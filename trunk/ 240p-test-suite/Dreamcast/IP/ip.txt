@@ -1,0 +1,11 @@
+Hardware ID   : SEGA SEGAKATANA
+Maker ID      : SEGA ENTERPRISES
+Device Info   : 0000 CD-ROM1/1
+Area Symbols  : JUE
+Peripherals   : E000F10
+Product No    : T0000
+Version       : V1.000
+Release Date  : 20000627
+Boot Filename : 1ST_READ.BIN
+SW Maker Name : ARTEMIO URBINA
+Game Title    : 240P TEST PATTERN SUITE
