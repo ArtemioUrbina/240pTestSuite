@@ -54,6 +54,7 @@ void Draw601ColorBars();
 void DrawGrid();
 void DrawLinearity();
 void DropShadowTest();
+void StripedSpriteTest();
 void LagTest();
 void DrawStripes();
 void DrawCheckBoard();
@@ -121,6 +122,7 @@ start:
 	DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Grid"); y += fh; c++;
 	DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Linearity"); y += fh; c++;
 	DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
+    DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
 	DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Lag Test"); y += fh; c++;
 	DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
 	DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
@@ -225,16 +227,19 @@ start:
 				case 5:
 					DropShadowTest();
 					break;
-				case 6:
-					LagTest();
+                case 6:
+					StripedSpriteTest();
 					break;
 				case 7:
-					DrawStripes();
+					LagTest();
 					break;
 				case 8:
-					DrawCheckBoard();
+					DrawStripes();
 					break;
 				case 9:
+					DrawCheckBoard();
+					break;
+				case 10:
 					ChangeResolution();
     					FreeImage(&scanlines);    
     					FreeImage(&title);    
@@ -243,7 +248,7 @@ start:
 					// not pretty, but "clean"
 					goto start;
 					break;
-				case 10:
+				case 11:
 					DrawCredits();
 					break;
 
@@ -532,6 +537,86 @@ void DropShadowTest()
     FreeImage(&back[1]);
     FreeImage(&back[2]);
     FreeImage(&shadow);
+}
+
+void StripedSpriteTest()
+{	
+	int		done = 0, x = 0, y = 0, selback = 0;
+    	uint16		oldbuttons = 0xffff, pressed;    
+    	ImagePtr	back[3], striped;
+
+	back[0] = LoadImage("/rd/motoko.png");
+	back[1] = LoadImage("/rd/checkpos.png");
+	back[2]  = LoadImage("/rd/stripespos.png");
+	striped = LoadImage("/rd/striped.png");
+    
+    	updateVMU(" Striped ", "", 1);
+	while(!done) 
+	{
+        	pvr_wait_ready();
+
+		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		pressed = st->buttons & ~oldbuttons;
+		oldbuttons = st->buttons;
+			
+		if (st->buttons & CONT_DPAD_UP)
+			y --;
+
+		if (st->buttons & CONT_DPAD_DOWN)
+			y ++;
+
+        	if (st->buttons & CONT_DPAD_LEFT)
+			x --;
+
+		if (st->buttons & CONT_DPAD_RIGHT)
+			x ++;
+
+        	// Joystick
+		if(st->joyx != 0)
+			x += st->joyx/20;
+
+		if(st->joyy != 0)
+			y += st->joyy/20;
+
+		if (pressed & CONT_START)
+			done =  1;        
+        
+		if (pressed & CONT_A)
+		{
+			if(selback > 0)
+				selback --;
+			else
+				selback = 2;
+		}
+
+		if (pressed & CONT_B)
+		{
+			if(selback < 2)
+				selback ++;
+			else
+				selback = 0;
+		}
+
+        	MAPLE_FOREACH_END()
+
+        	pvr_scene_begin();
+    
+        	pvr_list_begin(PVR_LIST_TR_POLY);
+        	DrawImage(back[selback]);
+	
+            striped->x = x;
+            striped->y = y;
+            DrawImage(striped);
+
+		DrawScanlines();
+        	pvr_list_finish();        
+
+        	pvr_scene_finish();
+    }
+    FreeImage(&back[0]);
+    FreeImage(&back[1]);
+    FreeImage(&back[2]);
+    FreeImage(&striped);
 }
 
 void LagTest()
@@ -1041,20 +1126,20 @@ void DrawCredits()
         	pvr_list_begin(PVR_LIST_TR_POLY);
         	DrawImage(back);
 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Code and Patterns"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Code and Patterns:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Artemio Urbina"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Tobias W. Reich"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "KallistiOS"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK Assistance"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Toolchain built with"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Toolchain built with:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "https://github.com/"); y += fh; 
 		DrawStringS(x+7, y, 1.0, 1.0, 1.0, "losinggeneration/buildcross"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb"); y += fh; 
 
 		DrawScanlines();

@@ -71,6 +71,7 @@ void Draw601ColorBars(SDL_Surface *screen);
 void DrawGrid(SDL_Surface *screen);
 void DrawLinearity(SDL_Surface *screen);
 void DropShadowTest(SDL_Surface *screen);
+void StripedSpriteTest(SDL_Surface *screen);
 void LagTest(SDL_Surface *screen);
 void DrawStripes(SDL_Surface *screen);
 void DrawCheckBoard(SDL_Surface *screen);
@@ -141,6 +142,8 @@ int main ( int argc, char *argv[] )
 			DStringS(screen, "Linearity",
 				x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, 0xFF); c++; y += fh;
 			DStringS(screen, "Drop Shadow Test",
+				x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, 0xFF); c++; y += fh;
+            DStringS(screen, "Striped Sprite Test",
 				x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, 0xFF); c++; y += fh;
 			DStringS(screen, "Lag Test",
 				x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, 0xFF); c++; y += fh;
@@ -250,19 +253,22 @@ int main ( int argc, char *argv[] )
 					case 5:
 						DropShadowTest(screen);
 						break;
-					case 6:
-						LagTest(screen);
+                    case 6:
+						StripedSpriteTest(screen);
 						break;
 					case 7:
-						DrawStripes(screen);
+						LagTest(screen);
 						break;
 					case 8:
-						DrawCheckBoard(screen);
+						DrawStripes(screen);
 						break;
 					case 9:
-						ChangeResolution(&screen, &W, &H, &video_flags, &video_bits);
+						DrawCheckBoard(screen);
 						break;
 					case 10:
+						ChangeResolution(&screen, &W, &H, &video_flags, &video_bits);
+						break;
+					case 11:
 						DrawCredits(screen);
 						break;
 
@@ -774,6 +780,164 @@ void DropShadowTest(SDL_Surface *screen)
 	return;
 }
 
+void StripedSpriteTest(SDL_Surface *screen)
+{    	
+	int done = 0;
+    	Uint16  oldbuttons = 0xffff, pressed, changeback = 0;
+    	int x = 0, y = 0, lx = 0, ly = 0, back = 0, redraw = 0;
+    	bitmap wall, striped, stripespos, checkpos, bgimage;
+
+    	wall = LoadImage("/rd/motoko.bmp");
+    	if(!wall)
+        	return;
+
+    	checkpos = LoadImage("/rd/checkpos.bmp");
+    	if(!checkpos)
+        	return;
+
+    	stripespos = LoadImage("/rd/stripespos.bmp");
+    	if(!stripespos)
+        	return;
+
+    	striped = LoadImageWAlpha("/rd/striped.bmp", 255, 0, 255 );
+    	if(!striped)
+        	return;
+
+	bgimage = wall;
+	
+	redraw = 1;
+	while(!done)
+	{
+		if(!redraw)
+		{
+			SDL_Rect rect = { lx, ly, 32, 32 };
+			SDL_BlitSurface (bgimage, &rect, screen, &rect);
+		}
+		else
+		{
+        		if(!DrawImage(screen, bgimage, 0, 0))
+		    		return;
+			redraw = 0;
+		}
+
+        if(!DrawImage(screen, striped, x, y))
+		           	return;
+            
+	    lx = x;
+		ly = y;
+        	
+		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+	    	pressed = st->buttons & ~oldbuttons;
+		oldbuttons = st->buttons;
+			
+        	if (st->buttons & CONT_DPAD_UP)
+		{
+			y --;
+			if(y < 0)
+				y = 0;
+		}
+
+		if (st->buttons & CONT_DPAD_DOWN)
+		{
+			y ++;
+			if(y > 234 - 32)
+				y = 234 - 32;
+		}
+
+        	if (st->buttons & CONT_DPAD_LEFT)
+		{
+			x --;
+			if(x < 0)
+				x = 0;
+		}
+
+		if (st->buttons & CONT_DPAD_RIGHT)
+		{
+			x ++;
+			if(x > 320 - 32)
+				x = 320 - 32;
+		}
+
+		// Joystick
+		if(st->joyx != 0)
+		{
+			x += st->joyx/10;
+			if(x > 320 - 32)
+				x = 320 - 32;
+			if(x < 0)
+				x = 0;
+		}
+
+		if(st->joyy != 0)
+		{
+			y += st->joyy/10;
+			if(y > 234 - 32)
+				y = 234 - 32;
+			if(y < 0)
+				y = 0;
+		}
+
+		if (pressed & CONT_START)
+			done =  1;
+
+        	if (pressed & CONT_A)
+		{
+			if(back > 0)
+				back --;
+			else
+				back = 2;
+			redraw = 1;
+			changeback = 1;
+		}
+
+        	if (pressed & CONT_B)
+		{
+			if(back < 2)
+				back ++;
+			else
+				back = 0;
+			redraw = 1;
+			changeback = 1;
+		}
+
+        	if (st->buttons & CONT_Y && st->buttons & CONT_X)
+		{
+			if(back < 2)
+				back ++;
+			else
+				back = 0;
+			changeback = 1;
+		}
+
+		if(changeback)
+		{
+			switch(back)
+			{
+				case 0:
+					bgimage = wall;
+					break;
+				case 1:
+					bgimage = checkpos;
+					break;
+				case 2:
+					bgimage = stripespos;
+					break;
+			}
+			changeback = 0;
+		}
+   
+
+		MAPLE_FOREACH_END()
+		ScaleScreen(screen);
+	}
+    	FreeImage(&wall);
+    	FreeImage(&checkpos);
+    	FreeImage(&stripespos);
+    	FreeImage(&striped);
+
+	return;
+}
+
 void LagTest(SDL_Surface *screen)
 {
 	int 		clicks[10], done = 0, view = 0, speed = 1, change = 1, erase = 0;
@@ -1254,7 +1418,7 @@ void DrawCredits(SDL_Surface *screen)
 	DStringS(screen, "Code and Patterns:", x, y, 0x0, 0xFF,  0x0, 0xFF); y += 10;
 	DStringS(screen, "Artemio Urbina", x+5, y, 0xFF, 0xFF, 0xFF, 0xFF); y += 10;
 	DStringS(screen, "Advisor:", x, y, 0x0, 0xFF, 0x0, 0xFF);y += 10;
-	DStringS(screen, "Tobias W. Reich", x+5, y, 0xFF, 0xFF, 0xFF, 0xFF);y += 10;
+	DStringS(screen, "Fudoh", x+5, y, 0xFF, 0xFF, 0xFF, 0xFF);y += 10;
 	DStringS(screen, "Menu Pixel Art:", x, y, 0x0, 0xFF, 0x0, 0xFF);y += 10;
 	DStringS(screen, "Asher", x+5, y, 0xFF, 0xFF, 0xFF, 0xFF);y += 10;
 	DStringS(screen, "SDK", x, y, 0x0, 0xFF, 0x0, 0xFF);y += 10;
