@@ -63,15 +63,15 @@ void DrawCredits();
 
 int main(void)
 {
-    int         done = 0, sel = 1, joycnt = 0;
-    uint16      oldbuttons = 0xffff, pressed;    
-    ImagePtr    title;
+	int         done = 0, sel = 1, joycnt = 0;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    title;
 
-    /* init kos  */
-    // PM_RGB555 PM_RGB565 PM_RGB888
-    vcable = vid_check_cable();
-    vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
-    pvr_init_defaults();
+	/* init kos  */
+	// PM_RGB555 PM_RGB565 PM_RGB888
+	vcable = vid_check_cable();
+	vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
+	pvr_init_defaults();
 
     // Disable deflicker filter, 
     if(PVR_GET(PVR_SCALER_CFG) != 0x400)
@@ -227,7 +227,7 @@ start:
 				    case 5:
 					    DropShadowTest();
 					    break;
-                    case 6:
+				    case 6:
 					    StripedSpriteTest();
 					    break;
 				    case 7:
@@ -555,17 +555,34 @@ void StripedSpriteTest()
 		    pressed = st->buttons & ~oldbuttons;
 		    oldbuttons = st->buttons;
 			    
-		    if (st->buttons & CONT_DPAD_UP)
-			    y --;
-    
-		    if (st->buttons & CONT_DPAD_DOWN)
-			    y ++;
+		    if(st->buttons & CONT_Y)
+		    {
+		    	if (pressed & CONT_DPAD_UP)
+			    	y --;
+    	
+		    	if (pressed & CONT_DPAD_DOWN)
+			    	y ++;
+	
+        	    	if (pressed & CONT_DPAD_LEFT)
+    			    	x --;
 
-        	if (st->buttons & CONT_DPAD_LEFT)
-    			x --;
+		    	if (pressed & CONT_DPAD_RIGHT)
+			    	x ++;
+		    }
+		    else
+		    {
+		    	if (st->buttons & CONT_DPAD_UP)
+			    	y --;
+    	
+		    	if (st->buttons & CONT_DPAD_DOWN)
+			    	y ++;
+	
+        	    	if (st->buttons & CONT_DPAD_LEFT)
+    			    	x --;
 
-		    if (st->buttons & CONT_DPAD_RIGHT)
-			    x ++;
+		    	if (st->buttons & CONT_DPAD_RIGHT)
+			    	x ++;
+		    }
 
         	// Joystick
 		    if(st->joyx != 0)
@@ -600,11 +617,19 @@ void StripedSpriteTest()
         pvr_list_begin(PVR_LIST_TR_POLY);
         DrawImage(back[selback]);
 
+	if(x < 0)
+		x = 0;
+	if(y < 0)
+		y = 0;
+	if(x > dW - striped->w)
+		x = dW - striped->w;
+	if(y > dH - striped->h)
+		y = dH - striped->h;
         striped->x = x;
         striped->y = y;
         DrawImage(striped);
 
-		DrawScanlines();
+	DrawScanlines();
         pvr_list_finish();        
 
         pvr_scene_finish();
@@ -842,12 +867,12 @@ void LagTest()
 
 			if(total < 5)
 			{
-				DrawStringS(130, 120, 0.0f, 1.0f, 0.0f, "EXCELLENT REFLEXES!");
+				DrawStringS(100, 120, 0.0f, 1.0f, 0.0f, "EXCELLENT REFLEXES!");
     				updateVMUFlash("Lag Test ", " AWESOME", 1);
 			}
 			if(total == 0)
 			{
-				DrawStringS(130, 120, 0.0f, 1.0f, 0.0f, "INCREDIBLE REFLEXES!!");
+				DrawStringS(100, 120, 0.0f, 1.0f, 0.0f, "INCREDIBLE REFLEXES!!");
     				updateVMUFlash("Lag Test ", "-PERFECT-", 1);
 			}
 
@@ -935,7 +960,7 @@ void DrawStripes()
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			DrawStringB(220, 12, 0, 1.0f, 0, msg);
+			DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
 			frame ++;
 			if(frame > 59)
 				frame = 0;
@@ -1012,7 +1037,7 @@ void DrawCheckBoard()
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			DrawStringB(220, 12, 0, 1.0f, 0, msg);
+			DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
 			frame ++;
 			if(frame > 59)
 				frame = 0;
@@ -1124,14 +1149,14 @@ void DrawCredits()
 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Code and Patterns:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Artemio Urbina"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "KallistiOS"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Toolchain built with:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "https://github.com/"); y += fh; 
 		DrawStringS(x+7, y, 1.0, 1.0, 1.0, "losinggeneration/buildcross"); y += fh; 
