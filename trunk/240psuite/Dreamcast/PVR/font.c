@@ -36,14 +36,14 @@ ImagePtr   black_t = NULL;
 
 void LoadFont()
 {
-    if(!font)
-    {
-	    font = plx_font_load("/rd/font.txf");
-	    font_cxt = plx_fcxt_create(font, PVR_LIST_TR_POLY);
-    }
+	if(!font)
+	{
+		font = plx_font_load("/rd/font.txf");
+		font_cxt = plx_fcxt_create(font, PVR_LIST_TR_POLY);
+	}
 
-    if(!black_t)
-	    black_t = LoadImage("/rd/black.png");
+	if(!black_t)
+		black_t = LoadImage("/rd/black.png");
 }
 
 void ReleaseFont()

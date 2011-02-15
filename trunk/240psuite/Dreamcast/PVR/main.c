@@ -73,432 +73,431 @@ int main(void)
 	vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
 	pvr_init_defaults();
 
-    // Disable deflicker filter, 
-    if(PVR_GET(PVR_SCALER_CFG) != 0x400)
-    {
-    	dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
-    	PVR_SET(PVR_SCALER_CFG, 0x400);
-    }
+ 	// Disable deflicker filter, 
+ 	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
+ 	{
+		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
+		PVR_SET(PVR_SCALER_CFG, 0x400);
+	}
 
     // Turn off texture dithering
-    if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
-    {
-    	dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
-    	PVR_SET(PVR_FB_CFG_2, 0x00000001);
-    }
+	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
+	{
+		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
+		PVR_SET(PVR_FB_CFG_2, 0x00000001);
+	}
 
 start:
-    vid_border_color(0, 0, 0);
-    pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+	vid_border_color(0, 0, 0);
+	pvr_set_bg_color(0.0f, 0.0f, 0.0f);
     
-    LoadFont();
-    title = LoadImage("/rd/title.png");    
-    if(!scanlines && vmode == FAKE_640_SL)
-    {
-	    scanlines = LoadImage("/rd/scanlines.png");
-	    scanlines->layer = 4;
-	    scanlines->alpha = 0.75f; // XRGB-3 175 
-	    scanlines->scale = 0;
-    }
+	LoadFont();
+	title = LoadImage("/rd/title.png");    
+	if(!scanlines && vmode == FAKE_640_SL)
+	{
+		scanlines = LoadImage("/rd/scanlines.png");
+		scanlines->layer = 4;
+		scanlines->alpha = 0.75f; // XRGB-3 175 
+		scanlines->scale = 0;
+	}
     
-    while(!done) 
-    {
-        char  	res[40];
-        float 	r = 1.0f;
-	    float 	g = 1.0f;
-	    float 	b = 1.0f;
-	    int 	c = 1;        
-	    float 	x = 30.0f;
-	    float 	y = 60.0f;
+ 	while(!done) 
+	{
+		char  	res[40];
+		float 	r = 1.0f;
+		float 	g = 1.0f;
+		float 	b = 1.0f;
+		int 	c = 1;        
+		float 	x = 30.0f;
+		float 	y = 60.0f;
         
-    	pvr_wait_ready();
-        pvr_scene_begin();
-        pvr_list_begin(PVR_LIST_TR_POLY);
+		pvr_wait_ready();
+		pvr_scene_begin();
+		pvr_list_begin(PVR_LIST_TR_POLY);
 
-        DrawImage(title);
+		DrawImage(title);
 
-	    DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars"); y += fh; c++;
-	    DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
-	    DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Grid"); y += fh; c++;
-	    DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Linearity"); y += fh; c++;
-	    DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
-        DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
-	    DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Lag Test"); y += fh; c++;
-	    DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
-	    DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Grid"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Linearity"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
 
-	    switch(vmode)
-	    {
-		    case NATIVE_320:
-        		    sprintf(res, "Video: 240p");
-			    break;
-		    case NATIVE_640:
-        		    sprintf(res, "Video: 480i");
-			    break;
-		    case FAKE_640:
-        		    sprintf(res, "Video: Fake 480i");
-			    break;
-		    case FAKE_640_SL:
-        		    sprintf(res, "Video: 480p/scanlines");
-			    break;
-	    }
-	    DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
-	    DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
+		switch(vmode)
+		{
+			case NATIVE_320:
+				sprintf(res, "Video: 240p");
+				break;
+			case NATIVE_640:
+				sprintf(res, "Video: 480i");
+				break;
+			case FAKE_640:
+				sprintf(res, "Video: Fake 480i");
+				break;
+			case FAKE_640_SL:
+				sprintf(res, "Video: 480p/scanlines");
+				break;
+		}
+		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
+		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
 
-	    switch(vcable)
-	    {
-		    case CT_RGB:
-			    DrawStringS(265.0f, 225.0f, 0, g,  b, "RGB");
-			    break;
-		    case CT_VGA:
-			    DrawStringS(265.0f, 225.0f, 0, g,  b, "VGA");
-			    break;
-		    case CT_COMPOSITE:
-			    DrawStringS(215.0f, 225.0f, 0, g,  b, "Composite");
-			    break;
-	    }
+		switch(vcable)
+		{
+			case CT_RGB:
+				DrawStringS(265.0f, 225.0f, 0, g,  b, "RGB");
+				break;
+			case CT_VGA:
+				DrawStringS(265.0f, 225.0f, 0, g,  b, "VGA");
+				break;
+			case CT_COMPOSITE:
+				DrawStringS(215.0f, 225.0f, 0, g,  b, "Composite");
+				break;
+		}
     
-	    DrawScanlines();
+		DrawScanlines();
         
-        pvr_list_finish();        
-        pvr_scene_finish();
+		pvr_list_finish();        
+		pvr_scene_finish();
 
-        MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-        {
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 #ifdef SERIAL
-		    if (st->buttons & CONT_START && st->buttons & CONT_B)
-		    {
-    			    updateVMU(" Goodbye ", " m(_ _)m ", 1);
-			    done =  1;
-		    }
+			if (st->buttons & CONT_START && st->buttons & CONT_B)
+			{
+				updateVMU(" Goodbye ", " m(_ _)m ", 1);
+				done =  1;
+			}
 #endif
 
-		    if (pressed & CONT_DPAD_UP)
-		    {
-			    sel --;
-			    if(sel < 1)
-				    sel = c;				
-		    }
+			if (pressed & CONT_DPAD_UP)
+			{
+				sel --;
+				if(sel < 1)
+					sel = c;				
+			}
     
-		    if (pressed & CONT_DPAD_DOWN)
-		    {
-			    sel ++;
-			    if(sel > c)
-				    sel = 1;				
-		    }
+			if (pressed & CONT_DPAD_DOWN)
+			{
+				sel ++;
+				if(sel > c)
+					sel = 1;				
+			}
     
-		    if(st->joyy != 0)
-		    {
-			    if(++joycnt > 5)
-			    {
-				    if(st->joyy > 0)
-					    sel ++;
-				    if(st->joyy < 0)
-					    sel --;
+			if(st->joyy != 0)
+			{
+				if(++joycnt > 5)
+				{
+					if(st->joyy > 0)
+						sel ++;
+					if(st->joyy < 0)
+						sel --;
     
-				    if(sel < 1)
-					    sel = c;
-				    if(sel > c)
-					    sel = 1;					
-				    joycnt = 0;
-			    }
-		    }
-		    else
-			    joycnt = 0;
+					if(sel < 1)
+						sel = c;
+					if(sel > c)
+						sel = 1;					
+					joycnt = 0;
+				}
+			}
+			else
+				joycnt = 0;
     
-		    if (pressed & CONT_A)
-		    {
-			    switch(sel)
-			    {
-				    case 1:
-					    DrawColorBars();
-					    break;
-				    case 2:
-					    Draw601ColorBars();
-					    break;
-				    case 3:
-					    DrawGrid();
-					    break;
-				    case 4:
-					    DrawLinearity();
-					    break;
-				    case 5:
-					    DropShadowTest();
-					    break;
-				    case 6:
-					    StripedSpriteTest();
-					    break;
-				    case 7:
-					    LagTest();
-					    break;
-				    case 8:
-					    DrawStripes();
-					    break;
-				    case 9:
-					    DrawCheckBoard();
-					    break;
-				    case 10:
-					    ChangeResolution();
-    					    FreeImage(&scanlines);    
-    					    FreeImage(&title);    
-    					    ReleaseFont();
-					    // we need to reload textures and stuff..
-					    // not pretty, but "clean"
-					    goto start;
-					    break;
-				    case 11:
-					    DrawCredits();
-					    break;
-    
-			    }                         
-    			updateVMU("240p Test", "", 1);
-		    }
-	    }
-        MAPLE_FOREACH_END()
+			if (pressed & CONT_A)
+			{
+				switch(sel)
+				{
+					case 1:
+						DrawColorBars();
+						break;
+					case 2:
+						Draw601ColorBars();
+						break;
+					case 3:
+						DrawGrid();
+						break;
+					case 4:
+						DrawLinearity();
+						break;
+					case 5:
+						DropShadowTest();
+						break;
+					case 6:
+						StripedSpriteTest();
+						break;
+					case 7:
+						LagTest();
+						break;
+					case 8:
+						DrawStripes();
+						break;
+					case 9:
+						DrawCheckBoard();
+						break;
+					case 10:
+						ChangeResolution();
+						FreeImage(&scanlines);    
+						FreeImage(&title);    
+						ReleaseFont();
+						// we need to reload textures and stuff..
+						// not pretty, but "clean"
+						goto start;
+						break;
+					case 11:
+						DrawCredits();
+						break;
+				}                         
+				updateVMU("240p Test", "", 1);
+			}
+		}
+		MAPLE_FOREACH_END()
 
-    	updateVMU("240p Test", "", 0);
-    }
+		updateVMU("240p Test", "", 0);
+	}
 
-    FreeImage(&scanlines);    
-    FreeImage(&title);    
-    ReleaseFont();
-    return 0;
+	FreeImage(&scanlines);    
+	FreeImage(&title);    
+	ReleaseFont();
+	return 0;
 }
 
 void DrawColorBars()
 {
 	int         done = 0;
-    uint16      oldbuttons = 0xffff, pressed;    
-    ImagePtr    back;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    back;
 
 	back = LoadImage("/rd/color.png");
     
-    updateVMU("Colorbars", "", 1);
+	updateVMU("Colorbars", "", 1);
 	while(!done) 
 	{
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			    
-		    if (pressed & CONT_START)
-			    done =  1;                
-        MAPLE_FOREACH_END()
+			if (pressed & CONT_START)
+				done =  1;                
+		MAPLE_FOREACH_END()
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
-        DrawImage(back);
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
 		DrawScanlines();
-        pvr_list_finish();        
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
-    FreeImage(&back);
+		pvr_scene_finish();
+	}
+	FreeImage(&back);
 }
 
 void Draw601ColorBars()
 {
 	int         done = 0;
-    uint16      oldbuttons = 0xffff, pressed;    
-    ImagePtr    back;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    back;
 
 	back = LoadImage("/rd/601701cb.png");
     
-    updateVMU("Colorbars", "with gray", 1);
+	updateVMU("Colorbars", "with gray", 1);
 	while(!done) 
 	{
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			    
-		    if (pressed & CONT_START)
-			    done =  1;                
-        MAPLE_FOREACH_END()
+			if (pressed & CONT_START)
+				done =  1;                
+		MAPLE_FOREACH_END()
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
-        DrawImage(back);
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
 		DrawScanlines();
-        pvr_list_finish();        
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
-    FreeImage(&back);
+		pvr_scene_finish();
+	}
+	FreeImage(&back);
 }
 
 void DrawGrid()
 {
 	int         done = 0;
-    uint16      oldbuttons = 0xffff, pressed;    
-    ImagePtr    back;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    back;
 
 	back = LoadImage("/rd/grid.png");
     
-    updateVMU("   Grid  ", "", 1);
+	updateVMU("   Grid  ", "", 1);
 	while(!done) 
 	{
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			    
-		    if (pressed & CONT_START)
-			    done =  1;                
-        MAPLE_FOREACH_END()
+			if (pressed & CONT_START)
+				done =  1;                
+		MAPLE_FOREACH_END()
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
-        DrawImage(back);
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
 		DrawScanlines();
-        pvr_list_finish();        
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
+		pvr_scene_finish();
+	}
 
-    FreeImage(&back);
+	FreeImage(&back);
 }
 
 void DrawLinearity()
 {
 	int         done = 0, gridpattern = 0, showgrid = 1;
 	uint16	    oldbuttons = 0xffff, pressed;
-    ImagePtr    circles, grid, gridd;
+	ImagePtr    circles, grid, gridd;
 
 	circles = LoadImage("/rd/circles.png");
 	grid = LoadImage("/rd/circles_grid.png");
 	gridd = LoadImage("/rd/circles_griddot.png");
     
-    updateVMU("Linearity", "   A B   ", 1);
+	updateVMU("Linearity", "   A B   ", 1);
 	while(!done) 
 	{
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			    
-		    if (pressed & CONT_A)
-			    showgrid = !showgrid;
+			if (pressed & CONT_A)
+				showgrid = !showgrid;
     
-		    if (pressed & CONT_B)
-			    gridpattern = !gridpattern;
+			if (pressed & CONT_B)
+				gridpattern = !gridpattern;
     
-		    if (pressed & CONT_START)
-			    done =  1;        
+			if (pressed & CONT_START)
+				done =  1;        
             
-        MAPLE_FOREACH_END()
+		MAPLE_FOREACH_END()
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
+		pvr_list_begin(PVR_LIST_TR_POLY);
 		if(showgrid)
 		{
 			if(gridpattern)
-        			DrawImage(gridd);
+				DrawImage(gridd);
 			else
-        			DrawImage(grid);
+				DrawImage(grid);
 		}
-        DrawImage(circles);
+		DrawImage(circles);
 		DrawScanlines();
-        pvr_list_finish();        
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
+		pvr_scene_finish();
+	}
 
-    FreeImage(&gridd);
-    FreeImage(&grid);
-    FreeImage(&circles);
+	FreeImage(&gridd);
+	FreeImage(&grid);
+	FreeImage(&circles);
 }
 
 void DropShadowTest()
 {
 	char		msg[50];
 	int		done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0;
-    uint16		oldbuttons = 0xffff, pressed;    
-    ImagePtr	back[3], shadow;
+	uint16		oldbuttons = 0xffff, pressed;    
+	ImagePtr	back[3], shadow;
 
 	back[0] = LoadImage("/rd/motoko.png");
 	back[1] = LoadImage("/rd/checkpos.png");
 	back[2]  = LoadImage("/rd/stripespos.png");
 	shadow = LoadImage("/rd/shadow.png");
     
-    updateVMU(" Shadow  ", "   even  ", 1);
+	updateVMU(" Shadow  ", "   even  ", 1);
 	while(!done) 
 	{
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			    
-		    if (st->buttons & CONT_DPAD_UP)
-			    y --;
+			if (st->buttons & CONT_DPAD_UP)
+				y --;
     
-		    if (st->buttons & CONT_DPAD_DOWN)
-			    y ++;
+			if (st->buttons & CONT_DPAD_DOWN)
+				y ++;
     
-            if (st->buttons & CONT_DPAD_LEFT)
-			    x --;
+			if (st->buttons & CONT_DPAD_LEFT)
+				x --;
     
-		    if (st->buttons & CONT_DPAD_RIGHT)
-			    x ++;
+			if (st->buttons & CONT_DPAD_RIGHT)
+				x ++;
 
-        	    // Joystick
-		    if(st->joyx != 0)
-			    x += st->joyx/20;
+			// Joystick
+			if(st->joyx != 0)
+				x += st->joyx/20;
     
-		    if(st->joyy != 0)
-			    y += st->joyy/20;
+			if(st->joyy != 0)
+				y += st->joyy/20;
     
-		    if (pressed & CONT_START)
-			    done =  1;        
+			if (pressed & CONT_START)
+				done =  1;        
 
-        	if (pressed & CONT_X)		
-		    {
-                invert = !invert;                       	
-			    if(invert)
-			    {
-				    sprintf(msg, "Shadow on odd frames");
-    				    updateVMU(" Shadow  ", "    odd  ", 1);
-			    }
-			    else
-			    {
-				    sprintf(msg, "Shadow on even frames");
-    				    updateVMU(" Shadow  ", "   even  ", 1);
-			    }
-			    text = 60;
-		    }
+			if (pressed & CONT_X)		
+			{
+				invert = !invert;                       	
+				if(invert)
+				{
+					sprintf(msg, "Shadow on odd frames");
+					updateVMU(" Shadow  ", "    odd  ", 1);
+				}
+				else
+				{
+					sprintf(msg, "Shadow on even frames");
+					updateVMU(" Shadow  ", "   even  ", 1);
+				}
+				text = 60;
+			}
         
-		    if (pressed & CONT_A)
-		    {
-			    if(selback > 0)
-				    selback --;
-			    else
-				    selback = 2;
-		    }
+			if (pressed & CONT_A)
+			{
+				if(selback > 0)
+					selback --;
+				else
+					selback = 2;
+			}
     
-		    if (pressed & CONT_B)
-		    {
-			    if(selback < 2)
-				    selback ++;
-			    else
-				    selback = 0;
-		    }
-        MAPLE_FOREACH_END()
+			if (pressed & CONT_B)
+			{
+				if(selback < 2)
+					selback ++;
+				else
+					selback = 0;
+			}
+		MAPLE_FOREACH_END()
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
-        DrawImage(back[selback]);
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back[selback]);
 
 		if(text)
 		{
@@ -506,8 +505,8 @@ void DropShadowTest()
 			text --;
 		}
 
-        if(frame == invert)
-        {
+		if(frame == invert)
+		{
 			if(x < 0)
 				x = 0;
 			if(y < 0)
@@ -517,139 +516,139 @@ void DropShadowTest()
 			if(y > dH - shadow->h)
 				y = dH - shadow->h;
 
-            shadow->x = x;
-            shadow->y = y;
-            DrawImage(shadow);
-            frame = !frame;
-        }
-        else
-            	frame = !frame;
+			shadow->x = x;
+			shadow->y = y;
+			DrawImage(shadow);
+			frame = !frame;
+		}
+		else
+			frame = !frame;
 		DrawScanlines();
-        pvr_list_finish();        
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
-    FreeImage(&back[0]);
-    FreeImage(&back[1]);
-    FreeImage(&back[2]);
-    FreeImage(&shadow);
+		pvr_scene_finish();
+	}
+	FreeImage(&back[0]);
+	FreeImage(&back[1]);
+	FreeImage(&back[2]);
+	FreeImage(&shadow);
 }
 
 void StripedSpriteTest()
 {	
 	int		done = 0, x = 0, y = 0, selback = 0;
-    uint16		oldbuttons = 0xffff, pressed;    
-    ImagePtr	back[3], striped;
+	uint16		oldbuttons = 0xffff, pressed;    
+	ImagePtr	back[3], striped;
 
 	back[0] = LoadImage("/rd/motoko.png");
 	back[1] = LoadImage("/rd/checkpos.png");
 	back[2]  = LoadImage("/rd/stripespos.png");
 	striped = LoadImage("/rd/striped.png");
     
-    updateVMU(" Striped ", "", 1);
+	updateVMU(" Striped ", "", 1);
 	while(!done) 
 	{
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			    
-		    if(st->buttons & CONT_Y)
-		    {
-		    	if (pressed & CONT_DPAD_UP)
-			    	y --;
+			if(st->buttons & CONT_Y)
+			{
+				if (pressed & CONT_DPAD_UP)
+					y --;
     	
-		    	if (pressed & CONT_DPAD_DOWN)
-			    	y ++;
+				if (pressed & CONT_DPAD_DOWN)
+					y ++;
 	
-        	    	if (pressed & CONT_DPAD_LEFT)
-    			    	x --;
+				if (pressed & CONT_DPAD_LEFT)
+					x --;
 
-		    	if (pressed & CONT_DPAD_RIGHT)
-			    	x ++;
-		    }
-		    else
-		    {
-		    	if (st->buttons & CONT_DPAD_UP)
-			    	y --;
+				if (pressed & CONT_DPAD_RIGHT)
+					x ++;
+			}
+			else
+			{
+				if (st->buttons & CONT_DPAD_UP)
+					y --;
     	
-		    	if (st->buttons & CONT_DPAD_DOWN)
-			    	y ++;
+				if (st->buttons & CONT_DPAD_DOWN)
+					y ++;
 	
-        	    	if (st->buttons & CONT_DPAD_LEFT)
-    			    	x --;
+				if (st->buttons & CONT_DPAD_LEFT)
+					x --;
 
-		    	if (st->buttons & CONT_DPAD_RIGHT)
-			    	x ++;
-		    }
+				if (st->buttons & CONT_DPAD_RIGHT)
+					x ++;
+			}
 
-        	// Joystick
-		    if(st->joyx != 0)
-			    x += st->joyx/20;
+			// Joystick
+			if(st->joyx != 0)
+				x += st->joyx/20;
     
-		    if(st->joyy != 0)
-			    y += st->joyy/20;
+			if(st->joyy != 0)
+				y += st->joyy/20;
     
-		    if (pressed & CONT_START)
-			    done =  1;        
+			if (pressed & CONT_START)
+				done =  1;        
             
-		    if (pressed & CONT_A)
-		    {
-			    if(selback > 0)
-				    selback --;
-			    else
-				    selback = 2;
-		    }
+			if (pressed & CONT_A)
+			{
+				if(selback > 0)
+					selback --;
+				else
+					selback = 2;
+			}
     
-		    if (pressed & CONT_B)
-		    {
-			    if(selback < 2)
-				    selback ++;
-			    else
-				    selback = 0;
-		    }
+			if (pressed & CONT_B)
+			{
+				if(selback < 2)
+					selback ++;
+				else
+					selback = 0;
+			}
 
-        MAPLE_FOREACH_END()
+		MAPLE_FOREACH_END()
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
-        DrawImage(back[selback]);
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back[selback]);
 
-	if(x < 0)
-		x = 0;
-	if(y < 0)
-		y = 0;
-	if(x > dW - striped->w)
-		x = dW - striped->w;
-	if(y > dH - striped->h)
-		y = dH - striped->h;
-        striped->x = x;
-        striped->y = y;
-        DrawImage(striped);
+		if(x < 0)
+			x = 0;
+		if(y < 0)
+			y = 0;
+		if(x > dW - striped->w)
+			x = dW - striped->w;
+		if(y > dH - striped->h)
+			y = dH - striped->h;
+		striped->x = x;
+		striped->y = y;
+		DrawImage(striped);
 
-	DrawScanlines();
-        pvr_list_finish();        
+		DrawScanlines();
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
-    FreeImage(&back[0]);
-    FreeImage(&back[1]);
-    FreeImage(&back[2]);
-    FreeImage(&striped);
+		pvr_scene_finish();
+	}
+	FreeImage(&back[0]);
+	FreeImage(&back[1]);
+	FreeImage(&back[2]);
+	FreeImage(&striped);
 }
 
 void LagTest()
 {
-	char 				msg[60];
-	int         			clicks[10], done = 0, view = 0, speed = 1, change = 1;
-    int         			x, y, x2, y2, audio = 1, pos = 0, i = 0;
-    uint16      			oldbuttons = 0xffff, pressed;    
-    ImagePtr    			back, spriteA, spriteB, spriteneg;
-	sfxhnd_t    			beep;
-	maple_device_t 			*purupuru = NULL;
-	static purupuru_effect_t 	effect;
+	char											msg[60];
+	int												clicks[10], done = 0, view = 0, speed = 1, change = 1;
+	int												x, y, x2, y2, audio = 1, pos = 0, i = 0;
+	uint16										oldbuttons = 0xffff, pressed;    
+	ImagePtr									back, spriteA, spriteB, spriteneg;
+	sfxhnd_t									beep;
+	maple_device_t						*purupuru = NULL;
+	static purupuru_effect_t	effect;
 
 	effect.duration = 1;
 	effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1);
@@ -658,7 +657,7 @@ void LagTest()
 
 	snd_init();
 
-    updateVMU("Lag Test ", "", 1);
+	updateVMU("Lag Test ", "", 1);
 	back = LoadImage("/rd/lag-per.png");
 	spriteA = LoadImage("/rd/lag-per.png");
 	spriteB = LoadImage("/rd/lag-per.png");
@@ -680,68 +679,68 @@ void LagTest()
 
 	while(!done) 
 	{
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			    
-		    if (pressed & CONT_A)
-		    {
-			    if(change)
-			    {
-				    clicks[pos] = (y - 96) *speed;
-				    change = 0;
+			if (pressed & CONT_A)
+			{
+				if(change)
+				{
+					clicks[pos] = (y - 96) *speed;
+					change = 0;
     
-				    sprintf(msg, " Off: %d", clicks[pos]);
-    				    updateVMU("Lag Test ", msg, 1);
+					sprintf(msg, " Off: %d", clicks[pos]);
+					updateVMU("Lag Test ", msg, 1);
     
-				    if(clicks[pos] >= 0)
-					    pos ++;
+					if(clicks[pos] >= 0)
+						pos ++;
 	    
-				    if(pos > 9)
-					    done = 1;
-			    }
-		    }
+					if(pos > 9)
+						done = 1;
+				}
+			}
 
-		    if (pressed & CONT_B)
-		    {
-			    view ++;
-			    if(view > 2)
-				    view = 0;
-		    }
+			if (pressed & CONT_B)
+			{
+				view ++;
+				if(view > 2)
+					view = 0;
+			}
             
-		    if (pressed & CONT_Y)
-			    audio =  !audio;        
+			if (pressed & CONT_Y)
+				audio =  !audio;        
     
-		    if (pressed & CONT_START)
-			    done =  1;        
+			if (pressed & CONT_START)
+				done =  1;        
     
-        MAPLE_FOREACH_END()
+		MAPLE_FOREACH_END()
     
 		if(y > 132)
-                {
-	       		speed = -1;
-		        change = 1;
+		{
+			speed = -1;
+			change = 1;
 		}
 
-        if(y < 60)
-	    {
+		if(y < 60)
+		{
 			speed = 1;
 			change = 1;
-    	}
+		}
 
-        y += speed;
-        x2 += speed;
+		y += speed;
+		x2 += speed;
 
 		spriteA->x = x;
 		spriteA->y = y;
 		spriteB->x = x2;
 		spriteB->y = y2;
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
+		pvr_list_begin(PVR_LIST_TR_POLY);
 
 		if(y == 96)
 		{
@@ -795,45 +794,45 @@ void LagTest()
 		DrawStringS(20, 190+3*fh, 1.0f, 1.0f, 1.0f, "\"B\" button toggles horz/vert.");
 
 		DrawScanlines();
-        pvr_list_finish();        
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
+		pvr_scene_finish();
+	}
 
-    if(beep != SFXHND_INVALID)
-    	snd_sfx_unload(beep);
-    FreeImage(&back);
-    FreeImage(&spriteA);
-    FreeImage(&spriteB);
-    FreeImage(&spriteneg);
-    snd_shutdown();
+	if(beep != SFXHND_INVALID)
+		snd_sfx_unload(beep);
+	FreeImage(&back);
+	FreeImage(&spriteA);
+	FreeImage(&spriteB);
+	FreeImage(&spriteneg);
+	snd_shutdown();
 
-    updateVMU("Lag Test ", "-Results-", 1);
-    if(pos > 9)
-    {
+	updateVMU("Lag Test ", "-Results-", 1);
+	if(pos > 9)
+	{
 		int	total = 0;
 		double  res = 0;
 		ImagePtr wall;
     
 		done = 0;
-        wall = LoadImage("/rd/back.png");
+		wall = LoadImage("/rd/back.png");
 
 		while(!done)
 		{
-            pvr_wait_ready();
+			pvr_wait_ready();
 
 			MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
 				
-			    if (st->buttons & CONT_START)
-				    done =  1;
+				if (st->buttons & CONT_START)
+					done =  1;
 
 			MAPLE_FOREACH_END()
 	
     
-        	pvr_scene_begin();
-        	pvr_list_begin(PVR_LIST_TR_POLY);
+			pvr_scene_begin();
+			pvr_list_begin(PVR_LIST_TR_POLY);
 
-    		DrawImage(wall);
+			DrawImage(wall);
 
 			total = 0;
 			for(i = 0; i < 10; i++)
@@ -877,79 +876,79 @@ void LagTest()
 			}
 
 			DrawScanlines();
-        	pvr_list_finish();        
+			pvr_list_finish();        
 
-        	pvr_scene_finish();
+			pvr_scene_finish();
 		}
 		FreeImage(&wall);
-    }
+	}
 }
 
 void DrawStripes()
 {
 	int         done = 0, field = 1, alternate = 0,
     		    frame = 0, dframe = 0, vertical = 0;
-    uint16      oldbuttons = 0xffff, pressed;    
-    ImagePtr    stripespos, stripesneg;
-    ImagePtr    vstripespos, vstripesneg;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    stripespos, stripesneg;
+	ImagePtr    vstripespos, vstripesneg;
 
 	stripespos = LoadImage("/rd/stripespos.png");
 	stripesneg = LoadImage("/rd/stripesneg.png");
 	vstripespos = LoadImage("/rd/vertstripespos.png");
 	vstripesneg = LoadImage("/rd/vertstripesneg.png");
     
-    updateVMU(" Stripes", "", 1);
+	updateVMU(" Stripes", "", 1);
 	while(!done) 
 	{
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			    
-		    if (pressed & CONT_START)
-			    done =  1;        
+			if (pressed & CONT_START)
+				done =  1;        
             
-		    if (pressed & CONT_A)
-		    {
-			    alternate = !alternate;        
-			    if(alternate)
-    				    updateVMU(" Stripes", "alternate", 1);
-			    else
-    				    updateVMU(" Stripes", "  still  ", 1);
-		    }
+			if (pressed & CONT_A)
+			{
+				alternate = !alternate;        
+				if(alternate)
+					updateVMU(" Stripes", "alternate", 1);
+				else
+					updateVMU(" Stripes", "  still  ", 1);
+			}
             
-		    if (pressed & CONT_Y)
-			    vertical = !vertical;
+			if (pressed & CONT_Y)
+				vertical = !vertical;
             
-		    if (pressed & CONT_X)
-		    {
-			    dframe = !dframe;
-			    frame = 0;
-		    }
+			if (pressed & CONT_X)
+			{
+				dframe = !dframe;
+				frame = 0;
+			}
             
-		    if (pressed & CONT_B && !alternate)
-			    field = !field;
+			if (pressed & CONT_B && !alternate)
+				field = !field;
         
-        MAPLE_FOREACH_END()
+		MAPLE_FOREACH_END()
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
+		pvr_list_begin(PVR_LIST_TR_POLY);
 
 		if(!vertical)
 		{
 			if(field == 1)
-        			DrawImage(stripespos);
+				DrawImage(stripespos);
 			else
-        			DrawImage(stripesneg);
+				DrawImage(stripesneg);
 		}
 		else
 		{
 			if(field == 1)
-        			DrawImage(vstripespos);
+				DrawImage(vstripespos);
 			else
-        			DrawImage(vstripesneg);
+				DrawImage(vstripesneg);
 		}
 
 		if(alternate)
@@ -967,67 +966,67 @@ void DrawStripes()
 		}
 
 		DrawScanlines();
-        pvr_list_finish();        
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
+		pvr_scene_finish();
+	}
 
-    FreeImage(&stripespos);
-    FreeImage(&vstripesneg);
-    FreeImage(&stripespos);
-    FreeImage(&stripesneg);
+	FreeImage(&stripespos);
+	FreeImage(&vstripesneg);
+	FreeImage(&stripespos);
+	FreeImage(&stripesneg);
 }
 
 void DrawCheckBoard()
 {
 	int         done = 0, field = 1, alternate = 0,
     		    frame = 0, dframe = 0;
-    uint16      oldbuttons = 0xffff, pressed;    
-    ImagePtr    checkpos, checkneg;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    checkpos, checkneg;
 
 	checkpos = LoadImage("/rd/checkpos.png");
 	checkneg = LoadImage("/rd/checkneg.png");
     
-    updateVMU("CHKB PTTN", "", 1);
+	updateVMU("CHKB PTTN", "", 1);
 	while(!done) 
 	{
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			    
-		    if (pressed & CONT_START)
-			    done =  1;        
+			if (pressed & CONT_START)
+				done =  1;        
             
-		    if (pressed & CONT_A)
-		    {
-			    alternate = !alternate;        
-			    if(alternate)
-    				    updateVMU("CHKB PTTN", "alternate", 1);
-			    else
-    				    updateVMU("CHKB PTTN", "  still  ", 1);
-		    }
+			if (pressed & CONT_A)
+			{
+				alternate = !alternate;        
+				if(alternate)
+					updateVMU("CHKB PTTN", "alternate", 1);
+				else
+					updateVMU("CHKB PTTN", "  still  ", 1);
+			}
     
-		    if (pressed & CONT_X)
-		    {
-			    dframe = !dframe;
-			    frame = 0;
-		    }
+			if (pressed & CONT_X)
+			{
+				dframe = !dframe;
+				frame = 0;
+			}
             
-		    if (pressed & CONT_B && !alternate)
-			    field = !field;
+			if (pressed & CONT_B && !alternate)
+				field = !field;
         
-        MAPLE_FOREACH_END()
+		MAPLE_FOREACH_END()
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
+		pvr_list_begin(PVR_LIST_TR_POLY);
 
 		if(field == 1)
-        		DrawImage(checkpos);
+			DrawImage(checkpos);
 		else
-        		DrawImage(checkneg);
+			DrawImage(checkneg);
 
 		if(alternate)
 			field = !field;
@@ -1044,12 +1043,12 @@ void DrawCheckBoard()
 		}
 
 		DrawScanlines();
-        pvr_list_finish();        
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
-    FreeImage(&checkpos);
-    FreeImage(&checkneg);
+		pvr_scene_finish();
+	}
+	FreeImage(&checkpos);
+	FreeImage(&checkneg);
 }
 
 void ChangeResolution()
@@ -1103,49 +1102,49 @@ void ChangeResolution()
 
 		pvr_init_defaults();
 
-        // Disable deflicker filter, 
-    	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
-    	{
-    		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
-    		PVR_SET(PVR_SCALER_CFG, 0x400);
-    	}
+		// Disable deflicker filter, 
+		if(PVR_GET(PVR_SCALER_CFG) != 0x400)
+		{
+			dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
+			PVR_SET(PVR_SCALER_CFG, 0x400);
+		}
 
-    	// Turn off texture dithering
-    	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
-    	{
-    		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
-    		PVR_SET(PVR_FB_CFG_2, 0x00000001);
-    	}
+		// Turn off texture dithering
+		if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
+		{
+			dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
+			PVR_SET(PVR_FB_CFG_2, 0x00000001);
+		}
 	}
 }
 
 void DrawCredits()
 {
 	int         done = 0;
-    uint16      oldbuttons = 0xffff, pressed;    
-    ImagePtr    back;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    back;
 
 	back = LoadImage("/rd/back.png");
     
-    updateVMU("  Credits", "", 1);
+	updateVMU("  Credits", "", 1);
 	while(!done) 
 	{
 		int x = 30, y = 60;
-        pvr_wait_ready();
+		pvr_wait_ready();
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-		    pressed = st->buttons & ~oldbuttons;
-		    oldbuttons = st->buttons;
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
 			
-	        if (pressed & CONT_START)
-		        done =  1;        
+			if (pressed & CONT_START)
+				done =  1;        
         
-        MAPLE_FOREACH_END()
+		MAPLE_FOREACH_END()
 
-        pvr_scene_begin();
+		pvr_scene_begin();
 
-        pvr_list_begin(PVR_LIST_TR_POLY);
-        DrawImage(back);
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Code and Patterns:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Artemio Urbina"); y += fh; 
@@ -1164,10 +1163,10 @@ void DrawCredits()
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb"); y += fh; 
 
 		DrawScanlines();
-        pvr_list_finish();        
+		pvr_list_finish();        
 
-        pvr_scene_finish();
-    }
-    FreeImage(&back);
+		pvr_scene_finish();
+	}
+	FreeImage(&back);
 }
 
