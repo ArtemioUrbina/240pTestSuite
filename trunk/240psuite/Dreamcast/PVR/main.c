@@ -20,6 +20,7 @@
  */
 
 #include <kos.h>
+#include <stdlib.h>
 #include <dc/sound/sound.h>
 #include <dc/sound/sfxmgr.h>
 
@@ -421,15 +422,31 @@ void DrawLinearity()
 void DropShadowTest()
 {
 	char		msg[50];
-	int		done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0;
+	int		done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
 	uint16		oldbuttons = 0xffff, pressed;    
-	ImagePtr	back[3], shadow;
+	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow;
 
 	back[0] = LoadImage("/rd/motoko.png");
-	back[1] = LoadImage("/rd/checkpos.png");
-	back[2]  = LoadImage("/rd/stripespos.png");
-	shadow = LoadImage("/rd/shadow.png");
+    if(vmode != NATIVE_640)
+        back[1]  = LoadImage("/rd/sonicbg-240.png");
+    else
+    {
+        back[1]  = LoadImage("/rd/sonicbg-480.png");
+        back[1]->scale = 0;
+    }
+	back[2] = LoadImage("/rd/checkpos.png");
+	back[3]  = LoadImage("/rd/stripespos.png");
     
+    ssprite = LoadImage("/rd/shadow.png");
+    buzz = LoadImage("/rd/buzzbomber.png");
+    buzzshadow = LoadImage("/rd/buzzbomberShadow.png");
+    
+    srand((int)(time(0) ^ getpid()));
+    sprite = rand() % 2;
+    if(sprite == 0)
+        shadow = ssprite;
+    else
+        shadow = buzzshadow;
 	updateVMU(" Shadow  ", "   even  ", 1);
 	while(!done) 
 	{
@@ -479,19 +496,26 @@ void DropShadowTest()
         
 			if (pressed & CONT_A)
 			{
-				if(selback > 0)
-					selback --;
-				else
-					selback = 2;
-			}
-    
-			if (pressed & CONT_B)
-			{
-				if(selback < 2)
+				if(selback < 3)
 					selback ++;
 				else
 					selback = 0;
 			}
+    
+			if (pressed & CONT_B)
+            {
+                if(sprite == 0)
+                {
+                    shadow = buzzshadow;
+                    sprite = 1;
+                }
+                else
+                {
+                    shadow = ssprite;
+                    sprite = 0;
+                }
+            }
+
 		MAPLE_FOREACH_END()
 
 		pvr_scene_begin();
@@ -523,6 +547,13 @@ void DropShadowTest()
 		}
 		else
 			frame = !frame;
+        
+        if(sprite == 1)
+        {
+            buzz->x = x - 20;
+			buzz->y = y - 20;
+            DrawImage(buzz);
+        }       
 		DrawScanlines();
 		pvr_list_finish();        
 
