@@ -94,8 +94,9 @@ void DrawCredits();
 
 int main() 
 { 
-    u16 cursel = 1, pos;
+    u16 cursel = 1, pos, reload = 1;
     u16 buttons, oldButtons = 0xffff, pressedButtons;
+    u16 ind = 0, size = 0;
 
     VDP_init(); 
     JOY_init();
@@ -105,17 +106,18 @@ int main()
 
     while(1)
     {
-        u16 ind = 0, size = 0;
-
-        VDP_setPalette(PAL2, title_pal); 
-        VDP_setPalette(PAL3, gillian_pal); 
-
-        ind = TILE_USERINDEX; 
-        size = sizeof(title_tiles) / 32; 
-        VDP_loadTileData(title_tiles, ind, size, 1); 
-        ind += size;
-        size = sizeof(gillian_tiles) / 32; 
-        VDP_loadTileData(gillian_tiles, ind, size, 1); 
+        if(reload)
+        {
+            VDP_setPalette(PAL2, title_pal); 
+            VDP_setPalette(PAL3, gillian_pal); 
+    
+            ind = TILE_USERINDEX; 
+            size = sizeof(title_tiles) / 32; 
+            VDP_loadTileData(title_tiles, ind, size, 1); 
+            ind += size;
+            size = sizeof(gillian_tiles) / 32; 
+            VDP_loadTileData(gillian_tiles, ind, size, 1); 
+        }
         
     
         VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
@@ -141,7 +143,7 @@ int main()
         if (pressedButtons & BUTTON_DOWN)
         {
             cursel ++;
-            if(cursel > pos)
+            if(cursel > 10)
                 cursel = 1;
         }
 
@@ -149,7 +151,7 @@ int main()
         {
             cursel --;
             if(cursel < 1)
-                cursel = pos;
+                cursel = 10;
         }
 
 		if (pressedButtons & BUTTON_A)
@@ -190,8 +192,11 @@ int main()
                     DrawCredits();                                   
                     break;
             }
+            VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
+            VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
 			
             VDP_resetScreen();
+            reload = 1;
         }
 
         VDP_waitVSync();
@@ -1052,7 +1057,10 @@ void DrawCredits()
     u16 ind = 0, size = 0, exit = 0, pos = 6;
     u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+    VDP_setPalette(PAL0, palette_grey);
     VDP_setPalette(PAL1, title_pal); 
+    VDP_setPalette(PAL2, palette_green);
+    VDP_setPalette(PAL3, bw_pal);    
 
     ind = TILE_USERINDEX; 
     size = sizeof(back_tiles) / 32; 
@@ -1060,9 +1068,9 @@ void DrawCredits()
     
     VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
     
-    VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL3, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
