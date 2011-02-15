@@ -1068,7 +1068,7 @@ void LagTest(SDL_Surface *screen)
 			px = 10;
 			py = pos * (fontH + 3) + 20;
 
-			sprintf(msg, "Offset %0.2d:", pos + 1);
+			sprintf(msg, "Offset %02d:", pos + 1);
 			DStringB(screen, msg, px, py, 0xFF, 0xFF, 0xFF, SDL_MapRGB(screen->format, 0, 0, 0));
 
 			px += (strlen(msg) + 1) * fontW;
@@ -1147,7 +1147,7 @@ void LagTest(SDL_Surface *screen)
 		}
 
 		res = (double)total / 10.0;
-		sprintf(msg, "%d/10 = %0.2f milliseconds", total, res);
+		sprintf(msg, "%d/10 = %02f milliseconds", total, res);
 		DStringS(screen, "+", 70, 100, 0xFF, 0x0, 0x0, 0xFF);
 		DStringS(screen, "----", 65, 60 + (fontH+3)*10, 0xFF, 0x0, 0x0, 0xFF);
 		DStringS(screen, msg, 70, 60 + (fontH+3)*11, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -1214,7 +1214,7 @@ void DrawStripes(SDL_Surface *screen)
         	{
             		char msg[20];
 	
-            		sprintf(msg, "Frame: %0.2d", frame);
+            		sprintf(msg, "Frame: %02d", frame);
             		DStringB(screen, msg, 250, 10, 0x00, 0xFF, 0x00, 0x00 );
             		frame ++;
             		if(frame > 59)
@@ -1292,7 +1292,7 @@ void DrawCheckBoard(SDL_Surface *screen)
         	{
             		char msg[20];
 	
-            		sprintf(msg, "Frame: %0.2d", frame);
+            		sprintf(msg, "Frame: %02d", frame);
             		DStringB(screen, msg, 250, 10, 0x00, 0xFF, 0x00, 0x00 );
             		frame ++;
             		if(frame > 59)
