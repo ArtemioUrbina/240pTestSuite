@@ -70,6 +70,9 @@ extern u32 motoko_tiles[35840/4];
 
 extern u16 motoko_pal[16]; 
 
+//Striped Sprite
+extern u32 striped_tiles[512/4]; 
+
 // Shadow Sprite
 extern u32 shadow_tiles[512/4]; 
 extern u16 wb_pal[16]; 
@@ -85,6 +88,7 @@ void DrawLinearity();
 void DrawCheckBoard();
 void DrawStripes();
 void DropShadowTest();
+void StripedSpriteTest();
 void LagTest();
 void DrawCredits();
 
@@ -124,10 +128,11 @@ int main()
         VDP_drawTextBG(APLAN, "Grid", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
         VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
         VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
-        VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+        VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
+        VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
         
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
@@ -136,7 +141,7 @@ int main()
         if (pressedButtons & BUTTON_DOWN)
         {
             cursel ++;
-            if(cursel > 9)
+            if(cursel > pos)
                 cursel = 1;
         }
 
@@ -144,7 +149,7 @@ int main()
         {
             cursel --;
             if(cursel < 1)
-                cursel = 9;
+                cursel = pos;
         }
 
 		if (pressedButtons & BUTTON_A)
@@ -170,15 +175,18 @@ int main()
                     DropShadowTest();
                     break;
                 case 6:
-                    LagTest();   
+                    StripedSpriteTest();
                     break;
                 case 7:
+                    LagTest();   
+                    break;
+                case 8:
                     DrawStripes();   
                     break;
-                case 8: 
+                case 9: 
                     DrawCheckBoard();                                   
                     break;  
-                case 9: 
+                case 10: 
                     DrawCredits();                                   
                     break;
             }
@@ -654,42 +662,122 @@ void DropShadowTest()
     VDP_updateSprites();
 }
 
-
-void DrawCredits()
+void StripedSpriteTest()
 {
-    u16 ind = 0, size = 0, exit = 0, pos = 6;
-    u16 buttons, oldButtons = 0xffff, pressedButtons;
+    u16 size, ind, back = 0, changeback = 0;
+    u16 x = 0, y = 0, exit = 0;
+    u16 buttons, pressedButtons, oldButtons = 0xffff;
 
-    VDP_setPalette(PAL1, title_pal); 
+    VDP_setPalette(PAL1, motoko_pal);
+    VDP_setPalette(PAL2, wb_pal);
 
     ind = TILE_USERINDEX; 
-    size = sizeof(back_tiles) / 32; 
-    VDP_loadTileData(back_tiles, ind, size, 1); 
+    size = sizeof(motoko_tiles) / 32; 
+    VDP_loadTileData(motoko_tiles, ind, size, 1); 
+    ind += size;
+    size = sizeof(striped_tiles) / 32; 
+    VDP_loadTileData(striped_tiles, ind, size, 1); 
+
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+    VDP_setSprite(0, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind, 1);       
+    VDP_setSprite(1, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind + 4, 2);            
+    VDP_setSprite(2, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind + 8, 3);            
+    VDP_setSprite(3, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind + 12, 0);             
     
-    VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
-    
-    VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL3, 0, 0, 0), 4, pos++);
-    VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-    VDP_drawTextBG(APLAN, "Tobias W. Reich", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
-    VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "SDK:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
-    VDP_drawTextBG(APLAN, "http://code.google.com/p/sgdk/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
-    VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
     while(!exit)
-    {
+    {                
+        if(changeback)
+        {
+            changeback = 0;
+            ind = TILE_USERINDEX; 
+            switch(back)
+            {
+                case 0:
+                    size = sizeof(motoko_tiles) / 32; 
+                    VDP_loadTileData(motoko_tiles, ind, size, 1); 
+                    VDP_setPalette(PAL1, motoko_pal);
+                    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+                    break;
+                case 1:
+                    size = sizeof(check_tile) / 32; 
+                    VDP_loadTileData(check_tile, ind, size, 1); 
+                    VDP_setPalette(PAL1, bw_pal);
+                    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+                    break;
+                case 2:
+                    size = sizeof(bw_tile) / 32; 
+                    VDP_loadTileData(bw_tile, ind, size, 1); 
+                    VDP_setPalette(PAL1, bw_pal);
+                    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+                    break;
+            }
+        }
+        
+        VDP_setSpritePosition(0, x, y);
+        VDP_setSpritePosition(1, x, y+8);
+        VDP_setSpritePosition(2, x, y+16);
+        VDP_setSpritePosition(3, x, y+24);
+            
 		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
+        pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
+
+        if (buttons & BUTTON_UP)
+		{
+            if(y > 0)
+                y --;   
+        }   
+
+        if (buttons & BUTTON_DOWN)
+		{
+            if(y < 192)
+                y ++;   
+        }   
+
+        if (buttons & BUTTON_LEFT)
+		{
+            if(x > 0)
+                x --;   
+        }   
+
+        if (buttons & BUTTON_RIGHT)
+		{
+            if(x < 288)
+                x ++;   
+        }   
 
 		if (pressedButtons & BUTTON_START)
 			exit = 1;
 
+        if (pressedButtons & BUTTON_A)
+        {
+            if(back > 0)
+                back --;
+            else
+                back = 2;
+            
+            changeback = 1;
+        }
+
+        if (pressedButtons & BUTTON_B)
+        {
+            if(back < 2)
+                back ++;
+            else
+                back = 0;
+            
+            changeback = 1;
+        }        
+
+        VDP_updateSprites();
         VDP_waitVSync();
     }
+
+    VDP_resetSprites();
+    VDP_updateSprites();
 }
+
+
 
 void LagTest()
 {
@@ -957,4 +1045,40 @@ void LagTest()
         }
     }
 
+}
+
+void DrawCredits()
+{
+    u16 ind = 0, size = 0, exit = 0, pos = 6;
+    u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+    VDP_setPalette(PAL1, title_pal); 
+
+    ind = TILE_USERINDEX; 
+    size = sizeof(back_tiles) / 32; 
+    VDP_loadTileData(back_tiles, ind, size, 1); 
+    
+    VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
+    
+    VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL3, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "SDK:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "http://code.google.com/p/sgdk/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    while(!exit)
+    {
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		if (pressedButtons & BUTTON_START)
+			exit = 1;
+
+        VDP_waitVSync();
+    }
 }
