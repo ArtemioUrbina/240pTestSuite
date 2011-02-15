@@ -65,6 +65,10 @@ extern u32 grid_tiles[35840/4];
 
 extern u16 grid_pal[16]; 
 
+// Sonic background
+extern u32 sonicback_tiles[35840/4]; 
+extern u16 sonicback_pal[16]; 
+
 // Motoko background
 extern u32 motoko_tiles[35840/4]; 
 
@@ -76,6 +80,11 @@ extern u32 striped_tiles[512/4];
 // Shadow Sprite
 extern u32 shadow_tiles[512/4]; 
 extern u16 wb_pal[16]; 
+
+// buzz Sprite
+extern u32 buzz_tiles[512/4]; 
+extern u32 buzzShadow_tiles[512/4]; 
+extern u16 buzz_pal[16]; 
 
 // Lag sprite
 extern u32 lag_tiles[512/4]; 
@@ -94,9 +103,8 @@ void DrawCredits();
 
 int main() 
 { 
-    u16 cursel = 1, pos, reload = 1;
+    u16 cursel = 1, pos;
     u16 buttons, oldButtons = 0xffff, pressedButtons;
-    u16 ind = 0, size = 0;
 
     VDP_init(); 
     JOY_init();
@@ -106,18 +114,17 @@ int main()
 
     while(1)
     {
-        if(reload)
-        {
-            VDP_setPalette(PAL2, title_pal); 
-            VDP_setPalette(PAL3, gillian_pal); 
-    
-            ind = TILE_USERINDEX; 
-            size = sizeof(title_tiles) / 32; 
-            VDP_loadTileData(title_tiles, ind, size, 1); 
-            ind += size;
-            size = sizeof(gillian_tiles) / 32; 
-            VDP_loadTileData(gillian_tiles, ind, size, 1); 
-        }
+        u16 ind = 0, size = 0;
+
+        VDP_setPalette(PAL2, title_pal); 
+        VDP_setPalette(PAL3, gillian_pal); 
+
+        ind = TILE_USERINDEX; 
+        size = sizeof(title_tiles) / 32; 
+        VDP_loadTileData(title_tiles, ind, size, 1); 
+        ind += size;
+        size = sizeof(gillian_tiles) / 32; 
+        VDP_loadTileData(gillian_tiles, ind, size, 1); 
         
     
         VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
@@ -143,7 +150,7 @@ int main()
         if (pressedButtons & BUTTON_DOWN)
         {
             cursel ++;
-            if(cursel > 10)
+            if(cursel > pos)
                 cursel = 1;
         }
 
@@ -151,7 +158,7 @@ int main()
         {
             cursel --;
             if(cursel < 1)
-                cursel = 10;
+                cursel = pos;
         }
 
 		if (pressedButtons & BUTTON_A)
@@ -192,11 +199,8 @@ int main()
                     DrawCredits();                                   
                     break;
             }
-            VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
-            VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
 			
             VDP_resetScreen();
-            reload = 1;
         }
 
         VDP_waitVSync();
@@ -522,25 +526,58 @@ void DrawGrid()
 
 void DropShadowTest()
 {
-    u16 size, ind, back = 0, changeback = 0, invert = 0;
-    u16 field = 1, x = 0, y = 0, exit = 0, text = 0;
+    u16 size, ind, back = 0, changeback = 0, invert = 0, sprite = 0;
+    u16 field = 1, x = 0, y = 0, exit = 0, text = 0, shadowpos = 0, buzzpos = 0, buzzshadowpos = 0;
     u16 buttons, pressedButtons, oldButtons = 0xffff;
 
     VDP_setPalette(PAL1, motoko_pal);
-    VDP_setPalette(PAL2, wb_pal);
+    VDP_setPalette(PAL2, wb_pal);    
+    VDP_setPalette(PAL3, buzz_pal);    
 
     ind = TILE_USERINDEX; 
     size = sizeof(motoko_tiles) / 32; 
     VDP_loadTileData(motoko_tiles, ind, size, 1); 
-    ind += size;
-    size = sizeof(shadow_tiles) / 32; 
-    VDP_loadTileData(shadow_tiles, ind, size, 1); 
-
     VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-    VDP_setSprite(0, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind, 1);       
-    VDP_setSprite(1, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind + 4, 2);            
-    VDP_setSprite(2, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind + 8, 3);            
-    VDP_setSprite(3, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind + 12, 0);             
+    
+    shadowpos = ind + size;
+    size = sizeof(shadow_tiles) / 32; 
+    VDP_loadTileData(shadow_tiles, shadowpos, size, 1);            
+
+    buzzpos = shadowpos + size;
+    size = sizeof(buzzShadow_tiles) / 32; 
+    VDP_loadTileData(buzz_tiles, buzzpos, size, 1); 
+
+    buzzshadowpos = buzzpos + size;
+    size = sizeof(buzzShadow_tiles) / 32; 
+    VDP_loadTileData(buzzShadow_tiles, buzzshadowpos, size, 1); 
+    
+    sprite = random() % 2;
+       
+    if(sprite == 0)
+    {   
+        x = 32;
+        y = 32;
+
+        VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);       
+        VDP_setSprite(1, x - 20, y - 12, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 4, 2);            
+        VDP_setSprite(2, x - 20, y - 4, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 8, 3);            
+        VDP_setSprite(3, x - 20, y + 4, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 12, 4);                                
+
+        VDP_setSprite(4, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 5);       
+        VDP_setSprite(5, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 4, 6);            
+        VDP_setSprite(6, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 8, 7);            
+        VDP_setSprite(7, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 12, 0);             
+                          
+        sprite = 1;
+    }
+    else
+    {                
+        VDP_setSprite(0, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 1);       
+        VDP_setSprite(1, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 4, 2);            
+        VDP_setSprite(2, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 8, 3);            
+        VDP_setSprite(3, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 12, 0);             
+        sprite = 0;
+    }           
     
     while(!exit)
     {        
@@ -552,47 +589,68 @@ void DropShadowTest()
         }       
 
         if(changeback)
-        {
-            changeback = 0;
-            ind = TILE_USERINDEX; 
+        {                                    
+            changeback = 0;            
             switch(back)
             {
                 case 0:
                     size = sizeof(motoko_tiles) / 32; 
                     VDP_loadTileData(motoko_tiles, ind, size, 1); 
                     VDP_setPalette(PAL1, motoko_pal);
-                    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+                    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
                     break;
-                case 1:
+                case 1:                    
+                    size = sizeof(sonicback_tiles) / 32; 
+                    VDP_loadTileData(sonicback_tiles, ind, size, 1); 
+                    VDP_setPalette(PAL1, sonicback_pal);
+                    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
+                    break;
+                case 2:
                     size = sizeof(check_tile) / 32; 
                     VDP_loadTileData(check_tile, ind, size, 1); 
                     VDP_setPalette(PAL1, bw_pal);
-                    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+                    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
                     break;
-                case 2:
+                case 3:
                     size = sizeof(bw_tile) / 32; 
                     VDP_loadTileData(bw_tile, ind, size, 1); 
                     VDP_setPalette(PAL1, bw_pal);
-                    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+                    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
                     break;
             }
         }
 
+        if(sprite == 1)
+        {
+            VDP_setSpritePosition(0, x - 20, y - 20);
+            VDP_setSpritePosition(1, x - 20, y - 12);
+            VDP_setSpritePosition(2, x - 20, y - 4);
+            VDP_setSpritePosition(3, x - 20, y + 4);
+        }
+
         if(field == invert)
         {
-            VDP_setSpritePosition(0, x, y);
-            VDP_setSpritePosition(1, x, y+8);
-            VDP_setSpritePosition(2, x, y+16);
-            VDP_setSpritePosition(3, x, y+24);
+            int index = 0;
+
+            if(sprite == 1)
+                index = 4;
+            VDP_setSpritePosition(index++, x, y);
+            VDP_setSpritePosition(index++, x, y+8);
+            VDP_setSpritePosition(index++, x, y+16);
+            VDP_setSpritePosition(index++, x, y+24);
             
             field = !field;
         }
         else
         {
-            VDP_setSpritePosition(0, 320, 224);
-            VDP_setSpritePosition(1, 320, 224);
-            VDP_setSpritePosition(2, 320, 224);
-            VDP_setSpritePosition(3, 320, 224);
+            int index = 0;
+
+            if(sprite == 1)
+                index = 4;
+            VDP_setSpritePosition(index++, 320, 224);
+            VDP_setSpritePosition(index++, 320, 224);
+            VDP_setSpritePosition(index++, 320, 224);
+            VDP_setSpritePosition(index++, 320, 224);
 
             field = !field;
         }
@@ -630,12 +688,13 @@ void DropShadowTest()
 
         if (pressedButtons & BUTTON_A)
         {
-            if(back > 0)
-                back --;
+            invert = !invert;
+            if(invert)
+                VDP_drawTextBG(APLAN, "Shadow on odd frames ", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
             else
-                back = 2;
+                VDP_drawTextBG(APLAN, "Shadow on even frames", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
             
-            changeback = 1;
+            text = 60;            
         }
 
         if (pressedButtons & BUTTON_B)
@@ -645,18 +704,33 @@ void DropShadowTest()
             else
                 back = 0;
             
+            VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
             changeback = 1;
         }
 
         if (pressedButtons & BUTTON_C)
         {
-            invert = !invert;
-            if(invert)
-                VDP_drawTextBG(APLAN, "Shadow on odd frames ", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
-            else
-                VDP_drawTextBG(APLAN, "Shadow on even frames", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
+            if(sprite == 0)
+            {                                                                
+                VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);       
+                VDP_setSprite(1, x - 20, y - 12, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 4, 2);            
+                VDP_setSprite(2, x - 20, y - 4, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 8, 3);            
+                VDP_setSprite(3, x - 20, y + 4, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 12, 4);                                
             
-            text = 60;
+                VDP_setSprite(4, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 5);       
+                VDP_setSprite(5, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 4, 6);            
+                VDP_setSprite(6, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 8, 7);            
+                VDP_setSprite(7, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 12, 0);               
+                sprite = 1;
+            }
+            else
+            {                
+                VDP_setSprite(0, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 1);       
+                VDP_setSprite(1, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 4, 2);            
+                VDP_setSprite(2, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 8, 3);            
+                VDP_setSprite(3, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 12, 0);             
+                sprite = 0;
+            }
         }
 
         VDP_updateSprites();
@@ -1057,10 +1131,7 @@ void DrawCredits()
     u16 ind = 0, size = 0, exit = 0, pos = 6;
     u16 buttons, oldButtons = 0xffff, pressedButtons;
 
-    VDP_setPalette(PAL0, palette_grey);
     VDP_setPalette(PAL1, title_pal); 
-    VDP_setPalette(PAL2, palette_green);
-    VDP_setPalette(PAL3, bw_pal);    
 
     ind = TILE_USERINDEX; 
     size = sizeof(back_tiles) / 32; 
@@ -1068,9 +1139,9 @@ void DrawCredits()
     
     VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
     
-    VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL3, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
