@@ -34,7 +34,7 @@ struct image_st{
     uint32  tw;
     uint32  th;    
     float   alpha;
-    uint32 scale;
+    uint32  scale;
 };
 
 typedef struct image_st * ImagePtr;
