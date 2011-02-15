@@ -26,15 +26,15 @@
 
 struct image_st{
     pvr_ptr_t tex;
-    uint32 x;
-    uint32 y;
-    uint32 w;
-    uint32 h;
-    uint32 tw;
-    uint32 th;
-    uint32 layer;
+    float   x;
+    float   y;
+    float   layer;    
+    uint32  w;
+    uint32  h;
+    uint32  tw;
+    uint32  th;    
+    float   alpha;
     uint32 scale;
-    float alpha;
 };
 
 typedef struct image_st * ImagePtr;
