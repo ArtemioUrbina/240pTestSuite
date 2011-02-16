@@ -39,8 +39,6 @@ int vcable	= CT_RGB;
 
 int W = 320;
 int H = 240;
-int dW = 320;
-int dH = 240;
 
 ImagePtr    scanlines = NULL;
 
@@ -421,32 +419,32 @@ void DrawLinearity()
 
 void DropShadowTest()
 {
-	char		msg[50];
-	int		done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
+	char		  msg[50];
+	int		    done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
 	uint16		oldbuttons = 0xffff, pressed;    
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow;
 
 	back[0] = LoadImage("/rd/motoko.png");
-    if(vmode != NATIVE_640)
-        back[1]  = LoadImage("/rd/sonicbg-240.png");
-    else
-    {
-        back[1]  = LoadImage("/rd/sonicbg-480.png");
-        back[1]->scale = 0;
-    }
+  if(vmode != NATIVE_640)
+      back[1] = LoadImage("/rd/sonicbg-240.png");
+  else
+  {
+      back[1] = LoadImage("/rd/sonicbg-480.png");
+      back[1]->scale = 0;
+  }
 	back[2] = LoadImage("/rd/checkpos.png");
-	back[3]  = LoadImage("/rd/stripespos.png");
+	back[3] = LoadImage("/rd/stripespos.png");
     
-    ssprite = LoadImage("/rd/shadow.png");
-    buzz = LoadImage("/rd/buzzbomber.png");
-    buzzshadow = LoadImage("/rd/buzzbomberShadow.png");
-    
-    srand((int)(time(0) ^ getpid()));
-    sprite = rand() % 2;
-    if(sprite == 0)
-        shadow = ssprite;
-    else
-        shadow = buzzshadow;
+  ssprite = LoadImage("/rd/shadow.png");
+  buzz = LoadImage("/rd/buzzbomber.png");
+  buzzshadow = LoadImage("/rd/buzzbomberShadow.png");
+  
+  srand((int)(time(0) ^ getpid()));
+  sprite = rand() % 2;
+  if(sprite == 0)
+      shadow = ssprite;
+  else
+      shadow = buzzshadow;
 	updateVMU(" Shadow  ", "   even  ", 1);
 	while(!done) 
 	{
@@ -503,18 +501,18 @@ void DropShadowTest()
 			}
     
 			if (pressed & CONT_B)
-            {
-                if(sprite == 0)
-                {
-                    shadow = buzzshadow;
-                    sprite = 1;
-                }
-                else
-                {
-                    shadow = ssprite;
-                    sprite = 0;
-                }
-            }
+      {
+        if(sprite == 0)
+        {
+          shadow = buzzshadow;
+          sprite = 1;
+        }
+        else
+        {
+          shadow = ssprite;
+          sprite = 0;
+        }
+      }
 
 		MAPLE_FOREACH_END()
 
@@ -535,10 +533,10 @@ void DropShadowTest()
 				x = 0;
 			if(y < 0)
 				y = 0;
-			if(x > dW - shadow->w)
-				x = dW - shadow->w;
-			if(y > dH - shadow->h)
-				y = dH - shadow->h;
+			if(x > (back[selback]->w/1.60f) - shadow->w)
+				x = (back[selback]->w/1.60f) - shadow->w;
+			if(y > (back[selback]->h/1.066f) - shadow->h)
+				y = (back[selback]->h/1.066f) - shadow->h;
 
 			shadow->x = x;
 			shadow->y = y;
@@ -548,12 +546,12 @@ void DropShadowTest()
 		else
 			frame = !frame;
         
-        if(sprite == 1)
-        {
-            buzz->x = x - 20;
-			buzz->y = y - 20;
-            DrawImage(buzz);
-        }       
+    if(sprite == 1)
+    {
+        buzz->x = x - 20;
+    		buzz->y = y - 20;
+        DrawImage(buzz);
+    }       
 		DrawScanlines();
 		pvr_list_finish();        
 
@@ -651,10 +649,10 @@ void StripedSpriteTest()
 			x = 0;
 		if(y < 0)
 			y = 0;
-		if(x > dW - striped->w)
-			x = dW - striped->w;
-		if(y > dH - striped->h)
-			y = dH - striped->h;
+		if(x > (back[selback]->w/1.60f) - striped->w)
+			x = (back[selback]->w/1.60f) - striped->w;
+		if(y > (back[selback]->h/1.066f) - striped->h)
+			y = (back[selback]->h/1.066f) - striped->h;
 		striped->x = x;
 		striped->y = y;
 		DrawImage(striped);
@@ -1103,16 +1101,12 @@ void ChangeResolution()
 		case NATIVE_320:
 			W = 320;
 			H = 240;
-			dW = 320;
-			dH = 240;
 			break;
 		case FAKE_640:
 		case FAKE_640_SL:
 		case NATIVE_640:
 			W = 640;
 			H = 480;
-			dW = 320;
-			dH = 240;
 			break;
 	}
 
