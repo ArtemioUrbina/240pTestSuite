@@ -560,7 +560,10 @@ void DropShadowTest()
 	FreeImage(&back[0]);
 	FreeImage(&back[1]);
 	FreeImage(&back[2]);
-	FreeImage(&shadow);
+	FreeImage(&back[3]);
+	FreeImage(&ssprite);
+	FreeImage(&buzz);
+	FreeImage(&buzzshadow);
 }
 
 void StripedSpriteTest()
