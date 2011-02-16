@@ -4,7 +4,7 @@
  *
  * This file is part of the 240p Test Suite
  *
- * To Eleven is free software; you can redistribute it and/or modify
+ * The 240p Test Suite is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
@@ -426,11 +426,11 @@ void DropShadowTest()
 
 	back[0] = LoadImage("/rd/motoko.png");
   if(vmode != NATIVE_640)
-      back[1] = LoadImage("/rd/sonicbg-240.png");
+		back[1] = LoadImage("/rd/sonicbg-240.png");
   else
   {
-      back[1] = LoadImage("/rd/sonicbg-480.png");
-      back[1]->scale = 0;
+    back[1] = LoadImage("/rd/sonicbg-480.png");
+    back[1]->scale = 0;
   }
 	back[2] = LoadImage("/rd/checkpos.png");
 	back[3] = LoadImage("/rd/stripespos.png");
@@ -442,9 +442,9 @@ void DropShadowTest()
   srand((int)(time(0) ^ getpid()));
   sprite = rand() % 2;
   if(sprite == 0)
-      shadow = ssprite;
+		shadow = ssprite;
   else
-      shadow = buzzshadow;
+		shadow = buzzshadow;
 	updateVMU(" Shadow  ", "   even  ", 1);
 	while(!done) 
 	{
@@ -548,9 +548,9 @@ void DropShadowTest()
         
     if(sprite == 1)
     {
-        buzz->x = x - 20;
-    		buzz->y = y - 20;
-        DrawImage(buzz);
+      buzz->x = x - 20;
+    	buzz->y = y - 20;
+      DrawImage(buzz);
     }       
 		DrawScanlines();
 		pvr_list_finish();        
