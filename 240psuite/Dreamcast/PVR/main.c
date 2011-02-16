@@ -132,10 +132,13 @@ start:
 				sprintf(res, "Video: 240p");
 				break;
 			case NATIVE_640:
-				sprintf(res, "Video: 480i");
+				sprintf(res, "Video: 240p in 480i");
 				break;
 			case FAKE_640:
 				sprintf(res, "Video: Fake 480i");
+				break;
+			case NATIVE_640_FS:
+				sprintf(res, "Video: 480i");
 				break;
 			case FAKE_640_SL:
 				sprintf(res, "Video: 480p/scanlines");
@@ -337,7 +340,14 @@ void DrawGrid()
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 
-	back = LoadImage("/rd/grid.png");
+  if(vmode != NATIVE_640_FS)
+		back = LoadImage("/rd/grid.png");
+	else
+	{
+		back = LoadImage("/rd/480/grid-480.png");
+		back->scale = 0;
+	}
+
     
 	updateVMU("   Grid  ", "", 1);
 	while(!done) 
@@ -424,16 +434,24 @@ void DropShadowTest()
 	uint16		oldbuttons = 0xffff, pressed;    
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow;
 
-	back[0] = LoadImage("/rd/motoko.png");
-  if(vmode != NATIVE_640)
+  if(vmode != NATIVE_640_FS)
+	{
+		back[0] = LoadImage("/rd/motoko.png");
 		back[1] = LoadImage("/rd/sonicbg-240.png");
+		back[2] = LoadImage("/rd/checkpos.png");
+		back[3] = LoadImage("/rd/stripespos.png");
+	}
   else
   {
-    back[1] = LoadImage("/rd/sonicbg-480.png");
+		back[0] = LoadImage("/rd/480/motoko-480.png");
+    back[0]->scale = 0;
+    back[1] = LoadImage("/rd/480/sonicbg-480.png");
     back[1]->scale = 0;
+		back[2] = LoadImage("/rd/480/checkpos-480.png");
+    back[2]->scale = 0;
+		back[3] = LoadImage("/rd/480/stripespos-480.png");
+    back[3]->scale = 0;
   }
-	back[2] = LoadImage("/rd/checkpos.png");
-	back[3] = LoadImage("/rd/stripespos.png");
     
   ssprite = LoadImage("/rd/shadow.png");
   buzz = LoadImage("/rd/buzzbomber.png");
@@ -523,21 +541,24 @@ void DropShadowTest()
 
 		if(text)
 		{
-			DrawStringB(140, 12, 0, 1.0, 0, msg);
+			if(vmode != NATIVE_640_FS)
+				DrawStringB(140, 12, 0, 1.0, 0, msg);
+			else
+				DrawStringB(600, 20, 0, 1.0, 0, msg);
 			text --;
 		}
 
+		if(x < 0)
+			x = 0;
+		if(y < 0)
+			y = 0;
+		if(x > (back[selback]->w/1.60f) - shadow->w)
+			x = (back[selback]->w/1.60f) - shadow->w;
+		if(y > (back[selback]->h/1.066f) - shadow->h)
+			y = (back[selback]->h/1.066f) - shadow->h;
+
 		if(frame == invert)
 		{
-			if(x < 0)
-				x = 0;
-			if(y < 0)
-				y = 0;
-			if(x > (back[selback]->w/1.60f) - shadow->w)
-				x = (back[selback]->w/1.60f) - shadow->w;
-			if(y > (back[selback]->h/1.066f) - shadow->h)
-				y = (back[selback]->h/1.066f) - shadow->h;
-
 			shadow->x = x;
 			shadow->y = y;
 			DrawImage(shadow);
@@ -570,11 +591,26 @@ void StripedSpriteTest()
 {	
 	int		done = 0, x = 0, y = 0, selback = 0;
 	uint16		oldbuttons = 0xffff, pressed;    
-	ImagePtr	back[3], striped;
+	ImagePtr	back[4], striped;
 
-	back[0] = LoadImage("/rd/motoko.png");
-	back[1] = LoadImage("/rd/checkpos.png");
-	back[2]  = LoadImage("/rd/stripespos.png");
+  if(vmode != NATIVE_640_FS)
+	{
+		back[0] = LoadImage("/rd/motoko.png");
+		back[1] = LoadImage("/rd/sonicbg-240.png");
+		back[2] = LoadImage("/rd/checkpos.png");
+		back[3] = LoadImage("/rd/stripespos.png");
+	}
+  else
+  {
+		back[0] = LoadImage("/rd/480/motoko-480.png");
+    back[0]->scale = 0;
+    back[1] = LoadImage("/rd/480/sonicbg-480.png");
+    back[1]->scale = 0;
+		back[2] = LoadImage("/rd/480/checkpos-480.png");
+    back[2]->scale = 0;
+		back[3] = LoadImage("/rd/480/stripespos-480.png");
+    back[3]->scale = 0;
+  }
 	striped = LoadImage("/rd/striped.png");
     
 	updateVMU(" Striped ", "", 1);
@@ -630,12 +666,12 @@ void StripedSpriteTest()
 				if(selback > 0)
 					selback --;
 				else
-					selback = 2;
+					selback = 3;
 			}
     
 			if (pressed & CONT_B)
 			{
-				if(selback < 2)
+				if(selback < 3)
 					selback ++;
 				else
 					selback = 0;
@@ -668,6 +704,7 @@ void StripedSpriteTest()
 	FreeImage(&back[0]);
 	FreeImage(&back[1]);
 	FreeImage(&back[2]);
+	FreeImage(&back[3]);
 	FreeImage(&striped);
 }
 
@@ -924,8 +961,18 @@ void DrawStripes()
 	ImagePtr    stripespos, stripesneg;
 	ImagePtr    vstripespos, vstripesneg;
 
-	stripespos = LoadImage("/rd/stripespos.png");
-	stripesneg = LoadImage("/rd/stripesneg.png");
+  if(vmode != NATIVE_640_FS)
+	{
+		stripespos = LoadImage("/rd/stripespos.png");
+		stripesneg = LoadImage("/rd/stripesneg.png");
+	}
+	else
+	{
+		stripespos = LoadImage("/rd/480/stripespos-480.png");
+		stripespos->scale = 0;
+		stripesneg = LoadImage("/rd/480/stripesneg-480.png");
+		stripesneg->scale = 0;
+	}
 	vstripespos = LoadImage("/rd/vertstripespos.png");
 	vstripesneg = LoadImage("/rd/vertstripesneg.png");
     
@@ -991,7 +1038,10 @@ void DrawStripes()
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
+			if(vmode != NATIVE_640_FS)
+					DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
+			else
+					DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
 			frame ++;
 			if(frame > 59)
 				frame = 0;
@@ -1016,8 +1066,16 @@ void DrawCheckBoard()
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    checkpos, checkneg;
 
-	checkpos = LoadImage("/rd/checkpos.png");
-	checkneg = LoadImage("/rd/checkneg.png");
+	if(vmode != NATIVE_640_FS)
+	{
+		checkpos = LoadImage("/rd/checkpos.png");
+		checkneg = LoadImage("/rd/checkneg.png");
+	}
+	else
+	{
+		checkpos = LoadImage("/rd/480/checkpos-480.png");
+		checkneg = LoadImage("/rd/480/checkneg-480.png");
+	}
     
 	updateVMU("CHKB PTTN", "", 1);
 	while(!done) 
@@ -1068,7 +1126,10 @@ void DrawCheckBoard()
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
+			if(vmode != NATIVE_640_FS)
+					DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
+			else
+					DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
 			frame ++;
 			if(frame > 59)
 				frame = 0;
@@ -1093,7 +1154,7 @@ void ChangeResolution()
 	if(vmode > FAKE_640_SL)
 		vmode = NATIVE_320;
 
-	if(vmode > NATIVE_640)
+	if(vmode > NATIVE_640_FS)
 	{
 		if(vcable != CT_VGA)
 			vmode = NATIVE_320;
@@ -1108,6 +1169,7 @@ void ChangeResolution()
 		case FAKE_640:
 		case FAKE_640_SL:
 		case NATIVE_640:
+		case NATIVE_640_FS:
 			W = 640;
 			H = 480;
 			break;
