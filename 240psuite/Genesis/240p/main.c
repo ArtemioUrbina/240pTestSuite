@@ -143,9 +143,9 @@ int main()
         VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
         VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
         
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
 
         if (pressedButtons & BUTTON_DOWN)
         {
@@ -161,7 +161,7 @@ int main()
                 cursel = pos;
         }
 
-		if (pressedButtons & BUTTON_A)
+				if (pressedButtons & BUTTON_A)
         {
             VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
             VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
@@ -249,12 +249,12 @@ void DrawColorBars()
 
     while(!exit)
     {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
 
         VDP_waitVSync();
     }
@@ -304,15 +304,15 @@ void DrawCheckBoard()
             VDP_drawText(cntstr, 8, 25);
         }
 
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-
-        if (pressedButtons & BUTTON_A)
-			alternate = ~alternate;
-
-        if (pressedButtons & BUTTON_B && !alternate)
-		{
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+   			if (pressedButtons & BUTTON_A)
+					alternate = ~alternate;
+		
+    		if (pressedButtons & BUTTON_B && !alternate)
+				{
             if(field == 0)
             {
                 VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
@@ -325,11 +325,11 @@ void DrawCheckBoard()
             }
         }   
 
-        if (pressedButtons & BUTTON_C)
-			docounter = ~docounter;
-
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    		if (pressedButtons & BUTTON_C)
+					docounter = ~docounter;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
 
         VDP_waitVSync();
     }
@@ -380,15 +380,15 @@ void DrawStripes()
             VDP_drawText(cntstr, 8, 25);
         }
 
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
 
-        if (pressedButtons & BUTTON_A)
-			alternate = ~alternate;
-
-        if (pressedButtons & BUTTON_B && !alternate)
-		{
+    		if (pressedButtons & BUTTON_A)
+					alternate = ~alternate;
+		
+    		if (pressedButtons & BUTTON_B && !alternate)
+				{
             if(field == 0)
             {
                 VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
@@ -401,11 +401,11 @@ void DrawStripes()
             }
         }   
 
-        if (pressedButtons & BUTTON_C)
-			docounter = ~docounter;
-
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    		if (pressedButtons & BUTTON_C)
+					docounter = ~docounter;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
 
         VDP_waitVSync();
     }
@@ -423,12 +423,12 @@ void Draw601ColorBars()
     VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
     while(!exit)
     {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
 
         VDP_waitVSync();
     }
@@ -474,12 +474,12 @@ void DrawLinearity()
             redraw = 0;
         }   
 
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
 
         if (pressedButtons & BUTTON_A)
         {
@@ -488,7 +488,7 @@ void DrawLinearity()
         }
         
         if (pressedButtons & BUTTON_B)
-		{
+				{
             if(gridpattern == 1)
                 gridpattern = 2;
             else
@@ -513,12 +513,12 @@ void DrawGrid()
     VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
     while(!exit)
     {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+				exit = 1;
 
         VDP_waitVSync();
     }
@@ -655,36 +655,36 @@ void DropShadowTest()
             field = !field;
         }
 
-		buttons = JOY_readJoypad(JOY_1);
+				buttons = JOY_readJoypad(JOY_1);
         pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+				oldButtons = buttons;
 
         if (buttons & BUTTON_UP)
-		{
+				{
             if(y > 0)
                 y --;   
         }   
 
         if (buttons & BUTTON_DOWN)
-		{
+				{
             if(y < 192)
                 y ++;   
         }   
 
         if (buttons & BUTTON_LEFT)
-		{
+				{
             if(x > 0)
                 x --;   
         }   
 
         if (buttons & BUTTON_RIGHT)
-		{
+				{
             if(x < 288)
                 x ++;   
         }   
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
 
         if (pressedButtons & BUTTON_A)
         {
@@ -797,36 +797,36 @@ void StripedSpriteTest()
         VDP_setSpritePosition(2, x, y+16);
         VDP_setSpritePosition(3, x, y+24);
             
-		buttons = JOY_readJoypad(JOY_1);
+				buttons = JOY_readJoypad(JOY_1);
         pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+				oldButtons = buttons;
 
         if (buttons & BUTTON_UP)
-		{
+				{
             if(y > 0)
                 y --;   
         }   
 
         if (buttons & BUTTON_DOWN)
-		{
+				{
             if(y < 192)
                 y ++;   
         }   
 
         if (buttons & BUTTON_LEFT)
-		{
+				{
             if(x > 0)
                 x --;   
         }   
 
         if (buttons & BUTTON_RIGHT)
-		{
+				{
             if(x < 288)
                 x ++;   
         }   
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
 
         if (pressedButtons & BUTTON_A)
         {
@@ -907,9 +907,9 @@ void LagTest()
     len = sizeof(beep); 
     while(!exit)    
     {                        
-		buttons = JOY_readJoypad(JOY_1);
+				buttons = JOY_readJoypad(JOY_1);
         pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+				oldButtons = buttons;
         
         if (pressedButtons & BUTTON_A)
         {            
@@ -928,7 +928,12 @@ void LagTest()
         if(y == 96) // half the screen?        
         {
             if(audio)                
-                startPlay_PCM(beep, len, 44100, AUDIO_PAN_CENTER);            
+						{
+								if(speed == 1)
+                	startPlay_PCM(beep, len, 44100, AUDIO_PAN_LEFT);            
+								else
+									startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);            
+						}	
             VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 144/8, 96/8, 32/8, 32/8);       
         }
         else
@@ -945,7 +950,7 @@ void LagTest()
             audio = !audio;    
 
        	if (pressedButtons & BUTTON_START)
-			exit = 1;
+						exit = 1;
 
         if(drawoffset)
         {
@@ -1114,12 +1119,12 @@ void LagTest()
        
         while(!exit)
         {  
-		    buttons = JOY_readJoypad(JOY_1);
+		    		buttons = JOY_readJoypad(JOY_1);
             pressedButtons = buttons & ~oldButtons;
-		    oldButtons = buttons;
+		    		oldButtons = buttons;
                 
             if (pressedButtons & BUTTON_START)
-			    exit = 1;
+			    			exit = 1;
             VDP_waitVSync();
         }
     }
@@ -1151,12 +1156,12 @@ void DrawCredits()
     VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
     while(!exit)
     {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
 
         VDP_waitVSync();
     }
