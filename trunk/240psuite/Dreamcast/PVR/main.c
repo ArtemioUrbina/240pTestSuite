@@ -544,7 +544,7 @@ void DropShadowTest()
 			if(vmode != NATIVE_640_FS)
 				DrawStringB(140, 12, 0, 1.0, 0, msg);
 			else
-				DrawStringB(600, 20, 0, 1.0, 0, msg);
+				DrawStringB(500, 20, 0, 1.0, 0, msg);
 			text --;
 		}
 
@@ -815,7 +815,7 @@ void LagTest()
 		{
 			DrawImage(spriteneg);
 			if(audio && beep != SFXHND_INVALID)
-				snd_sfx_play(beep, 255, 128);
+				snd_sfx_play(beep, 255, speed*255);	// toggle pan to 0 and 255, l & r
 
 			purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
 			if(purupuru)
