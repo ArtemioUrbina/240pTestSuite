@@ -25,7 +25,8 @@
 #define NATIVE_320      0
 #define FAKE_640        1
 #define NATIVE_640      2
-#define FAKE_640_SL     3
+#define NATIVE_640_FS   3
+#define FAKE_640_SL     4
 
 extern int vmode;
 extern int vcable;

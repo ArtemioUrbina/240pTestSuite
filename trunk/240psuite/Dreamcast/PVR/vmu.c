@@ -56,6 +56,9 @@ void updateVMU(char *line1, char *line2, int force)
 			case NATIVE_640:
 				vmu_draw_str(bitmap, (unsigned char*)"     480i", 0, 20);
 				break;
+			case NATIVE_640_FS:
+				vmu_draw_str(bitmap, (unsigned char*)"  480i/FS", 0, 20);
+				break;
 			case FAKE_640_SL:
 				vmu_draw_str(bitmap, (unsigned char*)"  480p/SL", 0, 20);
 				break;
