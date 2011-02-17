@@ -960,12 +960,22 @@ void LagTest()
 
 void ScrollTest()
 {
-	int         done = 0, speed = 1;
+	int         done = 0, speed = 1, x = 0, dw;
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 
-	back = LoadImage("/rd/MGBG-1.png");
+	back = LoadImage("/rd/MSBG-1.png");
+	if(!back)
+		return;
 	
+	if(vmode == NATIVE_640_FS)
+	{
+		dw = W;
+		back->y = (H - 240)/2;
+	}
+	else
+		dw = 320;
+
 	updateVMU(" Scroll  ", "", 1);
 	while(!done) 
 	{
@@ -983,9 +993,12 @@ void ScrollTest()
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
-		if(back->x < back->w - 320)
-			back->x += speed;
-		
+		if(!(x <= (back->tw - W) && x >= 0))
+			speed = speed * -1;
+
+		x += speed;
+
+		CalculateUV(x, 0, dw, 240, back);
 		DrawImage(back);
 		DrawScanlines();
 		pvr_list_finish();        
