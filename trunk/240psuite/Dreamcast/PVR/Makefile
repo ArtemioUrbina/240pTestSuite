@@ -3,7 +3,6 @@ TARGET = main
 OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DSERIAL
 
 KOS_CFLAGS+= -I$(KOS_BASE)/../kos-ports/include/SDL-1.2.9  $(OPTFLAGS)
-KOS_CFLAGS+= -I$(KOS_BASE)/../kos-ports/include/SDL-1.2.9  $(OPTFLAGS)
 
 all: $(TARGET).bin
 
@@ -12,6 +11,7 @@ include $(KOS_BASE)/Makefile.rules
 .SRCS	=	main.c \
             image.c \
             font.c \
+            vmodes.c \
             vmu_print.c \
             vmu.c \
 

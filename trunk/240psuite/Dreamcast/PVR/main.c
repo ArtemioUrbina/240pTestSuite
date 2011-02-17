@@ -34,12 +34,6 @@ extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 KOS_INIT_FLAGS(INIT_DEFAULT);
 
-int vmode 	= NATIVE_320;
-int vcable	= CT_RGB;
-
-int W = 320;
-int H = 240;
-
 ImagePtr    scanlines = NULL;
 
 static inline void DrawScanlines()
@@ -58,7 +52,6 @@ void LagTest();
 void ScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
-void ChangeResolution();
 void DrawCredits();
 
 int main(void)
@@ -92,10 +85,10 @@ start:
 	pvr_set_bg_color(0.0f, 0.0f, 0.0f);
     
 	LoadFont();
-	title = LoadImage("/rd/title.png");    
+	title = LoadImage("/rd/title.png", 1);
 	if(!scanlines && vmode == FAKE_640_SL)
 	{
-		scanlines = LoadImage("/rd/scanlines.png");
+		scanlines = LoadImage("/rd/scanlines.png", 1);
 		scanlines->layer = 4;
 		scanlines->alpha = 0.75f; // XRGB-3 175 
 		scanlines->scale = 0;
@@ -279,7 +272,7 @@ void DrawColorBars()
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 
-	back = LoadImage("/rd/color.png");
+	back = LoadImage("/rd/color.png", 1);
     
 	updateVMU("Colorbars", "", 1);
 	while(!done) 
@@ -312,7 +305,7 @@ void Draw601ColorBars()
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 
-	back = LoadImage("/rd/601701cb.png");
+	back = LoadImage("/rd/601701cb.png", 1);
     
 	updateVMU("Colorbars", "with gray", 1);
 	while(!done) 
@@ -346,10 +339,10 @@ void DrawGrid()
 	ImagePtr    back;
 
   if(vmode != NATIVE_640_FS)
-		back = LoadImage("/rd/grid.png");
+		back = LoadImage("/rd/grid.png", 1);
 	else
 	{
-		back = LoadImage("/rd/480/grid-480.png");
+		back = LoadImage("/rd/480/grid-480.png", 1);
 		back->scale = 0;
 	}
 
@@ -386,9 +379,9 @@ void DrawLinearity()
 	uint16	    oldbuttons = 0xffff, pressed;
 	ImagePtr    circles, grid, gridd;
 
-	circles = LoadImage("/rd/circles.png");
-	grid = LoadImage("/rd/circles_grid.png");
-	gridd = LoadImage("/rd/circles_griddot.png");
+	circles = LoadImage("/rd/circles.png", 1);
+	grid = LoadImage("/rd/circles_grid.png", 1);
+	gridd = LoadImage("/rd/circles_griddot.png", 1);
     
 	updateVMU("Linearity", "   A B   ", 1);
 	while(!done) 
@@ -441,26 +434,26 @@ void DropShadowTest()
 
   if(vmode != NATIVE_640_FS)
 	{
-		back[0] = LoadImage("/rd/motoko.png");
-		back[1] = LoadImage("/rd/sonicbg-240.png");
-		back[2] = LoadImage("/rd/checkpos.png");
-		back[3] = LoadImage("/rd/stripespos.png");
+		back[0] = LoadImage("/rd/motoko.png", 1);
+		back[1] = LoadImage("/rd/sonicbg-240.png", 1);
+		back[2] = LoadImage("/rd/checkpos.png", 1);
+		back[3] = LoadImage("/rd/stripespos.png", 1);
 	}
   else
   {
-		back[0] = LoadImage("/rd/480/motoko-480.png");
+		back[0] = LoadImage("/rd/480/motoko-480.png", 1);
     back[0]->scale = 0;
-    back[1] = LoadImage("/rd/480/sonicbg-480.png");
+    back[1] = LoadImage("/rd/480/sonicbg-480.png", 1);
     back[1]->scale = 0;
-		back[2] = LoadImage("/rd/480/checkpos-480.png");
+		back[2] = LoadImage("/rd/480/checkpos-480.png", 1);
     back[2]->scale = 0;
-		back[3] = LoadImage("/rd/480/stripespos-480.png");
+		back[3] = LoadImage("/rd/480/stripespos-480.png", 1);
     back[3]->scale = 0;
   }
     
-  ssprite = LoadImage("/rd/shadow.png");
-  buzz = LoadImage("/rd/buzzbomber.png");
-  buzzshadow = LoadImage("/rd/buzzbomberShadow.png");
+  ssprite = LoadImage("/rd/shadow.png", 0);
+  buzz = LoadImage("/rd/buzzbomber.png", 0);
+  buzzshadow = LoadImage("/rd/buzzbomberShadow.png", 0);
   
   srand((int)(time(0) ^ getpid()));
   sprite = rand() % 2;
@@ -557,10 +550,10 @@ void DropShadowTest()
 			x = 0;
 		if(y < 0)
 			y = 0;
-		if(x > (back[selback]->w/1.60f) - shadow->w)
-			x = (back[selback]->w/1.60f) - shadow->w;
-		if(y > (back[selback]->h/1.066f) - shadow->h)
-			y = (back[selback]->h/1.066f) - shadow->h;
+		if(x > back[selback]->w - shadow->w)
+			x = back[selback]->w - shadow->w;
+		if(y > back[selback]->h - shadow->h)
+			y = back[selback]->h - shadow->h;
 
 		if(frame == invert)
 		{
@@ -600,23 +593,23 @@ void StripedSpriteTest()
 
   if(vmode != NATIVE_640_FS)
 	{
-		back[0] = LoadImage("/rd/motoko.png");
-		back[1] = LoadImage("/rd/sonicbg-240.png");
-		back[2] = LoadImage("/rd/checkpos.png");
-		back[3] = LoadImage("/rd/stripespos.png");
+		back[0] = LoadImage("/rd/motoko.png", 1);
+		back[1] = LoadImage("/rd/sonicbg-240.png", 1);
+		back[2] = LoadImage("/rd/checkpos.png", 1);
+		back[3] = LoadImage("/rd/stripespos.png", 1);
 	}
   else
   {
-		back[0] = LoadImage("/rd/480/motoko-480.png");
+		back[0] = LoadImage("/rd/480/motoko-480.png", 1);
     back[0]->scale = 0;
-    back[1] = LoadImage("/rd/480/sonicbg-480.png");
+    back[1] = LoadImage("/rd/480/sonicbg-480.png", 1);
     back[1]->scale = 0;
-		back[2] = LoadImage("/rd/480/checkpos-480.png");
+		back[2] = LoadImage("/rd/480/checkpos-480.png", 1);
     back[2]->scale = 0;
-		back[3] = LoadImage("/rd/480/stripespos-480.png");
+		back[3] = LoadImage("/rd/480/stripespos-480.png", 1);
     back[3]->scale = 0;
   }
-	striped = LoadImage("/rd/striped.png");
+	striped = LoadImage("/rd/striped.png", 0);
     
 	updateVMU(" Striped ", "", 1);
 	while(!done) 
@@ -693,10 +686,10 @@ void StripedSpriteTest()
 			x = 0;
 		if(y < 0)
 			y = 0;
-		if(x > (back[selback]->w/1.60f) - striped->w)
-			x = (back[selback]->w/1.60f) - striped->w;
-		if(y > (back[selback]->h/1.066f) - striped->h)
-			y = (back[selback]->h/1.066f) - striped->h;
+		if(x > back[selback]->w - striped->w)
+			x = back[selback]->w - striped->w;
+		if(y > back[selback]->h - striped->h)
+			y = back[selback]->h - striped->h;
 		striped->x = x;
 		striped->y = y;
 		DrawImage(striped);
@@ -732,10 +725,10 @@ void LagTest()
 	snd_init();
 
 	updateVMU("Lag Test ", "", 1);
-	back = LoadImage("/rd/lag-per.png");
-	spriteA = LoadImage("/rd/lag-per.png");
-	spriteB = LoadImage("/rd/lag-per.png");
-	spriteneg = LoadImage("/rd/lag-full.png");
+	back = LoadImage("/rd/lag-per.png", 0);
+	spriteA = LoadImage("/rd/lag-per.png", 0);
+	spriteB = LoadImage("/rd/lag-per.png", 0);
+	spriteneg = LoadImage("/rd/lag-full.png", 0);
 
 	beep = snd_sfx_load("/rd/beep.wav");
 	x = 144;
@@ -889,7 +882,7 @@ void LagTest()
 		ImagePtr wall;
     
 		done = 0;
-		wall = LoadImage("/rd/back.png");
+		wall = LoadImage("/rd/back.png", 1);
 
 		while(!done)
 		{
@@ -960,21 +953,15 @@ void LagTest()
 
 void ScrollTest()
 {
-	int         done = 0, speed = 1, x = 0, dw;
+	int         done = 0, speed = 1, x = 0 ;
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 
-	back = LoadImage("/rd/MSBG-1.png");
+	back = LoadImage("/rd/MSBG-1.png", 0);
 	if(!back)
 		return;
 	
-	if(vmode == NATIVE_640_FS)
-	{
-		dw = W;
-		back->y = (H - 240)/2;
-	}
-	else
-		dw = 320;
+	back->y = (dH - 240)/2;
 
 	updateVMU(" Scroll  ", "", 1);
 	while(!done) 
@@ -998,7 +985,7 @@ void ScrollTest()
 
 		x += speed;
 
-		CalculateUV(x, 0, dw, 240, back);
+		CalculateUV(x, 0, dW, 240, back);
 		DrawImage(back);
 		DrawScanlines();
 		pvr_list_finish();        
@@ -1018,18 +1005,18 @@ void DrawStripes()
 
   if(vmode != NATIVE_640_FS)
 	{
-		stripespos = LoadImage("/rd/stripespos.png");
-		stripesneg = LoadImage("/rd/stripesneg.png");
+		stripespos = LoadImage("/rd/stripespos.png", 1);
+		stripesneg = LoadImage("/rd/stripesneg.png", 1);
 	}
 	else
 	{
-		stripespos = LoadImage("/rd/480/stripespos-480.png");
+		stripespos = LoadImage("/rd/480/stripespos-480.png", 1);
 		stripespos->scale = 0;
-		stripesneg = LoadImage("/rd/480/stripesneg-480.png");
+		stripesneg = LoadImage("/rd/480/stripesneg-480.png", 1);
 		stripesneg->scale = 0;
 	}
-	vstripespos = LoadImage("/rd/vertstripespos.png");
-	vstripesneg = LoadImage("/rd/vertstripesneg.png");
+	vstripespos = LoadImage("/rd/vertstripespos.png", 1);
+	vstripesneg = LoadImage("/rd/vertstripesneg.png", 1);
     
 	updateVMU(" Stripes", "", 1);
 	while(!done) 
@@ -1123,13 +1110,13 @@ void DrawCheckBoard()
 
 	if(vmode != NATIVE_640_FS)
 	{
-		checkpos = LoadImage("/rd/checkpos.png");
-		checkneg = LoadImage("/rd/checkneg.png");
+		checkpos = LoadImage("/rd/checkpos.png", 1);
+		checkneg = LoadImage("/rd/checkneg.png", 1);
 	}
 	else
 	{
-		checkpos = LoadImage("/rd/480/checkpos-480.png");
-		checkneg = LoadImage("/rd/480/checkneg-480.png");
+		checkpos = LoadImage("/rd/480/checkpos-480.png", 1);
+		checkneg = LoadImage("/rd/480/checkneg-480.png", 1);
 	}
     
 	updateVMU("CHKB PTTN", "", 1);
@@ -1199,77 +1186,13 @@ void DrawCheckBoard()
 	FreeImage(&checkneg);
 }
 
-void ChangeResolution()
-{
-	int lastw;
-
-	lastw = W;
-	vmode ++;
-
-	if(vmode > FAKE_640_SL)
-		vmode = NATIVE_320;
-
-	if(vmode > NATIVE_640_FS)
-	{
-		if(vcable != CT_VGA)
-			vmode = NATIVE_320;
-	}
-
-	switch(vmode)
-	{
-		case NATIVE_320:
-			W = 320;
-			H = 240;
-			break;
-		case FAKE_640:
-		case FAKE_640_SL:
-		case NATIVE_640:
-		case NATIVE_640_FS:
-			W = 640;
-			H = 480;
-			break;
-	}
-
-	if(lastw != W)
-	{
-		pvr_shutdown();
-		switch(vmode)
-		{
-			case NATIVE_320:
-    				vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
-				break;
-			case FAKE_640:
-			case NATIVE_640:
-			case FAKE_640_SL:
-    				vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
-				break;
-		}
-
-		pvr_init_defaults();
-
-		// Disable deflicker filter, 
-		if(PVR_GET(PVR_SCALER_CFG) != 0x400)
-		{
-			dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
-			PVR_SET(PVR_SCALER_CFG, 0x400);
-		}
-
-		// Turn off texture dithering
-		if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
-		{
-			dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
-			PVR_SET(PVR_FB_CFG_2, 0x00000001);
-		}
-	}
-}
-
 void DrawCredits()
 {
 	int         done = 0;
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 
-	back = LoadImage("/rd/back.png");
+	back = LoadImage("/rd/back.png", 1);
     
 	updateVMU("  Credits", "", 1);
 	while(!done) 

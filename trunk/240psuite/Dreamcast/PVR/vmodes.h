@@ -31,5 +31,13 @@
 extern int vmode;
 extern int vcable;
 
+
+extern int W;
+extern int H;
+extern int dW;
+extern int dH;
+
+void ChangeResolution();
+
 #endif 
 

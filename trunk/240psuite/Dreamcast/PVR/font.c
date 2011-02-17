@@ -43,7 +43,7 @@ void LoadFont()
 	}
 
 	if(!black_t)
-		black_t = LoadImage("/rd/black.png");
+		black_t = LoadImage("/rd/black.png", 0);
 }
 
 void ReleaseFont()
