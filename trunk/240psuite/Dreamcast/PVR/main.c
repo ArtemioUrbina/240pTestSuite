@@ -55,6 +55,7 @@ void DrawLinearity();
 void DropShadowTest();
 void StripedSpriteTest();
 void LagTest();
+void ScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
 void ChangeResolution();
@@ -123,6 +124,7 @@ start:
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
 
@@ -236,12 +238,15 @@ start:
 						LagTest();
 						break;
 					case 8:
-						DrawStripes();
+						ScrollTest();
 						break;
 					case 9:
-						DrawCheckBoard();
+						DrawStripes();
 						break;
 					case 10:
+						DrawCheckBoard();
+						break;
+					case 11:
 						ChangeResolution();
 						FreeImage(&scanlines);    
 						FreeImage(&title);    
@@ -250,7 +255,7 @@ start:
 						// not pretty, but "clean"
 						goto start;
 						break;
-					case 11:
+					case 12:
 						DrawCredits();
 						break;
 				}                         
@@ -951,6 +956,43 @@ void LagTest()
 		}
 		FreeImage(&wall);
 	}
+}
+
+void ScrollTest()
+{
+	int         done = 0, speed = 1;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    back;
+
+	back = LoadImage("/rd/MGBG-1.png");
+	
+	updateVMU(" Scroll  ", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+			    
+			if (pressed & CONT_START)
+				done =  1;                
+		MAPLE_FOREACH_END()
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+
+		if(back->x < back->w - 320)
+			back->x += speed;
+		
+		DrawImage(back);
+		DrawScanlines();
+		pvr_list_finish();        
+
+		pvr_scene_finish();
+	}
+	FreeImage(&back);
 }
 
 void DrawStripes()
