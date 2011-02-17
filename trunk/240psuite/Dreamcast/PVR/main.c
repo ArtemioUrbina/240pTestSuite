@@ -953,7 +953,7 @@ void LagTest()
 
 void ScrollTest()
 {
-	int         done = 0, speed = 1, x = 0 ;
+	int         done = 0, speed = 1, x = 0, pause = 0;
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 
@@ -974,16 +974,25 @@ void ScrollTest()
 			    
 			if (pressed & CONT_START)
 				done =  1;                
+
+			if (pressed & CONT_A)
+				pause = !pause;
+
+			if (pressed & CONT_B)
+				speed *= -1;
 		MAPLE_FOREACH_END()
 
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
-		if(!(x <= (back->tw - W) && x >= 0))
-			speed = speed * -1;
+		if(!pause)
+		{
+			if(!(x <= (back->tw - W) && x >= 0))
+				speed *= -1;
 
-		x += speed;
+			x += speed;
+		}
 
 		CalculateUV(x, 0, dW, 240, back);
 		DrawImage(back);
