@@ -43,7 +43,7 @@ struct image_st{
 
 typedef struct image_st * ImagePtr;
 
-ImagePtr LoadImage(const char *filename);
+ImagePtr LoadImage(const char *filename, int maptoscreen);
 void FreeImage(ImagePtr *image);
 void CalculateUV(float posx, float posy, float width, float height, ImagePtr image);
 void DrawImage(ImagePtr image);

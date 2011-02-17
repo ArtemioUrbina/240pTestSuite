@@ -23,7 +23,7 @@
 #include "image.h"
 #include "vmodes.h"
 
-ImagePtr LoadImage(const char *filename)
+ImagePtr LoadImage(const char *filename, int maptoscreen)
 {
     ImagePtr image;
     
@@ -47,6 +47,8 @@ ImagePtr LoadImage(const char *filename)
     image->alpha = 1.0;
     image->w = image->tw;
     image->h = image->th;
+		if(maptoscreen && image->w > dW)
+			CalculateUV(0, 0, dW, dH, image);
 
     return image;
 }
