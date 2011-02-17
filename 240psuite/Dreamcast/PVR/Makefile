@@ -36,7 +36,7 @@ $(TARGET).elf: $(OBJS) romdisk.o
 
 $(TARGET).bin: $(TARGET).elf
 	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin
-	strip $(TARGET).elf
+#	strip $(TARGET).elf
 
 run: $(TARGET).bin
 	$(KOS_LOADER) $(TARGET).bin
