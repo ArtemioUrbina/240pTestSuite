@@ -33,10 +33,10 @@ struct image_st{
 		float		v1;
 		float		u2;
 		float		v2;
-    uint32  w;
-    uint32  h;
-    uint32  tw;
-    uint32  th;    
+    float  	w;	
+    float  	h;
+    float  	tw;
+    float  	th;    
     float   alpha;
     uint32  scale;
 };

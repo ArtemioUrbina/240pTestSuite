@@ -25,17 +25,20 @@
 
 ImagePtr LoadImage(const char *filename, int maptoscreen)
 {
+		uint32	w, h;
     ImagePtr image;
     
     image = (ImagePtr)malloc(sizeof(struct image_st));
     //  PNG_MASK_ALPHA PNG_NO_ALPHA PNG_FULL_ALPHA
-    if(png_load_texture(filename, &image->tex, PNG_MASK_ALPHA, &image->tw, &image->th) == -1)
+    if(png_load_texture(filename, &image->tex, PNG_MASK_ALPHA, &w, &h) == -1)
     {
         free(image);
         fprintf(stderr, "Could not load %s\n", filename);
         return(NULL);
     }   
 
+		image->tw = w;
+		image->th = h;
     image->x = 0;
     image->y = 0;
     image->u1 = 0.0f;
@@ -77,7 +80,9 @@ void CalculateUV(float posx, float posy, float width, float height, ImagePtr ima
 }
 
 void DrawImage(ImagePtr image)
-{    
+{   
+		float x, y, w, h; 
+
     pvr_poly_cxt_t cxt;
     pvr_poly_hdr_t hdr;
     pvr_vertex_t vert;
@@ -85,12 +90,11 @@ void DrawImage(ImagePtr image)
     if(!image)
         return;
 
-    uint32 x, y, w, h;
-
-    x = image->x;
+		x = image->x;
     y = image->y;
     w = image->w;
     h = image->h;
+    
     if(image->scale && (vmode == FAKE_640 || vmode == FAKE_640_SL))
     {
 	    x *= 2;
