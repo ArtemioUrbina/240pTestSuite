@@ -29,6 +29,10 @@ struct image_st{
     float   x;
     float   y;
     float   layer;    
+		float		u1;
+		float		v1;
+		float		u2;
+		float		v2;
     uint32  w;
     uint32  h;
     uint32  tw;
@@ -41,6 +45,7 @@ typedef struct image_st * ImagePtr;
 
 ImagePtr LoadImage(const char *filename);
 void FreeImage(ImagePtr *image);
+void CalculateUV(float posx, float posy, float width, float height, ImagePtr image);
 void DrawImage(ImagePtr image);
 
 #endif

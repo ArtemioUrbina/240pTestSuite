@@ -38,6 +38,10 @@ ImagePtr LoadImage(const char *filename)
 
     image->x = 0;
     image->y = 0;
+    image->u1 = 0.0f;
+    image->v1 = 0.0f;
+    image->u2 = 1.0f;
+    image->v2 = 1.0f;
     image->layer = 1;
     image->scale = 1;
     image->alpha = 1.0;
@@ -55,6 +59,19 @@ void FreeImage(ImagePtr *image)
     	free(*image);
     	*image = NULL;
     }
+}
+
+void CalculateUV(float posx, float posy, float width, float height, ImagePtr image)
+{
+		if(!image)
+			return;
+
+		image->w = width;
+		image->h = height;
+		image->u1 = posx/image->tw;
+		image->v1 = posy/image->th;
+		image->u2 = (posx + width)/image->tw;
+		image->v2 = (posy + height)/image->th;
 }
 
 void DrawImage(ImagePtr image)
@@ -92,29 +109,29 @@ void DrawImage(ImagePtr image)
     vert.x = x;
     vert.y = y;
     vert.z = image->layer;
-    vert.u = 0.0;
-    vert.v = 0.0;
+    vert.u = image->u1;
+    vert.v = image->v1;
     pvr_prim(&vert, sizeof(vert));
     
     vert.x = x + w;
     vert.y = y;
     vert.z = image->layer;
-    vert.u = 1.0;
-    vert.v = 0.0;
+    vert.u = image->u2;
+    vert.v = image->v1;
     pvr_prim(&vert, sizeof(vert));
     
     vert.x = x;
     vert.y = y + h;
     vert.z = image->layer;
-    vert.u = 0.0;
-    vert.v = 1.0;
+    vert.u = image->u1;
+    vert.v = image->v2;
     pvr_prim(&vert, sizeof(vert));
     
     vert.x = x + w;
     vert.y = y + h;
     vert.z = image->layer;
-    vert.u = 1.0;
-    vert.v = 1.0;
+    vert.u = image->u2;
+    vert.v = image->v2;
     vert.flags = PVR_CMD_VERTEX_EOL;
     pvr_prim(&vert, sizeof(vert));
 }
