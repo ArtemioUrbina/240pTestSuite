@@ -54,10 +54,12 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
     image->w = image->tw;
     image->h = image->th;
 		if(maptoscreen)
+		{
 				if(image->w < dW)
 						CalculateUV(0, 0, 320, 240, image);
 				else
 						CalculateUV(0, 0, dW, dH, image);
+		}
 
     return image;
 }
