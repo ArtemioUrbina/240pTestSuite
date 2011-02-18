@@ -101,10 +101,10 @@ void DrawStringB(float x, float y, float r, float g, float b, char *str)
 {	
 	if(black_t)
 	{
-		int len;
+		float len;
 		
 		len = strlen(str);
-		len *= 8;
+		len *= fw;
 
 		black_t->x = x - 1;
 		black_t->y = y - 1;

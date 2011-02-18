@@ -953,7 +953,7 @@ void LagTest()
 
 void ScrollTest()
 {
-	int         done = 0, speed = 1, x = 0, pause = 0;
+	int         done = 0, speed = 1, acc = -1, x = 0, pause = 0;
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 
@@ -972,6 +972,12 @@ void ScrollTest()
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
+			if (pressed & CONT_DPAD_UP)
+				speed ++;             
+
+			if (pressed & CONT_DPAD_DOWN)
+				speed --;          
+
 			if (pressed & CONT_START)
 				done =  1;                
 
@@ -979,19 +985,25 @@ void ScrollTest()
 				pause = !pause;
 
 			if (pressed & CONT_B)
-				speed *= -1;
+				acc *= -1;
 		MAPLE_FOREACH_END()
 
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
+		if(speed > 15)
+			speed = 15;
+
+		if(speed < 1)
+			speed = 1;
+
 		if(!pause)
 		{
 			if(!(x <= (back->tw - W) && x >= 0))
-				speed *= -1;
+				acc *= -1;
 
-			x += speed;
+			x += speed * acc;
 		}
 
 		CalculateUV(x, 0, dW, 240, back);
@@ -1238,6 +1250,8 @@ void DrawCredits()
 		DrawStringS(x+7, y, 1.0, 1.0, 1.0, "losinggeneration/buildcross"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb"); y += fh; 
+
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.2"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();        
