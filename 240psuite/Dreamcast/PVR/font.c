@@ -26,7 +26,7 @@
 
 float f_size = 8.0f;
 
-float fw = 8.0f;
+float fw = 5.0f;
 float fh = 9.0f;
 
 ImagePtr   black_t = NULL;
@@ -66,8 +66,8 @@ void DrawChar(float x, float y, char c)
 	int charx, chary;
 
 	c -= 32;
-	charx = (c % 16) * 8;
-	chary = (c / 16) * 8;
+	charx = (c % 16) * fw;
+	chary = (c / 16) * f_size;
 	CalculateUV(charx, chary, fw, f_size, font_t);
 	font_t->x = x;
 	font_t->y = y;	

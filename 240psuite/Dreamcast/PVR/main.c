@@ -88,9 +88,9 @@ start:
 	title = LoadImage("/rd/title.png", 1);
 	if(!scanlines && vmode == FAKE_640_SL)
 	{
-		scanlines = LoadImage("/rd/scanlines.png", 1);
-		scanlines->layer = 4;
-		scanlines->alpha = 0.75f; // XRGB-3 175 
+		scanlines = LoadImage("/rd/scanlines.png", 0);
+		scanlines->layer = 5.0;
+		scanlines->alpha = 0.7f; // XRGB-3 175 
 		scanlines->scale = 0;
 	}
     
@@ -102,7 +102,7 @@ start:
 		float 	b = 1.0f;
 		int 	c = 1;        
 		float 	x = 30.0f;
-		float 	y = 60.0f;
+		float 	y = 55.0f;
         
 		pvr_wait_ready();
 		pvr_scene_begin();
@@ -171,6 +171,26 @@ start:
 				done =  1;
 			}
 #endif
+
+			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
+			{
+				if(scanlines)
+				{
+					scanlines->alpha += 0.1f; 
+					if(scanlines->alpha > 1.0f)
+						scanlines->alpha = 1.0f;
+				}
+			}
+
+			if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
+			{
+				if(scanlines)
+				{
+					scanlines->alpha -= 0.1f; 
+					if(scanlines->alpha < 0.0f)
+						scanlines->alpha = 0.0f;
+				}
+			}
 
 			if (pressed & CONT_DPAD_UP)
 			{
@@ -855,10 +875,9 @@ void LagTest()
 			}
 		}
 
-		DrawStringS(20, 190, 1.0f, 1.0f, 1.0f, "Press \"A\" when the sprite is aligned.");
-		DrawStringS(20, 190+fh, 1.0f, 1.0f, 1.0f, "A negative value means you pressed");
-		DrawStringS(20, 190+2*fh, 1.0f, 1.0f, 1.0f, "\"A\" before they intersected.");
-		DrawStringS(20, 190+3*fh, 1.0f, 1.0f, 1.0f, "\"B\" button toggles horz/vert.");
+		DrawStringS(20, 190, 1.0f, 1.0f, 1.0f, "Press \"A\" when the sprite is aligned with the background.");
+		DrawStringS(20, 190+fh, 1.0f, 1.0f, 1.0f, "Negative values mean you pressed \"A\" before they intersected");
+		DrawStringS(20, 190+2*fh, 1.0f, 1.0f, 1.0f, "\"B\" button toggles horizontal and vertical movement.");
 
 		DrawScanlines();
 		pvr_list_finish();        
@@ -878,7 +897,7 @@ void LagTest()
 	if(pos > 9)
 	{
 		int	total = 0;
-		double  res = 0;
+		double  res = 0, ms = 0;
 		ImagePtr wall;
     
 		done = 0;
@@ -926,12 +945,14 @@ void LagTest()
 			}
 
 			res = (double)total / 10.0;
-			sprintf(msg, "%d/10 = %0.2f milliseconds", total, res);
+			ms = (double)(res*(1000.0/60.0));
+			sprintf(msg, "%d/10 = %0.2f average frames ~= %0.2f ms", total, res, ms);
 			DrawStringS(60, 110, 1.0f, 0, 0, "+");
-			DrawStringS(55, 70 + fh*10, 1.0f, 0, 0, "----");
+			DrawStringS(55, 70 + fh*10, 1.0f, 0, 0, "-----");
 			DrawStringS(60, 70 + fh*11, 1.0f, 1.0f, 1.0f, msg);
+			DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that a frame is around 16.67 ms");
 
-			if(total < 5)
+			if(total && total < 5)
 			{
 				DrawStringS(100, 120, 0.0f, 1.0f, 0.0f, "EXCELLENT REFLEXES!");
     				updateVMUFlash("Lag Test ", " AWESOME", 1);
@@ -1246,12 +1267,11 @@ void DrawCredits()
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Toolchain built with:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "https://github.com/"); y += fh; 
-		DrawStringS(x+7, y, 1.0, 1.0, 1.0, "losinggeneration/buildcross"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "https://github.com/losinggeneration/buildcross"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.2"); y += fh; 
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.3"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();        
