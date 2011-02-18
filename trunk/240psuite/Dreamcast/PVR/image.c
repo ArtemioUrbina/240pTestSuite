@@ -29,7 +29,6 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
     ImagePtr image;
     
     image = (ImagePtr)malloc(sizeof(struct image_st));
-    //  PNG_MASK_ALPHA PNG_NO_ALPHA PNG_FULL_ALPHA
     if(png_load_texture(filename, &image->tex, PNG_MASK_ALPHA, &w, &h) == -1)
     {
         free(image);
@@ -54,8 +53,11 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
     image->alpha = 1.0;
     image->w = image->tw;
     image->h = image->th;
-		if(maptoscreen && image->w > dW)
-			CalculateUV(0, 0, dW, dH, image);
+		if(maptoscreen)
+				if(image->w < dW)
+						CalculateUV(0, 0, 320, 240, image);
+				else
+						CalculateUV(0, 0, dW, dH, image);
 
     return image;
 }
@@ -107,7 +109,6 @@ void DrawImage(ImagePtr image)
 	    h *= 2;
     }
     	
-    // PVR_TXRFMT_ARGB1555 PVR_TXRFMT_RGB565 PVR_TXRFMT_ARGB4444		
     pvr_poly_cxt_txr(&cxt, PVR_LIST_TR_POLY, PVR_TXRFMT_ARGB1555, image->tw, image->th, image->tex, PVR_FILTER_NONE);
     pvr_poly_compile(&hdr, &cxt);
     pvr_prim(&hdr, sizeof(hdr));
