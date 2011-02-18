@@ -42,16 +42,24 @@ static inline void DrawScanlines()
 		DrawImage(scanlines);
 }
 
+void TestPatternsMenu();
+
+void DrawPlunge();
+void DrawWhiteScreen();
+void DrawGrayRamp();
 void DrawColorBars();
 void Draw601ColorBars();
 void DrawGrid();
 void DrawLinearity();
+
+
 void DropShadowTest();
 void StripedSpriteTest();
 void LagTest();
 void ScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
+void SoundTest();
 void DrawCredits();
 
 int main(void)
@@ -101,7 +109,7 @@ start:
 		float 	g = 1.0f;
 		float 	b = 1.0f;
 		int 	c = 1;        
-		float 	x = 30.0f;
+		float 	x = 40.0f;
 		float 	y = 55.0f;
         
 		pvr_wait_ready();
@@ -109,17 +117,15 @@ start:
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
 		DrawImage(title);
-
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Grid"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Linearity"); y += fh; c++;
+		
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Lag Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 
 		switch(vmode)
 		{
@@ -230,36 +236,30 @@ start:
 				switch(sel)
 				{
 					case 1:
-						DrawColorBars();
+						TestPatternsMenu();
 						break;
-					case 2:
-						Draw601ColorBars();
-						break;
-					case 3:
-						DrawGrid();
-						break;
-					case 4:
-						DrawLinearity();
-						break;
-					case 5:
+					case 2:					
 						DropShadowTest();
 						break;
-					case 6:
+					case 3:
 						StripedSpriteTest();
 						break;
-					case 7:
+					case 4:
 						LagTest();
 						break;
-					case 8:
+					case 5:
 						ScrollTest();
 						break;
-					case 9:
+					case 6:
 						DrawStripes();
 						break;
-					case 10:
+					case 7:
 						DrawCheckBoard();
 						break;
-					case 11:
+					case 8:
+						SoundTest();
+						break;
+					case 9:
 						ChangeResolution();
 						FreeImage(&scanlines);    
 						FreeImage(&title);    
@@ -268,11 +268,11 @@ start:
 						// not pretty, but "clean"
 						goto start;
 						break;
-					case 12:
+					case 10:
 						DrawCredits();
 						break;
 				}                         
-				updateVMU("240p Test", "", 1);
+				updateVMU("240p Test", "", 1);				
 			}
 		}
 		MAPLE_FOREACH_END()
@@ -284,6 +284,296 @@ start:
 	FreeImage(&title);    
 	ReleaseFont();
 	return 0;
+}
+
+void TestPatternsMenu()
+{
+	int         done = 0, sel = 1, joycnt = 0;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    title;
+
+	title = LoadImage("/rd/title.png", 1);    
+ 	while(!done) 
+	{		
+		float 	r = 1.0f;
+		float 	g = 1.0f;
+		float 	b = 1.0f;
+		int 	c = 1;        
+		float 	x = 40.0f;
+		float 	y = 55.0f;
+        
+		pvr_wait_ready();
+		pvr_scene_begin();
+		pvr_list_begin(PVR_LIST_TR_POLY);
+
+		DrawImage(title);
+
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Plunge"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Grid"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Linearity"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "White Screen"); y += fh; c++;				
+		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
+
+		switch(vcable)
+		{
+			case CT_RGB:
+				DrawStringS(265.0f, 225.0f, 0, g,  b, "RGB");
+				break;
+			case CT_VGA:
+				DrawStringS(265.0f, 225.0f, 0, g,  b, "VGA");
+				break;
+			case CT_COMPOSITE:
+				DrawStringS(215.0f, 225.0f, 0, g,  b, "Composite");
+				break;
+		}
+    
+		DrawScanlines();
+        
+		pvr_list_finish();        
+		pvr_scene_finish();
+
+		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+
+			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
+			{
+				if(scanlines)
+				{
+					scanlines->alpha += 0.1f; 
+					if(scanlines->alpha > 1.0f)
+						scanlines->alpha = 1.0f;
+				}
+			}
+
+			if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
+			{
+				if(scanlines)
+				{
+					scanlines->alpha -= 0.1f; 
+					if(scanlines->alpha < 0.0f)
+						scanlines->alpha = 0.0f;
+				}
+			}
+
+			if (pressed & CONT_DPAD_UP)
+			{
+				sel --;
+				if(sel < 1)
+					sel = c;				
+			}
+    
+			if (pressed & CONT_DPAD_DOWN)
+			{
+				sel ++;
+				if(sel > c)
+					sel = 1;				
+			}
+    
+			if(st->joyy != 0)
+			{
+				if(++joycnt > 5)
+				{
+					if(st->joyy > 0)
+						sel ++;
+					if(st->joyy < 0)
+						sel --;
+    
+					if(sel < 1)
+						sel = c;
+					if(sel > c)
+						sel = 1;					
+					joycnt = 0;
+				}
+			}
+			else
+				joycnt = 0;
+    
+			if (pressed & CONT_B)			
+				done = 1;			
+		
+			if (pressed & CONT_A)
+			{
+				switch(sel)
+				{
+					case 1:
+						DrawPlunge();
+						break;
+					case 2:
+						DrawColorBars();
+						break;
+					case 3:
+						Draw601ColorBars();
+						break;
+					case 4:
+						DrawGrid();
+						break;
+					case 5:
+						DrawLinearity();
+						break;					
+					case 6:
+						DrawGrayRamp();
+						break;
+					case 7:
+						DrawWhiteScreen();
+						break;
+					case 8:
+						done = 1;
+						break;
+				}                         
+				updateVMU("Patterns", "", 1);
+			}			
+		}
+		MAPLE_FOREACH_END()
+
+		updateVMU("Patterns", "", 0);
+	}
+	
+	FreeImage(&title);    	
+	return;
+}
+
+void DrawPlunge()
+{
+	int         done = 0;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    back;
+
+	back = LoadImage("/rd/plunge.png", 1);
+    
+	updateVMU(" Plunge ", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+			    
+			if (pressed & CONT_START)
+				done =  1;                
+		MAPLE_FOREACH_END()
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+		DrawScanlines();
+		pvr_list_finish();        
+
+		pvr_scene_finish();
+	}
+	FreeImage(&back);
+}
+
+void DrawGrayRamp()
+{
+	int         done = 0;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    back;
+
+	back = LoadImage("/rd/grayramp.png", 1);
+    
+	updateVMU("Gray Ramp", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+			    
+			if (pressed & CONT_START)
+				done =  1;                
+		MAPLE_FOREACH_END()
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+		DrawScanlines();
+		pvr_list_finish();        
+
+		pvr_scene_finish();
+	}
+	FreeImage(&back);
+}
+
+void DrawWhiteScreen()
+{
+	int         done = 0, color = 0;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    back;
+
+	back = LoadImage("/rd/white.png", 1);
+    
+	updateVMU("White scr", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+			    
+			if (pressed & CONT_START)
+				done =  1;                
+
+			if (pressed & CONT_A)
+				color ++;
+
+			if (pressed & CONT_B)
+				color --;
+		MAPLE_FOREACH_END()
+
+		pvr_scene_begin();
+
+		if(color > 4)
+			color = 0;
+		if(color < 0)
+			color = 4;
+
+		switch(color)
+		{
+				case 0:
+					back->r = 1.0f;
+					back->g = 1.0f;
+					back->b = 1.0f;
+					break;
+				case 1:
+					back->r = 0.0f;
+					back->g = 0.0f;
+					back->b = 0.0f;
+					break;
+				case 2:
+					back->r = 1.0f;
+					back->g = 0.0f;
+					back->b = 0.0f;
+					break;
+				case 3:
+					back->r = 0.0f;
+					back->g = 1.0f;
+					back->b = 0.0f;
+					break;
+				case 4:
+					back->r = 0.0f;
+					back->g = 0.0f;
+					back->b = 1.0f;
+					break;
+		}
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+		DrawScanlines();
+		pvr_list_finish();        
+
+		pvr_scene_finish();
+	}
+	FreeImage(&back);
 }
 
 void DrawColorBars()
@@ -1226,6 +1516,71 @@ void DrawCheckBoard()
 	}
 	FreeImage(&checkpos);
 	FreeImage(&checkneg);
+}
+
+void SoundTest()
+{
+	int         done = 0, sel = 1, play = 0;
+	uint16      oldbuttons = 0xffff, pressed;    
+	ImagePtr    back;
+	sfxhnd_t		beep;
+
+	snd_init();
+	back = LoadImage("/rd/back.png", 1);
+	beep = snd_sfx_load("/rd/beep.wav");
+    
+	updateVMU(" Plunge ", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+			    
+			if (pressed & CONT_START)
+				done =  1;                
+
+			if (pressed & CONT_A)
+				play =  1;             
+
+			if (pressed & CONT_DPAD_LEFT)
+				sel --;
+
+			if (pressed & CONT_DPAD_RIGHT)
+				sel ++;
+		MAPLE_FOREACH_END()
+		
+		if(sel < 0)
+			sel = 2;
+
+		if(sel > 2)
+			sel = 0;
+
+		if(play && beep != SFXHND_INVALID)
+		{
+				snd_sfx_play(beep, 255, sel * 128);
+				play = 0;
+		}
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+
+		DrawStringS(120, 60, 1.0f, 1.0f, 1.0f, "Sound Test"); 
+		DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,  sel == 0 ? 0 : 1.0f, "Left Channel"); 
+		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,  sel == 1 ? 0 : 1.0f, "Center Channel");
+		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,  sel == 2 ? 0 : 1.0f, "Right Channel");
+		DrawScanlines();
+		
+		pvr_list_finish();        
+
+		pvr_scene_finish();
+	}
+	if(beep != SFXHND_INVALID)
+			snd_sfx_unload(beep);
+	FreeImage(&back);
 }
 
 void DrawCredits()
