@@ -23,15 +23,12 @@
 #define FONT_H
 
 #include <kos.h>
-#include <plx/font.h>
-#include <plx/sprite.h>
-#include <plx/list.h>
-#include <plx/dr.h>
 
 extern float fw;
 extern float fh;
 extern float f_size;
 
+void DrawChar(float x, float y, char c);
 void DrawString(float x, float y, float r, float g, float b, char *str);
 void DrawStringS(float x, float y, float r, float g, float b, char *str);
 void DrawStringB(float x, float y, float r, float g, float b, char *str);

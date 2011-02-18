@@ -24,39 +24,35 @@
 #include "image.h"
 #include "vmodes.h"
 
-plx_font_t *font = NULL;
-plx_fcxt_t *font_cxt = NULL;
+float f_size = 8.0f;
 
-float f_size = 7.5f;
-
-float fw = 7.0f;
+float fw = 8.0f;
 float fh = 9.0f;
 
 ImagePtr   black_t = NULL;
+ImagePtr   font_t = NULL;
 
 void LoadFont()
 {
-	if(!font)
+	if(!font_t)
 	{
-		font = plx_font_load("/rd/font.txf");
-		font_cxt = plx_fcxt_create(font, PVR_LIST_TR_POLY);
-	}
+		font_t = LoadImage("/rd/font.png", 0);
+		font_t->layer = 2.0f;
+	}	
 
 	if(!black_t)
+	{
 		black_t = LoadImage("/rd/black.png", 0);
+		black_t->alpha = 0.75f;
+	}
 }
 
 void ReleaseFont()
-{
-	if(font_cxt)
+{	
+	if(font_t)
 	{
-		plx_fcxt_destroy(font_cxt);
-		font_cxt = NULL;
-	}
-	if(font)
-	{
-		plx_font_destroy(font);
-		font = NULL;
+		FreeImage(&font_t);
+		font_t = NULL;
 	}
 	if(black_t)
 	{
@@ -65,143 +61,57 @@ void ReleaseFont()
 	}
 }
 
+void DrawChar(float x, float y, char c) 
+{
+	int charx, chary;
+
+	c -= 32;
+	charx = (c % 16) * 8;
+	chary = (c / 16) * 8;
+	CalculateUV(charx, chary, fw, f_size, font_t);
+	font_t->x = x;
+	font_t->y = y;	
+	DrawImage(font_t);
+}
+
 void DrawString(float x, float y, float r, float g, float b, char *str) 
 {
-	point_t pos;
+	font_t->r = r;
+	font_t->g = g;
+	font_t->b = b;
 
-	pos.x = x;
-	pos.y = y;
-	pos.z = 3.0f;
-
-	plx_fcxt_begin(font_cxt);
-
-	if(vmode == FAKE_640 || vmode == FAKE_640_SL)
-	{
-		x *= 2;
-		y *= 2;
-		plx_fcxt_setsize(font_cxt, f_size*2);
-	}
-	else
-		plx_fcxt_setsize(font_cxt, f_size);
-
-	plx_fcxt_setpos_pnt(font_cxt, &pos);
-	plx_fcxt_setcolor4f(font_cxt, 1.0f, r, g, b);
-	plx_fcxt_draw(font_cxt, str);
-
-	plx_fcxt_end(font_cxt);
+	while (*str) 
+	{    
+    DrawChar(x, y, *str++);
+		x += fw;
+  }
 }
 
 void DrawStringS(float x, float y, float r, float g, float b, char *str) 
 {
-	int c = 1;
-	point_t pos;
-
-	plx_fcxt_begin(font_cxt);
-
-	if(vmode == FAKE_640 || vmode == FAKE_640_SL)
-	{
-		x *= 2;
-		y *= 2;
-		c *= 2;
-		plx_fcxt_setsize(font_cxt, f_size*2);
-	}
-	else
-		plx_fcxt_setsize(font_cxt, f_size);
-
-	pos.x = x+c;
-	pos.y = y+c;
-	pos.z = 2.0f;
-	plx_fcxt_setpos_pnt(font_cxt, &pos);
-	plx_fcxt_setcolor4f(font_cxt, 0.8f, 0, 0, 0);
-	plx_fcxt_draw(font_cxt, str);
-
-	pos.x = x;
-	pos.y = y;
-	pos.z = 3.0f;
-	plx_fcxt_setpos_pnt(font_cxt, &pos);
-	plx_fcxt_setcolor4f(font_cxt, 1.0f, r, g, b);
-	plx_fcxt_draw(font_cxt, str);
-
-	plx_fcxt_end(font_cxt);
+	font_t->layer = 1.0f;
+	font_t->alpha = 0.75f;
+	DrawString(x+1, y+1, 0.0f, 0.0f, 0.0f, str);	
+	font_t->layer = 2.0f;
+	font_t->alpha = 1.0f;
+	DrawString(x, y, r, g, b, str);
 }
 
 void DrawStringB(float x, float y, float r, float g, float b, char *str) 
-{
-	float left, up, right, down, c = 1;
-	pvr_poly_cxt_t cxt;
-	pvr_poly_hdr_t hdr;
-	pvr_vertex_t vert;
-	point_t pos;
-
-
-	plx_fcxt_begin(font_cxt);
-
-	if(vmode == FAKE_640 || vmode == FAKE_640_SL)
+{	
+	if(black_t)
 	{
-		x *= 2;
-		y *= 2;
-		c *= 2;
-		plx_fcxt_setsize(font_cxt, f_size*2);
+		int len;
+		
+		len = strlen(str);
+		len *= 8;
+
+		black_t->x = x - 1;
+		black_t->y = y - 1;
+		black_t->w = len + 2;
+		black_t->h = f_size + 2;
+		DrawImage(black_t);
 	}
-	else
-		plx_fcxt_setsize(font_cxt, f_size);
-
-	pos.x = x;
-	pos.y = y;
-	pos.z = 3.0f;
-
-	plx_fcxt_setpos_pnt(font_cxt, &pos);
-	plx_fcxt_setcolor4f(font_cxt, 1.0f, r, g, b);
-
-	plx_fcxt_str_metrics(font_cxt, str, &left, &up, &right, &down);
-	plx_fcxt_draw(font_cxt, str);
-
-	plx_fcxt_end(font_cxt);
-
-	if(!black_t)
-		return;
-
-	pvr_poly_cxt_txr(&cxt, PVR_LIST_TR_POLY, PVR_TXRFMT_ARGB1555,
-		      black_t->tw, black_t->th, black_t->tex, PVR_FILTER_NONE);
-	pvr_poly_compile(&hdr, &cxt);
-	pvr_prim(&hdr, sizeof(hdr));
-
-	vert.argb = PVR_PACK_COLOR(black_t->alpha, 1.0f, 1.0f, 1.0f);
-	vert.oargb = 0;
-	vert.flags = PVR_CMD_VERTEX;
-
-	left = x - c;
-	right += x + c;
-	up = y - fh * c;
-	down += y + c;
-
-	vert.x = left;
-	vert.y = up;
-	vert.z = 2.0f;
-	vert.u = 0.0;
-	vert.v = 0.0;
-	pvr_prim(&vert, sizeof(vert));
-
-	vert.x = right;
-	vert.y = up;
-	vert.z = 2.0f;
-	vert.u = 1.0;
-	vert.v = 0.0;
-	pvr_prim(&vert, sizeof(vert));
-
-	vert.x = left;
-	vert.y = down;
-	vert.z = 2.0f;
-	vert.u = 0.0;
-	vert.v = 1.0;
-	pvr_prim(&vert, sizeof(vert));
-
-	vert.x = right;
-	vert.y = down;
-	vert.z = 2.0f;
-	vert.u = 1.0;
-	vert.v = 1.0;
-	vert.flags = PVR_CMD_VERTEX_EOL;
-	pvr_prim(&vert, sizeof(vert));
+	
+	DrawString(x, y, r, g, b, str);
 }
-

@@ -451,7 +451,7 @@ void DropShadowTest()
     back[3]->scale = 0;
   }
     
-  ssprite = LoadImage("/rd/shadow.png", 0);
+  ssprite = LoadImage("/rd/shadow.png", 0);	
   buzz = LoadImage("/rd/buzzbomber.png", 0);
   buzzshadow = LoadImage("/rd/buzzbomberShadow.png", 0);
   
@@ -542,7 +542,7 @@ void DropShadowTest()
 			if(vmode != NATIVE_640_FS)
 				DrawStringB(140, 12, 0, 1.0, 0, msg);
 			else
-				DrawStringB(500, 20, 0, 1.0, 0, msg);
+				DrawStringB(450, 20, 0, 1.0, 0, msg);
 			text --;
 		}
 

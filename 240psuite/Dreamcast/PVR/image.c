@@ -37,6 +37,10 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
         return(NULL);
     }   
 
+		image->r = 1.0f;
+		image->g = 1.0f;
+		image->b = 1.0f;
+
 		image->tw = w;
 		image->th = h;
     image->x = 0;
@@ -45,7 +49,7 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
     image->v1 = 0.0f;
     image->u2 = 1.0f;
     image->v2 = 1.0f;
-    image->layer = 1;
+    image->layer = 1.0f;
     image->scale = 1;
     image->alpha = 1.0;
     image->w = image->tw;
@@ -70,7 +74,7 @@ void CalculateUV(float posx, float posy, float width, float height, ImagePtr ima
 {
 		if(!image)
 			return;
-
+		
 		image->w = width;
 		image->h = height;
 		image->u1 = posx/image->tw;
@@ -108,7 +112,7 @@ void DrawImage(ImagePtr image)
     pvr_poly_compile(&hdr, &cxt);
     pvr_prim(&hdr, sizeof(hdr));
 
-    vert.argb = PVR_PACK_COLOR(image->alpha, 1.0f, 1.0f, 1.0f);    
+    vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);    
     vert.oargb = 0;
     vert.flags = PVR_CMD_VERTEX;
     
