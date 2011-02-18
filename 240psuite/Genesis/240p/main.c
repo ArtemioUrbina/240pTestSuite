@@ -100,11 +100,13 @@ void DropShadowTest();
 void StripedSpriteTest();
 void LagTest();
 void DrawCredits();
+void ScrollTest();
 
 int main() 
 { 
-    u16 cursel = 1, pos;
+    u16 cursel = 1, pos, reload = 1;
     u16 buttons, oldButtons = 0xffff, pressedButtons;
+    u16 ind = 0, size = 0;
 
     VDP_init(); 
     JOY_init();
@@ -114,17 +116,18 @@ int main()
 
     while(1)
     {
-        u16 ind = 0, size = 0;
-
-        VDP_setPalette(PAL2, title_pal); 
-        VDP_setPalette(PAL3, gillian_pal); 
-
-        ind = TILE_USERINDEX; 
-        size = sizeof(title_tiles) / 32; 
-        VDP_loadTileData(title_tiles, ind, size, 1); 
-        ind += size;
-        size = sizeof(gillian_tiles) / 32; 
-        VDP_loadTileData(gillian_tiles, ind, size, 1); 
+        if(reload)
+        {
+            VDP_setPalette(PAL2, title_pal); 
+            VDP_setPalette(PAL3, gillian_pal); 
+    
+            ind = TILE_USERINDEX; 
+            size = sizeof(title_tiles) / 32; 
+            VDP_loadTileData(title_tiles, ind, size, 1); 
+            ind += size;
+            size = sizeof(gillian_tiles) / 32; 
+            VDP_loadTileData(gillian_tiles, ind, size, 1); 
+        }
         
     
         VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
@@ -139,9 +142,10 @@ int main()
         VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
         VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
         VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+				VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
         
 				buttons = JOY_readJoypad(JOY_1);
 				pressedButtons = buttons & ~oldButtons;
@@ -150,7 +154,7 @@ int main()
         if (pressedButtons & BUTTON_DOWN)
         {
             cursel ++;
-            if(cursel > pos)
+            if(cursel > 11)
                 cursel = 1;
         }
 
@@ -158,14 +162,13 @@ int main()
         {
             cursel --;
             if(cursel < 1)
-                cursel = pos;
+                cursel = 11;
         }
 
 				if (pressedButtons & BUTTON_A)
-        {
-            VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
+        {            
             VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
-
+						VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);			
             switch(cursel)
             {
                 case 1:
@@ -189,18 +192,24 @@ int main()
                 case 7:
                     LagTest();   
                     break;
-                case 8:
+								case 8:
+                    ScrollTest();   
+                    break;
+                case 9:
                     DrawStripes();   
                     break;
-                case 9: 
+                case 10: 
                     DrawCheckBoard();                                   
                     break;  
-                case 10: 
+                case 11: 
                     DrawCredits();                                   
                     break;
             }
+            VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
+            VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
 			
             VDP_resetScreen();
+            reload = 1;
         }
 
         VDP_waitVSync();
@@ -699,7 +708,7 @@ void DropShadowTest()
 
         if (pressedButtons & BUTTON_B)
         {
-            if(back < 2)
+            if(back < 3)
                 back ++;
             else
                 back = 0;
@@ -768,7 +777,7 @@ void StripedSpriteTest()
         if(changeback)
         {
             changeback = 0;
-            ind = TILE_USERINDEX; 
+            ind = TILE_USERINDEX; 						
             switch(back)
             {
                 case 0:
@@ -777,13 +786,19 @@ void StripedSpriteTest()
                     VDP_setPalette(PAL1, motoko_pal);
                     VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
                     break;
-                case 1:
+								case 1:
+                    size = sizeof(sonicback_tiles) / 32; 
+                    VDP_loadTileData(sonicback_tiles, ind, size, 1); 
+                    VDP_setPalette(PAL1, sonicback_pal);
+                    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+                    break;
+                case 2:
                     size = sizeof(check_tile) / 32; 
                     VDP_loadTileData(check_tile, ind, size, 1); 
                     VDP_setPalette(PAL1, bw_pal);
                     VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
                     break;
-                case 2:
+                case 3:
                     size = sizeof(bw_tile) / 32; 
                     VDP_loadTileData(bw_tile, ind, size, 1); 
                     VDP_setPalette(PAL1, bw_pal);
@@ -840,12 +855,13 @@ void StripedSpriteTest()
 
         if (pressedButtons & BUTTON_B)
         {
-            if(back < 2)
+            if(back < 3)
                 back ++;
             else
                 back = 0;
             
             changeback = 1;
+						VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);           
         }        
 
         VDP_updateSprites();
@@ -1136,7 +1152,10 @@ void DrawCredits()
     u16 ind = 0, size = 0, exit = 0, pos = 6;
     u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+    VDP_setPalette(PAL0, palette_grey);
     VDP_setPalette(PAL1, title_pal); 
+    VDP_setPalette(PAL2, palette_green);
+    VDP_setPalette(PAL3, bw_pal);    
 
     ind = TILE_USERINDEX; 
     size = sizeof(back_tiles) / 32; 
@@ -1144,9 +1163,9 @@ void DrawCredits()
     
     VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
     
-    VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL3, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
@@ -1154,6 +1173,8 @@ void DrawCredits()
     VDP_drawTextBG(APLAN, "http://code.google.com/p/sgdk/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
     VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+
+		VDP_drawTextBG(APLAN, "Ver. 1.2", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
     while(!exit)
     {
 				buttons = JOY_readJoypad(JOY_1);
@@ -1165,4 +1186,58 @@ void DrawCredits()
 
         VDP_waitVSync();
     }
+}
+
+void ScrollTest()
+{		
+    u16 size;
+    u16 exit = 0;
+    u16 buttons, oldButtons = 0xffff, pressedButtons;
+		int x = 0, speed = 1, acc = -1, pause = 0;
+    
+    VDP_setPalette(PAL0, sonicback_pal);
+		size = sizeof(sonicback_tiles) / 32; 
+    VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, 1); 		
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 320/8, 0, 320/8, 224/8); 
+    VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+    while(!exit)
+    {
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+						
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
+	
+				if (pressedButtons & BUTTON_UP)
+					speed++;
+
+				if (pressedButtons & BUTTON_DOWN)
+					speed--;
+
+				if(speed > 20)				
+					speed = 20;					
+				
+				if(speed < 0)				
+					speed = 0;					
+
+				if (pressedButtons & BUTTON_A)
+        	pause = !pause;
+	
+				if (pressedButtons & BUTTON_B)
+        	acc *= -1;
+
+				if(!pause)
+					x += acc*speed;
+
+				if(x >= 512)
+					x = x % 512;
+	
+				if(x <= -512)
+					x = x % -512;
+
+				VDP_setHorizontalScroll(BPLAN, 0, x);				
+        VDP_waitVSync();
+    }
+		VDP_setHorizontalScroll(BPLAN, 0, 0);
 }
