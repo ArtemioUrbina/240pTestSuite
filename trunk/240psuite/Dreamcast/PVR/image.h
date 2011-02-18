@@ -36,7 +36,10 @@ struct image_st{
     float  	w;	
     float  	h;
     float  	tw;
-    float  	th;    
+    float  	th; 
+		float  	r;	
+    float  	g;   
+		float  	b;   
     float   alpha;
     uint32  scale;
 };
