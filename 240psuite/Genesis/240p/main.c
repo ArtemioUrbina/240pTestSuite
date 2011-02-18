@@ -89,18 +89,36 @@ extern u16 buzz_pal[16];
 // Lag sprite
 extern u32 lag_tiles[512/4]; 
 
+// Solid Color (White)
+extern u32 solid_tiles[32/4]; 
+
+// Gray Ramp background
+extern u32 grayramp_tiles[35840/4]; 
+
+// Plunge
+extern u32 plunge_tiles[35840/4]; 
+extern u16 plunge_pal[16]; 
+
+
 // Functions
+void DrawPlunge();
+void DrawGrayRamp();
+void DrawWhiteScreen();
 void DrawColorBars();
 void Draw601ColorBars();
 void DrawGrid();
 void DrawLinearity();
 void DrawCheckBoard();
+
 void DrawStripes();
 void DropShadowTest();
 void StripedSpriteTest();
-void LagTest();
-void DrawCredits();
 void ScrollTest();
+void LagTest();
+void SoundTest();
+void DrawCredits();
+
+void TestPatternMenu();
 
 int main() 
 { 
@@ -135,17 +153,15 @@ int main()
                 
 
         pos = 6;
-        VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Grid", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
-        VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
-        VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-				VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-        VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+        VDP_drawTextBG(APLAN, "Test Patterns", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
+        VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
+        VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
+        VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+				VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+				VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
         
 				buttons = JOY_readJoypad(JOY_1);
 				pressedButtons = buttons & ~oldButtons;
@@ -154,7 +170,7 @@ int main()
         if (pressedButtons & BUTTON_DOWN)
         {
             cursel ++;
-            if(cursel > 11)
+            if(cursel > 9)
                 cursel = 1;
         }
 
@@ -162,7 +178,7 @@ int main()
         {
             cursel --;
             if(cursel < 1)
-                cursel = 11;
+                cursel = 9;
         }
 
 				if (pressedButtons & BUTTON_A)
@@ -172,36 +188,30 @@ int main()
             switch(cursel)
             {
                 case 1:
-                    DrawColorBars();
-                    break;
+                    TestPatternMenu();
+                    break;                
                 case 2:
-                    Draw601ColorBars();
-                    break;
-                case 3:
-                    DrawGrid();                    
-                    break;
-                case 4:
-                    DrawLinearity();
-                    break;
-                case 5:
                     DropShadowTest();
                     break;
-                case 6:
+                case 3:
                     StripedSpriteTest();
                     break;
-                case 7:
+                case 4:
                     LagTest();   
                     break;
-								case 8:
+								case 5:
                     ScrollTest();   
                     break;
-                case 9:
+                case 6:
                     DrawStripes();   
                     break;
-                case 10: 
+                case 7: 
                     DrawCheckBoard();                                   
                     break;  
-                case 11: 
+								case 8: 
+                    SoundTest();                                   
+                    break;  
+                case 9: 
                     DrawCredits();                                   
                     break;
             }
@@ -216,6 +226,107 @@ int main()
     }
 
     return 0;
+} 
+
+void TestPatternMenu() 
+{ 
+    u16 cursel = 1, pos, reload = 1;
+    u16 buttons, oldButtons = 0xffff, pressedButtons;
+    u16 ind = 0, size = 0, done = 0;
+    
+    while(!done)
+    {
+        if(reload)
+        {
+            VDP_setPalette(PAL2, title_pal); 
+            VDP_setPalette(PAL3, gillian_pal); 
+    
+            ind = TILE_USERINDEX; 
+            size = sizeof(title_tiles) / 32; 
+            VDP_loadTileData(title_tiles, ind, size, 1); 
+            ind += size;
+            size = sizeof(gillian_tiles) / 32; 
+            VDP_loadTileData(gillian_tiles, ind, size, 1); 
+        }
+        
+    
+        VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
+        VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
+                
+
+        pos = 6;
+				VDP_drawTextBG(APLAN, "Plunge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Grid", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
+        VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
+        VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+        
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+
+        if (pressedButtons & BUTTON_DOWN)
+        {
+            cursel ++;
+            if(cursel > 8)
+                cursel = 1;
+        }
+
+        if (pressedButtons & BUTTON_UP)
+        {
+            cursel --;
+            if(cursel < 1)
+                cursel = 8;
+        }
+
+				if (pressedButtons & BUTTON_B)
+        		done = 1;            
+				
+				if (pressedButtons & BUTTON_A)
+        {            
+            VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+						VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);			
+            switch(cursel)
+            {
+								case 1:
+                    DrawPlunge();
+                    break;
+                case 2:
+                    DrawColorBars();
+                    break;
+                case 3:
+                    Draw601ColorBars();
+                    break;
+                case 4:
+                    DrawGrid();                    
+                    break;
+                case 5:
+                    DrawLinearity();
+                    break;
+                case 6:
+                    DrawGrayRamp();
+                    break;
+								case 7:
+                    DrawWhiteScreen();
+                    break;
+                case 8: 
+                    done = 1;
+                    break;
+            }
+            VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
+            VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+			
+            VDP_resetScreen();
+            reload = 1;
+        }
+
+        VDP_waitVSync();
+    }
+
+    return;
 } 
 
 void DrawColorBars()
@@ -415,6 +526,121 @@ void DrawStripes()
 		
 				if (pressedButtons & BUTTON_START)
 					exit = 1;
+
+        VDP_waitVSync();
+    }
+}
+
+void DrawPlunge()
+{
+    u16 size;
+    u16 exit = 0;
+    u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+    size = sizeof(plunge_tiles) / 32; 
+    VDP_setPalette(PAL0, plunge_pal);
+    VDP_loadTileData(plunge_tiles, TILE_USERINDEX, size, 1); 
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+    while(!exit)
+    {
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
+
+        VDP_waitVSync();
+    }
+}
+
+void DrawGrayRamp()
+{
+    u16 size;
+    u16 exit = 0;
+    u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+    size = sizeof(grayramp_tiles) / 32; 
+    VDP_setPalette(PAL0, white_pal);
+    VDP_loadTileData(grayramp_tiles, TILE_USERINDEX, size, 1); 
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+    while(!exit)
+    {
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
+
+        VDP_waitVSync();
+    }
+}
+
+void DrawWhiteScreen()
+{
+    u16 size;
+    u16 exit = 0;
+    u16 buttons, oldButtons = 0xffff, pressedButtons, redraw = 0;
+		int	color = 0;
+
+    size = sizeof(solid_tiles) / 32; 
+
+    VDP_setPalette(PAL0, palette_grey);
+    VDP_setPalette(PAL1, palette_red);
+    VDP_setPalette(PAL2, palette_green);
+    VDP_setPalette(PAL3, palette_blue);
+
+    VDP_loadTileData(solid_tiles, TILE_USERINDEX, size, 1); 
+    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+    while(!exit)
+    {
+				if(redraw)
+				{
+					switch(color)
+					{
+						case 0:
+							VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+							break;
+						case 1:
+							VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);							
+							break;
+						case 2:
+							VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+							break;
+						case 3:
+							VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+							break;
+						case 4:
+							VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+							break;
+					}
+					redraw = 0;
+				}
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
+
+				if (pressedButtons & BUTTON_A)
+				{
+					color ++;
+					redraw = 1;
+				}
+
+				if (pressedButtons & BUTTON_B)
+				{
+					color --;
+					redraw = 1;
+				}	
+
+				if(color > 4)
+					color = 0;
+		
+				if(color < 0)
+					color = 4;
 
         VDP_waitVSync();
     }
@@ -1240,4 +1466,65 @@ void ScrollTest()
         VDP_waitVSync();
     }
 		VDP_setHorizontalScroll(BPLAN, 0, 0);
+}
+
+void SoundTest()
+{
+		int sel = 0;
+ 		u16 ind = 0, size = 0, exit = 0;
+    u16 buttons, oldButtons = 0xffff, pressedButtons;
+		u16	len = 0;
+
+		len = sizeof(beep);
+    VDP_setPalette(PAL0, palette_grey);
+    VDP_setPalette(PAL1, title_pal); 
+    VDP_setPalette(PAL2, palette_green);
+    VDP_setPalette(PAL3, bw_pal);    
+
+    ind = TILE_USERINDEX; 
+    size = sizeof(back_tiles) / 32; 
+    VDP_loadTileData(back_tiles, ind, size, 1); 
+		
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
+
+    while(!exit)
+    {
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
+
+				if (pressedButtons & BUTTON_LEFT)
+					sel --;
+
+				if (pressedButtons & BUTTON_RIGHT)
+					sel ++;
+
+				if(sel > 2)
+					sel = 0;
+
+				if(sel < 0)
+					sel = 2;
+
+				if (pressedButtons & BUTTON_A)
+				{
+						if(sel == 0)
+									startPlay_PCM(beep, len, 44100, AUDIO_PAN_LEFT);            
+
+						if(sel == 0)
+									startPlay_PCM(beep, len, 44100, AUDIO_PAN_CENTER);            
+
+						if(sel == 2)
+									startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);           						
+				}
+        		
+				VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL0, 0, 0, 0), 15, 6);
+    		VDP_drawTextBG(APLAN, "Left Channel", TILE_ATTR(sel == 0 ? PAL2 : PAL0, 0, 0, 0), 6, 12);
+    		VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL2 : PAL0, 0, 0, 0), 14, 14);
+    		VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL2 : PAL0, 0, 0, 0), 22, 12);    
+
+        VDP_waitVSync();
+    }
 }

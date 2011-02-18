@@ -1520,7 +1520,7 @@ void DrawCheckBoard()
 
 void SoundTest()
 {
-	int         done = 0, sel = 1, play = 0;
+	int         done = 0, sel = 1, play = 0, pan = 0;
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 	sfxhnd_t		beep;
@@ -1557,9 +1557,22 @@ void SoundTest()
 		if(sel > 2)
 			sel = 0;
 
+		switch(sel)
+		{
+				case 0:
+					pan = 0;
+					break;
+				case 1:
+					pan = 128;
+					break;
+				case 2:
+					pan = 255;
+					break;
+		}
+
 		if(play && beep != SFXHND_INVALID)
 		{
-				snd_sfx_play(beep, 255, sel * 128);
+				snd_sfx_play(beep, 255, pan);
 				play = 0;
 		}
 
