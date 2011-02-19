@@ -29,6 +29,8 @@
 #include "vmodes.h"
 #include "vmu.h"
 
+#include "help.h"
+
 /* romdisk */
 extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
@@ -51,7 +53,6 @@ void DrawColorBars();
 void Draw601ColorBars();
 void DrawGrid();
 void DrawLinearity();
-
 
 void DropShadowTest();
 void StripedSpriteTest();
@@ -126,6 +127,7 @@ start:
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Sound Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Help"); y += fh; c++;
 
 		switch(vmode)
 		{
@@ -260,6 +262,9 @@ start:
 						SoundTest();
 						break;
 					case 9:
+						HelpWindow(GENERALHELP);
+						break;
+					case 10:
 						ChangeResolution();
 						FreeImage(&scanlines);    
 						FreeImage(&title);    
@@ -268,7 +273,7 @@ start:
 						// not pretty, but "clean"
 						goto start;
 						break;
-					case 10:
+					case 11:
 						DrawCredits();
 						break;
 				}                         
@@ -468,6 +473,7 @@ void DrawPluge()
 		pvr_scene_finish();
 	}
 	FreeImage(&back);
+	return;
 }
 
 void DrawGrayRamp()
@@ -501,6 +507,7 @@ void DrawGrayRamp()
 		pvr_scene_finish();
 	}
 	FreeImage(&back);
+	return;
 }
 
 void DrawWhiteScreen()
@@ -574,6 +581,7 @@ void DrawWhiteScreen()
 		pvr_scene_finish();
 	}
 	FreeImage(&back);
+	return;
 }
 
 void DrawColorBars()
@@ -607,6 +615,7 @@ void DrawColorBars()
 		pvr_scene_finish();
 	}
 	FreeImage(&back);
+	return;
 }
 
 void Draw601ColorBars()
@@ -640,6 +649,7 @@ void Draw601ColorBars()
 		pvr_scene_finish();
 	}
 	FreeImage(&back);
+	return;
 }
 
 void DrawGrid()
@@ -681,6 +691,7 @@ void DrawGrid()
 	}
 
 	FreeImage(&back);
+	return;
 }
 
 void DrawLinearity()
@@ -733,6 +744,7 @@ void DrawLinearity()
 	FreeImage(&gridd);
 	FreeImage(&grid);
 	FreeImage(&circles);
+	return;
 }
 
 void DropShadowTest()
@@ -893,6 +905,7 @@ void DropShadowTest()
 	FreeImage(&ssprite);
 	FreeImage(&buzz);
 	FreeImage(&buzzshadow);
+	return;
 }
 
 void StripedSpriteTest()
@@ -1014,6 +1027,7 @@ void StripedSpriteTest()
 	FreeImage(&back[2]);
 	FreeImage(&back[3]);
 	FreeImage(&striped);
+	return;
 }
 
 void LagTest()
@@ -1238,7 +1252,7 @@ void LagTest()
 			ms = (double)(res*(1000.0/60.0));
 			sprintf(msg, "%d/10 = %0.2f average frames ~= %0.2f ms", total, res, ms);
 			DrawStringS(60, 110, 1.0f, 0, 0, "+");
-			DrawStringS(55, 70 + fh*10, 1.0f, 0, 0, "-----");
+			DrawStringS(55, 70 + fh*10, 1.0f, 0, 0, "_____");
 			DrawStringS(60, 70 + fh*11, 1.0f, 1.0f, 1.0f, msg);
 			DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that a frame is around 16.67 ms");
 
@@ -1260,6 +1274,7 @@ void LagTest()
 		}
 		FreeImage(&wall);
 	}
+	return;
 }
 
 void ScrollTest()
@@ -1325,6 +1340,7 @@ void ScrollTest()
 		pvr_scene_finish();
 	}
 	FreeImage(&back);
+	return;
 }
 
 void DrawStripes()
@@ -1431,6 +1447,7 @@ void DrawStripes()
 	FreeImage(&vstripesneg);
 	FreeImage(&stripespos);
 	FreeImage(&stripesneg);
+	return;
 }
 
 void DrawCheckBoard()
@@ -1516,6 +1533,7 @@ void DrawCheckBoard()
 	}
 	FreeImage(&checkpos);
 	FreeImage(&checkneg);
+	return;
 }
 
 void SoundTest()
@@ -1594,6 +1612,7 @@ void SoundTest()
 	if(beep != SFXHND_INVALID)
 			snd_sfx_unload(beep);
 	FreeImage(&back);
+	return;
 }
 
 void DrawCredits()

@@ -11,6 +11,7 @@ include $(KOS_BASE)/Makefile.rules
 .SRCS	=	main.c \
             image.c \
             font.c \
+            help.c \
             vmodes.c \
             vmu_print.c \
             vmu.c \

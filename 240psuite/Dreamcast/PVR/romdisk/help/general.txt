@@ -1,0 +1,8 @@
+                    HELP
+
+The 240p Test Suite is designed to evaluate
+240p signal processing on modern TV sets and
+video processing equipment. 
+
+You can view help on any pattern by pressing
+the START button on your DC controller.
