@@ -79,9 +79,17 @@ void DrawString(float x, float y, float r, float g, float b, char *str)
 	font_t->r = r;
 	font_t->g = g;
 	font_t->b = b;
+	float orig_x = x;
 
 	while (*str) 
 	{    
+		if(*str == '\n')
+		{
+			x = orig_x;
+			y += fh;
+			str++;
+			continue;
+		}
     DrawChar(x, y, *str++);
 		x += fw;
   }
