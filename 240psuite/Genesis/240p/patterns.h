@@ -1,7 +1,7 @@
 #ifndef PATTERNS_H
 #define PATTERNS_H
 
-void DrawPlunge();
+void DrawPluge();
 void DrawColorBars();
 void Draw601ColorBars();
 void DrawGrid();

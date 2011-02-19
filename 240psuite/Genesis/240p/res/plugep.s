@@ -1,6 +1,6 @@
 * ---------------------------
-.global plunge_pal
-plunge_pal:
+.global pluge_pal
+pluge_pal:
 * ---------------------------
 * size:32 bytes
 

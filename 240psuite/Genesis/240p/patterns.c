@@ -3,15 +3,15 @@
 #include "patterns.h"
 
 
-void DrawPlunge()
+void DrawPluge()
 {
     u16 size;
     u16 exit = 0;
     u16 buttons, oldButtons = 0xffff, pressedButtons;
 
-    size = sizeof(plunge_tiles) / 32; 
-    VDP_setPalette(PAL0, plunge_pal);
-    VDP_loadTileData(plunge_tiles, TILE_USERINDEX, size, 1); 
+    size = sizeof(pluge_tiles) / 32; 
+    VDP_setPalette(PAL0, pluge_pal);
+    VDP_loadTileData(pluge_tiles, TILE_USERINDEX, size, 1); 
     VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
     while(!exit)
     {

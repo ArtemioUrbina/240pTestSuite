@@ -18,6 +18,7 @@ extern u16 cb601_pal[16];
 
 // Title screen
 extern u32 title_tiles[35840/4]; 
+extern u32 smenu_tiles[35840/4]; 
 extern u32 back_tiles[35840/4]; 
 extern u16 title_pal[16]; 
 
@@ -73,7 +74,7 @@ extern u32 solid_tiles[32/4];
 extern u32 grayramp_tiles[35840/4]; 
 
 // Plunge
-extern u32 plunge_tiles[35840/4]; 
-extern u16 plunge_pal[16]; 
+extern u32 pluge_tiles[35840/4]; 
+extern u16 pluge_pal[16]; 
 
 #endif

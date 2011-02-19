@@ -8,6 +8,5 @@ void ScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
 void SoundTest();
-void DrawCredits();
 
 #endif
