@@ -44,7 +44,7 @@ static inline void DrawScanlines()
 
 void TestPatternsMenu();
 
-void DrawPlunge();
+void DrawPluge();
 void DrawWhiteScreen();
 void DrawGrayRamp();
 void DrawColorBars();
@@ -308,7 +308,7 @@ void TestPatternsMenu()
 
 		DrawImage(title);
 
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Plunge"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Pluge"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Grid"); y += fh; c++;
@@ -401,7 +401,7 @@ void TestPatternsMenu()
 				switch(sel)
 				{
 					case 1:
-						DrawPlunge();
+						DrawPluge();
 						break;
 					case 2:
 						DrawColorBars();
@@ -437,15 +437,15 @@ void TestPatternsMenu()
 	return;
 }
 
-void DrawPlunge()
+void DrawPluge()
 {
 	int         done = 0;
 	uint16      oldbuttons = 0xffff, pressed;    
 	ImagePtr    back;
 
-	back = LoadImage("/rd/plunge.png", 1);
+	back = LoadImage("/rd/pluge.png", 1);
     
-	updateVMU(" Plunge ", "", 1);
+	updateVMU(" Pluge ", "", 1);
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -1529,7 +1529,7 @@ void SoundTest()
 	back = LoadImage("/rd/back.png", 1);
 	beep = snd_sfx_load("/rd/beep.wav");
     
-	updateVMU(" Plunge ", "", 1);
+	updateVMU(" Pluge ", "", 1);
 	while(!done) 
 	{
 		pvr_wait_ready();
