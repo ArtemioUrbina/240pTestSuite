@@ -867,15 +867,15 @@ void SoundTest()
 						if(sel == 0)
 									startPlay_PCM(beep, len, 44100, AUDIO_PAN_LEFT);            
 
-						if(sel == 0)
+						if(sel == 1)
 									startPlay_PCM(beep, len, 44100, AUDIO_PAN_CENTER);            
 
 						if(sel == 2)
 									startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);           						
 				}
         		
-				VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL0, 0, 0, 0), 15, 6);
-    		VDP_drawTextBG(APLAN, "Left Channel", TILE_ATTR(sel == 0 ? PAL2 : PAL0, 0, 0, 0), 6, 12);
+				VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL0, 0, 0, 0), 15, 5);
+    		VDP_drawTextBG(APLAN, "Left Channel", TILE_ATTR(sel == 0 ? PAL2 : PAL0, 0, 0, 0), 4, 12);
     		VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL2 : PAL0, 0, 0, 0), 14, 14);
     		VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL2 : PAL0, 0, 0, 0), 22, 12);    
 
