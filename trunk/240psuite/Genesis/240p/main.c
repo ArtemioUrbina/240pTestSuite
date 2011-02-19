@@ -26,6 +26,7 @@
 #include "tests.h"
 
 void TestPatternMenu();
+void DrawCredits();
 
 int main() 
 { 
@@ -149,8 +150,8 @@ void TestPatternMenu()
             VDP_setPalette(PAL3, gillian_pal); 
     
             ind = TILE_USERINDEX; 
-            size = sizeof(title_tiles) / 32; 
-            VDP_loadTileData(title_tiles, ind, size, 1); 
+            size = sizeof(smenu_tiles) / 32; 
+            VDP_loadTileData(smenu_tiles, ind, size, 1); 
             ind += size;
             size = sizeof(gillian_tiles) / 32; 
             VDP_loadTileData(gillian_tiles, ind, size, 1); 
@@ -162,7 +163,7 @@ void TestPatternMenu()
                 
 
         pos = 6;
-				VDP_drawTextBG(APLAN, "Plunge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+				VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
         VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
         VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
         VDP_drawTextBG(APLAN, "Grid", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -199,7 +200,7 @@ void TestPatternMenu()
             switch(cursel)
             {
 								case 1:
-                    DrawPlunge();
+                    DrawPluge();
                     break;
                 case 2:
                     DrawColorBars();
@@ -235,4 +236,46 @@ void TestPatternMenu()
 
     return;
 } 
+
+void DrawCredits()
+{
+    u16 ind = 0, size = 0, exit = 0, pos = 6;
+    u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+    VDP_setPalette(PAL0, palette_grey);
+    VDP_setPalette(PAL1, title_pal); 
+    VDP_setPalette(PAL2, palette_green);
+    VDP_setPalette(PAL3, bw_pal);    
+
+    ind = TILE_USERINDEX; 
+    size = sizeof(back_tiles) / 32; 
+    VDP_loadTileData(back_tiles, ind, size, 1); 
+    
+    VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
+    
+    VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "SDK:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "http://code.google.com/p/sgdk/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
+    VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+
+		VDP_drawTextBG(APLAN, "Ver. 1.3", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+    while(!exit)
+    {
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+		
+				if (pressedButtons & BUTTON_START)
+					exit = 1;
+
+        VDP_waitVSync();
+    }
+}
+
 

@@ -1,6 +1,6 @@
 * ---------------------------
-.global plunge_tiles
-plunge_tiles:
+.global pluge_tiles
+pluge_tiles:
 * ---------------------------
 * size:35840 bytes
 
