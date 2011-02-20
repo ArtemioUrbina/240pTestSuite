@@ -1,0 +1,28 @@
+                  COLORBARS 1/2
+
+This pattern allows you to calibrate each color:
+Red, Green and Blue; as  well as the white level.
+
+This is adjusted in the same way black levels
+are set with the PLUGE. If you adjusted the black
+level correctly with the PLUGE, the rectangles 
+under the "1" column should be barely visible.
+
+Adjust the white level first, this is done using
+the "Contrast" control on your TV set. Raise it
+until you cannot distinguish between the blocks
+under "E" and "F", and lower it slowly until you
+can clearly tell them appart.          (cont...)
+                  COLORBARS 2/2
+The same procedure should be used with each
+color, raise the control that adjusts the
+individual color level (not the color/tint one)
+until you can't tell the box under "F" from the
+one under "E", and then lower it until you can
+distinguish them clearly. 
+
+Repeat for each color and you are set.
+
+
+
+
