@@ -12,7 +12,7 @@
 
 extern ImagePtr    scanlines;
 
-uint16	showhelp = 1;
+uint16	showhelp = 0;
 
 static inline void DrawScanlines()
 {
@@ -104,9 +104,11 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 		return 1;
 
 	back = LoadImage("/rd/help.png", 1);
-	back->alpha = 0.6f;
+	back->alpha = 0.75f;
     
 	updateVMU("   Help  ", "", 1);
+	if(main)
+		showhelp = 1;
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -157,7 +159,8 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 
 		pvr_scene_finish();
 	}
-	free(buffer);
+	if(buffer)
+		free(buffer);
 	if(pages)
 		free(pages);
 	FreeImage(&back);

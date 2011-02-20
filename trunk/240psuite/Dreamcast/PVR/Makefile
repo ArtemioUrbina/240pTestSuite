@@ -33,7 +33,7 @@ romdisk.o: romdisk.img
 	$(KOS_BASE)/utils/bin2o/bin2o romdisk.img romdisk romdisk.o
 
 clean:
-	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin romdisk.o romdisk.img
+	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin romdisk.o romdisk.img 240pPVR.cdi
 
 $(OBJS): $(HEADERS) romdisk.o
 
@@ -47,4 +47,11 @@ $(TARGET).bin: $(TARGET).elf
 
 run: $(TARGET).bin
 	$(KOS_LOADER) $(TARGET).bin
+
+cdi: $(TARGET).bin
+	scramble $(TARGET).bin 1ST_READ.BIN
+	mkisofs -C 0,11702 -V 240pPVR -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 1ST_READ.BIN
+	cdi4dc 240p.iso 240pPVR.cdi
+	rm 240p.iso 1ST_READ.BIN
+
 
