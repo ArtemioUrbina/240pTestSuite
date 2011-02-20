@@ -1,6 +1,6 @@
                       GRID
 
-This grid uses the full 320x240 resoolution, and
+This grid uses the full 320x240 resolution, and
 should fill your display's 4:3 visible area. 
 
 You can use it to verify that all the visible 
