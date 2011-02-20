@@ -1,10 +1,10 @@
                     PLUGE
 
-A picture line-up generation equipment (PLUGE
-or pluge) is a test pattern used in order to
-adjust the black level and contrast of a video
-signal. Various PLUGE patterns can be generated,
-the most common consisting of three vertical
-bars of super-black, normal black, and
-near-black and two rectangles of mid-gray and
-white.
+A picture line-up generation equipment (PLUGE or
+pluge) is a test pattern used in order to adjust
+the black level and contrast of a video signal.
+
+Various PLUGE patterns can be generated, the most
+common consisting of three vertical bars of super-
+black, normal black, and near-black and two
+rectangles of mid-gray and white.
