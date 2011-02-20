@@ -1,0 +1,15 @@
+                      GRID
+
+This grid uses the full 320x240 resoolution, and
+should fill your display's 4:3 visible area. 
+
+You can use it to verify that all the visible 
+area is being displayed, and that there is no
+distortion present
+
+NOTE: When using Composite, SCART/RGB-21 or
+S-Video the last line is not visible. This is not
+a probelm with your display. To help you set it
+up, use the D-PAD to move the pattern. When doing
+this, an offset will be displayed on the top
+right corner of the screen.

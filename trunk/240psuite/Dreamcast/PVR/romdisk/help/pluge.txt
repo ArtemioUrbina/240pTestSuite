@@ -1,10 +1,25 @@
-                    PLUGE
+                    PLUGE 1/2
 
-A picture line-up generation equipment (PLUGE or
-pluge) is a test pattern used in order to adjust
-the black level and contrast of a video signal.
+The picture line-up generation equipment (PLUGE)
+is a test pattern used to adjust the black level
+and contrast of a video signal.
 
-Various PLUGE patterns can be generated, the most
-common consisting of three vertical bars of super-
-black, normal black, and near-black and two
-rectangles of mid-gray and white.
+The pattern in this suite is mainly designed to
+adjust the black level. The control for setting 
+this on your TV is usualy named "Brightness".
+
+Reduce the Brightness until these bars: 
+->   <-                                    ->   <-
+are no longer visible, and then slowly raise it
+until they are *just* visible. 
+(Do it without this help window open)    (cont...)
+                    PLUGE 2/2
+
+This adjustment assures that anything intended
+to be black is actually black, and allows all
+detail to be seen on dark scenes.
+
+
+
+
+

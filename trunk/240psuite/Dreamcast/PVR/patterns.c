@@ -106,7 +106,10 @@ void DrawGrayRamp()
 			oldbuttons = st->buttons;
 			    
 			if (pressed & CONT_START)
-				done =  1;                
+			{
+				if(HelpWindow(GRAYRAMPHELP, back, 0))
+					done =  1;                
+			}
 		MAPLE_FOREACH_END()
 
 		pvr_scene_begin();
@@ -214,7 +217,10 @@ void DrawColorBars()
 			oldbuttons = st->buttons;
 			    
 			if (pressed & CONT_START)
-				done =  1;                
+			{
+				if(HelpWindow(COLORBARSHELP, back, 0))
+					done =  1;                
+			}
 		MAPLE_FOREACH_END()
 
 		pvr_scene_begin();
@@ -289,7 +295,10 @@ void DrawGrid()
 			oldbuttons = st->buttons;
 			    
 			if (pressed & CONT_START)
-				done =  1;                
+			{
+				if(HelpWindow(GRIDHELP, back, 0))
+					done =  1;                
+			}
 			if (pressed & CONT_A)
 			{
 				back->x = 0.0f;
