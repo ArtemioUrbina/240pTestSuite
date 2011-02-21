@@ -3,7 +3,7 @@
 
 uint16 InitController(uint16 num)
 {
-	uint16 buttons = 0xffffff;
+	uint16 buttons = 0xffff;
 	cont_state_t *st;
 
 	st = ReadController(num);
