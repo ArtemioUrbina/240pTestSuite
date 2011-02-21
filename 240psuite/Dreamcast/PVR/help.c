@@ -1,6 +1,7 @@
 #include <kos.h>
 #include <stdio.h>
 
+#include "controller.h"
 #include "image.h"
 #include "font.h"
 #include "vmodes.h"
@@ -92,13 +93,15 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 {
 	int         done = 0, npages = 0, page = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
 	char				*buffer = NULL, **pages = NULL;
+	controller	*st;
 
 	if(!showhelp && !main)
 		return 1;
 
+	oldbuttons = InitController(0);
 	buffer = LoadHelpFile(filename, &pages, &npages);
 	if(!buffer)
 		return 1;
@@ -113,7 +116,9 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -127,8 +132,7 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 				done =  2;                
 			if (pressed & CONT_Y)
 				showhelp =  !showhelp;                
-
-		MAPLE_FOREACH_END()
+		}
 
 		if(page > npages - 1)
 			page = npages - 1;

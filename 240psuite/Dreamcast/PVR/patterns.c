@@ -24,6 +24,7 @@
 #include <dc/sound/sound.h>
 #include <dc/sound/sfxmgr.h>
 
+#include "controller.h"
 #include "image.h"
 #include "font.h"
 #include "vmodes.h"
@@ -54,9 +55,11 @@ void DrawLinearity();
 void DrawPluge()
 {
 	int         done = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	back = LoadImage("/rd/pluge.png", 1);
     
 	updateVMU(" Pluge ", "", 1);
@@ -64,7 +67,9 @@ void DrawPluge()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -73,7 +78,7 @@ void DrawPluge()
 				if(HelpWindow(PLUGEHELP, back, 0))
 					done =  1;                
 			}
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -91,9 +96,11 @@ void DrawPluge()
 void DrawGrayRamp()
 {
 	int         done = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	back = LoadImage("/rd/grayramp.png", 1);
     
 	updateVMU("Gray Ramp", "", 1);
@@ -101,7 +108,9 @@ void DrawGrayRamp()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -110,7 +119,7 @@ void DrawGrayRamp()
 				if(HelpWindow(GRAYRAMPHELP, back, 0))
 					done =  1;                
 			}
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -128,9 +137,11 @@ void DrawGrayRamp()
 void DrawWhiteScreen()
 {
 	int         done = 0, color = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	back = LoadImage("/rd/white.png", 1);
     
 	updateVMU("White scr", "", 1);
@@ -138,7 +149,9 @@ void DrawWhiteScreen()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -150,7 +163,7 @@ void DrawWhiteScreen()
 
 			if (pressed & CONT_B)
 				color --;
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -202,9 +215,11 @@ void DrawWhiteScreen()
 void DrawColorBars()
 {
 	int         done = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	back = LoadImage("/rd/color.png", 1);
     
 	updateVMU("Colorbars", "", 1);
@@ -212,7 +227,9 @@ void DrawColorBars()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -221,7 +238,7 @@ void DrawColorBars()
 				if(HelpWindow(COLORBARSHELP, back, 0))
 					done =  1;                
 			}
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -239,9 +256,11 @@ void DrawColorBars()
 void Draw601ColorBars()
 {
 	int         done = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	back = LoadImage("/rd/601701cb.png", 1);
     
 	updateVMU("Colorbars", "with gray", 1);
@@ -249,13 +268,15 @@ void Draw601ColorBars()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
 			if (pressed & CONT_START)
 				done =  1;                
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -273,10 +294,12 @@ void Draw601ColorBars()
 void DrawGrid()
 {
 	int         done = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
 	char				msg[20];
+	controller	*st;
 
+	oldbuttons = InitController(0);
   if(vmode != NATIVE_640_FS)
 		back = LoadImage("/rd/grid.png", 1);
 	else
@@ -290,7 +313,9 @@ void DrawGrid()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -312,7 +337,7 @@ void DrawGrid()
 				back->x -= 1.0f;
 			if (pressed & CONT_DPAD_RIGHT)
 				back->x += 1.0f;
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -336,9 +361,11 @@ void DrawGrid()
 void DrawLinearity()
 {
 	int         done = 0, gridpattern = 0, showgrid = 1;
-	uint16	    oldbuttons = 0xffff, pressed;
+	uint16	    oldbuttons, pressed;
 	ImagePtr    circles, grid, gridd;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	circles = LoadImage("/rd/circles.png", 1);
 	grid = LoadImage("/rd/circles_grid.png", 1);
 	gridd = LoadImage("/rd/circles_griddot.png", 1);
@@ -348,7 +375,9 @@ void DrawLinearity()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -360,9 +389,8 @@ void DrawLinearity()
     
 			if (pressed & CONT_START)
 				done =  1;        
+		}
             
-		MAPLE_FOREACH_END()
-
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);

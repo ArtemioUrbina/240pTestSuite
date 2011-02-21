@@ -29,6 +29,7 @@
 #include "vmodes.h"
 #include "vmu.h"
 
+#include "controller.h"
 #include "tests.h"
 #include "patterns.h"
 
@@ -53,8 +54,9 @@ void DrawCredits();
 int main(void)
 {
 	int         done = 0, sel = 1, joycnt = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    title;
+	controller	*st;
 
 	/* init kos  */
 	// PM_RGB555 PM_RGB565 PM_RGB888
@@ -90,6 +92,7 @@ start:
 		scanlines->scale = 0;
 	}
     
+	oldbuttons = InitController(0);
  	while(!done) 
 	{
 		char  	res[40];
@@ -155,7 +158,8 @@ start:
 		pvr_list_finish();        
 		pvr_scene_finish();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
@@ -183,7 +187,7 @@ start:
 				{
 					scanlines->alpha -= 0.1f; 
 					if(scanlines->alpha < 0.0f)
-						scanlines->alpha = 0.0f;
+							scanlines->alpha = 0.0f;
 				}
 			}
 
@@ -193,14 +197,14 @@ start:
 				if(sel < 1)
 					sel = c;				
 			}
-    
+			
 			if (pressed & CONT_DPAD_DOWN)
 			{
 				sel ++;
 				if(sel > c)
 					sel = 1;				
 			}
-    
+			
 			if(st->joyy != 0)
 			{
 				if(++joycnt > 5)
@@ -209,7 +213,7 @@ start:
 						sel ++;
 					if(st->joyy < 0)
 						sel --;
-    
+		
 					if(sel < 1)
 						sel = c;
 					if(sel > c)
@@ -219,7 +223,7 @@ start:
 			}
 			else
 				joycnt = 0;
-    
+			
 			if (pressed & CONT_A)
 			{
 				switch(sel)
@@ -265,10 +269,9 @@ start:
 						break;
 				}                         
 				updateVMU("240p Test", "", 1);				
+				oldbuttons = InitController(0);
 			}
 		}
-		MAPLE_FOREACH_END()
-
 		updateVMU("240p Test", "", 0);
 	}
 
@@ -281,9 +284,11 @@ start:
 void TestPatternsMenu()
 {
 	int         done = 0, sel = 1, joycnt = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    title;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	title = LoadImage("/rd/title.png", 1);    
  	while(!done) 
 	{		
@@ -327,7 +332,8 @@ void TestPatternsMenu()
 		pvr_list_finish();        
 		pvr_scene_finish();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
@@ -417,10 +423,10 @@ void TestPatternsMenu()
 						done = 1;
 						break;
 				}                         
+				oldbuttons = InitController(0);
 				updateVMU("Patterns", "", 1);
 			}			
 		}
-		MAPLE_FOREACH_END()
 
 		updateVMU("Patterns", "", 0);
 	}
@@ -432,8 +438,11 @@ void TestPatternsMenu()
 void DrawCredits()
 {
 	int         done = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
+	controller  *st;
+
+	oldbuttons = InitController(0);
 
 	back = LoadImage("/rd/back.png", 1);
     
@@ -443,14 +452,15 @@ void DrawCredits()
 		int x = 30, y = 60;
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			
 			if (pressed & CONT_START)
 				done =  1;        
-        
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -472,7 +482,7 @@ void DrawCredits()
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.41"); y += fh; 
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.42"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();        

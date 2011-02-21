@@ -16,6 +16,7 @@ include $(KOS_BASE)/Makefile.rules
             patterns.c \
             vmodes.c \
             vmu_print.c \
+            controller.c \
             vmu.c \
 
 OBJS = $(.SRCS:.c=.o)
