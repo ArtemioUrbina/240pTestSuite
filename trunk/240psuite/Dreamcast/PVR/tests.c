@@ -24,6 +24,7 @@
 #include <dc/sound/sound.h>
 #include <dc/sound/sfxmgr.h>
 
+#include "controller.h"
 #include "tests.h"
 #include "image.h"
 #include "font.h"
@@ -45,8 +46,11 @@ void DropShadowTest()
 {
 	char		  msg[50];
 	int		    done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
-	uint16		oldbuttons = 0xffff, pressed;    
+	uint16		oldbuttons, pressed;    
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow;
+	controller *st;
+
+	oldbuttons = InitController(0);
 
   if(vmode != NATIVE_640_FS)
 	{
@@ -82,7 +86,9 @@ void DropShadowTest()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -145,8 +151,7 @@ void DropShadowTest()
           sprite = 0;
         }
       }
-
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -207,7 +212,9 @@ void StripedSpriteTest()
 	int		done = 0, x = 0, y = 0, selback = 0;
 	uint16		oldbuttons = 0xffff, pressed;    
 	ImagePtr	back[4], striped;
+	controller *st;
 
+	oldbuttons = InitController(0);
   if(vmode != NATIVE_640_FS)
 	{
 		back[0] = LoadImage("/rd/motoko.png", 1);
@@ -233,7 +240,9 @@ void StripedSpriteTest()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -291,8 +300,7 @@ void StripedSpriteTest()
 				else
 					selback = 0;
 			}
-
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -329,12 +337,14 @@ void LagTest()
 	char											msg[60];
 	int												clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int												x, y, x2, y2, audio = 1, pos = 0, i = 0;
-	uint16										oldbuttons = 0xffff, pressed;    
+	uint16										oldbuttons, pressed;    
 	ImagePtr									back, spriteA, spriteB, spriteneg;
 	sfxhnd_t									beep;
 	maple_device_t						*purupuru = NULL;
 	static purupuru_effect_t	effect;
+	controller 								*st;
 
+	oldbuttons = InitController(0);
 	effect.duration = 1;
 	effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1);
 	effect.effect1 = PURUPURU_EFFECT1_INTENSITY(1);
@@ -366,7 +376,9 @@ void LagTest()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -400,8 +412,7 @@ void LagTest()
     
 			if (pressed & CONT_START)
 				done =  1;        
-    
-		MAPLE_FOREACH_END()
+		}
     
 		if(y > 132)
 		{
@@ -501,16 +512,17 @@ void LagTest()
 		done = 0;
 		wall = LoadImage("/rd/back.png", 1);
 
+		oldbuttons = InitController(0);
 		while(!done)
 		{
 			pvr_wait_ready();
 
-			MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
-				
+		  st = ReadController(0);	
+			if(st)
+			{
 				if (st->buttons & CONT_START)
 					done =  1;
-
-			MAPLE_FOREACH_END()
+			}
 	
     
 			pvr_scene_begin();
@@ -574,9 +586,11 @@ void LagTest()
 void ScrollTest()
 {
 	int         done = 0, speed = 1, acc = -1, x = 0, pause = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	back = LoadImage("/rd/MSBG-1.png", 0);
 	if(!back)
 		return;
@@ -588,7 +602,9 @@ void ScrollTest()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -606,7 +622,7 @@ void ScrollTest()
 
 			if (pressed & CONT_B)
 				acc *= -1;
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -641,10 +657,12 @@ void DrawStripes()
 {
 	int         done = 0, field = 1, alternate = 0,
     		    frame = 0, dframe = 0, vertical = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    stripespos, stripesneg;
 	ImagePtr    vstripespos, vstripesneg;
+	controller	*st;
 
+	oldbuttons = InitController(0);
   if(vmode != NATIVE_640_FS)
 	{
 		stripespos = LoadImage("/rd/stripespos.png", 1);
@@ -665,7 +683,9 @@ void DrawStripes()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -692,8 +712,7 @@ void DrawStripes()
             
 			if (pressed & CONT_B && !alternate)
 				field = !field;
-        
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -748,9 +767,11 @@ void DrawCheckBoard()
 {
 	int         done = 0, field = 1, alternate = 0,
     		    frame = 0, dframe = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    checkpos, checkneg;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	if(vmode != NATIVE_640_FS)
 	{
 		checkpos = LoadImage("/rd/checkpos.png", 1);
@@ -767,7 +788,9 @@ void DrawCheckBoard()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -791,8 +814,7 @@ void DrawCheckBoard()
             
 			if (pressed & CONT_B && !alternate)
 				field = !field;
-        
-		MAPLE_FOREACH_END()
+		}
 
 		pvr_scene_begin();
 
@@ -833,10 +855,12 @@ void DrawCheckBoard()
 void SoundTest()
 {
 	int         done = 0, sel = 1, play = 0, pan = 0;
-	uint16      oldbuttons = 0xffff, pressed;    
+	uint16      oldbuttons, pressed;    
 	ImagePtr    back;
 	sfxhnd_t		beep;
+	controller	*st;
 
+	oldbuttons = InitController(0);
 	snd_init();
 	back = LoadImage("/rd/back.png", 1);
 	beep = snd_sfx_load("/rd/beep.wav");
@@ -846,7 +870,9 @@ void SoundTest()
 	{
 		pvr_wait_ready();
 
-		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
+		st = ReadController(0);
+		if(st)
+		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			    
@@ -864,7 +890,7 @@ void SoundTest()
 
 			if (pressed & CONT_DPAD_RIGHT)
 				sel ++;
-		MAPLE_FOREACH_END()
+		}
 		
 		if(sel < 0)
 			sel = 2;
