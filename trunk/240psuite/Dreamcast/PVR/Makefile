@@ -33,7 +33,7 @@ romdisk.o: romdisk.img
 	$(KOS_BASE)/utils/bin2o/bin2o romdisk.img romdisk romdisk.o
 
 clean:
-	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin romdisk.o romdisk.img 240pPVR.cdi
+	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin romdisk.o romdisk.img 240pPVR.cdi 240p-DC-PVR*.zip
 
 $(OBJS): $(HEADERS) romdisk.o
 
@@ -53,5 +53,5 @@ cdi: $(TARGET).bin
 	mkisofs -C 0,11702 -V 240pPVR -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 1ST_READ.BIN
 	cdi4dc 240p.iso 240pPVR.cdi
 	rm 240p.iso 1ST_READ.BIN
-
+	zip 240p-DC-PVR-1.4x.zip  README.TXT 240pPVR.cdi
 
