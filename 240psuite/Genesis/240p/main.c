@@ -40,16 +40,17 @@ int main()
     VDP_setScreenWidth320(); 
     VDP_setScreenHeight224(); 
 
+		VDP_loadFont(font_tiles, 1);
     while(1)
     {
         if(reload)
         {
-            VDP_setPalette(PAL2, title_pal); 
+            VDP_setPalette(PAL2, back_pal); 
             VDP_setPalette(PAL3, gillian_pal); 
     
             ind = TILE_USERINDEX; 
-            size = sizeof(title_tiles) / 32; 
-            VDP_loadTileData(title_tiles, ind, size, 1); 
+            size = sizeof(back_tiles) / 32; 
+            VDP_loadTileData(back_tiles, ind, size, 1); 
             ind += size;
             size = sizeof(gillian_tiles) / 32; 
             VDP_loadTileData(gillian_tiles, ind, size, 1); 
@@ -146,12 +147,12 @@ void TestPatternMenu()
     {
         if(reload)
         {
-            VDP_setPalette(PAL2, title_pal); 
+            VDP_setPalette(PAL2, back_pal); 
             VDP_setPalette(PAL3, gillian_pal); 
     
             ind = TILE_USERINDEX; 
-            size = sizeof(smenu_tiles) / 32; 
-            VDP_loadTileData(smenu_tiles, ind, size, 1); 
+            size = sizeof(back_tiles) / 32; 
+            VDP_loadTileData(back_tiles, ind, size, 1); 
             ind += size;
             size = sizeof(gillian_tiles) / 32; 
             VDP_loadTileData(gillian_tiles, ind, size, 1); 
@@ -243,10 +244,10 @@ void DrawCredits()
     u16 buttons, oldButtons = 0xffff, pressedButtons;
 
     VDP_setPalette(PAL0, palette_grey);
-    VDP_setPalette(PAL1, title_pal); 
+    VDP_setPalette(PAL1, back_pal); 
     VDP_setPalette(PAL2, palette_green);
     VDP_setPalette(PAL3, bw_pal);    
-
+		
     ind = TILE_USERINDEX; 
     size = sizeof(back_tiles) / 32; 
     VDP_loadTileData(back_tiles, ind, size, 1); 

@@ -17,14 +17,14 @@ extern u32 cb601_tiles[35840/4];
 extern u16 cb601_pal[16];
 
 // Title screen
-extern u32 title_tiles[35840/4]; 
-extern u32 smenu_tiles[35840/4]; 
 extern u32 back_tiles[35840/4]; 
-extern u16 title_pal[16]; 
+extern u16 back_pal[16]; 
 
 extern u32 gillian_tiles[4032/4]; 
 extern u16 gillian_pal[16]; 
 
+// Font
+extern u32 font_tiles[3072/4];
 // Checkerboard
 extern u32 check_tile[32/4]; 
 extern u32 check_tile_inv[32/4]; 

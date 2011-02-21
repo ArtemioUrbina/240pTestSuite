@@ -679,7 +679,7 @@ void LagTest()
         fix32 totald = 0, cnt, tot;
         u16 total = 0, count = 0, c = 0;       
 
-        VDP_setPalette(PAL3, title_pal); 
+        VDP_setPalette(PAL3, back_pal); 
 
         size = sizeof(back_tiles) / 32; 
         VDP_loadTileData(back_tiles,  TILE_USERINDEX, size, 1); 
@@ -831,7 +831,7 @@ void SoundTest()
 
 		len = sizeof(beep);
     VDP_setPalette(PAL0, palette_grey);
-    VDP_setPalette(PAL1, title_pal); 
+    VDP_setPalette(PAL1, back_pal); 
     VDP_setPalette(PAL2, palette_green);
     VDP_setPalette(PAL3, bw_pal);    
 

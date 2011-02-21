@@ -1,6 +1,6 @@
 * ---------------------------
-.global title_pal
-title_pal:
+.global back_pal
+back_pal:
 * ---------------------------
 * size:32 bytes
 
