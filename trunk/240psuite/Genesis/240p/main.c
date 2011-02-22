@@ -30,17 +30,17 @@ void DrawCredits();
 
 int main() 
 { 
-	u16 cursel = 1, pos, reload = 1;
-	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 ind = 0, size = 0;
-	
-	VDP_init(); 
-	JOY_init();
-	
-	VDP_setScreenWidth320(); 
-	VDP_setScreenHeight224(); 
-	
-	VDP_loadFont(font_tiles, 1);
+  u16 cursel = 1, pos, reload = 1;
+  u16 buttons, oldButtons = 0xffff, pressedButtons;
+  u16 ind = 0, size = 0;
+  
+  VDP_init(); 
+  JOY_init();
+  
+  VDP_setScreenWidth320(); 
+  VDP_setScreenHeight224(); 
+  
+  VDP_loadFont(font_tiles, 1);
   while(1)
   {
     if(reload)
@@ -64,34 +64,34 @@ int main()
     VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
     VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
     VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
       if(cursel > 9)
-				cursel = 1;
+        cursel = 1;
     }
 
     if (pressedButtons & BUTTON_UP)
     {
       cursel --;
       if(cursel < 1)
-				cursel = 9;
+        cursel = 9;
     }
 
-		if (pressedButtons & BUTTON_A)
+    if (pressedButtons & BUTTON_A)
     {            
       VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
-			VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);			
+      VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);      
       switch(cursel)
       {
         case 1:
@@ -101,21 +101,21 @@ int main()
           DropShadowTest();
           break;
         case 3:
-	        StripedSpriteTest();
+          StripedSpriteTest();
           break;
         case 4:
           LagTest();   
           break;
-				case 5:
+        case 5:
           ScrollTest();   
           break;
-  	    case 6:
-					DrawStripes();   
-					break;
+        case 6:
+          DrawStripes();   
+          break;
         case 7: 
           DrawCheckBoard();                                   
           break;  
-				case 8: 
+        case 8: 
           SoundTest();                                   
           break;  
         case 9: 
@@ -128,7 +128,7 @@ int main()
       VDP_resetScreen();
       reload = 1;
     }
-		VDP_waitVSync();
+    VDP_waitVSync();
   }
 
   return 0;
@@ -161,7 +161,7 @@ void TestPatternMenu()
             
 
     pos = 6;
-		VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Grid", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -170,34 +170,34 @@ void TestPatternMenu()
     VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
     VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
       if(cursel > 8)
-				cursel = 1;
+        cursel = 1;
     }
 
     if (pressedButtons & BUTTON_UP)
     {
       cursel --;
       if(cursel < 1)
-				cursel = 8;
+        cursel = 8;
     }
 
-		if (pressedButtons & BUTTON_B)
-			done = 1;            
-		
-		if (pressedButtons & BUTTON_A)
+    if (pressedButtons & BUTTON_B)
+      done = 1;            
+    
+    if (pressedButtons & BUTTON_A)
     {            
       VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
-			VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);			
+      VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);      
       switch(cursel)
       {
-				case 1:
+        case 1:
           DrawPluge();
           break;
         case 2:
@@ -215,7 +215,7 @@ void TestPatternMenu()
         case 6:
           DrawGrayRamp();
           break;
-				case 7:
+        case 7:
           DrawWhiteScreen();
           break;
         case 8: 
@@ -244,7 +244,7 @@ void DrawCredits()
   VDP_setPalette(PAL1, back_pal); 
   VDP_setPalette(PAL2, palette_green);
   VDP_setPalette(PAL3, bw_pal);    
-	
+  
   ind = TILE_USERINDEX; 
   size = sizeof(back_tiles) / 32; 
   VDP_loadTileData(back_tiles, ind, size, 1); 
@@ -262,15 +262,15 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL2, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-	VDP_drawTextBG(APLAN, "Ver. 1.3", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+  VDP_drawTextBG(APLAN, "Ver. 1.3", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
   while(!exit)
   {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
     VDP_waitVSync();
   }
