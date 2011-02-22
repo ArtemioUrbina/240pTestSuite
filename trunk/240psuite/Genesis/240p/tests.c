@@ -60,22 +60,22 @@ void DrawCheckBoard()
     {
       count ++;
       if(count > 59)
-				count = 0;
+        count = 0;
 
       intToStr(count, cntstr, 2);
       VDP_drawText("Frame:", 2, 25);
       VDP_drawText(cntstr, 8, 25);
     }
 
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
-   	if (pressedButtons & BUTTON_A)
-			alternate = ~alternate;
-	
+     if (pressedButtons & BUTTON_A)
+      alternate = ~alternate;
+  
     if (pressedButtons & BUTTON_B && !alternate)
-		{
+    {
       if(field == 0)
       {
         VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
@@ -89,12 +89,12 @@ void DrawCheckBoard()
     }   
 
     if (pressedButtons & BUTTON_C)
-			docounter = ~docounter;
-	
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+      docounter = ~docounter;
+  
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
-		VDP_waitVSync();
+    VDP_waitVSync();
   }
 }
 
@@ -136,22 +136,22 @@ void DrawStripes()
     {
       count ++;
       if(count > 59)
-				count = 0;
+        count = 0;
 
       intToStr(count, cntstr, 2);
       VDP_drawText("Frame:", 2, 25);
       VDP_drawText(cntstr, 8, 25);
     }
 
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
     if (pressedButtons & BUTTON_A)
-			alternate = ~alternate;
+      alternate = ~alternate;
 
     if (pressedButtons & BUTTON_B && !alternate)
-		{
+    {
       if(field == 0)
       {
         VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
@@ -165,10 +165,10 @@ void DrawStripes()
     }   
 
     if (pressedButtons & BUTTON_C)
-			docounter = ~docounter;
+      docounter = ~docounter;
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
     VDP_waitVSync();
   }
@@ -283,7 +283,7 @@ void DropShadowTest()
       int index = 0;
 
       if(sprite == 1)
-				index = 4;
+        index = 4;
       VDP_setSpritePosition(index++, x, y);
       VDP_setSpritePosition(index++, x, y+8);
       VDP_setSpritePosition(index++, x, y+16);
@@ -296,7 +296,7 @@ void DropShadowTest()
       int index = 0;
 
       if(sprite == 1)
-				index = 4;
+        index = 4;
       VDP_setSpritePosition(index++, 320, 224);
       VDP_setSpritePosition(index++, 320, 224);
       VDP_setSpritePosition(index++, 320, 224);
@@ -305,44 +305,44 @@ void DropShadowTest()
       field = !field;
     }
 
-		buttons = JOY_readJoypad(JOY_1);
+    buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    oldButtons = buttons;
 
     if (buttons & BUTTON_UP)
-		{
+    {
       if(y > 0)
-				y --;   
+        y --;   
     }   
 
     if (buttons & BUTTON_DOWN)
-		{
+    {
       if(y < 192)
-				y ++;   
+        y ++;   
     }   
 
     if (buttons & BUTTON_LEFT)
-		{
+    {
       if(x > 0)
-				x --;   
+        x --;   
     }   
 
     if (buttons & BUTTON_RIGHT)
-		{
+    {
       if(x < 288)
-				x ++;   
+        x ++;   
     }   
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
     if (pressedButtons & BUTTON_A)
     {
       invert = !invert;
       if(invert)
-				VDP_drawTextBG(APLAN, "Shadow on odd frames ", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
+        VDP_drawTextBG(APLAN, "Shadow on odd frames ", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
       else
-				VDP_drawTextBG(APLAN, "Shadow on even frames", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
+        VDP_drawTextBG(APLAN, "Shadow on even frames", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
       
       text = 60;            
     }
@@ -350,9 +350,9 @@ void DropShadowTest()
     if (pressedButtons & BUTTON_B)
     {
       if(back < 3)
-				back ++;
+        back ++;
       else
-				back = 0;
+        back = 0;
       
       VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
       changeback = 1;
@@ -418,7 +418,7 @@ void StripedSpriteTest()
     if(changeback)
     {
       changeback = 0;
-      ind = TILE_USERINDEX; 						
+      ind = TILE_USERINDEX;             
       switch(back)
       {
         case 0:
@@ -427,7 +427,7 @@ void StripedSpriteTest()
           VDP_setPalette(PAL1, motoko_pal);
           VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
           break;
-				case 1:
+        case 1:
           size = sizeof(sonicback_tiles) / 32; 
           VDP_loadTileData(sonicback_tiles, ind, size, 1); 
           VDP_setPalette(PAL1, sonicback_pal);
@@ -453,43 +453,43 @@ void StripedSpriteTest()
     VDP_setSpritePosition(2, x, y+16);
     VDP_setSpritePosition(3, x, y+24);
         
-		buttons = JOY_readJoypad(JOY_1);
+    buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    oldButtons = buttons;
 
     if (buttons & BUTTON_UP)
-		{
+    {
       if(y > 0)
-				y --;   
+        y --;   
     }   
 
     if (buttons & BUTTON_DOWN)
-		{
+    {
       if(y < 192)
-				y ++;   
+        y ++;   
     }   
 
     if (buttons & BUTTON_LEFT)
-		{
+    {
       if(x > 0)
-				x --;   
+        x --;   
     }   
 
     if (buttons & BUTTON_RIGHT)
-		{
+    {
       if(x < 288)
-				x ++;   
+        x ++;   
     }   
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
     if (pressedButtons & BUTTON_A)
     {
       if(back > 0)
-				back --;
+        back --;
       else
-				back = 2;
+        back = 2;
       
       changeback = 1;
     }
@@ -497,12 +497,12 @@ void StripedSpriteTest()
     if (pressedButtons & BUTTON_B)
     {
       if(back < 3)
-				back ++;
+        back ++;
       else
-				back = 0;
+        back = 0;
       
       changeback = 1;
-			VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);           
+      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);           
     }        
 
     VDP_updateSprites();
@@ -564,9 +564,9 @@ void LagTest()
   len = sizeof(beep); 
   while(!exit)    
   {                        
-		buttons = JOY_readJoypad(JOY_1);
+    buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    oldButtons = buttons;
     
     if (pressedButtons & BUTTON_A)
     {            
@@ -585,12 +585,12 @@ void LagTest()
     if(y == 96) // half the screen?        
     {
       if(audio)                
-			{
-				if(speed == 1)
+      {
+        if(speed == 1)
           startPlay_PCM(beep, len, 44100, AUDIO_PAN_LEFT);            
-				else
-					startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);            
-			}	
+        else
+          startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);            
+      }  
       VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 144/8, 96/8, 32/8, 32/8);       
     }
     else
@@ -607,7 +607,7 @@ void LagTest()
       audio = !audio;    
 
     if (pressedButtons & BUTTON_START)
-			exit = 1;
+      exit = 1;
 
     if(drawoffset)
     {
@@ -766,87 +766,87 @@ void LagTest()
       VDP_drawTextBG(APLAN, " milliseconds", TILE_ATTR(PAL0, 0, 0, 0), h, v);
 
       if(total < 5)
-				VDP_drawTextBG(APLAN, "EXCELLENT REFLEXES!", TILE_ATTR(PAL1, 0, 0, 0), 14, 15);
+        VDP_drawTextBG(APLAN, "EXCELLENT REFLEXES!", TILE_ATTR(PAL1, 0, 0, 0), 14, 15);
       if(total == 0)
         VDP_drawTextBG(APLAN, "INCREDIBLE REFLEXES!!", TILE_ATTR(PAL1, 0, 0, 0), 14, 15);
-	  }
+    }
    
     while(!exit)
     {  
-		  buttons = JOY_readJoypad(JOY_1);
+      buttons = JOY_readJoypad(JOY_1);
       pressedButtons = buttons & ~oldButtons;
-		  oldButtons = buttons;
+      oldButtons = buttons;
           
       if (pressedButtons & BUTTON_START)
-			  exit = 1;
-	    VDP_waitVSync();
+        exit = 1;
+      VDP_waitVSync();
     }
-	}
+  }
 }
 
 
 void ScrollTest()
-{		
+{    
   u16 size;
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
-	int x = 0, speed = 1, acc = -1, pause = 0;
+  int x = 0, speed = 1, acc = -1, pause = 0;
   
   VDP_setPalette(PAL0, sonicback_pal);
-	size = sizeof(sonicback_tiles) / 32; 
-  VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, 1); 		
-	VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 320/8, 0, 320/8, 224/8); 
+  size = sizeof(sonicback_tiles) / 32; 
+  VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, 1);     
+  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 320/8, 0, 320/8, 224/8); 
   VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
   {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-				
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+        
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
-		if (pressedButtons & BUTTON_UP)
-			speed++;
+    if (pressedButtons & BUTTON_UP)
+      speed++;
 
-		if (pressedButtons & BUTTON_DOWN)
-			speed--;
+    if (pressedButtons & BUTTON_DOWN)
+      speed--;
 
-		if(speed > 20)				
-			speed = 20;					
-		
-		if(speed < 0)				
-			speed = 0;					
+    if(speed > 20)        
+      speed = 20;          
+    
+    if(speed < 0)        
+      speed = 0;          
 
-		if (pressedButtons & BUTTON_A)
+    if (pressedButtons & BUTTON_A)
       pause = !pause;
 
-		if (pressedButtons & BUTTON_B)
+    if (pressedButtons & BUTTON_B)
       acc *= -1;
 
-		if(!pause)
-			x += acc*speed;
+    if(!pause)
+      x += acc*speed;
 
-		if(x >= 512)
-			x = x % 512;
+    if(x >= 512)
+      x = x % 512;
 
-		if(x <= -512)
-			x = x % -512;
+    if(x <= -512)
+      x = x % -512;
 
-		VDP_setHorizontalScroll(BPLAN, 0, x);				
+    VDP_setHorizontalScroll(BPLAN, 0, x);        
     VDP_waitVSync();
   }
-	VDP_setHorizontalScroll(BPLAN, 0, 0);
+  VDP_setHorizontalScroll(BPLAN, 0, 0);
 }
 
 void SoundTest()
 {
-	int sel = 0;
- 	u16 ind = 0, size = 0, exit = 0;
+  int sel = 0;
+   u16 ind = 0, size = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16	len = 0;
+  u16  len = 0;
 
-	len = sizeof(beep);
+  len = sizeof(beep);
   VDP_setPalette(PAL0, palette_grey);
   VDP_setPalette(PAL1, back_pal); 
   VDP_setPalette(PAL2, palette_green);
@@ -855,41 +855,41 @@ void SoundTest()
   ind = TILE_USERINDEX; 
   size = sizeof(back_tiles) / 32; 
   VDP_loadTileData(back_tiles, ind, size, 1); 
-	
-	VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
+  
+  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
 
   while(!exit)
   {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
-		if (pressedButtons & BUTTON_LEFT)
-			sel --;
+    if (pressedButtons & BUTTON_LEFT)
+      sel --;
 
-		if (pressedButtons & BUTTON_RIGHT)
-			sel ++;
+    if (pressedButtons & BUTTON_RIGHT)
+      sel ++;
 
-		if(sel > 2)
-			sel = 0;
+    if(sel > 2)
+      sel = 0;
 
-		if(sel < 0)
-			sel = 2;
+    if(sel < 0)
+      sel = 2;
 
-		if (pressedButtons & BUTTON_A)
-		{
-				if(sel == 0)
-					startPlay_PCM(beep, len, 44100, AUDIO_PAN_LEFT);            			
-				if(sel == 1)
-					startPlay_PCM(beep, len, 44100, AUDIO_PAN_CENTER);            
-				if(sel == 2)
-					startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);           						
-		}
-        	
-		VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL0, 0, 0, 0), 14, 6);
+    if (pressedButtons & BUTTON_A)
+    {
+      if(sel == 0)
+        startPlay_PCM(beep, len, 44100, AUDIO_PAN_LEFT);                  
+      if(sel == 1)
+        startPlay_PCM(beep, len, 44100, AUDIO_PAN_CENTER);            
+      if(sel == 2)
+        startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);                       
+    }
+          
+    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL0, 0, 0, 0), 14, 6);
     VDP_drawTextBG(APLAN, "Left Channel", TILE_ATTR(sel == 0 ? PAL2 : PAL0, 0, 0, 0), 5, 12);
     VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL2 : PAL0, 0, 0, 0), 14, 14);
     VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL2 : PAL0, 0, 0, 0), 22, 12);    

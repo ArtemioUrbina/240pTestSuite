@@ -36,12 +36,12 @@ void DrawPluge()
   VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
   {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
     VDP_waitVSync();
   }
@@ -59,12 +59,12 @@ void DrawGrayRamp()
   VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
   {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
     VDP_waitVSync();
   }
@@ -75,7 +75,7 @@ void DrawWhiteScreen()
   u16 size;
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons, redraw = 0;
-	int	color = 0;
+  int  color = 0;
 
   size = sizeof(solid_tiles) / 32; 
 
@@ -88,52 +88,52 @@ void DrawWhiteScreen()
   VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
   {
-		if(redraw)
-		{
-			switch(color)
-			{
-				case 0:
-					VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-					break;
-				case 1:
-					VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);							
-					break;
-				case 2:
-					VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-					break;
-				case 3:
-					VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-					break;
-				case 4:
-					VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-					break;
-			}
-			redraw = 0;
-		}
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    if(redraw)
+    {
+      switch(color)
+      {
+        case 0:
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+          break;
+        case 1:
+          VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);              
+          break;
+        case 2:
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+          break;
+        case 3:
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+          break;
+        case 4:
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+          break;
+      }
+      redraw = 0;
+    }
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
-		if (pressedButtons & BUTTON_A)
-		{
-			color ++;
-			redraw = 1;
-		}
+    if (pressedButtons & BUTTON_A)
+    {
+      color ++;
+      redraw = 1;
+    }
 
-		if (pressedButtons & BUTTON_B)
-		{
-			color --;
-			redraw = 1;
-		}	
+    if (pressedButtons & BUTTON_B)
+    {
+      color --;
+      redraw = 1;
+    }  
 
-		if(color > 4)
-			color = 0;
+    if(color > 4)
+      color = 0;
 
-		if(color < 0)
-			color = 4;
+    if(color < 0)
+      color = 4;
 
     VDP_waitVSync();
   }
@@ -151,12 +151,12 @@ void Draw601ColorBars()
   VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
   {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
     VDP_waitVSync();
   }
@@ -193,21 +193,21 @@ void DrawLinearity()
       if(showgrid)
       {
         if(gridpattern == 1)
-					VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+          VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
         else
-					VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 320/8, 224/8); 
+          VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 320/8, 224/8); 
       }
       else
-				VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
+        VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
       redraw = 0;
     }   
 
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
     if (pressedButtons & BUTTON_A)
     {
@@ -216,7 +216,7 @@ void DrawLinearity()
     }
     
     if (pressedButtons & BUTTON_B)
-		{
+    {
       if(gridpattern == 1)
           gridpattern = 2;
       else
@@ -241,12 +241,12 @@ void DrawGrid()
   VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
   {
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
 
-		if (pressedButtons & BUTTON_START)
-			exit = 1;
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
 
     VDP_waitVSync();
   }
@@ -292,12 +292,12 @@ void DrawColorBars()
 
     while(!exit)
     {
-				buttons = JOY_readJoypad(JOY_1);
-				pressedButtons = buttons & ~oldButtons;
-				oldButtons = buttons;
-		
-				if (pressedButtons & BUTTON_START)
-					exit = 1;
+        buttons = JOY_readJoypad(JOY_1);
+        pressedButtons = buttons & ~oldButtons;
+        oldButtons = buttons;
+    
+        if (pressedButtons & BUTTON_START)
+          exit = 1;
 
         VDP_waitVSync();
     }
