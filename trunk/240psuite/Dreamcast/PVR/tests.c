@@ -11,12 +11,12 @@
  *
  * The 240p Test Suite is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
 #include <kos.h>
@@ -34,7 +34,7 @@
 #include "help.h"
 
 
-extern ImagePtr    scanlines;
+extern ImagePtr		scanlines;
 
 static inline void DrawScanlines()
 {
@@ -44,44 +44,44 @@ static inline void DrawScanlines()
 
 void DropShadowTest()
 {
-	char		  msg[50];
-	int		    done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
-	uint16		oldbuttons, pressed;    
+	char			msg[50];
+	int				done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
+	uint16		oldbuttons, pressed;		
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow;
 	controller *st;
 
 	oldbuttons = InitController(0);
 
-  if(vmode != NATIVE_640_FS)
+	if(vmode != NATIVE_640_FS)
 	{
 		back[0] = LoadImage("/rd/motoko.png", 1);
 		back[1] = LoadImage("/rd/sonicbg-240.png", 1);
 		back[2] = LoadImage("/rd/checkpos.png", 1);
 		back[3] = LoadImage("/rd/stripespos.png", 1);
 	}
-  else
-  {
+	else
+	{
 		back[0] = LoadImage("/rd/480/motoko-480.png", 1);
-    back[0]->scale = 0;
-    back[1] = LoadImage("/rd/480/sonicbg-480.png", 1);
-    back[1]->scale = 0;
+		back[0]->scale = 0;
+		back[1] = LoadImage("/rd/480/sonicbg-480.png", 1);
+		back[1]->scale = 0;
 		back[2] = LoadImage("/rd/480/checkpos-480.png", 1);
-    back[2]->scale = 0;
+		back[2]->scale = 0;
 		back[3] = LoadImage("/rd/480/stripespos-480.png", 1);
-    back[3]->scale = 0;
-  }
-    
-  ssprite = LoadImage("/rd/shadow.png", 0);	
-  buzz = LoadImage("/rd/buzzbomber.png", 0);
-  buzzshadow = LoadImage("/rd/buzzbomberShadow.png", 0);
-  
-  srand((int)(time(0) ^ getpid()));
-  sprite = rand() % 2;
-  if(sprite == 0)
+		back[3]->scale = 0;
+	}
+		
+	ssprite = LoadImage("/rd/shadow.png", 0);	
+	buzz = LoadImage("/rd/buzzbomber.png", 0);
+	buzzshadow = LoadImage("/rd/buzzbomberShadow.png", 0);
+	
+	srand((int)(time(0) ^ getpid()));
+	sprite = rand() % 2;
+	if(sprite == 0)
 		shadow = ssprite;
-  else
+	else
 		shadow = buzzshadow;
-	updateVMU(" Shadow  ", "   even  ", 1);
+	updateVMU(" Shadow	", " 	even	", 1);
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -91,45 +91,45 @@ void DropShadowTest()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (st->buttons & CONT_DPAD_UP)
 				y --;
-    
+		
 			if (st->buttons & CONT_DPAD_DOWN)
 				y ++;
-    
+		
 			if (st->buttons & CONT_DPAD_LEFT)
 				x --;
-    
+		
 			if (st->buttons & CONT_DPAD_RIGHT)
 				x ++;
 
 			// Joystick
 			if(st->joyx != 0)
 				x += st->joyx/20;
-    
+		
 			if(st->joyy != 0)
 				y += st->joyy/20;
-    
+		
 			if (pressed & CONT_START)
-				done =  1;        
+				done =	1;				
 
 			if (pressed & CONT_X)		
 			{
-				invert = !invert;                       	
+				invert = !invert; 												
 				if(invert)
 				{
 					sprintf(msg, "Shadow on odd frames");
-					updateVMU(" Shadow  ", "    odd  ", 1);
+					updateVMU(" Shadow	", "		odd	", 1);
 				}
 				else
 				{
 					sprintf(msg, "Shadow on even frames");
-					updateVMU(" Shadow  ", "   even  ", 1);
+					updateVMU(" Shadow	", " 	even	", 1);
 				}
 				text = 60;
 			}
-        
+				
 			if (pressed & CONT_A)
 			{
 				if(selback < 3)
@@ -137,20 +137,20 @@ void DropShadowTest()
 				else
 					selback = 0;
 			}
-    
+		
 			if (pressed & CONT_B)
-      {
-        if(sprite == 0)
-        {
-          shadow = buzzshadow;
-          sprite = 1;
-        }
-        else
-        {
-          shadow = ssprite;
-          sprite = 0;
-        }
-      }
+			{
+				if(sprite == 0)
+				{
+					shadow = buzzshadow;
+					sprite = 1;
+				}
+				else
+				{
+					shadow = ssprite;
+					sprite = 0;
+				}
+			}
 		}
 
 		pvr_scene_begin();
@@ -185,15 +185,15 @@ void DropShadowTest()
 		}
 		else
 			frame = !frame;
-        
-    if(sprite == 1)
-    {
-      buzz->x = x - 20;
-    	buzz->y = y - 20;
-      DrawImage(buzz);
-    }       
+				
+		if(sprite == 1)
+		{
+			buzz->x = x - 20;
+			buzz->y = y - 20;
+			DrawImage(buzz);
+		} 			
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -210,31 +210,31 @@ void DropShadowTest()
 void StripedSpriteTest()
 {	
 	int		done = 0, x = 0, y = 0, selback = 0;
-	uint16		oldbuttons = 0xffff, pressed;    
+	uint16		oldbuttons = 0xffff, pressed;		
 	ImagePtr	back[4], striped;
 	controller *st;
 
 	oldbuttons = InitController(0);
-  if(vmode != NATIVE_640_FS)
+	if(vmode != NATIVE_640_FS)
 	{
 		back[0] = LoadImage("/rd/motoko.png", 1);
 		back[1] = LoadImage("/rd/sonicbg-240.png", 1);
 		back[2] = LoadImage("/rd/checkpos.png", 1);
 		back[3] = LoadImage("/rd/stripespos.png", 1);
 	}
-  else
-  {
+	else
+	{
 		back[0] = LoadImage("/rd/480/motoko-480.png", 1);
-    back[0]->scale = 0;
-    back[1] = LoadImage("/rd/480/sonicbg-480.png", 1);
-    back[1]->scale = 0;
+		back[0]->scale = 0;
+		back[1] = LoadImage("/rd/480/sonicbg-480.png", 1);
+		back[1]->scale = 0;
 		back[2] = LoadImage("/rd/480/checkpos-480.png", 1);
-    back[2]->scale = 0;
+		back[2]->scale = 0;
 		back[3] = LoadImage("/rd/480/stripespos-480.png", 1);
-    back[3]->scale = 0;
-  }
+		back[3]->scale = 0;
+	}
 	striped = LoadImage("/rd/striped.png", 0);
-    
+		
 	updateVMU(" Striped ", "", 1);
 	while(!done) 
 	{
@@ -245,12 +245,12 @@ void StripedSpriteTest()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if(st->buttons & CONT_Y)
 			{
 				if (pressed & CONT_DPAD_UP)
 					y --;
-    	
+			
 				if (pressed & CONT_DPAD_DOWN)
 					y ++;
 	
@@ -264,7 +264,7 @@ void StripedSpriteTest()
 			{
 				if (st->buttons & CONT_DPAD_UP)
 					y --;
-    	
+			
 				if (st->buttons & CONT_DPAD_DOWN)
 					y ++;
 	
@@ -278,13 +278,13 @@ void StripedSpriteTest()
 			// Joystick
 			if(st->joyx != 0)
 				x += st->joyx/20;
-    
+		
 			if(st->joyy != 0)
 				y += st->joyy/20;
-    
+		
 			if (pressed & CONT_START)
-				done =  1;        
-            
+				done =	1;				
+						
 			if (pressed & CONT_A)
 			{
 				if(selback > 0)
@@ -292,7 +292,7 @@ void StripedSpriteTest()
 				else
 					selback = 3;
 			}
-    
+		
 			if (pressed & CONT_B)
 			{
 				if(selback < 3)
@@ -320,7 +320,7 @@ void StripedSpriteTest()
 		DrawImage(striped);
 
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -337,7 +337,7 @@ void LagTest()
 	char											msg[60];
 	int												clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int												x, y, x2, y2, audio = 1, pos = 0, i = 0;
-	uint16										oldbuttons, pressed;    
+	uint16										oldbuttons, pressed;		
 	ImagePtr									back, spriteA, spriteB, spriteneg;
 	sfxhnd_t									beep;
 	maple_device_t						*purupuru = NULL;
@@ -363,7 +363,7 @@ void LagTest()
 	y = 60;
 	x2 = 108;
 	y2 = 96;
-    
+		
 	back->x = 144;
 	back->y = 96;
 	spriteneg->x = 144;
@@ -381,20 +381,20 @@ void LagTest()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_A)
 			{
 				if(change)
 				{
 					clicks[pos] = (y - 96) *speed;
 					change = 0;
-    
+		
 					sprintf(msg, " Off: %d", clicks[pos]);
 					updateVMU("Lag Test ", msg, 1);
-    
+		
 					if(clicks[pos] >= 0)
 						pos ++;
-	    
+			
 					if(pos > 9)
 						done = 1;
 				}
@@ -406,14 +406,14 @@ void LagTest()
 				if(view > 2)
 					view = 0;
 			}
-            
+						
 			if (pressed & CONT_Y)
-				audio =  !audio;        
-    
+				audio =	!audio;				
+		
 			if (pressed & CONT_START)
-				done =  1;        
+				done =	1;				
 		}
-    
+		
 		if(y > 132)
 		{
 			speed = -1;
@@ -489,7 +489,7 @@ void LagTest()
 		DrawStringS(20, 190+2*fh, 1.0f, 1.0f, 1.0f, "\"B\" button toggles horizontal and vertical movement.");
 
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -506,9 +506,9 @@ void LagTest()
 	if(pos > 9)
 	{
 		int	total = 0;
-		double  res = 0, ms = 0;
+		double	res = 0, ms = 0;
 		ImagePtr wall;
-    
+		
 		done = 0;
 		wall = LoadImage("/rd/back.png", 1);
 
@@ -517,14 +517,14 @@ void LagTest()
 		{
 			pvr_wait_ready();
 
-		  st = ReadController(0);	
+			st = ReadController(0);	
 			if(st)
 			{
 				if (st->buttons & CONT_START)
-					done =  1;
+					done =	1;
 			}
 	
-    
+		
 			pvr_scene_begin();
 			pvr_list_begin(PVR_LIST_TR_POLY);
 
@@ -565,16 +565,16 @@ void LagTest()
 			if(total && total < 5)
 			{
 				DrawStringS(100, 120, 0.0f, 1.0f, 0.0f, "EXCELLENT REFLEXES!");
-    				updateVMUFlash("Lag Test ", " AWESOME", 1);
+				updateVMUFlash("Lag Test ", " AWESOME", 1);
 			}
 			if(total == 0)
 			{
 				DrawStringS(100, 120, 0.0f, 1.0f, 0.0f, "INCREDIBLE REFLEXES!!");
-    				updateVMUFlash("Lag Test ", "-PERFECT-", 1);
+				updateVMUFlash("Lag Test ", "-PERFECT-", 1);
 			}
 
 			DrawScanlines();
-			pvr_list_finish();        
+			pvr_list_finish();				
 
 			pvr_scene_finish();
 		}
@@ -585,9 +585,9 @@ void LagTest()
 
 void ScrollTest()
 {
-	int         done = 0, speed = 1, acc = -1, x = 0, pause = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
+	int 				done = 0, speed = 1, acc = -1, x = 0, pause = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -597,7 +597,7 @@ void ScrollTest()
 	
 	back->y = (dH - 240)/2;
 
-	updateVMU(" Scroll  ", "", 1);
+	updateVMU(" Scroll	", "", 1);
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -607,15 +607,15 @@ void ScrollTest()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_DPAD_UP)
-				speed ++;             
+				speed ++; 						
 
 			if (pressed & CONT_DPAD_DOWN)
-				speed --;          
+				speed --;					
 
 			if (pressed & CONT_START)
-				done =  1;                
+				done =	1;								
 
 			if (pressed & CONT_A)
 				pause = !pause;
@@ -645,7 +645,7 @@ void ScrollTest()
 		CalculateUV(x, 0, dW, 240, back);
 		DrawImage(back);
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -655,15 +655,15 @@ void ScrollTest()
 
 void DrawStripes()
 {
-	int         done = 0, field = 1, alternate = 0,
-    		    frame = 0, dframe = 0, vertical = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    stripespos, stripesneg;
-	ImagePtr    vstripespos, vstripesneg;
+	int 				done = 0, field = 1, alternate = 0,
+						frame = 0, dframe = 0, vertical = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		stripespos, stripesneg;
+	ImagePtr		vstripespos, vstripesneg;
 	controller	*st;
 
 	oldbuttons = InitController(0);
-  if(vmode != NATIVE_640_FS)
+	if(vmode != NATIVE_640_FS)
 	{
 		stripespos = LoadImage("/rd/stripespos.png", 1);
 		stripesneg = LoadImage("/rd/stripesneg.png", 1);
@@ -677,7 +677,7 @@ void DrawStripes()
 	}
 	vstripespos = LoadImage("/rd/vertstripespos.png", 1);
 	vstripesneg = LoadImage("/rd/vertstripesneg.png", 1);
-    
+		
 	updateVMU(" Stripes", "", 1);
 	while(!done) 
 	{
@@ -688,28 +688,28 @@ void DrawStripes()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
-				done =  1;        
-            
+				done =	1;				
+						
 			if (pressed & CONT_A)
 			{
-				alternate = !alternate;        
+				alternate = !alternate;				
 				if(alternate)
 					updateVMU(" Stripes", "alternate", 1);
 				else
-					updateVMU(" Stripes", "  still  ", 1);
+					updateVMU(" Stripes", "	still	", 1);
 			}
-            
+						
 			if (pressed & CONT_Y)
 				vertical = !vertical;
-            
+						
 			if (pressed & CONT_X)
 			{
 				dframe = !dframe;
 				frame = 0;
 			}
-            
+						
 			if (pressed & CONT_B && !alternate)
 				field = !field;
 		}
@@ -742,16 +742,16 @@ void DrawStripes()
 
 			sprintf(msg, "Frame: %02d", frame);
 			if(vmode != NATIVE_640_FS)
-					DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
+				DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
 			else
-					DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
+				DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
 			frame ++;
 			if(frame > 59)
 				frame = 0;
 		}
 
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -765,10 +765,10 @@ void DrawStripes()
 
 void DrawCheckBoard()
 {
-	int         done = 0, field = 1, alternate = 0,
-    		    frame = 0, dframe = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    checkpos, checkneg;
+	int 				done = 0, field = 1, alternate = 0,
+						frame = 0, dframe = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		checkpos, checkneg;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -782,7 +782,7 @@ void DrawCheckBoard()
 		checkpos = LoadImage("/rd/480/checkpos-480.png", 1);
 		checkneg = LoadImage("/rd/480/checkneg-480.png", 1);
 	}
-    
+		
 	updateVMU("CHKB PTTN", "", 1);
 	while(!done) 
 	{
@@ -793,25 +793,25 @@ void DrawCheckBoard()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
-				done =  1;        
-            
+				done =	1;				
+						
 			if (pressed & CONT_A)
 			{
-				alternate = !alternate;        
+				alternate = !alternate;				
 				if(alternate)
 					updateVMU("CHKB PTTN", "alternate", 1);
 				else
-					updateVMU("CHKB PTTN", "  still  ", 1);
+					updateVMU("CHKB PTTN", "	still	", 1);
 			}
-    
+		
 			if (pressed & CONT_X)
 			{
 				dframe = !dframe;
 				frame = 0;
 			}
-            
+						
 			if (pressed & CONT_B && !alternate)
 				field = !field;
 		}
@@ -834,16 +834,16 @@ void DrawCheckBoard()
 
 			sprintf(msg, "Frame: %02d", frame);
 			if(vmode != NATIVE_640_FS)
-					DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
+				DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
 			else
-					DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
+				DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
 			frame ++;
 			if(frame > 59)
 				frame = 0;
 		}
 
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -854,9 +854,9 @@ void DrawCheckBoard()
 
 void SoundTest()
 {
-	int         done = 0, sel = 1, play = 0, pan = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
+	int 				done = 0, sel = 1, play = 0, pan = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
 	sfxhnd_t		beep;
 	controller	*st;
 
@@ -864,7 +864,7 @@ void SoundTest()
 	snd_init();
 	back = LoadImage("/rd/back.png", 1);
 	beep = snd_sfx_load("/rd/beep.wav");
-    
+		
 	updateVMU("Sound Test", "", 1);
 	while(!done) 
 	{
@@ -875,15 +875,15 @@ void SoundTest()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
 			{
 				if(HelpWindow(SOUNDHELP, NULL, 0))
-					done =  1;                
+					done =	1;								
 			}
 
 			if (pressed & CONT_A)
-				play =  1;             
+				play =	1; 						
 
 			if (pressed & CONT_DPAD_LEFT)
 				sel --;
@@ -900,21 +900,21 @@ void SoundTest()
 
 		switch(sel)
 		{
-				case 0:
-					pan = 0;
-					break;
-				case 1:
-					pan = 128;
-					break;
-				case 2:
-					pan = 255;
-					break;
+			case 0:
+				pan = 0;
+				break;
+			case 1:
+				pan = 128;
+				break;
+			case 2:
+				pan = 255;
+				break;
 		}
 
 		if(play && beep != SFXHND_INVALID)
 		{
-				snd_sfx_play(beep, 255, pan);
-				play = 0;
+			snd_sfx_play(beep, 255, pan);
+			play = 0;
 		}
 
 		pvr_scene_begin();
@@ -923,17 +923,17 @@ void SoundTest()
 		DrawImage(back);
 
 		DrawStringS(120, 60, 1.0f, 1.0f, 1.0f, "Sound Test"); 
-		DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,  sel == 0 ? 0 : 1.0f, "Left Channel"); 
-		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,  sel == 1 ? 0 : 1.0f, "Center Channel");
-		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,  sel == 2 ? 0 : 1.0f, "Right Channel");
+		DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
+		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,	sel == 1 ? 0 : 1.0f, "Center Channel");
+		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");
 		DrawScanlines();
 		
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
 	if(beep != SFXHND_INVALID)
-			snd_sfx_unload(beep);
+		snd_sfx_unload(beep);
 	FreeImage(&back);
 	return;
 }

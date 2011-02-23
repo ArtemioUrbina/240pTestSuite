@@ -11,12 +11,12 @@
  *
  * The 240p Test Suite is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
 #include <kos.h>
@@ -40,7 +40,7 @@ extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 KOS_INIT_FLAGS(INIT_DEFAULT);
 
-ImagePtr    scanlines = NULL;
+ImagePtr		scanlines = NULL;
 
 static inline void DrawScanlines()
 {
@@ -53,12 +53,12 @@ void DrawCredits();
 
 int main(void)
 {
-	int         done = 0, sel = 1, joycnt = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    title;
+	int 				done = 0, sel = 1, joycnt = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		title;
 	controller	*st;
 
-	/* init kos  */
+	/* init kos	*/
 	// PM_RGB555 PM_RGB565 PM_RGB888
 	vcable = vid_check_cable();
 	vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
@@ -71,7 +71,7 @@ int main(void)
 		PVR_SET(PVR_SCALER_CFG, 0x400);
 	}
 
-    // Turn off texture dithering
+		// Turn off texture dithering
 	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
 	{
 		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
@@ -81,7 +81,7 @@ int main(void)
 start:
 	vid_border_color(0, 0, 0);
 	pvr_set_bg_color(0.0f, 0.0f, 0.0f);
-    
+		
 	LoadFont();
 	title = LoadImage("/rd/title.png", 1);
 	if(!scanlines && vmode == FAKE_640_SL)
@@ -91,32 +91,32 @@ start:
 		scanlines->alpha = 0.7f; // XRGB-3 175 
 		scanlines->scale = 0;
 	}
-    
+		
 	oldbuttons = InitController(0);
  	while(!done) 
 	{
-		char  	res[40];
+		char		res[40];
 		float 	r = 1.0f;
 		float 	g = 1.0f;
 		float 	b = 1.0f;
-		int 	c = 1;        
+		int 	c = 1;				
 		float 	x = 40.0f;
 		float 	y = 55.0f;
-        
+				
 		pvr_wait_ready();
 		pvr_scene_begin();
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
 		DrawImage(title);
 		
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Lag Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Sound Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 
 		switch(vmode)
 		{
@@ -137,25 +137,25 @@ start:
 				break;
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Help"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
 
 		switch(vcable)
 		{
 			case CT_RGB:
-				DrawStringS(265.0f, 225.0f, 0, g,  b, "RGB");
+				DrawStringS(265.0f, 225.0f, 0, g,	b, "RGB");
 				break;
 			case CT_VGA:
-				DrawStringS(265.0f, 225.0f, 0, g,  b, "VGA");
+				DrawStringS(265.0f, 225.0f, 0, g,	b, "VGA");
 				break;
 			case CT_COMPOSITE:
-				DrawStringS(215.0f, 225.0f, 0, g,  b, "Composite");
+				DrawStringS(215.0f, 225.0f, 0, g,	b, "Composite");
 				break;
 		}
-    
+		
 		DrawScanlines();
-        
-		pvr_list_finish();        
+				
+		pvr_list_finish();				
 		pvr_scene_finish();
 
 		st = ReadController(0);
@@ -167,7 +167,7 @@ start:
 			if (st->buttons & CONT_START && st->buttons & CONT_B)
 			{
 				updateVMU(" Goodbye ", " m(_ _)m ", 1);
-				done =  1;
+				done =	1;
 			}
 #endif
 
@@ -254,8 +254,8 @@ start:
 						break;
 					case 9:
 						ChangeResolution();
-						FreeImage(&scanlines);    
-						FreeImage(&title);    
+						FreeImage(&scanlines);		
+						FreeImage(&title);		
 						ReleaseFont();
 						// we need to reload textures and stuff..
 						// not pretty, but "clean"
@@ -267,7 +267,7 @@ start:
 					case 11:
 						DrawCredits();
 						break;
-				}                         
+				} 												
 				updateVMU("240p Test", "", 1);				
 				oldbuttons = InitController(0);
 			}
@@ -275,61 +275,61 @@ start:
 		updateVMU("240p Test", "", 0);
 	}
 
-	FreeImage(&scanlines);    
-	FreeImage(&title);    
+	FreeImage(&scanlines);		
+	FreeImage(&title);		
 	ReleaseFont();
 	return 0;
 }
 
 void TestPatternsMenu()
 {
-	int         done = 0, sel = 1, joycnt = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    title;
+	int 				done = 0, sel = 1, joycnt = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		title;
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	title = LoadImage("/rd/title.png", 1);    
+	title = LoadImage("/rd/title.png", 1);		
  	while(!done) 
 	{		
 		float 	r = 1.0f;
 		float 	g = 1.0f;
 		float 	b = 1.0f;
-		int 	c = 1;        
+		int 	c = 1;				
 		float 	x = 40.0f;
 		float 	y = 55.0f;
-        
+				
 		pvr_wait_ready();
 		pvr_scene_begin();
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
 		DrawImage(title);
 
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Pluge"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Grid"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Linearity"); y += fh; c++;		
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "White Screen"); y += fh; c++;				
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Pluge"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White Screen"); y += fh; c++;				
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		switch(vcable)
 		{
 			case CT_RGB:
-				DrawStringS(265.0f, 225.0f, 0, g,  b, "RGB");
+				DrawStringS(265.0f, 225.0f, 0, g,	b, "RGB");
 				break;
 			case CT_VGA:
-				DrawStringS(265.0f, 225.0f, 0, g,  b, "VGA");
+				DrawStringS(265.0f, 225.0f, 0, g,	b, "VGA");
 				break;
 			case CT_COMPOSITE:
-				DrawStringS(215.0f, 225.0f, 0, g,  b, "Composite");
+				DrawStringS(215.0f, 225.0f, 0, g,	b, "Composite");
 				break;
 		}
-    
+		
 		DrawScanlines();
-        
-		pvr_list_finish();        
+				
+		pvr_list_finish();				
 		pvr_scene_finish();
 
 		st = ReadController(0);
@@ -364,14 +364,14 @@ void TestPatternsMenu()
 				if(sel < 1)
 					sel = c;				
 			}
-    
+		
 			if (pressed & CONT_DPAD_DOWN)
 			{
 				sel ++;
 				if(sel > c)
 					sel = 1;				
 			}
-    
+		
 			if(st->joyy != 0)
 			{
 				if(++joycnt > 5)
@@ -380,7 +380,7 @@ void TestPatternsMenu()
 						sel ++;
 					if(st->joyy < 0)
 						sel --;
-    
+		
 					if(sel < 1)
 						sel = c;
 					if(sel > c)
@@ -390,7 +390,7 @@ void TestPatternsMenu()
 			}
 			else
 				joycnt = 0;
-    
+		
 			if (pressed & CONT_B)			
 				done = 1;			
 		
@@ -422,7 +422,7 @@ void TestPatternsMenu()
 					case 8:
 						done = 1;
 						break;
-				}                         
+				} 												
 				oldbuttons = InitController(0);
 				updateVMU("Patterns", "", 1);
 			}			
@@ -431,22 +431,22 @@ void TestPatternsMenu()
 		updateVMU("Patterns", "", 0);
 	}
 	
-	FreeImage(&title);    	
+	FreeImage(&title);			
 	return;
 }
 
 void DrawCredits()
 {
-	int         done = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
-	controller  *st;
+	int 				done = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
+	controller	*st;
 
 	oldbuttons = InitController(0);
 
 	back = LoadImage("/rd/back.png", 1);
-    
-	updateVMU("  Credits", "", 1);
+		
+	updateVMU("	Credits", "", 1);
 	while(!done) 
 	{
 		int x = 30, y = 60;
@@ -459,7 +459,7 @@ void DrawCredits()
 			oldbuttons = st->buttons;
 			
 			if (pressed & CONT_START)
-				done =  1;        
+				done =	1;				
 		}
 
 		pvr_scene_begin();
@@ -485,7 +485,7 @@ void DrawCredits()
 		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.05"); y += fh; 
 
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
