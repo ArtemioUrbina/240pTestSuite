@@ -787,18 +787,53 @@ void LagTest()
 
 void ScrollTest()
 {    
-  u16 size;
-  u16 exit = 0;
+  u16 size, sonic_floor, sonic_water;
+  u16 exit = 0, frame = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   int x = 0, speed = 1, acc = -1, pause = 0;
   
-  VDP_setPalette(PAL0, sonicback_pal);
+  VDP_setPalette(PAL0, sonicback_pal);  
+  VDP_setPalette(PAL1, sonicwater_pal);
+  VDP_setPalette(PAL2, sonicfloor_pal);
+
   size = sizeof(sonicback_tiles) / 32; 
   VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, 1);     
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 320/8, 0, 320/8, 224/8); 
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+
+  sonic_water = TILE_USERINDEX + size;
+  size = sizeof(sonicwater_tiles) / 32; 
+  VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);     
+
+  sonic_floor = sonic_water + size;
+  size = sizeof(sonicfloor_tiles) / 32; 
+  VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);     
+
+  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 256/8, 152/8); 
+  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 256/8, 0, 256/8, 152/8); 
+
+  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 0, 152/8, 256/8, 48/8); 
+  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 256/8, 152/8, 256/8, 48/8); 
+
+  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + sonic_floor, 0, 96/8, 256/8, 128/8); 
+  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + sonic_floor, 256/8, 96/8, 256/8, 128/8); 
   while(!exit)
   {
+    switch(frame)
+    {
+      case 30:
+        VDP_setPalette(PAL1, sonicwater_pal);
+        break;
+      case 60:
+        VDP_setPalette(PAL1, sonicwater2_pal);
+        break;
+      case 90:
+        VDP_setPalette(PAL1, sonicwater3_pal);  
+        break;
+    }
+
+    frame ++;
+    if(frame > 90)
+      frame = 1;
+    
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
@@ -833,10 +868,13 @@ void ScrollTest()
     if(x <= -512)
       x = x % -512;
 
-    VDP_setHorizontalScroll(BPLAN, 0, x);        
+    VDP_setHorizontalScroll(APLAN, 0, x);        
+    VDP_setHorizontalScroll(BPLAN, 0, x/2);        
     VDP_waitVSync();
   }
+  VDP_setHorizontalScroll(APLAN, 0, 0);
   VDP_setHorizontalScroll(BPLAN, 0, 0);
+  VDP_loadFont(font_tiles, 1);
 }
 
 void SoundTest()
