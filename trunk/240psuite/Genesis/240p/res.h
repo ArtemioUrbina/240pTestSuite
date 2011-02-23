@@ -65,8 +65,14 @@ extern u32 grid_tiles[35840/4];
 extern u16 grid_pal[16]; 
 
 // Sonic background
-extern u32 sonicback_tiles[35840/4]; 
+extern u32 sonicfloor_tiles[16384/4]; 
+extern u16 sonicfloor_pal[16]; 
+extern u32 sonicback_tiles[19456/4]; 
 extern u16 sonicback_pal[16]; 
+extern u32 sonicwater_tiles[6144/4]; 
+extern u16 sonicwater_pal[16]; 
+extern u16 sonicwater2_pal[16]; 
+extern u16 sonicwater3_pal[16]; 
 
 // Motoko background
 extern u32 motoko_tiles[35840/4]; 
