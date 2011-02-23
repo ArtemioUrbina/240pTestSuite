@@ -11,12 +11,12 @@
  *
  * The 240p Test Suite is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
 #include <kos.h>
@@ -32,7 +32,7 @@
 
 #define LINESPERPAGE	15
 
-extern ImagePtr    scanlines;
+extern ImagePtr		scanlines;
 
 uint16	showhelp = 0;
 
@@ -113,9 +113,9 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 
 uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 {
-	int         done = 0, npages = 0, page = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
+	int 				done = 0, npages = 0, page = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
 	char				*buffer = NULL, **pages = NULL;
 	controller	*st;
 
@@ -129,8 +129,8 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 
 	back = LoadImage("/rd/help.png", 1);
 	back->alpha = 0.75f;
-    
-	updateVMU("   Help  ", "", 1);
+		
+	updateVMU(" 	Help	", "", 1);
 	if(main)
 		showhelp = 1;
 	while(!done) 
@@ -142,17 +142,17 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
-				done =  1;                
+				done =	1;								
 			if (pressed & CONT_DPAD_LEFT)
 				page --;
 			if (pressed & CONT_DPAD_RIGHT)
 				page ++;
 			if (pressed & CONT_B)
-				done =  2;                
+				done =	2;								
 			if (pressed & CONT_Y)
-				showhelp =  !showhelp;                
+				showhelp =	!showhelp;								
 		}
 
 		if(page > npages - 1)
@@ -180,7 +180,7 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 		else
 			DrawStringS(270, 190, 0.0f, 0.7f, 0.7f, "No"); 
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}

@@ -11,12 +11,12 @@
  *
  * The 240p Test Suite is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
 #include <kos.h>
@@ -29,8 +29,8 @@ float f_size = 8.0f;
 float fw = 5.0f;
 float fh = 9.0f;
 
-ImagePtr   black_t = NULL;
-ImagePtr   font_t = NULL;
+ImagePtr 	black_t = NULL;
+ImagePtr 	font_t = NULL;
 
 void LoadFont()
 {
@@ -82,7 +82,7 @@ void DrawString(float x, float y, float r, float g, float b, char *str)
 	float orig_x = x;
 
 	while (*str) 
-	{    
+	{		
 		if(*str == '\n')
 		{
 			x = orig_x;
@@ -90,9 +90,9 @@ void DrawString(float x, float y, float r, float g, float b, char *str)
 			str++;
 			continue;
 		}
-    DrawChar(x, y, *str++);
+		DrawChar(x, y, *str++);
 		x += fw;
-  }
+	}
 }
 
 void DrawStringS(float x, float y, float r, float g, float b, char *str) 

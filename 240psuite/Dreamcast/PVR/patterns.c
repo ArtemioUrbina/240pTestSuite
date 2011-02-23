@@ -11,12 +11,12 @@
  *
  * The 240p Test Suite is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
 #include <kos.h>
@@ -36,7 +36,7 @@
 
 /* romdisk */
 
-extern ImagePtr    scanlines;
+extern ImagePtr		scanlines;
 
 static inline void DrawScanlines()
 {
@@ -54,14 +54,14 @@ void DrawLinearity();
 
 void DrawPluge()
 {
-	int         done = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
+	int 				done = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
 	back = LoadImage("/rd/pluge.png", 1);
-    
+		
 	updateVMU(" Pluge ", "", 1);
 	while(!done) 
 	{
@@ -72,11 +72,11 @@ void DrawPluge()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
 			{
 				if(HelpWindow(PLUGEHELP, back, 0))
-					done =  1;                
+					done =	1;								
 			}
 		}
 
@@ -85,7 +85,7 @@ void DrawPluge()
 		pvr_list_begin(PVR_LIST_TR_POLY);
 		DrawImage(back);
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -95,14 +95,14 @@ void DrawPluge()
 
 void DrawGrayRamp()
 {
-	int         done = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
+	int 				done = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
 	back = LoadImage("/rd/grayramp.png", 1);
-    
+		
 	updateVMU("Gray Ramp", "", 1);
 	while(!done) 
 	{
@@ -113,11 +113,11 @@ void DrawGrayRamp()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
 			{
 				if(HelpWindow(GRAYRAMPHELP, back, 0))
-					done =  1;                
+					done =	1;								
 			}
 		}
 
@@ -126,7 +126,7 @@ void DrawGrayRamp()
 		pvr_list_begin(PVR_LIST_TR_POLY);
 		DrawImage(back);
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -136,14 +136,14 @@ void DrawGrayRamp()
 
 void DrawWhiteScreen()
 {
-	int         done = 0, color = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
+	int 				done = 0, color = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
 	back = LoadImage("/rd/white.png", 1);
-    
+		
 	updateVMU("White scr", "", 1);
 	while(!done) 
 	{
@@ -154,9 +154,9 @@ void DrawWhiteScreen()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
-				done =  1;                
+				done =	1;								
 
 			if (pressed & CONT_A)
 				color ++;
@@ -204,7 +204,7 @@ void DrawWhiteScreen()
 		pvr_list_begin(PVR_LIST_TR_POLY);
 		DrawImage(back);
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -214,14 +214,14 @@ void DrawWhiteScreen()
 
 void DrawColorBars()
 {
-	int         done = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
+	int 				done = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
 	back = LoadImage("/rd/color.png", 1);
-    
+		
 	updateVMU("Colorbars", "", 1);
 	while(!done) 
 	{
@@ -232,11 +232,11 @@ void DrawColorBars()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
 			{
 				if(HelpWindow(COLORBARSHELP, back, 0))
-					done =  1;                
+					done =	1;								
 			}
 		}
 
@@ -245,7 +245,7 @@ void DrawColorBars()
 		pvr_list_begin(PVR_LIST_TR_POLY);
 		DrawImage(back);
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -255,14 +255,14 @@ void DrawColorBars()
 
 void Draw601ColorBars()
 {
-	int         done = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
+	int 				done = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
 	back = LoadImage("/rd/601701cb.png", 1);
-    
+		
 	updateVMU("Colorbars", "with gray", 1);
 	while(!done) 
 	{
@@ -273,9 +273,9 @@ void Draw601ColorBars()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
-				done =  1;                
+				done =	1;								
 		}
 
 		pvr_scene_begin();
@@ -283,7 +283,7 @@ void Draw601ColorBars()
 		pvr_list_begin(PVR_LIST_TR_POLY);
 		DrawImage(back);
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -293,14 +293,14 @@ void Draw601ColorBars()
 
 void DrawGrid()
 {
-	int         done = 0;
-	uint16      oldbuttons, pressed;    
-	ImagePtr    back;
+	int 				done = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
 	char				msg[20];
 	controller	*st;
 
 	oldbuttons = InitController(0);
-  if(vmode != NATIVE_640_FS)
+	if(vmode != NATIVE_640_FS)
 		back = LoadImage("/rd/grid.png", 1);
 	else
 	{
@@ -308,7 +308,7 @@ void DrawGrid()
 		back->scale = 0;
 	}
 
-	updateVMU("   Grid  ", "", 1);
+	updateVMU(" 	Grid	", "", 1);
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -318,11 +318,11 @@ void DrawGrid()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_START)
 			{
 				if(HelpWindow(GRIDHELP, back, 0))
-					done =  1;                
+					done =	1;								
 			}
 			if (pressed & CONT_A)
 			{
@@ -346,10 +346,10 @@ void DrawGrid()
 		if(back->x != 0.0f || back->y != 0.0f)
 		{
 			sprintf(msg, "%d,%d", (int)back->x, (int)back->y);
-			DrawStringB(275.0f, 5.0f, 1.0f, 1.0f,  1.0f, msg);
+			DrawStringB(275.0f, 5.0f, 1.0f, 1.0f,	1.0f, msg);
 		}
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
@@ -360,16 +360,16 @@ void DrawGrid()
 
 void DrawLinearity()
 {
-	int         done = 0, gridpattern = 0, showgrid = 1;
-	uint16	    oldbuttons, pressed;
-	ImagePtr    circles, grid, gridd;
+	int 				done = 0, gridpattern = 0, showgrid = 1;
+	uint16			oldbuttons, pressed;
+	ImagePtr		circles, grid, gridd;
 	controller	*st;
 
 	oldbuttons = InitController(0);
 	circles = LoadImage("/rd/circles.png", 1);
 	grid = LoadImage("/rd/circles_grid.png", 1);
 	gridd = LoadImage("/rd/circles_griddot.png", 1);
-    
+		
 	updateVMU("Linearity", "", 1);
 	while(!done) 
 	{
@@ -380,17 +380,17 @@ void DrawLinearity()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			    
+					
 			if (pressed & CONT_A)
 				showgrid = !showgrid;
-    
+		
 			if (pressed & CONT_B)
 				gridpattern = !gridpattern;
-    
+		
 			if (pressed & CONT_START)
-				done =  1;        
+				done =	1;				
 		}
-            
+						
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
@@ -403,7 +403,7 @@ void DrawLinearity()
 		}
 		DrawImage(circles);
 		DrawScanlines();
-		pvr_list_finish();        
+		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
