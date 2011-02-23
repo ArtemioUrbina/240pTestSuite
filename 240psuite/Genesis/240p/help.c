@@ -25,7 +25,7 @@
 
 void DrawHelp(int option)
 {
-  u16 ind = 0, size = 0, exit = 0, pos = 6;
+  u16 ind = 0, size = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
   VDP_setPalette(PAL0, palette_grey);
@@ -42,14 +42,15 @@ void DrawHelp(int option)
 	switch(option)
 	{
 		case HELP_GENERAL:			
-			VDP_drawTextBG(APLAN, "The 240p Test Suite was designed", TILE_ATTR(PAL0, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "with two goals in mind:", TILE_ATTR(PAL0, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "1) Evaluate 240p signals on TV", TILE_ATTR(PAL0, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "sets and video procesors", TILE_ATTR(PAL0, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "2) Provide calibration patterns", TILE_ATTR(PAL0, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "from a game console to help in", TILE_ATTR(PAL0, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "properly calibrating the display", TILE_ATTR(PAL0, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "black, white and color levels.", TILE_ATTR(PAL0, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "             HELP", TILE_ATTR(PAL2, 0, 0, 0), 4, 6);
+			VDP_drawTextBG(APLAN, "The 240p Test Suite was designed", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
+			VDP_drawTextBG(APLAN, "with two goals in mind:", TILE_ATTR(PAL0, 0, 0, 0), 4, 9);
+			VDP_drawTextBG(APLAN, "1) Evaluate 240p signals on TV", TILE_ATTR(PAL0, 0, 0, 0), 4, 11);
+			VDP_drawTextBG(APLAN, "sets and video procesors; and", TILE_ATTR(PAL0, 0, 0, 0), 4, 12);
+			VDP_drawTextBG(APLAN, "2) Provide calibration patterns", TILE_ATTR(PAL0, 0, 0, 0), 4, 14);
+			VDP_drawTextBG(APLAN, "from a game console to help in", TILE_ATTR(PAL0, 0, 0, 0), 4, 15);
+			VDP_drawTextBG(APLAN, "properly calibrating the display", TILE_ATTR(PAL0, 0, 0, 0), 4, 16);
+			VDP_drawTextBG(APLAN, "black, white and color levels.", TILE_ATTR(PAL0, 0, 0, 0), 4, 17);
 			break;
 		case HELP_PLUGE:			
 			
