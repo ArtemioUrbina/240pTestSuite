@@ -24,6 +24,7 @@
 #include "res.h"
 #include "patterns.h"
 #include "tests.h"
+#include "help.h"
 
 void TestPatternMenu();
 void DrawCredits();
@@ -68,7 +69,8 @@ int main()
     VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -77,7 +79,7 @@ int main()
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
-      if(cursel > 9)
+      if(cursel > 10)
         cursel = 1;
     }
 
@@ -85,7 +87,7 @@ int main()
     {
       cursel --;
       if(cursel < 1)
-        cursel = 9;
+        cursel = 10;
     }
 
     if (pressedButtons & BUTTON_A)
@@ -118,7 +120,10 @@ int main()
         case 8: 
           SoundTest();                                   
           break;  
-        case 9: 
+				case 9: 
+          DrawHelp(HELP_GENERAL);                                   
+          break;
+        case 10: 
           DrawCredits();                                   
           break;
       }
