@@ -22,6 +22,7 @@
 #include "genesis.h"
 #include "res.h"
 #include "patterns.h"
+#include "help.h"
 
 
 void DrawPluge()
@@ -30,6 +31,8 @@ void DrawPluge()
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+	if(showhelp)
+		DrawHelp(HELP_PLUGE);
   size = sizeof(pluge_tiles) / 32; 
   VDP_setPalette(PAL0, pluge_pal);
   VDP_loadTileData(pluge_tiles, TILE_USERINDEX, size, 1); 
@@ -40,7 +43,7 @@ void DrawPluge()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
-    if (pressedButtons & BUTTON_START)
+    if (pressedButtons & BUTTON_START)			
       exit = 1;
 
     VDP_waitVSync();
@@ -235,6 +238,8 @@ void DrawGrid()
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+	if(showhelp)
+		DrawHelp(HELP_GRID);
   size = sizeof(grid_tiles) / 32; 
   VDP_setPalette(PAL0, grid_pal);
   VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, 1); 
@@ -261,6 +266,8 @@ void DrawColorBars()
 
     exit = 0;
 
+		if(showhelp)
+			DrawHelp(HELP_COLORS);
     VDP_setPalette(PAL0, red_pal); 
     VDP_setPalette(PAL1, green_pal); 
     VDP_setPalette(PAL2, blue_pal); 

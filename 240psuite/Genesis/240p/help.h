@@ -27,6 +27,8 @@
 #define	HELP_COLORS			3
 #define	HELP_GRID				4
 
+extern u16	showhelp;
+
 void DrawHelp(int option);
 
 #endif
