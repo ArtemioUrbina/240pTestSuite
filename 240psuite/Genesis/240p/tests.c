@@ -743,8 +743,7 @@ void ScrollTest()
   int x = 0, speed = 1, acc = -1, pause = 0;
   
   VDP_setPalette(PAL0, sonicback_pal);  
-  VDP_setPalette(PAL1, sonicwater_pal);
-  VDP_setPalette(PAL2, sonicfloor_pal);
+  VDP_setPalette(PAL1, sonicwater_pal);  
 
   size = sizeof(sonicback_tiles) / 32; 
   VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, 1);     
@@ -763,8 +762,8 @@ void ScrollTest()
   VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 0, 152/8, 256/8, 48/8); 
   VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 256/8, 152/8, 256/8, 48/8); 
 
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + sonic_floor, 0, 96/8, 256/8, 128/8); 
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + sonic_floor, 256/8, 96/8, 256/8, 128/8); 
+  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + sonic_floor, 0, 96/8, 256/8, 128/8); 
+  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + sonic_floor, 256/8, 96/8, 256/8, 128/8); 
   while(!exit)
   {
     switch(frame)
