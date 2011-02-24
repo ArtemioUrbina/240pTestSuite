@@ -98,7 +98,8 @@ extern u32 lag_tiles[512/4];
 extern u32 solid_tiles[32/4]; 
 
 // Gray Ramp background
-extern u32 grayramp_tiles[35840/4]; 
+extern u32 grayramp_tiles[1280/4]; 
+extern u16 grayramp_pal[16]; 
 
 // Plunge
 extern u32 pluge_tiles[35840/4]; 

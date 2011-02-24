@@ -52,14 +52,22 @@ void DrawPluge()
 
 void DrawGrayRamp()
 {
-  u16 size;
+  u16 size, i;
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
+	u16 invert_pal[16]; 
+
+	for(i = 0; i < 8; i++)
+		invert_pal[i + 1] = grayramp_pal[8 - i];
 
   size = sizeof(grayramp_tiles) / 32; 
-  VDP_setPalette(PAL0, white_pal);
+  VDP_setPalette(PAL0, grayramp_pal);
+	VDP_setPalette(PAL1, invert_pal);
   VDP_loadTileData(grayramp_tiles, TILE_USERINDEX, size, 1); 
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+	for(i = 0; i < 14; i++)
+  	VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, i, 320/8, 8/8); 
+	for(i = 14; i < 28; i++)
+  	VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, i, 320/8, 8/8); 
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
