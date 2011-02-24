@@ -239,8 +239,10 @@ void DropShadowTest()
     }       
 
     if(changeback)
-    {                                    
+    {           
+      u16 sonic_water;                         
       changeback = 0;            
+      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
       switch(back)
       {
         case 0:
@@ -250,12 +252,20 @@ void DropShadowTest()
           VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
           break;
         case 1:                    
+          VDP_setPalette(PAL0, sonicback_pal);
+          VDP_setPalette(PAL1, sonicwater_pal);                
           size = sizeof(sonicback_tiles) / 32; 
-          VDP_loadTileData(sonicback_tiles, ind, size, 1); 
-          VDP_setPalette(PAL1, sonicback_pal);
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
+          VDP_loadTileData(sonicback_tiles, ind, size, 1);     
+          sonic_water = ind + size;
+          size = sizeof(sonicwater_tiles) / 32;           
+          VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);             
+          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 0, 0, 256/8, 152/8); 
+          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 256/8, 0, 256/8, 152/8);         
+          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 0, 152/8, 256/8, 48/8); 
+          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 256/8, 152/8, 256/8, 48/8);                   
           break;
         case 2:
+          VDP_setPalette(PAL0, palette_grey);
           size = sizeof(check_tile) / 32; 
           VDP_loadTileData(check_tile, ind, size, 1); 
           VDP_setPalette(PAL1, bw_pal);
@@ -417,31 +427,39 @@ void StripedSpriteTest()
   {                
     if(changeback)
     {
-      changeback = 0;
-      ind = TILE_USERINDEX;             
+      u16 sonic_water;                         
+      changeback = 0;   
+      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);        
       switch(back)
       {
         case 0:
           size = sizeof(motoko_tiles) / 32; 
-          VDP_loadTileData(motoko_tiles, ind, size, 1); 
+          VDP_loadTileData(motoko_tiles, TILE_USERINDEX, size, 1); 
           VDP_setPalette(PAL1, motoko_pal);
           VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
           break;
-        case 1:
-          size = sizeof(sonicback_tiles) / 32; 
-          VDP_loadTileData(sonicback_tiles, ind, size, 1); 
+        case 1:                    
           VDP_setPalette(PAL1, sonicback_pal);
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+          VDP_setPalette(PAL3, sonicwater_pal);                
+          size = sizeof(sonicback_tiles) / 32; 
+          VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, 1);     
+          sonic_water = TILE_USERINDEX + size;
+          size = sizeof(sonicwater_tiles) / 32;           
+          VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);             
+          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 256/8, 152/8); 
+          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 256/8, 0, 256/8, 152/8);         
+          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + sonic_water, 0, 152/8, 256/8, 48/8); 
+          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + sonic_water, 256/8, 152/8, 256/8, 48/8);                   
           break;
-        case 2:
+        case 2:          
           size = sizeof(check_tile) / 32; 
-          VDP_loadTileData(check_tile, ind, size, 1); 
+          VDP_loadTileData(check_tile, TILE_USERINDEX, size, 1); 
           VDP_setPalette(PAL1, bw_pal);
           VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
           break;
         case 3:
           size = sizeof(bw_tile) / 32; 
-          VDP_loadTileData(bw_tile, ind, size, 1); 
+          VDP_loadTileData(bw_tile, TILE_USERINDEX, size, 1); 
           VDP_setPalette(PAL1, bw_pal);
           VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
           break;
