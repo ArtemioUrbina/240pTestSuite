@@ -265,9 +265,28 @@ void DrawGrid()
   }
 }
 
+void DrawColorTilesAt(u16 plan, u16 pal, u16 x, u16 y, u16 tiles)
+{		
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 0, 0, 0, 0) + tiles, x+3, y, 3, 4); 		
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 0) + tiles, x+6, y, 3, 4); 		
+
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 0, 0, 0, 2) + tiles, x+9, y, 3, 4); 		
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 1) + tiles, x+12, y, 3, 4); 		
+
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 0, 0, 0, 4) + tiles, x+15, y, 3, 4); 		
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 2) + tiles, x+18, y, 3, 4); 		
+
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 0, 0, 0, 6) + tiles, x+21, y, 3, 4); 		
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 3) + tiles, x+24, y, 3, 4); 		
+		
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 4) + tiles, x+27, y, 3, 4); 		
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 5) + tiles, x+30, y, 3, 4); 		
+		VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 6) + tiles, x+33, y, 3, 4); 		
+}
+
 void DrawColorBars()
 {
-    u16 ind; 
+    u16 ind;
     u16 size;
     u16 exit;
     u16 buttons, oldButtons = 0xffff, pressedButtons;
@@ -281,29 +300,16 @@ void DrawColorBars()
     VDP_setPalette(PAL2, blue_pal); 
     VDP_setPalette(PAL3, white_pal); 
 
+		VDP_setHilightShadow(1);
+		ind = TILE_USERINDEX; 
+    size = sizeof(color_tiles) / 32; 
+    VDP_loadTileData(color_tiles, ind, size, 1); 
 
-    ind = TILE_USERINDEX; 
-    size = sizeof(red_tiles) / 32; 
-    VDP_loadTileData(red_tiles, ind, size, 1); 
-    ind += size; 
-    size = sizeof(green_tiles) / 32; 
-    VDP_loadTileData(green_tiles, ind, size, 1); 
-    ind += size; 
-    size = sizeof(blue_tiles) / 32; 
-    VDP_loadTileData(blue_tiles, ind, size, 1); 
-    ind += size; 
-    size = sizeof(white_tiles) / 32; 
-    VDP_loadTileData(white_tiles, ind, size, 1); 
-
-
-    ind = TILE_USERINDEX; 
-    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 0, 0, 320/8, 56/8); 
-    ind += sizeof(red_tiles) / 32; 
-    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 56/8, 320/8, 56/8); 
-    ind += sizeof(green_tiles) / 32; 
-    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + ind, 0, 112/8, 320/8, 56/8); 
-    ind += sizeof(blue_tiles) / 32; 
-    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 0, 168/8, 320/8, 56/8); 
+		
+		DrawColorTilesAt(APLAN, PAL0, 2, 5, ind);
+		DrawColorTilesAt(APLAN, PAL1, 2, 10, ind);
+		DrawColorTilesAt(APLAN, PAL2, 2, 15, ind);
+		DrawColorTilesAt(APLAN, PAL3, 2, 20, ind);		
 
     while(!exit)
     {
@@ -316,4 +322,5 @@ void DrawColorBars()
 
         VDP_waitVSync();
     }
+	VDP_setHilightShadow(0);
 }

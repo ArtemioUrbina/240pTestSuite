@@ -24,10 +24,7 @@
 
 #include "res/beep.h"
 
-extern u32 red_tiles[8960/4]; 
-extern u32 green_tiles[8960/4]; 
-extern u32 blue_tiles[8960/4]; 
-extern u32 white_tiles[8960/4]; 
+extern u32 color_tiles[224/4]; ; 
 
 extern u16 red_pal[16]; 
 extern u16 green_pal[16]; 
