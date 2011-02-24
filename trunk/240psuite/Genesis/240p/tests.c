@@ -208,24 +208,14 @@ void DropShadowTest()
     x = 32;
     y = 32;
 
-    VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);       
-    VDP_setSprite(1, x - 20, y - 12, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 4, 2);            
-    VDP_setSprite(2, x - 20, y - 4, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 8, 3);            
-    VDP_setSprite(3, x - 20, y + 4, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 12, 4);                                
-
-    VDP_setSprite(4, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 5);       
-    VDP_setSprite(5, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 4, 6);            
-    VDP_setSprite(6, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 8, 7);            
-    VDP_setSprite(7, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 12, 0);             
+    VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);                               
+    VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 0);       
                       
     sprite = 1;
   }
   else
   {                
-    VDP_setSprite(0, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 1);       
-    VDP_setSprite(1, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 4, 2);            
-    VDP_setSprite(2, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 8, 3);            
-    VDP_setSprite(3, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 12, 0);             
+    VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 0);       
     sprite = 0;
   }           
     
@@ -281,36 +271,17 @@ void DropShadowTest()
     }
 
     if(sprite == 1)
-    {
       VDP_setSpritePosition(0, x - 20, y - 20);
-      VDP_setSpritePosition(1, x - 20, y - 12);
-      VDP_setSpritePosition(2, x - 20, y - 4);
-      VDP_setSpritePosition(3, x - 20, y + 4);
-    }
 
     if(field == invert)
-    {
-      int index = 0;
+    {      
+      VDP_setSpritePosition(sprite, x, y);
 
-      if(sprite == 1)
-        index = 4;
-      VDP_setSpritePosition(index++, x, y);
-      VDP_setSpritePosition(index++, x, y+8);
-      VDP_setSpritePosition(index++, x, y+16);
-      VDP_setSpritePosition(index++, x, y+24);
-      
       field = !field;
     }
     else
-    {
-      int index = 0;
-
-      if(sprite == 1)
-        index = 4;
-      VDP_setSpritePosition(index++, 320, 224);
-      VDP_setSpritePosition(index++, 320, 224);
-      VDP_setSpritePosition(index++, 320, 224);
-      VDP_setSpritePosition(index++, 320, 224);
+    {      
+      VDP_setSpritePosition(sprite, 320, 224);
 
       field = !field;
     }
@@ -372,23 +343,15 @@ void DropShadowTest()
     {
       if(sprite == 0)
       {                                                                
-        VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);       
-        VDP_setSprite(1, x - 20, y - 12, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 4, 2);            
-        VDP_setSprite(2, x - 20, y - 4, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 8, 3);            
-        VDP_setSprite(3, x - 20, y + 4, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos + 12, 4);                                
-    
-        VDP_setSprite(4, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 5);       
-        VDP_setSprite(5, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 4, 6);            
-        VDP_setSprite(6, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 8, 7);            
-        VDP_setSprite(7, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos + 12, 0);               
+        VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);                                      
+        VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 0);       
+          
         sprite = 1;
       }
       else
       {                
-        VDP_setSprite(0, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 1);       
-        VDP_setSprite(1, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 4, 2);            
-        VDP_setSprite(2, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 8, 3);            
-        VDP_setSprite(3, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos + 12, 0);             
+        VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 0);       
+        
         sprite = 0;
       }
     }
@@ -418,10 +381,7 @@ void StripedSpriteTest()
   VDP_loadTileData(striped_tiles, ind, size, 1); 
 
   VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind, 1);       
-  VDP_setSprite(1, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind + 4, 2);            
-  VDP_setSprite(2, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind + 8, 3);            
-  VDP_setSprite(3, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL2, 0, 0, 0) + ind + 12, 0);             
+  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 0);       
   
   while(!exit)
   {                
@@ -467,10 +427,7 @@ void StripedSpriteTest()
     }
       
     VDP_setSpritePosition(0, x, y);
-    VDP_setSpritePosition(1, x, y+8);
-    VDP_setSpritePosition(2, x, y+16);
-    VDP_setSpritePosition(3, x, y+24);
-        
+    
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
@@ -564,15 +521,9 @@ void LagTest()
   x2 = 108;
   y2 = 96;
 
-  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + ind, 1);       
-  VDP_setSprite(1, x, y+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + ind + 4, 2);            
-  VDP_setSprite(2, x, y+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + ind + 8, 3);            
-  VDP_setSprite(3, x, y+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + ind + 12, 4);             
-
-  VDP_setSprite(4, x2, y2, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + ind, 5);       
-  VDP_setSprite(5, x2, y2+8, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + ind + 4, 6);            
-  VDP_setSprite(6, x2, y2+16, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + ind + 8, 7);            
-  VDP_setSprite(7, x2, y2+24, SPRITE_SIZE(4, 1), TILE_ATTR(PAL3, 0, 0, 0) + ind + 12, 0);             
+  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 1);         
+  VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 2);         
+  VDP_setSprite(2, x2, y2, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 0);           
   
   VDP_drawTextBG(APLAN, "Press the \"A\" button when the sprite", TILE_ATTR(PAL0, 0, 0, 0), 2, 22);
   VDP_drawTextBG(APLAN, "is aligned. A negative value means", TILE_ATTR(PAL0, 0, 0, 0), 2, 23);
@@ -609,10 +560,10 @@ void LagTest()
         else
           startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);            
       }  
-      VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 144/8, 96/8, 32/8, 32/8);       
+      VDP_setSprite(0, 144, 96, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 1);               
     }
     else
-      VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 144/8, 96/8, 32/8, 32/8); 
+      VDP_setSprite(0, 144, 96, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 1);               
 
     if (pressedButtons & BUTTON_B)
     {
@@ -673,34 +624,15 @@ void LagTest()
     x2 += speed;
 
     if(view == 0 || view == 2)
-    {
-      VDP_setSpritePosition(0, x, y);
-      VDP_setSpritePosition(1, x, y+8);
-      VDP_setSpritePosition(2, x, y+16);
-      VDP_setSpritePosition(3, x, y+24);
-    }
+      VDP_setSpritePosition(1, x, y);      
     else
-    {
-      VDP_setSpritePosition(0, 320, 224);
-      VDP_setSpritePosition(1, 320, 224);
-      VDP_setSpritePosition(2, 320, 224);
-      VDP_setSpritePosition(3, 320, 224);
-    }
+      VDP_setSpritePosition(1, 320, 224);      
 
     if(view == 1 || view == 2)
-    {
-      VDP_setSpritePosition(4, x2, y2);
-      VDP_setSpritePosition(5, x2, y2+8);
-      VDP_setSpritePosition(6, x2, y2+16);
-      VDP_setSpritePosition(7, x2, y2+24);
-    }
+      VDP_setSpritePosition(2, x2, y2);
     else
-    {
-      VDP_setSpritePosition(4, 320, 224);
-      VDP_setSpritePosition(5, 320, 224);
-      VDP_setSpritePosition(6, 320, 224);
-      VDP_setSpritePosition(7, 320, 224);
-    }
+      VDP_setSpritePosition(2, 320, 224);      
+
     VDP_updateSprites();        
     VDP_waitVSync();
   }   
