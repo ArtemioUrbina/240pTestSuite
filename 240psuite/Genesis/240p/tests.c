@@ -176,21 +176,18 @@ void DrawStripes()
 
 void DropShadowTest()
 {
-  u16 size, ind, back = 0, changeback = 0, invert = 0, sprite = 0;
+	u16 sonic_water = 0, sonic_floor = 0, frame = 0;                         
+  u16 size, ind, back = 1, changeback = 1, invert = 0, sprite = 0, redraw = 0;
   u16 field = 1, x = 0, y = 0, exit = 0, text = 0, shadowpos = 0, buzzpos = 0, buzzshadowpos = 0;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
 
+	VDP_setPalette(PAL0, palette_green);
   VDP_setPalette(PAL1, motoko_pal);
   VDP_setPalette(PAL2, wb_pal);    
   VDP_setPalette(PAL3, buzz_pal);    
 
-  ind = TILE_USERINDEX; 
-  size = sizeof(motoko_tiles) / 32; 
-  VDP_loadTileData(motoko_tiles, ind, size, 1); 
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-  
-  shadowpos = ind + size;
-  size = sizeof(shadow_tiles) / 32; 
+	shadowpos = TILE_USERINDEX;
+	size = sizeof(shadow_tiles) / 32; 
   VDP_loadTileData(shadow_tiles, shadowpos, size, 1);            
 
   buzzpos = shadowpos + size;
@@ -200,6 +197,8 @@ void DropShadowTest()
   buzzshadowpos = buzzpos + size;
   size = sizeof(buzzShadow_tiles) / 32; 
   VDP_loadTileData(buzzShadow_tiles, buzzshadowpos, size, 1); 
+
+	ind = buzzshadowpos + size;  
   
   sprite = random() % 2;
        
@@ -225,49 +224,80 @@ void DropShadowTest()
     {
         text --;
         if(text == 0)
-            changeback = 1;
+            redraw = 1;
     }       
 
-    if(changeback)
-    {           
-      u16 sonic_water;                         
-      changeback = 0;            
-      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+    if(changeback || redraw)
+    {                             
+			if(redraw)
+				VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+			if(!redraw)
+			{				
+				VDP_setHorizontalScroll(BPLAN, 0, 0);
+				VDP_setHorizontalScroll(APLAN, 0, 0);
+			}
+			if(back != 1)
+				VDP_setPalette(PAL0, palette_green);
       switch(back)
       {
         case 0:
-          size = sizeof(motoko_tiles) / 32; 
-          VDP_loadTileData(motoko_tiles, ind, size, 1); 
-          VDP_setPalette(PAL1, motoko_pal);
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
+					if(!redraw)
+					{
+          	size = sizeof(motoko_tiles) / 32; 
+          	VDP_loadTileData(motoko_tiles, ind, size, 1); 
+          	VDP_setPalette(PAL1, motoko_pal);
+					}
+          VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
           break;
-        case 1:                    
-          VDP_setPalette(PAL0, sonicback_pal);
-          VDP_setPalette(PAL1, sonicwater_pal);                
-          size = sizeof(sonicback_tiles) / 32; 
-          VDP_loadTileData(sonicback_tiles, ind, size, 1);     
-          sonic_water = ind + size;
-          size = sizeof(sonicwater_tiles) / 32;           
-          VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);             
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 0, 0, 256/8, 152/8); 
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 256/8, 0, 256/8, 152/8);         
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 0, 152/8, 256/8, 48/8); 
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 256/8, 152/8, 256/8, 48/8);                   
+        case 1:       
+					if(!redraw)
+					{             
+          	VDP_setPalette(PAL0, sonicback_pal);
+          	VDP_setPalette(PAL1, sonicwater_pal);   
+               
+          	size = sizeof(sonicback_tiles) / 32 - 64; 
+          	VDP_loadTileData(sonicback_tiles + 512, ind, size, 1);     
+	
+          	sonic_water = ind + size;
+          	size = sizeof(sonicwater_tiles) / 32;           
+          	VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);             
+	
+ 						sonic_floor = sonic_water + size;
+  					size = sizeof(sonicfloor_tiles) / 32; 
+  					VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);     
+					}
+            
+					if(!redraw)
+					{
+						VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 0, 16/8, 256/8, 136/8); 
+          	VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 256/8, 16/8, 256/8, 136/8);         
+          	VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 0, 152/8, 256/8, 48/8); 
+          	VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + sonic_water, 256/8, 152/8, 256/8, 48/8);                     					
+					}
+					VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 1, 0, 0) + sonic_floor, 0, 96/8, 256/8, 128/8); 
+  				VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 1, 0, 0) + sonic_floor, 256/8, 96/8, 256/8, 128/8); 					
           break;
         case 2:
-          VDP_setPalette(PAL0, palette_grey);
-          size = sizeof(check_tile) / 32; 
-          VDP_loadTileData(check_tile, ind, size, 1); 
-          VDP_setPalette(PAL1, bw_pal);
+					if(!redraw)
+					{          	
+          	size = sizeof(check_tile) / 32; 
+          	VDP_loadTileData(check_tile, ind, size, 1); 
+          	VDP_setPalette(PAL1, bw_pal);
+					}
           VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
           break;
         case 3:
-          size = sizeof(bw_tile) / 32; 
-          VDP_loadTileData(bw_tile, ind, size, 1); 
-          VDP_setPalette(PAL1, bw_pal);
+					if(!redraw)
+					{
+          	size = sizeof(bw_tile) / 32; 
+          	VDP_loadTileData(bw_tile, ind, size, 1); 
+          	VDP_setPalette(PAL1, bw_pal);
+					}
           VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
           break;
       }
+			changeback = 0;            
+			redraw = 0;
     }
 
     if(sprite == 1)
@@ -320,13 +350,37 @@ void DropShadowTest()
     if (pressedButtons & BUTTON_A)
     {
       invert = !invert;
+			
       if(invert)
-        VDP_drawTextBG(APLAN, "Shadow on odd frames ", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
+        VDP_drawText("Shadow on odd frames ", 19, 0);
       else
-        VDP_drawTextBG(APLAN, "Shadow on even frames", TILE_ATTR(PAL0, 0, 0, 0), 19, 0);
+        VDP_drawText("Shadow on even frames", 19, 0);
       
       text = 60;            
     }
+
+		if(back == 1)
+		{
+			VDP_setHorizontalScroll(BPLAN, 0, x*-2);
+			VDP_setHorizontalScroll(APLAN, 0, x*-4);  		
+
+			switch(frame)
+    	{
+      	case 30:
+        	VDP_setPalette(PAL1, sonicwater_pal);
+        	break;
+      	case 60:
+        	VDP_setPalette(PAL1, sonicwater2_pal);
+        	break;
+      	case 90:
+        	VDP_setPalette(PAL1, sonicwater3_pal);  
+        	break;
+    	}
+	
+    	frame ++;
+    	if(frame > 90)
+      	frame = 1;				
+		}
 
     if (pressedButtons & BUTTON_B)
     {
@@ -334,9 +388,10 @@ void DropShadowTest()
         back ++;
       else
         back = 0;
-      
-      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+            
       changeback = 1;
+			VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);				
+			VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);				
     }
 
     if (pressedButtons & BUTTON_C)
@@ -362,66 +417,76 @@ void DropShadowTest()
 
   VDP_resetSprites();
   VDP_updateSprites();
+	VDP_setHorizontalScroll(BPLAN, 0, 0);
+	VDP_setHorizontalScroll(APLAN, 0, 0);
 }
 
 void StripedSpriteTest()
 {
-  u16 size, ind, back = 0, changeback = 0;
+	u16 sonic_water = 0, sonic_floor = 0, sprite, frame = 0;     
+  u16 size, ind, back = 0, changeback = 1;
   u16 x = 0, y = 0, exit = 0;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
 
   VDP_setPalette(PAL1, motoko_pal);
   VDP_setPalette(PAL2, wb_pal);
 
-  ind = TILE_USERINDEX; 
-  size = sizeof(motoko_tiles) / 32; 
-  VDP_loadTileData(motoko_tiles, ind, size, 1); 
-  ind += size;
-  size = sizeof(striped_tiles) / 32; 
-  VDP_loadTileData(striped_tiles, ind, size, 1); 
+  sprite = TILE_USERINDEX; 
+	size = sizeof(striped_tiles) / 32; 
+  VDP_loadTileData(striped_tiles, sprite, size, 1); 	
+	VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + sprite, 0);       
 
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 0);       
-  
+	ind = sprite + size;  
+    
   while(!exit)
   {                
     if(changeback)
-    {
-      u16 sonic_water;                         
+    {      
       changeback = 0;   
       VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);        
+			VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8); 
+			if(back != 1)
+			{
+				VDP_setHorizontalScroll(BPLAN, 0, 0);
+				VDP_setHorizontalScroll(APLAN, 0, 0);       
+			}
       switch(back)
       {
         case 0:
           size = sizeof(motoko_tiles) / 32; 
-          VDP_loadTileData(motoko_tiles, TILE_USERINDEX, size, 1); 
+          VDP_loadTileData(motoko_tiles, ind, size, 1); 
           VDP_setPalette(PAL1, motoko_pal);
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
           break;
         case 1:                    
           VDP_setPalette(PAL1, sonicback_pal);
           VDP_setPalette(PAL3, sonicwater_pal);                
-          size = sizeof(sonicback_tiles) / 32; 
-          VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, 1);     
-          sonic_water = TILE_USERINDEX + size;
+          size = sizeof(sonicback_tiles) / 32 - 64; 
+          VDP_loadTileData(sonicback_tiles + 512, ind, size, 1);     
+          sonic_water = ind + size;
           size = sizeof(sonicwater_tiles) / 32;           
-          VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);             
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 256/8, 152/8); 
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 256/8, 0, 256/8, 152/8);         
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + sonic_water, 0, 152/8, 256/8, 48/8); 
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + sonic_water, 256/8, 152/8, 256/8, 48/8);                   
+          VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);  
+					sonic_floor = sonic_water + size;
+  				size = sizeof(sonicfloor_tiles) / 32; 
+  				VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);                
+          VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 16/8, 256/8, 136/8); 
+          VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 256/8, 16/8, 256/8, 136/8);         
+          VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + sonic_water, 0, 152/8, 256/8, 48/8); 
+          VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + sonic_water, 256/8, 152/8, 256/8, 48/8);                     					
+					VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 1, 0, 0) + sonic_floor, 0, 96/8, 256/8, 128/8); 
+  				VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 1, 0, 0) + sonic_floor, 256/8, 96/8, 256/8, 128/8); 				                		               
           break;
         case 2:          
           size = sizeof(check_tile) / 32; 
-          VDP_loadTileData(check_tile, TILE_USERINDEX, size, 1); 
+          VDP_loadTileData(check_tile, ind, size, 1); 
           VDP_setPalette(PAL1, bw_pal);
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
           break;
         case 3:
           size = sizeof(bw_tile) / 32; 
-          VDP_loadTileData(bw_tile, TILE_USERINDEX, size, 1); 
+          VDP_loadTileData(bw_tile, ind, size, 1); 
           VDP_setPalette(PAL1, bw_pal);
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
           break;
       }
     }
@@ -456,6 +521,29 @@ void StripedSpriteTest()
         x ++;   
     }   
 
+		if(back == 1)
+		{
+			VDP_setHorizontalScroll(BPLAN, 0, x*-2);
+			VDP_setHorizontalScroll(APLAN, 0, x*-4);  
+		
+			switch(frame)
+    	{
+      	case 30:
+        	VDP_setPalette(PAL3, sonicwater_pal);
+        	break;
+      	case 60:
+        	VDP_setPalette(PAL3, sonicwater2_pal);
+        	break;
+      	case 90:
+        	VDP_setPalette(PAL3, sonicwater3_pal);  
+        	break;
+    	}
+	
+    	frame ++;
+    	if(frame > 90)
+      	frame = 1;		
+		}
+
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
@@ -476,8 +564,7 @@ void StripedSpriteTest()
       else
         back = 0;
       
-      changeback = 1;
-      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);           
+      changeback = 1;      
     }        
 
     VDP_updateSprites();
@@ -486,6 +573,8 @@ void StripedSpriteTest()
 
   VDP_resetSprites();
   VDP_updateSprites();
+	VDP_setHorizontalScroll(BPLAN, 0, 0);
+	VDP_setHorizontalScroll(APLAN, 0, 0);
 }
 
 
