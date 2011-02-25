@@ -88,8 +88,5 @@ extern u32 lag_tiles[512/4];
 // Solid Color (White)
 extern u32 solid_tiles[32/4]; 
 
-// Plunge
-extern u32 pluge_tiles[35840/4]; 
-extern u16 pluge_pal[16]; 
 
 #endif
