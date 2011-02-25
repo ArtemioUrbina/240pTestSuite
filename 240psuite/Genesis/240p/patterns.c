@@ -253,39 +253,19 @@ void DrawLinearity()
 
 void DrawGrid()
 {
-  u16 size, i = 0, j = 0;
+  u16 size;
   u16 exit = 0;
-  u16 buttons, oldButtons = 0xffff, pressedButtons;
-  u16 posx = 0, posy = 0, pal = PAL0;
+  u16 buttons, oldButtons = 0xffff, pressedButtons;  
 
   if(showhelp)
     DrawHelp(HELP_GRID);
   
-  VDP_setPalette(PAL0, palette_grey);
-  VDP_setPalette(PAL1, palette_red);
-
-  size = sizeof(grid_tiles) / 32; 
+	VDP_setPalette(PAL0, grid_pal);
+	size = sizeof(grid_tiles) / 32; 
   VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, 1); 
-  
-  // 40 x 28 tiles, tiles on row 0 and 28 are red, 
-  // tiles on column 0 and 40 are red, the rest are white
 
-  for(i = 0; i < 20; i++)
-  {
-    for(j = 0; j < 14; j++)
-    {      
-      posx = i*2;
-      posy = j*2;
-      if(i*j == 0 || i == 19 || j == 13)
-        pal = PAL1;
-      else
-        pal = PAL0;
-      VDP_setTileMap(APLAN, TILE_ATTR(pal, 0, 0, 0) + TILE_USERINDEX, posx, posy); 
-      VDP_setTileMap(APLAN, TILE_ATTR(pal, 0, 0, 1) + TILE_USERINDEX, posx+1, posy); 
-      VDP_setTileMap(APLAN, TILE_ATTR(pal, 0, 1, 0) + TILE_USERINDEX, posx, posy+1); 
-      VDP_setTileMap(APLAN, TILE_ATTR(pal, 0, 1, 1) + TILE_USERINDEX, posx+1, posy+1);       
-    }
-  }
+	VDP_setTileMapRect(APLAN, grid_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);
+
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
