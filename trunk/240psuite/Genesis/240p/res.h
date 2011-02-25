@@ -53,8 +53,9 @@ extern u32 circles_tiles[35840/4];
 extern u32 circles_grid_tiles[32/4]; 
 extern u32 circles_griddot_tiles[32/4]; 
 
-extern u32 grid_tiles[32/4]; 
+extern u32 grid_tiles[64/4]; 
 extern u16 grid_pal[16]; 
+extern u16 grid_map[2240/2];
 
 // Sonic background
 extern u32 sonicfloor_tiles[16384/4]; 
