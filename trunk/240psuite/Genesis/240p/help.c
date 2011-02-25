@@ -60,14 +60,14 @@ void DrawHelp(int option)
 			VDP_drawTextBG(APLAN, "The PLUGE pattern is used to", TILE_ATTR(PAL0, 0, 0, 0), 4, 7);
 			VDP_drawTextBG(APLAN, "help adjust the black level to", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
 			VDP_drawTextBG(APLAN, "a correct value. ", TILE_ATTR(PAL0, 0, 0, 0), 4, 9);			
-			VDP_drawTextBG(APLAN, "The bars on the sides are black", TILE_ATTR(PAL0, 0, 0, 0), 4, 11);
-			VDP_drawTextBG(APLAN, "at 6%. ", TILE_ATTR(PAL0, 0, 0, 0), 4, 12);
-			VDP_drawTextBG(APLAN, "They should be visible, if", TILE_ATTR(PAL0, 0, 0, 0), 4, 13);
-			VDP_drawTextBG(APLAN, "not, adjust them with", TILE_ATTR(PAL0, 0, 0, 0), 4, 14);
-			VDP_drawTextBG(APLAN, "\"brightness\" until they are.", TILE_ATTR(PAL0, 0, 0, 0), 4, 15);
-			VDP_drawTextBG(APLAN, "You should lower it until they", TILE_ATTR(PAL0, 0, 0, 0), 4, 16);
-			VDP_drawTextBG(APLAN, "are not visible, and raise it", TILE_ATTR(PAL0, 0, 0, 0), 4, 17);
-			VDP_drawTextBG(APLAN, "until they show.", TILE_ATTR(PAL0, 0, 0, 0), 4, 18);
+			VDP_drawTextBG(APLAN, "The inner bars on the sides are", TILE_ATTR(PAL0, 0, 0, 0), 4, 11);
+			VDP_drawTextBG(APLAN, "black at 6%, the outer at 12%. ", TILE_ATTR(PAL0, 0, 0, 0), 4, 12);
+			VDP_drawTextBG(APLAN, "If these bars are not visible, ", TILE_ATTR(PAL0, 0, 0, 0), 4, 13);
+			VDP_drawTextBG(APLAN, "adjust the \"brightness\" control", TILE_ATTR(PAL0, 0, 0, 0), 4, 14);
+			VDP_drawTextBG(APLAN, "until they are.", TILE_ATTR(PAL0, 0, 0, 0), 4, 15);
+			VDP_drawTextBG(APLAN, "You should lower it until they", TILE_ATTR(PAL0, 0, 0, 0), 4, 17);
+			VDP_drawTextBG(APLAN, "are not visible, and raise it", TILE_ATTR(PAL0, 0, 0, 0), 4, 18);
+			VDP_drawTextBG(APLAN, "until they show.", TILE_ATTR(PAL0, 0, 0, 0), 4, 19);
 			break;
 		case HELP_COLORS:			
 			VDP_drawTextBG(APLAN, "           COLORBARS", TILE_ATTR(PAL2, 0, 0, 0), 4, 4);

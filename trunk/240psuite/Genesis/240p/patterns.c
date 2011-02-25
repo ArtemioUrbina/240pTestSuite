@@ -102,11 +102,6 @@ void DrawWhiteScreen()
 
   size = sizeof(solid_tiles) / 32; 
 
-  VDP_setPalette(PAL0, palette_grey);
-  VDP_setPalette(PAL1, palette_red);
-  VDP_setPalette(PAL2, palette_green);
-  VDP_setPalette(PAL3, palette_blue);
-
   VDP_loadTileData(solid_tiles, TILE_USERINDEX, size, 1); 
   VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
@@ -116,19 +111,19 @@ void DrawWhiteScreen()
       switch(color)
       {
         case 0:
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+					VDP_setPalette(PAL0, palette_grey);	         
           break;
         case 1:
-          VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);              
+					VDP_setPalette(PAL0, palette_black);          
           break;
         case 2:
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+					VDP_setPalette(PAL0, palette_red);          
           break;
         case 3:
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+					VDP_setPalette(PAL0, palette_green);          
           break;
         case 4:
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+					VDP_setPalette(PAL0, palette_blue);          
           break;
       }
       redraw = 0;
@@ -319,7 +314,7 @@ void DrawColorBars()
 
         VDP_waitVSync();
     }
-	VDP_setHilightShadow(0);
+		VDP_setHilightShadow(0);
 }
 
 void DrawColorTilesAt(u16 plan, u16 pal, u16 x, u16 y, u16 tiles, u16 w, u16 h)
