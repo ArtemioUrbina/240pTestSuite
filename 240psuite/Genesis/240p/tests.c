@@ -341,8 +341,8 @@ void DropShadowTest()
         direction = 0;
         if(sprite == 1)
         {             
-          VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);                               
-          VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 0);                                   
+          VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, direction) + buzzpos, 1);                               
+          VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos, 0);                                   
         }
       }
     }   
@@ -356,8 +356,8 @@ void DropShadowTest()
         direction = 1;
         if(sprite == 1)
         {             
-          VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 1) + buzzpos, 1);                               
-          VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 1) + buzzshadowpos, 0);                                   
+          VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, direction) + buzzpos, 1);                               
+          VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos, 0);                                   
         }
       }
     }   
@@ -416,8 +416,8 @@ void DropShadowTest()
     {
       if(sprite == 0)
       {                                                                
-        VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);                                      
-        VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 0);       
+        VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, direction) + buzzpos, 1);                                      
+        VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos, 0);       
           
         sprite = 1;
       }
@@ -600,7 +600,7 @@ void StripedSpriteTest()
 void LagTest()
 {
   char str[10];
-  u16 pal = PAL0, change = 1;
+  u16 pal = PAL0, change = 1, pass = 1;
   s16 speed = 1;
   u16 size, ind;
   u16 x = 0, y = 0, x2 = 0, y2 = 0, exit = 0;
@@ -628,7 +628,7 @@ void LagTest()
   x2 = 108;
   y2 = 96;
 
-  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 1);         
+  VDP_setSprite(0, x, 96, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 1);         
   VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 2);         
   VDP_setSprite(2, x2, y2, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 0);           
   
@@ -650,7 +650,8 @@ void LagTest()
       {                
         clicks[pos] = (y - 96) * speed;
         drawoffset = 1;
-        change = 0;
+        if(clicks[pos] >= 0)
+          change = 0;
       }           
     }
 
@@ -667,10 +668,15 @@ void LagTest()
         else
           startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);            
       }  
-      VDP_setSprite(0, 144, 96, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 1);               
+      VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 1);               
+      pass = 0;
     }
-    else
-      VDP_setSprite(0, 144, 96, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 1);               
+    else    
+      if(!pass)
+      {
+        VDP_setSprite(0, 144, 96, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + ind, 1);               
+        pass = 1;
+      }
 
     if (pressedButtons & BUTTON_B)
     {
@@ -779,16 +785,16 @@ void LagTest()
           count ++;
         }
 
-        VDP_drawTextBG(APLAN, str, TILE_ATTR(pal, 0, 0, 0), 10, c + 10);
+        VDP_drawTextBG(APLAN, str, TILE_ATTR(pal, 0, 0, 0), 10, c + 7);
       }
     }   
 
-    VDP_drawTextBG(APLAN, "+", TILE_ATTR(PAL1, 0, 0, 0), 8, 14);
+    VDP_drawTextBG(APLAN, "+", TILE_ATTR(PAL1, 0, 0, 0), 8, 11);
 
     if(count > 0)
     {
       u16 h = 10;
-      u16 v = 20;            
+      u16 v = 18;            
 
       VDP_drawTextBG(APLAN, "----", TILE_ATTR(PAL0, 0, 0, 0), h - 2, v++);
 
@@ -811,6 +817,8 @@ void LagTest()
       h += strlen(str);
       h -= 2;
       VDP_drawTextBG(APLAN, " frames", TILE_ATTR(PAL0, 0, 0, 0), h, v++);
+      VDP_drawTextBG(APLAN, "Keep in mind that a frame is", TILE_ATTR(PAL0, 0, 0, 0), 6, ++v);
+      VDP_drawTextBG(APLAN, "around 16.67 milliseconds.", TILE_ATTR(PAL0, 0, 0, 0), 6, ++v);
 
       h = 14;
       v = 12;
@@ -820,7 +828,7 @@ void LagTest()
       VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL2, 0, 0, 0), h, v);
       h += strlen(str);
       //h -= 2;
-      VDP_drawTextBG(APLAN, " milliseconds", TILE_ATTR(PAL0, 0, 0, 0), h, v);
+      VDP_drawTextBG(APLAN, " milliseconds", TILE_ATTR(PAL0, 0, 0, 0), h, v);      
 
       if(total < 5)
         VDP_drawTextBG(APLAN, "EXCELLENT REFLEXES!", TILE_ATTR(PAL1, 0, 0, 0), 14, 15);
