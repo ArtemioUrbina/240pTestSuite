@@ -952,7 +952,7 @@ void SoundTest()
   VDP_setPalette(PAL0, palette_grey);
   VDP_setPalette(PAL1, back_pal); 
   VDP_setPalette(PAL2, palette_green);
-  VDP_setPalette(PAL3, bw_pal);    
+  VDP_setPalette(PAL3, palette_red);  
 
   ind = TILE_USERINDEX; 
   size = sizeof(back_tiles) / 32; 
@@ -995,6 +995,8 @@ void SoundTest()
     VDP_drawTextBG(APLAN, "Left Channel", TILE_ATTR(sel == 0 ? PAL2 : PAL0, 0, 0, 0), 5, 12);
     VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL2 : PAL0, 0, 0, 0), 14, 14);
     VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL2 : PAL0, 0, 0, 0), 22, 12);    
+
+    VDP_drawTextBG(APLAN, "THIS TEST IS NOT WORKING YET", TILE_ATTR(PAL3, 0, 0, 0), 5, 18);    
 
     VDP_waitVSync();
   }
