@@ -28,6 +28,7 @@
 
 void TestPatternMenu();
 void DrawCredits();
+void DrawIntro();
 
 int main() 
 { 
@@ -42,6 +43,7 @@ int main()
   VDP_setScreenHeight224(); 
   
   VDP_loadFont(font_tiles, 1);
+  DrawIntro();
   while(1)
   {
     if(reload)
@@ -69,7 +71,7 @@ int main()
     VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
     buttons = JOY_readJoypad(JOY_1);
@@ -91,7 +93,7 @@ int main()
     }
 
     if (pressedButtons & BUTTON_A)
-    {            
+    { 
       VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
       VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);      
       switch(cursel)
@@ -120,7 +122,7 @@ int main()
         case 8: 
           SoundTest();                                   
           break;  
-				case 9: 
+        case 9: 
           DrawHelp(HELP_GENERAL);                                   
           break;
         case 10: 
@@ -239,6 +241,16 @@ void TestPatternMenu()
 
   return;
 } 
+
+void DrawIntro()
+{ 
+  VDP_setPalette(PAL0, palette_black);
+  VDP_drawTextBG(APLAN, "KORDAMP PRESENTS", TILE_ATTR(PAL0, 0, 0, 0), 12, 12); 
+  VDP_fadeIn(0, 15, palette_grey, 60, 1);  
+  VDP_waitFadeCompletion();
+  VDP_fadeOutAll(40, 0);
+  VDP_resetScreen();
+}
 
 void DrawCredits()
 {
