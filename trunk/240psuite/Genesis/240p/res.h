@@ -26,11 +26,6 @@
 
 extern u32 color_tiles[224/4]; ; 
 
-extern u16 red_pal[16]; 
-extern u16 green_pal[16]; 
-extern u16 blue_pal[16]; 
-extern u16 white_pal[16]; 
-
 extern u32 cb601_tiles[35840/4]; 
 extern u16 cb601_pal[16];
 
@@ -92,10 +87,6 @@ extern u32 lag_tiles[512/4];
 
 // Solid Color (White)
 extern u32 solid_tiles[32/4]; 
-
-// Gray Ramp background
-extern u32 grayramp_tiles[1280/4]; 
-extern u16 grayramp_pal[16]; 
 
 // Plunge
 extern u32 pluge_tiles[35840/4]; 
