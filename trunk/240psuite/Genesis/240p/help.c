@@ -56,19 +56,18 @@ void DrawHelp(int option)
 			showhelp = 1;
 			break;
 		case HELP_PLUGE:			
-						VDP_drawTextBG(APLAN, "            PLUGE", TILE_ATTR(PAL2, 0, 0, 0), 4, 4);
+			VDP_drawTextBG(APLAN, "            PLUGE", TILE_ATTR(PAL2, 0, 0, 0), 4, 4);
 			VDP_drawTextBG(APLAN, "The PLUGE pattern is used to", TILE_ATTR(PAL0, 0, 0, 0), 4, 7);
 			VDP_drawTextBG(APLAN, "help adjust the black level to", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
 			VDP_drawTextBG(APLAN, "a correct value. ", TILE_ATTR(PAL0, 0, 0, 0), 4, 9);			
 			VDP_drawTextBG(APLAN, "The bars on the sides are black", TILE_ATTR(PAL0, 0, 0, 0), 4, 11);
-			VDP_drawTextBG(APLAN, "at 12%, the minimum displayed", TILE_ATTR(PAL0, 0, 0, 0), 4, 12);
-			VDP_drawTextBG(APLAN, "by the system. They should be", TILE_ATTR(PAL0, 0, 0, 0), 4, 13);
-			VDP_drawTextBG(APLAN, "visible. If not, adjust the", TILE_ATTR(PAL0, 0, 0, 0), 4, 14);
+			VDP_drawTextBG(APLAN, "at 6%. ", TILE_ATTR(PAL0, 0, 0, 0), 4, 12);
+			VDP_drawTextBG(APLAN, "They should be visible, if", TILE_ATTR(PAL0, 0, 0, 0), 4, 13);
+			VDP_drawTextBG(APLAN, "not, adjust them with", TILE_ATTR(PAL0, 0, 0, 0), 4, 14);
 			VDP_drawTextBG(APLAN, "\"brightness\" until they are.", TILE_ATTR(PAL0, 0, 0, 0), 4, 15);
-			VDP_drawTextBG(APLAN, "On systems with full color range", TILE_ATTR(PAL0, 0, 0, 0), 4, 16);
-			VDP_drawTextBG(APLAN, "you should lower it until they", TILE_ATTR(PAL0, 0, 0, 0), 4, 17);
-			VDP_drawTextBG(APLAN, "are not visible, and raise it", TILE_ATTR(PAL0, 0, 0, 0), 4, 18);
-			VDP_drawTextBG(APLAN, "until they show.", TILE_ATTR(PAL0, 0, 0, 0), 4, 19);
+			VDP_drawTextBG(APLAN, "You should lower it until they", TILE_ATTR(PAL0, 0, 0, 0), 4, 16);
+			VDP_drawTextBG(APLAN, "are not visible, and raise it", TILE_ATTR(PAL0, 0, 0, 0), 4, 17);
+			VDP_drawTextBG(APLAN, "until they show.", TILE_ATTR(PAL0, 0, 0, 0), 4, 18);
 			break;
 		case HELP_COLORS:			
 			VDP_drawTextBG(APLAN, "           COLORBARS", TILE_ATTR(PAL2, 0, 0, 0), 4, 4);
@@ -79,7 +78,7 @@ void DrawHelp(int option)
 			VDP_drawTextBG(APLAN, "using the \"Contrast\" control", TILE_ATTR(PAL0, 0, 0, 0), 4, 12);
 			VDP_drawTextBG(APLAN, "on your TV set. Raise it until", TILE_ATTR(PAL0, 0, 0, 0), 4, 13);
 			VDP_drawTextBG(APLAN, "you cannot distinguish between", TILE_ATTR(PAL0, 0, 0, 0), 4, 14);
-			VDP_drawTextBG(APLAN, "the blocks under \"CD\" and \"EF\",", TILE_ATTR(PAL0, 0, 0, 0), 4, 15);
+			VDP_drawTextBG(APLAN, "the blocks under \"C\" and \"E\",", TILE_ATTR(PAL0, 0, 0, 0), 4, 15);
 			VDP_drawTextBG(APLAN, "and lower it slowly until you", TILE_ATTR(PAL0, 0, 0, 0), 4, 16);
 			VDP_drawTextBG(APLAN, "can clearly tell them appart.", TILE_ATTR(PAL0, 0, 0, 0), 4, 17);
 			VDP_drawTextBG(APLAN, "Do the same for each color.", TILE_ATTR(PAL0, 0, 0, 0), 4, 19);

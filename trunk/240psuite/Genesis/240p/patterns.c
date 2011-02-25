@@ -27,16 +27,31 @@
 
 void DrawPluge()
 {
-  u16 size;
+  u16 size, tiles;
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	if(showhelp)
 		DrawHelp(HELP_PLUGE);
-  size = sizeof(pluge_tiles) / 32; 
-  VDP_setPalette(PAL0, pluge_pal);
-  VDP_loadTileData(pluge_tiles, TILE_USERINDEX, size, 1); 
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+
+	VDP_setHilightShadow(1);
+
+	tiles = TILE_USERINDEX;
+  VDP_setPalette(PAL0, palette_grey);
+	size = sizeof(color_tiles) / 32; 
+  VDP_loadTileData(color_tiles, tiles, size, 1); 	
+
+	// 6% & 13% black
+	VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 0) + tiles, 5, 4, 2, 20); 		
+	VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 0, 0, 0, 0) + tiles, 9, 4, 2, 20);
+	VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 0, 0, 0, 0) + tiles, 29, 4, 2, 20);
+	VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 0) + tiles, 33, 4, 2, 20);
+
+	VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 6) + tiles, 15, 4, 10, 5);
+	VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 15, 9, 10, 5);
+	VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 1) + tiles, 15, 14, 10, 5);
+	VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 0, 0, 0, 2) + tiles, 15, 19, 10, 5);
+
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
@@ -48,6 +63,7 @@ void DrawPluge()
 
     VDP_waitVSync();
   }
+	VDP_setHilightShadow(0);
 }
 
 void DrawGrayRamp()
@@ -57,6 +73,7 @@ void DrawGrayRamp()
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	VDP_setHilightShadow(1);
+
 	VDP_setPalette(PAL0, palette_grey);
 	size = sizeof(color_tiles) / 32; 
   VDP_loadTileData(color_tiles, TILE_USERINDEX, size, 1); 	
