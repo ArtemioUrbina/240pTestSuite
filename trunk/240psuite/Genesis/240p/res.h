@@ -26,12 +26,12 @@
 
 extern u32 color_tiles[224/4]; ; 
 
-extern u32 cb601_tiles[2144]; 
+extern u32 cb601_tiles[2144/4]; 
 extern u16 cb601_pal[16];
 extern u16 cb601_map[2240/2]; 
 
 // Title screen
-extern u32 back_tiles[3232]; 
+extern u32 back_tiles[3232/4]; 
 extern u16 back_pal[16]; 
 extern u16 back_map[2240/2]; 
 
@@ -40,6 +40,7 @@ extern u16 gillian_pal[16];
 
 // Font
 extern u32 font_tiles[3072/4];
+
 // Checkerboard
 extern u32 check_tile[32/4]; 
 extern u32 check_tile_inv[32/4]; 
@@ -51,7 +52,8 @@ extern u32 wb_tile[32/4];
 extern u16 bw_pal[16]; 
 
 // Grid
-extern u32 circles_tiles[35840/4]; 
+extern u32 circles_tiles[1024/4]; 
+extern u16 circles_map[2240/2];
 extern u32 circles_grid_tiles[32/4]; 
 extern u32 circles_griddot_tiles[32/4]; 
 
@@ -60,10 +62,13 @@ extern u16 grid_pal[16];
 extern u16 grid_map[2240/2];
 
 // Sonic background
-extern u32 sonicfloor_tiles[16384/4]; 
-extern u32 sonicback_tiles[19456/4]; 
+extern u32 sonicfloor_tiles[2592/4]; 
+extern u16 sonicfloor_map[1024/2];
+extern u32 sonicback_tiles[6624/4]; 
+extern u16 sonicback_map[1216/2];
 extern u16 sonicback_pal[16]; 
-extern u32 sonicwater_tiles[6144/4]; 
+extern u32 sonicwater_tiles[704/4];
+extern u16 sonicwater_map[384/2]; 
 extern u16 sonicwater_pal[16]; 
 extern u16 sonicwater2_pal[16]; 
 extern u16 sonicwater3_pal[16]; 
