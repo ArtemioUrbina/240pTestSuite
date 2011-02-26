@@ -12,8 +12,10 @@ Adjust the white level first, this is done using
 the "Contrast" control on your TV set. Raise it
 until you cannot distinguish between the blocks
 under "E" and "F", and lower it slowly until you
-can clearly tell them appart.          (cont...)
+can clearly tell them appart.          
+                                      (cont...)
                   COLORBARS 2/2
+
 The same procedure should be used with each
 color, raise the control that adjusts the
 individual color level (not the color/tint one)

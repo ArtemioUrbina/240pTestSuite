@@ -91,7 +91,7 @@ start:
 		scanlines->alpha = 0.7f; // XRGB-3 175 
 		scanlines->scale = 0;
 	}
-		
+	
 	oldbuttons = InitController(0);
  	while(!done) 
 	{
@@ -482,7 +482,7 @@ void DrawCredits()
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.05"); y += fh; 
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.07"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();				
