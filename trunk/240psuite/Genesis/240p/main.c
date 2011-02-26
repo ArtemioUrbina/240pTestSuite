@@ -58,9 +58,9 @@ int main()
       size = sizeof(gillian_tiles) / 32; 
       VDP_loadTileData(gillian_tiles, ind, size, 1); 
 
-			VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);    
-    	VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
-			reload = 0;
+      VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);    
+      VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
+      reload = 0;
     }        
               
     pos = 6;
@@ -162,10 +162,10 @@ void TestPatternMenu()
       size = sizeof(gillian_tiles) / 32; 
       VDP_loadTileData(gillian_tiles, ind, size, 1); 
 
-			VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
-    	VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
+      VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+      VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
 
-			reload = 0;
+      reload = 0;
     }        
             
     pos = 6;
@@ -277,10 +277,12 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
   VDP_drawTextBG(APLAN, "SDK:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://code.google.com/p/sgdk/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+  VDP_drawTextBG(APLAN, "SDK Consultor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+  VDP_drawTextBG(APLAN, "Stef", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-  VDP_drawTextBG(APLAN, "Ver. 1.05", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+  VDP_drawTextBG(APLAN, "Ver. 1.06", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);

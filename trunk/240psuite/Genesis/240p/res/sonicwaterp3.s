@@ -8,8 +8,8 @@ sonicwater3_pal:
 * ---------------------------
 	dc.w 0x0000
 	dc.w 0x0d92
-  dc.w 0x0f96
-  dc.w 0x0b96
+    dc.w 0x0f96
+    dc.w 0x0b96
 	dc.w 0x0fdb
 	dc.w 0x0fb9		
 	dc.w 0x0000

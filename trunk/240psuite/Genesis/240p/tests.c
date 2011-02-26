@@ -174,11 +174,20 @@ void DrawStripes()
   }
 }
 
+void VDP_setSpriteAttr(u16 index, u16 tile_attr)
+{
+    _spritedef *sprite;    
+
+    sprite = &spriteDefCache[index];
+    
+    sprite->tile_attr = tile_attr;    
+}
+
 void DropShadowTest()
 {
   u16 sonic_water = 0, sonic_floor = 0, frame = 0, direction = 0;                         
   u16 size, ind, back = 0, changeback = 1, invert = 0, sprite = 0, redraw = 0;
-  u16 field = 1, x = 0, y = 0, exit = 0, text = 0, shadowpos = 0, buzzpos = 0, buzzshadowpos = 0;
+  u16 field = 1, x = 0, y = 0, exit = 0, text = 0, shadowpos = 0, buzzpos = 0, buzzshadowpos = 0, waterfall = 0;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
 
   VDP_setPalette(PAL0, palette_green);
@@ -198,24 +207,31 @@ void DropShadowTest()
   size = sizeof(buzzShadow_tiles) / 32; 
   VDP_loadTileData(buzzShadow_tiles, buzzshadowpos, size, 1); 
 
-  ind = buzzshadowpos + size;  
+  waterfall = buzzshadowpos + size;
+  size = sizeof(waterfall_tiles) / 32; 
+  VDP_loadTileData(waterfall_tiles, waterfall, size, 1);     
+
+  ind = waterfall + size;  
   
-  sprite = random() % 2;
-       
-  if(sprite == 0)
+  sprite = random() % 2;         
+  
+  VDP_setSprite(0, 12, 12, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);                               
+  VDP_setSprite(1, 32, 32, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 2);
+  VDP_setSprite(2, 0, 0, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 3);                     
+  VDP_setSprite(3, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 4);
+  VDP_setSprite(4, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);                                
+
+  if(sprite == 1)
   {   
     x = 32;
     y = 32;
 
-    VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);                               
-    VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 0);       
-                      
-    sprite = 1;
+    VDP_setSpritePosition(2, 320, 224);    
   }
   else
   {                
-    VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 0);       
-    sprite = 0;
+    VDP_setSpritePosition(0, 320, 224);
+    VDP_setSpritePosition(1, 320, 224);
   }           
     
   while(!exit)
@@ -231,13 +247,19 @@ void DropShadowTest()
     {                             
       if(redraw)
         VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
-      if(!redraw)
-      {        
-        VDP_setHorizontalScroll(BPLAN, 0, 0);
-        VDP_setHorizontalScroll(APLAN, 0, 0);
-      }
+
       if(back != 1)
         VDP_setPalette(PAL0, palette_green);
+
+      if(back == 2)
+      {
+        VDP_setHorizontalScroll(BPLAN, 0, 0);
+        VDP_setHorizontalScroll(APLAN, 0, 0);
+        VDP_setSpritePosition(3, 320, 224);
+        VDP_setSpritePosition(4, 320, 224);
+        VDP_updateSprites();
+      } 
+
       switch(back)
       {
         case 0:
@@ -264,7 +286,7 @@ void DropShadowTest()
   
             sonic_floor = sonic_water + size;
             size = sizeof(sonicfloor_tiles) / 32; 
-            VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);     
+            VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);                 
           }
             
           if(!redraw)
@@ -272,7 +294,7 @@ void DropShadowTest()
             VDP_setTileMapRect(BPLAN, sonicback_map, ind, 0, 0, 256/8, 152/8);                            
             VDP_setTileMapRect(BPLAN, sonicback_map, ind, 256/8, 0, 256/8, 152/8);                                   
             VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
-  					VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);
+            VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);
           }
           VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);                            
           VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);                                      
@@ -305,17 +327,17 @@ void DropShadowTest()
 
     if(field == invert)
     {      
-      VDP_setSpritePosition(sprite, x, y);
+      VDP_setSpritePosition(sprite == 1 ? 1 : 2, x, y);      
 
       field = !field;
     }
     else
-    {      
-      VDP_setSpritePosition(sprite, 320, 224);
+    {            
+      VDP_setSpritePosition(sprite == 1 ? 1 : 2, 320, 224);
 
       field = !field;
     }
-
+   
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
@@ -338,12 +360,9 @@ void DropShadowTest()
         x --;   
       if(direction == 1)
       {
-        direction = 0;
-        if(sprite == 1)
-        {             
-          VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, direction) + buzzpos, 1);                               
-          VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos, 0);                                   
-        }
+        direction = 0;        
+        VDP_setSpriteAttr(0, TILE_ATTR(PAL3, 0, 0, direction) + buzzpos);
+        VDP_setSpriteAttr(1, TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos);          
       }
     }   
 
@@ -354,11 +373,8 @@ void DropShadowTest()
       if(direction == 0)
       {
         direction = 1;
-        if(sprite == 1)
-        {             
-          VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, direction) + buzzpos, 1);                               
-          VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos, 0);                                   
-        }
+        VDP_setSpriteAttr(0, TILE_ATTR(PAL3, 0, 0, direction) + buzzpos);
+        VDP_setSpriteAttr(1, TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos);          
       }
     }   
 
@@ -379,6 +395,8 @@ void DropShadowTest()
 
     if(back == 1)
     {
+      VDP_setSpritePosition(3, x*-2 + 79, 120);
+      VDP_setSpritePosition(4, x*-2 + 335, 120);
       VDP_setHorizontalScroll(BPLAN, 0, x*-2);
       VDP_setHorizontalScroll(APLAN, 0, x*-4);      
 
@@ -392,7 +410,7 @@ void DropShadowTest()
           break;
         case 90:
           VDP_setPalette(PAL1, sonicwater3_pal);  
-          break;
+          break;        
       }
   
       frame ++;
@@ -412,21 +430,17 @@ void DropShadowTest()
       VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);        
     }
 
-    if (pressedButtons & BUTTON_C)
+    if (pressedButtons & BUTTON_C)    
     {
-      if(sprite == 0)
-      {                                                                
-        VDP_setSprite(0, x - 20, y - 20, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, direction) + buzzpos, 1);                                      
-        VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos, 0);       
-          
-        sprite = 1;
-      }
+      if(!sprite)      
+        VDP_setSpritePosition(2, 320, 224);    
       else
       {                
-        VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 0);       
-        
-        sprite = 0;
+        VDP_setSpritePosition(0, 320, 224);
+        VDP_setSpritePosition(1, 320, 224);
       }
+      
+      sprite = !sprite;
     }
 
     VDP_updateSprites();
@@ -441,7 +455,7 @@ void DropShadowTest()
 
 void StripedSpriteTest()
 {
-  u16 sonic_water = 0, sonic_floor = 0, sprite, frame = 0;     
+  u16 sonic_water = 0, sonic_floor = 0, sprite, frame = 0, waterfall = 0;     
   u16 size, ind, back = 0, changeback = 1;
   u16 x = 0, y = 0, exit = 0;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
@@ -452,9 +466,16 @@ void StripedSpriteTest()
   sprite = TILE_USERINDEX; 
   size = sizeof(striped_tiles) / 32; 
   VDP_loadTileData(striped_tiles, sprite, size, 1);   
-  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + sprite, 0);       
+  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + sprite, 1);    
 
-  ind = sprite + size;  
+  waterfall = sprite + size;
+  size = sizeof(waterfall_tiles) / 32; 
+  VDP_loadTileData(waterfall_tiles, waterfall, size, 1);        
+    
+  VDP_setSprite(1, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 2);
+  VDP_setSprite(2, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);      
+
+  ind = waterfall + size;  
     
   while(!exit)
   {                
@@ -466,8 +487,11 @@ void StripedSpriteTest()
       if(back != 1)
       {
         VDP_setHorizontalScroll(BPLAN, 0, 0);
-        VDP_setHorizontalScroll(APLAN, 0, 0);       
-      }
+        VDP_setHorizontalScroll(APLAN, 0, 0);
+        VDP_setSpritePosition(1, 320, 224);
+        VDP_setSpritePosition(2, 320, 224);
+        VDP_updateSprites();
+      } 
       switch(back)
       {
         case 0:
@@ -490,7 +514,7 @@ void StripedSpriteTest()
           VDP_setTileMapRect(BPLAN, sonicback_map, ind, 0, 0, 256/8, 152/8);                            
           VDP_setTileMapRect(BPLAN, sonicback_map, ind, 256/8, 0, 256/8, 152/8);                        
           VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
-  				VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);
+          VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);
           VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);                            
           VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);                                  
           break;
@@ -541,6 +565,8 @@ void StripedSpriteTest()
 
     if(back == 1)
     {
+      VDP_setSpritePosition(1, x*-2 + 79, 120);
+      VDP_setSpritePosition(2, x*-2 + 335, 120);
       VDP_setHorizontalScroll(BPLAN, 0, x*-2);
       VDP_setHorizontalScroll(APLAN, 0, x*-4);  
     
@@ -852,7 +878,7 @@ void LagTest()
 
 void ScrollTest()
 {    
-  u16 size, sonic_floor, sonic_water;
+  u16 size, sonic_floor, sonic_water, waterfall;
   u16 exit = 0, frame = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   int x = 0, speed = 1, acc = -1, pause = 0;
@@ -871,14 +897,21 @@ void ScrollTest()
   size = sizeof(sonicfloor_tiles) / 32; 
   VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);     
 
-	VDP_setTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 0, 0, 256/8, 152/8);                            
+  waterfall = sonic_floor + size;
+  size = sizeof(waterfall_tiles) / 32; 
+  VDP_loadTileData(waterfall_tiles, waterfall, size, 1);     
+
+  VDP_setTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 0, 0, 256/8, 152/8);                            
   VDP_setTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 256/8, 0, 256/8, 152/8);                        
 
   VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
-  VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);
+  VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);  
 
   VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);
   VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);
+
+  VDP_setSprite(0, 72, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 1);
+  VDP_setSprite(1, 328, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);  
   while(!exit)
   {
     switch(frame)
@@ -932,13 +965,17 @@ void ScrollTest()
     if(x <= -512)
       x = x % -512;
 
+    VDP_setSpritePosition(0, x/2 + 79, 120);
+    VDP_setSpritePosition(1, x/2 + 335, 120);
+    VDP_updateSprites();
     VDP_setHorizontalScroll(APLAN, 0, x);        
     VDP_setHorizontalScroll(BPLAN, 0, x/2);        
     VDP_waitVSync();
   }
   VDP_setHorizontalScroll(APLAN, 0, 0);
   VDP_setHorizontalScroll(BPLAN, 0, 0);
-  VDP_loadFont(font_tiles, 1);
+  VDP_resetSprites();
+  VDP_updateSprites();  
 }
 
 void SoundTest()
@@ -958,7 +995,7 @@ void SoundTest()
   size = sizeof(back_tiles) / 32; 
   VDP_loadTileData(back_tiles, ind, size, 1); 
   
-	VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+  VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
 
   while(!exit)
   {

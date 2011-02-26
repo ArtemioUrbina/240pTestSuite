@@ -2,114 +2,114 @@
 .global sonicback_tiles
 sonicback_tiles:
 * ---------------------------
-* size:6624 bytes
+* size:6432 bytes
 
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777757
-	dc.l 0x77555545
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555545
+	dc.l 0x55444434
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77757775
-	dc.l 0x77755754
-	dc.l 0x57754544
-	dc.l 0x45544422
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55545554
+	dc.l 0x55544543
+	dc.l 0x45543433
+	dc.l 0x34433322
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777775
-	dc.l 0x77555555
-	dc.l 0x55544445
-	dc.l 0x44422224
-	dc.l 0x44221122
-	dc.l 0x42211111
+	dc.l 0x55555555
+	dc.l 0x55555554
+	dc.l 0x55444444
+	dc.l 0x44433334
+	dc.l 0x33322223
+	dc.l 0x33221122
+	dc.l 0x32211111
 	dc.l 0x22111111
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x75777777
-	dc.l 0x55577777
-	dc.l 0x57777777
-	dc.l 0x55577777
-	dc.l 0x24455777
-	dc.l 0x22445577
-	dc.l 0x11224555
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x57555577
-	dc.l 0x45445777
-	dc.l 0x44545575
-	dc.l 0x24444455
-	dc.l 0x22222445
-	dc.l 0x21222444
-	dc.l 0x11242442
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x57777777
-	dc.l 0x55777777
+	dc.l 0x55555555
+	dc.l 0x54555555
+	dc.l 0x44455555
 	dc.l 0x45555555
+	dc.l 0x44455555
+	dc.l 0x23344555
+	dc.l 0x22334455
+	dc.l 0x11223444
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777755
-	dc.l 0x77775575
-	dc.l 0x77777555
-	dc.l 0x77755545
-	dc.l 0x77554444
-	dc.l 0x75775544
+	dc.l 0x55555555
+	dc.l 0x45444455
+	dc.l 0x34334555
+	dc.l 0x33434454
+	dc.l 0x23333344
+	dc.l 0x22222334
+	dc.l 0x21222333
+	dc.l 0x11232332
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x55555557
-	dc.l 0x54444445
-	dc.l 0x44442224
-	dc.l 0x54222122
-	dc.l 0x44211111
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x45555555
+	dc.l 0x44555555
+	dc.l 0x34444444
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555544
+	dc.l 0x55554454
+	dc.l 0x55555444
+	dc.l 0x55544434
+	dc.l 0x55443333
+	dc.l 0x54554433
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x44444445
+	dc.l 0x43333334
+	dc.l 0x33332223
+	dc.l 0x43222122
+	dc.l 0x33211111
 	dc.l 0x22111212
 
 * ---------------------------
-	dc.l 0x75454444
-	dc.l 0x54445424
-	dc.l 0x54244222
-	dc.l 0x44222222
-	dc.l 0x42221111
+	dc.l 0x54343333
+	dc.l 0x43334323
+	dc.l 0x43233222
+	dc.l 0x33222222
+	dc.l 0x32221111
 	dc.l 0x22111111
 	dc.l 0x11111111
 	dc.l 0x11111111
 
 * ---------------------------
-	dc.l 0x44542221
-	dc.l 0x24422111
-	dc.l 0x24221111
-	dc.l 0x42211111
+	dc.l 0x33432221
+	dc.l 0x23322111
+	dc.l 0x23221111
+	dc.l 0x32211111
 	dc.l 0x21211111
 	dc.l 0x11111111
 	dc.l 0x11111111
@@ -126,9 +126,9 @@ sonicback_tiles:
 	dc.l 0x11111111
 
 * ---------------------------
-	dc.l 0x12222445
-	dc.l 0x11112224
-	dc.l 0x11111224
+	dc.l 0x12222334
+	dc.l 0x11112223
+	dc.l 0x11111223
 	dc.l 0x11111122
 	dc.l 0x11111112
 	dc.l 0x11111111
@@ -136,84 +136,84 @@ sonicback_tiles:
 	dc.l 0x11111111
 
 * ---------------------------
-	dc.l 0x75454444
-	dc.l 0x77775444
-	dc.l 0x77777554
-	dc.l 0x77777775
-	dc.l 0x77777557
-	dc.l 0x77777545
-	dc.l 0x77575555
-	dc.l 0x77757777
+	dc.l 0x54343333
+	dc.l 0x55554333
+	dc.l 0x55555443
+	dc.l 0x55555554
+	dc.l 0x55555445
+	dc.l 0x55555434
+	dc.l 0x55454444
+	dc.l 0x55545555
 
 * ---------------------------
-	dc.l 0x44542221
+	dc.l 0x33432221
 	dc.l 0x21111111
-	dc.l 0x42221122
-	dc.l 0x44442224
-	dc.l 0x44544245
-	dc.l 0x54544454
-	dc.l 0x55555542
-	dc.l 0x77755544
+	dc.l 0x32221122
+	dc.l 0x33332223
+	dc.l 0x33433234
+	dc.l 0x43433343
+	dc.l 0x44444432
+	dc.l 0x55544433
 
 * ---------------------------
 	dc.l 0x11111111
-	dc.l 0x11212224
-	dc.l 0x11224245
-	dc.l 0x12222424
-	dc.l 0x12424544
-	dc.l 0x22245555
-	dc.l 0x44244457
-	dc.l 0x45445557
+	dc.l 0x11212223
+	dc.l 0x11223234
+	dc.l 0x12222323
+	dc.l 0x12323433
+	dc.l 0x22234444
+	dc.l 0x33233345
+	dc.l 0x34334445
 
 * ---------------------------
 	dc.l 0x11111111
-	dc.l 0x42212222
+	dc.l 0x32212222
 	dc.l 0x22111212
-	dc.l 0x44211111
-	dc.l 0x54222122
-	dc.l 0x44442224
-	dc.l 0x54444445
-	dc.l 0x55555557
+	dc.l 0x33211111
+	dc.l 0x43222122
+	dc.l 0x33332223
+	dc.l 0x43333334
+	dc.l 0x44444445
 
 * ---------------------------
-	dc.l 0x12244222
-	dc.l 0x11212224
-	dc.l 0x11224245
-	dc.l 0x12222424
-	dc.l 0x12424544
-	dc.l 0x22245555
-	dc.l 0x44244457
-	dc.l 0x45445557
+	dc.l 0x12233222
+	dc.l 0x11212223
+	dc.l 0x11223234
+	dc.l 0x12222323
+	dc.l 0x12323433
+	dc.l 0x22234444
+	dc.l 0x33233345
+	dc.l 0x34334445
 
 * ---------------------------
-	dc.l 0x24445577
-	dc.l 0x54555555
-	dc.l 0x75575775
-	dc.l 0x54577757
-	dc.l 0x42457777
-	dc.l 0x44455777
-	dc.l 0x55557777
-	dc.l 0x77777777
+	dc.l 0x23334455
+	dc.l 0x43444444
+	dc.l 0x54454554
+	dc.l 0x43455545
+	dc.l 0x32345555
+	dc.l 0x33344555
+	dc.l 0x44445555
+	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0x77777555
-	dc.l 0x77775444
-	dc.l 0x77777554
-	dc.l 0x77777775
-	dc.l 0x77777557
-	dc.l 0x77777545
-	dc.l 0x77575555
-	dc.l 0x77757777
+	dc.l 0x55555444
+	dc.l 0x55554333
+	dc.l 0x55555443
+	dc.l 0x55555554
+	dc.l 0x55555445
+	dc.l 0x55555434
+	dc.l 0x55454444
+	dc.l 0x55545555
 
 * ---------------------------
-	dc.l 0x42212222
-	dc.l 0x24442221
-	dc.l 0x44444422
-	dc.l 0x54445422
-	dc.l 0x54444422
-	dc.l 0x45755442
-	dc.l 0x57557542
-	dc.l 0x75455754
+	dc.l 0x32212222
+	dc.l 0x23332221
+	dc.l 0x33333322
+	dc.l 0x43334322
+	dc.l 0x43333322
+	dc.l 0x34544332
+	dc.l 0x45445432
+	dc.l 0x54344543
 
 * ---------------------------
 	dc.l 0x11111111
@@ -222,8 +222,8 @@ sonicback_tiles:
 	dc.l 0x11111111
 	dc.l 0x11111111
 	dc.l 0x22111111
-	dc.l 0x42212111
-	dc.l 0x54221221
+	dc.l 0x32212111
+	dc.l 0x43221221
 
 * ---------------------------
 	dc.l 0x11111111
@@ -232,1845 +232,1785 @@ sonicback_tiles:
 	dc.l 0x11111212
 	dc.l 0x11111112
 	dc.l 0x11112222
-	dc.l 0x11122444
-	dc.l 0x12224555
+	dc.l 0x11122333
+	dc.l 0x12223444
 
 * ---------------------------
 	dc.l 0x11111111
 	dc.l 0x21111111
-	dc.l 0x42221122
-	dc.l 0x44442224
-	dc.l 0x44544245
-	dc.l 0x54544454
-	dc.l 0x55555542
-	dc.l 0x77755544
+	dc.l 0x32221122
+	dc.l 0x33332223
+	dc.l 0x33433234
+	dc.l 0x43433343
+	dc.l 0x44444432
+	dc.l 0x55544433
 
 * ---------------------------
 	dc.l 0x11111111
 	dc.l 0x12122211
 	dc.l 0x11111122
 	dc.l 0x22111111
-	dc.l 0x42211111
-	dc.l 0x44422112
-	dc.l 0x45542222
-	dc.l 0x55754444
+	dc.l 0x32211111
+	dc.l 0x33322112
+	dc.l 0x34432222
+	dc.l 0x44543333
 
 * ---------------------------
-	dc.l 0x77777555
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-
-* ---------------------------
-	dc.l 0x55557757
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-
-* ---------------------------
-	dc.l 0x77577544
-	dc.l 0x77755544
-	dc.l 0x75754422
-	dc.l 0x77775442
-	dc.l 0x77754424
-	dc.l 0x77542245
-	dc.l 0x75444454
+	dc.l 0x55555444
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
 	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0x44442442
-	dc.l 0x44554422
-	dc.l 0x55445544
-	dc.l 0x75444445
-	dc.l 0x77555457
-	dc.l 0x77777557
-	dc.l 0x77777757
-	dc.l 0x77777777
+	dc.l 0x44445545
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0x24245555
-	dc.l 0x42444577
-	dc.l 0x44222455
-	dc.l 0x45442245
-	dc.l 0x55554457
-	dc.l 0x77775557
-	dc.l 0x77777775
-	dc.l 0x77777777
+	dc.l 0x55455433
+	dc.l 0x55544433
+	dc.l 0x54543322
+	dc.l 0x55554332
+	dc.l 0x55543323
+	dc.l 0x55432234
+	dc.l 0x54333343
+	dc.l 0x44444444
 
 * ---------------------------
-	dc.l 0x55775555
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x33332332
+	dc.l 0x33443322
+	dc.l 0x44334433
+	dc.l 0x54333334
+	dc.l 0x55444345
+	dc.l 0x55555445
+	dc.l 0x55555545
+	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777555
-	dc.l 0x77557544
-	dc.l 0x75445424
-	dc.l 0x75424212
-	dc.l 0x75442224
-	dc.l 0x54554445
-	dc.l 0x55575555
+	dc.l 0x23234444
+	dc.l 0x32333455
+	dc.l 0x33222344
+	dc.l 0x34332234
+	dc.l 0x44443345
+	dc.l 0x55554445
+	dc.l 0x55555554
+	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x55777777
-	dc.l 0x44555757
-	dc.l 0x22445777
-	dc.l 0x24455777
-	dc.l 0x45577757
-	dc.l 0x57777577
-	dc.l 0x77755457
+	dc.l 0x44554444
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0x75777775
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x55555555
+	dc.l 0x55555444
+	dc.l 0x55445433
+	dc.l 0x54334323
+	dc.l 0x54323212
+	dc.l 0x54332223
+	dc.l 0x43443334
+	dc.l 0x44454444
 
 * ---------------------------
-	dc.l 0x75777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x55555555
+	dc.l 0x44555555
+	dc.l 0x33444545
+	dc.l 0x22334555
+	dc.l 0x23344555
+	dc.l 0x34455545
+	dc.l 0x45555455
+	dc.l 0x55544345
 
 * ---------------------------
-	dc.l 0x77757557
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x54555554
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0x57777757
-	dc.l 0x77777775
-	dc.l 0x77555555
-	dc.l 0x55544445
-	dc.l 0x44422224
-	dc.l 0x44221122
-	dc.l 0x42211111
+	dc.l 0x54555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+
+* ---------------------------
+	dc.l 0x55545445
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+
+* ---------------------------
+	dc.l 0x45555545
+	dc.l 0x55555554
+	dc.l 0x55444444
+	dc.l 0x44433334
+	dc.l 0x33322223
+	dc.l 0x33221122
+	dc.l 0x32211111
 	dc.l 0x22111111
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x777779bf
-	dc.l 0x777779bf
-	dc.l 0x777779bf
-	dc.l 0x777779bf
-
-* ---------------------------
-	dc.l 0x777779bf
-	dc.l 0x777779bf
-	dc.l 0x77779bb0
-	dc.l 0x77779bb0
-	dc.l 0x77779bb0
-	dc.l 0x77779bf0
-	dc.l 0x77779bf0
-	dc.l 0x77779bf0
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0xff777777
-	dc.l 0xff777777
-	dc.l 0xff777777
-	dc.l 0xff777777
-	dc.l 0xff777777
-	dc.l 0xff777777
-	dc.l 0xff777777
-
-* ---------------------------
-	dc.l 0x77bbbb00
-	dc.l 0x77bbbb00
-	dc.l 0x77bbff00
-	dc.l 0x77bbff00
-	dc.l 0x799bff00
-	dc.l 0x799bff00
-	dc.l 0x799bff9b
-	dc.l 0x799bff9b
-
-* ---------------------------
-	dc.l 0xbbff7777
-	dc.l 0xbbff7777
-	dc.l 0xbbff7777
-	dc.l 0xbbff7777
-	dc.l 0xbbff7777
-	dc.l 0xbbff7777
-	dc.l 0xf00f7777
-	dc.l 0xf00f7777
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77779bf7
-	dc.l 0x77779bf7
-	dc.l 0x77779bf7
-	dc.l 0x77779bff
-	dc.l 0x77779bff
-	dc.l 0x77779bff
-	dc.l 0x77799bff
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x7777779f
-	dc.l 0x7777799f
-	dc.l 0x7777799f
-	dc.l 0x7777799f
-
-* ---------------------------
-	dc.l 0x799bff9b
-	dc.l 0x799bbfbb
-	dc.l 0xbbbbbfbb
-	dc.l 0xbbbbbfff
-	dc.l 0xffb99fff
-	dc.l 0xffb99fff
-	dc.l 0xf0b99fff
-	dc.l 0xf0b99bbf
-
-* ---------------------------
-	dc.l 0xf00f7777
-	dc.l 0xf000ff77
-	dc.l 0xf000ff77
-	dc.l 0xf000ff77
-	dc.l 0xf0ffbb0f
-	dc.l 0xff99ff0f
-	dc.l 0xff99ff0f
-	dc.l 0xff9ff000
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x777ffb97
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77fb9777
-	dc.l 0x77fb9777
-	dc.l 0x77fb9777
-	dc.l 0x77fb9777
-	dc.l 0x7ffbb977
-	dc.l 0x7ffbb977
-
-* ---------------------------
-	dc.l 0x77799bbf
-	dc.l 0x77799bbf
-	dc.l 0x77799bbf
-	dc.l 0x777bffff
-	dc.l 0x799bffff
-	dc.l 0x799bffbf
-	dc.l 0x799bffbf
-	dc.l 0x799bffbf
-
-* ---------------------------
-	dc.l 0xff07799f
-	dc.l 0xff77f99f
-	dc.l 0xff77fb9f
-	dc.l 0xff77fbbf
-	dc.l 0x7f77fbbf
-	dc.l 0x79bfffbf
-	dc.l 0x79bfffff
-	dc.l 0x79bfffff
-
-* ---------------------------
-	dc.l 0x77799bbf
-	dc.l 0x00fbbdd0
-	dc.l 0x00fbbdd0
-	dc.l 0x00fbbdd0
-	dc.l 0x0fffd000
-	dc.l 0x0fffd000
-	dc.l 0x0fffd000
-	dc.l 0x00ffd000
-
-* ---------------------------
-	dc.l 0xff07799f
-	dc.l 0x00b00000
-	dc.l 0x00b00000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0xf0f99bbf
-	dc.l 0xbbfffff7
-	dc.l 0xbbfffff7
-	dc.l 0xbbfffff7
-	dc.l 0xbbff9bf0
-	dc.l 0xbbff9bf0
-	dc.l 0xffff9bf0
-	dc.l 0xffff9bf0
-
-* ---------------------------
-	dc.l 0xf09ff000
-	dc.l 0x79bff777
-	dc.l 0x79bb0777
-	dc.l 0x9ffb0f77
-	dc.l 0x9fff0f77
-	dc.l 0x9ff00f77
-	dc.l 0xbff00077
-	dc.l 0xbf000077
-
-* ---------------------------
-	dc.l 0x77bbbb00
-	dc.l 0x7799bf0b
-	dc.l 0x7799bf09
-	dc.l 0x7799bf09
-	dc.l 0x77bbf009
-	dc.l 0x77bbf00b
-	dc.l 0x99fff00b
-	dc.l 0x99fff00f
-
-* ---------------------------
-	dc.l 0xbbff7777
-	dc.l 0xbb0f7777
-	dc.l 0x9f0f7777
-	dc.l 0x9f0f7777
-	dc.l 0x9f0f7777
-	dc.l 0xbf00ff77
-	dc.l 0xbf00fff7
-	dc.l 0xf000fff7
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x777777ff
-	dc.l 0x777777ff
-	dc.l 0x7f97770f
-	dc.l 0x7f97ff00
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x99777777
-	dc.l 0xbffb7777
-	dc.l 0xfffb7777
-	dc.l 0xf0ffb970
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77997777
-	dc.l 0x7bb97777
-	dc.l 0x7bb97777
-	dc.l 0x7fb977f9
-	dc.l 0x0fb9b7f9
-	dc.l 0x0fbfb7f9
-	dc.l 0x0fffbffb
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x777fb977
-	dc.l 0x777fb977
-	dc.l 0x777fb977
-	dc.l 0x77fbbb97
-	dc.l 0x77fb0b97
-	dc.l 0x97fb0bb7
-	dc.l 0x97fbbbbb
-
-* ---------------------------
-	dc.l 0x777ffb97
-	dc.l 0x7777f0bb
-	dc.l 0x7777f0f9
-	dc.l 0x7777f0f9
-	dc.l 0x7777f0f9
-	dc.l 0x77ff00fb
-	dc.l 0x7fff00fb
-	dc.l 0x7fff000f
-
-* ---------------------------
-	dc.l 0x7ffbb977
-	dc.l 0xb0fb9977
-	dc.l 0x90fb9977
-	dc.l 0x90fb9977
-	dc.l 0x900fbb77
-	dc.l 0xb00fbb77
-	dc.l 0xb00fff99
-	dc.l 0xf00fff99
-
-* ---------------------------
-	dc.l 0x77bbbb00
-	dc.l 0x00fbbdd0
-	dc.l 0x00fbbdd0
-	dc.l 0x00fbbdd0
-	dc.l 0x0fffd000
-	dc.l 0x0fffd000
-	dc.l 0x0fffd000
-	dc.l 0x00ffd000
-
-* ---------------------------
-	dc.l 0xbbff7777
-	dc.l 0x00b00000
-	dc.l 0x00b00000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x777779b7
-	dc.l 0x777779b7
-
-* ---------------------------
-	dc.l 0x7bbbffbf
-	dc.l 0xdd000000
-	dc.l 0xdd00ff00
-	dc.l 0xdd00ff00
-	dc.l 0xdd00f000
-	dc.l 0xdd00f000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x7bb77fff
-	dc.l 0x0dd00000
-	dc.l 0x0dd00000
-	dc.l 0x0ff00000
-	dc.l 0x0ff00000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x000ff000
-	dc.l 0x000ff000
-	dc.l 0x000ff000
-	dc.l 0x000ff000
-	dc.l 0x000ff000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x000000ff
-	dc.l 0x000000ff
-	dc.l 0x000000ff
-	dc.l 0x000000ff
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0xffffbbf0
-	dc.l 0x0000dd00
-	dc.l 0x0000dd00
-	dc.l 0x0000ff00
-	dc.l 0x0000ff00
-	dc.l 0x0000ff00
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0xff0000ff
-	dc.l 0xf0000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x99fff00f
-	dc.l 0xddff000f
-	dc.l 0xddff0000
-	dc.l 0xdf000000
-	dc.l 0xdf000000
-	dc.l 0xf0000000
-	dc.l 0xf0000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0xf000fff7
-	dc.l 0x000f0000
-	dc.l 0x000f0000
-	dc.l 0x000f0000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x7f9ffbb0
-	dc.l 0x0ffb000d
-	dc.l 0x000d000d
-	dc.l 0x000d0000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0xf0ffb900
-	dc.l 0x0000db00
-	dc.l 0x00000d00
-	dc.l 0x000000f0
-	dc.l 0x000000f0
-	dc.l 0x000000f0
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x0f0fb0fb
-	dc.l 0x0000000d
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0xb7f9b99b
-	dc.l 0xd0db0fbd
-	dc.l 0xd0d00ffd
-	dc.l 0x000000fd
-	dc.l 0x0000000f
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x77777bff
-	dc.l 0x77777bff
-	dc.l 0x777bfbf0
-	dc.l 0x777bfff0
-	dc.l 0x77fbfff0
-	dc.l 0x7bffff00
-	dc.l 0xfbf0ff00
-	dc.l 0xfff0f000
-
-* ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0xf77bf777
-	dc.l 0xf77bf777
-	dc.l 0x007f0f07
-	dc.l 0x00ff00f0
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00bbdd00
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0xddbbdd00
-	dc.l 0xddbbdd00
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x0000bbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x0000bbdd
-	dc.l 0x0000bbdd
-	dc.l 0x0000bbdd
-	dc.l 0x0000bbdd
-	dc.l 0x0000bbbb
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0xdd000000
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0xbbbbff00
-	dc.l 0xbbbbff00
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x000000bb
-	dc.l 0x000000bb
-	dc.l 0x000000bb
-	dc.l 0x000000bb
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0xbbdd0000
-	dc.l 0xbbddff00
-	dc.l 0xbbddff00
-	dc.l 0xbbddff00
-	dc.l 0xdddddd00
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x0000ccaa
-	dc.l 0x00aaccaa
-	dc.l 0x0088aacc
-	dc.l 0xaaeeee88
-	dc.l 0xaaeeee88
-	dc.l 0xccaaccaa
-	dc.l 0xccaacc88
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0xaacc0000
-	dc.l 0xaaccaa00
-	dc.l 0xccaaaa00
-	dc.l 0x88aaccaa
-	dc.l 0xaaaaccaa
-	dc.l 0xaaccaacc
-	dc.l 0xaaccaacc
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x000088aa
-	dc.l 0x000088aa
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x88cc0000
-	dc.l 0x88aacc00
-
-* ---------------------------
-	dc.l 0x0ff00000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x000088aa
-	dc.l 0x000088aa
-
-* ---------------------------
-	dc.l 0x00f00000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x88cc0000
-	dc.l 0x88aacc00
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdddd
-
-* ---------------------------
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-
-* ---------------------------
-	dc.l 0xddbbdd00
-	dc.l 0xddbbdd00
-	dc.l 0xddbbdd00
-	dc.l 0xddbbbb00
-	dc.l 0xddbbbb00
-	dc.l 0xddbbbb00
-	dc.l 0xddbbbb00
-	dc.l 0xddbbbb00
-
-* ---------------------------
-	dc.l 0x00bbbbff
-	dc.l 0xffbbbbff
-	dc.l 0xffbbbbff
-	dc.l 0xffbbbbff
-	dc.l 0xddddbbbb
-	dc.l 0xddddbbbb
-	dc.l 0xddddbbbb
-	dc.l 0xddddbbbb
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x000000bb
-	dc.l 0x000000bb
-	dc.l 0x0000ddbb
-	dc.l 0x0000ddbb
-	dc.l 0x0000ddbb
-	dc.l 0x0000ddbb
-	dc.l 0x00ddbbff
-
-* ---------------------------
-	dc.l 0x0000bbbb
-	dc.l 0x0000bbbb
-	dc.l 0x0000bbbb
-	dc.l 0x0000bbbb
-	dc.l 0x0000bbbb
-	dc.l 0x0000bbbb
-	dc.l 0x0000bbbb
-	dc.l 0x00bbff00
-
-* ---------------------------
-	dc.l 0xdd000000
-	dc.l 0xdd000000
-	dc.l 0xdd000000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0x00dddd00
-
-* ---------------------------
-	dc.l 0x00bbdd00
-	dc.l 0xbbbbdd00
-	dc.l 0xbbbbdd00
-	dc.l 0xddbbdd00
-	dc.l 0xddbbdd00
-	dc.l 0xddbbdd00
-	dc.l 0xddbbdd00
-	dc.l 0xddbbbb00
-
-* ---------------------------
-	dc.l 0x00bbdd00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-
-* ---------------------------
-	dc.l 0xbbbbff00
-	dc.l 0xbbddff00
-	dc.l 0xbbddff00
-	dc.l 0xbbddff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xddff0000
-	dc.l 0xffff0000
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x00dddddd
-	dc.l 0x00dddddd
-	dc.l 0x00dddddd
-	dc.l 0x00dddddd
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0xff000000
-	dc.l 0xff000000
-	dc.l 0xff000000
-	dc.l 0x00066423
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x000000dd
-	dc.l 0x000000dd
-	dc.l 0x000000dd
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x466420ff
-
-* ---------------------------
-	dc.l 0x000000bb
-	dc.l 0x000000ff
-	dc.l 0x000000ff
-	dc.l 0x00dd00ff
-	dc.l 0x00ddff00
-	dc.l 0x00ddff00
-	dc.l 0x00ddff00
-	dc.l 0xddff0000
-
-* ---------------------------
-	dc.l 0xdddddd00
-	dc.l 0xdddddd00
-	dc.l 0xdddddd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0xddffdd00
-
-* ---------------------------
-	dc.l 0xdddd0000
-	dc.l 0x00dd0000
-	dc.l 0x00dd0000
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbddff
-
-* ---------------------------
-	dc.l 0xeeaa8888
-	dc.l 0xeeaa8888
-	dc.l 0xeeaa88aa
-	dc.l 0xccccaaaa
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x5555579d
+	dc.l 0x5555579d
+	dc.l 0x5555579d
+	dc.l 0x5555579d
+
+* ---------------------------
+	dc.l 0x5555579d
+	dc.l 0x5555579d
+	dc.l 0x5555799e
+	dc.l 0x5555799e
+	dc.l 0x5555799e
+	dc.l 0x555579de
+	dc.l 0x555579de
+	dc.l 0x555579de
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0xdd555555
+	dc.l 0xdd555555
+	dc.l 0xdd555555
+	dc.l 0xdd555555
+	dc.l 0xdd555555
+	dc.l 0xdd555555
+	dc.l 0xdd555555
+
+* ---------------------------
+	dc.l 0x559999ee
+	dc.l 0x559999ee
+	dc.l 0x5599ddee
+	dc.l 0x5599ddee
+	dc.l 0x5779ddee
+	dc.l 0x5779ddee
+	dc.l 0x5779dd79
+	dc.l 0x5779dd79
+
+* ---------------------------
+	dc.l 0x99dd5555
+	dc.l 0x99dd5555
+	dc.l 0x99dd5555
+	dc.l 0x99dd5555
+	dc.l 0x99dd5555
+	dc.l 0x99dd5555
+	dc.l 0xdeed5555
+	dc.l 0xdeed5555
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x555579d5
+	dc.l 0x555579d5
+	dc.l 0x555579d5
+	dc.l 0x555579dd
+	dc.l 0x555579dd
+	dc.l 0x555579dd
+	dc.l 0x555779dd
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x5555557d
+	dc.l 0x5555577d
+	dc.l 0x5555577d
+	dc.l 0x5555577d
+
+* ---------------------------
+	dc.l 0x5779dd79
+	dc.l 0x57799d99
+	dc.l 0x99999d99
+	dc.l 0x99999ddd
+	dc.l 0xdd977ddd
+	dc.l 0xdd977ddd
+	dc.l 0xde977ddd
+	dc.l 0xde97799d
+
+* ---------------------------
+	dc.l 0xdeed5555
+	dc.l 0xdeeedd55
+	dc.l 0xdeeedd55
+	dc.l 0xdeeedd55
+	dc.l 0xdedd99ed
+	dc.l 0xdd77dded
+	dc.l 0xdd77dded
+	dc.l 0xdd7ddeee
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x555dd975
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55d97555
+	dc.l 0x55d97555
+	dc.l 0x55d97555
+	dc.l 0x55d97555
+	dc.l 0x5dd99755
+	dc.l 0x5dd99755
+
+* ---------------------------
+	dc.l 0x5557799d
+	dc.l 0x5557799d
+	dc.l 0x5557799d
+	dc.l 0x5559dddd
+	dc.l 0x5779dddd
+	dc.l 0x5779dd9d
+	dc.l 0x5779dd9d
+	dc.l 0x5779dd9d
+
+* ---------------------------
+	dc.l 0xdde5577d
+	dc.l 0xdd55d77d
+	dc.l 0xdd55d97d
+	dc.l 0xdd55d99d
+	dc.l 0x5d55d99d
+	dc.l 0x579ddd9d
+	dc.l 0x579ddddd
+	dc.l 0x579ddddd
+
+* ---------------------------
+	dc.l 0x5557799d
+	dc.l 0xeed99bbe
+	dc.l 0xeed99bbe
+	dc.l 0xeed99bbe
+	dc.l 0xedddbeee
+	dc.l 0xedddbeee
+	dc.l 0xedddbeee
+	dc.l 0xeeddbeee
+
+* ---------------------------
+	dc.l 0xdde5577d
+	dc.l 0xee9eeeee
+	dc.l 0xee9eeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xded7799d
+	dc.l 0x99ddddd5
+	dc.l 0x99ddddd5
+	dc.l 0x99ddddd5
+	dc.l 0x99dd79de
+	dc.l 0x99dd79de
+	dc.l 0xdddd79de
+	dc.l 0xdddd79de
+
+* ---------------------------
+	dc.l 0xde7ddeee
+	dc.l 0x579dd555
+	dc.l 0x5799e555
+	dc.l 0x7dd9ed55
+	dc.l 0x7ddded55
+	dc.l 0x7ddeed55
+	dc.l 0x9ddeee55
+	dc.l 0x9deeee55
+
+* ---------------------------
+	dc.l 0x559999ee
+	dc.l 0x55779de9
+	dc.l 0x55779de7
+	dc.l 0x55779de7
+	dc.l 0x5599dee7
+	dc.l 0x5599dee9
+	dc.l 0x77dddee9
+	dc.l 0x77dddeed
+
+* ---------------------------
+	dc.l 0x99dd5555
+	dc.l 0x99ed5555
+	dc.l 0x7ded5555
+	dc.l 0x7ded5555
+	dc.l 0x7ded5555
+	dc.l 0x9deedd55
+	dc.l 0x9deeddd5
+	dc.l 0xdeeeddd5
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x555555dd
+	dc.l 0x555555dd
+	dc.l 0x5d7555ed
+	dc.l 0x5d75ddee
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x77555555
+	dc.l 0x9dd95555
+	dc.l 0xddd95555
+	dc.l 0xdedd975e
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55775555
+	dc.l 0x59975555
+	dc.l 0x59975555
+	dc.l 0x5d9755d7
+	dc.l 0xed9795d7
+	dc.l 0xed9d95d7
+	dc.l 0xeddd9dd9
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x555d9755
+	dc.l 0x555d9755
+	dc.l 0x555d9755
+	dc.l 0x55d99975
+	dc.l 0x55d9e975
+	dc.l 0x75d9e995
+	dc.l 0x75d99999
+
+* ---------------------------
+	dc.l 0x555dd975
+	dc.l 0x5555de99
+	dc.l 0x5555ded7
+	dc.l 0x5555ded7
+	dc.l 0x5555ded7
+	dc.l 0x55ddeed9
+	dc.l 0x5dddeed9
+	dc.l 0x5dddeeed
+
+* ---------------------------
+	dc.l 0x5dd99755
+	dc.l 0x9ed97755
+	dc.l 0x7ed97755
+	dc.l 0x7ed97755
+	dc.l 0x7eed9955
+	dc.l 0x9eed9955
+	dc.l 0x9eeddd77
+	dc.l 0xdeeddd77
+
+* ---------------------------
+	dc.l 0x559999ee
+	dc.l 0xeed99bbe
+	dc.l 0xeed99bbe
+	dc.l 0xeed99bbe
+	dc.l 0xedddbeee
+	dc.l 0xedddbeee
+	dc.l 0xedddbeee
+	dc.l 0xeeddbeee
+
+* ---------------------------
+	dc.l 0x99dd5555
+	dc.l 0xee9eeeee
+	dc.l 0xee9eeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555795
+	dc.l 0x55555795
+
+* ---------------------------
+	dc.l 0x5999dd9d
+	dc.l 0xbbeeeeee
+	dc.l 0xbbeeddee
+	dc.l 0xbbeeddee
+	dc.l 0xbbeedeee
+	dc.l 0xbbeedeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0x59955ddd
+	dc.l 0xebbeeeee
+	dc.l 0xebbeeeee
+	dc.l 0xeddeeeee
+	dc.l 0xeddeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xeeeddeee
+	dc.l 0xeeeddeee
+	dc.l 0xeeeddeee
+	dc.l 0xeeeddeee
+	dc.l 0xeeeddeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xeeeeeedd
+	dc.l 0xeeeeeedd
+	dc.l 0xeeeeeedd
+	dc.l 0xeeeeeedd
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xdddd99de
+	dc.l 0xeeeebbee
+	dc.l 0xeeeebbee
+	dc.l 0xeeeeddee
+	dc.l 0xeeeeddee
+	dc.l 0xeeeeddee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xddeeeedd
+	dc.l 0xdeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0x77dddeed
+	dc.l 0xbbddeeed
+	dc.l 0xbbddeeee
+	dc.l 0xbdeeeeee
+	dc.l 0xbdeeeeee
+	dc.l 0xdeeeeeee
+	dc.l 0xdeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xdeeeddd5
+	dc.l 0xeeedeeee
+	dc.l 0xeeedeeee
+	dc.l 0xeeedeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0x5d7dd99e
+	dc.l 0xedd9eeeb
+	dc.l 0xeeebeeeb
+	dc.l 0xeeebeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xdedd97ee
+	dc.l 0xeeeeb9ee
+	dc.l 0xeeeeebee
+	dc.l 0xeeeeeede
+	dc.l 0xeeeeeede
+	dc.l 0xeeeeeede
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xeded9ed9
+	dc.l 0xeeeeeeeb
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0x95d79779
+	dc.l 0xbeb9ed9b
+	dc.l 0xbebeeddb
+	dc.l 0xeeeeeedb
+	dc.l 0xeeeeeeed
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0x555559dd
+	dc.l 0x555559dd
+	dc.l 0x5559d9de
+	dc.l 0x5559ddde
+	dc.l 0x55d9ddde
+	dc.l 0x59ddddee
+	dc.l 0xd9deddee
+	dc.l 0xdddedeee
+
+* ---------------------------
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0x55555555
+	dc.l 0xd559d555
+	dc.l 0xd559d555
+	dc.l 0xee5dede5
+	dc.l 0xeeddeede
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xee99bbee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xbb99bbee
+	dc.l 0xbb99bbee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeee99dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeee99bb
+	dc.l 0xeeee99bb
+	dc.l 0xeeee99bb
+	dc.l 0xeeee99bb
+	dc.l 0xeeee9999
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xbbeeeeee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0x9999ddee
+	dc.l 0x9999ddee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeee99
+	dc.l 0xeeeeee99
+	dc.l 0xeeeeee99
+	dc.l 0xeeeeee99
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0x99bbeeee
+	dc.l 0x99bbddee
+	dc.l 0x99bbddee
+	dc.l 0x99bbddee
+	dc.l 0xbbbbbbee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeaa88
+	dc.l 0xee88aa88
+	dc.l 0xee6688aa
+	dc.l 0x88cccc66
+	dc.l 0x88cccc66
+	dc.l 0xaa88aa88
+	dc.l 0xaa88aa66
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0x88aaeeee
+	dc.l 0x88aa88ee
+	dc.l 0xaa8888ee
+	dc.l 0x6688aa88
+	dc.l 0x8888aa88
+	dc.l 0x88aa88aa
+	dc.l 0x88aa88aa
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeee6688
+	dc.l 0xeeee6688
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0x66aaeeee
+	dc.l 0x6688aaee
+
+* ---------------------------
+	dc.l 0xeddeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeee6688
+	dc.l 0xeeee6688
+
+* ---------------------------
+	dc.l 0xeedeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0x66aaeeee
+	dc.l 0x6688aaee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbbb
+
+* ---------------------------
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+
+* ---------------------------
+	dc.l 0xbb99bbee
+	dc.l 0xbb99bbee
+	dc.l 0xbb99bbee
+	dc.l 0xbb9999ee
+	dc.l 0xbb9999ee
+	dc.l 0xbb9999ee
+	dc.l 0xbb9999ee
+	dc.l 0xbb9999ee
+
+* ---------------------------
+	dc.l 0xee9999dd
+	dc.l 0xdd9999dd
+	dc.l 0xdd9999dd
+	dc.l 0xdd9999dd
+	dc.l 0xbbbb9999
+	dc.l 0xbbbb9999
+	dc.l 0xbbbb9999
+	dc.l 0xbbbb9999
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeee99
+	dc.l 0xeeeeee99
+	dc.l 0xeeeebb99
+	dc.l 0xeeeebb99
+	dc.l 0xeeeebb99
+	dc.l 0xeeeebb99
+	dc.l 0xeebb99dd
+
+* ---------------------------
+	dc.l 0xeeee9999
+	dc.l 0xeeee9999
+	dc.l 0xeeee9999
+	dc.l 0xeeee9999
+	dc.l 0xeeee9999
+	dc.l 0xeeee9999
+	dc.l 0xeeee9999
+	dc.l 0xee99ddee
+
+* ---------------------------
+	dc.l 0xbbeeeeee
+	dc.l 0xbbeeeeee
+	dc.l 0xbbeeeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xeebbbbee
+
+* ---------------------------
+	dc.l 0xee99bbee
+	dc.l 0x9999bbee
+	dc.l 0x9999bbee
+	dc.l 0xbb99bbee
+	dc.l 0xbb99bbee
+	dc.l 0xbb99bbee
+	dc.l 0xbb99bbee
+	dc.l 0xbb9999ee
+
+* ---------------------------
+	dc.l 0xee99bbee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+
+* ---------------------------
+	dc.l 0x9999ddee
+	dc.l 0x99bbddee
+	dc.l 0x99bbddee
+	dc.l 0x99bbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbddeeee
+	dc.l 0xddddeeee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeebbbbbb
+	dc.l 0xeebbbbbb
+	dc.l 0xeebbbbbb
+	dc.l 0xeebbbbbb
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xddeeeeee
+	dc.l 0xddeeeeee
+	dc.l 0xddeeeeee
+	dc.l 0xeeeeeeee
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeebb
+	dc.l 0xeeeeeebb
+	dc.l 0xeeeeeebb
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeeeedd
+
+* ---------------------------
+	dc.l 0xeeeeee99
+	dc.l 0xeeeeeedd
+	dc.l 0xeeeeeedd
+	dc.l 0xeebbeedd
+	dc.l 0xeebbddee
+	dc.l 0xeebbddee
+	dc.l 0xeebbddee
+	dc.l 0xbbddeeee
+
+* ---------------------------
+	dc.l 0xbbbbbbee
+	dc.l 0xbbbbbbee
+	dc.l 0xbbbbbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xbbddbbee
+
+* ---------------------------
+	dc.l 0xbbbbeeee
+	dc.l 0xeebbeeee
+	dc.l 0xeebbeeee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbdd
+
+* ---------------------------
+	dc.l 0xcc886666
+	dc.l 0xcc886666
+	dc.l 0xcc886688
+	dc.l 0xaaaa8888
+	dc.l 0xccccaa88
+	dc.l 0xecccaaaa
 	dc.l 0xeeeeccaa
-	dc.l 0x0eeecccc
-	dc.l 0x0000eecc
-	dc.l 0xf00f00cc
+	dc.l 0xdeedeeaa
 
 * ---------------------------
-	dc.l 0xaaccccee
+	dc.l 0x88aaaacc
+	dc.l 0x8888aacc
+	dc.l 0x8888aaaa
+	dc.l 0x88aaaacc
+	dc.l 0xaa88aaca
+	dc.l 0xaa88ccca
+	dc.l 0xccaaccaa
+	dc.l 0xcccccaac
+
+* ---------------------------
+	dc.l 0xee668866
+	dc.l 0xee8866aa
+	dc.l 0x888866aa
+	dc.l 0xaa8888aa
+	dc.l 0x88aaaa66
+	dc.l 0x88aa8866
+	dc.l 0xaa886666
+	dc.l 0xaa886666
+
+* ---------------------------
+	dc.l 0x888888ee
+	dc.l 0x886688cc
+	dc.l 0x888888cc
+	dc.l 0x6688aaaa
+	dc.l 0x6666aa88
+	dc.l 0x6666aa88
+	dc.l 0x888888aa
+	dc.l 0x888888aa
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xeeee88aa
+	dc.l 0xeeee8888
+	dc.l 0xeeaa8866
+	dc.l 0xaa886688
+	dc.l 0xaa886688
+	dc.l 0x888888aa
+	dc.l 0x668888aa
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xaacceeee
+	dc.l 0xaacceeee
+	dc.l 0x88aaaaee
+	dc.l 0xaaaacc88
+	dc.l 0xaaaacc88
+	dc.l 0x6688aa88
+	dc.l 0x6688aa88
+
+* ---------------------------
+	dc.l 0xee668866
+	dc.l 0x88aa6666
+	dc.l 0x88aa6666
+	dc.l 0xaa886688
+	dc.l 0xaa88aa88
+	dc.l 0xaa88aa88
+	dc.l 0x888888aa
+	dc.l 0x888888aa
+
+* ---------------------------
+	dc.l 0x888888ee
+	dc.l 0x88668888
+	dc.l 0x88668888
+	dc.l 0x88aa88aa
+	dc.l 0xaaaa88aa
+	dc.l 0xaaaa88aa
+	dc.l 0xaaaaaaaa
+	dc.l 0xaaaaaaaa
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xee88aa88
+	dc.l 0xee88aa66
+	dc.l 0x66aa8866
+	dc.l 0x66aa8888
+	dc.l 0xaaaaaa88
+	dc.l 0x88aaccaa
+	dc.l 0x88aaccaa
+
+* ---------------------------
+	dc.l 0xeeeeeeee
+	dc.l 0xaaaaeeee
 	dc.l 0xaaaaccee
-	dc.l 0xaaaacccc
-	dc.l 0xaaccccee
-	dc.l 0xccaaccec
-	dc.l 0xccaaeeec
-	dc.l 0xeecceecc
-	dc.l 0xeeeeecce
+	dc.l 0x88aa88ee
+	dc.l 0x8888aaaa
+	dc.l 0x8888aaaa
+	dc.l 0x88aa88cc
+	dc.l 0x88aa88cc
 
 * ---------------------------
-	dc.l 0x0088aa88
-	dc.l 0x00aa88cc
-	dc.l 0xaaaa88cc
-	dc.l 0xccaaaacc
-	dc.l 0xaacccc88
-	dc.l 0xaaccaa88
-	dc.l 0xccaa8888
-	dc.l 0xccaa8888
+	dc.l 0xeeddbbbb
+	dc.l 0xeeddbbbb
+	dc.l 0xeeddbbbb
+	dc.l 0xeeddbb99
+	dc.l 0xeeddbb99
+	dc.l 0xeeddbb99
+	dc.l 0xeeddbb99
+	dc.l 0xeeddbb99
 
 * ---------------------------
-	dc.l 0xaaaaaa00
-	dc.l 0xaa88aaee
-	dc.l 0xaaaaaaee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xee99bbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbdd
+	dc.l 0xeeddbbdd
+
+* ---------------------------
+	dc.l 0xbb9999ee
+	dc.l 0xbb99bbee
+	dc.l 0xbb99bbee
+	dc.l 0xbb99bbee
+	dc.l 0xddbbbbee
+	dc.l 0xddbbbbee
+	dc.l 0xeeddddee
+	dc.l 0xeebbee99
+
+* ---------------------------
+	dc.l 0xbbbb9999
+	dc.l 0xbbbb9999
+	dc.l 0xbbbb9999
+	dc.l 0xbbbb9999
+	dc.l 0xbbbb9999
+	dc.l 0xbbbb9999
+	dc.l 0xeebbbbbb
+	dc.l 0x99ddeebb
+
+* ---------------------------
+	dc.l 0xeebb99dd
+	dc.l 0xeebb99dd
+	dc.l 0xeebb99dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+
+* ---------------------------
+	dc.l 0xee99ddee
+	dc.l 0xee99ddee
+	dc.l 0xee99ddee
+	dc.l 0xee99ddee
+	dc.l 0xee99ddee
+	dc.l 0xee99ddee
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+
+* ---------------------------
+	dc.l 0xeebbbbee
+	dc.l 0xeebbbbee
+	dc.l 0xeebbbbee
+	dc.l 0xeebbbbee
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbdddd
+
+* ---------------------------
+	dc.l 0xbb9999ee
+	dc.l 0xbb9999ee
+	dc.l 0xbb9999ee
+	dc.l 0xbb9999ee
+	dc.l 0xeebb99ee
+	dc.l 0xeebb99ee
+	dc.l 0xeebb99ee
+	dc.l 0xeebbbbee
+
+* ---------------------------
+	dc.l 0xbbbbddee
+	dc.l 0x99bbddee
+	dc.l 0x99bbddee
+	dc.l 0x99bbddee
+	dc.l 0x99bbdddd
+	dc.l 0x99bbdddd
+	dc.l 0xdddddddd
+	dc.l 0xeebbbbdd
+
+* ---------------------------
+	dc.l 0xddddeeee
+	dc.l 0xddddeeee
+	dc.l 0xddddeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+
+* ---------------------------
+	dc.l 0xeebbbbbb
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeedddd
+	dc.l 0xeeeedddd
+	dc.l 0xeeeedddd
+	dc.l 0xeeeeddee
+
+* ---------------------------
+	dc.l 0xbbddeeee
+	dc.l 0xbbddeeee
+	dc.l 0xbbddeeee
+	dc.l 0xbbddeeee
+	dc.l 0xddbbddee
+	dc.l 0xddbbddee
+	dc.l 0xddbbddee
+	dc.l 0xeeeebbee
+
+* ---------------------------
+	dc.l 0xbbddbbee
+	dc.l 0xbbddbbee
+	dc.l 0xbbddbbee
+	dc.l 0xbbddeeee
+	dc.l 0xbbddeeee
+	dc.l 0xbbddeeee
+	dc.l 0xddeeeeee
+	dc.l 0xddeeeeee
+
+* ---------------------------
+	dc.l 0xee99bbdd
+	dc.l 0xeebb99dd
+	dc.l 0xeebb99dd
+	dc.l 0xeebb99dd
+	dc.l 0xeebb99dd
+	dc.l 0xeebb99dd
+	dc.l 0xeebbbbdd
+	dc.l 0xeedddddd
+
+* ---------------------------
+	dc.l 0xdeedeede
+	dc.l 0x99bbddee
+	dc.l 0x99bbddee
+	dc.l 0x99bbddee
+	dc.l 0x99bbdddd
+	dc.l 0x99bbdddd
+	dc.l 0xdddddddd
+	dc.l 0xeebbbbdd
+
+* ---------------------------
+	dc.l 0xedeccaee
+	dc.l 0xddddeeee
+	dc.l 0xddddeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+
+* ---------------------------
+	dc.l 0xcc886688
+	dc.l 0x88aa6666
+	dc.l 0x88aa6666
+	dc.l 0xaa886688
+	dc.l 0xaa88aa88
+	dc.l 0xaa88aa88
+	dc.l 0x888888aa
+	dc.l 0x888888aa
+
+* ---------------------------
+	dc.l 0x88aacc88
+	dc.l 0x88668888
+	dc.l 0x88668888
+	dc.l 0x88aa88aa
+	dc.l 0xaaaa88aa
+	dc.l 0xaaaa88aa
+	dc.l 0xaaaaaaaa
+	dc.l 0xaaaaaaaa
+
+* ---------------------------
+	dc.l 0xdeedeede
+	dc.l 0xdeedeeed
+	dc.l 0xdeeeeeee
+	dc.l 0xdeeeeeee
+	dc.l 0xeeee8866
+	dc.l 0xeeee8866
+	dc.l 0xee88aa88
+	dc.l 0xee88aa66
+
+* ---------------------------
+	dc.l 0xedeccaee
+	dc.l 0xedeedede
+	dc.l 0x6688eede
+	dc.l 0x6688aaee
+	dc.l 0x8888aa88
+	dc.l 0x8888aa88
+	dc.l 0x88aa88aa
+	dc.l 0x88aa88aa
+
+* ---------------------------
+	dc.l 0x6688aa88
+	dc.l 0xaa886688
+	dc.l 0xaa886688
+	dc.l 0x88666666
+	dc.l 0x88668888
+	dc.l 0x88888888
+	dc.l 0xaa88aa88
+	dc.l 0xaa88aa88
+
+* ---------------------------
+	dc.l 0x88aa8888
+	dc.l 0x666688aa
+	dc.l 0x666688aa
+	dc.l 0x8888aacc
 	dc.l 0x88aacccc
-	dc.l 0x8888ccaa
-	dc.l 0x8888ccaa
-	dc.l 0xaaaaaacc
-	dc.l 0xaaaaaacc
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x0000aacc
-	dc.l 0x0000aaaa
-	dc.l 0x00ccaa88
-	dc.l 0xccaa88aa
-	dc.l 0xccaa88aa
-	dc.l 0xaaaaaacc
+	dc.l 0x88aacccc
+	dc.l 0x88aaaacc
 	dc.l 0x88aaaacc
 
 * ---------------------------
-	dc.l 0x00000000
-	dc.l 0xccee0000
-	dc.l 0xccee0000
-	dc.l 0xaacccc00
-	dc.l 0xcccceeaa
-	dc.l 0xcccceeaa
-	dc.l 0x88aaccaa
-	dc.l 0x88aaccaa
-
-* ---------------------------
-	dc.l 0x0088aa88
-	dc.l 0xaacc8888
-	dc.l 0xaacc8888
-	dc.l 0xccaa88aa
-	dc.l 0xccaaccaa
-	dc.l 0xccaaccaa
-	dc.l 0xaaaaaacc
-	dc.l 0xaaaaaacc
-
-* ---------------------------
-	dc.l 0xaaaaaa00
-	dc.l 0xaa88aaaa
-	dc.l 0xaa88aaaa
-	dc.l 0xaaccaacc
-	dc.l 0xccccaacc
-	dc.l 0xccccaacc
-	dc.l 0xcccccccc
-	dc.l 0xcccccccc
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00aaccaa
-	dc.l 0x00aacc88
-	dc.l 0x88ccaa88
-	dc.l 0x88ccaaaa
-	dc.l 0xccccccaa
-	dc.l 0xaacceecc
-	dc.l 0xaacceecc
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0xcccc0000
-	dc.l 0xccccee00
-	dc.l 0xaaccaa00
-	dc.l 0xaaaacccc
-	dc.l 0xaaaacccc
-	dc.l 0xaaccaaee
-	dc.l 0xaaccaaee
-
-* ---------------------------
-	dc.l 0x00ffdddd
-	dc.l 0x00ffdddd
-	dc.l 0x00ffdddd
-	dc.l 0x00ffddbb
-	dc.l 0x00ffddbb
-	dc.l 0x00ffddbb
-	dc.l 0x00ffddbb
-	dc.l 0x00ffddbb
-
-* ---------------------------
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00bbdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffddff
-	dc.l 0x00ffddff
-
-* ---------------------------
-	dc.l 0xddbbbb00
-	dc.l 0xddbbdd00
-	dc.l 0xddbbdd00
-	dc.l 0xddbbdd00
-	dc.l 0xffdddd00
-	dc.l 0xffdddd00
-	dc.l 0x00ffff00
-	dc.l 0x00dd00bb
-
-* ---------------------------
-	dc.l 0xddddbbbb
-	dc.l 0xddddbbbb
-	dc.l 0xddddbbbb
-	dc.l 0xddddbbbb
-	dc.l 0xddddbbbb
-	dc.l 0xddddbbbb
-	dc.l 0x00dddddd
-	dc.l 0xbbff00dd
-
-* ---------------------------
-	dc.l 0x00ddbbff
-	dc.l 0x00ddbbff
-	dc.l 0x00ddbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-
-* ---------------------------
-	dc.l 0x00bbff00
-	dc.l 0x00bbff00
-	dc.l 0x00bbff00
-	dc.l 0x00bbff00
-	dc.l 0x00bbff00
-	dc.l 0x00bbff00
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-
-* ---------------------------
-	dc.l 0x00dddd00
-	dc.l 0x00dddd00
-	dc.l 0x00dddd00
-	dc.l 0x00dddd00
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddffff
-
-* ---------------------------
-	dc.l 0xddbbbb00
-	dc.l 0xddbbbb00
-	dc.l 0xddbbbb00
-	dc.l 0xddbbbb00
-	dc.l 0x00ddbb00
-	dc.l 0x00ddbb00
-	dc.l 0x00ddbb00
-	dc.l 0x00dddd00
-
-* ---------------------------
-	dc.l 0xddddff00
-	dc.l 0xbbddff00
-	dc.l 0xbbddff00
-	dc.l 0xbbddff00
-	dc.l 0xbbddffff
-	dc.l 0xbbddffff
-	dc.l 0xffffffff
-	dc.l 0x00ddddff
-
-* ---------------------------
-	dc.l 0xffff0000
-	dc.l 0xffff0000
-	dc.l 0xffff0000
-	dc.l 0x00000000
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-
-* ---------------------------
-	dc.l 0x00dddddd
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ffff
-	dc.l 0x0000ffff
-	dc.l 0x0000ffff
-	dc.l 0x0000ff00
-
-* ---------------------------
-	dc.l 0x00344362
-	dc.l 0x00233246
-	dc.l 0x00632634
-	dc.l 0x00426623
-	dc.l 0x32364462
-	dc.l 0x36263466
-	dc.l 0x24242344
-	dc.l 0x23636233
-
-* ---------------------------
-	dc.l 0x344362ff
-	dc.l 0x233246ff
-	dc.l 0x632634ff
-	dc.l 0x426623ff
-	dc.l 0x36446242
-	dc.l 0x26346632
-	dc.l 0x24234426
-	dc.l 0x63623364
-
-* ---------------------------
-	dc.l 0xddff0000
-	dc.l 0xddff0000
-	dc.l 0xddff0000
-	dc.l 0xddff0000
-	dc.l 0xffddff00
-	dc.l 0xffddff00
-	dc.l 0xffddff00
-	dc.l 0x0000dd00
-
-* ---------------------------
-	dc.l 0xddffdd00
-	dc.l 0xddffdd00
-	dc.l 0xddffdd00
-	dc.l 0xddff0000
-	dc.l 0xddff0000
-	dc.l 0xddff0000
-	dc.l 0xff000000
-	dc.l 0xff000000
-
-* ---------------------------
-	dc.l 0x00bbddff
-	dc.l 0x00ddbbff
-	dc.l 0x00ddbbff
-	dc.l 0x00ddbbff
-	dc.l 0x00ddbbff
-	dc.l 0x00ddbbff
-	dc.l 0x00ddddff
-	dc.l 0x00ffffff
-
-* ---------------------------
-	dc.l 0xf00f00f0
-	dc.l 0xbbddff00
-	dc.l 0xbbddff00
-	dc.l 0xbbddff00
-	dc.l 0xbbddffff
-	dc.l 0xbbddffff
-	dc.l 0xffffffff
-	dc.l 0x00ddddff
-
-* ---------------------------
-	dc.l 0x0f0eec00
-	dc.l 0xffff0000
-	dc.l 0xffff0000
-	dc.l 0x00000000
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-
-* ---------------------------
-	dc.l 0xeeaa88aa
-	dc.l 0xaacc8888
-	dc.l 0xaacc8888
-	dc.l 0xccaa88aa
-	dc.l 0xccaaccaa
-	dc.l 0xccaaccaa
-	dc.l 0xaaaaaacc
-	dc.l 0xaaaaaacc
-
-* ---------------------------
-	dc.l 0xaacceeaa
-	dc.l 0xaa88aaaa
-	dc.l 0xaa88aaaa
-	dc.l 0xaaccaacc
-	dc.l 0xccccaacc
-	dc.l 0xccccaacc
-	dc.l 0xcccccccc
-	dc.l 0xcccccccc
-
-* ---------------------------
-	dc.l 0xf00f00f0
-	dc.l 0xf00f000f
-	dc.l 0xf0000000
-	dc.l 0xf0000000
-	dc.l 0x0000aa88
-	dc.l 0x0000aa88
-	dc.l 0x00aaccaa
-	dc.l 0x00aacc88
-
-* ---------------------------
-	dc.l 0x0f0eec00
-	dc.l 0x0f00f0f0
-	dc.l 0x88aa00f0
-	dc.l 0x88aacc00
-	dc.l 0xaaaaccaa
-	dc.l 0xaaaaccaa
-	dc.l 0xaaccaacc
-	dc.l 0xaaccaacc
-
-* ---------------------------
-	dc.l 0x88aaccaa
-	dc.l 0xccaa88aa
-	dc.l 0xccaa88aa
-	dc.l 0xaa888888
-	dc.l 0xaa88aaaa
-	dc.l 0xaaaaaaaa
-	dc.l 0xccaaccaa
-	dc.l 0xccaaccaa
-
-* ---------------------------
-	dc.l 0xaaccaaaa
-	dc.l 0x8888aacc
-	dc.l 0x8888aacc
-	dc.l 0xaaaaccee
-	dc.l 0xaacceeee
-	dc.l 0xaacceeee
-	dc.l 0xaaccccee
-	dc.l 0xaaccccee
-
-* ---------------------------
-	dc.l 0xccccaaaa
-	dc.l 0xeeaa8888
-	dc.l 0xeeaa88aa
-	dc.l 0xccccaaaa
-	dc.l 0xeeeeccaa
-	dc.l 0x0eeecccc
-	dc.l 0x0000eecc
-	dc.l 0xf00f00cc
-
-* ---------------------------
-	dc.l 0xcceeeecc
-	dc.l 0xaaaaccee
-	dc.l 0xaaaacccc
-	dc.l 0xaaccccee
-	dc.l 0xccaaccec
-	dc.l 0xccaaeeec
-	dc.l 0xeecceecc
-	dc.l 0xeeeeecce
-
-* ---------------------------
-	dc.l 0xccccaaaa
-	dc.l 0x00aa88cc
-	dc.l 0xaaaa88cc
-	dc.l 0xccaaaacc
-	dc.l 0xaacccc88
-	dc.l 0xaaccaa88
-	dc.l 0xccaa8888
-	dc.l 0xccaa8888
-
-* ---------------------------
-	dc.l 0xcceeeecc
-	dc.l 0xaa88aaee
-	dc.l 0xaaaaaaee
-	dc.l 0x88aacccc
-	dc.l 0x8888ccaa
-	dc.l 0x8888ccaa
-	dc.l 0xaaaaaacc
-	dc.l 0xaaaaaacc
-
-* ---------------------------
+	dc.l 0xaaaa8888
+	dc.l 0xcc886666
+	dc.l 0xcc886688
+	dc.l 0xaaaa8888
 	dc.l 0xccccaa88
-	dc.l 0x00aa88cc
-	dc.l 0xaaaa88cc
-	dc.l 0xccaaaacc
-	dc.l 0xaacccc88
-	dc.l 0xaaccaa88
-	dc.l 0xccaa8888
-	dc.l 0xccaa8888
+	dc.l 0xecccaaaa
+	dc.l 0xeeeeccaa
+	dc.l 0xdeedeeaa
+
+* ---------------------------
+	dc.l 0xaaccccaa
+	dc.l 0x8888aacc
+	dc.l 0x8888aaaa
+	dc.l 0x88aaaacc
+	dc.l 0xaa88aaca
+	dc.l 0xaa88ccca
+	dc.l 0xccaaccaa
+	dc.l 0xcccccaac
+
+* ---------------------------
+	dc.l 0xaaaa8888
+	dc.l 0xee8866aa
+	dc.l 0x888866aa
+	dc.l 0xaa8888aa
+	dc.l 0x88aaaa66
+	dc.l 0x88aa8866
+	dc.l 0xaa886666
+	dc.l 0xaa886666
+
+* ---------------------------
+	dc.l 0xaaccccaa
+	dc.l 0x886688cc
+	dc.l 0x888888cc
+	dc.l 0x6688aaaa
+	dc.l 0x6666aa88
+	dc.l 0x6666aa88
+	dc.l 0x888888aa
+	dc.l 0x888888aa
+
+* ---------------------------
+	dc.l 0xaaaa8866
+	dc.l 0xee8866aa
+	dc.l 0x888866aa
+	dc.l 0xaa8888aa
+	dc.l 0x88aaaa66
+	dc.l 0x88aa8866
+	dc.l 0xaa886666
+	dc.l 0xaa886666
+
+* ---------------------------
+	dc.l 0x8888aaaa
+	dc.l 0x886688cc
+	dc.l 0x888888cc
+	dc.l 0x6688aaaa
+	dc.l 0x6666aa88
+	dc.l 0x6666aa88
+	dc.l 0x888888aa
+	dc.l 0x888888aa
+
+* ---------------------------
+	dc.l 0xcc886688
+	dc.l 0xaa886688
+	dc.l 0xaa886688
+	dc.l 0x88666666
+	dc.l 0x88668888
+	dc.l 0x88888888
+	dc.l 0xaa88aa88
+	dc.l 0xaa88aa88
+
+* ---------------------------
+	dc.l 0x88aacc88
+	dc.l 0x666688aa
+	dc.l 0x666688aa
+	dc.l 0x8888aacc
+	dc.l 0x88aacccc
+	dc.l 0x88aacccc
+	dc.l 0x88aaaacc
+	dc.l 0x88aaaacc
+
+* ---------------------------
+	dc.l 0xeeddbb99
+	dc.l 0xeedd99bb
+	dc.l 0xeedd99bb
+	dc.l 0xeedd99bb
+	dc.l 0xee9999bb
+	dc.l 0xee9999bb
+	dc.l 0xbb9999bb
+	dc.l 0xbb9999bb
+
+* ---------------------------
+	dc.l 0xeeddbbdd
+	dc.l 0xeeddbbdd
+	dc.l 0xeeddbbdd
+	dc.l 0xeeddbbdd
+	dc.l 0xeeddbbdd
+	dc.l 0xeeddbbdd
+	dc.l 0xeeddee99
+	dc.l 0xeeddee99
+
+* ---------------------------
+	dc.l 0xeebbee99
+	dc.l 0xee99ee99
+	dc.l 0xee99ee99
+	dc.l 0xee99ee99
+	dc.l 0xee99ddee
+	dc.l 0xee99ddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+
+* ---------------------------
+	dc.l 0x99ddeebb
+	dc.l 0x99ddeebb
+	dc.l 0x99ddeebb
+	dc.l 0x99ddeebb
+	dc.l 0xbbddeebb
+	dc.l 0xbbddeebb
+	dc.l 0xbbddeebb
+	dc.l 0xbbddeebb
+
+* ---------------------------
+	dc.l 0xee9999dd
+	dc.l 0xee99bbdd
+	dc.l 0xee99bbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+
+* ---------------------------
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+	dc.l 0xee9999dd
+	dc.l 0xee99bbdd
+	dc.l 0xee99bbdd
+	dc.l 0xee99bbdd
+	dc.l 0xee99bbdd
+
+* ---------------------------
+	dc.l 0xeebbdddd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeeebbdd
+	dc.l 0xeeddbbee
+
+* ---------------------------
+	dc.l 0xeebbbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+
+* ---------------------------
+	dc.l 0xeebbbbdd
+	dc.l 0xddbbbbdd
+	dc.l 0xddbbbbdd
+	dc.l 0xddbbbbee
+	dc.l 0xeebbbbee
+	dc.l 0xeebbbbee
+	dc.l 0xeebbbbee
+	dc.l 0xeeddddee
+
+* ---------------------------
+	dc.l 0xeeeebbdd
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+
+* ---------------------------
+	dc.l 0xeeeeddee
+	dc.l 0xddeeddee
+	dc.l 0xddeeddee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbddee
+	dc.l 0xddddeeee
+
+* ---------------------------
+	dc.l 0xeeeebbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xddbbbbdd
+	dc.l 0xddbbbbdd
+
+* ---------------------------
+	dc.l 0xddeeeeee
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeeddddee
+	dc.l 0xeeddddee
+
+* ---------------------------
+	dc.l 0xeedddddd
+	dc.l 0xeeeebbee
+	dc.l 0xeeeebbee
+	dc.l 0xeeeebbee
+	dc.l 0xeeeebbee
+	dc.l 0xeeeebbee
+	dc.l 0xeeeeeeee
+	dc.l 0xbbbbddee
+
+* ---------------------------
+	dc.l 0xaaaa8888
+	dc.l 0xaa88aaaa
+	dc.l 0xaa88aaaa
+	dc.l 0xcccccccc
+	dc.l 0xacccaade
+	dc.l 0xacccaade
+	dc.l 0xcceeddde
+	dc.l 0xccdebbde
+
+* ---------------------------
+	dc.l 0xaaccccaa
+	dc.l 0xccccccaa
+	dc.l 0xccccccaa
+	dc.l 0xcceddeaa
+	dc.l 0xbdeddeee
+	dc.l 0xbdebdeee
+	dc.l 0xdd688edd
+	dc.l 0xe688a6d8
+
+* ---------------------------
+	dc.l 0xcc886666
+	dc.l 0xccaa88aa
+	dc.l 0xccaa88aa
+	dc.l 0xedccaa88
+	dc.l 0xedddedcc
+	dc.l 0xe68bedcc
+	dc.l 0x688bebdd
+	dc.l 0x68a8eebd
+
+* ---------------------------
+	dc.l 0x88aaaacc
+	dc.l 0x8888aacc
+	dc.l 0x8888aacc
+	dc.l 0xaa88cccc
+	dc.l 0xccccccde
+	dc.l 0xccccccdd
+	dc.l 0xeeeededd
+	dc.l 0xeeddd68d
+
+* ---------------------------
+	dc.l 0x88aa88cc
+	dc.l 0xeeccaacc
+	dc.l 0xeeccaacc
+	dc.l 0xdeddcccc
+	dc.l 0xdebbdedd
+	dc.l 0xbedbdebd
+	dc.l 0xdedbdedb
+	dc.l 0xeeeddedb
 
 * ---------------------------
 	dc.l 0xaaaacccc
-	dc.l 0xaa88aaee
-	dc.l 0xaaaaaaee
-	dc.l 0x88aacccc
-	dc.l 0x8888ccaa
-	dc.l 0x8888ccaa
-	dc.l 0xaaaaaacc
-	dc.l 0xaaaaaacc
+	dc.l 0xccccccde
+	dc.l 0xaaccccde
+	dc.l 0xaadedbde
+	dc.l 0xccdedbde
+	dc.l 0xccdedbde
+	dc.l 0xedded68a
+	dc.l 0xddde688d
 
 * ---------------------------
-	dc.l 0xeeaa88aa
+	dc.l 0xcc886688
 	dc.l 0xccaa88aa
 	dc.l 0xccaa88aa
-	dc.l 0xaa888888
-	dc.l 0xaa88aaaa
-	dc.l 0xaaaaaaaa
-	dc.l 0xccaaccaa
-	dc.l 0xccaaccaa
+	dc.l 0xedccaa88
+	dc.l 0xedddedcc
+	dc.l 0xe68bedcc
+	dc.l 0x688bebdd
+	dc.l 0x68a8eebd
 
 * ---------------------------
-	dc.l 0xaacceeaa
+	dc.l 0x88aacc88
 	dc.l 0x8888aacc
 	dc.l 0x8888aacc
-	dc.l 0xaaaaccee
-	dc.l 0xaacceeee
-	dc.l 0xaacceeee
-	dc.l 0xaaccccee
-	dc.l 0xaaccccee
+	dc.l 0xaa88cccc
+	dc.l 0xccccccde
+	dc.l 0xccccccdd
+	dc.l 0xeeeededd
+	dc.l 0xeeddd68d
 
 * ---------------------------
-	dc.l 0x00ffddbb
-	dc.l 0x00ffbbdd
-	dc.l 0x00ffbbdd
-	dc.l 0x00ffbbdd
-	dc.l 0x00bbbbdd
-	dc.l 0x00bbbbdd
-	dc.l 0xddbbbbdd
-	dc.l 0xddbbbbdd
+	dc.l 0xbb9999bb
+	dc.l 0xbb9999bb
+	dc.l 0xbb9999bb
+	dc.l 0xbb9999bb
+	dc.l 0xbbbb99dd
+	dc.l 0xbbbb99dd
+	dc.l 0xbbbbbbdd
+	dc.l 0xddddbbdd
 
 * ---------------------------
-	dc.l 0x00ffddff
-	dc.l 0x00ffddff
-	dc.l 0x00ffddff
-	dc.l 0x00ffddff
-	dc.l 0x00ffddff
-	dc.l 0x00ffddff
-	dc.l 0x00ff00bb
-	dc.l 0x00ff00bb
+	dc.l 0xeeddee99
+	dc.l 0xeeddee99
+	dc.l 0xeeddee99
+	dc.l 0xeeddee99
+	dc.l 0xeeddee99
+	dc.l 0xeeddee99
+	dc.l 0xeeeeeebb
+	dc.l 0xeeeeeedd
 
 * ---------------------------
-	dc.l 0x00dd00bb
-	dc.l 0x00bb00bb
-	dc.l 0x00bb00bb
-	dc.l 0x00bb00bb
-	dc.l 0x00bbff00
-	dc.l 0x00bbff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
+	dc.l 0xbbbbddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddeeee
+	dc.l 0xbbddeeee
+	dc.l 0xddeeeeee
+	dc.l 0xddeeeeee
 
 * ---------------------------
-	dc.l 0xbbff00dd
-	dc.l 0xbbff00dd
-	dc.l 0xbbff00dd
-	dc.l 0xbbff00dd
-	dc.l 0xddff00dd
-	dc.l 0xddff00dd
-	dc.l 0xddff00dd
-	dc.l 0xddff00dd
+	dc.l 0xbbddeebb
+	dc.l 0xbbddeebb
+	dc.l 0xbbddeebb
+	dc.l 0xddddeebb
+	dc.l 0xddddeebb
+	dc.l 0xddddeebb
+	dc.l 0xddeeeedd
+	dc.l 0xddeeeedd
 
 * ---------------------------
-	dc.l 0x00bbbbff
-	dc.l 0x00bbddff
-	dc.l 0x00bbddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
+	dc.l 0xeebbbbdd
+	dc.l 0x9999ddee
+	dc.l 0x9999ddee
+	dc.l 0x9999ddee
+	dc.l 0x9999ddee
+	dc.l 0x9999ddee
+	dc.l 0x99bbddee
+	dc.l 0xbbbbeeee
 
 * ---------------------------
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbbbff
-	dc.l 0x00bbddff
-	dc.l 0x00bbddff
-	dc.l 0x00bbddff
-	dc.l 0x00bbddff
+	dc.l 0xee99bbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeebbbbdd
+	dc.l 0xeeddbbdd
+	dc.l 0xeeddddee
 
 * ---------------------------
-	dc.l 0x00ddffff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x0000ddff
-	dc.l 0x00ffdd00
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeeeddee
 
 * ---------------------------
-	dc.l 0x00dddd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddddee
+	dc.l 0xeeeeddee
 
 * ---------------------------
-	dc.l 0x00ddddff
-	dc.l 0xffddddff
-	dc.l 0xffddddff
-	dc.l 0xffdddd00
-	dc.l 0x00dddd00
-	dc.l 0x00dddd00
-	dc.l 0x00dddd00
-	dc.l 0x00ffff00
-
-* ---------------------------
-	dc.l 0x0000ddff
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-
-* ---------------------------
-	dc.l 0x0000ff00
-	dc.l 0xff00ff00
-	dc.l 0xff00ff00
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xddddff00
-	dc.l 0xffff0000
-
-* ---------------------------
-	dc.l 0x62624632
-	dc.l 0x66463626
-	dc.l 0x44462464
-	dc.l 0x43346343
-	dc.l 0x32234242
-	dc.l 0x26623636
-	dc.l 0x64662424
-	dc.l 0x43446363
-
-* ---------------------------
-	dc.l 0x63463244
-	dc.l 0x42362633
-	dc.l 0x36246423
-	dc.l 0x24634362
-	dc.l 0x63424242
-	dc.l 0x42323632
-	dc.l 0x46362426
-	dc.l 0x34246364
-
-* ---------------------------
-	dc.l 0x0000dd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0xffddddff
-	dc.l 0xffddddff
-
-* ---------------------------
-	dc.l 0xff000000
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ffff00
-	dc.l 0x00ffff00
-
-* ---------------------------
-	dc.l 0x00ffffff
-	dc.l 0x0000dd00
-	dc.l 0x0000dd00
-	dc.l 0x0000dd00
-	dc.l 0x0000dd00
-	dc.l 0x0000dd00
-	dc.l 0x00000000
-	dc.l 0xddddff00
-
-* ---------------------------
-	dc.l 0xccccaaaa
-	dc.l 0xccaacccc
-	dc.l 0xccaacccc
+	dc.l 0xeeddddee
+	dc.l 0xeeddddee
+	dc.l 0xeeddddee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xddddeeee
 	dc.l 0xeeeeeeee
-	dc.l 0xceeeccf0
-	dc.l 0xceeeccf0
-	dc.l 0xee00fff0
-	dc.l 0xeef0ddf0
 
 * ---------------------------
-	dc.l 0xcceeeecc
-	dc.l 0xeeeeeecc
-	dc.l 0xeeeeeecc
-	dc.l 0xee0ff0cc
-	dc.l 0xdf0ff000
-	dc.l 0xdf0df000
-	dc.l 0xff8aa0ff
-	dc.l 0x08aac8fa
+	dc.l 0xbbbbeeee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xddddeeee
+	dc.l 0xeeeeeeee
 
 * ---------------------------
-	dc.l 0xeeaa8888
-	dc.l 0xeeccaacc
-	dc.l 0xeeccaacc
-	dc.l 0x0feeccaa
-	dc.l 0x0fff0fee
-	dc.l 0x08ad0fee
-	dc.l 0x8aad0dff
-	dc.l 0x8aca00df
-
-* ---------------------------
-	dc.l 0xaaccccee
-	dc.l 0xaaaaccee
-	dc.l 0xaaaaccee
-	dc.l 0xccaaeeee
-	dc.l 0xeeeeeef0
-	dc.l 0xeeeeeeff
-	dc.l 0x0000f0ff
-	dc.l 0x00fff8af
-
-* ---------------------------
-	dc.l 0xaaccaaee
-	dc.l 0x00eeccee
-	dc.l 0x00eeccee
-	dc.l 0xf0ffeeee
-	dc.l 0xf0ddf0ff
-	dc.l 0xd0fdf0df
-	dc.l 0xf0fdf0fd
-	dc.l 0x000ff0fd
-
-* ---------------------------
-	dc.l 0xcccceeee
-	dc.l 0xeeeeeef0
-	dc.l 0xcceeeef0
-	dc.l 0xccf0fdf0
-	dc.l 0xeef0fdf0
-	dc.l 0xeef0fdf0
-	dc.l 0x0ff0f8ac
-	dc.l 0xfff08aaf
-
-* ---------------------------
-	dc.l 0xeeaa88aa
-	dc.l 0xeeccaacc
-	dc.l 0xeeccaacc
-	dc.l 0x0feeccaa
-	dc.l 0x0fff0fee
-	dc.l 0x08ad0fee
-	dc.l 0x8aad0dff
-	dc.l 0x8aca00df
-
-* ---------------------------
-	dc.l 0xaacceeaa
-	dc.l 0xaaaaccee
-	dc.l 0xaaaaccee
-	dc.l 0xccaaeeee
-	dc.l 0xeeeeeef0
-	dc.l 0xeeeeeeff
-	dc.l 0x0000f0ff
-	dc.l 0x00fff8af
+	dc.l 0xddddeeee
+	dc.l 0xddddeeee
+	dc.l 0xddddeeee
+	dc.l 0xddddeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
 
 * ---------------------------
 	dc.l 0xddbbbbdd
-	dc.l 0xddbbbbdd
-	dc.l 0xddbbbbdd
-	dc.l 0xddbbbbdd
-	dc.l 0xddddbbff
-	dc.l 0xddddbbff
-	dc.l 0xddddddff
-	dc.l 0xffffddff
+	dc.l 0xddeebbdd
+	dc.l 0xddeebbdd
+	dc.l 0xddeedddd
+	dc.l 0xeeddeeee
+	dc.l 0xeeddeeee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeeee
 
 * ---------------------------
-	dc.l 0x00ff00bb
-	dc.l 0x00ff00bb
-	dc.l 0x00ff00bb
-	dc.l 0x00ff00bb
-	dc.l 0x00ff00bb
-	dc.l 0x00ff00bb
-	dc.l 0x000000dd
-	dc.l 0x000000ff
+	dc.l 0xeeddddee
+	dc.l 0xeeddddee
+	dc.l 0xeeddddee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeebb
+	dc.l 0xeeeeeebb
+	dc.l 0xeeeeeedd
+	dc.l 0xeeeeeeee
 
 * ---------------------------
-	dc.l 0xddddff00
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddff0000
-	dc.l 0xddff0000
-	dc.l 0xff000000
-	dc.l 0xff000000
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xddddeeee
+	dc.l 0xddddeeee
+	dc.l 0xddeeeeee
+	dc.l 0xeeeeeeee
 
 * ---------------------------
-	dc.l 0xddff00dd
-	dc.l 0xddff00dd
-	dc.l 0xddff00dd
-	dc.l 0xffff00dd
-	dc.l 0xffff00dd
-	dc.l 0xffff00dd
-	dc.l 0xff0000ff
-	dc.l 0xff0000ff
+	dc.l 0xeeddddee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeeeddee
 
 * ---------------------------
-	dc.l 0x00ddddff
-	dc.l 0xbbbbff00
-	dc.l 0xbbbbff00
-	dc.l 0xbbbbff00
-	dc.l 0xbbbbff00
-	dc.l 0xbbbbff00
-	dc.l 0xbbddff00
-	dc.l 0xdddd0000
+	dc.l 0xbbbbeeee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddbbee
+	dc.l 0xeeddddee
+	dc.l 0xeeeeddee
 
 * ---------------------------
-	dc.l 0x00bbddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ddddff
-	dc.l 0x00ffddff
-	dc.l 0x00ffff00
+	dc.l 0xbdeedede
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddeeee
+	dc.l 0xbbddeeee
+	dc.l 0xddeeeeee
+	dc.l 0xddeeeeee
 
 * ---------------------------
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x0000ff00
+	dc.l 0xe68dd8ad
+	dc.l 0xbbddeebb
+	dc.l 0xbbddeebb
+	dc.l 0xddddeebb
+	dc.l 0xddddeebb
+	dc.l 0xddddeebb
+	dc.l 0xddeeeedd
+	dc.l 0xddeeeedd
 
 * ---------------------------
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffff00
-	dc.l 0x0000ff00
+	dc.l 0x8aa8eeee
+	dc.l 0xdeedeeed
+	dc.l 0xdeeeeeee
+	dc.l 0xdeeeeeee
+	dc.l 0xeeee8866
+	dc.l 0xeeee8866
+	dc.l 0xee88aa88
+	dc.l 0xee88aa66
 
 * ---------------------------
-	dc.l 0x00ffff00
-	dc.l 0x00ffff00
-	dc.l 0x00ffff00
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xffff0000
-	dc.l 0x00000000
+	dc.l 0xeeeb88ad
+	dc.l 0xedeedede
+	dc.l 0x6688eede
+	dc.l 0x6688aaee
+	dc.l 0x8888aa88
+	dc.l 0x8888aa88
+	dc.l 0x88aa88aa
+	dc.l 0x88aa88aa
 
 * ---------------------------
-	dc.l 0xdddd0000
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xffff0000
-	dc.l 0x66662222
+	dc.l 0xaeedeeed
+	dc.l 0xdeedeeed
+	dc.l 0xdeeeeeee
+	dc.l 0xdeeeeeee
+	dc.l 0xeeee8866
+	dc.l 0xeeee8866
+	dc.l 0xee88aa88
+	dc.l 0xee88aa66
 
 * ---------------------------
-	dc.l 0xffff0000
-	dc.l 0xffff0000
-	dc.l 0xffff0000
-	dc.l 0xffff6000
-	dc.l 0x00430244
-	dc.l 0x00060044
-	dc.l 0x66004466
-	dc.l 0x33333344
+	dc.l 0xeede8aad
+	dc.l 0xedeedede
+	dc.l 0x6688eede
+	dc.l 0x6688aaee
+	dc.l 0x8888aa88
+	dc.l 0x8888aa88
+	dc.l 0x88aa88aa
+	dc.l 0x88aa88aa
 
 * ---------------------------
-	dc.l 0x42434243
-	dc.l 0x36323642
-	dc.l 0x34362626
-	dc.l 0x23366466
-	dc.l 0x62364346
-	dc.l 0x66243344
-	dc.l 0x44642334
-	dc.l 0x23636223
+	dc.l 0x8aa8eeee
+	dc.l 0xeeddddee
+	dc.l 0xeeddddee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xbbbbeeee
+	dc.l 0xddddeeee
+	dc.l 0xeeeeeeee
 
 * ---------------------------
-	dc.l 0x23246244
-	dc.l 0x62634634
-	dc.l 0x42624423
-	dc.l 0x36463363
-	dc.l 0x26442242
-	dc.l 0x24442636
-	dc.l 0x64336424
-	dc.l 0x63226323
+	dc.l 0xeeeb88ad
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xbbddddee
+	dc.l 0xddddeeee
+	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0xffddddff
-	dc.l 0xff00ddff
-	dc.l 0xff00ddff
-	dc.l 0xff00ffff
-	dc.l 0x34ff6400
-	dc.l 0x43ff3000
-	dc.l 0x66440066
-	dc.l 0x44443333
+	dc.l 0xaeedeeed
+	dc.l 0xeeddddee
+	dc.l 0xeeddddee
+	dc.l 0xeeeeeeee
+	dc.l 0xeeeeeebb
+	dc.l 0xeeeeeebb
+	dc.l 0xeeeeeedd
+	dc.l 0x55555555
 
 * ---------------------------
-	dc.l 0x00ffff00
-	dc.l 0x00ffff00
-	dc.l 0x00ffff00
-	dc.l 0x00000000
-	dc.l 0x000000dd
-	dc.l 0x000000dd
-	dc.l 0x000000ff
-	dc.l 0x22266666
-
-* ---------------------------
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xffff0000
-	dc.l 0xffff0000
-	dc.l 0xff000000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x00ffff00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x0000ff00
-
-* ---------------------------
-	dc.l 0xdddd0000
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffdd00
-	dc.l 0x00ffff00
-	dc.l 0x0000ff00
-
-* ---------------------------
-	dc.l 0xdf00f0f0
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddff0000
-	dc.l 0xddff0000
-	dc.l 0xff000000
-	dc.l 0xff000000
-
-* ---------------------------
-	dc.l 0x08affacf
-	dc.l 0xddff00dd
-	dc.l 0xddff00dd
-	dc.l 0xffff00dd
-	dc.l 0xffff00dd
-	dc.l 0xffff00dd
-	dc.l 0xff0000ff
-	dc.l 0xff0000ff
-
-* ---------------------------
-	dc.l 0xacca0000
-	dc.l 0xf00f000f
-	dc.l 0xf0000000
-	dc.l 0xf0000000
-	dc.l 0x0000aa88
-	dc.l 0x0000aa88
-	dc.l 0x00aaccaa
-	dc.l 0x00aacc88
-
-* ---------------------------
-	dc.l 0x000daacf
-	dc.l 0x0f00f0f0
-	dc.l 0x88aa00f0
-	dc.l 0x88aacc00
-	dc.l 0xaaaaccaa
-	dc.l 0xaaaaccaa
-	dc.l 0xaaccaacc
-	dc.l 0xaaccaacc
-
-* ---------------------------
-	dc.l 0xc00f000f
-	dc.l 0xf00f000f
-	dc.l 0xf0000000
-	dc.l 0xf0000000
-	dc.l 0x0000aa88
-	dc.l 0x0000aa88
-	dc.l 0x00aaccaa
-	dc.l 0x00aacc88
-
-* ---------------------------
-	dc.l 0x00f0accf
-	dc.l 0x0f00f0f0
-	dc.l 0x88aa00f0
-	dc.l 0x88aacc00
-	dc.l 0xaaaaccaa
-	dc.l 0xaaaaccaa
-	dc.l 0xaaccaacc
-	dc.l 0xaaccaacc
-
-* ---------------------------
-	dc.l 0xacca0000
-	dc.l 0x00ffff00
-	dc.l 0x00ffff00
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xdddd0000
-	dc.l 0xffff0000
-	dc.l 0x00000000
-
-* ---------------------------
-	dc.l 0x000daacf
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xddffff00
-	dc.l 0xffff0000
-	dc.l 0x77777777
-
-* ---------------------------
-	dc.l 0xc00f000f
-	dc.l 0x00ffff00
-	dc.l 0x00ffff00
-	dc.l 0x00000000
-	dc.l 0x000000dd
-	dc.l 0x000000dd
-	dc.l 0x000000ff
-	dc.l 0x77777777
-
-* ---------------------------
-	dc.l 0x00f0accf
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xddddff00
-	dc.l 0xffff0000
-	dc.l 0xffff0000
-	dc.l 0xff000000
-	dc.l 0x00000000
+	dc.l 0xeede8aad
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xbbbbddee
+	dc.l 0xddddeeee
+	dc.l 0xddddeeee
+	dc.l 0xddeeeeee
+	dc.l 0xeeeeeeee
