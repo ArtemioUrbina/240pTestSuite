@@ -64,7 +64,7 @@ extern u16 grid_map[2240/2];
 // Sonic background
 extern u32 sonicfloor_tiles[2592/4]; 
 extern u16 sonicfloor_map[1024/2];
-extern u32 sonicback_tiles[6624/4]; 
+extern u32 sonicback_tiles[6432/4]; 
 extern u16 sonicback_map[1216/2];
 extern u16 sonicback_pal[16]; 
 extern u32 sonicwater_tiles[704/4];
@@ -72,6 +72,9 @@ extern u16 sonicwater_map[384/2];
 extern u16 sonicwater_pal[16]; 
 extern u16 sonicwater2_pal[16]; 
 extern u16 sonicwater3_pal[16]; 
+
+// Waterfall sprite
+extern u32 waterfall_tiles[512/4]; 
 
 // Motoko background
 extern u32 motoko_tiles[20896/4]; 

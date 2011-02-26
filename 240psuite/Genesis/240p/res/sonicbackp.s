@@ -6,13 +6,11 @@ sonicback_pal:
 
 
 * ---------------------------
-	dc.w 0x0002
+	dc.w 0x0000
 	dc.w 0x0ffd
 	dc.w 0x0fdb
-	dc.w 0x0fb9
 	dc.w 0x0f96
 	dc.w 0x0d42
-	dc.w 0x0b96
 	dc.w 0x0b02
 	dc.w 0x00f9
 	dc.w 0x00df
@@ -22,3 +20,5 @@ sonicback_pal:
 	dc.w 0x0049
 	dc.w 0x0040
 	dc.w 0x0026
+	dc.w 0x0002
+	dc.w 0x0000
