@@ -31,20 +31,20 @@ void DrawHelp(int option)
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
   VDP_setPalette(PAL0, palette_grey);
-  VDP_setPalette(PAL1, back_pal); 
-  VDP_setPalette(PAL2, palette_green);
+  VDP_setPalette(PAL1, palette_green); 
+  VDP_setPalette(PAL2, back_pal);
   VDP_setPalette(PAL3, bw_pal);    
   
   ind = TILE_USERINDEX; 
   size = sizeof(back_tiles) / 32; 
   VDP_loadTileData(back_tiles, ind, size, 1); 
   
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);    
+	VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
 
 	switch(option)
 	{
 		case HELP_GENERAL:			
-			VDP_drawTextBG(APLAN, "             HELP", TILE_ATTR(PAL2, 0, 0, 0), 4, 4);
+			VDP_drawTextBG(APLAN, "             HELP", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
 			VDP_drawTextBG(APLAN, "The 240p Test Suite was designed", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
 			VDP_drawTextBG(APLAN, "with two goals in mind:", TILE_ATTR(PAL0, 0, 0, 0), 4, 9);
 			VDP_drawTextBG(APLAN, "1) Evaluate 240p signals on TV", TILE_ATTR(PAL0, 0, 0, 0), 4, 11);
@@ -56,7 +56,7 @@ void DrawHelp(int option)
 			showhelp = 1;
 			break;
 		case HELP_PLUGE:			
-			VDP_drawTextBG(APLAN, "            PLUGE", TILE_ATTR(PAL2, 0, 0, 0), 4, 4);
+			VDP_drawTextBG(APLAN, "            PLUGE", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
 			VDP_drawTextBG(APLAN, "The PLUGE pattern is used to", TILE_ATTR(PAL0, 0, 0, 0), 4, 7);
 			VDP_drawTextBG(APLAN, "help adjust the black level to", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
 			VDP_drawTextBG(APLAN, "a correct value. ", TILE_ATTR(PAL0, 0, 0, 0), 4, 9);			
@@ -70,7 +70,7 @@ void DrawHelp(int option)
 			VDP_drawTextBG(APLAN, "until they show.", TILE_ATTR(PAL0, 0, 0, 0), 4, 19);
 			break;
 		case HELP_COLORS:			
-			VDP_drawTextBG(APLAN, "           COLORBARS", TILE_ATTR(PAL2, 0, 0, 0), 4, 4);
+			VDP_drawTextBG(APLAN, "           COLORBARS", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
 			VDP_drawTextBG(APLAN, "This pattern allows you to", TILE_ATTR(PAL0, 0, 0, 0), 4, 7);
 			VDP_drawTextBG(APLAN, "calibrate each color: Red, Green", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
 			VDP_drawTextBG(APLAN, "and Blue; as well as white.", TILE_ATTR(PAL0, 0, 0, 0), 4, 9);						
@@ -84,7 +84,7 @@ void DrawHelp(int option)
 			VDP_drawTextBG(APLAN, "Do the same for each color.", TILE_ATTR(PAL0, 0, 0, 0), 4, 19);
 			break;
 		case HELP_GRID:			
-			VDP_drawTextBG(APLAN, "              GRID", TILE_ATTR(PAL2, 0, 0, 0), 4, 4);
+			VDP_drawTextBG(APLAN, "              GRID", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
 			VDP_drawTextBG(APLAN, "This grid uses the full 320x224", TILE_ATTR(PAL0, 0, 0, 0), 4, 7);
 			VDP_drawTextBG(APLAN, "resolution.", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
 			VDP_drawTextBG(APLAN, "You can use it to verify that ", TILE_ATTR(PAL0, 0, 0, 0), 4, 10);						
@@ -98,7 +98,7 @@ void DrawHelp(int option)
   VDP_drawTextBG(APLAN, "Show HELP:", TILE_ATTR(PAL0, 0, 0, 0), 22, 22);
   while(!exit)
   {		
-		VDP_drawTextBG(APLAN, showhelp == 0 ? "No " : "Yes" , TILE_ATTR(PAL2, 0, 0, 0), 32, 22);
+		VDP_drawTextBG(APLAN, showhelp == 0 ? "No " : "Yes" , TILE_ATTR(PAL1, 0, 0, 0), 32, 22);
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;

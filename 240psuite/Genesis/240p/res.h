@@ -26,12 +26,14 @@
 
 extern u32 color_tiles[224/4]; ; 
 
-extern u32 cb601_tiles[35840/4]; 
+extern u32 cb601_tiles[2144]; 
 extern u16 cb601_pal[16];
+extern u16 cb601_map[2240/2]; 
 
 // Title screen
-extern u32 back_tiles[35840/4]; 
+extern u32 back_tiles[3232]; 
 extern u16 back_pal[16]; 
+extern u16 back_map[2240/2]; 
 
 extern u32 gillian_tiles[4032/4]; 
 extern u16 gillian_pal[16]; 
@@ -67,8 +69,8 @@ extern u16 sonicwater2_pal[16];
 extern u16 sonicwater3_pal[16]; 
 
 // Motoko background
-extern u32 motoko_tiles[35840/4]; 
-
+extern u32 motoko_tiles[20896/4]; 
+extern u16 motoko_map[2240/2];
 extern u16 motoko_pal[16]; 
 
 //Striped Sprite
