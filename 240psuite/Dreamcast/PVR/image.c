@@ -136,6 +136,12 @@ void CalculateUV(float posx, float posy, float width, float height, ImagePtr ima
 	if(!image)
 		return;
 	
+  // These just keep the numbers clean
+	if(posx > image->tw)
+		posx = posx - image->tw;
+	if(posx < -1*image->tw)
+		posx = posx + image->tw;
+
 	image->w = width;
 	image->h = height;
 	image->u1 = posx/image->tw;
