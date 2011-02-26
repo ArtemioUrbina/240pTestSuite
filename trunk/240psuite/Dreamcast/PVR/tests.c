@@ -81,7 +81,7 @@ void DropShadowTest()
 		shadow = ssprite;
 	else
 		shadow = buzzshadow;
-	updateVMU(" Shadow  ", "  even  ", 1);
+	updateVMU("  Shadow	", "  even  ", 1);
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -597,17 +597,21 @@ void LagTest()
 
 void ScrollTest()
 {
-	int 				done = 0, speed = 1, acc = -1, x = 0, pause = 0;
+	int 				done = 0, speed = 1, acc = 1, x = 0, pause = 0;
 	uint16			oldbuttons, pressed;		
-	ImagePtr		back;
+	ImagePtr		back, overlay;
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadImage("/rd/MSBG-1.png", 0);
+	back = LoadImage("/rd/sonicback.png", 0);
+	if(!back)
+		return;
+  overlay = LoadImage("/rd/sonicfloor.png", 0);
 	if(!back)
 		return;
 	
 	back->y = (dH - 240)/2;
+  overlay->y = (dH - 240)/2;
 
 	updateVMU(" Scroll  ", "", 1);
 	while(!done) 
@@ -647,21 +651,25 @@ void ScrollTest()
 			speed = 1;
 
 		if(!pause)
-		{
-			if(!(x <= (back->tw - W) && x >= 0))
-				acc *= -1;
-
 			x += speed * acc;
-		}
+		
+		if(x > overlay->tw)
+			x = 1;
+
+		if(x < -1*overlay->tw)
+			x = -1;
 
 		CalculateUV(x, 0, dW, 240, back);
+    CalculateUV(x*2, 26, dW, 240, overlay);
 		DrawImage(back);
+    DrawImage(overlay);
 		DrawScanlines();
 		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
 	FreeImage(&back);
+  FreeImage(&overlay);
 	return;
 }
 
