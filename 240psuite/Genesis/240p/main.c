@@ -52,15 +52,16 @@ int main()
       VDP_setPalette(PAL3, gillian_pal); 
 
       ind = TILE_USERINDEX; 
-      size = sizeof(back_tiles) /  4 / 32; 
+      size = sizeof(back_tiles) / 32; 
       VDP_loadTileData(back_tiles, ind, size, 1); 
       ind += size;
       size = sizeof(gillian_tiles) / 32; 
       VDP_loadTileData(gillian_tiles, ind, size, 1); 
-    }
-    
-    VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);    
-    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
+
+			VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);    
+    	VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
+			reload = 0;
+    }        
               
     pos = 6;
     VDP_drawTextBG(APLAN, "Test Patterns", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
@@ -160,12 +161,13 @@ void TestPatternMenu()
       ind += size;
       size = sizeof(gillian_tiles) / 32; 
       VDP_loadTileData(gillian_tiles, ind, size, 1); 
-    }
-    
-    VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
-    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
-            
 
+			VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+    	VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
+
+			reload = 0;
+    }        
+            
     pos = 6;
     VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);

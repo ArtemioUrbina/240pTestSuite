@@ -204,9 +204,9 @@ void DrawLinearity()
   ind += size;
   size = sizeof(circles_tiles) / 32; 
   VDP_loadTileData(circles_tiles, ind, size, 1); 
-
+	
   VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
+  VDP_setTileMapRect(APLAN, circles_map, ind, 0, 0, 320/8, 224/8);      
   
   while(!exit)
   {
