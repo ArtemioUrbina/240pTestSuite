@@ -247,7 +247,7 @@ void DropShadowTest()
             VDP_loadTileData(motoko_tiles, ind, size, 1); 
             VDP_setPalette(PAL1, motoko_pal);
           }
-          VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
+          VDP_setTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320/8, 224/8);                            
           break;
         case 1:       
           if(!redraw)
@@ -474,7 +474,7 @@ void StripedSpriteTest()
           size = sizeof(motoko_tiles) / 32; 
           VDP_loadTileData(motoko_tiles, ind, size, 1); 
           VDP_setPalette(PAL1, motoko_pal);
-          VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
+          VDP_setTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320/8, 224/8);                  
           break;
         case 1:                    
           VDP_setPalette(PAL1, sonicback_pal);

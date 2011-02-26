@@ -170,7 +170,7 @@ void Draw601ColorBars()
   size = sizeof(cb601_tiles) / 32; 
   VDP_setPalette(PAL0, cb601_pal);
   VDP_loadTileData(cb601_tiles, TILE_USERINDEX, size, 1); 
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+  VDP_setTileMapRect(BPLAN, cb601_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
@@ -260,11 +260,11 @@ void DrawGrid()
   if(showhelp)
     DrawHelp(HELP_GRID);
   
-	VDP_setPalette(PAL0, grid_pal);
-	size = sizeof(grid_tiles) / 32; 
+  VDP_setPalette(PAL0, grid_pal);
+  size = sizeof(grid_tiles) / 32; 
   VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, 1); 
 
-	VDP_setTileMapRect(APLAN, grid_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);
+  VDP_setTileMapRect(APLAN, grid_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);
 
   while(!exit)
   {
