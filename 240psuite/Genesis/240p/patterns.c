@@ -23,7 +23,7 @@
 #include "res.h"
 #include "patterns.h"
 #include "help.h"
-
+#include "myvdp.h"
 
 void DrawPluge()
 {
@@ -170,7 +170,7 @@ void Draw601ColorBars()
   size = sizeof(cb601_tiles) / 32; 
   VDP_setPalette(PAL0, cb601_pal);
   VDP_loadTileData(cb601_tiles, TILE_USERINDEX, size, 1); 
-  VDP_setTileMapRect(BPLAN, cb601_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+  VDP_setMyTileMapRect(BPLAN, cb601_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
@@ -206,7 +206,7 @@ void DrawLinearity()
   VDP_loadTileData(circles_tiles, ind, size, 1); 
   
   VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
-  VDP_setTileMapRect(APLAN, circles_map, ind, 0, 0, 320/8, 224/8);      
+  VDP_setMyTileMapRect(APLAN, circles_map, ind, 0, 0, 320/8, 224/8);      
   
   while(!exit)
   {
@@ -264,7 +264,7 @@ void DrawGrid()
   size = sizeof(grid_tiles) / 32; 
   VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, 1); 
 
-  VDP_setTileMapRect(APLAN, grid_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);
+  VDP_setMyTileMapRect(APLAN, grid_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);
 
   while(!exit)
   {

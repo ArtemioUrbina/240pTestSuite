@@ -25,6 +25,7 @@
 #include "patterns.h"
 #include "tests.h"
 #include "help.h"
+#include "myvdp.h"
 
 void TestPatternMenu();
 void DrawCredits();
@@ -58,7 +59,7 @@ int main()
       size = sizeof(gillian_tiles) / 32; 
       VDP_loadTileData(gillian_tiles, ind, size, 1); 
 
-      VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);    
+      VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);    
       VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
       reload = 0;
     }        
@@ -162,7 +163,7 @@ void TestPatternMenu()
       size = sizeof(gillian_tiles) / 32; 
       VDP_loadTileData(gillian_tiles, ind, size, 1); 
 
-      VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+      VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
       VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
 
       reload = 0;
@@ -267,7 +268,7 @@ void DrawCredits()
   size = sizeof(back_tiles) / 32; 
   VDP_loadTileData(back_tiles, ind, size, 1); 
   
-  VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);      
+  VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);      
   
   VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
