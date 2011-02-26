@@ -53,6 +53,52 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
 	image->alpha = 1.0;
 	image->w = image->tw;
 	image->h = image->th;
+	image->RefCount = 1;
+	image->FH = 0;
+	image->FV = 0;
+	image->copyOf = NULL;
+	if(maptoscreen)
+	{
+		if(image->w < dW)
+			CalculateUV(0, 0, 320, 240, image);
+		else
+			CalculateUV(0, 0, dW, dH, image);
+	}
+
+	return image;
+}
+
+ImagePtr CloneImage(ImagePtr source, int maptoscreen)
+{	
+	ImagePtr image;
+	
+	if(!source)
+		return NULL;
+	image = (ImagePtr)malloc(sizeof(struct image_st));	
+
+	image->tex = source->tex;
+	image->r = source->r;
+	image->g = source->g;
+	image->b = source->b;
+
+	image->tw = source->tw;
+	image->th = source->th;
+	image->x = source->x;
+	image->y = source->y;
+	image->u1 = source->u1;
+	image->v1 = source->v1;
+	image->u2 = source->u2;
+	image->v2 = source->v2;
+	image->layer = source->layer;
+	image->scale = source->scale;
+	image->alpha = source->alpha;
+	image->w = image->tw;
+	image->h = image->th;
+	image->RefCount = 0;
+	image->FH = image->FH;
+	image->FV = image->FV;
+	image->copyOf = source;
+	source->RefCount ++;
 	if(maptoscreen)
 	{
 		if(image->w < dW)
@@ -65,12 +111,23 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
 }
 
 void FreeImage(ImagePtr *image)
-{
+{	
 	if(*image)
 	{
-		pvr_mem_free((*image)->tex);
-		free(*image);
-		*image = NULL;
+		uint16 *ref;
+
+		if((*image)->copyOf)		
+			ref = &((*image)->copyOf->RefCount);
+		else
+			ref = &((*image)->RefCount);
+			
+		(*ref)--;
+		if(!(*ref) && !(*image)->copyOf)
+		{
+			pvr_mem_free((*image)->tex);
+			free(*image);
+			*image = NULL;
+		}
 	}
 }
 
@@ -85,6 +142,46 @@ void CalculateUV(float posx, float posy, float width, float height, ImagePtr ima
 	image->v1 = posy/image->th;
 	image->u2 = (posx + width)/image->tw;
 	image->v2 = (posy + height)/image->th;
+}
+
+void FlipH(ImagePtr image, uint16 flip)
+{
+	if(!image)
+		return;
+
+	if((!image->FH && flip) || (image->FH && !flip))
+	{
+		float u1;
+	
+		u1 = image->u1;
+		image->u1 = image->u2;	
+		image->u2 = u1;	
+
+		image->FH = !image->FH;
+	}
+}
+
+void FlipV(ImagePtr image, uint16 flip)
+{
+	if(!image)
+		return;
+
+	if((!image->FV && flip) || (image->FV && !flip))
+	{
+		float v1;
+	
+		v1 = image->v1;
+		image->v1 = image->v2;	
+		image->v2 = v1;	
+		
+		image->FV = !image->FV;
+	}
+}
+
+void FlipHV(ImagePtr image, uint16 flip)
+{
+	FlipH(image, flip);
+	FlipV(image, flip);
 }
 
 void DrawImage(ImagePtr image)

@@ -9,11 +9,17 @@ adjust the black level. The control for setting
 this on your TV is usualy named "Brightness".
 
 Reduce the Brightness until these bars: 
-->   <-                                    ->   <-
+<>   <>    <-                         ->   <>   <>
 are no longer visible, and then slowly raise it
 until they are *just* visible. 
+
 (Do it without this help window open)    (cont...)
                     PLUGE 2/2
+
+There are three bars on each side, bars closer
+to the center are at 2%, the center ones at 4%
+and the outer ones are at 6%. In most cases
+you'll only see bars at 4% and 6%.
 
 This adjustment assures that anything intended
 to be black is actually black, and allows all

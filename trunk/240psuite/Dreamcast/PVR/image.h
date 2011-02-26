@@ -24,6 +24,8 @@
 
 #include <png/png.h>
 
+typedef struct image_st * ImagePtr;
+
 struct image_st{
     pvr_ptr_t tex;
     float   x;
@@ -42,13 +44,20 @@ struct image_st{
 		float  	b;   
     float   alpha;
     uint32  scale;
+    uint16  FH;
+    uint16  FV;
+
+    uint16    RefCount;
+    ImagePtr  copyOf;
 };
 
-typedef struct image_st * ImagePtr;
-
 ImagePtr LoadImage(const char *filename, int maptoscreen);
+ImagePtr CloneImage(ImagePtr source, int maptoscreen);
 void FreeImage(ImagePtr *image);
 void CalculateUV(float posx, float posy, float width, float height, ImagePtr image);
+void FlipH(ImagePtr image, uint16 flip);
+void FlipV(ImagePtr image, uint16 flip);
+void FlipHV(ImagePtr image, uint16 flip);
 void DrawImage(ImagePtr image);
 
 #endif

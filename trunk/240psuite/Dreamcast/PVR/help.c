@@ -30,7 +30,7 @@
 
 #include "help.h"
 
-#define LINESPERPAGE	15
+#define LINESPERPAGE	16
 
 extern ImagePtr		scanlines;
 

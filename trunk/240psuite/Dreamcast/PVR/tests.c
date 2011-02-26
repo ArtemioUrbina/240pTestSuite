@@ -81,7 +81,7 @@ void DropShadowTest()
 		shadow = ssprite;
 	else
 		shadow = buzzshadow;
-	updateVMU(" Shadow	", " 	even	", 1);
+	updateVMU(" Shadow  ", "  even  ", 1);
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -99,33 +99,45 @@ void DropShadowTest()
 				y ++;
 		
 			if (st->buttons & CONT_DPAD_LEFT)
+			{
 				x --;
+				FlipH(buzz, 0);
+				FlipH(buzzshadow, 0);
+			}
 		
 			if (st->buttons & CONT_DPAD_RIGHT)
+			{
 				x ++;
+				FlipH(buzz, 1);
+				FlipH(buzzshadow, 1);
+			}
 
 			// Joystick
 			if(st->joyx != 0)
+			{
 				x += st->joyx/20;
+				FlipH(buzz, st->joyx > 0 ? 1 : 0);
+				FlipH(buzzshadow, st->joyx > 0 ? 1 : 0);
+			}
 		
 			if(st->joyy != 0)
 				y += st->joyy/20;
 		
 			if (pressed & CONT_START)
-				done =	1;				
+				done =	1;
 
-			if (pressed & CONT_X)		
+			if (pressed & CONT_X)
 			{
-				invert = !invert; 												
+				invert = !invert;
 				if(invert)
 				{
 					sprintf(msg, "Shadow on odd frames");
-					updateVMU(" Shadow	", "		odd	", 1);
+					updateVMU(" Shadow  ", "  odd ", 1);
 				}
 				else
 				{
 					sprintf(msg, "Shadow on even frames");
-					updateVMU(" Shadow	", " 	even	", 1);
+					updateVMU(" Shadow  ", "  even ", 1);
 				}
 				text = 60;
 			}
@@ -210,7 +222,7 @@ void DropShadowTest()
 void StripedSpriteTest()
 {	
 	int		done = 0, x = 0, y = 0, selback = 0;
-	uint16		oldbuttons = 0xffff, pressed;		
+	uint16		oldbuttons = 0xffff, pressed;
 	ImagePtr	back[4], striped;
 	controller *st;
 
@@ -283,7 +295,7 @@ void StripedSpriteTest()
 				y += st->joyy/20;
 		
 			if (pressed & CONT_START)
-				done =	1;				
+				done =	1;
 						
 			if (pressed & CONT_A)
 			{
@@ -320,7 +332,7 @@ void StripedSpriteTest()
 		DrawImage(striped);
 
 		DrawScanlines();
-		pvr_list_finish();				
+		pvr_list_finish();
 
 		pvr_scene_finish();
 	}
@@ -354,8 +366,8 @@ void LagTest()
 
 	updateVMU("Lag Test ", "", 1);
 	back = LoadImage("/rd/lag-per.png", 0);
-	spriteA = LoadImage("/rd/lag-per.png", 0);
-	spriteB = LoadImage("/rd/lag-per.png", 0);
+	spriteA = CloneImage(back, 0);
+	spriteB = CloneImage(back, 0);
 	spriteneg = LoadImage("/rd/lag-full.png", 0);
 
 	beep = snd_sfx_load("/rd/beep.wav");
@@ -597,7 +609,7 @@ void ScrollTest()
 	
 	back->y = (dH - 240)/2;
 
-	updateVMU(" Scroll	", "", 1);
+	updateVMU(" Scroll  ", "", 1);
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -609,13 +621,13 @@ void ScrollTest()
 			oldbuttons = st->buttons;
 					
 			if (pressed & CONT_DPAD_UP)
-				speed ++; 						
+				speed ++;
 
 			if (pressed & CONT_DPAD_DOWN)
-				speed --;					
+				speed --;
 
 			if (pressed & CONT_START)
-				done =	1;								
+				done = 1;
 
 			if (pressed & CONT_A)
 				pause = !pause;
@@ -694,11 +706,11 @@ void DrawStripes()
 						
 			if (pressed & CONT_A)
 			{
-				alternate = !alternate;				
+				alternate = !alternate;
 				if(alternate)
 					updateVMU(" Stripes", "alternate", 1);
 				else
-					updateVMU(" Stripes", "	still	", 1);
+					updateVMU(" Stripes", " still ", 1);
 			}
 						
 			if (pressed & CONT_Y)
@@ -751,7 +763,7 @@ void DrawStripes()
 		}
 
 		DrawScanlines();
-		pvr_list_finish();				
+		pvr_list_finish();
 
 		pvr_scene_finish();
 	}
@@ -803,7 +815,7 @@ void DrawCheckBoard()
 				if(alternate)
 					updateVMU("CHKB PTTN", "alternate", 1);
 				else
-					updateVMU("CHKB PTTN", "	still	", 1);
+					updateVMU("CHKB PTTN", " still ", 1);
 			}
 		
 			if (pressed & CONT_X)
