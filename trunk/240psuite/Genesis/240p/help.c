@@ -22,6 +22,7 @@
 #include "genesis.h"
 #include "res.h"
 #include "help.h"
+#include "myvdp.h"
 
 u16  showhelp = 0;
 
@@ -39,7 +40,7 @@ void DrawHelp(int option)
   size = sizeof(back_tiles) / 32; 
   VDP_loadTileData(back_tiles, ind, size, 1); 
   
-  VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+  VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
 
   switch(option)
   {

@@ -20,6 +20,7 @@
  */
 
 #include "genesis.h"
+#include "myvdp.h"
 #include "res.h"
 #include "tests.h"
 
@@ -174,15 +175,6 @@ void DrawStripes()
   }
 }
 
-void VDP_setSpriteAttr(u16 index, u16 tile_attr)
-{
-    _spritedef *sprite;    
-
-    sprite = &spriteDefCache[index];
-    
-    sprite->tile_attr = tile_attr;    
-}
-
 void DropShadowTest()
 {
   u16 sonic_water = 0, sonic_floor = 0, frame = 0, direction = 0;                         
@@ -269,7 +261,7 @@ void DropShadowTest()
             VDP_loadTileData(motoko_tiles, ind, size, 1); 
             VDP_setPalette(PAL1, motoko_pal);
           }
-          VDP_setTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320/8, 224/8);                            
+          VDP_setMyTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320/8, 224/8);                            
           break;
         case 1:       
           if(!redraw)
@@ -291,13 +283,13 @@ void DropShadowTest()
             
           if(!redraw)
           {
-            VDP_setTileMapRect(BPLAN, sonicback_map, ind, 0, 0, 256/8, 152/8);                            
-            VDP_setTileMapRect(BPLAN, sonicback_map, ind, 256/8, 0, 256/8, 152/8);                                   
-            VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
-            VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);
+            VDP_setMyTileMapRect(BPLAN, sonicback_map, ind, 0, 0, 256/8, 152/8);                            
+            VDP_setMyTileMapRect(BPLAN, sonicback_map, ind, 256/8, 0, 256/8, 152/8);                                   
+            VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
+            VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);
           }
-          VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);                            
-          VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);                                      
+          VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);                            
+          VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);                                      
           break;
         case 2:
           if(!redraw)
@@ -498,7 +490,7 @@ void StripedSpriteTest()
           size = sizeof(motoko_tiles) / 32; 
           VDP_loadTileData(motoko_tiles, ind, size, 1); 
           VDP_setPalette(PAL1, motoko_pal);
-          VDP_setTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320/8, 224/8);                  
+          VDP_setMyTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320/8, 224/8);                  
           break;
         case 1:                    
           VDP_setPalette(PAL0, sonicback_pal);
@@ -511,12 +503,12 @@ void StripedSpriteTest()
           sonic_floor = sonic_water + size;
           size = sizeof(sonicfloor_tiles) / 32; 
           VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);                
-          VDP_setTileMapRect(BPLAN, sonicback_map, ind, 0, 0, 256/8, 152/8);                            
-          VDP_setTileMapRect(BPLAN, sonicback_map, ind, 256/8, 0, 256/8, 152/8);                        
-          VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
-          VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);
-          VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);                            
-          VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);                                  
+          VDP_setMyTileMapRect(BPLAN, sonicback_map, ind, 0, 0, 256/8, 152/8);                            
+          VDP_setMyTileMapRect(BPLAN, sonicback_map, ind, 256/8, 0, 256/8, 152/8);                        
+          VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
+          VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);
+          VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);                            
+          VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);                                  
           break;
         case 2:          
           size = sizeof(check_tile) / 32; 
@@ -791,7 +783,7 @@ void LagTest()
     size = sizeof(back_tiles) / 32; 
     VDP_loadTileData(back_tiles,  TILE_USERINDEX, size, 1); 
     
-    VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);      
+    VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);      
     exit = 0;
 
     for(c = 0; c < 10; c++)
@@ -901,14 +893,14 @@ void ScrollTest()
   size = sizeof(waterfall_tiles) / 32; 
   VDP_loadTileData(waterfall_tiles, waterfall, size, 1);     
 
-  VDP_setTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 0, 0, 256/8, 152/8);                            
-  VDP_setTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 256/8, 0, 256/8, 152/8);                        
+  VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 0, 0, 256/8, 152/8);                            
+  VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 256/8, 0, 256/8, 152/8);                        
 
-  VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
-  VDP_setTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);  
+  VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
+  VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);  
 
-  VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);
-  VDP_setTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);
+  VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);
+  VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);
 
   VDP_setSprite(0, 72, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 1);
   VDP_setSprite(1, 328, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);  
@@ -995,7 +987,7 @@ void SoundTest()
   size = sizeof(back_tiles) / 32; 
   VDP_loadTileData(back_tiles, ind, size, 1); 
   
-  VDP_setTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+  VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
 
   while(!exit)
   {
