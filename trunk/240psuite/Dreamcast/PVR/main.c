@@ -88,8 +88,9 @@ start:
 	{
 		scanlines = LoadImage("/rd/scanlines.png", 0);
 		scanlines->layer = 5.0;
-		scanlines->alpha = 0.7f; // XRGB-3 175 
+		scanlines->alpha = 0.7f; 
 		scanlines->scale = 0;
+		CalculateUV(0, 0, 640, 480, scanlines);
 	}
 	
 	oldbuttons = InitController(0);
@@ -99,7 +100,7 @@ start:
 		float 	r = 1.0f;
 		float 	g = 1.0f;
 		float 	b = 1.0f;
-		int 	c = 1;				
+		int   	c = 1;				
 		float 	x = 40.0f;
 		float 	y = 55.0f;
 				
@@ -133,7 +134,7 @@ start:
 				sprintf(res, "Video: 480i");
 				break;
 			case FAKE_640_SL:
-				sprintf(res, "Video: 480p/scanlines");
+				sprintf(res, "Video: 480p %s scanlines %0.0f%%", scanlines->y == 0 ? "even" : "odd", (double)scanlines->alpha*100);
 				break;
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
@@ -171,11 +172,22 @@ start:
 			}
 #endif
 
+			if (pressed & CONT_X)
+			{
+				if(scanlines)
+				{
+					if(scanlines->y == 0)
+						scanlines->y = -1;
+					else
+						scanlines->y = 0;
+				}
+			}
+
 			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
 			{
 				if(scanlines)
 				{
-					scanlines->alpha += 0.1f; 
+					scanlines->alpha += 0.05f; 
 					if(scanlines->alpha > 1.0f)
 						scanlines->alpha = 1.0f;
 				}
@@ -185,7 +197,7 @@ start:
 			{
 				if(scanlines)
 				{
-					scanlines->alpha -= 0.1f; 
+					scanlines->alpha -= 0.05f; 
 					if(scanlines->alpha < 0.0f)
 							scanlines->alpha = 0.0f;
 				}
@@ -278,6 +290,9 @@ start:
 	FreeImage(&scanlines);		
 	FreeImage(&title);		
 	ReleaseFont();
+#ifndef SERIAL
+	arch_menu();
+#endif
 	return 0;
 }
 
