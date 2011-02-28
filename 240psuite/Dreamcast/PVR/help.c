@@ -34,8 +34,6 @@
 
 extern ImagePtr		scanlines;
 
-uint16	showhelp = 0;
-
 static inline void DrawScanlines()
 {
 	if(vmode == FAKE_640_SL && scanlines)
@@ -114,13 +112,10 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 {
 	int 				done = 0, npages = 0, page = 0;
-	uint16			oldbuttons, pressed;		
+	uint16			oldbuttons, pressed = 0;		
 	ImagePtr		back;
 	char				*buffer = NULL, **pages = NULL;
 	controller	*st;
-
-	if(!showhelp && !main)
-		return 1;
 
 	oldbuttons = InitController(0);
 	buffer = LoadHelpFile(filename, &pages, &npages);
@@ -131,8 +126,6 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 	back->alpha = 0.75f;
 		
 	updateVMU(" 	Help	", "", 1);
-	if(main)
-		showhelp = 1;
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -149,10 +142,10 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 				page --;
 			if (pressed & CONT_DPAD_RIGHT)
 				page ++;
-			if (pressed & CONT_B)
-				done =	2;								
-			if (pressed & CONT_Y)
-				showhelp =	!showhelp;								
+			if (st->rtrig > 5)
+				page ++;
+			if (st->ltrig > 5)
+				page --;
 		}
 
 		if(page > npages - 1)
@@ -169,16 +162,7 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 		DrawImage(back);
 		DrawStringS(34, 42, 1.0f, 1.0f, 1.0f, pages[page]); 
 
-		if(main)
-			DrawStringS(80, 200, 0.9f, 0.9f, 0.9f, "Press START to return to Menu"); 
-		else
-			DrawStringS(30, 200, 0.9f, 0.9f, 0.9f, "Press START to return to Menu, or B to close help"); 
-		DrawStringS(170, 190, 0.7f, 0.7f, 0.7f, "Show help (Press Y):"); 
-
-		if(showhelp)
-			DrawStringS(270, 190, 0.0f, 0.7f, 0.7f, "Yes"); 
-		else
-			DrawStringS(270, 190, 0.0f, 0.7f, 0.7f, "No"); 
+		DrawStringS(100, 200, 0.9f, 0.9f, 0.9f, "Press START to return"); 
 		DrawScanlines();
 		pvr_list_finish();				
 
@@ -189,9 +173,7 @@ uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
 	if(pages)
 		free(pages);
 	FreeImage(&back);
-	if(done == 2)
-		return 0;
-	return 1;
+	return pressed;
 }
 
 

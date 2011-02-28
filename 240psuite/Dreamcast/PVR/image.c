@@ -29,6 +29,11 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
 	ImagePtr image;
 	
 	image = (ImagePtr)malloc(sizeof(struct image_st));
+	if(!image)
+	{
+		fprintf(stderr, "Could not malloc image struct %s\n", filename);
+		return(NULL);
+	}
 	if(png_load_texture(filename, &image->tex, PNG_MASK_ALPHA, &w, &h) == -1)
 	{
 		free(image);
@@ -59,7 +64,7 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
 	image->copyOf = NULL;
 	if(maptoscreen)
 	{
-		if(image->w < dW)
+		if(image->w < dW && image->w != 8)
 			CalculateUV(0, 0, 320, 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);
@@ -101,7 +106,7 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	source->RefCount ++;
 	if(maptoscreen)
 	{
-		if(image->w < dW)
+		if(image->w < dW && image->w != 8)
 			CalculateUV(0, 0, 320, 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);

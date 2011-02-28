@@ -74,10 +74,10 @@ void DrawPluge()
 			oldbuttons = st->buttons;
 					
 			if (pressed & CONT_START)
-			{
-				if(HelpWindow(PLUGEHELP, back, 0))
-					done =	1;								
-			}
+				done =	1;								
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(PLUGEHELP, back, 0);
 		}
 
 		pvr_scene_begin();
@@ -115,10 +115,10 @@ void DrawGrayRamp()
 			oldbuttons = st->buttons;
 					
 			if (pressed & CONT_START)
-			{
-				if(HelpWindow(GRAYRAMPHELP, back, 0))
-					done =	1;								
-			}
+				done =	1;								
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(GRAYRAMPHELP, back, 0);
 		}
 
 		pvr_scene_begin();
@@ -234,10 +234,10 @@ void DrawColorBars()
 			oldbuttons = st->buttons;
 					
 			if (pressed & CONT_START)
-			{
-				if(HelpWindow(COLORBARSHELP, back, 0))
-					done =	1;								
-			}
+				done =	1;								
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(COLORBARSHELP, back, 0);
 		}
 
 		pvr_scene_begin();
@@ -320,10 +320,7 @@ void DrawGrid()
 			oldbuttons = st->buttons;
 					
 			if (pressed & CONT_START)
-			{
-				if(HelpWindow(GRIDHELP, back, 0))
-					done =	1;								
-			}
+				done =	1;								
 			if (pressed & CONT_A)
 			{
 				back->x = 0.0f;
@@ -337,6 +334,8 @@ void DrawGrid()
 				back->x -= 1.0f;
 			if (pressed & CONT_DPAD_RIGHT)
 				back->x += 1.0f;
+			if (st->rtrig > 5)
+				oldbuttons = HelpWindow(GRIDHELP, back, 0);
 		}
 
 		pvr_scene_begin();
