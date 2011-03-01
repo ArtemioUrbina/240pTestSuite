@@ -809,6 +809,9 @@ void DrawStripes()
 						
 			if (pressed & CONT_B && !alternate)
 				field = !field;
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(STRIPESHELP, stripespos);
 		}
 
 		pvr_scene_begin();
@@ -907,6 +910,9 @@ void DrawCheckBoard()
 						
 			if (pressed & CONT_B && !alternate)
 				field = !field;
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(CHECKHELP, checkpos);
 		}
 
 		pvr_scene_begin();
@@ -986,7 +992,7 @@ void SoundTest()
 				sel ++;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(SOUNDHELP, NULL, 0);
+				oldbuttons = HelpWindow(SOUNDHELP, NULL);
 		}
 		
 		if(sel < 0)

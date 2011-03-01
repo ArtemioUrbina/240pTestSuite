@@ -250,7 +250,7 @@ int main(void)
 							done = 1;		// Reset PVR, but go on
 							break;
 						case 10:
-							HelpWindow(GENERALHELP, NULL, 1);
+							HelpWindow(GENERALHELP, NULL);
 							break;
 						case 11:
 							DrawCredits();

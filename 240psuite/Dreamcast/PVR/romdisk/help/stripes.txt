@@ -1,0 +1,33 @@
+              HORIZONTAL STRIPES 1/2
+
+This pattern is designed to show if all lines are
+visible in your setup, and how your video
+processor is handling 240p video. 
+
+You should see a pattern of lines, each one pixel
+in height, starting with a white one at the top of
+the screen. You can toggle the pattern with the B
+button, or turn on auto-toggle each frame with the
+A button.
+
+When auto-toggle is set, you should see the lines
+alternating rapidly. On some setups, the pattern
+doesn't change at all. This means that the signal
+                                           (cont...)
+              HORIZONTAL STRIPES 2/2
+is being treated as 480i and odd or even frames 
+are being discarded completely.
+
+A frame counter can be displayed on screen by 
+pressing the X button.
+
+You can also display vertical bars by pressing Y,
+that pattern will help you evaluate if the signal
+is not distorted horizontaly, since all one pixel
+wide lines should be of the same width.
+
+
+
+
+
+
