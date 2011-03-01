@@ -28,9 +28,10 @@
 #define NATIVE_640_FS   3
 #define FAKE_640_SL     4
 
+#include "image.h"
+
 extern int vmode;
 extern int vcable;
-extern int region;
 
 
 extern int W;
@@ -38,9 +39,18 @@ extern int H;
 extern int dW;
 extern int dH;
 
-void InitVideo();
-void ChangePVRDefaults();
+extern ImagePtr scanlines;
+
+void LoadScanlines();
+inline void ReleaseScanlines();
+inline void DrawScanlines();
+double GetScanlineIntensity();
+int ScanlinesEven();
+void LowerScanlineIntensity();
+void RaiseScanlineIntensity();
+void ToggleScanlineEvenOdd();
 void ChangeResolution();
+void PVRStats();
 
 #endif 
 

@@ -33,15 +33,6 @@
 
 #include "help.h"
 
-
-extern ImagePtr		scanlines;
-
-static inline void DrawScanlines()
-{
-	if(vmode == FAKE_640_SL && scanlines)
-		DrawImage(scanlines);
-}
-
 void DropShadowTest()
 {
 	char			msg[50];
@@ -1025,7 +1016,7 @@ void SoundTest()
 		pvr_list_begin(PVR_LIST_TR_POLY);
 		DrawImage(back);
 
-		DrawStringS(120, 60, 1.0f, 1.0f, 1.0f, "Sound Test"); 
+		DrawStringS(130, 60, 1.0f, 1.0f, 1.0f, "Sound Test"); 
 		DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
 		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,	sel == 1 ? 0 : 1.0f, "Center Channel");
 		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");

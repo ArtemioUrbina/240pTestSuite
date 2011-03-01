@@ -40,233 +40,250 @@ extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 KOS_INIT_FLAGS(INIT_DEFAULT);
 
-ImagePtr		scanlines = NULL;
-
-static inline void DrawScanlines()
-{
-	if(vmode == FAKE_640_SL && scanlines)
-		DrawImage(scanlines);
-}
+int					region = 0;
 
 void TestPatternsMenu();
 void DrawCredits();
 
 int main(void)
 {
-	int 				done = 0, sel = 1, joycnt = 0, restart = 1;
+	int 				done = 0, sel = 1, joycnt = 0;
 	uint16			oldbuttons, pressed;		
-	ImagePtr		title;
+	ImagePtr		title, sd;
 	controller	*st;
 
-	InitVideo();
-	
-	while(restart)	// This loop is used to Change resolutions
+	/* init kos	*/
+	// PM_RGB555 PM_RGB565 PM_RGB888
+	vcable = vid_check_cable();
+	vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
+	pvr_init_defaults();
+	region = flashrom_get_region();
+
+ 	// Disable deflicker filter, 
+ 	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
+ 	{
+		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
+		PVR_SET(PVR_SCALER_CFG, 0x400);
+	}
+
+		// Turn off texture dithering
+	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
 	{
-		LoadFont();
-		title = LoadImage("/rd/title.png", 1);		
-		if(!scanlines && vmode == FAKE_640_SL)
+		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
+		PVR_SET(PVR_FB_CFG_2, 0x00000001);
+	}
+
+start:
+	vid_border_color(0, 0, 0);
+	pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+		
+	LoadFont();
+	LoadScanlines();
+	title = LoadImage("/rd/back.png", 1);
+	sd = LoadImage("/rd/SD.png", 0);
+	if(sd)
+	{
+		sd->x = 221;
+		sd->y = 94;
+	}
+	
+	oldbuttons = InitController(0);
+ 	while(!done) 
+	{
+		char		res[40];
+		float 	r = 1.0f;
+		float 	g = 1.0f;
+		float 	b = 1.0f;
+		int   	c = 1;				
+		float 	x = 40.0f;
+		float 	y = 55.0f;
+				
+		pvr_wait_ready();
+		pvr_scene_begin();
+		pvr_list_begin(PVR_LIST_TR_POLY);
+
+		DrawImage(title);
+		DrawImage(sd);
+		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
+
+		switch(vmode)
 		{
-			scanlines = LoadImage("/rd/scanlines.png", 0);
-			scanlines->layer = 5.0;
-			scanlines->alpha = 0.7f; 
-			scanlines->scale = 0;
-			CalculateUV(0, 0, 640, 480, scanlines);
+			case NATIVE_320:
+				sprintf(res, "Video: 240p");
+				break;
+			case NATIVE_640:
+				sprintf(res, "Video: 240p in 480i");
+				break;
+			case FAKE_640:
+				sprintf(res, "Video: Fake 480i");
+				break;
+			case NATIVE_640_FS:
+				sprintf(res, "Video: 480i");
+				break;
+			case FAKE_640_SL:
+				sprintf(res, "Video: 480p %s scanlines %0.0f%%", ScanlinesEven() ? "even" : "odd", GetScanlineIntensity());
+				break;
+		}
+		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
+		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
+
+		r = 0.8f;
+		g = 0.8f;
+		b = 0.8f;
+		switch(vcable)
+		{
+			case CT_RGB:
+				DrawStringS(265.0f, 225.0f, r, g, b, "RGB");
+				break;
+			case CT_VGA:
+				DrawStringS(265.0f, 225.0f, r, g, b, "VGA");
+				break;
+			case CT_COMPOSITE:
+				DrawStringS(235.0f, 225.0f, r, g, b, "Composite");
+				break;
 		}
 		
-		oldbuttons = InitController(0);
- 		while(!done) // Main loop
+		switch(region)
 		{
-			char		res[40];
-			float 	r = 1.0f;
-			float 	g = 1.0f;
-			float 	b = 1.0f;
-			int   	c = 1;				
-			float 	x = 40.0f;
-			float 	y = 55.0f;
-					
-			pvr_wait_ready();
-			pvr_scene_begin();
-			pvr_list_begin(PVR_LIST_TR_POLY);
-	
-			DrawImage(title);
-			
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
-	
-			switch(vmode)
-			{
-				case NATIVE_320:
-					sprintf(res, "Video: 240p");
-					break;
-				case NATIVE_640:
-					sprintf(res, "Video: 240p in 480i");
-					break;
-				case FAKE_640:
-					sprintf(res, "Video: Fake 480i");
-					break;
-				case NATIVE_640_FS:
-					sprintf(res, "Video: 480i");
-					break;
-				case FAKE_640_SL:
-					sprintf(res, "Video: 480p %s scanlines %0.0f%%", scanlines->y == 0 ? "even" : "odd", (double)scanlines->alpha*100);
-					break;
-			}
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
-			DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
-	
-			switch(vcable)
-			{
-				case CT_RGB:
-					DrawStringS(265.0f, 225.0f, 0, g,	b, "RGB");
-					break;
-				case CT_VGA:
-					DrawStringS(265.0f, 225.0f, 0, g,	b, "VGA");
-					break;
-				case CT_COMPOSITE:
-					DrawStringS(215.0f, 225.0f, 0, g,	b, "Composite");
-					break;
-			}
-			
-			DrawScanlines();
-					
-			pvr_list_finish();				
-			pvr_scene_finish();
-	
-			st = ReadController(0);
-			if(st)
-			{
-				pressed = st->buttons & ~oldbuttons;
-				oldbuttons = st->buttons;
-#ifdef SERIAL
-				if (st->buttons & CONT_START && st->buttons & CONT_B)
-				{
-					updateVMU(" Goodbye ", " m(_ _)m ", 1);
-					done =	1;
-					restart = 0;
-				}
-#endif
-	
-				if (pressed & CONT_X)
-				{
-					if(scanlines)
-					{
-						if(scanlines->y == 0)
-							scanlines->y = -1;
-						else
-							scanlines->y = 0;
-					}
-				}
-	
-				if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
-				{
-					if(scanlines)
-					{
-						scanlines->alpha += 0.05f; 
-						if(scanlines->alpha > 1.0f)
-							scanlines->alpha = 1.0f;
-					}
-				}
-	
-				if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
-				{
-					if(scanlines)
-					{
-						scanlines->alpha -= 0.05f; 
-						if(scanlines->alpha < 0.0f)
-								scanlines->alpha = 0.0f;
-					}
-				}
-	
-				if (pressed & CONT_DPAD_UP)
-				{
-					sel --;
-					if(sel < 1)
-						sel = c;				
-				}
-				
-				if (pressed & CONT_DPAD_DOWN)
-				{
-					sel ++;
-					if(sel > c)
-						sel = 1;				
-				}
-				
-				if(st->joyy != 0)
-				{
-					if(++joycnt > 5)
-					{
-						if(st->joyy > 0)
-							sel ++;
-						if(st->joyy < 0)
-							sel --;
-			
-						if(sel < 1)
-							sel = c;
-						if(sel > c)
-							sel = 1;					
-						joycnt = 0;
-					}
-				}
-				else
-					joycnt = 0;
-				
-				if (pressed & CONT_A)
-				{
-					switch(sel)
-					{
-						case 1:
-							TestPatternsMenu();
-							break;
-						case 2:					
-							DropShadowTest();
-							break;
-						case 3:
-							StripedSpriteTest();
-							break;
-						case 4:
-							LagTest();
-							break;
-						case 5:
-							ScrollTest();
-							break;
-						case 6:
-							DrawStripes();
-							break;
-						case 7:
-							DrawCheckBoard();
-							break;
-						case 8:
-							SoundTest();
-							break;
-						case 9:
-							ChangeResolution();
-							done = 1;		// Reset PVR, but go on
-							break;
-						case 10:
-							HelpWindow(GENERALHELP, NULL);
-							break;
-						case 11:
-							DrawCredits();
-							break;
-					} 												
-					updateVMU("240p Test", "", 1);				
-					oldbuttons = InitController(0);
-				}
-			}
-			updateVMU("240p Test", "", 0);
+			case FLASHROM_REGION_UNKNOWN:
+				DrawStringS(265.0f, 215.0f, r, g, b, "??????");
+				break;
+			case FLASHROM_REGION_JAPAN:
+				DrawStringS(265.0f, 215.0f, r, g, b, "Japan");
+				break;
+			case FLASHROM_REGION_US:
+				DrawStringS(265.0f, 215.0f, r, g, b, "USA");
+				break;
+			case FLASHROM_REGION_EUROPE:
+				DrawStringS(265.0f, 215.0f, r, g, b, "Europe");
+				break;
 		}
-	
-		FreeImage(&scanlines);		
-		FreeImage(&title);		
-		ReleaseFont();
+		
+		DrawScanlines();
+				
+		pvr_list_finish();				
+		pvr_scene_finish();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+#ifdef SERIAL
+			if (st->buttons & CONT_START && st->buttons & CONT_B)
+			{
+				updateVMU(" Goodbye ", " m(_ _)m ", 1);
+				done =	1;
+			}
+#endif
+
+			if (pressed & CONT_X)
+				ToggleScanlineEvenOdd();
+
+			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
+				RaiseScanlineIntensity();
+
+			if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
+				LowerScanlineIntensity();
+
+			if (pressed & CONT_DPAD_UP)
+			{
+				sel --;
+				if(sel < 1)
+					sel = c;				
+			}
+			
+			if (pressed & CONT_DPAD_DOWN)
+			{
+				sel ++;
+				if(sel > c)
+					sel = 1;				
+			}
+			
+			if(st->joyy != 0)
+			{
+				if(++joycnt > 5)
+				{
+					if(st->joyy > 0)
+						sel ++;
+					if(st->joyy < 0)
+						sel --;
+		
+					if(sel < 1)
+						sel = c;
+					if(sel > c)
+						sel = 1;					
+					joycnt = 0;
+				}
+			}
+			else
+				joycnt = 0;
+			
+			if (pressed & CONT_A)
+			{
+				switch(sel)
+				{
+					case 1:
+						TestPatternsMenu();
+						break;
+					case 2:					
+						DropShadowTest();
+						break;
+					case 3:
+						StripedSpriteTest();
+						break;
+					case 4:
+						LagTest();
+						break;
+					case 5:
+						ScrollTest();
+						break;
+					case 6:
+						DrawStripes();
+						break;
+					case 7:
+						DrawCheckBoard();
+						break;
+					case 8:
+						SoundTest();
+						break;
+					case 9:
+						ChangeResolution();
+						FreeImage(&title);		
+						FreeImage(&sd);		
+						ReleaseScanlines();
+						ReleaseFont();
+						// we need to reload textures and stuff..
+						// not pretty, but "clean"
+						goto start;
+						break;
+					case 10:
+						HelpWindow(GENERALHELP, NULL);
+						break;
+					case 11:
+						DrawCredits();
+						break;
+				} 												
+				updateVMU("240p Test", "", 1);				
+				oldbuttons = InitController(0);
+			}
+		}
+		updateVMU("240p Test", "", 0);
 	}
+
+	FreeImage(&title);		
+	FreeImage(&sd);		
+	ReleaseScanlines();
+	ReleaseFont();
 #ifndef SERIAL
 	arch_menu();
 #endif
@@ -277,17 +294,24 @@ void TestPatternsMenu()
 {
 	int 				done = 0, sel = 1, joycnt = 0;
 	uint16			oldbuttons, pressed;		
-	ImagePtr		title;
+	ImagePtr		title, sd;
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	title = LoadImage("/rd/title.png", 1);		
+	title = LoadImage("/rd/back.png", 1);		
+	sd = LoadImage("/rd/SD.png", 0);
+	if(sd)
+	{
+		sd->x = 221;
+		sd->y = 94;
+	}
+
  	while(!done) 
 	{		
 		float 	r = 1.0f;
 		float 	g = 1.0f;
 		float 	b = 1.0f;
-		int 	c = 1;				
+		int			c = 1;				
 		float 	x = 40.0f;
 		float 	y = 55.0f;
 				
@@ -296,6 +320,7 @@ void TestPatternsMenu()
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
 		DrawImage(title);
+		DrawImage(sd);
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Pluge"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
@@ -306,16 +331,35 @@ void TestPatternsMenu()
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White Screen"); y += fh; c++;				
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
+		r = 0.8f;
+		g = 0.8f;
+		b = 0.8f;
 		switch(vcable)
 		{
 			case CT_RGB:
-				DrawStringS(265.0f, 225.0f, 0, g,	b, "RGB");
+				DrawStringS(265.0f, 225.0f, r, g,	b, "RGB");
 				break;
 			case CT_VGA:
-				DrawStringS(265.0f, 225.0f, 0, g,	b, "VGA");
+				DrawStringS(265.0f, 225.0f, r, g,	b, "VGA");
 				break;
 			case CT_COMPOSITE:
-				DrawStringS(215.0f, 225.0f, 0, g,	b, "Composite");
+				DrawStringS(215.0f, 225.0f, r, g,	b, "Composite");
+				break;
+		}
+		
+		switch(region)
+		{
+			case FLASHROM_REGION_UNKNOWN:
+				DrawStringS(265.0f, 215.0f, r, g, b, "??????");
+				break;
+			case FLASHROM_REGION_JAPAN:
+				DrawStringS(265.0f, 215.0f, r, g, b, "Japan");
+				break;
+			case FLASHROM_REGION_US:
+				DrawStringS(265.0f, 215.0f, r, g, b, "USA");
+				break;
+			case FLASHROM_REGION_EUROPE:
+				DrawStringS(265.0f, 215.0f, r, g, b, "Europe");
 				break;
 		}
 		
@@ -331,24 +375,10 @@ void TestPatternsMenu()
 			oldbuttons = st->buttons;
 
 			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
-			{
-				if(scanlines)
-				{
-					scanlines->alpha += 0.1f; 
-					if(scanlines->alpha > 1.0f)
-						scanlines->alpha = 1.0f;
-				}
-			}
+				RaiseScanlineIntensity();
 
 			if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
-			{
-				if(scanlines)
-				{
-					scanlines->alpha -= 0.1f; 
-					if(scanlines->alpha < 0.0f)
-						scanlines->alpha = 0.0f;
-				}
-			}
+				LowerScanlineIntensity();
 
 			if (pressed & CONT_DPAD_UP)
 			{
@@ -423,6 +453,7 @@ void TestPatternsMenu()
 		updateVMU("Patterns", "", 0);
 	}
 	
+	FreeImage(&sd);			
 	FreeImage(&title);			
 	return;
 }
