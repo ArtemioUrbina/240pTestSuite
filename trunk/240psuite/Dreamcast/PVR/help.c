@@ -109,7 +109,7 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 	return buffer;
 }
 
-uint16 HelpWindow(char *filename, ImagePtr screen, uint16 main)
+uint16 HelpWindow(char *filename, ImagePtr screen)
 {
 	int 				done = 0, npages = 0, page = 0;
 	uint16			oldbuttons, pressed = 0;		
