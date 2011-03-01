@@ -9,17 +9,8 @@ turn on auto-toggle each frame with the A button.
 When auto-toggle is set, you should see the it
 alternating rapidly. On some setups, the pattern
 doesn't change at all. This means that the signal
-                                           (cont...)
-                CHECKERBOARD 1/2
 is being treated as 480i and odd or even frames 
 are being discarded completely.
 
 A frame counter can be displayed on screen by 
 pressing the X button.
-
-
-
-
-
-
-

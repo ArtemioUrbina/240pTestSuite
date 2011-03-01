@@ -34,15 +34,6 @@
 
 #include "help.h"
 
-/* romdisk */
-
-extern ImagePtr		scanlines;
-
-static inline void DrawScanlines()
-{
-	if(vmode == FAKE_640_SL && scanlines)
-		DrawImage(scanlines);
-}
 
 void DrawPluge();
 void DrawWhiteScreen();

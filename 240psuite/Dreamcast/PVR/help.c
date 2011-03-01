@@ -32,14 +32,6 @@
 
 #define LINESPERPAGE	16
 
-extern ImagePtr		scanlines;
-
-static inline void DrawScanlines()
-{
-	if(vmode == FAKE_640_SL && scanlines)
-		DrawImage(scanlines);
-}
-
 char *LoadHelpFile(char *filename, char ***pages, int *npages)
 {
 	int		i = 0, lines = 0, linecount = 0, currpage = 0;

@@ -30,8 +30,8 @@
 #define GRIDHELP    		"/rd/help/grid.txt"
 #define COLORBARSHELP		"/rd/help/colors.txt"
 #define SOUNDHELP				"/rd/help/sound.txt"
-#define CHECKHELP				"/rd/help/stripes.txt"
-#define STRIPESHELP			"/rd/help/check.txt"
+#define CHECKHELP				"/rd/help/check.txt"
+#define STRIPESHELP			"/rd/help/stripes.txt"
 
 uint16 HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);
