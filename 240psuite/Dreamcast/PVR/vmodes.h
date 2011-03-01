@@ -30,6 +30,7 @@
 
 extern int vmode;
 extern int vcable;
+extern int region;
 
 
 extern int W;
@@ -37,6 +38,8 @@ extern int H;
 extern int dW;
 extern int dH;
 
+void InitVideo();
+void ChangePVRDefaults();
 void ChangeResolution();
 
 #endif 

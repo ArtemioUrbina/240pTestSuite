@@ -53,243 +53,220 @@ void DrawCredits();
 
 int main(void)
 {
-	int 				done = 0, sel = 1, joycnt = 0;
+	int 				done = 0, sel = 1, joycnt = 0, restart = 1;
 	uint16			oldbuttons, pressed;		
 	ImagePtr		title;
 	controller	*st;
 
-	/* init kos	*/
-	// PM_RGB555 PM_RGB565 PM_RGB888
-	vcable = vid_check_cable();
-	vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
-	pvr_init_defaults();
-
- 	// Disable deflicker filter, 
- 	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
- 	{
-		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
-		PVR_SET(PVR_SCALER_CFG, 0x400);
-	}
-
-		// Turn off texture dithering
-	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
-	{
-		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
-		PVR_SET(PVR_FB_CFG_2, 0x00000001);
-	}
-
-start:
-	vid_border_color(0, 0, 0);
-	pvr_set_bg_color(0.0f, 0.0f, 0.0f);
-		
-	LoadFont();
-	title = LoadImage("/rd/title.png", 1);
-	if(!scanlines && vmode == FAKE_640_SL)
-	{
-		scanlines = LoadImage("/rd/scanlines.png", 0);
-		scanlines->layer = 5.0;
-		scanlines->alpha = 0.7f; 
-		scanlines->scale = 0;
-		CalculateUV(0, 0, 640, 480, scanlines);
-	}
+	InitVideo();
 	
-	oldbuttons = InitController(0);
- 	while(!done) 
+	while(restart)	// This loop is used to Change resolutions
 	{
-		char		res[40];
-		float 	r = 1.0f;
-		float 	g = 1.0f;
-		float 	b = 1.0f;
-		int   	c = 1;				
-		float 	x = 40.0f;
-		float 	y = 55.0f;
-				
-		pvr_wait_ready();
-		pvr_scene_begin();
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
-		DrawImage(title);
-		
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
-
-		switch(vmode)
+		LoadFont();
+		title = LoadImage("/rd/title.png", 1);		
+		if(!scanlines && vmode == FAKE_640_SL)
 		{
-			case NATIVE_320:
-				sprintf(res, "Video: 240p");
-				break;
-			case NATIVE_640:
-				sprintf(res, "Video: 240p in 480i");
-				break;
-			case FAKE_640:
-				sprintf(res, "Video: Fake 480i");
-				break;
-			case NATIVE_640_FS:
-				sprintf(res, "Video: 480i");
-				break;
-			case FAKE_640_SL:
-				sprintf(res, "Video: 480p %s scanlines %0.0f%%", scanlines->y == 0 ? "even" : "odd", (double)scanlines->alpha*100);
-				break;
-		}
-		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
-		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
-
-		switch(vcable)
-		{
-			case CT_RGB:
-				DrawStringS(265.0f, 225.0f, 0, g,	b, "RGB");
-				break;
-			case CT_VGA:
-				DrawStringS(265.0f, 225.0f, 0, g,	b, "VGA");
-				break;
-			case CT_COMPOSITE:
-				DrawStringS(215.0f, 225.0f, 0, g,	b, "Composite");
-				break;
+			scanlines = LoadImage("/rd/scanlines.png", 0);
+			scanlines->layer = 5.0;
+			scanlines->alpha = 0.7f; 
+			scanlines->scale = 0;
+			CalculateUV(0, 0, 640, 480, scanlines);
 		}
 		
-		DrawScanlines();
-				
-		pvr_list_finish();				
-		pvr_scene_finish();
-
-		st = ReadController(0);
-		if(st)
+		oldbuttons = InitController(0);
+ 		while(!done) // Main loop
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
+			char		res[40];
+			float 	r = 1.0f;
+			float 	g = 1.0f;
+			float 	b = 1.0f;
+			int   	c = 1;				
+			float 	x = 40.0f;
+			float 	y = 55.0f;
+					
+			pvr_wait_ready();
+			pvr_scene_begin();
+			pvr_list_begin(PVR_LIST_TR_POLY);
+	
+			DrawImage(title);
+			
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
+	
+			switch(vmode)
+			{
+				case NATIVE_320:
+					sprintf(res, "Video: 240p");
+					break;
+				case NATIVE_640:
+					sprintf(res, "Video: 240p in 480i");
+					break;
+				case FAKE_640:
+					sprintf(res, "Video: Fake 480i");
+					break;
+				case NATIVE_640_FS:
+					sprintf(res, "Video: 480i");
+					break;
+				case FAKE_640_SL:
+					sprintf(res, "Video: 480p %s scanlines %0.0f%%", scanlines->y == 0 ? "even" : "odd", (double)scanlines->alpha*100);
+					break;
+			}
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
+			DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
+	
+			switch(vcable)
+			{
+				case CT_RGB:
+					DrawStringS(265.0f, 225.0f, 0, g,	b, "RGB");
+					break;
+				case CT_VGA:
+					DrawStringS(265.0f, 225.0f, 0, g,	b, "VGA");
+					break;
+				case CT_COMPOSITE:
+					DrawStringS(215.0f, 225.0f, 0, g,	b, "Composite");
+					break;
+			}
+			
+			DrawScanlines();
+					
+			pvr_list_finish();				
+			pvr_scene_finish();
+	
+			st = ReadController(0);
+			if(st)
+			{
+				pressed = st->buttons & ~oldbuttons;
+				oldbuttons = st->buttons;
 #ifdef SERIAL
-			if (st->buttons & CONT_START && st->buttons & CONT_B)
-			{
-				updateVMU(" Goodbye ", " m(_ _)m ", 1);
-				done =	1;
-			}
+				if (st->buttons & CONT_START && st->buttons & CONT_B)
+				{
+					updateVMU(" Goodbye ", " m(_ _)m ", 1);
+					done =	1;
+					restart = 0;
+				}
 #endif
-
-			if (pressed & CONT_X)
-			{
-				if(scanlines)
+	
+				if (pressed & CONT_X)
 				{
-					if(scanlines->y == 0)
-						scanlines->y = -1;
-					else
-						scanlines->y = 0;
+					if(scanlines)
+					{
+						if(scanlines->y == 0)
+							scanlines->y = -1;
+						else
+							scanlines->y = 0;
+					}
 				}
-			}
-
-			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
-			{
-				if(scanlines)
+	
+				if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
 				{
-					scanlines->alpha += 0.05f; 
-					if(scanlines->alpha > 1.0f)
-						scanlines->alpha = 1.0f;
+					if(scanlines)
+					{
+						scanlines->alpha += 0.05f; 
+						if(scanlines->alpha > 1.0f)
+							scanlines->alpha = 1.0f;
+					}
 				}
-			}
-
-			if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
-			{
-				if(scanlines)
+	
+				if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
 				{
-					scanlines->alpha -= 0.05f; 
-					if(scanlines->alpha < 0.0f)
-							scanlines->alpha = 0.0f;
+					if(scanlines)
+					{
+						scanlines->alpha -= 0.05f; 
+						if(scanlines->alpha < 0.0f)
+								scanlines->alpha = 0.0f;
+					}
 				}
-			}
-
-			if (pressed & CONT_DPAD_UP)
-			{
-				sel --;
-				if(sel < 1)
-					sel = c;				
-			}
-			
-			if (pressed & CONT_DPAD_DOWN)
-			{
-				sel ++;
-				if(sel > c)
-					sel = 1;				
-			}
-			
-			if(st->joyy != 0)
-			{
-				if(++joycnt > 5)
+	
+				if (pressed & CONT_DPAD_UP)
 				{
-					if(st->joyy > 0)
-						sel ++;
-					if(st->joyy < 0)
-						sel --;
-		
+					sel --;
 					if(sel < 1)
-						sel = c;
+						sel = c;				
+				}
+				
+				if (pressed & CONT_DPAD_DOWN)
+				{
+					sel ++;
 					if(sel > c)
-						sel = 1;					
+						sel = 1;				
+				}
+				
+				if(st->joyy != 0)
+				{
+					if(++joycnt > 5)
+					{
+						if(st->joyy > 0)
+							sel ++;
+						if(st->joyy < 0)
+							sel --;
+			
+						if(sel < 1)
+							sel = c;
+						if(sel > c)
+							sel = 1;					
+						joycnt = 0;
+					}
+				}
+				else
 					joycnt = 0;
+				
+				if (pressed & CONT_A)
+				{
+					switch(sel)
+					{
+						case 1:
+							TestPatternsMenu();
+							break;
+						case 2:					
+							DropShadowTest();
+							break;
+						case 3:
+							StripedSpriteTest();
+							break;
+						case 4:
+							LagTest();
+							break;
+						case 5:
+							ScrollTest();
+							break;
+						case 6:
+							DrawStripes();
+							break;
+						case 7:
+							DrawCheckBoard();
+							break;
+						case 8:
+							SoundTest();
+							break;
+						case 9:
+							ChangeResolution();
+							done = 1;		// Reset PVR, but go on
+							break;
+						case 10:
+							HelpWindow(GENERALHELP, NULL, 1);
+							break;
+						case 11:
+							DrawCredits();
+							break;
+					} 												
+					updateVMU("240p Test", "", 1);				
+					oldbuttons = InitController(0);
 				}
 			}
-			else
-				joycnt = 0;
-			
-			if (pressed & CONT_A)
-			{
-				switch(sel)
-				{
-					case 1:
-						TestPatternsMenu();
-						break;
-					case 2:					
-						DropShadowTest();
-						break;
-					case 3:
-						StripedSpriteTest();
-						break;
-					case 4:
-						LagTest();
-						break;
-					case 5:
-						ScrollTest();
-						break;
-					case 6:
-						DrawStripes();
-						break;
-					case 7:
-						DrawCheckBoard();
-						break;
-					case 8:
-						SoundTest();
-						break;
-					case 9:
-						ChangeResolution();
-						FreeImage(&scanlines);		
-						FreeImage(&title);		
-						ReleaseFont();
-						// we need to reload textures and stuff..
-						// not pretty, but "clean"
-						goto start;
-						break;
-					case 10:
-						HelpWindow(GENERALHELP, NULL, 1);
-						break;
-					case 11:
-						DrawCredits();
-						break;
-				} 												
-				updateVMU("240p Test", "", 1);				
-				oldbuttons = InitController(0);
-			}
+			updateVMU("240p Test", "", 0);
 		}
-		updateVMU("240p Test", "", 0);
+	
+		FreeImage(&scanlines);		
+		FreeImage(&title);		
+		ReleaseFont();
 	}
-
-	FreeImage(&scanlines);		
-	FreeImage(&title);		
-	ReleaseFont();
 #ifndef SERIAL
 	arch_menu();
 #endif
