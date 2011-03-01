@@ -2,11 +2,44 @@
 #include "vmodes.h"
 
 int vmode 	= NATIVE_320;
+int region	= FLASHROM_REGION_US;
 int vcable	= CT_RGB;
 int W				= 320;
 int H				= 240;
 int dW			= 320;
 int dH			= 240;
+
+void InitVideo()
+{
+	// PM_RGB555 PM_RGB565 PM_RGB888
+	vcable = vid_check_cable();
+	region = flashrom_get_region();
+
+	vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
+	pvr_init_defaults();
+
+ 	ChangePVRDefaults();
+
+	vid_border_color(0, 0, 0);
+	pvr_set_bg_color(0.0f, 0.0f, 0.0f);  
+}
+
+void ChangePVRDefaults()
+{
+	// Disable deflicker filter, 
+ 	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
+ 	{
+		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
+		PVR_SET(PVR_SCALER_CFG, 0x400);
+	}
+
+	// Turn off texture dithering
+	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
+	{
+		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
+		PVR_SET(PVR_FB_CFG_2, 0x00000001);
+	}
+}
 
 void ChangeResolution()
 {
@@ -66,20 +99,10 @@ void ChangeResolution()
 
 		pvr_init_defaults();
 
-		// Disable deflicker filter, 
-		if(PVR_GET(PVR_SCALER_CFG) != 0x400)
-		{
-			dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
-			PVR_SET(PVR_SCALER_CFG, 0x400);
-		}
-
-		// Turn off texture dithering
-		if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
-		{
-			dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
-			PVR_SET(PVR_FB_CFG_2, 0x00000001);
-		}
+		ChangePVRDefaults();
 	}
 }
+
+
 
 
