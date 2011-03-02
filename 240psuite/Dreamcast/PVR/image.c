@@ -20,14 +20,24 @@
  */
 
 #include <kos.h>
+#include <kmg/kmg.h>
+#include <kos/img.h>
+
 #include "image.h"
 #include "vmodes.h"
+
+#define BENCHMARK 
 
 ImagePtr LoadImage(const char *filename, int maptoscreen)
 {
 	uint32	w, h;
 	ImagePtr image;
-	
+#ifdef BENCHMARK
+	uint32 start, end;
+	char msg[100];
+		
+	timer_ms_gettime(NULL, &start);	
+#endif
 	image = (ImagePtr)malloc(sizeof(struct image_st));
 	if(!image)
 	{
@@ -39,7 +49,12 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
 		free(image);
 		fprintf(stderr, "Could not load %s\n", filename);
 		return(NULL);
-	} 	
+	} 		
+#ifdef BENCHMARK
+	timer_ms_gettime(NULL, &end);
+	sprintf(msg, "PNG %s took %u ms\n", filename, end - start);
+	dbglog(DBG_KDEBUG, msg);	
+#endif
 
 	image->r = 1.0f;
 	image->g = 1.0f;
@@ -73,6 +88,79 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
 	return image;
 }
 
+ImagePtr LoadKMG(const char *filename, int maptoscreen)
+{	
+	ImagePtr image;
+	kos_img_t img;
+#ifdef BENCHMARK
+	uint32 start, end;
+	char	msg[100];
+		
+	timer_ms_gettime(NULL, &start);
+#endif
+	image = (ImagePtr)malloc(sizeof(struct image_st));
+	if(!image)
+	{
+		fprintf(stderr, "Could not malloc image struct %s\n", filename);
+		return(NULL);
+	}
+	
+	if(kmg_to_img(filename, &img) != 0)
+	{
+		free(image);
+		fprintf(stderr, "Could not load %s\n", filename);
+		return(NULL);
+	}
+
+	image->tex = pvr_mem_malloc(img.byte_count);
+	if(!image->tex)
+	{
+		free(image);
+		fprintf(stderr, "Could not load %s to VRAM\n", filename);
+		return(NULL);
+	}
+
+	pvr_txr_load_kimg(&img, image->tex, PVR_TXRLOAD_DMA);
+	kos_img_free(&img, 0);	
+
+#ifdef BENCHMARK
+	timer_ms_gettime(NULL, &end);
+	sprintf(msg, "KMG %s took %u ms\n", filename, end - start);
+	dbglog(DBG_KDEBUG, msg);
+#endif
+
+	image->r = 1.0f;
+	image->g = 1.0f;
+	image->b = 1.0f;
+
+	image->tw = img.w;
+	image->th = img.h;
+	image->x = 0;
+	image->y = 0;
+	image->u1 = 0.0f;
+	image->v1 = 0.0f;
+	image->u2 = 1.0f;
+	image->v2 = 1.0f;
+	image->layer = 1.0f;
+	image->scale = 1;
+	image->alpha = 1.0;
+	image->w = image->tw;
+	image->h = image->th;
+	image->RefCount = 1;
+	image->FH = 0;
+	image->FV = 0;
+	image->copyOf = NULL;
+	if(maptoscreen)
+	{
+		if(image->w < dW && image->w != 8)
+			CalculateUV(0, 0, 320, 240, image);
+		else
+			CalculateUV(0, 0, dW, dH, image);
+	}
+
+	return image;
+}
+
 ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 {	
 	ImagePtr image;
@@ -80,7 +168,11 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	if(!source)
 		return NULL;
 	image = (ImagePtr)malloc(sizeof(struct image_st));	
-
+	if(!image)
+	{
+		fprintf(stderr, "Could not malloc image struct during copy\n");
+		return(NULL);
+	}
 	image->tex = source->tex;
 	image->r = source->r;
 	image->g = source->g;

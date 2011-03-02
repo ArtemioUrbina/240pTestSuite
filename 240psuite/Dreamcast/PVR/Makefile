@@ -40,7 +40,7 @@ $(OBJS): $(HEADERS) romdisk.o
 
 $(TARGET).elf: $(OBJS) romdisk.o 
 	$(KOS_CC) $(KOS_CFLAGS) $(KOS_LDFLAGS) romdisk.o -o $(TARGET).elf $(KOS_START) \
-	$(OBJS) -lpng  -lz -lm -lkosutils  $(OBJEXTRA) $(KOS_LIBS)
+	$(OBJS) -lpng  -lz -lm -lkmg -lkosutils  $(OBJEXTRA) $(KOS_LIBS)
 
 $(TARGET).bin: $(TARGET).elf
 	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin

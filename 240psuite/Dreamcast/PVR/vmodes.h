@@ -50,7 +50,7 @@ void LowerScanlineIntensity();
 void RaiseScanlineIntensity();
 void ToggleScanlineEvenOdd();
 void ChangeResolution();
-void PVRStats();
+void PVRStats(char *msg);
 
 #endif 
 

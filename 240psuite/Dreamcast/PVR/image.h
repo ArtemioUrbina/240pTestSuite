@@ -52,6 +52,7 @@ struct image_st{
 };
 
 ImagePtr LoadImage(const char *filename, int maptoscreen);
+ImagePtr LoadKMG(const char *filename, int maptoscreen);
 ImagePtr CloneImage(ImagePtr source, int maptoscreen);
 void FreeImage(ImagePtr *image);
 void CalculateUV(float posx, float posy, float width, float height, ImagePtr image);
