@@ -21,6 +21,11 @@ include $(KOS_BASE)/Makefile.rules
 
 OBJS = $(.SRCS:.c=.o)
 
+kmg:
+	kmgenc -a1 pngs/*.png
+	mv pngs/*.kmg romdisk
+	rm -f romdisk.o romdisk.img
+
 romdisk.img:
 	mv romdisk/.svn svn
 	mv romdisk/480/.svn 480svn
