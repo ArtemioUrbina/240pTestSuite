@@ -42,8 +42,8 @@ KOS_INIT_FLAGS(INIT_DEFAULT);
 
 int					region = 0;
 
-void TestPatternsMenu();
-void DrawCredits();
+void TestPatternsMenu(ImagePtr title, ImagePtr sd);
+void DrawCredits(ImagePtr back);
 
 int main(void)
 {
@@ -178,13 +178,11 @@ start:
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-#ifdef SERIAL
 			if (st->buttons & CONT_START && st->buttons & CONT_B)
 			{
 				updateVMU(" Goodbye ", " m(_ _)m ", 1);
 				done =	1;
 			}
-#endif
 
 			if (pressed & CONT_X)
 				ToggleScanlineEvenOdd();
@@ -233,7 +231,7 @@ start:
 				switch(sel)
 				{
 					case 1:
-						TestPatternsMenu();
+						TestPatternsMenu(title, sd);
 						break;
 					case 2:					
 						DropShadowTest();
@@ -270,7 +268,7 @@ start:
 						HelpWindow(GENERALHELP, NULL);
 						break;
 					case 11:
-						DrawCredits();
+						DrawCredits(title);
 						break;
 				} 												
 				updateVMU("240p Test", "", 1);				
@@ -290,22 +288,13 @@ start:
 	return 0;
 }
 
-void TestPatternsMenu()
+void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 {
 	int 				done = 0, sel = 1, joycnt = 0;
 	uint16			oldbuttons, pressed;		
-	ImagePtr		title, sd;
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	title = LoadKMG("/rd/back.kmg", 1);		
-	sd = LoadKMG("/rd/SD.kmg", 0);
-	if(sd)
-	{
-		sd->x = 221;
-		sd->y = 94;
-	}
-
  	while(!done) 
 	{		
 		float 	r = 1.0f;
@@ -452,23 +441,18 @@ void TestPatternsMenu()
 
 		updateVMU("Patterns", "", 0);
 	}
-	
-	FreeImage(&sd);			
-	FreeImage(&title);			
+
 	return;
 }
 
-void DrawCredits()
+void DrawCredits(ImagePtr back)
 {
 	int 				done = 0;
 	uint16			oldbuttons, pressed;		
-	ImagePtr		back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
 
-	back = LoadKMG("/rd/back.kmg", 1);
-		
 	updateVMU("	Credits", "", 1);
 	while(!done) 
 	{
@@ -512,6 +496,5 @@ void DrawCredits()
 
 		pvr_scene_finish();
 	}
-	FreeImage(&back);
 }
 

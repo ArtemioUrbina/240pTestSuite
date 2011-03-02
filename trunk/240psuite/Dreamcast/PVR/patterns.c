@@ -52,6 +52,8 @@ void DrawPluge()
 
 	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/pluge.kmg", 1);
+	if(!back)
+		return;
 		
 	updateVMU(" Pluge ", "", 1);
 	while(!done) 
@@ -93,6 +95,8 @@ void DrawGrayRamp()
 
 	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/grayramp.kmg", 1);
+	if(!back)
+		return;
 		
 	updateVMU("Gray Ramp", "", 1);
 	while(!done) 
@@ -134,6 +138,8 @@ void DrawWhiteScreen()
 
 	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/white.kmg", 1);
+	if(!back)
+		return;
 		
 	updateVMU("White scr", "", 1);
 	while(!done) 
@@ -212,6 +218,8 @@ void DrawColorBars()
 
 	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/color.kmg", 1);
+	if(!back)
+		return;
 		
 	updateVMU("Colorbars", "", 1);
 	while(!done) 
@@ -253,6 +261,8 @@ void Draw601ColorBars()
 
 	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/601701cb.kmg", 1);
+	if(!back)
+		return;
 		
 	updateVMU("Colorbars", "with gray", 1);
 	while(!done) 
@@ -292,10 +302,16 @@ void DrawGrid()
 
 	oldbuttons = InitController(0);
 	if(vmode != NATIVE_640_FS)
+	{
 		back = LoadKMG("/rd/grid.kmg", 1);
+		if(!back)
+			return;
+	}
 	else
 	{
 		back = LoadKMG("/rd/480/grid-480.kmg", 1);
+		if(!back)
+			return;
 		back->scale = 0;
 	}
 
@@ -357,8 +373,18 @@ void DrawLinearity()
 
 	oldbuttons = InitController(0);
 	circles = LoadKMG("/rd/circles.kmg", 1);
+	if(!circles)
+		return;
 	grid = LoadKMG("/rd/circles_grid.kmg", 1);
+	if(!grid)
+		return;
 	gridd = LoadKMG("/rd/circles_griddot.kmg", 1);
+	if(!gridd)
+		return;
+	grid->w = 320;
+	grid->h = 240;
+	gridd->w = 320;
+	gridd->h = 240;
 		
 	updateVMU("Linearity", "", 1);
 	while(!done) 
