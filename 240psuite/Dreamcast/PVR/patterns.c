@@ -51,7 +51,7 @@ void DrawPluge()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadImage("/rd/pluge.png", 1);
+	back = LoadKMG("/rd/pluge.kmg", 1);
 		
 	updateVMU(" Pluge ", "", 1);
 	while(!done) 
@@ -92,7 +92,7 @@ void DrawGrayRamp()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadImage("/rd/grayramp.png", 1);
+	back = LoadKMG("/rd/grayramp.kmg", 1);
 		
 	updateVMU("Gray Ramp", "", 1);
 	while(!done) 
@@ -133,7 +133,7 @@ void DrawWhiteScreen()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadImage("/rd/white.png", 1);
+	back = LoadKMG("/rd/white.kmg", 1);
 		
 	updateVMU("White scr", "", 1);
 	while(!done) 
@@ -211,7 +211,7 @@ void DrawColorBars()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadImage("/rd/color.png", 1);
+	back = LoadKMG("/rd/color.kmg", 1);
 		
 	updateVMU("Colorbars", "", 1);
 	while(!done) 
@@ -252,7 +252,7 @@ void Draw601ColorBars()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadImage("/rd/601701cb.png", 1);
+	back = LoadKMG("/rd/601701cb.kmg", 1);
 		
 	updateVMU("Colorbars", "with gray", 1);
 	while(!done) 
@@ -292,10 +292,10 @@ void DrawGrid()
 
 	oldbuttons = InitController(0);
 	if(vmode != NATIVE_640_FS)
-		back = LoadImage("/rd/grid.png", 1);
+		back = LoadKMG("/rd/grid.kmg", 1);
 	else
 	{
-		back = LoadImage("/rd/480/grid-480.png", 1);
+		back = LoadKMG("/rd/480/grid-480.kmg", 1);
 		back->scale = 0;
 	}
 
@@ -356,9 +356,9 @@ void DrawLinearity()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	circles = LoadImage("/rd/circles.png", 1);
-	grid = LoadImage("/rd/circles_grid.png", 1);
-	gridd = LoadImage("/rd/circles_griddot.png", 1);
+	circles = LoadKMG("/rd/circles.kmg", 1);
+	grid = LoadKMG("/rd/circles_grid.kmg", 1);
+	gridd = LoadKMG("/rd/circles_griddot.kmg", 1);
 		
 	updateVMU("Linearity", "", 1);
 	while(!done) 

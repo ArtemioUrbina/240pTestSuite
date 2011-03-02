@@ -26,7 +26,7 @@
 #include "image.h"
 #include "vmodes.h"
 
-#define BENCHMARK 
+//#define BENCHMARK 
 
 ImagePtr LoadImage(const char *filename, int maptoscreen)
 {
@@ -44,7 +44,7 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
 		fprintf(stderr, "Could not malloc image struct %s\n", filename);
 		return(NULL);
 	}
-	if(png_load_texture(filename, &image->tex, PNG_MASK_ALPHA, &w, &h) == -1)
+	if(png_load_texture(filename, &image->tex, PNG_FULL_ALPHA, &w, &h) == -1)
 	{
 		free(image);
 		fprintf(stderr, "Could not load %s\n", filename);
@@ -52,7 +52,7 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
 	} 		
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "PNG %s took %u ms\n", filename, end - start);
+	sprintf(msg, "PNG %s took %lu ms\n", filename, (unsigned int)end - start);
 	dbglog(DBG_KDEBUG, msg);	
 #endif
 
@@ -120,12 +120,12 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 		return(NULL);
 	}
 
-	pvr_txr_load_kimg(&img, image->tex, PVR_TXRLOAD_DMA);
+	pvr_txr_load_kimg(&img, image->tex, 0);
 	kos_img_free(&img, 0);	
 
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "KMG %s took %u ms\n", filename, end - start);
+	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned int)end - start);
 	dbglog(DBG_KDEBUG, msg);
 #endif
 
