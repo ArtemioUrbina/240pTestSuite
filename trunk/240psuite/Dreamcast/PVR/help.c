@@ -114,7 +114,7 @@ uint16 HelpWindow(char *filename, ImagePtr screen)
 	if(!buffer)
 		return 1;
 
-	back = LoadImage("/rd/help.png", 1);
+	back = LoadKMG("/rd/help.kmg", 1);
 	back->alpha = 0.75f;
 		
 	updateVMU(" 	Help	", "", 1);

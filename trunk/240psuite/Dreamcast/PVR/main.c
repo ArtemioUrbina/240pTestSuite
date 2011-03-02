@@ -79,8 +79,8 @@ start:
 		
 	LoadFont();
 	LoadScanlines();
-	title = LoadImage("/rd/back.png", 1);
-	sd = LoadImage("/rd/SD.png", 0);
+	title = LoadKMG("/rd/back.kmg", 1);
+	sd = LoadKMG("/rd/SD.kmg", 0);
 	if(sd)
 	{
 		sd->x = 221;
@@ -298,8 +298,8 @@ void TestPatternsMenu()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	title = LoadImage("/rd/back.png", 1);		
-	sd = LoadImage("/rd/SD.png", 0);
+	title = LoadKMG("/rd/back.kmg", 1);		
+	sd = LoadKMG("/rd/SD.kmg", 0);
 	if(sd)
 	{
 		sd->x = 221;
@@ -467,7 +467,7 @@ void DrawCredits()
 
 	oldbuttons = InitController(0);
 
-	back = LoadImage("/rd/back.png", 1);
+	back = LoadKMG("/rd/back.kmg", 1);
 		
 	updateVMU("	Credits", "", 1);
 	while(!done) 
