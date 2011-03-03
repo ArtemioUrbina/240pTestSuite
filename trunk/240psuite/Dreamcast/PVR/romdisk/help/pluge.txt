@@ -9,7 +9,7 @@ adjust the black level. The control for setting
 this on your TV is usualy named "Brightness".
 
 Reduce the Brightness until these bars: 
-<>   <>    <-                         ->   <>   <>
+<>   <->   <-                        ->   <->   <>
 are no longer visible, and then slowly raise it
 until they are *just* visible. 
 
@@ -17,15 +17,12 @@ until they are *just* visible.
                     PLUGE 2/2
 
 There are three bars on each side, bars closer
-to the center are at 2%, the center ones at 4%
-and the outer ones are at 6%. In most cases
-you'll only see bars at 4% and 6%.
+to the center are at 3.5%, the center ones at 4%
+and the outer ones are at 5%. Since the Dreamcast
+color is 5 bits per pixel (or 5-6-5 in the best
+case), 3.5% is the lowest level of black it can
+display.
 
 This adjustment assures that anything intended
 to be black is actually black, and allows all
 detail to be seen on dark scenes.
-
-
-
-
-
