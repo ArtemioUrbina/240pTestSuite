@@ -533,7 +533,6 @@ void DrawIntro()
 	
 		pvr_list_begin(PVR_LIST_TR_POLY);
 	
-		DrawImage(back);
 		DrawStringS(120, 115, 1.0, 1.0, 1.0, "KORDAMP PRESENTS");
 		DrawImage(black);
 
