@@ -51,7 +51,7 @@ void DrawPluge()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadKMG("/rd/pluge.kmg", 1);
+	back = LoadKMG("/rd/pluge.kmg.gz", 1);
 	if(!back)
 		return;
 		
@@ -94,7 +94,7 @@ void DrawGrayRamp()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadKMG("/rd/grayramp.kmg", 1);
+	back = LoadKMG("/rd/grayramp.kmg.gz", 1);
 	if(!back)
 		return;
 		
@@ -137,7 +137,7 @@ void DrawWhiteScreen()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadKMG("/rd/white.kmg", 1);
+	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
 		
@@ -217,7 +217,7 @@ void DrawColorBars()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadKMG("/rd/color.kmg", 1);
+	back = LoadKMG("/rd/color.kmg.gz", 1);
 	if(!back)
 		return;
 		
@@ -260,7 +260,7 @@ void Draw601ColorBars()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadKMG("/rd/601701cb.kmg", 1);
+	back = LoadKMG("/rd/601701cb.kmg.gz", 1);
 	if(!back)
 		return;
 		
@@ -303,13 +303,13 @@ void DrawGrid()
 	oldbuttons = InitController(0);
 	if(vmode != NATIVE_640_FS)
 	{
-		back = LoadKMG("/rd/grid.kmg", 1);
+		back = LoadKMG("/rd/grid.kmg.gz", 1);
 		if(!back)
 			return;
 	}
 	else
 	{
-		back = LoadKMG("/rd/480/grid-480.kmg", 1);
+		back = LoadKMG("/rd/480/grid-480.kmg.gz", 1);
 		if(!back)
 			return;
 		back->scale = 0;
@@ -372,13 +372,13 @@ void DrawLinearity()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	circles = LoadKMG("/rd/circles.kmg", 1);
+	circles = LoadKMG("/rd/circles.kmg.gz", 1);
 	if(!circles)
 		return;
-	grid = LoadKMG("/rd/circles_grid.kmg", 1);
+	grid = LoadKMG("/rd/circles_grid.kmg.gz", 1);
 	if(!grid)
 		return;
-	gridd = LoadKMG("/rd/circles_griddot.kmg", 1);
+	gridd = LoadKMG("/rd/circles_griddot.kmg.gz", 1);
 	if(!gridd)
 		return;
 	grid->w = 320;

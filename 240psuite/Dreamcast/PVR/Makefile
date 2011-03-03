@@ -22,8 +22,13 @@ include $(KOS_BASE)/Makefile.rules
 OBJS = $(.SRCS:.c=.o)
 
 kmg:
+	rm -f romdisk/*.kmg.gz romdisk/480/*.kmg.gz
 	kmgenc -a1 pngs/*.png
+	kmgenc -a1 pngs/480/*.png
 	mv pngs/*.kmg romdisk
+	mv pngs/480/*.kmg romdisk/480
+	gzip romdisk/*.kmg
+	gzip romdisk/480/*.kmg
 	rm -f romdisk.o romdisk.img
 
 romdisk.img:
@@ -45,7 +50,7 @@ $(OBJS): $(HEADERS) romdisk.o
 
 $(TARGET).elf: $(OBJS) romdisk.o 
 	$(KOS_CC) $(KOS_CFLAGS) $(KOS_LDFLAGS) romdisk.o -o $(TARGET).elf $(KOS_START) \
-	$(OBJS) -lpng  -lz -lm -lkmg -lkosutils  $(OBJEXTRA) $(KOS_LIBS)
+	$(OBJS) -lz -lm -lkmg -lkosutils  $(OBJEXTRA) $(KOS_LIBS)
 
 $(TARGET).bin: $(TARGET).elf
 	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin

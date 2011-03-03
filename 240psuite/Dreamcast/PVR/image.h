@@ -51,7 +51,7 @@ struct image_st{
     ImagePtr  copyOf;
 };
 
-ImagePtr LoadImage(const char *filename, int maptoscreen);
+//ImagePtr LoadImage(const char *filename, int maptoscreen);
 ImagePtr LoadKMG(const char *filename, int maptoscreen);
 ImagePtr CloneImage(ImagePtr source, int maptoscreen);
 void FreeImage(ImagePtr *image);

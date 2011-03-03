@@ -36,13 +36,13 @@ void LoadFont()
 {
 	if(!font_t)
 	{
-		font_t = LoadKMG("/rd/font.kmg", 0);
+		font_t = LoadKMG("/rd/font.kmg.gz", 0);
 		font_t->layer = 2.0f;
 	}	
 
 	if(!black_t)
-	{
-		black_t = LoadKMG("/rd/black.kmg", 0);
+	{				
+		black_t = LoadKMG("/rd/black.kmg.gz", 0);
 		black_t->alpha = 0.75f;
 	}
 }

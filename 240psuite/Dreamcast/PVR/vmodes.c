@@ -14,7 +14,7 @@ void LoadScanlines()
 {
 	if(!scanlines && vmode == FAKE_640_SL)
 	{
-		scanlines = LoadImage("/rd/scanlines.png", 0);
+		scanlines = LoadKMG("/rd/scanlines.kmg.gz", 0);
 		scanlines->layer = 5.0;
 		scanlines->alpha = 0.7f;
 		scanlines->scale = 0;

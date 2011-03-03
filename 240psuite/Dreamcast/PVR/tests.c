@@ -43,28 +43,28 @@ void DropShadowTest()
 
 	oldbuttons = InitController(0);
 
-	back[1] = LoadKMG("/rd/sonicback.kmg", 1);
+	back[1] = LoadKMG("/rd/sonicback.kmg.gz", 1);
 	if(!back[1])
 		return;
-	back[2] = LoadKMG("/rd/checkpos.kmg", 1);
+	back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
 	if(!back[2])
 		return;
-	back[3] = LoadKMG("/rd/stripespos.kmg", 1);
+	back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
 	if(!back[3])
 		return;
-	overlay = LoadKMG("/rd/sonicfloor.kmg", 1);
+	overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 1);
 	if(!overlay)
 		return;
 
 	if(vmode != NATIVE_640_FS)
-	{
-		back[0] = LoadKMG("/rd/motoko.kmg", 1);
+	{		
+		back[0] = LoadKMG("/rd/motoko.kmg.gz", 1);
 		if(!back[0])
 			return;
 	}
 	else
 	{
-		back[0] = LoadKMG("/rd/480/motoko-480.kmg", 1);
+		back[0] = LoadKMG("/rd/480/motoko-480.kmg.gz", 1);
 		if(!back[0])
 			return;
 
@@ -78,13 +78,13 @@ void DropShadowTest()
   	overlay->y = (dH - 240)/2;
 	}
 		
-	ssprite = LoadKMG("/rd/shadow.kmg", 0);	
+	ssprite = LoadKMG("/rd/shadow.kmg.gz", 0);	
 	if(!ssprite)
 		return;
-	buzz = LoadKMG("/rd/buzzbomber.kmg", 0);
+	buzz = LoadKMG("/rd/buzzbomber.kmg.gz", 0);
 	if(!buzz)
 		return;
-	buzzshadow = LoadKMG("/rd/buzzbomberShadow.kmg", 0);
+	buzzshadow = LoadKMG("/rd/buzzbomberShadow.kmg.gz", 0);
 	if(!buzzshadow)
 		return;
 	
@@ -249,49 +249,49 @@ void StripedSpriteTest()
 
 	oldbuttons = InitController(0);
 	if(vmode != NATIVE_640_FS)
-	{
-		back[0] = LoadKMG("/rd/motoko.kmg", 1);
+	{		
+		back[0] = LoadKMG("/rd/motoko.kmg.gz", 1);
 		if(!back[0])
 			return;
-		back[1] = LoadKMG("/rd/sonicback.kmg", 1);
+		back[1] = LoadKMG("/rd/sonicback.kmg.gz", 1);
 		if(!back[0])
 			return;
-		back[2] = LoadKMG("/rd/checkpos.kmg", 1);
+		back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
 		if(!back[0])
 			return;
-		back[3] = LoadKMG("/rd/stripespos.kmg", 1);
+		back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
 		if(!back[0])
 			return;
-		overlay = LoadKMG("/rd/sonicfloor.kmg", 1);
+		overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 1);
 		if(!back[0])
 			return;
 	}
 	else
 	{
-		back[0] = LoadKMG("/rd/480/motoko-480.kmg", 1);
+		back[0] = LoadKMG("/rd/480/motoko-480.kmg.gz", 1);
 		if(!back[0])
 			return;
 		back[0]->scale = 0;
-		back[1] = LoadKMG("/rd/sonicback.kmg", 1);
+		back[1] = LoadKMG("/rd/sonicback.kmg.gz", 1);
 		if(!back[1])
 			return;
 		back[1]->scale = 0;
-		back[2] = LoadKMG("/rd/checkpos.kmg", 1);
+		back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
 		if(!back[2])
 			return;
 		back[2]->scale = 0;
-		back[3] = LoadKMG("/rd/stripespos.kmg", 1);
+		back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
 		if(!back[3])
 			return;
 		back[3]->scale = 0;
-		overlay = LoadKMG("/rd/sonicfloor.kmg", 1);
+		overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 1);
 		if(!overlay)
 			return;
 
 		back[1]->y = (dH - 240)/2;
   	overlay->y = (dH - 240)/2;
 	}
-	striped = LoadKMG("/rd/striped.kmg", 0);
+	striped = LoadKMG("/rd/striped.kmg.gz", 0);
 	if(!striped)
 		return;
 		
@@ -422,7 +422,7 @@ void LagTest()
 	snd_init();
 
 	updateVMU("Lag Test ", "", 1);
-	back = LoadKMG("/rd/lag-per.kmg", 0);
+	back = LoadKMG("/rd/lag-per.kmg.gz", 0);
 	if(!back)
 		return;
 	spriteA = CloneImage(back, 0);
@@ -431,7 +431,7 @@ void LagTest()
 	spriteB = CloneImage(back, 0);
 	if(!spriteB)
 		return;
-	spriteneg = LoadKMG("/rd/lag-full.kmg", 0);
+	spriteneg = LoadKMG("/rd/lag-full.kmg.gz", 0);
 	if(!spriteneg)
 		return;
 
@@ -589,7 +589,7 @@ void LagTest()
 		ImagePtr wall;
 		
 		done = 0;
-		wall = LoadKMG("/rd/back.kmg", 1);
+		wall = LoadKMG("/rd/back.kmg.gz", 1);
 		if(!wall)
 			return;
 
@@ -672,10 +672,10 @@ void ScrollTest()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	back = LoadKMG("/rd/sonicback.kmg", 0);
+	back = LoadKMG("/rd/sonicback.kmg.gz", 0);
 	if(!back)
 		return;
-  overlay = LoadKMG("/rd/sonicfloor.kmg", 0);
+  overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
 	if(!back)
 		return;
 	
@@ -752,17 +752,17 @@ void DrawStripes()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	stripespos = LoadKMG("/rd/stripespos.kmg", 1);
+	stripespos = LoadKMG("/rd/stripespos.kmg.gz", 1);
 	if(!stripespos)
 		return;
-	stripesneg = LoadKMG("/rd/stripesneg.kmg", 1);
+	stripesneg = LoadKMG("/rd/stripesneg.kmg.gz", 1);
 	if(!stripesneg)
 		return;
 
-	vstripespos = LoadKMG("/rd/vertstripespos.kmg", 1);
+	vstripespos = LoadKMG("/rd/vertstripespos.kmg.gz", 1);
 	if(!vstripespos)
 		return;
-	vstripesneg = LoadKMG("/rd/vertstripesneg.kmg", 1);
+	vstripesneg = LoadKMG("/rd/vertstripesneg.kmg.gz", 1);
 	if(!vstripesneg)
 		return;
 
@@ -863,10 +863,10 @@ void DrawCheckBoard()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	checkpos = LoadKMG("/rd/checkpos.kmg", 1);
+	checkpos = LoadKMG("/rd/checkpos.kmg.gz", 1);
 	if(!checkpos)
 		return;
-	checkneg = LoadKMG("/rd/checkneg.kmg", 1);
+	checkneg = LoadKMG("/rd/checkneg.kmg.gz", 1);
 	if(!checkneg)
 		return;
 
@@ -952,7 +952,7 @@ void SoundTest()
 
 	oldbuttons = InitController(0);
 	snd_init();
-	back = LoadKMG("/rd/back.kmg", 1);
+	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
 	beep = snd_sfx_load("/rd/beep.wav");
