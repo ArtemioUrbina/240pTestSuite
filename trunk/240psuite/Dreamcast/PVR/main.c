@@ -79,8 +79,8 @@ start:
 		
 	LoadFont();
 	LoadScanlines();
-	title = LoadKMG("/rd/back.kmg", 1);
-	sd = LoadKMG("/rd/SD.kmg", 0);
+	title = LoadKMG("/rd/back.kmg.gz", 1);
+	sd = LoadKMG("/rd/SD.kmg.gz", 0);
 	if(sd)
 	{
 		sd->x = 221;

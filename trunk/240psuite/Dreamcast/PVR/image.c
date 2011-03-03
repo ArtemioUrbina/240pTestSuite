@@ -22,12 +22,120 @@
 #include <kos.h>
 #include <kmg/kmg.h>
 #include <kos/img.h>
+#include <zlib/zlib.h>
+#include <assert.h>
 
 #include "image.h"
 #include "vmodes.h"
 
 //#define BENCHMARK 
 
+int gkmg_to_img(const char * fn, kos_img_t * rv) {	
+	kmg_header_t	hdr;
+	int		dep;	
+	int length = 0;
+	gzFile f;		
+
+	assert( rv != NULL );
+
+	/* Open the file */
+	length = zlib_getlength((char *)fn);	
+	f = gzopen(fn, "r");
+	if (!f) {		
+		dbglog(DBG_ERROR, "gkmg_to_img: can't open file '%s'\n", fn);
+		return -1;
+	}  
+  	
+	/* Read the header */
+	if (gzread(f, &hdr, sizeof(hdr)) != sizeof(hdr)) {
+		gzclose(f);
+		dbglog(DBG_ERROR, "gkmg_to_img: can't read header from file '%s'\n", fn);
+		return -2;
+	}
+
+	/* Verify a few things */
+	if (hdr.magic != KMG_MAGIC || hdr.version != KMG_VERSION ||
+		hdr.platform != KMG_PLAT_DC)
+	{
+		gzclose(f);
+		dbglog(DBG_ERROR, "gkmg_to_img: file '%s' is incompatible:\n"
+			"   magic %08lx version %d platform %d\n",
+			fn, hdr.magic, (int)hdr.version, (int)hdr.platform);
+		return -3;
+	}
+	
+	/* Setup the kimg struct */
+	rv->w = hdr.width;
+	rv->h = hdr.height;
+
+	dep = 0;
+	if (hdr.format & KMG_DCFMT_VQ)
+		dep |= PVR_TXRLOAD_FMT_VQ;
+	if (hdr.format & KMG_DCFMT_TWIDDLED)
+		dep |= PVR_TXRLOAD_FMT_TWIDDLED;
+
+	switch (hdr.format & KMG_DCFMT_MASK) {
+	case KMG_DCFMT_RGB565:
+		rv->fmt = KOS_IMG_FMT(KOS_IMG_FMT_RGB565, dep);
+		break;
+
+	case KMG_DCFMT_ARGB4444:
+		rv->fmt = KOS_IMG_FMT(KOS_IMG_FMT_ARGB4444, dep);
+		break;
+
+	case KMG_DCFMT_ARGB1555:
+		rv->fmt = KOS_IMG_FMT(KOS_IMG_FMT_ARGB1555, dep);
+		break;
+
+	case KMG_DCFMT_YUV422:
+		rv->fmt = KOS_IMG_FMT(KOS_IMG_FMT_YUV422, dep);
+		break;
+
+	case KMG_DCFMT_BUMP:
+		/* XXX */
+		rv->fmt = KOS_IMG_FMT(KOS_IMG_FMT_RGB565, dep);
+		break;
+
+	case KMG_DCFMT_4BPP_PAL:
+	case KMG_DCFMT_8BPP_PAL:
+	default:
+		assert_msg( 0, "currently-unsupported KMG pixel format" );
+		gzclose(f);
+		if(rv->data)
+			free(rv->data);
+		return -5;
+	}
+	
+	rv->byte_count = hdr.byte_count;
+
+	/* And load the rest  */
+	
+	rv->data = malloc(hdr.byte_count);
+	if (!rv->data) {
+		dbglog(DBG_ERROR, "gkmg_to_img: can't malloc(%d) while loading '%s'\n",
+			(int)hdr.byte_count, fn);
+		gzclose(f);
+		return -4;
+	}
+	if (gzread(f, rv->data, rv->byte_count) != rv->byte_count) {
+		dbglog(DBG_ERROR, "gkmg_to_img: can't read %d bytes while loading '%s'\n",
+			(int)hdr.byte_count, fn);
+		gzclose(f);
+		free(rv->data);
+		return -6;
+	}
+
+	/* Ok, all done */
+	gzclose(f);
+
+	/* If the byte count is not a multiple of 32, bump it up as well.
+	   This is for DMA/SQ usage. */
+	rv->byte_count = (rv->byte_count + 31) & ~31;
+	
+	return 0;
+}
+
+/*
 ImagePtr LoadImage(const char *filename, int maptoscreen)
 {
 	uint32	w, h;
@@ -87,9 +195,11 @@ ImagePtr LoadImage(const char *filename, int maptoscreen)
 
 	return image;
 }
+*/
 
 ImagePtr LoadKMG(const char *filename, int maptoscreen)
 {	
+	int load, len;
 	ImagePtr image;
 	kos_img_t img;
 #ifdef BENCHMARK
@@ -105,7 +215,12 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 		return(NULL);
 	}
 	
-	if(kmg_to_img(filename, &img) != 0)
+	len = strlen(filename);
+	if(filename[len - 2] == 'g' && filename[len - 1] == 'z')
+		load = gkmg_to_img(filename, &img);
+	else
+		load = kmg_to_img(filename, &img);
+	if(load != 0)
 	{
 		free(image);
 		fprintf(stderr, "Could not load %s\n", filename);
