@@ -44,11 +44,12 @@ int					region = 0;
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawCredits(ImagePtr back);
+void DrawIntro();
 
 int main(void)
 {
 	int 				done = 0, sel = 1, joycnt = 0;
-	uint16			oldbuttons, pressed;		
+	uint16			oldbuttons, pressed, start = 1;
 	ImagePtr		title, sd;
 	controller	*st;
 
@@ -88,6 +89,11 @@ start:
 	}
 	
 	oldbuttons = InitController(0);
+	if(start)
+	{
+		DrawIntro();
+		start = 0;
+	}
  	while(!done) 
 	{
 		char		res[40];
@@ -465,6 +471,9 @@ void DrawCredits(ImagePtr back)
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 			
+			if (st->rtrig > 5)
+				DrawIntro();
+
 			if (pressed & CONT_START)
 				done =	1;				
 		}
@@ -489,7 +498,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.07"); y += fh; 
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.08"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();				
@@ -498,3 +507,43 @@ void DrawCredits(ImagePtr back)
 	}
 }
 
+void DrawIntro()
+{
+	uint32			counter, frames = 60;
+	float				delta;
+	ImagePtr		black;
+
+	black = LoadKMG("/rd/black.kmg.gz", 1);
+	if(!black)
+		return;
+
+	black->alpha = 1.0f;
+	delta = 1.0f / frames;
+	black->w = dW;
+	black->h = dH;
+	black->layer = 5.0f;
+	for(counter = 0; counter < frames*2; counter ++)
+	{
+		black->alpha -= delta;
+		if(black->alpha < 0.0f)
+			black->alpha = 0.0f;
+
+		pvr_wait_ready();
+		pvr_scene_begin();
+	
+		pvr_list_begin(PVR_LIST_TR_POLY);
+	
+		DrawImage(back);
+		DrawStringS(120, 115, 1.0, 1.0, 1.0, "KORDAMP PRESENTS");
+		DrawImage(black);
+
+		DrawScanlines();
+		pvr_list_finish();
+	
+		pvr_scene_finish();
+
+		if(counter == frames)
+			delta *= -1;
+	}
+	FreeImage(&black);
+}
