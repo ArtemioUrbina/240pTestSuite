@@ -1,6 +1,6 @@
 TARGET = main
 
-OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DSERIAL
+OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST 
 
 KOS_CFLAGS+= -I$(KOS_BASE)/../kos-ports/include/SDL-1.2.9  $(OPTFLAGS)
 
