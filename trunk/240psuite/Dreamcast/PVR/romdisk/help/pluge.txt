@@ -17,10 +17,10 @@ until they are *just* visible.
                     PLUGE 2/2
 
 There are three bars on each side, bars closer
-to the center are at 3.5%, the center ones at 4%
-and the outer ones are at 5%. Since the Dreamcast
+to the center are at 4%, the center ones at 7% and
+the outer ones are at 10%. Since the Dreamcast
 color is 5 bits per pixel (or 5-6-5 in the best
-case), 3.5% is the lowest level of black it can
+case), 4% is the lowest level of black it can
 display.
 
 This adjustment assures that anything intended
