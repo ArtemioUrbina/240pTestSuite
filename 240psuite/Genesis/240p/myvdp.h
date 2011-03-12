@@ -19,8 +19,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef TESTS_H
-#define TESTS_H
+#ifndef MYVDP_H
+#define MYVDP_H
 
 void VDP_setSpriteAttr(u16 index, u16 tile_attr);
 void VDP_setMyTileMapRect(u16 plan, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h);
