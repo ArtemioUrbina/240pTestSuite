@@ -38,7 +38,7 @@ void DrawHelp(int option)
   
   ind = TILE_USERINDEX; 
   size = sizeof(back_tiles) / 32; 
-  VDP_loadTileData(back_tiles, ind, size, 1); 
+  VDP_loadTileData(back_tiles, ind, size, USE_DMA); 
   
   VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
 

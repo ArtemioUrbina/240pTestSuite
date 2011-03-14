@@ -39,7 +39,7 @@ void DrawPluge()
   tiles = TILE_USERINDEX;
   VDP_setPalette(PAL0, palette_grey);
   size = sizeof(color_tiles) / 32; 
-  VDP_loadTileData(color_tiles, tiles, size, 1);   
+  VDP_loadTileData(color_tiles, tiles, size, USE_DMA);   
 
   // 6% & 13% black
   VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 0) + tiles, 5, 4, 2, 20);     
@@ -76,7 +76,7 @@ void DrawGrayRamp()
 
   VDP_setPalette(PAL0, palette_grey);
   size = sizeof(color_tiles) / 32; 
-  VDP_loadTileData(color_tiles, TILE_USERINDEX, size, 1);   
+  VDP_loadTileData(color_tiles, TILE_USERINDEX, size, USE_DMA);   
   DrawColorTilesAt(APLAN, PAL0, 0, 0, TILE_USERINDEX, 3, 14);
   DrawColorTilesAtInv(APLAN, PAL0, 0, 14, TILE_USERINDEX, 3, 14);
 
@@ -106,7 +106,7 @@ void DrawWhiteScreen()
 
   size = sizeof(solid_tiles) / 32; 
 
-  VDP_loadTileData(solid_tiles, TILE_USERINDEX, size, 1); 
+  VDP_loadTileData(solid_tiles, TILE_USERINDEX, size, USE_DMA); 
   VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
   {
@@ -169,7 +169,7 @@ void Draw601ColorBars()
 
   size = sizeof(cb601_tiles) / 32; 
   VDP_setPalette(PAL0, cb601_pal);
-  VDP_loadTileData(cb601_tiles, TILE_USERINDEX, size, 1); 
+  VDP_loadTileData(cb601_tiles, TILE_USERINDEX, size, USE_DMA); 
   VDP_setMyTileMapRect(BPLAN, cb601_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
   while(!exit)
   {
@@ -194,16 +194,16 @@ void DrawLinearity()
 
   ind = TILE_USERINDEX; 
   size = sizeof(circles_grid_tiles) / 32; 
-  VDP_loadTileData(circles_grid_tiles, ind, size, 1); 
+  VDP_loadTileData(circles_grid_tiles, ind, size, USE_DMA); 
   ind += size;
   size = sizeof(circles_griddot_tiles) / 32; 
-  VDP_loadTileData(circles_griddot_tiles, ind, size, 1); 
+  VDP_loadTileData(circles_griddot_tiles, ind, size, USE_DMA); 
 
   grid2 = ind;
 
   ind += size;
   size = sizeof(circles_tiles) / 32; 
-  VDP_loadTileData(circles_tiles, ind, size, 1); 
+  VDP_loadTileData(circles_tiles, ind, size, USE_DMA); 
   
   VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   VDP_setMyTileMapRect(APLAN, circles_map, ind, 0, 0, 320/8, 224/8);      
@@ -262,7 +262,7 @@ void DrawGrid()
   
   VDP_setPalette(PAL0, grid_pal);
   size = sizeof(grid_tiles) / 32; 
-  VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, 1); 
+  VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, USE_DMA); 
 
   VDP_setMyTileMapRect(APLAN, grid_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);
 
@@ -298,7 +298,7 @@ void DrawColorBars()
     VDP_setHilightShadow(1);
     ind = TILE_USERINDEX; 
     size = sizeof(color_tiles) / 32; 
-    VDP_loadTileData(color_tiles, ind, size, 1); 
+    VDP_loadTileData(color_tiles, ind, size, USE_DMA); 
 
     VDP_drawTextBG(APLAN, "  0  1  2  3  4  5  6  7  8  A  C  E", TILE_ATTR(PAL0, 1, 0, 0), 2, 4);        
     VDP_drawTextBG(APLAN, "RED", TILE_ATTR(PAL0, 1, 0, 0), 2, 9);        
