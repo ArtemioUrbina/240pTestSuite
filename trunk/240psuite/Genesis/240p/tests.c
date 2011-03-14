@@ -35,10 +35,10 @@ void DrawCheckBoard()
 
   ind = TILE_USERINDEX; 
   size = sizeof(check_tile) / 32; 
-  VDP_loadTileData(check_tile, ind, size, 1); 
+  VDP_loadTileData(check_tile, ind, size, USE_DMA); 
   ind += size;
   size = sizeof(check_tile_inv) / 32; 
-  VDP_loadTileData(check_tile_inv, ind, size, 1); 
+  VDP_loadTileData(check_tile_inv, ind, size, USE_DMA); 
 
   VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
@@ -111,10 +111,10 @@ void DrawStripes()
 
   ind = TILE_USERINDEX; 
   size = sizeof(bw_tile) / 32; 
-  VDP_loadTileData(bw_tile, ind, size, 1); 
+  VDP_loadTileData(bw_tile, ind, size, USE_DMA); 
   ind += size;
   size = sizeof(wb_tile) / 32; 
-  VDP_loadTileData(wb_tile, ind, size, 1); 
+  VDP_loadTileData(wb_tile, ind, size, USE_DMA); 
 
   VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
@@ -189,19 +189,19 @@ void DropShadowTest()
 
   shadowpos = TILE_USERINDEX;
   size = sizeof(shadow_tiles) / 32; 
-  VDP_loadTileData(shadow_tiles, shadowpos, size, 1);            
+  VDP_loadTileData(shadow_tiles, shadowpos, size, USE_DMA);
 
   buzzpos = shadowpos + size;
   size = sizeof(buzzShadow_tiles) / 32; 
-  VDP_loadTileData(buzz_tiles, buzzpos, size, 1); 
+  VDP_loadTileData(buzz_tiles, buzzpos, size, USE_DMA); 
 
   buzzshadowpos = buzzpos + size;
   size = sizeof(buzzShadow_tiles) / 32; 
-  VDP_loadTileData(buzzShadow_tiles, buzzshadowpos, size, 1); 
+  VDP_loadTileData(buzzShadow_tiles, buzzshadowpos, size, USE_DMA); 
 
   waterfall = buzzshadowpos + size;
   size = sizeof(waterfall_tiles) / 32; 
-  VDP_loadTileData(waterfall_tiles, waterfall, size, 1);     
+  VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);
 
   ind = waterfall + size;  
   
@@ -258,7 +258,7 @@ void DropShadowTest()
           if(!redraw)
           {
             size = sizeof(motoko_tiles) / 32; 
-            VDP_loadTileData(motoko_tiles, ind, size, 1); 
+            VDP_loadTileData(motoko_tiles, ind, size, USE_DMA); 
             VDP_setPalette(PAL1, motoko_pal);
           }
           VDP_setMyTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320/8, 224/8);                            
@@ -270,15 +270,15 @@ void DropShadowTest()
             VDP_setPalette(PAL1, sonicwater_pal);   
                
             size = sizeof(sonicback_tiles) / 32; 
-            VDP_loadTileData(sonicback_tiles, ind, size, 1);     
+            VDP_loadTileData(sonicback_tiles, ind, size, USE_DMA);
   
             sonic_water = ind + size;
             size = sizeof(sonicwater_tiles) / 32;           
-            VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);             
+            VDP_loadTileData(sonicwater_tiles, sonic_water, size, USE_DMA);
   
             sonic_floor = sonic_water + size;
             size = sizeof(sonicfloor_tiles) / 32; 
-            VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);                 
+            VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, USE_DMA);
           }
             
           if(!redraw)
@@ -295,7 +295,7 @@ void DropShadowTest()
           if(!redraw)
           {            
             size = sizeof(check_tile) / 32; 
-            VDP_loadTileData(check_tile, ind, size, 1); 
+            VDP_loadTileData(check_tile, ind, size, USE_DMA);
             VDP_setPalette(PAL1, bw_pal);
           }
           VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
@@ -304,7 +304,7 @@ void DropShadowTest()
           if(!redraw)
           {
             size = sizeof(bw_tile) / 32; 
-            VDP_loadTileData(bw_tile, ind, size, 1); 
+            VDP_loadTileData(bw_tile, ind, size, USE_DMA);
             VDP_setPalette(PAL1, bw_pal);
           }
           VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
@@ -457,12 +457,12 @@ void StripedSpriteTest()
 
   sprite = TILE_USERINDEX; 
   size = sizeof(striped_tiles) / 32; 
-  VDP_loadTileData(striped_tiles, sprite, size, 1);   
+  VDP_loadTileData(striped_tiles, sprite, size, USE_DMA);
   VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + sprite, 1);    
 
   waterfall = sprite + size;
   size = sizeof(waterfall_tiles) / 32; 
-  VDP_loadTileData(waterfall_tiles, waterfall, size, 1);        
+  VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);
     
   VDP_setSprite(1, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 2);
   VDP_setSprite(2, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);      
@@ -488,7 +488,7 @@ void StripedSpriteTest()
       {
         case 0:
           size = sizeof(motoko_tiles) / 32; 
-          VDP_loadTileData(motoko_tiles, ind, size, 1); 
+          VDP_loadTileData(motoko_tiles, ind, size, USE_DMA);
           VDP_setPalette(PAL1, motoko_pal);
           VDP_setMyTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320/8, 224/8);                  
           break;
@@ -496,13 +496,13 @@ void StripedSpriteTest()
           VDP_setPalette(PAL0, sonicback_pal);
           VDP_setPalette(PAL1, sonicwater_pal);                
           size = sizeof(sonicback_tiles) / 32; 
-          VDP_loadTileData(sonicback_tiles, ind, size, 1);     
+          VDP_loadTileData(sonicback_tiles, ind, size, USE_DMA);
           sonic_water = ind + size;
           size = sizeof(sonicwater_tiles) / 32;           
-          VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);  
+          VDP_loadTileData(sonicwater_tiles, sonic_water, size, USE_DMA);  
           sonic_floor = sonic_water + size;
           size = sizeof(sonicfloor_tiles) / 32; 
-          VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);                
+          VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, USE_DMA);
           VDP_setMyTileMapRect(BPLAN, sonicback_map, ind, 0, 0, 256/8, 152/8);                            
           VDP_setMyTileMapRect(BPLAN, sonicback_map, ind, 256/8, 0, 256/8, 152/8);                        
           VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
@@ -512,13 +512,13 @@ void StripedSpriteTest()
           break;
         case 2:          
           size = sizeof(check_tile) / 32; 
-          VDP_loadTileData(check_tile, ind, size, 1); 
+          VDP_loadTileData(check_tile, ind, size, USE_DMA);
           VDP_setPalette(PAL1, bw_pal);
           VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
           break;
         case 3:
           size = sizeof(bw_tile) / 32; 
-          VDP_loadTileData(bw_tile, ind, size, 1); 
+          VDP_loadTileData(bw_tile, ind, size, USE_DMA); 
           VDP_setPalette(PAL1, bw_pal);
           VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
           break;
@@ -635,10 +635,10 @@ void LagTest()
 
   ind = TILE_USERINDEX; 
   size = sizeof(shadow_tiles) / 32; 
-  VDP_loadTileData(shadow_tiles, ind, size, 1); 
+  VDP_loadTileData(shadow_tiles, ind, size, USE_DMA); 
   ind += size;
   size = sizeof(lag_tiles) / 32; 
-  VDP_loadTileData(lag_tiles, ind, size, 1); 
+  VDP_loadTileData(lag_tiles, ind, size, USE_DMA); 
 
   x = 144;
   y = 60;
@@ -781,7 +781,7 @@ void LagTest()
     VDP_setPalette(PAL2, back_pal); 
 
     size = sizeof(back_tiles) / 32; 
-    VDP_loadTileData(back_tiles,  TILE_USERINDEX, size, 1); 
+    VDP_loadTileData(back_tiles,  TILE_USERINDEX, size, USE_DMA); 
     
     VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);      
     exit = 0;
@@ -879,19 +879,19 @@ void ScrollTest()
   VDP_setPalette(PAL1, sonicwater_pal);  
 
   size = sizeof(sonicback_tiles) / 32; 
-  VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, 1);     
+  VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, USE_DMA);     
 
   sonic_water = TILE_USERINDEX + size;
   size = sizeof(sonicwater_tiles) / 32; 
-  VDP_loadTileData(sonicwater_tiles, sonic_water, size, 1);     
+  VDP_loadTileData(sonicwater_tiles, sonic_water, size, USE_DMA);     
 
   sonic_floor = sonic_water + size;
   size = sizeof(sonicfloor_tiles) / 32; 
-  VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, 1);     
+  VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, USE_DMA);     
 
   waterfall = sonic_floor + size;
   size = sizeof(waterfall_tiles) / 32; 
-  VDP_loadTileData(waterfall_tiles, waterfall, size, 1);     
+  VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);     
 
   VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 0, 0, 256/8, 152/8);                            
   VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 256/8, 0, 256/8, 152/8);                        
@@ -985,7 +985,7 @@ void SoundTest()
 
   ind = TILE_USERINDEX; 
   size = sizeof(back_tiles) / 32; 
-  VDP_loadTileData(back_tiles, ind, size, 1); 
+  VDP_loadTileData(back_tiles, ind, size, USE_DMA); 
   
   VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
 

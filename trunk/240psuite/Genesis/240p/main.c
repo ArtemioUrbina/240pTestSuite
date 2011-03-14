@@ -43,8 +43,8 @@ int main()
   VDP_setScreenWidth320(); 
   VDP_setScreenHeight224(); 
   
-  VDP_loadFont(font_tiles, 1);
-  DrawIntro();
+  VDP_loadFont(font_tiles, USE_DMA);
+  //DrawIntro();
   while(1)
   {    
     if(reload)
@@ -54,10 +54,10 @@ int main()
 
       ind = TILE_USERINDEX; 
       size = sizeof(back_tiles) / 32; 
-      VDP_loadTileData(back_tiles, ind, size, 1); 
+      VDP_loadTileData(back_tiles, ind, size, USE_DMA); 
       ind += size;
       size = sizeof(gillian_tiles) / 32; 
-      VDP_loadTileData(gillian_tiles, ind, size, 1); 
+      VDP_loadTileData(gillian_tiles, ind, size, USE_DMA); 
 
       VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);    
       VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
@@ -158,10 +158,10 @@ void TestPatternMenu()
 
       ind = TILE_USERINDEX; 
       size = sizeof(back_tiles) / 32; 
-      VDP_loadTileData(back_tiles, ind, size, 1); 
+      VDP_loadTileData(back_tiles, ind, size, USE_DMA); 
       ind += size;
       size = sizeof(gillian_tiles) / 32; 
-      VDP_loadTileData(gillian_tiles, ind, size, 1); 
+      VDP_loadTileData(gillian_tiles, ind, size, USE_DMA); 
 
       VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
       VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
@@ -266,7 +266,7 @@ void DrawCredits()
   
   ind = TILE_USERINDEX; 
   size = sizeof(back_tiles) / 32; 
-  VDP_loadTileData(back_tiles, ind, size, 1); 
+  VDP_loadTileData(back_tiles, ind, size, USE_DMA); 
   
   VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);      
   
