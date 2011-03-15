@@ -44,7 +44,7 @@ int main()
   VDP_setScreenHeight224(); 
   
   VDP_loadFont(font_tiles, USE_DMA);
-  //DrawIntro();
+  DrawIntro();
   while(1)
   {    
     if(reload)
@@ -79,7 +79,7 @@ int main()
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
-
+		
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
@@ -280,6 +280,12 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "http://code.google.com/p/sgdk/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
   VDP_drawTextBG(APLAN, "SDK Consultor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Stef", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+#ifdef SEGACD
+	VDP_drawTextBG(APLAN, "SEGA CD Loader by:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+  VDP_drawTextBG(APLAN, "lukeusher123", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+	VDP_drawTextBG(APLAN, "SEGA CD Consultors:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+  VDP_drawTextBG(APLAN, "Chilly Willy & TascoDLX", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+#endif
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
