@@ -96,9 +96,13 @@ out/$(ROM).bin: out/$(ROM).out
 	$(MKISOFS) -iso-level 1 -o $(SCD_LOADER)/filesystem.img -pad $(SCD_LOADER)/_filesystem
 	$(TRIMFSIMG) $(SCD_LOADER)/filesystem.img $(SCD_LOADER)/filesystem.bin
 	$(RM) -f $(SCD_LOADER)/filesystem.img
-	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip.asm, $(SCD_LOADER)/_boot/ip.bin
+	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-us.asm, $(SCD_LOADER)/_boot/ip-us.bin
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/sp.asm, $(SCD_LOADER)/_boot/sp.bin
-	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main.asm, $(SCD_LOADER)/out.iso
+	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-us.asm, out/240p_SegaCD_USA.iso
+	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-eu.asm, $(SCD_LOADER)/_boot/ip-eu.bin
+	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-eu.asm, out/240p_SegaCD_EU.iso
+	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-jp.asm, $(SCD_LOADER)/_boot/ip-jp.bin
+	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-jp.asm, out/240p_SegaCD_JP.iso
 	$(RM) -f $(SCD_LOADER)/filesystem.bin
 
 out/$(ROM).out: $(LIB)/segacd.o $(OBJ) $(LIB)/libgendev.a
