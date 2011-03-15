@@ -1,3 +1,7 @@
+; =======================================================================================
+;  Sega CD Boot loader by Luke Usher/SoullessSentinel (c) 2010
+;  Used with permission. This code is not released under the GPL.
+; =======================================================================================
 align macro
 	cnop 0,\1
 	endm
