@@ -490,11 +490,11 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 		
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Toolchain built with:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "https://github.com/losinggeneration/buildcross"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
