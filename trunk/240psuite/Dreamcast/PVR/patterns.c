@@ -327,20 +327,7 @@ void DrawGrid()
 			oldbuttons = st->buttons;
 					
 			if (pressed & CONT_START)
-				done =	1;								
-			if (pressed & CONT_A)
-			{
-				back->x = 0.0f;
-				back->y = 0.0f;
-			}
-			if (pressed & CONT_DPAD_UP)
-				back->y -= 1.0f;
-			if (pressed & CONT_DPAD_DOWN)
-				back->y += 1.0f;
-			if (pressed & CONT_DPAD_LEFT)
-				back->x -= 1.0f;
-			if (pressed & CONT_DPAD_RIGHT)
-				back->x += 1.0f;
+				done =	1;											
 			if (st->rtrig > 5)
 				oldbuttons = HelpWindow(GRIDHELP, back);
 		}
@@ -348,12 +335,7 @@ void DrawGrid()
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);
-		if(back->x != 0.0f || back->y != 0.0f)
-		{
-			sprintf(msg, "%d,%d", (int)back->x, (int)back->y);
-			DrawStringB(275.0f, 5.0f, 1.0f, 1.0f,	1.0f, msg);
-		}
+		DrawImage(back);		
 		DrawScanlines();
 		pvr_list_finish();				
 
