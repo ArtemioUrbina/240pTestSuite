@@ -12,7 +12,7 @@ Adjust the white level first, this is done using
 the "Contrast" control on your TV set. Raise it
 until you cannot distinguish between the two
 blocks under "F", and lower it slowly until you
-can clearly tell them appart.          
+can clearly tell them apart.          
                                       (cont...)
                   COLORBARS 2/2
 
