@@ -297,7 +297,6 @@ void DrawGrid()
 	int 				done = 0;
 	uint16			oldbuttons, pressed;		
 	ImagePtr		back;
-	char				msg[20];
 	controller	*st;
 
 	oldbuttons = InitController(0);
