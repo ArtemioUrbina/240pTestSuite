@@ -37,7 +37,7 @@ continue:
         lea     __stack,%a0
         movea.l %a0,%sp                   /* set stack pointer to top of Work RAM */
 
-*If we restore interrupt state or move it to 0x2300 the whole thing crashes
+* restore interrupts
         and.w	  #0xF8FF, %sr
         jmp     _start_entry                    /* call main() */        
 
