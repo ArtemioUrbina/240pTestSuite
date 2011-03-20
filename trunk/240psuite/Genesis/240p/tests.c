@@ -395,13 +395,13 @@ void DropShadowTest()
       switch(frame)
       {
         case 30:
-          VDP_setPalette(PAL1, sonicwater_pal);
+          VDP_setPalette(PAL1, sonicwater3_pal);
           break;
         case 60:
           VDP_setPalette(PAL1, sonicwater2_pal);
           break;
         case 90:
-          VDP_setPalette(PAL1, sonicwater3_pal);  
+          VDP_setPalette(PAL1, sonicwater_pal);  
           break;        
       }
   
@@ -565,13 +565,13 @@ void StripedSpriteTest()
       switch(frame)
       {
         case 30:
-          VDP_setPalette(PAL1, sonicwater_pal);
+          VDP_setPalette(PAL1, sonicwater3_pal);
           break;
         case 60:
           VDP_setPalette(PAL1, sonicwater2_pal);
           break;
         case 90:
-          VDP_setPalette(PAL1, sonicwater3_pal);  
+          VDP_setPalette(PAL1, sonicwater_pal);  
           break;
       }
   
@@ -588,7 +588,7 @@ void StripedSpriteTest()
       if(back > 0)
         back --;
       else
-        back = 2;
+        back = 3;
       
       changeback = 1;
     }
@@ -909,13 +909,13 @@ void ScrollTest()
     switch(frame)
     {
       case 30:
-        VDP_setPalette(PAL1, sonicwater_pal);
+        VDP_setPalette(PAL1, sonicwater3_pal);
         break;
       case 60:
         VDP_setPalette(PAL1, sonicwater2_pal);
         break;
       case 90:
-        VDP_setPalette(PAL1, sonicwater3_pal);  
+        VDP_setPalette(PAL1, sonicwater_pal);  
         break;
     }
 
