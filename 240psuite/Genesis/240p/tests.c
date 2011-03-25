@@ -975,14 +975,14 @@ void VScrollTest()
   u16 size;
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
-  int y = 0, speed = 1, acc = -1, pause = 0;
+  int pos = 0, speed = 1, acc = -1, pause = 0, direction = 0;
   
   VDP_setPalette(PAL0, bw_pal);    
 
 	size = sizeof(circles_grid_tiles) / 32; 
   VDP_loadTileData(circles_grid_tiles, TILE_USERINDEX, size, USE_DMA);   
 
-  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 512/8); 
+  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 512/8, 512/8); 
   
   while(!exit)
   {
@@ -999,8 +999,8 @@ void VScrollTest()
     if (pressedButtons & BUTTON_DOWN)
       speed--;
 
-    if(speed > 20)        
-      speed = 20;          
+    if(speed > 5)        
+      speed = 5;          
     
     if(speed < 0)        
       speed = 0;          
@@ -1011,19 +1011,26 @@ void VScrollTest()
     if (pressedButtons & BUTTON_B)
       acc *= -1;
 
+		if (pressedButtons & BUTTON_C)
+      direction = !direction;
+
     if(!pause)
-      y += acc*speed;
+      pos += acc*speed;
 
-		if(y >= 512)
-      y = y % 512;
+		if(pos >= 512)
+      pos = pos % 512;
 
-    if(y <= -512)
-      y = y % -512;
+    if(pos <= -512)
+      pos = pos % -512;
     
-    VDP_setVerticalScroll(APLAN, 0, y);            
+		if(direction)
+    	VDP_setHorizontalScroll(APLAN, 0, pos);            
+		else
+			VDP_setVerticalScroll(APLAN, 0, pos);            
     VDP_waitVSync();
   }  
-  VDP_setVerticalScroll(APLAN, 0, 0);              
+  VDP_setHorizontalScroll(APLAN, 0, 0);              
+	VDP_setVerticalScroll(APLAN, 0, 0);    
 }
 
 void SoundTest()
