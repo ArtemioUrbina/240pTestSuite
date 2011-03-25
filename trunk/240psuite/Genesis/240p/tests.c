@@ -868,7 +868,7 @@ void LagTest()
 }
 
 
-void ScrollTest()
+void HScrollTest()
 {    
   u16 size, sonic_floor, sonic_water, waterfall;
   u16 exit = 0, frame = 1;
@@ -968,6 +968,62 @@ void ScrollTest()
   VDP_setHorizontalScroll(BPLAN, 0, 0);
   VDP_resetSprites();
   VDP_updateSprites();  
+}
+
+void VScrollTest()
+{    
+  u16 size;
+  u16 exit = 0;
+  u16 buttons, oldButtons = 0xffff, pressedButtons;
+  int y = 0, speed = 1, acc = -1, pause = 0;
+  
+  VDP_setPalette(PAL0, bw_pal);    
+
+	size = sizeof(circles_grid_tiles) / 32; 
+  VDP_loadTileData(circles_grid_tiles, TILE_USERINDEX, size, USE_DMA);   
+
+  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 512/8); 
+  
+  while(!exit)
+  {
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+        
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
+
+    if (pressedButtons & BUTTON_UP)
+      speed++;
+
+    if (pressedButtons & BUTTON_DOWN)
+      speed--;
+
+    if(speed > 20)        
+      speed = 20;          
+    
+    if(speed < 0)        
+      speed = 0;          
+
+    if (pressedButtons & BUTTON_A)
+      pause = !pause;
+
+    if (pressedButtons & BUTTON_B)
+      acc *= -1;
+
+    if(!pause)
+      y += acc*speed;
+
+		if(y >= 512)
+      y = y % 512;
+
+    if(y <= -512)
+      y = y % -512;
+    
+    VDP_setVerticalScroll(APLAN, 0, y);            
+    VDP_waitVSync();
+  }  
+  VDP_setVerticalScroll(APLAN, 0, 0);              
 }
 
 void SoundTest()
