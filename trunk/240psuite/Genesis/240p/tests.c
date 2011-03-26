@@ -675,16 +675,16 @@ void LagTest()
 
     //play audio 1 frame before
     //if((y == 95 && speed == 1 ) || (y == 97 && speed == -1))
-    //    startPlay_PCM(beep, len, 44100, AUDIO_PAN_CENTER);            
+    //    startPlay_PCM(beep, len, 16000, AUDIO_PAN_CENTER);            
 
     if(y == 96) // half the screen?        
     {
       if(audio)                
       {
         if(speed == 1)
-          startPlay_PCM(beep, len, 44100, AUDIO_PAN_LEFT);            
+          startPlay_PCM(beep, len, 16000, AUDIO_PAN_LEFT);            
         else
-          startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);            
+          startPlay_PCM(beep, len, 16000, AUDIO_PAN_RIGHT);            
       }  
       VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 1);               
       pass = 0;
@@ -1076,11 +1076,11 @@ void SoundTest()
     if (pressedButtons & BUTTON_A)
     {
       if(sel == 0)
-        startPlay_PCM(beep, len, 44100, AUDIO_PAN_LEFT);                  
+        startPlay_PCM(beep, len, 16000, AUDIO_PAN_LEFT);                  
       if(sel == 1)
-        startPlay_PCM(beep, len, 44100, AUDIO_PAN_CENTER);            
+        startPlay_PCM(beep, len, 16000, AUDIO_PAN_CENTER);            
       if(sel == 2)
-        startPlay_PCM(beep, len, 44100, AUDIO_PAN_RIGHT);                       
+        startPlay_PCM(beep, len, 16000, AUDIO_PAN_RIGHT);                       
     }
           
     VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL0, 0, 0, 0), 14, 6);
