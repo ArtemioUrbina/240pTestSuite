@@ -1097,7 +1097,7 @@ void SoundTest()
     VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 14, 14);
     VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 22, 12);        
 
-    VDP_drawTextBG(APLAN, "Space Standart track by Shiryu", TILE_ATTR(PAL1, 0, 0, 0), 5, 22);                
+    VDP_drawTextBG(APLAN, "Space Standart track by Shiru", TILE_ATTR(PAL1, 0, 0, 0), 5, 22);                
 
     VDP_waitVSync();
   }  
