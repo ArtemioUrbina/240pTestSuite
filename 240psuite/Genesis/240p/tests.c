@@ -1076,20 +1076,30 @@ void SoundTest()
     if (pressedButtons & BUTTON_A)
     {
       if(sel == 0)
-        startPlay_PCM(beep, len, 16000, AUDIO_PAN_LEFT);                  
+      {
+        stopPlay_PCM();
+        startPlay_TFM(left);                
+      }
       if(sel == 1)
-        startPlay_PCM(beep, len, 16000, AUDIO_PAN_CENTER);            
+      {
+        stopPlay_PCM();
+        startPlay_TFM(center);
+      }
       if(sel == 2)
-        startPlay_PCM(beep, len, 16000, AUDIO_PAN_RIGHT);                       
+      {
+        stopPlay_PCM();
+        startPlay_TFM(right);
+      }
     }
           
     VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL0, 0, 0, 0), 14, 6);
-    VDP_drawTextBG(APLAN, "Left Channel", TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), 5, 12);
-    VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), 14, 14);
-    VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), 22, 12);    
+    VDP_drawTextBG(APLAN, "Left Channel", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 5, 12);
+    VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 14, 14);
+    VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 22, 12);        
 
-    VDP_drawTextBG(APLAN, "THIS TEST IS NOT WORKING YET", TILE_ATTR(PAL3, 0, 0, 0), 5, 18);    
+    VDP_drawTextBG(APLAN, "Space Standart track by Shiryu", TILE_ATTR(PAL1, 0, 0, 0), 5, 22);                
 
     VDP_waitVSync();
-  }
+  }  
+  stopPlay_PCM();
 }

@@ -84,7 +84,7 @@ int main()
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
-      if(cursel > 10)
+      if(cursel > pos - 6)
         cursel = 1;
     }
 
@@ -92,7 +92,7 @@ int main()
     {
       cursel --;
       if(cursel < 1)
-        cursel = 10;
+        cursel = pos - 6;
     }
 
     if (pressedButtons & BUTTON_A)

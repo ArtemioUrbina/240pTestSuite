@@ -23,6 +23,9 @@
 #define RES_H
 
 #include "res/beep.h"
+#include "res/left.h"
+#include "res/right.h"
+#include "res/center.h"
 
 extern u32 color_tiles[224/4]; ; 
 
