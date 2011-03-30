@@ -33,6 +33,9 @@ recommend the Tototek Flashcart or the newer Everdrive.
 The Genesis resolution is 320x224 and is being used fully, in NTSC (60hz).
 [edit] Sega Dreamcast
 
+The Sega CD version has the exact same specs as teh Genesis one, but you only
+need a CD-R to run it.
+
 The Sega Dreamcast version includes more options, but the core functionality 
 for 240p is the same. No special hardware or modifications are needed, it will
 run on any MIL-CD compatible Dreamcast after burning the CDI image 
@@ -66,8 +69,6 @@ Dreamcast directly with a great advantage in speed for frame alternating
 patterns. However the SDL version is kept - but no longer maintained - for 
 documentation purposes along with its source code.
 
-The Dreamcast-PVR version uses the freeware Atari Classic TrueType Font, 
-converted to texture format using gentexfont. 
 
 Contributors
 ===============================================================================
