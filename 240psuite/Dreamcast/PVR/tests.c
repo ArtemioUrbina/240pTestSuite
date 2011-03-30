@@ -254,16 +254,16 @@ void StripedSpriteTest()
 		if(!back[0])
 			return;
 		back[1] = LoadKMG("/rd/sonicback.kmg.gz", 1);
-		if(!back[0])
+		if(!back[1])
 			return;
 		back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
-		if(!back[0])
+		if(!back[2])
 			return;
 		back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
-		if(!back[0])
+		if(!back[3])
 			return;
 		overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 1);
-		if(!back[0])
+		if(!overlay)
 			return;
 	}
 	else
@@ -676,7 +676,7 @@ void ScrollTest()
 	if(!back)
 		return;
   overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
-	if(!back)
+	if(!overlay)
 		return;
 	
 	back->y = (dH - 240)/2;
@@ -739,6 +739,80 @@ void ScrollTest()
 	}
 	FreeImage(&back);
   FreeImage(&overlay);
+	return;
+}
+
+void GridScrollTest()
+{
+	int 				done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, direction = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back;
+	controller	*st;
+
+	oldbuttons = InitController(0);
+	back = LoadKMG("/rd/circles_grid.kmg.gz", 0);
+	if(!back)
+		return;  
+	
+	back->y = (dH - 240)/2;  
+
+	updateVMU("G. Scroll", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_DPAD_UP)
+				speed ++;
+
+			if (pressed & CONT_DPAD_DOWN)
+				speed --;
+
+			if (pressed & CONT_START)
+				done = 1;
+
+			if (pressed & CONT_A)
+				pause = !pause;
+
+			if (pressed & CONT_B)
+				acc *= -1;
+
+			if (pressed & CONT_Y)
+				direction = !direction;
+		}
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+
+		if(speed > 5)
+			speed = 5;
+
+		if(speed < 1)
+			speed = 1;
+
+		if(!pause)
+		{
+			if(direction)
+				x += speed * acc;
+			else
+				y += speed * acc;
+		}	
+				
+		CalculateUV(x, y, dW, 240, back);    
+		DrawImage(back);
+  
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
+	}
+	FreeImage(&back);  
 	return;
 }
 

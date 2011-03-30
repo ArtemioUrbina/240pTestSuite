@@ -26,6 +26,7 @@ void DropShadowTest();
 void StripedSpriteTest();
 void LagTest();
 void ScrollTest();
+void GridScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
 void SoundTest();
