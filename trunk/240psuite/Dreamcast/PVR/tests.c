@@ -754,7 +754,7 @@ void GridScrollTest()
 	if(!back)
 		return;  
 	
-	back->y = (dH - 240)/2;  
+	//back->y = (dH - 240)/2;  
 
 	updateVMU("G. Scroll", "", 1);
 	while(!done) 
@@ -782,7 +782,7 @@ void GridScrollTest()
 			if (pressed & CONT_B)
 				acc *= -1;
 
-			if (pressed & CONT_Y)
+			if (pressed & CONT_X)
 				direction = !direction;
 		}
 
@@ -804,7 +804,7 @@ void GridScrollTest()
 				y += speed * acc;
 		}	
 				
-		CalculateUV(x, y, dW, 240, back);    
+		CalculateUV(x, y, dW, dH, back);    
 		DrawImage(back);
   
 		DrawScanlines();
