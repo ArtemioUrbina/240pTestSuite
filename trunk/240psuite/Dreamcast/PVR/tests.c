@@ -784,6 +784,13 @@ void GridScrollTest()
 
 			if (pressed & CONT_X)
 				direction = !direction;
+
+			// Joystick
+			if(st->joyx != 0)
+				x += st->joyx/30;
+		
+			if(st->joyy != 0)
+				y += st->joyy/30;
 		}
 
 		pvr_scene_begin();
