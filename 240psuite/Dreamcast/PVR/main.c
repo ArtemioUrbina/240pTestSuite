@@ -250,10 +250,10 @@ start:
 						LagTest();
 						break;
 					case 5:
-						GridScrollTest();
+						ScrollTest();
 						break;
 					case 6:
-						ScrollTest();
+						GridScrollTest();
 						break;
 					case 7:
 						DrawStripes();
