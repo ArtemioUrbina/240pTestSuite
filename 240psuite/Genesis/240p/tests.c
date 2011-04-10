@@ -682,9 +682,9 @@ void LagTest()
       if(audio)                
       {
         if(speed == 1)
-          startPlay_PCM(beep, len, 16000, AUDIO_PAN_LEFT);            
+          startPlay_PCM(beep, len, (u8)16000, AUDIO_PAN_LEFT, 0);            
         else
-          startPlay_PCM(beep, len, 16000, AUDIO_PAN_RIGHT);            
+          startPlay_PCM(beep, len, (u8)16000, AUDIO_PAN_RIGHT, 0);            
       }  
       VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 1);               
       pass = 0;
@@ -1076,9 +1076,10 @@ void SoundTest()
     if (pressedButtons & BUTTON_A)
     {
       if(sel == 0)
-      {
+      {        
         stopPlay_PCM();
         startPlay_TFM(left);                
+	      //YM2612_writeRegSafe(0, 0xb4, 0x80);
       }
       if(sel == 1)
       {
@@ -1088,7 +1089,8 @@ void SoundTest()
       if(sel == 2)
       {
         stopPlay_PCM();
-        startPlay_TFM(right);
+        startPlay_TFM(right);        
+	      //YM2612_writeRegSafe(0, 0xb4, 0x40);
       }
     }
           
