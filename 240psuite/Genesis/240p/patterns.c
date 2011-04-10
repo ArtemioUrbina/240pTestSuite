@@ -72,6 +72,7 @@ void DrawGrayRamp()
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
   VDP_setHilightShadow(1);
 
   VDP_setPalette(PAL0, palette_grey);
@@ -80,7 +81,7 @@ void DrawGrayRamp()
   DrawColorTilesAt(APLAN, PAL0, 0, 0, TILE_USERINDEX, 3, 14);
   DrawColorTilesAtInv(APLAN, PAL0, 0, 14, TILE_USERINDEX, 3, 14);
 
-  //Center it, we are missinga few tiles tiles, so scroll 16 to center the pattern
+  //Center it, we are missing a few tiles, so scroll 16 pixels to center the pattern
   VDP_setHorizontalScroll(APLAN, 0, 16);
   while(!exit)
   {
@@ -93,6 +94,7 @@ void DrawGrayRamp()
 
     VDP_waitVSync();
   }
+  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
   VDP_setHilightShadow(0);
   VDP_setHorizontalScroll(APLAN, 0, 0);
 }
@@ -321,6 +323,7 @@ void DrawColorBars()
 
         VDP_waitVSync();
     }
+    VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
     VDP_setHilightShadow(0);
 }
 
