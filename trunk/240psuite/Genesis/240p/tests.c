@@ -1035,7 +1035,7 @@ void VScrollTest()
 
 void SoundTest()
 {
-  int sel = 0;
+  int sel = 1;
    u16 ind = 0, size = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   u16  len = 0;
