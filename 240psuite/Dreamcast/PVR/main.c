@@ -324,6 +324,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Pluge"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
+    DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
@@ -428,19 +429,22 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					case 3:
 						Draw601ColorBars();
 						break;
-					case 4:
-						DrawGrid();
+          case 4:
+						DrawColorBleed();
 						break;
 					case 5:
+						DrawGrid();
+						break;
+					case 6:
 						DrawLinearity();
 						break;					
-					case 6:
+					case 7:
 						DrawGrayRamp();
 						break;
-					case 7:
+					case 8:
 						DrawWhiteScreen();
 						break;
-					case 8:
+					case 9:
 						done = 1;
 						break;
 				} 												
@@ -502,7 +506,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.09"); y += fh; 
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.10"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();				

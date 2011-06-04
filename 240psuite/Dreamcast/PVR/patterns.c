@@ -292,6 +292,56 @@ void Draw601ColorBars()
 	return;
 }
 
+void DrawColorBleed()
+{
+	int 				done = 0, type = 0;
+	uint16			oldbuttons, pressed;		
+	ImagePtr		back, backchk;
+	controller	*st;
+
+	oldbuttons = InitController(0);
+	back = LoadKMG("/rd/colorbleed.kmg.gz", 1);
+	if(!back)
+		return;
+  backchk = LoadKMG("/rd/colorbleedchk.kmg.gz", 1);
+	if(!backchk)
+		return;
+		
+	updateVMU("Bleed CHK", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_START)
+				done =	1;								
+
+			if (pressed & CONT_A)
+				type = !type;
+		}
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+    if(!type)
+		  DrawImage(back);
+    else
+      DrawImage(backchk);
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
+	}
+	FreeImage(&back);
+  FreeImage(&backchk);
+	return;
+}
+
 void DrawGrid()
 {
 	int 				done = 0;
