@@ -177,11 +177,12 @@ void TestPatternMenu()
     VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Grid", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
-    VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
-    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+    VDP_drawTextBG(APLAN, "Color Bleed Check", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Grid", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
+    VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
+    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -190,7 +191,7 @@ void TestPatternMenu()
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
-      if(cursel > 8)
+      if(cursel > 9)
         cursel = 1;
     }
 
@@ -198,7 +199,7 @@ void TestPatternMenu()
     {
       cursel --;
       if(cursel < 1)
-        cursel = 8;
+        cursel = 9;
     }
 
     if (pressedButtons & BUTTON_B)
@@ -220,18 +221,21 @@ void TestPatternMenu()
           Draw601ColorBars();
           break;
         case 4:
-          DrawGrid();                    
+          DrawColorBleed();                    
           break;
         case 5:
-          DrawLinearity();
+          DrawGrid();                    
           break;
         case 6:
-          DrawGrayRamp();
+          DrawLinearity();
           break;
         case 7:
+          DrawGrayRamp();
+          break;
+        case 8:
           DrawWhiteScreen();
           break;
-        case 8: 
+        case 9: 
           done = 1;
           break;
       }
@@ -293,7 +297,7 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-  VDP_drawTextBG(APLAN, "Ver. 1.07", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+  VDP_drawTextBG(APLAN, "Ver. 1.08", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
