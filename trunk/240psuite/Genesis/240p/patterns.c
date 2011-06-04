@@ -281,6 +281,59 @@ void DrawGrid()
   }
 }
 
+void DrawColorBleed()
+{
+    u16 ind, type = 0;
+    u16 size;
+    u16 exit;
+    u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+    exit = 0;
+
+    //if(showhelp)
+    //  DrawHelp(HELP_COLORBLEED);
+    VDP_setPalette(PAL0, palette_red); 
+    VDP_setPalette(PAL1, palette_green); 
+    VDP_setPalette(PAL2, palette_blue); 
+    VDP_setPalette(PAL3, palette_grey); 
+    
+    ind = TILE_USERINDEX; 
+    size = sizeof(vstripes_tiles) / 32; 
+    VDP_loadTileData(vstripes_tiles, ind, size, USE_DMA); 
+    
+    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 16/8, 40/8, 288/8, 32/8); 
+    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 16/8, 80/8, 288/8, 32/8); 
+    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + ind, 16/8, 120/8, 288/8, 32/8); 
+    VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 16/8, 160/8, 288/8, 32/8); 
+
+    while(!exit)
+    {
+        buttons = JOY_readJoypad(JOY_1);
+        pressedButtons = buttons & ~oldButtons;
+        oldButtons = buttons;
+    
+        if (pressedButtons & BUTTON_START)
+          exit = 1;
+
+        if (pressedButtons & BUTTON_A)
+        {
+          if(!type)
+            VDP_loadTileData(checkbleed_tile, ind, size, USE_DMA); 
+          else
+            VDP_loadTileData(vstripes_tiles, ind, size, USE_DMA); 
+
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 16/8, 40/8, 288/8, 32/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 16/8, 80/8, 288/8, 32/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + ind, 16/8, 120/8, 288/8, 32/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 16/8, 160/8, 288/8, 32/8);
+          type = !type;
+        }
+
+        VDP_waitVSync();
+    }
+    VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+}
+
 void DrawColorBars()
 {
     u16 ind;

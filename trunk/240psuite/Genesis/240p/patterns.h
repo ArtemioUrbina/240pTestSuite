@@ -26,6 +26,7 @@ void DrawPluge();
 void DrawColorBars();
 void Draw601ColorBars();
 void DrawGrid();
+void DrawColorBleed();
 void DrawLinearity();
 void DrawGrayRamp();
 void DrawWhiteScreen();
