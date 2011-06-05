@@ -54,6 +54,7 @@ extern u32 checkbleed_tile[32/4];
 extern u32 bw_tile[32/4]; 
 extern u32 wb_tile[32/4]; 
 extern u32 vstripes_tiles[32/4]; 
+extern u32 vstripesneg_tiles[32/4]; 
 
 extern u16 bw_pal[16]; 
 
