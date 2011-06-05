@@ -103,34 +103,47 @@ void DrawCheckBoard()
 void DrawStripes()
 {
   char cntstr[4];
-  u16 ind, size, count = 0, docounter = 0;
-  u16 field = 1, alternate = 0, exit = 0;
+  u16 hor1, hor2, ver1, ver2, size, count = 0, docounter = 0;
+  u16 field = 1, alternate = 0, exit = 0, vertical = 0, redraw = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
   VDP_setPalette(PAL1, bw_pal);
 
-  ind = TILE_USERINDEX; 
+  hor1 = TILE_USERINDEX; 
   size = sizeof(bw_tile) / 32; 
-  VDP_loadTileData(bw_tile, ind, size, USE_DMA); 
-  ind += size;
+  VDP_loadTileData(bw_tile, hor1, size, USE_DMA); 
+  hor2 = hor1 + size;
   size = sizeof(wb_tile) / 32; 
-  VDP_loadTileData(wb_tile, ind, size, USE_DMA); 
+  VDP_loadTileData(wb_tile, hor2, size, USE_DMA); 
+  ver1 = hor2 + size;
+  size = sizeof(vstripes_tiles) / 32; 
+  VDP_loadTileData(vstripes_tiles, ver1, size, USE_DMA); 
+  ver2 = ver1 + size;
+  size = sizeof(vstripesneg_tiles) / 32; 
+  VDP_loadTileData(vstripesneg_tiles, ver2, size, USE_DMA); 
 
   VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   while(!exit)
   {
-    if(alternate)
+    if(alternate || redraw)
     {
       if(field == 0)
       {
-        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);  
+        if(vertical)
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver1, 0, 0, 320/8, 224/8);  
+        else
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor1, 0, 0, 320/8, 224/8);  
         field = 1;
       }
       else
       {
-        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
+        if(vertical)
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver2, 0, 0, 320/8, 224/8); 
+        else
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor2, 0, 0, 320/8, 224/8); 
         field = 0;
       }
+      redraw = 0;
     }
   
     if(docounter)
@@ -155,15 +168,27 @@ void DrawStripes()
     {
       if(field == 0)
       {
-        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+        if(vertical)
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver1, 0, 0, 320/8, 224/8); 
+        else
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor1, 0, 0, 320/8, 224/8); 
         field = 1;
       }
       else
       {
-        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, 224/8); 
+        if(vertical)
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver2, 0, 0, 320/8, 224/8); 
+        else
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor2, 0, 0, 320/8, 224/8);  
         field = 0;
       }
     }   
+
+    if (pressedButtons & BUTTON_UP)
+    {
+      vertical = ~vertical;
+      redraw = 1;
+    }
 
     if (pressedButtons & BUTTON_C)
       docounter = ~docounter;
