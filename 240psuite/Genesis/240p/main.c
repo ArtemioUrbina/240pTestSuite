@@ -278,6 +278,8 @@ void DrawCredits()
   
   VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);      
   
+  VDP_setVerticalScroll(APLAN, 0, 4);
+
   VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);  
   VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
@@ -311,6 +313,8 @@ void DrawCredits()
 
     VDP_waitVSync();
   }
+
+  VDP_setVerticalScroll(APLAN, 0, 0);
 }
 
 
