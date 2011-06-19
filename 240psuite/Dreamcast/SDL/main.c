@@ -187,7 +187,7 @@ int main ( int argc, char *argv[] )
             		redraw = 0;
         	}
 		else
-			c = 10;
+			c = 11;
 
 		MAPLE_FOREACH_BEGIN(MAPLE_FUNC_CONTROLLER, cont_state_t, st)
 		{
