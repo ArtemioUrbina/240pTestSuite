@@ -290,8 +290,8 @@ void DrawColorBleed()
 
     exit = 0;
 
-    //if(showhelp)
-    //  DrawHelp(HELP_COLORBLEED);
+    if(showhelp)
+      DrawHelp(HELP_BLEED);
     VDP_setPalette(PAL0, palette_red); 
     VDP_setPalette(PAL1, palette_green); 
     VDP_setPalette(PAL2, palette_blue); 
