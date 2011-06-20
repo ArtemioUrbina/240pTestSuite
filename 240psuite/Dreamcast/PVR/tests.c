@@ -599,7 +599,7 @@ void LagTest()
 
 		sprintf(msg, "Audio: %s", audio ? "on" : "off");
 		DrawStringS(200, 20, 1.0f, 1.0f, 1.0f, msg);
-		sprintf(msg, "Timing: %s", variation ? "random" : "rythmic");
+		sprintf(msg, "Timing: %s", variation ? "random" : "rhythmic");
 		DrawStringS(200, 20+fh, 1.0f, 1.0f, 1.0f, msg);
 		if(purupuru)
 		{
@@ -612,7 +612,7 @@ void LagTest()
 		DrawStringS(20, 170, 0.0f, 1.0f, 0.0f, "Press \"A\" when the sprite is aligned with the background.");
 		DrawStringS(20, 170+fh, 0.0f, 1.0f, 0.0f, "Negative values mean you pressed \"A\" before they intersected");
 		DrawStringS(20, 170+2*fh, 0.0f, 1.0f, 0.0f, "\"B\" button toggles horizontal and vertical movement.");
-		DrawStringS(20, 170+3*fh, 0.0f, 1.0f, 0.0f, "\"L\" trigger toggles rythmic timing.");
+		DrawStringS(20, 170+3*fh, 0.0f, 1.0f, 0.0f, "\"L\" trigger toggles rhythmic timing.");
 		DrawStringS(20, 170+4*fh, 0.0f, 1.0f, 0.0f, "\"Y\" button toggles audio feedback.");
 		if(purupuru)
 			DrawStringS(20, 170+5*fh, 0.0f, 1.0f, 0.0f, "\"X\" button toggles vibration feedback.");
