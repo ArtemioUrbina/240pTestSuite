@@ -277,6 +277,9 @@ void Draw601ColorBars()
 					
 			if (pressed & CONT_START)
 				done =	1;								
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(COLORBARSHELP, back);
 		}
 
 		pvr_scene_begin();
@@ -323,6 +326,9 @@ void DrawColorBleed()
 
 			if (pressed & CONT_A)
 				type = !type;
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(COLORBLEEDHELP, back);
 		}
 
 		pvr_scene_begin();

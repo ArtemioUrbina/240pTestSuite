@@ -405,8 +405,8 @@ void LagTest()
 {
 	char											msg[60];
 	int												clicks[10], done = 0, view = 0, speed = 1, change = 1;
-	int												x, y, x2, y2, audio = 1, pos = 0, i = 0;
-	uint16										oldbuttons, pressed;		
+	int												x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 0, vary = 0, variation = 1;
+	uint16										oldbuttons, pressed, timeout = 0;		
 	ImagePtr									back, spriteA, spriteB, spriteneg;
 	sfxhnd_t									beep;
 	maple_device_t						*purupuru = NULL;
@@ -421,6 +421,7 @@ void LagTest()
 
 	snd_init();
 
+	srand((int)(time(0) ^ getpid()));
 	updateVMU("Lag Test ", "", 1);
 	back = LoadKMG("/rd/lag-per.kmg.gz", 0);
 	if(!back)
@@ -489,20 +490,50 @@ void LagTest()
 			if (pressed & CONT_Y)
 				audio =	!audio;				
 		
+			if (pressed & CONT_X)
+				vibrate =	!vibrate;				
+		
+			if(st->ltrig > 5 && !timeout)
+			{
+				variation = !variation;
+				if(!variation)
+					vary = 0;
+				timeout = 10;
+			}
+			else
+			{
+				if(timeout)
+					timeout -= 1;
+			}
+
 			if (pressed & CONT_START)
 				done =	1;				
 		}
 		
-		if(y > 132)
+		if(y > 132 + vary)
 		{
 			speed = -1;
 			change = 1;
+			if(variation)
+			{
+				if(rand() % 2)
+					vary = rand() % 7;
+				else
+					vary = -1 * rand() % 7;
+			}
 		}
 
-		if(y < 60)
+		if(y < 60 + vary)
 		{
 			speed = 1;
 			change = 1;
+			if(variation)
+			{
+				if(rand() % 2)
+					vary = rand() % 7;
+				else
+					vary = -1 * rand() % 7;
+			}
 		}
 
 		y += speed;
@@ -524,8 +555,11 @@ void LagTest()
 				snd_sfx_play(beep, 255, speed*255);	// toggle pan to 0 and 255, l & r
 
 			purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
-			if(purupuru)
-				purupuru_rumble(purupuru, &effect);
+			if(vibrate)
+			{
+				if(purupuru)
+					purupuru_rumble(purupuru, &effect);
+			}
 		}
 		else
 			DrawImage(back);
@@ -563,9 +597,25 @@ void LagTest()
 			}
 		}
 
-		DrawStringS(20, 190, 1.0f, 1.0f, 1.0f, "Press \"A\" when the sprite is aligned with the background.");
-		DrawStringS(20, 190+fh, 1.0f, 1.0f, 1.0f, "Negative values mean you pressed \"A\" before they intersected");
-		DrawStringS(20, 190+2*fh, 1.0f, 1.0f, 1.0f, "\"B\" button toggles horizontal and vertical movement.");
+		sprintf(msg, "Audio: %s", audio ? "on" : "off");
+		DrawStringS(200, 20, 1.0f, 1.0f, 1.0f, msg);
+		sprintf(msg, "Timing: %s", variation ? "random" : "rythmic");
+		DrawStringS(200, 20+fh, 1.0f, 1.0f, 1.0f, msg);
+		if(purupuru)
+		{
+			sprintf(msg, "Vibration: %s", vibrate ? "on" : "off");
+			DrawStringS(200, 20+2*fh, 1.0f, 1.0f, 1.0f, msg);
+		}
+		else
+			DrawStringS(200, 20+2*fh, 1.0f, 1.0f, 1.0f, "Vibration: n/a");
+
+		DrawStringS(20, 170, 0.0f, 1.0f, 0.0f, "Press \"A\" when the sprite is aligned with the background.");
+		DrawStringS(20, 170+fh, 0.0f, 1.0f, 0.0f, "Negative values mean you pressed \"A\" before they intersected");
+		DrawStringS(20, 170+2*fh, 0.0f, 1.0f, 0.0f, "\"B\" button toggles horizontal and vertical movement.");
+		DrawStringS(20, 170+3*fh, 0.0f, 1.0f, 0.0f, "\"L\" trigger toggles rythmic timing.");
+		DrawStringS(20, 170+4*fh, 0.0f, 1.0f, 0.0f, "\"Y\" button toggles audio feedback.");
+		if(purupuru)
+			DrawStringS(20, 170+5*fh, 0.0f, 1.0f, 0.0f, "\"X\" button toggles vibration feedback.");
 
 		DrawScanlines();
 		pvr_list_finish();				
