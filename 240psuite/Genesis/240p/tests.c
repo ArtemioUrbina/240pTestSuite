@@ -644,11 +644,11 @@ void LagTest()
 {
   char str[10];
   u16 pal = PAL0, change = 1, pass = 1;
-  s16 speed = 1;
+  s16 speed = 1, vary = 0;
   u16 size, ind;
-  u16 x = 0, y = 0, x2 = 0, y2 = 0, exit = 0;
+  u16 x = 0, y = 0, x2 = 0, y2 = 0, exit = 0, variation = 0, draw = 1;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
-  u16 pos = 0, view = 0, audio  = 1, drawoffset = 0;
+  u16 pos = 0, view = 0, audio  = 0, drawoffset = 0;
   u32 len = 0;    
 
   s16 clicks[10];
@@ -675,10 +675,12 @@ void LagTest()
   VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 2);         
   VDP_setSprite(2, x2, y2, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 0);           
   
-  VDP_drawTextBG(APLAN, "Press the \"A\" button when the sprite", TILE_ATTR(PAL0, 0, 0, 0), 2, 22);
-  VDP_drawTextBG(APLAN, "is aligned. A negative value means", TILE_ATTR(PAL0, 0, 0, 0), 2, 23);
-  VDP_drawTextBG(APLAN, "you pressed \"A\" before they intersect.", TILE_ATTR(PAL0, 0, 0, 0), 2, 24);
-  VDP_drawTextBG(APLAN, "\"B\" button toggles horz/vert", TILE_ATTR(PAL0, 0, 0, 0), 2, 25);
+  VDP_drawTextBG(APLAN, "Press the \"A\" button when the sprite", TILE_ATTR(PAL3, 0, 0, 0), 2, 21);
+  VDP_drawTextBG(APLAN, "is aligned. A negative value means", TILE_ATTR(PAL3, 0, 0, 0), 2, 22);
+  VDP_drawTextBG(APLAN, "you pressed \"A\" before they intersect.", TILE_ATTR(PAL3, 0, 0, 0), 2, 23);
+  VDP_drawTextBG(APLAN, "\"B\" button toggles horz/vert", TILE_ATTR(PAL3, 0, 0, 0), 2, 24);
+  VDP_drawTextBG(APLAN, "\"C\" button toggles audio", TILE_ATTR(PAL3, 0, 0, 0), 2, 25);
+  VDP_drawTextBG(APLAN, "DOWN toggles random/rhythmic", TILE_ATTR(PAL3, 0, 0, 0), 2, 26);
 
   len = sizeof(beep); 
   while(!exit)    
@@ -726,10 +728,21 @@ void LagTest()
       view ++;
       if(view > 2)
         view = 0;            
-    }
+    }    
   
     if (pressedButtons & BUTTON_C)        
+    {
       audio = !audio;    
+      draw = 1;
+    }
+
+    if (pressedButtons & BUTTON_DOWN)
+    {
+      variation = !variation;
+      if(!variation)
+        vary = 0;
+      draw = 1;
+    }
 
     if (pressedButtons & BUTTON_START)
       exit = 1;
@@ -764,16 +777,45 @@ void LagTest()
       drawoffset = 0;
     }       
 
-    if(y > 132)
+    if(draw)
+    {      
+      VDP_drawTextBG(APLAN, "Audio:", TILE_ATTR(PAL0, 0, 0, 0), 22, 0);
+      if(audio)
+        VDP_drawTextBG(APLAN, "on ", TILE_ATTR(PAL0, 0, 0, 0), 29, 0);
+      else
+        VDP_drawTextBG(APLAN, "off", TILE_ATTR(PAL0, 0, 0, 0), 29, 0);
+      VDP_drawTextBG(APLAN, "Timing:", TILE_ATTR(PAL0, 0, 0, 0), 22, 1);
+      if(variation)
+        VDP_drawTextBG(APLAN, "random  ", TILE_ATTR(PAL0, 0, 0, 0), 30, 1);
+      else
+        VDP_drawTextBG(APLAN, "rhythmic", TILE_ATTR(PAL0, 0, 0, 0), 30, 1);
+      draw = 0;
+    }
+    
+    if(y > 132 + vary)
     {
       speed = -1;
       change = 1;
+      if(variation)
+			{
+				if(random() % 2)
+					vary = random() % 7;
+				else
+					vary = -1 * random() % 7;
+			}
     }
     
-    if(y < 60)
+    if(y < 60 + vary)
     {
       speed = 1;
       change = 1;
+      if(variation)
+			{
+				if(random() % 2)
+					vary = random() % 7;
+				else
+					vary = -1 * random() % 7;
+			}
     }
 
     y += speed;
