@@ -470,7 +470,7 @@ void DrawCredits(ImagePtr back)
 	updateVMU("	Credits", "", 1);
 	while(!done) 
 	{
-		int x = 30, y = 60;
+		int x = 30, y = 52;
 		pvr_wait_ready();
 
 		st = ReadController(0);

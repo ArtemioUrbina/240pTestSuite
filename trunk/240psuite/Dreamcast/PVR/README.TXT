@@ -19,12 +19,9 @@ black and white levels for specific console outputs and setups.
 Versions
 ===============================================================================
 
-There are currently two platforms that run the suite, both have been developed
+There are currently three platforms that run the suite, both have been developed
 and tested on real hardware, The software should run in NTSC mode by default 
 (hasn't been tested in PAL hardware, but should work as expected).
-
-Sega Genesis/Mega Drive
-------------------------
 
 The Sega Genesis version was developed using the SGDK, it was the first version
 of the 240p Test Suite and is fully coded in C. In order to run it, we 
@@ -62,8 +59,8 @@ following values:
 
 The software is compatible with composite, s-video, RGB and VGA cables.
 
-The Dreamcast resolution is full 320x240 when in that mode and using the 
-PowerVR (PVR) version, there is a previous SDL version that runs on 320x234
+The Dreamcast resolution is 320x239 when in that mode and using the PowerVR
+(PVR) version, there is a previous SDL version that runs on 320x234
 mode, but the small framework was rewritten to use the PVR chip on the 
 Dreamcast directly with a great advantage in speed for frame alternating 
 patterns. However the SDL version is kept - but no longer maintained - for 
@@ -78,6 +75,7 @@ Contributors
     * KallistiOS SDK assistance: BlueCrab
     * Dreamcast toolchain built with: Buildcross
     * Advisor: Fudoh 
+		* Extra patterns and collaboration: Konsolkongen & shmups regulars
 
 
 ===============================================================================

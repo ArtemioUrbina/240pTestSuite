@@ -1,0 +1,8 @@
+                  COLOR BLEED 
+
+This pattern helps diagnose unneeded color
+upsampling. It consists of one pixel width color
+bars alternating with one pixel width black bars.
+
+You can change the vertical bars to a checker
+board with the A button.
