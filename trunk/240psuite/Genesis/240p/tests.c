@@ -646,7 +646,7 @@ void LagTest()
   u16 pal = PAL0, change = 1, pass = 1;
   s16 speed = 1, vary = 0;
   u16 size, ind;
-  u16 x = 0, y = 0, x2 = 0, y2 = 0, exit = 0, variation = 0, draw = 1;
+  u16 x = 0, y = 0, x2 = 0, y2 = 0, exit = 0, variation = 1, draw = 1;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
   u16 pos = 0, view = 0, audio  = 0, drawoffset = 0;
   u32 len = 0;    
