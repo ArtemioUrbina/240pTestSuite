@@ -24,14 +24,13 @@
 
 #include "image.h"
 
-#define GENERALHELP			"/rd/help/general.txt"
-#define PLUGEHELP				"/rd/help/pluge.txt"
-#define GRAYRAMPHELP		"/rd/help/grayramp.txt"
-#define GRIDHELP    		"/rd/help/grid.txt"
-#define COLORBARSHELP		"/rd/help/colors.txt"
 #define COLORBLEEDHELP	"/rd/help/bleed.txt"
-#define SOUNDHELP				"/rd/help/sound.txt"
 #define CHECKHELP				"/rd/help/check.txt"
+#define COLORBARSHELP		"/rd/help/colors.txt"
+#define GENERALHELP			"/rd/help/general.txt"
+#define GRAYHELP			  "/rd/help/gray.txt"
+#define GRIDHELP    		"/rd/help/grid.txt"
+#define PLUGEHELP				"/rd/help/pluge.txt"
 #define STRIPESHELP			"/rd/help/stripes.txt"
 
 uint16 HelpWindow(char *filename, ImagePtr screen);

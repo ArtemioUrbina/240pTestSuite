@@ -113,7 +113,7 @@ void DrawGrayRamp()
 				done =	1;								
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(GRAYRAMPHELP, back);
+				oldbuttons = HelpWindow(GRAYHELP, back);
 		}
 
 		pvr_scene_begin();
