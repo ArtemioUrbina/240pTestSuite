@@ -583,7 +583,10 @@ void LagTest()
 				DrawStringS(px, py, 1.0f, 1.0f, 1.0f, msg);
 			
 				px += (strlen(msg) + 2)*fw;
-				sprintf(msg, "%2d", clicks[i]);
+        if(clicks[i] == 1)
+          sprintf(msg, "%2d frame", clicks[i]);
+        else
+				  sprintf(msg, "%2d frames", clicks[i]);
 
 				if(clicks[i] >= 0)
 				{
@@ -691,7 +694,7 @@ void LagTest()
 			DrawStringS(60, 110, 1.0f, 0, 0, "+");
 			DrawStringS(55, 70 + fh*10, 1.0f, 0, 0, "_____");
 			DrawStringS(60, 70 + fh*11, 1.0f, 1.0f, 1.0f, msg);
-			DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that a frame is around 16.67 ms");
+			DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that a frame is around 16.68 ms");
 
 			if(total && total < 5)
 			{
