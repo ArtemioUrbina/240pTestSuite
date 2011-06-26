@@ -767,7 +767,10 @@ void LagTest()
       intToStr(clicks[pos], str, 1);
       VDP_drawTextBG(APLAN, str, TILE_ATTR(pal, 0, 0, 0), pos == 9 ? 13 : 12, pos);
       ppos = strlen(str);
-      VDP_drawTextBG(APLAN, "   ", TILE_ATTR(pal, 0, 0, 0), pos == 9 ? 13 : 12 + ppos, pos);
+      if(clicks[pos] == 1)
+        VDP_drawTextBG(APLAN, " frame    ", TILE_ATTR(pal, 0, 0, 0), pos == 9 ? 13 : 12 + ppos, pos);
+      else
+        VDP_drawTextBG(APLAN, " frames   ", TILE_ATTR(pal, 0, 0, 0), pos == 9 ? 13 : 12 + ppos, pos);
 
       if(clicks[pos] >= 0)
         pos++;
@@ -779,16 +782,16 @@ void LagTest()
 
     if(draw)
     {      
-      VDP_drawTextBG(APLAN, "Audio:", TILE_ATTR(PAL0, 0, 0, 0), 22, 0);
+      VDP_drawTextBG(APLAN, "Audio:", TILE_ATTR(PAL0, 0, 0, 0), 24, 0);
       if(audio)
-        VDP_drawTextBG(APLAN, "on ", TILE_ATTR(PAL0, 0, 0, 0), 29, 0);
+        VDP_drawTextBG(APLAN, "on ", TILE_ATTR(PAL0, 0, 0, 0), 31, 0);
       else
-        VDP_drawTextBG(APLAN, "off", TILE_ATTR(PAL0, 0, 0, 0), 29, 0);
-      VDP_drawTextBG(APLAN, "Timing:", TILE_ATTR(PAL0, 0, 0, 0), 22, 1);
+        VDP_drawTextBG(APLAN, "off", TILE_ATTR(PAL0, 0, 0, 0), 31, 0);
+      VDP_drawTextBG(APLAN, "Timing:", TILE_ATTR(PAL0, 0, 0, 0), 24, 1);
       if(variation)
-        VDP_drawTextBG(APLAN, "random  ", TILE_ATTR(PAL0, 0, 0, 0), 30, 1);
+        VDP_drawTextBG(APLAN, "random  ", TILE_ATTR(PAL0, 0, 0, 0), 32, 1);
       else
-        VDP_drawTextBG(APLAN, "rhythmic", TILE_ATTR(PAL0, 0, 0, 0), 30, 1);
+        VDP_drawTextBG(APLAN, "rhythmic", TILE_ATTR(PAL0, 0, 0, 0), 32, 1);
       draw = 0;
     }
     
@@ -903,7 +906,7 @@ void LagTest()
       h -= 2;
       VDP_drawTextBG(APLAN, " frames", TILE_ATTR(PAL0, 0, 0, 0), h, v++);
       VDP_drawTextBG(APLAN, "Keep in mind that a frame is", TILE_ATTR(PAL0, 0, 0, 0), 6, ++v);
-      VDP_drawTextBG(APLAN, "around 16.67 milliseconds.", TILE_ATTR(PAL0, 0, 0, 0), 6, ++v);
+      VDP_drawTextBG(APLAN, "around 16.68 milliseconds.", TILE_ATTR(PAL0, 0, 0, 0), 6, ++v);
 
       h = 14;
       v = 12;
