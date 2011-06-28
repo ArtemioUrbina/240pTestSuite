@@ -407,7 +407,7 @@ void LagTest()
 	int												clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int												x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 0, vary = 0, variation = 1;
 	uint16										oldbuttons, pressed, timeout = 0;		
-	ImagePtr									back, spriteA, spriteB, spriteneg;
+	ImagePtr									back, spriteA, spriteB;
 	sfxhnd_t									beep;
 	maple_device_t						*purupuru = NULL;
 	static purupuru_effect_t	effect;
@@ -431,10 +431,7 @@ void LagTest()
 		return;
 	spriteB = CloneImage(back, 0);
 	if(!spriteB)
-		return;
-	spriteneg = LoadKMG("/rd/lag-full.kmg.gz", 0);
-	if(!spriteneg)
-		return;
+		return;	
 
 	beep = snd_sfx_load("/rd/beep.wav");
 	x = 144;
@@ -443,9 +440,7 @@ void LagTest()
 	y2 = 96;
 		
 	back->x = 144;
-	back->y = 96;
-	spriteneg->x = 144;
-	spriteneg->y = 96;
+	back->y = 96;	
 
 	for(i = 0; i < 10; i++)
 		clicks[i] = 0xFF;
@@ -548,9 +543,10 @@ void LagTest()
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
+    DrawImage(back);
+
 		if(y == 96)
-		{
-			DrawImage(spriteneg);
+		{			
 			if(audio && beep != SFXHND_INVALID)
 				snd_sfx_play(beep, 255, speed*255);	// toggle pan to 0 and 255, l & r
 
@@ -560,9 +556,39 @@ void LagTest()
 				if(purupuru)
 					purupuru_rumble(purupuru, &effect);
 			}
+
+      spriteA->r = 1.0;
+      spriteA->g = 0.0;
+      spriteA->b = 0.0;
+
+      spriteB->r = 1.0;
+      spriteB->g = 0.0;
+      spriteB->b = 0.0;
 		}
-		else
-			DrawImage(back);
+    else
+    {
+      if(y == 97 || y == 95) // one pixel off
+      {
+        spriteA->r = 0.0;
+        spriteA->g = 1.0;
+        spriteA->b = 0.0;
+
+        spriteB->r = 0.0;
+        spriteB->g = 1.0;
+        spriteB->b = 0.0;
+      }
+
+      if(y == 98 || y == 94) // two pixels off
+      {
+        spriteA->r = 1.0;
+        spriteA->g = 1.0;
+        spriteA->b = 1.0;
+
+        spriteB->r = 1.0;
+        spriteB->g = 1.0;
+        spriteB->b = 1.0;
+      }
+    }			
 
 		if(view == 0 || view == 2)
 			DrawImage(spriteA);
@@ -630,8 +656,7 @@ void LagTest()
 		snd_sfx_unload(beep);
 	FreeImage(&back);
 	FreeImage(&spriteA);
-	FreeImage(&spriteB);
-	FreeImage(&spriteneg);
+	FreeImage(&spriteB);	
 	snd_shutdown();
 
 	updateVMU("Lag Test ", "-Results-", 1);
