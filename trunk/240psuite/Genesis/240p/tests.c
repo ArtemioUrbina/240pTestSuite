@@ -643,7 +643,7 @@ void StripedSpriteTest()
 void LagTest()
 {
   char str[10];
-  u16 pal = PAL0, change = 1, pass = 1;
+  u16 pal = PAL0, change = 1;
   s16 speed = 1, vary = 0;
   u16 size, ind;
   u16 x = 0, y = 0, x2 = 0, y2 = 0, exit = 0, variation = 1, draw = 1;
@@ -712,16 +712,8 @@ void LagTest()
           startPlay_PCM(beep, len, (u8)16000, AUDIO_PAN_LEFT, 0);            
         else
           startPlay_PCM(beep, len, (u8)16000, AUDIO_PAN_RIGHT, 0);            
-      }  
-      VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 1);               
-      pass = 0;
-    }
-    else    
-      if(!pass)
-      {
-        VDP_setSprite(0, 144, 96, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 1);               
-        pass = 1;
-      }
+      }        
+    }    
 
     if (pressedButtons & BUTTON_B)
     {
@@ -823,6 +815,13 @@ void LagTest()
 
     y += speed;
     x2 += speed;
+
+    if(y == 96) // Red on the spot
+      VDP_setSpriteAttr(0, TILE_ATTR(PAL1, 0, 0, 0) + ind);
+    if(y == 95 || y == 97) //Green one pixel before or after
+      VDP_setSpriteAttr(0, TILE_ATTR(PAL3, 0, 0, 0) + ind);
+    if(y == 98 || y == 94) //Back to white two pixels before or after
+      VDP_setSpriteAttr(0, TILE_ATTR(PAL2, 0, 0, 0) + ind);    
 
     if(view == 0 || view == 2)
       VDP_setSpritePosition(1, x, y);      
