@@ -406,7 +406,7 @@ void LagTest()
 	char											msg[60];
 	int												clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int												x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 0, vary = 0, variation = 1;
-	uint16										oldbuttons, pressed, timeout = 0;		
+	uint16										oldbuttons, pressed, ltrig = 0, oldltrig = 0;		
 	ImagePtr									back, spriteA, spriteB;
 	sfxhnd_t									beep;
 	maple_device_t						*purupuru = NULL;
@@ -454,6 +454,8 @@ void LagTest()
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
+			ltrig = st->ltrig > 5 && oldltrig < 5;
+			oldltrig = st->ltrig;
 					
 			if (pressed & CONT_A)
 			{
@@ -488,17 +490,11 @@ void LagTest()
 			if (pressed & CONT_X)
 				vibrate =	!vibrate;				
 		
-			if(st->ltrig > 5 && !timeout)
+			if(ltrig)
 			{
 				variation = !variation;
 				if(!variation)
 					vary = 0;
-				timeout = 10;
-			}
-			else
-			{
-				if(timeout)
-					timeout -= 1;
 			}
 
 			if (pressed & CONT_START)
@@ -647,6 +643,7 @@ void LagTest()
 			DrawStringS(20, 170+5*fh, 0.0f, 1.0f, 0.0f, "\"X\" button toggles vibration feedback.");
 
 		DrawScanlines();
+
 		pvr_list_finish();				
 
 		pvr_scene_finish();
@@ -1141,8 +1138,8 @@ void SoundTest()
 			if (pressed & CONT_DPAD_RIGHT)
 				sel ++;
 
-			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(SOUNDHELP, NULL);
+			//if(st->rtrig > 5)
+				//oldbuttons = HelpWindow(SOUNDHELP, NULL);
 		}
 		
 		if(sel < 0)
