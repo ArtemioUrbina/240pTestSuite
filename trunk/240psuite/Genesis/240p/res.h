@@ -106,5 +106,11 @@ extern u32 lag_tiles[512/4];
 // Solid Color (White)
 extern u32 solid_tiles[32/4]; 
 
+//LED Zone Tiles
+extern u32 size0led_t[32/4]; 
+extern u32 size1led_t[32/4]; 
+extern u32 size2led_t[32/4]; 
+extern u32 size3led_t[32/4]; 
+extern u32 size4led_t[32/4]; 
 
 #endif

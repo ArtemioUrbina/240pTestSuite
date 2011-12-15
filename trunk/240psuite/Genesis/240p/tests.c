@@ -1174,3 +1174,116 @@ void SoundTest()
   }  
   stopPlay_PCM();
 }
+
+void LEDZoneTest()
+{
+  u16 size, sprite0, sprite1, sprite2, sprite3, sprite4;
+  u16 x = 160, y = 112, exit = 0, sprite = 0, change = 0;
+  u16 buttons, pressedButtons, oldButtons = 0xffff;
+
+  VDP_setPalette(PAL1, bw_pal);  
+
+  size = sizeof(size0led_t) / 32; 
+
+  sprite0 = TILE_USERINDEX;   
+  VDP_loadTileData(size0led_t, sprite0, size, USE_DMA);
+  sprite1 = sprite0 + size;  
+  VDP_loadTileData(size1led_t, sprite1, size, USE_DMA);  
+  sprite2 = sprite1 + size;  
+  VDP_loadTileData(size2led_t, sprite2, size, USE_DMA);
+  sprite3 = sprite2 + size;  
+  VDP_loadTileData(size3led_t, sprite3, size, USE_DMA);
+  sprite4 = sprite3 + size;  
+  VDP_loadTileData(size4led_t, sprite4, size, USE_DMA);  
+
+  VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite0, 1);    
+
+  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);            
+  while(!exit)
+  {                          
+    VDP_setSpritePosition(0, x, y);
+    
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+
+    if (buttons & BUTTON_UP)
+    {
+      if(y > 0)
+        y --;   
+    }   
+
+    if (buttons & BUTTON_DOWN)
+    {
+      if(y < 224 - size)
+        y ++;   
+    }   
+
+    if (buttons & BUTTON_LEFT)
+    {
+      if(x > 0)
+        x --;   
+    }   
+
+    if (buttons & BUTTON_RIGHT)
+    {
+      if(x < 320 - size)
+        x ++;   
+    }   
+
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
+
+    if (pressedButtons & BUTTON_A)
+    {          
+      if(sprite == 0)
+        sprite = 4;
+      else
+        sprite --;
+      change = 1;
+    }
+
+    if (pressedButtons & BUTTON_B)
+    {     
+      if(sprite == 4)
+        sprite = 0;
+      else
+        sprite ++;
+      change = 1;
+    }        
+
+    if(change)
+    {
+      switch(sprite)
+      {
+        case 0:
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite0, 1);    
+          size = 1;
+          break;
+        case 1:
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite1, 1);    
+          size = 2;
+          break;
+        case 2:
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite2, 1);    
+          size = 4;
+          break;
+        case 3:
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite3, 1);    
+          size = 6;
+          break;
+        case 4:
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite4, 1);    
+          size = 8;
+          break;
+      }
+    }
+
+    VDP_updateSprites();
+    VDP_waitVSync();
+  }
+
+  VDP_resetSprites();
+  VDP_updateSprites();    
+}
+
