@@ -189,7 +189,7 @@ void Draw601ColorBars()
 void DrawLinearity()
 {
   u16 size, ind, grid2, redraw = 0;
-  u16 exit = 0, showgrid = 1, gridpattern = 1;
+  u16 exit = 0, showgrid = 1, gridpattern = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
   VDP_setPalette(PAL0, bw_pal);
@@ -207,7 +207,8 @@ void DrawLinearity()
   size = sizeof(circles_tiles) / 32; 
   VDP_loadTileData(circles_tiles, ind, size, USE_DMA); 
   
-  VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
+  if(gridpattern)
+    VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8); 
   VDP_setMyTileMapRect(APLAN, circles_map, ind, 0, 0, 320/8, 224/8);      
   
   while(!exit)
