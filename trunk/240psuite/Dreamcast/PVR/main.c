@@ -117,8 +117,9 @@ start:
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+    DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 
 		switch(vmode)
@@ -261,10 +262,13 @@ start:
 					case 8:
 						DrawCheckBoard();
 						break;
-					case 9:
-						SoundTest();
+          case 8:
+						LEDZoneTest();
 						break;
 					case 10:
+						SoundTest();
+						break;
+					case 11:
 						ChangeResolution();
 						FreeImage(&title);		
 						FreeImage(&sd);		
@@ -274,10 +278,10 @@ start:
 						// not pretty, but "clean"
 						goto start;
 						break;
-					case 11:
+					case 12:
 						HelpWindow(GENERALHELP, NULL);
 						break;
-					case 12:
+					case 13:
 						DrawCredits(title);
 						break;
 				} 												
@@ -508,7 +512,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.10"); y += fh; 
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.11"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();				

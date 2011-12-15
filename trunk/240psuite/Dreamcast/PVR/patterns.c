@@ -34,15 +34,6 @@
 
 #include "help.h"
 
-
-void DrawPluge();
-void DrawWhiteScreen();
-void DrawGrayRamp();
-void DrawColorBars();
-void Draw601ColorBars();
-void DrawGrid();
-void DrawLinearity();
-
 void DrawPluge()
 {
 	int 				done = 0;
@@ -403,7 +394,7 @@ void DrawGrid()
 
 void DrawLinearity()
 {
-	int 				done = 0, gridpattern = 0, showgrid = 1;
+	int 				done = 0, gridpattern = 0, showgrid = 0;
 	uint16			oldbuttons, pressed;
 	ImagePtr		circles, grid, gridd;
 	controller	*st;

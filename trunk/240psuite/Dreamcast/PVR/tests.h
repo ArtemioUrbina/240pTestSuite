@@ -30,6 +30,7 @@ void GridScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
 void SoundTest();
+void LEDZoneTest();
 
 #endif
 
