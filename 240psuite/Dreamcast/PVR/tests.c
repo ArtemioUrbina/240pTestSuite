@@ -1188,3 +1188,122 @@ void SoundTest()
 	return;
 }
 
+void LEDZoneTest()
+{	
+	int		    done = 0, x = 0, y = 0, selsprite = 1, show = 1;
+	uint16		oldbuttons = 0xffff, pressed;
+	ImagePtr	back, sprite[5];
+	controller *st;
+
+	oldbuttons = InitController(0);
+	back = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!back)
+		return;
+
+  back->r = 0.0f;
+	back->g = 0.0f;
+	back->b = 0.0f;
+			
+	sprite[0] = LoadKMG("/rd/sprite0led.kmg.gz", 0);
+	if(!sprite[0])
+		return;
+  sprite[1] = LoadKMG("/rd/sprite1led.kmg.gz", 0);
+	if(!sprite[1])
+		return;
+  sprite[2] = LoadKMG("/rd/sprite2led.kmg.gz", 0);
+	if(!sprite[2])
+		return;
+  sprite[3] = LoadKMG("/rd/sprite3led.kmg.gz", 0);
+	if(!sprite[3])
+		return;
+  sprite[4] = LoadKMG("/rd/sprite4led.kmg.gz", 0);
+	if(!sprite[4])
+		return;
+		
+	updateVMU("Backlit", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;				
+			
+      if(show)
+      {
+			  if (st->buttons & CONT_DPAD_UP)
+				  y --;
+		  
+			  if (st->buttons & CONT_DPAD_DOWN)
+				  y ++;
+  
+			  if (st->buttons & CONT_DPAD_LEFT)
+				  x --;
+  
+			  if (st->buttons & CONT_DPAD_RIGHT)
+				  x ++;
+			  
+  
+			  // Joystick
+			  if(st->joyx != 0)
+				  x += st->joyx/40;
+		  
+			  if(st->joyy != 0)
+				  y += st->joyy/40;
+      }
+		
+			if (pressed & CONT_START)
+				done =	1;
+						
+			if (pressed & CONT_A)
+			{
+				if(selsprite > 0)
+					selsprite --;
+				else
+					selsprite = 4;
+			}
+		
+			if (pressed & CONT_B)
+			{
+				if(selsprite < 4)
+					selsprite ++;
+				else
+					selsprite = 0;
+			}
+
+      if (pressed & CONT_Y)
+			  show = !show;
+		}
+		
+		if(x > back->w + back]->x - sprite[selsprite]->w)
+			x = back]->w + back->x - sprite[selsprite]->w;
+		if(y > back->h + back->y - sprite[selsprite]->h)
+			y = back->h + back->y - sprite[selsprite]->h;
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);		
+		DrawImage(back);		
+
+    if(show)
+    {
+		  sprite[selsprite]->x = x;
+   		sprite[selsprite]->y = y;
+		  DrawImage(sprite[selsprite]);
+    }
+
+		DrawScanlines();
+		pvr_list_finish();
+
+		pvr_scene_finish();
+	}
+	FreeImage(&back);
+	FreeImage(&sprite[0]);
+	FreeImage(&sprite[1]);
+	FreeImage(&sprite[2]);
+	FreeImage(&sprite[3]);
+	FreeImage(&sprite[4]);
+	return;
+}
