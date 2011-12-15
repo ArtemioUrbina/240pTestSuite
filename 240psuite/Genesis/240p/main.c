@@ -73,9 +73,10 @@ int main()
 		VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+    VDP_drawTextBG(APLAN, "LED Zones", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -126,12 +127,15 @@ int main()
           DrawCheckBoard();                                   
           break;  
         case 9: 
-          SoundTest();                                   
+          LEDZoneTest();                                   
           break;  
         case 10: 
+          SoundTest();                                   
+          break;  
+        case 11: 
           DrawHelp(HELP_GENERAL);                                   
           break;
-        case 11: 
+        case 12: 
           DrawCredits();                                   
           break;
       }
