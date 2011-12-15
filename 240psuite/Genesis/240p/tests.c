@@ -1177,8 +1177,8 @@ void SoundTest()
 
 void LEDZoneTest()
 {
-  u16 size, sprite0, sprite1, sprite2, sprite3, sprite4;
-  u16 x = 160, y = 112, exit = 0, sprite = 0, change = 0;
+  u16 size, sprite0, sprite1, sprite2, sprite3, sprite4, tmp = 0;
+  u16 x = 160, y = 112, exit = 0, sprite = 1, change = 0, draw = 1;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
 
   VDP_setPalette(PAL1, bw_pal);  
@@ -1196,9 +1196,9 @@ void LEDZoneTest()
   sprite4 = sprite3 + size;  
   VDP_loadTileData(size4led_t, sprite4, size, USE_DMA);  
 
-  VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite0, 1);    
+  VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite1, 0);    
 
-  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);            
+  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);              
   while(!exit)
   {                          
     VDP_setSpritePosition(0, x, y);
@@ -1207,28 +1207,31 @@ void LEDZoneTest()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
-    if (buttons & BUTTON_UP)
+    if(draw)
     {
-      if(y > 0)
-        y --;   
-    }   
-
-    if (buttons & BUTTON_DOWN)
-    {
-      if(y < 224 - size)
-        y ++;   
-    }   
-
-    if (buttons & BUTTON_LEFT)
-    {
-      if(x > 0)
-        x --;   
-    }   
-
-    if (buttons & BUTTON_RIGHT)
-    {
-      if(x < 320 - size)
-        x ++;   
+      if (buttons & BUTTON_UP)
+      {
+        if(y > 0)
+          y --;   
+      }   
+  
+      if (buttons & BUTTON_DOWN)
+      {
+        if(y < 224 - size)
+          y ++;   
+      }   
+  
+      if (buttons & BUTTON_LEFT)
+      {
+        if(x > 0)
+          x --;   
+      }   
+  
+      if (buttons & BUTTON_RIGHT)
+      {
+        if(x < 320 - size)
+          x ++;   
+      }
     }   
 
     if (pressedButtons & BUTTON_START)
@@ -1252,28 +1255,41 @@ void LEDZoneTest()
       change = 1;
     }        
 
+    if (pressedButtons & BUTTON_C)
+    {
+      draw = !draw;   
+      change = 1;
+      if(draw)
+        x = tmp;
+      else
+      {
+        tmp = x;
+        x = 340;
+      }
+    }
+
     if(change)
     {
       switch(sprite)
       {
         case 0:
-          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite0, 1);    
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite0, 0);    
           size = 1;
           break;
         case 1:
-          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite1, 1);    
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite1, 0);    
           size = 2;
           break;
         case 2:
-          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite2, 1);    
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite2, 0);    
           size = 4;
           break;
         case 3:
-          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite3, 1);    
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite3, 0);    
           size = 6;
           break;
         case 4:
-          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite4, 1);    
+          VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite4, 0);    
           size = 8;
           break;
       }
