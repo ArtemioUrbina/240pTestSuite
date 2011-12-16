@@ -1275,6 +1275,9 @@ void LEDZoneTest()
 
       if (pressed & CONT_Y)
 			  show = !show;
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(BACKLITHELP, NULL);
 		}
 		
 		if(x < 0)

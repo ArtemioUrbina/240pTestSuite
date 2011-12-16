@@ -32,6 +32,7 @@
 #define GRIDHELP    		"/rd/help/grid.txt"
 #define PLUGEHELP				"/rd/help/pluge.txt"
 #define STRIPESHELP			"/rd/help/stripes.txt"
+#define BACKLITHELP			"/rd/help/backlit.txt"
 
 uint16 HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);
