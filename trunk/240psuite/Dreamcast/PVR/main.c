@@ -262,7 +262,7 @@ start:
 					case 8:
 						DrawCheckBoard();
 						break;
-          case 8:
+          case 9:
 						LEDZoneTest();
 						break;
 					case 10:

@@ -1277,10 +1277,14 @@ void LEDZoneTest()
 			  show = !show;
 		}
 		
-		if(x > back->w + back]->x - sprite[selsprite]->w)
-			x = back]->w + back->x - sprite[selsprite]->w;
-		if(y > back->h + back->y - sprite[selsprite]->h)
-			y = back->h + back->y - sprite[selsprite]->h;
+		if(x < 0)
+			x = 0;
+		if(y < 0)
+			y = 0;
+		if(x > back->w - 1)
+			x = back->w - 1;
+		if(y > back->h - 1)
+			y = back->h - 1;
 
 		pvr_scene_begin();
 
