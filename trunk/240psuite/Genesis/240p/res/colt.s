@@ -48,12 +48,12 @@ tiles_c:
 * ---------------------------
 	dc.l 0x00000000
 	dc.l 0x00000000
-	dc.l 0x00111110
-	dc.l 0x01111110
-	dc.l 0x01111111
-	dc.l 0x01111111
-	dc.l 0x01111111
-	dc.l 0x00111110
+	dc.l 0x00fffff0
+	dc.l 0x0ffffff0
+	dc.l 0x0fffffff
+	dc.l 0x0fffffff
+	dc.l 0x0fffffff
+	dc.l 0x00fffff0
 
 * ---------------------------
 	dc.l 0x00000000
@@ -76,7 +76,7 @@ tiles_c:
 	dc.l 0x00000000
 
 * ---------------------------
-	dc.l 0x00011100
+	dc.l 0x000fff00
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000000
@@ -106,13 +106,13 @@ tiles_c:
 	dc.l 0x00000000
 
 * ---------------------------
-	dc.l 0x00111110
-	dc.l 0x01111110
-	dc.l 0x01111111
-	dc.l 0x01111111
-	dc.l 0x01111111
-	dc.l 0x00111110
-	dc.l 0x00011100
+	dc.l 0x00fffff0
+	dc.l 0x0ffffff0
+	dc.l 0x0fffffff
+	dc.l 0x0fffffff
+	dc.l 0x0fffffff
+	dc.l 0x00fffff0
+	dc.l 0x000fff00
 	dc.l 0x00000000
 
 * ---------------------------

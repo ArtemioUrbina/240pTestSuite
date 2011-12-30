@@ -126,5 +126,7 @@ extern u32 tiles_8[480/4];
 extern u32 tiles_9[480/4]; 
 extern u32 tiles_c[480/4]; 
 
+extern u32 circle56_tiles[1568/4];
+
 
 #endif
