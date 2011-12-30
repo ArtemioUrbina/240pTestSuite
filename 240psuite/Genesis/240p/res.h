@@ -113,4 +113,18 @@ extern u32 size2led_t[32/4];
 extern u32 size3led_t[32/4]; 
 extern u32 size4led_t[32/4]; 
 
+// Big Number tiles
+extern u32 tiles_0[480/4]; 
+extern u32 tiles_1[480/4]; 
+extern u32 tiles_2[480/4]; 
+extern u32 tiles_3[480/4]; 
+extern u32 tiles_4[480/4]; 
+extern u32 tiles_5[480/4]; 
+extern u32 tiles_6[480/4]; 
+extern u32 tiles_7[480/4]; 
+extern u32 tiles_8[480/4]; 
+extern u32 tiles_9[480/4]; 
+extern u32 tiles_c[480/4]; 
+
+
 #endif

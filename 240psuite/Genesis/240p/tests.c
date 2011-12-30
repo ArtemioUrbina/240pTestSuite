@@ -1303,3 +1303,126 @@ void LEDZoneTest()
   VDP_updateSprites();    
 }
 
+void PrintMSF(u16 frames)
+{
+/*
+   char cntstr[10];
+   intToStr(count, cntstr, 2);
+   VDP_drawText("Frame:", 2, 25);
+   VDP_drawText(cntstr, 8, 25);
+*/
+}
+
+void PassiveLagTest()
+{  
+  u16 frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1;
+  u16 exit = 0;
+  u16 buttons, oldButtons = 0xffff, pressedButtons;  
+  u16 numbers[11], size, lsd, msd;
+
+  VDP_setPalette(PAL1, bw_pal);
+  VDP_setPalette(PAL2, palette_blue);
+  VDP_setPalette(PAL3, palette_red);
+
+  numbers[0] = TILE_USERINDEX; 
+  size = sizeof(tiles_0) / 32; 
+
+  VDP_loadTileData(tiles_0, numbers[0], size, USE_DMA); 
+  numbers[1] = numbers[0] + size;  
+  VDP_loadTileData(tiles_1, numbers[1], size, USE_DMA); 
+  numbers[2] = numbers[1] + size;  
+  VDP_loadTileData(tiles_2, numbers[2], size, USE_DMA); 
+  numbers[3] = numbers[2] + size;  
+  VDP_loadTileData(tiles_3, numbers[3], size, USE_DMA); 
+  numbers[4] = numbers[3] + size;  
+  VDP_loadTileData(tiles_4, numbers[4], size, USE_DMA); 
+  numbers[5] = numbers[4] + size;  
+  VDP_loadTileData(tiles_5, numbers[5], size, USE_DMA); 
+  numbers[6] = numbers[5] + size;  
+  VDP_loadTileData(tiles_6, numbers[6], size, USE_DMA); 
+  numbers[7] = numbers[6] + size;  
+  VDP_loadTileData(tiles_7, numbers[7], size, USE_DMA); 
+  numbers[8] = numbers[7] + size;  
+  VDP_loadTileData(tiles_8, numbers[8], size, USE_DMA); 
+  numbers[9] = numbers[8] + size;  
+  VDP_loadTileData(tiles_9, numbers[9], size, USE_DMA); 
+  numbers[10] = numbers[9] + size;  
+  VDP_loadTileData(tiles_c, numbers[10], size, USE_DMA); 
+    
+  while(!exit)
+  {             
+    if(framecnt > 8)
+      framecnt = 1;
+    
+    if(frames > 59)
+    {
+      frames = 0;
+      seconds ++;
+    }
+    
+    if(seconds > 59)
+    {
+      seconds = 0;
+      minutes ++;
+    }
+
+    if(minutes > 59)
+    {
+      minutes = 0;
+      hours ++;
+    }
+
+    if(hours > 99)
+      hours = 0;
+    
+    // Draw Hours
+    lsd = hours % 10;
+    msd = hours / 10;
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[msd], 4, 2, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[lsd], 7, 2, 3, 5);  
+  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 10, 2, 3, 5);  
+    // Draw Minutes
+    lsd = minutes % 10;
+    msd = minutes / 10;
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[msd], 13, 2, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[lsd], 16, 2, 3, 5);  
+  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 19, 2, 3, 5);  
+    // Draw Seconds
+    lsd = seconds % 10;
+    msd = seconds / 10;
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[msd], 22, 2, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[lsd], 25, 2, 3, 5);  
+  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 28, 2, 3, 5);  
+    // Draw frames
+    lsd = frames % 10;
+    msd = frames / 10;
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + numbers[msd], 31, 2, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + numbers[lsd], 34, 2, 3, 5);          
+
+    // Draw Frame divisor
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(framecnt == 1 ? PAL3 : PAL2, 0, 0, 0) + numbers[1], 4, 10, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(framecnt == 2 ? PAL3 : PAL2, 0, 0, 0) + numbers[2], 14, 10, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(framecnt == 3 ? PAL3 : PAL2, 0, 0, 0) + numbers[3], 24, 10, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(framecnt == 4 ? PAL3 : PAL2, 0, 0, 0) + numbers[4], 34, 10, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(framecnt == 5 ? PAL3 : PAL2, 0, 0, 0) + numbers[5], 4, 17, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(framecnt == 6 ? PAL3 : PAL2, 0, 0, 0) + numbers[6], 14, 17, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(framecnt == 7 ? PAL3 : PAL2, 0, 0, 0) + numbers[7], 24, 17, 3, 5);  
+    VDP_fillTileMapRectInc(APLAN, TILE_ATTR(framecnt == 8 ? PAL3 : PAL2, 0, 0, 0) + numbers[8], 34, 17, 3, 5);  
+    
+
+    
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
+
+    VDP_waitVSync();
+    frames ++;
+    framecnt ++;
+  }
+}
