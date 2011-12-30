@@ -68,8 +68,8 @@ int main()
     VDP_drawTextBG(APLAN, "Test Patterns", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
     VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
     VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
-    VDP_drawTextBG(APLAN, "Active Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Passive Lag Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Manual Lag Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -113,10 +113,10 @@ int main()
           StripedSpriteTest();
           break;
         case 4:
-          LagTest();   
+          PassiveLagTest();             
           break;
         case 5:
-          PassiveLagTest();   
+          LagTest();   
           break;
         case 6:
           HScrollTest();   
@@ -309,7 +309,7 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-  VDP_drawTextBG(APLAN, "Ver. 1.10 b", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
+  VDP_drawTextBG(APLAN, "Ver. 1.10c", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
