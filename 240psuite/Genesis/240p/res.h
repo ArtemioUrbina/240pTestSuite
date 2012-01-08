@@ -128,5 +128,12 @@ extern u32 tiles_c[480/4];
 
 extern u32 circle56_tiles[1568/4];
 
+extern u16 btw_pal[16]; 
+extern u16 redw_pal[16]; 
+extern u16 bluew_pal[16]; 
+extern u16 greenw_pal[16]; 
+
+extern u32 solidw_tiles[32/4]; 
+
 
 #endif
