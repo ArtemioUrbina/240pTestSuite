@@ -1316,13 +1316,13 @@ void PrintMSF(u16 frames)
 void PassiveLagTest()
 {  
   u16 frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, bgcol = PAL2;
-  u16 exit = 0;
+  u16 exit = 0, color = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;  
   u16 numbers[11], size, lsd, msd, pause = 0, circle, cposx = 32, cposy = 17, solid;
   
   VDP_setPalette(PAL1, btw_pal);
-  VDP_setPalette(PAL2, bluew_pal);
-  VDP_setPalette(PAL3, redw_pal);
+  VDP_setPalette(PAL2, btw_pal);
+  VDP_setPalette(PAL3, bw_pal);
 
   numbers[0] = TILE_USERINDEX; 
   size = sizeof(tiles_0) / 32; 
@@ -1397,7 +1397,7 @@ void PassiveLagTest()
     if(framecnt > 8)
       framecnt = 1;
 
-    if(!pause)
+    if(!pause && color)
     {
       if(bgcol == PAL2)
         bgcol = PAL3;
@@ -1481,6 +1481,23 @@ void PassiveLagTest()
     {
       frames = hours = minutes = seconds = 0;
       framecnt = 1;
+    }
+
+    if (pressedButtons & BUTTON_C)
+    {
+      color = !color;
+      if(!color)
+      {
+        VDP_setPalette(PAL1, btw_pal);
+        VDP_setPalette(PAL2, btw_pal);
+        VDP_setPalette(PAL3, bw_pal);
+      } 
+      else
+      {
+        VDP_setPalette(PAL1, btw_pal);
+        VDP_setPalette(PAL2, bluew_pal);
+        VDP_setPalette(PAL3, redw_pal);
+      }
     }
     
     if (pressedButtons & BUTTON_START)
