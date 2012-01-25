@@ -309,7 +309,7 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-  VDP_drawTextBG(APLAN, "Ver. 1.10c", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
+  VDP_drawTextBG(APLAN, "Ver. 1.10e", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
