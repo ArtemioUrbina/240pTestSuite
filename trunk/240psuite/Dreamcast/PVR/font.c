@@ -32,6 +32,13 @@ float fh = 9.0f;
 ImagePtr 	black_t = NULL;
 ImagePtr 	font_t = NULL;
 
+float n_size = 40.0f;
+
+float nw = 24.0f;
+float nh = 40.0f;
+
+ImagePtr  num_t = NULL;
+
 void LoadFont()
 {
 	if(!font_t)
@@ -122,4 +129,54 @@ void DrawStringB(float x, float y, float r, float g, float b, char *str)
 	}
 	
 	DrawString(x, y, r, g, b, str);
+}
+
+/* Big Numbers */
+
+void LoadNumbers()
+{
+	if(!num_t)
+	{
+		num_t = LoadKMG("/rd/numbers.kmg.gz", 0);
+		num_t->layer = 2.0f;
+	}		
+}
+
+void ReleaseNumbers()
+{	
+	if(num_t)
+	{
+		FreeImage(&num_t);
+		num_t = NULL;
+	}	
+}
+
+
+void DrawDigit(float x, float y, int digit) 
+{
+	int numx, numy;
+	
+	numx = (c % 5) * dw;
+	numy = (c / 5) * d_size;
+	CalculateUV(numx, numy, fw, d_size, num_t);
+	num_t->x = x;
+	num_t->y = y;	
+	DrawImage(num_t);
+}
+
+void DrawNumber(float x, float y, float r, float g, float b, int number) 
+{
+  char  str[10];
+  float orig_x = x;
+
+	num_t->r = r;
+	num_t->g = g;
+	num_t->b = b;	
+
+  sprintf(str, "%d", number);
+	while (str) 
+	{				
+		DrawDigit(x, y, str++);
+		x += nw;
+	}
 }

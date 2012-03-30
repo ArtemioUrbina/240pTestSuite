@@ -36,4 +36,12 @@ void DrawStringB(float x, float y, float r, float g, float b, char *str);
 void LoadFont();
 void ReleaseFont();
 
+/* Big Numbers */
+/* Big Numbers */
+
+void LoadNumbers();
+void ReleaseNumbers();
+void DrawDigit(float x, float y, int digit);
+void DrawNumber(float x, float y, float r, float g, float b, int number);
+
 #endif
