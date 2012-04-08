@@ -156,9 +156,9 @@ void DrawDigit(float x, float y, int digit)
 {
 	int numx, numy;
 	
-	numx = (c % 5) * dw;
-	numy = (c / 5) * d_size;
-	CalculateUV(numx, numy, fw, d_size, num_t);
+	numx = (digit % 5) * nw;
+	numy = (digit / 5) * n_size;
+	CalculateUV(numx, numy, fw, n_size, num_t);
 	num_t->x = x;
 	num_t->y = y;	
 	DrawImage(num_t);
@@ -166,17 +166,18 @@ void DrawDigit(float x, float y, int digit)
 
 void DrawNumber(float x, float y, float r, float g, float b, int number) 
 {
-  char  str[10];
-  float orig_x = x;
+  char  string[10], *str;
 
 	num_t->r = r;
 	num_t->g = g;
 	num_t->b = b;	
 
+	str = string;
+
   sprintf(str, "%d", number);
-	while (str) 
+	while (*str) 
 	{				
-		DrawDigit(x, y, str++);
+		DrawDigit(x, y, *str++);
 		x += nw;
 	}
 }
