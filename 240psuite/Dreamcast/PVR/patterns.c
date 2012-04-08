@@ -202,13 +202,16 @@ void DrawWhiteScreen()
 
 void DrawColorBars()
 {
-	int 				done = 0;
+	int 				done = 0, type = 0;
 	uint16			oldbuttons, pressed;		
-	ImagePtr		back;
+	ImagePtr		back, backgrid;
 	controller	*st;
 
 	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/color.kmg.gz", 1);
+	if(!back)
+		return;
+	backgrid = LoadKMG("/rd/color_grid.kmg.gz", 1);
 	if(!back)
 		return;
 		
@@ -226,6 +229,9 @@ void DrawColorBars()
 			if (pressed & CONT_START)
 				done =	1;								
 
+			if (pressed & CONT_A)
+				type = !type;
+
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(COLORBARSHELP, back);
 		}
@@ -233,7 +239,10 @@ void DrawColorBars()
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);
+		if(!type)
+			DrawImage(back);
+		else
+			DrawImage(backgrid);
 		DrawScanlines();
 		pvr_list_finish();				
 
