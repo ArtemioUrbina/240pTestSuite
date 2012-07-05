@@ -74,6 +74,13 @@ int main(void)
 		PVR_SET(PVR_FB_CFG_2, 0x00000001);
 	}
 
+	 // Default to 480p when VGA is connected.
+	 if(vcable == CT_VGA)
+	 {
+			//vmode = FAKE_640; // One less, so it changes to 480p
+			ChangeResolution();
+	 }
+
 start:
 	vid_border_color(0, 0, 0);
 	pvr_set_bg_color(0.0f, 0.0f, 0.0f);
@@ -125,7 +132,10 @@ start:
 		switch(vmode)
 		{
 			case NATIVE_320:
-				sprintf(res, "Video: 240p");
+	 			if(vcable != CT_VGA)
+					sprintf(res, "Video: 240p");
+				else
+					sprintf(res, "Video: 240p linedoubled");
 				break;
 			case NATIVE_640:
 				sprintf(res, "Video: 240p in 480i");
@@ -134,7 +144,10 @@ start:
 				sprintf(res, "Video: Fake 480i");
 				break;
 			case NATIVE_640_FS:
-				sprintf(res, "Video: 480i");
+	 			if(vcable != CT_VGA)
+					sprintf(res, "Video: 480i");
+				else
+					sprintf(res, "Video: 480p Full Screen");
 				break;
 			case FAKE_640_SL:
 				sprintf(res, "Video: 480p %s scanlines %0.0f%%", ScanlinesEven() ? "even" : "odd", GetScanlineIntensity());
