@@ -84,6 +84,9 @@ void ChangeResolution()
 	int lastw;
 
 	lastw = W;
+	// Skip useless video modes when in VGA
+	if(vcable == CT_VGA && vmode == NATIVE_320)
+		vmode = NATIVE_640;
 	vmode ++;
 
 	if(vmode > FAKE_640_SL)
@@ -103,9 +106,9 @@ void ChangeResolution()
 			dW = 320;
 			dH = 240;
 			break;
+		case NATIVE_640:
 		case FAKE_640:
 		case FAKE_640_SL:
-		case NATIVE_640:
 			W = 640;
 			H = 480;
 			dW = 320;
