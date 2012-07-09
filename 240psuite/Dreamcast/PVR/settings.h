@@ -19,29 +19,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef FONT_H
-#define FONT_H
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
-#include <kos.h>
+#include "image.h"
 
-extern float fw;
-extern float fh;
-extern float f_size;
+struct settings_st {
+	int drawborder;
+	int drawpvrbg;
+};
 
-void DrawChar(float x, float y, char c);
-void DrawString(float x, float y, float r, float g, float b, char *str);
-void DrawStringS(float x, float y, float r, float g, float b, char *str);
-void DrawStringB(float x, float y, float r, float g, float b, char *str);
+extern struct settings_st settings;
 
-void LoadFont();
-void ReleaseFont();
-
-/* Big Numbers */
-/* Big Numbers */
-
-void LoadNumbers();
-void ReleaseNumbers();
-void DrawDigit(float x, float y, float r, float g, float b, int digit) ;
-void DrawNumber(float x, float y, float r, float g, float b, int number);
+void Settings(ImagePtr back);
 
 #endif
+

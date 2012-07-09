@@ -32,6 +32,7 @@
 #include "vmu.h"
 
 #include "help.h"
+#include "settings.h"
 
 void DropShadowTest()
 {
@@ -1314,3 +1315,587 @@ void LEDZoneTest()
 	FreeImage(&sprite[4]);
 	return;
 }
+
+void PassiveLagTest()
+{
+	int frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
+	uint16			oldbuttons, pressed, lsd, msd, pause = 0;		
+	ImagePtr		back, circle;
+	controller	*st;
+
+	oldbuttons = InitController(0);
+
+	LoadNumbers();
+	back = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!back)
+		return;
+
+	circle= LoadKMG("/rd/circle.kmg.gz", 0);
+	if(!circle)
+		return;
+	circle->r = 0.0f;
+	circle->g = 0.0f;
+	circle->b = 1.0f;
+
+	updateVMU("LAG TEST", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		if(!pause)
+		{
+			frames ++;
+			framecnt ++;
+			if(framecnt > 8)
+				framecnt = 1;
+		}
+
+		if(frames > 59)
+		{
+			frames = 0;
+			seconds ++;
+		}
+
+		if(seconds > 59)
+		{
+			seconds = 0;
+			minutes ++;
+		}
+
+		if(minutes > 59)
+		{
+			minutes = 0;
+			hours ++;
+		}
+
+		if(hours > 99)
+			hours = 0;
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+
+		DrawImage(back);
+		DrawString(32, 8, 0, 0,	0, "hours");
+		DrawString(104, 8, 0, 0, 0, "minutes");
+		DrawString(176, 8, 0, 0, 0, "seconds");
+		DrawString(248, 8, 0, 0, 0, "frames");
+
+		// Counter Separators
+		DrawDigit(80, 16, 0, 0, 0, 10);
+		DrawDigit(152, 16, 0, 0, 0, 10);
+		DrawDigit(224, 16, 0, 0, 0, 10);
+
+		// Circles 1st row
+		circle->x = 16;
+		circle->y = 56;
+		if(framecnt == 1)
+		{
+			circle->b = 0;
+			circle->r = 1.0f;
+		}
+		else
+		{
+			circle->b = 1.0f;
+			circle->r = 0;
+		}
+		DrawImage(circle);
+		DrawDigit(36, 68, 1.0f, 1.0f, 1.0f, 1);
+
+		circle->x = 96;
+		circle->y = 56;
+		if(framecnt == 2)
+		{
+			circle->b = 0;
+			circle->r = 1.0f;
+		}
+		else
+		{
+			circle->b = 1.0f;
+			circle->r = 0;
+		}
+		DrawImage(circle);
+		DrawDigit(116, 68, 1.0f, 1.0f, 1.0f, 2);
+
+		circle->x = 176;
+		circle->y = 56;
+		if(framecnt == 3)
+		{
+			circle->b = 0;
+			circle->r = 1.0f;
+		}
+		else
+		{
+			circle->b = 1.0f;
+			circle->r = 0;
+		}
+		DrawImage(circle);
+		DrawDigit(196, 68, 1.0f, 1.0f, 1.0f, 3);
+
+		circle->x = 256;
+		circle->y = 56;
+		if(framecnt == 4)
+		{
+			circle->b = 0;
+			circle->r = 1.0f;
+		}
+		else
+		{
+			circle->b = 1.0f;
+			circle->r = 0;
+		}
+		DrawImage(circle);
+		DrawDigit(276, 68, 1.0f, 1.0f, 1.0f, 4);
+
+		// Circles 2nd row
+		circle->x = 16;
+		circle->y = 136;
+		if(framecnt == 5)
+		{
+			circle->b = 0;
+			circle->r = 1.0f;
+		}
+		else
+		{
+			circle->b = 1.0f;
+			circle->r = 0;
+		}
+		DrawImage(circle);
+		DrawDigit(36, 148, 1.0f, 1.0f, 1.0f, 5);
+
+		circle->x = 96;
+		circle->y = 136;
+		if(framecnt == 6)
+		{
+			circle->b = 0;
+			circle->r = 1.0f;
+		}
+		else
+		{
+			circle->b = 1.0f;
+			circle->r = 0;
+		}
+		DrawImage(circle);
+		DrawDigit(116, 148, 1.0f, 1.0f, 1.0f, 6);
+
+		circle->x = 176;
+		circle->y = 136;
+		if(framecnt == 7)
+		{
+			circle->b = 0;
+			circle->r = 1.0f;
+		}
+		else
+		{
+			circle->b = 1.0f;
+			circle->r = 0;
+		}
+		DrawImage(circle);
+		DrawDigit(196, 148, 1.0f, 1.0f, 1.0f, 7);
+
+		circle->x = 256;
+		circle->y = 136;
+		if(framecnt == 8)
+		{
+			circle->b = 0;
+			circle->r = 1.0f;
+		}
+		else
+		{
+			circle->b = 1.0f;
+			circle->r = 0;
+		}
+		DrawImage(circle);
+		DrawDigit(276, 148, 1.0f, 1.0f, 1.0f, 8);
+
+		// Draw Hours
+		lsd = hours % 10;
+		msd = hours / 10;
+		DrawDigit(32, 16, 0, 0, 0, msd);
+		DrawDigit(56, 16, 0, 0, 0, lsd);
+
+		// Draw Minutes
+		lsd = minutes % 10;
+		msd = minutes / 10;
+		DrawDigit(104, 16, 0, 0, 0, msd);
+		DrawDigit(128, 16, 0, 0, 0, lsd);
+
+		// Draw Seconds
+		lsd = seconds % 10;
+		msd = seconds / 10;
+		DrawDigit(176, 16, 0, 0, 0, msd);
+		DrawDigit(200, 16, 0, 0, 0, lsd);
+
+		// Draw Frames
+		lsd = frames % 10;
+		msd = frames / 10;
+		DrawDigit(248, 16, 0, 0, 0, msd);
+		DrawDigit(272, 16, 0, 0, 0, lsd);
+
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_START)
+				done =	1;				
+						
+			if (pressed & CONT_B && pause)
+			{
+				frames = hours = minutes = seconds = 0;
+				framecnt = 1;
+			}
+
+			if (pressed & CONT_A)
+				pause = !pause;
+		}
+	}
+	FreeImage(&back);
+	FreeImage(&circle);
+	ReleaseNumbers();
+}
+
+void ResetVideoValues(vid_mode_t *vga_mode)
+{
+	if(!vga_mode)
+		return;
+
+	/*
+	vga_mode->generic = DM_640x480;
+	vga_mode->width = 640;
+	vga_mode->height = 480;
+	vga_mode->flags = VID_INTERLACE;
+	vga_mode->cable_type = CT_VGA;
+	vga_mode->pm = PM_RGB565;
+	vga_mode->scanlines = 526;
+	vga_mode->clocks = 855;		
+	vga_mode->bitmapx = 156;	// X & Y in Framebuffer
+	vga_mode->bitmapy = 36;
+	vga_mode->scanint1 = 21;	// scanline interrupt positions
+	vga_mode->scanint2 = 260;
+	vga_mode->borderx1 = 115; // X Start 
+	vga_mode->borderx2 = 835; // X Stop  
+	vga_mode->bordery1 = 36;  // Y start 
+	vga_mode->bordery2 = 516; // Y Stop 
+	vga_mode->fb_curr = 0; 
+	vga_mode->fb_count = 1; 
+	vga_mode->fb_base[0] = 0; 
+	vga_mode->fb_base[1] = 0; 
+	vga_mode->fb_base[2] = 0; 
+	*/
+
+	vga_mode->generic = DM_640x480;
+	vga_mode->width = 640;
+	vga_mode->height = 480;
+	vga_mode->flags = VID_INTERLACE;
+	vga_mode->cable_type = CT_VGA;
+	vga_mode->pm = PM_RGB565;
+	vga_mode->scanlines = 526;
+	vga_mode->clocks = 855;		
+	vga_mode->bitmapx = 175;	// X & Y in Framebuffer
+	vga_mode->bitmapy = 36;
+	vga_mode->scanint1 = 21;	// scanline interrupt positions
+	vga_mode->scanint2 = 260;
+	vga_mode->borderx1 = 135; // X Start 
+	vga_mode->borderx2 = 855; // X Stop  
+	vga_mode->bordery1 = 36;  // Y start 
+	vga_mode->bordery2 = 516; // Y Stop 
+	vga_mode->fb_curr = 0; 
+	vga_mode->fb_count = 1; 
+	vga_mode->fb_base[0] = 0; 
+	vga_mode->fb_base[1] = 0; 
+	vga_mode->fb_base[2] = 0; 
+	vga_mode->fb_base[3] = 0; 
+}
+
+vid_mode_t  vga_mode;
+int					initvga = 1;
+
+void TestVideoMode()
+{
+	int 				done =  0;
+	uint16			oldbuttons, pressed, update = 0, load = 0, sel = 1, showback = 1;		
+	controller	*st;
+	char				str[50];
+	ImagePtr		back;
+
+	if(vcable != CT_VGA)
+		return;
+
+	if(initvga)
+	{
+		ResetVideoValues(&vga_mode);
+		initvga = 0;
+	}
+
+	back = LoadKMG("/rd/480/grid-480.kmg.gz", 1);
+	if(!back)
+		return;
+	back->scale = 0;
+
+	oldbuttons = InitController(0);
+
+	updateVMU("VIDEO", "", 1);
+
+	vid_set_mode_ex(&vga_mode);
+
+	while(!done) 
+	{
+		float   r = 1.0f;
+		float   g = 1.0f;
+		float   b = 1.0f;
+		int     c = 1;
+		float   x = 40.0f;
+		float   y = 55.0f;
+
+		if(load)
+		{
+			LoadFont();
+			LoadScanlines();
+			load = 0;
+		}
+
+		pvr_wait_ready();
+		pvr_scene_begin();
+		pvr_list_begin(PVR_LIST_TR_POLY);
+
+		if(showback)
+			DrawImage(back);
+
+		sprintf(str, " Width:     %d ", vga_mode.width);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Height:    %d ", vga_mode.height);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " Scanlines: %d ", vga_mode.scanlines);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Clocks:    %d ", vga_mode.clocks);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " Bitmap X:  %d ", vga_mode.bitmapx);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Bitmap Y:  %d ", vga_mode.bitmapy);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " Border X1: %d ", vga_mode.borderx1);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Border X2: %d ", vga_mode.borderx2);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Border Y1: %d ", vga_mode.bordery1);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Border Y2: %d ", vga_mode.bordery2);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " Draw Video Border:   %s ", settings.drawborder == 1 ? "yes" : " no");
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Draw PVR Background: %s ", settings.drawpvrbg == 1 ? "yes" : " no");
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		sprintf(str, " Video Border Size:               %dx%d ", vga_mode.borderx2-vga_mode.borderx1, vga_mode.bordery2-vga_mode.bordery1);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+
+		sprintf(str, " Active Area Margin Left:         %d", vga_mode.bitmapx - vga_mode.borderx1);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+		sprintf(str, " Active Area Margin Right:        %d", vga_mode.clocks - vga_mode.bitmapx - vga_mode.width);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+		sprintf(str, " Active Area Margin Top:          %d", vga_mode.bitmapy);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+		sprintf(str, " Active Area Margin Bottom:       %d", vga_mode.scanlines - vga_mode.bitmapy - vga_mode.height);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+
+		DrawScanlines();
+
+		pvr_list_finish();				
+		pvr_scene_finish();
+
+		if(update)
+		{
+			ReleaseScanlines();
+			ReleaseFont();
+
+			vid_set_mode_ex(&vga_mode);
+
+			if(settings.drawborder)
+				vid_border_color(255, 255, 255);
+			else
+				vid_border_color(0, 0, 0);
+
+			if(settings.drawpvrbg)
+				pvr_set_bg_color(0.0f, 1.0f, 0.0f);
+			else
+				pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+
+			update = 0;
+			load = 1;
+		}
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_START)
+				done =	1;				
+
+			if (pressed & CONT_X)
+			{
+				ResetVideoValues(&vga_mode);
+				update = 1;
+			}
+						
+			if (pressed & CONT_Y)
+				update = 1;
+
+			if (pressed & CONT_A)
+				showback = !showback;
+
+			if (pressed & CONT_DPAD_UP)
+			{
+				sel --;
+				if(sel < 1)
+					sel = c - 1;
+			}
+
+			if (pressed & CONT_DPAD_DOWN)
+			{
+				sel ++;
+				if(sel > c - 1)
+					sel = 1;
+			}
+
+			if (pressed & CONT_DPAD_LEFT)
+			{
+				switch(sel)
+				{
+					case 1:
+						if (pressed & CONT_B)
+							vga_mode.width --;
+						break;
+					case 2:
+						if (pressed & CONT_B)
+							vga_mode.height --;
+						break;
+					case 3:
+						vga_mode.scanlines --;
+						break;
+					case 4:
+						vga_mode.clocks --;
+						break;
+					case 5:
+						vga_mode.bitmapx --;
+						break;
+					case 6:
+						vga_mode.bitmapy --;
+						break;
+					case 7:
+						vga_mode.borderx1 --;
+						break;
+					case 8:
+						vga_mode.borderx2 --;
+						break;
+					case 9:
+						vga_mode.bordery1 --;
+						break;
+					case 10:
+						vga_mode.bordery2 --;
+						break;
+					case 11:
+						settings.drawborder = !settings.drawborder;
+						break;
+					case 12:
+						settings.drawpvrbg = !settings.drawpvrbg;
+						break;
+				}
+			}
+
+			if (pressed & CONT_DPAD_RIGHT)
+			{
+				switch(sel)
+				{
+					case 1:
+						if (pressed & CONT_B)
+							vga_mode.width ++;
+						break;
+					case 2:
+						if (pressed & CONT_B)
+							vga_mode.height ++;
+						break;
+					case 3:
+						vga_mode.scanlines ++;
+						break;
+					case 4:
+						vga_mode.clocks ++;
+						break;
+					case 5:
+						vga_mode.bitmapx ++;
+						break;
+					case 6:
+						vga_mode.bitmapy ++;
+						break;
+					case 7:
+						vga_mode.borderx1 ++;
+						break;
+					case 8:
+						vga_mode.borderx2 ++;
+						break;
+					case 9:
+						vga_mode.bordery1 ++;
+						break;
+					case 10:
+						vga_mode.bordery2 ++;
+						break;
+					case 11:
+						settings.drawborder = !settings.drawborder;
+						break;
+					case 12:
+						settings.drawpvrbg = !settings.drawpvrbg;
+						break;
+				}
+			}
+		}
+	}
+
+	FreeImage(&back);
+
+	sprintf(str, " Width:     %d\n", vga_mode.width);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Height:    %d\n", vga_mode.height);
+	dbglog(DBG_KDEBUG, str);
+
+	sprintf(str, " Scanlines: %d\n", vga_mode.scanlines);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Clocks:    %d\n", vga_mode.clocks);
+	dbglog(DBG_KDEBUG, str);
+
+	sprintf(str, " Bitmap X:  %d\n", vga_mode.bitmapx);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Bitmap Y:  %d\n", vga_mode.bitmapy);
+	dbglog(DBG_KDEBUG, str);
+
+	sprintf(str, " Border X1: %d\n", vga_mode.borderx1);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Border X2: %d\n", vga_mode.borderx2);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Border Y1: %d\n", vga_mode.bordery1);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Border Y2: %d\n", vga_mode.bordery2);
+	dbglog(DBG_KDEBUG, str);
+}
+
+
+

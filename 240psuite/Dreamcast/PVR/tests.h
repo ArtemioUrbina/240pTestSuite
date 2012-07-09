@@ -31,6 +31,8 @@ void DrawStripes();
 void DrawCheckBoard();
 void SoundTest();
 void LEDZoneTest();
+void PassiveLagTest();
+void TestVideoMode();
 
 #endif
 

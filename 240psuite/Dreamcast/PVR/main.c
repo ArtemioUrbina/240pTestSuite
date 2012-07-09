@@ -34,6 +34,7 @@
 #include "patterns.h"
 
 #include "help.h"
+#include "settings.h"
 
 /* romdisk */
 extern uint8 romdisk[];
@@ -54,9 +55,10 @@ int main(void)
 	controller	*st;
 
 	/* init kos	*/
-	// PM_RGB555 PM_RGB565 PM_RGB888
 	vcable = vid_check_cable();
-	vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
+	if(vcable != CT_VGA)
+		vid_set_mode(DM_320x240_NTSC, PM_RGB565); // PM_RGB555 PM_RGB565 PM_RGB888
+
 	pvr_init_defaults();
 	region = flashrom_get_region();
 
@@ -76,14 +78,21 @@ int main(void)
 
 	 // Default to 480p when VGA is connected.
 	 if(vcable == CT_VGA)
-	 {
-			//vmode = FAKE_640; // One less, so it changes to 480p
 			ChangeResolution();
-	 }
 
 start:
-	vid_border_color(0, 0, 0);
-	pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+	// Check cable again in case it was changed on the fly
+	vcable = vid_check_cable();
+
+	if(!settings.drawborder) // Draw back video signal limits?
+		vid_border_color(0, 0, 0);
+	else
+		vid_border_color(255, 255, 255);
+
+	if(!settings.drawpvrbg)
+		pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+	else
+		pvr_set_bg_color(0.0f, 1.0f, 0.0f);
 		
 	LoadFont();
 	LoadScanlines();
@@ -122,6 +131,7 @@ start:
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Manual Lag Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
@@ -156,6 +166,11 @@ start:
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
+		if(vmode == NATIVE_640_FS && vcable == CT_VGA)
+		{
+			c++;
+			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VGA Settings"); 
+		}
 
 		r = 0.8f;
 		g = 0.8f;
@@ -207,6 +222,17 @@ start:
 
 			if (pressed & CONT_X)
 				ToggleScanlineEvenOdd();
+
+			if (pressed & CONT_X && pressed & CONT_Y)
+			{
+				settings.drawborder = !settings.drawborder;
+				settings.drawpvrbg = !settings.drawpvrbg;
+				FreeImage(&title);		
+				FreeImage(&sd);		
+				ReleaseScanlines();
+				ReleaseFont();
+				goto start;
+			}
 
 			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
 				RaiseScanlineIntensity();
@@ -261,27 +287,30 @@ start:
 						StripedSpriteTest();
 						break;
 					case 4:
-						LagTest();
+						PassiveLagTest();
 						break;
 					case 5:
-						ScrollTest();
+						LagTest();
 						break;
 					case 6:
-						GridScrollTest();
+						ScrollTest();
 						break;
 					case 7:
-						DrawStripes();
+						GridScrollTest();
 						break;
 					case 8:
+						DrawStripes();
+						break;
+					case 9:
 						DrawCheckBoard();
 						break;
-          case 9:
+          case 10:
 						LEDZoneTest();
 						break;
-					case 10:
+					case 11:
 						SoundTest();
 						break;
-					case 11:
+					case 12:
 						ChangeResolution();
 						FreeImage(&title);		
 						FreeImage(&sd);		
@@ -291,11 +320,15 @@ start:
 						// not pretty, but "clean"
 						goto start;
 						break;
-					case 12:
-						HelpWindow(GENERALHELP, NULL);
-						break;
 					case 13:
+						HelpWindow(GENERALHELP, title);
+						break;
+					case 14:
 						DrawCredits(title);
+						break;
+					case 15:
+						//Settings(title);
+						TestVideoMode();
 						break;
 				} 												
 				updateVMU("240p Test", "", 1);				
@@ -525,7 +558,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.13"); y += fh; 
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.14"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();				
@@ -573,3 +606,4 @@ void DrawIntro()
 	}
 	FreeImage(&black);
 }
+
