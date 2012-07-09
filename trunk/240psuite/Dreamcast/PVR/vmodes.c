@@ -8,6 +8,24 @@ int H				= 240;
 int dW			= 320;
 int dH			= 240;
 
+/* 640x480 VGA 60Hz */
+/* DM_640x480_VGA */
+vid_mode_t custom_vga =
+{
+	DM_640x480,
+	640, 480,
+	VID_INTERLACE,
+	CT_VGA,
+	PM_RGB565,
+	526, 855,
+	175, 36,
+	21, 260,
+	135, 855,
+	36, 516,
+	0, 1,
+	{ 0, 0, 0, 0 }
+};
+
 ImagePtr   scanlines = NULL;
 
 void LoadScanlines()
@@ -134,6 +152,10 @@ void ChangeResolution()
 			case FAKE_640_SL:
 			case NATIVE_640:
 			case NATIVE_640_FS:
+					if(vcable == CT_VGA)
+						//vid_set_mode(DM_640x480_VGA, PM_RGB565); 
+						vid_set_mode_ex(&custom_vga);
+					else
 						vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
 				break;
 		}
@@ -168,3 +190,4 @@ void PVRStats(char *msg)
 		printf("VBlank count %u  Frame last time: %u  Frame Rate: %f  Rendering Time: %u\n",
 			(unsigned int)stats.vbl_count, (unsigned int)stats.frame_last_time, (double)stats.frame_rate, (unsigned int)stats.rnd_last_time);
 }
+

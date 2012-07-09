@@ -48,7 +48,10 @@ void updateVMU(char *line1, char *line2, int force)
 		switch(vmode)
 		{
 			case NATIVE_320:
-				vmu_draw_str(bitmap, (unsigned char*)"     240p", 0, 20);
+				if(vcable != CT_VGA)
+					vmu_draw_str(bitmap, (unsigned char*)"     240p", 0, 20);
+				else
+					vmu_draw_str(bitmap, (unsigned char*)"  240p/LD", 0, 20);
 				break;
 			case FAKE_640:
 				vmu_draw_str(bitmap, (unsigned char*)"Fake 480i", 0, 20);
@@ -57,7 +60,10 @@ void updateVMU(char *line1, char *line2, int force)
 				vmu_draw_str(bitmap, (unsigned char*)"     480i", 0, 20);
 				break;
 			case NATIVE_640_FS:
-				vmu_draw_str(bitmap, (unsigned char*)"  480i/FS", 0, 20);
+				if(vcable != CT_VGA)
+					vmu_draw_str(bitmap, (unsigned char*)"  480i/FS", 0, 20);
+				else
+					vmu_draw_str(bitmap, (unsigned char*)"  480p/FS", 0, 20);
 				break;
 			case FAKE_640_SL:
 				vmu_draw_str(bitmap, (unsigned char*)"  480p/SL", 0, 20);

@@ -152,13 +152,17 @@ void ReleaseNumbers()
 }
 
 
-void DrawDigit(float x, float y, int digit) 
+void DrawDigit(float x, float y, float r, float g, float b, int digit) 
 {
 	int numx, numy;
 	
+	num_t->r = r;
+	num_t->g = g;
+	num_t->b = b;	
+
 	numx = (digit % 5) * nw;
 	numy = (digit / 5) * n_size;
-	CalculateUV(numx, numy, fw, n_size, num_t);
+	CalculateUV(numx, numy, nw, n_size, num_t);
 	num_t->x = x;
 	num_t->y = y;	
 	DrawImage(num_t);
@@ -168,16 +172,12 @@ void DrawNumber(float x, float y, float r, float g, float b, int number)
 {
   char  string[10], *str;
 
-	num_t->r = r;
-	num_t->g = g;
-	num_t->b = b;	
-
 	str = string;
 
   sprintf(str, "%d", number);
 	while (*str) 
 	{				
-		DrawDigit(x, y, *str++);
+		DrawDigit(x, y, r, g, b, *str++);
 		x += nw;
 	}
 }
