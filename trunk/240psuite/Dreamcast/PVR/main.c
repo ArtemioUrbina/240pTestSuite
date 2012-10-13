@@ -116,9 +116,10 @@ start:
 		float 	r = 1.0f;
 		float 	g = 1.0f;
 		float 	b = 1.0f;
-		int   	c = 1;				
+		int   	c = 1;				    
 		float 	x = 40.0f;
 		float 	y = 55.0f;
+    maple_device_t *sip = NULL;
 				
 		pvr_wait_ready();
 		pvr_scene_begin();
@@ -170,6 +171,13 @@ start:
 		{
 			c++;
 			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VGA Settings"); 
+		}
+    
+    sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+    if(sip)
+		{
+			c++;
+			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag test via micro"); 
 		}
 
 		r = 0.8f;
@@ -330,7 +338,11 @@ start:
 						//Settings(title);
 						TestVideoMode();
 						break;
-				} 												
+          case 16:
+						SIPLagTest();
+						break;
+				} 					
+        sip = DetectSIP();							
 				updateVMU("240p Test", "", 1);				
 				oldbuttons = InitController(0);
 			}

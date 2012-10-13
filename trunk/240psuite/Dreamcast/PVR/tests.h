@@ -33,6 +33,7 @@ void SoundTest();
 void LEDZoneTest();
 void PassiveLagTest();
 void TestVideoMode();
+void SIPLagTest();
 
 #endif
 
