@@ -1983,7 +1983,7 @@ void SIPLagTest()
         if(buffer && size)
         {
           FILE *fp = fopen("/pc/samples.raw", "wb");
-          printf("Creating samples.raw file\n", (int)size);
+          printf("Creating samples.raw file\n");
           if(fp)
           {
             fwrite(buffer, 1, size, fp);
