@@ -342,7 +342,6 @@ start:
 						SIPLagTest();
 						break;
 				} 					
-        sip = DetectSIP();							
 				updateVMU("240p Test", "", 1);				
 				oldbuttons = InitController(0);
 			}
