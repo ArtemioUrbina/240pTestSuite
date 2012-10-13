@@ -1913,7 +1913,7 @@ void SIPLagTest()
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
-	beep = snd_sfx_load("/rd/beep.wav");
+	beep = snd_sfx_load("/rd/Sample.wav");
 	if(!beep)
 		return;
 		
@@ -1947,7 +1947,7 @@ void SIPLagTest()
       
       if(sip_start_sampling(sip, 1) == MAPLE_EOK)
       {
-        counter = 10; // wait 10 frames
+        counter = 5; // wait 5 frames
         status = 2;
       }
       else
@@ -1970,7 +1970,7 @@ void SIPLagTest()
       printf("Status 3: Starting playback\n");
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
-      counter = 60; // record 60 frames
+      counter = 3*60+5; // record 3 seconds and 5 frames
 		}    
 
     if(status == 5 && sip)
