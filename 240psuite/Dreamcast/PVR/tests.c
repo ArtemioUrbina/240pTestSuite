@@ -1897,5 +1897,108 @@ void TestVideoMode()
 	dbglog(DBG_KDEBUG, str);
 }
 
+void SIPLagTest()
+{
+  int 				    done = 0, status = 0, counter = 0;
+	uint16			    oldbuttons, pressed;		
+	ImagePtr		    back;
+	sfxhnd_t		    beep;  
+	controller	    *st;
+	maple_device_t  *sip = NULL;
+  sip_state_t     *sip_state = NULL;
 
+	oldbuttons = InitController(0);
+	snd_init();
+	back = LoadKMG("/rd/back.kmg.gz", 1);
+	if(!back)
+		return;
+	beep = snd_sfx_load("/rd/beep.wav");
+	if(!beep)
+		return;
+		
+	updateVMU("Lag v/Micr", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+    if(status == 0) // no input if we are sampling
+    {
+		  st = ReadController(0);
+		  if(st)
+		  {
+			  pressed = st->buttons & ~oldbuttons;
+			  oldbuttons = st->buttons;					      
+       
+        if (pressed & CONT_START)
+				  done =	1;				
+  
+        if (pressed & CONT_A)
+  			  status = 1;
+		  }
+    }
+
+    if(status == 1 && sip)
+    {
+      sip_set_gain(sip, 0x1F);
+      sip_state = (sip_state_t *) maple_dev_status(sip);
+      sip_start_sampling(sip);
+      counter = 10; // wait 10 frames
+      status = 2;
+    }
+
+    if(status == 2 || status == 4)
+    {
+      counter --;
+      if(!counter)
+        status++;
+    }
+    
+		if(status == 3 && beep != SFXHND_INVALID)
+		{
+			snd_sfx_play(beep, 255, 128);
+			status = 4;
+      counter = 60; // record 60 frames
+		}    
+
+    if(status == 5)
+    {
+      sip_stop_sampling(sip);
+
+      FILE *fp = fopen("/pc/samples.raw", "wb");
+      if(fp)
+      {
+        fwrite(sip_state->samples_buf, 1, sip_state->buf_pos, fp);
+        fclose(fp);
+        printf("Wrote %d bytes\n", sip_state->buf_pos);
+        thd_sleep(1000);
+      }
+      sip_clear_samples(sip);
+
+      status = 0;
+    }   
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+
+		DrawStringS(130, 60, 1.0f, 1.0f, 1.0f, "Lag Test via Microphone"); 
+		
+		DrawStringS(160, 120, 1.0f, 1.0f,	1.0f, "Status goes here");
+		DrawScanlines();
+		
+		pvr_list_finish();				
+
+		pvr_scene_finish();
+
+	  sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+    if(!sip)
+      done = 1;
+	}
+
+	if(beep != SFXHND_INVALID)
+		snd_sfx_unload(beep);
+	FreeImage(&back);
+	return;
+}
 
