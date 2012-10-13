@@ -1904,8 +1904,9 @@ void SIPLagTest()
 	ImagePtr		    back;
 	sfxhnd_t		    beep;  
 	controller	    *st;
-	maple_device_t  *sip = NULL;
-  sip_state_t     *sip_state = NULL;
+	maple_device_t  *sip = NULL;  
+  size_t          size = 0;
+  uint8           *buffer = NULL;
 
 	oldbuttons = InitController(0);
 	snd_init();
@@ -1939,8 +1940,11 @@ void SIPLagTest()
 
     if(status == 1 && sip)
     {
-      sip_set_gain(sip, 0x1F);
-      sip_state = (sip_state_t *) maple_dev_status(sip);
+      printf("Status 1: Setting up mic and recording\n");
+      sip_set_gain(sip, SIP_MAX_GAIN);
+      sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED);
+      sip_set_frequency(sip, SIP_SAMPLE_11KHZ);
+      
       sip_start_sampling(sip);
       counter = 10; // wait 10 frames
       status = 2;
@@ -1948,6 +1952,7 @@ void SIPLagTest()
 
     if(status == 2 || status == 4)
     {
+      printf("Status %d: Waiting %d\n", status, counter);
       counter --;
       if(!counter)
         status++;
@@ -1955,22 +1960,34 @@ void SIPLagTest()
     
 		if(status == 3 && beep != SFXHND_INVALID)
 		{
+      printf("Status 3: Starting playback\n");
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
       counter = 60; // record 60 frames
 		}    
 
-    if(status == 5)
+    if(status == 5 && sip)
     {
+      printf("Status 5: Stopping sampling\n");
       sip_stop_sampling(sip);
 
-      FILE *fp = fopen("/pc/samples.raw", "wb");
-      if(fp)
+      buffer = sip_get_samples(sip, &size);
+      printf("Got %d bytes\n", (int)size);
+      if(buffer && size)
       {
-        fwrite(sip_state->samples_buf, 1, sip_state->buf_pos, fp);
-        fclose(fp);
-        printf("Wrote %d bytes\n", sip_state->buf_pos);
-        thd_sleep(1000);
+        FILE *fp = fopen("/pc/samples.raw", "wb");
+        printf("Creating samples.raw file\n", (int)size);
+        if(fp)
+        {
+          fwrite(buffer, 1, size, fp);
+          fclose(fp);
+          printf("Wrote %d bytes to file\n", size);
+
+          thd_sleep(1000);
+        }
+        free(buffer);
+        buffer = NULL;
+        size = 0;
       }
       sip_clear_samples(sip);
 
