@@ -1941,13 +1941,20 @@ void SIPLagTest()
     if(status == 1 && sip)
     {
       printf("Status 1: Setting up mic and recording\n");
-      sip_set_gain(sip, SIP_MAX_GAIN);
+      sip_set_gain(sip, SIP_MAX_GAIN); // SIP_DEFAULT_GAIN  
       sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED);
       sip_set_frequency(sip, SIP_SAMPLE_11KHZ);
       
-      sip_start_sampling(sip);
-      counter = 10; // wait 10 frames
-      status = 2;
+      if(sip_start_sampling(sip, 1) == MAPLE_EOK)
+      {
+        counter = 10; // wait 10 frames
+        status = 2;
+      }
+      else
+      {
+        printf("Start Recording: Failed\n");
+        status = 0;
+      }
     }
 
     if(status == 2 || status == 4)
@@ -1969,28 +1976,31 @@ void SIPLagTest()
     if(status == 5 && sip)
     {
       printf("Status 5: Stopping sampling\n");
-      sip_stop_sampling(sip);
-
-      buffer = sip_get_samples(sip, &size);
-      printf("Got %d bytes\n", (int)size);
-      if(buffer && size)
+      if(sip_stop_sampling(sip, 1) == MAPLE_EOK)
       {
-        FILE *fp = fopen("/pc/samples.raw", "wb");
-        printf("Creating samples.raw file\n", (int)size);
-        if(fp)
+        buffer = sip_get_samples(sip, &size);
+        printf("Got %d bytes\n", (int)size);
+        if(buffer && size)
         {
-          fwrite(buffer, 1, size, fp);
-          fclose(fp);
-          printf("Wrote %d bytes to file\n", size);
-
-          thd_sleep(1000);
-        }
-        free(buffer);
-        buffer = NULL;
-        size = 0;
+          FILE *fp = fopen("/pc/samples.raw", "wb");
+          printf("Creating samples.raw file\n", (int)size);
+          if(fp)
+          {
+            fwrite(buffer, 1, size, fp);
+            fclose(fp);
+            printf("Wrote %d bytes to file\n", size);
+  
+            thd_sleep(1000);
+          }
+          free(buffer);
+          buffer = NULL;
+          size = 0;
+        }        
       }
-      sip_clear_samples(sip);
+      else
+        printf("Stop sampling failed: aborting\n");        
 
+      sip_clear_samples(sip);
       status = 0;
     }   
 
