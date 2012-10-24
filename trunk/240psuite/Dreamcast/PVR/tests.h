@@ -33,7 +33,10 @@ void SoundTest();
 void LEDZoneTest();
 void PassiveLagTest();
 void TestVideoMode();
+#ifdef USE_FFTW
 void SIPLagTest();
+void ProcessSamples(uint8 *samples, size_t size);
+#endif
 
 #endif
 

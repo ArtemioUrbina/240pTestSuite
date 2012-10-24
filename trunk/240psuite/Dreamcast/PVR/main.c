@@ -119,7 +119,9 @@ start:
 		int   	c = 1;				    
 		float 	x = 40.0f;
 		float 	y = 55.0f;
+#ifdef USE_FFTW
     maple_device_t *sip = NULL;
+#endif
 				
 		pvr_wait_ready();
 		pvr_scene_begin();
@@ -128,11 +130,20 @@ start:
 		DrawImage(title);
 		DrawImage(sd);
 		
+#ifdef USE_FFTW
+    sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+#endif
+
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Manual Lag Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
+    DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+#ifdef USE_FFTW
+    if(sip)
+		  DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Microphone Lag Test"); y += fh; c++;
+    else
+#endif
+		  DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Manual Lag Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
@@ -171,14 +182,7 @@ start:
 		{
 			c++;
 			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VGA Settings"); 
-		}
-    
-    sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
-    if(sip)
-		{
-			c++;
-			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag test via micro"); 
-		}
+		}    
 
 		r = 0.8f;
 		g = 0.8f;
@@ -298,7 +302,12 @@ start:
 						PassiveLagTest();
 						break;
 					case 5:
-						LagTest();
+#ifdef USE_FFTW
+            if(sip)
+              SIPLagTest();
+						else
+#endif
+						  LagTest();
 						break;
 					case 6:
 						ScrollTest();
@@ -337,10 +346,7 @@ start:
 					case 15:
 						//Settings(title);
 						TestVideoMode();
-						break;
-          case 16:
-						SIPLagTest();
-						break;
+						break;          						
 				} 					
 				updateVMU("240p Test", "", 1);				
 				oldbuttons = InitController(0);
