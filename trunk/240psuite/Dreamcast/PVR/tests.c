@@ -25,8 +25,9 @@
 #include <dc/sound/sfxmgr.h>
 
 #ifdef USE_FFTW
+	#include <math.h>
   #include <complex.h>
-  #include <fftw3.h>
+	#include <fftw/fftw3.h>
 #endif
 
 #include "controller.h"
@@ -38,6 +39,8 @@
 
 #include "help.h"
 #include "settings.h"
+
+#define CUE_FRAMES	5
 
 void DropShadowTest()
 {
@@ -1117,11 +1120,11 @@ void SoundTest()
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
+  snd_init();	
 	beep = snd_sfx_load("/rd/beep.wav");
 	if(!beep)
 		return;
 	
-  snd_init();	
 	updateVMU("Sound Test", "", 1);
 	while(!done) 
 	{
@@ -1915,18 +1918,21 @@ void SIPLagTest()
 	maple_device_t  *sip = NULL;  
   size_t          size = 0;
   uint8           *buffer = NULL;
+	char						DStatus[30];
 
 	oldbuttons = InitController(0);
 	
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
+
+  snd_init();		
 	beep = snd_sfx_load("/rd/Sample.wav");
 	if(!beep)
 		return;
 
-  snd_init();		
 	updateVMU("Lag v/Micr", "", 1);
+	sprintf(DStatus, "Press A");
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -1942,6 +1948,9 @@ void SIPLagTest()
         if (pressed & CONT_START)
 				  done =	1;				
   
+        if (pressed & CONT_B)
+					sprintf(DStatus, "Press A");
+  
         if (pressed & CONT_A)
   			  status = 1;
 		  }
@@ -1956,7 +1965,7 @@ void SIPLagTest()
       
       if(sip_start_sampling(sip, 1) == MAPLE_EOK)
       {
-        counter = 5; // wait 5 frames
+        counter = CUE_FRAMES; // wait n CUE_FRAMES frames
         status = 2;
       }
       else
@@ -1968,10 +1977,11 @@ void SIPLagTest()
 
     if(status == 2 || status == 4)
     {
-      printf("Status %d: Waiting %d\n", status, counter);
       counter --;
       if(!counter)
         status++;
+			if(counter == 1 && status == 4)
+				sprintf(DStatus, "Processing");
     }
     
 		if(status == 3 && beep != SFXHND_INVALID)
@@ -1979,38 +1989,35 @@ void SIPLagTest()
       printf("Status 3: Starting playback\n");
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
-      counter = 5*60; // record 5 seconds
+      counter = 2*60; // record 2 seconds + CUE frames
 		}    
 
     if(status == 5 && sip)
     {
+			int  retval = 0;
+
       printf("Status 5: Stopping sampling\n");
-      if(sip_stop_sampling(sip, 1) == MAPLE_EOK)
+      retval = sip_stop_sampling(sip, 1);
+			printf("Sip Stop returned %d\n", retval);
+      if(retval == 0)
       {
         buffer = sip_get_samples(sip, &size);
         printf("Got %d bytes\n", (int)size);
-        if(buffer && size)
+        if(buffer && size > 0)
         {
-          FILE *fp = fopen("/pc/samples.raw", "wb");
-          printf("Creating samples.raw file\n");
-          if(fp)
-          {
-            fwrite(buffer, 1, size, fp);
-            fclose(fp);
-            printf("Wrote %d bytes to file\n", size);
-  
-            thd_sleep(1000);
-          }          
+					int value = -1;
 
-          ProcessSamples(buffer);
+          ProcessSamples((short*)buffer, size, &value);
+					if(value != -1)
+						sprintf(DStatus, "Lag is %d frames", value);
+					else
+						sprintf(DStatus, "Check audio system");
 
           free(buffer);
           buffer = NULL;
           size = 0;
         }        
       }
-      else
-        printf("Stop sampling failed: aborting\n");        
 
       sip_clear_samples(sip);
       status = 0;
@@ -2023,7 +2030,7 @@ void SIPLagTest()
 
 		DrawStringS(130, 60, 1.0f, 1.0f, 1.0f, "Lag Test via Microphone"); 
 		
-		DrawStringS(160, 120, 1.0f, 1.0f,	1.0f, "Status goes here");
+		DrawStringS(60, 120, 1.0f, 1.0f,	1.0f, DStatus);
 		DrawScanlines();
 		
 		pvr_list_finish();				
@@ -2038,19 +2045,20 @@ void SIPLagTest()
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
 	FreeImage(&back);
+
+	snd_shutdown();
 	return;
 }
 
-void ProcessSamples(uint8 *samples, size_t size)
+void ProcessSamples(short *samples, size_t size, int *value)
 {
   long          samplesize = 0;
   unsigned long samplerate = 0;
   long          i = 0, f = 0, framesizernd = 0, time = 0;
   double        *in, root = 0, framesize = 0;  
   double        *MaxFreqArray = NULL;
-  //short       *samples = NULL;
   fftw_complex  *out;
-  fftw_plan     p;
+  fftw_plan     p = NULL;
   uint64        start, end;
   
   samplesize = (long) size;
@@ -2060,7 +2068,7 @@ void ProcessSamples(uint8 *samples, size_t size)
   framesizernd = (long)framesize;
   samplesize /= 2; // Make a 16 bit array
 
-  printf("Samples are at %u Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
+  printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
 
   start = timer_ms_gettime64();
   in = (double*) fftw_malloc(sizeof(double) * framesizernd);
@@ -2103,49 +2111,52 @@ void ProcessSamples(uint8 *samples, size_t size)
     mainfreq = (double)((double)maxind/((double)arraysize/(double)samplerate));
     MaxFreqArray[f] = mainfreq;
     
-    //printf("Frame %ld: Main frequency %g Hz\n", f, mainfreq, less, plus);
+  	fftw_destroy_plan(p);
   }
 
   end = timer_ms_gettime64();
   time = end - start;
-  printf("FFT for %ld frames took %ld\n", (long)samplesize/framesize, time);
+  printf("FFT for %ld frames took %ld\n", (long)(samplesize/framesize), time);
   start = end;
 
   // 60 hz array boxes. since 60hz sample chunks
   {
+		int found = 0;
     long pos = 0, count = 0;    
 
     for(f = 0; f < samplesize/framesize; f++)
     {
-      if(count)
-      {
-        if(MaxFreqArray[pos] != MaxFreqArray[f])
-        {
-          count = 0;          
-          pos = 0;
-        }
-        else
-        {
-          count++;
-          if(count == 60)
-          {
-            printf("Found at %d frames -> %g sec (we waited 5 frames to start playback)\n", pos, pos/60.0);
-            pos = 0;
-            count = 0;
-          }
-
-          // this is just for debugging
-          if(count > 50)
-            printf("Found (%d) at %d frames -> %g sec (we waited 5 frames to start playback)\n", count, pos, pos/60.0);
-        }
-      }
+			if(!found)
+			{
+    		printf("Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
+      	if(count)
+      	{
+       	 	//if(MaxFreqArray[pos] != MaxFreqArray[f])
+      		if(MaxFreqArray[f] <= 963.0 || MaxFreqArray[f] >= 1085.0)        
+       	 	{
+       	 	  count = 0;          
+       	 	  pos = 0;
+       	 	}
+       	 	else
+       	 	{
+       	 	  count++;
+       	 	  if(count == 60)
+       	 	  {
+							pos -= CUE_FRAMES;
+							printf("*Found at %ld frames -> %g sec\n", pos, pos/60.0);
+							*value = pos;
+							found = 1;
+       	 	  }
+       	 	}
+      	}
   
-      // 930 and 1030 since our sampling is 11025 and we have 60 hz "boxes", our error is also 60
-      if(!count && MaxFreqArray[f] > 970 && MaxFreqArray[f] < 1030)        
-      {
-        pos = f;        
-        count = 1;
-      }      
+      	// 930 and 1030 since our sampling is 11025 and we have 60 hz "boxes", our error is also 60
+      	if(!count && MaxFreqArray[f] > 963.0 && MaxFreqArray[f] < 1085.0)        
+      	{
+        	pos = f;        
+        	count = 1;
+      	}      
+			}
     }
   }
 
@@ -2156,7 +2167,6 @@ void ProcessSamples(uint8 *samples, size_t size)
   free(MaxFreqArray);
   MaxFreqArray = NULL;  
   
-  fftw_destroy_plan(p);
   fftw_free(in); 
   fftw_free(out);
   fftw_cleanup();  
