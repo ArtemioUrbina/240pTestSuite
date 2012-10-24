@@ -1979,7 +1979,7 @@ void SIPLagTest()
       printf("Status 3: Starting playback\n");
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
-      counter = 3*60+5; // record 3 seconds and 5 frames
+      counter = 5*60; // record 5 seconds
 		}    
 
     if(status == 5 && sip)
@@ -2045,12 +2045,13 @@ void ProcessSamples(uint8 *samples, size_t size)
 {
   long          samplesize = 0;
   unsigned long samplerate = 0;
-  long          i = 0, f = 0, framesizernd = 0;
+  long          i = 0, f = 0, framesizernd = 0, time = 0;
   double        *in, root = 0, framesize = 0;  
   double        *MaxFreqArray = NULL;
   //short       *samples = NULL;
   fftw_complex  *out;
   fftw_plan     p;
+  uint64        start, end;
   
   samplesize = (long) size;
   samplerate = 11025; 
@@ -2061,6 +2062,7 @@ void ProcessSamples(uint8 *samples, size_t size)
 
   printf("Samples are at %u Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
 
+  start = timer_ms_gettime64();
   in = (double*) fftw_malloc(sizeof(double) * framesizernd);
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (framesizernd/2+1));  
     
@@ -2104,6 +2106,11 @@ void ProcessSamples(uint8 *samples, size_t size)
     //printf("Frame %ld: Main frequency %g Hz\n", f, mainfreq, less, plus);
   }
 
+  end = timer_ms_gettime64();
+  time = end - start;
+  printf("FFT for %ld frames took %ld\n", (long)samplesize/framesize, time);
+  start = end;
+
   // 60 hz array boxes. since 60hz sample chunks
   {
     long pos = 0, count = 0;    
@@ -2122,13 +2129,18 @@ void ProcessSamples(uint8 *samples, size_t size)
           count++;
           if(count == 60)
           {
-            printf("Found at %d frames -> %g sec\n", pos, pos/60.0);
+            printf("Found at %d frames -> %g sec (we waited 5 frames to start playback)\n", pos, pos/60.0);
             pos = 0;
             count = 0;
           }
+
+          // this is just for debugging
+          if(count > 50)
+            printf("Found (%d) at %d frames -> %g sec (we waited 5 frames to start playback)\n", count, pos, pos/60.0);
         }
       }
   
+      // 930 and 1030 since our sampling is 11025 and we have 60 hz "boxes", our error is also 60
       if(!count && MaxFreqArray[f] > 970 && MaxFreqArray[f] < 1030)        
       {
         pos = f;        
@@ -2136,6 +2148,10 @@ void ProcessSamples(uint8 *samples, size_t size)
       }      
     }
   }
+
+  end = timer_ms_gettime64();
+  time = end - start;
+  printf("Processing frequencies took %ld\n", time);
 
   free(MaxFreqArray);
   MaxFreqArray = NULL;  
