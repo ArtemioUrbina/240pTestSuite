@@ -24,6 +24,11 @@
 #include <dc/sound/sound.h>
 #include <dc/sound/sfxmgr.h>
 
+#ifdef USE_FFTW
+  #include <complex.h>
+  #include <fftw3.h>
+#endif
+
 #include "controller.h"
 #include "tests.h"
 #include "image.h"
@@ -1108,14 +1113,15 @@ void SoundTest()
 	controller	*st;
 
 	oldbuttons = InitController(0);
-	snd_init();
+	
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
 	beep = snd_sfx_load("/rd/beep.wav");
 	if(!beep)
 		return;
-		
+	
+  snd_init();	
 	updateVMU("Sound Test", "", 1);
 	while(!done) 
 	{
@@ -1897,6 +1903,8 @@ void TestVideoMode()
 	dbglog(DBG_KDEBUG, str);
 }
 
+#ifdef USE_FFTW
+
 void SIPLagTest()
 {
   int 				    done = 0, status = 0, counter = 0;
@@ -1909,14 +1917,15 @@ void SIPLagTest()
   uint8           *buffer = NULL;
 
 	oldbuttons = InitController(0);
-	snd_init();
+	
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
 	beep = snd_sfx_load("/rd/Sample.wav");
 	if(!beep)
 		return;
-		
+
+  snd_init();		
 	updateVMU("Lag v/Micr", "", 1);
 	while(!done) 
 	{
@@ -1942,8 +1951,8 @@ void SIPLagTest()
     {
       printf("Status 1: Setting up mic and recording\n");
       sip_set_gain(sip, SIP_MAX_GAIN); // SIP_DEFAULT_GAIN  
-      sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED);
-      sip_set_frequency(sip, SIP_SAMPLE_11KHZ);
+      sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED); 
+      sip_set_frequency(sip, SIP_SAMPLE_11KHZ); // 11.025kHz
       
       if(sip_start_sampling(sip, 1) == MAPLE_EOK)
       {
@@ -1991,7 +2000,10 @@ void SIPLagTest()
             printf("Wrote %d bytes to file\n", size);
   
             thd_sleep(1000);
-          }
+          }          
+
+          ProcessSamples(buffer);
+
           free(buffer);
           buffer = NULL;
           size = 0;
@@ -2029,3 +2041,109 @@ void SIPLagTest()
 	return;
 }
 
+void ProcessSamples(uint8 *samples, size_t size)
+{
+  long          samplesize = 0;
+  unsigned long samplerate = 0;
+  long          i = 0, f = 0, framesizernd = 0;
+  double        *in, root = 0, framesize = 0;  
+  double        *MaxFreqArray = NULL;
+  //short       *samples = NULL;
+  fftw_complex  *out;
+  fftw_plan     p;
+  
+  samplesize = (long) size;
+  samplerate = 11025; 
+
+  framesize = samplerate/60.0;
+  framesizernd = (long)framesize;
+  samplesize /= 2; // Make a 16 bit array
+
+  printf("Samples are at %u Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
+
+  in = (double*) fftw_malloc(sizeof(double) * framesizernd);
+  out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (framesizernd/2+1));  
+    
+  long arraysize = framesizernd;
+  MaxFreqArray = malloc(sizeof(double)*(long)(samplesize/framesize));
+  for(f = 0; f < samplesize/framesize - 1; f++)
+  {
+    double mainfreq = 0, max = 0;
+    long   maxind = -1;
+    long   framestart = 0;
+
+    framestart = framesize*f;
+    for(i = 0; i < framesizernd; i++)
+      in[i] = (double)samples[i+framestart];
+
+    //printf("Estimating plan\n");
+    p = fftw_plan_dft_r2c_1d(arraysize, in, out, FFTW_ESTIMATE);      
+
+    //printf("Executing FFTW\n");
+    fftw_execute(p); 
+  
+    //printf("Analyzing results\n");
+    root = sqrt(arraysize);
+    for(i = 0; i < arraysize/2+1; i++)
+    {
+      double r1 = creal(out[i]);
+      double i1 = cimag(out[i]);
+      double val = 0;
+  
+      val = sqrt(sqrt(r1 * r1 + i1 * i1) / root);
+      if(val > max)
+      {
+        max = val;
+        maxind = i;
+      }    
+    }
+    
+    mainfreq = (double)((double)maxind/((double)arraysize/(double)samplerate));
+    MaxFreqArray[f] = mainfreq;
+    
+    //printf("Frame %ld: Main frequency %g Hz\n", f, mainfreq, less, plus);
+  }
+
+  // 60 hz array boxes. since 60hz sample chunks
+  {
+    long pos = 0, count = 0;    
+
+    for(f = 0; f < samplesize/framesize; f++)
+    {
+      if(count)
+      {
+        if(MaxFreqArray[pos] != MaxFreqArray[f])
+        {
+          count = 0;          
+          pos = 0;
+        }
+        else
+        {
+          count++;
+          if(count == 60)
+          {
+            printf("Found at %d frames -> %g sec\n", pos, pos/60.0);
+            pos = 0;
+            count = 0;
+          }
+        }
+      }
+  
+      if(!count && MaxFreqArray[f] > 970 && MaxFreqArray[f] < 1030)        
+      {
+        pos = f;        
+        count = 1;
+      }      
+    }
+  }
+
+  free(MaxFreqArray);
+  MaxFreqArray = NULL;  
+  
+  fftw_destroy_plan(p);
+  fftw_free(in); 
+  fftw_free(out);
+  fftw_cleanup();  
+}
+
+#endif
