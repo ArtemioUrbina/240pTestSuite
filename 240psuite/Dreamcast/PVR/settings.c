@@ -26,6 +26,7 @@
 #include "font.h"
 #include "vmodes.h"
 #include "vmu.h"
+#include "tests.h"
 
 #include "controller.h"
 

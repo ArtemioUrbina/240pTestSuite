@@ -1,6 +1,6 @@
 TARGET = main
 
-OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST 
+OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DUSE_FFTW -DSERIAL
 
 KOS_CFLAGS+= -I$(KOS_BASE)/../kos-ports/include/SDL-1.2.9  $(OPTFLAGS) 
 
@@ -51,7 +51,7 @@ $(OBJS): $(HEADERS) romdisk.o
 
 $(TARGET).elf: $(OBJS) romdisk.o 
 	$(KOS_CC) $(KOS_CFLAGS) $(KOS_LDFLAGS) romdisk.o -o $(TARGET).elf $(KOS_START) \
-	$(OBJS) -lz -lm -lkmg -lkosutils  $(OBJEXTRA) $(KOS_LIBS)
+	$(OBJS) -lz -lfftw3 -lm -lkmg -lkosutils  $(OBJEXTRA) $(KOS_LIBS) 
 
 $(TARGET).bin: $(TARGET).elf
 	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin
