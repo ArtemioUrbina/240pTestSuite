@@ -35,7 +35,7 @@ void PassiveLagTest();
 void TestVideoMode();
 #ifdef USE_FFTW
 void SIPLagTest();
-void ProcessSamples(short *samples, size_t size, int *value);
+void ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq, int startframe, int numframes, double *value)
 #endif
 
 #endif
