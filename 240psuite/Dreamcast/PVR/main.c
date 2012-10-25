@@ -62,9 +62,9 @@ int main(void)
 	pvr_init_defaults();
 	region = flashrom_get_region();
 
- 	// Disable deflicker filter, 
- 	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
- 	{
+	// Disable deflicker filter, 
+	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
+	{
 		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
 		PVR_SET(PVR_SCALER_CFG, 0x400);
 	}
@@ -110,7 +110,7 @@ start:
 		DrawIntro();
 		start = 0;
 	}
- 	while(!done) 
+	while(!done) 
 	{
 		char		res[40];
 		float 	r = 1.0f;
@@ -120,7 +120,7 @@ start:
 		float 	x = 40.0f;
 		float 	y = 55.0f;
 #ifdef USE_FFTW
-    maple_device_t *sip = NULL;
+		maple_device_t *sip = NULL;
 #endif
 				
 		pvr_wait_ready();
@@ -131,22 +131,22 @@ start:
 		DrawImage(sd);
 		
 #ifdef USE_FFTW
-    sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 #endif
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
-    DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
 #ifdef USE_FFTW
-    if(sip)
+		if(sip)
 		{
-		  DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Microphone Lag Test"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Microphone Lag Test"); y += fh; c++;
 		}
-    else
+		else
 		{
 #endif
-		  DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Manual Lag Test"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Manual Lag Test"); y += fh; c++;
 #ifdef USE_FFTW
 		}
 #endif
@@ -154,13 +154,13 @@ start:
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
-    DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 
 		switch(vmode)
 		{
 			case NATIVE_320:
-	 			if(vcable != CT_VGA)
+				if(vcable != CT_VGA)
 					sprintf(res, "Video: 240p");
 				else
 					sprintf(res, "Video: 240p linedoubled");
@@ -172,7 +172,7 @@ start:
 				sprintf(res, "Video: Fake 480i");
 				break;
 			case NATIVE_640_FS:
-	 			if(vcable != CT_VGA)
+				if(vcable != CT_VGA)
 					sprintf(res, "Video: 480i");
 				else
 					sprintf(res, "Video: 480p Full Screen");
@@ -309,11 +309,11 @@ start:
 						break;
 					case 5:
 #ifdef USE_FFTW
-            if(sip)
-              SIPLagTest();
+						if(sip)
+							SIPLagTest();
 						else
 #endif
-						  LagTest();
+							LagTest();
 						break;
 					case 6:
 						ScrollTest();
@@ -327,7 +327,7 @@ start:
 					case 9:
 						DrawCheckBoard();
 						break;
-          case 10:
+					case 10:
 						LEDZoneTest();
 						break;
 					case 11:
@@ -378,7 +378,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 	controller	*st;
 
 	oldbuttons = InitController(0);
- 	while(!done) 
+	while(!done) 
 	{		
 		float 	r = 1.0f;
 		float 	g = 1.0f;
@@ -397,7 +397,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Pluge"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
-    DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
@@ -502,7 +502,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					case 3:
 						Draw601ColorBars();
 						break;
-          case 4:
+					case 4:
 						DrawColorBleed();
 						break;
 					case 5:
@@ -576,7 +576,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "https://github.com/losinggeneration/buildcross"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
-    DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Konsolkongen & shmups regulars"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 

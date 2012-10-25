@@ -170,11 +170,11 @@ void DrawDigit(float x, float y, float r, float g, float b, int digit)
 
 void DrawNumber(float x, float y, float r, float g, float b, int number) 
 {
-  char  string[10], *str;
+	char  string[10], *str;
 
 	str = string;
 
-  sprintf(str, "%d", number);
+	sprintf(str, "%d", number);
 	while (*str) 
 	{				
 		DrawDigit(x, y, r, g, b, *str++);
