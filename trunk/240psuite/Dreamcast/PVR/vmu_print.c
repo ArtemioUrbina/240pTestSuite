@@ -54,7 +54,7 @@ inline void vmu_set_bit(uint8 bitmap[192], uint8 x, uint8 y)
 
 void vmu_draw_char(uint8 bitmap[192], unsigned char c, int x, int y)
 	/* (x, y) is position for upper-left corner of character,
- 		(0, 0) is upper-left corner of screen */
+		(0, 0) is upper-left corner of screen */
 {
 	int i, j;
 
@@ -71,7 +71,7 @@ void vmu_draw_char(uint8 bitmap[192], unsigned char c, int x, int y)
 
 void vmu_draw_str(uint8 bitmap[192], unsigned char *str, int x, int y)
 	/* (x, y) is position for upper-left corner of string,
- 		(0, 0) is upper-left corner of screen */
+		(0, 0) is upper-left corner of screen */
 {
 	int i;
 

@@ -45,7 +45,7 @@ int gkmg_to_img(const char * fn, kos_img_t * rv) {
 		dbglog(DBG_ERROR, "gkmg_to_img: can't open file '%s'\n", fn);
 		return -1;
 	}  
-  	
+		
 	/* Read the header */
 	if (gzread(f, &hdr, sizeof(hdr)) != sizeof(hdr)) {
 		gzclose(f);
@@ -129,7 +129,7 @@ int gkmg_to_img(const char * fn, kos_img_t * rv) {
 	gzclose(f);
 
 	/* If the byte count is not a multiple of 32, bump it up as well.
-	   This is for DMA/SQ usage. */
+		 This is for DMA/SQ usage. */
 	rv->byte_count = (rv->byte_count + 31) & ~31;
 	
 	return 0;
@@ -348,7 +348,7 @@ void CalculateUV(float posx, float posy, float width, float height, ImagePtr ima
 	if(!image)
 		return;
 	
-  // These just keep the numbers clean
+	// These just keep the numbers clean
 	if(posx > image->tw)
 		posx = posx - image->tw;
 	if(posx < -1*image->tw)

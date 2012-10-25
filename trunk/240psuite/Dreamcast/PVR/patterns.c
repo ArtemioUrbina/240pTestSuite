@@ -306,7 +306,7 @@ void DrawColorBleed()
 	back = LoadKMG("/rd/colorbleed.kmg.gz", 1);
 	if(!back)
 		return;
-  backchk = LoadKMG("/rd/colorbleedchk.kmg.gz", 1);
+	backchk = LoadKMG("/rd/colorbleedchk.kmg.gz", 1);
 	if(!backchk)
 		return;
 		
@@ -334,17 +334,17 @@ void DrawColorBleed()
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
-    if(!type)
-		  DrawImage(back);
-    else
-      DrawImage(backchk);
+		if(!type)
+			DrawImage(back);
+		else
+			DrawImage(backchk);
 		DrawScanlines();
 		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
 	FreeImage(&back);
-  FreeImage(&backchk);
+	FreeImage(&backchk);
 	return;
 }
 
