@@ -1195,6 +1195,7 @@ void SoundTest()
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
 	FreeImage(&back);
+  snd_shutdown();
 	return;
 }
 
@@ -2005,13 +2006,15 @@ void SIPLagTest()
         printf("Got %d bytes\n", (int)size);
         if(buffer && size > 0)
         {
-					int value = -1;
+					int value = 10000;
 
           ProcessSamples((short*)buffer, size, &value);
-					if(value != -1)
+					if(value > 0)
 						sprintf(DStatus, "Lag is %d frames", value);
-					else
+					if(value == 10000)
 						sprintf(DStatus, "Check audio system");
+          if(value < 0)
+            sprintf(DStatus, "Back noise at 1kh");
 
           free(buffer);
           buffer = NULL;
