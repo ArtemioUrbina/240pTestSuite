@@ -2008,13 +2008,13 @@ void SIPLagTest()
         {
 					int value = 10000;
 
-          ProcessSamples((short*)buffer, size, &value);
+          ProcessSamples((short*)buffer, size/2, &value);
 					if(value > 0)
 						sprintf(DStatus, "Lag is %d frames", value);
 					if(value == 10000)
 						sprintf(DStatus, "Check audio system");
           if(value < 0)
-            sprintf(DStatus, "Back noise at 1kh");
+            sprintf(DStatus, "Noise at 1khz");
 
           free(buffer);
           buffer = NULL;
@@ -2063,22 +2063,40 @@ void ProcessSamples(short *samples, size_t size, int *value)
   fftw_complex  *out;
   fftw_plan     p = NULL;
   uint64        start, end;
+  double        searchfreq = 1000, mins, maxs;
+  double        boxsize = 0;
+  int           casefrq = 0;
+  double        secondunits = 60.0;
   
   samplesize = (long) size;
   samplerate = 11025; 
 
-  framesize = samplerate/60.0;
-  framesizernd = (long)framesize;
-  samplesize /= 2; // Make a 16 bit array
+  framesize = samplerate/secondunits;
+  framesizernd = (long)framesize;  
 
   printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
 
   start = timer_ms_gettime64();
   in = (double*) fftw_malloc(sizeof(double) * framesizernd);
+  if(!in)
+    return;
   out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (framesizernd/2+1));  
+  if(!out)
+  {     
+     fftw_free(in); 
+     return;
+  }
     
   long arraysize = framesizernd;
   MaxFreqArray = malloc(sizeof(double)*(long)(samplesize/framesize));
+  if(!MaxFreqArray)
+  {
+     fftw_free(in); 
+     fftw_free(out);
+     return;
+  }
+
+  boxsize = (double)arraysize/(double)samplerate;  
   for(f = 0; f < samplesize/framesize - 1; f++)
   {
     double mainfreq = 0, max = 0;
@@ -2111,7 +2129,7 @@ void ProcessSamples(short *samples, size_t size, int *value)
       }    
     }
     
-    mainfreq = (double)((double)maxind/((double)arraysize/(double)samplerate));
+    mainfreq = (double)((double)maxind/boxsize);
     MaxFreqArray[f] = mainfreq;
     
   	fftw_destroy_plan(p);
@@ -2122,6 +2140,10 @@ void ProcessSamples(short *samples, size_t size, int *value)
   printf("FFT for %ld frames took %ld\n", (long)(samplesize/framesize), time);
   start = end;
 
+  casefrq = (int)ceil(searchfreq/(1/boxsize));
+  mins = (casefrq - 1) / boxsize;
+  maxs = (casefrq + 1) / boxsize;
+  printf("Searching for %g, due to samplerate and arraysize it is %g, between %g and %g\n", searchfreq, casefrq/boxsize, mins, maxs);
   // 60 hz array boxes. since 60hz sample chunks
   {
 		int found = 0;
@@ -2133,9 +2155,8 @@ void ProcessSamples(short *samples, size_t size, int *value)
 			{
     		printf("Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
       	if(count)
-      	{
-       	 	//if(MaxFreqArray[pos] != MaxFreqArray[f])
-      		if(MaxFreqArray[f] <= 963.0 || MaxFreqArray[f] >= 1085.0)        
+      	{       	 	
+      		if(MaxFreqArray[f] < mins || MaxFreqArray[f] > maxs)        
        	 	{
        	 	  count = 0;          
        	 	  pos = 0;
@@ -2146,15 +2167,14 @@ void ProcessSamples(short *samples, size_t size, int *value)
        	 	  if(count == 60)
        	 	  {
 							pos -= CUE_FRAMES;
-							printf("*Found at %ld frames -> %g sec\n", pos, pos/60.0);
+							printf("Found at %g frames -> %g sec\n", pos/(secondunits/60.0), pos/secondunits);
 							*value = pos;
 							found = 1;
        	 	  }
        	 	}
       	}
-  
-      	// 930 and 1030 since our sampling is 11025 and we have 60 hz "boxes", our error is also 60
-      	if(!count && MaxFreqArray[f] > 963.0 && MaxFreqArray[f] < 1085.0)        
+        	
+      	if(!count && MaxFreqArray[f] >= mins && MaxFreqArray[f] <= maxs)              
       	{
         	pos = f;        
         	count = 1;
