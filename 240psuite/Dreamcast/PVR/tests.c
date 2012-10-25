@@ -26,7 +26,7 @@
 
 #ifdef USE_FFTW
 	#include <math.h>
-  #include <complex.h>
+	#include <complex.h>
 	#include <fftw/fftw3.h>
 #endif
 
@@ -84,7 +84,7 @@ void DropShadowTest()
 		overlay->scale = 0;
 
 		back[1]->y = (dH - 240)/2;
-  	overlay->y = (dH - 240)/2;
+		overlay->y = (dH - 240)/2;
 	}
 		
 	ssprite = LoadKMG("/rd/shadow.kmg.gz", 0);	
@@ -298,7 +298,7 @@ void StripedSpriteTest()
 			return;
 
 		back[1]->y = (dH - 240)/2;
-  	overlay->y = (dH - 240)/2;
+		overlay->y = (dH - 240)/2;
 	}
 	striped = LoadKMG("/rd/striped.kmg.gz", 0);
 	if(!striped)
@@ -384,7 +384,7 @@ void StripedSpriteTest()
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
 		if(selback == 1)
-	  {
+		{
 			CalculateUV(x, 0, dW, 240, back[selback]);
 			CalculateUV(x*2, 0, dW, 240, overlay);
 		}
@@ -548,7 +548,7 @@ void LagTest()
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
-    DrawImage(back);
+		DrawImage(back);
 
 		if(y == 96)
 		{			
@@ -562,38 +562,38 @@ void LagTest()
 					purupuru_rumble(purupuru, &effect);
 			}
 
-      spriteA->r = 1.0;
-      spriteA->g = 0.0;
-      spriteA->b = 0.0;
+			spriteA->r = 1.0;
+			spriteA->g = 0.0;
+			spriteA->b = 0.0;
 
-      spriteB->r = 1.0;
-      spriteB->g = 0.0;
-      spriteB->b = 0.0;
+			spriteB->r = 1.0;
+			spriteB->g = 0.0;
+			spriteB->b = 0.0;
 		}
-    else
-    {
-      if(y == 97 || y == 95) // one pixel off
-      {
-        spriteA->r = 0.0;
-        spriteA->g = 1.0;
-        spriteA->b = 0.0;
+		else
+		{
+			if(y == 97 || y == 95) // one pixel off
+			{
+				spriteA->r = 0.0;
+				spriteA->g = 1.0;
+				spriteA->b = 0.0;
 
-        spriteB->r = 0.0;
-        spriteB->g = 1.0;
-        spriteB->b = 0.0;
-      }
+				spriteB->r = 0.0;
+				spriteB->g = 1.0;
+				spriteB->b = 0.0;
+			}
 
-      if(y == 98 || y == 94) // two pixels off
-      {
-        spriteA->r = 1.0;
-        spriteA->g = 1.0;
-        spriteA->b = 1.0;
+			if(y == 98 || y == 94) // two pixels off
+			{
+				spriteA->r = 1.0;
+				spriteA->g = 1.0;
+				spriteA->b = 1.0;
 
-        spriteB->r = 1.0;
-        spriteB->g = 1.0;
-        spriteB->b = 1.0;
-      }
-    }			
+				spriteB->r = 1.0;
+				spriteB->g = 1.0;
+				spriteB->b = 1.0;
+			}
+		}			
 
 		if(view == 0 || view == 2)
 			DrawImage(spriteA);
@@ -614,10 +614,10 @@ void LagTest()
 				DrawStringS(px, py, 1.0f, 1.0f, 1.0f, msg);
 			
 				px += (strlen(msg) + 2)*fw;
-        if(clicks[i] == 1)
-          sprintf(msg, "%2d frame", clicks[i]);
-        else
-				  sprintf(msg, "%2d frames", clicks[i]);
+				if(clicks[i] == 1)
+					sprintf(msg, "%2d frame", clicks[i]);
+				else
+					sprintf(msg, "%2d frames", clicks[i]);
 
 				if(clicks[i] >= 0)
 				{
@@ -759,12 +759,12 @@ void ScrollTest()
 	back = LoadKMG("/rd/sonicback.kmg.gz", 0);
 	if(!back)
 		return;
-  overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
+	overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
 	if(!overlay)
 		return;
 	
 	back->y = (dH - 240)/2;
-  overlay->y = (dH - 240)/2;
+	overlay->y = (dH - 240)/2;
 
 	updateVMU(" Scroll  ", "", 1);
 	while(!done) 
@@ -813,16 +813,16 @@ void ScrollTest()
 			x = -1;
 
 		CalculateUV(x, 0, dW, 240, back);
-    CalculateUV(x*2, 0, dW, 240, overlay);
+		CalculateUV(x*2, 0, dW, 240, overlay);
 		DrawImage(back);
-    DrawImage(overlay);
+		DrawImage(overlay);
 		DrawScanlines();
 		pvr_list_finish();				
 
 		pvr_scene_finish();
 	}
 	FreeImage(&back);
-  FreeImage(&overlay);
+	FreeImage(&overlay);
 	return;
 }
 
@@ -897,7 +897,7 @@ void GridScrollTest()
 				
 		CalculateUV(x, y, dW, dH, back);    
 		DrawImage(back);
-  
+	
 		DrawScanlines();
 		pvr_list_finish();				
 
@@ -1120,7 +1120,7 @@ void SoundTest()
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
-  snd_init();	
+	snd_init();	
 	beep = snd_sfx_load("/rd/beep.wav");
 	if(!beep)
 		return;
@@ -1195,7 +1195,7 @@ void SoundTest()
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
 	FreeImage(&back);
-  snd_shutdown();
+	snd_shutdown();
 	return;
 }
 
@@ -1211,23 +1211,23 @@ void LEDZoneTest()
 	if(!back)
 		return;
 
-  back->r = 0.0f;
+	back->r = 0.0f;
 	back->g = 0.0f;
 	back->b = 0.0f;
 			
 	sprite[0] = LoadKMG("/rd/sprite0led.kmg.gz", 0);
 	if(!sprite[0])
 		return;
-  sprite[1] = LoadKMG("/rd/sprite1led.kmg.gz", 0);
+	sprite[1] = LoadKMG("/rd/sprite1led.kmg.gz", 0);
 	if(!sprite[1])
 		return;
-  sprite[2] = LoadKMG("/rd/sprite2led.kmg.gz", 0);
+	sprite[2] = LoadKMG("/rd/sprite2led.kmg.gz", 0);
 	if(!sprite[2])
 		return;
-  sprite[3] = LoadKMG("/rd/sprite3led.kmg.gz", 0);
+	sprite[3] = LoadKMG("/rd/sprite3led.kmg.gz", 0);
 	if(!sprite[3])
 		return;
-  sprite[4] = LoadKMG("/rd/sprite4led.kmg.gz", 0);
+	sprite[4] = LoadKMG("/rd/sprite4led.kmg.gz", 0);
 	if(!sprite[4])
 		return;
 		
@@ -1242,28 +1242,28 @@ void LEDZoneTest()
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;				
 			
-      if(show)
-      {
-			  if (st->buttons & CONT_DPAD_UP)
-				  y --;
-		  
-			  if (st->buttons & CONT_DPAD_DOWN)
-				  y ++;
-  
-			  if (st->buttons & CONT_DPAD_LEFT)
-				  x --;
-  
-			  if (st->buttons & CONT_DPAD_RIGHT)
-				  x ++;
-			  
-  
-			  // Joystick
-			  if(st->joyx != 0)
-				  x += st->joyx/40;
-		  
-			  if(st->joyy != 0)
-				  y += st->joyy/40;
-      }
+			if(show)
+			{
+				if (st->buttons & CONT_DPAD_UP)
+					y --;
+			
+				if (st->buttons & CONT_DPAD_DOWN)
+					y ++;
+	
+				if (st->buttons & CONT_DPAD_LEFT)
+					x --;
+	
+				if (st->buttons & CONT_DPAD_RIGHT)
+					x ++;
+				
+	
+				// Joystick
+				if(st->joyx != 0)
+					x += st->joyx/40;
+			
+				if(st->joyy != 0)
+					y += st->joyy/40;
+			}
 		
 			if (pressed & CONT_START)
 				done =	1;
@@ -1284,8 +1284,8 @@ void LEDZoneTest()
 					selsprite = 0;
 			}
 
-      if (pressed & CONT_Y)
-			  show = !show;
+			if (pressed & CONT_Y)
+				show = !show;
 
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(BACKLITHELP, NULL);
@@ -1305,12 +1305,12 @@ void LEDZoneTest()
 		pvr_list_begin(PVR_LIST_TR_POLY);		
 		DrawImage(back);		
 
-    if(show)
-    {
-		  sprite[selsprite]->x = x;
-   		sprite[selsprite]->y = y;
-		  DrawImage(sprite[selsprite]);
-    }
+		if(show)
+		{
+			sprite[selsprite]->x = x;
+			sprite[selsprite]->y = y;
+			DrawImage(sprite[selsprite]);
+		}
 
 		DrawScanlines();
 		pvr_list_finish();
@@ -1911,14 +1911,14 @@ void TestVideoMode()
 
 void SIPLagTest()
 {
-  int 				    done = 0, status = 0, counter = 0;
+	int 				    done = 0, status = 0, counter = 0;
 	uint16			    oldbuttons, pressed;		
 	ImagePtr		    back;
 	sfxhnd_t		    beep;  
 	controller	    *st;
 	maple_device_t  *sip = NULL;  
-  size_t          size = 0;
-  uint8           *buffer = NULL;
+	size_t          size = 0;
+	uint8           *buffer = NULL;
 	char						DStatus[30];
 
 	oldbuttons = InitController(0);
@@ -1927,7 +1927,7 @@ void SIPLagTest()
 	if(!back)
 		return;
 
-  snd_init();		
+	snd_init();		
 	beep = snd_sfx_load("/rd/Sample.wav");
 	if(!beep)
 		return;
@@ -1938,100 +1938,104 @@ void SIPLagTest()
 	{
 		pvr_wait_ready();
 
-    if(status == 0) // no input if we are sampling
-    {
-		  st = ReadController(0);
-		  if(st)
-		  {
-			  pressed = st->buttons & ~oldbuttons;
-			  oldbuttons = st->buttons;					      
-       
-        if (pressed & CONT_START)
-				  done =	1;				
-  
-        if (pressed & CONT_B)
+		if(status == 0) // no input if we are sampling
+		{
+			st = ReadController(0);
+			if(st)
+			{
+				pressed = st->buttons & ~oldbuttons;
+				oldbuttons = st->buttons;					      
+			 
+				if (pressed & CONT_START)
+					done =	1;				
+	
+				if (pressed & CONT_B)
 					sprintf(DStatus, "Press A");
-  
-        if (pressed & CONT_A)
-  			  status = 1;
-		  }
-    }
+	
+				if (pressed & CONT_A)
+					status = 1;
+			}
+		}
 
-    if(status == 1 && sip)
-    {
-      printf("Status 1: Setting up mic and recording\n");
-      sip_set_gain(sip, SIP_MAX_GAIN); // SIP_DEFAULT_GAIN  
-      sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED); 
-      sip_set_frequency(sip, SIP_SAMPLE_11KHZ); // 11.025kHz
-      
-      if(sip_start_sampling(sip, 1) == MAPLE_EOK)
-      {
-        counter = CUE_FRAMES; // wait n CUE_FRAMES frames
-        status = 2;
-      }
-      else
-      {
-        printf("Start Recording: Failed\n");
-        status = 0;
-      }
-    }
+		if(status == 1 && sip)
+		{
+			printf("Status 1: Setting up mic and recording\n");
+			sip_set_gain(sip, SIP_MAX_GAIN); // SIP_DEFAULT_GAIN  
+			sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED); 
+			sip_set_frequency(sip, SIP_SAMPLE_11KHZ); // 11.025kHz
+			
+			if(sip_start_sampling(sip, 1) == MAPLE_EOK)
+			{
+				counter = CUE_FRAMES; // wait n CUE_FRAMES frames
+				status = 2;
+			}
+			else
+			{
+				printf("Start Recording: Failed\n");
+				status = 0;
+			}
+		}
 
-    if(status == 2 || status == 4)
-    {
-      counter --;
-      if(!counter)
-        status++;
+		if(status == 2 || status == 4)
+		{
+			counter --;
+			if(!counter)
+				status++;
 			if(counter == 1 && status == 4)
 				sprintf(DStatus, "Processing");
-    }
-    
+		}
+		
 		if(status == 3 && beep != SFXHND_INVALID)
 		{
-      printf("Status 3: Starting playback\n");
+			printf("Status 3: Starting playback\n");
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
-      counter = 2*60; // record 2 seconds + CUE frames
+			counter = 2*60; // record 2 seconds + CUE frames
 		}    
 
-    if(status == 5 && sip)
-    {
+		if(status == 5 && sip)
+		{
 			int  retval = 0;
 
-      printf("Status 5: Stopping sampling\n");
-      retval = sip_stop_sampling(sip, 1);
+			printf("Status 5: Stopping sampling\n");
+			retval = sip_stop_sampling(sip, 1);
 			printf("Sip Stop returned %d\n", retval);
-      if(retval == 0)
-      {
-        buffer = sip_get_samples(sip, &size);
-        printf("Got %d bytes\n", (int)size);
-        if(buffer && size > 0)
-        {
+			if(retval == 0)
+			{
+				buffer = sip_get_samples(sip, &size);
+				printf("Got %d bytes\n", (int)size);
+				if(buffer && size > 0)
+				{
 					int value = 10000;
 
-          ProcessSamples((short*)buffer, size/2, &value);
+					ProcessSamples((short*)buffer, size/2, 11025, 60.0, 1000, 0, -1, &value);          
 					if(value > 0)
-						sprintf(DStatus, "Lag is %d frames", value);
+					{
+						// Check the actual frame divided in 4 FFT, at 4.2ms each
+						ProcessSamples((short*)buffer, size/2, 11025, 60.0*4, 1000, value - 1, 60*4+8, &value);  
+						sprintf(DStatus, "Lag is %d frames (%g)", ((value - floor(value)) >= 0.5) ? ceil(value) : floor(value), value);
+					}
 					if(value == 10000)
 						sprintf(DStatus, "Check audio system");
-          if(value < 0)
-            sprintf(DStatus, "Noise at 1khz");
+					if(value < 0)
+						sprintf(DStatus, "Noise at 1khz");
 
-          free(buffer);
-          buffer = NULL;
-          size = 0;
-        }        
-      }
+					free(buffer);
+					buffer = NULL;
+					size = 0;
+				}        
+			}
 
-      sip_clear_samples(sip);
-      status = 0;
-    }   
+			sip_clear_samples(sip);
+			status = 0;
+		}   
 
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
 		DrawImage(back);
 
-		DrawStringS(130, 60, 1.0f, 1.0f, 1.0f, "Lag Test via Microphone"); 
+		DrawStringS(40, 60, 1.0f, 0.0f, 0.0f, "Lag Test via Microphone"); 
 		
 		DrawStringS(60, 120, 1.0f, 1.0f,	1.0f, DStatus);
 		DrawScanlines();
@@ -2040,9 +2044,9 @@ void SIPLagTest()
 
 		pvr_scene_finish();
 
-	  sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
-    if(!sip)
-      done = 1;
+		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+		if(!sip)
+			done = 1;
 	}
 
 	if(beep != SFXHND_INVALID)
@@ -2053,146 +2057,147 @@ void SIPLagTest()
 	return;
 }
 
-void ProcessSamples(short *samples, size_t size, int *value)
+void ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq, int startframe, int numframes, double *value)
 {
-  long          samplesize = 0;
-  unsigned long samplerate = 0;
-  long          i = 0, f = 0, framesizernd = 0, time = 0;
-  double        *in, root = 0, framesize = 0;  
-  double        *MaxFreqArray = NULL;
-  fftw_complex  *out;
-  fftw_plan     p = NULL;
-  uint64        start, end;
-  double        searchfreq = 1000, mins, maxs;
-  double        boxsize = 0;
-  int           casefrq = 0;
-  double        secondunits = 60.0;
-  
-  samplesize = (long) size;
-  samplerate = 11025; 
+	long          samplesize = 0, arraysize = 0, endframe = 0;  
+	long          i = 0, f = 0, framesizernd = 0, time = 0;
+	double        *in, root = 0, framesize = 0;  
+	double        *MaxFreqArray = NULL;
+	fftw_complex  *out;
+	fftw_plan     p = NULL;
+	uint64        start, end;
+	double        mins, maxs;
+	double        boxsize = 0;
+	int           casefrq = 0;  
+	int 					found = 0;
+	long 					pos = 0, count = 0;    
+	
+	samplesize = (long) size;  
 
-  framesize = samplerate/secondunits;
-  framesizernd = (long)framesize;  
+	framesize = samplerate/secondunits;
+	framesizernd = (long)framesize;  
 
-  printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
+	printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
 
-  start = timer_ms_gettime64();
-  in = (double*) fftw_malloc(sizeof(double) * framesizernd);
-  if(!in)
-    return;
-  out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (framesizernd/2+1));  
-  if(!out)
-  {     
-     fftw_free(in); 
-     return;
-  }
-    
-  long arraysize = framesizernd;
-  MaxFreqArray = malloc(sizeof(double)*(long)(samplesize/framesize));
-  if(!MaxFreqArray)
-  {
-     fftw_free(in); 
-     fftw_free(out);
-     return;
-  }
+	start = timer_ms_gettime64();
+	in = (double*) fftw_malloc(sizeof(double) * framesizernd);
+	if(!in)
+		return;
+	out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (framesizernd/2+1));  
+	if(!out)
+	{     
+		 fftw_free(in); 
+		 return;
+	}
+		
+	arraysize = framesizernd;
+	MaxFreqArray = malloc(sizeof(double)*(long)(samplesize/framesize));
+	if(!MaxFreqArray)
+	{
+		 fftw_free(in); 
+		 fftw_free(out);
+		 return;
+	}
 
-  boxsize = (double)arraysize/(double)samplerate;  
-  for(f = 0; f < samplesize/framesize - 1; f++)
-  {
-    double mainfreq = 0, max = 0;
-    long   maxind = -1;
-    long   framestart = 0;
+	boxsize = (double)arraysize/(double)samplerate;  
+	if(numframes == -1)
+		endframe = samplesize/framesize - 1;
+	else
+	{
+		startframe = startframe*(secondunits/60.0);
+		endframe = startframe + numframes;
+	}
+	for(f = startframe; f < endframe; f++)
+	{
+		double mainfreq = 0, max = 0;
+		long   maxind = -1;
+		long   framestart = 0;
 
-    framestart = framesize*f;
-    for(i = 0; i < framesizernd; i++)
-      in[i] = (double)samples[i+framestart];
+		framestart = framesize*f;
+		for(i = 0; i < framesizernd; i++)
+			in[i] = (double)samples[i+framestart];
 
-    //printf("Estimating plan\n");
-    p = fftw_plan_dft_r2c_1d(arraysize, in, out, FFTW_ESTIMATE);      
+		//printf("Estimating plan\n");
+		p = fftw_plan_dft_r2c_1d(arraysize, in, out, FFTW_ESTIMATE);      
 
-    //printf("Executing FFTW\n");
-    fftw_execute(p); 
-  
-    //printf("Analyzing results\n");
-    root = sqrt(arraysize);
-    for(i = 0; i < arraysize/2+1; i++)
-    {
-      double r1 = creal(out[i]);
-      double i1 = cimag(out[i]);
-      double val = 0;
-  
-      val = sqrt(sqrt(r1 * r1 + i1 * i1) / root);
-      if(val > max)
-      {
-        max = val;
-        maxind = i;
-      }    
-    }
-    
-    mainfreq = (double)((double)maxind/boxsize);
-    MaxFreqArray[f] = mainfreq;
-    
-  	fftw_destroy_plan(p);
-  }
-
-  end = timer_ms_gettime64();
-  time = end - start;
-  printf("FFT for %ld frames took %ld\n", (long)(samplesize/framesize), time);
-  start = end;
-
-  casefrq = (int)ceil(searchfreq/(1/boxsize));
-  mins = (casefrq - 1) / boxsize;
-  maxs = (casefrq + 1) / boxsize;
-  printf("Searching for %g, due to samplerate and arraysize it is %g, between %g and %g\n", searchfreq, casefrq/boxsize, mins, maxs);
-  // 60 hz array boxes. since 60hz sample chunks
-  {
-		int found = 0;
-    long pos = 0, count = 0;    
-
-    for(f = 0; f < samplesize/framesize; f++)
-    {
-			if(!found)
+		//printf("Executing FFTW\n");
+		fftw_execute(p); 
+	
+		//printf("Analyzing results\n");
+		root = sqrt(arraysize);
+		for(i = 0; i < arraysize/2+1; i++)
+		{
+			double r1 = creal(out[i]);
+			double i1 = cimag(out[i]);
+			double val = 0;
+	
+			val = sqrt(sqrt(r1 * r1 + i1 * i1) / root);
+			if(val > max)
 			{
-    		printf("Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
-      	if(count)
-      	{       	 	
-      		if(MaxFreqArray[f] < mins || MaxFreqArray[f] > maxs)        
-       	 	{
-       	 	  count = 0;          
-       	 	  pos = 0;
-       	 	}
-       	 	else
-       	 	{
-       	 	  count++;
-       	 	  if(count == 60)
-       	 	  {
-							pos -= CUE_FRAMES;
-							printf("Found at %g frames -> %g sec\n", pos/(secondunits/60.0), pos/secondunits);
-							*value = pos;
-							found = 1;
-       	 	  }
-       	 	}
-      	}
-        	
-      	if(!count && MaxFreqArray[f] >= mins && MaxFreqArray[f] <= maxs)              
-      	{
-        	pos = f;        
-        	count = 1;
-      	}      
+				max = val;
+				maxind = i;
+			}    
+		}
+		
+		mainfreq = (double)((double)maxind/boxsize);
+		MaxFreqArray[f] = mainfreq;
+		
+		fftw_destroy_plan(p);
+	}
+
+	end = timer_ms_gettime64();
+	time = end - start;
+	printf("FFT for %ld frames took %ld\n", (long)(samplesize/framesize), time);
+	start = end;
+
+	casefrq = (int)ceil(searchfreq/(1/boxsize));
+	mins = (casefrq - 1) / boxsize;
+	maxs = (casefrq + 1) / boxsize;
+	printf("Searching for %g, due to samplerate and arraysize it is %g, between %g and %g\n", searchfreq, casefrq/boxsize, mins, maxs);
+ 
+	for(f = 0; f < samplesize/framesize; f++)
+	{
+		if(!found)
+		{
+			printf("Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
+			if(count)
+			{       	 	
+				if(MaxFreqArray[f] < mins || MaxFreqArray[f] > maxs)        
+				{
+					count = 0;          
+					pos = 0;
+				}
+				else
+				{
+					count++;
+					if(count == (int)secondunits)
+					{
+						pos -= CUE_FRAMES;
+						printf("Found at %g frames -> %g sec\n", pos/(secondunits/60.0), pos/secondunits);
+						*value = pos;
+						found = 1;
+					}
+				}
 			}
-    }
-  }
+				
+			if(!count && MaxFreqArray[f] >= mins && MaxFreqArray[f] <= maxs)              
+			{
+				pos = f;        
+				count = 1;
+			}      
+		}
+	}
 
-  end = timer_ms_gettime64();
-  time = end - start;
-  printf("Processing frequencies took %ld\n", time);
+	end = timer_ms_gettime64();
+	time = end - start;
+	printf("Processing frequencies took %ld\n", time);
 
-  free(MaxFreqArray);
-  MaxFreqArray = NULL;  
-  
-  fftw_free(in); 
-  fftw_free(out);
-  fftw_cleanup();  
+	free(MaxFreqArray);
+	MaxFreqArray = NULL;  
+	
+	fftw_free(in); 
+	fftw_free(out);
+	fftw_cleanup();  
 }
 
 #endif
