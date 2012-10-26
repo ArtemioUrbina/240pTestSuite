@@ -40,7 +40,7 @@
 #include "help.h"
 #include "settings.h"
 
-#define CUE_FRAMES	5
+#define CUE_FRAMES	10
 
 void DropShadowTest()
 {
@@ -1911,7 +1911,7 @@ void TestVideoMode()
 
 void SIPLagTest()
 {
-	int 				    done = 0, status = 0, counter = 0;
+	int 				    done = 0, status = 0, counter = 0, pres = 1;
 	uint16			    oldbuttons, pressed;		
 	ImagePtr		    back;
 	sfxhnd_t		    beep;  
@@ -1919,10 +1919,12 @@ void SIPLagTest()
 	maple_device_t  *sip = NULL;  
 	size_t          size = 0;
 	uint8           *buffer = NULL;
-	char						DStatus[30];
+	char						DStatus[30], DPres[20];
 
 	oldbuttons = InitController(0);
 	
+	DStatus[0] = 0x0;
+	DPres[0] = 0x0;
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
@@ -1954,6 +1956,18 @@ void SIPLagTest()
 	
 				if (pressed & CONT_A)
 					status = 1;
+
+				if (pressed & CONT_DPAD_UP)
+					pres *= 2;
+
+				if (pressed & CONT_DPAD_DOWN)
+					pres /= 2;
+
+				if(pres > 4)
+					pres = 4;
+
+				if(pres < 1)
+					pres = 1;
 			}
 		}
 
@@ -2006,19 +2020,15 @@ void SIPLagTest()
 				printf("Got %d bytes\n", (int)size);
 				if(buffer && size > 0)
 				{
-					int value = 10000;
+					double value;
 
-					ProcessSamples((short*)buffer, size/2, 11025, 60.0, 1000, 0, -1, &value);          
-					if(value > 0)
-					{
-						// Check the actual frame divided in 4 FFT, at 4.2ms each
-						ProcessSamples((short*)buffer, size/2, 11025, 60.0*4, 1000, value - 1, 60*4+8, &value);  
-						sprintf(DStatus, "Lag is %d frames (%g)", ((value - floor(value)) >= 0.5) ? ceil(value) : floor(value), value);
-					}
-					if(value == 10000)
-						sprintf(DStatus, "Check audio system");
-					if(value < 0)
+					value = ProcessSamples((short*)buffer, size/2, 11025, 60.0*pres, 1000);          
+					if(value < 0 && value != -500)
 						sprintf(DStatus, "Noise at 1khz");
+					if(value == -500)
+						sprintf(DStatus, "Check audio system");
+					if(value >= 0)
+						sprintf(DStatus, "Lag is %g frames (%g)", ((value - floor(value)) >= 0.5) ? ceil(value) : floor(value), value);
 
 					free(buffer);
 					buffer = NULL;
@@ -2035,9 +2045,10 @@ void SIPLagTest()
 		pvr_list_begin(PVR_LIST_TR_POLY);
 		DrawImage(back);
 
+		sprintf(DPres, "Presicion %d", pres);
 		DrawStringS(40, 60, 1.0f, 0.0f, 0.0f, "Lag Test via Microphone"); 
-		
 		DrawStringS(60, 120, 1.0f, 1.0f,	1.0f, DStatus);
+		DrawStringS(60, 200, 1.0f, 1.0f,	1.0f, DPres);
 		DrawScanlines();
 		
 		pvr_list_finish();				
@@ -2053,13 +2064,14 @@ void SIPLagTest()
 		snd_sfx_unload(beep);
 	FreeImage(&back);
 
+	fftw_cleanup();  
 	snd_shutdown();
 	return;
 }
 
-void ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq, int startframe, int numframes, double *value)
+double ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq)
 {
-	long          samplesize = 0, arraysize = 0, endframe = 0;  
+	long          samplesize = 0, arraysize = 0;  
 	long          i = 0, f = 0, framesizernd = 0, time = 0;
 	double        *in, root = 0, framesize = 0;  
 	double        *MaxFreqArray = NULL;
@@ -2071,6 +2083,7 @@ void ProcessSamples(short *samples, size_t size, long samplerate, double secondu
 	int           casefrq = 0;  
 	int 					found = 0;
 	long 					pos = 0, count = 0;    
+	double				value = -500;
 	
 	samplesize = (long) size;  
 
@@ -2082,32 +2095,25 @@ void ProcessSamples(short *samples, size_t size, long samplerate, double secondu
 	start = timer_ms_gettime64();
 	in = (double*) fftw_malloc(sizeof(double) * framesizernd);
 	if(!in)
-		return;
+		return value;
 	out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (framesizernd/2+1));  
 	if(!out)
 	{     
 		 fftw_free(in); 
-		 return;
+		 return value;
 	}
 		
 	arraysize = framesizernd;
-	MaxFreqArray = malloc(sizeof(double)*(long)(samplesize/framesize));
+	MaxFreqArray = malloc(sizeof(double)*(samplesize/framesize - 1));
 	if(!MaxFreqArray)
 	{
 		 fftw_free(in); 
 		 fftw_free(out);
-		 return;
+		 return value;
 	}
 
 	boxsize = (double)arraysize/(double)samplerate;  
-	if(numframes == -1)
-		endframe = samplesize/framesize - 1;
-	else
-	{
-		startframe = startframe*(secondunits/60.0);
-		endframe = startframe + numframes;
-	}
-	for(f = startframe; f < endframe; f++)
+	for(f = 0; f < samplesize/framesize - 1; f++)
 	{
 		double mainfreq = 0, max = 0;
 		long   maxind = -1;
@@ -2147,7 +2153,7 @@ void ProcessSamples(short *samples, size_t size, long samplerate, double secondu
 
 	end = timer_ms_gettime64();
 	time = end - start;
-	printf("FFT for %ld frames took %ld\n", (long)(samplesize/framesize), time);
+	printf("FFT for %g frames took %ld\n", samplesize/framesize - 1, time);
 	start = end;
 
 	casefrq = (int)ceil(searchfreq/(1/boxsize));
@@ -2155,7 +2161,7 @@ void ProcessSamples(short *samples, size_t size, long samplerate, double secondu
 	maxs = (casefrq + 1) / boxsize;
 	printf("Searching for %g, due to samplerate and arraysize it is %g, between %g and %g\n", searchfreq, casefrq/boxsize, mins, maxs);
  
-	for(f = 0; f < samplesize/framesize; f++)
+	for(f = 0; f < samplesize/framesize - 1; f++)
 	{
 		if(!found)
 		{
@@ -2172,9 +2178,9 @@ void ProcessSamples(short *samples, size_t size, long samplerate, double secondu
 					count++;
 					if(count == (int)secondunits)
 					{
-						pos -= CUE_FRAMES;
-						printf("Found at %g frames -> %g sec\n", pos/(secondunits/60.0), pos/secondunits);
-						*value = pos;
+						pos -= CUE_FRAMES*(secondunits/60.0);
+						value = pos/(secondunits/60.0);
+						printf("Found at %g frames -> %g sec\n", value, pos/secondunits);
 						found = 1;
 					}
 				}
@@ -2197,7 +2203,7 @@ void ProcessSamples(short *samples, size_t size, long samplerate, double secondu
 	
 	fftw_free(in); 
 	fftw_free(out);
-	fftw_cleanup();  
+	return(value);
 }
 
 #endif
