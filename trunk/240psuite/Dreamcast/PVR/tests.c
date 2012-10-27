@@ -1909,6 +1909,27 @@ void TestVideoMode()
 
 #ifdef USE_FFTW
 
+void DrawSIPScreen(ImagePtr back, char *Status, int pres, char *Results, int ResCount)
+{
+	char						DPres[20];
+
+	pvr_wait_ready();
+	pvr_scene_begin();
+
+	pvr_list_begin(PVR_LIST_TR_POLY);
+	DrawImage(back);
+
+	sprintf(DPres, "Presicion %d", pres);
+	DrawStringS(40, 60, 1.0f, 0.0f, 0.0f, "Lag Test via Microphone"); 
+	DrawStringS(60, 120, 1.0f, 1.0f,	1.0f, Status);
+	DrawStringS(60, 200, 1.0f, 1.0f,	1.0f, DPres);
+	DrawScanlines();
+	
+	pvr_list_finish();				
+
+	pvr_scene_finish();
+}
+
 void SIPLagTest()
 {
 	int 				    done = 0, status = 0, counter = 0, pres = 1;
@@ -1919,6 +1940,8 @@ void SIPLagTest()
 	maple_device_t  *sip = NULL;  
 	size_t          size = 0;
 	uint8           *buffer = NULL;
+	double          Results[10];
+	int             ResCount = 0;
 	char						DStatus[30], DPres[20];
 
 	oldbuttons = InitController(0);
@@ -1937,9 +1960,7 @@ void SIPLagTest()
 	updateVMU("Lag v/Micr", "", 1);
 	sprintf(DStatus, "Press A");
 	while(!done) 
-	{
-		pvr_wait_ready();
-
+	{		
 		if(status == 0) // no input if we are sampling
 		{
 			st = ReadController(0);
@@ -2022,6 +2043,7 @@ void SIPLagTest()
 				{
 					double value;
 
+					DrawSIPScreen(back, "Analyzing...", pres, Results, ResCount);
 					value = ProcessSamples((short*)buffer, size/2, 11025, 60.0*pres, 1000);          
 					if(value < 0 && value != -500)
 						sprintf(DStatus, "Noise at 1khz");
@@ -2040,20 +2062,7 @@ void SIPLagTest()
 			status = 0;
 		}   
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);
-
-		sprintf(DPres, "Presicion %d", pres);
-		DrawStringS(40, 60, 1.0f, 0.0f, 0.0f, "Lag Test via Microphone"); 
-		DrawStringS(60, 120, 1.0f, 1.0f,	1.0f, DStatus);
-		DrawStringS(60, 200, 1.0f, 1.0f,	1.0f, DPres);
-		DrawScanlines();
-		
-		pvr_list_finish();				
-
-		pvr_scene_finish();
+		DrawSIPScreen(back, DStatus, pres, Results, ResCount);
 
 		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 		if(!sip)
