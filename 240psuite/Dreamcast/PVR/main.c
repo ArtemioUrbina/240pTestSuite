@@ -184,11 +184,14 @@ start:
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
+
+#ifdef VGA_SETTINGS
 		if(vmode == NATIVE_640_FS && vcable == CT_VGA)
 		{
 			c++;
 			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VGA Settings"); 
 		}    
+#endif
 
 		r = 0.8f;
 		g = 0.8f;
