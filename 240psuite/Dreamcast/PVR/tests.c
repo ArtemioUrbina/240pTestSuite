@@ -41,6 +41,8 @@
 #include "settings.h"
 
 #define CUE_FRAMES	10
+#define SECONDS_TO_RECORD	2
+#define RESULTS_MAX	10
 
 void DropShadowTest()
 {
@@ -1909,9 +1911,11 @@ void TestVideoMode()
 
 #ifdef USE_FFTW
 
-void DrawSIPScreen(ImagePtr back, char *Status, int pres, char *Results, int ResCount)
+void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int ResCount)
 {
+	int							i = 0;
 	char						DPres[20];
+	char						Res[20];
 
 	pvr_wait_ready();
 	pvr_scene_begin();
@@ -1922,7 +1926,12 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, char *Results, int Res
 	sprintf(DPres, "Presicion %d", pres);
 	DrawStringS(40, 60, 1.0f, 0.0f, 0.0f, "Lag Test via Microphone"); 
 	DrawStringS(60, 120, 1.0f, 1.0f,	1.0f, Status);
-	DrawStringS(60, 200, 1.0f, 1.0f,	1.0f, DPres);
+	DrawStringS(140, 200, 1.0f, 1.0f,	1.0f, DPres);
+	for(i = 1; i <= ResCount; i++)
+	{
+		sprintf(Res, "%g", Results[i-1]);
+		DrawStringS(200, 60+i*fh, 1.0f, 1.0f,	1.0f, Res);
+	}
 	DrawScanlines();
 	
 	pvr_list_finish();				
@@ -1940,7 +1949,7 @@ void SIPLagTest()
 	maple_device_t  *sip = NULL;  
 	size_t          size = 0;
 	uint8           *buffer = NULL;
-	double          Results[10];
+	double          Results[RESULTS_MAX];
 	int             ResCount = 0;
 	char						DStatus[30], DPres[20];
 
@@ -1972,9 +1981,6 @@ void SIPLagTest()
 				if (pressed & CONT_START)
 					done =	1;				
 	
-				if (pressed & CONT_B)
-					sprintf(DStatus, "Press A");
-	
 				if (pressed & CONT_A)
 					status = 1;
 
@@ -1994,6 +2000,7 @@ void SIPLagTest()
 
 		if(status == 1 && sip)
 		{
+			sprintf(DStatus, "Starting Microphone");
 			printf("Status 1: Setting up mic and recording\n");
 			sip_set_gain(sip, SIP_MAX_GAIN); // SIP_DEFAULT_GAIN  
 			sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED); 
@@ -2006,6 +2013,7 @@ void SIPLagTest()
 			}
 			else
 			{
+				sprintf(DStatus, "Microphone failed");
 				printf("Start Recording: Failed\n");
 				status = 0;
 			}
@@ -2016,22 +2024,26 @@ void SIPLagTest()
 			counter --;
 			if(!counter)
 				status++;
-			if(counter == 1 && status == 4)
-				sprintf(DStatus, "Processing");
+			if(counter == 1)
+				sprintf(DStatus, "Frame Audio Cue:%d", CUE_FRAMES - counter);
+			if(status == 4)
+				sprintf(DStatus, "Recording:Frame %d", SECONDS_TO_RECORD*60 - counter);
 		}
 		
 		if(status == 3 && beep != SFXHND_INVALID)
 		{
+			sprintf(DStatus, "Playing");
 			printf("Status 3: Starting playback\n");
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
-			counter = 2*60; // record 2 seconds + CUE frames
+			counter = SECONDS_TO_RECORD*60; // record 2 seconds + CUE frames
 		}    
 
 		if(status == 5 && sip)
 		{
 			int  retval = 0;
 
+			sprintf(DStatus, "Stopped recording");
 			printf("Status 5: Stopping sampling\n");
 			retval = sip_stop_sampling(sip, 1);
 			printf("Sip Stop returned %d\n", retval);
@@ -2050,7 +2062,18 @@ void SIPLagTest()
 					if(value == -500)
 						sprintf(DStatus, "Check audio system");
 					if(value >= 0)
-						sprintf(DStatus, "Lag is %g frames (%g)", ((value - floor(value)) >= 0.5) ? ceil(value) : floor(value), value);
+					{
+						int i = 0;
+
+						sprintf(DStatus, "Lag is %g frames", value);
+						if(ResCount == RESULTS_MAX)
+						{
+							for(i = 0; i < RESULTS_MAX - 1; i++)
+								Results[i] = Results[i+1];
+							ResCount --;
+						}
+						Results[ResCount++] = value;
+					}
 
 					free(buffer);
 					buffer = NULL;
