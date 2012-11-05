@@ -40,7 +40,7 @@
 #include "help.h"
 #include "settings.h"
 
-#define CUE_FRAMES	10
+#define CUE_FRAMES	5
 #define SECONDS_TO_RECORD	2
 #define RESULTS_MAX	10
 
@@ -1935,11 +1935,16 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int R
 			sprintf(Header, "Last result:");
 		else
 			sprintf(Header, "Last %d results:", ResCount);
-		DrawStringS(180, 80, 0.0f, 1.0f,	0.0f, Header);
+		DrawStringS(170, 70, 0.0f, 1.0f,	0.0f, Header);
 		for(i = 1; i <= ResCount; i++)
 		{
-			sprintf(Res, "%.2d %g frames", i, Results[i-1]);
-			DrawStringS(180, 80+i*fh, 1.0f, 1.0f,	1.0f, Res);
+			if(Results[i-1] < 0 && Results[i-1] != -500)
+				sprintf(Res, "%.2d Noise at 1khz", i);
+			if(Results[i-1] == -500)
+				sprintf(Res, "%.2d No tone detected", i);
+			if(Results[i-1] >= 0)
+				sprintf(Res, "%.2d Lag was %g frames", i, Results[i-1]);
+			DrawStringS(170, 70+i*fh, 1.0f, 1.0f,	1.0f, Res);
 		}
 	}
 	DrawScanlines();
@@ -2072,18 +2077,17 @@ void SIPLagTest()
 					if(value == -500)
 						sprintf(DStatus, "Check audio system");
 					if(value >= 0)
+						sprintf(DStatus, "Lag is %g frames", value);
+
+					if(ResCount == RESULTS_MAX)
 					{
 						int i = 0;
 
-						sprintf(DStatus, "Lag is %g frames", value);
-						if(ResCount == RESULTS_MAX)
-						{
-							for(i = 0; i < RESULTS_MAX - 1; i++)
-								Results[i] = Results[i+1];
-							ResCount --;
-						}
-						Results[ResCount++] = value;
+						for(i = 0; i < RESULTS_MAX - 1; i++)
+							Results[i] = Results[i+1];
+						ResCount --;
 					}
+					Results[ResCount++] = value;
 
 					free(buffer);
 					buffer = NULL;
