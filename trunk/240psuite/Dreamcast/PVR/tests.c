@@ -2066,8 +2066,7 @@ void SIPLagTest()
 					double value;
 
 					DrawSIPScreen(back, "Analyzing...", pres, Results, ResCount);
-					//value = ProcessSamples((short*)buffer, size/2, 11025, 60.0*pres, 1000);          
-					value = 1.256;
+					value = ProcessSamples((short*)buffer, size/2, 11025, 60.0*pres, 1000);          
 					if(value < 0 && value != -500)
 						sprintf(DStatus, "Noise at 1khz");
 					if(value == -500)
