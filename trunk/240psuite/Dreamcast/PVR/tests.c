@@ -1914,8 +1914,9 @@ void TestVideoMode()
 void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int ResCount)
 {
 	int							i = 0;
-	char						DPres[20];
-	char						Res[20];
+	char						DPres[40];
+	char						Header[40];
+	char						Res[40];
 
 	pvr_wait_ready();
 	pvr_scene_begin();
@@ -1923,14 +1924,23 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int R
 	pvr_list_begin(PVR_LIST_TR_POLY);
 	DrawImage(back);
 
-	sprintf(DPres, "Presicion %d", pres);
+	sprintf(DPres, "Precision %d", pres);
 	DrawStringS(40, 60, 1.0f, 0.0f, 0.0f, "Lag Test via Microphone"); 
-	DrawStringS(60, 120, 1.0f, 1.0f,	1.0f, Status);
-	DrawStringS(140, 200, 1.0f, 1.0f,	1.0f, DPres);
-	for(i = 1; i <= ResCount; i++)
+	DrawStringS(50, 120, 1.0f, 1.0f,	1.0f, Status);
+	DrawStringS(230, 200, 0.0f, 1.0f,	0.0f, DPres);
+
+	if(ResCount)
 	{
-		sprintf(Res, "%g", Results[i-1]);
-		DrawStringS(200, 60+i*fh, 1.0f, 1.0f,	1.0f, Res);
+		if(ResCount == 1)
+			sprintf(Header, "Last result:");
+		else
+			sprintf(Header, "Last %d results:", ResCount);
+		DrawStringS(180, 80, 0.0f, 1.0f,	0.0f, Header);
+		for(i = 1; i <= ResCount; i++)
+		{
+			sprintf(Res, "%.2d %g frames", i, Results[i-1]);
+			DrawStringS(180, 80+i*fh, 1.0f, 1.0f,	1.0f, Res);
+		}
 	}
 	DrawScanlines();
 	
@@ -2025,9 +2035,9 @@ void SIPLagTest()
 			if(!counter)
 				status++;
 			if(counter == 1)
-				sprintf(DStatus, "Frame Audio Cue:%d", CUE_FRAMES - counter);
+				sprintf(DStatus, "Frame Audio Cue: %d", CUE_FRAMES - counter);
 			if(status == 4)
-				sprintf(DStatus, "Recording:Frame %d", SECONDS_TO_RECORD*60 - counter);
+				sprintf(DStatus, "Recording Frame: %d", SECONDS_TO_RECORD*60 - counter);
 		}
 		
 		if(status == 3 && beep != SFXHND_INVALID)
@@ -2056,7 +2066,8 @@ void SIPLagTest()
 					double value;
 
 					DrawSIPScreen(back, "Analyzing...", pres, Results, ResCount);
-					value = ProcessSamples((short*)buffer, size/2, 11025, 60.0*pres, 1000);          
+					//value = ProcessSamples((short*)buffer, size/2, 11025, 60.0*pres, 1000);          
+					value = 1.256;
 					if(value < 0 && value != -500)
 						sprintf(DStatus, "Noise at 1khz");
 					if(value == -500)
@@ -2122,7 +2133,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	framesize = samplerate/secondunits;
 	framesizernd = (long)framesize;  
 
-	printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
+	//printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
 
 	start = timer_ms_gettime64();
 	in = (double*) fftw_malloc(sizeof(double) * framesizernd);
@@ -2185,19 +2196,19 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 
 	end = timer_ms_gettime64();
 	time = end - start;
-	printf("FFT for %g frames took %ld\n", samplesize/framesize - 1, time);
+	//printf("FFT for %g frames took %ld\n", samplesize/framesize - 1, time);
 	start = end;
 
 	casefrq = (int)ceil(searchfreq/(1/boxsize));
 	mins = (casefrq - 1) / boxsize;
 	maxs = (casefrq + 1) / boxsize;
-	printf("Searching for %g, due to samplerate and arraysize it is %g, between %g and %g\n", searchfreq, casefrq/boxsize, mins, maxs);
+	//printf("Searching for %g, due to samplerate and arraysize it is %g, between %g and %g\n", searchfreq, casefrq/boxsize, mins, maxs);
  
 	for(f = 0; f < samplesize/framesize - 1; f++)
 	{
 		if(!found)
 		{
-			printf("Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
+			//printf("Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
 			if(count)
 			{       	 	
 				if(MaxFreqArray[f] < mins || MaxFreqArray[f] > maxs)        
@@ -2212,7 +2223,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 					{
 						pos -= CUE_FRAMES*(secondunits/60.0);
 						value = pos/(secondunits/60.0);
-						printf("Found at %g frames -> %g sec\n", value, pos/secondunits);
+						//printf("Found at %g frames -> %g sec\n", value, pos/secondunits);
 						found = 1;
 					}
 				}
@@ -2228,7 +2239,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 
 	end = timer_ms_gettime64();
 	time = end - start;
-	printf("Processing frequencies took %ld\n", time);
+	//printf("Processing frequencies took %ld\n", time);
 
 	free(MaxFreqArray);
 	MaxFreqArray = NULL;  
