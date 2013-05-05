@@ -405,6 +405,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White Screen"); y += fh; c++;				
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;				
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		r = 0.8f;
@@ -521,6 +522,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 						DrawWhiteScreen();
 						break;
 					case 9:
+						Draw100IRE();
+						break;
+					case 10:
 						done = 1;
 						break;
 				} 												
@@ -584,7 +588,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.14"); y += fh; 
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.15"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();				

@@ -33,6 +33,7 @@
 #define PLUGEHELP				"/rd/help/pluge.txt"
 #define STRIPESHELP			"/rd/help/stripes.txt"
 #define BACKLITHELP			"/rd/help/backlit.txt"
+#define IREHELP  	  		"/rd/help/ire100.txt"
 
 uint16 HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);
