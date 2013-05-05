@@ -467,4 +467,73 @@ void DrawLinearity()
 	return;
 }
 
+void Draw100IRE()
+{
+	int 				done = 0;
+	uint16			oldbuttons, pressed, text = 0;	
+	ImagePtr		back;
+	controller	*st;
+	char				msg[50];
+
+	oldbuttons = InitController(0);
+	back = LoadKMG("/rd/100IRE.kmg.gz", 1);
+	if(!back)
+		return;
+
+	updateVMU(" 100 IRE ", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_A)
+			{
+				back->alpha -= 0.1f;
+				if(back->alpha < 0.0f)
+					back->alpha = 0.0f;
+
+				text = 30;
+			}
+		
+			if (pressed & CONT_B)
+			{
+				back->alpha += 0.1f;
+				if(back->alpha > 1.0f)
+					back->alpha = 1.0f;
+
+				text = 30;
+			}
+		
+			if (pressed & CONT_START)
+				done =	1;											
+			if (st->rtrig > 5)
+				oldbuttons = HelpWindow(IREHELP, back);
+		}
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);		
+
+		if(text)
+		{
+			sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
+			DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+			text --;
+		}
+
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
+	}
+
+	FreeImage(&back);
+	return;
+}
 
