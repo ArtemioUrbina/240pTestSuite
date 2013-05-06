@@ -2051,7 +2051,7 @@ void SIPLagTest()
 			printf("Status 3: Starting playback\n");
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
-			counter = SECONDS_TO_RECORD*60; // record 2 seconds + CUE frames
+			counter = SECONDS_TO_RECORD*60; // record N seconds + CUE frames
 		}    
 
 		if(status == 5 && sip)
