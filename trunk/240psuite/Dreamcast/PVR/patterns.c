@@ -479,12 +479,12 @@ void Draw100IRE()
 	back = LoadKMG("/rd/100IRE.kmg.gz", 1);
 	if(!back)
 		return;
-    white = LoadKMG("/rd/white.kmg.gz", 1);
+  white = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!white)
-    {
-        FreeImage(&back);
+  {
+  	FreeImage(&back);
 		return;
-    }
+  }
 
 	updateVMU(" 100 IRE ", "", 1);
 	while(!done) 
@@ -499,45 +499,50 @@ void Draw100IRE()
 					
 			if (pressed & CONT_A)
 			{
-                if(!invert)
-                {
-				    back->alpha -= 0.1f;
-				    if(back->alpha < 0.0f)
-					    back->alpha = 0.0f;
-                }
-                else
-                {
-                    back->alpha -= 0.25f;
-				    if(back->alpha < 0.0f)
-					    back->alpha = 0.0f;
-                }
+      	if(!invert)
+        {
+					back->alpha -= 0.1f;
+				  if(back->alpha < 0.0f)
+						back->alpha = 0.0f;
+        }
+        else
+        {
+        	back->alpha += 0.125;
+				  if(back->alpha > 1.0f)
+						back->alpha = 1.0f;
+        }
 
 				text = 30;
 			}
 		
 			if (pressed & CONT_B)
 			{
-                if(!invert)
-                {
-				    back->alpha += 0.1f;
-				    if(back->alpha > 1.0f)
-					    back->alpha = 1.0f;
-                }
-                else
-                {
-                    back->alpha += 0.25f;
-				    if(back->alpha > 1.0f)
-					    back->alpha = 1.0f;
-                }
+      	if(!invert)
+        {
+					back->alpha += 0.1f;
+				  if(back->alpha > 1.0f)
+						back->alpha = 1.0f;
+        }
+        else
+        {
+        	back->alpha -= 0.125f;
+				  if(back->alpha < 0.0f)
+						back->alpha = 0.0f;
+        }
 
 				text = 30;
 			}
 
-            if (pressed & CONT_Y)
-            {
-			    invert = !invert;
-                back->alpha = 1.0f;
-            }
+     	if (pressed & CONT_Y)
+      {
+				invert = !invert;
+        back->alpha = 1.0f;
+				text = 30;
+				if(!invert)
+					updateVMU(" 100 IRE ", "", 1);
+				else
+					updateVMU(" 140 IRE ", "", 1);
+      }
 		
 			if (pressed & CONT_START)
 				done =	1;											
@@ -548,24 +553,24 @@ void Draw100IRE()
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
-        if(invert)
-            DrawImage(white);	
+    if(invert)
+      DrawImage(white);	
 		DrawImage(back);		
 
 		if(text)
 		{
-            if(!invert)
-            {
-			    sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
-			    DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
-			    text --;
-            }
-            else
-            {
-			    sprintf(msg, "%0.0f IRE", 100.0f + (double)(back->alpha * 40));
-			    DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
-			    text --;
-            }
+    	if(!invert)
+      {
+				sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
+			  DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+			  text --;
+      }
+      else
+      {
+			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
+			  DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+			  text --;
+      }
 		}
 
 		DrawScanlines();
