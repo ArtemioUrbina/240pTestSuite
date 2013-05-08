@@ -383,24 +383,54 @@ void DrawColorBars()
 
 void Draw100IRE()
 {
-  u16 size;
-  u16 exit = 0;
+  char str[10];
+  u16 size, irevals[] = { 13, 25, 41, 53, 66, 82, 94 };
+  u16 exit = 0, ire = 6, text = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;  
 
-  size = sizeof(solid_tiles) / 32; 
+  size = sizeof(color_tiles) / 32; 
 
-  VDP_loadTileData(solid_tiles, TILE_USERINDEX, size, USE_DMA); 
-  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 80/8, 56/8, 160/8, 112/8); 
+  if(showhelp)
+    DrawHelp(HELP_IRE);
+  VDP_loadTileData(color_tiles, TILE_USERINDEX, size, USE_DMA); 
+  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+ire, 80/8, 56/8, 160/8, 112/8); 
   VDP_setPalette(PAL0, palette_grey);           
   while(!exit)
   {    
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
-
+    
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
+    // 13, 25, 41, 53, 66, 82, 94 IRE
+    if (pressedButtons & BUTTON_A)
+    {        
+        if(ire != 0)
+            ire--;
+        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+ire, 80/8, 56/8, 160/8, 112/8); 
+        intToStr(irevals[ire], str, 2);
+        VDP_drawText(str, 32, 26);
+        VDP_drawText("IRE", 35, 26);
+        text = 60;
+    }
+    if (pressedButtons & BUTTON_B)
+    {        
+        if(ire != 6)
+            ire++;
+        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+ire, 80/8, 56/8, 160/8, 112/8); 
+        intToStr(irevals[ire], str, 2);
+        VDP_drawText(str, 32, 26);
+        VDP_drawText("IRE", 35, 26);
+        text = 60;
+    }
+    if(text)
+    {
+        text --;
+        if(!text)
+            VDP_drawText("        ", 32, 26);
+    }
     VDP_waitVSync();
   }
 }
