@@ -102,6 +102,12 @@ void DrawHelp(int option)
       VDP_drawTextBG(APLAN, "vertical bars and", TILE_ATTR(PAL0, 0, 0, 0), 4, 12);
       VDP_drawTextBG(APLAN, "checkerboard with 'A'.", TILE_ATTR(PAL0, 0, 0, 0), 4, 13);      
       break;
+    case HELP_IRE:
+      VDP_drawTextBG(APLAN, "          100 IRE", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+      VDP_drawTextBG(APLAN, "You can vary IRE intensity", TILE_ATTR(PAL0, 0, 0, 0), 4, 7);
+      VDP_drawTextBG(APLAN, "with A and B. Values are:", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
+      VDP_drawTextBG(APLAN, "13, 25, 41, 53, 66, 82, 94", TILE_ATTR(PAL0, 0, 0, 0), 4, 9);                  
+      break;
   }
 
   VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);

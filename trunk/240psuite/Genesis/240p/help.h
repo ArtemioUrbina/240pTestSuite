@@ -25,8 +25,9 @@
 #define	HELP_GENERAL		1
 #define	HELP_PLUGE			2
 #define	HELP_COLORS			3
-#define	HELP_GRID				4
+#define	HELP_GRID		    4
 #define	HELP_BLEED			5
+#define	HELP_IRE   			6
 
 extern u16	showhelp;
 
