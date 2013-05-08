@@ -381,6 +381,30 @@ void DrawColorBars()
     VDP_setHilightShadow(0);
 }
 
+void Draw100IRE()
+{
+  u16 size;
+  u16 exit = 0;
+  u16 buttons, oldButtons = 0xffff, pressedButtons;  
+
+  size = sizeof(solid_tiles) / 32; 
+
+  VDP_loadTileData(solid_tiles, TILE_USERINDEX, size, USE_DMA); 
+  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 80/8, 56/8, 160/8, 112/8); 
+  VDP_setPalette(PAL0, palette_grey);           
+  while(!exit)
+  {    
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
+
+    VDP_waitVSync();
+  }
+}
+
 void DrawColorTilesAt(u16 plan, u16 pal, u16 x, u16 y, u16 tiles, u16 w, u16 h)
 {    
     VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 0, 0, 0, 0) + tiles, x+w*1, y, w, h);     

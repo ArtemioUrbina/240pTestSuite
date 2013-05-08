@@ -190,7 +190,8 @@ void TestPatternMenu()
     VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
     VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
-    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+    VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
+    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -199,7 +200,7 @@ void TestPatternMenu()
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
-      if(cursel > 9)
+      if(cursel > 10)
         cursel = 1;
     }
 
@@ -207,7 +208,7 @@ void TestPatternMenu()
     {
       cursel --;
       if(cursel < 1)
-        cursel = 9;
+        cursel = 10;
     }
 
     if (pressedButtons & BUTTON_B)
@@ -244,6 +245,9 @@ void TestPatternMenu()
           DrawWhiteScreen();
           break;
         case 9: 
+          Draw100IRE();
+          break;
+        case 10: 
           done = 1;
           break;
       }
@@ -309,7 +313,7 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-  VDP_drawTextBG(APLAN, "Ver. 1.10e", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
+  VDP_drawTextBG(APLAN, "Ver. 1.11", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
