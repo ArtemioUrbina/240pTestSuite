@@ -169,6 +169,9 @@ void Draw601ColorBars()
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+  if(showhelp)
+    DrawHelp(HELP_601CB);
+
   size = sizeof(cb601_tiles) / 32; 
   VDP_setPalette(PAL0, cb601_pal);
   VDP_loadTileData(cb601_tiles, TILE_USERINDEX, size, USE_DMA); 

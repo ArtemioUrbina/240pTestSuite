@@ -28,6 +28,7 @@
 #define	HELP_GRID		    4
 #define	HELP_BLEED			5
 #define	HELP_IRE   			6
+#define HELP_601CB          7
 
 extern u16	showhelp;
 

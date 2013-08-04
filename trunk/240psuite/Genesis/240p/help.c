@@ -108,6 +108,12 @@ void DrawHelp(int option)
       VDP_drawTextBG(APLAN, "with A and B. Values are:", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
       VDP_drawTextBG(APLAN, "13, 25, 41, 53, 66, 82, 94", TILE_ATTR(PAL0, 0, 0, 0), 4, 9);                  
       break;
+    case HELP_601CB:
+      VDP_drawTextBG(APLAN, "          601 COLORBARS", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+      VDP_drawTextBG(APLAN, "This pattern can be used with", TILE_ATTR(PAL0, 0, 0, 0), 4, 7);
+      VDP_drawTextBG(APLAN, "color filters in order to adjust", TILE_ATTR(PAL0, 0, 0, 0), 4, 8);
+      VDP_drawTextBG(APLAN, "color accuracy. ", TILE_ATTR(PAL0, 0, 0, 0), 4, 9);                  
+      break;      
   }
 
   VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
