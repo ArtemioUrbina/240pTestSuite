@@ -30,6 +30,9 @@
 void TestPatternMenu();
 void DrawCredits();
 void DrawIntro();
+u16  Detect_VDP_PAL();
+u16  Detect_CPU_PAL();
+u16  Detect_MD_Version();
 
 int main() 
 { 
@@ -40,9 +43,10 @@ int main()
   VDP_init(); 
   JOY_init();
   
+  pal_vdp = 0;
   VDP_setScreenWidth320(); 
   VDP_setScreenHeight224(); 
-  
+
   VDP_loadFont(font_tiles, USE_DMA);
   DrawIntro();
   while(1)
@@ -71,14 +75,18 @@ int main()
     VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Manual Lag Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+	VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);    
     VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
-    
+    if(Detect_VDP_PAL())
+      VDP_drawTextBG(APLAN, pal_vdp ? "PAL Mode    " : "NTSC Mode    ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    else
+      VDP_drawTextBG(APLAN, "NTSC Console", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);    
+ 
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
@@ -88,6 +96,8 @@ int main()
       cursel ++;
       if(cursel > pos - 6)
         cursel = 1;
+      if(cursel == 13 && !Detect_VDP_PAL())
+        cursel = 14;
     }
 
     if (pressedButtons & BUTTON_UP)
@@ -95,6 +105,8 @@ int main()
       cursel --;
       if(cursel < 1)
         cursel = pos - 6;
+      if(cursel == 13 && !Detect_VDP_PAL())
+        cursel = 12;
     }
 
     if (pressedButtons & BUTTON_A)
@@ -121,7 +133,7 @@ int main()
         case 6:
           HScrollTest();   
           break;
-				case 7:
+		case 7:
           VScrollTest();   
           break;
         case 8:
@@ -135,11 +147,26 @@ int main()
           break;  
         case 11: 
           SoundTest();                                   
-          break;  
+          break;          
         case 12: 
           DrawHelp(HELP_GENERAL);                                   
           break;
-        case 13: 
+        case 13:
+          if(Detect_VDP_PAL())
+          {
+            if(!pal_vdp)
+            {
+              VDP_setScreenHeight240();
+              pal_vdp = 1;
+            }
+            else
+            {
+              VDP_setScreenHeight224(); 
+              pal_vdp = 0;
+            }
+          }
+          break;
+        case 14: 
           DrawCredits();                                   
           break;
       }
@@ -274,6 +301,36 @@ void DrawIntro()
   VDP_resetScreen();
 }
 
+u16 Detect_MD_Version()
+{
+  char *pointer = NULL;
+  u16  version = 0;
+
+  pointer = (char *)0xA10001;
+  version = (*pointer & 0x04);
+  return version;     
+}
+
+u16 Detect_CPU_PAL()
+{
+  char *pointer = NULL;
+
+  pointer = (char *)0xA10001;
+  if((*pointer & 0x40) == 0x40)
+     return 1;
+  return 0;
+}
+
+u16 Detect_VDP_PAL()
+{
+  u16 *pointer = NULL;
+
+  pointer = (u16 *)0xC00004;
+  if(*pointer & 0x01)
+     return 1;
+  return 0;
+}
+
 void DrawCredits()
 {
   u16 ind = 0, size = 0, exit = 0, pos = 6;
@@ -301,19 +358,19 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "SDK Consultor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Stef", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 #ifdef SEGACD
-	VDP_drawTextBG(APLAN, "SEGA CD Loader by:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+  VDP_drawTextBG(APLAN, "SEGA CD Loader by:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Luke Usher/SoullessSentinel", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-	VDP_drawTextBG(APLAN, "SEGA CD Consultors:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+  VDP_drawTextBG(APLAN, "SEGA CD Consultors:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Chilly Willy & TascoDLX", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 #endif
-	VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+  VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
   VDP_drawTextBG(APLAN, "Collaboration:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Konsolkongen & shmups regulars", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-  VDP_drawTextBG(APLAN, "Ver. 1.11", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
+  VDP_drawTextBG(APLAN, "Ver. 1.12", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
