@@ -40,19 +40,19 @@ void DrawCheckBoard()
   size = sizeof(check_tile_inv) / 32; 
   VDP_loadTileData(check_tile_inv, ind, size, USE_DMA); 
 
-  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
   while(!exit)
   {
     if(alternate)
     {
       if(field == 0)
       {
-        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8);  
+        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);  
         field = 1;
       }
       else
       {
-        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
         field = 0;
       }
     }
@@ -61,7 +61,7 @@ void DrawCheckBoard()
     {
       count ++;
 
-      if(pal_vdp)
+      if(Detect_VDP_PAL())
       {
         if(count > 49)
             count = 0;
@@ -88,12 +88,12 @@ void DrawCheckBoard()
     {
       if(field == 0)
       {
-        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
         field = 1;
       }
       else
       {
-        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+        VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
         field = 0;
       }
     }   
@@ -131,7 +131,7 @@ void DrawStripes()
   size = sizeof(vstripesneg_tiles) / 32; 
   VDP_loadTileData(vstripesneg_tiles, ver2, size, USE_DMA); 
 
-  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
   while(!exit)
   {
     if(alternate || redraw)
@@ -139,17 +139,17 @@ void DrawStripes()
       if(field == 0)
       {
         if(vertical)
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver1, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8);  
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver1, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);  
         else
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor1, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8);  
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor1, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);  
         field = 1;
       }
       else
       {
         if(vertical)
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver2, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver2, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
         else
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor2, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor2, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
         field = 0;
       }
       redraw = 0;
@@ -158,7 +158,7 @@ void DrawStripes()
     if(docounter)
     {
       count ++;
-      if(pal_vdp)
+      if(Detect_VDP_PAL())
       {
         if(count > 49)
           count = 0;
@@ -186,17 +186,17 @@ void DrawStripes()
       if(field == 0)
       {
         if(vertical)
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver1, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver1, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
         else
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor1, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor1, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
         field = 1;
       }
       else
       {
         if(vertical)
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver2, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ver2, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
         else
-          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor2, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8);  
+          VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor2, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);  
         field = 0;
       }
     }   
@@ -1215,7 +1215,7 @@ void LEDZoneTest()
 
   VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite1, 0);    
 
-  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8);              
+  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);              
   while(!exit)
   {                          
     VDP_setSpritePosition(0, x, y);
@@ -1234,7 +1234,7 @@ void LEDZoneTest()
   
       if (buttons & BUTTON_DOWN)
       {
-        if(y < pal_vdp ? 240 : 224 - size)
+        if(y < pal_240 ? 240 : 224 - size)
           y ++;   
       }   
   
@@ -1377,7 +1377,7 @@ void PassiveLagTest()
   VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);   
   VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);   
   
-  VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + solid, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+  VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + solid, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
 
   VDP_drawTextBG(APLAN, "hours", TILE_ATTR(PAL1, 0, 0, 0), 4, 1);
   VDP_drawTextBG(APLAN, "minutes", TILE_ATTR(PAL1, 0, 0, 0), 13, 1);
@@ -1422,7 +1422,7 @@ void PassiveLagTest()
         bgcol = PAL2;
     }
     
-    if(pal_vdp)
+    if(Detect_VDP_PAL())
     {
       if(frames > 49)
       {

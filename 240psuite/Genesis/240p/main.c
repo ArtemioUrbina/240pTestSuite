@@ -30,7 +30,6 @@
 void TestPatternMenu();
 void DrawCredits();
 void DrawIntro();
-u16  Detect_VDP_PAL();
 u16  Detect_CPU_PAL();
 u16  Detect_MD_Version();
 
@@ -42,10 +41,18 @@ int main()
   
   VDP_init(); 
   JOY_init();
-  
-  pal_vdp = 0;
+    
   VDP_setScreenWidth320(); 
-  VDP_setScreenHeight224(); 
+  if(Detect_VDP_PAL())
+  {
+    VDP_setScreenHeight240();
+    pal_240 = 1;
+  }
+  else
+  {
+    VDP_setScreenHeight224(); 
+    pal_240 = 0;
+  }
 
   VDP_loadFont(font_tiles, USE_DMA);
   DrawIntro();
@@ -66,7 +73,15 @@ int main()
       VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);    
       VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
       reload = 0;
-    }        
+    }   
+
+    if(pal_240 && !Detect_VDP_PAL())
+    {
+      VDP_setScreenHeight224(); 
+      pal_240 = 0;
+      if(cursel == 13)
+        cursel = 14;
+    }     
               
     pos = 6;
     VDP_drawTextBG(APLAN, "Test Patterns", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
@@ -82,9 +97,9 @@ int main()
     VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);    
     VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     if(Detect_VDP_PAL())
-      VDP_drawTextBG(APLAN, pal_vdp ? "PAL Mode    " : "NTSC Mode    ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     else
-      VDP_drawTextBG(APLAN, "NTSC Console", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+      VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);    
  
     buttons = JOY_readJoypad(JOY_1);
@@ -154,15 +169,15 @@ int main()
         case 13:
           if(Detect_VDP_PAL())
           {
-            if(!pal_vdp)
+            if(!pal_240)
             {
               VDP_setScreenHeight240();
-              pal_vdp = 1;
+              pal_240 = 1;
             }
             else
             {
               VDP_setScreenHeight224(); 
-              pal_vdp = 0;
+              pal_240 = 0;
             }
           }
           break;
@@ -206,19 +221,32 @@ void TestPatternMenu()
       VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
 
       reload = 0;
-    }        
+    }       
+
+    if(pal_240 && !Detect_VDP_PAL())
+    {
+      VDP_setScreenHeight224(); 
+      pal_240 = 0;
+      if(cursel == 11)
+        cursel = 12;
+    }    
             
     pos = 6;
     VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bleed Check", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Grid", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
-    VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
-    VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
-    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+    VDP_drawTextBG(APLAN, pal_240 ? "Grid 320x240" : "Grid 320x224", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, pal_240 ? "Grid 256x240" : "Grid 256x224", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
+    VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
+    VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
+    if(Detect_VDP_PAL())
+      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    else
+      VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);           
+    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -227,14 +255,18 @@ void TestPatternMenu()
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
-      if(cursel > 10)
+      if(cursel > 12)
         cursel = 1;
+      if(cursel == 11 && !Detect_VDP_PAL())
+        cursel = 12;
     }
 
     if (pressedButtons & BUTTON_UP)
     {
       cursel --;
       if(cursel < 1)
+        cursel = 12;
+      if(cursel == 11 && !Detect_VDP_PAL())
         cursel = 10;
     }
 
@@ -260,21 +292,39 @@ void TestPatternMenu()
           DrawColorBleed();                    
           break;
         case 5:
-          DrawGrid();                    
+          DrawGrid(GRID_320);                    
           break;
         case 6:
-          DrawLinearity();
+          DrawGrid(GRID_256);                    
           break;
         case 7:
-          DrawGrayRamp();
+          DrawLinearity();
           break;
         case 8:
+          DrawGrayRamp();
+          break;
+        case 9:
           DrawWhiteScreen();
           break;
-        case 9: 
+        case 10: 
           Draw100IRE();
           break;
-        case 10: 
+        case 11:
+          if(Detect_VDP_PAL())
+          {
+            if(!pal_240)
+            {
+              VDP_setScreenHeight240();
+              pal_240 = 1;
+            }
+            else
+            {
+              VDP_setScreenHeight224(); 
+              pal_240 = 0;
+            }
+          }
+          break;
+        case 12: 
           done = 1;
           break;
       }
@@ -317,16 +367,6 @@ u16 Detect_CPU_PAL()
 
   pointer = (char *)0xA10001;
   if((*pointer & 0x40) == 0x40)
-     return 1;
-  return 0;
-}
-
-u16 Detect_VDP_PAL()
-{
-  u16 *pointer = NULL;
-
-  pointer = (u16 *)0xC00004;
-  if(*pointer & 0x01)
      return 1;
   return 0;
 }

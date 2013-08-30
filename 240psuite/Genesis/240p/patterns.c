@@ -109,7 +109,7 @@ void DrawWhiteScreen()
   size = sizeof(solid_tiles) / 32; 
 
   VDP_loadTileData(solid_tiles, TILE_USERINDEX, size, USE_DMA); 
-  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
   while(!exit)
   {
     if(redraw)
@@ -207,7 +207,7 @@ void DrawLinearity()
   grid2 = ind;
 
   ind += size;
-  if(pal_vdp)
+  if(pal_240)
   {
     size = sizeof(circlesPAL_tiles) / 32; 
     VDP_loadTileData(circlesPAL_tiles, ind, size, USE_DMA); 
@@ -219,9 +219,9 @@ void DrawLinearity()
   }
   
   if(gridpattern)
-    VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+    VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
 
-  if(pal_vdp)
+  if(pal_240)
     VDP_setMyTileMapRect(APLAN, circlesPAL_map, ind, 0, 0, 320/8, 240/8);      
   else
     VDP_setMyTileMapRect(APLAN, circles_map, ind, 0, 0, 320/8, 224/8);      
@@ -233,12 +233,12 @@ void DrawLinearity()
       if(showgrid)
       {
         if(gridpattern == 1)
-          VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+          VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
         else
-          VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8); 
+          VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
       }
       else
-        VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, (pal_vdp ? 240 : 224)/8);
+        VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);
       redraw = 0;
     }   
 
@@ -269,7 +269,7 @@ void DrawLinearity()
   }
 }
 
-void DrawGrid()
+void DrawGrid(u16 gridtype)
 {
   u16 size;
   u16 exit = 0;
@@ -277,15 +277,28 @@ void DrawGrid()
 
   if(showhelp)
     DrawHelp(HELP_GRID);
+
+  if(gridtype == GRID_256)
+    VDP_setScreenWidth256(); 
   
   VDP_setPalette(PAL0, grid_pal);
   size = sizeof(grid_tiles) / 32; 
   VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, USE_DMA); 
 
-  if(pal_vdp)
-    VDP_setMyTileMapRect(APLAN, grid_PAL_map, TILE_USERINDEX, 0, 0, 320/8, 240/8);
+  if(gridtype == GRID_256)
+  {
+    if(pal_240)
+      VDP_setMyTileMapRect(APLAN, grid_PAL_256_map, TILE_USERINDEX, 0, 0, 256/8, 240/8);
+    else
+      VDP_setMyTileMapRect(APLAN, grid_256_map, TILE_USERINDEX, 0, 0, 256/8, 224/8);
+  }
   else
-    VDP_setMyTileMapRect(APLAN, grid_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);
+  {
+    if(pal_240)
+      VDP_setMyTileMapRect(APLAN, grid_PAL_map, TILE_USERINDEX, 0, 0, 320/8, 240/8);
+    else
+      VDP_setMyTileMapRect(APLAN, grid_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);
+  }
 
   while(!exit)
   {
@@ -298,6 +311,9 @@ void DrawGrid()
 
     VDP_waitVSync();
   }
+
+  if(gridtype == GRID_256)
+    VDP_setScreenWidth320(); 
 }
 
 void DrawColorBleed()
