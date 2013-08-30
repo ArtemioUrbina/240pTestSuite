@@ -22,6 +22,8 @@
 #include "genesis.h"
 #include "myvdp.h"
 
+u16 pal_vdp;
+
 void VDP_setSpriteAttr(u16 index, u16 tile_attr)
 {
     _spritedef *sprite;    
