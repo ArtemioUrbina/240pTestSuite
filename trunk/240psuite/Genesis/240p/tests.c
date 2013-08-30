@@ -809,12 +809,12 @@ void LagTest()
       speed = -1;
       change = 1;
       if(variation)
-			{
-				if(random() % 2)
-					vary = random() % 7;
-				else
-					vary = -1 * random() % 7;
-			}
+	  {
+		if(random() % 2)
+		  vary = random() % 7;
+		else
+		  vary = -1 * random() % 7;
+	  }
     }
     
     if(y < 60 + vary)
@@ -822,12 +822,12 @@ void LagTest()
       speed = 1;
       change = 1;
       if(variation)
-			{
-				if(random() % 2)
-					vary = random() % 7;
-				else
-					vary = -1 * random() % 7;
-			}
+	  {
+		if(random() % 2)
+		  vary = random() % 7;
+		else
+		  vary = -1 * random() % 7;
+	  }
     }
 
     y += speed;
@@ -1065,7 +1065,7 @@ void VScrollTest()
   
   VDP_setPalette(PAL0, bw_pal);    
 
-	size = sizeof(circles_grid_tiles) / 32; 
+  size = sizeof(circles_grid_tiles) / 32; 
   VDP_loadTileData(circles_grid_tiles, TILE_USERINDEX, size, USE_DMA);   
 
   VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 512/8, 512/8); 
@@ -1097,22 +1097,22 @@ void VScrollTest()
     if (pressedButtons & BUTTON_B)
       acc *= -1;
 
-		if (pressedButtons & BUTTON_C)
+	if (pressedButtons & BUTTON_C)
       direction = !direction;
 
     if(!pause)
       pos += acc*speed;
 
-		if(pos >= 512)
+	if(pos >= 512)
       pos = pos % 512;
 
     if(pos <= -512)
       pos = pos % -512;
     
-		if(direction)
-    	VDP_setHorizontalScroll(APLAN, 0, pos);            
-		else
-			VDP_setVerticalScroll(APLAN, 0, pos);            
+    if(direction)
+      VDP_setHorizontalScroll(APLAN, 0, pos);            
+	else
+	  VDP_setVerticalScroll(APLAN, 0, pos);            
     VDP_waitVSync();
   }  
   VDP_setHorizontalScroll(APLAN, 0, 0);              
@@ -1122,7 +1122,7 @@ void VScrollTest()
 void SoundTest()
 {
   int sel = 1;
-   u16 ind = 0, size = 0, exit = 0;
+  u16 ind = 0, size = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   u16  len = 0;
 
@@ -1320,16 +1320,6 @@ void LEDZoneTest()
   VDP_updateSprites();    
 }
 
-void PrintMSF(u16 frames)
-{
-/*
-   char cntstr[10];
-   intToStr(count, cntstr, 2);
-   VDP_drawText("Frame:", 2, 25);
-   VDP_drawText(cntstr, 8, 25);
-*/
-}
-
 void PassiveLagTest()
 {  
   u16 frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, bgcol = PAL2;
@@ -1406,8 +1396,7 @@ void PassiveLagTest()
   VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 32, 9, 7, 7);  
   VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 17, 7, 7);  
   VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 17, 7, 7);  
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 17, 7, 7);  
-  //VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 32, 17, 7, 7);
+  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 17, 7, 7);    
 
   while(!exit)
   {             

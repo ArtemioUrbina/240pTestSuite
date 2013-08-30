@@ -61,7 +61,7 @@ extern u16 bw_pal[16];
 // Grid
 extern u32 circles_tiles[1888/4]; 
 extern u16 circles_map[2240/2];
-extern u32 circlesPAL_tiles[1664/4]; 
+extern u32 circlesPAL_tiles[1696/4]; 
 extern u16 circlesPAL_map[2400/2];
 extern u32 circles_grid_tiles[32/4]; 
 extern u32 circles_griddot_tiles[32/4]; 
