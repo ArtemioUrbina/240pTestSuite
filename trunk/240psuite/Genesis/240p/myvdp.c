@@ -22,7 +22,7 @@
 #include "genesis.h"
 #include "myvdp.h"
 
-u16 pal_vdp;
+u16 pal_240;
 
 void VDP_setSpriteAttr(u16 index, u16 tile_attr)
 {
@@ -31,6 +31,19 @@ void VDP_setSpriteAttr(u16 index, u16 tile_attr)
     sprite = &spriteDefCache[index];
     
     sprite->tile_attr = tile_attr;    
+}
+
+u16 Detect_VDP_PAL()
+{
+  return(GET_VDPSTATUS(IS_PALSYSTEM));
+  /*
+  u16 *pointer = NULL;
+
+  pointer = (u16 *)0xC00004;
+  if(*pointer & 0x01)
+     return 1;
+  return 0;
+  */
 }
 
 void VDP_setMyTileMapRect(u16 plan, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h)
