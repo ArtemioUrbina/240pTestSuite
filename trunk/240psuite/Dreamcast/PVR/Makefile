@@ -1,6 +1,6 @@
 TARGET = main
 
-OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DUSE_FFTW 
+OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST 
 
 KOS_CFLAGS+= -I$(KOS_BASE)/../kos-ports/include/SDL-1.2.9  $(OPTFLAGS) 
 
@@ -33,13 +33,13 @@ kmg:
 	rm -f romdisk.o romdisk.img
 
 romdisk.img:
-	mv romdisk/.svn svn
-	mv romdisk/480/.svn 480svn
-	mv romdisk/help/.svn helpsvn
+	#mv romdisk/.svn svn
+	#mv romdisk/480/.svn 480svn
+	#mv romdisk/help/.svn helpsvn
 	$(KOS_GENROMFS) -f romdisk.img -d romdisk -v
-	mv svn romdisk/.svn 
-	mv 480svn romdisk/480/.svn 
-	mv helpsvn romdisk/help/.svn 
+	#mv svn romdisk/.svn 
+	#mv 480svn romdisk/480/.svn 
+	#mv helpsvn romdisk/help/.svn 
 
 romdisk.o: romdisk.img
 	$(KOS_BASE)/utils/bin2o/bin2o romdisk.img romdisk romdisk.o
@@ -51,7 +51,7 @@ $(OBJS): $(HEADERS) romdisk.o
 
 $(TARGET).elf: $(OBJS) romdisk.o 
 	$(KOS_CC) $(KOS_CFLAGS) $(KOS_LDFLAGS) romdisk.o -o $(TARGET).elf $(KOS_START) \
-	$(OBJS) -lz -lfftw3 -lm -lkmg -lkosutils  $(OBJEXTRA) $(KOS_LIBS) 
+	$(OBJS) -lz -lm -lkmg -lkosutils  $(OBJEXTRA) $(KOS_LIBS) 
 
 $(TARGET).bin: $(TARGET).elf
 	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin
