@@ -153,8 +153,8 @@ void ChangeResolution()
 			case NATIVE_640:
 			case NATIVE_640_FS:
 					if(vcable == CT_VGA)
-						//vid_set_mode(DM_640x480_VGA, PM_RGB565); 
-						vid_set_mode_ex(&custom_vga);
+						vid_set_mode(DM_640x480_VGA, PM_RGB565); 
+						//vid_set_mode_ex(&custom_vga);
 					else
 						vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
 				break;
@@ -175,6 +175,48 @@ void ChangeResolution()
 			dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
 			PVR_SET(PVR_FB_CFG_2, 0x00000001);
 		}
+	}
+}
+
+void Toggle240p480i(int mode)
+{
+	// Skip useless video modes when in VGA
+	if(vcable == CT_VGA)
+		return;
+
+	if(mode == 0)
+	{
+		W = 320;
+		H = 240;
+		dW = 320;
+		dH = 240;
+		pvr_shutdown();
+		vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
+	}
+	else
+	{
+		W = 640;
+		H = 480;
+		dW = 320;
+		dH = 240;
+		pvr_shutdown();
+		vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
+	}
+
+	pvr_init_defaults();
+
+	// Disable deflicker filter, 
+	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
+	{
+		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
+		PVR_SET(PVR_SCALER_CFG, 0x400);
+	}
+
+	// Turn off texture dithering
+	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
+	{
+		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
+		PVR_SET(PVR_FB_CFG_2, 0x00000001);
 	}
 }
 
