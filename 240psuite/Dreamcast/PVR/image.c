@@ -33,13 +33,13 @@
 int gkmg_to_img(const char * fn, kos_img_t * rv) {	
 	kmg_header_t	hdr;
 	int		dep;	
-	int length = 0;
+	//int length = 0;
 	gzFile f;		
 
 	assert( rv != NULL );
 
 	/* Open the file */
-	length = zlib_getlength((char *)fn);	
+	//length = zlib_getlength((char *)fn);	
 	f = gzopen(fn, "r");
 	if (!f) {		
 		dbglog(DBG_ERROR, "gkmg_to_img: can't open file '%s'\n", fn);

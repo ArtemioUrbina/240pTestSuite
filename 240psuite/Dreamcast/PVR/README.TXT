@@ -73,7 +73,6 @@ Contributors
     * Main menu graphics: Asher
     * SGDK assistance: Stephane
     * KallistiOS SDK assistance: BlueCrab
-    * Dreamcast toolchain built with: Buildcross
     * Advisor: Fudoh 
 		* Extra patterns and collaboration: Konsolkongen & shmups regulars
 

@@ -155,6 +155,14 @@ start:
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
+		if(vcable == CT_VGA)
+		{
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Alternating 240p/480i Test"); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Alternating 240p/480i Test"); y += fh; c++;
+		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 
 		switch(vmode)
@@ -235,7 +243,7 @@ start:
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
-			if (st->buttons & CONT_START && st->buttons & CONT_B)
+			if (st->buttons & CONT_START && st->buttons & CONT_Y)
 			{
 				updateVMU(" Goodbye ", " m(_ _)m ", 1);
 				done =	1;
@@ -334,9 +342,13 @@ start:
 						LEDZoneTest();
 						break;
 					case 11:
-						SoundTest();
+						if(vcable == CT_VGA)
+							Alternate240p480i();
 						break;
 					case 12:
+						SoundTest();
+						break;
+					case 13:
 						ChangeResolution();
 						FreeImage(&title);		
 						FreeImage(&sd);		
@@ -346,13 +358,13 @@ start:
 						// not pretty, but "clean"
 						goto start;
 						break;
-					case 13:
+					case 14:
 						HelpWindow(GENERALHELP, title);
 						break;
-					case 14:
+					case 15:
 						DrawCredits(title);
 						break;
-					case 15:
+					case 16:
 						//Settings(title);
 						TestVideoMode();
 						break;          						
@@ -376,9 +388,9 @@ start:
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 {
-	int 				done = 0, sel = 1, joycnt = 0;
+	int 			done = 0, sel = 1, joycnt = 0;
 	uint16			oldbuttons, pressed;		
-	controller	*st;
+	controller		*st;
 
 	oldbuttons = InitController(0);
 	while(!done) 
@@ -541,8 +553,8 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 
 void DrawCredits(ImagePtr back)
 {
-	int 				done = 0;
-	uint16			oldbuttons, pressed;		
+	int 		done = 0;
+	uint16		oldbuttons, pressed;		
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -579,8 +591,6 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 		
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Toolchain built with:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "https://github.com/losinggeneration/buildcross"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:"); y += fh; 
@@ -588,7 +598,8 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
 
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.16"); y += fh; 
+		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.17"); y += fh; 
+		DrawStringS(220, 58+fh, 1.0, 1.0, 1.0, "31/12/2013"); y += fh; 
 
 		DrawScanlines();
 		pvr_list_finish();				

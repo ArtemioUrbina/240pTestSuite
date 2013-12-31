@@ -44,6 +44,15 @@
 #define SECONDS_TO_RECORD	2
 #define RESULTS_MAX	10
 
+typedef struct timecode{
+	int hours;
+	int minutes;
+	int seconds;
+	int frames;
+	int type;
+	int res;
+} timecode;
+
 void DropShadowTest()
 {
 	char			msg[50];
@@ -1330,9 +1339,9 @@ void LEDZoneTest()
 
 void PassiveLagTest()
 {
-	int frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
-	uint16			oldbuttons, pressed, lsd, msd, pause = 0;		
-	ImagePtr		back, circle;
+	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
+	uint16		oldbuttons, pressed, lsd, msd, pause = 0;		
+	ImagePtr	back, circle;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -1573,6 +1582,118 @@ void PassiveLagTest()
 	ReleaseNumbers();
 }
 
+void Alternate240p480i()
+{
+	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, done =  0, current = 0, res = 0, status = 0;
+	timecode	times[20];
+	uint16		oldbuttons, pressed;		
+	char 		buffer[20];
+	controller	*st;
+
+	oldbuttons = InitController(0);
+
+	updateVMU("240p/480i", "", 1);
+	while(!done) 
+	{
+		pvr_wait_ready();
+
+		frames ++;
+
+		if(frames > 59)
+		{
+			frames = 0;
+			seconds ++;
+		}
+
+		if(seconds > 59)
+		{
+			seconds = 0;
+			minutes ++;
+		}
+
+		if(minutes > 59)
+		{
+			minutes = 0;
+			hours ++;
+		}
+
+		if(hours > 99)
+			hours = 0;
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+
+		DrawString(32, 8, 0, 1.0f, 0, "Current Resolution:");
+		DrawString(140, 8, 0, 1.0f, 0, res == 0 ? "240p" : "480i");
+
+		sprintf(buffer, "%02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
+		DrawString(32, 32, 1.0, 1.0, 1.0, "Elapsed Timer:");
+		DrawString(140, 32, 1.0, 1.0, 1.0, buffer);
+
+		if(current)
+		{
+			int i = 0;
+			for(i = 0; i < current; i++)
+			{
+				if(times[i].type == 0)
+				{
+					DrawString(32,      40+i*8, 1.0, 1.0, 1.0, "Switched to");
+					DrawString(32+12*5, 40+i*8, 1.0, 1.0, 1.0, times[i].res == 0 ? "240p" : "480i");
+					DrawString(32+16*5, 40+i*8, 1.0, 1.0, 1.0, " at:");
+				}
+				else
+					DrawString(32, 40+i*8, 1.0, 1.0, 1.0, "Viewed at:");
+				sprintf(buffer, "%02d:%02d:%02d:%02d", times[i].hours, times[i].minutes, times[i].seconds, times[i].frames);
+				DrawString(140, 40+i*8, 1.0, 1.0, 1.0, buffer);
+			}
+		}
+
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_START)
+				done =	1;				
+						
+			if (pressed & CONT_A)
+			{
+				if(current < 19)
+					current ++;
+				else
+					current = 1;
+
+				times[current - 1].frames = frames;
+				times[current - 1].minutes = minutes;
+				times[current - 1].seconds = seconds;
+				times[current - 1].hours = hours;
+
+				status ++;
+				if(status == 1)
+				{
+					times[current - 1].type = 0;
+					res = !res;
+					times[current - 1].res = res;
+					Toggle240p480i(res);
+				}
+				if(status == 2)
+				{
+					times[current - 1].type = 1;
+					times[current - 1].res = res;
+					status = 0;
+				}
+			}
+		}
+	}
+}
+
 void ResetVideoValues(vid_mode_t *vga_mode)
 {
 	if(!vga_mode)
@@ -1631,10 +1752,10 @@ int					initvga = 1;
 
 void TestVideoMode()
 {
-	int 				done =  0;
+	int 			done =  0;
 	uint16			oldbuttons, pressed, update = 0, load = 0, sel = 1, showback = 1;		
-	controller	*st;
-	char				str[50];
+	controller		*st;
+	char			str[50];
 	ImagePtr		back;
 
 	if(vcable != CT_VGA)

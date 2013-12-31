@@ -51,6 +51,7 @@ void RaiseScanlineIntensity();
 void ToggleScanlineEvenOdd();
 void ChangeResolution();
 void PVRStats(char *msg);
+void Toggle240p480i(int mode);
 
 #endif 
 

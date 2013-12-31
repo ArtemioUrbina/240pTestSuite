@@ -350,7 +350,7 @@ void DrawColorBleed()
 
 void DrawGrid()
 {
-	int 				done = 0;
+	int 			done = 0;
 	uint16			oldbuttons, pressed;		
 	ImagePtr		back;
 	controller	*st;
@@ -403,7 +403,7 @@ void DrawGrid()
 
 void DrawLinearity()
 {
-	int 				done = 0, gridpattern = 0, showgrid = 0;
+	int 			done = 0, gridpattern = 0, showgrid = 0;
 	uint16			oldbuttons, pressed;
 	ImagePtr		circles, grid, gridd;
 	controller	*st;
@@ -469,22 +469,24 @@ void DrawLinearity()
 
 void Draw100IRE()
 {
-	int 				done = 0;
+	int 			done = 0;
 	uint16			oldbuttons, pressed, text = 0, invert = 0;	
 	ImagePtr		back, white;
-	controller	*st;
-	char				msg[50];
+	controller		*st;
+	char			msg[50];
 
 	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/100IRE.kmg.gz", 1);
 	if(!back)
 		return;
-  white = LoadKMG("/rd/white.kmg.gz", 1);
+  	white = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!white)
-  {
-  	FreeImage(&back);
+  	{
+  		FreeImage(&back);
 		return;
-  }
+  	}
+	white->w = 320;
+	white->h = 240;
 
 	updateVMU(" 100 IRE ", "", 1);
 	while(!done) 
@@ -499,50 +501,50 @@ void Draw100IRE()
 					
 			if (pressed & CONT_A)
 			{
-      	if(!invert)
-        {
+      				if(!invert)
+        			{
 					back->alpha -= 0.1f;
-				  if(back->alpha < 0.0f)
+				  	if(back->alpha < 0.0f)
 						back->alpha = 0.0f;
-        }
-        else
-        {
-        	back->alpha += 0.125;
-				  if(back->alpha > 1.0f)
+        			}
+        			else
+        			{
+        				back->alpha += 0.125;
+				  	if(back->alpha > 1.0f)
 						back->alpha = 1.0f;
-        }
+        			}
 
 				text = 30;
 			}
 		
 			if (pressed & CONT_B)
 			{
-      	if(!invert)
-        {
+      				if(!invert)
+        			{
 					back->alpha += 0.1f;
-				  if(back->alpha > 1.0f)
+				  	if(back->alpha > 1.0f)
 						back->alpha = 1.0f;
-        }
-        else
-        {
-        	back->alpha -= 0.125f;
-				  if(back->alpha < 0.0f)
+        			}
+        			else
+        			{
+        				back->alpha -= 0.125f;
+				  	if(back->alpha < 0.0f)
 						back->alpha = 0.0f;
-        }
+        			}
 
 				text = 30;
 			}
 
-     	if (pressed & CONT_Y)
-      {
+     			if (pressed & CONT_Y)
+      			{
 				invert = !invert;
-        back->alpha = 1.0f;
+        			back->alpha = 1.0f;
 				text = 30;
 				if(!invert)
 					updateVMU(" 100 IRE ", "", 1);
 				else
 					updateVMU(" 140 IRE ", "", 1);
-      }
+      			}
 		
 			if (pressed & CONT_START)
 				done =	1;											
@@ -553,24 +555,24 @@ void Draw100IRE()
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
-    if(invert)
-      DrawImage(white);	
+    		if(invert)
+      			DrawImage(white);	
 		DrawImage(back);		
 
 		if(text)
 		{
-    	if(!invert)
-      {
+    			if(!invert)
+      			{
 				sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
-			  DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
-			  text --;
-      }
-      else
-      {
+			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+			  	text --;
+      			}
+      			else
+      			{
 			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
-			  DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
-			  text --;
-      }
+			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+			  	text --;
+      			}
 		}
 
 		DrawScanlines();
