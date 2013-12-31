@@ -342,7 +342,7 @@ start:
 						LEDZoneTest();
 						break;
 					case 11:
-						if(vcable == CT_VGA)
+						if(vcable != CT_VGA)
 							Alternate240p480i();
 						break;
 					case 12:
