@@ -1593,6 +1593,15 @@ void Alternate240p480i()
 	oldbuttons = InitController(0);
 
 	updateVMU("240p/480i", "", 1);
+	if(vmode != NATIVE_320)
+	{
+		ReleaseScanlines();
+		ReleaseFont();
+		Toggle240p480i(res);
+		LoadFont();
+		LoadScanlines();
+	}
+
 	while(!done) 
 	{
 		pvr_wait_ready();
@@ -1681,7 +1690,11 @@ void Alternate240p480i()
 					times[current - 1].type = 0;
 					res = !res;
 					times[current - 1].res = res;
+					ReleaseScanlines();
+					ReleaseFont();
 					Toggle240p480i(res);
+					LoadFont();
+					LoadScanlines();
 				}
 				if(status == 2)
 				{
