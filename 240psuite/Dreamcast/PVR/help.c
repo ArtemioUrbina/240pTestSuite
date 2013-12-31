@@ -34,7 +34,7 @@
 
 char *LoadHelpFile(char *filename, char ***pages, int *npages)
 {
-	int		i = 0, lines = 0, linecount = 0, currpage = 0;
+	int	i = 0, lines = 0, linecount = 0, currpage = 0;
 	long 	size = 0;
 	FILE 	*fp = NULL;
 	char 	*buffer = NULL;
@@ -134,10 +134,12 @@ uint16 HelpWindow(char *filename, ImagePtr screen)
 				page --;
 			if (pressed & CONT_DPAD_RIGHT)
 				page ++;
+			/*
 			if (st->rtrig > 5)
 				page ++;
 			if (st->ltrig > 5)
 				page --;
+			*/
 		}
 
 		if(page > npages - 1)

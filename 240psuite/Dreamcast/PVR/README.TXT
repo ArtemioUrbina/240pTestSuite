@@ -74,7 +74,7 @@ Contributors
     * SGDK assistance: Stephane
     * KallistiOS SDK assistance: BlueCrab
     * Advisor: Fudoh 
-		* Extra patterns and collaboration: Konsolkongen & shmups regulars
+    * Extra patterns and collaboration: Konsolkongen & shmups regulars
 
 
 ===============================================================================
@@ -83,4 +83,4 @@ For full dcoumentation and source code, please visit:
 http://junkerhq.net/xrgb/index.php/240p_test_suite
 
 ===============================================================================
-2011 Artemio Urbina
+2011-2014 Artemio Urbina

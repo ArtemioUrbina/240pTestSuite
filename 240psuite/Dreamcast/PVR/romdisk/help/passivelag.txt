@@ -1,0 +1,16 @@
+                   LAG TEST 
+
+This test is designed to be used with two displays
+conected at the same time. One being a CRT, or a
+display with a known lag as reference, and the
+other the display to test.
+
+Using a camera, a picture should be taken of both
+screens at the same time. The picture will show 
+the frame discrepancy between them. 
+
+The circles in the bottom help determine the frame
+even when the numbers are blurry.
+
+The Sega Genesis version of the test can be used
+with a Nomad as the reference display.

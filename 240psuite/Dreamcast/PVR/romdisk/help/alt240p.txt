@@ -1,0 +1,9 @@
+             ALTERNATIONG 240p/480i 
+
+Some devices have a delay when the source changes
+between resolutions, which happens in some games.
+This test allows to time that delay manually. 
+
+Press 'A' to switch the resolution; press it again
+when you are able to see the screen back in your
+display.

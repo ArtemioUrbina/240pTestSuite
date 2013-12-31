@@ -55,11 +55,11 @@ typedef struct timecode{
 
 void DropShadowTest()
 {
-	char			msg[50];
-	int				done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
+	char		msg[50];
+	int		done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
 	uint16		oldbuttons, pressed;		
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay;
-	controller *st;
+	controller 	*st;
 
 	oldbuttons = InitController(0);
 
@@ -196,6 +196,9 @@ void DropShadowTest()
 					sprite = 0;
 				}
 			}
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(DROPSHADOW, back[selback]);
 		}
 
 		if(x < back[selback]->x)
@@ -353,6 +356,7 @@ void StripedSpriteTest()
 
 				if (st->buttons & CONT_DPAD_RIGHT)
 					x ++;
+
 			}
 
 			// Joystick
@@ -380,6 +384,9 @@ void StripedSpriteTest()
 				else
 					selback = 0;
 			}
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(STRIPED, back[selback]);
 		}
 
 		if(x < back[selback]->x)
@@ -423,15 +430,15 @@ void StripedSpriteTest()
 
 void LagTest()
 {
-	char											msg[60];
-	int												clicks[10], done = 0, view = 0, speed = 1, change = 1;
-	int												x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 0, vary = 0, variation = 1;
-	uint16										oldbuttons, pressed, ltrig = 0, oldltrig = 0;		
-	ImagePtr									back, spriteA, spriteB;
-	sfxhnd_t									beep;
-	maple_device_t						*purupuru = NULL;
+	char				msg[60];
+	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
+	int				x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 0, vary = 0, variation = 1;
+	uint16				oldbuttons, pressed, ltrig = 0, oldltrig = 0;		
+	ImagePtr			back, spriteA, spriteB;
+	sfxhnd_t			beep;
+	maple_device_t			*purupuru = NULL;
 	static purupuru_effect_t	effect;
-	controller 								*st;
+	controller 			*st;
 
 	oldbuttons = InitController(0);
 	effect.duration = 1;
@@ -519,6 +526,9 @@ void LagTest()
 
 			if (pressed & CONT_START)
 				done =	1;				
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(MANUALLAG, NULL);
 		}
 		
 		if(y > 132 + vary)
@@ -761,9 +771,9 @@ void LagTest()
 
 void ScrollTest()
 {
-	int 				done = 0, speed = 1, acc = 1, x = 0, pause = 0;
-	uint16			oldbuttons, pressed;		
-	ImagePtr		back, overlay;
+	int 		done = 0, speed = 1, acc = 1, x = 0, pause = 0;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back, overlay;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -802,6 +812,9 @@ void ScrollTest()
 
 			if (pressed & CONT_B)
 				acc *= -1;
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(SCROLL, back);
 		}
 
 		pvr_scene_begin();
@@ -839,10 +852,10 @@ void ScrollTest()
 
 void GridScrollTest()
 {
-	int 				done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, direction = 0;
+	int 			done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, direction = 0;
 	uint16			oldbuttons, pressed;		
 	ImagePtr		back;
-	controller	*st;
+	controller		*st;
 
 	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/circles_grid.kmg.gz", 0);
@@ -886,6 +899,9 @@ void GridScrollTest()
 		
 			if(st->joyy != 0)
 				y += st->joyy/30;
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(GRIDSCROLL, back);
 		}
 
 		pvr_scene_begin();
@@ -1159,8 +1175,8 @@ void SoundTest()
 			if (pressed & CONT_DPAD_RIGHT)
 				sel ++;
 
-			//if(st->rtrig > 5)
-				//oldbuttons = HelpWindow(SOUNDHELP, NULL);
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(SOUNDHELP, NULL);
 		}
 		
 		if(sel < 0)
@@ -1575,11 +1591,40 @@ void PassiveLagTest()
 
 			if (pressed & CONT_A)
 				pause = !pause;
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(PASSIVELAG, NULL);
 		}
 	}
 	FreeImage(&back);
 	FreeImage(&circle);
 	ReleaseNumbers();
+}
+
+uint16 ConvertToFrames(timecode *time)
+{
+	uint16	frames = 0;
+
+	if(!time)
+		return frames;
+
+	frames = time->frames;
+	frames += time->seconds*60;
+	frames += time->minutes*3600;
+	frames += time->hours*216000;
+	return frames;
+}
+
+void ConvertFromFrames(timecode *value, uint16 Frames)
+{
+	if(!value)
+		return;
+	value->hours = Frames / 216000;
+	Frames = Frames % 216000;
+	value->minutes = Frames / 3600;
+	Frames = Frames % 3600;
+	value->seconds = Frames / 60;
+	value->frames = Frames % 60;
 }
 
 void Alternate240p480i()
@@ -1635,6 +1680,7 @@ void Alternate240p480i()
 
 		DrawString(32, 8, 0, 1.0f, 0, "Current Resolution:");
 		DrawString(140, 8, 0, 1.0f, 0, res == 0 ? "240p" : "480i");
+		DrawString(180, 8, 1.0, 1.0f, 1.0, "Press 'R' trigger for help");
 
 		sprintf(buffer, "%02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
 		DrawString(32, 32, 1.0, 1.0, 1.0, "Elapsed Timer:");
@@ -1647,14 +1693,26 @@ void Alternate240p480i()
 			{
 				if(times[i].type == 0)
 				{
-					DrawString(32,      40+i*8, 1.0, 1.0, 1.0, "Switched to");
-					DrawString(32+12*5, 40+i*8, 1.0, 1.0, 1.0, times[i].res == 0 ? "240p" : "480i");
-					DrawString(32+16*5, 40+i*8, 1.0, 1.0, 1.0, " at:");
+					DrawString(32,      40+i*8, 1.0, 1.0, 0.0, "Switched to");
+					DrawString(32+12*5, 40+i*8, 1.0, 1.0, 0.0, times[i].res == 0 ? "240p" : "480i");
+					DrawString(32+16*5, 40+i*8, 1.0, 1.0, 0.0, " at:");
 				}
 				else
-					DrawString(32, 40+i*8, 1.0, 1.0, 1.0, "Viewed at:");
+					DrawString(32, 40+i*8, 0.0, 1.0, 0.0, "Viewed at:");
 				sprintf(buffer, "%02d:%02d:%02d:%02d", times[i].hours, times[i].minutes, times[i].seconds, times[i].frames);
 				DrawString(140, 40+i*8, 1.0, 1.0, 1.0, buffer);
+				if(times[i].type != 0 && i >= 1 && i <= 19)
+				{
+					uint16 		framesA = 0, framesB = 0, res = 0;
+					timecode 	len;
+
+					framesB = ConvertToFrames(&times[i]);
+					framesA = ConvertToFrames(&times[i - 1]);
+					res = framesB - framesA;
+					ConvertFromFrames(&len, res);
+					sprintf(buffer, "%02d:%02d:%02d:%02d", len.hours, len.minutes, len.seconds, len.frames);
+					DrawString(200, 40+i*8, 1.0, 0.0, 0.0, buffer);
+				}
 			}
 		}
 
@@ -1669,12 +1727,15 @@ void Alternate240p480i()
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
 					
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(ALTERNATE, NULL);
+
 			if (pressed & CONT_START)
 				done =	1;				
 						
 			if (pressed & CONT_A)
 			{
-				if(current < 19)
+				if(current <= 19)
 					current ++;
 				else
 					current = 1;
