@@ -190,6 +190,7 @@ void Toggle240p480i(int mode)
 		H = 240;
 		dW = 320;
 		dH = 240;
+		vmode = NATIVE_320;
 		pvr_shutdown();
 		vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
 	}
@@ -199,6 +200,7 @@ void Toggle240p480i(int mode)
 		H = 480;
 		dW = 320;
 		dH = 240;
+		vmode = FAKE_640;
 		pvr_shutdown();
 		vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
 	}

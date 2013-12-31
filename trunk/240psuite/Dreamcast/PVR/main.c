@@ -112,7 +112,7 @@ start:
 	}
 	while(!done) 
 	{
-		char		res[40];
+		char	res[40];
 		float 	r = 1.0f;
 		float 	g = 1.0f;
 		float 	b = 1.0f;
@@ -343,7 +343,14 @@ start:
 						break;
 					case 11:
 						if(vcable != CT_VGA)
+						{
+							FreeImage(&title);		
+							FreeImage(&sd);		
 							Alternate240p480i();
+							ReleaseScanlines();
+							ReleaseFont();
+							goto start;
+						}
 						break;
 					case 12:
 						SoundTest();
