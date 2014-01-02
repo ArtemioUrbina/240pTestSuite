@@ -40,10 +40,6 @@
 #include "help.h"
 #include "settings.h"
 
-#define CUE_FRAMES	5
-#define SECONDS_TO_RECORD	2
-#define RESULTS_MAX	10
-
 typedef struct timecode{
 	int hours;
 	int minutes;
@@ -2106,12 +2102,29 @@ void TestVideoMode()
 
 #ifdef USE_FFTW
 
+#define CUE_FRAMES		5
+#define SECONDS_TO_RECORD	2
+#define RESULTS_MAX		10
+#define BUFFER_SIZE 		50000	// we need around 45k only
+#define	FFT_OM			-5000
+#define	FFT_NOT_FOUND		-500
+
+typedef struct recording {
+	uint8	*buffer;
+	size_t	size;
+	int	pos;
+	uint8	overflow;
+	uint8	recording;
+} recording;
+
+recording rec_buffer;
+
 void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int ResCount)
 {
-	int							i = 0;
-	char						DPres[40];
-	char						Header[40];
-	char						Res[40];
+	int	i = 0;
+	char	DPres[40];
+	char	Header[40];
+	char	Res[40];
 
 	pvr_wait_ready();
 	pvr_scene_begin();
@@ -2120,7 +2133,7 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int R
 	DrawImage(back);
 
 	sprintf(DPres, "Precision %d", pres);
-	DrawStringS(40, 60, 1.0f, 0.0f, 0.0f, "Lag Test via Microphone"); 
+	DrawStringS(40, 60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone"); 
 	DrawStringS(50, 120, 1.0f, 1.0f,	1.0f, Status);
 	DrawStringS(230, 200, 0.0f, 1.0f,	0.0f, DPres);
 
@@ -2133,9 +2146,11 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int R
 		DrawStringS(170, 70, 0.0f, 1.0f,	0.0f, Header);
 		for(i = 1; i <= ResCount; i++)
 		{
-			if(Results[i-1] < 0 && Results[i-1] != -500)
+			if(Results[i-1] < 0 && Results[i-1] != FFT_OM && Results[i-1] != FFT_NOT_FOUND)
 				sprintf(Res, "%.2d Noise at 1khz", i);
-			if(Results[i-1] == -500)
+			if(Results[i-1] == FFT_OM)
+				sprintf(Res, "%.2d Out of Memory", i);
+			if(Results[i-1] == FFT_NOT_FOUND)
 				sprintf(Res, "%.2d No tone detected", i);
 			if(Results[i-1] >= 0)
 				sprintf(Res, "%.2d Lag was %g frames", i, Results[i-1]);
@@ -2149,24 +2164,48 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int R
 	pvr_scene_finish();
 }
 
+void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
+{
+	if(!rec_buffer.recording)
+		return;
+
+	if(!rec_buffer.buffer || !rec_buffer.size)
+	{
+		//printf("Invalid buffer or size\n");
+		return;	
+	}
+	if(!dev || !samples || !len)
+	{
+		//printf("Invalid dev, samples or len\n");
+		return;
+	}
+	
+	if(len > (rec_buffer.size - (size_t)rec_buffer.pos))
+	{
+		rec_buffer.overflow = 1;
+		//printf("Buffer overflow\n");
+		return;
+	}
+
+	memcpy(rec_buffer.buffer + rec_buffer.pos, samples, len);
+	rec_buffer.pos += len;
+}
+
 void SIPLagTest()
 {
-	int 				    done = 0, status = 0, counter = 0, pres = 1;
-	uint16			    oldbuttons, pressed;		
-	ImagePtr		    back;
-	sfxhnd_t		    beep;  
-	controller	    *st;
+	int 		done = 0, status = 0, counter = 0, pres = 1;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back;
+	sfxhnd_t	beep;  
+	controller	*st;
 	maple_device_t  *sip = NULL;  
-	size_t          size = 0;
-	uint8           *buffer = NULL;
 	double          Results[RESULTS_MAX];
 	int             ResCount = 0;
-	char						DStatus[30], DPres[20];
+	char		DStatus[100];
 
 	oldbuttons = InitController(0);
 	
 	DStatus[0] = 0x0;
-	DPres[0] = 0x0;
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
@@ -2174,7 +2213,41 @@ void SIPLagTest()
 	snd_init();		
 	beep = snd_sfx_load("/rd/Sample.wav");
 	if(!beep)
+	{
+		FreeImage(&back);
 		return;
+	}
+
+	rec_buffer.buffer = malloc(sizeof(uint8)*BUFFER_SIZE);
+	if(!rec_buffer.buffer)
+	{
+		if(beep != SFXHND_INVALID)
+			snd_sfx_unload(beep);
+		FreeImage(&back);
+		return;
+	}
+	rec_buffer.size = sizeof(uint8)*BUFFER_SIZE;
+	rec_buffer.pos = 0;
+	rec_buffer.overflow = 0;
+	rec_buffer.recording = 0;
+
+	sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+	if(!sip)
+		return;
+
+	sip_set_gain(sip, SIP_MAX_GAIN); // SIP_DEFAULT_GAIN  
+	sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED); 
+	sip_set_frequency(sip, SIP_SAMPLE_11KHZ); // 11.025kHz
+		
+	if(sip_start_sampling(sip, sip_copy, 1) == MAPLE_EOK)
+	{
+		//printf("Mic ok\n");
+	}
+	else
+	{
+		printf("Mic Recording: Failed\n");
+		done = 1;
+	}
 
 	updateVMU("Lag v/Micr", "", 1);
 	sprintf(DStatus, "Press A");
@@ -2189,7 +2262,7 @@ void SIPLagTest()
 				oldbuttons = st->buttons;					      
 			 
 				if (pressed & CONT_START)
-					done =	1;				
+					done =1;				
 	
 				if (pressed & CONT_A)
 					status = 1;
@@ -2208,89 +2281,79 @@ void SIPLagTest()
 			}
 		}
 
-		if(status == 1 && sip)
-		{
-			sprintf(DStatus, "Starting Microphone");
-			printf("Status 1: Setting up mic and recording\n");
-			sip_set_gain(sip, SIP_MAX_GAIN); // SIP_DEFAULT_GAIN  
-			sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED); 
-			sip_set_frequency(sip, SIP_SAMPLE_11KHZ); // 11.025kHz
-			
-			if(sip_start_sampling(sip, 1) == MAPLE_EOK)
-			{
-				counter = CUE_FRAMES; // wait n CUE_FRAMES frames
-				status = 2;
-			}
-			else
-			{
-				sprintf(DStatus, "Microphone failed");
-				printf("Start Recording: Failed\n");
-				status = 0;
-			}
-		}
-
 		if(status == 2 || status == 4)
 		{
+			// Start sampling one frame behind, due to buffer
+			if(status == 2 && counter == CUE_FRAMES - 1 && !rec_buffer.recording)
+				rec_buffer.recording = 1;
+
 			counter --;
 			if(!counter)
 				status++;
-			if(counter == 1)
-				sprintf(DStatus, "Frame Audio Cue: %d", CUE_FRAMES - counter);
+			
 			if(status == 4)
+			{
 				sprintf(DStatus, "Recording Frame: %d", SECONDS_TO_RECORD*60 - counter);
+				if(counter == 1)
+					rec_buffer.recording = 0;
+
+				if(rec_buffer.pos == 0)
+				{
+					sprintf(DStatus, "Please remove and reinsert Microphone");
+					rec_buffer.recording = 0;
+					status = 0;
+				}
+			}
 		}
-		
+
+		if(status == 1 && sip)
+		{
+			sprintf(DStatus, "Starting");
+			status = 2;
+			counter = CUE_FRAMES;
+		}
+
 		if(status == 3 && beep != SFXHND_INVALID)
 		{
-			sprintf(DStatus, "Playing");
-			printf("Status 3: Starting playback\n");
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
 			counter = SECONDS_TO_RECORD*60; // record N seconds + CUE frames
 		}    
-
-		if(status == 5 && sip)
+		
+		if(status == 5)
 		{
-			int  retval = 0;
+			sprintf(DStatus, "Stopping sampling");
 
-			sprintf(DStatus, "Stopped recording");
-			printf("Status 5: Stopping sampling\n");
-			retval = sip_stop_sampling(sip, 1);
-			printf("Sip Stop returned %d\n", retval);
-			if(retval == 0)
+			//printf("Got %d bytes\n", (int)rec_buffer.pos);
+			if(rec_buffer.buffer && rec_buffer.pos > 0)
 			{
-				buffer = sip_get_samples(sip, &size);
-				printf("Got %d bytes\n", (int)size);
-				if(buffer && size > 0)
+				double value;
+
+				DrawSIPScreen(back, "Analyzing...", pres, Results, ResCount);
+				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2, 11025, 60.0*pres, 1000);          
+				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
+					sprintf(DStatus, "Noise at 1khz");
+				if(value == FFT_OM)
+					sprintf(DStatus, "Out of Memory");
+				if(value == FFT_NOT_FOUND)
+					sprintf(DStatus, "Check audio system");
+				if(value >= 0)
+					sprintf(DStatus, "Lag is %g frames", value);
+
+				if(ResCount == RESULTS_MAX)
 				{
-					double value;
+					int i = 0;
 
-					DrawSIPScreen(back, "Analyzing...", pres, Results, ResCount);
-					value = ProcessSamples((short*)buffer, size/2, 11025, 60.0*pres, 1000);          
-					if(value < 0 && value != -500)
-						sprintf(DStatus, "Noise at 1khz");
-					if(value == -500)
-						sprintf(DStatus, "Check audio system");
-					if(value >= 0)
-						sprintf(DStatus, "Lag is %g frames", value);
+					for(i = 0; i < RESULTS_MAX - 1; i++)
+						Results[i] = Results[i+1];
+					ResCount --;
+				}
+				Results[ResCount++] = value;
+			}        
+			else
+				sprintf(DStatus, "Recording failed");
 
-					if(ResCount == RESULTS_MAX)
-					{
-						int i = 0;
-
-						for(i = 0; i < RESULTS_MAX - 1; i++)
-							Results[i] = Results[i+1];
-						ResCount --;
-					}
-					Results[ResCount++] = value;
-
-					free(buffer);
-					buffer = NULL;
-					size = 0;
-				}        
-			}
-
-			sip_clear_samples(sip);
+			rec_buffer.pos = 0;
 			status = 0;
 		}   
 
@@ -2299,6 +2362,16 @@ void SIPLagTest()
 		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 		if(!sip)
 			done = 1;
+	}
+
+	if(sip)
+		sip_stop_sampling(sip, 0);
+
+	if(rec_buffer.size)
+	{
+		free(rec_buffer.buffer);
+		rec_buffer.size = 0;
+		rec_buffer.pos = 0;
 	}
 
 	if(beep != SFXHND_INVALID)
@@ -2312,19 +2385,20 @@ void SIPLagTest()
 
 double ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq)
 {
-	long          samplesize = 0, arraysize = 0;  
-	long          i = 0, f = 0, framesizernd = 0, time = 0;
-	double        *in, root = 0, framesize = 0;  
-	double        *MaxFreqArray = NULL;
-	fftw_complex  *out;
-	fftw_plan     p = NULL;
-	uint64        start, end;
-	double        mins, maxs;
-	double        boxsize = 0;
-	int           casefrq = 0;  
-	int 					found = 0;
-	long 					pos = 0, count = 0;    
-	double				value = -500;
+	long          	samplesize = 0, arraysize = 0;  
+	long          	i = 0, f = 0, framesizernd = 0; // time = 0;
+	double        	*in, root = 0, framesize = 0;  
+	double        	*MaxFreqArray = NULL;
+	fftw_complex  	*out;
+	fftw_plan	p = NULL;
+	//uint64		start, end;
+	double    	mins, maxs;
+	double       	boxsize = 0;
+	int          	casefrq = 0;  
+	int 		found = 0;
+	long 		pos = 0, count = 0;    
+	long 		tpos = 0, tcount = 0;    
+	double		value = FFT_NOT_FOUND;
 	
 	samplesize = (long) size;  
 
@@ -2333,15 +2407,15 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 
 	//printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
 
-	start = timer_ms_gettime64();
+	//start = timer_ms_gettime64();
 	in = (double*) fftw_malloc(sizeof(double) * framesizernd);
 	if(!in)
-		return value;
+		return FFT_OM;
 	out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (framesizernd/2+1));  
 	if(!out)
 	{     
 		 fftw_free(in); 
-		 return value;
+		 return FFT_OM;
 	}
 		
 	arraysize = framesizernd;
@@ -2350,7 +2424,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	{
 		 fftw_free(in); 
 		 fftw_free(out);
-		 return value;
+		 return FFT_OM;
 	}
 
 	boxsize = (double)arraysize/(double)samplerate;  
@@ -2392,10 +2466,10 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 		fftw_destroy_plan(p);
 	}
 
-	end = timer_ms_gettime64();
-	time = end - start;
+	//end = timer_ms_gettime64();
+	//time = end - start;
 	//printf("FFT for %g frames took %ld\n", samplesize/framesize - 1, time);
-	start = end;
+	//start = end;
 
 	casefrq = (int)ceil(searchfreq/(1/boxsize));
 	mins = (casefrq - 1) / boxsize;
@@ -2411,6 +2485,13 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 			{       	 	
 				if(MaxFreqArray[f] < mins || MaxFreqArray[f] > maxs)        
 				{
+					// tentative result if all fails
+					if(!pos) // only the first result
+					{
+						tpos = pos;
+						tcount = count;
+					}
+	
 					count = 0;          
 					pos = 0;
 				}
@@ -2434,9 +2515,16 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 			}      
 		}
 	}
+	
+	if(!found && tpos != 0 && tcount > secondunits/2) // Did we find one at least 1/2 second long?
+	{
+		pos = tpos - CUE_FRAMES*(secondunits/60.0);
+		value = pos/(secondunits/60.0);
+		//printf("Found (heur %ld) at %g frames -> %g sec\n", tcount, value, pos/secondunits);
+	}
 
-	end = timer_ms_gettime64();
-	time = end - start;
+	//end = timer_ms_gettime64();
+	//time = end - start;
 	//printf("Processing frequencies took %ld\n", time);
 
 	free(MaxFreqArray);
