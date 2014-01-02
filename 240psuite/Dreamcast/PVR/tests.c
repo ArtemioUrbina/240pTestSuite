@@ -2486,7 +2486,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 				if(MaxFreqArray[f] < mins || MaxFreqArray[f] > maxs)        
 				{
 					// tentative result if all fails
-					if(!pos) // only the first result
+					if(!tpos) // only the first result
 					{
 						tpos = pos;
 						tcount = count;
