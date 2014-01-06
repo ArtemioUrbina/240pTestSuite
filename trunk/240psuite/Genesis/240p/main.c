@@ -79,8 +79,8 @@ int main()
     {
       VDP_setScreenHeight224(); 
       pal_240 = 0;
-      if(cursel == 13)
-        cursel = 14;
+      if(cursel == 14)
+        cursel = 15;
     }     
               
     pos = 6;
@@ -90,17 +90,18 @@ int main()
     VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Manual Lag Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-	VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);    
-    VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "VA Panel Scroll Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+	VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);    
+    VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     if(Detect_VDP_PAL())
-      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     else
       VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);    
+    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);    
  
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -111,8 +112,8 @@ int main()
       cursel ++;
       if(cursel > pos - 6)
         cursel = 1;
-      if(cursel == 13 && !Detect_VDP_PAL())
-        cursel = 14;
+      if(cursel == 14 && !Detect_VDP_PAL())
+        cursel = 15;
     }
 
     if (pressedButtons & BUTTON_UP)
@@ -120,8 +121,8 @@ int main()
       cursel --;
       if(cursel < 1)
         cursel = pos - 6;
-      if(cursel == 13 && !Detect_VDP_PAL())
-        cursel = 12;
+      if(cursel == 14 && !Detect_VDP_PAL())
+        cursel = 13;
     }
 
     if (pressedButtons & BUTTON_A)
@@ -149,24 +150,27 @@ int main()
           HScrollTest();   
           break;
 		case 7:
-          VScrollTest();   
+          VAPanelScrollTest();
           break;
         case 8:
+          VScrollTest();   
+          break;
+        case 9:
           DrawStripes();   
           break;
-        case 9: 
+        case 10: 
           DrawCheckBoard();                                   
           break;  
-        case 10: 
+        case 11: 
           LEDZoneTest();                                   
           break;  
-        case 11: 
+        case 12: 
           SoundTest();                                   
           break;          
-        case 12: 
+        case 13: 
           DrawHelp(HELP_GENERAL);                                   
           break;
-        case 13:
+        case 14:
           if(Detect_VDP_PAL())
           {
             if(!pal_240)
@@ -181,7 +185,7 @@ int main()
             }
           }
           break;
-        case 14: 
+        case 15: 
           DrawCredits();                                   
           break;
       }
@@ -410,7 +414,8 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-  VDP_drawTextBG(APLAN, "Ver. 1.12", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
+  VDP_drawTextBG(APLAN, "Ver. 1.13", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
+  VDP_drawTextBG(APLAN, "06/01/2014", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);

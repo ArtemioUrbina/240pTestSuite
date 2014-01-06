@@ -30,7 +30,7 @@ void DrawCheckBoard()
   u16 ind, size, count = 0, docounter = 0;
   u16 field = 1, alternate = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
-
+  
   VDP_setPalette(PAL1, bw_pal);
 
   ind = TILE_USERINDEX; 
@@ -1527,4 +1527,74 @@ void PassiveLagTest()
     }
     VDP_waitVSync();
   }
+}
+
+void VAPanelScrollTest()
+{    
+  u16 size;
+  u16 exit = 0;
+  u16 buttons, oldButtons = 0xffff, pressedButtons;
+  int x = 0, speed = 1, acc = -1, pause = 0;
+  char str[10];
+  
+  VDP_setPalette(PAL0, VAPanel_pal);    
+  VDP_setPalette(PAL1, palette_grey);
+
+  size = sizeof(VAPanel_tiles) / 32; 
+  VDP_loadTileData(VAPanel_tiles, TILE_USERINDEX, size, USE_DMA);       
+
+  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 0, 0, 64/8, 136/8);                            
+  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 64/8, 0, 64/8, 136/8);                            
+  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 128/8, 0, 64/8, 136/8);                            
+  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 192/8, 0, 64/8, 136/8);                            
+  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 256/8, 0, 64/8, 136/8);                            
+  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 320/8, 0, 64/8, 136/8);                            
+  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 384/8, 0, 64/8, 136/8);                            
+  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 448/8, 0, 64/8, 136/8);                            
+    
+  VDP_drawTextBG(BPLAN, "Scroll Speed:", TILE_ATTR(PAL1, 0, 0, 0), 20, 26);
+  while(!exit)
+  {  
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+        
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
+
+    if (pressedButtons & BUTTON_UP)
+      speed++;
+
+    if (pressedButtons & BUTTON_DOWN)
+      speed--;
+
+    if(speed > 10)        
+      speed = 10;          
+    
+    if(speed < 0)        
+      speed = 0;          
+
+    if (pressedButtons & BUTTON_A)
+      pause = !pause;
+
+    if (pressedButtons & BUTTON_B)
+      acc *= -1;
+
+    if(!pause)
+      x += acc*speed;
+
+    if(x >= 512)
+      x = x % 512;
+
+    if(x <= -512)
+      x = x % -512;
+
+    VDP_drawTextBG(BPLAN, "   ", TILE_ATTR(PAL1, 0, 0, 0), 34, 26);
+    intToStr(speed, str, 1);    
+    VDP_drawTextBG(BPLAN, str, TILE_ATTR(PAL1, 0, 0, 0), 34, 26);
+    
+    VDP_setHorizontalScroll(APLAN, 0, x);            
+    VDP_waitVSync();
+  }
+  VDP_setHorizontalScroll(APLAN, 0, 0);  
 }
