@@ -142,7 +142,7 @@ extern u16 greenw_pal[16];
 extern u32 solidw_tiles[32/4]; 
 
 // VA Panel Test, from MM
-extern u32 VAPanel_tiles[1888/4]; 
+extern u32 VAPanel_tiles[1856/4]; 
 extern u16 VAPanel_map[272/2];
 extern u16 VAPanel_pal[16]; 
 
