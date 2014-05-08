@@ -27,8 +27,8 @@
 
 int main(int argc, char **argv) 
 {
-	int video = NATIVE_320, x = 0, y = 0;	
-	ImagePtr GridImage = NULL, Image = NULL, Check = NULL;
+	int video = NATIVE_320, close = 0;	
+	ImagePtr Back = NULL, sd = NULL;
 		
 	VIDEO_Init();
 		
@@ -39,35 +39,65 @@ int main(int argc, char **argv)
 	SetupGX();
 
     LoadFont();
-	GridImage = LoadImage(grid, 0);
-	if(!GridImage)
+	Back = LoadImage(back, 0);
+	if(!Back)
+    {
+        ReleaseFont();
+		exit(0);
+    }	
+    sd = LoadImage(supdef, 0);
+    if(!sd)
     {
         ReleaseFont();
 		exit(0);
     }
-	Check = LoadImage(checkpos, 0);
-	if(!Check)
-    {
-        ReleaseFont();
-		exit(0);
-    }
+    
+    sd->x = 221;
+    sd->y = 94;
+			
+	while(!close) 
+	{        
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1;				    
+		u8   	sel = 1;				    
+		u16     x = 40;
+		u16     y = 55;
+        u32     pressed = 0;
 		
-	Image = GridImage;
-	while(1) 
-	{
-		WPAD_ScanPads();
+		StartScene();
+		        
+		DrawImage(Back);
+        DrawImage(sd);
 		
-		u32 pressed = WPAD_ButtonsDown(0);
+        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Manual Lag Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
+        DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Alternating 240p/480i Test"); y += fh; c++;
+        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
+        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
+		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
+		
+		EndScene();
+
+		VIDEO_Flush();
+		VIDEO_WaitVSync();
+
+        WPAD_ScanPads();
+		
+		pressed = WPAD_ButtonsDown(0);
 
 		// We return to the launcher application via exit
 		if ( pressed & WPAD_BUTTON_HOME ) 		
-		{	
-			Image = NULL;
-			FreeImage(&GridImage);
-			FreeImage(&Check);
-            ReleaseFont();
-			exit(0);
-		}
+			close = 1;
 		
 		// Change resolution
 		if ( pressed & WPAD_BUTTON_A )
@@ -103,28 +133,11 @@ int main(int argc, char **argv)
 		if( pressed & WPAD_BUTTON_B )
 		{			
 			x = y = 0;
-		}
-		
-		if( pressed & WPAD_BUTTON_1 )
-		{		
-			Image = GridImage;
-		}
-		
-		if ( pressed & WPAD_BUTTON_2 )
-		{			
-			Image = Check;
-		}
-		
-		StartScene();
-		        
-		DrawImage(Image);
-		DrawStringS(x, y, 0xff, 0xff, 0xff, "Test Patterns");
-		
-		EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();		
+		}		
 	}
+		
+	FreeImage(&Back);
+	ReleaseFont();	
 
 	return 0;
 }
