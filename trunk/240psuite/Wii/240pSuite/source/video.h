@@ -23,11 +23,11 @@
 
 #define TOTAL_VMODES 3
 
-#define NATIVE_320      0
-#define FAKE_640        1
-#define NATIVE_640_FS   2
-#define NATIVE_640      3
-#define FAKE_640_SL     4
+#define NATIVE_320      0   // 240p
+#define FAKE_640        1	// 480i with assets in 240p
+//#define NATIVE_640      2	// 480i with 480p assets
+#define NATIVE_640_FS   2	// 480p
+#define FAKE_640_SL     3	// 480p with software scanlines
 
 extern void *frameBuffer[TOTAL_VMODES];
 extern GXRModeObj *rmode;
