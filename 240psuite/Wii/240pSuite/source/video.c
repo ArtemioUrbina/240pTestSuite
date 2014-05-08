@@ -40,8 +40,11 @@ int dH			    = 240;
 
 void SetVideoMode(u32 newmode)
 {
+	if(!VIDEO_HaveComponentCable() && newmode >= NATIVE_640_FS)
+		newmode ++;		
+		
 	if(newmode >= TOTAL_VMODES || newmode < 0)
-		newmode = 0;		
+		newmode = 0;			
 		
 	vmode = newmode;
 	
