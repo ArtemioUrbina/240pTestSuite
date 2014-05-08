@@ -25,6 +25,9 @@
 #include "video.h"
 #include "image.h"
 #include "font.h"
+
+#include "patterns.h"
+
 #ifdef WII_VERSION
 #include "CheckRegion.h"
 #endif
@@ -53,13 +56,13 @@ int main(int argc, char **argv)
 	SetupGX();
 
     LoadFont();
-	Back = LoadImage(back, 0);
+	Back = LoadImage(BACKIMG, 0);
 	if(!Back)
     {
         ReleaseFont();
 		exit(0);
     }	
-    sd = LoadImage(supdef, 0);
+    sd = LoadImage(SDIMG, 0);
     if(!sd)
     {
         ReleaseFont();
@@ -305,11 +308,11 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		if (pressed & WPAD_BUTTON_A)
 		{            
 			switch(sel)
-			{
-				/*
+			{				
 				case 1:
 					DrawPluge();
 					break;
+				/*
 				case 2:
 					DrawColorBars();
 					break;
@@ -325,12 +328,14 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 				case 6:
 					DrawLinearity();
 					break;					
+					*/
 				case 7:
 					DrawGrayRamp();
 					break;
 				case 8:
 					DrawWhiteScreen();
 					break;
+					/*
 				case 9:
 					Draw100IRE();
 					break;
@@ -419,7 +424,7 @@ void DrawIntro()
 	int				delta;
 	ImagePtr		black;
 
-	black = LoadImage(Black, 1);
+	black = LoadImage(BLACKIMG, 1);
 	if(!black)
 		return;
 
