@@ -31,8 +31,8 @@ GXRModeObj *vmodes[TOTAL_VMODES] = {
 	&TVNtsc480Prog
 };
 
-
-void *frameBuffer[TOTAL_VMODES];
+u32	ActiveFB = 0;
+void *frameBuffer[TOTAL_VMODES][2];
 u32 vmode           = VIDEO_240P;
 GXRModeObj *rmode   = NULL;
 int VideoInit       = 0;
@@ -60,7 +60,7 @@ void SetVideoMode(u32 newmode)
 		InitFrameBuffers();		
 		
 	VIDEO_Configure(rmode);		
-	VIDEO_SetNextFramebuffer(frameBuffer[vmode]);
+	VIDEO_SetNextFramebuffer(frameBuffer[vmode][ActiveFB]);
 	VIDEO_SetBlack(FALSE);
 	VIDEO_Flush();
 
@@ -74,7 +74,11 @@ void InitFrameBuffers()
 	int mode = 0;
 	
 	for(mode = 0; mode < TOTAL_VMODES; mode++)		
-		frameBuffer[mode] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));			
+	{
+		frameBuffer[mode][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));			
+		frameBuffer[mode][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));			
+	}
 
 	VideoInit = 1;
 }
+

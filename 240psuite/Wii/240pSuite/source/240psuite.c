@@ -28,6 +28,7 @@
 #include "options.h"
 
 #include "patterns.h"
+#include "tests.h"
 
 #ifdef WII_VERSION
 #include "CheckRegion.h"
@@ -182,7 +183,6 @@ int main(int argc, char **argv)
 				case 1:
 					TestPatternsMenu(Back, sd);
 					break;
-				/*
 				case 2:					
 					DropShadowTest();
 					break;
@@ -191,10 +191,10 @@ int main(int argc, char **argv)
 					break;
 				case 4:
 					PassiveLagTest();
-					break;
+					break;					
 				case 5:
 					LagTest();
-					break;
+					break;					
 				case 6:
 					ScrollTest();
 					break;
@@ -207,12 +207,15 @@ int main(int argc, char **argv)
 				case 9:
 					DrawCheckBoard();
 					break;
+				/*
 				case 10:
 					LEDZoneTest();
 					break;
+					*/
 				case 11:
 					Alternate240p480i();					
 					break;
+					/*
 				case 12:
 					SoundTest();
 					break;
@@ -661,7 +664,7 @@ void DrawCredits(ImagePtr Back)
 
 		y = 58;
 		
-		DrawStringS(200, y, 0xff, 0xff, 0xff, "Wii GX Ver. 1.18"); y += fh;
+		DrawStringS(200, y, 0xff, 0xff, 0xff, "Wii GX Ver. 1.18B"); y += fh;
 		DrawStringS(200, y, 0xff, 0xff, 0xff, "08/05/2014"); y += 2*fh;
 
 #ifdef WII_VERSION		
