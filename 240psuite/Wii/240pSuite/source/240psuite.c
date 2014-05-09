@@ -25,6 +25,7 @@
 #include "video.h"
 #include "image.h"
 #include "font.h"
+#include "options.h"
 
 #include "patterns.h"
 
@@ -32,9 +33,15 @@
 #include "CheckRegion.h"
 #endif
 
+
+// Default options
+struct options_st Options = { 0, 1 };
+
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawCredits(ImagePtr Back);
 void DrawIntro();
+void SelectVideoMode();
+void ChangeOptions(ImagePtr Back);
 
 #ifdef WII_VERSION
 char wiiregion[100];
@@ -43,7 +50,7 @@ void GetWiiRegion();
 
 int main(int argc, char **argv) 
 {
-	int 		video = NATIVE_320, close = 0;	
+	int 		close = 0;	
 	ImagePtr 	Back = NULL, sd = NULL;
 	u8   		sel = 1;	
 		
@@ -51,7 +58,7 @@ int main(int argc, char **argv)
 		
 	WPAD_Init();
 
-	SetVideoMode(video);
+	SetVideoMode(vmode);
 	InitGX();
 	SetupGX();
 
@@ -75,7 +82,8 @@ int main(int argc, char **argv)
 	DrawIntro();
 	
 #ifdef WII_VERSION
-	GetWiiRegion();
+	if(Options.ShowWiiRegion)
+		GetWiiRegion();
 #endif
 	
 	while(!close) 
@@ -108,19 +116,26 @@ int main(int argc, char **argv)
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
         switch(vmode)
 		{
-			case NATIVE_320:
+			case VIDEO_240P:
 				sprintf(res, "Video: 240p");				
 				break;			
-			case FAKE_640:
+			case VIDEO_480I_A240:
 				sprintf(res, "Video: Fake 480i");
 				break;
-			case NATIVE_640_FS:
+			case VIDEO_480I:
+				sprintf(res, "Video: 480i");
+				break;
+			case VIDEO_480P:
 				sprintf(res, "Video: 480p");
+				break;
+			case VIDEO_480P_SL:
+				sprintf(res, "Video: 480p/SL");
 				break;				
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
-		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
+		DrawStringS(x, y + fh + 1, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
 		
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");
@@ -128,7 +143,8 @@ int main(int argc, char **argv)
 			DrawStringS(215, 225, r, g,	 b, "Composite");		
 
 #ifdef WII_VERSION
-		DrawStringS(215, 215.0f, r, g, b, wiiregion);
+		if(Options.ShowWiiRegion)
+			DrawStringS(215, 215, r, g, b, wiiregion);
 #endif				
 		
 		EndScene();
@@ -201,23 +217,17 @@ int main(int argc, char **argv)
 					break;
 				*/
 				case 13:
-					video ++;
-					
-					if(!VIDEO_HaveComponentCable() && video >= NATIVE_640_FS)
-						video ++;
-						
-			        if(video >= TOTAL_VMODES)
-				        video = 0;							
-	        
-			        SetVideoMode(video);
-			        SetupGX();
+					SelectVideoMode(Back, sd);					
 					break;
-				/*
 				case 14:
+					ChangeOptions(Back);
+					break;
+				/*				
+				case 15:
 					HelpWindow(GENERALHELP, title);
 					break;
 				*/
-				case 15:
+				case 16:
 					DrawCredits(Back);
 					break;
 			} 									
@@ -266,7 +276,8 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 			DrawStringS(215, 225, r, g,	 b, "Composite");				
 		
 #ifdef WII_VERSION
-		DrawStringS(215, 215.0f, r, g, b, wiiregion);
+		if(Options.ShowWiiRegion)
+			DrawStringS(215, 215.0f, r, g, b, wiiregion);
 #endif		
 		
 		//DrawScanlines();
@@ -311,8 +322,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 			{				
 				case 1:
 					DrawPluge();
-					break;
-				/*
+					break;				
 				case 2:
 					DrawColorBars();
 					break;
@@ -324,25 +334,261 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					break;
 				case 5:
 					DrawGrid();
-					break;
+					break;					
 				case 6:
 					DrawLinearity();
-					break;					
-					*/
+					break;										
 				case 7:
 					DrawGrayRamp();
 					break;
 				case 8:
 					DrawWhiteScreen();
-					break;
-					/*
+					break;					
 				case 9:
 					Draw100IRE();
-					break;
-				*/
+					break;				
 				case 10:
 					close = 1;
 					break;
+			} 			            										
+		}
+		
+		VIDEO_Flush();
+		VIDEO_WaitVSync();			
+	}
+
+	return;
+}
+
+void SelectVideoMode(ImagePtr title, ImagePtr sd)
+{
+	int 	sel = 1, close = 0;		
+	
+	while(!close) 
+	{		
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1;				    					   
+		u16     x = 80;
+		u16     y = 55;
+        u32     pressed = 0;
+				
+		StartScene();
+		        
+		DrawImage(title);
+        DrawImage(sd);
+
+		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 2*fh; 
+		
+		DrawStringS(x - 10, y + (vmode * fh), 0x00, 0xff, 0x00, ">"); 
+		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i with 240p resources (Fake 480i)"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i"); y += fh; c++;
+		if(Options.Activate480p && VIDEO_HaveComponentCable())
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p with 240p resources"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p linedoubled"); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p with 240p resources"); y += fh; c++;
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p linedoubled"); y += fh; c++;
+		}	
+			
+		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		
+		if(VIDEO_HaveComponentCable())		
+		{
+			DrawStringS(215, 225, r, g,	 b, "Component");
+			if(!Options.Activate480p)
+				DrawStringS(x-40, y + 4*fh, r, g, b, "You can activate 480p from Options"); 		
+		}
+		else
+			DrawStringS(215, 225, r, g,	 b, "Composite");				
+		
+#ifdef WII_VERSION
+		if(Options.ShowWiiRegion)
+			DrawStringS(215, 215, r, g, b, wiiregion);
+#endif				
+				
+		EndScene();		
+        
+        WPAD_ScanPads();
+
+		pressed = WPAD_ButtonsDown(0);
+		
+        /*
+		pressed = st->buttons & ~oldbuttons;
+		oldbuttons = st->buttons;
+
+		if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
+			RaiseScanlineIntensity();
+
+		if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
+			LowerScanlineIntensity();
+        */
+
+		if ( pressed & WPAD_BUTTON_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & WPAD_BUTTON_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }			
+			
+		if ( pressed & WPAD_BUTTON_B ) 		
+			close = 1;	
+	
+		if (pressed & WPAD_BUTTON_A)
+		{     
+			switch(sel)
+			{			
+					case 1:
+						SetVideoMode(VIDEO_240P);
+						SetupGX();
+						break;
+					case 2:
+						SetVideoMode(VIDEO_480I_A240);
+						SetupGX();
+						break;
+					case 3:
+						SetVideoMode(VIDEO_480I);
+						SetupGX();
+						break;
+					case 4:
+						if(Options.Activate480p)
+						{
+							SetVideoMode(VIDEO_480P);
+							SetupGX();
+						}
+						break;
+					case 5:
+						if(Options.Activate480p)
+						{
+							SetVideoMode(VIDEO_480P_SL);
+							SetupGX();
+						}
+						break;					
+					case 6:
+						close = 1;
+						break;
+					default:
+						break;
+			} 			            										
+		}
+		
+		VIDEO_Flush();
+		VIDEO_WaitVSync();			
+	}
+
+	return;
+}
+
+void ChangeOptions(ImagePtr title)
+{
+	int 	sel = 1, close = 0;		
+	
+	while(!close) 
+	{		
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1;				    					   
+		u16     x = 80;
+		u16     y = 55;
+        u32     pressed = 0;
+				
+		StartScene();
+		        
+		DrawImage(title);        
+
+		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "General Options"); y += 2*fh; 
+
+#ifdef WII_VERSION				
+		DrawStringS(x + 100, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.ShowWiiRegion ? "ON" : "OFF");
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Show WII region"); y += fh; c++;		
+#endif
+				
+		if(VIDEO_HaveComponentCable())
+		{			
+			DrawStringS(x + 100, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.Activate480p ? "ON" : "OFF"); 					
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Allow 480p"); y += fh; c++;			
+		}
+		else
+		{			
+			DrawStringS(x + 100, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.Activate480p ? "ON" : "OFF"); 					
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Allow 480p"); y += fh; c++;			
+		}	
+		
+		//DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline intensity"); 		
+			
+		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+				
+		
+#ifdef WII_VERSION
+		if(Options.ShowWiiRegion)
+			DrawStringS(215, 215, r, g, b, wiiregion);
+#endif				
+				
+		EndScene();		
+        
+        WPAD_ScanPads();
+
+		pressed = WPAD_ButtonsDown(0);
+		
+        /*
+		pressed = st->buttons & ~oldbuttons;
+		oldbuttons = st->buttons;
+
+		if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
+			RaiseScanlineIntensity();
+
+		if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
+			LowerScanlineIntensity();
+        */
+
+		if ( pressed & WPAD_BUTTON_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & WPAD_BUTTON_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }			
+			
+		if ( pressed & WPAD_BUTTON_B ) 		
+			close = 1;	
+	
+		if (pressed & WPAD_BUTTON_A)
+		{     
+			switch(sel)
+			{			
+					case 1:
+						Options.ShowWiiRegion = !Options.ShowWiiRegion;
+						if(Options.ShowWiiRegion)
+							GetWiiRegion();
+						break;
+					case 2:
+						Options.Activate480p = !Options.Activate480p;
+						break;				
+					case 3:
+						close = 1;
+						break;
+					default:
+						break;
 			} 			            										
 		}
 		
@@ -407,8 +653,11 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(200, y, 0xff, 0xff, 0xff, "08/05/2014"); y += 2*fh;
 
 #ifdef WII_VERSION		
-		DrawStringS(200, y, 0xee, 0xee, 0xee, shop); y += fh;
-		DrawStringS(200, y, 0xee, 0xee, 0xee, wiiregion); y += fh;
+		if(Options.ShowWiiRegion)
+		{
+			DrawStringS(200, y, 0xee, 0xee, 0xee, shop); y += fh;
+			DrawStringS(200, y, 0xee, 0xee, 0xee, wiiregion); y += fh;
+		}
 #endif
 
 		EndScene();
