@@ -63,6 +63,8 @@ int main(int argc, char **argv)
 	SetupGX();
 
     LoadFont();
+	LoadScanlines();
+	
 	Back = LoadImage(BACKIMG, 0);
 	if(!Back)
     {
@@ -129,7 +131,7 @@ int main(int argc, char **argv)
 				sprintf(res, "Video: 480p");
 				break;
 			case VIDEO_480P_SL:
-				sprintf(res, "Video: 480p/SL");
+				sprintf(res, "Video: 480p LD");
 				break;				
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
@@ -156,7 +158,6 @@ int main(int argc, char **argv)
 		
 		pressed = WPAD_ButtonsDown(0);
 
-		// We return to the launcher application via exit
 		if ( pressed & WPAD_BUTTON_HOME ) 		
 			close = 1;
 		
@@ -236,6 +237,7 @@ int main(int argc, char **argv)
 		
 	FreeImage(&Back);
 	ReleaseFont();	
+	ReleaseScanlines();
 
 	return 0;
 }
@@ -278,26 +280,13 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 #ifdef WII_VERSION
 		if(Options.ShowWiiRegion)
 			DrawStringS(215, 215.0f, r, g, b, wiiregion);
-#endif		
-		
-		//DrawScanlines();
+#endif				
 				
 		EndScene();		
         
         WPAD_ScanPads();
 
 		pressed = WPAD_ButtonsDown(0);
-		
-        /*
-		pressed = st->buttons & ~oldbuttons;
-		oldbuttons = st->buttons;
-
-		if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
-			RaiseScanlineIntensity();
-
-		if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
-			LowerScanlineIntensity();
-        */
 
 		if ( pressed & WPAD_BUTTON_UP )
 	    {
@@ -389,7 +378,7 @@ void SelectVideoMode(ImagePtr title, ImagePtr sd)
 		if(Options.Activate480p && VIDEO_HaveComponentCable())
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p with 240p resources"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p linedoubled"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p linedoubled & scanlines"); y += fh; c++;
 		}
 		else
 		{
@@ -402,11 +391,15 @@ void SelectVideoMode(ImagePtr title, ImagePtr sd)
 		if(VIDEO_HaveComponentCable())		
 		{
 			DrawStringS(215, 225, r, g,	 b, "Component");
-			if(!Options.Activate480p)
+			if(sel >= 4 && sel != 6 && !Options.Activate480p)
 				DrawStringS(x-40, y + 4*fh, r, g, b, "You can activate 480p from Options"); 		
 		}
 		else
+		{
 			DrawStringS(215, 225, r, g,	 b, "Composite");				
+			if(sel >= 4 && sel != 6)
+				DrawStringS(x-40, y + 4*fh, r, g, b, "You need a component cable for 480p"); 		
+		}
 		
 #ifdef WII_VERSION
 		if(Options.ShowWiiRegion)
@@ -419,17 +412,6 @@ void SelectVideoMode(ImagePtr title, ImagePtr sd)
 
 		pressed = WPAD_ButtonsDown(0);
 		
-        /*
-		pressed = st->buttons & ~oldbuttons;
-		oldbuttons = st->buttons;
-
-		if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
-			RaiseScanlineIntensity();
-
-		if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
-			LowerScanlineIntensity();
-        */
-
 		if ( pressed & WPAD_BUTTON_UP )
 	    {
 		    sel --;
@@ -505,6 +487,7 @@ void ChangeOptions(ImagePtr title)
 		u16     x = 80;
 		u16     y = 55;
         u32     pressed = 0;
+		char	intensity[80];
 				
 		StartScene();
 		        
@@ -515,6 +498,9 @@ void ChangeOptions(ImagePtr title)
 #ifdef WII_VERSION				
 		DrawStringS(x + 100, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.ShowWiiRegion ? "ON" : "OFF");
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Show WII region"); y += fh; c++;		
+#else
+		DrawStringS(x + 100, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.ShowWiiRegion ? "ON" : "OFF");
+		DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Show WII region"); y += fh; c++;		
 #endif
 				
 		if(VIDEO_HaveComponentCable())
@@ -528,11 +514,26 @@ void ChangeOptions(ImagePtr title)
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Allow 480p"); y += fh; c++;			
 		}	
 		
-		//DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline intensity"); 		
+		sprintf(intensity, "Scanline intensity: %d", GetScanlineIntensity()	);
+		if(vmode == VIDEO_480P_SL)
+		{
+			DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); y += fh; c++;			
+			
+			DrawStringS(x + 100, y + fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD"); 					
+			DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanlines"); y += fh; c++;	
+		}				
+		else
+		{
+			DrawStringS(x, y + fh, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, intensity); y += fh; c++;			
+			
+			DrawStringS(x + 100, y + fh, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, ScanlinesEven() ? "EVEN" : "ODD"); 					
+			DrawStringS(x, y + fh,sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanlines"); y += fh; c++;	
+		}
 			
 		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
-		
+		if(vmode != VIDEO_480P_SL && (sel == 3 || sel == 4))
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 		
 #ifdef WII_VERSION
 		if(Options.ShowWiiRegion)
 			DrawStringS(215, 215, r, g, b, wiiregion);
@@ -544,16 +545,6 @@ void ChangeOptions(ImagePtr title)
 
 		pressed = WPAD_ButtonsDown(0);
 		
-        /*
-		pressed = st->buttons & ~oldbuttons;
-		oldbuttons = st->buttons;
-
-		if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
-			RaiseScanlineIntensity();
-
-		if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
-			LowerScanlineIntensity();
-        */
 
 		if ( pressed & WPAD_BUTTON_UP )
 	    {
@@ -568,6 +559,18 @@ void ChangeOptions(ImagePtr title)
 		    if(sel > c)
 			    sel = 1;	
 	    }			
+		
+		if ( pressed & WPAD_BUTTON_PLUS && sel == 3)
+	    {
+			if(vmode == VIDEO_480P_SL)
+				RaiseScanlineIntensity();
+	    }
+	    
+	    if ( pressed & WPAD_BUTTON_MINUS && sel == 3)
+	    {
+			if(vmode == VIDEO_480P_SL)
+				LowerScanlineIntensity();
+	    }			
 			
 		if ( pressed & WPAD_BUTTON_B ) 		
 			close = 1;	
@@ -577,14 +580,23 @@ void ChangeOptions(ImagePtr title)
 			switch(sel)
 			{			
 					case 1:
+#ifdef WII_VERSION		
 						Options.ShowWiiRegion = !Options.ShowWiiRegion;
 						if(Options.ShowWiiRegion)
 							GetWiiRegion();
+#endif
 						break;
 					case 2:
-						Options.Activate480p = !Options.Activate480p;
+						if(!(Options.Activate480p && vmode >= VIDEO_480P))
+							Options.Activate480p = !Options.Activate480p;
+						break;
+					case 3:						
 						break;				
-					case 3:
+					case 4:
+						if(vmode == VIDEO_480P_SL)
+							ToggleScanlineEvenOdd();
+						break;
+					case 5:
 						close = 1;
 						break;
 					default:
