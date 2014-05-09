@@ -69,7 +69,7 @@ void SetupGX()
 
 	GX_SetCullMode(GX_CULL_NONE);
 		
-	GX_CopyDisp(frameBuffer[vmode],GX_TRUE);
+	GX_CopyDisp(frameBuffer[vmode][ActiveFB],GX_TRUE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
 		
 	GX_SetNumChans(1);
@@ -92,6 +92,8 @@ void StartScene()
 {
 	Mtx GXmodelView2D;		
 	
+	VIDEO_SetNextFramebuffer(frameBuffer[vmode][ActiveFB]);
+	
 	GX_SetViewport(0,0,rmode->fbWidth,rmode->efbHeight,0,1);
 	GX_InvVtxCache();
 
@@ -111,13 +113,14 @@ void StartScene()
 
 void EndScene()
 {
-	DrawScanlines();
-		
+	DrawScanlines();	
+			
 	GX_SetZMode(GX_DISABLE, GX_LEQUAL, GX_FALSE);
 	GX_SetBlendMode(GX_BM_BLEND,GX_BL_SRCALPHA,GX_BL_INVSRCALPHA,GX_LO_CLEAR);
 	GX_SetAlphaUpdate(GX_TRUE);
 	GX_SetColorUpdate(GX_TRUE);
-	GX_CopyDisp(frameBuffer[vmode],GX_TRUE);
+	GX_CopyDisp(frameBuffer[vmode][ActiveFB],GX_TRUE);
+	ActiveFB ^= 1;      
 }
 
 ImagePtr LoadImage(int Texture, int maptoscreen)
@@ -322,7 +325,7 @@ void DrawImage(ImagePtr image)
 	}
 		
 	GX_LoadTexObj(&image->tex, GX_TEXMAP0);	
-	GX_InvalidateTexAll();			
+	//GX_InvalidateTexAll();			
 		
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
 		GX_Position2f32(x, y);					// Top Left
@@ -342,7 +345,6 @@ void DrawImage(ImagePtr image)
 		GX_TexCoord2f32(image->u1, image->v2);		
 	GX_End();		
 	GX_DrawDone();							// Done Drawing The Quad 
-
 }
 
 #define SCANSTEP 0x0a
