@@ -26,6 +26,7 @@
 #include "image.h"
 #include "font.h"
 #include "options.h"
+#include "help.h"
 
 #include "patterns.h"
 #include "tests.h"
@@ -206,31 +207,25 @@ int main(int argc, char **argv)
 					break;
 				case 9:
 					DrawCheckBoard();
-					break;
-				/*
+					break;				
 				case 10:
 					LEDZoneTest();
 					break;
-					*/
 				case 11:
 					Alternate240p480i();					
-					break;
-					/*
+					break;					
 				case 12:
 					SoundTest();
-					break;
-				*/
+					break;				
 				case 13:
 					SelectVideoMode(Back, sd);					
 					break;
 				case 14:
 					ChangeOptions(Back);
-					break;
-				/*				
+					break;					
 				case 15:
-					HelpWindow(GENERALHELP, title);
-					break;
-				*/
+					HelpWindow(GENERALHELP, Back);
+					break;				
 				case 16:
 					DrawCredits(Back);
 					break;
@@ -377,16 +372,16 @@ void SelectVideoMode(ImagePtr title, ImagePtr sd)
 		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i with 240p resources (Fake 480i)"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i with mixed 480p/240p resources"); y += fh; c++;
 		if(Options.Activate480p && VIDEO_HaveComponentCable())
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p with 240p resources"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p linedoubled & scanlines"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p with mixed 480p/240p resources"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p with 240p resources & scanlines"); y += fh; c++;
 		}
 		else
 		{
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p with 240p resources"); y += fh; c++;
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p linedoubled"); y += fh; c++;
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p with mixed 480p/240p resources"); y += fh; c++;
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p with 240p resources & scanlines"); y += fh; c++;
 		}	
 			
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		

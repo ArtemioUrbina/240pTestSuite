@@ -45,29 +45,40 @@ void DropShadowTest()
 	u32		    pressed, held;		
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay;	
 
-	back[1] = LoadImage(SONICBACKIMG, 1);
-	if(!back[1])
-		return;
-	back[2] = LoadImage(CHECKPOSIMG, 1);
-	if(!back[2])
-		return;
-	back[3] = LoadImage(STRIPESPOSIMG, 1);
-	if(!back[3])
-		return;
-	overlay = LoadImage(SONICFLOORIMG, 1);
-	if(!overlay)
-		return;
-
-	if(vmode != VIDEO_480P)
+	if(vmode != VIDEO_480P && vmode != VIDEO_480I)
 	{		
 		back[0] = LoadImage(MOTOKOIMG, 1);
 		if(!back[0])
 			return;
+		back[1] = LoadImage(SONICBACKIMG, 1);
+		if(!back[1])
+			return;
+		back[2] = LoadImage(CHECKPOSIMG, 1);
+		if(!back[2])
+			return;
+		back[3] = LoadImage(STRIPESPOSIMG, 1);
+		if(!back[3])
+			return;
+		overlay = LoadImage(SONICFLOORIMG, 1);
+		if(!overlay)
+			return;
 	}
 	else
 	{
-		back[0] = LoadImage(MOTOKO480IMG, 1);
+		back[0] = LoadImage(MOTOKO480IMG, 0);
 		if(!back[0])
+			return;
+		back[1] = LoadImage(SONICBACKIMG, 0);
+		if(!back[1])
+			return;
+		back[2] = LoadImage(CHECKPOSIMG, 1);
+		if(!back[2])
+			return;
+		back[3] = LoadImage(STRIPESPOSIMG, 1);
+		if(!back[3])
+			return;
+		overlay = LoadImage(SONICFLOORIMG, 0);
+		if(!overlay)
 			return;
 
 		back[0]->scale = 0;
@@ -158,8 +169,8 @@ void DropShadowTest()
 			}
 		}
 
-		//if(st->rtrig > 5)
-        //	oldbuttons = HelpWindow(DROPSHADOW, back[selback]);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(DROPSHADOW, back[selback]);			
 
 		if(x < back[selback]->x)
 			x = back[selback]->x;
@@ -228,7 +239,7 @@ void StripedSpriteTest()
 	u32		    pressed, held;	
 	ImagePtr	back[4], striped, overlay;	
 
-	if(vmode != VIDEO_480P)
+	if(vmode != VIDEO_480P && vmode != VIDEO_480I)
 	{		
 		back[0] = LoadImage(MOTOKOIMG, 1);
 		if(!back[0])
@@ -248,11 +259,11 @@ void StripedSpriteTest()
 	}
 	else
 	{
-		back[0] = LoadImage(MOTOKO480IMG, 1);
+		back[0] = LoadImage(MOTOKO480IMG, 0);
 		if(!back[0])
 			return;
 		back[0]->scale = 0;
-		back[1] = LoadImage(SONICBACKIMG, 1);
+		back[1] = LoadImage(SONICBACKIMG, 0);
 		if(!back[1])
 			return;
 		back[1]->scale = 0;
@@ -264,7 +275,7 @@ void StripedSpriteTest()
 		if(!back[3])
 			return;
 		back[3]->scale = 0;
-		overlay = LoadImage(SONICFLOORIMG, 1);
+		overlay = LoadImage(SONICFLOORIMG, 0);
 		if(!overlay)
 			return;
 
@@ -306,8 +317,8 @@ void StripedSpriteTest()
 				selback = 3;
 		}
 		
-		//if(st->rtrig > 5)
-			//oldbuttons = HelpWindow(STRIPED, back[selback]);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(STRIPED, back[selback]);					
 
 		if(x < back[selback]->x)
 			x = back[selback]->x;
@@ -674,9 +685,8 @@ void ScrollTest()
 		if (pressed & WPAD_BUTTON_1)
 			acc *= -1;
 
-		//if(st->rtrig > 5)
-			//	oldbuttons = HelpWindow(SCROLL, back);
-
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(SCROLL, back);			
 
 		StartScene();
 
@@ -745,8 +755,8 @@ void GridScrollTest()
 		if (pressed & WPAD_BUTTON_2)
 			direction = !direction;
 		
-		//if(st->rtrig > 5)
-			//oldbuttons = HelpWindow(GRIDSCROLL, back);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(GRIDSCROLL, back);			
 
 		StartScene();
 
@@ -822,8 +832,8 @@ void DrawStripes()
 		if (pressed & WPAD_BUTTON_1 && !alternate)
 			field = !field;
 
-		//if(st->rtrig > 5)
-			//oldbuttons = HelpWindow(STRIPESHELP, stripespos);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(STRIPESHELP, stripespos);					
 
 		StartScene();
 
@@ -908,8 +918,8 @@ void DrawCheckBoard()
 		if (pressed & WPAD_BUTTON_PLUS && !alternate)
 			field = !field;
 
-		//if(st->rtrig > 5)
-			//oldbuttons = HelpWindow(CHECKHELP, checkpos);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(CHECKHELP, checkpos);							
 
 		StartScene();
 
@@ -945,50 +955,43 @@ void DrawCheckBoard()
 	return;
 }
 
-/*
 void SoundTest()
 {
-	int 				done = 0, sel = 1, play = 0, pan = 0;
-	u16			oldbuttons, pressed;		
+	int 			done = 0, sel = 1 /*, play = 0, pan = 0*/;
+	u32			    pressed;		
 	ImagePtr		back;
-	sfxhnd_t		beep;
-	controller	*st;
-
-	oldbuttons = InitController(0);
+	//sfxhnd_t		beep;
 	
-	back = LoadImage("/rd/back.kmg.gz", 1);
+	back = LoadImage(BACKIMG, 1);
 	if(!back)
 		return;
+    /*
 	snd_init();	
 	beep = snd_sfx_load("/rd/beep.wav");
 	if(!beep)
 		return;
-	
+	*/
 	while(!done) 
 	{
-		pvr_wait_ready();
+		WPAD_ScanPads();
+		
+        pressed = WPAD_ButtonsDown(0);		
+		if (pressed & WPAD_BUTTON_B)
+			done =	1;								
 
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_START)
-				done =	1;								
+		/*
+		if (pressed & WPAD_BUTTON_A)
+			play =	1; 						
+		*/
 
-			if (pressed & CONT_A)
-				play =	1; 						
+		if (pressed & WPAD_BUTTON_LEFT)
+			sel --;
 
-			if (pressed & CONT_DPAD_LEFT)
-				sel --;
+		if (pressed & WPAD_BUTTON_RIGHT)
+			sel ++;
 
-			if (pressed & CONT_DPAD_RIGHT)
-				sel ++;
-
-			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(SOUNDHELP, NULL);
-		}
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(SOUNDHELP, back);									
 		
 		if(sel < 0)
 			sel = 2;
@@ -996,6 +999,7 @@ void SoundTest()
 		if(sel > 2)
 			sel = 0;
 
+		/*
 		switch(sel)
 		{
 			case 0:
@@ -1008,44 +1012,44 @@ void SoundTest()
 				pan = 255;
 				break;
 		}
+		*/
 
+        /*
 		if(play && beep != SFXHND_INVALID)
 		{
 			snd_sfx_play(beep, 255, pan);
 			play = 0;
 		}
+        */
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		DrawImage(back);
 
 		DrawStringS(130, 60, 0xff, 0xff, 0xff, "Sound Test"); 
 		DrawStringS(80, 120, 0xff, sel == 0 ? 0 : 0xff,	sel == 0 ? 0 : 0xff, "Left Channel"); 
-		DrawStringS(120, 130, 0xff, sel == 1 ? 0 : 0xff,	sel == 1 ? 0 : 0xff, "Center Channel");
-		DrawStringS(160, 120, 0xff, sel == 2 ? 0 : 0xff,	sel == 2 ? 0 : 0xff, "Right Channel");
-		DrawScanlines();
-		
-		pvr_list_finish();				
+		DrawStringS(120, 130, 0xff, sel == 1 ? 0 : 0xff, sel == 1 ? 0 : 0xff, "Center Channel");
+		DrawStringS(160, 120, 0xff, sel == 2 ? 0 : 0xff, sel == 2 ? 0 : 0xff, "Right Channel");
+		EndScene();
 
-		pvr_scene_finish();
+		VIDEO_Flush();
+		VIDEO_WaitVSync();
 	}
+    /*
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
+    */
 	FreeImage(&back);
-	snd_shutdown();
+	//snd_shutdown();
 	return;
 }
 
 void LEDZoneTest()
 {	
 	int		    done = 0, x = 0, y = 0, selsprite = 1, show = 1;
-	u16		oldbuttons = 0xffff, pressed;
+	u32		    pressed, held;
 	ImagePtr	back, sprite[5];
-	controller *st;
-
-	oldbuttons = InitController(0);
-	back = LoadImage("/rd/white.kmg.gz", 1);
+	
+	back = LoadImage(WHITEIMG, 1);
 	if(!back)
 		return;
 
@@ -1053,80 +1057,66 @@ void LEDZoneTest()
 	back->g = 0x00;
 	back->b = 0x00;
 			
-	sprite[0] = LoadImage("/rd/sprite0led.kmg.gz", 0);
+	sprite[0] = LoadImage(SPRITE0LEDIMG, 0);
 	if(!sprite[0])
 		return;
-	sprite[1] = LoadImage("/rd/sprite1led.kmg.gz", 0);
+	sprite[1] = LoadImage(SPRITE1LEDIMG, 0);
 	if(!sprite[1])
 		return;
-	sprite[2] = LoadImage("/rd/sprite2led.kmg.gz", 0);
+	sprite[2] = LoadImage(SPRITE2LEDIMG, 0);
 	if(!sprite[2])
 		return;
-	sprite[3] = LoadImage("/rd/sprite3led.kmg.gz", 0);
+	sprite[3] = LoadImage(SPRITE3LEDIMG, 0);
 	if(!sprite[3])
 		return;
-	sprite[4] = LoadImage("/rd/sprite4led.kmg.gz", 0);
+	sprite[4] = LoadImage(SPRITE4LEDIMG, 0);
 	if(!sprite[4])
 		return;
 		
 	while(!done) 
 	{
-		pvr_wait_ready();
+		WPAD_ScanPads();
+		
+		held = WPAD_ButtonsHeld(0);		
 
-		st = ReadController(0);
-		if(st)
+		if (held & WPAD_BUTTON_UP)
+			y --;
+	
+		if (held & WPAD_BUTTON_DOWN)
+			y ++;
+
+		if (held & WPAD_BUTTON_LEFT)
+			x --;
+
+		if (held & WPAD_BUTTON_RIGHT)
+			x ++;			
+	
+        pressed = WPAD_ButtonsDown(0);
+
+		if (pressed & WPAD_BUTTON_B)
+			done =	1;
+					
+		if (pressed & WPAD_BUTTON_MINUS)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;				
-			
-			if(show)
-			{
-				if (st->buttons & CONT_DPAD_UP)
-					y --;
-			
-				if (st->buttons & CONT_DPAD_DOWN)
-					y ++;
-	
-				if (st->buttons & CONT_DPAD_LEFT)
-					x --;
-	
-				if (st->buttons & CONT_DPAD_RIGHT)
-					x ++;
-				
-	
-				// Joystick
-				if(st->joyx != 0)
-					x += st->joyx/40;
-			
-				if(st->joyy != 0)
-					y += st->joyy/40;
-			}
-		
-			if (pressed & CONT_START)
-				done =	1;
-						
-			if (pressed & CONT_A)
-			{
-				if(selsprite > 0)
-					selsprite --;
-				else
-					selsprite = 4;
-			}
-		
-			if (pressed & CONT_B)
-			{
-				if(selsprite < 4)
-					selsprite ++;
-				else
-					selsprite = 0;
-			}
-
-			if (pressed & CONT_Y)
-				show = !show;
-
-			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(BACKLITHELP, NULL);
+			if(selsprite > 0)
+				selsprite --;
+			else
+				selsprite = 4;
 		}
+	
+		if (pressed & WPAD_BUTTON_PLUS)
+		{
+			if(selsprite < 4)
+				selsprite ++;
+			else
+				selsprite = 0;
+		}
+
+		if (pressed & WPAD_BUTTON_A)
+			show = !show;
+
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(BACKLITHELP, back);											
 		
 		if(x < 0)
 			x = 0;
@@ -1137,9 +1127,7 @@ void LEDZoneTest()
 		if(y > back->h - 1)
 			y = back->h - 1;
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);		
+		StartScene();	
 		DrawImage(back);		
 
 		if(show)
@@ -1149,10 +1137,10 @@ void LEDZoneTest()
 			DrawImage(sprite[selsprite]);
 		}
 
-		DrawScanlines();
-		pvr_list_finish();
+		EndScene();
 
-		pvr_scene_finish();
+		VIDEO_Flush();
+		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	FreeImage(&sprite[0]);
@@ -1162,7 +1150,6 @@ void LEDZoneTest()
 	FreeImage(&sprite[4]);
 	return;
 }
-*/
 
 void PassiveLagTest()
 {
@@ -1392,8 +1379,8 @@ void PassiveLagTest()
 		if (pressed & WPAD_BUTTON_A)
 			pause = !pause;
 
-		//if(st->rtrig > 5)
-			//oldbuttons = HelpWindow(PASSIVELAG, NULL);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(PASSIVELAG, back);				
 	}
 	FreeImage(&back);
 	FreeImage(&circle);
@@ -1513,8 +1500,8 @@ void Alternate240p480i()
 		WPAD_ScanPads();
         pressed = WPAD_ButtonsDown(0);
 					
-		//if(st->rtrig > 5)
-			//oldbuttons = HelpWindow(ALTERNATE, NULL);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(ALTERNATE, NULL);						
 
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;				
