@@ -18,25 +18,11 @@
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
 
-#include <gccore.h>
+struct options_st {
+	u8 Activate480p;
+	u8 ShowWiiRegion;
+};
 
-#define TOTAL_VMODES 5
-
-#define VIDEO_240P      	0   // 240p
-#define VIDEO_480I_A240 	1   // 480i with assets in 240p
-#define VIDEO_480I     		2	// 480i with 480p assets
-#define VIDEO_480P 		 	3	// 480p
-#define VIDEO_480P_SL  		4	// 480p with software scanlines
-
-extern void *frameBuffer[TOTAL_VMODES];
-extern GXRModeObj *rmode;
-extern u32 vmode;
-
-extern int W;
-extern int H;
-extern int dW;
-extern int dH;
-
-void InitFrameBuffers();
-void SetVideoMode(u32 mode);
+extern struct options_st Options;

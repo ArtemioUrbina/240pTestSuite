@@ -19,6 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "image.h"
 #include "font.h"
@@ -109,6 +110,12 @@ void DrawWhiteScreen()
 	if(!back)
 		return;
 		
+	if(vmode == VIDEO_480I || vmode == VIDEO_480P)
+	{
+		back->w = 640;
+		back->h = 480;
+	}
+		
 	while(!done) 
 	{
 		WPAD_ScanPads();
@@ -171,54 +178,44 @@ void DrawWhiteScreen()
 	return;
 }
 
-/*
 void DrawColorBars()
 {
-	int 				done = 0, type = 0;
-	u32			oldbuttons, pressed;		
-	ImagePtr		back, backgrid;
-	controller	*st;
-
-	oldbuttons = InitController(0);
-	back = LoadImage("/rd/color.kmg.gz", 1);
+	int 		done = 0, type = 0;
+	u32         pressed;		
+	ImagePtr	back, backgrid;
+	
+	back = LoadImage(COLORIMG, 1);
 	if(!back)
 		return;
-	backgrid = LoadImage("/rd/color_grid.kmg.gz", 1);
-	if(!back)
+	backgrid = LoadImage(COLORGRIDIMG, 1);
+	if(!backgrid)
 		return;
-		
-	updateVMU("Colorbars", "", 1);
+			
 	while(!done) 
-	{
-		pvr_wait_ready();
+	{		
+		WPAD_ScanPads();
+		
+		pressed = WPAD_ButtonsDown(0);
+		
+		if (pressed & WPAD_BUTTON_B)
+			done =	1;								
 
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_START)
-				done =	1;								
+		if (pressed & WPAD_BUTTON_A)
+			type = !type;
 
-			if (pressed & CONT_A)
-				type = !type;
+		//	if (pressed & WPAD_BUTTON_PLUS)
+		//	HelpWindow(PLUGEHELP, back);		
 
-			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(COLORBARSHELP, back);
-		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
+		        
 		if(!type)
 			DrawImage(back);
 		else
 			DrawImage(backgrid);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
+		
+        EndScene();		
+        VIDEO_Flush();
+		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	return;
@@ -226,42 +223,34 @@ void DrawColorBars()
 
 void Draw601ColorBars()
 {
-	int 				done = 0;
-	u32			oldbuttons, pressed;		
-	ImagePtr		back;
-	controller	*st;
-
-	oldbuttons = InitController(0);
-	back = LoadImage("/rd/601701cb.kmg.gz", 1);
+	int 		done = 0;
+	u32			pressed;		
+	ImagePtr	back;
+	
+	back = LoadImage(CB601701IMG, 1);
 	if(!back)
 		return;
-		
-	updateVMU("Colorbars", "with gray", 1);
+			
 	while(!done) 
 	{
-		pvr_wait_ready();
+		WPAD_ScanPads();
+		
+		pressed = WPAD_ButtonsDown(0);
+		
+		if (pressed & WPAD_BUTTON_B)
+			done =	1;								
+	
+	//	if (pressed & WPAD_BUTTON_PLUS)
+		//	HelpWindow(PLUGEHELP, back);
 
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_START)
-				done =	1;								
-
-			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(COLORBARSHELP, back);
-		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
+		        
 		DrawImage(back);
-		DrawScanlines();
-		pvr_list_finish();				
+		
+        EndScene();
 
-		pvr_scene_finish();
+		VIDEO_Flush();
+		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	return;
@@ -269,51 +258,41 @@ void Draw601ColorBars()
 
 void DrawColorBleed()
 {
-	int 				done = 0, type = 0;
-	u32			oldbuttons, pressed;		
-	ImagePtr		back, backchk;
-	controller	*st;
-
-	oldbuttons = InitController(0);
-	back = LoadImage("/rd/colorbleed.kmg.gz", 1);
+	int 		done = 0, type = 0;
+	u32			pressed;		
+	ImagePtr	back, backchk;
+	
+	back = LoadImage(COLORBLEEDIMG, 1);
 	if(!back)
 		return;
-	backchk = LoadImage("/rd/colorbleedchk.kmg.gz", 1);
+	backchk = LoadImage(COLORBLEEDCHKIMG, 1);
 	if(!backchk)
 		return;
 		
-	updateVMU("Bleed CHK", "", 1);
 	while(!done) 
 	{
-		pvr_wait_ready();
+		WPAD_ScanPads();
+		
+		pressed = WPAD_ButtonsDown(0);
+		if (pressed & WPAD_BUTTON_B)
+			done =	1;								
 
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_START)
-				done =	1;								
+		if (pressed & WPAD_BUTTON_A)
+			type = !type;
 
-			if (pressed & CONT_A)
-				type = !type;
+		//	if (pressed & WPAD_BUTTON_PLUS)
+		//	HelpWindow(PLUGEHELP, back);		
 
-			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(COLORBLEEDHELP, back);
-		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
+		        
 		if(!type)
 			DrawImage(back);
 		else
 			DrawImage(backchk);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
+		
+        EndScene();		
+        VIDEO_Flush();
+		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	FreeImage(&backchk);
@@ -322,51 +301,43 @@ void DrawColorBleed()
 
 void DrawGrid()
 {
-	int 			done = 0;
-	u32			oldbuttons, pressed;		
-	ImagePtr		back;
-	controller	*st;
-
-	oldbuttons = InitController(0);
-	if(vmode != NATIVE_640_FS)
+	int 		done = 0;
+	u32			pressed;		
+	ImagePtr	back;
+	
+	if(vmode == VIDEO_480I || vmode == VIDEO_480P)
 	{
-		back = LoadImage("/rd/grid.kmg.gz", 1);
+		back = LoadImage(GRID480IMG, 0);
 		if(!back)
 			return;
+        back->scale = 0;		
 	}
 	else
 	{
-		back = LoadImage("/rd/480/grid-480.kmg.gz", 1);
+		back = LoadImage(GRIDIMG, 1);
 		if(!back)
-			return;
-		back->scale = 0;
+			return;		
 	}
-
-	updateVMU(" 	Grid	", "", 1);
+	
 	while(!done) 
 	{
-		pvr_wait_ready();
+		WPAD_ScanPads();
+		
+		pressed = WPAD_ButtonsDown(0);
+		
+		if (pressed & WPAD_BUTTON_B)
+			done =	1;								
 
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_START)
-				done =	1;											
-			if (st->rtrig > 5)
-				oldbuttons = HelpWindow(GRIDHELP, back);
-		}
+		//	if (pressed & WPAD_BUTTON_PLUS)
+		//	HelpWindow(PLUGEHELP, back);		
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);		
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
+		StartScene();
+		        
+		DrawImage(back);
+		
+        EndScene();		
+        VIDEO_Flush();
+		VIDEO_WaitVSync();
 	}
 
 	FreeImage(&back);
@@ -375,50 +346,42 @@ void DrawGrid()
 
 void DrawLinearity()
 {
-	int 			done = 0, gridpattern = 0, showgrid = 0;
-	u32			oldbuttons, pressed;
-	ImagePtr		circles, grid, gridd;
-	controller	*st;
-
-	oldbuttons = InitController(0);
-	circles = LoadImage("/rd/circles.kmg.gz", 1);
+	int 		done = 0, gridpattern = 0, showgrid = 0;
+	u32			pressed;
+	ImagePtr	circles, grid, gridd;
+	
+	circles = LoadImage(CIRCLESIMG, 1);
 	if(!circles)
 		return;
-	grid = LoadImage("/rd/circles_grid.kmg.gz", 1);
+	grid = LoadImage(CIRCLESGRIDIMG, 1);
 	if(!grid)
 		return;
-	gridd = LoadImage("/rd/circles_griddot.kmg.gz", 1);
+	gridd = LoadImage(CIRCLESGRIDDOTIMG, 1);
 	if(!gridd)
 		return;
 	grid->w = 320;
 	grid->h = 240;
 	gridd->w = 320;
 	gridd->h = 240;
-		
-	updateVMU("Linearity", "", 1);
+			
 	while(!done) 
 	{
-		pvr_wait_ready();
-
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_A)
-				showgrid = !showgrid;
+        WPAD_ScanPads();
 		
-			if (pressed & CONT_B)
-				gridpattern = !gridpattern;
-		
-			if (pressed & CONT_START)
-				done =	1;				
-		}
-						
-		pvr_scene_begin();
+		pressed = WPAD_ButtonsDown(0);
+				
+		if (pressed & WPAD_BUTTON_B)
+			done =	1;	
 
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		if (pressed & WPAD_BUTTON_PLUS)
+			showgrid = !showgrid;
+		
+		if (pressed & WPAD_BUTTON_MINUS)
+			gridpattern = !gridpattern;
+		
+		
+		StartScene();
+		        
 		if(showgrid)
 		{
 			if(gridpattern)
@@ -427,10 +390,11 @@ void DrawLinearity()
 				DrawImage(grid);
 		}
 		DrawImage(circles);
-		DrawScanlines();
-		pvr_list_finish();				
+		
+        EndScene();
 
-		pvr_scene_finish();
+		VIDEO_Flush();
+		VIDEO_WaitVSync();		
 	}
 
 	FreeImage(&gridd);
@@ -442,16 +406,15 @@ void DrawLinearity()
 void Draw100IRE()
 {
 	int 			done = 0;
-	u32				oldbuttons, pressed, text = 0, invert = 0;	
-	ImagePtr		back, white;
-	controller		*st;
+	u8				step = 0x0a;
+	u32				pressed, text = 0, invert = 0;	
+	ImagePtr		back, white;	
 	char			msg[50];
-
-	oldbuttons = InitController(0);
-	back = LoadImage("/rd/100IRE.kmg.gz", 1);
+	
+	back = LoadImage(IRE100IMG, 1);
 	if(!back)
 		return;
-  	white = LoadImage("/rd/white.kmg.gz", 1);
+  	white = LoadImage(WHITEIMG, 1);
 	if(!white)
   	{
   		FreeImage(&back);
@@ -459,104 +422,93 @@ void Draw100IRE()
   	}
 	white->w = 320;
 	white->h = 240;
-
-	updateVMU(" 100 IRE ", "", 1);
+	
 	while(!done) 
 	{
-		pvr_wait_ready();
-
-		st = ReadController(0);
-		if(st)
+		WPAD_ScanPads();
+		
+		pressed = WPAD_ButtonsDown(0);
+		if (pressed & WPAD_BUTTON_MINUS)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_A)
-			{
-      				if(!invert)
-        			{
-					back->alpha -= 0.1f;
-				  	if(back->alpha < 0.0f)
-						back->alpha = 0.0f;
-        			}
-        			else
-        			{
-        				back->alpha += 0.125;
-				  	if(back->alpha > 1.0f)
-						back->alpha = 1.0f;
-        			}
-
-				text = 30;
-			}
-		
-			if (pressed & CONT_B)
-			{
-      				if(!invert)
-        			{
-					back->alpha += 0.1f;
-				  	if(back->alpha > 1.0f)
-						back->alpha = 1.0f;
-        			}
-        			else
-        			{
-        				back->alpha -= 0.125f;
-				  	if(back->alpha < 0.0f)
-						back->alpha = 0.0f;
-        			}
-
-				text = 30;
-			}
-
-     			if (pressed & CONT_Y)
-      			{
-				invert = !invert;
-        			back->alpha = 1.0f;
-				text = 30;
-				if(!invert)
-					updateVMU(" 100 IRE ", "", 1);
+      		if(!invert)
+        	{    			
+	    		if((int)back->alpha - step <  0x00)
+		    		back->alpha = 0x00;
 				else
-					updateVMU(" 140 IRE ", "", 1);
-      			}
-		
-			if (pressed & CONT_START)
-				done =	1;											
-			if (st->rtrig > 5)
-				oldbuttons = HelpWindow(IREHELP, back);
+					back->alpha -= step;
+        	}
+        	else
+        	{        		
+			    if((int)back->alpha + step > 0xff)
+				    back->alpha = 0xff;
+				else
+					back->alpha += step;
+        	}
+
+			text = 30;
+		}
+	
+		if (pressed & WPAD_BUTTON_PLUS)
+		{
+      		if(!invert)
+        	{				
+				if((int)back->alpha + step > 0xff)
+					back->alpha = 0xff;
+				else
+					back->alpha += step;
+        	}
+        	else
+        	{        		
+				if((int)back->alpha - step < 0x00)
+					back->alpha = 0x00;
+				else
+					back->alpha -= step;
+        	}
+
+			text = 30;
 		}
 
-		pvr_scene_begin();
+     	if (pressed & WPAD_BUTTON_1)
+      	{
+			invert = !invert;
+        		back->alpha = 0xff;
+			text = 30;			
+      	}
+	
+		if (pressed & WPAD_BUTTON_B)
+			done =	1;				
+							
+		//if (st->rtrig > 5)
+		//	oldbuttons = HelpWindow(IREHELP, back);
 
-		pvr_list_begin(PVR_LIST_TR_POLY);
-    		if(invert)
-      			DrawImage(white);	
+		StartScene();
+    	if(invert)
+      		DrawImage(white);	
 		DrawImage(back);		
 
 		if(text)
 		{
-    			if(!invert)
-      			{
-				sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
-			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+    		if(!invert)
+      		{
+				sprintf(msg, "%0.0f IRE", (double)(back->alpha*100/0xff));
+			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
-      			}
-      			else
-      			{
-			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
-			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+      		}
+      		else
+      		{
+			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40/0xff)));
+			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
-      			}
+      		}
 		}
+		EndScene();
 
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
+		VIDEO_Flush();
+		VIDEO_WaitVSync();
 	}
 
 	FreeImage(&back);
 	FreeImage(&white);
 	return;
 }
-
-*/
 

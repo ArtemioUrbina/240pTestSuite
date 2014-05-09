@@ -19,18 +19,21 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-#include "video.h"
 #include <stdio.h>
+#include "video.h"
+#include "options.h"
 
 GXRModeObj *vmodes[TOTAL_VMODES] = {
 	&TVNtsc240Ds,
-	&TVNtsc480Int, // Real NTSC TVNtsc480IntDf	
+	&TVNtsc480Int, 		// Real NTSC TVNtsc480IntDf	
+	&TVNtsc480IntDf, 
+	&TVNtsc480Prog,
 	&TVNtsc480Prog
 };
 
 
 void *frameBuffer[TOTAL_VMODES];
-u32 vmode           = NATIVE_320;
+u32 vmode           = VIDEO_240P;
 GXRModeObj *rmode   = NULL;
 int VideoInit       = 0;
 int W			    = 320;
@@ -40,11 +43,14 @@ int dH			    = 240;
 
 void SetVideoMode(u32 newmode)
 {
-	if(!VIDEO_HaveComponentCable() && newmode >= NATIVE_640_FS)
-		newmode ++;		
+	if(newmode >= VIDEO_480P && !VIDEO_HaveComponentCable())
+		newmode = VIDEO_240P;		
 		
 	if(newmode >= TOTAL_VMODES || newmode < 0)
-		newmode = 0;			
+		newmode = VIDEO_240P;	
+
+	if(newmode >= VIDEO_480P && !Options.Activate480p )
+		newmode = VIDEO_240P;
 		
 	vmode = newmode;
 	
