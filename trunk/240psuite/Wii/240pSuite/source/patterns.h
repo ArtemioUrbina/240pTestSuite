@@ -31,6 +31,7 @@ void Draw601ColorBars();
 void DrawGrid();
 void DrawLinearity();
 void Draw100IRE();
+void DrawSMPTEColorBars();
 
 #endif
 

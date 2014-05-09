@@ -256,6 +256,41 @@ void Draw601ColorBars()
 	return;
 }
 
+void DrawSMPTEColorBars()
+{
+	int 		done = 0;
+	u32			pressed;		
+	ImagePtr	back;
+	
+	back = LoadImage(SMPTECBIMG, 1);
+	if(!back)
+		return;
+			
+	while(!done) 
+	{
+		WPAD_ScanPads();
+		
+		pressed = WPAD_ButtonsDown(0);
+		
+		if (pressed & WPAD_BUTTON_B)
+			done =	1;								
+	
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(COLORBARSHELP, back);
+
+		StartScene();
+		        
+		DrawImage(back);
+		
+        EndScene();
+
+		VIDEO_Flush();
+		VIDEO_WaitVSync();
+	}
+	FreeImage(&back);
+	return;
+}
+
 void DrawColorBleed()
 {
 	int 		done = 0, type = 0;
