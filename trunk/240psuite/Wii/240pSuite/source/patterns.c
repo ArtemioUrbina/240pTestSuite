@@ -49,8 +49,8 @@ void DrawPluge()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;								
 	
-	//	if (pressed & WPAD_BUTTON_PLUS)
-		//	HelpWindow(PLUGEHELP, back);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(PLUGEHELP, back);
 
 		StartScene();
 		        
@@ -84,8 +84,8 @@ void DrawGrayRamp()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;								
 	
-	//	if (pressed & WPAD_BUTTON_PLUS)
-		//	HelpWindow(PLUGEHELP, back);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(GRAYHELP, back);
 
 		StartScene();
 		        
@@ -203,8 +203,8 @@ void DrawColorBars()
 		if (pressed & WPAD_BUTTON_A)
 			type = !type;
 
-		//	if (pressed & WPAD_BUTTON_PLUS)
-		//	HelpWindow(PLUGEHELP, back);		
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(COLORBARSHELP, back);		
 
 		StartScene();
 		        
@@ -240,8 +240,8 @@ void Draw601ColorBars()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;								
 	
-	//	if (pressed & WPAD_BUTTON_PLUS)
-		//	HelpWindow(PLUGEHELP, back);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(COLORBARSHELP, back);
 
 		StartScene();
 		        
@@ -280,8 +280,8 @@ void DrawColorBleed()
 		if (pressed & WPAD_BUTTON_A)
 			type = !type;
 
-		//	if (pressed & WPAD_BUTTON_PLUS)
-		//	HelpWindow(PLUGEHELP, back);		
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(COLORBLEEDHELP, back);		
 
 		StartScene();
 		        
@@ -328,8 +328,8 @@ void DrawGrid()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;								
 
-		//	if (pressed & WPAD_BUTTON_PLUS)
-		//	HelpWindow(PLUGEHELP, back);		
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(GRIDHELP, back);		
 
 		StartScene();
 		        
@@ -478,8 +478,8 @@ void Draw100IRE()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;				
 							
-		//if (st->rtrig > 5)
-		//	oldbuttons = HelpWindow(IREHELP, back);
+		if (pressed & WPAD_BUTTON_HOME)
+			HelpWindow(IREHELP, back);				
 
 		StartScene();
     	if(invert)
