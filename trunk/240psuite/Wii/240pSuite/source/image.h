@@ -85,5 +85,20 @@ void FlipV(ImagePtr image, u16 flip);
 void FlipHV(ImagePtr image, u16 flip);
 void DrawImage(ImagePtr image);
 
+/************************/
+/*    Scanline Functions   */
+/************************/
+
+extern ImagePtr scanlines;
+
+void LoadScanlines();
+inline void ReleaseScanlines();
+inline void DrawScanlines();
+u8 GetScanlineIntensity();
+int ScanlinesEven();
+void LowerScanlineIntensity();
+void RaiseScanlineIntensity();
+void ToggleScanlineEvenOdd();
+
 
 #endif

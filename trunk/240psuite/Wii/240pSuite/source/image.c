@@ -32,6 +32,7 @@ static u8 gp_fifo[GX_FIFO_MINSIZE] ATTRIBUTE_ALIGN(32);
 
 TPLFile backsTPL;	
 
+
 void InitGX()
 {	
     memset(&gp_fifo, 0, sizeof(gp_fifo));    
@@ -110,7 +111,7 @@ void StartScene()
 
 void EndScene()
 {
-	GX_DrawDone();
+	DrawScanlines();
 		
 	GX_SetZMode(GX_DISABLE, GX_LEQUAL, GX_FALSE);
 	GX_SetBlendMode(GX_BM_BLEND,GX_BL_SRCALPHA,GX_BL_INVSRCALPHA,GX_LO_CLEAR);
@@ -344,3 +345,78 @@ void DrawImage(ImagePtr image)
 
 }
 
+#define SCANSTEP 0x0a
+ImagePtr   scanlines = NULL;
+
+void LoadScanlines()
+{
+	if(!scanlines)
+	{
+		scanlines = LoadImage(SCANLINESIMG, 0);
+		if(!scanlines)
+			return;
+		scanlines->layer = 5.0;
+		scanlines->alpha = 0xaa;
+		scanlines->scale = 0;
+		CalculateUV(0, 0, 640, 480, scanlines);
+	}
+}
+
+void ToggleScanlineEvenOdd()
+{
+	if(scanlines)
+	{
+		if(scanlines->y == 0)
+			scanlines->y = -1;
+		else
+			scanlines->y = 0;
+	}
+}
+
+void RaiseScanlineIntensity()
+{
+	if(scanlines)
+	{		
+		if((int)scanlines->alpha + SCANSTEP > 0xff)
+			scanlines->alpha = 0xff;
+		else
+			scanlines->alpha += SCANSTEP;
+	}
+}
+
+void LowerScanlineIntensity()
+{
+	if(scanlines)
+	{		
+		if((int)scanlines->alpha - SCANSTEP < 0x00)
+			scanlines->alpha = 0x00;
+		else
+			scanlines->alpha -= SCANSTEP;
+	}
+}
+
+int ScanlinesEven()
+{
+	if(scanlines)
+		return(scanlines->y == 0);
+	return 0;
+}
+
+u8 GetScanlineIntensity()
+{
+	if(scanlines)
+		return((u8)scanlines->alpha*100/0xff);
+	else
+		return 0;
+}
+
+inline void DrawScanlines()
+{
+	if(vmode == VIDEO_480P_SL && scanlines)
+		DrawImage(scanlines);
+}
+
+inline void ReleaseScanlines()
+{
+	FreeImage(&scanlines);
+}
