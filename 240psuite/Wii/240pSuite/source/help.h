@@ -24,27 +24,46 @@
 
 #include "image.h"
 
-#define COLORBLEEDHELP	0  // "/rd/help/bleed.txt"
-#define CHECKHELP		1  // "/rd/help/check.txt"
-#define COLORBARSHELP	2  // "/rd/help/colors.txt"
-#define GENERALHELP		3  // "/rd/help/general.txt"
-#define GRAYHELP		4  // "/rd/help/gray.txt"
-#define GRIDHELP    	5  // "/rd/help/grid.txt"
-#define PLUGEHELP		6  // "/rd/help/pluge.txt"
-#define STRIPESHELP		7  // "/rd/help/stripes.txt"
-#define BACKLITHELP		8  // "/rd/help/backlit.txt"
-#define IREHELP  		9  // "/rd/help/ire100.txt"
-#define ALTERNATE		10 // "/rd/help/alt240p.txt"
-#define SOUNDHELP		11 // "/rd/help/sound.txt"
-#define DROPSHADOW		12 // "/rd/help/dshadow.txt"
-#define STRIPED			13 // "/rd/help/striped.txt"
-#define GRIDSCROLL		14 // "/rd/help/gridscroll.txt"
-#define SCROLL			15 // "/rd/help/scroll.txt"
-#define MANUALLAG		16 // "/rd/help/manuallag.txt"
-#define PASSIVELAG		17 // "/rd/help/passivelag.txt"
+#define COLORBLEEDHELP	bleed_txt
+#define CHECKHELP		check_txt
+#define COLORBARSHELP	colors_txt
+#define GENERALHELP		general_txt
+#define GRAYHELP		gray_txt
+#define GRIDHELP    	grid_txt
+#define PLUGEHELP		pluge_txt
+#define STRIPESHELP		stripes_txt
+#define BACKLITHELP		backlit_txt
+#define IREHELP  		ire100_txt
+#define ALTERNATE		alt240p_txt
+#define SOUNDHELP		sound_txt
+#define DROPSHADOW		dshadow_txt
+#define STRIPED			striped_txt
+#define GRIDSCROLL		gridscroll_txt
+#define SCROLL			scroll_txt
+#define MANUALLAG		manuallag_txt
+#define PASSIVELAG		passivelag_txt
 
-u32 HelpWindow(char *filename, ImagePtr screen);
-char *LoadHelpFile(char *filename, char ***pages, int *npages);
+extern char *alt240p_txt[];
+extern char *backlit_txt[];
+extern char *bleed_txt[];
+extern char *check_txt[];
+extern char *colors_txt[];
+extern char *dshadow_txt[];
+extern char *general_txt[];
+extern char *gray_txt[];
+extern char *grid_txt[];
+extern char *gridscroll_txt[];
+extern char *ire100_txt[];
+extern char *manuallag_txt[];
+extern char *passivelag_txt[];
+extern char *pluge_txt[];
+extern char *scroll_txt[];
+extern char *sound_txt[];
+extern char *striped_txt[];
+extern char *stripes_txt[];
+
+
+void HelpWindow(ImagePtr screen);
 
 #endif
 

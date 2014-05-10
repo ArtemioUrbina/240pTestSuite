@@ -19,10 +19,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-#define VERSION_NUMBER "Wii GX Ver. 1.18B"
+#define VERSION_NUMBER "Wii GX Ver. 1.0"
 
 extern u8 DrawMenu;
-extern u8 HelpData;
+extern char **HelpData;
 extern u8 EndProgram;
 
 void ShowMenu();

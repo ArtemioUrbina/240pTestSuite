@@ -1,0 +1,11 @@
+                  GRAY RAMP 
+
+This gray ramp pattern can be used to check color
+balance and to adjust the white level. 
+
+In order to adjust white level, you need to use
+the "contrast" control of your TV set. Raise the
+contrast to the point where the white bars on the
+sides are undistinguishable from each other, and 
+then lower it to the point where you can clearly
+identify both.

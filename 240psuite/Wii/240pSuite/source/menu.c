@@ -37,7 +37,7 @@ char wiiregion[100];
 #endif
 
 u8 DrawMenu = 0;
-u8 HelpData = 0;
+char **HelpData = GENERALHELP;
 u8 EndProgram = 0;
 
 void ShowMenu()
@@ -109,7 +109,8 @@ void ShowMenu()
 		{     
 			switch(sel)
 			{			
-					case 1:						
+					case 1:			
+						HelpWindow(cFB);
 						break;					
 					case 2:		
 						ChangeOptions(cFB);
