@@ -23,6 +23,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------*/
 
+#ifdef WII_VERSION
+
 //==============================================================================
 // Includes
 //==============================================================================
@@ -399,3 +401,5 @@ s32 CONF_GetShopCode(u8 *shopcode) {
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
+#endif

@@ -24,7 +24,7 @@
 #include "image.h"
 #include "font.h"
 #include "video.h"
-#include <wiiuse/wpad.h>
+#include "controller.h"
 
 #include "patterns.h"
 
@@ -43,17 +43,17 @@ void DrawPluge()
 			
 	while(!done && !EndProgram) 
 	{		
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 				
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = PLUGEHELP;
 		}
 			
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;										
 
 		StartScene();
@@ -78,14 +78,14 @@ void DrawGrayRamp()
 			
 	while(!done && !EndProgram) 
 	{		
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 				
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;								
 	
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = GRAYHELP;
@@ -119,20 +119,20 @@ void DrawWhiteScreen()
 		
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 				
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;						
 			
-		if (pressed & WPAD_BUTTON_PLUS)
+		if (pressed & PAD_TRIGGER_R)
 			color ++;
 
-		if (pressed & WPAD_BUTTON_MINUS)
+		if (pressed & PAD_TRIGGER_L)
 			color --;
 			
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = NULL;
@@ -197,17 +197,17 @@ void DrawColorBars()
 			
 	while(!done && !EndProgram) 
 	{		
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;								
 
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 			type = !type;
 
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = COLORBARSHELP;
@@ -238,14 +238,14 @@ void Draw601ColorBars()
 			
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;								
 	
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = NULL;
@@ -273,14 +273,14 @@ void DrawSMPTEColorBars()
 			
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;								
 	
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = NULL;
@@ -311,16 +311,16 @@ void DrawColorBleed()
 		
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
-		if (pressed & WPAD_BUTTON_B)
+		pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_B)
 			done =	1;								
 
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 			type = !type;
 
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = COLORBLEEDHELP;
@@ -362,14 +362,14 @@ void DrawGrid()
 	
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;								
 
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = GRIDHELP;
@@ -408,20 +408,20 @@ void DrawLinearity()
 			
 	while(!done && !EndProgram) 
 	{
-        WPAD_ScanPads();
+        ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 				
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;	
 
-		if (pressed & WPAD_BUTTON_PLUS)
+		if (pressed & PAD_TRIGGER_R)
 			showgrid = !showgrid;
 		
-		if (pressed & WPAD_BUTTON_MINUS)
+		if (pressed & PAD_TRIGGER_L)
 			gridpattern = !gridpattern;
 			
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = NULL;
@@ -470,10 +470,10 @@ void Draw100IRE()
 	
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
-		if (pressed & WPAD_BUTTON_MINUS)
+		pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_TRIGGER_L)
 		{
       		if(!invert)
         	{    			
@@ -493,7 +493,7 @@ void Draw100IRE()
 			text = 30;
 		}
 	
-		if (pressed & WPAD_BUTTON_PLUS)
+		if (pressed & PAD_TRIGGER_R)
 		{
       		if(!invert)
         	{				
@@ -513,17 +513,17 @@ void Draw100IRE()
 			text = 30;
 		}
 
-     	if (pressed & WPAD_BUTTON_1)
+     	if (pressed & PAD_BUTTON_X)
       	{
 			invert = !invert;
         		back->alpha = 0xff;
 			text = 30;			
       	}
 	
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;				
 							
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = IREHELP;

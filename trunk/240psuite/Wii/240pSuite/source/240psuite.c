@@ -21,7 +21,7 @@
  
 #include <stdio.h>
 #include <stdlib.h>
-#include <wiiuse/wpad.h>
+#include "controller.h"
 #include "video.h"
 #include "image.h"
 #include "font.h"
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 		
 	VIDEO_Init();
 		
-	WPAD_Init();
+	ControllerInit();
 
 	SetVideoMode(vmode);
 	InitGX();
@@ -147,28 +147,28 @@ int main(int argc, char **argv)
 		
 		EndScene();
 		
-        WPAD_ScanPads();
+        ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 			DrawMenu = 1;	
 		
-		if ( pressed & WPAD_BUTTON_UP )
+		if ( pressed & PAD_BUTTON_UP )
 		{
 			sel --;
 			if(sel < 1)
 				sel = c;		
 		}
 		
-		if ( pressed & WPAD_BUTTON_DOWN )
+		if ( pressed & PAD_BUTTON_DOWN )
 		{
 			sel ++;
 			if(sel > c)
 				sel = 1;	
 		}
 
-        if (pressed & WPAD_BUTTON_A)
+        if (pressed & PAD_BUTTON_A)
 		{		
 			switch(sel)
 			{
@@ -271,31 +271,31 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 				
 		EndScene();		
         
-        WPAD_ScanPads();
+        ControllerScan();
 
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 			DrawMenu = 1;	
 
-		if ( pressed & WPAD_BUTTON_UP )
+		if ( pressed & PAD_BUTTON_UP )
 	    {
 		    sel --;
 		    if(sel < 1)
 			    sel = c;		
 	    }
 	    
-	    if ( pressed & WPAD_BUTTON_DOWN )
+	    if ( pressed & PAD_BUTTON_DOWN )
 	    {
 		    sel ++;
 		    if(sel > c)
 			    sel = 1;	
 	    }			
 			
-		if ( pressed & WPAD_BUTTON_B ) 		
+		if ( pressed & PAD_BUTTON_B ) 		
 			close = 1;	
 	
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{            
 			switch(sel)
 			{				
@@ -361,14 +361,14 @@ void DrawCredits(ImagePtr Back)
 	{
 		int x = 30, y = 52;
 
-		WPAD_ScanPads();
-		pressed = WPAD_ButtonsDown(0);
+		ControllerScan();
+		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START) 		
 			DrawMenu = 1;	
-        if (pressed & WPAD_BUTTON_PLUS)
+        if (pressed & PAD_TRIGGER_R)
 			DrawIntro();
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;						
 
 		StartScene();
