@@ -1,0 +1,24 @@
+              Backlit Test (1/2)
+
+This test allows you to check how the display's
+backlit works when only a small array of pixels
+is shown. This can be very revealing, and can
+be used to detect the zones in LED backlit 
+displays, or to evaluate global and local
+dimming.
+
+The user can move around the white pixel arrays
+with the d-pad or joystiq, and change the size
+of the pixel array with "A" and "B". The "Y"
+button allows the user to hide the pixel array
+in order to alternate a fully black screen.
+
+                                     (cont...)
+              Backlit Test (2/2)
+
+It might be necessary to have a fully-off panel
+(if possible) when displaying the black 
+background,  in order to evaluate full-backlit
+displays by adjusting brightness accordingly for
+this test.
+

@@ -1,0 +1,6 @@
+                   SCROLL TEST
+
+This test shows a two layer background from Sonic
+the Hedgehog. The speed can be varied with the
+d-pad, and change direction with the B button.
+The A button stops the scroll. 

@@ -1,0 +1,16 @@
+                      GRID
+
+This grid uses a 320x239 pattern, and should fill
+all of the 4:3 visible area. 
+
+You can use it to verify that all the visible area
+is being displayed, and that there is
+no distortion present
+
+NOTE: When using Composite, SCART/RGB-21 or
+S-Video only 239 lines are visible and that is the
+reason this pattern only uses 239 pixels. When
+using VGA, all 240 lines are visible, and you'll
+notice a green line at the bottom of the screen.
+As a result the central row of pixels in the grid
+is only 1 pixel tall.
