@@ -21,14 +21,13 @@
  
 #include <stdio.h>
 #include <stdlib.h>
-#include <wiiuse/wpad.h>
+#include "controller.h"
 #include "video.h"
 #include "image.h"
 #include "font.h"
 #include "options.h"
 #include "help.h"
 #include "menu.h"
-
 
 
 #ifdef WII_VERSION
@@ -84,28 +83,28 @@ void ShowMenu()
 						
 		EndScene();		
 		
-		WPAD_ScanPads();
+		ControllerScan();
 
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & WPAD_BUTTON_UP )
+		if ( pressed & PAD_BUTTON_UP )
 	    {
 		    sel --;
 		    if(sel < 1)
 			    sel = c;		
 	    }
 	    
-	    if ( pressed & WPAD_BUTTON_DOWN )
+	    if ( pressed & PAD_BUTTON_DOWN )
 	    {
 		    sel ++;
 		    if(sel > c)
 			    sel = 1;	
 	    }			
 			
-		if ( pressed & WPAD_BUTTON_B ) 		
+		if ( pressed & PAD_BUTTON_B ) 		
 			close = 1;	
 	
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{     
 			switch(sel)
 			{			
@@ -206,48 +205,52 @@ void ChangeOptions(ImagePtr title)
 		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
 		if(vmode == VIDEO_480P_SL && sel == 3)
+#ifdef WII_VERSION		
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons"); 										
+#else
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
+#endif
 			
 		if(vmode != VIDEO_480P_SL && (sel == 3 || sel == 4))
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 				
 		EndScene();		
         
-        WPAD_ScanPads();
+        ControllerScan();
 
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
 
-		if ( pressed & WPAD_BUTTON_UP )
+		if ( pressed & PAD_BUTTON_UP )
 	    {
 		    sel --;
 		    if(sel < 1)
 			    sel = c;		
 	    }
 	    
-	    if ( pressed & WPAD_BUTTON_DOWN )
+	    if ( pressed & PAD_BUTTON_DOWN )
 	    {
 		    sel ++;
 		    if(sel > c)
 			    sel = 1;	
 	    }			
 		
-		if ( pressed & WPAD_BUTTON_PLUS && sel == 3)
+		if ( pressed & PAD_TRIGGER_R && sel == 3)
 	    {
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
 	    }
 	    
-	    if ( pressed & WPAD_BUTTON_MINUS && sel == 3)
+	    if ( pressed & PAD_TRIGGER_L && sel == 3)
 	    {
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
 	    }			
 			
-		if ( pressed & WPAD_BUTTON_B ) 		
+		if ( pressed & PAD_BUTTON_B ) 		
 			close = 1;	
 	
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{     
 			switch(sel)
 			{			
@@ -329,28 +332,28 @@ void SelectVideoMode(ImagePtr title)
 				
 		EndScene();		
         
-        WPAD_ScanPads();
+        ControllerScan();
 
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & WPAD_BUTTON_UP )
+		if ( pressed & PAD_BUTTON_UP )
 	    {
 		    sel --;
 		    if(sel < 1)
 			    sel = c;		
 	    }
 	    
-	    if ( pressed & WPAD_BUTTON_DOWN )
+	    if ( pressed & PAD_BUTTON_DOWN )
 	    {
 		    sel ++;
 		    if(sel > c)
 			    sel = 1;	
 	    }			
 			
-		if ( pressed & WPAD_BUTTON_B ) 		
+		if ( pressed & PAD_BUTTON_B ) 		
 			close = 1;	
 	
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{     
 			switch(sel)
 			{			

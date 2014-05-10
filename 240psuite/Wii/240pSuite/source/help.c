@@ -27,7 +27,7 @@
 
 #include "help.h"
 #include "menu.h"
-#include <wiiuse/wpad.h>
+#include "controller.h"
 
 #define LINESPERPAGE	16
 
@@ -135,16 +135,16 @@ void HelpWindow(ImagePtr screen)
 			
 	while(!done) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		pressed = WPAD_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
 					
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;								
-		if (pressed & WPAD_BUTTON_LEFT)
+		if (pressed & PAD_BUTTON_LEFT)
 			page --;
-		if (pressed & WPAD_BUTTON_RIGHT)
+		if (pressed & PAD_BUTTON_RIGHT)
 			page ++;
 
 		if(page > npages - 1)

@@ -28,7 +28,7 @@
 
 #include "help.h"
 #include "menu.h"
-#include <wiiuse/wpad.h>
+#include "controller.h"
 #include <asndlib.h>
 
 extern u8 beep_snd_end[];
@@ -115,35 +115,35 @@ void DropShadowTest()
 		shadow = buzzshadow;	
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		held = WPAD_ButtonsHeld(0);		
+		held = Controller_ButtonsHeld(0);		
 				
-		if (held & WPAD_BUTTON_UP)
+		if (held & PAD_BUTTON_UP)
 			y --;
 	
-		if (held & WPAD_BUTTON_DOWN)
+		if (held & PAD_BUTTON_DOWN)
 			y ++;
 	
-		if (held & WPAD_BUTTON_LEFT)
+		if (held & PAD_BUTTON_LEFT)
 		{
 			x --;
 			FlipH(buzz, 0);
 			FlipH(buzzshadow, 0);
 		}
 	
-		if (held & WPAD_BUTTON_RIGHT)
+		if (held & PAD_BUTTON_RIGHT)
 		{
 			x ++;
 			FlipH(buzz, 1);
 			FlipH(buzzshadow, 1);
 		}
 		
-        pressed = WPAD_ButtonsDown(0);
-		if (pressed & WPAD_BUTTON_B)
+        pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_B)
 			done =	1;
 
-		if (pressed & WPAD_BUTTON_1)
+		if (pressed & PAD_BUTTON_X)
 		{
 			invert = !invert;
 			if(invert)
@@ -153,7 +153,7 @@ void DropShadowTest()
 			text = 60;
 		}
 			
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{
 			if(selback < 3)
 				selback ++;
@@ -161,7 +161,7 @@ void DropShadowTest()
 				selback = 0;
 		}
 	
-		if (pressed & WPAD_BUTTON_2)
+		if (pressed & PAD_BUTTON_Y)
 		{
 			if(sprite == 0)
 			{
@@ -175,7 +175,7 @@ void DropShadowTest()
 			}
 		}
 
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = DROPSHADOW;
@@ -294,28 +294,28 @@ void StripedSpriteTest()
 			
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		held = WPAD_ButtonsHeld(0);		
+		held = Controller_ButtonsHeld(0);		
 
-		if (held & WPAD_BUTTON_UP)
+		if (held & PAD_BUTTON_UP)
 			y --;
 	
-		if (held & WPAD_BUTTON_DOWN)
+		if (held & PAD_BUTTON_DOWN)
 			y ++;
 
-		if (held & WPAD_BUTTON_LEFT)
+		if (held & PAD_BUTTON_LEFT)
 			x --;
 
-		if (held & WPAD_BUTTON_RIGHT)
+		if (held & PAD_BUTTON_RIGHT)
 			x ++;
 			
 
-		pressed = WPAD_ButtonsDown(0);
-		if (pressed & WPAD_BUTTON_B)
+		pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_B)
 			done =	1;
 					
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{
 			if(selback > 0)
 				selback --;
@@ -323,7 +323,7 @@ void StripedSpriteTest()
 				selback = 3;
 		}
 		
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = STRIPED;
@@ -399,18 +399,18 @@ void LagTest()
 
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
-		pressed = WPAD_ButtonsDown(0);
-		if (pressed & WPAD_BUTTON_B)
+		ControllerScan();
+		pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_B)
 			done =	1;
 			
-		if (pressed & WPAD_BUTTON_HOME)		
+		if (pressed & PAD_BUTTON_START)		
 		{
 			DrawMenu = 1;					
 			HelpData = MANUALLAG;
 		}
 			
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{
 			if(change)
 			{
@@ -429,10 +429,10 @@ void LagTest()
 			}
 		}
 
-		if (pressed & WPAD_BUTTON_PLUS)
+		if (pressed & PAD_TRIGGER_R)
 			audio =	!audio;	
 			
-		if (pressed & WPAD_BUTTON_1)
+		if (pressed & PAD_BUTTON_X)
 		{
 			view ++;
 			if(view > 2)
@@ -440,7 +440,7 @@ void LagTest()
 		}
 					
     					
-		if(pressed & WPAD_BUTTON_2)
+		if(pressed & PAD_BUTTON_Y)
 		{
 			variation = !variation;
 			if(!variation)
@@ -592,11 +592,11 @@ void LagTest()
 		
 		while(!done && !EndProgram) 
 		{
-			WPAD_ScanPads();
+			ControllerScan();
 		
-		    pressed = WPAD_ButtonsHeld(0);		
+		    pressed = Controller_ButtonsHeld(0);		
 			
-			if (pressed & WPAD_BUTTON_B)
+			if (pressed & PAD_BUTTON_B)
 				done =	1;
 			
 			StartScene();
@@ -672,26 +672,26 @@ void ScrollTest()
 
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 
-        pressed = WPAD_ButtonsDown(0);
+        pressed = Controller_ButtonsDown(0);
 		
-		if (pressed & WPAD_BUTTON_UP)
+		if (pressed & PAD_BUTTON_UP)
 			speed ++;
 
-		if (pressed & WPAD_BUTTON_DOWN)
+		if (pressed & PAD_BUTTON_DOWN)
 			speed --;
 
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done = 1;
 
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 			pause = !pause;
 
-		if (pressed & WPAD_BUTTON_1)
+		if (pressed & PAD_BUTTON_X)
 			acc *= -1;
 
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = SCROLL;
@@ -741,28 +741,28 @@ void GridScrollTest()
 
 	while(!done && !EndProgram) 
 	{	
-		WPAD_ScanPads();
+		ControllerScan();
 				
-        pressed = WPAD_ButtonsDown(0);
-		if (pressed & WPAD_BUTTON_UP)
+        pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_UP)
 			speed ++;
 
-		if (pressed & WPAD_BUTTON_DOWN)
+		if (pressed & PAD_BUTTON_DOWN)
 			speed --;
 
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done = 1;
 
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 			pause = !pause;
 
-		if (pressed & WPAD_BUTTON_1)
+		if (pressed & PAD_BUTTON_X)
 			acc *= -1;
 
-		if (pressed & WPAD_BUTTON_2)
+		if (pressed & PAD_BUTTON_Y)
 			direction = !direction;
 		
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = GRIDSCROLL;
@@ -818,29 +818,29 @@ void DrawStripes()
 
 	while(!done && !EndProgram) 
 	{   
-        WPAD_ScanPads();
-        pressed = WPAD_ButtonsDown(0);
-		if (pressed & WPAD_BUTTON_B)
+        ControllerScan();
+        pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_B)
 			done =	1;				
 					
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{
 			alternate = !alternate;
 		}
 					
-		if (pressed & WPAD_BUTTON_PLUS)
+		if (pressed & PAD_TRIGGER_R)
 			vertical = !vertical;
 					
-		if (pressed & WPAD_BUTTON_2)
+		if (pressed & PAD_BUTTON_Y)
 		{
 			dframe = !dframe;
 			frame = 0;
 		}
 					
-		if (pressed & WPAD_BUTTON_1 && !alternate)
+		if (pressed & PAD_BUTTON_X && !alternate)
 			field = !field;
 
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = STRIPESHELP;
@@ -907,27 +907,27 @@ void DrawCheckBoard()
 
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
-        pressed = WPAD_ButtonsDown(0);
+		ControllerScan();
+        pressed = Controller_ButtonsDown(0);
 		
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;				
 					
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{
 			alternate = !alternate;				
 		}
 	
-		if (pressed & WPAD_BUTTON_1)
+		if (pressed & PAD_BUTTON_X)
 		{
 			dframe = !dframe;
 			frame = 0;
 		}
 					
-		if (pressed & WPAD_BUTTON_PLUS && !alternate)
+		if (pressed & PAD_TRIGGER_R && !alternate)
 			field = !field;
 
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = CHECKHELP;
@@ -979,22 +979,22 @@ void SoundTest()
     SND_Pause(0);
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-        pressed = WPAD_ButtonsDown(0);		
-		if (pressed & WPAD_BUTTON_B)
+        pressed = Controller_ButtonsDown(0);		
+		if (pressed & PAD_BUTTON_B)
 			done =	1;								
 
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 			play =	1; 								
 
-		if (pressed & WPAD_BUTTON_LEFT)
+		if (pressed & PAD_BUTTON_LEFT)
 			sel --;
 
-		if (pressed & WPAD_BUTTON_RIGHT)
+		if (pressed & PAD_BUTTON_RIGHT)
 			sel ++;
 
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = SOUNDHELP;
@@ -1075,28 +1075,28 @@ void LEDZoneTest()
 		
 	while(!done && !EndProgram) 
 	{
-		WPAD_ScanPads();
+		ControllerScan();
 		
-		held = WPAD_ButtonsHeld(0);		
+		held = Controller_ButtonsHeld(0);		
 
-		if (held & WPAD_BUTTON_UP)
+		if (held & PAD_BUTTON_UP)
 			y --;
 	
-		if (held & WPAD_BUTTON_DOWN)
+		if (held & PAD_BUTTON_DOWN)
 			y ++;
 
-		if (held & WPAD_BUTTON_LEFT)
+		if (held & PAD_BUTTON_LEFT)
 			x --;
 
-		if (held & WPAD_BUTTON_RIGHT)
+		if (held & PAD_BUTTON_RIGHT)
 			x ++;			
 	
-        pressed = WPAD_ButtonsDown(0);
+        pressed = Controller_ButtonsDown(0);
 
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;
 					
-		if (pressed & WPAD_BUTTON_MINUS)
+		if (pressed & PAD_TRIGGER_L)
 		{
 			if(selsprite > 0)
 				selsprite --;
@@ -1104,7 +1104,7 @@ void LEDZoneTest()
 				selsprite = 4;
 		}
 	
-		if (pressed & WPAD_BUTTON_PLUS)
+		if (pressed & PAD_TRIGGER_R)
 		{
 			if(selsprite < 4)
 				selsprite ++;
@@ -1112,10 +1112,10 @@ void LEDZoneTest()
 				selsprite = 0;
 		}
 
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 			show = !show;
 		
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = BACKLITHELP;
@@ -1362,22 +1362,22 @@ void PassiveLagTest()
 
 		EndScene();
 
-		WPAD_ScanPads();
-        pressed = WPAD_ButtonsDown(0);
+		ControllerScan();
+        pressed = Controller_ButtonsDown(0);
 					
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;				
 					
-		if (pressed & WPAD_BUTTON_1 && pause)
+		if (pressed & PAD_BUTTON_X && pause)
 		{
 			frames = hours = minutes = seconds = 0;
 			framecnt = 1;
 		}
 
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 			pause = !pause;
 		
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = PASSIVELAG;
@@ -1496,19 +1496,19 @@ void Alternate240p480i()
 		EndScene();
 
 
-		WPAD_ScanPads();
-        pressed = WPAD_ButtonsDown(0);
+		ControllerScan();
+        pressed = Controller_ButtonsDown(0);
 					
-		if ( pressed & WPAD_BUTTON_HOME ) 		
+		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = ALTERNATE;
 		}													
 
-		if (pressed & WPAD_BUTTON_B)
+		if (pressed & PAD_BUTTON_B)
 			done =	1;				
 					
-		if (pressed & WPAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{
 			if(current <= 19)
 				current ++;

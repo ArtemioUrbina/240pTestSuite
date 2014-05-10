@@ -19,17 +19,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-#define VERSION_NUMBER "Wii GX Ver. 1.1"
+#include <gccore.h>
 
-extern u8 DrawMenu;
-extern char **HelpData;
-extern u8 EndProgram;
-
-void ShowMenu();
-void SelectVideoMode(ImagePtr title);
-void ChangeOptions(ImagePtr Back);
-
-#ifdef WII_VERSION	
-void GetWiiRegion();
-extern char wiiregion[100];
-#endif
+s32 ControllerInit();
+s32 ControllerScan();
+u32 Controller_ButtonsDown(int chan);
+u32 Controller_ButtonsHeld(int chan);
