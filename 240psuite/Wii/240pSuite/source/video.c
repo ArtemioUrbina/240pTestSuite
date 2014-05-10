@@ -57,16 +57,21 @@ void SetVideoMode(u32 newmode)
 	rmode = vmodes[vmode];
 
 	if(!VideoInit)
+	{
 		InitFrameBuffers();		
+		VIDEO_SetBlack(FALSE);
+	}
 		
+	VIDEO_ClearFrameBuffer(rmode, frameBuffer[vmode][ActiveFB], 0);
 	VIDEO_Configure(rmode);		
-	VIDEO_SetNextFramebuffer(frameBuffer[vmode][ActiveFB]);
-	VIDEO_SetBlack(FALSE);
+	VIDEO_SetNextFramebuffer(frameBuffer[vmode][ActiveFB]);		
 	VIDEO_Flush();
 
 	VIDEO_WaitVSync();
-	if(rmode->viTVMode & VI_NON_INTERLACE) 
+	/*
+	if(vmode == VIDEO_480I_A240 || vmode == VIDEO_480I) 
 		VIDEO_WaitVSync();
+		*/
 }
 
 void InitFrameBuffers()
@@ -75,8 +80,10 @@ void InitFrameBuffers()
 	
 	for(mode = 0; mode < TOTAL_VMODES; mode++)		
 	{
-		frameBuffer[mode][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));			
+		frameBuffer[mode][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));	
+		VIDEO_ClearFrameBuffer(vmodes[mode], frameBuffer[mode][0], 0);		
 		frameBuffer[mode][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));			
+		VIDEO_ClearFrameBuffer(vmodes[mode], frameBuffer[mode][1], 0);		
 	}
 
 	VideoInit = 1;

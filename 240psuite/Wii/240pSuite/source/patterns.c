@@ -131,6 +131,12 @@ void DrawWhiteScreen()
 
 		if (pressed & WPAD_BUTTON_MINUS)
 			color --;
+			
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = NULL;
+		}	
 
 		if(color > 4)
 			color = 0;
@@ -242,7 +248,7 @@ void Draw601ColorBars()
 		if ( pressed & WPAD_BUTTON_HOME ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = COLORBARSHELP;
+			HelpData = NULL;
 		}		
 	
 		StartScene();
@@ -277,7 +283,7 @@ void DrawSMPTEColorBars()
 		if ( pressed & WPAD_BUTTON_HOME ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = COLORBARSHELP;
+			HelpData = NULL;
 		}		
 
 		StartScene();
@@ -414,6 +420,12 @@ void DrawLinearity()
 		
 		if (pressed & WPAD_BUTTON_MINUS)
 			gridpattern = !gridpattern;
+			
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = NULL;
+		}	
 		
 		
 		StartScene();

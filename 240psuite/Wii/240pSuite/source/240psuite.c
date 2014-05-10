@@ -209,7 +209,7 @@ int main(int argc, char **argv)
 					SoundTest();
 					break;				
 				case 13:
-					SelectVideoMode(Back, sd);					
+					SelectVideoMode(Back);					
 					break;
 				case 14:
 					ChangeOptions(Back);
@@ -424,6 +424,7 @@ void DrawIntro()
 	black->w = dW;
 	black->h = dH;
 	black->layer = 5.0f;
+		
 	for(counter = 0; counter < frames*2; counter ++)
 	{
 		black->alpha -= delta;

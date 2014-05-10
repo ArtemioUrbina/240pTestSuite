@@ -65,8 +65,8 @@ void ShowMenu()
 		u8      g = 0xff;
 		u8      b = 0xff;
 		u8   	c = 1;				    					   
-		u16     x = 100;
-		u16     y = 38;
+		u16     x = Back->x + 20;
+		u16     y = Back->y + 10;
         u32     pressed = 0;
 				
 		StartScene();
@@ -74,7 +74,7 @@ void ShowMenu()
 		DrawImage(cFB);         
 		DrawImage(Back);       
 
-		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
+		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 3*fh; 		
 		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;		
@@ -116,7 +116,7 @@ void ShowMenu()
 						ChangeOptions(cFB);
 						break;
 					case 3:		
-						SelectVideoMode(cFB, NULL);
+						SelectVideoMode(cFB);
 						break;
 					case 4:
 						close = 1;
@@ -157,7 +157,7 @@ void ChangeOptions(ImagePtr title)
 		u8      b = 0xff;
 		u8   	c = 1;				    					   
 		u16     x = 80;
-		u16     y = 55;
+		u16     y = 80;
         u32     pressed = 0;
 		char	intensity[80];
 				
@@ -205,12 +205,11 @@ void ChangeOptions(ImagePtr title)
 			
 		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
+		if(vmode == VIDEO_480P_SL && sel == 3)
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons"); 										
+			
 		if(vmode != VIDEO_480P_SL && (sel == 3 || sel == 4))
-			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 		
-#ifdef WII_VERSION
-		if(Options.ShowWiiRegion)
-			DrawStringS(215, 215, r, g, b, wiiregion);
-#endif				
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 				
 		EndScene();		
         
@@ -283,7 +282,7 @@ void ChangeOptions(ImagePtr title)
 	return;
 }
 
-void SelectVideoMode(ImagePtr title, ImagePtr sd)
+void SelectVideoMode(ImagePtr title)
 {
 	int 		sel = 1, close = 0;		
 	ImagePtr	back;
@@ -300,14 +299,13 @@ void SelectVideoMode(ImagePtr title, ImagePtr sd)
 		u8      b = 0xff;
 		u8   	c = 1;				    					   
 		u16     x = 80;
-		u16     y = 55;
+		u16     y = 80;
         u32     pressed = 0;
 				
 		StartScene();
 		        
 		DrawImage(title);		
-		DrawImage(back);
-        DrawImage(sd);
+		DrawImage(back);        
 
 		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 2*fh; 
 		
@@ -328,24 +326,6 @@ void SelectVideoMode(ImagePtr title, ImagePtr sd)
 		}	
 			
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
-		
-		if(VIDEO_HaveComponentCable())		
-		{
-			DrawStringS(215, 225, r, g,	 b, "Component");
-			if(sel >= 4 && sel != 6 && !Options.Activate480p)
-				DrawStringS(x-40, y + 4*fh, r, g, b, "You can activate 480p from Options"); 		
-		}
-		else
-		{
-			DrawStringS(215, 225, r, g,	 b, "Composite");				
-			if(sel >= 4 && sel != 6)
-				DrawStringS(x-40, y + 4*fh, r, g, b, "You need a component cable for 480p"); 		
-		}
-		
-#ifdef WII_VERSION
-		if(Options.ShowWiiRegion)
-			DrawStringS(215, 215, r, g, b, wiiregion);
-#endif				
 				
 		EndScene();		
         
