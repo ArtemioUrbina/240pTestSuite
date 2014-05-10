@@ -3,6 +3,10 @@
 This gray ramp pattern can be used to check color
 balance and to adjust the white level. 
 
+You should make sure the bars are gray, with no
+red or blue bias. This can be adjusted with the
+individual color settings, or the "tint" control.
+
 In order to adjust white level, you need to use
 the "contrast" control of your TV set. Raise the
 contrast to the point where the white bars on the

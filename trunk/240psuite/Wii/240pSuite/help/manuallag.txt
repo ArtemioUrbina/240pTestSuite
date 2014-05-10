@@ -25,15 +25,13 @@ Of course the evaluation is dependent on reflexes
 and/or rhythm more than anything. The visual and
 audio cues are the more revealing aspects which the
 user should consider, of course the interactive
-                                          (cont...)
-             MANUAL LAG TEST (3/3)
-
 factor can give an experienced player the hang of
 the system when testing via different connections.
 
+
+                                          (cont...)
+             MANUAL LAG TEST (3/3)
 Since a frame is around 16 ms (1000/60), that value
 must be considered the general error when using the
 test results. 
-
-*AUDIO UNAVAILABLE IN WII VERSION, coming soon
 

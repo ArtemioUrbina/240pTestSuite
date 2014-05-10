@@ -26,7 +26,7 @@ extern char **HelpData;
 extern u8 EndProgram;
 
 void ShowMenu();
-void SelectVideoMode();
+void SelectVideoMode(ImagePtr title);
 void ChangeOptions(ImagePtr Back);
 
 #ifdef WII_VERSION	

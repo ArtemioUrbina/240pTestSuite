@@ -29,6 +29,11 @@
 #include "help.h"
 #include "menu.h"
 #include <wiiuse/wpad.h>
+#include <asndlib.h>
+
+extern u8 beep_snd_end[];
+extern u8 beep_snd[];
+extern u32 beep_snd_size;
 
 typedef struct timecode{
 	int hours;
@@ -363,10 +368,10 @@ void LagTest()
 	char			msg[60];
 	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int				x, y, x2, y2, pos = 0, i = 0, vary = 0, variation = 1;
-	u16				pressed;
+	u16				pressed, audio = 0;
 	ImagePtr		back, spriteA, spriteB;
-	//sfxhnd_t		beep;
-
+	
+	
 	srand((int)(time(0)));	
 	back = LoadImage(LAGPERIMG, 0);
 	if(!back)
@@ -377,8 +382,10 @@ void LagTest()
 	spriteB = CloneImage(back, 0);
 	if(!spriteB)
 		return;	
+		
+	SND_Init(INIT_RATE_48000); 
+    SND_Pause(0); 	
 
-//	beep = snd_sfx_load("/rd/beep.wav");
 	x = 144;
 	y = 60;
 	x2 = 108;
@@ -422,6 +429,9 @@ void LagTest()
 			}
 		}
 
+		if (pressed & WPAD_BUTTON_PLUS)
+			audio =	!audio;	
+			
 		if (pressed & WPAD_BUTTON_1)
 		{
 			view ++;
@@ -429,11 +439,7 @@ void LagTest()
 				view = 0;
 		}
 					
-		/*
-        if (pressed & CONT_Y)
-			audio =	!audio;				
-        */
-		
+    					
 		if(pressed & WPAD_BUTTON_2)
 		{
 			variation = !variation;
@@ -481,10 +487,8 @@ void LagTest()
 
 		if(y == 96)
 		{			
-            /*
-			if(audio && beep != SFXHND_INVALID)
-				snd_sfx_play(beep, 255, speed*255);	// toggle pan to 0 and 255, l & r
-            */
+			if(audio)
+				SND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_STEREO_16BIT, 44100, 0, beep_snd, beep_snd_size, speed == -1 ? 0 : 255, speed == -1 ? 255 : 0, NULL);				
 			
 			spriteA->r = 0xff;
 			spriteA->g = 0x00;
@@ -555,8 +559,8 @@ void LagTest()
 			}
 		}
 
-		//sprintf(msg, "Audio: %s", audio ? "on" : "off");
-		//DrawStringS(200, 20, 0xff, 0xff, 0xff, msg);
+		sprintf(msg, "Audio: %s", audio ? "on" : "off");
+		DrawStringS(200, 20, 0xff, 0xff, 0xff, msg);
 		sprintf(msg, "Timing: %s", variation ? "random" : "rhythmic");
 		DrawStringS(200, 20+fh, 0xff, 0xff, 0xff, msg);		
 
@@ -564,16 +568,13 @@ void LagTest()
 		DrawStringS(20, 170+fh, 0x00, 0xff, 0x00, "Negative values mean you pressed \"A\" before they intersected");
 		DrawStringS(20, 170+2*fh, 0x00, 0xff, 0x00, "\"1\" button toggles horizontal and vertical movement.");
 		DrawStringS(20, 170+3*fh, 0x00, 0xff, 0x00, "\"2\" trigger toggles rhythmic timing.");
-		//DrawStringS(20, 170+4*fh, 0x00, 0xff, 0x00, "\"Y\" button toggles audio feedback.");
+		DrawStringS(20, 170+4*fh, 0x00, 0xff, 0x00, "\"+\" button toggles audio feedback.");
 
 		EndScene();
 
 	}
+    
 
-    /*
-	if(beep != SFXHND_INVALID)
-		snd_sfx_unload(beep);
-    */
 	FreeImage(&back);
 	FreeImage(&spriteA);
 	FreeImage(&spriteB);	
@@ -648,6 +649,8 @@ void LagTest()
 		}
 		FreeImage(&wall);
 	}
+	SND_End();
+	
 	return;
 }
 
@@ -964,20 +967,16 @@ void DrawCheckBoard()
 
 void SoundTest()
 {
-	int 			done = 0, sel = 1 /*, play = 0, pan = 0*/;
+	int 			done = 0, sel = 1, play = 0, aleft = 0, aright = 0;
 	u32			    pressed;		
-	ImagePtr		back;
-	//sfxhnd_t		beep;
+	ImagePtr		back;	
 	
 	back = LoadImage(BACKIMG, 1);
 	if(!back)
 		return;
-    /*
-	snd_init();	
-	beep = snd_sfx_load("/rd/beep.wav");
-	if(!beep)
-		return;
-	*/
+		
+    SND_Init(INIT_RATE_48000); 
+    SND_Pause(0);
 	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
@@ -986,10 +985,8 @@ void SoundTest()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;								
 
-		/*
 		if (pressed & WPAD_BUTTON_A)
-			play =	1; 						
-		*/
+			play =	1; 								
 
 		if (pressed & WPAD_BUTTON_LEFT)
 			sel --;
@@ -1008,46 +1005,41 @@ void SoundTest()
 
 		if(sel > 2)
 			sel = 0;
-
-		/*
+		
 		switch(sel)
 		{
 			case 0:
-				pan = 0;
+				aleft = 0xff;
+				aright = 0x00;
 				break;
 			case 1:
-				pan = 128;
+				aleft = 0xff;
+				aright = 0xff;
 				break;
 			case 2:
-				pan = 255;
+				aleft = 0x00;
+				aright = 0xff;
 				break;
 		}
-		*/
 
-        /*
-		if(play && beep != SFXHND_INVALID)
+		if(play)
 		{
-			snd_sfx_play(beep, 255, pan);
+			SND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_STEREO_16BIT, 44100, 0, beep_snd, beep_snd_size, aleft, aright, NULL);				
 			play = 0;
-		}
-        */
+		}        
 
 		StartScene();
 		DrawImage(back);
 
 		DrawStringS(130, 60, 0xff, 0xff, 0xff, "Sound Test"); 
-		DrawStringS(80, 120, 0xff, sel == 0 ? 0 : 0xff,	sel == 0 ? 0 : 0xff, "Left Channel"); 
+		DrawStringS(80, 120, 0xff, sel == 0 ? 0 : 0xff, sel == 0 ? 0 : 0xff, "Left Channel"); 
 		DrawStringS(120, 130, 0xff, sel == 1 ? 0 : 0xff, sel == 1 ? 0 : 0xff, "Center Channel");
 		DrawStringS(160, 120, 0xff, sel == 2 ? 0 : 0xff, sel == 2 ? 0 : 0xff, "Right Channel");
 		EndScene();
 
-	}
-    /*
-	if(beep != SFXHND_INVALID)
-		snd_sfx_unload(beep);
-    */
+	}    
 	FreeImage(&back);
-	//snd_shutdown();
+	SND_End();
 	return;
 }
 
@@ -1465,7 +1457,7 @@ void Alternate240p480i()
 
 		DrawString(32, 8, 0, 0xff, 0, "Current Resolution:");
 		DrawString(140, 8, 0, 0xff, 0, res == 0 ? "240p" : "480i");
-		//DrawString(180, 8, 0xff, 0xff, 0xff, "Press 'R' trigger for help");
+		DrawString(180, 8, 0xff, 0xff, 0xff, "Press HOME button for help");
 
 		sprintf(buffer, "%02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
 		DrawString(32, 32, 0xff, 0xff, 0xff, "Elapsed Timer:");
