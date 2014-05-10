@@ -61,6 +61,8 @@ int main(int argc, char **argv)
     LoadFont();
 	LoadScanlines();
 	
+	DrawIntro();
+	
 	Back = LoadImage(BACKIMG, 0);
 	if(!Back)
     {
@@ -76,9 +78,7 @@ int main(int argc, char **argv)
     
     sd->x = 221;
     sd->y = 94;
-			
-	DrawIntro();
-	
+				
 #ifdef WII_VERSION
 	if(Options.ShowWiiRegion)
 		GetWiiRegion();

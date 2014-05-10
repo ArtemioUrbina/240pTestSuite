@@ -62,7 +62,6 @@ extern char *sound_txt[];
 extern char *striped_txt[];
 extern char *stripes_txt[];
 
-
 void HelpWindow(ImagePtr screen);
 
 #endif

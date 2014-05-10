@@ -397,6 +397,12 @@ void LagTest()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;
 			
+		if (pressed & WPAD_BUTTON_HOME)		
+		{
+			DrawMenu = 1;					
+			HelpData = MANUALLAG;
+		}
+			
 		if (pressed & WPAD_BUTTON_A)
 		{
 			if(change)

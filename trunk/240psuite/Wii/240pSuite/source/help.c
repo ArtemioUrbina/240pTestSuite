@@ -32,11 +32,11 @@
 #define LINESPERPAGE	16
 
 char *alt240p_txt[] = { 
-"             ALTERNATIONG 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress 'A' to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
+"             ALTERNATING 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress 'A' to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
 NULL
 };
 char *backlit_txt[] = { 
-"              Backlit Test (1/2)\n\nThis test allows you to check how the display's\nbacklit works when only a small array of pixels\nis shown. This can be very revealing, and can\nbe used to detect the zones in LED backlit \ndisplays, or to evaluate global and local\ndimming.\n\nThe user can move around the white pixel arrays\nwith the d-pad or joystiq, and change the size\nof the pixel array with \"A\" and \"B\". The \"Y\"\nbutton allows the user to hide the pixel array\nin order to alternate a fully black screen.\n\n                                     (cont...)",
+"              Backlit Test (1/2)\n\nThis test allows you to check how the display's\nbacklit works when only a small array of pixels\nis shown. This can be very revealing, and can\nbe used to detect the zones in LED backlit \ndisplays, or to evaluate global and local\ndimming.\n\nThe user can move around the white pixel arrays\nwith the d-pad or joystiq, and change the size\nof the pixel array with \"+\" and \"-\". The A\nbutton allows the user to hide the pixel array\nin order to alternate a fully black screen.\n\n                                     (cont...)",
 "              Backlit Test (2/2)\n\nIt might be necessary to have a fully-off panel\n(if possible) when displaying the black \nbackground,  in order to evaluate full-backlit\ndisplays by adjusting brightness accordingly for\nthis test.\n\n",
 NULL
 };
@@ -45,7 +45,7 @@ char *bleed_txt[] = {
 NULL
 };
 char *check_txt[] = { 
-"                 CHECKERBOARD\n\nThis pattern shows all the visible pixels in an\nalternating white and black grid array. \n\nYou can toggle the pattern with the B button, or\nturn on auto-toggle each frame with the A button.\n\nWhen auto-toggle is set, you should see it\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing the X button.\n",
+"                 CHECKERBOARD\n\nThis pattern shows all the visible pixels in an\nalternating white and black grid array. \n\nYou can toggle the pattern with the + button, or\nturn on auto-toggle each frame with the A button.\n\nWhen auto-toggle is set, you should see it\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button 1.\n",
 NULL
 };
 char *colors_txt[] = { 
@@ -54,11 +54,11 @@ char *colors_txt[] = {
 NULL
 };
 char *dshadow_txt[] = { 
-"                DROP SHADOW TEST \n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\nshadow on a 60hz signal. No background detail\nshould be lost and the shadow should be visible. \n\nThe user can toggle the frame used to draw the\nshadow with the Y button. Backgrounds can be\nswitched with the A button and the B button\ntoggles sprites. \n",
+"                DROP SHADOW TEST \n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\nshadow on a 60hz signal. No background detail\nshould be lost and the shadow should be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button 1. Backgrounds can be\nswitched with the A button and button 2\ntoggles sprites. \n",
 NULL
 };
 char *general_txt[] = { 
-"                    HELP\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\nRight Trigger.\n",
+"                    HELP\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\nHOME button.\n",
 NULL
 };
 char *gray_txt[] = { 
@@ -66,22 +66,22 @@ char *gray_txt[] = {
 NULL
 };
 char *grid_txt[] = { 
-"                      GRID\n\nThis grid uses a 320x239 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is\nno distortion present\n\nNOTE: When using Composite, SCART/RGB-21 or\nS-Video only 239 lines are visible and that is the\nreason this pattern only uses 239 pixels. When\nusing VGA, all 240 lines are visible, and you'll\nnotice a green line at the bottom of the screen.\nAs a result the central row of pixels in the grid\nis only 1 pixel tall.\n",
+"                      GRID\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is\nno distortion present\n\nA 640x480 Grid can be shown in compatible video\nmodes.",
 NULL
 };
 char *gridscroll_txt[] = { 
-"                GRID SCROLL TEST\n\nA grid is scrolled vertically or horizontally,\nwhich can be used to test linearity of the signal\nand how well the display copes with scrolling.\n\nThe X button can be used to toggle between\nhorizontal and vertical, while the d-pad regulates\nspeed; A button stops and the B button changes\ndirection. \n",
+"                GRID SCROLL TEST\n\nA grid is scrolled vertically or horizontally,\nwhich can be used to test linearity of the signal\nand how well the display copes with scrolling.\n\nThe button 2 can be used to toggle between\nhorizontal and vertical, while the d-pad regulates\nspeed; A button stops and button 1 changes\ndirection. \n",
 NULL
 };
 char *ire100_txt[] = { 
-"                  100 IRE(1/2)\n\nAn IRE is a unit used in the measurement of\ncomposite video signals. Its name is derived from\n the initials of the Institute of Radio Engineers.\n\nA value of 100 IRE was originally defined to be\nthe range from black to white in a video signal.\n\nA value of 0 IRE corresponds to the zero voltage\nvalue during the blanking period. The sync pulse\nis normally 40 IRE below the zero value, so, peak\nto peak, an all white signal should be equal to\n140 IRE.\n\n                                     (cont...)",
-"                  100 IRE(2/2)\n\nThe reason IRE is a relative measurement (percent)\nis because a video signal may be any amplitude.\n\nThis unit is used in the ITU-R BT.470 which\ndefines PAL, NTSC and SECAM\n\nYou can use the A abd B buttons to change between\n100 IRE to 0 IRE in steps of 10 IRE.\n\nWith Y you can change the range to 100 and 140 IRE\nin 5 IRE steps.\n",
+"                  100 IRE(1/2)\n\nAn IRE is a unit used in the measurement of\ncomposite video signals. Its name is derived from\nthe initials of the Institute of Radio Engineers.\n\nA value of 100 IRE was originally defined to be\nthe range from black to white in a video signal.\n\nA value of 0 IRE corresponds to the zero voltage\nvalue during the blanking period. The sync pulse\nis normally 40 IRE below the zero value, so, peak\nto peak, an all white signal should be equal to\n140 IRE.\n\n                                     (cont...)",
+"                  100 IRE(2/2)\n\nThe reason IRE is a relative measurement (percent)\nis because a video signal may be any amplitude.\n\nThis unit is used in the ITU-R BT.470 which\ndefines PAL, NTSC and SECAM\n\nYou can use the + abd - buttons to change between\n100 IRE to 0 IRE in steps.\n\nWith button 1 you can change the range to 100-140\nIRE.\n",
 NULL
 };
 char *manuallag_txt[] = { 
 "             MANUAL LAG TEST (1/3)\n\nThe main intention is to show a changing pattern\non the screen, and given a visual and repetitive\ncue, play a beep alternating speakers. This\nshould show to some degree the lag (if present)\nwhen processing the signal.\n\nAs an added feature, the user can click the A\nbutton when the sprite is aligned with the one on\nthe background, and the offset in frames form the\nactual intersection will be shown on screen. This\ncan be repeated ten times and the software will\ncalculate the average. Whenever the button was\npressed before the actual intersection frame, the\n                                       (cont...)",
-"             MANUAL LAG TEST (2/3)\n\nresult will be ignored (but still shown onscreen).\nThe B button can be used to change the direction\nof the sprite from vertical to horizontal, or\ndisplay both at the same time.\n\nThe X button can be used to turn off the audio cue.\nIf a Purupuru (Jump pack) is found, it will be used\nas well.\n\nOf course the evaluation is dependent on reflexes\nand/or rhythm more than anything. The visual and\naudio cues are the more revealing aspects which the\nuser should consider, of course the interactive\n                                          (cont...)",
-"             MANUAL LAG TEST (3/3)\n\nfactor can give an experienced player the hang of\nthe system when testing via different connections.\n\nSince a frame is around 16 ms (1000/60), that value\nmust be considered the general error when using the\ntest results. \n\n",
+"             MANUAL LAG TEST (2/3)\n\nresult will be ignored (but still shown onscreen).\nButton 1 can be used to change the direction\nof the sprite from vertical to horizontal, or\ndisplay both at the same time.\n\nOf course the evaluation is dependent on reflexes\nand/or rhythm more than anything. The visual and\naudio cues are the more revealing aspects which the\nuser should consider, of course the interactive\n                                          (cont...)\n             MANUAL LAG TEST (3/3)\n\nfactor can give an experienced player the hang of\nthe system when testing via different connections.",
+"\nSince a frame is around 16 ms (1000/60), that value\nmust be considered the general error when using the\ntest results. \n\n*AUDIO UNAVAILABLE IN WII VERSION, coming soon\n\n",
 NULL
 };
 char *passivelag_txt[] = { 
@@ -90,26 +90,27 @@ NULL
 };
 char *pluge_txt[] = { 
 "                    PLUGE 1/2\n\nThe picture line-up generation equipment (PLUGE)\nis a test pattern used to adjust the black level\nand contrast of a video signal.\n\nThe pattern in this suite is mainly designed to\nadjust the black level. The control for setting \nthis on your TV is usualy named \"Brightness\".\n\nReduce the Brightness until these bars: \n<>   <->   <-                        ->   <->   <>\nare no longer visible, and then slowly raise it\nuntil they are *just* visible. \n\n(Do it without this help window open)    (cont...)",
-"                    PLUGE 2/2\n\nThere are three bars on each side, bars closer\nto the center are at 4%, the center ones at 7% and\nthe outer ones are at 10%. Since the Dreamcast\ncolor is 5 bits per pixel (or 5-6-5 in the best\ncase), 4% is the lowest level of black it can\ndisplay.\n\nThis adjustment assures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.\n",
+"                    PLUGE 2/2\n\nThere are three bars on each side, bars closer\nto the center are at 4%, the center ones at 7% and\nthe outer ones are at 10%. Since the Dreamcast\ncolor is 5 bits per pixel (or 5-6-5 in the best\ncase), 4% is the lowest level of black it can\ndisplay. (Wii pattern coming soon)\n\nThis adjustment assures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.\n",
 NULL
 };
 char *scroll_txt[] = { 
-"                   SCROLL TEST\n\nThis test shows a two layer background from Sonic\nthe Hedgehog. The speed can be varied with the\nd-pad, and change direction with the B button.\nThe A button stops the scroll. \n",
+"                   SCROLL TEST\n\nThis test shows a two layer background from Sonic\nthe Hedgehog. The speed can be varied with the\nd-pad, and change direction with the button 1.\nThe A button stops the scroll. \n",
 NULL
 };
 char *sound_txt[] = { 
-"                      SOUND\n\nThis simple test plays a sound in either or both\nchannels.\n\nIt can be used to determine if the audio chain is\nworking properly.\n",
+"                      SOUND\n\nThis simple test plays a sound in either or both\nchannels.\n\nIt can be used to determine if the audio chain is\nworking properly.\n\nNOT IMPLEMENTED ON WII YET-\n",
 NULL
 };
 char *striped_txt[] = { 
-"              STRIPED SPRITE TEST\n\nThere are actually deinterlacers out there which\ncan display the drop shadows correctly and still\ninterpreted 240p as 480i. With a striped sprite it\nshould be easy to tell if a processor tries to\ndeinterlace (plus interpolate) or not.\n\nThe user can change background with the A and B\nbuttons. The Y button allows to move 1 pixel at\na time.\n",
+"              STRIPED SPRITE TEST\n\nThere are actually deinterlacers out there which\ncan display the drop shadows correctly and still\ninterpreted 240p as 480i. With a striped sprite it\nshould be easy to tell if a processor tries to\ndeinterlace (plus interpolate) or not.\n\nYou can change backgrounds with A.\n",
 NULL
 };
 char *stripes_txt[] = { 
-"              HORIZONTAL STRIPES 1/2\n\nThis pattern is designed to show if all lines are\nvisible in your setup, and how your video\nprocessor is handling 240p video. \n\nYou should see a pattern of lines, each one pixel\nin height, starting with a white one at the top of\nthe screen. You can toggle the pattern with the B\nbutton, or turn on auto-toggle each frame with the\nA button.\n\nWhen auto-toggle is set, you should see the lines\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\n                                         (cont...)",
-"              HORIZONTAL STRIPES 2/2\n\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing the X button.\n\nYou can also display vertical bars by pressing Y,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all one pixel\nwide lines should be of the same width.\n",
+"              HORIZONTAL STRIPES 1/2\n\nThis pattern is designed to show if all lines are\nvisible in your setup, and how your video\nprocessor is handling 240p video. \n\nYou should see a pattern of lines, each one pixel\nin height, starting with a white one at the top of\nthe screen. You can toggle the pattern with \nbutton 1, or turn on auto-toggle each frame with\nthe A button.\n\nWhen auto-toggle is set, you should see the lines\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\n                                         (cont...)",
+"              HORIZONTAL STRIPES 2/2\n\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button 2.\n\nYou can also display vertical bars by pressing +,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all one pixel\nwide lines should be of the same width.\n",
 NULL
 };
+
 
 
 void HelpWindow(ImagePtr screen)
@@ -162,7 +163,6 @@ void HelpWindow(ImagePtr screen)
 		EndScene();
 	}
 	
-	HelpData = GENERALHELP;
 	FreeImage(&back);
 	return;
 }
