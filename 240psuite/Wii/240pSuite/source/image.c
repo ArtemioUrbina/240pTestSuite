@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include "image.h"
+#include "menu.h"
 
 static u8 gp_fifo[GX_FIFO_MINSIZE] ATTRIBUTE_ALIGN(32);
 
@@ -88,7 +89,7 @@ void SetupGX()
 	GX_SetDither(GX_FALSE);
 }
 
-void StartScene()
+inline void StartScene()
 {
 	Mtx GXmodelView2D;		
 	
@@ -111,7 +112,7 @@ void StartScene()
 	GX_LoadPosMtxImm(GXmodelView2D,GX_PNMTX0);
 }
 
-void EndScene()
+inline void EndScene()
 {
 	DrawScanlines();	
 			
@@ -119,8 +120,25 @@ void EndScene()
 	GX_SetBlendMode(GX_BM_BLEND,GX_BL_SRCALPHA,GX_BL_INVSRCALPHA,GX_LO_CLEAR);
 	GX_SetAlphaUpdate(GX_TRUE);
 	GX_SetColorUpdate(GX_TRUE);
-	GX_CopyDisp(frameBuffer[vmode][ActiveFB],GX_TRUE);
-	ActiveFB ^= 1;      
+	
+	if(!DrawMenu)
+	{
+		GX_CopyDisp(frameBuffer[vmode][ActiveFB], GX_TRUE);
+		ActiveFB ^= 1;    
+	  
+		VIDEO_Flush();                      
+		VIDEO_WaitVSync();                  
+		
+		/*
+		if(vmode == VIDEO_480I || vmode == VIDEO_480I_A240)
+			VIDEO_WaitVSync();
+		*/
+	}
+	else
+	{
+		DrawMenu = 0;
+		ShowMenu();
+	}
 }
 
 ImagePtr LoadImage(int Texture, int maptoscreen)
@@ -161,6 +179,7 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	image->FH = 0;
 	image->FV = 0;
 	image->copyOf = NULL;
+	image->cFB = NULL;
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
@@ -178,6 +197,9 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	
 	if(!source)
 		return NULL;
+	if(source->cFB)
+		return NULL;
+		
 	image = (ImagePtr)malloc(sizeof(struct image_st));	
 	if(!image)
 	{
@@ -206,6 +228,7 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	image->FH = image->FH;
 	image->FV = image->FV;
 	image->copyOf = source;
+	image->cFB = NULL;
 	source->RefCount ++;
 	if(maptoscreen)
 	{
@@ -217,6 +240,72 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 
 	return image;
 }
+
+ImagePtr CopyFrameBufferToImage()
+{	
+	int fbsize = 0;
+	ImagePtr image;	
+	u8 *cfb = NULL;	
+	u32	width, height;
+			
+	width = rmode->fbWidth;
+	height = rmode->efbHeight;
+	
+	fbsize = GX_GetTexBufferSize(width, height, GX_TF_RGBA8, GX_TRUE, 0);
+	cfb = (u8 *)memalign(32, fbsize);
+    if (!cfb)
+		return NULL;
+		
+    GX_DrawDone();
+    GX_SetCopyFilter(GX_FALSE, NULL, GX_FALSE, NULL);
+    GX_SetTexCopySrc(0, 0, width, height);
+	GX_SetTexCopyDst(width, height, GX_TF_RGBA8, GX_FALSE);
+	GX_CopyTex(cfb, GX_TRUE);
+	GX_PixModeSync();	
+	DCFlushRange(cfb, fbsize);
+	
+	SetupGX();
+	
+	image = (ImagePtr)malloc(sizeof(struct image_st));
+	if(!image)
+	{
+		free(cfb);
+		fprintf(stderr, "Could not malloc image struct FB\n");
+		return(NULL);
+	}	
+	
+	image->cFB = cfb;
+	GX_InitTexObj(&image->tex, image->cFB, width, height, GX_TF_RGBA8, GX_CLAMP, GX_CLAMP, GX_FALSE);
+	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);				
+
+	image->r = 0xff;
+	image->g = 0xff;
+	image->b = 0xff;
+
+	if(height == 240)
+		width = 320;
+		
+	image->tw = width;
+	image->th = height;
+	image->x = 0;
+	image->y = 0;
+	image->u1 = 0.0f;
+	image->v1 = 0.0f;
+	image->u2 = 1.0f;
+	image->v2 = 1.0f;
+	image->layer = 1.0f;
+	image->scale = 0;
+	image->alpha = 0xff;
+	image->w = image->tw;
+	image->h = image->th;
+	image->RefCount = 1;
+	image->FH = 0;
+	image->FV = 0;
+	image->copyOf = NULL;	
+			
+	return image;
+}
+
 
 void FreeImage(ImagePtr *image)
 {	
@@ -232,6 +321,11 @@ void FreeImage(ImagePtr *image)
 		(*ref)--;
 		if(!(*ref) && !(*image)->copyOf)
 		{
+			if((*image)->cFB)
+			{
+				free((*image)->cFB);
+				(*image)->cFB = NULL;
+			}
 			//pvr_mem_free((*image)->tex); We don't delete images here
 			free(*image);
 			*image = NULL;
@@ -346,6 +440,7 @@ void DrawImage(ImagePtr image)
 	GX_End();		
 	GX_DrawDone();							// Done Drawing The Quad 
 }
+
 
 #define SCANSTEP 0x0a
 ImagePtr   scanlines = NULL;

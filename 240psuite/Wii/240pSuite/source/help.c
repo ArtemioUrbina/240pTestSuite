@@ -113,6 +113,9 @@ u32 HelpWindow(char *filename, ImagePtr screen)
 	*/
 
 	back = LoadImage(HELPIMG, 1);
+	if(!back)
+		return pressed;
+		
 	back->alpha = 0xAA;
 			
 	while(!done) 
