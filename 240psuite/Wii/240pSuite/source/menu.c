@@ -131,6 +131,7 @@ void ShowMenu()
 		}		
 	}
 	
+	HelpData = GENERALHELP;
 	FreeImage(&Back);
 	FreeImage(&cFB);
 
