@@ -5,3 +5,5 @@ channels.
 
 It can be used to determine if the audio chain is
 working properly.
+
+NOT IMPLEMENTED ON WII YET-

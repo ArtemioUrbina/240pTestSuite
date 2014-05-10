@@ -11,4 +11,4 @@ game console to help in properly calibrating the
 display's black, white and color levels.
 
 Help is available on some patterns by pressing the
-Right Trigger.
+HOME button.

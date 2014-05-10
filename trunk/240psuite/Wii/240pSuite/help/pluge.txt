@@ -21,7 +21,7 @@ to the center are at 4%, the center ones at 7% and
 the outer ones are at 10%. Since the Dreamcast
 color is 5 bits per pixel (or 5-6-5 in the best
 case), 4% is the lowest level of black it can
-display.
+display. (Wii pattern coming soon)
 
 This adjustment assures that anything intended
 to be black is actually black, and allows all

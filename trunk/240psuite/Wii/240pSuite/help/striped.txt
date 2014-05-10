@@ -6,6 +6,4 @@ interpreted 240p as 480i. With a striped sprite it
 should be easy to tell if a processor tries to
 deinterlace (plus interpolate) or not.
 
-The user can change background with the A and B
-buttons. The Y button allows to move 1 pixel at
-a time.
+You can change backgrounds with A.

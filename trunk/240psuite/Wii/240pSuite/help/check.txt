@@ -3,7 +3,7 @@
 This pattern shows all the visible pixels in an
 alternating white and black grid array. 
 
-You can toggle the pattern with the B button, or
+You can toggle the pattern with the + button, or
 turn on auto-toggle each frame with the A button.
 
 When auto-toggle is set, you should see it
@@ -13,4 +13,4 @@ is being treated as 480i and odd or even frames
 are being discarded completely.
 
 A frame counter can be displayed on screen by 
-pressing the X button.
+pressing button 1.

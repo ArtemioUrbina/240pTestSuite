@@ -17,13 +17,9 @@ pressed before the actual intersection frame, the
              MANUAL LAG TEST (2/3)
 
 result will be ignored (but still shown onscreen).
-The B button can be used to change the direction
+Button 1 can be used to change the direction
 of the sprite from vertical to horizontal, or
 display both at the same time.
-
-The X button can be used to turn off the audio cue.
-If a Purupuru (Jump pack) is found, it will be used
-as well.
 
 Of course the evaluation is dependent on reflexes
 and/or rhythm more than anything. The visual and
@@ -38,4 +34,6 @@ the system when testing via different connections.
 Since a frame is around 16 ms (1000/60), that value
 must be considered the general error when using the
 test results. 
+
+*AUDIO UNAVAILABLE IN WII VERSION, coming soon
 
