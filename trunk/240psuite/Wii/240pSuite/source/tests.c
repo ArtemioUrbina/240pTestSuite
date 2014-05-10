@@ -27,6 +27,7 @@
 #include "video.h"
 
 #include "help.h"
+#include "menu.h"
 #include <wiiuse/wpad.h>
 
 typedef struct timecode{
@@ -107,7 +108,7 @@ void DropShadowTest()
 		shadow = ssprite;
 	else
 		shadow = buzzshadow;	
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -169,8 +170,11 @@ void DropShadowTest()
 			}
 		}
 
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(DROPSHADOW, back[selback]);			
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = DROPSHADOW;
+		}	
 
 		if(x < back[selback]->x)
 			x = back[selback]->x;
@@ -218,9 +222,6 @@ void DropShadowTest()
 			DrawImage(buzz);
 		} 			
 		EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back[0]);
 	FreeImage(&back[1]);
@@ -286,7 +287,7 @@ void StripedSpriteTest()
 	if(!striped)
 		return;
 			
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -317,8 +318,11 @@ void StripedSpriteTest()
 				selback = 3;
 		}
 		
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(STRIPED, back[selback]);					
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = STRIPED;
+		}			
 
 		if(x < back[selback]->x)
 			x = back[selback]->x;
@@ -344,9 +348,6 @@ void StripedSpriteTest()
 		DrawImage(striped);
 
 		EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back[0]);
 	FreeImage(&back[1]);
@@ -389,7 +390,7 @@ void LagTest()
 	for(i = 0; i < 10; i++)
 		clicks[i] = 0xFF;
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		pressed = WPAD_ButtonsDown(0);
@@ -561,8 +562,6 @@ void LagTest()
 
 		EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 
     /*
@@ -584,7 +583,7 @@ void LagTest()
 		if(!wall)
 			return;
 		
-		while(!done)
+		while(!done && !EndProgram) 
 		{
 			WPAD_ScanPads();
 		
@@ -640,8 +639,6 @@ void LagTest()
 
 			EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 		}
 		FreeImage(&wall);
 	}
@@ -664,7 +661,7 @@ void ScrollTest()
 	back->y = (dH - 240)/2;
 	overlay->y = (dH - 240)/2;
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 
@@ -685,8 +682,11 @@ void ScrollTest()
 		if (pressed & WPAD_BUTTON_1)
 			acc *= -1;
 
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(SCROLL, back);			
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = SCROLL;
+		}					
 
 		StartScene();
 
@@ -712,8 +712,6 @@ void ScrollTest()
 		
 		EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	FreeImage(&overlay);
@@ -732,7 +730,7 @@ void GridScrollTest()
 	
 	//back->y = (dH - 240)/2;  
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{	
 		WPAD_ScanPads();
 				
@@ -755,8 +753,11 @@ void GridScrollTest()
 		if (pressed & WPAD_BUTTON_2)
 			direction = !direction;
 		
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(GRIDSCROLL, back);			
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = GRIDSCROLL;
+		}							
 
 		StartScene();
 
@@ -779,8 +780,6 @@ void GridScrollTest()
 	
 		EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);  
 	return;
@@ -808,7 +807,7 @@ void DrawStripes()
 	if(!vstripesneg)
 		return;
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{   
         WPAD_ScanPads();
         pressed = WPAD_ButtonsDown(0);
@@ -832,8 +831,11 @@ void DrawStripes()
 		if (pressed & WPAD_BUTTON_1 && !alternate)
 			field = !field;
 
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(STRIPESHELP, stripespos);					
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = STRIPESHELP;
+		}												
 
 		StartScene();
 
@@ -871,8 +873,6 @@ void DrawStripes()
 
 		EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 
 	FreeImage(&stripespos);
@@ -896,7 +896,7 @@ void DrawCheckBoard()
 	if(!checkneg)
 		return;
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
         pressed = WPAD_ButtonsDown(0);
@@ -918,8 +918,11 @@ void DrawCheckBoard()
 		if (pressed & WPAD_BUTTON_PLUS && !alternate)
 			field = !field;
 
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(CHECKHELP, checkpos);							
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = CHECKHELP;
+		}																
 
 		StartScene();
 
@@ -947,8 +950,6 @@ void DrawCheckBoard()
 
 		EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&checkpos);
 	FreeImage(&checkneg);
@@ -971,7 +972,7 @@ void SoundTest()
 	if(!beep)
 		return;
 	*/
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -990,8 +991,11 @@ void SoundTest()
 		if (pressed & WPAD_BUTTON_RIGHT)
 			sel ++;
 
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(SOUNDHELP, back);									
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = SOUNDHELP;
+		}																	
 		
 		if(sel < 0)
 			sel = 2;
@@ -1031,8 +1035,6 @@ void SoundTest()
 		DrawStringS(160, 120, 0xff, sel == 2 ? 0 : 0xff, sel == 2 ? 0 : 0xff, "Right Channel");
 		EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
     /*
 	if(beep != SFXHND_INVALID)
@@ -1073,7 +1075,7 @@ void LEDZoneTest()
 	if(!sprite[4])
 		return;
 		
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -1114,9 +1116,12 @@ void LEDZoneTest()
 
 		if (pressed & WPAD_BUTTON_A)
 			show = !show;
-
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(BACKLITHELP, back);											
+		
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = BACKLITHELP;
+		}																			
 		
 		if(x < 0)
 			x = 0;
@@ -1139,8 +1144,6 @@ void LEDZoneTest()
 
 		EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	FreeImage(&sprite[0]);
@@ -1169,7 +1172,7 @@ void PassiveLagTest()
 	circle->g = 0x00;
 	circle->b = 0xff;
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{		
 		if(!pause)
 		{
@@ -1361,9 +1364,6 @@ void PassiveLagTest()
 
 		EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
-
 		WPAD_ScanPads();
         pressed = WPAD_ButtonsDown(0);
 					
@@ -1378,9 +1378,12 @@ void PassiveLagTest()
 
 		if (pressed & WPAD_BUTTON_A)
 			pause = !pause;
-
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(PASSIVELAG, back);				
+		
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = PASSIVELAG;
+		}										
 	}
 	FreeImage(&back);
 	FreeImage(&circle);
@@ -1427,7 +1430,7 @@ void Alternate240p480i()
 		SetupGX();
 	}
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		frames ++;
 
@@ -1494,14 +1497,15 @@ void Alternate240p480i()
 
 		EndScene();
 
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 
 		WPAD_ScanPads();
         pressed = WPAD_ButtonsDown(0);
 					
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(ALTERNATE, NULL);						
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = ALTERNATE;
+		}													
 
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;				

@@ -61,6 +61,7 @@ struct image_st{
 
 		u16     	RefCount;
 		ImagePtr  	copyOf;
+		u8			*cFB;
 };
 
 /***********************/
@@ -71,6 +72,7 @@ void InitGX();
 void SetupGX();
 void StartScene();
 void EndScene();
+void EndSceneScreenShot();
 
 /************************/
 /*    Image Functions   */
@@ -78,6 +80,7 @@ void EndScene();
 
 ImagePtr LoadImage(int texture, int maptoscreen);
 ImagePtr CloneImage(ImagePtr source, int maptoscreen);
+ImagePtr CopyFrameBufferToImage();
 void FreeImage(ImagePtr *image);
 void CalculateUV(float posx, float posy, float width, float height, ImagePtr image);
 void FlipH(ImagePtr image, u16 flip);

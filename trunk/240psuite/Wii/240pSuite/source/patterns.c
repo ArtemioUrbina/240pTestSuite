@@ -29,6 +29,7 @@
 #include "patterns.h"
 
 #include "help.h"
+#include "menu.h"
 
 void DrawPluge()
 {
@@ -40,26 +41,26 @@ void DrawPluge()
 	if(!back)
 		return;
 			
-	while(!done) 
+	while(!done && !EndProgram) 
 	{		
 		WPAD_ScanPads();
 		
 		pressed = WPAD_ButtonsDown(0);
 				
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = PLUGEHELP;
+		}
+			
 		if (pressed & WPAD_BUTTON_B)
-			done =	1;								
-	
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(PLUGEHELP, back);
+			done =	1;										
 
 		StartScene();
 		        
 		DrawImage(back);
 		
         EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	return;
@@ -75,7 +76,7 @@ void DrawGrayRamp()
 	if(!back)
 		return;
 			
-	while(!done) 
+	while(!done && !EndProgram) 
 	{		
 		WPAD_ScanPads();
 		
@@ -84,17 +85,17 @@ void DrawGrayRamp()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;								
 	
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(GRAYHELP, back);
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = GRAYHELP;
+		}		
 
 		StartScene();
 		        
 		DrawImage(back);
 		
         EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	return;
@@ -116,7 +117,7 @@ void DrawWhiteScreen()
 		back->h = 480;
 	}
 		
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -170,9 +171,6 @@ void DrawWhiteScreen()
 		DrawImage(back);
 		
         EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	return;
@@ -191,7 +189,7 @@ void DrawColorBars()
 	if(!backgrid)
 		return;
 			
-	while(!done) 
+	while(!done && !EndProgram) 
 	{		
 		WPAD_ScanPads();
 		
@@ -203,8 +201,11 @@ void DrawColorBars()
 		if (pressed & WPAD_BUTTON_A)
 			type = !type;
 
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(COLORBARSHELP, back);		
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = COLORBARSHELP;
+		}		
 
 		StartScene();
 		        
@@ -214,8 +215,6 @@ void DrawColorBars()
 			DrawImage(backgrid);
 		
         EndScene();		
-        VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	return;
@@ -231,7 +230,7 @@ void Draw601ColorBars()
 	if(!back)
 		return;
 			
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -240,17 +239,17 @@ void Draw601ColorBars()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;								
 	
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(COLORBARSHELP, back);
-
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = COLORBARSHELP;
+		}		
+	
 		StartScene();
 		        
 		DrawImage(back);
 		
         EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	return;
@@ -266,7 +265,7 @@ void DrawSMPTEColorBars()
 	if(!back)
 		return;
 			
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -275,17 +274,17 @@ void DrawSMPTEColorBars()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;								
 	
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(COLORBARSHELP, back);
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = COLORBARSHELP;
+		}		
 
 		StartScene();
 		        
 		DrawImage(back);
 		
         EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	return;
@@ -304,7 +303,7 @@ void DrawColorBleed()
 	if(!backchk)
 		return;
 		
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -315,8 +314,11 @@ void DrawColorBleed()
 		if (pressed & WPAD_BUTTON_A)
 			type = !type;
 
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(COLORBLEEDHELP, back);		
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = COLORBLEEDHELP;
+		}				
 
 		StartScene();
 		        
@@ -326,8 +328,6 @@ void DrawColorBleed()
 			DrawImage(backchk);
 		
         EndScene();		
-        VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 	FreeImage(&back);
 	FreeImage(&backchk);
@@ -354,7 +354,7 @@ void DrawGrid()
 			return;		
 	}
 	
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -363,16 +363,17 @@ void DrawGrid()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;								
 
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(GRIDHELP, back);		
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = GRIDHELP;
+		}						
 
 		StartScene();
 		        
 		DrawImage(back);
 		
         EndScene();		
-        VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 
 	FreeImage(&back);
@@ -399,7 +400,7 @@ void DrawLinearity()
 	gridd->w = 320;
 	gridd->h = 240;
 			
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
         WPAD_ScanPads();
 		
@@ -427,9 +428,6 @@ void DrawLinearity()
 		DrawImage(circles);
 		
         EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();		
 	}
 
 	FreeImage(&gridd);
@@ -458,7 +456,7 @@ void Draw100IRE()
 	white->w = 320;
 	white->h = 240;
 	
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		WPAD_ScanPads();
 		
@@ -513,8 +511,11 @@ void Draw100IRE()
 		if (pressed & WPAD_BUTTON_B)
 			done =	1;				
 							
-		if (pressed & WPAD_BUTTON_HOME)
-			HelpWindow(IREHELP, back);				
+		if ( pressed & WPAD_BUTTON_HOME ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = IREHELP;
+		}						
 
 		StartScene();
     	if(invert)
@@ -537,9 +538,6 @@ void Draw100IRE()
       		}
 		}
 		EndScene();
-
-		VIDEO_Flush();
-		VIDEO_WaitVSync();
 	}
 
 	FreeImage(&back);
