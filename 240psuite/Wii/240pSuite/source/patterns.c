@@ -43,6 +43,12 @@ void DrawPluge()
 			
 	while(!done && !EndProgram) 
 	{		
+		StartScene();
+		        
+		DrawImage(back);
+		
+        EndScene();
+		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
@@ -56,11 +62,6 @@ void DrawPluge()
 		if (pressed & PAD_BUTTON_B)
 			done =	1;										
 
-		StartScene();
-		        
-		DrawImage(back);
-		
-        EndScene();
 	}
 	FreeImage(&back);
 	return;
@@ -77,7 +78,13 @@ void DrawGrayRamp()
 		return;
 			
 	while(!done && !EndProgram) 
-	{		
+	{				
+		StartScene();
+		        
+		DrawImage(back);
+		
+        EndScene();
+		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
@@ -90,12 +97,6 @@ void DrawGrayRamp()
 			DrawMenu = 1;					
 			HelpData = GRAYHELP;
 		}		
-
-		StartScene();
-		        
-		DrawImage(back);
-		
-        EndScene();
 	}
 	FreeImage(&back);
 	return;
@@ -118,7 +119,13 @@ void DrawWhiteScreen()
 	}
 		
 	while(!done && !EndProgram) 
-	{
+	{		
+		StartScene();
+		        
+		DrawImage(back);
+		
+        EndScene();
+		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
@@ -171,12 +178,6 @@ void DrawWhiteScreen()
 					back->b = 0xff;
 					break;
 		}
-
-		StartScene();
-		        
-		DrawImage(back);
-		
-        EndScene();
 	}
 	FreeImage(&back);
 	return;
@@ -196,7 +197,16 @@ void DrawColorBars()
 		return;
 			
 	while(!done && !EndProgram) 
-	{		
+	{				
+		StartScene();
+		        
+		if(!type)
+			DrawImage(back);
+		else
+			DrawImage(backgrid);
+		
+        EndScene();	
+
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
@@ -211,16 +221,7 @@ void DrawColorBars()
 		{
 			DrawMenu = 1;					
 			HelpData = COLORBARSHELP;
-		}		
-
-		StartScene();
-		        
-		if(!type)
-			DrawImage(back);
-		else
-			DrawImage(backgrid);
-		
-        EndScene();		
+		}			
 	}
 	FreeImage(&back);
 	return;
@@ -237,7 +238,13 @@ void Draw601ColorBars()
 		return;
 			
 	while(!done && !EndProgram) 
-	{
+	{			
+		StartScene();
+		        
+		DrawImage(back);
+		
+        EndScene();
+		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
@@ -249,13 +256,7 @@ void Draw601ColorBars()
 		{
 			DrawMenu = 1;					
 			HelpData = NULL;
-		}		
-	
-		StartScene();
-		        
-		DrawImage(back);
-		
-        EndScene();
+		}	
 	}
 	FreeImage(&back);
 	return;
@@ -272,7 +273,13 @@ void DrawSMPTEColorBars()
 		return;
 			
 	while(!done && !EndProgram) 
-	{
+	{		
+		StartScene();
+		        
+		DrawImage(back);
+		
+        EndScene();
+		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
@@ -286,11 +293,6 @@ void DrawSMPTEColorBars()
 			HelpData = NULL;
 		}		
 
-		StartScene();
-		        
-		DrawImage(back);
-		
-        EndScene();
 	}
 	FreeImage(&back);
 	return;
@@ -310,7 +312,16 @@ void DrawColorBleed()
 		return;
 		
 	while(!done && !EndProgram) 
-	{
+	{		
+		StartScene();
+		        
+		if(!type)
+			DrawImage(back);
+		else
+			DrawImage(backchk);
+		
+        EndScene();		
+		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
@@ -325,15 +336,6 @@ void DrawColorBleed()
 			DrawMenu = 1;					
 			HelpData = COLORBLEEDHELP;
 		}				
-
-		StartScene();
-		        
-		if(!type)
-			DrawImage(back);
-		else
-			DrawImage(backchk);
-		
-        EndScene();		
 	}
 	FreeImage(&back);
 	FreeImage(&backchk);
@@ -361,7 +363,13 @@ void DrawGrid()
 	}
 	
 	while(!done && !EndProgram) 
-	{
+	{		
+		StartScene();
+		        
+		DrawImage(back);
+		
+        EndScene();		
+		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
@@ -375,11 +383,6 @@ void DrawGrid()
 			HelpData = GRIDHELP;
 		}						
 
-		StartScene();
-		        
-		DrawImage(back);
-		
-        EndScene();		
 	}
 
 	FreeImage(&back);
@@ -407,8 +410,21 @@ void DrawLinearity()
 	gridd->h = 240;
 			
 	while(!done && !EndProgram) 
-	{
-        ControllerScan();
+	{        
+		StartScene();
+		        
+		if(showgrid)
+		{
+			if(gridpattern)
+				DrawImage(gridd);
+			else
+				DrawImage(grid);
+		}
+		DrawImage(circles);
+		
+        EndScene();
+		
+		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 				
@@ -428,18 +444,6 @@ void DrawLinearity()
 		}	
 		
 		
-		StartScene();
-		        
-		if(showgrid)
-		{
-			if(gridpattern)
-				DrawImage(gridd);
-			else
-				DrawImage(grid);
-		}
-		DrawImage(circles);
-		
-        EndScene();
 	}
 
 	FreeImage(&gridd);
@@ -469,7 +473,29 @@ void Draw100IRE()
 	white->h = 240;
 	
 	while(!done && !EndProgram) 
-	{
+	{		
+		StartScene();
+    	if(invert)
+      		DrawImage(white);	
+		DrawImage(back);		
+
+		if(text)
+		{
+    		if(!invert)
+      		{
+				sprintf(msg, "%0.0f IRE", (double)(back->alpha*100/0xff));
+			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
+			  	text --;
+      		}
+      		else
+      		{
+			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40/0xff)));
+			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
+			  	text --;
+      		}
+		}
+		EndScene();
+		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
@@ -528,28 +554,6 @@ void Draw100IRE()
 			DrawMenu = 1;					
 			HelpData = IREHELP;
 		}						
-
-		StartScene();
-    	if(invert)
-      		DrawImage(white);	
-		DrawImage(back);		
-
-		if(text)
-		{
-    		if(!invert)
-      		{
-				sprintf(msg, "%0.0f IRE", (double)(back->alpha*100/0xff));
-			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
-			  	text --;
-      		}
-      		else
-      		{
-			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40/0xff)));
-			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
-			  	text --;
-      		}
-		}
-		EndScene();
 	}
 
 	FreeImage(&back);

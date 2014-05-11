@@ -350,7 +350,7 @@ void DrawCredits(ImagePtr Back)
 	if(Options.ShowWiiRegion)
 	{
 		if (CONF_GetShopCode(&shopcode) >= 0) {
-			sprintf(shop, "Shop: (%u) %s\n", shopcode, (strlen(CONF_CountryCodes[shopcode]) ? CONF_CountryCodes[shopcode] : "Unknown Country"));
+			sprintf(shop, "Shop: %s\n", (strlen(CONF_CountryCodes[shopcode]) ? CONF_CountryCodes[shopcode] : "Unknown Country"));
 		} else {		
 			sprintf(shop, "Error getting shop code!\n");			
 		}
