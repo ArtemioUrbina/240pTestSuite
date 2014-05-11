@@ -20,12 +20,15 @@
  */
  
 #include "controller.h"
-#ifdef WII_VERSION
-#include <wiiuse/wpad.h>
+
 #define JOYTHSHLD 10			// min value for joystick to be a read
 #define MINFRAMES 4				// Frames to count joystick helps as pad
+
 u8 JoyCountX = 0;
 u8 JoyCountY = 0;
+
+#ifdef WII_VERSION
+#include <wiiuse/wpad.h>
 #endif
 
 

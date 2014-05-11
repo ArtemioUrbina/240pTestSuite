@@ -395,7 +395,7 @@ void DrawCredits(ImagePtr Back)
 		y = 58;
 		
 		DrawStringS(200, y, 0xff, 0xff, 0xff, VERSION_NUMBER); y += fh;
-		DrawStringS(200, y, 0xff, 0xff, 0xff, "10/05/2014"); y += 2*fh;
+		DrawStringS(200, y, 0xff, 0xff, 0xff, VERSION_DATE); y += 2*fh;
 
 #ifdef WII_VERSION		
 		if(Options.ShowWiiRegion)
