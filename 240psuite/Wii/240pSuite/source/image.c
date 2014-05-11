@@ -139,9 +139,9 @@ inline void EndScene()
 	GX_SetBlendMode(GX_BM_BLEND,GX_BL_SRCALPHA,GX_BL_INVSRCALPHA,GX_LO_CLEAR);
 	GX_SetAlphaUpdate(GX_TRUE);
 	GX_SetColorUpdate(GX_TRUE);
-	
+		
 	if(!DrawMenu)
-	{
+	{		
 		GX_CopyDisp(frameBuffer[vmode][ActiveFB], GX_TRUE);
 		ActiveFB ^= 1;    
 	  
@@ -423,11 +423,11 @@ void DrawImage(ImagePtr image)
 	
 	if(!image)
 		return;
-
+	
 	x = image->x;
 	y = image->y;
 	w = image->w;
-	h = image->h;
+	h = image->h;	
 	
 	if(image->scale && (vmode == VIDEO_480I_A240 || vmode == VIDEO_480P_SL))
 	{
@@ -435,7 +435,7 @@ void DrawImage(ImagePtr image)
 		y *= 2;
 		w *= 2;
 		h *= 2;
-	}
+	}		
 		
 	GX_LoadTexObj(&image->tex, GX_TEXMAP0);	
 	//GX_InvalidateTexAll();			
