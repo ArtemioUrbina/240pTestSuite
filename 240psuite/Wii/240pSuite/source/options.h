@@ -23,6 +23,7 @@
 struct options_st {
 	u8 Activate480p;
 	u8 ShowWiiRegion;
+	u8 CorrectFor169;
 };
 
 extern struct options_st Options;

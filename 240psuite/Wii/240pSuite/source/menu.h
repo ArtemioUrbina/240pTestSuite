@@ -20,9 +20,9 @@
  */
  
 #ifdef WII_VERSION
-#define VERSION_NUMBER "Wii GX Ver. 1.1"
+#define VERSION_NUMBER "Wii GX Ver. 1.2"
 #else
-#define VERSION_NUMBER "GC GX Ver. 1.1"
+#define VERSION_NUMBER "GC GX Ver. 1.2"
 #endif
 
 extern u8 DrawMenu;

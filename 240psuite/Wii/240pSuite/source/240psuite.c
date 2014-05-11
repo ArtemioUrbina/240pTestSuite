@@ -38,7 +38,7 @@
 #endif
 
 // Default options
-struct options_st Options = { 0, 1 };
+struct options_st Options = { 0, 1, 0 };
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawCredits(ImagePtr Back);
@@ -118,16 +118,16 @@ int main(int argc, char **argv)
 				sprintf(res, "Video: 240p");				
 				break;			
 			case VIDEO_480I_A240:
-				sprintf(res, "Video: Fake 480i");
+				sprintf(res, "Video: 480i (scaled 240p)");
 				break;
 			case VIDEO_480I:
-				sprintf(res, "Video: 480i");
+				sprintf(res, "Video: 480i (Scaling disabled)");
 				break;
 			case VIDEO_480P:
-				sprintf(res, "Video: 480p");
+				sprintf(res, "Video: 480p (Scaling disabled)");
 				break;
 			case VIDEO_480P_SL:
-				sprintf(res, "Video: 480p LD");
+				sprintf(res, "Video: 480p (scaled 240p)");
 				break;				
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
