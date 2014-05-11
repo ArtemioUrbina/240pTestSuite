@@ -170,9 +170,6 @@ void ChangeOptions(ImagePtr title)
 #ifdef WII_VERSION				
 		DrawStringS(x + 100, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.ShowWiiRegion ? "ON" : "OFF");
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Show WII region"); y += fh; c++;		
-#else
-		DrawStringS(x + 100, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.ShowWiiRegion ? "ON" : "OFF");
-		DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Show WII region"); y += fh; c++;		
 #endif
 				
 		if(VIDEO_HaveComponentCable())
@@ -204,14 +201,19 @@ void ChangeOptions(ImagePtr title)
 			
 		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
-		if(vmode == VIDEO_480P_SL && sel == 3)
-#ifdef WII_VERSION		
+#ifdef WII_VERSION					
+		if(vmode == VIDEO_480P_SL && sel == 3)	
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons"); 										
 #else
+		if(vmode == VIDEO_480P_SL && sel == 2)	
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
 #endif
-			
+
+#ifdef WII_VERSION								
 		if(vmode != VIDEO_480P_SL && (sel == 3 || sel == 4))
+#else
+		if(vmode != VIDEO_480P_SL && (sel == 2 || sel == 3))
+#endif
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 				
 		EndScene();		
@@ -252,7 +254,11 @@ void ChangeOptions(ImagePtr title)
 	
 		if (pressed & PAD_BUTTON_A)
 		{     
+#ifdef WII_VERSION		
 			switch(sel)
+#else
+			switch(sel + 1)
+#endif
 			{			
 					case 1:
 #ifdef WII_VERSION		
@@ -262,7 +268,7 @@ void ChangeOptions(ImagePtr title)
 #endif
 						break;
 					case 2:
-						if(!(Options.Activate480p && vmode >= VIDEO_480P))
+						if(VIDEO_HaveComponentCable() && !(Options.Activate480p && vmode >= VIDEO_480P))
 							Options.Activate480p = !Options.Activate480p;
 						break;
 					case 3:						

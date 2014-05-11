@@ -115,6 +115,38 @@ void DropShadowTest()
 		shadow = buzzshadow;	
 	while(!done && !EndProgram) 
 	{
+		StartScene();
+		DrawImage(back[selback]);
+		if(selback == 1)
+			DrawImage(overlay);
+
+		if(text)
+		{
+			if(vmode != VIDEO_480P)
+				DrawStringB(140, 12, 0, 0xff, 0, msg);
+			else
+				DrawStringB(450, 20, 0, 0xff, 0, msg);
+			text --;
+		}
+
+		if(frame == invert)
+		{
+			shadow->x = x;
+			shadow->y = y;
+			DrawImage(shadow);
+			frame = !frame;
+		}
+		else
+			frame = !frame;
+				
+		if(sprite == 1)
+		{
+			buzz->x = x - 20;
+			buzz->y = y - 20;
+			DrawImage(buzz);
+		} 			
+		EndScene();
+		
 		ControllerScan();
 		
 		held = Controller_ButtonsHeld(0);		
@@ -194,39 +226,7 @@ void DropShadowTest()
 		{
 			CalculateUV(x, 0, dW, 240, back[selback]);
 			CalculateUV(x*2, 0, dW, 240, overlay);
-		}
-		
-		StartScene();
-		DrawImage(back[selback]);
-		if(selback == 1)
-			DrawImage(overlay);
-
-		if(text)
-		{
-			if(vmode != VIDEO_480P)
-				DrawStringB(140, 12, 0, 0xff, 0, msg);
-			else
-				DrawStringB(450, 20, 0, 0xff, 0, msg);
-			text --;
-		}
-
-		if(frame == invert)
-		{
-			shadow->x = x;
-			shadow->y = y;
-			DrawImage(shadow);
-			frame = !frame;
-		}
-		else
-			frame = !frame;
-				
-		if(sprite == 1)
-		{
-			buzz->x = x - 20;
-			buzz->y = y - 20;
-			DrawImage(buzz);
-		} 			
-		EndScene();
+		}		
 	}
 	FreeImage(&back[0]);
 	FreeImage(&back[1]);
@@ -293,7 +293,23 @@ void StripedSpriteTest()
 		return;
 			
 	while(!done && !EndProgram) 
-	{
+	{		
+		StartScene();
+		if(selback == 1)
+		{
+			CalculateUV(x, 0, dW, 240, back[selback]);
+			CalculateUV(x*2, 0, dW, 240, overlay);
+		}
+		DrawImage(back[selback]);
+		if(selback == 1)
+			DrawImage(overlay);
+
+		striped->x = x;
+		striped->y = y;
+		DrawImage(striped);
+
+		EndScene();
+		
 		ControllerScan();
 		
 		held = Controller_ButtonsHeld(0);		
@@ -337,22 +353,6 @@ void StripedSpriteTest()
 			x = back[selback]->w + back[selback]->x - striped->w;
 		if(y > back[selback]->h + back[selback]->y - striped->h)
 			y = back[selback]->h + back[selback]->y - striped->h;
-
-		StartScene();
-		if(selback == 1)
-		{
-			CalculateUV(x, 0, dW, 240, back[selback]);
-			CalculateUV(x*2, 0, dW, 240, overlay);
-		}
-		DrawImage(back[selback]);
-		if(selback == 1)
-			DrawImage(overlay);
-
-		striped->x = x;
-		striped->y = y;
-		DrawImage(striped);
-
-		EndScene();
 	}
 	FreeImage(&back[0]);
 	FreeImage(&back[1]);
@@ -399,54 +399,10 @@ void LagTest()
 
 	while(!done && !EndProgram) 
 	{
-		ControllerScan();
-		pressed = Controller_ButtonsDown(0);
-		if (pressed & PAD_BUTTON_B)
-			done =	1;
-			
-		if (pressed & PAD_BUTTON_START)		
-		{
-			DrawMenu = 1;					
-			HelpData = MANUALLAG;
-		}
-			
-		if (pressed & PAD_BUTTON_A)
-		{
-			if(change)
-			{
-				clicks[pos] = (y - 96) *speed;
-	
-				sprintf(msg, " Off: %d", clicks[pos]);					
-	
-				if(clicks[pos] >= 0)
-				{
-					change = 0;
-					pos ++;
-				}
-		
-				if(pos > 9)
-					done = 1;
-			}
-		}
+		StartScene();
 
-		if (pressed & PAD_TRIGGER_R)
-			audio =	!audio;	
-			
-		if (pressed & PAD_BUTTON_X)
-		{
-			view ++;
-			if(view > 2)
-				view = 0;
-		}
-					
-    					
-		if(pressed & PAD_BUTTON_Y)
-		{
-			variation = !variation;
-			if(!variation)
-				vary = 0;
-		}
-		
+		DrawImage(back);
+
 		if(y > 132 + vary)
 		{
 			speed = -1;
@@ -480,11 +436,7 @@ void LagTest()
 		spriteA->y = y;
 		spriteB->x = x2;
 		spriteB->y = y2;
-
-		StartScene();
-
-		DrawImage(back);
-
+		
 		if(y == 96)
 		{			
 			if(audio)
@@ -571,7 +523,54 @@ void LagTest()
 		DrawStringS(20, 170+4*fh, 0x00, 0xff, 0x00, "\"+\" button toggles audio feedback.");
 
 		EndScene();
+		
+		ControllerScan();
+		pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_B)
+			done =	1;
+			
+		if (pressed & PAD_BUTTON_START)		
+		{
+			DrawMenu = 1;					
+			HelpData = MANUALLAG;
+		}
+			
+		if (pressed & PAD_BUTTON_A)
+		{
+			if(change)
+			{
+				clicks[pos] = (y - 96) *speed;
+	
+				sprintf(msg, " Off: %d", clicks[pos]);					
+	
+				if(clicks[pos] >= 0)
+				{
+					change = 0;
+					pos ++;
+				}
+		
+				if(pos > 9)
+					done = 1;
+			}
+		}
 
+		if (pressed & PAD_TRIGGER_R)
+			audio =	!audio;	
+			
+		if (pressed & PAD_BUTTON_X)
+		{
+			view ++;
+			if(view > 2)
+				view = 0;
+		}
+					
+    					
+		if(pressed & PAD_BUTTON_Y)
+		{
+			variation = !variation;
+			if(!variation)
+				vary = 0;
+		}
 	}
     
 
@@ -591,14 +590,7 @@ void LagTest()
 			return;
 		
 		while(!done && !EndProgram) 
-		{
-			ControllerScan();
-		
-		    pressed = Controller_ButtonsHeld(0);		
-			
-			if (pressed & PAD_BUTTON_B)
-				done =	1;
-			
+		{			
 			StartScene();
 
 			DrawImage(wall);
@@ -645,7 +637,13 @@ void LagTest()
 			}
 
 			EndScene();
-
+			
+			ControllerScan();
+		
+		    pressed = Controller_ButtonsHeld(0);		
+			
+			if (pressed & PAD_BUTTON_B)
+				done =	1;		
 		}
 		FreeImage(&wall);
 	}
@@ -671,32 +669,7 @@ void ScrollTest()
 	overlay->y = (dH - 240)/2;
 
 	while(!done && !EndProgram) 
-	{
-		ControllerScan();
-
-        pressed = Controller_ButtonsDown(0);
-		
-		if (pressed & PAD_BUTTON_UP)
-			speed ++;
-
-		if (pressed & PAD_BUTTON_DOWN)
-			speed --;
-
-		if (pressed & PAD_BUTTON_B)
-			done = 1;
-
-		if (pressed & PAD_BUTTON_A)
-			pause = !pause;
-
-		if (pressed & PAD_BUTTON_X)
-			acc *= -1;
-
-		if ( pressed & PAD_BUTTON_START ) 		
-		{
-			DrawMenu = 1;					
-			HelpData = SCROLL;
-		}					
-
+	{			
 		StartScene();
 
 		if(speed > 15)
@@ -721,6 +694,30 @@ void ScrollTest()
 		
 		EndScene();
 
+		ControllerScan();
+
+        pressed = Controller_ButtonsDown(0);
+		
+		if (pressed & PAD_BUTTON_UP)
+			speed ++;
+
+		if (pressed & PAD_BUTTON_DOWN)
+			speed --;
+
+		if (pressed & PAD_BUTTON_B)
+			done = 1;
+
+		if (pressed & PAD_BUTTON_A)
+			pause = !pause;
+
+		if (pressed & PAD_BUTTON_X)
+			acc *= -1;
+
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = SCROLL;
+		}				
 	}
 	FreeImage(&back);
 	FreeImage(&overlay);
@@ -741,6 +738,27 @@ void GridScrollTest()
 
 	while(!done && !EndProgram) 
 	{	
+		StartScene();
+
+		if(speed > 5)
+			speed = 5;
+
+		if(speed < 1)
+			speed = 1;
+
+		if(!pause)
+		{
+			if(direction)
+				x += speed * acc;
+			else
+				y += speed * acc;
+		}	
+				
+		CalculateUV(x, y, dW, dH, back);    
+		DrawImage(back);
+	
+		EndScene();
+
 		ControllerScan();
 				
         pressed = Controller_ButtonsDown(0);
@@ -767,28 +785,6 @@ void GridScrollTest()
 			DrawMenu = 1;					
 			HelpData = GRIDSCROLL;
 		}							
-
-		StartScene();
-
-		if(speed > 5)
-			speed = 5;
-
-		if(speed < 1)
-			speed = 1;
-
-		if(!pause)
-		{
-			if(direction)
-				x += speed * acc;
-			else
-				y += speed * acc;
-		}	
-				
-		CalculateUV(x, y, dW, dH, back);    
-		DrawImage(back);
-	
-		EndScene();
-
 	}
 	FreeImage(&back);  
 	return;
@@ -818,34 +814,6 @@ void DrawStripes()
 
 	while(!done && !EndProgram) 
 	{   
-        ControllerScan();
-        pressed = Controller_ButtonsDown(0);
-		if (pressed & PAD_BUTTON_B)
-			done =	1;				
-					
-		if (pressed & PAD_BUTTON_A)
-		{
-			alternate = !alternate;
-		}
-					
-		if (pressed & PAD_TRIGGER_R)
-			vertical = !vertical;
-					
-		if (pressed & PAD_BUTTON_Y)
-		{
-			dframe = !dframe;
-			frame = 0;
-		}
-					
-		if (pressed & PAD_BUTTON_X && !alternate)
-			field = !field;
-
-		if ( pressed & PAD_BUTTON_START ) 		
-		{
-			DrawMenu = 1;					
-			HelpData = STRIPESHELP;
-		}												
-
 		StartScene();
 
 		if(!vertical)
@@ -881,7 +849,34 @@ void DrawStripes()
 		}
 
 		EndScene();
+		
+		        ControllerScan();
+        pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_B)
+			done =	1;				
+					
+		if (pressed & PAD_BUTTON_A)
+		{
+			alternate = !alternate;
+		}
+					
+		if (pressed & PAD_TRIGGER_R)
+			vertical = !vertical;
+					
+		if (pressed & PAD_BUTTON_Y)
+		{
+			dframe = !dframe;
+			frame = 0;
+		}
+					
+		if (pressed & PAD_BUTTON_X && !alternate)
+			field = !field;
 
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = STRIPESHELP;
+		}												
 	}
 
 	FreeImage(&stripespos);
@@ -907,32 +902,6 @@ void DrawCheckBoard()
 
 	while(!done && !EndProgram) 
 	{
-		ControllerScan();
-        pressed = Controller_ButtonsDown(0);
-		
-		if (pressed & PAD_BUTTON_B)
-			done =	1;				
-					
-		if (pressed & PAD_BUTTON_A)
-		{
-			alternate = !alternate;				
-		}
-	
-		if (pressed & PAD_BUTTON_X)
-		{
-			dframe = !dframe;
-			frame = 0;
-		}
-					
-		if (pressed & PAD_TRIGGER_R && !alternate)
-			field = !field;
-
-		if ( pressed & PAD_BUTTON_START ) 		
-		{
-			DrawMenu = 1;					
-			HelpData = CHECKHELP;
-		}																
-
 		StartScene();
 
 		if(field == 1)
@@ -959,6 +928,31 @@ void DrawCheckBoard()
 
 		EndScene();
 
+		ControllerScan();
+        pressed = Controller_ButtonsDown(0);
+		
+		if (pressed & PAD_BUTTON_B)
+			done =	1;				
+					
+		if (pressed & PAD_BUTTON_A)
+		{
+			alternate = !alternate;				
+		}
+	
+		if (pressed & PAD_BUTTON_X)
+		{
+			dframe = !dframe;
+			frame = 0;
+		}
+					
+		if (pressed & PAD_TRIGGER_R && !alternate)
+			field = !field;
+
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = CHECKHELP;
+		}																
 	}
 	FreeImage(&checkpos);
 	FreeImage(&checkneg);
@@ -979,6 +973,15 @@ void SoundTest()
     SND_Pause(0);
 	while(!done && !EndProgram) 
 	{
+		StartScene();
+		DrawImage(back);
+
+		DrawStringS(130, 60, 0xff, 0xff, 0xff, "Sound Test"); 
+		DrawStringS(80, 120, 0xff, sel == 0 ? 0 : 0xff, sel == 0 ? 0 : 0xff, "Left Channel"); 
+		DrawStringS(120, 130, 0xff, sel == 1 ? 0 : 0xff, sel == 1 ? 0 : 0xff, "Center Channel");
+		DrawStringS(160, 120, 0xff, sel == 2 ? 0 : 0xff, sel == 2 ? 0 : 0xff, "Right Channel");
+		EndScene();
+
 		ControllerScan();
 		
         pressed = Controller_ButtonsDown(0);		
@@ -1028,15 +1031,6 @@ void SoundTest()
 			play = 0;
 		}        
 
-		StartScene();
-		DrawImage(back);
-
-		DrawStringS(130, 60, 0xff, 0xff, 0xff, "Sound Test"); 
-		DrawStringS(80, 120, 0xff, sel == 0 ? 0 : 0xff, sel == 0 ? 0 : 0xff, "Left Channel"); 
-		DrawStringS(120, 130, 0xff, sel == 1 ? 0 : 0xff, sel == 1 ? 0 : 0xff, "Center Channel");
-		DrawStringS(160, 120, 0xff, sel == 2 ? 0 : 0xff, sel == 2 ? 0 : 0xff, "Right Channel");
-		EndScene();
-
 	}    
 	FreeImage(&back);
 	SND_End();
@@ -1075,6 +1069,18 @@ void LEDZoneTest()
 		
 	while(!done && !EndProgram) 
 	{
+		StartScene();	
+		DrawImage(back);		
+
+		if(show)
+		{
+			sprite[selsprite]->x = x;
+			sprite[selsprite]->y = y;
+			DrawImage(sprite[selsprite]);
+		}
+
+		EndScene();
+
 		ControllerScan();
 		
 		held = Controller_ButtonsHeld(0);		
@@ -1129,18 +1135,6 @@ void LEDZoneTest()
 			x = back->w - 1;
 		if(y > back->h - 1)
 			y = back->h - 1;
-
-		StartScene();	
-		DrawImage(back);		
-
-		if(show)
-		{
-			sprite[selsprite]->x = x;
-			sprite[selsprite]->y = y;
-			DrawImage(sprite[selsprite]);
-		}
-
-		EndScene();
 
 	}
 	FreeImage(&back);
