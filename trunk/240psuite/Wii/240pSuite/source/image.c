@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include "image.h"
 #include "menu.h"
+#include "options.h"
 
 static u8 gp_fifo[GX_FIFO_MINSIZE] ATTRIBUTE_ALIGN(32);
 
@@ -114,6 +115,24 @@ inline void StartScene()
 
 inline void EndScene()
 {
+#ifdef CORRECT169
+	if(Options.CorrectFor169)
+	{
+		ImagePtr	cFB;	
+	
+		cFB = CopyFrameBufferToImage();	
+		if(cFB)
+		{
+			VIDEO_ClearFrameBuffer(rmode, frameBuffer[vmode][ActiveFB], 0);		
+			StartScene();
+			cFB->x = cFB->x*3/4 + (720 - (rmode->fbWidth)) / 2;;
+			cFB->w = cFB->w*3/4;
+			DrawImage(cFB);
+			FreeImage(&cFB);			
+		}
+	}	
+#endif
+	
 	DrawScanlines();	
 			
 	GX_SetZMode(GX_DISABLE, GX_LEQUAL, GX_FALSE);
@@ -326,7 +345,7 @@ void FreeImage(ImagePtr *image)
 				free((*image)->cFB);
 				(*image)->cFB = NULL;
 			}
-			//pvr_mem_free((*image)->tex); We don't delete images here
+			//pvr_mem_free((*image)->tex); We don't delete images from TPL
 			free(*image);
 			*image = NULL;
 		}

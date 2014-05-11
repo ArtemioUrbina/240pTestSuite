@@ -25,3 +25,5 @@ s32 ControllerInit();
 s32 ControllerScan();
 u32 Controller_ButtonsDown(int chan);
 u32 Controller_ButtonsHeld(int chan);
+u8 ControllerBattery(int chan);
+void ControllerRumble(int chan, int rumble);

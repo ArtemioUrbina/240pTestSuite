@@ -26,8 +26,8 @@
 #define VIDEO_240P      	0   // 240p
 #define VIDEO_480I_A240 	1   // 480i with assets in 240p
 #define VIDEO_480I     		2	// 480i with 480p assets
-#define VIDEO_480P 		 	3	// 480p
-#define VIDEO_480P_SL  		4	// 480p with software scanlines
+#define VIDEO_480P_SL  		3	// 480p with software scanlines
+#define VIDEO_480P 		 	4	// 480p with 480p assets
 
 extern u32 ActiveFB;
 extern void *frameBuffer[TOTAL_VMODES][2];

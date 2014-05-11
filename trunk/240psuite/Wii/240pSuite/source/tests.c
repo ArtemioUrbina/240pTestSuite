@@ -112,9 +112,16 @@ void DropShadowTest()
 	if(sprite == 0)
 		shadow = ssprite;
 	else
-		shadow = buzzshadow;	
+		shadow = buzzshadow;
+	
 	while(!done && !EndProgram) 
 	{
+		if(selback == 1)
+		{
+			CalculateUV(x, 0, dW, 240, back[selback]);
+			CalculateUV(x*2, 0, dW, 240, overlay);
+		}	
+		
 		StartScene();
 		DrawImage(back[selback]);
 		if(selback == 1)
@@ -220,13 +227,7 @@ void DropShadowTest()
 		if(x > back[selback]->w + back[selback]->x - shadow->w)
 			x = back[selback]->w + back[selback]->x - shadow->w;
 		if(y > back[selback]->h + back[selback]->y - shadow->h)
-			y = back[selback]->h + back[selback]->y - shadow->h;
-
-		if(selback == 1)
-		{
-			CalculateUV(x, 0, dW, 240, back[selback]);
-			CalculateUV(x*2, 0, dW, 240, overlay);
-		}		
+			y = back[selback]->h + back[selback]->y - shadow->h;			
 	}
 	FreeImage(&back[0]);
 	FreeImage(&back[1]);
@@ -368,7 +369,7 @@ void LagTest()
 	char			msg[60];
 	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int				x, y, x2, y2, pos = 0, i = 0, vary = 0, variation = 1;
-	u16				pressed, audio = 0;
+	u16				pressed, audio = 0, rumble = 0;
 	ImagePtr		back, spriteA, spriteB;
 	
 	
@@ -441,6 +442,9 @@ void LagTest()
 		{			
 			if(audio)
 				SND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_STEREO_16BIT, 44100, 0, beep_snd, beep_snd_size, speed == -1 ? 0 : 255, speed == -1 ? 255 : 0, NULL);				
+				
+			if(rumble)
+				ControllerRumble(0, 1);
 			
 			spriteA->r = 0xff;
 			spriteA->g = 0x00;
@@ -452,6 +456,9 @@ void LagTest()
 		}
 		else
 		{
+			if(rumble)
+				ControllerRumble(0, 0);
+				
 			if(y == 97 || y == 95) // one pixel off
 			{
 				spriteA->r = 0x00;
@@ -515,12 +522,15 @@ void LagTest()
 		DrawStringS(200, 20, 0xff, 0xff, 0xff, msg);
 		sprintf(msg, "Timing: %s", variation ? "random" : "rhythmic");
 		DrawStringS(200, 20+fh, 0xff, 0xff, 0xff, msg);		
+		sprintf(msg, "Rumble: %s", rumble ? "on" : "off");
+		DrawStringS(200, 20+2*fh, 0xff, 0xff, 0xff, msg);		
 
 		DrawStringS(20, 170, 0x00, 0xff, 0x00, "Press \"A\" when the sprite is aligned with the background.");
 		DrawStringS(20, 170+fh, 0x00, 0xff, 0x00, "Negative values mean you pressed \"A\" before they intersected");
 		DrawStringS(20, 170+2*fh, 0x00, 0xff, 0x00, "\"1\" button toggles horizontal and vertical movement.");
 		DrawStringS(20, 170+3*fh, 0x00, 0xff, 0x00, "\"2\" trigger toggles rhythmic timing.");
 		DrawStringS(20, 170+4*fh, 0x00, 0xff, 0x00, "\"+\" button toggles audio feedback.");
+		DrawStringS(20, 170+5*fh, 0x00, 0xff, 0x00, "\"-\" button toggles rumble feedback.");
 
 		EndScene();
 		
@@ -556,6 +566,13 @@ void LagTest()
 
 		if (pressed & PAD_TRIGGER_R)
 			audio =	!audio;	
+			
+		if (pressed & PAD_TRIGGER_L)
+		{
+			rumble = !rumble;	
+			if(!rumble)
+				ControllerRumble(0, 0);
+		}
 			
 		if (pressed & PAD_BUTTON_X)
 		{
@@ -640,10 +657,16 @@ void LagTest()
 			
 			ControllerScan();
 		
-		    pressed = Controller_ButtonsHeld(0);		
+		    pressed = Controller_ButtonsDown(0);		
 			
 			if (pressed & PAD_BUTTON_B)
-				done =	1;		
+				done =	1;	
+	
+			if (pressed & PAD_BUTTON_START)		
+			{
+				DrawMenu = 1;					
+				HelpData = MANUALLAG;
+			}
 		}
 		FreeImage(&wall);
 	}

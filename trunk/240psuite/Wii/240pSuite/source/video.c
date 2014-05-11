@@ -25,7 +25,7 @@
 
 GXRModeObj *vmodes[TOTAL_VMODES] = {
 	&TVNtsc240Ds,
-	&TVNtsc480Int, 		// Real NTSC TVNtsc480IntDf	
+	&TVNtsc480IntDf, 		// used to beTVNtsc480Int	
 	&TVNtsc480IntDf, 
 	&TVNtsc480Prog,
 	&TVNtsc480Prog
@@ -55,6 +55,21 @@ void SetVideoMode(u32 newmode)
 	vmode = newmode;
 	
 	rmode = vmodes[vmode];
+	
+	switch(vmode)
+	{
+		case VIDEO_240P:
+		case VIDEO_480I_A240:
+		case VIDEO_480P_SL:
+			dW = 320;
+			dH = 240;
+			break;
+		case VIDEO_480I:
+		case VIDEO_480P:
+			dW = 640;
+			dH = 480;
+			break;
+	}
 
 	if(!VideoInit)
 	{
