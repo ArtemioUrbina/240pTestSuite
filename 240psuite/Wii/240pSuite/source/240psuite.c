@@ -38,17 +38,30 @@
 #endif
 
 // Default options
-struct options_st Options = { 0, 1, 0 };
+struct options_st Options = DEFAULT_OPTIONS;
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawCredits(ImagePtr Back);
 void DrawIntro();
 
+#ifdef WII_VERSION
+s8 HWButton = -1; 
+void WiiResetPressed();
+void WiiPowerPressed();
+void WiimotePowerPressed(s32 chan);
+#endif
+
 int main(int argc, char **argv) 
 {
 	int 		close = 0;	
 	ImagePtr 	Back = NULL, sd = NULL;
-	u8   		sel = 1;		
+	u8   		sel = 1;				
+
+#ifdef WII_VERSION
+	SYS_SetResetCallback(WiiResetPressed);
+	SYS_SetPowerCallback(WiiPowerPressed);
+	WPAD_SetPowerButtonCallback(WiimotePowerPressed);
+#endif
 		
 	VIDEO_Init();
 		
@@ -61,6 +74,7 @@ int main(int argc, char **argv)
     LoadFont();
 	LoadScanlines();
 	
+	LoadOptions();
 	DrawIntro();
 	
 	Back = LoadImage(BACKIMG, 0);
@@ -151,6 +165,11 @@ int main(int argc, char **argv)
 		
 		pressed = Controller_ButtonsDown(0);
 
+#ifdef WII_VERSION
+		if(HWButton != -1)
+			EndProgram = 1;
+#endif
+			
 		if ( pressed & PAD_BUTTON_START ) 		
 			DrawMenu = 1;	
 		
@@ -221,9 +240,16 @@ int main(int argc, char **argv)
 		}
 	}
 		
+	SaveOptions();
+	
 	FreeImage(&Back);
 	ReleaseFont();	
 	ReleaseScanlines();
+	
+#ifdef WII_VERSION
+	if(HWButton != -1)
+		SYS_ResetSystem(HWButton, 0, 0);
+#endif
 
 	return 0;
 }
@@ -444,3 +470,30 @@ void DrawIntro()
 	FreeImage(&black);
 }
 
+#ifdef WII_VERSION
+/**
+ * Callback for the reset button on the Wii.
+ */
+void WiiResetPressed()
+{
+	HWButton = SYS_RETURNTOMENU;
+}
+ 
+/**
+ * Callback for the power button on the Wii.
+ */
+void WiiPowerPressed()
+{
+	HWButton = SYS_POWEROFF_STANDBY;
+}
+ 
+/**
+ * Callback for the power button on the Wiimote.
+ * @param[in] chan The Wiimote that pressed the button
+ */
+void WiimotePowerPressed(s32 chan)
+{
+	HWButton = SYS_POWEROFF_STANDBY;
+}
+
+#endif

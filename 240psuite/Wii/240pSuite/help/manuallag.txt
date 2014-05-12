@@ -31,6 +31,7 @@ the system when testing via different connections.
 
                                           (cont...)
              MANUAL LAG TEST (3/3)
+
 Since a frame is around 16 ms (1000/60), that value
 must be considered the general error when using the
 test results. 

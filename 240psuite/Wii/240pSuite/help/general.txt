@@ -1,4 +1,4 @@
-                    HELP
+                HELP (1/2)
 
 The 240p Test Suite was designed with two goals
 in mind:
@@ -12,3 +12,12 @@ display's black, white and color levels.
 
 Help is available on some patterns by pressing the
 HOME button.
+
+                                         (cont...)
+                HELP (1/2)
+
+This version of the suite supports 240p, 480i and
+480p video modes. However, 480p is only available
+via component cables, you can enable it from the
+options menu. Some patterns do not resolve 
+perfectly in 480p mode due to console limitations.

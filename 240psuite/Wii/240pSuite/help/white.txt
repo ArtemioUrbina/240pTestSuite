@@ -1,0 +1,13 @@
+                WHITE SCREEN
+
+This pattern allows you to calibrate each color:
+Red, Green and Blue; as  well as the white level.
+
+This pattern can be changed between white, black,
+red, green and blue full screens using the + and 
+- buttons. Some displays and scalers cannot have
+issues when changing between a fully black and 
+a fully white screen.
+
+It can also be used to check color purity, and 
+dead pixels.

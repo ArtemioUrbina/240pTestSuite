@@ -19,11 +19,21 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
+#include <stdio.h>
+#include <stdlib.h>
+
+#define DEFAULT_OPTIONS { 0, 1, 0, 0 }
 
 struct options_st {
-	u8 Activate480p;
-	u8 ShowWiiRegion;
-	u8 CorrectFor169;
+	int Activate480p;
+	int ShowWiiRegion;
+	int CorrectFor169;
+	int SFCClassicController;
 };
 
 extern struct options_st Options;
+
+u8 LoadOptions();
+u8 SaveOptions();
+u8 InitFS();
+void CloseFS();

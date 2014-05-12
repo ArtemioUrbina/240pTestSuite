@@ -115,7 +115,6 @@ inline void StartScene()
 
 inline void EndScene()
 {
-#ifdef CORRECT169
 	if(Options.CorrectFor169)
 	{
 		ImagePtr	cFB;	
@@ -131,7 +130,6 @@ inline void EndScene()
 			FreeImage(&cFB);			
 		}
 	}	
-#endif
 	
 	DrawScanlines();	
 			
@@ -526,6 +524,14 @@ u8 GetScanlineIntensity()
 		return 0;
 }
 
+u8 GetRawScanlineValue()
+{
+	if(scanlines)
+		return((u8)scanlines->alpha);
+	else
+		return 0;
+}
+
 inline void DrawScanlines()
 {
 	if(vmode == VIDEO_480P_SL && scanlines)
@@ -535,4 +541,23 @@ inline void DrawScanlines()
 inline void ReleaseScanlines()
 {
 	FreeImage(&scanlines);
+}
+
+void SetRawScanlineIntensity(u8 intensity)
+{
+	if(scanlines)
+	{		
+		scanlines->alpha = intensity;
+	}
+}
+
+void SetScanlinesEvenOrOdd(u8 Even)
+{
+	if(scanlines)
+	{
+		if(!Even)
+			scanlines->y = -1;
+		else
+			scanlines->y = 0;
+	}
 }

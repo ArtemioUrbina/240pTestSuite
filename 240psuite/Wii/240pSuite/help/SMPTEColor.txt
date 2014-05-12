@@ -1,0 +1,28 @@
+       COLOR BARS WITH GRAY SCALE (1/2)
+
+In an SMPTE color bar image, the top two-thirds
+of the television picture contain seven vertical
+bars of 75% intensity. In order from left to
+right, the colors are gray, yellow, cyan, green,
+magenta, red, and blue. This sequence runs 
+through all seven possible combinations that use
+at least one of the three basic color components
+of green, red, and blue, with blue cycling on 
+and off between every bar, red cycling on and 
+off every two bars, and green on for the leftmost
+four bars and off for the rightmost three.
+
+                                         (cont...)
+
+       COLOR BARS WITH GRAY SCALE (2/2)
+
+Below the main set of seven bars is a strip of 
+blue, magenta, cyan, and white castellations. 
+When a television receiver is set to filter out 
+all colors except for blue, these castellations, 
+combined with the main set of color bars, are 
+used to properly adjust the color controls; they
+appear as four solid blue bars, with no visible 
+distinction between the bars and the 
+castellations, if the color controls are properly
+adjusted.
