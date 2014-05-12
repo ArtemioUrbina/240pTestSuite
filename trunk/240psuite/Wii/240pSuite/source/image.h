@@ -103,5 +103,9 @@ void LowerScanlineIntensity();
 void RaiseScanlineIntensity();
 void ToggleScanlineEvenOdd();
 
+u8 GetRawScanlineValue();
+void SetRawScanlineIntensity(u8 intensity);
+void SetScanlinesEvenOrOdd(u8 Even);
+
 
 #endif

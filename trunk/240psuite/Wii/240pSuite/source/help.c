@@ -29,8 +29,11 @@
 #include "menu.h"
 #include "controller.h"
 
-#define LINESPERPAGE	16
-
+char *SMPTEColor_txt[] = { 
+"       COLOR BARS WITH GRAY SCALE (1/2)\n\nIn an SMPTE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on \nand off between every bar, red cycling on and \noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\n                                         (cont...)\n",
+"       COLOR BARS WITH GRAY SCALE (2/2)\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
+NULL
+};
 char *alt240p_txt[] = { 
 "             ALTERNATING 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress 'A' to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
 NULL
@@ -45,7 +48,12 @@ char *bleed_txt[] = {
 NULL
 };
 char *check_txt[] = { 
-"                 CHECKERBOARD\n\nThis pattern shows all the visible pixels in an\nalternating white and black grid array. \n\nYou can toggle the pattern with the + button, or\nturn on auto-toggle each frame with the A button.\n\nWhen auto-toggle is set, you should see it\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button 1.\n",
+"              CHECKERBOARD 1/2\n\nThis pattern shows all the visible pixels in an\nalternating white and black grid array. \n\nYou can toggle the pattern with button 1, or\nturn on auto-toggle each frame with the A button.\n\nWhen auto-toggle is set, you should see it\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\n                                         (cont...)\n",
+"              CHECKERBOARD 2/2\n\nA frame counter can be displayed on screen by \npressing button 2.\n\nUnfortunately the Wii cannot resolve this pattern\ncorrectly in full 480p mode as other consoles,\nbut 240p and 480i resolve just fine.",
+NULL
+};
+char *color601_txt[] = { 
+"           COLOR BARS WITH GRAY SCALE\n\nThis pattern idea and layout borrows form the \nDigital Video Essentials color adjust pattern.\n\nIt has a gray background as reference, and can \nbe used with color filters in order to adjust \ncolor accuracy. If your TV set has a blue only\nmode, you can also use that to correct color\nbalance.",
 NULL
 };
 char *colors_txt[] = { 
@@ -58,11 +66,12 @@ char *dshadow_txt[] = {
 NULL
 };
 char *general_txt[] = { 
-"                    HELP\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\nHOME button.\n",
+"                HELP (1/2)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\nHOME button.\n\n                                         (cont...)",
+"                HELP (1/2)\n\nThis version of the suite supports 240p, 480i and\n480p video modes. However, 480p is only available\nvia component cables, you can enable it from the\noptions menu. Some patterns do not resolve \nperfectly in 480p mode due to console limitations.\n",
 NULL
 };
 char *gray_txt[] = { 
-"                  GRAY RAMP \n\nThis gray ramp pattern can be used to check color\nbalance and to adjust the white level. \n\nIn order to adjust white level, you need to use\nthe \"contrast\" control of your TV set. Raise the\ncontrast to the point where the white bars on the\nsides are undistinguishable from each other, and \nthen lower it to the point where you can clearly\nidentify both.",
+"                  GRAY RAMP \n\nThis gray ramp pattern can be used to check color\nbalance and to adjust the white level. \n\nYou should make sure the bars are gray, with no\nred or blue bias. This can be adjusted with the\nindividual color settings, or the \"tint\" control.\n\nIn order to adjust white level, you need to use\nthe \"contrast\" control of your TV set. Raise the\ncontrast to the point where the white bars on the\nsides are undistinguishable from each other, and \nthen lower it to the point where you can clearly\nidentify both.",
 NULL
 };
 char *grid_txt[] = { 
@@ -75,13 +84,17 @@ NULL
 };
 char *ire100_txt[] = { 
 "                  100 IRE(1/2)\n\nAn IRE is a unit used in the measurement of\ncomposite video signals. Its name is derived from\nthe initials of the Institute of Radio Engineers.\n\nA value of 100 IRE was originally defined to be\nthe range from black to white in a video signal.\n\nA value of 0 IRE corresponds to the zero voltage\nvalue during the blanking period. The sync pulse\nis normally 40 IRE below the zero value, so, peak\nto peak, an all white signal should be equal to\n140 IRE.\n\n                                     (cont...)",
-"                  100 IRE(2/2)\n\nThe reason IRE is a relative measurement (percent)\nis because a video signal may be any amplitude.\n\nThis unit is used in the ITU-R BT.470 which\ndefines PAL, NTSC and SECAM\n\nYou can use the + abd - buttons to change between\n100 IRE to 0 IRE in steps.\n\nWith button 1 you can change the range to 100-140\nIRE.\n",
+"                  100 IRE(2/2)\n\nThe reason IRE is a relative measurement (percent)\nis because a video signal may be any amplitude.\n\nThis unit is used in the ITU-R BT.470 which\ndefines PAL, NTSC and SECAM\n\nYou can use the + and - buttons to change between\n100 IRE to 0 IRE in steps.\n\nWith button 1 you can change the range to 100-140\nIRE.\n",
+NULL
+};
+char *linearity_txt[] = { 
+"                LINEARITY\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC pixel aspect ratio.\n\nThe diameter of the 4 small ones is identical, \nso as a group the linearity of the display or\nupscaler can be verified by measuring them.\n\nOf course, the diameter of the central circle \nshould also be maintained in all directions.\n",
 NULL
 };
 char *manuallag_txt[] = { 
 "             MANUAL LAG TEST (1/3)\n\nThe main intention is to show a changing pattern\non the screen, and given a visual and repetitive\ncue, play a beep alternating speakers. This\nshould show to some degree the lag (if present)\nwhen processing the signal.\n\nAs an added feature, the user can click the A\nbutton when the sprite is aligned with the one on\nthe background, and the offset in frames form the\nactual intersection will be shown on screen. This\ncan be repeated ten times and the software will\ncalculate the average. Whenever the button was\npressed before the actual intersection frame, the\n                                       (cont...)",
 "             MANUAL LAG TEST (2/3)\n\nresult will be ignored (but still shown onscreen).\nButton 1 can be used to change the direction\nof the sprite from vertical to horizontal, or\ndisplay both at the same time.\n\nOf course the evaluation is dependent on reflexes\nand/or rhythm more than anything. The visual and\naudio cues are the more revealing aspects which the\nuser should consider, of course the interactive\nfactor can give an experienced player the hang of\nthe system when testing via different connections.\n\n\n                                          (cont...)",
-"             MANUAL LAG TEST (3/3)\nSince a frame is around 16 ms (1000/60), that value\nmust be considered the general error when using the\ntest results. \n\n*AUDIO UNAVAILABLE IN WII VERSION, coming soon\n\n",
+"             MANUAL LAG TEST (3/3)\n\nSince a frame is around 16 ms (1000/60), that value\nmust be considered the general error when using the\ntest results. \n\n",
 NULL
 };
 char *passivelag_txt[] = { 
@@ -94,11 +107,11 @@ char *pluge_txt[] = {
 NULL
 };
 char *scroll_txt[] = { 
-"                   SCROLL TEST\n\nThis test shows a two layer background from Sonic\nthe Hedgehog. The speed can be varied with the\nd-pad, and change direction with the button 1.\nThe A button stops the scroll. \n",
+"                   SCROLL TEST\n\nThis test shows a two layer background from Sonic\nthe Hedgehog. The speed can be varied with the\nd-pad, and change direction with the button 1.\nThe A button stops the scroll. \n\nSonic The Hedgehog is a trademark of \nSega Enterprises Ltd.",
 NULL
 };
 char *sound_txt[] = { 
-"                      SOUND\n\nThis simple test plays a sound in either or both\nchannels.\n\nIt can be used to determine if the audio chain is\nworking properly.\n\nNOT IMPLEMENTED ON WII YET-\n",
+"                      SOUND\n\nThis simple test plays a sound in either or both\nchannels.\n\nIt can be used to determine if the audio chain is\nworking properly.\n",
 NULL
 };
 char *striped_txt[] = { 
@@ -110,8 +123,10 @@ char *stripes_txt[] = {
 "              HORIZONTAL STRIPES 2/2\n\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button 2.\n\nYou can also display vertical bars by pressing +,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all one pixel\nwide lines should be of the same width.\n",
 NULL
 };
-
-
+char *white_txt[] = { 
+"                WHITE SCREEN\n\nThis pattern allows you to calibrate each color:\nRed, Green and Blue; as  well as the white level.\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the + and \n- buttons. Some displays and scalers cannot have\nissues when changing between a fully black and \na fully white screen.\n\nIt can also be used to check color purity, and \ndead pixels.",
+NULL
+};
 
 void HelpWindow(ImagePtr screen)
 {

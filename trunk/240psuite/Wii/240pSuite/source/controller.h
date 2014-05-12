@@ -21,6 +21,10 @@
  
 #include <gccore.h>
 
+#ifdef WII_VERSION
+#include <wiiuse/wpad.h>
+#endif
+
 s32 ControllerInit();
 s32 ControllerScan();
 u32 Controller_ButtonsDown(int chan);

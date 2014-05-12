@@ -962,13 +962,13 @@ void DrawCheckBoard()
 			alternate = !alternate;				
 		}
 	
-		if (pressed & PAD_BUTTON_X)
+		if (pressed & PAD_BUTTON_Y)
 		{
 			dframe = !dframe;
 			frame = 0;
 		}
 					
-		if (pressed & PAD_TRIGGER_R && !alternate)
+		if (pressed & PAD_BUTTON_X && !alternate)
 			field = !field;
 
 		if ( pressed & PAD_BUTTON_START ) 		

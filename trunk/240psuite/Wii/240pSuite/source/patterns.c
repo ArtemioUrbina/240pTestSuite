@@ -142,7 +142,7 @@ void DrawWhiteScreen()
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = NULL;
+			HelpData = WHITEHELP;
 		}	
 
 		if(color > 4)
@@ -255,7 +255,7 @@ void Draw601ColorBars()
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = NULL;
+			HelpData = COLOR601HELP;
 		}	
 	}
 	FreeImage(&back);
@@ -290,7 +290,7 @@ void DrawSMPTEColorBars()
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = NULL;
+			HelpData = SMPTECOLOR;
 		}		
 
 	}
@@ -440,7 +440,7 @@ void DrawLinearity()
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = NULL;
+			HelpData = LINEARITYHELP;
 		}	
 		
 		

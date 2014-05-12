@@ -42,11 +42,17 @@
 #define SCROLL			scroll_txt
 #define MANUALLAG		manuallag_txt
 #define PASSIVELAG		passivelag_txt
+#define WHITEHELP 		white_txt
+#define COLOR601HELP	color601_txt
+#define SMPTECOLOR 		SMPTEColor_txt
+#define LINEARITYHELP	linearity_txt
 
+extern char *SMPTEColor_txt[];
 extern char *alt240p_txt[];
 extern char *backlit_txt[];
 extern char *bleed_txt[];
 extern char *check_txt[];
+extern char *color601_txt[];
 extern char *colors_txt[];
 extern char *dshadow_txt[];
 extern char *general_txt[];
@@ -54,6 +60,7 @@ extern char *gray_txt[];
 extern char *grid_txt[];
 extern char *gridscroll_txt[];
 extern char *ire100_txt[];
+extern char *linearity_txt[];
 extern char *manuallag_txt[];
 extern char *passivelag_txt[];
 extern char *pluge_txt[];
@@ -61,6 +68,7 @@ extern char *scroll_txt[];
 extern char *sound_txt[];
 extern char *striped_txt[];
 extern char *stripes_txt[];
+extern char *white_txt[];
 
 void HelpWindow(ImagePtr screen);
 
