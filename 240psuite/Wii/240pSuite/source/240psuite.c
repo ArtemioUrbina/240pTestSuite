@@ -124,7 +124,14 @@ int main(int argc, char **argv)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
-        DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Alternating 240p/480i Test"); y += fh; c++;
+		if(vmode == VIDEO_480P || vmode == VIDEO_480P_SL)
+		{
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Alternating 240p/480i Test"); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Alternating 240p/480i Test"); y += fh; c++;
+		}        
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
         switch(vmode)
 		{
@@ -222,7 +229,8 @@ int main(int argc, char **argv)
 					LEDZoneTest();
 					break;
 				case 11:
-					Alternate240p480i();					
+					if(vmode != VIDEO_480P && vmode != VIDEO_480P_SL)
+						Alternate240p480i();					
 					break;					
 				case 12:
 					SoundTest();
@@ -368,7 +376,8 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 void DrawCredits(ImagePtr Back)
 {
 	int 	done = 0;	
-    u32     pressed = 0;		
+    u32     pressed = 0, counter = 1;
+	char	name[50], title[50];
 #ifdef WII_VERSION
 	u8 		shopcode = 0;
 	char	shop[100];	
@@ -385,24 +394,28 @@ void DrawCredits(ImagePtr Back)
 	
 	while(!done && !EndProgram)  
 	{
-		int x = 30, y = 52;
-
-		ControllerScan();
-		pressed = Controller_ButtonsDown(0);
-		
-		if ( pressed & PAD_BUTTON_START) 		
-			DrawMenu = 1;	
-        if (pressed & PAD_TRIGGER_R)
-			DrawIntro();
-		if (pressed & PAD_BUTTON_B)
-			done =	1;						
+		int x = 30, y = 52;			
 
 		StartScene();
 		        
 		DrawImage(Back);
-
-		DrawStringS(x, y, 0x00, 0xff, 0x00, "Code and Patterns:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Artemio Urbina"); y += fh; 
+		
+		if(counter == 1)
+		{
+			sprintf(title, "Code and Patterns:");
+			sprintf(name, "Artemio Urbina"); 
+		}
+		if(counter == 60*5)
+		{
+			sprintf(title, "Support and suggestions:");
+			sprintf(name, "aurbina@junkerhq.net"); 
+		}
+		if(counter == 60*10)
+			sprintf(name, "@Artemio (twitter)"); 
+		if(counter == 60*15)
+			counter = 0;
+		DrawStringS(x, y, 0x00, 0xff, 0x00, title); y += fh; 
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, name); y += fh; 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "devkitPPC"); y += fh; 		
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y += fh; 
@@ -412,16 +425,16 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Collaboration:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Konsolkongen & shmups regulars"); y += fh; 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/xrgb/"); y += 2*fh; 
-		
-		DrawStringS(x, y, 0x00, 0xaa, 0xaa, "This program is free Software");  y += fh;
-		DrawStringS(x, y, 0x00, 0xaa, 0xaa, "Source code is available under GPL.");  y += fh;
-		DrawStringS(x, y, 0x00, 0xaa, 0xaa, "Includes libcheckregion.");
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/240p"); y += 2*fh; 
+
+		DrawStringS(x, y, 0x00, 0xba, 0xba, "This program is free Software");  y += fh;
+		DrawStringS(x, y, 0x00, 0xba, 0xba, "Source code is available under GPL.");  y += fh;
+		DrawStringS(x, y, 0x00, 0xba, 0xba, "Includes libcheckregion.");
 
 		y = 58;
 		
-		DrawStringS(200, y, 0xff, 0xff, 0xff, VERSION_NUMBER); y += fh;
-		DrawStringS(200, y, 0xff, 0xff, 0xff, VERSION_DATE); y += 2*fh;
+		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_NUMBER); y += fh;
+		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_DATE); y += 2*fh;
 
 #ifdef WII_VERSION		
 		if(Options.ShowWiiRegion)
@@ -431,7 +444,19 @@ void DrawCredits(ImagePtr Back)
 		}
 #endif
 
-		EndScene();
+		EndScene();		
+		
+		ControllerScan();
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_START) 		
+			DrawMenu = 1;	
+        if (pressed & PAD_TRIGGER_R)
+			DrawIntro();
+		if (pressed & PAD_BUTTON_B)
+			done =	1;		
+			
+		counter ++;			
 	}
 }
 
