@@ -106,7 +106,7 @@ void DrawStringS(u16 x, u16 y, u8 r, u8 g, u8 b, char *str)
 {
 	font_t->layer = 1.0f;
 	font_t->alpha = 0xaa;
-	DrawString(x+1, y+1, 0.0f, 0.0f, 0.0f, str);	
+	DrawString(x+1, y+1, 0x00, 0x00, 0x00, str);	
 	font_t->layer = 2.0f;
 	font_t->alpha = 0xff;
 	DrawString(x, y, r, g, b, str);

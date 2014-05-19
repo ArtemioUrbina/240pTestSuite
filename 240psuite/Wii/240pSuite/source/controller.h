@@ -25,6 +25,30 @@
 #include <wiiuse/wpad.h>
 #endif
 
+enum ControlTypes{	
+	ControllerGC,
+	ControllerWiimote,
+	ControllerWiiClassic	
+};
+
+enum ControlNames{	
+	ControlButtonStart,
+	ControlButtonA,
+	ControlButtonB,
+	ControlButtonX,
+	ControlButtonY,
+	ControlButtonL,
+	ControlButtonR
+};
+
+extern u8 ControllerType;
+extern char *ControlNamesGC[];
+#ifdef WII_VERSION
+extern char *ControlNamesWii[];
+extern char	*ControlNamesWiiCC[];
+extern char	*ControlNamesWiiSFC_CC[];
+#endif
+
 s32 ControllerInit();
 s32 ControllerScan();
 u32 Controller_ButtonsDown(int chan);

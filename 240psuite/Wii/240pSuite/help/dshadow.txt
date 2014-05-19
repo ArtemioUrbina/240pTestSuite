@@ -9,6 +9,6 @@ shadow on a 60hz signal. No background detail
 should be lost and the shadow should be visible. 
 
 The user can toggle the frame used to draw the
-shadow with button 1. Backgrounds can be
-switched with the A button and button 2
+shadow with button $X. Backgrounds can be
+switched with the A button and button $Y
 toggles sprites. 

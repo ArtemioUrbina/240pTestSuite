@@ -58,7 +58,7 @@ void ShowMenu()
 	
 	Back->alpha = 0xaa;
 	   
-	while(!close) 
+	while(!close && !EndProgram) 
 	{		
 		u8      r = 0xff;
 		u8      g = 0xff;
@@ -161,7 +161,7 @@ void ChangeOptions(ImagePtr title)
 		
 	back->alpha = 0xaa;
 		
-	while(!close) 
+	while(!close && !EndProgram) 
 	{		
 		u8      r = 0xff;
 		u8      g = 0xff;
@@ -234,12 +234,18 @@ void ChangeOptions(ImagePtr title)
 		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
 #ifdef WII_VERSION					
-		if(vmode == VIDEO_480P_SL && sel == 3)	
-			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons"); 										
+		if(vmode == VIDEO_480P_SL && sel == 3)
+		{
+			if(ControllerType != ControllerGC && !Options.SFCClassicController)
+				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons"); 										
+			else
+				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 	
+		}
 #else
 		if(vmode == VIDEO_480P_SL && sel == 2)	
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
 #endif
+
 
 #ifdef WII_VERSION								
 		if(vmode != VIDEO_480P_SL && (sel == 3 || sel == 4))
@@ -250,7 +256,7 @@ void ChangeOptions(ImagePtr title)
 			
 #ifdef WII_VERSION					
 		if(sel == 5)	
-			DrawStringS(x-40, y + 4*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [+ -] -> [L R]"); 										
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]"); 										
 #endif
 				
 		EndScene();		
@@ -367,7 +373,7 @@ void SelectVideoMode(ImagePtr title)
 		return;
 		
 	back->alpha = 0xaa;
-	while(!close) 
+	while(!close && !EndProgram) 
 	{		
 		u8      r = 0xff;
 		u8      g = 0xff;

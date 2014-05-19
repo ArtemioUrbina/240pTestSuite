@@ -6,7 +6,7 @@ cue, play a beep alternating speakers. This
 should show to some degree the lag (if present)
 when processing the signal.
 
-As an added feature, the user can click the A
+As an added feature, the user can click the $A
 button when the sprite is aligned with the one on
 the background, and the offset in frames form the
 actual intersection will be shown on screen. This
@@ -17,7 +17,7 @@ pressed before the actual intersection frame, the
              MANUAL LAG TEST (2/3)
 
 result will be ignored (but still shown onscreen).
-Button 1 can be used to change the direction
+Button $X can be used to change the direction
 of the sprite from vertical to horizontal, or
 display both at the same time.
 
