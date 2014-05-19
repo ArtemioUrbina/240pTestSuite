@@ -113,6 +113,47 @@ void DropShadowTest()
 	updateVMU("  Shadow	", "  even  ", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		if(selback == 1)
+		{
+			CalculateUV(x, 0, dW, 240, back[selback]);
+			CalculateUV(x*2, 0, dW, 240, overlay);
+		}
+		DrawImage(back[selback]);
+		if(selback == 1)
+			DrawImage(overlay);
+
+		if(text)
+		{
+			if(vmode != NATIVE_640_FS)
+				DrawStringB(140, 12, 0, 1.0, 0, msg);
+			else
+				DrawStringB(450, 20, 0, 1.0, 0, msg);
+			text --;
+		}
+
+		if(frame == invert)
+		{
+			shadow->x = x;
+			shadow->y = y;
+			DrawImage(shadow);
+			frame = !frame;
+		}
+		else
+			frame = !frame;
+				
+		if(sprite == 1)
+		{
+			buzz->x = x - 20;
+			buzz->y = y - 20;
+			DrawImage(buzz);
+		} 			
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -206,47 +247,6 @@ void DropShadowTest()
 		if(y > back[selback]->h + back[selback]->y - shadow->h)
 			y = back[selback]->h + back[selback]->y - shadow->h;
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		if(selback == 1)
-		{
-			CalculateUV(x, 0, dW, 240, back[selback]);
-			CalculateUV(x*2, 0, dW, 240, overlay);
-		}
-		DrawImage(back[selback]);
-		if(selback == 1)
-			DrawImage(overlay);
-
-		if(text)
-		{
-			if(vmode != NATIVE_640_FS)
-				DrawStringB(140, 12, 0, 1.0, 0, msg);
-			else
-				DrawStringB(450, 20, 0, 1.0, 0, msg);
-			text --;
-		}
-
-		if(frame == invert)
-		{
-			shadow->x = x;
-			shadow->y = y;
-			DrawImage(shadow);
-			frame = !frame;
-		}
-		else
-			frame = !frame;
-				
-		if(sprite == 1)
-		{
-			buzz->x = x - 20;
-			buzz->y = y - 20;
-			DrawImage(buzz);
-		} 			
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 	FreeImage(&back[0]);
 	FreeImage(&back[1]);
@@ -317,6 +317,26 @@ void StripedSpriteTest()
 	updateVMU(" Striped ", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		if(selback == 1)
+		{
+			CalculateUV(x, 0, dW, 240, back[selback]);
+			CalculateUV(x*2, 0, dW, 240, overlay);
+		}
+		DrawImage(back[selback]);
+		if(selback == 1)
+			DrawImage(overlay);
+
+		striped->x = x;
+		striped->y = y;
+		DrawImage(striped);
+
+		DrawScanlines();
+		pvr_list_finish();
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -394,26 +414,6 @@ void StripedSpriteTest()
 		if(y > back[selback]->h + back[selback]->y - striped->h)
 			y = back[selback]->h + back[selback]->y - striped->h;
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		if(selback == 1)
-		{
-			CalculateUV(x, 0, dW, 240, back[selback]);
-			CalculateUV(x*2, 0, dW, 240, overlay);
-		}
-		DrawImage(back[selback]);
-		if(selback == 1)
-			DrawImage(overlay);
-
-		striped->x = x;
-		striped->y = y;
-		DrawImage(striped);
-
-		DrawScanlines();
-		pvr_list_finish();
-
-		pvr_scene_finish();
 	}
 	FreeImage(&back[0]);
 	FreeImage(&back[1]);
@@ -470,97 +470,6 @@ void LagTest()
 
 	while(!done) 
 	{
-		pvr_wait_ready();
-
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-			ltrig = st->ltrig > 5 && oldltrig < 5;
-			oldltrig = st->ltrig;
-					
-			if (pressed & CONT_A)
-			{
-				if(change)
-				{
-					clicks[pos] = (y - 96) *speed;
-		
-					sprintf(msg, " Off: %d", clicks[pos]);
-					updateVMU("Lag Test ", msg, 1);
-		
-					if(clicks[pos] >= 0)
-					{
-						change = 0;
-						pos ++;
-					}
-			
-					if(pos > 9)
-						done = 1;
-				}
-			}
-
-			if (pressed & CONT_B)
-			{
-				view ++;
-				if(view > 2)
-					view = 0;
-			}
-						
-			if (pressed & CONT_Y)
-				audio =	!audio;				
-		
-			if (pressed & CONT_X)
-				vibrate =	!vibrate;				
-		
-			if(ltrig)
-			{
-				variation = !variation;
-				if(!variation)
-					vary = 0;
-			}
-
-			if (pressed & CONT_START)
-				done =	1;				
-
-			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(MANUALLAG, NULL);
-		}
-		
-		if(y > 132 + vary)
-		{
-			speed = -1;
-			change = 1;
-			if(variation)
-			{
-				if(rand() % 2)
-					vary = rand() % 7;
-				else
-					vary = -1 * rand() % 7;
-			}
-		}
-
-		if(y < 60 + vary)
-		{
-			speed = 1;
-			change = 1;
-			if(variation)
-			{
-				if(rand() % 2)
-					vary = rand() % 7;
-				else
-					vary = -1 * rand() % 7;
-			}
-		}
-
-		y += speed;
-		x2 += speed;
-
-		spriteA->x = x;
-		spriteA->y = y;
-		spriteB->x = x2;
-		spriteB->y = y2;
-
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
@@ -673,6 +582,97 @@ void LagTest()
 		pvr_list_finish();				
 
 		pvr_scene_finish();
+		pvr_wait_ready();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+			ltrig = st->ltrig > 5 && oldltrig < 5;
+			oldltrig = st->ltrig;
+					
+			if (pressed & CONT_A)
+			{
+				if(change)
+				{
+					clicks[pos] = (y - 96) *speed;
+		
+					sprintf(msg, " Off: %d", clicks[pos]);
+					updateVMU("Lag Test ", msg, 1);
+		
+					if(clicks[pos] >= 0)
+					{
+						change = 0;
+						pos ++;
+					}
+			
+					if(pos > 9)
+						done = 1;
+				}
+			}
+
+			if (pressed & CONT_B)
+			{
+				view ++;
+				if(view > 2)
+					view = 0;
+			}
+						
+			if (pressed & CONT_Y)
+				audio =	!audio;				
+		
+			if (pressed & CONT_X)
+				vibrate =	!vibrate;				
+		
+			if(ltrig)
+			{
+				variation = !variation;
+				if(!variation)
+					vary = 0;
+			}
+
+			if (pressed & CONT_START)
+				done =	1;				
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(MANUALLAG, NULL);
+		}
+		
+		if(y > 132 + vary)
+		{
+			speed = -1;
+			change = 1;
+			if(variation)
+			{
+				if(rand() % 2)
+					vary = rand() % 7;
+				else
+					vary = -1 * rand() % 7;
+			}
+		}
+
+		if(y < 60 + vary)
+		{
+			speed = 1;
+			change = 1;
+			if(variation)
+			{
+				if(rand() % 2)
+					vary = rand() % 7;
+				else
+					vary = -1 * rand() % 7;
+			}
+		}
+
+		y += speed;
+		x2 += speed;
+
+		spriteA->x = x;
+		spriteA->y = y;
+		spriteB->x = x2;
+		spriteB->y = y2;
+
 	}
 
 	if(beep != SFXHND_INVALID)
@@ -697,16 +697,6 @@ void LagTest()
 		oldbuttons = InitController(0);
 		while(!done)
 		{
-			pvr_wait_ready();
-
-			st = ReadController(0);	
-			if(st)
-			{
-				if (st->buttons & CONT_START)
-					done =	1;
-			}
-	
-		
 			pvr_scene_begin();
 			pvr_list_begin(PVR_LIST_TR_POLY);
 
@@ -759,6 +749,14 @@ void LagTest()
 			pvr_list_finish();				
 
 			pvr_scene_finish();
+			pvr_wait_ready();
+
+			st = ReadController(0);	
+			if(st)
+			{
+				if (st->buttons & CONT_START)
+					done =	1;
+			}
 		}
 		FreeImage(&wall);
 	}
@@ -786,33 +784,6 @@ void ScrollTest()
 	updateVMU(" Scroll  ", "", 1);
 	while(!done) 
 	{
-		pvr_wait_ready();
-
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_DPAD_UP)
-				speed ++;
-
-			if (pressed & CONT_DPAD_DOWN)
-				speed --;
-
-			if (pressed & CONT_START)
-				done = 1;
-
-			if (pressed & CONT_A)
-				pause = !pause;
-
-			if (pressed & CONT_B)
-				acc *= -1;
-
-			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(SCROLL, back);
-		}
-
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
@@ -840,6 +811,32 @@ void ScrollTest()
 		pvr_list_finish();				
 
 		pvr_scene_finish();
+		pvr_wait_ready();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_DPAD_UP)
+				speed ++;
+
+			if (pressed & CONT_DPAD_DOWN)
+				speed --;
+
+			if (pressed & CONT_START)
+				done = 1;
+
+			if (pressed & CONT_A)
+				pause = !pause;
+
+			if (pressed & CONT_B)
+				acc *= -1;
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(SCROLL, back);
+		}
 	}
 	FreeImage(&back);
 	FreeImage(&overlay);
@@ -863,6 +860,31 @@ void GridScrollTest()
 	updateVMU("G. Scroll", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+
+		if(speed > 5)
+			speed = 5;
+
+		if(speed < 1)
+			speed = 1;
+
+		if(!pause)
+		{
+			if(direction)
+				x += speed * acc;
+			else
+				y += speed * acc;
+		}	
+				
+		CalculateUV(x, y, dW, dH, back);    
+		DrawImage(back);
+	
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -900,31 +922,6 @@ void GridScrollTest()
 				oldbuttons = HelpWindow(GRIDSCROLL, back);
 		}
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
-		if(speed > 5)
-			speed = 5;
-
-		if(speed < 1)
-			speed = 1;
-
-		if(!pause)
-		{
-			if(direction)
-				x += speed * acc;
-			else
-				y += speed * acc;
-		}	
-				
-		CalculateUV(x, y, dW, dH, back);    
-		DrawImage(back);
-	
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 	FreeImage(&back);  
 	return;
@@ -932,8 +929,8 @@ void GridScrollTest()
 
 void DrawStripes()
 {
-	int 				done = 0, field = 1, alternate = 0,
-						frame = 0, dframe = 0, vertical = 0;
+	int 			done = 0, field = 1, alternate = 0,
+				frame = 0, dframe = 0, vertical = 0;
 	uint16			oldbuttons, pressed;		
 	ImagePtr		stripespos, stripesneg;
 	ImagePtr		vstripespos, vstripesneg;
@@ -957,42 +954,6 @@ void DrawStripes()
 	updateVMU(" Stripes", "", 1);
 	while(!done) 
 	{
-		pvr_wait_ready();
-
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_START)
-				done =	1;				
-						
-			if (pressed & CONT_A)
-			{
-				alternate = !alternate;
-				if(alternate)
-					updateVMU(" Stripes", "alternate", 1);
-				else
-					updateVMU(" Stripes", " still ", 1);
-			}
-						
-			if (pressed & CONT_Y)
-				vertical = !vertical;
-						
-			if (pressed & CONT_X)
-			{
-				dframe = !dframe;
-				frame = 0;
-			}
-						
-			if (pressed & CONT_B && !alternate)
-				field = !field;
-
-			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(STRIPESHELP, stripespos);
-		}
-
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
@@ -1033,6 +994,41 @@ void DrawStripes()
 		pvr_list_finish();
 
 		pvr_scene_finish();
+		pvr_wait_ready();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_START)
+				done =	1;				
+						
+			if (pressed & CONT_A)
+			{
+				alternate = !alternate;
+				if(alternate)
+					updateVMU(" Stripes", "alternate", 1);
+				else
+					updateVMU(" Stripes", " still ", 1);
+			}
+						
+			if (pressed & CONT_Y)
+				vertical = !vertical;
+						
+			if (pressed & CONT_X)
+			{
+				dframe = !dframe;
+				frame = 0;
+			}
+						
+			if (pressed & CONT_B && !alternate)
+				field = !field;
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(STRIPESHELP, stripespos);
+		}
 	}
 
 	FreeImage(&stripespos);
@@ -1044,8 +1040,8 @@ void DrawStripes()
 
 void DrawCheckBoard()
 {
-	int 				done = 0, field = 1, alternate = 0,
-						frame = 0, dframe = 0;
+	int 			done = 0, field = 1, alternate = 0,
+				frame = 0, dframe = 0;
 	uint16			oldbuttons, pressed;		
 	ImagePtr		checkpos, checkneg;
 	controller	*st;
@@ -1061,6 +1057,36 @@ void DrawCheckBoard()
 	updateVMU("CHKB PTTN", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+
+		if(field == 1)
+			DrawImage(checkpos);
+		else
+			DrawImage(checkneg);
+
+		if(alternate)
+			field = !field;
+
+		if(dframe)
+		{
+			char msg[20];
+
+			sprintf(msg, "Frame: %02d", frame);
+			if(vmode != NATIVE_640_FS)
+				DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
+			else
+				DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
+			frame ++;
+			if(frame > 59)
+				frame = 0;
+		}
+
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -1093,37 +1119,6 @@ void DrawCheckBoard()
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(CHECKHELP, checkpos);
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
-		if(field == 1)
-			DrawImage(checkpos);
-		else
-			DrawImage(checkneg);
-
-		if(alternate)
-			field = !field;
-
-		if(dframe)
-		{
-			char msg[20];
-
-			sprintf(msg, "Frame: %02d", frame);
-			if(vmode != NATIVE_640_FS)
-				DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
-			else
-				DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
-			frame ++;
-			if(frame > 59)
-				frame = 0;
-		}
-
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 	FreeImage(&checkpos);
 	FreeImage(&checkneg);
@@ -1132,10 +1127,10 @@ void DrawCheckBoard()
 
 void SoundTest()
 {
-	int 				done = 0, sel = 1, play = 0, pan = 0;
-	uint16			oldbuttons, pressed;		
-	ImagePtr		back;
-	sfxhnd_t		beep;
+	int 		done = 0, sel = 1, play = 0, pan = 0;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back;
+	sfxhnd_t	beep;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -1151,6 +1146,20 @@ void SoundTest()
 	updateVMU("Sound Test", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+
+		DrawStringS(130, 60, 1.0f, 1.0f, 1.0f, "Sound Test"); 
+		DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
+		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,	sel == 1 ? 0 : 1.0f, "Center Channel");
+		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");
+		DrawScanlines();
+		
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -1199,21 +1208,6 @@ void SoundTest()
 			snd_sfx_play(beep, 255, pan);
 			play = 0;
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);
-
-		DrawStringS(130, 60, 1.0f, 1.0f, 1.0f, "Sound Test"); 
-		DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
-		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,	sel == 1 ? 0 : 1.0f, "Center Channel");
-		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");
-		DrawScanlines();
-		
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
@@ -1224,10 +1218,10 @@ void SoundTest()
 
 void LEDZoneTest()
 {	
-	int		    done = 0, x = 0, y = 0, selsprite = 1, show = 1;
+	int		done = 0, x = 0, y = 0, selsprite = 1, show = 1;
 	uint16		oldbuttons = 0xffff, pressed;
 	ImagePtr	back, sprite[5];
-	controller *st;
+	controller 	*st;
 
 	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/white.kmg.gz", 1);
@@ -1257,6 +1251,22 @@ void LEDZoneTest()
 	updateVMU("Backlit", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);		
+		DrawImage(back);		
+
+		if(show)
+		{
+			sprite[selsprite]->x = x;
+			sprite[selsprite]->y = y;
+			DrawImage(sprite[selsprite]);
+		}
+
+		DrawScanlines();
+		pvr_list_finish();
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -1323,22 +1333,6 @@ void LEDZoneTest()
 		if(y > back->h - 1)
 			y = back->h - 1;
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);		
-		DrawImage(back);		
-
-		if(show)
-		{
-			sprite[selsprite]->x = x;
-			sprite[selsprite]->y = y;
-			DrawImage(sprite[selsprite]);
-		}
-
-		DrawScanlines();
-		pvr_list_finish();
-
-		pvr_scene_finish();
 	}
 	FreeImage(&back);
 	FreeImage(&sprite[0]);
@@ -1373,37 +1367,6 @@ void PassiveLagTest()
 	updateVMU("LAG TEST", "", 1);
 	while(!done) 
 	{
-		pvr_wait_ready();
-
-		if(!pause)
-		{
-			frames ++;
-			framecnt ++;
-			if(framecnt > 8)
-				framecnt = 1;
-		}
-
-		if(frames > 59)
-		{
-			frames = 0;
-			seconds ++;
-		}
-
-		if(seconds > 59)
-		{
-			seconds = 0;
-			minutes ++;
-		}
-
-		if(minutes > 59)
-		{
-			minutes = 0;
-			hours ++;
-		}
-
-		if(hours > 99)
-			hours = 0;
-
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
@@ -1569,6 +1532,7 @@ void PassiveLagTest()
 		pvr_list_finish();				
 
 		pvr_scene_finish();
+		pvr_wait_ready();
 
 		st = ReadController(0);
 		if(st)
@@ -1591,6 +1555,37 @@ void PassiveLagTest()
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(PASSIVELAG, NULL);
 		}
+
+
+		if(!pause)
+		{
+			frames ++;
+			framecnt ++;
+			if(framecnt > 8)
+				framecnt = 1;
+		}
+
+		if(frames > 59)
+		{
+			frames = 0;
+			seconds ++;
+		}
+
+		if(seconds > 59)
+		{
+			seconds = 0;
+			minutes ++;
+		}
+
+		if(minutes > 59)
+		{
+			minutes = 0;
+			hours ++;
+		}
+
+		if(hours > 99)
+			hours = 0;
+
 	}
 	FreeImage(&back);
 	FreeImage(&circle);
@@ -1645,31 +1640,6 @@ void Alternate240p480i()
 
 	while(!done) 
 	{
-		pvr_wait_ready();
-
-		frames ++;
-
-		if(frames > 59)
-		{
-			frames = 0;
-			seconds ++;
-		}
-
-		if(seconds > 59)
-		{
-			seconds = 0;
-			minutes ++;
-		}
-
-		if(minutes > 59)
-		{
-			minutes = 0;
-			hours ++;
-		}
-
-		if(hours > 99)
-			hours = 0;
-
 		pvr_scene_begin();
 
 		pvr_list_begin(PVR_LIST_TR_POLY);
@@ -1716,6 +1686,7 @@ void Alternate240p480i()
 		pvr_list_finish();				
 
 		pvr_scene_finish();
+		pvr_wait_ready();
 
 		st = ReadController(0);
 		if(st)
@@ -1761,6 +1732,29 @@ void Alternate240p480i()
 				}
 			}
 		}
+
+		frames ++;
+
+		if(frames > 59)
+		{
+			frames = 0;
+			seconds ++;
+		}
+
+		if(seconds > 59)
+		{
+			seconds = 0;
+			minutes ++;
+		}
+
+		if(minutes > 59)
+		{
+			minutes = 0;
+			hours ++;
+		}
+
+		if(hours > 99)
+			hours = 0;
 	}
 }
 
@@ -1864,7 +1858,6 @@ void TestVideoMode()
 			load = 0;
 		}
 
-		pvr_wait_ready();
 		pvr_scene_begin();
 		pvr_list_begin(PVR_LIST_TR_POLY);
 
@@ -1924,27 +1917,8 @@ void TestVideoMode()
 
 		pvr_list_finish();				
 		pvr_scene_finish();
+		pvr_wait_ready();
 
-		if(update)
-		{
-			ReleaseScanlines();
-			ReleaseFont();
-
-			vid_set_mode_ex(&vga_mode);
-
-			if(settings.drawborder)
-				vid_border_color(255, 255, 255);
-			else
-				vid_border_color(0, 0, 0);
-
-			if(settings.drawpvrbg)
-				pvr_set_bg_color(0.0f, 1.0f, 0.0f);
-			else
-				pvr_set_bg_color(0.0f, 0.0f, 0.0f);
-
-			update = 0;
-			load = 1;
-		}
 
 		st = ReadController(0);
 		if(st)
@@ -2071,6 +2045,27 @@ void TestVideoMode()
 				}
 			}
 		}
+
+		if(update)
+		{
+			ReleaseScanlines();
+			ReleaseFont();
+
+			vid_set_mode_ex(&vga_mode);
+
+			if(settings.drawborder)
+				vid_border_color(255, 255, 255);
+			else
+				vid_border_color(0, 0, 0);
+
+			if(settings.drawpvrbg)
+				pvr_set_bg_color(0.0f, 1.0f, 0.0f);
+			else
+				pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+
+			update = 0;
+			load = 1;
+		}
 	}
 
 	FreeImage(&back);
@@ -2126,7 +2121,6 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int R
 	char	Header[40];
 	char	Res[40];
 
-	pvr_wait_ready();
 	pvr_scene_begin();
 
 	pvr_list_begin(PVR_LIST_TR_POLY);
@@ -2162,6 +2156,7 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int R
 	pvr_list_finish();				
 
 	pvr_scene_finish();
+	pvr_wait_ready();
 }
 
 void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
@@ -2253,6 +2248,12 @@ void SIPLagTest()
 	sprintf(DStatus, "Press A");
 	while(!done) 
 	{		
+		DrawSIPScreen(back, DStatus, pres, Results, ResCount);
+
+		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+		if(!sip)
+			done = 1;
+
 		if(status == 0) // no input if we are sampling
 		{
 			st = ReadController(0);
@@ -2357,11 +2358,6 @@ void SIPLagTest()
 			status = 0;
 		}   
 
-		DrawSIPScreen(back, DStatus, pres, Results, ResCount);
-
-		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
-		if(!sip)
-			done = 1;
 	}
 
 	if(sip)
