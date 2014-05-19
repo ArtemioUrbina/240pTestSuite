@@ -36,9 +36,9 @@
 
 void DrawPluge()
 {
-	int 				done = 0;
-	uint16			oldbuttons, pressed;		
-	ImagePtr		back;
+	int 		done = 0;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -70,6 +70,48 @@ void DrawPluge()
 
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(PLUGEHELP, back);
+		}
+	}
+	FreeImage(&back);
+	return;
+}
+
+void DrawSMPTEColorBars()
+{
+	int 		done = 0;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back;
+	controller	*st;
+
+	oldbuttons = InitController(0);
+	back = LoadKMG("/rd/SMPTEColorBars.kmg.gz", 1);
+	if(!back)
+		return;
+		
+	updateVMU(" SMPTE ", "", 1);
+	while(!done) 
+	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
+		pvr_wait_ready();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_START)
+				done =	1;								
+
+			if(st->rtrig > 5)
+				oldbuttons = HelpWindow(SMPTECOLOR, back);
 		}
 	}
 	FreeImage(&back);
