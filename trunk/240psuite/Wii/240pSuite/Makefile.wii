@@ -26,10 +26,10 @@ INCLUDES	:=
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	= -g -O2 -Wall $(MACHDEP) $(INCLUDE) -DWII_VERSION
+CFLAGS	= -O2 -Wall $(MACHDEP) $(INCLUDE) -DWII_VERSION
 CXXFLAGS	=	$(CFLAGS)
 
-LDFLAGS	=	-L$(DEVKITPRO)/portlibs/ppc/lib -g $(MACHDEP) -Wl,-Map,$(notdir $@).map
+LDFLAGS	=	-L$(DEVKITPRO)/portlibs/ppc/lib $(MACHDEP) -Wl,-Map,$(notdir $@).map
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
