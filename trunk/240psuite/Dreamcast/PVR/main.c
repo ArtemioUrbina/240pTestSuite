@@ -418,6 +418,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Pluge"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SMPTE Color Bars"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
@@ -523,27 +524,30 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 						DrawColorBars();
 						break;
 					case 3:
-						Draw601ColorBars();
+						DrawSMPTEColorBars();
 						break;
 					case 4:
-						DrawColorBleed();
+						Draw601ColorBars();
 						break;
 					case 5:
-						DrawGrid();
+						DrawColorBleed();
 						break;
 					case 6:
+						DrawGrid();
+						break;
+					case 7:
 						DrawLinearity();
 						break;					
-					case 7:
+					case 8:
 						DrawGrayRamp();
 						break;
-					case 8:
+					case 9:
 						DrawWhiteScreen();
 						break;
-					case 9:
+					case 10:
 						Draw100IRE();
 						break;
-					case 10:
+					case 11:
 						done = 1;
 						break;
 				} 												

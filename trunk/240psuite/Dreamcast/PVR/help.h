@@ -42,6 +42,7 @@
 #define SCROLL		"/rd/help/scroll.txt"
 #define MANUALLAG	"/rd/help/manuallag.txt"
 #define PASSIVELAG	"/rd/help/passivelag.txt"
+#define SMPTECOLOR	"/rd/help/SMPTEColor.txt"
 
 uint16 HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);
