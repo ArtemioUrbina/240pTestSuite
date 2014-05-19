@@ -49,6 +49,14 @@ void DrawPluge()
 	updateVMU(" Pluge ", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -63,15 +71,6 @@ void DrawPluge()
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(PLUGEHELP, back);
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 	FreeImage(&back);
 	return;
@@ -79,9 +78,9 @@ void DrawPluge()
 
 void DrawGrayRamp()
 {
-	int 				done = 0;
-	uint16			oldbuttons, pressed;		
-	ImagePtr		back;
+	int 		done = 0;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -92,6 +91,14 @@ void DrawGrayRamp()
 	updateVMU("Gray Ramp", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -106,15 +113,6 @@ void DrawGrayRamp()
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(GRAYHELP, back);
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 	FreeImage(&back);
 	return;
@@ -122,9 +120,9 @@ void DrawGrayRamp()
 
 void DrawWhiteScreen()
 {
-	int 				done = 0, color = 0;
-	uint16			oldbuttons, pressed;		
-	ImagePtr		back;
+	int 		done = 0, color = 0;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -135,24 +133,6 @@ void DrawWhiteScreen()
 	updateVMU("White scr", "", 1);
 	while(!done) 
 	{
-		pvr_wait_ready();
-
-		st = ReadController(0);
-		if(st)
-		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
-			if (pressed & CONT_START)
-				done =	1;								
-
-			if (pressed & CONT_A)
-				color ++;
-
-			if (pressed & CONT_B)
-				color --;
-		}
-
 		pvr_scene_begin();
 
 		if(color > 4)
@@ -195,6 +175,23 @@ void DrawWhiteScreen()
 		pvr_list_finish();				
 
 		pvr_scene_finish();
+		pvr_wait_ready();
+
+		st = ReadController(0);
+		if(st)
+		{
+			pressed = st->buttons & ~oldbuttons;
+			oldbuttons = st->buttons;
+					
+			if (pressed & CONT_START)
+				done =	1;								
+
+			if (pressed & CONT_A)
+				color ++;
+
+			if (pressed & CONT_B)
+				color --;
+		}
 	}
 	FreeImage(&back);
 	return;
@@ -218,6 +215,17 @@ void DrawColorBars()
 	updateVMU("Colorbars", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		if(!type)
+			DrawImage(back);
+		else
+			DrawImage(backgrid);
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -235,18 +243,6 @@ void DrawColorBars()
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(COLORBARSHELP, back);
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		if(!type)
-			DrawImage(back);
-		else
-			DrawImage(backgrid);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 	FreeImage(&back);
 	return;
@@ -254,9 +250,9 @@ void DrawColorBars()
 
 void Draw601ColorBars()
 {
-	int 				done = 0;
-	uint16			oldbuttons, pressed;		
-	ImagePtr		back;
+	int 		done = 0;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -267,6 +263,14 @@ void Draw601ColorBars()
 	updateVMU("Colorbars", "with gray", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -281,15 +285,6 @@ void Draw601ColorBars()
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(COLORBARSHELP, back);
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 	FreeImage(&back);
 	return;
@@ -297,9 +292,9 @@ void Draw601ColorBars()
 
 void DrawColorBleed()
 {
-	int 				done = 0, type = 0;
-	uint16			oldbuttons, pressed;		
-	ImagePtr		back, backchk;
+	int 		done = 0, type = 0;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back, backchk;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -313,6 +308,17 @@ void DrawColorBleed()
 	updateVMU("Bleed CHK", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		if(!type)
+			DrawImage(back);
+		else
+			DrawImage(backchk);
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -330,18 +336,6 @@ void DrawColorBleed()
 			if(st->rtrig > 5)
 				oldbuttons = HelpWindow(COLORBLEEDHELP, back);
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		if(!type)
-			DrawImage(back);
-		else
-			DrawImage(backchk);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 	FreeImage(&back);
 	FreeImage(&backchk);
@@ -350,9 +344,9 @@ void DrawColorBleed()
 
 void DrawGrid()
 {
-	int 			done = 0;
-	uint16			oldbuttons, pressed;		
-	ImagePtr		back;
+	int 		done = 0;
+	uint16		oldbuttons, pressed;		
+	ImagePtr	back;
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -373,6 +367,14 @@ void DrawGrid()
 	updateVMU(" 	Grid	", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);		
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -386,15 +388,6 @@ void DrawGrid()
 			if (st->rtrig > 5)
 				oldbuttons = HelpWindow(GRIDHELP, back);
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);		
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 
 	FreeImage(&back);
@@ -426,6 +419,21 @@ void DrawLinearity()
 	updateVMU("Linearity", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		if(showgrid)
+		{
+			if(gridpattern)
+				DrawImage(gridd);
+			else
+				DrawImage(grid);
+		}
+		DrawImage(circles);
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -443,22 +451,6 @@ void DrawLinearity()
 			if (pressed & CONT_START)
 				done =	1;				
 		}
-						
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		if(showgrid)
-		{
-			if(gridpattern)
-				DrawImage(gridd);
-			else
-				DrawImage(grid);
-		}
-		DrawImage(circles);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 
 	FreeImage(&gridd);
@@ -491,6 +483,33 @@ void Draw100IRE()
 	updateVMU(" 100 IRE ", "", 1);
 	while(!done) 
 	{
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+    		if(invert)
+      			DrawImage(white);	
+		DrawImage(back);		
+
+		if(text)
+		{
+    			if(!invert)
+      			{
+				sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
+			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+			  	text --;
+      			}
+      			else
+      			{
+			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
+			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+			  	text --;
+      			}
+		}
+
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
 
 		st = ReadController(0);
@@ -551,34 +570,6 @@ void Draw100IRE()
 			if (st->rtrig > 5)
 				oldbuttons = HelpWindow(IREHELP, back);
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-    		if(invert)
-      			DrawImage(white);	
-		DrawImage(back);		
-
-		if(text)
-		{
-    			if(!invert)
-      			{
-				sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
-			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
-			  	text --;
-      			}
-      			else
-      			{
-			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
-			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
-			  	text --;
-      			}
-		}
-
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 
 	FreeImage(&back);

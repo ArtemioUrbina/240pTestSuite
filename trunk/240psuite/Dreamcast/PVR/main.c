@@ -41,7 +41,7 @@ extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 KOS_INIT_FLAGS(INIT_DEFAULT);
 
-int					region = 0;
+int	region = 0;
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawCredits(ImagePtr back);
@@ -49,7 +49,7 @@ void DrawIntro();
 
 int main(void)
 {
-	int 				done = 0, sel = 1, joycnt = 0;
+	int 			done = 0, sel = 1, joycnt = 0;
 	uint16			oldbuttons, pressed, start = 1;
 	ImagePtr		title, sd;
 	controller	*st;
@@ -561,7 +561,8 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 void DrawCredits(ImagePtr back)
 {
 	int 		done = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		oldbuttons, pressed, counter = 1;		
+	char 		name[50], title[50];
 	controller	*st;
 
 	oldbuttons = InitController(0);
@@ -570,7 +571,56 @@ void DrawCredits(ImagePtr back)
 	while(!done) 
 	{
 		int x = 30, y = 52;
+
+		pvr_scene_begin();
+
+		pvr_list_begin(PVR_LIST_TR_POLY);
+		DrawImage(back);
+
+		if(counter == 1)
+                {
+                        sprintf(title, "Code and Patterns:");
+                        sprintf(name, "Artemio Urbina");
+                }
+                if(counter == 60*5)
+                {
+                        sprintf(title, "Support and suggestions:");
+                        sprintf(name, "aurbina@junkerhq.net");
+                }
+                if(counter == 60*10)
+                        sprintf(name, "@Artemio (twitter)");
+                if(counter == 60*15)
+                        counter = 0;
+
+		DrawStringS(x, y, 0.0, 1.0, 0.0, title); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, name); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "KallistiOS"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 		
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Konsolkongen & shmups regulars"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/"); y += fh; 
+
+		DrawStringS(x, y, 0.0, .75, .75, "This program is free Software");  y += fh;
+                DrawStringS(x, y, 0.0, .75, .75, "Source code is available under GPL.");  y += fh;
+
+		y = 58;
+		DrawStringS(220, y, 1.0, 1.0, 1.0, "Ver. 1.19"); y += fh; 
+		DrawStringS(220, y, 1.0, 1.0, 1.0, "19/05/2014"); y += fh; 
+
+		DrawScanlines();
+		pvr_list_finish();				
+
+		pvr_scene_finish();
 		pvr_wait_ready();
+
+		counter ++;
 
 		st = ReadController(0);
 		if(st)
@@ -584,34 +634,6 @@ void DrawCredits(ImagePtr back)
 			if (pressed & CONT_START)
 				done =	1;				
 		}
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		DrawImage(back);
-
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Code and Patterns:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Artemio Urbina"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "KallistiOS"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 		
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Konsolkongen & shmups regulars"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/xrgb/"); y += fh; 
-
-		DrawStringS(220, 58, 1.0, 1.0, 1.0, "Ver. 1.18"); y += fh; 
-		DrawStringS(220, 58+fh, 1.0, 1.0, 1.0, "01/01/2014"); y += fh; 
-
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
 }
 
@@ -636,7 +658,9 @@ void DrawIntro()
 		if(black->alpha < 0.0f)
 			black->alpha = 0.0f;
 
-		pvr_wait_ready();
+		if(counter == frames)
+			delta *= -1;
+
 		pvr_scene_begin();
 	
 		pvr_list_begin(PVR_LIST_TR_POLY);
@@ -648,9 +672,8 @@ void DrawIntro()
 		pvr_list_finish();
 	
 		pvr_scene_finish();
+		pvr_wait_ready();
 
-		if(counter == frames)
-			delta *= -1;
 	}
 	FreeImage(&black);
 }
