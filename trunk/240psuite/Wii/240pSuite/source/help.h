@@ -46,12 +46,14 @@
 #define COLOR601HELP	color601_txt
 #define SMPTECOLOR 		SMPTEColor_txt
 #define LINEARITYHELP	linearity_txt
+#define CHECK480PWII	check480pWii_txt
 
 extern char *SMPTEColor_txt[];
 extern char *alt240p_txt[];
 extern char *backlit_txt[];
 extern char *bleed_txt[];
 extern char *check_txt[];
+extern char *check480pWii_txt[];
 extern char *color601_txt[];
 extern char *colors_txt[];
 extern char *dshadow_txt[];

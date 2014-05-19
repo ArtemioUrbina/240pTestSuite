@@ -29,6 +29,7 @@
 #include "help.h"
 #include "menu.h"
 #include "controller.h"
+#include "options.h"
 #include <asndlib.h>
 
 extern u8 beep_snd_end[];
@@ -366,11 +367,12 @@ void StripedSpriteTest()
 
 void LagTest()
 {
-	char			msg[60];
+	char			msg[60], strings[100];
 	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int				x, y, x2, y2, pos = 0, i = 0, vary = 0, variation = 1;
 	u16				pressed, audio = 0, rumble = 0;
 	ImagePtr		back, spriteA, spriteB;
+	char 			**ControllerButtons = NULL;
 	
 	
 	srand((int)(time(0)));	
@@ -525,12 +527,39 @@ void LagTest()
 		sprintf(msg, "Rumble: %s", rumble ? "on" : "off");
 		DrawStringS(200, 20+2*fh, 0xff, 0xff, 0xff, msg);		
 
-		DrawStringS(20, 170, 0x00, 0xff, 0x00, "Press \"A\" when the sprite is aligned with the background.");
-		DrawStringS(20, 170+fh, 0x00, 0xff, 0x00, "Negative values mean you pressed \"A\" before they intersected");
-		DrawStringS(20, 170+2*fh, 0x00, 0xff, 0x00, "\"1\" button toggles horizontal and vertical movement.");
-		DrawStringS(20, 170+3*fh, 0x00, 0xff, 0x00, "\"2\" trigger toggles rhythmic timing.");
-		DrawStringS(20, 170+4*fh, 0x00, 0xff, 0x00, "\"+\" button toggles audio feedback.");
-		DrawStringS(20, 170+5*fh, 0x00, 0xff, 0x00, "\"-\" button toggles rumble feedback.");
+#ifdef WII_VERSION
+		if(ControllerType == ControllerWiimote)
+			ControllerButtons = ControlNamesWii;
+			
+		if(ControllerType == ControllerWiiClassic)
+		{
+			if(Options.SFCClassicController)
+				ControllerButtons = ControlNamesWiiSFC_CC;
+			else
+				ControllerButtons = ControlNamesWiiCC;
+		}
+			
+		if(ControllerType == ControllerGC)
+#endif
+			ControllerButtons = ControlNamesGC;
+			
+		sprintf(strings, "Press \"%c\" when the sprite is aligned with the background.", ControllerButtons[ControlButtonA][0]);
+		DrawStringS(20, 170, 0x00, 0xff, 0x00, strings);
+		
+		sprintf(strings, "Negative values mean you pressed \"%c\" before they intersected", ControllerButtons[ControlButtonA][0]);
+		DrawStringS(20, 170+fh, 0x00, 0xff, 0x00, strings);
+		
+		sprintf(strings, "\"%c\" button toggles horizontal and vertical movement.", ControllerButtons[ControlButtonX][0]);
+		DrawStringS(20, 170+2*fh, 0x00, 0xff, 0x00, strings);
+		
+		sprintf(strings, "\"%c\" trigger toggles rhythmic timing.", ControllerButtons[ControlButtonY][0]);
+		DrawStringS(20, 170+3*fh, 0x00, 0xff, 0x00, strings);
+		
+		sprintf(strings, "\"%c\" button toggles audio feedback.", ControllerButtons[ControlButtonR][0]);
+		DrawStringS(20, 170+4*fh, 0x00, 0xff, 0x00, strings);
+		
+		sprintf(strings, "\"%c\" button toggles rumble feedback.", ControllerButtons[ControlButtonL][0]);
+		DrawStringS(20, 170+5*fh, 0x00, 0xff, 0x00, strings);
 
 		EndScene();
 		
@@ -756,8 +785,6 @@ void GridScrollTest()
 	back = LoadImage(CIRCLESGRIDIMG, 0);
 	if(!back)
 		return;  
-	
-	//back->y = (dH - 240)/2;  
 
 	while(!done && !EndProgram) 
 	{	
@@ -921,8 +948,16 @@ void DrawCheckBoard()
 		return;
 	checkneg = LoadImage(CHECKNEGIMG, 1);
 	if(!checkneg)
-		return;
-
+		return;	
+		
+#ifdef WII_VERSION		
+	if(vmode == VIDEO_480P)
+	{				
+		HelpData = CHECK480PWII;
+		HelpWindow(checkpos);					
+	}
+#endif
+	
 	while(!done && !EndProgram) 
 	{
 		StartScene();

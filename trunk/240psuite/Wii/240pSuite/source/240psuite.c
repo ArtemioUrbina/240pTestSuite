@@ -152,7 +152,7 @@ int main(int argc, char **argv)
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");
 		else
-			DrawStringS(215, 225, r, g,	 b, "Composite");		
+			DrawStringS(215, 225, r, g,	 b, "");		
 
 #ifdef WII_VERSION
 		if(Options.ShowWiiRegion)

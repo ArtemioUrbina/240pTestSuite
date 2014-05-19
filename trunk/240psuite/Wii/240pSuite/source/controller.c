@@ -27,6 +27,50 @@
 
 u8 JoyCountX = 0;
 u8 JoyCountY = 0;
+u8 ControllerType = ControllerGC;
+
+char *ControlNamesGC[] = {
+	"Start",
+	"A",
+	"B",
+	"X",
+	"Y",
+	"L",
+	"R"
+};
+
+#ifdef WII_VERSION
+char *ControlNamesWii[] = {
+	"HOME",
+	"A",
+	"B",
+	"1",
+	"2",
+	"-",
+	"+"
+};
+
+char *ControlNamesWiiCC[] = {
+	"HOME",
+	"A",
+	"B",
+	"X",
+	"Y",
+	"-",
+	"+"
+};
+
+char *ControlNamesWiiSFC_CC[] = {
+	"Start",
+	"A",
+	"B",
+	"X",
+	"Y",
+	"L",
+	"R"
+};
+
+#endif
 
 
 s32 ControllerInit()
@@ -58,7 +102,10 @@ u32 Controller_ButtonsDown(int chan)
 	int x, y;
 
     retval = PAD_ButtonsDown(chan);
-    
+	
+    if(retval)
+		ControllerType = ControllerGC;
+		
     x  = PAD_StickX(0);
     y  = PAD_StickY(0);
     if (x > JOYTHSHLD)
@@ -96,13 +143,14 @@ u32 Controller_ButtonsDown(int chan)
 			retval |= PAD_BUTTON_DOWN;
 			JoyCountY = 0;
 		}
-	}
+	}	
 	 
 #ifdef WII_VERSION
-    u32 wiistate;
+    u32 wiistate = 0, found = 0;
 
 // WiiPad
-	wiistate = WPAD_ButtonsDown(chan);
+	wiistate = WPAD_ButtonsDown(chan);	
+	found = retval;
 
     if( wiistate & WPAD_BUTTON_LEFT )
         retval |= PAD_BUTTON_LEFT;
@@ -127,7 +175,11 @@ u32 Controller_ButtonsDown(int chan)
         retval |= PAD_TRIGGER_R;
     if( wiistate & WPAD_BUTTON_MINUS )
         retval |= PAD_TRIGGER_L;  
+		
+	if(found != retval)
+		ControllerType = ControllerWiimote;
 
+	found = retval;
 // Wii Classic Controller
     WPADData *data = WPAD_Data(0);
     if (data && data->exp.type == WPAD_EXP_CLASSIC)
@@ -265,8 +317,11 @@ u32 Controller_ButtonsDown(int chan)
 				}
 			}
 		}
+		
+		if(found != retval)
+			ControllerType = ControllerWiiClassic;   
     }
-
+	
     if (data && data->exp.type == WPAD_EXP_NUNCHUK)
     {
         int x, y, overflow;               

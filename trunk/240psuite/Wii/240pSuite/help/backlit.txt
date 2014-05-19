@@ -9,7 +9,7 @@ dimming.
 
 The user can move around the white pixel arrays
 with the d-pad or joystiq, and change the size
-of the pixel array with "+" and "-". The A
+of the pixel array with "$R" and "$L". The $A
 button allows the user to hide the pixel array
 in order to alternate a fully black screen.
 
