@@ -49,15 +49,9 @@ void DrawPluge()
 	updateVMU(" Pluge ", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		DrawImage(back);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -91,15 +85,9 @@ void DrawSMPTEColorBars()
 	updateVMU(" SMPTE ", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		DrawImage(back);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -133,15 +121,9 @@ void DrawGrayRamp()
 	updateVMU("Gray Ramp", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		DrawImage(back);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -175,8 +157,6 @@ void DrawWhiteScreen()
 	updateVMU("White scr", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
 		if(color > 4)
 			color = 0;
 		if(color < 0)
@@ -211,13 +191,9 @@ void DrawWhiteScreen()
 					break;
 		}
 
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		DrawImage(back);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -257,18 +233,12 @@ void DrawColorBars()
 	updateVMU("Colorbars", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		if(!type)
 			DrawImage(back);
 		else
 			DrawImage(backgrid);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -305,15 +275,9 @@ void Draw601ColorBars()
 	updateVMU("Colorbars", "with gray", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		DrawImage(back);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -350,18 +314,12 @@ void DrawColorBleed()
 	updateVMU("Bleed CHK", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		if(!type)
 			DrawImage(back);
 		else
 			DrawImage(backchk);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -409,15 +367,9 @@ void DrawGrid()
 	updateVMU(" 	Grid	", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		DrawImage(back);		
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -461,9 +413,7 @@ void DrawLinearity()
 	updateVMU("Linearity", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		if(showgrid)
 		{
 			if(gridpattern)
@@ -472,11 +422,7 @@ void DrawLinearity()
 				DrawImage(grid);
 		}
 		DrawImage(circles);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -525,9 +471,7 @@ void Draw100IRE()
 	updateVMU(" 100 IRE ", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
     		if(invert)
       			DrawImage(white);	
 		DrawImage(back);		
@@ -548,12 +492,7 @@ void Draw100IRE()
       			}
 		}
 
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
-
+		EndScene();
 		st = ReadController(0);
 		if(st)
 		{

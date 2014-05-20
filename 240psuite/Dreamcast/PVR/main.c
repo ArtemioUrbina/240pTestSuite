@@ -123,10 +123,7 @@ start:
 		maple_device_t *sip = NULL;
 #endif
 				
-		pvr_wait_ready();
-		pvr_scene_begin();
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
+		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
 		
@@ -171,19 +168,19 @@ start:
 				if(vcable != CT_VGA)
 					sprintf(res, "Video: 240p");
 				else
-					sprintf(res, "Video: 240p linedoubled");
+					sprintf(res, "Video: 480p linedoubled 240p");
 				break;
 			case NATIVE_640:
-				sprintf(res, "Video: 240p in 480i");
+				sprintf(res, "Video: 480i no scaling/240p assets");
 				break;
 			case FAKE_640:
-				sprintf(res, "Video: Fake 480i");
+				sprintf(res, "Video: 480i scaled 240p");
 				break;
 			case NATIVE_640_FS:
 				if(vcable != CT_VGA)
-					sprintf(res, "Video: 480i");
+					sprintf(res, "Video: 480i no scaling/mixed assers");
 				else
-					sprintf(res, "Video: 480p Full Screen");
+					sprintf(res, "Video: 480p no scaling/mixed assets");
 				break;
 			case FAKE_640_SL:
 				sprintf(res, "Video: 480p %s scanlines %0.0f%%", ScanlinesEven() ? "even" : "odd", GetScanlineIntensity());
@@ -233,11 +230,7 @@ start:
 				break;
 		}
 		
-		DrawScanlines();
-				
-		pvr_list_finish();				
-		pvr_scene_finish();
-
+		EndScene();
 		st = ReadController(0);
 		if(st)
 		{
@@ -409,10 +402,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		float 	x = 40.0f;
 		float 	y = 55.0f;
 				
-		pvr_wait_ready();
-		pvr_scene_begin();
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
+		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
 
@@ -460,10 +450,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 				break;
 		}
 		
-		DrawScanlines();
-				
-		pvr_list_finish();				
-		pvr_scene_finish();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -576,9 +563,7 @@ void DrawCredits(ImagePtr back)
 	{
 		int x = 30, y = 52;
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		DrawImage(back);
 
 		if(counter == 1)
@@ -618,12 +603,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(220, y, 1.0, 1.0, 1.0, "Ver. 1.19"); y += fh; 
 		DrawStringS(220, y, 1.0, 1.0, 1.0, "19/05/2014"); y += fh; 
 
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
-
+		EndScene();
 		counter ++;
 
 		st = ReadController(0);
@@ -665,19 +645,11 @@ void DrawIntro()
 		if(counter == frames)
 			delta *= -1;
 
-		pvr_scene_begin();
-	
-		pvr_list_begin(PVR_LIST_TR_POLY);
-	
+		StartScene();
 		DrawStringS(120, 115, 1.0, 1.0, 1.0, "KORDAMP PRESENTS");
 		DrawImage(black);
 
-		DrawScanlines();
-		pvr_list_finish();
-	
-		pvr_scene_finish();
-		pvr_wait_ready();
-
+		EndScene();
 	}
 	FreeImage(&black);
 }

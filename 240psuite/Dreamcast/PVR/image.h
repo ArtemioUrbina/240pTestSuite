@@ -31,10 +31,10 @@ struct image_st{
 		float   x;
 		float   y;
 		float   layer;    
-		float		u1;
-		float		v1;
-		float		u2;
-		float		v2;
+		float	u1;
+		float	v1;
+		float	u2;
+		float	v2;
 		float  	w;	
 		float  	h;
 		float  	tw;
@@ -46,12 +46,12 @@ struct image_st{
 		uint32  scale;
 		uint16  FH;
 		uint16  FV;
+		uint32	texFormat;
 
 		uint16    RefCount;
 		ImagePtr  copyOf;
 };
 
-//ImagePtr LoadImage(const char *filename, int maptoscreen);
 ImagePtr LoadKMG(const char *filename, int maptoscreen);
 ImagePtr CloneImage(ImagePtr source, int maptoscreen);
 void FreeImage(ImagePtr *image);
@@ -60,5 +60,7 @@ void FlipH(ImagePtr image, uint16 flip);
 void FlipV(ImagePtr image, uint16 flip);
 void FlipHV(ImagePtr image, uint16 flip);
 void DrawImage(ImagePtr image);
+inline void StartScene();
+inline void EndScene();
 
 #endif

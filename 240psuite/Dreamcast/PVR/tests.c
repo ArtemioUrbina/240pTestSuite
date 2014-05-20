@@ -476,6 +476,11 @@ void LagTest()
 
 		DrawImage(back);
 
+		spriteA->x = x;
+		spriteA->y = y;
+		spriteB->x = x2;
+		spriteB->y = y2;
+
 		if(y == 96)
 		{			
 			if(audio && beep != SFXHND_INVALID)
@@ -668,10 +673,6 @@ void LagTest()
 		y += speed;
 		x2 += speed;
 
-		spriteA->x = x;
-		spriteA->y = y;
-		spriteB->x = x2;
-		spriteB->y = y2;
 
 	}
 

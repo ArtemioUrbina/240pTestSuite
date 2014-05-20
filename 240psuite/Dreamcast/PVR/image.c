@@ -135,68 +135,6 @@ int gkmg_to_img(const char * fn, kos_img_t * rv) {
 	return 0;
 }
 
-/*
-ImagePtr LoadImage(const char *filename, int maptoscreen)
-{
-	uint32	w, h;
-	ImagePtr image;
-#ifdef BENCHMARK
-	uint32 start, end;
-	char msg[100];
-		
-	timer_ms_gettime(NULL, &start);	
-#endif
-	image = (ImagePtr)malloc(sizeof(struct image_st));
-	if(!image)
-	{
-		fprintf(stderr, "Could not malloc image struct %s\n", filename);
-		return(NULL);
-	}
-	if(png_load_texture(filename, &image->tex, PNG_FULL_ALPHA, &w, &h) == -1)
-	{
-		free(image);
-		fprintf(stderr, "Could not load %s\n", filename);
-		return(NULL);
-	} 		
-#ifdef BENCHMARK
-	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "PNG %s took %lu ms\n", filename, (unsigned int)end - start);
-	dbglog(DBG_KDEBUG, msg);	
-#endif
-
-	image->r = 1.0f;
-	image->g = 1.0f;
-	image->b = 1.0f;
-
-	image->tw = w;
-	image->th = h;
-	image->x = 0;
-	image->y = 0;
-	image->u1 = 0.0f;
-	image->v1 = 0.0f;
-	image->u2 = 1.0f;
-	image->v2 = 1.0f;
-	image->layer = 1.0f;
-	image->scale = 1;
-	image->alpha = 1.0;
-	image->w = image->tw;
-	image->h = image->th;
-	image->RefCount = 1;
-	image->FH = 0;
-	image->FV = 0;
-	image->copyOf = NULL;
-	if(maptoscreen)
-	{
-		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, 240, image);
-		else
-			CalculateUV(0, 0, dW, dH, image);
-	}
-
-	return image;
-}
-*/
-
 ImagePtr LoadKMG(const char *filename, int maptoscreen)
 {	
 	int load, len;
@@ -265,6 +203,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	image->FH = 0;
 	image->FV = 0;
 	image->copyOf = NULL;
+	image->texFormat = PVR_TXRFMT_ARGB1555;
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
@@ -310,6 +249,7 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	image->FH = image->FH;
 	image->FV = image->FV;
 	image->copyOf = source;
+	image->texFormat = source->texFormat;
 	source->RefCount ++;
 	if(maptoscreen)
 	{
@@ -431,7 +371,7 @@ void DrawImage(ImagePtr image)
 		h *= 2;
 	}
 		
-	pvr_poly_cxt_txr(&cxt, PVR_LIST_TR_POLY, PVR_TXRFMT_ARGB1555, image->tw, image->th, image->tex, PVR_FILTER_NONE);
+	pvr_poly_cxt_txr(&cxt, PVR_LIST_TR_POLY, image->texFormat, image->tw, image->th, image->tex, PVR_FILTER_NONE);
 	pvr_poly_compile(&hdr, &cxt);
 	pvr_prim(&hdr, sizeof(hdr));
 
@@ -467,5 +407,19 @@ void DrawImage(ImagePtr image)
 	vert.v = image->v2;
 	vert.flags = PVR_CMD_VERTEX_EOL;
 	pvr_prim(&vert, sizeof(vert));
+}
+
+inline void StartScene()
+{
+	pvr_scene_begin();
+	pvr_list_begin(PVR_LIST_TR_POLY);
+}
+
+inline void EndScene()
+{
+	DrawScanlines();
+	pvr_list_finish();				
+	pvr_scene_finish();
+	pvr_wait_ready();
 }
 
