@@ -43,6 +43,9 @@
 #define MANUALLAG	"/rd/help/manuallag.txt"
 #define PASSIVELAG	"/rd/help/passivelag.txt"
 #define SMPTECOLOR	"/rd/help/SMPTEColor.txt"
+#define COLOR601	"/rd/help/color601.txt"
+#define WHITEHELP	"/rd/help/white.txt"
+#define LINEARITYHELP	"/rd/help/linearity.txt"
 
 void HelpWindow(char *data);
 void DrawHelpWindow(char *filename, ImagePtr screen);

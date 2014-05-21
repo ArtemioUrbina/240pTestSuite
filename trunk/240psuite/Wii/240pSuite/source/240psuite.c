@@ -376,7 +376,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 void DrawCredits(ImagePtr Back)
 {
 	int 	done = 0;	
-    u32     pressed = 0, counter = 1;
+    	u32     pressed = 0, counter = 1;
 	char	name[50], title[50];
 #ifdef WII_VERSION
 	u8 		shopcode = 0;
@@ -451,7 +451,7 @@ void DrawCredits(ImagePtr Back)
 		
 		if ( pressed & PAD_BUTTON_START) 		
 			DrawMenu = 1;	
-        if (pressed & PAD_TRIGGER_R)
+        	if (pressed & PAD_TRIGGER_R)
 			DrawIntro();
 		if (pressed & PAD_BUTTON_B)
 			done =	1;		

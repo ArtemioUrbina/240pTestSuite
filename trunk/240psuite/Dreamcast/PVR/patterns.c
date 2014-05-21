@@ -193,6 +193,9 @@ void DrawWhiteScreen()
 
 			if (pressed & CONT_B)
 				color --;
+
+			if(st->rtrig > 5)
+				HelpWindow(WHITEHELP);
 		}
 	}
 	FreeImage(&back);
@@ -265,7 +268,7 @@ void Draw601ColorBars()
 				done =	1;								
 
 			if(st->rtrig > 5)
-				HelpWindow(COLORBARSHELP);
+				HelpWindow(COLOR601);
 		}
 	}
 	FreeImage(&back);
@@ -402,6 +405,9 @@ void DrawLinearity()
 		
 			if (pressed & CONT_START)
 				done =	1;				
+
+			if (st->rtrig > 5)
+				HelpWindow(LINEARITYHELP);
 		}
 	}
 
