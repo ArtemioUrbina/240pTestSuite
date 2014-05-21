@@ -41,11 +41,9 @@ struct settings_st settings = {
 
 void Settings(ImagePtr back)
 {
-	int 				done = 0, sel = 1;
-	uint16			oldbuttons, pressed;		
+	int 		done = 0, sel = 1;
+	uint16		pressed;		
 	controller	*st;
-
-	oldbuttons = InitController(0);
 
 	updateVMU("Settings", "", 1);
 	while(!done) 
@@ -84,12 +82,9 @@ void Settings(ImagePtr back)
 
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-			
 			if (pressed & CONT_START)
 				done =	1;				
 

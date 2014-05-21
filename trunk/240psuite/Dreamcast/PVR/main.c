@@ -34,6 +34,7 @@
 #include "patterns.h"
 
 #include "help.h"
+#include "menu.h"
 #include "settings.h"
 
 /* romdisk */
@@ -50,7 +51,7 @@ void DrawIntro();
 int main(void)
 {
 	int 			done = 0, sel = 1, joycnt = 0;
-	uint16			oldbuttons, pressed, start = 1;
+	uint16			pressed, start = 1;
 	ImagePtr		title, sd;
 	controller	*st;
 
@@ -94,7 +95,6 @@ start:
 	else
 		pvr_set_bg_color(0.0f, 1.0f, 0.0f);
 		
-	InitTextureFB();
 	LoadFont();
 	LoadScanlines();
 	title = LoadKMG("/rd/back.kmg.gz", 1);
@@ -105,7 +105,6 @@ start:
 		sd->y = 94;
 	}
 	
-	oldbuttons = InitController(0);
 	if(start)
 	{
 		DrawIntro();
@@ -232,12 +231,9 @@ start:
 		}
 		
 		EndScene();
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-
 			if (st->buttons & CONT_START && st->buttons & CONT_Y)
 			{
 				updateVMU(" Goodbye ", " m(_ _)m ", 1);
@@ -344,7 +340,6 @@ start:
 							Alternate240p480i();
 							ReleaseScanlines();
 							ReleaseFont();
-							FreeTextureFB();
 							goto start;
 						}
 						break;
@@ -357,13 +352,12 @@ start:
 						FreeImage(&sd);		
 						ReleaseScanlines();
 						ReleaseFont();
-						FreeTextureFB();
 						// we need to reload textures and stuff..
 						// not pretty, but "clean"
 						goto start;
 						break;
 					case 14:
-						HelpWindow(GENERALHELP, title);
+						HelpWindow(GENERALHELP);
 						break;
 					case 15:
 						DrawCredits(title);
@@ -374,7 +368,6 @@ start:
 						break;          						
 				} 					
 				updateVMU("240p Test", "", 1);				
-				oldbuttons = InitController(0);
 			}
 		}
 		updateVMU("240p Test", "", 0);
@@ -384,7 +377,6 @@ start:
 	FreeImage(&sd);		
 	ReleaseScanlines();
 	ReleaseFont();
-	FreeTextureFB();
 #ifndef SERIAL
 	arch_menu();
 #endif
@@ -394,10 +386,9 @@ start:
 void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 {
 	int 			done = 0, sel = 1, joycnt = 0;
-	uint16			oldbuttons, pressed;		
+	uint16			pressed;		
 	controller		*st;
 
-	oldbuttons = InitController(0);
 	while(!done) 
 	{		
 		float 	r = 1.0f;
@@ -457,12 +448,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-
 			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
 				RaiseScanlineIntensity();
 
@@ -543,7 +531,6 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 						done = 1;
 						break;
 				} 												
-				oldbuttons = InitController(0);
 				updateVMU("Patterns", "", 1);
 			}			
 		}
@@ -557,11 +544,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 void DrawCredits(ImagePtr back)
 {
 	int 		done = 0;
-	uint16		oldbuttons, pressed, counter = 1;		
+	uint16		pressed, counter = 1;		
 	char 		name[50], title[50];
 	controller	*st;
-
-	oldbuttons = InitController(0);
 
 	updateVMU("	Credits", "", 1);
 	while(!done) 
@@ -611,12 +596,9 @@ void DrawCredits(ImagePtr back)
 		EndScene();
 		counter ++;
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-			
 			if (st->rtrig > 5)
 				DrawIntro();
 
