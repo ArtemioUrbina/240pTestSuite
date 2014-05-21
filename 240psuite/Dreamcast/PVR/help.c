@@ -120,7 +120,14 @@ uint16 HelpWindow(char *filename, ImagePtr screen)
 	updateVMU(" 	Help	", "", 1);
 	while(!done) 
 	{
-		pvr_wait_ready();
+		StartScene();
+		if(screen)
+			DrawImage(screen);
+		DrawImage(back);
+		DrawStringS(34, 42, 1.0f, 1.0f, 1.0f, pages[page]); 
+
+		DrawStringS(100, 200, 0.9f, 0.9f, 0.9f, "Press START to return"); 
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -144,24 +151,10 @@ uint16 HelpWindow(char *filename, ImagePtr screen)
 
 		if(page > npages - 1)
 			page = npages - 1;
-
 		if(page < 0)
 			page = 0;
-
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-		if(screen)
-			DrawImage(screen);
-		DrawImage(back);
-		DrawStringS(34, 42, 1.0f, 1.0f, 1.0f, pages[page]); 
-
-		DrawStringS(100, 200, 0.9f, 0.9f, 0.9f, "Press START to return"); 
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
 	}
+
 	if(buffer)
 		free(buffer);
 	if(pages)

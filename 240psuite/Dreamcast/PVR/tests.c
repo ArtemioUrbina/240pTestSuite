@@ -113,9 +113,7 @@ void DropShadowTest()
 	updateVMU("  Shadow	", "  even  ", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		if(selback == 1)
 		{
 			CalculateUV(x, 0, dW, 240, back[selback]);
@@ -150,11 +148,7 @@ void DropShadowTest()
 			buzz->y = y - 20;
 			DrawImage(buzz);
 		} 			
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -317,9 +311,7 @@ void StripedSpriteTest()
 	updateVMU(" Striped ", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		if(selback == 1)
 		{
 			CalculateUV(x, 0, dW, 240, back[selback]);
@@ -332,12 +324,7 @@ void StripedSpriteTest()
 		striped->x = x;
 		striped->y = y;
 		DrawImage(striped);
-
-		DrawScanlines();
-		pvr_list_finish();
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -470,9 +457,7 @@ void LagTest()
 
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 
 		DrawImage(back);
 
@@ -582,12 +567,7 @@ void LagTest()
 		if(purupuru)
 			DrawStringS(20, 170+5*fh, 0.0f, 1.0f, 0.0f, "\"X\" button toggles vibration feedback.");
 
-		DrawScanlines();
-
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -698,8 +678,7 @@ void LagTest()
 		oldbuttons = InitController(0);
 		while(!done)
 		{
-			pvr_scene_begin();
-			pvr_list_begin(PVR_LIST_TR_POLY);
+			StartScene();
 
 			DrawImage(wall);
 
@@ -746,11 +725,7 @@ void LagTest()
 				updateVMUFlash("Lag Test ", "-PERFECT-", 1);
 			}
 
-			DrawScanlines();
-			pvr_list_finish();				
-
-			pvr_scene_finish();
-			pvr_wait_ready();
+			EndScene();
 
 			st = ReadController(0);	
 			if(st)
@@ -785,9 +760,7 @@ void ScrollTest()
 	updateVMU(" Scroll  ", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 
 		if(speed > 15)
 			speed = 15;
@@ -808,11 +781,7 @@ void ScrollTest()
 		CalculateUV(x*2, 0, dW, 240, overlay);
 		DrawImage(back);
 		DrawImage(overlay);
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -861,10 +830,7 @@ void GridScrollTest()
 	updateVMU("G. Scroll", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
+		StartScene();
 		if(speed > 5)
 			speed = 5;
 
@@ -881,13 +847,8 @@ void GridScrollTest()
 				
 		CalculateUV(x, y, dW, dH, back);    
 		DrawImage(back);
+		EndScene();
 	
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
-
 		st = ReadController(0);
 		if(st)
 		{
@@ -955,10 +916,7 @@ void DrawStripes()
 	updateVMU(" Stripes", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
+		StartScene();
 		if(!vertical)
 		{
 			if(field == 1)
@@ -990,12 +948,7 @@ void DrawStripes()
 			if(frame > 59)
 				frame = 0;
 		}
-
-		DrawScanlines();
-		pvr_list_finish();
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -1053,15 +1006,15 @@ void DrawCheckBoard()
 		return;
 	checkneg = LoadKMG("/rd/checkneg.kmg.gz", 1);
 	if(!checkneg)
+	{
+		FreeImage(&checkpos);
 		return;
+	}
 
 	updateVMU("CHKB PTTN", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
+		StartScene();
 		if(field == 1)
 			DrawImage(checkpos);
 		else
@@ -1083,12 +1036,7 @@ void DrawCheckBoard()
 			if(frame > 59)
 				frame = 0;
 		}
-
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -1147,21 +1095,14 @@ void SoundTest()
 	updateVMU("Sound Test", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 		DrawImage(back);
 
 		DrawStringS(130, 60, 1.0f, 1.0f, 1.0f, "Sound Test"); 
 		DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
 		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,	sel == 1 ? 0 : 1.0f, "Center Channel");
 		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");
-		DrawScanlines();
-		
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -1252,9 +1193,7 @@ void LEDZoneTest()
 	updateVMU("Backlit", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);		
+		StartScene();
 		DrawImage(back);		
 
 		if(show)
@@ -1263,12 +1202,7 @@ void LEDZoneTest()
 			sprite[selsprite]->y = y;
 			DrawImage(sprite[selsprite]);
 		}
-
-		DrawScanlines();
-		pvr_list_finish();
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -1368,10 +1302,7 @@ void PassiveLagTest()
 	updateVMU("LAG TEST", "", 1);
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
+		StartScene();
 		DrawImage(back);
 		DrawString(32, 8, 0, 0,	0, "hours");
 		DrawString(104, 8, 0, 0, 0, "minutes");
@@ -1529,11 +1460,7 @@ void PassiveLagTest()
 		DrawDigit(248, 16, 0, 0, 0, msd);
 		DrawDigit(272, 16, 0, 0, 0, lsd);
 
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -1641,9 +1568,7 @@ void Alternate240p480i()
 
 	while(!done) 
 	{
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
+		StartScene();
 
 		DrawString(32, 8, 0, 1.0f, 0, "Current Resolution:");
 		DrawString(140, 8, 0, 1.0f, 0, res == 0 ? "240p" : "480i");
@@ -1683,11 +1608,7 @@ void Alternate240p480i()
 			}
 		}
 
-		DrawScanlines();
-		pvr_list_finish();				
-
-		pvr_scene_finish();
-		pvr_wait_ready();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -1859,9 +1780,7 @@ void TestVideoMode()
 			load = 0;
 		}
 
-		pvr_scene_begin();
-		pvr_list_begin(PVR_LIST_TR_POLY);
-
+		StartScene();
 		if(showback)
 			DrawImage(back);
 
@@ -1914,12 +1833,7 @@ void TestVideoMode()
 		sprintf(str, " Active Area Margin Bottom:       %d", vga_mode.scanlines - vga_mode.bitmapy - vga_mode.height);
 		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
 
-		DrawScanlines();
-
-		pvr_list_finish();				
-		pvr_scene_finish();
-		pvr_wait_ready();
-
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
@@ -2122,9 +2036,7 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int R
 	char	Header[40];
 	char	Res[40];
 
-	pvr_scene_begin();
-
-	pvr_list_begin(PVR_LIST_TR_POLY);
+	StartScene();
 	DrawImage(back);
 
 	sprintf(DPres, "Precision %d", pres);
@@ -2152,12 +2064,7 @@ void DrawSIPScreen(ImagePtr back, char *Status, int pres, double *Results, int R
 			DrawStringS(170, 70+i*fh, 1.0f, 1.0f,	1.0f, Res);
 		}
 	}
-	DrawScanlines();
-	
-	pvr_list_finish();				
-
-	pvr_scene_finish();
-	pvr_wait_ready();
+	EndScene();
 }
 
 void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
