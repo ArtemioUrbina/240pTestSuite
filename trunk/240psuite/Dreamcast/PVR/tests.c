@@ -183,7 +183,7 @@ void DropShadowTest()
 			if(st->joyy != 0)
 				y += st->joyy/40;
 		
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;
 
 			if (pressed & CONT_X)
@@ -210,7 +210,7 @@ void DropShadowTest()
 					selback = 0;
 			}
 		
-			if (pressed & CONT_B)
+			if (pressed & CONT_Y)
 			{
 				if(sprite == 0)
 				{
@@ -224,7 +224,7 @@ void DropShadowTest()
 				}
 			}
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(DROPSHADOW);
 		}
 
@@ -361,7 +361,7 @@ void StripedSpriteTest()
 			if(st->joyy != 0)
 				y += st->joyy/40;
 		
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;
 						
 			if (pressed & CONT_A)
@@ -372,15 +372,7 @@ void StripedSpriteTest()
 					selback = 3;
 			}
 		
-			if (pressed & CONT_B)
-			{
-				if(selback < 3)
-					selback ++;
-				else
-					selback = 0;
-			}
-
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(STRIPED);
 		}
 
@@ -407,8 +399,8 @@ void LagTest()
 {
 	char				msg[60];
 	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
-	int				x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 0, vary = 0, variation = 1;
-	uint16				pressed, ltrig = 0, oldltrig = 0;		
+	int				x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 1, vary = 0, variation = 1;
+	uint16				pressed;		
 	ImagePtr			back, spriteA, spriteB;
 	sfxhnd_t			beep;
 	maple_device_t			*purupuru = NULL;
@@ -446,6 +438,7 @@ void LagTest()
 	for(i = 0; i < 10; i++)
 		clicks[i] = 0xFF;
 
+	purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
 	while(!done) 
 	{
 		StartScene();
@@ -552,20 +545,17 @@ void LagTest()
 
 		DrawStringS(20, 170, 0.0f, 1.0f, 0.0f, "Press \"A\" when the sprite is aligned with the background.");
 		DrawStringS(20, 170+fh, 0.0f, 1.0f, 0.0f, "Negative values mean you pressed \"A\" before they intersected");
-		DrawStringS(20, 170+2*fh, 0.0f, 1.0f, 0.0f, "\"B\" button toggles horizontal and vertical movement.");
-		DrawStringS(20, 170+3*fh, 0.0f, 1.0f, 0.0f, "\"L\" trigger toggles rhythmic timing.");
-		DrawStringS(20, 170+4*fh, 0.0f, 1.0f, 0.0f, "\"Y\" button toggles audio feedback.");
+		DrawStringS(20, 170+2*fh, 0.0f, 1.0f, 0.0f, "\"X\" button toggles horizontal and vertical movement.");
+		DrawStringS(20, 170+3*fh, 0.0f, 1.0f, 0.0f, "\"Y\" button toggles rhythmic timing.");
+		DrawStringS(20, 170+4*fh, 0.0f, 1.0f, 0.0f, "\"R\" trigger toggles audio feedback.");
 		if(purupuru)
-			DrawStringS(20, 170+5*fh, 0.0f, 1.0f, 0.0f, "\"X\" button toggles vibration feedback.");
+			DrawStringS(20, 170+5*fh, 0.0f, 1.0f, 0.0f, "\"L\" trigger toggles vibration feedback.");
 
 		EndScene();
 
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			ltrig = st->ltrig > 5 && oldltrig < 5;
-			oldltrig = st->ltrig;
-					
 			if (pressed & CONT_A)
 			{
 				if(change)
@@ -586,30 +576,30 @@ void LagTest()
 				}
 			}
 
-			if (pressed & CONT_B)
+			if (pressed & CONT_X)
 			{
 				view ++;
 				if(view > 2)
 					view = 0;
 			}
 						
-			if (pressed & CONT_Y)
+			if (pressed & CONT_RTRIGGER)
 				audio =	!audio;				
 		
-			if (pressed & CONT_X)
-				vibrate =	!vibrate;				
+			if (pressed & CONT_LTRIGGER)
+				vibrate = !vibrate;				
 		
-			if(ltrig)
+			if (pressed & CONT_Y)
 			{
 				variation = !variation;
 				if(!variation)
 					vary = 0;
 			}
 
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;				
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(MANUALLAG);
 		}
 		
@@ -718,8 +708,10 @@ void LagTest()
 			st = ReadController(0, &pressed);	
 			if(st)
 			{
-				if (st->buttons & CONT_START)
+				if (pressed & CONT_B)
 					done =	1;
+				if (pressed & CONT_START)
+					HelpWindow(MANUALLAG);
 			}
 		}
 		FreeImage(&wall);
@@ -779,16 +771,16 @@ void ScrollTest()
 			if (pressed & CONT_DPAD_DOWN)
 				speed --;
 
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done = 1;
 
 			if (pressed & CONT_A)
 				pause = !pause;
 
-			if (pressed & CONT_B)
+			if (pressed & CONT_X)
 				acc *= -1;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(SCROLL);
 		}
 	}
@@ -841,13 +833,13 @@ void GridScrollTest()
 			if (pressed & CONT_DPAD_DOWN)
 				speed --;
 
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done = 1;
 
 			if (pressed & CONT_A)
 				pause = !pause;
 
-			if (pressed & CONT_B)
+			if (pressed & CONT_Y)
 				acc *= -1;
 
 			if (pressed & CONT_X)
@@ -860,7 +852,7 @@ void GridScrollTest()
 			if(st->joyy != 0)
 				y += st->joyy/30;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(GRIDSCROLL);
 		}
 
@@ -932,7 +924,7 @@ void DrawStripes()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;				
 						
 			if (pressed & CONT_A)
@@ -953,10 +945,10 @@ void DrawStripes()
 				frame = 0;
 			}
 						
-			if (pressed & CONT_B && !alternate)
+			if (pressed & CONT_RTRIGGER && !alternate)
 				field = !field;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(STRIPESHELP);
 		}
 	}
@@ -1016,7 +1008,7 @@ void DrawCheckBoard()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;				
 						
 			if (pressed & CONT_A)
@@ -1034,10 +1026,10 @@ void DrawCheckBoard()
 				frame = 0;
 			}
 						
-			if (pressed & CONT_B && !alternate)
+			if (pressed & CONT_RTRIGGER && !alternate)
 				field = !field;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(CHECKHELP);
 		}
 	}
@@ -1077,7 +1069,7 @@ void SoundTest()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;								
 
 			if (pressed & CONT_A)
@@ -1089,7 +1081,7 @@ void SoundTest()
 			if (pressed & CONT_DPAD_RIGHT)
 				sel ++;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(SOUNDHELP);
 		}
 		
@@ -1196,10 +1188,10 @@ void LEDZoneTest()
 					y += st->joyy/40;
 			}
 		
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;
 						
-			if (pressed & CONT_A)
+			if (pressed & CONT_LTRIGGER)
 			{
 				if(selsprite > 0)
 					selsprite --;
@@ -1207,7 +1199,7 @@ void LEDZoneTest()
 					selsprite = 4;
 			}
 		
-			if (pressed & CONT_B)
+			if (pressed & CONT_RTRIGGER)
 			{
 				if(selsprite < 4)
 					selsprite ++;
@@ -1215,10 +1207,10 @@ void LEDZoneTest()
 					selsprite = 0;
 			}
 
-			if (pressed & CONT_Y)
+			if (pressed & CONT_A)
 				show = !show;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(BACKLITHELP);
 		}
 		
@@ -1426,10 +1418,10 @@ void PassiveLagTest()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;				
 						
-			if (pressed & CONT_B && pause)
+			if (pressed & CONT_X && pause)
 			{
 				frames = hours = minutes = seconds = 0;
 				framecnt = 1;
@@ -1438,7 +1430,7 @@ void PassiveLagTest()
 			if (pressed & CONT_A)
 				pause = !pause;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(PASSIVELAG);
 		}
 
@@ -1569,10 +1561,10 @@ void Alternate240p480i()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(ALTERNATE);
 
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;				
 						
 			if (pressed & CONT_A)
@@ -1789,7 +1781,7 @@ void TestVideoMode()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;				
 
 			if (pressed & CONT_X)
@@ -2114,15 +2106,18 @@ void SIPLagTest()
 			if(st)
 			{
 				if (pressed & CONT_START)
+					HelpWindow(FFTHELP);
+
+				if (pressed & CONT_B)
 					done =1;				
 	
 				if (pressed & CONT_A)
 					status = 1;
 
-				if (pressed & CONT_DPAD_UP)
+				if (pressed & CONT_RTRIGGER)
 					pres *= 2;
 
-				if (pressed & CONT_DPAD_DOWN)
+				if (pressed & CONT_LTRIGGER)
 					pres /= 2;
 
 				if(pres > 4)

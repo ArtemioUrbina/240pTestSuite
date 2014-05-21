@@ -1,4 +1,4 @@
-                    HELP
+                    HELP (1/2)
 
 The 240p Test Suite was designed with two goals
 in mind:
@@ -11,4 +11,22 @@ game console to help in properly calibrating the
 display's black, white and color levels.
 
 Help is available on some patterns by pressing the
-Right Trigger.
+Start button. Use right and left in the d-pad to
+navigate between help pages.
+                                        (cont...)
+                    HELP (2/2)
+
+The Dreamcast microphone is supported, and when
+connected it enables a new lag test.
+
+This test can be used to measure display lag if
+both video and audio follow the same chain.
+
+It uses fast Fourier Transform (FFT) to detect the
+audio delay by playing a 1Khz tone and accurately
+calculating the frame delay.
+
+The Purupuru and VMU are also supported for some
+tests and information display.
+
+All devices can be hotswapped.

@@ -133,24 +133,22 @@ void  DrawHelpWindow(char *filename, ImagePtr screen)
 		DrawImage(back);
 		DrawStringS(34, 42, 1.0f, 1.0f, 1.0f, pages[page]); 
 
-		DrawStringS(100, 200, 0.9f, 0.9f, 0.9f, "Press START to return"); 
+		DrawStringS(110, 200, 0.9f, 0.9f, 0.9f, "Press B to return"); 
 		EndScene();
 
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;								
 			if (pressed & CONT_DPAD_LEFT)
 				page --;
 			if (pressed & CONT_DPAD_RIGHT)
 				page ++;
-			/*
-			if (st->rtrig > 5)
+			if (pressed & CONT_RTRIGGER)
 				page ++;
-			if (st->ltrig > 5)
+			if (pressed & CONT_LTRIGGER)
 				page --;
-			*/
 		}
 
 		if(page > npages - 1)

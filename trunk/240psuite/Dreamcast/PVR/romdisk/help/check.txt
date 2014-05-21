@@ -3,7 +3,7 @@
 This pattern shows all the visible pixels in an
 alternating white and black grid array. 
 
-You can toggle the pattern with the B button, or
+You can toggle the pattern with the R trigger, or
 turn on auto-toggle each frame with the A button.
 
 When auto-toggle is set, you should see it

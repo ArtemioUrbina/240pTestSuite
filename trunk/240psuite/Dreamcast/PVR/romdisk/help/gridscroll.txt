@@ -6,5 +6,5 @@ and how well the display copes with scrolling.
 
 The X button can be used to toggle between
 horizontal and vertical, while the d-pad regulates
-speed; A button stops and the B button changes
+speed; A button stops and the Y button changes
 direction. 

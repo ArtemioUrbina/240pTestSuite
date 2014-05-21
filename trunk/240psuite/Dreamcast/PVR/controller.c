@@ -14,6 +14,10 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	st = (cont_state_t*)maple_dev_status(dev); 
 	if(!st)
 		return NULL;
+	if (st->ltrig > 5)
+		st->buttons |= CONT_LTRIGGER;
+	if (st->rtrig > 5)
+		st->buttons |= CONT_RTRIGGER;
 	if(pressed)
 		*pressed = st->buttons & ~OldButtonsInternal & st->buttons;
 	OldButtonsInternal = st->buttons;
