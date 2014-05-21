@@ -44,7 +44,8 @@
 #define PASSIVELAG	"/rd/help/passivelag.txt"
 #define SMPTECOLOR	"/rd/help/SMPTEColor.txt"
 
-uint16 HelpWindow(char *filename, ImagePtr screen);
+void HelpWindow(char *data);
+void DrawHelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);
 
 #endif

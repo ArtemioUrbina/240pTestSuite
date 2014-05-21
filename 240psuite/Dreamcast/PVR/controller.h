@@ -5,7 +5,6 @@
 
 typedef cont_state_t controller;
 
-uint16 InitController(uint16 num);
-cont_state_t *ReadController(uint16 num);
+cont_state_t *ReadController(uint16 num, uint16 *pressed);
 
 #endif

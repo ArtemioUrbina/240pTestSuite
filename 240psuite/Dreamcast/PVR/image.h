@@ -25,7 +25,6 @@
 #include <png/png.h>
 
 typedef struct image_st * ImagePtr;
-extern uint DrawMenu;
 
 struct image_st{
 		pvr_ptr_t tex;
@@ -63,8 +62,5 @@ void FlipHV(ImagePtr image, uint16 flip);
 void DrawImage(ImagePtr image);
 inline void StartScene();
 inline void EndScene();
-void InitTextureFB();
-void FreeTextureFB();
-void ShowMenu();
 
 #endif

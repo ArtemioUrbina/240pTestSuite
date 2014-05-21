@@ -20,6 +20,7 @@ include $(KOS_BASE)/Makefile.rules
             controller.c \
             vmu.c \
             settings.c \
+            menu.c \
 
 OBJS = $(.SRCS:.c=.o)
 

@@ -38,6 +38,7 @@
 #include "vmu.h"
 
 #include "help.h"
+#include "menu.h"
 #include "settings.h"
 
 typedef struct timecode{
@@ -53,11 +54,9 @@ void DropShadowTest()
 {
 	char		msg[50];
 	int		done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay;
 	controller 	*st;
-
-	oldbuttons = InitController(0);
 
 	back[1] = LoadKMG("/rd/sonicback.kmg.gz", 1);
 	if(!back[1])
@@ -150,12 +149,9 @@ void DropShadowTest()
 		} 			
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (st->buttons & CONT_DPAD_UP)
 				y --;
 		
@@ -229,7 +225,7 @@ void DropShadowTest()
 			}
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(DROPSHADOW, back[selback]);
+				HelpWindow(DROPSHADOW);
 		}
 
 		if(x < back[selback]->x)
@@ -256,11 +252,10 @@ void DropShadowTest()
 void StripedSpriteTest()
 {	
 	int		done = 0, x = 0, y = 0, selback = 0;
-	uint16		oldbuttons = 0xffff, pressed;
+	uint16		pressed;
 	ImagePtr	back[4], striped, overlay;
 	controller *st;
 
-	oldbuttons = InitController(0);
 	if(vmode != NATIVE_640_FS)
 	{		
 		back[0] = LoadKMG("/rd/motoko.kmg.gz", 1);
@@ -326,12 +321,9 @@ void StripedSpriteTest()
 		DrawImage(striped);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if(st->buttons & CONT_Y)
 			{
 				if (pressed & CONT_DPAD_UP)
@@ -389,7 +381,7 @@ void StripedSpriteTest()
 			}
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(STRIPED, back[selback]);
+				HelpWindow(STRIPED);
 		}
 
 		if(x < back[selback]->x)
@@ -416,14 +408,13 @@ void LagTest()
 	char				msg[60];
 	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int				x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 0, vary = 0, variation = 1;
-	uint16				oldbuttons, pressed, ltrig = 0, oldltrig = 0;		
+	uint16				pressed, ltrig = 0, oldltrig = 0;		
 	ImagePtr			back, spriteA, spriteB;
 	sfxhnd_t			beep;
 	maple_device_t			*purupuru = NULL;
 	static purupuru_effect_t	effect;
 	controller 			*st;
 
-	oldbuttons = InitController(0);
 	effect.duration = 1;
 	effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1);
 	effect.effect1 = PURUPURU_EFFECT1_INTENSITY(1);
@@ -569,11 +560,9 @@ void LagTest()
 
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
 			ltrig = st->ltrig > 5 && oldltrig < 5;
 			oldltrig = st->ltrig;
 					
@@ -621,7 +610,7 @@ void LagTest()
 				done =	1;				
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(MANUALLAG, NULL);
+				HelpWindow(MANUALLAG);
 		}
 		
 		if(y > 132 + vary)
@@ -675,7 +664,6 @@ void LagTest()
 		if(!wall)
 			return;
 
-		oldbuttons = InitController(0);
 		while(!done)
 		{
 			StartScene();
@@ -727,7 +715,7 @@ void LagTest()
 
 			EndScene();
 
-			st = ReadController(0);	
+			st = ReadController(0, &pressed);	
 			if(st)
 			{
 				if (st->buttons & CONT_START)
@@ -742,11 +730,10 @@ void LagTest()
 void ScrollTest()
 {
 	int 		done = 0, speed = 1, acc = 1, x = 0, pause = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back, overlay;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/sonicback.kmg.gz", 0);
 	if(!back)
 		return;
@@ -783,12 +770,9 @@ void ScrollTest()
 		DrawImage(overlay);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_DPAD_UP)
 				speed ++;
 
@@ -805,7 +789,7 @@ void ScrollTest()
 				acc *= -1;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(SCROLL, back);
+				HelpWindow(SCROLL);
 		}
 	}
 	FreeImage(&back);
@@ -816,11 +800,10 @@ void ScrollTest()
 void GridScrollTest()
 {
 	int 			done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, direction = 0;
-	uint16			oldbuttons, pressed;		
+	uint16			pressed;		
 	ImagePtr		back;
 	controller		*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/circles_grid.kmg.gz", 0);
 	if(!back)
 		return;  
@@ -849,12 +832,9 @@ void GridScrollTest()
 		DrawImage(back);
 		EndScene();
 	
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_DPAD_UP)
 				speed ++;
 
@@ -881,7 +861,7 @@ void GridScrollTest()
 				y += st->joyy/30;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(GRIDSCROLL, back);
+				HelpWindow(GRIDSCROLL);
 		}
 
 	}
@@ -893,12 +873,11 @@ void DrawStripes()
 {
 	int 			done = 0, field = 1, alternate = 0,
 				frame = 0, dframe = 0, vertical = 0;
-	uint16			oldbuttons, pressed;		
+	uint16			pressed;		
 	ImagePtr		stripespos, stripesneg;
 	ImagePtr		vstripespos, vstripesneg;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	stripespos = LoadKMG("/rd/stripespos.kmg.gz", 1);
 	if(!stripespos)
 		return;
@@ -950,12 +929,9 @@ void DrawStripes()
 		}
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;				
 						
@@ -981,7 +957,7 @@ void DrawStripes()
 				field = !field;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(STRIPESHELP, stripespos);
+				HelpWindow(STRIPESHELP);
 		}
 	}
 
@@ -996,11 +972,10 @@ void DrawCheckBoard()
 {
 	int 			done = 0, field = 1, alternate = 0,
 				frame = 0, dframe = 0;
-	uint16			oldbuttons, pressed;		
+	uint16			pressed;		
 	ImagePtr		checkpos, checkneg;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	checkpos = LoadKMG("/rd/checkpos.kmg.gz", 1);
 	if(!checkpos)
 		return;
@@ -1038,12 +1013,9 @@ void DrawCheckBoard()
 		}
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;				
 						
@@ -1066,7 +1038,7 @@ void DrawCheckBoard()
 				field = !field;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(CHECKHELP, checkpos);
+				HelpWindow(CHECKHELP);
 		}
 	}
 	FreeImage(&checkpos);
@@ -1077,13 +1049,11 @@ void DrawCheckBoard()
 void SoundTest()
 {
 	int 		done = 0, sel = 1, play = 0, pan = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back;
 	sfxhnd_t	beep;
 	controller	*st;
 
-	oldbuttons = InitController(0);
-	
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
 		return;
@@ -1104,12 +1074,9 @@ void SoundTest()
 		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;								
 
@@ -1123,7 +1090,7 @@ void SoundTest()
 				sel ++;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(SOUNDHELP, NULL);
+				HelpWindow(SOUNDHELP);
 		}
 		
 		if(sel < 0)
@@ -1161,11 +1128,10 @@ void SoundTest()
 void LEDZoneTest()
 {	
 	int		done = 0, x = 0, y = 0, selsprite = 1, show = 1;
-	uint16		oldbuttons = 0xffff, pressed;
+	uint16		pressed;
 	ImagePtr	back, sprite[5];
 	controller 	*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
@@ -1204,12 +1170,9 @@ void LEDZoneTest()
 		}
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;				
-			
 			if(show)
 			{
 				if (st->buttons & CONT_DPAD_UP)
@@ -1256,7 +1219,7 @@ void LEDZoneTest()
 				show = !show;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(BACKLITHELP, NULL);
+				HelpWindow(BACKLITHELP);
 		}
 		
 		if(x < 0)
@@ -1281,11 +1244,9 @@ void LEDZoneTest()
 void PassiveLagTest()
 {
 	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
-	uint16		oldbuttons, pressed, lsd, msd, pause = 0;		
+	uint16		pressed, lsd, msd, pause = 0;		
 	ImagePtr	back, circle;
 	controller	*st;
-
-	oldbuttons = InitController(0);
 
 	LoadNumbers();
 	back = LoadKMG("/rd/white.kmg.gz", 1);
@@ -1462,12 +1423,9 @@ void PassiveLagTest()
 
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;				
 						
@@ -1481,7 +1439,7 @@ void PassiveLagTest()
 				pause = !pause;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(PASSIVELAG, NULL);
+				HelpWindow(PASSIVELAG);
 		}
 
 
@@ -1550,11 +1508,9 @@ void Alternate240p480i()
 {
 	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, done =  0, current = 0, res = 0, status = 0;
 	timecode	times[20];
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	char 		buffer[20];
 	controller	*st;
-
-	oldbuttons = InitController(0);
 
 	updateVMU("240p/480i", "", 1);
 	if(vmode != NATIVE_320)
@@ -1610,14 +1566,11 @@ void Alternate240p480i()
 
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(ALTERNATE, NULL);
+				HelpWindow(ALTERNATE);
 
 			if (pressed & CONT_START)
 				done =	1;				
@@ -1739,7 +1692,7 @@ int					initvga = 1;
 void TestVideoMode()
 {
 	int 			done =  0;
-	uint16			oldbuttons, pressed, update = 0, load = 0, sel = 1, showback = 1;		
+	uint16			pressed, update = 0, load = 0, sel = 1, showback = 1;		
 	controller		*st;
 	char			str[50];
 	ImagePtr		back;
@@ -1757,8 +1710,6 @@ void TestVideoMode()
 	if(!back)
 		return;
 	back->scale = 0;
-
-	oldbuttons = InitController(0);
 
 	updateVMU("VIDEO", "", 1);
 
@@ -1835,12 +1786,9 @@ void TestVideoMode()
 
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;				
 
@@ -2097,7 +2045,7 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 void SIPLagTest()
 {
 	int 		done = 0, status = 0, counter = 0, pres = 1;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back;
 	sfxhnd_t	beep;  
 	controller	*st;
@@ -2106,8 +2054,6 @@ void SIPLagTest()
 	int             ResCount = 0;
 	char		DStatus[100];
 
-	oldbuttons = InitController(0);
-	
 	DStatus[0] = 0x0;
 	back = LoadKMG("/rd/back.kmg.gz", 1);
 	if(!back)
@@ -2164,12 +2110,9 @@ void SIPLagTest()
 
 		if(status == 0) // no input if we are sampling
 		{
-			st = ReadController(0);
+			st = ReadController(0, &pressed);
 			if(st)
 			{
-				pressed = st->buttons & ~oldbuttons;
-				oldbuttons = st->buttons;					      
-			 
 				if (pressed & CONT_START)
 					done =1;				
 	

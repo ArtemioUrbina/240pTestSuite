@@ -37,11 +37,10 @@
 void DrawPluge()
 {
 	int 		done = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/pluge.kmg.gz", 1);
 	if(!back)
 		return;
@@ -53,17 +52,14 @@ void DrawPluge()
 		DrawImage(back);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;								
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(PLUGEHELP, back);
+				HelpWindow(PLUGEHELP);
 		}
 	}
 	FreeImage(&back);
@@ -73,11 +69,10 @@ void DrawPluge()
 void DrawSMPTEColorBars()
 {
 	int 		done = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/SMPTEColorBars.kmg.gz", 1);
 	if(!back)
 		return;
@@ -89,17 +84,14 @@ void DrawSMPTEColorBars()
 		DrawImage(back);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;								
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(SMPTECOLOR, back);
+				HelpWindow(SMPTECOLOR);
 		}
 	}
 	FreeImage(&back);
@@ -109,11 +101,10 @@ void DrawSMPTEColorBars()
 void DrawGrayRamp()
 {
 	int 		done = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/grayramp.kmg.gz", 1);
 	if(!back)
 		return;
@@ -125,17 +116,14 @@ void DrawGrayRamp()
 		DrawImage(back);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;								
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(GRAYHELP, back);
+				HelpWindow(GRAYHELP);
 		}
 	}
 	FreeImage(&back);
@@ -145,11 +133,10 @@ void DrawGrayRamp()
 void DrawWhiteScreen()
 {
 	int 		done = 0, color = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
@@ -195,12 +182,9 @@ void DrawWhiteScreen()
 		DrawImage(back);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;								
 
@@ -217,12 +201,11 @@ void DrawWhiteScreen()
 
 void DrawColorBars()
 {
-	int 				done = 0, type = 0;
-	uint16			oldbuttons, pressed;		
-	ImagePtr		back, backgrid;
+	int 		done = 0, type = 0;
+	uint16		pressed;		
+	ImagePtr	back, backgrid;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/color.kmg.gz", 1);
 	if(!back)
 		return;
@@ -240,12 +223,9 @@ void DrawColorBars()
 			DrawImage(backgrid);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;								
 
@@ -253,7 +233,7 @@ void DrawColorBars()
 				type = !type;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(COLORBARSHELP, back);
+				HelpWindow(COLORBARSHELP);
 		}
 	}
 	FreeImage(&back);
@@ -263,11 +243,10 @@ void DrawColorBars()
 void Draw601ColorBars()
 {
 	int 		done = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/601701cb.kmg.gz", 1);
 	if(!back)
 		return;
@@ -279,17 +258,14 @@ void Draw601ColorBars()
 		DrawImage(back);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;								
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(COLORBARSHELP, back);
+				HelpWindow(COLORBARSHELP);
 		}
 	}
 	FreeImage(&back);
@@ -299,11 +275,10 @@ void Draw601ColorBars()
 void DrawColorBleed()
 {
 	int 		done = 0, type = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back, backchk;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/colorbleed.kmg.gz", 1);
 	if(!back)
 		return;
@@ -321,12 +296,9 @@ void DrawColorBleed()
 			DrawImage(backchk);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;								
 
@@ -334,7 +306,7 @@ void DrawColorBleed()
 				type = !type;
 
 			if(st->rtrig > 5)
-				oldbuttons = HelpWindow(COLORBLEEDHELP, back);
+				HelpWindow(COLORBLEEDHELP);
 		}
 	}
 	FreeImage(&back);
@@ -345,11 +317,10 @@ void DrawColorBleed()
 void DrawGrid()
 {
 	int 		done = 0;
-	uint16		oldbuttons, pressed;		
+	uint16		pressed;		
 	ImagePtr	back;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	if(vmode != NATIVE_640_FS)
 	{
 		back = LoadKMG("/rd/grid.kmg.gz", 1);
@@ -371,16 +342,13 @@ void DrawGrid()
 		DrawImage(back);		
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;											
 			if (st->rtrig > 5)
-				oldbuttons = HelpWindow(GRIDHELP, back);
+				HelpWindow(GRIDHELP);
 		}
 	}
 
@@ -391,11 +359,10 @@ void DrawGrid()
 void DrawLinearity()
 {
 	int 			done = 0, gridpattern = 0, showgrid = 0;
-	uint16			oldbuttons, pressed;
+	uint16			pressed;
 	ImagePtr		circles, grid, gridd;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	circles = LoadKMG("/rd/circles.kmg.gz", 1);
 	if(!circles)
 		return;
@@ -424,12 +391,9 @@ void DrawLinearity()
 		DrawImage(circles);
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_A)
 				showgrid = !showgrid;
 		
@@ -450,12 +414,11 @@ void DrawLinearity()
 void Draw100IRE()
 {
 	int 			done = 0;
-	uint16			oldbuttons, pressed, text = 0, invert = 0;	
+	uint16			pressed, text = 0, invert = 0;	
 	ImagePtr		back, white;
 	controller		*st;
 	char			msg[50];
 
-	oldbuttons = InitController(0);
 	back = LoadKMG("/rd/100IRE.kmg.gz", 1);
 	if(!back)
 		return;
@@ -493,12 +456,9 @@ void Draw100IRE()
 		}
 
 		EndScene();
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_A)
 			{
       				if(!invert)
@@ -549,7 +509,7 @@ void Draw100IRE()
 			if (pressed & CONT_START)
 				done =	1;											
 			if (st->rtrig > 5)
-				oldbuttons = HelpWindow(IREHELP, back);
+				HelpWindow(IREHELP);
 		}
 	}
 

@@ -29,6 +29,8 @@
 #include "vmu.h"
 
 #include "help.h"
+char *HelpData = NULL;
+extern uint16 DrawMenu;
 
 #define LINESPERPAGE	16
 
@@ -101,18 +103,23 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 	return buffer;
 }
 
-uint16 HelpWindow(char *filename, ImagePtr screen)
+void HelpWindow(char *filename)
 {
-	int 				done = 0, npages = 0, page = 0;
-	uint16			oldbuttons, pressed = 0;		
+	DrawMenu = 1;
+	HelpData = filename;
+}
+
+void  DrawHelpWindow(char *filename, ImagePtr screen)
+{
+	int 			done = 0, npages = 0, page = 0;
+	uint16			pressed = 0;		
 	ImagePtr		back;
-	char				*buffer = NULL, **pages = NULL;
+	char			*buffer = NULL, **pages = NULL;
 	controller	*st;
 
-	oldbuttons = InitController(0);
 	buffer = LoadHelpFile(filename, &pages, &npages);
 	if(!buffer)
-		return 1;
+		return;
 
 	back = LoadKMG("/rd/help.kmg.gz", 1);
 	back->alpha = 0.75f;
@@ -129,12 +136,9 @@ uint16 HelpWindow(char *filename, ImagePtr screen)
 		DrawStringS(100, 200, 0.9f, 0.9f, 0.9f, "Press START to return"); 
 		EndScene();
 
-		st = ReadController(0);
+		st = ReadController(0, &pressed);
 		if(st)
 		{
-			pressed = st->buttons & ~oldbuttons;
-			oldbuttons = st->buttons;
-					
 			if (pressed & CONT_START)
 				done =	1;								
 			if (pressed & CONT_DPAD_LEFT)
@@ -160,7 +164,6 @@ uint16 HelpWindow(char *filename, ImagePtr screen)
 	if(pages)
 		free(pages);
 	FreeImage(&back);
-	return pressed;
 }
 
 

@@ -27,9 +27,9 @@
 
 #include "image.h"
 #include "vmodes.h"
+#include "menu.h"
 
-ImagePtr fbtexture = NULL;
-uint DrawMenu = 0;
+extern uint16 DrawMenu;
 
 //#define BENCHMARK 
 
@@ -418,9 +418,6 @@ inline void StartScene()
 	pvr_list_begin(PVR_LIST_TR_POLY);
 }
 
-#define rotr(value, shift) \
-    (value >> shift) | (value << (16 - shift))
-
 inline void EndScene()
 {
 	DrawScanlines();
@@ -429,130 +426,9 @@ inline void EndScene()
 	pvr_wait_ready();
 
 	//PVRStats("EndFrame");
-	if(DrawMenu && fbtexture)
+	if(DrawMenu)
 	{
-    		int 	i, numpix, w;
-    		uint16  *buffer, npixel;
-    		uint32  save;
-    		uint32  pixel;  
-    		uint8   r, g, b;
-#ifdef BENCHMARK
-	        uint32 start, end;
-	        char	msg[100];
-		
-	        timer_ms_gettime(NULL, &start);
-#endif
-    		numpix = vid_mode->width * vid_mode->height;
-            w = vid_mode->width;
-
-    		buffer = (uint16 *)malloc(1024*512*sizeof(uint16)); 
-    		if(buffer == NULL)
-            {
-        		dbglog(DBG_ERROR, "FB copy can't allocate memory\n");
-        		return;
-    		}
-
-    		if(vid_mode->pm != PM_RGB565)
-            {
-        		dbglog(DBG_ERROR, "FB copy: video mode not 565\n");
-        		return;
-            }
-
-    		save = irq_disable();
-            for(i = 0; i < numpix; i++)
-            {
-                uint x = 0, y = 0;
-                
-                pixel = vram_s[i];
-                
-                r = (((pixel >> 11) & 0x1f) << 0);
-                g = (((pixel >>  5) & 0x3f) >> 1);
-                b = (((pixel >>  0) & 0x1f) << 0);
-                
-                npixel = r << 2 | rotr(g, 3) | b << 8 | 0x80;
-                
-                x = i % w;
-                y = i / w;
-                y *= w == 320 ? 512 : 1024;
-                buffer[y+x] = ((npixel << 8) & 0xff00) | ((npixel >> 8) & 0x00ff);
-          	}
-    		irq_restore(save);
-
-    		pvr_txr_load_ex (buffer, fbtexture->tex, w == 320 ? 512 : 1024, w == 320 ? 256 : 512, PVR_TXRLOAD_16BPP|PVR_TXRLOAD_SQ);
-            fbtexture->tw = w == 320 ? 512 : 1024;
-            fbtexture->th = w == 320 ? 256 : 512;
-            fbtexture->w = fbtexture->tw;
-            fbtexture->h = fbtexture->th;
-
-#ifdef BENCHMARK
-	        timer_ms_gettime(NULL, &end);
-	        sprintf(msg, "FB copy and conversion took %lu ms\n", (unsigned int)end - start);
-	        dbglog(DBG_KDEBUG, msg);
-#endif
-
-    		free(buffer);
-
 		DrawMenu = 0;
 		ShowMenu();
 	}
-}
-
-void InitTextureFB()
-{	
-	if(fbtexture)
-		return;
-
-	fbtexture = (ImagePtr)malloc(sizeof(struct image_st));	
-	if(!fbtexture)
-	{
-		fprintf(stderr, "Could not malloc image struct for FB\n");
-		return;
-	}
-	fbtexture->tex = pvr_mem_malloc(1024*512*2); //Min  size for 640x480
-	if(!fbtexture->tex)
-	{
-		free(fbtexture);
-		fbtexture = NULL;
-		fprintf(stderr, "Could not pvr mem malloc image struct for FB\n");
-		return;
-	}
-
-    fbtexture->r = 1.0f;
-    fbtexture->g = 1.0f;
-    fbtexture->b = 1.0f;
-    
-    fbtexture->tw = 1024;
-    fbtexture->th = 512;
-    fbtexture->x = 0;
-    fbtexture->y = 0;
-    fbtexture->u1 = 0.0f;
-    fbtexture->v1 = 0.0f;
-    fbtexture->u2 = 1.0f;
-    fbtexture->v2 = 1.0f;
-    fbtexture->layer = 0.5f;
-    fbtexture->scale = 0;
-    fbtexture->alpha = 1.0;
-    fbtexture->w = fbtexture->tw;
-    fbtexture->h = fbtexture->th;
-    fbtexture->RefCount = 1;
-    fbtexture->FH = 0;
-    fbtexture->FV = 0;
-    fbtexture->copyOf = NULL;
-    fbtexture->texFormat = PVR_TXRFMT_ARGB1555;
-}
-
-void FreeTextureFB()
-{
-	if(fbtexture)
-		FreeImage(&fbtexture);
-}
-
-#include "help.h"
-
-void ShowMenu()
-{
-	if(fbtexture)
-		fbtexture->alpha = 0.75f;
-
-	HelpWindow(GRIDHELP, fbtexture);
 }

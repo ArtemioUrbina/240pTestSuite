@@ -1,18 +1,9 @@
 #include <kos.h>
 #include "controller.h"
 
-uint16 InitController(uint16 num)
-{
-	uint16 buttons = 0xffff;
-	cont_state_t *st;
+uint16 OldButtonsInternal = 0;
 
-	st = ReadController(num);
-	if(st)
-		buttons = st->buttons;
-	return buttons;
-}
-
-cont_state_t *ReadController(uint16 num)
+cont_state_t *ReadController(uint16 num, uint16 *pressed)
 {
 	cont_state_t *st;
 	maple_device_t *dev;
@@ -23,5 +14,8 @@ cont_state_t *ReadController(uint16 num)
 	st = (cont_state_t*)maple_dev_status(dev); 
 	if(!st)
 		return NULL;
+	if(pressed)
+		*pressed = st->buttons & ~OldButtonsInternal & st->buttons;
+	OldButtonsInternal = st->buttons;
 	return st;
 }
