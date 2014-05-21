@@ -1,10 +1,12 @@
                 WHITE SCREEN
 
 This pattern can be changed between white, black,
-red, green and blue full screens using the A and 
-B buttons. Some displays and scalers have issues
-when changing between a fully black and a fully 
-white screen.
+red, green and blue full screens using the R and 
+L triggers.
+
+Some displays and scalers have issues when
+changing between a fully black and a fully white
+screen.
 
 It can also be used to check color purity, and 
-dead pixels.
+for dead pixels.

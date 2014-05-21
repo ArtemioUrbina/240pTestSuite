@@ -22,8 +22,8 @@ is because a video signal may be any amplitude.
 This unit is used in the ITU-R BT.470 which
 defines PAL, NTSC and SECAM
 
-You can use the A abd B buttons to change between
+You can use the R and L triggers to change between
 100 IRE to 0 IRE in steps of 10 IRE.
 
-With Y you can change the range to 100 and 140 IRE
+With A you can change the range to 100 and 140 IRE
 in 5 IRE steps.

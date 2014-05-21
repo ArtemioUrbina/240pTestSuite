@@ -1,0 +1,13 @@
+            SIP MICROPHONE AND FFT 
+
+This test can be used to measure display lag if
+both video and audio follow the same chain.
+
+It uses Fast Fourier Transform (FFT) to detect the
+audio delay by playing a 1Khz tone and accurately
+calculating the frame delay.
+
+The L and R triggers allow you to change the 
+precision of the FFT used to calculate the audio
+delay.
+

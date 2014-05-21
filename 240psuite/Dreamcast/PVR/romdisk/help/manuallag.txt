@@ -8,29 +8,34 @@ when processing the signal.
 
 As an added feature, the user can click the A
 button when the sprite is aligned with the one on
-the background, and the offset in frames form the
+the background, and the offset in frames from the
 actual intersection will be shown on screen. This
 can be repeated ten times and the software will
 calculate the average. Whenever the button was
-pressed before the actual intersection frame, the
+
                                        (cont...)
              MANUAL LAG TEST (2/3)
 
+pressed before the actual intersection frame, the
 result will be ignored (but still shown onscreen).
-The B button can be used to change the direction
+The X button can be used to change the direction
 of the sprite from vertical to horizontal, or
 display both at the same time.
 
-The X button can be used to turn off the audio cue.
+The R trigger can be used to turn off the audio cue.
 If a Purupuru (Jump pack) is found, it will be used
-as well.
+as well, it can be activated with the L trigger.
+
+The interval of movement can be rythmic or random,
+and this can be toggled with the Y button.
+
+                                          (cont...)
+             MANUAL LAG TEST (3/3)
 
 Of course the evaluation is dependent on reflexes
 and/or rhythm more than anything. The visual and
 audio cues are the more revealing aspects which the
-user should consider, of course the interactive
-                                          (cont...)
-             MANUAL LAG TEST (3/3)
+user should considers. Of course the interactive
 
 factor can give an experienced player the hang of
 the system when testing via different connections.
@@ -38,4 +43,3 @@ the system when testing via different connections.
 Since a frame is around 16 ms (1000/60), that value
 must be considered the general error when using the
 test results. 
-

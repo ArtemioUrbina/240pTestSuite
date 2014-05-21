@@ -55,10 +55,10 @@ void DrawPluge()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;								
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(PLUGEHELP);
 		}
 	}
@@ -87,10 +87,10 @@ void DrawSMPTEColorBars()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;								
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(SMPTECOLOR);
 		}
 	}
@@ -119,10 +119,10 @@ void DrawGrayRamp()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;								
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(GRAYHELP);
 		}
 	}
@@ -185,16 +185,16 @@ void DrawWhiteScreen()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;								
 
-			if (pressed & CONT_A)
+			if (pressed & CONT_RTRIGGER)
 				color ++;
 
-			if (pressed & CONT_B)
+			if (pressed & CONT_LTRIGGER)
 				color --;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(WHITEHELP);
 		}
 	}
@@ -229,13 +229,13 @@ void DrawColorBars()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;								
 
 			if (pressed & CONT_A)
 				type = !type;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(COLORBARSHELP);
 		}
 	}
@@ -264,10 +264,10 @@ void Draw601ColorBars()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;								
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(COLOR601);
 		}
 	}
@@ -302,13 +302,13 @@ void DrawColorBleed()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;								
 
 			if (pressed & CONT_A)
 				type = !type;
 
-			if(st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(COLORBLEEDHELP);
 		}
 	}
@@ -348,9 +348,9 @@ void DrawGrid()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;											
-			if (st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(GRIDHELP);
 		}
 	}
@@ -397,16 +397,16 @@ void DrawLinearity()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_A)
+			if (pressed & CONT_X)
 				showgrid = !showgrid;
 		
-			if (pressed & CONT_B)
+			if (pressed & CONT_Y)
 				gridpattern = !gridpattern;
 		
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;				
 
-			if (st->rtrig > 5)
+			if (pressed & CONT_START)
 				HelpWindow(LINEARITYHELP);
 		}
 	}
@@ -449,14 +449,20 @@ void Draw100IRE()
 		{
     			if(!invert)
       			{
-				sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
-			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+				if(text > 30)
+					sprintf(msg, "RANGE 0-100 IRE");
+				else
+					sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
+			  	DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
 			  	text --;
       			}
       			else
       			{
-			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
-			  	DrawStringS(265, 225, 1.0f, 1.0f, 1.0f, msg);
+				if(text > 30)
+					sprintf(msg, "RANGE 100-140 IRE");
+				else
+			 		sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
+			  	DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
 			  	text --;
       			}
 		}
@@ -465,7 +471,7 @@ void Draw100IRE()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_A)
+     			if (pressed & CONT_LTRIGGER)
 			{
       				if(!invert)
         			{
@@ -483,7 +489,7 @@ void Draw100IRE()
 				text = 30;
 			}
 		
-			if (pressed & CONT_B)
+     			if (pressed & CONT_RTRIGGER)
 			{
       				if(!invert)
         			{
@@ -501,20 +507,21 @@ void Draw100IRE()
 				text = 30;
 			}
 
-     			if (pressed & CONT_Y)
+     			if (pressed & CONT_A)
       			{
 				invert = !invert;
         			back->alpha = 1.0f;
-				text = 30;
+				text = 60;
 				if(!invert)
 					updateVMU(" 100 IRE ", "", 1);
 				else
 					updateVMU(" 140 IRE ", "", 1);
       			}
 		
-			if (pressed & CONT_START)
+			if (pressed & CONT_B)
 				done =	1;											
-			if (st->rtrig > 5)
+
+			if (pressed & CONT_START)
 				HelpWindow(IREHELP);
 		}
 	}
