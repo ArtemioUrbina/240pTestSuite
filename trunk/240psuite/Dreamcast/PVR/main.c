@@ -94,6 +94,7 @@ start:
 	else
 		pvr_set_bg_color(0.0f, 1.0f, 0.0f);
 		
+	InitTextureFB();
 	LoadFont();
 	LoadScanlines();
 	title = LoadKMG("/rd/back.kmg.gz", 1);
@@ -236,6 +237,7 @@ start:
 		{
 			pressed = st->buttons & ~oldbuttons;
 			oldbuttons = st->buttons;
+
 			if (st->buttons & CONT_START && st->buttons & CONT_Y)
 			{
 				updateVMU(" Goodbye ", " m(_ _)m ", 1);
@@ -342,6 +344,7 @@ start:
 							Alternate240p480i();
 							ReleaseScanlines();
 							ReleaseFont();
+							FreeTextureFB();
 							goto start;
 						}
 						break;
@@ -354,6 +357,7 @@ start:
 						FreeImage(&sd);		
 						ReleaseScanlines();
 						ReleaseFont();
+						FreeTextureFB();
 						// we need to reload textures and stuff..
 						// not pretty, but "clean"
 						goto start;
@@ -380,6 +384,7 @@ start:
 	FreeImage(&sd);		
 	ReleaseScanlines();
 	ReleaseFont();
+	FreeTextureFB();
 #ifndef SERIAL
 	arch_menu();
 #endif

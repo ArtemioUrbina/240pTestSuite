@@ -57,11 +57,8 @@ void Settings(ImagePtr back)
 		int     c = 1;
 		char		str[100];
 
-		pvr_wait_ready();
+		StartScene();
 
-		pvr_scene_begin();
-
-		pvr_list_begin(PVR_LIST_TR_POLY);
 		DrawImage(back);
 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "SETTINGS:"); y += 2*fh; 
@@ -85,9 +82,7 @@ void Settings(ImagePtr back)
 		sprintf(str, "Draw PVR Background: %s ", settings.drawpvrbg == 1 ? "yes" : "no");
 		DrawStringS(x+5, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
 
-		DrawScanlines();
-		pvr_list_finish();				
-		pvr_scene_finish();
+		EndScene();
 
 		st = ReadController(0);
 		if(st)
