@@ -1,4 +1,4 @@
-       COLOR BARS WITH GRAY SCALE (1/2)
+            SMPTE COLOR BARS (1/2)
 
 In an SMPTE color bar image, the top two-thirds
 of the television picture contain seven vertical
@@ -14,7 +14,7 @@ four bars and off for the rightmost three.
 
                                          (cont...)
 
-       COLOR BARS WITH GRAY SCALE (2/2)
+            SMPTE COLOR BARS (2/2)
 
 Below the main set of seven bars is a strip of 
 blue, magenta, cyan, and white castellations. 

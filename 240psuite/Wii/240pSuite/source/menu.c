@@ -66,7 +66,7 @@ void ShowMenu()
 		u8   	c = 1;				    					   
 		u16     x = Back->x + 20;
 		u16     y = Back->y + 10;
-        u32     pressed = 0;
+        	u32     pressed = 0;
 				
 		StartScene();
 		

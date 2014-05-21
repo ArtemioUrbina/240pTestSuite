@@ -25,6 +25,5 @@ you can distinguish them clearly.
 
 Repeat for each color and you are set.
 
-
-
-
+The same bars with a grid pattern is also available
+with the A button.

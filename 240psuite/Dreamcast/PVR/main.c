@@ -561,14 +561,14 @@ void DrawCredits(ImagePtr back)
                         sprintf(title, "Code and Patterns:");
                         sprintf(name, "Artemio Urbina");
                 }
-                if(counter == 60*5)
+                if(counter == 60*4)
                 {
                         sprintf(title, "Support and suggestions:");
                         sprintf(name, "aurbina@junkerhq.net");
                 }
-                if(counter == 60*10)
+                if(counter == 60*8)
                         sprintf(name, "@Artemio (twitter)");
-                if(counter == 60*15)
+                if(counter == 60*12)
                         counter = 0;
 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, title); y += fh; 
