@@ -30,6 +30,7 @@
 
 #include "controller.h"
 
+#include "menu.h"
 #include "help.h"
 #include "settings.h"
 #include "vmodes.h"
@@ -46,7 +47,7 @@ void Settings(ImagePtr back)
 	controller	*st;
 
 	updateVMU("Settings", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		int     x = 30, y = 52;
 		float   r = 1.0f;

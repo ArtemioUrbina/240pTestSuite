@@ -28,9 +28,15 @@
 #include "image.h"
 #include "vmodes.h"
 #include "menu.h"
+#include "controller.h"
+#include "font.h"
 
 //#define BENCHMARK 
 
+#define MENUSIZE_W 116
+#define MENUSIZE_H 123
+
+uint8 EndProgram = 0;
 uint DrawMenu = 0;
 extern char *HelpData;
 ImagePtr fbtexture = NULL;
@@ -94,7 +100,7 @@ void FreeTextureFB()
 #define rotr(value, shift) \
     (value >> shift) | (value << (16 - shift))
 
-void ShowMenu()
+void CopyFBToBG()
 {
 	int 	i, numpix, w, tw, th;
 	uint16  *buffer, npixel;
@@ -107,7 +113,9 @@ void ShowMenu()
 		
 	timer_ms_gettime(NULL, &start);
 #endif
-	InitTextureFB();
+
+	if(!fbtexture)
+		return;
 
 	numpix = vid_mode->width * vid_mode->height;
 	w = vid_mode->width;
@@ -183,8 +191,338 @@ void ShowMenu()
 	buffer = NULL;
 
 	fbtexture->alpha = 0.75f;
+}
 
-	 DrawHelpWindow(HelpData, fbtexture);
+void ShowMenu(char *filename)
+{
+	DrawMenu = 1;
+	HelpData = filename;
+}
 
+void DrawShowMenu()
+{
+	ImagePtr	back;
+	int		done = 0;
+	int		sel = 1;
+
+	InitTextureFB();
+	CopyFBToBG();
+
+	back = LoadKMG("/rd/FloatMenu.kmg.gz", 1);
+	if(!back)
+	{
+		FreeTextureFB();
+		return;
+	}	
+
+	back->x = (dW - MENUSIZE_W) / 2;
+        back->y = (dH - MENUSIZE_H) / 2;
+	back->alpha = 0.75f;
+
+	while(!done && !EndProgram)
+	{
+		float   r = 1.0f;
+		float   g = 1.0f;
+		float   b = 1.0f;
+		int   	c = 1;				    					   
+		uint16	x = back->x + 20;
+		uint16  y = back->y + 10;
+        	uint16	pressed = 0;
+				
+		StartScene();
+		
+		if(fbtexture)
+			DrawImage(fbtexture);
+		DrawImage(back);
+
+		DrawStringS(x, y, 0.0f, 1.0f, 0.0f, VERSION_NUMBER); y += 3*fh; 		
+		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;				
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu"); y += 2* fh; c++;			
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Exit 240p Suite"); y += 3* fh; 		
+		
+		EndScene();		
+		
+		ReadController(0, &pressed);
+
+		if ( pressed & CONT_DPAD_UP )
+	    	{
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    	}
+	    
+	    	if ( pressed & CONT_DPAD_DOWN )
+	    	{
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    	}			
+			
+		if (pressed & CONT_B || pressed & CONT_START) 		
+			done = 1;	
+	
+		if (pressed & CONT_A)
+		{     
+			switch(sel)
+			{			
+					case 1:			
+						HelpWindow(HelpData, fbtexture);
+						break;					
+					case 2:		
+						SelectVideoMode();
+						break;
+					case 3:		
+						ChangeOptions();						
+						break;
+					case 4:
+						done = 1;
+						break;
+					case 5:
+						EndProgram = 1;
+						done = 1;
+						break;
+					default:
+						break;
+			} 			            										
+		}		
+	}
+	
 	FreeTextureFB();
+	FreeImage(&back);
+	HelpData = GENERALHELP;
+
+	return;
+}
+
+
+void ChangeOptions()
+{	
+	int 		sel = 1, close = 0;	
+	ImagePtr	back;
+	
+	back = LoadKMG("/rd/help.kmg.gz", 1);
+	if(!back)
+		return;
+		
+	back->alpha = 0.75f;
+		
+	while(!close && !EndProgram) 
+	{		
+		float	r = 1.0f;
+		float	g = 1.0f;
+		float	b = 1.0f;
+		uint8	c = 1;				    					   
+		uint16	x = 80;
+		uint16	y = 70;
+		uint16	OptPos = 140;
+        	uint16	pressed = 0;
+		char	intensity[80];
+				
+		StartScene();
+		        
+		if(fbtexture)
+			DrawImage(fbtexture);
+		DrawImage(back);
+
+		DrawStringS(x - 20, y, 0.0f, 1.0f, 0.0f, "General Options"); y += 2*fh; 
+
+		// option 1, Scanline intensity
+		sprintf(intensity, "%f%%", GetScanlineIntensity());
+		if(vmode == FAKE_640_SL)
+		{
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline intensity:"); y += fh; c++;			
+			
+			// option 2, Scanline even/odd
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD"); 					
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanlines"); y += fh; c++;	
+		}				
+		else
+		{
+			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, intensity);
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanline intensity:"); y += fh; c++;			
+			
+			// option 2, Scanline even/odd
+			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, ScanlinesEven() ? "EVEN" : "ODD"); 					
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanlines"); y += fh; c++;	
+		}
+		
+		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+				
+		if(vmode == FAKE_640_SL && sel == 1)	
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
+
+		if(vmode != FAKE_640_SL && (sel == 1 || sel == 2))
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
+			
+		EndScene();		
+        
+		ReadController(0, &pressed);
+
+		if ( pressed & CONT_DPAD_UP )
+	    	{
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    	}
+	    
+	    	if ( pressed & CONT_DPAD_DOWN )
+	    	{
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    	}			
+
+		if ( pressed & CONT_RTRIGGER && sel == 1)
+	    	{
+			if(vmode == FAKE_640_SL)
+				RaiseScanlineIntensity();
+	    	}
+	    
+	    	if ( pressed & CONT_LTRIGGER && sel == 1)
+	    	{
+			if(vmode == FAKE_640_SL)
+				LowerScanlineIntensity();
+	    	}			
+			
+		if ( pressed & CONT_B ) 		
+			close = 1;	
+	
+		if (pressed & CONT_A)
+		{     
+			switch(sel)
+			{			
+					case 2:
+						if(vmode == FAKE_640_SL)
+							ToggleScanlineEvenOdd();
+						break;
+					case 3:
+						close = 1;
+						break;
+					default:
+						break;
+			} 			            										
+		}		
+	}
+	
+	FreeImage(&back);
+
+	return;
+}
+
+void SelectVideoMode()
+{
+	int 		sel = 1, close = 0;		
+	ImagePtr	back;
+	
+	back = LoadKMG("/rd/help.kmg.gz", 1);
+	if(!back)
+		return;
+		
+	back->alpha = 0.75f;
+	while(!close && !EndProgram) 
+	{		
+		float	r = 1.0f;
+		float   g = 1.0f;
+		float   b = 1.0f;
+		uint8	c = 1;				    					   
+		uint16	x = 80;
+		uint16	y = 80;
+        	uint16	pressed = 0;
+				
+		StartScene();
+		        
+		if(fbtexture)
+			DrawImage(fbtexture);
+		DrawImage(back);        
+
+		DrawStringS(x - 20, y, 0.0f, 1.0f, 0.0f, "Please select the desired video mode"); y += 2*fh; 
+		
+		DrawStringS(x - 10, y + (vmode * fh), 0.0f, 1.0f, 0.0f, ">"); 
+		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;
+/*
+		if(Options.Activate480p && VIDEO_HaveComponentCable())
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p scaled 240p assets & scanlines"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p scaled 240p assets & scanlines"); y += fh; c++;
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
+		}	
+			
+*/
+		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+				
+		EndScene();		
+        
+		ReadController(0, &pressed);
+
+		if ( pressed & CONT_DPAD_UP )
+	    	{
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    	}
+	    
+	    	if ( pressed & CONT_DPAD_DOWN )
+	    	{
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    	}			
+			
+		if ( pressed & CONT_B ) 		
+			close = 1;	
+	
+		if (pressed & CONT_A)
+		{     
+	/*
+			switch(sel)
+			{			
+					case 1:
+						SetVideoMode(VIDEO_240P);
+						SetupGX();
+						break;
+					case 2:
+						SetVideoMode(VIDEO_480I_A240);
+						SetupGX();
+						break;
+					case 3:
+						SetVideoMode(VIDEO_480I);
+						SetupGX();
+						break;
+					case 4:
+						if(Options.Activate480p)
+						{
+							SetVideoMode(FAKE_640_SL);
+							SetupGX();
+						}
+						break;					
+					case 5:
+						if(Options.Activate480p)
+						{
+							SetVideoMode(VIDEO_480P);
+							SetupGX();
+						}
+						break;		
+					case 6:
+						close = 1;
+						break;
+					default:
+						break;
+			} 			            										
+			*/
+		}		
+	}
+	FreeImage(&back);
+
+	return;
 }

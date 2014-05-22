@@ -110,7 +110,7 @@ void DropShadowTest()
 	else
 		shadow = buzzshadow;
 	updateVMU("  Shadow	", "  even  ", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		if(selback == 1)
@@ -225,7 +225,7 @@ void DropShadowTest()
 			}
 
 			if (pressed & CONT_START)
-				HelpWindow(DROPSHADOW);
+				ShowMenu(DROPSHADOW);
 		}
 
 		if(x < back[selback]->x)
@@ -304,7 +304,7 @@ void StripedSpriteTest()
 		return;
 		
 	updateVMU(" Striped ", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		if(selback == 1)
@@ -373,7 +373,7 @@ void StripedSpriteTest()
 			}
 		
 			if (pressed & CONT_START)
-				HelpWindow(STRIPED);
+				ShowMenu(STRIPED);
 		}
 
 		if(x < back[selback]->x)
@@ -439,7 +439,7 @@ void LagTest()
 		clicks[i] = 0xFF;
 
 	purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 
@@ -600,7 +600,7 @@ void LagTest()
 				done =	1;				
 
 			if (pressed & CONT_START)
-				HelpWindow(MANUALLAG);
+				ShowMenu(MANUALLAG);
 		}
 		
 		if(y > 132 + vary)
@@ -654,7 +654,7 @@ void LagTest()
 		if(!wall)
 			return;
 
-		while(!done)
+		while(!done && !EndProgram)
 		{
 			StartScene();
 
@@ -711,7 +711,7 @@ void LagTest()
 				if (pressed & CONT_B)
 					done =	1;
 				if (pressed & CONT_START)
-					HelpWindow(MANUALLAG);
+					ShowMenu(MANUALLAG);
 			}
 		}
 		FreeImage(&wall);
@@ -737,7 +737,7 @@ void ScrollTest()
 	overlay->y = (dH - 240)/2;
 
 	updateVMU(" Scroll  ", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 
@@ -781,7 +781,7 @@ void ScrollTest()
 				acc *= -1;
 
 			if (pressed & CONT_START)
-				HelpWindow(SCROLL);
+				ShowMenu(SCROLL);
 		}
 	}
 	FreeImage(&back);
@@ -803,7 +803,7 @@ void GridScrollTest()
 	//back->y = (dH - 240)/2;  
 
 	updateVMU("G. Scroll", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		if(speed > 5)
@@ -853,7 +853,7 @@ void GridScrollTest()
 				y += st->joyy/30;
 
 			if (pressed & CONT_START)
-				HelpWindow(GRIDSCROLL);
+				ShowMenu(GRIDSCROLL);
 		}
 
 	}
@@ -885,7 +885,7 @@ void DrawStripes()
 		return;
 
 	updateVMU(" Stripes", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		if(!vertical)
@@ -949,7 +949,7 @@ void DrawStripes()
 				field = !field;
 
 			if (pressed & CONT_START)
-				HelpWindow(STRIPESHELP);
+				ShowMenu(STRIPESHELP);
 		}
 	}
 
@@ -979,7 +979,7 @@ void DrawCheckBoard()
 	}
 
 	updateVMU("CHKB PTTN", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		if(field == 1)
@@ -1030,7 +1030,7 @@ void DrawCheckBoard()
 				field = !field;
 
 			if (pressed & CONT_START)
-				HelpWindow(CHECKHELP);
+				ShowMenu(CHECKHELP);
 		}
 	}
 	FreeImage(&checkpos);
@@ -1055,7 +1055,7 @@ void SoundTest()
 		return;
 	
 	updateVMU("Sound Test", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
@@ -1082,7 +1082,7 @@ void SoundTest()
 				sel ++;
 
 			if (pressed & CONT_START)
-				HelpWindow(SOUNDHELP);
+				ShowMenu(SOUNDHELP);
 		}
 		
 		if(sel < 0)
@@ -1149,7 +1149,7 @@ void LEDZoneTest()
 		return;
 		
 	updateVMU("Backlit", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);		
@@ -1211,7 +1211,7 @@ void LEDZoneTest()
 				show = !show;
 
 			if (pressed & CONT_START)
-				HelpWindow(BACKLITHELP);
+				ShowMenu(BACKLITHELP);
 		}
 		
 		if(x < 0)
@@ -1253,7 +1253,7 @@ void PassiveLagTest()
 	circle->b = 1.0f;
 
 	updateVMU("LAG TEST", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
@@ -1431,7 +1431,7 @@ void PassiveLagTest()
 				pause = !pause;
 
 			if (pressed & CONT_START)
-				HelpWindow(PASSIVELAG);
+				ShowMenu(PASSIVELAG);
 		}
 
 
@@ -1514,7 +1514,7 @@ void Alternate240p480i()
 		LoadScanlines();
 	}
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 
@@ -1562,7 +1562,7 @@ void Alternate240p480i()
 		if(st)
 		{
 			if (pressed & CONT_START)
-				HelpWindow(ALTERNATE);
+				ShowMenu(ALTERNATE);
 
 			if (pressed & CONT_B)
 				done =	1;				
@@ -1707,7 +1707,7 @@ void TestVideoMode()
 
 	vid_set_mode_ex(&vga_mode);
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		float   r = 1.0f;
 		float   g = 1.0f;
@@ -2092,7 +2092,7 @@ void SIPLagTest()
 
 	updateVMU("Lag v/Micr", "", 1);
 	sprintf(DStatus, "Press A");
-	while(!done) 
+	while(!done && !EndProgram) 
 	{		
 		DrawSIPScreen(back, DStatus, pres, Results, ResCount);
 
@@ -2106,7 +2106,7 @@ void SIPLagTest()
 			if(st)
 			{
 				if (pressed & CONT_START)
-					HelpWindow(FFTHELP);
+					ShowMenu(FFTHELP);
 
 				if (pressed & CONT_B)
 					done =1;				

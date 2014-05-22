@@ -22,6 +22,13 @@
 #ifndef MENU_H
 #define MENU_H
 
-void ShowMenu();
+#define VERSION_NUMBER "Ver. 1.19"
+#define VERSION_DATE "19/05/2014"
+
+extern uint8 EndProgram;
+void ChangeOptions();
+void SelectVideoMode();
+void DrawShowMenu();
+void ShowMenu(char *HelpData);
 
 #endif
