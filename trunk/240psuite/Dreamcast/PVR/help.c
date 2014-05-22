@@ -29,6 +29,7 @@
 #include "vmu.h"
 
 #include "help.h"
+#include "menu.h"
 char *HelpData = NULL;
 extern uint16 DrawMenu;
 
@@ -103,13 +104,7 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 	return buffer;
 }
 
-void HelpWindow(char *filename)
-{
-	DrawMenu = 1;
-	HelpData = filename;
-}
-
-void  DrawHelpWindow(char *filename, ImagePtr screen)
+void  HelpWindow(char *filename, ImagePtr screen)
 {
 	int 			done = 0, npages = 0, page = 0;
 	uint16			pressed = 0;		
@@ -125,7 +120,7 @@ void  DrawHelpWindow(char *filename, ImagePtr screen)
 	back->alpha = 0.75f;
 		
 	updateVMU(" 	Help	", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		if(screen)

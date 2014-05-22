@@ -24,6 +24,7 @@
 
 #include "image.h"
 
+extern char *HelpData;
 #define COLORBLEEDHELP	"/rd/help/bleed.txt"
 #define CHECKHELP	"/rd/help/check.txt"
 #define COLORBARSHELP	"/rd/help/colors.txt"
@@ -48,8 +49,7 @@
 #define LINEARITYHELP	"/rd/help/linearity.txt"
 #define FFTHELP		"/rd/help/fft.txt"
 
-void HelpWindow(char *data);
-void DrawHelpWindow(char *filename, ImagePtr screen);
+void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);
 
 #endif

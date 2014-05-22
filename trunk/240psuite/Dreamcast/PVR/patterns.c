@@ -33,6 +33,7 @@
 #include "patterns.h"
 
 #include "help.h"
+#include "menu.h"
 
 void DrawPluge()
 {
@@ -46,7 +47,7 @@ void DrawPluge()
 		return;
 		
 	updateVMU(" Pluge ", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
@@ -59,7 +60,7 @@ void DrawPluge()
 				done =	1;								
 
 			if (pressed & CONT_START)
-				HelpWindow(PLUGEHELP);
+				ShowMenu(PLUGEHELP);
 		}
 	}
 	FreeImage(&back);
@@ -78,7 +79,7 @@ void DrawSMPTEColorBars()
 		return;
 		
 	updateVMU(" SMPTE ", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
@@ -91,7 +92,7 @@ void DrawSMPTEColorBars()
 				done =	1;								
 
 			if (pressed & CONT_START)
-				HelpWindow(SMPTECOLOR);
+				ShowMenu(SMPTECOLOR);
 		}
 	}
 	FreeImage(&back);
@@ -110,7 +111,7 @@ void DrawGrayRamp()
 		return;
 		
 	updateVMU("Gray Ramp", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
@@ -123,7 +124,7 @@ void DrawGrayRamp()
 				done =	1;								
 
 			if (pressed & CONT_START)
-				HelpWindow(GRAYHELP);
+				ShowMenu(GRAYHELP);
 		}
 	}
 	FreeImage(&back);
@@ -142,7 +143,7 @@ void DrawWhiteScreen()
 		return;
 		
 	updateVMU("White scr", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		if(color > 4)
 			color = 0;
@@ -195,7 +196,7 @@ void DrawWhiteScreen()
 				color --;
 
 			if (pressed & CONT_START)
-				HelpWindow(WHITEHELP);
+				ShowMenu(WHITEHELP);
 		}
 	}
 	FreeImage(&back);
@@ -217,7 +218,7 @@ void DrawColorBars()
 		return;
 		
 	updateVMU("Colorbars", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		if(!type)
@@ -236,7 +237,7 @@ void DrawColorBars()
 				type = !type;
 
 			if (pressed & CONT_START)
-				HelpWindow(COLORBARSHELP);
+				ShowMenu(COLORBARSHELP);
 		}
 	}
 	FreeImage(&back);
@@ -255,7 +256,7 @@ void Draw601ColorBars()
 		return;
 		
 	updateVMU("Colorbars", "with gray", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
@@ -268,7 +269,7 @@ void Draw601ColorBars()
 				done =	1;								
 
 			if (pressed & CONT_START)
-				HelpWindow(COLOR601);
+				ShowMenu(COLOR601);
 		}
 	}
 	FreeImage(&back);
@@ -290,7 +291,7 @@ void DrawColorBleed()
 		return;
 		
 	updateVMU("Bleed CHK", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		if(!type)
@@ -309,7 +310,7 @@ void DrawColorBleed()
 				type = !type;
 
 			if (pressed & CONT_START)
-				HelpWindow(COLORBLEEDHELP);
+				ShowMenu(COLORBLEEDHELP);
 		}
 	}
 	FreeImage(&back);
@@ -339,7 +340,7 @@ void DrawGrid()
 	}
 
 	updateVMU(" 	Grid	", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);		
@@ -351,7 +352,7 @@ void DrawGrid()
 			if (pressed & CONT_B)
 				done =	1;											
 			if (pressed & CONT_START)
-				HelpWindow(GRIDHELP);
+				ShowMenu(GRIDHELP);
 		}
 	}
 
@@ -381,7 +382,7 @@ void DrawLinearity()
 	gridd->h = 240;
 		
 	updateVMU("Linearity", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
 		if(showgrid)
@@ -407,7 +408,7 @@ void DrawLinearity()
 				done =	1;				
 
 			if (pressed & CONT_START)
-				HelpWindow(LINEARITYHELP);
+				ShowMenu(LINEARITYHELP);
 		}
 	}
 
@@ -438,7 +439,7 @@ void Draw100IRE()
 	white->h = 240;
 
 	updateVMU(" 100 IRE ", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		StartScene();
     		if(invert)
@@ -522,7 +523,7 @@ void Draw100IRE()
 				done =	1;											
 
 			if (pressed & CONT_START)
-				HelpWindow(IREHELP);
+				ShowMenu(IREHELP);
 		}
 	}
 

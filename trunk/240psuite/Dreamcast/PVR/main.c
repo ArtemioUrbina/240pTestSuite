@@ -79,7 +79,7 @@ int main(void)
 
 	 // Default to 480p when VGA is connected.
 	 if(vcable == CT_VGA)
-			ChangeResolution();
+		ChangeResolution();
 
 start:
 	// Check cable again in case it was changed on the fly
@@ -110,7 +110,7 @@ start:
 		DrawIntro();
 		start = 0;
 	}
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		char	res[40];
 		float 	r = 1.0f;
@@ -234,11 +234,8 @@ start:
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (st->buttons & CONT_START && st->buttons & CONT_Y)
-			{
-				updateVMU(" Goodbye ", " m(_ _)m ", 1);
-				done =	1;
-			}
+			if (pressed & CONT_START)
+				ShowMenu(GENERALHELP);
 
 			if (pressed & CONT_X)
 				ToggleScanlineEvenOdd();
@@ -357,7 +354,7 @@ start:
 						goto start;
 						break;
 					case 14:
-						HelpWindow(GENERALHELP);
+						HelpWindow(GENERALHELP, title);
 						break;
 					case 15:
 						DrawCredits(title);
@@ -372,6 +369,8 @@ start:
 		}
 		updateVMU("240p Test", "", 0);
 	}
+
+	updateVMU(" Goodbye ", " m(_ _)m ", 1);
 
 	FreeImage(&title);		
 	FreeImage(&sd);		
@@ -389,7 +388,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 	uint16			pressed;		
 	controller		*st;
 
-	while(!done) 
+	while(!done && !EndProgram) 
 	{		
 		float 	r = 1.0f;
 		float 	g = 1.0f;
@@ -451,6 +450,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		st = ReadController(0, &pressed);
 		if(st)
 		{
+			if (pressed & CONT_START)
+				ShowMenu(GENERALHELP);
+
 			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
 				RaiseScanlineIntensity();
 
@@ -549,7 +551,7 @@ void DrawCredits(ImagePtr back)
 	controller	*st;
 
 	updateVMU("	Credits", "", 1);
-	while(!done) 
+	while(!done && !EndProgram) 
 	{
 		int x = 30, y = 52;
 
@@ -590,8 +592,8 @@ void DrawCredits(ImagePtr back)
                 DrawStringS(x, y, 0.0, .75, .75, "Source code is available under GPL.");  y += fh;
 
 		y = 58;
-		DrawStringS(220, y, 1.0, 1.0, 1.0, "Ver. 1.19"); y += fh; 
-		DrawStringS(220, y, 1.0, 1.0, 1.0, "19/05/2014"); y += fh; 
+		DrawStringS(220, y, 1.0, 1.0, 1.0, VERSION_NUMBER); y += fh; 
+		DrawStringS(220, y, 1.0, 1.0, 1.0, VERSION_DATE); y += fh; 
 
 		EndScene();
 		counter ++;
@@ -599,11 +601,11 @@ void DrawCredits(ImagePtr back)
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (st->rtrig > 5)
-				DrawIntro();
-
 			if (pressed & CONT_START)
-				done =	1;				
+				ShowMenu(GENERALHELP);
+
+			if (pressed & CONT_RTRIGGER)
+				DrawIntro();
 		}
 	}
 }

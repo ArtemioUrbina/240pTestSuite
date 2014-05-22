@@ -28,6 +28,7 @@
 #include "image.h"
 #include "vmodes.h"
 #include "menu.h"
+#include "help.h"
 
 extern uint16 DrawMenu;
 
@@ -429,6 +430,6 @@ inline void EndScene()
 	if(DrawMenu)
 	{
 		DrawMenu = 0;
-		ShowMenu();
+		DrawShowMenu();
 	}
 }
