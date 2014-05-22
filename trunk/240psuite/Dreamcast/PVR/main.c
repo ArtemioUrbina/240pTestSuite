@@ -35,7 +35,6 @@
 
 #include "help.h"
 #include "menu.h"
-#include "settings.h"
 
 /* romdisk */
 extern uint8 romdisk[];
@@ -50,51 +49,20 @@ void DrawIntro();
 
 int main(void)
 {
-	int 			done = 0, sel = 1, joycnt = 0;
-	uint16			pressed, start = 1;
-	ImagePtr		title, sd;
+	int 		done = 0, sel = 1, joycnt = 0;
+	uint16		pressed;
+	ImagePtr	title, sd;
 	controller	*st;
 
 	/* init kos	*/
 	vcable = vid_check_cable();
 	if(vcable != CT_VGA)
-		vid_set_mode(DM_320x240_NTSC, PM_RGB565); // PM_RGB555 PM_RGB565 PM_RGB888
+		ChangeResolution(VIDEO_240P);
+	else
+		ChangeResolution(VIDEO_480P_SL);
 
-	pvr_init_defaults();
 	region = flashrom_get_region();
 
-	// Disable deflicker filter, 
-	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
-	{
-		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
-		PVR_SET(PVR_SCALER_CFG, 0x400);
-	}
-
-		// Turn off texture dithering
-	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
-	{
-		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
-		PVR_SET(PVR_FB_CFG_2, 0x00000001);
-	}
-
-	 // Default to 480p when VGA is connected.
-	 if(vcable == CT_VGA)
-		ChangeResolution(NATIVE_640);
-
-start:
-	// Check cable again in case it was changed on the fly
-	vcable = vid_check_cable();
-
-	if(!settings.drawborder) // Draw back video signal limits?
-		vid_border_color(0, 0, 0);
-	else
-		vid_border_color(255, 255, 255);
-
-	if(!settings.drawpvrbg)
-		pvr_set_bg_color(0.0f, 0.0f, 0.0f);
-	else
-		pvr_set_bg_color(0.0f, 1.0f, 0.0f);
-		
 	InitImages();
 	LoadFont();
 	LoadScanlines();
@@ -106,11 +74,7 @@ start:
 		sd->y = 94;
 	}
 	
-	if(start)
-	{
-		DrawIntro();
-		start = 0;
-	}
+	DrawIntro();
 	while(!done && !EndProgram) 
 	{
 		char	res[40];
@@ -124,6 +88,9 @@ start:
 		maple_device_t *sip = NULL;
 #endif
 				
+		// Check cable again in case it was changed on the fly
+		vcable = vid_check_cable();
+
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
@@ -163,36 +130,36 @@ start:
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 
+		res[0] = '\0';
 		switch(vmode)
 		{
-			case NATIVE_320:
+			case VIDEO_240P:
 				if(vcable != CT_VGA)
 					sprintf(res, "Video: 240p");
-				else
-					sprintf(res, "Video: 480p linedoubled 240p");
 				break;
-			case NATIVE_640:
-				sprintf(res, "Video: 480i no scaling/240p assets");
-				break;
-			case FAKE_640:
-				sprintf(res, "Video: 480i scaled 240p");
-				break;
-			case NATIVE_640_FS:
+			case VIDEO_480I_A240:
 				if(vcable != CT_VGA)
-					sprintf(res, "Video: 480i no scaling/mixed assets");
-				else
-					sprintf(res, "Video: 480p no scaling/mixed assets");
+					sprintf(res, "Video: 480i (scaled 240p)");
 				break;
-			case FAKE_640_SL:
-				sprintf(res, "Video: 480p %s scanlines %0.0f%%", ScanlinesEven() ? "even" : "odd", GetScanlineIntensity());
+			case VIDEO_480I:
+				if(vcable != CT_VGA)
+					sprintf(res, "Video: 480i (Scaling disabled)");
+				break;
+			case VIDEO_480P:
+				if(vcable == CT_VGA)
+					sprintf(res, "Video: 480p (Scaling disabled)");
+				break;
+			case VIDEO_480P_SL:
+				if(vcable == CT_VGA)
+					sprintf(res, "Video: 480p (scaled 240p)");
 				break;
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
-		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
 
 #ifdef VGA_SETTINGS
-		if(vmode == NATIVE_640_FS && vcable == CT_VGA)
+		if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)
 		{
 			c++;
 			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VGA Settings"); 
@@ -242,15 +209,7 @@ start:
 				ToggleScanlineEvenOdd();
 
 			if (pressed & CONT_X && pressed & CONT_Y)
-			{
-				settings.drawborder = !settings.drawborder;
 				settings.drawpvrbg = !settings.drawpvrbg;
-				FreeImage(&title);		
-				FreeImage(&sd);		
-				ReleaseScanlines();
-				ReleaseFont();
-				goto start;
-			}
 
 			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
 				RaiseScanlineIntensity();
@@ -332,40 +291,20 @@ start:
 						break;
 					case 11:
 						if(vcable != CT_VGA)
-						{
-							FreeImage(&title);		
-							FreeImage(&sd);		
 							Alternate240p480i();
-							ReleaseScanlines();
-							ReleaseFont();
-							goto start;
-						}
 						break;
 					case 12:
 						SoundTest();
 						break;
 					case 13:
-					/*
-						ChangeResolution();
-						FreeImage(&title);		
-						FreeImage(&sd);		
-						ReleaseScanlines();
-						ReleaseFont();
-						// we need to reload textures and stuff..
-						// not pretty, but "clean"
-						goto start;
-					*/
+						SelectVideoMode(title);
 						break;
 					case 14:
-						HelpWindow(GENERALHELP, title);
+						ChangeOptions(title);
 						break;
 					case 15:
-						DrawCredits(title);
+						HelpWindow(GENERALHELP, title);
 						break;
-					case 16:
-						//Settings(title);
-						TestVideoMode();
-						break;          						
 				} 					
 				updateVMU("240p Test", "", 1);				
 			}
@@ -546,107 +485,3 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 
 	return;
 }
-
-void DrawCredits(ImagePtr back)
-{
-	int 		done = 0;
-	uint16		pressed, counter = 1;		
-	char 		name[50], title[50];
-	controller	*st;
-
-	updateVMU("	Credits", "", 1);
-	while(!done && !EndProgram) 
-	{
-		int x = 30, y = 52;
-
-		StartScene();
-		DrawImage(back);
-
-		if(counter == 1)
-                {
-                        sprintf(title, "Code and Patterns:");
-                        sprintf(name, "Artemio Urbina");
-                }
-                if(counter == 60*2)
-                {
-                        sprintf(title, "Support and suggestions:");
-                        sprintf(name, "aurbina@junkerhq.net");
-                }
-                if(counter == 60*4)
-                        sprintf(name, "@Artemio (twitter)");
-                if(counter == 60*8)
-                        counter = 0;
-
-		DrawStringS(x, y, 0.0, 1.0, 0.0, title); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, name); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "KallistiOS"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 		
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Konsolkongen & shmups regulars"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/"); y += fh; 
-
-		DrawStringS(x, y, 0.0, .75, .75, "This program is free Software");  y += fh;
-                DrawStringS(x, y, 0.0, .75, .75, "Source code is available under GPL.");  y += fh;
-
-		y = 58;
-		DrawStringS(220, y, 1.0, 1.0, 1.0, VERSION_NUMBER); y += fh; 
-		DrawStringS(220, y, 1.0, 1.0, 1.0, VERSION_DATE); y += fh; 
-
-		EndScene();
-		counter ++;
-
-		st = ReadController(0, &pressed);
-		if(st)
-		{
-			if (pressed & CONT_B)
-				done = 1;
-
-			if (pressed & CONT_START)
-				ShowMenu(GENERALHELP);
-
-			if (pressed & CONT_RTRIGGER)
-				DrawIntro();
-		}
-	}
-}
-
-void DrawIntro()
-{
-	uint32			counter, frames = 60;
-	float			delta;
-	ImagePtr		black;
-
-	black = LoadKMG("/rd/black.kmg.gz", 1);
-	if(!black)
-		return;
-
-	black->alpha = 1.0f;
-	delta = 1.0f / frames;
-	black->w = dW;
-	black->h = dH;
-	black->layer = 5.0f;
-	for(counter = 0; counter < frames*2; counter ++)
-	{
-		black->alpha -= delta;
-		if(black->alpha < 0.0f)
-			black->alpha = 0.0f;
-
-		if(counter == frames)
-			delta *= -1;
-
-		StartScene();
-		DrawStringS(120, 115, 1.0, 1.0, 1.0, "KORDAMP PRESENTS");
-		DrawImage(black);
-
-		EndScene();
-	}
-	FreeImage(&black);
-}
-

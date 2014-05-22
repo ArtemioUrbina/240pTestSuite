@@ -326,7 +326,7 @@ void DrawGrid()
 	ImagePtr	back;
 	controller	*st;
 
-	if(vmode != NATIVE_640_FS)
+	if(vmode != VIDEO_480I && vmode != VIDEO_480P)
 	{
 		back = LoadKMG("/rd/grid.kmg.gz", 1);
 		if(!back)

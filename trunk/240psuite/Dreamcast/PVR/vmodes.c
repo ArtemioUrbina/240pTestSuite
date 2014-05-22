@@ -1,12 +1,13 @@
 #include <kos.h>
 #include "vmodes.h"
+#include "menu.h"
 
-int vmode 	= NATIVE_320;
+int vmode 	= -1;
 int vcable	= CT_RGB;
-int W				= 320;
-int H				= 240;
-int dW			= 320;
-int dH			= 240;
+int W		= 0;
+int H		= 0;
+int dW		= 0;
+int dH		= 0;
 
 /* 640x480 VGA 60Hz */
 /* DM_640x480_VGA */
@@ -30,11 +31,11 @@ ImagePtr   scanlines = NULL;
 
 void LoadScanlines()
 {
-	if(!scanlines && vmode == FAKE_640_SL)
+	if(!scanlines && vmode == VIDEO_480P_SL)
 	{
 		scanlines = LoadKMG("/rd/scanlines.kmg.gz", 0);
 		scanlines->layer = 5.0;
-		scanlines->alpha = 0.7f;
+		scanlines->alpha = 0.5f;
 		scanlines->scale = 0;
 		CalculateUV(0, 0, 640, 480, scanlines);
 	}
@@ -88,7 +89,7 @@ double GetScanlineIntensity()
 
 inline void DrawScanlines()
 {
-	if(vmode == FAKE_640_SL && scanlines)
+	if(vmode == VIDEO_480P_SL && scanlines)
 		DrawImage(scanlines);
 }
 
@@ -102,41 +103,43 @@ void ChangeResolution(int nvmode)
 	int lastw;
 
 	lastw = W;
-	/*
-	// Skip useless video modes when in VGA
-	if(vcable == CT_VGA && vmode == NATIVE_320)
-		vmode = NATIVE_640;
-	vmode ++;
-	*/
 
-	if(nvmode < NATIVE_320)
-		nvmode = NATIVE_320;
-	if(nvmode > FAKE_640_SL)
-		nvmode = FAKE_640_SL;
-	if(nvmode > NATIVE_640_FS)
+	// Skip useless video modes when in VGA
+	vcable = vid_check_cable();
+	if(vcable == CT_VGA && nvmode == VIDEO_240P)
+		nvmode = VIDEO_480P;
+
+	if(nvmode < VIDEO_240P)
+		nvmode = VIDEO_240P;
+	if(nvmode > VIDEO_480P)
+		nvmode = VIDEO_480P_SL;
+	if(nvmode > VIDEO_480P)
 	{
 		if(vcable != CT_VGA)
-			nvmode = NATIVE_320;
+			nvmode = VIDEO_240P;
 	}
+	if(vmode == nvmode)
+		return;
+
 	vmode = nvmode;
 
 	switch(vmode)
 	{
-		case NATIVE_320:
+		case VIDEO_240P:
 			W = 320;
 			H = 240;
 			dW = 320;
 			dH = 240;
 			break;
-		case NATIVE_640:
-		case FAKE_640:
-		case FAKE_640_SL:
+		case VIDEO_480I_A240:
+		case VIDEO_480P_SL:
 			W = 640;
 			H = 480;
 			dW = 320;
 			dH = 240;
 			break;
-		case NATIVE_640_FS:
+		case VIDEO_480I:
+		case VIDEO_480P:
 			W = 640;
 			H = 480;
 			dW = 640;
@@ -146,16 +149,18 @@ void ChangeResolution(int nvmode)
 
 	if(lastw != W)
 	{
+		ReleaseTextures();
+
 		pvr_shutdown();
 		switch(vmode)
 		{
-			case NATIVE_320:
+			case VIDEO_240P:
 						vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
 				break;
-			case FAKE_640:
-			case FAKE_640_SL:
-			case NATIVE_640:
-			case NATIVE_640_FS:
+			case VIDEO_480I_A240:
+			case VIDEO_480P_SL:
+			case VIDEO_480I:
+			case VIDEO_480P:
 					if(vcable == CT_VGA)
 						vid_set_mode(DM_640x480_VGA, PM_RGB565); 
 						//vid_set_mode_ex(&custom_vga);
@@ -165,6 +170,8 @@ void ChangeResolution(int nvmode)
 		}
 
 		pvr_init_defaults();
+
+		RefreshLoadedImages();
 
 		// Disable deflicker filter, 
 		if(PVR_GET(PVR_SCALER_CFG) != 0x400)
@@ -179,6 +186,17 @@ void ChangeResolution(int nvmode)
 			dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
 			PVR_SET(PVR_FB_CFG_2, 0x00000001);
 		}
+
+		if(!settings.drawborder) // Draw back video signal limits?
+			vid_border_color(0, 0, 0);
+		else
+			vid_border_color(255, 255, 255);
+	
+		if(!settings.drawpvrbg)
+			pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+		else
+			pvr_set_bg_color(0.0f, 1.0f, 0.0f);
+		
 	}
 }
 
@@ -188,28 +206,37 @@ void Toggle240p480i(int mode)
 	if(vcable == CT_VGA)
 		return;
 
+	ReleaseTextures();
+	pvr_shutdown();
+
 	if(mode == 0)
 	{
+		ReleaseTextures();
+
 		W = 320;
 		H = 240;
 		dW = 320;
 		dH = 240;
-		vmode = NATIVE_320;
-		pvr_shutdown();
+		vmode = VIDEO_240P;
+
 		vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
+
 	}
 	else
 	{
+
 		W = 640;
 		H = 480;
 		dW = 320;
 		dH = 240;
-		vmode = FAKE_640;
-		pvr_shutdown();
+		vmode = VIDEO_480I_A240;
+
 		vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
 	}
 
 	pvr_init_defaults();
+
+	RefreshLoadedImages();
 
 	// Disable deflicker filter, 
 	if(PVR_GET(PVR_SCALER_CFG) != 0x400)

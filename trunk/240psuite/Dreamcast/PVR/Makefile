@@ -1,7 +1,7 @@
 TARGET = main
 
 #optional -DUSE_FFTW -DSERIAL
-OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DUSE_FFTW -DSERIAL
+OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DUSE_FFTW 
 
 KOS_CFLAGS+= -I$(KOS_BASE)/../kos-ports/include/SDL-1.2.9  $(OPTFLAGS) 
 
@@ -19,7 +19,6 @@ include $(KOS_BASE)/Makefile.rules
             vmu_print.c \
             controller.c \
             vmu.c \
-            settings.c \
             menu.c \
 
 OBJS = $(.SRCS:.c=.o)
