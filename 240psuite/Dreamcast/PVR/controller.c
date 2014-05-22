@@ -3,7 +3,7 @@
 
 uint16 OldButtonsInternal = 0;
 
-#define  SCREENSHOTMODE
+//#define  SCREENSHOTMODE
 
 cont_state_t *ReadController(uint16 num, uint16 *pressed)
 {

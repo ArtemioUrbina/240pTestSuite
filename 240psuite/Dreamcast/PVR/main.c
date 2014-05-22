@@ -156,7 +156,7 @@ int main(void)
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); 
 
 #ifdef VGA_SETTINGS
 		if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)

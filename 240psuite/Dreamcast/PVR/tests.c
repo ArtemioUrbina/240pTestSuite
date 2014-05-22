@@ -1561,7 +1561,7 @@ void Alternate240p480i()
 		if(st)
 		{
 			if (pressed & CONT_START)
-				ShowMenu(ALTERNATE);
+				ShowHelpWindow(ALTERNATE);
 
 			if (pressed & CONT_B)
 				done =	1;				
@@ -1982,9 +1982,9 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 	DrawImage(wave);
 
 	if(accuracy == 1)
-		sprintf(DPres, "Frame accuracy (1 frame 16.67ms)");
+		sprintf(DPres, "Frame accuracy: 1 frame 16.67ms");
 	else
-		sprintf(DPres, "Frame accuracy (1/%d frame %0.3gms)", accuracy, 16.6667/accuracy);
+		sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 16.6667/accuracy);
 	DrawStringS(40, 60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone"); 
 	DrawStringS(50, 120, 1.0f, 1.0f,	1.0f, Status);
 	DrawStringS(120, 200, 0.0f, 1.0f,	0.0f, DPres);

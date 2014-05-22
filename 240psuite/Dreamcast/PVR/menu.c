@@ -245,6 +245,14 @@ void ShowMenu(char *filename)
 	HelpData = filename;
 }
 
+void ShowHelpWindow(char *Data)
+{
+	InitTextureFB();
+        CopyFBToBG();
+	HelpWindow(Data, fbtexture);
+	FreeTextureFB();
+}
+
 void DrawShowMenu()
 {
 	ImagePtr	back;
