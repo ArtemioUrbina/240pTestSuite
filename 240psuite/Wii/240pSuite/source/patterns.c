@@ -195,7 +195,10 @@ void DrawColorBars()
 		return;
 	backgrid = LoadImage(COLORGRIDIMG, 1);
 	if(!backgrid)
+	{
+		FreeImage(&back);
 		return;
+	}
 			
 	while(!done && !EndProgram) 
 	{				
