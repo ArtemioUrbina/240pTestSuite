@@ -22,14 +22,23 @@
 #ifndef MENU_H
 #define MENU_H
 
-#define VERSION_NUMBER "Ver. 1.19"
-#define VERSION_DATE "19/05/2014"
+#define VERSION_NUMBER "Dreamcast Ver. 1.19"
+#define VERSION_DATE "22/05/2014"
+
+struct settings_st {
+	int drawborder;
+	int drawpvrbg;
+};
+
+extern struct settings_st settings;
 
 extern uint8 EndProgram;
-void ChangeOptions();
-void SelectVideoMode();
+void ChangeOptions(ImagePtr screen);
+void SelectVideoMode(ImagePtr screen);
 void DrawShowMenu();
 void ShowMenu(char *HelpData);
 uint8 ReloadFBTexture();
+void DrawCredits(ImagePtr back);
+void DrawIntro();
 
 #endif

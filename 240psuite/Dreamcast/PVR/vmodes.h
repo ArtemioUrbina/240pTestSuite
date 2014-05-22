@@ -22,11 +22,11 @@
 #ifndef V_MODES_H
 #define V_MODES_H
 
-#define NATIVE_320      0
-#define FAKE_640        1
-#define NATIVE_640      2
-#define NATIVE_640_FS   3
-#define FAKE_640_SL     4
+#define VIDEO_240P              0   // 240p
+#define VIDEO_480I_A240         1   // 480i with assets in 240p
+#define VIDEO_480I              2   // 480i with 480p assets
+#define VIDEO_480P_SL           3   // 480p with software scanlines
+#define VIDEO_480P              4   // 480p with 480p assets
 
 #include "image.h"
 

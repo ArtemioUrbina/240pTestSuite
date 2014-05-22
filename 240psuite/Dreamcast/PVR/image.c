@@ -574,7 +574,7 @@ void DrawImage(ImagePtr image)
 	w = image->w;
 	h = image->h;
 	
-	if(image->scale && (vmode == FAKE_640 || vmode == FAKE_640_SL))
+	if(image->scale && (vmode == VIDEO_480P_SL || vmode == VIDEO_480I_A240))
 	{
 		x *= 2;
 		y *= 2;
