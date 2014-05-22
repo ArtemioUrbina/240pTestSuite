@@ -97,24 +97,28 @@ inline void ReleaseScanlines()
 	FreeImage(&scanlines);
 }
 
-void ChangeResolution()
+void ChangeResolution(int nvmode)
 {
 	int lastw;
 
 	lastw = W;
+	/*
 	// Skip useless video modes when in VGA
 	if(vcable == CT_VGA && vmode == NATIVE_320)
 		vmode = NATIVE_640;
 	vmode ++;
+	*/
 
-	if(vmode > FAKE_640_SL)
-		vmode = NATIVE_320;
-
-	if(vmode > NATIVE_640_FS)
+	if(nvmode < NATIVE_320)
+		nvmode = NATIVE_320;
+	if(nvmode > FAKE_640_SL)
+		nvmode = FAKE_640_SL;
+	if(nvmode > NATIVE_640_FS)
 	{
 		if(vcable != CT_VGA)
-			vmode = NATIVE_320;
+			nvmode = NATIVE_320;
 	}
+	vmode = nvmode;
 
 	switch(vmode)
 	{

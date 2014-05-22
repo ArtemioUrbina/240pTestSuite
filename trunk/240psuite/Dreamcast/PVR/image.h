@@ -52,9 +52,35 @@ struct image_st{
 		ImagePtr  copyOf;
 };
 
+#define MAX_IMAGES	50
+#define PATH_LEN	150
+
+//states
+#define MEM_RELEASED 	0
+#define MEM_LOADED	1
+#define MEM_TEXRELEASED	2
+
+typedef struct image_mem_st ImageMem;
+
+struct image_mem_st{
+	ImagePtr	image;
+	char		name[PATH_LEN];
+	uint8		state;
+};
+
+extern ImageMem Images[MAX_IMAGES];
+
+void InitImages();
+void CleanImages();
+void RefreshLoadedImages();
+void InsertImage(ImagePtr image, char *name);
+void ReleaseTextures();
+
 ImagePtr LoadKMG(const char *filename, int maptoscreen);
+uint8 ReLoadKMG(ImagePtr image, const char *filename);
 ImagePtr CloneImage(ImagePtr source, int maptoscreen);
 void FreeImage(ImagePtr *image);
+uint8 FreeImageData(ImagePtr *image);
 void CalculateUV(float posx, float posy, float width, float height, ImagePtr image);
 void FlipH(ImagePtr image, uint16 flip);
 void FlipV(ImagePtr image, uint16 flip);

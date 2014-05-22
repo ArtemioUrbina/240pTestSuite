@@ -240,6 +240,7 @@ void DrawColorBars()
 				ShowMenu(COLORBARSHELP);
 		}
 	}
+	FreeImage(&backgrid);
 	FreeImage(&back);
 	return;
 }

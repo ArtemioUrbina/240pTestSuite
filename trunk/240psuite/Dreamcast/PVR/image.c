@@ -31,8 +31,127 @@
 #include "help.h"
 
 extern uint16 DrawMenu;
+ImageMem Images[MAX_IMAGES];
+uint8 UsedImages = 0;
 
 //#define BENCHMARK 
+
+void InitImages()
+{
+	uint8	i = 0;
+	for(i = 0; i < MAX_IMAGES; i++)
+	{
+		Images[i].image = NULL;
+		Images[i].state = MEM_RELEASED;
+	}
+	UsedImages = 0;
+}
+
+void CleanImages()
+{
+	uint8	i = 0;
+	for(i = 0; i < MAX_IMAGES; i++)
+	{
+		if(Images[i].state != MEM_RELEASED)
+		{
+			dbglog(DBG_ERROR, "Found unreleased image %s\n", Images[i].name);
+			FreeImage(&Images[i].image);
+			Images[i].state = MEM_RELEASED;
+			Images[i].name[0] = '\0';
+			if(UsedImages)
+				UsedImages --;
+			else
+				dbglog(DBG_ERROR, "Invalid used image index\n");
+		}	
+	}
+}
+
+void RefreshLoadedImages()
+{
+	uint8	i = 0;
+
+	for(i = 0; i < MAX_IMAGES; i++)
+	{
+		if(Images[i].state == MEM_TEXRELEASED)
+		{
+			if(Images[i].name[0] == 'F' && Images[i].name[1] == 'B')
+			{
+				if(!ReloadFBTexture())
+					dbglog(DBG_ERROR, "Could not reload FrameBuffer\n");
+				else
+					Images[i].state = MEM_LOADED;
+			}
+			else
+			{
+				if(ReLoadKMG(Images[i].image, Images[i].name))
+					Images[i].state = MEM_LOADED;
+			}
+		}	
+	}
+}
+
+void ReleaseTextures()
+{
+	uint8	i = 0;
+
+	for(i = 0; i < MAX_IMAGES; i++)
+	{
+		if(Images[i].state == MEM_LOADED)
+		{
+			if(!FreeImageData(&Images[i].image))
+				dbglog(DBG_ERROR, "Could not free image: %s\n", Images[i].name);
+			else
+				Images[i].state = MEM_TEXRELEASED;
+		}	
+	}
+}
+
+void InsertImage(ImagePtr image, char *name)
+{
+	if(UsedImages < MAX_IMAGES)
+	{
+		uint8 i, placed = 0;
+
+		for(i = 0; i < MAX_IMAGES && !placed; i++)
+		{
+			if(Images[i].state == MEM_RELEASED)
+			{
+				Images[i].image = image;
+				Images[i].state = MEM_LOADED;
+				strncpy(Images[i].name, name, PATH_LEN);
+				UsedImages ++;
+				placed = 1;
+			}
+		}
+		if(!placed)
+			dbglog(DBG_ERROR, "Image array full (NO FREE)\n");
+	}
+	else
+		dbglog(DBG_ERROR, "Image array full\n");
+}
+
+void ReleaseImage(ImagePtr image)
+{
+	uint8   i = 0, deleted = 0;
+
+        for(i = 0; i < MAX_IMAGES && !deleted; i++)
+        {
+		if(Images[i].image == image)
+		{
+			Images[i].image = NULL;
+			Images[i].state = MEM_RELEASED;
+                        Images[i].name[0] = '\0';
+			if(UsedImages)
+				UsedImages --;
+			else
+				dbglog(DBG_ERROR, "Invalid used image index\n");
+			deleted = 1;
+		}
+	}
+
+	if(!deleted)
+		dbglog(DBG_ERROR, "Image not found for deletion\n");
+}
 
 int gkmg_to_img(const char * fn, kos_img_t * rv) {	
 	kmg_header_t	hdr;
@@ -216,7 +335,71 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 			CalculateUV(0, 0, dW, dH, image);
 	}
 
+	InsertImage(image, (char*)filename);
+
 	return image;
+}
+
+uint8 ReLoadKMG(ImagePtr image, const char *filename)
+{	
+	int load, len;
+	kos_img_t img;
+#ifdef BENCHMARK
+	uint32 start, end;
+	char	msg[100];
+		
+	timer_ms_gettime(NULL, &start);
+#endif
+	if(!image)
+	{
+		fprintf(stderr, "Invalid image pointer for reload %s\n", filename);
+		return 0;
+	}
+	
+	len = strlen(filename);
+	if(filename[len - 2] == 'g' && filename[len - 1] == 'z')
+		load = gkmg_to_img(filename, &img);
+	else
+		load = kmg_to_img(filename, &img);
+	if(load != 0)
+	{
+		fprintf(stderr, "Could not load %s\n", filename);
+		return 0;
+	}
+
+	if(image->tex)
+	{
+		fprintf(stderr, "Found unreleased texture while reloading %s\n", filename);
+		return 0;
+	}
+
+	image->tex = pvr_mem_malloc(img.byte_count);
+	if(!image->tex)
+	{
+		fprintf(stderr, "Could not load %s to VRAM\n", filename);
+		return 0;
+	}
+
+	pvr_txr_load_kimg(&img, image->tex, 0);
+	kos_img_free(&img, 0);	
+
+#ifdef BENCHMARK
+	timer_ms_gettime(NULL, &end);
+	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned int)end - start);
+	dbglog(DBG_KDEBUG, msg);
+#endif
+
+	/*
+	if(maptoscreen)
+	{
+		if(image->w < dW && image->w != 8)
+			CalculateUV(0, 0, 320, 240, image);
+		else
+			CalculateUV(0, 0, dW, dH, image);
+	}
+	*/
+
+	return 1;
 }
 
 ImagePtr CloneImage(ImagePtr source, int maptoscreen)
@@ -275,16 +458,40 @@ void FreeImage(ImagePtr *image)
 		if((*image)->copyOf)		
 			ref = &((*image)->copyOf->RefCount);
 		else
+		{
 			ref = &((*image)->RefCount);
+			ReleaseImage(*image);
+		}
 			
 		(*ref)--;
 		if(!(*ref) && !(*image)->copyOf)
 		{
-			pvr_mem_free((*image)->tex);
+			if((*image)->tex)
+			{
+				pvr_mem_free((*image)->tex);
+				(*image)->tex = NULL;
+			}
 			free(*image);
 			*image = NULL;
 		}
 	}
+}
+
+uint8 FreeImageData(ImagePtr *image)
+{	
+	if(*image)
+	{
+		if(!(*image)->copyOf)
+		{
+			if((*image)->tex)
+			{
+				pvr_mem_free((*image)->tex);
+				(*image)->tex = NULL;
+				return 1;
+			}
+		}
+	}
+	return 0;
 }
 
 void CalculateUV(float posx, float posy, float width, float height, ImagePtr image)
@@ -359,7 +566,7 @@ void DrawImage(ImagePtr image)
 	pvr_poly_hdr_t hdr;
 	pvr_vertex_t vert;
 	
-	if(!image)
+	if(!image || !image->tex)
 		return;
 
 	x = image->x;

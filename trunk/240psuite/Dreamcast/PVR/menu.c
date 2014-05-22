@@ -30,6 +30,7 @@
 #include "menu.h"
 #include "controller.h"
 #include "font.h"
+#include "help.h"
 
 //#define BENCHMARK 
 
@@ -40,29 +41,63 @@ uint8 EndProgram = 0;
 uint DrawMenu = 0;
 extern char *HelpData;
 ImagePtr fbtexture = NULL;
+uint16  *fbtextureBuffer = NULL;
 
 #define FB_TEX_H	1024
 #define FB_TEX_V	512
 #define FB_TEX_BYTES	sizeof(uint16)
 
+#define rotr(value, shift) \
+    (value >> shift) | (value << (16 - shift))
+
+void FreeTextureFB()
+{
+	if(fbtexture)
+		FreeImage(&fbtexture);
+
+	if(EndProgram)
+	{
+		if(fbtextureBuffer)
+		{
+			free(fbtextureBuffer);
+			fbtextureBuffer = NULL;
+		}
+	}
+}
+
 void InitTextureFB()
 {	
-	if(fbtexture)
-		return;
-
-	fbtexture = (ImagePtr)malloc(sizeof(struct image_st));	
 	if(!fbtexture)
 	{
-		fprintf(stderr, "Could not malloc image struct for FB\n");
-		return;
+		fbtexture = (ImagePtr)malloc(sizeof(struct image_st));	
+		if(!fbtexture)
+		{
+			fprintf(stderr, "Could not malloc image struct for FB\n");
+			return;
+		}
+		fbtexture->tex = NULL;
 	}
-	fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); //Min  size for 640x480
+
 	if(!fbtexture->tex)
 	{
-		free(fbtexture);
-		fbtexture = NULL;
-		fprintf(stderr, "Could not pvr mem malloc image struct for FB\n");
-		return;
+		fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); //Min  size for 640x480
+		if(!fbtexture->tex)
+		{
+			FreeTextureFB();
+			fprintf(stderr, "Could not pvr mem malloc image struct for FB\n");
+			return;
+		}
+	}
+
+	if(!fbtextureBuffer)
+	{
+		fbtextureBuffer = (uint16 *)malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); 
+		if(fbtextureBuffer == NULL)
+		{
+			FreeTextureFB();
+			dbglog(DBG_ERROR, "FB copy can't allocate memory\n");
+			return;
+		}
 	}
 
 	fbtexture->r = 1.0f;
@@ -87,23 +122,36 @@ void InitTextureFB()
 	fbtexture->FV = 0;
 	fbtexture->copyOf = NULL;
 	fbtexture->texFormat = PVR_TXRFMT_ARGB1555;
+	
+	InsertImage(fbtexture, "FB");
 }
 
-void FreeTextureFB()
+uint8 ReloadFBTexture()
 {
-	if(fbtexture)
-		FreeImage(&fbtexture);
+	if(fbtextureBuffer && fbtexture)
+	{
+		if(!fbtexture->tex)
+		{
+			fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
+			if(!fbtexture->tex)
+			{
+				fprintf(stderr, "Could not malloc FB to VRAM\n");
+				return 0;
+			}
+			memset(fbtexture->tex, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
+		}
+
+		pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex,
+			fbtexture->tw, fbtexture->th, PVR_TXRLOAD_16BPP|PVR_TXRLOAD_SQ);
+		return 1;
+	}
+	return 0;
 }
-
-#include "help.h"
-
-#define rotr(value, shift) \
-    (value >> shift) | (value << (16 - shift))
 
 void CopyFBToBG()
 {
 	int 	i, numpix, w, tw, th;
-	uint16  *buffer, npixel;
+	uint16  npixel;
 	uint32  save;
 	uint32  pixel;  
 	uint16  r, g, b;
@@ -127,22 +175,14 @@ void CopyFBToBG()
 		th /= 2;
 	}
 
-	buffer = (uint16 *)malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); 
-	if(buffer == NULL)
-	{
-		dbglog(DBG_ERROR, "FB copy can't allocate memory\n");
-		FreeTextureFB();
-		return;
-	}
-
 	if(vid_mode->pm != PM_RGB565)
 	{
 		dbglog(DBG_ERROR, "FB copy: video mode not 565\n");
-		free(buffer);
 		FreeTextureFB();
 		return;
 	}
 
+	memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
 	sprintf(msg, "FB buffer init took %lu ms\n", (unsigned int)end - start);
@@ -165,7 +205,7 @@ void CopyFBToBG()
 		x = i % w;
 		y = i / w;
 		y *= tw;
-		buffer[y+x] = ((npixel << 8) & 0xff00) | ((npixel >> 8) & 0x00ff);
+		fbtextureBuffer[y+x] = ((npixel << 8) & 0xff00) | ((npixel >> 8) & 0x00ff);
 	}
 	irq_restore(save);
 
@@ -175,7 +215,7 @@ void CopyFBToBG()
 	dbglog(DBG_KDEBUG, msg);
 	timer_ms_gettime(NULL, &start);
 #endif
-	pvr_txr_load_ex (buffer, fbtexture->tex, tw, th, PVR_TXRLOAD_16BPP|PVR_TXRLOAD_SQ);
+	pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex, tw, th, PVR_TXRLOAD_16BPP|PVR_TXRLOAD_SQ);
 	fbtexture->tw = tw;
 	fbtexture->th = th;
 	fbtexture->w = fbtexture->tw;
@@ -186,9 +226,6 @@ void CopyFBToBG()
 	sprintf(msg, "FB texture upload took %lu ms\n", (unsigned int)end - start);
 	dbglog(DBG_KDEBUG, msg);
 #endif
-
-	free(buffer);
-	buffer = NULL;
 
 	fbtexture->alpha = 0.75f;
 }
@@ -342,19 +379,18 @@ void ChangeOptions()
 		}				
 		else
 		{
-			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, intensity);
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanline intensity:"); y += fh; c++;			
+			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, intensity);
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Scanline intensity:"); y += fh; c++;			
 			
 			// option 2, Scanline even/odd
-			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, ScanlinesEven() ? "EVEN" : "ODD"); 					
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanlines"); y += fh; c++;	
+			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, ScanlinesEven() ? "EVEN" : "ODD"); 					
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Scanlines"); y += fh; c++;	
 		}
 		
 		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
 		if(vmode == FAKE_640_SL && sel == 1)	
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
-
 		if(vmode != FAKE_640_SL && (sel == 1 || sel == 2))
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 			
@@ -418,6 +454,7 @@ void SelectVideoMode()
 	int 		sel = 1, close = 0;		
 	ImagePtr	back;
 	
+	
 	back = LoadKMG("/rd/help.kmg.gz", 1);
 	if(!back)
 		return;
@@ -432,6 +469,7 @@ void SelectVideoMode()
 		uint16	x = 80;
 		uint16	y = 80;
         	uint16	pressed = 0;
+		uint8	changed = 0;
 				
 		StartScene();
 		        
@@ -446,21 +484,21 @@ void SelectVideoMode()
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;
-/*
-		if(Options.Activate480p && VIDEO_HaveComponentCable())
+		if(vcable == CT_VGA)
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p scaled 240p assets & scanlines"); y += fh; c++;
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
 		}
 		else
 		{
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p scaled 240p assets & scanlines"); y += fh; c++;
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "480p scaled 240p assets & scanlines"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
 		}	
 			
-*/
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
+		if(vcable != CT_VGA && ((sel == 4) || (sel == 5)))
+			DrawStringS(x-40, y + 4*fh, r, g, b, "480p is only available though D-SUB (VGA)"); 						
 		EndScene();		
         
 		ReadController(0, &pressed);
@@ -484,33 +522,37 @@ void SelectVideoMode()
 	
 		if (pressed & CONT_A)
 		{     
-	/*
 			switch(sel)
 			{			
 					case 1:
-						SetVideoMode(VIDEO_240P);
-						SetupGX();
+						ReleaseTextures();
+						ChangeResolution(NATIVE_320);
+						changed = 1;
 						break;
 					case 2:
-						SetVideoMode(VIDEO_480I_A240);
-						SetupGX();
+						ReleaseTextures();
+						ChangeResolution(FAKE_640);
+						changed = 1;
 						break;
 					case 3:
-						SetVideoMode(VIDEO_480I);
-						SetupGX();
+						ReleaseTextures();
+						ChangeResolution(NATIVE_640);
+						changed = 1;
 						break;
 					case 4:
-						if(Options.Activate480p)
+						if(vcable == CT_VGA)
 						{
-							SetVideoMode(FAKE_640_SL);
-							SetupGX();
+							ReleaseTextures();
+							ChangeResolution(FAKE_640_SL);
+							changed = 1;
 						}
 						break;					
 					case 5:
-						if(Options.Activate480p)
+						if(vcable == CT_VGA)
 						{
-							SetVideoMode(VIDEO_480P);
-							SetupGX();
+							ReleaseTextures();
+							ChangeResolution(NATIVE_640_FS);
+							changed = 1;
 						}
 						break;		
 					case 6:
@@ -519,8 +561,13 @@ void SelectVideoMode()
 					default:
 						break;
 			} 			            										
-			*/
 		}		
+
+		if(changed)
+		{
+			RefreshLoadedImages();
+			changed = 0;
+		}
 	}
 	FreeImage(&back);
 
