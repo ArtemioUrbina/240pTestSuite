@@ -1,4 +1,5 @@
 /* 
+ * r
  * 240p Test Suite
  * Copyright (C)2011 Artemio Urbina
  *
@@ -105,7 +106,7 @@ void DrawGrayRamp()
 void DrawWhiteScreen()
 {
 	int 		done = 0, color = 0;
-	u32			pressed;		
+	u32		pressed;		
 	ImagePtr	back;
 	
 	back = LoadImage(WHITEIMG, 1);
@@ -223,6 +224,7 @@ void DrawColorBars()
 			HelpData = COLORBARSHELP;
 		}			
 	}
+	FreeImage(&backgrid);
 	FreeImage(&back);
 	return;
 }
