@@ -79,7 +79,7 @@ int main(void)
 
 	 // Default to 480p when VGA is connected.
 	 if(vcable == CT_VGA)
-		ChangeResolution();
+		ChangeResolution(NATIVE_640);
 
 start:
 	// Check cable again in case it was changed on the fly
@@ -95,6 +95,7 @@ start:
 	else
 		pvr_set_bg_color(0.0f, 1.0f, 0.0f);
 		
+	InitImages();
 	LoadFont();
 	LoadScanlines();
 	title = LoadKMG("/rd/back.kmg.gz", 1);
@@ -178,7 +179,7 @@ start:
 				break;
 			case NATIVE_640_FS:
 				if(vcable != CT_VGA)
-					sprintf(res, "Video: 480i no scaling/mixed assers");
+					sprintf(res, "Video: 480i no scaling/mixed assets");
 				else
 					sprintf(res, "Video: 480p no scaling/mixed assets");
 				break;
@@ -344,6 +345,7 @@ start:
 						SoundTest();
 						break;
 					case 13:
+					/*
 						ChangeResolution();
 						FreeImage(&title);		
 						FreeImage(&sd);		
@@ -352,6 +354,7 @@ start:
 						// we need to reload textures and stuff..
 						// not pretty, but "clean"
 						goto start;
+					*/
 						break;
 					case 14:
 						HelpWindow(GENERALHELP, title);
@@ -376,6 +379,7 @@ start:
 	FreeImage(&sd);		
 	ReleaseScanlines();
 	ReleaseFont();
+	CleanImages();
 #ifndef SERIAL
 	arch_menu();
 #endif
@@ -601,6 +605,9 @@ void DrawCredits(ImagePtr back)
 		st = ReadController(0, &pressed);
 		if(st)
 		{
+			if (pressed & CONT_B)
+				done = 1;
+
 			if (pressed & CONT_START)
 				ShowMenu(GENERALHELP);
 
@@ -613,7 +620,7 @@ void DrawCredits(ImagePtr back)
 void DrawIntro()
 {
 	uint32			counter, frames = 60;
-	float				delta;
+	float			delta;
 	ImagePtr		black;
 
 	black = LoadKMG("/rd/black.kmg.gz", 1);

@@ -49,7 +49,7 @@ int ScanlinesEven();
 void LowerScanlineIntensity();
 void RaiseScanlineIntensity();
 void ToggleScanlineEvenOdd();
-void ChangeResolution();
+void ChangeResolution(int nvmode);
 void PVRStats(char *msg);
 void Toggle240p480i(int mode);
 

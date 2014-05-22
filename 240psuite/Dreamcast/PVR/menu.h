@@ -30,5 +30,6 @@ void ChangeOptions();
 void SelectVideoMode();
 void DrawShowMenu();
 void ShowMenu(char *HelpData);
+uint8 ReloadFBTexture();
 
 #endif
