@@ -40,5 +40,6 @@ void ShowMenu(char *HelpData);
 uint8 ReloadFBTexture();
 void DrawCredits(ImagePtr back);
 void DrawIntro();
+void ShowHelpWindow(char *Data);
 
 #endif
