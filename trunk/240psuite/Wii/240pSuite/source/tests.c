@@ -929,7 +929,7 @@ void DrawStripes()
 		}												
 	}
 
-	FreeImage(&stripespos);
+	FreeImage(&vstripespos);
 	FreeImage(&vstripesneg);
 	FreeImage(&stripespos);
 	FreeImage(&stripesneg);
