@@ -1,0 +1,20 @@
+This is a handy batch file, which uses dolLZ3 and
+mkisofs to create a bootable homebrew disc.
+
+Usage:
+1. Move your dol file to the "homebrew_disc" folder and rename it to "my.dol".
+2. It will then be relocated and copied to "disc\bootldr.dol".
+3. Launch "make_dol_and_iso.bat".
+
+OR (if your dol file already is relocated / "dollz'd")
+
+1. Move your dol file to the "homebrew_disc\disc" folder and rename it to "bootldr.dol".
+2. Make sure there is no "my.dol" in the "homebrew_disc" folder.
+3. Launch "make_dol_and_iso.bat".
+
+Have fun :)
+
+-- infact, 2011
+
+Links:
+[1] http://www.gc-forever.com/wiki/index.php?title=Create_a_bootable_homebrew_disc

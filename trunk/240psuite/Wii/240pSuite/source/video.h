@@ -21,7 +21,7 @@
 
 #include <gccore.h>
 
-#define TOTAL_VMODES 8
+#define TOTAL_VMODES 10
 
 #define VIDEO_240P      	0   // 240p
 #define VIDEO_480I_A240 	1   // 480i with assets in 240p
@@ -32,8 +32,15 @@
 #define VIDEO_480P_SL  		6	// 480p with software scanlines
 #define VIDEO_480P 		 	7	// 480p with 480p assets
 
-extern u32 ActiveFB;
-extern void *frameBuffer[TOTAL_VMODES][2];
+#define INVALID_VIDEO		8
+
+
+#define HertzNTSC			0
+#define HertzPAL			1
+
+extern u32 	ActiveFB;
+extern u8	Hertz;
+extern void *frameBuffer[2][2];
 extern GXRModeObj *rmode;
 extern u32 vmode;
 
@@ -45,4 +52,5 @@ extern int dH;
 void InitVideo();
 void RestoreVideo();
 void InitFrameBuffers();
+void DeleteFrameBuffers();
 void SetVideoMode(u32 mode);
