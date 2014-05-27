@@ -71,7 +71,7 @@ void SetupGX()
 
 	GX_SetCullMode(GX_CULL_NONE);
 		
-	GX_CopyDisp(frameBuffer[vmode][ActiveFB],GX_TRUE);
+	//GX_CopyDisp(frameBuffer[Hertz][ActiveFB],GX_TRUE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
 		
 	GX_SetNumChans(1);
@@ -93,8 +93,6 @@ void SetupGX()
 inline void StartScene()
 {
 	Mtx GXmodelView2D;		
-	
-	VIDEO_SetNextFramebuffer(frameBuffer[vmode][ActiveFB]);
 	
 	GX_SetViewport(0,0,rmode->fbWidth,rmode->efbHeight,0,1);
 	GX_InvVtxCache();
@@ -122,7 +120,7 @@ inline void EndScene()
 		cFB = CopyFrameBufferToImage();	
 		if(cFB)
 		{
-			VIDEO_ClearFrameBuffer(rmode, frameBuffer[vmode][ActiveFB], 0);		
+			VIDEO_ClearFrameBuffer(rmode, frameBuffer[Hertz][ActiveFB], COLOR_BLACK);		
 			StartScene();
 			cFB->x = cFB->x*3/4 + (720 - (rmode->fbWidth)) / 2;;
 			cFB->w = cFB->w*3/4;
@@ -140,16 +138,13 @@ inline void EndScene()
 		
 	if(!DrawMenu)
 	{		
-		GX_CopyDisp(frameBuffer[vmode][ActiveFB], GX_TRUE);
-		ActiveFB ^= 1;    
+		GX_CopyDisp(frameBuffer[Hertz][ActiveFB], GX_TRUE); 		
 	  
 		VIDEO_Flush();                      
-		VIDEO_WaitVSync();                  
-		
-		/*
-		if(vmode == VIDEO_480I || vmode == VIDEO_480I_A240)
-			VIDEO_WaitVSync();
-		*/
+		VIDEO_WaitVSync();
+
+		ActiveFB ^= 1;   
+		VIDEO_SetNextFramebuffer(frameBuffer[Hertz][ActiveFB]);   		
 	}
 	else
 	{
@@ -283,11 +278,18 @@ ImagePtr CopyFrameBufferToImage()
 	
 	SetupGX();
 	
+	ActiveFB ^= 1;    		
+	  
+	VIDEO_Flush();                      
+	VIDEO_WaitVSync();
+
+	VIDEO_SetNextFramebuffer(frameBuffer[Hertz][ActiveFB]);   			
+	
 	image = (ImagePtr)malloc(sizeof(struct image_st));
 	if(!image)
 	{
 		free(cfb);
-		fprintf(stderr, "Could not malloc image struct FB\n");
+		fprintf(stderr, "\nCould not malloc image struct FB\n");
 		return(NULL);
 	}	
 	

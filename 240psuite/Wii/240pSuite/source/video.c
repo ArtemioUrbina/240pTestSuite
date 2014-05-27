@@ -23,34 +23,39 @@
 #include "video.h"
 #include "options.h"
 
-GXRModeObj *vmodes[TOTAL_VMODES] = {
-	&TVNtsc240Ds,
-	&TVNtsc480IntDf, 		// used to beTVNtsc480Int	
-	&TVNtsc480IntDf, 
-	&TVPal264Ds,
-	&TVPal528IntDf,
-	&TVPal528IntDf,
-	&TVNtsc480Prog,
-	&TVNtsc480Prog
-};
-
-u32	ActiveFB = 0;
-void *frameBuffer[TOTAL_VMODES][2];
-u32 vmode           = VIDEO_240P;
-GXRModeObj *mvmode	= NULL;
-GXRModeObj *rmode   = NULL;
-int W			    = 320;
-int H			    = 240;
-int dW			    = 320;
-int dH			    = 240;
-
  GXRModeObj Mode_240p;
  GXRModeObj Mode_480i;
  GXRModeObj Mode_264p;
  GXRModeObj Mode_528i;
 
+GXRModeObj *vmodes[TOTAL_VMODES] = {
+	&Mode_240p,
+	&Mode_480i, 		
+	&Mode_480i, 
+	&Mode_264p,
+	&Mode_528i,
+	&Mode_528i,
+	&TVNtsc480Prog,
+	&TVNtsc480Prog
+};
+
+u32	ActiveFB	= 0;
+u32 vmode		= INVALID_VIDEO;
+u8 	Hertz		= HertzNTSC;
+void *frameBuffer[2][2];
+
+
+GXRModeObj *mvmode	= NULL;
+GXRModeObj *rmode   = NULL;
+int W			    = 0;
+int H			    = 0;
+int dW			    = 0;
+int dH			    = 0;
+
 void InitVideo()
 {
+	int fb = 0;
+	
 	VIDEO_Init();
 		
 	mvmode = VIDEO_GetPreferredMode(NULL);
@@ -60,14 +65,6 @@ void InitVideo()
 	Mode_264p = TVPal264Ds;
 	Mode_528i = TVPal528IntDf;
 	
-	vmodes[VIDEO_240P] 			= &Mode_240p;
-	vmodes[VIDEO_480I_A240] 	= &Mode_480i;
-	vmodes[VIDEO_480I]			= &Mode_480i;
-	
-	vmodes[VIDEO_288P]			= &Mode_264p;
-	vmodes[VIDEO_576I_A264]		= &Mode_528i;
-	vmodes[VIDEO_576I]			= &Mode_528i;
-
 #ifdef WII_VERSION		
 	/* Adjust SCART cable settings */		
 	switch (mvmode->viTVMode >> 2)
@@ -82,18 +79,30 @@ void InitVideo()
 	}
 #endif
 
-	InitFrameBuffers();		
+	for(fb = 0; fb < 2; fb++)
+	{
+		frameBuffer[fb][0] = NULL;
+		frameBuffer[fb][1] = NULL;
+	}
+	
+	InitFrameBuffers();
+	SetVideoMode(VIDEO_240P);
 	VIDEO_SetBlack(FALSE);
 }
 
 void RestoreVideo()
 {
+	DeleteFrameBuffers();	
+	
 	if(mvmode)
 		VIDEO_Configure(mvmode);	
 }
 
 void SetVideoMode(u32 newmode)
-{
+{	
+	if(newmode == vmode)
+		return;
+		
 	if(newmode >= VIDEO_480P && !VIDEO_HaveComponentCable())
 		newmode = VIDEO_240P;		
 		
@@ -105,9 +114,9 @@ void SetVideoMode(u32 newmode)
 
 	if(newmode >= VIDEO_480P && !Options.Activate480p )
 		newmode = VIDEO_240P;
+				
+	vmode = newmode;	
 		
-	vmode = newmode;
-	
 	rmode = vmodes[vmode];
 	
 	switch(vmode)
@@ -117,41 +126,68 @@ void SetVideoMode(u32 newmode)
 		case VIDEO_480P_SL:
 			dW = 320;
 			dH = 240;
+			Hertz = HertzNTSC;
 			break;
 		case VIDEO_480I:
 		case VIDEO_480P:
 			dW = 640;
 			dH = 480;
+			Hertz = HertzNTSC;
 			break;
 		case VIDEO_288P:
 		case VIDEO_576I_A264:		
 			dW = 320;
 			dH = 264;
+			Hertz = HertzPAL;
 			break;
 		case VIDEO_576I:
 			dW = 640;
 			dH = 528;
+			Hertz = HertzPAL;
 			break;
-	}
+	}	
 		
-	VIDEO_ClearFrameBuffer(rmode, frameBuffer[vmode][ActiveFB], COLOR_BLACK);
-	VIDEO_Configure(rmode);		
-	VIDEO_SetNextFramebuffer(frameBuffer[vmode][ActiveFB]);		
-	VIDEO_Flush();
-
-	VIDEO_WaitVSync();	
+	VIDEO_Configure(rmode);			
+	VIDEO_SetNextFramebuffer(frameBuffer[Hertz][ActiveFB]);			
+	VIDEO_Flush();	
 }
 
 void InitFrameBuffers()
-{
-	int mode = 0;
+{	
+	if(!frameBuffer[HertzNTSC][0])
+		frameBuffer[HertzNTSC][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));			
 	
-	for(mode = 0; mode < TOTAL_VMODES; mode++)		
+	if(!frameBuffer[HertzNTSC][1])	
+		frameBuffer[HertzNTSC][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));	
+		
+	if(!frameBuffer[HertzPAL][0])
+		frameBuffer[HertzPAL][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));	
+		
+	if(!frameBuffer[HertzPAL][1])
+		frameBuffer[HertzPAL][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));			
+}
+
+void DeleteFrameBuffers()
+{
+	if(frameBuffer[HertzNTSC][0])
 	{
-		frameBuffer[mode][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));	
-		VIDEO_ClearFrameBuffer(vmodes[mode], frameBuffer[mode][0], COLOR_BLACK);		
-		frameBuffer[mode][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));			
-		VIDEO_ClearFrameBuffer(vmodes[mode], frameBuffer[mode][1], COLOR_BLACK);		
+		free(MEM_K1_TO_K0(frameBuffer[HertzNTSC][0]));
+		frameBuffer[HertzNTSC][0] = NULL;		
+	}
+	if(frameBuffer[HertzNTSC][1])
+	{
+		free(MEM_K1_TO_K0(frameBuffer[HertzNTSC][1]));
+		frameBuffer[HertzNTSC][1] = NULL;		
+	}	
+	if(frameBuffer[HertzPAL][0])
+	{
+		free(MEM_K1_TO_K0(frameBuffer[HertzPAL][0]));
+		frameBuffer[HertzPAL][0] = NULL;		
+	}
+	if(frameBuffer[HertzPAL][1])
+	{
+		free(MEM_K1_TO_K0(frameBuffer[HertzPAL][1]));
+		frameBuffer[HertzPAL][1] = NULL;		
 	}	
 }
 

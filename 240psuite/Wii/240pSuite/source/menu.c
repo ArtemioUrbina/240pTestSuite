@@ -327,7 +327,9 @@ void ChangeOptions(ImagePtr title)
 						Options.ShowWiiRegion = !Options.ShowWiiRegion;
 						if(Options.ShowWiiRegion)
 							GetWiiRegion();
-#endif
+						break;
+					case 2:
+#endif	
 						if(VIDEO_HaveComponentCable() && !(Options.Activate480p && vmode >= VIDEO_480P))
 							Options.Activate480p = !Options.Activate480p;
 						break;
@@ -665,6 +667,8 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Fudoh"); y += fh; 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Collaboration:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Konsolkongen & shmups regulars"); y += fh; 
+		DrawStringS(x, y, 0x00, 0xff, 0x00, "PAL testing:"); y += fh; 
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Yamato "); y += fh; 		
         y += fh;
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/240p/"); y += 2*fh; 

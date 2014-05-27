@@ -64,7 +64,6 @@ int main(int argc, char **argv)
 		
 	ControllerInit();
 
-	SetVideoMode(vmode);
 	InitGX();
 	SetupGX();
 
@@ -158,7 +157,7 @@ int main(int argc, char **argv)
 				break;				
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); 
 		
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");

@@ -34,7 +34,7 @@ LDFLAGS		= $(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	-lfat -lmxml -lasnd -logc -lm
+LIBS	:=	-lasnd -logc -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -110,7 +110,7 @@ clean:
 	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol
 #---------------------------------------------------------------------------------
 run:	
-	$(DEVKITPRO)/emulators/gcube/gcube $(OUTPUT).dol
+	$(DEVKITPRO)/emulators/Dolphin/Dolphin --debugger --exec="$(OUTPUT).dol"
 
 #---------------------------------------------------------------------------------
 else
