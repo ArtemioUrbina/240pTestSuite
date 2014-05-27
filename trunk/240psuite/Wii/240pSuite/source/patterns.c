@@ -113,7 +113,7 @@ void DrawWhiteScreen()
 	if(!back)
 		return;
 		
-	if(vmode == VIDEO_480I || vmode == VIDEO_480P)
+	if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
 	{
 		back->w = 640;
 		back->h = 480;
@@ -349,26 +349,47 @@ void DrawColorBleed()
 
 void DrawGrid()
 {
-	int 		done = 0;
+	int 		done = 0, oldvmode = vmode;
 	u32			pressed;		
-	ImagePtr	back;
-	
-	if(vmode == VIDEO_480I || vmode == VIDEO_480P)
-	{
-		back = LoadImage(GRID480IMG, 0);
-		if(!back)
-			return;
-        back->scale = 0;		
-	}
-	else
-	{
-		back = LoadImage(GRIDIMG, 1);
-		if(!back)
-			return;		
-	}
+	ImagePtr	back = NULL;
 	
 	while(!done && !EndProgram) 
 	{		
+		if(oldvmode != vmode)
+			FreeImage(&back);		
+		
+		if(!back)
+		{
+			if(vmode == VIDEO_480I || vmode == VIDEO_480P)
+			{
+				back = LoadImage(GRID480IMG, 0);
+				if(!back)
+					return;
+				back->scale = 0;		
+			}
+			
+			if(vmode == VIDEO_288P || vmode == VIDEO_576I_A264)
+			{
+				back = LoadImage(GRIDPALIMG, 0);
+				if(!back)
+					return;        	
+			}
+			
+			if(vmode == VIDEO_576I)
+			{
+				back = LoadImage(GRIDPAL480IMG, 0);
+				if(!back)
+					return;        	
+			}
+			
+			if(!back)
+			{
+				back = LoadImage(GRIDIMG, 1);
+				if(!back)
+					return;		
+			}
+		}
+		
 		StartScene();
 		        
 		DrawImage(back);
@@ -381,11 +402,12 @@ void DrawGrid()
 		
 		if (pressed & PAD_BUTTON_B)
 			done =	1;								
-
+	
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = GRIDHELP;
+			oldvmode = vmode;
 		}						
 
 	}
@@ -565,4 +587,41 @@ void Draw100IRE()
 	FreeImage(&white);
 	return;
 }
+
+void DrawSharpness()
+{
+	int 		done = 0;
+	u32			pressed;		
+	ImagePtr	back;	
+	
+	back = LoadImage(SHARPNESSIMG, 1);
+	if(!back)
+		return;
+			
+	while(!done && !EndProgram) 
+	{		
+		StartScene();
+		        
+		DrawImage(back);
+		
+        EndScene();
+		
+		ControllerScan();
+		
+		pressed = Controller_ButtonsDown(0);
+				
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = SHARPNESSHELP;
+		}
+			
+		if (pressed & PAD_BUTTON_B)
+			done =	1;										
+
+	}
+	FreeImage(&back);
+	return;
+}
+
 

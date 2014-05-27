@@ -42,3 +42,6 @@
 <filepath="help.png" id="HELPIMG" colfmt=6 />
 <filepath="SMPTECB.png" id="SMPTECBIMG" colfmt=6 />
 <filepath="FloatMenu.png" id="FLOATMENUIMG" colfmt=6 />
+<filepath="sharpness.png" id="SHARPNESSIMG" colfmt=6 />
+<filepath="gridPAL.png" id="GRIDPALIMG" colfmt=6 />
+<filepath="gridPAL480.png" id="GRIDPAL480IMG" colfmt=6 />

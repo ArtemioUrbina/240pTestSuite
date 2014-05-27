@@ -52,7 +52,7 @@ void DropShadowTest()
 	u32		    pressed, held;		
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay;	
 
-	if(vmode != VIDEO_480P && vmode != VIDEO_480I)
+	if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
 	{		
 		back[0] = LoadImage(MOTOKOIMG, 1);
 		if(!back[0])
@@ -247,7 +247,7 @@ void StripedSpriteTest()
 	u32		    pressed, held;	
 	ImagePtr	back[4], striped, overlay;	
 
-	if(vmode != VIDEO_480P && vmode != VIDEO_480I)
+	if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
 	{		
 		back[0] = LoadImage(MOTOKOIMG, 1);
 		if(!back[0])

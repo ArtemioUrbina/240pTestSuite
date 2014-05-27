@@ -32,6 +32,7 @@ void DrawGrid();
 void DrawLinearity();
 void Draw100IRE();
 void DrawSMPTEColorBars();
+void DrawSharpness();
 
 #endif
 

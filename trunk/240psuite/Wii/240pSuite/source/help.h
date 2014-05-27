@@ -47,6 +47,7 @@
 #define SMPTECOLOR 		SMPTEColor_txt
 #define LINEARITYHELP	linearity_txt
 #define CHECK480PWII	check480pWii_txt
+#define SHARPNESSHELP	sharpness_txt
 
 extern char *SMPTEColor_txt[];
 extern char *alt240p_txt[];
@@ -67,6 +68,7 @@ extern char *manuallag_txt[];
 extern char *passivelag_txt[];
 extern char *pluge_txt[];
 extern char *scroll_txt[];
+extern char *sharpness_txt[];
 extern char *sound_txt[];
 extern char *striped_txt[];
 extern char *stripes_txt[];

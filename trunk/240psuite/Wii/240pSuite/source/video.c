@@ -27,6 +27,9 @@ GXRModeObj *vmodes[TOTAL_VMODES] = {
 	&TVNtsc240Ds,
 	&TVNtsc480IntDf, 		// used to beTVNtsc480Int	
 	&TVNtsc480IntDf, 
+	&TVPal264Ds,
+	&TVPal528IntDf,
+	&TVPal528IntDf,
 	&TVNtsc480Prog,
 	&TVNtsc480Prog
 };
@@ -34,12 +37,60 @@ GXRModeObj *vmodes[TOTAL_VMODES] = {
 u32	ActiveFB = 0;
 void *frameBuffer[TOTAL_VMODES][2];
 u32 vmode           = VIDEO_240P;
+GXRModeObj *mvmode	= NULL;
 GXRModeObj *rmode   = NULL;
-int VideoInit       = 0;
 int W			    = 320;
 int H			    = 240;
 int dW			    = 320;
 int dH			    = 240;
+
+ GXRModeObj Mode_240p;
+ GXRModeObj Mode_480i;
+ GXRModeObj Mode_264p;
+ GXRModeObj Mode_528i;
+
+void InitVideo()
+{
+	VIDEO_Init();
+		
+	mvmode = VIDEO_GetPreferredMode(NULL);
+
+	Mode_240p = TVNtsc240Ds;
+	Mode_480i = TVNtsc480IntDf;
+	Mode_264p = TVPal264Ds;
+	Mode_528i = TVPal528IntDf;
+	
+	vmodes[VIDEO_240P] 			= &Mode_240p;
+	vmodes[VIDEO_480I_A240] 	= &Mode_480i;
+	vmodes[VIDEO_480I]			= &Mode_480i;
+	
+	vmodes[VIDEO_288P]			= &Mode_264p;
+	vmodes[VIDEO_576I_A264]		= &Mode_528i;
+	vmodes[VIDEO_576I]			= &Mode_528i;
+
+#ifdef WII_VERSION		
+	/* Adjust SCART cable settings */		
+	switch (mvmode->viTVMode >> 2)
+	{
+	case VI_EURGB60:  	
+	
+	  Mode_240p.viTVMode = VI_TVMODE_EURGB60_DS;
+	  Mode_480i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  
+	  Mode_264p.viTVMode = VI_TVMODE_EURGB60_DS;
+	  Mode_528i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  
+	  break;	
+	}
+#endif
+
+	InitFrameBuffers();		
+	VIDEO_SetBlack(FALSE);
+}
+
+void RestoreVideo()
+{
+	if(mvmode)
+		VIDEO_Configure(mvmode);	
+}
 
 void SetVideoMode(u32 newmode)
 {
@@ -47,6 +98,9 @@ void SetVideoMode(u32 newmode)
 		newmode = VIDEO_240P;		
 		
 	if(newmode >= TOTAL_VMODES || newmode < 0)
+		newmode = VIDEO_240P;	
+		
+	if(newmode >= VIDEO_288P && newmode <= VIDEO_576I && !Options.EnablePAL)
 		newmode = VIDEO_240P;	
 
 	if(newmode >= VIDEO_480P && !Options.Activate480p )
@@ -69,24 +123,23 @@ void SetVideoMode(u32 newmode)
 			dW = 640;
 			dH = 480;
 			break;
-	}
-
-	if(!VideoInit)
-	{
-		InitFrameBuffers();		
-		VIDEO_SetBlack(FALSE);
+		case VIDEO_288P:
+		case VIDEO_576I_A264:		
+			dW = 320;
+			dH = 264;
+			break;
+		case VIDEO_576I:
+			dW = 640;
+			dH = 528;
+			break;
 	}
 		
-	VIDEO_ClearFrameBuffer(rmode, frameBuffer[vmode][ActiveFB], 0);
+	VIDEO_ClearFrameBuffer(rmode, frameBuffer[vmode][ActiveFB], COLOR_BLACK);
 	VIDEO_Configure(rmode);		
 	VIDEO_SetNextFramebuffer(frameBuffer[vmode][ActiveFB]);		
 	VIDEO_Flush();
 
-	VIDEO_WaitVSync();
-	/*
-	if(vmode == VIDEO_480I_A240 || vmode == VIDEO_480I) 
-		VIDEO_WaitVSync();
-		*/
+	VIDEO_WaitVSync();	
 }
 
 void InitFrameBuffers()
@@ -96,11 +149,9 @@ void InitFrameBuffers()
 	for(mode = 0; mode < TOTAL_VMODES; mode++)		
 	{
 		frameBuffer[mode][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));	
-		VIDEO_ClearFrameBuffer(vmodes[mode], frameBuffer[mode][0], 0);		
+		VIDEO_ClearFrameBuffer(vmodes[mode], frameBuffer[mode][0], COLOR_BLACK);		
 		frameBuffer[mode][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(vmodes[mode]));			
-		VIDEO_ClearFrameBuffer(vmodes[mode], frameBuffer[mode][1], 0);		
-	}
-
-	VideoInit = 1;
+		VIDEO_ClearFrameBuffer(vmodes[mode], frameBuffer[mode][1], COLOR_BLACK);		
+	}	
 }
 

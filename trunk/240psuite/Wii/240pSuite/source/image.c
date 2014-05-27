@@ -83,7 +83,7 @@ void SetupGX()
 	GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);	
 		
 	height = rmode->efbHeight;
-	width = height == 480 ? xfbWidth : 320;
+	width = (vmode == VIDEO_240P || vmode == VIDEO_288P) ? 320 : xfbWidth;
 	
 	guOrtho(perspective,0,height,0,width,0,300);    
 	GX_LoadProjectionMtx(perspective, GX_ORTHOGRAPHIC);
@@ -299,7 +299,7 @@ ImagePtr CopyFrameBufferToImage()
 	image->g = 0xff;
 	image->b = 0xff;
 
-	if(height == 240)
+	if(vmode == VIDEO_240P || vmode == VIDEO_288P)
 		width = 320;
 		
 	image->tw = width;
@@ -427,7 +427,9 @@ void DrawImage(ImagePtr image)
 	w = image->w;
 	h = image->h;	
 	
-	if(image->scale && (vmode == VIDEO_480I_A240 || vmode == VIDEO_480P_SL))
+	if(image->scale && (vmode == VIDEO_480I_A240 || 
+						vmode == VIDEO_480P_SL || 
+						vmode == VIDEO_576I_A264))
 	{
 		x *= 2;
 		y *= 2;
@@ -438,8 +440,8 @@ void DrawImage(ImagePtr image)
 	GX_LoadTexObj(&image->tex, GX_TEXMAP0);	
 	//GX_InvalidateTexAll();			
 		
-	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
-		GX_Position2f32(x, y);					// Top Left
+	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);		// Draw A Quad
+		GX_Position2f32(x, y);				// Top Left
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
 		GX_TexCoord2f32(image->u1, image->v1);				
 		
@@ -447,11 +449,11 @@ void DrawImage(ImagePtr image)
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
 		GX_TexCoord2f32(image->u2, image->v1);		
 		
-		GX_Position2f32(x+w,y+h);	// Bottom Right
+		GX_Position2f32(x+w,y+h);			// Bottom Right
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
 		GX_TexCoord2f32(image->u2, image->v2);
 		
-		GX_Position2f32(x,y+h);			// Bottom Left
+		GX_Position2f32(x,y+h);				// Bottom Left
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
 		GX_TexCoord2f32(image->u1, image->v2);		
 	GX_End();		
