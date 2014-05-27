@@ -41,8 +41,6 @@
 struct options_st Options = DEFAULT_OPTIONS;
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
-void DrawCredits(ImagePtr Back);
-void DrawIntro();
 
 #ifdef WII_VERSION
 s8 HWButton = -1; 
@@ -62,8 +60,7 @@ int main(int argc, char **argv)
 	SYS_SetPowerCallback(WiiPowerPressed);
 	WPAD_SetPowerButtonCallback(WiimotePowerPressed);
 #endif
-		
-	VIDEO_Init();
+	InitVideo();	
 		
 	ControllerInit();
 
@@ -144,6 +141,15 @@ int main(int argc, char **argv)
 			case VIDEO_480I:
 				sprintf(res, "Video: 480i (Scaling disabled)");
 				break;
+			case VIDEO_288P:
+				sprintf(res, "Video: 288p");				
+				break;			
+			case VIDEO_576I_A264:
+				sprintf(res, "Video: 576i (scaled 264p)");
+				break;
+			case VIDEO_576I:
+				sprintf(res, "Video: 576i (Scaling disabled)");
+				break;
 			case VIDEO_480P:
 				sprintf(res, "Video: 480p (Scaling disabled)");
 				break;
@@ -152,9 +158,7 @@ int main(int argc, char **argv)
 				break;				
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
-        
-		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += fh; 
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;		
 		
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");
@@ -240,10 +244,7 @@ int main(int argc, char **argv)
 					break;
 				case 14:
 					ChangeOptions(Back);
-					break;				
-				case 15:
-					DrawCredits(Back);
-					break;
+					break;								
 			} 									
 		}
 	}
@@ -253,6 +254,8 @@ int main(int argc, char **argv)
 	FreeImage(&Back);
 	ReleaseFont();	
 	ReleaseScanlines();
+	
+	RestoreVideo();
 	
 #ifdef WII_VERSION
 	if(HWButton != -1)
@@ -291,6 +294,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White Screen"); y += fh; c++;				
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;				
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;	
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		if(VIDEO_HaveComponentCable())		
@@ -364,6 +368,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					Draw100IRE();
 					break;				
 				case 11:
+					DrawSharpness();
+					break;				
+				case 12:
 					close = 1;
 					break;
 			} 			            										
@@ -373,127 +380,6 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 	return;
 }
 
-void DrawCredits(ImagePtr Back)
-{
-	int 	done = 0;	
-    	u32     pressed = 0, counter = 1;
-	char	name[50], title[50];
-#ifdef WII_VERSION
-	u8 		shopcode = 0;
-	char	shop[100];	
-	
-	if(Options.ShowWiiRegion)
-	{
-		if (CONF_GetShopCode(&shopcode) >= 0) {
-			sprintf(shop, "Shop: %s\n", (strlen(CONF_CountryCodes[shopcode]) ? CONF_CountryCodes[shopcode] : "Unknown Country"));
-		} else {		
-			sprintf(shop, "Error getting shop code!\n");			
-		}
-	}
-#endif
-	
-	while(!done && !EndProgram)  
-	{
-		int x = 30, y = 52;			
-
-		StartScene();
-		        
-		DrawImage(Back);
-		
-		if(counter == 1)
-		{
-			sprintf(title, "Code and Patterns:");
-			sprintf(name, "Artemio Urbina"); 
-		}
-		if(counter == 60*5)
-		{
-			sprintf(title, "Support and suggestions:");
-			sprintf(name, "aurbina@junkerhq.net"); 
-		}
-		if(counter == 60*10)
-			sprintf(name, "@Artemio (twitter)"); 
-		if(counter == 60*15)
-			counter = 0;
-		DrawStringS(x, y, 0x00, 0xff, 0x00, title); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, name); y += fh; 
-		DrawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "devkitPPC"); y += fh; 		
-		DrawStringS(x, y, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Asher"); y += fh; 		
-		DrawStringS(x, y, 0x00, 0xff, 0x00, "Advisor:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Fudoh"); y += fh; 
-		DrawStringS(x, y, 0x00, 0xff, 0x00, "Collaboration:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Konsolkongen & shmups regulars"); y += fh; 
-		DrawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/240p"); y += 2*fh; 
-
-		DrawStringS(x, y, 0x00, 0xba, 0xba, "This program is free Software");  y += fh;
-		DrawStringS(x, y, 0x00, 0xba, 0xba, "Source code is available under GPL.");  y += fh;
-		DrawStringS(x, y, 0x00, 0xba, 0xba, "Includes libcheckregion.");
-
-		y = 58;
-		
-		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_NUMBER); y += fh;
-		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_DATE); y += 2*fh;
-
-#ifdef WII_VERSION		
-		if(Options.ShowWiiRegion)
-		{
-			DrawStringS(200, y, 0xee, 0xee, 0xee, shop); y += fh;
-			DrawStringS(200, y, 0xee, 0xee, 0xee, wiiregion); y += fh;
-		}
-#endif
-
-		EndScene();		
-		
-		ControllerScan();
-		pressed = Controller_ButtonsDown(0);
-		
-		if ( pressed & PAD_BUTTON_START) 		
-			DrawMenu = 1;	
-        	if (pressed & PAD_TRIGGER_R)
-			DrawIntro();
-		if (pressed & PAD_BUTTON_B)
-			done =	1;		
-			
-		counter ++;			
-	}
-}
-
-void DrawIntro()
-{    
-	u32				counter, frames = 60;
-	int				delta;
-	ImagePtr		black;
-
-	black = LoadImage(BLACKIMG, 1);
-	if(!black)
-		return;
-
-	black->alpha = 0xff;
-	delta = 1;
-	black->w = dW;
-	black->h = dH;
-	black->layer = 5.0f;
-		
-	for(counter = 0; counter < frames*2; counter ++)
-	{
-		black->alpha -= delta;
-		if(black->alpha < 0x00)
-			black->alpha = 0x00;
-
-		StartScene();
-	
-		DrawStringS(120, 115, 0xff, 0xff, 0xff, "KORDAMP PRESENTS");
-		DrawImage(black);
-		
-		EndScene();		
-
-		if(counter == frames)
-			delta *= -1;
-	}
-	FreeImage(&black);
-}
 
 #ifdef WII_VERSION
 /**

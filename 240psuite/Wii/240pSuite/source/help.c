@@ -31,8 +31,8 @@
 #include "options.h"
 
 char *SMPTEColor_txt[] = { 
-"       COLOR BARS WITH GRAY SCALE (1/2)\n\nIn an SMPTE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on \nand off between every bar, red cycling on and \noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\n                                         (cont...)\n",
-"       COLOR BARS WITH GRAY SCALE (2/2)\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
+"            SMPTE COLOR BARS (1/2)\n\nIn an SMPTE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on \nand off between every bar, red cycling on and \noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\n                                         (cont...)\n",
+"            SMPTE COLOR BARS (2/2)\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.\n",
 NULL
 };
 char *alt240p_txt[] = { 
@@ -72,7 +72,7 @@ NULL
 };
 char *general_txt[] = { 
 "                  HELP (1/2)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\n$S button.\n\n                                         (cont...)",
-"                  HELP (2/2)\n\nThis version of the suite supports 240p, 480i and\n480p video modes. However, 480p is only available\nvia component cables, you can enable it from the\noptions menu. \n",
+"                  HELP (1/2)\n\nThis version of the suite supports 240p, 480i and\n480p video modes. However, 480p is only available\nvia component cables, you can enable it from the\noptions menu. \n",
 NULL
 };
 char *gray_txt[] = { 
@@ -80,7 +80,8 @@ char *gray_txt[] = {
 NULL
 };
 char *grid_txt[] = { 
-"                      GRID\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is\nno distortion present\n\nA 640x480 Grid can be shown in compatible video\nmodes.",
+"                  GRID (1/2)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is\nno distortion present\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
+"                  GRID (1/2)\n\nIn 264 mode, only 263 active pixels are shown.\n\nSince 264 is not an exact multiple of 16 there is\na centered line of smaller tiles.\n\nWhen in 576i linedoubled mode, an extra green \nline is displayed at teh bottom of the screen.\n\nIn 576i unscaled 1:1 mode, a full 640x576 grid is\nshown.",
 NULL
 };
 char *gridscroll_txt[] = { 
@@ -93,7 +94,7 @@ char *ire100_txt[] = {
 NULL
 };
 char *linearity_txt[] = { 
-"                LINEARITY\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC pixel aspect ratio.\n\nThe diameter of the 4 small ones is identical, \nso as a group the linearity of the display or\nupscaler can be verified by measuring them.\n\nOf course, the diameter of the central circle \nshould also be maintained in all directions.\n",
+"                LINEARITY\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC pixel aspect ratio.\n\nThe diameter of the 4 small ones is identical, \nso as a group the linearity of the display or\nupscaler can be verified by measuring them.\n\nOf course, the diameter of the central circle \nshould also be maintained in all directions.\n\nA grid is also available with the $L and $R \nbuttons.\n",
 NULL
 };
 char *manuallag_txt[] = { 
@@ -115,6 +116,10 @@ char *scroll_txt[] = {
 "                   SCROLL TEST\n\nThis test shows a two layer background from Sonic\nthe Hedgehog. The speed can be varied with the\nd-pad, and change direction with the button $X.\nThe A button stops the scroll. \n\nSonic The Hedgehog is a trademark of \nSega Enterprises Ltd.",
 NULL
 };
+char *sharpness_txt[] = { 
+"                SHARPNESS\n\nYou should set the sharpness of your CRT to a\nvalue that shows clean black and gray transitions,\nwith no white ghosting in between.\n\nOn most modern displays, the Sharpness control is \nan edge-enhancement control, and most probably\nshould be set to zero, or in the middle.",
+NULL
+};
 char *sound_txt[] = { 
 "                      SOUND\n\nThis simple test plays a sound in either or both\nchannels.\n\nIt can be used to determine if the audio chain is\nworking properly.\n",
 NULL
@@ -129,7 +134,7 @@ char *stripes_txt[] = {
 NULL
 };
 char *white_txt[] = { 
-"                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons. Some displays and scalers have issues\nwhen changing between a fully black and a fully \nwhite screen.\n\nIt can also be used to check color purity, and \ndead pixels.",
+"                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n",
 NULL
 };
 

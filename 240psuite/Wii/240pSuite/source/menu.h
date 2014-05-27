@@ -20,12 +20,12 @@
  */
  
 #ifdef WII_VERSION
-#define VERSION_NUMBER "Wii GX Ver. 1.4"
+#define VERSION_NUMBER "Wii GX Ver. 1.5"
 #else
-#define VERSION_NUMBER "GC GX Ver. 1.4"
+#define VERSION_NUMBER "GC GX Ver. 1.5"
 #endif
 
-#define VERSION_DATE "19/11/2014"
+#define VERSION_DATE "26/11/2014"
 
 extern u8 DrawMenu;
 extern char **HelpData;
@@ -34,6 +34,10 @@ extern u8 EndProgram;
 void ShowMenu();
 void SelectVideoMode(ImagePtr title);
 void ChangeOptions(ImagePtr Back);
+void ShowVideoData();
+
+void DrawCredits(ImagePtr Back);
+void DrawIntro();
 
 #ifdef WII_VERSION	
 void GetWiiRegion();

@@ -14,7 +14,7 @@ Help is available on some patterns by pressing the
 $S button.
 
                                          (cont...)
-                 HELP (1/2)
+                  HELP (1/2)
 
 This version of the suite supports 240p, 480i and
 480p video modes. However, 480p is only available

@@ -22,13 +22,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEFAULT_OPTIONS { 0, 1, 0, 0 }
+#define DEFAULT_OPTIONS { 0, 1, 0, 0, 0 }
 
 struct options_st {
 	int Activate480p;
 	int ShowWiiRegion;
 	int CorrectFor169;
 	int SFCClassicController;
+	int EnablePAL;
 };
 
 extern struct options_st Options;

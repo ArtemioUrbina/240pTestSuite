@@ -113,6 +113,14 @@ u8 LoadOptions()
 		    
 	}	
 	
+	node = mxmlFindElement(xml, xml, "EnablePAL", NULL, NULL, MXML_DESCEND);
+	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "EnablePAL"))
+	{
+		if(node->child)       
+            Options.EnablePAL = node->child->value.integer;		    
+		    
+	}	
+	
 	if(xml)
 		mxmlDelete(xml);
 		
@@ -165,6 +173,9 @@ u8 SaveOptions()
 	mxmlNewInteger(node, (int)ScanlinesEven());
 	node = mxmlNewElement(options240p, "ScanlineIntensity");
 	mxmlNewInteger(node, (int)GetRawScanlineValue());	
+	
+	node = mxmlNewElement(options240p, "EnablePAL");
+	mxmlNewInteger(node, Options.EnablePAL);	
 		
     mxmlSaveFile(xml, file, MXML_NO_CALLBACK);	
 		
