@@ -109,6 +109,22 @@ inline void StartScene()
 	guMtxIdentity(GXmodelView2D);
 	guMtxTransApply (GXmodelView2D, GXmodelView2D, 0.0F, 0.0F, -5.0F);
 	GX_LoadPosMtxImm(GXmodelView2D,GX_PNMTX0);
+	
+	if(IsPAL)
+	{
+		ImagePtr back = NULL;
+		
+		back = LoadImage(WHITEIMG, 1);
+		if(back)
+		{
+			back->r = 0x44; 
+			back->g = 0x44;
+			back->b = 0x44;
+			
+			DrawImage(back);
+			FreeImage(&back);
+		}
+	}
 }
 
 inline void EndScene()

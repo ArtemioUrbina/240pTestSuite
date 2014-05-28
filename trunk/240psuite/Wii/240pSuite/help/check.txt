@@ -1,4 +1,4 @@
-              CHECKERBOARD 1/2
+             CHECKERBOARD (1/2)
 
 This pattern shows all the visible pixels in an
 alternating white and black grid array. 
@@ -14,7 +14,7 @@ are being discarded completely.
 
                                          (cont...)
 
-              CHECKERBOARD 2/2
+             CHECKERBOARD (2/2)
 
 A frame counter can be displayed on screen by 
 pressing button $Y.

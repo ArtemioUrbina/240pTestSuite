@@ -14,7 +14,7 @@ Help is available on some patterns by pressing the
 $S button.
 
                                          (cont...)
-                  HELP (1/2)
+                  HELP (2/2)
 
 This version of the suite supports 240p, 288p, 
 576i, 480i and 480p video modes. However, 480p is
@@ -22,7 +22,10 @@ only available via component cables.
 
 In 288p and 576i PAL modes, the system is capable
 of drawing the whole visible signal, 264 and 528
-lines respectively.
+lines respectively. However, since most screens
+are only 240p tall, the suite centers them 
+vertically. Grids and other 264p patterns are 
+shown using the full resolution.
 
 PAL and 480p modes must be enabled from the 
 options menu. 

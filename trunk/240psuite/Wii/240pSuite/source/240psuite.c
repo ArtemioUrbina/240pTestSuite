@@ -122,11 +122,13 @@ int main(int argc, char **argv)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
 		if(vmode == VIDEO_480P || vmode == VIDEO_480P_SL)
 		{
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Alternating 240p/480i Test"); y += fh; c++;
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, 
+				IsPAL ? "Alternating 288p/476i Test" : "Alternating 240p/480i Test"); y += fh; c++;
 		}
 		else
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Alternating 240p/480i Test"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, 
+				IsPAL ? "Alternating 288p/476i Test" : "Alternating 240p/480i Test"); y += fh; c++;
 		}        
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
         switch(vmode)
@@ -161,8 +163,8 @@ int main(int argc, char **argv)
 		
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");
-		else
-			DrawStringS(215, 225, r, g,	 b, "");		
+		if(VIDEO_HaveSCARTRGBCable())
+			DrawStringS(215, 225, r, g,	 b, "SCART RGB");		
 
 #ifdef WII_VERSION
 		if(Options.ShowWiiRegion)
@@ -297,9 +299,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		if(VIDEO_HaveComponentCable())		
-			DrawStringS(215, 225, r, g,	 b, "Component");
-		else
-			DrawStringS(215, 225, r, g,	 b, "Composite");				
+			DrawStringS(215, 225, r, g,	 b, "Component");		
+		if(VIDEO_HaveSCARTRGBCable())
+			DrawStringS(215, 225, r, g,	 b, "SCART RGB");		
 		
 #ifdef WII_VERSION
 		if(Options.ShowWiiRegion)

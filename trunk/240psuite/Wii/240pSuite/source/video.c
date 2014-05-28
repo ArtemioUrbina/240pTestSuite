@@ -53,6 +53,14 @@ int H			    = 0;
 int dW			    = 0;
 int dH			    = 0;
 
+u8 VIDEO_HaveSCARTRGBCable()
+{
+	if(!mvmode)
+		return 0;
+		
+	return(mvmode->viTVMode >> 2 == VI_EURGB60);
+}
+
 void InitVideo()
 {
 	int fb = 0;
@@ -70,7 +78,7 @@ void InitVideo()
 	Mode_528i.viYOrigin = PAL_OFFSET;
 	
 #ifdef WII_VERSION		
-	/* Adjust SCART cable settings */		
+	/* Adjust SCART cable to output RGB and not YUV */		
 	switch (mvmode->viTVMode >> 2)
 	{
 	case VI_EURGB60:  	

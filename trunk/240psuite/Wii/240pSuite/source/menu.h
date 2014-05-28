@@ -25,7 +25,7 @@
 #define VERSION_NUMBER "GC GX Ver. 1.5"
 #endif
 
-#define VERSION_DATE "26/11/2014"
+#define VERSION_DATE "28/05/2014"
 
 extern u8 DrawMenu;
 extern char **HelpData;

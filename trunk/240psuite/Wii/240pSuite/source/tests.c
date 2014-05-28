@@ -1489,7 +1489,10 @@ u16 ConvertToFrames(timecode *time)
 		return frames;
 
 	frames = time->frames;
-	frames += time->seconds*60;
+	if(IsPAL)
+		frames += time->seconds*50;
+	else
+		frames += time->seconds*60;
 	frames += time->minutes*3600;
 	frames += time->hours*216000;
 	return frames;
@@ -1503,32 +1506,62 @@ void ConvertFromFrames(timecode *value, u16 Frames)
 	Frames = Frames % 216000;
 	value->minutes = Frames / 3600;
 	Frames = Frames % 3600;
-	value->seconds = Frames / 60;
-	value->frames = Frames % 60;
+	if(IsPAL)
+	{
+		value->seconds = Frames / 50;
+		value->frames = Frames % 50;
+	}
+	else
+	{
+		value->seconds = Frames / 60;
+		value->frames = Frames % 60;
+	}
 }
 
 void Alternate240p480i()
 {
 	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, done =  0, current = 0, res = 0, status = 0;
 	timecode	times[20];
-	u32		    pressed, oldvmode = VIDEO_240P;		
+	u32		    pressed, oldvmode = vmode;		
 	char 		buffer[20];
 	
-	if(vmode != VIDEO_240P)
+	if(IsPAL)
 	{
-		oldvmode = vmode;
-		SetVideoMode(VIDEO_240P);				
-		SetupGX();
+		if(vmode != VIDEO_288P)
+		{			
+			SetVideoMode(VIDEO_288P);				
+			SetupGX();
+		}
+
+	}
+	else
+	{
+		if(vmode != VIDEO_240P)
+		{		
+			SetVideoMode(VIDEO_240P);				
+			SetupGX();
+		}
 	}
 
 	while(!done && !EndProgram) 
 	{
 		frames ++;
 
-		if(frames > 59)
+		if(IsPAL)
 		{
-			frames = 0;
-			seconds ++;
+			if(frames > 49)
+			{
+				frames = 0;
+				seconds ++;
+			}
+		}
+		else
+		{
+			if(frames > 59)
+			{
+				frames = 0;
+				seconds ++;
+			}
 		}
 
 		if(seconds > 59)
@@ -1549,8 +1582,12 @@ void Alternate240p480i()
 		StartScene();
 
 		DrawString(32, 8, 0, 0xff, 0, "Current Resolution:");
-		DrawString(140, 8, 0, 0xff, 0, res == 0 ? "240p" : "480i");
+		DrawString(140, 8, 0, 0xff, 0, res == 0 ? (IsPAL ? "288p" : "240p") : (IsPAL ? "576i" : "480i"));
+#ifdef WII_VERSION
 		DrawString(180, 8, 0xff, 0xff, 0xff, "Press HOME button for help");
+#else
+		DrawString(180, 8, 0xff, 0xff, 0xff, "Press Start button for help");
+#endif
 
 		sprintf(buffer, "%02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
 		DrawString(32, 32, 0xff, 0xff, 0xff, "Elapsed Timer:");
@@ -1564,7 +1601,8 @@ void Alternate240p480i()
 				if(times[i].type == 0)
 				{
 					DrawString(32,      40+i*8, 0xff, 0xff, 0.0, "Switched to");
-					DrawString(32+12*5, 40+i*8, 0xff, 0xff, 0.0, times[i].res == 0 ? "240p" : "480i");
+					DrawString(32+12*5, 40+i*8, 0xff, 0xff, 0.0, 
+							times[i].res == 0 ? (IsPAL ? "288p" : "240p") : (IsPAL ? "576i" : "480i"));
 					DrawString(32+16*5, 40+i*8, 0xff, 0xff, 0.0, " at:");
 				}
 				else
@@ -1593,9 +1631,9 @@ void Alternate240p480i()
         pressed = Controller_ButtonsDown(0);
 					
 		if ( pressed & PAD_BUTTON_START ) 		
-		{
-			DrawMenu = 1;					
+		{					
 			HelpData = ALTERNATE;
+			DrawHelpWindow();
 		}													
 
 		if (pressed & PAD_BUTTON_B)
@@ -1620,9 +1658,9 @@ void Alternate240p480i()
 				res = !res;
 				times[current - 1].res = res;	
 				if(!res)
-					SetVideoMode(VIDEO_240P);
+					SetVideoMode(IsPAL ? VIDEO_288P : VIDEO_240P);
 				else
-					SetVideoMode(VIDEO_480I_A240);
+					SetVideoMode(IsPAL ? VIDEO_576I_A264 : VIDEO_480I_A240);
 				SetupGX();
 			}
 			if(status == 2)

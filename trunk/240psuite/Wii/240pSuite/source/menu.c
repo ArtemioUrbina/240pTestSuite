@@ -392,12 +392,14 @@ void SelectVideoMode(ImagePtr title)
 
 		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 2*fh; 
 		
-		DrawStringS(x - 10, y + (vmode * fh), 0x00, 0xff, 0x00, ">"); 
+		DrawStringS(x - 10, y + (vmode * fh) + ((vmode >= VIDEO_288P) ? fh/2 : 0) + ((vmode >= VIDEO_480P_SL) ? fh/2 - 1: 0),
+					0x00, 0xff, 0x00, ">"); 
 		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;				
 		
+		y += fh/2;
 		if(Options.EnablePAL)
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
@@ -411,6 +413,7 @@ void SelectVideoMode(ImagePtr title)
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i mixed 480p/240p assets (1:1/PAL)"); y += fh; c++;			
 		}			
 		
+		y += fh/2;
 		if(Options.Activate480p && VIDEO_HaveComponentCable())
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p scaled 240p assets & scanlines"); y += fh; c++;

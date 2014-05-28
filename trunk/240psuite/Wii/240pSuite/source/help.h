@@ -75,6 +75,7 @@ extern char *stripes_txt[];
 extern char *white_txt[];
 
 void HelpWindow(ImagePtr screen);
+void DrawHelpWindow();
 
 #endif
 
