@@ -207,7 +207,7 @@ void DrawLinearity()
   grid2 = ind;
 
   ind += size;
-  if(pal_240)
+  if(Detect_VDP_PAL())
   {
     size = sizeof(circlesPAL_tiles) / 32; 
     VDP_loadTileData(circlesPAL_tiles, ind, size, USE_DMA); 
@@ -221,8 +221,8 @@ void DrawLinearity()
   if(gridpattern)
     VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
 
-  if(pal_240)
-    VDP_setMyTileMapRect(APLAN, circlesPAL_map, ind, 0, 0, 320/8, 240/8);      
+  if(Detect_VDP_PAL())
+    VDP_setMyTileMapRect(APLAN, circlesPAL_map, ind, 0, 0, 320/8, 224/8);      
   else
     VDP_setMyTileMapRect(APLAN, circles_map, ind, 0, 0, 320/8, 224/8);      
   
