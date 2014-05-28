@@ -499,7 +499,10 @@ void SelectVideoMode(ImagePtr title)
 						}
 						break;		
 					case 9:
-						close = 1;
+						if(Controller_ButtonsHeld(0) & PAD_TRIGGER_L)
+							ShowVideoData();
+						else
+							close = 1;
 						break;
 					default:
 						break;
@@ -576,25 +579,18 @@ void ShowVideoData()
 		sprintf(data, "Preferred field_rendering: %u", mvmode->field_rendering);
 		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;		
 		sprintf(data, "Current   field_rendering: %u", rmode->field_rendering);
+		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;					
+		
+		sprintf(data, "Preferred viXOrigin: %u", mvmode->viXOrigin);
+		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;		
+		sprintf(data, "Current   viXOrigin: %u", rmode->viXOrigin);
 		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;
 		
-		sprintf(data, "VI_TVMODE_EURGB60_DS: %X", VI_TVMODE_EURGB60_DS);
+		sprintf(data, "Preferred viYOrigin: %u", mvmode->viYOrigin);
 		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;		
+		sprintf(data, "Current   viYOrigin: %u", rmode->viYOrigin);
+		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;	
 		
-		sprintf(data, "mvmode->viTVMode >> 2: %X", mvmode->viTVMode >> 2);
-		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;		
-		
-		sprintf(data, "VI_EURGB60: %X", VI_EURGB60);
-		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;						
-		
-		if(VIDEO_HaveComponentCable())
-		{
-			DrawStringS(x, y, 0xff, 0xff, 0xff, "CMPT"); y += fh;
-		}
-		else
-		{
-			DrawStringS(x, y, 0xff, 0xff, 0xff, "NCMPT"); y += fh;
-		}
 		
 		EndScene();		
 			
