@@ -172,7 +172,22 @@ void InitFrameBuffers()
 		frameBuffer[MODE_PAL][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));	
 		
 	if(!frameBuffer[MODE_PAL][1])
-		frameBuffer[MODE_PAL][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));			
+		frameBuffer[MODE_PAL][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));		
+		
+	CleanFB();	
+}
+
+void CleanFB()
+{
+	if(frameBuffer[MODE_PAL][0])
+		VIDEO_ClearFrameBuffer(&TVPal576ProgScale, frameBuffer[MODE_PAL][0], COLOR_BLACK);		
+	if(frameBuffer[MODE_PAL][1])
+		VIDEO_ClearFrameBuffer(&TVPal576ProgScale, frameBuffer[MODE_PAL][1], COLOR_BLACK);		
+
+	if(frameBuffer[MODE_NTSC][0])
+		VIDEO_ClearFrameBuffer(&TVNtsc480Prog, frameBuffer[MODE_NTSC][0], COLOR_BLACK);		
+	if(frameBuffer[MODE_NTSC][0])
+		VIDEO_ClearFrameBuffer(&TVNtsc480Prog, frameBuffer[MODE_NTSC][1], COLOR_BLACK);		
 }
 
 void DeleteFrameBuffers()
