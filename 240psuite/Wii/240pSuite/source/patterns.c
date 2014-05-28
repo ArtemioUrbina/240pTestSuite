@@ -541,8 +541,8 @@ void DrawLinearity()
 void Draw100IRE()
 {
 	int 			done = 0;
-	u8				step = 0x0a;
-	u32				pressed, text = 0, invert = 0;	
+	u8				step = 0x01;
+	u32				pressed, held, text = 0, invert = 0;	
 	ImagePtr		back, white;	
 	char			msg[50];
 	
@@ -569,13 +569,13 @@ void Draw100IRE()
 		{
     		if(!invert)
       		{
-				sprintf(msg, "%0.0f IRE", (double)(back->alpha*100/0xff));
+				sprintf(msg, "%0.1f IRE", (back->alpha*100.0/255.0));
 			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
       		}
       		else
       		{
-			 	sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40/0xff)));
+			 	sprintf(msg, "%0.0f IRE", 100.0f + abs(40 - (back->alpha * 40.0/255.0)));
 			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
       		}
@@ -584,8 +584,8 @@ void Draw100IRE()
 		
 		ControllerScan();
 		
-		pressed = Controller_ButtonsDown(0);
-		if (pressed & PAD_TRIGGER_L)
+		held = Controller_ButtonsHeld(0);
+		if (held & PAD_TRIGGER_L)
 		{
       		if(!invert)
         	{    			
@@ -605,7 +605,7 @@ void Draw100IRE()
 			text = 30;
 		}
 	
-		if (pressed & PAD_TRIGGER_R)
+		if (held & PAD_TRIGGER_R)
 		{
       		if(!invert)
         	{				
@@ -625,11 +625,16 @@ void Draw100IRE()
 			text = 30;
 		}
 
+		pressed = Controller_ButtonsDown(0);
      	if (pressed & PAD_BUTTON_X)
       	{
 			invert = !invert;
-        		back->alpha = 0xff;
+        	back->alpha = 0xff;
 			text = 30;			
+			if(invert)
+				step = 0x04;
+			else
+				step = 0x01;
       	}
 	
 		if (pressed & PAD_BUTTON_B)
