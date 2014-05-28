@@ -56,4 +56,5 @@ void InitVideo();
 void RestoreVideo();
 void InitFrameBuffers();
 void DeleteFrameBuffers();
+void CleanFB();
 void SetVideoMode(u32 mode);

@@ -449,7 +449,7 @@ void DrawGrid()
 		}
 		
 		if(text)
-			sprintf(msg, "Grid origin in video signal: [%d,%d]", (int)back->x, (int)back->y + (IsPAL ? PAL_OFFSET : 0));
+			sprintf(msg, "Grid origin in video signal: [%d,%d]", (int)back->x, (int)back->y);
 	}
 
 	FreeImage(&back);
@@ -458,26 +458,46 @@ void DrawGrid()
 
 void DrawLinearity()
 {
-	int 		done = 0, gridpattern = 0, showgrid = 0;
+	int 		done = 0, gridpattern = 0, oldvmode = vmode, showgrid = 0;
 	u32			pressed;
-	ImagePtr	circles, grid, gridd;
+	ImagePtr	circles = NULL, grid, gridd;
 	
-	circles = LoadImage(CIRCLESIMG, 0);
-	if(!circles)
-		return;
+
 	grid = LoadImage(CIRCLESGRIDIMG, 1);
 	if(!grid)
 		return;
 	gridd = LoadImage(CIRCLESGRIDDOTIMG, 1);
 	if(!gridd)
 		return;
+		
 	grid->w = 320;
 	grid->h = IsPAL ? 264 : 240;
 	gridd->w = 320;
 	gridd->h = IsPAL ? 264 : 240;
 			
 	while(!done && !EndProgram) 
-	{        
+	{    
+		if(oldvmode != vmode)
+		{
+			FreeImage(&circles);		
+			oldvmode = vmode;
+		}    
+		
+		if(!circles)
+		{
+			if(IsPAL)
+			{	
+				circles = LoadImage(CIRCLESPALIMG, 0);
+				if(!circles)
+					return;
+			}
+			else
+			{
+				circles = LoadImage(CIRCLESIMG, 0);
+				if(!circles)
+					return;
+			}
+		}
 		StartScene();
 		        
 		if(showgrid)
@@ -508,9 +528,8 @@ void DrawLinearity()
 		{
 			DrawMenu = 1;					
 			HelpData = LINEARITYHELP;
+			oldvmode = vmode;
 		}	
-		
-		
 	}
 
 	FreeImage(&gridd);
