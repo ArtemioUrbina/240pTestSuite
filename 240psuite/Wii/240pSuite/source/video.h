@@ -43,6 +43,7 @@ extern u8	Hertz;
 extern void *frameBuffer[2][2];
 extern GXRModeObj *rmode;
 extern u32 vmode;
+extern u8 offsetY;
 
 extern int W;
 extern int H;

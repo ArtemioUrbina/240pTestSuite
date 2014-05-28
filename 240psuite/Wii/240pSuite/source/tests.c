@@ -54,10 +54,10 @@ void DropShadowTest()
 
 	if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
 	{		
-		back[0] = LoadImage(MOTOKOIMG, 1);
+		back[0] = LoadImage(MOTOKOIMG, 0);
 		if(!back[0])
 			return;
-		back[1] = LoadImage(SONICBACKIMG, 1);
+		back[1] = LoadImage(SONICBACKIMG, 0);
 		if(!back[1])
 			return;
 		back[2] = LoadImage(CHECKPOSIMG, 1);
@@ -66,7 +66,7 @@ void DropShadowTest()
 		back[3] = LoadImage(STRIPESPOSIMG, 1);
 		if(!back[3])
 			return;
-		overlay = LoadImage(SONICFLOORIMG, 1);
+		overlay = LoadImage(SONICFLOORIMG, 0);
 		if(!overlay)
 			return;
 	}
@@ -249,10 +249,10 @@ void StripedSpriteTest()
 
 	if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
 	{		
-		back[0] = LoadImage(MOTOKOIMG, 1);
+		back[0] = LoadImage(MOTOKOIMG, 0);
 		if(!back[0])
 			return;
-		back[1] = LoadImage(SONICBACKIMG, 1);
+		back[1] = LoadImage(SONICBACKIMG, 0);
 		if(!back[1])
 			return;
 		back[2] = LoadImage(CHECKPOSIMG, 1);
@@ -261,7 +261,7 @@ void StripedSpriteTest()
 		back[3] = LoadImage(STRIPESPOSIMG, 1);
 		if(!back[3])
 			return;
-		overlay = LoadImage(SONICFLOORIMG, 1);
+		overlay = LoadImage(SONICFLOORIMG, 0);
 		if(!overlay)
 			return;
 	}
@@ -631,7 +631,7 @@ void LagTest()
 		ImagePtr wall;
 		
 		done = 0;
-		wall = LoadImage(BACKIMG, 1);
+		wall = LoadImage(BACKIMG, 0);
 		if(!wall)
 			return;
 		
@@ -1023,7 +1023,7 @@ void SoundTest()
 	u32			    pressed;		
 	ImagePtr		back;	
 	
-	back = LoadImage(BACKIMG, 1);
+	back = LoadImage(BACKIMG, 0);
 	if(!back)
 		return;
 		

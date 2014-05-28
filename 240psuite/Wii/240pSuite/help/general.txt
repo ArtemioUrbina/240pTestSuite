@@ -16,7 +16,12 @@ $S button.
                                          (cont...)
                   HELP (1/2)
 
-This version of the suite supports 240p, 480i and
-480p video modes. However, 480p is only available
-via component cables, you can enable it from the
+This version of the suite supports 240p, 288p, 
+576i, 480i and 480p video modes. However, 480p is
+only available via component cables. 
+
+In 288p and 576i PAL modes, the system is only
+capable of drawing 264 and 528 lines respectively.
+
+PAL and 480p modes must be enebled from the 
 options menu. 

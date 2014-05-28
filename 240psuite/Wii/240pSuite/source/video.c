@@ -43,6 +43,7 @@ u32	ActiveFB	= 0;
 u32 vmode		= INVALID_VIDEO;
 u8 	Hertz		= HertzNTSC;
 void *frameBuffer[2][2];
+u8	offsetY		= 0;
 
 
 GXRModeObj *mvmode	= NULL;
@@ -127,22 +128,26 @@ void SetVideoMode(u32 newmode)
 			dW = 320;
 			dH = 240;
 			Hertz = HertzNTSC;
+			offsetY = 0;
 			break;
 		case VIDEO_480I:
 		case VIDEO_480P:
 			dW = 640;
 			dH = 480;
 			Hertz = HertzNTSC;
+			offsetY = 0;
 			break;
 		case VIDEO_288P:
 		case VIDEO_576I_A264:		
 			dW = 320;
 			dH = 264;
+			offsetY = 12; // (264 - 240) / 2 -> to center all in PAL modes
 			Hertz = HertzPAL;
 			break;
 		case VIDEO_576I:
 			dW = 640;
 			dH = 528;
+			offsetY = 12;
 			Hertz = HertzPAL;
 			break;
 	}	

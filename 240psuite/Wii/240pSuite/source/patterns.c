@@ -38,7 +38,7 @@ void DrawPluge()
 	u32			pressed;		
 	ImagePtr	back;	
 	
-	back = LoadImage(PLUGEIMG, 1);
+	back = LoadImage(PLUGEIMG, 0);
 	if(!back)
 		return;
 			
@@ -74,7 +74,7 @@ void DrawGrayRamp()
 	u32			pressed;		
 	ImagePtr	back;	
 	
-	back = LoadImage(GRAYIMG, 1);
+	back = LoadImage(GRAYIMG, 0);
 	if(!back)
 		return;
 			
@@ -190,10 +190,10 @@ void DrawColorBars()
 	u32         pressed;		
 	ImagePtr	back, backgrid;
 	
-	back = LoadImage(COLORIMG, 1);
+	back = LoadImage(COLORIMG, 0);
 	if(!back)
 		return;
-	backgrid = LoadImage(COLORGRIDIMG, 1);
+	backgrid = LoadImage(COLORGRIDIMG, 0);
 	if(!backgrid)
 	{
 		FreeImage(&back);
@@ -238,7 +238,7 @@ void Draw601ColorBars()
 	u32			pressed;		
 	ImagePtr	back;
 	
-	back = LoadImage(CB601701IMG, 1);
+	back = LoadImage(CB601701IMG, 0);
 	if(!back)
 		return;
 			
@@ -273,7 +273,7 @@ void DrawSMPTEColorBars()
 	u32			pressed;		
 	ImagePtr	back;
 	
-	back = LoadImage(SMPTECBIMG, 1);
+	back = LoadImage(SMPTECBIMG, 0);
 	if(!back)
 		return;
 			
@@ -309,10 +309,10 @@ void DrawColorBleed()
 	u32			pressed;		
 	ImagePtr	back, backchk;
 	
-	back = LoadImage(COLORBLEEDIMG, 1);
+	back = LoadImage(COLORBLEEDIMG, 0);
 	if(!back)
 		return;
-	backchk = LoadImage(COLORBLEEDCHKIMG, 1);
+	backchk = LoadImage(COLORBLEEDCHKIMG, 0);
 	if(!backchk)
 		return;
 		
@@ -384,7 +384,7 @@ void DrawGrid()
 			
 			if(!back)
 			{
-				back = LoadImage(GRIDIMG, 1);
+				back = LoadImage(GRIDIMG, 0);
 				if(!back)
 					return;		
 			}
@@ -422,7 +422,7 @@ void DrawLinearity()
 	u32			pressed;
 	ImagePtr	circles, grid, gridd;
 	
-	circles = LoadImage(CIRCLESIMG, 1);
+	circles = LoadImage(CIRCLESIMG, 0);
 	if(!circles)
 		return;
 	grid = LoadImage(CIRCLESGRIDIMG, 1);
@@ -432,9 +432,9 @@ void DrawLinearity()
 	if(!gridd)
 		return;
 	grid->w = 320;
-	grid->h = 240;
+	grid->h = Hertz ? 264 : 240;
 	gridd->w = 320;
-	gridd->h = 240;
+	gridd->h = Hertz ? 264 : 240;
 			
 	while(!done && !EndProgram) 
 	{        
@@ -487,17 +487,17 @@ void Draw100IRE()
 	ImagePtr		back, white;	
 	char			msg[50];
 	
-	back = LoadImage(IRE100IMG, 1);
+	back = LoadImage(IRE100IMG, 0);
 	if(!back)
 		return;
-  	white = LoadImage(WHITEIMG, 1);
+  	white = LoadImage(WHITEIMG, 0);
 	if(!white)
   	{
   		FreeImage(&back);
 		return;
   	}
 	white->w = 320;
-	white->h = 240;
+	white->h = Hertz ? 264 : 240;
 	
 	while(!done && !EndProgram) 
 	{		
@@ -594,7 +594,7 @@ void DrawSharpness()
 	u32			pressed;		
 	ImagePtr	back;	
 	
-	back = LoadImage(SHARPNESSIMG, 1);
+	back = LoadImage(SHARPNESSIMG, 0);
 	if(!back)
 		return;
 			
