@@ -72,7 +72,7 @@ NULL
 };
 char *general_txt[] = { 
 "                  HELP (1/2)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\n$S button.\n\n                                         (cont...)",
-"                  HELP (1/2)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is only\ncapable of drawing 264 and 528 lines respectively.\n\nPAL and 480p modes must be enebled from the \noptions menu. ",
+"                  HELP (1/2)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is capable\nof drawing the whole visible signal, 264 and 528\nlines respectively.\n\nPAL and 480p modes must be enabled from the \noptions menu. ",
 NULL
 };
 char *gray_txt[] = { 
@@ -81,7 +81,7 @@ NULL
 };
 char *grid_txt[] = { 
 "                  GRID (1/2)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
-"                  GRID (1/2)\n\nIn the 288p PAL mode, only 320x264 are visible in\nthis hardware. Since 264 is not an exact multiple \nof 16, there is a centered line of smaller blue \nrectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. This is also the maximum visible area for\nthat mode.",
+"                  GRID (1/2)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. \n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 25\nfor PAL. It uses the whole visible are in both.\n\nThe d-pad can be used to move the grid around the\nvideo signal. A button resets it to its position.",
 NULL
 };
 char *gridscroll_txt[] = { 
@@ -137,6 +137,7 @@ char *white_txt[] = {
 "                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n",
 NULL
 };
+
 
 char *PrepareHelpText(char *text)
 {

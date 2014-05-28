@@ -16,11 +16,16 @@ grids.
                                     (cont...)
                   GRID (1/2)
 
-In the 288p PAL mode, only 320x264 are visible in
-this hardware. Since 264 is not an exact multiple 
-of 16, there is a centered line of smaller blue 
-rectangles. 
+In the 288p PAL video, only 264 are visible lines.
+Since 264 is not an exact multiple of 16, there is
+a centered line of smaller blue rectangles. 
 
 In 576i unscaled 1:1 mode, a full 640x528 grid is
-shown. This is also the maximum visible area for
-that mode.
+shown. 
+
+The 240 test suite draws from line 22 onwards from 
+the blanking interval of NTSC signals, and line 25
+for PAL. It uses the whole visible are in both.
+
+The d-pad can be used to move the grid around the
+video signal. A button resets it to its position.
