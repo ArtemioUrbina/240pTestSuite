@@ -41,7 +41,7 @@ GXRModeObj *vmodes[TOTAL_VMODES] = {
 
 u32	ActiveFB	= 0;
 u32 vmode		= INVALID_VIDEO;
-u8 	Hertz		= HertzNTSC;
+u8 	IsPAL		= MODE_NTSC;
 void *frameBuffer[2][2];
 u8	offsetY		= 0;
 
@@ -65,6 +65,9 @@ void InitVideo()
 	Mode_480i = TVNtsc480IntDf;
 	Mode_264p = TVPal264Ds;
 	Mode_528i = TVPal528IntDf;
+	
+	Mode_264p.viYOrigin = PAL_OFFSET;
+	Mode_528i.viYOrigin = PAL_OFFSET;
 	
 #ifdef WII_VERSION		
 	/* Adjust SCART cable settings */		
@@ -127,14 +130,14 @@ void SetVideoMode(u32 newmode)
 		case VIDEO_480P_SL:
 			dW = 320;
 			dH = 240;
-			Hertz = HertzNTSC;
+			IsPAL = MODE_NTSC;
 			offsetY = 0;
 			break;
 		case VIDEO_480I:
 		case VIDEO_480P:
 			dW = 640;
 			dH = 480;
-			Hertz = HertzNTSC;
+			IsPAL = MODE_NTSC;
 			offsetY = 0;
 			break;
 		case VIDEO_288P:
@@ -142,57 +145,57 @@ void SetVideoMode(u32 newmode)
 			dW = 320;
 			dH = 264;
 			offsetY = 12; // (264 - 240) / 2 -> to center all in PAL modes
-			Hertz = HertzPAL;
+			IsPAL = MODE_PAL;
 			break;
 		case VIDEO_576I:
 			dW = 640;
 			dH = 528;
 			offsetY = 12;
-			Hertz = HertzPAL;
+			IsPAL = MODE_PAL;
 			break;
 	}	
 		
 	VIDEO_Configure(rmode);			
-	VIDEO_SetNextFramebuffer(frameBuffer[Hertz][ActiveFB]);			
+	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);			
 	VIDEO_Flush();	
 }
 
 void InitFrameBuffers()
 {	
-	if(!frameBuffer[HertzNTSC][0])
-		frameBuffer[HertzNTSC][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));			
+	if(!frameBuffer[MODE_NTSC][0])
+		frameBuffer[MODE_NTSC][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));			
 	
-	if(!frameBuffer[HertzNTSC][1])	
-		frameBuffer[HertzNTSC][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));	
+	if(!frameBuffer[MODE_NTSC][1])	
+		frameBuffer[MODE_NTSC][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));	
 		
-	if(!frameBuffer[HertzPAL][0])
-		frameBuffer[HertzPAL][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));	
+	if(!frameBuffer[MODE_PAL][0])
+		frameBuffer[MODE_PAL][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));	
 		
-	if(!frameBuffer[HertzPAL][1])
-		frameBuffer[HertzPAL][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));			
+	if(!frameBuffer[MODE_PAL][1])
+		frameBuffer[MODE_PAL][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));			
 }
 
 void DeleteFrameBuffers()
 {
-	if(frameBuffer[HertzNTSC][0])
+	if(frameBuffer[MODE_NTSC][0])
 	{
-		free(MEM_K1_TO_K0(frameBuffer[HertzNTSC][0]));
-		frameBuffer[HertzNTSC][0] = NULL;		
+		free(MEM_K1_TO_K0(frameBuffer[MODE_NTSC][0]));
+		frameBuffer[MODE_NTSC][0] = NULL;		
 	}
-	if(frameBuffer[HertzNTSC][1])
+	if(frameBuffer[MODE_NTSC][1])
 	{
-		free(MEM_K1_TO_K0(frameBuffer[HertzNTSC][1]));
-		frameBuffer[HertzNTSC][1] = NULL;		
+		free(MEM_K1_TO_K0(frameBuffer[MODE_NTSC][1]));
+		frameBuffer[MODE_NTSC][1] = NULL;		
 	}	
-	if(frameBuffer[HertzPAL][0])
+	if(frameBuffer[MODE_PAL][0])
 	{
-		free(MEM_K1_TO_K0(frameBuffer[HertzPAL][0]));
-		frameBuffer[HertzPAL][0] = NULL;		
+		free(MEM_K1_TO_K0(frameBuffer[MODE_PAL][0]));
+		frameBuffer[MODE_PAL][0] = NULL;		
 	}
-	if(frameBuffer[HertzPAL][1])
+	if(frameBuffer[MODE_PAL][1])
 	{
-		free(MEM_K1_TO_K0(frameBuffer[HertzPAL][1]));
-		frameBuffer[HertzPAL][1] = NULL;		
+		free(MEM_K1_TO_K0(frameBuffer[MODE_PAL][1]));
+		frameBuffer[MODE_PAL][1] = NULL;		
 	}	
 }
 

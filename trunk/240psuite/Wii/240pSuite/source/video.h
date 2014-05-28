@@ -34,12 +34,14 @@
 
 #define INVALID_VIDEO		8
 
+#define PAL_OFFSET			2
 
-#define HertzNTSC			0
-#define HertzPAL			1
+
+#define MODE_NTSC			0
+#define MODE_PAL			1
 
 extern u32 	ActiveFB;
-extern u8	Hertz;
+extern u8	IsPAL;
 extern void *frameBuffer[2][2];
 extern GXRModeObj *rmode;
 extern u32 vmode;

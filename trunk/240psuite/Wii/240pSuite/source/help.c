@@ -80,8 +80,8 @@ char *gray_txt[] = {
 NULL
 };
 char *grid_txt[] = { 
-"                  GRID (1/2)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is\nno distortion present\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
-"                  GRID (1/2)\n\nIn 264 mode, only 263 active pixels are shown.\n\nSince 264 is not an exact multiple of 16 there is\na centered line of smaller tiles.\n\nWhen in 576i linedoubled mode, an extra green \nline is displayed at the bottom of the screen.\n\nIn 576i unscaled 1:1 mode, a full 640x576 grid is\nshown.",
+"                  GRID (1/2)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
+"                  GRID (1/2)\n\nIn the 288p PAL mode, only 320x264 are visible in\nthis hardware. Since 264 is not an exact multiple \nof 16, there is a centered line of smaller blue \nrectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. This is also the maximum visible area for\nthat mode.",
 NULL
 };
 char *gridscroll_txt[] = { 
@@ -137,6 +137,7 @@ char *white_txt[] = {
 "                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n",
 NULL
 };
+
 
 char *PrepareHelpText(char *text)
 {

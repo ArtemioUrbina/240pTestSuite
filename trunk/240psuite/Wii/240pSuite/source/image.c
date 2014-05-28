@@ -71,7 +71,7 @@ void SetupGX()
 
 	GX_SetCullMode(GX_CULL_NONE);
 		
-	//GX_CopyDisp(frameBuffer[Hertz][ActiveFB],GX_TRUE);
+	//GX_CopyDisp(frameBuffer[IsPAL][ActiveFB],GX_TRUE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
 		
 	GX_SetNumChans(1);
@@ -120,7 +120,7 @@ inline void EndScene()
 		cFB = CopyFrameBufferToImage();	
 		if(cFB)
 		{
-			VIDEO_ClearFrameBuffer(rmode, frameBuffer[Hertz][ActiveFB], COLOR_BLACK);		
+			VIDEO_ClearFrameBuffer(rmode, frameBuffer[IsPAL][ActiveFB], COLOR_BLACK);		
 			StartScene();
 			cFB->x = cFB->x*3/4 + (720 - (rmode->fbWidth)) / 2;;
 			cFB->w = cFB->w*3/4;
@@ -138,13 +138,13 @@ inline void EndScene()
 		
 	if(!DrawMenu)
 	{		
-		GX_CopyDisp(frameBuffer[Hertz][ActiveFB], GX_TRUE); 		
+		GX_CopyDisp(frameBuffer[IsPAL][ActiveFB], GX_TRUE); 		
 	  
 		VIDEO_Flush();                      
 		VIDEO_WaitVSync();
 
 		ActiveFB ^= 1;   
-		VIDEO_SetNextFramebuffer(frameBuffer[Hertz][ActiveFB]);   		
+		VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);   		
 	}
 	else
 	{
@@ -195,7 +195,7 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, Hertz ? 264 : 240, image);
+			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);
 	}
@@ -245,7 +245,7 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, Hertz ? 264 : 240, image);
+			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);
 	}
@@ -283,7 +283,7 @@ ImagePtr CopyFrameBufferToImage()
 	VIDEO_Flush();                      
 	VIDEO_WaitVSync();
 
-	VIDEO_SetNextFramebuffer(frameBuffer[Hertz][ActiveFB]);   			
+	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);   			
 	
 	image = (ImagePtr)malloc(sizeof(struct image_st));
 	if(!image)
@@ -430,7 +430,7 @@ void DrawImage(ImagePtr image)
 	h = image->h;	
 	
 	// Center display vertically in PAL modes, since images are mostly NTSC
-	if(Hertz && h != dH)
+	if(IsPAL && h != dH)
 		if(!(2*h == dH && vmode == VIDEO_576I_A264))
 			y+= offsetY;
 		

@@ -349,14 +349,18 @@ void DrawColorBleed()
 
 void DrawGrid()
 {
-	int 		done = 0, oldvmode = vmode;
+	int 		done = 0, oldvmode = vmode, text = 0;
 	u32			pressed;		
 	ImagePtr	back = NULL;
+	char		msg[60];
 	
 	while(!done && !EndProgram) 
 	{		
 		if(oldvmode != vmode)
+		{
 			FreeImage(&back);		
+			oldvmode = vmode;
+		}
 		
 		if(!back)
 		{
@@ -394,6 +398,12 @@ void DrawGrid()
 		        
 		DrawImage(back);
 		
+		if(text)
+		{			
+			DrawStringB(60, 40, 0, 0xff, 0, msg);
+			text --;
+		}
+		
         EndScene();		
 		
 		ControllerScan();
@@ -408,8 +418,38 @@ void DrawGrid()
 			DrawMenu = 1;					
 			HelpData = GRIDHELP;
 			oldvmode = vmode;
-		}						
-
+		}				
+		
+		if ( pressed & PAD_BUTTON_UP ) 
+		{
+			text = 30;
+			back->y --;
+		}
+		if ( pressed & PAD_BUTTON_DOWN ) 		
+		{
+			text = 30;
+			back->y ++;
+		}	
+		if ( pressed & PAD_BUTTON_LEFT ) 		
+		{
+			text = 30;
+			back->x --;
+		}
+		if ( pressed & PAD_BUTTON_RIGHT ) 		
+		{
+			text = 30;
+			back->x ++;
+		}
+		
+		if ( pressed & PAD_BUTTON_A ) 		
+		{
+			text = 30;
+			back->x = 0;
+			back->y = 0;
+		}
+		
+		if(text)
+			sprintf(msg, "Grid origin in video signal: [%d,%d]", (int)back->x, (int)back->y + (IsPAL ? PAL_OFFSET : 0));
 	}
 
 	FreeImage(&back);
@@ -432,9 +472,9 @@ void DrawLinearity()
 	if(!gridd)
 		return;
 	grid->w = 320;
-	grid->h = Hertz ? 264 : 240;
+	grid->h = IsPAL ? 264 : 240;
 	gridd->w = 320;
-	gridd->h = Hertz ? 264 : 240;
+	gridd->h = IsPAL ? 264 : 240;
 			
 	while(!done && !EndProgram) 
 	{        
@@ -497,7 +537,7 @@ void Draw100IRE()
 		return;
   	}
 	white->w = 320;
-	white->h = Hertz ? 264 : 240;
+	white->h = IsPAL ? 264 : 240;
 	
 	while(!done && !EndProgram) 
 	{		

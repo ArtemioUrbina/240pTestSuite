@@ -4,8 +4,8 @@ This grid uses a 320x240 pattern, and should fill
 all of the 4:3 visible area. 
 
 You can use it to verify that all the visible area
-is being displayed, and that there is
-no distortion present
+is being displayed, and that there is no distortion
+present.
 
 A 640x480 Grid can be shown in compatible NTSC
 video modes. 
@@ -16,13 +16,11 @@ grids.
                                     (cont...)
                   GRID (1/2)
 
-In 264 mode, only 263 active pixels are shown.
+In the 288p PAL mode, only 320x264 are visible in
+this hardware. Since 264 is not an exact multiple 
+of 16, there is a centered line of smaller blue 
+rectangles. 
 
-Since 264 is not an exact multiple of 16 there is
-a centered line of smaller tiles.
-
-When in 576i linedoubled mode, an extra green 
-line is displayed at the bottom of the screen.
-
-In 576i unscaled 1:1 mode, a full 640x576 grid is
-shown.
+In 576i unscaled 1:1 mode, a full 640x528 grid is
+shown. This is also the maximum visible area for
+that mode.

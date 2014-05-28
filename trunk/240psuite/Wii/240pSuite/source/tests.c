@@ -665,13 +665,26 @@ void LagTest()
 	
 			}
 
-			res = (double)total / 10.0;
-			ms = (double)(res*(1000.0/60.0));
-			sprintf(msg, "%d/10 = %0.2f average frames ~= %0.2f ms", total, res, ms);
-			DrawStringS(60, 110, 0xff, 0x00, 0xff, "+");
-			DrawStringS(55, 70 + fh*10, 0xff, 0x00, 0x00, "_____");
-			DrawStringS(60, 70 + fh*11, 0xff, 0xff, 0xff, msg);
-			DrawStringS(60, 70 + fh*12, 0x00, 0xff, 0xff, "Keep in mind that a frame is around 16.68 ms");
+			if(!IsPAL)
+			{
+				res = (double)total / 10.0;
+				ms = (double)(res*(1000.0/60.0));
+				sprintf(msg, "%d/10 = %0.2f average frames ~= %0.2f ms", total, res, ms);
+				DrawStringS(60, 110, 0xff, 0x00, 0xff, "+");
+				DrawStringS(55, 70 + fh*10, 0xff, 0x00, 0x00, "_____");
+				DrawStringS(60, 70 + fh*11, 0xff, 0xff, 0xff, msg);
+				DrawStringS(60, 70 + fh*12, 0x00, 0xff, 0xff, "Keep in mind that an NTSC frame is around 16.67 ms");
+			}
+			else
+			{
+				res = (double)total / 10.0;
+				ms = (double)(res*(1000.0/50.0));
+				sprintf(msg, "%d/10 = %0.2f average frames ~= %0.2f ms", total, res, ms);
+				DrawStringS(60, 110, 0xff, 0x00, 0xff, "+");
+				DrawStringS(55, 70 + fh*10, 0xff, 0x00, 0x00, "_____");
+				DrawStringS(60, 70 + fh*11, 0xff, 0xff, 0xff, msg);
+				DrawStringS(60, 70 + fh*12, 0x00, 0xff, 0xff, "Keep in mind that a PAL frame is around 20 ms");
+			}
 
 			if(total && total < 5)
 			{
@@ -894,8 +907,16 @@ void DrawStripes()
 			else
 				DrawStringB(20, 460, 0xff, 0xff, 0xff, msg);
 			frame ++;
-			if(frame > 59)
-				frame = 0;
+			if(IsPAL)
+			{
+				if(frame > 59)
+					frame = 0;
+			}
+			else
+			{
+				if(frame > 49)
+					frame = 0;
+			}
 		}
 
 		EndScene();
@@ -980,8 +1001,16 @@ void DrawCheckBoard()
 			else
 				DrawStringB(20, 460, 0xff, 0xff, 0xff, msg);
 			frame ++;
-			if(frame > 59)
-				frame = 0;
+			if(IsPAL)
+			{
+				if(frame > 59)
+					frame = 0;
+			}
+			else
+			{
+				if(frame > 49)
+					frame = 0;
+			}
 		}
 
 		EndScene();
@@ -1232,10 +1261,22 @@ void PassiveLagTest()
 				framecnt = 1;
 		}
 
-		if(frames > 59)
+		if(IsPAL)
 		{
-			frames = 0;
-			seconds ++;
+			if(frames > 49)
+			{
+				frames = 0;
+				seconds ++;
+			}
+
+		}
+		else
+		{
+			if(frames > 59)
+			{
+				frames = 0;
+				seconds ++;
+			}
 		}
 
 		if(seconds > 59)
