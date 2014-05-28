@@ -72,7 +72,7 @@ NULL
 };
 char *general_txt[] = { 
 "                  HELP (1/2)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\n$S button.\n\n                                         (cont...)",
-"                  HELP (1/2)\n\nThis version of the suite supports 240p, 480i and\n480p video modes. However, 480p is only available\nvia component cables, you can enable it from the\noptions menu. \n",
+"                  HELP (1/2)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is only\ncapable of drawing 264 and 528 lines respectively.\n\nPAL and 480p modes must be enebled from the \noptions menu. ",
 NULL
 };
 char *gray_txt[] = { 
@@ -81,7 +81,7 @@ NULL
 };
 char *grid_txt[] = { 
 "                  GRID (1/2)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is\nno distortion present\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
-"                  GRID (1/2)\n\nIn 264 mode, only 263 active pixels are shown.\n\nSince 264 is not an exact multiple of 16 there is\na centered line of smaller tiles.\n\nWhen in 576i linedoubled mode, an extra green \nline is displayed at teh bottom of the screen.\n\nIn 576i unscaled 1:1 mode, a full 640x576 grid is\nshown.",
+"                  GRID (1/2)\n\nIn 264 mode, only 263 active pixels are shown.\n\nSince 264 is not an exact multiple of 16 there is\na centered line of smaller tiles.\n\nWhen in 576i linedoubled mode, an extra green \nline is displayed at the bottom of the screen.\n\nIn 576i unscaled 1:1 mode, a full 640x576 grid is\nshown.",
 NULL
 };
 char *gridscroll_txt[] = { 
@@ -137,7 +137,6 @@ char *white_txt[] = {
 "                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n",
 NULL
 };
-
 
 char *PrepareHelpText(char *text)
 {
@@ -238,7 +237,7 @@ void HelpWindow(ImagePtr screen)
 	
 	page = 0;
 
-	back = LoadImage(HELPIMG, 1);
+	back = LoadImage(HELPIMG, 0);
 	if(!back)
 		return;
 		

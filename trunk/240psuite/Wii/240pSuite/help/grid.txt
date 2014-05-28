@@ -22,7 +22,7 @@ Since 264 is not an exact multiple of 16 there is
 a centered line of smaller tiles.
 
 When in 576i linedoubled mode, an extra green 
-line is displayed at teh bottom of the screen.
+line is displayed at the bottom of the screen.
 
 In 576i unscaled 1:1 mode, a full 640x576 grid is
 shown.

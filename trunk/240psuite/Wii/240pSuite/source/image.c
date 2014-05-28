@@ -195,7 +195,7 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, 240, image);
+			CalculateUV(0, 0, 320, Hertz ? 264 : 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);
 	}
@@ -245,7 +245,7 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, 240, image);
+			CalculateUV(0, 0, 320, Hertz ? 264 : 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);
 	}
@@ -429,6 +429,11 @@ void DrawImage(ImagePtr image)
 	w = image->w;
 	h = image->h;	
 	
+	// Center display vertically in PAL modes, since images are mostly NTSC
+	if(Hertz && h != dH)
+		if(!(2*h == dH && vmode == VIDEO_576I_A264))
+			y+= offsetY;
+		
 	if(image->scale && (vmode == VIDEO_480I_A240 || 
 						vmode == VIDEO_480P_SL || 
 						vmode == VIDEO_576I_A264))

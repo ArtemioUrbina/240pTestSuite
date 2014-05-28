@@ -46,7 +46,7 @@ void ShowMenu()
 	
 	cFB = CopyFrameBufferToImage();	
 	if(cFB)
-	{
+	{	
 		cFB->alpha = 0x77;
 	}
 	Back = LoadImage(FLOATMENUIMG, 0);
@@ -161,7 +161,7 @@ void ChangeOptions(ImagePtr title)
 	int 		sel = 1, close = 0;	
 	ImagePtr	back;
 	
-	back = LoadImage(HELPIMG, 1);
+	back = LoadImage(HELPIMG, 0);
 	if(!back)
 		return;
 		
@@ -322,14 +322,14 @@ void ChangeOptions(ImagePtr title)
 			switch(sel + 1)
 #endif
 			{			
-					case 1:
 #ifdef WII_VERSION		
+					case 1:
 						Options.ShowWiiRegion = !Options.ShowWiiRegion;
 						if(Options.ShowWiiRegion)
 							GetWiiRegion();
 						break;
-					case 2:
 #endif	
+					case 2:
 						if(VIDEO_HaveComponentCable() && !(Options.Activate480p && vmode >= VIDEO_480P))
 							Options.Activate480p = !Options.Activate480p;
 						break;
@@ -369,7 +369,7 @@ void SelectVideoMode(ImagePtr title)
 	int 		sel = 1, close = 0;		
 	ImagePtr	back;
 	
-	back = LoadImage(HELPIMG, 1);
+	back = LoadImage(HELPIMG, 0);
 	if(!back)
 		return;
 		
