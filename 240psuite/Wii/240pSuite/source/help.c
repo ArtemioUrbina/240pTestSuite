@@ -49,8 +49,8 @@ char *bleed_txt[] = {
 NULL
 };
 char *check_txt[] = { 
-"              CHECKERBOARD 1/2\n\nThis pattern shows all the visible pixels in an\nalternating white and black grid array. \n\nYou can toggle the pattern with button $X, or\nturn on auto-toggle each frame with the $A button.\n\nWhen auto-toggle is set, you should see it\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\n                                         (cont...)\n",
-"              CHECKERBOARD 2/2\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nUnfortunately the Wii cannot resolve this pattern\ncorrectly in full 480p mode as other consoles,\nbut 240p and 480i resolve just fine.",
+"             CHECKERBOARD (1/2)\n\nThis pattern shows all the visible pixels in an\nalternating white and black grid array. \n\nYou can toggle the pattern with button $X, or\nturn on auto-toggle each frame with the $A button.\n\nWhen auto-toggle is set, you should see it\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\n                                         (cont...)\n",
+"             CHECKERBOARD (2/2)\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nUnfortunately the Wii cannot resolve this pattern\ncorrectly in full 480p mode as other consoles,\nbut 240p and 480i resolve just fine.",
 NULL
 };
 char *check480pWii_txt[] = { 
@@ -62,8 +62,8 @@ char *color601_txt[] = {
 NULL
 };
 char *colors_txt[] = { 
-"                  COLORBARS 1/2\n\nThis pattern allows you to calibrate each color:\nRed, Green and Blue; as  well as the white level.\n\nThis is adjusted in the same way black levels\nare set with the PLUGE. If you adjusted the black\nlevel correctly with the PLUGE, the rectangles \nunder the \"1\" column should be barely visible.\n\nAdjust the white level first, this is done using\nthe \"Contrast\" control on your TV set. Raise it\nuntil you cannot distinguish between the two\nblocks under \"F\", and lower it slowly until you\ncan clearly tell them apart.          \n                                      (cont...)",
-"                  COLORBARS 2/2\n\nThe same procedure should be used with each\ncolor, raise the control that adjusts the\nindividual color level (not the color/tint one)\nuntil you can't tell the rightmost box under \"F\"\nfrom the one to its left, and then lower it until\nyou can distinguish them clearly. \n\nRepeat for each color and you are set.\n\n\n\n\n",
+"               COLORBARS (1/2)\n\nThis pattern allows you to calibrate each color:\nRed, Green and Blue; as  well as the white level.\n\nThis is adjusted in the same way black levels\nare set with the PLUGE. If you adjusted the black\nlevel correctly with the PLUGE, the rectangles \nunder the \"1\" column should be barely visible.\n\nAdjust the white level first, this is done using\nthe \"Contrast\" control on your TV set. Raise it\nuntil you cannot distinguish between the two\nblocks under \"F\", and lower it slowly until you\ncan clearly tell them apart.          \n                                      (cont...)",
+"               COLORBARS (2/2)\n\nThe same procedure should be used with each\ncolor, raise the control that adjusts the\nindividual color level (not the color/tint one)\nuntil you can't tell the rightmost box under \"F\"\nfrom the one to its left, and then lower it until\nyou can distinguish them clearly. \n\nRepeat for each color and you are set.\n\n\n\n\n",
 NULL
 };
 char *dshadow_txt[] = { 
@@ -72,7 +72,7 @@ NULL
 };
 char *general_txt[] = { 
 "                  HELP (1/2)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\n$S button.\n\n                                         (cont...)",
-"                  HELP (1/2)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is capable\nof drawing the whole visible signal, 264 and 528\nlines respectively.\n\nPAL and 480p modes must be enabled from the \noptions menu. ",
+"                  HELP (2/2)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is capable\nof drawing the whole visible signal, 264 and 528\nlines respectively. However, since most screens\nare only 240p tall, the suite centers them \nvertically. Grids and other 264p patterns are \nshown using the full resolution.\n\nPAL and 480p modes must be enabled from the \noptions menu. ",
 NULL
 };
 char *gray_txt[] = { 
@@ -81,7 +81,7 @@ NULL
 };
 char *grid_txt[] = { 
 "                  GRID (1/2)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
-"                  GRID (1/2)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. \n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 25\nfor PAL. It uses the whole visible are in both.\n\nThe d-pad can be used to move the grid around the\nvideo signal. A button resets it to its position.",
+"                  GRID (2/2)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. \n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 25\nfor PAL. It uses the whole visible are in both.\n\nThe d-pad can be used to move the grid around the\nvideo signal. A button resets it to its position.",
 NULL
 };
 char *gridscroll_txt[] = { 
@@ -108,8 +108,8 @@ char *passivelag_txt[] = {
 NULL
 };
 char *pluge_txt[] = { 
-"                    PLUGE 1/2\n\nThe picture line-up generation equipment (PLUGE)\nis a test pattern used to adjust the black level\nand contrast of a video signal.\n\nThe pattern in this suite is mainly designed to\nadjust the black level. The control for setting \nthis on your TV is usualy named \"Brightness\".\n\nReduce the Brightness until these bars: \n      ->   <-                        ->   <-  \nare no longer visible, and then slowly raise it\nuntil they are *just* visible. \n\n(Do it without this help window open)    (cont...)",
-"                    PLUGE 2/2\n\nThere are three bars on each side, bars closer\nto the center are at 3.5 IRE, the center ones at \n7.5 IRE and the outer ones are at 11.5 IRE. Since\nthe Wii color is 8 bits per pixel it can correctly\ndisplay them at exact values.\n\nThis adjustment assures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.\n",
+"                 PLUGE (1/2)\n\nThe picture line-up generation equipment (PLUGE)\nis a test pattern used to adjust the black level\nand contrast of a video signal.\n\nThe pattern in this suite is mainly designed to\nadjust the black level. The control for setting \nthis on your TV is usually named \"Brightness\".\n\nReduce the Brightness until these bars: \n      ->   <-                        ->   <-  \nare no longer visible, and then slowly raise it\nuntil they are *just* visible. \n\n(Do it without this help window open)    (cont...)",
+"                 PLUGE (2/2)\n\nThere are three bars on each side, bars closer\nto the center are at 3.5 IRE, the center ones at \n7.5 IRE and the outer ones are at 11.5 IRE. Since\nthe Wii color is 8 bits per pixel it can correctly\ndisplay them at exact values.\n\nThis adjustment assures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.\n",
 NULL
 };
 char *scroll_txt[] = { 
@@ -129,15 +129,14 @@ char *striped_txt[] = {
 NULL
 };
 char *stripes_txt[] = { 
-"              HORIZONTAL STRIPES 1/2\n\nThis pattern is designed to show if all lines are\nvisible in your setup, and how your video\nprocessor is handling 240p video. \n\nYou should see a pattern of lines, each one pixel\nin height, starting with a white one at the top of\nthe screen. You can toggle the pattern with \nbutton $X, or turn on auto-toggle each frame with\nthe $A button.\n\nWhen auto-toggle is set, you should see the lines\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\n                                         (cont...)",
-"              HORIZONTAL STRIPES 2/2\n\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nYou can also display vertical bars by pressing $R,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all one pixel\nwide lines should be of the same width.\n",
+"            HORIZONTAL STRIPES (1/2)\n\nThis pattern is designed to show if all lines are\nvisible in your setup, and how your video\nprocessor is handling 240p video. \n\nYou should see a pattern of lines, each one pixel\nin height, starting with a white one at the top of\nthe screen. You can toggle the pattern with \nbutton $X, or turn on auto-toggle each frame with\nthe $A button.\n\nWhen auto-toggle is set, you should see the lines\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\n                                         (cont...)",
+"            HORIZONTAL STRIPES (2/2)\n\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nYou can also display vertical bars by pressing $R,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all one pixel\nwide lines should be of the same width.\n",
 NULL
 };
 char *white_txt[] = { 
 "                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n",
 NULL
 };
-
 
 char *PrepareHelpText(char *text)
 {
@@ -221,6 +220,18 @@ char *PrepareHelpText(char *text)
 	if(ntextpos+1 < tsize+20)
 		ntext[ntextpos++] = '\0';
 	return ntext;
+}
+
+void DrawHelpWindow()
+{	
+	ImagePtr	cFB;	
+	
+	cFB = CopyFrameBufferToImage();	
+	if(cFB)
+		cFB->alpha = 0x77;
+	HelpWindow(cFB);
+	HelpData = GENERALHELP;
+	FreeImage(&cFB);
 }
 
 void HelpWindow(ImagePtr screen)

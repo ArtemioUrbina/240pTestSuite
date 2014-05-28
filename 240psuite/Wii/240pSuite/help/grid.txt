@@ -14,7 +14,7 @@ In PAL resolutions, there are also two different
 grids. 
 
                                     (cont...)
-                  GRID (1/2)
+                  GRID (2/2)
 
 In the 288p PAL video, only 264 are visible lines.
 Since 264 is not an exact multiple of 16, there is

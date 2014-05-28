@@ -61,3 +61,4 @@ void InitFrameBuffers();
 void DeleteFrameBuffers();
 void CleanFB();
 void SetVideoMode(u32 mode);
+u8	 VIDEO_HaveSCARTRGBCable();

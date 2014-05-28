@@ -1,4 +1,4 @@
-              HORIZONTAL STRIPES 1/2
+            HORIZONTAL STRIPES (1/2)
 
 This pattern is designed to show if all lines are
 visible in your setup, and how your video
@@ -14,7 +14,7 @@ When auto-toggle is set, you should see the lines
 alternating rapidly. On some setups, the pattern
 doesn't change at all. This means that the signal
                                          (cont...)
-              HORIZONTAL STRIPES 2/2
+            HORIZONTAL STRIPES (2/2)
 
 is being treated as 480i and odd or even frames 
 are being discarded completely.
