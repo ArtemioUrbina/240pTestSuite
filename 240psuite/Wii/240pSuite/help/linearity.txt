@@ -1,14 +1,13 @@
                 LINEARITY
 
 This pattern shows 5 circles, that are matched
-to the 10:11 NTSC pixel aspect ratio.
+to the 10:11 NTSC and the 59:54 PAL aspect ratios
+depending on the currently selected resolution.
 
-The diameter of the 4 small ones is identical, 
-so as a group the linearity of the display or
-upscaler can be verified by measuring them.
-
-Of course, the diameter of the central circle 
-should also be maintained in all directions.
+The linearity of the display or upscaler can be 
+verified by measuring the diameter of the circles.
+Of course the linearity should be kept in all 
+directions.
 
 A grid is also available with the $L and $R 
 buttons.

@@ -94,7 +94,7 @@ char *ire100_txt[] = {
 NULL
 };
 char *linearity_txt[] = { 
-"                LINEARITY\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC pixel aspect ratio.\n\nThe diameter of the 4 small ones is identical, \nso as a group the linearity of the display or\nupscaler can be verified by measuring them.\n\nOf course, the diameter of the central circle \nshould also be maintained in all directions.\n\nA grid is also available with the $L and $R \nbuttons.\n",
+"                LINEARITY\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC and the 59:54 PAL aspect ratios\ndepending on the currently selected resolution.\n\nThe linearity of the display or upscaler can be \nverified by measuring the diameter of the circles.\nOf course the linearity should be kept in all \ndirections.\n\nA grid is also available with the $L and $R \nbuttons.",
 NULL
 };
 char *manuallag_txt[] = { 
@@ -137,7 +137,6 @@ char *white_txt[] = {
 "                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n",
 NULL
 };
-
 
 char *PrepareHelpText(char *text)
 {
