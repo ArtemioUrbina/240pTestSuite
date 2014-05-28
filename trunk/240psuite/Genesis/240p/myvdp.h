@@ -31,6 +31,9 @@
 void VDP_setSpriteAttr(u16 index, u16 tile_attr);
 void VDP_setMyTileMapRect(u16 plan, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h);
 u16  Detect_VDP_PAL();
+u16 VDP_Detect_Interlace();
+void VDP_EnableInterlace(u8 value);
+void VDP_EnableDInterlace(u8 value);
 
 extern u16 pal_240;
 

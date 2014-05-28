@@ -1529,6 +1529,7 @@ void PassiveLagTest()
   }
 }
 
+/*
 void VAPanelScrollTest()
 {    
   u16 size;
@@ -1598,3 +1599,4 @@ void VAPanelScrollTest()
   }
   VDP_setHorizontalScroll(APLAN, 0, 0);  
 }
+*/

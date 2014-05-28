@@ -36,14 +36,6 @@ void VDP_setSpriteAttr(u16 index, u16 tile_attr)
 u16 Detect_VDP_PAL()
 {
   return(GET_VDPSTATUS(IS_PALSYSTEM));
-  /*
-  u16 *pointer = NULL;
-
-  pointer = (u16 *)0xC00004;
-  if(*pointer & 0x01)
-     return 1;
-  return 0;
-  */
 }
 
 void VDP_setMyTileMapRect(u16 plan, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h)
@@ -76,3 +68,47 @@ void VDP_setMyTileMapRect(u16 plan, const u16 *data, u16 basetile, u16 x, u16 y,
 		addr += planwidth * 2;
 	}
 }
+
+u16 VDP_Detect_Interlace()
+{  
+  if(VDP_getReg(0x0C) & 0x02)
+     return 0;
+  return 1;
+}
+
+void VDP_EnableInterlace(u8 value)
+{
+    u8 reg;
+
+    reg = VDP_getReg(0x0C);
+    if (value)
+        reg |= 0x02;
+    else 
+        reg &= ~0x02;
+
+    VDP_setReg(0x0C, reg);
+}
+
+void VDP_EnableDInterlace(u8 value)
+{
+    u8 reg;
+
+    reg = VDP_getReg(0x0C);
+    if (value)
+        reg |= 0x06;
+    else 
+        reg &= ~0x06;
+
+    VDP_setReg(0x0C, reg);
+    /*  
+    vu16 *pw;
+    
+    pw = (u16 *) GFX_CTRL_PORT;
+    if(value)
+        *pw = 0x9000 | 0x01;
+    else
+        *pw = 0x9000 | 0x11;
+    */
+}
+
+

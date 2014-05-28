@@ -32,6 +32,6 @@ void DrawCheckBoard();
 void SoundTest();
 void LEDZoneTest();
 void PassiveLagTest();
-void VAPanelScrollTest();
+//void VAPanelScrollTest();
 
 #endif

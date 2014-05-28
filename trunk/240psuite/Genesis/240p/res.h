@@ -61,8 +61,8 @@ extern u16 bw_pal[16];
 // Grid
 extern u32 circles_tiles[1888/4]; 
 extern u16 circles_map[2240/2];
-extern u32 circlesPAL_tiles[2208/4]; 
-extern u16 circlesPAL_map[2400/2];
+extern u32 circlesPAL_tiles[1824/4]; 
+extern u16 circlesPAL_map[2240/2];
 extern u32 circles_grid_tiles[32/4]; 
 extern u32 circles_griddot_tiles[32/4]; 
 
@@ -141,9 +141,11 @@ extern u16 greenw_pal[16];
 
 extern u32 solidw_tiles[32/4]; 
 
+/*
 // VA Panel Test, from MM
 extern u32 VAPanel_tiles[1856/4]; 
 extern u16 VAPanel_map[272/2];
 extern u16 VAPanel_pal[16]; 
+*/
 
 #endif
