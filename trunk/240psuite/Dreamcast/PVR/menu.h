@@ -28,6 +28,7 @@
 struct settings_st {
 	int drawborder;
 	int drawpvrbg;
+	int EnablePAL;
 };
 
 extern struct settings_st settings;

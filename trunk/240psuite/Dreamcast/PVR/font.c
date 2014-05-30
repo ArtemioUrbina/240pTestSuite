@@ -104,10 +104,10 @@ void DrawString(float x, float y, float r, float g, float b, char *str)
 
 void DrawStringS(float x, float y, float r, float g, float b, char *str) 
 {
-	font_t->layer = 1.0f;
+	font_t->layer = 2.0f;
 	font_t->alpha = 0.75f;
 	DrawString(x+1, y+1, 0.0f, 0.0f, 0.0f, str);	
-	font_t->layer = 2.0f;
+	font_t->layer = 3.0f;
 	font_t->alpha = 1.0f;
 	DrawString(x, y, r, g, b, str);
 }

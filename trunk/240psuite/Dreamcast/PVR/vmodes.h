@@ -25,8 +25,13 @@
 #define VIDEO_240P              0   // 240p
 #define VIDEO_480I_A240         1   // 480i with assets in 240p
 #define VIDEO_480I              2   // 480i with 480p assets
-#define VIDEO_480P_SL           3   // 480p with software scanlines
-#define VIDEO_480P              4   // 480p with 480p assets
+#define VIDEO_288P		3   // 288p
+#define VIDEO_576I_A264		4   // 576i with assets in 240p
+#define VIDEO_576I		5   // 576i with 480p assets
+#define VIDEO_480P_SL           6   // 480p with software scanlines
+#define VIDEO_480P              7   // 480p with 480p assets
+
+#define INVALID_VIDEO		8
 
 #include "image.h"
 
@@ -38,8 +43,12 @@ extern int W;
 extern int H;
 extern int dW;
 extern int dH;
+extern int offsetY;
+extern int IsPAL;
 
 extern ImagePtr scanlines;
+extern vid_mode_t custom_240;
+extern vid_mode_t custom_288;
 
 void LoadScanlines();
 inline void ReleaseScanlines();

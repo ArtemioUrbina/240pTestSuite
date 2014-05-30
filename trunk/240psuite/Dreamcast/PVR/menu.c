@@ -54,6 +54,7 @@ uint16  *fbtextureBuffer = NULL;
 
 struct settings_st settings = {
 	0,
+	0,
 	0
 };
 
@@ -179,7 +180,8 @@ void CopyFBToBG()
 	if(w == 320)
 	{
 		tw /= 2;
-		th /= 2;
+		if(dH < 256)
+			th /= 2;
 	}
 
 	if(vid_mode->pm != PM_RGB565)
@@ -360,15 +362,16 @@ void DrawShowMenu()
 
 void ChangeOptions(ImagePtr screen)
 {	
-	int 		sel = 1, close = 0;	
+	int 		sel = 1, close = 0, region;	
 	ImagePtr	back;
 	
-	back = LoadKMG("/rd/help.kmg.gz", 1);
+	back = LoadKMG("/rd/help.kmg.gz", 0);
 	if(!back)
 		return;
 		
 	back->alpha = 0.75f;
 		
+	region = flashrom_get_region();
 	while(!close && !EndProgram) 
 	{		
 		float	r = 1.0f;
@@ -391,14 +394,31 @@ void ChangeOptions(ImagePtr screen)
 
 		DrawStringS(x - 20, y, 0.0f, 1.0f, 0.0f, "General Options"); y += 2*fh; 
 
-		// option 1, Scanline intensity
+		// option 1, PAL
+		if(region == FLASHROM_REGION_EUROPE)
+		{
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+				settings.EnablePAL == 1 ? "yes" : "no"); 
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+				"Enable PAL modes:"); y += fh; c++;			
+		}
+		else
+		{
+			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+				settings.EnablePAL  == 1 ? "yes" : "no");
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+				"Enable PAL modes:"); y += fh; c++;			
+		}
+
+		y += fh;
+		// option 2, Scanline intensity
 		sprintf(intensity, "%0.0f%%", GetScanlineIntensity());
 		if(vmode == VIDEO_480P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline intensity:"); y += fh; c++;			
 			
-			// option 2, Scanline even/odd
+			// option 3, Scanline even/odd
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanlines"); y += fh; c++;	
 		}				
@@ -407,7 +427,7 @@ void ChangeOptions(ImagePtr screen)
 			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, intensity);
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Scanline intensity:"); y += fh; c++;			
 			
-			// option 2, Scanline even/odd
+			// option 3, Scanline even/odd
 			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Scanlines"); y += fh; c++;	
 		}
@@ -424,7 +444,9 @@ void ChangeOptions(ImagePtr screen)
 				
 		if(vmode == VIDEO_480P_SL && sel == 1)	
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
-		if(vmode != VIDEO_480P_SL && (sel == 1 || sel == 2))
+		if(region != FLASHROM_REGION_EUROPE && (sel == 1))
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Only European FlashROMs can output PAL"); 						
+		if(vmode != VIDEO_480P_SL && (sel == 2 || sel == 3))
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 			
 		EndScene();		
@@ -445,13 +467,13 @@ void ChangeOptions(ImagePtr screen)
 			    sel = 1;	
 	    	}			
 
-		if ( pressed & CONT_RTRIGGER && sel == 1)
+		if ( pressed & CONT_RTRIGGER && sel == 2)
 	    	{
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
 	    	}
 	    
-	    	if ( pressed & CONT_LTRIGGER && sel == 1)
+	    	if ( pressed & CONT_LTRIGGER && sel == 2)
 	    	{
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
@@ -464,21 +486,25 @@ void ChangeOptions(ImagePtr screen)
 		{     
 			switch(sel)
 			{			
-					case 2:
+					case 1:
+						if(region == FLASHROM_REGION_EUROPE)
+							settings.EnablePAL = !settings.EnablePAL;
+						break;
+					case 3:
 						if(vmode == VIDEO_480P_SL)
 							ToggleScanlineEvenOdd();
 						break;
-					case 3:
+					case 4:
 						settings.drawborder = !settings.drawborder;
 						changedPVR = 1;
 						break;
 					/*
-					case 4:
+					case 5:
 						settings.drawpvrbg = !settings.drawpvrbg;
 						changedPVR = 1;
 						break;
 					*/
-					case 4:
+					case 5:
 						close = 1;
 						break;
 					default:
@@ -511,7 +537,7 @@ void SelectVideoMode(ImagePtr screen)
 	ImagePtr	back;
 	
 	
-	back = LoadKMG("/rd/help.kmg.gz", 1);
+	back = LoadKMG("/rd/help.kmg.gz", 0);
 	if(!back)
 		return;
 		
@@ -524,7 +550,7 @@ void SelectVideoMode(ImagePtr screen)
 		float   b = 1.0f;
 		uint8	c = 1;				    					   
 		uint16	x = 80;
-		uint16	y = 80;
+		uint16	y = 60;
         	uint16	pressed = 0;
 				
 		StartScene();
@@ -535,7 +561,8 @@ void SelectVideoMode(ImagePtr screen)
 
 		DrawStringS(x - 20, y, 0.0f, 1.0f, 0.0f, "Please select the desired video mode"); y += 2*fh; 
 		
-		DrawStringS(x - 10, y + (vmode * fh), 0.0f, 1.0f, 0.0f, ">"); 
+		DrawStringS(x - 10, y + (vmode * fh)+ ((vmode >= VIDEO_288P) ? fh/2 : 0) + ((vmode >= VIDEO_480P_SL) ? fh/2 - 1: 0),
+				0.0f, 1.0f, 0.0f, ">"); 
 		
 		if(vcable != CT_VGA)
 		{
@@ -550,6 +577,21 @@ void SelectVideoMode(ImagePtr screen)
 			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;
 		}
 
+		y += fh/2;
+		if(vcable != CT_VGA && settings.EnablePAL)
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 240p assets (PAL)"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i mixed 480p/240p assets (1:1/PAL)"); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "288p"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "576i scaled 240p assets (PAL)"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "576i mixed 480p/240p assets (1:1/PAL)"); y += fh; c++;
+		}
+
+		y += fh/2;
 		if(vcable == CT_VGA)
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p scaled 240p assets & scanlines"); y += fh; c++;
@@ -563,7 +605,7 @@ void SelectVideoMode(ImagePtr screen)
 			
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
-		if(vcable != CT_VGA && ((sel == 4) || (sel == 5)))
+		if(vcable != CT_VGA && ((sel == 7) || (sel == 8)))
 			DrawStringS(x-40, y + 4*fh, r, g, b, "480p is only available though D-SUB (VGA)"); 						
 		EndScene();		
         
@@ -603,14 +645,26 @@ void SelectVideoMode(ImagePtr screen)
 							ChangeResolution(VIDEO_480I);
 						break;
 					case 4:
+						if(vcable != CT_VGA && settings.EnablePAL)
+							ChangeResolution(VIDEO_288P);
+						break;
+					case 5:
+						if(vcable != CT_VGA && settings.EnablePAL)
+							ChangeResolution(VIDEO_576I_A264);
+						break;
+					case 6:
+						if(vcable != CT_VGA && settings.EnablePAL)
+							ChangeResolution(VIDEO_576I);
+						break;
+					case 7:
 						if(vcable == CT_VGA)
 							ChangeResolution(VIDEO_480P_SL);
 						break;					
-					case 5:
+					case 8:
 						if(vcable == CT_VGA)
 							ChangeResolution(VIDEO_480P);
 						break;		
-					case 6:
+					case 9:
 						close = 1;
 						break;
 					default:

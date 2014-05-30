@@ -42,7 +42,7 @@ void DrawPluge()
 	ImagePtr	back;
 	controller	*st;
 
-	back = LoadKMG("/rd/pluge.kmg.gz", 1);
+	back = LoadKMG("/rd/pluge.kmg.gz", 0);
 	if(!back)
 		return;
 		
@@ -74,7 +74,7 @@ void DrawSMPTEColorBars()
 	ImagePtr	back;
 	controller	*st;
 
-	back = LoadKMG("/rd/SMPTEColorBars.kmg.gz", 1);
+	back = LoadKMG("/rd/SMPTEColorBars.kmg.gz", 0);
 	if(!back)
 		return;
 		
@@ -106,7 +106,7 @@ void DrawGrayRamp()
 	ImagePtr	back;
 	controller	*st;
 
-	back = LoadKMG("/rd/grayramp.kmg.gz", 1);
+	back = LoadKMG("/rd/grayramp.kmg.gz", 0);
 	if(!back)
 		return;
 		
@@ -210,10 +210,10 @@ void DrawColorBars()
 	ImagePtr	back, backgrid;
 	controller	*st;
 
-	back = LoadKMG("/rd/color.kmg.gz", 1);
+	back = LoadKMG("/rd/color.kmg.gz", 0);
 	if(!back)
 		return;
-	backgrid = LoadKMG("/rd/color_grid.kmg.gz", 1);
+	backgrid = LoadKMG("/rd/color_grid.kmg.gz", 0);
 	if(!back)
 		return;
 		
@@ -252,7 +252,7 @@ void Draw601ColorBars()
 	ImagePtr	back;
 	controller	*st;
 
-	back = LoadKMG("/rd/601701cb.kmg.gz", 1);
+	back = LoadKMG("/rd/601701cb.kmg.gz", 0);
 	if(!back)
 		return;
 		
@@ -284,10 +284,10 @@ void DrawColorBleed()
 	ImagePtr	back, backchk;
 	controller	*st;
 
-	back = LoadKMG("/rd/colorbleed.kmg.gz", 1);
+	back = LoadKMG("/rd/colorbleed.kmg.gz", 0);
 	if(!back)
 		return;
-	backchk = LoadKMG("/rd/colorbleedchk.kmg.gz", 1);
+	backchk = LoadKMG("/rd/colorbleedchk.kmg.gz", 0);
 	if(!backchk)
 		return;
 		
@@ -328,13 +328,13 @@ void DrawGrid()
 
 	if(vmode != VIDEO_480I && vmode != VIDEO_480P)
 	{
-		back = LoadKMG("/rd/grid.kmg.gz", 1);
+		back = LoadKMG("/rd/grid.kmg.gz", 0);
 		if(!back)
 			return;
 	}
 	else
 	{
-		back = LoadKMG("/rd/480/grid-480.kmg.gz", 1);
+		back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
 		if(!back)
 			return;
 		back->scale = 0;
@@ -368,7 +368,7 @@ void DrawLinearity()
 	ImagePtr		circles, grid, gridd;
 	controller	*st;
 
-	circles = LoadKMG("/rd/circles.kmg.gz", 1);
+	circles = LoadKMG("/rd/circles.kmg.gz", 0);
 	if(!circles)
 		return;
 	grid = LoadKMG("/rd/circles_grid.kmg.gz", 1);
@@ -427,10 +427,10 @@ void Draw100IRE()
 	controller		*st;
 	char			msg[50];
 
-	back = LoadKMG("/rd/100IRE.kmg.gz", 1);
+	back = LoadKMG("/rd/100IRE.kmg.gz", 0);
 	if(!back)
 		return;
-  	white = LoadKMG("/rd/white.kmg.gz", 1);
+  	white = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!white)
   	{
   		FreeImage(&back);

@@ -59,12 +59,11 @@ following values:
 
 The software is compatible with composite, s-video, RGB and VGA cables.
 
-The Dreamcast resolution is 320x239 when in that mode and using the PowerVR
-(PVR) version, there is a previous SDL version that runs on 320x234
-mode, but the small framework was rewritten to use the PVR chip on the 
-Dreamcast directly with a great advantage in speed for frame alternating 
-patterns. However the SDL version is kept - but no longer maintained - for 
-documentation purposes along with its source code.
+There is a previous SDL version that runs on 320x234 mode, but the small
+framework was rewritten to use the PVR chip on the Dreamcast directly with
+a great advantage in speed for frame alternating patterns. However the SDL
+version is kept - but no longer maintained - for documentation purposes along
+with its source code.
 
 
 Contributors
@@ -79,8 +78,8 @@ Contributors
 
 ===============================================================================
 
-For full dcoumentation and source code, please visit:
-http://junkerhq.net/xrgb/index.php/240p_test_suite
+For full documentation and source code, please visit:
+http://junkerhq.net/240p/
 
 ===============================================================================
 2011-2014 Artemio Urbina

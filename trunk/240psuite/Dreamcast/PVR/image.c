@@ -330,7 +330,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, 240, image);
+			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);
 	}
@@ -393,7 +393,7 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, 240, image);
+			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);
 	}
@@ -441,7 +441,7 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, 240, image);
+			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);
 	}
@@ -574,7 +574,14 @@ void DrawImage(ImagePtr image)
 	w = image->w;
 	h = image->h;
 	
-	if(image->scale && (vmode == VIDEO_480P_SL || vmode == VIDEO_480I_A240))
+	// Center display vertically in PAL modes, since images are mostly NTSC
+	if(IsPAL && h < dH)
+		if(!(2*h < dH && vmode == VIDEO_576I_A264))
+			y+= offsetY;
+
+	if(image->scale && (vmode == VIDEO_480P_SL
+			|| vmode == VIDEO_480I_A240
+			|| vmode == VIDEO_576I_A264))
 	{
 		x *= 2;
 		y *= 2;
@@ -624,6 +631,24 @@ inline void StartScene()
 {
 	pvr_scene_begin();
 	pvr_list_begin(PVR_LIST_TR_POLY);
+
+	/*
+	if(IsPAL)
+        {
+                ImagePtr back = NULL;
+
+		back = LoadKMG("/rd/white.kmg.gz", 1);
+                if(back)
+                {
+                        back->r = 0.4f;
+                        back->g = 0.4f;
+                        back->b = 0.4f;
+
+                        DrawImage(back);
+                        FreeImage(&back);
+                }
+        }
+	*/
 }
 
 inline void EndScene()

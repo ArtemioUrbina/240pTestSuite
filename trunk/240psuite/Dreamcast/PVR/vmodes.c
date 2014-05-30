@@ -8,6 +8,8 @@ int W		= 0;
 int H		= 0;
 int dW		= 0;
 int dH		= 0;
+int offsetY 	= 0;
+int IsPAL 	= 0;
 
 /* 640x480 VGA 60Hz */
 /* DM_640x480_VGA */
@@ -26,6 +28,53 @@ vid_mode_t custom_vga =
 	0, 1,
 	{ 0, 0, 0, 0 }
 };
+
+/* 320x240 NTSC 60Hz */
+vid_mode_t custom_240 = 
+    /* DM_320x240_NTSC */
+    {
+        DM_320x240,
+        320, 240,
+        VID_PIXELDOUBLE | VID_LINEDOUBLE,
+        CT_ANY,
+        PM_RGB565,
+        262, // Number of scanlines. 262 default
+	857, // Clocks per scanline. 
+        164, // Bitmap window X position. 
+	18, // Bitmap window Y position (automatically increased for PAL) 24 default, now starts at 22
+        21, // First scanline interrupt position. 21 default
+	260, // Second scanline interrupt position (automatically doubled for VGA) 
+        139, // Border X starting position. gives 704x240
+	843, // Border X stop position. 
+        24, // Border Y starting position.
+	264, // Border Y stop position.
+        0, 1,
+        { 0, 0, 0, 0 }
+    };
+
+
+vid_mode_t custom_288 = 
+{
+        DM_320x240,
+        320, // Width
+	264, // Height
+        VID_PIXELDOUBLE | VID_LINEDOUBLE | VID_PAL,  // flags
+        CT_ANY, // Allowed cable type. 
+        PM_RGB565, // Pixel mode. 
+        312, // Number of scanlines. 312 default, 
+	863, // Clocks per scanline. 863, 727 working
+        174, // Bitmap window X position. 
+	24, // Bitmap window Y position (automatically increased for PAL) 45 default
+        21, // First scanline interrupt position. 21 default
+	310, // Second scanline interrupt position (automatically doubled for VGA) 
+        116, // Border X starting position. 
+	843, // Border X stop position. 
+        44, // Border Y starting position. 
+	620, // Border Y stop position. 
+        0, // Current framebuffer. 
+	1, // Number of framebuffers. 
+        { 0, 0, 0, 0 } // Offset to framebuffers. 
+    };
 
 ImagePtr   scanlines = NULL;
 
@@ -100,9 +149,9 @@ inline void ReleaseScanlines()
 
 void ChangeResolution(int nvmode)
 {
-	int lastw;
+	//int lastw;
 
-	lastw = W;
+	//lastw = W;
 
 	// Skip useless video modes when in VGA
 	vcable = vid_check_cable();
@@ -130,6 +179,16 @@ void ChangeResolution(int nvmode)
 			H = 240;
 			dW = 320;
 			dH = 240;
+			offsetY = 0;
+			IsPAL = 0;
+			break;
+		case VIDEO_288P:
+			W = 320;
+			H = 264;
+			dW = 320;
+			dH = 264;
+			offsetY = 12;
+			IsPAL = 1;
 			break;
 		case VIDEO_480I_A240:
 		case VIDEO_480P_SL:
@@ -137,6 +196,16 @@ void ChangeResolution(int nvmode)
 			H = 480;
 			dW = 320;
 			dH = 240;
+			offsetY = 0;
+			IsPAL = 0;
+			break;
+		case VIDEO_576I_A264:
+			W = 640;
+			H = 528;
+			dW = 320;
+			dH = 264;
+			offsetY = 12;
+			IsPAL = 1;
 			break;
 		case VIDEO_480I:
 		case VIDEO_480P:
@@ -144,10 +213,20 @@ void ChangeResolution(int nvmode)
 			H = 480;
 			dW = 640;
 			dH = 480;
+			offsetY = 0;
+			IsPAL = 0;
+			break;
+		case VIDEO_576I:
+			W = 640;
+			H = 528;
+			dW = 640;
+			dH = 528;
+			offsetY = 12;
+			IsPAL = 1;
 			break;
 	}
 
-	if(lastw != W)
+	//if(lastw != W)
 	{
 		ReleaseTextures();
 
@@ -155,7 +234,16 @@ void ChangeResolution(int nvmode)
 		switch(vmode)
 		{
 			case VIDEO_240P:
-						vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
+						//vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
+						vid_set_mode_ex(&custom_240); 
+				break;
+			case VIDEO_288P:
+						//vid_set_mode(DM_320x240_PAL, PM_RGB565); 
+						vid_set_mode_ex(&custom_288); 
+				break;
+			case VIDEO_576I:
+			case VIDEO_576I_A264:
+						vid_set_mode(DM_640x480_PAL_IL, PM_RGB565); 
 				break;
 			case VIDEO_480I_A240:
 			case VIDEO_480P_SL:

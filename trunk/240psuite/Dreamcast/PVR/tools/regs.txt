@@ -1,0 +1,1181 @@
+Guide to the PowerVR-chip of the Dreamcast
+by Lars Olsson <jlo@ludd.luth.se>
+v0.51, 2004-Oct-27
+
+
+
+
+
+static vuint32 *regs = (uint32*)0xA05F8000;
+a05f8000: (id)
++------+
+| 31-0 |
+| id   |
++------+
+
+	id:
+		0x17fd11db:  Set5.xx development box or consumer machine
+		others:      Set4 delopment box or others
+
+
+a05f8004: (revision)
++----------------------+
+| 31-8 | 7-4   | 3-0   |
+| n/a  | major | minor |
++----------------------+
+
+	major.minor:
+	          0.1: Set5.16 development box (?)
+	       >= 1.1: Set5.2x development box or consumer machine
+
+
+a05f8008: (reset)
++-----------------------+
+| 31-3 | 2   | 1   | 0  |
+| n/a  | bus | PVR | TA |
++-----------------------+
+
+	bus:
+		0: normal
+		1: reset VRAM bus
+
+	PVR:
+		0: normal
+		1: reset PVR
+
+	TA:
+		0: normal
+		1: reset Tile Accelerator
+
+
+a05f8014: (startrender)
++-------+
+| 31-0  |
+| start |
++-------+
+
+	start:
+		Writing to this register initiates rendering sequence.
+
+
+a05f8018:
++------+
+| 31-0 |
+| ???  |
++------+
+	
+	under investigation
+
+
+
+a05f8020: (ob_addr)
++--------------+
+| 31-24 | 23-0 |
+|  n/a  | base |
++--------------+
+
+	base:
+		Base address of the Object Buffer in VRAM to be used
+		when the PVR is rendering a scene. Bits 0-19 are always
+		zero.
+
+
+a05f802c: (tilebuf_addr)
++--------------+
+| 31-24 | 23-0 |
+|  n/a  | addr |
++--------------+
+
+	addr:
+		Location of the Tile Buffer in VRAM (64-bit aligned) to be
+		used when the PVR is rendering a scene.
+
+
+a05f8030: (spansort_cfg)
++-----------------------------------------+
+| 31-17 | 16 | 15-9 | 8     | 7-1 | 0     |
+|  n/a  | ce | n/a  | span1 | n/a | span0 |
++-----------------------------------------+
+
+	ce:
+		0: enable TSP cache
+		1: disable TSP cache
+
+	span0 & span1: under investigation; set both to 1 for now
+
+
+a05f8040: (border_col)
++--------------+
+| 31-24 | 23-0 |
+|  n/a  | col  |
++--------------+
+
+	col:
+		Border color in RGB888-format.
+
+
+a05f8044: (fb_display_cfg)
+[0x11]
++----------------------------------------------------------------
+| 31-24 | 23    | 22      | 21-16    | 15-8      | 7   | 6-4    |
+|  n/a  | clock | stripen | striplen | threshold | n/a | extend |
++----------------------------------------------------------------
+----------------------------------+
+| 3-2       | 1          | 0      |
+| pixelmode | linedouble | enable |
+----------------------------------+
+
+	clock:
+		0: normal
+		1: pixel-clock runs at twice the speed (for VGA-mode)
+
+	stripen:
+		0: no strip buffer
+		1: enable strip buffer
+
+	striplen:
+		Under investigation; should specify the length of the
+		strip buffer in terms of 32 scanlines.
+
+	threshold:
+		Comparison value when the display mode is ARGB8888.
+
+	extend:
+		This value is inserted into the lower bits when the
+		display mode is RGB555 or RGB565 in order to extend
+		it to RGB888.
+
+	pixelmode: (alphamode is not set)
+		0: RGB0555 (2 bytes/pixel)
+		1: RGB565 (2 bytes/pixel)
+		2: RGB888 (3 bytes/pixel)
+		3: RGB0888 (4 bytes/pixel)
+
+	linedouble:
+		0: normal
+		1: scan lines are sent twice (for 240 scanlines)
+
+	enable:
+		0: disable display
+		1: enable display
+
+
+a05f8048: (fb_render_cfg)
++--------------------------------------------------------+
+| 31-24 | 23-16     | 15-8  | 7-4 | 3      | 2-0         |
+|  n/a  | threshold | alpha | n/a | dither | render mode |
++--------------------------------------------------------+
+
+	threshold:
+		Threshold for alpha transparency
+
+	alpha:
+		This is inserted into the alpha channel for those
+		render modes that support it when writing to the
+		framebuffer.
+
+	dither:
+		0: dither disabled
+		1: dither enabled for 2 bytes/pixel displays
+
+	render mode:
+		0: RGB0555  (2 bytes/pixel, alpha is inserted into bit15)
+		1: RGB565   (2 bytes/pixel)
+		2: ARGB4444 (2 bytes/pixel)
+		3: ARGB1555 (2 bytes/pixel, alpha is determined by threshold)
+		4: RGB888   (3 bytes/pixel)
+		5: RGB0888  (4 bytes/pixel, alpha is inserted into bit24-31)
+		6: ARGB8888 (4 bytes/pixel)
+		7: ARGB4444 (2 bytes/pixel, same as 2?)
+
+
+a05f804c: (fb_render_modulo)
+[0x13]
++---------------+
+| 31-9 | 8-0    |
+| n/a  | modulo |
++---------------+
+
+	(haven't got this to work in *RGB888 modes...)
+	modulo:
+		((bytes/pixel * width)/8
+
+
+a05f8050: (fb_display_addr1)
++--------------+
+| 31-24 | 23-0 |
+|  n/a  | addr |
++--------------+
+
+	addr:
+		Address in VRAM for displaying odd fields (32-bit aligned)
+
+
+a05f8054: (fb_display_addr2)
++--------------+
+| 31-24 | 23-0 |
+|  n/a  | addr |
++--------------+
+
+	addr:
+		Address in VRAM for displaying even fields (32-bit aligned)
+
+
+a05f805c: (fb_display_size)
+[0x17]
++---------------------------------+
+| 31-30 | 29-20  | 19-10  | 9-0   |
+|  n/a  | modulo | height | width |
++---------------------------------+
+
+	modulo:
+		Number of words in VRAM before next scanline starts, plus 1
+
+	height:
+		interlace:	height/2 - 1
+		noninterlace:	height/2 - 1
+		VGA:		height - 1
+
+	width:
+		((width * bytes/pixel)/4) - 1
+
+
+a05f8060: (fb_render_addr1)
++-------------------+
+| 31-25 | 24 | 23-0 |
+| n/a   | tx | addr |
++-------------------+
+
+	tx:
+		0: 32-bit write
+		1: 64-bit write (for rendering to textures)
+
+	addr:
+		Address in VRAM for rendering of odd fields.
+
+
+a05f8064: (fb_render_addr2)
++-------------------+
+| 31-25 | 24 | 23-0 |
+| n/a   | tx | addr |
++-------------------+
+
+	tx:
+		0: 32-bit write
+		1: 64-bit write (for rendering to textures)
+
+	addr:
+		Address in VRAM for rendering of even fields.
+
+
+a05f8068: (fb_clip_x)
++-------------------------------+
+| 31-27 | 26-16 | 15-11 | 10-0  |
+|  n/a  | max   |  n/a  | min   |
++-------------------------------+
+	
+	Specifies the horizontal pixel clipping area - 1.
+
+
+a05f806c: (fb_clip_y)
++-------------------------------+
+| 31-27 | 26-16 | 15-11 | 10-0  |
+|  n/a  | max   |  n/a  | min   |
++-------------------------------+
+
+	Specifies the vertical pixel clipping area - 1.
+
+
+a05f8074: (shadow)
++----------------------------+
+| 31-9 | 8       | 7-0       |
+| n/a  | enable  | intensity |
++----------------------------+
+
+	enable:
+		0: cheap shadow disabled
+		1: cheap shadow enabled
+
+	intensity:
+		how much cheap shadow should affect polygon depending on
+		how far away the modifier volume is located
+
+
+a05f8078: (object_clip)
++--------------+
+| 31-0 (FLOAT) |
+| distance     |
++--------------+
+
+	distance:
+		Position of polygon culling.
+
+
+a05f807c: (ob_cfg)
++-------------------------+
+| 31-22 | 21 | 20  | 19-0 |
+| n/a   | as | n/a | u    |
++-------------------------+
+
+	as:
+		0: translucent autosort selected by the isp_cfg register
+		1: translucent autosort selected by sort bit in Region Buffer
+
+	u:
+		under investigation; write 0x0007df77 for now.
+
+	
+
+
+
+a05f8080:
++------+
+| 31-0 |
+| ???  |
++------+
+
+	under investigation; write 0x00000007 for now
+
+
+a05f8084: (???)
++--------------+
+| 31-0 (FLOAT) |
+| ???          |
++--------------+
+
+	Under investigation; write 0x00000000 for now
+
+
+a05f8088: (bgplane_z)
++--------------+
+| 31-0 (FLOAT) |
+| distance     |
++--------------+
+
+	distance:
+		Position of background plane.
+
+
+a05f808c: (bgplane_cfg)
++----------------------------------+
+| 31-29 | 28 | 27    |26-24 | 23-0 |
+| n/a   | ce | moden | isp  | addr |
++----------------------------------+
+
+	ce:
+		0: enable TSP cache for bgplane
+		1: disable TSP cache for bgplane
+
+	moden:
+		0: disable modifier volume for bgplane
+		1: enable modifier volume for bgplane
+
+	isp:
+		0: ???
+		1: texture disabled
+		2: texture enabled
+		3: texture enabled + specular highlight + 16bit UV-coords
+		4: texture enabled + specular highlight + 32bit UV-coords
+		5: ???
+		6: ???
+		7: ???
+
+	addr:
+		Location of background plane in VRAM. 
+
+
+a05f8098: (isp_cfg)
++--------------------------------------------------+
+| 31-24 | 23-14      | 13-4 | 3       | 2-1 | 0    |
+| n/a   | u1         | u2   | discard | n/a | sort |
++--------------------------------------------------+
+
+	u1:
+		under investigation; write 0x00800000 for now
+
+	u2:
+		under investigation; write 0x00000400 for now
+
+	discard:
+		When auto-sorting translucent polygons, the ISP may
+		have to process the same polygons multiple times in
+		case of overlap. Setting this bit will discard polygons
+		that have been completely processed one time from
+		further processing, reducing overhead.
+
+	sort: (only valid when specified so in the ob_cfg register)
+		0: auto-sort translucent polygons
+		1: do not auto-sort translucent polygons (must be submitted
+		   in sorted order.)
+
+
+a05f80a0: (vram_cfg1)
++----------------+
+| 31-8 | 7-0     |
+| n/a  | refresh |
++----------------+
+
+	refresh:
+		Specifies the refresh-timer for the VRAM.
+		(normally set to 0x20)
+		if set to 0 and no read/write cycle is performed
+		for awhile, VRAM will lose all contents.
+
+
+a05f80a4: (vram_cfg2)
++------+
+| 31-0 |
+| ???  |
++------+
+
+	under investigation; write 0x0000001f for now
+
+
+a05f80a8: (vram_cfg3)
++------+
+| 31-0 |
+| ???  |
++------+
+
+	under investigation; write 0x15d1c951 for now
+
+
+a05f80b0: (fog_table_col)
++------+
+| 31-0 |
+| col  |
++------+
+
+	col:
+		Color used for fogging operations on polygons that use
+		the fogging table.
+
+
+a05f80b4: (fog_vertex_col)
++------+
+| 31-0 |
+| col  |
++------+
+
+	col:
+		Color used for fogging operation on polygons that do
+		manual processing of the fog.
+
+
+a05f80b8: (fog_density)
++-----------------------------+
+| 31-16 | 15-8     | 7-0      |
+|  n/a  | mantissa | exponent |
++-----------------------------+
+
+	Specifies a coefficient for TSP fogging.
+
+	exponent:
+		power of 2
+
+
+a05f80bc: (clamp_max)
++------+
+| 31-0 |
+| col  |
++------+
+
+	col:
+		Colors above this RGB value will be set to this color.
+
+
+a05f80c0: (clamp_min)
++------+
+| 31-0 |
+| col  |
++------+
+
+	col:
+		Colors below this RGB value will be set to this color.
+
+
+a05f80c4: (gun_pos)
++----------------------------------+
+| 31 - 26 | 25 - 16 | 15-10 | 9-0  |
+|   ???   | vpos    |  n/a  | hpos |
++----------------------------------+
+
+	vpos:
+		Vertical position of lightgun.
+
+	hpos:
+		Horizontal position of lightgun.
+
+
+a05f80c8: (hpos_irq)
++--------------------------------------+
+| 31-28 | 25-16 | 15-14 | 13-12 | 9-0  |
+|  n/a  | pos   |  n/a  | mode  | lval |
++--------------------------------------+
+
+	(I had HPOS and VPOS IRQs mixed up before, hence the confusion :)
+
+	pos:
+		horizontal position of the HPOS IRQ.
+
+	mode:
+		0: generate IRQ when the scanline is the same as lval
+		1: ???
+		2: generate IRQ on every scanline
+		3: ???
+
+	line:
+		If specified by mode, generate an HPOS IRQ only on this
+		scanline.
+
+
+a05f80cc: (vpos_irq)
+[0x33]
++------------------------------+
+| 31-28 | 25-16 | 15-10 | 9-0  |
+|  n/a  | pos1  |  n/a  | pos2 |
++------------------------------+
+
+	pos1:
+		A VPOS1_IRQ will be generated when the raster reaches this
+		scanline.
+
+	pos2:
+		A VPOS2_IRQ will be generated when the raster reaches this
+		scanline.
+
+	for PAL:
+		pos1: 21
+		pos2: 310
+
+	for NTSC, 480 height
+		pos1: 21
+		pos2: 258
+
+	for NTSC, 240 height
+		pos1: 21
+		pos2B: 260
+
+	for VGA:
+		pos1: 21
+		pos2: 510
+
+
+a05f80d0: (sync_cfg)
+[0x34]
++------------------------------------------------------------------------+
+| 31-10 | 9     | 8      | 7-6   | 5   | 4         | 3   | 2  | 1  | 0   |
+|  n/a  | ???   | enable | video | ??? | interlace | ??? | HP | VP | ??? |
++------------------------------------------------------------------------+
+
+	enable:
+		0: video output disabled
+		1: video output enabled
+
+	video: (this doesn't seem to work on Japanese machines for some
+		reason. They do have PAL capabilities though because I
+		made a hardware modification to always output PAL.)
+		0: VGA
+		1: NTSC
+		2: PAL
+		3: n/a
+
+	interlace:
+		0: non-interlace
+		1: interlace
+
+	HP:
+		0: negative H-sync
+		1: positive H-sync
+
+	VP:
+		0: negative V-sync
+		1: positive V-sync
+
+
+a05f80d4: (hborder)
+[0x35]
++-----------------------------+
+| 31-28 | 25-16 | 15-10 | 9-0 |
+|  n/a  | start |  n/a  | end | 
++-----------------------------+
+
+	Specifies the area of the horizontal border.
+
+	for PAL:
+		start:		end:
+		116		843
+
+	for NTSC:
+		start:		end:
+		126		837
+
+	for VGA:
+		start:		end:
+		126		837
+
+
+a05f80d8: (sync_load)
+[0x36]
++-------------------------------+
+| 31-28 | 25-16 | 15-10 | 9-0   |
+|  n/a  | vsync |  n/a  | hsync |
++-------------------------------+
+
+	Specifies the refresh rate of the display.
+
+	for PAL, interlace:
+		vsync:		hsync:
+		624		863
+
+	for PAL, noninterlace:
+		vsync:		hsync:
+		312		863
+
+	for NTSC, interlace:
+		vsync:		hsync:
+		524		857
+
+	for NTSC, noninterlace:
+		vsync:		hsync:
+		262		857
+
+	for VGA:
+		vsync:		hsync:
+		524		857
+
+
+a05f80dc: (vborder)
+[0x37]
++-----------------------------+
+| 31-28 | 25-16 | 15-10 | 9-0 |
+|  n/a  | start |  n/a  | end |
++-----------------------------+
+
+	Specifies the area of the vertical border.
+
+	for PAL:
+		start:		end:
+		44		620
+
+	for NTSC, 480 height:
+		start:		end:
+		36		516
+
+	for NTSC, 240 height:
+		start:		end:
+		18		258
+
+	for VGA:
+		start:		end:
+		40		520
+
+
+a05f80e0: (sync_width)
+[38]
++---------------------------------------------------------+
+| 31-23 | 27-22 | 21-12 | 11-8        |  7  | 6-0         |
+|  n/a  | x     | y     | vsync-width | n/a | hsync-width |
++---------------------------------------------------------+
+
+	Specifies the position(?) and width of the sync pulses.
+
+	for PAL, 480 height
+		x:	y:	hwidth:		vwidth:
+		0x1f	362	0x05		0x3f
+
+	for PAL, 240 height
+		x:	y:	Vsync:		Hsync:
+		0x1f	799	0x05		0x3f
+
+	for NTSC, 480 height
+		x:	y:	Vsync:		Hsync:
+		0x1f	364	0x06		0x3f
+
+	for NTSC, 240 height
+		x:	y:	Vsync:		Hsync:
+		0x0f	793	0x03		0x3f
+
+	for VGA:
+		x:	y:	Vsync:		Hsync:
+		0x0f	793	0x03		0x3f
+
+
+a05f80e4: (tsp_cfg)
++------------------------------------------------+
+| 31-19 | 17  | 16 | 15-13 | 12-8 | 7-5 | 4-0    |
+|  n/a  | cbe | ie |  n/a  |  ??? | n/a | modulo |
++------------------------------------------------+
+
+	cbe:
+		0: little endian entries for codebook for VQ textures
+		1: big endian entries for codebook for VQ textures
+
+	ie:
+		0: little endian entries for index for VQ textures
+		1: big endian entries for index for VQ textures
+
+	modulo:
+		Modulo width for textures.
+
+
+a05f80e8: (video_cfg)
+[0x3A]
++--------------------------------------------------------------+
+| 31-22 | 21-16 | 15-9 | 8     | 7-4 | 3     | 2   | 1   | 0   |
+|  n/a  |  A    |  n/a | lores | ??? | blank | ??? | ??? | ??? |
++--------------------------------------------------------------+
+
+	A:
+		0x16
+
+	lores:
+		0: 640 width
+		1: 320 width
+
+	blank:
+		0: normal mode
+		1: border covers the whole screen
+
+
+a05f80ec: (hpos)
+[0x3B]
++-------------+
+| 31-10 | 9-0 |
+|  n/a  | pos |
++-------------+
+
+	Specifies the horizontal position of the display.
+
+	for PAL:
+		pos:
+		174
+
+	for NTSC:
+		pos:
+		164
+
+	for VGA:
+		pos:
+		144
+
+
+a05f80f0: (vpos)
+[0x3C]
++-----------------------------+
+| 31-26 | 25-16 | 15-10 | 9-0 |
+|  n/a  | even  |  n/a  | odd |
++-----------------------------+
+
+	Specifies the vertical postition of the display for even and odd
+	fields.
+
+
+	for PAL interlace:
+		even:		odd:
+		18		18
+	
+	for PAL noninterlace:
+		even:		odd:
+		18		17
+
+	for NTSC interlace:
+		even:		odd:
+		18		18
+
+	for NTSC non interlace:
+		even:		odd:
+		18		17
+
+	for VGA:
+		even:		odd:
+		35		35
+
+
+a05f80f4: (scaler_cfg)
++-------------------------------------+
+| 31-19 | 18  | 17  | 16     | 15-0   |
+| n/a   | ??? | n/a | hscale | vscale |
++-------------------------------------+
+
+	hscale:
+		Horizontal scaler.
+
+	vscale:
+		Vertical scaler.
+
+
+a05f8108: (palette_cfg)
++---------------+
+| 31 - 2 | 1-0  |
+|  n/a   | mode |
++---------------+
+
+	mode:
+		0: ARGB1555
+		1: RGB565
+		2: ARGB4444
+		3: ARGB8888
+
+
+a05f810c: (sync_stat)
++----------------------------------------------+
+| 31-14 | 13     | 12     | 11  | 10    | 9-0  |
+|  ???  | vblank | hblank | ??? | field | vpos |
++----------------------------------------------+
+	vblank:
+		0: normal
+		1: vblank in progress
+
+	hblank:
+		0: normal
+		1: hblank in progress
+
+	field:
+		0: odd field of interlace
+		1: even field of interlace
+
+	vpos:
+		Current vertical position of the rasterbeam.
+
+
+a05f8110: (???)
++------+
+| 31-0 |
+| ???  |
++------+
+
+	under investigation; write 0x00093f39 for now
+
+
+a05f8114: (???)
++------+
+| 31-0 |
+| ???  |
++------+
+
+	under investigation; write 0x00200000 for now
+
+
+a05f8118: (ta_luminance)
++--------------------+
+| 31-16 | 15-8 | 7-0 |
+| n/a   | b1   | b2  |
++--------------------+
+
+	under investigation; write 0x00008040 for now
+
+
+a05f8124: (ta_opb_start)
++--------------+
+| 31-24 | 23-0 |
+| n/a   | addr |
++--------------+
+
+	addr:
+		Start of Object Pointer Buffer in VRAM (128-byte aligned)
+		for vertex registration. The Tile Accelerator will examine
+		vertex data it receives and determine which tiles the objects
+		might appear in and create links to the object in the
+		referenced tiles.
+
+
+a05f8128: (ta_ob_start)
++--------------+
+| 31-24 | 23-0 |
+| n/a   | addr |
++--------------+
+
+	addr:
+		Start of Object Buffer in VRAM (64-bit aligned) for vertex
+		registration. This is where the vertex data sent to the
+		Tiling Accelerator will be stored.
+
+
+a05f812c: (ta_opb_end)
++--------------+
+| 31-24 | 23-0 |
+| n/a   | addr |
++--------------+
+
+	addr:
+		End of Object Pointer Buffer in VRAM (128-byte aligned) for
+		vertex registration. The Tiling Accelerator will not use
+		memory beyond this point when creating Object Links. The
+		direction the Object Pointer Buffer grows in can be user
+		specified so care must be taken to place this correctly. An
+		OPB_OVERRUN IRQ will be generated should this limit be
+		exceeded.
+
+
+a05f8130: (ta_ob_end)
++--------------+
+| 31-24 | 23-0 |
+| n/a   | addr |
++--------------+
+
+	addr:
+		End of Object Buffer in VRAM (64-bit aligned) for vertex
+		registration. the Tiling Accelerator will not use memory
+		beyond this point when receiving data. If this happens an
+		OB_OVERRUN IRQ will be generated.
+		
+
+
+a05f8134: (ta_opb_pos)
++--------------+
+| 31-23 | 22-0 |
+| n/a   | addr |
++--------------+
+
+	addr:
+		Object Pointer Buffer position
+		This register contains the current address to be used by
+		the Object Pointer Buffer when more space needs to be
+		allocated.
+
+
+a05f8138: (ta_ob_pos)
++--------------+
+| 31-23 | 22-0 |
+| n/a   | addr |
++--------------+
+
+	addr:
+		Object Buffer position
+		This register contains the current address to be used by
+		the Object Buffer when Tile Accelerator receives vertex data.
+
+
+
+a05f813c: (tilebuf_size)
++----------------+
+| 31-16  | 15-0  |
+| height | width |
++----------------+
+
+	height:
+		Height of tile buffer in 32-pixel high tiles, minus 1.
+
+	width:
+		Width of tile buffer in 32-pixel wide tiles, minus 1.
+
+
+a05f8140: (ta_opb_cfg)
++--------------------------------------------------------------------
+| 31-21 | 20     | 19-18 | 17-16         | 15-14 | 13-12    | 11-10 |
+| n/a   | opbdir | n/a   | punch-through | n/a   | transmod | n/a   |
++--------------------------------------------------------------------
+-------------------------------------------------------+
+| 9-8       | 7-6 | 5-4       | 3   | 2   | 1-0        |
+| transpoly | n/a | opaquemod | n/a | ??? | opaquepoly |
+-------------------------------------------------------+
+
+	opbdir:
+		0: The Object Pointer Buffer grows upwards in VRAM
+		1: The Object Pointer Buffer grows downwards in VRAM
+
+	punch-through:
+		0: size_0 -  Punch-through Polygons disabled
+		1: size_8 -  7 Object Pointers + 1 List Pointer
+		2: size_16 - 15 Object Pointers + 1 List Pointer
+		3: size_32 - 31 Object Pointers + 1 List Pointer
+
+	transmod:
+		0: size_0 -  Translucent Modifiers disabled
+		1: size_8 -  7 Object Pointers + 1 List Pointer
+		2: size_16 - 15 Object Pointers + 1 List Pointer
+		3: size_32 - 31 Object Pointers + 1 List Pointer
+
+	transpoly:
+		0: size_0 - Translucent Polygons disabled
+		1: size_8 - 7 Object Pointers + 1 List Pointer
+		2: size_16 - 15 Object Pointers + 1 List Pointer
+		3: size_32 - 31 Object Pointers + 1 List Pointer
+
+	opaquemod:
+		0: size_0 - Opaque Modifiers disabled
+		1: size_8 - 7 Object Pointers + 1 List Pointer
+		2: size_16 - 15 Object Pointers + 1 List Pointer
+		3: size_32 - 31 Object Pointers + 1 List Pointer
+
+	opaquepoly:
+		0: size_0 - Opaque Polygons disabled
+		1: size_8 -  7 Object Pointers + 1 List Pointer
+		2: size_16 - 15 Object Pointers + 1 List Pointer
+		3: size_32 - 31 Object Pointers + 1 List Pointer
+
+
+a05f8144: (ta_init)
++-------------+
+| 31   | 30-0 |
+| init | n/a  |
++-------------+
+
+	init:
+		0: normal
+		1: initialize TA vertex registration parameters
+
+
+a05f8148: (yuv_addr)
++--------------+
+| 31-24 | 23-0 |
+| n/a   | addr |
++--------------+
+
+	addr:
+		Destination address in VRAM (32-byte aligned) for YUV
+		conversion.
+
+
+a05f814c: (yuv_cfg1)
++--------------------------------------------------------------+
+| 31-25 | 24     | 23-17 | 16   | 15-14 | 13-8   | 7-6 | 5-0   |
+| n/a   | format |  n/a  | mode | n/a   | height | n/a | width |
++--------------------------------------------------------------+
+
+	format:
+		0: YUV420
+		1: YUV422
+
+	mode:
+		0: single transfer (size must be 16,32,64,128,256,512 or 1024)
+		1: multiple transfers in terms of 16x16 macro blocks
+
+	height:
+		height/32-1
+
+	width:
+		width/32-1
+
+	Notes:
+		After setting yuv_cfg1 and yuv_addr, data should be sent via
+		DMA to the YUV converter at address 0x10800000.
+
+
+a05f8150: (yuv_stat)
++----------------+
+| 31-13 | 12-0   |
+| n/a   | blocks |
++----------------+
+
+	blocks:
+		Indicates the number of 16x16 macroblocks currently
+		converted.
+
+
+a05f8160: (ta_opl_reinit)
++---------------+
+| 31     | 30-0 |
+| reinit | n/a  |
++---------------+
+
+	reinit:
+		0: normal
+		1: initialize TA vertex registration parameters (same as
+		   ta_init) except ta_obp_pos and ta_ob_pos are not
+		   initialized, allowing continuation of registration.
+
+
+a05f8164: (ta_opl_init)
++--------------+
+| 31-24 | 23-0 |
+| n/a   | addr |
++--------------+
+
+	addr:
+		Start of Object Pointer List allocation in VRAM
+		(128-byte aligned). The Object Pointer List is part
+		of the Object Pointer Buffer and this is where the Tile
+		Accelerator allocates memory if needed for the Object
+		Pointer Buffer. The direction of the allocation can be
+		specified in the ta_opb_cfg register.
+
+
+a05f8180:
++------+
+| 31-0 |
+| ???  |
++------+
+
+
+a05f8184:
++------+
+| 31-0 |
+| ???  |
++------+
+
+
+a05f8190:
++------+
+| 31-0 |
+| ???  |
++------+
+
+
+a05f8194:
++------+
+| 31-0 |
+| ???  |
++------+
+
+
+a05f8198:
++------+
+| 31-0 |
+| ???  |
++------+
+
+
+a05f8200 - a05f83ff: (fog_table)
++-------------------+
+| 31-16 | 15-0      |
+| n/a   | fog entry |
++-------------------+
+
+	128 entries for use with fogging operations. The index of the table
+	is used as a depth-value and the element at that position is used to
+	specify a fog density. Polygons using fog_table will use the fog
+	density as the alpha value of the fog. Polygons that use fog_table2
+	change the polygon color to the fog density value and the polygon
+	alpha value will become the fog alpha value.
+
+
+a05f8600 - a05f8fff: (opl_table)
++------+
+| 31-0 |
+| ???  |
++------+
+
+	This is quite likely where the Tile Accelerator stores pointers to
+	the current addresses in the Object Pointer List segments. It
+	seems the entries also contain additional information, such as the
+	type of object etc.
+
+
+a05f9000 - a05f9fff: (palette_table)
++---------------+
+| 31-0          |
+| palette entry |
++---------------+
+
+	1024 entries for use with palettized textures. Palette is split into
+	banks depending on color mode. For 4bpp mode there are 64 banks
+	with 16 colors in each; for 8bpp mode there are 4 banks with 256
+	colors in each.
+
+
+
+
+Notes:
+
+Some uncertainties still linger, but this doc is a bit more correct than
+the previous. Everything is unoffical though and should be taken for what it
+is; only an attempt at understanding the workings of a complex chip. It is
+not yet complete and most certainly contains errors in some parts, but I feel
+somewhat confident that it is correct in at least an equal amount :-)
+
+Reach me at: jlo@ludd.luth.se for any questions, comments or corrections...
+
+
+/Lars Olsson
