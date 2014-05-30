@@ -57,7 +57,7 @@ void DropShadowTest()
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay;
 	controller 	*st;
 
-	back[1] = LoadKMG("/rd/sonicback.kmg.gz", 1);
+	back[1] = LoadKMG("/rd/sonicback.kmg.gz", 0);
 	if(!back[1])
 		return;
 	back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
@@ -66,19 +66,20 @@ void DropShadowTest()
 	back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
 	if(!back[3])
 		return;
-	overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 1);
+	overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
 	if(!overlay)
 		return;
 
-	if(vmode != VIDEO_480P || vmode == VIDEO_480I_A240)
+	if(vmode != VIDEO_480P || vmode == VIDEO_480I_A240 ||
+		vmode == VIDEO_576I_A264)
 	{		
-		back[0] = LoadKMG("/rd/motoko.kmg.gz", 1);
+		back[0] = LoadKMG("/rd/motoko.kmg.gz", 0);
 		if(!back[0])
 			return;
 	}
 	else
 	{
-		back[0] = LoadKMG("/rd/480/motoko-480.kmg.gz", 1);
+		back[0] = LoadKMG("/rd/480/motoko-480.kmg.gz", 0);
 		if(!back[0])
 			return;
 
@@ -255,9 +256,9 @@ void StripedSpriteTest()
 	ImagePtr	back[4], striped, overlay;
 	controller *st;
 
-	if(vmode != VIDEO_480P && vmode != VIDEO_480I)
+	if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
 	{		
-		back[0] = LoadKMG("/rd/motoko.kmg.gz", 1);
+		back[0] = LoadKMG("/rd/motoko.kmg.gz", 0);
 		if(!back[0])
 			return;
 		back[1] = LoadKMG("/rd/sonicback.kmg.gz", 1);
@@ -269,17 +270,17 @@ void StripedSpriteTest()
 		back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
 		if(!back[3])
 			return;
-		overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 1);
+		overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
 		if(!overlay)
 			return;
 	}
 	else
 	{
-		back[0] = LoadKMG("/rd/480/motoko-480.kmg.gz", 1);
+		back[0] = LoadKMG("/rd/480/motoko-480.kmg.gz", 0);
 		if(!back[0])
 			return;
 		back[0]->scale = 0;
-		back[1] = LoadKMG("/rd/sonicback.kmg.gz", 1);
+		back[1] = LoadKMG("/rd/sonicback.kmg.gz", 0);
 		if(!back[1])
 			return;
 		back[1]->scale = 0;
@@ -291,7 +292,7 @@ void StripedSpriteTest()
 		if(!back[3])
 			return;
 		back[3]->scale = 0;
-		overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 1);
+		overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
 		if(!overlay)
 			return;
 
@@ -649,7 +650,7 @@ void LagTest()
 		ImagePtr wall;
 		
 		done = 0;
-		wall = LoadKMG("/rd/back.kmg.gz", 1);
+		wall = LoadKMG("/rd/back.kmg.gz", 0);
 		if(!wall)
 			return;
 
@@ -1045,7 +1046,7 @@ void SoundTest()
 	sfxhnd_t	beep;
 	controller	*st;
 
-	back = LoadKMG("/rd/back.kmg.gz", 1);
+	back = LoadKMG("/rd/back.kmg.gz", 0);
 	if(!back)
 		return;
 	snd_init();	
@@ -1624,87 +1625,64 @@ void Alternate240p480i()
 	}
 }
 
-void ResetVideoValues(vid_mode_t *vga_mode)
+void ResetVideoValues(vid_mode_t *vid_mode, vid_mode_t *vid_source)
 {
-	if(!vga_mode)
+	if(!vid_mode || !vid_source)
+	{
+		printf("Could not copy values\n");
 		return;
+	}
 
-	/*
-	vga_mode->generic = DM_640x480;
-	vga_mode->width = 640;
-	vga_mode->height = 480;
-	vga_mode->flags = VID_INTERLACE;
-	vga_mode->cable_type = CT_VGA;
-	vga_mode->pm = PM_RGB565;
-	vga_mode->scanlines = 526;
-	vga_mode->clocks = 855;		
-	vga_mode->bitmapx = 156;	// X & Y in Framebuffer
-	vga_mode->bitmapy = 36;
-	vga_mode->scanint1 = 21;	// scanline interrupt positions
-	vga_mode->scanint2 = 260;
-	vga_mode->borderx1 = 115; // X Start 
-	vga_mode->borderx2 = 835; // X Stop  
-	vga_mode->bordery1 = 36;  // Y start 
-	vga_mode->bordery2 = 516; // Y Stop 
-	vga_mode->fb_curr = 0; 
-	vga_mode->fb_count = 1; 
-	vga_mode->fb_base[0] = 0; 
-	vga_mode->fb_base[1] = 0; 
-	vga_mode->fb_base[2] = 0; 
-	*/
-
-	vga_mode->generic = DM_640x480;
-	vga_mode->width = 640;
-	vga_mode->height = 480;
-	vga_mode->flags = VID_INTERLACE;
-	vga_mode->cable_type = CT_VGA;
-	vga_mode->pm = PM_RGB565;
-	vga_mode->scanlines = 526;
-	vga_mode->clocks = 855;		
-	vga_mode->bitmapx = 175;	// X & Y in Framebuffer
-	vga_mode->bitmapy = 36;
-	vga_mode->scanint1 = 21;	// scanline interrupt positions
-	vga_mode->scanint2 = 260;
-	vga_mode->borderx1 = 135; // X Start 
-	vga_mode->borderx2 = 855; // X Stop  
-	vga_mode->bordery1 = 36;  // Y start 
-	vga_mode->bordery2 = 516; // Y Stop 
-	vga_mode->fb_curr = 0; 
-	vga_mode->fb_count = 1; 
-	vga_mode->fb_base[0] = 0; 
-	vga_mode->fb_base[1] = 0; 
-	vga_mode->fb_base[2] = 0; 
-	vga_mode->fb_base[3] = 0; 
+	vid_mode->generic = vid_source->generic;
+	vid_mode->width = vid_source->width;
+	vid_mode->height = vid_source->height;
+	vid_mode->flags = vid_source->flags;
+	vid_mode->cable_type = vid_source->cable_type;
+	vid_mode->pm = vid_source->pm;
+	vid_mode->scanlines = vid_source->scanlines;
+	vid_mode->clocks = vid_source->clocks;		
+	vid_mode->bitmapx = vid_source->bitmapx;	// X & Y in Framebuffer
+	vid_mode->bitmapy = vid_source->bitmapy;
+	vid_mode->scanint1 = vid_source->scanint1;	// scanline interrupt positions
+	vid_mode->scanint2 = vid_source->scanint2;
+	vid_mode->borderx1 = vid_source->borderx1; // X Start 
+	vid_mode->borderx2 = vid_source->borderx2; // X Stop  
+	vid_mode->bordery1 = vid_source->bordery1;  // Y start 
+	vid_mode->bordery2 = vid_source->bordery2; // Y Stop 
+	vid_mode->fb_curr = vid_source->fb_curr; 
+	vid_mode->fb_count = vid_source->fb_count; 
+	vid_mode->fb_base[0] = vid_source->fb_base[0]; 
+	vid_mode->fb_base[1] = vid_source->fb_base[1]; 
+	vid_mode->fb_base[2] = vid_source->fb_base[2]; 
+	vid_mode->fb_base[3] = vid_source->fb_base[3]; 
 }
 
-vid_mode_t  vga_mode;
-int					initvga = 1;
+vid_mode_t  test_mode;
 
-void TestVideoMode()
+void TestVideoMode(vid_mode_t *source_mode)
 {
-	int 			done =  0;
-	uint16			pressed, update = 0, load = 0, sel = 1, showback = 1;		
+	int 			done =  0, oldvmode = vmode;
+	uint16			pressed, update = 0, sel = 1, showback = 1;		
 	controller		*st;
 	char			str[50];
 	ImagePtr		back;
 
-	if(vcable != CT_VGA)
-		return;
+	ResetVideoValues(&test_mode, source_mode);
 
-	if(initvga)
-	{
-		ResetVideoValues(&vga_mode);
-		initvga = 0;
-	}
-
-	back = LoadKMG("/rd/480/grid-480.kmg.gz", 1);
+	back = LoadKMG("/rd/grid.kmg.gz", 0);
 	if(!back)
 		return;
 	back->scale = 0;
 
 	updateVMU("VIDEO", "", 1);
 
-	vid_set_mode_ex(&vga_mode);
+	/*
+	ReleaseTextures();
+	pvr_shutdown();
+	vid_set_mode_ex(&test_mode);
+	pvr_init_defaults();
+	RefreshLoadedImages();
+	*/
 
 	while(!done && !EndProgram) 
 	{
@@ -1713,47 +1691,47 @@ void TestVideoMode()
 		float   b = 1.0f;
 		int     c = 1;
 		float   x = 40.0f;
-		float   y = 55.0f;
-
-		if(load)
-		{
-			LoadFont();
-			LoadScanlines();
-			load = 0;
-		}
+		float   y = 15.0f;
 
 		StartScene();
 		if(showback)
 			DrawImage(back);
 
-		sprintf(str, " Width:     %d ", vga_mode.width);
+		sprintf(str, " Width:     %d ", test_mode.width);
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
-		sprintf(str, " Height:    %d ", vga_mode.height);
-		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
-
-		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
-
-		sprintf(str, " Scanlines: %d ", vga_mode.scanlines);
-		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
-		sprintf(str, " Clocks:    %d ", vga_mode.clocks);
+		sprintf(str, " Height:    %d ", test_mode.height);
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
 
 		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
 
-		sprintf(str, " Bitmap X:  %d ", vga_mode.bitmapx);
+		sprintf(str, " Scanlines: %d ", test_mode.scanlines);
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
-		sprintf(str, " Bitmap Y:  %d ", vga_mode.bitmapy);
+		sprintf(str, " Clocks:    %d ", test_mode.clocks);
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
 
 		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
 
-		sprintf(str, " Border X1: %d ", vga_mode.borderx1);
+		sprintf(str, " Bitmap X:  %d ", test_mode.bitmapx);
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
-		sprintf(str, " Border X2: %d ", vga_mode.borderx2);
+		sprintf(str, " Bitmap Y:  %d ", test_mode.bitmapy);
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
-		sprintf(str, " Border Y1: %d ", vga_mode.bordery1);
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " ScanInt1:  %d ", test_mode.scanint1);
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
-		sprintf(str, " Border Y2: %d ", vga_mode.bordery2);
+		sprintf(str, " ScanInt2:  %d ", test_mode.scanint2);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " Border X1: %d ", test_mode.borderx1);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Border X2: %d ", test_mode.borderx2);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Border Y1: %d ", test_mode.bordery1);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Border Y2: %d ", test_mode.bordery2);
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
 
 		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
@@ -1763,18 +1741,19 @@ void TestVideoMode()
 		sprintf(str, " Draw PVR Background: %s ", settings.drawpvrbg == 1 ? "yes" : " no");
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
 
-		sprintf(str, " Video Border Size:               %dx%d ", vga_mode.borderx2-vga_mode.borderx1, vga_mode.bordery2-vga_mode.bordery1);
+		sprintf(str, " Video Border Size:               %dx%d ", test_mode.borderx2-test_mode.borderx1, test_mode.bordery2-test_mode.bordery1);
 		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
 
-		sprintf(str, " Active Area Margin Left:         %d", vga_mode.bitmapx - vga_mode.borderx1);
+		sprintf(str, " Active Area Margin Left:         %d", test_mode.bitmapx - test_mode.borderx1);
 		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
-		sprintf(str, " Active Area Margin Right:        %d", vga_mode.clocks - vga_mode.bitmapx - vga_mode.width);
+		sprintf(str, " Active Area Margin Right:        %d", test_mode.clocks - test_mode.bitmapx - test_mode.width);
 		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
-		sprintf(str, " Active Area Margin Top:          %d", vga_mode.bitmapy);
+		sprintf(str, " Active Area Margin Top:          %d", test_mode.bitmapy);
 		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
-		sprintf(str, " Active Area Margin Bottom:       %d", vga_mode.scanlines - vga_mode.bitmapy - vga_mode.height);
+		sprintf(str, " Active Area Margin Bottom:       %d", test_mode.scanlines - test_mode.bitmapy - test_mode.height);
 		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
 
+		DrawStringB(100, 10, 0, 1.0f, 0.0f, "X to reset, Y to set"); y += fh; 
 		EndScene();
 
 		st = ReadController(0, &pressed);
@@ -1785,7 +1764,7 @@ void TestVideoMode()
 
 			if (pressed & CONT_X)
 			{
-				ResetVideoValues(&vga_mode);
+				ResetVideoValues(&test_mode, source_mode);
 				update = 1;
 			}
 						
@@ -1814,41 +1793,45 @@ void TestVideoMode()
 				switch(sel)
 				{
 					case 1:
-						if (pressed & CONT_B)
-							vga_mode.width --;
+						test_mode.width --;
 						break;
 					case 2:
-						if (pressed & CONT_B)
-							vga_mode.height --;
+						test_mode.height --;
 						break;
 					case 3:
-						vga_mode.scanlines --;
+						test_mode.scanlines --;
 						break;
 					case 4:
-						vga_mode.clocks --;
+						test_mode.clocks --;
 						break;
 					case 5:
-						vga_mode.bitmapx --;
+						test_mode.bitmapx --;
 						break;
 					case 6:
-						vga_mode.bitmapy --;
+						test_mode.bitmapy --;
 						break;
 					case 7:
-						vga_mode.borderx1 --;
+						test_mode.scanint1 --;
 						break;
 					case 8:
-						vga_mode.borderx2 --;
+						test_mode.scanint2 --;
 						break;
 					case 9:
-						vga_mode.bordery1 --;
+						test_mode.borderx1 --;
 						break;
 					case 10:
-						vga_mode.bordery2 --;
+						test_mode.borderx2 --;
 						break;
 					case 11:
-						settings.drawborder = !settings.drawborder;
+						test_mode.bordery1 --;
 						break;
 					case 12:
+						test_mode.bordery2 --;
+						break;
+					case 13:
+						settings.drawborder = !settings.drawborder;
+						break;
+					case 14:
 						settings.drawpvrbg = !settings.drawpvrbg;
 						break;
 				}
@@ -1859,41 +1842,45 @@ void TestVideoMode()
 				switch(sel)
 				{
 					case 1:
-						if (pressed & CONT_B)
-							vga_mode.width ++;
+						test_mode.width ++;
 						break;
 					case 2:
-						if (pressed & CONT_B)
-							vga_mode.height ++;
+						test_mode.height ++;
 						break;
 					case 3:
-						vga_mode.scanlines ++;
+						test_mode.scanlines ++;
 						break;
 					case 4:
-						vga_mode.clocks ++;
+						test_mode.clocks ++;
 						break;
 					case 5:
-						vga_mode.bitmapx ++;
+						test_mode.bitmapx ++;
 						break;
 					case 6:
-						vga_mode.bitmapy ++;
+						test_mode.bitmapy ++;
 						break;
 					case 7:
-						vga_mode.borderx1 ++;
+						test_mode.scanint1 ++;
 						break;
 					case 8:
-						vga_mode.borderx2 ++;
+						test_mode.scanint2 ++;
 						break;
 					case 9:
-						vga_mode.bordery1 ++;
+						test_mode.borderx1 ++;
 						break;
 					case 10:
-						vga_mode.bordery2 ++;
+						test_mode.borderx2 ++;
 						break;
 					case 11:
-						settings.drawborder = !settings.drawborder;
+						test_mode.bordery1 ++;
 						break;
 					case 12:
+						test_mode.bordery2 ++;
+						break;
+					case 13:
+						settings.drawborder = !settings.drawborder;
+						break;
+					case 14:
 						settings.drawpvrbg = !settings.drawpvrbg;
 						break;
 				}
@@ -1902,10 +1889,36 @@ void TestVideoMode()
 
 		if(update)
 		{
-			ReleaseScanlines();
-			ReleaseFont();
+			vuint32 *regs = (uint32*)0xA05F8000;
+			uint32 data = 0;
 
-			vid_set_mode_ex(&vga_mode);
+			ReleaseTextures();
+			pvr_shutdown();
+			vid_set_mode_ex(&test_mode);
+			pvr_init_defaults();
+			RefreshLoadedImages();
+
+			regs[0x3A] |= 8;    /* Blank */
+    			regs[0x11] &= ~1;   /* Display disable */
+
+			PVR_SET(PVR_SCALER_CFG, 0x400);
+			PVR_SET(PVR_FB_CFG_2, 0x00000001);
+
+			printf("PVR 0x38: %lX\n", regs[0x38]);
+			data = 0x05 | 0x3f << 8 | 0x31F << 12 | 0x1f << 22;
+			printf("Data to write %lX\n", data);
+			regs[0x38] = data;
+			printf("PVR written at 0x38: %lX\n", regs[0x38]);
+
+			printf("PVR 0x34: %lX\n", regs[0x34]);
+			data = 0x100 | 0x80 | 0x04;
+			printf("Data to write at 0x34  %lX\n", data);
+			regs[0x34] = data;
+			printf("PVR written to 0x34: %lX\n", regs[0x34]);
+	
+			/* Enable display */
+			regs[0x3A] &= ~8;
+    			regs[0x11] |= 1;
 
 			if(settings.drawborder)
 				vid_border_color(255, 255, 255);
@@ -1918,34 +1931,40 @@ void TestVideoMode()
 				pvr_set_bg_color(0.0f, 0.0f, 0.0f);
 
 			update = 0;
-			load = 1;
 		}
 	}
 
 	FreeImage(&back);
 
-	sprintf(str, " Width:     %d\n", vga_mode.width);
+	dbglog(DBG_KDEBUG, "----------EXIT-------\n\n");
+	ChangeResolution(oldvmode);
+	sprintf(str, " Width:     %d\n", test_mode.width);
 	dbglog(DBG_KDEBUG, str);
-	sprintf(str, " Height:    %d\n", vga_mode.height);
-	dbglog(DBG_KDEBUG, str);
-
-	sprintf(str, " Scanlines: %d\n", vga_mode.scanlines);
-	dbglog(DBG_KDEBUG, str);
-	sprintf(str, " Clocks:    %d\n", vga_mode.clocks);
+	sprintf(str, " Height:    %d\n", test_mode.height);
 	dbglog(DBG_KDEBUG, str);
 
-	sprintf(str, " Bitmap X:  %d\n", vga_mode.bitmapx);
+	sprintf(str, " Scanlines: %d\n", test_mode.scanlines);
 	dbglog(DBG_KDEBUG, str);
-	sprintf(str, " Bitmap Y:  %d\n", vga_mode.bitmapy);
+	sprintf(str, " Clocks:    %d\n", test_mode.clocks);
 	dbglog(DBG_KDEBUG, str);
 
-	sprintf(str, " Border X1: %d\n", vga_mode.borderx1);
+	sprintf(str, " Bitmap X:  %d\n", test_mode.bitmapx);
 	dbglog(DBG_KDEBUG, str);
-	sprintf(str, " Border X2: %d\n", vga_mode.borderx2);
+	sprintf(str, " Bitmap Y:  %d\n", test_mode.bitmapy);
 	dbglog(DBG_KDEBUG, str);
-	sprintf(str, " Border Y1: %d\n", vga_mode.bordery1);
+
+	sprintf(str, " ScanInt1:  %d\n", test_mode.scanint1);
 	dbglog(DBG_KDEBUG, str);
-	sprintf(str, " Border Y2: %d\n", vga_mode.bordery2);
+	sprintf(str, " ScanInt2:  %d\n", test_mode.scanint2);
+	dbglog(DBG_KDEBUG, str);
+
+	sprintf(str, " Border X1: %d\n", test_mode.borderx1);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Border X2: %d\n", test_mode.borderx2);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Border Y1: %d\n", test_mode.bordery1);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Border Y2: %d\n", test_mode.bordery2);
 	dbglog(DBG_KDEBUG, str);
 }
 
@@ -2059,11 +2078,11 @@ void SIPLagTest()
 	float		delta = 0.01f;
 
 	DStatus[0] = 0x0;
-	back = LoadKMG("/rd/back.kmg.gz", 1);
+	back = LoadKMG("/rd/back.kmg.gz", 0);
 	if(!back)
 		return;
 
-	wave = LoadKMG("/rd/1khz.kmg.gz", 1);
+	wave = LoadKMG("/rd/1khz.kmg.gz", 0);
 	if(!wave)
 	{
 		FreeImage(&back);

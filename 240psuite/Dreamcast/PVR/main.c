@@ -62,11 +62,13 @@ int main(void)
 		ChangeResolution(VIDEO_480P_SL);
 
 	region = flashrom_get_region();
+	if(region == FLASHROM_REGION_EUROPE)
+		settings.EnablePAL = 1;
 
 	InitImages();
 	LoadFont();
 	LoadScanlines();
-	title = LoadKMG("/rd/back.kmg.gz", 1);
+	title = LoadKMG("/rd/back.kmg.gz", 0);
 	sd = LoadKMG("/rd/SD.kmg.gz", 0);
 	if(sd)
 	{
@@ -145,6 +147,15 @@ int main(void)
 				if(vcable != CT_VGA)
 					sprintf(res, "Video: 480i (Scaling disabled)");
 				break;
+			case VIDEO_288P:
+                                sprintf(res, "Video: 288p");
+                                break;
+                        case VIDEO_576I_A264:
+                                sprintf(res, "Video: 576i (scaled 264p)");
+                                break;
+                        case VIDEO_576I:
+                                sprintf(res, "Video: 576i (Scaling disabled)");
+                                break;
 			case VIDEO_480P:
 				if(vcable == CT_VGA)
 					sprintf(res, "Video: 480p (Scaling disabled)");
@@ -158,13 +169,13 @@ int main(void)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); 
 
-#ifdef VGA_SETTINGS
-		if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)
+//#ifdef VGA_SETTINGS
+		//if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)
 		{
 			c++;
-			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VGA Settings"); 
+			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video Settings"); 
 		}    
-#endif
+//#endif
 
 		r = 0.8f;
 		g = 0.8f;
@@ -178,7 +189,7 @@ int main(void)
 				DrawStringS(265.0f, 225.0f, r, g, b, "VGA");
 				break;
 			case CT_COMPOSITE:
-				DrawStringS(235.0f, 225.0f, r, g, b, "Composite");
+				DrawStringS(265.0f, 225.0f, r, g, b, "Composite");
 				break;
 		}
 		
@@ -305,6 +316,9 @@ int main(void)
 					case 15:
 						HelpWindow(GENERALHELP, title);
 						break;
+					case 16:
+						TestVideoMode(&custom_288);
+						break;
 				} 					
 				updateVMU("240p Test", "", 1);				
 			}
@@ -362,13 +376,13 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		switch(vcable)
 		{
 			case CT_RGB:
-				DrawStringS(265.0f, 225.0f, r, g,	b, "RGB");
+				DrawStringS(265.0f, 225.0f, r, g, b, "RGB");
 				break;
 			case CT_VGA:
-				DrawStringS(265.0f, 225.0f, r, g,	b, "VGA");
+				DrawStringS(265.0f, 225.0f, r, g, b, "VGA");
 				break;
 			case CT_COMPOSITE:
-				DrawStringS(215.0f, 225.0f, r, g,	b, "Composite");
+				DrawStringS(265.0f, 225.0f, r, g, b, "Composite");
 				break;
 		}
 		

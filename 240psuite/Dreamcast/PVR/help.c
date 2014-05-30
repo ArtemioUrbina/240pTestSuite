@@ -116,7 +116,7 @@ void  HelpWindow(char *filename, ImagePtr screen)
 	if(!buffer)
 		return;
 
-	back = LoadKMG("/rd/help.kmg.gz", 1);
+	back = LoadKMG("/rd/help.kmg.gz", 0);
 	back->alpha = 0.75f;
 		
 	updateVMU(" 	Help	", "", 1);
