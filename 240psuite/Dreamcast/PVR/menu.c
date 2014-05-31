@@ -162,6 +162,7 @@ void CopyFBToBG()
 	uint16  npixel;
 	uint32  save;
 	uint32  pixel;  
+	uint16  *fbcopy = NULL;
 	uint16  r, g, b;
 #ifdef BENCHMARK
 	uint32 start, end;
@@ -191,6 +192,14 @@ void CopyFBToBG()
 		return;
 	}
 
+	fbcopy = (uint16*)malloc(sizeof(uint16)*numpix);
+	if(!fbcopy)
+	{
+		dbglog(DBG_ERROR, "FB copy: not enough memory\n");
+		FreeTextureFB();
+		return;
+	}
+	
 	memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
@@ -199,11 +208,14 @@ void CopyFBToBG()
 	timer_ms_gettime(NULL, &start);
 #endif
 	save = irq_disable();
+	memcpy(fbcopy, vram_s, sizeof(uint16)*numpix);
+	irq_restore(save);
+
 	for(i = 0; i < numpix; i++)
 	{
 		uint x = 0, y = 0;
 
-		pixel = vram_s[i];
+		pixel = fbcopy[i];
 
 		r = (((pixel >> 11) & 0x1f) << 0);
 		g = (((pixel >>  5) & 0x3f) >> 1);
@@ -216,7 +228,9 @@ void CopyFBToBG()
 		y *= tw;
 		fbtextureBuffer[y+x] = ((npixel << 8) & 0xff00) | ((npixel >> 8) & 0x00ff);
 	}
-	irq_restore(save);
+		
+	free(fbcopy);
+	fbcopy = NULL;
 
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
@@ -275,6 +289,7 @@ void DrawShowMenu()
         back->y = (dH - MENUSIZE_H) / 2;
 	back->alpha = 0.75f;
 
+	updateVMU("   MENU", "", 1);
 	while(!done && !EndProgram)
 	{
 		float   r = 1.0f;
@@ -349,6 +364,7 @@ void DrawShowMenu()
 					default:
 						break;
 			} 			            										
+			updateVMU("   MENU", "", 1);
 		}		
 	}
 	
@@ -372,6 +388,7 @@ void ChangeOptions(ImagePtr screen)
 	back->alpha = 0.75f;
 		
 	region = flashrom_get_region();
+	updateVMU("  Options", "", 1);
 	while(!close && !EndProgram) 
 	{		
 		float	r = 1.0f;
@@ -543,6 +560,7 @@ void SelectVideoMode(ImagePtr screen)
 		
 	back->alpha = 0.75f;
 	sel = vmode + 1;
+	updateVMU("Video Mode", "", 1);
 	while(!close && !EndProgram) 
 	{		
 		float	r = 1.0f;

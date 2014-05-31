@@ -49,6 +49,7 @@ extern int IsPAL;
 extern ImagePtr scanlines;
 extern vid_mode_t custom_240;
 extern vid_mode_t custom_288;
+extern vid_mode_t custom_576;
 
 void LoadScanlines();
 inline void ReleaseScanlines();

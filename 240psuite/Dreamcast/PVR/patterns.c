@@ -321,28 +321,52 @@ void DrawColorBleed()
 
 void DrawGrid()
 {
-	int 		done = 0;
+	int 		done = 0, oldvmode = vmode;
 	uint16		pressed;		
-	ImagePtr	back;
+	ImagePtr	back = NULL;
 	controller	*st;
-
-	if(vmode != VIDEO_480I && vmode != VIDEO_480P)
-	{
-		back = LoadKMG("/rd/grid.kmg.gz", 0);
-		if(!back)
-			return;
-	}
-	else
-	{
-		back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
-		if(!back)
-			return;
-		back->scale = 0;
-	}
 
 	updateVMU(" 	Grid	", "", 1);
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			FreeImage(&back);		
+			oldvmode = vmode;
+		}
+		
+		if(!back)
+		{
+			if(vmode == VIDEO_480I || vmode == VIDEO_480P)
+			{
+				back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
+				if(!back)
+					return;
+				back->scale = 0;		
+			}
+			
+			if(vmode == VIDEO_288P || vmode == VIDEO_576I_A264)
+			{
+				back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
+				if(!back)
+					return;        	
+			}
+			
+			if(vmode == VIDEO_576I)
+			{
+				back = LoadKMG("/rd/480/gridPAL480.kmg.gz", 0);
+				if(!back)
+					return;        	
+			}
+			
+			if(!back)
+			{
+				back = LoadKMG("/rd/grid.kmg.gz", 0);
+				if(!back)
+					return;		
+			}
+		}
+		
 		StartScene();
 		DrawImage(back);		
 		EndScene();
@@ -363,28 +387,46 @@ void DrawGrid()
 
 void DrawLinearity()
 {
-	int 			done = 0, gridpattern = 0, showgrid = 0;
-	uint16			pressed;
-	ImagePtr		circles, grid, gridd;
+	int 		done = 0, oldvmode = vmode, gridpattern = 0, showgrid = 0;
+	uint16		pressed;
+	ImagePtr	circles = NULL, grid, gridd;
 	controller	*st;
 
-	circles = LoadKMG("/rd/circles.kmg.gz", 0);
-	if(!circles)
-		return;
 	grid = LoadKMG("/rd/circles_grid.kmg.gz", 1);
 	if(!grid)
 		return;
 	gridd = LoadKMG("/rd/circles_griddot.kmg.gz", 1);
 	if(!gridd)
 		return;
-	grid->w = 320;
-	grid->h = 240;
-	gridd->w = 320;
-	gridd->h = 240;
 		
 	updateVMU("Linearity", "", 1);
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			FreeImage(&circles);		
+			oldvmode = vmode;
+		}    
+		
+		if(!circles)
+		{
+			if(!IsPAL)
+			{
+				circles = LoadKMG("/rd/circles.kmg.gz", 0);
+				if(!circles)
+					return;
+			}
+			else
+			{
+				circles = LoadKMG("/rd/circlesPAL.kmg.gz", 0);
+				if(!circles)
+					return;
+			}
+
+			CalculateUV(0, 0, dW, dH, grid);
+			CalculateUV(0, 0, dW, dH, gridd);
+		}
+	
 		StartScene();
 		if(showgrid)
 		{
@@ -532,4 +574,38 @@ void Draw100IRE()
 	FreeImage(&white);
 	return;
 }
+
+void DrawSharpness()
+{
+	int 		done = 0;
+	uint16		pressed;		
+	ImagePtr	back;	
+	controller	*st;
+	
+	back = LoadKMG("/rd/sharpness.kmg.gz", 0);
+	if(!back)
+		return;
+			
+	updateVMU("Sharpness", "", 1);
+	while(!done && !EndProgram) 
+	{		
+		StartScene();
+		DrawImage(back);
+        	EndScene();
+		
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_START ) 		
+				ShowMenu(SHARPNESSHELP);
+			
+			if (pressed & CONT_B)
+				done =	1;										
+		}
+
+	}
+	FreeImage(&back);
+	return;
+}
+
 
