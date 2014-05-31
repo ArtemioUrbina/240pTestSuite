@@ -32,7 +32,7 @@ vid_mode_t custom_vga =
 /* 320x240 NTSC 60Hz */
 vid_mode_t custom_240 = 
     /* DM_320x240_NTSC */
-    {
+{
         DM_320x240,
         320, 240,
         VID_PIXELDOUBLE | VID_LINEDOUBLE,
@@ -50,7 +50,7 @@ vid_mode_t custom_240 =
 	264, // Border Y stop position.
         0, 1,
         { 0, 0, 0, 0 }
-    };
+};
 
 
 vid_mode_t custom_288 = 
@@ -74,7 +74,33 @@ vid_mode_t custom_288 =
         0, // Current framebuffer. 
 	1, // Number of framebuffers. 
         { 0, 0, 0, 0 } // Offset to framebuffers. 
-    };
+};
+
+/* 640x480 PAL 50Hz IL */
+ /* DM_640x480_PAL_IL */
+vid_mode_t custom_576 = 
+ {
+        DM_640x480,
+        640,
+	480,
+        VID_INTERLACE | VID_PAL,
+        CT_ANY,
+        PM_RGB565,
+        624,
+	863,
+        174,
+	17,
+        21,
+	310,
+        116,
+	843,
+        16,
+	318, // 620
+        0,
+	1,
+        { 0, 0, 0, 0 }
+};
+
 
 ImagePtr   scanlines = NULL;
 
@@ -204,7 +230,7 @@ void ChangeResolution(int nvmode)
 			H = 528;
 			dW = 320;
 			dH = 264;
-			offsetY = 12;
+			offsetY = 0;
 			IsPAL = 1;
 			break;
 		case VIDEO_480I:
@@ -221,7 +247,7 @@ void ChangeResolution(int nvmode)
 			H = 528;
 			dW = 640;
 			dH = 528;
-			offsetY = 12;
+			offsetY = 0;
 			IsPAL = 1;
 			break;
 	}
@@ -243,7 +269,8 @@ void ChangeResolution(int nvmode)
 				break;
 			case VIDEO_576I:
 			case VIDEO_576I_A264:
-						vid_set_mode(DM_640x480_PAL_IL, PM_RGB565); 
+						//vid_set_mode(DM_640x480_PAL_IL, PM_RGB565); 
+						vid_set_mode_ex(&custom_576); 
 				break;
 			case VIDEO_480I_A240:
 			case VIDEO_480P_SL:

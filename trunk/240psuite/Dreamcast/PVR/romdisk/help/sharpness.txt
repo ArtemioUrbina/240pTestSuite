@@ -1,0 +1,9 @@
+                SHARPNESS
+
+You should set the sharpness of your CRT to a
+value that shows clean black and gray transitions,
+with no white ghosting in between.
+
+On most modern displays, the Sharpness control is 
+an edge-enhancement control, and most probably
+should be set to zero, or in the middle.

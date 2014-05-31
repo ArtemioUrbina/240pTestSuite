@@ -576,7 +576,7 @@ void DrawImage(ImagePtr image)
 	
 	// Center display vertically in PAL modes, since images are mostly NTSC
 	if(IsPAL && h < dH)
-		if(!(2*h < dH && vmode == VIDEO_576I_A264))
+		if(!(h  == 512 && IsPAL)) // special case for FB
 			y+= offsetY;
 
 	if(image->scale && (vmode == VIDEO_480P_SL

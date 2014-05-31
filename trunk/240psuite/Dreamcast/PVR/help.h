@@ -48,6 +48,7 @@ extern char *HelpData;
 #define WHITEHELP	"/rd/help/white.txt"
 #define LINEARITYHELP	"/rd/help/linearity.txt"
 #define FFTHELP		"/rd/help/fft.txt"
+#define SHARPNESSHELP	"/rd/help/sharpness.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);

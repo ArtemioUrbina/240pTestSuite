@@ -317,7 +317,7 @@ int main(void)
 						HelpWindow(GENERALHELP, title);
 						break;
 					case 16:
-						TestVideoMode(&custom_288);
+						TestVideoMode(&custom_576);
 						break;
 				} 					
 				updateVMU("240p Test", "", 1);				
@@ -345,6 +345,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 	uint16			pressed;		
 	controller		*st;
 
+	updateVMU("Patterns", "", 1);
 	while(!done && !EndProgram) 
 	{		
 		float 	r = 1.0f;
@@ -368,6 +369,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White Screen"); y += fh; c++;				
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;				
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;				
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		r = 0.8f;
@@ -487,6 +489,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 						Draw100IRE();
 						break;
 					case 11:
+						DrawSharpness();
+						break;
+					case 12:
 						done = 1;
 						break;
 				} 												

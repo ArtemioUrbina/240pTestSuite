@@ -70,8 +70,7 @@ void DropShadowTest()
 	if(!overlay)
 		return;
 
-	if(vmode != VIDEO_480P || vmode == VIDEO_480I_A240 ||
-		vmode == VIDEO_576I_A264)
+	if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
 	{		
 		back[0] = LoadKMG("/rd/motoko.kmg.gz", 0);
 		if(!back[0])
@@ -109,7 +108,7 @@ void DropShadowTest()
 		shadow = ssprite;
 	else
 		shadow = buzzshadow;
-	updateVMU("  Shadow	", "  even  ", 1);
+	updateVMU(" Shadow  ", "  even ", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1669,7 +1668,10 @@ void TestVideoMode(vid_mode_t *source_mode)
 
 	ResetVideoValues(&test_mode, source_mode);
 
-	back = LoadKMG("/rd/grid.kmg.gz", 0);
+	if(vmode == VIDEO_288P)
+		back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
+	else
+		back = LoadKMG("/rd/480/gridPAL480.kmg.gz", 0);
 	if(!back)
 		return;
 	back->scale = 0;
@@ -1753,7 +1755,7 @@ void TestVideoMode(vid_mode_t *source_mode)
 		sprintf(str, " Active Area Margin Bottom:       %d", test_mode.scanlines - test_mode.bitmapy - test_mode.height);
 		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
 
-		DrawStringB(100, 10, 0, 1.0f, 0.0f, "X to reset, Y to set"); y += fh; 
+		DrawStringB(100, 5, 0, 1.0f, 0.0f, "X to reset, Y to set"); y += fh; 
 		EndScene();
 
 		st = ReadController(0, &pressed);
@@ -1904,17 +1906,35 @@ void TestVideoMode(vid_mode_t *source_mode)
 			PVR_SET(PVR_SCALER_CFG, 0x400);
 			PVR_SET(PVR_FB_CFG_2, 0x00000001);
 
-			printf("PVR 0x38: %lX\n", regs[0x38]);
-			data = 0x05 | 0x3f << 8 | 0x31F << 12 | 0x1f << 22;
-			printf("Data to write %lX\n", data);
-			regs[0x38] = data;
-			printf("PVR written at 0x38: %lX\n", regs[0x38]);
+			if(vmode == VIDEO_288P)
+			{
+				printf("PVR 0x38: %lX\n", regs[0x38]);
+				data = 0x05 | 0x3f << 8 | 0x31F << 12 | 0x1f << 22;
+				printf("Data to write %lX\n", data);
+				regs[0x38] = data;
+				printf("PVR written at 0x38: %lX\n", regs[0x38]);
 
-			printf("PVR 0x34: %lX\n", regs[0x34]);
-			data = 0x100 | 0x80 | 0x04;
-			printf("Data to write at 0x34  %lX\n", data);
-			regs[0x34] = data;
-			printf("PVR written to 0x34: %lX\n", regs[0x34]);
+				printf("PVR 0x34: %lX\n", regs[0x34]);
+				data = 0x100 | 0x80 | 0x04;
+				printf("Data to write at 0x34  %lX\n", data);
+				regs[0x34] = data;
+				printf("PVR written to 0x34: %lX\n", regs[0x34]);
+			}
+
+			if(vmode == VIDEO_576I || vmode == VIDEO_576I_A264)
+			{
+				printf("PVR 0x38: %lX\n", regs[0x38]);
+				data = 0x05 | 0x3f << 8 | 0x16A << 12 | 0x1f << 22;
+				printf("Data to write %lX\n", data);
+				regs[0x38] = data;
+				printf("PVR written at 0x38: %lX\n", regs[0x38]);
+
+				printf("PVR 0x34: %lX\n", regs[0x34]);
+				data = 0x100 | 0x80 | 0x04;
+				printf("Data to write at 0x34  %lX\n", data);
+				regs[0x34] = data;
+				printf("PVR written to 0x34: %lX\n", regs[0x34]);
+			}
 	
 			/* Enable display */
 			regs[0x3A] &= ~8;
