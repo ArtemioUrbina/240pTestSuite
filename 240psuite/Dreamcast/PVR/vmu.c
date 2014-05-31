@@ -56,6 +56,15 @@ void updateVMU(char *line1, char *line2, int force)
 			case VIDEO_480I:
 				vmu_draw_str(bitmap, (unsigned char*)"  480i/FS", 0, 20);
 				break;
+			case VIDEO_288P:
+				vmu_draw_str(bitmap, (unsigned char*)"     288p", 0, 20);
+				break;
+			case VIDEO_576I_A264:
+				vmu_draw_str(bitmap, (unsigned char*)"288p->576i", 0, 20);
+				break;
+			case VIDEO_576I:
+				vmu_draw_str(bitmap, (unsigned char*)"  576i/FS", 0, 20);
+				break;
 			case VIDEO_480P:
 				vmu_draw_str(bitmap, (unsigned char*)"  480p/FS", 0, 20);
 				break;
