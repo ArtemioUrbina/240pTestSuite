@@ -569,14 +569,20 @@ void Draw100IRE()
 		{
     		if(!invert)
       		{
-				sprintf(msg, "%0.1f IRE", (back->alpha*100.0/255.0));
-			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
+				if(text > 30)
+					sprintf(msg, "RANGE 0-100 IRE");
+				else
+					sprintf(msg, "%0.1f IRE", (back->alpha*100.0/255.0));
+			  	DrawStringS(225, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
       		}
       		else
       		{
-			 	sprintf(msg, "%0.0f IRE", 100.0f + abs(40 - (back->alpha * 40.0/255.0)));
-			  	DrawStringS(265, 225, 0xff, 0xff, 0xff, msg);
+				if(text > 30)
+					sprintf(msg, "RANGE 100-140 IRE");
+				else
+					sprintf(msg, "%0.0f IRE", 100.0f + abs(40 - (back->alpha * 40.0/255.0)));
+			  	DrawStringS(225, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
       		}
 		}
@@ -626,11 +632,11 @@ void Draw100IRE()
 		}
 
 		pressed = Controller_ButtonsDown(0);
-     	if (pressed & PAD_BUTTON_X)
+     	if (pressed & PAD_BUTTON_A)
       	{
 			invert = !invert;
         	back->alpha = 0xff;
-			text = 30;			
+			text = 60;			
 			if(invert)
 				step = 0x04;
 			else

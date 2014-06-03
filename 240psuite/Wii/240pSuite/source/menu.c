@@ -555,11 +555,32 @@ void SelectVideoMode(ImagePtr title)
 void ChangePALBackgroundColor(ImagePtr title)
 {
 	int 		sel = 1, close = 0;	
-	ImagePtr	back;
+	ImagePtr	back, block, blackblock;
 	
 	back = LoadImage(HELPIMG, 0);
 	if(!back)
 		return;
+		
+	block = LoadImage(WHITEIMG, 0);
+	if(!block)
+		return;
+		
+	blackblock = LoadImage(WHITEIMG, 0);
+	if(!blackblock)
+		return;
+		
+	block->x = 160;
+	block->y = 92;
+	block->w = 20;
+	block->h = 20;
+	
+	blackblock->x = block->x - 1;
+	blackblock->y = block->y - 1;
+	blackblock->w = block->w + 2;
+	blackblock->h = block->h + 2;
+	blackblock->r = 0;
+	blackblock->g = 0;
+	blackblock->b = 0;
 		
 	back->alpha = 0xaa;
 		
@@ -573,11 +594,17 @@ void ChangePALBackgroundColor(ImagePtr title)
 		u16     y = 70;		
         u32     pressed = 0;
 		char	color[80];
+		
+		block->r = Options.PalBackR;
+		block->g = Options.PalBackG;
+		block->b = Options.PalBackB;
 				
 		StartScene();
 		        
 		DrawImage(title);        
 		DrawImage(back);
+		DrawImage(blackblock);
+		DrawImage(block);
 
 		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "PAL background color"); y += 2*fh; 
 		
@@ -676,7 +703,9 @@ void ChangePALBackgroundColor(ImagePtr title)
 				Options.PalBackB ++;
 	    }
 	}
-		
+	FreeImage(&back);		
+	FreeImage(&block);
+	FreeImage(&blackblock);
 }
 
 extern GXRModeObj *mvmode;

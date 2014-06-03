@@ -371,18 +371,28 @@ void LagTest()
 	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int				x, y, x2, y2, pos = 0, i = 0, vary = 0, variation = 1;
 	u16				pressed, audio = 0, rumble = 0;
-	ImagePtr		back, spriteA, spriteB;
+	ImagePtr		back, spriteA, spriteB, fixed;
 	char 			**ControllerButtons = NULL;
 	
 	
 	srand((int)(time(0)));	
-	back = LoadImage(LAGPERIMG, 0);
+	back = LoadImage(WHITEIMG, 1);
 	if(!back)
 		return;
-	spriteA = CloneImage(back, 0);
+
+	back->w = 320;
+	back->h = 240;
+	back->r = 0x00;
+	back->g = 0x00;
+	back->b = 0x00;
+	
+	fixed = LoadImage(LAGPERIMG, 0);
+	if(!fixed)
+		return;
+	spriteA = CloneImage(fixed, 0);
 	if(!spriteA)
 		return;
-	spriteB = CloneImage(back, 0);
+	spriteB = CloneImage(fixed, 0);
 	if(!spriteB)
 		return;	
 		
@@ -394,8 +404,8 @@ void LagTest()
 	x2 = 108;
 	y2 = 96;
 		
-	back->x = 144;
-	back->y = 96;	
+	fixed->x = 144;
+	fixed->y = 96;	
 
 	for(i = 0; i < 10; i++)
 		clicks[i] = 0xFF;
@@ -405,6 +415,7 @@ void LagTest()
 		StartScene();
 
 		DrawImage(back);
+		DrawImage(fixed);
 
 		if(y > 132 + vary)
 		{
@@ -622,6 +633,7 @@ void LagTest()
 	ControllerRumble(0, 0);
 
 	FreeImage(&back);
+	FreeImage(&fixed);
 	FreeImage(&spriteA);
 	FreeImage(&spriteB);	
 	
@@ -1241,9 +1253,11 @@ void PassiveLagTest()
 	ImagePtr	back, circle;	
 
 	LoadNumbers();
-	back = LoadImage(WHITEIMG, 1);
+	back = LoadImage(WHITEIMG, 0);
 	if(!back)
 		return;
+	back->w = 320;
+	back->h = 240;
 
 	circle= LoadImage(CIRCLEIMG, 0);
 	if(!circle)
@@ -1525,6 +1539,7 @@ void Alternate240p480i()
 	timecode	times[20];
 	u32		    pressed, oldvmode = vmode;		
 	char 		buffer[20];
+	ImagePtr	back;
 	
 	if(IsPAL)
 	{
@@ -1543,6 +1558,15 @@ void Alternate240p480i()
 			SetupGX();
 		}
 	}
+	
+	back = LoadImage(WHITEIMG, 0);
+	if(!back)
+		return;
+		
+	back->r = 0x00;
+	back->g = 0x00;
+	back->b = 0x00;
+	CalculateUV(0, 0, dW, dH, back);
 
 	while(!done && !EndProgram) 
 	{
@@ -1582,6 +1606,7 @@ void Alternate240p480i()
 
 		StartScene();
 
+		DrawImage(back);
 		DrawString(32, 8, 0, 0xff, 0, "Current Resolution:");
 		DrawString(140, 8, 0, 0xff, 0, res == 0 ? (IsPAL ? "288p" : "240p") : (IsPAL ? "576i" : "480i"));
 #ifdef WII_VERSION
@@ -1662,6 +1687,7 @@ void Alternate240p480i()
 					SetVideoMode(IsPAL ? VIDEO_288P : VIDEO_240P);
 				else
 					SetVideoMode(IsPAL ? VIDEO_576I_A264 : VIDEO_480I_A240);
+				CalculateUV(0, 0, dW, dH, back);
 				SetupGX();
 			}
 			if(status == 2)
@@ -1674,5 +1700,6 @@ void Alternate240p480i()
 	}	
 	SetVideoMode(oldvmode);				
 	SetupGX();
+	FreeImage(&back);
 }
 

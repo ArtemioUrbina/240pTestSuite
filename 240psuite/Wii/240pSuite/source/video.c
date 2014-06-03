@@ -73,28 +73,24 @@ void InitVideo()
 	Mode_480i = TVNtsc480IntDf;
 	Mode_264p = TVPal264Ds;
 	Mode_528i = TVPal528IntDf;
-
-#ifdef WII_VERSION			
-	/* Adjust SCART cable to output RGB and not YUV */	
 	
-	Mode_240p.viTVMode = VI_TVMODE_EURGB60_DS;
-	Mode_480i.viTVMode = VI_TVMODE_EURGB60_INT;
-	Mode_264p.viTVMode = VI_TVMODE_EURGB60_DS;
-	Mode_528i.viTVMode = VI_TVMODE_EURGB60_INT;
-	
-	if(!(mvmode->viTVMode >> 2))
-	{
-		Mode_240p.viTVMode = VI_TVMODE(mvmode->viTVMode >> 2, VI_NON_INTERLACE);
-		Mode_480i.viTVMode = VI_TVMODE(mvmode->viTVMode >> 2, VI_INTERLACE);
-		Mode_264p.viTVMode = VI_TVMODE(mvmode->viTVMode >> 2, VI_NON_INTERLACE);
-		Mode_528i.viTVMode = VI_TVMODE(mvmode->viTVMode >> 2, VI_INTERLACE);
-	}	
-#endif
-	
-	// Fix scanline start for PAL modes to line 25
 	Mode_264p.viYOrigin = PAL_OFFSET;
-	Mode_528i.viYOrigin = PAL_OFFSET;	
+	Mode_528i.viYOrigin = PAL_OFFSET;
 	
+#ifdef WII_VERSION		
+	/* Adjust SCART cable to output RGB and not YUV */		
+	switch (mvmode->viTVMode >> 2)
+	{
+	case VI_EURGB60:  	
+	
+	  Mode_240p.viTVMode = VI_TVMODE_EURGB60_DS;
+	  Mode_480i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  
+	  Mode_264p.viTVMode = VI_TVMODE_EURGB60_DS;
+	  Mode_528i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  
+	  break;	
+	}
+#endif
+
 	for(fb = 0; fb < 2; fb++)
 	{
 		frameBuffer[fb][0] = NULL;
