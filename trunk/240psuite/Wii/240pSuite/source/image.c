@@ -130,7 +130,7 @@ inline void StartScene()
 	guMtxTransApply (GXmodelView2D, GXmodelView2D, 0.0F, 0.0F, -5.0F);
 	GX_LoadPosMtxImm(GXmodelView2D,GX_PNMTX0);
 	
-	if(IsPAL)
+	if(Options.EnablePALBG && IsPAL)
 	{
 		ImagePtr back = NULL;
 		
@@ -470,7 +470,7 @@ void DrawImage(ImagePtr image)
 	
 	// Center display vertically in PAL modes, since images are mostly NTSC
 	if(IsPAL && h != dH)
-		if(!(2*h == dH && vmode == VIDEO_576I_A264))
+		if(!(h/2 == dH && vmode == VIDEO_576I_A264))
 			y+= offsetY;
 		
 	if(image->scale && (vmode == VIDEO_480I_A240 || 

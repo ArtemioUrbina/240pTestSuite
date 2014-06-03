@@ -121,6 +121,38 @@ u8 LoadOptions()
 		    
 	}	
 	
+	node = mxmlFindElement(xml, xml, "EnablePALBG", NULL, NULL, MXML_DESCEND);
+	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "EnablePALBG"))
+	{
+		if(node->child)       
+            Options.EnablePALBG = node->child->value.integer;		    
+		    
+	}	
+	
+	node = mxmlFindElement(xml, xml, "PalBackR", NULL, NULL, MXML_DESCEND);
+	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PalBackR"))
+	{
+		if(node->child)       
+            Options.PalBackR = node->child->value.integer;		    
+		    
+	}	
+	
+	node = mxmlFindElement(xml, xml, "PalBackG", NULL, NULL, MXML_DESCEND);
+	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PalBackG"))
+	{
+		if(node->child)       
+            Options.PalBackG = node->child->value.integer;		    
+		    
+	}	
+	
+	node = mxmlFindElement(xml, xml, "PalBackB", NULL, NULL, MXML_DESCEND);
+	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PalBackB"))
+	{
+		if(node->child)       
+            Options.PalBackB = node->child->value.integer;		    
+		    
+	}	
+	
 	if(xml)
 		mxmlDelete(xml);
 		
@@ -176,6 +208,14 @@ u8 SaveOptions()
 	
 	node = mxmlNewElement(options240p, "EnablePAL");
 	mxmlNewInteger(node, Options.EnablePAL);	
+	node = mxmlNewElement(options240p, "EnablePALBG");
+	mxmlNewInteger(node, Options.EnablePALBG);	
+	node = mxmlNewElement(options240p, "PalBackR");
+	mxmlNewInteger(node, Options.PalBackR);	
+	node = mxmlNewElement(options240p, "PalBackG");
+	mxmlNewInteger(node, Options.PalBackG);	
+	node = mxmlNewElement(options240p, "PalBackB");
+	mxmlNewInteger(node, Options.PalBackB);	
 		
     mxmlSaveFile(xml, file, MXML_NO_CALLBACK);	
 		

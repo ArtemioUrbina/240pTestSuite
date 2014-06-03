@@ -47,7 +47,9 @@ void ShowMenu()
 	cFB = CopyFrameBufferToImage();	
 	if(cFB)
 	{	
-		cFB->alpha = 0x77;
+		cFB->r = 0x77;
+		cFB->g = 0x77;
+		cFB->b = 0x77;
 	}
 	Back = LoadImage(FLOATMENUIMG, 0);
 	if(!Back)
@@ -89,7 +91,7 @@ void ShowMenu()
 		battery = ControllerBattery(0);
 		if(battery)
 		{
-			sprintf(level, "Wiimote batt: %d%%", battery);
+			sprintf(level, "Wiimote batt: %d%%", battery > 100 ? 100 : battery);
 			DrawStringS(x-10, y, battery < 25 ? 0xff : 0x00, 0x88, battery >= 25 ? 0xff : 0x00 , level); 
 		}
 #endif				
@@ -174,7 +176,7 @@ void ChangeOptions(ImagePtr title)
 		u8      b = 0xff;
 		u8   	c = 1;				    					   
 		u16     x = 80;
-		u16     y = 70;
+		u16     y = 52;
 		u16		OptPos = 140;
         u32     pressed = 0;
 		char	intensity[80];
@@ -189,57 +191,82 @@ void ChangeOptions(ImagePtr title)
 		// option 1, Show region
 #ifdef WII_VERSION				
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.ShowWiiRegion ? "ON" : "OFF");
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Show WII region:"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Show Wii Region:"); y += fh; c++;		
 #endif
 		
 		// option 2, Active 480p
 		if(VIDEO_HaveComponentCable())
 		{			
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.Activate480p ? "ON" : "OFF"); 					
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable 480p modes:"); y += fh; c++;			
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable 480p Modes:"); y += fh; c++;			
 		}
 		else
 		{			
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.Activate480p ? "ON" : "OFF"); 					
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Enable 480p modes:"); y += fh; c++;			
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Enable 480p Modes:"); y += fh; c++;			
 		}
 
 		// Option 3
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.EnablePAL ? "ON" : "OFF"); 					
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable PAL Modes:"); y += fh; c++;						
 		
-		// option 4, Scanline intensity
+		// Option 4
+		if(Options.EnablePAL)
+		{			
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.EnablePALBG ? "ON" : "OFF"); 					
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable PAL Background:"); y += fh; c++;								
+		}
+		else
+		{			
+			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.EnablePALBG ? "ON" : "OFF"); 					
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Enable PAL Background:"); y += fh; c++;						
+		}
+		
+		// Option 5
+		{
+			char BorderColor[100];
+			
+			sprintf(BorderColor, "Change PAL Background:      [%X,%X,%X]", Options.PalBackR, Options.PalBackG, Options.PalBackB);
+			if(Options.EnablePAL)
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, BorderColor); 
+			else
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, BorderColor); 
+			y += fh; c++;						
+		}
+		
+		// option 6, Scanline intensity
 		sprintf(intensity, "%d%%", GetScanlineIntensity());
 		if(vmode == VIDEO_480P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline intensity:"); y += fh; c++;			
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline Intensity:"); y += fh; c++;			
 			
-			// option 5, Scanline even/odd
+			// option 7, Scanline even/odd
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanlines:"); y += fh; c++;	
 		}				
 		else
 		{
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, intensity);
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanline intensity:"); y += fh; c++;			
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanline Intensity:"); y += fh; c++;			
 			
-			// option 5, Scanline even/odd
+			// option 7, Scanline even/odd
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanlines:"); y += fh; c++;	
 		}
 		
 #ifdef WII_VERSION					
-		// option 6, SFC CC
+		// option 8, SFC CC
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.SFCClassicController ? "ON" : "OFF"); 					
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SFC Classic Controller:"); y += fh; c++;			
 #endif		
 			
-		// Option 7
+		// Option 9
 		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
-				
+			
+		r = g = b = r - 0x30;
 #ifdef WII_VERSION					
-		if(vmode == VIDEO_480P_SL && sel == 4)
+		if(vmode == VIDEO_480P_SL && sel == 6)
 		{
 			if(ControllerType != ControllerGC && !Options.SFCClassicController)
 				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons"); 										
@@ -247,20 +274,20 @@ void ChangeOptions(ImagePtr title)
 				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 	
 		}
 #else
-		if(vmode == VIDEO_480P_SL && sel == 3)	
+		if(vmode == VIDEO_480P_SL && sel == 5)	
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
 #endif
 
 
 #ifdef WII_VERSION								
-		if(vmode != VIDEO_480P_SL && (sel == 4 || sel == 5))
+		if(vmode != VIDEO_480P_SL && (sel == 6 || sel == 7))
 #else
-		if(vmode != VIDEO_480P_SL && (sel == 3 || sel == 4))
+		if(vmode != VIDEO_480P_SL && (sel == 5 || sel == 6))
 #endif
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 			
 #ifdef WII_VERSION					
-		if(sel == 6)	
+		if(sel == 8)	
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]"); 										
 #endif
 				
@@ -286,25 +313,25 @@ void ChangeOptions(ImagePtr title)
 	    }			
 
 #ifdef WII_VERSION			
-		if ( pressed & PAD_TRIGGER_R && sel == 4)
+		if ( pressed & PAD_TRIGGER_R && sel == 6)
 	    {
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
 	    }
 	    
-	    if ( pressed & PAD_TRIGGER_L && sel == 4)
+	    if ( pressed & PAD_TRIGGER_L && sel == 6)
 	    {
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
 	    }			
 #else
-		if ( pressed & PAD_TRIGGER_R && sel == 3)
+		if ( pressed & PAD_TRIGGER_R && sel == 5)
 	    {
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
 	    }
 	    
-	    if ( pressed & PAD_TRIGGER_L && sel == 3)
+	    if ( pressed & PAD_TRIGGER_L && sel == 5)
 	    {
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
@@ -336,17 +363,25 @@ void ChangeOptions(ImagePtr title)
 					case 3:	
 						Options.EnablePAL = !Options.EnablePAL;					
 						break;				
-					case 4:
+					case 4:	
+						if(Options.EnablePAL)
+							Options.EnablePALBG = !Options.EnablePALBG;					
 						break;
-					case 5:
+					case 5:	
+						if(Options.EnablePAL)
+							ChangePALBackgroundColor(title);
+						break;				
+					case 6:
+						break;
+					case 7:
 						if(vmode == VIDEO_480P_SL)
 							ToggleScanlineEvenOdd();
 						break;
-					case 6:
+					case 8:
 #ifdef WII_VERSION		
 						Options.SFCClassicController = !Options.SFCClassicController;
 						break;										
-					case 7:
+					case 9:
 #endif					
 						if(Controller_ButtonsHeld(0) & PAD_TRIGGER_L)
 							Options.CorrectFor169 = !Options.CorrectFor169;
@@ -515,6 +550,133 @@ void SelectVideoMode(ImagePtr title)
 	FreeImage(&back);
 
 	return;
+}
+
+void ChangePALBackgroundColor(ImagePtr title)
+{
+	int 		sel = 1, close = 0;	
+	ImagePtr	back;
+	
+	back = LoadImage(HELPIMG, 0);
+	if(!back)
+		return;
+		
+	back->alpha = 0xaa;
+		
+	while(!close && !EndProgram) 
+	{		
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1;				    					   
+		u16     x = 80;
+		u16     y = 70;		
+        u32     pressed = 0;
+		char	color[80];
+				
+		StartScene();
+		        
+		DrawImage(title);        
+		DrawImage(back);
+
+		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "PAL background color"); y += 2*fh; 
+		
+		sprintf(color, "Red:    0x%X", Options.PalBackR);
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, color); y += fh; c++;		
+		sprintf(color, "Green:  0x%X", Options.PalBackG);
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, color); y += fh; c++;		
+		sprintf(color, "Blue:   0x%X", Options.PalBackB);
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, color); y += fh; c++;	
+
+		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Options Menu"); 	
+		
+		DrawStringS(x-40, y + 6*fh, r-0x30, g-0x30, b-0x30, "The background color is used to fill the screen"); 	
+		DrawStringS(x-40, y + 7*fh, r-0x30, g-0x30, b-0x30, "to the full PAL resolution when needed"); 	
+		
+#ifdef WII_VERSION					
+		if(sel != c)
+		{
+			if(ControllerType != ControllerGC && !Options.SFCClassicController)
+				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons or Left & Right"); 										
+			else
+				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers or Left & Right"); 	
+		}
+#else
+		if(sel != c)	
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers or Left & Right"); 										
+#endif
+
+		EndScene();		
+        
+        ControllerScan();
+
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & PAD_BUTTON_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }			
+			
+		if ( pressed & PAD_BUTTON_B ) 		
+			close = 1;	
+	
+		if (pressed & PAD_BUTTON_A)
+		{     
+			switch(sel)
+			{						
+					case 4:
+						close = 1;
+						break;
+			}
+		}
+		
+		 
+	    if ((pressed & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 1)
+	    {
+			if(Options.PalBackR - 1 >= 0)
+				Options.PalBackR --;
+	    }
+		
+		if ((pressed & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 1)
+	    {
+			if(Options.PalBackR + 1 <= 255)
+				Options.PalBackR ++;
+	    }
+		
+		if ((pressed & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 2)		
+	    {
+			if(Options.PalBackG - 1 >= 0)
+				Options.PalBackG --;
+	    }
+		
+		if ((pressed & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 2)
+	    {
+			if(Options.PalBackG + 1 <= 255)
+				Options.PalBackG ++;
+	    }
+		
+		if ((pressed & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 3)		
+	    {
+			if(Options.PalBackB - 1 >= 0)
+				Options.PalBackB --;
+	    }
+		
+		if ((pressed & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 3)
+	    {
+			if(Options.PalBackB + 1 <= 255)
+				Options.PalBackB ++;
+	    }
+	}
+		
 }
 
 extern GXRModeObj *mvmode;
