@@ -34,6 +34,7 @@ extern u8 EndProgram;
 void ShowMenu();
 void SelectVideoMode(ImagePtr title);
 void ChangeOptions(ImagePtr Back);
+void ChangePALBackgroundColor(ImagePtr Back);
 void ShowVideoData();
 
 void DrawCredits(ImagePtr Back);
