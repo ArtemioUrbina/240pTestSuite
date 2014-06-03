@@ -33,15 +33,36 @@
 static u8 gp_fifo[GX_FIFO_MINSIZE] ATTRIBUTE_ALIGN(32);
 
 TPLFile backsTPL;	
+u8 *full_textures_tpl = NULL;
+uLong full_textures_tpl_size = TEXTURE_FSIZE;
+// We use zlib to compress textures at compile time
+// this needs a program called cfile (source under the tools folder)
+// and it must be placed in the devkitPPC bin folder when compiled		
 
-
-void InitGX()
+u8 InitGX()
 {	
     memset(&gp_fifo, 0, sizeof(gp_fifo));    
     GX_Init(&gp_fifo, sizeof(gp_fifo));    
 	
-    // Load Textures
-	TPL_OpenTPLFromMemory(&backsTPL, (void *)textures_tpl,textures_tpl_size);			
+    // Load Textures	
+	full_textures_tpl = (u8 *)memalign(32, full_textures_tpl_size);
+	if(!full_textures_tpl)
+		return 0;
+	
+	if(uncompress(full_textures_tpl, &full_textures_tpl_size, textures_tpl, textures_tpl_size) != Z_OK)	
+		return 0 ;	
+	
+	TPL_OpenTPLFromMemory(&backsTPL, (void *)full_textures_tpl, full_textures_tpl_size);			
+	return 1;
+}
+
+void EndGX()
+{
+	if(full_textures_tpl)
+	{
+		free(full_textures_tpl);
+		full_textures_tpl = NULL;
+	}
 }
 
 void SetupGX()
@@ -70,8 +91,7 @@ void SetupGX()
 	GX_SetFieldMode(rmode->field_rendering,((rmode->viHeight==2*rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));	
 
 	GX_SetCullMode(GX_CULL_NONE);
-		
-	//GX_CopyDisp(frameBuffer[IsPAL][ActiveFB],GX_TRUE);
+			
 	GX_SetDispCopyGamma(GX_GM_1_0);
 		
 	GX_SetNumChans(1);
@@ -117,9 +137,9 @@ inline void StartScene()
 		back = LoadImage(WHITEIMG, 1);
 		if(back)
 		{
-			back->r = 0x44; 
-			back->g = 0x44;
-			back->b = 0x44;
+			back->r = Options.PalBackR; 
+			back->g = Options.PalBackG;
+			back->b = Options.PalBackB;
 			
 			DrawImage(back);
 			FreeImage(&back);
@@ -166,6 +186,9 @@ inline void EndScene()
 	{
 		DrawMenu = 0;
 		ShowMenu();
+		
+		VIDEO_Flush();                      
+		VIDEO_WaitVSync();
 	}
 }
 

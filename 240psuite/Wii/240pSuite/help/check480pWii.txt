@@ -1,4 +1,7 @@
-            CHECKERBOARD 480p Wii
+             CHECKERBOARD 480p
 
-Unfortunately the Wii cannot resolve this pattern
-correctly in full 480p mode as other consoles.
+This is not a problem in your console or setup.
+
+Unfortunately this hardware cannot resolve this
+pattern correctly in full 480p mode as other 
+consoles.

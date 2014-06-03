@@ -619,6 +619,7 @@ void LagTest()
 		}
 	}
     
+	ControllerRumble(0, 0);
 
 	FreeImage(&back);
 	FreeImage(&spriteA);
@@ -673,7 +674,7 @@ void LagTest()
 				DrawStringS(60, 110, 0xff, 0x00, 0xff, "+");
 				DrawStringS(55, 70 + fh*10, 0xff, 0x00, 0x00, "_____");
 				DrawStringS(60, 70 + fh*11, 0xff, 0xff, 0xff, msg);
-				DrawStringS(60, 70 + fh*12, 0x00, 0xff, 0xff, "Keep in mind that an NTSC frame is around 16.67 ms");
+				DrawStringS(30, 70 + fh*12, 0x00, 0xff, 0xff, "Keep in mind that an NTSC frame is around 16.67 ms");
 			}
 			else
 			{
@@ -683,7 +684,7 @@ void LagTest()
 				DrawStringS(60, 110, 0xff, 0x00, 0xff, "+");
 				DrawStringS(55, 70 + fh*10, 0xff, 0x00, 0x00, "_____");
 				DrawStringS(60, 70 + fh*11, 0xff, 0xff, 0xff, msg);
-				DrawStringS(60, 70 + fh*12, 0x00, 0xff, 0xff, "Keep in mind that a PAL frame is around 20 ms");
+				DrawStringS(40, 70 + fh*12, 0x00, 0xff, 0xff, "Keep in mind that a PAL frame is around 20 ms");
 			}
 
 			if(total && total < 5)
@@ -909,19 +910,19 @@ void DrawStripes()
 			frame ++;
 			if(IsPAL)
 			{
-				if(frame > 59)
+				if(frame > 49)
 					frame = 0;
 			}
 			else
 			{
-				if(frame > 49)
+				if(frame > 59)
 					frame = 0;
 			}
 		}
 
 		EndScene();
 		
-		        ControllerScan();
+		ControllerScan();
         pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_BUTTON_B)
 			done =	1;				
@@ -1003,12 +1004,12 @@ void DrawCheckBoard()
 			frame ++;
 			if(IsPAL)
 			{
-				if(frame > 59)
+				if(frame > 49)
 					frame = 0;
 			}
 			else
 			{
-				if(frame > 49)
+				if(frame > 59)
 					frame = 0;
 			}
 		}

@@ -29,10 +29,12 @@
 
 #include <string.h>
 #include <malloc.h>
+#include <zlib.h>
 #include <ogc/tpl.h>
 
 #include "textures_tpl.h"
 #include "textures.h"
+#include "comp_textures.h"
 
 #include "video.h"
 
@@ -68,11 +70,12 @@ struct image_st{
 /*    Base Functions   */
 /***********************/
 
-void InitGX();
+u8 InitGX();
 void SetupGX();
 void StartScene();
 void EndScene();
 void EndSceneScreenShot();
+void EndGX();
 
 /************************/
 /*    Image Functions   */

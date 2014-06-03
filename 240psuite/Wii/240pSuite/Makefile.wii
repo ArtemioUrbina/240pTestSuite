@@ -29,7 +29,7 @@ INCLUDES	:=
 CFLAGS	= -O2 -Wall $(MACHDEP) $(INCLUDE) -DWII_VERSION
 CXXFLAGS	=	$(CFLAGS)
 
-LDFLAGS	=	-L$(DEVKITPRO)/portlibs/ppc/lib $(MACHDEP) -Wl,-Map,$(notdir $@).map
+LDFLAGS	=	-L$(DEVKITPRO)/portlibs/ppc/lib $(MACHDEP) -Wl,-Map,$(notdir $@).map -lz
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
@@ -147,6 +147,8 @@ $(OUTPUT).elf: $(OFILES)
 %.tpl.o	:	%.tpl
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
+	mv $< $<.full
+	cfile $<.full $< comp_textures.h
 	@$(bin2o)
 
 
