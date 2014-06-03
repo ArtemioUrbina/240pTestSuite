@@ -22,3 +22,6 @@ pressing button $Y.
 Unfortunately the Wii cannot resolve this pattern
 correctly in full 480p mode as other consoles,
 but 240p and 480i resolve just fine.
+
+The GameCube can give a better output, but it is
+not fully visible under most conditions either.

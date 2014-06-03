@@ -29,7 +29,7 @@ INCLUDES	:=
 CFLAGS		= -O2 -Wall $(MACHDEP) $(INCLUDE) 
 CXXFLAGS	= $(CFLAGS)
 
-LDFLAGS		= $(MACHDEP) -Wl,-Map,$(notdir $@).map
+LDFLAGS		= $(MACHDEP) -Wl,-Map,$(notdir $@).map -lz
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
@@ -145,6 +145,8 @@ $(OUTPUT).elf: $(OFILES)
 %.tpl.o	:	%.tpl
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
+	mv $< $<.full
+	cfile $<.full $< comp_textures.h
 	@$(bin2o)
 
 

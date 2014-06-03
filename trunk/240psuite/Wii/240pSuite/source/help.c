@@ -50,11 +50,11 @@ NULL
 };
 char *check_txt[] = { 
 "             CHECKERBOARD (1/2)\n\nThis pattern shows all the visible pixels in an\nalternating white and black grid array. \n\nYou can toggle the pattern with button $X, or\nturn on auto-toggle each frame with the $A button.\n\nWhen auto-toggle is set, you should see it\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\n                                         (cont...)\n",
-"             CHECKERBOARD (2/2)\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nUnfortunately the Wii cannot resolve this pattern\ncorrectly in full 480p mode as other consoles,\nbut 240p and 480i resolve just fine.",
+"             CHECKERBOARD (2/2)\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nUnfortunately the Wii cannot resolve this pattern\ncorrectly in full 480p mode as other consoles,\nbut 240p and 480i resolve just fine.\n\nThe GameCube can give a better output, but it is\nnot fully visible under most conditions either.",
 NULL
 };
 char *check480pWii_txt[] = { 
-"            CHECKERBOARD 480p Wii\n\nUnfortunately the Wii cannot resolve this pattern\ncorrectly in full 480p mode as other consoles.",
+"             CHECKERBOARD 480p\n\nThis is not a problem in your console or setup.\n\nUnfortunately this hardware cannot resolve this\npattern correctly in full 480p mode as other \nconsoles.\n",
 NULL
 };
 char *color601_txt[] = { 
@@ -67,7 +67,7 @@ char *colors_txt[] = {
 NULL
 };
 char *dshadow_txt[] = { 
-"                DROP SHADOW TEST \n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\nshadow on a 60hz signal. No background detail\nshould be lost and the shadow should be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button $X. Backgrounds can be\nswitched with the A button and button $Y\ntoggles sprites. \n",
+"                DROP SHADOW TEST \n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\n(25Hz) shadow on a 60hz (50hz) signal. No \nbackground detail should be lost and the shadow \nshould be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button $X. Backgrounds can be\nswitched with the A button and button $Y\ntoggles sprites. \n",
 NULL
 };
 char *general_txt[] = { 
@@ -109,7 +109,7 @@ NULL
 };
 char *pluge_txt[] = { 
 "                 PLUGE (1/2)\n\nThe picture line-up generation equipment (PLUGE)\nis a test pattern used to adjust the black level\nand contrast of a video signal.\n\nThe pattern in this suite is mainly designed to\nadjust the black level. The control for setting \nthis on your TV is usually named \"Brightness\".\n\nReduce the Brightness until these bars: \n      ->   <-                        ->   <-  \nare no longer visible, and then slowly raise it\nuntil they are *just* visible. \n\n(Do it without this help window open)    (cont...)",
-"                 PLUGE (2/2)\n\nThere are three bars on each side, bars closer\nto the center are at 3.5 IRE, the center ones at \n7.5 IRE and the outer ones are at 11.5 IRE. Since\nthe Wii color is 8 bits per pixel it can correctly\ndisplay them at exact values.\n\nThis adjustment assures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.\n",
+"                 PLUGE (2/2)\n\nThere are three bars on each side, bars closer\nto the center are at 3.5 IRE, the center ones at \n7.5 IRE and the outer ones are at 11.5 IRE. Since\nthe Wii/GC color is 8 bits per pixel it can \ncorrectly display them at exact values.\n\nThis adjustment assures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.\n",
 NULL
 };
 char *scroll_txt[] = { 

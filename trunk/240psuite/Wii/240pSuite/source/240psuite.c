@@ -64,7 +64,9 @@ int main(int argc, char **argv)
 		
 	ControllerInit();
 
-	InitGX();
+	if(!InitGX())
+		return 0;
+		
 	SetupGX();
 
     LoadFont();
@@ -77,13 +79,13 @@ int main(int argc, char **argv)
 	if(!Back)
     {
         ReleaseFont();
-		exit(0);
+		EndProgram = 1;
     }	
     sd = LoadImage(SDIMG, 0);
     if(!sd)
     {
         ReleaseFont();
-		exit(0);
+		EndProgram = 1;
     }
     
     sd->x = 221;
@@ -256,6 +258,7 @@ int main(int argc, char **argv)
 	ReleaseFont();	
 	ReleaseScanlines();
 	
+	EndGX();
 	RestoreVideo();
 	
 #ifdef WII_VERSION

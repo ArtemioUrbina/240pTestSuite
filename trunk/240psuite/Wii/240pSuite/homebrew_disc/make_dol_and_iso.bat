@@ -4,8 +4,8 @@ echo ===========================================================
 echo.
 echo Relocating dol and move to bootldr
 echo.
-REM dollz3 ..\240pSuite-GC.dol disc\bootldr.dol -m
-copy ..\240pSuite-GC.dol disc\bootldr.dol 
+dollz3 ..\240pSuite-GC.dol disc\bootldr.dol -m
+REM copy ..\240pSuite-GC.dol disc\bootldr.dol 
 :NORELOC
 echo.
 echo Creating disc... Please wait.
