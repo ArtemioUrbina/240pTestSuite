@@ -3,8 +3,8 @@
   <name>240p Test Suite GX</name>
   <coder>Artemio Urbina</coder>
   <version>1.5 beta</version>
-  <release_date>05/26/2014</release_date>
+  <release_date>06/02/2014</release_date>
   <short_description>A video suite for game consoles.</short_description> 
-  <long_description>A homebrew software suite for video game consoles developed to help in the evaluation of upscalers, upscan converters, line doublers and of course TV processing of 240p video. The Wii version has an modes for 480i/480p evaluation as well. As a secondary target, the suite aims to provide tools for calibrating colors, black and white levels for specific console outputs and setups. Please visit http://junkerhq.net/xrgb/index.php/240p_test_suite for full documentation. </long_description> 
+  <long_description>A homebrew software suite for video game consoles developed to help in the evaluation of upscalers, upscan converters, line doublers and of course TV processing of 240p video. The Wii version has an modes for 480i/480p evaluation as well. As a secondary target, the suite aims to provide tools for calibrating colors, black and white levels for specific console outputs and setups. Please visit http://junkerhq.net/240p for full documentation. </long_description> 
   <ahb_access/>
 </app>
