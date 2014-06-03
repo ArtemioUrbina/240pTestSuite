@@ -90,7 +90,7 @@ NULL
 };
 char *ire100_txt[] = { 
 "                  100 IRE(1/2)\n\nAn IRE is a unit used in the measurement of\ncomposite video signals. Its name is derived from\nthe initials of the Institute of Radio Engineers.\n\nA value of 100 IRE was originally defined to be\nthe range from black to white in a video signal.\n\nA value of 0 IRE corresponds to the zero voltage\nvalue during the blanking period. The sync pulse\nis normally 40 IRE below the zero value, so, peak\nto peak, an all white signal should be equal to\n140 IRE.\n\n                                     (cont...)",
-"                  100 IRE(2/2)\n\nThe reason IRE is a relative measurement (percent)\nis because a video signal may be any amplitude.\n\nThis unit is used in the ITU-R BT.470 which\ndefines PAL, NTSC and SECAM\n\nYou can use the $R and $L buttons to change between\n100 IRE to 0 IRE in steps.\n\nWith button $X you can change the range to 100-140\nIRE.\n",
+"                  100 IRE(2/2)\n\nThe reason IRE is a relative measurement (percent)\nis because a video signal may be any amplitude.\n\nThis unit is used in the ITU-R BT.470 which\ndefines PAL, NTSC and SECAM\n\nYou can use the $R and $L buttons to change between\n100 IRE to 0 IRE in steps.\n\nWith button $A you can change the range to 100-140\nIRE.\n",
 NULL
 };
 char *linearity_txt[] = { 
