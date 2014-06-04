@@ -62,6 +62,9 @@ void ToggleScanlineEvenOdd();
 void ChangeResolution(int nvmode);
 void PVRStats(char *msg);
 void Toggle240p480i(int mode);
+#ifdef SERIAL
+void TestVideoMode(vid_mode_t *tets_mode);
+#endif
 
 #endif 
 
