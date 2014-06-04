@@ -337,7 +337,7 @@ void DrawGrid()
 		
 		if(!back)
 		{
-			if(vmode == VIDEO_480I || vmode == VIDEO_480P)
+			if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
 			{
 				back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
 				if(!back)
@@ -345,19 +345,21 @@ void DrawGrid()
 				back->scale = 0;		
 			}
 			
-			if(vmode == VIDEO_288P || vmode == VIDEO_576I_A264)
+			if(vmode == VIDEO_288P /*|| vmode == VIDEO_576I_A264 */)
 			{
 				back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
 				if(!back)
 					return;        	
 			}
 			
+			/*
 			if(vmode == VIDEO_576I)
 			{
 				back = LoadKMG("/rd/480/gridPAL480.kmg.gz", 0);
 				if(!back)
 					return;        	
 			}
+			*/
 			
 			if(!back)
 			{

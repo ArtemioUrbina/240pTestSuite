@@ -33,7 +33,6 @@ void SoundTest();
 void LEDZoneTest();
 void PassiveLagTest();
 void Alternate240p480i();
-void TestVideoMode(vid_mode_t *tets_mode);
 #ifdef USE_FFTW
 void SIPLagTest();
 double ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq);

@@ -273,7 +273,16 @@ void DrawShowMenu()
 {
 	ImagePtr	back;
 	int		done = 0;
-	int		sel = 1;
+	int		sel = 1, oldsel = 0;
+	char		*vmuopt[6] =
+				{
+					"Help",
+					"Video",
+					"Options",
+					"Credits",
+					"Close",
+					"Exit"
+				};
 
 	InitTextureFB();
 	CopyFBToBG();
@@ -366,6 +375,12 @@ void DrawShowMenu()
 			} 			            										
 			updateVMU("   MENU", "", 1);
 		}		
+
+		if(oldsel != sel)
+		{
+			updateVMU("   MENU", vmuopt[sel-1],1);
+			oldsel = sel;
+		}
 	}
 	
 	FreeTextureFB();
@@ -400,7 +415,6 @@ void ChangeOptions(ImagePtr screen)
 		uint16	OptPos = 140;
         	uint16	pressed = 0;
 		char	intensity[80];
-		char	str[100];
 		int	changedPVR = 0;
 				
 		StartScene();
@@ -449,13 +463,18 @@ void ChangeOptions(ImagePtr screen)
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Scanlines"); y += fh; c++;	
 		}
 		
+#ifdef SERIAL
+		char	str[100];
+
 		y += fh;
-		sprintf(str, "Draw Video Border:   %s ", settings.drawborder == 1 ? "yes" : "no");
-		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, "%s", settings.drawborder == 1 ? "yes" : "no");
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, str); 
+		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, "Draw Video Border:"); y += fh; c++;
 		/*
 		sprintf(str, "Draw PVR Background: %s ", settings.drawpvrbg == 1 ? "yes" : "no");
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
 		*/
+#endif
 
 		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
@@ -512,6 +531,7 @@ void ChangeOptions(ImagePtr screen)
 							ToggleScanlineEvenOdd();
 						break;
 					case 4:
+#ifdef SERIAL
 						settings.drawborder = !settings.drawborder;
 						changedPVR = 1;
 						break;
@@ -522,6 +542,7 @@ void ChangeOptions(ImagePtr screen)
 						break;
 					*/
 					case 5:
+#endif
 						close = 1;
 						break;
 					default:
@@ -550,8 +571,20 @@ void ChangeOptions(ImagePtr screen)
 
 void SelectVideoMode(ImagePtr screen)
 {
-	int 		sel = 1, close = 0;		
+	int 		sel = 1, close = 0, oldsel = 0;		
 	ImagePtr	back;
+	char		*vmuopt[9] =
+				{
+					"240p",
+					"480i/LD",
+					"480i/FS",
+					"288p",
+					"576i/LD",
+					"576i/FS",
+					"480p/LD",
+					"480p/FS",
+					"Close"
+				};
 	
 	
 	back = LoadKMG("/rd/help.kmg.gz", 0);
@@ -559,6 +592,7 @@ void SelectVideoMode(ImagePtr screen)
 		return;
 		
 	back->alpha = 0.75f;
+
 	sel = vmode + 1;
 	updateVMU("Video Mode", "", 1);
 	while(!close && !EndProgram) 
@@ -598,13 +632,13 @@ void SelectVideoMode(ImagePtr screen)
 		y += fh/2;
 		if(vcable != CT_VGA && settings.EnablePAL)
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p mixed 240p/264p assets"); y += fh; c++;
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 240p assets (PAL)"); y += fh; c++;
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i mixed 480p/240p assets (1:1/PAL)"); y += fh; c++;
 		}
 		else
 		{
-			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "288p"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "288p with 264p assets"); y += fh; c++;
 			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "576i scaled 240p assets (PAL)"); y += fh; c++;
 			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "576i mixed 480p/240p assets (1:1/PAL)"); y += fh; c++;
 		}
@@ -689,6 +723,11 @@ void SelectVideoMode(ImagePtr screen)
 						break;
 			} 			            										
 		}		
+		if(oldsel != sel)
+		{
+			updateVMU("Video Mode", vmuopt[sel-1], 1);
+			oldsel = sel;
+		}
 	}
 	FreeImage(&back);
 

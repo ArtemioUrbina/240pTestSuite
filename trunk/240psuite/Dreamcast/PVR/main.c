@@ -169,13 +169,13 @@ int main(void)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); 
 
-//#ifdef VGA_SETTINGS
+#ifdef SERIAL
 		//if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)
 		{
 			c++;
 			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video Settings"); 
 		}    
-//#endif
+#endif
 
 		r = 0.8f;
 		g = 0.8f;
@@ -183,29 +183,29 @@ int main(void)
 		switch(vcable)
 		{
 			case CT_RGB:
-				DrawStringS(265.0f, 225.0f, r, g, b, "RGB");
+				DrawStringS(225.0f, 225.0f, r, g, b, "RGB");
 				break;
 			case CT_VGA:
-				DrawStringS(265.0f, 225.0f, r, g, b, "VGA");
+				DrawStringS(225.0f, 225.0f, r, g, b, "VGA");
 				break;
 			case CT_COMPOSITE:
-				DrawStringS(265.0f, 225.0f, r, g, b, "Composite");
+				DrawStringS(225.0f, 225.0f, r, g, b, "Composite");
 				break;
 		}
 		
 		switch(region)
 		{
 			case FLASHROM_REGION_UNKNOWN:
-				DrawStringS(265.0f, 215.0f, r, g, b, "??????");
+				DrawStringS(225.0f, 215.0f, r, g, b, "??????");
 				break;
 			case FLASHROM_REGION_JAPAN:
-				DrawStringS(265.0f, 215.0f, r, g, b, "Japan");
+				DrawStringS(225.0f, 215.0f, r, g, b, "Japan");
 				break;
 			case FLASHROM_REGION_US:
-				DrawStringS(265.0f, 215.0f, r, g, b, "USA");
+				DrawStringS(225.0f, 215.0f, r, g, b, "USA");
 				break;
 			case FLASHROM_REGION_EUROPE:
-				DrawStringS(265.0f, 215.0f, r, g, b, "Europe");
+				DrawStringS(225.0f, 215.0f, r, g, b, "Europe");
 				break;
 		}
 		
@@ -316,9 +316,11 @@ int main(void)
 					case 15:
 						HelpWindow(GENERALHELP, title);
 						break;
+#ifdef SERIAL
 					case 16:
 						TestVideoMode(&custom_576);
 						break;
+#endif
 				} 					
 				updateVMU("240p Test", "", 1);				
 			}

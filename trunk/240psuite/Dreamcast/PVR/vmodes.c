@@ -80,7 +80,7 @@ vid_mode_t custom_288 =
  /* DM_640x480_PAL_IL */
 vid_mode_t custom_576 = 
  {
-        DM_640x480,
+        DM_640x480_PAL_IL,
         640,
 	480,
         VID_INTERLACE | VID_PAL,
@@ -88,19 +88,18 @@ vid_mode_t custom_576 =
         PM_RGB565,
         624,
 	863,
-        174,
-	17,
+        175,
+	16,  // can start at 16 -> 70
         21,
 	310,
-        116,
-	843,
-        16,
-	318, // 620
+        172,
+	816,
+        0,
+	312, // 620
         0,
 	1,
         { 0, 0, 0, 0 }
 };
-
 
 ImagePtr   scanlines = NULL;
 
@@ -175,6 +174,9 @@ inline void ReleaseScanlines()
 
 void ChangeResolution(int nvmode)
 {
+	vuint32 *regs = (uint32*)0xA05F8000;
+	uint32 data = 0;
+
 	//int lastw;
 
 	//lastw = W;
@@ -193,9 +195,10 @@ void ChangeResolution(int nvmode)
 		if(vcable != CT_VGA)
 			nvmode = VIDEO_240P;
 	}
+#ifndef SERIAL
 	if(vmode == nvmode)
 		return;
-
+#endif
 	vmode = nvmode;
 
 	switch(vmode)
@@ -227,9 +230,9 @@ void ChangeResolution(int nvmode)
 			break;
 		case VIDEO_576I_A264:
 			W = 640;
-			H = 528;
+			H = 480;
 			dW = 320;
-			dH = 264;
+			dH = 240;
 			offsetY = 0;
 			IsPAL = 1;
 			break;
@@ -244,9 +247,9 @@ void ChangeResolution(int nvmode)
 			break;
 		case VIDEO_576I:
 			W = 640;
-			H = 528;
+			H = 480;
 			dW = 640;
-			dH = 528;
+			dH = 480;
 			offsetY = 0;
 			IsPAL = 1;
 			break;
@@ -284,9 +287,76 @@ void ChangeResolution(int nvmode)
 				break;
 		}
 
+		regs[0x3A] |= 8;    /* Blank */
+    		regs[0x11] &= ~1;   /* Display disable */
+
 		pvr_init_defaults();
 
 		RefreshLoadedImages();
+
+		if(IsPAL)
+		{
+			if(vmode == VIDEO_288P)
+			{
+				// Video enable 0x100 ORed with PAL mode 0x80.	
+				// Sync should be  negative in vertical and
+				// horzontal for PAL, they are bits 1 and 2.
+				data = 0x100 | 0x80; 
+				regs[0x34] = data;
+
+				// Set sync width
+				data = 0x05 | 0x3f << 8 | 0x31F << 12 | 0x1f << 22;
+				regs[0x38] = data;
+			}
+			if(vmode == VIDEO_576I || vmode == VIDEO_576I_A264)
+			{	
+				// Video enable 0x100 ORed with PAL mode 0x80.	
+				// Sync should be  negative in vertical and
+				// horzontal for PAL, they are bits 1 and 2.
+				// 0x10 is for interlaced mode.
+				data = 0x100 | 0x80 | 0x10; 
+				regs[0x34] = data;
+
+				// Set sync width
+				data = 0x05 | 0x3f << 8 | 0x16A << 12 | 0x1f << 22;
+				regs[0x38] = data;
+			}
+		}
+		else
+		{
+			// Set sync width
+			if(vmode == VIDEO_240P)
+			{
+				// Video enable 0x100 ORed with PAL mode 0x80.	
+				// Sync should be  negative in vertical and
+				// horzontal for PAL, they are bits 1 and 2.
+				// 0x10 is for interlaced mode.
+				data = 0x100 | 0x40; 
+				regs[0x34] = data;
+
+				data = 0x03 | 0x3f << 8 | 0x319 << 12 | 0x0f << 22;
+				regs[0x38] = data;
+			}
+			if(vmode == VIDEO_480I  || vmode == VIDEO_480I_A240)
+			{	
+				// Video enable 0x100 ORed with PAL mode 0x80.	
+				// Sync should be  negative in vertical and
+				// horzontal for PAL, they are bits 1 and 2.
+				// 0x10 is for interlaced mode.
+				data = 0x100 | 0x40 | 0x10; 
+				regs[0x34] = data;
+
+				data = 0x06 | 0x3f << 8 | 0x16C << 12 | 0x1f << 22;
+				regs[0x38] = data;
+			}
+		}
+
+		if(vmode == VIDEO_480P || vmode == VIDEO_480P_SL)
+		{
+			data = 0x03 | 0x3f << 8 | 0x319 << 12 | 0x0f << 22;
+			regs[0x38] = data;
+		}
+
 
 		// Disable deflicker filter, 
 		if(PVR_GET(PVR_SCALER_CFG) != 0x400)
@@ -301,6 +371,10 @@ void ChangeResolution(int nvmode)
 			dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
 			PVR_SET(PVR_FB_CFG_2, 0x00000001);
 		}
+
+		// Enable display
+		regs[0x3A] &= ~8;
+    		regs[0x11] |= 1;
 
 		if(!settings.drawborder) // Draw back video signal limits?
 			vid_border_color(0, 0, 0);
@@ -381,3 +455,352 @@ void PVRStats(char *msg)
 			(unsigned int)stats.vbl_count, (unsigned int)stats.frame_last_time, (double)stats.frame_rate, (unsigned int)stats.rnd_last_time);
 }
 
+#ifdef SERIAL
+
+#include "vmu.h"
+#include "controller.h"
+#include "font.h"
+
+void TestVideoMode(vid_mode_t *source_mode)
+{
+	int 			done =  0, oldvmode = vmode;
+	uint16			pressed, update = 0, sel = 1, showback = 1;		
+	controller		*st;
+	char			str[50];
+	ImagePtr		back;
+	vid_mode_t  		test_mode;
+	vid_mode_t  		backup_mode;
+
+	test_mode = *source_mode;
+	backup_mode = *source_mode;
+
+	//if(vmode == VIDEO_288P)
+		//back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
+	//else
+		back = LoadKMG("/rd/480/gridPAL480.kmg.gz", 0);
+	if(!back)
+		return;
+	back->scale = 0;
+
+	updateVMU("VIDEO", "", 1);
+
+	/*
+	ReleaseTextures();
+	pvr_shutdown();
+	vid_set_mode_ex(&test_mode);
+	pvr_init_defaults();
+	RefreshLoadedImages();
+	*/
+
+	while(!done && !EndProgram) 
+	{
+		float   r = 1.0f;
+		float   g = 1.0f;
+		float   b = 1.0f;
+		int     c = 1;
+		float   x = 40.0f;
+		float   y = 15.0f;
+
+		StartScene();
+		if(showback)
+			DrawImage(back);
+
+		sprintf(str, " Width:     %d ", test_mode.width);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Height:    %d ", test_mode.height);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " Scanlines: %d ", test_mode.scanlines);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Clocks:    %d ", test_mode.clocks);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " Bitmap X:  %d ", test_mode.bitmapx);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Bitmap Y:  %d ", test_mode.bitmapy);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " ScanInt1:  %d ", test_mode.scanint1);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " ScanInt2:  %d ", test_mode.scanint2);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " Border X1: %d ", test_mode.borderx1);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Border X2: %d ", test_mode.borderx2);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Border Y1: %d ", test_mode.bordery1);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Border Y2: %d ", test_mode.bordery2);
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		DrawStringB(x, y, 0, 0,  0 , "                "); y+= fh;
+
+		sprintf(str, " Draw Video Border:   %s ", settings.drawborder == 1 ? "yes" : " no");
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+		sprintf(str, " Draw PVR Background: %s ", settings.drawpvrbg == 1 ? "yes" : " no");
+		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
+
+		sprintf(str, " Video Border Size:               %dx%d ", test_mode.borderx2-test_mode.borderx1, test_mode.bordery2-test_mode.bordery1);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+
+		sprintf(str, " Active Area Margin Left:         %d", test_mode.bitmapx - test_mode.borderx1);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+		sprintf(str, " Active Area Margin Right:        %d", test_mode.clocks - test_mode.bitmapx - test_mode.width);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+		sprintf(str, " Active Area Margin Top:          %d", test_mode.bitmapy);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+		sprintf(str, " Active Area Margin Bottom:       %d", test_mode.scanlines - test_mode.bitmapy - test_mode.height);
+		DrawStringB(x, y, 0, 1.0f, 0.0f, str); y += fh; 
+
+		DrawStringB(100, 5, 0, 1.0f, 0.0f, "X to reset, Y to set"); y += fh; 
+		EndScene();
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_START)
+				ChangeResolution(VIDEO_288P);
+
+			if (pressed & CONT_B)
+				done =	1;				
+
+			if (pressed & CONT_X)
+			{
+				test_mode = backup_mode;
+				update = 1;
+			}
+						
+			if (pressed & CONT_Y)
+				update = 1;
+
+			if (pressed & CONT_A)
+				showback = !showback;
+
+			if (pressed & CONT_DPAD_UP)
+			{
+				sel --;
+				if(sel < 1)
+					sel = c - 1;
+			}
+
+			if (pressed & CONT_DPAD_DOWN)
+			{
+				sel ++;
+				if(sel > c - 1)
+					sel = 1;
+			}
+
+			if (pressed & CONT_DPAD_LEFT)
+			{
+				switch(sel)
+				{
+					case 1:
+						test_mode.width -=32;
+						break;
+					case 2:
+						test_mode.height -=32;
+						break;
+					case 3:
+						test_mode.scanlines -=32;
+						break;
+					case 4:
+						test_mode.clocks --;
+						break;
+					case 5:
+						test_mode.bitmapx --;
+						break;
+					case 6:
+						test_mode.bitmapy --;
+						break;
+					case 7:
+						test_mode.scanint1 --;
+						break;
+					case 8:
+						test_mode.scanint2 --;
+						break;
+					case 9:
+						test_mode.borderx1 --;
+						break;
+					case 10:
+						test_mode.borderx2 --;
+						break;
+					case 11:
+						test_mode.bordery1 --;
+						break;
+					case 12:
+						test_mode.bordery2 --;
+						break;
+					case 13:
+						settings.drawborder = !settings.drawborder;
+						break;
+					case 14:
+						settings.drawpvrbg = !settings.drawpvrbg;
+						break;
+				}
+			}
+
+			if (pressed & CONT_DPAD_RIGHT)
+			{
+				switch(sel)
+				{
+					case 1:
+						test_mode.width +=32;
+						break;
+					case 2:
+						test_mode.height +=32;
+						break;
+					case 3:
+						test_mode.scanlines +=32;
+						break;
+					case 4:
+						test_mode.clocks ++;
+						break;
+					case 5:
+						test_mode.bitmapx ++;
+						break;
+					case 6:
+						test_mode.bitmapy ++;
+						break;
+					case 7:
+						test_mode.scanint1 ++;
+						break;
+					case 8:
+						test_mode.scanint2 ++;
+						break;
+					case 9:
+						test_mode.borderx1 ++;
+						break;
+					case 10:
+						test_mode.borderx2 ++;
+						break;
+					case 11:
+						test_mode.bordery1 ++;
+						break;
+					case 12:
+						test_mode.bordery2 ++;
+						break;
+					case 13:
+						settings.drawborder = !settings.drawborder;
+						break;
+					case 14:
+						settings.drawpvrbg = !settings.drawpvrbg;
+						break;
+				}
+			}
+		}
+
+		if(update)
+		{
+			*source_mode = test_mode;
+			ChangeResolution(VIDEO_576I);
+			//vuint32 *regs = (uint32*)0xA05F8000;
+			//uint32 data = 0;
+
+			/*
+			ReleaseTextures();
+			pvr_shutdown();
+			vid_set_mode_ex(&test_mode);
+			pvr_init_defaults();
+			RefreshLoadedImages();
+			*/
+
+			//regs[0x3A] |= 8;    /* Blank */
+    			//regs[0x11] &= ~1;   /* Display disable */
+
+			//PVR_SET(PVR_SCALER_CFG, 0x400);
+			//PVR_SET(PVR_FB_CFG_2, 0x00000001);
+
+/*
+			if(vmode == VIDEO_288P)
+			{
+				printf("PVR 0x38: %lX\n", regs[0x38]);
+				data = 0x05 | 0x3f << 8 | 0x31F << 12 | 0x1f << 22;
+				printf("Data to write %lX\n", data);
+				regs[0x38] = data;
+				printf("PVR written at 0x38: %lX\n", regs[0x38]);
+
+				printf("PVR 0x34: %lX\n", regs[0x34]);
+				data = 0x100 | 0x80 | 0x04;
+				printf("Data to write at 0x34  %lX\n", data);
+				regs[0x34] = data;
+				printf("PVR written to 0x34: %lX\n", regs[0x34]);
+			}
+
+			if(vmode == VIDEO_576I || vmode == VIDEO_576I_A264)
+			{
+				printf("PVR 0x38: %lX\n", regs[0x38]);
+				data = 0x05 | 0x3f << 8 | 0x16A << 12 | 0x1f << 22;
+				printf("Data to write %lX\n", data);
+				regs[0x38] = data;
+				printf("PVR written at 0x38: %lX\n", regs[0x38]);
+
+				printf("PVR 0x34: %lX\n", regs[0x34]);
+				data = 0x100 | 0x80 | 0x04;
+				printf("Data to write at 0x34  %lX\n", data);
+				regs[0x34] = data;
+				printf("PVR written to 0x34: %lX\n", regs[0x34]);
+			}
+*/
+	
+			/* Enable display */
+			//regs[0x3A] &= ~8;
+    			//regs[0x11] |= 1;
+
+			if(settings.drawborder)
+				vid_border_color(255, 255, 255);
+			else
+				vid_border_color(0, 0, 0);
+
+			if(settings.drawpvrbg)
+				pvr_set_bg_color(0.0f, 1.0f, 0.0f);
+			else
+				pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+
+			update = 0;
+		}
+	}
+
+	FreeImage(&back);
+
+	dbglog(DBG_KDEBUG, "----------EXIT-------\n\n");
+	ChangeResolution(oldvmode);
+	sprintf(str, " Width:     %d\n", test_mode.width);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Height:    %d\n", test_mode.height);
+	dbglog(DBG_KDEBUG, str);
+
+	sprintf(str, " Scanlines: %d\n", test_mode.scanlines);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Clocks:    %d\n", test_mode.clocks);
+	dbglog(DBG_KDEBUG, str);
+
+	sprintf(str, " Bitmap X:  %d\n", test_mode.bitmapx);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Bitmap Y:  %d\n", test_mode.bitmapy);
+	dbglog(DBG_KDEBUG, str);
+
+	sprintf(str, " ScanInt1:  %d\n", test_mode.scanint1);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " ScanInt2:  %d\n", test_mode.scanint2);
+	dbglog(DBG_KDEBUG, str);
+
+	sprintf(str, " Border X1: %d\n", test_mode.borderx1);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Border X2: %d\n", test_mode.borderx2);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Border Y1: %d\n", test_mode.bordery1);
+	dbglog(DBG_KDEBUG, str);
+	sprintf(str, " Border Y2: %d\n", test_mode.bordery2);
+	dbglog(DBG_KDEBUG, str);
+}
+
+#endif
