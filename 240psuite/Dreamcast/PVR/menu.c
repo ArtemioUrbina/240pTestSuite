@@ -450,17 +450,21 @@ void ChangeOptions(ImagePtr screen)
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline intensity:"); y += fh; c++;			
 			
 			// option 3, Scanline even/odd
-			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD"); 					
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD");
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanlines"); y += fh; c++;	
 		}				
 		else
 		{
-			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, intensity);
-			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Scanline intensity:"); y += fh; c++;			
+			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+				intensity);
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+				"Scanline intensity:"); y += fh; c++;			
 			
 			// option 3, Scanline even/odd
-			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, ScanlinesEven() ? "EVEN" : "ODD"); 					
-			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Scanlines"); y += fh; c++;	
+			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+				ScanlinesEven() ? "EVEN" : "ODD"); 					
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+				"Scanlines"); y += fh; c++;	
 		}
 		
 #ifdef SERIAL
@@ -613,46 +617,61 @@ void SelectVideoMode(ImagePtr screen)
 
 		DrawStringS(x - 20, y, 0.0f, 1.0f, 0.0f, "Please select the desired video mode"); y += 2*fh; 
 		
-		DrawStringS(x - 10, y + (vmode * fh)+ ((vmode >= VIDEO_288P) ? fh/2 : 0) + ((vmode >= VIDEO_480P_SL) ? fh/2 - 1: 0),
-				0.0f, 1.0f, 0.0f, ">"); 
+		DrawStringS(x - 10, y + (vmode * fh)+((vmode >= VIDEO_288P) ? fh/2 : 0) +
+			((vmode >= VIDEO_480P_SL) ? fh/2 - 1: 0), 0.0f, 1.0f, 0.0f, ">"); 
 		
 		if(vcable != CT_VGA)
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
+				"480i scaled 240p assets (NTSC)"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
+				"480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;
 		}
 		else
 		{
-			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "240p"); y += fh; c++;
-			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "480i scaled 240p assets (NTSC)"); y += fh; c++;
-			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f,
+				"240p"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f,
+				"480i scaled 240p assets (NTSC)"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f,
+				"480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;
 		}
 
 		y += fh/2;
 		if(vcable != CT_VGA && settings.EnablePAL)
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p mixed 240p/264p assets"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 240p assets (PAL)"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i mixed 480p/240p assets (1:1/PAL)"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
+				"288p mixed 240p/264p assets"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
+				"576i scaled 240p assets (PAL)"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
+				"576i mixed 480p/240p assets (1:1/PAL)"); y += fh; c++;
 		}
 		else
 		{
-			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "288p with 264p assets"); y += fh; c++;
-			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "576i scaled 240p assets (PAL)"); y += fh; c++;
-			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "576i mixed 480p/240p assets (1:1/PAL)"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f,
+				"288p with 264p assets"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f,
+				"576i scaled 240p assets (PAL)"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f,
+				"576i mixed 480p/240p assets (1:1/PAL)"); y += fh; c++;
 		}
 
 		y += fh/2;
 		if(vcable == CT_VGA)
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p scaled 240p assets & scanlines"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
+				"480p scaled 240p assets & scanlines"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
+				"480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
 		}
 		else
 		{
-			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "480p scaled 240p assets & scanlines"); y += fh; c++;
-			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f,
+				"480p scaled 240p assets & scanlines"); y += fh; c++;
+			DrawStringS(x, y, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f, sel != c ? 0.5f : 0.7f,
+				"480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
 		}	
 			
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		

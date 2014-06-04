@@ -1538,7 +1538,8 @@ void Alternate240p480i()
 				}
 				else
 					DrawString(32, 40+i*8, 0.0, 1.0, 0.0, "Viewed at:");
-				sprintf(buffer, "%02d:%02d:%02d:%02d", times[i].hours, times[i].minutes, times[i].seconds, times[i].frames);
+				sprintf(buffer, "%02d:%02d:%02d:%02d",
+					times[i].hours, times[i].minutes, times[i].seconds, times[i].frames);
 				DrawString(140, 40+i*8, 1.0, 1.0, 1.0, buffer);
 				if(times[i].type != 0 && i >= 1 && i <= 19)
 				{
@@ -1549,7 +1550,8 @@ void Alternate240p480i()
 					framesA = ConvertToFrames(&times[i - 1]);
 					res = framesB - framesA;
 					ConvertFromFrames(&len, res);
-					sprintf(buffer, "%02d:%02d:%02d:%02d", len.hours, len.minutes, len.seconds, len.frames);
+					sprintf(buffer, "%02d:%02d:%02d:%02d",
+						len.hours, len.minutes, len.seconds, len.frames);
 					DrawString(200, 40+i*8, 1.0, 0.0, 0.0, buffer);
 				}
 			}
@@ -1893,7 +1895,8 @@ void SIPLagTest()
 				double value;
 
 				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount);
-				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2, 11025, 60.0*accuracy, 1000);          
+				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2,
+					11025, 60.0*accuracy, 1000);          
 				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
 					sprintf(DStatus, "Noise at 1khz");
 				if(value == FFT_OM)
@@ -1967,7 +1970,8 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	framesizernd = (long)framesize;  
 
 #ifdef DEBUG_FFT
-	printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n", samplerate, (double)samplesize/samplerate, framesize);    
+	printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n",
+			samplerate, (double)samplesize/samplerate, framesize);    
 
 	start = timer_ms_gettime64();
 #endif
