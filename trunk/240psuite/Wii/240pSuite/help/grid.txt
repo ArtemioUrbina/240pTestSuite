@@ -25,7 +25,7 @@ shown.
 
 The 240 test suite draws from line 22 onwards from 
 the blanking interval of NTSC signals, and line 25
-for PAL. It uses the whole visible are in both.
+for PAL. It uses the whole visible area in both.
 
 The d-pad can be used to move the grid around the
 video signal. A button resets it to its position.
