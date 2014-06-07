@@ -156,6 +156,9 @@ void DrawDigit(u16 x, u16 y, u8 r, u8 g, u8 b, int digit)
 {
 	int numx, numy;
 	
+	if(!num_t)
+		return;
+		
 	num_t->r = r;
 	num_t->g = g;
 	num_t->b = b;	

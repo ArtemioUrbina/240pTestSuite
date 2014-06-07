@@ -796,6 +796,61 @@ void ShowVideoData()
 	}
 }
 
+void ShowVideoWarning(ImagePtr screen)
+{	
+	u32     	pressed = 0, done = 0;	
+	ImagePtr	Back = NULL;
+	
+	Back = LoadImage(FLOATMENUIMG, 0);
+	if(!Back)
+		return;	
+		
+	Back->x = (dW - Back->w) / 2;
+	Back->y = (dH - Back->h) / 2;
+	
+	Back->alpha = 0xaa;
+	
+	while(!done)
+	{			
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;					    					  
+		u16     x = Back->x + 20;
+		u16     y = Back->y + 10;        
+				
+		StartScene();
+		
+		DrawImage(screen); 		
+		DrawImage(Back);       
+
+		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
+		
+		x -= 10;			
+		DrawStringS(x, y, r, 0, 0, "These settings will"); y += fh;
+		DrawStringS(x, y, r, 0, 0, "be ignored:"); y += fh;
+				
+		if(OffsetH != 0)
+		{
+			DrawStringS(x, y, r, g, b, "-Horizontal Offset"); y += fh;
+		}
+		
+		if(AspectRatio != 0)
+		{
+			DrawStringS(x, y, r, g, b, "-16:9 Aspect Ratio"); y += fh;
+		}
+				
+		DrawStringS(x+5, Back->y + fh*12, 0, g, b, "Press B to return"); 
+		
+		EndScene();		
+			
+		ControllerScan();
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_B ) 		
+			done = 1;	
+	}
+}
+
 void DrawCredits(ImagePtr Back)
 {
 	int 	done = 0, r, g, b;	

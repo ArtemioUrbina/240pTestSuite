@@ -155,7 +155,10 @@ void ReleaseNumbers()
 void DrawDigit(float x, float y, float r, float g, float b, int digit) 
 {
 	int numx, numy;
-	
+
+	if(!num_t)	
+		return;
+
 	num_t->r = r;
 	num_t->g = g;
 	num_t->b = b;	

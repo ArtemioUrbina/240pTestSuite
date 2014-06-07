@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEFAULT_OPTIONS { 0, 1, 0, 0, 0, 0, 0x77, 0x77, 0x77 }
+#define DEFAULT_OPTIONS { 0, 1, 0, 0, 0, 0, 0xE7, 0xE7, 0xE7 }
 
 struct options_st {
 	int Activate480p;

@@ -86,16 +86,19 @@ int main(int argc, char **argv)
     {
         ReleaseFont();
 		EndProgram = 1;
-    }
-    
-    sd->x = 221;
-    sd->y = 94;
+    }   
+	
+	sd->x = 221;
+    sd->y = 94;		
 				
 #ifdef WII_VERSION
 	if(Options.ShowWiiRegion)
 		GetWiiRegion();
 #endif
 	
+	if(OffsetH || AspectRatio)
+		ShowVideoWarning(sd);
+		
 	while(!close && !EndProgram) 
 	{        
         char	res[40];
@@ -133,6 +136,8 @@ int main(int argc, char **argv)
 				IsPAL ? "Alternating 288p/576i Test" : "Alternating 240p/480i Test"); y += fh; c++;
 		}        
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
+		
+		y += fh;
         switch(vmode)
 		{
 			case VIDEO_240P:
@@ -296,9 +301,10 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White Screen"); y += fh; c++;				
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White & RGB Screens"); y += fh; c++;				
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;				
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;	
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;	
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		if(VIDEO_HaveComponentCable())		
@@ -375,6 +381,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					DrawSharpness();
 					break;				
 				case 12:
+					DrawOverscan();
+					break;				
+				case 13:
 					close = 1;
 					break;
 			} 			            										

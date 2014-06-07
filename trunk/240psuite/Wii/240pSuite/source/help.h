@@ -48,6 +48,7 @@
 #define LINEARITYHELP	linearity_txt
 #define CHECK480PWII	check480pWii_txt
 #define SHARPNESSHELP	sharpness_txt
+#define OVERSCANHELP	overscan_txt
 
 extern char *SMPTEColor_txt[];
 extern char *alt240p_txt[];
@@ -65,6 +66,7 @@ extern char *gridscroll_txt[];
 extern char *ire100_txt[];
 extern char *linearity_txt[];
 extern char *manuallag_txt[];
+extern char *overscan_txt[];
 extern char *passivelag_txt[];
 extern char *pluge_txt[];
 extern char *scroll_txt[];

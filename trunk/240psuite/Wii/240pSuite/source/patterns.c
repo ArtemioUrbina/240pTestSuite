@@ -695,3 +695,189 @@ void DrawSharpness()
 }
 
 
+void DrawOverscan()
+{
+	int 		done = 0, oLeft = 0, oTop = 0, 
+				oRight = 0, oBottom = 0, 
+				sel = 0, oldvmode = vmode, reset = 0;
+	u32			pressed;		
+	ImagePtr	square, border;	
+	char		msg[50];
+	
+	square = LoadImage(WHITEIMG, 1);
+	if(!square)
+		return;
+		
+	border = CloneImage(square, 1);
+	if(!border)
+		return;		
+	
+	border->r = 0xff;
+	border->g = 0x00;
+	border->b = 0x00;
+	
+	square->r = 0x70;
+	square->g = 0x70;
+	square->b = 0x70;
+			
+	while(!done && !EndProgram) 
+	{			
+		int x = 0, y = 0;
+		
+		if(oldvmode != vmode || reset)
+		{
+			oTop = oLeft = oBottom = oRight = 0;
+			CalculateUV(0, 0, dW, dH, square);
+			CalculateUV(0, 0, dW, dH, border);
+			square->x = square->y = 0;
+			oldvmode = vmode;
+			reset = 0;
+		}		
+		
+		StartScene();
+		        
+		DrawImage(border);
+		DrawImage(square);	
+
+		x = dW/2;
+		y = dH/2-2*fh;
+		
+		DrawStringS(x-110, y+(fh*sel), 0x00, 0x00, 0xff, ">");
+				
+		DrawStringS(x-100, y, 0xff, 0xff, 0xff, "Top Overscan:");
+		sprintf(msg, "%d pixels (%g%%)", oTop, (oTop*100.0f)/(dH/2));
+		DrawStringS(x+20, y, 0xff, 0xff, 0xff, msg);
+		
+		y+= fh;
+		
+		DrawStringS(x-100, y, 0xff, 0xff, 0xff, "Bottom Overscan:");
+		sprintf(msg, "%d pixels (%g%%)", oBottom, (oBottom*100.0f)/(dH/2));
+		DrawStringS(x+20, y, 0xff, 0xff, 0xff, msg);
+		
+		y+= fh;		
+		
+		DrawStringS(x-100, y, 0xff, 0xff, 0xff, "Left Overscan:");
+		sprintf(msg, "%d pixels (%g%%)", oLeft, (oLeft*100.0f)/(dW/2));
+		DrawStringS(x+20, y, 0xff, 0xff, 0xff, msg);
+		
+		y+= fh;
+		
+		DrawStringS(x-100, y, 0xff, 0xff, 0xff, "Right Overscan:");
+		sprintf(msg, "%d pixels (%g%%)", oRight, (oRight*100.0f)/(dW/2));
+		DrawStringS(x+20, y, 0xff, 0xff, 0xff, msg);			
+				
+		if(oLeft > 40 || oRight > 40 || oTop > 40 || oBottom > 40)
+			DrawStringS(dW/2-100, 10, 0xff, 0xff, 0xff, "Your display can't possibly be this bad");						
+		
+        EndScene();
+		
+		ControllerScan();
+		
+		pressed = Controller_ButtonsDown(0);
+				
+		if(pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = OVERSCANHELP;
+		}
+		
+		if ( pressed & PAD_BUTTON_UP ) 
+			sel--;
+		
+		if ( pressed & PAD_BUTTON_DOWN ) 		
+			sel++;
+			
+		if(sel < 0)
+			sel = 3;
+		if(sel > 3)
+			sel = 0;
+			
+		if(pressed & PAD_TRIGGER_R && sel == 0)
+		{
+			if(square->y + 1 <= dH/2)
+			{				
+				square->y++;
+				square->h--;
+				oTop++;
+			}
+		}
+		
+		if(pressed & PAD_TRIGGER_L && sel == 0)
+		{
+			if(square->y - 1 >= 0)
+			{				
+				square->y--;
+				square->h++;	
+				oTop--;
+			}
+		}
+		
+		if(pressed & PAD_TRIGGER_R && sel == 1)
+		{
+			if(square->h - 1 >= 0)
+			{								
+				square->h--;
+				oBottom++;
+			}
+		}
+		
+		if(pressed & PAD_TRIGGER_L && sel == 1)
+		{
+			if(oBottom <= dH/2)
+			{								
+				square->h++;	
+				oBottom--;
+			}
+		}
+		
+		if(pressed & PAD_TRIGGER_R && sel == 2)
+		{
+			if(square->x + 1 <= dW/2)
+			{				
+				square->x++;
+				square->w--;
+				oLeft++;
+			}
+		}
+		
+		if(pressed & PAD_TRIGGER_L && sel == 2)
+		{
+			if(square->x - 1 >= 0)
+			{				
+				square->x--;
+				square->w++;
+				oLeft--;
+			}
+		}
+		
+		if(pressed & PAD_TRIGGER_R && sel == 3)
+		{
+			if(square->w - 1 >= 0)
+			{								
+				square->w--;
+				oRight++;
+			}
+		}
+		
+		if(pressed & PAD_TRIGGER_L && sel == 3)
+		{
+			if(oRight <= dW/2)
+			{								
+				square->w++;	
+				oRight--;
+			}
+		}
+				
+		if (pressed & PAD_BUTTON_A)	
+			reset = 1;
+		
+		if (pressed & PAD_BUTTON_B)
+			done =	1;										
+
+	}
+	FreeImage(&border);
+	FreeImage(&square);
+	return;
+}
+
+

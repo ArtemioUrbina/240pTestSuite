@@ -5,7 +5,7 @@ all of the 4:3 visible area.
 
 You can use it to verify that all the visible area
 is being displayed, and that there is no distortion
-present.
+present. Consumer TVs may not show the red squares.
 
 A 640x480 Grid can be shown in compatible NTSC
 video modes. 
@@ -24,7 +24,7 @@ In 576i unscaled 1:1 mode, a full 640x528 grid is
 shown. 
 
 The 240 test suite draws from line 22 onwards from 
-the blanking interval of NTSC signals, and line 25
+the blanking interval of NTSC signals, and line 23
 for PAL. It uses the whole visible area in both.
 
 The d-pad can be used to move the grid around the

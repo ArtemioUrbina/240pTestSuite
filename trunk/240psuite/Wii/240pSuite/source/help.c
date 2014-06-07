@@ -80,8 +80,8 @@ char *gray_txt[] = {
 NULL
 };
 char *grid_txt[] = { 
-"                  GRID (1/2)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
-"                  GRID (2/2)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. \n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 25\nfor PAL. It uses the whole visible are in both.\n\nThe d-pad can be used to move the grid around the\nvideo signal. A button resets it to its position.",
+"                  GRID (1/2)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. Consumer TVs may not show the red squares.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
+"                  GRID (2/2)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. \n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 23\nfor PAL. It uses the whole visible area in both.\n\nThe d-pad can be used to move the grid around the\nvideo signal. A button resets it to its position.\n",
 NULL
 };
 char *gridscroll_txt[] = { 
@@ -101,6 +101,10 @@ char *manuallag_txt[] = {
 "             MANUAL LAG TEST (1/3)\n\nThe main intention is to show a changing pattern\non the screen, and given a visual and repetitive\ncue, play a beep alternating speakers. This\nshould show to some degree the lag (if present)\nwhen processing the signal.\n\nAs an added feature, the user can click the $A\nbutton when the sprite is aligned with the one on\nthe background, and the offset in frames form the\nactual intersection will be shown on screen. This\ncan be repeated ten times and the software will\ncalculate the average. Whenever the button was\npressed before the actual intersection frame, the\n                                       (cont...)",
 "             MANUAL LAG TEST (2/3)\n\nresult will be ignored (but still shown onscreen).\nButton $X can be used to change the direction\nof the sprite from vertical to horizontal, or\ndisplay both at the same time.\n\nOf course the evaluation is dependent on reflexes\nand/or rhythm more than anything. The visual and\naudio cues are the more revealing aspects which the\nuser should consider, of course the interactive\nfactor can give an experienced player the hang of\nthe system when testing via different connections.\n\n\n                                          (cont...)",
 "             MANUAL LAG TEST (3/3)\n\nSince a frame is around 16 ms (1000/60), that value\nmust be considered the general error when using the\ntest results. \n\n",
+NULL
+};
+char *overscan_txt[] = { 
+"                  OVERSCAN\n\nWith this pattern you can interactively find out\nthe overscan in pixels and percentage of each\nedge in a display. \n\nUse the $R and $L buttons to increment the \noverscan until you see the red border, then go \nback one pixel. The resulting number is the\namount of overscan in pixels in each direction.",
 NULL
 };
 char *passivelag_txt[] = { 
