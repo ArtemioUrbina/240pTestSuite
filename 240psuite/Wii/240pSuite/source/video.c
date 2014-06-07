@@ -53,12 +53,12 @@ int H			    = 0;
 int dW			    = 0;
 int dH			    = 0;
 
+s8	OffsetH			= 0;
+s8	AspectRatio		= 0;
+
 u8 VIDEO_HaveSCARTRGBCable()
 {
-	if(!mvmode)
-		return 0;
-		
-	return(mvmode->viTVMode >> 2 == VI_EURGB60);
+	return(CONF_GetEuRGB60() > 0);
 }
 
 void InitVideo()
@@ -77,18 +77,27 @@ void InitVideo()
 	Mode_264p.viYOrigin = PAL_OFFSET;
 	Mode_528i.viYOrigin = PAL_OFFSET;
 	
+	CONF_GetDisplayOffsetH(&OffsetH);
+	AspectRatio = CONF_GetAspectRatio();
+	
 #ifdef WII_VERSION		
 	/* Adjust SCART cable to output RGB and not YUV */		
+	/*
 	switch (mvmode->viTVMode >> 2)
 	{
 	case VI_EURGB60:  	
-	
+	*/
+	if(CONF_GetEuRGB60() > 0)
+	{
 	  Mode_240p.viTVMode = VI_TVMODE_EURGB60_DS;
 	  Mode_480i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  
-	  Mode_264p.viTVMode = VI_TVMODE_EURGB60_DS;
-	  Mode_528i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  
+	  //Mode_264p.viTVMode = VI_TVMODE_EURGB60_DS;
+	  //Mode_528i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  
+	}
+	  /*
 	  break;	
 	}
+	*/
 #endif
 
 	for(fb = 0; fb < 2; fb++)
@@ -98,6 +107,10 @@ void InitVideo()
 	}
 	
 	InitFrameBuffers();
+	if(CONF_GetVideo() == CONF_VIDEO_PAL ||
+		CONF_GetVideo() == CONF_VIDEO_MPAL)
+		Options.EnablePAL = 1;			
+	
 	SetVideoMode(VIDEO_240P);
 	VIDEO_SetBlack(FALSE);
 }

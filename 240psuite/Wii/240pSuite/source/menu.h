@@ -25,7 +25,7 @@
 #define VERSION_NUMBER "GC GX Ver. 1.5"
 #endif
 
-#define VERSION_DATE "28/05/2014"
+#define VERSION_DATE "03/06/2014"
 
 extern u8 DrawMenu;
 extern char **HelpData;
@@ -36,6 +36,7 @@ void SelectVideoMode(ImagePtr title);
 void ChangeOptions(ImagePtr Back);
 void ChangePALBackgroundColor(ImagePtr Back);
 void ShowVideoData();
+void ShowVideoWarning(ImagePtr screen);
 
 void DrawCredits(ImagePtr Back);
 void DrawIntro();

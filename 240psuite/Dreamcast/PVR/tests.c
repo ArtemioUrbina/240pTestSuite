@@ -52,7 +52,7 @@ typedef struct timecode{
 void DropShadowTest()
 {
 	char		msg[50];
-	int		done = 0, x = 0, y = 0, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
+	int		done = 0, x = dW/2, y = dH/2, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
 	uint16		pressed;		
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay;
 	controller 	*st;
@@ -124,9 +124,9 @@ void DropShadowTest()
 		if(text)
 		{
 			if(vmode != VIDEO_480I && vmode != VIDEO_480P)
-				DrawStringB(140, 12, 0, 1.0, 0, msg);
+				DrawStringB(140, 30, 0, 1.0, 0, msg);
 			else
-				DrawStringB(450, 20, 0, 1.0, 0, msg);
+				DrawStringB(450, 40, 0, 1.0, 0, msg);
 			text --;
 		}
 
@@ -250,7 +250,7 @@ void DropShadowTest()
 
 void StripedSpriteTest()
 {	
-	int		done = 0, x = 0, y = 0, selback = 0;
+	int		done = 0, x = dW/2, y = dH/2, selback = 0;
 	uint16		pressed;
 	ImagePtr	back[4], striped, overlay;
 	controller *st;
@@ -721,6 +721,7 @@ void LagTest()
 void ScrollTest()
 {
 	int 		done = 0, speed = 1, acc = 1, x = 0, pause = 0;
+	int 		oldvmode = vmode;
 	uint16		pressed;		
 	ImagePtr	back, overlay;
 	controller	*st;
@@ -738,6 +739,18 @@ void ScrollTest()
 	updateVMU(" Scroll  ", "", 1);
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			back->y = (dH - 240)/2;
+			overlay->y = (dH - 240)/2;
+			if(offsetY)  // center in PAL modes
+			{
+				back->y -= offsetY;
+				overlay->y -= offsetY;
+			}
+			oldvmode = vmode;
+		}
+
 		StartScene();
 
 		if(speed > 15)
@@ -1238,8 +1251,7 @@ void PassiveLagTest()
 	uint16		pressed, lsd, msd, pause = 0;		
 	ImagePtr	back, circle;
 	controller	*st;
-
-	LoadNumbers();
+	
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
@@ -1251,6 +1263,7 @@ void PassiveLagTest()
 	circle->g = 0.0f;
 	circle->b = 1.0f;
 
+	LoadNumbers();
 	updateVMU("LAG TEST", "", 1);
 	while(!done && !EndProgram) 
 	{

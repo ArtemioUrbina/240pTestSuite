@@ -34,11 +34,10 @@
 
 #define INVALID_VIDEO		8
 
-#define PAL_OFFSET			5   // With this offset, PAL signal starts at line 25
+#define PAL_OFFSET			3   // With this offset, PAL signal starts at line 23
 								// verified with the scope. NTSC starts at 22 
 								// after VBI. We can start drawing at 22 in PAL,
-								// but would end 3 lines before 288 and wouldn't
-								// respect the standard.
+								// but wouldn't respect the standard.
 
 #define MODE_NTSC			0
 #define MODE_PAL			1
@@ -54,6 +53,9 @@ extern int W;
 extern int H;
 extern int dW;
 extern int dH;
+
+extern	s8	AspectRatio;
+extern	s8	OffsetH;
 
 void InitVideo();
 void RestoreVideo();
