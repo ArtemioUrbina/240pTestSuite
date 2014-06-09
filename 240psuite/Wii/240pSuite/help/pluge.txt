@@ -11,9 +11,9 @@ this on your TV is usually named "Brightness".
 Reduce the Brightness until these bars: 
       ->   <-                        ->   <-  
 are no longer visible, and then slowly raise it
-until they are *just* visible. 
-
-(Do it without this help window open)    (cont...)
+until they are *just* visible, and go back one
+notch where they blend with the background. Do 
+it without this help window open    (cont...)
                  PLUGE (2/2)
 
 There are three bars on each side, bars closer
@@ -21,6 +21,9 @@ to the center are at 3.5 IRE, the center ones at
 7.5 IRE and the outer ones are at 11.5 IRE. Since
 the Wii/GC color is 8 bits per pixel it can 
 correctly display them at exact values.
+
+The middle bars are true NTSC black at 7.5 IRE, 
+what is usually refered to as the setup level.
 
 This adjustment assures that anything intended
 to be black is actually black, and allows all
