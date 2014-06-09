@@ -228,3 +228,32 @@ void DeleteFrameBuffers()
 	}	
 }
 
+s8 Get576iLine23Option()
+{
+	return(Mode_528i.viYOrigin == PAL_OFFSET-2);
+}
+
+void Set576iLine23Option(s8 set)
+{
+	int oldpos;
+	
+	oldpos = Mode_528i.viYOrigin;
+	
+	if(set)
+		Mode_528i.viYOrigin = PAL_OFFSET-2;
+	else
+		Mode_528i.viYOrigin = PAL_OFFSET;	
+
+	if(oldpos != Mode_528i.viYOrigin)
+	{
+		if(vmode == VIDEO_576I_A264 || vmode == VIDEO_576I)
+		{
+			int oldvmode = vmode;
+			
+			vmode = VIDEO_288P; // lie
+			SetVideoMode(oldvmode);
+		}
+	}	
+	
+	Options.PALline23 = set;
+}

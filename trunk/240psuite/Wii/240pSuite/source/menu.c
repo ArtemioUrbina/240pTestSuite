@@ -237,12 +237,12 @@ void ChangeOptions(ImagePtr title)
 		// Option 6
 		if(Options.EnablePAL)
 		{			
-			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Mode_528i.viYOrigin ==  PAL_OFFSET-2 ? "ON" : "OFF");
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Get576iLine23Option() ? "ON" : "OFF");
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PAL 576i in line 23 1/2:"); y += fh; c++;								
 		}
 		else
 		{			
-			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Mode_528i.viYOrigin ==  PAL_OFFSET-2 ? "ON" : "OFF"); 					
+			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Get576iLine23Option() ? "ON" : "OFF");
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "PAL 576i in line 23 1/2:"); y += fh; c++;						
 		}		
 		
@@ -385,20 +385,7 @@ void ChangeOptions(ImagePtr title)
 						break;				
 					case 6:	
 						if(Options.EnablePAL)
-						{
-							if(Mode_528i.viYOrigin == PAL_OFFSET-2)
-								Mode_528i.viYOrigin = PAL_OFFSET;
-							else
-								Mode_528i.viYOrigin = PAL_OFFSET-2;
-							
-							if(vmode == VIDEO_576I_A264 || vmode == VIDEO_576I)
-							{
-								int oldvmode = vmode;
-								
-								vmode = VIDEO_288P; // lie
-								SetVideoMode(oldvmode);
-							}
-						}
+							Set576iLine23Option(!Get576iLine23Option());
 						break;				
 					case 7:
 						break;
