@@ -49,6 +49,11 @@ extern GXRModeObj *rmode;
 extern u32 vmode;
 extern u8 offsetY;
 
+extern GXRModeObj Mode_240p;
+extern GXRModeObj Mode_480i;
+extern GXRModeObj Mode_264p;
+extern GXRModeObj Mode_528i;
+
 extern int W;
 extern int H;
 extern int dW;

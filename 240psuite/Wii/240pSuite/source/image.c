@@ -192,6 +192,12 @@ inline void EndScene()
 	}
 }
 
+void IgnoreOffset(ImagePtr image)
+{
+	if(image)
+		image->IgnoreOffsetY = 1;
+}
+
 ImagePtr LoadImage(int Texture, int maptoscreen)
 {		
     u32 fmt = 0;
@@ -231,13 +237,17 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	image->FV = 0;
 	image->copyOf = NULL;
 	image->cFB = NULL;
+	image->IgnoreOffsetY = 0;	
+	
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
 			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
 		else
-			CalculateUV(0, 0, dW, dH, image);
-	}
+			CalculateUV(0, 0, dW, dH, image);		
+			
+		IgnoreOffset(image);
+	}	
 
 	return image;
 }
@@ -280,7 +290,8 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	image->FV = image->FV;
 	image->copyOf = source;
 	image->cFB = NULL;
-	source->RefCount ++;
+	image->IgnoreOffsetY = source->IgnoreOffsetY;
+	source->RefCount ++;	
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
@@ -360,6 +371,7 @@ ImagePtr CopyFrameBufferToImage()
 	image->FH = 0;
 	image->FV = 0;
 	image->copyOf = NULL;	
+	IgnoreOffset(image);	
 			
 	return image;
 }
@@ -469,9 +481,8 @@ void DrawImage(ImagePtr image)
 	h = image->h;	
 	
 	// Center display vertically in PAL modes, since images are mostly NTSC
-	if(IsPAL && h != dH)
-		if(!(h/2 == dH && vmode == VIDEO_576I_A264))
-			y+= offsetY;
+	if(!image->IgnoreOffsetY)
+		y+= offsetY;
 		
 	if(image->scale && (vmode == VIDEO_480I_A240 || 
 						vmode == VIDEO_480P_SL || 
@@ -484,7 +495,6 @@ void DrawImage(ImagePtr image)
 	}		
 		
 	GX_LoadTexObj(&image->tex, GX_TEXMAP0);	
-	//GX_InvalidateTexAll();			
 		
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);		// Draw A Quad
 		GX_Position2f32(x, y);				// Top Left

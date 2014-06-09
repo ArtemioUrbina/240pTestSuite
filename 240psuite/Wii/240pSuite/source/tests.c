@@ -49,6 +49,7 @@ void DropShadowTest()
 {
 	char		msg[50];
 	int		    done = 0, x = dW/2, y = dH/2, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
+	int			oldvmode = vmode;
 	u32		    pressed, held;		
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay;	
 
@@ -96,6 +97,11 @@ void DropShadowTest()
 
 		back[1]->y = (dH - 240)/2;
 		overlay->y = (dH - 240)/2;
+		if(offsetY)  // center in PAL modes
+		{
+			back[1]->y -= offsetY;
+			overlay->y -= offsetY;
+		}
 	}
 		
 	ssprite = LoadImage(SHADOWIMG, 0);	
@@ -117,6 +123,18 @@ void DropShadowTest()
 	
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			back[1]->y = (dH - 240)/2;
+			overlay->y = (dH - 240)/2;
+			if(offsetY)  // center in PAL modes
+			{
+				back[1]->y -= offsetY;
+				overlay->y -= offsetY;
+			}
+			oldvmode = vmode;
+		}
+		
 		if(selback == 1)
 		{
 			CalculateUV(x, 0, dW, 240, back[selback]);
@@ -244,6 +262,7 @@ void DropShadowTest()
 void StripedSpriteTest()
 {	
 	int		    done = 0, x = dW/2, y = dH/2, selback = 0;
+	int			oldvmode = vmode;
 	u32		    pressed, held;	
 	ImagePtr	back[4], striped, overlay;	
 
@@ -289,13 +308,30 @@ void StripedSpriteTest()
 
 		back[1]->y = (dH - 240)/2;
 		overlay->y = (dH - 240)/2;
+		if(offsetY)  // center in PAL modes
+		{
+			back[1]->y -= offsetY;
+			overlay->y -= offsetY;
+		}
 	}
 	striped = LoadImage(STRIPEDIMG, 0);
 	if(!striped)
 		return;
 			
 	while(!done && !EndProgram) 
-	{		
+	{	
+		if(oldvmode != vmode)
+		{
+			back[1]->y = (dH - 240)/2;
+			overlay->y = (dH - 240)/2;
+			if(offsetY)  // center in PAL modes
+			{
+				back[1]->y -= offsetY;
+				overlay->y -= offsetY;
+			}
+			oldvmode = vmode;
+		}
+	
 		StartScene();
 		if(selback == 1)
 		{
@@ -379,9 +415,7 @@ void LagTest()
 	back = LoadImage(WHITEIMG, 1);
 	if(!back)
 		return;
-
-	back->w = 320;
-	back->h = 240;
+	
 	back->r = 0x00;
 	back->g = 0x00;
 	back->b = 0x00;
@@ -683,7 +717,7 @@ void LagTest()
 				res = (double)total / 10.0;
 				ms = (double)(res*(1000.0/60.0));
 				sprintf(msg, "%d/10 = %0.2f average frames ~= %0.2f ms", total, res, ms);
-				DrawStringS(60, 110, 0xff, 0x00, 0xff, "+");
+				DrawStringS(60, 110, 0xff, 0x00, 0x00, "+");
 				DrawStringS(55, 70 + fh*10, 0xff, 0x00, 0x00, "_____");
 				DrawStringS(60, 70 + fh*11, 0xff, 0xff, 0xff, msg);
 				DrawStringS(30, 70 + fh*12, 0x00, 0xff, 0xff, "Keep in mind that an NTSC frame is around 16.67 ms");
@@ -746,6 +780,9 @@ void ScrollTest()
 	
 	back->y = (dH - 240)/2;
 	overlay->y = (dH - 240)/2;
+	
+	IgnoreOffset(back);
+	IgnoreOffset(overlay);
 
 	while(!done && !EndProgram) 
 	{		
@@ -821,7 +858,7 @@ void GridScrollTest()
 	u32			    pressed;		
 	ImagePtr		back;
 		
-	back = LoadImage(CIRCLESGRIDIMG, 0);
+	back = LoadImage(CIRCLESGRIDIMG, 1);
 	if(!back)
 		return;  
 
@@ -1573,7 +1610,7 @@ void Alternate240p480i()
 		}
 	}
 	
-	back = LoadImage(WHITEIMG, 0);
+	back = LoadImage(WHITEIMG, 1);
 	if(!back)
 		return;
 		

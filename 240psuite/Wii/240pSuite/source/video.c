@@ -23,10 +23,10 @@
 #include "video.h"
 #include "options.h"
 
- GXRModeObj Mode_240p;
- GXRModeObj Mode_480i;
- GXRModeObj Mode_264p;
- GXRModeObj Mode_528i;
+GXRModeObj Mode_240p;
+GXRModeObj Mode_480i;
+GXRModeObj Mode_264p;
+GXRModeObj Mode_528i;
 
 GXRModeObj *vmodes[TOTAL_VMODES] = {
 	&Mode_240p,
@@ -75,29 +75,22 @@ void InitVideo()
 	Mode_528i = TVPal528IntDf;
 	
 	Mode_264p.viYOrigin = PAL_OFFSET;
-	Mode_528i.viYOrigin = PAL_OFFSET;
+	Mode_528i.viYOrigin = PAL_OFFSET-2;
 	
 	CONF_GetDisplayOffsetH(&OffsetH);
 	AspectRatio = CONF_GetAspectRatio();
 	
 #ifdef WII_VERSION		
 	/* Adjust SCART cable to output RGB and not YUV */		
-	/*
-	switch (mvmode->viTVMode >> 2)
+	if(!VIDEO_HaveComponentCable())
 	{
-	case VI_EURGB60:  	
-	*/
-	if(CONF_GetEuRGB60() > 0)
-	{
-	  Mode_240p.viTVMode = VI_TVMODE_EURGB60_DS;
-	  Mode_480i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  
-	  //Mode_264p.viTVMode = VI_TVMODE_EURGB60_DS;
-	  //Mode_528i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  
+		if(CONF_GetEuRGB60() > 0 || CONF_GetVideo() == CONF_VIDEO_PAL)
+		{
+			Mode_240p.viTVMode = VI_TVMODE_EURGB60_DS;
+			Mode_480i.viTVMode = VI_TVMODE_EURGB60_INT;	  		  	  
+		}		
 	}
-	  /*
-	  break;	
-	}
-	*/
+	  
 #endif
 
 	for(fb = 0; fb < 2; fb++)

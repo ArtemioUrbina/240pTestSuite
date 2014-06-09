@@ -376,14 +376,14 @@ void DrawGrid()
 			{
 				back = LoadImage(GRIDPALIMG, 0);
 				if(!back)
-					return;        	
+					return;    				
 			}
 			
 			if(vmode == VIDEO_576I)
 			{
 				back = LoadImage(GRIDPAL480IMG, 0);
 				if(!back)
-					return;        	
+					return;
 			}
 			
 			if(!back)
@@ -392,6 +392,8 @@ void DrawGrid()
 				if(!back)
 					return;		
 			}
+			
+			IgnoreOffset(back);
 		}
 		
 		StartScene();
@@ -490,6 +492,7 @@ void DrawLinearity()
 				circles = LoadImage(CIRCLESPALIMG, 0);
 				if(!circles)
 					return;
+				IgnoreOffset(circles);
 			}
 			else
 			{
@@ -549,14 +552,12 @@ void Draw100IRE()
 	back = LoadImage(IRE100IMG, 0);
 	if(!back)
 		return;
-  	white = LoadImage(WHITEIMG, 0);
+  	white = LoadImage(WHITEIMG, 1);
 	if(!white)
   	{
   		FreeImage(&back);
 		return;
-  	}
-	white->w = 320;
-	white->h = IsPAL ? 264 : 240;
+  	}	
 	
 	while(!done && !EndProgram) 
 	{		
@@ -714,11 +715,11 @@ void DrawOverscan()
 	
 	border->r = 0xff;
 	border->g = 0x00;
-	border->b = 0x00;
+	border->b = 0x00;	
 	
 	square->r = 0x70;
 	square->g = 0x70;
-	square->b = 0x70;
+	square->b = 0x70;	
 			
 	while(!done && !EndProgram) 
 	{			
@@ -729,7 +730,7 @@ void DrawOverscan()
 			oTop = oLeft = oBottom = oRight = 0;
 			CalculateUV(0, 0, dW, dH, square);
 			CalculateUV(0, 0, dW, dH, border);
-			square->x = square->y = 0;
+			square->x = square->y = 0;			
 			oldvmode = vmode;
 			reset = 0;
 		}		
@@ -792,9 +793,10 @@ void DrawOverscan()
 		if(sel > 3)
 			sel = 0;
 			
+		// Top
 		if(pressed & PAD_TRIGGER_R && sel == 0)
 		{
-			if(square->y + 1 <= dH/2)
+			if(square->y + 1 <= dH/2 && oTop + 1 <= dH/2)
 			{				
 				square->y++;
 				square->h--;
@@ -804,7 +806,7 @@ void DrawOverscan()
 		
 		if(pressed & PAD_TRIGGER_L && sel == 0)
 		{
-			if(square->y - 1 >= 0)
+			if(square->y - 1 >= 0 && oTop - 1 >= 0)
 			{				
 				square->y--;
 				square->h++;	
@@ -812,9 +814,10 @@ void DrawOverscan()
 			}
 		}
 		
+		// Bottom
 		if(pressed & PAD_TRIGGER_R && sel == 1)
 		{
-			if(square->h - 1 >= 0)
+			if(square->h - 1 >= 0 && oBottom + 1 <= dH/2)
 			{								
 				square->h--;
 				oBottom++;
@@ -823,16 +826,17 @@ void DrawOverscan()
 		
 		if(pressed & PAD_TRIGGER_L && sel == 1)
 		{
-			if(oBottom <= dH/2)
+			if(square->h + 1 <= dW && oBottom - 1 >=0 )
 			{								
 				square->h++;	
 				oBottom--;
 			}
 		}
 		
+		// Left
 		if(pressed & PAD_TRIGGER_R && sel == 2)
 		{
-			if(square->x + 1 <= dW/2)
+			if(square->x + 1 <= dW/2 && oLeft + 1 <= dW/2)
 			{				
 				square->x++;
 				square->w--;
@@ -842,7 +846,7 @@ void DrawOverscan()
 		
 		if(pressed & PAD_TRIGGER_L && sel == 2)
 		{
-			if(square->x - 1 >= 0)
+			if(square->x - 1 >= 0 && oLeft - 1 >= 0)
 			{				
 				square->x--;
 				square->w++;
@@ -850,9 +854,10 @@ void DrawOverscan()
 			}
 		}
 		
+		// Right
 		if(pressed & PAD_TRIGGER_R && sel == 3)
 		{
-			if(square->w - 1 >= 0)
+			if(square->w - 1 >= 0 && oRight + 1 <= dW/2)
 			{								
 				square->w--;
 				oRight++;
@@ -861,7 +866,7 @@ void DrawOverscan()
 		
 		if(pressed & PAD_TRIGGER_L && sel == 3)
 		{
-			if(oRight <= dW/2)
+			if(square->w + 1 <= dW && oRight - 1 >= 0)
 			{								
 				square->w++;	
 				oRight--;
