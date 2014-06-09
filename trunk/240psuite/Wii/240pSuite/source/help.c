@@ -112,8 +112,8 @@ char *passivelag_txt[] = {
 NULL
 };
 char *pluge_txt[] = { 
-"                 PLUGE (1/2)\n\nThe picture line-up generation equipment (PLUGE)\nis a test pattern used to adjust the black level\nand contrast of a video signal.\n\nThe pattern in this suite is mainly designed to\nadjust the black level. The control for setting \nthis on your TV is usually named \"Brightness\".\n\nReduce the Brightness until these bars: \n      ->   <-                        ->   <-  \nare no longer visible, and then slowly raise it\nuntil they are *just* visible. \n\n(Do it without this help window open)    (cont...)",
-"                 PLUGE (2/2)\n\nThere are three bars on each side, bars closer\nto the center are at 3.5 IRE, the center ones at \n7.5 IRE and the outer ones are at 11.5 IRE. Since\nthe Wii/GC color is 8 bits per pixel it can \ncorrectly display them at exact values.\n\nThis adjustment assures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.\n",
+"                 PLUGE (1/2)\n\nThe picture line-up generation equipment (PLUGE)\nis a test pattern used to adjust the black level\nand contrast of a video signal.\n\nThe pattern in this suite is mainly designed to\nadjust the black level. The control for setting \nthis on your TV is usually named \"Brightness\".\n\nReduce the Brightness until these bars: \n      ->   <-                        ->   <-  \nare no longer visible, and then slowly raise it\nuntil they are *just* visible, and go back one\nnotch where they blend with the background. Do \nit without this help window open    (cont...)",
+"                 PLUGE (2/2)\n\nThere are three bars on each side, bars closer\nto the center are at 3.5 IRE, the center ones at \n7.5 IRE and the outer ones are at 11.5 IRE. Since\nthe Wii/GC color is 8 bits per pixel it can \ncorrectly display them at exact values.\n\nThe middle bars are true NTSC black at 7.5 IRE, \nwhat is usually refered to as the setup level.\n\nThis adjustment assures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.",
 NULL
 };
 char *scroll_txt[] = { 

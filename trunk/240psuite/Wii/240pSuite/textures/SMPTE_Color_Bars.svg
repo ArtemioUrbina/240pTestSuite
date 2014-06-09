@@ -16,8 +16,8 @@
  <rect x="274" y="160" width="46" height="20" fill="#c0c0c0" />
 
  <rect x="0" y="180" width="60" height="60" fill="#00214c" />
- <rect x="60" y="180" width="60" height="60" fill="#ffffff" />
- <rect x="120" y="180" width="60" height="60" fill="#32006a" />
- <rect x="240" y="180" width="15" height="60" fill="#090909" />
- <rect x="272" y="180" width="15" height="60" fill="#1d1d1d" />
+ <rect x="57" y="180" width="60" height="60" fill="#ffffff" />
+ <rect x="114" y="180" width="60" height="60" fill="#32006a" />
+ <rect x="228" y="180" width="15" height="60" fill="#090909" />
+ <rect x="259" y="180" width="15" height="60" fill="#1d1d1d" />
 </svg>
