@@ -269,19 +269,66 @@ void Draw601ColorBars()
 
 void DrawSMPTEColorBars()
 {
-	int 		done = 0;
+	int 		done = 0, is75 = 1, text = 0;
 	u32			pressed;		
-	ImagePtr	back;
+	ImagePtr	backNTSC75, backNTSC100, backPAL75, backPAL100;
+	char		msg[40];
 	
-	back = LoadImage(SMPTECBIMG, 0);
-	if(!back)
+	backNTSC75 = LoadImage(SMPTECB75IMG, 0);
+	if(!backNTSC75)
 		return;
+		
+	backNTSC100 = LoadImage(SMPTECB100IMG, 0);
+	if(!backNTSC75)
+	{
+		FreeImage(&backNTSC75);
+		return;
+	}
+		
+	backPAL75 = LoadImage(EBUCB75IMG, 0);
+	if(!backNTSC75)
+	{
+		FreeImage(&backNTSC75);
+		FreeImage(&backNTSC100);
+		return;
+	}
+		
+	backPAL100 = LoadImage(EBUCB100IMG, 0);
+	if(!backNTSC75)
+	{
+		FreeImage(&backNTSC75);
+		FreeImage(&backNTSC100);
+		FreeImage(&backNTSC75);
+		return;
+	}
+	
+	IgnoreOffset(backPAL75);
+	IgnoreOffset(backPAL100);
 			
 	while(!done && !EndProgram) 
 	{		
 		StartScene();
-		        
-		DrawImage(back);
+		
+		if(!IsPAL)
+		{
+			if(is75)
+				DrawImage(backNTSC75);
+			else
+				DrawImage(backNTSC100);
+		}
+		else
+		{
+			if(is75)
+				DrawImage(backPAL75);
+			else
+				DrawImage(backPAL100);
+		}
+
+		if(text)
+		{			
+			DrawStringB(260, 20, 0, 0xff, 0, msg);
+			text --;
+		}		
 		
         EndScene();
 		
@@ -291,6 +338,13 @@ void DrawSMPTEColorBars()
 		
 		if (pressed & PAD_BUTTON_B)
 			done =	1;								
+			
+		if (pressed & PAD_BUTTON_A)
+		{
+			is75 = !is75;
+			text = 30;
+			sprintf(msg, "%s%%", is75 ? "75" : "100");
+		}
 	
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
@@ -299,7 +353,10 @@ void DrawSMPTEColorBars()
 		}		
 
 	}
-	FreeImage(&back);
+	FreeImage(&backNTSC75);
+	FreeImage(&backNTSC100);
+	FreeImage(&backPAL75);	
+	FreeImage(&backPAL100);	
 	return;
 }
 
