@@ -60,6 +60,7 @@ struct image_st{
 		u32 	scale;
 		u16 	FH;
 		u16 	FV;
+		u8		IgnoreOffsetY;
 
 		u16     	RefCount;
 		ImagePtr  	copyOf;
@@ -90,6 +91,7 @@ void FlipH(ImagePtr image, u16 flip);
 void FlipV(ImagePtr image, u16 flip);
 void FlipHV(ImagePtr image, u16 flip);
 void DrawImage(ImagePtr image);
+void IgnoreOffset(ImagePtr image);
 
 /************************/
 /*    Scanline Functions   */

@@ -234,14 +234,26 @@ void ChangeOptions(ImagePtr title)
 			y += fh; c++;						
 		}
 		
-		// option 6, Scanline intensity
+		// Option 6
+		if(Options.EnablePAL)
+		{			
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Mode_528i.viYOrigin ==  PAL_OFFSET-2 ? "ON" : "OFF");
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PAL 576i in line 23 1/2:"); y += fh; c++;								
+		}
+		else
+		{			
+			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Mode_528i.viYOrigin ==  PAL_OFFSET-2 ? "ON" : "OFF"); 					
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "PAL 576i in line 23 1/2:"); y += fh; c++;						
+		}		
+		
+		// option 7, Scanline intensity
 		sprintf(intensity, "%d%%", GetScanlineIntensity());
 		if(vmode == VIDEO_480P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline Intensity:"); y += fh; c++;			
 			
-			// option 7, Scanline even/odd
+			// option 8, Scanline even/odd
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanlines:"); y += fh; c++;	
 		}				
@@ -250,45 +262,45 @@ void ChangeOptions(ImagePtr title)
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, intensity);
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanline Intensity:"); y += fh; c++;			
 			
-			// option 7, Scanline even/odd
+			// option 8, Scanline even/odd
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanlines:"); y += fh; c++;	
 		}
 		
 #ifdef WII_VERSION					
-		// option 8, SFC CC
+		// option 9, SFC CC
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.SFCClassicController ? "ON" : "OFF"); 					
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SFC Classic Controller:"); y += fh; c++;			
 #endif		
 			
-		// Option 9
-		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		// Option 10
+		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 			
 		r = g = b = r - 0x30;
 #ifdef WII_VERSION					
-		if(vmode == VIDEO_480P_SL && sel == 6)
+		if(vmode == VIDEO_480P_SL && sel == 7)
 		{
 			if(ControllerType != ControllerGC && !Options.SFCClassicController)
-				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons"); 										
+				DrawStringS(x-40, y + 3*fh, r, g, b, "Adjust with + and - buttons"); 										
 			else
-				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 	
+				DrawStringS(x-40, y + 3*fh, r, g, b, "Adjust with L and R triggers"); 	
 		}
 #else
-		if(vmode == VIDEO_480P_SL && sel == 5)	
-			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
+		if(vmode == VIDEO_480P_SL && sel == 6)	
+			DrawStringS(x-40, y + 3*fh, r, g, b, "Adjust with L and R triggers"); 										
 #endif
 
 
 #ifdef WII_VERSION								
-		if(vmode != VIDEO_480P_SL && (sel == 6 || sel == 7))
+		if(vmode != VIDEO_480P_SL && (sel == 7 || sel == 8))
 #else
-		if(vmode != VIDEO_480P_SL && (sel == 5 || sel == 6))
+		if(vmode != VIDEO_480P_SL && (sel == 6 || sel == 7))
 #endif
-			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
+			DrawStringS(x-40, y + 3*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 			
 #ifdef WII_VERSION					
-		if(sel == 8)	
-			DrawStringS(x-40, y + 4*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]"); 										
+		if(sel == 9)	
+			DrawStringS(x-40, y + 3*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]"); 										
 #endif
 				
 		EndScene();		
@@ -313,6 +325,18 @@ void ChangeOptions(ImagePtr title)
 	    }			
 
 #ifdef WII_VERSION			
+		if ( pressed & PAD_TRIGGER_R && sel == 7)
+	    {
+			if(vmode == VIDEO_480P_SL)
+				RaiseScanlineIntensity();
+	    }
+	    
+	    if ( pressed & PAD_TRIGGER_L && sel == 7)
+	    {
+			if(vmode == VIDEO_480P_SL)
+				LowerScanlineIntensity();
+	    }			
+#else
 		if ( pressed & PAD_TRIGGER_R && sel == 6)
 	    {
 			if(vmode == VIDEO_480P_SL)
@@ -320,18 +344,6 @@ void ChangeOptions(ImagePtr title)
 	    }
 	    
 	    if ( pressed & PAD_TRIGGER_L && sel == 6)
-	    {
-			if(vmode == VIDEO_480P_SL)
-				LowerScanlineIntensity();
-	    }			
-#else
-		if ( pressed & PAD_TRIGGER_R && sel == 5)
-	    {
-			if(vmode == VIDEO_480P_SL)
-				RaiseScanlineIntensity();
-	    }
-	    
-	    if ( pressed & PAD_TRIGGER_L && sel == 5)
 	    {
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
@@ -371,17 +383,34 @@ void ChangeOptions(ImagePtr title)
 						if(Options.EnablePAL)
 							ChangePALBackgroundColor(title);
 						break;				
-					case 6:
-						break;
+					case 6:	
+						if(Options.EnablePAL)
+						{
+							if(Mode_528i.viYOrigin == PAL_OFFSET-2)
+								Mode_528i.viYOrigin = PAL_OFFSET;
+							else
+								Mode_528i.viYOrigin = PAL_OFFSET-2;
+							
+							if(vmode == VIDEO_576I_A264 || vmode == VIDEO_576I)
+							{
+								int oldvmode = vmode;
+								
+								vmode = VIDEO_288P; // lie
+								SetVideoMode(oldvmode);
+							}
+						}
+						break;				
 					case 7:
+						break;
+					case 8:
 						if(vmode == VIDEO_480P_SL)
 							ToggleScanlineEvenOdd();
 						break;
-					case 8:
+					case 9:
 #ifdef WII_VERSION		
 						Options.SFCClassicController = !Options.SFCClassicController;
 						break;										
-					case 9:
+					case 10:
 #endif					
 						if(Controller_ButtonsHeld(0) & PAD_TRIGGER_L)
 							Options.CorrectFor169 = !Options.CorrectFor169;

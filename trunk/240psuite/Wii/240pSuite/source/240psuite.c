@@ -170,8 +170,6 @@ int main(int argc, char **argv)
 		
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");
-		if(VIDEO_HaveSCARTRGBCable())
-			DrawStringS(215, 225, r, g,	 b, "SCART RGB");		
 
 #ifdef WII_VERSION
 		if(Options.ShowWiiRegion)
@@ -308,9 +306,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		if(VIDEO_HaveComponentCable())		
-			DrawStringS(215, 225, r, g,	 b, "Component");		
-		if(VIDEO_HaveSCARTRGBCable())
-			DrawStringS(215, 225, r, g,	 b, "SCART RGB");		
+			DrawStringS(215, 225, r, g,	 b, "Component");
 		
 #ifdef WII_VERSION
 		if(Options.ShowWiiRegion)
