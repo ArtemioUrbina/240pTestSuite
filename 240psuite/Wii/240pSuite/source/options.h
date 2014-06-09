@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEFAULT_OPTIONS { 0, 1, 0, 0, 0, 0, 0xE7, 0xE7, 0xE7 }
+#define DEFAULT_OPTIONS { 0, 1, 0, 0, 0, 0, 0xE7, 0xE7, 0xE7, 1}
 
 struct options_st {
 	int Activate480p;
@@ -34,6 +34,7 @@ struct options_st {
 	int PalBackR;
 	int PalBackG;
 	int PalBackB;
+	int PALline23;
 };
 
 extern struct options_st Options;

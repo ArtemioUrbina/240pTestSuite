@@ -109,48 +109,50 @@ u8 LoadOptions()
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "ScanlineIntensity"))
 	{
 		if(node->child)       
-            SetRawScanlineIntensity(node->child->value.integer);
-		    
+            SetRawScanlineIntensity(node->child->value.integer);		    
 	}	
 	
 	node = mxmlFindElement(xml, xml, "EnablePAL", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "EnablePAL"))
 	{
 		if(node->child)       
-            Options.EnablePAL = node->child->value.integer;		    
-		    
+            Options.EnablePAL = node->child->value.integer;		    		    
 	}	
 	
 	node = mxmlFindElement(xml, xml, "EnablePALBG", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "EnablePALBG"))
 	{
 		if(node->child)       
-            Options.EnablePALBG = node->child->value.integer;		    
-		    
+            Options.EnablePALBG = node->child->value.integer;		    		    
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PalBackR", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PalBackR"))
 	{
 		if(node->child)       
-            Options.PalBackR = node->child->value.integer;		    
-		    
+            Options.PalBackR = node->child->value.integer;		    		    
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PalBackG", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PalBackG"))
 	{
 		if(node->child)       
-            Options.PalBackG = node->child->value.integer;		    
-		    
+            Options.PalBackG = node->child->value.integer;		    		    
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PalBackB", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PalBackB"))
 	{
 		if(node->child)       
-            Options.PalBackB = node->child->value.integer;		    
-		    
+            Options.PalBackB = node->child->value.integer;		    		    
+	}	
+	
+	node = mxmlFindElement(xml, xml, "PALline23", NULL, NULL, MXML_DESCEND);
+	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PALline23"))
+	{
+		if(node->child)       
+            Options.PALline23 = node->child->value.integer;		    		    
+		Set576iLine23Option(Options.PALline23);
 	}	
 	
 	if(xml)
@@ -216,6 +218,8 @@ u8 SaveOptions()
 	mxmlNewInteger(node, Options.PalBackG);	
 	node = mxmlNewElement(options240p, "PalBackB");
 	mxmlNewInteger(node, Options.PalBackB);	
+	node = mxmlNewElement(options240p, "PALline23");
+	mxmlNewInteger(node, Options.PALline23);		
 		
     mxmlSaveFile(xml, file, MXML_NO_CALLBACK);	
 		

@@ -49,11 +49,6 @@ extern GXRModeObj *rmode;
 extern u32 vmode;
 extern u8 offsetY;
 
-extern GXRModeObj Mode_240p;
-extern GXRModeObj Mode_480i;
-extern GXRModeObj Mode_264p;
-extern GXRModeObj Mode_528i;
-
 extern int W;
 extern int H;
 extern int dW;
@@ -68,4 +63,5 @@ void InitFrameBuffers();
 void DeleteFrameBuffers();
 void CleanFB();
 void SetVideoMode(u32 mode);
-u8	 VIDEO_HaveSCARTRGBCable();
+s8 Get576iLine23Option();
+void Set576iLine23Option(s8 set);
