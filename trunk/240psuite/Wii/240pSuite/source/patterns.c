@@ -34,19 +34,142 @@
 
 void DrawPluge()
 {
-	int 		done = 0;
+	int 		done = 0, text = 0, oldvmode = vmode, ShowHelp = 0;
 	u32			pressed;		
-	ImagePtr	back;	
+	ImagePtr	back = NULL, backPAL, backNTSC, black, highlight;	
+	char		msg[50];
 	
-	back = LoadImage(PLUGEIMG, 0);
-	if(!back)
+	backNTSC = LoadImage(PLUGEIMG, 0);
+	if(!backNTSC)
 		return;
+	backPAL = LoadImage(PLUGEPALIMG, 0);
+	if(!backPAL)
+	{
+		FreeImage(&back);	
+		return;
+	}	
+	black = LoadImage(WHITEIMG, 1);
+	if(!black)
+	{
+		FreeImage(&backPAL);
+		FreeImage(&back);
+		return;
+	}	
+	highlight = LoadImage(PLUGEBORDERIMG, 0);
+	if(!highlight)
+	{
+		FreeImage(&backPAL);
+		FreeImage(&black);
+		FreeImage(&back);
+		return;
+	}	
+	
+	black->r = 0x0;
+	black->g = 0x0;
+	black->b = 0x0;
+	black->h = 264;
+	
+	if(!IsPAL)
+		back = backNTSC;
+	else
+		back = backPAL;
 			
 	while(!done && !EndProgram) 
-	{		
+	{
+		if(oldvmode != vmode)
+		{
+			if(!IsPAL)
+				back = backNTSC;
+			else
+				back = backPAL;
+			oldvmode = vmode;
+		}
+				
 		StartScene();
-		        
+		
+		DrawImage(black);  
 		DrawImage(back);
+		
+		if(ShowHelp)
+		{
+			highlight->r = 0xff;
+			highlight->g = 0x0;
+			highlight->b = 0x0;
+			
+			highlight->y = 39;
+						
+			DrawStringB(14, 205, 0xff, 0x00, 0, back == backNTSC ? "11.5" : "7.5");
+			highlight->x = 14;			
+			DrawImage(highlight);
+			
+			if(back == backNTSC)
+			{
+				highlight->r = 0x0;
+				highlight->g = 0xff;				
+			}
+			DrawStringB(44, 205, 0xff, 0x00, 0, back == backNTSC ? "7.5" : "3.5");
+			highlight->x = 44;			
+			DrawImage(highlight);
+			
+			if(back == backNTSC)
+			{
+				highlight->r = 0xff;
+				highlight->g = 0x0;				
+			}
+			else
+			{			
+				highlight->r = 0x0;
+				highlight->g = 0xff;				
+			}
+			DrawStringB(74, 205, 0xff, 0x00, 0, back == backNTSC ? "3.5" : "2");
+			highlight->x = 74;			
+			DrawImage(highlight);
+			
+			
+			if(back == backNTSC)
+			{
+				highlight->r = 0xff;
+				highlight->g = 0x0;				
+			}
+			else
+			{			
+				highlight->r = 0x0;
+				highlight->g = 0xff;				
+			}			
+			DrawStringB(228, 205, 0xff, 0x00, 0, back == backNTSC ? "3.5" : "2");
+			highlight->x = 228;			
+			DrawImage(highlight);
+			
+			if(back == backNTSC)
+			{
+				highlight->r = 0x0;
+				highlight->g = 0xff;				
+			}
+			else
+			{
+				highlight->r = 0xff;
+				highlight->g = 0x0;				
+			}
+			DrawStringB(259, 205, 0xff, 0x00, 0, back == backNTSC ? "7.5" : "3.5");
+			highlight->x = 259;			
+			DrawImage(highlight);
+			
+			highlight->r = 0xff;
+			highlight->g = 0x0;
+			highlight->b = 0x0;	
+			DrawStringB(289, 205, 0xff, 0x00, 0, back == backNTSC ? "11.5" : "7.5");
+			highlight->x = 289;			
+			DrawImage(highlight);
+
+			ShowHelp--;
+		}
+		
+		
+		if(text)
+		{			
+			DrawStringB(228, 20, 0, 0xff, 0, msg);
+			text --;
+		}		
 		
         EndScene();
 		
@@ -56,15 +179,40 @@ void DrawPluge()
 				
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
-			DrawMenu = 1;					
-			HelpData = PLUGEHELP;
+			DrawMenu = 1;			
+			HelpData = PLUGEHELP;			
 		}
 			
 		if (pressed & PAD_BUTTON_B)
 			done =	1;										
+			
+		if (pressed & PAD_BUTTON_A)
+		{
+			if(!IsPAL)
+			{
+				if(back == backNTSC)
+				{
+					sprintf(msg, "RGB Full RANGE");
+					back = backPAL;
+				}
+				else
+				{
+					sprintf(msg, "NTSC 7.5 IRE");
+					back = backNTSC;
+				}
+					
+				text = 60;				
+			}
+		}
+		
+		if (pressed & PAD_BUTTON_X)
+			ShowHelp = 100;
 
 	}
-	FreeImage(&back);
+	FreeImage(&highlight);
+	FreeImage(&backNTSC);
+	FreeImage(&backPAL);
+	FreeImage(&black);
 	return;
 }
 
@@ -105,9 +253,9 @@ void DrawGrayRamp()
 
 void DrawWhiteScreen()
 {
-	int 		done = 0, color = 0;
-	u32		pressed;		
-	ImagePtr	back;
+	int 		done = 0, color = 0, BlackLevel = 0x00, text = 0;
+	u32			pressed;		
+	ImagePtr	back;	
 	
 	back = LoadImage(WHITEIMG, 1);
 	if(!back)
@@ -118,12 +266,29 @@ void DrawWhiteScreen()
 		back->w = 640;
 		back->h = 480;
 	}
+	
+	if(!IsPAL)
+		BlackLevel = 0x13; // 7.5 IRE
+	else
+		BlackLevel = 0x00; // 0 IRE
 		
 	while(!done && !EndProgram) 
 	{		
+		if(IsPAL)
+			BlackLevel = 0x00;
+			
 		StartScene();
 		        
 		DrawImage(back);
+		
+		if(text && color == 1)
+		{			
+			if(BlackLevel)
+				DrawStringB(200, 20, 0, 0xff, 0, "Black Level: 0 IRE");
+			else
+				DrawStringB(200, 20, 0, 0xff, 0, "Black Level: 7.5 IRE");
+			text --;
+		}			
 		
         EndScene();
 		
@@ -133,6 +298,15 @@ void DrawWhiteScreen()
 				
 		if (pressed & PAD_BUTTON_B)
 			done =	1;						
+			
+		if (pressed & PAD_BUTTON_A && color == 1 && !IsPAL)
+		{
+			if(!BlackLevel)
+				BlackLevel = 0x13;
+			else
+				BlackLevel = 0x0;
+			text = 140;
+		}				
 			
 		if (pressed & PAD_TRIGGER_R)
 			color ++;
@@ -150,7 +324,7 @@ void DrawWhiteScreen()
 			color = 0;
 		if(color < 0)
 			color = 4;
-
+		
 		switch(color)
 		{
 				case 0:
@@ -159,9 +333,9 @@ void DrawWhiteScreen()
 					back->b = 0xff;
 					break;
 				case 1:
-					back->r = 0x00;
-					back->g = 0x00;
-					back->b = 0x00;
+					back->r = BlackLevel;
+					back->g = BlackLevel;
+					back->b = BlackLevel;
 					break;
 				case 2:
 					back->r = 0xff;

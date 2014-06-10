@@ -223,9 +223,18 @@ void DeleteFrameBuffers()
 	}	
 }
 
-s8 Get576iLine23Option()
+char *GetPalStartText()
 {
-	return(Mode_528i.viYOrigin == PAL_OFFSET-2);
+	switch(Options.PALline23)
+	{
+		case PAL_LINE23HALF:
+			return("23 1/2");			
+		case PAL_LINE24:
+			return("24");
+		case PAL_CENTERED:
+			return("Centered");
+	}
+	return("");
 }
 
 void Set576iLine23Option(s8 set)
@@ -234,18 +243,32 @@ void Set576iLine23Option(s8 set)
 	
 	oldpos = Mode_528i.viYOrigin;
 	
-	if(set)
-		Mode_528i.viYOrigin = PAL_OFFSET-2;
-	else
-		Mode_528i.viYOrigin = PAL_OFFSET;	
-
+	if(set > PAL_CENTERED)
+		set = PAL_LINE23HALF;
+		
+	switch(set)
+	{
+		case PAL_LINE23HALF:
+			Mode_264p.viYOrigin = PAL_OFFSET-2;
+			Mode_528i.viYOrigin = PAL_OFFSET-2;
+			break;
+		case PAL_LINE24:
+			Mode_264p.viYOrigin = PAL_OFFSET;
+			Mode_528i.viYOrigin = PAL_OFFSET;	
+			break;
+		case PAL_CENTERED:
+			Mode_264p.viYOrigin = TVPal264Ds.viYOrigin;
+			Mode_528i.viYOrigin = TVPal528IntDf.viYOrigin;	
+			break;
+	}
+		
 	if(oldpos != Mode_528i.viYOrigin)
 	{
-		if(vmode == VIDEO_576I_A264 || vmode == VIDEO_576I)
+		if(IsPAL)
 		{
 			int oldvmode = vmode;
 			
-			vmode = VIDEO_288P; // lie
+			vmode = VIDEO_240P; // lie
 			SetVideoMode(oldvmode);
 		}
 	}	
