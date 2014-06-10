@@ -66,22 +66,33 @@ void DrawPluge()
 	
 	black->r = 0x0;
 	black->g = 0x0;
-	black->b = 0x0;
-	black->h = 264;
+	black->b = 0x0;	
 	
 	if(!IsPAL)
+	{
 		back = backNTSC;
+		black->h = 240;
+	}
 	else
+	{
 		back = backPAL;
+		black->h = 264;	
+	}
 			
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
 		{
 			if(!IsPAL)
+			{
 				back = backNTSC;
+				black->h = 240;
+			}
 			else
+			{
 				back = backPAL;
+				black->h = 264;
+			}
 			oldvmode = vmode;
 		}
 				
@@ -98,66 +109,39 @@ void DrawPluge()
 			
 			highlight->y = 39;
 						
-			DrawStringB(14, 205, 0xff, 0x00, 0, back == backNTSC ? "11.5" : "7.5");
+			DrawStringB(14, 205, 0xff, 0x00, 0, back == backNTSC ? "11.5" : "3.5");
 			highlight->x = 14;			
 			DrawImage(highlight);
-			
-			if(back == backNTSC)
-			{
-				highlight->r = 0x0;
-				highlight->g = 0xff;				
-			}
-			DrawStringB(44, 205, 0xff, 0x00, 0, back == backNTSC ? "7.5" : "3.5");
+						
+			highlight->r = 0x0;
+			highlight->g = 0xff;							
+			DrawStringB(44, 205, 0xff, 0x00, 0, back == backNTSC ? "7.5" : "2");
 			highlight->x = 44;			
 			DrawImage(highlight);
-			
-			if(back == backNTSC)
-			{
-				highlight->r = 0xff;
-				highlight->g = 0x0;				
-			}
-			else
-			{			
-				highlight->r = 0x0;
-				highlight->g = 0xff;				
-			}
-			DrawStringB(74, 205, 0xff, 0x00, 0, back == backNTSC ? "3.5" : "2");
+						
+			highlight->r = 0xff;
+			highlight->g = 0x0;							
+			DrawStringB(74, 205, 0xff, 0x00, 0, back == backNTSC ? "3.5" : "1");
 			highlight->x = 74;			
 			DrawImage(highlight);
 			
 			
-			if(back == backNTSC)
-			{
-				highlight->r = 0xff;
-				highlight->g = 0x0;				
-			}
-			else
-			{			
-				highlight->r = 0x0;
-				highlight->g = 0xff;				
-			}			
-			DrawStringB(228, 205, 0xff, 0x00, 0, back == backNTSC ? "3.5" : "2");
+			highlight->r = 0xff;
+			highlight->g = 0x0;							
+			DrawStringB(228, 205, 0xff, 0x00, 0, back == backNTSC ? "3.5" : "1");
 			highlight->x = 228;			
 			DrawImage(highlight);
-			
-			if(back == backNTSC)
-			{
-				highlight->r = 0x0;
-				highlight->g = 0xff;				
-			}
-			else
-			{
-				highlight->r = 0xff;
-				highlight->g = 0x0;				
-			}
-			DrawStringB(259, 205, 0xff, 0x00, 0, back == backNTSC ? "7.5" : "3.5");
+						
+			highlight->r = 0x0;
+			highlight->g = 0xff;							
+			DrawStringB(259, 205, 0xff, 0x00, 0, back == backNTSC ? "7.5" : "2");
 			highlight->x = 259;			
 			DrawImage(highlight);
 			
 			highlight->r = 0xff;
 			highlight->g = 0x0;
 			highlight->b = 0x0;	
-			DrawStringB(289, 205, 0xff, 0x00, 0, back == backNTSC ? "11.5" : "7.5");
+			DrawStringB(289, 205, 0xff, 0x00, 0, back == backNTSC ? "11.5" : "3.5");
 			highlight->x = 289;			
 			DrawImage(highlight);
 
@@ -192,7 +176,7 @@ void DrawPluge()
 			{
 				if(back == backNTSC)
 				{
-					sprintf(msg, "RGB Full RANGE");
+					sprintf(msg, "RGB Full Range");
 					back = backPAL;
 				}
 				else
@@ -822,7 +806,8 @@ void Draw100IRE()
 		ControllerScan();
 		
 		held = Controller_ButtonsHeld(0);
-		if (held & PAD_TRIGGER_L)
+		pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_TRIGGER_L || held & PAD_BUTTON_Y)
 		{
       		if(!invert)
         	{    			
@@ -842,7 +827,7 @@ void Draw100IRE()
 			text = 30;
 		}
 	
-		if (held & PAD_TRIGGER_R)
+		if (pressed & PAD_TRIGGER_R || held & PAD_BUTTON_X) 
 		{
       		if(!invert)
         	{				
@@ -861,8 +846,7 @@ void Draw100IRE()
 
 			text = 30;
 		}
-
-		pressed = Controller_ButtonsDown(0);
+		
      	if (pressed & PAD_BUTTON_A)
       	{
 			invert = !invert;
@@ -996,10 +980,7 @@ void DrawOverscan()
 		DrawStringS(x-100, y, 0xff, 0xff, 0xff, "Right Overscan:");
 		sprintf(msg, "%d pixels (%g%%)", oRight, (oRight*100.0f)/(dW/2));
 		DrawStringS(x+20, y, 0xff, 0xff, 0xff, msg);			
-				
-		if(oLeft > 40 || oRight > 40 || oTop > 40 || oBottom > 40)
-			DrawStringS(dW/2-100, 10, 0xff, 0xff, 0xff, "Your display can't possibly be this bad");						
-		
+						
         EndScene();
 		
 		ControllerScan();
