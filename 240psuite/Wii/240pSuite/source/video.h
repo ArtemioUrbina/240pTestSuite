@@ -38,6 +38,9 @@
 								// verified with the scope. NTSC starts at 22 
 								// after VBI. We can start drawing at 22 in PAL,
 								// but wouldn't respect the standard.
+#define PAL_LINE23HALF		0
+#define PAL_LINE24			1
+#define PAL_CENTERED		2
 
 #define MODE_NTSC			0
 #define MODE_PAL			1
@@ -63,5 +66,5 @@ void InitFrameBuffers();
 void DeleteFrameBuffers();
 void CleanFB();
 void SetVideoMode(u32 mode);
-s8 Get576iLine23Option();
 void Set576iLine23Option(s8 set);
+char *GetPalStartText();

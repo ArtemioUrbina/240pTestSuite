@@ -235,15 +235,20 @@ void ChangeOptions(ImagePtr title)
 		}
 		
 		// Option 6
-		if(Options.EnablePAL)
-		{			
-			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Get576iLine23Option() ? "ON" : "OFF");
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PAL 576i in line 23 1/2:"); y += fh; c++;								
-		}
-		else
-		{			
-			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Get576iLine23Option() ? "ON" : "OFF");
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "PAL 576i in line 23 1/2:"); y += fh; c++;						
+		{
+			char palstart[20];
+			
+			sprintf(palstart, "%s", GetPalStartText());
+			if(Options.EnablePAL)
+			{			
+				DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, palstart);
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PAL starting line:"); y += fh; c++;								
+			}
+			else
+			{			
+				DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, palstart);
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "PAL starting line:"); y += fh; c++;						
+			}
 		}		
 		
 		// option 7, Scanline intensity
@@ -385,7 +390,7 @@ void ChangeOptions(ImagePtr title)
 						break;				
 					case 6:	
 						if(Options.EnablePAL)
-							Set576iLine23Option(!Get576iLine23Option());
+							Set576iLine23Option(Options.PALline23+1);
 						break;				
 					case 7:
 						break;

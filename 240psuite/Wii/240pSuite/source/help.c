@@ -31,8 +31,9 @@
 #include "options.h"
 
 char *SMPTEColor_txt[] = { 
-"            SMPTE COLOR BARS (1/2)\n\nIn an SMPTE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on \nand off between every bar, red cycling on and \noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\n                                         (cont...)\n",
-"            SMPTE COLOR BARS (2/2)\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.\n",
+"            SMPTE COLOR BARS (1/3)\n\nThis pattern can be used to calibrate for NTSC\nlevels regarding contrast and brightness, and \nappropiate colors as well. \n\nYou can toggle between 75% and 100% SMPTE color \nbars by pressing $A.\n\nWhen in PAL, this pattern shows the EBU color\nbars intead, since setup starts at 0mV.\n\nIn an SMPTE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\n                                         (cont...)",
+"            SMPTE COLOR BARS (2/3)\n\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on \nand off between every bar, red cycling on and \noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \n                                         (cont...)",
+"            SMPTE COLOR BARS (3/3)\n\ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
 NULL
 };
 char *alt240p_txt[] = { 
@@ -112,8 +113,9 @@ char *passivelag_txt[] = {
 NULL
 };
 char *pluge_txt[] = { 
-"                 PLUGE (1/2)\n\nThe picture line-up generation equipment (PLUGE)\nis a test pattern used to adjust the black level\nand contrast of a video signal.\n\nThe pattern in this suite is mainly designed to\nadjust the black level. The control for setting \nthis on your TV is usually named \"Brightness\".\n\nReduce the Brightness until these bars: \n      ->   <-                        ->   <-  \nare no longer visible, and then slowly raise it\nuntil they are *just* visible, and go back one\nnotch where they blend with the background. Do \nit without this help window open    (cont...)",
-"                 PLUGE (2/2)\n\nThere are three bars on each side, bars closer\nto the center are at 3.5 IRE, the center ones at \n7.5 IRE and the outer ones are at 11.5 IRE. Since\nthe Wii/GC color is 8 bits per pixel it can \ncorrectly display them at exact values.\n\nThe middle bars are true NTSC black at 7.5 IRE, \nwhat is usually refered to as the setup level.\n\nThis adjustment assures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.",
+"                 PLUGE (1/3)\n\nThe picture line-up generation equipment (PLUGE)\nis a test pattern used to adjust the black level\nand contrast of a video signal.\n\nThe pattern in this suite is mainly designed to\nadjust the black level. The control for setting \nthis on your TV is usually named \"Brightness\".\n\nThis adjustment ensures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.\n\nThere are three bars at each side, you can \nhighlight them with the $X button.        (cont...)",
+"                 PLUGE (2/3)\n\nThe $A button changes between NTSC and full range\n(0-255) when in any NTSC mode.        \n                                         \nThe values of the bars depend on your current\nvideo mode. Reduce the Brightness until the \ndesired bars are no longer visible, and then \nslowly raise it until they are *just* visible,\nand go back one notch where they blend with the\nbackground. \n\nValues for the bars when in NTSC mode are: the \nclosest to the center are at 3.5 IRE, the central\nones at 7.5 IRE, and the outer ones at 11.5 IRE. \n                                         (cont...)",
+"                 PLUGE (3/3)\n\nWhen in calibrating for NTSC material, the 7.5 IRE\nbars should blend in the background. The 7.5 IRE in\nNTSC is the black level, also known as setup.\n\nWhen in PAL mode or Full RGB mode, the 2 IRE bars \nare the ones you should calibrate against.",
 NULL
 };
 char *scroll_txt[] = { 
@@ -138,7 +140,7 @@ char *stripes_txt[] = {
 NULL
 };
 char *white_txt[] = { 
-"                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n",
+"                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n\nPressing $A while displaying the black screen and \nin NTSC modes will toggle between 7.5 IRE and the \n0 IRE below black levels. ",
 NULL
 };
 

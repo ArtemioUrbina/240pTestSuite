@@ -10,3 +10,7 @@ screen.
 
 It can also be used to check color purity, and 
 for dead pixels.
+
+Pressing $A while displaying the black screen and 
+in NTSC modes will toggle between 7.5 IRE and the 
+0 IRE below black levels. 

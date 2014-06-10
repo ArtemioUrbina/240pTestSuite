@@ -49,3 +49,5 @@
 <filepath="circlesPAL.png" id="CIRCLESPALIMG" colfmt=6 />
 <filepath="EBUColorBars75.png" id="EBUCB75IMG" colfmt=6 />
 <filepath="EBUColorBars100.png" id="EBUCB100IMG" colfmt=6 />
+<filepath="plugePAL.png" id="PLUGEPALIMG" colfmt=6 />
+<filepath="PLUGEBorder.png" id="PLUGEBORDERIMG" colfmt=6 />
