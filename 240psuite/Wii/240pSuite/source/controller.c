@@ -80,7 +80,7 @@ s32 ControllerInit()
     retval = PAD_Init();
 #ifdef WII_VERSION
     retval = WPAD_Init();
-    WPAD_SetIdleTimeout(60);
+    WPAD_SetIdleTimeout(200);
 #endif    
     return retval;
 }
@@ -491,8 +491,25 @@ u32 Controller_ButtonsHeld(int chan)
         if( wiistate & WPAD_CLASSIC_BUTTON_UP )
             retval |= PAD_BUTTON_UP;
     
-        if( wiistate & WPAD_CLASSIC_BUTTON_HOME )
-            retval |= PAD_BUTTON_START;
+        if(Options.SFCClassicController)
+		{
+			if( wiistate & WPAD_CLASSIC_BUTTON_PLUS )
+				retval |= PAD_BUTTON_START;
+			if( wiistate & WPAD_CLASSIC_BUTTON_FULL_R )
+				retval |= PAD_TRIGGER_R;
+			if( wiistate & WPAD_CLASSIC_BUTTON_FULL_L )
+				retval |= PAD_TRIGGER_L;  
+		}		
+		else // Normal Classic Controller
+		{
+			if( wiistate & WPAD_CLASSIC_BUTTON_HOME )
+				retval |= PAD_BUTTON_START;
+			if( wiistate & WPAD_CLASSIC_BUTTON_PLUS )
+				retval |= PAD_TRIGGER_R;
+			if( wiistate & WPAD_CLASSIC_BUTTON_MINUS )
+				retval |= PAD_TRIGGER_L;  
+		}
+
         if( wiistate & WPAD_CLASSIC_BUTTON_A )
             retval |= PAD_BUTTON_A;
         if( wiistate & WPAD_CLASSIC_BUTTON_B )
@@ -500,11 +517,7 @@ u32 Controller_ButtonsHeld(int chan)
         if( wiistate & WPAD_CLASSIC_BUTTON_X )
             retval |= PAD_BUTTON_X;
         if( wiistate & WPAD_CLASSIC_BUTTON_Y )
-            retval |= PAD_BUTTON_Y;
-        if( wiistate & WPAD_CLASSIC_BUTTON_PLUS )
-            retval |= PAD_TRIGGER_R;
-        if( wiistate & WPAD_CLASSIC_BUTTON_MINUS )
-            retval |= PAD_TRIGGER_L;  
+            retval |= PAD_BUTTON_Y;        
        
 		overflow = 0;
 		
