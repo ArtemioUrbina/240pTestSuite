@@ -21,7 +21,7 @@
 
 #include <gccore.h>
 
-#define TOTAL_VMODES 10
+#define TOTAL_VMODES 8
 
 #define VIDEO_240P      	0   // 240p
 #define VIDEO_480I_A240 	1   // 480i with assets in 240p

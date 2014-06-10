@@ -761,8 +761,7 @@ void DrawLinearity()
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = LINEARITYHELP;
-			oldvmode = vmode;
+			HelpData = LINEARITYHELP;			
 		}	
 	}
 
@@ -932,7 +931,7 @@ void DrawOverscan()
 	int 		done = 0, oLeft = 0, oTop = 0, 
 				oRight = 0, oBottom = 0, 
 				sel = 0, oldvmode = vmode, reset = 0;
-	u32			pressed;		
+	u32			pressed, held;		
 	ImagePtr	square, border;	
 	char		msg[50];
 	
@@ -1006,6 +1005,7 @@ void DrawOverscan()
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
+		held = Controller_ButtonsHeld(0);
 				
 		if(pressed & PAD_BUTTON_START ) 		
 		{
@@ -1025,7 +1025,8 @@ void DrawOverscan()
 			sel = 0;
 			
 		// Top
-		if(pressed & PAD_TRIGGER_R && sel == 0)
+		if((pressed & PAD_TRIGGER_R && sel == 0) ||
+			(held & PAD_BUTTON_X && sel == 0))
 		{
 			if(square->y + 1 <= dH/2 && oTop + 1 <= dH/2)
 			{				
@@ -1035,7 +1036,8 @@ void DrawOverscan()
 			}
 		}
 		
-		if(pressed & PAD_TRIGGER_L && sel == 0)
+		if((pressed & PAD_TRIGGER_L && sel == 0) ||
+			(held & PAD_BUTTON_Y && sel == 0))
 		{
 			if(square->y - 1 >= 0 && oTop - 1 >= 0)
 			{				
@@ -1046,7 +1048,8 @@ void DrawOverscan()
 		}
 		
 		// Bottom
-		if(pressed & PAD_TRIGGER_R && sel == 1)
+		if((pressed & PAD_TRIGGER_R && sel == 1) ||
+			(held & PAD_BUTTON_X && sel == 1))
 		{
 			if(square->h - 1 >= 0 && oBottom + 1 <= dH/2)
 			{								
@@ -1055,7 +1058,8 @@ void DrawOverscan()
 			}
 		}
 		
-		if(pressed & PAD_TRIGGER_L && sel == 1)
+		if((pressed & PAD_TRIGGER_L && sel == 1) ||
+			(held & PAD_BUTTON_Y && sel == 1))
 		{
 			if(square->h + 1 <= dW && oBottom - 1 >=0 )
 			{								
@@ -1065,7 +1069,8 @@ void DrawOverscan()
 		}
 		
 		// Left
-		if(pressed & PAD_TRIGGER_R && sel == 2)
+		if((pressed & PAD_TRIGGER_R && sel == 2) ||
+			(held & PAD_BUTTON_X && sel == 2))
 		{
 			if(square->x + 1 <= dW/2 && oLeft + 1 <= dW/2)
 			{				
@@ -1075,7 +1080,8 @@ void DrawOverscan()
 			}
 		}
 		
-		if(pressed & PAD_TRIGGER_L && sel == 2)
+		if((pressed & PAD_TRIGGER_L && sel == 2) ||
+			(held & PAD_BUTTON_Y && sel == 2))
 		{
 			if(square->x - 1 >= 0 && oLeft - 1 >= 0)
 			{				
@@ -1086,7 +1092,8 @@ void DrawOverscan()
 		}
 		
 		// Right
-		if(pressed & PAD_TRIGGER_R && sel == 3)
+		if((pressed & PAD_TRIGGER_R && sel == 3) ||
+			(held & PAD_BUTTON_X && sel == 3))
 		{
 			if(square->w - 1 >= 0 && oRight + 1 <= dW/2)
 			{								
@@ -1095,7 +1102,8 @@ void DrawOverscan()
 			}
 		}
 		
-		if(pressed & PAD_TRIGGER_L && sel == 3)
+		if((pressed & PAD_TRIGGER_L && sel == 3) ||
+			(held & PAD_BUTTON_Y && sel == 3))
 		{
 			if(square->w + 1 <= dW && oRight - 1 >= 0)
 			{								
