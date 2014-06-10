@@ -36,5 +36,5 @@ When in calibrating for NTSC material, the 7.5 IRE
 bars should blend in the background. The 7.5 IRE in
 NTSC is the black level, also known as setup.
 
-When in PAL mode or Full RGB mode, the 2 IRE bars 
+When in PAL mode or RGB Full Range, the 2 IRE bars 
 are the ones you should calibrate against.
