@@ -245,11 +245,9 @@ void DrawWhiteScreen()
 	if(!back)
 		return;
 		
-	if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
-	{
-		back->w = 640;
-		back->h = 480;
-	}
+	
+	back->w = dW;
+	back->h = dH;
 	
 	if(!IsPAL)
 		BlackLevel = 0x13; // 7.5 IRE
@@ -928,12 +926,12 @@ void DrawOverscan()
 		return;		
 	
 	border->r = 0xff;
-	border->g = 0x00;
-	border->b = 0x00;	
+	border->g = 0xff;
+	border->b = 0xff;	
 	
-	square->r = 0x70;
-	square->g = 0x70;
-	square->b = 0x70;	
+	square->r = 0x60;
+	square->g = 0x60;
+	square->b = 0x60;	
 			
 	while(!done && !EndProgram) 
 	{			
@@ -957,7 +955,7 @@ void DrawOverscan()
 		x = dW/2;
 		y = dH/2-2*fh;
 		
-		DrawStringS(x-110, y+(fh*sel), 0x00, 0x00, 0xff, ">");
+		DrawStringS(x-110, y+(fh*sel), 0xff, 0xff, 0xff, ">");
 				
 		DrawStringS(x-100, y, 0xff, 0xff, 0xff, "Top Overscan:");
 		sprintf(msg, "%d pixels (%g%%)", oTop, (oTop*100.0f)/(dH/2));

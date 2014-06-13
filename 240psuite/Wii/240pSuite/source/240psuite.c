@@ -138,33 +138,7 @@ int main(int argc, char **argv)
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 		
 		y += fh;
-        switch(vmode)
-		{
-			case VIDEO_240P:
-				sprintf(res, "Video: 240p");				
-				break;			
-			case VIDEO_480I_A240:
-				sprintf(res, "Video: 480i (scaled 240p)");
-				break;
-			case VIDEO_480I:
-				sprintf(res, "Video: 480i (Scaling disabled)");
-				break;
-			case VIDEO_288P:
-				sprintf(res, "Video: 288p");				
-				break;			
-			case VIDEO_576I_A264:
-				sprintf(res, "Video: 576i (scaled 264p)");
-				break;
-			case VIDEO_576I:
-				sprintf(res, "Video: 576i (Scaling disabled)");
-				break;
-			case VIDEO_480P:
-				sprintf(res, "Video: 480p (Scaling disabled)");
-				break;
-			case VIDEO_480P_SL:
-				sprintf(res, "Video: 480p (scaled 240p)");
-				break;				
-		}
+        GetVideoModeStr(res, 0);
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); 
 		
