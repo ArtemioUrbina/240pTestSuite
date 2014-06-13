@@ -418,6 +418,7 @@ void ChangeOptions(ImagePtr title)
 									SetVideoMode(VIDEO_576I_SCALED);
 								else
 									SetVideoMode(VIDEO_576I);
+								SetupGX();
 							}
 						}
 						break;				
@@ -451,7 +452,7 @@ void ChangeOptions(ImagePtr title)
 
 void SelectVideoMode(ImagePtr title)
 {
-	int 		sel = 1, close = 0, mode = vmode;;		
+	int 		sel = 1, close = 0, mode = vmode;		
 	ImagePtr	back;
 	
 	back = LoadImage(HELPIMG, 0);
