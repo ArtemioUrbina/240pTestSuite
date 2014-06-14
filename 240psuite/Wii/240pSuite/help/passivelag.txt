@@ -1,4 +1,4 @@
-                   LAG TEST 
+               LAG TEST (1/2)
 
 This test is designed to be used with two displays
 conected at the same time. One being a CRT, or a
@@ -13,4 +13,8 @@ The circles in the bottom help determine the frame
 even when the numbers are blurry.
 
 The Sega Genesis version of the test can be used
-with a Nomad as the reference display.
+with a Nomad as the reference display.   (cont...)
+               LAG TEST (2/2)
+
+You can also chain the output ports of a PVM/BVM
+to an upscaler and use the CRT as reference.

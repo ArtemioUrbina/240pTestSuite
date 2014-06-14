@@ -15,17 +15,18 @@ int main(int argc, char **argv)
     int     *npages;
     char    **realpages = NULL;
     int     realnpages = 0;
+    char    *start = NULL;
     
     FILE    *nfile, *hfile;
 
-    nfile = fopen("helpcode.c", "w");
+    nfile = fopen("helpdata.c", "w");
     if(!nfile)
     {
         fprintf(stderr, "Could not open results  file\n");
         return 0;
     }
 
-    hfile = fopen("helpcode.h", "w");
+    hfile = fopen("helpdata.h", "w");
     if(!hfile)
     {
         fprintf(stderr, "Could not open results  file\n");
@@ -103,13 +104,23 @@ int main(int argc, char **argv)
 	    }  
 
         /*    char    **realpages = NULL;
-    int     realnpages = 0;
+              int     realnpages = 0;
         */
         /* here */
         argv[c][strlen(argv[c]) - 4] = '_';
-        
-        fprintf(nfile, "char *%s[] = { \n", argv[c]);
-        fprintf(hfile, "extern char *%s[];\n", argv[c]);
+                
+        start = strrchr (argv[c], '/'); 
+        if(!start)
+            start = strrchr (argv[c], '\\'); 
+
+        if(start)
+            start ++;
+
+        if(!start)
+            start = argv[c];
+
+        fprintf(nfile, "char *%s[] = { \n", start);
+        fprintf(hfile, "extern char *%s[];\n", start);
 
         for(d = 0; d < realnpages; d ++)
         {

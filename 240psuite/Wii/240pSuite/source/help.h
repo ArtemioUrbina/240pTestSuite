@@ -49,6 +49,8 @@
 #define CHECK480PWII	check480pWii_txt
 #define SHARPNESSHELP	sharpness_txt
 #define OVERSCANHELP	overscan_txt
+#define VIDEOMODEHELP	vmode_txt
+#define OPTIONSHELP		options_txt
 
 extern char *SMPTEColor_txt[];
 extern char *alt240p_txt[];
@@ -66,6 +68,7 @@ extern char *gridscroll_txt[];
 extern char *ire100_txt[];
 extern char *linearity_txt[];
 extern char *manuallag_txt[];
+extern char *options_txt[];
 extern char *overscan_txt[];
 extern char *passivelag_txt[];
 extern char *pluge_txt[];
@@ -74,6 +77,7 @@ extern char *sharpness_txt[];
 extern char *sound_txt[];
 extern char *striped_txt[];
 extern char *stripes_txt[];
+extern char *vmode_txt[];
 extern char *white_txt[];
 
 void HelpWindow(ImagePtr screen);

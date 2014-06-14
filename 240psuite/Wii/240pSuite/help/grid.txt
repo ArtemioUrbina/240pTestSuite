@@ -1,4 +1,4 @@
-                  GRID (1/2)
+                  GRID (1/3)
 
 This grid uses a 320x240 pattern, and should fill
 all of the 4:3 visible area. 
@@ -14,18 +14,23 @@ In PAL resolutions, there are also two different
 grids. 
 
                                     (cont...)
-                  GRID (2/2)
+                  GRID (2/3)
 
 In the 288p PAL video, only 264 are visible lines.
 Since 264 is not an exact multiple of 16, there is
 a centered line of smaller blue rectangles. 
 
 In 576i unscaled 1:1 mode, a full 640x528 grid is
-shown. 
+shown. You can also use the 576i stretched option 
+to fill the whole screen at the cost of 1:1 pixel 
+mapping.
 
 The 240 test suite draws from line 22 onwards from 
 the blanking interval of NTSC signals, and line 23
-for PAL. It uses the whole visible area in both.
+for PAL. You can adjust this value for PAL in 1:1
+mapping modes.
+                                    (cont...)
+                  GRID (2/3)
 
 The d-pad can be used to move the grid around the
 video signal. A button resets it to its position.

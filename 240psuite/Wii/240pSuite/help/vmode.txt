@@ -1,4 +1,4 @@
-            HORIZONTAL STRIPES (1/2)
+                VIDEO MODES
 
 This pattern is designed to show if all lines are
 visible in your setup, and how your video

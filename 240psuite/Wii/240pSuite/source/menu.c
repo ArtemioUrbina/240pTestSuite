@@ -178,10 +178,10 @@ void ChangeOptions(ImagePtr title)
 		u8      g = 0xff;
 		u8      b = 0xff;
 		u8   	c = 1;				    					   
-		u16     x = 80;
+		u16     x = 70;
 		u16     y = 52;
 		u16		OptPos = 140;
-        u32     pressed = 0;
+        u32     pressed = 0, held = 0;
 		char	intensity[80];
 				
 		StartScene();
@@ -262,7 +262,7 @@ void ChangeOptions(ImagePtr title)
 		}
 		else
 		{			
-			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.PALScale576 ? "ON" : "OFF");
+			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.PALScale576 ? "ON" : "OFF");
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Stretch to full 576i:"); y += fh; c++;						
 		}
 		
@@ -271,20 +271,20 @@ void ChangeOptions(ImagePtr title)
 		if(vmode == VIDEO_480P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline Intensity:"); y += fh; c++;			
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p Scanline Intensity:"); y += fh; c++;			
 			
 			// option 9, Scanline even/odd
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD"); 					
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanlines:"); y += fh; c++;	
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p Scanlines:"); y += fh; c++;	
 		}				
 		else
 		{
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, intensity);
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanline Intensity:"); y += fh; c++;			
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p Scanline Intensity:"); y += fh; c++;			
 			
 			// option 9, Scanline even/odd
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, ScanlinesEven() ? "EVEN" : "ODD"); 					
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Scanlines:"); y += fh; c++;	
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p Scanlines:"); y += fh; c++;	
 		}
 		
 #ifdef WII_VERSION					
@@ -292,7 +292,7 @@ void ChangeOptions(ImagePtr title)
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.SFCClassicController ? "ON" : "OFF"); 					
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SFC Classic Controller:"); y += fh; c++;			
 #endif		
-			
+				
 		// Option 11
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 			
@@ -302,13 +302,13 @@ void ChangeOptions(ImagePtr title)
 		if(vmode == VIDEO_480P_SL && sel == 8)
 		{
 			if(ControllerType != ControllerGC && !Options.SFCClassicController)
-				DrawStringS(x-40, y + 2*fh, r, g, b, "Adjust with + and - buttons"); 										
+				DrawStringS(x-40, y + 2*fh, r, g, b, "Adjust with + & - buttons or Left & Right"); 										
 			else
-				DrawStringS(x-40, y + 2*fh, r, g, b, "Adjust with L and R triggers"); 	
+				DrawStringS(x-40, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 	
 		}
 #else
 		if(vmode == VIDEO_480P_SL && sel == 7)	
-			DrawStringS(x-40, y + 2*fh, r, g, b, "Adjust with L and R triggers"); 										
+			DrawStringS(x-40, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 										
 #endif
 
 
@@ -324,12 +324,18 @@ void ChangeOptions(ImagePtr title)
 			DrawStringS(x-40, y + 2*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]"); 										
 #endif
 				
+#ifdef WII_VERSION
+		DrawStringS(x+40, 200, r, g, b, "Press HOME for help");
+#else
+		DrawStringS(x+40, 200, r, g, b, "Press START for help");
+#endif
+		
 		EndScene();		
         
         ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
-		
+		held = Controller_ButtonsHeld(0);
 
 		if ( pressed & PAD_BUTTON_UP )
 	    {
@@ -344,7 +350,7 @@ void ChangeOptions(ImagePtr title)
 		    if(sel > c)
 			    sel = 1;	
 	    }			
-
+				
 #ifdef WII_VERSION			
 		if ( pressed & PAD_TRIGGER_R && sel == 8)
 	    {
@@ -370,11 +376,44 @@ void ChangeOptions(ImagePtr title)
 				LowerScanlineIntensity();
 	    }	
 #endif
+
+#ifdef WII_VERSION			
+		if ( held & PAD_BUTTON_RIGHT && sel == 8)
+	    {
+			if(vmode == VIDEO_480P_SL)
+				RaiseScanlineIntensity();
+	    }
+	    
+	    if ( held & PAD_BUTTON_LEFT && sel == 8)
+	    {
+			if(vmode == VIDEO_480P_SL)
+				LowerScanlineIntensity();
+	    }			
+#else
+		if ( held & PAD_BUTTON_RIGHT && sel == 7)
+	    {
+			if(vmode == VIDEO_480P_SL)
+				RaiseScanlineIntensity();
+	    }
+	    
+	    if ( held & PAD_BUTTON_LEFT && sel == 7)
+	    {
+			if(vmode == VIDEO_480P_SL)
+				LowerScanlineIntensity();
+	    }	
+#endif	
 			
-		if ( pressed & PAD_BUTTON_B ) 		
+		if(pressed & PAD_BUTTON_START)
+		{
+			HelpData = OPTIONSHELP;
+			HelpWindow(title);
+			HelpData = GENERALHELP;
+		}
+		
+		if(pressed & PAD_BUTTON_B ) 		
 			close = 1;	
 	
-		if (pressed & PAD_BUTTON_A)
+		if(pressed & PAD_BUTTON_A)
 		{     
 #ifdef WII_VERSION		
 			switch(sel)
@@ -471,7 +510,7 @@ void SelectVideoMode(ImagePtr title)
 		u8      g = 0xff;
 		u8      b = 0xff;
 		u8   	c = 1;   
-		u16     x = 80;
+		u16     x = 70;
 		u16     y = 70;
         u32     pressed = 0;
 				
@@ -535,6 +574,11 @@ void SelectVideoMode(ImagePtr title)
 			
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
+#ifdef WII_VERSION
+		DrawStringS(x+40, 200, r, g, b, "Press HOME for help");
+#else
+		DrawStringS(x+40, 200, r, g, b, "Press START for help");
+#endif				
 		EndScene();		
         
         ControllerScan();
@@ -553,7 +597,14 @@ void SelectVideoMode(ImagePtr title)
 		    sel ++;
 		    if(sel > c)
 			    sel = 1;	
-	    }			
+	    }	
+
+		if(pressed & PAD_BUTTON_START)
+		{
+			HelpData = VIDEOMODEHELP;
+			HelpWindow(title);
+			HelpData = GENERALHELP;
+		}		
 			
 		if ( pressed & PAD_BUTTON_B ) 		
 			close = 1;	

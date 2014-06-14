@@ -1,0 +1,41 @@
+                OPTIONS (1/3)
+
+#GShow Wii region:#G Determines if the Wii region
+    is shown in the lower left corner.
+
+#GEnable 480p Modes:#G If a component cable is
+    present, this option enables progressive
+    640x480 modes.
+
+#GEnable PAL Modes:#G These are disabled by default
+    since many NTSC TVs don't support them.
+
+#GEnable PAL Background:#G Since most of the menus
+    and screens are designed for 240p, this fills
+    the borders with the selected color, however
+                                        #C(cont...)#C
+                OPTIONS (2/3)
+
+    there are specific PAL patterns that do not 
+    need this, such as grids and overscan.
+
+#GChange PAL Background:#G Select the fill color for
+    the PAL background.
+                
+#GPAL starting line:#G The PAL standars specifies the
+    start of video data at line 23 1/2, this
+    setting allows starting from line 24, 
+    centering the 528 rendered lines in the 576i 
+    signal or moving the whole screen to the bottom.
+
+
+                                        #C(cont...)#C
+                OPTIONS (1/3)
+
+#GStretch to full 576i:#G Since the $H can't render
+    the full 288p/576i screen in 1:1 pixel 
+    mapping, this option enables a video mode for 
+    576i where the 528 lines are streched 
+    vertically to fill the 576i PAL signal. #RThis 
+    is uneven and should only be used to check for 
+    overscan.#R

@@ -266,9 +266,9 @@ void DrawWhiteScreen()
 		if(text && color == 1)
 		{			
 			if(BlackLevel)
-				DrawStringB(200, 20, 0, 0xff, 0, "Black Level: 0 IRE");
-			else
 				DrawStringB(200, 20, 0, 0xff, 0, "Black Level: 7.5 IRE");
+			else
+				DrawStringB(200, 20, 0, 0xff, 0, "Black Level: 0 IRE");
 			text --;
 		}			
 		
