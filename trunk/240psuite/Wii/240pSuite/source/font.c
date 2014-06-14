@@ -82,12 +82,14 @@ void DrawChar(u16 x, u16 y, char c)
 }
 
 void DrawString(u16 x, u16 y, u8 r, u8 g, u8 b, char *str) 
-{
+{	
+	float orig_x = x;
+	int highlight = 0;
+
 	font_t->r = r;
 	font_t->g = g;
 	font_t->b = b;
-	float orig_x = x;
-
+	
 	while (*str) 
 	{		
 		if(*str == '\n')
@@ -97,6 +99,55 @@ void DrawString(u16 x, u16 y, u8 r, u8 g, u8 b, char *str)
 			str++;
 			continue;
 		}
+		
+		if(*str == '#')
+		{						
+			highlight = !highlight;
+			str++;
+			
+			if(highlight && r + g + b != 0x0)
+			{
+				font_t->r = 0x00;
+				font_t->g = 0x00;
+				font_t->b = 0x00;
+				switch(*str)
+				{
+					case 'R':
+						font_t->r = 0xFF;
+						break;
+					case 'G':
+						font_t->g = 0xFF;
+						break;
+					case 'B':
+						font_t->b = 0xFF;
+						break;
+					case 'Y':
+						font_t->r = 0xFF;
+						font_t->g = 0xFF;
+						break;
+					case 'C':
+						font_t->g = 0xFF;
+						font_t->b = 0xFF;
+						break;
+					case 'M':
+						font_t->r = 0xFF;
+						font_t->b = 0xFF;
+						break;
+					default:						
+						font_t->g = 0xFF;
+						break;
+				}
+			}			
+			else
+			{
+				font_t->r = r;
+				font_t->g = g;
+				font_t->b = b;
+			}
+			str++;
+			continue;
+		}
+				
 		DrawChar(x, y, *str++);
 		x += fw;
 	}

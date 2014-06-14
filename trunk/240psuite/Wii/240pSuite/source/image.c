@@ -517,7 +517,7 @@ void DrawImage(ImagePtr image)
 }
 
 
-#define SCANSTEP 0x0a
+#define SCANSTEP 0x03
 ImagePtr   scanlines = NULL;
 
 void LoadScanlines()

@@ -1,4 +1,4 @@
-                DROP SHADOW TEST 
+              DROP SHADOW TEST 
 
 This is a crucial test for 240p upscan converters.
 It displays a simple sprite shadow (32x32 pixels)

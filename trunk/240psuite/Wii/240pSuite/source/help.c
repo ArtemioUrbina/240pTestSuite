@@ -68,7 +68,7 @@ char *colors_txt[] = {
 NULL
 };
 char *dshadow_txt[] = { 
-"                DROP SHADOW TEST \n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\n(25Hz) shadow on a 60hz (50hz) signal. No \nbackground detail should be lost and the shadow \nshould be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button $X. Backgrounds can be\nswitched with the A button and button $Y\ntoggles sprites. \n",
+"              DROP SHADOW TEST \n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\n(25Hz) shadow on a 60hz (50hz) signal. No \nbackground detail should be lost and the shadow \nshould be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button $X. Backgrounds can be\nswitched with the A button and button $Y\ntoggles sprites. ",
 NULL
 };
 char *general_txt[] = { 
@@ -81,12 +81,13 @@ char *gray_txt[] = {
 NULL
 };
 char *grid_txt[] = { 
-"                  GRID (1/2)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. Consumer TVs may not show the red squares.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
-"                  GRID (2/2)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. \n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 23\nfor PAL. It uses the whole visible area in both.\n\nThe d-pad can be used to move the grid around the\nvideo signal. A button resets it to its position.\n",
+"                  GRID (1/3)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. Consumer TVs may not show the red squares.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    (cont...)",
+"                  GRID (2/3)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. You can also use the 576i stretched option \nto fill the whole screen at the cost of 1:1 pixel \nmapping.\n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 23\nfor PAL. You can adjust this value for PAL in 1:1\nmapping modes.\n                                    (cont...)",
+"                  GRID (2/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. A button resets it to its position.\n",
 NULL
 };
 char *gridscroll_txt[] = { 
-"                GRID SCROLL TEST\n\nA grid is scrolled vertically or horizontally,\nwhich can be used to test linearity of the signal\nand how well the display copes with scrolling.\n\nThe button $Y can be used to toggle between\nhorizontal and vertical, while the d-pad regulates\nspeed; $A button stops and button $X changes\ndirection. \n",
+"                GRID SCROLL TEST\n\nA grid is scrolled vertically or horizontally,\nwhich can be used to test linearity of the signal\nand how well the display or video processor copes\nwith scrolling and framerate.\n\nButton $Y can be used to toggle between horizontal\nand vertical, while the d-pad regulates speed. \nButton $A stops the scroll and button $X changes\ndirection. \n",
 NULL
 };
 char *ire100_txt[] = { 
@@ -99,9 +100,15 @@ char *linearity_txt[] = {
 NULL
 };
 char *manuallag_txt[] = { 
-"             MANUAL LAG TEST (1/3)\n\nThe main intention is to show a changing pattern\non the screen, and given a visual and repetitive\ncue, play a beep alternating speakers. This\nshould show to some degree the lag (if present)\nwhen processing the signal.\n\nAs an added feature, the user can click the $A\nbutton when the sprite is aligned with the one on\nthe background, and the offset in frames form the\nactual intersection will be shown on screen. This\ncan be repeated ten times and the software will\ncalculate the average. Whenever the button was\npressed before the actual intersection frame, the\n                                       (cont...)",
-"             MANUAL LAG TEST (2/3)\n\nresult will be ignored (but still shown onscreen).\nButton $X can be used to change the direction\nof the sprite from vertical to horizontal, or\ndisplay both at the same time.\n\nOf course the evaluation is dependent on reflexes\nand/or rhythm more than anything. The visual and\naudio cues are the more revealing aspects which the\nuser should consider, of course the interactive\nfactor can give an experienced player the hang of\nthe system when testing via different connections.\n\n\n                                          (cont...)",
-"             MANUAL LAG TEST (3/3)\n\nSince a frame is around 16 ms (1000/60), that value\nmust be considered the general error when using the\ntest results. \n\n",
+"             MANUAL LAG TEST (1/3)\n\nThe main intention is to show a changing pattern\non the screen, which can be complemented with \naudio and vibration on the controller if set. \nThis should show to some degree any lag when  \nprocessing the signal.\n\nAs an added feature, the user can click the $A\nbutton when the sprite is aligned with the one on\nthe background, and the offset in frames form the\nactual intersection will be shown on screen. This\ncan be repeated ten times and the software will\ncalculate the average. Whenever the button was\npressed before the actual intersection frame, the\n                                        (cont...)",
+"             MANUAL LAG TEST (2/3)\n\nresult will be ignored (but still shown onscreen).\nButton $X can be used to change the direction\nof the sprite from vertical to horizontal, or\ndisplay both at the same time.\n\n\nOf course the evaluation is dependent on reflexes\nand/or rhythm more than anything. The visual and\naudio cues are the more revealing aspects which \nthe user should consider, of course the interactive\nfactor can give an experienced player the hang of\nthe system when testing via different connections.\n\n                                        (cont...)",
+"             MANUAL LAG TEST (3/3)\n\nSince a frame is around 16 ms (1000/60) in NTSC \nand 20 ms (1000/50) in PAL, that value must be \nconsidered the general error when using the test \nresults. \n\n",
+NULL
+};
+char *options_txt[] = { 
+"                OPTIONS (1/3)\n\n#GShow Wii region:#G Determines if the Wii region\n    is shown in the lower left corner.\n\n#GEnable 480p Modes:#G If a component cable is\n    present, this option enables progressive\n    640x480 modes.\n\n#GEnable PAL Modes:#G These are disabled by default\n    since many NTSC TVs don't support them.\n\n#GEnable PAL Background:#G Since most of the menus\n    and screens are designed for 240p, this fills\n    the borders with the selected color, however\n                                        #C(cont...)#C",
+"                OPTIONS (2/3)\n\n    there are specific PAL patterns that do not \n    need this, such as grids and overscan.\n\n#GChange PAL Background:#G Select the fill color for\n    the PAL background.\n                \n#GPAL starting line:#G The PAL standars specifies the\n    start of video data at line 23 1/2, this\n    setting allows starting from line 24, \n    centering the 528 rendered lines in the 576i \n    signal or moving the whole screen to the bottom.\n\n\n                                        #C(cont...)#C",
+"                OPTIONS (1/3)\n\n#GStretch to full 576i:#G Since the $H can't render\n    the full 288p/576i screen in 1:1 pixel \n    mapping, this option enables a video mode for \n    576i where the 528 lines are streched \n    vertically to fill the 576i PAL signal. #RThis \n    is uneven and should only be used to check for \n    overscan.#R\n",
 NULL
 };
 char *overscan_txt[] = { 
@@ -109,7 +116,8 @@ char *overscan_txt[] = {
 NULL
 };
 char *passivelag_txt[] = { 
-"                   LAG TEST \n\nThis test is designed to be used with two displays\nconected at the same time. One being a CRT, or a\ndisplay with a known lag as reference, and the\nother the display to test.\n\nUsing a camera, a picture should be taken of both\nscreens at the same time. The picture will show \nthe frame discrepancy between them. \n\nThe circles in the bottom help determine the frame\neven when the numbers are blurry.\n\nThe Sega Genesis version of the test can be used\nwith a Nomad as the reference display.\n",
+"               LAG TEST (1/2)\n\nThis test is designed to be used with two displays\nconected at the same time. One being a CRT, or a\ndisplay with a known lag as reference, and the\nother the display to test.\n\nUsing a camera, a picture should be taken of both\nscreens at the same time. The picture will show \nthe frame discrepancy between them. \n\nThe circles in the bottom help determine the frame\neven when the numbers are blurry.\n\nThe Sega Genesis version of the test can be used\nwith a Nomad as the reference display.   (cont...)",
+"               LAG TEST (2/2)\n\nYou can also chain the output ports of a PVM/BVM\nto an upscaler and use the CRT as reference.",
 NULL
 };
 char *pluge_txt[] = { 
@@ -119,7 +127,7 @@ char *pluge_txt[] = {
 NULL
 };
 char *scroll_txt[] = { 
-"                   SCROLL TEST\n\nThis test shows a two layer background from Sonic\nthe Hedgehog. The speed can be varied with the\nd-pad, and change direction with the button $X.\nThe A button stops the scroll. \n\nSonic The Hedgehog is a trademark of \nSega Enterprises Ltd.",
+"                   SCROLL TEST\n\nThis test shows a two layer background from Sonic\nthe Hedgehog. The speed can be varied with the\nd-pad, and change direction with the button $X.\nThe A button stops the scroll. \n\nThis can be used to notice any drops in framerate\nwhen using a video processor.\n\nSonic The Hedgehog is a trademark of \nSega Enterprises Ltd.",
 NULL
 };
 char *sharpness_txt[] = { 
@@ -131,18 +139,24 @@ char *sound_txt[] = {
 NULL
 };
 char *striped_txt[] = { 
-"              STRIPED SPRITE TEST\n\nThere are actually deinterlacers out there which\ncan display the drop shadows correctly and still\ninterpreted 240p as 480i. With a striped sprite it\nshould be easy to tell if a processor tries to\ndeinterlace (plus interpolate) or not.\n\nYou can change backgrounds with $A.\n",
+"              STRIPED SPRITE TEST\n\nThere actually are deinterlacers out there which\ncan display the drop shadows correctly and still\ninterpreted 240p as 480i. With a striped sprite it\nshould be easy to tell if a processor tries to\ndeinterlace (plus interpolate) or not.\n\nYou can change backgrounds with $A.\n",
 NULL
 };
 char *stripes_txt[] = { 
 "            HORIZONTAL STRIPES (1/2)\n\nThis pattern is designed to show if all lines are\nvisible in your setup, and how your video\nprocessor is handling 240p video. \n\nYou should see a pattern of lines, each one pixel\nin height, starting with a white one at the top of\nthe screen. You can toggle the pattern with \nbutton $X, or turn on auto-toggle each frame with\nthe $A button.\n\nWhen auto-toggle is set, you should see the lines\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\n                                         (cont...)",
-"            HORIZONTAL STRIPES (2/2)\n\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nYou can also display vertical bars by pressing $R,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all one pixel\nwide lines should be of the same width.\n",
+"            HORIZONTAL STRIPES (2/2)\n\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nYou can also display vertical bars by pressing $R,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all lines \nshould be one pixel wide.\n\nThis pattern is completely distorted when using\nthe 576i stretched mode.",
+NULL
+};
+char *vmode_txt[] = { 
+"                VIDEO MODES\n\nThis pattern is designed to show if all lines are\nvisible in your setup, and how your video\nprocessor is handling 240p video. \n\nYou should see a pattern of lines, each one pixel\nin height, starting with a white one at the top of\nthe screen. You can toggle the pattern with \nbutton $X, or turn on auto-toggle each frame with\nthe $A button.\n\nWhen auto-toggle is set, you should see the lines\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\n                                         (cont...)",
+"            HORIZONTAL STRIPES (2/2)\n\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nYou can also display vertical bars by pressing $R,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all lines \nshould be one pixel wide.\n\nThis pattern is completely distorted when using\nthe 576i stretched mode.",
 NULL
 };
 char *white_txt[] = { 
 "                WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n\nPressing $A while displaying the black screen and \nin NTSC modes will toggle between 7.5 IRE and the \n0 IRE below black levels. ",
 NULL
 };
+
 
 char *PrepareHelpText(char *text)
 {
@@ -208,6 +222,13 @@ char *PrepareHelpText(char *text)
 						break;
 					case 'R':
 						buttonName = ControllerButtons[ControlButtonR];
+						break;
+					case 'H':
+#ifdef WII_VERSION					
+						buttonName = "Wii";
+#else
+						buttonName = "GC";
+#endif
 						break;
 					default:
 						buttonName = ControllerButtons[ControlButtonA];
