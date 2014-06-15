@@ -6,30 +6,30 @@ and contrast of a video signal.
 
 The pattern in this suite is mainly designed to
 adjust the black level. The control for setting 
-this on your TV is usually named "Brightness".
+this on your TV is usually named #YBrightness#Y.
 
 This adjustment ensures that anything intended
 to be black is actually black, and allows all
 detail to be seen on dark scenes.
 
 There are three bars at each side, you can 
-highlight them with the $X button.        (cont...)
+highlight them with the $X button.        #C(cont...)#C
                  PLUGE (2/3)
 
 The $A button changes between NTSC and full range
 (0-255) when in any NTSC mode.        
                                          
 The values of the bars depend on your current
-video mode. Reduce the Brightness until the 
+video mode. Reduce the #YBrightness#Y until the 
 desired bars are no longer visible, and then 
-slowly raise it until they are *just* visible,
+slowly raise it until they are #Gjust#G visible,
 and go back one notch where they blend with the
 background. 
 
 Values for the bars when in NTSC mode are: the 
 closest to the center are at 3.5 IRE, the central
 ones at 7.5 IRE, and the outer ones at 11.5 IRE. 
-                                         (cont...)
+                                         #C(cont...)#C
                  PLUGE (3/3)
 
 When in calibrating for NTSC material, the 7.5 IRE

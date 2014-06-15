@@ -104,7 +104,7 @@ void InitVideo()
 	Mode_528i = TVPal528IntDf;
 	
 	Mode_264p.viYOrigin = PAL_OFFSET;
-	Mode_528i.viYOrigin = PAL_OFFSET-2;
+	Mode_528i.viYOrigin = PAL_OFFSET - 2;
 
 #ifdef WII_VERSION		
 	CONF_GetDisplayOffsetH(&OffsetH);
@@ -277,39 +277,33 @@ char *GetPalStartText()
 }
 
 void Set576iLine23Option(s8 set)
-{
-	int oldpos;
-	
-	oldpos = Mode_528i.viYOrigin;
-	
+{	
 	if(set > PAL_BOTTOM)
 		set = PAL_LINE23HALF;
 		
 	switch(set)
 	{
 		case PAL_LINE23HALF:
-			Mode_264p.viYOrigin = PAL_OFFSET-2;
-			Mode_528i.viYOrigin = PAL_OFFSET-2;
+			Mode_264p.viYOrigin = PAL_OFFSET;
+			Mode_528i.viYOrigin = PAL_OFFSET - 2;
 			break;
 		case PAL_LINE24:
-			Mode_264p.viYOrigin = PAL_OFFSET-1;
-			Mode_528i.viYOrigin = PAL_OFFSET-1;	
+			Mode_264p.viYOrigin = PAL_OFFSET + 1;
+			Mode_528i.viYOrigin = PAL_OFFSET - 1;	
 			break;
 		case PAL_CENTERED:
-			Mode_264p.viYOrigin = (VI_MAX_HEIGHT_PAL - 528)/2;
-			Mode_528i.viYOrigin = (VI_MAX_HEIGHT_PAL - 528)/2;	
+			Mode_264p.viYOrigin = (VI_MAX_HEIGHT_PAL/2 - 264)/2; // starts in 32
+			Mode_528i.viYOrigin = (VI_MAX_HEIGHT_PAL - 528)/2;	// starts in 35
 			break;
 		case PAL_BOTTOM:
-			Mode_264p.viYOrigin = VI_MAX_HEIGHT_PAL - 528;
-			Mode_528i.viYOrigin = VI_MAX_HEIGHT_PAL - 528;	
+			Mode_264p.viYOrigin = VI_MAX_HEIGHT_PAL/2 - 264 - 1; // Max output line in 264 mode is 306, starts in 43
+			Mode_528i.viYOrigin = VI_MAX_HEIGHT_PAL - 528;	// max ouput is 310, last line befor pulses, starts in 47
 			break;
 	}
 		
-	if(oldpos != Mode_528i.viYOrigin)
-	{
-		if(IsPAL)
-			SetVideoMode(vmode);		
-	}	
+	
+	if(IsPAL)
+		SetVideoMode(vmode);			
 	
 	Options.PALline23 = set;
 }

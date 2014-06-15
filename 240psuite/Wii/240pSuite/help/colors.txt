@@ -13,7 +13,7 @@ the "Contrast" control on your TV set. Raise it
 until you cannot distinguish between the two
 blocks under "F", and lower it slowly until you
 can clearly tell them apart.          
-                                      (cont...)
+                                      #C(cont...)#C
                COLORBARS (2/2)
 
 The same procedure should be used with each

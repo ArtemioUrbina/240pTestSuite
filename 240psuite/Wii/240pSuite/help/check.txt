@@ -12,7 +12,7 @@ doesn't change at all. This means that the signal
 is being treated as 480i and odd or even frames 
 are being discarded completely.
 
-                                         (cont...)
+                                         #C(cont...)#C
 
              CHECKERBOARD (2/2)
 

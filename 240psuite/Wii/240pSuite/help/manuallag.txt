@@ -13,7 +13,7 @@ actual intersection will be shown on screen. This
 can be repeated ten times and the software will
 calculate the average. Whenever the button was
 pressed before the actual intersection frame, the
-                                        (cont...)
+                                        #C(cont...)#C
              MANUAL LAG TEST (2/3)
 
 result will be ignored (but still shown onscreen).
@@ -22,14 +22,14 @@ of the sprite from vertical to horizontal, or
 display both at the same time.
 
 
-Of course the evaluation is dependent on reflexes
-and/or rhythm more than anything. The visual and
+#ROf course the evaluation is dependent on reflexes
+and/or rhythm more than anything.#R The visual and
 audio cues are the more revealing aspects which 
 the user should consider, of course the interactive
 factor can give an experienced player the hang of
 the system when testing via different connections.
 
-                                        (cont...)
+                                        #C(cont...)#C
              MANUAL LAG TEST (3/3)
 
 Since a frame is around 16 ms (1000/60) in NTSC 
