@@ -28,12 +28,13 @@ GXRModeObj Mode_480i;
 GXRModeObj Mode_264p;
 GXRModeObj Mode_528i;
 
+// Starts in line 23 1/2 and end in line 308. Lines 309 and 310 don't show.
 GXRModeObj TVPal576IntDfFull =
 {
     VI_TVMODE_PAL_INT,      // viDisplayMode
     640,             // fbWidth
     528,             // efbHeight
-    574,             // xfbHeight when using 576 2 lines are not drawn
+    572,             // xfbHeight when using 576 2 lines are not drawn
     (VI_MAX_WIDTH_PAL - 640)/2,         // viXOrigin
     PAL_OFFSET-2, // (VI_MAX_HEIGHT_PAL - 576)/2,        // viYOrigin
     640,             // viWidth
