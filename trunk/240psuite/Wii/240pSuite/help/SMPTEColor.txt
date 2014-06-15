@@ -13,7 +13,7 @@ bars intead, since setup starts at 0mV.
 In an SMPTE color bar image, the top two-thirds
 of the television picture contain seven vertical
 bars of 75% intensity. In order from left to
-                                         (cont...)
+                                         #C(cont...)#C
             SMPTE COLOR BARS (2/3)
 
 right, the colors are gray, yellow, cyan, green,
@@ -29,7 +29,7 @@ Below the main set of seven bars is a strip of
 blue, magenta, cyan, and white castellations. 
 When a television receiver is set to filter out 
 all colors except for blue, these castellations, 
-                                         (cont...)
+                                         #C(cont...)#C
             SMPTE COLOR BARS (3/3)
 
 combined with the main set of color bars, are 

@@ -13,7 +13,7 @@ is normally 40 IRE below the zero value, so, peak
 to peak, an all white signal should be equal to
 140 IRE.
 
-                                     (cont...)
+                                     #C(cont...)#C
                   100 IRE(2/2)
 
 The reason IRE is a relative measurement (percent)

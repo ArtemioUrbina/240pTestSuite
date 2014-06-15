@@ -13,7 +13,7 @@ of the pixel array with "$R" and "$L". The $A
 button allows the user to hide the pixel array
 in order to alternate a fully black screen.
 
-                                     (cont...)
+                                     #C(cont...)#C
               Backlit Test (2/2)
 
 It might be necessary to have a fully-off panel

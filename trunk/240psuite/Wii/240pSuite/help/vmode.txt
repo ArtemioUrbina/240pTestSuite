@@ -1,31 +1,52 @@
-                VIDEO MODES
+             VIDEO MODES (1/4)
 
-This pattern is designed to show if all lines are
-visible in your setup, and how your video
-processor is handling 240p video. 
+The $H version of the 240p suite supports the 
+following video modes:
 
-You should see a pattern of lines, each one pixel
-in height, starting with a white one at the top of
-the screen. You can toggle the pattern with 
-button $X, or turn on auto-toggle each frame with
-the $A button.
+#YNTSC compatible modes (60hz):#Y The first 21
+lines of NTSC are reserved and cannot contain 
+video material in broadcast standards, since 
+line 21 usually has close caption (CC) data.
+Console games typically respect this, since 
+their target display were consumer TVs. It has
+525 lines in interlaced mode, of which only 480
+are visible, 240 in each field. The following
+modes start at line 22 of every field.
 
-When auto-toggle is set, you should see the lines
-alternating rapidly. On some setups, the pattern
-doesn't change at all. This means that the signal
-                                         (cont...)
-            HORIZONTAL STRIPES (2/2)
+                                   #C(cont...)#C
+             VIDEO MODES (2/4)
 
-is being treated as 480i and odd or even frames 
-are being discarded completely.
+ #G240p:#G The progressive variant of NTSC 525i
+    line video, it has 262 lines of which 240
+    video lines are active. This format is 
+    used in most SD game consoles, from the 
+    #YAtari VCS#Y to the #YPS2#Y. The $H version
+    of the suite displays a full 320x240p screen.
 
-A frame counter can be displayed on screen by 
-pressing button $Y.
+ #G480i scaled 240p assets (NTSC):#G This displays
+    the 240p patterns in 480i mode. It uses the 
+    480 visible lines, 240 in each field. The 
+    whole content of the suite is linedoubled in 
+    this mode.
 
-You can also display vertical bars by pressing $R,
-that pattern will help you evaluate if the signal
-is not distorted horizontaly, since all lines 
-should be one pixel wide.
+                                   #C(cont...)#C
+             VIDEO MODES (3/4)
 
-This pattern is completely distorted when using
-the 576i stretched mode.
+ #G480i mixed 480p/240p assets (1:1/NTSC):#G This
+    mode has an identical 480i NTSC signal, and
+    the content of the suite is never line doubled.
+    As a result, most screens end up filling 1/4th
+    of the screen in 1:1 pixel mode. However, 
+    there are several patterns in 480 resolution
+    that fill the screen, such as the grid, scroll
+    and overscan.
+
+
+
+
+
+                                   #C(cont...)#C
+             VIDEO MODES (4/4)
+
+#YPAL compatible modes (50hz):#Y These modes must
+be enabled from the #YOptions#Y menu.

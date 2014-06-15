@@ -13,7 +13,7 @@ video modes.
 In PAL resolutions, there are also two different 
 grids. 
 
-                                    (cont...)
+                                    #C(cont...)#C
                   GRID (2/3)
 
 In the 288p PAL video, only 264 are visible lines.
@@ -29,7 +29,7 @@ The 240 test suite draws from line 22 onwards from
 the blanking interval of NTSC signals, and line 23
 for PAL. You can adjust this value for PAL in 1:1
 mapping modes.
-                                    (cont...)
+                                    #C(cont...)#C
                   GRID (2/3)
 
 The d-pad can be used to move the grid around the
