@@ -1,4 +1,4 @@
-             MANUAL LAG TEST (1/3)
+              MANUAL LAG TEST (1/3)
 
 The main intention is to show a changing pattern
 on the screen, which can be complemented with 
@@ -14,7 +14,7 @@ can be repeated ten times and the software will
 calculate the average. Whenever the button was
 pressed before the actual intersection frame, the
                                         #C(cont...)#C
-             MANUAL LAG TEST (2/3)
+              MANUAL LAG TEST (2/3)
 
 result will be ignored (but still shown onscreen).
 Button $X can be used to change the direction
@@ -30,7 +30,7 @@ factor can give an experienced player the hang of
 the system when testing via different connections.
 
                                         #C(cont...)#C
-             MANUAL LAG TEST (3/3)
+              MANUAL LAG TEST (3/3)
 
 Since a frame is around 16 ms (1000/60) in NTSC 
 and 20 ms (1000/50) in PAL, that value must be 

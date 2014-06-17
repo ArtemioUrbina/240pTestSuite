@@ -1,4 +1,4 @@
-                GRID SCROLL TEST
+                 GRID SCROLL TEST
 
 A grid is scrolled vertically or horizontally,
 which can be used to test linearity of the signal

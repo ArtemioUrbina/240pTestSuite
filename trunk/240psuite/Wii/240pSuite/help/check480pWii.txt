@@ -1,4 +1,4 @@
-             CHECKERBOARD 480p
+                CHECKERBOARD 480p
 
 This is not a problem in your console or setup.
 

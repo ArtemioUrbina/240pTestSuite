@@ -25,8 +25,8 @@
 #GPAL starting line:#G PAL specifies the start of
     video data at line 23 1/2, this setting allows
     starting from line 24, centering the 528 
-    rendered lines in the 576i signal or moving 
-    the whole screen to the bottom.
+    active video lines in the 576i signal or 
+    moving the whole screen to the bottom.
 
 
                                         #C(cont...)#C
@@ -37,8 +37,8 @@
     mapping, this option enables a video mode for 
     576i where the 528 lines are stretched 
     vertically to fill the 576i PAL signal. #RThis 
-    is uneven and should only be used to check for 
-    overscan.#R
+    is uneven and should only be used to visually 
+    check for overscan.#R
 
 #G480p Scanline Intensity:#G When in line doubled
     480p mode, the suite allows the display of

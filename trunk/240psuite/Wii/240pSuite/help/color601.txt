@@ -1,10 +1,10 @@
-           COLOR BARS WITH GRAY SCALE
+            COLOR BARS WITH GRAY SCALE
 
-This pattern idea and layout borrows form the 
-Digital Video Essentials color adjust pattern.
+This pattern idea and layout borrows from the 
+#YDigital Video Essentials#Y color adjust pattern.
 
 It has a gray background as reference, and can 
 be used with color filters in order to adjust 
-color accuracy. If your TV set has a blue only
-mode, you can also use that to correct color
-balance.
+color accuracy. If your display set has a blue 
+only mode, you can also use that to correct 
+color balance.

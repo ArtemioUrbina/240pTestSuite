@@ -1,4 +1,4 @@
-                WHITE SCREEN
+                   WHITE SCREEN
 
 This pattern can be changed between white, black,
 red, green and blue full screens using the $R and 

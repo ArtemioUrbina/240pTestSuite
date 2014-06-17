@@ -1,4 +1,4 @@
-              STRIPED SPRITE TEST
+               STRIPED SPRITE TEST
 
 There actually are deinterlacers out there which
 can display the drop shadows correctly and still
