@@ -32,10 +32,10 @@
                                         #C(cont...)#C
                   OPTIONS (3/4)
 
-#GStretch to full 576i:#G Since the $H can't render
+#GStretch to full 288/576:#G Since the $H can't render
     the full 288p/576i screen in 1:1 pixel 
     mapping, this option enables a video mode for 
-    all PAL modes where the 264/528 lines are 
+    all PAL settings where the 264/528 lines are 
     stretched vertically to fill the 576i PAL 
     signal. #YThis is uneven and should only be 
     used to visually check for overscan.#Y
