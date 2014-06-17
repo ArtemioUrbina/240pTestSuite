@@ -63,6 +63,8 @@ GXRModeObj TVPal264DsFull =
 };
 
 // Starts in line 23 1/2 and end in line 308. Lines 309 and 310 don't show.
+// GC starts at 23
+
 GXRModeObj TVPal576IntDfFull =
 {
     VI_TVMODE_PAL_INT,      // viDisplayMode
@@ -311,7 +313,11 @@ char *GetPalStartText()
 	switch(Options.PALline23)
 	{
 		case PAL_LINE23HALF:
-			return("23 1/2");			
+#ifdef WII_VERSION
+			return("23 1/2");
+#else
+			return("23");
+#endif
 		case PAL_LINE24:
 			return("24");
 		case PAL_CENTERED:

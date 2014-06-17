@@ -854,7 +854,7 @@ void Draw100IRE()
 {
 	int 			done = 0;
 	int				irecount = 10, iremax = 10;  
-	u32				pressed, held, text = 0, invert = 0;	
+	u32				pressed, text = 0, invert = 0;	
 	ImagePtr		back, white;	
 	char			msg[50];
 	int				*irevalues = NULL;
@@ -903,10 +903,9 @@ void Draw100IRE()
 		EndScene();
 		
 		ControllerScan();
-		
-		held = Controller_ButtonsHeld(0);
+				
 		pressed = Controller_ButtonsDown(0);
-		if (pressed & PAD_TRIGGER_L || held & PAD_BUTTON_Y)
+		if (pressed & PAD_TRIGGER_L)
 		{
       		if(!invert)
         	{    		
@@ -927,7 +926,7 @@ void Draw100IRE()
 			back->alpha = irevalues[irecount];
 		}
 	
-		if (pressed & PAD_TRIGGER_R || held & PAD_BUTTON_X) 
+		if (pressed & PAD_TRIGGER_R) 
 		{
       		if(invert)
         	{    		
