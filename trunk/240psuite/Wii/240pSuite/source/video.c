@@ -289,6 +289,23 @@ void DeleteFrameBuffers()
 	}	
 }
 
+void EnableStretchedPALModes(int enable)
+{
+	Options.PALScale576 = enable;	
+	
+	if(enable)
+	{
+		Mode_264p = TVPal264DsFull;
+		Mode_528i = TVPal576IntDfFull;
+	}
+	else
+	{
+		Mode_264p = TVPal264Ds;
+		Mode_528i = TVPal528IntDf;
+		Set576iLine23Option(Options.PALline23);
+	}	
+}
+
 char *GetPalStartText()
 {
 	switch(Options.PALline23)
@@ -332,11 +349,7 @@ void Set576iLine23Option(s8 set)
 			Mode_528i.viYOrigin = VI_MAX_HEIGHT_PAL - 528;	// max ouput is 310, last line befor pulses, starts in 47
 			break;
 	}
-		
-	
-	if(IsPAL)
-		SetVideoMode(vmode);			
-	
+			
 	Options.PALline23 = set;
 }
 
@@ -421,24 +434,4 @@ void GetVideoModeStr(char *res, int shortdesc)
 		}
 
 	}
-}
-
-void EnableStretchedPALModes(int enable)
-{
-	if(enable)
-	{
-		Mode_264p = TVPal264DsFull;
-		Mode_528i = TVPal576IntDfFull;
-	}
-	else
-	{
-		Mode_264p = TVPal264Ds;
-		Mode_528i = TVPal528IntDf;
-		Set576iLine23Option(Options.PALline23);
-	}
-	
-	Options.PALScale576 = enable;
-	
-	if(IsPAL)							
-		SetVideoMode(vmode);		
 }

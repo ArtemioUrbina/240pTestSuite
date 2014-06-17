@@ -179,7 +179,7 @@ void ChangeOptions(ImagePtr title)
 		u8      b = 0xff;
 		u8   	c = 1;				    					   
 		u16     x = 70;
-		u16     y = 52;
+		u16     y = 41;
 		u16		OptPos = 140;
         u32     pressed = 0, held = 0;
 		char	intensity[80];
@@ -189,8 +189,9 @@ void ChangeOptions(ImagePtr title)
 		DrawImage(title);        
 		DrawImage(back);
 
-		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "General Options"); y += 1.5*fh; 
-
+		DrawStringS(x - 20, 42, 0x00, 0xff, 0x00, "General Options"); 
+		
+		y += 2*fh; 
 		// option 1, Show region
 #ifdef WII_VERSION				
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.ShowWiiRegion ? "ON" : "OFF");
@@ -294,7 +295,7 @@ void ChangeOptions(ImagePtr title)
 #endif		
 				
 		// Option 11
-		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		DrawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 			
 		r = g = b = r - 0x30;
 		y += fh / 2;
@@ -445,14 +446,24 @@ void ChangeOptions(ImagePtr title)
 						break;				
 					case 6:	
 						if(Options.EnablePAL)
+						{
 							Set576iLine23Option(Options.PALline23+1);
+							if(IsPAL)	
+							{
+								SetVideoMode(vmode);										
+								SetupGX();							
+							}
+						}
 						break;				
 					case 7:	
 						if(Options.EnablePAL)
 						{
 							EnableStretchedPALModes(!Options.PALScale576);
-							if(IsPAL)											
+							if(IsPAL)	
+							{
+								SetVideoMode(vmode);										
 								SetupGX();							
+							}
 						}
 						break;				
 					case 8:
@@ -466,11 +477,8 @@ void ChangeOptions(ImagePtr title)
 						Options.SFCClassicController = !Options.SFCClassicController;
 						break;										
 					case 11:
-#endif					
-						if(Controller_ButtonsHeld(0) & PAD_TRIGGER_L)
-							Options.CorrectFor169 = !Options.CorrectFor169;
-						else
-							close = 1;
+#endif											
+						close = 1;
 						break;
 					default:
 						break;
@@ -502,7 +510,7 @@ void SelectVideoMode(ImagePtr title)
 		u8      b = 0xff;
 		u8   	c = 1;   
 		u16     x = 70;
-		u16     y = 70;
+		u16     y = 42;
         u32     pressed = 0;
 				
 		StartScene();
@@ -510,7 +518,7 @@ void SelectVideoMode(ImagePtr title)
 		DrawImage(title);		
 		DrawImage(back);        
 
-		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 2*fh; 
+		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 3*fh; 
 		
 		mode = vmode;		
 			
@@ -524,27 +532,31 @@ void SelectVideoMode(ImagePtr title)
 		y += fh/2;
 		if(Options.EnablePAL)
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 264/240p assets (PAL)"); y += fh; c++;			
 			if(!Options.PALScale576)
 			{
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 264/240p assets (PAL)"); y += fh; c++;
 				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i 528/480/240p assets (1:1/PAL)"); y += fh; c++;			
 			}
 			else
 			{
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p (stretched)"); y += fh; c++;
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 264/240p assets (stretched/PAL)"); y += fh; c++;
 				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i 528/480/240p assets (stretched/PAL)"); y += fh; c++;			
 			}
 		}
 		else
 		{
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "288p"); y += fh; c++;
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i scaled 264/240p assets (PAL)"); y += fh; c++;			
 			if(!Options.PALScale576)
 			{
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "288p"); y += fh; c++;
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i scaled 264/240p assets (PAL)"); y += fh; c++;						
 				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i 528/480/240p assets (1:1/PAL)"); y += fh; c++;			
 			}
 			else
 			{
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "288p (stretched)"); y += fh; c++;
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i scaled 264/240p assets (stretched/PAL)"); y += fh; c++;
 				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i 528/480/240p assets (stretched/PAL)"); y += fh; c++;			
 			}
 		}			
@@ -561,7 +573,7 @@ void SelectVideoMode(ImagePtr title)
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
 		}			
 			
-		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		DrawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
 #ifdef WII_VERSION
 		DrawStringS(x+40, 200, r, g, b, "Press HOME for help");
@@ -925,8 +937,8 @@ void ShowVideoWarning(ImagePtr screen)
 		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
 		
 		x -= 10;			
-		DrawStringS(x, y, r, 0, 0, "These settings will"); y += fh;
-		DrawStringS(x, y, r, 0, 0, "be ignored:"); y += fh;
+		DrawStringS(x, y, r, 0, 0, "These settings"); y += fh;
+		DrawStringS(x, y, r, 0, 0, "will be ignored:"); y += fh;
 				
 		if(OffsetH != 0)
 		{
@@ -938,7 +950,7 @@ void ShowVideoWarning(ImagePtr screen)
 			DrawStringS(x, y, r, g, b, "-16:9 Aspect Ratio"); y += fh;
 		}
 				
-		DrawStringS(x+5, Back->y + fh*12, 0, g, b, "Press B to return"); 
+		DrawStringS(x, Back->y + fh*12, 0, g, b, "Press B to continue"); 
 		
 		EndScene();		
 			

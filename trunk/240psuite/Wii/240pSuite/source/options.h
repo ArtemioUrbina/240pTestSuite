@@ -22,12 +22,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEFAULT_OPTIONS { 0, 1, 0, 0, 0, 0, 0xE7, 0xE7, 0xE7, 0, 0}
+#define DEFAULT_OPTIONS { \
+	0,\
+	1,\
+	0,\
+	0,\
+	0,\
+	0xE7,\
+	0xE7,\
+	0xE7,\
+	0,\
+	0\
+	}
 
 struct options_st {
 	int Activate480p;
-	int ShowWiiRegion;
-	int CorrectFor169;
+	int ShowWiiRegion;	
 	int SFCClassicController;
 	int EnablePAL;
 	int EnablePALBG;

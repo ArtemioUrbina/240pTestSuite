@@ -35,10 +35,10 @@
 #GStretch to full 576i:#G Since the $H can't render
     the full 288p/576i screen in 1:1 pixel 
     mapping, this option enables a video mode for 
-    576i where the 528 lines are stretched 
-    vertically to fill the 576i PAL signal. #RThis 
-    is uneven and should only be used to visually 
-    check for overscan.#R
+    all PAL modes where the 264/528 lines are 
+    stretched vertically to fill the 576i PAL 
+    signal. #YThis is uneven and should only be 
+    used to visually check for overscan.#Y
 
 #G480p Scanline Intensity:#G When in line doubled
     480p mode, the suite allows the display of
