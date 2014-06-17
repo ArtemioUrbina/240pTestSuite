@@ -757,11 +757,15 @@ void DrawLinearity()
 void Draw100IRE()
 {
 	int 			done = 0;
-	u8				step = 0x01;
+	int				irecount = 10, iremax = 10;  
 	u32				pressed, held, text = 0, invert = 0;	
 	ImagePtr		back, white;	
 	char			msg[50];
+	int				*irevalues = NULL;
+	int				irevalues100[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
+	int				irevalues140[5] = { 0, 63, 127, 190, 255 };	
 	
+	irevalues = irevalues100;
 	back = LoadImage(IRE100IMG, 0);
 	if(!back)
 		return;
@@ -786,7 +790,7 @@ void Draw100IRE()
 				if(text > 30)
 					sprintf(msg, "RANGE 0-100 IRE");
 				else
-					sprintf(msg, "%0.1f IRE", (back->alpha*100.0/255.0));
+					sprintf(msg, "%0.1f IRE", ((back->alpha*100.0)/255.0));
 			  	DrawStringS(225, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
       		}
@@ -795,7 +799,7 @@ void Draw100IRE()
 				if(text > 30)
 					sprintf(msg, "RANGE 100-140 IRE");
 				else
-					sprintf(msg, "%0.0f IRE", 100.0f + abs(40 - (back->alpha * 40.0/255.0)));
+					sprintf(msg, "%0.0f IRE", 100.0f + abs(40.0 - ((back->alpha * 40.0)/255.0)));
 			  	DrawStringS(225, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
       		}
@@ -809,52 +813,63 @@ void Draw100IRE()
 		if (pressed & PAD_TRIGGER_L || held & PAD_BUTTON_Y)
 		{
       		if(!invert)
-        	{    			
-	    		if((int)back->alpha - step <  0x00)
-		    		back->alpha = 0x00;
-				else
-					back->alpha -= step;
+        	{    		
+				irecount --;
+				
+				if(irecount < 0)
+					irecount = 0;	    						
         	}
         	else
-        	{        		
-			    if((int)back->alpha + step > 0xff)
-				    back->alpha = 0xff;
-				else
-					back->alpha += step;
+        	{    
+				irecount ++;
+				
+				if(irecount > iremax)
+					irecount = iremax;					
         	}
 
 			text = 30;
+			back->alpha = irevalues[irecount];
 		}
 	
 		if (pressed & PAD_TRIGGER_R || held & PAD_BUTTON_X) 
 		{
-      		if(!invert)
-        	{				
-				if((int)back->alpha + step > 0xff)
-					back->alpha = 0xff;
-				else
-					back->alpha += step;
+      		if(invert)
+        	{    		
+				irecount --;
+				
+				if(irecount < 0)
+					irecount = 0;	    						
         	}
         	else
-        	{        		
-				if((int)back->alpha - step < 0x00)
-					back->alpha = 0x00;
-				else
-					back->alpha -= step;
+        	{    
+				irecount ++;
+				
+				if(irecount > iremax)
+					irecount = iremax;					
         	}
 
 			text = 30;
+			back->alpha = irevalues[irecount];
 		}
 		
      	if (pressed & PAD_BUTTON_A)
       	{
 			invert = !invert;
         	back->alpha = 0xff;
-			text = 60;			
+			text = 60;
+
 			if(invert)
-				step = 0x04;
+			{
+				irevalues = irevalues140;
+				iremax = 4;
+				irecount = 4;
+			}
 			else
-				step = 0x01;
+			{
+				irevalues = irevalues100;
+				iremax = 10;
+				irecount = 10;
+			}
       	}
 	
 		if (pressed & PAD_BUTTON_B)

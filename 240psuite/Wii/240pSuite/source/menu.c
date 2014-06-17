@@ -85,7 +85,7 @@ void ShowMenu()
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;		
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Credits"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu"); y += 2* fh; c++;			
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Exit 240p Suite"); y += 2* fh; 		
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g,	sel == c ? 0 : b, "Exit 240p Suite"); y += 2* fh; 		
 		
 #ifdef WII_VERSION		
 		u8 		battery;
@@ -191,7 +191,11 @@ void ChangeOptions(ImagePtr title)
 
 		DrawStringS(x - 20, 42, 0x00, 0xff, 0x00, "General Options"); 
 		
+#ifdef WII_VERSION			
 		y += 2*fh; 
+#else
+		y += 4*fh; 
+#endif
 		// option 1, Show region
 #ifdef WII_VERSION				
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.ShowWiiRegion ? "ON" : "OFF");
@@ -259,12 +263,12 @@ void ChangeOptions(ImagePtr title)
 		if(Options.EnablePAL)
 		{			
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.PALScale576 ? "ON" : "OFF");					
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Stretch to full 576i:"); y += fh; c++;								
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Stretch to full 288/576:"); y += fh; c++;								
 		}
 		else
 		{			
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.PALScale576 ? "ON" : "OFF");
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Stretch to full 576i:"); y += fh; c++;						
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Stretch to full 288/576:"); y += fh; c++;						
 		}
 		
 		// option 8, Scanline intensity
@@ -299,17 +303,38 @@ void ChangeOptions(ImagePtr title)
 			
 		r = g = b = r - 0x30;
 		y += fh / 2;
+		
+		if(Options.EnablePAL && Options.PALScale576)		
+		{
+#ifdef WII_VERSION			
+			if(sel == 6)
+#else
+			if(sel == 5)
+#endif
+				DrawStringS(x-35, y + 2*fh, r, g, b, "This setting has no effect in stretched modes");		
+		}
+		
+		if(Options.EnablePAL)
+		{
+#ifdef WII_VERSION	
+			if(sel == 7)
+#else
+			if(sel == 6)
+#endif
+				DrawStringS(x-35, y + 2*fh, r, g, b, "Stretching PAL modes disables 1:1 pixel mapping");
+		}
+			
 #ifdef WII_VERSION					
 		if(vmode == VIDEO_480P_SL && sel == 8)
 		{
 			if(ControllerType != ControllerGC && !Options.SFCClassicController)
-				DrawStringS(x-40, y + 2*fh, r, g, b, "Adjust with + & - buttons or Left & Right"); 										
+				DrawStringS(x-35, y + 2*fh, r, g, b, "Adjust with + & - buttons or Left & Right"); 										
 			else
-				DrawStringS(x-40, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 	
+				DrawStringS(x-35, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 	
 		}
 #else
 		if(vmode == VIDEO_480P_SL && sel == 7)	
-			DrawStringS(x-40, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 										
+			DrawStringS(x-35, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 										
 #endif
 
 
@@ -318,11 +343,11 @@ void ChangeOptions(ImagePtr title)
 #else
 		if(vmode != VIDEO_480P_SL && (sel == 7 || sel == 8))
 #endif
-			DrawStringS(x-40, y + 2*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
+			DrawStringS(x-35, y + 2*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 			
 #ifdef WII_VERSION					
 		if(sel == 10)	
-			DrawStringS(x-40, y + 2*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]"); 										
+			DrawStringS(x-35, y + 2*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]"); 										
 #endif
 				
 #ifdef WII_VERSION

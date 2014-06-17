@@ -1,4 +1,4 @@
-                VIDEO MODES (1/4)
+                VIDEO MODES (1/8)
 
 The $H version of the 240p suite supports the 
 following video modes:
@@ -14,7 +14,7 @@ are visible, 240 in each field. The following
 modes start at line 22 of every field.
 
                                    #C(cont...)#C
-                VIDEO MODES (2/4)
+                VIDEO MODES (2/8)
 
  #G240p:#G The progressive variant of NTSC 525i
     line video, it has 262 lines of which 240
@@ -30,11 +30,13 @@ modes start at line 22 of every field.
     this mode.
 
                                    #C(cont...)#C
-                VIDEO MODES (3/4)
+                VIDEO MODES (3/8)
 
  #G480i mixed 480p/240p assets (1:1/NTSC):#G This
     mode has an identical 480i NTSC signal, and
-    the content of the suite is never line doubled.
+    the content of the suite is never line 
+    doubled.
+
     As a result, most screens end up filling 1/4th
     of the screen in 1:1 pixel mode. However, 
     there are several patterns in 480 resolution
@@ -43,10 +45,84 @@ modes start at line 22 of every field.
 
 
 
+                                   #C(cont...)#C
+                VIDEO MODES (4/8)
+
+#YPAL compatible modes (50hz):#Y These modes must
+be enabled from the #YOptions#Y menu.  The first
+22 lines of PAL are reserved and cannot contain
+video material in broadcast standards. Console 
+games typically respect this, since their target 
+display were consumer TVs. It has 625 lines in 
+interlaced mode, of which only 576 are visible, 
+288 in each field. 
+
+The $H cannot use the whole 288 lines as active
+video while doing 1:1 pixel mapping, instead it
+can draw 264 lines on each field.
+
+                                   #C(cont...)#C
+                VIDEO MODES (5/8)
+
+In order to help overcome this limitation, the
+240p suite adds several options for evaluation of
+PAL modes. 
+
+The first and recommended one, is using the #GPAL 
+starting line#G option. It allows the PAL active
+video to start at either line 23 1/2, 24, centered
+in the signal, or at the bottom of the signal. 
+This allows using the 264/528 patterns to verify
+overscan, alignment, geometry, etc.
+
 
 
                                    #C(cont...)#C
-                VIDEO MODES (4/4)
+                VIDEO MODES (6/8)
 
-#YPAL compatible modes (50hz):#Y These modes must
-be enabled from the #YOptions#Y menu.
+The other option - #GStretch to full 288/576#G - must
+only be used to visually check how the whole video
+signal is filled. It works by using the same 
+264/528 patterns stretched by the $H hardware to 
+fill the active video, resulting in distorted 
+patterns that are not 1:1 pixel mapped. 
+
+Finally, the #GEnable PAL Background#G option fills
+the whole screen with the selected color, enabling
+visualization of the full 264/528 active video 
+signal when the menu or pattern shown does not 
+match the current resolution. This can be combined 
+with the stretched video option as well.
+                                   #C(cont...)#C
+                VIDEO MODES (7/8)
+
+The following modes start at line 23 1/2 of every
+field, as the PAL standard determines.
+
+ #G288p#G: The progressive variant of PAL 625i
+    line video, it has 312 lines of which 288
+    video lines are active. This format is 
+    used in most SD game consoles. The $H version
+    of the suite displays a 320x264p screen.
+
+ #G576i scaled 264/240p assets (PAL):#G This displays
+    the 264p patterns in 576i mode. It uses the 
+    528 visible lines, 264 in each field. The 
+    whole content of the suite is linedoubled in 
+    this mode.                     #C(cont...)#C
+                VIDEO MODES (8/8)
+
+#G576i 528/480/240p assets (1:1/PAL):#G This
+    mode has an identical 576i PAL signal, and
+    the content of the suite is never line 
+    doubled.
+
+    As a result, most screens end up filling 1/4th
+    of the screen in 1:1 pixel mode. However, 
+    there are several patterns in 528 resolution
+    that fill the screen, such as the grid, scroll
+    and overscan.
+
+All of these PAL modes do have a stretched variant
+when that option is enabled.
+
