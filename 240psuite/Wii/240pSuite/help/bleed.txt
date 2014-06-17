@@ -1,4 +1,4 @@
-                  COLOR BLEED 
+                   COLOR BLEED 
 
 This pattern helps diagnose unneeded color
 upsampling. It consists of one pixel width color

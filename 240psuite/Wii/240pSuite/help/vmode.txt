@@ -1,4 +1,4 @@
-             VIDEO MODES (1/4)
+                VIDEO MODES (1/4)
 
 The $H version of the 240p suite supports the 
 following video modes:
@@ -14,7 +14,7 @@ are visible, 240 in each field. The following
 modes start at line 22 of every field.
 
                                    #C(cont...)#C
-             VIDEO MODES (2/4)
+                VIDEO MODES (2/4)
 
  #G240p:#G The progressive variant of NTSC 525i
     line video, it has 262 lines of which 240
@@ -30,7 +30,7 @@ modes start at line 22 of every field.
     this mode.
 
                                    #C(cont...)#C
-             VIDEO MODES (3/4)
+                VIDEO MODES (3/4)
 
  #G480i mixed 480p/240p assets (1:1/NTSC):#G This
     mode has an identical 480i NTSC signal, and
@@ -46,7 +46,7 @@ modes start at line 22 of every field.
 
 
                                    #C(cont...)#C
-             VIDEO MODES (4/4)
+                VIDEO MODES (4/4)
 
 #YPAL compatible modes (50hz):#Y These modes must
 be enabled from the #YOptions#Y menu.

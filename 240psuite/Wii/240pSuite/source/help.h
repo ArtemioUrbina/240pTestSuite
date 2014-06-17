@@ -82,6 +82,7 @@ extern char *white_txt[];
 
 void HelpWindow(ImagePtr screen);
 void DrawHelpWindow();
+void ShowAllHelp();
 
 #endif
 

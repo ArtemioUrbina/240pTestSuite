@@ -1,4 +1,4 @@
-                 PLUGE (1/3)
+                   PLUGE (1/3)
 
 The picture line-up generation equipment (PLUGE)
 is a test pattern used to adjust the black level
@@ -14,10 +14,10 @@ detail to be seen on dark scenes.
 
 There are three bars at each side, you can 
 highlight them with the $X button.        #C(cont...)#C
-                 PLUGE (2/3)
+                   PLUGE (2/3)
 
-The $A button changes between NTSC and full range
-(0-255) when in any NTSC mode.        
+The $A button changes between NTSC and #GRGB Full 
+Range#G (0-255) when in any NTSC mode.        
                                          
 The values of the bars depend on your current
 video mode. Reduce the #YBrightness#Y until the 
@@ -30,11 +30,11 @@ Values for the bars when in NTSC mode are: the
 closest to the center are at 3.5 IRE, the central
 ones at 7.5 IRE, and the outer ones at 11.5 IRE. 
                                          #C(cont...)#C
-                 PLUGE (3/3)
+                   PLUGE (3/3)
 
 When in calibrating for NTSC material, the 7.5 IRE
 bars should blend in the background. The 7.5 IRE in
 NTSC is the black level, also known as setup.
 
-When in PAL mode or RGB Full Range, the 2 IRE bars 
+When in PAL mode or #GRGB Full Range#G, the 2 IRE bars 
 are the ones you should calibrate against.

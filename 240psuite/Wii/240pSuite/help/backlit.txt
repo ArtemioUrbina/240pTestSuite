@@ -1,4 +1,4 @@
-              Backlit Test (1/2)
+                BACKLIT TEST (1/2)
 
 This test allows you to check how the display's
 backlit works when only a small array of pixels
@@ -14,7 +14,7 @@ button allows the user to hide the pixel array
 in order to alternate a fully black screen.
 
                                      #C(cont...)#C
-              Backlit Test (2/2)
+                BACKLIT TEST (2/2)
 
 It might be necessary to have a fully-off panel
 (if possible) when displaying the black 

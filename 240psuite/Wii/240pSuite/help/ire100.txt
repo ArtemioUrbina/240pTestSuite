@@ -1,8 +1,8 @@
-                  100 IRE(1/2)
+                   100 IRE(1/2)
 
 An IRE is a unit used in the measurement of
 composite video signals. Its name is derived from
-the initials of the Institute of Radio Engineers.
+the initials of the #YInstitute of Radio Engineers#Y.
 
 A value of 100 IRE was originally defined to be
 the range from black to white in a video signal.
@@ -14,12 +14,12 @@ to peak, an all white signal should be equal to
 140 IRE.
 
                                      #C(cont...)#C
-                  100 IRE(2/2)
+                   100 IRE(2/2)
 
 The reason IRE is a relative measurement (percent)
 is because a video signal may be any amplitude.
 
-This unit is used in the ITU-R BT.470 which
+This unit is used in the #YITU-R BT.470#Y which
 defines PAL, NTSC and SECAM
 
 You can press $R and $L buttons to step, or hold 

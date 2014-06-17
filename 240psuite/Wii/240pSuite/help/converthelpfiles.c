@@ -16,6 +16,8 @@ int main(int argc, char **argv)
     char    **realpages = NULL;
     int     realnpages = 0;
     char    *start = NULL;
+    char    HelpArray[1024];  // yes, too much.
+    int     HelpArrayPos = 0;
     
     FILE    *nfile, *hfile;
 
@@ -42,6 +44,8 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    sprintf(HelpArray, "#define\tHELPCOUNT\t%d\nchar **HelpArray[HELPCOUNT] = {\n", argc);
+    HelpArrayPos = strlen(HelpArray);
     for(c = 1; c < argc; c++)
     {
         fp = fopen(argv[c], "r");
@@ -121,6 +125,13 @@ int main(int argc, char **argv)
 
         fprintf(nfile, "char *%s[] = { \n", start);
         fprintf(hfile, "extern char *%s[];\n", start);
+        
+        if(c != argc - 1)
+            sprintf(HelpArray+HelpArrayPos, "\t%s,\n", start);
+        else
+            sprintf(HelpArray+HelpArrayPos, "\t%s,\nNULL\n};", start);            
+
+        HelpArrayPos = strlen(HelpArray);
 
         for(d = 0; d < realnpages; d ++)
         {
@@ -156,6 +167,9 @@ int main(int argc, char **argv)
 
     
     }
+
+    fprintf(nfile, "\n%s", HelpArray);
+
     fclose(nfile);
     fclose(hfile);
     return 0;

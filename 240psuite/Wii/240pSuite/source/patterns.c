@@ -25,6 +25,7 @@
 #include "image.h"
 #include "font.h"
 #include "video.h"
+#include "options.h"
 #include "controller.h"
 
 #include "patterns.h"
@@ -978,7 +979,10 @@ void DrawOverscan()
 		DrawStringS(x-100, y, 0xff, 0xff, 0xff, "Right Overscan:");
 		sprintf(msg, "%d pixels (%g%%)", oRight, (oRight*100.0f)/(dW/2));
 		DrawStringS(x+20, y, 0xff, 0xff, 0xff, msg);			
-						
+				
+		if(IsPAL && Options.PALScale576)
+			DrawStringS(50, 50, 0xff, 0xff, 0x00, "When using PAL stretched modes, the pixel\ncount is inaccurate due to vertical scaling.\nRead the #MHELP#M for details");
+			
         EndScene();
 		
 		ControllerScan();

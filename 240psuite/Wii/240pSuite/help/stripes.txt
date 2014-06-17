@@ -1,4 +1,4 @@
-            HORIZONTAL STRIPES (1/2)
+             HORIZONTAL STRIPES (1/2)
 
 This pattern is designed to show if all lines are
 visible in your setup, and how your video
@@ -14,7 +14,7 @@ When auto-toggle is set, you should see the lines
 alternating rapidly. On some setups, the pattern
 doesn't change at all. This means that the signal
                                          #C(cont...)#C
-            HORIZONTAL STRIPES (2/2)
+             HORIZONTAL STRIPES (2/2)
 
 is being treated as 480i and odd or even frames 
 are being discarded completely.
@@ -27,5 +27,5 @@ that pattern will help you evaluate if the signal
 is not distorted horizontaly, since all lines 
 should be one pixel wide.
 
-This pattern is completely distorted when using
-the 576i stretched mode.
+#YThis pattern is completely distorted when using
+the 576i stretched mode.#Y
