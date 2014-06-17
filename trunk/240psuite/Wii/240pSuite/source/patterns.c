@@ -239,8 +239,10 @@ void DrawGrayRamp()
 void DrawWhiteScreen()
 {
 	int 		done = 0, color = 0, BlackLevel = 0x00, text = 0;
+	int			cr, cb, cg, sel = 1, editmode = 0;
 	u32			pressed;		
 	ImagePtr	back;	
+	char		msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
 	
 	back = LoadImage(WHITEIMG, 1);
 	if(!back)
@@ -255,6 +257,7 @@ void DrawWhiteScreen()
 	else
 		BlackLevel = 0x00; // 0 IRE
 		
+	cr = cb = cg = 0xff; // white
 	while(!done && !EndProgram) 
 	{		
 		if(IsPAL)
@@ -264,12 +267,9 @@ void DrawWhiteScreen()
 		        
 		DrawImage(back);
 		
-		if(text && color == 1)
-		{			
-			if(BlackLevel)
-				DrawStringB(200, 20, 0, 0xff, 0, "Black Level: 7.5 IRE");
-			else
-				DrawStringB(200, 20, 0, 0xff, 0, "Black Level: 0 IRE");
+		if(text)
+		{						
+			DrawStringB(200, 20, 0xff, 0xff, 0xff, msg);			
 			text --;
 		}			
 		
@@ -285,35 +285,131 @@ void DrawWhiteScreen()
 		if (pressed & PAD_BUTTON_A && color == 1 && !IsPAL)
 		{
 			if(!BlackLevel)
+			{
 				BlackLevel = 0x13;
+				sprintf(msg, "$GBlack Level: 7.5 IRE#G");
+			}
 			else
+			{
 				BlackLevel = 0x0;
+				sprintf(msg, "#GBlack Level: 0 IRE#G");
+			}
 			text = 140;
 		}				
+		
+		if (pressed & PAD_BUTTON_A && color == 0)
+			editmode = !editmode;
+		
+		if(editmode)
+		{
+			int *current = NULL;
+							
+			sprintf(msg, "#%cR:0x%x#W #%cG:0x%x#W #%cB:0x%x#W", 
+					sel == 1 ? 'G' : 'W', cr,
+					sel == 2 ? 'G' : 'W', cg, 
+					sel == 3 ? 'G' : 'W', cb);
+			text = 1;
+
+			if ( pressed & PAD_BUTTON_LEFT )
+			{
+				sel --;
+				if(sel < 1)
+					sel = 3;
+			}
 			
+			if ( pressed & PAD_BUTTON_RIGHT )
+			{
+				sel ++;
+				if(sel > 3)
+					sel = 1;
+			}
+			
+			switch(sel)
+			{
+				case 1:
+					current = &cr;
+					break;
+				case 2:
+					current = &cg;
+					break;
+				case 3:
+					current = &cb;
+					break;
+			}
+			
+			if ( pressed & PAD_BUTTON_UP )
+			{				
+				if(current)
+				{
+					(*current) ++;
+					if(*current > 0xff)
+						*current = 0xff;
+				}
+			}
+			
+			if ( pressed & PAD_BUTTON_DOWN )
+			{			
+				if(current)
+				{
+					(*current) --;
+					if(*current < 0)
+						*current = 0;
+				}
+			}	
+
+			if ( pressed & PAD_BUTTON_Y )
+			{				
+				if(current)			
+					*current  = 0;					
+			}
+			
+			if ( pressed & PAD_BUTTON_X )
+			{			
+				if(current)				
+					*current = 0xff;
+			}	
+		}
+		
 		if (pressed & PAD_TRIGGER_R)
+		{
 			color ++;
+			if(color > 4)
+				color = 0;		
+			
+			editmode = 0;
+			if(color == 0 && cr + cb + cg != 3*0xff)
+				sprintf(msg, "%s [EDITED]", mode[color]);
+			else
+				sprintf(msg, "%s", mode[color]);
+			text = 30;
+		}
 
 		if (pressed & PAD_TRIGGER_L)
+		{			
 			color --;
+			if(color < 0)
+				color = 4;			
+				
+			editmode = 0;
+			if(color == 0 && cr + cb + cg != 3*0xff)
+				sprintf(msg, "%s [edited]", mode[color]);
+			else
+				sprintf(msg, "%s", mode[color]);
+			text = 30;
+		}
 			
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = WHITEHELP;
-		}	
-
-		if(color > 4)
-			color = 0;
-		if(color < 0)
-			color = 4;
+		}			
 		
 		switch(color)
 		{
 				case 0:
-					back->r = 0xff;
-					back->g = 0xff;
-					back->b = 0xff;
+					back->r = cr;
+					back->g = cg;
+					back->b = cb;
 					break;
 				case 1:
 					back->r = BlackLevel;

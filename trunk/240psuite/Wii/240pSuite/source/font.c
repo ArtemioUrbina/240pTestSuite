@@ -133,9 +133,12 @@ void DrawString(u16 x, u16 y, u8 r, u8 g, u8 b, char *str)
 						font_t->r = 0xFF;
 						font_t->b = 0xFF;
 						break;
-					default:						
+					case 'W':
+					default:											
+						font_t->r = 0xFF;
 						font_t->g = 0xFF;
-						break;
+						font_t->b = 0xFF;
+						break;					
 				}
 			}			
 			else
@@ -163,13 +166,41 @@ void DrawStringS(u16 x, u16 y, u8 r, u8 g, u8 b, char *str)
 	DrawString(x, y, r, g, b, str);
 }
 
+int MeasureString(char *str)
+{
+	int len = 0, count = 0;
+	char *pos = NULL, *check = str;
+	
+	if(!str)
+		return len;
+		
+	len = strlen(str);
+	
+	do
+	{
+		pos = strchr(check, '#');
+		if(pos)
+		{
+			check = pos + 1;
+			count ++;
+		}
+	}while(pos);
+	
+	len = len - 2*count;
+	
+	if(len < 0)
+		len = 0;
+		
+	return len;
+}
+
 void DrawStringB(u16 x, u16 y, u8 r, u8 g, u8 b, char *str) 
 {	
 	if(black_t)
 	{
 		float len;
-		
-		len = strlen(str);
+				
+		len = MeasureString(str);
 		len *= fw;
 
 		black_t->x = x - 1;

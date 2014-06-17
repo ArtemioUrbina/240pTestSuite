@@ -161,7 +161,8 @@ char *vmode_txt[] = {
 NULL
 };
 char *white_txt[] = { 
-"                   WHITE SCREEN\n\nThis pattern can be changed between white, black,\nred, green and blue full screens using the $R and \n$L buttons.\n\nSome displays and scalers have issues when\nchanging between a fully black and a fully white\nscreen.\n\nIt can also be used to check color purity, and \nfor dead pixels.\n\nPressing $A while displaying the black screen and \nin NTSC modes will toggle between 7.5 IRE and the \n0 IRE below black levels. ",
+"                WHITE SCREEN (1/2)\n\nThis pattern can be changed between white, black,\nred, green, blue and custom color full screens by \nusing the $R and $L buttons.\n\nPressing $A while displaying the black screen and \nin NTSC modes will toggle between 7.5 IRE and the \n0 IRE below black levels. \n\nPressing $A while displaying the white screen will\nenter color edit mode, to select the RGB color to\nfill the screen with. Use the d-pad, $X and $Y\nbuttons to change each color.\n\n                                   #C(cont...)#C",
+"                WHITE SCREEN (2/2)\n\nSome displays and scalers have issues when\nchanging between a black 0 IRE and a white screen.\n\nThis pattern can also be used to check color \npurity, and for dead pixels in some displays.\n",
 NULL
 };
 
