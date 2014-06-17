@@ -21,7 +21,7 @@
 
 #include <gccore.h>
 
-#define TOTAL_VMODES 9
+#define TOTAL_VMODES 8
 
 #define VIDEO_240P      	0   // 240p
 #define VIDEO_480I_A240 	1   // 480i with assets in 240p
@@ -31,7 +31,6 @@
 #define VIDEO_576I 		 	5	// 576i with 480p assets 1:1
 #define VIDEO_480P_SL  		6	// 480p with software scanlines
 #define VIDEO_480P 		 	7	// 480p with 480p assets
-#define VIDEO_576I_SCALED 	8	// Full 576i scaled Framebuffer from 528i
 
 #define INVALID_VIDEO		TOTAL_VMODES
 
@@ -71,3 +70,4 @@ void SetVideoMode(u32 mode);
 void Set576iLine23Option(s8 set);
 char *GetPalStartText();
 void GetVideoModeStr(char *res, int shortdesc);
+void EnableStretchedPALModes(int enable);

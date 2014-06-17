@@ -159,7 +159,7 @@ u8 LoadOptions()
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PALScale576"))
 	{
 		if(node->child)       
-            Options.PALScale576 = node->child->value.integer;		    		    		
+            EnableStretchedPALModes(node->child->value.integer); 		
 	}	
 	
 	if(xml)

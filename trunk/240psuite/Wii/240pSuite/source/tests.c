@@ -54,7 +54,7 @@ void DropShadowTest()
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay;	
 
 	if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
-		vmode != VIDEO_576I && vmode != VIDEO_576I_SCALED)
+		vmode != VIDEO_576I)
 	{		
 		back[0] = LoadImage(MOTOKOIMG, 0);
 		if(!back[0])
@@ -268,7 +268,7 @@ void StripedSpriteTest()
 	ImagePtr	back[4], striped, overlay;	
 
 	if(vmode != VIDEO_480P && vmode != VIDEO_480I && 
-		vmode != VIDEO_576I && vmode != VIDEO_576I_SCALED)
+		vmode != VIDEO_576I)
 	{		
 		back[0] = LoadImage(MOTOKOIMG, 0);
 		if(!back[0])
