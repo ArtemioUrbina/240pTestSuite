@@ -287,7 +287,7 @@ void DrawWhiteScreen()
 			if(!BlackLevel)
 			{
 				BlackLevel = 0x13;
-				sprintf(msg, "$GBlack Level: 7.5 IRE#G");
+				sprintf(msg, "#GBlack Level: 7.5 IRE#G");
 			}
 			else
 			{
