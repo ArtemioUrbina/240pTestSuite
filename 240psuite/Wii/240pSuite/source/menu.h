@@ -20,9 +20,9 @@
  */
  
 #ifdef WII_VERSION
-#define VERSION_NUMBER "Wii GX Ver. 1.5"
+#define VERSION_NUMBER "Wii GX Ver. 1.6"
 #else
-#define VERSION_NUMBER "GC GX Ver. 1.5"
+#define VERSION_NUMBER "GC GX Ver. 1.6"
 #endif
 
 #define VERSION_DATE "17/06/2014"

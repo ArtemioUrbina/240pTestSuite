@@ -22,9 +22,8 @@ is because a video signal may be any amplitude.
 This unit is used in the #YITU-R BT.470#Y which
 defines PAL, NTSC and SECAM
 
-You can press $R and $L buttons advance in 10 IRE
-steps, or hold $X or $Y to quickly advance in the
-selected range.
+You can press $R and $L buttons to advance in 10 IRE
+steps in the selected range.
 
 With button $A you can toggle the range between
 #C[0-100]#C and #C[100-140]#C IRE.

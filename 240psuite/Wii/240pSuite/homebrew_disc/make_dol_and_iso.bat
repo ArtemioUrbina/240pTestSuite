@@ -11,12 +11,12 @@ echo.
 echo Creating disc... Please wait.
 echo.
 echo ===========================================================
-mkisofs -R -J -G gbi.hdr -no-emul-boot -b bootldr.dol -o 240pTest-GC.iso disc/
+mkisofs -R -J -G gbi.hdr -no-emul-boot -b bootldr.dol -o GameCube-240pSuite-1.X.iso disc/
 echo.
 echo ===========================================================
 echo.
 echo Look at the output above. If no error is shown, the bootable disc is 
-echo successfully built as "240pTest-GC.iso"
+echo successfully built as "GameCube-240pSuite-1.X.iso"
 echo.
 echo Press any key or close window to exit
 pause >nul

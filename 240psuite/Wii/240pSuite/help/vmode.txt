@@ -1,4 +1,4 @@
-                VIDEO MODES (1/8)
+                VIDEO MODES (1/10)
 
 The $H version of the 240p suite supports the 
 following video modes:
@@ -14,7 +14,7 @@ are visible, 240 in each field. The following
 modes start at line 22 of every field.
 
                                    #C(cont...)#C
-                VIDEO MODES (2/8)
+                VIDEO MODES (2/10)
 
  #G240p:#G The progressive variant of NTSC 525i
     line video, it has 262 lines of which 240
@@ -30,23 +30,23 @@ modes start at line 22 of every field.
     this mode.
 
                                    #C(cont...)#C
-                VIDEO MODES (3/8)
+                VIDEO MODES (3/10)
 
- #G480i mixed 480p/240p assets (1:1/NTSC):#G This
-    mode has an identical 480i NTSC signal, and
-    the content of the suite is never line 
+ #G480i mixed 480p/240p assets (1:1/NTSC):#G In this
+    mode the content of the suite is never line 
     doubled.
 
     As a result, most screens end up filling 1/4th
-    of the screen in 1:1 pixel mode. However, 
+    of the display in 1:1 pixel mode. However, 
     there are several patterns in 480 resolution
     that fill the screen, such as the grid, scroll
     and overscan.
 
 
 
+
                                    #C(cont...)#C
-                VIDEO MODES (4/8)
+                VIDEO MODES (4/10)
 
 #YPAL compatible modes (50hz):#Y These modes must
 be enabled from the #YOptions#Y menu.  The first
@@ -62,7 +62,7 @@ video while doing 1:1 pixel mapping, instead it
 can draw 264 lines on each field.
 
                                    #C(cont...)#C
-                VIDEO MODES (5/8)
+                VIDEO MODES (5/10)
 
 In order to help overcome this limitation, the
 240p suite adds several options for evaluation of
@@ -75,10 +75,10 @@ in the signal, or at the bottom of the signal.
 This allows using the 264/528 patterns to verify
 overscan, alignment, geometry, etc.
 
-
-
+The #GGC#G version starts at line 23, since the HW
+ignores the PAL definition.
                                    #C(cont...)#C
-                VIDEO MODES (6/8)
+                VIDEO MODES (6/10)
 
 The other option - #GStretch to full 288/576#G - must
 only be used to visually check how the whole video
@@ -94,10 +94,10 @@ signal when the menu or pattern shown does not
 match the current resolution. This can be combined 
 with the stretched video option as well.
                                    #C(cont...)#C
-                VIDEO MODES (7/8)
+                VIDEO MODES (7/10)
 
 The following modes start at line 23 1/2 of every
-field, as the PAL standard determines.
+field, as the PAL standard determines. (23 in #GGC#G)
 
  #G288p#G: The progressive variant of PAL 625i
     line video, it has 312 lines of which 288
@@ -110,9 +110,9 @@ field, as the PAL standard determines.
     528 visible lines, 264 in each field. The 
     whole content of the suite is linedoubled in 
     this mode.                     #C(cont...)#C
-                VIDEO MODES (8/8)
+                VIDEO MODES (8/10)
 
-#G576i 528/480/240p assets (1:1/PAL):#G This
+ #G576i 528/480/240p assets (1:1/PAL):#G This
     mode has an identical 576i PAL signal, and
     the content of the suite is never line 
     doubled.
@@ -125,4 +125,31 @@ field, as the PAL standard determines.
 
 All of these PAL modes do have a stretched variant
 when that option is enabled.
+                                   #C(cont...)#C
+                VIDEO MODES (9/10)
 
+#Y480p compatible modes (60hz):#Y These modes must
+be enabled from the #YOptions#Y menu, and are only
+available when a #YComponent cable#Y is present.
+
+Please keep in mind that the 480p signal of the $H
+is not as good as it should be, and complex 
+patterns will be too soft or not resolve properly.
+
+ #G480p scaled 240p assets & scanlines:#G  This 
+    displays the 240p patterns in 480p. The whole
+    content of the suite is linedoubled, and 
+    scanline parameters can be modified from the 
+    #GOptions#G menu, they can also be completely
+    disabled if needed.            #C(cont...)#C
+                VIDEO MODES (10/10)
+
+ #G480p mixed 480p/240p assets (1:1):#G In this
+    mode the content of the suite is never line 
+    doubled.
+
+    As a result, most screens end up filling 1/4th
+    of the display in 1:1 pixel mode. However, 
+    there are several patterns in 480 resolution
+    that fill the screen, such as the grid, scroll
+    and overscan.

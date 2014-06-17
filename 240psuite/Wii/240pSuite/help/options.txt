@@ -26,8 +26,8 @@
     video data at line 23 1/2, this setting allows
     starting from line 24, centering the 528 
     active video lines in the 576i signal or 
-    moving the whole screen to the bottom.
-
+    moving the whole screen to the bottom. The #GGC#G
+    version starts at line 23.
 
                                         #C(cont...)#C
                   OPTIONS (3/4)
