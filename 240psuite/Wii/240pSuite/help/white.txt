@@ -1,16 +1,23 @@
-                   WHITE SCREEN
+                WHITE SCREEN (1/2)
 
 This pattern can be changed between white, black,
-red, green and blue full screens using the $R and 
-$L buttons.
-
-Some displays and scalers have issues when
-changing between a fully black and a fully white
-screen.
-
-It can also be used to check color purity, and 
-for dead pixels.
+red, green, blue and custom color full screens by 
+using the $R and $L buttons.
 
 Pressing $A while displaying the black screen and 
 in NTSC modes will toggle between 7.5 IRE and the 
 0 IRE below black levels. 
+
+Pressing $A while displaying the white screen will
+enter color edit mode, to select the RGB color to
+fill the screen with. Use the d-pad, $X and $Y
+buttons to change each color.
+
+                                   #C(cont...)#C
+                WHITE SCREEN (2/2)
+
+Some displays and scalers have issues when
+changing between a black 0 IRE and a white screen.
+
+This pattern can also be used to check color 
+purity, and for dead pixels in some displays.
