@@ -155,12 +155,15 @@ u8 LoadOptions()
 		Set576iLine23Option(Options.PALline23);
 	}	
 	
+	// Removing this option from the save file, since it looks terrible
+	/*
 	node = mxmlFindElement(xml, xml, "PALScale576", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PALScale576"))
 	{
 		if(node->child)       
             EnableStretchedPALModes(node->child->value.integer); 		
-	}	
+	}
+	*/	
 	
 	if(xml)
 		mxmlDelete(xml);
@@ -204,9 +207,7 @@ u8 SaveOptions()
 	node = mxmlNewElement(options240p, "Activate480p");
 	mxmlNewInteger(node, Options.Activate480p);
 	node = mxmlNewElement(options240p, "ShowWiiRegion");
-	mxmlNewInteger(node, Options.ShowWiiRegion);
-	//node = mxmlNewElement(options240p, "CorrectFor169");
-	//mxmlNewInteger(node, 0, Options.CorrectFor169);	
+	mxmlNewInteger(node, Options.ShowWiiRegion);	
 	node = mxmlNewElement(options240p, "SFCClassicController");
 	mxmlNewInteger(node, Options.SFCClassicController);
 	
@@ -227,8 +228,10 @@ u8 SaveOptions()
 	mxmlNewInteger(node, Options.PalBackB);	
 	node = mxmlNewElement(options240p, "PALline23");
 	mxmlNewInteger(node, Options.PALline23);		
-	node = mxmlNewElement(options240p, "PALScale576");
-	mxmlNewInteger(node, Options.PALScale576);		
+	
+	// Removing this option from the save file, since it looks terrible
+	//node = mxmlNewElement(options240p, "PALScale576");
+	//mxmlNewInteger(node, Options.PALScale576);		
 		
     mxmlSaveFile(xml, file, MXML_NO_CALLBACK);	
 		

@@ -149,22 +149,6 @@ inline void StartScene()
 
 inline void EndScene()
 {
-	if(Options.CorrectFor169)
-	{
-		ImagePtr	cFB;	
-	
-		cFB = CopyFrameBufferToImage();	
-		if(cFB)
-		{
-			VIDEO_ClearFrameBuffer(rmode, frameBuffer[IsPAL][ActiveFB], COLOR_BLACK);		
-			StartScene();
-			cFB->x = cFB->x*3/4 + (720 - (rmode->fbWidth)) / 2;;
-			cFB->w = cFB->w*3/4;
-			DrawImage(cFB);
-			FreeImage(&cFB);			
-		}
-	}	
-	
 	DrawScanlines();	
 			
 	GX_SetZMode(GX_DISABLE, GX_LEQUAL, GX_FALSE);
