@@ -28,6 +28,40 @@ GXRModeObj Mode_480i;
 GXRModeObj Mode_264p;
 GXRModeObj Mode_528i;
 
+GXRModeObj TVPal264DsFull =
+{
+    VI_TVMODE_PAL_DS,       // viDisplayMode
+    640,             // fbWidth
+    264,             // efbHeight
+    284,             // xfbHeight
+    (VI_MAX_WIDTH_PAL - 640)/2,         // viXOrigin
+    PAL_OFFSET,        // viYOrigin
+    640,             // viWidth
+    572,             // viHeight
+    VI_XFBMODE_SF,   // xFBmode
+    GX_FALSE,        // field_rendering
+    GX_FALSE,        // aa
+
+    // sample points arranged in increasing Y order
+	{
+		{6,6},{6,6},{6,6},  // pix 0, 3 sample points, 1/12 units, 4 bits each
+		{6,6},{6,6},{6,6},  // pix 1
+		{6,6},{6,6},{6,6},  // pix 2
+		{6,6},{6,6},{6,6}   // pix 3
+	},
+
+    // vertical filter[7], 1/64 units, 6 bits each
+	{
+		 0,         // line n-1
+		 0,         // line n-1
+		21,         // line n
+		22,         // line n
+		21,         // line n
+		 0,         // line n+1
+		 0          // line n+1
+	}
+};
+
 // Starts in line 23 1/2 and end in line 308. Lines 309 and 310 don't show.
 GXRModeObj TVPal576IntDfFull =
 {
@@ -70,8 +104,7 @@ GXRModeObj *vmodes[TOTAL_VMODES] = {
 	&Mode_528i,	
 	&Mode_528i,	
 	&TVNtsc480Prog,
-	&TVNtsc480Prog,
-	&TVPal576IntDfFull
+	&TVNtsc480Prog	
 };
 
 u32	ActiveFB	= 0;
@@ -104,8 +137,7 @@ void InitVideo()
 	Mode_264p = TVPal264Ds;
 	Mode_528i = TVPal528IntDf;
 	
-	Mode_264p.viYOrigin = PAL_OFFSET;
-	Mode_528i.viYOrigin = PAL_OFFSET - 2;
+	Set576iLine23Option(Options.PALline23);
 
 #ifdef WII_VERSION		
 	CONF_GetDisplayOffsetH(&OffsetH);
@@ -160,9 +192,6 @@ void SetVideoMode(u32 newmode)
 		
 	// check PAL safety
 	if(newmode >= VIDEO_288P && newmode <= VIDEO_576I && !Options.EnablePAL)
-		newmode = VIDEO_240P;	
-		
-	if(newmode == VIDEO_576I_SCALED && !Options.EnablePAL && !Options.PALScale576)
 		newmode = VIDEO_240P;		
 	
 	vmode = newmode;			
@@ -192,8 +221,7 @@ void SetVideoMode(u32 newmode)
 			offsetY = 12; // (264 - 240) / 2 -> to center all in PAL modes
 			IsPAL = MODE_PAL;
 			break;
-		case VIDEO_576I:
-		case VIDEO_576I_SCALED:
+		case VIDEO_576I:		
 			dW = 640;
 			dH = 528;
 			offsetY = 12;
@@ -279,6 +307,9 @@ char *GetPalStartText()
 
 void Set576iLine23Option(s8 set)
 {	
+	if(Options.PALScale576)
+		return;
+		
 	if(set > PAL_BOTTOM)
 		set = PAL_LINE23HALF;
 		
@@ -325,16 +356,22 @@ void GetVideoModeStr(char *res, int shortdesc)
 				sprintf(res, "Video: 480i (Scaling disabled)");
 				break;
 			case VIDEO_288P:
-				sprintf(res, "Video: 288p");				
+				if(Options.PALScale576)
+					sprintf(res, "Video: 288p (stretched)");				
+				else
+					sprintf(res, "Video: 288p");				
 				break;			
 			case VIDEO_576I_A264:
-				sprintf(res, "Video: 576i (scaled 264p)");
-				break;
-			case VIDEO_576I_SCALED:
-				sprintf(res, "Video: 576i (Full PAL stretched)");
-				break;
+				if(Options.PALScale576)
+					sprintf(res, "Video: 576i (scaled 264p stretched)");
+				else
+					sprintf(res, "Video: 576i (scaled 264p)");
+				break;			
 			case VIDEO_576I:
-				sprintf(res, "Video: 576i (Scaling disabled)");
+				if(Options.PALScale576)
+					sprintf(res, "Video: 576i (no scaling stretched)");
+				else
+					sprintf(res, "Video: 576i (Scaling disabled)");
 				break;
 			case VIDEO_480P:
 				sprintf(res, "Video: 480p (Scaling disabled)");
@@ -358,16 +395,22 @@ void GetVideoModeStr(char *res, int shortdesc)
 				sprintf(res, "[480i 1:1]");
 				break;
 			case VIDEO_288P:
-				sprintf(res, "[288p]");				
+				if(Options.PALScale576)
+					sprintf(res, "[288p STR]");				
+				else
+					sprintf(res, "[288p]");				
 				break;			
 			case VIDEO_576I_A264:
-				sprintf(res, "[576i LD]");
-				break;
-			case VIDEO_576I_SCALED:
-				sprintf(res, "[576i STR]");
+				if(Options.PALScale576)
+					sprintf(res, "[576i LD/S]");
+				else
+					sprintf(res, "[576i LD]");				
 				break;
 			case VIDEO_576I:
-				sprintf(res, "[576i 1:1]");
+				if(Options.PALScale576)
+					sprintf(res, "[576i STR]");
+				else
+					sprintf(res, "[576i 1:1]");
 				break;
 			case VIDEO_480P:
 				sprintf(res, "[480p 1:1]");
@@ -378,4 +421,24 @@ void GetVideoModeStr(char *res, int shortdesc)
 		}
 
 	}
+}
+
+void EnableStretchedPALModes(int enable)
+{
+	if(enable)
+	{
+		Mode_264p = TVPal264DsFull;
+		Mode_528i = TVPal576IntDfFull;
+	}
+	else
+	{
+		Mode_264p = TVPal264Ds;
+		Mode_528i = TVPal528IntDf;
+		Set576iLine23Option(Options.PALline23);
+	}
+	
+	Options.PALScale576 = enable;
+	
+	if(IsPAL)							
+		SetVideoMode(vmode);		
 }

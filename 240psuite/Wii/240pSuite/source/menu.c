@@ -450,15 +450,9 @@ void ChangeOptions(ImagePtr title)
 					case 7:	
 						if(Options.EnablePAL)
 						{
-							Options.PALScale576 = !Options.PALScale576;
-							if(vmode == VIDEO_576I_SCALED || vmode == VIDEO_576I)
-							{
-								if(Options.PALScale576)
-									SetVideoMode(VIDEO_576I_SCALED);
-								else
-									SetVideoMode(VIDEO_576I);
-								SetupGX();
-							}
+							EnableStretchedPALModes(!Options.PALScale576);
+							if(IsPAL)											
+								SetupGX();							
 						}
 						break;				
 					case 8:
@@ -499,9 +493,6 @@ void SelectVideoMode(ImagePtr title)
 		return;
 		
 	back->alpha = 0xaa;
-	
-	if(mode == VIDEO_576I_SCALED)
-		mode = VIDEO_576I;
 		
 	sel = mode + 1;
 	while(!close && !EndProgram) 
@@ -521,9 +512,7 @@ void SelectVideoMode(ImagePtr title)
 
 		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 2*fh; 
 		
-		mode = vmode;
-		if(mode == VIDEO_576I_SCALED)
-			mode = VIDEO_576I;
+		mode = vmode;		
 			
 		DrawStringS(x - 10, y + (mode * fh) + ((mode >= VIDEO_288P) ? fh/2 : 0) + ((mode >= VIDEO_480P_SL) ? fh/2 - 1: 0),
 					0x00, 0xff, 0x00, ">"); 
@@ -642,10 +631,7 @@ void SelectVideoMode(ImagePtr title)
 					case 6:
 						if(Options.EnablePAL)
 						{
-							if(Options.PALScale576)
-								SetVideoMode(VIDEO_576I_SCALED);
-							else
-								SetVideoMode(VIDEO_576I);
+							SetVideoMode(VIDEO_576I);
 							SetupGX();
 						}
 						break;

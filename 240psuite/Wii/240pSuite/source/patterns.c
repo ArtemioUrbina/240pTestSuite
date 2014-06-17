@@ -593,7 +593,7 @@ void DrawGrid()
 					return;    				
 			}
 			
-			if(vmode == VIDEO_576I || vmode == VIDEO_576I_SCALED)
+			if(vmode == VIDEO_576I)
 			{
 				back = LoadImage(GRIDPAL480IMG, 0);
 				if(!back)
