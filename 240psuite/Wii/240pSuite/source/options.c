@@ -84,11 +84,11 @@ u8 LoadOptions()
 	        Options.Activate480p = node->child->value.integer;		    
 	}
 		
-	node = mxmlFindElement(xml, xml, "ShowWiiRegion", NULL, NULL, MXML_DESCEND);
-	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "ShowWiiRegion"))
+	node = mxmlFindElement(xml, xml, "UseTrapFilter", NULL, NULL, MXML_DESCEND);
+	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "UseTrapFilter"))
 	{		
 		if(node->child)
-		    Options.ShowWiiRegion = node->child->value.integer;				    
+		    Options.TrapFilter = node->child->value.integer;				    
 	}	
 	
 	node = mxmlFindElement(xml, xml, "SFCClassicController", NULL, NULL, MXML_DESCEND);
@@ -206,8 +206,8 @@ u8 SaveOptions()
 
 	node = mxmlNewElement(options240p, "Activate480p");
 	mxmlNewInteger(node, Options.Activate480p);
-	node = mxmlNewElement(options240p, "ShowWiiRegion");
-	mxmlNewInteger(node, Options.ShowWiiRegion);	
+	node = mxmlNewElement(options240p, "UseTrapFilter");
+	mxmlNewInteger(node, Options.TrapFilter);	
 	node = mxmlNewElement(options240p, "SFCClassicController");
 	mxmlNewInteger(node, Options.SFCClassicController);
 	

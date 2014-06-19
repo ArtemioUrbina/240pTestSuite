@@ -107,14 +107,22 @@ char *manuallag_txt[] = {
 NULL
 };
 char *options_txt[] = { 
-"                  OPTIONS (1/4)\n\n#GShow Wii region:#G Determines if the Wii region\n    is shown in the lower left corner.\n\n#GEnable 480p Modes:#G If a component cable is\n    present, this option enables progressive\n    640x480 modes.\n\n#GEnable PAL Modes:#G These are disabled by default\n    since many NTSC TVs don't support them.\n\n#GEnable PAL Background:#G Since most of the menus\n    and screens are designed for 240p, this fills\n    the borders with the selected color, however\n                                        #C(cont...)#C",
-"                  OPTIONS (2/4)\n\n    there are specific PAL patterns that do not \n    need this, such as grids and overscan.\n\n#GChange PAL Background:#G Select the fill color for\n    the PAL background.\n                \n#GPAL starting line:#G PAL specifies the start of\n    video data at line 23 1/2, this setting allows\n    starting from line 24, centering the 528 \n    active video lines in the 576i signal or \n    moving the whole screen to the bottom. The #GGC#G\n    version starts at line 23.\n\n                                        #C(cont...)#C",
-"                  OPTIONS (3/4)\n\n#GStretch to full 288/576:#G Since the $H can't render\n    the full 288p/576i screen in 1:1 pixel \n    mapping, this option enables a video mode for \n    all PAL settings where the 264/528 lines are \n    stretched vertically to fill the 576i PAL \n    signal. #YThis is uneven and should only be \n    used to visually check for overscan.#Y\n\n#G480p Scanline Intensity:#G When in line doubled\n    480p mode, the suite allows the display of\n    rendered scanlines. This determines the alpha\n    value for them, 0% to eliminates them.\n\n                                        #C(cont...)#C",
-"                  OPTIONS (4/4)\n\n#G480p Scanlines:#G This setting allows the display\n    or EVEN or ODD scanline display in 480p line\n    doubled mode.\n\n#GSFC Classic Controller:#G The #YSuper Famicom#Y\n    version of the #YClassic Controller#Y needs a \n    different button layout since it doesn't have\n    a HOME button. This changes the layout for it.",
+"                  OPTIONS (1/5)\n\n#GVI Trap Filter (Composite):#G A Trap filter is\n    generally used to improve #YLuma#Y/#YChroma#Y\n    separation in the #Ycomposite#Y video signal. When \n    disabled, the video signal is unfiltered, \n    which sometimes produces visual artefacts such \n    as color bleeding. A notch filter centered at \n    the color subcarrier frequency is used to \n    extract color from 2.5MHz to 4.5MHz.This method \n    has two drawbacks. First, it limits the color \n    bandwidth (which extends to 2.1MHz) cutting out\n    fine color detail. Second, luminance info in \n    the notch frequency range contaminates color \n    and generates unwanted color or rainbows.\n                                        #C(cont...)#C",
+"                  OPTIONS (2/5)\n\n#GGX Deflickering Filter:#G A filter that removes\n    ficker in interlaced modes by softening the\n    rendered image. \n\n#GEnable 480p Modes:#G If a component cable is\n    present, this option enables progressive\n    640x480 modes.\n\n#GEnable PAL Modes:#G These are disabled by default\n    since many NTSC TVs don't support them.\n\n\n\n                                        #C(cont...)#C",
+"                  OPTIONS (3/5)\n\n#GEnable PAL Background:#G Since most of the menus\n    and screens are designed for 240p, this fills\n    the borders with the selected color, however\n    there are specific PAL patterns that do not \n    need this, such as grids and overscan.\n\n#GChange PAL Background:#G Select the fill color for\n    the PAL background.\n\n#GPAL starting line:#G PAL specifies the start of\n    active video at line 23 1/2, this setting \n    allows starting from line 24, centering the \n    528 active video lines in the 576i signal or \n    moving it to the bottom.            #C(cont...)#C",
+"                  OPTIONS (4/5)\n                \n#GStretch to full 288/576:#G Since the $H can't render\n    the full 288p/576i screen in 1:1 pixel \n    mapping, this option enables a video mode for \n    all PAL settings where the 264/528 lines are \n    stretched vertically to fill the 576i PAL \n    signal. #YThis is uneven and should only be \n    used to visually check for overscan.#Y\n                \n#G480p Scanline Intensity:#G When in line doubled\n    480p mode, the suite allows the display of\n    rendered scanlines. This determines the alpha\n    value for them, 0% to eliminates them.\n\n                                        #C(cont...)#C",
+"                  OPTIONS (5/5)\n\n#G480p Scanlines:#G This setting allows the display\n    or EVEN or ODD scanline display in 480p line\n    doubled mode.\n\n#GSFC Classic Controller:#G The #YSuper Famicom#Y\n    version of the #YClassic Controller#Y needs a \n    different button layout since it doesn't have\n    a HOME button. This changes the layout for it.",
+NULL
+};
+char *optionsgc_txt[] = { 
+"                  OPTIONS (1/4)\n\n#GGX Deflickering Filter:#G A filter that removes\n    ficker in interlaced modes by softening the\n    rendered image. \n\n#GEnable 480p Modes:#G If a component cable is\n    present, this option enables progressive\n    640x480 modes.\n                                      \n#GEnable PAL Modes:#G These are disabled by default\n    since many NTSC TVs don't support them.\n\n\n\n                                        #C(cont...)#C",
+"                  OPTIONS (2/4)\n\n#GEnable PAL Background:#G Since most of the menus\n    and screens are designed for 240p, this fills\n    the borders with the selected color, however\n    there are specific PAL patterns that do not \n    need this, such as grids and overscan.\n\n#GChange PAL Background:#G Select the fill color for\n    the PAL background.\n\n\n\n\n\n                                        #C(cont...)#C",
+"                  OPTIONS (3/4)\n\n#GPAL starting line:#G PAL specifies the start of\n    video data at line 23 1/2, this setting allows\n    starting from line 24, centering the 528 \n    active video lines in the 576i signal or \n    moving the whole screen to the bottom. The #GGC#G\n    version starts at line 23.\n                \n#GStretch to full 288/576:#G Since the $H can't render\n    the full 288p/576i screen in 1:1 pixel \n    mapping, this option enables a video mode for \n    all PAL settings where the 264/528 lines are \n    stretched vertically to fill the 576i PAL \n    signal. #YThis is uneven and should only be \n    used to visually check for overscan.#Y  #C(cont...)#C               ",
+"                  OPTIONS (4/4)\n\n#G480p Scanline Intensity:#G When in line doubled\n    480p mode, the suite allows the display of\n    rendered scanlines. This determines the alpha\n    value for them, 0% to eliminates them.\n\n#G480p Scanlines:#G This setting allows the display\n    or EVEN or ODD scanline display in 480p line\n    doubled mode.\n\n#GSFC Classic Controller:#G The #YSuper Famicom#Y\n    version of the #YClassic Controller#Y needs a \n    different button layout since it doesn't have\n    a HOME button. This changes the layout for it.",
 NULL
 };
 char *overscan_txt[] = { 
-"                     OVERSCAN\n\nWith this pattern you can interactively find out\nthe overscan in pixels and percentage of each\nedge in a display. \n\nUse the $R and $L buttons to increment the \noverscan until you see the red border, then go \nback one pixel. The resulting number is the\namount of overscan in pixels in each direction.\n\n#YWhen in 576i stretched PAL modes, the pixel\ncount is not accurate#Y. For precise results, \ninstead use the #GPAL start line option#G in #Y23 1/2#Y\nand #YBottom#y modes, each one to count top or bottom\noverscan accurately.\n",
+"                     OVERSCAN\n\nWith this pattern you can interactively find out\nthe overscan in pixels and percentage of each\nedge in a display. \n\nUse the $R and $L buttons to increment the \noverscan until you see the white border, then go \nback one pixel. The resulting number is the\namount of overscan in pixels in each direction.\n\n#YWhen in 576i stretched PAL modes, the pixel\ncount is not accurate#Y. For precise results, \ninstead use the #GPAL start line option#G in #Y23 1/2#Y\nand #YBottom#y modes, each one to count top or bottom\noverscan accurately.\n",
 NULL
 };
 char *passivelag_txt[] = { 
@@ -168,7 +176,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	28
+#define	HELPCOUNT	29
 char **HelpArray[HELPCOUNT] = {
 	SMPTEColor_txt,
 	alt240p_txt,
@@ -187,6 +195,7 @@ char **HelpArray[HELPCOUNT] = {
 	linearity_txt,
 	manuallag_txt,
 	options_txt,
+	optionsgc_txt,
 	overscan_txt,
 	passivelag_txt,
 	pluge_txt,

@@ -87,7 +87,7 @@ void SetupGX()
 		
 	GX_SetDispCopySrc(0,0,rmode->fbWidth,rmode->efbHeight);
 	GX_SetDispCopyDst(xfbWidth, xfbHeight);
-	GX_SetCopyFilter(rmode->aa, rmode->sample_pattern, GX_FALSE, rmode->vfilter);
+	GX_SetCopyFilter(rmode->aa, rmode->sample_pattern, Options.FlickerFilter, rmode->vfilter);
 	GX_SetFieldMode(rmode->field_rendering,((rmode->viHeight==2*rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));	
 
 	GX_SetCullMode(GX_CULL_NONE);
@@ -196,7 +196,10 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	}
 		
 	TPL_GetTexture(&backsTPL, Texture, &image->tex);	
-	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
+	
+	// me 
+	// GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
+	GX_InitTexObjLOD(&image->tex, Options.BilinearFiler, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
 	TPL_GetTextureInfo(&backsTPL, Texture, &fmt, &t_width, &t_height);	
 
 	image->r = 0xff;

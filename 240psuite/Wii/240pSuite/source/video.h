@@ -71,3 +71,5 @@ void Set576iLine23Option(s8 set);
 char *GetPalStartText();
 void GetVideoModeStr(char *res, int shortdesc);
 void EnableStretchedPALModes(int enable);
+void SetBilinearOption(s8 set);
+char *GetBilinearText(s8 shortdesc);

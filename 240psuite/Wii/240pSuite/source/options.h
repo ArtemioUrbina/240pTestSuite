@@ -24,7 +24,6 @@
 
 #define DEFAULT_OPTIONS { \
 	0,\
-	1,\
 	0,\
 	0,\
 	0,\
@@ -32,12 +31,14 @@
 	0xE7,\
 	0xE7,\
 	0,\
-	0\
+	0,\
+	0,\
+	GX_FALSE,\
+	GX_NEAR\
 	}
 
 struct options_st {
 	int Activate480p;
-	int ShowWiiRegion;	
 	int SFCClassicController;
 	int EnablePAL;
 	int EnablePALBG;
@@ -46,6 +47,9 @@ struct options_st {
 	int PalBackB;
 	int PALline23;
 	int PALScale576;
+	int TrapFilter;
+	int FlickerFilter;
+	int BilinearFiler;
 };
 
 extern struct options_st Options;

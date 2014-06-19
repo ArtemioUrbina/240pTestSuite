@@ -91,9 +91,8 @@ int main(int argc, char **argv)
 	sd->x = 221;
     sd->y = 94;		
 				
-#ifdef WII_VERSION
-	if(Options.ShowWiiRegion)
-		GetWiiRegion();
+#ifdef WII_VERSION	
+	GetWiiRegion();
 #endif
 	
 	if(OffsetH || AspectRatio)
@@ -145,9 +144,8 @@ int main(int argc, char **argv)
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");
 
-#ifdef WII_VERSION
-		if(Options.ShowWiiRegion)
-			DrawStringS(215, 215, r, g, b, wiiregion);
+#ifdef WII_VERSION		
+		DrawStringS(215, 215, r, g, b, wiiregion);
 #endif				
 		
 		EndScene();
@@ -289,9 +287,8 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");
 		
-#ifdef WII_VERSION
-		if(Options.ShowWiiRegion)
-			DrawStringS(215, 215.0f, r, g, b, wiiregion);
+#ifdef WII_VERSION		
+		DrawStringS(215, 215.0f, r, g, b, wiiregion);
 #endif				
 				
 		EndScene();		

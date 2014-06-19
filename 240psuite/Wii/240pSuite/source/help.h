@@ -51,6 +51,7 @@
 #define OVERSCANHELP	overscan_txt
 #define VIDEOMODEHELP	vmode_txt
 #define OPTIONSHELP		options_txt
+#define OPTIONSGCHELP	optionsgc_txt
 
 extern char *SMPTEColor_txt[];
 extern char *alt240p_txt[];

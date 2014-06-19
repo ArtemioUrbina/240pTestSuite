@@ -770,7 +770,7 @@ void DrawGrid()
 
 void DrawLinearity()
 {
-	int 		done = 0, gridpattern = 0, oldvmode = vmode, showgrid = 0;
+	int 		done = 0, oldvmode = vmode, gridmode = 0;
 	u32			pressed;
 	ImagePtr	circles = NULL, grid, gridd;
 	
@@ -793,6 +793,11 @@ void DrawLinearity()
 		{
 			FreeImage(&circles);		
 			oldvmode = vmode;
+			
+			grid->w = 320;
+			grid->h = IsPAL ? 264 : 240;
+			gridd->w = 320;
+			gridd->h = IsPAL ? 264 : 240;
 		}    
 		
 		if(!circles)
@@ -811,15 +816,18 @@ void DrawLinearity()
 					return;
 			}
 		}
-		StartScene();
-		        
-		if(showgrid)
-		{
-			if(gridpattern)
-				DrawImage(gridd);
-			else
+		StartScene();		
+		
+		switch(gridmode)
+		{			
+			case 1:
 				DrawImage(grid);
-		}
+				break;
+			case 2:
+				DrawImage(gridd);
+				break;
+		}		
+		
 		DrawImage(circles);
 		
         EndScene();
@@ -832,10 +840,16 @@ void DrawLinearity()
 			done =	1;	
 
 		if (pressed & PAD_TRIGGER_R)
-			showgrid = !showgrid;
+			gridmode ++;
 		
 		if (pressed & PAD_TRIGGER_L)
-			gridpattern = !gridpattern;
+			gridmode --;
+			
+		if(gridmode < 0)
+			gridmode = 2;
+			
+		if(gridmode > 2)
+			gridmode = 0;
 			
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
