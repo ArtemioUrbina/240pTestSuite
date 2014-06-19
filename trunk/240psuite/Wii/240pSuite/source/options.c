@@ -90,6 +90,12 @@ u8 LoadOptions()
 		if(node->child)
 		    Options.TrapFilter = node->child->value.integer;				    
 	}	
+	node = mxmlFindElement(xml, xml, "UseDeflickerFilter", NULL, NULL, MXML_DESCEND);
+	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "UseDeflickerFilter"))
+	{		
+		if(node->child)
+		    Options.FlickerFilter = node->child->value.integer;				    
+	}
 	
 	node = mxmlFindElement(xml, xml, "SFCClassicController", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "SFCClassicController"))
@@ -202,14 +208,18 @@ u8 SaveOptions()
 		mxmlDelete(xml);
 		CloseFS();
 		return 0;
-	}
-
-	node = mxmlNewElement(options240p, "Activate480p");
-	mxmlNewInteger(node, Options.Activate480p);
+	}	
+	
 	node = mxmlNewElement(options240p, "UseTrapFilter");
 	mxmlNewInteger(node, Options.TrapFilter);	
+	node = mxmlNewElement(options240p, "UseDeflickerFilter");
+	mxmlNewInteger(node, Options.FlickerFilter);		
+	
 	node = mxmlNewElement(options240p, "SFCClassicController");
 	mxmlNewInteger(node, Options.SFCClassicController);
+	
+	node = mxmlNewElement(options240p, "Activate480p");
+	mxmlNewInteger(node, Options.Activate480p);
 	
 	node = mxmlNewElement(options240p, "ScanlineEvenOdd");
 	mxmlNewInteger(node, (int)ScanlinesEven());
@@ -227,7 +237,7 @@ u8 SaveOptions()
 	node = mxmlNewElement(options240p, "PalBackB");
 	mxmlNewInteger(node, Options.PalBackB);	
 	node = mxmlNewElement(options240p, "PALline23");
-	mxmlNewInteger(node, Options.PALline23);		
+	mxmlNewInteger(node, Options.PALline23);			
 	
 	// Removing this option from the save file, since it looks terrible
 	//node = mxmlNewElement(options240p, "PALScale576");

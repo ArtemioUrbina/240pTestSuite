@@ -22,20 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEFAULT_OPTIONS { \
-	0,\
-	0,\
-	0,\
-	0,\
-	0xE7,\
-	0xE7,\
-	0xE7,\
-	0,\
-	0,\
-	0,\
-	GX_FALSE,\
-	GX_NEAR\
-	}
+#define DEFAULT_OPTIONS { 0, 0,	0, 0, 0xC2, 0xC2, 0xC2, 0, 0, 0, GX_FALSE, GX_NEAR }
 
 struct options_st {
 	int Activate480p;
@@ -53,6 +40,7 @@ struct options_st {
 };
 
 extern struct options_st Options;
+extern struct options_st DefaultOptions;
 
 u8 LoadOptions();
 u8 SaveOptions();

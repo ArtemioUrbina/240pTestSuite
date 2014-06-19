@@ -463,6 +463,9 @@ void ChangeOptions(ImagePtr title)
 		
 		if(pressed & PAD_BUTTON_B ) 		
 			close = 1;	
+			
+		if(held & PAD_TRIGGER_L && held & PAD_TRIGGER_R)
+			Options = DefaultOptions;
 	
 		if(pressed & PAD_BUTTON_A)
 		{     
