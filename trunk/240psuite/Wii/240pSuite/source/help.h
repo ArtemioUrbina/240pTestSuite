@@ -70,6 +70,7 @@ extern char *ire100_txt[];
 extern char *linearity_txt[];
 extern char *manuallag_txt[];
 extern char *options_txt[];
+extern char *optionsgc_txt[];
 extern char *overscan_txt[];
 extern char *passivelag_txt[];
 extern char *pluge_txt[];

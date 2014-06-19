@@ -455,7 +455,7 @@ void ChangeOptions(ImagePtr title)
 #ifdef WII_VERSION
 			HelpData = OPTIONSHELP;
 #else
-			HelpData = OPTIONGCSHELP;
+			HelpData = OPTIONSGCHELP;
 #endif
 			HelpWindow(title);
 			HelpData = GENERALHELP;

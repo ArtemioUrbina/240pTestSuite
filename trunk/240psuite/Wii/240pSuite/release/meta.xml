@@ -2,7 +2,7 @@
 <app version="1">
   <name>240p Test Suite GX</name>
   <coder>Artemio Urbina</coder>
-  <version>1.6</version>
+  <version>1.6b</version>
   <release_date>06/17/2014</release_date>
   <short_description>A video suite for game consoles.</short_description> 
   <long_description>A homebrew software suite for video game consoles developed to help in the evaluation of upscalers, upscan converters, line doublers and of course TV processing of 240p video. The Wii version also has modes for 480i, 288p, 576i, and 480p evaluation. As a secondary target, the suite aims to provide tools for calibrating colors, black and white levels for specific console outputs and setups. 

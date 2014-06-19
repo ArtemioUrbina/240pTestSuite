@@ -30,7 +30,7 @@ shown using the full resolution.
 PAL and 480p modes must be enabled from the 
 options menu. 
                                          #C(cont...)#C
-                    HELP (2/3)
+                    HELP (3/3)
 
 The 240p suite is also available in other systems,
 including: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/
