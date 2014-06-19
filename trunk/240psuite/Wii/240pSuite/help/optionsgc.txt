@@ -1,20 +1,4 @@
-                  OPTIONS (1/5)
-
-#GVI Trap Filter (Composite):#G A Trap filter is
-    generally used to improve #YLuma#Y/#YChroma#Y
-    separation in the #Ycomposite#Y video signal. When 
-    disabled, the video signal is unfiltered, 
-    which sometimes produces visual artefacts such 
-    as color bleeding. A notch filter centered at 
-    the color subcarrier frequency is used to 
-    extract color from 2.5MHz to 4.5MHz.This method 
-    has two drawbacks. First, it limits the color 
-    bandwidth (which extends to 2.1MHz) cutting out
-    fine color detail. Second, luminance info in 
-    the notch frequency range contaminates color 
-    and generates unwanted color or rainbows.
-                                        #C(cont...)#C
-                  OPTIONS (2/5)
+                  OPTIONS (1/4)
 
 #GGX Deflickering Filter:#G A filter that removes
     ficker in interlaced modes by softening the
@@ -23,14 +7,14 @@
 #GEnable 480p Modes:#G If a component cable is
     present, this option enables progressive
     640x480 modes.
-
+                                      
 #GEnable PAL Modes:#G These are disabled by default
     since many NTSC TVs don't support them.
 
 
 
                                         #C(cont...)#C
-                  OPTIONS (3/5)
+                  OPTIONS (2/4)
 
 #GEnable PAL Background:#G Since most of the menus
     and screens are designed for 240p, this fills
@@ -41,12 +25,19 @@
 #GChange PAL Background:#G Select the fill color for
     the PAL background.
 
+
+
+
+
+                                        #C(cont...)#C
+                  OPTIONS (3/4)
+
 #GPAL starting line:#G PAL specifies the start of
-    active video at line 23 1/2, this setting 
-    allows starting from line 24, centering the 
-    528 active video lines in the 576i signal or 
-    moving it to the bottom.            #C(cont...)#C
-                  OPTIONS (4/5)
+    video data at line 23 1/2, this setting allows
+    starting from line 24, centering the 528 
+    active video lines in the 576i signal or 
+    moving the whole screen to the bottom. The #GGC#G
+    version starts at line 23.
                 
 #GStretch to full 288/576:#G Since the $H can't render
     the full 288p/576i screen in 1:1 pixel 
@@ -54,15 +45,13 @@
     all PAL settings where the 264/528 lines are 
     stretched vertically to fill the 576i PAL 
     signal. #YThis is uneven and should only be 
-    used to visually check for overscan.#Y
-                
+    used to visually check for overscan.#Y  #C(cont...)#C               
+                  OPTIONS (4/4)
+
 #G480p Scanline Intensity:#G When in line doubled
     480p mode, the suite allows the display of
     rendered scanlines. This determines the alpha
     value for them, 0% to eliminates them.
-
-                                        #C(cont...)#C
-                  OPTIONS (5/5)
 
 #G480p Scanlines:#G This setting allows the display
     or EVEN or ODD scanline display in 480p line

@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include "video.h"
 #include "options.h"
+#include "vi_encoder.h"
 
 GXRModeObj Mode_240p;
 GXRModeObj Mode_480i;
@@ -231,7 +232,10 @@ void SetVideoMode(u32 newmode)
 			break;		
 	}	
 		
-	ActiveFB ^= 1;  	
+	ActiveFB ^= 1;  
+#ifdef WII_VERSION
+	VIDEO_SetTrapFilter(Options.TrapFilter);
+#endif
 	VIDEO_Configure(rmode);			
 	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);			
 	VIDEO_Flush();	
@@ -440,4 +444,84 @@ void GetVideoModeStr(char *res, int shortdesc)
 		}
 
 	}
+}
+
+void SetBilinearOption(s8 set)
+{
+	if(set > GX_LIN_MIP_LIN)
+		set = GX_NEAR;
+		
+	if(set < GX_NEAR)
+		set = GX_NEAR;
+		
+	Options.BilinearFiler = set;
+}
+
+char *GetBilinearText(s8 shortdesc)
+{
+	/*
+	#define GX_NEAR   0
+	Point sampling, no mipmap
+	
+	#define GX_LINEAR   1
+	Bilinear filtering, no mipmap
+	
+	#define GX_NEAR_MIP_NEAR   2
+	Point sampling, discrete mipmap
+	
+	#define GX_LIN_MIP_NEAR   3
+	Bilinear filtering, discrete mipmap
+
+	#define GX_NEAR_MIP_LIN   4
+	Point sampling, linear mipmap
+	
+	#define GX_LIN_MIP_LIN   5
+	Trilinear filtering
+	*/
+	
+	// Genesis DX no bilinear
+	//GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR_MIP_NEAR,0.0,10.0,0.0, GX_FALSE,GX_FALSE,GX_ANISO_1);
+	// mine
+	//GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
+		
+		
+	if(shortdesc)
+	{
+		switch(Options.BilinearFiler)
+		{
+			case GX_NEAR:
+				return("None");
+			case GX_LINEAR:
+				return("ON");
+			case GX_NEAR_MIP_NEAR:
+				return("None + DMM");
+			case GX_LIN_MIP_NEAR:
+				return("ON + DMM");
+			case GX_NEAR_MIP_LIN:
+				return("None + LMM");
+			case GX_LIN_MIP_LIN:
+				return("Trilinear");
+		}
+		return("Unknown mode");
+	}
+	else
+	{
+		switch(Options.BilinearFiler)
+		{
+			case GX_NEAR:
+				return("Point sampling, no mipmap");
+			case GX_LINEAR:
+				return("Bilinear filtering, no mipmap");
+			case GX_NEAR_MIP_NEAR:
+				return("Point sampling, discrete mipmap");
+			case GX_LIN_MIP_NEAR:
+				return("Bilinear filtering, discrete mipmap");
+			case GX_NEAR_MIP_LIN:
+				return("Point sampling, linear mipmap");
+			case GX_LIN_MIP_LIN:
+				return("Trilinear filtering");
+		}
+		return("Unknown mode");
+	}
+	return("");
 }
