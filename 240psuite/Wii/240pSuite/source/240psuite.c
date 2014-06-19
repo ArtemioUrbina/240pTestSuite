@@ -39,6 +39,7 @@
 
 // Default options
 struct options_st Options = DEFAULT_OPTIONS;
+struct options_st DefaultOptions = DEFAULT_OPTIONS;
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 

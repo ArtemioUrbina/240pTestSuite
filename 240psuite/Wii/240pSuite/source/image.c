@@ -197,9 +197,8 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 		
 	TPL_GetTexture(&backsTPL, Texture, &image->tex);	
 	
-	// me 
-	// GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
-	GX_InitTexObjLOD(&image->tex, Options.BilinearFiler, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
+	//GX_InitTexObjLOD(&image->tex, Options.BilinearFiler, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
+	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);	
 	TPL_GetTextureInfo(&backsTPL, Texture, &fmt, &t_width, &t_height);	
 
 	image->r = 0xff;

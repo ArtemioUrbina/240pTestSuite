@@ -72,3 +72,6 @@
     version of the #YClassic Controller#Y needs a 
     different button layout since it doesn't have
     a HOME button. This changes the layout for it.
+
+Holding $L and $R buttons while in the options menu
+will reset all options to their defaults.
