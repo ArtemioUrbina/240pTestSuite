@@ -29,6 +29,8 @@ u8 JoyCountX = 0;
 u8 JoyCountY = 0;
 u8 ControllerType = ControllerGC;
 
+extern u8 EndProgram;
+
 char *ControlNamesGC[] = {
 	"Start",
 	"A",
@@ -427,7 +429,16 @@ u32 Controller_ButtonsDown(int chan)
 			}
 		}
     }
-#endif    
+#endif  
+
+	// Emergency exit
+	{
+		u32 held = Controller_ButtonsHeld(0);
+		
+		if(held & PAD_BUTTON_DOWN && 
+			held & PAD_TRIGGER_R && held && PAD_TRIGGER_L)
+			EndProgram = 1;
+	}
     return retval;
 }
 
