@@ -130,6 +130,7 @@ void InitTextureFB()
 	fbtexture->FV = 0;
 	fbtexture->copyOf = NULL;
 	fbtexture->texFormat = PVR_TXRFMT_ARGB1555;
+	IgnoreOffset(fbtexture);
 	
 	InsertImage(fbtexture, "FB");
 }

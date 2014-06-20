@@ -368,6 +368,10 @@ void DrawGrid()
 				if(!back)
 					return;		
 			}
+
+			if(back)
+				IgnoreOffset(back);
+
 		}
 		
 		StartScene();
@@ -424,6 +428,7 @@ void DrawLinearity()
 				circles = LoadKMG("/rd/circlesPAL.kmg.gz", 0);
 				if(!circles)
 					return;
+				IgnoreOffset(circles);
 			}
 
 			CalculateUV(0, 0, dW, dH, grid);
@@ -616,7 +621,7 @@ void DrawOverscan()
 	int 		done = 0, oLeft = 0, oTop = 0, 
 			oRight = 0, oBottom = 0, 
 			sel = 0, oldvmode = vmode, reset = 0;
-	uint16		pressed, held;		
+	uint16		pressed;		
 	ImagePtr	square, border;	
 	char		msg[50];
 	controller	*st;
@@ -691,7 +696,6 @@ void DrawOverscan()
 			
         	EndScene();
 		
-		held = 0;
 		st = ReadController(0, &pressed);
 		if(st)
 		{
@@ -711,7 +715,7 @@ void DrawOverscan()
 			
 			// Top
 			if((pressed & CONT_RTRIGGER && sel == 0) ||
-				(held & CONT_X && sel == 0))
+				(st->buttons & CONT_X && sel == 0))
 			{
 				if(square->y + 1 <= dH/2 && oTop + 1 <= dH/2)
 				{				
@@ -722,7 +726,7 @@ void DrawOverscan()
 			}
 		
 			if((pressed & CONT_LTRIGGER && sel == 0) ||
-				(held & CONT_Y && sel == 0))
+				(st->buttons & CONT_Y && sel == 0))
 			{
 				if(square->y - 1 >= 0 && oTop - 1 >= 0)
 				{				
@@ -734,7 +738,7 @@ void DrawOverscan()
 		
 			// Bottom
 			if((pressed & CONT_RTRIGGER && sel == 1) ||
-				(held & CONT_X && sel == 1))
+				(st->buttons & CONT_X && sel == 1))
 			{
 				if(square->h - 1 >= 0 && oBottom + 1 <= dH/2)
 				{								
@@ -744,7 +748,7 @@ void DrawOverscan()
 			}
 			
 			if((pressed & CONT_LTRIGGER && sel == 1) ||
-				(held & CONT_Y && sel == 1))
+				(st->buttons & CONT_Y && sel == 1))
 			{
 				if(square->h + 1 <= dW && oBottom - 1 >=0 )
 				{								
@@ -755,7 +759,7 @@ void DrawOverscan()
 			
 			// Left
 			if((pressed & CONT_RTRIGGER && sel == 2) ||
-				(held & CONT_X && sel == 2))
+				(st->buttons & CONT_X && sel == 2))
 			{
 				if(square->x + 1 <= dW/2 && oLeft + 1 <= dW/2)
 				{				
@@ -766,7 +770,7 @@ void DrawOverscan()
 			}
 		
 			if((pressed & CONT_LTRIGGER && sel == 2) ||
-				(held & CONT_Y && sel == 2))
+				(st->buttons & CONT_Y && sel == 2))
 			{
 				if(square->x - 1 >= 0 && oLeft - 1 >= 0)
 				{				
@@ -778,7 +782,7 @@ void DrawOverscan()
 		
 			// Right
 			if((pressed & CONT_RTRIGGER && sel == 3) ||
-				(held & CONT_X && sel == 3))
+				(st->buttons & CONT_X && sel == 3))
 			{
 				if(square->w - 1 >= 0 && oRight + 1 <= dW/2)
 				{								
@@ -788,7 +792,7 @@ void DrawOverscan()
 			}
 		
 			if((pressed & CONT_LTRIGGER && sel == 3) ||
-				(held & CONT_Y && sel == 3))
+				(st->buttons & CONT_Y && sel == 3))
 			{
 				if(square->w + 1 <= dW && oRight - 1 >= 0)
 				{								

@@ -736,6 +736,9 @@ void ScrollTest()
 	back->y = (dH - 240)/2;
 	overlay->y = (dH - 240)/2;
 
+	IgnoreOffset(back);
+	IgnoreOffset(overlay);
+
 	updateVMU(" Scroll  ", "", 1);
 	while(!done && !EndProgram) 
 	{

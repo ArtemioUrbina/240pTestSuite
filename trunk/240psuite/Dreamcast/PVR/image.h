@@ -46,6 +46,7 @@ struct image_st{
 		uint32  scale;
 		uint16  FH;
 		uint16  FV;
+		uint8	IgnoreOffsetY;
 		uint32	texFormat;
 
 		uint16    RefCount;
@@ -75,6 +76,7 @@ void CleanImages();
 void RefreshLoadedImages();
 void InsertImage(ImagePtr image, char *name);
 void ReleaseTextures();
+void IgnoreOffset(ImagePtr image);
 
 ImagePtr LoadKMG(const char *filename, int maptoscreen);
 uint8 ReLoadKMG(ImagePtr image, const char *filename);

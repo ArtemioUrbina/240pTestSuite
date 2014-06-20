@@ -88,6 +88,13 @@ void RefreshLoadedImages()
 			}
 		}	
 	}
+	
+	// Patch Clones
+	for(i = 0; i < MAX_IMAGES; i++)
+	{
+		if(Images[i].state == MEM_TEXRELEASED && Images[i].image->copyOf)
+			Images[i].image->tex = Images[i].image->copyOf->tex;
+	}
 }
 
 void ReleaseTextures()
@@ -258,6 +265,12 @@ int gkmg_to_img(const char * fn, kos_img_t * rv) {
 	return 0;
 }
 
+void IgnoreOffset(ImagePtr image)
+{
+	if(image)
+		image->IgnoreOffsetY = 1;
+}
+
 ImagePtr LoadKMG(const char *filename, int maptoscreen)
 {	
 	int load, len;
@@ -328,12 +341,16 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	image->FV = 0;
 	image->copyOf = NULL;
 	image->texFormat = PVR_TXRFMT_ARGB1555;
+	image->IgnoreOffsetY = 0;
+
 	if(maptoscreen)
 	{
 		if(image->w < dW && image->w != 8)
 			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
 		else
 			CalculateUV(0, 0, dW, dH, image);
+
+		IgnoreOffset(image);
 	}
 
 	InsertImage(image, (char*)filename);
@@ -357,6 +374,9 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 		return 0;
 	}
 	
+	if(image->copyOf)
+		return 0;
+
 	if(image->tex)
 	{
 		fprintf(stderr, "Found unreleased texture while reloading %s\n", filename);
@@ -428,6 +448,7 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 	image->FV = image->FV;
 	image->copyOf = source;
 	image->texFormat = source->texFormat;
+	image->IgnoreOffsetY = source->IgnoreOffsetY;
 	source->RefCount ++;
 	if(maptoscreen)
 	{
@@ -436,6 +457,8 @@ ImagePtr CloneImage(ImagePtr source, int maptoscreen)
 		else
 			CalculateUV(0, 0, dW, dH, image);
 	}
+
+	InsertImage(image, "clone");
 
 	return image;
 }
@@ -480,6 +503,11 @@ uint8 FreeImageData(ImagePtr *image)
 				(*image)->tex = NULL;
 				return 1;
 			}
+		}
+		else
+		{
+			(*image)->tex = NULL;
+			return 1;
 		}
 	}
 	return 0;
@@ -566,9 +594,8 @@ void DrawImage(ImagePtr image)
 	h = image->h;
 	
 	// Center display vertically in PAL modes, since images are mostly NTSC
-	if(IsPAL && h < dH)
-		if(!(h  == 512 && IsPAL)) // special case for FB
-			y+= offsetY;
+	if(!image->IgnoreOffsetY)
+		y+= offsetY;
 
 	if(image->scale && (vmode == VIDEO_480P_SL
 			|| vmode == VIDEO_480I_A240
