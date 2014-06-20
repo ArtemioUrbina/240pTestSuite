@@ -1,7 +1,7 @@
            COLOR BARS WITH GRAY SCALE
 
 This pattern idea and layout borrows from the 
-Digital Video Essentials color adjust pattern.
+#YDigital Video Essentials#Y color adjust pattern.
 
 It has a gray background as reference, and can 
 be used with color filters in order to adjust 

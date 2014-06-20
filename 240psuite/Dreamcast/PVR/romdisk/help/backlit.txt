@@ -1,4 +1,4 @@
-              Backlit Test (1/2)
+                BACKLIT TEST (1/2)
 
 This test allows you to check how the display's
 backlit works when only a small array of pixels
@@ -9,12 +9,12 @@ dimming.
 
 The user can move around the white pixel arrays
 with the d-pad or joystiq, and change the size
-of the pixel array with "R" and "L" triggers.
-Button "A" allows the user to hide the pixel
+of the pixel array with #GR#G and #GL#G triggers.
+Button #GA#G allows the user to hide the pixel
 array in order to alternate a fully black screen.
 
-                                     (cont...)
-              Backlit Test (2/2)
+                                     #C(cont...)#C
+                BACKLIT TEST (2/2)
 
 It might be necessary to have a fully-off panel
 (if possible) when displaying the black 

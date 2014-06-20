@@ -1,10 +1,10 @@
-                 CHECKERBOARD
+                   CHECKERBOARD 
 
 This pattern shows all the visible pixels in an
 alternating white and black grid array. 
 
-You can toggle the pattern with the R trigger, or
-turn on auto-toggle each frame with the A button.
+You can toggle the pattern with the #GR#G trigger, or
+turn on auto-toggle each frame with the #GA#G button.
 
 When auto-toggle is set, you should see it
 alternating rapidly. On some setups, the pattern
@@ -13,4 +13,4 @@ is being treated as 480i and odd or even frames
 are being discarded completely.
 
 A frame counter can be displayed on screen by 
-pressing the X button.
+pressing the #GX#G button.

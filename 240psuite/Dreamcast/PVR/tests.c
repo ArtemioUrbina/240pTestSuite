@@ -400,7 +400,7 @@ void LagTest()
 	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int				x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 1, vary = 0, variation = 1;
 	uint16				pressed;		
-	ImagePtr			back, spriteA, spriteB;
+	ImagePtr			back, spriteA, spriteB, fixed;
 	sfxhnd_t			beep;
 	maple_device_t			*purupuru = NULL;
 	static purupuru_effect_t	effect;
@@ -413,15 +413,23 @@ void LagTest()
 
 	snd_init();
 
-	srand((int)(time(0) ^ getpid()));
-	updateVMU("Lag Test ", "", 1);
-	back = LoadKMG("/rd/lag-per.kmg.gz", 0);
+	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
-	spriteA = CloneImage(back, 0);
+
+	back->r = 0.0f;
+	back->g = 0.0f;
+	back->b = 0.0f;
+			
+	srand((int)(time(0) ^ getpid()));
+	updateVMU("Lag Test ", "", 1);
+	fixed = LoadKMG("/rd/lag-per.kmg.gz", 0);
+	if(!fixed)
+		return;
+	spriteA = CloneImage(fixed, 0);
 	if(!spriteA)
 		return;
-	spriteB = CloneImage(back, 0);
+	spriteB = CloneImage(fixed, 0);
 	if(!spriteB)
 		return;	
 
@@ -431,8 +439,8 @@ void LagTest()
 	x2 = 108;
 	y2 = 96;
 		
-	back->x = 144;
-	back->y = 96;	
+	fixed->x = 144;
+	fixed->y = 96;	
 
 	for(i = 0; i < 10; i++)
 		clicks[i] = 0xFF;
@@ -443,6 +451,7 @@ void LagTest()
 		StartScene();
 
 		DrawImage(back);
+		DrawImage(fixed);
 
 		spriteA->x = x;
 		spriteA->y = y;
@@ -637,6 +646,7 @@ void LagTest()
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
 	FreeImage(&back);
+	FreeImage(&fixed);
 	FreeImage(&spriteA);
 	FreeImage(&spriteB);	
 	snd_shutdown();
@@ -1518,6 +1528,7 @@ void Alternate240p480i()
 	uint16		pressed;		
 	char 		buffer[20];
 	controller	*st;
+	ImagePtr	back;
 
 	updateVMU("240p/480i", "", 1);
 	if(vmode != VIDEO_240P)
@@ -1529,9 +1540,19 @@ void Alternate240p480i()
 		LoadScanlines();
 	}
 
+	back = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!back)
+		return;
+
+	back->r = 0.0f;
+	back->g = 0.0f;
+	back->b = 0.0f;
+			
 	while(!done && !EndProgram) 
 	{
 		StartScene();
+
+		DrawImage(back);
 
 		DrawString(32, 8, 0, 1.0f, 0, "Current Resolution:");
 		DrawString(140, 8, 0, 1.0f, 0, res == 0 ? "240p" : "480i");
@@ -1640,6 +1661,7 @@ void Alternate240p480i()
 		if(hours > 99)
 			hours = 0;
 	}
+	FreeImage(&back);
 }
 
 #ifdef USE_FFTW

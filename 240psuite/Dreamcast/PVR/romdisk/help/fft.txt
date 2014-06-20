@@ -3,14 +3,14 @@
 This test can be used to measure display lag if
 both video and audio follow the same chain.
 
-It uses Fast Fourier Transform (FFT) to detect the
-audio delay by playing a 1Khz tone and precisely
+It uses #YFast Fourier Transform#Y (FFT) to detect the
+audio delay by playing a #G1Khz#G tone and precisely
 calculating the frame delay.
 
-The L and R triggers allow you to change the frame
+The #GL#G and #GR#G triggers allow you to change the frame
 accuracy of the FFT used to estimate the audio
 delay. This ranges from 1 frame to 1/4th of a frame
 (16.67ms to 4.16ms). The smaller the frame accuracy,
 the higher the probability of small errors; since
-the Dreamcast's microphone samples rate is 11Khz.
+the #YDreamcast#Y's microphone samples rate is 11Khz.
 All settings are within the hardware capabilities.
