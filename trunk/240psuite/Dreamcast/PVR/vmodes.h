@@ -38,19 +38,20 @@
 extern int vmode;
 extern int vcable;
 
-
 extern int W;
 extern int H;
 extern int dW;
 extern int dH;
 extern int offsetY;
 extern int IsPAL;
+extern int IsPALDC;
 
 extern ImagePtr scanlines;
 extern vid_mode_t custom_240;
 extern vid_mode_t custom_288;
 extern vid_mode_t custom_576;
 
+void InitVideoModes();
 void LoadScanlines();
 inline void ReleaseScanlines();
 inline void DrawScanlines();
@@ -63,7 +64,7 @@ void ChangeResolution(int nvmode);
 void PVRStats(char *msg);
 void Toggle240p480i(int mode);
 #ifdef SERIAL
-void TestVideoMode(vid_mode_t *tets_mode);
+void TestVideoMode(int mode);
 #endif
 
 #endif 

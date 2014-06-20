@@ -292,6 +292,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	if(!image->tex)
 	{
 		free(image);
+		kos_img_free(&img, 0);	
 		fprintf(stderr, "Could not load %s to VRAM\n", filename);
 		return(NULL);
 	}
@@ -356,6 +357,12 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 		return 0;
 	}
 	
+	if(image->tex)
+	{
+		fprintf(stderr, "Found unreleased texture while reloading %s\n", filename);
+		return 0;
+	}
+
 	len = strlen(filename);
 	if(filename[len - 2] == 'g' && filename[len - 1] == 'z')
 		load = gkmg_to_img(filename, &img);
@@ -367,16 +374,11 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 		return 0;
 	}
 
-	if(image->tex)
-	{
-		fprintf(stderr, "Found unreleased texture while reloading %s\n", filename);
-		return 0;
-	}
-
 	image->tex = pvr_mem_malloc(img.byte_count);
 	if(!image->tex)
 	{
 		fprintf(stderr, "Could not load %s to VRAM\n", filename);
+		kos_img_free(&img, 0);	
 		return 0;
 	}
 
@@ -388,17 +390,6 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned int)end - start);
 	dbglog(DBG_KDEBUG, msg);
 #endif
-
-	/*
-	if(maptoscreen)
-	{
-		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
-		else
-			CalculateUV(0, 0, dW, dH, image);
-	}
-	*/
-
 	return 1;
 }
 

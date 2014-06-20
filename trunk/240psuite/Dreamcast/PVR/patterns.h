@@ -33,6 +33,7 @@ void DrawLinearity();
 void Draw100IRE();
 void DrawSMPTEColorBars();
 void DrawSharpness();
+void DrawOverscan();
 
 #endif
 

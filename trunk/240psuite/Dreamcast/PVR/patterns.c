@@ -361,6 +361,7 @@ void DrawGrid()
 			}
 			*/
 			
+			// Use 240p Grid
 			if(!back)
 			{
 				back = LoadKMG("/rd/grid.kmg.gz", 0);
@@ -610,4 +611,201 @@ void DrawSharpness()
 	return;
 }
 
+void DrawOverscan()
+{
+	int 		done = 0, oLeft = 0, oTop = 0, 
+			oRight = 0, oBottom = 0, 
+			sel = 0, oldvmode = vmode, reset = 0;
+	uint16		pressed, held;		
+	ImagePtr	square, border;	
+	char		msg[50];
+	controller	*st;
+	
+	square = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!square)
+		return;
+		
+	border = CloneImage(square, 1);
+	if(!border)
+		return;		
+	
+	border->r = 1.0;
+	border->g = 1.0;
+	border->b = 1.0;	
+	
+	square->r = 0.4;
+	square->g = 0.4;
+	square->b = 0.4;	
+			
+	while(!done && !EndProgram) 
+	{			
+		int x = 0, y = 0;
+		
+		if(oldvmode != vmode || reset)
+		{
+			oTop = oLeft = oBottom = oRight = 0;
+			CalculateUV(0, 0, dW, dH, square);
+			CalculateUV(0, 0, dW, dH, border);
+			square->x = square->y = 0;			
+			oldvmode = vmode;
+			reset = 0;
+		}		
+		
+		StartScene();
+		        
+		DrawImage(border);
+		DrawImage(square);	
+
+		x = dW/2;
+		y = dH/2-2*fh;
+		
+		DrawStringS(x-110, y+(fh*sel), 1.0, 1.0, 1.0, ">");
+				
+		DrawStringS(x-100, y, 1.0, 1.0, 1.0, "Top Overscan:");
+		sprintf(msg, "%d pixels (%g%%)", oTop, (double)(oTop*100.0f)/(dH/2));
+		DrawStringS(x+20, y, 1.0, 1.0, 1.0, msg);
+		
+		y+= fh;
+		
+		DrawStringS(x-100, y, 1.0, 1.0, 1.0, "Bottom Overscan:");
+		sprintf(msg, "%d pixels (%g%%)", oBottom, (double)(oBottom*100.0f)/(dH/2));
+		DrawStringS(x+20, y, 1.0, 1.0, 1.0, msg);
+		
+		y+= fh;		
+		
+		DrawStringS(x-100, y, 1.0, 1.0, 1.0, "Left Overscan:");
+		sprintf(msg, "%d pixels (%g%%)", oLeft, (double)(oLeft*100.0f)/(dW/2));
+		DrawStringS(x+20, y, 1.0, 1.0, 1.0, msg);
+		
+		y+= fh;
+		
+		DrawStringS(x-100, y, 1.0, 1.0, 1.0, "Right Overscan:");
+		sprintf(msg, "%d pixels (%g%%)", oRight, (double)(oRight*100.0f)/(dW/2));
+		DrawStringS(x+20, y, 1.0, 1.0, 1.0, msg);			
+				
+		/*
+		if(IsPAL && Options.PALScale576)
+			DrawStringS(50, 50, 1.0, 1.0, 0x00,
+			"When using PAL stretched modes, the pixel\ncount is inaccurate due to vertical scaling.\nRead the #MHELP#M for details");
+		*/
+			
+        	EndScene();
+		
+		held = 0;
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if(pressed & CONT_START ) 		
+				ShowMenu(OVERSCANHELP);
+			
+			if ( pressed & CONT_DPAD_UP ) 
+				sel--;
+		
+			if ( pressed & CONT_DPAD_DOWN ) 		
+				sel++;
+			
+			if(sel < 0)
+				sel = 3;
+			if(sel > 3)
+				sel = 0;
+			
+			// Top
+			if((pressed & CONT_RTRIGGER && sel == 0) ||
+				(held & CONT_X && sel == 0))
+			{
+				if(square->y + 1 <= dH/2 && oTop + 1 <= dH/2)
+				{				
+					square->y++;
+					square->h--;
+					oTop++;
+				}
+			}
+		
+			if((pressed & CONT_LTRIGGER && sel == 0) ||
+				(held & CONT_Y && sel == 0))
+			{
+				if(square->y - 1 >= 0 && oTop - 1 >= 0)
+				{				
+					square->y--;
+					square->h++;	
+					oTop--;
+				}
+			}
+		
+			// Bottom
+			if((pressed & CONT_RTRIGGER && sel == 1) ||
+				(held & CONT_X && sel == 1))
+			{
+				if(square->h - 1 >= 0 && oBottom + 1 <= dH/2)
+				{								
+					square->h--;
+					oBottom++;
+				}
+			}
+			
+			if((pressed & CONT_LTRIGGER && sel == 1) ||
+				(held & CONT_Y && sel == 1))
+			{
+				if(square->h + 1 <= dW && oBottom - 1 >=0 )
+				{								
+					square->h++;	
+					oBottom--;
+				}
+			}
+			
+			// Left
+			if((pressed & CONT_RTRIGGER && sel == 2) ||
+				(held & CONT_X && sel == 2))
+			{
+				if(square->x + 1 <= dW/2 && oLeft + 1 <= dW/2)
+				{				
+					square->x++;
+					square->w--;
+					oLeft++;
+				}
+			}
+		
+			if((pressed & CONT_LTRIGGER && sel == 2) ||
+				(held & CONT_Y && sel == 2))
+			{
+				if(square->x - 1 >= 0 && oLeft - 1 >= 0)
+				{				
+					square->x--;
+					square->w++;
+					oLeft--;
+				}
+			}
+		
+			// Right
+			if((pressed & CONT_RTRIGGER && sel == 3) ||
+				(held & CONT_X && sel == 3))
+			{
+				if(square->w - 1 >= 0 && oRight + 1 <= dW/2)
+				{								
+					square->w--;
+					oRight++;
+				}
+			}
+		
+			if((pressed & CONT_LTRIGGER && sel == 3) ||
+				(held & CONT_Y && sel == 3))
+			{
+				if(square->w + 1 <= dW && oRight - 1 >= 0)
+				{								
+					square->w++;	
+					oRight--;
+				}
+			}
+					
+			if (pressed & CONT_A)	
+				reset = 1;
+			
+			if (pressed & CONT_B)
+				done =	1;										
+		}
+	}
+	FreeImage(&border);
+	FreeImage(&square);
+	return;
+}
 

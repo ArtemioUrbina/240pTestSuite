@@ -49,6 +49,7 @@ extern char *HelpData;
 #define LINEARITYHELP	"/rd/help/linearity.txt"
 #define FFTHELP		"/rd/help/fft.txt"
 #define SHARPNESSHELP	"/rd/help/sharpness.txt"
+#define OVERSCANHELP	"/rd/help/overscan.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);
