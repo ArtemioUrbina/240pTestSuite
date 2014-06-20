@@ -41,7 +41,7 @@ extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 KOS_INIT_FLAGS(INIT_DEFAULT);
 
-int	region = 0;
+int	region = FLASHROM_REGION_UNKNOWN;
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawCredits(ImagePtr back);
@@ -54,20 +54,25 @@ int main(void)
 	ImagePtr	title, sd;
 	controller	*st;
 
-	/* init kos	*/
 	vcable = vid_check_cable();
+	region = flashrom_get_region();
+	if(region == FLASHROM_REGION_EUROPE)
+	{
+		settings.EnablePAL = 1;
+		IsPALDC = 1;
+	}
+
+	InitImages();
+	InitVideoModes();
+
 	if(vcable != CT_VGA)
 		ChangeResolution(VIDEO_240P);
 	else
 		ChangeResolution(VIDEO_480P_SL);
 
-	region = flashrom_get_region();
-	if(region == FLASHROM_REGION_EUROPE)
-		settings.EnablePAL = 1;
-
-	InitImages();
 	LoadFont();
 	LoadScanlines();
+
 	title = LoadKMG("/rd/back.kmg.gz", 0);
 	sd = LoadKMG("/rd/SD.kmg.gz", 0);
 	if(sd)
@@ -318,7 +323,7 @@ int main(void)
 						break;
 #ifdef SERIAL
 					case 16:
-						TestVideoMode(&custom_576);
+						TestVideoMode(vmode);
 						break;
 #endif
 				} 					
@@ -367,11 +372,12 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;		
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White Screen"); y += fh; c++;				
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;				
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;				
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White & RGB screens"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		r = 0.8f;
@@ -494,6 +500,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 						DrawSharpness();
 						break;
 					case 12:
+						DrawOverscan();
+						break;
+					case 13:
 						done = 1;
 						break;
 				} 												

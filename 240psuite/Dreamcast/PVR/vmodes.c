@@ -10,6 +10,7 @@ int dW		= 0;
 int dH		= 0;
 int offsetY 	= 0;
 int IsPAL 	= 0;
+int IsPALDC	= 0;
 
 /* 640x480 VGA 60Hz */
 /* DM_640x480_VGA */
@@ -40,12 +41,12 @@ vid_mode_t custom_240 =
         PM_RGB565,
         262, // Number of scanlines. 262 default
 	857, // Clocks per scanline. 
-        164, // Bitmap window X position. 
-	18, // Bitmap window Y position (automatically increased for PAL) 24 default, now starts at 22
+        174, // Bitmap X, 157 brings it to 35 2/3 uS centering the signal, 164 centers it within the horizontal signal the DC can produce
+	18, // Bitmap Y 18 starts at NTSC line 22, according to spec
         21, // First scanline interrupt position. 21 default
 	260, // Second scanline interrupt position (automatically doubled for VGA) 
-        139, // Border X starting position. gives 704x240
-	843, // Border X stop position. 
+        129, // Border X starting. 
+	840, // Border X stop position. 
         24, // Border Y starting position.
 	264, // Border Y stop position.
         0, 1,
@@ -64,13 +65,13 @@ vid_mode_t custom_288 =
         312, // Number of scanlines. 312 default, 
 	863, // Clocks per scanline. 863, 727 working
         174, // Bitmap window X position. 
-	24, // Bitmap window Y position (automatically increased for PAL) 45 default
+	22, // Bitmap window Y (45 defaulty), with 22 starts at line 23 as PAL dictates
         21, // First scanline interrupt position. 21 default
 	310, // Second scanline interrupt position (automatically doubled for VGA) 
-        116, // Border X starting position. 
-	843, // Border X stop position. 
-        44, // Border Y starting position. 
-	620, // Border Y stop position. 
+        143, // Border X starting position. 
+	845, // Border X stop position. 
+        22, // Border Y starting position. 
+	311, // Border Y stop position. 
         0, // Current framebuffer. 
 	1, // Number of framebuffers. 
         { 0, 0, 0, 0 } // Offset to framebuffers. 
@@ -89,17 +90,36 @@ vid_mode_t custom_576 =
         624,
 	863,
         175,
-	16,  // can start at 16 -> 70
-        21,
+	21, // Starts at line #23 in PAL composite
+        21,  
 	310,
-        172,
-	816,
+        143,
+	845,
         0,
-	312, // 620
+	310, // 620
         0,
 	1,
         { 0, 0, 0, 0 }
 };
+
+void InitVideoModes()
+{
+	if(IsPALDC)
+	{
+		// Adjust bitmapy for European DC
+		// and NTSC modes
+
+		if(vcable == CT_COMPOSITE)
+		{
+			// Starts at lien 26 when in PAL, lower is invisible via composite	
+			custom_240.bitmapy += 4; 
+			//custom_480i.bitmapy ++;	
+		}
+	}	
+	else
+	{
+	}
+}
 
 ImagePtr   scanlines = NULL;
 
@@ -175,7 +195,7 @@ inline void ReleaseScanlines()
 void ChangeResolution(int nvmode)
 {
 	vuint32 *regs = (uint32*)0xA05F8000;
-	uint32 data = 0;
+	//uint32 data = 0;
 
 	//int lastw;
 
@@ -294,6 +314,7 @@ void ChangeResolution(int nvmode)
 
 		RefreshLoadedImages();
 
+/*
 		if(IsPAL)
 		{
 			if(vmode == VIDEO_288P)
@@ -356,19 +377,19 @@ void ChangeResolution(int nvmode)
 			data = 0x03 | 0x3f << 8 | 0x319 << 12 | 0x0f << 22;
 			regs[0x38] = data;
 		}
-
+*/
 
 		// Disable deflicker filter, 
 		if(PVR_GET(PVR_SCALER_CFG) != 0x400)
 		{
-			dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
+			//dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
 			PVR_SET(PVR_SCALER_CFG, 0x400);
 		}
 
 		// Turn off texture dithering
 		if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
 		{
-			dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
+			//dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
 			PVR_SET(PVR_FB_CFG_2, 0x00000001);
 		}
 
@@ -461,7 +482,7 @@ void PVRStats(char *msg)
 #include "controller.h"
 #include "font.h"
 
-void TestVideoMode(vid_mode_t *source_mode)
+void TestVideoMode(int mode)
 {
 	int 			done =  0, oldvmode = vmode;
 	uint16			pressed, update = 0, sel = 1, showback = 1;		
@@ -470,14 +491,25 @@ void TestVideoMode(vid_mode_t *source_mode)
 	ImagePtr		back;
 	vid_mode_t  		test_mode;
 	vid_mode_t  		backup_mode;
+	vid_mode_t  		*source_mode = NULL;
+
+	if(mode == VIDEO_240P)
+		source_mode = &custom_240;
+	if(mode == VIDEO_576I)
+		source_mode = &custom_576;
+	if(mode == VIDEO_288P)
+		source_mode = &custom_288;
+
+	if(!source_mode)
+		return;
 
 	test_mode = *source_mode;
-	backup_mode = *source_mode;
+	backup_mode = test_mode;
 
-	//if(vmode == VIDEO_288P)
-		//back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
-	//else
-		back = LoadKMG("/rd/480/gridPAL480.kmg.gz", 0);
+	if(vmode == VIDEO_288P)
+		back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
+	else
+		back = LoadKMG("/rd/grid.kmg.gz", 0);
 	if(!back)
 		return;
 	back->scale = 0;
@@ -567,9 +599,6 @@ void TestVideoMode(vid_mode_t *source_mode)
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START)
-				ChangeResolution(VIDEO_288P);
-
 			if (pressed & CONT_B)
 				done =	1;				
 
@@ -701,7 +730,7 @@ void TestVideoMode(vid_mode_t *source_mode)
 		if(update)
 		{
 			*source_mode = test_mode;
-			ChangeResolution(VIDEO_576I);
+			ChangeResolution(mode);
 			//vuint32 *regs = (uint32*)0xA05F8000;
 			//uint32 data = 0;
 

@@ -527,7 +527,10 @@ void ChangeOptions(ImagePtr screen)
 			switch(sel)
 			{			
 					case 1:
+						// NTSC consoles output a corrupt PAL signal
+#ifndef SERIAL
 						if(region == FLASHROM_REGION_EUROPE)
+#endif
 							settings.EnablePAL = !settings.EnablePAL;
 						break;
 					case 3:
