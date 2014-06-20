@@ -22,8 +22,8 @@
 #ifndef MENU_H
 #define MENU_H
 
-#define VERSION_NUMBER "Dreamcast Ver. 1.19"
-#define VERSION_DATE "22/05/2014"
+#define VERSION_NUMBER "Dreamcast Ver. 1.20"
+#define VERSION_DATE "20/06/2014"
 
 struct settings_st {
 	int drawborder;

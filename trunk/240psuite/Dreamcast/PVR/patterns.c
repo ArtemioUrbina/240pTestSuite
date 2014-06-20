@@ -41,19 +41,19 @@ void DrawPluge()
 	uint16		pressed;		
 	ImagePtr	back = NULL, backPAL, backNTSC, black, highlight;
 	controller	*st;
-    char		msg[50];
+	char		msg[50];
 
 	backNTSC = LoadKMG("/rd/pluge.kmg.gz", 0);
 	if(!backNTSC)
 		return;
 
-    backPAL = LoadKMG("/rd/plugepal.kmg.gz", 0);
+	backPAL = LoadKMG("/rd/plugepal.kmg.gz", 0);
 	if(!backPAL)
-    {
-        FreeImage(&backNTSC);	
+	{
+		FreeImage(&backNTSC);	
 		return;
-    }
-    black = LoadKMG("/rd/white.kmg.gz", 0);
+    	}
+	black = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!black)
 	{
 		FreeImage(&backPAL);
@@ -61,7 +61,7 @@ void DrawPluge()
 		return;
 	}	
 
-    highlight = LoadKMG("/rd/plugehigh.kmg.gz", 0);
+	highlight = LoadKMG("/rd/PLUGEBorder.kmg.gz", 0);
 	if(!highlight)
 	{
 		FreeImage(&backPAL);
@@ -74,7 +74,7 @@ void DrawPluge()
 	black->g = 0x0;
 	black->b = 0x0;	
 
-    if(!IsPAL)
+	if(!IsPAL)
 	{
 		back = backNTSC;
 		black->h = 240;
@@ -88,7 +88,7 @@ void DrawPluge()
 	updateVMU(" Pluge ", "", 1);
 	while(!done && !EndProgram) 
 	{
-        if(oldvmode != vmode)
+		if(oldvmode != vmode)
 		{
 			if(!IsPAL)
 			{
@@ -173,8 +173,8 @@ void DrawPluge()
 			if (pressed & CONT_START)
 				ShowMenu(PLUGEHELP);
 
-            if (pressed & CONT_A)
-		    {
+			if (pressed & CONT_A)
+			{
 			    if(!IsPAL)
 			    {
 				    if(back == backNTSC)
@@ -192,7 +192,7 @@ void DrawPluge()
 			    }
 		    }
 		    
-		    if (pressed & PAD_BUTTON_X)
+		    if (pressed & CONT_X)
 			    ShowHelp = 100;
 		}
 	}
@@ -270,37 +270,37 @@ void DrawGrayRamp()
 void DrawWhiteScreen()
 {
 	int 		done = 0, color = 0, text = 0;
-    int			sel = 1, editmode = 0;
-    float       BlackLevel = 0.0f, cr, cb, cg;
+	int		sel = 1, editmode = 0;
+	float		BlackLevel = 0.0f, cr, cb, cg;
 	uint16		pressed;		
 	ImagePtr	back;
 	controller	*st;
-    char		msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
+	char		msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
 
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
 
-    back->w = dW;
+	back->w = dW;
 	back->h = dH;
 
-    if(!IsPAL)
+	if(!IsPAL)
 		BlackLevel = 0.075f; // 7.5 IRE
 	else
 		BlackLevel = 0.0f; // 0 IRE
 		
-    cr = cb = cg = 1.0f; // white
+	cr = cb = cg = 1.0f; // white
 	updateVMU("White scr", "", 1);
 	while(!done && !EndProgram) 
 	{		
-        if(IsPAL)
+		if(IsPAL)
 			BlackLevel = 0.0f;
 
 		StartScene();
 
-        DrawImage(back);
+		DrawImage(back);
 
-        if(text)
+		if(text)
 		{						
 			DrawStringB(200, 20, 1.0f, 1.0f, 1.0f, msg);			
 			text --;
@@ -316,129 +316,128 @@ void DrawWhiteScreen()
 
 			if (pressed & CONT_RTRIGGER)
 			{
-			    color ++;
-			    if(color > 4)
-				    color = 0;		
+				color ++;
+				if(color > 4)
+					color = 0;		
 			    
-			    editmode = 0;
-			    if(color == 0 && cr + cb + cg != 3*1.0f)
-				    sprintf(msg, "%s [EDITED]", mode[color]);
-			    else
-				    sprintf(msg, "%s", mode[color]);
+				editmode = 0;
+				if(color == 0 && cr + cb + cg != 3*1.0f)
+					sprintf(msg, "%s [EDITED]", mode[color]);
+				else
+					sprintf(msg, "%s", mode[color]);
 
-                updateVMU("White scr", mode[color], 1);
-			    text = 30;
-		    }
+				updateVMU("White scr", mode[color], 1);
+				text = 30;
+			}
 
 			if (pressed & CONT_LTRIGGER)
 			{			
-			    color --;
-			    if(color < 0)
-				    color = 4;			
+				color --;
+				if(color < 0)
+					color = 4;			
 				    
-			    editmode = 0;
-			    if(color == 0 && cr + cb + cg != 3*1.0f)
-				    sprintf(msg, "%s [edited]", mode[color]);
-			    else
-				    sprintf(msg, "%s", mode[color]);
-                updateVMU("White scr", mode[color], 1);
-			    text = 30;
-		    }
+				editmode = 0;
+				if(color == 0 && cr + cb + cg != 3*1.0f)
+					sprintf(msg, "%s [edited]", mode[color]);
+				else
+					sprintf(msg, "%s", mode[color]);
+				updateVMU("White scr", mode[color], 1);
+				text = 30;
+			}
 
 			if (pressed & CONT_START)
 				ShowMenu(WHITEHELP);
 
-            if (pressed CONT_A && color == 1 && !IsPAL)
-		    {
-			    if(!BlackLevel)
-			    {
-				    BlackLevel = 0.075f;
-				    sprintf(msg, "#GBlack Level: 7.5 IRE#G");
-			    }
-			    else
-			    {
-				    BlackLevel = 0.0f;
-				    sprintf(msg, "#GBlack Level: 0 IRE#G");
-			    }
-			    text = 140;
-		    }				
+			if (pressed & CONT_A && color == 1 && !IsPAL)
+			{
+				if(!BlackLevel)
+				{
+					BlackLevel = 0.075f;
+					sprintf(msg, "#GBlack Level: 7.5 IRE#G");
+				}
+				else
+				{
+					BlackLevel = 0.0f;
+					sprintf(msg, "#GBlack Level: 0 IRE#G");
+				}
+				text = 140;
+			}				
 		    
-		    if (pressed & CONT_A && color == 0)
-			    editmode = !editmode;
+			if (pressed & CONT_A && color == 0)
+				editmode = !editmode;
 
-            if(editmode)
-		    {
-			    int *current = NULL;
+			if(editmode)
+			{
+				float *current = NULL;
 							    
-			    sprintf(msg, "#%cR:%0.2f#W #%cG:%0.2f#W #%cB:x#W", 
-					    sel == 1 ? 'G' : 'W', cr,
-					    sel == 2 ? 'G' : 'W', cg, 
-					    sel == 3 ? 'G' : 'W', cb);
-			    text = 1;
+				sprintf(msg, "#%cR:%0.2f#W #%cG:%0.2f#W #%cB:%0.2f#W", 
+					sel == 1 ? 'G' : 'W', (double)cr,
+					sel == 2 ? 'G' : 'W', (double)cg, 
+					sel == 3 ? 'G' : 'W', (double)cb);
+				text = 1;
     
-			    if ( pressed & CONT_DPAD_LEFT )
-			    {
-				    sel --;
-				    if(sel < 1)
-					    sel = 3;
-			    }
+				if ( pressed & CONT_DPAD_LEFT )
+				{
+					sel --;
+					if(sel < 1)
+						sel = 3;
+				}
 			    
-			    if ( pressed & CONT_DPAD_RIGHT )
-			    {
-				    sel ++;
-				    if(sel > 3)
-					    sel = 1;
-			    }
+				if ( pressed & CONT_DPAD_RIGHT )
+				{
+					sel ++;
+					if(sel > 3)
+						sel = 1;
+				}
 			    
-			    switch(sel)
-			    {
-				    case 1:
-					    current = &cr;
-					    break;
-				    case 2:
-					    current = &cg;
-					    break;
-				    case 3:
-					    current = &cb;
-					    break;
-			    }
+				switch(sel)
+				{
+					case 1:
+						current = &cr;
+						break;
+					case 2:
+						current = &cg;
+						break;
+					case 3:
+						current = &cb;
+						break;
+				}
 			    
-			    if ( pressed & CONT_DPAD_UP )
-			    {				
+				if ( pressed & CONT_DPAD_UP )
+				{				
+					if(current)
+					{
+						(*current) += .01;
+						if(*current > 1.0f)
+							*current = 1.0f;
+					}
+				}
+			    
+				if ( pressed & CONT_DPAD_DOWN )
+				{			
 				    if(current)
 				    {
-					    (*current) + = .05;
-					    if(*current > 0xff)
-						    *current = 0xff;
-				    }
-			    }
-			    
-			    if ( pressed & CONT_DPAD_DOWN )
-			    {			
-				    if(current)
-				    {
-					    (*current) -= .05;
+					    (*current) -= .01;
 					    if(*current < 0)
 						    *current = 0;
 				    }
-			    }	
+				}	
     
-			    if ( pressed & CONT_Y )
-			    {				
+				if ( pressed & CONT_X )
+				{				
 				    if(current)			
 					    *current  = 0.0f;					
-			    }
+				}
 			    
-			    if ( pressed &CONT_X )
-			    {			
+				if ( pressed &CONT_Y )
+				{			
 				    if(current)				
 					    *current = 1.0f;
-			    }	
-		    }
-		}
+				}	
+			}
 
-		switch(color)
-		{
+			switch(color)
+			{
 				case 0:
 					back->r = cr;
 					back->g = cg;
@@ -464,6 +463,7 @@ void DrawWhiteScreen()
 					back->g = 0.0f;
 					back->b = 1.0f;
 					break;
+			}
 		}
 
 	}
@@ -664,9 +664,17 @@ void DrawLinearity()
 {
 	int 		done = 0, oldvmode = vmode, gridpattern = 0, showgrid = 0;
 	uint16		pressed;
-	ImagePtr	circles = NULL, grid, gridd;
+	ImagePtr	circles = NULL, grid, gridd, back;
 	controller	*st;
 
+	back = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!back)
+		return;		
+	
+	back->r = 0.0;
+	back->g = 0.0;
+	back->b = 0.0;	
+	
 	grid = LoadKMG("/rd/circles_grid.kmg.gz", 1);
 	if(!grid)
 		return;
@@ -704,6 +712,8 @@ void DrawLinearity()
 		}
 	
 		StartScene();
+
+		DrawImage(back);
 		if(showgrid)
 		{
 			if(gridpattern)
@@ -734,6 +744,7 @@ void DrawLinearity()
 	FreeImage(&gridd);
 	FreeImage(&grid);
 	FreeImage(&circles);
+	FreeImage(&back);
 	return;
 }
 
