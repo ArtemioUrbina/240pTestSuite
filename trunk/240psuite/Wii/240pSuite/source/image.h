@@ -38,6 +38,10 @@
 
 #include "video.h"
 
+#ifdef DEBUG_MEM
+void debugstr(char *data);
+#endif
+
 typedef struct image_st * ImagePtr;
 
 struct image_st{

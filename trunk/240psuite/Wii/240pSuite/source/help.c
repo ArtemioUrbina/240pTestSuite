@@ -209,6 +209,8 @@ char **HelpArray[HELPCOUNT] = {
 NULL
 };
 
+#define EXTRA_BUFFER 500
+
 char *PrepareHelpText(char *text)
 {
 	u32  tsize = 0, pos = 0, ntextpos = 0;
@@ -218,7 +220,7 @@ char *PrepareHelpText(char *text)
 	if(!text)
 		return NULL;
 	tsize = strlen(text);
-	ntext = (char*)malloc(sizeof(char)*tsize+40);
+	ntext = (char*)malloc(sizeof(char)*tsize+EXTRA_BUFFER);
 	if(!ntext)
 		return NULL;
 		
@@ -293,7 +295,7 @@ char *PrepareHelpText(char *text)
 				bNameLen = strlen(buttonName);
 				for(bNamePos = 0; bNamePos < bNameLen; bNamePos++)				
 				{
-					if(ntextpos+1 < tsize+20)
+					if(ntextpos+1 < tsize+EXTRA_BUFFER)
 						ntext[ntextpos++] = buttonName[bNamePos];
 				}
 				
@@ -302,7 +304,7 @@ char *PrepareHelpText(char *text)
 			}
 		}
 	}
-	if(ntextpos+1 < tsize+40)
+	if(ntextpos+1 < tsize+EXTRA_BUFFER)
 		ntext[ntextpos++] = '\0';
 	return ntext;
 }

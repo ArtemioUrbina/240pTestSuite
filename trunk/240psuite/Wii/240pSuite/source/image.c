@@ -30,6 +30,57 @@
 #include "menu.h"
 #include "options.h"
 
+#ifdef DEBUG_MEM
+#include "font.h"
+#include <limits.h>
+
+#define DEBUG_NUM	15
+
+char *debug[DEBUG_NUM];
+int debugnum = 0;
+
+void debugstr(char *data)
+{
+	int len = 0;
+	char *ndata = NULL;
+	
+	if(!data)
+		return;
+			
+	len = strlen(data);
+	ndata = malloc(sizeof(char)*len+1);
+	if(!ndata)
+		return;
+	
+	strcpy(ndata, data);
+	if(debugnum < DEBUG_NUM)
+	{
+		debug[debugnum] = ndata;
+		debugnum ++;
+	}
+	else
+	{
+		int i = 0;
+			
+		free(debug[0]);
+		debug[0] = NULL;
+		
+		for(i = 0; i < debugnum - 1; i ++)
+			debug[i] = debug[i + 1];
+		
+		debug[debugnum] = ndata;
+	}
+}
+
+void debugdata()
+{	
+	int i = 0;
+	
+	for(i = 0; i < debugnum; i++)
+		if(debug[i]) DrawStringB(20, 20+i*fh, 0x00, 0xff, 0x00, debug[i]);   	
+}
+#endif
+
 static u8 gp_fifo[GX_FIFO_MINSIZE] ATTRIBUTE_ALIGN(32);
 
 TPLFile backsTPL;	
@@ -298,8 +349,9 @@ ImagePtr CopyFrameBufferToImage()
 			
 	width = rmode->fbWidth;
 	height = rmode->efbHeight;
-	
-	fbsize = GX_GetTexBufferSize(width, height, GX_TF_RGBA8, GX_TRUE, 0);
+	//Darned GX_GetTexBufferSize returns 0! this crashed the suite, no wonder
+	//fbsize = GX_GetTexBufferSize(width, height, GX_TF_RGBA8, GX_TRUE, 0);	
+	fbsize = width * height * 4;  // 32 bits	
 	cfb = (u8 *)memalign(32, fbsize);
     if (!cfb)
 		return NULL;
@@ -580,6 +632,10 @@ inline void DrawScanlines()
 {
 	if(vmode == VIDEO_480P_SL && scanlines)
 		DrawImage(scanlines);
+		
+#ifdef DEBUG_MEM
+	debugdata();
+#endif
 }
 
 inline void ReleaseScanlines()
