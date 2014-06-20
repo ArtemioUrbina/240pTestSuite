@@ -4,13 +4,9 @@ With this pattern you can interactively find out
 the overscan in pixels and percentage of each
 edge in a display. 
 
-Use the $R and $L buttons to increment the 
+Use the #GR#G and #GL#G triggers to increment the 
 overscan until you see the white border, then go 
 back one pixel. The resulting number is the
 amount of overscan in pixels in each direction.
 
-#YWhen in 576i stretched PAL modes, the pixel
-count is not accurate#Y. For precise results, 
-instead use the #GPAL start line option#G in #Y23 1/2#Y
-and #YBottom#y modes, each one to count top or bottom
-overscan accurately.
+The #GA#G button resets all borders to zero.

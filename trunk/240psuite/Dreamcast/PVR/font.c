@@ -82,11 +82,13 @@ void DrawChar(float x, float y, char c)
 }
 
 void DrawString(float x, float y, float r, float g, float b, char *str) 
-{
+{	
+	float orig_x = x;
+	int highlight = 0;
+
 	font_t->r = r;
 	font_t->g = g;
 	font_t->b = b;
-	float orig_x = x;
 
 	while (*str) 
 	{		
@@ -94,6 +96,57 @@ void DrawString(float x, float y, float r, float g, float b, char *str)
 		{
 			x = orig_x;
 			y += fh;
+			str++;
+			continue;
+		}
+
+		if(*str == '#')
+		{						
+			highlight = !highlight;
+			str++;
+			
+			if(highlight && r + g + b != 0.0f)
+			{
+				font_t->r = 0.0f;
+				font_t->g = 0.0f;
+				font_t->b = 0.0f;
+				switch(*str)
+				{
+					case 'R':
+						font_t->r = 1.0f;
+						break;
+					case 'G':
+						font_t->g = 1.0f;
+						break;
+					case 'B':
+						font_t->b = 1.0f;
+						break;
+					case 'Y':
+						font_t->r = 1.0f;
+						font_t->g = 1.0f;
+						break;
+					case 'C':
+						font_t->g = 1.0f;
+						font_t->b = 1.0f;
+						break;
+					case 'M':
+						font_t->r = 1.0f;
+						font_t->b = 1.0f;
+						break;
+					case 'W':
+					default:											
+						font_t->r = 1.0f;
+						font_t->g = 1.0f;
+						font_t->b = 1.0f;
+						break;					
+				}
+			}			
+			else
+			{
+				font_t->r = r;
+				font_t->g = g;
+				font_t->b = b;
+			}
 			str++;
 			continue;
 		}
@@ -112,13 +165,42 @@ void DrawStringS(float x, float y, float r, float g, float b, char *str)
 	DrawString(x, y, r, g, b, str);
 }
 
+int MeasureString(char *str)
+{
+	int len = 0, count = 0;
+	char *pos = NULL, *check = str;
+	
+	if(!str)
+		return len;
+		
+	len = strlen(str);
+	
+	do
+	{
+		pos = strchr(check, '#');
+		if(pos)
+		{
+			check = pos + 1;
+			count ++;
+		}
+	}while(pos);
+	
+	len = len - 2*count;
+	
+	if(len < 0)
+		len = 0;
+		
+	return len;
+}
+
+
 void DrawStringB(float x, float y, float r, float g, float b, char *str) 
 {	
 	if(black_t)
 	{
 		float len;
 		
-		len = strlen(str);
+		len = MeasureString(str);
 		len *= fw;
 
 		black_t->x = x - 1;
