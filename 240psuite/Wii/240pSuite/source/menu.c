@@ -1066,7 +1066,7 @@ void DrawCredits(ImagePtr Back)
 	
 	while(!done && !EndProgram)  
 	{
-		int x = 20, y = 20;			
+		int x = 20, y = 10;			
 
 		StartScene();
 		        
@@ -1096,15 +1096,20 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Collaboration:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Konsolkongen & shmups regulars"); y += fh; 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "PAL testing:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Yamato "); y += fh; 		
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Yamato"); y += fh; 		
+#ifndef WII_VERSION
+		DrawStringS(x, y, 0x00, 0xff, 0x00, "GameCube Tools:"); y += fh; 
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Rolman"); y += fh; 	
+#endif
         y += fh;
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/240p/"); y += 2*fh; 
 
 		DrawStringS(x, y, 0x00, 0xba, 0xba, "This program is free Software.");  y += fh;
 		DrawStringS(x, y, 0x00, 0xba, 0xba, "Source code is available under GPL.");  y += fh;
+#ifdef WII_VERSION
 		DrawStringS(x, y, 0x00, 0xba, 0xba, "Includes libcheckregion.");
-
+#endif
 		y = 58;
 		
 		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_NUMBER); y += fh;
