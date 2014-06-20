@@ -269,34 +269,185 @@ void DrawGrayRamp()
 
 void DrawWhiteScreen()
 {
-	int 		done = 0, color = 0;
+	int 		done = 0, color = 0, text = 0;
+    int			sel = 1, editmode = 0;
+    float       BlackLevel = 0.0f, cr, cb, cg;
 	uint16		pressed;		
 	ImagePtr	back;
 	controller	*st;
+    char		msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
 
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
+
+    back->w = dW;
+	back->h = dH;
+
+    if(!IsPAL)
+		BlackLevel = 0.075f; // 7.5 IRE
+	else
+		BlackLevel = 0.0f; // 0 IRE
 		
+    cr = cb = cg = 1.0f; // white
 	updateVMU("White scr", "", 1);
 	while(!done && !EndProgram) 
-	{
-		if(color > 4)
-			color = 0;
-		if(color < 0)
-			color = 4;
+	{		
+        if(IsPAL)
+			BlackLevel = 0.0f;
+
+		StartScene();
+
+        DrawImage(back);
+
+        if(text)
+		{						
+			DrawStringB(200, 20, 1.0f, 1.0f, 1.0f, msg);			
+			text --;
+		}		
+		
+		EndScene();
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;								
+
+			if (pressed & CONT_RTRIGGER)
+			{
+			    color ++;
+			    if(color > 4)
+				    color = 0;		
+			    
+			    editmode = 0;
+			    if(color == 0 && cr + cb + cg != 3*1.0f)
+				    sprintf(msg, "%s [EDITED]", mode[color]);
+			    else
+				    sprintf(msg, "%s", mode[color]);
+
+                updateVMU("White scr", mode[color], 1);
+			    text = 30;
+		    }
+
+			if (pressed & CONT_LTRIGGER)
+			{			
+			    color --;
+			    if(color < 0)
+				    color = 4;			
+				    
+			    editmode = 0;
+			    if(color == 0 && cr + cb + cg != 3*1.0f)
+				    sprintf(msg, "%s [edited]", mode[color]);
+			    else
+				    sprintf(msg, "%s", mode[color]);
+                updateVMU("White scr", mode[color], 1);
+			    text = 30;
+		    }
+
+			if (pressed & CONT_START)
+				ShowMenu(WHITEHELP);
+
+            if (pressed CONT_A && color == 1 && !IsPAL)
+		    {
+			    if(!BlackLevel)
+			    {
+				    BlackLevel = 0.075f;
+				    sprintf(msg, "#GBlack Level: 7.5 IRE#G");
+			    }
+			    else
+			    {
+				    BlackLevel = 0.0f;
+				    sprintf(msg, "#GBlack Level: 0 IRE#G");
+			    }
+			    text = 140;
+		    }				
+		    
+		    if (pressed & CONT_A && color == 0)
+			    editmode = !editmode;
+
+            if(editmode)
+		    {
+			    int *current = NULL;
+							    
+			    sprintf(msg, "#%cR:%0.2f#W #%cG:%0.2f#W #%cB:x#W", 
+					    sel == 1 ? 'G' : 'W', cr,
+					    sel == 2 ? 'G' : 'W', cg, 
+					    sel == 3 ? 'G' : 'W', cb);
+			    text = 1;
+    
+			    if ( pressed & CONT_DPAD_LEFT )
+			    {
+				    sel --;
+				    if(sel < 1)
+					    sel = 3;
+			    }
+			    
+			    if ( pressed & CONT_DPAD_RIGHT )
+			    {
+				    sel ++;
+				    if(sel > 3)
+					    sel = 1;
+			    }
+			    
+			    switch(sel)
+			    {
+				    case 1:
+					    current = &cr;
+					    break;
+				    case 2:
+					    current = &cg;
+					    break;
+				    case 3:
+					    current = &cb;
+					    break;
+			    }
+			    
+			    if ( pressed & CONT_DPAD_UP )
+			    {				
+				    if(current)
+				    {
+					    (*current) + = .05;
+					    if(*current > 0xff)
+						    *current = 0xff;
+				    }
+			    }
+			    
+			    if ( pressed & CONT_DPAD_DOWN )
+			    {			
+				    if(current)
+				    {
+					    (*current) -= .05;
+					    if(*current < 0)
+						    *current = 0;
+				    }
+			    }	
+    
+			    if ( pressed & CONT_Y )
+			    {				
+				    if(current)			
+					    *current  = 0.0f;					
+			    }
+			    
+			    if ( pressed &CONT_X )
+			    {			
+				    if(current)				
+					    *current = 1.0f;
+			    }	
+		    }
+		}
 
 		switch(color)
 		{
 				case 0:
-					back->r = 1.0f;
-					back->g = 1.0f;
-					back->b = 1.0f;
+					back->r = cr;
+					back->g = cg;
+					back->b = cb;
 					break;
 				case 1:
-					back->r = 0.0f;
-					back->g = 0.0f;
-					back->b = 0.0f;
+					back->r = BlackLevel;
+					back->g = BlackLevel;
+					back->b = BlackLevel;
 					break;
 				case 2:
 					back->r = 1.0f;
@@ -315,25 +466,6 @@ void DrawWhiteScreen()
 					break;
 		}
 
-		StartScene();
-		DrawImage(back);
-		EndScene();
-
-		st = ReadController(0, &pressed);
-		if(st)
-		{
-			if (pressed & CONT_B)
-				done =	1;								
-
-			if (pressed & CONT_RTRIGGER)
-				color ++;
-
-			if (pressed & CONT_LTRIGGER)
-				color --;
-
-			if (pressed & CONT_START)
-				ShowMenu(WHITEHELP);
-		}
 	}
 	FreeImage(&back);
 	return;
