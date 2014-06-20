@@ -37,20 +37,131 @@
 
 void DrawPluge()
 {
-	int 		done = 0;
+	int 		done = 0, text = 0, oldvmode = vmode, ShowHelp = 0;
 	uint16		pressed;		
-	ImagePtr	back;
+	ImagePtr	back = NULL, backPAL, backNTSC, black, highlight;
 	controller	*st;
+    char		msg[50];
 
-	back = LoadKMG("/rd/pluge.kmg.gz", 0);
-	if(!back)
+	backNTSC = LoadKMG("/rd/pluge.kmg.gz", 0);
+	if(!backNTSC)
 		return;
+
+    backPAL = LoadKMG("/rd/plugepal.kmg.gz", 0);
+	if(!backPAL)
+    {
+        FreeImage(&backNTSC);	
+		return;
+    }
+    black = LoadKMG("/rd/white.kmg.gz", 0);
+	if(!black)
+	{
+		FreeImage(&backPAL);
+		FreeImage(&backNTSC);
+		return;
+	}	
+
+    highlight = LoadKMG("/rd/plugehigh.kmg.gz", 0);
+	if(!highlight)
+	{
+		FreeImage(&backPAL);
+		FreeImage(&black);
+		FreeImage(&backNTSC);
+		return;
+	}	
+	
+	black->r = 0x0;
+	black->g = 0x0;
+	black->b = 0x0;	
+
+    if(!IsPAL)
+	{
+		back = backNTSC;
+		black->h = 240;
+	}
+	else
+	{
+		back = backPAL;
+		black->h = 264;	
+	}
 		
 	updateVMU(" Pluge ", "", 1);
 	while(!done && !EndProgram) 
 	{
+        if(oldvmode != vmode)
+		{
+			if(!IsPAL)
+			{
+				back = backNTSC;
+				black->h = 240;
+			}
+			else
+			{
+				back = backPAL;
+				black->h = 264;
+			}
+			oldvmode = vmode;
+		}
+
 		StartScene();
+
+		DrawImage(black);  
 		DrawImage(back);
+		
+		if(ShowHelp)
+		{
+			highlight->r = 1.0f;
+			highlight->g = 0.0f;
+			highlight->b = 0.0f;
+			
+			highlight->y = 39;
+						
+			DrawStringB(14, 205, 1.0f, 0.0f, 0, back == backNTSC ? "11.5" : "3.5");
+			highlight->x = 14;			
+			DrawImage(highlight);
+						
+			highlight->r = 0.0f;
+			highlight->g = 1.0f;							
+			DrawStringB(44, 205, 1.0f, 0.0f, 0, back == backNTSC ? "7.5" : "2");
+			highlight->x = 44;			
+			DrawImage(highlight);
+						
+			highlight->r = 1.0f;
+			highlight->g = 0.0f;							
+			DrawStringB(74, 205, 1.0f, 0.0f, 0, back == backNTSC ? "3.5" : "1");
+			highlight->x = 74;			
+			DrawImage(highlight);
+			
+			
+			highlight->r = 1.0f;
+			highlight->g = 0.0f;							
+			DrawStringB(228, 205, 1.0f, 0.0f, 0, back == backNTSC ? "3.5" : "1");
+			highlight->x = 228;			
+			DrawImage(highlight);
+						
+			highlight->r = 0.0f;
+			highlight->g = 1.0f;							
+			DrawStringB(259, 205, 1.0f, 0.0f, 0, back == backNTSC ? "7.5" : "2");
+			highlight->x = 259;			
+			DrawImage(highlight);
+			
+			highlight->r = 1.0f;
+			highlight->g = 0.0f;
+			highlight->b = 0.0f;	
+			DrawStringB(289, 205, 1.0f, 0.0f, 0, back == backNTSC ? "11.5" : "3.5");
+			highlight->x = 289;			
+			DrawImage(highlight);
+
+			ShowHelp--;
+		}
+		
+		
+		if(text)
+		{			
+			DrawStringB(228, 20, 0, 0xff, 0, msg);
+			text --;
+		}		
+
 		EndScene();
 
 		st = ReadController(0, &pressed);
@@ -61,9 +172,34 @@ void DrawPluge()
 
 			if (pressed & CONT_START)
 				ShowMenu(PLUGEHELP);
+
+            if (pressed & CONT_A)
+		    {
+			    if(!IsPAL)
+			    {
+				    if(back == backNTSC)
+				    {
+					    sprintf(msg, "RGB Full Range");
+					    back = backPAL;
+				    }
+				    else
+				    {
+					    sprintf(msg, "NTSC 7.5 IRE");
+					    back = backNTSC;
+				    }
+					    
+				    text = 60;				
+			    }
+		    }
+		    
+		    if (pressed & PAD_BUTTON_X)
+			    ShowHelp = 100;
 		}
 	}
-	FreeImage(&back);
+	FreeImage(&highlight);
+	FreeImage(&backNTSC);
+	FreeImage(&backPAL);
+	FreeImage(&black);
 	return;
 }
 
