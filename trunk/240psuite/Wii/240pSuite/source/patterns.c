@@ -46,14 +46,14 @@ void DrawPluge()
 	backPAL = LoadImage(PLUGEPALIMG, 0);
 	if(!backPAL)
 	{
-		FreeImage(&back);	
+		FreeImage(&backNTSC);	
 		return;
 	}	
 	black = LoadImage(WHITEIMG, 1);
 	if(!black)
 	{
 		FreeImage(&backPAL);
-		FreeImage(&back);
+		FreeImage(&backNTSC);
 		return;
 	}	
 	highlight = LoadImage(PLUGEBORDERIMG, 0);
@@ -61,7 +61,7 @@ void DrawPluge()
 	{
 		FreeImage(&backPAL);
 		FreeImage(&black);
-		FreeImage(&back);
+		FreeImage(&backNTSC);
 		return;
 	}	
 	
