@@ -247,8 +247,7 @@ void DrawWhiteScreen()
 	back = LoadImage(WHITEIMG, 1);
 	if(!back)
 		return;
-		
-	
+			
 	back->w = dW;
 	back->h = dH;
 	
