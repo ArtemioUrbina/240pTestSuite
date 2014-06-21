@@ -65,7 +65,7 @@ vid_mode_t custom_288 =
         312, // Number of scanlines. 312 default, 
 	863, // Clocks per scanline. 863, 727 working
         174, // Bitmap window X position. 
-	22, // Bitmap window Y (45 defaulty), with 22 starts at line 23 as PAL dictates
+	22, // Bitmap window Y (45 defaulty), with 22 starts at line 23 as PAL dictates, 49 is bottom at PAL limit
         21, // First scanline interrupt position. 21 default
 	310, // Second scanline interrupt position (automatically doubled for VGA) 
         143, // Border X starting position. 
@@ -111,7 +111,7 @@ void InitVideoModes()
 
 		if(vcable == CT_COMPOSITE)
 		{
-			// Starts at lien 26 when in PAL, lower is invisible via composite	
+			// Starts at line 26 when in PAL, lower is invisible via composite	
 			custom_240.bitmapy += 4; 
 			//custom_480i.bitmapy ++;	
 		}
@@ -461,6 +461,44 @@ void Toggle240p480i(int mode)
 		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
 		PVR_SET(PVR_FB_CFG_2, 0x00000001);
 	}
+}
+
+char *GetPalStartText()
+{
+	switch(settings.PALStart)
+	{
+		case PAL_LINE23:
+			return("Top");
+		case PAL_CENTERED:
+			return("Centered");
+		case PAL_BOTTOM:
+			return("Bottom");
+	}
+	return("");
+}
+
+void Set576iLine23Option(uint8 set)
+{	
+	if(set > PAL_BOTTOM)
+		set = PAL_LINE23;
+		
+	switch(set)
+	{
+		case PAL_LINE23:
+			custom_288.bitmapy = 22;
+			custom_576.bitmapy = 21;
+			break;
+		case PAL_CENTERED:
+			custom_288.bitmapy = 36;   // starts in 
+			custom_576.bitmapy = 45;   // starts in 
+			break;
+		case PAL_BOTTOM:
+			custom_288.bitmapy = 49; // starts in 
+			custom_576.bitmapy = 69; // starts in 
+			break;
+	}
+			
+	settings.PALStart = set;
 }
 
 void PVRStats(char *msg)

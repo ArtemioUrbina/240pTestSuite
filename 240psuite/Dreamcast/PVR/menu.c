@@ -52,11 +52,7 @@ uint16  *fbtextureBuffer = NULL;
 #define rotr(value, shift) \
     (value >> shift) | (value << (16 - shift))
 
-struct settings_st settings = {
-	0,
-	0,
-	0
-};
+struct settings_st settings = DEFAULT_OPTIONS;
 
 void FreeTextureFB()
 {
@@ -125,10 +121,8 @@ void InitTextureFB()
 	fbtexture->alpha = 1.0;
 	fbtexture->w = fbtexture->tw;
 	fbtexture->h = fbtexture->th;
-	fbtexture->RefCount = 1;
 	fbtexture->FH = 0;
 	fbtexture->FV = 0;
-	fbtexture->copyOf = NULL;
 	fbtexture->texFormat = PVR_TXRFMT_ARGB1555;
 	IgnoreOffset(fbtexture);
 	
@@ -433,6 +427,12 @@ void ChangeOptions(ImagePtr screen)
 				settings.EnablePAL == 1 ? "yes" : "no"); 
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 				"Enable PAL modes:"); y += fh; c++;			
+
+			// option 2, PAL Start 
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+				GetPalStartText());
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+				"PAL starting line:"); y += fh; c++;			
 		}
 		else
 		{
@@ -440,17 +440,23 @@ void ChangeOptions(ImagePtr screen)
 				settings.EnablePAL  == 1 ? "yes" : "no");
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
 				"Enable PAL modes:"); y += fh; c++;			
+
+			// option 2,  PAL Start
+			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+				GetPalStartText());
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+				"PAL starting line:"); y += fh; c++;			
 		}
 
 		y += fh;
-		// option 2, Scanline intensity
+		// option 3, Scanline intensity
 		sprintf(intensity, "%0.0f%%", GetScanlineIntensity());
 		if(vmode == VIDEO_480P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline intensity:"); y += fh; c++;			
 			
-			// option 3, Scanline even/odd
+			// option 4, Scanline even/odd
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD");
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanlines"); y += fh; c++;	
 		}				
@@ -461,7 +467,7 @@ void ChangeOptions(ImagePtr screen)
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
 				"Scanline intensity:"); y += fh; c++;			
 			
-			// option 3, Scanline even/odd
+			// option 4, Scanline even/odd
 			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
 				ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
@@ -483,11 +489,11 @@ void ChangeOptions(ImagePtr screen)
 
 		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
-		if(vmode == VIDEO_480P_SL && sel == 1)	
+		if(vmode == VIDEO_480P_SL && sel == 3)	
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
-		if(region != FLASHROM_REGION_EUROPE && (sel == 1))
+		if(region != FLASHROM_REGION_EUROPE && (sel == 1 || sel == 2))
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Only European FlashROMs can output PAL correctly"); 
-		if(vmode != VIDEO_480P_SL && (sel == 2 || sel == 3))
+		if(vmode != VIDEO_480P_SL && (sel == 3 || sel == 4))
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 			
 		EndScene();		
@@ -508,13 +514,13 @@ void ChangeOptions(ImagePtr screen)
 			    sel = 1;	
 	    	}			
 
-		if ( pressed & CONT_RTRIGGER && sel == 2)
+		if ( pressed & CONT_RTRIGGER && sel == 3)
 	    	{
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
 	    	}
 	    
-	    	if ( pressed & CONT_LTRIGGER && sel == 2)
+	    	if ( pressed & CONT_LTRIGGER && sel == 3)
 	    	{
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
@@ -534,11 +540,20 @@ void ChangeOptions(ImagePtr screen)
 #endif
 							settings.EnablePAL = !settings.EnablePAL;
 						break;
-					case 3:
+					case 2:
+						// NTSC consoles output a corrupt PAL signal
+						if(region == FLASHROM_REGION_EUROPE)
+						{
+							Set576iLine23Option(settings.PALStart+1);
+							if(IsPAL)	
+								ChangeResolution(vmode);
+						}
+						break;
+					case 4:
 						if(vmode == VIDEO_480P_SL)
 							ToggleScanlineEvenOdd();
 						break;
-					case 4:
+					case 5:
 #ifdef SERIAL
 						settings.drawborder = !settings.drawborder;
 						changedPVR = 1;
@@ -549,7 +564,7 @@ void ChangeOptions(ImagePtr screen)
 						changedPVR = 1;
 						break;
 					*/
-					case 5:
+					case 6:
 #endif
 						close = 1;
 						break;

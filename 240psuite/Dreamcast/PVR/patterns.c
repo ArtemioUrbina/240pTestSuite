@@ -971,9 +971,12 @@ void DrawOverscan()
 	if(!square)
 		return;
 		
-	border = CloneImage(square, 1);
+	border = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!border)
+	{
+		FreeImage(&square);
 		return;		
+	}
 	
 	border->r = 1.0;
 	border->g = 1.0;

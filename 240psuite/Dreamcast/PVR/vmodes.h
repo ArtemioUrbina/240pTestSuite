@@ -33,6 +33,10 @@
 
 #define INVALID_VIDEO		8
 
+#define	PAL_LINE23		0
+#define	PAL_CENTERED		1
+#define	PAL_BOTTOM		2
+
 #include "image.h"
 
 extern int vmode;
@@ -61,6 +65,8 @@ void LowerScanlineIntensity();
 void RaiseScanlineIntensity();
 void ToggleScanlineEvenOdd();
 void ChangeResolution(int nvmode);
+char *GetPalStartText();
+void Set576iLine23Option(uint8 set);
 void PVRStats(char *msg);
 void Toggle240p480i(int mode);
 #ifdef SERIAL
