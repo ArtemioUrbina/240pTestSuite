@@ -50,6 +50,7 @@ void LoadFont()
 	if(!black_t)
 	{				
 		black_t = LoadKMG("/rd/black.kmg.gz", 0);
+		black_t->layer = 2.0f;
 		black_t->alpha = 0.75f;
 	}
 }

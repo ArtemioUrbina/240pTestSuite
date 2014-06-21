@@ -1700,9 +1700,9 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 		sprintf(DPres, "Frame accuracy: 1 frame 16.67ms");
 	else
 		sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 16.6667/accuracy);
-	DrawStringS(40, 60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone"); 
-	DrawStringS(50, 120, 1.0f, 1.0f,	1.0f, Status);
-	DrawStringS(120, 200, 0.0f, 1.0f,	0.0f, DPres);
+	DrawStringS(40, 60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone & Fast Fourier Transform"); 
+	DrawStringS(50, 120, 1.0f, 1.0f, 1.0f, Status);
+	DrawStringS(120, 200, 0.0f, 1.0f, 0.0f, DPres);
 
 	if(ResCount)
 	{
