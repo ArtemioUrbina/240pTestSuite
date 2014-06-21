@@ -205,20 +205,72 @@ void DrawPluge()
 
 void DrawSMPTEColorBars()
 {
-	int 		done = 0;
+	int 		done = 0, is75 = 1, text = 0;
 	uint16		pressed;		
-	ImagePtr	back;
+	ImagePtr	backNTSC75, backNTSC100, backPAL75, backPAL100;
 	controller	*st;
+	char		msg[40];
 
-	back = LoadKMG("/rd/SMPTEColorBars.kmg.gz", 0);
-	if(!back)
+	backNTSC75 = LoadKMG("/rd/SMPTEColorBars.kmg.gz", 0);
+	if(!backNTSC75)
 		return;
+
+	backNTSC100 = LoadKMG("/rd/SMPTEColorBars100.kmg.gz", 0);
+	if(!backNTSC100)
+	{
+		FreeImage(&backNTSC75);
+		return;
+	}
+
+	backPAL75 = LoadKMG("/rd/EBUColorBars75.kmg.gz", 0);
+        if(!backNTSC75)
+        {
+                FreeImage(&backNTSC75);
+                FreeImage(&backNTSC100);
+                return;
+        }
+
+        backPAL100 = LoadKMG("/rd/EBUColorBars100.kmg.gz", 0);
+        if(!backNTSC75)
+        {
+                FreeImage(&backNTSC75);
+                FreeImage(&backNTSC100);
+                FreeImage(&backPAL75);
+                return;
+        }
+
+	IgnoreOffset(backPAL75);
+        IgnoreOffset(backPAL100);
 		
-	updateVMU(" SMPTE ", "", 1);
+	if(IsPAL)
+		updateVMU(" EBU ", "", 1);
+	else
+		updateVMU(" SMPTE ", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
-		DrawImage(back);
+
+		if(!IsPAL)
+                {
+                        if(is75)
+                                DrawImage(backNTSC75);
+                        else
+                                DrawImage(backNTSC100);
+                }
+                else
+                {
+                        if(is75)
+                                DrawImage(backPAL75);
+                        else
+                                DrawImage(backPAL100);
+                }
+
+		if(text)
+                {
+                        DrawStringB(260, 20, 0, 1.0f, 0, msg);
+                        text --;
+                }
+
 		EndScene();
 
 		st = ReadController(0, &pressed);
@@ -227,11 +279,21 @@ void DrawSMPTEColorBars()
 			if (pressed & CONT_B)
 				done =	1;								
 
+			if (pressed & CONT_A)
+			{
+				is75 = !is75;
+                        	text = 30;
+                        	sprintf(msg, "%s%%", is75 ? "75" : "100");
+			}
+
 			if (pressed & CONT_START)
 				ShowMenu(SMPTECOLOR);
 		}
 	}
-	FreeImage(&back);
+	FreeImage(&backNTSC75);
+        FreeImage(&backNTSC100);
+        FreeImage(&backPAL75);
+        FreeImage(&backPAL100);
 	return;
 }
 
