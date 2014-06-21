@@ -63,7 +63,6 @@ int main(void)
 	}
 
 	InitImages();
-	InitVideoModes();
 
 	if(vcable != CT_VGA)
 		ChangeResolution(VIDEO_240P);
@@ -129,11 +128,21 @@ int main(void)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
 		if(vcable == CT_VGA)
 		{
-			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Alternating 240p/480i Test"); y += fh; c++;
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+				"Alternating 240p/480i Test"); y += fh; c++;
 		}
 		else
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Alternating 240p/480i Test"); y += fh; c++;
+			if(!IsPAL)
+			{
+				DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+					"Alternating 240p/480i Test"); y += fh; c++;
+			}
+			else
+			{
+				DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+					"Alternating 288p/576i Test"); y += fh; c++;
+			}
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 

@@ -102,25 +102,6 @@ vid_mode_t custom_576 =
         { 0, 0, 0, 0 }
 };
 
-void InitVideoModes()
-{
-	if(IsPALDC)
-	{
-		// Adjust bitmapy for European DC
-		// and NTSC modes
-
-		if(vcable == CT_COMPOSITE)
-		{
-			// Starts at line 26 when in PAL, lower is invisible via composite	
-			custom_240.bitmapy += 4; 
-			//custom_480i.bitmapy ++;	
-		}
-	}	
-	else
-	{
-	}
-}
-
 ImagePtr   scanlines = NULL;
 
 void LoadScanlines()
@@ -272,6 +253,7 @@ void ChangeResolution(int nvmode)
 			break;
 	}
 
+	AdjustVideoModes();
 	//if(lastw != W)
 	{
 		ReleaseTextures();
@@ -416,29 +398,52 @@ void Toggle240p480i(int mode)
 	ReleaseTextures();
 	pvr_shutdown();
 
-	if(mode == 0)
+	if(!IsPAL)
 	{
-		ReleaseTextures();
+		if(mode == 0)
+		{
+			W = 320;
+			H = 240;
+			dW = 320;
+			dH = 240;
+			vmode = VIDEO_240P;
 
-		W = 320;
-		H = 240;
-		dW = 320;
-		dH = 240;
-		vmode = VIDEO_240P;
-
-		vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
-
+			vid_set_mode_ex(&custom_240); 
+		}
+		else
+		{
+			W = 640;
+			H = 480;
+			dW = 320;
+			dH = 240;
+			vmode = VIDEO_480I_A240;
+	
+			vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
+		}
 	}
 	else
 	{
+		if(mode == 0)
+		{
+			W = 320;
+			H = 264;
+			dW = 320;
+			dH = 264;
+			vmode = VIDEO_288P;
 
-		W = 640;
-		H = 480;
-		dW = 320;
-		dH = 240;
-		vmode = VIDEO_480I_A240;
-
-		vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
+			vid_set_mode_ex(&custom_288); 
+		}
+		else
+		{
+			W = 640;
+			H = 480;
+			dW = 320;
+			dH = 240;
+			offsetY = 0;
+			vmode = VIDEO_576I_A264;
+	
+			vid_set_mode_ex(&custom_576); 
+		}
 	}
 
 	pvr_init_defaults();
@@ -494,8 +499,23 @@ void Set576iLine23Option(uint8 set)
 			custom_576.bitmapy = 69; // starts in 
 			break;
 	}
-			
+
 	settings.PALStart = set;
+}
+
+void AdjustVideoModes()
+{
+	if(IsPALDC)
+	{
+		// Adjust bitmapy for European DC
+		if(vcable == CT_COMPOSITE)
+		{
+			// Starts at line 26 when in PAL, lower is invisible via composite	
+			custom_240.bitmapy = 22; 
+			if(settings.PALStart == PAL_BOTTOM)
+				custom_288.bitmapy = 46;
+		}
+	}	
 }
 
 void PVRStats(char *msg)
