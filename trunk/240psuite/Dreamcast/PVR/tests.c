@@ -1700,6 +1700,7 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 		sprintf(DPres, "Frame accuracy: 1 frame 16.67ms");
 	else
 		sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 16.6667/accuracy);
+
 	DrawStringS(40, 60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone & Fast Fourier Transform"); 
 	DrawStringS(50, 120, 1.0f, 1.0f, 1.0f, Status);
 	DrawStringS(120, 200, 0.0f, 1.0f, 0.0f, DPres);
@@ -1710,18 +1711,18 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 			sprintf(Header, "Last result:");
 		else
 			sprintf(Header, "Last %d results:", ResCount);
-		DrawStringS(170, 70, 0.0f, 1.0f,	0.0f, Header);
+		DrawStringS(170, 90, 0.0f, 1.0f,	0.0f, Header);
 		for(i = 1; i <= ResCount; i++)
 		{
 			if(Results[i-1] < 0 && Results[i-1] != FFT_OM && Results[i-1] != FFT_NOT_FOUND)
-				sprintf(Res, "%.2d Noise at 1khz", i);
+				sprintf(Res, "#G%.2d#G #YNoise at 1khz#Y", i);
 			if(Results[i-1] == FFT_OM)
-				sprintf(Res, "%.2d Out of Memory", i);
+				sprintf(Res, "#G%.2d#G #ROut of Memory#R", i);
 			if(Results[i-1] == FFT_NOT_FOUND)
-				sprintf(Res, "%.2d No tone detected", i);
+				sprintf(Res, "#G%.2d#G #RNo tone detected#R", i);
 			if(Results[i-1] >= 0)
-				sprintf(Res, "%.2d Lag was %g frames", i, Results[i-1]);
-			DrawStringS(170, 70+i*fh, 1.0f, 1.0f,	1.0f, Res);
+				sprintf(Res, "#G%.2d#G Lag was #C%g#C frames", i, Results[i-1]);
+			DrawStringS(160, 90+i*fh, 1.0f, 1.0f,	1.0f, Res);
 		}
 	}
 	EndScene();
@@ -1900,7 +1901,7 @@ void SIPLagTest()
 
 				if(rec_buffer.pos == 0)
 				{
-					sprintf(DStatus, "Please remove and reinsert Microphone");
+					sprintf(DStatus, "#YPlease remove and reinsert Microphone#Y");
 					rec_buffer.recording = 0;
 					status = 0;
 				}
@@ -1936,13 +1937,13 @@ void SIPLagTest()
 				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2,
 					11025, 60.0*accuracy, 1000);          
 				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
-					sprintf(DStatus, "Noise at 1khz");
+					sprintf(DStatus, "#YNoise at 1khz#Y");
 				if(value == FFT_OM)
-					sprintf(DStatus, "Out of Memory");
+					sprintf(DStatus, "#ROut of Memory#R");
 				if(value == FFT_NOT_FOUND)
-					sprintf(DStatus, "Check audio system");
+					sprintf(DStatus, "#YCheck audio system#Y");
 				if(value >= 0)
-					sprintf(DStatus, "Lag is %g frames", value);
+					sprintf(DStatus, "Lag is #C%g#C frames", value);
 
 				if(ResCount == RESULTS_MAX)
 				{
@@ -1955,7 +1956,7 @@ void SIPLagTest()
 				Results[ResCount++] = value;
 			}        
 			else
-				sprintf(DStatus, "Recording failed");
+				sprintf(DStatus, "#YRecording failed#Y");
 
 			rec_buffer.pos = 0;
 			status = 0;
