@@ -25,10 +25,13 @@
 #define VERSION_NUMBER "Dreamcast Ver. 1.20"
 #define VERSION_DATE "20/06/2014"
 
+#define DEFAULT_OPTIONS { 0, 0, 0, 0 };
+
 struct settings_st {
 	int drawborder;
 	int drawpvrbg;
 	int EnablePAL;
+	int PALStart;
 };
 
 extern struct settings_st settings;

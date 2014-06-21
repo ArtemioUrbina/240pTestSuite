@@ -426,10 +426,10 @@ void LagTest()
 	fixed = LoadKMG("/rd/lag-per.kmg.gz", 0);
 	if(!fixed)
 		return;
-	spriteA = CloneImage(fixed, 0);
+	spriteA = LoadKMG("/rd/lag-per.kmg.gz", 0);
 	if(!spriteA)
 		return;
-	spriteB = CloneImage(fixed, 0);
+	spriteB = LoadKMG("/rd/lag-per.kmg.gz", 0);
 	if(!spriteB)
 		return;	
 

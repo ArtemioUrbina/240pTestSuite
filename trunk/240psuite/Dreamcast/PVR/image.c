@@ -88,13 +88,6 @@ void RefreshLoadedImages()
 			}
 		}	
 	}
-	
-	// Patch Clones
-	for(i = 0; i < MAX_IMAGES; i++)
-	{
-		if(Images[i].state == MEM_TEXRELEASED && Images[i].image->copyOf)
-			Images[i].image->tex = Images[i].image->copyOf->tex;
-	}
 }
 
 void ReleaseTextures()
@@ -336,10 +329,8 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	image->alpha = 1.0;
 	image->w = image->tw;
 	image->h = image->th;
-	image->RefCount = 1;
 	image->FH = 0;
 	image->FV = 0;
-	image->copyOf = NULL;
 	image->texFormat = PVR_TXRFMT_ARGB1555;
 	image->IgnoreOffsetY = 0;
 
@@ -374,9 +365,6 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 		return 0;
 	}
 	
-	if(image->copyOf)
-		return 0;
-
 	if(image->tex)
 	{
 		fprintf(stderr, "Found unreleased texture while reloading %s\n", filename);
@@ -413,81 +401,14 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 	return 1;
 }
 
-ImagePtr CloneImage(ImagePtr source, int maptoscreen)
-{	
-	ImagePtr image;
-	
-	if(!source)
-		return NULL;
-	image = (ImagePtr)malloc(sizeof(struct image_st));	
-	if(!image)
-	{
-		fprintf(stderr, "Could not malloc image struct during copy\n");
-		return(NULL);
-	}
-	image->tex = source->tex;
-	image->r = source->r;
-	image->g = source->g;
-	image->b = source->b;
-
-	image->tw = source->tw;
-	image->th = source->th;
-	image->x = source->x;
-	image->y = source->y;
-	image->u1 = source->u1;
-	image->v1 = source->v1;
-	image->u2 = source->u2;
-	image->v2 = source->v2;
-	image->layer = source->layer;
-	image->scale = source->scale;
-	image->alpha = source->alpha;
-	image->w = image->tw;
-	image->h = image->th;
-	image->RefCount = 0;
-	image->FH = image->FH;
-	image->FV = image->FV;
-	image->copyOf = source;
-	image->texFormat = source->texFormat;
-	image->IgnoreOffsetY = source->IgnoreOffsetY;
-	source->RefCount ++;
-	if(maptoscreen)
-	{
-		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
-		else
-			CalculateUV(0, 0, dW, dH, image);
-	}
-
-	InsertImage(image, "clone");
-
-	return image;
-}
-
 void FreeImage(ImagePtr *image)
 {	
 	if(*image)
 	{
-		uint16 *ref;
-
-		if((*image)->copyOf)		
-			ref = &((*image)->copyOf->RefCount);
-		else
-		{
-			ref = &((*image)->RefCount);
-			ReleaseImage(*image);
-		}
-			
-		(*ref)--;
-		if(!(*ref) && !(*image)->copyOf)
-		{
-			if((*image)->tex)
-			{
-				pvr_mem_free((*image)->tex);
-				(*image)->tex = NULL;
-			}
-			free(*image);
-			*image = NULL;
-		}
+		ReleaseImage(*image);
+		FreeImageData(image);
+		free(*image);
+		*image = NULL;
 	}
 }
 
@@ -495,17 +416,9 @@ uint8 FreeImageData(ImagePtr *image)
 {	
 	if(*image)
 	{
-		if(!(*image)->copyOf)
+		if((*image)->tex)
 		{
-			if((*image)->tex)
-			{
-				pvr_mem_free((*image)->tex);
-				(*image)->tex = NULL;
-				return 1;
-			}
-		}
-		else
-		{
+			pvr_mem_free((*image)->tex);
 			(*image)->tex = NULL;
 			return 1;
 		}
