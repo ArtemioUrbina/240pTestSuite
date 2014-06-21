@@ -427,7 +427,7 @@ void ChangeOptions(ImagePtr screen)
 		DrawStringS(x - 20, y, 0.0f, 1.0f, 0.0f, "General Options"); y += 2*fh; 
 
 		// option 1, PAL
-		region = FLASHROM_REGION_EUROPE;
+		//region = FLASHROM_REGION_EUROPE;
 		if(region == FLASHROM_REGION_EUROPE)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
