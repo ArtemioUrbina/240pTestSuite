@@ -427,12 +427,6 @@ void ChangeOptions(ImagePtr screen)
 				settings.EnablePAL == 1 ? "yes" : "no"); 
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 				"Enable PAL modes:"); y += fh; c++;			
-
-			// option 2, PAL Start 
-			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
-				GetPalStartText());
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
-				"PAL starting line:"); y += fh; c++;			
 		}
 		else
 		{
@@ -440,8 +434,18 @@ void ChangeOptions(ImagePtr screen)
 				settings.EnablePAL  == 1 ? "yes" : "no");
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
 				"Enable PAL modes:"); y += fh; c++;			
+		}
 
-			// option 2,  PAL Start
+		// option 2,  PAL Start
+		if(region == FLASHROM_REGION_EUROPE && settings.EnablePAL)
+		{
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+				GetPalStartText());
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+				"PAL starting line:"); y += fh; c++;			
+		}
+		else
+		{
 			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
 				GetPalStartText());
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
@@ -542,7 +546,7 @@ void ChangeOptions(ImagePtr screen)
 						break;
 					case 2:
 						// NTSC consoles output a corrupt PAL signal
-						if(region == FLASHROM_REGION_EUROPE)
+						if(settings.EnablePAL && region == FLASHROM_REGION_EUROPE)
 						{
 							Set576iLine23Option(settings.PALStart+1);
 							if(IsPAL)	

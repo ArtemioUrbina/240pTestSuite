@@ -215,10 +215,7 @@ void ChangeResolution(int nvmode)
 		if(vcable != CT_VGA)
 			nvmode = VIDEO_240P;
 	}
-#ifndef SERIAL
-	if(vmode == nvmode)
-		return;
-#endif
+
 	vmode = nvmode;
 
 	switch(vmode)
