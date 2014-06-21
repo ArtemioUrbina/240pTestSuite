@@ -4,7 +4,7 @@ A grid is scrolled vertically or horizontally,
 which can be used to test linearity of the signal
 and how well the display copes with scrolling.
 
-The X button can be used to toggle between
+The #GX#G button can be used to toggle between
 horizontal and vertical, while the d-pad regulates
-speed; A button stops and the Y button changes
+speed; #GA#G button stops and the #GY#G button changes
 direction. 

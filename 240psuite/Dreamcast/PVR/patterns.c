@@ -116,39 +116,39 @@ void DrawPluge()
 			
 			highlight->y = 39;
 						
-			DrawStringB(14, 205, 1.0f, 0.0f, 0, back == backNTSC ? "11.5" : "3.5");
+			DrawStringB(14, 205, 1.0f, 0.0f, 0, back == backNTSC ? "10" : "7");
 			highlight->x = 14;			
 			DrawImage(highlight);
 						
 			highlight->r = 0.0f;
 			highlight->g = 1.0f;							
-			DrawStringB(44, 205, 1.0f, 0.0f, 0, back == backNTSC ? "7.5" : "2");
+			DrawStringB(44, 205, 1.0f, 0.0f, 0, back == backNTSC ? "7.5" : "4");
 			highlight->x = 44;			
 			DrawImage(highlight);
 						
 			highlight->r = 1.0f;
 			highlight->g = 0.0f;							
-			DrawStringB(74, 205, 1.0f, 0.0f, 0, back == backNTSC ? "3.5" : "1");
+			DrawStringB(74, 205, 1.0f, 0.0f, 0, back == backNTSC ? "4" : "0");
 			highlight->x = 74;			
 			DrawImage(highlight);
 			
 			
 			highlight->r = 1.0f;
 			highlight->g = 0.0f;							
-			DrawStringB(228, 205, 1.0f, 0.0f, 0, back == backNTSC ? "3.5" : "1");
+			DrawStringB(228, 205, 1.0f, 0.0f, 0, back == backNTSC ? "4" : "0");
 			highlight->x = 228;			
 			DrawImage(highlight);
 						
 			highlight->r = 0.0f;
 			highlight->g = 1.0f;							
-			DrawStringB(259, 205, 1.0f, 0.0f, 0, back == backNTSC ? "7.5" : "2");
+			DrawStringB(259, 205, 1.0f, 0.0f, 0, back == backNTSC ? "7.5" : "4");
 			highlight->x = 259;			
 			DrawImage(highlight);
 			
 			highlight->r = 1.0f;
 			highlight->g = 0.0f;
 			highlight->b = 0.0f;	
-			DrawStringB(289, 205, 1.0f, 0.0f, 0, back == backNTSC ? "11.5" : "3.5");
+			DrawStringB(289, 205, 1.0f, 0.0f, 0, back == backNTSC ? "10" : "7");
 			highlight->x = 289;			
 			DrawImage(highlight);
 
@@ -158,7 +158,7 @@ void DrawPluge()
 		
 		if(text)
 		{			
-			DrawStringB(228, 20, 0, 0xff, 0, msg);
+			DrawStringB(228, 20, 0, 1.0f, 0, msg);
 			text --;
 		}		
 
