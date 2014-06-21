@@ -1,4 +1,5 @@
-How to compile fftw-3.3.2 for Dreamcast with KallistiOS:
+How to compile fftw-3.3.4 for Dreamcast with KallistiOS:
+http://www.fftw.org/download.html
 
 ############### Change kernel/cycles.h and add: ############### 
 
