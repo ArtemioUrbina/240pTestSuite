@@ -37,7 +37,7 @@ char *SMPTEColor_txt[] = {
 NULL
 };
 char *alt240p_txt[] = { 
-"              ALTERNATING 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress '$A' to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
+"              ALTERNATING 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress $A to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
 NULL
 };
 char *backlit_txt[] = { 
@@ -101,7 +101,7 @@ char *linearity_txt[] = {
 NULL
 };
 char *manuallag_txt[] = { 
-"              MANUAL LAG TEST (1/3)\n\nThe main intention is to show a changing pattern\non the screen, which can be complemented with \naudio and vibration on the controller if set. \nThis should show to some degree any lag when  \nprocessing the signal.\n\nAs an added feature, the user can click the $A\nbutton when the sprite is aligned with the one on\nthe background, and the offset in frames form the\nactual intersection will be shown on screen. This\ncan be repeated ten times and the software will\ncalculate the average. Whenever the button was\npressed before the actual intersection frame, the\n                                        #C(cont...)#C",
+"              MANUAL LAG TEST (1/3)\n\nThe main intention is to show a changing pattern\non the screen, which can be complemented with \naudio and vibration on the controller if set. \nThis should show to some degree any lag when  \nprocessing the signal.\n\nAs an added feature, the user can click the $A\nbutton when the sprite is aligned with the one on\nthe background, and the offset in frames from the\nactual intersection will be shown on screen. This\ncan be repeated ten times and the software will\ncalculate the average. Whenever the button was\npressed before the actual intersection frame, the\n                                        #C(cont...)#C",
 "              MANUAL LAG TEST (2/3)\n\nresult will be ignored (but still shown onscreen).\nButton $X can be used to change the direction\nof the sprite from vertical to horizontal, or\ndisplay both at the same time.\n\n\n#ROf course the evaluation is dependent on reflexes\nand/or rhythm more than anything.#R The visual and\naudio cues are the more revealing aspects which \nthe user should consider, of course the interactive\nfactor can give an experienced player the hang of\nthe system when testing via different connections.\n\n                                        #C(cont...)#C",
 "              MANUAL LAG TEST (3/3)\n\nSince a frame is around 16 ms (1000/60) in NTSC \nand 20 ms (1000/50) in PAL, that value must be \nconsidered the general error when using the test \nresults. \n\n",
 NULL
