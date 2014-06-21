@@ -269,10 +269,8 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	image->alpha = 0xff;
 	image->w = image->tw;
 	image->h = image->th;
-	image->RefCount = 1;
 	image->FH = 0;
 	image->FV = 0;
-	image->copyOf = NULL;
 	image->cFB = NULL;
 	image->IgnoreOffsetY = 0;	
 	
@@ -285,57 +283,6 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 			
 		IgnoreOffset(image);
 	}	
-
-	return image;
-}
-
-ImagePtr CloneImage(ImagePtr source, int maptoscreen)
-{	
-	ImagePtr image;
-	
-	if(!source)
-		return NULL;
-	if(source->cFB)
-		return NULL;
-		
-	image = (ImagePtr)malloc(sizeof(struct image_st));	
-	if(!image)
-	{
-		fprintf(stderr, "Could not malloc image struct during copy\n");
-		return(NULL);
-	}
-	image->tex = source->tex;
-	image->r = source->r;
-	image->g = source->g;
-	image->b = source->b;
-
-	image->tw = source->tw;
-	image->th = source->th;
-	image->x = source->x;
-	image->y = source->y;
-	image->u1 = source->u1;
-	image->v1 = source->v1;
-	image->u2 = source->u2;
-	image->v2 = source->v2;
-	image->layer = source->layer;
-	image->scale = source->scale;
-	image->alpha = source->alpha;
-	image->w = image->tw;
-	image->h = image->th;
-	image->RefCount = 0;
-	image->FH = image->FH;
-	image->FV = image->FV;
-	image->copyOf = source;
-	image->cFB = NULL;
-	image->IgnoreOffsetY = source->IgnoreOffsetY;
-	source->RefCount ++;	
-	if(maptoscreen)
-	{
-		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
-		else
-			CalculateUV(0, 0, dW, dH, image);
-	}
 
 	return image;
 }
@@ -405,10 +352,8 @@ ImagePtr CopyFrameBufferToImage()
 	image->alpha = 0xff;
 	image->w = image->tw;
 	image->h = image->th;
-	image->RefCount = 1;
 	image->FH = 0;
 	image->FV = 0;
-	image->copyOf = NULL;	
 	IgnoreOffset(image);	
 			
 	return image;
@@ -419,25 +364,14 @@ void FreeImage(ImagePtr *image)
 {	
 	if(*image)
 	{
-		u16 *ref;
-
-		if((*image)->copyOf)		
-			ref = &((*image)->copyOf->RefCount);
-		else
-			ref = &((*image)->RefCount);
-			
-		(*ref)--;
-		if(!(*ref) && !(*image)->copyOf)
+		if((*image)->cFB)
 		{
-			if((*image)->cFB)
-			{
-				free((*image)->cFB);
-				(*image)->cFB = NULL;
-			}
-			//pvr_mem_free((*image)->tex); We don't delete images from TPL
-			free(*image);
-			*image = NULL;
+			free((*image)->cFB);
+			(*image)->cFB = NULL;
 		}
+		//pvr_mem_free((*image)->tex); We don't delete images from TPL
+		free(*image);
+		*image = NULL;
 	}
 }
 
