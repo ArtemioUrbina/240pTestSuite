@@ -427,7 +427,6 @@ void ChangeOptions(ImagePtr screen)
 		DrawStringS(x - 20, y, 0.0f, 1.0f, 0.0f, "General Options"); y += 2*fh; 
 
 		// option 1, PAL
-		//region = FLASHROM_REGION_EUROPE;
 		if(region == FLASHROM_REGION_EUROPE)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
@@ -487,7 +486,7 @@ void ChangeOptions(ImagePtr screen)
 		if(vmode == VIDEO_480P_SL && sel == 1)	
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
 		if(region != FLASHROM_REGION_EUROPE && (sel == 1))
-			DrawStringS(x-40, y + 4*fh, r, g, b, "Only European FlashROMs can output PAL"); 						
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Only European FlashROMs can output PAL correctly"); 
 		if(vmode != VIDEO_480P_SL && (sel == 2 || sel == 3))
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 			

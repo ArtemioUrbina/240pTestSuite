@@ -1885,7 +1885,7 @@ void SIPLagTest()
 		if(status == 2 || status == 4)
 		{
 			// Start sampling one frame behind, due to buffer
-			if(status == 2 && counter == CUE_FRAMES - 1 && !rec_buffer.recording)
+			if(status == 2 && counter == CUE_FRAMES /* - 1*/ && !rec_buffer.recording)
 				rec_buffer.recording = 1;
 
 			counter --;
