@@ -944,7 +944,7 @@ void DrawStripes()
 			else
 				DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
 			frame ++;
-			if(frame > 59)
+			if(frame > (IsPAL ? 49 : 59))
 				frame = 0;
 		}
 		EndScene();
@@ -1028,7 +1028,7 @@ void DrawCheckBoard()
 			else
 				DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
 			frame ++;
-			if(frame > 59)
+			if(frame > (IsPAL ? 49 : 59))
 				frame = 0;
 		}
 		EndScene();
@@ -1471,7 +1471,7 @@ void PassiveLagTest()
 				framecnt = 1;
 		}
 
-		if(frames > 59)
+		if(frames > (IsPAL ? 49 : 59))
 		{
 			frames = 0;
 			seconds ++;
@@ -1533,14 +1533,29 @@ void Alternate240p480i()
 	controller	*st;
 	ImagePtr	back;
 
-	updateVMU("240p/480i", "", 1);
-	if(vmode != VIDEO_240P)
+	if(!IsPAL)
 	{
-		ReleaseScanlines();
-		ReleaseFont();
-		Toggle240p480i(res);
-		LoadFont();
-		LoadScanlines();
+		updateVMU("240p/480i", "", 1);
+		if(vmode != VIDEO_240P)
+		{
+			ReleaseScanlines();
+			ReleaseFont();
+			Toggle240p480i(res);
+			LoadFont();
+			LoadScanlines();
+		}
+	}
+	else
+	{
+		updateVMU("288p/576i", "", 1);
+		if(vmode != VIDEO_288P)
+		{
+			ReleaseScanlines();
+			ReleaseFont();
+			Toggle240p480i(res);
+			LoadFont();
+			LoadScanlines();
+		}
 	}
 
 	back = LoadKMG("/rd/white.kmg.gz", 1);
@@ -1558,7 +1573,8 @@ void Alternate240p480i()
 		DrawImage(back);
 
 		DrawString(32, 8, 0, 1.0f, 0, "Current Resolution:");
-		DrawString(140, 8, 0, 1.0f, 0, res == 0 ? "240p" : "480i");
+		DrawString(140, 8, 0, 1.0f, 0, res == 0 ?
+			(IsPAL ? "288" : "240p") : (IsPAL ? "576i" : "480i"));
 		DrawString(180, 8, 1.0, 1.0f, 1.0, "Press 'Start' for help");
 
 		sprintf(buffer, "%02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
@@ -1573,7 +1589,8 @@ void Alternate240p480i()
 				if(times[i].type == 0)
 				{
 					DrawString(32,      40+i*8, 1.0, 1.0, 0.0, "Switched to");
-					DrawString(32+12*5, 40+i*8, 1.0, 1.0, 0.0, times[i].res == 0 ? "240p" : "480i");
+					DrawString(32+12*5, 40+i*8, 1.0, 1.0, 0.0, times[i].res == 0 ?
+						(IsPAL ? "288" : "240p") : (IsPAL ? "576i" : "480i"));
 					DrawString(32+16*5, 40+i*8, 1.0, 1.0, 0.0, " at:");
 				}
 				else
@@ -1643,7 +1660,7 @@ void Alternate240p480i()
 
 		frames ++;
 
-		if(frames > 59)
+		if(frames > (IsPAL ? 49 : 59))
 		{
 			frames = 0;
 			seconds ++;
@@ -1676,7 +1693,7 @@ void Alternate240p480i()
 #define	FFT_OM			-5000
 #define	FFT_NOT_FOUND		-500
 
-//#define DEBUG_FFT
+#define DEBUG_FFT
 
 typedef struct recording {
 	uint8	*buffer;
@@ -1704,7 +1721,7 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 		if(accuracy == 1)
 			sprintf(DPres, "Frame accuracy: 1 frame 20ms");
 		else
-			sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 20/accuracy);
+			sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 20.0/accuracy);
 	}
 	else
 	{

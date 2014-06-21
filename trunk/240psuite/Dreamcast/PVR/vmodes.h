@@ -55,7 +55,7 @@ extern vid_mode_t custom_240;
 extern vid_mode_t custom_288;
 extern vid_mode_t custom_576;
 
-void InitVideoModes();
+void AdjustVideoModes();
 void LoadScanlines();
 inline void ReleaseScanlines();
 inline void DrawScanlines();
