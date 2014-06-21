@@ -694,12 +694,15 @@ void LagTest()
 			}
 
 			res = (double)total / 10.0;
-			ms = (double)(res*(1000.0/60.0));
+			ms = (double)(res*(1000.0/(IsPAL ? 50.0 : 60.0)));
 			sprintf(msg, "%d/10 = %0.2f average frames ~= %0.2f ms", total, res, ms);
 			DrawStringS(60, 110, 1.0f, 0, 0, "+");
 			DrawStringS(55, 70 + fh*10, 1.0f, 0, 0, "_____");
 			DrawStringS(60, 70 + fh*11, 1.0f, 1.0f, 1.0f, msg);
-			DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that a frame is around 16.68 ms");
+			if(IsPAL)
+				DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that a frame is around 20 ms");
+			else
+				DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that a frame is around 16.68 ms");
 
 			if(total && total < 5)
 			{
@@ -1503,7 +1506,7 @@ uint16 ConvertToFrames(timecode *time)
 		return frames;
 
 	frames = time->frames;
-	frames += time->seconds*60;
+	frames += time->seconds*(IsPAL ? 50 : 60);
 	frames += time->minutes*3600;
 	frames += time->hours*216000;
 	return frames;
@@ -1517,8 +1520,8 @@ void ConvertFromFrames(timecode *value, uint16 Frames)
 	Frames = Frames % 216000;
 	value->minutes = Frames / 3600;
 	Frames = Frames % 3600;
-	value->seconds = Frames / 60;
-	value->frames = Frames % 60;
+	value->seconds = Frames / (IsPAL ? 50 : 60);
+	value->frames = Frames % (IsPAL ? 50 : 60);
 }
 
 void Alternate240p480i()
@@ -1696,10 +1699,20 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 	DrawImage(back);
 	DrawImage(wave);
 
-	if(accuracy == 1)
-		sprintf(DPres, "Frame accuracy: 1 frame 16.67ms");
+	if(IsPAL)
+	{
+		if(accuracy == 1)
+			sprintf(DPres, "Frame accuracy: 1 frame 20ms");
+		else
+			sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 20/accuracy);
+	}
 	else
-		sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 16.6667/accuracy);
+	{
+		if(accuracy == 1)
+			sprintf(DPres, "Frame accuracy: 1 frame 16.67ms");
+		else
+			sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 16.6667/accuracy);
+	}
 
 	DrawStringS(40, 60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone & Fast Fourier Transform"); 
 	DrawStringS(50, 120, 1.0f, 1.0f, 1.0f, Status);
@@ -1885,8 +1898,8 @@ void SIPLagTest()
 
 		if(status == 2 || status == 4)
 		{
-			// Start sampling one frame behind, due to buffer
-			if(status == 2 && counter == CUE_FRAMES /* - 1*/ && !rec_buffer.recording)
+			// frame accurate sampling
+			if(status == 2 && counter == CUE_FRAMES && !rec_buffer.recording)
 				rec_buffer.recording = 1;
 
 			counter --;
@@ -1895,7 +1908,7 @@ void SIPLagTest()
 			
 			if(status == 4)
 			{
-				sprintf(DStatus, "Recording Frame: %d", SECONDS_TO_RECORD*60 - counter);
+				sprintf(DStatus, "Recording Frame: %d", SECONDS_TO_RECORD*(IsPAL ? 50 : 60) - counter);
 				if(counter == 1)
 					rec_buffer.recording = 0;
 
@@ -1919,7 +1932,7 @@ void SIPLagTest()
 		{
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
-			counter = SECONDS_TO_RECORD*60; // record N seconds + CUE frames
+			counter = SECONDS_TO_RECORD*(IsPAL ? 50 : 60); // record N seconds + CUE frames
 		}    
 		
 		if(status == 5)
@@ -1935,7 +1948,7 @@ void SIPLagTest()
 
 				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount);
 				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2,
-					11025, 60.0*accuracy, 1000);          
+					11025, (IsPAL ? 50.0 : 60.0)*accuracy, 1000);          
 				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
 					sprintf(DStatus, "#YNoise at 1khz#Y");
 				if(value == FFT_OM)
@@ -2090,7 +2103,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	maxs = (casefrq + 1) / boxsize;
 #ifdef DEBUG_FFT
 	printf("Searching for %g, due to samplerate, arraysize and accurancy %d it is %g, between %g and %g\n",
-		searchfreq, (int)secondunits/60, casefrq/boxsize, mins, maxs);
+		searchfreq, (int)secondunits/(IsPAL ? 50 : 60), casefrq/boxsize, mins, maxs);
 #endif
  
 	for(f = 0; f < samplesize/framesize - 1; f++)
@@ -2119,8 +2132,8 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 					count++;
 					if(count == (int)secondunits)
 					{
-						pos -= CUE_FRAMES*(secondunits/60.0);
-						value = pos/(secondunits/60.0);
+						pos -= CUE_FRAMES*(secondunits/(IsPAL ? 50.0 : 60.0));
+						value = pos/(secondunits/(IsPAL ? 50.0 : 60.0));
 #ifdef DEBUG_FFT
 						printf("Found at %g frames -> %g sec\n", value, pos/secondunits);
 #endif
@@ -2139,8 +2152,8 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	
 	if(!found && tpos != 0 && tcount > secondunits/2) // Did we find one at least 1/2 second long?
 	{
-		pos = tpos - CUE_FRAMES*(secondunits/60.0);
-		value = pos/(secondunits/60.0);
+		pos = tpos - CUE_FRAMES*(secondunits/(IsPAL ? 50.0 : 60.0));
+		value = pos/(secondunits/(IsPAL ? 50.0 : 60.0));
 #ifdef DEBUG_FFT
 		printf("Found (heur %ld) at %g frames -> %g sec\n", tcount, value, pos/secondunits);
 #endif
