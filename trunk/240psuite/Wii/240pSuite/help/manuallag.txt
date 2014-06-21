@@ -8,7 +8,7 @@ processing the signal.
 
 As an added feature, the user can click the $A
 button when the sprite is aligned with the one on
-the background, and the offset in frames form the
+the background, and the offset in frames from the
 actual intersection will be shown on screen. This
 can be repeated ten times and the software will
 calculate the average. Whenever the button was
