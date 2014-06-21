@@ -550,7 +550,7 @@ void DrawSMPTEColorBars()
 	{
 		FreeImage(&backNTSC75);
 		FreeImage(&backNTSC100);
-		FreeImage(&backNTSC75);
+		FreeImage(&backPAL75);
 		return;
 	}
 	
@@ -1045,7 +1045,7 @@ void DrawOverscan()
 	if(!square)
 		return;
 		
-	border = CloneImage(square, 1);
+	border = LoadImage(WHITEIMG, 1);
 	if(!border)
 		return;		
 	

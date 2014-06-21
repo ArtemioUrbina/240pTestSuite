@@ -425,12 +425,19 @@ void LagTest()
 	fixed = LoadImage(LAGPERIMG, 0);
 	if(!fixed)
 		return;
-	spriteA = CloneImage(fixed, 0);
+	spriteA = LoadImage(LAGPERIMG, 0);
 	if(!spriteA)
+	{
+		FreeImage(&fixed);
 		return;
-	spriteB = CloneImage(fixed, 0);
+	}
+	spriteB = LoadImage(LAGPERIMG, 0);
 	if(!spriteB)
-		return;	
+	{
+		FreeImage(&spriteA);
+		FreeImage(&fixed);
+		return;
+	}
 		
 	SND_Init(INIT_RATE_48000); 
     SND_Pause(0); 	
