@@ -82,7 +82,7 @@ void DrawGrayRamp()
   DrawColorTilesAtInv(APLAN, PAL0, 0, 14, TILE_USERINDEX, 3, 14);
 
   //Center it, we are missing a few tiles, so scroll 16 pixels to center the pattern
-  VDP_setHorizontalScroll(APLAN, 0, 16);
+  VDP_setHorizontalScroll(PLAN_A, 16);
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
@@ -96,7 +96,7 @@ void DrawGrayRamp()
   }
   VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
   VDP_setHilightShadow(0);
-  VDP_setHorizontalScroll(APLAN, 0, 0);
+  VDP_setHorizontalScroll(PLAN_A, 0);
 }
 
 void DrawWhiteScreen()

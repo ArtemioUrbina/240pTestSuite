@@ -128,13 +128,13 @@ _INT:
         rte
 _HBL:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr    _hblank_callback
+        jsr    _hint_callback
         movem.l (%sp)+,%d0-%d1/%a0-%a1
         rte
 
 _VBL:
         movem.l %d0-%d1/%a0-%a1,-(%sp)
-        jsr    _vblank_callback        
+        jsr    _vint_callback        
         movem.l (%sp)+,%d0-%d1/%a0-%a1        
         rte
 

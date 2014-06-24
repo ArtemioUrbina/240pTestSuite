@@ -287,8 +287,8 @@ void DropShadowTest()
 
       if(back == 2)
       {
-        VDP_setHorizontalScroll(BPLAN, 0, 0);
-        VDP_setHorizontalScroll(APLAN, 0, 0);
+        VDP_setHorizontalScroll(PLAN_B, 0);
+        VDP_setHorizontalScroll(PLAN_A, 0);
         VDP_setSpritePosition(3, 320, 224);
         VDP_setSpritePosition(4, 320, 224);
         VDP_updateSprites();
@@ -431,8 +431,8 @@ void DropShadowTest()
     {
       VDP_setSpritePosition(3, x*-2 + 79, 120);
       VDP_setSpritePosition(4, x*-2 + 335, 120);
-      VDP_setHorizontalScroll(BPLAN, 0, x*-2);
-      VDP_setHorizontalScroll(APLAN, 0, x*-4);      
+      VDP_setHorizontalScroll(PLAN_B, x*-2);
+      VDP_setHorizontalScroll(PLAN_A, x*-4);      
 
       switch(frame)
       {
@@ -483,8 +483,8 @@ void DropShadowTest()
 
   VDP_resetSprites();
   VDP_updateSprites();
-  VDP_setHorizontalScroll(BPLAN, 0, 0);
-  VDP_setHorizontalScroll(APLAN, 0, 0);
+  VDP_setHorizontalScroll(PLAN_B, 0);
+  VDP_setHorizontalScroll(PLAN_A, 0);
 }
 
 void StripedSpriteTest()
@@ -520,8 +520,8 @@ void StripedSpriteTest()
       VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8); 
       if(back != 1)
       {
-        VDP_setHorizontalScroll(BPLAN, 0, 0);
-        VDP_setHorizontalScroll(APLAN, 0, 0);
+        VDP_setHorizontalScroll(PLAN_B, 0);
+        VDP_setHorizontalScroll(PLAN_A, 0);
         VDP_setSpritePosition(1, 320, 224);
         VDP_setSpritePosition(2, 320, 224);
         VDP_updateSprites();
@@ -601,8 +601,8 @@ void StripedSpriteTest()
     {
       VDP_setSpritePosition(1, x*-2 + 79, 120);
       VDP_setSpritePosition(2, x*-2 + 335, 120);
-      VDP_setHorizontalScroll(BPLAN, 0, x*-2);
-      VDP_setHorizontalScroll(APLAN, 0, x*-4);  
+      VDP_setHorizontalScroll(PLAN_B, x*-2);
+      VDP_setHorizontalScroll(PLAN_A, x*-4);  
     
       switch(frame)
       {
@@ -651,8 +651,8 @@ void StripedSpriteTest()
 
   VDP_resetSprites();
   VDP_updateSprites();
-  VDP_setHorizontalScroll(BPLAN, 0, 0);
-  VDP_setHorizontalScroll(APLAN, 0, 0);
+  VDP_setHorizontalScroll(PLAN_B, 0);
+  VDP_setHorizontalScroll(PLAN_A, 0);
 }
 
 
@@ -719,16 +719,16 @@ void LagTest()
 
     //play audio 1 frame before
     //if((y == 95 && speed == 1 ) || (y == 97 && speed == -1))
-    //    startPlay_PCM(beep, len, 16000, AUDIO_PAN_CENTER);            
+    //    SND_stopPlay_PCM(beep, len, 16000, AUDIO_PAN_CENTER);            
 
     if(y == 96) // half the screen?        
     {
       if(audio)                
       {
         if(speed == 1)
-          startPlay_PCM(beep, len, (u8)16000, AUDIO_PAN_LEFT, 0);            
+          SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_LEFT, 0);            
         else
-          startPlay_PCM(beep, len, (u8)16000, AUDIO_PAN_RIGHT, 0);            
+          SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_RIGHT, 0);            
       }        
     }    
 
@@ -916,7 +916,7 @@ void LagTest()
       VDP_drawTextBG(APLAN, "=", TILE_ATTR(PAL1, 0, 0, 0), h++, v);
       
       totald = fix32Div(tot, cnt);
-      fix32ToStr(totald, str);
+      fix32ToStr(totald, str, 2);
       VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL3, 0, 0, 0), h, v);
       h += strlen(str);
       h -= 2;
@@ -928,7 +928,7 @@ void LagTest()
       v = 12;
       tot = FIX32(16.6834);
       cnt = fix32Mul(totald, tot);
-      fix32ToStr(cnt, str);
+      fix32ToStr(cnt, str, 2);
       VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL3, 0, 0, 0), h, v);
       h += strlen(str);
       //h -= 2;
@@ -1046,12 +1046,12 @@ void HScrollTest()
     VDP_setSpritePosition(0, x/2 + 79, 120);
     VDP_setSpritePosition(1, x/2 + 335, 120);
     VDP_updateSprites();
-    VDP_setHorizontalScroll(APLAN, 0, x);        
-    VDP_setHorizontalScroll(BPLAN, 0, x/2);        
+    VDP_setHorizontalScroll(PLAN_A, x);        
+    VDP_setHorizontalScroll(PLAN_B, x/2);        
     VDP_waitVSync();
   }
-  VDP_setHorizontalScroll(APLAN, 0, 0);
-  VDP_setHorizontalScroll(BPLAN, 0, 0);
+  VDP_setHorizontalScroll(PLAN_A, 0);
+  VDP_setHorizontalScroll(PLAN_B, 0);
   VDP_resetSprites();
   VDP_updateSprites();  
 }
@@ -1110,13 +1110,13 @@ void VScrollTest()
       pos = pos % -512;
     
     if(direction)
-      VDP_setHorizontalScroll(APLAN, 0, pos);            
+      VDP_setHorizontalScroll(PLAN_A, pos);
 	else
-	  VDP_setVerticalScroll(APLAN, 0, pos);            
+	  VDP_setVerticalScroll(PLAN_A, pos);            
     VDP_waitVSync();
   }  
-  VDP_setHorizontalScroll(APLAN, 0, 0);              
-	VDP_setVerticalScroll(APLAN, 0, 0);    
+  VDP_setHorizontalScroll(PLAN_A, 0);
+	VDP_setVerticalScroll(PLAN_A, 0);
 }
 
 void SoundTest()
@@ -1163,19 +1163,19 @@ void SoundTest()
     {
       if(sel == 0)
       {        
-        stopPlay_PCM();
-        startPlay_TFM(left);                
+        SND_stopPlay_PCM();
+        SND_startPlay_TFM(left);                
 	      //YM2612_writeRegSafe(0, 0xb4, 0x80);
       }
       if(sel == 1)
       {
-        stopPlay_PCM();
-        startPlay_TFM(center);
+        SND_stopPlay_PCM();
+        SND_startPlay_TFM(center);
       }
       if(sel == 2)
       {
-        stopPlay_PCM();
-        startPlay_TFM(right);        
+        SND_stopPlay_PCM();
+        SND_startPlay_TFM(right);        
 	      //YM2612_writeRegSafe(0, 0xb4, 0x40);
       }
     }
@@ -1189,7 +1189,7 @@ void SoundTest()
 
     VDP_waitVSync();
   }  
-  stopPlay_PCM();
+  SND_stopPlay_PCM();
 }
 
 void LEDZoneTest()
@@ -1594,9 +1594,9 @@ void VAPanelScrollTest()
     intToStr(speed, str, 1);    
     VDP_drawTextBG(BPLAN, str, TILE_ATTR(PAL1, 0, 0, 0), 34, 26);
     
-    VDP_setHorizontalScroll(APLAN, 0, x);            
+    VDP_setHorizontalScroll(PLAN_A, x);            
     VDP_waitVSync();
   }
-  VDP_setHorizontalScroll(APLAN, 0, 0);  
+  VDP_setHorizontalScroll(PLAN_A, 0);  
 }
 */

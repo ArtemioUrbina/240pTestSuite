@@ -19,7 +19,7 @@ __DYNAMIC  =  0;
  * +--------------------+
  * | .bss               |
  * |        __bss_start | start of bss, cleared by crt0
- * |        _end        | start of heap, used by sbrk()
+ * |        _bend       | start of heap, used by sbrk()
  * +--------------------+
  * .                    .
  * .                    .
@@ -96,9 +96,9 @@ SECTIONS
     *(.shbss)
     *(.bss .bss.*)
     *(COMMON)
-    _end =  ALIGN (0x8);
-    __end = _end;
-    end = _end;
+    _bend =  ALIGN (0x8);
+    __end = _bend;
+    end = _bend;
   } > ram
 
   .stab 0 (NOLOAD) :

@@ -26,9 +26,9 @@ u16 pal_240;
 
 void VDP_setSpriteAttr(u16 index, u16 tile_attr)
 {
-    _spritedef *sprite;    
+    SpriteDef *sprite;    
 
-    sprite = &spriteDefCache[index];
+    sprite = &vdpSpriteCache[index];
     
     sprite->tile_attr = tile_attr;    
 }
