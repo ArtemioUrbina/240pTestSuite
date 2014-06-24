@@ -176,11 +176,7 @@ inline void ReleaseScanlines()
 void ChangeResolution(int nvmode)
 {
 	vuint32 *regs = (uint32*)0xA05F8000;
-	//uint32 data = 0;
-
-	//int lastw;
-
-	//lastw = W;
+	uint32 data = 0;
 
 	// Skip useless video modes when in VGA
 	vcable = vid_check_cable();
@@ -254,46 +250,46 @@ void ChangeResolution(int nvmode)
 	}
 
 	AdjustVideoModes();
-	//if(lastw != W)
+	ReleaseTextures();
+
+	pvr_shutdown();
+	switch(vmode)
 	{
-		ReleaseTextures();
+		case VIDEO_240P:
+			//vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
+			vid_set_mode_ex(&custom_240); 
+			break;
+		case VIDEO_288P:
+			//vid_set_mode(DM_320x240_PAL, PM_RGB565); 
+			vid_set_mode_ex(&custom_288); 
+			break;
+		case VIDEO_576I:
+		case VIDEO_576I_A264:
+			vid_set_mode_ex(&custom_576); 
+			//vid_set_mode(DM_768x576_PAL_IL, PM_RGB565); crashes the DC
+			break;
+		case VIDEO_480I_A240:
+		case VIDEO_480P_SL:
+		case VIDEO_480I:
+		case VIDEO_480P:
+			if(vcable == CT_VGA)
+				vid_set_mode(DM_640x480_VGA, PM_RGB565); 
+				//vid_set_mode_ex(&custom_vga);
+			else
+				vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
+			break;
+	}
 
-		pvr_shutdown();
-		switch(vmode)
-		{
-			case VIDEO_240P:
-						//vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
-						vid_set_mode_ex(&custom_240); 
-				break;
-			case VIDEO_288P:
-						//vid_set_mode(DM_320x240_PAL, PM_RGB565); 
-						vid_set_mode_ex(&custom_288); 
-				break;
-			case VIDEO_576I:
-			case VIDEO_576I_A264:
-						//vid_set_mode(DM_640x480_PAL_IL, PM_RGB565); 
-						vid_set_mode_ex(&custom_576); 
-				break;
-			case VIDEO_480I_A240:
-			case VIDEO_480P_SL:
-			case VIDEO_480I:
-			case VIDEO_480P:
-					if(vcable == CT_VGA)
-						vid_set_mode(DM_640x480_VGA, PM_RGB565); 
-						//vid_set_mode_ex(&custom_vga);
-					else
-						vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
-				break;
-		}
+	regs[0x3A] |= 8;    /* Blank */
+    	regs[0x11] &= ~1;   /* Display disable */
 
-		regs[0x3A] |= 8;    /* Blank */
-    		regs[0x11] &= ~1;   /* Display disable */
+	pvr_init_defaults();
 
-		pvr_init_defaults();
+	RefreshLoadedImages();
 
-		RefreshLoadedImages();
-
-/*
+	if(settings.ChangeVideoRegs)
+	{
+		dbglog(DBG_KDEBUG, "Changing video registers to match specs\n");
 		if(IsPAL)
 		{
 			if(vmode == VIDEO_288P)
@@ -356,37 +352,43 @@ void ChangeResolution(int nvmode)
 			data = 0x03 | 0x3f << 8 | 0x319 << 12 | 0x0f << 22;
 			regs[0x38] = data;
 		}
-*/
-
-		// Disable deflicker filter, 
-		if(PVR_GET(PVR_SCALER_CFG) != 0x400)
-		{
-			//dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
-			PVR_SET(PVR_SCALER_CFG, 0x400);
-		}
-
-		// Turn off texture dithering
-		if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
-		{
-			//dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
-			PVR_SET(PVR_FB_CFG_2, 0x00000001);
-		}
-
-		// Enable display
-		regs[0x3A] &= ~8;
-    		regs[0x11] |= 1;
-
-		if(!settings.drawborder) // Draw back video signal limits?
-			vid_border_color(0, 0, 0);
-		else
-			vid_border_color(255, 255, 255);
-	
-		if(!settings.drawpvrbg)
-			pvr_set_bg_color(0.0f, 0.0f, 0.0f);
-		else
-			pvr_set_bg_color(0.0f, 1.0f, 0.0f);
-		
 	}
+
+	// deflicker filter 
+	if(/*!settings.Deflicker && */PVR_GET(PVR_SCALER_CFG) != 0x400)
+	{
+		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
+		PVR_SET(PVR_SCALER_CFG, 0x400);
+	}
+
+	/*
+	if(settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x401)
+	{
+		dbglog(DBG_KDEBUG, "Enabling pvr deflicker filter by user request\n");
+		PVR_SET(PVR_SCALER_CFG, 0x401);
+	}
+	*/
+
+	// Turn off texture dithering
+	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
+	{
+		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
+		PVR_SET(PVR_FB_CFG_2, 0x00000001);
+	}
+
+	// Enable display
+	regs[0x3A] &= ~8;
+    	regs[0x11] |= 1;
+
+	if(!settings.drawborder) // Draw back video signal limits?
+		vid_border_color(0, 0, 0);
+	else
+		vid_border_color(255, 255, 255);
+	
+	if(!settings.EnablePALBG)
+		pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+	else
+		pvr_set_bg_color(settings.PalBackR, settings.PalBackG, settings.PalBackB);
 }
 
 void Toggle240p480i(int mode)
@@ -451,11 +453,19 @@ void Toggle240p480i(int mode)
 	RefreshLoadedImages();
 
 	// Disable deflicker filter, 
-	if(PVR_GET(PVR_SCALER_CFG) != 0x400)
+	if(/*!settings.Deflicker &&*/ PVR_GET(PVR_SCALER_CFG) != 0x400)
 	{
 		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
 		PVR_SET(PVR_SCALER_CFG, 0x400);
 	}
+
+	/*
+	if(settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x401)
+	{
+		dbglog(DBG_KDEBUG, "Enabling pvr deflicker filter by user request\n");
+		PVR_SET(PVR_SCALER_CFG, 0x401);
+	}
+	*/
 
 	// Turn off texture dithering
 	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
@@ -639,6 +649,8 @@ void TestVideoMode(int mode)
 
 	if(mode == VIDEO_240P)
 		source_mode = &custom_240;
+	if(mode == VIDEO_576I_A264)
+		source_mode = &custom_288;
 	if(mode == VIDEO_576I)
 		source_mode = &custom_576;
 	if(mode == VIDEO_288P)
@@ -650,13 +662,13 @@ void TestVideoMode(int mode)
 	test_mode = *source_mode;
 	backup_mode = test_mode;
 
-	if(vmode == VIDEO_288P)
+	if(IsPAL)
 		back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
 	else
 		back = LoadKMG("/rd/grid.kmg.gz", 0);
 	if(!back)
 		return;
-	back->scale = 0;
+	//back->scale = 0;
 
 	updateVMU("VIDEO", "", 1);
 
@@ -722,7 +734,7 @@ void TestVideoMode(int mode)
 
 		sprintf(str, " Draw Video Border:   %s ", settings.drawborder == 1 ? "yes" : " no");
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
-		sprintf(str, " Draw PVR Background: %s ", settings.drawpvrbg == 1 ? "yes" : " no");
+		sprintf(str, " Draw PVR Background: %s ", settings.EnablePALBG == 1 ? "yes" : " no");
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
 
 		sprintf(str, " Video Border Size:               %dx%d ", test_mode.borderx2-test_mode.borderx1, test_mode.bordery2-test_mode.bordery1);
@@ -816,7 +828,7 @@ void TestVideoMode(int mode)
 						settings.drawborder = !settings.drawborder;
 						break;
 					case 14:
-						settings.drawpvrbg = !settings.drawpvrbg;
+						settings.EnablePALBG = !settings.EnablePALBG;
 						break;
 				}
 			}
@@ -865,7 +877,7 @@ void TestVideoMode(int mode)
 						settings.drawborder = !settings.drawborder;
 						break;
 					case 14:
-						settings.drawpvrbg = !settings.drawpvrbg;
+						settings.EnablePALBG = !settings.EnablePALBG;
 						break;
 				}
 			}
@@ -933,8 +945,8 @@ void TestVideoMode(int mode)
 			else
 				vid_border_color(0, 0, 0);
 
-			if(settings.drawpvrbg)
-				pvr_set_bg_color(0.0f, 1.0f, 0.0f);
+			if(settings.EnablePALBG)
+				pvr_set_bg_color(settings.PalBackR, settings.PalBackG, settings.PalBackB);
 			else
 				pvr_set_bg_color(0.0f, 0.0f, 0.0f);
 

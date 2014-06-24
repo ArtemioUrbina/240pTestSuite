@@ -675,21 +675,12 @@ void DrawGrid()
 				back->scale = 0;		
 			}
 			
-			if(vmode == VIDEO_288P /*|| vmode == VIDEO_576I_A264 */)
+			if(vmode == VIDEO_288P)
 			{
 				back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
 				if(!back)
 					return;        	
 			}
-			
-			/*
-			if(vmode == VIDEO_576I)
-			{
-				back = LoadKMG("/rd/480/gridPAL480.kmg.gz", 0);
-				if(!back)
-					return;        	
-			}
-			*/
 			
 			// Use 240p Grid
 			if(!back)
@@ -782,7 +773,10 @@ void DrawLinearity()
 			}
 			else
 			{
-				circles = LoadKMG("/rd/circlesPAL.kmg.gz", 0);
+				if(vmode == VIDEO_288P)
+					circles = LoadKMG("/rd/circlesPAL.kmg.gz", 0);
+				else
+					circles = LoadKMG("/rd/circlesPAL240.kmg.gz", 0);
 				if(!circles)
 					return;
 				IgnoreOffset(circles);

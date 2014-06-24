@@ -202,9 +202,6 @@ int main(void)
 			if (pressed & CONT_X)
 				ToggleScanlineEvenOdd();
 
-			if (pressed & CONT_X && pressed & CONT_Y)
-				settings.drawpvrbg = !settings.drawpvrbg;
-
 			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
 				RaiseScanlineIntensity();
 
