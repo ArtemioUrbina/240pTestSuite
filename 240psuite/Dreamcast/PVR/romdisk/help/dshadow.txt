@@ -1,4 +1,4 @@
-                DROP SHADOW TEST 
+                 DROP SHADOW TEST 
 
 This is a crucial test for 240p upscan converters.
 It displays a simple sprite shadow (32x32 pixels)
@@ -11,5 +11,5 @@ should be visible.
 
 The user can toggle the frame used to draw the
 shadow with the #GX#G button. Backgrounds can be
-switched with the #GA#G button, and the Y button
+switched with the #GA#G button, and the #GY#G button
 toggles sprites. 

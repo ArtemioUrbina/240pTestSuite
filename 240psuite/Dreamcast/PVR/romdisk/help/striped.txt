@@ -1,11 +1,11 @@
               STRIPED SPRITE TEST
 
-There are actually deinterlacers out there which
+There actually are deinterlacers out there which
 can display the drop shadows correctly and still
 interpreted 240p as 480i. With a striped sprite it
 should be easy to tell if a processor tries to
 deinterlace (plus interpolate) or not.
 
-The user can change background with the A button.
-Holding the Y button allows to move 1 pixel at
+The user can change background with the #GA#G button.
+Holding the #GY#G button allows to move 1 pixel at
 a time.

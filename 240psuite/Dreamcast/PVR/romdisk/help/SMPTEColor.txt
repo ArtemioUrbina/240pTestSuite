@@ -1,4 +1,25 @@
-              SMPTE COLOR BARS (1/2)
+              SMPTE COLOR BARS (1/3)
+
+This pattern can be used to calibrate for NTSC
+levels regarding contrast and brightness, and 
+appropiate colors as well. 
+
+You can toggle between 75% and 100% SMPTE color 
+bars by pressing #GA#G.
+
+When in PAL this pattern shows the #YEBU#Y color
+bars intead, since setup starts at 0mV.
+
+Remember that the black level in the SMPTE pattern
+refers to 7.5 IRE for video, console games usually
+start at 0 IRE. This pattern can be used to 
+                                         #C(cont...)#C
+              SMPTE COLOR BARS (2/3)
+
+calibrate colors - or auto calibrated in a 
+professional display - and then black levels can
+be adjusted with the PLUGE pattern using the #GFull 
+RGB Mode#G.
 
 In an SMPTE color bar image, the top two-thirds
 of the television picture contain seven vertical
@@ -8,13 +29,12 @@ magenta, red, and blue. This sequence runs
 through all seven possible combinations that use
 at least one of the three basic color components
 of green, red, and blue, with blue cycling on 
+                                         #C(cont...)#C
+              SMPTE COLOR BARS (3/3)
+
 and off between every bar, red cycling on and 
 off every two bars, and green on for the leftmost
 four bars and off for the rightmost three.
-
-                                         (cont...)
-
-              SMPTE COLOR BARS (2/2)
 
 Below the main set of seven bars is a strip of 
 blue, magenta, cyan, and white castellations. 
