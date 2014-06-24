@@ -2,7 +2,7 @@
 
 An IRE is a unit used in the measurement of
 composite video signals. Its name is derived from
- the initials of the #YInstitute of Radio Engineers#Y.
+the initials of the #YInstitute of Radio Engineers#Y.
 
 A value of 100 IRE was originally defined to be
 the range from black to white in a video signal.
