@@ -35,7 +35,7 @@ Table:
 
 continue:                        
         lea     __stack,%a0
-        movea.l %a0,%sp                   /* set stack pointer to top of Work RAM */        
+        movea.l %a0,%sp                   /* set stack pointer to top of Work RAM */
 
 * Define known Jump Table, DMA is used to copy font (corrupted font)               
 	    move.l	(_HBL),(0xFFFD0E)        
