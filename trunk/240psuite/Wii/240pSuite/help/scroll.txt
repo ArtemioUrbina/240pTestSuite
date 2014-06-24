@@ -3,7 +3,7 @@
 This test shows a two layer background from #YSonic
 the Hedgehog#Y. The speed can be varied with the
 d-pad, and change direction with the button $X.
-The A button stops the scroll. 
+The $A button stops the scroll. 
 
 This can be used to notice any drops in framerate
 when using a video processor.
