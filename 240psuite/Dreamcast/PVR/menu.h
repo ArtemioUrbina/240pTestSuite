@@ -25,13 +25,18 @@
 #define VERSION_NUMBER "Dreamcast Ver. 1.20"
 #define VERSION_DATE "20/06/2014"
 
-#define DEFAULT_OPTIONS { 0, 0, 0, PAL_CENTERED };
+#define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7};
 
 struct settings_st {
 	int drawborder;
-	int drawpvrbg;
 	int EnablePAL;
 	int PALStart;
+	int ChangeVideoRegs;
+	int Deflicker;
+	int EnablePALBG;
+	float PalBackR;
+	float PalBackG;
+	float PalBackB;
 };
 
 extern struct settings_st settings;
@@ -45,5 +50,6 @@ uint8 ReloadFBTexture();
 void DrawCredits(ImagePtr back);
 void DrawIntro();
 void ShowHelpWindow(char *Data);
+void ChangePALBackgroundColor(ImagePtr title);
 
 #endif

@@ -10,7 +10,7 @@ calculating the frame delay.
 The #GL#G and #GR#G triggers allow you to change the frame
 accuracy of the FFT used to estimate the audio
 delay. This ranges from 1 frame to 1/4th of a frame
-(16.67ms to 4.16ms). The smaller the frame accuracy,
+(16.67 to 4.16ms). The smaller the frame accuracy,
 the higher the probability of small errors; since
 the #YDreamcast#Y's microphone samples rate is 11Khz.
 All settings are within the hardware capabilities.

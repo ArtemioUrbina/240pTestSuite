@@ -824,12 +824,10 @@ void GridScrollTest()
 	ImagePtr		back;
 	controller		*st;
 
-	back = LoadKMG("/rd/circles_grid.kmg.gz", 0);
+	back = LoadKMG("/rd/circles_grid.kmg.gz", 1);
 	if(!back)
 		return;  
 	
-	//back->y = (dH - 240)/2;  
-
 	updateVMU("G. Scroll", "", 1);
 	while(!done && !EndProgram) 
 	{
