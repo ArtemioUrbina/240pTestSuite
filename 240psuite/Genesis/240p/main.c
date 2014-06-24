@@ -54,7 +54,7 @@ int main()
     pal_240 = 0;
   }
 
-  VDP_loadFont(font_tiles, USE_DMA);
+  VDP_loadFontData(font_tiles, FONT_LEN, USE_DMA);
   DrawIntro();
   while(1)
   {    
@@ -392,7 +392,7 @@ void DrawCredits()
   
   VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);      
   
-  VDP_setVerticalScroll(APLAN, 0, 4);
+  VDP_setVerticalScroll(PLAN_A, 4);
 
   VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);  
@@ -429,7 +429,7 @@ void DrawCredits()
     VDP_waitVSync();
   }
 
-  VDP_setVerticalScroll(APLAN, 0, 0);
+  VDP_setVerticalScroll(PLAN_A, 0);
 }
 
 

@@ -2,95 +2,90 @@ BIN= $(GDK)/bin
 LIB= $(GDK)/lib
 
 LIBSRC= $(GDK)/src
-LIBINCLUDE= $(GDK)/include
+LIBRES= $(GDK)/res
+LIBINCLUDE= $(GDK)/inc
 
-ROM = romscd
+ROM = rom
 SRC= src
 RES= res
-INCLUDE= include
+INCLUDE= inc
 
 TRIMFSIMG = $(SCD_LOADER)/trimfsimage
 MKISOFS = $(SCD_LOADER)/mkisofs
 ASM68K = $(SCD_LOADER)/ASM68K
 
-SHELL=$(BIN)/sh
+SHELL= $(BIN)/sh
+RM= $(BIN)/rm
+CP= $(BIN)/cp
 AR= $(BIN)/ar
 CC= $(BIN)/gcc
+LD= $(BIN)/ld
+NM= $(BIN)/nm
+ECHO= echo
 OBJCPY= $(BIN)/objcopy
 ASMZ80= $(BIN)/sjasm
 MACCER= $(BIN)/mac68k
 SIZEBND= $(BIN)/sizebnd
-BINTOC= $(BIN)/bintoc
 BINTOS= $(BIN)/bintos
-WAVTORAW= $(BIN)/wavtoraw
 GENRES= $(BIN)/genres
-TFMCOM= $(BIN)/tfmcom
-NM= $(BIN)/nm
-RM= $(BIN)/rm
+RESCOMP= $(BIN)/rescomp
 MKDIR= $(BIN)/mkdir
-NM2WCH= $(BIN)/nm2wch
-
-
-OPTION= -DSEGACD
 
 SRC_C= $(wildcard *.c)
 SRC_C+= $(wildcard $(SRC)/*.c)
 SRC_S= $(wildcard *.s)
 SRC_S+= $(wildcard $(SRC)/*.s)
-SRC_SZ80= $(wildcard *.s80)
-SRC_SZ80+= $(wildcard $(SRC)/*.s80)
+SRC_ASM= $(wildcard *.asm)
+SRC_ASM+= $(wildcard $(SRC)/*.asm)
+SRC_S80= $(wildcard *.s80)
+SRC_S80+= $(wildcard $(SRC)/*.s80)
+
+RES_C= $(wildcard $(RES)/*.c)
 RES_S= $(wildcard $(RES)/*.s)
-RES_BMP= $(wildcard *.bmp)
-RES_BMP+= $(wildcard $(RES)/*.bmp)
-RES_RAW= $(wildcard *.raw)
-RES_RAW+= $(wildcard $(RES)/*.raw)
-RES_PCM= $(wildcard *.pcm)
-RES_PCM+= $(wildcard $(RES)/*.pcm)
-RES_TFD= $(wildcard *.tfd)
-RES_TFD+= $(wildcard $(RES)/*.tfd)
-RES_TFC= $(wildcard *.tfc)
-RES_TFC+= $(wildcard $(RES)/*.tfc)
-RES_WAV= $(wildcard *.wav)
-RES_WAV+= $(wildcard $(RES)/*.wav)
 RES_RC= $(wildcard *.rc)
 RES_RC+= $(wildcard $(RES)/*.rc)
-RES_ASM= $(wildcard *.asm)
-RES_ASM+= $(wildcard $(RES)/*.asm)
+RES_RES= $(wildcard *.res)
+RES_RES+= $(wildcard $(RES)/*.res)
 
-OBJ= $(RES_BMP:.bmp=.o)
-OBJ+= $(RES_WAV:.wav=.o)
+OBJ= $(RES_RES:.res=.o)
 OBJ+= $(RES_RC:.rc=.o)
-OBJ+= $(RES_ASM:.asm=.o)
-OBJ+= $(RES_RAW:.raw=.o)
-OBJ+= $(RES_PCM:.pcm=.o)
-OBJ+= $(RES_TFD:.tfd=.o)
-OBJ+= $(RES_TFC:.tfc=.o)
 OBJ+= $(RES_S:.s=.o)
-OBJ+= $(SRC_SZ80:.s80=.o)
+OBJ+= $(RES_C:.c=.o)
+OBJ+= $(SRC_S80:.s80=.o)
+OBJ+= $(SRC_ASM:.asm=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
-INCS= -I$(LIBINCLUDE) -I$(INCLUDE) -I$(RES)
-FLAGS= $(OPTION) -m68000 -Wall -O1 -fomit-frame-pointer -fno-builtin-memset -fno-builtin-memcpy $(INCS)
-FLAGSZ80= -i$(LIBSRC) -i$(LIBINCLUDE) -i$(SRC) -i$(INCLUDE) -i$(RES)
+OBJS = $(addprefix out/, $(OBJ))
 
-all: out/$(ROM).bin
+INCS= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
+DEFAULT_FLAGS= -DSEGACD -m68000 -Wall -fno-builtin $(INCS) -B$(BIN)
+FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
-default: all
+
+#release: FLAGS= $(DEFAULT_FLAGS) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
+release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
+release: out/rom.bin
+
+debug: FLAGS= $(DEFAULT_FLAGS) -O1 -ggdb -DDEBUG=1
+debug: out/rom.bin out/rom.out out/symbol.txt
+
+
+all: release
+default: release
 
 .PHONY: clean
 
+
 clean:
-	$(RM) -f $(OBJ) out.lst out/$(ROM).nm out/$(ROM).wch out/$(ROM).out out/$(ROM).out
+	$(RM) -f $(OBJS) out.lst out/cmd_ out/segacd.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
 
 cleanobj:
-	$(RM) -f $(OBJ) out.lst out/$(ROM).nm out/$(ROM).out
+	$(RM) -f $(OBJS) out/segacd.o out/rom_head.bin out/rom_head.o out/rom.out
 
-out/$(ROM).bin: out/$(ROM).out
-	$(NM) -n -S -t x out/$(ROM).out >out/$(ROM).nm
-	$(NM2WCH) out/$(ROM).nm out/$(ROM).wch
-	$(OBJCPY) -O binary out/$(ROM).out out/$(ROM).bin
-	$(SIZEBND) out/$(ROM).bin -sizealign 131072   
+out/rom.bin: out/rom.out
+	$(OBJCPY) -O binary out/rom.out out/rom.bin
+	$(SIZEBND) out/rom.bin -sizealign 131072
 	$(OBJCPY) -O binary out/$(ROM).out $(SCD_LOADER)/_filesystem/M_INIT.PRG
 	$(SIZEBND) $(SCD_LOADER)/_filesystem/M_INIT.PRG -sizealign 131072    
 	$(MKISOFS) -iso-level 1 -o $(SCD_LOADER)/filesystem.img -pad $(SCD_LOADER)/_filesystem
@@ -105,9 +100,42 @@ out/$(ROM).bin: out/$(ROM).out
 	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-jp.asm, out/240p_SegaCD_JP.iso
 	$(RM) -f $(SCD_LOADER)/filesystem.bin
 
-out/$(ROM).out: $(LIB)/segacd.o $(OBJ) $(LIB)/libgendev.a
+out/symbol.txt: out/rom.out
+	$(NM) out/rom.out > out/symbol.txt
+
+out/rom.out: out/segacd.o out/cmd_ $(LIB)/libmd.a
+	$(CC) -B$(BIN) -n -T $(GDK)/mdcd.ld -nostdlib out/segacd.o @out/cmd_ $(LIB)/libmd.a $(LIB)/libgcc.a -o out/rom.out
+	$(RM) out/cmd_
+
+out/cmd_: $(OBJS)
+	$(ECHO) "$(OBJS)" > out/cmd_
+
+out/segacd.o: segacdfiles/segacd.s out/rom_head.bin
 	$(MKDIR) -p out
-	$(CC) -T $(GDK)/mdcd.ld -nostdlib $(LIB)/segacd.o $(OBJ) $(LIB)/libgendev.a $(LIB)/libgcc.a -o out/$(ROM).out    
+	$(CC) $(FLAGS) -c segacdfiles/segacd.s -o $@
+
+out/rom_head.bin: out/rom_head.o
+	$(LD) -T $(GDK)/mdcd.ld -nostdlib --oformat binary -o $@ $<
+
+out/rom_head.o: $(LIBSRC)/boot/rom_head.c
+	$(MKDIR) -p out
+	$(CC) $(FLAGS) -c $< -o $@
+
+
+out/%.o: %.c
+	$(MKDIR) -p out
+	$(MKDIR) -p out/src
+	$(MKDIR) -p out/res
+	$(CC) $(FLAGS) -c $< -o $@
+
+out/%.o: %.s
+	$(MKDIR) -p out
+	$(MKDIR) -p out/src
+	$(MKDIR) -p out/res
+	$(CC) $(FLAGS) -c $< -o $@
+
+%.s: %.res
+	$(RESCOMP) $< $@
 
 %.asm: %.rc
 	$(GENRES) $< $@
@@ -115,32 +143,8 @@ out/$(ROM).out: $(LIB)/segacd.o $(OBJ) $(LIB)/libgendev.a
 %.s: %.asm
 	$(MACCER) -o $@ $<
 
-%.s: %.bmp
-	$(BINTOS) -bmp $<
-
-%.raw: %.wav
-	$(WAVTORAW) $<
-
-%.tfc: %.tfd
-	$(TFMCOM) $<
-
-%.s: %.tfc
-	$(BINTOS) -align 32768 $<
-
-%.s: %.raw
-	$(BINTOS) -align 256 -sizealign 256 $<
-
-%.s: %.pcm
-	$(BINTOS) -align 256 -sizealign 256 $<
-
 %.o80: %.s80
 	$(ASMZ80) $(FLAGSZ80) $< $@ out.lst
 
-%.c: %.o80
-	$(BINTOC) $<
-
-%.o: %.c
-	$(CC) $(FLAGS) -c $< -o $@
-
-%.o: %.s
-	$(CC) $(FLAGS) -c $< -o $@
+%.s: %.o80
+	$(BINTOS) $<
