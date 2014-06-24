@@ -724,7 +724,7 @@ void DrawGrid()
 
 void DrawLinearity()
 {
-	int 		done = 0, oldvmode = vmode, gridpattern = 0, showgrid = 0;
+	int 		done = 0, oldvmode = vmode, gridmode = 0;
 	uint16		pressed;
 	ImagePtr	circles = NULL, grid, gridd, back;
 	controller	*st;
@@ -739,10 +739,22 @@ void DrawLinearity()
 	
 	grid = LoadKMG("/rd/circles_grid.kmg.gz", 1);
 	if(!grid)
+	{
+		FreeImage(&back);
 		return;
+	}
 	gridd = LoadKMG("/rd/circles_griddot.kmg.gz", 1);
 	if(!gridd)
+	{
+		FreeImage(&back);
+		FreeImage(&grid);
 		return;
+	}
+	
+	grid->w = 320;
+        grid->h = IsPAL ? 264 : 240;
+        gridd->w = 320;
+        gridd->h = IsPAL ? 264 : 240;
 		
 	updateVMU("Linearity", "", 1);
 	while(!done && !EndProgram) 
@@ -751,6 +763,13 @@ void DrawLinearity()
 		{
 			FreeImage(&circles);		
 			oldvmode = vmode;
+
+			grid->w = 320;
+                        grid->h = IsPAL ? 264 : 240;
+                        gridd->w = 320;
+                        gridd->h = IsPAL ? 264 : 240;
+			CalculateUV(0, 0, dW, dH, grid);
+			CalculateUV(0, 0, dW, dH, gridd);
 		}    
 		
 		if(!circles)
@@ -768,21 +787,20 @@ void DrawLinearity()
 					return;
 				IgnoreOffset(circles);
 			}
-
-			CalculateUV(0, 0, dW, dH, grid);
-			CalculateUV(0, 0, dW, dH, gridd);
 		}
 	
 		StartScene();
 
 		DrawImage(back);
-		if(showgrid)
-		{
-			if(gridpattern)
-				DrawImage(gridd);
-			else
-				DrawImage(grid);
-		}
+		switch(gridmode)
+                {
+                        case 1:
+                                DrawImage(grid);
+                                break;
+                        case 2:
+                                DrawImage(gridd);
+                                break;
+                }
 		DrawImage(circles);
 		EndScene();
 
@@ -790,16 +808,22 @@ void DrawLinearity()
 		if(st)
 		{
 			if (pressed & CONT_X)
-				showgrid = !showgrid;
+				gridmode --;
 		
 			if (pressed & CONT_Y)
-				gridpattern = !gridpattern;
+				gridmode ++;
 		
 			if (pressed & CONT_B)
 				done =	1;				
 
 			if (pressed & CONT_START)
 				ShowMenu(LINEARITYHELP);
+
+			if(gridmode < 0)
+                        	gridmode = 2;
+
+                	if(gridmode > 2)
+                        	gridmode = 0;
 		}
 	}
 

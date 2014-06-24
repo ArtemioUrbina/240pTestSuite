@@ -50,6 +50,8 @@ extern char *HelpData;
 #define FFTHELP		"/rd/help/fft.txt"
 #define SHARPNESSHELP	"/rd/help/sharpness.txt"
 #define OVERSCANHELP	"/rd/help/overscan.txt"
+#define OPTIONSHELP	"/rd/help/options.txt"
+#define VIDEOHELP	"/rd/help/vmode.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);

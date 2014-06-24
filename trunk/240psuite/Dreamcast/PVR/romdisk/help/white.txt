@@ -1,7 +1,7 @@
                 WHITE SCREEN (1/2)
 
 This pattern can be changed between white, black,
-red, grgreen, blue and custom color full screens by
+red, green, blue and custom color full screens by
 using the #GR#G and #GL#G triggers.
 
 Pressing #GA#G while displaying the black screen and 
@@ -10,7 +10,7 @@ in NTSC modes will toggle between 7.5 IRE and the
 
 Pressing #GA#G while displaying the white screen will
 enter color edit mode, to select the RGB color to
-fill the screen with. Use the d-pad, $X and $Y
+fill the screen with. Use the d-pad, #GX#G and #GY#G
 buttons to change each color.
 
                                    #C(cont...)#C

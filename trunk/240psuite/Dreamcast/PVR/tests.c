@@ -1147,7 +1147,7 @@ void SoundTest()
 
 void LEDZoneTest()
 {	
-	int		done = 0, x = 0, y = 0, selsprite = 1, show = 1;
+	int		done = 0, x = 30, y = 30, selsprite = 1, show = 1;
 	uint16		pressed;
 	ImagePtr	back, sprite[5];
 	controller 	*st;

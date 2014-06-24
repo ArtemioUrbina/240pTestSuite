@@ -65,7 +65,7 @@ vid_mode_t custom_288 =
         312, // Number of scanlines. 312 default, 
 	863, // Clocks per scanline. 863, 727 working
         174, // Bitmap window X position. 
-	22, // Bitmap window Y (45 defaulty), with 22 starts at line 23 as PAL dictates, 49 is bottom at PAL limit
+	36, // Bitmap window Y (45 defaulty), with 22 starts at line 23 as PAL dictates, 49 is bottom at PAL limit
         21, // First scanline interrupt position. 21 default
 	310, // Second scanline interrupt position (automatically doubled for VGA) 
         143, // Border X starting position. 
@@ -90,7 +90,7 @@ vid_mode_t custom_576 =
         624,
 	863,
         175,
-	21, // Starts at line #23 in PAL composite
+	45, //  21 Starts at line #23 in PAL composite, 45 starts centered
         21,  
 	310,
         143,
@@ -462,6 +462,95 @@ void Toggle240p480i(int mode)
 	{
 		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
 		PVR_SET(PVR_FB_CFG_2, 0x00000001);
+	}
+}
+
+void GetVideoModeStr(char *res, int shortdesc)
+{
+	if(!shortdesc)
+	{
+		switch(vmode)
+		{
+			case VIDEO_240P:
+				if(vcable != CT_VGA)
+				{
+					if(IsPALDC && vcable == CT_COMPOSITE)
+						sprintf(res, "Video: 240p (PAL60)");
+					else
+						sprintf(res, "Video: 240p");
+				}
+				break;
+			case VIDEO_480I_A240:
+				if(vcable != CT_VGA)
+				{
+					if(IsPALDC && vcable == CT_COMPOSITE)
+						sprintf(res, "Video: 480i (scaled 240p/PAL 60)");
+					else
+						sprintf(res, "Video: 480i (scaled 240p)");
+				}
+				break;
+			case VIDEO_480I:
+				if(vcable != CT_VGA)
+				{
+					if(IsPALDC && vcable == CT_COMPOSITE)
+						sprintf(res, "Video: 480i (Scaling disabled/PAL 60)");
+					else
+						sprintf(res, "Video: 480i (Scaling disabled)");
+				}
+				break;
+			case VIDEO_288P:
+                        	sprintf(res, "Video: 288p");
+                        	break;
+			case VIDEO_576I_A264:
+                        	sprintf(res, "Video: 576i (scaled 264p)");
+                        	break;
+			case VIDEO_576I:
+                        	sprintf(res, "Video: 576i (Scaling disabled)");
+                        	break;
+			case VIDEO_480P:
+				if(vcable == CT_VGA)
+					sprintf(res, "Video: 480p (Scaling disabled)");
+				break;
+			case VIDEO_480P_SL:
+				if(vcable == CT_VGA)
+					sprintf(res, "Video: 480p (scaled 240p)");
+				break;
+		}
+	}
+	else
+	{
+		switch(vmode)
+		{
+			case VIDEO_240P:
+				if(vcable != CT_VGA)
+					sprintf(res, "[240p]");
+				break;
+			case VIDEO_480I_A240:
+				if(vcable != CT_VGA)
+					sprintf(res, "[480i LD]");
+				break;
+			case VIDEO_480I:
+				if(vcable != CT_VGA)
+					sprintf(res, "[480i 1:1]");
+				break;
+			case VIDEO_288P:
+                        	sprintf(res, "[288p]");
+                        	break;
+			case VIDEO_576I_A264:
+                        	sprintf(res, "[576i LD]");
+                        	break;
+			case VIDEO_576I:
+                        	sprintf(res, "[576i 1:1]");
+                        	break;
+			case VIDEO_480P:
+				if(vcable == CT_VGA)
+					sprintf(res, "[480p 1:1]");
+				break;
+			case VIDEO_480P_SL:
+				if(vcable == CT_VGA)
+					sprintf(res, "[480p LD]");
+				break;
+		}
 	}
 }
 
