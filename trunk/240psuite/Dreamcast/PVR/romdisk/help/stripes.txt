@@ -1,4 +1,4 @@
-              HORIZONTAL STRIPES 1/2
+             HORIZONTAL STRIPES (1/2)
 
 This pattern is designed to show if all lines are
 visible in your setup, and how your video
@@ -13,16 +13,16 @@ A button.
 When auto-toggle is set, you should see the lines
 alternating rapidly. On some setups, the pattern
 doesn't change at all. This means that the signal
-                                         (cont...)
-              HORIZONTAL STRIPES 2/2
+                                         #C(cont...)#C
+             HORIZONTAL STRIPES (2/2)
 
-is being treated as 480i and odd or even frames 
-are being discarded completely.
+is being treated as 480i/576i and odd or even 
+frames are being discarded completely.
 
 A frame counter can be displayed on screen by 
-pressing the X button.
+pressing the #GX#G button.
 
-You can also display vertical bars by pressing Y,
+You can also display vertical bars by pressing #GY#G,
 that pattern will help you evaluate if the signal
-is not distorted horizontaly, since all one pixel
-wide lines should be of the same width.
+is not distorted horizontaly, since all lines 
+should be one pixel wide.

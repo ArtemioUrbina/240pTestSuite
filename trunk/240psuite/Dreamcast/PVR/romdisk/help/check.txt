@@ -9,8 +9,8 @@ turn on auto-toggle each frame with the #GA#G button.
 When auto-toggle is set, you should see it
 alternating rapidly. On some setups, the pattern
 doesn't change at all. This means that the signal
-is being treated as 480i and odd or even frames 
-are being discarded completely.
+is being treated as 480i/576i and odd or even 
+frames are being discarded completely.
 
 A frame counter can be displayed on screen by 
 pressing the #GX#G button.
