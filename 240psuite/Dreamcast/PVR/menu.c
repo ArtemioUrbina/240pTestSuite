@@ -533,6 +533,9 @@ void ChangeOptions(ImagePtr screen)
 		if ( pressed & CONT_B ) 		
 			close = 1;	
 	
+		if ( pressed & CONT_START ) 		
+			HelpWindow(OPTIONSHELP, screen);
+	
 		if (pressed & CONT_A)
 		{     
 			switch(sel)
@@ -722,6 +725,9 @@ void SelectVideoMode(ImagePtr screen)
 		if ( pressed & CONT_B ) 		
 			close = 1;	
 	
+		if ( pressed & CONT_START ) 		
+			HelpWindow(VIDEOHELP, screen);
+
 		if (pressed & CONT_A)
 		{     
 			switch(sel)

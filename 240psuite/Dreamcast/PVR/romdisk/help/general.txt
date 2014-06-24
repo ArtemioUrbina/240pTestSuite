@@ -13,7 +13,7 @@ display's black, white and color levels.
 Help is available everywhere by pressing the
 #GStart#G button. Use right and left in the d-pad to
 navigate between help pages.
-                                       #C(cont...)#C
+                                         #C(cont...)#C
                     HELP (2/4)
 
 This version of the suite supports 240p, 288p, 
@@ -33,9 +33,9 @@ PAL modes must be enabled from the options menu.
                     HELP (3/4)
 
 The #YDreamcast#Y microphone is supported, and when
-connected it enables a new lag test. This test can be
-used to measure display lag if both video and audio
-follow the same chain.
+connected it enables a new lag test. This test can
+be used to measure display lag if both video and
+audio follow the same chain.
 
 It uses #YFast Fourier Transform#Y (FFT) to detect the
 audio delay by playing a 1Khz tone and accurately
@@ -46,7 +46,7 @@ tests and information display.
 
 All devices can be hotswapped.         
                                          #C(cont...)#C
-                    HELP (3/4)
+                    HELP (4/4)
 
 The 240p suite is also available in other systems,
 including: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/
