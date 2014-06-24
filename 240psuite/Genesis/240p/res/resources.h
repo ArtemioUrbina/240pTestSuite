@@ -3,7 +3,5 @@
 
 extern const u8 beep[1792];
 extern const u8 center[14497];
-extern const u8 left[14569];
-extern const u8 right[14511];
 
 #endif // _RESOURCES_H_

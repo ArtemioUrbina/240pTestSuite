@@ -1124,9 +1124,9 @@ void SoundTest()
   int sel = 1;
   u16 ind = 0, size = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
-  u16  len = 0;
+  //u16 len = 0;
 
-  len = sizeof(beep);
+  //len = sizeof(beep);
   VDP_setPalette(PAL0, palette_grey);
   VDP_setPalette(PAL1, palette_green); 
   VDP_setPalette(PAL2, back_pal);
@@ -1159,24 +1159,51 @@ void SoundTest()
     if(sel < 0)
       sel = 2;
 
+	/*
+	When Bit 5 of YM Register $2C is set to 1, Panning gets affected by the L/R part of the L/R/AMS/FMS reg of these channels:
+	
+	$B4 in Bank 1 of the YM2612 for Channel FM1
+	$B5 in Bank 1 of the YM2612 for Channel FM2
+	$B6 in Bank 1 of the YM2612 for Channel FM3
+	$B4 in Bank 2 of the YM2612 for Channel FM4
+	$B6 in Bank 2 of the YM2612 for Channel FM6
+	http://forums.sonicretro.org/index.php?showtopic=28589
+	*/
     if (pressedButtons & BUTTON_A)
     {
       if(sel == 0)
-      {        
+      { 
+		SND_stopPlay_TFM();     
         SND_stopPlay_PCM();
-        SND_startPlay_TFM(left);                
-	      //YM2612_writeRegSafe(0, 0xb4, 0x80);
+        //SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_LEFT, 0);           
+		SND_startPlay_TFM(center);
+		
+	    YM2612_writeReg(0, 0xb4, 0x80);
+		YM2612_writeReg(0, 0xb5, 0x80);
+		YM2612_writeReg(0, 0xb6, 0x80);
+		YM2612_writeReg(1, 0xb4, 0x80);		
+		YM2612_writeReg(1, 0xb5, 0x80);	
+		YM2612_writeReg(1, 0xb6, 0x80);
       }
       if(sel == 1)
       {
+		SND_stopPlay_TFM();
         SND_stopPlay_PCM();
         SND_startPlay_TFM(center);
       }
       if(sel == 2)
       {
-        SND_stopPlay_PCM();
-        SND_startPlay_TFM(right);        
-	      //YM2612_writeRegSafe(0, 0xb4, 0x40);
+		SND_stopPlay_TFM();
+        SND_stopPlay_PCM();        
+		//SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_RIGHT, 0);
+		SND_startPlay_TFM(center);
+		
+	    YM2612_writeReg(0, 0xb4, 0x40);
+		YM2612_writeReg(0, 0xb5, 0x40);
+		YM2612_writeReg(0, 0xb6, 0x40);
+		YM2612_writeReg(1, 0xb4, 0x40);		
+		YM2612_writeReg(1, 0xb5, 0x40);	
+		YM2612_writeReg(1, 0xb6, 0x40);
       }
     }
           
@@ -1189,6 +1216,7 @@ void SoundTest()
 
     VDP_waitVSync();
   }  
+  SND_stopPlay_TFM();
   SND_stopPlay_PCM();
 }
 
