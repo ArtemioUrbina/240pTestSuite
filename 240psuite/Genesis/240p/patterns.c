@@ -165,7 +165,7 @@ void DrawWhiteScreen()
 
 void DrawSMPTE()
 {	
-  u16 size, Is75 = 1;
+  u16 size, Is75 = 1, text = 0;
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
@@ -175,11 +175,19 @@ void DrawSMPTE()
   */
 
   size = sizeof(SMPTECB75_tiles) / 32; 
-  VDP_setPalette(PAL0, SMPTECB75_pal);
+  VDP_setPalette(PAL2, SMPTECB75_pal);
   VDP_loadTileData(SMPTECB75_tiles, TILE_USERINDEX, size, USE_DMA); 
-  VDP_setMyTileMapRect(BPLAN, SMPTECB75_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+  VDP_setMyTileMapRect(BPLAN, SMPTECB75_map, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+  
   while(!exit)
   {
+  	if(text)
+  	{
+  		text --;
+  		if(!text)
+  			VDP_drawText("    ", 32, 1);
+  	}
+  	
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
@@ -190,10 +198,17 @@ void DrawSMPTE()
     if (pressedButtons & BUTTON_A)
     {
     	if(Is75)
-      	VDP_setPalette(PAL0, SMPTECB100_pal);
+    	{
+      	VDP_setPalette(PAL2, SMPTECB100_pal);
+      	VDP_drawText("100%", 32, 1);
+      }
       else
-      	VDP_setPalette(PAL0, SMPTECB75_pal);
+      {
+      	VDP_setPalette(PAL2, SMPTECB75_pal);
+      	VDP_drawText(" 75%", 32, 1);
+      }
       Is75 = !Is75;
+      text = 30;
     }
 
     VDP_waitVSync();
@@ -213,6 +228,34 @@ void Draw601ColorBars()
   VDP_setPalette(PAL0, cb601_pal);
   VDP_loadTileData(cb601_tiles, TILE_USERINDEX, size, USE_DMA); 
   VDP_setMyTileMapRect(BPLAN, cb601_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+  while(!exit)
+  {
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
+
+    VDP_waitVSync();
+  }
+}
+
+void DrawSharpness()
+{
+  u16 size;
+  u16 exit = 0;
+  u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+	/*
+  if(showhelp)
+    DrawHelp(HELP_601CB);
+  */
+
+  size = sizeof(sharpness_tiles) / 32; 
+  VDP_setPalette(PAL0, sharpness_pal);
+  VDP_loadTileData(sharpness_tiles, TILE_USERINDEX, size, USE_DMA); 
+  VDP_setMyTileMapRect(BPLAN, sharpness_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);

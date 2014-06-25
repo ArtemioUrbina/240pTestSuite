@@ -1440,7 +1440,7 @@ void PassiveLagTest()
   {             
     if(framecnt > 8)
       framecnt = 1;
-
+      
     if(!pause && color)
     {
       if(bgcol == PAL2)
@@ -1448,7 +1448,7 @@ void PassiveLagTest()
       else
         bgcol = PAL2;
     }
-    
+
     if(Detect_VDP_PAL())
     {
       if(frames > 49)
@@ -1552,7 +1552,12 @@ void PassiveLagTest()
         VDP_setPalette(PAL1, btw_pal);
         VDP_setPalette(PAL2, bluew_pal);
         VDP_setPalette(PAL3, redw_pal);
-      }
+  		}
+  		
+  		if(color)  		
+        bgcol = PAL3;
+      else
+        bgcol = PAL2;
     }
     
     if (pressedButtons & BUTTON_START)

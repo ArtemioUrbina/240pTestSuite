@@ -248,11 +248,12 @@ void TestPatternMenu()
     VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
     VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
     VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
+    VDP_drawTextBG(APLAN, "Sharpness", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     if(Detect_VDP_PAL())
-      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     else
       VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);           
-    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -261,19 +262,19 @@ void TestPatternMenu()
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
-      if(cursel > 12)
+      if(cursel > 14)
         cursel = 1;
-      if(cursel == 11 && !Detect_VDP_PAL())
-        cursel = 13;
+      if(cursel == 13 && !Detect_VDP_PAL())
+        cursel = 14;
     }
 
     if (pressedButtons & BUTTON_UP)
     {
       cursel --;
       if(cursel < 1)
-        cursel = 13;
-      if(cursel == 12 && !Detect_VDP_PAL())
-        cursel = 11;
+        cursel = 14;
+      if(cursel == 13 && !Detect_VDP_PAL())
+        cursel = 12;
     }
 
     if (pressedButtons & BUTTON_B)
@@ -318,7 +319,10 @@ void TestPatternMenu()
         case 11: 
           Draw100IRE();
           break;
-        case 12:
+        case 12: 
+          DrawSharpness();
+          break;
+        case 13:
           if(Detect_VDP_PAL())
           {
             if(!pal_240)
@@ -333,7 +337,7 @@ void TestPatternMenu()
             }
           }
           break;
-        case 13: 
+        case 14: 
           done = 1;
           break;
       }
