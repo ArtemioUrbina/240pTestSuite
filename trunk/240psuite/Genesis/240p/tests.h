@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2014 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *

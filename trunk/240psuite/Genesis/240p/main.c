@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2014 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -249,11 +249,12 @@ void TestPatternMenu()
     VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
     VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     VDP_drawTextBG(APLAN, "Sharpness", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
+    VDP_drawTextBG(APLAN, "Overscan", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     if(Detect_VDP_PAL())
-      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     else
       VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);           
-    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -262,19 +263,19 @@ void TestPatternMenu()
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
-      if(cursel > 14)
+      if(cursel > 15)
         cursel = 1;
-      if(cursel == 13 && !Detect_VDP_PAL())
-        cursel = 14;
+      if(cursel == 14 && !Detect_VDP_PAL())
+        cursel = 15;
     }
 
     if (pressedButtons & BUTTON_UP)
     {
       cursel --;
       if(cursel < 1)
-        cursel = 14;
-      if(cursel == 13 && !Detect_VDP_PAL())
-        cursel = 12;
+        cursel = 15;
+      if(cursel == 14 && !Detect_VDP_PAL())
+        cursel = 13;
     }
 
     if (pressedButtons & BUTTON_B)
@@ -322,7 +323,10 @@ void TestPatternMenu()
         case 12: 
           DrawSharpness();
           break;
-        case 13:
+        case 13: 
+          DrawOverscan();
+          break;
+        case 14:
           if(Detect_VDP_PAL())
           {
             if(!pal_240)
@@ -337,7 +341,7 @@ void TestPatternMenu()
             }
           }
           break;
-        case 14: 
+        case 15: 
           done = 1;
           break;
       }

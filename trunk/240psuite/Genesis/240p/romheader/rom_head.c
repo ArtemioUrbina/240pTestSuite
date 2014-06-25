@@ -26,7 +26,7 @@ const struct
     "(C)ARTEMIO  2014",
     "240P TEST SUITE                                 ",
     "240P TEST SUITE                                 ",
-    "GM 00000000-00",
+    "GM 00002501-14",
     0x0000,
     "JD              ",
     0x00000000,
