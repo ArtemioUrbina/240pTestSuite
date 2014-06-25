@@ -34,6 +34,7 @@ void DrawLinearity();
 void DrawGrayRamp();
 void DrawWhiteScreen();
 void Draw100IRE();
+void DrawSMPTE();
 
 void DrawColorTilesAt(u16 plan, u16 pal, u16 x, u16 y, u16 tiles, u16 w, u16 h);
 void DrawColorTilesAtInv(u16 plan, u16 pal, u16 x, u16 y, u16 tiles, u16 w, u16 h);

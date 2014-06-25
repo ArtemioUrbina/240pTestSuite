@@ -41,7 +41,7 @@ int main()
   
   VDP_init(); 
   JOY_init();
-    
+      
   VDP_setScreenWidth320(); 
   if(Detect_VDP_PAL())
   {
@@ -90,7 +90,7 @@ int main()
     VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Manual Lag Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);    
-	VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -239,19 +239,20 @@ void TestPatternMenu()
     pos = 6;
     VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Color Bleed Check", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, pal_240 ? "Grid 320x240" : "Grid 320x224", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, pal_240 ? "Grid 256x240" : "Grid 256x224", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
-    VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
-    VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
+    VDP_drawTextBG(APLAN, "SMPTE Color Bars", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Color Bleed Check", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, pal_240 ? "Grid 320x240" : "Grid 320x224", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, pal_240 ? "Grid 256x240" : "Grid 256x224", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
+    VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
+    VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     if(Detect_VDP_PAL())
-      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     else
       VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);           
-    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -263,16 +264,16 @@ void TestPatternMenu()
       if(cursel > 12)
         cursel = 1;
       if(cursel == 11 && !Detect_VDP_PAL())
-        cursel = 12;
+        cursel = 13;
     }
 
     if (pressedButtons & BUTTON_UP)
     {
       cursel --;
       if(cursel < 1)
-        cursel = 12;
-      if(cursel == 11 && !Detect_VDP_PAL())
-        cursel = 10;
+        cursel = 13;
+      if(cursel == 12 && !Detect_VDP_PAL())
+        cursel = 11;
     }
 
     if (pressedButtons & BUTTON_B)
@@ -291,30 +292,33 @@ void TestPatternMenu()
           DrawColorBars();
           break;
         case 3:
-          Draw601ColorBars();
+          DrawSMPTE();
           break;
         case 4:
-          DrawColorBleed();                    
+          Draw601ColorBars();
           break;
         case 5:
-          DrawGrid(GRID_320);                    
+          DrawColorBleed();                    
           break;
         case 6:
-          DrawGrid(GRID_256);                    
+          DrawGrid(GRID_320);                    
           break;
         case 7:
-          DrawLinearity();
+          DrawGrid(GRID_256);                    
           break;
         case 8:
-          DrawGrayRamp();
+          DrawLinearity();
           break;
         case 9:
+          DrawGrayRamp();
+          break;
+        case 10:
           DrawWhiteScreen();
           break;
-        case 10: 
+        case 11: 
           Draw100IRE();
           break;
-        case 11:
+        case 12:
           if(Detect_VDP_PAL())
           {
             if(!pal_240)
@@ -329,7 +333,7 @@ void TestPatternMenu()
             }
           }
           break;
-        case 12: 
+        case 13: 
           done = 1;
           break;
       }
@@ -416,7 +420,7 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "http://junkerhq.net/xrgb", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
   VDP_drawTextBG(APLAN, "Ver. 1.14", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
-  VDP_drawTextBG(APLAN, "22/05/2014", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+  VDP_drawTextBG(APLAN, "24/06/2014", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);

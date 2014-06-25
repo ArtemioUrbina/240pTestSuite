@@ -1121,12 +1121,12 @@ void VScrollTest()
 
 void SoundTest()
 {
-  int sel = 1, oldsel = 1;
-  u16 ind = 0, size = 0, exit = 0, playing = 1;
+  int sel = 1;
+  u16 ind = 0, size = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
-  //u16 len = 0;
+  u16 len = 0;
 
-  //len = sizeof(beep);
+  len = sizeof(beep);
   VDP_setPalette(PAL0, palette_grey);
   VDP_setPalette(PAL1, palette_green); 
   VDP_setPalette(PAL2, back_pal);
@@ -1137,8 +1137,7 @@ void SoundTest()
   VDP_loadTileData(back_tiles, ind, size, USE_DMA); 
   
   VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
-
-  SND_startPlay_TFM(center);
+  
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
@@ -1160,19 +1159,7 @@ void SoundTest()
     if(sel < 0)
       sel = 2;
 
-	if (pressedButtons & BUTTON_A)
-    {
-		if(playing)
-			SND_stopPlay_TFM();
-		else
-		{
-			SND_startPlay_TFM(center);
-			if(sel != 2)
-				oldsel = 4;
-		}
-
-		playing = !playing;
-	}
+	
 	/*
 	When Bit 5 of YM Register $2C is set to 1, Panning gets affected by the L/R part of the L/R/AMS/FMS reg of these channels:
 	
@@ -1183,46 +1170,51 @@ void SoundTest()
 	$B6 in Bank 2 of the YM2612 for Channel FM6
 	http://forums.sonicretro.org/index.php?showtopic=28589
 	*/
-    if (sel != oldsel && playing)
+    if (pressedButtons & BUTTON_A)
     {
       if(sel == 0)
       { 
-		//SND_stopPlay_TFM();             
-        //SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_LEFT, 0);           
-		//SND_startPlay_TFM(center);
+		SND_stopPlay_TFM(); 
+		SND_stopPlay_PCM();             
+        SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_LEFT, 0);           		
 		
+		/*
 	    YM2612_writeReg(0, 0xb4, 0x80);
 		YM2612_writeReg(0, 0xb5, 0x80);
 		YM2612_writeReg(0, 0xb6, 0x80);
 		YM2612_writeReg(1, 0xb4, 0x80);		
 		YM2612_writeReg(1, 0xb5, 0x80);	
 		YM2612_writeReg(1, 0xb6, 0x80);
+		*/
       }
       if(sel == 1)
       {
-		//SND_stopPlay_TFM();        
-        //SND_startPlay_TFM(center);
+		SND_stopPlay_TFM(); 
+		SND_stopPlay_PCM();        
+        SND_startPlay_TFM(center);
 
+		/*
 		YM2612_writeReg(0, 0xb5, 0xc0);
 		YM2612_writeReg(0, 0xb6, 0xc0);
 		YM2612_writeReg(1, 0xb4, 0xc0);		
 		YM2612_writeReg(1, 0xb5, 0xc0);	
 		YM2612_writeReg(1, 0xb6, 0xc0);
+		*/
       }
       if(sel == 2)
       {
-		//SND_stopPlay_TFM();           
-		//SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_RIGHT, 0);
-		//SND_startPlay_TFM(center);
-		
+		SND_stopPlay_TFM(); 
+		SND_stopPlay_PCM();           
+		SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_RIGHT, 0);				
+		/*
 	    YM2612_writeReg(0, 0xb4, 0x40);
 		YM2612_writeReg(0, 0xb5, 0x40);
 		YM2612_writeReg(0, 0xb6, 0x40);
 		YM2612_writeReg(1, 0xb4, 0x40);		
 		YM2612_writeReg(1, 0xb5, 0x40);	
 		YM2612_writeReg(1, 0xb6, 0x40);
-      }
-	  oldsel = sel;
+		*/
+      }	  
     }
           
     VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL0, 0, 0, 0), 14, 6);
@@ -1234,8 +1226,8 @@ void SoundTest()
 
     VDP_waitVSync();
   }  
-  if(playing)
-  	SND_stopPlay_TFM();  
+  SND_stopPlay_PCM();
+  SND_stopPlay_TFM();
 }
 
 void LEDZoneTest()
