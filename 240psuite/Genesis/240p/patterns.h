@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2014 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -36,6 +36,7 @@ void DrawWhiteScreen();
 void Draw100IRE();
 void DrawSMPTE();
 void DrawSharpness();
+void DrawOverscan();
 
 void DrawColorTilesAt(u16 plan, u16 pal, u16 x, u16 y, u16 tiles, u16 w, u16 h);
 void DrawColorTilesAtInv(u16 plan, u16 pal, u16 x, u16 y, u16 tiles, u16 w, u16 h);

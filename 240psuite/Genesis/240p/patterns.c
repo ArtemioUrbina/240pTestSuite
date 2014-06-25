@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2014 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -585,4 +585,262 @@ void DrawColorTilesAtInv(u16 plan, u16 pal, u16 x, u16 y, u16 tiles, u16 w, u16 
     VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 4) + tiles, x+w*2, y, w, h);     
     VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 5) + tiles, x+w*1, y, w, h);     
     VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 6) + tiles, x+w*0, y, w, h);     
+}
+
+u32 tile_l[8], tile_r[8], tile_t[8], tile_b[8];
+u32 tile_lb[8], tile_lt[8], tile_rt[8], tile_rb[8];
+
+void CleanTile(u32 *array)
+{
+	int i = 0;
+	
+	for(i = 0; i < 8; i++)
+		array[i] = 0x44444444;
+}
+
+void FillTiles(u16 vram, int left, int right, int top, int bottom)
+{
+	u32 mask = 0;
+	int l, r, t, b, i;
+	
+	l = left % 8;
+	r = right % 8;
+	t = top % 8;
+	b = bottom % 8;
+	
+	CleanTile(tile_l);
+  CleanTile(tile_r);
+  CleanTile(tile_t);
+  CleanTile(tile_b);
+  CleanTile(tile_lt);
+  CleanTile(tile_lb);
+  CleanTile(tile_rt);
+  CleanTile(tile_rb);
+  
+  // top
+  for(i = 0; i < t; i++)
+  {
+  	tile_t[i] = 0x77777777;
+  	tile_rt[i] = 0x77777777;
+  	tile_lt[i] = 0x77777777;
+  }
+
+	// bottom  	
+  for(i = 0; i < b; i++)
+  {
+  	tile_b[7 - i] = 0x77777777;
+  	tile_rb[7 - i] = 0x77777777;
+  	tile_lb[7 - i] = 0x77777777;
+  }
+  
+  // left
+  mask = 0x44444444;
+  for(i = 0; i < l; i++)
+  	mask |= 0x7 << 4*(7 - i);
+  
+  for(i = 0; i < 8; i++)
+  {  	
+  	tile_l[i] = mask;  
+  	tile_lt[i] |= mask;
+  	tile_lb[i] |= mask;	
+  }
+  
+  // right
+  mask = 0x44444444;
+  for(i = 0; i < r; i++)
+  	mask |= 0x7 << 4*i;
+  
+  for(i = 0; i < 8; i++)
+  {  	
+  	tile_r[i] = mask;  
+  	tile_rt[i] |= mask;
+  	tile_rb[i] |= mask;	
+  }
+  
+  VDP_loadTileData(tile_l, vram + 1, 1, USE_DMA);
+  VDP_loadTileData(tile_r, vram + 2, 1, USE_DMA);
+  VDP_loadTileData(tile_t, vram + 3, 1, USE_DMA);
+  VDP_loadTileData(tile_b, vram + 4, 1, USE_DMA);
+  VDP_loadTileData(tile_lt, vram + 5, 1, USE_DMA);
+  VDP_loadTileData(tile_lb, vram + 6, 1, USE_DMA);
+  VDP_loadTileData(tile_rt, vram + 7, 1, USE_DMA);
+  VDP_loadTileData(tile_rb, vram + 8, 1, USE_DMA);
+}
+
+void DrawOverscan()
+{
+	const u32 back[8] =	{	0x44444444, 0x44444444, 0x44444444, 0x44444444,
+												0x44444444, 0x44444444, 0x44444444, 0x44444444 };
+	const u32 white[8] =	{	0x77777777, 0x77777777, 0x77777777, 0x77777777,
+												0x77777777, 0x77777777, 0x77777777, 0x77777777 };
+												
+	u16		vram = TILE_USERINDEX;
+	int		left = 0, right = 0, top = 0, bottom = 0, exit = 0; 
+	u16 	buttons, oldButtons = 0xffff, pressedButtons, redraw = 1;
+	int		sel = 0;
+													
+	VDP_loadTileData(back, vram, 1, USE_DMA);		
+	VDP_loadTileData(white, vram + 9, 1, USE_DMA);
+	
+	VDP_setPalette(PAL3, palette_grey);            
+	VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + vram, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);   
+      
+  while(!exit)
+  {    
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+    
+    if(redraw)
+    {
+    	char data[10];
+    	int l, r, t, b;
+  
+  		l = left / 8;
+  		r = right / 8;
+  		t = top / 8;
+  		b = bottom / 8;
+  		
+  		FillTiles(vram, left, right, top, bottom);   	
+  		  		
+    	// Left
+    	VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 1, l, 1, 1, 26);       	    	
+    	// Right
+    	VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 2, 39-r, 1, 1, 26);    	
+    	
+    	// Top
+    	VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 3, 1, t, 38, 1);       	
+    	// Bottom
+    	VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 4, 1, 27-b, 38, 1);
+    	
+    	// Corners
+    	
+    	// left top
+    	VDP_setTileMapXY(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 5, l, t);
+    	// left bottom
+    	VDP_setTileMapXY(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 6, l, 27-b);
+    	// right top
+    	VDP_setTileMapXY(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 7, 39-r, t);
+    	// right bottom
+    	VDP_setTileMapXY(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 8, 39-r, 27-b);
+    	
+    	// Whites
+    	// Left
+    	if(l)
+    		VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 0, l, 28);       	    	
+    	// Right
+    	if(r)
+    		VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 40-r, 0, r, 28);    	
+    	
+    	// Top
+    	if(t)
+    		VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 0, 40, t);       	
+    	// Bottom
+    	if(b)
+    		VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 28-b, 40, 28-b);
+    		
+    	// text
+    	intToStr(top, data, 1);
+    	VDP_drawTextBG(APLAN, "Top:", TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), 12, 12);
+    	VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), 20, 12);
+    	VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), 20, 12);    	
+    	
+    	intToStr(bottom, data, 1);	
+    	VDP_drawTextBG(APLAN, "Bottom:", TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), 12, 13);
+    	VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), 20, 13);
+    	VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), 20, 13);    	
+    	
+    	intToStr(left, data, 1);		
+    	VDP_drawTextBG(APLAN, "Left:", TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), 12, 14);
+    	VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), 20, 14);
+    	VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), 20, 14);
+    		
+			intToStr(right, data, 1);    		
+    	VDP_drawTextBG(APLAN, "Right:", TILE_ATTR(sel == 3 ? PAL1 : PAL0, 0, 0, 0), 12, 15);
+    	VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 3 ? PAL1 : PAL0, 0, 0, 0), 20, 15);
+    	VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 3 ? PAL1 : PAL0, 0, 0, 0), 20, 15);    	
+    		
+    	redraw = 0;
+    }
+    
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
+      
+    if (pressedButtons & BUTTON_UP)
+    {
+    	sel --;  
+    	redraw = 1;
+    }
+    
+    if (pressedButtons & BUTTON_DOWN)    
+    {    	
+    	sel ++;  
+    	redraw = 1;
+    }
+    	
+    if(sel < 0)
+    	sel = 3;
+    if(sel > 3)
+    	sel = 0;   
+    
+    if (pressedButtons & BUTTON_LEFT)
+    { 
+    	int *data = NULL;
+    	
+    	switch(sel)
+    	{
+    		case 0:
+    			data = &top;
+    			break;
+    		case 1:
+    			data = &bottom;
+    			break;
+    		case 2:
+    			data = &left;
+    			break;
+    		case 3:
+    			data = &right;
+    			break;
+    	} 
+    	
+    	if(data)
+    	{
+    		(*data) --;
+    		if(*data < 0)
+    			*data = 0;
+    	}
+			redraw = 1;              
+    }
+    
+    if (pressedButtons & BUTTON_RIGHT)
+    {
+    	int *data = NULL;
+    	
+    	switch(sel)
+    	{
+    		case 0:
+    			data = &top;
+    			break;
+    		case 1:
+    			data = &bottom;
+    			break;
+    		case 2:
+    			data = &left;
+    			break;
+    		case 3:
+    			data = &right;
+    			break;
+    	} 
+    	
+    	if(data)
+    	{
+    		(*data) ++;
+    		if(*data > 99)
+    			*data = 99;
+    	} 
+    	redraw = 1;       
+    }
+    
+    VDP_waitVSync();
+  } 
 }
