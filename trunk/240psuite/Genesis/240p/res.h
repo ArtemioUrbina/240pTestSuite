@@ -138,11 +138,16 @@ extern u16 greenw_pal[16];
 
 extern u32 solidw_tiles[32/4]; 
 
-// Title screen
+// SMPTE
 extern u32 SMPTECB75_tiles[1440/4]; 
 extern u16 SMPTECB75_pal[16]; 
 extern u16 SMPTECB100_pal[16]; 
 extern u16 SMPTECB75_map[2240/2]; 
+
+// Sharpness
+extern u32 sharpness_tiles[4064/4]; 
+extern u16 sharpness_pal[16]; 
+extern u16 sharpness_map[2240/2]; 
 
 /*
 // VA Panel Test, from MM
