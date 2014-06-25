@@ -163,6 +163,43 @@ void DrawWhiteScreen()
   }
 }
 
+void DrawSMPTE()
+{	
+  u16 size, Is75 = 1;
+  u16 exit = 0;
+  u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+	/*
+  if(showhelp)
+    DrawHelp(HELP_601CB);
+  */
+
+  size = sizeof(SMPTECB75_tiles) / 32; 
+  VDP_setPalette(PAL0, SMPTECB75_pal);
+  VDP_loadTileData(SMPTECB75_tiles, TILE_USERINDEX, size, USE_DMA); 
+  VDP_setMyTileMapRect(BPLAN, SMPTECB75_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+  while(!exit)
+  {
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
+      
+    if (pressedButtons & BUTTON_A)
+    {
+    	if(Is75)
+      	VDP_setPalette(PAL0, SMPTECB100_pal);
+      else
+      	VDP_setPalette(PAL0, SMPTECB75_pal);
+      Is75 = !Is75;
+    }
+
+    VDP_waitVSync();
+  }
+}
+
 void Draw601ColorBars()
 {
   u16 size;
