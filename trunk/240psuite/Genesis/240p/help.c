@@ -47,6 +47,7 @@ void DrawHelp(int option)
   {
   	case HELP_GENERAL:
   	case HELP_PLUGE:
+  	case HELP_STRIPES:
   		totalpages = 2;
   		break;  		
   }
@@ -275,7 +276,56 @@ void DrawHelp(int option)
 		      VDP_drawTextBG(APLAN, "black 0 IRE and a white screen.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
 		      break; 
 		    case HELP_CHECK:    
+		    	VDP_drawTextBG(APLAN, "          CHECKERBOARD", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+		      VDP_drawTextBG(APLAN, "This pattern shows all the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "visible pixels in an", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "alternating white and black", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "grid array.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      y++;     
+		      VDP_drawTextBG(APLAN, "You can toggle the pattern with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "button 'B', or turn on", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "auto-toggle each frame with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      VDP_drawTextBG(APLAN, "'A' button. A frame counter is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      VDP_drawTextBG(APLAN, "also available with 'C'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      break;
 		    case HELP_STRIPES:
+		    	switch(page)
+		    	{
+		    		case 1:
+				    	VDP_drawTextBG(APLAN, "    HORIZONTAL STRIPES (1/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "You should see a pattern of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "lines, each one pixel in height", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "starting with a white one.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      y++;     
+				      VDP_drawTextBG(APLAN, "You can toggle the pattern with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "button 'B', or turn on", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "auto-toggle each frame with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "'A' button. A frame counter is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "also available with 'C'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		   
+				      y++;   
+				      VDP_drawTextBG(APLAN, "When auto-toggle is set, you", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "should see the lines", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "alternating rapidly. On some", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "setups, the pattern doesn't", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "change at all. This means that", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);	
+				      break;
+				    case 2:
+			      	VDP_drawTextBG(APLAN, "    HORIZONTAL STRIPES (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "the signal is being treated as", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "480i/576i and odd or even frames", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "are being discarded completely.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      				      
+				      y++;   
+				      VDP_drawTextBG(APLAN, "You can also display vertical", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "bars by pressing 'UP'. That", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "pattern will help you ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "evaluate if the signal is not", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "distorted horizontaly, since", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      VDP_drawTextBG(APLAN, "all lines should be one pixel", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);						      
+				      VDP_drawTextBG(APLAN, "wide.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      break;
+			    }		         
+		      break;
 		    case HELP_SHADOW:
 		    case HELP_STRIPED:
 		    case HELP_MANUALLAG:
