@@ -48,7 +48,9 @@ void DrawHelp(int option)
   	case HELP_GENERAL:
   	case HELP_PLUGE:
   	case HELP_STRIPES:
-  	case HELP_SHADOW:  	
+  	case HELP_SHADOW:
+  	case HELP_LED:
+  	case HELP_LAG:
   		totalpages = 2;
   		break;
   	case HELP_MANUALLAG:
@@ -444,9 +446,103 @@ void DrawHelp(int option)
 		      VDP_drawTextBG(APLAN, "Ltd.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
 		      break;
 		    case HELP_VSCROLL:
+		    	VDP_drawTextBG(APLAN, "       GRID SCROLL TEST", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+		      VDP_drawTextBG(APLAN, "A grid is scrolled vertically or", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "horizontally, which can be used", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "to test linearity of the signal", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "and how well the display or", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      VDP_drawTextBG(APLAN, "video processor copes with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "scrolling and framerate.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      y++;
+		      VDP_drawTextBG(APLAN, "Button 'C' can be used to toggle", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "between horizontal and vertical,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "while the d-pad regulates speed. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      y++;
+		      VDP_drawTextBG(APLAN, "Button 'A' stops the scroll and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "button 'B' changes direction.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      break;
 		    case HELP_SOUND:
+		    	VDP_drawTextBG(APLAN, "         SOUND TEST", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+		      VDP_drawTextBG(APLAN, "This simple test plays a beep", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "in either channel, or a synth", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "track by shiru in both.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      y++;
+		      VDP_drawTextBG(APLAN, "It can be used to determine if", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      VDP_drawTextBG(APLAN, "the audio chain is working", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "properly.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		 
+		      break;     		      
 		    case HELP_LED:
+		    	switch(page)
+		    	{
+		    		case 1:
+				    	VDP_drawTextBG(APLAN, "      BACKLIT TEST (1/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "This test allows you to check", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "how the display's backlit works", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "when only a small array of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      
+				      VDP_drawTextBG(APLAN, "pixels is shown. This can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "very revealing and can be used", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "to detect the zones in LED", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "backlit displays, or to evaluate", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "global and local dimming.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		   
+				      y++;   
+				      VDP_drawTextBG(APLAN, "The user can move around the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "white pixel arrays with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "d-pad, and change the size of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "the pixel array with 'A' and 'B'", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "The 'C' button allows the user", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      VDP_drawTextBG(APLAN, "to hide the pixel array in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);	
+				      break;
+				    case 2:
+			      	VDP_drawTextBG(APLAN, "      BACKLIT TEST (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "order to alternate a fully black", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "screen.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      y++;
+				      VDP_drawTextBG(APLAN, "It might be necessary to have a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      				      				         
+				      VDP_drawTextBG(APLAN, "fully-off panel (if possible)", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "when displaying the black", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "background,  in order to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "evaluate full-backlit displays", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "by adjusting brightness", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      VDP_drawTextBG(APLAN, "accordingly for this test.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);						      				      
+				      break;
+			    }		         
+		      break;
 		    case HELP_LAG:		    
+		    	switch(page)
+		    	{
+		    		case 1:
+				    	VDP_drawTextBG(APLAN, "          LAG TEST (1/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "This test is designed to be used", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "with two displays conected at", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "the same time. One being a CRT,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      
+				      VDP_drawTextBG(APLAN, "or a display with a known lag as", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "reference, and the other the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "display to test.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      y++;
+				      VDP_drawTextBG(APLAN, "Using a camera, a picture should", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "be taken of both screens at the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		   				      
+				      VDP_drawTextBG(APLAN, "same time. The picture will show", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "the frame discrepancy between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "them. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      y++;
+				      VDP_drawTextBG(APLAN, "The circles in the bottom help", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      VDP_drawTextBG(APLAN, "determine the frame even when", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);	
+				      break;
+				    case 2:
+			      	VDP_drawTextBG(APLAN, "          LAG TEST (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "the numbers are blurry.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				      
+				      y++;
+				      VDP_drawTextBG(APLAN, "This version of the suite can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      				      				         
+				      VDP_drawTextBG(APLAN, "used with a Sega Nomad as the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "reference display.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      y++;
+				      VDP_drawTextBG(APLAN, "You can also split the video", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "signal and feed both displays.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      
+				      break;
+			    }
+			    break;
 		    default:
 		    	exit = 1;
 		    	break; 
