@@ -72,6 +72,9 @@ void DrawGrayRamp()
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+  if(showhelp)
+    DrawHelp(HELP_GRAY);
+
   VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
   VDP_setHilightShadow(1);
 
@@ -106,6 +109,9 @@ void DrawWhiteScreen()
   u16 buttons, oldButtons = 0xffff, pressedButtons, redraw = 0;
   int  color = 0;
 
+	if(showhelp)
+    DrawHelp(HELP_WHITE);
+    
   size = sizeof(solid_tiles) / 32; 
 
   VDP_loadTileData(solid_tiles, TILE_USERINDEX, size, USE_DMA); 
@@ -168,11 +174,9 @@ void DrawSMPTE()
   u16 size, Is75 = 1, text = 0;
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
-
-	/*
+	
   if(showhelp)
-    DrawHelp(HELP_601CB);
-  */
+    DrawHelp(HELP_SMPTE);
 
   size = sizeof(SMPTECB75_tiles) / 32; 
   VDP_setPalette(PAL2, SMPTECB75_pal);
@@ -247,10 +251,8 @@ void DrawSharpness()
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
-	/*
   if(showhelp)
-    DrawHelp(HELP_601CB);
-  */
+    DrawHelp(HELP_SHARPNESS);
 
   size = sizeof(sharpness_tiles) / 32; 
   VDP_setPalette(PAL0, sharpness_pal);
@@ -275,6 +277,9 @@ void DrawLinearity()
   u16 exit = 0, showgrid = 1, gridpattern = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+  if(showhelp)
+    DrawHelp(HELP_LINEARITY);
+    
   VDP_setPalette(PAL0, bw_pal);
 
   ind = TILE_USERINDEX; 
@@ -677,7 +682,9 @@ void DrawOverscan()
 	int		left = 0, right = 0, top = 0, bottom = 0, exit = 0; 
 	u16 	buttons, oldButtons = 0xffff, pressedButtons, redraw = 1;
 	int		sel = 0, maxtiles = 0;
-													
+	
+	if(showhelp)
+    	DrawHelp(HELP_OVERSCAN);
 	VDP_loadTileData(back, vram, 1, USE_DMA);		
 	VDP_loadTileData(white, vram + 9, 1, USE_DMA);
 	

@@ -246,7 +246,7 @@ void TestPatternMenu()
     VDP_drawTextBG(APLAN, pal_240 ? "Grid 256x240" : "Grid 256x224", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);        
-    VDP_drawTextBG(APLAN, "White Screen", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
+    VDP_drawTextBG(APLAN, "White & RGB Screens", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);                
     VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     VDP_drawTextBG(APLAN, "Sharpness", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     VDP_drawTextBG(APLAN, "Overscan", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
@@ -278,7 +278,7 @@ void TestPatternMenu()
         cursel = 13;
     }
 
-    if (pressedButtons & BUTTON_B)
+    if (pressedButtons & BUTTON_B || pressedButtons & BUTTON_START)
       done = 1;            
     
     if (pressedButtons & BUTTON_A)
@@ -349,6 +349,11 @@ void TestPatternMenu()
       VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
 
       VDP_resetScreen();
+      
+      buttons = JOY_readJoypad(JOY_1);
+    	pressedButtons = buttons & ~oldButtons;
+    	oldButtons = buttons;
+    	
       reload = 1;
     }
 
