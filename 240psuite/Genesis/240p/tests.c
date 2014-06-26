@@ -731,22 +731,7 @@ void LagTest()
         if(clicks[pos] >= 0)
           change = 0;
       }           
-    }
-
-    //play audio 1 frame before
-    //if((y == 95 && speed == 1 ) || (y == 97 && speed == -1))
-    //    SND_stopPlay_PCM(beep, len, 16000, AUDIO_PAN_CENTER);            
-
-    if(y == 96) // half the screen?        
-    {
-      if(audio)                
-      {
-        if(speed == 1)
-          SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_LEFT, 0);            
-        else
-          SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_RIGHT, 0);            
-      }        
-    }    
+    }     
 
     if (pressedButtons & BUTTON_B)
     {
@@ -825,12 +810,12 @@ void LagTest()
       speed = -1;
       change = 1;
       if(variation)
-	  {
-		if(random() % 2)
-		  vary = random() % 7;
-		else
-		  vary = -1 * random() % 7;
-	  }
+		  {
+				if(random() % 2)
+				  vary = random() % 7;
+				else
+				  vary = -1 * random() % 7;
+		  }
     }
     
     if(y < 60 + vary)
@@ -838,12 +823,12 @@ void LagTest()
       speed = 1;
       change = 1;
       if(variation)
-	  {
-		if(random() % 2)
-		  vary = random() % 7;
-		else
-		  vary = -1 * random() % 7;
-	  }
+		  {
+				if(random() % 2)
+				  vary = random() % 7;
+				else
+				  vary = -1 * random() % 7;
+		  }
     }
 
     y += speed;
@@ -866,7 +851,19 @@ void LagTest()
     else
       VDP_setSpritePosition(2, 320, 224);      
 
-    VDP_updateSprites();        
+    VDP_updateSprites(); 
+    
+    if(y == 96) // half the screen?        
+    {
+      if(audio)                
+      {
+        if(speed == 1)
+          SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_LEFT, 0);            
+        else
+          SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_RIGHT, 0);            
+      }        
+    }    
+           
     VDP_waitVSync();
   }   
 
