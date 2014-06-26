@@ -273,7 +273,20 @@ void DrawHelp(int option)
 		      VDP_drawTextBG(APLAN, "Some displays and scalers have", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 		      VDP_drawTextBG(APLAN, "issues when changing between a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 		      VDP_drawTextBG(APLAN, "black 0 IRE and a white screen.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
-		      break;      
+		      break; 
+		    case HELP_CHECK:    
+		    case HELP_STRIPES:
+		    case HELP_SHADOW:
+		    case HELP_STRIPED:
+		    case HELP_MANUALLAG:
+		    case HELP_HSCROLL:
+		    case HELP_VSCROLL:
+		    case HELP_SOUND:
+		    case HELP_LED:
+		    case HELP_LAG:		    
+		    default:
+		    	exit = 1;
+		    	break; 
 		  }
 		  
 		  VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
