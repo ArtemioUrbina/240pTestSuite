@@ -23,6 +23,7 @@
 #include "myvdp.h"
 #include "res.h"
 #include "tests.h"
+#include "help.h"
 
 void DrawCheckBoard()
 {
@@ -30,7 +31,10 @@ void DrawCheckBoard()
   u16 ind, size, count = 0, docounter = 0;
   u16 field = 1, alternate = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
-  
+
+	if(showhelp)
+    DrawHelp(HELP_CHECK);  
+    
   VDP_setPalette(PAL1, bw_pal);
 
   ind = TILE_USERINDEX; 
@@ -116,6 +120,9 @@ void DrawStripes()
   u16 field = 1, alternate = 0, exit = 0, vertical = 0, redraw = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+	if(showhelp)
+    DrawHelp(HELP_STRIPES);  
+    
   VDP_setPalette(PAL1, bw_pal);
 
   hor1 = TILE_USERINDEX; 
@@ -224,6 +231,9 @@ void DropShadowTest()
   u16 field = 1, x = 0, y = 0, exit = 0, text = 0, shadowpos = 0, buzzpos = 0, buzzshadowpos = 0, waterfall = 0;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
 
+	if(showhelp)
+    DrawHelp(HELP_SHADOW);  
+    
   VDP_setPalette(PAL0, palette_green);
   VDP_setPalette(PAL1, motoko_pal);
   VDP_setPalette(PAL2, wb_pal);    
@@ -494,6 +504,9 @@ void StripedSpriteTest()
   u16 x = 0, y = 0, exit = 0;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
 
+	if(showhelp)
+    DrawHelp(HELP_STRIPED);  
+    
   VDP_setPalette(PAL1, motoko_pal);
   VDP_setPalette(PAL3, wb_pal);
 
@@ -670,6 +683,9 @@ void LagTest()
 
   s16 clicks[10];
 
+	if(showhelp)
+    DrawHelp(HELP_MANUALLAG);  
+    
   VDP_setPalette(PAL0, palette_grey);
   VDP_setPalette(PAL1, palette_red);
   VDP_setPalette(PAL2, bw_pal);
@@ -961,6 +977,9 @@ void HScrollTest()
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   int x = 0, speed = 1, acc = -1, pause = 0;
   
+  if(showhelp)
+    DrawHelp(HELP_HSCROLL);  
+    
   VDP_setPalette(PAL0, sonicback_pal);  
   VDP_setPalette(PAL1, sonicwater_pal);  
 
@@ -1063,6 +1082,9 @@ void VScrollTest()
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   int pos = 0, speed = 1, acc = -1, pause = 0, direction = 0;
   
+  if(showhelp)
+    DrawHelp(HELP_VSCROLL);  
+    
   VDP_setPalette(PAL0, bw_pal);    
 
   size = sizeof(circles_grid_tiles) / 32; 
@@ -1126,6 +1148,9 @@ void SoundTest()
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   u16 len = 0;
 
+	if(showhelp)
+    DrawHelp(HELP_SOUND);  
+    
   len = sizeof(beep);
   VDP_setPalette(PAL0, palette_grey);
   VDP_setPalette(PAL1, palette_green); 
@@ -1236,6 +1261,9 @@ void LEDZoneTest()
   u16 x = 160, y = 112, exit = 0, sprite = 1, change = 0, draw = 1;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
 
+	if(showhelp)
+    DrawHelp(HELP_LED);  
+    
   VDP_setPalette(PAL1, bw_pal);  
 
   size = sizeof(size0led_t) / 32; 
@@ -1365,6 +1393,9 @@ void PassiveLagTest()
   u16 buttons, oldButtons = 0xffff, pressedButtons;  
   u16 numbers[11], size, lsd, msd, pause = 0, circle, cposx = 32, cposy = 17, solid;
   
+  if(showhelp)
+    DrawHelp(HELP_LAG);  
+    
   VDP_setPalette(PAL1, btw_pal);
   VDP_setPalette(PAL2, btw_pal);
   VDP_setPalette(PAL3, bw_pal);
