@@ -673,11 +673,10 @@ void DrawOverscan()
 												0x44444444, 0x44444444, 0x44444444, 0x44444444 };
 	const u32 white[8] =	{	0x77777777, 0x77777777, 0x77777777, 0x77777777,
 												0x77777777, 0x77777777, 0x77777777, 0x77777777 };
-												
 	u16		vram = TILE_USERINDEX;
 	int		left = 0, right = 0, top = 0, bottom = 0, exit = 0; 
 	u16 	buttons, oldButtons = 0xffff, pressedButtons, redraw = 1;
-	int		sel = 0;
+	int		sel = 0, maxtiles = 0;
 													
 	VDP_loadTileData(back, vram, 1, USE_DMA);		
 	VDP_loadTileData(white, vram + 9, 1, USE_DMA);
@@ -690,7 +689,7 @@ void DrawOverscan()
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
-    
+        
     if(redraw)
     {
     	char data[10];
@@ -701,43 +700,50 @@ void DrawOverscan()
   		t = top / 8;
   		b = bottom / 8;
   		
-  		FillTiles(vram, left, right, top, bottom);   	
-  		  		
+  		maxtiles = (pal_240 ? 240 : 224)/8;
+  			
+  		// Clean center
+    	VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram, l+1, t+1, 40-(r+l)-2, maxtiles-(t+b)-2);
+    	
+  		FillTiles(vram, left, right, top, bottom);   	  		   		  		
+      	 		
     	// Left
-    	VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 1, l, 1, 1, 26);       	    	
+    	VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 1, l, t+1, 1, (maxtiles-2)-b-t);       	    	
     	// Right
-    	VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 2, 39-r, 1, 1, 26);    	
+    	VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 2, 39-r, t+1, 1, (maxtiles-2)-b-t);    	
     	
     	// Top
-    	VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 3, 1, t, 38, 1);       	
+    	VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 3, l+1, t, 38-r-l, 1);  	
     	// Bottom
-    	VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 4, 1, 27-b, 38, 1);
+    	VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 4, l+1, (maxtiles-1)-b, 38-r-l, 1);
     	
     	// Corners
     	
     	// left top
-    	VDP_setTileMapXY(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 5, l, t);
+    	VDP_setTileMapXY(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 5, l, t);
     	// left bottom
-    	VDP_setTileMapXY(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 6, l, 27-b);
+    	VDP_setTileMapXY(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 6, l, (maxtiles-1)-b);
     	// right top
-    	VDP_setTileMapXY(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 7, 39-r, t);
+    	VDP_setTileMapXY(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 7, 39-r, t);
     	// right bottom
-    	VDP_setTileMapXY(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 8, 39-r, 27-b);
+    	VDP_setTileMapXY(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 8, 39-r, (maxtiles-1)-b);
     	
     	// Whites
     	// Left
     	if(l)
-    		VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 0, l, 28);       	    	
+    		VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 0, l, maxtiles);       	    	
     	// Right
     	if(r)
-    		VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 40-r, 0, r, 28);    	
+    		VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 40-r, 0, r, maxtiles);    	
     	
     	// Top
     	if(t)
-    		VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 0, 40, t);       	
+    		VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 0, 40, t);       	
     	// Bottom
     	if(b)
-    		VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 28-b, 40, 28-b);
+    		VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 28-b, 40, maxtiles-b);
+    		
+    	
     		
     	// text
     	intToStr(top, data, 1);
@@ -766,13 +772,13 @@ void DrawOverscan()
     if (pressedButtons & BUTTON_START)
       exit = 1;
       
-    if (pressedButtons & BUTTON_UP)
+    if (pressedButtons & BUTTON_UP || (buttons & BUTTON_UP && buttons & BUTTON_B))    
     {
     	sel --;  
     	redraw = 1;
     }
     
-    if (pressedButtons & BUTTON_DOWN)    
+    if (pressedButtons & BUTTON_DOWN || (buttons & BUTTON_DOWN && buttons & BUTTON_B))    
     {    	
     	sel ++;  
     	redraw = 1;
@@ -783,7 +789,7 @@ void DrawOverscan()
     if(sel > 3)
     	sel = 0;   
     
-    if (pressedButtons & BUTTON_LEFT)
+    if (pressedButtons & BUTTON_LEFT || (buttons & BUTTON_LEFT && buttons & BUTTON_B))    
     { 
     	int *data = NULL;
     	
@@ -812,7 +818,7 @@ void DrawOverscan()
 			redraw = 1;              
     }
     
-    if (pressedButtons & BUTTON_RIGHT)
+    if (pressedButtons & BUTTON_RIGHT || (buttons & BUTTON_RIGHT && buttons & BUTTON_B))    
     {
     	int *data = NULL;
     	
@@ -839,6 +845,12 @@ void DrawOverscan()
     			*data = 99;
     	} 
     	redraw = 1;       
+    }
+    
+    if (pressedButtons & BUTTON_A)
+    {
+    	left = right = bottom = top = 0;
+    	redraw = 1;
     }
     
     VDP_waitVSync();
