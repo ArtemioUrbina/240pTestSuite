@@ -48,8 +48,12 @@ void DrawHelp(int option)
   	case HELP_GENERAL:
   	case HELP_PLUGE:
   	case HELP_STRIPES:
+  	case HELP_SHADOW:  	
   		totalpages = 2;
-  		break;  		
+  		break;
+  	case HELP_MANUALLAG:
+  		totalpages = 3;
+  		break;
   }
   	
 	VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);
@@ -327,9 +331,118 @@ void DrawHelp(int option)
 			    }		         
 		      break;
 		    case HELP_SHADOW:
+		    	switch(page)
+		    	{
+		    		case 1:
+				    	VDP_drawTextBG(APLAN, "     DROP SHADOW TEST (1/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "This is a crucial test for 240p", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "upscan converters. It displays a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "simple sprite shadow against a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      
+				      VDP_drawTextBG(APLAN, "background, but the shadow is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "shown only on each other frame.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      y++;
+				      VDP_drawTextBG(APLAN, "On a CRT this achieves a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "transparency effect, since you", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "are watching a 30hz (25Hz)", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		   				         
+				      VDP_drawTextBG(APLAN, "shadow on a 60hz (50hz) signal.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "No background detail should be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "lost and the shadow should be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "visible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      
+				      VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);	
+				      break;
+				    case 2:
+			      	VDP_drawTextBG(APLAN, "     DROP SHADOW TEST (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "The user can toggle the frame", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "used to draw the shadow with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "button 'A'. Backgrounds can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      				      				      
+				      VDP_drawTextBG(APLAN, "switched with the 'B' button and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "button 'C' toggles sprites. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				      
+				      break;
+			    }		         
+		      break;
 		    case HELP_STRIPED:
+		    	VDP_drawTextBG(APLAN, "      STRIPED SPRITE TEST", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+		      VDP_drawTextBG(APLAN, "There are deinterlacers out", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "there that can display the drop", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "shadows correctly and still", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "interpret 240p as 480i. With a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      VDP_drawTextBG(APLAN, "striped sprite it should be easy", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "to tell if a processor tries to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "deinterlace (plus interpolate).", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      y++;
+		      VDP_drawTextBG(APLAN, "You can change backgrounds with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "'A'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      break;
 		    case HELP_MANUALLAG:
+		    	switch(page)
+		    	{
+		    		case 1:
+				    	VDP_drawTextBG(APLAN, "     MANUAL LAG TEST (1/3)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "The main intention is to show a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "changing pattern on the screen,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "which can be complemented with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      				      				      
+				      VDP_drawTextBG(APLAN, "audio. This should show to some", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "degree any lag when processing", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);	
+				      VDP_drawTextBG(APLAN, "the signal.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      y++;
+				      VDP_drawTextBG(APLAN, "As an added feature, the user", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "can click the 'A' button when", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+				      VDP_drawTextBG(APLAN, "the sprite is aligned with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		   				         
+				      VDP_drawTextBG(APLAN, "one on the background, and the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "offset in frames from the actual", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "intersection will be shown on", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "screen. This can be repeated ten", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "times and the software will", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);	
+				      break;
+				    case 2:
+			      	VDP_drawTextBG(APLAN, "     MANUAL LAG TEST (2/3)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "calculate the average. Whenever", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "the button was pressed before", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "the actual intersection frame,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      				      				      
+				      VDP_drawTextBG(APLAN, "the result will be ignored, but", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "still shown onscreen. Button 'B'", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "can be used to change the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "direction of the sprite from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "vertical to horizontal, or both", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "at the same time.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      y++;
+				      VDP_drawTextBG(APLAN, "Of course the evaluation is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "dependent on reflexes and/or", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "rhythm more than anything. The", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "visual and audio cues are the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "more revealing aspects which", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);					      
+				      break;
+				    case 3:
+			      	VDP_drawTextBG(APLAN, "     MANUAL LAG TEST (3/3)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+				      VDP_drawTextBG(APLAN, "the user should consider, of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "course the interactive factor", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "can give an experienced player", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      				      				      				      
+				      VDP_drawTextBG(APLAN, "the hang of the system when", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "testing via different", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "connections.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				      				  				      
+				      break;
+			    }		         
+		      break;
 		    case HELP_HSCROLL:
+		    	VDP_drawTextBG(APLAN, "          SCROLL TEST", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+		      VDP_drawTextBG(APLAN, "This test shows a two layer", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "background from Sonic the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "Hedgehog. The speed can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "varied with the d-pad, and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      VDP_drawTextBG(APLAN, "change direction with the button", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "'B'. The 'A' button stops the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "scroll.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      y++;
+		      VDP_drawTextBG(APLAN, "This can be used to notice any", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "drops in frameratewhen using a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "video processor.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      y++;
+		      VDP_drawTextBG(APLAN, "Sonic The Hedgehog is a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "trademark of Sega Enterprises", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "Ltd.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      break;
 		    case HELP_VSCROLL:
 		    case HELP_SOUND:
 		    case HELP_LED:
