@@ -855,4 +855,6 @@ void DrawOverscan()
     
     VDP_waitVSync();
   } 
+  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+  VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
 }
