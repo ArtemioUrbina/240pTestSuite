@@ -17,4 +17,5 @@ with a #YNomad#Y as the reference display.   #C(cont...)#C
                   LAG TEST (2/2)
 
 You can also chain the output ports of a #YPVM/BVM#Y
-to an upscaler and use the CRT as reference.
+to an upscaler and use the CRT as reference, or
+split the video signal.
