@@ -28,7 +28,13 @@
 #define	HELP_GRID		    4
 #define	HELP_BLEED			5
 #define	HELP_IRE   			6
-#define HELP_601CB          7
+#define HELP_601CB      7
+#define HELP_SHARPNESS	8
+#define HELP_OVERSCAN		9
+#define HELP_SMPTE			10
+#define HELP_LINEARITY	11
+#define HELP_GRAY				12
+#define HELP_WHITE			13
 
 extern u16	showhelp;
 
