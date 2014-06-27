@@ -324,7 +324,7 @@ void DrawShowMenu()
 				"Credits"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
 				"Close Menu"); y += 2* fh; c++;			
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
+		DrawStringS(x, y, r-0.4, sel == c ? 0 : g,	sel == c ? 0 : b,
 				"Exit 240p Suite"); y += 3* fh; 		
 		
 		EndScene();		
@@ -537,15 +537,17 @@ void ChangeOptions(ImagePtr screen)
 				"Scanlines"); y += fh; c++;	
 		}
 		
-		DrawStringS(x, y + 2* fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		DrawStringS(x, y + 2* fh, r-0.4, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
 		r = g = b = 0.8;
-		if(vmode == VIDEO_480P_SL && sel == 4)	
+		if(vmode == VIDEO_480P_SL && sel == 5)	
 			DrawStringS(x-15, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
-		if(region != FLASHROM_REGION_EUROPE && (sel == 1))
-			DrawStringS(x-15, y + 4*fh, r, g, b, "Only European FlashROMs can output PAL correctly"); 
+		if(region != FLASHROM_REGION_EUROPE && (sel <= 4))
+			DrawStringS(x-15, y + 4*fh, r, g, b,
+				"Only European FlashROMs can output PAL correctly"); 
 		if(vmode != VIDEO_480P_SL && (sel == 5 || sel == 6))
-			DrawStringS(x-15, y + 4*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
+			DrawStringS(x-15, y + 4*fh, r, g, b,
+				"Scanlines are only available in 480p\nLine Doubled mode via D-SUB (VGA)"); 						
 		DrawStringS(x+60, 200, r, g, b, "Press START for help");
 		EndScene();		
         
@@ -723,7 +725,7 @@ void ChangePALBackgroundColor(ImagePtr title)
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, color); y += fh; c++;
 		sprintf(color, "Blue:   %0.2f", (double)settings.PalBackB);
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, color); y += fh; c++;
-		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Options Menu");
+		DrawStringS(x, y + fh, r-0.4, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Options Menu");
 
 		DrawStringS(x-40, y + 6*fh, r-0.4, g-0.4, b-0.4, "The background color is used to fill the screen");
 		DrawStringS(x-40, y + 7*fh, r-0.4, g-0.4, b-0.4, "to the selected PAL resolution when needed");
@@ -908,10 +910,18 @@ void SelectVideoMode(ImagePtr screen)
 				"480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
 		}	
 			
-		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		DrawStringS(x, y + fh, r-0.4, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
+		r = g = b = 0.8;
+
+		if(flashrom_get_region() != FLASHROM_REGION_EUROPE && (sel >= 4 && sel <= 6))
+			DrawStringS(x-40, y + 3*fh, r, g, b,
+				"Only European FlashROMs can output PAL correctly"); 
+
 		if(vcable != CT_VGA && ((sel == 7) || (sel == 8)))
-			DrawStringS(x-40, y + 2*fh, r, g, b, "480p is only available though D-SUB (VGA)"); 						
+			DrawStringS(x-40, y + 3*fh, r, g, b,
+				"480p is only available though D-SUB (VGA)"); 
+
 		DrawStringS(x+40, 200, r, g, b, "Press START for help");
 		EndScene();		
         

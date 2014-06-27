@@ -765,21 +765,30 @@ void DrawLinearity()
 		
 		if(!circles)
 		{
-			if(!IsPAL)
+			if(vmode >= VIDEO_480P_SL)
 			{
-				circles = LoadKMG("/rd/circles.kmg.gz", 0);
+				circles = LoadKMG("/rd/circlesVGA.kmg.gz", 0);
 				if(!circles)
 					return;
 			}
 			else
 			{
-				if(vmode == VIDEO_288P)
-					circles = LoadKMG("/rd/circlesPAL.kmg.gz", 0);
+				if(!IsPAL)
+				{
+					circles = LoadKMG("/rd/circles.kmg.gz", 0);
+					if(!circles)
+						return;
+				}
 				else
-					circles = LoadKMG("/rd/circlesPAL240.kmg.gz", 0);
-				if(!circles)
-					return;
-				IgnoreOffset(circles);
+				{
+					if(vmode == VIDEO_288P)
+						circles = LoadKMG("/rd/circlesPAL.kmg.gz", 0);
+					else
+						circles = LoadKMG("/rd/circlesPAL240.kmg.gz", 0);
+					if(!circles)
+						return;
+					IgnoreOffset(circles);
+				}
 			}
 		}
 	
