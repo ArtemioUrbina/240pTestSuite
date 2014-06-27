@@ -209,6 +209,10 @@ void DrawHelp(int option)
 		      VDP_drawTextBG(APLAN, "all the visible area is being ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 		      VDP_drawTextBG(APLAN, "displayed, and that there is no", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 		      VDP_drawTextBG(APLAN, "distortion present.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      y++;
+		      VDP_drawTextBG(APLAN, "The full active video signal can", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "be filled with gray by pressing", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "the 'A' button.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 		      break;
 		    case HELP_BLEED:
 		      VDP_drawTextBG(APLAN, "          COLOR BLEED", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
