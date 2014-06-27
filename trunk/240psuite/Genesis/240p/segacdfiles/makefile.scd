@@ -95,9 +95,9 @@ out/rom.bin: out/rom.out
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/sp.asm, $(SCD_LOADER)/_boot/sp.bin
 	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-us.asm, out/240p_SegaCD_USA.iso
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-eu.asm, $(SCD_LOADER)/_boot/ip-eu.bin
-	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-eu.asm, out/240p_SegaCD_EU.iso
+	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-eu.asm, out/240p_MegaCD_EU.iso
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-jp.asm, $(SCD_LOADER)/_boot/ip-jp.bin
-	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-jp.asm, out/240p_SegaCD_JP.iso
+	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-jp.asm, out/240p_MegaCD_JP.iso
 	$(RM) -f $(SCD_LOADER)/filesystem.bin
 
 out/symbol.txt: out/rom.out
