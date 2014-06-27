@@ -995,7 +995,7 @@ void DrawOverscan()
     		VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 0, 40, t);       	
     	// Bottom
     	if(b)
-    		VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, maxtiles-b, 40, maxtiles-b);
+    		VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, maxtiles-b, 40, b);
     		
     	
     		
