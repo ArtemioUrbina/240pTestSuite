@@ -307,6 +307,9 @@ void DrawHelp(int option)
 		      VDP_drawTextBG(APLAN, "Some displays and scalers have", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 		      VDP_drawTextBG(APLAN, "issues when changing between a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 		      VDP_drawTextBG(APLAN, "black 0 IRE and a white screen.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      y++;
+		      VDP_drawTextBG(APLAN, "A custom color mode is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "available by pressing 'C'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
 		      break; 
 		    case HELP_CHECK:    
 		    	VDP_drawTextBG(APLAN, "          CHECKERBOARD", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
@@ -573,28 +576,24 @@ void DrawHelp(int option)
 		    default:
 		    	exit = 1;
 		    	break; 
-		  }
-		  
-		  if(joytype != JOY_TYPE_PAD6)
-		  {
-		  	VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
-  			VDP_drawTextBG(APLAN, "Show HELP (A):", TILE_ATTR(PAL0, 0, 0, 0), 14, 26);
-  			VDP_drawTextBG(APLAN, showhelp == 0 ? "No " : "Yes" , TILE_ATTR(PAL1, 0, 0, 0), 29, 26);
-  		}
-  		else
-  			VDP_drawTextBG(APLAN, "Press Z to exit help", TILE_ATTR(PAL0, 0, 0, 0), 11, 24);
+		  }		  		
+  			
   		redraw = 0;
   	}     	
   	 
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
-    oldButtons = buttons;
+    oldButtons = buttons;    
 
 		if(joytype != JOY_TYPE_PAD6)
 		{
-    	if (pressedButtons & BUTTON_START)
-      	
+			VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
+  		VDP_drawTextBG(APLAN, "Show HELP (A):", TILE_ATTR(PAL0, 0, 0, 0), 14, 26);
+  		VDP_drawTextBG(APLAN, showhelp == 0 ? "No " : "Yes" , TILE_ATTR(PAL1, 0, 0, 0), 29, 26);
+  				
+    	if (pressedButtons & BUTTON_START)      	
       	exit = 1;
+      	
       if (pressedButtons & BUTTON_A)
 	    {
 	      showhelp = !showhelp;
@@ -603,8 +602,10 @@ void DrawHelp(int option)
     }
     else
     {
+    	VDP_drawTextBG(APLAN, "Press Z to exit help", TILE_ATTR(PAL0, 0, 0, 0), 11, 24);
+    	
     	if (pressedButtons & BUTTON_Z)
-      	exit = 1;
+      	exit = 1;      	      
     }
     
     if (pressedButtons & BUTTON_LEFT)

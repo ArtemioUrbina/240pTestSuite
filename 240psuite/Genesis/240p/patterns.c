@@ -115,8 +115,7 @@ void DrawGrayRamp()
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
-		if(!loadvram)
-    	VDP_waitVSync();
+		VDP_waitVSync();
   }
 }
 
@@ -125,9 +124,18 @@ void DrawWhiteScreen()
   u16 size, loadvram = 1;
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons, redraw = 0;
-  int  color = 0;
+  int color = 0, sel = 0;
+  u16 custom_pal[16];
+  u8	r, g, b, custom = 0;
+  char str[20], num[4];
 
 	CleanOrShowHelp(HELP_WHITE);  
+		
+	memcpy(custom_pal, palette_grey, sizeof(palette_grey));	
+	
+	b = custom_pal[0xf] & 0x0f00 >> 8;
+	g = custom_pal[0xf] & 0x00f0 >> 4;
+	r = custom_pal[0xf] & 0x000f;
 	
   while(!exit)
   {
@@ -135,17 +143,20 @@ void DrawWhiteScreen()
   	{
   		size = sizeof(solid_tiles) / 32; 
 		
+			VDP_setPalette(PAL3, palette_black);  
 		  VDP_loadTileData(solid_tiles, TILE_USERINDEX, size, USE_DMA); 
-		  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
+		  VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
 		  loadvram = 0;
   	}
   	
     if(redraw)
     {
+    	custom_pal[0xf] = b << 8 | g << 4 | r;
+    	
       switch(color)
       {
         case 0:
-          VDP_setPalette(PAL0, palette_grey);           
+          VDP_setPalette(PAL0, custom_pal);           
           break;
         case 1:
           VDP_setPalette(PAL0, palette_black);          
@@ -160,6 +171,32 @@ void DrawWhiteScreen()
           VDP_setPalette(PAL0, palette_blue);          
           break;
       }
+      
+      if(custom && color == 0)
+      {
+      	VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, 22, 1, 14, 1); 
+      		
+      	strcpy(str, "R:");
+      	intToHex(r, num, 2);
+      	strcat(str, num);
+      	
+      	VDP_drawTextBG(APLAN, str, TILE_ATTR(sel == 0 ? PAL1 : PAL2, 0, 0, 0), 22, 1);
+      	
+      	strcpy(str, "G:");
+      	intToHex(g, num, 2);
+      	strcat(str, num);
+      	
+      	VDP_drawTextBG(APLAN, str, TILE_ATTR(sel == 1 ? PAL1 : PAL2, 0, 0, 0), 27, 1);
+      	
+      	strcpy(str, "B:");
+      	intToHex(b, num, 2);
+      	strcat(str, num);
+      	
+      	VDP_drawTextBG(APLAN, str, TILE_ATTR(sel == 2 ? PAL1 : PAL2, 0, 0, 0), 32, 1);
+    	}
+    	else    	
+    		VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 22, 1, 14, 1); 
+      
       redraw = 0;
     }
     buttons = JOY_readJoypad(JOY_1);
@@ -175,6 +212,78 @@ void DrawWhiteScreen()
 		
     if (pressedButtons & BUTTON_START)
       exit = 1;
+      
+    if(custom)
+  	{
+  		if (pressedButtons & BUTTON_LEFT)
+	    {
+	      sel --;
+	      redraw = 1;
+	    }
+	
+	    if (pressedButtons & BUTTON_RIGHT)
+	    {
+	      sel ++;
+	      redraw = 1;
+	    }  	    
+	    
+	    if (pressedButtons & BUTTON_UP)
+	    {
+	      u8 *edit = NULL;
+	      
+	      switch(sel)
+	      {
+	      	case 0:
+	      		edit = &r;
+	      		break;
+	      	case 1:
+	      		edit = &g;
+	      		break;
+	      	case 2:
+	      		edit = &b;
+	      		break;
+	      }
+	      
+	      if(edit)
+      	{      		
+      		if(*edit != 0xe)
+      			(*edit) += 2;
+      			      		
+      		redraw = 1;
+      	}	      
+	    }
+	
+	    if (pressedButtons & BUTTON_DOWN)
+	    {
+	      u8 *edit = NULL;
+	      
+	      switch(sel)
+	      {
+	      	case 0:
+	      		edit = &r;
+	      		break;
+	      	case 1:
+	      		edit = &g;
+	      		break;
+	      	case 2:
+	      		edit = &b;
+	      		break;
+	      }
+	      
+	      if(edit)
+      	{
+      		if(*edit != 0)
+      			(*edit) -= 2;      		
+      			      		
+      		redraw = 1;
+      	}	      
+	    }
+	    
+	    if(sel < 0)
+	    	sel = 2;
+	    if(sel > 2)
+	    	sel = 0;	    
+  	}
 
     if (pressedButtons & BUTTON_A)
     {
@@ -187,6 +296,12 @@ void DrawWhiteScreen()
       color --;
       redraw = 1;
     }  
+    
+    if (pressedButtons & BUTTON_C)
+    {
+      custom = !custom;
+      redraw = 1;
+    }  
 
     if(color > 4)
       color = 0;
@@ -194,8 +309,7 @@ void DrawWhiteScreen()
     if(color < 0)
       color = 4;
 		
-		if(!loadvram)			
-    	VDP_waitVSync();
+		VDP_waitVSync();
   }
 }
 
@@ -271,8 +385,7 @@ void DrawSMPTE()
       text = 30;
     }
 
-		if(!loadvram)
-    	VDP_waitVSync();
+		VDP_waitVSync();
   }
 }
 
@@ -308,8 +421,7 @@ void Draw601ColorBars()
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
-		if(!loadvram)
-    	VDP_waitVSync();
+		VDP_waitVSync();
   }
 }
 
@@ -344,8 +456,7 @@ void DrawSharpness()
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
-		if(!loadvram)
-    	VDP_waitVSync();
+		VDP_waitVSync();
   }
 }
 
@@ -439,8 +550,7 @@ void DrawLinearity()
       redraw = 1;
     }
 
-		if(!loadvram)
-    	VDP_waitVSync();
+		VDP_waitVSync();
   }
 }
 
@@ -497,8 +607,7 @@ void DrawGrid(u16 gridtype)
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }  
 }
 
@@ -564,8 +673,7 @@ void DrawColorBleed()
           VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 16/8, 160/8, 288/8, 32/8);          
         }
 
-        if(!loadvram)
-    			VDP_waitVSync();
+        VDP_waitVSync();
     }    
 }
 
@@ -620,8 +728,7 @@ void DrawColorBars()
         if (pressedButtons & BUTTON_START)
           exit = 1;
 
-        if(!loadvram)
-    			VDP_waitVSync();
+        VDP_waitVSync();
     }    
 }
 
@@ -686,8 +793,7 @@ void Draw100IRE()
         if(!text)
             VDP_drawText("        ", 32, 26);
     }
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }
 }
 
@@ -1008,7 +1114,6 @@ void DrawOverscan()
     	redraw = 1;
     }
     
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }   
 }

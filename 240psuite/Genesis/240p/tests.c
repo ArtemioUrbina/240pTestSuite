@@ -119,8 +119,7 @@ void DrawCheckBoard()
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }
 }
 
@@ -241,9 +240,8 @@ void DrawStripes()
 
     if (pressedButtons & BUTTON_START)
       exit = 1;
-
-    if(!loadvram)
-    	VDP_waitVSync();
+    
+    VDP_waitVSync();
   }
 }
 
@@ -525,8 +523,7 @@ void DropShadowTest()
 		}
 
     VDP_updateSprites();
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }  
 }
 
@@ -703,8 +700,7 @@ void StripedSpriteTest()
     }        
 
     VDP_updateSprites();
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }  
 }
 
@@ -946,20 +942,19 @@ void LagTest()
       }        
     }    
            
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }   
-
-  VDP_resetSprites();
-  VDP_updateSprites();
-
-  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
  
   if(pos > 9)
   {
     fix32 totald = 0, cnt, tot;
     u16 total = 0, count = 0, c = 0;       
 
+		VDP_resetSprites();
+		VDP_updateSprites();
+		
+		VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+		
     VDP_setPalette(PAL2, back_pal); 
 
     size = sizeof(back_tiles) / 32; 
@@ -1044,8 +1039,7 @@ void LagTest()
           
       if (pressedButtons & BUTTON_START)
         exit = 1;
-      if(!loadvram)
-    		VDP_waitVSync();
+      VDP_waitVSync();
     }
   }
 }
@@ -1160,8 +1154,7 @@ void HScrollTest()
     VDP_updateSprites();
     VDP_setHorizontalScroll(PLAN_A, x);        
     VDP_setHorizontalScroll(PLAN_B, x/2);        
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }  
 }
 
@@ -1235,8 +1228,7 @@ void VScrollTest()
       VDP_setHorizontalScroll(PLAN_A, pos);
 		else
 	  	VDP_setVerticalScroll(PLAN_A, pos);            
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }    
 }
 
@@ -1357,8 +1349,7 @@ void SoundTest()
 
     VDP_drawTextBG(APLAN, "Space Standart track by Shiru", TILE_ATTR(PAL1, 0, 0, 0), 5, 22);                
 
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }  
   SND_stopPlay_PCM();
   SND_stopPlay_TFM();
@@ -1501,8 +1492,7 @@ void LEDZoneTest()
     }
 
     VDP_updateSprites();
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }  
 }
 
@@ -1729,8 +1719,7 @@ void PassiveLagTest()
       frames ++;
       framecnt ++;
     }
-    if(!loadvram)
-    	VDP_waitVSync();
+    VDP_waitVSync();
   }
 }
 
