@@ -220,7 +220,7 @@ void DrawWhiteScreen()
 
 void DrawSMPTE()
 {	
-  u16 size, Is75 = 1, text = 0;
+  u16 size, Is75 = 1, text = 0, PALCheck = 0;
   u16 exit = 0, loadvram = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 	
@@ -240,12 +240,24 @@ void DrawSMPTE()
       	VDP_setPalette(PAL2, SMPTECB100_pal);
       else      
       	VDP_setPalette(PAL2, SMPTECB75_pal);
-      			 
-		  VDP_loadTileData(SMPTECB75_tiles, TILE_USERINDEX, size, USE_DMA); 
-		  VDP_setMyTileMapRect(BPLAN, SMPTECB75_map, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);      
+      
+      PALCheck = Detect_VDP_PAL();
+      if(PALCheck)			 
+      {      	
+      	VDP_loadTileData(EBUColorBars75_tiles, TILE_USERINDEX, size, USE_DMA); 
+		  	VDP_setMyTileMapRect(BPLAN, EBUColorBars75_map, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);      
+    	}
+      else
+      {
+		  	VDP_loadTileData(SMPTECB75_tiles, TILE_USERINDEX, size, USE_DMA); 
+		  	VDP_setMyTileMapRect(BPLAN, SMPTECB75_map, TILE_ATTR(PAL2, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, 224/8);      
+			}
 		  loadvram = 0;  
   	}
   	
+  	if(PALCheck != Detect_VDP_PAL())
+  		loadvram = 1;
+  		
   	if(text)
   	{
   		text --;
@@ -373,7 +385,7 @@ void DrawLinearity()
 {
   u16 size, ind, grid2 = 0, redraw = 0, loadvram = 1;
   u16 exit = 0, showgrid = 0, gridpattern = 0;
-  u16 buttons, oldButtons = 0xffff, pressedButtons;
+  u16 buttons, oldButtons = 0xffff, pressedButtons, PALCheck = 0;
 
 	if(joytype != JOY_TYPE_PAD6)
 	{
@@ -385,6 +397,8 @@ void DrawLinearity()
   {
   	if(loadvram)
   	{
+  		PALCheck = Detect_VDP_PAL();
+  		
   		VDP_setPalette(PAL0, bw_pal);
 
 		  ind = TILE_USERINDEX; 
@@ -397,7 +411,7 @@ void DrawLinearity()
 		  grid2 = ind;
 		
 		  ind += size;
-		  if(Detect_VDP_PAL())
+		  if(PALCheck)
 		  {
 		    size = sizeof(circlesPAL_tiles) / 32; 
 		    VDP_loadTileData(circlesPAL_tiles, ind, size, USE_DMA); 
@@ -408,7 +422,7 @@ void DrawLinearity()
 		    VDP_loadTileData(circles_tiles, ind, size, USE_DMA); 
 		  }		  
 		
-		  if(Detect_VDP_PAL())
+		  if(PALCheck)
 		    VDP_setMyTileMapRect(APLAN, circlesPAL_map, ind, 0, 0, 320/8, 224/8);      
 		  else
 		    VDP_setMyTileMapRect(APLAN, circles_map, ind, 0, 0, 320/8, 224/8);      
@@ -435,6 +449,9 @@ void DrawLinearity()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
+		if(PALCheck != Detect_VDP_PAL())
+			loadvram = 1;
+			
 		if (pressedButtons & BUTTON_Z)
 		{					
 			DrawHelp(HELP_LINEARITY);  
@@ -872,8 +889,7 @@ void DrawOverscan()
   while(!exit)
   {   
   	if(loadvram)
-  	{
-  		VDP_resetScreen();
+  	{  		
   		VDP_loadTileData(back, vram, 1, USE_DMA);		
 			VDP_loadTileData(white, vram + 9, 1, USE_DMA);
 			

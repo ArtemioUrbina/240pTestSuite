@@ -144,6 +144,10 @@ extern u16 SMPTECB75_pal[16];
 extern u16 SMPTECB100_pal[16]; 
 extern u16 SMPTECB75_map[2240/2]; 
 
+// EBU
+extern u32 EBUColorBars75_tiles[256/4];  
+extern u16 EBUColorBars75_map[2240/2]; 
+
 // Sharpness
 extern u32 sharpness_tiles[4064/4]; 
 extern u16 sharpness_pal[16]; 

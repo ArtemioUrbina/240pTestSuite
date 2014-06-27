@@ -110,13 +110,19 @@ int main()
     VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos); 
         	    
  		Detect_MD(md_ver);
- 		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL1, 0, 0, 0), 8, 24);   		
+ 		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);   		
  
  		joytype = JOY_getJoypadType(JOY_1);
  		
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
+		
+		if (pressedButtons & BUTTON_Z)
+		{								
+			DrawHelp(HELP_GENERAL);  			
+     	reload = 1;   			
+		}
 		
     if (pressedButtons & BUTTON_DOWN)
     {
@@ -246,7 +252,10 @@ void TestPatternMenu()
     pos = 6;
     VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "SMPTE Color Bars", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    if(!Detect_VDP_PAL())
+    	VDP_drawTextBG(APLAN, "SMPTE Color Bars", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    else
+    	VDP_drawTextBG(APLAN, "EBU Color Bars", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bleed Check", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, pal_240 ? "Grid 320x240" : "Grid 320x224", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -269,6 +278,12 @@ void TestPatternMenu()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
+		if (pressedButtons & BUTTON_Z)
+		{				
+			DrawHelp(HELP_GENERAL);  			
+     	reload = 1;   			
+		}
+		
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
@@ -397,9 +412,9 @@ void Detect_MD(char *str)
   IsAsia = (data & 0xFF00) == 0x0;
     
   if(TMSS)
-  	strcpy(str, "Hardware: TMSS ");
+  	strcpy(str, "TMSS ");
   else
-  	strcpy(str, "     Hardware: ");
+  	strcpy(str, "     ");
   
   if(!IsAsia)
   { 
