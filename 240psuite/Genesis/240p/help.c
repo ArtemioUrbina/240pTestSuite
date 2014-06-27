@@ -31,6 +31,7 @@ void DrawHelp(int option)
   u16 ind = 0, size = 0, exit = 0, redraw = 1, totalpages = 1, page = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+	VDP_resetScreen();
   VDP_setPalette(PAL0, palette_grey);
   VDP_setPalette(PAL1, palette_green); 
   VDP_setPalette(PAL2, back_pal);
@@ -612,5 +613,6 @@ void DrawHelp(int option)
   }
   VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
   VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
+  VDP_resetScreen();
 }
 
