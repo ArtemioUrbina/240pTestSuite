@@ -11,6 +11,6 @@ amount of overscan in pixels in each direction.
 
 The #GA#G button resets all borders to zero.
 
-For precise results in PAL modes, use the #GPAL
-start line option#G in #YTop#Y and #YBottom#Y modes,
-each one to count top or bottom overscan accurately.
+For precise results in PAL modes, use the #GPAL start
+line option#G in #YTop#Y and #YBottom#Y modes, each
+one to count top or bottom overscan accurately.
