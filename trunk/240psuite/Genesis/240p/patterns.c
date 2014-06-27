@@ -130,8 +130,8 @@ void DrawWhiteScreen()
   char str[20], num[4];
 
 	CleanOrShowHelp(HELP_WHITE);  
-		
-	memcpy(custom_pal, palette_grey, sizeof(palette_grey));	
+			
+	memcpy(custom_pal, palette_grey, sizeof(palette_grey));		
 	
 	b = custom_pal[0xf] & 0x0f00 >> 8;
 	g = custom_pal[0xf] & 0x00f0 >> 4;
@@ -556,9 +556,10 @@ void DrawLinearity()
 
 void DrawGrid(u16 gridtype)
 {
-  u16 size;
+  u16 size, drawBorder = 0;
   u16 exit = 0, loadvram = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;  
+  u16 first_pal[16], oldColor = 0;
 
 	CleanOrShowHelp(HELP_GRID);  
 	
@@ -602,6 +603,25 @@ void DrawGrid(u16 gridtype)
 		{						
 			DrawHelp(HELP_GRID);  
 			loadvram = 1;
+		}
+		
+		if (pressedButtons & BUTTON_A)
+		{
+			if(!drawBorder)
+		 	{
+		 		VDP_getPalette(PAL0, first_pal); 
+		 		oldColor = first_pal[0];
+		 		first_pal[0] = 0x0666;
+		 		VDP_setPalette(PAL0, first_pal); 
+		 		drawBorder = 1;
+			}
+			else
+			{
+				VDP_getPalette(PAL0, first_pal); 		 		 
+		 		first_pal[0] = oldColor;
+		 		VDP_setPalette(PAL0, first_pal); 
+		 		drawBorder = 0;
+			}
 		}
 		
     if (pressedButtons & BUTTON_START)
