@@ -27,15 +27,15 @@ SP_WorkRAM:	dc.l 0
 ;  Game Header
 ; =======================================================================================	
 HardwareType:	dc.b 'SEGA MEGA DRIVE '
-Copyright:	dc.b '(C)ARTEMIO 2011 '
+Copyright:	dc.b 'ARTEMIO    2014 '
 NativeName:	dc.b '240P TEST SUITE                                 '
 OverseasName:	dc.b '240P TEST SUITE                                 '
-DiscID:		dc.b 'GM 00-0000-00   '
+DiscID:		dc.b 'GM 00-2501-14   '
 IO:		dc.b 'J               '
 		; Modem information, notes, and padding, left undefined as it is not used
 		; Padded to $1F0 instead (Start of Region Code)
 		align $1F0
-Region:		dc.b 'E               '
+Region:		dc.b 'U               '
 ; ========================================================================================
 ;  IP (Includes security sector)
 ; ========================================================================================	
