@@ -32,7 +32,14 @@ void CleanOrShowHelp(int option)
 	if(joytype != JOY_TYPE_PAD6)
 	{
 		if(showhelp)
-  		DrawHelp(option);  
+  		DrawHelp(option);    	
+  	else
+  	{
+  		VDP_fadeOutAll(FADE_TIME, 0);
+			VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
+			VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+			VDP_resetScreen();
+  	}
 	}	    
 	else
 	{
