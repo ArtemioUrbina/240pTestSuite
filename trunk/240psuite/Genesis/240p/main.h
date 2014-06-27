@@ -19,37 +19,25 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef HELP_H
-#define HELP_H
 
-#define	HELP_GENERAL		1
-#define	HELP_PLUGE			2
-#define	HELP_COLORS			3
-#define	HELP_GRID		    4
-#define	HELP_BLEED			5
-#define	HELP_IRE   			6
-#define HELP_601CB      7
-#define HELP_SHARPNESS	8
-#define HELP_OVERSCAN		9
-#define HELP_SMPTE			10
-#define HELP_LINEARITY	11
-#define HELP_GRAY				12
-#define HELP_WHITE			13
-#define HELP_CHECK			14
-#define HELP_STRIPES		15
-#define HELP_SHADOW			16
-#define HELP_STRIPED		17
-#define HELP_MANUALLAG	18
-#define HELP_HSCROLL		19
-#define HELP_VSCROLL		20
-#define HELP_SOUND			21
-#define HELP_LED				23
-#define HELP_LAG				24
+#include "genesis.h" 
+#include "res.h"
+#include "patterns.h"
+#include "tests.h"
+#include "help.h"
+#include "myvdp.h"
 
-extern u16	showhelp;
+extern u8		joytype;
+extern u8		IsPALVDP;
+extern u8		VDPChanged;
 
-void DrawHelp(int option);
-void CleanOrShowHelp(int option);
+#define FADE_TIME 10
+
+void TestPatternMenu();
+void DrawCredits();
+void DrawIntro();
+void Detect_MD(char *str);
 void FadeAndCleanUp();
 
-#endif
+extern u8	joytype;
+

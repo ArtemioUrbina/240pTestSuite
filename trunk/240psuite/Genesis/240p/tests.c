@@ -24,6 +24,7 @@
 #include "res.h"
 #include "tests.h"
 #include "help.h"
+#include "main.h"
 
 void DrawCheckBoard()
 {
@@ -32,11 +33,7 @@ void DrawCheckBoard()
   u16 field = 1, alternate = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
-	if(joytype != JOY_TYPE_PAD6)
-	{
-		if(showhelp)
-    	DrawHelp(HELP_CHECK);  
-  }
+	CleanOrShowHelp(HELP_CHECK);  
        
   while(!exit)
   {
@@ -73,7 +70,7 @@ void DrawCheckBoard()
     {
       count ++;
 
-      if(Detect_VDP_PAL())
+      if(IsPALVDP)
       {
         if(count > 49)
             count = 0;
@@ -135,11 +132,7 @@ void DrawStripes()
   u16 field = 1, alternate = 0, exit = 0, vertical = 0, redraw = 0;
   u16 buttons = 0, oldButtons = 0xffff, pressedButtons = 0;
 
-	if(joytype != JOY_TYPE_PAD6)
-	{
-		if(showhelp)
-    	DrawHelp(HELP_STRIPES);  
-  }
+	CleanOrShowHelp(HELP_STRIPES);  
       
   while(!exit)
   {
@@ -261,11 +254,7 @@ void DropShadowTest()
   u16 field = 1, x = 0, y = 0, exit = 0, text = 0, shadowpos = 0, buzzpos = 0, buzzshadowpos = 0, waterfall = 0;
   u16 buttons = 0, pressedButtons = 0, oldButtons = 0xffff;
 
-	if(joytype != JOY_TYPE_PAD6)
-	{
-		if(showhelp)
-    	DrawHelp(HELP_SHADOW);  
-  }
+	CleanOrShowHelp(HELP_SHADOW);  
     
   while(!exit)
   {      
@@ -316,14 +305,7 @@ void DropShadowTest()
 		  }           
   		loadvram = 0;  	
   		changeback = 1;	
-  	}  
-  	
-    if(text)
-    {
-        text --;
-        if(text == 0)
-            redraw = 1;
-    }       
+  	}       
 
     if(changeback || redraw)
     {                             
@@ -403,6 +385,13 @@ void DropShadowTest()
       changeback = 0;            
       redraw = 0;
     }
+    
+    if(text)
+    {
+        text --;
+        if(text == 0)
+            redraw = 1;
+    }  
 
     if(sprite == 1)
       VDP_setSpritePosition(0, x - 20, y - 20);
@@ -422,17 +411,7 @@ void DropShadowTest()
    
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
-    oldButtons = buttons;
-
-		if (pressedButtons & BUTTON_Z)
-		{
-			VDP_resetSprites();
-  		VDP_updateSprites();
-  		VDP_setHorizontalScroll(PLAN_B, 0);
-  		VDP_setHorizontalScroll(PLAN_A, 0);
-			DrawHelp(HELP_SHADOW);
-			loadvram = 1;
-		}
+    oldButtons = buttons;		
 			
     if (buttons & BUTTON_UP)
     {
@@ -534,16 +513,21 @@ void DropShadowTest()
       
       sprite = !sprite;
     }
+    
+    if (pressedButtons & BUTTON_Z)
+		{
+			VDP_resetSprites();
+  		VDP_updateSprites();
+  		VDP_setHorizontalScroll(PLAN_B, 0);
+  		VDP_setHorizontalScroll(PLAN_A, 0);
+			DrawHelp(HELP_SHADOW);
+			loadvram = 1;
+		}
 
     VDP_updateSprites();
     if(!loadvram)
     	VDP_waitVSync();
-  }
-
-  VDP_resetSprites();
-  VDP_updateSprites();
-  VDP_setHorizontalScroll(PLAN_B, 0);
-  VDP_setHorizontalScroll(PLAN_A, 0);
+  }  
 }
 
 void StripedSpriteTest()
@@ -553,11 +537,7 @@ void StripedSpriteTest()
   u16 x = 0, y = 0, exit = 0;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
 
-	if(joytype != JOY_TYPE_PAD6)
-	{
-		if(showhelp)
-    	DrawHelp(HELP_STRIPED);  	
-  }
+	CleanOrShowHelp(HELP_STRIPED);  	
     
   while(!exit)
   {
@@ -645,12 +625,7 @@ void StripedSpriteTest()
     oldButtons = buttons;
 
 		if (pressedButtons & BUTTON_Z)
-		{
-			VDP_resetSprites();
-		  VDP_updateSprites();
-		  VDP_setHorizontalScroll(PLAN_B, 0);
-		  VDP_setHorizontalScroll(PLAN_A, 0);
-		  
+		{			
 			DrawHelp(HELP_STRIPED);
 			loadvram = 1;
 		}
@@ -730,12 +705,7 @@ void StripedSpriteTest()
     VDP_updateSprites();
     if(!loadvram)
     	VDP_waitVSync();
-  }
-
-  VDP_resetSprites();
-  VDP_updateSprites();
-  VDP_setHorizontalScroll(PLAN_B, 0);
-  VDP_setHorizontalScroll(PLAN_A, 0);
+  }  
 }
 
 
@@ -753,12 +723,8 @@ void LagTest()
 
   s16 clicks[10];
 
-	if(joytype != JOY_TYPE_PAD6)
-	{
-		if(showhelp)
-    	DrawHelp(HELP_MANUALLAG);  
-  }
-  
+	CleanOrShowHelp(HELP_MANUALLAG);  
+	
   x = 144;
   y = 60;
 
@@ -833,10 +799,7 @@ void LagTest()
     oldButtons = buttons;
     
     if (pressedButtons & BUTTON_Z)
-    {
-    	VDP_resetSprites();
-  		VDP_updateSprites();
-  		
+    {    	
     	DrawHelp(HELP_MANUALLAG); 
     	loadvram = 1;
     }
@@ -1095,11 +1058,7 @@ void HScrollTest()
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   int x = 0, speed = 1, acc = -1, pause = 0;
   
-  if(joytype != JOY_TYPE_PAD6)
-	{
-  	if(showhelp)
-    	DrawHelp(HELP_HSCROLL);  
-  }
+  CleanOrShowHelp(HELP_HSCROLL);  
         
   while(!exit)
   {
@@ -1160,12 +1119,7 @@ void HScrollTest()
     oldButtons = buttons;
         
     if (pressedButtons & BUTTON_Z)
-    {
-    	VDP_setHorizontalScroll(PLAN_A, 0);
-		  VDP_setHorizontalScroll(PLAN_B, 0);
-		  VDP_resetSprites();
-		  VDP_updateSprites();  
-		  
+    {    	
 		  DrawHelp(HELP_HSCROLL);  
 		  
     	loadvram = 1;
@@ -1208,11 +1162,7 @@ void HScrollTest()
     VDP_setHorizontalScroll(PLAN_B, x/2);        
     if(!loadvram)
     	VDP_waitVSync();
-  }
-  VDP_setHorizontalScroll(PLAN_A, 0);
-  VDP_setHorizontalScroll(PLAN_B, 0);
-  VDP_resetSprites();
-  VDP_updateSprites();  
+  }  
 }
 
 void VScrollTest()
@@ -1222,11 +1172,7 @@ void VScrollTest()
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   int pos = 0, speed = 1, acc = -1, pause = 0, direction = 0;
   
-  if(joytype != JOY_TYPE_PAD6)
-	{
-  	if(showhelp)
-    	DrawHelp(HELP_VSCROLL);  
-  }
+  CleanOrShowHelp(HELP_VSCROLL);  
   
   while(!exit)
   {
@@ -1246,10 +1192,7 @@ void VScrollTest()
     oldButtons = buttons;
         
     if (pressedButtons & BUTTON_Z)
-  	{
-  		VDP_setHorizontalScroll(PLAN_A, 0);
-			VDP_setVerticalScroll(PLAN_A, 0);
-			
+  	{  		
 			DrawHelp(HELP_VSCROLL);  
 			
   		loadvram = 1;
@@ -1294,9 +1237,7 @@ void VScrollTest()
 	  	VDP_setVerticalScroll(PLAN_A, pos);            
     if(!loadvram)
     	VDP_waitVSync();
-  }  
-  VDP_setHorizontalScroll(PLAN_A, 0);
-	VDP_setVerticalScroll(PLAN_A, 0);
+  }    
 }
 
 void SoundTest()
@@ -1306,11 +1247,7 @@ void SoundTest()
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   u16 len = 0;
 
-	if(joytype != JOY_TYPE_PAD6)
-	{
-		if(showhelp)
-    	DrawHelp(HELP_SOUND);  
-  }       
+	CleanOrShowHelp(HELP_SOUND); 
   
   while(!exit)
   {
@@ -1433,12 +1370,8 @@ void LEDZoneTest()
   u16 x = 160, y = 112, exit = 0, sprite = 1, change = 0, draw = 1;
   u16 buttons, pressedButtons, oldButtons = 0xffff, loadvram = 1;
 
-	if(joytype != JOY_TYPE_PAD6)
-	{
-		if(showhelp)
-    	DrawHelp(HELP_LED);  
-  }
-      
+	CleanOrShowHelp(HELP_LED);  
+	
   while(!exit)
   { 
   	if(loadvram)
@@ -1570,10 +1503,7 @@ void LEDZoneTest()
     VDP_updateSprites();
     if(!loadvram)
     	VDP_waitVSync();
-  }
-
-  VDP_resetSprites();
-  VDP_updateSprites();    
+  }  
 }
 
 void PassiveLagTest()
@@ -1583,11 +1513,7 @@ void PassiveLagTest()
   u16 buttons, oldButtons = 0xffff, pressedButtons;  
   u16 numbers[11], size, lsd, msd, pause = 0, circle = 0, cposx = 32, cposy = 17, solid;
   
-  if(joytype != JOY_TYPE_PAD6)
-	{
-  	if(showhelp)
-    	DrawHelp(HELP_LAG);  
-  }
+  CleanOrShowHelp(HELP_LAG);  
       
   while(!exit)
   {   

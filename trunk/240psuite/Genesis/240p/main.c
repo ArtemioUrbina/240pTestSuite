@@ -20,19 +20,31 @@
  */
 
 
-#include "genesis.h" 
-#include "res.h"
-#include "patterns.h"
-#include "tests.h"
-#include "help.h"
-#include "myvdp.h"
-
-void TestPatternMenu();
-void DrawCredits();
-void DrawIntro();
-void Detect_MD(char *str);
+#include "main.h"
 
 u8	joytype = JOY_TYPE_UNKNOWN;
+u8	IsPALVDP = 0;
+u8	VDPChanged = 0;
+
+void VBlankIntCallback()
+{
+		u8 PalCheck = 0;
+		
+	 	joytype = JOY_getJoypadType(JOY_1);
+	 	PalCheck = Detect_VDP_PAL();
+	 	if(PalCheck != IsPALVDP)
+	 	{
+	 		IsPALVDP = PalCheck;
+	 		if(!IsPALVDP && pal_240)
+	 		{
+				VDP_setScreenHeight224(); 
+    		pal_240 = 0;
+	 		}
+	 		VDPChanged = 1;
+	 	}
+	 	else
+	 		VDPChanged = 0;
+}
 
 int main() 
 { 
@@ -43,7 +55,8 @@ int main()
   
   VDP_init(); 
   JOY_init();
-      
+   
+  SYS_setVIntCallback(VBlankIntCallback);   
   VDP_setScreenWidth320(); 
   if(Detect_VDP_PAL())
   {
@@ -77,12 +90,10 @@ int main()
       reload = 0;
     }   
 
-    if(pal_240 && !Detect_VDP_PAL())
-    {
-      VDP_setScreenHeight224(); 
-      pal_240 = 0;
+    if(VDPChanged)
+    {            
       if(cursel == 13)
-        cursel = 14;
+        cursel = 14;     	
     }     
               
     pos = 6;
@@ -98,7 +109,7 @@ int main()
     VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);    
     VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    if(Detect_VDP_PAL())
+    if(IsPALVDP)
       VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     else
     {
@@ -111,8 +122,6 @@ int main()
         	    
  		Detect_MD(md_ver);
  		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);   		
- 
- 		joytype = JOY_getJoypadType(JOY_1);
  		
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -129,7 +138,7 @@ int main()
       cursel ++;
       if(cursel > pos - 6)
         cursel = 1;
-      if(cursel == 13 && !Detect_VDP_PAL())
+      if(cursel == 13 && !IsPALVDP)
         cursel = 14;
     }
 
@@ -138,14 +147,12 @@ int main()
       cursel --;
       if(cursel < 1)
         cursel = pos - 6;
-      if(cursel == 13 && !Detect_VDP_PAL())
+      if(cursel == 13 && !IsPALVDP)
         cursel = 12;
     }
 
     if (pressedButtons & BUTTON_A)
-    { 
-      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
-      VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);      
+    {       
       switch(cursel)
       {
         case 1:
@@ -185,7 +192,7 @@ int main()
           DrawHelp(HELP_GENERAL);                                   
           break;
         case 13:
-          if(Detect_VDP_PAL())
+          if(IsPALVDP)
           {
             if(!pal_240)
             {
@@ -202,11 +209,9 @@ int main()
         case 14: 
           DrawCredits();                                   
           break;
-      }
-      VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
-      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+      }      
 
-      VDP_resetScreen();
+			FadeAndCleanUp();
       reload = 1;      
     }
     VDP_waitVSync();
@@ -221,6 +226,7 @@ void TestPatternMenu()
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   u16 ind = 0, size = 0, done = 0;
     
+  FadeAndCleanUp();
   while(!done)
   {
     if(reload)
@@ -239,20 +245,12 @@ void TestPatternMenu()
       VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);
 
       reload = 0;
-    }       
-
-    if(pal_240 && !Detect_VDP_PAL())
-    {
-      VDP_setScreenHeight224(); 
-      pal_240 = 0;
-      if(cursel == 11)
-        cursel = 12;
-    }    
+    }        
             
     pos = 6;
     VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    if(!Detect_VDP_PAL())
+    if(!IsPALVDP)
     	VDP_drawTextBG(APLAN, "SMPTE Color Bars", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     else
     	VDP_drawTextBG(APLAN, "EBU Color Bars", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -266,18 +264,28 @@ void TestPatternMenu()
     VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     VDP_drawTextBG(APLAN, "Sharpness", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     VDP_drawTextBG(APLAN, "Overscan", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
-    if(Detect_VDP_PAL())
+    if(IsPALVDP)
       VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     else
       VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);           
-    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
-    
-    joytype = JOY_getJoypadType(JOY_1);
+    VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);    
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
-
+    
+     if(VDPChanged)
+    {      
+      if(cursel == 14)
+        cursel = 15;
+    }   
+    
+ 		if(pal_240 && !IsPALVDP)
+    {      
+      if(cursel == 14)
+        cursel = 15;
+    }  
+    
 		if (pressedButtons & BUTTON_Z)
 		{				
 			DrawHelp(HELP_GENERAL);  			
@@ -289,7 +297,7 @@ void TestPatternMenu()
       cursel ++;
       if(cursel > 15)
         cursel = 1;
-      if(cursel == 14 && !Detect_VDP_PAL())
+      if(cursel == 14 && !IsPALVDP)
         cursel = 15;
     }
 
@@ -298,7 +306,7 @@ void TestPatternMenu()
       cursel --;
       if(cursel < 1)
         cursel = 15;
-      if(cursel == 14 && !Detect_VDP_PAL())
+      if(cursel == 14 && !IsPALVDP)
         cursel = 13;
     }
 
@@ -306,9 +314,7 @@ void TestPatternMenu()
       done = 1;            
     
     if (pressedButtons & BUTTON_A)
-    {            
-      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
-      VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);      
+    {                        
       switch(cursel)
       {
         case 1:
@@ -351,7 +357,7 @@ void TestPatternMenu()
           DrawOverscan();
           break;
         case 14:
-          if(Detect_VDP_PAL())
+          if(IsPALVDP)
           {
             if(!pal_240)
             {
@@ -369,10 +375,7 @@ void TestPatternMenu()
           done = 1;
           break;
       }
-      VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
-      VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
-
-      VDP_resetScreen();
+      FadeAndCleanUp();
       
       buttons = JOY_readJoypad(JOY_1);
     	pressedButtons = buttons & ~oldButtons;
@@ -429,9 +432,10 @@ void Detect_MD(char *str)
 
 void DrawCredits()
 {
-  u16 ind = 0, size = 0, exit = 0, pos = 6;
+  u16 ind = 0, size = 0, exit = 0, pos = 8, counter = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+	FadeAndCleanUp();
   VDP_setPalette(PAL0, palette_grey);
   VDP_setPalette(PAL1, palette_green); 
   VDP_setPalette(PAL2, back_pal);
@@ -445,8 +449,12 @@ void DrawCredits()
   
   VDP_setVerticalScroll(PLAN_A, 4);
 
-  VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-  VDP_drawTextBG(APLAN, "Artemio Urbina", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);  
+#ifdef SEGACD
+	pos = 6;
+#endif
+
+  VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++); 
+  pos++; 
   VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
   VDP_drawTextBG(APLAN, "SDK:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
@@ -468,19 +476,47 @@ void DrawCredits()
 
   VDP_drawTextBG(APLAN, "Ver. 1.14", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
   VDP_drawTextBG(APLAN, "27/06/2014", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+  
+#ifdef SEGACD
+	pos = 7;
+#else
+	pos = 9;
+#endif
   while(!exit)
   {
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
+    
+    if(counter == 1)
+    	VDP_drawTextBG(APLAN, "Artemio Urbina      ", TILE_ATTR(PAL0, 0, 0, 0), 5, pos);  	  	
+	  if(counter == 60*4)
+			VDP_drawTextBG(APLAN, "@Artemio (twitter)  ", TILE_ATTR(PAL0, 0, 0, 0), 5, pos);  
+	  if(counter == 60*8)
+	  	VDP_drawTextBG(APLAN, "aurbina@junkerhq.net", TILE_ATTR(PAL0, 0, 0, 0), 5, pos);  
+	  if(counter == 60*16)
+			counter = 0;				      
 
     if (pressedButtons & BUTTON_START)
-      exit = 1;
+      exit = 1;         
 
     VDP_waitVSync();
+    counter ++;
   }
 
+	VDP_fadeOutAll(FADE_TIME, 0);
   VDP_setVerticalScroll(PLAN_A, 0);
 }
 
-
+void FadeAndCleanUp()
+{
+	VDP_fadeOutAll(FADE_TIME, 0);
+	VDP_resetSprites();
+  VDP_updateSprites();
+  VDP_setHorizontalScroll(PLAN_B, 0);
+  VDP_setHorizontalScroll(PLAN_A, 0);
+  VDP_setVerticalScroll(PLAN_A, 0);
+  VDP_setHilightShadow(0);
+  VDP_setScreenWidth320(); 		
+	VDP_resetScreen();
+}
