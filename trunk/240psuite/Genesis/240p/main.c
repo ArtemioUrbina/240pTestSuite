@@ -30,14 +30,16 @@
 void TestPatternMenu();
 void DrawCredits();
 void DrawIntro();
-u16  Detect_CPU_PAL();
-u16  Detect_MD_Version();
+void Detect_MD(char *str);
+
+u8	joytype = JOY_TYPE_UNKNOWN;
 
 int main() 
 { 
   u16 cursel = 1, pos, reload = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   u16 ind = 0, size = 0;
+  char md_ver[30];
   
   VDP_init(); 
   JOY_init();
@@ -105,8 +107,13 @@ int main()
         else
             VDP_drawTextBG(APLAN, "NTSC VDP 320x224i", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
     }
-    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);    
+    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos); 
+        	    
+ 		Detect_MD(md_ver);
+ 		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL1, 0, 0, 0), 8, 24);   		
  
+ 		joytype = JOY_getJoypadType(JOY_1);
+ 		
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
@@ -194,7 +201,7 @@ int main()
       VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
 
       VDP_resetScreen();
-      reload = 1;
+      reload = 1;      
     }
     VDP_waitVSync();
   }
@@ -255,6 +262,8 @@ void TestPatternMenu()
     else
       VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);           
     VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+    
+    joytype = JOY_getJoypadType(JOY_1);
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
@@ -373,24 +382,34 @@ void DrawIntro()
   VDP_resetScreen();
 }
 
-u16 Detect_MD_Version()
+void Detect_MD(char *str)
 {
   char *pointer = NULL;
-  u16  version = 0;
+  u16 IsPAL = 0, data = 0;
+  u16	TMSS = 0, IsAsia = 0;
 
   pointer = (char *)0xA10001;
-  version = (*pointer & 0x04);
-  return version;     
-}
-
-u16 Detect_CPU_PAL()
-{
-  char *pointer = NULL;
-
-  pointer = (char *)0xA10001;
-  if((*pointer & 0x40) == 0x40)
-     return 1;
-  return 0;
+  
+  data = *pointer;
+  
+  IsPAL = (data & 0x40);
+  TMSS = (data & 0x0F);
+  IsAsia = (data & 0xFF00) == 0x0;
+    
+  if(TMSS)
+  	strcpy(str, "Hardware: TMSS ");
+  else
+  	strcpy(str, "     Hardware: ");
+  
+  if(!IsAsia)
+  { 
+  	if(IsPAL) 
+  		strcat(str, "MegaDrive EU");  	
+  	else
+  		strcat(str, "Sega Genesis");  	
+  }
+  else
+  	strcat(str, "MegaDrive JP");  	
 }
 
 void DrawCredits()

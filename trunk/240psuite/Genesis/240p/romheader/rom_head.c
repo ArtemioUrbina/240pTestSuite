@@ -23,7 +23,7 @@ const struct
     char region[16];                /* Country Support (16) */
 } rom_header = {
     "SEGA MEGA DRIVE ",
-    "(C)ARTEMIO  2014",
+    "ARTEMIO     2014",
     "240P TEST SUITE                                 ",
     "240P TEST SUITE                                 ",
     "GM 00002501-14",

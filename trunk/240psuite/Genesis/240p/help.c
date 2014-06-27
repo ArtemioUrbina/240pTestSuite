@@ -94,8 +94,16 @@ void DrawHelp(int option)
 				      VDP_drawTextBG(APLAN, "In PAL consoles, it can display", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "either 224 or 240 lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      y++;
-				      VDP_drawTextBG(APLAN, "When enabled, help will be shown", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "after selecting a test/pattern.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      if(joytype != JOY_TYPE_PAD6)
+				      {
+				      	VDP_drawTextBG(APLAN, "When enabled, help will be shown", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      	VDP_drawTextBG(APLAN, "after selecting a test/pattern.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      }
+				      else
+				      {
+				      	VDP_drawTextBG(APLAN, "Help can be shown by pressin 'Z'", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      	VDP_drawTextBG(APLAN, "in any test or pattern.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      }				      
 				      y++;		      	
 				      VDP_drawTextBG(APLAN, "The 240p suite is also available", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "in Nintendo GameCube, Wii and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -548,22 +556,38 @@ void DrawHelp(int option)
 		    	break; 
 		  }
 		  
-		  VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
-  		VDP_drawTextBG(APLAN, "Show HELP (A):", TILE_ATTR(PAL0, 0, 0, 0), 14, 26);
-  		VDP_drawTextBG(APLAN, showhelp == 0 ? "No " : "Yes" , TILE_ATTR(PAL1, 0, 0, 0), 29, 26);
+		  if(joytype != JOY_TYPE_PAD6)
+		  {
+		  	VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
+  			VDP_drawTextBG(APLAN, "Show HELP (A):", TILE_ATTR(PAL0, 0, 0, 0), 14, 26);
+  			VDP_drawTextBG(APLAN, showhelp == 0 ? "No " : "Yes" , TILE_ATTR(PAL1, 0, 0, 0), 29, 26);
+  		}
+  		else
+  			VDP_drawTextBG(APLAN, "Press Z to exit help", TILE_ATTR(PAL0, 0, 0, 0), 11, 24);
   		redraw = 0;
-  	}    
+  	}   
+  	
+  	joytype = JOY_getJoypadType(JOY_1);
+  	 
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
-    if (pressedButtons & BUTTON_START)
-      exit = 1;
-
-    if (pressedButtons & BUTTON_A)
+		if(joytype != JOY_TYPE_PAD6)
+		{
+    	if (pressedButtons & BUTTON_START)
+      	
+      	exit = 1;
+      if (pressedButtons & BUTTON_A)
+	    {
+	      showhelp = !showhelp;
+	      redraw = 1;
+	    }
+    }
+    else
     {
-      showhelp = !showhelp;
-      redraw = 1;
+    	if (pressedButtons & BUTTON_Z)
+      	exit = 1;
     }
     
     if (pressedButtons & BUTTON_LEFT)

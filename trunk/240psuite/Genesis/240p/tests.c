@@ -28,25 +28,33 @@
 void DrawCheckBoard()
 {
   char cntstr[4];
-  u16 ind, size, count = 0, docounter = 0;
+  u16 ind = 0, size = 0, count = 0, docounter = 0, loadvram = 1;
   u16 field = 1, alternate = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
 
-	if(showhelp)
-    DrawHelp(HELP_CHECK);  
-    
-  VDP_setPalette(PAL1, bw_pal);
-
-  ind = TILE_USERINDEX; 
-  size = sizeof(check_tile) / 32; 
-  VDP_loadTileData(check_tile, ind, size, USE_DMA); 
-  ind += size;
-  size = sizeof(check_tile_inv) / 32; 
-  VDP_loadTileData(check_tile_inv, ind, size, USE_DMA); 
-
-  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
+	if(joytype != JOY_TYPE_PAD6)
+	{
+		if(showhelp)
+    	DrawHelp(HELP_CHECK);  
+  }
+       
   while(!exit)
   {
+  	if(loadvram)
+  	{
+  		VDP_setPalette(PAL1, bw_pal);
+
+		  ind = TILE_USERINDEX; 
+		  size = sizeof(check_tile) / 32; 
+		  VDP_loadTileData(check_tile, ind, size, USE_DMA); 
+		  ind += size;
+		  size = sizeof(check_tile_inv) / 32; 
+		  VDP_loadTileData(check_tile_inv, ind, size, USE_DMA); 
+		
+		  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);
+		 	loadvram = 0;
+  	}
+  	
     if(alternate)
     {
       if(field == 0)
@@ -85,7 +93,13 @@ void DrawCheckBoard()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
-     if (pressedButtons & BUTTON_A)
+		if (pressedButtons & BUTTON_Z)
+		{
+			DrawHelp(HELP_CHECK); 
+			loadvram = 1;
+		}
+			
+    if (pressedButtons & BUTTON_A)
       alternate = ~alternate;
   
     if (pressedButtons & BUTTON_B && !alternate)
@@ -108,7 +122,8 @@ void DrawCheckBoard()
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
-    VDP_waitVSync();
+    if(!loadvram)
+    	VDP_waitVSync();
   }
 }
 
@@ -116,31 +131,39 @@ void DrawCheckBoard()
 void DrawStripes()
 {
   char cntstr[4];
-  u16 hor1, hor2, ver1, ver2, size, count = 0, docounter = 0;
+  u16 hor1 = 0, hor2 = 0, ver1 = 0, ver2 = 0, size = 0, count = 0, docounter = 0, loadvram = 1;
   u16 field = 1, alternate = 0, exit = 0, vertical = 0, redraw = 0;
-  u16 buttons, oldButtons = 0xffff, pressedButtons;
+  u16 buttons = 0, oldButtons = 0xffff, pressedButtons = 0;
 
-	if(showhelp)
-    DrawHelp(HELP_STRIPES);  
-    
-  VDP_setPalette(PAL1, bw_pal);
-
-  hor1 = TILE_USERINDEX; 
-  size = sizeof(bw_tile) / 32; 
-  VDP_loadTileData(bw_tile, hor1, size, USE_DMA); 
-  hor2 = hor1 + size;
-  size = sizeof(wb_tile) / 32; 
-  VDP_loadTileData(wb_tile, hor2, size, USE_DMA); 
-  ver1 = hor2 + size;
-  size = sizeof(vstripes_tiles) / 32; 
-  VDP_loadTileData(vstripes_tiles, ver1, size, USE_DMA); 
-  ver2 = ver1 + size;
-  size = sizeof(vstripesneg_tiles) / 32; 
-  VDP_loadTileData(vstripesneg_tiles, ver2, size, USE_DMA); 
-
-  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
+	if(joytype != JOY_TYPE_PAD6)
+	{
+		if(showhelp)
+    	DrawHelp(HELP_STRIPES);  
+  }
+      
   while(!exit)
   {
+  	if(loadvram)
+  	{
+  		VDP_setPalette(PAL1, bw_pal);
+
+		  hor1 = TILE_USERINDEX; 
+		  size = sizeof(bw_tile) / 32; 
+		  VDP_loadTileData(bw_tile, hor1, size, USE_DMA); 
+		  hor2 = hor1 + size;
+		  size = sizeof(wb_tile) / 32; 
+		  VDP_loadTileData(wb_tile, hor2, size, USE_DMA); 
+		  ver1 = hor2 + size;
+		  size = sizeof(vstripes_tiles) / 32; 
+		  VDP_loadTileData(vstripes_tiles, ver1, size, USE_DMA); 
+		  ver2 = ver1 + size;
+		  size = sizeof(vstripesneg_tiles) / 32; 
+		  VDP_loadTileData(vstripesneg_tiles, ver2, size, USE_DMA); 
+		
+		  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
+		  loadvram = 0;
+  	}
+  	
     if(alternate || redraw)
     {
       if(field == 0)
@@ -185,6 +208,12 @@ void DrawStripes()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
+		if (pressedButtons & BUTTON_Z)
+		{
+			DrawHelp(HELP_STRIPES);
+			loadvram = 1;
+		}
+			
     if (pressedButtons & BUTTON_A)
       alternate = ~alternate;
 
@@ -220,66 +249,75 @@ void DrawStripes()
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
-    VDP_waitVSync();
+    if(!loadvram)
+    	VDP_waitVSync();
   }
 }
 
 void DropShadowTest()
 {
-  u16 sonic_water = 0, sonic_floor = 0, frame = 0, direction = 0;                         
-  u16 size, ind, back = 0, changeback = 1, invert = 0, sprite = 0, redraw = 0;
+  u16 sonic_water = 0, sonic_floor = 0, frame = 0, direction = 0, loadvram = 1;                         
+  u16 size = 0, ind = 0, back = 0, changeback = 1, invert = 0, sprite = 0, redraw = 0;
   u16 field = 1, x = 0, y = 0, exit = 0, text = 0, shadowpos = 0, buzzpos = 0, buzzshadowpos = 0, waterfall = 0;
-  u16 buttons, pressedButtons, oldButtons = 0xffff;
+  u16 buttons = 0, pressedButtons = 0, oldButtons = 0xffff;
 
-	if(showhelp)
-    DrawHelp(HELP_SHADOW);  
-    
-  VDP_setPalette(PAL0, palette_green);
-  VDP_setPalette(PAL1, motoko_pal);
-  VDP_setPalette(PAL2, wb_pal);    
-  VDP_setPalette(PAL3, buzz_pal);    
-
-  shadowpos = TILE_USERINDEX;
-  size = sizeof(shadow_tiles) / 32; 
-  VDP_loadTileData(shadow_tiles, shadowpos, size, USE_DMA);
-
-  buzzpos = shadowpos + size;
-  size = sizeof(buzzShadow_tiles) / 32; 
-  VDP_loadTileData(buzz_tiles, buzzpos, size, USE_DMA); 
-
-  buzzshadowpos = buzzpos + size;
-  size = sizeof(buzzShadow_tiles) / 32; 
-  VDP_loadTileData(buzzShadow_tiles, buzzshadowpos, size, USE_DMA); 
-
-  waterfall = buzzshadowpos + size;
-  size = sizeof(waterfall_tiles) / 32; 
-  VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);
-
-  ind = waterfall + size;  
-  
-  sprite = random() % 2;         
-  
-  VDP_setSprite(0, 12, 12, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);                               
-  VDP_setSprite(1, 32, 32, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 2);
-  VDP_setSprite(2, 0, 0, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 3);                     
-  VDP_setSprite(3, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 4);
-  VDP_setSprite(4, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);                                
-
-  if(sprite == 1)
-  {   
-    x = 32;
-    y = 32;
-
-    VDP_setSpritePosition(2, 320, 224);    
+	if(joytype != JOY_TYPE_PAD6)
+	{
+		if(showhelp)
+    	DrawHelp(HELP_SHADOW);  
   }
-  else
-  {                
-    VDP_setSpritePosition(0, 320, 224);
-    VDP_setSpritePosition(1, 320, 224);
-  }           
     
   while(!exit)
-  {        
+  {      
+  	if(loadvram)
+  	{
+  		VDP_setPalette(PAL0, palette_green);
+		  VDP_setPalette(PAL1, motoko_pal);
+		  VDP_setPalette(PAL2, wb_pal);    
+		  VDP_setPalette(PAL3, buzz_pal);    
+		
+		  shadowpos = TILE_USERINDEX;
+		  size = sizeof(shadow_tiles) / 32; 
+		  VDP_loadTileData(shadow_tiles, shadowpos, size, USE_DMA);
+		
+		  buzzpos = shadowpos + size;
+		  size = sizeof(buzzShadow_tiles) / 32; 
+		  VDP_loadTileData(buzz_tiles, buzzpos, size, USE_DMA); 
+		
+		  buzzshadowpos = buzzpos + size;
+		  size = sizeof(buzzShadow_tiles) / 32; 
+		  VDP_loadTileData(buzzShadow_tiles, buzzshadowpos, size, USE_DMA); 
+		
+		  waterfall = buzzshadowpos + size;
+		  size = sizeof(waterfall_tiles) / 32; 
+		  VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);
+		
+		  ind = waterfall + size;  
+		  
+		  sprite = random() % 2;         
+		  
+		  VDP_setSprite(0, 12, 12, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + buzzpos, 1);                               
+		  VDP_setSprite(1, 32, 32, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + buzzshadowpos, 2);
+		  VDP_setSprite(2, 0, 0, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + shadowpos, 3);                     
+		  VDP_setSprite(3, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 4);
+		  VDP_setSprite(4, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);                                
+		
+		  if(sprite == 1)
+		  {   
+		    x = 32;
+		    y = 32;
+		
+		    VDP_setSpritePosition(2, 320, 224);    
+		  }
+		  else
+		  {                
+		    VDP_setSpritePosition(0, 320, 224);
+		    VDP_setSpritePosition(1, 320, 224);
+		  }           
+  		loadvram = 0;  	
+  		changeback = 1;	
+  	}  
+  	
     if(text)
     {
         text --;
@@ -386,6 +424,16 @@ void DropShadowTest()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
+		if (pressedButtons & BUTTON_Z)
+		{
+			VDP_resetSprites();
+  		VDP_updateSprites();
+  		VDP_setHorizontalScroll(PLAN_B, 0);
+  		VDP_setHorizontalScroll(PLAN_A, 0);
+			DrawHelp(HELP_SHADOW);
+			loadvram = 1;
+		}
+			
     if (buttons & BUTTON_UP)
     {
       if(y > 0)
@@ -488,7 +536,8 @@ void DropShadowTest()
     }
 
     VDP_updateSprites();
-    VDP_waitVSync();
+    if(!loadvram)
+    	VDP_waitVSync();
   }
 
   VDP_resetSprites();
@@ -500,32 +549,41 @@ void DropShadowTest()
 void StripedSpriteTest()
 {
   u16 sonic_water = 0, sonic_floor = 0, sprite, frame = 0, waterfall = 0;     
-  u16 size, ind, back = 0, changeback = 1;
+  u16 size, ind = 0, back = 0, changeback = 1, loadvram = 1;
   u16 x = 0, y = 0, exit = 0;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
 
-	if(showhelp)
-    DrawHelp(HELP_STRIPED);  
-    
-  VDP_setPalette(PAL1, motoko_pal);
-  VDP_setPalette(PAL3, wb_pal);
-
-  sprite = TILE_USERINDEX; 
-  size = sizeof(striped_tiles) / 32; 
-  VDP_loadTileData(striped_tiles, sprite, size, USE_DMA);
-  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + sprite, 1);    
-
-  waterfall = sprite + size;
-  size = sizeof(waterfall_tiles) / 32; 
-  VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);
-    
-  VDP_setSprite(1, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 2);
-  VDP_setSprite(2, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);      
-
-  ind = waterfall + size;  
+	if(joytype != JOY_TYPE_PAD6)
+	{
+		if(showhelp)
+    	DrawHelp(HELP_STRIPED);  	
+  }
     
   while(!exit)
-  {                
+  {
+  	if(loadvram)
+  	{
+  		VDP_setPalette(PAL1, motoko_pal);
+		  VDP_setPalette(PAL3, wb_pal);
+		
+		  sprite = TILE_USERINDEX; 
+		  size = sizeof(striped_tiles) / 32; 
+		  VDP_loadTileData(striped_tiles, sprite, size, USE_DMA);
+		  VDP_setSprite(0, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL3, 0, 0, 0) + sprite, 1);    
+		
+		  waterfall = sprite + size;
+		  size = sizeof(waterfall_tiles) / 32; 
+		  VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);
+		    
+		  VDP_setSprite(1, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 2);
+		  VDP_setSprite(2, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);      
+		
+		  ind = waterfall + size;  
+		  
+		  loadvram = 0;
+		  changeback = 1;
+  	} 
+  	               
     if(changeback)
     {      
       changeback = 0;   
@@ -586,6 +644,17 @@ void StripedSpriteTest()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
+		if (pressedButtons & BUTTON_Z)
+		{
+			VDP_resetSprites();
+		  VDP_updateSprites();
+		  VDP_setHorizontalScroll(PLAN_B, 0);
+		  VDP_setHorizontalScroll(PLAN_A, 0);
+		  
+			DrawHelp(HELP_STRIPED);
+			loadvram = 1;
+		}
+			
     if (buttons & BUTTON_UP)
     {
       if(y > 0)
@@ -659,7 +728,8 @@ void StripedSpriteTest()
     }        
 
     VDP_updateSprites();
-    VDP_waitVSync();
+    if(!loadvram)
+    	VDP_waitVSync();
   }
 
   VDP_resetSprites();
@@ -673,9 +743,9 @@ void StripedSpriteTest()
 void LagTest()
 {
   char str[10];
-  u16 pal = PAL0, change = 1;
+  u16 pal = PAL0, change = 1, loadvram = 1;
   s16 speed = 1, vary = 0;
-  u16 size, ind;
+  u16 size, ind = 0;
   u16 x = 0, y = 0, x2 = 0, y2 = 0, exit = 0, variation = 1, draw = 1;
   u16 buttons, pressedButtons, oldButtons = 0xffff;
   u16 pos = 0, view = 0, audio  = 0, drawoffset = 0;
@@ -683,44 +753,93 @@ void LagTest()
 
   s16 clicks[10];
 
-	if(showhelp)
-    DrawHelp(HELP_MANUALLAG);  
-    
-  VDP_setPalette(PAL0, palette_grey);
-  VDP_setPalette(PAL1, palette_red);
-  VDP_setPalette(PAL2, bw_pal);
-  VDP_setPalette(PAL3, palette_green);
-
-  ind = TILE_USERINDEX; 
-  size = sizeof(shadow_tiles) / 32; 
-  VDP_loadTileData(shadow_tiles, ind, size, USE_DMA); 
-  ind += size;
-  size = sizeof(lag_tiles) / 32; 
-  VDP_loadTileData(lag_tiles, ind, size, USE_DMA); 
-
+	if(joytype != JOY_TYPE_PAD6)
+	{
+		if(showhelp)
+    	DrawHelp(HELP_MANUALLAG);  
+  }
+  
   x = 144;
   y = 60;
 
   x2 = 108;
   y2 = 96;
-
-  VDP_setSprite(0, x, 96, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 1);         
-  VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 2);         
-  VDP_setSprite(2, x2, y2, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 0);           
-  
-  VDP_drawTextBG(APLAN, "Press the \"A\" button when the sprite", TILE_ATTR(PAL3, 0, 0, 0), 2, 21);
-  VDP_drawTextBG(APLAN, "is aligned. A negative value means", TILE_ATTR(PAL3, 0, 0, 0), 2, 22);
-  VDP_drawTextBG(APLAN, "you pressed \"A\" before they intersect.", TILE_ATTR(PAL3, 0, 0, 0), 2, 23);
-  VDP_drawTextBG(APLAN, "\"B\" button toggles horz/vert", TILE_ATTR(PAL3, 0, 0, 0), 2, 24);
-  VDP_drawTextBG(APLAN, "\"C\" button toggles audio", TILE_ATTR(PAL3, 0, 0, 0), 2, 25);
-  VDP_drawTextBG(APLAN, "DOWN toggles random/rhythmic", TILE_ATTR(PAL3, 0, 0, 0), 2, 26);
-
-  len = sizeof(beep); 
+      
   while(!exit)    
-  {                        
+  { 
+  	if(loadvram)
+  	{
+  		VDP_setPalette(PAL0, palette_grey);
+		  VDP_setPalette(PAL1, palette_red);
+		  VDP_setPalette(PAL2, bw_pal);
+		  VDP_setPalette(PAL3, palette_green);
+		
+		  ind = TILE_USERINDEX; 
+		  size = sizeof(shadow_tiles) / 32; 
+		  VDP_loadTileData(shadow_tiles, ind, size, USE_DMA); 
+		  ind += size;
+		  size = sizeof(lag_tiles) / 32; 
+		  VDP_loadTileData(lag_tiles, ind, size, USE_DMA); 
+				  
+		  VDP_setSprite(0, x, 96, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 1);         
+		  VDP_setSprite(1, x, y, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 2);         
+		  VDP_setSprite(2, x2, y2, SPRITE_SIZE(4, 4), TILE_ATTR(PAL2, 0, 0, 0) + ind, 0);           
+		  
+		  VDP_drawTextBG(APLAN, "Press the \"A\" button when the sprite", TILE_ATTR(PAL3, 0, 0, 0), 2, 21);
+		  VDP_drawTextBG(APLAN, "is aligned. A negative value means", TILE_ATTR(PAL3, 0, 0, 0), 2, 22);
+		  VDP_drawTextBG(APLAN, "you pressed \"A\" before they intersect.", TILE_ATTR(PAL3, 0, 0, 0), 2, 23);
+		  VDP_drawTextBG(APLAN, "\"B\" button toggles horz/vert", TILE_ATTR(PAL3, 0, 0, 0), 2, 24);
+		  VDP_drawTextBG(APLAN, "\"C\" button toggles audio", TILE_ATTR(PAL3, 0, 0, 0), 2, 25);
+		  VDP_drawTextBG(APLAN, "DOWN toggles random/rhythmic", TILE_ATTR(PAL3, 0, 0, 0), 2, 26);
+		
+		  len = sizeof(beep); 
+		  loadvram = 0;		  
+		  draw = 1;
+		  
+		  if(pos)		  
+	    {
+	    	int i = 0;
+	      u16 ppos = 0;
+		      
+	      for(i = 0; i < pos; i++)	
+	      {
+	      	pal = PAL0;
+	      	
+		      intToStr(clicks[i], str, 1);
+		
+		      if(clicks[i] == 0)
+		        pal = PAL3;
+		      if(clicks[i] < 0)
+		        pal = PAL1;
+		
+		      ppos = i + 1;                    
+		      intToStr(ppos, str, 1);
+		      VDP_drawTextBG(APLAN, "Offset", TILE_ATTR(PAL0, 0, 0, 0), 2, i);
+		      VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL0, 0, 0, 0), 9, i);
+		      VDP_drawTextBG(APLAN, ":", TILE_ATTR(PAL0, 0, 0, 0), i == 9 ? 11 : 10, i);
+		      intToStr(clicks[i], str, 1);
+		      VDP_drawTextBG(APLAN, str, TILE_ATTR(pal, 0, 0, 0), i == 9 ? 13 : 12, i);
+		      ppos = strlen(str);
+		      if(clicks[i] == 1)
+		        VDP_drawTextBG(APLAN, " frame    ", TILE_ATTR(pal, 0, 0, 0), pos == 9 ? 13 : 12 + ppos, i);
+		      else
+		        VDP_drawTextBG(APLAN, " frames   ", TILE_ATTR(pal, 0, 0, 0), pos == 9 ? 13 : 12 + ppos, i);		      
+	    	}  
+		  }
+  	}              
+  	         
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
+    
+    if (pressedButtons & BUTTON_Z)
+    {
+    	VDP_resetSprites();
+  		VDP_updateSprites();
+  		
+    	DrawHelp(HELP_MANUALLAG); 
+    	loadvram = 1;
+    }
     
     if (pressedButtons & BUTTON_A)
     {            
@@ -864,7 +983,8 @@ void LagTest()
       }        
     }    
            
-    VDP_waitVSync();
+    if(!loadvram)
+    	VDP_waitVSync();
   }   
 
   VDP_resetSprites();
@@ -961,7 +1081,8 @@ void LagTest()
           
       if (pressedButtons & BUTTON_START)
         exit = 1;
-      VDP_waitVSync();
+      if(!loadvram)
+    		VDP_waitVSync();
     }
   }
 }
@@ -969,45 +1090,54 @@ void LagTest()
 
 void HScrollTest()
 {    
-  u16 size, sonic_floor, sonic_water, waterfall;
+  u16 size, sonic_floor, sonic_water, waterfall, loadvram = 1;
   u16 exit = 0, frame = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   int x = 0, speed = 1, acc = -1, pause = 0;
   
-  if(showhelp)
-    DrawHelp(HELP_HSCROLL);  
-    
-  VDP_setPalette(PAL0, sonicback_pal);  
-  VDP_setPalette(PAL1, sonicwater_pal);  
-
-  size = sizeof(sonicback_tiles) / 32; 
-  VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, USE_DMA);     
-
-  sonic_water = TILE_USERINDEX + size;
-  size = sizeof(sonicwater_tiles) / 32; 
-  VDP_loadTileData(sonicwater_tiles, sonic_water, size, USE_DMA);     
-
-  sonic_floor = sonic_water + size;
-  size = sizeof(sonicfloor_tiles) / 32; 
-  VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, USE_DMA);     
-
-  waterfall = sonic_floor + size;
-  size = sizeof(waterfall_tiles) / 32; 
-  VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);     
-
-  VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 0, 0, 256/8, 152/8);                            
-  VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 256/8, 0, 256/8, 152/8);                        
-
-  VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
-  VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);  
-
-  VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);
-  VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);
-
-  VDP_setSprite(0, 72, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 1);
-  VDP_setSprite(1, 328, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);  
+  if(joytype != JOY_TYPE_PAD6)
+	{
+  	if(showhelp)
+    	DrawHelp(HELP_HSCROLL);  
+  }
+        
   while(!exit)
   {
+  	if(loadvram)
+  	{
+  		VDP_setPalette(PAL0, sonicback_pal);  
+		  VDP_setPalette(PAL1, sonicwater_pal);  
+		
+		  size = sizeof(sonicback_tiles) / 32; 
+		  VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, USE_DMA);     
+		
+		  sonic_water = TILE_USERINDEX + size;
+		  size = sizeof(sonicwater_tiles) / 32; 
+		  VDP_loadTileData(sonicwater_tiles, sonic_water, size, USE_DMA);     
+		
+		  sonic_floor = sonic_water + size;
+		  size = sizeof(sonicfloor_tiles) / 32; 
+		  VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, USE_DMA);     
+		
+		  waterfall = sonic_floor + size;
+		  size = sizeof(waterfall_tiles) / 32; 
+		  VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);     
+		
+		  VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 0, 0, 256/8, 152/8);                            
+		  VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 256/8, 0, 256/8, 152/8);                        
+		
+		  VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152/8, 256/8, 48/8);
+		  VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 256/8, 152/8, 256/8, 48/8);  
+		
+		  VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96/8, 256/8, 128/8);
+		  VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256/8, 96/8, 256/8, 128/8);
+		
+		  VDP_setSprite(0, 72, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 1);
+		  VDP_setSprite(1, 328, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);
+		  
+		  loadvram = 0;
+  	}
+  	
     switch(frame)
     {
       case 30:
@@ -1029,6 +1159,18 @@ void HScrollTest()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
         
+    if (pressedButtons & BUTTON_Z)
+    {
+    	VDP_setHorizontalScroll(PLAN_A, 0);
+		  VDP_setHorizontalScroll(PLAN_B, 0);
+		  VDP_resetSprites();
+		  VDP_updateSprites();  
+		  
+		  DrawHelp(HELP_HSCROLL);  
+		  
+    	loadvram = 1;
+    }
+    
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
@@ -1064,7 +1206,8 @@ void HScrollTest()
     VDP_updateSprites();
     VDP_setHorizontalScroll(PLAN_A, x);        
     VDP_setHorizontalScroll(PLAN_B, x/2);        
-    VDP_waitVSync();
+    if(!loadvram)
+    	VDP_waitVSync();
   }
   VDP_setHorizontalScroll(PLAN_A, 0);
   VDP_setHorizontalScroll(PLAN_B, 0);
@@ -1074,27 +1217,44 @@ void HScrollTest()
 
 void VScrollTest()
 {    
-  u16 size;
+  u16 size, loadvram = 1;
   u16 exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   int pos = 0, speed = 1, acc = -1, pause = 0, direction = 0;
   
-  if(showhelp)
-    DrawHelp(HELP_VSCROLL);  
-    
-  VDP_setPalette(PAL0, bw_pal);    
-
-  size = sizeof(circles_grid_tiles) / 32; 
-  VDP_loadTileData(circles_grid_tiles, TILE_USERINDEX, size, USE_DMA);   
-
-  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 512/8, 512/8); 
+  if(joytype != JOY_TYPE_PAD6)
+	{
+  	if(showhelp)
+    	DrawHelp(HELP_VSCROLL);  
+  }
   
   while(!exit)
   {
+  	if(loadvram)
+  	{
+  		VDP_setPalette(PAL0, bw_pal);    
+
+		  size = sizeof(circles_grid_tiles) / 32; 
+		  VDP_loadTileData(circles_grid_tiles, TILE_USERINDEX, size, USE_DMA);   
+		
+		  VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 512/8, 512/8); 
+		  loadvram = 0;
+  	}
+  	
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
         
+    if (pressedButtons & BUTTON_Z)
+  	{
+  		VDP_setHorizontalScroll(PLAN_A, 0);
+			VDP_setVerticalScroll(PLAN_A, 0);
+			
+			DrawHelp(HELP_VSCROLL);  
+			
+  		loadvram = 1;
+  	}
+  	
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
@@ -1116,13 +1276,13 @@ void VScrollTest()
     if (pressedButtons & BUTTON_B)
       acc *= -1;
 
-	if (pressedButtons & BUTTON_C)
+		if (pressedButtons & BUTTON_C)
       direction = !direction;
 
     if(!pause)
       pos += acc*speed;
 
-	if(pos >= 512)
+		if(pos >= 512)
       pos = pos % 512;
 
     if(pos <= -512)
@@ -1130,9 +1290,10 @@ void VScrollTest()
     
     if(direction)
       VDP_setHorizontalScroll(PLAN_A, pos);
-	else
-	  VDP_setVerticalScroll(PLAN_A, pos);            
-    VDP_waitVSync();
+		else
+	  	VDP_setVerticalScroll(PLAN_A, pos);            
+    if(!loadvram)
+    	VDP_waitVSync();
   }  
   VDP_setHorizontalScroll(PLAN_A, 0);
 	VDP_setVerticalScroll(PLAN_A, 0);
@@ -1140,32 +1301,45 @@ void VScrollTest()
 
 void SoundTest()
 {
-  int sel = 1;
+  int sel = 1, loadvram = 1;
   u16 ind = 0, size = 0, exit = 0;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   u16 len = 0;
 
-	if(showhelp)
-    DrawHelp(HELP_SOUND);  
-    
-  len = sizeof(beep);
-  VDP_setPalette(PAL0, palette_grey);
-  VDP_setPalette(PAL1, palette_green); 
-  VDP_setPalette(PAL2, back_pal);
-  VDP_setPalette(PAL3, palette_red);  
-
-  ind = TILE_USERINDEX; 
-  size = sizeof(back_tiles) / 32; 
-  VDP_loadTileData(back_tiles, ind, size, USE_DMA); 
-  
-  VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);        
+	if(joytype != JOY_TYPE_PAD6)
+	{
+		if(showhelp)
+    	DrawHelp(HELP_SOUND);  
+  }       
   
   while(!exit)
   {
+  	if(loadvram)
+  	{
+  		len = sizeof(beep);
+		  VDP_setPalette(PAL0, palette_grey);
+		  VDP_setPalette(PAL1, palette_green); 
+		  VDP_setPalette(PAL2, back_pal);
+		  VDP_setPalette(PAL3, palette_red);  
+		
+		  ind = TILE_USERINDEX; 
+		  size = sizeof(back_tiles) / 32; 
+		  VDP_loadTileData(back_tiles, ind, size, USE_DMA); 
+		  
+		  VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);   
+		  loadvram = 0;
+  	}
+  	
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
+		if (pressedButtons & BUTTON_Z)
+		{
+			DrawHelp(HELP_SOUND);  
+			loadvram = 1;
+		}
+		
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
@@ -1182,60 +1356,60 @@ void SoundTest()
       sel = 2;
 
 	
-	/*
-	When Bit 5 of YM Register $2C is set to 1, Panning gets affected by the L/R part of the L/R/AMS/FMS reg of these channels:
-	
-	$B4 in Bank 1 of the YM2612 for Channel FM1
-	$B5 in Bank 1 of the YM2612 for Channel FM2
-	$B6 in Bank 1 of the YM2612 for Channel FM3
-	$B4 in Bank 2 of the YM2612 for Channel FM4
-	$B6 in Bank 2 of the YM2612 for Channel FM6
-	http://forums.sonicretro.org/index.php?showtopic=28589
-	*/
+		/*
+		When Bit 5 of YM Register $2C is set to 1, Panning gets affected by the L/R part of the L/R/AMS/FMS reg of these channels:
+		
+		$B4 in Bank 1 of the YM2612 for Channel FM1
+		$B5 in Bank 1 of the YM2612 for Channel FM2
+		$B6 in Bank 1 of the YM2612 for Channel FM3
+		$B4 in Bank 2 of the YM2612 for Channel FM4
+		$B6 in Bank 2 of the YM2612 for Channel FM6
+		http://forums.sonicretro.org/index.php?showtopic=28589
+		*/
     if (pressedButtons & BUTTON_A)
     {
       if(sel == 0)
       { 
-		SND_stopPlay_TFM(); 
-		SND_stopPlay_PCM();             
+				SND_stopPlay_TFM(); 
+				SND_stopPlay_PCM();             
         SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_LEFT, 0);           		
 		
-		/*
-	    YM2612_writeReg(0, 0xb4, 0x80);
-		YM2612_writeReg(0, 0xb5, 0x80);
-		YM2612_writeReg(0, 0xb6, 0x80);
-		YM2612_writeReg(1, 0xb4, 0x80);		
-		YM2612_writeReg(1, 0xb5, 0x80);	
-		YM2612_writeReg(1, 0xb6, 0x80);
-		*/
+				/*
+			    YM2612_writeReg(0, 0xb4, 0x80);
+				YM2612_writeReg(0, 0xb5, 0x80);
+				YM2612_writeReg(0, 0xb6, 0x80);
+				YM2612_writeReg(1, 0xb4, 0x80);		
+				YM2612_writeReg(1, 0xb5, 0x80);	
+				YM2612_writeReg(1, 0xb6, 0x80);
+				*/
       }
-      if(sel == 1)
+     	if(sel == 1)
       {
-		SND_stopPlay_TFM(); 
-		SND_stopPlay_PCM();        
+				SND_stopPlay_TFM(); 
+				SND_stopPlay_PCM();        
         SND_startPlay_TFM(center);
 
-		/*
-		YM2612_writeReg(0, 0xb5, 0xc0);
-		YM2612_writeReg(0, 0xb6, 0xc0);
-		YM2612_writeReg(1, 0xb4, 0xc0);		
-		YM2612_writeReg(1, 0xb5, 0xc0);	
-		YM2612_writeReg(1, 0xb6, 0xc0);
-		*/
+				/*
+				YM2612_writeReg(0, 0xb5, 0xc0);
+				YM2612_writeReg(0, 0xb6, 0xc0);
+				YM2612_writeReg(1, 0xb4, 0xc0);		
+				YM2612_writeReg(1, 0xb5, 0xc0);	
+				YM2612_writeReg(1, 0xb6, 0xc0);
+				*/
       }
       if(sel == 2)
       {
-		SND_stopPlay_TFM(); 
-		SND_stopPlay_PCM();           
-		SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_RIGHT, 0);				
-		/*
-	    YM2612_writeReg(0, 0xb4, 0x40);
-		YM2612_writeReg(0, 0xb5, 0x40);
-		YM2612_writeReg(0, 0xb6, 0x40);
-		YM2612_writeReg(1, 0xb4, 0x40);		
-		YM2612_writeReg(1, 0xb5, 0x40);	
-		YM2612_writeReg(1, 0xb6, 0x40);
-		*/
+				SND_stopPlay_TFM(); 
+				SND_stopPlay_PCM();           
+				SND_startPlay_PCM(beep, len, (u8)16000, SOUND_PAN_RIGHT, 0);				
+				/*
+			    YM2612_writeReg(0, 0xb4, 0x40);
+				YM2612_writeReg(0, 0xb5, 0x40);
+				YM2612_writeReg(0, 0xb6, 0x40);
+				YM2612_writeReg(1, 0xb4, 0x40);		
+				YM2612_writeReg(1, 0xb5, 0x40);	
+				YM2612_writeReg(1, 0xb6, 0x40);
+				*/
       }	  
     }
           
@@ -1246,7 +1420,8 @@ void SoundTest()
 
     VDP_drawTextBG(APLAN, "Space Standart track by Shiru", TILE_ATTR(PAL1, 0, 0, 0), 5, 22);                
 
-    VDP_waitVSync();
+    if(!loadvram)
+    	VDP_waitVSync();
   }  
   SND_stopPlay_PCM();
   SND_stopPlay_TFM();
@@ -1254,33 +1429,41 @@ void SoundTest()
 
 void LEDZoneTest()
 {
-  u16 size, sprite0, sprite1, sprite2, sprite3, sprite4, tmp = 0;
+  u16 size = 0, sprite0 = 0, sprite1 = 0, sprite2 = 0, sprite3 = 0, sprite4 = 0, tmp = 0;
   u16 x = 160, y = 112, exit = 0, sprite = 1, change = 0, draw = 1;
-  u16 buttons, pressedButtons, oldButtons = 0xffff;
+  u16 buttons, pressedButtons, oldButtons = 0xffff, loadvram = 1;
 
-	if(showhelp)
-    DrawHelp(HELP_LED);  
-    
-  VDP_setPalette(PAL1, bw_pal);  
-
-  size = sizeof(size0led_t) / 32; 
-
-  sprite0 = TILE_USERINDEX;   
-  VDP_loadTileData(size0led_t, sprite0, size, USE_DMA);
-  sprite1 = sprite0 + size;  
-  VDP_loadTileData(size1led_t, sprite1, size, USE_DMA);  
-  sprite2 = sprite1 + size;  
-  VDP_loadTileData(size2led_t, sprite2, size, USE_DMA);
-  sprite3 = sprite2 + size;  
-  VDP_loadTileData(size3led_t, sprite3, size, USE_DMA);
-  sprite4 = sprite3 + size;  
-  VDP_loadTileData(size4led_t, sprite4, size, USE_DMA);  
-
-  VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite1, 0);    
-
-  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);              
+	if(joytype != JOY_TYPE_PAD6)
+	{
+		if(showhelp)
+    	DrawHelp(HELP_LED);  
+  }
+      
   while(!exit)
-  {                          
+  { 
+  	if(loadvram)
+  	{
+  		VDP_setPalette(PAL1, bw_pal);  
+
+		  size = sizeof(size0led_t) / 32; 
+		
+		  sprite0 = TILE_USERINDEX;   
+		  VDP_loadTileData(size0led_t, sprite0, size, USE_DMA);
+		  sprite1 = sprite0 + size;  
+		  VDP_loadTileData(size1led_t, sprite1, size, USE_DMA);  
+		  sprite2 = sprite1 + size;  
+		  VDP_loadTileData(size2led_t, sprite2, size, USE_DMA);
+		  sprite3 = sprite2 + size;  
+		  VDP_loadTileData(size3led_t, sprite3, size, USE_DMA);
+		  sprite4 = sprite3 + size;  
+		  VDP_loadTileData(size4led_t, sprite4, size, USE_DMA);  
+		
+		  VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite1, 0);    
+		
+		  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, (pal_240 ? 240 : 224)/8);  
+		  loadvram = 0;            
+  	}              
+  	           
     VDP_setSpritePosition(0, x, y);
     
     buttons = JOY_readJoypad(JOY_1);
@@ -1317,6 +1500,15 @@ void LEDZoneTest()
     if (pressedButtons & BUTTON_START)
       exit = 1;
 
+		if (pressedButtons & BUTTON_Z)
+		{
+			VDP_resetSprites();
+  		VDP_updateSprites();    
+  		
+			DrawHelp(HELP_LED);  
+			loadvram = 1;
+		}
+		
     if (pressedButtons & BUTTON_A)
     {          
       if(sprite == 0)
@@ -1376,7 +1568,8 @@ void LEDZoneTest()
     }
 
     VDP_updateSprites();
-    VDP_waitVSync();
+    if(!loadvram)
+    	VDP_waitVSync();
   }
 
   VDP_resetSprites();
@@ -1386,86 +1579,94 @@ void LEDZoneTest()
 void PassiveLagTest()
 {  
   u16 frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, bgcol = PAL2;
-  u16 exit = 0, color = 0;
+  u16 exit = 0, color = 0, loadvram = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;  
-  u16 numbers[11], size, lsd, msd, pause = 0, circle, cposx = 32, cposy = 17, solid;
+  u16 numbers[11], size, lsd, msd, pause = 0, circle = 0, cposx = 32, cposy = 17, solid;
   
-  if(showhelp)
-    DrawHelp(HELP_LAG);  
-    
-  VDP_setPalette(PAL1, btw_pal);
-  VDP_setPalette(PAL2, btw_pal);
-  VDP_setPalette(PAL3, bw_pal);
-
-  numbers[0] = TILE_USERINDEX; 
-  size = sizeof(tiles_0) / 32; 
-
-  VDP_loadTileData(tiles_0, numbers[0], size, USE_DMA); 
-  numbers[1] = numbers[0] + size;  
-  VDP_loadTileData(tiles_1, numbers[1], size, USE_DMA); 
-  numbers[2] = numbers[1] + size;  
-  VDP_loadTileData(tiles_2, numbers[2], size, USE_DMA); 
-  numbers[3] = numbers[2] + size;  
-  VDP_loadTileData(tiles_3, numbers[3], size, USE_DMA); 
-  numbers[4] = numbers[3] + size;  
-  VDP_loadTileData(tiles_4, numbers[4], size, USE_DMA); 
-  numbers[5] = numbers[4] + size;  
-  VDP_loadTileData(tiles_5, numbers[5], size, USE_DMA); 
-  numbers[6] = numbers[5] + size;  
-  VDP_loadTileData(tiles_6, numbers[6], size, USE_DMA); 
-  numbers[7] = numbers[6] + size;  
-  VDP_loadTileData(tiles_7, numbers[7], size, USE_DMA); 
-  numbers[8] = numbers[7] + size;  
-  VDP_loadTileData(tiles_8, numbers[8], size, USE_DMA); 
-  numbers[9] = numbers[8] + size;  
-  VDP_loadTileData(tiles_9, numbers[9], size, USE_DMA); 
-  numbers[10] = numbers[9] + size;  
-  VDP_loadTileData(tiles_c, numbers[10], size, USE_DMA); 
-
-  circle = numbers[10] + size;
-  size = sizeof(circle56_tiles) / 32; 
-  VDP_loadTileData(circle56_tiles, circle, size, USE_DMA); 
-
-  solid = circle + size;
-  size = sizeof(solidw_tiles) / 32; 
-  VDP_loadTileData(solidw_tiles, solid, size, USE_DMA);   
-    
-  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);   
-  VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);   
-  
-  VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + solid, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
-
-  VDP_drawTextBG(APLAN, "hours", TILE_ATTR(PAL1, 0, 0, 0), 4, 1);
-  VDP_drawTextBG(APLAN, "minutes", TILE_ATTR(PAL1, 0, 0, 0), 13, 1);
-  VDP_drawTextBG(APLAN, "seconds", TILE_ATTR(PAL1, 0, 0, 0), 22, 1);
-  VDP_drawTextBG(APLAN, "frames", TILE_ATTR(PAL1, 0, 0, 0), 31, 1);
-
-  // Draw Frame divisor numbers
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[1], 4, 10, 3, 5);  
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[2], 14, 10, 3, 5);  
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[3], 24, 10, 3, 5);  
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[4], 34, 10, 3, 5);  
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[5], 4, 18, 3, 5);  
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[6], 14, 18, 3, 5);  
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[7], 24, 18, 3, 5);  
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[8], 34, 18, 3, 5);  
-
-  // Draw counter separators
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 10, 2, 3, 5);  
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 19, 2, 3, 5);  
-  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 28, 2, 3, 5);  
-
-  //Draw initial circles
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 9, 7, 7);  
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 9, 7, 7);  
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 9, 7, 7);  
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 32, 9, 7, 7);  
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 17, 7, 7);  
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 17, 7, 7);  
-  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 17, 7, 7);    
-
+  if(joytype != JOY_TYPE_PAD6)
+	{
+  	if(showhelp)
+    	DrawHelp(HELP_LAG);  
+  }
+      
   while(!exit)
-  {             
+  {   
+  	if(loadvram)
+  	{
+  		VDP_setPalette(PAL1, btw_pal);
+		  VDP_setPalette(PAL2, btw_pal);
+		  VDP_setPalette(PAL3, bw_pal);
+		
+		  numbers[0] = TILE_USERINDEX; 
+		  size = sizeof(tiles_0) / 32; 
+		
+		  VDP_loadTileData(tiles_0, numbers[0], size, USE_DMA); 
+		  numbers[1] = numbers[0] + size;  
+		  VDP_loadTileData(tiles_1, numbers[1], size, USE_DMA); 
+		  numbers[2] = numbers[1] + size;  
+		  VDP_loadTileData(tiles_2, numbers[2], size, USE_DMA); 
+		  numbers[3] = numbers[2] + size;  
+		  VDP_loadTileData(tiles_3, numbers[3], size, USE_DMA); 
+		  numbers[4] = numbers[3] + size;  
+		  VDP_loadTileData(tiles_4, numbers[4], size, USE_DMA); 
+		  numbers[5] = numbers[4] + size;  
+		  VDP_loadTileData(tiles_5, numbers[5], size, USE_DMA); 
+		  numbers[6] = numbers[5] + size;  
+		  VDP_loadTileData(tiles_6, numbers[6], size, USE_DMA); 
+		  numbers[7] = numbers[6] + size;  
+		  VDP_loadTileData(tiles_7, numbers[7], size, USE_DMA); 
+		  numbers[8] = numbers[7] + size;  
+		  VDP_loadTileData(tiles_8, numbers[8], size, USE_DMA); 
+		  numbers[9] = numbers[8] + size;  
+		  VDP_loadTileData(tiles_9, numbers[9], size, USE_DMA); 
+		  numbers[10] = numbers[9] + size;  
+		  VDP_loadTileData(tiles_c, numbers[10], size, USE_DMA); 
+		
+		  circle = numbers[10] + size;
+		  size = sizeof(circle56_tiles) / 32; 
+		  VDP_loadTileData(circle56_tiles, circle, size, USE_DMA); 
+		
+		  solid = circle + size;
+		  size = sizeof(solidw_tiles) / 32; 
+		  VDP_loadTileData(solidw_tiles, solid, size, USE_DMA);   
+		    
+		  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);   
+		  VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);   
+		  
+		  VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + solid, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
+		
+		  VDP_drawTextBG(APLAN, "hours", TILE_ATTR(PAL1, 0, 0, 0), 4, 1);
+		  VDP_drawTextBG(APLAN, "minutes", TILE_ATTR(PAL1, 0, 0, 0), 13, 1);
+		  VDP_drawTextBG(APLAN, "seconds", TILE_ATTR(PAL1, 0, 0, 0), 22, 1);
+		  VDP_drawTextBG(APLAN, "frames", TILE_ATTR(PAL1, 0, 0, 0), 31, 1);
+		
+		  // Draw Frame divisor numbers
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[1], 4, 10, 3, 5);  
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[2], 14, 10, 3, 5);  
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[3], 24, 10, 3, 5);  
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[4], 34, 10, 3, 5);  
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[5], 4, 18, 3, 5);  
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[6], 14, 18, 3, 5);  
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[7], 24, 18, 3, 5);  
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[8], 34, 18, 3, 5);  
+		
+		  // Draw counter separators
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 10, 2, 3, 5);  
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 19, 2, 3, 5);  
+		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 28, 2, 3, 5);  
+		
+		  //Draw initial circles
+		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 9, 7, 7);  
+		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 9, 7, 7);  
+		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 9, 7, 7);  
+		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 32, 9, 7, 7);  
+		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 17, 7, 7);  
+		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 17, 7, 7);  
+		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 17, 7, 7); 
+		  
+		  loadvram = 0;   
+  	}
+  	          
     if(framecnt > 8)
       framecnt = 1;
       
@@ -1557,6 +1758,12 @@ void PassiveLagTest()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
+		if (pressedButtons & BUTTON_Z)
+		{		
+			DrawHelp(HELP_LAG);  
+			loadvram = 1;
+		}
+		
     if (pressedButtons & BUTTON_A)
       pause = !pause;
 
@@ -1596,7 +1803,8 @@ void PassiveLagTest()
       frames ++;
       framecnt ++;
     }
-    VDP_waitVSync();
+    if(!loadvram)
+    	VDP_waitVSync();
   }
 }
 
