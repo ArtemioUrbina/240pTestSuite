@@ -1,7 +1,7 @@
 TARGET = main
 
 #optional -DUSE_FFTW -DSERIAL
-OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DUSE_FFTW -DSERIAL
+OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DUSE_FFTW 
 
 KOS_CFLAGS+= $(OPTFLAGS) 
 
@@ -18,6 +18,7 @@ include $(KOS_BASE)/Makefile.rules
             vmodes.c \
             vmu_print.c \
             controller.c \
+            vmufs.c \
             vmu.c \
             menu.c \
 

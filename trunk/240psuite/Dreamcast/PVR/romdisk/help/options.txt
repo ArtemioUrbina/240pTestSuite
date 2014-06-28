@@ -36,5 +36,9 @@
     or EVEN or ODD scanline display in 480p line
     doubled mode.
 
+#GSave Options to VMU:#G Saves current options to
+    VMU. They are auto loaded at start if a save
+    is found. Save requires 2 free blocks.
+
 Holding #GL#G and #GR#G buttons while in the options menu
 will reset all options to their defaults.

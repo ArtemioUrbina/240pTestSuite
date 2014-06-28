@@ -61,6 +61,7 @@ void LoadScanlines();
 inline void ReleaseScanlines();
 inline void DrawScanlines();
 double GetScanlineIntensity();
+void SetScanlineIntensity();
 int ScanlinesEven();
 void LowerScanlineIntensity();
 void RaiseScanlineIntensity();

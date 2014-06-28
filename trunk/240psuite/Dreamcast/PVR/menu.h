@@ -22,8 +22,10 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include "image.h"
+
 #define VERSION_NUMBER "Dreamcast Ver. 1.20"
-#define VERSION_DATE "20/06/2014"
+#define VERSION_DATE "27/06/2014"
 
 #define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7};
 

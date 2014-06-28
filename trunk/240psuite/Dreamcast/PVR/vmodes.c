@@ -31,6 +31,7 @@ vid_mode_t custom_vga =
 };
 
 /* 320x240 NTSC 60Hz */
+// oputputs PAL 60 when using composite in Euro Flash ROM
 vid_mode_t custom_240 = 
     /* DM_320x240_NTSC */
 {
@@ -160,6 +161,12 @@ double GetScanlineIntensity()
 		return((double)scanlines->alpha*100);
 	else
 		return 0;
+}
+
+void SetScanlineIntensity(double value)
+{
+	if(scanlines)
+		scanlines->alpha = value/100;
 }
 
 inline void DrawScanlines()
@@ -586,16 +593,16 @@ void Set576iLine23Option(uint8 set)
 	switch(set)
 	{
 		case PAL_LINE23:
-			custom_288.bitmapy = 22;
-			custom_576.bitmapy = 21;
+			custom_288.bitmapy = 22; // starts at 23
+			custom_576.bitmapy = 21; // starts at 23
 			break;
 		case PAL_CENTERED:
-			custom_288.bitmapy = 36;   // starts in 
-			custom_576.bitmapy = 45;   // starts in 
+			custom_288.bitmapy = 36; // starts in 37
+			custom_576.bitmapy = 45; // starts in 47
 			break;
 		case PAL_BOTTOM:
-			custom_288.bitmapy = 49; // starts in 
-			custom_576.bitmapy = 69; // starts in 
+			custom_288.bitmapy = 49; // starts in 47
+			custom_576.bitmapy = 69; // starts in 71
 			break;
 	}
 
