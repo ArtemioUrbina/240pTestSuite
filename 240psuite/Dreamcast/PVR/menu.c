@@ -33,6 +33,7 @@
 #include "font.h"
 #include "help.h"
 #include "vmu.h"
+#include "vmufs.h"
 
 //#define BENCHMARK 
 
@@ -324,7 +325,7 @@ void DrawShowMenu()
 				"Credits"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
 				"Close Menu"); y += 2* fh; c++;			
-		DrawStringS(x, y, r-0.4, sel == c ? 0 : g,	sel == c ? 0 : b,
+		DrawStringS(x, y, r-0.2, sel == c ? 0 : g,	sel == c ? 0 : b,
 				"Exit 240p Suite"); y += 3* fh; 		
 		
 		EndScene();		
@@ -396,7 +397,7 @@ void DrawShowMenu()
 
 void ChangeOptions(ImagePtr screen)
 {	
-	int 		sel = 1, close = 0, region;	
+	int 		sel = 1, close = 0, region, saved = -1;	
 	ImagePtr	back;
 	
 	back = LoadKMG("/rd/help.kmg.gz", 0);
@@ -420,6 +421,7 @@ void ChangeOptions(ImagePtr screen)
 		char	intensity[80];
 		int	changedPVR = 0;
 		controller      *st;
+		maple_device_t *dev;
 				
 		StartScene();
 		        
@@ -537,7 +539,36 @@ void ChangeOptions(ImagePtr screen)
 				"Scanlines"); y += fh; c++;	
 		}
 		
-		DrawStringS(x, y + 2* fh, r-0.4, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		dev = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
+		if(dev)
+		{
+			char *msg;
+
+			switch(saved)
+			{
+				case 1:
+					msg = "#GOptions saved to VMU#G";
+					break;
+				case 0:
+					msg = "#RSave to VMU failed#R";
+					break;
+				default:
+				case -1:
+					msg = "Save Options to VMU";
+					break;
+			}
+
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+					msg); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+					"Save Options to VMU"); y += fh; c++;
+			saved = -1;
+		}
+
+		DrawStringS(x, y + 2* fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
 		r = g = b = 0.8;
 		if(vmode == VIDEO_480P_SL && sel == 5)	
@@ -558,6 +589,8 @@ void ChangeOptions(ImagePtr screen)
 		    sel --;
 		    if(sel < 1)
 			    sel = c;		
+                    if(saved != -1 && sel == 7)
+			sel = 6;
 	    	}
 	    
 	    	if ( pressed & CONT_DPAD_DOWN )
@@ -565,6 +598,8 @@ void ChangeOptions(ImagePtr screen)
 		    sel ++;
 		    if(sel > c)
 			    sel = 1;	
+                    if(saved != -1 && sel == 7)
+			sel = 8;
 	    	}			
 
 		if ( pressed & CONT_RTRIGGER && sel == 5)
@@ -630,6 +665,16 @@ void ChangeOptions(ImagePtr screen)
 							ToggleScanlineEvenOdd();
 						break;
 					case 7:
+						if(dev && saved != 1)
+						{
+							int icon = 1;
+
+							if ( st && st->buttons & CONT_Y )
+								icon = 0;
+							saved = writevmu(icon);
+						}
+						break;
+					case 8:
 						if ( st && st->buttons & CONT_Y )
 						{
 							settings.drawborder = !settings.drawborder;
@@ -725,7 +770,7 @@ void ChangePALBackgroundColor(ImagePtr title)
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, color); y += fh; c++;
 		sprintf(color, "Blue:   %0.2f", (double)settings.PalBackB);
 		DrawStringS(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, color); y += fh; c++;
-		DrawStringS(x, y + fh, r-0.4, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Options Menu");
+		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Options Menu");
 
 		DrawStringS(x-40, y + 6*fh, r-0.4, g-0.4, b-0.4, "The background color is used to fill the screen");
 		DrawStringS(x-40, y + 7*fh, r-0.4, g-0.4, b-0.4, "to the selected PAL resolution when needed");
@@ -910,7 +955,7 @@ void SelectVideoMode(ImagePtr screen)
 				"480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
 		}	
 			
-		DrawStringS(x, y + fh, r-0.4, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
 		r = g = b = 0.8;
 

@@ -28,6 +28,7 @@
 #include "font.h"
 #include "vmodes.h"
 #include "vmu.h"
+#include "vmufs.h"
 
 #include "controller.h"
 #include "tests.h"
@@ -56,11 +57,6 @@ int main(void)
 
 	vcable = vid_check_cable();
 	region = flashrom_get_region();
-	if(region == FLASHROM_REGION_EUROPE)
-	{
-		settings.EnablePAL = 1;
-		IsPALDC = 1;
-	}
 
 	InitImages();
 
@@ -71,6 +67,22 @@ int main(void)
 
 	LoadFont();
 	LoadScanlines();
+
+	if(!readvmu())
+	{
+		if(region == FLASHROM_REGION_EUROPE)
+		{
+			settings.EnablePAL = 1;
+			IsPALDC = 1;
+		}
+	}
+	else
+	{
+		if(region == FLASHROM_REGION_EUROPE)
+			IsPALDC = 1;
+		else
+			settings.EnablePAL = 0;
+	}
 
 	title = LoadKMG("/rd/back.kmg.gz", 0);
 	sd = LoadKMG("/rd/SD.kmg.gz", 0);
@@ -148,16 +160,18 @@ int main(void)
 
 		res[0] = '\0';
 		GetVideoModeStr(res, 0);
-		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); 
+		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
+		DrawStringS(x, y, r-0.2, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
+		DrawStringS(x, y, r-0.2, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); 
 
 #ifdef SERIAL
+		/*
 		//if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)
 		{
 			c++;
 			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video Settings"); 
 		}    
+		*/
 #endif
 
 		r = 0.8f;
@@ -360,7 +374,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;
-		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
+		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		r = 0.8f;
 		g = 0.8f;
