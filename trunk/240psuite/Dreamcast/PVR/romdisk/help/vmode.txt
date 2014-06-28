@@ -66,7 +66,7 @@ in interlaced mode, of which only 576 are visible,
 
 The #GDC#G cannot use the whole 288 lines as active
 video, instead it can draw 264 lines in 288p mode
-and only 240 lines when in 576i mode. In order to
+and only 480 lines when in 576i mode. In order to
 help overcome this limitation, the 240p suite adds
 several options for evaluation of PAL modes. 
 
@@ -120,7 +120,7 @@ field, as the PAL standard determines.
     As a result, most screens end up filling 1/4th
     of the screen in 1:1 pixel mode. However, 
     there are several patterns in 480 resolution
-    that fill the active vide area, such as the
+    that fill the active video area, such as the
     grid, scroll and overscan.
 
 
