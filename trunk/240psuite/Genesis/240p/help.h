@@ -46,7 +46,7 @@
 #define HELP_LED				23
 #define HELP_LAG				24
 
-extern u16	showhelp;
+extern u8	showhelp;
 
 void DrawHelp(int option);
 void CleanOrShowHelp(int option);

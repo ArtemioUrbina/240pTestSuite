@@ -25,7 +25,7 @@
 #include "myvdp.h"
 #include "main.h"
 
-u16  showhelp = 0;
+u8  showhelp = 0;
 
 void CleanOrShowHelp(int option)
 {
@@ -510,7 +510,7 @@ void DrawHelp(int option)
 		      y++;
 		      VDP_drawTextBG(APLAN, "It can be used to determine if", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
 		      VDP_drawTextBG(APLAN, "the audio chain is working", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-		      VDP_drawTextBG(APLAN, "properly.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		 
+		      VDP_drawTextBG(APLAN, "properly.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		 		 
 		      break;     		      
 		    case HELP_LED:
 		    	switch(page)

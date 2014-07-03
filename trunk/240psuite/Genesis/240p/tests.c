@@ -1347,7 +1347,12 @@ void SoundTest()
     VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 14, 14);
     VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 22, 12);        
 
-    VDP_drawTextBG(APLAN, "Space Standart track by Shiru", TILE_ATTR(PAL1, 0, 0, 0), 5, 22);                
+		VDP_drawTextBG(APLAN, "The Model 1 headphone jack", TILE_ATTR(PAL1, 0, 0, 0), 7, 17);
+		VDP_drawTextBG(APLAN, "channels are inverted when", TILE_ATTR(PAL1, 0, 0, 0), 7, 18);
+		VDP_drawTextBG(APLAN, "compared against all the", TILE_ATTR(PAL1, 0, 0, 0), 7, 19);		 
+		VDP_drawTextBG(APLAN, "later hardware revisions.", TILE_ATTR(PAL1, 0, 0, 0), 7, 20);		 			
+		
+    VDP_drawTextBG(APLAN, "Space Standart track by Shiru", TILE_ATTR(PAL0, 0, 0, 0), 5, 22);
 
     VDP_waitVSync();
   }  

@@ -30,7 +30,7 @@ const struct
     0x0000,
     "JD              ",
     0x00000000,
-    0x00100000,
+    0x0003FFFF,
     0x00FF0000,
     0x00FFFFFF,
     "  ",
