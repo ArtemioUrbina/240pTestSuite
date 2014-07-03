@@ -855,8 +855,8 @@ void DrawColorTilesAtInv(u16 plan, u16 pal, u16 x, u16 y, u16 tiles, u16 w, u16 
     VDP_fillTileMapRect(plan, TILE_ATTR_FULL(pal, 1, 0, 0, 6) + tiles, x+w*0, y, w, h);     
 }
 
-u32 tile_l[8], tile_r[8], tile_t[8], tile_b[8];
-u32 tile_lb[8], tile_lt[8], tile_rt[8], tile_rb[8];
+u32 *tile_l, *tile_r, *tile_t, *tile_b;
+u32 *tile_lb, *tile_lt, *tile_rt, *tile_rb;
 
 void CleanTile(u32 *array)
 {
@@ -937,6 +937,8 @@ void FillTiles(u16 vram, int left, int right, int top, int bottom)
 
 void DrawOverscan()
 {
+	u32 _tile_l[8], _tile_r[8], _tile_t[8], _tile_b[8];
+	u32 _tile_lb[8], _tile_lt[8], _tile_rt[8], _tile_rb[8];
 	const u32 back[8] =	{	0x44444444, 0x44444444, 0x44444444, 0x44444444,
 												0x44444444, 0x44444444, 0x44444444, 0x44444444 };
 	const u32 white[8] =	{	0x77777777, 0x77777777, 0x77777777, 0x77777777,
@@ -945,6 +947,15 @@ void DrawOverscan()
 	int		left = 0, right = 0, top = 0, bottom = 0, exit = 0; 
 	u16 	buttons, oldButtons = 0xffff, pressedButtons, redraw = 1;
 	int		sel = 0, maxtiles = 0, loadvram = 1;
+	
+	tile_l = _tile_l;
+	tile_r = _tile_r;
+	tile_t = _tile_t;
+	tile_b = _tile_b;
+	tile_lb = _tile_lb;
+	tile_lt = _tile_lt;
+	tile_rt = _tile_rt;
+	tile_rb = _tile_rb;
 	
 	CleanOrShowHelp(HELP_OVERSCAN);  			
 	
