@@ -17,11 +17,8 @@ int main(void)
 {
 	u16 sel = 0, redraw = 1;
 	u16 pad0, oldpad = 0xffff, pressed;
-	
-    // Initialize SNES 
-	consoleInit();
-	
-	// Initialize text console with our font
+	    
+	consoleInit();	
 	consoleInitText(0, 1, &font);		
 	
 	// Main loop
@@ -52,8 +49,7 @@ int main(void)
 			oamSet(0, 10, 10, 3, 0, 0, 0, 2);
 			oamSetEx(0, OBJ_LARGE, OBJ_SHOW);
 			*/
-			
-			// Now Put in 16 color mode and disable other BGs 
+						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);		
 			
@@ -94,22 +90,17 @@ int main(void)
 
 void DrawGrid(void) 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;
-	 
-	// Copy tiles to VRAM
-	bgInitTileSet(1, &grid_tiles, &grid_pal, 0, (&grid_tiles_end - &grid_tiles), 16*2, BG_16COLORS, 0x4000);
-
-	// Copy Map to VRAM
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	
+	bgInitTileSet(1, &grid_tiles, &grid_pal, 0, (&grid_tiles_end - &grid_tiles), 16*2, BG_16COLORS, 0x4000);	
 	bgInitMapSet(1, &grid_map, (&grid_map_end - &grid_map), SC_32x32, 0x1000);
-
-	// Now Put in 16 color mode and disable other BGs 
+	
 	setMode(BG_MODE1,0); 
 	bgSetDisable(0);		
 	bgSetDisable(2);
 	
 	bgSetScroll(1, 0, -1);
-	
-	// Main loop
+		
 	while(!end) 
 	{		
 		scanPads();
@@ -119,7 +110,7 @@ void DrawGrid(void)
 		oldpad = pad0;
 		
 					
-		if(pressed == KEY_START)				
+		if(pressed == KEY_A)				
 			end = 1;		
 				
 		
