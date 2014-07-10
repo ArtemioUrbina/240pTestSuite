@@ -35,7 +35,7 @@ extern u32 back_tiles[3232/4];
 extern u16 back_pal[16]; 
 extern u16 back_map[2240/2]; 
 
-extern u32 gillian_tiles[4032/4]; 
+extern u32 gillian_tiles[2912/4]; 
 extern u16 gillian_pal[16]; 
 
 // Font

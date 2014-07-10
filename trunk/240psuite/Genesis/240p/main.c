@@ -86,7 +86,7 @@ int main()
       VDP_loadTileData(gillian_tiles, ind, size, USE_DMA); 
 
       VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320/8, 224/8);    
-      VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 200/8, 80/8, 72/8, 112/8);      
+      VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 216/8, 80/8, 56/8, 104/8);      
       reload = 0;
     }   
 
