@@ -14,6 +14,21 @@
 //---------------------------------------------------------------------------------
 void DrawGrid();
 
+/*
+copy buffer via DMA, bit 10 is the palette
+void fontPrint(u8 palt,u8 x, u8 y, char *str) 
+{
+	pgfx=str;
+	for (bclig=0;*pgfx != 0;bclig++) 
+	{
+		bclig1=*(pgfx++);
+		if (bclig1 == 'x') 
+			bclig1=27+32;
+		buffer[x+bclig+y*32]= (bclig1-32) | (palt<<10);
+	}
+}
+*/
+
 void Set240pMode()
 {
 	REG_SETINI |= 0x04;
@@ -22,19 +37,6 @@ void Set240pMode()
 void Set224pMode()
 {
 	REG_SETINI = 0;
-}
-
-void LoadPalette(u8 bgNumber, u8 *tilePalette, u8 paletteEntry, u16 paletteSize, u16 colorMode) 
-{
-	u16 palEntry;
-	
-	// If mode 0, compute palette entry with separate subpalettes in entries 0-31, 32-63, 64-95, and 96-127
-	if (colorMode == BG_4COLORS0)
-		palEntry = bgNumber*32 + paletteEntry*BG_4COLORS;
-	else
-		palEntry = paletteEntry*colorMode;			
-	
-  	dmaCopyCGram(tilePalette, palEntry, paletteSize);
 }
 
 //---------------------------------------------------------------------------------
@@ -46,7 +48,7 @@ int main(void)
 	setBrightness(0);
 	
 	consoleInit();	
-	consoleInitText(0, 1, &font);	
+	consoleInitText(2, 0, &font);	
 
 	// Main loop
 	while(1) 
@@ -55,35 +57,30 @@ int main(void)
 		
 		if(redraw)
 		{
-			u16 vrampos = 0x4000, size = 0, mappos = 0x1000;				
+			u16 size = 0;
 					
 			setBrightness(0);	
-			
+						
 			size = (&back_tiles_end - &back_tiles);
-			bgInitTileSet(1, &back_tiles, &back_pal, 0, size, 16*2, BG_16COLORS, vrampos);
-			vrampos += size;			
+			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x5000);				
+			
+			size = (&gillian_tiles_end - &gillian_tiles);
+			bgInitTileSet(0, &gillian_tiles, &gillian_pal, 2, size, 16*2, BG_16COLORS, 0x4000);
 			
 			size = (&back_map_end - &back_map);
-			bgInitMapSet(1, &back_map, size, SC_32x32, mappos);
-			mappos += size;			
-			
-			consoleDrawText(4, 6, "Grid");
-			consoleDrawText(4, 7, "Horizontal stripes");	
-			
-			/*
-			size = (&gillian_tiles_end - &gillian_tiles);
-			bgInitTileSet(2, &gillian_tiles, &gillian_pal, 2, size, 16*2, BG_16COLORS, vrampos);
-			vrampos += size;			
+			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_map_end - &gillian_map);
-			bgInitMapSet(2, &gillian_map, size, SC_32x32, mappos);
-			mappos += size;			
-			*/
+			bgInitMapSet(0, &gillian_map, size, SC_32x32, 0x3000);			
+			
+			consoleDrawText(4, 6, "Grid");
+			//consoleDrawText(4, 7, "Horizontal stripes");	
 						
 			setMode(BG_MODE1,0); 	
-			bgSetDisable(2);		
+			//bgSetDisable(2);		
 			
 			bgSetScroll(1, 0, -1);			
+			bgSetScroll(0, -160, -80);		
 			
 			setBrightness(0xF);
 			WaitForVBlank();						

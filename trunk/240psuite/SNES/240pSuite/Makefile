@@ -63,8 +63,16 @@ clean:
 #---------------------------------------------------------------------------------
 font.pic: font.bmp
 	@echo convert font with no tile reduction ... $(notdir $@)
-	$(GFXCONV) -n -gs8 -po2 -pc16 -pe1 -mR! -m! -p! $<	
-
+	$(GFXCONV) -n -gs8 -po2 -pc16 -pe0 -mR! -m! -p! $<
+	
+gillian.pic: gillian.bmp
+	@echo convert bitmap ... $(notdir $@)
+	$(GFXCONV) -pr -pc16 -n -gs8 -pe2 -fbmp -m $<
+	
+back.pic: back.bmp
+	@echo convert bitmap ... $(notdir $@)
+	$(GFXCONV) -pr -pc16 -n -gs8 -pe1 -fbmp -m $<
+	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic
 
 #---------------------------------------------------------------------------------
