@@ -21,21 +21,6 @@
 
 #include "patterns.h"
 
-/*
-copy buffer via DMA, bit 10 is the palette
-void fontPrint(u8 palt,u8 x, u8 y, char *str) 
-{
-	pgfx=str;
-	for (bclig=0;*pgfx != 0;bclig++) 
-	{
-		bclig1=*(pgfx++);
-		if (bclig1 == 'x') 
-			bclig1=27+32;
-		buffer[x+bclig+y*32]= (bclig1-32) | (palt<<10);
-	}
-}
-*/
-
 int main(void) 
 {
 	u16 sel = 0, redraw = 1;
@@ -44,7 +29,7 @@ int main(void)
 	setBrightness(0);
 	
 	consoleInit();	
-	consoleInitText(2, 0, &font);	
+	consoleInitText(0, 0, &font);	
 
 	// Main loop
 	while(1) 
@@ -58,25 +43,21 @@ int main(void)
 			setBrightness(0);	
 						
 			size = (&back_tiles_end - &back_tiles);
-			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x5000);				
+			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 			
-			size = (&gillian_tiles_end - &gillian_tiles);
-			bgInitTileSet(0, &gillian_tiles, &gillian_pal, 2, size, 16*2, BG_16COLORS, 0x4000);
-			
-			size = (&back_map_end - &back_map);
+			size = (&back_map_end - &back_map);	
 			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
 			
-			size = (&gillian_map_end - &gillian_map);
-			bgInitMapSet(0, &gillian_map, size, SC_32x32, 0x3000);			
+			size = (&gillian_tiles_end-&gillian_tiles);
+			DrawTilesWithSprites(160, 80, 64, 112, &gillian_tiles, size, &gillian_pal);
 			
 			consoleDrawText(4, 6, "Grid");
 			//consoleDrawText(4, 7, "Horizontal stripes");	
 						
 			setMode(BG_MODE1,0); 	
-			//bgSetDisable(2);		
+			bgSetDisable(2);
 			
-			bgSetScroll(1, 0, -1);			
-			bgSetScroll(0, -160, -80);		
+			bgSetScroll(1, 0, -1);						
 			
 			setBrightness(0xF);
 			WaitForVBlank();						
@@ -104,8 +85,10 @@ int main(void)
 			sel = 0;
 			
 		if(pressed == KEY_B)
-		{	
+		{							
 			setFadeEffect(FADE_OUT);		
+			oamClear(0, 0);
+			
 			DrawGrid();
 			redraw = 1;
 		}

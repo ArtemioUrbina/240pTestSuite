@@ -46,10 +46,6 @@ back_pal:
 .incbin "back.pal"
 back_pal_end:
 
-gillian_map:
-.incbin "gillian.map"
-gillian_map_end:
-
 grid_map:
 .incbin "grid.map"
 grid_map_end:
