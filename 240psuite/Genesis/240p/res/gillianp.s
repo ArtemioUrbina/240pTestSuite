@@ -8,8 +8,8 @@ gillian_pal:
 * ---------------------------
 	dc.w 0x0666
 	dc.w 0x0fff
-	dc.w 0x0222
-	dc.w 0x0224
+	dc.w 0x0fb4
+	dc.w 0x0d40
 	dc.w 0x0bdf
 	dc.w 0x069d
 	dc.w 0x049b
