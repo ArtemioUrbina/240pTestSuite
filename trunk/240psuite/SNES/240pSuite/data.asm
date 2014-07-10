@@ -29,9 +29,17 @@ grid_map:
 .incbin "grid.map"
 grid_map_end:
 
+grid240_map:
+.incbin "grid240.map"
+grid240_map_end:
+
 grid_pal:
 .incbin "grid.pal"
 grid_pal_end:
+
+gillian_map:
+.incbin "gillian.map"
+gillian_map_end:
 
 gillian_pal:
 .incbin "gillian.pal"
