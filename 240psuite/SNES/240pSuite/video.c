@@ -19,18 +19,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-extern char back_tiles, back_tiles_end;
-extern char back_pal, back_pal_end;
-extern char back_map, back_map_end;
+#include "video.h"
 
-extern char gillian_tiles, gillian_tiles_end;
-extern char gillian_pal, gillian_pal_end;
-extern char gillian_map, gillian_map_end;
+#define REG_SETINI (*(vuint8*)0x2133)
 
-extern char grid_tiles, grid_tiles_end;
-extern char grid_pal, grid_pal_end;
-extern char grid_map, grid_map_end;
+void Set240pMode()
+{
+	REG_SETINI |= 0x04;
+}
 
-extern char grid240_map, grid240_map_end;
-
-extern char font;
+void Set224pMode()
+{
+	REG_SETINI = 0;
+}
