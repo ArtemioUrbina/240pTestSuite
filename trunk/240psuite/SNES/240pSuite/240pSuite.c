@@ -20,22 +20,22 @@
  */
 
 #include "patterns.h"
+#include "font.h"
 
 int main(void) 
 {
-	u16 sel = 0, redraw = 1;
+	u16 redraw = 1, change = 0;
 	u16 pad0, oldpad = 0xffff, pressed;
+	int sel = 0;
 	    
 	setBrightness(0);
 	
 	consoleInit();	
-	consoleInitText(0, 0, &font);	
+	consoleInitText(0, 7, &font);	
 
 	// Main loop
 	while(1) 
 	{
-		u16 change = 0;				
-		
 		if(redraw)
 		{
 			u16 size = 0;
@@ -49,10 +49,7 @@ int main(void)
 			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
-			DrawTilesWithSprites(160, 80, 64, 112, &gillian_tiles, size, &gillian_pal);
-			
-			consoleDrawText(4, 6, "Grid");
-			//consoleDrawText(4, 7, "Horizontal stripes");	
+			DrawTilesWithSprites(170, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -60,9 +57,32 @@ int main(void)
 			bgSetScroll(1, 0, -1);						
 			
 			setBrightness(0xF);
-			WaitForVBlank();						
+			WaitForVBlank();
 			redraw = 0;
+			change = 1;
 		}			
+		
+		if(change)
+		{
+			u16 pos = 7;
+			
+			setPaletteColor(0x71, RGB5(31, 31, 31));
+			setPaletteColor(0x61, RGB5(31, 0, 0));
+			
+			drawText(4, pos, sel == 0 ? 6 : 7, "Test Patterns"); pos ++;
+			drawText(4, pos, sel == 1 ? 6 : 7, "Drop Shadow Test"); pos ++;
+			drawText(4, pos, sel == 2 ? 6 : 7, "Lag Test"); pos ++;
+			drawText(4, pos, sel == 3 ? 6 : 7, "Manual Lag Test"); pos ++;
+			drawText(4, pos, sel == 4 ? 6 : 7, "Scroll Test"); pos ++;
+			drawText(4, pos, sel == 5 ? 6 : 7, "Grid Scroll Test"); pos ++;
+			drawText(4, pos, sel == 6 ? 6 : 7, "Horizontal Stripes"); pos ++;
+			drawText(4, pos, sel == 7 ? 6 : 7, "Checkerboard"); pos ++;
+			drawText(4, pos, sel == 8 ? 6 : 7, "Backlit Zone Test"); pos ++;
+			drawText(4, pos, sel == 9 ? 6 : 7, "Sound Test"); pos ++;
+			drawText(4, pos, sel == 10 ? 6 : 7, "Help"); pos += 2;	
+			drawText(4, pos, sel == 11 ? 6 : 7, "Credits"); 
+			change = 0;			
+		}
 		
 		scanPads();
 		pad0 = padsCurrent(0);
@@ -81,7 +101,10 @@ int main(void)
 			change = 1;		
 		}	
 
-		if(sel != 0)
+		if(sel < 0)
+			sel = 11;
+			
+		if(sel > 11)
 			sel = 0;
 			
 		if(pressed == KEY_B)
