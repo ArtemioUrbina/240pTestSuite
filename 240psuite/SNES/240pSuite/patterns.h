@@ -29,3 +29,4 @@ void DrawColorBars();
 void Drawcircles();
 void DrawPluge();
 void DrawGrayRamp();
+void DrawColorBleed();

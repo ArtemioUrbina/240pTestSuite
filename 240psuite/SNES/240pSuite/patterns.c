@@ -209,7 +209,7 @@ void Drawcircles()
 
 void DrawPluge() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0, grid = 0;
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;
 	u16 redraw = 1;
 	
 	bgInitTileSet(1, &pluge_tiles, &pluge_pal, 0, (&pluge_tiles_end - &pluge_tiles), 16*2, BG_16COLORS, 0x4000);	
@@ -237,8 +237,8 @@ void DrawPluge()
 		oldpad = pad0;
 		
 		if(pressed == KEY_A)
-			end = 1;				
-		
+			end = 1;		
+
 		WaitForVBlank();
 	}	
 	setFadeEffect(FADE_OUT);	
@@ -278,6 +278,56 @@ void DrawGrayRamp(void)
 		
 		if(pressed == KEY_A)
 			end = 1;		
+		
+		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
+}
+
+void DrawColorBleed() 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0, toggle = 0;
+	u16 redraw = 1;
+	
+	bgInitTileSet(1, &colorbleed_tiles, &colorbleed_pal, 0, (&colorbleed_tiles_end - &colorbleed_tiles), 16*2, BG_16COLORS, 0x4000);	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			bgInitMapSet(1, &colorbleed_map, (&colorbleed_map_end - &colorbleed_map), SC_32x32, 0x1000);
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(0);		
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_A)
+			end = 1;		
+
+		if(pressed == KEY_B)
+		{
+			toggle = !toggle;
+			if(toggle)
+				bgInitTileSet(1, &colorbleedchk_tiles, &colorbleed_pal, 0, (&colorbleedchk_tiles_end - &colorbleedchk_tiles), 16*2, BG_16COLORS, 0x4000);	
+			else
+				bgInitTileSet(1, &colorbleed_tiles, &colorbleed_pal, 0, (&colorbleed_tiles_end - &colorbleed_tiles), 16*2, BG_16COLORS, 0x4000);				
+			redraw = 1;
+		}		
+				
 		
 		WaitForVBlank();
 	}	

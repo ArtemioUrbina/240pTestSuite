@@ -57,5 +57,10 @@ extern char grayramp_tiles, grayramp_tiles_end;
 extern char grayramp_pal, grayramp_pal_end;
 extern char grayramp_map, grayramp_map_end;
 
+extern char colorbleed_tiles, colorbleed_tiles_end;
+extern char colorbleedchk_tiles, colorbleedchk_tiles_end;
+extern char colorbleed_pal, colorbleed_pal_end;
+extern char colorbleed_map, colorbleed_map_end;
+
 extern char font;
 

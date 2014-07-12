@@ -43,6 +43,7 @@ motoko_tiles1_end:
 .ends
 
 .section ".rodata2" superfree
+
 back_map:
 .incbin "back.map"
 back_map_end:
@@ -119,6 +120,14 @@ grayramp_pal:
 .incbin "grayramp.pal"
 grayramp_pal_end:
 
+colorbleed_map:
+.incbin "colorbleed.map"
+colorbleed_map_end:
+
+colorbleed_pal:
+.incbin "colorbleed.pal"
+colorbleed_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
@@ -127,7 +136,7 @@ font:
 .incbin "font.pic"
 
 motoko_tiles2:
-.incbin "motoko.pic" skip $6000 read $69C0
+.incbin "motoko.pic" skip $6000
 motoko_tiles2_end:
 
 .ends
@@ -153,5 +162,13 @@ pluge_tiles_end:
 grayramp_tiles:
 .incbin "grayramp.pic"
 grayramp_tiles_end:
+
+colorbleed_tiles:
+.incbin "colorbleed.pic"
+colorbleed_tiles_end:
+
+colorbleedchk_tiles:
+.incbin "colorbleedchk.pic"
+colorbleedchk_tiles_end:
 
 .ends
