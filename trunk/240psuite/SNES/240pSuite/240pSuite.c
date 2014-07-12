@@ -235,6 +235,12 @@ void TestPatterns(void)
 			
 			switch(sel)
 			{
+				case 1:
+					DrawColorBars();
+					break;
+				case 2:
+					DrawSMPTE();
+					break;
 				case 5:
 					DrawGrid(0);
 					break;
@@ -262,7 +268,7 @@ void TestPatterns(void)
 
 void DrawCredits(void) 
 {
-	u16 redraw = 1, change = 0,  counter = 1;
+	u16 redraw = 1, counter = 1;
 	u16 pad0, oldpad = 0xffff, pressed;
 	int exit = 0;
 	    	
@@ -271,6 +277,7 @@ void DrawCredits(void)
 		if(redraw)
 		{
 			u16 size = 0;
+			u16 pos = 8;
 					
 			setBrightness(0);	
 			
@@ -285,13 +292,6 @@ void DrawCredits(void)
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);						
-									
-			change = 1;
-		}			
-		
-		if(change)
-		{
-			u16 pos = 8;
 			
 			setPaletteColor(0x71, RGB5(31, 31, 31));
 			setPaletteColor(0x61, RGB5(0, 31, 0));
@@ -316,13 +316,7 @@ void DrawCredits(void)
 			drawText(19, 7, 7, "11/07/2014");
 			 			
 			if(redraw)
-			{
-				redraw = 0;
-				setBrightness(0xF);
-				WaitForVBlank();
-			}
-						
-			change = 0;			
+				redraw = 0;						
 		}
 				
 		if(counter == 1)
@@ -332,7 +326,11 @@ void DrawCredits(void)
 		if(counter == 60*8)
 			drawText(4, 9, 7, "aurbina@junkerhq.net");
 		if(counter == 60*16)
-			counter = 0;	
+			counter = 0;
+
+		setBrightness(0xF);		
+		WaitForVBlank();
+		counter ++;
 		
 		scanPads();
 		pad0 = padsCurrent(0);
@@ -345,9 +343,6 @@ void DrawCredits(void)
 			exit = 1;
 			setFadeEffect(FADE_OUT);				
 		}
-		
-		WaitForVBlank();
-		counter ++;
 	}
 	return 0;
 }

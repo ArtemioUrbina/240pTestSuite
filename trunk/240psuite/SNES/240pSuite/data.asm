@@ -21,6 +21,7 @@
  
 .include "hdr.asm"
 
+/* has only 40 bytes left */
 .section ".rodata1" superfree
 
 back_tiles:
@@ -34,6 +35,10 @@ gillian_tiles_end:
 grid_tiles:
 .incbin "grid.pic"
 grid_tiles_end:
+
+motoko_tiles1:
+.incbin "motoko.pic" read $6000
+motoko_tiles1_end:
 
 .ends
 
@@ -70,6 +75,26 @@ motoko_pal:
 .incbin "motoko.pal"
 motoko_pal_end:
 
+SMPTECB75_map:
+.incbin "SMPTECB75.map"
+SMPTECB75_map_end:
+
+SMPTECB75_pal:
+.incbin "SMPTECB75.pal"
+SMPTECB75_pal_end:
+
+SMPTECB100_pal:
+.incbin "SMPTECB100.pal"
+SMPTECB100_pal_end:
+
+color_map:
+.incbin "color.map"
+color_map_end:
+
+color_pal:
+.incbin "color.pal"
+color_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
@@ -77,16 +102,20 @@ motoko_pal_end:
 font:
 .incbin "font.pic"
 
-motoko_tiles1:
-.incbin "motoko.pic" read $6000
-motoko_tiles1_end:
+motoko_tiles2:
+.incbin "motoko.pic" skip $6000 read $7040
+motoko_tiles2_end:
 
 .ends
 
 .section ".rodata4" superfree
 
-motoko_tiles2:
-.incbin "motoko.pic" skip $6000 read $7040
-motoko_tiles2_end:
+SMPTECB75_tiles:
+.incbin "SMPTECB75.pic"
+SMPTECB75_tiles_end:
+
+color_tiles:
+.incbin "color.pic"
+color_tiles_end:
 
 .ends

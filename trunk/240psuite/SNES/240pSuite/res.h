@@ -27,6 +27,7 @@ extern char gillian_tiles, gillian_tiles_end;
 extern char gillian_pal, gillian_pal_end;
 
 extern char grid_tiles, grid_tiles_end;
+extern char grid240_map, grid240_map_end;
 extern char grid_pal, grid_pal_end;
 extern char grid_map, grid_map_end;
 
@@ -35,6 +36,14 @@ extern char motoko_tiles2, motoko_tiles2_end;
 extern char motoko_pal, motoko_pal_end;
 extern char motoko_map, motoko_map_end;
 
-extern char grid240_map, grid240_map_end;
+extern char SMPTECB75_tiles, SMPTECB75_tiles_end;
+extern char SMPTECB100_pal, SMPTECB100_pal_end;
+extern char SMPTECB75_pal, SMPTECB75_pal_end;
+extern char SMPTECB75_map, SMPTECB75_map_end;
+
+extern char color_tiles, color_tiles_end;
+extern char color_pal, color_pal_end;
+extern char color_map, color_map_end;
 
 extern char font;
+
