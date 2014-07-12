@@ -75,11 +75,11 @@ back.pic: back.bmp
 	
 motoko.pic: motoko.bmp
 	@echo convert bitmap in 256 colors... $(notdir $@)
-	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
+	$(GFXCONV) -pR! -pc256 -n -gs8 -pe0 -fbmp -m $<
 	
 color.pic: color.bmp
-	@echo convert bitmap in 256 colors... $(notdir $@)
-	$(GFXCONV) -pc128 -po128 -n -gs8 -pe0 -fbmp -m $<
+	@echo convert bitmap in 256 colors wihout palette rounding... $(notdir $@)
+	$(GFXCONV) -pR! -pc128 -po128 -n -gs8 -pe0 -fbmp -m $<
 
 SMPTECB75.pic: SMPTECB75.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
