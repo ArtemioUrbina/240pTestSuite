@@ -70,5 +70,12 @@ extern char sharpness_tiles, sharpness_tiles_end;
 extern char sharpness_pal, sharpness_pal_end;
 extern char sharpness_map, sharpness_map_end;
 
+extern char fullscreen_tiles, fullscreen_tiles_end;
+extern char fullscreen256_tiles, fullscreen256_tiles_end;
+extern char fullscreen_pal, fullscreen_pal_end;
+extern char fullscreen_map, fullscreen_map_end;
+
+extern char hstripes_tiles, hstripes_tiles_end;
+
 extern char font;
 

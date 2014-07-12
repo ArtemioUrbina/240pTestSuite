@@ -32,3 +32,4 @@ void DrawGrayRamp();
 void DrawColorBleed();
 void Draw601CB();
 void DrawSharpness();
+void DrawWhite();

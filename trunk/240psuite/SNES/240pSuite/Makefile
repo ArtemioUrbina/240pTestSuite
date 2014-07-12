@@ -65,6 +65,10 @@ font.pic: font.bmp
 	@echo convert font with no tile reduction ... $(notdir $@)
 	$(GFXCONV) -n -gs8 -po2 -pc16 -pe0 -mR! -m! -p! $<
 
+fullscreen256.pic: fullscreen256.bmp
+	@echo convert font 256 with no tile reduction ... $(notdir $@)
+	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
+
 gillian.pic: gillian.bmp
 	@echo convert bitmap to sprites... $(notdir $@)
 	$(GFXCONV) -pR! -gs16 -pc16 -po16 -n $<		
@@ -107,7 +111,8 @@ sharpness.pic: sharpness.bmp
 	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
 	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic colorbleed.pic\
-	colorbleedchk.pic 601701cb.pic sharpness.pic
+	colorbleedchk.pic 601701cb.pic sharpness.pic fullscreen.pic fullscreen256.pic\
+	hstripes.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)
