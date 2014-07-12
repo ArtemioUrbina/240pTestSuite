@@ -20,6 +20,7 @@
  */
  
 #include "video.h"
+#include "res.h"
 
 #define REG_SETINI (*(vuint8*)0x2133)
 
@@ -63,4 +64,16 @@ void DrawTilesWithSprites(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 ti
 		if(row % 2 != 0)
 			tileIndex += 4*sizeX;
 	}
+}
+
+void ClearScreen(u8 layer)
+{	
+	bgInitTileSet(layer, &fullscreen_tiles, &grid_pal, 0, (&fullscreen_tiles_end - &fullscreen_tiles), 16*2, BG_16COLORS, 0x6000);	
+	bgInitMapSet(layer, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+}
+
+void ClearScreen256(u8 layer)
+{	
+	bgInitTileSet(layer, &fullscreen256_tiles, &grid_pal, 0, (&fullscreen256_tiles_end - &fullscreen256_tiles), 16*2, BG_256COLORS, 0x6000);	
+	bgInitMapSet(layer, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 }

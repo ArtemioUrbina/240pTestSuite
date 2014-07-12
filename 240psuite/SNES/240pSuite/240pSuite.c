@@ -45,7 +45,7 @@ int main(void)
 					
 			setBrightness(0);	
 			
-			consoleInitText(0, 7, &font);				
+			consoleInitText(0, 7, &font);
 			size = (&back_tiles_end - &back_tiles);
 			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 			
@@ -128,6 +128,9 @@ int main(void)
 					break;
 				case 1:
 					DropShadowTest();
+					break;
+				case 6:
+					DrawStripes();
 					break;
 				case 11:
 					DrawCredits();
@@ -262,6 +265,9 @@ void TestPatterns(void)
 				case 8:
 					DrawGrayRamp();
 					break;
+				case 9:
+					DrawWhite();
+					break;
 				case 11:
 					DrawSharpness();
 					break;
@@ -330,8 +336,8 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(19, 6, 5, "Ver. 0.01");
-			drawText(19, 7, 7, "11/07/2014");
+			drawText(19, 6, 5, "Ver. 0.02");
+			drawText(19, 7, 7, "12/07/2014");
 			 			
 			if(redraw)
 				redraw = 0;						

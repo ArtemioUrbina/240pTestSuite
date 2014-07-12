@@ -143,6 +143,10 @@ sharpness_map_end:
 sharpness_pal:
 .incbin "sharpness.pal"
 sharpness_pal_end:
+ 
+fullscreen_map:
+.incbin "fullscreen.map"
+fullscreen_map_end:
 
 .ends
 
@@ -194,5 +198,17 @@ cb601701_tiles_end:
 sharpness_tiles:
 .incbin "sharpness.pic"
 sharpness_tiles_end:
+
+fullscreen_tiles:
+.incbin "fullscreen.pic"
+fullscreen_tiles_end:
+
+fullscreen256_tiles:
+.incbin "fullscreen256.pic"
+fullscreen256_tiles_end:
+
+hstripes_tiles:
+.incbin "hstripes.pic"
+hstripes_tiles_end:
 
 .ends
