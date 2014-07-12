@@ -66,18 +66,32 @@ font.pic: font.bmp
 	$(GFXCONV) -n -gs8 -po2 -pc16 -pe0 -mR! -m! -p! $<
 
 gillian.pic: gillian.bmp
-	@echo convert bitmap ... $(notdir $@)
+	@echo convert bitmap to sprites... $(notdir $@)
 	$(GFXCONV) -gs16 -pc16 -po16 -n $<		
 	
 back.pic: back.bmp
-	@echo convert bitmap ... $(notdir $@)
+	@echo convert bitmap to palette 1... $(notdir $@)
 	$(GFXCONV) -pr -pc16 -n -gs8 -pe1 -fbmp -m $<
 	
 motoko.pic: motoko.bmp
-	@echo convert bitmap ... $(notdir $@)
+	@echo convert bitmap in 256 colors... $(notdir $@)
 	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
 	
-bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic
+color.pic: color.bmp
+	@echo convert bitmap in 256 colors... $(notdir $@)
+	$(GFXCONV) -pc128 -po128 -n -gs8 -pe0 -fbmp -m $<
 
+SMPTECB75.pic: SMPTECB75.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+	
+SMPTECB100.pic: SMPTECB100.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+	
+bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
+	SMPTECB100.pic color.pic
+	
+	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

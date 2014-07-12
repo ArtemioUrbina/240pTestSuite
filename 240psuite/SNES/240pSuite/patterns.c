@@ -70,3 +70,96 @@ void DrawGrid(u8 type)
 	
 	return;
 }
+
+
+void DrawSMPTE() 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0, type = 0;
+	u16 redraw = 1;
+	
+	bgInitTileSet(1, &SMPTECB75_tiles, &SMPTECB75_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			bgInitMapSet(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x1000);
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(0);		
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_A)
+			end = 1;		
+		
+		if(pressed == KEY_B)
+		{
+			if(type)
+			{
+				dmaCopyCGram(&SMPTECB75_pal, 0, 16*2);
+			}
+			else
+			{
+				dmaCopyCGram(&SMPTECB100_pal, 0, 16*2);
+			}
+			type = !type;
+		}
+		
+		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
+}
+
+void DrawColorBars(void) 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 redraw = 1, size = 0;
+	
+	size = (&color_tiles_end - &color_tiles);
+	bgInitTileSet(0, &color_tiles, &color_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
+	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			bgInitMapSet(0, &color_map, (&color_map_end - &color_map), SC_32x32, 0x7000);
+						
+			setMode(BG_MODE3,0); 					
+			bgSetDisable(1);
+			
+			bgSetScroll(0, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_A)
+			end = 1;		
+		
+		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
+}
