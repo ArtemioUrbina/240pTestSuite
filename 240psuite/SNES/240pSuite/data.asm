@@ -103,7 +103,7 @@ font:
 .incbin "font.pic"
 
 motoko_tiles2:
-.incbin "motoko.pic" skip $6000 read $7040
+.incbin "motoko.pic" skip $6000 read $69C0
 motoko_tiles2_end:
 
 .ends
