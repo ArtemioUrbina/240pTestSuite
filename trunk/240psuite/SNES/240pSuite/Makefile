@@ -73,7 +73,11 @@ back.pic: back.bmp
 	@echo convert bitmap ... $(notdir $@)
 	$(GFXCONV) -pr -pc16 -n -gs8 -pe1 -fbmp -m $<
 	
-bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic
+motoko.pic: motoko.bmp
+	@echo convert bitmap ... $(notdir $@)
+	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
+	
+bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic
 
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

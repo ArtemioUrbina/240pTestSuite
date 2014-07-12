@@ -23,4 +23,4 @@
 #include "video.h"
 
 //---------------------------------------------------------------------------------
-void DrawGrid(u8 type);
+void DropShadowTest();
