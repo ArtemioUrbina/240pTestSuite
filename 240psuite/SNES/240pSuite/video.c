@@ -33,6 +33,11 @@ void Set224pMode()
 	REG_SETINI = 0;
 }
 
+void SetH512Mode()
+{
+	REG_SETINI |= 0x08;
+}
+
 void DrawTilesWithSprites(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 tileSize, u8 * pal)
 {
 	u16 baseX = X, baseY = Y;

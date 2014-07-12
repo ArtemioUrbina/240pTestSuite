@@ -62,11 +62,31 @@ gillian_pal:
 .incbin "gillian.pal"
 gillian_pal_end:
 
+motoko_map:
+.incbin "motoko.map"
+motoko_map_end:
+
+motoko_pal:
+.incbin "motoko.pal"
+motoko_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
 
 font:
 .incbin "font.pic"
+
+motoko_tiles1:
+.incbin "motoko.pic" read $6000
+motoko_tiles1_end:
+
+.ends
+
+.section ".rodata4" superfree
+
+motoko_tiles2:
+.incbin "motoko.pic" skip $6000 read $7040
+motoko_tiles2_end:
 
 .ends
