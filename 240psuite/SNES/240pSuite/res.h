@@ -49,5 +49,13 @@ extern char circles_tiles, circles_tiles_end;
 extern char circles_pal, circles_pal_end;
 extern char circles_map, circles_map_end;
 
+extern char pluge_tiles, pluge_tiles_end;
+extern char pluge_pal, pluge_pal_end;
+extern char pluge_map, pluge_map_end;
+
+extern char grayramp_tiles, grayramp_tiles_end;
+extern char grayramp_pal, grayramp_pal_end;
+extern char grayramp_map, grayramp_map_end;
+
 extern char font;
 
