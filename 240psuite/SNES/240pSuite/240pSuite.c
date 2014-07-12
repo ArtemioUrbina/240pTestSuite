@@ -244,6 +244,9 @@ void TestPatterns(void)
 				case 2:
 					DrawSMPTE();
 					break;
+				case 3:
+					Draw601CB();
+					break;
 				case 4:
 					DrawColorBleed();
 					break;
@@ -258,6 +261,9 @@ void TestPatterns(void)
 					break;
 				case 8:
 					DrawGrayRamp();
+					break;
+				case 11:
+					DrawSharpness();
 					break;
 				case 13:
 					exit = 1;

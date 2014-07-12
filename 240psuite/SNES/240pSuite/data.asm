@@ -128,6 +128,22 @@ colorbleed_pal:
 .incbin "colorbleed.pal"
 colorbleed_pal_end:
 
+cb601701_map:
+.incbin "601701cb.map"
+cb601701_map_end:
+
+cb601701_pal:
+.incbin "601701cb.pal"
+cb601701_pal_end:
+
+sharpness_map:
+.incbin "sharpness.map"
+sharpness_map_end:
+
+sharpness_pal:
+.incbin "sharpness.pal"
+sharpness_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
@@ -170,5 +186,13 @@ colorbleed_tiles_end:
 colorbleedchk_tiles:
 .incbin "colorbleedchk.pic"
 colorbleedchk_tiles_end:
+
+cb601701_tiles:
+.incbin "601701cb.pic"
+cb601701_tiles_end:
+
+sharpness_tiles:
+.incbin "sharpness.pic"
+sharpness_tiles_end:
 
 .ends

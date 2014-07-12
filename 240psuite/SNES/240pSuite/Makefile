@@ -97,10 +97,17 @@ pluge.pic: pluge.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
 	
+601701cb.pic: 601701cb.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+	
+sharpness.pic: sharpness.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
 	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic colorbleed.pic\
-	colorbleedchk.pic
-	
+	colorbleedchk.pic 601701cb.pic sharpness.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)
