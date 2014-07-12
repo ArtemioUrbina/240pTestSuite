@@ -62,5 +62,13 @@ extern char colorbleedchk_tiles, colorbleedchk_tiles_end;
 extern char colorbleed_pal, colorbleed_pal_end;
 extern char colorbleed_map, colorbleed_map_end;
 
+extern char cb601701_tiles, cb601701_tiles_end;
+extern char cb601701_pal, cb601701_pal_end;
+extern char cb601701_map, cb601701_map_end;
+
+extern char sharpness_tiles, sharpness_tiles_end;
+extern char sharpness_pal, sharpness_pal_end;
+extern char sharpness_map, sharpness_map_end;
+
 extern char font;
 

@@ -30,3 +30,5 @@ void Drawcircles();
 void DrawPluge();
 void DrawGrayRamp();
 void DrawColorBleed();
+void Draw601CB();
+void DrawSharpness();

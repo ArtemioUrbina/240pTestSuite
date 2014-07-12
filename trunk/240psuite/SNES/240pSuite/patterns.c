@@ -335,3 +335,81 @@ void DrawColorBleed()
 	
 	return;
 }
+
+void Draw601CB() 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 redraw = 1;
+	
+	bgInitTileSet(1, &cb601701_tiles, &cb601701_pal, 0, (&cb601701_tiles_end - &cb601701_tiles), 16*2, BG_16COLORS, 0x4000);	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			bgInitMapSet(1, &cb601701_map, (&cb601701_map_end - &cb601701_map), SC_32x32, 0x1000);
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(0);		
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_A)
+			end = 1;		
+
+		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
+}
+
+void DrawSharpness() 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 redraw = 1;
+	
+	bgInitTileSet(1, &sharpness_tiles, &sharpness_pal, 0, (&sharpness_tiles_end - &sharpness_tiles), 16*2, BG_16COLORS, 0x4000);	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			bgInitMapSet(1, &sharpness_map, (&sharpness_map_end - &sharpness_map), SC_32x32, 0x1000);
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(0);		
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_A)
+			end = 1;		
+
+		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
+}
