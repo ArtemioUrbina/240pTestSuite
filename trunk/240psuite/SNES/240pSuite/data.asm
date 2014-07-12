@@ -103,6 +103,22 @@ circles_pal:
 .incbin "circles.pal"
 circlesr_pal_end:
 
+pluge_map:
+.incbin "pluge.map"
+pluge_map_end:
+
+pluge_pal:
+.incbin "pluge.pal"
+pluge_pal_end:
+
+grayramp_map:
+.incbin "grayramp.map"
+grayramp_map_end:
+
+grayramp_pal:
+.incbin "grayramp.pal"
+grayramp_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
@@ -129,5 +145,13 @@ color_tiles_end:
 circles_tiles:
 .incbin "circles.pic"
 circles_tiles_end:
+
+pluge_tiles:
+.incbin "pluge.pic"
+pluge_tiles_end:
+
+grayramp_tiles:
+.incbin "grayramp.pic"
+grayramp_tiles_end:
 
 .ends

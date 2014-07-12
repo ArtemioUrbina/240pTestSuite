@@ -235,6 +235,9 @@ void TestPatterns(void)
 			
 			switch(sel)
 			{
+				case 0:
+					DrawPluge();
+					break;
 				case 1:
 					DrawColorBars();
 					break;
@@ -249,6 +252,9 @@ void TestPatterns(void)
 					break;
 				case 7:
 					Drawcircles();
+					break;
+				case 8:
+					DrawGrayRamp();
 					break;
 				case 13:
 					exit = 1;

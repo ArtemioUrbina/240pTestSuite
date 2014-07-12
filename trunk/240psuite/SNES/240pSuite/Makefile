@@ -80,6 +80,10 @@ motoko.pic: motoko.bmp
 color.pic: color.bmp
 	@echo convert bitmap in 256 colors wihout palette rounding... $(notdir $@)
 	$(GFXCONV) -pR! -pc128 -po128 -n -gs8 -pe0 -fbmp -m $<
+	
+grayramp.pic: grayramp.bmp
+	@echo convert bitmap in 256 colors wihout palette rounding... $(notdir $@)
+	$(GFXCONV) -pR! -pc128 -po128 -n -gs8 -pe0 -fbmp -m $<
 
 SMPTECB75.pic: SMPTECB75.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
@@ -88,9 +92,13 @@ SMPTECB75.pic: SMPTECB75.bmp
 SMPTECB100.pic: SMPTECB100.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+
+pluge.pic: pluge.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
 	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
-	SMPTECB100.pic color.pic circles.pic
+	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic
 	
 	
 #---------------------------------------------------------------------------------
