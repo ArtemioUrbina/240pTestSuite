@@ -163,3 +163,46 @@ void DrawColorBars(void)
 	
 	return;
 }
+
+void Drawcircles() 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0, grid = 0;
+	u16 redraw = 1;
+	
+	bgInitTileSet(1, &circles_tiles, &circles_pal, 0, (&circles_tiles_end - &circles_tiles), 16*2, BG_16COLORS, 0x4000);	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			bgInitMapSet(1, &circles_map, (&circles_map_end - &circles_map), SC_32x32, 0x1000);
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(0);		
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_A)
+			end = 1;		
+		
+		if(pressed == KEY_B)
+		{
+		}
+		
+		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
+}

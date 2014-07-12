@@ -247,6 +247,9 @@ void TestPatterns(void)
 				case 6:
 					DrawGrid(1);
 					break;
+				case 7:
+					Drawcircles();
+					break;
 				case 13:
 					exit = 1;
 					break;

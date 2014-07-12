@@ -26,3 +26,4 @@
 void DrawGrid(u8 type);
 void DrawSMPTE();
 void DrawColorBars();
+void Drawcircles();
