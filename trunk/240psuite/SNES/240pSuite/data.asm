@@ -95,6 +95,14 @@ color_pal:
 .incbin "color.pal"
 color_pal_end:
 
+circles_map:
+.incbin "circles.map"
+circles_map_end:
+
+circles_pal:
+.incbin "circles.pal"
+circlesr_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
@@ -117,5 +125,9 @@ SMPTECB75_tiles_end:
 color_tiles:
 .incbin "color.pic"
 color_tiles_end:
+
+circles_tiles:
+.incbin "circles.pic"
+circles_tiles_end:
 
 .ends

@@ -45,5 +45,9 @@ extern char color_tiles, color_tiles_end;
 extern char color_pal, color_pal_end;
 extern char color_map, color_map_end;
 
+extern char circles_tiles, circles_tiles_end;
+extern char circles_pal, circles_pal_end;
+extern char circles_map, circles_map_end;
+
 extern char font;
 
