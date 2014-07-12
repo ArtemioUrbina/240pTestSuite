@@ -244,6 +244,9 @@ void TestPatterns(void)
 				case 2:
 					DrawSMPTE();
 					break;
+				case 4:
+					DrawColorBleed();
+					break;
 				case 5:
 					DrawGrid(0);
 					break;

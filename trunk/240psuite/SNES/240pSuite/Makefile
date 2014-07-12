@@ -98,7 +98,8 @@ pluge.pic: pluge.bmp
 	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
 	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
-	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic
+	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic colorbleed.pic\
+	colorbleedchk.pic
 	
 	
 #---------------------------------------------------------------------------------
