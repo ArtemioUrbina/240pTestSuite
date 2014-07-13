@@ -120,11 +120,15 @@ sharpness.pic: sharpness.bmp
 fullscreen256.pic: fullscreen256.bmp
 	@echo convert font 256 with no tile reduction ... $(notdir $@)
 	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
+
+100IRE.pic: 100IRE.bmp
+	@echo convert font 256 with no tile reduction ... $(notdir $@)
+	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
 	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
 	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic colorbleed.pic\
 	colorbleedchk.pic 601701cb.pic sharpness.pic fullscreen.pic fullscreen256.pic\
-	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic	
+	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic 100IRE.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

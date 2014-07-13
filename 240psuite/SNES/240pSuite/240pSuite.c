@@ -273,6 +273,9 @@ void TestPatterns(void)
 				case 9:
 					DrawWhite();
 					break;
+				case 10:
+					Draw100IRE();
+					break;
 				case 11:
 					DrawSharpness();
 					break;

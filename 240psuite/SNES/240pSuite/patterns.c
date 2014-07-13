@@ -21,6 +21,7 @@
  
 #include "patterns.h"
 #include "font.h"
+#include <stdio.h>  
 
 void DrawGrid(u8 type) 
 {	
@@ -342,7 +343,6 @@ void DrawColorBleed()
 			toggle = !toggle;			
 			redraw = 1;
 		}		
-				
 		
 		WaitForVBlank();
 	}	
@@ -447,6 +447,7 @@ void DrawWhite()
 			
 			setPaletteColor(0x60, RGB5(0, 0, 0));
 			setPaletteColor(0x61, RGB5(0, 0xff, 0));
+			
 			setPaletteColor(0x70, RGB5(0, 0, 0));
 			setPaletteColor(0x71, RGB5(0xff, 0xff, 0xff));
 			
@@ -656,6 +657,126 @@ void DrawWhite()
 		}
 
 		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
+}
+
+void Draw100IRE() 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 redraw = 1;
+	int	irecount = 10, iremax = 10, changedire = 0; 
+	u8	*irevalues = NULL, invert = 0, text = 0;
+	u8	irevalues100[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
+	u8	irevalues140[5] = { 0, 63, 127, 190, 255 };	
+		
+	irevalues = irevalues100;
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			consoleInitText(1, 7, &fontback);
+			bgInitTileSet(0, &IRE100_tiles, &grid_pal, 0, (&IRE100_tiles_end - &IRE100_tiles), 16*2, BG_256COLORS, 0x4000);	
+			bgInitMapSet(0, &IRE100_map, (&IRE100_map_end - &IRE100_map), SC_32x32, 0x2000);
+			
+			setPaletteColor(0x00, RGB8(0, 0, 0));
+			setPaletteColor(0x01, RGB8(0xff, 0xff, 0xff));
+			
+			setMode(BG_MODE3,0);			
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		if(changedire)
+		{
+			setPaletteColor(!invert, RGB8(irevalues[irecount], irevalues[irecount], irevalues[irecount]));
+			changedire = 0;			
+		}
+		
+		if(text)
+		{
+    		if(!invert)
+      		{
+				if(text > 30)
+					drawText(14, 26, 7, "RANGE 0-100 IRE   ");
+				else
+					drawText(14, 26, 7, "         %0.3d IRE", 
+							(int)((irevalues[irecount]*100.0)/255.0));					
+			  	text --;
+      		}
+      		else
+      		{
+				if(text > 30)
+					drawText(14, 26, 7, "RANGE 100-140 IRE   ");
+				else
+					drawText(14, 26, 7, "         %0.3d IRE  ", 
+							(int)(100.0f + ((irevalues[irecount] * 40.5)/255.0)));
+			  	text --;
+      		}
+			
+			if(!text)
+				drawText(14, 26, 7, "                   ");
+		}
+		WaitForVBlank();
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_A)
+			end = 1;		
+			
+		if(pressed == KEY_B)
+		{
+			invert = !invert;
+			if(invert)
+			{
+				irecount = 0;
+				iremax = 4;
+				irevalues = irevalues140;
+			}
+			else
+			{
+				irecount = 10;
+				iremax = 10;
+				irevalues = irevalues100;
+			}
+			
+			setPaletteColor(0x00, RGB8(0, 0, 0));
+			setPaletteColor(0x01, RGB8(0xff, 0xff, 0xff));
+			
+			text = 60;
+			changedire = 1;
+		}
+			
+		if(pressed == KEY_L)
+		{			
+			if(irecount > 0)
+			{
+				irecount--;	
+				changedire = 1;
+			}
+			text = 30;
+		}
+			
+		if(pressed == KEY_R)
+		{
+			irecount ++;
+				
+			if(irecount > iremax)
+				irecount = iremax;	
+			changedire = 1;
+			text = 30;
+		}		
 	}	
 	setFadeEffect(FADE_OUT);	
 	
