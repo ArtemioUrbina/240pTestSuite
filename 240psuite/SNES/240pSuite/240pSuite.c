@@ -45,6 +45,7 @@ int main(void)
 					
 			setBrightness(0);	
 			
+			setPaletteColor(0x00, RGB5(0, 0, 0));
 			consoleInitText(0, 7, &font);
 			size = (&back_tiles_end - &back_tiles);
 			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
@@ -132,6 +133,9 @@ int main(void)
 				case 6:
 					DrawStripes();
 					break;
+				case 7:
+					DrawCheck();
+					break;
 				case 11:
 					DrawCredits();
 					break;
@@ -158,6 +162,7 @@ void TestPatterns(void)
 					
 			setBrightness(0);	
 			
+			setPaletteColor(0x00, RGB5(0, 0, 0));
 			consoleInitText(0, 7, &font);				
 			size = (&back_tiles_end - &back_tiles);
 			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			

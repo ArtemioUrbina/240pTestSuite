@@ -443,12 +443,12 @@ void DrawWhite()
 		{
 			setBrightness(0);
 			
-			consoleInitText(1, 7, &font);
+			consoleInitText(1, 7, &fontback);
 			
-			setPaletteColor(0x60, RGB8(0, 0, 0));
-			setPaletteColor(0x61, RGB8(0, 0xff, 0));
-			setPaletteColor(0x70, RGB8(0, 0, 0));
-			setPaletteColor(0x71, RGB8(0xff, 0xff, 0xff));
+			setPaletteColor(0x60, RGB5(0, 0, 0));
+			setPaletteColor(0x61, RGB5(0, 0xff, 0));
+			setPaletteColor(0x70, RGB5(0, 0, 0));
+			setPaletteColor(0x71, RGB5(0xff, 0xff, 0xff));
 			
 			ClearScreen256(0);
 						
@@ -652,12 +652,6 @@ void DrawWhite()
 									
 					change = 1;
 				}	 
-			}
-			
-			if(pressed == KEY_START)
-			{
-				r = g = b = 0xff;
-				change = 1;
 			}
 		}
 

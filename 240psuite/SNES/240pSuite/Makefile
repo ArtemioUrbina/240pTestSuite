@@ -65,14 +65,22 @@ font.pic: font.bmp
 	@echo convert font with no tile reduction ... $(notdir $@)
 	$(GFXCONV) -n -gs8 -po2 -pc16 -pe0 -mR! -m! -p! $<
 
-fullscreen256.pic: fullscreen256.bmp
-	@echo convert font 256 with no tile reduction ... $(notdir $@)
-	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
+fontback.pic: fontback.bmp
+	@echo convert font with no tile reduction ... $(notdir $@)
+	$(GFXCONV) -n -gs8 -pc16 -pe0 -mR! -m! -p! $<
+
+#----------------------------------SPRITES-----------------------------------------
 
 gillian.pic: gillian.bmp
 	@echo convert bitmap to sprites... $(notdir $@)
 	$(GFXCONV) -pR! -gs16 -pc16 -po16 -n $<		
+
+sprites.pic: sprites.bmp
+	@echo convert bitmap to sprites... $(notdir $@)
+	$(GFXCONV) -pR! -gs32 -pc16 -po16 -n $<		
 	
+#----------------------------------END SPRITES-------------------------------------
+
 back.pic: back.bmp
 	@echo convert bitmap to palette 1... $(notdir $@)
 	$(GFXCONV) -pR! -pr -pc16 -n -gs8 -pe1 -fbmp -m $<
@@ -108,11 +116,15 @@ pluge.pic: pluge.bmp
 sharpness.pic: sharpness.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+
+fullscreen256.pic: fullscreen256.bmp
+	@echo convert font 256 with no tile reduction ... $(notdir $@)
+	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
 	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
 	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic colorbleed.pic\
 	colorbleedchk.pic 601701cb.pic sharpness.pic fullscreen.pic fullscreen256.pic\
-	hstripes.pic
+	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic	
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)
