@@ -76,6 +76,13 @@ extern char fullscreen_pal, fullscreen_pal_end;
 extern char fullscreen_map, fullscreen_map_end;
 
 extern char hstripes_tiles, hstripes_tiles_end;
+extern char vstripes_tiles, vstripes_tiles_end;
+
+extern char check_tiles, check_tiles_end;
+
+extern char sprites_tiles, sprites_tiles_end;
+extern char sprites_pal, sprites_pal_end;
 
 extern char font;
+extern char fontback;
 

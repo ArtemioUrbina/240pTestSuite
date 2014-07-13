@@ -148,6 +148,10 @@ fullscreen_map:
 .incbin "fullscreen.map"
 fullscreen_map_end:
 
+sprites_pal:
+.incbin "sprites.pal"
+sprites_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
@@ -162,6 +166,10 @@ motoko_tiles2_end:
 .ends
 
 .section ".rodata4" superfree
+
+fontback:
+.incbin "fontback.pic"
+fontback_end:
 
 SMPTECB75_tiles:
 .incbin "SMPTECB75.pic"
@@ -210,5 +218,17 @@ fullscreen256_tiles_end:
 hstripes_tiles:
 .incbin "hstripes.pic"
 hstripes_tiles_end:
+
+vstripes_tiles:
+.incbin "vstripes.pic"
+vstripes_tiles_end:
+
+check_tiles:
+.incbin "check.pic"
+check_tiles_end:
+
+sprites_tiles:
+.incbin "sprites.pic"
+sprites_tiles_end:
 
 .ends
