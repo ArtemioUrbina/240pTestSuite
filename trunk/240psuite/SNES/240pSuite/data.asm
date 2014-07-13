@@ -163,6 +163,10 @@ motoko_tiles2:
 .incbin "motoko.pic" skip $6000
 motoko_tiles2_end:
 
+IRE100_map:
+.incbin "100IRE.map"
+IRE100_map_end:
+
 .ends
 
 .section ".rodata4" superfree
@@ -230,5 +234,9 @@ check_tiles_end:
 sprites_tiles:
 .incbin "sprites.pic"
 sprites_tiles_end:
+
+IRE100_tiles:
+.incbin "100IRE.pic"
+IRE100_tiles_end:
 
 .ends

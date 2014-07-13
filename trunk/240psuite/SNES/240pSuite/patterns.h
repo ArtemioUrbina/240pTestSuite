@@ -33,3 +33,4 @@ void DrawColorBleed();
 void Draw601CB();
 void DrawSharpness();
 void DrawWhite();
+void Draw100IRE();

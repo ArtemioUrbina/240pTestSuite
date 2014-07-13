@@ -83,6 +83,9 @@ extern char check_tiles, check_tiles_end;
 extern char sprites_tiles, sprites_tiles_end;
 extern char sprites_pal, sprites_pal_end;
 
+extern char IRE100_tiles, IRE100_tiles_end;
+extern char IRE100_map, IRE100_map_end;
+
 extern char font;
 extern char fontback;
 
