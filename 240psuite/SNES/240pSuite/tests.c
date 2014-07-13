@@ -37,13 +37,15 @@ void DropShadowTest(void)
 			setBrightness(0);
 			
 			size = (&motoko_tiles1_end - &motoko_tiles1);
-			bgInitTileSet(0, &motoko_tiles1, &motoko_pal, 0, size, 256*2, BG_256COLORS, 0x1000);	
-			dmaCopyVram(&motoko_tiles2, 0x4000, (&motoko_tiles2_end-&motoko_tiles2));
+			bgInitTileSet(0, &motoko_tiles1, &motoko_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
+			dmaCopyVram(&motoko_tiles2, 0x5000, (&motoko_tiles2_end-&motoko_tiles2));
 			
-			bgInitMapSet(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x400);
+			bgInitMapSet(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x7400);
 			
 			oamInitGfxSet(&sprites_tiles, (&sprites_tiles_end - &sprites_tiles), &sprites_pal, 16*2, 7, 0x0, OBJ_SIZE32);
-						
+			
+			//InitTextColor(1, 7, RGB5(0, 31, 0), RGB5(0, 0, 0));
+			
 			setMode(BG_MODE3,0); 					
 			bgSetDisable(1);
 			
@@ -170,7 +172,7 @@ void DrawStripes(void)
 		{
 			setBrightness(0);
 			
-			consoleInitText(0, 7, &fontback);
+			InitTextColor(0, 7, RGB5(31, 31, 31), RGB5(0, 0, 0));			
 			
 			if(!vert)
 				bgInitTileSet(1, &hstripes_tiles, &grid_pal, 0, (&hstripes_tiles_end - &hstripes_tiles), 16*2, BG_16COLORS, 0x6000);	
@@ -256,7 +258,7 @@ void DrawCheck(void)
 		{
 			setBrightness(0);
 			
-			consoleInitText(0, 7, &fontback);
+			InitTextColor(0, 7, RGB5(31, 31, 31), RGB5(0, 0, 0));		
 						
 			bgInitTileSet(1, &check_tiles, &grid_pal, 0, (&check_tiles_end - &check_tiles), 16*2, BG_16COLORS, 0x6000);	
 				

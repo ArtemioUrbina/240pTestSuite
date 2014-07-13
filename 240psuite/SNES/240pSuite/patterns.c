@@ -91,7 +91,7 @@ void DrawSMPTE()
 			setPaletteColor(0x71, RGB5(31, 31, 31));			
 			bgInitTileSet(1, &SMPTECB75_tiles, &SMPTECB75_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);	
 			
-			bgInitMapSet(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x1000);
+			bgInitMapSet(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x2000);
 			
 			setMode(BG_MODE1,0); 			
 			bgSetDisable(2);
@@ -100,6 +100,7 @@ void DrawSMPTE()
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
 		if(text)
 		{
@@ -122,18 +123,18 @@ void DrawSMPTE()
 			if(type)
 			{
 				drawText(26, 1, 7, " 75%");
-				dmaCopyCGram(&SMPTECB75_pal, 0, 16*2);				
+				WaitForVBlank();
+				dmaCopyCGram(&SMPTECB75_pal, 0, 16*2);
 			}
 			else
 			{
 				drawText(26, 1, 7, "100%");
-				dmaCopyCGram(&SMPTECB100_pal, 0, 16*2);				
+				WaitForVBlank();
+				dmaCopyCGram(&SMPTECB100_pal, 0, 16*2);
 			}
 			text = 30;
 			type = !type;
-		}
-		
-		WaitForVBlank();
+		}		
 	}	
 	setFadeEffect(FADE_OUT);	
 	
@@ -443,13 +444,8 @@ void DrawWhite()
 		{
 			setBrightness(0);
 			
-			consoleInitText(1, 7, &fontback);
-			
-			setPaletteColor(0x60, RGB5(0, 0, 0));
-			setPaletteColor(0x61, RGB5(0, 0xff, 0));
-			
-			setPaletteColor(0x70, RGB5(0, 0, 0));
-			setPaletteColor(0x71, RGB5(0xff, 0xff, 0xff));
+			InitTextColor(1, 7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));
 			
 			ClearScreen256(0);
 						
@@ -676,15 +672,17 @@ void Draw100IRE()
 	while(!end) 
 	{		
 		if(redraw)
-		{
+		{			
 			setBrightness(0);
-			
-			consoleInitText(1, 7, &fontback);
+				
+			WaitForVBlank();		
 			bgInitTileSet(0, &IRE100_tiles, &grid_pal, 0, (&IRE100_tiles_end - &IRE100_tiles), 16*2, BG_256COLORS, 0x4000);	
 			bgInitMapSet(0, &IRE100_map, (&IRE100_map_end - &IRE100_map), SC_32x32, 0x2000);
 			
 			setPaletteColor(0x00, RGB8(0, 0, 0));
 			setPaletteColor(0x01, RGB8(0xff, 0xff, 0xff));
+			
+			InitTextColor(1, 7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			
 			setMode(BG_MODE3,0);			
 			bgSetDisable(2);
@@ -751,6 +749,7 @@ void Draw100IRE()
 				irevalues = irevalues100;
 			}
 			
+			WaitForVBlank();
 			setPaletteColor(0x00, RGB8(0, 0, 0));
 			setPaletteColor(0x01, RGB8(0xff, 0xff, 0xff));
 			
