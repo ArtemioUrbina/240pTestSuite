@@ -20,6 +20,7 @@
  */
  
 #include "font.h"
+#include "res.h"
 
 extern unsigned char pvsneslibfont_map[];
 extern u8 pvsneslibdirty;
@@ -34,4 +35,19 @@ void drawText(u16 x, u16 y, u8 palette, char *fmt, ...)
 	
 	consoleDrawTextMap(x, y, pvsneslibfont_map, (palette<<2) | (1<<5), text_buffer);	
 	pvsneslibdirty = 1;
+}
+
+void InitTextColor(u8 layer, u8 palette, u16 front, u16 back)
+{
+	consoleInitText(layer, palette, &fontback);
+	setPaletteColor(palette * 0x10, RGB5(31, 0, 31));
+	setPaletteColor(palette * 0x10 + 1, front);
+	setPaletteColor(palette * 0x10 + 2, back);
+}
+
+void AddTextColor(u8 palette, u16 front, u16 back)
+{
+	setPaletteColor(palette * 0x10, RGB5(31, 0, 31));
+	setPaletteColor(palette * 0x10 + 1, front);
+	setPaletteColor(palette * 0x10 + 2, back);
 }
