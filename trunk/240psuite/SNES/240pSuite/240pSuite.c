@@ -117,7 +117,7 @@ int main(void)
 		if(sel > 11)
 			sel = 0;
 			
-		if(pressed == KEY_B)
+		if(pressed == KEY_A)
 		{							
 			setFadeEffect(FADE_OUT);		
 			oamClear(0, 0);
@@ -129,6 +129,9 @@ int main(void)
 					break;
 				case 1:
 					DropShadowTest();
+					break;
+				case 2:
+					PassiveLagTest();
 					break;
 				case 6:
 					DrawStripes();
@@ -236,7 +239,7 @@ void TestPatterns(void)
 		if(sel > 13)
 			sel = 0;
 			
-		if(pressed == KEY_B)
+		if(pressed == KEY_A)
 		{							
 			setFadeEffect(FADE_OUT);		
 			oamClear(0, 0);
@@ -286,7 +289,7 @@ void TestPatterns(void)
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 		{
 			exit = 1;
 			setFadeEffect(FADE_OUT);		
@@ -370,7 +373,7 @@ void DrawCredits(void)
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;					
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 		{
 			exit = 1;
 			setFadeEffect(FADE_OUT);				

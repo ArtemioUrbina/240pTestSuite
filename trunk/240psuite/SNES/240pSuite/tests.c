@@ -26,8 +26,8 @@ void DropShadowTest(void)
 {	
 	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
 	u16 redraw = 1, size = 0, changesprite = 1;
-	u8	drawShadow = 1;
-	int sprite = 0, x = 100, y = 100;
+	u8	drawShadow = 1, odd = 0;
+	int sprite = 0, x = 100, y = 100, text = 0;
 	
 	sprite = rand() % 2;
 	while(!end) 
@@ -36,18 +36,19 @@ void DropShadowTest(void)
 		{
 			setBrightness(0);
 			
+			// We add the font, it will be overwritten by sprites they 
+			// need to be in 8k vram steps. Lowercase will be available
+			consoleInitText(1, 7, &font);	
+			
 			size = (&motoko_tiles1_end - &motoko_tiles1);
 			bgInitTileSet(0, &motoko_tiles1, &motoko_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
 			dmaCopyVram(&motoko_tiles2, 0x5000, (&motoko_tiles2_end-&motoko_tiles2));
 			
-			bgInitMapSet(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x7400);
+			bgInitMapSet(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x7C00);
 			
-			oamInitGfxSet(&sprites_tiles, (&sprites_tiles_end - &sprites_tiles), &sprites_pal, 16*2, 7, 0x0, OBJ_SIZE32);
+			oamInitGfxSet(&sprites_tiles, (&sprites_tiles_end - &sprites_tiles), &sprites_pal, 16*2, 7, 0, OBJ_SIZE32);			
 			
-			//InitTextColor(1, 7, RGB5(0, 31, 0), RGB5(0, 0, 0));
-			
-			setMode(BG_MODE3,0); 					
-			bgSetDisable(1);
+			setMode(BG_MODE3,0);			
 			
 			bgSetScroll(0, 0, -1);
 			setBrightness(0xF);
@@ -76,7 +77,7 @@ void DropShadowTest(void)
 			}
 			changesprite = 0;
 		}
-		
+				
 		oamSetXY(0, x, y);
 		if(!sprite)
 			oamSetXY(4, x+10, y+10);
@@ -94,6 +95,23 @@ void DropShadowTest(void)
 				oamSetVisible(0, OBJ_HIDE);
 			else
 				oamSetVisible(4, OBJ_HIDE);
+		}
+		
+		if(text)
+		{			
+			if(odd)
+			{
+				drawText(20, 1, 7, "odd");
+				drawText(24, 1, 7, "frames");
+			}
+			else
+			{
+				drawText(20, 1, 7, "even");
+				drawText(25, 1, 7, "frames");
+			}
+			text --;
+			if(!text)						
+				CleanFontMap();			
 		}
 		
 		drawShadow = !drawShadow;
@@ -145,13 +163,20 @@ void DropShadowTest(void)
 		if(y < 0)
 			y = 0;
 			
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 			
 		if(pressed == KEY_X)
 		{
 			sprite = !sprite;
 			changesprite = 1;
+		}
+		
+		if(pressed == KEY_Y)
+		{		
+			odd = !odd;
+			drawShadow = !drawShadow;
+			text = 30;
 		}
 		
 		WaitForVBlank();
@@ -223,14 +248,14 @@ void DrawStripes(void)
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_B)
+		if(pressed == KEY_A)
 			alternate = !alternate;
 			
 		if(pressed == KEY_Y)
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
-				drawText(2, 25, 7, "           ");
+				CleanFontMap();
 		}
 			
 		if(pressed == KEY_X)
@@ -239,7 +264,7 @@ void DrawStripes(void)
 			redraw = 1;
 		}		
 			
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;				
 	}	
 	setFadeEffect(FADE_OUT);	
@@ -295,7 +320,7 @@ void DrawCheck(void)
 			drawText(2, 25, 7, "Frame:%0.2d", frame);
 			frame ++;
 			if(frame == 60)
-				frame = 0;			
+				frame = 0;
 		}
 		
 		WaitForVBlank();
@@ -306,20 +331,170 @@ void DrawCheck(void)
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_B)
+		if(pressed == KEY_A)
 			alternate = !alternate;
 			
 		if(pressed == KEY_Y)
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
-				drawText(2, 25, 7, "           ");
+				CleanFontMap();
 		}
 			
-		if(pressed == KEY_A)
-			end = 1;				
+		if(pressed == KEY_B)
+			end = 1;
 	}	
 	setFadeEffect(FADE_OUT);	
 	
 	return;
+}
+
+void PassiveLagTest()
+{
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 frames = 0, seconds = 0, minutes = 0, hours = 0, msd, lsd;
+	u16 numberIndex[12] = { 0, 8, 64, 72, 128, 136, 192, 200, 256, 264, 320, 328};
+	u16 spriteIndex[12] = { 0, 4, 8, 12, 16, 20, 24, 28, 32 };
+	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };
+	u16 circleIndex[8] = { 192, 196, 200, 204, 208, 212, 216, 220 };
+	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
+	int index = 0, y = 20, running = 0, redraw = 1;
+	int a = 0, b = 0;
+	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			ClearScreen(0);	
+			setPaletteColor(0x00, RGB5(0x0, 0xff, 0x0));
+			
+			oamInitGfxSet(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
+				
+			/*****Numbers*****/
+			
+			// Hours			
+			DrawNumber(xpos[0], y, spriteIndex[0], numberIndex[0], 0);	
+			DrawNumber(xpos[1], y, spriteIndex[1], numberIndex[0], 0);	
+			
+			// Minutes
+			DrawNumber(xpos[2], y, spriteIndex[2], numberIndex[0], 0);	
+			DrawNumber(xpos[3], y, spriteIndex[3], numberIndex[0], 0);	
+			
+			//Seconds
+			DrawNumber(xpos[4], y, spriteIndex[4], numberIndex[0], 0);	
+			DrawNumber(xpos[5], y, spriteIndex[5], numberIndex[0], 0);	
+			
+			// Frames
+			DrawNumber(xpos[6], y, spriteIndex[6], numberIndex[0], 0);	
+			DrawNumber(xpos[7], y, spriteIndex[7], numberIndex[0], 0);			
+			
+			/*****Separators*****/
+			
+			/*****Circles*****/			
+			DrawCircle(0, 70, circleIndex[0], numberIndex[11], 0);
+			DrawCircle(64, 70, circleIndex[1], numberIndex[11], 0);
+			DrawCircle(128, 70, circleIndex[2], numberIndex[11], 0);
+			DrawCircle(192, 70, circleIndex[3], numberIndex[11], 0);
+			
+			DrawCircle(0, 140, circleIndex[4], numberIndex[11], 0);
+			DrawCircle(64, 140, circleIndex[5], numberIndex[11], 0);
+			DrawCircle(128, 140, circleIndex[6], numberIndex[11], 0);
+			DrawCircle(192, 140, circleIndex[7], numberIndex[11], 0);
+			
+			/*****Numbers on Circles*****/
+			DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 0);	
+			DrawNumber(a, b, numberTopIndex[1], numberIndex[2], 0);
+			/*
+			DrawNumber(118, 80, numberTopIndex[2], numberIndex[3], 0);	
+			DrawNumber(182, 80, numberTopIndex[3], numberIndex[4], 0);	
+			
+			DrawNumber(10, 150, numberTopIndex[4], numberIndex[5], 0);	
+			DrawNumber(54, 150, numberTopIndex[5], numberIndex[6], 0);	
+			DrawNumber(118, 150, numberTopIndex[6], numberIndex[7], 0);	
+			DrawNumber(182, 150, numberTopIndex[7], numberIndex[8], 0);	
+			*/
+			
+			setMode(BG_MODE1,0);
+			bgSetDisable(1);
+			bgSetDisable(2);
+			redraw = 0;
+		}
+		
+		if(running)
+		{
+			if(frames > 59)
+			{
+				frames = 0;
+				seconds ++;	
+			}
+		
+			if(seconds > 59)
+			{
+			  seconds = 0;
+			  minutes ++;
+			}
+
+			if(minutes > 59)
+			{
+			  minutes = 0;
+			  hours ++;
+			}
+
+			if(hours > 99)
+			  hours = 0;
+			  
+			// Hours			
+			lsd = hours % 10;
+			msd = hours / 10;			
+			ChangeNumber(xpos[0], y, spriteIndex[0], numberIndex[msd], 0);	
+			ChangeNumber(xpos[1], y, spriteIndex[1], numberIndex[lsd], 0);	
+			
+			// Minutes			
+			lsd = minutes % 10;
+			msd = minutes / 10;			
+			ChangeNumber(xpos[2], y, spriteIndex[2], numberIndex[msd], 0);	
+			ChangeNumber(xpos[3], y, spriteIndex[3], numberIndex[lsd], 0);	
+			
+			// Seconds		
+			lsd = seconds % 10;
+			msd = seconds / 10;			
+			ChangeNumber(xpos[4], y, spriteIndex[4], numberIndex[msd], 0);	
+			ChangeNumber(xpos[5], y, spriteIndex[5], numberIndex[lsd], 0);	
+			
+			// frames		
+			lsd = frames % 10;
+			msd = frames / 10;			
+			ChangeNumber(xpos[6], y, spriteIndex[6], numberIndex[msd], 0);	
+			ChangeNumber(xpos[7], y, spriteIndex[7], numberIndex[lsd], 0);	
+			
+			frames ++;
+		}
+		
+		WaitForVBlank();
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_A)
+			running = !running;
+				
+		if(pressed == KEY_B)
+			end = 1;	
+
+		if(pad0 & KEY_UP)
+			b--;
+		if(pad0 & KEY_DOWN)
+			b++;
+		if(pad0 & KEY_LEFT)
+			a--;				
+		if(pad0 & KEY_RIGHT)		
+			a++;
+
+		ChangeNumber(a, b, numberTopIndex[1], numberIndex[2], 0);		
+	}
+	setFadeEffect(FADE_OUT);		
+	oamClear(0, 0);
 }

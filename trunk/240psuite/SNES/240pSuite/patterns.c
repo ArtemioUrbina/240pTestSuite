@@ -63,7 +63,7 @@ void DrawGrid(u8 type)
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 		
 		WaitForVBlank();
@@ -106,7 +106,7 @@ void DrawSMPTE()
 		{
 			text --;
 			if(!text)
-				drawText(26, 1, 7, "    ");
+				CleanFontMap();
 		}
 		
 		scanPads();
@@ -115,10 +115,10 @@ void DrawSMPTE()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 		
-		if(pressed == KEY_B)
+		if(pressed == KEY_A)
 		{
 			if(type)
 			{
@@ -171,7 +171,7 @@ void DrawColorBars(void)
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 		
 		WaitForVBlank();
@@ -210,10 +210,10 @@ void Drawcircles()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 		
-		if(pressed == KEY_B)
+		if(pressed == KEY_A)
 		{
 		}
 		
@@ -253,7 +253,7 @@ void DrawPluge()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 
 		WaitForVBlank();
@@ -293,7 +293,7 @@ void DrawGrayRamp(void)
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 		
 		WaitForVBlank();
@@ -336,10 +336,10 @@ void DrawColorBleed()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 
-		if(pressed == KEY_B)
+		if(pressed == KEY_A)
 		{
 			toggle = !toggle;			
 			redraw = 1;
@@ -381,7 +381,7 @@ void Draw601CB()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 
 		WaitForVBlank();
@@ -420,7 +420,7 @@ void DrawSharpness()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 
 		WaitForVBlank();
@@ -484,12 +484,8 @@ void DrawWhite()
 				drawText(18, 1, mod == 1 ? 6 : 7, "G:%0.3d", g);				
 				drawText(24, 1, mod == 2 ? 6 : 7, "B:%0.3d", b);
 			}
-			else
-			{
-				drawText(12, 1, 7, "     ");
-				drawText(18, 1, 7, "     ");
-				drawText(24, 1, 7, "     ");
-			}
+			else			
+				CleanFontMap();
 			
 			setPaletteColor(0x00, color);			
 			change = 0;
@@ -501,13 +497,13 @@ void DrawWhite()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_B)
+		if(pressed == KEY_A)
 		{
 			custom = !custom;	
 			change = 1;
 		}
 			
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;	
 
 		if(pressed == KEY_R)
@@ -552,7 +548,7 @@ void DrawWhite()
 			if(pressed == KEY_UP || fast && pad0 == KEY_UP)
 			{
 				int *edit = NULL;
-	      
+	  
 				switch(mod)
 				{
 					case 0:
@@ -567,18 +563,18 @@ void DrawWhite()
 				}
 				  
 				if(edit)
-				{      		
+				{  		
 					if(*edit != 0xff)
 						(*edit) += 1;
 									
 					change = 1;
-				}	      
+				}  
 			}
 				
 			if(pressed == KEY_DOWN || fast && pad0 == KEY_DOWN)
 			{
 				int *edit = NULL;
-	      
+	  
 				switch(mod)
 				{
 					case 0:
@@ -593,7 +589,7 @@ void DrawWhite()
 				}
 				  
 				if(edit)
-				{      		
+				{  		
 					if(*edit != 0x00)
 						(*edit) -= 1;
 									
@@ -604,7 +600,7 @@ void DrawWhite()
 			if(pressed == KEY_Y)
 			{
 				int *edit = NULL;
-	      
+	  
 				switch(mod)
 				{
 					case 0:
@@ -619,17 +615,17 @@ void DrawWhite()
 				}
 				  
 				if(edit)
-				{      		
+				{  		
 					*edit = 0;
 					
 					change = 1;
-				}	      
+				}  
 			}
 				
 			if(pressed == KEY_X)
 			{
 				int *edit = NULL;
-	      
+	  
 				switch(mod)
 				{
 					case 0:
@@ -644,7 +640,7 @@ void DrawWhite()
 				}
 				  
 				if(edit)
-				{      		
+				{  		
 					*edit = 0xff;
 									
 					change = 1;
@@ -700,27 +696,27 @@ void Draw100IRE()
 		
 		if(text)
 		{
-    		if(!invert)
-      		{
+			if(!invert)
+			{
 				if(text > 30)
 					drawText(14, 26, 7, "RANGE 0-100 IRE   ");
 				else
 					drawText(14, 26, 7, "         %0.3d IRE", 
 							(int)((irevalues[irecount]*100.0)/255.0));					
 			  	text --;
-      		}
-      		else
-      		{
+			}
+			else
+			{
 				if(text > 30)
 					drawText(14, 26, 7, "RANGE 100-140 IRE   ");
 				else
 					drawText(14, 26, 7, "         %0.3d IRE  ", 
 							(int)(100.0f + ((irevalues[irecount] * 40.5)/255.0)));
 			  	text --;
-      		}
+			}
 			
 			if(!text)
-				drawText(14, 26, 7, "                   ");
+				CleanFontMap();
 		}
 		WaitForVBlank();
 		
@@ -730,10 +726,10 @@ void Draw100IRE()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		if(pressed == KEY_A)
+		if(pressed == KEY_B)
 			end = 1;		
 			
-		if(pressed == KEY_B)
+		if(pressed == KEY_A)
 		{
 			invert = !invert;
 			if(invert)
