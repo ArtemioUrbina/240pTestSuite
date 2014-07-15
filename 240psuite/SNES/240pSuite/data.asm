@@ -152,6 +152,10 @@ sprites_pal:
 .incbin "sprites.pal"
 sprites_pal_end:
 
+numbers_pal:
+.incbin "numbers.pal"
+numbers_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
@@ -238,5 +242,13 @@ sprites_tiles_end:
 IRE100_tiles:
 .incbin "100IRE.pic"
 IRE100_tiles_end:
+
+.ends
+
+.section ".rodata5" superfree
+
+numbers_tiles:
+.incbin "numbers.pic"
+numbers_tiles_end:
 
 .ends

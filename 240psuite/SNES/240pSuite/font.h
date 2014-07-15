@@ -27,3 +27,8 @@
 void drawText(u16 x, u16 y, u8 palette, char *fmt, ...);
 void InitTextColor(u8 layer, u8 palette, u16 front, u16 back);
 void AddTextColor(u8 palette, u16 front, u16 back);
+void CleanFontMap();
+void DrawNumber(u16 x, u16 y, u16 spriteIndex, u16 tileIndex, u16 pal);
+void ChangeNumber(u16 x, u16 y, u16 spriteIndex, u16 tileIndex, u16 pal);
+void DrawCircle(u16 x, u16 y, u16 spriteIndex, u16 tileIndex, u16 pal);
+void ChangeCircle(u16 x, u16 y, u16 spriteIndex, u16 tileIndex, u16 pal);
