@@ -156,6 +156,10 @@ numbers_pal:
 .incbin "numbers.pal"
 numbers_pal_end:
 
+lagtest_pal:
+.incbin "lagtest.pal"
+lagtest_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
@@ -243,6 +247,10 @@ IRE100_tiles:
 .incbin "100IRE.pic"
 IRE100_tiles_end:
 
+lagtest_map:
+.incbin "lagtest.map"
+lagtest_map_end:
+
 .ends
 
 .section ".rodata5" superfree
@@ -250,5 +258,9 @@ IRE100_tiles_end:
 numbers_tiles:
 .incbin "numbers.pic"
 numbers_tiles_end:
+
+lagtest_tiles:
+.incbin "lagtest.pic"
+lagtest_tiles_end:
 
 .ends

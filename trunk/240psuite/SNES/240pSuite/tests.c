@@ -352,23 +352,26 @@ void DrawCheck(void)
 void PassiveLagTest()
 {
 	u16 pad0, oldpad = 0xffff, pressed, end = 0;
-	u16 frames = 0, seconds = 0, minutes = 0, hours = 0, msd, lsd;
+	u16 frames = 0, seconds = 0, minutes = 0, hours = 0, msd, lsd, framecnt = 0;
 	u16 numberIndex[12] = { 0, 8, 64, 72, 128, 136, 192, 200, 256, 264, 320, 328};
 	u16 spriteIndex[12] = { 0, 4, 8, 12, 16, 20, 24, 28, 32 };
-	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };
-	u16 circleIndex[8] = { 192, 196, 200, 204, 208, 212, 216, 220 };
+	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };	
 	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
-	int index = 0, y = 20, running = 0, redraw = 1;
-	int a = 0, b = 0;
+	int index = 0, y = 20, running = 0, redraw = 1;	
 	
 	while(!end) 
-	{		
+	{	
+		u16 count = 0, mul = 1;
+	
 		if(redraw)
 		{
-			ClearScreen(0);	
-			setPaletteColor(0x00, RGB5(0x0, 0xff, 0x0));
+			setPaletteColor(0x91, RGB5(31, 31, 31));
+			setPaletteColor(0xA3, RGB5(31, 0, 0));
 			
 			oamInitGfxSet(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
+			
+			bgInitTileSet(0, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
+			bgInitMapSet(0, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
 				
 			/*****Numbers*****/
 			
@@ -387,87 +390,90 @@ void PassiveLagTest()
 			// Frames
 			DrawNumber(xpos[6], y, spriteIndex[6], numberIndex[0], 0);	
 			DrawNumber(xpos[7], y, spriteIndex[7], numberIndex[0], 0);			
-			
-			/*****Separators*****/
-			
+					
 			/*****Circles*****/			
-			DrawCircle(0, 70, circleIndex[0], numberIndex[11], 0);
-			DrawCircle(64, 70, circleIndex[1], numberIndex[11], 0);
-			DrawCircle(128, 70, circleIndex[2], numberIndex[11], 0);
-			DrawCircle(192, 70, circleIndex[3], numberIndex[11], 0);
 			
-			DrawCircle(0, 140, circleIndex[4], numberIndex[11], 0);
-			DrawCircle(64, 140, circleIndex[5], numberIndex[11], 0);
-			DrawCircle(128, 140, circleIndex[6], numberIndex[11], 0);
-			DrawCircle(192, 140, circleIndex[7], numberIndex[11], 0);
-			
+			DrawCircle(0, 70, 192, numberIndex[11], 2);
+		
 			/*****Numbers on Circles*****/
-			DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 0);	
-			DrawNumber(a, b, numberTopIndex[1], numberIndex[2], 0);
-			/*
-			DrawNumber(118, 80, numberTopIndex[2], numberIndex[3], 0);	
-			DrawNumber(182, 80, numberTopIndex[3], numberIndex[4], 0);	
+			DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 1);	
+			DrawNumber(84, 80, numberTopIndex[1], numberIndex[2], 1);
+			DrawNumber(148, 80, numberTopIndex[2], numberIndex[3], 1);	
+			DrawNumber(212, 80, numberTopIndex[3], numberIndex[4], 1);	
 			
-			DrawNumber(10, 150, numberTopIndex[4], numberIndex[5], 0);	
-			DrawNumber(54, 150, numberTopIndex[5], numberIndex[6], 0);	
-			DrawNumber(118, 150, numberTopIndex[6], numberIndex[7], 0);	
-			DrawNumber(182, 150, numberTopIndex[7], numberIndex[8], 0);	
-			*/
+			DrawNumber(20, 150, numberTopIndex[4], numberIndex[5], 1);	
+			DrawNumber(84, 150, numberTopIndex[5], numberIndex[6], 1);	
+			DrawNumber(148, 150, numberTopIndex[6], numberIndex[7], 1);	
+			DrawNumber(212, 150, numberTopIndex[7], numberIndex[8], 1);				
 			
 			setMode(BG_MODE1,0);
+			bgSetScroll(0, 0, -1);
 			bgSetDisable(1);
 			bgSetDisable(2);
 			redraw = 0;
 		}
 		
-		if(running)
-		{
-			if(frames > 59)
-			{
-				frames = 0;
-				seconds ++;	
-			}
+		if(framecnt > 7)
+			framecnt = 0;
 		
-			if(seconds > 59)
-			{
-			  seconds = 0;
-			  minutes ++;
-			}
+		if(frames > 59)
+		{
+			frames = 0;
+			seconds ++;	
+		}
+	
+		if(seconds > 59)
+		{
+		  seconds = 0;
+		  minutes ++;
+		}
 
-			if(minutes > 59)
-			{
-			  minutes = 0;
-			  hours ++;
-			}
+		if(minutes > 59)
+		{
+		  minutes = 0;
+		  hours ++;
+		}
 
-			if(hours > 99)
-			  hours = 0;
-			  
-			// Hours			
-			lsd = hours % 10;
-			msd = hours / 10;			
-			ChangeNumber(xpos[0], y, spriteIndex[0], numberIndex[msd], 0);	
-			ChangeNumber(xpos[1], y, spriteIndex[1], numberIndex[lsd], 0);	
+		if(hours > 99)
+		  hours = 0;
+		  
+		// Hours			
+		lsd = hours % 10;
+		msd = hours / 10;			
+		ChangeNumber(xpos[0], y, spriteIndex[0], numberIndex[msd], 0);	
+		ChangeNumber(xpos[1], y, spriteIndex[1], numberIndex[lsd], 0);	
+		
+		// Minutes			
+		lsd = minutes % 10;
+		msd = minutes / 10;			
+		ChangeNumber(xpos[2], y, spriteIndex[2], numberIndex[msd], 0);	
+		ChangeNumber(xpos[3], y, spriteIndex[3], numberIndex[lsd], 0);	
+		
+		// Seconds		
+		lsd = seconds % 10;
+		msd = seconds / 10;			
+		ChangeNumber(xpos[4], y, spriteIndex[4], numberIndex[msd], 0);	
+		ChangeNumber(xpos[5], y, spriteIndex[5], numberIndex[lsd], 0);	
+		
+		// frames		
+		lsd = frames % 10;
+		msd = frames / 10;			
+		ChangeNumber(xpos[6], y, spriteIndex[6], numberIndex[msd], 0);	
+		ChangeNumber(xpos[7], y, spriteIndex[7], numberIndex[lsd], 0);	
+		
+		count = framecnt;
+		if(count > 3)
+		{
+			count -= 3;
+			mul = 2;
+		}
 			
-			// Minutes			
-			lsd = minutes % 10;
-			msd = minutes / 10;			
-			ChangeNumber(xpos[2], y, spriteIndex[2], numberIndex[msd], 0);	
-			ChangeNumber(xpos[3], y, spriteIndex[3], numberIndex[lsd], 0);	
-			
-			// Seconds		
-			lsd = seconds % 10;
-			msd = seconds / 10;			
-			ChangeNumber(xpos[4], y, spriteIndex[4], numberIndex[msd], 0);	
-			ChangeNumber(xpos[5], y, spriteIndex[5], numberIndex[lsd], 0);	
-			
-			// frames		
-			lsd = frames % 10;
-			msd = frames / 10;			
-			ChangeNumber(xpos[6], y, spriteIndex[6], numberIndex[msd], 0);	
-			ChangeNumber(xpos[7], y, spriteIndex[7], numberIndex[lsd], 0);	
-			
+		ChangeCircle(count*64, 70*mul, 192, numberIndex[11], 2);
+		
+		if(running)
+		{	
 			frames ++;
+			framecnt ++;
 		}
 		
 		WaitForVBlank();
@@ -482,18 +488,13 @@ void PassiveLagTest()
 			running = !running;
 				
 		if(pressed == KEY_B)
-			end = 1;	
-
-		if(pad0 & KEY_UP)
-			b--;
-		if(pad0 & KEY_DOWN)
-			b++;
-		if(pad0 & KEY_LEFT)
-			a--;				
-		if(pad0 & KEY_RIGHT)		
-			a++;
-
-		ChangeNumber(a, b, numberTopIndex[1], numberIndex[2], 0);		
+			end = 1;
+			
+		if (pressed == KEY_X && !running)
+		{
+			frames = hours = minutes = seconds = 0;
+			framecnt = 0;
+		}		
 	}
 	setFadeEffect(FADE_OUT);		
 	oamClear(0, 0);

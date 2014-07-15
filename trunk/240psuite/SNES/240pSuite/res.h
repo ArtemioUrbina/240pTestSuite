@@ -89,6 +89,10 @@ extern char IRE100_map, IRE100_map_end;
 extern char numbers_tiles, numbers_tiles_end;
 extern char numbers_pal, numbers_pal_end;
 
+extern char lagtest_tiles, lagtest_tiles_end;
+extern char lagtest_pal, lagtest_pal_end;
+extern char lagtest_map, lagtest_map_end;
+
 extern char font;
 extern char fontback;
 
