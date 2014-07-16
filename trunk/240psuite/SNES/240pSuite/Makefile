@@ -87,7 +87,7 @@ numbers.pic: numbers.bmp
 
 back.pic: back.bmp
 	@echo convert bitmap to palette 1... $(notdir $@)
-	$(GFXCONV) -pR! -pr -pc16 -n -gs8 -pe1 -fbmp -m $<
+	$(GFXCONV) -pR! -pr -pc16 -po16 -n -gs8 -pe1 -fbmp -m $<
 	
 motoko.pic: motoko.bmp
 	@echo convert bitmap in 256 colors... $(notdir $@)
@@ -100,40 +100,48 @@ color.pic: color.bmp
 grayramp.pic: grayramp.bmp
 	@echo convert bitmap in 256 colors wihout palette rounding... $(notdir $@)
 	$(GFXCONV) -pR! -pc128 -po128 -n -gs8 -pe0 -fbmp -m $<
+	
+fullscreen256.pic: fullscreen256.bmp
+	@echo convert font 256 with no color reduction ... $(notdir $@)
+	$(GFXCONV) -pc256 -po16 -n -gs8 -pe0 -fbmp -m $<	
+
+100IRE.pic: 100IRE.bmp
+	@echo convert font 256 with no color reduction ... $(notdir $@)
+	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
+	
+sonicback.pic: sonicback.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc256 -n -gs8 -pe0 -fbmp -m $<
+
+sonicfloor.pic: sonicfloor.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe2 -fbmp -mp -m $<
 
 SMPTECB75.pic: SMPTECB75.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
-	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 	
 SMPTECB100.pic: SMPTECB100.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
-	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 
 pluge.pic: pluge.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
-	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 	
 601701cb.pic: 601701cb.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
-	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 	
 sharpness.pic: sharpness.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
-	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m -m $<
-
-fullscreen256.pic: fullscreen256.bmp
-	@echo convert font 256 with no tile reduction ... $(notdir $@)
-	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
-
-100IRE.pic: 100IRE.bmp
-	@echo convert font 256 with no tile reduction ... $(notdir $@)
-	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
 	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic colorbleed.pic\
 	colorbleedchk.pic 601701cb.pic sharpness.pic fullscreen.pic fullscreen256.pic\
 	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic 100IRE.pic\
-	numbers.pic lagtest.pic
+	numbers.pic lagtest.pic sonicback.pic sonicfloor.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)
