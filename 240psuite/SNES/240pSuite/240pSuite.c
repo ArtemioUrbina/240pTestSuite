@@ -68,8 +68,8 @@ int main(void)
 		{
 			u16 pos = 7;
 			
-			setPaletteColor(0x71, RGB5(31, 31, 31));
-			setPaletteColor(0x61, RGB5(31, 0, 0));
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));			
 			
 			drawText(3, pos, sel == 0 ? 6 : 7, "Test Patterns"); pos ++;
 			drawText(3, pos, sel == 1 ? 6 : 7, "Drop Shadow Test"); pos ++;
@@ -188,8 +188,8 @@ void TestPatterns(void)
 		{
 			u16 pos = 6;
 			
-			setPaletteColor(0x71, RGB5(31, 31, 31));
-			setPaletteColor(0x61, RGB5(31, 0, 0));
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));	
 			
 			drawText(3, pos, sel == 0 ? 6 : 7, "Pluge"); pos ++;
 			drawText(3, pos, sel == 1 ? 6 : 7, "Color Bars"); pos ++;
@@ -328,9 +328,9 @@ void DrawCredits(void)
 			
 			bgSetScroll(1, 0, -1);						
 			
-			setPaletteColor(0x71, RGB5(31, 31, 31));
-			setPaletteColor(0x61, RGB5(0, 31, 0));
-			setPaletteColor(0x51, RGB5(0, 0, 31));
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
+			AddTextColor(5, RGB5(0, 25, 25), RGB5(0, 0, 0));	
 			
 			drawText(3, pos, 6, "Code and Patterns:"); pos ++;
 			pos++;
