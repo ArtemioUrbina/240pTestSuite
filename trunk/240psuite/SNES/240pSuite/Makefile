@@ -63,7 +63,7 @@ clean:
 #---------------------------------------------------------------------------------
 font.pic: font.bmp
 	@echo convert font with no tile reduction ... $(notdir $@)
-	$(GFXCONV) -n -gs8 -po2 -pc16 -pe0 -mR! -m! -p! $<
+	$(GFXCONV) -n -gs8 -pc16 -pe0 -mR! -m! -p! $<
 
 fontback.pic: fontback.bmp
 	@echo convert font with no tile reduction ... $(notdir $@)

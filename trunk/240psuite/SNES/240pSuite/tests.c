@@ -365,14 +365,20 @@ void PassiveLagTest()
 	
 		if(redraw)
 		{
+			consoleInitText(0, 7, &font);	
+			
 			setPaletteColor(0x91, RGB5(31, 31, 31));
 			setPaletteColor(0xA3, RGB5(31, 0, 0));
 			
+			AddTextColor(7, RGB5(0, 0, 0), RGB5(31, 31, 31));
+			
 			oamInitGfxSet(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
 			
-			bgInitTileSet(0, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
-			bgInitMapSet(0, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
-				
+			bgInitTileSet(1, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
+			bgInitMapSet(1, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
+			
+			drawText(1, 1, 7, "hours   minutes seconds frames");
+			
 			/*****Numbers*****/
 			
 			// Hours			
@@ -407,8 +413,7 @@ void PassiveLagTest()
 			DrawNumber(212, 150, numberTopIndex[7], numberIndex[8], 1);				
 			
 			setMode(BG_MODE1,0);
-			bgSetScroll(0, 0, -1);
-			bgSetDisable(1);
+			bgSetScroll(1, 0, -1);			
 			bgSetDisable(2);
 			redraw = 0;
 		}
