@@ -160,6 +160,14 @@ lagtest_pal:
 .incbin "lagtest.pal"
 lagtest_pal_end:
 
+sonicback_pal:
+.incbin "sonicback.pal"
+sonicback_pal_end:
+
+sonicfloor_pal:
+.incbin "sonicfloor.pal"
+sonicfloor_pal_end:
+
 .ends
 
 .section ".rodata3" superfree
@@ -174,6 +182,14 @@ motoko_tiles2_end:
 IRE100_map:
 .incbin "100IRE.map"
 IRE100_map_end:
+
+sonicback_map:
+.incbin "sonicback.map"
+sonicback_map_end:
+
+sonicfloor_map:
+.incbin "sonicfloor.map"
+sonicfloor_map_end:
 
 .ends
 
@@ -262,5 +278,17 @@ numbers_tiles_end:
 lagtest_tiles:
 .incbin "lagtest.pic"
 lagtest_tiles_end:
+
+sonicfloor_tiles:
+.incbin "sonicfloor.pic"
+sonicfloor_tiles_end:
+
+.ends
+
+.section ".rodata6" superfree
+
+sonicback_tiles:
+.incbin "sonicback.pic"
+sonicback_tiles_end:
 
 .ends

@@ -133,6 +133,9 @@ int main(void)
 				case 2:
 					PassiveLagTest();
 					break;
+				case 4:
+					HScrollTest();
+					break;
 				case 6:
 					DrawStripes();
 					break;

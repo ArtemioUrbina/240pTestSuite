@@ -93,6 +93,14 @@ extern char lagtest_tiles, lagtest_tiles_end;
 extern char lagtest_pal, lagtest_pal_end;
 extern char lagtest_map, lagtest_map_end;
 
+extern char sonicback_tiles, sonicback_tiles_end;
+extern char sonicback_pal, sonicback_pal_end;
+extern char sonicback_map, sonicback_map_end;
+
+extern char sonicfloor_tiles, sonicfloor_tiles_end;
+extern char sonicfloor_pal, sonicfloor_pal_end;
+extern char sonicfloor_map, sonicfloor_map_end;
+
 extern char font;
 extern char fontback;
 

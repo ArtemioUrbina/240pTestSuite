@@ -27,3 +27,4 @@ void DropShadowTest();
 void DrawStripes();
 void DrawCheck();
 void PassiveLagTest();
+void HScrollTest();

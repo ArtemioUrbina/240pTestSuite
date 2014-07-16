@@ -354,10 +354,10 @@ void PassiveLagTest()
 	u16 pad0, oldpad = 0xffff, pressed, end = 0;
 	u16 frames = 0, seconds = 0, minutes = 0, hours = 0, msd, lsd, framecnt = 0;
 	u16 numberIndex[12] = { 0, 8, 64, 72, 128, 136, 192, 200, 256, 264, 320, 328};
-	u16 spriteIndex[12] = { 0, 4, 8, 12, 16, 20, 24, 28, 32 };
+	u16 spriteIndex[8] = { 0, 4, 8, 12, 16, 20, 24, 28 };
 	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };	
 	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
-	int index = 0, y = 20, running = 0, redraw = 1;	
+	u16 y = 20, running = 0, redraw = 1, color = 1, bgcol = 0xa;	
 	
 	while(!end) 
 	{	
@@ -365,19 +365,23 @@ void PassiveLagTest()
 	
 		if(redraw)
 		{
+			setBrightness(0);
+			
 			consoleInitText(0, 7, &font);	
 			
 			setPaletteColor(0x91, RGB5(31, 31, 31));
 			setPaletteColor(0xA3, RGB5(31, 0, 0));
+			setPaletteColor(0xA1, RGB5(31, 0, 0));
+			setPaletteColor(0xB1, RGB5(0, 0, 31));
 			
 			AddTextColor(7, RGB5(0, 0, 0), RGB5(31, 31, 31));
-			
-			oamInitGfxSet(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
-			
+						
 			bgInitTileSet(1, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
 			bgInitMapSet(1, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
 			
 			drawText(1, 1, 7, "hours   minutes seconds frames");
+			
+			oamInitGfxSet(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
 			
 			/*****Numbers*****/
 			
@@ -399,7 +403,7 @@ void PassiveLagTest()
 					
 			/*****Circles*****/			
 			
-			DrawCircle(0, 70, 192, numberIndex[11], 2);
+			DrawCircle(0, 70, 192, numberIndex[10], 2);
 		
 			/*****Numbers on Circles*****/
 			DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 1);	
@@ -413,13 +417,25 @@ void PassiveLagTest()
 			DrawNumber(212, 150, numberTopIndex[7], numberIndex[8], 1);				
 			
 			setMode(BG_MODE1,0);
-			bgSetScroll(1, 0, -1);			
+			bgSetScroll(1, 0, -1);	
 			bgSetDisable(2);
+			
+			setBrightness(0xf);
+			
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
 		if(framecnt > 7)
 			framecnt = 0;
+			
+		if(running && color)
+		{
+			if(bgcol == 0xa)
+				bgcol = 0xb;
+			else
+				bgcol = 0xa;
+		}
 		
 		if(frames > 59)
 		{
@@ -463,8 +479,8 @@ void PassiveLagTest()
 		// frames		
 		lsd = frames % 10;
 		msd = frames / 10;			
-		ChangeNumber(xpos[6], y, spriteIndex[6], numberIndex[msd], 0);	
-		ChangeNumber(xpos[7], y, spriteIndex[7], numberIndex[lsd], 0);	
+		ChangeNumber(xpos[6], y, spriteIndex[6], numberIndex[msd], bgcol);	
+		ChangeNumber(xpos[7], y, spriteIndex[7], numberIndex[lsd], bgcol);	
 		
 		count = framecnt;
 		if(count > 3)
@@ -473,16 +489,14 @@ void PassiveLagTest()
 			mul = 2;
 		}
 			
-		ChangeCircle(count*64, 70*mul, 192, numberIndex[11], 2);
+		ChangeCircle(count*64, 70*mul, 192, numberIndex[10], 2);
 		
 		if(running)
 		{	
 			frames ++;
 			framecnt ++;
 		}
-		
-		WaitForVBlank();
-		
+			
 		scanPads();
 		pad0 = padsCurrent(0);
 		
@@ -503,4 +517,116 @@ void PassiveLagTest()
 	}
 	setFadeEffect(FADE_OUT);		
 	oamClear(0, 0);
+}
+
+void ShiftPalette(u16 pal, u16 pos)
+{	
+	u16 *palette = (unsigned int*)&sonicback_pal;
+	
+	if(pos == 1)
+	{
+		setPaletteColor(pal*0x10+2, palette[16+2]);
+		setPaletteColor(pal*0x10+3, palette[16+3]);
+		setPaletteColor(pal*0x10+4, palette[16+4]);
+		setPaletteColor(pal*0x10+5, palette[16+5]);
+	}
+	
+	if(pos == 2)
+	{
+		setPaletteColor(pal*0x10+2, palette[16+5]);
+		setPaletteColor(pal*0x10+3, palette[16+2]);
+		setPaletteColor(pal*0x10+4, palette[16+3]);
+		setPaletteColor(pal*0x10+5, palette[16+4]);
+	}
+	
+	if(pos == 3)
+	{
+		setPaletteColor(pal*0x10+2, palette[16+4]);
+		setPaletteColor(pal*0x10+3, palette[16+5]);
+		setPaletteColor(pal*0x10+4, palette[16+2]);
+		setPaletteColor(pal*0x10+5, palette[16+3]);
+	}
+}
+
+void HScrollTest() 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 redraw = 1, x = 0, pause = 0, frame = 0;
+	int speed = 1, acc = 1;
+		
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+						
+			bgInitTileSet(0, &sonicback_tiles, &sonicback_pal, 0, (&sonicback_tiles_end - &sonicback_tiles), 32*2, BG_256COLORS, 0x3000);	
+			bgInitMapSet(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
+			
+			bgInitTileSet(1, &sonicfloor_tiles, &sonicfloor_pal, 2, (&sonicfloor_tiles_end - &sonicfloor_tiles), 16*2, BG_16COLORS, 0x6000);	
+			bgInitMapSet(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);			
+			
+			setMode(BG_MODE3,0); 			
+			
+			bgSetScroll(0, 0, -1);
+			bgSetScroll(1, 0, -97);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		switch(frame)
+		{
+			case 30:
+				ShiftPalette(1, 3);
+				break;
+			case 60:
+				ShiftPalette(1, 2);
+				break;
+			case 90:
+				ShiftPalette(1, 1);
+				break;
+		}
+
+		frame ++;
+		if(frame > 90)
+			frame = 1;
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_B)
+			end = 1;	
+			
+		if(pressed == KEY_UP)
+			speed++;	
+			
+		if(pressed == KEY_DOWN)
+			speed--;
+			
+		if(speed > 20)        
+			speed = 20;          
+
+		if(speed < 0)        
+			speed = 0;  
+			
+		if (pressed & KEY_A)
+			pause = !pause;
+
+		if (pressed & KEY_X)
+			acc *= -1;
+
+		if(!pause)
+			x += acc*speed;
+			
+		bgSetScroll(0, x/2, -1);
+		bgSetScroll(1, x, -97);	
+
+		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
 }
