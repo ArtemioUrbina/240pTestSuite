@@ -72,6 +72,7 @@ int main(void)
 			
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));			
+			AddTextColor(5, RGB5(0, 28, 28), RGB5(0, 0, 0));			
 			
 			drawText(3, pos, sel == 0 ? 6 : 7, "Test Patterns"); pos ++;
 			drawText(3, pos, sel == 1 ? 6 : 7, "Drop Shadow Test"); pos ++;
@@ -85,7 +86,7 @@ int main(void)
 			drawText(3, pos, sel == 9 ? 6 : 7, "Backlit Zone Test"); pos ++;
 			drawText(3, pos, sel == 10 ? 6 : 7, "Sound Test"); pos ++;
 			drawText(3, pos, sel == 11 ? 6 : 7, "Help"); pos += 2;	
-			drawText(3, pos, sel == 12 ? 6 : 7, "Credits"); 
+			drawText(3, pos, sel == 12 ? 6 : 5, "Credits"); 
 			
 			if(redraw)
 			{
@@ -218,6 +219,7 @@ void TestPatterns(void)
 			
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));	
+			AddTextColor(5, RGB5(0, 28, 28), RGB5(0, 0, 0));
 			
 			drawText(3, pos, sel == 0 ? 6 : 7, "Pluge"); pos ++;
 			drawText(3, pos, sel == 1 ? 6 : 7, "Color Bars"); pos ++;
@@ -232,7 +234,7 @@ void TestPatterns(void)
 			drawText(3, pos, sel == 10 ? 6 : 7, "100 IRE"); pos ++;	
 			drawText(3, pos, sel == 11 ? 6 : 7, "Sharpness"); pos++;
 			drawText(3, pos, sel == 12 ? 6 : 7, "Overscan"); pos+=2;
-			drawText(3, pos, sel == 13 ? 6 : 7, "Back to Main Menu"); 
+			drawText(3, pos, sel == 13 ? 6 : 5, "Back to Main Menu"); 
 			
 			if(redraw)
 			{
