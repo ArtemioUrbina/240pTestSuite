@@ -200,6 +200,14 @@ LEDsprites_pal:
 .incbin "LEDsprites.pal"
 LEDsprites_pal_end:
 
+striped_tiles:
+.incbin "striped.pic"
+striped_tiles_end:
+
+striped_pal:
+.incbin "striped.pal"
+striped_pal_end:
+
 .ends
 
 .section ".rodata4" superfree
@@ -299,6 +307,10 @@ lagtest_tiles_end:
 sonicfloor_tiles:
 .incbin "sonicfloor.pic"
 sonicfloor_tiles_end:
+
+beep_brr:
+.incbin "beep.brr"
+beep_brr_end:
 
 .ends
 

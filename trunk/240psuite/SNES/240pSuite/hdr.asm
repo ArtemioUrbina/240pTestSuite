@@ -29,7 +29,7 @@
 .ENDME          ; End MemoryMap definition
 
 .ROMBANKSIZE $8000              ; Every ROM bank is 32 KBytes in size
-.ROMBANKS 8                     ; 2 Mbits - Tell WLA we want to use 8 ROM Banks
+.ROMBANKS 16                     ; 2 Mbits - Tell WLA we want to use 8 ROM Banks
 
 .SNESHEADER
   ID "SNES"                     ; 1-4 letter string, just leave it as "SNES"
@@ -40,9 +40,9 @@
   SLOWROM
   LOROM
 
-  CARTRIDGETYPE $02             ; $02 = ROM+SRAM, see WLA documentation for others
-  ROMSIZE $08                   ; $08 = 2 Mbits,  see WLA doc for more..
-  SRAMSIZE $01                  ; $01 = 16 kbits, see WLA doc for more..
+  CARTRIDGETYPE $00             ; $02 = ROM+SRAM, see WLA documentation for others
+  ROMSIZE $09                   ; $08 = 2 Mbits,  see WLA doc for more..
+  SRAMSIZE $00                  ; $01 = 16 kbits, see WLA doc for more..
   COUNTRY $01                   ; $01 = U.S.  $00 = Japan, that's all I know
   LICENSEECODE $00              ; Just use $00
   VERSION $00                   ; $00 = 1.00, $01 = 1.01, etc.
