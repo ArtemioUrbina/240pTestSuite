@@ -42,6 +42,7 @@ motoko_tiles1_end:
 
 .ends
 
+/* Has CC0 bytes free */
 .section ".rodata2" superfree
 
 back_map:
@@ -189,7 +190,15 @@ sonicback_map_end:
 
 sonicfloor_map:
 .incbin "sonicfloor.map"
-sonicfloor_map_end:
+sonicfloor_map_end:	
+
+nishka_map:
+.incbin "n_m.s"
+nishka_map_end:
+
+LEDsprites_pal:
+.incbin "LEDsprites.pal"
+LEDsprites_pal_end:
 
 .ends
 
@@ -267,6 +276,14 @@ lagtest_map:
 .incbin "lagtest.map"
 lagtest_map_end:
 
+nishka_pal:
+.incbin "n_p.s"
+nishka_pal_end:
+
+circlesgrid_tiles:
+.incbin "circles_grid.pic"
+circlesgrid_tiles_end:
+
 .ends
 
 .section ".rodata5" superfree
@@ -290,5 +307,17 @@ sonicfloor_tiles_end:
 sonicback_tiles:
 .incbin "sonicback.pic"
 sonicback_tiles_end:
+
+LEDsprites_tiles:
+.incbin "LEDsprites.pic"
+LEDsprites_tiles_end:
+
+.ends
+
+.section ".rodata7" superfree
+
+nishka_tiles:
+.incbin "n_t.s"
+nishka_tiles_end:
 
 .ends

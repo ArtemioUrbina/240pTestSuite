@@ -28,3 +28,5 @@ void DrawStripes();
 void DrawCheck();
 void PassiveLagTest();
 void HScrollTest();
+void VScrollTest();
+void LEDZoneTest();
