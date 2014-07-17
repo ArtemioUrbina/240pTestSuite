@@ -82,6 +82,10 @@ sprites.pic: sprites.bmp
 numbers.pic: numbers.bmp
 	@echo convert bitmap to sprites... $(notdir $@)
 	$(GFXCONV) -pR! -gs32 -pc16 -po16 -n $<		
+
+LEDsprites.pic: LEDsprites.bmp
+	@echo convert bitmap to sprites... $(notdir $@)
+	$(GFXCONV) -pR! -gs8 -pc16 -po16 -n $<		
 	
 #----------------------------------END SPRITES-------------------------------------
 
@@ -141,7 +145,8 @@ bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB7
 	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic colorbleed.pic\
 	colorbleedchk.pic 601701cb.pic sharpness.pic fullscreen.pic fullscreen256.pic\
 	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic 100IRE.pic\
-	numbers.pic lagtest.pic sonicback.pic sonicfloor.pic
+	numbers.pic lagtest.pic sonicback.pic sonicfloor.pic circles_grid.pic\
+	LEDsprites.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

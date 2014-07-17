@@ -101,6 +101,15 @@ extern char sonicfloor_tiles, sonicfloor_tiles_end;
 extern char sonicfloor_pal, sonicfloor_pal_end;
 extern char sonicfloor_map, sonicfloor_map_end;
 
+extern char nishka_tiles, nishka_tiles_end;
+extern char nishka_pal, nishka_pal_end;
+extern char nishka_map, nishka_map_end;
+
+extern char circlesgrid_tiles, circlesgrid_tiles_end;
+
+extern char LEDsprites_tiles, LEDsprites_tiles_end;
+extern char LEDsprites_pal, LEDsprites_pal_end;
+
 extern char font;
 extern char fontback;
 

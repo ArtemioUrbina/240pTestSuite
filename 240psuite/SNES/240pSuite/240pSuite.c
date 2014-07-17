@@ -136,11 +136,17 @@ int main(void)
 				case 4:
 					HScrollTest();
 					break;
+				case 5:
+					VScrollTest();
+					break;
 				case 6:
 					DrawStripes();
 					break;
 				case 7:
 					DrawCheck();
+					break;
+				case 8:
+					LEDZoneTest();
 					break;
 				case 11:
 					DrawCredits();
@@ -304,6 +310,52 @@ void TestPatterns(void)
 	return 0;
 }
 
+
+void DrawCat(void) 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 redraw = 1, size = 0, count = 0;	
+	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			consoleInitText(1, 4, &font);			
+			size = (&nishka_tiles_end - &nishka_tiles);
+			bgInitTileSet(0, &nishka_tiles, &nishka_pal, 0, size, 256*2, BG_256COLORS, 0x2000);		
+	
+			bgInitMapSet(0, &nishka_map, (&nishka_map_end - &nishka_map), SC_32x32, 0x7000);
+						
+			setMode(BG_MODE3,0); 								
+			
+			drawText(5, 25, 4, "The cat was unimpresed");
+						
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_B)
+			end = 1;
+
+		count++;
+		if(count == 100)
+			end = 1;
+		
+		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
+}
+
 void DrawCredits(void) 
 {
 	u16 redraw = 1, counter = 1;
@@ -319,7 +371,7 @@ void DrawCredits(void)
 					
 			setBrightness(0);	
 			
-			consoleInitText(0, 7, &font);				
+			consoleInitText(0, 7, &font);
 			size = (&back_tiles_end - &back_tiles);
 			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 			
@@ -350,8 +402,8 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(19, 6, 5, "Ver. 0.02");
-			drawText(19, 7, 7, "12/07/2014");
+			drawText(19, 6, 5, "Ver. 0.04");
+			drawText(19, 7, 7, "16/07/2014");
 			 			
 			if(redraw)
 				redraw = 0;						
@@ -380,6 +432,14 @@ void DrawCredits(void)
 		{
 			exit = 1;
 			setFadeEffect(FADE_OUT);				
+		}
+		
+		if(pressed == KEY_L)
+		{			
+			setFadeEffect(FADE_OUT);				
+			DrawCat();
+			redraw = 1;
+			counter = 1;
 		}
 	}
 	return 0;

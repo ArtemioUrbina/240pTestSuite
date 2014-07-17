@@ -22,12 +22,42 @@
 #include "tests.h"
 #include "font.h"
 
+
+void ShiftPalette(u16 pal, u16 pos)
+{	
+	u16 *palette = (unsigned int*)&sonicback_pal;
+	
+	if(pos == 1)
+	{
+		setPaletteColor(pal*0x10+2, palette[16+2]);
+		setPaletteColor(pal*0x10+3, palette[16+3]);
+		setPaletteColor(pal*0x10+4, palette[16+4]);
+		setPaletteColor(pal*0x10+5, palette[16+5]);
+	}
+	
+	if(pos == 2)
+	{
+		setPaletteColor(pal*0x10+2, palette[16+5]);
+		setPaletteColor(pal*0x10+3, palette[16+2]);
+		setPaletteColor(pal*0x10+4, palette[16+3]);
+		setPaletteColor(pal*0x10+5, palette[16+4]);
+	}
+	
+	if(pos == 3)
+	{
+		setPaletteColor(pal*0x10+2, palette[16+4]);
+		setPaletteColor(pal*0x10+3, palette[16+5]);
+		setPaletteColor(pal*0x10+4, palette[16+2]);
+		setPaletteColor(pal*0x10+5, palette[16+3]);
+	}
+}
+
 void DropShadowTest(void) 
 {	
 	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
 	u16 redraw = 1, size = 0, changesprite = 1;
-	u8	drawShadow = 1, odd = 0;
-	int sprite = 0, x = 100, y = 100, text = 0;
+	u8	drawShadow = 1, odd = 0, mode = BG_MODE3, frame = 0;
+	int sprite = 0, x = 100, y = 100, text = 0, back = 0;
 	
 	sprite = rand() % 2;
 	while(!end) 
@@ -40,19 +70,87 @@ void DropShadowTest(void)
 			// need to be in 8k vram steps. Lowercase will be available
 			consoleInitText(1, 7, &font);	
 			
-			size = (&motoko_tiles1_end - &motoko_tiles1);
-			bgInitTileSet(0, &motoko_tiles1, &motoko_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
-			dmaCopyVram(&motoko_tiles2, 0x5000, (&motoko_tiles2_end-&motoko_tiles2));
+			if(back == 0)
+			{
+				size = (&motoko_tiles1_end - &motoko_tiles1);
+				bgInitTileSet(0, &motoko_tiles1, &motoko_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
+				dmaCopyVram(&motoko_tiles2, 0x5000, (&motoko_tiles2_end-&motoko_tiles2));
+				
+				bgInitMapSet(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x7C00);
+				mode = BG_MODE3;
+			}
 			
-			bgInitMapSet(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x7C00);
+			if(back == 1)
+			{
+				size = (&sonicback_tiles_end - &sonicback_tiles);
+				bgInitTileSet(0, &sonicback_tiles, &sonicback_pal, 0, size, 32*2, BG_256COLORS, 0x3000);	
+				bgInitMapSet(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
+			
+				size = (&sonicfloor_tiles_end - &sonicfloor_tiles);
+				bgInitTileSet(1, &sonicfloor_tiles, &sonicfloor_pal, 2, size, 16*2, BG_16COLORS, 0x6000);	
+				bgInitMapSet(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);	
+				mode = BG_MODE3;				
+			}
+			
+			if(back == 2)
+			{
+				size = (&hstripes_tiles_end - &hstripes_tiles);
+				bgInitTileSet(1, &hstripes_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);	
+				bgInitMapSet(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+				
+				setPaletteColor(0x00, RGB5(0, 0, 0));
+				setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
+				mode = BG_MODE1;
+			}
+			
+			if(back == 3)
+			{
+				size = (&check_tiles_end - &check_tiles);
+				bgInitTileSet(1, &check_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);						
+				bgInitMapSet(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+				setPaletteColor(0x00, RGB5(0, 0, 0));
+				setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
+				mode = BG_MODE1;
+			}
 			
 			oamInitGfxSet(&sprites_tiles, (&sprites_tiles_end - &sprites_tiles), &sprites_pal, 16*2, 7, 0, OBJ_SIZE32);			
 			
-			setMode(BG_MODE3,0);			
+			setMode(mode,0);			
 			
 			bgSetScroll(0, 0, -1);
+			if(back == 1)
+				bgSetScroll(1, 0, -97);
+			if(back > 1)
+			{
+				bgSetScroll(1, 0, -1);
+				bgSetDisable(0);
+				bgSetDisable(2);
+			}				
 			setBrightness(0xF);
 			redraw = 0;
+		}
+		
+		if(back == 1)
+		{
+			switch(frame)
+			{
+				case 30:
+					ShiftPalette(1, 3);
+					break;
+				case 60:
+					ShiftPalette(1, 2);
+					break;
+				case 90:
+					ShiftPalette(1, 1);
+					break;
+			}
+
+			frame ++;
+			if(frame > 90)
+				frame = 1;
+				
+			bgSetScroll(0, x*2, -1);
+			bgSetScroll(1, x*4, -97);  
 		}
 		
 		if(changesprite)
@@ -61,13 +159,13 @@ void DropShadowTest(void)
 			
 			if(sprite)
 			{
-				oamSet(0, x, y, 3, 0, 0, 8, 7); 
+				oamSet(0, x, y, 2, 0, 0, 8, 7); 
 				oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
 				oamSetVisible(0, OBJ_SHOW);
 			}
 			else
 			{
-				oamSet(0, x, y, 3, 0, 0, 0, 7); 
+				oamSet(0, x, y, 2, 0, 0, 0, 7); 
 				oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
 				oamSetVisible(0, OBJ_SHOW);
 				
@@ -130,11 +228,11 @@ void DropShadowTest(void)
 		{
 			if(sprite)
 			{
-				oamSet(0, x, y, 3, 0, 0, 8, 7);
+				oamSet(0, x, y, 2, 0, 0, 8, 7);
 			}
 			else
 			{
-				oamSet(0, x, y, 3, 0, 0, 0, 7); 				
+				oamSet(0, x, y, 2, 0, 0, 0, 7); 				
 				oamSet(4, x+10, y+10, 2, 0, 0, 4, 7); 
 			}
 			x--;
@@ -144,11 +242,11 @@ void DropShadowTest(void)
 		{
 			if(sprite)
 			{
-				oamSet(0, x, y, 3, 1, 0, 8, 7);
+				oamSet(0, x, y, 2, 1, 0, 8, 7);
 			}
 			else
 			{
-				oamSet(0, x, y, 3, 1, 0, 0, 7); 				
+				oamSet(0, x, y, 2, 1, 0, 0, 7); 				
 				oamSet(4, x+10, y+10, 2, 1, 0, 4, 7); 
 			}
 			x++;
@@ -177,6 +275,24 @@ void DropShadowTest(void)
 			odd = !odd;
 			drawShadow = !drawShadow;
 			text = 30;
+		}
+		
+		if(pressed == KEY_R)
+		{		
+			back ++;
+			redraw = 1;
+			
+			if(back > 3)
+				back = 0;
+		}
+		
+		if(pressed == KEY_L)
+		{		
+			back --;
+			redraw = 1;
+			
+			if(back < 0)
+				back = 3;
 		}
 		
 		WaitForVBlank();
@@ -212,7 +328,7 @@ void DrawStripes(void)
 			setMode(BG_MODE1,0); 								
 			bgSetDisable(2);
 			
-			bgSetScroll(0, 0, -1);
+			bgSetScroll(1, 0, -1);
 			setBrightness(0xF);
 			redraw = 0;
 		}
@@ -295,7 +411,7 @@ void DrawCheck(void)
 			setMode(BG_MODE1,0); 								
 			bgSetDisable(2);
 			
-			bgSetScroll(0, 0, -1);
+			bgSetScroll(1, 0, -1);
 			setBrightness(0xF);
 			redraw = 0;
 		}
@@ -519,35 +635,6 @@ void PassiveLagTest()
 	oamClear(0, 0);
 }
 
-void ShiftPalette(u16 pal, u16 pos)
-{	
-	u16 *palette = (unsigned int*)&sonicback_pal;
-	
-	if(pos == 1)
-	{
-		setPaletteColor(pal*0x10+2, palette[16+2]);
-		setPaletteColor(pal*0x10+3, palette[16+3]);
-		setPaletteColor(pal*0x10+4, palette[16+4]);
-		setPaletteColor(pal*0x10+5, palette[16+5]);
-	}
-	
-	if(pos == 2)
-	{
-		setPaletteColor(pal*0x10+2, palette[16+5]);
-		setPaletteColor(pal*0x10+3, palette[16+2]);
-		setPaletteColor(pal*0x10+4, palette[16+3]);
-		setPaletteColor(pal*0x10+5, palette[16+4]);
-	}
-	
-	if(pos == 3)
-	{
-		setPaletteColor(pal*0x10+2, palette[16+4]);
-		setPaletteColor(pal*0x10+3, palette[16+5]);
-		setPaletteColor(pal*0x10+4, palette[16+2]);
-		setPaletteColor(pal*0x10+5, palette[16+3]);
-	}
-}
-
 void HScrollTest() 
 {	
 	u16 pad0, oldpad = 0xffff, pressed, end = 0;
@@ -628,5 +715,169 @@ void HScrollTest()
 	}	
 	setFadeEffect(FADE_OUT);	
 	
+	return;
+}
+
+void VScrollTest(void)
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 redraw = 1;
+	int posx = 0, posy = 0, speed = 1, acc = -1, pause = 0, *pos = NULL;
+	
+	pos = &posx;
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			bgInitTileSet(0, &circlesgrid_tiles, &grid_pal, 0, (&circlesgrid_tiles_end - &circlesgrid_tiles), 16*2, BG_16COLORS, 0x6000);					
+			bgInitMapSet(0, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+			
+			setPaletteColor(0x00, RGB5(0, 0, 0));
+			setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
+			
+			setMode(BG_MODE1,0); 								
+			bgSetDisable(1);
+			bgSetDisable(2);
+			
+			bgSetScroll(0, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+				
+		WaitForVBlank();
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+				
+		if(pressed == KEY_B)
+			end = 1;
+		
+		if(pressed & KEY_UP)
+			speed++;
+
+		if(pressed & KEY_DOWN)
+			speed--;
+
+		if(speed > 5)        
+			speed = 5;          
+
+		if(speed < 0)        
+			speed = 0;          
+
+		if(pressed & KEY_A)
+			pause = !pause;
+
+		if(pressed & KEY_X)
+			acc *= -1;
+
+		if(pressed & KEY_Y)
+		{
+			if(pos == &posx)
+				pos = &posy;
+			else
+				pos = &posx;
+		}
+
+		if(!pause)
+			*pos += acc*speed;
+				
+		bgSetScroll(0, posx, posy);
+	}	
+	setFadeEffect(FADE_OUT);	
+	
+	return;
+}
+
+void LEDZoneTest() 
+{	
+	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 redraw = 1, changed = 0;		
+	int x = 128, y = 112, sprite = 0;
+		
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			ClearScreen(0);
+			
+			oamInitGfxSet(&LEDsprites_tiles, (&LEDsprites_tiles_end - &LEDsprites_tiles), &LEDsprites_pal, 16*2, 7, 0, OBJ_SIZE8);
+			
+			oamSet(0, x, y, 2, 0, 0, sprite, 7); 
+			oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
+			oamSetVisible(0, OBJ_SHOW);
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(1);		
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+		}
+		
+		scanPads();
+		pad0 = padsCurrent(0);
+		
+		pressed = pad0 & ~oldpad;
+		oldpad = pad0;
+		
+		if(pressed == KEY_B)
+			end = 1;		
+			
+		if(pressed == KEY_L)
+		{
+			sprite --;
+			changed = 1;
+		}
+			
+		if(pressed == KEY_R)
+		{
+			sprite ++;
+			changed = 1;
+		}
+		
+		if(sprite > 3)
+			sprite = 0;
+		if(sprite < 0)
+			sprite = 3;
+		
+		if(pad0 & KEY_UP)
+			y--;
+		if(pad0 & KEY_DOWN)
+			y++;
+		if(pad0 & KEY_LEFT)
+			x--;		
+		if(pad0 & KEY_RIGHT)
+			x++;
+			
+		if(x > 255)
+			x = 255;
+		if(x < 0)
+			x = 0;
+		if(y > 223)
+			y = 223;
+		if(y < 0)
+			y = 0;
+
+		if(changed)
+		{
+			oamSet(0, x, y, 2, 0, 0, sprite, 7); 
+			oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
+			oamSetVisible(0, OBJ_SHOW);
+		}
+		
+		oamSetXY(0, x, y);
+
+		WaitForVBlank();
+	}	
+	setFadeEffect(FADE_OUT);	
+	oamClear(0, 0);
 	return;
 }
