@@ -276,8 +276,9 @@ void DropShadowTest(void)
 			changesprite = 1;
 		}
 		
-		if(pressed == KEY_Y)
+		if(pressed == KEY_A)
 		{		
+			CleanFontMap();	
 			odd = !odd;
 			drawShadow = !drawShadow;
 			text = 30;
@@ -546,14 +547,14 @@ void DrawStripes(void)
 		if(pressed == KEY_A)
 			alternate = !alternate;
 			
-		if(pressed == KEY_Y)
+		if(pressed == KEY_X)
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
 				CleanFontMap();
 		}
 			
-		if(pressed == KEY_X)
+		if(pressed == KEY_Y)
 		{
 			vert = !vert;
 			redraw = 1;
@@ -635,7 +636,7 @@ void DrawCheck(void)
 		if(pressed == KEY_A)
 			alternate = !alternate;
 			
-		if(pressed == KEY_Y)
+		if(pressed == KEY_X)
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
@@ -975,10 +976,10 @@ void VScrollTest(void)
 		if(pressed & KEY_A)
 			pause = !pause;
 
-		if(pressed & KEY_X)
+		if(pressed & KEY_Y)
 			acc *= -1;
 
-		if(pressed & KEY_Y)
+		if(pressed & KEY_X)
 		{
 			if(pos == &posx)
 				pos = &posy;
@@ -999,7 +1000,7 @@ void VScrollTest(void)
 void LEDZoneTest() 
 {	
 	u16 pad0, oldpad = 0xffff, pressed, end = 0;
-	u16 redraw = 1, changed = 0;		
+	u16 redraw = 1, changed = 0, shown = 1;		
 	int x = 128, y = 112, sprite = 0;
 		
 	while(!end) 
@@ -1013,8 +1014,16 @@ void LEDZoneTest()
 			oamInitGfxSet(&LEDsprites_tiles, (&LEDsprites_tiles_end - &LEDsprites_tiles), &LEDsprites_pal, 16*2, 7, 0, OBJ_SIZE8);
 			
 			oamSet(0, x, y, 2, 0, 0, sprite, 7); 
-			oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
-			oamSetVisible(0, OBJ_SHOW);
+			if(shown)
+			{
+				oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
+				oamSetVisible(0, OBJ_SHOW);
+			}
+			else
+			{
+				oamSetEx(0, OBJ_SMALL, OBJ_HIDE);
+				oamSetVisible(0, OBJ_HIDE);
+			}
 			
 			setMode(BG_MODE1,0); 
 			bgSetDisable(1);		
@@ -1039,6 +1048,12 @@ void LEDZoneTest()
 		
 		if(pressed == KEY_B)
 			end = 1;		
+		
+		if(pressed == KEY_A)
+		{
+			shown = !shown;
+			changed = 1;
+		}
 			
 		if(pressed == KEY_L)
 		{
@@ -1078,8 +1093,16 @@ void LEDZoneTest()
 		if(changed)
 		{
 			oamSet(0, x, y, 2, 0, 0, sprite, 7); 
-			oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
-			oamSetVisible(0, OBJ_SHOW);
+			if(shown)
+			{
+				oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
+				oamSetVisible(0, OBJ_SHOW);
+			}
+			else
+			{
+				oamSetEx(0, OBJ_SMALL, OBJ_HIDE);
+				oamSetVisible(0, OBJ_HIDE);
+			}
 		}
 		
 		oamSetXY(0, x, y);
@@ -1175,14 +1198,11 @@ void SoundTest()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
-		/* Uncomment this and it crashes */
-		/*
 		if(pressed == KEY_START)
 		{
 			DrawHelp(HELP_SOUND);
 			redraw = 1;
 		}
-		*/
 		
 		if(pressed == KEY_A)
 			spcPlaySound(sound);

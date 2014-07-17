@@ -67,7 +67,10 @@ void DrawGrid(u8 type)
 		if(pressed == KEY_START)
 		{
 			if(type)
-				DrawHelp(HELP_GRID_239);
+			{
+				Set224pMode();
+				DrawHelp(HELP_GRID_239);				
+			}
 			else
 				DrawHelp(HELP_GRID);
 			redraw = 1;
@@ -160,7 +163,7 @@ void DrawSMPTE()
 void DrawColorBars(void) 
 {	
 	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
-	u16 redraw = 1, size = 0;	
+	u16 redraw = 1, size = 0, type = 0;	
 	
 	while(!end) 
 	{		
@@ -168,10 +171,20 @@ void DrawColorBars(void)
 		{
 			setBrightness(0);
 			
-			size = (&color_tiles_end - &color_tiles);
-			bgInitTileSet(0, &color_tiles, &color_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
+			if(!type)
+			{
+				size = (&color_tiles_end - &color_tiles);
+				bgInitTileSet(0, &color_tiles, &color_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
 	
-			bgInitMapSet(0, &color_map, (&color_map_end - &color_map), SC_32x32, 0x7000);
+				bgInitMapSet(0, &color_map, (&color_map_end - &color_map), SC_32x32, 0x7000);
+			}
+			else
+			{
+				size = (&color_grid_tiles_end - &color_grid_tiles);
+				bgInitTileSet(0, &color_grid_tiles, &color_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
+	
+				bgInitMapSet(0, &color_grid_map, (&color_grid_map_end - &color_grid_map), SC_32x32, 0x7000);
+			}
 						
 			setMode(BG_MODE3,0); 					
 			bgSetDisable(1);
@@ -193,6 +206,12 @@ void DrawColorBars(void)
 			redraw = 1;
 		}
 		
+		if(pressed == KEY_A)
+		{
+			type = !type;
+			redraw = 1;
+		}
+		
 		if(pressed == KEY_B)
 			end = 1;		
 		
@@ -206,7 +225,7 @@ void DrawColorBars(void)
 void Drawcircles() 
 {	
 	u16 pad0, oldpad = 0xffff, pressed, end = 0, grid = 0;
-	u16 redraw = 1;
+	u16 redraw = 1, grid = 0;
 		
 	while(!end) 
 	{		
@@ -214,11 +233,18 @@ void Drawcircles()
 		{
 			setBrightness(0);
 			
+			if(grid)
+			{
+				bgInitTileSet(0, &circlesgrid_tiles, &grid_pal, 0, (&circlesgrid_tiles_end - &circlesgrid_tiles), 16*2, BG_16COLORS, 0x6000);
+				bgInitMapSet(0, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+			}
+			
 			bgInitTileSet(1, &circles_tiles, &circles_pal, 0, (&circles_tiles_end - &circles_tiles), 16*2, BG_16COLORS, 0x4000);	
 			bgInitMapSet(1, &circles_map, (&circles_map_end - &circles_map), SC_32x32, 0x1000);
 			
 			setMode(BG_MODE1,0); 
-			bgSetDisable(0);		
+			if(!grid)
+				bgSetDisable(0);
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
@@ -243,6 +269,8 @@ void Drawcircles()
 		
 		if(pressed == KEY_A)
 		{
+			grid = !grid;
+			redraw = 1;
 		}
 		
 		WaitForVBlank();
