@@ -21,6 +21,7 @@
  
 #include "patterns.h"
 #include "font.h"
+#include "help.h"
 #include <stdio.h>  
 
 void DrawGrid(u8 type) 
@@ -62,6 +63,12 @@ void DrawGrid(u8 type)
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_GRID);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_B)
 			end = 1;		
@@ -114,6 +121,12 @@ void DrawSMPTE()
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_SMPTE);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_B)
 			end = 1;		
@@ -171,6 +184,12 @@ void DrawColorBars(void)
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_COLORS);
+			redraw = 1;
+		}
+		
 		if(pressed == KEY_B)
 			end = 1;		
 		
@@ -209,6 +228,12 @@ void Drawcircles()
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_LINEARITY);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_B)
 			end = 1;		
@@ -253,6 +278,12 @@ void DrawPluge()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_PLUGE);
+			redraw = 1;
+		}
+		
 		if(pressed == KEY_B)
 			end = 1;		
 
@@ -292,6 +323,12 @@ void DrawGrayRamp(void)
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_GRAY);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_B)
 			end = 1;		
@@ -335,6 +372,12 @@ void DrawColorBleed()
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_BLEED);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_B)
 			end = 1;		
@@ -381,6 +424,12 @@ void Draw601CB()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_601CB);
+			redraw = 1;
+		}
+		
 		if(pressed == KEY_B)
 			end = 1;		
 
@@ -419,6 +468,12 @@ void DrawSharpness()
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_SHARPNESS);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_B)
 			end = 1;		
@@ -496,6 +551,13 @@ void DrawWhite()
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_WHITE);
+			redraw = 1;
+			change = 1;
+		}
 		
 		if(pressed == KEY_A)
 		{
@@ -725,6 +787,12 @@ void Draw100IRE()
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_IRE);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_B)
 			end = 1;		
