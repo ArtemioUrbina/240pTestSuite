@@ -22,6 +22,7 @@
 #include "font.h"
 #include "tests.h"
 #include "patterns.h"
+#include "help.h"
 
 void TestPatterns();
 void DrawCredits();
@@ -73,16 +74,17 @@ int main(void)
 			
 			drawText(3, pos, sel == 0 ? 6 : 7, "Test Patterns"); pos ++;
 			drawText(3, pos, sel == 1 ? 6 : 7, "Drop Shadow Test"); pos ++;
-			drawText(3, pos, sel == 2 ? 6 : 7, "Lag Test"); pos ++;
-			drawText(3, pos, sel == 3 ? 6 : 7, "Manual Lag Test"); pos ++;
-			drawText(3, pos, sel == 4 ? 6 : 7, "Scroll Test"); pos ++;
-			drawText(3, pos, sel == 5 ? 6 : 7, "Grid Scroll Test"); pos ++;
-			drawText(3, pos, sel == 6 ? 6 : 7, "Horizontal Stripes"); pos ++;
-			drawText(3, pos, sel == 7 ? 6 : 7, "Checkerboard"); pos ++;
-			drawText(3, pos, sel == 8 ? 6 : 7, "Backlit Zone Test"); pos ++;
-			drawText(3, pos, sel == 9 ? 6 : 7, "Sound Test"); pos ++;
-			drawText(3, pos, sel == 10 ? 6 : 7, "Help"); pos += 2;	
-			drawText(3, pos, sel == 11 ? 6 : 7, "Credits"); 
+			drawText(3, pos, sel == 2 ? 6 : 7, "Stripped Sprite Test"); pos ++;
+			drawText(3, pos, sel == 3 ? 6 : 7, "Lag Test"); pos ++;
+			drawText(3, pos, sel == 4 ? 6 : 7, "Manual Lag Test"); pos ++;
+			drawText(3, pos, sel == 5 ? 6 : 7, "Scroll Test"); pos ++;
+			drawText(3, pos, sel == 6 ? 6 : 7, "Grid Scroll Test"); pos ++;
+			drawText(3, pos, sel == 7 ? 6 : 7, "Horizontal Stripes"); pos ++;
+			drawText(3, pos, sel == 8 ? 6 : 7, "Checkerboard"); pos ++;
+			drawText(3, pos, sel == 9 ? 6 : 7, "Backlit Zone Test"); pos ++;
+			drawText(3, pos, sel == 10 ? 6 : 7, "Sound Test"); pos ++;
+			drawText(3, pos, sel == 11 ? 6 : 7, "Help"); pos += 2;	
+			drawText(3, pos, sel == 12 ? 6 : 7, "Credits"); 
 			
 			if(redraw)
 			{
@@ -112,10 +114,17 @@ int main(void)
 		}	
 
 		if(sel < 0)
-			sel = 11;
+			sel = 12;
 			
-		if(sel > 11)
+		if(sel > 12)
 			sel = 0;
+			
+		if(pressed == KEY_START)
+		{
+			setFadeEffect(FADE_OUT);
+			DrawHelp(HELP_GENERAL);
+			redraw = 1;
+		}
 			
 		if(pressed == KEY_A)
 		{							
@@ -130,25 +139,28 @@ int main(void)
 				case 1:
 					DropShadowTest();
 					break;
-				case 2:
+				case 3:
 					PassiveLagTest();
 					break;
-				case 4:
+				case 5:
 					HScrollTest();
 					break;
-				case 5:
+				case 6:
 					VScrollTest();
 					break;
-				case 6:
+				case 7:
 					DrawStripes();
 					break;
-				case 7:
+				case 8:
 					DrawCheck();
 					break;
-				case 8:
+				case 9:
 					LEDZoneTest();
 					break;
 				case 11:
+					DrawHelp(HELP_GENERAL);
+					break;
+				case 12:
 					DrawCredits();
 					break;
 			}
@@ -248,6 +260,13 @@ void TestPatterns(void)
 		if(sel > 13)
 			sel = 0;
 			
+		if(pressed == KEY_START)
+		{
+			setFadeEffect(FADE_OUT);
+			DrawHelp(HELP_GENERAL);
+			redraw = 1;
+		}
+			
 		if(pressed == KEY_A)
 		{							
 			setFadeEffect(FADE_OUT);		
@@ -344,9 +363,12 @@ void DrawCat(void)
 		
 		if(pressed == KEY_B)
 			end = 1;
+		
+		if(pad0 == KEY_L)
+			count = 0;
 
 		count++;
-		if(count == 100)
+		if(count == 20)
 			end = 1;
 		
 		WaitForVBlank();

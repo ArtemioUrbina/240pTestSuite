@@ -21,7 +21,7 @@
  
 #include "tests.h"
 #include "font.h"
-
+#include "help.h"
 
 void ShiftPalette(u16 pal, u16 pos)
 {	
@@ -220,6 +220,12 @@ void DropShadowTest(void)
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_SHADOW);
+			redraw = 1;
+		}
+			
 		if(pad0 & KEY_UP)
 			y--;
 		if(pad0 & KEY_DOWN)
@@ -297,7 +303,8 @@ void DropShadowTest(void)
 		
 		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	setFadeEffect(FADE_OUT);
+	oamClear(0, 0);	
 	
 	return;
 }
@@ -363,6 +370,12 @@ void DrawStripes(void)
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_STRIPES);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_A)
 			alternate = !alternate;
@@ -446,6 +459,12 @@ void DrawCheck(void)
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_CHECK);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_A)
 			alternate = !alternate;
@@ -619,6 +638,12 @@ void PassiveLagTest()
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
 		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_LAG);
+			redraw = 1;
+		}
+		
 		if(pressed == KEY_A)
 			running = !running;
 				
@@ -683,6 +708,12 @@ void HScrollTest()
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_HSCROLL);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_B)
 			end = 1;	
@@ -753,7 +784,13 @@ void VScrollTest(void)
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
-				
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_VSCROLL);
+			redraw = 1;
+		}
+		
 		if(pressed == KEY_B)
 			end = 1;
 		
@@ -827,6 +864,12 @@ void LEDZoneTest()
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		if(pressed == HELP_LED)
+		{
+			DrawHelp(HELP_VSCROLL);
+			redraw = 1;
+		}
 		
 		if(pressed == KEY_B)
 			end = 1;		
