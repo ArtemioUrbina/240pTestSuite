@@ -312,6 +312,10 @@ beep_brr:
 .incbin "beep.brr"
 beep_brr_end:
 
+color_grid_map:
+.incbin "color_grid.map"
+color_grid_map_end:
+
 .ends
 
 .section ".rodata6" superfree
@@ -331,5 +335,13 @@ LEDsprites_tiles_end:
 nishka_tiles:
 .incbin "n_t.s"
 nishka_tiles_end:
+
+.ends
+
+.section ".rodata8" superfree
+
+color_grid_tiles:
+.incbin "color_grid.pic"
+color_grid_tiles_end:
 
 .ends
