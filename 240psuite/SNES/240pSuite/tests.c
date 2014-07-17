@@ -1091,6 +1091,31 @@ void LEDZoneTest()
 	return;
 }
 
+/*
+Same code as PVsneslib, just sets panning value
+*/
+void spcSetSoundEntryMine(u8 vol, u8 panning, u8 pitch, u16 length, u8 *sampleaddr, brrsamples *ptr) {
+	dmaMemory  data_to_transfert;
+	u16 brrlength,brraddr;
+	
+	// compute some values for sound
+	ptr->pitch = pitch;
+	ptr->panning=panning;
+	ptr->volume=15;
+	brrlength = length/9;
+	data_to_transfert.mem.p = (u8 *) sampleaddr;
+	brraddr= data_to_transfert.mem.c.addr;
+	ptr->length1 = (brrlength & 0xFF);
+	ptr->length2 = (brrlength>>8);
+	ptr->addr1 = (brraddr & 0xFF);
+	ptr->addr2 = (brraddr>>8);
+	ptr->bank=data_to_transfert.mem.c.bank;
+	
+	// Send variable to sound memory
+	data_to_transfert.mem.p = (u8 *) ptr;
+	spcSetSoundTable(data_to_transfert.mem.c.addr,data_to_transfert.mem.c.bank);
+}
+
 void SoundTest()
 {
 	u16 redraw = 1, change = 0, end = 0;
@@ -1100,9 +1125,9 @@ void SoundTest()
 	
 	spcAllocateSoundRegion(39);
 	
-	spcSetSoundEntry(15, 15, 4, &beep_brr_end-&beep_brr, &beep_brr, &beepleft);		
-	spcSetSoundEntry(15, 8, 4, &beep_brr_end-&beep_brr, &beep_brr, &beepcenter);	
-	spcSetSoundEntry(15, 0, 4, &beep_brr_end-&beep_brr, &beep_brr, &beepright);	
+	spcSetSoundEntryMine(15, 15, 4, &beep_brr_end-&beep_brr, &beep_brr, &beepleft);		
+	spcSetSoundEntryMine(15, 8, 4, &beep_brr_end-&beep_brr, &beep_brr, &beepcenter);	
+	spcSetSoundEntryMine(15, 0, 4, &beep_brr_end-&beep_brr, &beep_brr, &beepright);	
 	
 	while(!end) 
 	{
@@ -1149,6 +1174,15 @@ void SoundTest()
 		
 		pressed = pad0 & ~oldpad;
 		oldpad = pad0;
+		
+		/* Uncomment this and it crashes */
+		/*
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_SOUND);
+			redraw = 1;
+		}
+		*/
 		
 		if(pressed == KEY_A)
 			spcPlaySound(sound);
