@@ -32,13 +32,9 @@ void DrawHelp(u16 option)
 	switch(option)
 	{
 		case HELP_PLUGE:
-		case HELP_STRIPES:
-		case HELP_SHADOW:
-		case HELP_LED:
-		case HELP_LAG:
+		case HELP_COLORS:
 			totalpages = 2;
-			break;
-		case HELP_MANUALLAG:
+			break;		
 		case HELP_GENERAL:
 			totalpages = 3;
 			break;
@@ -104,7 +100,7 @@ void DrawHelp(u16 option)
 						case 2:
 							drawText(3, 4  , 6, "        HELP (2/3)"); 
 							drawText(3, y++, 7, "The SNES/SFC can output"); 
-							drawText(3, y++, 7, "224 and 240 active video");
+							drawText(3, y++, 7, "224 and 239 active video");
 							drawText(3, y++, 7, "lines.");
 							y++;
 							drawText(3, y++, 7, "Help can be shown by"); 
@@ -124,6 +120,94 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "for more information.");							
 							break;
 					}
+					break;
+				case HELP_PLUGE:
+					switch(page)
+					{
+						case 1:
+							drawText(3, 4  , 6, "        PLUGE (1/2)"); 
+							drawText(3, y++, 7, "The PLUGE pattern is used"); 
+							drawText(3, y++, 7, "to help adjust the black");
+							drawText(3, y++, 7, "level to a correct value.");
+							y++;
+							drawText(3, y++, 7, "The inner bars on the"); 
+							drawText(3, y++, 7, "sides are black @ 3.5 IRE,");
+							drawText(3, y++, 7, "the middle ones @ 7.5 IRE,");
+							drawText(3, y++, 7, "and the outer @ 11.5 IRE.");
+							y++;
+							drawText(3, y++, 7, "If these bars are not"); 
+							drawText(3, y++, 7, "visible, adjust the");
+							drawText(3, y++, 7, "\"brightness\" control until");
+							drawText(3, y++, 7, "they are.");							
+							drawText(20, 22, 6, "(cont...)");							
+							break;
+						case 2:
+							drawText(3, 4  , 6, "        PLUGE (2/2)"); 
+							drawText(3, y++, 7, "You should lower it until"); 
+							drawText(3, y++, 7, "they are not visible, and");
+							drawText(3, y++, 7, "raise it until they show.");
+							y++;
+							drawText(3, y++, 7, "NTSC levels require black"); 
+							drawText(3, y++, 7, "@ 7.5 IRE for video.");							
+							y++;
+							drawText(3, y++, 7, "In PAL - and console"); 
+							drawText(3, y++, 7, "gaming in general - it is");
+							drawText(3, y++, 7, "adviced to use the 3.5");
+							drawText(3, y++, 7, "IRE value as black."		);														
+							break;
+					}
+					break;
+				case HELP_COLORS:
+					switch(page)
+					{
+						case 1:
+							drawText(3, 4  , 6, "     COLORBARS (1/2)"); 
+							drawText(3, y++, 7, "This pattern allows you to"); 
+							drawText(3, y++, 7, "calibrate each color: Red,");
+							drawText(3, y++, 7, "Green and Blue; as well as");
+							drawText(3, y++, 7, "white.");
+							y++;
+							drawText(3, y++, 7, "Adjust the white level"); 
+							drawText(3, y++, 7, "first, using the");
+							drawText(3, y++, 7, "\"Contrast\" control on your");
+							drawText(3, y++, 7, "TV set.");
+							y++;
+							drawText(3, y++, 7, "Raise it until you cannot");							
+							drawText(3, y++, 7, "distinguish between the"); 
+							drawText(3, y++, 7, "blocks under \"C\" and \"E\",");
+							drawText(3, y++, 7, "and lower it slowly until");														
+							drawText(20, 22, 6, "(cont...)");							
+							break;
+						case 2:
+							drawText(3, 4  , 6, "     COLORBARS (2/2)"); 
+							drawText(3, y++, 7, "you can clearly tell them");
+							drawText(3, y++, 7, "appart."); 
+							y++;
+							drawText(3, y++, 7, "Do the same for each");
+							drawText(3, y++, 7, "color.");
+							break;
+					}
+					break;
+				case HELP_GRID:
+				case HELP_GRID_239:
+							drawText(3, 4  , 6, "           GRID"); 
+							drawText(3, y++, 7, "This grid uses the full"); 
+							if(option == HELP_GRID_239)
+								drawText(3, y++, 7, "256x239 resolution.");					
+							else
+								drawText(3, y++, 7, "256x224 resolution.");
+							y++;
+							drawText(3, y++, 7, "You can use it to verify"); 
+							drawText(3, y++, 7, "that all the visible area");
+							drawText(3, y++, 7, "is being displayed, and");
+							drawText(3, y++, 7, "that there is no");
+							drawText(3, y++, 7, "distortion present.");
+							if(option == HELP_GRID_239)
+							{
+								y++;
+								drawText(3, y++, 7, "The 239 resolution is");
+								drawText(3, y++, 7, "rarely used."); 								
+							}
 					break;
 			}
 			drawText(7, 24, 6, "Press B to exit help");
@@ -148,7 +232,7 @@ void DrawHelp(u16 option)
 		if(pressed == KEY_B)
 			end = 1;
 			
-		if(pressed == KEY_LEFT)
+		if(pressed == KEY_LEFT || pressed == KEY_L)
 		{
 			if(page - 1 > 0)
 			{
@@ -157,7 +241,7 @@ void DrawHelp(u16 option)
 			}
 		}
 			
-		if(pressed == KEY_RIGHT)
+		if(pressed == KEY_RIGHT || pressed == KEY_R)
 		{
 			if(page + 1 <= totalpages)
 			{

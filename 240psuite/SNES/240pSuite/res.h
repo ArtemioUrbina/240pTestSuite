@@ -110,6 +110,10 @@ extern char circlesgrid_tiles, circlesgrid_tiles_end;
 extern char LEDsprites_tiles, LEDsprites_tiles_end;
 extern char LEDsprites_pal, LEDsprites_pal_end;
 
+extern char striped_tiles, striped_tiles_end;
+extern char striped_pal, striped_pal_end;
+
 extern char font;
 extern char fontback;
 
+extern char beep_brr,beep_brr_end;

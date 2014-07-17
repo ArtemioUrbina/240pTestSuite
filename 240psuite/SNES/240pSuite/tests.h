@@ -30,3 +30,5 @@ void PassiveLagTest();
 void HScrollTest();
 void VScrollTest();
 void LEDZoneTest();
+void StripedSpriteTest();
+void SoundTest();

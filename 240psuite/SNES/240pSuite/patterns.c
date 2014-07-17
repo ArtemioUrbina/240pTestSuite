@@ -66,7 +66,10 @@ void DrawGrid(u8 type)
 		
 		if(pressed == KEY_START)
 		{
-			DrawHelp(HELP_GRID);
+			if(type)
+				DrawHelp(HELP_GRID_239);
+			else
+				DrawHelp(HELP_GRID);
 			redraw = 1;
 		}
 		

@@ -44,5 +44,6 @@
 #define HELP_SOUND			21
 #define HELP_LED			23
 #define HELP_LAG			24
+#define	HELP_GRID_239	    25
 
 void DrawHelp(u16 help);

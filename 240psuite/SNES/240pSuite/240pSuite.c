@@ -35,7 +35,8 @@ int main(void)
 	    
 	setBrightness(0);
 	
-	consoleInit();		
+	spcBoot();	
+	consoleInit();			
 	
 	// Main loop
 	while(1) 
@@ -61,7 +62,7 @@ int main(void)
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);						
-									
+
 			change = 1;
 		}			
 		
@@ -139,6 +140,9 @@ int main(void)
 				case 1:
 					DropShadowTest();
 					break;
+				case 2:
+					StripedSpriteTest();
+					break;
 				case 3:
 					PassiveLagTest();
 					break;
@@ -156,6 +160,9 @@ int main(void)
 					break;
 				case 9:
 					LEDZoneTest();
+					break;
+				case 10:
+					SoundTest();
 					break;
 				case 11:
 					DrawHelp(HELP_GENERAL);
