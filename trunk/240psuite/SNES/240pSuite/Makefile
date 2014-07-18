@@ -39,6 +39,14 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
  
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.asm)))
+
+export AUDIOFILES :=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.it)))
+
+ifneq ($(AUDIOFILES),)
+ifeq ($(wildcard soundbank.asm),)
+	SFILES		:=	soundbank.asm $(SFILES)
+endif
+endif
  
 #---------------------------------------------------------------------------------
 
@@ -48,7 +56,9 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 					-I$(CURDIR)/$(BUILD)
 
-GTITLE 		:= -ht"$(TARGET)"
+GTITLE 		:= -ht"240p Test Suite SNES "
+
+SMCONVFLAGS	:= -l -s -o soundbank -v -b 5
  
 .PHONY: bitmaps all
 
@@ -58,8 +68,14 @@ all	:	bitmaps $(OUTPUT).sfc
 
 clean:
 	@echo clean ...
-	@rm -f $(OFILES) $(TARGET).sfc $(TARGET).sym *.pic *.map *.pal *.brr
+	@rm -f $(OFILES) $(TARGET).sfc $(TARGET).sym *.pic *.map *.pal *.brr *.bnk soundbank.asm soundbank.h
 
+#---------------------------------------------------------------------------------
+
+soundbank.asm : $(AUDIOFILES)
+	@echo Compiling Soundbank ... 
+	@$(SMCONV) $(SMCONVFLAGS) $^
+	
 #---------------------------------------------------------------------------------
 font.pic: font.bmp
 	@echo convert font with no tile reduction ... $(notdir $@)
@@ -158,7 +174,7 @@ bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB7
 	colorbleedchk.pic 601701cb.pic sharpness.pic fullscreen.pic fullscreen256.pic\
 	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic 100IRE.pic\
 	numbers.pic lagtest.pic sonicback.pic sonicfloor.pic circles_grid.pic\
-	LEDsprites.pic striped.pic beep.brr color_grid.pic lag-spr.pic
+	LEDsprites.pic striped.pic color_grid.pic lag-spr.pic soundbank.asm
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

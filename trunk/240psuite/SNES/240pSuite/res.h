@@ -122,4 +122,4 @@ extern char lagspr_pal, lagspr_pal_end;
 extern char font;
 extern char fontback;
 
-extern char beep_brr,beep_brr_end;
+extern char __SOUNDBANK__;

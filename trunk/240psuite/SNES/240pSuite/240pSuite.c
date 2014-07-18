@@ -37,7 +37,12 @@ int main(void)
 	setBrightness(0);
 	
 	spcBoot();	
-	consoleInit();			
+	consoleInit();
+	
+	spcSetBank(&__SOUNDBANK__);
+	spcAllocateSoundRegion(39);
+	spcLoad(0);
+	spcLoadEffect(0);
 	
 	// Main loop
 	while(1) 
