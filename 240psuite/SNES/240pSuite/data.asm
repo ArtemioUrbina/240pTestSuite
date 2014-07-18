@@ -316,10 +316,6 @@ sonicfloor_tiles:
 .incbin "sonicfloor.pic"
 sonicfloor_tiles_end:
 
-beep_brr:
-.incbin "beep.brr"
-beep_brr_end:
-
 color_grid_map:
 .incbin "color_grid.map"
 color_grid_map_end:

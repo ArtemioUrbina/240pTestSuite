@@ -27,7 +27,6 @@ inline u16 PadPressed(u8 pad)
 {
 	u16 read = 0, pressed = 0;
 	
-	scanPads();
 	read = padsCurrent(pad);
 	
 	pressed = read & ~oldpad;
@@ -38,8 +37,7 @@ inline u16 PadPressed(u8 pad)
 inline u16 PadHeld(u8 pad)
 {
 	u16 read = 0;
-	
-	scanPads();
+		
 	read = padsCurrent(pad);
 	
 	return(read);
