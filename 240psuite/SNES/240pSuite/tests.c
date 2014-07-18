@@ -1145,7 +1145,7 @@ void SoundTest()
 		}
 		
 		if(pressed == KEY_A)
-			spcEffect(2, 0, 15*16+pan[sound]); // (2=pitch,1=sfxIndex, u8 volpan);
+			spcEffect(2, 0, 15*16+pan[sound]);
 			
 		if(pressed == KEY_B)
 			end = 1;	
@@ -1175,7 +1175,7 @@ void SoundTest()
 
 void ManualLagTest() 
 {	
-	u16 pressed, end = 0, change = 1, draw = 0, audio = 0;
+	u16 pressed, end = 0, change = 1, draw = 0, audio = 0, sound = 0;
 	u16 redraw = 1, changed = 0, variation = 1, pos = 0, drawoffset = 0;
 	int x = 112, y = 96, x2 = 112, y2 = 96, speed = 1, vary = 1;
 	int clicks[10], pal = 7, sprpal = 7, view = 0;
@@ -1305,6 +1305,19 @@ void ManualLagTest()
 			oamSetEx(8, OBJ_SMALL, show);
 			oamSetVisible(8, show);		
 			changed = 0;
+		}
+		
+		if(audio)
+		{
+			if(y == 96)
+			{
+				spcEffect(2, 1, 15*16+sound);
+				if(sound == 0)
+					sound = 15;
+				else
+					sound = 0;
+			}
+			spcProcess();	
 		}
 
 		WaitForVBlank();
