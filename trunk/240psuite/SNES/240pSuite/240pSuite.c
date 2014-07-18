@@ -43,6 +43,7 @@ int main(void)
 	spcAllocateSoundRegion(39);
 	spcLoad(0);
 	spcLoadEffect(0);
+	spcLoadEffect(1);
 	
 	// Main loop
 	while(1) 
