@@ -32,3 +32,4 @@ void VScrollTest();
 void LEDZoneTest();
 void StripedSpriteTest();
 void SoundTest();
+void ManualLagTest();

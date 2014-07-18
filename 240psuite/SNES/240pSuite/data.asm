@@ -208,6 +208,14 @@ striped_pal:
 .incbin "striped.pal"
 striped_pal_end:
 
+lagspr_tiles:
+.incbin "lag-spr.pic"
+lagspr_tiles_end:
+
+lagspr_pal:
+.incbin "lag-spr.pal"
+lagspr_pal_end:
+
 .ends
 
 .section ".rodata4" superfree

@@ -22,13 +22,15 @@
 #include "help.h"
 #include "res.h"
 #include "font.h"
+#include "video.h"
+#include "control.h"
 
 void DrawHelp(u16 option)
 {
 	u16 redraw = 1, change = 0, end = 0;
-	u16 pad0, oldpad = 0xffff, pressed;	
+	u16 pressed;	
 	int page = 1, totalpages = 1;
-	
+		
 	switch(option)
 	{
 		case HELP_PLUGE:
@@ -51,14 +53,15 @@ void DrawHelp(u16 option)
 		if(redraw)
 		{
 			u16 size = 0;
-					
+						
 			setBrightness(0);	
 			
 			setPaletteColor(0x00, RGB5(0, 0, 0));
 			consoleInitText(0, 7, &font);
+			
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));			
-			AddTextColor(5, RGB5(0, 27, 27), RGB5(0, 0, 0));			
+			AddTextColor(5, RGB5(0, 27, 27), RGB5(0, 0, 0));	
 			
 			size = (&back_tiles_end - &back_tiles);
 			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
@@ -79,7 +82,11 @@ void DrawHelp(u16 option)
 		{
 			u16 y = 7;			
 			
-			CleanFontMap();
+			if(!redraw)
+				CleanFontMap();
+			else
+				setBrightness(0);	
+		
 			switch(option)
 			{
 				case HELP_GENERAL:
@@ -622,24 +629,19 @@ void DrawHelp(u16 option)
 					}
 					break;
 			}
-			drawText(7, 24, 5, "Press B to exit help");
+			drawText(5, 24, 5, "Press B to exit help");
 			
-			if(redraw)
+			if(redraw)	
 			{
-				redraw = 0;
-				
 				setBrightness(0xF);
-				WaitForVBlank();			
+				redraw = 0;
 			}
 						
 			change = 0;			
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 			end = 1;
@@ -664,8 +666,6 @@ void DrawHelp(u16 option)
 				change = 1;
 			}
 		}
-			
-		WaitForVBlank();
 	}
-	setFadeEffect(FADE_OUT);	
+	Transition();
 }

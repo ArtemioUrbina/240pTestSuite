@@ -55,9 +55,9 @@ void AddTextColor(u8 palette, u16 front, u16 back)
 void CleanFontMap()
 {
 	u16 x;
-	for (x=0;x<0x800;x++) pvsneslibfont_map[x] = 0x00;	
-	WaitForVBlank();
-	dmaCopyVram(pvsneslibfont_map, 0x800, 0x800);
+	for (x=0;x<0x800;x++)
+		pvsneslibfont_map[x] = 0x00;	
+	pvsneslibdirty = 1;	
 }
 
 void DrawNumber(u16 x, u16 y, u16 spriteIndex, u16 tileIndex, u16 pal)

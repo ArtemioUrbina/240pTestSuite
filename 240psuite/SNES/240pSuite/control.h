@@ -18,14 +18,7 @@
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
-#include <snes.h>
 
-void Set240pMode();
-void Set224pMode();
-void SetH512Mode();
 
-void DrawTilesWithSprites(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 tileSize, u8 * pal);
-void ClearScreen(u8 layer);
-void ClearScreen256(u8 layer);
-inline void Transition();
+inline u16 PadPressed(u8 pad);
+inline u16 PadHeld(u8 pad);

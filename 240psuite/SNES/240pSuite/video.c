@@ -77,3 +77,8 @@ void ClearScreen256(u8 layer)
 	bgInitTileSet(layer, &fullscreen256_tiles, &grid_pal, 0, (&fullscreen256_tiles_end - &fullscreen256_tiles), 16*2, BG_256COLORS, 0x6000);	
 	bgInitMapSet(layer, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 }
+
+inline void Transition()
+{
+	//setFadeEffect(FADE_OUT);
+}
