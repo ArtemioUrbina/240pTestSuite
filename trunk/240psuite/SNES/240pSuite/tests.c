@@ -987,7 +987,7 @@ void LEDZoneTest()
 			
 			ClearScreen(0);
 			
-			oamInitGfxSet(&lagspr_tiles, (&lagspr_tiles_end - &lagspr_tiles), &lagspr_pal, 16*2, 7, 0, OBJ_SIZE8);
+			oamInitGfxSet(&LEDsprites_tiles, (&LEDsprites_tiles_end - &LEDsprites_tiles), &LEDsprites_pal, 16*2, 7, 0, OBJ_SIZE8);
 			
 			oamSet(0, x, y, 2, 0, 0, sprite, 7); 
 			if(shown)
