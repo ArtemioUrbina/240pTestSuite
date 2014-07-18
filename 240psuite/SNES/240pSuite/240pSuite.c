@@ -319,6 +319,9 @@ void TestPatterns(void)
 				case 11:
 					DrawSharpness();
 					break;
+				case 12:
+					DrawOverscan();
+					break;
 				case 13:
 					exit = 1;
 					break;
