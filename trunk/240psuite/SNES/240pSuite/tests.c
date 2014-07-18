@@ -22,6 +22,7 @@
 #include "tests.h"
 #include "font.h"
 #include "help.h"
+#include "control.h"
 
 void ShiftPalette(u16 pal, u16 pos)
 {	
@@ -54,7 +55,7 @@ void ShiftPalette(u16 pal, u16 pos)
 
 void DropShadowTest(void) 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 pressed, held, end = 0;	 
 	u16 redraw = 1, size = 0, changesprite = 1;
 	u8	drawShadow = 1, odd = 0, mode = BG_MODE3, frame = 0;
 	int sprite = 0, x = 100, y = 100, text = 0, back = 0;
@@ -211,14 +212,13 @@ void DropShadowTest(void)
 			if(!text)						
 				CleanFontMap();			
 		}
+				
+		WaitForVBlank();
 		
 		drawShadow = !drawShadow;
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
+		held = PadHeld(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -226,11 +226,11 @@ void DropShadowTest(void)
 			redraw = 1;
 		}
 			
-		if(pad0 & KEY_UP)
+		if(held & KEY_UP)
 			y--;
-		if(pad0 & KEY_DOWN)
+		if(held & KEY_DOWN)
 			y++;
-		if(pad0 & KEY_LEFT)
+		if(held & KEY_LEFT)
 		{
 			if(sprite)
 			{
@@ -244,7 +244,7 @@ void DropShadowTest(void)
 			x--;
 		}
 		
-		if(pad0 & KEY_RIGHT)
+		if(held & KEY_RIGHT)
 		{
 			if(sprite)
 			{
@@ -301,10 +301,8 @@ void DropShadowTest(void)
 			if(back < 0)
 				back = 3;
 		}
-		
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);
+	Transition();
 	oamClear(0, 0);	
 	
 	return;
@@ -312,7 +310,7 @@ void DropShadowTest(void)
 
 void StripedSpriteTest(void) 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 pressed, held, end = 0;	 
 	u16 redraw = 1, size = 0;
 	u8	drawShadow = 1, odd = 0, mode = BG_MODE3, frame = 0;
 	int x = 100, y = 100, back = 0;
@@ -415,13 +413,12 @@ void StripedSpriteTest(void)
 			bgSetScroll(1, x*4, -97);  
 		}
 				
-		oamSetXY(0, x, y);				
+		oamSetXY(0, x, y);	
 		
-		scanPads();
-		pad0 = padsCurrent(0);
+		WaitForVBlank();			
 		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
+		held = PadHeld(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -429,13 +426,13 @@ void StripedSpriteTest(void)
 			redraw = 1;
 		}
 			
-		if(pad0 & KEY_UP)
+		if(held & KEY_UP)
 			y--;
-		if(pad0 & KEY_DOWN)
+		if(held & KEY_DOWN)
 			y++;
-		if(pad0 & KEY_LEFT)
+		if(held & KEY_LEFT)
 			x--;		
-		if(pad0 & KEY_RIGHT)
+		if(held & KEY_RIGHT)
 			x++;		
 			
 		if(x > 216)
@@ -467,10 +464,8 @@ void StripedSpriteTest(void)
 			if(back < 0)
 				back = 3;
 		}
-		
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);
+	Transition();
 	oamClear(0, 0);	
 	
 	return;
@@ -478,7 +473,7 @@ void StripedSpriteTest(void)
 
 void DrawStripes(void)
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0, drawframe = 0;	 
+	u16 pressed, end = 0, drawframe = 0;	 
 	u16 redraw = 1, alternate = 0, pos = 0, vert = 0, frame = 0;
 	
 	while(!end) 
@@ -532,11 +527,7 @@ void DrawStripes(void)
 		
 		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -563,14 +554,14 @@ void DrawStripes(void)
 		if(pressed == KEY_B)
 			end = 1;				
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void DrawCheck(void)
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0, drawframe = 0;	 
+	u16 pressed, end = 0, drawframe = 0;	 
 	u16 redraw = 1, alternate = 0, pos = 0, frame = 0;
 	
 	while(!end) 
@@ -621,11 +612,7 @@ void DrawCheck(void)
 		
 		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -646,14 +633,14 @@ void DrawCheck(void)
 		if(pressed == KEY_B)
 			end = 1;
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void PassiveLagTest()
 {
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 pressed, end = 0;
 	u16 frames = 0, seconds = 0, minutes = 0, hours = 0, msd, lsd, framecnt = 0;
 	u16 numberIndex[12] = { 0, 8, 64, 72, 128, 136, 192, 200, 256, 264, 320, 328};
 	u16 spriteIndex[8] = { 0, 4, 8, 12, 16, 20, 24, 28 };
@@ -799,11 +786,7 @@ void PassiveLagTest()
 			framecnt ++;
 		}
 			
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -823,13 +806,14 @@ void PassiveLagTest()
 			framecnt = 0;
 		}		
 	}
-	setFadeEffect(FADE_OUT);		
+	Transition();
 	oamClear(0, 0);
+	return;
 }
 
 void HScrollTest() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 pressed, end = 0;
 	u16 redraw = 1, x = 0, pause = 0, frame = 0;
 	int speed = 1, acc = 1;
 		
@@ -870,11 +854,12 @@ void HScrollTest()
 		if(frame > 90)
 			frame = 1;
 		
-		scanPads();
-		pad0 = padsCurrent(0);
+		bgSetScroll(0, x/2, -1);
+		bgSetScroll(1, x, -97);	
 		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		WaitForVBlank();
+		
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -905,20 +890,15 @@ void HScrollTest()
 
 		if(!pause)
 			x += acc*speed;
-			
-		bgSetScroll(0, x/2, -1);
-		bgSetScroll(1, x, -97);	
-
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void VScrollTest(void)
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 pressed, end = 0;	 
 	u16 redraw = 1;
 	int posx = 0, posy = 0, speed = 1, acc = -1, pause = 0, *pos = NULL;
 	
@@ -946,11 +926,7 @@ void VScrollTest(void)
 				
 		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -992,14 +968,14 @@ void VScrollTest(void)
 				
 		bgSetScroll(0, posx, posy);
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void LEDZoneTest() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 pressed, held, end = 0;
 	u16 redraw = 1, changed = 0, shown = 1;		
 	int x = 128, y = 112, sprite = 0;
 		
@@ -1011,7 +987,7 @@ void LEDZoneTest()
 			
 			ClearScreen(0);
 			
-			oamInitGfxSet(&LEDsprites_tiles, (&LEDsprites_tiles_end - &LEDsprites_tiles), &LEDsprites_pal, 16*2, 7, 0, OBJ_SIZE8);
+			oamInitGfxSet(&lagspr_tiles, (&lagspr_tiles_end - &lagspr_tiles), &lagspr_pal, 16*2, 7, 0, OBJ_SIZE8);
 			
 			oamSet(0, x, y, 2, 0, 0, sprite, 7); 
 			if(shown)
@@ -1034,11 +1010,27 @@ void LEDZoneTest()
 			redraw = 0;
 		}
 		
-		scanPads();
-		pad0 = padsCurrent(0);
+		if(changed)
+		{
+			oamSet(0, x, y, 2, 0, 0, sprite, 7); 
+			if(shown)
+			{
+				oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
+				oamSetVisible(0, OBJ_SHOW);
+			}
+			else
+			{
+				oamSetEx(0, OBJ_SMALL, OBJ_HIDE);
+				oamSetVisible(0, OBJ_HIDE);
+			}
+		}
 		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		oamSetXY(0, x, y);
+
+		WaitForVBlank();
+		
+		pressed = PadPressed(0);
+		held = PadHeld(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -1072,13 +1064,13 @@ void LEDZoneTest()
 		if(sprite < 0)
 			sprite = 3;
 		
-		if(pad0 & KEY_UP)
+		if(held & KEY_UP)
 			y--;
-		if(pad0 & KEY_DOWN)
+		if(held & KEY_DOWN)
 			y++;
-		if(pad0 & KEY_LEFT)
+		if(held & KEY_LEFT)
 			x--;		
-		if(pad0 & KEY_RIGHT)
+		if(held & KEY_RIGHT)
 			x++;
 			
 		if(x > 255)
@@ -1089,27 +1081,8 @@ void LEDZoneTest()
 			y = 223;
 		if(y < 0)
 			y = 0;
-
-		if(changed)
-		{
-			oamSet(0, x, y, 2, 0, 0, sprite, 7); 
-			if(shown)
-			{
-				oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
-				oamSetVisible(0, OBJ_SHOW);
-			}
-			else
-			{
-				oamSetEx(0, OBJ_SMALL, OBJ_HIDE);
-				oamSetVisible(0, OBJ_HIDE);
-			}
-		}
-		
-		oamSetXY(0, x, y);
-
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	oamClear(0, 0);
 	return;
 }
@@ -1142,7 +1115,7 @@ void spcSetSoundEntryMine(u8 vol, u8 panning, u8 pitch, u16 length, u8 *samplead
 void SoundTest()
 {
 	u16 redraw = 1, change = 0, end = 0;
-	u16 pad0, oldpad = 0xffff, pressed;
+	u16 pressed;
 	brrsamples beepleft, beepcenter, beepright;	
 	int sound = 1;	
 	
@@ -1190,13 +1163,12 @@ void SoundTest()
 			drawText(13, 16, sound == 1 ? 5 : 7, "Center"); 
 			drawText(22, 14, sound == 2 ? 5 : 7, "Right"); 
 			change = 0;
-		}		
+		}	
+
+		spcProcess();	
+		WaitForVBlank();	
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -1227,11 +1199,335 @@ void SoundTest()
 		if(sound > 2)
 			sound = 0;		
 		
-		spcProcess();	
-		WaitForVBlank();
 	}
 	// This shuts it up
 	spcAllocateSoundRegion(39);
-	setFadeEffect(FADE_OUT);	
+	Transition();
+	return;
 }
+
+void ManualLagTest() 
+{	
+	u16 pressed, end = 0, change = 1, draw = 0, audio = 0;
+	u16 redraw = 1, changed = 0, variation = 1, pos = 0, drawoffset = 0;
+	int x = 112, y = 96, x2 = 112, y2 = 96, speed = 1, vary = 1;
+	int clicks[10], pal = 7, sprpal = 7, view = 0;
 		
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			ClearScreen(1);
+			
+			consoleInitText(0, 7, &font);
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
+			AddTextColor(5, RGB5(31, 0, 0), RGB5(0, 0, 0));
+			AddTextColor(4, RGB5(0, 25, 25), RGB5(0, 0, 0));
+			
+			AddTextColor(15, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(14, RGB5(0, 31, 0), RGB5(0, 0, 0));	
+			AddTextColor(13, RGB5(31, 0, 0), RGB5(0, 0, 0));
+			AddTextColor(12, RGB5(0, 25, 25), RGB5(0, 0, 0));
+			
+			oamInitGfxSet(&lagspr_tiles, (&lagspr_tiles_end - &lagspr_tiles), &lagspr_pal, 16*2, 7, 0x2000, OBJ_SIZE32);
+			
+			oamSet(0, x, y, 3, 0, 0, 0, 7); 
+			oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
+			oamSetVisible(0, OBJ_SHOW);
+			
+			oamSet(4, 112, 96, 2, 0, 0, 0, 7); 
+			oamSetEx(4, OBJ_SMALL, OBJ_SHOW);
+			oamSetVisible(4, OBJ_SHOW);
+			
+			oamSet(8, x2, y2, 3, 0, 0, 0, 7); 
+			oamSetEx(8, OBJ_SMALL, OBJ_HIDE);
+			oamSetVisible(8, OBJ_HIDE);		
+			
+			drawText(2, 21, 6, "Press the A button when the");
+			drawText(2, 22, 6, "sprite is aligned. A negative");
+			drawText(2, 23, 6, "value means you pressed A");
+			drawText(2, 24, 6, "before they intersect.");
+			drawText(2, 25, 6, "X button toggles horz/vert");
+			drawText(2, 26, 6, "R button toggles audio");
+			drawText(2, 27, 6, "Y toggles random/rhythmic");
+					
+			if(pos)		  
+			{
+				int i = 0;
+				u16 ppos = 0;
+
+				for(i = 0; i < pos; i++)	
+				{
+					pal = 7;
+
+					if(clicks[i] == 0)
+						pal = 6;
+					if(clicks[i] < 0)
+						pal = 5;
+
+					ppos = i + 1;                    					
+					drawText(0, i, 4, "%d:", ppos);
+					if(clicks[i] == 1)
+						drawText(3, i, pal, "%d frame   ", clicks[i]);
+					else
+						drawText(3, i, pal, "%d frames  ", clicks[i]);
+				}  
+			}
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(2);
+			
+			bgSetScroll(0, 0, -1);
+			bgSetScroll(1, 0, -1);
+			setBrightness(0xF);
+			redraw = 0;
+			draw = 1;
+		}
+		
+		if(draw)
+		{      
+			drawText(16, 0, 4, "Audio: %s", audio ? "on " : "off");
+			drawText(15, 1, 4, "Timing: %s", variation ? "random  " : "rhythmic");
+			draw = 0;
+		}
+		
+		if(drawoffset)
+		{
+			u16 ppos = 0;
+
+			pal = 7;
+
+			if(clicks[pos] == 0)
+				pal = 6;
+			if(clicks[pos] < 0)
+				pal = 5;
+
+			ppos = pos + 1;
+			drawText(0, pos, 4, "%d:", ppos);
+			if(clicks[pos] == 1)
+				drawText(3, pos, pal, "%d frame   ", clicks[pos]);
+			else
+				drawText(3, pos, pal, "%d frames  ", clicks[pos]);
+
+			if(clicks[pos] >= 0)
+				pos++;
+
+			if(pos > 9)
+				end = 1;
+			drawoffset = 0;
+		} 
+		
+		if(changed)
+		{
+			u8 show = OBJ_HIDE;
+			
+			oamSet(0, x, y, 3, 0, 0, 0, sprpal); 
+			if(view == 0 || view == 2)
+				show = OBJ_SHOW;
+			oamSetEx(0, OBJ_SMALL, show);
+			oamSetVisible(0, show);	
+
+			show = OBJ_HIDE;
+			
+			oamSet(8, x2, y2, 3, 0, 0, 0, sprpal); 
+			if(view == 1 || view == 2)
+				show = OBJ_SHOW;
+			oamSetEx(8, OBJ_SMALL, show);
+			oamSetVisible(8, show);		
+			changed = 0;
+		}
+
+		WaitForVBlank();
+		
+		if(y > 132 + vary)
+		{
+			speed = -1;
+			change = 1;
+			if(variation)
+			{
+				if(rand() % 2)
+					vary = rand() % 7;
+				else
+					vary = -1 * rand() % 7;
+			}
+		}
+		
+		if(y < 60 + vary)
+		{
+			speed = 1;
+			change = 1;
+			if(variation)
+			{
+				if(rand() % 2)
+					vary = rand() % 7;
+				else
+					vary = -1 * rand() % 7;
+			}
+		}
+	
+		y += speed;
+		x2 += speed;
+		
+		if(y == 96) // Red on the spot
+		{
+			sprpal = 5;
+			changed = 1;
+		}
+		if(y == 95 || y == 97) //Green one pixel before or after
+		{
+			sprpal = 6;
+			changed = 1;
+		}
+		if(y == 98 || y == 94) //Back to white two pixels before or after
+		{
+			sprpal = 7;
+			changed = 1;
+		}
+		
+		if(view == 0 || view == 2)
+			oamSetXY(0, x, y);
+
+		if(view == 1 || view == 2)
+			oamSetXY(8, x2, y2);
+		
+		pressed = PadPressed(0);		
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_MANUALLAG);
+			redraw = 1;
+		}
+		
+		if(pressed == KEY_B)
+			end = 1;		
+		
+		if(pressed == KEY_A)
+		{
+			if(change)
+			{                
+				clicks[pos] = (y - 96) * speed;
+				drawoffset = 1;
+				if(clicks[pos] >= 0)
+					change = 0;
+			}      
+		}
+		
+		if(pressed == KEY_X)
+		{
+			view ++;
+			if(view > 2)
+				view = 0;
+			changed = 1;
+		}
+		
+		if(pressed == KEY_Y)
+		{
+			variation = !variation;
+			if(!variation)
+				vary = 0;
+			draw = 1;
+		}
+		
+		if(pressed == KEY_R)
+		{
+			audio = !audio;
+			draw = 1;
+		}
+	}	
+	
+	if(pos > 9)
+	{
+		int i = 0;
+		u16 size = 0;			
+		u16 ppos = 0, count = 0;
+		int total = 0;
+		float frames = 0;
+		
+		end = 0;
+		oamClear(0, 0);
+
+		setBrightness(0);	
+		
+		setPaletteColor(0x00, RGB5(0, 0, 0));
+		consoleInitText(0, 7, &font);
+		
+		AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+		AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));			
+		AddTextColor(5, RGB5(0, 27, 27), RGB5(0, 0, 0));	
+		
+		size = (&back_tiles_end - &back_tiles);
+		bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+		
+		size = (&back_map_end - &back_map);	
+		bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
+
+		for(i = 0; i < pos; i++)
+		{
+			drawText(8, 7+i, 7, "%0.2d", clicks[i]);
+			if(clicks[i] >= 0)
+			{
+				total += clicks[i];
+				count ++;
+			}
+		}
+		drawText(6, 11, 5, "+");
+		
+		if(count > 0)
+		{
+		    u16 h = 8;
+			u16 v = 17; 
+			int fint, fdec;	
+			float frame = 1000f/59.97f, totalms = 0;
+			
+			frames = (float)total/(float)count;
+			fint = (int)frames;			
+			fdec = (int)((frames - (float)fint)*100.0f);
+			fdec ++;
+			
+			drawText(h - 2, v++, 5, "----");
+			drawText(h, v++, 7, "%d/%d=%d.%0.2d frames", total, count, fint, fdec);
+			
+			totalms = frame * frames;
+			fint = (int)totalms;			
+			fdec = (int)((totalms - (float)fint)*100.0f);
+			fdec ++;
+						
+			drawText(h, v++, 7, "%d.%0.2d milliseconds", fint, fdec);
+			
+			drawText(3, v++, 6, "Keep in mind that a frame");
+			drawText(3, v, 6, "is around 16.68 ms.");
+			
+			if(total < 5)
+				drawText(10, 11, 6, "EXCELLENT REFLEXES!");
+			if(total == 0)
+				drawText(10, 11, 6, "INCREDIBLE REFLEXES!");
+		}
+
+		setMode(BG_MODE1,0); 	
+		bgSetDisable(2);
+		
+		bgSetScroll(1, 0, -1);						
+		bgSetScroll(0, 0, -2);	
+		while(!end) 
+		{
+			pressed = PadPressed(0);		
+			
+			if(pressed == KEY_START)
+			{
+				DrawHelp(HELP_MANUALLAG);
+				redraw = 1;
+			}
+			
+			if(pressed == KEY_B)
+				end = 1;
+				
+			WaitForVBlank();
+		}
+	}
+	Transition();
+	oamClear(0, 0);
+	return;
+}

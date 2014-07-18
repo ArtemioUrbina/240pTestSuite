@@ -23,6 +23,7 @@
 #include "tests.h"
 #include "patterns.h"
 #include "help.h"
+#include "control.h"
 
 void TestPatterns();
 void DrawCredits();
@@ -30,7 +31,7 @@ void DrawCredits();
 int main(void) 
 {
 	u16 redraw = 1, change = 0;
-	u16 pad0, oldpad = 0xffff, pressed;
+	u16 pressed;
 	int sel = 0;
 	    
 	setBrightness(0);
@@ -92,17 +93,13 @@ int main(void)
 			{
 				redraw = 0;
 				setBrightness(0xF);
-				WaitForVBlank();
 			}
 						
 			change = 0;			
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 					
 		if(pressed == KEY_DOWN)
 		{
@@ -123,14 +120,14 @@ int main(void)
 			
 		if(pressed == KEY_START)
 		{
-			setFadeEffect(FADE_OUT);
+			Transition();
 			DrawHelp(HELP_GENERAL);
 			redraw = 1;
 		}
 			
 		if(pressed == KEY_A)
 		{							
-			setFadeEffect(FADE_OUT);		
+			Transition();
 			oamClear(0, 0);
 			
 			switch(sel)
@@ -146,6 +143,9 @@ int main(void)
 					break;
 				case 3:
 					PassiveLagTest();
+					break;
+				case 4:
+					ManualLagTest();
 					break;
 				case 5:
 					HScrollTest();
@@ -174,8 +174,6 @@ int main(void)
 			}
 			redraw = 1;
 		}
-		
-		WaitForVBlank();
 	}
 	return 0;
 }
@@ -183,7 +181,7 @@ int main(void)
 void TestPatterns(void) 
 {
 	u16 redraw = 1, change = 0;
-	u16 pad0, oldpad = 0xffff, pressed;
+	u16 pressed;
 	int sel = 0, exit = 0;	    	
 		
 	while(!exit) 
@@ -240,17 +238,13 @@ void TestPatterns(void)
 			{
 				redraw = 0;
 				setBrightness(0xF);
-				WaitForVBlank();
 			}
 						
 			change = 0;			
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 					
 		if(pressed == KEY_DOWN)
 		{
@@ -271,14 +265,14 @@ void TestPatterns(void)
 			
 		if(pressed == KEY_START)
 		{
-			setFadeEffect(FADE_OUT);
+			Transition();
 			DrawHelp(HELP_GENERAL);
 			redraw = 1;
 		}
 			
 		if(pressed == KEY_A)
 		{							
-			setFadeEffect(FADE_OUT);		
+			Transition();
 			oamClear(0, 0);
 			
 			switch(sel)
@@ -329,11 +323,9 @@ void TestPatterns(void)
 		if(pressed == KEY_B)
 		{
 			exit = 1;
-			setFadeEffect(FADE_OUT);		
+			Transition();
 			oamClear(0, 0);
 		}
-		
-		WaitForVBlank();
 	}
 	return 0;
 }
@@ -341,7 +333,7 @@ void TestPatterns(void)
 
 void DrawCat(void) 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 held, pressed, end = 0;	 
 	u16 redraw = 1, size = 0, count = 0;	
 	
 	while(!end) 
@@ -363,26 +355,22 @@ void DrawCat(void)
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
+		held = PadHeld(0);
 		
 		if(pressed == KEY_B)
 			end = 1;
 		
-		if(pad0 == KEY_L)
+		if(held == KEY_L)
 			count = 0;
 
 		count++;
 		if(count == 20)
 			end = 1;
-		
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
@@ -390,7 +378,7 @@ void DrawCat(void)
 void DrawCredits(void) 
 {
 	u16 redraw = 1, counter = 1;
-	u16 pad0, oldpad = 0xffff, pressed;
+	u16 pressed;
 	int exit = 0;
 	    	
 	while(!exit) 
@@ -435,7 +423,8 @@ void DrawCredits(void)
 			
 			drawText(19, 6, 5, "Ver. 0.04");
 			drawText(19, 7, 7, "16/07/2014");
-			 			
+			
+			setBrightness(0xF);	
 			if(redraw)
 				redraw = 0;						
 		}
@@ -448,26 +437,18 @@ void DrawCredits(void)
 			drawText(4, 9, 7, "aurbina@junkerhq.net");
 		if(counter == 60*16)
 			counter = 0;
-
-		setBrightness(0xF);		
+	
 		WaitForVBlank();
 		counter ++;
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;					
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_B)
-		{
 			exit = 1;
-			setFadeEffect(FADE_OUT);				
-		}
 		
 		if(pressed == KEY_L)
 		{			
-			setFadeEffect(FADE_OUT);				
+			Transition();
 			DrawCat();
 			redraw = 1;
 			counter = 1;

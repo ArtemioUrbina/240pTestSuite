@@ -116,6 +116,9 @@ extern char LEDsprites_pal, LEDsprites_pal_end;
 extern char striped_tiles, striped_tiles_end;
 extern char striped_pal, striped_pal_end;
 
+extern char lagspr_tiles, lagspr_tiles_end;
+extern char lagspr_pal, lagspr_pal_end;
+
 extern char font;
 extern char fontback;
 

@@ -19,14 +19,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
+#include <stdio.h>  
 #include "patterns.h"
 #include "font.h"
 #include "help.h"
-#include <stdio.h>  
+#include "control.h"
 
 void DrawGrid(u8 type) 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 pressed, end = 0;	 
 	u16 redraw = 1;
 		
 	while(!end) 
@@ -57,12 +58,9 @@ void DrawGrid(u8 type)
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -78,10 +76,8 @@ void DrawGrid(u8 type)
 		
 		if(pressed == KEY_B)
 			end = 1;		
-		
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);
+	Transition();
 	Set224pMode();
 	
 	return;
@@ -90,7 +86,7 @@ void DrawGrid(u8 type)
 
 void DrawSMPTE() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0, type = 0;
+	u16 pressed, end = 0, type = 0;
 	u16 redraw = 1, text = 0;
 				
 	while(!end) 
@@ -122,11 +118,7 @@ void DrawSMPTE()
 				CleanFontMap();
 		}
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -155,14 +147,14 @@ void DrawSMPTE()
 			type = !type;
 		}		
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void DrawColorBars(void) 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 pressed, end = 0;	 
 	u16 redraw = 1, size = 0, type = 0;	
 	
 	while(!end) 
@@ -193,12 +185,9 @@ void DrawColorBars(void)
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -214,17 +203,15 @@ void DrawColorBars(void)
 		
 		if(pressed == KEY_B)
 			end = 1;		
-		
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void Drawcircles() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0, grid = 0;
+	u16 pressed, end = 0, grid = 0;
 	u16 redraw = 1, grid = 0;
 		
 	while(!end) 
@@ -251,12 +238,9 @@ void Drawcircles()
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -272,17 +256,15 @@ void Drawcircles()
 			grid = !grid;
 			redraw = 1;
 		}
-		
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void DrawPluge() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 pressed, end = 0;
 	u16 redraw = 1;
 		
 	while(!end) 
@@ -302,12 +284,9 @@ void DrawPluge()
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -316,18 +295,16 @@ void DrawPluge()
 		}
 		
 		if(pressed == KEY_B)
-			end = 1;		
-
-		WaitForVBlank();
+			end = 1;
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void DrawGrayRamp(void) 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;	 
+	u16 pressed, end = 0;	 
 	u16 redraw = 1, size = 0;	
 	
 	while(!end) 
@@ -348,12 +325,9 @@ void DrawGrayRamp(void)
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -363,17 +337,15 @@ void DrawGrayRamp(void)
 		
 		if(pressed == KEY_B)
 			end = 1;		
-		
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void DrawColorBleed() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0, toggle = 0;
+	u16 pressed, end = 0, toggle = 0;
 	u16 redraw = 1;
 		
 	while(!end) 
@@ -397,12 +369,9 @@ void DrawColorBleed()
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -418,17 +387,15 @@ void DrawColorBleed()
 			toggle = !toggle;			
 			redraw = 1;
 		}		
-		
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void Draw601CB() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 pressed, end = 0;
 	u16 redraw = 1;
 		
 	while(!end) 
@@ -448,12 +415,9 @@ void Draw601CB()
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -462,18 +426,16 @@ void Draw601CB()
 		}
 		
 		if(pressed == KEY_B)
-			end = 1;		
-
-		WaitForVBlank();
+			end = 1;
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void DrawSharpness() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 pressed, end = 0;
 	u16 redraw = 1;
 		
 	while(!end) 
@@ -493,12 +455,9 @@ void DrawSharpness()
 			setBrightness(0xF);
 			redraw = 0;
 		}
+		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -508,17 +467,15 @@ void DrawSharpness()
 		
 		if(pressed == KEY_B)
 			end = 1;		
-
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void DrawWhite() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 pressed, held, end = 0;
 	u16 redraw = 1, color, change = 1;
 	u8	custom = 0, fast = 0;
 	int sel = 0, mod = 0, r, g, b;
@@ -577,11 +534,10 @@ void DrawWhite()
 			change = 0;
 		}
 		
-		scanPads();
-		pad0 = padsCurrent(0);
+		WaitForVBlank();
 		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
+		held = PadHeld(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -638,7 +594,7 @@ void DrawWhite()
 			if(mod < 0)
 				mod = 2;
 				
-			if(pressed == KEY_UP || fast && pad0 == KEY_UP)
+			if(pressed == KEY_UP || fast && held == KEY_UP)
 			{
 				int *edit = NULL;
 	  
@@ -664,7 +620,7 @@ void DrawWhite()
 				}  
 			}
 				
-			if(pressed == KEY_DOWN || fast && pad0 == KEY_DOWN)
+			if(pressed == KEY_DOWN || fast && held == KEY_DOWN)
 			{
 				int *edit = NULL;
 	  
@@ -740,17 +696,15 @@ void DrawWhite()
 				}	 
 			}
 		}
-
-		WaitForVBlank();
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
 
 void Draw100IRE() 
 {	
-	u16 pad0, oldpad = 0xffff, pressed, end = 0;
+	u16 pressed, end = 0;
 	u16 redraw = 1;
 	int	irecount = 10, iremax = 10, changedire = 0; 
 	u8	*irevalues = NULL, invert = 0, text = 0;
@@ -813,11 +767,7 @@ void Draw100IRE()
 		}
 		WaitForVBlank();
 		
-		scanPads();
-		pad0 = padsCurrent(0);
-		
-		pressed = pad0 & ~oldpad;
-		oldpad = pad0;
+		pressed = PadPressed(0);
 		
 		if(pressed == KEY_START)
 		{
@@ -872,7 +822,7 @@ void Draw100IRE()
 			text = 30;
 		}		
 	}	
-	setFadeEffect(FADE_OUT);	
+	Transition();
 	
 	return;
 }
