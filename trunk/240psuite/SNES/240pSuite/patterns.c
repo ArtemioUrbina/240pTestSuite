@@ -20,6 +20,7 @@
  */
  
 #include <stdio.h>  
+#include <stdlib.h>  
 #include "patterns.h"
 #include "font.h"
 #include "help.h"
@@ -825,4 +826,302 @@ void Draw100IRE()
 	Transition();
 	
 	return;
+}
+
+u8 *empty_over, *tile_l, *tile_r, *tile_t, *tile_b;
+u8 *tile_lb, *tile_lt, *tile_rt, *tile_rb;
+u8 *tiles_over = NULL;
+u8 *map_over = NULL;
+
+inline void CleanTile(u8 *array)
+{
+	int i = 0;
+	
+	// fill all bitplanes
+	for(i = 0; i < 0x20; i++)
+		array[i] = 0x00;
+}
+
+inline void place_tile_in_map(u16 x, u16 y, u8 *map, u8 pal, u16 tileNum) 
+{
+	u16 x1; 
+    
+	x1 = y*0x40 + x*2;
+
+	// Write tile to screen
+	map[x1] = tileNum;
+	x1++;
+	map[x1] = (pal<<2) | (1<<5);
+}
+
+void FillTiles(int left, int right, int top, int bottom)
+{
+	u8 l, r, t, b, mask;
+	u16 i, j;
+	int lp, rp, tp, bp;
+  
+	lp = left / 8;
+	rp = right / 8;
+	tp = top / 8;
+	bp = bottom / 8;
+	
+	l = left % 8;
+	r = right % 8;
+	t = top % 8;
+	b = bottom % 8;
+	
+	CleanTile(tile_l);
+	CleanTile(tile_r);
+	CleanTile(tile_t);
+	CleanTile(tile_b);
+	CleanTile(tile_lt);
+	CleanTile(tile_lb);
+	CleanTile(tile_rt);
+	CleanTile(tile_rb);
+	
+	/*-------- Tiles -------*/
+	
+	// Top	
+	for(i = 0; i < t; i++)
+	{
+		tile_t[i*2] = 0xFF;
+		tile_rt[i*2] = 0xFF;
+		tile_lt[i*2] = 0xFF;
+	}
+	
+	// Bottom  	
+	for(i = 0; i < b; i++)
+	{
+		tile_b[14 - i*2] = 0xFF;
+		tile_rb[14 - i*2] = 0xFF;
+		tile_lb[14 - i*2] = 0xFF;
+	}
+	
+	// left
+	mask = 0x00;
+	for(i = 0; i < l; i++)
+		mask |= 1 << (7 - i);
+		
+	for(i = 0; i < 8; i++)
+	{  	
+		tile_l[i*2] = mask;  
+		tile_lt[i*2] |= mask;
+		tile_lb[i*2] |= mask;	
+	}
+	
+	// right
+	mask = 0x00;
+	for(i = 0; i < r; i++)
+		mask |= 1 << i;
+		
+	for(i = 0; i < 8; i++)
+	{  	
+		tile_r[i*2] = mask;  
+		tile_rt[i*2] |= mask;
+		tile_rb[i*2] |= mask;	
+	}
+	
+	/*-------- Maps -------*/
+	
+	// Clean map
+	for(i = 0; i < 0x800; i++)
+		map_over[i] = 0x00;	
+	
+	// top map
+	for(i = lp+1; i < 30-rp; i++)
+		place_tile_in_map(i, tp, map_over, 1, 3);
+	
+	// bottom map
+	for(i = lp+1; i < 30-rp; i++)
+		place_tile_in_map(i, 27-bp, map_over, 1, 4);
+		
+	// left map
+	for(i = tp+1; i < 26-bp; i++)
+		place_tile_in_map(lp, i, map_over, 1, 1);
+		
+	// right map
+	for(i = tp+1; i < 26-bp; i++)
+		place_tile_in_map(31-rp, i, map_over, 1, 2);
+			
+	WaitForVBlank();
+	dmaCopyVram(tiles_over, 0x4000, 0x120*2);  	
+	bgSetGfxPtr(1, 0x4000);
+	
+	dmaCopyVram(map_over, 0x2000, 0x800);
+	bgSetMapPtr(1, 0x2000, SC_32x32);
+}
+
+void DrawOverscan()
+{
+	u16 pressed, end = 0, changed = 0;
+	u16 redraw = 1, i = 0;
+	int top, bottom, left, right, sel = 0;	
+	
+	tiles_over = (u8*)malloc(sizeof(u8)*0x120);
+	if(!tiles_over)
+		return;
+		
+	map_over = (u8*)malloc(sizeof(u8)*0x800);
+	if(!map_over)
+	{
+		if(tiles_over)
+		{
+			free(tiles_over);
+			tiles_over = NULL;
+		}
+		return;
+	}
+	
+	empty_over = &tiles_over[0x00];
+	tile_l = &tiles_over[0x20];
+	tile_r = &tiles_over[0x40];
+	tile_t = &tiles_over[0x60];
+	tile_b = &tiles_over[0x80];
+	tile_lb = &tiles_over[0xA0];
+	tile_lt = &tiles_over[0xC0];
+	tile_rt = &tiles_over[0xE0];
+	tile_rb = &tiles_over[0x100];
+	
+	CleanTile(empty_over);
+	
+	top = bottom = left = right = 0;
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			setBrightness(0);
+			
+			consoleInitText(0, 7, &font);				
+			setPaletteColor(0x61, RGB5(0, 12, 27));			
+			
+			setPaletteColor(0x11, RGB5(17, 17, 17));
+		
+			ClearScreen(2);
+			setPaletteColor(0x00, RGB5(31, 31, 31));
+			changed = 1;
+		}
+		
+		if(changed)
+		{
+			FillTiles(left, right, top, bottom);
+			
+			drawText(7, 12, sel == 0 ? 6 : 7, "Top:    %0.2d pixels", top);
+			drawText(7, 13, sel == 1 ? 6 : 7, "Bottom: %0.2d pixels", bottom);
+			drawText(7, 14, sel == 2 ? 6 : 7, "Left:   %0.2d pixels", left);
+			drawText(7, 15, sel == 3 ? 6 : 7, "Right:  %0.2d pixels", right);
+			
+			changed = 0;
+			if(redraw)
+			{
+				setMode(BG_MODE1,0); 			
+				bgSetScroll(0, 0, -1);
+				bgSetScroll(1, 0, -1);
+				bgSetScroll(2, 0, -1);
+				setBrightness(0xF);
+				redraw = 0;
+			}
+		}
+		
+		WaitForVBlank();
+		
+		pressed = PadPressed(0);
+		
+		if(pressed == KEY_UP)
+		{
+			sel --;
+			changed = 1;
+		}
+		
+		if(pressed == KEY_DOWN)
+		{
+			sel ++;
+			changed = 1;
+		}
+		
+		if(changed)
+		{
+			if(sel > 3)
+				sel = 0;
+			if(sel < 0)
+				sel = 3;
+		}
+		
+		if (pressed & KEY_LEFT)    
+		{ 
+			int *data = NULL;
+
+			switch(sel)
+			{
+				case 0:
+					data = &top;
+					break;
+				case 1:
+					data = &bottom;
+					break;
+				case 2:
+					data = &left;
+					break;
+				case 3:
+					data = &right;
+					break;
+			} 
+
+			if(data)
+			{
+				(*data) --;
+				if(*data < 0)
+					*data = 0;
+			}
+			changed = 1;
+		}
+
+		if (pressed & KEY_RIGHT)    
+		{
+			int *data = NULL;
+
+			switch(sel)
+			{
+				case 0:
+					data = &top;
+					break;
+				case 1:
+					data = &bottom;
+					break;
+				case 2:
+					data = &left;
+					break;
+				case 3:
+					data = &right;
+					break;
+			} 
+
+			if(data)
+			{
+				(*data) ++;
+				if(*data > 99)
+					*data = 99;
+			} 
+			changed = 1;
+		}
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_OVERSCAN);
+			redraw = 1;
+		}
+		
+		if(pressed == KEY_B)
+			end = 1;		
+	}
+	
+	if(tiles_over)
+	{
+		free(tiles_over);
+		tiles_over = NULL;
+	}
+	if(map_over)
+	{
+		free(map_over);
+		map_over = NULL;
+	}
 }
