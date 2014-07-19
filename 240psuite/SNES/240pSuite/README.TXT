@@ -1,6 +1,6 @@
 240p Test Suite
 ===============================================================================
-For full dcoumentation and source code, please visit:
+For full documentation and source code, please visit:
 http://junkerhq.net/xrgb/index.php/240p_test_suite
 ===============================================================================
 

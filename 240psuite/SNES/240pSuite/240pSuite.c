@@ -94,8 +94,9 @@ int main(void)
 			drawText(3, pos, sel == 8 ? 6 : 7, "Checkerboard"); pos ++;
 			drawText(3, pos, sel == 9 ? 6 : 7, "Backlit Zone Test"); pos ++;
 			drawText(3, pos, sel == 10 ? 6 : 7, "Sound Test"); pos ++;
-			drawText(3, pos, sel == 11 ? 6 : 7, "Help"); pos += 2;	
-			drawText(3, pos, sel == 12 ? 6 : 5, "Credits"); 
+			drawText(3, pos, sel == 11 ? 6 : 7, "Help"); pos ++;	
+			drawText(3, pos, sel == 12 ? 6 : 7, "Video Options"); pos += 2;	
+			drawText(3, pos, sel == 13 ? 6 : 5, "Credits"); 
 			
 			if(redraw)
 			{
@@ -127,9 +128,9 @@ int main(void)
 		}	
 
 		if(sel < 0)
-			sel = 12;
+			sel = 13;
 			
-		if(sel > 12)
+		if(sel > 13)
 			sel = 0;
 			
 		if(pressed == KEY_START)
@@ -137,6 +138,16 @@ int main(void)
 			Transition();
 			DrawHelp(HELP_GENERAL);
 			redraw = 1;
+		}
+		
+		if(pressed == KEY_SELECT)
+		{
+			interlaced = !interlaced;
+			
+			if(interlaced)
+				SetInterlaced();
+			else
+				ClearInterlaced();				
 		}
 			
 		if(pressed == KEY_A)
@@ -183,6 +194,9 @@ int main(void)
 					DrawHelp(HELP_GENERAL);
 					break;
 				case 12:
+					ChangeVideo();
+					break;
+				case 13:
 					DrawCredits();
 					break;
 			}
@@ -470,7 +484,7 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(19, 6, 5, "Ver. 1.00");
+			drawText(19, 6, 5, "Ver. 1.01");
 			drawText(19, 7, 7, "19/07/2014");
 			
 			setBrightness(0xF);	
