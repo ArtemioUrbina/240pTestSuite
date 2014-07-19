@@ -119,6 +119,9 @@ extern char striped_pal, striped_pal_end;
 extern char lagspr_tiles, lagspr_tiles_end;
 extern char lagspr_pal, lagspr_pal_end;
 
+extern char mode7_tiles, mode7_tiles_end;
+extern char mode7_map, mode7_map_end;
+
 extern char font;
 extern char fontback;
 

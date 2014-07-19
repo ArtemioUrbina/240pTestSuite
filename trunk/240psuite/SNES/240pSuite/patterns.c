@@ -829,7 +829,7 @@ void Draw100IRE()
 }
 
 u8 *empty_over, *tile_l, *tile_r, *tile_t, *tile_b;
-u8 *tile_lb, *tile_lt, *tile_rt, *tile_rb;
+u8 *full_over, *tile_lb, *tile_lt, *tile_rt, *tile_rb;
 u8 *tiles_over = NULL;
 u8 *map_over = NULL;
 
@@ -840,6 +840,15 @@ inline void CleanTile(u8 *array)
 	// fill all bitplanes
 	for(i = 0; i < 0x20; i++)
 		array[i] = 0x00;
+}
+
+inline void FillTile(u8 *array)
+{
+	int i = 0;
+	
+	// fill all bitplanes
+	for(i = 0; i < 8; i++)
+		array[i*2] = 0xFF;
 }
 
 inline void place_tile_in_map(u16 x, u16 y, u8 *map, u8 pal, u16 tileNum) 
@@ -881,22 +890,6 @@ void FillTiles(int left, int right, int top, int bottom)
 	
 	/*-------- Tiles -------*/
 	
-	// Top	
-	for(i = 0; i < t; i++)
-	{
-		tile_t[i*2] = 0xFF;
-		tile_rt[i*2] = 0xFF;
-		tile_lt[i*2] = 0xFF;
-	}
-	
-	// Bottom  	
-	for(i = 0; i < b; i++)
-	{
-		tile_b[14 - i*2] = 0xFF;
-		tile_rb[14 - i*2] = 0xFF;
-		tile_lb[14 - i*2] = 0xFF;
-	}
-	
 	// left
 	mask = 0x00;
 	for(i = 0; i < l; i++)
@@ -921,30 +914,80 @@ void FillTiles(int left, int right, int top, int bottom)
 		tile_rb[i*2] |= mask;	
 	}
 	
+	// Top	
+	for(i = 0; i < t; i++)
+	{
+		tile_t[i*2] = 0xFF;
+		tile_rt[i*2] = 0xFF;
+		tile_lt[i*2] = 0xFF;
+	}
+	
+	// Bottom  	
+	for(i = 0; i < b; i++)
+	{
+		tile_b[14 - i*2] = 0xFF;
+		tile_rb[14 - i*2] = 0xFF;
+		tile_lb[14 - i*2] = 0xFF;
+	}
+
 	/*-------- Maps -------*/
 	
 	// Clean map
 	for(i = 0; i < 0x800; i++)
 		map_over[i] = 0x00;	
 	
-	// top map
-	for(i = lp+1; i < 30-rp; i++)
-		place_tile_in_map(i, tp, map_over, 1, 3);
-	
-	// bottom map
-	for(i = lp+1; i < 30-rp; i++)
-		place_tile_in_map(i, 27-bp, map_over, 1, 4);
-		
 	// left map
-	for(i = tp+1; i < 26-bp; i++)
+	for(i = tp; i < 27-bp; i++)
 		place_tile_in_map(lp, i, map_over, 1, 1);
 		
 	// right map
-	for(i = tp+1; i < 26-bp; i++)
+	for(i = tp; i < 27-bp; i++)
 		place_tile_in_map(31-rp, i, map_over, 1, 2);
+		
+	// top map
+	for(i = lp+1; i < 31-rp; i++)
+		place_tile_in_map(i, tp, map_over, 1, 3);
+	
+	// bottom map
+	for(i = lp+1; i < 31-rp; i++)
+		place_tile_in_map(i, 27-bp, map_over, 1, 4);
+		
+	// corners	
+	place_tile_in_map(lp, 27-bp, map_over, 1, 5);
+	place_tile_in_map(lp, tp, map_over, 1, 6);	
+	place_tile_in_map(31-rp, tp, map_over, 1, 7);
+	place_tile_in_map(31-rp, 27-bp, map_over, 1, 8);
+	
+	// Whites
+	
+	// left
+	for(i = 0; i < lp; i++)
+		for(j = 0; j < 28; j++)
+			place_tile_in_map(i, j, map_over, 1, 9);
+		
+	// right map
+	for(i = 32-rp; i < 32; i++)
+		for(j = 0; j < 28; j++)
+			place_tile_in_map(i, j, map_over, 1, 9);
+			
+	// top map
+	if(tp)
+	{
+		for(i = 0; i < 32; i++)
+			for(j = 0; j < tp; j++)
+				place_tile_in_map(i, j, map_over, 1, 9);
+	}
+	
+	// bottom map
+	if(bp)
+	{
+		for(i = 0; i < 32; i++)
+			for(j = 28-bp; j < 28; j++)
+				place_tile_in_map(i, j, map_over, 1, 9);
+	}
 			
 	WaitForVBlank();
-	dmaCopyVram(tiles_over, 0x4000, 0x120*2);  	
+	dmaCopyVram(tiles_over, 0x4000, 0x140*2);  	
 	bgSetGfxPtr(1, 0x4000);
 	
 	dmaCopyVram(map_over, 0x2000, 0x800);
@@ -953,11 +996,11 @@ void FillTiles(int left, int right, int top, int bottom)
 
 void DrawOverscan()
 {
-	u16 pressed, end = 0, changed = 0;
-	u16 redraw = 1, i = 0;
+	u16 pressed, end = 0, held = 0, changed = 0;
+	u16 redraw = 1, changedval = 1, i = 0;
 	int top, bottom, left, right, sel = 0;	
 	
-	tiles_over = (u8*)malloc(sizeof(u8)*0x120);
+	tiles_over = (u8*)malloc(sizeof(u8)*0x140);
 	if(!tiles_over)
 		return;
 		
@@ -981,8 +1024,11 @@ void DrawOverscan()
 	tile_lt = &tiles_over[0xC0];
 	tile_rt = &tiles_over[0xE0];
 	tile_rb = &tiles_over[0x100];
+	full_over = &tiles_over[0x120];
 	
 	CleanTile(empty_over);
+	CleanTile(full_over);
+	FillTile(full_over);
 	
 	top = bottom = left = right = 0;
 	while(!end) 
@@ -994,16 +1040,20 @@ void DrawOverscan()
 			consoleInitText(0, 7, &font);				
 			setPaletteColor(0x61, RGB5(0, 12, 27));			
 			
-			setPaletteColor(0x11, RGB5(17, 17, 17));
+			setPaletteColor(0x11, RGB5(31, 31, 31));
 		
 			ClearScreen(2);
-			setPaletteColor(0x00, RGB5(31, 31, 31));
+			setPaletteColor(0x00, RGB5(17, 17, 17));
 			changed = 1;
 		}
 		
 		if(changed)
 		{
-			FillTiles(left, right, top, bottom);
+			if(changedval)
+			{
+				FillTiles(left, right, top, bottom);
+				changedval = 0;
+			}
 			
 			drawText(7, 12, sel == 0 ? 6 : 7, "Top:    %0.2d pixels", top);
 			drawText(7, 13, sel == 1 ? 6 : 7, "Bottom: %0.2d pixels", bottom);
@@ -1025,6 +1075,7 @@ void DrawOverscan()
 		WaitForVBlank();
 		
 		pressed = PadPressed(0);
+		held = PadHeld(0);
 		
 		if(pressed == KEY_UP)
 		{
@@ -1046,7 +1097,7 @@ void DrawOverscan()
 				sel = 3;
 		}
 		
-		if (pressed & KEY_LEFT)    
+		if (pressed == KEY_LEFT || held == KEY_L)    
 		{ 
 			int *data = NULL;
 
@@ -1073,9 +1124,10 @@ void DrawOverscan()
 					*data = 0;
 			}
 			changed = 1;
+			changedval = 1;
 		}
 
-		if (pressed & KEY_RIGHT)    
+		if (pressed == KEY_RIGHT || held == KEY_R)     
 		{
 			int *data = NULL;
 
@@ -1102,12 +1154,19 @@ void DrawOverscan()
 					*data = 99;
 			} 
 			changed = 1;
+			changedval = 1;
 		}
 		
 		if(pressed == KEY_START)
 		{
 			DrawHelp(HELP_OVERSCAN);
 			redraw = 1;
+		}
+		
+		if(pressed == KEY_A)
+		{
+			top = bottom = left = right = 0;
+			changed = 1;
 		}
 		
 		if(pressed == KEY_B)
@@ -1124,4 +1183,56 @@ void DrawOverscan()
 		free(map_over);
 		map_over = NULL;
 	}
+}
+
+void DrawMode7()
+{
+	u16 held, end = 0, pressed = 0;
+	u8 angle=0, redraw = 1;;
+		
+	while(!end) 
+	{	
+		if(redraw)
+		{
+			bgInitMapTileSet7(&mode7_tiles,  &mode7_map, &grid_pal, (&mode7_tiles_end-&mode7_tiles), 0x0000);	
+			setMode7(0); 
+			setMode7Rot(angle);
+			redraw = 0;
+		}
+		
+		scanPads();
+		held = PadHeld(0);
+		pressed = PadPressed(0);
+		
+		if(held == KEY_L || pressed == KEY_LEFT)
+		{
+			angle--; 
+			setMode7Rot(angle);
+		}
+		
+		if(held == KEY_R || pressed == KEY_RIGHT)
+		{
+			angle++; 
+			setMode7Rot(angle);
+		}
+			
+		if(pressed == KEY_A)
+		{
+			angle = 0;
+			setMode7Rot(angle);
+		}
+		
+		if(pressed == KEY_START)
+		{
+			consoleInit();
+			DrawHelp(HELP_MODE7);
+			redraw = 1;
+		}
+		
+		if(pressed == KEY_B)
+			end = 1;
+		
+		WaitForVBlank();
+	}
+	consoleInit();
 }

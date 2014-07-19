@@ -547,6 +547,17 @@ void DrawHelp(u16 option)
 							break;
 					}
 					break;
+				case HELP_MODE7:
+							drawText(3, 4  , 6, "       MODE 7 GRID"); 
+							drawText(3, y++, 7, "This serves no particular"); 
+							drawText(3, y++, 7, "purpose, but using Mode 7.");
+							y++;
+							drawText(3, y++, 7, "The grid can be rotated");
+							drawText(3, y++, 7, "with L & R, reset with A.");
+							y++;
+							drawText(3, y++, 7, "Rotation can be done in");
+							drawText(3, y++, 7, "steps with the d-pad.");
+						break;
 				case HELP_OVERSCAN:
 							drawText(3, 4  , 6, "         OVERSCAN"); 
 							drawText(3, y++, 7, "With this pattern you can"); 
