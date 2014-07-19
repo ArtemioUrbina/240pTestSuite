@@ -29,7 +29,7 @@ void DrawHelp(u16 option)
 {
 	u16 redraw = 1, change = 0, end = 0;
 	u16 pressed;	
-	int page = 1, totalpages = 1;
+	s16 page = 1, totalpages = 1;
 		
 	switch(option)
 	{
@@ -62,6 +62,7 @@ void DrawHelp(u16 option)
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));			
 			AddTextColor(5, RGB5(0, 27, 27), RGB5(0, 0, 0));	
+			AddTextColor(4, RGB5(28, 28, 0), RGB5(0, 0, 0));	
 			
 			size = (&back_tiles_end - &back_tiles);
 			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
@@ -108,7 +109,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "properly calibrating the");
 							drawText(3, y++, 7, "display black, white and");
 							drawText(3, y++, 7, "color levels.");
-							drawText(20, 22, 6, "(cont...)");							
+							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
 							drawText(3, 4  , 6, "        HELP (2/3)"); 
@@ -124,12 +125,12 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "available in GameCube,");
 							drawText(3, y++, 7, "Wii, Genesis, Sega CD");
 							drawText(3, y++, 7, "and Dreamcast.");							
-							drawText(20, 22, 6, "(cont...)");
+							drawText(20, 22, 4, "(cont...)");
 							break;
 						case 3:
 							drawText(3, 4  , 6, "        HELP (3/3)"); 
 							drawText(3, y++, 7, "Please visit:"); 
-							drawText(3, y++, 7, "http://junkerhq.net/240p");
+							drawText(3, y++, 5, "http://junkerhq.net/240p");
 							drawText(3, y++, 7, "for more information.");							
 							break;
 					}
@@ -152,7 +153,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "visible, adjust the");
 							drawText(3, y++, 7, "\"brightness\" control until");
 							drawText(3, y++, 7, "they are.");							
-							drawText(20, 22, 6, "(cont...)");							
+							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
 							drawText(3, 4  , 6, "        PLUGE (2/2)"); 
@@ -189,7 +190,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "distinguish between the"); 
 							drawText(3, y++, 7, "blocks under \"C\" and \"E\",");
 							drawText(3, y++, 7, "and lower it slowly until");														
-							drawText(20, 22, 6, "(cont...)");							
+							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
 							drawText(3, 4  , 6, "     COLORBARS (2/2)"); 
@@ -327,7 +328,8 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "a white screen.");
 							y++;
 							drawText(3, y++, 7, "A custom color mode is");
-							drawText(3, y++, 7, "available by pressing A.");
+							drawText(3, y++, 7, "available with A, SELECT");
+							drawText(3, y++, 7, "enables fast color mode.");
 					break;
 				case HELP_CHECK:
 							drawText(3, 4  , 6, "       CHECKERBOARD"); 
@@ -361,7 +363,7 @@ void DrawHelp(u16 option)
 							y++;								
 							drawText(3, y++, 7, "When auto-toggle is set,");
 							drawText(3, y++, 7, "you should see the lines");				
-							drawText(20, 22, 6, "(cont...)");							
+							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
 							drawText(3, 4  , 6, " HORIZONTAL STRIPES (2/3)"); 
@@ -377,7 +379,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "vertical bars by pressing"); 
 							drawText(3, y++, 7, "Y. That pattern will help");
 							drawText(3, y++, 7, "you evaluate if the signal");												
-							drawText(20, 22, 6, "(cont...)");							
+							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 3:
 							drawText(3, 4  , 6, " HORIZONTAL STRIPES (3/3)"); 
@@ -407,7 +409,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "signal. No background");				
 							drawText(3, y++, 7, "detail should be lost and");				
 							drawText(3, y++, 7, "the shadow must be shown.");				
-							drawText(20, 22, 6, "(cont...)");							
+							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
 							drawText(3, 4  , 6, "   DROP SHADOW TEST (2/2)"); 
@@ -503,7 +505,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "The user can move around"); 
 							drawText(3, y++, 7, "the white pixel arrays");
 							drawText(3, y++, 7, "with the d-pad, and change");
-							drawText(20, 22, 6, "(cont...)");							
+							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
 							drawText(3, 4  , 6, "    BACKLIT TEST (2/2)"); 
@@ -536,7 +538,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "The picture will show the"); 
 							drawText(3, y++, 7, "frame discrepancy between");
 							drawText(3, y++, 7, "them.");
-							drawText(20, 22, 6, "(cont...)");							
+							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
 							drawText(3, 4  , 6, "      LAG TEST (2/2)"); 
@@ -593,7 +595,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "aligned with the one on");
 							drawText(3, y++, 7, "the background, and the");
 							drawText(3, y++, 7, "offset in frames from the");
-							drawText(20, 22, 6, "(cont...)");							
+							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
 							drawText(3, 4  , 6, "  MANUAL LAG TEST (2/4)"); 
@@ -611,7 +613,7 @@ void DrawHelp(u16 option)
 							y++;
 							drawText(3, y++, 7, "Button X can be used to");
 							drawText(3, y++, 7, "change the direction of");
-							drawText(20, 22, 6, "(cont...)");
+							drawText(20, 22, 4, "(cont...)");
 							break;
 						case 3:
 							drawText(3, 4  , 6, "  MANUAL LAG TEST (3/4)"); 
@@ -628,7 +630,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "the user should consider,"); 
 							drawText(3, y++, 7, "of course the interactive");
 							drawText(3, y++, 7, "factor can give an");
-							drawText(20, 22, 6, "(cont...)");
+							drawText(20, 22, 4, "(cont...)");
 							break;
 						case 4:
 							drawText(3, 4  , 6, "  MANUAL LAG TEST (4/4)"); 

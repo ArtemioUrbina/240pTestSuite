@@ -33,7 +33,7 @@ int main(void)
 {
 	u16 redraw = 1, change = 0;
 	u16 pressed;
-	int sel = 0, start = 1;
+	s16 sel = 0, start = 1;
 	    
 	setBrightness(0);
 	
@@ -196,7 +196,7 @@ void TestPatterns(void)
 {
 	u16 redraw = 1, change = 0;
 	u16 pressed;
-	int sel = 0, exit = 0;	    	
+	s16 sel = 0, exit = 0;	    	
 		
 	while(!exit) 
 	{
@@ -245,9 +245,10 @@ void TestPatterns(void)
 			drawText(3, pos, sel == 9 ? 6 : 7, "White & RGB Screen"); pos ++;
 			drawText(3, pos, sel == 10 ? 6 : 7, "100 IRE"); pos ++;	
 			drawText(3, pos, sel == 11 ? 6 : 7, "Sharpness"); pos++;
-			drawText(3, pos, sel == 12 ? 6 : 7, "Overscan"); pos++;
-			drawText(3, pos, sel == 13 ? 6 : 7, "Mode 7"); pos+=2;
-			drawText(3, pos, sel == 14 ? 6 : 5, "Back to Main Menu"); 
+			drawText(3, pos, sel == 12 ? 6 : 7, "Overscan 224p"); pos++;
+			drawText(3, pos, sel == 13 ? 6 : 7, "Overscan 239p"); pos++;
+			drawText(3, pos, sel == 14 ? 6 : 7, "Mode 7"); pos+=2;
+			drawText(3, pos, sel == 15 ? 6 : 5, "Back to Main Menu"); 
 			
 			if(redraw)
 			{
@@ -273,9 +274,9 @@ void TestPatterns(void)
 		}	
 
 		if(sel < 0)
-			sel = 14;
+			sel = 15;
 			
-		if(sel > 14)
+		if(sel > 15)
 			sel = 0;
 			
 		if(pressed == KEY_START)
@@ -329,12 +330,15 @@ void TestPatterns(void)
 					DrawSharpness();
 					break;
 				case 12:
-					DrawOverscan();
+					DrawOverscan(0);
 					break;
 				case 13:
-					DrawMode7();
+					DrawOverscan(1);
 					break;
 				case 14:
+					DrawMode7();
+					break;
+				case 15:
 					exit = 1;
 					break;
 			}
@@ -424,7 +428,7 @@ void DrawCredits(void)
 {
 	u16 redraw = 1, counter = 1;
 	u16 pressed;
-	int exit = 0;
+	s16 exit = 0;
 	 
 	while(!exit) 
 	{
@@ -467,7 +471,7 @@ void DrawCredits(void)
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
 			drawText(19, 6, 5, "Ver. 1.00");
-			drawText(19, 7, 7, "18/07/2014");
+			drawText(19, 7, 7, "19/07/2014");
 			
 			setBrightness(0xF);	
 			if(redraw)
