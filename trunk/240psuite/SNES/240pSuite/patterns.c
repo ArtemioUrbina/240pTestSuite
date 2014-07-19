@@ -479,7 +479,7 @@ void DrawWhite()
 	u16 pressed, held, end = 0;
 	u16 redraw = 1, color, change = 1;
 	u8	custom = 0, fast = 0;
-	int sel = 0, mod = 0, r, g, b;
+	s16 sel = 0, mod = 0, r, g, b;
 			
 	r = g = b = 255;
 	while(!end) 
@@ -597,7 +597,7 @@ void DrawWhite()
 				
 			if(pressed == KEY_UP || fast && held == KEY_UP)
 			{
-				int *edit = NULL;
+				s16 *edit = NULL;
 	  
 				switch(mod)
 				{
@@ -623,7 +623,7 @@ void DrawWhite()
 				
 			if(pressed == KEY_DOWN || fast && held == KEY_DOWN)
 			{
-				int *edit = NULL;
+				s16 *edit = NULL;
 	  
 				switch(mod)
 				{
@@ -649,7 +649,7 @@ void DrawWhite()
 			
 			if(pressed == KEY_Y)
 			{
-				int *edit = NULL;
+				s16 *edit = NULL;
 	  
 				switch(mod)
 				{
@@ -674,7 +674,7 @@ void DrawWhite()
 				
 			if(pressed == KEY_X)
 			{
-				int *edit = NULL;
+				s16 *edit = NULL;
 	  
 				switch(mod)
 				{
@@ -750,7 +750,7 @@ void Draw100IRE()
 					drawText(14, 26, 7, "RANGE 0-100 IRE   ");
 				else
 					drawText(14, 26, 7, "         %0.3d IRE", 
-							(int)((irevalues[irecount]*100.0)/255.0));					
+							(s16)((irevalues[irecount]*100.0)/255.0));					
 			  	text --;
 			}
 			else
@@ -759,7 +759,7 @@ void Draw100IRE()
 					drawText(14, 26, 7, "RANGE 100-140 IRE   ");
 				else
 					drawText(14, 26, 7, "         %0.3d IRE  ", 
-							(int)(100.0f + ((irevalues[irecount] * 40.5)/255.0)));
+							(s16)(100.0f + ((irevalues[irecount] * 40.5)/255.0)));
 			  	text --;
 			}
 			
@@ -835,16 +835,12 @@ u8 *map_over = NULL;
 
 inline void CleanTile(u8 *array)
 {
-	int i = 0;
-	
-	// fill all bitplanes
-	for(i = 0; i < 0x20; i++)
-		array[i] = 0x00;
+	memset(array, 0x00, 0x20);
 }
 
 inline void FillTile(u8 *array)
 {
-	int i = 0;
+	s16 i = 0;
 	
 	// fill all bitplanes
 	for(i = 0; i < 8; i++)
@@ -863,16 +859,23 @@ inline void place_tile_in_map(u16 x, u16 y, u8 *map, u8 pal, u16 tileNum)
 	map[x1] = (pal<<2) | (1<<5);
 }
 
-void FillTiles(int left, int right, int top, int bottom)
+inline void FillTiles(s16 left, s16 right, s16 top, s16 bottom, u8 mode)
 {
-	u8 l, r, t, b, mask;
-	u16 i, j;
-	int lp, rp, tp, bp;
+	u8 mask;
+	s16 i, j, maxw, maxh;
+	s16 lp, rp, tp, bp;
+	s16 l, r, t, b;
   
-	lp = left / 8;
-	rp = right / 8;
-	tp = top / 8;
-	bp = bottom / 8;
+	maxw = 31;
+	maxh = 27;
+	
+	if(mode)
+		maxh = 29;
+	
+	lp = left >> 3;
+	rp = right >> 3;
+	tp = top >> 3;
+	bp = bottom >> 3;
 	
 	l = left % 8;
 	r = right % 8;
@@ -889,6 +892,22 @@ void FillTiles(int left, int right, int top, int bottom)
 	CleanTile(tile_rb);
 	
 	/*-------- Tiles -------*/
+	
+	// Top	
+	for(i = 0; i < t; i++)
+	{
+		tile_t[i*2] = 0xFF;
+		tile_rt[i*2] = 0xFF;
+		tile_lt[i*2] = 0xFF;
+	}
+	
+	// Bottom  	
+	for(i = 0; i < b; i++)
+	{
+		tile_b[14 - i*2] = 0xFF;
+		tile_rb[14 - i*2] = 0xFF;
+		tile_lb[14 - i*2] = 0xFF;
+	}
 	
 	// left
 	mask = 0x00;
@@ -914,91 +933,76 @@ void FillTiles(int left, int right, int top, int bottom)
 		tile_rb[i*2] |= mask;	
 	}
 	
-	// Top	
-	for(i = 0; i < t; i++)
-	{
-		tile_t[i*2] = 0xFF;
-		tile_rt[i*2] = 0xFF;
-		tile_lt[i*2] = 0xFF;
-	}
-	
-	// Bottom  	
-	for(i = 0; i < b; i++)
-	{
-		tile_b[14 - i*2] = 0xFF;
-		tile_rb[14 - i*2] = 0xFF;
-		tile_lb[14 - i*2] = 0xFF;
-	}
-
 	/*-------- Maps -------*/
 	
 	// Clean map
-	for(i = 0; i < 0x800; i++)
-		map_over[i] = 0x00;	
+	memset(map_over, 0, 0x800);
 	
 	// left map
-	for(i = tp; i < 27-bp; i++)
+	for(i = tp; i < maxh-bp; i++)
 		place_tile_in_map(lp, i, map_over, 1, 1);
 		
 	// right map
-	for(i = tp; i < 27-bp; i++)
-		place_tile_in_map(31-rp, i, map_over, 1, 2);
+	for(i = tp; i < maxh-bp; i++)
+		place_tile_in_map(maxw-rp, i, map_over, 1, 2);
 		
 	// top map
-	for(i = lp+1; i < 31-rp; i++)
+	for(i = lp+1; i < maxw-rp; i++)
 		place_tile_in_map(i, tp, map_over, 1, 3);
 	
 	// bottom map
-	for(i = lp+1; i < 31-rp; i++)
-		place_tile_in_map(i, 27-bp, map_over, 1, 4);
+	for(i = lp+1; i < maxw-rp; i++)
+		place_tile_in_map(i, maxh-bp, map_over, 1, 4);
 		
 	// corners	
-	place_tile_in_map(lp, 27-bp, map_over, 1, 5);
+	place_tile_in_map(lp, maxh-bp, map_over, 1, 5);
 	place_tile_in_map(lp, tp, map_over, 1, 6);	
-	place_tile_in_map(31-rp, tp, map_over, 1, 7);
-	place_tile_in_map(31-rp, 27-bp, map_over, 1, 8);
+	place_tile_in_map(maxw-rp, tp, map_over, 1, 7);
+	place_tile_in_map(maxw-rp, maxh-bp, map_over, 1, 8);
 	
 	// Whites
+	maxh++;
+	maxw++;
 	
 	// left
 	for(i = 0; i < lp; i++)
-		for(j = 0; j < 28; j++)
+		for(j = 0; j < maxh; j++)
 			place_tile_in_map(i, j, map_over, 1, 9);
 		
 	// right map
-	for(i = 32-rp; i < 32; i++)
-		for(j = 0; j < 28; j++)
+	for(i = maxw-rp; i < maxw; i++)
+		for(j = 0; j < maxh; j++)
 			place_tile_in_map(i, j, map_over, 1, 9);
 			
 	// top map
-	if(tp)
-	{
-		for(i = 0; i < 32; i++)
-			for(j = 0; j < tp; j++)
-				place_tile_in_map(i, j, map_over, 1, 9);
-	}
+	for(j = 0; j < tp; j++)		
+		for(i = 0; i < maxw; i++)
+			place_tile_in_map(i, j, map_over, 1, 9);
 	
 	// bottom map
-	if(bp)
-	{
-		for(i = 0; i < 32; i++)
-			for(j = 28-bp; j < 28; j++)
-				place_tile_in_map(i, j, map_over, 1, 9);
-	}
-			
+	for(j = maxh-bp; j < maxh; j++)
+		for(i = 0; i < maxw; i++)
+			place_tile_in_map(i, j, map_over, 1, 9);	
+	
 	WaitForVBlank();
-	dmaCopyVram(tiles_over, 0x4000, 0x140*2);  	
-	bgSetGfxPtr(1, 0x4000);
+	dmaCopyVram(tiles_over, 0x4000, 0x140*2);  
+	
+	if(mode) // doesn't end the copy if in 240p mode...
+	{
+		setBrightness(0x0);
+		WaitForVBlank();
+	}
 	
 	dmaCopyVram(map_over, 0x2000, 0x800);
-	bgSetMapPtr(1, 0x2000, SC_32x32);
+	if(mode) // doesn't end the copy if in 240p mode...
+		setBrightness(0xf);		
 }
 
-void DrawOverscan()
+void DrawOverscan(u8 mode)
 {
 	u16 pressed, end = 0, held = 0, changed = 0;
 	u16 redraw = 1, changedval = 1, i = 0;
-	int top, bottom, left, right, sel = 0;	
+	s16 top, bottom, left, right, sel = 0;	
 	
 	tiles_over = (u8*)malloc(sizeof(u8)*0x140);
 	if(!tiles_over)
@@ -1014,7 +1018,7 @@ void DrawOverscan()
 		}
 		return;
 	}
-	
+		
 	empty_over = &tiles_over[0x00];
 	tile_l = &tiles_over[0x20];
 	tile_r = &tiles_over[0x40];
@@ -1026,39 +1030,57 @@ void DrawOverscan()
 	tile_rb = &tiles_over[0x100];
 	full_over = &tiles_over[0x120];
 	
-	CleanTile(empty_over);
-	CleanTile(full_over);
-	FillTile(full_over);
-	
 	top = bottom = left = right = 0;
+	
+	if(mode)
+		bottom = 1;  // deal with 239
+	
 	while(!end) 
 	{		
 		if(redraw)
 		{
 			setBrightness(0);
 			
+			if(mode)
+				Set240pMode();	
+					
+			CleanTile(empty_over);
+			CleanTile(full_over);
+			FillTile(full_over);
+			
+			bgSetGfxPtr(1, 0x4000);
+			bgSetMapPtr(1, 0x2000, SC_32x32);
+			
 			consoleInitText(0, 7, &font);				
-			setPaletteColor(0x61, RGB5(0, 12, 27));			
+			setPaletteColor(0x61, RGB5(0, 12, 27));
+			setPaletteColor(0x51, RGB5(0, 27, 27));
 			
 			setPaletteColor(0x11, RGB5(31, 31, 31));
 		
 			ClearScreen(2);
 			setPaletteColor(0x00, RGB5(17, 17, 17));
 			changed = 1;
+			changedval = 1;
 		}
 		
 		if(changed)
 		{
 			if(changedval)
 			{
-				FillTiles(left, right, top, bottom);
+				FillTiles(left, right, top, bottom, mode);
 				changedval = 0;
 			}
 			
-			drawText(7, 12, sel == 0 ? 6 : 7, "Top:    %0.2d pixels", top);
-			drawText(7, 13, sel == 1 ? 6 : 7, "Bottom: %0.2d pixels", bottom);
-			drawText(7, 14, sel == 2 ? 6 : 7, "Left:   %0.2d pixels", left);
-			drawText(7, 15, sel == 3 ? 6 : 7, "Right:  %0.2d pixels", right);
+			drawText(7, 12+mode, sel == 0 ? 6 : 7, "Top:    %0.2d pixels", top);
+			drawText(7, 13+mode, sel == 1 ? 6 : 7, "Bottom: %0.2d pixels", mode ? bottom - 1 : bottom);
+			drawText(7, 14+mode, sel == 2 ? 6 : 7, "Left:   %0.2d pixels", left);
+			drawText(7, 15+mode, sel == 3 ? 6 : 7, "Right:  %0.2d pixels", right);
+			if(mode)
+			{
+				drawText(2, 20, 5, "Screen flashing is normal in");
+				drawText(2, 21, 5, "239p due to forced vblanking");
+				drawText(2, 22, 5, "in order to DMA into VRAM.");
+			}
 			
 			changed = 0;
 			if(redraw)
@@ -1071,8 +1093,6 @@ void DrawOverscan()
 				redraw = 0;
 			}
 		}
-		
-		WaitForVBlank();
 		
 		pressed = PadPressed(0);
 		held = PadHeld(0);
@@ -1099,7 +1119,7 @@ void DrawOverscan()
 		
 		if (pressed == KEY_LEFT || held == KEY_L)    
 		{ 
-			int *data = NULL;
+			s16 *data = NULL;
 
 			switch(sel)
 			{
@@ -1123,13 +1143,17 @@ void DrawOverscan()
 				if(*data < 0)
 					*data = 0;
 			}
+			
+			if(sel == 1 && mode && bottom == 0)
+				bottom = 1;
+				
 			changed = 1;
 			changedval = 1;
 		}
 
 		if (pressed == KEY_RIGHT || held == KEY_R)     
 		{
-			int *data = NULL;
+			s16 *data = NULL;
 
 			switch(sel)
 			{
@@ -1159,18 +1183,27 @@ void DrawOverscan()
 		
 		if(pressed == KEY_START)
 		{
+			if(mode)
+				Set224pMode();
 			DrawHelp(HELP_OVERSCAN);
+			if(mode)
+				Set240pMode();
 			redraw = 1;
 		}
 		
 		if(pressed == KEY_A)
 		{
 			top = bottom = left = right = 0;
+			if(mode)
+				bottom = 1;
 			changed = 1;
+			changedval = 1;
 		}
 		
 		if(pressed == KEY_B)
-			end = 1;		
+			end = 1;	
+			
+		WaitForVBlank();
 	}
 	
 	if(tiles_over)
@@ -1183,6 +1216,8 @@ void DrawOverscan()
 		free(map_over);
 		map_over = NULL;
 	}
+	if(mode)
+		Set224pMode();
 }
 
 void DrawMode7()

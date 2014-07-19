@@ -26,7 +26,7 @@
 
 void Set240pMode()
 {
-	REG_SETINI |= 0x04;
+	REG_SETINI = 0x04;
 }
 
 void Set224pMode()
@@ -36,7 +36,7 @@ void Set224pMode()
 
 void SetH512Mode()
 {
-	REG_SETINI |= 0x08;
+	REG_SETINI = 0x08;
 }
 
 void DrawTilesWithSprites(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 tileSize, u8 * pal)

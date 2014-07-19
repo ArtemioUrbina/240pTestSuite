@@ -58,7 +58,7 @@ void DropShadowTest(void)
 	u16 pressed, held, end = 0;	 
 	u16 redraw = 1, size = 0, changesprite = 1;
 	u8	drawShadow = 1, odd = 0, mode = BG_MODE3, frame = 0;
-	int sprite = 0, x = 100, y = 100, text = 0, back = 0;
+	s16 sprite = 0, x = 100, y = 100, text = 0, back = 0;
 	
 	sprite = rand() % 2;
 	while(!end) 
@@ -313,7 +313,7 @@ void StripedSpriteTest(void)
 	u16 pressed, held, end = 0;	 
 	u16 redraw = 1, size = 0;
 	u8	drawShadow = 1, odd = 0, mode = BG_MODE3, frame = 0;
-	int x = 100, y = 100, back = 0;
+	s16 x = 100, y = 100, back = 0;
 		
 	while(!end) 
 	{		
@@ -646,7 +646,7 @@ void PassiveLagTest()
 	u16 spriteIndex[8] = { 0, 4, 8, 12, 16, 20, 24, 28 };
 	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };	
 	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
-	u16 y = 20, running = 0, redraw = 1, color = 1, bgcol = 0xa;	
+	u16 y = 20, running = 1, redraw = 1, color = 1, bgcol = 0xa;	
 	
 	while(!end) 
 	{	
@@ -815,7 +815,7 @@ void HScrollTest()
 {	
 	u16 pressed, end = 0;
 	u16 redraw = 1, x = 0, pause = 0, frame = 0;
-	int speed = 1, acc = 1;
+	s16 speed = 1, acc = 1;
 		
 	while(!end) 
 	{		
@@ -900,7 +900,7 @@ void VScrollTest(void)
 {	
 	u16 pressed, end = 0;	 
 	u16 redraw = 1;
-	int posx = 0, posy = 0, speed = 1, acc = -1, pause = 0, *pos = NULL;
+	s16 posx = 0, posy = -1, speed = 1, acc = -1, pause = 0, *pos = NULL;
 	
 	pos = &posx;
 	while(!end) 
@@ -919,7 +919,7 @@ void VScrollTest(void)
 			bgSetDisable(1);
 			bgSetDisable(2);
 			
-			bgSetScroll(0, 0, -1);
+			bgSetScroll(0, posx, posy);
 			setBrightness(0xF);
 			redraw = 0;
 		}
@@ -977,7 +977,7 @@ void LEDZoneTest()
 {	
 	u16 pressed, held, end = 0;
 	u16 redraw = 1, changed = 0, shown = 1;		
-	int x = 128, y = 112, sprite = 0;
+	s16 x = 128, y = 112, sprite = 0;
 		
 	while(!end) 
 	{		
@@ -1091,7 +1091,7 @@ void SoundTest()
 {
 	u16 redraw = 1, change = 0, end = 0;
 	u16 pressed;	
-	int sound = 1, effect = 0, pan[3] = { 0, 8, 15 };
+	s16 sound = 1, effect = 0, pan[3] = { 0, 8, 15 };
 
 	while(!end) 
 	{
@@ -1177,8 +1177,8 @@ void ManualLagTest()
 {	
 	u16 pressed, end = 0, change = 1, draw = 0, audio = 0, sound = 0;
 	u16 redraw = 1, changed = 0, variation = 1, pos = 0, drawoffset = 0;
-	int x = 112, y = 96, x2 = 112, y2 = 96, speed = 1, vary = 1;
-	int clicks[10], pal = 7, sprpal = 7, view = 0;
+	s16 x = 112, y = 96, x2 = 112, y2 = 96, speed = 1, vary = 1;
+	s16 clicks[10], pal = 7, sprpal = 7, view = 0;
 		
 	while(!end) 
 	{		
@@ -1223,7 +1223,7 @@ void ManualLagTest()
 					
 			if(pos)		  
 			{
-				int i = 0;
+				s16 i = 0;
 				u16 ppos = 0;
 
 				for(i = 0; i < pos; i++)	
@@ -1420,10 +1420,10 @@ void ManualLagTest()
 	
 	if(pos > 9)
 	{
-		int i = 0;
+		s16 i = 0;
 		u16 size = 0;			
 		u16 ppos = 0, count = 0;
-		int total = 0;
+		s16 total = 0;
 		float frames = 0;
 		
 		end = 0;
@@ -1459,20 +1459,20 @@ void ManualLagTest()
 		{
 		    u16 h = 8;
 			u16 v = 17; 
-			int fint, fdec;	
+			s16 fint, fdec;	
 			float frame = 1000f/59.97f, totalms = 0;
 			
 			frames = (float)total/(float)count;
-			fint = (int)frames;			
-			fdec = (int)((frames - (float)fint)*100.0f);
+			fint = (s16)frames;			
+			fdec = (s16)((frames - (float)fint)*100.0f);
 			fdec ++;
 			
 			drawText(h - 2, v++, 5, "----");
 			drawText(h, v++, 7, "%d/%d=%d.%0.2d frames", total, count, fint, fdec);
 			
 			totalms = frame * frames;
-			fint = (int)totalms;			
-			fdec = (int)((totalms - (float)fint)*100.0f);
+			fint = (s16)totalms;			
+			fdec = (s16)((totalms - (float)fint)*100.0f);
 			fdec ++;
 						
 			drawText(h, v++, 7, "%d.%0.2d milliseconds", fint, fdec);

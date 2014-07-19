@@ -34,5 +34,5 @@ void Draw601CB();
 void DrawSharpness();
 void DrawWhite();
 void Draw100IRE();
-void DrawOverscan();
+void DrawOverscan(u8 mode);
 void DrawMode7();
