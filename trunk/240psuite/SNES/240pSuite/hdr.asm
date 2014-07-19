@@ -45,7 +45,7 @@
   SRAMSIZE $00                  ; $01 = 16 kbits, see WLA doc for more..
   COUNTRY $01                   ; $01 = U.S.  $00 = Japan, that's all I know
   LICENSEECODE $00              ; Just use $00
-  VERSION $00                   ; $00 = 1.00, $01 = 1.01, etc.
+  VERSION $01                   ; $00 = 1.00, $01 = 1.01, etc.
 .ENDSNES
 
 .SNESNATIVEVECTOR               ; Define Native Mode interrupt vector table

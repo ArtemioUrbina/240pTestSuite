@@ -46,5 +46,6 @@
 #define HELP_LAG			24
 #define	HELP_GRID_239	    25
 #define	HELP_MODE7		    26
+#define	HELP_VIDEO			27
 
 void DrawHelp(u16 help);

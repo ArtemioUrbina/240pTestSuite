@@ -117,18 +117,23 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "224 and 239 active video");
 							drawText(3, y++, 7, "lines.");
 							y++;
+							drawText(3, y++, 7, "An interlaced mode is"); 
+							drawText(3, y++, 7, "also available.");
+							y++;
 							drawText(3, y++, 7, "Help can be shown by"); 
 							drawText(3, y++, 7, "pressing 'START' in any");
 							drawText(3, y++, 7, "test or pattern.");
 							y++;
-							drawText(3, y++, 7, "The 240p suite is also"); 
-							drawText(3, y++, 7, "available in GameCube,");
-							drawText(3, y++, 7, "Wii, Genesis, Sega CD");
-							drawText(3, y++, 7, "and Dreamcast.");							
+												
 							drawText(20, 22, 4, "(cont...)");
 							break;
 						case 3:
 							drawText(3, 4  , 6, "        HELP (3/3)"); 
+							drawText(3, y++, 7, "The 240p suite is also"); 
+							drawText(3, y++, 7, "available in GameCube,");
+							drawText(3, y++, 7, "Wii, Genesis, Sega CD");
+							drawText(3, y++, 7, "and Dreamcast.");		
+							y++;
 							drawText(3, y++, 7, "Please visit:"); 
 							drawText(3, y++, 5, "http://junkerhq.net/240p");
 							drawText(3, y++, 7, "for more information.");							
@@ -559,6 +564,15 @@ void DrawHelp(u16 option)
 							y++;
 							drawText(3, y++, 7, "Rotation can be done in");
 							drawText(3, y++, 7, "steps with the d-pad.");
+						break;
+				case HELP_VIDEO:
+							drawText(3, 4  , 6, "       VIDEO OPTIONS"); 
+							drawText(3, y++, 7, "Here you can enable or"); 
+							drawText(3, y++, 7, "disable the System's");
+							drawText(3, y++, 7, "interlaced video mode.");
+							y++;
+							drawText(3, y++, 7, "When enabled, the system");
+							drawText(3, y++, 7, "outputs each field twice.");
 						break;
 				case HELP_OVERSCAN:
 							drawText(3, 4  , 6, "         OVERSCAN"); 
