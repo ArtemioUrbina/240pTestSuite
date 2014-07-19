@@ -35,3 +35,4 @@ void DrawSharpness();
 void DrawWhite();
 void Draw100IRE();
 void DrawOverscan();
+void DrawMode7();

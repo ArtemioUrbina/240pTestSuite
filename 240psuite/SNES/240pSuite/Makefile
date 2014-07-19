@@ -68,7 +68,7 @@ all	:	bitmaps $(OUTPUT).sfc
 
 clean:
 	@echo clean ...
-	@rm -f $(OFILES) $(TARGET).sfc $(TARGET).sym *.pic *.map *.pal *.brr *.bnk soundbank.asm soundbank.h
+	@rm -f $(OFILES) $(TARGET).sfc $(TARGET).sym *.pic *.map *.pal *.brr *.bnk soundbank.asm soundbank.h *pc7 *.mp7
 
 #---------------------------------------------------------------------------------
 
@@ -169,12 +169,16 @@ sharpness.pic: sharpness.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 	
+gridm7.pc7	: gridm7.bmp
+	@echo convert bitmap ... $(notdir $@)
+	$(GFXCONV) -n -fbmp -m7 $<
+	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
 	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic colorbleed.pic\
 	colorbleedchk.pic 601701cb.pic sharpness.pic fullscreen.pic fullscreen256.pic\
 	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic 100IRE.pic\
 	numbers.pic lagtest.pic sonicback.pic sonicfloor.pic circles_grid.pic\
-	LEDsprites.pic striped.pic color_grid.pic lag-spr.pic soundbank.asm
+	LEDsprites.pic striped.pic color_grid.pic lag-spr.pic soundbank.asm gridm7.pc7
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

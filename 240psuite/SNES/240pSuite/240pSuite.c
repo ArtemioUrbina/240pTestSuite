@@ -27,12 +27,13 @@
 
 void TestPatterns();
 void DrawCredits();
+void DrawIntro();
 
 int main(void) 
 {
 	u16 redraw = 1, change = 0;
 	u16 pressed;
-	int sel = 0;
+	int sel = 0, start = 1;
 	    
 	setBrightness(0);
 	
@@ -46,6 +47,7 @@ int main(void)
 	spcLoadEffect(1);
 	
 	// Main loop
+	DrawIntro();
 	while(1) 
 	{
 		if(redraw)
@@ -99,6 +101,12 @@ int main(void)
 			{
 				redraw = 0;
 				setBrightness(0xF);
+				if(start)
+				{
+					setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
+					WaitForVBlank();
+					start = 0;
+				}
 			}
 						
 			change = 0;			
@@ -237,8 +245,9 @@ void TestPatterns(void)
 			drawText(3, pos, sel == 9 ? 6 : 7, "White & RGB Screen"); pos ++;
 			drawText(3, pos, sel == 10 ? 6 : 7, "100 IRE"); pos ++;	
 			drawText(3, pos, sel == 11 ? 6 : 7, "Sharpness"); pos++;
-			drawText(3, pos, sel == 12 ? 6 : 7, "Overscan"); pos+=2;
-			drawText(3, pos, sel == 13 ? 6 : 5, "Back to Main Menu"); 
+			drawText(3, pos, sel == 12 ? 6 : 7, "Overscan"); pos++;
+			drawText(3, pos, sel == 13 ? 6 : 7, "Mode 7"); pos+=2;
+			drawText(3, pos, sel == 14 ? 6 : 5, "Back to Main Menu"); 
 			
 			if(redraw)
 			{
@@ -264,9 +273,9 @@ void TestPatterns(void)
 		}	
 
 		if(sel < 0)
-			sel = 13;
+			sel = 14;
 			
-		if(sel > 13)
+		if(sel > 14)
 			sel = 0;
 			
 		if(pressed == KEY_START)
@@ -323,6 +332,9 @@ void TestPatterns(void)
 					DrawOverscan();
 					break;
 				case 13:
+					DrawMode7();
+					break;
+				case 14:
 					exit = 1;
 					break;
 			}
@@ -345,6 +357,7 @@ void DrawCat(void)
 	u16 held, pressed, end = 0;	 
 	u16 redraw = 1, size = 0, count = 0;	
 	
+	setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
 	while(!end) 
 	{		
 		if(redraw)
@@ -363,6 +376,7 @@ void DrawCat(void)
 						
 			setBrightness(0xF);
 			redraw = 0;
+			setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
 		}
 		WaitForVBlank();
 		
@@ -379,9 +393,31 @@ void DrawCat(void)
 		if(count == 20)
 			end = 1;
 	}	
-	Transition();
 	
 	return;
+}
+
+void DrawIntro(void) 
+{	
+	u8 i = 0;
+	
+	setBrightness(0);
+	
+	consoleInitText(0, 7, &font);
+	AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+	
+	drawText(8, 12, 7, "KORDAMP PRESENTS");
+	setMode(BG_MODE1,0); 	
+	bgSetDisable(1);
+	bgSetDisable(2);
+	bgSetScroll(1, 0, -1);
+	setBrightness(0xf);
+	
+	while(i++ < 20)
+		WaitForVBlank();
+		
+	setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
+	WaitForVBlank();
 }
 
 void DrawCredits(void) 
@@ -389,14 +425,14 @@ void DrawCredits(void)
 	u16 redraw = 1, counter = 1;
 	u16 pressed;
 	int exit = 0;
-	    	
+	 
 	while(!exit) 
 	{
 		if(redraw)
 		{
 			u16 size = 0;
 			u16 pos = 8;
-					
+			
 			setBrightness(0);	
 			
 			consoleInitText(0, 7, &font);
@@ -430,12 +466,12 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(19, 6, 5, "Ver. 0.04");
-			drawText(19, 7, 7, "16/07/2014");
+			drawText(19, 6, 5, "Ver. 1.00");
+			drawText(19, 7, 7, "18/07/2014");
 			
 			setBrightness(0xF);	
 			if(redraw)
-				redraw = 0;						
+				redraw = 0;
 		}
 				
 		if(counter == 1)

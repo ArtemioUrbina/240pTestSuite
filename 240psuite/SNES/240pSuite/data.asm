@@ -332,6 +332,10 @@ LEDsprites_tiles:
 .incbin "LEDsprites.pic"
 LEDsprites_tiles_end:
 
+mode7_tiles:
+.incbin "gridm7.pc7"
+mode7_tiles_end:
+
 .ends
 
 .section ".rodata7" superfree
@@ -347,5 +351,13 @@ nishka_tiles_end:
 color_grid_tiles:
 .incbin "color_grid.pic"
 color_grid_tiles_end:
+
+.ends
+
+.section ".rodata9" superfree
+
+mode7_map:
+.incbin "gridm7.mp7"
+mode7_map_end:
 
 .ends
