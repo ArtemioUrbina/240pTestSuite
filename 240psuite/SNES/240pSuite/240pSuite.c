@@ -65,7 +65,7 @@ int main(void)
 			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
-			DrawTilesWithSprites(170, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
+			DrawTilesWithSprites(176, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -93,10 +93,11 @@ int main(void)
 			drawText(3, pos, sel == 7 ? 6 : 7, "Horizontal Stripes"); pos ++;
 			drawText(3, pos, sel == 8 ? 6 : 7, "Checkerboard"); pos ++;
 			drawText(3, pos, sel == 9 ? 6 : 7, "Backlit Zone Test"); pos ++;
-			drawText(3, pos, sel == 10 ? 6 : 7, "Sound Test"); pos ++;
-			drawText(3, pos, sel == 11 ? 6 : 7, "Help"); pos ++;	
-			drawText(3, pos, sel == 12 ? 6 : 7, "Video Options"); pos += 2;	
-			drawText(3, pos, sel == 13 ? 6 : 5, "Credits"); 
+			drawText(3, pos, sel == 10 ? 6 : 7, "Alternate 240p/480i"); pos ++;
+			drawText(3, pos, sel == 11 ? 6 : 7, "Sound Test"); pos ++;
+			drawText(3, pos, sel == 12 ? 6 : 7, "Help"); pos ++;	
+			drawText(3, pos, sel == 13 ? 6 : 7, "Video: %s", interlaced ? "480i" : "240p"); pos += 2;	
+			drawText(3, pos, sel == 14 ? 6 : 5, "Credits"); 
 			
 			if(redraw)
 			{
@@ -128,9 +129,9 @@ int main(void)
 		}	
 
 		if(sel < 0)
-			sel = 13;
+			sel = 14;
 			
-		if(sel > 13)
+		if(sel > 14)
 			sel = 0;
 			
 		if(pressed == KEY_START)
@@ -140,17 +141,16 @@ int main(void)
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_SELECT)
+		if(pressed == KEY_A && sel == 13)
 		{
-			interlaced = !interlaced;
-			
 			if(interlaced)
-				SetInterlaced();
+				ClearInterlaced();
 			else
-				ClearInterlaced();				
+				SetInterlaced();
+			redraw = 1;
 		}
 			
-		if(pressed == KEY_A)
+		if(pressed == KEY_A && sel != 13)
 		{							
 			Transition();
 			oamClear(0, 0);
@@ -188,15 +188,17 @@ int main(void)
 					LEDZoneTest();
 					break;
 				case 10:
-					SoundTest();
+					Alternate240p480i();
 					break;
 				case 11:
-					DrawHelp(HELP_GENERAL);
+					SoundTest();
 					break;
 				case 12:
-					ChangeVideo();
+					DrawHelp(HELP_GENERAL);
 					break;
 				case 13:
+					break;
+				case 14:
 					DrawCredits();
 					break;
 			}
@@ -229,7 +231,7 @@ void TestPatterns(void)
 			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
-			DrawTilesWithSprites(170, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
+			DrawTilesWithSprites(176, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -485,7 +487,7 @@ void DrawCredits(void)
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
 			drawText(19, 6, 5, "Ver. 1.01");
-			drawText(19, 7, 7, "19/07/2014");
+			drawText(19, 7, 7, "20/07/2014");
 			
 			setBrightness(0xF);	
 			if(redraw)
