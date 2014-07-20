@@ -590,6 +590,21 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "overscan in pixels in each");
 							drawText(3, y++, 7, "direction.");
 					break;
+				case HELP_ALTERNATE:
+							drawText(3, 4  , 6, "  ALTERNATING 240p/480i"); 
+							drawText(3, y++, 7, "Some devices have a delay"); 
+							drawText(3, y++, 7, "when the source changes      ");
+							drawText(3, y++, 7, "between resolutions, which ");							
+							drawText(3, y++, 7, "happens in some games.");
+							y++;
+							drawText(3, y++, 7, "This test allows to time");
+							drawText(3, y++, 7, "that delay manually.");
+							y++;
+							drawText(3, y++, 7, "Press A to switch modes");
+							drawText(3, y++, 7, "press it again when you");
+							drawText(3, y++, 7, "are able to see the screen");
+							drawText(3, y++, 7, "back in your display.");
+					break;
 				case HELP_MANUALLAG:
 					switch(page)
 					{

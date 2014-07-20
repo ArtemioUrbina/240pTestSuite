@@ -19,10 +19,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
+#include <stdio.h>  
+#include <stdlib.h>  
 #include "tests.h"
 #include "font.h"
 #include "help.h"
 #include "control.h"
+
+typedef struct timecode{
+	u16 hours;
+	u16 minutes;
+	u16 seconds;
+	u16 frames;
+	u16 type;
+	u16 res;
+} timecode;
+
 
 void ShiftPalette(u16 pal, u16 pos)
 {	
@@ -1509,5 +1521,211 @@ void ManualLagTest()
 	}
 	Transition();
 	oamClear(0, 0);
+	return;
+}
+
+u16 ConvertToFrames(timecode *time)
+{
+	u16	frames = 0;
+
+	if(!time)
+		return frames;
+
+	frames = time->frames;
+	frames += time->seconds*60;
+	frames += time->minutes*3600;
+	frames += time->hours*216000;
+	return frames;
+}
+
+void ConvertFromFrames(timecode *value, u16 Frames)
+{
+	if(!value)
+		return;
+	value->hours = Frames / 216000;
+	Frames = Frames % 216000;
+	value->minutes = Frames / 3600;
+	Frames = Frames % 3600;
+	value->seconds = Frames / 60;
+	value->frames = Frames % 60;
+}
+
+void Alternate240p480i()
+{
+	u16 redraw = 1, end = 0;
+	u16 pressed, frames = 0;
+	u16 frames = 0, seconds = 0, minutes = 0, hours = 0;
+	u8 res = 0, current = 0, status = 0, oldinterlaced, changed = 1;
+	timecode *times = NULL;
+
+	oldinterlaced = interlaced;
+	times = (timecode*)malloc(sizeof(timecode)*20);
+	if(!times)
+		return;
+	
+	if(interlaced)
+		ClearInterlaced();
+		
+	while(!end) 
+	{
+		if(redraw)
+		{
+			u16 size = 0;
+					
+			setBrightness(0);	
+			
+			consoleInitText(0, 7, &font);
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
+			AddTextColor(5, RGB5(31, 0, 0), RGB5(0, 0, 0));
+			AddTextColor(4, RGB5(0, 26, 26), RGB5(0, 0, 0));
+			
+			ClearScreen(1);
+						
+			setMode(BG_MODE1,0); 	
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);					
+			
+			changed = 1;
+		}			
+		
+		drawText(1, 3, 7, "Elapsed Timer: %02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
+		
+		if(changed)
+		{
+			u8 i = 0;
+				
+			if(redraw)
+			{
+				i = 0;
+				redraw = 0;
+			}
+			else 
+				i = current - 1;
+				
+			drawText(1, 2, 6, "Current Resolution: %s", res == 0 ? "240p" : "480i"); 			
+			if(current)
+			{
+				for(i = 0; i < current; i++)
+				{
+					u8 len = 0;
+					
+					if(times[i].type == 0)
+					{
+						drawText(2, i+5, 4, "Switched %s:", times[i].res == 0 ? "240p" : "480i");
+						len = 14;
+					}
+					else
+					{
+						drawText(2, i+5, 4, "Viewed:");
+						len = 8;
+					}
+
+					drawText(3+len, i+5, 7, "%02d:%02d:%02d",
+							times[i].minutes, times[i].seconds, times[i].frames);
+					
+					if(times[i].type != 0 && i >= 1 && i <= 19)
+					{
+						u16 		framesA = 0, framesB = 0, res = 0;
+						timecode 	len;
+
+						framesB = ConvertToFrames(&times[i]);
+						framesA = ConvertToFrames(&times[i - 1]);
+						res = framesB - framesA;
+						ConvertFromFrames(&len, res);
+						drawText(20, i+5, 5, "%02d:%02d:%02d",
+							len.minutes, len.seconds, len.frames);
+					}
+				}
+			}
+			changed = 0;
+		}
+
+
+		WaitForVBlank();	
+		
+		frames ++;
+		if(frames > 59)
+		{
+			frames = 0;
+			seconds ++;	
+		}
+	
+		if(seconds > 59)
+		{
+		  seconds = 0;
+		  minutes ++;
+		}
+
+		if(minutes > 59)
+		{
+		  minutes = 0;
+		  hours ++;
+		}
+
+		if(hours > 99)
+		  hours = 0;
+		
+		pressed = PadPressed(0);
+		
+		if(pressed == KEY_START)
+		{
+			DrawHelp(HELP_ALTERNATE);
+			redraw = 1;
+		}
+		
+		if(pressed == KEY_A)
+		{
+			if(current <= 19)
+				current ++;
+			else
+			{
+				current = 1;
+				CleanFontMap();
+			}
+
+			times[current - 1].frames = frames;
+			times[current - 1].minutes = minutes;
+			times[current - 1].seconds = seconds;
+			times[current - 1].hours = hours;
+
+			status ++;
+			if(status == 1)
+			{
+				times[current - 1].type = 0;
+				res = !res;
+				times[current - 1].res = res;	
+				if(!res)
+					ClearInterlaced();
+				else
+					SetInterlaced();
+			}
+			if(status == 2)
+			{
+				times[current - 1].type = 1;
+				times[current - 1].res = res;
+				status = 0;
+			}
+			changed = 1;
+		}
+			
+		if(pressed == KEY_B)
+			end = 1;	
+
+	}
+	if(times)
+	{
+		free(times);
+		times = NULL;
+	}
+	
+	Transition();
+	
+	if(oldinterlaced)
+		SetInterlaced();
+	else
+		ClearInterlaced();
+
 	return;
 }

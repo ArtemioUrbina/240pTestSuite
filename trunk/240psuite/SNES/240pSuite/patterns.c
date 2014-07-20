@@ -844,7 +844,7 @@ inline void FillTile(u8 *array)
 	
 	// fill all bitplanes
 	for(i = 0; i < 8; i++)
-		array[i*2] = 0xFF;
+		array[i<<1] = 0xFF;
 }
 
 inline void place_tile_in_map(u16 x, u16 y, u8 *map, u8 pal, u16 tileNum) 
@@ -864,7 +864,7 @@ inline void FillTiles(s16 left, s16 right, s16 top, s16 bottom, u8 mode)
 	u8 mask;
 	s16 i, j, maxw, maxh;
 	s16 lp, rp, tp, bp;
-	s16 l, r, t, b;
+	s16 l, r, t, b, index = 0;
   
 	maxw = 31;
 	maxh = 27;
@@ -896,17 +896,19 @@ inline void FillTiles(s16 left, s16 right, s16 top, s16 bottom, u8 mode)
 	// Top	
 	for(i = 0; i < t; i++)
 	{
-		tile_t[i*2] = 0xFF;
-		tile_rt[i*2] = 0xFF;
-		tile_lt[i*2] = 0xFF;
+		index = i << 1;
+		tile_t[index] = 0xFF;
+		tile_rt[index] = 0xFF;
+		tile_lt[index] = 0xFF;
 	}
 	
 	// Bottom  	
 	for(i = 0; i < b; i++)
 	{
-		tile_b[14 - i*2] = 0xFF;
-		tile_rb[14 - i*2] = 0xFF;
-		tile_lb[14 - i*2] = 0xFF;
+		index = 14 - (i << 1);
+		tile_b[index] = 0xFF;
+		tile_rb[index] = 0xFF;
+		tile_lb[index] = 0xFF;
 	}
 	
 	// left
@@ -916,9 +918,10 @@ inline void FillTiles(s16 left, s16 right, s16 top, s16 bottom, u8 mode)
 		
 	for(i = 0; i < 8; i++)
 	{  	
-		tile_l[i*2] = mask;  
-		tile_lt[i*2] |= mask;
-		tile_lb[i*2] |= mask;	
+		index = i << 1;
+		tile_l[index] = mask;  
+		tile_lt[index] |= mask;
+		tile_lb[index] |= mask;	
 	}
 	
 	// right
@@ -928,9 +931,10 @@ inline void FillTiles(s16 left, s16 right, s16 top, s16 bottom, u8 mode)
 		
 	for(i = 0; i < 8; i++)
 	{  	
-		tile_r[i*2] = mask;  
-		tile_rt[i*2] |= mask;
-		tile_rb[i*2] |= mask;	
+		index = i << 1;
+		tile_r[index] = mask;  
+		tile_rt[index] |= mask;
+		tile_rb[index] |= mask;	
 	}
 	
 	/*-------- Maps -------*/
@@ -985,7 +989,7 @@ inline void FillTiles(s16 left, s16 right, s16 top, s16 bottom, u8 mode)
 			place_tile_in_map(i, j, map_over, 1, 9);	
 	
 	WaitForVBlank();
-	dmaCopyVram(tiles_over, 0x4000, 0x140*2);  
+	dmaCopyVram(tiles_over, 0x4000, 0x140<<1);  
 	
 	if(mode) // doesn't end the copy if in 240p mode...
 	{
