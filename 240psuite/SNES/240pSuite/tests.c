@@ -533,8 +533,16 @@ void DrawStripes(void)
 		{
 			drawText(2, 25, 7, "Frame:%0.2d", frame);
 			frame ++;
-			if(frame == 60)
-				frame = 0;			
+			if(snes_50hz)
+			{
+				if(frame == 50)
+					frame = 0;	
+			}
+			else
+			{
+				if(frame == 60)
+					frame = 0;			
+			}
 		}
 		
 		WaitForVBlank();
@@ -618,8 +626,16 @@ void DrawCheck(void)
 		{
 			drawText(2, 25, 7, "Frame:%0.2d", frame);
 			frame ++;
-			if(frame == 60)
-				frame = 0;
+			if(snes_50hz)
+			{
+				if(frame == 50)
+					frame = 0;
+			}
+			else
+			{
+				if(frame == 60)
+					frame = 0;
+			}
 		}
 		
 		WaitForVBlank();
@@ -737,11 +753,23 @@ void PassiveLagTest()
 			else
 				bgcol = 0xa;
 		}
-		
-		if(frames > 59)
+	
+		if(snes_50hz)	
 		{
-			frames = 0;
-			seconds ++;	
+			if(frames > 49)
+			{
+				frames = 0;
+				seconds ++;	
+			}
+		}
+		else
+		{
+			if(frames > 59)
+			{
+				frames = 0;
+				seconds ++;	
+			}
+
 		}
 	
 		if(seconds > 59)
@@ -1472,7 +1500,13 @@ void ManualLagTest()
 		    u16 h = 8;
 			u16 v = 17; 
 			s16 fint, fdec;	
-			float frame = 1000f/59.97f, totalms = 0;
+			float frame, totalms = 0;
+			
+			if(snes_50hz)	
+				frame = 20.0f;
+			else
+				frame = 1000f/59.97f;
+		
 			
 			frames = (float)total/(float)count;
 			fint = (s16)frames;			
@@ -1489,8 +1523,12 @@ void ManualLagTest()
 						
 			drawText(h, v++, 7, "%d.%0.2d milliseconds", fint, fdec);
 			
+			
 			drawText(3, v++, 6, "Keep in mind that a frame");
-			drawText(3, v, 6, "is around 16.68 ms.");
+			if(snes_50hz)	
+				drawText(3, v, 6, "is 20 ms in PAL.");
+			else
+				drawText(3, v, 6, "is around 16.68 ms.");
 			
 			if(total < 5)
 				drawText(10, 11, 6, "EXCELLENT REFLEXES!");
@@ -1532,7 +1570,10 @@ u16 ConvertToFrames(timecode *time)
 		return frames;
 
 	frames = time->frames;
-	frames += time->seconds*60;
+	if(snes_50hz)
+		frames += time->seconds*50;
+	else
+		frames += time->seconds*60;
 	frames += time->minutes*3600;
 	frames += time->hours*216000;
 	return frames;
@@ -1546,8 +1587,16 @@ void ConvertFromFrames(timecode *value, u16 Frames)
 	Frames = Frames % 216000;
 	value->minutes = Frames / 3600;
 	Frames = Frames % 3600;
-	value->seconds = Frames / 60;
-	value->frames = Frames % 60;
+	if(snes_50hz)
+	{
+		value->seconds = Frames / 50;
+		value->frames = Frames % 50;
+	}
+	else
+	{
+		value->seconds = Frames / 60;
+		value->frames = Frames % 60;
+	}
 }
 
 void Alternate240p480i()
@@ -1646,11 +1695,23 @@ void Alternate240p480i()
 		WaitForVBlank();	
 		
 		frames ++;
-		if(frames > 59)
+		if(snes_50hz)	
 		{
-			frames = 0;
-			seconds ++;	
+			if(frames > 49)
+			{
+				frames = 0;
+				seconds ++;	
+			}
 		}
+		else
+		{
+			if(frames > 59)
+			{
+				frames = 0;
+				seconds ++;	
+			}
+		}
+
 	
 		if(seconds > 59)
 		{
