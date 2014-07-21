@@ -96,9 +96,11 @@ int main(void)
 			drawText(3, pos, sel == 10 ? 6 : 7, "Alternate 240p/480i"); pos ++;
 			drawText(3, pos, sel == 11 ? 6 : 7, "Sound Test"); pos ++;
 			drawText(3, pos, sel == 12 ? 6 : 7, "Help"); pos ++;	
-			drawText(3, pos, sel == 13 ? 6 : 7, "Video: %s", interlaced ? "480i" : "240p"); pos += 2;	
+			drawText(3, pos, sel == 13 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos += 2;	
 			drawText(3, pos, sel == 14 ? 6 : 5, "Credits"); 
 			
+			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 			
+				
 			if(redraw)
 			{
 				redraw = 0;
@@ -265,6 +267,8 @@ void TestPatterns(void)
 			drawText(3, pos, sel == 13 ? 6 : 7, "Overscan 239p"); pos++;
 			drawText(3, pos, sel == 14 ? 6 : 7, "Mode 7"); pos+=2;
 			drawText(3, pos, sel == 15 ? 6 : 5, "Back to Main Menu"); 
+			
+			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
 			
 			if(redraw)
 			{

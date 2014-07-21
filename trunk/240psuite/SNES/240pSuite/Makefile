@@ -4,6 +4,9 @@ export DEVKITSNES := /c/snesdev/
 # path to devkitsnes root directory for compiler
 export DEVKIT65XX := /c/snesdev/devkitsnes
 
+export CHNGREG	:=	$(DEVKIT65XX)/tools/changeregion
+export UCON64	:=	$(DEVKIT65XX)/tools/ucon64
+
 #---------------------------------------------------------------------------------
 .SUFFIXES:
 #---------------------------------------------------------------------------------
@@ -65,10 +68,13 @@ SMCONVFLAGS	:= -l -s -o soundbank -v -b 5
 #---------------------------------------------------------------------------------
 all	:	bitmaps $(OUTPUT).sfc
 	$(SNTOOLS) -hi! $(GTITLE) $(TARGET).sfc
+	$(CHNGREG) $(TARGET).sfc $(TARGET)-PAL.sfc
+	$(UCON64) --chk $(TARGET)-PAL.sfc
+	rm $(TARGET)-PAL.bak
 	
 clean:
 	@echo clean ...
-	@rm -f $(OFILES) $(TARGET).sfc $(TARGET).sym *.pic *.map *.pal *.brr *.bnk soundbank.asm soundbank.h *pc7 *.mp7
+	@rm -f $(OFILES) $(TARGET).sfc $(TARGET)-PAL.sfc $(TARGET).sym *.pic *.map *.pal *.brr *.bnk soundbank.asm soundbank.h *pc7 *.mp7
 
 #---------------------------------------------------------------------------------
 
