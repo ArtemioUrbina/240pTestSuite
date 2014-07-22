@@ -41,6 +41,11 @@ extern char SMPTECB100_pal, SMPTECB100_pal_end;
 extern char SMPTECB75_pal, SMPTECB75_pal_end;
 extern char SMPTECB75_map, SMPTECB75_map_end;
 
+extern char EBUCB75_tiles, EBUCB75_tiles_end;
+extern char EBUCB100_pal, EBUCB100_pal_end;
+extern char EBUCB75_pal, EBUCB75_pal_end;
+extern char EBUCB75_map, EBUCB75_map_end;
+
 extern char color_tiles, color_tiles_end;
 extern char color_pal, color_pal_end;
 extern char color_map, color_map_end;
@@ -51,6 +56,9 @@ extern char color_grid_map, color_grid_map_end;
 extern char circles_tiles, circles_tiles_end;
 extern char circles_pal, circles_pal_end;
 extern char circles_map, circles_map_end;
+
+extern char circlesPAL_tiles, circlesPAL_tiles_end;
+extern char circlesPAL_map, circlesPAL_map_end;
 
 extern char pluge_tiles, pluge_tiles_end;
 extern char pluge_pal, pluge_pal_end;
