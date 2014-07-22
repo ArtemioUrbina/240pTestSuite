@@ -98,10 +98,17 @@ void DrawSMPTE()
 			
 			consoleInitText(0, 7, &font);				
 			
-			setPaletteColor(0x71, RGB5(31, 31, 31));			
-			bgInitTileSet(1, &SMPTECB75_tiles, &SMPTECB75_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);	
-			
-			bgInitMapSet(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x2000);
+			setPaletteColor(0x71, RGB5(31, 31, 31));
+			if(!snes_50hz)			
+			{
+				bgInitTileSet(1, &SMPTECB75_tiles, &SMPTECB75_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);
+				bgInitMapSet(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x2000);
+			}
+			else
+			{
+				bgInitTileSet(1, &EBUCB75_tiles, &EBUCB75_pal, 0, (&EBUCB75_tiles_end - &EBUCB75_tiles), 16*2, BG_16COLORS, 0x4000);
+				bgInitMapSet(1, &EBUCB75_map, (&EBUCB75_map_end - &EBUCB75_map), SC_32x32, 0x2000);
+			}
 			
 			setMode(BG_MODE1,0); 			
 			bgSetDisable(2);
@@ -136,13 +143,19 @@ void DrawSMPTE()
 			{
 				drawText(26, 1, 7, " 75%");
 				WaitForVBlank();
-				dmaCopyCGram(&SMPTECB75_pal, 0, 16*2);
+				if(!snes_50hz)	
+					dmaCopyCGram(&SMPTECB75_pal, 0, 16*2);
+				else
+					dmaCopyCGram(&EBUCB75_pal, 0, 16*2);
 			}
 			else
 			{
 				drawText(26, 1, 7, "100%");
 				WaitForVBlank();
-				dmaCopyCGram(&SMPTECB100_pal, 0, 16*2);
+				if(!snes_50hz)	
+					dmaCopyCGram(&SMPTECB100_pal, 0, 16*2);
+				else
+					dmaCopyCGram(&EBUCB100_pal, 0, 16*2);
 			}
 			text = 30;
 			type = !type;
@@ -227,8 +240,16 @@ void Drawcircles()
 				bgInitMapSet(0, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 			}
 			
-			bgInitTileSet(1, &circles_tiles, &circles_pal, 0, (&circles_tiles_end - &circles_tiles), 16*2, BG_16COLORS, 0x4000);	
-			bgInitMapSet(1, &circles_map, (&circles_map_end - &circles_map), SC_32x32, 0x1000);
+			if(!snes_50hz)
+			{
+				bgInitTileSet(1, &circles_tiles, &circles_pal, 0, (&circles_tiles_end - &circles_tiles), 16*2, BG_16COLORS, 0x4000);	
+				bgInitMapSet(1, &circles_map, (&circles_map_end - &circles_map), SC_32x32, 0x1000);
+			}
+			else
+			{
+				bgInitTileSet(1, &circlesPAL_tiles, &circles_pal, 0, (&circlesPAL_tiles_end - &circlesPAL_tiles), 16*2, BG_16COLORS, 0x4000);	
+				bgInitMapSet(1, &circlesPAL_map, (&circlesPAL_map_end - &circlesPAL_map), SC_32x32, 0x1000);
+			}
 			
 			setMode(BG_MODE1,0); 
 			if(!grid)

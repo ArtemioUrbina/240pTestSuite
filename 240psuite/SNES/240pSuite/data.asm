@@ -320,6 +320,30 @@ color_grid_map:
 .incbin "color_grid.map"
 color_grid_map_end:
 
+circlesPAL_tiles:
+.incbin "circlesPAL.pic"
+circlesPAL_tiles_end:
+
+circlesPAL_map:
+.incbin "circlesPAL.map"
+circlesPAL_map_end:
+
+EBUCB75_map:
+.incbin "EBUCB75.map"
+EBUCB75_map_end:
+
+EBUCB75_pal:
+.incbin "EBUCB75.pal"
+EBUCB75_pal_end:
+
+EBUCB100_pal:
+.incbin "EBUCB100.pal"
+EBUCB100_pal_end:
+
+EBUCB75_tiles:
+.incbin "EBUCB75.pic"
+EBUCB75_tiles_end:
+
 .ends
 
 .section ".rodata6" superfree

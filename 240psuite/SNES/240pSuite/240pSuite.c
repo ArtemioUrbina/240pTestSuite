@@ -253,7 +253,7 @@ void TestPatterns(void)
 			
 			drawText(3, pos, sel == 0 ? 6 : 7, "Pluge"); pos ++;
 			drawText(3, pos, sel == 1 ? 6 : 7, "Color Bars"); pos ++;
-			drawText(3, pos, sel == 2 ? 6 : 7, "SMPTE Color Bars"); pos ++;
+			drawText(3, pos, sel == 2 ? 6 : 7, snes_50hz ? "EBU Color Bars" : "SMPTE Color Bars"); pos ++;
 			drawText(3, pos, sel == 3 ? 6 : 7, "Color Bars w/ Gray Ref"); pos ++;
 			drawText(3, pos, sel == 4 ? 6 : 7, "Color Bleed Check"); pos ++;
 			drawText(3, pos, sel == 5 ? 6 : 7, "Grid 256x224"); pos ++;

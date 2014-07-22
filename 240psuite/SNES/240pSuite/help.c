@@ -276,14 +276,23 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "in the middle.");							
 					break;
 				case HELP_SMPTE:
-							drawText(3, 4  , 6, "     SMPTE COLOR BARS"); 
+							if(!snes_50hz)
+								drawText(3, 4  , 6, "     SMPTE COLOR BARS"); 
+							else
+								drawText(3, 4  , 6, "      EBU COLOR BARS"); 
 							drawText(3, y++, 7, "This pattern can be used"); 
-							drawText(3, y++, 7, "to calibrate for NTSC");
+							if(snes_50hz)
+								drawText(3, y++, 7, "to calibrate for PAL");
+							else
+								drawText(3, y++, 7, "to calibrate for NTSC");
 							drawText(3, y++, 7, "levels regarding contrast,");							
 							drawText(3, y++, 7, "brightness and colors.");
 							y++;
 							drawText(3, y++, 7, "You can toggle between 75%");
-							drawText(3, y++, 7, "and 100% SMPTE color bars");
+							if(snes_50hz)
+								drawText(3, y++, 7, "and 100% EBU color bars");
+							else
+								drawText(3, y++, 7, "and 100% SMPTE color bars");
 							drawText(3, y++, 7, "with A.");
 							y++;
 							drawText(3, y++, 7, "You can use color filters"); 
@@ -295,7 +304,10 @@ void DrawHelp(u16 option)
 							drawText(3, 4  , 6, "         LINEARITY"); 
 							drawText(3, y++, 7, "This pattern shows 5"); 
 							drawText(3, y++, 7, "circles, that are matched");
-							drawText(3, y++, 7, "to the 10:11 NTSC aspect");							
+							if(!snes_50hz)
+								drawText(3, y++, 7, "to the 10:11 NTSC aspect");
+							else
+								drawText(3, y++, 7, "to the 59:54 PAL aspect");
 							drawText(3, y++, 7, "ratio.");
 							y++;
 							drawText(3, y++, 7, "The linearity of the");
@@ -315,9 +327,14 @@ void DrawHelp(u16 option)
 							y++;
 							drawText(3, y++, 7, "You should make sure the");
 							drawText(3, y++, 7, "bars are gray, with no red");
-							drawText(3, y++, 7, "or blue bias. This can be");
-							drawText(3, y++, 7, "adjusted with the color");
-							drawText(3, y++, 7, "control in NTSC displays.");
+							drawText(3, y++, 7, "or blue bias.");
+							if(!snes_50hz)
+							{
+								y++;
+								drawText(3, y++, 7, "This can be adjusted with ");
+								drawText(3, y++, 7, "the color control in NTSC");
+								drawText(3, y++, 7, "displays.");
+							}
 					break;
 				case HELP_WHITE:
 							drawText(3, 4  , 6, "       WHITE SCREEN"); 
