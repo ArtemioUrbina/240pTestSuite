@@ -50,6 +50,6 @@ All devices can be hotswapped.
 
 The 240p suite is also available in other systems,
 including: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/
-#YMega CD#Y, #YNintendo GameCube#Y, #YNintendo Wii#Y and
-#YSega Dreamcast#Y.
+#YMega CD#Y, #YNintendo GameCube#Y, #YSuper Nintendo#Y,
+#YNintendo Wii#Y and #YSega Dreamcast#Y.
 

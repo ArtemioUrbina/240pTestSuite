@@ -1504,7 +1504,7 @@ void LEDZoneTest()
 void PassiveLagTest()
 {  
   u16 frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, bgcol = PAL2;
-  u16 exit = 0, color = 0, loadvram = 1;
+  u16 exit = 0, color = 1, loadvram = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;  
   u16 numbers[11], size, lsd, msd, pause = 0, circle = 0, cposx = 32, cposy = 17, solid;
   

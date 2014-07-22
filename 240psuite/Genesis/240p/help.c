@@ -127,13 +127,13 @@ void DrawHelp(int option)
 				      }
 				      else
 				      {
-				      	VDP_drawTextBG(APLAN, "Help can be shown by pressin 'Z'", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      	VDP_drawTextBG(APLAN, "Help can be shown by pressing 'Z'", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      	VDP_drawTextBG(APLAN, "in any test or pattern.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      }				      
 				      y++;		      	
 				      VDP_drawTextBG(APLAN, "The 240p suite is also available", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "in Nintendo GameCube, Wii and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "Sega Dreamcast.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				          
+				      VDP_drawTextBG(APLAN, "in GameCube, Wii, Super Nintendo,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "and Sega Dreamcast.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				          
 				      y++;
 				      VDP_drawTextBG(APLAN, "Visit: http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "for more information.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
