@@ -77,39 +77,39 @@ void DropShadowTest(void)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			// We add the font, it will be overwritten by sprites they 
 			// need to be in 8k vram steps. Lowercase will be available
-			consoleInitText(1, 7, &font);	
+			consoleInitTextMine(1, 7, &font);			
 			
 			if(back == 0)
 			{
 				size = (&motoko_tiles1_end - &motoko_tiles1);
-				bgInitTileSet(0, &motoko_tiles1, &motoko_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
-				dmaCopyVram(&motoko_tiles2, 0x5000, (&motoko_tiles2_end-&motoko_tiles2));
+				bgInitTileSetMine(0, &motoko_tiles1, &motoko_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
+				CopyExtraTiles(&motoko_tiles2, 0x5000, (&motoko_tiles2_end-&motoko_tiles2));
 				
-				bgInitMapSet(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x7C00);
+				bgInitMapSetMine(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x7C00);
 				mode = BG_MODE3;
 			}
 			
 			if(back == 1)
 			{
 				size = (&sonicback_tiles_end - &sonicback_tiles);
-				bgInitTileSet(0, &sonicback_tiles, &sonicback_pal, 0, size, 32*2, BG_256COLORS, 0x3000);	
-				bgInitMapSet(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
+				bgInitTileSetMine(0, &sonicback_tiles, &sonicback_pal, 0, size, 32*2, BG_256COLORS, 0x3000);	
+				bgInitMapSetMine(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
 			
 				size = (&sonicfloor_tiles_end - &sonicfloor_tiles);
-				bgInitTileSet(1, &sonicfloor_tiles, &sonicfloor_pal, 2, size, 16*2, BG_16COLORS, 0x6000);	
-				bgInitMapSet(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);	
+				bgInitTileSetMine(1, &sonicfloor_tiles, &sonicfloor_pal, 2, size, 16*2, BG_16COLORS, 0x6000);	
+				bgInitMapSetMine(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);	
 				mode = BG_MODE3;				
 			}
 			
 			if(back == 2)
 			{
 				size = (&hstripes_tiles_end - &hstripes_tiles);
-				bgInitTileSet(1, &hstripes_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);	
-				bgInitMapSet(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+				bgInitTileSetMine(1, &hstripes_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);	
+				bgInitMapSetMine(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 				
 				setPaletteColor(0x00, RGB5(0, 0, 0));
 				setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
@@ -119,27 +119,32 @@ void DropShadowTest(void)
 			if(back == 3)
 			{
 				size = (&check_tiles_end - &check_tiles);
-				bgInitTileSet(1, &check_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);						
-				bgInitMapSet(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+				bgInitTileSetMine(1, &check_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);						
+				bgInitMapSetMine(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 				setPaletteColor(0x00, RGB5(0, 0, 0));
 				setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
 				mode = BG_MODE1;
 			}
 			
-			oamInitGfxSet(&sprites_tiles, (&sprites_tiles_end - &sprites_tiles), &sprites_pal, 16*2, 7, 0, OBJ_SIZE32);			
+			oamInitGfxSetMine(&sprites_tiles, (&sprites_tiles_end - &sprites_tiles), &sprites_pal, 16*2, 7, 0, OBJ_SIZE32);			
 			
 			setMode(mode,0);			
 			
-			bgSetScroll(0, 0, -1);
+			if(back == 0)
+				bgSetScroll(0, 0, -1);
 			if(back == 1)
-				bgSetScroll(1, 0, -97);
+			{
+				bgSetScroll(0, x*2, -1);
+				bgSetScroll(1, x*4, -97);
+			}
 			if(back > 1)
 			{
 				bgSetScroll(1, 0, -1);
 				bgSetDisable(0);
 				bgSetDisable(2);
 			}				
-			setBrightness(0xF);
+			
+			EndDMA();
 			redraw = 0;
 		}
 		
@@ -331,39 +336,39 @@ void StripedSpriteTest(void)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			// We add the font, it will be overwritten by sprites they 
 			// need to be in 8k vram steps. Lowercase will be available
-			consoleInitText(1, 7, &font);	
+			consoleInitTextMine(1, 7, &font);	
 			
 			if(back == 0)
 			{
 				size = (&motoko_tiles1_end - &motoko_tiles1);
-				bgInitTileSet(0, &motoko_tiles1, &motoko_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
-				dmaCopyVram(&motoko_tiles2, 0x5000, (&motoko_tiles2_end-&motoko_tiles2));
+				bgInitTileSetMine(0, &motoko_tiles1, &motoko_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
+				CopyExtraTiles(&motoko_tiles2, 0x5000, (&motoko_tiles2_end-&motoko_tiles2));
 				
-				bgInitMapSet(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x7C00);
+				bgInitMapSetMine(0, &motoko_map, (&motoko_map_end - &motoko_map), SC_32x32, 0x7C00);
 				mode = BG_MODE3;
 			}
 			
 			if(back == 1)
 			{
 				size = (&sonicback_tiles_end - &sonicback_tiles);
-				bgInitTileSet(0, &sonicback_tiles, &sonicback_pal, 0, size, 32*2, BG_256COLORS, 0x3000);	
-				bgInitMapSet(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
+				bgInitTileSetMine(0, &sonicback_tiles, &sonicback_pal, 0, size, 32*2, BG_256COLORS, 0x3000);	
+				bgInitMapSetMine(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
 			
 				size = (&sonicfloor_tiles_end - &sonicfloor_tiles);
-				bgInitTileSet(1, &sonicfloor_tiles, &sonicfloor_pal, 2, size, 16*2, BG_16COLORS, 0x6000);	
-				bgInitMapSet(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);	
+				bgInitTileSetMine(1, &sonicfloor_tiles, &sonicfloor_pal, 2, size, 16*2, BG_16COLORS, 0x6000);	
+				bgInitMapSetMine(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);	
 				mode = BG_MODE3;				
 			}
 			
 			if(back == 2)
 			{
 				size = (&hstripes_tiles_end - &hstripes_tiles);
-				bgInitTileSet(1, &hstripes_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);	
-				bgInitMapSet(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+				bgInitTileSetMine(1, &hstripes_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);	
+				bgInitMapSetMine(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 				
 				setPaletteColor(0x00, RGB5(0, 0, 0));
 				setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
@@ -373,20 +378,24 @@ void StripedSpriteTest(void)
 			if(back == 3)
 			{
 				size = (&check_tiles_end - &check_tiles);
-				bgInitTileSet(1, &check_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);						
-				bgInitMapSet(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+				bgInitTileSetMine(1, &check_tiles, &grid_pal, 0, size, 16*2, BG_16COLORS, 0x6000);						
+				bgInitMapSetMine(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 				setPaletteColor(0x00, RGB5(0, 0, 0));
 				setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
 				mode = BG_MODE1;
 			}
 			
-			oamInitGfxSet(&striped_tiles, (&striped_tiles_end - &striped_tiles), &striped_pal, 16*2, 7, 0, OBJ_SIZE32);			
+			oamInitGfxSetMine(&striped_tiles, (&striped_tiles_end - &striped_tiles), &striped_pal, 16*2, 7, 0, OBJ_SIZE32);			
 			
 			setMode(mode, 0);			
 			
-			bgSetScroll(0, 0, -1);
+			if(back == 0)
+				bgSetScroll(0, 0, -1);
 			if(back == 1)
-				bgSetScroll(1, 0, -97);
+			{
+				bgSetScroll(0, x*2, -1);
+				bgSetScroll(1, x*4, -97);
+			}
 			if(back > 1)
 			{
 				bgSetScroll(1, 0, -1);
@@ -398,7 +407,7 @@ void StripedSpriteTest(void)
 			oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
 			oamSetVisible(0, OBJ_SHOW);
 				
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		
@@ -492,16 +501,16 @@ void DrawStripes(void)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			InitTextColor(0, 7, RGB5(31, 31, 31), RGB5(0, 0, 0));			
 			
 			if(!vert)
-				bgInitTileSet(1, &hstripes_tiles, &grid_pal, 0, (&hstripes_tiles_end - &hstripes_tiles), 16*2, BG_16COLORS, 0x6000);	
+				bgInitTileSetMine(1, &hstripes_tiles, &grid_pal, 0, (&hstripes_tiles_end - &hstripes_tiles), 16*2, BG_16COLORS, 0x6000);	
 			else
-				bgInitTileSet(1, &vstripes_tiles, &grid_pal, 0, (&vstripes_tiles_end - &vstripes_tiles), 16*2, BG_16COLORS, 0x6000);	
+				bgInitTileSetMine(1, &vstripes_tiles, &grid_pal, 0, (&vstripes_tiles_end - &vstripes_tiles), 16*2, BG_16COLORS, 0x6000);	
 				
-			bgInitMapSet(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+			bgInitMapSetMine(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 			
 			setPaletteColor(0x00, RGB5(0, 0, 0));
 			setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
@@ -510,7 +519,7 @@ void DrawStripes(void)
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		
@@ -588,13 +597,13 @@ void DrawCheck(void)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			InitTextColor(0, 7, RGB5(31, 31, 31), RGB5(0, 0, 0));		
 						
-			bgInitTileSet(1, &check_tiles, &grid_pal, 0, (&check_tiles_end - &check_tiles), 16*2, BG_16COLORS, 0x6000);	
+			bgInitTileSetMine(1, &check_tiles, &grid_pal, 0, (&check_tiles_end - &check_tiles), 16*2, BG_16COLORS, 0x6000);	
 				
-			bgInitMapSet(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+			bgInitMapSetMine(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 			
 			setPaletteColor(0x00, RGB5(0, 0, 0));
 			setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
@@ -603,7 +612,7 @@ void DrawCheck(void)
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		
@@ -682,9 +691,9 @@ void PassiveLagTest()
 	
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
-			consoleInitText(0, 7, &font);	
+			consoleInitTextMine(0, 7, &font);	
 			
 			setPaletteColor(0x91, RGB5(31, 31, 31));
 			setPaletteColor(0xA3, RGB5(31, 0, 0));
@@ -693,12 +702,12 @@ void PassiveLagTest()
 			
 			AddTextColor(7, RGB5(0, 0, 0), RGB5(31, 31, 31));
 						
-			bgInitTileSet(1, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
-			bgInitMapSet(1, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
+			bgInitTileSetMine(1, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
+			bgInitMapSetMine(1, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
 			
 			drawText(1, 1, 7, "hours   minutes seconds frames");
 			
-			oamInitGfxSet(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
+			oamInitGfxSetMine(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
 			
 			/*****Numbers*****/
 			
@@ -737,7 +746,7 @@ void PassiveLagTest()
 			bgSetScroll(1, 0, -1);	
 			bgSetDisable(2);
 			
-			setBrightness(0xf);
+			EndDMA();
 			
 			redraw = 0;
 		}
@@ -861,19 +870,19 @@ void HScrollTest()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 						
-			bgInitTileSet(0, &sonicback_tiles, &sonicback_pal, 0, (&sonicback_tiles_end - &sonicback_tiles), 32*2, BG_256COLORS, 0x3000);	
-			bgInitMapSet(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
+			bgInitTileSetMine(0, &sonicback_tiles, &sonicback_pal, 0, (&sonicback_tiles_end - &sonicback_tiles), 32*2, BG_256COLORS, 0x3000);	
+			bgInitMapSetMine(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
 			
-			bgInitTileSet(1, &sonicfloor_tiles, &sonicfloor_pal, 2, (&sonicfloor_tiles_end - &sonicfloor_tiles), 16*2, BG_16COLORS, 0x6000);	
-			bgInitMapSet(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);			
+			bgInitTileSetMine(1, &sonicfloor_tiles, &sonicfloor_pal, 2, (&sonicfloor_tiles_end - &sonicfloor_tiles), 16*2, BG_16COLORS, 0x6000);	
+			bgInitMapSetMine(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);			
 			
 			setMode(BG_MODE3,0); 			
 			
 			bgSetScroll(0, 0, -1);
 			bgSetScroll(1, 0, -97);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		
@@ -947,10 +956,10 @@ void VScrollTest(void)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
-			bgInitTileSet(0, &circlesgrid_tiles, &grid_pal, 0, (&circlesgrid_tiles_end - &circlesgrid_tiles), 16*2, BG_16COLORS, 0x6000);					
-			bgInitMapSet(0, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+			bgInitTileSetMine(0, &circlesgrid_tiles, &grid_pal, 0, (&circlesgrid_tiles_end - &circlesgrid_tiles), 16*2, BG_16COLORS, 0x6000);					
+			bgInitMapSetMine(0, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 			
 			setPaletteColor(0x00, RGB5(0, 0, 0));
 			setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
@@ -960,7 +969,7 @@ void VScrollTest(void)
 			bgSetDisable(2);
 			
 			bgSetScroll(0, posx, posy);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 				
@@ -1023,11 +1032,11 @@ void LEDZoneTest()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			ClearScreen(0);
 			
-			oamInitGfxSet(&LEDsprites_tiles, (&LEDsprites_tiles_end - &LEDsprites_tiles), &LEDsprites_pal, 16*2, 7, 0, OBJ_SIZE8);
+			oamInitGfxSetMine(&LEDsprites_tiles, (&LEDsprites_tiles_end - &LEDsprites_tiles), &LEDsprites_pal, 16*2, 7, 0, OBJ_SIZE8);
 			
 			oamSet(0, x, y, 2, 0, 0, sprite, 7); 
 			if(shown)
@@ -1046,7 +1055,7 @@ void LEDZoneTest()
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		
@@ -1139,19 +1148,19 @@ void SoundTest()
 		{
 			u16 size = 0;
 					
-			setBrightness(0);	
+			StartDMA();	
 			
 			CleanFontMap();
-			consoleInitText(0, 7, &font);
+			consoleInitTextMine(0, 7, &font);
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
 			AddTextColor(5, RGB5(31, 0, 0), RGB5(0, 0, 0));
 			
 			size = (&back_tiles_end - &back_tiles);
-			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 			
 			size = (&back_map_end - &back_map);	
-			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -1224,11 +1233,11 @@ void ManualLagTest()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			ClearScreen(1);
 			
-			consoleInitText(0, 7, &font);
+			consoleInitTextMine(0, 7, &font);
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
 			AddTextColor(5, RGB5(31, 0, 0), RGB5(0, 0, 0));
@@ -1239,7 +1248,7 @@ void ManualLagTest()
 			AddTextColor(13, RGB5(31, 0, 0), RGB5(0, 0, 0));
 			AddTextColor(12, RGB5(0, 25, 25), RGB5(0, 0, 0));
 			
-			oamInitGfxSet(&lagspr_tiles, (&lagspr_tiles_end - &lagspr_tiles), &lagspr_pal, 16*2, 7, 0x2000, OBJ_SIZE32);
+			oamInitGfxSetMine(&lagspr_tiles, (&lagspr_tiles_end - &lagspr_tiles), &lagspr_pal, 16*2, 7, 0x2000, OBJ_SIZE32);
 			
 			oamSet(0, x, y, 3, 0, 0, 0, 7); 
 			oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
@@ -1289,7 +1298,7 @@ void ManualLagTest()
 			
 			bgSetScroll(0, 0, -1);
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 			draw = 1;
 		}
@@ -1469,20 +1478,20 @@ void ManualLagTest()
 		end = 0;
 		oamClear(0, 0);
 
-		setBrightness(0);	
+		StartDMA();	
 		
 		setPaletteColor(0x00, RGB5(0, 0, 0));
-		consoleInitText(0, 7, &font);
+		consoleInitTextMine(0, 7, &font);
 		
 		AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 		AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));			
 		AddTextColor(5, RGB5(0, 27, 27), RGB5(0, 0, 0));	
 		
 		size = (&back_tiles_end - &back_tiles);
-		bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+		bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 		
 		size = (&back_map_end - &back_map);	
-		bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
+		bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 
 		for(i = 0; i < pos; i++)
 		{
@@ -1621,9 +1630,9 @@ void Alternate240p480i()
 		{
 			u16 size = 0;
 					
-			setBrightness(0);	
+			StartDMA();	
 			
-			consoleInitText(0, 7, &font);
+			consoleInitTextMine(0, 7, &font);
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
 			AddTextColor(5, RGB5(31, 0, 0), RGB5(0, 0, 0));

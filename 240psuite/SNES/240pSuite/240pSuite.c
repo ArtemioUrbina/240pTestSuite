@@ -54,15 +54,15 @@ int main(void)
 		{
 			u16 size = 0;
 					
-			setBrightness(0);	
+			StartDMA();	
 			
 			setPaletteColor(0x00, RGB5(0, 0, 0));
-			consoleInitText(0, 7, &font);
+			consoleInitTextMine(0, 7, &font);
 			size = (&back_tiles_end - &back_tiles);
-			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 			
 			size = (&back_map_end - &back_map);	
-			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
 			DrawTilesWithSprites(176, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
@@ -104,7 +104,7 @@ int main(void)
 			if(redraw)
 			{
 				redraw = 0;
-				setBrightness(0xF);
+				EndDMA();
 				if(start)
 				{
 					setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
@@ -222,15 +222,15 @@ void TestPatterns(void)
 		{
 			u16 size = 0;
 					
-			setBrightness(0);	
+			StartDMA();	
 			
 			setPaletteColor(0x00, RGB5(0, 0, 0));
-			consoleInitText(0, 7, &font);				
+			consoleInitTextMine(0, 7, &font);				
 			size = (&back_tiles_end - &back_tiles);
-			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 			
 			size = (&back_map_end - &back_map);	
-			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
 			DrawTilesWithSprites(176, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
@@ -273,7 +273,7 @@ void TestPatterns(void)
 			if(redraw)
 			{
 				redraw = 0;
-				setBrightness(0xF);
+				EndDMA();
 			}
 						
 			change = 0;			
@@ -386,19 +386,19 @@ void DrawCat(void)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
-			consoleInitText(1, 4, &font);			
+			consoleInitTextMine(1, 4, &font);			
 			size = (&nishka_tiles_end - &nishka_tiles);
-			bgInitTileSet(0, &nishka_tiles, &nishka_pal, 0, size, 256*2, BG_256COLORS, 0x2000);		
+			bgInitTileSetMine(0, &nishka_tiles, &nishka_pal, 0, size, 256*2, BG_256COLORS, 0x2000);		
 	
-			bgInitMapSet(0, &nishka_map, (&nishka_map_end - &nishka_map), SC_32x32, 0x7000);
+			bgInitMapSetMine(0, &nishka_map, (&nishka_map_end - &nishka_map), SC_32x32, 0x7000);
 						
 			setMode(BG_MODE3,0); 								
 			
 			drawText(5, 25, 4, "The cat was unimpressed");
 						
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 			setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
 		}
@@ -425,9 +425,12 @@ void DrawIntro(void)
 {	
 	u8 i = 0;
 	
-	setBrightness(0);
+	StartDMA();	
+	ClearScreen(0);
+	EndDMA();
 	
-	consoleInitText(0, 7, &font);
+	StartDMA();
+	consoleInitTextMine(0, 7, &font);
 	AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 	
 	drawText(8, 12, 7, "KORDAMP PRESENTS");
@@ -435,7 +438,7 @@ void DrawIntro(void)
 	bgSetDisable(1);
 	bgSetDisable(2);
 	bgSetScroll(1, 0, -1);
-	setBrightness(0xf);
+	EndDMA();
 	
 	while(i++ < 20)
 		WaitForVBlank();
@@ -457,14 +460,14 @@ void DrawCredits(void)
 			u16 size = 0;
 			u16 pos = 8;
 			
-			setBrightness(0);	
+			StartDMA();
 			
-			consoleInitText(0, 7, &font);
+			consoleInitTextMine(0, 7, &font);
 			size = (&back_tiles_end - &back_tiles);
-			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 			
 			size = (&back_map_end - &back_map);	
-			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);						
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);						
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -490,10 +493,10 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(19, 6, 5, "Ver. 1.01");
+			drawText(19, 6, 5, "Ver. 1.02");
 			drawText(19, 7, 7, "20/07/2014");
 			
-			setBrightness(0xF);	
+			EndDMA();	
 			if(redraw)
 				redraw = 0;
 		}

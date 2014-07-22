@@ -54,10 +54,10 @@ void DrawHelp(u16 option)
 		{
 			u16 size = 0;
 						
-			setBrightness(0);	
+			StartDMA();
 			
 			setPaletteColor(0x00, RGB5(0, 0, 0));
-			consoleInitText(0, 7, &font);
+			consoleInitTextMine(0, 7, &font);
 			
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));			
@@ -65,10 +65,10 @@ void DrawHelp(u16 option)
 			AddTextColor(4, RGB5(28, 28, 0), RGB5(0, 0, 0));	
 			
 			size = (&back_tiles_end - &back_tiles);
-			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 			
 			size = (&back_map_end - &back_map);	
-			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -86,7 +86,7 @@ void DrawHelp(u16 option)
 			if(!redraw)
 				CleanFontMap();
 			else
-				setBrightness(0);	
+				StartDMA();
 		
 			switch(option)
 			{
@@ -692,7 +692,7 @@ void DrawHelp(u16 option)
 			
 			if(redraw)	
 			{
-				setBrightness(0xF);
+				EndDMA();
 				redraw = 0;
 			}
 						
