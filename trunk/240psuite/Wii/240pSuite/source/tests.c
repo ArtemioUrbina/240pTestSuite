@@ -1198,7 +1198,7 @@ void SoundTest()
 
 void LEDZoneTest()
 {	
-	int		    done = 0, x = 0, y = 0, selsprite = 1, show = 1;
+	int		    done = 0, x = dW/2, y = dH/2, selsprite = 1, show = 1;
 	u32		    pressed, held;
 	ImagePtr	back, sprite[5];
 	
