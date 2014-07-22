@@ -396,7 +396,7 @@ void DrawCat(void)
 						
 			setMode(BG_MODE3,0); 								
 			
-			drawText(5, 25, 4, "The cat was unimpresed");
+			drawText(5, 25, 4, "The cat was unimpressed");
 						
 			setBrightness(0xF);
 			redraw = 0;
