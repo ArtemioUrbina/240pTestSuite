@@ -36,3 +36,11 @@ void DrawTilesWithSprites(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 ti
 void ClearScreen(u8 layer);
 void ClearScreen256(u8 layer);
 inline void Transition();
+
+void StartDMA();
+void bgInitTileSetMine(u8 bgNumber, u8 *tileSource, u8 *tilePalette, u8 paletteEntry, u16 tileSize, u16 paletteSize, u16 colorMode, u16 address);
+void bgInitMapSetMine(u8 bgNumber, u8 *mapSource, u16 mapSize, u8 sizeMode, u16 address);
+void oamInitGfxSetMine(u8 *tileSource, u16 tileSize, u8 *tilePalette, u16 paletteSize, u8 tilePaletteNumber, u16 address, u8 oamsize);
+void CopyExtraTiles(u8 * source, u16 address, u16 size);
+void consoleInitTextMine(u8 bgNumber,u8 paletteNumber, u8 *gfxText);
+void EndDMA();

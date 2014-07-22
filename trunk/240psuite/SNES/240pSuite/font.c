@@ -21,6 +21,7 @@
  
 #include "font.h"
 #include "res.h"
+#include "video.h"
 
 extern unsigned char pvsneslibfont_map[];
 extern u8 pvsneslibdirty;
@@ -39,7 +40,7 @@ void drawText(u16 x, u16 y, u8 palette, char *fmt, ...)
 
 void InitTextColor(u8 layer, u8 palette, u16 front, u16 back)
 {
-	consoleInitText(layer, palette, &fontback);
+	consoleInitTextMine(layer, palette, &fontback);
 	setPaletteColor(palette * 0x10, RGB5(31, 0, 31));
 	setPaletteColor(palette * 0x10 + 1, front);
 	setPaletteColor(palette * 0x10 + 2, back);

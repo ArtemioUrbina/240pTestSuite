@@ -35,19 +35,19 @@ void DrawGrid(u8 type)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
-			bgInitTileSet(1, &grid_tiles, &grid_pal, 0, (&grid_tiles_end - &grid_tiles), 16*2, BG_16COLORS, 0x4000);	
+			bgInitTileSetMine(1, &grid_tiles, &grid_pal, 0, (&grid_tiles_end - &grid_tiles), 16*2, BG_16COLORS, 0x4000);	
 			
 			if(type)
 			{					
-				bgInitMapSet(1, &grid240_map, (&grid240_map_end - &grid240_map), SC_32x32, 0x1000);
+				bgInitMapSetMine(1, &grid240_map, (&grid240_map_end - &grid240_map), SC_32x32, 0x1000);
 			
 				Set240pMode();
 			}
 			else
 			{				
-				bgInitMapSet(1, &grid_map, (&grid_map_end - &grid_map), SC_32x32, 0x1000);
+				bgInitMapSetMine(1, &grid_map, (&grid_map_end - &grid_map), SC_32x32, 0x1000);
 			
 				Set224pMode();
 			}
@@ -56,7 +56,7 @@ void DrawGrid(u8 type)
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		WaitForVBlank();
@@ -94,27 +94,27 @@ void DrawSMPTE()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
-			consoleInitText(0, 7, &font);				
+			consoleInitTextMine(0, 7, &font);				
 			
 			setPaletteColor(0x71, RGB5(31, 31, 31));
 			if(!snes_50hz)			
 			{
-				bgInitTileSet(1, &SMPTECB75_tiles, &SMPTECB75_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);
-				bgInitMapSet(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x2000);
+				bgInitTileSetMine(1, &SMPTECB75_tiles, &SMPTECB75_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);
+				bgInitMapSetMine(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x2000);
 			}
 			else
 			{
-				bgInitTileSet(1, &EBUCB75_tiles, &EBUCB75_pal, 0, (&EBUCB75_tiles_end - &EBUCB75_tiles), 16*2, BG_16COLORS, 0x4000);
-				bgInitMapSet(1, &EBUCB75_map, (&EBUCB75_map_end - &EBUCB75_map), SC_32x32, 0x2000);
+				bgInitTileSetMine(1, &EBUCB75_tiles, &EBUCB75_pal, 0, (&EBUCB75_tiles_end - &EBUCB75_tiles), 16*2, BG_16COLORS, 0x4000);
+				bgInitMapSetMine(1, &EBUCB75_map, (&EBUCB75_map_end - &EBUCB75_map), SC_32x32, 0x2000);
 			}
 			
 			setMode(BG_MODE1,0); 			
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		WaitForVBlank();
@@ -175,28 +175,28 @@ void DrawColorBars(void)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			if(!type)
 			{
 				size = (&color_tiles_end - &color_tiles);
-				bgInitTileSet(0, &color_tiles, &color_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
+				bgInitTileSetMine(0, &color_tiles, &color_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
 	
-				bgInitMapSet(0, &color_map, (&color_map_end - &color_map), SC_32x32, 0x7000);
+				bgInitMapSetMine(0, &color_map, (&color_map_end - &color_map), SC_32x32, 0x7000);
 			}
 			else
 			{
 				size = (&color_grid_tiles_end - &color_grid_tiles);
-				bgInitTileSet(0, &color_grid_tiles, &color_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
+				bgInitTileSetMine(0, &color_grid_tiles, &color_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
 	
-				bgInitMapSet(0, &color_grid_map, (&color_grid_map_end - &color_grid_map), SC_32x32, 0x7000);
+				bgInitMapSetMine(0, &color_grid_map, (&color_grid_map_end - &color_grid_map), SC_32x32, 0x7000);
 			}
 						
 			setMode(BG_MODE3,0); 					
 			bgSetDisable(1);
 			
 			bgSetScroll(0, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		WaitForVBlank();
@@ -232,23 +232,23 @@ void Drawcircles()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			if(grid)
 			{
-				bgInitTileSet(0, &circlesgrid_tiles, &grid_pal, 0, (&circlesgrid_tiles_end - &circlesgrid_tiles), 16*2, BG_16COLORS, 0x6000);
-				bgInitMapSet(0, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+				bgInitTileSetMine(0, &circlesgrid_tiles, &grid_pal, 0, (&circlesgrid_tiles_end - &circlesgrid_tiles), 16*2, BG_16COLORS, 0x6000);
+				bgInitMapSetMine(0, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 			}
 			
 			if(!snes_50hz)
 			{
-				bgInitTileSet(1, &circles_tiles, &circles_pal, 0, (&circles_tiles_end - &circles_tiles), 16*2, BG_16COLORS, 0x4000);	
-				bgInitMapSet(1, &circles_map, (&circles_map_end - &circles_map), SC_32x32, 0x1000);
+				bgInitTileSetMine(1, &circles_tiles, &circles_pal, 0, (&circles_tiles_end - &circles_tiles), 16*2, BG_16COLORS, 0x4000);	
+				bgInitMapSetMine(1, &circles_map, (&circles_map_end - &circles_map), SC_32x32, 0x1000);
 			}
 			else
 			{
-				bgInitTileSet(1, &circlesPAL_tiles, &circles_pal, 0, (&circlesPAL_tiles_end - &circlesPAL_tiles), 16*2, BG_16COLORS, 0x4000);	
-				bgInitMapSet(1, &circlesPAL_map, (&circlesPAL_map_end - &circlesPAL_map), SC_32x32, 0x1000);
+				bgInitTileSetMine(1, &circlesPAL_tiles, &circles_pal, 0, (&circlesPAL_tiles_end - &circlesPAL_tiles), 16*2, BG_16COLORS, 0x4000);	
+				bgInitMapSetMine(1, &circlesPAL_map, (&circlesPAL_map_end - &circlesPAL_map), SC_32x32, 0x1000);
 			}
 			
 			setMode(BG_MODE1,0); 
@@ -257,7 +257,7 @@ void Drawcircles()
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		WaitForVBlank();
@@ -293,17 +293,17 @@ void DrawPluge()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
-			bgInitTileSet(1, &pluge_tiles, &pluge_pal, 0, (&pluge_tiles_end - &pluge_tiles), 16*2, BG_16COLORS, 0x4000);	
-			bgInitMapSet(1, &pluge_map, (&pluge_map_end - &pluge_map), SC_32x32, 0x1000);
+			bgInitTileSetMine(1, &pluge_tiles, &pluge_pal, 0, (&pluge_tiles_end - &pluge_tiles), 16*2, BG_16COLORS, 0x4000);	
+			bgInitMapSetMine(1, &pluge_map, (&pluge_map_end - &pluge_map), SC_32x32, 0x1000);
 			
 			setMode(BG_MODE1,0); 
 			bgSetDisable(0);		
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		WaitForVBlank();
@@ -333,18 +333,18 @@ void DrawGrayRamp(void)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			size = (&grayramp_tiles_end - &grayramp_tiles);
-			bgInitTileSet(0, &grayramp_tiles, &grayramp_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
+			bgInitTileSetMine(0, &grayramp_tiles, &grayramp_pal, 0, size, 128*2, BG_256COLORS, 0x0000);		
 			
-			bgInitMapSet(0, &grayramp_map, (&grayramp_map_end - &grayramp_map), SC_32x32, 0x7000);
+			bgInitMapSetMine(0, &grayramp_map, (&grayramp_map_end - &grayramp_map), SC_32x32, 0x7000);
 						
 			setMode(BG_MODE3,0); 					
 			bgSetDisable(1);
 			
 			bgSetScroll(0, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		WaitForVBlank();
@@ -374,21 +374,21 @@ void DrawColorBleed()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			if(toggle)
-				bgInitTileSet(1, &colorbleedchk_tiles, &colorbleed_pal, 0, (&colorbleedchk_tiles_end - &colorbleedchk_tiles), 16*2, BG_16COLORS, 0x4000);	
+				bgInitTileSetMine(1, &colorbleedchk_tiles, &colorbleed_pal, 0, (&colorbleedchk_tiles_end - &colorbleedchk_tiles), 16*2, BG_16COLORS, 0x4000);	
 			else
-				bgInitTileSet(1, &colorbleed_tiles, &colorbleed_pal, 0, (&colorbleed_tiles_end - &colorbleed_tiles), 16*2, BG_16COLORS, 0x4000);				
+				bgInitTileSetMine(1, &colorbleed_tiles, &colorbleed_pal, 0, (&colorbleed_tiles_end - &colorbleed_tiles), 16*2, BG_16COLORS, 0x4000);				
 				
-			bgInitMapSet(1, &colorbleed_map, (&colorbleed_map_end - &colorbleed_map), SC_32x32, 0x1000);
+			bgInitMapSetMine(1, &colorbleed_map, (&colorbleed_map_end - &colorbleed_map), SC_32x32, 0x1000);
 			
 			setMode(BG_MODE1,0); 
 			bgSetDisable(0);		
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		WaitForVBlank();
@@ -424,17 +424,17 @@ void Draw601CB()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
-			bgInitTileSet(1, &cb601701_tiles, &cb601701_pal, 0, (&cb601701_tiles_end - &cb601701_tiles), 16*2, BG_16COLORS, 0x4000);	
-			bgInitMapSet(1, &cb601701_map, (&cb601701_map_end - &cb601701_map), SC_32x32, 0x1000);
+			bgInitTileSetMine(1, &cb601701_tiles, &cb601701_pal, 0, (&cb601701_tiles_end - &cb601701_tiles), 16*2, BG_16COLORS, 0x4000);	
+			bgInitMapSetMine(1, &cb601701_map, (&cb601701_map_end - &cb601701_map), SC_32x32, 0x1000);
 			
 			setMode(BG_MODE1,0); 
 			bgSetDisable(0);		
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		WaitForVBlank();
@@ -464,17 +464,17 @@ void DrawSharpness()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
-			bgInitTileSet(1, &sharpness_tiles, &sharpness_pal, 0, (&sharpness_tiles_end - &sharpness_tiles), 16*2, BG_16COLORS, 0x4000);	
-			bgInitMapSet(1, &sharpness_map, (&sharpness_map_end - &sharpness_map), SC_32x32, 0x1000);
+			bgInitTileSetMine(1, &sharpness_tiles, &sharpness_pal, 0, (&sharpness_tiles_end - &sharpness_tiles), 16*2, BG_16COLORS, 0x4000);	
+			bgInitMapSetMine(1, &sharpness_map, (&sharpness_map_end - &sharpness_map), SC_32x32, 0x1000);
 			
 			setMode(BG_MODE1,0); 
 			bgSetDisable(0);		
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		WaitForVBlank();
@@ -507,7 +507,7 @@ void DrawWhite()
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			InitTextColor(1, 7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));
@@ -518,7 +518,7 @@ void DrawWhite()
 			bgSetDisable(2);
 			
 			bgSetScroll(0, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		
@@ -738,11 +738,11 @@ void Draw100IRE()
 	{		
 		if(redraw)
 		{			
-			setBrightness(0);
+			StartDMA();
 				
 			WaitForVBlank();		
-			bgInitTileSet(0, &IRE100_tiles, &grid_pal, 0, (&IRE100_tiles_end - &IRE100_tiles), 16*2, BG_256COLORS, 0x4000);	
-			bgInitMapSet(0, &IRE100_map, (&IRE100_map_end - &IRE100_map), SC_32x32, 0x2000);
+			bgInitTileSetMine(0, &IRE100_tiles, &grid_pal, 0, (&IRE100_tiles_end - &IRE100_tiles), 16*2, BG_256COLORS, 0x4000);	
+			bgInitMapSetMine(0, &IRE100_map, (&IRE100_map_end - &IRE100_map), SC_32x32, 0x2000);
 			
 			setPaletteColor(0x00, RGB8(0, 0, 0));
 			setPaletteColor(0x01, RGB8(0xff, 0xff, 0xff));
@@ -753,7 +753,7 @@ void Draw100IRE()
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
-			setBrightness(0xF);
+			EndDMA();
 			redraw = 0;
 		}
 		
@@ -1020,7 +1020,7 @@ inline void FillTiles(s16 left, s16 right, s16 top, s16 bottom, u8 mode)
 	
 	dmaCopyVram(map_over, 0x2000, 0x800);
 	if(mode) // doesn't end the copy if in 240p mode...
-		setBrightness(0xf);		
+		setBrightness(0xf);
 }
 
 void DrawOverscan(u8 mode)
@@ -1028,6 +1028,8 @@ void DrawOverscan(u8 mode)
 	u16 pressed, end = 0, held = 0, changed = 0;
 	u16 redraw = 1, changedval = 1, i = 0;
 	s16 top, bottom, left, right, sel = 0;	
+	
+	setBrightness(0);
 	
 	tiles_over = (u8*)malloc(sizeof(u8)*0x140);
 	if(!tiles_over)
@@ -1064,7 +1066,7 @@ void DrawOverscan(u8 mode)
 	{		
 		if(redraw)
 		{
-			setBrightness(0);
+			StartDMA();
 			
 			if(mode)
 				Set240pMode();	
@@ -1076,7 +1078,7 @@ void DrawOverscan(u8 mode)
 			bgSetGfxPtr(1, 0x4000);
 			bgSetMapPtr(1, 0x2000, SC_32x32);
 			
-			consoleInitText(0, 7, &font);				
+			consoleInitTextMine(0, 7, &font);				
 			setPaletteColor(0x61, RGB5(0, 12, 27));
 			setPaletteColor(0x51, RGB5(0, 27, 27));
 			
@@ -1114,7 +1116,7 @@ void DrawOverscan(u8 mode)
 				bgSetScroll(0, 0, -1);
 				bgSetScroll(1, 0, -1);
 				bgSetScroll(2, 0, -1);
-				setBrightness(0xF);
+				EndDMA();
 				redraw = 0;
 			}
 		}
