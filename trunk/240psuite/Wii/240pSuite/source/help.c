@@ -50,7 +50,7 @@ char *bleed_txt[] = {
 NULL
 };
 char *check_txt[] = { 
-"                CHECKERBOARD (1/2)\n\nThis pattern shows all the visible pixels in an\nalternating white and black grid array. \n\nYou can toggle the pattern with button $X, or\nturn on auto-toggle each frame with the $A button.\n\nWhen auto-toggle is set, you should see it\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\n                                         #C(cont...)#C\n",
+"                CHECKERBOARD (1/2)\n\nThis pattern shows all the visible pixels in an\nalternating white and black grid array. \n\nYou can toggle the pattern with button $X, or\nturn on auto-toggle each frame with the $A button.\n\nWhen auto-toggle is set, you should see it\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\nis being treated as 480i/576i and odd or even \nframes are being discarded completely.\n\n\n                                         #C(cont...)#C",
 "                CHECKERBOARD (2/2)\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nUnfortunately the Wii cannot resolve this pattern\ncorrectly in full 480p mode as other consoles,\nbut 240p and 480i resolve just fine.\n\nThe GameCube can give a better output, but it is\nnot fully visible under most conditions either.",
 NULL
 };
@@ -74,7 +74,7 @@ NULL
 char *general_txt[] = { 
 "                    HELP (1/3)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\n$S button.\n\n                                         #C(cont...)#C",
 "                    HELP (2/3)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is capable\nof drawing the whole visible signal, 264 and 528\nlines respectively. However, since most screens\nare only 240p tall, the suite centers them \nvertically. Grids and other 264p patterns are \nshown using the full resolution.\n\nPAL and 480p modes must be enabled from the \noptions menu. \n                                         #C(cont...)#C",
-"                    HELP (3/3)\n\nThe 240p suite is also available in other systems,\nincluding: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/\n#YMega CD#Y, #YNintendo GameCube#Y, #YNintendo Wii#Y and\n#YSega Dreamcast#Y.",
+"                    HELP (3/3)\n\nThe 240p suite is also available in other systems,\nincluding: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/\n#YMega CD#Y, #YSuper Nintendo#Y, #YNintendo GameCube#Y, \n#YNintendo Wii#Y and #YSega Dreamcast#Y.",
 NULL
 };
 char *gray_txt[] = { 
@@ -87,6 +87,10 @@ char *grid_txt[] = {
 "                    GRID (3/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. $A button resets it to its position.\n",
 NULL
 };
+char *grid224_txt[] = { 
+"                    GRID 224p\n\nThis grid uses a 320x224 pattern in a 240p signal,\nit is intended to mock-up the typical display area \nfor other consoles, such as the SNES, Sega Genesis \nand Playstation.\n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. Consumer TVs may not show the red squares.\n\nYou can press $A to toggle the starting scanline.\nThe current modes simulate the Genesis and SNES.",
+NULL
+};
 char *gridscroll_txt[] = { 
 "                 GRID SCROLL TEST\n\nA grid is scrolled vertically or horizontally,\nwhich can be used to test linearity of the signal\nand how well the display or video processor copes\nwith scrolling and framerate.\n\nButton $Y can be used to toggle between horizontal\nand vertical, while the d-pad regulates speed. \nButton $A stops the scroll and button $X changes\ndirection. \n",
 NULL
@@ -97,7 +101,11 @@ char *ire100_txt[] = {
 NULL
 };
 char *linearity_txt[] = { 
-"                    LINEARITY\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC and the 59:54 PAL aspect ratios\ndepending on the currently selected resolution.\n\nThe linearity of the display or upscaler can be \nverified by measuring the diameter of the circles.\nOf course the linearity should be kept in all \ndirections.\n\nA grid is also available with the $L and $R \nbuttons.",
+"                    LINEARITY\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC and the 59:54 PAL pixel aspect\nratios depending on the currently selected \nresolution.\n\nThe linearity of the display or upscaler can be \nverified by measuring the diameter of the circles.\nOf course the linearity should be kept in all \ndirections.\n\nA grid is also available with the $L and $R \nbuttons.",
+NULL
+};
+char *linearity224_txt[] = { 
+"                LINEARITY 224p\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC, but limited to a 320x224 area.\nThis is a mock-up of teh area shown in several\nconsoles, such as the SNES, Genesis and\nPlaystation, and also useful in monitors with\nregular overscan.\n\nThe linearity of the display or upscaler can be \nverified by measuring the diameter of the circles.\nOf course the linearity should be kept in all \ndirections.\n\nA grid is also available with the $L and $R \nbuttons.",
 NULL
 };
 char *manuallag_txt[] = { 
@@ -127,7 +135,7 @@ NULL
 };
 char *passivelag_txt[] = { 
 "                  LAG TEST (1/2)\n\nThis test is designed to be used with two displays\nconected at the same time. One being a CRT, or a\ndisplay with a known lag as reference, and the\nother the display to test.\n\nUsing a camera, a picture should be taken of both\nscreens at the same time. The picture will show \nthe frame discrepancy between them. \n\nThe circles in the bottom help determine the frame\neven when the numbers are blurry.\n\nThe #YSega Genesis#Y version of the test can be used\nwith a #YNomad#Y as the reference display.   #C(cont...)#C",
-"                  LAG TEST (2/2)\n\nYou can also chain the output ports of a #YPVM/BVM#Y\nto an upscaler and use the CRT as reference.",
+"                  LAG TEST (2/2)\n\nYou can also chain the output ports of a #YPVM/BVM#Y\nto an upscaler and use the CRT as reference, or\nsplit the video signal.",
 NULL
 };
 char *pluge_txt[] = { 
@@ -137,7 +145,7 @@ char *pluge_txt[] = {
 NULL
 };
 char *scroll_txt[] = { 
-"                    SCROLL TEST\n\nThis test shows a two layer background from #YSonic\nthe Hedgehog#Y. The speed can be varied with the\nd-pad, and change direction with the button $X.\nThe A button stops the scroll. \n\nThis can be used to notice any drops in framerate\nwhen using a video processor.\n\n#YSonic The Hedgehog#Y is a trademark of \n#YSega Enterprises Ltd#Y.",
+"                    SCROLL TEST\n\nThis test shows a two layer background from #YSonic\nthe Hedgehog#Y. The speed can be varied with the\nd-pad, and change direction with the button $X.\nThe $A button stops the scroll. \n\nThis can be used to notice any drops in framerate\nwhen using a video processor.\n\n#YSonic The Hedgehog#Y is a trademark of \n#YSega Enterprises Ltd#Y.",
 NULL
 };
 char *sharpness_txt[] = { 
@@ -149,12 +157,12 @@ char *sound_txt[] = {
 NULL
 };
 char *striped_txt[] = { 
-"               STRIPED SPRITE TEST\n\nThere actually are deinterlacers out there which\ncan display the drop shadows correctly and still\ninterpreted 240p as 480i. With a striped sprite it\nshould be easy to tell if a processor tries to\ndeinterlace (plus interpolate) or not.\n\nYou can change backgrounds with $A.\n",
+"               STRIPED SPRITE TEST\n\nThere actually are deinterlacers out there which\ncan display the drop shadows correctly and still\ninterpret 240p as 480i. With a striped sprite it\nshould be easy to tell if a processor tries to\ndeinterlace (plus interpolate) or not.\n\nYou can change backgrounds with $A.\n",
 NULL
 };
 char *stripes_txt[] = { 
 "             HORIZONTAL STRIPES (1/2)\n\nThis pattern is designed to show if all lines are\nvisible in your setup, and how your video\nprocessor is handling 240p video. \n\nYou should see a pattern of lines, each one pixel\nin height, starting with a white one at the top of\nthe screen. You can toggle the pattern with \nbutton $X, or turn on auto-toggle each frame with\nthe $A button.\n\nWhen auto-toggle is set, you should see the lines\nalternating rapidly. On some setups, the pattern\ndoesn't change at all. This means that the signal\n                                         #C(cont...)#C",
-"             HORIZONTAL STRIPES (2/2)\n\nis being treated as 480i and odd or even frames \nare being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nYou can also display vertical bars by pressing $R,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all lines \nshould be one pixel wide.\n\n#YThis pattern is completely distorted when using\nthe 576i stretched mode.#Y",
+"             HORIZONTAL STRIPES (2/2)\n\nis being treated as 480i/576i and odd or even\nframes are being discarded completely.\n\nA frame counter can be displayed on screen by \npressing button $Y.\n\nYou can also display vertical bars by pressing $R,\nthat pattern will help you evaluate if the signal\nis not distorted horizontaly, since all lines \nshould be one pixel wide.\n\n#YThis pattern is completely distorted when using\nthe 576i stretched mode.#Y",
 NULL
 };
 char *vmode_txt[] = { 
@@ -176,7 +184,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	29
+#define	HELPCOUNT	31
 char **HelpArray[HELPCOUNT] = {
 	SMPTEColor_txt,
 	alt240p_txt,
@@ -190,9 +198,11 @@ char **HelpArray[HELPCOUNT] = {
 	general_txt,
 	gray_txt,
 	grid_txt,
+	grid224_txt,
 	gridscroll_txt,
 	ire100_txt,
 	linearity_txt,
+	linearity224_txt,
 	manuallag_txt,
 	options_txt,
 	optionsgc_txt,

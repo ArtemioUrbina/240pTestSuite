@@ -767,6 +767,101 @@ void DrawGrid()
 	return;
 }
 
+void DrawGrid224()
+{
+	int 		done = 0, oldvmode = vmode, genny = 0, text = 0;
+	u32			pressed;		
+	ImagePtr	back = NULL;
+	char		msg[50];
+	
+	if(oldvmode != VIDEO_240P) 
+	{
+		SetVideoMode(VIDEO_240P);
+		SetupGX();	
+	}
+	
+	ChangeVideoEnabled = 0;
+	
+	while(!done && !EndProgram) 
+	{		
+		if(!back)
+		{
+			/*
+			if(vmode == VIDEO_288P || vmode == VIDEO_576I_A264)
+			{
+				back = LoadImage(GRIDPALIMG, 0);
+				if(!back)
+					return;    				
+			}
+			*/
+			
+			if(!back)
+			{
+				back = LoadImage(GRID224IMG, 0);
+				if(!back)
+					return;	
+				back->y = (240-224)/2; //SNES
+			}
+			
+			IgnoreOffset(back);
+		}
+		
+		StartScene();
+		        
+		DrawImage(back);
+		
+		if(text)
+		{			
+			DrawStringB(260, 20, 0, 0xff, 0, msg);
+			text --;
+		}	
+		
+        EndScene();		
+		
+		ControllerScan();
+		
+		pressed = Controller_ButtonsDown(0);
+		
+		if (pressed & PAD_BUTTON_B)
+			done =	1;								
+	
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;		
+			HelpData = GRID224HELP;
+		}				
+		
+		if ( pressed & PAD_BUTTON_A ) 		
+		{
+			genny = !genny;
+			
+			if(genny)
+			{
+				back->y = (240-224)/2 + 1;
+				sprintf(msg, "Genesis");
+			}
+			else
+			{
+				back->y = (240-224)/2; // SNES
+				sprintf(msg, "SNES");
+			}
+			
+			text = 30;
+		}
+	}
+
+	ChangeVideoEnabled = 1;
+	FreeImage(&back);
+	
+	if(oldvmode != vmode)
+	{
+		SetVideoMode(oldvmode);
+		SetupGX();	
+	}
+	
+	return;
+}
+
 void DrawLinearity()
 {
 	int 		done = 0, oldvmode = vmode, gridmode = 0;
@@ -860,6 +955,129 @@ void DrawLinearity()
 	FreeImage(&gridd);
 	FreeImage(&grid);
 	FreeImage(&circles);
+	return;
+}
+
+void DrawLinearity224()
+{
+	int 		done = 0, oldvmode = vmode, gridmode = 0;
+	u32			pressed;
+	ImagePtr	circles = NULL, grid, gridd;
+	
+
+	grid = LoadImage(CIRCLESGRIDIMG, 0);
+	if(!grid)
+		return;
+	gridd = LoadImage(CIRCLESGRIDDOTIMG, 0);
+	if(!gridd)
+		return;
+		
+	grid->w = 320;
+	grid->h = IsPAL ? 264 : 224;
+	gridd->w = 320;
+	gridd->h = IsPAL ? 264 : 224;
+	
+	grid->y = (240-224)/2; 
+	gridd->y = (240-224)/2; 
+	
+	IgnoreOffset(grid);
+	IgnoreOffset(gridd);
+	
+	CalculateUV(0, 0, 320, 224, grid);
+	CalculateUV(0, 0, 320, 224, gridd);
+	
+	if(oldvmode != VIDEO_240P) 
+	{
+		SetVideoMode(VIDEO_240P);
+		SetupGX();
+	}
+	
+	ChangeVideoEnabled = 0;
+		
+	while(!done && !EndProgram) 
+	{    
+		if(oldvmode != vmode)
+		{
+			FreeImage(&circles);		
+			oldvmode = vmode;
+			
+			grid->w = 320;
+			grid->h = IsPAL ? 264 : 224;
+			gridd->w = 320;
+			gridd->h = IsPAL ? 264 : 224;
+		}    
+		
+		if(!circles)
+		{
+			if(IsPAL)
+			{	
+				circles = LoadImage(CIRCLESPALIMG, 0);
+				if(!circles)
+					return;
+				IgnoreOffset(circles);
+			}
+			else
+			{
+				circles = LoadImage(LINEARITY224IMG, 0);
+				if(!circles)
+					return;
+			}
+			circles->y = (240-224)/2; 
+		}
+		StartScene();		
+		
+		switch(gridmode)
+		{			
+			case 1:
+				DrawImage(grid);
+				break;
+			case 2:
+				DrawImage(gridd);
+				break;
+		}		
+		
+		DrawImage(circles);
+		
+        EndScene();
+		
+		ControllerScan();
+		
+		pressed = Controller_ButtonsDown(0);
+				
+		if (pressed & PAD_BUTTON_B)
+			done =	1;	
+
+		if (pressed & PAD_TRIGGER_R)
+			gridmode ++;
+		
+		if (pressed & PAD_TRIGGER_L)
+			gridmode --;
+			
+		if(gridmode < 0)
+			gridmode = 2;
+			
+		if(gridmode > 2)
+			gridmode = 0;
+			
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = LINEAR224HELP;			
+		}	
+	}
+
+	ChangeVideoEnabled = 0;
+	
+	FreeImage(&gridd);
+	FreeImage(&grid);
+	FreeImage(&circles);
+	
+	if(oldvmode != vmode)
+	{
+		SetVideoMode(oldvmode);
+		SetupGX();	
+	}
+	
 	return;
 }
 

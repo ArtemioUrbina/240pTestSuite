@@ -1628,6 +1628,8 @@ void Alternate240p480i()
 	back->b = 0x00;
 	CalculateUV(0, 0, dW, dH, back);
 
+	ChangeVideoEnabled = 0;
+	
 	while(!done && !EndProgram) 
 	{
 		frames ++;
@@ -1717,9 +1719,9 @@ void Alternate240p480i()
         pressed = Controller_ButtonsDown(0);
 					
 		if ( pressed & PAD_BUTTON_START ) 		
-		{					
+		{			
+			DrawMenu = 1;		
 			HelpData = ALTERNATE;
-			DrawHelpWindow();
 		}													
 
 		if (pressed & PAD_BUTTON_B)
@@ -1758,6 +1760,9 @@ void Alternate240p480i()
 			}
 		}
 	}	
+	
+	ChangeVideoEnabled = 1;
+	
 	SetVideoMode(oldvmode);				
 	SetupGX();
 	FreeImage(&back);
