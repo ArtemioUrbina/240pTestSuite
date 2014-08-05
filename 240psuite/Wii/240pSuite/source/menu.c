@@ -38,6 +38,7 @@ char wiiregion[100];
 u8 DrawMenu = 0;
 char **HelpData = GENERALHELP;
 u8 EndProgram = 0;
+u8 ChangeVideoEnabled = 1;
 
 void ShowMenu()
 {
@@ -80,8 +81,16 @@ void ShowMenu()
 		
 		GetVideoModeStr(videomode, 1);
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;				
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video");
-		DrawStringS(x+6*fw, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, videomode); y += fh; c++;		
+		if(ChangeVideoEnabled)
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video");
+			DrawStringS(x+6*fw, y, r, sel == c ? 0 : g, sel == c ? 0 : b, videomode); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA,	sel == c ? 0x77 : 0xAA, "Video");
+			DrawStringS(x+6*fw, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, videomode); y += fh; c++;		
+		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;		
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Credits"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu"); y += 2* fh; c++;			
@@ -129,10 +138,13 @@ void ShowMenu()
 					case 1:			
 						HelpWindow(cFB);
 						break;					
-					case 2:		
-						SelectVideoMode(cFB);
-						Back->x = (dW - Back->w) / 2;
-						Back->y = (dH - Back->h) / 2;
+					case 2:	
+						if(ChangeVideoEnabled)
+						{
+							SelectVideoMode(cFB);
+							Back->x = (dW - Back->w) / 2;
+							Back->y = (dH - Back->h) / 2;
+						}
 						break;
 					case 3:		
 						ChangeOptions(cFB);						

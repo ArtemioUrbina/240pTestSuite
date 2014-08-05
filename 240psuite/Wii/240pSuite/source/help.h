@@ -30,6 +30,7 @@
 #define GENERALHELP		general_txt
 #define GRAYHELP		gray_txt
 #define GRIDHELP    	grid_txt
+#define GRID224HELP    	grid224_txt
 #define PLUGEHELP		pluge_txt
 #define STRIPESHELP		stripes_txt
 #define BACKLITHELP		backlit_txt
@@ -46,6 +47,7 @@
 #define COLOR601HELP	color601_txt
 #define SMPTECOLOR 		SMPTEColor_txt
 #define LINEARITYHELP	linearity_txt
+#define LINEAR224HELP	linearity224_txt
 #define CHECK480PWII	check480pWii_txt
 #define SHARPNESSHELP	sharpness_txt
 #define OVERSCANHELP	overscan_txt
@@ -65,9 +67,11 @@ extern char *dshadow_txt[];
 extern char *general_txt[];
 extern char *gray_txt[];
 extern char *grid_txt[];
+extern char *grid224_txt[];
 extern char *gridscroll_txt[];
 extern char *ire100_txt[];
 extern char *linearity_txt[];
+extern char *linearity224_txt[];
 extern char *manuallag_txt[];
 extern char *options_txt[];
 extern char *optionsgc_txt[];

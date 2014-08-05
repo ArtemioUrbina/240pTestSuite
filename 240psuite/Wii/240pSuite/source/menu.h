@@ -30,6 +30,7 @@
 extern u8 DrawMenu;
 extern char **HelpData;
 extern u8 EndProgram;
+extern u8 ChangeVideoEnabled;
 
 void ShowMenu();
 void SelectVideoMode(ImagePtr title);
