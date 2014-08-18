@@ -170,6 +170,15 @@ void InitVideo()
 	InitFrameBuffers();	
 	
 	SetVideoMode(VIDEO_240P);
+	
+	if(Options.Force480p)
+	{
+		if(VIDEO_HaveComponentCable())
+			SetVideoMode(VIDEO_480P_SL);
+		else
+			Options.Force480p = 0;
+	}
+		
 	VIDEO_SetBlack(FALSE);
 }
 

@@ -54,16 +54,19 @@ int main(int argc, char **argv)
 {
 	int 		close = 0;	
 	ImagePtr 	Back = NULL, sd = NULL;
-	u8   		sel = 1;				
+	u8   		sel = 1;
 
 #ifdef WII_VERSION
 	SYS_SetResetCallback(WiiResetPressed);
 	SYS_SetPowerCallback(WiiPowerPressed);
 	WPAD_SetPowerButtonCallback(WiimotePowerPressed);
 #endif
-	InitVideo();	
-		
+
 	ControllerInit();
+
+	LoadOptions();
+	
+	InitVideo();	
 
 	if(!InitGX())
 		return 0;
@@ -73,7 +76,6 @@ int main(int argc, char **argv)
     LoadFont();
 	LoadScanlines();
 	
-	LoadOptions();
 	DrawIntro();
 	
 	Back = LoadImage(BACKIMG, 0);

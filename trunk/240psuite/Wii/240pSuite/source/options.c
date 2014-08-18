@@ -161,6 +161,13 @@ u8 LoadOptions()
 		Set576iLine23Option(Options.PALline23);
 	}	
 	
+	node = mxmlFindElement(xml, xml, "Force480p", NULL, NULL, MXML_DESCEND);
+	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "Force480p"))
+	{
+		if(node->child)       
+            Options.Force480p = node->child->value.integer;		    		    
+	}	
+	
 	// Removing this option from the save file, since it looks terrible
 	/*
 	node = mxmlFindElement(xml, xml, "PALScale576", NULL, NULL, MXML_DESCEND);
@@ -237,7 +244,9 @@ u8 SaveOptions()
 	node = mxmlNewElement(options240p, "PalBackB");
 	mxmlNewInteger(node, Options.PalBackB);	
 	node = mxmlNewElement(options240p, "PALline23");
-	mxmlNewInteger(node, Options.PALline23);			
+	mxmlNewInteger(node, Options.PALline23);	
+	node = mxmlNewElement(options240p, "Force480p");
+	mxmlNewInteger(node, Options.Force480p);	
 	
 	// Removing this option from the save file, since it looks terrible
 	//node = mxmlNewElement(options240p, "PALScale576");
