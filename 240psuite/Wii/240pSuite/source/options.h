@@ -37,6 +37,7 @@ struct options_st {
 	int TrapFilter;
 	int FlickerFilter;
 	int BilinearFiler;
+	int Force480p;
 };
 
 extern struct options_st Options;

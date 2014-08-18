@@ -1671,11 +1671,6 @@ void Alternate240p480i()
 		DrawImage(back);
 		DrawString(32, 8, 0, 0xff, 0, "Current Resolution:");
 		DrawString(140, 8, 0, 0xff, 0, res == 0 ? (IsPAL ? "288p" : "240p") : (IsPAL ? "576i" : "480i"));
-#ifdef WII_VERSION
-		DrawString(180, 8, 0xff, 0xff, 0xff, "Press HOME button for help");
-#else
-		DrawString(180, 8, 0xff, 0xff, 0xff, "Press Start button for help");
-#endif
 
 		sprintf(buffer, "%02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
 		DrawString(32, 32, 0xff, 0xff, 0xff, "Elapsed Timer:");
