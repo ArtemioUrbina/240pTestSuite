@@ -32,5 +32,6 @@ void VScrollTest();
 void LEDZoneTest();
 void StripedSpriteTest();
 void SoundTest();
+void ControllerTest();
 void ManualLagTest();
 void Alternate240p480i();

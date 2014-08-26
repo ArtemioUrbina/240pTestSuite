@@ -478,7 +478,7 @@ void DrawCredits(void)
 			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
 			AddTextColor(5, RGB5(0, 25, 25), RGB5(0, 0, 0));	
 			
-			drawText(3, pos, 6, "Code and Patterns:"); pos ++;
+			drawText(3, pos, 6, "Code, patterns & contact:"); pos ++;
 			pos++;
 			drawText(3, pos, 6, "Menu Pixel Art:"); pos ++;
 			drawText(4, pos, 7, "Asher"); pos ++;
@@ -494,7 +494,7 @@ void DrawCredits(void)
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
 			drawText(19, 6, 5, "Ver. 1.02");
-			drawText(19, 7, 7, "20/07/2014");
+			drawText(19, 7, 7, "01/08/2014");
 			
 			EndDMA();	
 			if(redraw)

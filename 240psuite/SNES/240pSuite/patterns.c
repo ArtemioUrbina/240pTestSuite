@@ -286,8 +286,8 @@ void Drawcircles()
 
 void DrawPluge() 
 {	
-	u16 pressed, end = 0;
-	u16 redraw = 1;
+	u16 pressed, end = 0, text = 0;
+	u16 redraw = 1, fullrange = 0;
 		
 	while(!end) 
 	{		
@@ -295,11 +295,14 @@ void DrawPluge()
 		{
 			StartDMA();
 			
+			consoleInitTextMine(0, 7, &font);	
+						
 			bgInitTileSetMine(1, &pluge_tiles, &pluge_pal, 0, (&pluge_tiles_end - &pluge_tiles), 16*2, BG_16COLORS, 0x4000);	
-			bgInitMapSetMine(1, &pluge_map, (&pluge_map_end - &pluge_map), SC_32x32, 0x1000);
+			bgInitMapSetMine(1, &pluge_map, (&pluge_map_end - &pluge_map), SC_32x32, 0x2000);
+			
+			InitTextColor(0, 7, RGB5(31, 0, 0), RGB5(0, 0, 0));
 			
 			setMode(BG_MODE1,0); 
-			bgSetDisable(0);		
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);
@@ -316,8 +319,32 @@ void DrawPluge()
 			redraw = 1;
 		}
 		
+		if(pressed == KEY_A)
+		{
+			fullrange = !fullrange;
+			if(fullrange)
+				drawText(16, 1, 7, "RGB FULL RANGE");
+			else
+				drawText(16, 1, 7, "NTSC 7.5 IRE  ");
+				
+			text = 30;
+			
+			WaitForVBlank();			
+			if(fullrange)
+				dmaCopyCGram(&plugePAL_pal, 0, 16*2);
+			else
+				dmaCopyCGram(&pluge_pal, 0, 16*2);
+		}
+		
 		if(pressed == KEY_B)
 			end = 1;
+			
+		if(text)
+		{
+			text --;
+			if(!text)
+				CleanFontMap();
+		}
 	}	
 	Transition();
 	
