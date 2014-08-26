@@ -149,19 +149,25 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "to help adjust the black");
 							drawText(3, y++, 7, "level to a correct value.");
 							y++;
+							drawText(3, y++, 7, "You can toggle between");
+							drawText(3, y++, 7, "7.5 IRE NTSC bars and full");
+							drawText(3, y++, 7, "range RGB bars with A.");
+							y++;
 							drawText(3, y++, 7, "The inner bars on the"); 
-							drawText(3, y++, 7, "sides are black @ 3.5 IRE,");
-							drawText(3, y++, 7, "the middle ones @ 7.5 IRE,");
-							drawText(3, y++, 7, "and the outer @ 11.5 IRE.");
+							drawText(3, y++, 7, "sides are black at 3.5,");
+							drawText(3, y++, 7, "7.5, and 11.5 IRE when in");
+							drawText(3, y++, 7, "NTSC; and 1, 2 and 3 IRE.");
+							drawText(3, y++, 7, "when using full range RGB.");
 							y++;
 							drawText(3, y++, 7, "If these bars are not"); 
-							drawText(3, y++, 7, "visible, adjust the");
-							drawText(3, y++, 7, "\"brightness\" control until");
-							drawText(3, y++, 7, "they are.");							
 							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
 							drawText(3, 4  , 6, "        PLUGE (2/2)"); 
+							drawText(3, y++, 7, "visible, adjust the");
+							drawText(3, y++, 7, "\"brightness\" control until");
+							drawText(3, y++, 7, "they are.");					
+							y++;					
 							drawText(3, y++, 7, "You should lower it until"); 
 							drawText(3, y++, 7, "they are not visible, and");
 							drawText(3, y++, 7, "raise it until they show.");
@@ -169,10 +175,10 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "NTSC levels require black"); 
 							drawText(3, y++, 7, "@ 7.5 IRE for video.");							
 							y++;
-							drawText(3, y++, 7, "In PAL - and console"); 
-							drawText(3, y++, 7, "gaming in general - it is");
-							drawText(3, y++, 7, "adviced to use the 3.5");
-							drawText(3, y++, 7, "IRE value as black."		);														
+							drawText(3, y++, 7, "In PAL - and console games"); 
+							drawText(3, y++, 7, "in general - it is adviced");
+							drawText(3, y++, 7, "to use the full range");
+							drawText(3, y++, 7, "1 IRE value as black.");														
 							break;
 					}
 					break;

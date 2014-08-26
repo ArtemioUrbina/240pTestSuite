@@ -1799,3 +1799,66 @@ void Alternate240p480i()
 
 	return;
 }
+
+void ControllerTest()
+{
+	u16 redraw = 1, change = 0, end = 0;
+	u16 pressed;	
+
+	while(!end) 
+	{
+		if(redraw)
+		{
+			u16 size = 0;
+					
+			StartDMA();	
+			
+			CleanFontMap();
+			consoleInitTextMine(1, 7, &font);
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
+			AddTextColor(5, RGB5(31, 0, 0), RGB5(0, 0, 0));
+			
+			size = (&controller_tiles_end - &controller_tiles);
+			bgInitTileSetMine(0, &controller_tiles, &controller_pal, 2, size, 16*2, BG_16COLORS, 0x4000);
+			
+			size = (&controller_map_end - &controller_map);	
+			bgInitMapSetMine(0, &controller_map, size, SC_32x32, 0x6800);
+		
+			setMode(BG_MODE1,0); 
+			bgSetDisable(2);	
+			
+			bgSetScroll(0, -24, -70);
+			bgSetScroll(1, 0, -1);
+			
+			redraw = 0;
+			change = 1;
+		}			
+		
+		if(change)
+		{
+			u16 y = 7;						
+			
+			drawText(8, 2, 6, "Controller Test");			
+			change = 0;
+		}	
+
+		spcProcess();	
+		WaitForVBlank();	
+		
+		pressed = PadPressed(0);
+		
+		if(pressed == KEY_START)
+		{
+			//DrawHelp(HELP_SOUND);
+			redraw = 1;
+		}
+	
+		if(pressed == KEY_B)
+			end = 1;	
+		
+	}
+
+	Transition();
+	return;
+}

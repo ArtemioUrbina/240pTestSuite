@@ -136,24 +136,34 @@ void ChangeVideo()
 		{
 			u16 size = 0;
 					
-			setBrightness(0);	
+			StartDMA();
 			
 			CleanFontMap();
-			consoleInitText(0, 7, &font);
+			consoleInitTextMine(1, 7, &font);
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
 			AddTextColor(5, RGB5(0, 27, 27), RGB5(0, 0, 0));	
 			
-			size = (&back_tiles_end - &back_tiles);
-			bgInitTileSet(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			size = (&grid512_tiles_end - &grid512_tiles);
+			bgInitTileSetMine(0, &grid512_tiles, &grid512_pal, 0, size, 16*2, BG_16COLORS, 0x6000);			
 			
-			size = (&back_map_end - &back_map);	
-			bgInitMapSet(1, &back_map, size, SC_32x32, 0x2000);
-						
-			setMode(BG_MODE1,0); 	
-			bgSetDisable(2);
+			size = (&grid512_map_end - &grid512_map);	
+			bgInitMapSetMine(0, &grid512_map, size, SC_64x32, 0x2000);
+				
+			if(!pseudo512)
+			{
+				setMode(BG_MODE1, 0); 	
+				bgSetDisable(2);
+			}
+			else
+			{
+				setMode(BG_MODE5, 0); 	//BG1_TSIZE16x16
+				REG_TM = BG1_ENABLE | BG2_ENABLE | OBJ_ENABLE;
+				REG_TS = BG1_ENABLE | BG2_ENABLE | OBJ_ENABLE;
+			}
 			
-			bgSetScroll(1, 0, -1);					
+			bgSetScroll(1, 0, -1);	
+			EndDMA();				
 			
 			redraw = 0;
 			change = 1;
@@ -165,14 +175,13 @@ void ChangeVideo()
 			
 			CleanFontMap();
 			drawText(5, y++, sel == 0 ? 6 : 7, "%s interlaced mode", interlaced ? "Disable" : "Enable");
-			//drawText(5, y++, sel == 1 ? 6 : 7, "%s pseudo 512 mode", pseudo512 ? "Disable" : "Enable");
+			drawText(5, y++, sel == 1 ? 6 : 7, "%s pseudo 512 mode", pseudo512 ? "Disable" : "Enable");
 			y+=4;
-			drawText(5, y, sel == 1 ? 6 : 5, "Back to main menu");
+			drawText(5, y, sel == 2 ? 6 : 5, "Back to main menu");
 			
 			change = 0;
 		}	
-
-		spcProcess();	
+		
 		WaitForVBlank();	
 		
 		pressed = PadPressed(0);
@@ -194,14 +203,16 @@ void ChangeVideo()
 						SetInterlaced();
 					break;
 				case 1:
-				/*
+					/*
 					if(pseudo512)
 						ClearH512Mode();
 					else
 						SetH512Mode();
+					*/
+					pseudo512 = !pseudo512;
+					redraw = 1;
 					break;
 				case 2:
-				*/
 					end = 1;
 					break;
 			}
@@ -224,8 +235,8 @@ void ChangeVideo()
 		}
 
 		if(sel < 0)
-			sel = 1;
-		if(sel > 1)
+			sel = 2;
+		if(sel > 2)
 			sel = 0;		
 		
 	}
