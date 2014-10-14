@@ -23,11 +23,13 @@
  
  */
  
-#include "huc.h"
+#include <huc.h>
 #include "res.h"
+#include "font.h"
 
-void setupFont();
 void TestPatterns();
+
+#define HPOS 5
 
 void main()
 {
@@ -35,49 +37,67 @@ void main()
     int controller;   
     int read; 
     int redraw = 1;
+	int refresh = 1;
     int sel = 0;
 
-    /* 0428 to HDR */
-    //vreg(11, 0x0428);
+    //vreg(0xB, 0x0428);	
+	//vreg(0xD, 0x00EF);
+	//vreg(0xE, 0x0003);
+	set_xres(320);
 
     while(1)
     {   
+		vsync();
+		
         if(redraw)
         {
-            int row = 7;
-
 			init_satb();
 			satb_update();
-
-			load_background(MB_bg, MB_pal, MB_bat, 32, 28);    
+			
 			setupFont();
-            
-            set_font_pal(sel == 0 ? 15 : 14);
-            put_string("Test Patterns", 3, row++);
-            set_font_pal(sel == 1 ? 15 : 14);
-            put_string("Drop Shadow Test", 3, row++);
-            set_font_pal(sel == 2 ? 15 : 14);
-            put_string("Striped Sprite Test", 3, row++);
-            set_font_pal(sel == 3 ? 15 : 14);
-            put_string("Lag Test", 3, row++);
-            set_font_pal(sel == 4 ? 15 : 14);
-            put_string("Manual Lag Test", 3, row++);
-            set_font_pal(sel == 5 ? 15 : 14);
-            put_string("Scroll Test", 3, row++);
-            set_font_pal(sel == 6 ? 15 : 14);
-            put_string("Grid Scroll Test", 3, row++);
-            set_font_pal(sel == 7 ? 15 : 14);
-            put_string("Horizontal Stripes", 3, row++);
-            set_font_pal(sel == 8 ? 15 : 14);
-            put_string("Checkerboard", 3, row++);
-            set_font_pal(sel == 9 ? 15 : 14);
-            put_string("Backlit Zone Test", 3, row++);
-            set_font_pal(sel == 10 ? 15 : 14);
-            put_string("Sound Test", 3, row++);
-            set_font_pal(sel == 11 ? 15 : 14);
-            put_string("Help", 3, ++row);
 
+			set_map_data(MB_map, 40, 30);
+			set_tile_data(MB_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0,MB_pal,1);  
+           
             redraw = 0;
+			refresh = 1;
+        }
+		
+		if(refresh)
+        {
+            int row = 8;
+
+            set_font_pal(sel == 0 ? 15 : 14);
+            put_string("Test Patterns", HPOS, row++);
+            set_font_pal(sel == 1 ? 15 : 14);
+            put_string("Drop Shadow Test", HPOS, row++);
+            set_font_pal(sel == 2 ? 15 : 14);
+            put_string("Striped Sprite Test", HPOS, row++);
+            set_font_pal(sel == 3 ? 15 : 14);
+            put_string("Lag Test", HPOS, row++);
+            set_font_pal(sel == 4 ? 15 : 14);
+            put_string("Manual Lag Test", HPOS, row++);
+            set_font_pal(sel == 5 ? 15 : 14);
+            put_string("Scroll Test", HPOS, row++);
+            set_font_pal(sel == 6 ? 15 : 14);
+            put_string("Grid Scroll Test", HPOS, row++);
+            set_font_pal(sel == 7 ? 15 : 14);
+            put_string("Horizontal Stripes", HPOS, row++);
+            set_font_pal(sel == 8 ? 15 : 14);
+            put_string("Checkerboard", HPOS, row++);
+            set_font_pal(sel == 9 ? 15 : 14);
+            put_string("Backlit Zone Test", HPOS, row++);
+            set_font_pal(sel == 10 ? 15 : 14);
+            put_string("Sound Test", HPOS, row++);
+            set_font_pal(sel == 11 ? 15 : 14);
+            put_string("Help", HPOS, ++row);
+			set_font_pal(sel == 12 ? 15 : 14);
+            put_string("Credits", HPOS, ++row);
+
+            refresh = 0;
         }
 
         read = joy(0);
@@ -87,17 +107,17 @@ void main()
         if (controller & JOY_DOWN) 
         {
             sel++;
-            if(sel > 11)
+            if(sel > 12)
                 sel = 0;
-            redraw = 1;
+            refresh = 1;
         }
 
         if (controller & JOY_UP) 
         {
             sel--;
             if(sel < 0)
-                sel = 11;
-            redraw = 1;
+                sel = 12;
+            refresh = 1;
         }
 		
 		if (controller & JOY_I)
@@ -110,26 +130,7 @@ void main()
 			}
 			redraw = 1;
 		}
-
-        vsync();
     }
-}
-
-/*
- *
- *		Helper Functions
- *
- *
- */
-
-void setupFont()
-{	
-    load_font(my_font, 96);
-    set_font_pal(14);        
-    set_color_rgb(225, 255, 255, 255);
-    set_color_rgb(226, 0, 0, 0);
-    set_color_rgb(241, 255, 0, 0);
-    set_color_rgb(242, 0, 0, 0);
 }
 
 /*
@@ -145,49 +146,63 @@ void TestPatterns()
     int controller;   
     int read; 
     int redraw = 1;
+	int refresh = 1;
     int sel = 0;
 	int end = 0;
 
     while(!end)
     {   
+		vsync();
+		
         if(redraw)
         {
-            int row = 7;
-
 			init_satb();
 			satb_update();
-
-			load_background(MB_bg, MB_pal, MB_bat, 32, 28);    
+			
 			setupFont();
+			
+			set_map_data(MB_map, 40, 30);
+			set_tile_data(MB_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0,MB_pal,1);  
+         
+			refresh = 1;
+            redraw = 0;
+        }
+		
+		if(refresh)
+        {
+            int row = 8;
             
             set_font_pal(sel == 0 ? 15 : 14);
-            put_string("Pluge", 3, row++);
+            put_string("Pluge", HPOS, row++);
             set_font_pal(sel == 1 ? 15 : 14);
-            put_string("Color Bars", 3, row++);
+            put_string("Color Bars", HPOS, row++);
             set_font_pal(sel == 2 ? 15 : 14);
-            put_string("SMPTE Color Bars", 3, row++);
+            put_string("SMPTE Color Bars", HPOS, row++);
             set_font_pal(sel == 3 ? 15 : 14);
-            put_string("Color Bars w/ Gray Ref", 3, row++);
+            put_string("Color Bars w/ Gray Ref", HPOS, row++);
             set_font_pal(sel == 4 ? 15 : 14);
-            put_string("Color Bleed Check", 3, row++);
+            put_string("Color Bleed Check", HPOS, row++);
             set_font_pal(sel == 5 ? 15 : 14);
-            put_string("Grid 256x224", 3, row++);
+            put_string("Grid 256x224", HPOS, row++);
             set_font_pal(sel == 6 ? 15 : 14);
-            put_string("Linearity", 3, row++);
+            put_string("Linearity", HPOS, row++);
             set_font_pal(sel == 7 ? 15 : 14);
-            put_string("Gray Ramp", 3, row++);
+            put_string("Gray Ramp", HPOS, row++);
             set_font_pal(sel == 8 ? 15 : 14);
-            put_string("White & RGB Screen", 3, row++);
+            put_string("White & RGB Screen", HPOS, row++);
             set_font_pal(sel == 9 ? 15 : 14);
-            put_string("100 IRE", 3, row++);
+            put_string("100 IRE", HPOS, row++);
             set_font_pal(sel == 10 ? 15 : 14);
-            put_string("Sharpness", 3, row++);
+            put_string("Sharpness", HPOS, row++);
             set_font_pal(sel == 11 ? 15 : 14);
-            put_string("Overscan", 3, row++);
+            put_string("Overscan", HPOS, row++);
 			set_font_pal(sel == 12 ? 15 : 14);
-            put_string("Back to Main Menu", 3, ++row);
+            put_string("Back to Main Menu", HPOS, ++row);
 
-            redraw = 0;
+            refresh = 0;
         }
 
         read = joy(0);
@@ -199,7 +214,7 @@ void TestPatterns()
             sel++;
             if(sel > 12)
                 sel = 0;
-            redraw = 1;
+            refresh = 1;
         }
 
         if (controller & JOY_UP) 
@@ -207,7 +222,7 @@ void TestPatterns()
             sel--;
             if(sel < 0)
                 sel = 12;
-            redraw = 1;
+            refresh = 1;
         }
 		
 		if (controller & JOY_I)
@@ -218,11 +233,10 @@ void TestPatterns()
 					end = 1;
 					break;
 			}
+			redraw = 1;
 		}
 		
 		if (controller & JOY_II)
 			end = 1;
-
-        vsync();
     }
 }

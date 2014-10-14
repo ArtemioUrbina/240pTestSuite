@@ -17,19 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ 
+ 
+ This version of the suite is compiled with HuC from https://github.com/uli/huc
+ 
  */
  
-/*
-            DEFINES
-*/
+#include "huc.h"
 
-#define MAIN_BACKGROUND "graphics/mainbg.pcx"
-#define MAIN_BACKMAP "graphics/mainbg.fmp"
+#define FONT            "graphics/font.pcx"
 
-/*
-            GRAPHICS
-*/
+#incchr(my_font, FONT, 32, 3);
 
-#incbin(MB_map, MAIN_BACKMAP);
-#incchr_ex(MB_bg, MAIN_BACKGROUND, 0, 0, 20, 7, 0);
-#incpal(MB_pal, MAIN_BACKGROUND, 0, 1);
+void setupFont()
+{	
+    load_font(my_font, 96);
+    set_font_pal(14);        
+    set_color_rgb(225, 255, 255, 255);
+    set_color_rgb(226, 0, 0, 0);
+    set_color_rgb(241, 255, 0, 0);
+    set_color_rgb(242, 0, 0, 0);
+}
