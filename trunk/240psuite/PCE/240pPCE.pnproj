@@ -1,1 +1,1 @@
-<Project name="240pPCE"><File path="240pSuite.c"></File><File path="res.h"></File></Project>
+<Project name="240pPCE"><File path="240pSuite.c"></File><File path="res.h"></File><File path="font.c"></File><File path="font.h"></File></Project>
