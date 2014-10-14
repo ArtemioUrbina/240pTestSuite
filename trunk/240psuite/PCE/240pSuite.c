@@ -28,6 +28,7 @@
 #include "font.h"
 
 void TestPatterns();
+void DrawCheck();
 
 #define HPOS 5
 
@@ -40,10 +41,9 @@ void main()
 	int refresh = 1;
     int sel = 0;
 
-    //vreg(0xB, 0x0428);	
+	set_xres(320);
 	//vreg(0xD, 0x00EF);
 	//vreg(0xE, 0x0003);
-	set_xres(320);
 
     while(1)
     {   
@@ -60,7 +60,7 @@ void main()
 			set_tile_data(MB_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0,MB_pal,1);  
+			load_palette(0, MB_pal, 1);  
            
             redraw = 0;
 			refresh = 1;
@@ -127,6 +127,9 @@ void main()
 				case 0:
 					TestPatterns();
 					break;
+				case 8:
+					DrawCheck();
+					break;
 			}
 			redraw = 1;
 		}
@@ -165,7 +168,7 @@ void TestPatterns()
 			set_tile_data(MB_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0,MB_pal,1);  
+			load_palette(0, MB_pal, 1);  
          
 			refresh = 1;
             redraw = 0;
@@ -236,6 +239,38 @@ void TestPatterns()
 			redraw = 1;
 		}
 		
+		if (controller & JOY_II)
+			end = 1;
+    }
+}
+
+void DrawCheck()
+{
+	int OldButtonsInternal = 0;
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(fs_map, 40, 30);
+			set_tile_data(check_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, check_pal, 1);  
+         
+            redraw = 0;
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
 		if (controller & JOY_II)
 			end = 1;
     }

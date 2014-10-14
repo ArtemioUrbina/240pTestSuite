@@ -24,7 +24,10 @@
 */
 
 #define MAIN_BACKGROUND "graphics/mainbg.pcx"
-#define MAIN_BACKMAP "graphics/mainbg.fmp"
+#define MAIN_BACKMAP 	"graphics/mainbg.fmp"
+
+#define FS_MAP 			"graphics/fullscreen.fmp"
+#define CHECK_TILES 	"graphics/check.pcx"
 
 /*
             GRAPHICS
@@ -33,3 +36,12 @@
 #incbin(MB_map, MAIN_BACKMAP);
 #incchr_ex(MB_bg, MAIN_BACKGROUND, 0, 0, 20, 7, 0);
 #incpal(MB_pal, MAIN_BACKGROUND, 0, 1);
+
+/*
+			TEST PATTERNS
+*/
+
+#incbin(fs_map, FS_MAP);
+#incchr_ex(check_bg, CHECK_TILES, 0, 0, 1, 1, 0);
+#incpal(check_pal, CHECK_TILES);
+
