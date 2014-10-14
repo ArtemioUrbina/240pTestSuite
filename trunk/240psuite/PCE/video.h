@@ -17,41 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ 
+ 
+ This version of the suite is compiled with HuC from https://github.com/uli/huc
+ 
  */
  
-/*
-            DEFINES
-*/
-
-#define MAIN_BACKGROUND "graphics/mainbg.pcx"
-#define MAIN_BACKMAP 	"graphics/mainbg.fmp"
-
-#define FS_MAP 			"graphics/fullscreen.fmp"
-#define CHECK_TILES 	"graphics/check.pcx"
-
-#define GRID_MAP 		"graphics/grid.fmp"
-#define GRID_TILES 	"graphics/grid.pcx"
-
-/*
-            GRAPHICS
-*/
-
-#incbin(MB_map, MAIN_BACKMAP);
-#incchr_ex(MB_bg, MAIN_BACKGROUND, 0, 0, 20, 7, 0);
-#incpal(MB_pal, MAIN_BACKGROUND, 0, 1);
-
-/*
-			TEST 
-*/
-
-#incbin(fs_map, FS_MAP);
-#incchr_ex(check_bg, CHECK_TILES, 0, 0, 1, 1, 0);
-#incpal(check_pal, CHECK_TILES, 0, 1);
-
-/*
-			PATTERNS
-*/
-
-#incbin(grid_map, GRID_MAP);
-#incchr_ex(grid_bg, GRID_TILES, 0, 0, 2, 4, 0);
-#incpal(grid_pal, GRID_TILES, 0, 1);
+void Set224p();
+void Set240p();

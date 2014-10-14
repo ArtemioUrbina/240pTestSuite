@@ -26,9 +26,17 @@
 #include <huc.h>
 #include "res.h"
 #include "font.h"
+#include "video.h"
 
 void TestPatterns();
+
 void DrawCheck();
+
+void DrawGrid256();
+void DrawGrid320();
+void DrawGrid512();
+
+int Enabled240p = 0;
 
 #define HPOS 5
 
@@ -40,10 +48,8 @@ void main()
     int redraw = 1;
 	int refresh = 1;
     int sel = 0;
-
-	set_xres(320);
-	//vreg(0xD, 0x00EF);
-	//vreg(0xE, 0x0003);
+	
+	set_xres(320, XRES_SHARP);
 
     while(1)
     {   
@@ -92,9 +98,16 @@ void main()
             put_string("Backlit Zone Test", HPOS, row++);
             set_font_pal(sel == 10 ? 15 : 14);
             put_string("Sound Test", HPOS, row++);
+			
             set_font_pal(sel == 11 ? 15 : 14);
-            put_string("Help", HPOS, ++row);
+			if(Enabled240p)
+				put_string("VDC 320x240", HPOS, row++);			
+			else
+				put_string("VDC 320x224", HPOS, row++);			
+			
 			set_font_pal(sel == 12 ? 15 : 14);
+            put_string("Help", HPOS, ++row);
+			set_font_pal(sel == 13 ? 15 : 14);
             put_string("Credits", HPOS, ++row);
 
             refresh = 0;
@@ -107,7 +120,7 @@ void main()
         if (controller & JOY_DOWN) 
         {
             sel++;
-            if(sel > 12)
+            if(sel > 13)
                 sel = 0;
             refresh = 1;
         }
@@ -116,7 +129,7 @@ void main()
         {
             sel--;
             if(sel < 0)
-                sel = 12;
+                sel = 13;
             refresh = 1;
         }
 		
@@ -127,11 +140,18 @@ void main()
 				case 0:
 					TestPatterns();
 					break;
+				case 11:
+					if(Enabled240p)
+						Set224p();
+					else
+						Set240p();
+					break;
 				case 8:
 					DrawCheck();
 					break;
 			}
 			redraw = 1;
+			OldButtonsInternal = joy(0);
 		}
     }
 }
@@ -176,7 +196,7 @@ void TestPatterns()
 		
 		if(refresh)
         {
-            int row = 8;
+            int row = 7;
             
             set_font_pal(sel == 0 ? 15 : 14);
             put_string("Pluge", HPOS, row++);
@@ -189,20 +209,40 @@ void TestPatterns()
             set_font_pal(sel == 4 ? 15 : 14);
             put_string("Color Bleed Check", HPOS, row++);
             set_font_pal(sel == 5 ? 15 : 14);
-            put_string("Grid 256x224", HPOS, row++);
-            set_font_pal(sel == 6 ? 15 : 14);
-            put_string("Linearity", HPOS, row++);
-            set_font_pal(sel == 7 ? 15 : 14);
-            put_string("Gray Ramp", HPOS, row++);
+			if(Enabled240p)
+				put_string("Grid 256x240", HPOS, row++);
+			else
+				put_string("Grid 256x224", HPOS, row++);
+			set_font_pal(sel == 6 ? 15 : 14);
+			if(Enabled240p)
+				put_string("Grid 320x240", HPOS, row++);
+			else
+				put_string("Grid 320x224", HPOS, row++);
+			set_font_pal(sel == 7 ? 15 : 14);
+			if(Enabled240p)
+				put_string("Grid 512x240", HPOS, row++);
+			else
+				put_string("Grid 512x224", HPOS, row++);
             set_font_pal(sel == 8 ? 15 : 14);
-            put_string("White & RGB Screen", HPOS, row++);
+            put_string("Linearity", HPOS, row++);
             set_font_pal(sel == 9 ? 15 : 14);
-            put_string("100 IRE", HPOS, row++);
+            put_string("Gray Ramp", HPOS, row++);
             set_font_pal(sel == 10 ? 15 : 14);
-            put_string("Sharpness", HPOS, row++);
+            put_string("White & RGB Screen", HPOS, row++);
             set_font_pal(sel == 11 ? 15 : 14);
+            put_string("100 IRE", HPOS, row++);
+            set_font_pal(sel == 12 ? 15 : 14);
+            put_string("Sharpness", HPOS, row++);
+            set_font_pal(sel == 13 ? 15 : 14);
             put_string("Overscan", HPOS, row++);
-			set_font_pal(sel == 12 ? 15 : 14);
+			
+			set_font_pal(sel == 14 ? 15 : 14);
+			if(Enabled240p)
+				put_string("VDC 320x240", HPOS, row++);			
+			else
+				put_string("VDC 320x224", HPOS, row++);			
+			
+			set_font_pal(sel == 15 ? 15 : 14);
             put_string("Back to Main Menu", HPOS, ++row);
 
             refresh = 0;
@@ -215,7 +255,7 @@ void TestPatterns()
         if (controller & JOY_DOWN) 
         {
             sel++;
-            if(sel > 12)
+            if(sel > 15)
                 sel = 0;
             refresh = 1;
         }
@@ -224,25 +264,50 @@ void TestPatterns()
         {
             sel--;
             if(sel < 0)
-                sel = 12;
+                sel = 15;
             refresh = 1;
         }
+		
+				
+		if (controller & JOY_II)
+			end = 1;
 		
 		if (controller & JOY_I)
 		{
 			switch(sel)
 			{
-				case 12:
+				case 5:
+					DrawGrid256();
+					break;
+				case 6:
+					DrawGrid320();
+					break;
+				case 7:
+					DrawGrid512();
+					break;
+				case 14:
+					if(Enabled240p)
+						Set224p();
+					else
+						Set240p();
+					break;
+				case 15:
 					end = 1;
 					break;
 			}
-			redraw = 1;
+			OldButtonsInternal = joy(0);
+			redraw = 1;			
 		}
-		
-		if (controller & JOY_II)
-			end = 1;
+
     }
 }
+
+/*
+ *
+ *		Test Functions
+ *
+ *
+ */
 
 void DrawCheck()
 {
@@ -274,4 +339,114 @@ void DrawCheck()
 		if (controller & JOY_II)
 			end = 1;
     }
+}
+
+
+/*
+ *
+ *		Pattern Functions
+ *
+ *
+ */
+
+void DrawGrid256()
+{
+	int OldButtonsInternal = 0;
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+	set_xres(256, XRES_SHARP);
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(grid_map, 40, 30);
+			set_tile_data(grid_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, grid_pal, 1);  
+         
+            redraw = 0;
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+	set_xres(320, XRES_SHARP);
+}
+
+void DrawGrid320()
+{
+	int OldButtonsInternal = 0;
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+	set_xres(320, XRES_SHARP);
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(grid_map, 40, 30);
+			set_tile_data(grid_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, grid_pal, 1);  
+         
+            redraw = 0;
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+	set_xres(320, XRES_SHARP);
+}
+
+void DrawGrid512()
+{
+	int OldButtonsInternal = 0;
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+	set_xres(512, XRES_SHARP);
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(grid_map, 40, 30);
+			set_tile_data(grid_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, grid_pal, 1);  
+         
+            redraw = 0;
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+	set_xres(320, XRES_SHARP);
 }
