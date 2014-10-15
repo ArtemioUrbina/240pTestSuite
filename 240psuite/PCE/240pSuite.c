@@ -31,24 +31,28 @@
 void TestPatterns();
 
 void DrawCheck();
+void DrawStripes();
 
 void DrawGrid256();
 void DrawGrid320();
 void DrawGrid512();
+void DrawWhite();
+void DrawPluge();
 
 int Enabled240p = 0;
+int OldButtonsInternal = 0;
 
 #define HPOS 5
 
 void main()
 {
-    int OldButtonsInternal = 0;
     int controller;   
     int read; 
     int redraw = 1;
 	int refresh = 1;
     int sel = 0;
-	
+
+	disp_off();
 	set_xres(320, XRES_SHARP);
 
     while(1)
@@ -70,6 +74,7 @@ void main()
            
             redraw = 0;
 			refresh = 1;
+			disp_on();
         }
 		
 		if(refresh)
@@ -140,15 +145,19 @@ void main()
 				case 0:
 					TestPatterns();
 					break;
+				case 7:
+					DrawStripes();
+					break;
+				case 8:
+					DrawCheck();
+					break;
 				case 11:
 					if(Enabled240p)
 						Set224p();
 					else
 						Set240p();
 					break;
-				case 8:
-					DrawCheck();
-					break;
+				disp_off();
 			}
 			redraw = 1;
 			OldButtonsInternal = joy(0);
@@ -165,7 +174,6 @@ void main()
 
 void TestPatterns()
 {
-	int OldButtonsInternal = 0;
     int controller;   
     int read; 
     int redraw = 1;
@@ -173,6 +181,7 @@ void TestPatterns()
     int sel = 0;
 	int end = 0;
 
+	disp_off();
     while(!end)
     {   
 		vsync();
@@ -192,6 +201,7 @@ void TestPatterns()
          
 			refresh = 1;
             redraw = 0;
+			disp_on();
         }
 		
 		if(refresh)
@@ -276,6 +286,9 @@ void TestPatterns()
 		{
 			switch(sel)
 			{
+				case 0:
+					DrawPluge();
+					break;
 				case 5:
 					DrawGrid256();
 					break;
@@ -284,6 +297,9 @@ void TestPatterns()
 					break;
 				case 7:
 					DrawGrid512();
+					break;
+				case 10:
+					DrawWhite();
 					break;
 				case 14:
 					if(Enabled240p)
@@ -296,7 +312,8 @@ void TestPatterns()
 					break;
 			}
 			OldButtonsInternal = joy(0);
-			redraw = 1;			
+			redraw = 1;	
+			disp_off();
 		}
 
     }
@@ -311,7 +328,6 @@ void TestPatterns()
 
 void DrawCheck()
 {
-	int OldButtonsInternal = 0;
     int controller;   
     int read; 
     int redraw = 1;
@@ -342,16 +358,88 @@ void DrawCheck()
 }
 
 
+void DrawStripes()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(fs_map, 40, 30);
+			set_tile_data(hstripes_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, check_pal, 1);  
+         
+            redraw = 0;
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+		if (controller & JOY_DOWN)
+		{
+			set_tile_data(vstripes_bg);
+			load_tile(0x1000);
+		}
+		if (controller & JOY_UP)
+		{
+			set_tile_data(hstripes_bg);
+			load_tile(0x1000);
+		}
+    }
+}
+
+
 /*
  *
  *		Pattern Functions
  *
  *
  */
+ 
+ void DrawPluge()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(pluge_map, 40, 30);
+			set_tile_data(pluge_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, pluge_pal, 1);  
+         
+            redraw = 0;
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+}
 
 void DrawGrid256()
 {
-	int OldButtonsInternal = 0;
     int controller;   
     int read; 
     int redraw = 1;
@@ -388,7 +476,6 @@ void DrawGrid256()
 
 void DrawGrid320()
 {
-	int OldButtonsInternal = 0;
     int controller;   
     int read; 
     int redraw = 1;
@@ -425,7 +512,6 @@ void DrawGrid320()
 
 void DrawGrid512()
 {
-	int OldButtonsInternal = 0;
     int controller;   
     int read; 
     int redraw = 1;
@@ -458,4 +544,35 @@ void DrawGrid512()
 			end = 1;
     }
 	set_xres(320, XRES_SHARP);
+}
+
+void DrawWhite()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(fs_map, 40, 30);
+			set_tile_data(white_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, check_pal, 1);  
+         
+            redraw = 0;
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
 }

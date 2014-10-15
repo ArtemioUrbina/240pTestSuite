@@ -29,6 +29,9 @@
 #define FS_MAP 			"graphics/fullscreen.fmp"
 #define CHECK_TILES 	"graphics/check.pcx"
 
+#define PLUGE_MAP 		"graphics/pluge.fmp"
+#define PLUGE_TILES 	"graphics/pluge.pcx"
+
 #define GRID320_240_MAP "graphics/grid320_240.fmp"
 #define GRID320_224_MAP "graphics/grid320_224.fmp"
 #define GRID256_240_MAP	"graphics/grid256_240.fmp"
@@ -53,9 +56,17 @@
 #incchr_ex(check_bg, CHECK_TILES, 0, 0, 1, 1, 0);
 #incpal(check_pal, CHECK_TILES, 0, 1);
 
+#incchr_ex(hstripes_bg, CHECK_TILES, 8, 0, 1, 1, 0);
+#incchr_ex(vstripes_bg, CHECK_TILES, 0, 8, 1, 1, 0);
+#incchr_ex(white_bg, CHECK_TILES, 8, 8, 1, 1, 0);
+
 /*
 			PATTERNS
 */
+
+#incbin(pluge_map, PLUGE_MAP);
+#incchr_ex(pluge_bg, PLUGE_TILES, 0, 0, 20, 3, 0);
+#incpal(pluge_pal, PLUGE_TILES, 0, 1);
 
 #incchr_ex(grid_bg, GRID_TILES, 0, 0, 2, 4, 0);
 #incpal(grid_pal, GRID_TILES, 0, 1);
