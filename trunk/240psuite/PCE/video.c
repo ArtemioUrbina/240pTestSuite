@@ -30,39 +30,31 @@ extern int Enabled240p;
 void Set224p()
 {
 	Enabled240p = 0;
-// VSR/VPR 0C 17
+// VSR/VPR 02 17
 // VDW DF 00
 #asm
 
-	cly 
-	ldy   #$0C		; select the VDC register
-	tya
+	lda   #$0C
 	sta   <vdc_reg
 	sta   video_reg
 	asl   A
 	tax
-	ldy   #$02		; send the 16-bit data
-	tya
+	lda   #$02
 	sta   video_data_l
 	sta   _vdc,X
-	ldy   #$17
-	tya
+	lda   #$17
 	sta   video_data_h
 	sta   _vdc+1,X
 	
-	cly 
-	ldy   #$0D		; select the VDC register
-	tya
+	lda   #$0D
 	sta   <vdc_reg
 	sta   video_reg
 	asl   A
 	tax
-	ldy   #$DF		; send the 16-bit data
-	tya
+	lda   #$DF
 	sta   video_data_l
 	sta   _vdc,X
-	ldy   #$00
-	tya
+	lda   #$00
 	sta   video_data_h
 	sta   _vdc+1,X
 	
@@ -76,35 +68,27 @@ void Set240p()
 // VSR/VPR 0D 02
 // VDW EF 00
 #asm
-	cly 
-	ldy   #$0C		; select the VDC register
-	tya
+	lda   #$0C
 	sta   <vdc_reg
 	sta   video_reg
 	asl   A
 	tax
-	ldy   #$02		; send the 16-bit data
-	tya
+	lda   #$02
 	sta   video_data_l
 	sta   _vdc,X
-	ldy   #$0D
-	tya
+	lda   #$0D
 	sta   video_data_h
 	sta   _vdc+1,X
 	
-	cly 
-	ldy   #$0D		; select the VDC register
-	tya
+	lda   #$0D
 	sta   <vdc_reg
 	sta   video_reg
 	asl   A
 	tax
-	ldy   #$EF		; send the 16-bit data
-	tya
+	lda   #$EF
 	sta   video_data_l
 	sta   _vdc,X
-	ldy   #$00
-	tya
+	lda   #$00
 	sta   video_data_h
 	sta   _vdc+1,X
 	
