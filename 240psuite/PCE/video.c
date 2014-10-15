@@ -73,7 +73,7 @@ void Set224p()
 void Set240p()
 {
 	Enabled240p = 1;
-// VSR/VPR 0C 02
+// VSR/VPR 0D 02
 // VDW EF 00
 #asm
 	cly 
@@ -87,7 +87,7 @@ void Set240p()
 	tya
 	sta   video_data_l
 	sta   _vdc,X
-	ldy   #$0C
+	ldy   #$0D
 	tya
 	sta   video_data_h
 	sta   _vdc+1,X
