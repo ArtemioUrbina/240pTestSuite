@@ -364,10 +364,13 @@ void DrawGrid256()
 		
         if(redraw)
         {
-			set_map_data(grid_map, 40, 30);
+			if(Enabled240p)
+				set_map_data(grid256_240_map, 32, 30);
+			else
+				set_map_data(grid256_224_map, 32, 28);
 			set_tile_data(grid_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
+			load_map(0, 0, 0, 0, 32, Enabled240p ? 30 : 28);
 			load_palette(0, grid_pal, 1);  
          
             redraw = 0;
@@ -398,10 +401,13 @@ void DrawGrid320()
 		
         if(redraw)
         {
-			set_map_data(grid_map, 40, 30);
+			if(Enabled240p)
+				set_map_data(grid320_240_map, 40, 30);
+			else
+				set_map_data(grid320_224_map, 40, 28);
 			set_tile_data(grid_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
+			load_map(0, 0, 0, 0, 40, Enabled240p ? 30 : 28);
 			load_palette(0, grid_pal, 1);  
          
             redraw = 0;
@@ -432,10 +438,13 @@ void DrawGrid512()
 		
         if(redraw)
         {
-			set_map_data(grid_map, 40, 30);
+			if(Enabled240p)
+				set_map_data(grid512_240_map, 64, 30);
+			else
+				set_map_data(grid512_224_map, 64, 28);
 			set_tile_data(grid_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
+			load_map(0, 0, 0, 0, 64, Enabled240p ? 30 : 28);
 			load_palette(0, grid_pal, 1);  
          
             redraw = 0;

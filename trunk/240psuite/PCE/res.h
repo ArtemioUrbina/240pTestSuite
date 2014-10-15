@@ -29,8 +29,13 @@
 #define FS_MAP 			"graphics/fullscreen.fmp"
 #define CHECK_TILES 	"graphics/check.pcx"
 
-#define GRID_MAP 		"graphics/grid.fmp"
-#define GRID_TILES 	"graphics/grid.pcx"
+#define GRID320_240_MAP "graphics/grid320_240.fmp"
+#define GRID320_224_MAP "graphics/grid320_224.fmp"
+#define GRID256_240_MAP	"graphics/grid256_240.fmp"
+#define GRID256_224_MAP	"graphics/grid256_224.fmp"
+#define GRID512_240_MAP	"graphics/grid512_240.fmp"
+#define GRID512_224_MAP	"graphics/grid512_224.fmp"
+#define GRID_TILES 		"graphics/grid.pcx"
 
 /*
             GRAPHICS
@@ -52,6 +57,14 @@
 			PATTERNS
 */
 
-#incbin(grid_map, GRID_MAP);
 #incchr_ex(grid_bg, GRID_TILES, 0, 0, 2, 4, 0);
 #incpal(grid_pal, GRID_TILES, 0, 1);
+
+#incbin(grid320_240_map, GRID320_240_MAP);
+#incbin(grid320_224_map, GRID320_224_MAP);
+
+#incbin(grid256_224_map, GRID256_224_MAP);
+#incbin(grid256_240_map, GRID256_240_MAP);
+
+#incbin(grid512_224_map, GRID512_224_MAP);
+#incbin(grid512_240_map, GRID512_240_MAP);
