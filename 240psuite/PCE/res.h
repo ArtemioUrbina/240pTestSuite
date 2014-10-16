@@ -40,9 +40,15 @@
 #define GRID512_224_MAP	"graphics/grid512_224.fmp"
 #define GRID_TILES 		"graphics/grid.pcx"
 
+
+#define FONT            "graphics/font.pcx"
+
+
 /*
             GRAPHICS
 */
+
+#incchr(my_font, FONT, 32, 3);
 
 #incbin(MB_map, MAIN_BACKMAP);
 #incchr_ex(MB_bg, MAIN_BACKGROUND, 0, 0, 20, 7, 0);
