@@ -23,16 +23,8 @@
  
  */
  
-#include "huc.h"
-
-extern char my_font[];
-
-void setupFont()
-{	
-    load_font(my_font, 96);
-    set_font_pal(14);        
-    set_color_rgb(225, 255, 255, 255);
-    set_color_rgb(226, 0, 0, 0);
-    set_color_rgb(241, 255, 0, 0);
-    set_color_rgb(242, 0, 0, 0);
-}
+void DrawGrid256();
+void DrawGrid320();
+void DrawGrid512();
+void DrawWhite();
+void DrawPluge();
