@@ -31,11 +31,11 @@ extern int OldButtonsInternal;
 
 extern char fs_map[];
 
-extern char hstripes_bg[];
-extern char vstripes_bg[];
+extern int hstripes_bg[];
+extern int vstripes_bg[];
 
-extern char check_bg[];
-extern char check_pal[];
+extern int check_bg[];
+extern int check_pal[];
 
 void DrawCheck()
 {
@@ -57,6 +57,7 @@ void DrawCheck()
 			load_palette(0, check_pal, 1);  
          
             redraw = 0;
+			disp_on();
         }
 
         read = joy(0);
@@ -89,6 +90,7 @@ void DrawStripes()
 			load_palette(0, check_pal, 1);  
          
             redraw = 0;
+			disp_on();
         }
 
         read = joy(0);

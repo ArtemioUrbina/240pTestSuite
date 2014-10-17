@@ -23,9 +23,4 @@
  
  */
  
-void Set224p();
-void Set240p();
-void Set239p();
-
-void SetNormalHMode();
-void SetArcadeMode();
+void showHelp();
