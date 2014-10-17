@@ -5,4 +5,4 @@
 @set PCE_INCLUDE=%HUC_HOME%/include/pce
 
 @REM Compile, assemble, and link
-huc -t -O2 -fno-recursive -msmall 240pSuite.c font.c video.c patterns.c tests.c
+huc -t -O2 -fno-recursive -msmall 240pSuite.c font.c video.c patterns.c tests.c help.c

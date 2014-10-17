@@ -26,11 +26,18 @@
 #define MAIN_BACKGROUND "graphics/mainbg.pcx"
 #define MAIN_BACKMAP 	"graphics/mainbg.fmp"
 
+#define MAIN_BG_512		"graphics/back512.pcx"
+#define MAIN_MAP_512 	"graphics/back512.fmp"
+
 #define FS_MAP 			"graphics/fullscreen.fmp"
 #define CHECK_TILES 	"graphics/check.pcx"
 
 #define PLUGE_MAP 		"graphics/pluge.fmp"
 #define PLUGE_TILES 	"graphics/pluge.pcx"
+
+#define COLOR_MAP 		"graphics/color_BAT.bin"
+#define COLOR_TILES 	"graphics/color_DATA.bin"
+#define COLOR_PAL 		"graphics/color_PAL.bin"
 
 #define GRID320_240_MAP "graphics/grid320_240.fmp"
 #define GRID320_224_MAP "graphics/grid320_224.fmp"
@@ -53,6 +60,10 @@
 #incbin(MB_map, MAIN_BACKMAP);
 #incchr_ex(MB_bg, MAIN_BACKGROUND, 0, 0, 20, 7, 0);
 #incpal(MB_pal, MAIN_BACKGROUND, 0, 1);
+
+#incbin(MB512_map, MAIN_MAP_512);
+#incchr_ex(MB512_bg, MAIN_BG_512, 0, 0, 20, 10, 0);
+#incpal(MB512_pal, MAIN_BG_512, 0, 1);
 
 /*
 			TEST 
@@ -85,3 +96,7 @@
 
 #incbin(grid512_224_map, GRID512_224_MAP);
 #incbin(grid512_240_map, GRID512_240_MAP);
+
+#incbin(color_map, COLOR_MAP);
+#incbin(color_bg, COLOR_TILES);
+#incbin(color_pal, COLOR_PAL);

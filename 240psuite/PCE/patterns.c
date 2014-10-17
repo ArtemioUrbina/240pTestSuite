@@ -30,17 +30,21 @@ extern int Enabled240p;
 extern int OldButtonsInternal;
 
 extern char pluge_map[];
-extern char pluge_bg[];
-extern char pluge_pal[];
+extern int pluge_bg[];
+extern int pluge_pal[];
+
+extern char color_map[];
+extern int color_bg[];
+extern int color_pal[];
 
 extern char fs_map[];
 
-extern char white_bg[];
+extern int white_bg[];
 
-extern char check_pal[];
+extern int check_pal[];
 
-extern char grid_bg[];
-extern char grid_pal[];
+extern int grid_bg[];
+extern int grid_pal[];
 
 extern char grid256_224_map[];
 extern char grid256_240_map[];
@@ -69,6 +73,34 @@ void DrawPluge()
 			load_palette(0, pluge_pal, 1);  
          
             redraw = 0;
+			disp_on();
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+}
+
+void DrawColor()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			load_background(color_bg, color_pal, color_map, 40, 30);
+            redraw = 0;
+			disp_on();
         }
 
         read = joy(0);
@@ -104,6 +136,7 @@ void DrawGrid256()
 			load_palette(0, grid_pal, 1);  
          
             redraw = 0;
+			disp_on();
         }
 
         read = joy(0);
@@ -140,6 +173,7 @@ void DrawGrid320()
 			load_palette(0, grid_pal, 1);  
          
             redraw = 0;
+			disp_on();
         }
 
         read = joy(0);
@@ -176,6 +210,7 @@ void DrawGrid512()
 			load_palette(0, grid_pal, 1);  
          
             redraw = 0;
+			disp_on();
         }
 
         read = joy(0);
@@ -208,6 +243,7 @@ void DrawWhite()
 			load_palette(0, check_pal, 1);  
          
             redraw = 0;
+			disp_on();
         }
 
         read = joy(0);

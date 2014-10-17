@@ -30,6 +30,7 @@ extern int Enabled240p;
 void Set224p()
 {
 	Enabled240p = 0;
+	vsync();
 // VSR/VPR 02 17
 // VDW DF 00
 #asm
@@ -62,9 +63,17 @@ void Set224p()
 #endasm	
 }
 
+/*
+	This shows the full 240 lines, however it starts at line 22
+	and is not used in comemrcial games. Line 21 containc closed
+	captioned data in NTSC, and teh signal typicaly starts at 
+	line 23.
+*/
+
 void Set240p()
 {
 	Enabled240p = 1;
+	vsync();
 // VSR/VPR 0D 02
 // VDW EF 00
 #asm
@@ -96,3 +105,114 @@ void Set240p()
 #endasm	
 }
 
+/*
+	This is the typical setting in PC Engine games,
+	since it respects teh NTSC standard of starting 
+	at line 23. However this displays only 239 active 
+	lines of video signal.
+*/
+
+void Set239p() 
+{
+	Enabled240p = 1;
+	vsync();
+// VSR/VPR 0F 02
+// VDW EF 00
+#asm
+	lda   #$0C
+	sta   <vdc_reg
+	sta   video_reg
+	asl   A
+	tax
+	lda   #$02
+	sta   video_data_l
+	sta   _vdc,X
+	lda   #$0F
+	sta   video_data_h
+	sta   _vdc+1,X
+	
+	lda   #$0D
+	sta   <vdc_reg
+	sta   video_reg
+	asl   A
+	tax
+	lda   #$EF
+	sta   video_data_l
+	sta   _vdc,X
+	lda   #$00
+	sta   video_data_h
+	sta   _vdc+1,X
+	
+	rts
+#endasm	
+}
+
+void SetArcadeMode()
+{
+	vsync();
+// HSR 09 03
+// HDR 0A 1F
+#asm
+
+	lda   #$0A
+	sta   <vdc_reg
+	sta   video_reg
+	asl   A
+	tax
+	lda   #$03
+	sta   video_data_l
+	sta   _vdc,X
+	lda   #$09
+	sta   video_data_h
+	sta   _vdc+1,X
+	
+	lda   #$0B
+	sta   <vdc_reg
+	sta   video_reg
+	asl   A
+	tax
+	lda   #$1F
+	sta   video_data_l
+	sta   _vdc,X
+	lda   #$0A
+	sta   video_data_h
+	sta   _vdc+1,X
+	
+	rts
+#endasm	
+}
+
+void SetNormalHMode()
+{
+	vsync();
+// HSR 02 02
+// HDR 04 1F
+#asm
+
+	lda   #$0A
+	sta   <vdc_reg
+	sta   video_reg
+	asl   A
+	tax
+	lda   #$02
+	sta   video_data_l
+	sta   _vdc,X
+	lda   #$02
+	sta   video_data_h
+	sta   _vdc+1,X
+	
+	lda   #$0B
+	sta   <vdc_reg
+	sta   video_reg
+	asl   A
+	tax
+	lda   #$1F
+	sta   video_data_l
+	sta   _vdc,X
+	lda   #$04
+	sta   video_data_h
+	sta   _vdc+1,X
+	
+	rts
+#endasm	
+}
