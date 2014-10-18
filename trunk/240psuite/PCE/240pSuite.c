@@ -33,6 +33,7 @@
 
 void TestPatterns();
 void Options();
+void DrawCredits();
 
 int Enabled240p = 0;
 int UseDefault = 0;
@@ -152,6 +153,9 @@ void main()
 				case 12:
 					showHelp();
 					break;
+				case 13:
+					DrawCredits();
+					break;
 			}
 			redraw = 1;
 			OldButtonsInternal = joy(0);
@@ -242,12 +246,6 @@ void TestPatterns()
             put_string("Overscan", HPOS, row++);
 			
 			set_font_pal(sel == 14 ? 15 : 14);
-			if(Enabled240p)
-				put_string("VDC 320x240", HPOS, row++);			
-			else
-				put_string("VDC 320x224", HPOS, row++);			
-			
-			set_font_pal(sel == 15 ? 15 : 14);
             put_string("Back to Main Menu", HPOS, ++row);
 
             refresh = 0;
@@ -260,7 +258,7 @@ void TestPatterns()
         if (controller & JOY_DOWN) 
         {
             sel++;
-            if(sel > 15)
+            if(sel > 14)
                 sel = 0;
             refresh = 1;
         }
@@ -269,7 +267,7 @@ void TestPatterns()
         {
             sel--;
             if(sel < 0)
-                sel = 15;
+                sel = 14;
             refresh = 1;
         }
 		
@@ -301,12 +299,6 @@ void TestPatterns()
 					DrawWhite();
 					break;
 				case 14:
-					if(Enabled240p)
-						Set224p();
-					else
-						Set240p();
-					break;
-				case 15:
 					end = 1;
 					break;
 			}
@@ -363,12 +355,25 @@ void Options()
 				put_string("224p", HPOS+22, row);
 			row++;
 			
-            set_font_pal(sel == 1 ? 15 : 14);
-            put_string("Start at line:", HPOS, row);
-			if(UseDefault)
-				put_string("24", HPOS+22, row);
+			if(Enabled240p)
+			{
+				set_font_pal(sel == 1 ? 15 : 14);
+				put_string("Start at line:", HPOS, row);
+				if(UseDefault)
+					put_string("24", HPOS+22, row);
+				else
+					put_string("22", HPOS+22, row);
+			}
 			else
-				put_string("22", HPOS+22, row);
+			{
+				set_font_pal(sel == 1 ? 13 : 12);
+				put_string("Start at line:", HPOS, row);
+				if(UseDefault)
+					put_string("24", HPOS+22, row);
+				else
+					put_string("22", HPOS+22, row);
+			}
+			
 			row++;
 			
 			
@@ -440,4 +445,78 @@ void Options()
 		}
 
     }
+}
+
+
+void DrawCredits()
+{
+	int controller;   
+    int read; 
+    int redraw = 1;
+	int refresh = 1;
+	int end = 0;
+
+	set_xres(512, XRES_SHARP);
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			setupFont();
+			
+			set_map_data(MB512_map, 64, 30);
+			set_tile_data(MB512_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 64, 30);
+			load_palette(0, MB512_pal, 1);  
+			
+            redraw = 0;
+			refresh = 1;
+			disp_on();
+        }
+		
+		if(refresh)
+		{
+			int row = 6;
+			
+			put_string("Code and Patterns:", HPOS+2, row++);
+			put_string("Artemio Urbina", HPOS+2, row++);
+			row++;
+			
+			put_string("SDK:", HPOS+2, row++);
+			put_string("Enhanced HuC https://github.com/uli/huc", HPOS+2, row++);
+			row++;
+			
+			put_string("Menu Pixel Art:", HPOS+2, row++);
+			put_string("Asher", HPOS+2, row++);
+			row++;
+			
+			put_string("Advisor:", HPOS+2, row++);
+			put_string("Fudoh", HPOS+2, row++);
+			row++;
+			
+			put_string("Collaboration:", HPOS+2, row++);
+			put_string("Konsolkongen & shmups regulars", HPOS+2, row++);
+			row++;
+			
+			put_string("Info on using this suite:", HPOS+2, row++);
+			put_string("http://junkerhq.net/240p/", HPOS+2, row++);
+			row++;
+			
+			put_string("This program is free software and open source.", HPOS+2, row++);
+			put_string("Source code is available under GPL.", HPOS+2, row++);
+			row++;
+
+			refresh = 0;
+		}
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+    }	
+	set_xres(320, XRES_SHARP);
 }
