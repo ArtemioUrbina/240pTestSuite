@@ -59,6 +59,7 @@ void DrawPluge()
     int read; 
     int redraw = 1;
 	int end = 0;
+	int col = 0;
 
     while(!end)
     {   
@@ -82,6 +83,13 @@ void DrawPluge()
         
 		if (controller & JOY_II)
 			end = 1;
+		
+		if (controller & JOY_I)
+		{
+			col ++;
+			set_color_rgb(1, 0, col, 0);
+			put_hex(col, 2, 2);
+		}
     }
 }
 

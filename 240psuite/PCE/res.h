@@ -92,7 +92,7 @@
 #incbin(grid320_224_map, GRID320_224_MAP);
 
 #incbin(grid256_224_map, GRID256_224_MAP);
-#incbin(grid256_240_map, GRID256_240_MAP);
+#incbin(	, GRID256_240_MAP);
 
 #incbin(grid512_224_map, GRID512_224_MAP);
 #incbin(grid512_240_map, GRID512_240_MAP);
