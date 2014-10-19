@@ -22,7 +22,6 @@
  This version of the suite is compiled with HuC from https://github.com/uli/huc
  
  */
- 
 #include <huc.h>
 #include "res.h"
 #include "font.h"
@@ -37,7 +36,6 @@ void DrawCredits();
 
 int Enabled240p = 0;
 int UseDefault = 0;
-int OldButtonsInternal = 0;
 
 #define HPOS 5
 
@@ -52,7 +50,7 @@ void main()
 	disp_off();
 	set_xres(320, XRES_SHARP);
 	Set240p();
-
+	
     while(1)
     {   
 		vsync();
@@ -113,9 +111,7 @@ void main()
             refresh = 0;
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
         if (controller & JOY_DOWN) 
         {
@@ -160,8 +156,7 @@ void main()
 					DrawCredits();
 					break;
 			}
-			redraw = 1;
-			OldButtonsInternal = joy(0);
+			redraw = 1;			
 			disp_off();
 		}
     }
@@ -254,9 +249,7 @@ void TestPatterns()
             refresh = 0;
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
         if (controller & JOY_DOWN) 
         {
@@ -314,7 +307,6 @@ void TestPatterns()
 					end = 1;
 					break;
 			}
-			OldButtonsInternal = joy(0);
 			redraw = 1;	
 			disp_off();
 		}
@@ -395,9 +387,7 @@ void Options()
             refresh = 0;
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
         if (controller & JOY_DOWN) 
         {
@@ -451,7 +441,6 @@ void Options()
 					end = 1;
 					break;
 			}
-			OldButtonsInternal = joy(0);
 			redraw = 1;	
 			disp_off();
 		}
@@ -476,6 +465,8 @@ void DrawCredits()
         if(redraw)
         {
 			setupFont();
+			set_color_rgb(241, 0, 6, 0);
+			set_color_rgb(209, 1, 6, 6);
 			
 			set_map_data(MB512_map, 64, 30);
 			set_tile_data(MB512_bg);
@@ -492,30 +483,41 @@ void DrawCredits()
 		{
 			int row = 6;
 			
+			set_font_pal(15);
 			put_string("Code and Patterns:", HPOS+2, row++);
+			set_font_pal(14);
 			put_string("Artemio Urbina", HPOS+2, row++);
 			row++;
 			
+			set_font_pal(15);
 			put_string("SDK:", HPOS+2, row++);
+			set_font_pal(14);
 			put_string("Enhanced HuC https://github.com/uli/huc", HPOS+2, row++);
 			row++;
 			
+			set_font_pal(15);
 			put_string("Menu Pixel Art:", HPOS+2, row++);
+			set_font_pal(14);
 			put_string("Asher", HPOS+2, row++);
 			row++;
 			
+			set_font_pal(15);
 			put_string("Advisor:", HPOS+2, row++);
+			set_font_pal(14);
 			put_string("Fudoh", HPOS+2, row++);
 			row++;
 			
+			set_font_pal(15);
 			put_string("Collaboration:", HPOS+2, row++);
+			set_font_pal(14);
 			put_string("Konsolkongen & shmups regulars", HPOS+2, row++);
 			row++;
 			
+			set_font_pal(15);
 			put_string("Info on using this suite:", HPOS+2, row++);
+			set_font_pal(14);
 			put_string("http://junkerhq.net/240p/", HPOS+2, row++);
-			row++;
-			
+			set_font_pal(13);
 			put_string("This program is free software and open source.", HPOS+2, row++);
 			put_string("Source code is available under GPL.", HPOS+2, row++);
 			row++;
@@ -523,9 +525,7 @@ void DrawCredits()
 			refresh = 0;
 		}
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;

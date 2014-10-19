@@ -28,8 +28,6 @@
 
 #define HPOS 6
 
-extern int OldButtonsInternal;
-
 extern char MB512_map[];
 extern int MB512_bg[];
 extern int MB512_pal[];
@@ -50,6 +48,7 @@ void showHelp()
         if(redraw)
         {
 			setupFont();
+			set_color_rgb(241, 0, 6, 0);
 			
 			set_map_data(MB512_map, 64, 30);
 			set_tile_data(MB512_bg);
@@ -64,9 +63,12 @@ void showHelp()
 		
 		if(refresh)
 		{
-			int row = 6;
+			int row = 4;
 			
+			set_font_pal(15);
 			put_string("HELP", HPOS+23, row++);
+			set_font_pal(14);
+			row++;
 			put_string("The 240p Test Suite was designed with two goals in", HPOS, row++);
 			put_string("mind:", HPOS, row++);
 			row++;
@@ -81,17 +83,15 @@ void showHelp()
 			put_string("button. Use right and left in the d-pad to navigate", HPOS, row++);
 			put_string("between help pages.", HPOS, row++);
 			row++;
-			put_string("This version of the suite is in 320x224p by", HPOS, row++);
-			put_string("default; but can change to 320x240p. Grids are", HPOS, row++);
+			put_string("This version of the suite is in 320x240p by", HPOS, row++);
+			put_string("default; but can be changed to 320x224p. Grids are", HPOS, row++);
 			put_string("also available in 256x224, 256x240, 512x224 and", HPOS, row++);
 			put_string("512x240 resolutions.", HPOS, row++);
 
 			refresh = 0;
 		}
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;

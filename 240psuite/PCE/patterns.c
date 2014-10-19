@@ -27,7 +27,6 @@
 #include "patterns.h"
 
 extern int Enabled240p;
-extern int OldButtonsInternal;
 
 extern char pluge_map[];
 extern int pluge_bg[];
@@ -91,9 +90,7 @@ void DrawPluge()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -125,9 +122,7 @@ void DrawColor()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -157,9 +152,7 @@ void DrawCB601()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -193,9 +186,7 @@ void DrawColorBleed()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -244,9 +235,7 @@ void DrawSMPTE()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -294,9 +283,7 @@ void DrawGrid256()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -331,9 +318,7 @@ void DrawGrid320()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -368,9 +353,7 @@ void DrawGrid512()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -401,9 +384,7 @@ void DrawWhite()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;

@@ -27,7 +27,6 @@
 #include "patterns.h"
 
 extern int Enabled240p;
-extern int OldButtonsInternal;
 
 extern char fs_map[];
 
@@ -64,9 +63,7 @@ void DrawCheck()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -97,9 +94,7 @@ void DrawStripes()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
@@ -134,9 +129,7 @@ void DropShadow()
 			disp_on();
         }
 
-        read = joy(0);
-        controller =  read & ~OldButtonsInternal;
-        OldButtonsInternal = read;
+        controller = joytrg(0);
         
 		if (controller & JOY_II)
 			end = 1;
