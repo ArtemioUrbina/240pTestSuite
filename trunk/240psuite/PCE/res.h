@@ -77,7 +77,7 @@
 #incpal(MB_pal, MAIN_BACKGROUND, 0, 1);
 
 #incbin(MB512_map, MAIN_MAP_512);
-#incchr_ex(MB512_bg, MAIN_BG_512, 0, 0, 20, 10, 0);
+#incchr_ex(MB512_bg, MAIN_BG_512, 0, 0, 20, 8, 0);
 #incpal(MB512_pal, MAIN_BG_512, 0, 1);
 
 #incbin(motoko_map, MOTOKO_MAP);
