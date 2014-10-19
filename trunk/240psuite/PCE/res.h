@@ -51,6 +51,17 @@
 #define GRID512_224_MAP	"graphics/grid512_224.fmp"
 #define GRID_TILES 		"graphics/grid.pcx"
 
+#define CB601_MAP 		"graphics/cb601.fmp"
+#define CB601_TILES 	"graphics/cb601.pcx"
+
+#define COLORBLEED_MAP 		"graphics/colorbleed.fmp"
+#define COLORBLEED_TILES 	"graphics/colorbleed.pcx"
+#define COLORBLEEDCHK_TILES "graphics/colorbleedcheck.pcx"
+
+#define SMPTE75_MAP 	"graphics/SMPTE75.fmp"
+#define SMPTE75_TILES 	"graphics/SMPTE75.pcx"
+#define SMPTE100_TILES 	"graphics/SMPTE100.pcx"
+
 
 #define FONT            "graphics/font.pcx"
 
@@ -108,3 +119,17 @@
 #incbin(color_map, COLOR_MAP);
 #incbin(color_bg, COLOR_TILES);
 #incbin(color_pal, COLOR_PAL);
+
+#incbin(cb601_map, CB601_MAP);
+#incchr_ex(cb601_bg, CB601_TILES, 0, 0, 20, 4, 0);
+#incpal(cb601_pal, CB601_TILES, 0, 1);
+
+#incbin(colorbleed_map, COLORBLEED_MAP);
+#incchr_ex(colorbleed_bg, COLORBLEED_TILES, 0, 0, 2, 3, 0);
+#incchr_ex(colorbleedchk_bg, COLORBLEEDCHK_TILES, 0, 0, 2, 3, 0);
+#incpal(colorbleed_pal, COLORBLEED_TILES, 0, 1);
+
+#incbin(SMPTE75_map, SMPTE75_MAP);
+#incchr_ex(SMPTE75_bg, SMPTE75_TILES, 0, 0, 20, 3, 0);
+#incpal(SMPTE75_pal, SMPTE75_TILES, 0, 1);
+#incpal(SMPTE100_pal, SMPTE100_TILES, 0, 1);
