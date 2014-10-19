@@ -63,7 +63,7 @@ void showHelp()
 		
 		if(refresh)
 		{
-			int row = 4;
+			int row = 5;
 			
 			set_font_pal(15);
 			put_string("HELP", HPOS+23, row++);
