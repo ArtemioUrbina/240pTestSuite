@@ -66,6 +66,14 @@ extern char grid320_240_map[];
 extern char grid512_224_map[];
 extern char grid512_240_map[];
 
+extern char linearity240_map[];
+extern int linearity240_bg[];
+extern int linearity240_pal[];
+
+extern char linearity224_map[];
+extern int linearity224_bg[];
+extern int linearity224_pal[];
+
 void DrawPluge()
 {
     int controller;   
@@ -98,8 +106,23 @@ void DrawPluge()
 		if (controller & JOY_I)
 		{
 			col ++;
-			set_color_rgb(1, 0, col, 0);
-			put_hex(col, 2, 2);
+			if(col > 3)
+				col = 0;
+			switch(col)
+			{
+				case 0:
+					set_color_rgb(1, 1, 1, 1);
+					break;
+				case 1:
+					set_color_rgb(1, 0, 0, 1);
+					break;
+				case 2:
+					set_color_rgb(1, 0, 1, 0);
+					break;
+				case 3:
+					set_color_rgb(1, 1, 0, 0);
+					break;
+			}
 		}
     }
 }
@@ -367,6 +390,10 @@ void DrawWhite()
     int read; 
     int redraw = 1;
 	int end = 0;
+	int color = 0;
+	int edit = 0;
+	int r = 7, g = 7, b = 7;
+	int sel = 0;
 
     while(!end)
     {   
@@ -380,6 +407,158 @@ void DrawWhite()
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1);  
          
+            redraw = 0;
+			disp_on();
+        }
+
+        controller = joytrg(0);
+        
+		if (controller & JOY_II)
+			end = 1;
+		if (!edit && controller & JOY_I)
+		{
+			color++;
+			if(color > 4)
+				color = 0;
+			switch(color)
+			{
+				case 0:
+					set_color_rgb(1, 7, 7, 7);
+					break;
+				case 1:
+					set_color_rgb(1, 0, 0, 0);
+					break;
+				case 2:
+					set_color_rgb(1, 7, 0, 0);
+					break;
+				case 3:
+					set_color_rgb(1, 0, 7, 0);
+					break;
+				case 4:
+					set_color_rgb(1, 0, 0, 7);
+					break;
+			}
+		}
+		
+		if (controller & JOY_SEL)
+		{
+			if(edit)
+			{
+				redraw = 1;
+				edit = 0;
+			}
+			else
+				edit = 1;
+		}
+			
+		if(color == 0 && edit)
+		{
+			if (controller & JOY_LEFT)
+			{
+				if(sel > 1)
+					sel --;
+				else
+					sel = 0;
+			}
+			
+			if (controller & JOY_RIGHT)
+			{
+				sel ++;
+				if(sel > 2)
+					sel = 2;
+			}
+			
+			if (controller & JOY_UP)
+			{
+				switch(sel)
+				{
+					case 0:
+						r++;
+						break;
+					case 1:
+						g++;
+						break;
+					case 2:
+						b++;
+						break;
+				}
+				
+				if(r > 7)
+					r = 7;
+				if(g > 7)
+					g = 7;
+				if(b > 7)
+					b = 7;
+			}
+			
+			if (controller & JOY_DOWN)
+			{
+				switch(sel)
+				{
+					case 0:
+						r--;
+						break;
+					case 1:
+						g--;
+						break;
+					case 2:
+						b--;
+						break;
+				}
+				
+				if(r < 0)
+					r = 0;
+				if(g < 0)
+					g = 0;
+				if(b < 0)
+					b = 0;
+			}
+			
+			set_font_pal(sel == 0 ? 15 : 14);
+			put_string("R:", 24, 4);
+			put_digit(r, 26, 4);
+			set_font_pal(sel == 1 ? 15 : 14);
+			put_string(" G:", 27, 4);
+			put_digit(g, 30, 4);
+			set_font_pal(sel == 2 ? 15 : 14);
+			put_string(" B:", 31, 4);
+			put_digit(b, 34, 4);
+			
+			set_color_rgb(1, r, g, b);
+		}
+    }
+}
+
+void DrawLinearity()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			if(Enabled240p)
+			{
+				set_map_data(linearity240_map, 40, 30);
+				set_tile_data(linearity240_bg);
+				load_tile(0x1000);
+				load_map(0, 0, 0, 0, 40, 30);
+				load_palette(0, linearity240_pal, 1);  
+			}
+			else
+			{
+				set_map_data(linearity224_map, 40, 28);
+				set_tile_data(linearity224_bg);
+				load_tile(0x1000);
+				load_map(0, 0, 0, 0, 40, 28);
+				load_palette(0, linearity224_pal, 1);  
+			}
+			
             redraw = 0;
 			disp_on();
         }

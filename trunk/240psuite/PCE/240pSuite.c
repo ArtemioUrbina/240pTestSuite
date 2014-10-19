@@ -300,6 +300,9 @@ void TestPatterns()
 				case 7:
 					DrawGrid512();
 					break;
+				case 8:
+					DrawLinearity();
+					break;
 				case 10:
 					DrawWhite();
 					break;
@@ -467,6 +470,7 @@ void DrawCredits()
 			setupFont();
 			set_color_rgb(241, 0, 6, 0);
 			set_color_rgb(209, 1, 6, 6);
+			set_color_rgb(210, 0, 0, 0);
 			
 			set_map_data(MB512_map, 64, 30);
 			set_tile_data(MB512_bg);
@@ -481,7 +485,7 @@ void DrawCredits()
 		
 		if(refresh)
 		{
-			int row = 6;
+			int row = 7;
 			
 			set_font_pal(15);
 			put_string("Code and Patterns:", HPOS+2, row++);
