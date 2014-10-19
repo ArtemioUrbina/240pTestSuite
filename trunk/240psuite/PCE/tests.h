@@ -25,3 +25,4 @@
  
 void DrawCheck();
 void DrawStripes();
+void DropShadow();

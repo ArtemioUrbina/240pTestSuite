@@ -39,6 +39,10 @@
 #define COLOR_TILES 	"graphics/color_DATA.bin"
 #define COLOR_PAL 		"graphics/color_PAL.bin"
 
+#define MOTOKO_MAP 		"graphics/motoko_BAT.bin"
+#define MOTOKO_TILES 	"graphics/motoko_DATA.bin"
+#define MOTOKO_PAL 		"graphics/motoko_PAL.bin"
+
 #define GRID320_240_MAP "graphics/grid320_240.fmp"
 #define GRID320_224_MAP "graphics/grid320_224.fmp"
 #define GRID256_240_MAP	"graphics/grid256_240.fmp"
@@ -64,6 +68,10 @@
 #incbin(MB512_map, MAIN_MAP_512);
 #incchr_ex(MB512_bg, MAIN_BG_512, 0, 0, 20, 10, 0);
 #incpal(MB512_pal, MAIN_BG_512, 0, 1);
+
+#incbin(motoko_map, MOTOKO_MAP);
+#incbin(motoko_bg, MOTOKO_TILES);
+#incbin(motoko_pal, MOTOKO_PAL);
 
 /*
 			TEST 
@@ -92,7 +100,7 @@
 #incbin(grid320_224_map, GRID320_224_MAP);
 
 #incbin(grid256_224_map, GRID256_224_MAP);
-#incbin(	, GRID256_240_MAP);
+#incbin(grid256_240_map	, GRID256_240_MAP);
 
 #incbin(grid512_224_map, GRID512_224_MAP);
 #incbin(grid512_240_map, GRID512_240_MAP);
