@@ -29,3 +29,6 @@ void DrawGrid512();
 void DrawWhite();
 void DrawPluge();
 void DrawColor();
+void DrawCB601();
+void DrawColorBleed();
+void DrawSMPTE();

@@ -37,6 +37,20 @@ extern char color_map[];
 extern int color_bg[];
 extern int color_pal[];
 
+extern char colorbleed_map[];
+extern int colorbleed_bg[];
+extern int colorbleedchk_bg[];
+extern int colorbleed_pal[];
+
+extern char SMPTE75_map[];
+extern int SMPTE75_bg[];
+extern int SMPTE75_pal[];
+extern int SMPTE100_pal[];
+
+extern char cb601_map[];
+extern int cb601_bg[];
+extern int cb601_pal[];
+
 extern char fs_map[];
 
 extern int white_bg[];
@@ -119,6 +133,139 @@ void DrawColor()
 			end = 1;
     }
 }
+
+void DrawCB601()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(cb601_map, 40, 30);
+			set_tile_data(cb601_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, cb601_pal, 1);  
+			
+            redraw = 0;
+			disp_on();
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+}
+
+void DrawColorBleed()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+	int check = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(colorbleed_map, 40, 30);
+			if(check)
+				set_tile_data(colorbleedchk_bg);
+			else
+				set_tile_data(colorbleed_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, colorbleed_pal, 1);  
+			
+            redraw = 0;
+			disp_on();
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+		if (controller & JOY_I)
+		{
+			if(check)
+			{
+				set_tile_data(colorbleed_bg);
+				load_tile(0x1000);
+				check = 0;
+			}
+			else
+			{
+				set_tile_data(colorbleedchk_bg);
+				load_tile(0x1000);
+				check = 1;
+			}
+		}
+    }
+}
+
+void DrawSMPTE()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+	int is100 = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(SMPTE75_map, 40, 30);			
+			set_tile_data(SMPTE75_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			if(is100)
+				load_palette(0, SMPTE100_pal, 1);  
+			else
+				load_palette(0, SMPTE75_pal, 1);  
+			
+            redraw = 0;
+			disp_on();
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
+		if (controller & JOY_I)
+		{
+			if(is100)
+			{
+				load_palette(0, SMPTE75_pal, 1);  
+				is100 = 0;
+			}
+			else
+			{
+				load_palette(0, SMPTE100_pal, 1);  
+				is100 = 1;
+			}
+		}
+    }
+}
+
 
 void DrawGrid256()
 {

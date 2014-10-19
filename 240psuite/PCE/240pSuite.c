@@ -289,6 +289,15 @@ void TestPatterns()
 				case 1:
 					DrawColor();
 					break;
+				case 2:
+					DrawSMPTE();
+					break;
+				case 3:
+					DrawCB601();
+					break;
+				case 4:
+					DrawColorBleed();
+					break;
 				case 5:
 					DrawGrid256();
 					break;
