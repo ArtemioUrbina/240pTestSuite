@@ -37,6 +37,10 @@ extern int vstripes_bg[];
 extern int check_bg[];
 extern int check_pal[];
 
+extern char motoko_map[];
+extern int motoko_bg[];
+extern int motoko_pal[];
+
 void DrawCheck()
 {
     int controller;   
@@ -109,5 +113,32 @@ void DrawStripes()
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
 		}
+    }
+}
+
+void DropShadow()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+            redraw = 0;
+			disp_on();
+        }
+
+        read = joy(0);
+        controller =  read & ~OldButtonsInternal;
+        OldButtonsInternal = read;
+        
+		if (controller & JOY_II)
+			end = 1;
     }
 }

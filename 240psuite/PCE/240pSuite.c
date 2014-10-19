@@ -141,6 +141,9 @@ void main()
 				case 0:
 					TestPatterns();
 					break;
+				case 1:
+					DropShadow();
+					break;
 				case 7:
 					DrawStripes();
 					break;
