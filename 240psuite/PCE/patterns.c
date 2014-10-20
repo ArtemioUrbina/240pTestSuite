@@ -25,54 +25,9 @@
  
 #include "huc.h"
 #include "patterns.h"
+#include "graphics.h"
 
 extern int Enabled240p;
-
-extern char pluge_map[];
-extern int pluge_bg[];
-extern int pluge_pal[];
-
-extern char color_map[];
-extern int color_bg[];
-extern int color_pal[];
-
-extern char colorbleed_map[];
-extern int colorbleed_bg[];
-extern int colorbleedchk_bg[];
-extern int colorbleed_pal[];
-
-extern char SMPTE75_map[];
-extern int SMPTE75_bg[];
-extern int SMPTE75_pal[];
-extern int SMPTE100_pal[];
-
-extern char cb601_map[];
-extern int cb601_bg[];
-extern int cb601_pal[];
-
-extern char fs_map[];
-
-extern int white_bg[];
-
-extern int check_pal[];
-
-extern int grid_bg[];
-extern int grid_pal[];
-
-extern char grid256_224_map[];
-extern char grid256_240_map[];
-extern char grid320_224_map[];
-extern char grid320_240_map[];
-extern char grid512_224_map[];
-extern char grid512_240_map[];
-
-extern char linearity240_map[];
-extern int linearity240_bg[];
-extern int linearity240_pal[];
-
-extern char linearity224_map[];
-extern int linearity224_bg[];
-extern int linearity224_pal[];
 
 void DrawPluge()
 {
@@ -93,6 +48,7 @@ void DrawPluge()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, pluge_pal, 1);  
+			Center224in240();
          
             redraw = 0;
 			disp_on();
@@ -141,6 +97,7 @@ void DrawColor()
         if(redraw)
         {
 			load_background(color_bg, color_pal, color_map, 40, 30);
+			Center224in240();
             redraw = 0;
 			disp_on();
         }
@@ -170,6 +127,7 @@ void DrawCB601()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, cb601_pal, 1);  
+			Center224in240();
 			
             redraw = 0;
 			disp_on();
@@ -204,6 +162,7 @@ void DrawColorBleed()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, colorbleed_pal, 1);  
+			Center224in240();
 			
             redraw = 0;
 			disp_on();
@@ -252,7 +211,8 @@ void DrawSMPTE()
 			if(is100)
 				load_palette(0, SMPTE100_pal, 1);  
 			else
-				load_palette(0, SMPTE75_pal, 1);  
+				load_palette(0, SMPTE75_pal, 1);
+			Center224in240();  
 			
             redraw = 0;
 			disp_on();
@@ -406,6 +366,7 @@ void DrawWhite()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1);  
+			Center224in240();
          
             redraw = 0;
 			disp_on();
@@ -568,4 +529,68 @@ void DrawLinearity()
 		if (controller & JOY_II)
 			end = 1;
     }
+}
+
+void DrawSharpness()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(sharpness_map, 40, 30);
+			set_tile_data(sharpness_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, sharpness_pal, 1);  
+			Center224in240();
+
+            redraw = 0;
+			disp_on();
+        }
+
+        controller = joytrg(0);
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+}
+
+void DrawGray()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+	set_xres(256, XRES_SHARP);
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(gray_map, 32, 30);
+			set_tile_data(gray_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 32, 30);
+			load_palette(0, gray_pal, 1);  
+			Center224in240();
+
+            redraw = 0;
+			disp_on();
+        }
+
+        controller = joytrg(0);
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+	set_xres(320, XRES_SHARP);
 }

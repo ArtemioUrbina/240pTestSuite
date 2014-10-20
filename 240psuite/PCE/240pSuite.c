@@ -52,15 +52,12 @@ void main()
 	Set240p();
 	
     while(1)
-    {   
+    {   	
 		vsync();
-		
+	
         if(redraw)
         {
-			init_satb();
-			satb_update();
-			
-			setupFont();
+			ResetVideo();
 
 			set_map_data(MB_map, 40, 30);
 			set_tile_data(MB_bg);
@@ -185,10 +182,7 @@ void TestPatterns()
 		
         if(redraw)
         {
-			init_satb();
-			satb_update();
-			
-			setupFont();
+			ResetVideo();
 			
 			set_map_data(MB_map, 40, 30);
 			set_tile_data(MB_bg);
@@ -303,8 +297,14 @@ void TestPatterns()
 				case 8:
 					DrawLinearity();
 					break;
+				case 9:
+					DrawGray();
+					break;
 				case 10:
 					DrawWhite();
+					break;
+				case 12:
+					DrawSharpness();
 					break;
 				case 14:
 					end = 1;
@@ -334,10 +334,7 @@ void Options()
 		
         if(redraw)
         {
-			init_satb();
-			satb_update();
-			
-			setupFont();
+			ResetVideo();
 			
 			set_map_data(MB_map, 40, 30);
 			set_tile_data(MB_bg);
@@ -460,14 +457,17 @@ void DrawCredits()
 	int refresh = 1;
 	int end = 0;
 
-	set_xres(512, XRES_SHARP);
     while(!end)
     {   
 		vsync();
 		
         if(redraw)
         {
-			setupFont();
+			disp_off();
+			set_xres(512, XRES_SHARP);
+			
+			ResetVideo();
+			
 			set_color_rgb(241, 0, 6, 0);
 			set_color_rgb(209, 1, 6, 6);
 			set_color_rgb(210, 0, 0, 0);
@@ -533,6 +533,43 @@ void DrawCredits()
         
 		if (controller & JOY_II)
 			end = 1;
+			
+		if (controller & JOY_SEL)
+		{
+			DrawN();
+			redraw = 1;
+		}
     }	
 	set_xres(320, XRES_SHARP);
+}
+
+void DrawN()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 1;
+
+	vsync();
+	disp_off();
+	set_xres(256, XRES_SHARP);
+    do
+    {   
+		vsync();
+		
+		end = 1;
+        if(redraw)
+        {
+			cls();
+			load_background(n_bg, n_pal, n_map, 32, 24);
+			Center224in240();
+            redraw = 0;
+			disp_on();
+        }
+
+        controller = joy(0);
+        
+		if(controller & JOY_SEL)
+			end = 0;
+    }while(!end);
 }

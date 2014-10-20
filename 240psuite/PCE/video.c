@@ -105,6 +105,21 @@ void Set240p()
 #endasm	
 }
 
+void Center224in240()
+{
+	if(!Enabled240p)
+		scroll(0, 0, 8, 0, 240, 0xC0);
+}
+
+void ResetVideo()
+{
+	init_satb();
+	satb_update();
+			
+	setupFont();
+	scroll(0, 0, 0, 0, 240, 0xC0);
+}
+
 /*
 	This is the typical setting in PC Engine games,
 	since it respects teh NTSC standard of starting 
