@@ -29,3 +29,5 @@ void Set239p();
 
 void SetNormalHMode();
 void SetArcadeMode();
+
+void spr_make(int spriteno, int spritex, int spritey, int spritepattern, int ctrl1, int ctrl2, int sprpal, int sprpri);

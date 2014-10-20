@@ -20,151 +20,96 @@
  */
  
 /*
-            DEFINES
-*/
-
-#define MAIN_BACKGROUND "graphics/mainbg.pcx"
-#define MAIN_BACKMAP 	"graphics/mainbg.fmp"
-
-#define MAIN_BG_512		"graphics/back512.pcx"
-#define MAIN_MAP_512 	"graphics/back512.fmp"
-
-#define FS_MAP 			"graphics/fullscreen.fmp"
-#define CHECK_TILES 	"graphics/check.pcx"
-
-#define PLUGE_MAP 		"graphics/pluge.fmp"
-#define PLUGE_TILES 	"graphics/pluge.pcx"
-
-#define COLOR_MAP 		"graphics/color_BAT.bin"
-#define COLOR_TILES 	"graphics/color_DATA.bin"
-#define COLOR_PAL 		"graphics/color_PAL.bin"
-
-#define MOTOKO_MAP 		"graphics/motoko_BAT.bin"
-#define MOTOKO_TILES 	"graphics/motoko_DATA.bin"
-#define MOTOKO_PAL 		"graphics/motoko_PAL.bin"
-
-#define GRID320_240_MAP "graphics/grid320_240.fmp"
-#define GRID320_224_MAP "graphics/grid320_224.fmp"
-#define GRID256_240_MAP	"graphics/grid256_240.fmp"
-#define GRID256_224_MAP	"graphics/grid256_224.fmp"
-#define GRID512_240_MAP	"graphics/grid512_240.fmp"
-#define GRID512_224_MAP	"graphics/grid512_224.fmp"
-#define GRID_TILES 		"graphics/grid.pcx"
-
-#define CB601_MAP 		"graphics/cb601.fmp"
-#define CB601_TILES 	"graphics/cb601.pcx"
-
-#define COLORBLEED_MAP 		"graphics/colorbleed.fmp"
-#define COLORBLEED_TILES 	"graphics/colorbleed.pcx"
-#define COLORBLEEDCHK_TILES "graphics/colorbleedcheck.pcx"
-
-#define SMPTE75_MAP 	"graphics/SMPTE75.fmp"
-#define SMPTE75_TILES 	"graphics/SMPTE75.pcx"
-#define SMPTE100_TILES 	"graphics/SMPTE100.pcx"
-
-#define GRAY_MAP 	"graphics/gray.fmp"
-#define GRAY_TILES 	"graphics/gray.pcx"
-
-#define N_MAP 		"graphics/N_BAT.bin"
-#define N_TILES 	"graphics/N_DATA.bin"
-#define N_PAL 		"graphics/N_PAL.bin"
-
-#define LINEARITY224_MAP 	"graphics/linearity224.fmp"
-#define LINEARITY224_TILES	"graphics/linearity224.pcx"
-#define LINEARITY240_MAP 	"graphics/linearity240.fmp"
-#define LINEARITY240_TILES	"graphics/linearity240.pcx"
-
-#define SHARPNESS_MAP 	"graphics/sharpness.fmp"
-#define SHARPNESS_TILES	"graphics/sharpness.pcx"
-
-
-#define FONT            "graphics/font.pcx"
-
-
-/*
             GRAPHICS
 */
 
-#incchr(my_font, FONT, 32, 3);
+#incchr(my_font, "graphics/font.pcx", 32, 3);
 
-#incbin(MB_map, MAIN_BACKMAP);
-#incchr_ex(MB_bg, MAIN_BACKGROUND, 0, 0, 20, 7, 0);
-#incpal(MB_pal, MAIN_BACKGROUND, 0, 1);
+#incbin(MB_map, "graphics/mainbg.fmp");
+#incchr_ex(MB_bg, "graphics/mainbg.pcx", 0, 0, 20, 7, 0);
+#incpal(MB_pal, "graphics/mainbg.pcx", 0, 1);
 
-#incbin(MB512_map, MAIN_MAP_512);
-#incchr_ex(MB512_bg, MAIN_BG_512, 0, 0, 20, 8, 0);
-#incpal(MB512_pal, MAIN_BG_512, 0, 1);
+#incbin(MB512_map, "graphics/back512.fmp");
+#incchr_ex(MB512_bg, "graphics/back512.pcx", 0, 0, 4, 36, 0);
+#incpal(MB512_pal, "graphics/back512.pcx", 0, 1);
 
-#incbin(motoko_map, MOTOKO_MAP);
-#incbin(motoko_bg, MOTOKO_TILES);
-#incbin(motoko_pal, MOTOKO_PAL);
+#incbin(motoko_map, "graphics/motoko_BAT.bin");
+#incbin(motoko_bg, "graphics/motoko_DATA.bin");
+#incbin(motoko_pal, "graphics/motoko_PAL.bin");
 
-#incbin(n_map, N_MAP);
-#incbin(n_bg, N_TILES);
-#incbin(n_pal, N_PAL);
+#incbin(n_map, "graphics/N_BAT.bin");
+#incbin(n_bg, "graphics/N_DATA.bin");
+#incbin(n_pal, "graphics/N_PAL.bin");
 
 /*
 			TEST 
 */
 
-#incbin(fs_map, FS_MAP);
-#incchr_ex(check_bg, CHECK_TILES, 0, 0, 1, 1, 0);
-#incpal(check_pal, CHECK_TILES, 0, 1);
+#incbin(fs_map, "graphics/fullscreen.fmp");
+#incchr_ex(check_bg, "graphics/check.pcx", 0, 0, 1, 1, 0);
+#incpal(check_pal, "graphics/check.pcx", 0, 1);
 
-#incchr_ex(hstripes_bg, CHECK_TILES, 8, 0, 1, 1, 0);
-#incchr_ex(vstripes_bg, CHECK_TILES, 0, 8, 1, 1, 0);
-#incchr_ex(white_bg, CHECK_TILES, 8, 8, 1, 1, 0);
+#incchr_ex(hstripes_bg, "graphics/check.pcx", 8, 0, 1, 1, 0);
+#incchr_ex(vstripes_bg, "graphics/check.pcx", 0, 8, 1, 1, 0);
+#incchr_ex(white_bg, "graphics/check.pcx", 8, 8, 1, 1, 0);
 
 /*
 			PATTERNS
 */
 
-#incbin(pluge_map, PLUGE_MAP);
-#incchr_ex(pluge_bg, PLUGE_TILES, 0, 0, 20, 3, 0);
-#incpal(pluge_pal, PLUGE_TILES, 0, 1);
+#incbin(pluge_map, "graphics/pluge.fmp");
+#incchr_ex(pluge_bg, "graphics/pluge.pcx", 0, 0, 2, 23, 0);
+#incpal(pluge_pal, "graphics/pluge.pcx", 0, 1);
 
-#incchr_ex(grid_bg, GRID_TILES, 0, 0, 2, 4, 0);
-#incpal(grid_pal, GRID_TILES, 0, 1);
+#incchr_ex(grid_bg, "graphics/grid.pcx", 0, 0, 2, 4, 0);
+#incpal(grid_pal, "graphics/grid.pcx", 0, 1);
 
-#incbin(grid320_240_map, GRID320_240_MAP);
-#incbin(grid320_224_map, GRID320_224_MAP);
+#incbin(grid320_240_map, "graphics/grid320_240.fmp");
+#incbin(grid320_224_map, "graphics/grid320_224.fmp");
 
-#incbin(grid256_224_map, GRID256_224_MAP);
-#incbin(grid256_240_map	, GRID256_240_MAP);
+#incbin(grid256_224_map, "graphics/grid256_224.fmp");
+#incbin(grid256_240_map	, "graphics/grid256_240.fmp");
 
-#incbin(grid512_224_map, GRID512_224_MAP);
-#incbin(grid512_240_map, GRID512_240_MAP);
+#incbin(grid512_224_map, "graphics/grid512_224.fmp");
+#incbin(grid512_240_map, "graphics/grid512_240.fmp");
 
-#incbin(color_map, COLOR_MAP);
-#incbin(color_bg, COLOR_TILES);
-#incbin(color_pal, COLOR_PAL);
+#incbin(color_map, "graphics/color_BAT.bin");
+#incbin(color_bg, "graphics/color_DATA.bin");
+#incbin(color_pal, "graphics/color_PAL.bin");
 
-#incbin(gray_map, GRAY_MAP);
-#incchr_ex(gray_bg, GRAY_TILES, 0, 0, 4, 2, 0);
-#incpal(gray_pal, GRAY_TILES, 0, 1);
+#incbin(gray_map, "graphics/gray.fmp");
+#incchr_ex(gray_bg, "graphics/gray.pcx", 0, 0, 4, 2, 0);
+#incpal(gray_pal, "graphics/gray.pcx", 0, 1);
 
-#incbin(cb601_map, CB601_MAP);
-#incchr_ex(cb601_bg, CB601_TILES, 0, 0, 20, 4, 0);
-#incpal(cb601_pal, CB601_TILES, 0, 1);
+#incbin(cb601_map, "graphics/cb601.fmp");
+#incchr_ex(cb601_bg, "graphics/cb601.pcx", 0, 0, 2, 34, 0);
+#incpal(cb601_pal, "graphics/cb601.pcx", 0, 1);
 
-#incbin(colorbleed_map, COLORBLEED_MAP);
-#incchr_ex(colorbleed_bg, COLORBLEED_TILES, 0, 0, 2, 3, 0);
-#incchr_ex(colorbleedchk_bg, COLORBLEEDCHK_TILES, 0, 0, 2, 3, 0);
-#incpal(colorbleed_pal, COLORBLEED_TILES, 0, 1);
+#incbin(colorbleed_map, "graphics/colorbleed.fmp");
+#incchr_ex(colorbleed_bg, "graphics/colorbleed.pcx", 0, 0, 2, 3, 0);
+#incchr_ex(colorbleedchk_bg, "graphics/colorbleedcheck.pcx", 0, 0, 2, 3, 0);
+#incpal(colorbleed_pal, "graphics/colorbleed.pcx", 0, 1);
 
-#incbin(SMPTE75_map, SMPTE75_MAP);
-#incchr_ex(SMPTE75_bg, SMPTE75_TILES, 0, 0, 20, 3, 0);
-#incpal(SMPTE75_pal, SMPTE75_TILES, 0, 1);
-#incpal(SMPTE100_pal, SMPTE100_TILES, 0, 1);
+#incbin(SMPTE75_map, "graphics/SMPTE75.fmp");
+#incchr_ex(SMPTE75_bg, "graphics/SMPTE75.pcx", 0, 0, 2, 27, 0);
+#incpal(SMPTE75_pal, "graphics/SMPTE75.pcx", 0, 1);
+#incpal(SMPTE100_pal, "graphics/SMPTE100.pcx", 0, 1);
 
-#incbin(linearity240_map, LINEARITY240_MAP);
-#incchr_ex(linearity240_bg, LINEARITY240_TILES, 0, 0, 20, 10, 0);
-#incpal(linearity240_pal, LINEARITY240_TILES, 0, 1);
+#incbin(linearity240_map, "graphics/linearity240.fmp");
+#incchr_ex(linearity240_bg, "graphics/linearity240.pcx", 0, 0, 4, 49, 0);
+#incpal(linearity240_pal, "graphics/linearity240.pcx", 0, 1);
 
-#incbin(linearity224_map, LINEARITY224_MAP);
-#incchr_ex(linearity224_bg, LINEARITY224_TILES, 0, 0, 20, 8, 0);
-#incpal(linearity224_pal, LINEARITY224_TILES, 0, 1);
+#incbin(linearity224_map, "graphics/linearity224.fmp");
+#incchr_ex(linearity224_bg, "graphics/linearity224.pcx", 0, 0, 2, 71, 0);
+#incpal(linearity224_pal, "graphics/linearity224.pcx", 0, 1);
 
-#incbin(sharpness_map, SHARPNESS_MAP);
-#incchr_ex(sharpness_bg, SHARPNESS_TILES, 0, 0, 20, 11, 0);
-#incpal(sharpness_pal, SHARPNESS_TILES, 0, 1);
+#incbin(sharpness_map, "graphics/sharpness.fmp");
+#incchr_ex(sharpness_bg, "graphics/sharpness.pcx", 0, 0, 4, 51, 0);
+#incpal(sharpness_pal, "graphics/sharpness.pcx", 0, 1);
+
+/*
+		SPRITES
+*/
+
+#incspr(SD_sp, "graphics/SD.pcx", 0, 0, 4, 7);
+#incpal(SD_pal, "graphics/SD.pcx", 0, 1);

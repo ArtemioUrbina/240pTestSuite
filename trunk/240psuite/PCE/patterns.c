@@ -476,14 +476,14 @@ void DrawWhite()
 			}
 			
 			set_font_pal(sel == 0 ? 15 : 14);
-			put_string("R:", 24, 4);
-			put_digit(r, 26, 4);
+			put_string("R:", 24, 2);
+			put_digit(r, 26, 2);
 			set_font_pal(sel == 1 ? 15 : 14);
-			put_string(" G:", 27, 4);
-			put_digit(g, 30, 4);
+			put_string(" G:", 27, 2);
+			put_digit(g, 30, 2);
 			set_font_pal(sel == 2 ? 15 : 14);
-			put_string(" B:", 31, 4);
-			put_digit(b, 34, 4);
+			put_string(" B:", 31, 2);
+			put_digit(b, 34, 2);
 			
 			set_color_rgb(1, r, g, b);
 		}
