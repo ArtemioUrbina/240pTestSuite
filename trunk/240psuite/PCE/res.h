@@ -62,10 +62,20 @@
 #define SMPTE75_TILES 	"graphics/SMPTE75.pcx"
 #define SMPTE100_TILES 	"graphics/SMPTE100.pcx"
 
+#define GRAY_MAP 	"graphics/gray.fmp"
+#define GRAY_TILES 	"graphics/gray.pcx"
+
+#define N_MAP 		"graphics/N_BAT.bin"
+#define N_TILES 	"graphics/N_DATA.bin"
+#define N_PAL 		"graphics/N_PAL.bin"
+
 #define LINEARITY224_MAP 	"graphics/linearity224.fmp"
 #define LINEARITY224_TILES	"graphics/linearity224.pcx"
 #define LINEARITY240_MAP 	"graphics/linearity240.fmp"
 #define LINEARITY240_TILES	"graphics/linearity240.pcx"
+
+#define SHARPNESS_MAP 	"graphics/sharpness.fmp"
+#define SHARPNESS_TILES	"graphics/sharpness.pcx"
 
 
 #define FONT            "graphics/font.pcx"
@@ -88,6 +98,10 @@
 #incbin(motoko_map, MOTOKO_MAP);
 #incbin(motoko_bg, MOTOKO_TILES);
 #incbin(motoko_pal, MOTOKO_PAL);
+
+#incbin(n_map, N_MAP);
+#incbin(n_bg, N_TILES);
+#incbin(n_pal, N_PAL);
 
 /*
 			TEST 
@@ -125,6 +139,10 @@
 #incbin(color_bg, COLOR_TILES);
 #incbin(color_pal, COLOR_PAL);
 
+#incbin(gray_map, GRAY_MAP);
+#incchr_ex(gray_bg, GRAY_TILES, 0, 0, 4, 2, 0);
+#incpal(gray_pal, GRAY_TILES, 0, 1);
+
 #incbin(cb601_map, CB601_MAP);
 #incchr_ex(cb601_bg, CB601_TILES, 0, 0, 20, 4, 0);
 #incpal(cb601_pal, CB601_TILES, 0, 1);
@@ -146,3 +164,7 @@
 #incbin(linearity224_map, LINEARITY224_MAP);
 #incchr_ex(linearity224_bg, LINEARITY224_TILES, 0, 0, 20, 8, 0);
 #incpal(linearity224_pal, LINEARITY224_TILES, 0, 1);
+
+#incbin(sharpness_map, SHARPNESS_MAP);
+#incchr_ex(sharpness_bg, SHARPNESS_TILES, 0, 0, 20, 11, 0);
+#incpal(sharpness_pal, SHARPNESS_TILES, 0, 1);

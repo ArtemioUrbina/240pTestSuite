@@ -25,20 +25,9 @@
  
 #include "huc.h"
 #include "patterns.h"
+#include "graphics.h"
 
 extern int Enabled240p;
-
-extern char fs_map[];
-
-extern int hstripes_bg[];
-extern int vstripes_bg[];
-
-extern int check_bg[];
-extern int check_pal[];
-
-extern char motoko_map[];
-extern int motoko_bg[];
-extern int motoko_pal[];
 
 void DrawCheck()
 {

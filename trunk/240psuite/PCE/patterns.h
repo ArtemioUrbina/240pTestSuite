@@ -32,3 +32,6 @@ void DrawColor();
 void DrawCB601();
 void DrawColorBleed();
 void DrawSMPTE();
+void DrawLinearity();
+void DrawSharpness();
+void DrawGray();
