@@ -89,3 +89,6 @@ extern int check_pal[];
 extern char motoko_map[];
 extern int motoko_bg[];
 extern int motoko_pal[];
+
+extern int SD_sp[];
+extern int SD_pal[];

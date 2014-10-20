@@ -65,6 +65,7 @@ void main()
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, MB_pal, 1);  
            
+			DrawSP();
             redraw = 0;
 			refresh = 1;
 			disp_on();
@@ -129,6 +130,7 @@ void main()
 		if (controller & JOY_I)
 		{
 			disp_off();
+			ResetVideo();
 			switch(sel)
 			{
 				case 0:
@@ -190,6 +192,7 @@ void TestPatterns()
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, MB_pal, 1);  
          
+			DrawSP();
 			refresh = 1;
             redraw = 0;
 			disp_on();
@@ -268,6 +271,7 @@ void TestPatterns()
 		if (controller & JOY_I)
 		{
 			disp_off();
+			ResetVideo();
 			switch(sel)
 			{
 				case 0:
@@ -448,6 +452,36 @@ void Options()
     }
 }
 
+void DrawN()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 1;
+
+	vsync();
+	disp_off();
+	set_xres(256, XRES_SHARP);
+    do
+    {   
+		vsync();
+		
+		end = 1;
+        if(redraw)
+        {
+			cls();
+			load_background(n_bg, n_pal, n_map, 32, 22);
+			scroll(0, 0, -32, 0, 240, 0xC0);
+            redraw = 0;
+			disp_on();
+        }
+
+        controller = joy(0);
+        
+		if(controller & JOY_SEL)
+			end = 0;
+    }while(!end);
+}
 
 void DrawCredits()
 {
@@ -543,33 +577,26 @@ void DrawCredits()
 	set_xres(320, XRES_SHARP);
 }
 
-void DrawN()
+void DrawSP()
 {
-    int controller;   
-    int read; 
-    int redraw = 1;
-	int end = 1;
+	int x = 210;
+	int y = 84;
+	int vram = 0x5000;
+	int pos = 0;
+	int row = 0;
+	int count = 0;
+	
+	init_satb();
+	load_palette(16, SD_pal, 1);
+	load_vram(0x5000, SD_sp, 0x700);
 
-	vsync();
-	disp_off();
-	set_xres(256, XRES_SHARP);
-    do
-    {   
-		vsync();
-		
-		end = 1;
-        if(redraw)
-        {
-			cls();
-			load_background(n_bg, n_pal, n_map, 32, 24);
-			Center224in240();
-            redraw = 0;
-			disp_on();
-        }
-
-        controller = joy(0);
-        
-		if(controller & JOY_SEL)
-			end = 0;
-    }while(!end);
+	for(row = 0; row < 7; row++)
+	{
+		for(pos = 0; pos < 4; pos++)
+		{
+			spr_make(count, x+pos*16, y+row*16, vram+0x40*count, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			count ++;
+		}
+	}
+	satb_update();
 }

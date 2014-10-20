@@ -231,3 +231,15 @@ void SetNormalHMode()
 	rts
 #endasm	
 }
+
+/* from obeybrew.com */
+void spr_make(int spriteno, int spritex, int spritey, int spritepattern, int ctrl1, int ctrl2, int sprpal, int sprpri)
+{
+	spr_set(spriteno);
+	spr_x(spritex);
+	spr_y(spritey);
+	spr_pattern(spritepattern);
+	spr_ctrl(ctrl1, ctrl2);
+	spr_pal(sprpal);
+	spr_pri(sprpri);
+}
