@@ -26,3 +26,4 @@
 void DrawCheck();
 void DrawStripes();
 void DropShadow();
+void scrollTest();

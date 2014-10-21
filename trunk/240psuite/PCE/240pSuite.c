@@ -146,6 +146,9 @@ void main()
 				case 1:
 					DropShadow();
 					break;
+				case 5:
+					ScrollTest();
+					break;
 				case 7:
 					DrawStripes();
 					break;
@@ -374,43 +377,43 @@ void Options()
             int row = 14;
             
             set_font_pal(sel == 0 ? 15 : 14);
-            put_string("Vertical Resolution:", HPOS+5, row);
+            put_string("Vertical Resolution:", HPOS+2, row);
 			if(Enabled240p)
-				put_string("240p", HPOS+30, row);
+				put_string("240p", HPOS+27, row);
 			else
-				put_string("224p", HPOS+30, row);
+				put_string("224p", HPOS+27, row);
 			row++;
 			
 			if(Enabled240p)
 				set_font_pal(sel == 1 ? 15 : 14);
 			else
 				set_font_pal(sel == 1 ? 13 : 12);
-			put_string("Start at line:", HPOS+7, row);
+			put_string("Start at line:", HPOS+4, row);
 			if(UseDefault)
-				put_string("24", HPOS+30, row);
+				put_string("24 [Standard use in games]", HPOS+27, row);
 			else
-				put_string("22", HPOS+30, row);
+				put_string("22 [Full 240 visible lines]", HPOS+27, row);
 			
 			row++;
 			
 			set_font_pal(sel == 2 ? 15 : 14);
-            put_string("Composite filter:", HPOS+5, row);
+            put_string("Composite filter:", HPOS+2, row);
 			if(EnabledSoft)
-				put_string("On ", HPOS+30, row);
+				put_string("On ", HPOS+27, row);
 			else
-				put_string("Off", HPOS+30, row);
+				put_string("Off", HPOS+27, row);
 			row++;
 			
 			set_font_pal(sel == 3 ? 15 : 14);
-            put_string("Composite B&W:", HPOS+5, row);
+            put_string("Composite B&W:", HPOS+2, row);
 			if(Enabled_C_BW)
-				put_string("On ", HPOS+30, row);
+				put_string("On ", HPOS+27, row);
 			else
-				put_string("Off", HPOS+30, row);
+				put_string("Off", HPOS+27, row);
 			row++;
 			
 			set_font_pal(sel == 4 ? 15 : 14);
-            put_string("Back to Main Menu", HPOS+5, ++row);
+            put_string("Back to Main Menu", HPOS+2, ++row);
 
             refresh = 0;
         }
@@ -668,7 +671,7 @@ void DrawSP()
 	{
 		for(pos = 0; pos < 4; pos++)
 		{
-			spr_make(count, x+pos*16, y+row*16, vram+0x40*count, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			spr_make(count, pos*16+x, row*16+y, 0x40*count+vram, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
 			count ++;
 		}
 	}

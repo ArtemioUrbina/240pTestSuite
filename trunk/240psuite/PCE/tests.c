@@ -129,3 +129,114 @@ void DropShadow()
 			end = 1;
     }
 }
+
+void SwapPalette(int pal, int index)
+{
+	int pos;
+	int tmpcol1 = 0;
+	int tmpcol2 = 0;
+	int tmpcol3 = 0;
+	int tmpcol4 = 0;
+	
+	pos = index+pal*16;
+	tmpcol1 = get_color(pos);
+	tmpcol2 = get_color(pos+1);
+	tmpcol3 = get_color(pos+2);
+	tmpcol4 = get_color(pos+3);
+		
+	set_color(pos, tmpcol4);
+	set_color(pos+1, tmpcol1);
+	set_color(pos+2, tmpcol2);
+	set_color(pos+3, tmpcol3);		
+}
+
+void ScrollTest()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+	int x1 = 0;
+	int x2 = 0;
+	int x3 = 0;
+	int x4 = 0;
+	int pause = 0;
+	int dir = 1;
+	int spd = 1;
+	int colswap = 0;
+
+	set_screen_size(0);
+	scroll(0, 0, 0, 0, 76, 0xC0);
+	scroll(1, 0, 76, 76, 160, 0xC0);
+	scroll(2, 0, 160, 160, 216, 0xC0);
+	scroll(3, 0, 216, 216, 240, 0xC0);
+	
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
+			
+			Center224in240();
+            redraw = 0;
+			disp_on();
+        }
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_UP)
+			spd++;
+		
+		if (controller & JOY_DOWN)
+			spd --;
+			
+		if(spd > 10)
+			spd = 10;
+			
+		if(spd < 0)
+			spd = 0;
+        
+		if (controller & JOY_II)
+			end = 1;
+			
+		if (controller & JOY_I)
+		{
+			if(pause)
+				pause = 0;
+			else
+				pause = 1;
+		}
+		
+		if(colswap == 60)
+		{
+			SwapPalette(4, 2);
+			SwapPalette(6, 3);
+			
+			colswap = 0;
+		}
+		colswap++;
+		
+		if (controller & JOY_SEL)
+			dir *= -1;
+		
+		if(!pause)
+		{
+			x1 += 1*spd*dir;
+			x2 += 2*spd*dir;
+			x3 += 3*spd*dir;
+			x4 += 4*spd*dir;
+		}
+		
+		scroll(0, x1, 0, 0, 76, 0xC0);
+		scroll(1, x2, 76, 76, 160, 0xC0);
+		scroll(2, x3, 160, 160, 216, 0xC0);
+		scroll(3, x4, 216, 216, 240, 0xC0);
+    }
+	scroll(0, 0, 0, 0, 76, 0xC0);
+	scroll(1, 0, 76, 76, 160, 0xC0);
+	scroll(2, 0, 160, 160, 216, 0xC0);
+	scroll(3, 0, 216, 216, 240, 0xC0);
+	set_screen_size(1);
+}

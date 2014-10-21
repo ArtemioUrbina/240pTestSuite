@@ -33,10 +33,6 @@
 #incchr_ex(MB512_bg, "graphics/back512.pcx", 0, 0, 4, 36, 0);
 #incpal(MB512_pal, "graphics/back512.pcx", 0, 1);
 
-#incbin(motoko_map, "graphics/motoko_BAT.bin");
-#incbin(motoko_bg, "graphics/motoko_DATA.bin");
-#incbin(motoko_pal, "graphics/motoko_PAL.bin");
-
 #incbin(n_map, "graphics/N_BAT.bin");
 #incbin(n_bg, "graphics/N_DATA.bin");
 #incbin(n_pal, "graphics/N_PAL.bin");
@@ -52,6 +48,14 @@
 #incchr_ex(hstripes_bg, "graphics/check.pcx", 8, 0, 1, 1, 0);
 #incchr_ex(vstripes_bg, "graphics/check.pcx", 0, 8, 1, 1, 0);
 #incchr_ex(white_bg, "graphics/check.pcx", 8, 8, 1, 1, 0);
+
+#incbin(motoko_map, "graphics/motoko_BAT.bin");
+#incbin(motoko_bg, "graphics/motoko_DATA.bin");
+#incbin(motoko_pal, "graphics/motoko_PAL.bin");
+
+#incbin(sonic_map, "graphics/sonic_BAT.bin");
+#incbin(sonic_bg, "graphics/sonic_DATA.bin");
+#incbin(sonic_pal, "graphics/sonic_PAL.bin");
 
 /*
 			PATTERNS
