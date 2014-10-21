@@ -24,15 +24,22 @@
  */
  
 #include "huc.h"
+#include "font.h"
 
 extern char my_font[];
 
 void setupFont()
 {	
     load_font(my_font, 96);
-    set_font_pal(14);        
-    set_color_rgb(225, 255, 255, 255);
-    set_color_rgb(226, 0, 0, 0);
-    set_color_rgb(241, 255, 0, 0);
-    set_color_rgb(242, 0, 0, 0);
+    set_font_pal(14);
+	
+	SetFontColors(14, RGB(3, 3, 3), RGB(7, 7, 7), RGB(0, 0, 0));
+	SetFontColors(15, RGB(3, 3, 3), RGB(7, 0, 0), RGB(0, 0, 0));
+}
+
+void SetFontColors(int palette, int back, int text, int shade)
+{
+	set_color(palette*16+1, back);    
+	set_color(palette*16+2, text);  
+	set_color(palette*16+3, shade);  
 }

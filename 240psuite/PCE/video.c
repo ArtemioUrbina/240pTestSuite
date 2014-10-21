@@ -27,6 +27,12 @@
 
 extern int Enabled240p;
 
+int xres_flags = XRES_SOFT;
+int Enabled240p = 0;
+int UseDefault = 0;
+int EnabledSoft = 1;
+int Enabled_C_BW = 0;
+
 void Set224p()
 {
 	Enabled240p = 0;

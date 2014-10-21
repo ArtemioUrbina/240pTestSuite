@@ -26,8 +26,7 @@
 #include "huc.h"
 #include "patterns.h"
 #include "graphics.h"
-
-extern int Enabled240p;
+#include "video.h"
 
 void DrawPluge()
 {
@@ -246,7 +245,7 @@ void DrawGrid256()
     int redraw = 1;
 	int end = 0;
 
-	set_xres(256, XRES_SHARP);
+	set_xres(256, xres_flags);
     while(!end)
     {   
 		vsync();
@@ -271,7 +270,7 @@ void DrawGrid256()
 		if (controller & JOY_II)
 			end = 1;
     }
-	set_xres(320, XRES_SHARP);
+	set_xres(320, xres_flags);
 }
 
 void DrawGrid320()
@@ -281,7 +280,7 @@ void DrawGrid320()
     int redraw = 1;
 	int end = 0;
 
-	set_xres(320, XRES_SHARP);
+	set_xres(320, xres_flags);
     while(!end)
     {   
 		vsync();
@@ -306,7 +305,7 @@ void DrawGrid320()
 		if (controller & JOY_II)
 			end = 1;
     }
-	set_xres(320, XRES_SHARP);
+	set_xres(320, xres_flags);
 }
 
 void DrawGrid512()
@@ -316,7 +315,7 @@ void DrawGrid512()
     int redraw = 1;
 	int end = 0;
 
-	set_xres(512, XRES_SHARP);
+	set_xres(512, xres_flags);
     while(!end)
     {   
 		vsync();
@@ -341,7 +340,7 @@ void DrawGrid512()
 		if (controller & JOY_II)
 			end = 1;
     }
-	set_xres(320, XRES_SHARP);
+	set_xres(320, xres_flags);
 }
 
 void DrawWhite()
@@ -569,7 +568,7 @@ void DrawGray()
     int redraw = 1;
 	int end = 0;
 
-	set_xres(256, XRES_SHARP);
+	set_xres(256, xres_flags);
     while(!end)
     {   
 		vsync();
@@ -592,5 +591,5 @@ void DrawGray()
 		if (controller & JOY_II)
 			end = 1;
     }
-	set_xres(320, XRES_SHARP);
+	set_xres(320, xres_flags);
 }

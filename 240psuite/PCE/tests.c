@@ -26,8 +26,7 @@
 #include "huc.h"
 #include "patterns.h"
 #include "graphics.h"
-
-extern int Enabled240p;
+#include "video.h"
 
 void DrawCheck()
 {
@@ -46,7 +45,9 @@ void DrawCheck()
 			set_tile_data(check_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, check_pal, 1);  
+			load_palette(0, check_pal, 1); 
+
+			Center224in240(); 
          
             redraw = 0;
 			disp_on();
@@ -78,6 +79,8 @@ void DrawStripes()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1);  
+			
+			Center224in240();
          
             redraw = 0;
 			disp_on();
@@ -114,6 +117,8 @@ void DropShadow()
         if(redraw)
         {
 			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+			
+			Center224in240();
             redraw = 0;
 			disp_on();
         }
