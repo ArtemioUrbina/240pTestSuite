@@ -196,6 +196,7 @@ void DrawSMPTE()
     int redraw = 1;
 	int end = 0;
 	int is100 = 0;
+	int text = 0;
 
     while(!end)
     {   
@@ -203,7 +204,7 @@ void DrawSMPTE()
 		
         if(redraw)
         {
-			set_map_data(SMPTE75_map, 40, 30);			
+			set_map_data(SMPTE75_map, 40, 30);	
 			set_tile_data(SMPTE75_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
@@ -227,13 +228,20 @@ void DrawSMPTE()
 			{
 				load_palette(0, SMPTE75_pal, 1);  
 				is100 = 0;
+				put_string(" 75%", 30, 2);
+				text = 30;
 			}
 			else
 			{
 				load_palette(0, SMPTE100_pal, 1);  
 				is100 = 1;
+				put_string("100%", 30, 2);
+				text = 30;
 			}
 		}
+		
+		if(--text == 0)
+			redraw = 1;
     }
 }
 

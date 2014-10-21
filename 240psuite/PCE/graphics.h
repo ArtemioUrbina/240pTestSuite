@@ -80,6 +80,9 @@ extern char gray_map[];
 extern int gray_bg[];
 extern int gray_pal[];
 
+
+/*---------------------*/
+
 extern int hstripes_bg[];
 extern int vstripes_bg[];
 
@@ -92,3 +95,8 @@ extern int motoko_pal[];
 
 extern int SD_sp[];
 extern int SD_pal[];
+
+extern char sonic_map[];
+extern int sonic_bg[];
+extern int sonic_pal[];
+
