@@ -23,6 +23,14 @@
  
  */
  
+#define XRES_BW 0x80
+
+extern int xres_flags;
+extern int Enabled240p;
+extern int UseDefault;
+extern int EnabledSoft;
+extern int Enabled_C_BW;
+ 
 void Set224p();
 void Set240p();
 void Set239p();

@@ -25,6 +25,7 @@
  
 #include "huc.h"
 #include "font.h"
+#include "video.h"
 
 #define HPOS 6
 
@@ -40,7 +41,6 @@ void showHelp()
 	int refresh = 1;
 	int end = 0;
 
-	set_xres(512, XRES_SHARP);
     while(!end)
     {   
 		vsync();
@@ -48,13 +48,16 @@ void showHelp()
         if(redraw)
         {
 			setupFont();
-			set_color_rgb(241, 0, 6, 0);
+			set_xres(512, xres_flags);
+			SetFontColors(15, RGB(2, 2, 2), RGB(0, 6, 0), RGB(0, 0, 0));
 			
 			set_map_data(MB512_map, 64, 30);
 			set_tile_data(MB512_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 64, 30);
 			load_palette(0, MB512_pal, 1);  
+			
+			Center224in240();
 			
             redraw = 0;
 			refresh = 1;
@@ -96,5 +99,5 @@ void showHelp()
 		if (controller & JOY_II)
 			end = 1;
     }	
-	set_xres(320, XRES_SHARP);
+	set_xres(320, xres_flags);
 }

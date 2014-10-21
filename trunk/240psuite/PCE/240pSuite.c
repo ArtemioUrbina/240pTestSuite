@@ -33,9 +33,7 @@
 void TestPatterns();
 void Options();
 void DrawCredits();
-
-int Enabled240p = 0;
-int UseDefault = 0;
+void DisplaySystemInfo();
 
 #define HPOS 5
 
@@ -48,7 +46,7 @@ void main()
     int sel = 0;
 
 	disp_off();
-	set_xres(320, XRES_SHARP);
+	set_xres(320, xres_flags);
 	Set240p();
 	
     while(1)
@@ -65,11 +63,18 @@ void main()
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, MB_pal, 1);  
            
+			init_satb();
 			DrawSP();
+			satb_update();
+			
+			Center224in240();
+			
             redraw = 0;
 			refresh = 1;
 			disp_on();
         }
+		
+		set_font_pal(15);
 		
 		if(refresh)
         {
@@ -105,6 +110,8 @@ void main()
             put_string("Help", HPOS, ++row);
 			set_font_pal(sel == 13 ? 15 : 14);
             put_string("Credits", HPOS, ++row);
+			
+			DisplaySystemInfo();
 
             refresh = 0;
         }
@@ -191,8 +198,13 @@ void TestPatterns()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, MB_pal, 1);  
+			
+			Center224in240();
          
+			init_satb();
 			DrawSP();
+			satb_update();
+
 			refresh = 1;
             redraw = 0;
 			disp_on();
@@ -242,6 +254,8 @@ void TestPatterns()
 			
 			set_font_pal(sel == 14 ? 15 : 14);
             put_string("Back to Main Menu", HPOS, ++row);
+			
+			DisplaySystemInfo();
 
             refresh = 0;
         }
@@ -331,20 +345,24 @@ void Options()
     int sel = 0;
 	int end = 0;
 
-	disp_off();
     while(!end)
     {   
 		vsync();
 		
         if(redraw)
         {
+			set_xres(512, xres_flags);
 			ResetVideo();
 			
-			set_map_data(MB_map, 40, 30);
-			set_tile_data(MB_bg);
+			SetFontColors(12, RGB(3, 3, 3), RGB(4, 4, 4), RGB(0, 0, 0));
+			SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), RGB(0, 0, 0));
+			set_map_data(MB512_map, 64, 30);
+			set_tile_data(MB512_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, MB_pal, 1);  
+			load_map(0, 0, 0, 0, 64, 30);
+			load_palette(0, MB512_pal, 1);  
+			
+			Center224in240();
          
 			refresh = 1;
             redraw = 0;
@@ -356,37 +374,43 @@ void Options()
             int row = 14;
             
             set_font_pal(sel == 0 ? 15 : 14);
-            put_string("Vertical Resolution:", HPOS, row);
+            put_string("Vertical Resolution:", HPOS+5, row);
 			if(Enabled240p)
-				put_string("240p", HPOS+22, row);
+				put_string("240p", HPOS+30, row);
 			else
-				put_string("224p", HPOS+22, row);
+				put_string("224p", HPOS+30, row);
 			row++;
 			
 			if(Enabled240p)
-			{
 				set_font_pal(sel == 1 ? 15 : 14);
-				put_string("Start at line:", HPOS, row);
-				if(UseDefault)
-					put_string("24", HPOS+22, row);
-				else
-					put_string("22", HPOS+22, row);
-			}
 			else
-			{
 				set_font_pal(sel == 1 ? 13 : 12);
-				put_string("Start at line:", HPOS, row);
-				if(UseDefault)
-					put_string("24", HPOS+22, row);
-				else
-					put_string("22", HPOS+22, row);
-			}
+			put_string("Start at line:", HPOS+7, row);
+			if(UseDefault)
+				put_string("24", HPOS+30, row);
+			else
+				put_string("22", HPOS+30, row);
 			
 			row++;
-			
 			
 			set_font_pal(sel == 2 ? 15 : 14);
-            put_string("Back to Main Menu", HPOS, ++row);
+            put_string("Composite filter:", HPOS+5, row);
+			if(EnabledSoft)
+				put_string("On ", HPOS+30, row);
+			else
+				put_string("Off", HPOS+30, row);
+			row++;
+			
+			set_font_pal(sel == 3 ? 15 : 14);
+            put_string("Composite B&W:", HPOS+5, row);
+			if(Enabled_C_BW)
+				put_string("On ", HPOS+30, row);
+			else
+				put_string("Off", HPOS+30, row);
+			row++;
+			
+			set_font_pal(sel == 4 ? 15 : 14);
+            put_string("Back to Main Menu", HPOS+5, ++row);
 
             refresh = 0;
         }
@@ -396,7 +420,7 @@ void Options()
         if (controller & JOY_DOWN) 
         {
             sel++;
-            if(sel > 2)
+            if(sel > 4)
                 sel = 0;
             refresh = 1;
         }
@@ -405,7 +429,7 @@ void Options()
         {
             sel--;
             if(sel < 0)
-                sel = 2;
+                sel = 4;
             refresh = 1;
         }
 		
@@ -415,7 +439,6 @@ void Options()
 		
 		if (controller & JOY_I)
 		{
-			disp_off();
 			switch(sel)
 			{
 				case 0:
@@ -426,30 +449,68 @@ void Options()
 							Set239p();
 						else
 							Set240p();
+					disp_off();
+					redraw = 1;	
 					break;
 				case 1:
-					if(UseDefault)
+					if(Enabled240p)
 					{
-						UseDefault = 0;
-						if(Enabled240p)
+						if(UseDefault)
+						{
+							UseDefault = 0;
 							Set240p();
-					}
-					else
-					{
-						UseDefault = 1;
-						if(Enabled240p)
+						}
+						else
+						{
+							UseDefault = 1;
 							Set239p();
+						}
+						disp_off();
+						redraw = 1;	
 					}
 					break;
 				case 2:
+					if(EnabledSoft)
+					{
+						EnabledSoft = 0;
+						xres_flags = XRES_SHARP;
+					}
+					else
+					{
+						EnabledSoft = 1;
+						xres_flags = XRES_SOFT;
+					}
+					
+					if(Enabled_C_BW)
+						xres_flags |= XRES_BW;
+					
+					refresh = 1;
+					
+					set_xres(512, xres_flags);
+					break;
+				case 3:
+					if(Enabled_C_BW)
+					{
+						Enabled_C_BW = 0;
+						xres_flags = EnabledSoft ? XRES_SOFT : XRES_SHARP;
+					}
+					else
+					{
+						Enabled_C_BW = 1;
+						xres_flags = (EnabledSoft ? XRES_SOFT : XRES_SHARP) | XRES_BW;
+					}
+					refresh = 1;
+					
+					set_xres(512, xres_flags);
+					break;
+				case 4:
 					end = 1;
 					break;
 			}
-			redraw = 1;	
-			disp_off();
 		}
 
     }
+	set_xres(320, xres_flags);
 }
 
 void DrawN()
@@ -459,9 +520,6 @@ void DrawN()
     int redraw = 1;
 	int end = 1;
 
-	vsync();
-	disp_off();
-	set_xres(256, XRES_SHARP);
     do
     {   
 		vsync();
@@ -470,6 +528,7 @@ void DrawN()
         if(redraw)
         {
 			cls();
+			set_xres(256, xres_flags);
 			load_background(n_bg, n_pal, n_map, 32, 22);
 			scroll(0, 0, -32, 0, 240, 0xC0);
             redraw = 0;
@@ -490,6 +549,7 @@ void DrawCredits()
     int redraw = 1;
 	int refresh = 1;
 	int end = 0;
+	int counter = 0;
 
     while(!end)
     {   
@@ -497,20 +557,20 @@ void DrawCredits()
 		
         if(redraw)
         {
-			disp_off();
-			set_xres(512, XRES_SHARP);
+			set_xres(512, xres_flags);
 			
 			ResetVideo();
 			
-			set_color_rgb(241, 0, 6, 0);
-			set_color_rgb(209, 1, 6, 6);
-			set_color_rgb(210, 0, 0, 0);
+			SetFontColors(15, RGB(3, 3, 3), RGB(0, 6, 0), RGB(0, 0, 0));
+			SetFontColors(13, RGB(3, 3, 3), RGB(1, 6, 6), RGB(0, 0, 0));
 			
 			set_map_data(MB512_map, 64, 30);
 			set_tile_data(MB512_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 64, 30);
 			load_palette(0, MB512_pal, 1);  
+			
+			Center224in240();
 			
             redraw = 0;
 			refresh = 1;
@@ -559,9 +619,24 @@ void DrawCredits()
 			put_string("This program is free software and open source.", HPOS+2, row++);
 			put_string("Source code is available under GPL.", HPOS+2, row++);
 			row++;
+		
+			set_font_pal(14);	
+			put_string("Ver. 0.01", 50, 7);
+			put_string("20/10/2014", 49, 8);
 
 			refresh = 0;
 		}
+		
+		if(counter == 1)
+			put_string("Artemio Urbina      ", HPOS+2, 8);
+		if(counter == 60*4)
+			put_string("@Artemio (twitter)  ", HPOS+2, 8);
+		if(counter == 60*8)
+			put_string("aurbina@junkerhq.net", HPOS+2, 8);
+		if(counter == 60*16)
+			counter = 0;
+			
+		counter++;
 
         controller = joytrg(0);
         
@@ -574,7 +649,7 @@ void DrawCredits()
 			redraw = 1;
 		}
     }	
-	set_xres(320, XRES_SHARP);
+	set_xres(320, xres_flags);
 }
 
 void DrawSP()
@@ -586,7 +661,6 @@ void DrawSP()
 	int row = 0;
 	int count = 0;
 	
-	init_satb();
 	load_palette(16, SD_pal, 1);
 	load_vram(0x5000, SD_sp, 0x700);
 
@@ -598,5 +672,60 @@ void DrawSP()
 			count ++;
 		}
 	}
-	satb_update();
+}
+
+// returns 1 if US system
+char DetectTG16()
+{
+	char region;
+	char *io = 0x1000;
+	
+	region = *io;
+	
+	if((region & 0x40) == 0)
+		return 1;
+	else
+		return 0;
+}
+
+// returns 1 if CD detected
+char DetectCDROM()
+{
+	char region;
+	char *io = 0x1000;
+	
+	region = *io;
+	if((region & 0x80) == 0)
+		return 1;
+	else
+		return 0;
+}
+
+void DisplaySystemInfo()
+{
+	SetFontColors(13, RGB(2, 4, 7), RGB(7, 7, 7), RGB(1, 3, 7));
+	set_font_pal(13);
+	if(DetectTG16())
+	{
+		if(DetectCDROM())
+			put_string("TG-16+CDROM", 26, 27);
+		else
+			put_string("TG-16", 32, 27);
+	}
+	else
+	{
+		if(DetectCDROM())
+			put_string("PCE+CDROM2", 26, 27);
+		else
+			put_string("PCE", 34, 27);
+	}
+	if(Enabled240p)
+	{
+		if(UseDefault)
+			put_string("240p", 33, 28);
+		else
+			put_string("Full 240p", 28, 28);
+	}
+	else
+		put_string("224p", 33, 28);	
 }
