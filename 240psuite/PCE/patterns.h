@@ -22,7 +22,9 @@
  This version of the suite is compiled with HuC from https://github.com/uli/huc
  
  */
- 
+
+void TestPatterns();
+
 void DrawGrid256();
 void DrawGrid320();
 void DrawGrid512();
@@ -33,5 +35,6 @@ void DrawCB601();
 void DrawColorBleed();
 void DrawSMPTE();
 void DrawLinearity();
+void DrawLinearity256();
 void DrawSharpness();
 void DrawGray();

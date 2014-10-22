@@ -25,8 +25,6 @@
  
 #include "huc.h"
 
-extern int Enabled240p;
-
 int xres_flags = XRES_SOFT;
 int Enabled240p = 0;
 int UseDefault = 0;
@@ -124,6 +122,7 @@ void ResetVideo()
 	satb_update();
 			
 	ResetScroll();
+	set_xres(320, xres_flags);
 }
 
 void ResetScroll()

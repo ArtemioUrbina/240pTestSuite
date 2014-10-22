@@ -6,6 +6,7 @@
 
 @REM Compile, assemble, and link
 @REM -msmall causes scroll to crash
-huc -s -t -O2 -fno-recursive 240pSuite.c font.c video.c patterns.c tests.c help.c tools.c
-pceas -raw 240pSuite.s
-@REM with -s & 
+huc -DCDROM -t -O2 -fno-recursive -scd -overlay 240pSuite.c font.c video.c tests.c help.c tools.c
+huc -DCDROM -t -O2 -fno-recursive -scd -overlay patterns.c font.c video.c help.c tools.c
+isolink 240pSuite.iso 240pSuite.ovl patterns.ovl
+pause
