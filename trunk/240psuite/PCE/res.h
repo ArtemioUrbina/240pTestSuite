@@ -57,59 +57,13 @@
 #incbin(sonic_bg, "graphics/sonic_DATA.bin");
 #incbin(sonic_pal, "graphics/sonic_PAL.bin");
 
-/*
-			PATTERNS
-*/
+#incbin(lagback_map, "graphics/lagback.fmp");
+#incchr_ex(lagback_bg, "graphics/lagback.pcx", 0, 0, 2, 35, 0);
+#incpal(lagback_pal, "graphics/lagback.pcx", 0, 1);
 
-#incbin(pluge_map, "graphics/pluge.fmp");
-#incchr_ex(pluge_bg, "graphics/pluge.pcx", 0, 0, 2, 23, 0);
-#incpal(pluge_pal, "graphics/pluge.pcx", 0, 1);
-
-#incchr_ex(grid_bg, "graphics/grid.pcx", 0, 0, 2, 4, 0);
-#incpal(grid_pal, "graphics/grid.pcx", 0, 1);
-
-#incbin(grid320_240_map, "graphics/grid320_240.fmp");
-#incbin(grid320_224_map, "graphics/grid320_224.fmp");
-
-#incbin(grid256_224_map, "graphics/grid256_224.fmp");
-#incbin(grid256_240_map	, "graphics/grid256_240.fmp");
-
-#incbin(grid512_224_map, "graphics/grid512_224.fmp");
-#incbin(grid512_240_map, "graphics/grid512_240.fmp");
-
-#incbin(color_map, "graphics/color_BAT.bin");
-#incbin(color_bg, "graphics/color_DATA.bin");
-#incbin(color_pal, "graphics/color_PAL.bin");
-
-#incbin(gray_map, "graphics/gray.fmp");
-#incchr_ex(gray_bg, "graphics/gray.pcx", 0, 0, 4, 2, 0);
-#incpal(gray_pal, "graphics/gray.pcx", 0, 1);
-
-#incbin(cb601_map, "graphics/cb601.fmp");
-#incchr_ex(cb601_bg, "graphics/cb601.pcx", 0, 0, 2, 34, 0);
-#incpal(cb601_pal, "graphics/cb601.pcx", 0, 1);
-
-#incbin(colorbleed_map, "graphics/colorbleed.fmp");
-#incchr_ex(colorbleed_bg, "graphics/colorbleed.pcx", 0, 0, 2, 3, 0);
-#incchr_ex(colorbleedchk_bg, "graphics/colorbleedcheck.pcx", 0, 0, 2, 3, 0);
-#incpal(colorbleed_pal, "graphics/colorbleed.pcx", 0, 1);
-
-#incbin(SMPTE75_map, "graphics/SMPTE75.fmp");
-#incchr_ex(SMPTE75_bg, "graphics/SMPTE75.pcx", 0, 0, 2, 27, 0);
-#incpal(SMPTE75_pal, "graphics/SMPTE75.pcx", 0, 1);
-#incpal(SMPTE100_pal, "graphics/SMPTE100.pcx", 0, 1);
-
-#incbin(linearity240_map, "graphics/linearity240.fmp");
-#incchr_ex(linearity240_bg, "graphics/linearity240.pcx", 0, 0, 4, 49, 0);
-#incpal(linearity240_pal, "graphics/linearity240.pcx", 0, 1);
-
-#incbin(linearity224_map, "graphics/linearity224.fmp");
-#incchr_ex(linearity224_bg, "graphics/linearity224.pcx", 0, 0, 2, 71, 0);
-#incpal(linearity224_pal, "graphics/linearity224.pcx", 0, 1);
-
-#incbin(sharpness_map, "graphics/sharpness.fmp");
-#incchr_ex(sharpness_bg, "graphics/sharpness.pcx", 0, 0, 4, 51, 0);
-#incpal(sharpness_pal, "graphics/sharpness.pcx", 0, 1);
+#ifndef CDROM
+#include "res_patterns.h"
+#endif
 
 /*
 		SPRITES

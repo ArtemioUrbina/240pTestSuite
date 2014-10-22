@@ -29,3 +29,4 @@ void DropShadow();
 void scrollTest();
 void LEDZoneTest();
 void StripedSprite();
+void LagTest();

@@ -25,8 +25,192 @@
  
 #include "huc.h"
 #include "patterns.h"
+
+#ifndef CDROM
 #include "graphics.h"
+#else
+#include "res_patterns.h"
+#include "graphics_patterns.h"
+#endif
+
 #include "video.h"
+
+#define HPOS 5
+
+#ifndef CDROM
+void TestPatterns()
+#else
+void main()
+#endif
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int refresh = 1;
+    int sel = 0;
+	int end = 0;
+
+	disp_off();
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			ResetVideo();
+			setupFont();
+			
+			set_map_data(MB_map, 40, 30);
+			set_tile_data(MB_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, MB_pal, 1);  
+			
+			Center224in240();
+         
+			init_satb();
+			DrawSP();
+			satb_update();
+
+			refresh = 1;
+            redraw = 0;
+			disp_on();
+        }
+		
+		if(refresh)
+        {
+            int row = 7;
+            
+            set_font_pal(sel == 0 ? 15 : 14);
+            put_string("Pluge", HPOS, row++);
+            set_font_pal(sel == 1 ? 15 : 14);
+            put_string("Color Bars", HPOS, row++);
+            set_font_pal(sel == 2 ? 15 : 14);
+            put_string("SMPTE Color Bars", HPOS, row++);
+            set_font_pal(sel == 3 ? 15 : 14);
+            put_string("Color Bars w/ Gray Ref", HPOS, row++);
+            set_font_pal(sel == 4 ? 15 : 14);
+            put_string("Color Bleed Check", HPOS, row++);
+            set_font_pal(sel == 5 ? 15 : 14);
+			if(Enabled240p)
+				put_string("Grid 256x240", HPOS, row++);
+			else
+				put_string("Grid 256x224", HPOS, row++);
+			set_font_pal(sel == 6 ? 15 : 14);
+			if(Enabled240p)
+				put_string("Grid 320x240", HPOS, row++);
+			else
+				put_string("Grid 320x224", HPOS, row++);
+			set_font_pal(sel == 7 ? 15 : 14);
+			if(Enabled240p)
+				put_string("Grid 512x240", HPOS, row++);
+			else
+				put_string("Grid 512x224", HPOS, row++);
+            set_font_pal(sel == 8 ? 15 : 14);
+			if(Enabled240p)
+				put_string("Linearity 320x240", HPOS, row++);
+			else
+				put_string("Linearity 320x224", HPOS, row++);
+			set_font_pal(sel == 9 ? 15 : 14);
+            put_string("Linearity 256x224", HPOS, row++);
+            set_font_pal(sel == 10 ? 15 : 14);
+            put_string("Gray Ramp", HPOS, row++);
+            set_font_pal(sel == 11 ? 15 : 14);
+            put_string("White & RGB Screen", HPOS, row++);
+            set_font_pal(sel == 12 ? 15 : 14);
+            put_string("100 IRE", HPOS, row++);
+            set_font_pal(sel == 13 ? 15 : 14);
+            put_string("Sharpness", HPOS, row++);
+            set_font_pal(sel == 14 ? 15 : 14);
+            put_string("Overscan", HPOS, row++);
+			
+			set_font_pal(sel == 15 ? 15 : 14);
+            put_string("Back to Main Menu", HPOS, ++row);
+			
+			DisplaySystemInfo();
+
+            refresh = 0;
+        }
+
+        controller = joytrg(0);
+        
+        if (controller & JOY_DOWN) 
+        {
+            sel++;
+            if(sel > 15)
+                sel = 0;
+            refresh = 1;
+        }
+
+        if (controller & JOY_UP) 
+        {
+            sel--;
+            if(sel < 0)
+                sel = 15;
+            refresh = 1;
+        }
+		
+				
+		if (controller & JOY_II)
+			end = 1;
+		
+		if (controller & JOY_I)
+		{
+			disp_off();
+			ResetVideo();
+			switch(sel)
+			{
+				case 0:
+					DrawPluge();
+					break;
+				case 1:
+					DrawColor();
+					break;
+				case 2:
+					DrawSMPTE();
+					break;
+				case 3:
+					DrawCB601();
+					break;
+				case 4:
+					DrawColorBleed();
+					break;
+				case 5:
+					DrawGrid256();
+					break;
+				case 6:
+					DrawGrid320();
+					break;
+				case 7:
+					DrawGrid512();
+					break;
+				case 8:
+					DrawLinearity();
+					break;
+				case 9:
+					DrawLinearity256();
+					break;
+				case 10:
+					DrawGray();
+					break;
+				case 11:
+					DrawWhite();
+					break;
+				case 13:
+					DrawSharpness();
+					break;
+				case 15:
+					end = 1;
+					break;
+			}
+			redraw = 1;	
+			disp_off();
+		}
+    }
+#ifdef CDROM
+	//cd_execoverlay(0);
+#endif
+}
 
 void DrawPluge()
 {
@@ -257,7 +441,6 @@ void DrawGrid256()
     int redraw = 1;
 	int end = 0;
 
-	set_xres(256, xres_flags);
     while(!end)
     {   
 		vsync();
@@ -275,6 +458,7 @@ void DrawGrid256()
          
             redraw = 0;
 			disp_on();
+			set_xres(256, xres_flags);
         }
 
         controller = joytrg(0);
@@ -282,7 +466,6 @@ void DrawGrid256()
 		if (controller & JOY_II)
 			end = 1;
     }
-	set_xres(320, xres_flags);
 }
 
 void DrawGrid320()
@@ -292,7 +475,6 @@ void DrawGrid320()
     int redraw = 1;
 	int end = 0;
 
-	set_xres(320, xres_flags);
     while(!end)
     {   
 		vsync();
@@ -310,6 +492,7 @@ void DrawGrid320()
          
             redraw = 0;
 			disp_on();
+			set_xres(320, xres_flags);
         }
 
         controller = joytrg(0);
@@ -317,7 +500,6 @@ void DrawGrid320()
 		if (controller & JOY_II)
 			end = 1;
     }
-	set_xres(320, xres_flags);
 }
 
 void DrawGrid512()
@@ -327,7 +509,6 @@ void DrawGrid512()
     int redraw = 1;
 	int end = 0;
 
-	set_xres(512, xres_flags);
     while(!end)
     {   
 		vsync();
@@ -345,6 +526,7 @@ void DrawGrid512()
          
             redraw = 0;
 			disp_on();
+			set_xres(512, xres_flags);
         }
 
         controller = joytrg(0);
@@ -352,7 +534,6 @@ void DrawGrid512()
 		if (controller & JOY_II)
 			end = 1;
     }
-	set_xres(320, xres_flags);
 }
 
 void DrawWhite()
@@ -542,6 +723,46 @@ void DrawLinearity()
     }
 }
 
+void DrawLinearity256()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(linearity256_map, 32, 28);
+			set_tile_data(linearity256_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 32, 28);
+			load_palette(0, linearity256_pal, 1);  
+			
+            redraw = 0;
+			disp_on();
+			set_xres(256, xres_flags);
+			if(Enabled240p)
+				Set224p();
+        }
+
+        controller = joytrg(0);
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+	if(Enabled240p)
+	{
+		if(!UseDefault)
+			Set240p();
+		else
+			Set239p();
+	}
+}
+
 void DrawSharpness()
 {
     int controller;   
@@ -580,7 +801,6 @@ void DrawGray()
     int redraw = 1;
 	int end = 0;
 
-	set_xres(256, xres_flags);
     while(!end)
     {   
 		vsync();
@@ -596,6 +816,7 @@ void DrawGray()
 
             redraw = 0;
 			disp_on();
+			set_xres(256, xres_flags);
         }
 
         controller = joytrg(0);
@@ -603,5 +824,4 @@ void DrawGray()
 		if (controller & JOY_II)
 			end = 1;
     }
-	set_xres(320, xres_flags);
 }

@@ -1,4 +1,4 @@
- /*
+/* 
  * 240p Test Suite
  * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
@@ -22,44 +22,10 @@
  This version of the suite is compiled with HuC from https://github.com/uli/huc
  
  */
-extern char MB_map[];
-extern int MB_bg[];
-extern int MB_pal[];
 
-extern int SD_sp[];
-extern int SD_pal[];
- 
-extern char fs_map[];
-extern int white_bg[];
-
-extern int check_pal[];
-
-extern int hstripes_bg[];
-extern int vstripes_bg[];
-
-extern int check_bg[];
-extern int check_pal[];
-
-extern char motoko_map[];
-extern int motoko_bg[];
-extern int motoko_pal[];
-
-extern int SD_sp[];
-extern int SD_pal[];
-
-extern int palm_sp[];
-extern int palm_pal[];
-
-extern int shadow_sp[];
-extern int striped_sp[];
-
-extern char sonic_map[];
-extern int sonic_bg[];
-extern int sonic_pal[];
-
-extern char lagback_map[];
-extern int lagback_bg[];
-extern int lagback_pal[];
-
-#include "graphics_patterns.h"
-
+void DrawSP();
+// returns 1 if US system
+char DetectTG16();
+// returns 1 if CD detected
+char DetectCDROM();
+void DisplaySystemInfo();

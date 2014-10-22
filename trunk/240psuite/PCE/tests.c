@@ -28,6 +28,14 @@
 #include "graphics.h"
 #include "video.h"
 
+#ifdef CDROM
+extern int xres_flags;
+extern int Enabled240p;
+extern int UseDefault;
+extern int EnabledSoft;
+extern int Enabled_C_BW;
+#endif
+
 void DrawCheck()
 {
     int controller;   
@@ -590,6 +598,38 @@ void LEDZoneTest()
 			
             redraw = 0;
 			disp_on();
+        }
+
+        controller = joytrg(0);
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+}
+
+void LagTest()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+        if(redraw)
+        {
+			set_map_data(lagback_map, 32, 30);
+			set_tile_data(lagback_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 32, 30);
+			load_palette(0, lagback_pal, 1); 
+
+			Center224in240(); 
+         
+            redraw = 0;
+			disp_on();
+			set_xres(256, xres_flags);
         }
 
         controller = joytrg(0);

@@ -26,11 +26,10 @@
 #include "res.h"
 #include "font.h"
 #include "video.h"
-#include "patterns.h"
 #include "tests.h"
 #include "help.h"
+#include "tools.h"
 
-void TestPatterns();
 void Options();
 void DrawCredits();
 void DisplaySystemInfo();
@@ -142,13 +141,20 @@ void main()
 			switch(sel)
 			{
 				case 0:
+#ifndef CDROM
 					TestPatterns();
+#else
+					cd_execoverlay(1);
+#endif
 					break;
 				case 1:
 					DropShadow();
 					break;
 				case 2:
 					StripedSprite();
+					break;
+				case 3:
+					LagTest();
 					break;
 				case 5:
 					ScrollTest();
@@ -185,168 +191,6 @@ void main()
  *
  */
 
-void TestPatterns()
-{
-    int controller;   
-    int read; 
-    int redraw = 1;
-	int refresh = 1;
-    int sel = 0;
-	int end = 0;
-
-	disp_off();
-    while(!end)
-    {   
-		vsync();
-		
-        if(redraw)
-        {
-			ResetVideo();
-			setupFont();
-			
-			set_map_data(MB_map, 40, 30);
-			set_tile_data(MB_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, MB_pal, 1);  
-			
-			Center224in240();
-         
-			init_satb();
-			DrawSP();
-			satb_update();
-
-			refresh = 1;
-            redraw = 0;
-			disp_on();
-        }
-		
-		if(refresh)
-        {
-            int row = 7;
-            
-            set_font_pal(sel == 0 ? 15 : 14);
-            put_string("Pluge", HPOS, row++);
-            set_font_pal(sel == 1 ? 15 : 14);
-            put_string("Color Bars", HPOS, row++);
-            set_font_pal(sel == 2 ? 15 : 14);
-            put_string("SMPTE Color Bars", HPOS, row++);
-            set_font_pal(sel == 3 ? 15 : 14);
-            put_string("Color Bars w/ Gray Ref", HPOS, row++);
-            set_font_pal(sel == 4 ? 15 : 14);
-            put_string("Color Bleed Check", HPOS, row++);
-            set_font_pal(sel == 5 ? 15 : 14);
-			if(Enabled240p)
-				put_string("Grid 256x240", HPOS, row++);
-			else
-				put_string("Grid 256x224", HPOS, row++);
-			set_font_pal(sel == 6 ? 15 : 14);
-			if(Enabled240p)
-				put_string("Grid 320x240", HPOS, row++);
-			else
-				put_string("Grid 320x224", HPOS, row++);
-			set_font_pal(sel == 7 ? 15 : 14);
-			if(Enabled240p)
-				put_string("Grid 512x240", HPOS, row++);
-			else
-				put_string("Grid 512x224", HPOS, row++);
-            set_font_pal(sel == 8 ? 15 : 14);
-            put_string("Linearity", HPOS, row++);
-            set_font_pal(sel == 9 ? 15 : 14);
-            put_string("Gray Ramp", HPOS, row++);
-            set_font_pal(sel == 10 ? 15 : 14);
-            put_string("White & RGB Screen", HPOS, row++);
-            set_font_pal(sel == 11 ? 15 : 14);
-            put_string("100 IRE", HPOS, row++);
-            set_font_pal(sel == 12 ? 15 : 14);
-            put_string("Sharpness", HPOS, row++);
-            set_font_pal(sel == 13 ? 15 : 14);
-            put_string("Overscan", HPOS, row++);
-			
-			set_font_pal(sel == 14 ? 15 : 14);
-            put_string("Back to Main Menu", HPOS, ++row);
-			
-			DisplaySystemInfo();
-
-            refresh = 0;
-        }
-
-        controller = joytrg(0);
-        
-        if (controller & JOY_DOWN) 
-        {
-            sel++;
-            if(sel > 14)
-                sel = 0;
-            refresh = 1;
-        }
-
-        if (controller & JOY_UP) 
-        {
-            sel--;
-            if(sel < 0)
-                sel = 14;
-            refresh = 1;
-        }
-		
-				
-		if (controller & JOY_II)
-			end = 1;
-		
-		if (controller & JOY_I)
-		{
-			disp_off();
-			ResetVideo();
-			switch(sel)
-			{
-				case 0:
-					DrawPluge();
-					break;
-				case 1:
-					DrawColor();
-					break;
-				case 2:
-					DrawSMPTE();
-					break;
-				case 3:
-					DrawCB601();
-					break;
-				case 4:
-					DrawColorBleed();
-					break;
-				case 5:
-					DrawGrid256();
-					break;
-				case 6:
-					DrawGrid320();
-					break;
-				case 7:
-					DrawGrid512();
-					break;
-				case 8:
-					DrawLinearity();
-					break;
-				case 9:
-					DrawGray();
-					break;
-				case 10:
-					DrawWhite();
-					break;
-				case 12:
-					DrawSharpness();
-					break;
-				case 14:
-					end = 1;
-					break;
-			}
-			redraw = 1;	
-			disp_off();
-		}
-
-    }
-}
-
-
 void Options()
 {
     int controller;   
@@ -362,7 +206,6 @@ void Options()
 		
         if(redraw)
         {
-			set_xres(512, xres_flags);
 			ResetVideo();
 			setupFont();
 			
@@ -379,6 +222,7 @@ void Options()
 			refresh = 1;
             redraw = 0;
 			disp_on();
+			set_xres(512, xres_flags);
         }
 		
 		if(refresh)
@@ -522,7 +366,6 @@ void Options()
 		}
 
     }
-	set_xres(320, xres_flags);
 }
 
 void DrawN()
@@ -540,11 +383,11 @@ void DrawN()
         if(redraw)
         {
 			cls();
-			set_xres(256, xres_flags);
 			load_background(n_bg, n_pal, n_map, 32, 22);
 			scroll(0, 0, -32, 0, 240, 0xC0);
             redraw = 0;
 			disp_on();
+			set_xres(256, xres_flags);
         }
 
         controller = joy(0);
@@ -569,8 +412,6 @@ void DrawCredits()
 		
         if(redraw)
         {
-			set_xres(512, xres_flags);
-			
 			ResetVideo();
 			setupFont();
 			
@@ -588,6 +429,7 @@ void DrawCredits()
             redraw = 0;
 			refresh = 1;
 			disp_on();
+			set_xres(512, xres_flags);
         }
 		
 		if(refresh)
@@ -662,83 +504,4 @@ void DrawCredits()
 			redraw = 1;
 		}
     }	
-	set_xres(320, xres_flags);
-}
-
-void DrawSP()
-{
-	int x = 210;
-	int y = 84;
-	int vram = 0x5000;
-	int pos = 0;
-	int row = 0;
-	int count = 0;
-	
-	load_palette(16, SD_pal, 1);
-	load_vram(0x5000, SD_sp, 0x700);
-
-	for(row = 0; row < 7; row++)
-	{
-		for(pos = 0; pos < 4; pos++)
-		{
-			spr_make(count, pos*16+x, row*16+y, 0x40*count+vram, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
-			count ++;
-		}
-	}
-}
-
-// returns 1 if US system
-char DetectTG16()
-{
-	char region;
-	char *io = 0x1000;
-	
-	region = *io;
-	
-	if((region & 0x40) == 0)
-		return 1;
-	else
-		return 0;
-}
-
-// returns 1 if CD detected
-char DetectCDROM()
-{
-	char region;
-	char *io = 0x1000;
-	
-	region = *io;
-	if((region & 0x80) == 0)
-		return 1;
-	else
-		return 0;
-}
-
-void DisplaySystemInfo()
-{
-	SetFontColors(13, RGB(2, 4, 7), RGB(7, 7, 7), RGB(1, 3, 7));
-	set_font_pal(13);
-	if(DetectTG16())
-	{
-		if(DetectCDROM())
-			put_string("TG-16+CDROM", 26, 27);
-		else
-			put_string("TG-16", 32, 27);
-	}
-	else
-	{
-		if(DetectCDROM())
-			put_string("PCE+CDROM2", 26, 27);
-		else
-			put_string("PCE", 34, 27);
-	}
-	if(Enabled240p)
-	{
-		if(UseDefault)
-			put_string("240p", 33, 28);
-		else
-			put_string("Full 240p", 28, 28);
-	}
-	else
-		put_string("224p", 33, 28);	
 }

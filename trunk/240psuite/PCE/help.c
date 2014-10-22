@@ -33,6 +33,14 @@ extern char MB512_map[];
 extern int MB512_bg[];
 extern int MB512_pal[];
 
+#ifdef CDROM
+extern int xres_flags;
+extern int Enabled240p;
+extern int UseDefault;
+extern int EnabledSoft;
+extern int Enabled_C_BW;
+#endif
+
 void showHelp()
 {
 	int controller;   
@@ -47,8 +55,8 @@ void showHelp()
 		
         if(redraw)
         {
+			ResetVideo();
 			setupFont();
-			set_xres(512, xres_flags);
 			SetFontColors(15, RGB(2, 2, 2), RGB(0, 6, 0), RGB(0, 0, 0));
 			
 			set_map_data(MB512_map, 64, 30);
@@ -62,6 +70,7 @@ void showHelp()
             redraw = 0;
 			refresh = 1;
 			disp_on();
+			set_xres(512, xres_flags);
         }
 		
 		if(refresh)
@@ -99,5 +108,4 @@ void showHelp()
 		if (controller & JOY_II)
 			end = 1;
     }	
-	set_xres(320, xres_flags);
 }
