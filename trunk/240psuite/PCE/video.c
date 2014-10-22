@@ -25,11 +25,11 @@
  
 #include "huc.h"
 
-int xres_flags = XRES_SOFT;
-int Enabled240p = 0;
-int UseDefault = 0;
-int EnabledSoft = 1;
-int Enabled_C_BW = 0;
+int xres_flags;
+int Enabled240p;
+int UseDefault;
+int EnabledSoft;
+int Enabled_C_BW;
 
 void Set224p()
 {
@@ -117,6 +117,7 @@ void Center224in240()
 
 void ResetVideo()
 {
+	cls();
 	set_screen_size(1);
 	init_satb();
 	satb_update();
