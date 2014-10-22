@@ -56,6 +56,7 @@ void main()
         if(redraw)
         {
 			ResetVideo();
+			setupFont();
 
 			set_map_data(MB_map, 40, 30);
 			set_tile_data(MB_bg);
@@ -146,6 +147,9 @@ void main()
 				case 1:
 					DropShadow();
 					break;
+				case 2:
+					StripedSprite();
+					break;
 				case 5:
 					ScrollTest();
 					break;
@@ -154,6 +158,9 @@ void main()
 					break;
 				case 8:
 					DrawCheck();
+					break;
+				case 9:
+					LEDZoneTest();
 					break;
 				case 11:
 					Options();
@@ -195,6 +202,7 @@ void TestPatterns()
         if(redraw)
         {
 			ResetVideo();
+			setupFont();
 			
 			set_map_data(MB_map, 40, 30);
 			set_tile_data(MB_bg);
@@ -356,6 +364,7 @@ void Options()
         {
 			set_xres(512, xres_flags);
 			ResetVideo();
+			setupFont();
 			
 			SetFontColors(12, RGB(3, 3, 3), RGB(4, 4, 4), RGB(0, 0, 0));
 			SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), RGB(0, 0, 0));
@@ -563,6 +572,7 @@ void DrawCredits()
 			set_xres(512, xres_flags);
 			
 			ResetVideo();
+			setupFont();
 			
 			SetFontColors(15, RGB(3, 3, 3), RGB(0, 6, 0), RGB(0, 0, 0));
 			SetFontColors(13, RGB(3, 3, 3), RGB(1, 6, 6), RGB(0, 0, 0));
