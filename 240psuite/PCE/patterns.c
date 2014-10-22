@@ -22,7 +22,6 @@
  This version of the suite is compiled with HuC from https://github.com/uli/huc
  
  */
- 
 #include "huc.h"
 #include "patterns.h"
 
@@ -49,6 +48,15 @@ void main()
 	int refresh = 1;
     int sel = 0;
 	int end = 0;
+
+#ifdef CDROM
+	/* global values are not holding their data */
+	xres_flags = xres_flags_g;
+	Enabled240p = Enabled240p_g;
+	UseDefault = UseDefault_g;
+	EnabledSoft = EnabledSoft_g;
+	Enabled_C_BW = Enabled_C_BW_g;
+#endif
 
 	disp_off();
     while(!end)
@@ -208,7 +216,13 @@ void main()
 		}
     }
 #ifdef CDROM
-	//cd_execoverlay(0);
+	xres_flags_g = xres_flags;
+	Enabled240p_g = Enabled240p;
+	UseDefault_g = UseDefault;
+	EnabledSoft_g = EnabledSoft;
+	Enabled_C_BW_g = Enabled_C_BW;
+	
+	cd_execoverlay(1);
 #endif
 }
 

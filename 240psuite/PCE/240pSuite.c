@@ -22,7 +22,7 @@
  This version of the suite is compiled with HuC from https://github.com/uli/huc
  
  */
-#include <huc.h>
+#include "huc.h"
 #include "res.h"
 #include "font.h"
 #include "video.h"
@@ -44,9 +44,30 @@ void main()
 	int refresh = 1;
     int sel = 0;
 
+	if(!global_init)
+	{
+		xres_flags = XRES_SOFT;
+		Enabled240p = 1;
+		UseDefault = 0;
+		EnabledSoft = 1;
+		Enabled_C_BW = 0;
+		global_init = 1;
+	}
+#ifdef CDROM
+	else
+	{
+		xres_flags = xres_flags_g;
+		Enabled240p = Enabled240p_g;
+		UseDefault = UseDefault_g;
+		EnabledSoft = EnabledSoft_g;
+		Enabled_C_BW = Enabled_C_BW_g;
+	}
+#endif
+
 	disp_off();
 	set_xres(320, xres_flags);
-	Set240p();
+	if(Enabled240p)
+		Set240p();
 	
     while(1)
     {   	
@@ -144,7 +165,13 @@ void main()
 #ifndef CDROM
 					TestPatterns();
 #else
-					cd_execoverlay(1);
+					xres_flags_g = xres_flags;
+					Enabled240p_g = Enabled240p;
+					UseDefault_g = UseDefault;
+					EnabledSoft_g = EnabledSoft;
+					Enabled_C_BW_g = Enabled_C_BW;
+					
+					cd_execoverlay(2);
 #endif
 					break;
 				case 1:
