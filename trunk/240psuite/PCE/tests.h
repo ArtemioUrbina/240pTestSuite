@@ -27,3 +27,5 @@ void DrawCheck();
 void DrawStripes();
 void DropShadow();
 void scrollTest();
+void LEDZoneTest();
+void StripedSprite();

@@ -117,3 +117,9 @@
 
 #incspr(SD_sp, "graphics/SD.pcx", 0, 0, 4, 7);
 #incpal(SD_pal, "graphics/SD.pcx", 0, 1);
+
+#incspr(palm_sp, "graphics/sonicpalm.pcx", 0, 0, 5, 7);
+#incpal(palm_pal, "graphics/sonicpalm.pcx", 0, 1);
+
+#incspr(shadow_sp, "graphics/shadow.pcx", 0, 0, 2, 2);
+#incspr(striped_sp, "graphics/striped.pcx", 0, 0, 2, 2);

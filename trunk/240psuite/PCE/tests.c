@@ -109,24 +109,306 @@ void DropShadow()
     int read; 
     int redraw = 1;
 	int end = 0;
+	int x = 144, y = 100;
+	int show = 1;
+	int text = 0;
+	int refresh = 0;
+	int back = 0;
+	int colswap = 0;
 
     while(!end)
     {   
 		vsync();
 		
         if(redraw)
-        {
-			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+        {	
+			ResetVideo();
+			switch(back)
+			{
+				case 0:
+					load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+					break;
+				case 1:
+					set_screen_size(0);
+		
+					scroll(0, 0, y, 0, 76, 0xC0);
+					scroll(1, 0, 76, 76, 160, 0xC0);
+					scroll(2, 0, 160, 160, 208, 0xC0);
+					scroll(3, 0, 208, 208, 240, 0xC0);
+					load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
+					break;
+				case 2:
+					set_map_data(fs_map, 40, 30);
+					set_tile_data(hstripes_bg);
+					load_tile(0x1000);
+					load_map(0, 0, 0, 0, 40, 30);
+					load_palette(0, check_pal, 1); 
+					break;
+				case 3:
+					set_map_data(fs_map, 40, 30);
+					set_tile_data(check_bg);
+					load_tile(0x1000);
+					load_map(0, 0, 0, 0, 40, 30);
+					load_palette(0, check_pal, 1);
+					break;
+			}
+			setupFont();
+			
+			init_satb();
+			set_color_rgb(240, 0, 0, 0); 
+			set_color_rgb(241, 0, 0, 0); 
+			load_vram(0x6000, shadow_sp, 0x100);
+			spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+			if(back == 1)
+				DrawPalm();
+			satb_update();
 			
 			Center224in240();
             redraw = 0;
 			disp_on();
         }
+		
+		if(refresh)
+		{
+			refresh = 0;
+			switch(back)
+			{
+				case 0:
+					load_bat(0, motoko_map, 40, 3);
+					break;
+				case 1:
+					load_bat(0, sonic_map, 40, 30);
+					break;
+				case 2:
+					set_map_data(fs_map, 40, 3);
+					load_map(0, 0, 0, 0, 40, 3);
+					break;
+				case 3:
+					set_map_data(fs_map, 40, 3);
+					load_map(0, 0, 0, 0, 40, 3);
+					break;
+			}
+		}
+		
+		if(back == 1)
+		{
+			if(colswap == 60)
+			{
+				SwapPalette(6, 4);
+				SwapPalette(7, 8);
+				
+				colswap = 0;
+			}
+			colswap++;
+			
+			scroll(0, x, 0, 0, 76, 0xC0);
+			scroll(1, 2*x, 76, 76, 160, 0xC0);
+			scroll(2, 3*x, 160, 160, 208, 0xC0);
+			scroll(3, 4*x, 208, 208, 240, 0xC0);
+		
+			MovePalm(4*x);
+		}
 
         controller = joytrg(0);
+		
+		if (controller & JOY_I)
+		{
+			back++;
+			if(back > 3)
+				back = 0;
+			redraw = 1;
+			disp_off();
+		}
         
 		if (controller & JOY_II)
 			end = 1;
+			
+		if (controller & JOY_SEL)
+		{
+			if(show)
+			{
+				show = 0;
+				put_string("Even frames", (back == 1) ? 0 : 26, 2);
+			}
+			else
+			{
+				show = 1;
+				put_string("Odd frames ", (back == 1) ? 0 : 26, 2);
+			}
+			text = 60;
+		}
+		
+		if(text)
+		{
+			text--;
+			if(!text)
+				refresh = 1;
+		}
+			
+		controller = joy(0);
+		
+		if (controller & JOY_UP)
+			y--;
+			
+		if (controller & JOY_DOWN)
+			y++;
+		
+		if (controller & JOY_LEFT)
+			x--;
+		
+		if (controller & JOY_RIGHT)
+			x++;
+			
+		if(x < 0)
+			x = 0;
+		if(x > 288)
+			x = 288;
+		if(y < 0)
+			y = 0;
+		if(y > (Enabled240p ? 208 : 192))
+			y = (Enabled240p ? 208 : 192);
+		
+		spr_set(0);	
+		if(show)
+		{
+			spr_x(x);
+			spr_y(y);
+			show = 0;
+		}
+		else
+		{
+			spr_x(512);
+			spr_y(512);
+			show = 1;
+		}
+		satb_update();
+    }
+}
+
+void StripedSprite()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+	int x = 144, y = 100;
+	int back = 0;
+	int colswap = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {	
+			ResetVideo();
+			switch(back)
+			{
+				case 0:
+					load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+					break;
+				case 1:
+					set_screen_size(0);
+		
+					scroll(0, 0, y, 0, 76, 0xC0);
+					scroll(1, 0, 76, 76, 160, 0xC0);
+					scroll(2, 0, 160, 160, 208, 0xC0);
+					scroll(3, 0, 208, 208, 240, 0xC0);
+					load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
+					break;
+				case 2:
+					set_map_data(fs_map, 40, 30);
+					set_tile_data(hstripes_bg);
+					load_tile(0x1000);
+					load_map(0, 0, 0, 0, 40, 30);
+					load_palette(0, check_pal, 1); 
+					break;
+				case 3:
+					set_map_data(fs_map, 40, 30);
+					set_tile_data(check_bg);
+					load_tile(0x1000);
+					load_map(0, 0, 0, 0, 40, 30);
+					load_palette(0, check_pal, 1);
+					break;
+			}
+			setupFont();
+			
+			init_satb();
+			set_color_rgb(240, 0, 0, 0); 
+			set_color_rgb(241, 0, 0, 0); 
+			load_vram(0x6000, striped_sp, 0x100);
+			spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+			if(back == 1)
+				DrawPalm();
+			satb_update();
+			
+			Center224in240();
+            redraw = 0;
+			disp_on();
+        }
+		
+		if(back == 1)
+		{
+			if(colswap == 60)
+			{
+				SwapPalette(6, 4);
+				SwapPalette(7, 8);
+				
+				colswap = 0;
+			}
+			colswap++;
+			
+			scroll(0, x, 0, 0, 76, 0xC0);
+			scroll(1, 2*x, 76, 76, 160, 0xC0);
+			scroll(2, 3*x, 160, 160, 208, 0xC0);
+			scroll(3, 4*x, 208, 208, 240, 0xC0);
+		
+			MovePalm(4*x);
+		}
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_I)
+		{
+			back++;
+			if(back > 3)
+				back = 0;
+			redraw = 1;
+			disp_off();
+		}
+        
+		if (controller & JOY_II)
+			end = 1;
+			
+		controller = joy(0);
+		
+		if (controller & JOY_UP)
+			y--;
+			
+		if (controller & JOY_DOWN)
+			y++;
+		
+		if (controller & JOY_LEFT)
+			x--;
+		
+		if (controller & JOY_RIGHT)
+			x++;
+			
+		if(x < 0)
+			x = 0;
+		if(x > 288)
+			x = 288;
+		if(y < 0)
+			y = 0;
+		if(y > (Enabled240p ? 208 : 192))
+			y = (Enabled240p ? 208 : 192);
+		
+		spr_set(0);	
+		
+		spr_x(x);
+		spr_y(y);
+		
+		satb_update();
     }
 }
 
@@ -150,6 +432,48 @@ void SwapPalette(int pal, int index)
 	set_color(pos+3, tmpcol3);		
 }
 
+void DrawPalm()
+{
+	int x = 500;
+	int y = 104;
+	int vram = 0x5000;
+	int pos = 0;
+	int row = 0;
+	int count = 0;
+	
+	load_palette(16, palm_pal, 1);
+	load_vram(vram, palm_sp, 0x8C0);
+
+	for(row = 0; row < 7; row++)
+	{
+		for(pos = 0; pos < 5; pos++)
+		{
+			spr_make(count+2, pos*16+x, row*16+y, 0x40*count+vram, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			count ++;
+		}
+	}
+}
+
+void MovePalm(int x)
+{
+	int row = 0;
+	int pos = 0;
+	int count = 0;
+	
+	x = 4+x*-1;
+	for(row = 0; row < 7; row++)
+	{
+		for(pos = 0; pos < 5; pos++)
+		{
+			spr_set(count+2);
+			spr_x(pos*16+x);
+			count ++;
+		}
+	}
+	
+	satb_update();
+}
+
 void ScrollTest()
 {
     int controller;   
@@ -160,16 +484,18 @@ void ScrollTest()
 	int x2 = 0;
 	int x3 = 0;
 	int x4 = 0;
+	int y = 0;
 	int pause = 0;
 	int dir = 1;
 	int spd = 1;
 	int colswap = 0;
 
 	set_screen_size(0);
-	scroll(0, 0, 0, 0, 76, 0xC0);
+	
+	scroll(0, 0, y, 0, 76, 0xC0);
 	scroll(1, 0, 76, 76, 160, 0xC0);
-	scroll(2, 0, 160, 160, 216, 0xC0);
-	scroll(3, 0, 216, 216, 240, 0xC0);
+	scroll(2, 0, 160, 160, 208, 0xC0);
+	scroll(3, 0, 208, 208, 240, 0xC0);
 	
     while(!end)
     {   
@@ -179,7 +505,10 @@ void ScrollTest()
         {
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 			
-			Center224in240();
+			init_satb();
+			DrawPalm();
+			satb_update();
+			
             redraw = 0;
 			disp_on();
         }
@@ -211,8 +540,8 @@ void ScrollTest()
 		
 		if(colswap == 60)
 		{
-			SwapPalette(4, 2);
-			SwapPalette(6, 3);
+			SwapPalette(6, 4);
+			SwapPalette(7, 8);
 			
 			colswap = 0;
 		}
@@ -229,14 +558,43 @@ void ScrollTest()
 			x4 += 4*spd*dir;
 		}
 		
+		MovePalm(x4);
+		
 		scroll(0, x1, 0, 0, 76, 0xC0);
 		scroll(1, x2, 76, 76, 160, 0xC0);
-		scroll(2, x3, 160, 160, 216, 0xC0);
-		scroll(3, x4, 216, 216, 240, 0xC0);
+		scroll(2, x3, 160, 160, 208, 0xC0);
+		scroll(3, x4, 208, 208, 240, 0xC0);
     }
-	scroll(0, 0, 0, 0, 76, 0xC0);
-	scroll(1, 0, 76, 76, 160, 0xC0);
-	scroll(2, 0, 160, 160, 216, 0xC0);
-	scroll(3, 0, 216, 216, 240, 0xC0);
 	set_screen_size(1);
+}
+
+void LEDZoneTest()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			set_map_data(fs_map, 40, 30);
+			set_tile_data(white_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			set_color_rgb(1, 0, 0, 0); 
+			Center224in240();
+			
+            redraw = 0;
+			disp_on();
+        }
+
+        controller = joytrg(0);
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
 }

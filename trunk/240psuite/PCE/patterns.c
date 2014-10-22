@@ -240,8 +240,12 @@ void DrawSMPTE()
 			}
 		}
 		
-		if(--text == 0)
-			redraw = 1;
+		if(text)
+		{
+			text--;
+			if(!text)
+				redraw = 1;
+		}
     }
 }
 

@@ -119,11 +119,19 @@ void Center224in240()
 
 void ResetVideo()
 {
+	set_screen_size(1);
 	init_satb();
 	satb_update();
 			
-	setupFont();
+	ResetScroll();
+}
+
+void ResetScroll()
+{
 	scroll(0, 0, 0, 0, 240, 0xC0);
+	scroll(1, 0, 0, 0, 240, 0xC0);
+	scroll(2, 0, 0, 0, 240, 0xC0);
+	scroll(3, 0, 0, 0, 240, 0xC0);
 }
 
 /*

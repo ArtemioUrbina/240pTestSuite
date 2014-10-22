@@ -96,7 +96,14 @@ extern int motoko_pal[];
 extern int SD_sp[];
 extern int SD_pal[];
 
+extern int palm_sp[];
+extern int palm_pal[];
+
+extern int shadow_sp[];
+extern int striped_sp[];
+
 extern char sonic_map[];
 extern int sonic_bg[];
 extern int sonic_pal[];
+
 
