@@ -222,7 +222,7 @@ void main()
 	EnabledSoft_g = EnabledSoft;
 	Enabled_C_BW_g = Enabled_C_BW;
 	
-	cd_execoverlay(1);
+	cd_execoverlay(2);
 #endif
 }
 
