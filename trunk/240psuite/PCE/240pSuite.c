@@ -171,7 +171,7 @@ void main()
 					EnabledSoft_g = EnabledSoft;
 					Enabled_C_BW_g = Enabled_C_BW;
 					
-					cd_execoverlay(2);
+					cd_execoverlay(3);
 #endif
 					break;
 				case 1:
