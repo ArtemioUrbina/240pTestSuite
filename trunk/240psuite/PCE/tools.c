@@ -111,4 +111,9 @@ void DisplaySystemInfo()
 	}
 	else
 		put_string("224p", 33, 28);	
+		
+#ifdef ARCADE
+	if(ac_exists())
+		put_string("AC+", 23, 27);	
+#endif
 }

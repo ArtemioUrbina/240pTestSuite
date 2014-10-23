@@ -24,6 +24,7 @@
  */
 #include "huc.h"
 #include "patterns.h"
+#include "help.h"
 
 #ifndef CDROM
 #include "graphics.h"
@@ -141,6 +142,13 @@ void main()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+
         
         if (controller & JOY_DOWN) 
         {
@@ -222,6 +230,9 @@ void main()
 	EnabledSoft_g = EnabledSoft;
 	Enabled_C_BW_g = Enabled_C_BW;
 	
+	ResetVideo();
+	set_font_pal(13);
+	put_string("Loading...", 27, 26);
 	cd_execoverlay(2);
 #endif
 }
@@ -231,6 +242,7 @@ void DrawPluge()
     int controller;   
     int read; 
     int redraw = 1;
+	int refresh = 0;
 	int end = 0;
 	int col = 0;
 
@@ -240,6 +252,8 @@ void DrawPluge()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			set_map_data(pluge_map, 40, 30);
 			set_tile_data(pluge_bg);
 			load_tile(0x1000);
@@ -248,19 +262,12 @@ void DrawPluge()
 			Center224in240();
          
             redraw = 0;
+			refresh = 1;
 			disp_on();
         }
-
-        controller = joytrg(0);
-        
-		if (controller & JOY_II)
-			end = 1;
 		
-		if (controller & JOY_I)
+		if(refresh)
 		{
-			col ++;
-			if(col > 3)
-				col = 0;
 			switch(col)
 			{
 				case 0:
@@ -276,6 +283,27 @@ void DrawPluge()
 					set_color_rgb(1, 1, 0, 0);
 					break;
 			}
+			refresh = 0;
+		}
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+
+        
+		if (controller & JOY_II)
+			end = 1;
+		
+		if (controller & JOY_I)
+		{
+			col ++;
+			if(col > 3)
+				col = 0;
+			refresh = 1;
 		}
     }
 }
@@ -293,6 +321,8 @@ void DrawColor()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			load_background(color_bg, color_pal, color_map, 40, 30);
 			Center224in240();
             redraw = 0;
@@ -300,6 +330,13 @@ void DrawColor()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+
         
 		if (controller & JOY_II)
 			end = 1;
@@ -319,6 +356,8 @@ void DrawCB601()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			set_map_data(cb601_map, 40, 30);
 			set_tile_data(cb601_bg);
 			load_tile(0x1000);
@@ -331,6 +370,12 @@ void DrawCB601()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -351,6 +396,8 @@ void DrawColorBleed()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			set_map_data(colorbleed_map, 40, 30);
 			if(check)
 				set_tile_data(colorbleedchk_bg);
@@ -366,6 +413,12 @@ void DrawColorBleed()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -402,6 +455,9 @@ void DrawSMPTE()
 		
         if(redraw)
         {
+			ResetVideo();
+			
+			setupFont();
 			set_map_data(SMPTE75_map, 40, 30);	
 			set_tile_data(SMPTE75_bg);
 			load_tile(0x1000);
@@ -417,6 +473,12 @@ void DrawSMPTE()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -442,7 +504,10 @@ void DrawSMPTE()
 		{
 			text--;
 			if(!text)
-				redraw = 1;
+			{
+				set_map_data(SMPTE75_map, 40, 3);
+				load_map(0, 0, 0, 0, 40, 3);
+			}
 		}
     }
 }
@@ -461,6 +526,8 @@ void DrawGrid256()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			if(Enabled240p)
 				set_map_data(grid256_240_map, 32, 30);
 			else
@@ -476,6 +543,12 @@ void DrawGrid256()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -495,6 +568,8 @@ void DrawGrid320()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			if(Enabled240p)
 				set_map_data(grid320_240_map, 40, 30);
 			else
@@ -510,6 +585,12 @@ void DrawGrid320()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -529,6 +610,8 @@ void DrawGrid512()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			if(Enabled240p)
 				set_map_data(grid512_240_map, 64, 30);
 			else
@@ -542,8 +625,14 @@ void DrawGrid512()
 			disp_on();
 			set_xres(512, xres_flags);
         }
-
+		
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -555,6 +644,7 @@ void DrawWhite()
     int controller;   
     int read; 
     int redraw = 1;
+	int refresh = 0;
 	int end = 0;
 	int color = 0;
 	int edit = 0;
@@ -567,6 +657,8 @@ void DrawWhite()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(white_bg);
 			load_tile(0x1000);
@@ -575,10 +667,56 @@ void DrawWhite()
 			Center224in240();
          
             redraw = 0;
+			refresh = 1;
 			disp_on();
         }
+		
+		if(refresh)
+		{
+			if(color == 0 && edit)
+			{
+				set_font_pal(sel == 0 ? 15 : 14);
+				put_string("R:", 24, 2);
+				put_digit(r, 26, 2);
+				set_font_pal(sel == 1 ? 15 : 14);
+				put_string(" G:", 27, 2);
+				put_digit(g, 30, 2);
+				set_font_pal(sel == 2 ? 15 : 14);
+				put_string(" B:", 31, 2);
+				put_digit(b, 34, 2);
+				
+				set_color_rgb(1, r, g, b);
+			}
+			else
+			{
+				switch(color)
+				{
+					case 0:
+						set_color_rgb(1, 7, 7, 7);
+						break;
+					case 1:
+						set_color_rgb(1, 0, 0, 0);
+						break;
+					case 2:
+						set_color_rgb(1, 7, 0, 0);
+						break;
+					case 3:
+						set_color_rgb(1, 0, 7, 0);
+						break;
+					case 4:
+						set_color_rgb(1, 0, 0, 7);
+						break;
+				}
+			}
+		}
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -587,24 +725,7 @@ void DrawWhite()
 			color++;
 			if(color > 4)
 				color = 0;
-			switch(color)
-			{
-				case 0:
-					set_color_rgb(1, 7, 7, 7);
-					break;
-				case 1:
-					set_color_rgb(1, 0, 0, 0);
-					break;
-				case 2:
-					set_color_rgb(1, 7, 0, 0);
-					break;
-				case 3:
-					set_color_rgb(1, 0, 7, 0);
-					break;
-				case 4:
-					set_color_rgb(1, 0, 0, 7);
-					break;
-			}
+			refresh = 1;
 		}
 		
 		if (controller & JOY_SEL)
@@ -681,17 +802,7 @@ void DrawWhite()
 					b = 0;
 			}
 			
-			set_font_pal(sel == 0 ? 15 : 14);
-			put_string("R:", 24, 2);
-			put_digit(r, 26, 2);
-			set_font_pal(sel == 1 ? 15 : 14);
-			put_string(" G:", 27, 2);
-			put_digit(g, 30, 2);
-			set_font_pal(sel == 2 ? 15 : 14);
-			put_string(" B:", 31, 2);
-			put_digit(b, 34, 2);
-			
-			set_color_rgb(1, r, g, b);
+			refresh = 1;
 		}
     }
 }
@@ -709,6 +820,8 @@ void DrawLinearity()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			if(Enabled240p)
 			{
 				set_map_data(linearity240_map, 40, 30);
@@ -731,6 +844,12 @@ void DrawLinearity()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -750,6 +869,8 @@ void DrawLinearity256()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			set_map_data(linearity256_map, 32, 28);
 			set_tile_data(linearity256_bg);
 			load_tile(0x1000);
@@ -760,10 +881,26 @@ void DrawLinearity256()
 			disp_on();
 			set_xres(256, xres_flags);
 			if(Enabled240p)
+			{
 				Set224p();
+				Enabled240p = 1;
+			}
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			if(Enabled240p)
+			{
+				if(!UseDefault)
+					Set240p();
+				else
+					Set239p();
+			}
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -790,6 +927,8 @@ void DrawSharpness()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			set_map_data(sharpness_map, 40, 30);
 			set_tile_data(sharpness_bg);
 			load_tile(0x1000);
@@ -802,6 +941,12 @@ void DrawSharpness()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -821,6 +966,8 @@ void DrawGray()
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			set_map_data(gray_map, 32, 30);
 			set_tile_data(gray_bg);
 			load_tile(0x1000);
@@ -834,6 +981,12 @@ void DrawGray()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;

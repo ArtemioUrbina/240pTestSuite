@@ -50,6 +50,8 @@ extern int SD_pal[];
 extern int palm_sp[];
 extern int palm_pal[];
 
+extern int LED_sp[];
+
 extern int shadow_sp[];
 extern int striped_sp[];
 
@@ -60,6 +62,8 @@ extern int sonic_pal[];
 extern char lagback_map[];
 extern int lagback_bg[];
 extern int lagback_pal[];
+
+extern char cgrid_bg[];
 
 #include "graphics_patterns.h"
 

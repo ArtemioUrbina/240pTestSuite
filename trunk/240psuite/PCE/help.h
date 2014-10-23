@@ -23,4 +23,6 @@
  
  */
  
-void showHelp();
+ #define GENERAL_HELP	1
+ 
+void showHelp(int data);

@@ -33,6 +33,7 @@
 void Options();
 void DrawCredits();
 void DisplaySystemInfo();
+void DrawIntro();
 
 #define HPOS 5
 
@@ -68,7 +69,15 @@ void main()
 	set_xres(320, xres_flags);
 	if(Enabled240p)
 		Set240p();
-	
+
+#ifndef CDROM
+#ifndef ARCADE
+	disp_on();
+	DrawIntro();
+	disp_off();
+#endif
+#endif
+
     while(1)
     {   	
 		vsync();
@@ -155,6 +164,12 @@ void main()
             refresh = 1;
         }
 		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+		
 		if (controller & JOY_I)
 		{
 			disp_off();
@@ -171,6 +186,8 @@ void main()
 					EnabledSoft_g = EnabledSoft;
 					Enabled_C_BW_g = Enabled_C_BW;
 					
+					set_font_pal(14);
+					put_string("Loading...", 27, 26);
 					cd_execoverlay(3);
 #endif
 					break;
@@ -186,6 +203,9 @@ void main()
 				case 5:
 					ScrollTest();
 					break;
+				case 6:
+					VScrollTest();
+					break;
 				case 7:
 					DrawStripes();
 					break;
@@ -199,7 +219,7 @@ void main()
 					Options();
 					break;
 				case 12:
-					showHelp();
+					showHelp(GENERAL_HELP);
 					break;
 				case 13:
 					DrawCredits();
@@ -299,6 +319,12 @@ void Options()
         }
 
         controller = joytrg(0);
+
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
         if (controller & JOY_DOWN) 
         {
@@ -532,3 +558,35 @@ void DrawCredits()
 		}
     }	
 }
+
+#ifndef CDROM
+
+void DrawIntro()
+{
+	int frame;
+	
+	ResetVideo();
+	setupFont();
+	
+	vsync();
+	set_color(1, 0);
+	SetFontColors(14, RGB(0, 0, 0), RGB(0, 0, 0), RGB(0, 0, 0));
+	put_string("KORDAMP PRESENTS", 12, 14);
+	for(frame = 0; frame < 7; frame ++)
+	{
+		SetFontColors(14, RGB(0, 0, 0), RGB(frame, frame, frame), RGB(0, 0, 0));
+		vsync(3);
+	}
+	
+	frame = 5;
+	while(frame)
+		frame --;
+	
+	for(frame = 7; frame > 0; frame --)
+	{
+		SetFontColors(14, RGB(0, 0, 0), RGB(frame, frame, frame), RGB(0, 0, 0));
+		vsync(3);
+	}
+}
+
+#endif
