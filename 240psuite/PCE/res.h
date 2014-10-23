@@ -61,6 +61,8 @@
 #incchr_ex(lagback_bg, "graphics/lagback.pcx", 0, 0, 2, 35, 0);
 #incpal(lagback_pal, "graphics/lagback.pcx", 0, 1);
 
+#incchr_ex(cgrid_bg, "graphics/circles_grid.pcx", 0, 0, 1, 1, 0);
+
 #ifndef CDROM
 #include "res_patterns.h"
 #endif
@@ -77,3 +79,5 @@
 
 #incspr(shadow_sp, "graphics/shadow.pcx", 0, 0, 2, 2);
 #incspr(striped_sp, "graphics/striped.pcx", 0, 0, 2, 2);
+
+#incspr(LED_sp, "graphics/LEDsprites.pcx", 0, 0, 2, 2);

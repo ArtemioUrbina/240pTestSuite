@@ -23,17 +23,58 @@
  
  */
 #include "huc.h"
+#include "video.h"
+#include "font.h"
+
+#incchr(my_font, "graphics/font.pcx", 32, 3);
+
+void DrawIntro()
+{
+	int frame;
+	
+	ResetVideo();
+	setupFont();
+	
+	vsync();
+	set_color(1, 0);
+	SetFontColors(14, RGB(0, 0, 0), RGB(0, 0, 0), RGB(0, 0, 0));
+	put_string("KORDAMP PRESENTS", 12, 12);
+	for(frame = 0; frame < 7; frame ++)
+	{
+		SetFontColors(14, RGB(0, 0, 0), RGB(frame, frame, frame), RGB(0, 0, 0));
+		vsync(3);
+	}
+	
+	frame = 5;
+	while(frame)
+		frame --;
+	
+	for(frame = 7; frame > 0; frame --)
+	{
+		SetFontColors(14, RGB(0, 0, 0), RGB(frame, frame, frame), RGB(0, 0, 0));
+		vsync(3);
+	}
+}
 
 void main()
-{
-	disp_off();
+{	
+	DrawIntro();
+	
+	cls();
+	SetFontColors(14, RGB(0, 0, 0), RGB(4, 4, 4), RGB(0, 0, 0));
     while(1)
     {   	
 		vsync();
 		if(ac_exists())
+		{
+			put_string("Loading to AC...", 25, 26);
 			cd_execoverlay(4); // Arcade Card
+		}
 		else
+		{
+			put_string("Loading...", 28, 26);
 			cd_execoverlay(2); // Super CD-ROM2
+		}
 		break;
     }
 }

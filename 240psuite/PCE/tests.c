@@ -27,6 +27,8 @@
 #include "patterns.h"
 #include "graphics.h"
 #include "video.h"
+#include "font.h"
+#include "help.h"
 
 #ifdef CDROM
 extern int xres_flags;
@@ -42,6 +44,10 @@ void DrawCheck()
     int read; 
     int redraw = 1;
 	int end = 0;
+	int alternate = 0;
+	int pos = 0;
+	int drawframe = 0;
+	int frame = 0;
 
     while(!end)
     {   
@@ -49,6 +55,9 @@ void DrawCheck()
 		
         if(redraw)
         {
+			ResetVideo();
+			setupFont();
+			
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(check_bg);
 			load_tile(0x1000);
@@ -60,8 +69,48 @@ void DrawCheck()
             redraw = 0;
 			disp_on();
         }
+		
+		if(drawframe)
+		{
+			put_string("Frame: ", 2, 26);
+			put_number(frame, 2, 8, 26); 
+			frame ++;
+			if(frame == 60)
+				frame = 0;
+		}
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+		
+		if(alternate || controller & JOY_RIGHT)
+		{
+			if(pos)
+			{
+				set_color(0, RGB(0, 0, 0));
+				set_color(1, RGB(7, 7, 7));
+			}
+			else
+			{
+				set_color(1, RGB(0, 0, 0));
+				set_color(0, RGB(7, 7, 7));
+			}
+			pos = !pos;
+		}
+		
+		if (controller & JOY_I)
+			alternate = !alternate;
+        
+		if (controller & JOY_LEFT)
+		{
+			drawframe = !drawframe;
+			if(!drawframe)
+				redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
@@ -75,6 +124,10 @@ void DrawStripes()
     int read; 
     int redraw = 1;
 	int end = 0;
+	int alternate = 0;
+	int pos = 0;
+	int drawframe = 0;
+	int frame = 0;
 
     while(!end)
     {   
@@ -82,6 +135,9 @@ void DrawStripes()
 		
         if(redraw)
         {
+			ResetVideo();
+			setupFont();
+			
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
@@ -93,17 +149,58 @@ void DrawStripes()
             redraw = 0;
 			disp_on();
         }
-
-        controller = joytrg(0);
+		
+		if(drawframe)
+		{
+			put_string("Frame: ", 2, 26);
+			put_number(frame, 2, 8, 26); 
+			frame ++;
+			if(frame == 60)
+				frame = 0;
+		}
+		
+		controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+		
+		if(alternate || controller & JOY_RIGHT)
+		{
+			if(pos)
+			{
+				set_color(0, RGB(0, 0, 0));
+				set_color(1, RGB(7, 7, 7));
+			}
+			else
+			{
+				set_color(1, RGB(0, 0, 0));
+				set_color(0, RGB(7, 7, 7));
+			}
+			pos = !pos;
+		}
+		
+		if (controller & JOY_I)
+			alternate = !alternate;
         
 		if (controller & JOY_II)
 			end = 1;
-		if (controller & JOY_DOWN)
+		
+		if (controller & JOY_LEFT)
+		{
+			drawframe = !drawframe;
+			if(!drawframe)
+				redraw = 1;
+		}
+			
+		if (controller & JOY_UP)
 		{
 			set_tile_data(vstripes_bg);
 			load_tile(0x1000);
 		}
-		if (controller & JOY_UP)
+		if (controller & JOY_DOWN)
 		{
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
@@ -218,6 +315,12 @@ void DropShadow()
 		}
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
 		
 		if (controller & JOY_I)
 		{
@@ -376,6 +479,12 @@ void StripedSprite()
 
         controller = joytrg(0);
 		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+		
 		if (controller & JOY_I)
 		{
 			back++;
@@ -498,30 +607,39 @@ void ScrollTest()
 	int spd = 1;
 	int colswap = 0;
 
-	set_screen_size(0);
-	
-	scroll(0, 0, y, 0, 76, 0xC0);
-	scroll(1, 0, 76, 76, 160, 0xC0);
-	scroll(2, 0, 160, 160, 208, 0xC0);
-	scroll(3, 0, 208, 208, 240, 0xC0);
-	
     while(!end)
     {   
 		vsync();
 		
         if(redraw)
         {
+			ResetVideo();
+			set_screen_size(0);
+	
+			scroll(0, x1, 0, 0, 76, 0xC0);
+			scroll(1, x2, 76, 76, 160, 0xC0);
+			scroll(2, x3, 160, 160, 208, 0xC0);
+			scroll(3, x4, 208, 208, 240, 0xC0);
+	
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 			
 			init_satb();
 			DrawPalm();
 			satb_update();
 			
+			MovePalm(4*spd*dir);
+			
             redraw = 0;
 			disp_on();
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
 		
 		if (controller & JOY_UP)
 			spd++;
@@ -582,13 +700,24 @@ void LEDZoneTest()
     int read; 
     int redraw = 1;
 	int end = 0;
+	int sel = 0;
+	int x = 144, y = 100;
+	int refresh = 0;
+	int size[4];
 
+	size[0] = 1;
+	size[1] = 2;
+	size[2] = 4;
+	size[3] = 8;
+	
     while(!end)
     {   
 		vsync();
 		
         if(redraw)
         {
+			ResetVideo();
+			
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(white_bg);
 			load_tile(0x1000);
@@ -596,14 +725,70 @@ void LEDZoneTest()
 			set_color_rgb(1, 0, 0, 0); 
 			Center224in240();
 			
+			refresh = 1;
+			
             redraw = 0;
 			disp_on();
         }
+		
+		if(refresh)
+		{
+			init_satb();
+			set_color_rgb(256, 0, 0, 0); 
+			set_color_rgb(257, 7, 7, 7); 
+			load_vram(0x5000, LED_sp, 0x100);
+			spr_make(0, x, y, 0x5000+0x40*sel, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			satb_update();
+		}
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
+			
+		if (controller & JOY_I)
+		{
+			sel++;
+			if(sel > 3)
+				sel = 0;
+			refresh = 1;
+		}
+			
+		controller = joy(0);
+		
+		if (controller & JOY_UP)
+			y--;
+			
+		if (controller & JOY_DOWN)
+			y++;
+		
+		if (controller & JOY_LEFT)
+			x--;
+		
+		if (controller & JOY_RIGHT)
+			x++;
+			
+		if(x < 0)
+			x = 0;
+		if(x > 320 - size[sel])
+			x = 320 - size[sel];
+		if(y < 0)
+			y = 0;
+		if(y > (Enabled240p ? 240 - size[sel] : 224 - size[sel]))
+			y = Enabled240p ? 240 - size[sel] : 224 - size[sel];
+		
+		spr_set(0);	
+		
+		spr_x(x);
+		spr_y(y);
+		
+		satb_update();
     }
 }
 
@@ -619,6 +804,8 @@ void LagTest()
 		vsync();
         if(redraw)
         {
+			ResetVideo();
+			
 			set_map_data(lagback_map, 32, 30);
 			set_tile_data(lagback_bg);
 			load_tile(0x1000);
@@ -633,8 +820,96 @@ void LagTest()
         }
 
         controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
         
 		if (controller & JOY_II)
 			end = 1;
     }
 }
+
+void VScrollTest()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+	int x = 0;
+	int y = 0;
+	int speed = 1;
+	int *pos = 0;
+	int pause = 0;
+	int acc = 1;
+
+	pos = &x;
+    while(!end)
+    {   
+		vsync();
+        if(redraw)
+        {
+			ResetVideo();
+			setupFont();
+			
+			set_screen_size(0);
+			scroll(0, x, y, 0, 240, 0xC0);
+			set_map_data(fs_map, 40, 32);
+			set_tile_data(cgrid_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 32);
+			load_palette(0, check_pal, 1); 
+
+			Center224in240(); 
+         
+            redraw = 0;
+			disp_on();
+        }
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+        
+		if (controller & JOY_II)
+			end = 1;
+		
+		if (controller & JOY_UP)
+			speed++;
+
+		if (controller & JOY_DOWN)
+			speed--;
+
+		if (speed > 5)        
+			speed = 5;          
+
+		if (speed < 0)        
+			speed = 0;          
+
+		if (controller & JOY_I)
+			pause = !pause;
+
+		if (controller & JOY_LEFT || controller & JOY_RIGHT)
+			acc *= -1;
+
+		if(controller & JOY_SEL)
+		{
+			if(pos == &x)
+				pos = &y;
+			else
+				pos = &x;
+		}
+
+		if(!pause)
+			*pos += acc*speed;
+			
+		scroll(0, x, y, 0, 240, 0xC0);
+    }
+	set_screen_size(1);
+}
+

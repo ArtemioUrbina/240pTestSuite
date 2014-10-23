@@ -22,12 +22,16 @@
  This version of the suite is compiled with HuC from https://github.com/uli/huc
  
  */
- 
-void DrawCheck();
-void DrawStripes();
-void DropShadow();
-void scrollTest();
-void LEDZoneTest();
-void StripedSprite();
-void LagTest();
-void VScrollTest();
+#include "huc.h"
+#include "font.h"
+
+void main()
+{
+	disp_off();
+    while(1)
+    {   	
+		vsync();
+		put_string("ERROR", 10, 10);
+    }
+}
+

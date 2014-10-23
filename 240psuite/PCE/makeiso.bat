@@ -5,12 +5,12 @@
 @set PCE_INCLUDE=%HUC_HOME%/include/pce
 
 @REM Compile, assemble, and link
-@REM -msmall causes scroll to crash
+@REM -msmall causes scroll to crash (works in CD?)
 @REM -fno-recursive makes globals fail
 huc -DCDROM -t -O2 -scd -overlay 240pSuite.c font.c video.c tests.c help.c tools.c
 huc -DCDROM -t -O2 -scd -overlay patterns.c font.c video.c help.c tools.c
-huc -DCDROM -t -O2 -scd -overlay loader.c
+huc -DCDROM -t -O2 -scd -overlay loader.c font.c video.c
 copy 240pSuite.c 240pArcade.c
-huc -t -O2 -scd -overlay 240pArcade.c font.c video.c tests.c patterns.c help.c tools.c
+huc -DARCADE -t -O2 -scd -overlay 240pArcade.c font.c video.c tests.c patterns.c help.c tools.c
 isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl 240pArcade.ovl
 del 240pArcade.c
