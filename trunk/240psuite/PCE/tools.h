@@ -23,9 +23,11 @@
  
  */
 
+
 void DrawSP();
 // returns 1 if US system
 char DetectTG16();
 // returns 1 if CD detected
 char DetectCDROM();
 void DisplaySystemInfo();
+void Options();

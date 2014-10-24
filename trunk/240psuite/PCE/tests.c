@@ -83,11 +83,11 @@ void DrawCheck()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(CHECK_HELP);
 			redraw = 1;
 		}
 		
-		if(alternate || controller & JOY_RIGHT)
+		if(alternate || controller & JOY_SEL)
 		{
 			if(pos)
 			{
@@ -109,7 +109,10 @@ void DrawCheck()
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
-				redraw = 1;
+			{
+				set_map_data(fs_map, 40, 30);
+				load_map(0, 0, 0, 0, 40, 30);
+			}
 		}
         
 		if (controller & JOY_II)
@@ -167,7 +170,7 @@ void DrawStripes()
 			redraw = 1;
 		}
 		
-		if(alternate || controller & JOY_RIGHT)
+		if(alternate || controller & JOY_SEL)
 		{
 			if(pos)
 			{
@@ -192,7 +195,10 @@ void DrawStripes()
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
-				redraw = 1;
+			{
+				set_map_data(fs_map, 40, 30);
+				load_map(0, 0, 0, 0, 40, 30);
+			}
 		}
 			
 		if (controller & JOY_UP)
@@ -703,6 +709,7 @@ void LEDZoneTest()
 	int sel = 0;
 	int x = 144, y = 100;
 	int refresh = 0;
+	int visible = 1;
 	int size[4];
 
 	size[0] = 1;
@@ -739,18 +746,28 @@ void LEDZoneTest()
 			load_vram(0x5000, LED_sp, 0x100);
 			spr_make(0, x, y, 0x5000+0x40*sel, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
 			satb_update();
+			refresh = 0;
 		}
 
         controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(BACKLIT_HELP);
 			redraw = 1;
 		}
         
 		if (controller & JOY_II)
 			end = 1;
+			
+		if (controller & JOY_SEL)
+		{
+			visible = !visible;
+			if(!visible)
+				set_color_rgb(257, 0, 0, 0); 
+			else
+				set_color_rgb(257, 7, 7, 7); 
+		}
 			
 		if (controller & JOY_I)
 		{
@@ -760,35 +777,38 @@ void LEDZoneTest()
 			refresh = 1;
 		}
 			
-		controller = joy(0);
-		
-		if (controller & JOY_UP)
-			y--;
+		if(visible)
+		{
+			controller = joy(0);
 			
-		if (controller & JOY_DOWN)
-			y++;
-		
-		if (controller & JOY_LEFT)
-			x--;
-		
-		if (controller & JOY_RIGHT)
-			x++;
+			if (controller & JOY_UP)
+				y--;
+				
+			if (controller & JOY_DOWN)
+				y++;
 			
-		if(x < 0)
-			x = 0;
-		if(x > 320 - size[sel])
-			x = 320 - size[sel];
-		if(y < 0)
-			y = 0;
-		if(y > (Enabled240p ? 240 - size[sel] : 224 - size[sel]))
-			y = Enabled240p ? 240 - size[sel] : 224 - size[sel];
+			if (controller & JOY_LEFT)
+				x--;
+			
+			if (controller & JOY_RIGHT)
+				x++;
+				
+			if(x < 0)
+				x = 0;
+			if(x > 320 - size[sel])
+				x = 320 - size[sel];
+			if(y < 0)
+				y = 0;
+			if(y > (Enabled240p ? 240 - size[sel] : 224 - size[sel]))
+				y = Enabled240p ? 240 - size[sel] : 224 - size[sel];
 		
-		spr_set(0);	
+			spr_set(0);	
 		
-		spr_x(x);
-		spr_y(y);
+			spr_x(x);
+			spr_y(y);
 		
-		satb_update();
+			satb_update();
+		}
     }
 }
 

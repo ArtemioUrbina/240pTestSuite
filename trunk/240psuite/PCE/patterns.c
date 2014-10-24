@@ -148,6 +148,12 @@ void main()
 			showHelp(GENERAL_HELP);
 			redraw = 1;
 		}
+		
+		if (controller & JOY_SEL)
+		{
+			Options();
+			redraw = 1;
+		}
 
         
         if (controller & JOY_DOWN) 
@@ -416,7 +422,7 @@ void DrawColorBleed()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(BLEED_HELP);
 			redraw = 1;
 		}
         

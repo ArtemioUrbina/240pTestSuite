@@ -67,7 +67,7 @@ void main()
 		vsync();
 		if(ac_exists())
 		{
-			put_string("Loading to AC...", 25, 26);
+			put_string("Loading to AC...", 24, 26);
 			cd_execoverlay(4); // Arcade Card
 		}
 		else

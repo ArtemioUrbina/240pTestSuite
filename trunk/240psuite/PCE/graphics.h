@@ -26,6 +26,10 @@ extern char MB_map[];
 extern int MB_bg[];
 extern int MB_pal[];
 
+extern char MB512_map[];
+extern int MB512_bg[];
+extern int MB512_pal[];
+
 extern int SD_sp[];
 extern int SD_pal[];
  
