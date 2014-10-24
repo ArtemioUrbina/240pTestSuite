@@ -24,5 +24,8 @@
  */
  
  #define GENERAL_HELP	1
+ #define BACKLIT_HELP	2
+ #define BLEED_HELP		3
+ #define CHECK_HELP		4
  
 void showHelp(int data);
