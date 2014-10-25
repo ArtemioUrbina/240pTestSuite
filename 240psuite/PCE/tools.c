@@ -48,7 +48,11 @@ void DrawSP()
 	int count = 0;
 	
 	load_palette(16, SD_pal, 1);
+#ifndef CDROM1		
 	load_vram(0x5000, SD_sp, 0x700);
+#else
+	cd_loadvram(3, OFS_SD_tile_bin, 0x5000, SIZE_SD_tile_bin);
+#endif
 
 	for(row = 0; row < 7; row++)
 	{
@@ -141,11 +145,17 @@ void Options()
 			
 			SetFontColors(12, RGB(3, 3, 3), RGB(4, 4, 4), RGB(0, 0, 0));
 			SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), RGB(0, 0, 0));
+#ifndef CDROM1
 			set_map_data(MB512_map, 64, 30);
 			set_tile_data(MB512_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 64, 30);
 			load_palette(0, MB512_pal, 1);  
+#else
+			set_screen_size(SCR_SIZE_32x32); 
+			cd_loadvram(3, OFS_back512_tile_bin, 0x1000, SIZE_back512_tile_bin);
+			cd_loadvram(3, OFS_back512_map_bin, 0, SIZE_back512_map_bin);		
+#endif
 			
 			Center224in240();
          

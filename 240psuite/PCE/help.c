@@ -30,9 +30,13 @@
 
 #define HPOS 6
 
-extern char MB512_map[];
-extern int MB512_bg[];
-extern int MB512_pal[];
+#ifndef CDROM
+#include "graphics.h"
+#endif
+
+#ifdef CDROM1
+#include "gdata.h"
+#endif
 
 #ifdef CDROM
 extern int xres_flags;
@@ -40,6 +44,10 @@ extern int Enabled240p;
 extern int UseDefault;
 extern int EnabledSoft;
 extern int Enabled_C_BW;
+
+extern char MB512_map[];
+extern int MB512_bg[];
+extern int MB512_pal[];
 #endif
 
 void showHelp(int data)
@@ -64,9 +72,13 @@ void showHelp(int data)
 			
 			SetFontColors(13, RGB(3, 3, 3), RGB(0, 6, 0), RGB(0, 0, 0));
 			SetFontColors(15, RGB(2, 2, 2), RGB(0, 6, 0), RGB(0, 0, 0));
-			
+
+#ifndef CDROM1			
 			set_tile_data(MB512_bg);
 			load_tile(0x1000);
+#else
+			cd_loadvram(3, OFS_back512_tile_bin, 0x1000, SIZE_back512_tile_bin);
+#endif
 			load_palette(0, MB512_pal, 1);  
 			
 			Center224in240();
@@ -80,9 +92,14 @@ void showHelp(int data)
 		if(refresh)
 		{
 			int row = 5;
-			
+
+#ifndef CDROM1
 			set_map_data(MB512_map, 64, 30);
 			load_map(0, 0, 0, 0, 64, 30);
+#else
+			set_screen_size(SCR_SIZE_32x32); 
+			cd_loadvram(3, OFS_back512_map_bin, 0, SIZE_back512_map_bin);		
+#endif
 			
 			set_font_pal(15);
 			switch(data)

@@ -86,10 +86,16 @@ void main()
 			ResetVideo();
 			setupFont();
 
+#ifndef CDROM1
 			set_map_data(MB_map, 40, 30);
 			set_tile_data(MB_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(3, OFS_mainbg_tile_bin, 0x1000, SIZE_mainbg_tile_bin);
+			cd_loadvram(3, OFS_mainbg_map_bin, 0, SIZE_mainbg_map_bin);		
+#endif
 			load_palette(0, MB_pal, 1);  
            
 			init_satb();
@@ -259,7 +265,14 @@ void DrawN()
         if(redraw)
         {
 			cls();
+#ifndef CDROM1
 			load_background(n_bg, n_pal, n_map, 32, 22);
+#else
+			set_screen_size(SCR_SIZE_32x32); 
+			cd_loadvram(3, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
+			cd_loadvram(3, OFS_N_BAT_bin, 0, SIZE_N_BAT_bin);
+#endif
+
 			scroll(0, 0, -32, 0, 240, 0xC0);
             redraw = 0;
 			disp_on();
@@ -294,11 +307,17 @@ void DrawCredits()
 			
 			SetFontColors(15, RGB(3, 3, 3), RGB(0, 6, 0), RGB(0, 0, 0));
 			SetFontColors(13, RGB(3, 3, 3), RGB(1, 6, 6), RGB(0, 0, 0));
-			
+
+#ifndef CDROM1			
 			set_map_data(MB512_map, 64, 30);
 			set_tile_data(MB512_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 64, 30);
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(3, OFS_back512_tile_bin, 0x1000, SIZE_back512_tile_bin);
+			cd_loadvram(3, OFS_back512_map_bin, 0, SIZE_back512_map_bin);		
+#endif
 			load_palette(0, MB512_pal, 1);  
 			
 			Center224in240();
