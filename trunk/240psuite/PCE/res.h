@@ -25,17 +25,18 @@
 
 #incchr(my_font, "graphics/font.pcx", 32, 3);
 
+#ifdef CDROM1
+#include "graphics.h"
+#elseif
+
 #incbin(MB_map, "graphics/mainbg.fmp");
 #incchr_ex(MB_bg, "graphics/mainbg.pcx", 0, 0, 20, 7, 0);
-#incpal(MB_pal, "graphics/mainbg.pcx", 0, 1);
 
 #incbin(MB512_map, "graphics/back512.fmp");
 #incchr_ex(MB512_bg, "graphics/back512.pcx", 0, 0, 4, 36, 0);
-#incpal(MB512_pal, "graphics/back512.pcx", 0, 1);
 
 #incbin(n_map, "graphics/N_BAT.bin");
 #incbin(n_bg, "graphics/N_DATA.bin");
-#incbin(n_pal, "graphics/N_PAL.bin");
 
 /*
 			TEST 
@@ -43,7 +44,6 @@
 
 #incbin(fs_map, "graphics/fullscreen.fmp");
 #incchr_ex(check_bg, "graphics/check.pcx", 0, 0, 1, 1, 0);
-#incpal(check_pal, "graphics/check.pcx", 0, 1);
 
 #incchr_ex(hstripes_bg, "graphics/check.pcx", 8, 0, 1, 1, 0);
 #incchr_ex(vstripes_bg, "graphics/check.pcx", 0, 8, 1, 1, 0);
@@ -51,33 +51,47 @@
 
 #incbin(motoko_map, "graphics/motoko_BAT.bin");
 #incbin(motoko_bg, "graphics/motoko_DATA.bin");
-#incbin(motoko_pal, "graphics/motoko_PAL.bin");
 
 #incbin(sonic_map, "graphics/sonic_BAT.bin");
 #incbin(sonic_bg, "graphics/sonic_DATA.bin");
-#incbin(sonic_pal, "graphics/sonic_PAL.bin");
 
 #incbin(lagback_map, "graphics/lagback.fmp");
 #incchr_ex(lagback_bg, "graphics/lagback.pcx", 0, 0, 2, 35, 0);
-#incpal(lagback_pal, "graphics/lagback.pcx", 0, 1);
 
 #incchr_ex(cgrid_bg, "graphics/circles_grid.pcx", 0, 0, 1, 1, 0);
 
-#ifndef CDROM
-#include "res_patterns.h"
-#endif
 
 /*
 		SPRITES
 */
 
+
 #incspr(SD_sp, "graphics/SD.pcx", 0, 0, 4, 7);
-#incpal(SD_pal, "graphics/SD.pcx", 0, 1);
 
 #incspr(palm_sp, "graphics/sonicpalm.pcx", 0, 0, 5, 7);
-#incpal(palm_pal, "graphics/sonicpalm.pcx", 0, 1);
 
 #incspr(shadow_sp, "graphics/shadow.pcx", 0, 0, 2, 2);
 #incspr(striped_sp, "graphics/striped.pcx", 0, 0, 2, 2);
 
 #incspr(LED_sp, "graphics/LEDsprites.pcx", 0, 0, 2, 2);
+
+#endif // CDROM1
+
+/*
+		Palettes
+*/
+
+#ifndef CDROM
+#include "res_patterns.h"
+#endif
+
+#incbin(motoko_pal, "graphics/motoko_PAL.bin");
+#incbin(n_pal, "graphics/N_PAL.bin");
+#incbin(sonic_pal, "graphics/sonic_PAL.bin");
+#incpal(lagback_pal, "graphics/lagback.pcx", 0, 1);
+#incpal(check_pal, "graphics/check.pcx", 0, 1);
+#incpal(MB512_pal, "graphics/back512.pcx", 0, 1);
+#incpal(MB_pal, "graphics/mainbg.pcx", 0, 1);
+
+#incpal(SD_pal, "graphics/SD.pcx", 0, 1);
+#incpal(palm_pal, "graphics/sonicpalm.pcx", 0, 1);

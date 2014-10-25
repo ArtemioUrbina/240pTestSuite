@@ -22,52 +22,57 @@
  This version of the suite is compiled with HuC from https://github.com/uli/huc
  
  */
+ 
+ #ifdef CDROM1
+ #include "gdata.h"
+ #endif
+
+#ifndef CDROM1
+ 
 extern char MB_map[];
 extern int MB_bg[];
-extern int MB_pal[];
+
+extern int SD_sp[];
+extern int shadow_sp[];
+extern int striped_sp[];
+
+extern int LED_sp[];
 
 extern char MB512_map[];
 extern int MB512_bg[];
-extern int MB512_pal[];
 
-extern int SD_sp[];
-extern int SD_pal[];
- 
 extern char fs_map[];
 extern int white_bg[];
-
-extern int check_pal[];
 
 extern int hstripes_bg[];
 extern int vstripes_bg[];
 
 extern int check_bg[];
-extern int check_pal[];
 
 extern char motoko_map[];
 extern int motoko_bg[];
-extern int motoko_pal[];
-
-extern int SD_sp[];
-extern int SD_pal[];
 
 extern int palm_sp[];
-extern int palm_pal[];
-
-extern int LED_sp[];
-
-extern int shadow_sp[];
-extern int striped_sp[];
 
 extern char sonic_map[];
 extern int sonic_bg[];
-extern int sonic_pal[];
 
 extern char lagback_map[];
 extern int lagback_bg[];
-extern int lagback_pal[];
 
 extern char cgrid_bg[];
 
-#include "graphics_patterns.h"
+
+#endif
+
+extern int MB512_pal[];
+extern int check_pal[];
+extern int motoko_pal[];
+extern int SD_pal[];
+extern int palm_pal[];
+extern int sonic_pal[];
+extern int lagback_pal[];
+extern int MB_pal[];
+extern int n_pal[];
+
 

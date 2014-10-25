@@ -4,3 +4,4 @@ del *.s
 del *.sym
 del *.pce
 del *.iso
+del *.lst

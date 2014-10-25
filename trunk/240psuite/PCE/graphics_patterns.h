@@ -23,6 +23,12 @@
  
  */
  
+#ifdef CDROM1
+#include "gdata.h"
+#endif 
+
+#ifndef CDROM1
+
 #ifdef CDROM
 extern char MB_map[];
 extern int MB_bg[];
@@ -37,29 +43,21 @@ extern int check_pal[];
 #endif
 
 extern char pluge_map[];
-extern int pluge_bg[];
-extern int pluge_pal[];
 
 extern char color_map[];
 extern int color_bg[];
-extern int color_pal[];
 
 extern char colorbleed_map[];
 extern int colorbleed_bg[];
 extern int colorbleedchk_bg[];
-extern int colorbleed_pal[];
 
 extern char SMPTE75_map[];
 extern int SMPTE75_bg[];
-extern int SMPTE75_pal[];
-extern int SMPTE100_pal[];
 
 extern char cb601_map[];
 extern int cb601_bg[];
-extern int cb601_pal[];
 
 extern int grid_bg[];
-extern int grid_pal[];
 
 extern char grid256_224_map[];
 extern char grid256_240_map[];
@@ -70,20 +68,31 @@ extern char grid512_240_map[];
 
 extern char linearity240_map[];
 extern int linearity240_bg[];
-extern int linearity240_pal[];
 
 extern char linearity224_map[];
 extern int linearity224_bg[];
-extern int linearity224_pal[];
 
 extern char linearity256_map[];
 extern int linearity256_bg[];
-extern int linearity256_pal[];
 
 extern char sharpness_map[];
 extern int sharpness_bg[];
-extern int sharpness_pal[];
 
 extern char gray_map[];
 extern int gray_bg[];
+
+#endif
+
+extern int color_pal[];
+extern int pluge_bg[];
+extern int colorbleed_pal[];
+extern int SMPTE100_pal[];
+extern int SMPTE75_pal[];
+extern int cb601_pal[];
+extern int grid_pal[];
+extern int linearity240_pal[];
+extern int linearity224_pal[];
+extern int linearity256_pal[];
+extern int sharpness_pal[];
 extern int gray_pal[];
+extern int pluge_pal[];

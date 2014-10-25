@@ -27,11 +27,16 @@
 #include "help.h"
 
 #ifndef CDROM
+#ifndef CDROM1
 #include "graphics.h"
-#else
-#include "res_patterns.h"
 #include "graphics_patterns.h"
 #endif
+#endif
+
+#ifdef CDROM
+#include "res_patterns.h"
+#endif
+
 
 #include "video.h"
 
@@ -51,7 +56,6 @@ void main()
 	int end = 0;
 
 #ifdef CDROM
-	/* global values are not holding their data */
 	xres_flags = xres_flags_g;
 	Enabled240p = Enabled240p_g;
 	UseDefault = UseDefault_g;
@@ -69,11 +73,17 @@ void main()
 			ResetVideo();
 			setupFont();
 			
+#ifndef CDROM1			
 			set_map_data(MB_map, 40, 30);
 			set_tile_data(MB_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, MB_pal, 1);  
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(3, OFS_mainbg_tile_bin, 0x1000, SIZE_mainbg_tile_bin);
+			cd_loadvram(3, OFS_mainbg_map_bin, 0, SIZE_mainbg_map_bin);		
+#endif
+			load_palette(0, MB_pal, 1);
 			
 			Center224in240();
          
@@ -259,12 +269,19 @@ void DrawPluge()
         if(redraw)
         {
 			ResetVideo();
-			
+	
+#ifndef CDROM1		
 			set_map_data(pluge_map, 40, 30);
 			set_tile_data(pluge_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, pluge_pal, 1);  
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(3, OFS_pluge_tile_bin, 0x1000, SIZE_pluge_tile_bin);
+			cd_loadvram(3, OFS_pluge_map_bin, 0, SIZE_pluge_map_bin);
+#endif
+
 			Center224in240();
          
             redraw = 0;
@@ -328,8 +345,13 @@ void DrawColor()
         if(redraw)
         {
 			ResetVideo();
-			
+#ifndef CDROM1	
 			load_background(color_bg, color_pal, color_map, 40, 30);
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(3, OFS_color_DATA_bin, 0x1000, SIZE_color_DATA_bin);
+			cd_loadvram(3, OFS_color_BAT_bin, 0, SIZE_color_BAT_bin);
+#endif
 			Center224in240();
             redraw = 0;
 			disp_on();
@@ -363,12 +385,15 @@ void DrawCB601()
         if(redraw)
         {
 			ResetVideo();
-			
+
+#ifndef CDROM1
 			set_map_data(cb601_map, 40, 30);
 			set_tile_data(cb601_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, cb601_pal, 1);  
+#else
+#endif
 			Center224in240();
 			
             redraw = 0;
@@ -403,7 +428,8 @@ void DrawColorBleed()
         if(redraw)
         {
 			ResetVideo();
-			
+
+#ifndef CDROM1			
 			set_map_data(colorbleed_map, 40, 30);
 			if(check)
 				set_tile_data(colorbleedchk_bg);
@@ -412,6 +438,8 @@ void DrawColorBleed()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, colorbleed_pal, 1);  
+#else
+#endif
 			Center224in240();
 			
             redraw = 0;
@@ -432,14 +460,20 @@ void DrawColorBleed()
 		{
 			if(check)
 			{
+#ifndef CDROM1
 				set_tile_data(colorbleed_bg);
 				load_tile(0x1000);
+#else
+#endif
 				check = 0;
 			}
 			else
 			{
+#ifndef CDROM1
 				set_tile_data(colorbleedchk_bg);
 				load_tile(0x1000);
+#else
+#endif
 				check = 1;
 			}
 		}
@@ -464,6 +498,7 @@ void DrawSMPTE()
 			ResetVideo();
 			
 			setupFont();
+#ifndef CDROM1
 			set_map_data(SMPTE75_map, 40, 30);	
 			set_tile_data(SMPTE75_bg);
 			load_tile(0x1000);
@@ -472,6 +507,8 @@ void DrawSMPTE()
 				load_palette(0, SMPTE100_pal, 1);  
 			else
 				load_palette(0, SMPTE75_pal, 1);
+#else
+#endif
 			Center224in240();  
 			
             redraw = 0;
@@ -492,14 +529,20 @@ void DrawSMPTE()
 		{
 			if(is100)
 			{
+#ifndef CDROM1
 				load_palette(0, SMPTE75_pal, 1);  
+#else
+#endif
 				is100 = 0;
 				put_string(" 75%", 30, 2);
 				text = 30;
 			}
 			else
 			{
+#ifndef CDROM1
 				load_palette(0, SMPTE100_pal, 1);  
+#else
+#endif
 				is100 = 1;
 				put_string("100%", 30, 2);
 				text = 30;
@@ -511,8 +554,11 @@ void DrawSMPTE()
 			text--;
 			if(!text)
 			{
+#ifndef CDROM1
 				set_map_data(SMPTE75_map, 40, 3);
 				load_map(0, 0, 0, 0, 40, 3);
+#else
+#endif
 			}
 		}
     }
@@ -533,7 +579,8 @@ void DrawGrid256()
         if(redraw)
         {
 			ResetVideo();
-			
+
+#ifndef CDROM1			
 			if(Enabled240p)
 				set_map_data(grid256_240_map, 32, 30);
 			else
@@ -542,6 +589,8 @@ void DrawGrid256()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 32, Enabled240p ? 30 : 28);
 			load_palette(0, grid_pal, 1);  
+#else
+#endif
          
             redraw = 0;
 			disp_on();
@@ -576,6 +625,7 @@ void DrawGrid320()
         {
 			ResetVideo();
 			
+#ifndef CDROM1			
 			if(Enabled240p)
 				set_map_data(grid320_240_map, 40, 30);
 			else
@@ -584,6 +634,8 @@ void DrawGrid320()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, Enabled240p ? 30 : 28);
 			load_palette(0, grid_pal, 1);  
+#else
+#endif
          
             redraw = 0;
 			disp_on();
@@ -618,6 +670,7 @@ void DrawGrid512()
         {
 			ResetVideo();
 			
+#ifndef CDROM1			
 			if(Enabled240p)
 				set_map_data(grid512_240_map, 64, 30);
 			else
@@ -626,6 +679,8 @@ void DrawGrid512()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 64, Enabled240p ? 30 : 28);
 			load_palette(0, grid_pal, 1);  
+#else
+#endif
          
             redraw = 0;
 			disp_on();
@@ -664,12 +719,15 @@ void DrawWhite()
         if(redraw)
         {
 			ResetVideo();
-			
+
+#ifndef CDROM1
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(white_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1);  
+#else
+#endif
 			Center224in240();
          
             redraw = 0;
@@ -830,19 +888,25 @@ void DrawLinearity()
 			
 			if(Enabled240p)
 			{
+#ifndef CDROM1
 				set_map_data(linearity240_map, 40, 30);
 				set_tile_data(linearity240_bg);
 				load_tile(0x1000);
 				load_map(0, 0, 0, 0, 40, 30);
 				load_palette(0, linearity240_pal, 1);  
+#else
+#endif
 			}
 			else
 			{
+#ifndef CDROM1
 				set_map_data(linearity224_map, 40, 28);
 				set_tile_data(linearity224_bg);
 				load_tile(0x1000);
 				load_map(0, 0, 0, 0, 40, 28);
 				load_palette(0, linearity224_pal, 1);  
+#else
+#endif
 			}
 			
             redraw = 0;
@@ -876,12 +940,15 @@ void DrawLinearity256()
         if(redraw)
         {
 			ResetVideo();
-			
+
+#ifndef CDROM1			
 			set_map_data(linearity256_map, 32, 28);
 			set_tile_data(linearity256_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 32, 28);
 			load_palette(0, linearity256_pal, 1);  
+#else
+#endif
 			
             redraw = 0;
 			disp_on();
@@ -935,11 +1002,14 @@ void DrawSharpness()
         {
 			ResetVideo();
 			
+#ifndef CDROM1			
 			set_map_data(sharpness_map, 40, 30);
 			set_tile_data(sharpness_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, sharpness_pal, 1);  
+#else
+#endif
 			Center224in240();
 
             redraw = 0;
@@ -973,12 +1043,15 @@ void DrawGray()
         if(redraw)
         {
 			ResetVideo();
-			
+
+#ifndef CDROM1			
 			set_map_data(gray_map, 32, 30);
 			set_tile_data(gray_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 32, 30);
 			load_palette(0, gray_pal, 1);  
+#else
+#endif
 			Center224in240();
 
             redraw = 0;

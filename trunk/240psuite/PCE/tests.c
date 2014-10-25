@@ -57,12 +57,15 @@ void DrawCheck()
         {
 			ResetVideo();
 			setupFont();
-			
+
+#ifndef CDROM1			
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(check_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1); 
+#else
+#endif
 
 			Center224in240(); 
          
@@ -110,8 +113,11 @@ void DrawCheck()
 			drawframe = !drawframe;
 			if(!drawframe)
 			{
+#ifndef CDROM1
 				set_map_data(fs_map, 40, 30);
 				load_map(0, 0, 0, 0, 40, 30);
+#else
+#endif
 			}
 		}
         
@@ -140,12 +146,15 @@ void DrawStripes()
         {
 			ResetVideo();
 			setupFont();
-			
+
+#ifndef CDROM1			
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1);  
+#else
+#endif
 			
 			Center224in240();
          
@@ -196,20 +205,29 @@ void DrawStripes()
 			drawframe = !drawframe;
 			if(!drawframe)
 			{
+#ifndef CDROM1
 				set_map_data(fs_map, 40, 30);
 				load_map(0, 0, 0, 0, 40, 30);
+#else
+#endif
 			}
 		}
 			
 		if (controller & JOY_UP)
 		{
+#ifndef CDROM1
 			set_tile_data(vstripes_bg);
 			load_tile(0x1000);
+#else
+#endif
 		}
 		if (controller & JOY_DOWN)
 		{
+#ifndef CDROM1
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
+#else
+#endif
 		}
     }
 }
@@ -237,7 +255,14 @@ void DropShadow()
 			switch(back)
 			{
 				case 0:
+#ifndef CDROM1
 					load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+#else
+					set_screen_size(SCR_SIZE_64x32); 
+					cd_loadvram(3, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
+					cd_loadvram(3, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+					load_palette(0, n_pal, 16);
+#endif
 					break;
 				case 1:
 					set_screen_size(0);
@@ -246,21 +271,34 @@ void DropShadow()
 					scroll(1, 0, 76, 76, 160, 0xC0);
 					scroll(2, 0, 160, 160, 208, 0xC0);
 					scroll(3, 0, 208, 208, 240, 0xC0);
+#ifndef CDROM1
 					load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
+#else
+					set_screen_size(SCR_SIZE_64x32); 
+					cd_loadvram(3, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+					cd_loadvram(3, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+					load_palette(0, n_pal, 16);
+#endif
 					break;
 				case 2:
+#ifndef CDROM1
 					set_map_data(fs_map, 40, 30);
 					set_tile_data(hstripes_bg);
 					load_tile(0x1000);
 					load_map(0, 0, 0, 0, 40, 30);
 					load_palette(0, check_pal, 1); 
+#else
+#endif
 					break;
 				case 3:
+#ifndef CDROM1
 					set_map_data(fs_map, 40, 30);
 					set_tile_data(check_bg);
 					load_tile(0x1000);
 					load_map(0, 0, 0, 0, 40, 30);
 					load_palette(0, check_pal, 1);
+#else
+#endif
 					break;
 			}
 			setupFont();
@@ -268,8 +306,11 @@ void DropShadow()
 			init_satb();
 			set_color_rgb(240, 0, 0, 0); 
 			set_color_rgb(241, 0, 0, 0); 
+#ifndef CDROM1		
 			load_vram(0x6000, shadow_sp, 0x100);
 			spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+#else
+#endif
 			if(back == 1)
 				DrawPalm();
 			satb_update();
@@ -285,18 +326,30 @@ void DropShadow()
 			switch(back)
 			{
 				case 0:
+#ifndef CDROM1
 					load_bat(0, motoko_map, 40, 3);
+#else
+#endif
 					break;
 				case 1:
+#ifndef CDROM1
 					load_bat(0, sonic_map, 40, 30);
+#else
+#endif
 					break;
 				case 2:
+#ifndef CDROM1
 					set_map_data(fs_map, 40, 3);
 					load_map(0, 0, 0, 0, 40, 3);
+#else
+#endif
 					break;
 				case 3:
+#ifndef CDROM1
 					set_map_data(fs_map, 40, 3);
 					load_map(0, 0, 0, 0, 40, 3);
+#else
+#endif
 					break;
 			}
 		}
@@ -422,7 +475,14 @@ void StripedSprite()
 			switch(back)
 			{
 				case 0:
+#ifndef CDROM1
 					load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+#else
+					set_screen_size(SCR_SIZE_64x32); 
+					cd_loadvram(3, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
+					cd_loadvram(3, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+					load_palette(0, n_pal, 16);
+#endif
 					break;
 				case 1:
 					set_screen_size(0);
@@ -431,30 +491,46 @@ void StripedSprite()
 					scroll(1, 0, 76, 76, 160, 0xC0);
 					scroll(2, 0, 160, 160, 208, 0xC0);
 					scroll(3, 0, 208, 208, 240, 0xC0);
+#ifndef CDROM1
 					load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
+#else
+					set_screen_size(SCR_SIZE_64x32); 
+					cd_loadvram(3, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+					cd_loadvram(3, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+					load_palette(0, n_pal, 16);
+#endif
 					break;
 				case 2:
+#ifndef CDROM1
 					set_map_data(fs_map, 40, 30);
 					set_tile_data(hstripes_bg);
 					load_tile(0x1000);
 					load_map(0, 0, 0, 0, 40, 30);
-					load_palette(0, check_pal, 1); 
+					load_palette(0, check_pal, 1);
+#else
+#endif
 					break;
 				case 3:
+#ifndef CDROM1
 					set_map_data(fs_map, 40, 30);
 					set_tile_data(check_bg);
 					load_tile(0x1000);
 					load_map(0, 0, 0, 0, 40, 30);
 					load_palette(0, check_pal, 1);
+#else
+#endif
 					break;
 			}
 			setupFont();
 			
 			init_satb();
 			set_color_rgb(240, 0, 0, 0); 
-			set_color_rgb(241, 0, 0, 0); 
+			set_color_rgb(241, 0, 0, 0);
+#ifndef CDROM1		 
 			load_vram(0x6000, striped_sp, 0x100);
 			spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+#else
+#endif
 			if(back == 1)
 				DrawPalm();
 			satb_update();
@@ -564,8 +640,11 @@ void DrawPalm()
 	int row = 0;
 	int count = 0;
 	
+#ifndef CDROM1
 	load_palette(16, palm_pal, 1);
 	load_vram(vram, palm_sp, 0x8C0);
+#else
+#endif
 
 	for(row = 0; row < 7; row++)
 	{
@@ -627,7 +706,13 @@ void ScrollTest()
 			scroll(2, x3, 160, 160, 208, 0xC0);
 			scroll(3, x4, 208, 208, 240, 0xC0);
 	
+#ifndef CDROM1
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(3, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+			cd_loadvram(3, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+#endif
 			
 			init_satb();
 			DrawPalm();
@@ -724,12 +809,16 @@ void LEDZoneTest()
         if(redraw)
         {
 			ResetVideo();
-			
+
+#ifndef CDROM1			
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(white_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			set_color_rgb(1, 0, 0, 0); 
+#else
+#endif
+
 			Center224in240();
 			
 			refresh = 1;
@@ -743,8 +832,11 @@ void LEDZoneTest()
 			init_satb();
 			set_color_rgb(256, 0, 0, 0); 
 			set_color_rgb(257, 7, 7, 7); 
+#ifndef CDROM1		
 			load_vram(0x5000, LED_sp, 0x100);
 			spr_make(0, x, y, 0x5000+0x40*sel, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+#else
+#endif
 			satb_update();
 			refresh = 0;
 		}
@@ -826,11 +918,14 @@ void LagTest()
         {
 			ResetVideo();
 			
+#ifndef CDROM1
 			set_map_data(lagback_map, 32, 30);
 			set_tile_data(lagback_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 32, 30);
 			load_palette(0, lagback_pal, 1); 
+#else
+#endif
 
 			Center224in240(); 
          
@@ -876,11 +971,14 @@ void VScrollTest()
 			
 			set_screen_size(0);
 			scroll(0, x, y, 0, 240, 0xC0);
+#ifndef CDROM1
 			set_map_data(fs_map, 40, 32);
 			set_tile_data(cgrid_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 32);
 			load_palette(0, check_pal, 1); 
+#else
+#endif
 
 			Center224in240(); 
          
