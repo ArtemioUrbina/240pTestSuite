@@ -259,9 +259,8 @@ void DropShadow()
 					load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
 #else
 					set_screen_size(SCR_SIZE_64x32); 
-					cd_loadvram(3, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
-					cd_loadvram(3, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
-					load_palette(0, n_pal, 16);
+					cd_loadvram(4, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
+					cd_loadvram(4, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
 #endif
 					break;
 				case 1:
@@ -275,9 +274,8 @@ void DropShadow()
 					load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
 					set_screen_size(SCR_SIZE_64x32); 
-					cd_loadvram(3, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
-					cd_loadvram(3, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
-					load_palette(0, n_pal, 16);
+					cd_loadvram(4, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+					cd_loadvram(4, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
 #endif
 					break;
 				case 2:
@@ -479,9 +477,8 @@ void StripedSprite()
 					load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
 #else
 					set_screen_size(SCR_SIZE_64x32); 
-					cd_loadvram(3, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
-					cd_loadvram(3, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
-					load_palette(0, n_pal, 16);
+					cd_loadvram(4, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
+					cd_loadvram(4, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
 #endif
 					break;
 				case 1:
@@ -495,9 +492,8 @@ void StripedSprite()
 					load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
 					set_screen_size(SCR_SIZE_64x32); 
-					cd_loadvram(3, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
-					cd_loadvram(3, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
-					load_palette(0, n_pal, 16);
+					cd_loadvram(4, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+					cd_loadvram(4, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
 #endif
 					break;
 				case 2:
@@ -710,8 +706,8 @@ void ScrollTest()
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(3, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
-			cd_loadvram(3, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+			cd_loadvram(4, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+			cd_loadvram(4, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
 #endif
 			
 			init_satb();
@@ -1031,3 +1027,190 @@ void VScrollTest()
 	set_screen_size(1);
 }
 
+void LoadWave()
+{
+#asm
+		lda     #0
+		sta     $0800
+		lda     #%010_00000
+		sta     $0804
+		lda     #%000_00000
+		sta     $0804
+		
+		clx   
+				
+load:   lda     sine,x
+		sta     $0806 
+		inx           
+		cpx     #32   
+		bne     load
+		
+		
+		lda     #LOW(112)
+		sta     $0802
+		lda     #HIGH(112)
+		sta     $0803
+		
+		lda     #$EE
+		sta     $0801		
+		
+		rts
+		
+sine:   db      18,22,24,26,28,28,30,30
+		db      30,30,28,28,26,24,22,18
+		db      12,8,6,4,2,2,0,0
+		db      0,0,2,2,4,6,8,12
+#endasm		
+}
+
+void PlayLeft()
+{
+#asm
+		lda     #$F0
+		sta     $0805
+		
+		lda     #%100_11111
+		sta     $0804
+		rts
+#endasm
+}
+
+void PlayRight()
+{
+#asm
+		lda     #$0F
+		sta     $0805
+		
+		lda     #%100_11111
+		sta     $0804
+		rts
+#endasm
+}
+
+void PlayCenter()
+{
+#asm
+		lda     #$FF
+		sta     $0805
+		
+		lda     #%100_11111
+		sta     $0804
+		rts
+#endasm
+}
+
+void StopAudio()
+{
+#asm
+		lda     #%000_11111
+		sta     $0804
+		rts
+#endasm
+}
+
+void SoundTest()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int refresh = 0;
+	int end = 0;
+	int count = 0;
+	int sel = 1;
+
+	LoadWave();
+	
+    while(!end)
+    {   
+		vsync();
+        if(redraw)
+        {
+			ResetVideo();
+			setupFont();
+
+			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), RGB(0, 0, 0));
+#ifndef CDROM1
+			set_map_data(MB_map, 40, 30);
+			set_tile_data(MB_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, MB_pal, 1);  
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(4, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+			cd_loadvram(4, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+			cd_loaddata(4, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
+			set_bgpal(0, palCD); 
+#endif
+			
+			set_font_pal(13);
+            put_string("Sound Test", 15, 5);
+			
+			Center224in240();
+			
+            redraw = 0;
+			refresh = 1;
+			disp_on();
+		}
+		
+		if(refresh)
+		{
+			set_font_pal(sel == 0 ? 15 : 14);
+            put_string("Left", 9, 14);
+            set_font_pal(sel == 1 ? 15 : 14);
+            put_string("Center", 17, 16);
+            set_font_pal(sel == 2 ? 15 : 14);
+            put_string("Right", 26, 14);
+		}
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			StopAudio();
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+        
+		if (controller & JOY_II)
+			end = 1;
+			
+		if (controller & JOY_I)
+		{
+			switch(sel)
+			{
+				case 0:
+					PlayLeft();
+					break;
+				case 1:
+					PlayCenter();
+					break;
+				case 2:
+					PlayRight();
+					break;
+			}
+			count = 20;
+		}
+			
+		if (controller & JOY_LEFT)
+			sel --;
+			
+		if (controller & JOY_RIGHT)
+			sel ++;
+	
+		if(sel < 0)
+			sel = 0;
+		if(sel > 2)
+			sel = 2;
+			
+		if(count)
+			count--;
+			
+		if(count == 1)
+		{
+			StopAudio();
+			count = 0;
+		}
+    }
+	StopAudio();
+}

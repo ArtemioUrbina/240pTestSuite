@@ -62,6 +62,7 @@ void main()
 	
 	cls();
 	SetFontColors(14, RGB(0, 0, 0), RGB(4, 4, 4), RGB(0, 0, 0));
+#ifndef CDROM1
     while(1)
     {   	
 		vsync();
@@ -77,5 +78,9 @@ void main()
 		}
 		break;
     }
+#else
+	help_data_g = 0;
+	cd_execoverlay(2); // CD-ROM2
+#endif
 }
 

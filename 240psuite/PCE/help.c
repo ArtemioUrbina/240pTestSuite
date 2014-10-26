@@ -36,6 +36,7 @@
 
 #ifdef CDROM1
 #include "gdata.h"
+extern char palCD[];
 #endif
 
 #ifdef CDROM
@@ -76,10 +77,12 @@ void showHelp(int data)
 #ifndef CDROM1			
 			set_tile_data(MB512_bg);
 			load_tile(0x1000);
-#else
-			cd_loadvram(3, OFS_back512_tile_bin, 0x1000, SIZE_back512_tile_bin);
-#endif
 			load_palette(0, MB512_pal, 1);  
+#else
+			cd_loadvram(4, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
+			cd_loaddata(4, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
+			set_bgpal(0, palCD); 
+#endif
 			
 			Center224in240();
 			
@@ -97,8 +100,8 @@ void showHelp(int data)
 			set_map_data(MB512_map, 64, 30);
 			load_map(0, 0, 0, 0, 64, 30);
 #else
-			set_screen_size(SCR_SIZE_32x32); 
-			cd_loadvram(3, OFS_back512_map_bin, 0, SIZE_back512_map_bin);		
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(4, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
 #endif
 			
 			set_font_pal(15);

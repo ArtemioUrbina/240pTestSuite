@@ -31,3 +31,4 @@ void LEDZoneTest();
 void StripedSprite();
 void LagTest();
 void VScrollTest();
+void SoundTest();

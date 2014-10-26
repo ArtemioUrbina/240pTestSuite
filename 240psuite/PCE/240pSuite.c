@@ -34,6 +34,11 @@ void DrawCredits();
 void DisplaySystemInfo();
 void DrawIntro();
 
+
+#ifdef CDROM1
+char palCD[32];
+#endif
+
 #define HPOS 5
 
 void main()
@@ -91,12 +96,14 @@ void main()
 			set_tile_data(MB_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, MB_pal, 1);  
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(3, OFS_mainbg_tile_bin, 0x1000, SIZE_mainbg_tile_bin);
-			cd_loadvram(3, OFS_mainbg_map_bin, 0, SIZE_mainbg_map_bin);		
+			cd_loadvram(4, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+			cd_loadvram(4, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+			cd_loaddata(4, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
+			set_bgpal(0, palCD); 
 #endif
-			load_palette(0, MB_pal, 1);  
            
 			init_satb();
 			DrawSP();
@@ -226,6 +233,9 @@ void main()
 				case 9:
 					LEDZoneTest();
 					break;
+				case 10:
+					SoundTest();
+					break;
 				case 11:
 					Options();
 					break;
@@ -269,8 +279,8 @@ void DrawN()
 			load_background(n_bg, n_pal, n_map, 32, 22);
 #else
 			set_screen_size(SCR_SIZE_32x32); 
-			cd_loadvram(3, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
-			cd_loadvram(3, OFS_N_BAT_bin, 0, SIZE_N_BAT_bin);
+			cd_loadvram(4, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
+			cd_loadvram(4, OFS_N_BAT_bin, 0, SIZE_N_BAT_bin);
 #endif
 
 			scroll(0, 0, -32, 0, 240, 0xC0);
@@ -313,12 +323,14 @@ void DrawCredits()
 			set_tile_data(MB512_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 64, 30);
+			load_palette(0, MB512_pal, 1);  
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(3, OFS_back512_tile_bin, 0x1000, SIZE_back512_tile_bin);
-			cd_loadvram(3, OFS_back512_map_bin, 0, SIZE_back512_map_bin);		
+			cd_loadvram(4, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+			cd_loadvram(4, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
+			cd_loaddata(4, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
+			set_bgpal(0, palCD); 
 #endif
-			load_palette(0, MB512_pal, 1);  
 			
 			Center224in240();
 			
