@@ -23,9 +23,10 @@
  
  */
  
- #ifdef CDROM1
- #include "gdata.h"
- #endif
+#ifdef CDROM1
+#include "gdata.h"
+extern char palCD[];
+#endif
 
 #ifndef CDROM1
  

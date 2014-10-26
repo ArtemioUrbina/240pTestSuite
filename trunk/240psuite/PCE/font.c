@@ -30,12 +30,9 @@ extern char my_font[];
 
 void setupFont()
 {	
-#ifndef CDROM1
     load_font(my_font, 96);
     set_font_pal(14);
-#else
-#endif
-	
+
 	SetFontColors(14, RGB(3, 3, 3), RGB(7, 7, 7), RGB(0, 0, 0));
 	SetFontColors(15, RGB(3, 3, 3), RGB(7, 0, 0), RGB(0, 0, 0));
 }
