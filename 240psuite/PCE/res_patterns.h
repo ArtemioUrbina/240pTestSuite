@@ -95,6 +95,9 @@
 #incbin(sharpness_map, "graphics/sharpness.fmp");
 #incchr_ex(sharpness_bg, "graphics/sharpness.pcx", 0, 0, 4, 51, 0);
 
+#incbin(ire100_map, "graphics/100IRE.fmp");
+#incchr_ex(ire100_bg, "graphics/100IRE.pcx", 0, 0, 2, 2, 0);
+
 /*
 		SPRITES
 */

@@ -38,3 +38,4 @@ void DrawLinearity();
 void DrawLinearity256();
 void DrawSharpness();
 void DrawGray();
+void Draw100IRE();

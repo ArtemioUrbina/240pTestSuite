@@ -118,7 +118,7 @@ void Center224in240()
 void ResetVideo()
 {
 	cls();
-	set_screen_size(1);
+	set_screen_size(SCR_SIZE_64x32);
 	init_satb();
 	satb_update();
 			
@@ -136,7 +136,7 @@ void ResetScroll()
 
 /*
 	This is the typical setting in PC Engine games,
-	since it respects teh NTSC standard of starting 
+	since it respects the NTSC standard of starting 
 	at line 23. However this displays only 239 active 
 	lines of video signal.
 */
