@@ -384,8 +384,8 @@ void DrawCredits()
 			row++;
 		
 			set_font_pal(14);	
-			put_string("Ver. 0.01", 50, 7);
-			put_string("20/10/2014", 49, 8);
+			put_string("Ver. 0.02", 50, 7);
+			put_string("26/10/2014", 49, 8);
 
 			refresh = 0;
 		}
