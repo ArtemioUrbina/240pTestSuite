@@ -264,7 +264,7 @@ void DropShadow()
 #endif
 					break;
 				case 1:
-					set_screen_size(0);
+					set_screen_size(SCR_SIZE_32x32);
 		
 					scroll(0, 0, y, 0, 76, 0xC0);
 					scroll(1, 0, 76, 76, 160, 0xC0);
@@ -482,7 +482,7 @@ void StripedSprite()
 #endif
 					break;
 				case 1:
-					set_screen_size(0);
+					set_screen_size(SCR_SIZE_32x32);
 		
 					scroll(0, 0, y, 0, 76, 0xC0);
 					scroll(1, 0, 76, 76, 160, 0xC0);
@@ -695,7 +695,7 @@ void ScrollTest()
         if(redraw)
         {
 			ResetVideo();
-			set_screen_size(0);
+			set_screen_size(SCR_SIZE_32x32);
 	
 			scroll(0, x1, 0, 0, 76, 0xC0);
 			scroll(1, x2, 76, 76, 160, 0xC0);
@@ -778,7 +778,7 @@ void ScrollTest()
 		scroll(2, x3, 160, 160, 208, 0xC0);
 		scroll(3, x4, 208, 208, 240, 0xC0);
     }
-	set_screen_size(1);
+	set_screen_size(SCR_SIZE_64x32);
 }
 
 void LEDZoneTest()
@@ -788,7 +788,7 @@ void LEDZoneTest()
     int redraw = 1;
 	int end = 0;
 	int sel = 0;
-	int x = 144, y = 100;
+	int x = 144, y = 120;
 	int refresh = 0;
 	int visible = 1;
 	int size[4];
@@ -965,7 +965,7 @@ void VScrollTest()
 			ResetVideo();
 			setupFont();
 			
-			set_screen_size(0);
+			set_screen_size(SCR_SIZE_32x32);
 			scroll(0, x, y, 0, 240, 0xC0);
 #ifndef CDROM1
 			set_map_data(fs_map, 40, 32);
@@ -1024,7 +1024,7 @@ void VScrollTest()
 			
 		scroll(0, x, y, 0, 240, 0xC0);
     }
-	set_screen_size(1);
+	set_screen_size(SCR_SIZE_64x32);
 }
 
 void LoadWave()

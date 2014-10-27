@@ -81,6 +81,9 @@ extern int sharpness_bg[];
 extern char gray_map[];
 extern int gray_bg[];
 
+extern char ire100_map[];
+extern int ire100_bg[];
+
 #endif
 
 extern int color_pal[];

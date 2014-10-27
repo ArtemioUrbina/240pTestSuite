@@ -233,8 +233,14 @@ void main()
 				case 11:
 					DrawWhite();
 					break;
+				case 12:
+					Draw100IRE();
+					break;
 				case 13:
 					DrawSharpness();
+					break;
+				case 14:
+					DrawOverscan();
 					break;
 				case 15:
 					end = 1;
@@ -1062,6 +1068,257 @@ void DrawGray()
             redraw = 0;
 			disp_on();
 			set_xres(256, xres_flags);
+        }
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+        
+		if (controller & JOY_II)
+			end = 1;
+    }
+}
+
+void DrawOverscan()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int refresh = 0;
+	int end = 0;
+	int draw = 0;
+	int sel = 0;
+	int top = 0;
+	int bottom = 0;
+	int left = 0;
+	int right = 0;
+	int previous = 0;
+	int screen = 0;
+	
+	if(Enabled240p)
+	{
+		if(UseDefault)
+			screen = 239;
+		else
+			screen = 240;
+	}
+	else
+		screen = 224;
+	
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			ResetVideo();
+			
+			set_screen_size(SCR_SIZE_32x32); 
+			gfx_clear(0x1200);
+			gfx_init(0x1200);
+			
+			setupFont();
+			
+			set_color_rgb(1, 7, 7, 7);
+
+            redraw = 0;
+			refresh = 1;
+			disp_on();
+			set_xres(256, xres_flags);
+        }
+		
+		if(draw)
+		{
+			switch(sel)
+			{
+				case 0:
+					if(previous < top)
+						gfx_line(left, top-1, 255-right, top-1, 1);
+					else
+						gfx_line(left, previous-1, 255-right, previous-1, 0);
+					break;
+				case 1:
+					if(previous < bottom)
+						gfx_line(left, screen-bottom, 255-right, screen-bottom, 1);
+					else
+						gfx_line(left, screen-previous, 255-right, screen-previous, 0);
+					break;
+				case 2:
+					if(previous < left)
+						gfx_line(left-1, top, left-1, screen-bottom, 1);
+					else
+						gfx_line(previous-1, top, previous-1, screen-bottom, 0);
+					break;
+				case 3:
+					if(previous < right)
+						gfx_line(256-right, top, 256-right, screen-bottom, 1);
+					else
+						gfx_line(256-previous, top, 256-previous, screen-bottom, 0);
+					break;
+			}
+			draw = 0;
+		}
+		
+		if(refresh)
+		{
+			setupFont();
+			
+			set_font_pal(sel == 0 ? 15 : 14);
+			put_string("Top: ", 7, 12);
+			put_number(top, 3, 14, 12);
+			put_string("pixels", 18, 12);
+			
+			set_font_pal(sel == 1 ? 15 : 14);
+			put_string("Bottom: ", 7, 13);
+			put_number(bottom, 3, 14, 13);
+			put_string("pixels", 18, 13);
+			
+			set_font_pal(sel == 2 ? 15 : 14);
+			put_string("Left: ", 7, 14);
+			put_number(left, 3, 14, 14);
+			put_string("pixels", 18, 14);
+			
+			set_font_pal(sel == 3 ? 15 : 14);
+			put_string("Right: ", 7, 15);
+			put_number(right, 3, 14, 15);
+			put_string("pixels", 18, 15);
+			
+			refresh = 0;
+		}
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+
+		if (controller & JOY_II)
+			end = 1;
+		
+		if (controller & JOY_I)
+		{
+			left = right = bottom = top = 0;
+			redraw = 1;
+		}
+			
+		if (controller & JOY_UP)
+		{
+			sel --;
+			refresh = 1;
+		}
+		
+		if (controller & JOY_DOWN)
+		{
+			sel ++;
+			refresh = 1;
+		}
+		
+		if(sel < 0)
+			sel = 3;
+		if(sel > 3)
+			sel = 0;
+		
+		if (controller & JOY_LEFT)
+		{
+			int *data = 0;
+			
+			switch(sel)
+			{
+				case 0:
+					data = &top;
+					break;
+				case 1:
+					data = &bottom;
+					break;
+				case 2:
+					data = &left;
+					break;
+				case 3:
+					data = &right;
+					break;
+			} 
+			
+			previous = *data;
+			
+			if(data)
+			{
+				(*data) --;
+				if(*data < 0)
+					*data = 0;
+			}
+			refresh = 1;
+			draw = 1;
+		}
+		
+		if (controller & JOY_RIGHT)
+		{
+			int *data = 0;
+			
+			switch(sel)
+			{
+				case 0:
+					data = &top;
+					break;
+				case 1:
+					data = &bottom;
+					break;
+				case 2:
+					data = &left;
+					break;
+				case 3:
+					data = &right;
+					break;
+			} 
+			
+			previous = *data;
+			
+			if(data)
+			{
+				(*data) ++;
+				if(*data > 99)
+					*data = 99;
+			}
+			refresh = 1;
+			draw = 1;
+		}
+    }
+}
+
+void Draw100IRE()
+{
+    int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			ResetVideo();
+
+#ifndef CDROM1			
+			set_map_data(ire100_map, 40, 30);
+			set_tile_data(ire100_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			set_color_rgb(0, 0, 0, 0);
+			set_color_rgb(1, 7, 7, 7);
+#else
+#endif
+			Center224in240();
+
+            redraw = 0;
+			disp_on();
         }
 
         controller = joytrg(0);
