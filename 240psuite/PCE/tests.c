@@ -900,12 +900,106 @@ void LEDZoneTest()
     }
 }
 
+void DrawNumber(int x, int y, int sprite, int number, int palette)
+{
+	spr_make(sprite, x, y, 0x100*number+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, palette, 1);
+}
+
+void ChangeNumber(int sprite, int number)
+{
+	spr_set(sprite);
+	spr_pattern(0x100*number+0x5000);
+}
+
+void DrawCircle(int pos)
+{
+	int x = 0;
+	int y = 78;
+	
+	if(pos > 4)
+		x = 64*(pos-5);
+	else
+		x = 64*(pos-1);
+	
+	if(pos > 4)
+		y = 148;
+		
+	spr_make(16, x, y, 0x5A00, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 2, 2);
+	spr_make(17, x+32, y, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_X|SZ_32x32, 2, 2);
+	y+=32;
+	spr_make(18, x, y, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_Y|SZ_32x32, 2, 2);
+	spr_make(19, x+32, y, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_X|FLIP_Y|SZ_32x32, 2, 2);
+}
+
+void LoadNumbers()
+{
+	int count = 0;
+	int number = 1;
+
+	set_color_rgb(256, 7, 7, 7);
+	set_color_rgb(258, 0, 0, 0);
+	
+	set_color_rgb(272, 7, 7, 7);
+	set_color_rgb(274, 7, 7, 7);
+	
+	set_color_rgb(288, 7, 7, 7);
+	set_color_rgb(289, 7, 0, 0);
+	
+#ifndef CDROM1		
+	load_vram(0x5000, numbers_sp, 0xB00);
+#else
+	cd_loadvram(4, OFS_numbers_tile_bin, 0x5000, SIZE_numbers_tile_bin);
+#endif
+
+	init_satb();
+	
+	// Hours			
+	DrawNumber(5, 32, 0, 0, 0);	
+	DrawNumber(30, 32, 1, 0, 0);	
+	
+	// Minutes
+	DrawNumber(70, 32, 2, 0, 0);	
+	DrawNumber(95, 32, 3, 0, 0);	
+	
+	//Seconds
+	DrawNumber(135, 32, 4, 0, 0);	
+	DrawNumber(160, 32, 5, 0, 0);	
+	
+	// Frames
+	DrawNumber(200, 32, 6, 0, 0);	
+	DrawNumber(225, 32, 7, 0, 0);	
+	
+	/*****Numbers on Circles*****/
+	DrawNumber(20, 92, 8, 1, 1);	
+	DrawNumber(84, 92, 9, 2, 1);
+	DrawNumber(148, 92, 10, 3, 1);	
+	DrawNumber(212, 92, 11, 4, 1);	
+	
+	DrawNumber(20, 162, 12, 5, 1);	
+	DrawNumber(84, 162, 13, 6, 1);	
+	DrawNumber(148, 162, 14, 7, 1);	
+	DrawNumber(212, 162, 15, 8, 1);	
+		
+	DrawCircle(1);
+	
+	satb_update();
+}
+
 void LagTest()
 {
     int controller;   
     int read; 
     int redraw = 1;
 	int end = 0;
+	int framecnt = 0;
+	int frames = 0;
+	int seconds = 0;
+	int minutes = 0;
+	int hours = 0;
+	int running = 0;
+	int lsd = 0;
+	int msd = 0;
+	int update = 0;
 
     while(!end)
     {   
@@ -913,6 +1007,8 @@ void LagTest()
         if(redraw)
         {
 			ResetVideo();
+			setupFont();
+			SetFontColors(14, RGB(7, 7, 7), RGB(0, 0, 0), RGB(7, 7, 7));
 			
 #ifndef CDROM1
 			set_map_data(lagback_map, 32, 30);
@@ -922,24 +1018,99 @@ void LagTest()
 			load_palette(0, lagback_pal, 1); 
 #else
 #endif
-
+			put_string("hours", 1, 3);
+			put_string("minutes", 9, 3);
+			put_string("seconds", 17, 3);
+			put_string("frames", 25, 3);
+			LoadNumbers();
+	
 			Center224in240(); 
          
             redraw = 0;
 			disp_on();
 			set_xres(256, xres_flags);
         }
+		
+		if(running || update)
+		{	
+			if(framecnt > 7)
+				framecnt = 0;
+				
+			if(frames > 59)
+			{
+				frames = 0;
+				seconds ++;	
+			}
+			
+			if(seconds > 59)
+			{
+				seconds = 0;
+				minutes ++;
+			}
 
+			if(minutes > 59)
+			{
+				minutes = 0;
+				hours ++;
+			}
+
+			if(hours > 99)
+				hours = 0;
+			
+			lsd = hours % 10;
+			msd = hours / 10;
+			ChangeNumber(0, msd);
+			ChangeNumber(1, lsd);
+			
+			lsd = minutes % 10;
+			msd = minutes / 10;
+			ChangeNumber(2, msd);
+			ChangeNumber(3, lsd);
+			
+			lsd = seconds % 10;
+			msd = seconds / 10;
+			ChangeNumber(4, msd);
+			ChangeNumber(5, lsd);
+			
+			lsd = frames % 10;
+			msd = frames / 10;
+			ChangeNumber(6, msd);
+			ChangeNumber(7, lsd);
+			
+			DrawCircle(framecnt+1);
+			
+			satb_update();
+		
+			if(running)
+			{
+				frames ++;
+				framecnt ++;
+			}
+			
+			update = 0;
+		}
+			
         controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
 			showHelp(GENERAL_HELP);
 			redraw = 1;
+			update = 1;
 		}
         
 		if (controller & JOY_II)
 			end = 1;
+			
+		if (controller & JOY_I)
+			running = !running;
+			
+		if (controller & JOY_SEL && !running)
+		{
+			frames = hours = minutes = seconds = 0;
+			framecnt = 0;
+			update = 1;
+		}
     }
 }
 

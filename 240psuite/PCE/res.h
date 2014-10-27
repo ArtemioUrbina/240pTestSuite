@@ -82,6 +82,8 @@
 
 #incspr(LED_sp, "graphics/LEDsprites.pcx", 0, 0, 2, 2);
 
+#incspr(numbers_sp, "graphics/numbers.pcx", 0, 0, 2, 22);
+
 #endif // CDROM1
 
 /*

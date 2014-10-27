@@ -36,6 +36,7 @@ extern int MB_bg[];
 extern int SD_sp[];
 extern int shadow_sp[];
 extern int striped_sp[];
+extern int numbers_sp[];
 
 extern int LED_sp[];
 
