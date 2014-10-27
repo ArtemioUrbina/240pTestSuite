@@ -25,6 +25,7 @@
 #include "huc.h"
 #include "patterns.h"
 #include "help.h"
+#include "font.h"
 
 #ifndef CDROM
 #ifndef CDROM1
@@ -1291,13 +1292,23 @@ void DrawOverscan()
     }
 }
 
+// 100 IRE 
+// 720mV, 624mV, 512mV, 424mV, 312mV, 208mV, 96mV, 0mV
+// 100, 86.6, 71.1, 58.8, 43.3, 28.8, 13.3, 0
+
 void Draw100IRE()
 {
     int controller;   
     int read; 
     int redraw = 1;
 	int end = 0;
+	int color = 7;
+	int mode = 0;
+	int text = 0;
+	int refresh = 0;
+	int factor = 14; // aproximate for IRE
 
+	set_color_rgb(0, 0, 0, 0);
     while(!end)
     {   
 		vsync();
@@ -1305,31 +1316,131 @@ void Draw100IRE()
         if(redraw)
         {
 			ResetVideo();
-
+			setupFont();
+			
+			if(mode)
+			{
+				SetFontColors(14, RGB(color, color, color), RGB(6, 6, 6), RGB(3, 3, 3));
+				set_color_rgb(1, 7, 7, 7);
+			}
+			else
+			{
+				SetFontColors(14, RGB(0, 0, 0), RGB(6, 6, 6), RGB(3, 3, 3));
+				set_color_rgb(0, 0, 0, 0);
+			}
+			
 #ifndef CDROM1			
 			set_map_data(ire100_map, 40, 30);
 			set_tile_data(ire100_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			set_color_rgb(0, 0, 0, 0);
-			set_color_rgb(1, 7, 7, 7);
+			load_map(0, 0, 0, 0, 40, 30);	
 #else
 #endif
 			Center224in240();
 
             redraw = 0;
+			refresh = 1;
 			disp_on();
         }
+		
+		if(refresh)
+		{
+			set_color_rgb(!mode, color, color, color);	
+			if(mode)
+				SetFontColors(14, RGB(color, color, color), RGB(6, 6, 6), RGB(3, 3, 3));
+			else
+				SetFontColors(14, RGB(0, 0, 0), RGB(6, 6, 6), RGB(3, 3, 3));		
+			refresh = 0;
+		}
 
         controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
 			showHelp(GENERAL_HELP);
-			redraw = 1;
+			redraw = 1;			
+		}
+		
+		if (controller & JOY_LEFT)
+		{
+			color --;
+			text = 30;
+			refresh = 1;
+			
+			if(color < 0)
+				color = 0;
+				
+#ifndef CDROM1
+			set_map_data(ire100_map, 40, 30);
+			load_map(0, 0, 0, 0, 40, 30);
+#else
+#endif	
+			if(!mode)
+				put_number(factor*color+(color > 4 ? 2 : 0), 3, 28, 26);
+			else
+				put_number(100+(factor*color)-(color > 4 ? 2 : 0), 3, 28, 26);
+			put_string("IRE", 32, 26);
+		}
+		
+		if (controller & JOY_RIGHT)
+		{
+			color ++;
+			text = 30;
+			refresh = 1;
+			
+			if(color > 7)
+				color = 7;
+			
+#ifndef CDROM1
+			set_map_data(ire100_map, 40, 30);
+			load_map(0, 0, 0, 0, 40, 30);
+#else
+#endif	
+			if(!mode)
+				put_number(factor*color+(color > 4 ? 2 : 0), 3, 28, 26);
+			else
+				put_number(100+(factor*color)-(color > 4 ? 2 : 0), 3, 28, 26);
+				
+			put_string("IRE", 32, 26);
+		}
+		
+		if (controller & JOY_I)
+		{
+			mode = !mode;
+			if(mode)
+			{
+				color = 0;
+				set_color_rgb(1, 7, 7, 7);
+				refresh = 1;
+				put_string("RANGE 100-140 IRE", 20, 26);
+				factor = 6;
+			}
+			else
+			{
+				color = 7;
+				set_color_rgb(0, 0, 0, 0);
+				refresh = 1;
+				put_string("RANGE 0-100 IRE  ", 20, 26);
+				factor = 14;
+			}
+			text = 30;
 		}
         
 		if (controller & JOY_II)
 			end = 1;
+		
+		if(text)
+		{
+			text--;
+			if(!text)
+			{
+#ifndef CDROM1
+				set_map_data(ire100_map, 40, 30);
+				load_map(0, 0, 0, 0, 40, 30);
+#else
+#endif
+			}
+		}
     }
 }
+
