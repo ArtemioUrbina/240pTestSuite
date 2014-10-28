@@ -218,6 +218,9 @@ void main()
 				case 3:
 					LagTest();
 					break;
+				case 4:
+					ManualLagTest();
+					break;
 				case 5:
 					ScrollTest();
 					break;

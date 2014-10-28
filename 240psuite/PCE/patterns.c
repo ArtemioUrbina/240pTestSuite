@@ -583,6 +583,7 @@ void DrawGrid256()
     int read; 
     int redraw = 1;
 	int end = 0;
+	int showcolor = 0;
 
     while(!end)
     {   
@@ -619,6 +620,15 @@ void DrawGrid256()
         
 		if (controller & JOY_II)
 			end = 1;
+			
+		if(controller & JOY_I)
+		{
+			showcolor = !showcolor;
+			if(showcolor)
+				set_color_rgb(256, 7, 7, 7);
+			else
+				set_color_rgb(256, 0, 0, 0);
+		}
     }
 }
 
@@ -628,6 +638,7 @@ void DrawGrid320()
     int read; 
     int redraw = 1;
 	int end = 0;
+	int showcolor = 0;
 
     while(!end)
     {   
@@ -664,6 +675,15 @@ void DrawGrid320()
         
 		if (controller & JOY_II)
 			end = 1;
+			
+		if(controller & JOY_I)
+		{
+			showcolor = !showcolor;
+			if(showcolor)
+				set_color_rgb(256, 7, 7, 7);
+			else
+				set_color_rgb(256, 0, 0, 0);
+		}
     }
 }
 
@@ -673,6 +693,7 @@ void DrawGrid512()
     int read; 
     int redraw = 1;
 	int end = 0;
+	int showcolor = 0;
 
     while(!end)
     {   
@@ -709,6 +730,8 @@ void DrawGrid512()
         
 		if (controller & JOY_II)
 			end = 1;
+			
+		
     }
 }
 
