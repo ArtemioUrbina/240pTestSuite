@@ -79,6 +79,7 @@
 
 #incspr(shadow_sp, "graphics/shadow.pcx", 0, 0, 2, 2);
 #incspr(striped_sp, "graphics/striped.pcx", 0, 0, 2, 2);
+#incspr(lagspr_sp, "graphics/lagspr.pcx", 0, 0, 2, 2);
 
 #incspr(LED_sp, "graphics/LEDsprites.pcx", 0, 0, 2, 2);
 

@@ -37,6 +37,7 @@ extern int SD_sp[];
 extern int shadow_sp[];
 extern int striped_sp[];
 extern int numbers_sp[];
+extern int lagspr_sp[];
 
 extern int LED_sp[];
 
@@ -63,7 +64,6 @@ extern char lagback_map[];
 extern int lagback_bg[];
 
 extern char cgrid_bg[];
-
 
 #endif
 

@@ -32,3 +32,4 @@ void StripedSprite();
 void LagTest();
 void VScrollTest();
 void SoundTest();
+void ManualLagTest();
