@@ -88,29 +88,7 @@ void main()
 	
         if(redraw)
         {
-			ResetVideo();
-			setupFont();
-
-#ifndef CDROM1
-			set_map_data(MB_map, 40, 30);
-			set_tile_data(MB_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, MB_pal, 1);  
-#else
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(4, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-			cd_loadvram(4, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-			cd_loaddata(4, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
-			set_bgpal(0, palCD); 
-#endif
-           
-			init_satb();
-			DrawSP();
-			satb_update();
-			
-			Center224in240();
-			
+			RedrawMain();
             redraw = 0;
 			refresh = 1;
 			disp_on();
@@ -120,40 +98,7 @@ void main()
 		
 		if(refresh)
         {
-            int row = 8;
-
-            set_font_pal(sel == 0 ? 15 : 14);
-            put_string("Test Patterns", HPOS, row++);
-            set_font_pal(sel == 1 ? 15 : 14);
-            put_string("Drop Shadow Test", HPOS, row++);
-            set_font_pal(sel == 2 ? 15 : 14);
-            put_string("Striped Sprite Test", HPOS, row++);
-            set_font_pal(sel == 3 ? 15 : 14);
-            put_string("Lag Test", HPOS, row++);
-            set_font_pal(sel == 4 ? 15 : 14);
-            put_string("Manual Lag Test", HPOS, row++);
-            set_font_pal(sel == 5 ? 15 : 14);
-            put_string("Scroll Test", HPOS, row++);
-            set_font_pal(sel == 6 ? 15 : 14);
-            put_string("Grid Scroll Test", HPOS, row++);
-            set_font_pal(sel == 7 ? 15 : 14);
-            put_string("Horizontal Stripes", HPOS, row++);
-            set_font_pal(sel == 8 ? 15 : 14);
-            put_string("Checkerboard", HPOS, row++);
-            set_font_pal(sel == 9 ? 15 : 14);
-            put_string("Backlit Zone Test", HPOS, row++);
-            set_font_pal(sel == 10 ? 15 : 14);
-            put_string("Sound Test", HPOS, row++);
-			
-            set_font_pal(sel == 11 ? 15 : 14);
-			put_string("Options", HPOS, ++row);
-			
-			set_font_pal(sel == 12 ? 15 : 14);
-            put_string("Help", HPOS, ++row);
-			set_font_pal(sel == 13 ? 15 : 14);
-            put_string("Credits", HPOS, ++row);
-			
-			DisplaySystemInfo();
+            RefreshMain(sel);
 
             refresh = 0;
         }
@@ -255,6 +200,77 @@ void main()
     }
 }
 
+void RedrawMain()
+{
+	ResetVideo();
+	setupFont();
+
+#ifndef CDROM1
+	set_map_data(MB_map, 40, 30);
+	set_tile_data(MB_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 40, 30);
+	load_palette(0, MB_pal, 1);  
+#else
+	set_screen_size(SCR_SIZE_64x32); 
+	cd_loadvram(4, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+	cd_loadvram(4, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+	cd_loaddata(4, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
+	set_bgpal(0, palCD); 
+#endif
+   
+	init_satb();
+	DrawSP();
+	satb_update();
+	
+	Center224in240();		
+}
+
+void RefreshMain(int sel)
+{
+	int row = 8;
+
+	set_font_pal(sel == 0 ? 15 : 14);
+	put_string("Test Patterns", HPOS, row++);
+	set_font_pal(sel == 1 ? 15 : 14);
+	put_string("Drop Shadow Test", HPOS, row++);
+	set_font_pal(sel == 2 ? 15 : 14);
+	put_string("Striped Sprite Test", HPOS, row++);
+	set_font_pal(sel == 3 ? 15 : 14);
+	put_string("Lag Test", HPOS, row++);
+	set_font_pal(sel == 4 ? 15 : 14);
+	put_string("Manual Lag Test", HPOS, row++);
+	set_font_pal(sel == 5 ? 15 : 14);
+	put_string("Scroll Test", HPOS, row++);
+	set_font_pal(sel == 6 ? 15 : 14);
+	put_string("Grid Scroll Test", HPOS, row++);
+	
+	RefreshMainAux(sel, row);
+}
+
+void RefreshMainAux(int sel, int row)
+{
+	set_font_pal(sel == 7 ? 15 : 14);
+	put_string("Horizontal Stripes", HPOS, row++);
+	set_font_pal(sel == 8 ? 15 : 14);
+	put_string("Checkerboard", HPOS, row++);
+	set_font_pal(sel == 9 ? 15 : 14);
+	put_string("Backlit Zone Test", HPOS, row++);
+	set_font_pal(sel == 10 ? 15 : 14);
+	put_string("Sound Test", HPOS, row++);
+	
+	set_font_pal(sel == 11 ? 15 : 14);
+	put_string("Options", HPOS, ++row);
+	
+	set_font_pal(sel == 12 ? 15 : 14);
+	put_string("Help", HPOS, ++row);
+	set_font_pal(sel == 13 ? 15 : 14);
+	put_string("Credits", HPOS, ++row);
+	
+	DisplaySystemInfo();
+}
+
+
 /*
  *
  *		Menu Functions
@@ -318,8 +334,8 @@ void DrawCredits()
 			ResetVideo();
 			setupFont();
 			
-			SetFontColors(15, RGB(3, 3, 3), RGB(0, 6, 0), RGB(0, 0, 0));
-			SetFontColors(13, RGB(3, 3, 3), RGB(1, 6, 6), RGB(0, 0, 0));
+			SetFontColors(15, RGB(3, 3, 3), RGB(0, 6, 0), 0);
+			SetFontColors(13, RGB(3, 3, 3), RGB(1, 6, 6), 0);
 
 #ifndef CDROM1			
 			set_map_data(MB512_map, 64, 30);
@@ -345,50 +361,7 @@ void DrawCredits()
 		
 		if(refresh)
 		{
-			int row = 7;
-			
-			set_font_pal(15);
-			put_string("Code and Patterns:", HPOS+2, row++);
-			set_font_pal(14);
-			put_string("Artemio Urbina", HPOS+2, row++);
-			row++;
-			
-			set_font_pal(15);
-			put_string("SDK:", HPOS+2, row++);
-			set_font_pal(14);
-			put_string("Enhanced HuC https://github.com/uli/huc", HPOS+2, row++);
-			row++;
-			
-			set_font_pal(15);
-			put_string("Menu Pixel Art:", HPOS+2, row++);
-			set_font_pal(14);
-			put_string("Asher", HPOS+2, row++);
-			row++;
-			
-			set_font_pal(15);
-			put_string("Advisor:", HPOS+2, row++);
-			set_font_pal(14);
-			put_string("Fudoh", HPOS+2, row++);
-			row++;
-			
-			set_font_pal(15);
-			put_string("Collaboration:", HPOS+2, row++);
-			set_font_pal(14);
-			put_string("Konsolkongen & shmups regulars", HPOS+2, row++);
-			row++;
-			
-			set_font_pal(15);
-			put_string("Info on using this suite:", HPOS+2, row++);
-			set_font_pal(14);
-			put_string("http://junkerhq.net/240p/", HPOS+2, row++);
-			set_font_pal(13);
-			put_string("This program is free software and open source.", HPOS+2, row++);
-			put_string("Source code is available under GPL.", HPOS+2, row++);
-			row++;
-		
-			set_font_pal(14);	
-			put_string("Ver. 0.02", 50, 7);
-			put_string("26/10/2014", 49, 8);
+			RefreshCredits();
 
 			refresh = 0;
 		}
@@ -417,6 +390,54 @@ void DrawCredits()
     }	
 }
 
+void RefreshCredits()
+{
+	int row = 7;
+			
+	set_font_pal(15);
+	put_string("Code and Patterns:", HPOS+2, row++);
+	set_font_pal(14);
+	put_string("Artemio Urbina", HPOS+2, row++);
+	row++;
+	
+	set_font_pal(15);
+	put_string("SDK:", HPOS+2, row++);
+	set_font_pal(14);
+	put_string("Enhanced HuC https://github.com/uli/huc", HPOS+2, row++);
+	row++;
+	
+	set_font_pal(15);
+	put_string("Menu Pixel Art:", HPOS+2, row++);
+	set_font_pal(14);
+	put_string("Asher", HPOS+2, row++);
+	row++;
+	
+	set_font_pal(15);
+	put_string("Advisor:", HPOS+2, row++);
+	set_font_pal(14);
+	put_string("Fudoh", HPOS+2, row++);
+	row++;
+	
+	set_font_pal(15);
+	put_string("Collaboration:", HPOS+2, row++);
+	set_font_pal(14);
+	put_string("Konsolkongen & shmups regulars", HPOS+2, row++);
+	row++;
+	
+	set_font_pal(15);
+	put_string("Info on using this suite:", HPOS+2, row++);
+	set_font_pal(14);
+	put_string("http://junkerhq.net/240p/", HPOS+2, row++);
+	set_font_pal(13);
+	put_string("This program is free software and open source.", HPOS+2, row++);
+	put_string("Source code is available under GPL.", HPOS+2, row++);
+	row++;
+
+	set_font_pal(14);	
+	put_string("Ver. 0.02", 50, 7);
+	put_string("26/10/2014", 49, 8);
+}
+
 #ifndef CDROM
 
 void DrawIntro()
@@ -428,11 +449,11 @@ void DrawIntro()
 	
 	vsync();
 	set_color(1, 0);
-	SetFontColors(14, RGB(0, 0, 0), RGB(0, 0, 0), RGB(0, 0, 0));
+	SetFontColors(14, 0, 0, 0);
 	put_string("KORDAMP PRESENTS", 12, 14);
 	for(frame = 0; frame < 7; frame ++)
 	{
-		SetFontColors(14, RGB(0, 0, 0), RGB(frame, frame, frame), RGB(0, 0, 0));
+		SetFontColors(14, 0, RGB(frame, frame, frame), 0);
 		vsync(3);
 	}
 	
@@ -442,7 +463,7 @@ void DrawIntro()
 	
 	for(frame = 7; frame > 0; frame --)
 	{
-		SetFontColors(14, RGB(0, 0, 0), RGB(frame, frame, frame), RGB(0, 0, 0));
+		SetFontColors(14, 0, RGB(frame, frame, frame), 0);
 		vsync(3);
 	}
 }

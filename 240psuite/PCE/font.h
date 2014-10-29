@@ -22,7 +22,7 @@
  This version of the suite is compiled with HuC from https://github.com/uli/huc
  
  */
-#define RGB(r, g, b) (g << 6) + (r << 3) + (b)
  
 void setupFont();
 void SetFontColors(int palette, int back, int text, int shade);
+int RGB(int r, int g, int b);

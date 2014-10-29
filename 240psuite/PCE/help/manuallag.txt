@@ -1,0 +1,32 @@
+              MANUAL LAG TEST (1/2)
+
+The main intention is to show a changing pattern
+on the screen, which can be complemented with 
+audio and vibration on the controller if set. 
+This should show to some degree any lag when  
+processing the signal.
+
+As an added feature, the user can click the $A
+button when the sprite is aligned with the one on
+the background, and the offset in frames from the
+actual intersection will be shown on screen. This
+can be repeated ten times and the software will
+calculate the average. Whenever the button was
+pressed before the actual intersection frame, the
+result will be ignored (but still shown onscreen).
+Button $X can be used to change the direction
+of the sprite from vertical to horizontal, or
+display both at the same time.
+
+              MANUAL LAG TEST (2/2)
+
+Of course the evaluation is dependent on reflexes
+and/or rhythm more than anything. The visual and
+audio cues are the more revealing aspects which 
+the user should consider, of course the interactive
+factor can give an experienced player the hang of
+the system when testing via different connections.
+
+Since a frame is around 16 ms (1000/60) in NTSC 
+that value must be considered the general error
+when using the test results. 

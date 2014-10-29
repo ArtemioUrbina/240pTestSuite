@@ -24,10 +24,10 @@ move gdata.* ..
 @REM del *.s
 @REM del *.sym
 cd ..
-huc -DCDROM -DCDROM1 -s -msmall -t -O2 -scd -overlay 240pSuite.c font.c video.c tests.c help.c tools.c
-huc -DCDROM -DCDROM1 -s -msmall -t -O2 -scd -overlay patterns.c font.c video.c help.c tools.c
-huc -DCDROM -DCDROM1 -s -msmall -t -O2 -scd -overlay loader.c video.c font.c
-pceas -DCDROM -DCDROM1 -s -msmall -scd -overlay 240pSuite.s
-pceas -DCDROM -DCDROM1 -s -msmall -scd -overlay patterns.s
-pceas -DCDROM -DCDROM1 -s -msmall -scd -overlay loader.s
+huc -DCDROM -DCDROM1 -s -msmall -t -O2 -cd -overlay 240pSuite.c font.c video.c tests.c tools.c help.c 
+huc -DCDROM -DCDROM1 -s -msmall -t -O2 -cd -overlay patterns.c font.c video.c tools.c help.c 
+huc -DCDROM -DCDROM1 -s -msmall -t -O2 -cd -overlay loader.c video.c font.c
+pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay 240pSuite.s
+pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay patterns.s
+pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay loader.s
 isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl gdata.bin

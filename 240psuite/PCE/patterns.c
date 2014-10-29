@@ -104,57 +104,8 @@ void main()
         }
 		
 		if(refresh)
-        {
-            int row = 7;
-            
-            set_font_pal(sel == 0 ? 15 : 14);
-            put_string("Pluge", HPOS, row++);
-            set_font_pal(sel == 1 ? 15 : 14);
-            put_string("Color Bars", HPOS, row++);
-            set_font_pal(sel == 2 ? 15 : 14);
-            put_string("SMPTE Color Bars", HPOS, row++);
-            set_font_pal(sel == 3 ? 15 : 14);
-            put_string("Color Bars w/ Gray Ref", HPOS, row++);
-            set_font_pal(sel == 4 ? 15 : 14);
-            put_string("Color Bleed Check", HPOS, row++);
-            set_font_pal(sel == 5 ? 15 : 14);
-			if(Enabled240p)
-				put_string("Grid 256x240", HPOS, row++);
-			else
-				put_string("Grid 256x224", HPOS, row++);
-			set_font_pal(sel == 6 ? 15 : 14);
-			if(Enabled240p)
-				put_string("Grid 320x240", HPOS, row++);
-			else
-				put_string("Grid 320x224", HPOS, row++);
-			set_font_pal(sel == 7 ? 15 : 14);
-			if(Enabled240p)
-				put_string("Grid 512x240", HPOS, row++);
-			else
-				put_string("Grid 512x224", HPOS, row++);
-            set_font_pal(sel == 8 ? 15 : 14);
-			if(Enabled240p)
-				put_string("Linearity 320x240", HPOS, row++);
-			else
-				put_string("Linearity 320x224", HPOS, row++);
-			set_font_pal(sel == 9 ? 15 : 14);
-            put_string("Linearity 256x224", HPOS, row++);
-            set_font_pal(sel == 10 ? 15 : 14);
-            put_string("Gray Ramp", HPOS, row++);
-            set_font_pal(sel == 11 ? 15 : 14);
-            put_string("White & RGB Screen", HPOS, row++);
-            set_font_pal(sel == 12 ? 15 : 14);
-            put_string("100 IRE", HPOS, row++);
-            set_font_pal(sel == 13 ? 15 : 14);
-            put_string("Sharpness", HPOS, row++);
-            set_font_pal(sel == 14 ? 15 : 14);
-            put_string("Overscan", HPOS, row++);
-			
-			set_font_pal(sel == 15 ? 15 : 14);
-            put_string("Back to Main Menu", HPOS, ++row);
-			
-			DisplaySystemInfo();
-
+        {   
+            RefreshTestPatterns(sel);
             refresh = 0;
         }
 
@@ -263,6 +214,65 @@ void main()
 	put_string("Loading...", 27, 26);
 	cd_execoverlay(2);
 #endif
+}
+
+void RefreshTestPatterns(int sel)
+{
+    int row = 7;
+	
+	set_font_pal(sel == 0 ? 15 : 14);
+	put_string("Pluge", HPOS, row++);
+	set_font_pal(sel == 1 ? 15 : 14);
+	put_string("Color Bars", HPOS, row++);
+	set_font_pal(sel == 2 ? 15 : 14);
+	put_string("SMPTE Color Bars", HPOS, row++);
+	set_font_pal(sel == 3 ? 15 : 14);
+	put_string("Color Bars w/ Gray Ref", HPOS, row++);
+	set_font_pal(sel == 4 ? 15 : 14);
+	put_string("Color Bleed Check", HPOS, row++);
+	set_font_pal(sel == 5 ? 15 : 14);
+	if(Enabled240p)
+		put_string("Grid 256x240", HPOS, row++);
+	else
+		put_string("Grid 256x224", HPOS, row++);
+	set_font_pal(sel == 6 ? 15 : 14);
+	if(Enabled240p)
+		put_string("Grid 320x240", HPOS, row++);
+	else
+		put_string("Grid 320x224", HPOS, row++);
+	set_font_pal(sel == 7 ? 15 : 14);
+	if(Enabled240p)
+		put_string("Grid 512x240", HPOS, row++);
+	else
+		put_string("Grid 512x224", HPOS, row++);
+	RefreshTestPatternsAux(sel, row);
+}
+		
+void RefreshTestPatternsAux(int sel, int row)
+{
+	set_font_pal(sel == 8 ? 15 : 14);
+	if(Enabled240p)
+		put_string("Linearity 320x240", HPOS, row++);
+	else
+		put_string("Linearity 320x224", HPOS, row++);
+	set_font_pal(sel == 9 ? 15 : 14);
+	put_string("Linearity 256x224", HPOS, row++);
+	set_font_pal(sel == 10 ? 15 : 14);
+	put_string("Gray Ramp", HPOS, row++);
+	set_font_pal(sel == 11 ? 15 : 14);
+	put_string("White & RGB Screen", HPOS, row++);
+	set_font_pal(sel == 12 ? 15 : 14);
+	put_string("100 IRE", HPOS, row++);
+	set_font_pal(sel == 13 ? 15 : 14);
+	put_string("Sharpness", HPOS, row++);
+	set_font_pal(sel == 14 ? 15 : 14);
+	put_string("Overscan", HPOS, row++);
+
+	set_font_pal(sel == 15 ? 15 : 14);
+	put_string("Back to Main Menu", HPOS, ++row);
+
+	DisplaySystemInfo();
+
 }
 
 void DrawPluge()
@@ -753,18 +763,8 @@ void DrawWhite()
 		
         if(redraw)
         {
-			ResetVideo();
-
-#ifndef CDROM1
-			set_map_data(fs_map, 40, 30);
-			set_tile_data(white_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, check_pal, 1);  
-#else
-#endif
-			Center224in240();
-         
+			RedrawWhite();
+			
             redraw = 0;
 			refresh = 1;
 			disp_on();
@@ -772,41 +772,8 @@ void DrawWhite()
 		
 		if(refresh)
 		{
-			if(color == 0 && edit)
-			{
-				set_font_pal(sel == 0 ? 15 : 14);
-				put_string("R:", 24, 2);
-				put_digit(r, 26, 2);
-				set_font_pal(sel == 1 ? 15 : 14);
-				put_string(" G:", 27, 2);
-				put_digit(g, 30, 2);
-				set_font_pal(sel == 2 ? 15 : 14);
-				put_string(" B:", 31, 2);
-				put_digit(b, 34, 2);
-				
-				set_color_rgb(1, r, g, b);
-			}
-			else
-			{
-				switch(color)
-				{
-					case 0:
-						set_color_rgb(1, 7, 7, 7);
-						break;
-					case 1:
-						set_color_rgb(1, 0, 0, 0);
-						break;
-					case 2:
-						set_color_rgb(1, 7, 0, 0);
-						break;
-					case 3:
-						set_color_rgb(1, 0, 7, 0);
-						break;
-					case 4:
-						set_color_rgb(1, 0, 0, 7);
-						break;
-				}
-			}
+			RefreshWhite(color, edit, r, g, b, sel);
+			refresh = 0;
 		}
 
         controller = joytrg(0);
@@ -904,6 +871,60 @@ void DrawWhite()
 			refresh = 1;
 		}
     }
+}
+
+void RedrawWhite()
+{
+	ResetVideo();
+
+#ifndef CDROM1
+	set_map_data(fs_map, 40, 30);
+	set_tile_data(white_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 40, 30);
+	load_palette(0, check_pal, 1);  
+#else
+#endif
+	Center224in240();
+}
+
+void RefreshWhite(int color, int edit, int r, int g, int b, int sel)
+{
+	if(color == 0 && edit)
+	{
+		set_font_pal(sel == 0 ? 15 : 14);
+		put_string("R:", 24, 2);
+		put_digit(r, 26, 2);
+		set_font_pal(sel == 1 ? 15 : 14);
+		put_string(" G:", 27, 2);
+		put_digit(g, 30, 2);
+		set_font_pal(sel == 2 ? 15 : 14);
+		put_string(" B:", 31, 2);
+		put_digit(b, 34, 2);
+		
+		set_color_rgb(1, r, g, b);
+	}
+	else
+	{
+		switch(color)
+		{
+			case 0:
+				set_color_rgb(1, 7, 7, 7);
+				break;
+			case 1:
+				set_color_rgb(1, 0, 0, 0);
+				break;
+			case 2:
+				set_color_rgb(1, 7, 0, 0);
+				break;
+			case 3:
+				set_color_rgb(1, 0, 7, 0);
+				break;
+			case 4:
+				set_color_rgb(1, 0, 0, 7);
+				break;
+		}
+	}
 }
 
 void DrawLinearity()
@@ -1140,77 +1161,20 @@ void DrawOverscan()
 		
         if(redraw)
         {
-			ResetVideo();
-			
-			set_screen_size(SCR_SIZE_32x32); 
-			gfx_clear(0x1200);
-			gfx_init(0x1200);
-			
-			setupFont();
-			
-			set_color_rgb(1, 7, 7, 7);
-
+			RedrawOverscan();
             redraw = 0;
 			refresh = 1;
-			disp_on();
-			set_xres(256, xres_flags);
         }
 		
 		if(draw)
 		{
-			switch(sel)
-			{
-				case 0:
-					if(previous < top)
-						gfx_line(left, top-1, 255-right, top-1, 1);
-					else
-						gfx_line(left, previous-1, 255-right, previous-1, 0);
-					break;
-				case 1:
-					if(previous < bottom)
-						gfx_line(left, screen-bottom, 255-right, screen-bottom, 1);
-					else
-						gfx_line(left, screen-previous, 255-right, screen-previous, 0);
-					break;
-				case 2:
-					if(previous < left)
-						gfx_line(left-1, top, left-1, screen-bottom, 1);
-					else
-						gfx_line(previous-1, top, previous-1, screen-bottom, 0);
-					break;
-				case 3:
-					if(previous < right)
-						gfx_line(256-right, top, 256-right, screen-bottom, 1);
-					else
-						gfx_line(256-previous, top, 256-previous, screen-bottom, 0);
-					break;
-			}
+			DrawOverscanLines(sel, top, bottom, left, right, screen, previous);
 			draw = 0;
 		}
 		
 		if(refresh)
 		{
-			setupFont();
-			
-			set_font_pal(sel == 0 ? 15 : 14);
-			put_string("Top: ", 7, 12);
-			put_number(top, 3, 14, 12);
-			put_string("pixels", 18, 12);
-			
-			set_font_pal(sel == 1 ? 15 : 14);
-			put_string("Bottom: ", 7, 13);
-			put_number(bottom, 3, 14, 13);
-			put_string("pixels", 18, 13);
-			
-			set_font_pal(sel == 2 ? 15 : 14);
-			put_string("Left: ", 7, 14);
-			put_number(left, 3, 14, 14);
-			put_string("pixels", 18, 14);
-			
-			set_font_pal(sel == 3 ? 15 : 14);
-			put_string("Right: ", 7, 15);
-			put_number(right, 3, 14, 15);
-			put_string("pixels", 18, 15);
+			RefreshOverscan(sel, top, bottom, left, right);
 			
 			refresh = 0;
 		}
@@ -1315,6 +1279,96 @@ void DrawOverscan()
     }
 }
 
+void RedrawOverscan()
+{
+	ResetVideo();
+			
+	set_screen_size(SCR_SIZE_32x32); 
+	gfx_clear(0x1200);
+	gfx_init(0x1200);
+	
+	setupFont();
+	
+	set_color_rgb(1, 7, 7, 7);
+	disp_on();
+	set_xres(256, xres_flags);
+}
+
+void RefreshOverscan(int sel, int top, int bottom, int left, int right)
+{
+	setupFont();
+			
+	set_font_pal(sel == 0 ? 15 : 14);
+	put_string("Top: ", 7, 12);
+	put_number(top, 3, 14, 12);
+	put_string("pixels", 18, 12);
+	
+	set_font_pal(sel == 1 ? 15 : 14);
+	put_string("Bottom: ", 7, 13);
+	put_number(bottom, 3, 14, 13);
+	put_string("pixels", 18, 13);
+	
+	set_font_pal(sel == 2 ? 15 : 14);
+	put_string("Left: ", 7, 14);
+	put_number(left, 3, 14, 14);
+	put_string("pixels", 18, 14);
+	
+	set_font_pal(sel == 3 ? 15 : 14);
+	put_string("Right: ", 7, 15);
+	put_number(right, 3, 14, 15);
+	put_string("pixels", 18, 15);
+}
+
+void DrawOverscanLines(int sel, int top, int bottom, int left, int right, int screen, int previous)
+{
+	switch(sel)
+	{
+		case 0:
+			DrawTopLines(top, bottom, left, right, previous);
+			break;
+		case 1:
+			DrawBottomLines(top, bottom, left, right, previous, screen);
+			break;
+		case 2:
+			DrawLeftLines(top, bottom, left, right, previous, screen);
+			break;
+		case 3:
+			DrawRightLines(top, bottom, left, right, previous, screen);
+			break;
+	}
+}
+
+void DrawTopLines(int top, int bottom, int left, int right, int previous)
+{
+	if(previous < top)
+		gfx_line(left, top-1, 255-right, top-1, 1);
+	else
+		gfx_line(left, previous-1, 255-right, previous-1, 0);
+}
+
+void DrawBottomLines(int top, int bottom, int left, int right, int previous, int screen)
+{
+	if(previous < bottom)
+		gfx_line(left, screen-bottom, 255-right, screen-bottom, 1);
+	else
+		gfx_line(left, screen-previous, 255-right, screen-previous, 0);
+}
+
+void DrawLeftLines(int top, int bottom, int left, int right, int previous, int screen)
+{
+	if(previous < left)
+		gfx_line(left-1, top, left-1, screen-bottom, 1);
+	else
+		gfx_line(previous-1, top, previous-1, screen-bottom, 0);
+}
+
+void DrawRightLines(int top, int bottom, int left, int right, int previous, int screen)
+{
+	if(previous < right)
+		gfx_line(256-right, top, 256-right, screen-bottom, 1);
+	else
+		gfx_line(256-previous, top, 256-previous, screen-bottom, 0);
+}
 // 100 IRE 
 // 720mV, 624mV, 512mV, 424mV, 312mV, 208mV, 96mV, 0mV
 // 100, 86.6, 71.1, 58.8, 43.3, 28.8, 13.3, 0
@@ -1338,28 +1392,7 @@ void Draw100IRE()
 		
         if(redraw)
         {
-			ResetVideo();
-			setupFont();
-			
-			if(mode)
-			{
-				SetFontColors(14, RGB(color, color, color), RGB(6, 6, 6), RGB(3, 3, 3));
-				set_color_rgb(1, 7, 7, 7);
-			}
-			else
-			{
-				SetFontColors(14, RGB(0, 0, 0), RGB(6, 6, 6), RGB(3, 3, 3));
-				set_color_rgb(0, 0, 0, 0);
-			}
-			
-#ifndef CDROM1			
-			set_map_data(ire100_map, 40, 30);
-			set_tile_data(ire100_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);	
-#else
-#endif
-			Center224in240();
+			Redraw100IRE(mode, color);
 
             redraw = 0;
 			refresh = 1;
@@ -1372,7 +1405,7 @@ void Draw100IRE()
 			if(mode)
 				SetFontColors(14, RGB(color, color, color), RGB(6, 6, 6), RGB(3, 3, 3));
 			else
-				SetFontColors(14, RGB(0, 0, 0), RGB(6, 6, 6), RGB(3, 3, 3));		
+				SetFontColors(14, 0, RGB(6, 6, 6), RGB(3, 3, 3));		
 			refresh = 0;
 		}
 
@@ -1465,5 +1498,31 @@ void Draw100IRE()
 			}
 		}
     }
+}
+
+void Redraw100IRE(int mode, int color)
+{
+	ResetVideo();
+	setupFont();
+	
+	if(mode)
+	{
+		SetFontColors(14, RGB(color, color, color), RGB(6, 6, 6), RGB(3, 3, 3));
+		set_color_rgb(1, 7, 7, 7);
+	}
+	else
+	{
+		SetFontColors(14, 0, RGB(6, 6, 6), RGB(3, 3, 3));
+		set_color(0, 0);
+	}
+	
+#ifndef CDROM1			
+	set_map_data(ire100_map, 40, 30);
+	set_tile_data(ire100_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 40, 30);	
+#else
+#endif
+	Center224in240();
 }
 

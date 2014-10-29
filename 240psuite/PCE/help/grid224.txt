@@ -1,0 +1,13 @@
+                    GRID 224p
+
+This grid uses a 320x224 pattern in a 224p signal.
+This vertical resolution is also used by other
+consoles, such as the SNES, Sega Genesis and
+Playstation.
+
+You can use it to verify that all the visible area
+is being displayed, and that there is no distortion
+present. Consumer TVs may not show the red squares.
+
+You can press button I to fill all the video signal
+background area.
