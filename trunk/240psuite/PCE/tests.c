@@ -29,6 +29,7 @@
 #include "video.h"
 #include "font.h"
 #include "help.h"
+#include "tests.h"
 
 #ifdef CDROM
 extern int xres_flags;
@@ -94,12 +95,12 @@ void DrawCheck()
 		{
 			if(pos)
 			{
-				set_color(0, RGB(0, 0, 0));
+				set_color(0, 0);
 				set_color(1, RGB(7, 7, 7));
 			}
 			else
 			{
-				set_color(1, RGB(0, 0, 0));
+				set_color(1, 0);
 				set_color(0, RGB(7, 7, 7));
 			}
 			pos = !pos;
@@ -183,12 +184,12 @@ void DrawStripes()
 		{
 			if(pos)
 			{
-				set_color(0, RGB(0, 0, 0));
+				set_color(0, 0);
 				set_color(1, RGB(7, 7, 7));
 			}
 			else
 			{
-				set_color(1, RGB(0, 0, 0));
+				set_color(1, 0);
 				set_color(0, RGB(7, 7, 7));
 			}
 			pos = !pos;
@@ -252,70 +253,8 @@ void DropShadow()
         if(redraw)
         {	
 			ResetVideo();
-			switch(back)
-			{
-				case 0:
-#ifndef CDROM1
-					load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
-#else
-					set_screen_size(SCR_SIZE_64x32); 
-					cd_loadvram(4, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
-					cd_loadvram(4, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
-#endif
-					break;
-				case 1:
-					set_screen_size(SCR_SIZE_32x32);
-		
-					scroll(0, 0, y, 0, 76, 0xC0);
-					scroll(1, 0, 76, 76, 160, 0xC0);
-					scroll(2, 0, 160, 160, 208, 0xC0);
-					scroll(3, 0, 208, 208, 240, 0xC0);
-#ifndef CDROM1
-					load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
-#else
-					set_screen_size(SCR_SIZE_64x32); 
-					cd_loadvram(4, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
-					cd_loadvram(4, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
-#endif
-					break;
-				case 2:
-#ifndef CDROM1
-					set_map_data(fs_map, 40, 30);
-					set_tile_data(hstripes_bg);
-					load_tile(0x1000);
-					load_map(0, 0, 0, 0, 40, 30);
-					load_palette(0, check_pal, 1); 
-#else
-#endif
-					break;
-				case 3:
-#ifndef CDROM1
-					set_map_data(fs_map, 40, 30);
-					set_tile_data(check_bg);
-					load_tile(0x1000);
-					load_map(0, 0, 0, 0, 40, 30);
-					load_palette(0, check_pal, 1);
-#else
-#endif
-					break;
-			}
-			setupFont();
-			
-			init_satb();
-			set_color_rgb(240, 0, 0, 0); 
-			set_color_rgb(241, 0, 0, 0); 
-#ifndef CDROM1		
-			load_vram(0x6000, shadow_sp, 0x100);
-			spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
-#else
-#endif
-			if(back == 1)
-				DrawPalm();
-			satb_update();
-			
-			Center224in240();
-            redraw = 0;
-			disp_on();
+			RedrawDropShadow(back, x, y);
+			redraw = 0;
         }
 		
 		if(refresh)
@@ -451,6 +390,73 @@ void DropShadow()
 		}
 		satb_update();
     }
+}
+
+void RedrawDropShadow(int back, int x, int y)
+{
+	switch(back)
+	{
+		case 0:
+#ifndef CDROM1
+			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(4, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
+			cd_loadvram(4, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+#endif
+			break;
+		case 1:
+			set_screen_size(SCR_SIZE_32x32);
+
+			scroll(0, 0, y, 0, 76, 0xC0);
+			scroll(1, 0, 76, 76, 160, 0xC0);
+			scroll(2, 0, 160, 160, 208, 0xC0);
+			scroll(3, 0, 208, 208, 240, 0xC0);
+#ifndef CDROM1
+			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(4, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+			cd_loadvram(4, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+#endif
+			break;
+		case 2:
+#ifndef CDROM1
+			set_map_data(fs_map, 40, 30);
+			set_tile_data(hstripes_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, check_pal, 1); 
+#else
+#endif
+			break;
+		case 3:
+#ifndef CDROM1
+			set_map_data(fs_map, 40, 30);
+			set_tile_data(check_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, check_pal, 1);
+#else
+#endif
+			break;
+	}
+	setupFont();
+	
+	init_satb();
+	set_color_rgb(240, 0, 0, 0); 
+	set_color_rgb(241, 0, 0, 0); 
+#ifndef CDROM1		
+	load_vram(0x6000, shadow_sp, 0x100);
+	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+#else
+#endif
+	if(back == 1)
+		DrawPalm();
+	satb_update();
+	
+	Center224in240();
+	disp_on();
 }
 
 void StripedSprite()
@@ -1008,7 +1014,7 @@ void LagTest()
         {
 			ResetVideo();
 			setupFont();
-			SetFontColors(14, RGB(7, 7, 7), RGB(0, 0, 0), RGB(7, 7, 7));
+			SetFontColors(14, RGB(7, 7, 7), 0, RGB(7, 7, 7));
 			
 #ifndef CDROM1
 			set_map_data(lagback_map, 32, 30);
@@ -1299,7 +1305,7 @@ void SoundTest()
 			ResetVideo();
 			setupFont();
 
-			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), RGB(0, 0, 0));
+			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
 #ifndef CDROM1
 			set_map_data(MB_map, 40, 30);
 			set_tile_data(MB_bg);
@@ -1386,6 +1392,174 @@ void SoundTest()
 	StopAudio();
 }
 
+
+void RedrawManualLagTest(int x)
+{
+	ResetVideo();
+	setupFont();
+	SetFontColors(13, 0, RGB(0, 7, 0), 0);
+	SetFontColors(14, 0, RGB(7, 7, 7), 0);
+	SetFontColors(15, 0, RGB(7, 0, 0), 0);
+
+#ifndef CDROM1			
+	set_map_data(fs_map, 40, 30);
+	set_tile_data(white_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 40, 30);
+	set_color_rgb(1, 0, 0, 0);   
+#else
+#endif
+	ManualLagTestSprites(x);
+	ManualLagTestText();
+}
+
+void ManualLagTestSprites(int x)
+{
+	init_satb();
+	set_color_rgb(256, 0, 0, 0); 
+	set_color_rgb(257, 7, 7, 7); 
+	set_color_rgb(273, 7, 0, 0); 
+	set_color_rgb(289, 0, 7, 0);
+
+#ifndef CDROM1		
+	load_vram(0x5000, lagspr_sp, 0x100);
+	spr_make(0, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+	spr_make(1, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+	spr_make(2, x, 96, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 2);
+#else
+#endif
+	satb_update();
+}
+
+
+void ManualLagTestText()
+{
+	set_font_pal(13);
+	put_string("Press \"I\" when the sprite is aligned", 2, 21);
+	put_string("with the background.", 3, 22);
+	put_string("Negative values mean you pressed \"I\"", 2, 23);
+	put_string("before they intersected.", 3, 24);
+	put_string("SELECT toggles horizontal and vertical movement.", 2, 25);
+	put_string("movement.", 3, 26);
+	put_string("D-pad up toggles audio feedback.", 2, 27);
+	put_string("D-pad down toggles rhythmic timing.", 2, 28);
+		
+	Center224in240();
+}
+
+void ManualLagTestResults(int *clicks[])
+{
+	int controller;   
+    int read; 
+    int redraw = 1;
+	int end = 0;
+	int x = 0;
+	int total = 0;
+	int totalms = 0;
+	int i = 0;
+	int val = 0;
+	
+	end = 0;
+	redraw = 1;
+	x = 0;
+	
+	while(!end)
+	{   	
+		vsync();
+
+		if(redraw)
+		{
+			ManualLagTestResultsBack();
+			
+			set_font_pal(14);
+			for(i = 0; i < 10; i++)
+			{
+				val = clicks[i];
+				if(val != 0xFF)
+				{
+					put_number(val, 2, 10, 8+i); 
+					if(val >= 0)
+					{
+						total += val;
+						x ++;
+					}
+				}
+			}
+			
+			set_font_pal(15);
+			put_string("+", 8, 14);
+			put_string("----", 8, 18);
+			
+			totalms = total/x;
+			
+			set_font_pal(14);
+			put_number(total, 7, 5, 19);
+			put_string("/", 12, 19);
+			put_number(x, 2, 13, 19);
+			set_font_pal(15);
+			put_string("=", 15, 19);
+			set_font_pal(14);
+			put_number(totalms, 2, 16, 19);
+			put_string("frames", 19, 19);
+			if(totalms == 1)
+				put_string(" ", 19, 19);
+			totalms = total/x*16;
+			put_number(totalms, 2, 16, 20);
+			put_string("milliseconds", 19, 20);
+			
+			set_font_pal(13);
+			put_string("Keep in mind that a frame is", 6, 21);
+			put_string("16.67 milliseconds.", 6, 22);
+			
+			if(total == 10)
+			{
+				x = 1;
+				for(i = 0; i < 10; i++)
+				{
+					if(clicks[i] != 1)
+						x = 0;
+				}
+				if(x)
+					put_string("Smells like turbo...", 14, 13);
+			}
+			if(total < 5)
+				put_string("EXCELLENT REFLEXES!", 14, 13);
+			if(total == 0)
+				put_string("INCREDIBLE REFLEXES!", 14, 13);
+			
+			redraw = 0;
+			disp_on();
+		}
+		
+		controller = joytrg(0);
+		
+		if (controller & JOY_II)
+			end = 1;
+	}
+}
+
+void ManualLagTestResultsBack()
+{
+	ResetVideo();
+	setupFont();
+	SetFontColors(13, RGB(3, 3, 3), RGB(0, 7, 0), 0);
+
+#ifndef CDROM1
+	set_map_data(MB_map, 40, 30);
+	set_tile_data(MB_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 40, 30);
+	load_palette(0, MB_pal, 1);  
+#else
+	set_screen_size(SCR_SIZE_64x32); 
+	cd_loadvram(4, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+	cd_loadvram(4, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+	cd_loaddata(4, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
+	set_bgpal(0, palCD); 
+#endif
+	Center224in240();
+}
+
 void ManualLagTest()
 {
     int controller;   
@@ -1406,8 +1580,6 @@ void ManualLagTest()
 	int refresh = 0;
 	int pos = 0;
 	int i = 0;
-	int total = 0;
-	int totalms = 0;
 
 	srand(clock_tt());
 	
@@ -1426,49 +1598,9 @@ void ManualLagTest()
 		
         if(redraw)
         {
-			ResetVideo();
-			setupFont();
-			SetFontColors(13, RGB(0, 0, 0), RGB(0, 7, 0), RGB(0, 0, 0));
-			SetFontColors(14, RGB(0, 0, 0), RGB(7, 7, 7), RGB(0, 0, 0));
-			SetFontColors(15, RGB(0, 0, 0), RGB(7, 0, 0), RGB(0, 0, 0));
-
-#ifndef CDROM1			
-			set_map_data(fs_map, 40, 30);
-			set_tile_data(white_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			set_color_rgb(1, 0, 0, 0);   
-#else
-#endif
-			init_satb();
-			set_color_rgb(256, 0, 0, 0); 
-			set_color_rgb(257, 7, 7, 7); 
-			set_color_rgb(273, 7, 0, 0); 
-			set_color_rgb(289, 0, 7, 0);
-			
-#ifndef CDROM1		
-			load_vram(0x5000, lagspr_sp, 0x100);
-			spr_make(0, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
-			spr_make(1, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
-			spr_make(2, x, 96, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 2);
-#else
-#endif
-			satb_update();
-			
-			set_font_pal(13);
-			put_string("Press \"I\" when the sprite is aligned", 2, 21);
-			put_string("with the background.", 3, 22);
-			put_string("Negative values mean you pressed \"I\"", 2, 23);
-			put_string("before they intersected.", 3, 24);
-			put_string("SELECT toggles horizontal and vertical movement.", 2, 25);
-			put_string("movement.", 3, 26);
-			put_string("D-pad up toggles audio feedback.", 2, 27);
-			put_string("D-pad down toggles rhythmic timing.", 2, 28);
-				
-			Center224in240();
-
-			refresh = 1;
+			RedrawManualLagTest(x);
             redraw = 0;
+			refresh = 1;
 			disp_on();
         }
 		
@@ -1655,100 +1787,5 @@ void ManualLagTest()
 	StopAudio();
 	
 	if(pos > 9)
-	{
-		end = 0;
-		redraw = 1;
-		x = 0;
-		
-		while(!end)
-		{   	
-			vsync();
-
-			if(redraw)
-			{
-				ResetVideo();
-				setupFont();
-				SetFontColors(13, RGB(3, 3, 3), RGB(0, 7, 0), RGB(0, 0, 0));
-
-#ifndef CDROM1
-				set_map_data(MB_map, 40, 30);
-				set_tile_data(MB_bg);
-				load_tile(0x1000);
-				load_map(0, 0, 0, 0, 40, 30);
-				load_palette(0, MB_pal, 1);  
-#else
-				set_screen_size(SCR_SIZE_64x32); 
-				cd_loadvram(4, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-				cd_loadvram(4, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-				cd_loaddata(4, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
-				set_bgpal(0, palCD); 
-#endif
-				Center224in240();
-				
-				for(i = 0; i < 10; i++)
-				{
-					if(clicks[i] != 0xFF)
-					{
-						set_font_pal(14);
-						put_number(clicks[i], 2, 10, 8+i); 
-						if(clicks[i] >= 0)
-						{
-							total += clicks[i];
-							x ++;
-						}
-					}
-				}
-				
-				set_font_pal(15);
-				put_string("+", 8, 14);
-				put_string("----", 8, 18);
-				
-				totalms = total / x;
-				
-				set_font_pal(14);
-				put_number(total, 7, 5, 19);
-				put_string("/", 12, 19);
-				put_number(x, 2, 13, 19);
-				set_font_pal(15);
-				put_string("=", 15, 19);
-				set_font_pal(14);
-				put_number(totalms, 2, 16, 19);
-				put_string("frames", 19, 19);
-				if(totalms == 1)
-					put_string(" ", 19, 19);
-				totalms = total / x*16;
-				put_number(totalms, 2, 16, 20);
-				put_string("milliseconds", 19, 20);
-				
-				set_font_pal(13);
-				put_string("Keep in mind that a frame is", 6, 21);
-				put_string("16.67 milliseconds.", 6, 22);
-				
-				if(total == 10)
-				{
-					x = 1;
-					for(i = 0; i < 10; i++)
-					{
-						if(clicks[i] != 1)
-							x = 0;
-					}
-					if(x)
-						put_string("Smells like turbo...", 14, 13);
-				}
-				if(total < 5)
-					put_string("EXCELLENT REFLEXES!", 14, 13);
-				if(total == 0)
-					put_string("INCREDIBLE REFLEXES!", 14, 13);
-				
-				redraw = 0;
-				refresh = 1;
-				disp_on();
-			}
-			
-			controller = joytrg(0);
-			
-			if (controller & JOY_II)
-				end = 1;
-		}
-	}
+		ManualLagTestResults(clicks);
 }

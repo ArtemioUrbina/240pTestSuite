@@ -140,26 +140,7 @@ void Options()
 		
         if(redraw)
         {
-			ResetVideo();
-			setupFont();
-			
-			SetFontColors(12, RGB(3, 3, 3), RGB(4, 4, 4), RGB(0, 0, 0));
-			SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), RGB(0, 0, 0));
-#ifndef CDROM1
-			set_map_data(MB512_map, 64, 30);
-			set_tile_data(MB512_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 64, 30);
-			load_palette(0, MB512_pal, 1);  
-#else
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(4, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
-			cd_loadvram(4, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
-			cd_loaddata(4, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
-			set_bgpal(0, palCD); 
-#endif
-			
-			Center224in240();
+			RedrawOptions();
          
 			refresh = 1;
             redraw = 0;
@@ -169,47 +150,7 @@ void Options()
 		
 		if(refresh)
         {
-            int row = 14;
-            
-            set_font_pal(sel == 0 ? 15 : 14);
-            put_string("Vertical Resolution:", HPOS+2, row);
-			if(Enabled240p)
-				put_string("240p", HPOS+27, row);
-			else
-				put_string("224p", HPOS+27, row);
-			row++;
-			
-			if(Enabled240p)
-				set_font_pal(sel == 1 ? 15 : 14);
-			else
-				set_font_pal(sel == 1 ? 13 : 12);
-			put_string("Start at line:", HPOS+4, row);
-			if(UseDefault)
-				put_string("24 [Standard use in games]", HPOS+27, row);
-			else
-				put_string("22 [Full 240 visible lines]", HPOS+27, row);
-			
-			row++;
-			
-			set_font_pal(sel == 2 ? 15 : 14);
-            put_string("Composite filter:", HPOS+2, row);
-			if(EnabledSoft)
-				put_string("On ", HPOS+27, row);
-			else
-				put_string("Off", HPOS+27, row);
-			row++;
-			
-			set_font_pal(sel == 3 ? 15 : 14);
-            put_string("Composite B&W:", HPOS+2, row);
-			if(Enabled_C_BW)
-				put_string("On ", HPOS+27, row);
-			else
-				put_string("Off", HPOS+27, row);
-			row++;
-			
-			set_font_pal(sel == 4 ? 15 : 14);
-            put_string("Back to Main Menu", HPOS+2, ++row);
-
+			RefreshOptions(sel);
             refresh = 0;
         }
 
@@ -246,75 +187,159 @@ void Options()
 		
 		if (controller & JOY_I)
 		{
-			switch(sel)
-			{
-				case 0:
-					if(Enabled240p)
-						Set224p();
-					else
-						if(UseDefault)
-							Set239p();
-						else
-							Set240p();
-					disp_off();
-					redraw = 1;	
-					break;
-				case 1:
-					if(Enabled240p)
-					{
-						if(UseDefault)
-						{
-							UseDefault = 0;
-							Set240p();
-						}
-						else
-						{
-							UseDefault = 1;
-							Set239p();
-						}
-						disp_off();
-						redraw = 1;	
-					}
-					break;
-				case 2:
-					if(EnabledSoft)
-					{
-						EnabledSoft = 0;
-						xres_flags = XRES_SHARP;
-					}
-					else
-					{
-						EnabledSoft = 1;
-						xres_flags = XRES_SOFT;
-					}
-					
-					if(Enabled_C_BW)
-						xres_flags |= XRES_BW;
-					
-					refresh = 1;
-					
-					set_xres(512, xres_flags);
-					break;
-				case 3:
-					if(Enabled_C_BW)
-					{
-						Enabled_C_BW = 0;
-						xres_flags = EnabledSoft ? XRES_SOFT : XRES_SHARP;
-					}
-					else
-					{
-						Enabled_C_BW = 1;
-						xres_flags = (EnabledSoft ? XRES_SOFT : XRES_SHARP) | XRES_BW;
-					}
-					refresh = 1;
-					
-					set_xres(512, xres_flags);
-					break;
-				case 4:
-					end = 1;
-					break;
-			}
+			int val = 0;
+			
+			val = ExecuteOptions(sel);
+			if(val == 1)
+				redraw = 1;
+			if(val == 2)
+				refresh = 1;
+			if(val == 3)
+				end = 1;
 		}
-
     }
+}
+
+void RedrawOptions()
+{
+	ResetVideo();
+	setupFont();
+	
+	SetFontColors(12, RGB(3, 3, 3), RGB(4, 4, 4), 0);
+	SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), 0);
+#ifndef CDROM1
+	set_map_data(MB512_map, 64, 30);
+	set_tile_data(MB512_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 64, 30);
+	load_palette(0, MB512_pal, 1);  
+#else
+	set_screen_size(SCR_SIZE_64x32); 
+	cd_loadvram(4, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+	cd_loadvram(4, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
+	cd_loaddata(4, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
+	set_bgpal(0, palCD); 
+#endif
+	
+	Center224in240();
+}
+
+void RefreshOptions(int sel)
+{
+	int row = 14;
+            
+	set_font_pal(sel == 0 ? 15 : 14);
+	put_string("Vertical Resolution:", HPOS+2, row);
+	if(Enabled240p)
+		put_string("240p", HPOS+27, row);
+	else
+		put_string("224p", HPOS+27, row);
+	row++;
+	
+	if(Enabled240p)
+		set_font_pal(sel == 1 ? 15 : 14);
+	else
+		set_font_pal(sel == 1 ? 13 : 12);
+	put_string("Start at line:", HPOS+4, row);
+	if(UseDefault)
+		put_string("24 [Standard use in games]", HPOS+27, row);
+	else
+		put_string("22 [Full 240 visible lines]", HPOS+27, row);
+	
+	row++;
+	
+	set_font_pal(sel == 2 ? 15 : 14);
+	put_string("Composite filter:", HPOS+2, row);
+	if(EnabledSoft)
+		put_string("On ", HPOS+27, row);
+	else
+		put_string("Off", HPOS+27, row);
+	row++;
+	
+	set_font_pal(sel == 3 ? 15 : 14);
+	put_string("Composite B&W:", HPOS+2, row);
+	if(Enabled_C_BW)
+		put_string("On ", HPOS+27, row);
+	else
+		put_string("Off", HPOS+27, row);
+	row++;
+	
+	set_font_pal(sel == 4 ? 15 : 14);
+	put_string("Back to Main Menu", HPOS+2, ++row);
+
+}
+
+int ExecuteOptions(int sel)
+{
+	int val = 0;
+	
+	switch(sel)
+	{
+		case 0:
+			if(Enabled240p)
+				Set224p();
+			else
+				if(UseDefault)
+					Set239p();
+				else
+					Set240p();
+			disp_off();
+			val = 1;	
+			break;
+		case 1:
+			if(Enabled240p)
+			{
+				if(UseDefault)
+				{
+					UseDefault = 0;
+					Set240p();
+				}
+				else
+				{
+					UseDefault = 1;
+					Set239p();
+				}
+				disp_off();
+				val = 1;	
+			}
+			break;
+		case 2:
+			if(EnabledSoft)
+			{
+				EnabledSoft = 0;
+				xres_flags = XRES_SHARP;
+			}
+			else
+			{
+				EnabledSoft = 1;
+				xres_flags = XRES_SOFT;
+			}
+			
+			if(Enabled_C_BW)
+				xres_flags |= XRES_BW;
+			
+			val = 2;
+			
+			set_xres(512, xres_flags);
+			break;
+		case 3:
+			if(Enabled_C_BW)
+			{
+				Enabled_C_BW = 0;
+				xres_flags = EnabledSoft ? XRES_SOFT : XRES_SHARP;
+			}
+			else
+			{
+				Enabled_C_BW = 1;
+				xres_flags = (EnabledSoft ? XRES_SOFT : XRES_SHARP) | XRES_BW;
+			}
+			val = 2;
+			
+			set_xres(512, xres_flags);
+			break;
+		case 4:
+			val = 3;
+			break;
+	}
+	return val;
 }
