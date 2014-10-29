@@ -325,61 +325,6 @@ gridscroll_00_08:	.db	"d-pad left or right changes direction."
 }
 
 
-void display_ire100_00()
-{
-#asm
-	p_string	ire100_00_00,27,5
-	__ldwi		14
-	call		_set_font_pal
-	p_string	ire100_00_01,6,7
-	p_string	ire100_00_02,6,8
-	p_string	ire100_00_03,6,9
-	p_string	ire100_00_04,6,11
-	p_string	ire100_00_05,6,12
-	p_string	ire100_00_06,6,14
-	p_string	ire100_00_07,6,15
-	p_string	ire100_00_08,6,16
-	p_string	ire100_00_09,6,17
-	p_string	ire100_00_10,6,18
-	p_string	ire100_00_11,6,20
-	p_string	ire100_00_12,6,21
-	p_string	ire100_00_13,6,23
-	rts
-
-ire100_00_00:	.db	"100 IRE"
-			.db	0
-ire100_00_01:	.db	"An IRE is a unit used in the measurement of"
-			.db	0
-ire100_00_02:	.db	"composite video signals. Its name is derived from"
-			.db	0
-ire100_00_03:	.db	"the initials of the Institute of Radio Engineers."
-			.db	0
-ire100_00_04:	.db	"A value of 100 IRE was originally defined to be"
-			.db	0
-ire100_00_05:	.db	"the range from black to white in a video signal."
-			.db	0
-ire100_00_06:	.db	"A value of 0 IRE corresponds to the zero voltage"
-			.db	0
-ire100_00_07:	.db	"value during the blanking period. The sync pulse"
-			.db	0
-ire100_00_08:	.db	"is normally 40 IRE below the zero value, so, peak"
-			.db	0
-ire100_00_09:	.db	"to peak, an all white signal should be equal to"
-			.db	0
-ire100_00_10:	.db	"140 IRE."
-			.db	0
-ire100_00_11:	.db	"You can press left and right to advance in IRE"
-			.db	0
-ire100_00_12:	.db	"steps in the selected range."
-			.db	0
-ire100_00_13:	.db	"Button I toggles the range between [0-100] and"
-			.db	0
-ire100_00_14:	.db	"[100-140] IRE."
-			.db	0
-#endasm
-}
-
-
 void display_linearity_00()
 {
 #asm
