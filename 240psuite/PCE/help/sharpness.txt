@@ -4,9 +4,9 @@ You should set the sharpness of your CRT to a
 value that shows clean black and gray transitions,
 with no white ghosting in between.
 
-On most modern displays, the sharpness control is 
+On most modern displays, the sharpness control is
 an edge-enhancement control, and most probably
 should be set to zero, or in the middle.
 
-In some PVM/BVM displays this is also referred 
+In some PVM/BVM displays this is also referred
 to as aperture.

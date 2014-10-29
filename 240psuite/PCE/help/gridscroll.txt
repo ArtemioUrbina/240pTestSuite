@@ -8,4 +8,4 @@ with scrolling and framerate.
 Select can be used to toggle between horizontal
 and vertical, while the d-pad up or down
 regulates speed. Button I stops the scroll and
-d-pad left or right changes direction. 
+d-pad left or right changes direction.

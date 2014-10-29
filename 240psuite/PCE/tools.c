@@ -40,12 +40,11 @@ extern unsigned char Enabled_C_BW;
  
 void DrawSP()
 {
-	int x = 210;
-	int y = 84;
-	int vram = 0x5000;
 	int pos = 0;
-	int row = 0;
 	int count = 0;
+
+	x2 = 210;
+	y2 = 84;	
 	
 	load_palette(16, SD_pal, 1);
 #ifndef CDROM1		
@@ -58,18 +57,19 @@ void DrawSP()
 	{
 		for(pos = 0; pos < 4; pos++)
 		{
-			spr_make(count, pos*16+x, row*16+y, 0x40*count+vram, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			spr_make(count, pos*16+x2, row*16+y2, 0x40*count+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
 			count ++;
 		}
 	}
 }
 
+unsigned char region;
+unsigned char *io;
+
 // returns 1 if US system
 char DetectTG16()
 {
-	char region;
-	char *io = 0x1000;
-	
+	io = 0x1000;
 	region = *io;
 	
 	if((region & 0x40) == 0)
@@ -81,8 +81,8 @@ char DetectTG16()
 // returns 1 if CD detected
 char DetectCDROM()
 {
-	char region;
-	char *io = 0x1000;
+	io = 0x1000;
+	region = *io;
 	
 	region = *io;
 	if((region & 0x80) == 0)
@@ -127,13 +127,11 @@ void DisplaySystemInfo()
 
 void Options()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
-	unsigned char refresh = 1;
     int sel = 0;
 	unsigned char end = 0;
 
+	redraw = 1;
+	refresh = 1;
     while(!end)
     {   
 		vsync();
@@ -226,7 +224,7 @@ void RedrawOptions()
 
 void RefreshOptions(int sel)
 {
-	int row = 14;
+	row = 14;
             
 	set_font_pal(sel == 0 ? 15 : 14);
 	put_string("Vertical Resolution:", HPOS+2, row);

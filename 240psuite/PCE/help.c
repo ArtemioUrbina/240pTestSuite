@@ -51,15 +51,13 @@ extern int MB512_pal[];
 
 void showHelp(unsigned char data)
 {
-	int controller;   
-    int read; 
-    unsigned char redraw = 1;
-	unsigned char refresh = 1;
 	unsigned char end = 0;
 	unsigned char page = 1;
 	unsigned char total = 1;
 	unsigned char count = 1;
 
+	redraw = 1;
+	refresh = 1;
     while(!end)
     {   
 		vsync();
@@ -101,8 +99,9 @@ void showHelp(unsigned char data)
 #endif
 			
 			set_font_pal(15);
-			
+#ifndef CDROM1
 			DrawGeneralHelp(page);
+#endif
 			
 			set_font_pal(13);
 			if(total > 1 && page != total)
@@ -137,12 +136,14 @@ void showHelp(unsigned char data)
 		}
     }	
 	disp_off();
+	read = controller = 0;
 }
 
+#ifndef CDROM1
 /* This is defined in C to use up the constants bank */
 void DrawGeneralHelp(char page)
-{
-	unsigned char row = 5;
+{	
+	row = 5;
 	
 	switch(page)
 	{
@@ -170,7 +171,7 @@ void DrawGeneralHelp(char page)
 			else
 				put_string("The TurboGrafx-16 version of the suite is in", 6, row++);
 			put_string("320x240 by default, but can be changed to 320x224p.", 6, row++);
-			put_string("Grids and other screens are also available in ", 6, row++);
+			put_string("Grids and other screens are also available in", 6, row++);
 			break;
 		case 2:
 			put_string("HELP (2/2)", 26, row++);
@@ -199,7 +200,7 @@ void DrawGeneralHelp(char page)
 
 void DrawBacklitHelp()
 {
-	unsigned char row = 5;
+	row = 5;
 	
 	put_string("BACKLIT TEST", 6+20, row++);
 	set_font_pal(14);
@@ -225,7 +226,7 @@ void DrawBacklitHelp()
 
 void DrawChecksHelp()
 {
-	unsigned char row = 5;
+	row = 5;
 					
 	put_string("CHECKERBOARD", 6+20, row++);
 	set_font_pal(14);
@@ -239,16 +240,16 @@ void DrawChecksHelp()
 	put_string("When auto-toggle is set, you should see it", 6, row++);
 	put_string("alternating rapidly. On some setups, the pattern", 6, row++);
 	put_string("doesn't change at all. This means that the signal", 6, row++);
-	put_string("is being treated as 480i/576i and odd or even ", 6, row++);
+	put_string("is being treated as 480i/576i and odd or even", 6, row++);
 	put_string("frames are being discarded completely.", 6, row++);
 	row++;
-	put_string("A frame counter can be displayed on screen by ", 6, row++);
+	put_string("A frame counter can be displayed on screen by", 6, row++);
 	put_string("pressing left on the d-pad.", 6, row++);
 }
 
 void DrawBleedHelp()
 {
-	unsigned char row = 5;
+	row = 5;
 	
 	put_string("COLOR BLEED", 6+20, row++);
 	set_font_pal(14);
@@ -261,7 +262,74 @@ void DrawBleedHelp()
 	put_string("board with button I.", 6, row++);
 }
 
-	   
+void DrawStripesHelp(char page)
+{	
+	row = 5;
+	
+	switch(page)
+	{
+		case 1:
+			put_string("HORIZONTAL STRIPES (1/2)", 19, row++);
+			set_font_pal(14);
+			row++;
+			put_string("This pattern is designed to show if all lines are", 6, row++);
+			put_string("visible in your setup, and how your video", 6, row++);
+			put_string("processor is handling 240p video.", 6, row++);
+			row++;
+			put_string("You should see a pattern of lines, each one pixel", 6, row++);
+			put_string("in height, starting with a white one at the top of", 6, row++);
+			put_string("the screen. You can toggle the pattern with", 6, row++);
+			put_string("Select, or turn on auto-toggle each frame with I.", 6, row++);
+			row++;
+			put_string("When auto-toggle is set, you should see the lines", 6, row++);
+			put_string("alternating rapidly. On some setups, the pattern", 6, row++);
+			put_string("doesn't change at all. This means that the signal", 6, row++);
+			put_string("is being treated as 480i and odd or even",6, row++);
+			put_string("frames are being discarded completely.", 6, row++);
+			row++;
+			put_string("A frame counter can be displayed on screen by", 6, row++);
+			put_string("pressing left.", 6, row++);
+			break;
+		case 2:
+			put_string("HORIZONTAL STRIPES (2/2)", 26, row++);
+			set_font_pal(14);
+			row++;
+			put_string("You can also display vertical bars by pressing up,", 6, row++);
+			put_string("that pattern will help you evaluate if the signal", 6, row++);
+			put_string("is not distorted horizontaly, since all lines", 6, row++);
+			put_string("should be one pixel wide.", 6, row++);
+			break;
+	}
+}
+
+
+void DrawPassiveLagHelp()
+{
+	row = 5;
+					
+	put_string("LAG TEST", 6+20, row++);
+	set_font_pal(14);
+	row++;
+	put_string("This test is designed to be used with two displays", 6, row++);
+	put_string("conected at the same time. One being a CRT, or a", 6, row++);
+	put_string("display with a known lag as reference, and the", 6, row++);
+	put_string("other the display to test.", 6, row++);
+	row++;
+	put_string("Using a camera, a picture should be taken of both", 6, row++);
+	put_string("screens at the same time. The picture will show", 6, row++);
+	put_string("the frame discrepancy between them", 6, row++);
+	put_string("even when the numbers are blurry.", 6, row++);
+	row++;
+	put_string("The Sega Genesis version of the test can be used", 6, row++);
+	put_string("with a Nomad as the reference display.", 6, row++);
+	row++;
+	put_string("You can also chain the output ports of a PVM/BVM", 6, row++);
+	put_string("to an upscaler and use the CRT as reference, or", 6, row++);
+	put_string("split the video signal.", 6, row++);
+}
+
+#endif
+
 #asm
 p_string	.macro
 	__ldwi	\1

@@ -31,6 +31,29 @@ unsigned char UseDefault;
 unsigned char EnabledSoft;
 unsigned char Enabled_C_BW;
 
+int controller;   
+int read; 
+
+unsigned char redraw;
+unsigned char refresh;
+
+int row;
+int x;
+int x1;
+int x2;
+int x3;
+int x4;
+int y;
+int y2;
+
+int speed;
+int clicks[10];
+unsigned char variation;
+unsigned char change;
+unsigned char audio;
+unsigned char view;
+int vary;
+
 void Set224p()
 {
 	Enabled240p = 0;

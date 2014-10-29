@@ -14,17 +14,17 @@ void display_color601_00()
 
 color601_00_00:	.db	"COLOR BARS WITH GRAY SCALE"
 			.db	0
-color601_00_01:	.db	"This pattern idea and layout borrows from the "
+color601_00_01:	.db	"This pattern idea and layout borrows from the"
 			.db	0
 color601_00_02:	.db	"Digital Video Essentials color adjust pattern."
 			.db	0
-color601_00_03:	.db	"It has a gray background as reference, and can "
+color601_00_03:	.db	"It has a gray background as reference, and can"
 			.db	0
-color601_00_04:	.db	"be used with color filters in order to adjust "
+color601_00_04:	.db	"be used with color filters in order to adjust"
 			.db	0
-color601_00_05:	.db	"color accuracy. If your display set has a blue "
+color601_00_05:	.db	"color accuracy. If your display set has a blue"
 			.db	0
-color601_00_06:	.db	"only mode, you can also use that to correct "
+color601_00_06:	.db	"only mode, you can also use that to correct"
 			.db	0
 color601_00_07:	.db	"color balance."
 			.db	0
@@ -61,7 +61,7 @@ colors_00_03:	.db	"This is adjusted in the same way black levels"
 			.db	0
 colors_00_04:	.db	"are set with the PLUGE. If you adjusted the black"
 			.db	0
-colors_00_05:	.db	"level correctly with the PLUGE, the rectangles "
+colors_00_05:	.db	"level correctly with the PLUGE, the rectangles"
 			.db	0
 colors_00_06:	.db	"under the 1 column should be barely visible."
 			.db	0
@@ -106,7 +106,7 @@ colors_01_04:	.db	"until you can't tell the rightmost box under F"
 			.db	0
 colors_01_05:	.db	"from the one to its left, and then lower it until"
 			.db	0
-colors_01_06:	.db	"you can distinguish them clearly. "
+colors_01_06:	.db	"you can distinguish them clearly."
 			.db	0
 colors_01_07:	.db	"Repeat for each color and you are set."
 			.db	0
@@ -131,7 +131,7 @@ void display_dshadow_00()
 	p_string	dshadow_00_09,6,16
 	rts
 
-dshadow_00_00:	.db	"DROP SHADOW TEST "
+dshadow_00_00:	.db	"DROP SHADOW TEST"
 			.db	0
 dshadow_00_01:	.db	"This is a crucial test for 240p upscan converters."
 			.db	0
@@ -145,7 +145,7 @@ dshadow_00_05:	.db	"transparency effect, since you are watching a 30hz"
 			.db	0
 dshadow_00_06:	.db	"shadow on a 60hz signal. No background detail"
 			.db	0
-dshadow_00_07:	.db	"should be lost and the shadow should be visible. "
+dshadow_00_07:	.db	"should be lost and the shadow should be visible."
 			.db	0
 dshadow_00_08:	.db	"The user can toggle the frame used to draw the"
 			.db	0
@@ -176,11 +176,11 @@ void display_gray_00()
 	p_string	gray_00_11,6,19
 	rts
 
-gray_00_00:	.db	"GRAY RAMP "
+gray_00_00:	.db	"GRAY RAMP"
 			.db	0
 gray_00_01:	.db	"This gray ramp pattern can be used to check color"
 			.db	0
-gray_00_02:	.db	"balance and to adjust the white level. "
+gray_00_02:	.db	"balance and to adjust the white level."
 			.db	0
 gray_00_03:	.db	"You should make sure the bars are gray, with no"
 			.db	0
@@ -196,7 +196,7 @@ gray_00_08:	.db	"the contrast control of your TV set. Raise the"
 			.db	0
 gray_00_09:	.db	"contrast to the point where the white bars on the"
 			.db	0
-gray_00_10:	.db	"sides are undistinguishable from each other, and "
+gray_00_10:	.db	"sides are undistinguishable from each other, and"
 			.db	0
 gray_00_11:	.db	"then lower it to the point where you can clearly"
 			.db	0
@@ -227,7 +227,7 @@ grid_00_00:	.db	"GRID"
 			.db	0
 grid_00_01:	.db	"This grid uses a 320x240 pattern, and should fill"
 			.db	0
-grid_00_02:	.db	"all of the 4:3 visible area. "
+grid_00_02:	.db	"all of the 4:3 visible area."
 			.db	0
 grid_00_03:	.db	"You can use it to verify that all the visible area"
 			.db	0
@@ -235,7 +235,7 @@ grid_00_04:	.db	"is being displayed, and that there is no distortion"
 			.db	0
 grid_00_05:	.db	"present. Consumer TVs may not show the red squares."
 			.db	0
-grid_00_06:	.db	"The 240 test suite draws from line 22 onwards from "
+grid_00_06:	.db	"The 240 test suite draws from line 22 onwards from"
 			.db	0
 grid_00_07:	.db	"the blanking interval of NTSC signals"
 			.db	0
@@ -319,7 +319,7 @@ gridscroll_00_06:	.db	"and vertical, while the d-pad up or down"
 			.db	0
 gridscroll_00_07:	.db	"regulates speed. Button I stops the scroll and"
 			.db	0
-gridscroll_00_08:	.db	"d-pad left or right changes direction. "
+gridscroll_00_08:	.db	"d-pad left or right changes direction."
 			.db	0
 #endasm
 }
@@ -399,11 +399,11 @@ linearity_00_01:	.db	"This pattern shows 5 circles, that are matched"
 			.db	0
 linearity_00_02:	.db	"to the 10:11 NTSC pixel aspect ratio."
 			.db	0
-linearity_00_03:	.db	"The linearity of the display or upscaler can be "
+linearity_00_03:	.db	"The linearity of the display or upscaler can be"
 			.db	0
 linearity_00_04:	.db	"verified by measuring the diameter of the circles."
 			.db	0
-linearity_00_05:	.db	"Of course the linearity should be kept in all "
+linearity_00_05:	.db	"Of course the linearity should be kept in all"
 			.db	0
 linearity_00_06:	.db	"directions."
 			.db	0
@@ -434,7 +434,7 @@ linearity224_00_03:	.db	"The linearity of the display or upscaler can be "
 			.db	0
 linearity224_00_04:	.db	"verified by measuring the diameter of the circles."
 			.db	0
-linearity224_00_05:	.db	"Of course the linearity should be kept in all "
+linearity224_00_05:	.db	"Of course the linearity should be kept in all"
 			.db	0
 linearity224_00_06:	.db	"directions."
 			.db	0
@@ -470,11 +470,11 @@ manuallag_00_00:	.db	"MANUAL LAG TEST (1/2)"
 			.db	0
 manuallag_00_01:	.db	"The main intention is to show a changing pattern"
 			.db	0
-manuallag_00_02:	.db	"on the screen, which can be complemented with "
+manuallag_00_02:	.db	"on the screen, which can be complemented with"
 			.db	0
-manuallag_00_03:	.db	"audio and vibration on the controller if set. "
+manuallag_00_03:	.db	"audio and vibration on the controller if set."
 			.db	0
-manuallag_00_04:	.db	"This should show to some degree any lag when  "
+manuallag_00_04:	.db	"This should show to some degree any lag when"
 			.db	0
 manuallag_00_05:	.db	"processing the signal."
 			.db	0
@@ -527,7 +527,7 @@ manuallag_01_01:	.db	"Of course the evaluation is dependent on reflexes"
 			.db	0
 manuallag_01_02:	.db	"and/or rhythm more than anything. The visual and"
 			.db	0
-manuallag_01_03:	.db	"audio cues are the more revealing aspects which "
+manuallag_01_03:	.db	"audio cues are the more revealing aspects which"
 			.db	0
 manuallag_01_04:	.db	"the user should consider, of course the interactive"
 			.db	0
@@ -535,11 +535,11 @@ manuallag_01_05:	.db	"factor can give an experienced player the hang of"
 			.db	0
 manuallag_01_06:	.db	"the system when testing via different connections."
 			.db	0
-manuallag_01_07:	.db	"Since a frame is around 16 ms (1000/60) in NTSC "
+manuallag_01_07:	.db	"Since a frame is around 16 ms (1000/60) in NTSC"
 			.db	0
 manuallag_01_08:	.db	"that value must be considered the general error"
 			.db	0
-manuallag_01_09:	.db	"when using the test results. "
+manuallag_01_09:	.db	"when using the test results."
 			.db	0
 #endasm
 }
@@ -574,25 +574,25 @@ options_00_01:	.db	"#GVI Trap Filter (Composite):#G A Trap filter is"
 			.db	0
 options_00_02:	.db	"generally used to improve #YLuma#Y/#YChroma#Y"
 			.db	0
-options_00_03:	.db	"separation in the #Ycomposite#Y video signal. When "
+options_00_03:	.db	"separation in the #Ycomposite#Y video signal. When"
 			.db	0
-options_00_04:	.db	"disabled, the video signal is unfiltered, "
+options_00_04:	.db	"disabled, the video signal is unfiltered,"
 			.db	0
-options_00_05:	.db	"which sometimes produces visual artefacts such "
+options_00_05:	.db	"which sometimes produces visual artefacts such"
 			.db	0
-options_00_06:	.db	"as color bleeding. A notch filter centered at "
+options_00_06:	.db	"as color bleeding. A notch filter centered at"
 			.db	0
 options_00_07:	.db	"the color subcarrier frequency is used to "
 			.db	0
-options_00_08:	.db	"extract color from 2.5MHz to 4.5MHz.This method "
+options_00_08:	.db	"extract color from 2.5MHz to 4.5MHz.This method"
 			.db	0
-options_00_09:	.db	"has two drawbacks. First, it limits the color "
+options_00_09:	.db	"has two drawbacks. First, it limits the color"
 			.db	0
 options_00_10:	.db	"bandwidth (which extends to 2.1MHz) cutting out"
 			.db	0
-options_00_11:	.db	"fine color detail. Second, luminance info in "
+options_00_11:	.db	"fine color detail. Second, luminance info in"
 			.db	0
-options_00_12:	.db	"the notch frequency range contaminates color "
+options_00_12:	.db	"the notch frequency range contaminates color"
 			.db	0
 options_00_13:	.db	"and generates unwanted color or rainbows."
 			.db	0
@@ -627,7 +627,7 @@ overscan_00_01:	.db	"With this pattern you can interactively find out"
 			.db	0
 overscan_00_02:	.db	"the overscan in pixels and percentage of each"
 			.db	0
-overscan_00_03:	.db	"edge in a display. "
+overscan_00_03:	.db	"edge in a display."
 			.db	0
 overscan_00_04:	.db	"Increment the overscan with left and right until"
 			.db	0
@@ -638,61 +638,6 @@ overscan_00_06:	.db	"The resulting number is the amount of overscan"
 overscan_00_07:	.db	"in pixels in each direction."
 			.db	0
 overscan_00_08:	.db	"This pattern follows the current video options."
-			.db	0
-#endasm
-}
-
-
-void display_passivelag_00()
-{
-#asm
-	p_string	passivelag_00_00,26,5
-	__ldwi		14
-	call		_set_font_pal
-	p_string	passivelag_00_01,6,7
-	p_string	passivelag_00_02,6,8
-	p_string	passivelag_00_03,6,9
-	p_string	passivelag_00_04,6,10
-	p_string	passivelag_00_05,6,12
-	p_string	passivelag_00_06,6,13
-	p_string	passivelag_00_07,6,14
-	p_string	passivelag_00_08,6,16
-	p_string	passivelag_00_09,6,17
-	p_string	passivelag_00_10,6,19
-	p_string	passivelag_00_11,6,20
-	p_string	passivelag_00_12,6,22
-	p_string	passivelag_00_13,6,23
-	rts
-
-passivelag_00_00:	.db	"LAG TEST"
-			.db	0
-passivelag_00_01:	.db	"This test is designed to be used with two displays"
-			.db	0
-passivelag_00_02:	.db	"conected at the same time. One being a CRT, or a"
-			.db	0
-passivelag_00_03:	.db	"display with a known lag as reference, and the"
-			.db	0
-passivelag_00_04:	.db	"other the display to test."
-			.db	0
-passivelag_00_05:	.db	"Using a camera, a picture should be taken of both"
-			.db	0
-passivelag_00_06:	.db	"screens at the same time. The picture will show "
-			.db	0
-passivelag_00_07:	.db	"the frame discrepancy between them. "
-			.db	0
-passivelag_00_08:	.db	"The circles in the bottom help determine the frame"
-			.db	0
-passivelag_00_09:	.db	"even when the numbers are blurry."
-			.db	0
-passivelag_00_10:	.db	"The Sega Genesis version of the test can be used"
-			.db	0
-passivelag_00_11:	.db	"with a Nomad as the reference display."
-			.db	0
-passivelag_00_12:	.db	"You can also chain the output ports of a PVM/BVM"
-			.db	0
-passivelag_00_13:	.db	"to an upscaler and use the CRT as reference, or"
-			.db	0
-passivelag_00_14:	.db	"split the video signal."
 			.db	0
 #endasm
 }
@@ -728,7 +673,7 @@ pluge_00_03:	.db	"and contrast of a video signal."
 			.db	0
 pluge_00_04:	.db	"The pattern in this suite is mainly designed to"
 			.db	0
-pluge_00_05:	.db	"adjust the black level. The control for setting "
+pluge_00_05:	.db	"adjust the black level. The control for setting"
 			.db	0
 pluge_00_06:	.db	"this on your TV is usually named Brightness."
 			.db	0
@@ -762,7 +707,7 @@ void display_pluge_01()
 	p_string	pluge_01_06,6,12
 	rts
 
-pluge_01_00:	.db	"PLUGE (2/2)                                         "
+pluge_01_00:	.db	"PLUGE (2/2)"
 			.db	0
 pluge_01_01:	.db	"Reduce the Brightness until the inner bars"
 			.db	0
@@ -770,7 +715,7 @@ pluge_01_02:	.db	"are no longer visible, and then slowly raise it"
 			.db	0
 pluge_01_03:	.db	"until they are just visible, and go back one"
 			.db	0
-pluge_01_04:	.db	"notch where they blend with the background. "
+pluge_01_04:	.db	"notch where they blend with the background."
 			.db	0
 pluge_01_05:	.db	"Please keep in mind that black levels are lower"
 			.db	0
@@ -805,13 +750,13 @@ scroll_00_02:	.db	"the Hedgehog. The speed can be varied with the"
 			.db	0
 scroll_00_03:	.db	"d-pad, and change direction with the Select"
 			.db	0
-scroll_00_04:	.db	"Button I stops the scroll. "
+scroll_00_04:	.db	"Button I stops the scroll."
 			.db	0
 scroll_00_05:	.db	"This can be used to notice any drops in framerate"
 			.db	0
 scroll_00_06:	.db	"when using a video processor."
 			.db	0
-scroll_00_07:	.db	"Sonic The Hedgehog is a trademark of "
+scroll_00_07:	.db	"Sonic The Hedgehog is a trademark of"
 			.db	0
 scroll_00_08:	.db	"Sega Enterprises Ltd."
 			.db	0
@@ -842,13 +787,13 @@ sharpness_00_02:	.db	"value that shows clean black and gray transitions,"
 			.db	0
 sharpness_00_03:	.db	"with no white ghosting in between."
 			.db	0
-sharpness_00_04:	.db	"On most modern displays, the sharpness control is "
+sharpness_00_04:	.db	"On most modern displays, the sharpness control is"
 			.db	0
 sharpness_00_05:	.db	"an edge-enhancement control, and most probably"
 			.db	0
 sharpness_00_06:	.db	"should be set to zero, or in the middle."
 			.db	0
-sharpness_00_07:	.db	"In some PVM/BVM displays this is also referred "
+sharpness_00_07:	.db	"In some PVM/BVM displays this is also referred"
 			.db	0
 sharpness_00_08:	.db	"to as aperture."
 			.db	0
@@ -872,11 +817,11 @@ SMPTEColor_00_00:	.db	"SMPTE COLOR BARS"
 			.db	0
 SMPTEColor_00_01:	.db	"This pattern can be used to calibrate for NTSC"
 			.db	0
-SMPTEColor_00_02:	.db	"levels regarding contrast and brightness, and "
+SMPTEColor_00_02:	.db	"levels regarding contrast and brightness, and"
 			.db	0
-SMPTEColor_00_03:	.db	"appropiate colors as well. "
+SMPTEColor_00_03:	.db	"appropiate colors as well."
 			.db	0
-SMPTEColor_00_04:	.db	"You can toggle between 75% and 100% SMPTE color "
+SMPTEColor_00_04:	.db	"You can toggle between 75% and 100% SMPTE color"
 			.db	0
 SMPTEColor_00_05:	.db	"bars by pressing I."
 			.db	0
@@ -942,87 +887,6 @@ striped_00_06:	.db	"You can change backgrounds with I."
 }
 
 
-void display_stripes_00()
-{
-#asm
-	p_string	stripes_00_00,19,5
-	__ldwi		14
-	call		_set_font_pal
-	p_string	stripes_00_01,6,7
-	p_string	stripes_00_02,6,8
-	p_string	stripes_00_03,6,9
-	p_string	stripes_00_04,6,11
-	p_string	stripes_00_05,6,12
-	p_string	stripes_00_06,6,13
-	p_string	stripes_00_07,6,14
-	p_string	stripes_00_08,6,16
-	p_string	stripes_00_09,6,17
-	p_string	stripes_00_10,6,18
-	p_string	stripes_00_11,6,19
-	p_string	stripes_00_12,6,20
-	p_string	stripes_00_13,6,22
-	p_string	stripes_00_14,6,23
-	rts
-
-stripes_00_00:	.db	"HORIZONTAL STRIPES (1/2)"
-			.db	0
-stripes_00_01:	.db	"This pattern is designed to show if all lines are"
-			.db	0
-stripes_00_02:	.db	"visible in your setup, and how your video"
-			.db	0
-stripes_00_03:	.db	"processor is handling 240p video. "
-			.db	0
-stripes_00_04:	.db	"You should see a pattern of lines, each one pixel"
-			.db	0
-stripes_00_05:	.db	"in height, starting with a white one at the top of"
-			.db	0
-stripes_00_06:	.db	"the screen. You can toggle the pattern with "
-			.db	0
-stripes_00_07:	.db	"Select, or turn on auto-toggle each frame with I."
-			.db	0
-stripes_00_08:	.db	"When auto-toggle is set, you should see the lines"
-			.db	0
-stripes_00_09:	.db	"alternating rapidly. On some setups, the pattern"
-			.db	0
-stripes_00_10:	.db	"doesn't change at all. This means that the signal"
-			.db	0
-stripes_00_11:	.db	"is being treated as 480i/576i and odd or even"
-			.db	0
-stripes_00_12:	.db	"frames are being discarded completely."
-			.db	0
-stripes_00_13:	.db	"A frame counter can be displayed on screen by "
-			.db	0
-stripes_00_14:	.db	"pressing left."
-			.db	0
-#endasm
-}
-
-
-void display_stripes_01()
-{
-#asm
-	p_string	stripes_01_00,19,5
-	__ldwi		14
-	call		_set_font_pal
-	p_string	stripes_01_01,6,7
-	p_string	stripes_01_02,6,8
-	p_string	stripes_01_03,6,9
-	rts
-
-stripes_01_00:	.db	"HORIZONTAL STRIPES (2/2)"
-			.db	0
-stripes_01_01:	.db	"You can also display vertical bars by pressing up,"
-			.db	0
-stripes_01_02:	.db	"that pattern will help you evaluate if the signal"
-			.db	0
-stripes_01_03:	.db	"is not distorted horizontaly, since all lines "
-			.db	0
-stripes_01_04:	.db	"should be one pixel wide."
-			.db	0
-#endasm
-}
-
-
 void display_white_00()
 {
 #asm
@@ -1044,7 +908,7 @@ white_00_00:	.db	"WHITE SCREEN"
 			.db	0
 white_00_01:	.db	"This pattern can be changed between white, black,"
 			.db	0
-white_00_02:	.db	"red, green, blue and custom color full screens by "
+white_00_02:	.db	"red, green, blue and custom color full screens by"
 			.db	0
 white_00_03:	.db	"using button I."
 			.db	0
@@ -1058,7 +922,7 @@ white_00_07:	.db	"Some displays and scalers have issues when"
 			.db	0
 white_00_08:	.db	"changing between a black 0 IRE and a white screen."
 			.db	0
-white_00_09:	.db	"This pattern can also be used to check color "
+white_00_09:	.db	"This pattern can also be used to check color"
 			.db	0
 white_00_10:	.db	"purity, and for dead pixels in some displays."
 			.db	0

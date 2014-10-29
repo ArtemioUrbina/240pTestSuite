@@ -30,6 +30,30 @@ extern unsigned char Enabled240p;
 extern unsigned char UseDefault;
 extern unsigned char EnabledSoft;
 extern unsigned char Enabled_C_BW;
+
+extern int controller;   
+extern int read; 
+
+extern unsigned char redraw;
+extern unsigned char refresh;
+
+extern int row;
+extern int x;
+extern int x1;
+extern int x2;
+extern int x3;
+extern int x4;
+extern int y;
+extern int y2;
+
+extern int speed;
+
+extern int clicks[];
+extern unsigned char variation;
+extern unsigned char change;
+extern unsigned char audio;
+extern unsigned char view;
+extern int vary;
  
 void Set224p();
 void Set240p();

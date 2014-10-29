@@ -5,7 +5,7 @@ is a test pattern used to adjust the black level
 and contrast of a video signal.
 
 The pattern in this suite is mainly designed to
-adjust the black level. The control for setting 
+adjust the black level. The control for setting
 this on your TV is usually named Brightness.
 
 This adjustment ensures that anything intended
@@ -18,11 +18,11 @@ luminance in order not to crush detail.
 
 
 
-                   PLUGE (2/2)                                         
+                   PLUGE (2/2)
 Reduce the Brightness until the inner bars
 are no longer visible, and then slowly raise it
 until they are just visible, and go back one
-notch where they blend with the background. 
+notch where they blend with the background.
 
 Please keep in mind that black levels are lower
 in other game consoles, the are just the lowest

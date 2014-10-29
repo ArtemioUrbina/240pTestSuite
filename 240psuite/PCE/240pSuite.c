@@ -43,10 +43,6 @@ char palCD[32];
 
 void main()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
-	unsigned char refresh = 1;
     int sel = 0;
 
 	if(!global_init)
@@ -228,7 +224,7 @@ void RedrawMain()
 
 void RefreshMain(int sel)
 {
-	int row = 8;
+	row = 8;
 
 	set_font_pal(sel == 0 ? 15 : 14);
 	put_string("Test Patterns", HPOS, row++);
@@ -245,10 +241,10 @@ void RefreshMain(int sel)
 	set_font_pal(sel == 6 ? 15 : 14);
 	put_string("Grid Scroll Test", HPOS, row++);
 	
-	RefreshMainAux(sel, row);
+	RefreshMainAux(sel);
 }
 
-void RefreshMainAux(int sel, int row)
+void RefreshMainAux(int sel)
 {
 	set_font_pal(sel == 7 ? 15 : 14);
 	put_string("Horizontal Stripes", HPOS, row++);
@@ -281,11 +277,9 @@ void RefreshMainAux(int sel, int row)
  
 void DrawN()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 1;
 
+	redraw = 1;
     do
     {   
 		vsync();
@@ -318,13 +312,11 @@ void DrawN()
 
 void DrawCredits()
 {
-	int controller;   
-    int read; 
-    unsigned char redraw = 1;
-	unsigned char refresh = 1;
 	unsigned char end = 0;
 	int counter = 0;
 
+	redraw = 1;
+	refresh = 1;
     while(!end)
     {   
 		vsync();
@@ -392,7 +384,7 @@ void DrawCredits()
 
 void RefreshCredits()
 {
-	unsigned char row = 7;
+	row = 7;
 			
 	set_font_pal(15);
 	put_string("Code and Patterns:", HPOS+2, row++);

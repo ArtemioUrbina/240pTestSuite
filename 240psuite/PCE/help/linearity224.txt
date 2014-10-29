@@ -5,5 +5,5 @@ to the 10:11 NTSC, but limited to a 320x224 mode.
 
 The linearity of the display or upscaler can be 
 verified by measuring the diameter of the circles.
-Of course the linearity should be kept in all 
+Of course the linearity should be kept in all
 directions.
