@@ -45,6 +45,9 @@ void main()
 {
     int sel = 0;
 
+	redraw = 1;
+	refresh = 1;
+	
 	if(!global_init)
 	{
 		xres_flags = XRES_SOFT;
@@ -224,7 +227,7 @@ void RedrawMain()
 
 void RefreshMain(int sel)
 {
-	row = 8;
+	int row = 8;
 
 	set_font_pal(sel == 0 ? 15 : 14);
 	put_string("Test Patterns", HPOS, row++);
@@ -241,10 +244,10 @@ void RefreshMain(int sel)
 	set_font_pal(sel == 6 ? 15 : 14);
 	put_string("Grid Scroll Test", HPOS, row++);
 	
-	RefreshMainAux(sel);
+	RefreshMainAux(sel, row);
 }
 
-void RefreshMainAux(int sel)
+void RefreshMainAux(int sel, int row)
 {
 	set_font_pal(sel == 7 ? 15 : 14);
 	put_string("Horizontal Stripes", HPOS, row++);
@@ -384,7 +387,7 @@ void DrawCredits()
 
 void RefreshCredits()
 {
-	row = 7;
+	unsigned char row = 7;
 			
 	set_font_pal(15);
 	put_string("Code and Patterns:", HPOS+2, row++);

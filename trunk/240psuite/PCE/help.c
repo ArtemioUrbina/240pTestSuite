@@ -307,7 +307,7 @@ void DrawPassiveLagHelp()
 {
 	row = 5;
 					
-	put_string("LAG TEST", 6+20, row++);
+	put_string("LAG TEST", 26, row++);
 	set_font_pal(14);
 	row++;
 	put_string("This test is designed to be used with two displays", 6, row++);
@@ -326,6 +326,30 @@ void DrawPassiveLagHelp()
 	put_string("You can also chain the output ports of a PVM/BVM", 6, row++);
 	put_string("to an upscaler and use the CRT as reference, or", 6, row++);
 	put_string("split the video signal.", 6, row++);
+}
+
+void DrawIre100Help()
+{
+	row = 5;
+	
+	put_string("100 IRE", 26, row++);
+	set_font_pal(14);
+	put_string("An IRE is a unit used in the measurement of", 6, row++);
+	put_string("composite video signals. Its name is derived from", 6, row++);
+	put_string("the initials of the Institute of Radio Engineers.", 6, row++);
+	row++;
+	put_string("A value of 100 IRE was originally defined to be", 6, row++);
+	put_string("the range from black to white in a video signal.", 6, row++);
+	put_string("A value of 0 IRE corresponds to the zero voltage", 6, row++);
+	put_string("value during the blanking period. The sync pulse", 6, row++);
+	put_string("is normally 40 IRE below the zero value, so, peak", 6, row++);
+	put_string("to peak, an all white signal should be equal to", 6, row++);
+	put_string("140 IRE.", 6, row++);
+	row++;
+	put_string("You can press left and right to advance in IRE", 6, row++);
+	put_string("steps in the selected range.", 6, row++);
+	put_string("Button I toggles the range between [0-100] and", 6, row++);
+	put_string("[100-140] IRE.", 6, row++);
 }
 
 #endif
