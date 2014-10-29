@@ -30,18 +30,18 @@
 
 void DrawIntro()
 {
-	int frame;
+	unsigned char frame;
 	
 	ResetVideo();
 	setupFont();
 	
 	vsync();
 	set_color(1, 0);
-	SetFontColors(14, RGB(0, 0, 0), RGB(0, 0, 0), RGB(0, 0, 0));
+	SetFontColors(14, 0, 0, 0);
 	put_string("KORDAMP PRESENTS", 12, 12);
 	for(frame = 0; frame < 7; frame ++)
 	{
-		SetFontColors(14, RGB(0, 0, 0), RGB(frame, frame, frame), RGB(0, 0, 0));
+		SetFontColors(14, 0, RGB(frame, frame, frame), 0);
 		vsync(3);
 	}
 	
@@ -51,7 +51,7 @@ void DrawIntro()
 	
 	for(frame = 7; frame > 0; frame --)
 	{
-		SetFontColors(14, RGB(0, 0, 0), RGB(frame, frame, frame), RGB(0, 0, 0));
+		SetFontColors(14, 0, RGB(frame, frame, frame), 0);
 		vsync(3);
 	}
 }
@@ -62,7 +62,7 @@ void main()
 	
 	cls();
 #ifndef CDROM1
-	SetFontColors(14, RGB(0, 0, 0), RGB(4, 4, 4), RGB(0, 0, 0));
+	SetFontColors(14, 0, RGB(4, 4, 4), 0);
     
 	vsync();
 	if(ac_exists())

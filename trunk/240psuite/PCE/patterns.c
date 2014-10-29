@@ -55,10 +55,10 @@ void main()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int refresh = 1;
+    unsigned char redraw = 1;
+	unsigned char refresh = 1;
     int sel = 0;
-	int end = 0;
+	unsigned char end = 0;
 
 #ifdef CDROM
 	xres_flags = xres_flags_g;
@@ -279,10 +279,10 @@ void DrawPluge()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int refresh = 0;
-	int end = 0;
-	int col = 0;
+    unsigned char redraw = 1;
+	unsigned char refresh = 0;
+	unsigned char end = 0;
+	unsigned char col = 0;
 
     while(!end)
     {   
@@ -357,8 +357,8 @@ void DrawColor()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 
     while(!end)
     {   
@@ -397,8 +397,8 @@ void DrawCB601()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 
     while(!end)
     {   
@@ -439,9 +439,9 @@ void DrawColorBleed()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
-	int check = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
+	unsigned char check = 0;
 
     while(!end)
     {   
@@ -506,10 +506,10 @@ void DrawSMPTE()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
-	int is100 = 0;
-	int text = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
+	unsigned char is100 = 0;
+	unsigned char text = 0;
 
     while(!end)
     {   
@@ -591,9 +591,9 @@ void DrawGrid256()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
-	int showcolor = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
+	unsigned char showcolor = 0;
 
     while(!end)
     {   
@@ -646,9 +646,9 @@ void DrawGrid320()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
-	int showcolor = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
+	unsigned char showcolor = 0;
 
     while(!end)
     {   
@@ -701,9 +701,9 @@ void DrawGrid512()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
-	int showcolor = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
+	unsigned char showcolor = 0;
 
     while(!end)
     {   
@@ -741,7 +741,14 @@ void DrawGrid512()
 		if (controller & JOY_II)
 			end = 1;
 			
-		
+		if(controller & JOY_I)
+		{
+			showcolor = !showcolor;
+			if(showcolor)
+				set_color_rgb(256, 7, 7, 7);
+			else
+				set_color_rgb(256, 0, 0, 0);
+		}
     }
 }
 
@@ -749,11 +756,11 @@ void DrawWhite()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int refresh = 0;
-	int end = 0;
-	int color = 0;
-	int edit = 0;
+    unsigned char redraw = 1;
+	unsigned char refresh = 0;
+	unsigned char end = 0;
+	unsigned char color = 0;
+	unsigned char edit = 0;
 	int r = 7, g = 7, b = 7;
 	int sel = 0;
 
@@ -888,7 +895,7 @@ void RedrawWhite()
 	Center224in240();
 }
 
-void RefreshWhite(int color, int edit, int r, int g, int b, int sel)
+void RefreshWhite(unsigned char color, unsigned char edit, int r, int g, int b, int sel)
 {
 	if(color == 0 && edit)
 	{
@@ -931,8 +938,8 @@ void DrawLinearity()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 
     while(!end)
     {   
@@ -986,8 +993,8 @@ void DrawLinearity256()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 
     while(!end)
     {   
@@ -1047,8 +1054,8 @@ void DrawSharpness()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 
     while(!end)
     {   
@@ -1089,8 +1096,8 @@ void DrawGray()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 
     while(!end)
     {   
@@ -1132,17 +1139,17 @@ void DrawOverscan()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int refresh = 0;
-	int end = 0;
-	int draw = 0;
+    unsigned char redraw = 1;
+	unsigned char refresh = 0;
+	unsigned char end = 0;
+	unsigned char draw = 0;
 	int sel = 0;
 	int top = 0;
 	int bottom = 0;
 	int left = 0;
 	int right = 0;
-	int previous = 0;
-	int screen = 0;
+	unsigned char previous = 0;
+	unsigned char screen = 0;
 	
 	if(Enabled240p)
 	{
@@ -1319,7 +1326,7 @@ void RefreshOverscan(int sel, int top, int bottom, int left, int right)
 	put_string("pixels", 18, 15);
 }
 
-void DrawOverscanLines(int sel, int top, int bottom, int left, int right, int screen, int previous)
+void DrawOverscanLines(int sel, int top, int bottom, int left, int right, int screen, unsigned char previous)
 {
 	switch(sel)
 	{
@@ -1338,7 +1345,7 @@ void DrawOverscanLines(int sel, int top, int bottom, int left, int right, int sc
 	}
 }
 
-void DrawTopLines(int top, int bottom, int left, int right, int previous)
+void DrawTopLines(int top, int bottom, int left, int right, unsigned char previous)
 {
 	if(previous < top)
 		gfx_line(left, top-1, 255-right, top-1, 1);
@@ -1346,7 +1353,7 @@ void DrawTopLines(int top, int bottom, int left, int right, int previous)
 		gfx_line(left, previous-1, 255-right, previous-1, 0);
 }
 
-void DrawBottomLines(int top, int bottom, int left, int right, int previous, int screen)
+void DrawBottomLines(int top, int bottom, int left, int right, unsigned char previous, unsigned char screen)
 {
 	if(previous < bottom)
 		gfx_line(left, screen-bottom, 255-right, screen-bottom, 1);
@@ -1354,7 +1361,7 @@ void DrawBottomLines(int top, int bottom, int left, int right, int previous, int
 		gfx_line(left, screen-previous, 255-right, screen-previous, 0);
 }
 
-void DrawLeftLines(int top, int bottom, int left, int right, int previous, int screen)
+void DrawLeftLines(int top, int bottom, int left, int right, unsigned char previous, unsigned char screen)
 {
 	if(previous < left)
 		gfx_line(left-1, top, left-1, screen-bottom, 1);
@@ -1362,7 +1369,7 @@ void DrawLeftLines(int top, int bottom, int left, int right, int previous, int s
 		gfx_line(previous-1, top, previous-1, screen-bottom, 0);
 }
 
-void DrawRightLines(int top, int bottom, int left, int right, int previous, int screen)
+void DrawRightLines(int top, int bottom, int left, int right, unsigned char previous, unsigned char screen)
 {
 	if(previous < right)
 		gfx_line(256-right, top, 256-right, screen-bottom, 1);
@@ -1377,12 +1384,12 @@ void Draw100IRE()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 	int color = 7;
-	int mode = 0;
-	int text = 0;
-	int refresh = 0;
+	unsigned char mode = 0;
+	unsigned char text = 0;
+	unsigned char refresh = 0;
 	int factor = 14; // aproximate for IRE
 
 	set_color_rgb(0, 0, 0, 0);
@@ -1500,7 +1507,7 @@ void Draw100IRE()
     }
 }
 
-void Redraw100IRE(int mode, int color)
+void Redraw100IRE(unsigned char mode, unsigned char color)
 {
 	ResetVideo();
 	setupFont();

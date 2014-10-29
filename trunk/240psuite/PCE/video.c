@@ -26,10 +26,10 @@
 #include "huc.h"
 
 int xres_flags;
-int Enabled240p;
-int UseDefault;
-int EnabledSoft;
-int Enabled_C_BW;
+unsigned char Enabled240p;
+unsigned char UseDefault;
+unsigned char EnabledSoft;
+unsigned char Enabled_C_BW;
 
 void Set224p()
 {
