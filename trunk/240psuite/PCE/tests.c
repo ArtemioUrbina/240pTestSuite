@@ -41,15 +41,13 @@ extern unsigned char Enabled_C_BW;
 
 void DrawCheck()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	unsigned char alternate = 0;
 	unsigned char pos = 0;
 	unsigned char drawframe = 0;
 	int frame = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -130,15 +128,13 @@ void DrawCheck()
 
 void DrawStripes()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	unsigned char alternate = 0;
 	unsigned char pos = 0;
 	unsigned char drawframe = 0;
 	int frame = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -235,17 +231,16 @@ void DrawStripes()
 
 void DropShadow()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
-	int x = 144, y = 100;
 	unsigned char show = 1;
 	unsigned char text = 0;
 	unsigned char refresh = 0;
 	unsigned char back = 0;
 	int colswap = 0;
 
+	redraw = 1;
+	x = 144;
+	y = 100;
     while(!end)
     {   
 		vsync();
@@ -461,14 +456,13 @@ void RedrawDropShadow(unsigned char back, int x, int y)
 
 void StripedSprite()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
-	int x = 144, y = 100;
 	unsigned char back = 0;
 	int colswap = 0;
 
+	x = 144;
+	y = 100;
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -635,11 +629,8 @@ void SwapPalette(int pal, int index)
 
 void DrawPalm()
 {
-	int x = 500;
-	int y = 104;
 	int vram = 0x5000;
 	int pos = 0;
-	unsigned char row = 0;
 	unsigned char count = 0;
 	
 #ifndef CDROM1
@@ -648,11 +639,13 @@ void DrawPalm()
 #else
 #endif
 
+	x2 = 500;
+	y2 = 104;
 	for(row = 0; row < 7; row++)
 	{
 		for(pos = 0; pos < 5; pos++)
 		{
-			spr_make(count+2, pos*16+x, row*16+y, 0x40*count+vram, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			spr_make(count+2, pos*16+x2, row*16+y2, 0x40*count+vram, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
 			count ++;
 		}
 	}
@@ -660,7 +653,6 @@ void DrawPalm()
 
 void MovePalm(int x)
 {
-	int row = 0;
 	unsigned char pos = 0;
 	unsigned char count = 0;
 	
@@ -680,20 +672,20 @@ void MovePalm(int x)
 
 void ScrollTest()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
-	int x1 = 0;
-	int x2 = 0;
-	int x3 = 0;
-	int x4 = 0;
-	int y = 0;
 	unsigned char pause = 0;
 	int dir = 1;
 	int spd = 1;
 	int colswap = 0;
 
+	x1 = 0;
+	x2 = 0;
+	x3 = 0;
+	x4 = 0;
+	
+	y = 0;
+	
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -789,16 +781,16 @@ void ScrollTest()
 
 void LEDZoneTest()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	int sel = 0;
-	int x = 144, y = 120;
 	unsigned char refresh = 0;
 	unsigned char visible = 1;
 	int size[4];
 
+	x = 144;
+	y = 120;
+	redraw = 1;
+	
 	size[0] = 1;
 	size[1] = 2;
 	size[2] = 4;
@@ -919,29 +911,26 @@ void ChangeNumber(int sprite, int number)
 
 void DrawCircle(int pos)
 {
-	int x = 0;
-	int y = 78;
+	x2 = 0;
+	y2 = 78;
 	
 	if(pos > 4)
-		x = 64*(pos-5);
+		x2 = 64*(pos-5);
 	else
-		x = 64*(pos-1);
+		x2 = 64*(pos-1);
 	
 	if(pos > 4)
-		y = 148;
+		y2 = 148;
 		
-	spr_make(16, x, y, 0x5A00, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 2, 2);
-	spr_make(17, x+32, y, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_X|SZ_32x32, 2, 2);
-	y+=32;
-	spr_make(18, x, y, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_Y|SZ_32x32, 2, 2);
-	spr_make(19, x+32, y, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_X|FLIP_Y|SZ_32x32, 2, 2);
+	spr_make(16, x2, y2, 0x5A00, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 2, 2);
+	spr_make(17, x2+32, y2, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_X|SZ_32x32, 2, 2);
+	y2+=32;
+	spr_make(18, x2, y2, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_Y|SZ_32x32, 2, 2);
+	spr_make(19, x2+32, y2, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_X|FLIP_Y|SZ_32x32, 2, 2);
 }
 
 void LoadNumbers()
 {
-	int count = 0;
-	int number = 1;
-
 	set_color_rgb(256, 0, 0, 0);
 	set_color_rgb(258, 0, 0, 0);
 	
@@ -993,9 +982,6 @@ void LoadNumbers()
 
 void LagTest()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	int framecnt = 0;
 	int frames = 0;
@@ -1007,6 +993,7 @@ void LagTest()
 	int msd = 0;
 	unsigned char update = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -1122,18 +1109,16 @@ void LagTest()
 
 void VScrollTest()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	int x = 0;
 	int y = 0;
-	int speed = 1;
 	int *pos = 0;
 	unsigned char pause = 0;
 	int acc = 1;
 
+	redraw = 1;
 	pos = &x;
+	speed = 1;
     while(!end)
     {   
 		vsync();
@@ -1287,14 +1272,13 @@ void StopAudio()
 
 void SoundTest()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
-	unsigned char refresh = 0;
 	unsigned char end = 0;
 	int count = 0;
 	int sel = 1;
 
+	redraw = 1;
+	refresh = 0;
+	
 	LoadWave();
 	
     while(!end)
@@ -1393,7 +1377,7 @@ void SoundTest()
 }
 
 
-void RedrawManualLagTest(int x)
+void RedrawManualLagTest()
 {
 	ResetVideo();
 	setupFont();
@@ -1409,11 +1393,11 @@ void RedrawManualLagTest(int x)
 	set_color_rgb(1, 0, 0, 0);   
 #else
 #endif
-	ManualLagTestSprites(x);
+	ManualLagTestSprites();
 	ManualLagTestText();
 }
 
-void ManualLagTestSprites(int x)
+void ManualLagTestSprites()
 {
 	init_satb();
 	set_color_rgb(256, 0, 0, 0); 
@@ -1447,20 +1431,15 @@ void ManualLagTestText()
 	Center224in240();
 }
 
-void ManualLagTestResults(int *clicks[])
+void ManualLagTestResults()
 {
-	int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
-	int x = 0;
 	int total = 0;
 	int totalms = 0;
-	int i = 0;
 	int val = 0;
 	
-	end = 0;
 	redraw = 1;
+	end = 0;
 	x = 0;
 	
 	while(!end)
@@ -1472,12 +1451,12 @@ void ManualLagTestResults(int *clicks[])
 			ManualLagTestResultsBack();
 			
 			set_font_pal(14);
-			for(i = 0; i < 10; i++)
+			for(x2 = 0; x2 < 10; x2++)
 			{
-				val = clicks[i];
+				val = clicks[x2];
 				if(val != 0xFF)
 				{
-					put_number(val, 2, 10, 8+i); 
+					put_number(val, 2, 10, 8+x2); 
 					if(val >= 0)
 					{
 						total += val;
@@ -1514,9 +1493,9 @@ void ManualLagTestResults(int *clicks[])
 			if(total == 10)
 			{
 				x = 1;
-				for(i = 0; i < 10; i++)
+				for(x2 = 0; x2 < 10; x2++)
 				{
-					if(clicks[i] != 1)
+					if(clicks[x2] != 1)
 						x = 0;
 				}
 				if(x)
@@ -1562,29 +1541,28 @@ void ManualLagTestResultsBack()
 
 void ManualLagTest()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
-	int x = 0;
-	int y = 0;
-	int x2 = 0;
-	int y2 = 0;
-	int clicks[10];
-	int vary = 0;
-	unsigned char variation = 1;
-	unsigned char change = 1;
-	int speed = 1;
-	unsigned char audio = 1;
-	unsigned char view = 0;
-	unsigned char refresh = 0;
 	int pos = 0;
-	int i = 0;
 
+	x = 0;
+	y = 0;
+	x2 = 0;
+	y2 = 0;
+	
+	speed = 1;
+	
+	variation = 1;
+	change = 1;
+	audio = 1;
+	view = 0;
+	vary = 0;
+	
+	refresh = 0;
+	redraw = 1;
 	srand(clock_tt());
 	
-	for(i = 0; i < 10; i++)
-		clicks[i] = 0xFF;
+	for(x2 = 0; x2 < 10; x2++)
+		clicks[x2] = 0xFF;
 	
 	x = 144;
 	y = 60;
@@ -1598,7 +1576,7 @@ void ManualLagTest()
 		
         if(redraw)
         {
-			RedrawManualLagTest(x);
+			RedrawManualLagTest();
             redraw = 0;
 			refresh = 1;
 			disp_on();
@@ -1606,18 +1584,8 @@ void ManualLagTest()
 		
 		if(refresh)
 		{
-			set_font_pal(13);
-			put_string("Audio:", 25, 1);
-			if(audio)
-				put_string("on ", 32, 1); 
-			else
-				put_string("off", 32, 1);
-				
-			put_string("Timing:", 24, 2);
-			if(variation)
-				put_string("random  ", 32, 2); 
-			else
-				put_string("rhythmic", 32, 2);
+			RefreshManualLagTest();
+			refresh = 0;
 		}
 		
 		controller = joytrg(0);
@@ -1679,30 +1647,7 @@ void ManualLagTest()
 				vary = 0;
 		}
 		
-		for(i = 0; i < 10; i++)
-		{
-			if(clicks[i] != 0xFF)
-			{
-				set_font_pal(14);
-				put_string("Offset  :", 2, 1+i);
-				put_number(i+1, 2, 8, 1+i); 
-				
-				if(clicks[i] >= 0)
-				{
-					if(clicks[i] == 0)
-						set_font_pal(13);
-					else
-						set_font_pal(14);
-				}
-				else
-					set_font_pal(15);
-				
-				put_number(clicks[i], 2, 11, 1+i); 
-				put_string("frames", 14, 1+i);
-				if(clicks[i] == 1 || clicks[i] == -1)
-					put_string(" ", 19, 1+i);
-			}
-		}
+		ManualLagTestClickRefresh();
 		
 		if(y > 132 + vary)
 		{
@@ -1787,5 +1732,49 @@ void ManualLagTest()
 	StopAudio();
 	
 	if(pos > 9)
-		ManualLagTestResults(clicks);
+		ManualLagTestResults();
+}
+
+void RefreshManualLagTest()
+{
+	set_font_pal(13);
+	put_string("Audio:", 25, 1);
+	if(audio)
+		put_string("on ", 32, 1); 
+	else
+		put_string("off", 32, 1);
+		
+	put_string("Timing:", 24, 2);
+	if(variation)
+		put_string("random  ", 32, 2); 
+	else
+		put_string("rhythmic", 32, 2);
+}
+
+void ManualLagTestClickRefresh()
+{
+	for(x2 = 0; x2 < 10; x2++)
+	{
+		if(clicks[x2] != 0xFF)
+		{
+			set_font_pal(14);
+			put_string("Offset  :", 2, 1+x2);
+			put_number(x2+1, 2, 8, 1+x2); 
+			
+			if(clicks[x2] >= 0)
+			{
+				if(clicks[x2] == 0)
+					set_font_pal(13);
+				else
+					set_font_pal(14);
+			}
+			else
+				set_font_pal(15);
+			
+			put_number(clicks[x2], 2, 11, 1+x2); 
+			put_string("frames", 14, 1+x2);
+			if(clicks[x2] == 1 || clicks[x2] == -1)
+				put_string(" ", 19, 1+x2);
+		}
+	}
 }

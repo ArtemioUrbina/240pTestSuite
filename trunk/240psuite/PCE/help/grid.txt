@@ -1,13 +1,13 @@
                        GRID
 
 This grid uses a 320x240 pattern, and should fill
-all of the 4:3 visible area. 
+all of the 4:3 visible area.
 
 You can use it to verify that all the visible area
 is being displayed, and that there is no distortion
 present. Consumer TVs may not show the red squares.
 
-The 240 test suite draws from line 22 onwards from 
+The 240 test suite draws from line 22 onwards from
 the blanking interval of NTSC signals
 
 You can press button I to fill all the video signal

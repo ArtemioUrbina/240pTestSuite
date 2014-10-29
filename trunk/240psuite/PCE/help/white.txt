@@ -1,7 +1,7 @@
                   WHITE SCREEN
 
 This pattern can be changed between white, black,
-red, green, blue and custom color full screens by 
+red, green, blue and custom color full screens by
 using button I.
 
 Pressing Select while displaying the white screen
@@ -11,5 +11,5 @@ color to fill the screen with.
 Some displays and scalers have issues when
 changing between a black 0 IRE and a white screen.
 
-This pattern can also be used to check color 
+This pattern can also be used to check color
 purity, and for dead pixels in some displays.

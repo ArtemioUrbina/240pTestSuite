@@ -3,10 +3,10 @@
 This test shows a two layer background from Sonic
 the Hedgehog. The speed can be varied with the
 d-pad, and change direction with the Select
-Button I stops the scroll. 
+Button I stops the scroll.
 
 This can be used to notice any drops in framerate
 when using a video processor.
 
-Sonic The Hedgehog is a trademark of 
+Sonic The Hedgehog is a trademark of
 Sega Enterprises Ltd.

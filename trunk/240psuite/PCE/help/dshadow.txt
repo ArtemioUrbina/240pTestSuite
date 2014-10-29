@@ -1,4 +1,4 @@
-                 DROP SHADOW TEST 
+                 DROP SHADOW TEST
 
 This is a crucial test for 240p upscan converters.
 It displays a simple sprite shadow (32x32 pixels)
@@ -6,7 +6,7 @@ against a background, but the shadow is shown only
 on each other frame. On a CRT this achieves a
 transparency effect, since you are watching a 30hz
 shadow on a 60hz signal. No background detail
-should be lost and the shadow should be visible. 
+should be lost and the shadow should be visible.
 
 The user can toggle the frame used to draw the
 shadow with SELECT. Backgrounds can be

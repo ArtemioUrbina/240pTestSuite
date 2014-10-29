@@ -53,13 +53,12 @@ void TestPatterns()
 void main()
 #endif
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
-	unsigned char refresh = 1;
     int sel = 0;
 	unsigned char end = 0;
 
+	redraw = 1;
+	refresh = 1;
+	
 #ifdef CDROM
 	xres_flags = xres_flags_g;
 	Enabled240p = Enabled240p_g;
@@ -218,7 +217,7 @@ void main()
 
 void RefreshTestPatterns(int sel)
 {
-    int row = 7;
+    row = 7;
 	
 	set_font_pal(sel == 0 ? 15 : 14);
 	put_string("Pluge", HPOS, row++);
@@ -245,10 +244,10 @@ void RefreshTestPatterns(int sel)
 		put_string("Grid 512x240", HPOS, row++);
 	else
 		put_string("Grid 512x224", HPOS, row++);
-	RefreshTestPatternsAux(sel, row);
+	RefreshTestPatternsAux(sel);
 }
 		
-void RefreshTestPatternsAux(int sel, int row)
+void RefreshTestPatternsAux(int sel)
 {
 	set_font_pal(sel == 8 ? 15 : 14);
 	if(Enabled240p)
@@ -277,13 +276,11 @@ void RefreshTestPatternsAux(int sel, int row)
 
 void DrawPluge()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
-	unsigned char refresh = 0;
 	unsigned char end = 0;
 	unsigned char col = 0;
 
+	redraw = 1;
+	refresh = 0;
     while(!end)
     {   
 		vsync();
@@ -355,11 +352,9 @@ void DrawPluge()
 
 void DrawColor()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -395,11 +390,9 @@ void DrawColor()
 
 void DrawCB601()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -437,12 +430,10 @@ void DrawCB601()
 
 void DrawColorBleed()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	unsigned char check = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -504,13 +495,11 @@ void DrawColorBleed()
 
 void DrawSMPTE()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	unsigned char is100 = 0;
 	unsigned char text = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -589,12 +578,10 @@ void DrawSMPTE()
 
 void DrawGrid256()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	unsigned char showcolor = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -644,12 +631,10 @@ void DrawGrid256()
 
 void DrawGrid320()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	unsigned char showcolor = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -699,12 +684,10 @@ void DrawGrid320()
 
 void DrawGrid512()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	unsigned char showcolor = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -754,16 +737,14 @@ void DrawGrid512()
 
 void DrawWhite()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
-	unsigned char refresh = 0;
 	unsigned char end = 0;
 	unsigned char color = 0;
 	unsigned char edit = 0;
 	int r = 7, g = 7, b = 7;
 	int sel = 0;
 
+	redraw = 1;
+	refresh = 0;
     while(!end)
     {   
 		vsync();
@@ -936,11 +917,9 @@ void RefreshWhite(unsigned char color, unsigned char edit, int r, int g, int b, 
 
 void DrawLinearity()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -991,11 +970,9 @@ void DrawLinearity()
 
 void DrawLinearity256()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -1052,11 +1029,9 @@ void DrawLinearity256()
 
 void DrawSharpness()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -1094,11 +1069,9 @@ void DrawSharpness()
 
 void DrawGray()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 
+	redraw = 1;
     while(!end)
     {   
 		vsync();
@@ -1137,10 +1110,6 @@ void DrawGray()
 
 void DrawOverscan()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
-	unsigned char refresh = 0;
 	unsigned char end = 0;
 	unsigned char draw = 0;
 	int sel = 0;
@@ -1151,6 +1120,8 @@ void DrawOverscan()
 	unsigned char previous = 0;
 	unsigned char screen = 0;
 	
+	redraw = 1;
+	refresh = 0;
 	if(Enabled240p)
 	{
 		if(UseDefault)
@@ -1382,9 +1353,6 @@ void DrawRightLines(int top, int bottom, int left, int right, unsigned char prev
 
 void Draw100IRE()
 {
-    int controller;   
-    int read; 
-    unsigned char redraw = 1;
 	unsigned char end = 0;
 	int color = 7;
 	unsigned char mode = 0;
@@ -1392,6 +1360,7 @@ void Draw100IRE()
 	unsigned char refresh = 0;
 	int factor = 14; // aproximate for IRE
 
+	redraw = 1;
 	set_color_rgb(0, 0, 0, 0);
     while(!end)
     {   

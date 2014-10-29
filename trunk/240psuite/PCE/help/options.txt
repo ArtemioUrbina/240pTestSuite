@@ -2,16 +2,16 @@
 
 #GVI Trap Filter (Composite):#G A Trap filter is
     generally used to improve #YLuma#Y/#YChroma#Y
-    separation in the #Ycomposite#Y video signal. When 
-    disabled, the video signal is unfiltered, 
-    which sometimes produces visual artefacts such 
-    as color bleeding. A notch filter centered at 
+    separation in the #Ycomposite#Y video signal. When
+    disabled, the video signal is unfiltered,
+    which sometimes produces visual artefacts such
+    as color bleeding. A notch filter centered at
     the color subcarrier frequency is used to 
-    extract color from 2.5MHz to 4.5MHz.This method 
-    has two drawbacks. First, it limits the color 
+    extract color from 2.5MHz to 4.5MHz.This method
+    has two drawbacks. First, it limits the color
     bandwidth (which extends to 2.1MHz) cutting out
-    fine color detail. Second, luminance info in 
-    the notch frequency range contaminates color 
+    fine color detail. Second, luminance info in
+    the notch frequency range contaminates color
     and generates unwanted color or rainbows.
 
 #GGX Deflickering Filter:#G A filter that removes
