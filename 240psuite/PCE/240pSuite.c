@@ -45,8 +45,8 @@ void main()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int refresh = 1;
+    unsigned char redraw = 1;
+	unsigned char refresh = 1;
     int sel = 0;
 
 	if(!global_init)
@@ -283,8 +283,8 @@ void DrawN()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 1;
+    unsigned char redraw = 1;
+	unsigned char end = 1;
 
     do
     {   
@@ -320,9 +320,9 @@ void DrawCredits()
 {
 	int controller;   
     int read; 
-    int redraw = 1;
-	int refresh = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char refresh = 1;
+	unsigned char end = 0;
 	int counter = 0;
 
     while(!end)
@@ -392,7 +392,7 @@ void DrawCredits()
 
 void RefreshCredits()
 {
-	int row = 7;
+	unsigned char row = 7;
 			
 	set_font_pal(15);
 	put_string("Code and Patterns:", HPOS+2, row++);
@@ -442,7 +442,7 @@ void RefreshCredits()
 
 void DrawIntro()
 {
-	int frame;
+	unsigned char frame;
 	
 	ResetVideo();
 	setupFont();

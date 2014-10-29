@@ -25,8 +25,8 @@
 
 // CDROM variables between overlays
 int xres_flags_g;
-int Enabled240p_g;
-int UseDefault_g;
-int EnabledSoft_g;
-int Enabled_C_BW_g;
-int global_init;
+unsigned char Enabled240p_g;
+unsigned char UseDefault_g;
+unsigned char EnabledSoft_g;
+unsigned char Enabled_C_BW_g;
+unsigned char global_init;

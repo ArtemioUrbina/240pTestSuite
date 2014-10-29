@@ -30,10 +30,10 @@
 
 #ifdef CDROM
 extern int xres_flags;
-extern int Enabled240p;
-extern int UseDefault;
-extern int EnabledSoft;
-extern int Enabled_C_BW;
+extern unsigned char Enabled240p;
+extern unsigned char UseDefault;
+extern unsigned char EnabledSoft;
+extern unsigned char Enabled_C_BW;
 #endif
 
 #define HPOS 5
@@ -129,10 +129,10 @@ void Options()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int refresh = 1;
+    unsigned char redraw = 1;
+	unsigned char refresh = 1;
     int sel = 0;
-	int end = 0;
+	unsigned char end = 0;
 
     while(!end)
     {   

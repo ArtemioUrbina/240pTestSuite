@@ -33,21 +33,21 @@
 
 #ifdef CDROM
 extern int xres_flags;
-extern int Enabled240p;
-extern int UseDefault;
-extern int EnabledSoft;
-extern int Enabled_C_BW;
+extern unsigned char Enabled240p;
+extern unsigned char UseDefault;
+extern unsigned char EnabledSoft;
+extern unsigned char Enabled_C_BW;
 #endif
 
 void DrawCheck()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
-	int alternate = 0;
-	int pos = 0;
-	int drawframe = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
+	unsigned char alternate = 0;
+	unsigned char pos = 0;
+	unsigned char drawframe = 0;
 	int frame = 0;
 
     while(!end)
@@ -132,11 +132,11 @@ void DrawStripes()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
-	int alternate = 0;
-	int pos = 0;
-	int drawframe = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
+	unsigned char alternate = 0;
+	unsigned char pos = 0;
+	unsigned char drawframe = 0;
 	int frame = 0;
 
     while(!end)
@@ -237,13 +237,13 @@ void DropShadow()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 	int x = 144, y = 100;
-	int show = 1;
-	int text = 0;
-	int refresh = 0;
-	int back = 0;
+	unsigned char show = 1;
+	unsigned char text = 0;
+	unsigned char refresh = 0;
+	unsigned char back = 0;
 	int colswap = 0;
 
     while(!end)
@@ -392,7 +392,7 @@ void DropShadow()
     }
 }
 
-void RedrawDropShadow(int back, int x, int y)
+void RedrawDropShadow(unsigned char back, int x, int y)
 {
 	switch(back)
 	{
@@ -463,10 +463,10 @@ void StripedSprite()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 	int x = 144, y = 100;
-	int back = 0;
+	unsigned char back = 0;
 	int colswap = 0;
 
     while(!end)
@@ -639,8 +639,8 @@ void DrawPalm()
 	int y = 104;
 	int vram = 0x5000;
 	int pos = 0;
-	int row = 0;
-	int count = 0;
+	unsigned char row = 0;
+	unsigned char count = 0;
 	
 #ifndef CDROM1
 	load_palette(16, palm_pal, 1);
@@ -661,8 +661,8 @@ void DrawPalm()
 void MovePalm(int x)
 {
 	int row = 0;
-	int pos = 0;
-	int count = 0;
+	unsigned char pos = 0;
+	unsigned char count = 0;
 	
 	x = 4+x*-1;
 	for(row = 0; row < 7; row++)
@@ -682,14 +682,14 @@ void ScrollTest()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 	int x1 = 0;
 	int x2 = 0;
 	int x3 = 0;
 	int x4 = 0;
 	int y = 0;
-	int pause = 0;
+	unsigned char pause = 0;
 	int dir = 1;
 	int spd = 1;
 	int colswap = 0;
@@ -791,12 +791,12 @@ void LEDZoneTest()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 	int sel = 0;
 	int x = 144, y = 120;
-	int refresh = 0;
-	int visible = 1;
+	unsigned char refresh = 0;
+	unsigned char visible = 1;
 	int size[4];
 
 	size[0] = 1;
@@ -995,17 +995,17 @@ void LagTest()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 	int framecnt = 0;
 	int frames = 0;
 	int seconds = 0;
 	int minutes = 0;
 	int hours = 0;
-	int running = 0;
+	unsigned char running = 0;
 	int lsd = 0;
 	int msd = 0;
-	int update = 0;
+	unsigned char update = 0;
 
     while(!end)
     {   
@@ -1124,13 +1124,13 @@ void VScrollTest()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 	int x = 0;
 	int y = 0;
 	int speed = 1;
 	int *pos = 0;
-	int pause = 0;
+	unsigned char pause = 0;
 	int acc = 1;
 
 	pos = &x;
@@ -1289,9 +1289,9 @@ void SoundTest()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int refresh = 0;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char refresh = 0;
+	unsigned char end = 0;
 	int count = 0;
 	int sel = 1;
 
@@ -1451,8 +1451,8 @@ void ManualLagTestResults(int *clicks[])
 {
 	int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 	int x = 0;
 	int total = 0;
 	int totalms = 0;
@@ -1564,20 +1564,20 @@ void ManualLagTest()
 {
     int controller;   
     int read; 
-    int redraw = 1;
-	int end = 0;
+    unsigned char redraw = 1;
+	unsigned char end = 0;
 	int x = 0;
 	int y = 0;
 	int x2 = 0;
 	int y2 = 0;
 	int clicks[10];
 	int vary = 0;
-	int variation = 1;
-	int change = 1;
+	unsigned char variation = 1;
+	unsigned char change = 1;
 	int speed = 1;
-	int audio = 1;
-	int view = 0;
-	int refresh = 0;
+	unsigned char audio = 1;
+	unsigned char view = 0;
+	unsigned char refresh = 0;
 	int pos = 0;
 	int i = 0;
 
