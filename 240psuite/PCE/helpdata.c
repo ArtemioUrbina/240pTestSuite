@@ -204,11 +204,11 @@ void display_grid_00()
 	p_string	grid_00_05,6,12
 	p_string	grid_00_06,6,13
 	p_string	grid_00_07,6,14
-	p_string	grid_00_08,6,15
-	p_string	grid_00_09,6,16
-	p_string	grid_00_10,6,17
-	p_string	grid_00_11,6,19
-	p_string	grid_00_12,6,20
+	p_string	grid_00_08,6,16
+	p_string	grid_00_09,6,17
+	p_string	grid_00_10,6,18
+	p_string	grid_00_11,6,20
+	p_string	grid_00_12,6,21
 	rts
 
 grid_00_00:	.db	"GRID"
@@ -227,11 +227,11 @@ grid_00_06:	.db	"is being displayed, and that there is no distortion"
 			.db	0
 grid_00_07:	.db	"present. Consumer TVs may not show the red squares."
 			.db	0
-grid_00_08:	.db	"The area covered in the display with each resolution"
+grid_00_08:	.db	"The Grids are not perfectly centered within the"
 			.db	0
-grid_00_09:	.db	"might vary slighly, but the aspect ratio should be"
+grid_00_09:	.db	"NTSC signal, and that is normal. It is the way"
 			.db	0
-grid_00_10:	.db	"kept."
+grid_00_10:	.db	"Hudson uses each resolution."
 			.db	0
 grid_00_11:	.db	"You can press button I to fill all the video signal"
 			.db	0

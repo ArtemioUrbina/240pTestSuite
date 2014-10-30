@@ -47,7 +47,9 @@ int y;
 int y2;
 
 int speed;
+int color;
 int clicks[10];
+unsigned char text;
 unsigned char variation;
 unsigned char change;
 unsigned char audio;

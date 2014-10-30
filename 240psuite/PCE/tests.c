@@ -31,7 +31,7 @@
 #include "help.h"
 #include "tests.h"
 
-#ifdef CDROM
+#ifdef CDROM1
 extern int xres_flags;
 extern unsigned char Enabled240p;
 extern unsigned char UseDefault;
@@ -54,20 +54,7 @@ void DrawCheck()
 		
         if(redraw)
         {
-			ResetVideo();
-			setupFont();
-
-#ifndef CDROM1			
-			set_map_data(fs_map, 40, 30);
-			set_tile_data(check_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, check_pal, 1); 
-#else
-#endif
-
-			Center224in240(); 
-         
+			RedrawCheck();
             redraw = 0;
 			disp_on();
         }
@@ -125,6 +112,23 @@ void DrawCheck()
     }
 }
 
+void RedrawCheck()
+{
+	ResetVideo();
+	setupFont();
+
+#ifndef CDROM1			
+	set_map_data(fs_map, 40, 30);
+	set_tile_data(check_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 40, 30);
+	load_palette(0, check_pal, 1); 
+#else
+#endif
+
+	Center224in240(); 
+}
+
 
 void DrawStripes()
 {
@@ -141,20 +145,7 @@ void DrawStripes()
 		
         if(redraw)
         {
-			ResetVideo();
-			setupFont();
-
-#ifndef CDROM1			
-			set_map_data(fs_map, 40, 30);
-			set_tile_data(hstripes_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, check_pal, 1);  
-#else
-#endif
-			
-			Center224in240();
-         
+			RedrawStripes();
             redraw = 0;
 			disp_on();
         }
@@ -229,15 +220,31 @@ void DrawStripes()
     }
 }
 
+void RedrawStripes()
+{
+	ResetVideo();
+	setupFont();
+
+#ifndef CDROM1			
+	set_map_data(fs_map, 40, 30);
+	set_tile_data(hstripes_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 40, 30);
+	load_palette(0, check_pal, 1);  
+#else
+#endif
+	
+	Center224in240();
+}
+
 void DropShadow()
 {
 	unsigned char end = 0;
 	unsigned char show = 1;
-	unsigned char text = 0;
-	unsigned char refresh = 0;
 	unsigned char back = 0;
 	int colswap = 0;
 
+	text = 0;
 	redraw = 1;
 	x = 144;
 	y = 100;
@@ -469,69 +476,8 @@ void StripedSprite()
 		
         if(redraw)
         {	
-			ResetVideo();
-			switch(back)
-			{
-				case 0:
-#ifndef CDROM1
-					load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
-#else
-					set_screen_size(SCR_SIZE_64x32); 
-					cd_loadvram(4, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
-					cd_loadvram(4, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
-#endif
-					break;
-				case 1:
-					set_screen_size(SCR_SIZE_32x32);
-		
-					scroll(0, 0, y, 0, 76, 0xC0);
-					scroll(1, 0, 76, 76, 160, 0xC0);
-					scroll(2, 0, 160, 160, 208, 0xC0);
-					scroll(3, 0, 208, 208, 240, 0xC0);
-#ifndef CDROM1
-					load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
-#else
-					set_screen_size(SCR_SIZE_64x32); 
-					cd_loadvram(4, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
-					cd_loadvram(4, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
-#endif
-					break;
-				case 2:
-#ifndef CDROM1
-					set_map_data(fs_map, 40, 30);
-					set_tile_data(hstripes_bg);
-					load_tile(0x1000);
-					load_map(0, 0, 0, 0, 40, 30);
-					load_palette(0, check_pal, 1);
-#else
-#endif
-					break;
-				case 3:
-#ifndef CDROM1
-					set_map_data(fs_map, 40, 30);
-					set_tile_data(check_bg);
-					load_tile(0x1000);
-					load_map(0, 0, 0, 0, 40, 30);
-					load_palette(0, check_pal, 1);
-#else
-#endif
-					break;
-			}
-			setupFont();
+			RefreshStriped(back);
 			
-			init_satb();
-			set_color_rgb(240, 0, 0, 0); 
-			set_color_rgb(241, 0, 0, 0);
-#ifndef CDROM1		 
-			load_vram(0x6000, striped_sp, 0x100);
-			spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
-#else
-#endif
-			if(back == 1)
-				DrawPalm();
-			satb_update();
-			
-			Center224in240();
             redraw = 0;
 			disp_on();
         }
@@ -605,6 +551,72 @@ void StripedSprite()
 		
 		satb_update();
     }
+}
+
+void RefreshStriped(char back)
+{
+	ResetVideo();
+	switch(back)
+	{
+		case 0:
+#ifndef CDROM1
+			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(4, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
+			cd_loadvram(4, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+#endif
+			break;
+		case 1:
+			set_screen_size(SCR_SIZE_32x32);
+
+			scroll(0, 0, y, 0, 76, 0xC0);
+			scroll(1, 0, 76, 76, 160, 0xC0);
+			scroll(2, 0, 160, 160, 208, 0xC0);
+			scroll(3, 0, 208, 208, 240, 0xC0);
+#ifndef CDROM1
+			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(4, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+			cd_loadvram(4, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+#endif
+			break;
+		case 2:
+#ifndef CDROM1
+			set_map_data(fs_map, 40, 30);
+			set_tile_data(hstripes_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, check_pal, 1);
+#else
+#endif
+			break;
+		case 3:
+#ifndef CDROM1
+			set_map_data(fs_map, 40, 30);
+			set_tile_data(check_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, check_pal, 1);
+#else
+#endif
+			break;
+	}
+	setupFont();
+	init_satb();
+	set_color_rgb(240, 0, 0, 0); 
+	set_color_rgb(241, 0, 0, 0);
+#ifndef CDROM1		 
+	load_vram(0x6000, striped_sp, 0x100);
+	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+#else
+#endif
+	if(back == 1)
+		DrawPalm();
+	satb_update();
+	
+	Center224in240();
 }
 
 void SwapPalette(int pal, int index)
@@ -1016,8 +1028,6 @@ void LagTest()
 			put_string("seconds", 17, 3);
 			put_string("frames", 25, 3);
 			LoadNumbers();
-	
-			Center224in240(); 
          
             redraw = 0;
 			disp_on();
@@ -1738,17 +1748,17 @@ void ManualLagTest()
 void RefreshManualLagTest()
 {
 	set_font_pal(13);
-	put_string("Audio:", 25, 1);
+	put_string("Audio:", 25, 2);
 	if(audio)
-		put_string("on ", 32, 1); 
+		put_string("on ", 32, 2); 
 	else
-		put_string("off", 32, 1);
+		put_string("off", 32, 2);
 		
-	put_string("Timing:", 24, 2);
+	put_string("Timing:", 24, 3);
 	if(variation)
-		put_string("random  ", 32, 2); 
+		put_string("random  ", 32, 3); 
 	else
-		put_string("rhythmic", 32, 2);
+		put_string("rhythmic", 32, 3);
 }
 
 void ManualLagTestClickRefresh()
@@ -1758,8 +1768,8 @@ void ManualLagTestClickRefresh()
 		if(clicks[x2] != 0xFF)
 		{
 			set_font_pal(14);
-			put_string("Offset  :", 2, 1+x2);
-			put_number(x2+1, 2, 8, 1+x2); 
+			put_string("Offset  :", 2, 2+x2);
+			put_number(x2+1, 2, 8, 2+x2); 
 			
 			if(clicks[x2] >= 0)
 			{
@@ -1771,10 +1781,10 @@ void ManualLagTestClickRefresh()
 			else
 				set_font_pal(15);
 			
-			put_number(clicks[x2], 2, 11, 1+x2); 
-			put_string("frames", 14, 1+x2);
+			put_number(clicks[x2], 2, 11, 2+x2); 
+			put_string("frames", 14, 2+x2);
 			if(clicks[x2] == 1 || clicks[x2] == -1)
-				put_string(" ", 19, 1+x2);
+				put_string(" ", 19, 2+x2);
 		}
 	}
 }

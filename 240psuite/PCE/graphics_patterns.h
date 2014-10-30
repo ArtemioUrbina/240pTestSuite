@@ -29,7 +29,7 @@
 
 #ifndef CDROM1
 
-#ifdef CDROM
+#ifdef CDROM1
 extern char MB_map[];
 extern int MB_bg[];
 extern int MB_pal[];

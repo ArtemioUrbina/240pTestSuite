@@ -28,7 +28,7 @@
 #include "graphics.h"
 #include "help.h"
 
-#ifdef CDROM
+#ifdef CDROM1
 extern int xres_flags;
 extern unsigned char Enabled240p;
 extern unsigned char UseDefault;
@@ -119,7 +119,7 @@ void DisplaySystemInfo()
 	else
 		put_string("224p", 33, 28);	
 		
-#ifdef ARCADE
+#ifdef SCDROM
 	if(ac_exists())
 		put_string("AC+", 23, 27);	
 #endif
