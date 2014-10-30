@@ -1,9 +1,11 @@
-                LINEARITY 224p
+                LINEARITY 256
+
 
 This pattern shows 5 circles, that are matched
-to the 10:11 NTSC, but limited to a 320x224 mode.
+to the 10:11 NTSC, but using the 256 horizontal
+resolution.
 
 The linearity of the display or upscaler can be 
 verified by measuring the diameter of the circles.
 Of course the linearity should be kept in all
-directions.
+directions, no distortion should be present.

@@ -1,5 +1,7 @@
                  COLORBARS (1/2)
 
+
+
 This pattern allows you to calibrate each color:
 Red, Green and Blue; as  well as the white level.
 
@@ -16,9 +18,9 @@ can clearly tell them apart.
 
 
 
-
-
                  COLORBARS (2/2)
+
+
 
 The same procedure should be used with each
 color, raise the control that adjusts the

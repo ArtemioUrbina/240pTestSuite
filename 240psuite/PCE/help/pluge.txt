@@ -1,5 +1,6 @@
                    PLUGE (1/2)
 
+
 The picture line-up generation equipment (PLUGE)
 is a test pattern used to adjust the black level
 and contrast of a video signal.
@@ -12,13 +13,14 @@ This adjustment ensures that anything intended
 to be black is actually black, and allows all
 detail to be seen on dark scenes.
 
-The button I changes the inner bars between gray
-and the lowest R,G,B values, which are lower in
+Button I changes the inner bars between gray and
+the lowest R,G,B values, which are lower in
 luminance in order not to crush detail.
 
 
-
                    PLUGE (2/2)
+
+
 Reduce the Brightness until the inner bars
 are no longer visible, and then slowly raise it
 until they are just visible, and go back one
