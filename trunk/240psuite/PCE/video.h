@@ -23,6 +23,20 @@
  
  */
  
+#ifdef CDROM1
+
+#define LOADER_OVERLAY 1
+#define MAIN_OVERLAY 2
+#define PATTERNS_OVERLAY 3
+#define TEST_EXT_OVERLAY 4
+#define GPHX_OVERLAY 5
+
+#define TOOL_VSCROLL	1
+#define TOOL_SOUND		2
+#define TOOL_MANUAL		3
+
+#endif
+ 
 #define XRES_BW 0x80
 
 extern int xres_flags;

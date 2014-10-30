@@ -20,14 +20,16 @@ pcecdpak 0 gdata.bin gdata.h *.bin
 
 move gdata.* ..
 @REM del *.bin
-@REM del *.ovl
-@REM del *.s
-@REM del *.sym
+del *.ovl
+del *.s
+del *.sym
 cd ..
+huc -DCDROM1 -s -msmall -t -O2 -cd -overlay loader.c video.c font.c
 huc -DCDROM1 -s -msmall -t -O2 -cd -overlay 240pSuite.c font.c video.c tests.c tools.c help.c 
 huc -DCDROM1 -s -msmall -t -O2 -cd -overlay patterns.c font.c video.c tools.c help.c 
-huc -DCDROM1 -s -msmall -t -O2 -cd -overlay loader.c video.c font.c
+huc -DCDROM1 -s -msmall -t -O2 -cd -overlay tests_ext.c video.c font.c help.c 
+pceas -DCDROM1 -s -msmall -cd -overlay loader.s
 pceas -DCDROM1 -s -msmall -cd -overlay 240pSuite.s
 pceas -DCDROM1 -s -msmall -cd -overlay patterns.s
-pceas -DCDROM1 -s -msmall -cd -overlay loader.s
-isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl gdata.bin
+pceas -DCDROM1 -s -msmall -cd -overlay tests_ext.s
+isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl tests_ext.ovl gdata.bin
