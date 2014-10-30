@@ -429,7 +429,7 @@ void RefreshCredits()
 	row++;
 
 	set_font_pal(14);	
-	put_string("Ver. 0.04", 50, 7);
+	put_string("Ver. 1.00", 50, 7);
 	put_string("29/10/2014", 49, 8);
 }
 

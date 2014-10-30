@@ -159,7 +159,7 @@ void Options()
 
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(OPTIONS_HELP);
 			redraw = 1;
 		}
         
@@ -205,6 +205,7 @@ void RedrawOptions()
 	
 	SetFontColors(12, RGB(3, 3, 3), RGB(4, 4, 4), 0);
 	SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), 0);
+	SetFontColors(11, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 #ifndef CDROM1
 	set_map_data(MB512_map, 64, 30);
 	set_tile_data(MB512_bg);
@@ -226,44 +227,47 @@ void RefreshOptions(int sel)
 {
 	row = 14;
             
+	set_font_pal(11);
+	put_string("Video Options", 23, 10);
+			
 	set_font_pal(sel == 0 ? 15 : 14);
-	put_string("Vertical Resolution:", HPOS+2, row);
+	put_string("Vertical Resolution:", HPOS+1, row);
 	if(Enabled240p)
-		put_string("240p", HPOS+27, row);
+		put_string("240p", HPOS+26, row);
 	else
-		put_string("224p", HPOS+27, row);
+		put_string("224p", HPOS+26, row);
 	row++;
 	
 	if(Enabled240p)
 		set_font_pal(sel == 1 ? 15 : 14);
 	else
 		set_font_pal(sel == 1 ? 13 : 12);
-	put_string("Start at line:", HPOS+4, row);
+	put_string("Start at line:", HPOS+3, row);
 	if(UseDefault)
-		put_string("24 [Standard use in games]", HPOS+27, row);
+		put_string("24 [Standard use in games]", HPOS+26, row);
 	else
-		put_string("22 [Full 240 visible lines]", HPOS+27, row);
+		put_string("22 [Full 240 visible lines]", HPOS+26, row);
 	
 	row++;
 	
 	set_font_pal(sel == 2 ? 15 : 14);
-	put_string("Composite filter:", HPOS+2, row);
+	put_string("Composite filter:", HPOS+1, row);
 	if(EnabledSoft)
-		put_string("On ", HPOS+27, row);
+		put_string("On ", HPOS+26, row);
 	else
-		put_string("Off", HPOS+27, row);
+		put_string("Off", HPOS+26, row);
 	row++;
 	
 	set_font_pal(sel == 3 ? 15 : 14);
-	put_string("Composite B&W:", HPOS+2, row);
+	put_string("Composite B&W:", HPOS+1, row);
 	if(Enabled_C_BW)
-		put_string("On ", HPOS+27, row);
+		put_string("On ", HPOS+26, row);
 	else
-		put_string("Off", HPOS+27, row);
+		put_string("Off", HPOS+26, row);
 	row++;
 	
 	set_font_pal(sel == 4 ? 15 : 14);
-	put_string("Back to Main Menu", HPOS+2, ++row);
+	put_string("Back to Main Menu", HPOS+1, ++row);
 
 }
 
