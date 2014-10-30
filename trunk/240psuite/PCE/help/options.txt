@@ -1,19 +1,20 @@
-                  OPTIONS (1/2)
+                     OPTIONS
 
-#GVI Trap Filter (Composite):#G A Trap filter is
-    generally used to improve #YLuma#Y/#YChroma#Y
-    separation in the #Ycomposite#Y video signal. When
-    disabled, the video signal is unfiltered,
-    which sometimes produces visual artefacts such
-    as color bleeding. A notch filter centered at
-    the color subcarrier frequency is used to 
-    extract color from 2.5MHz to 4.5MHz.This method
-    has two drawbacks. First, it limits the color
-    bandwidth (which extends to 2.1MHz) cutting out
-    fine color detail. Second, luminance info in
-    the notch frequency range contaminates color
-    and generates unwanted color or rainbows.
+Vertical resolution: This system can display either
+240p or 224 video. Although the system is capable of
+displaying all the 240 vertical lines, games tend to
+use only 239 active lines for unkown reasons.
 
-#GGX Deflickering Filter:#G A filter that removes
-    ficker in interlaced modes by softening the
-    rendered image.
+The suite uses the full 240 mode by default, but you
+can enable the one games use by selecting to start at
+line 24 instead of 22. This will clip the last line
+in patterns, but show the real area used by games.
+
+Composite Filter: When in this mode, the system
+outputs an extra video line, and uses filtering to
+enhance the composite video signal. This extra line
+is a result of the filer, and not a complement to the
+239 visible lines. (signal ends at line 262)
+
+Composite B&W: This option works only in composite.
+It disables the NTSC color burst, eliminating color.

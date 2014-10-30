@@ -452,60 +452,57 @@ manuallag_01_09:	.db	"when using the test results."
 void display_options_00()
 {
 #asm
-	p_string	options_00_00,24,5
+	p_string	options_00_00,27,5
 	__ldwi		14
 	call		_set_font_pal
 	p_string	options_00_01,6,7
-	p_string	options_00_02,10,8
-	p_string	options_00_03,10,9
-	p_string	options_00_04,10,10
-	p_string	options_00_05,10,11
-	p_string	options_00_06,10,12
-	p_string	options_00_07,10,13
-	p_string	options_00_08,10,14
-	p_string	options_00_09,10,15
-	p_string	options_00_10,10,16
-	p_string	options_00_11,10,17
-	p_string	options_00_12,10,18
-	p_string	options_00_13,10,19
-	p_string	options_00_14,6,21
-	p_string	options_00_15,10,22
-	p_string	options_00_16,10,23
+	p_string	options_00_02,6,8
+	p_string	options_00_03,6,9
+	p_string	options_00_04,6,10
+	p_string	options_00_05,6,12
+	p_string	options_00_06,6,13
+	p_string	options_00_07,6,14
+	p_string	options_00_08,6,15
+	p_string	options_00_09,6,17
+	p_string	options_00_10,6,18
+	p_string	options_00_11,6,19
+	p_string	options_00_12,6,20
+	p_string	options_00_13,6,21
+	p_string	options_00_14,6,23
+	p_string	options_00_15,6,24
 	rts
 
-options_00_00:	.db	"OPTIONS (1/2)"
+options_00_00:	.db	"OPTIONS"
 			.db	0
-options_00_01:	.db	"#GVI Trap Filter (Composite):#G A Trap filter is"
+options_00_01:	.db	"Vertical resolution: This system can display either"
 			.db	0
-options_00_02:	.db	"generally used to improve #YLuma#Y/#YChroma#Y"
+options_00_02:	.db	"240p or 224 video. Although the system is capable of"
 			.db	0
-options_00_03:	.db	"separation in the #Ycomposite#Y video signal. When"
+options_00_03:	.db	"displaying all the 240 vertical lines, games tend to"
 			.db	0
-options_00_04:	.db	"disabled, the video signal is unfiltered,"
+options_00_04:	.db	"use only 239 active lines for unkown reasons."
 			.db	0
-options_00_05:	.db	"which sometimes produces visual artefacts such"
+options_00_05:	.db	"The suite uses the full 240 mode by default, but you"
 			.db	0
-options_00_06:	.db	"as color bleeding. A notch filter centered at"
+options_00_06:	.db	"can enable the one games use by selecting to start at"
 			.db	0
-options_00_07:	.db	"the color subcarrier frequency is used to "
+options_00_07:	.db	"line 24 instead of 22. This will clip the last line"
 			.db	0
-options_00_08:	.db	"extract color from 2.5MHz to 4.5MHz.This method"
+options_00_08:	.db	"in patterns, but show the real area used by games."
 			.db	0
-options_00_09:	.db	"has two drawbacks. First, it limits the color"
+options_00_09:	.db	"Composite Filter: When in this mode, the system"
 			.db	0
-options_00_10:	.db	"bandwidth (which extends to 2.1MHz) cutting out"
+options_00_10:	.db	"outputs an extra video line, and uses filtering to"
 			.db	0
-options_00_11:	.db	"fine color detail. Second, luminance info in"
+options_00_11:	.db	"enhance the composite video signal. This extra line"
 			.db	0
-options_00_12:	.db	"the notch frequency range contaminates color"
+options_00_12:	.db	"is a result of the filer, and not a complement to the"
 			.db	0
-options_00_13:	.db	"and generates unwanted color or rainbows."
+options_00_13:	.db	"239 visible lines. (signal ends at line 262)"
 			.db	0
-options_00_14:	.db	"#GGX Deflickering Filter:#G A filter that removes"
+options_00_14:	.db	"Composite B&W: This option works only in composite."
 			.db	0
-options_00_15:	.db	"ficker in interlaced modes by softening the"
-			.db	0
-options_00_16:	.db	"rendered image."
+options_00_15:	.db	"It disables the NTSC color burst, eliminating color."
 			.db	0
 #endasm
 }
