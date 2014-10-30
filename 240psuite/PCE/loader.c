@@ -58,23 +58,28 @@ void DrawIntro()
 
 void main()
 {	
-	DrawIntro();
-	
-	cls();
-	vsync();
-	
 	xres_flags = XRES_SOFT;
 	Enabled240p = 1;
 	UseDefault = 0;
 	EnabledSoft = 1;
 	Enabled_C_BW = 0;
 	
+	DrawIntro();
+	
+	xres_flags_g = xres_flags;
+	Enabled240p_g = Enabled240p;
+	UseDefault_g = UseDefault;
+	EnabledSoft_g = EnabledSoft;
+	Enabled_C_BW_g = Enabled_C_BW;
+	
+	cls();
+	vsync();
 #ifndef CDROM1
 	SetFontColors(14, 0, RGB(4, 4, 4), 0);
 	put_string("Loading...", 28, 26);
 	cd_execoverlay(2); // Super CD-ROM2
 #else
-	cd_execoverlay(2); // CD-ROM2
+	cd_execoverlay(MAIN_OVERLAY); // CD-ROM2
 #endif
 }
 

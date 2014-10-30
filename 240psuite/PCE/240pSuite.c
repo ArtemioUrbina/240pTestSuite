@@ -149,7 +149,7 @@ void main()
 					
 					set_font_pal(14);
 					put_string("Loading...", 27, 26);
-					cd_execoverlay(3);
+					cd_execoverlay(PATTERNS_OVERLAY);
 #endif
 					break;
 				case 1:
@@ -211,9 +211,9 @@ void RedrawMain()
 	load_palette(0, MB_pal, 1);  
 #else
 	set_screen_size(SCR_SIZE_64x32); 
-	cd_loadvram(4, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-	cd_loadvram(4, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-	cd_loaddata(4, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+	cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
 	set_bgpal(0, palCD); 
 #endif
    
@@ -294,8 +294,8 @@ void DrawN()
 			load_background(n_bg, n_pal, n_map, 32, 22);
 #else
 			set_screen_size(SCR_SIZE_32x32); 
-			cd_loadvram(4, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
-			cd_loadvram(4, OFS_N_BAT_bin, 0, SIZE_N_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_N_BAT_bin, 0, SIZE_N_BAT_bin);
 #endif
 
 			scroll(0, 0, -32, 0, 240, 0xC0);
@@ -339,9 +339,9 @@ void DrawCredits()
 			load_palette(0, MB512_pal, 1);  
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(4, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
-			cd_loadvram(4, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
-			cd_loaddata(4, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
+			cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
 			set_bgpal(0, palCD); 
 #endif
 			

@@ -29,3 +29,8 @@ unsigned char Enabled240p_g;
 unsigned char UseDefault_g;
 unsigned char EnabledSoft_g;
 unsigned char Enabled_C_BW_g;
+
+#ifdef CDROM1
+int HelpItem;
+int ToolItem;
+#endif

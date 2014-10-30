@@ -82,9 +82,9 @@ void main()
 			load_palette(0, MB_pal, 1);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(4, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-			cd_loadvram(4, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-			cd_loaddata(4, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
+			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
 			set_bgpal(0, palCD); 
 #endif
 			
@@ -201,7 +201,7 @@ void main()
 	ResetVideo();
 	set_font_pal(13);
 	put_string("Loading...", 27, 26);
-	cd_execoverlay(2);
+	cd_execoverlay(MAIN_OVERLAY);
 #endif
 }
 
@@ -287,8 +287,8 @@ void DrawPluge()
 			load_palette(0, pluge_pal, 1);  
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			//cd_loadvram(4, OFS_pluge_tile_bin, 0x1000, SIZE_pluge_tile_bin);
-			//cd_loadvram(4, OFS_pluge_map_bin, 0, SIZE_pluge_map_bin);
+			//cd_loadvram(GPHX_OVERLAY, OFS_pluge_tile_bin, 0x1000, SIZE_pluge_tile_bin);
+			//cd_loadvram(GPHX_OVERLAY, OFS_pluge_map_bin, 0, SIZE_pluge_map_bin);
 #endif
 
 			Center224in240();
@@ -356,8 +356,8 @@ void DrawColor()
 			load_background(color_bg, color_pal, color_map, 40, 30);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			//cd_loadvram(4, OFS_color_DATA_bin, 0x1000, SIZE_color_DATA_bin);
-			//cd_loadvram(4, OFS_color_BAT_bin, 0, SIZE_color_BAT_bin);
+			//cd_loadvram(GPHX_OVERLAY, OFS_color_DATA_bin, 0x1000, SIZE_color_DATA_bin);
+			//cd_loadvram(GPHX_OVERLAY, OFS_color_BAT_bin, 0, SIZE_color_BAT_bin);
 #endif
 			Center224in240();
             redraw = 0;

@@ -212,12 +212,12 @@ void showHelp(char data)
 void showHelp(char data)
 {
 	/*
-	cd_loadvram(4, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
-	cd_loaddata(4, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
+	cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
+	cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
 	set_bgpal(0, palCD); 
 
 	set_screen_size(SCR_SIZE_64x32); 
-	cd_loadvram(4, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
 	*/
 	return;
 }
