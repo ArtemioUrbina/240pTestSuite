@@ -47,6 +47,8 @@ extern int y;
 extern int y2;
 
 extern int speed;
+extern int color;
+extern unsigned char text;
 
 extern int clicks[];
 extern unsigned char variation;

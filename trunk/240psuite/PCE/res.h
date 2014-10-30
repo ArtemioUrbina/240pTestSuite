@@ -91,10 +91,9 @@
 		Palettes
 */
 
-#ifndef CDROM
+#ifndef CDROM1
 #include "res_patterns.h"
 #endif
-
 
 #incpal(SD_pal, "graphics/SD.pcx", 0, 1);
 #incpal(palm_pal, "graphics/sonicpalm.pcx", 0, 1);

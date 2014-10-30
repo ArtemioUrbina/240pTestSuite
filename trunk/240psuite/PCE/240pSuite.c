@@ -57,7 +57,7 @@ void main()
 		Enabled_C_BW = 0;
 		global_init = 1;
 	}
-#ifdef CDROM
+#ifdef CDROM1
 	else
 	{
 		xres_flags = xres_flags_g;
@@ -73,8 +73,8 @@ void main()
 	if(Enabled240p)
 		Set240p();
 
-#ifndef CDROM
-#ifndef ARCADE
+#ifndef CDROM1
+#ifndef SCDROM
 	disp_on();
 	DrawIntro();
 	disp_off();
@@ -139,7 +139,7 @@ void main()
 			switch(sel)
 			{
 				case 0:
-#ifndef CDROM
+#ifndef CDROM1
 					TestPatterns();
 #else
 					xres_flags_g = xres_flags;
@@ -387,7 +387,7 @@ void DrawCredits()
 
 void RefreshCredits()
 {
-	unsigned char row = 7;
+	row = 7;
 			
 	set_font_pal(15);
 	put_string("Code and Patterns:", HPOS+2, row++);
@@ -429,11 +429,12 @@ void RefreshCredits()
 	row++;
 
 	set_font_pal(14);	
-	put_string("Ver. 0.02", 50, 7);
-	put_string("26/10/2014", 49, 8);
+	put_string("Ver. 0.04", 50, 7);
+	put_string("29/10/2014", 49, 8);
 }
 
-#ifndef CDROM
+#ifndef CDROM1
+#ifndef SCDROM
 
 void DrawIntro()
 {
@@ -463,4 +464,5 @@ void DrawIntro()
 	}
 }
 
+#endif
 #endif

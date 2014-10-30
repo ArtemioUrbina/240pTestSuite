@@ -27,17 +27,14 @@
 #include "help.h"
 #include "font.h"
 
-#ifndef CDROM
 #ifndef CDROM1
 #include "graphics.h"
 #include "graphics_patterns.h"
 #endif
-#endif
 
-#ifdef CDROM
+#ifdef CDROM1
 #include "res_patterns.h"
 #endif
-
 
 #include "video.h"
 
@@ -47,7 +44,7 @@
 char palCD[32];
 #endif
 			
-#ifndef CDROM
+#ifndef CDROM1
 void TestPatterns()
 #else
 void main()
@@ -59,7 +56,7 @@ void main()
 	redraw = 1;
 	refresh = 1;
 	
-#ifdef CDROM
+#ifdef CDROM1
 	xres_flags = xres_flags_g;
 	Enabled240p = Enabled240p_g;
 	UseDefault = UseDefault_g;
@@ -164,13 +161,13 @@ void main()
 					DrawColorBleed();
 					break;
 				case 5:
-					DrawGrid256();
+					DrawGrid(1);
 					break;
 				case 6:
-					DrawGrid320();
+					DrawGrid(2);
 					break;
 				case 7:
-					DrawGrid512();
+					DrawGrid(3);
 					break;
 				case 8:
 					DrawLinearity();
@@ -201,7 +198,7 @@ void main()
 			disp_off();
 		}
     }
-#ifdef CDROM
+#ifdef CDROM1
 	xres_flags_g = xres_flags;
 	Enabled240p_g = Enabled240p;
 	UseDefault_g = UseDefault;
@@ -576,7 +573,7 @@ void DrawSMPTE()
 }
 
 
-void DrawGrid256()
+void DrawGrid(char type)
 {
 	unsigned char end = 0;
 	unsigned char showcolor = 0;
@@ -590,21 +587,49 @@ void DrawGrid256()
         {
 			ResetVideo();
 
-#ifndef CDROM1			
-			if(Enabled240p)
-				set_map_data(grid256_240_map, 32, 30);
-			else
-				set_map_data(grid256_224_map, 32, 28);
+#ifndef CDROM1		
 			set_tile_data(grid_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 32, Enabled240p ? 30 : 28);
+			
+			switch(type)
+			{
+				case 1:
+					if(Enabled240p)
+						set_map_data(grid256_240_map, 32, 30);
+					else
+						set_map_data(grid256_224_map, 32, 28);
+
+					load_map(0, 0, 0, 0, 32, Enabled240p ? 30 : 28);
+					break;
+				case 2:
+					if(Enabled240p)
+						set_map_data(grid320_240_map, 40, 30);
+					else
+						set_map_data(grid320_224_map, 40, 28);
+
+					load_map(0, 0, 0, 0, 40, Enabled240p ? 30 : 28);
+					break;
+				case 3:
+					if(Enabled240p)
+						set_map_data(grid512_240_map, 64, 30);
+					else
+						set_map_data(grid512_224_map, 64, 28);
+					load_map(0, 0, 0, 0, 64, Enabled240p ? 30 : 28);
+					break;
+			}
+			
 			load_palette(0, grid_pal, 1);  
 #else
 #endif
          
             redraw = 0;
 			disp_on();
-			set_xres(256, xres_flags);
+			if(type == 1)
+				set_xres(256, xres_flags);
+			else if(type == 2)
+				set_xres(320, xres_flags);
+			else if(type == 3)
+				set_xres(512, xres_flags);
         }
 
         controller = joytrg(0);
@@ -629,111 +654,6 @@ void DrawGrid256()
     }
 }
 
-void DrawGrid320()
-{
-	unsigned char end = 0;
-	unsigned char showcolor = 0;
-
-	redraw = 1;
-    while(!end)
-    {   
-		vsync();
-		
-        if(redraw)
-        {
-			ResetVideo();
-			
-#ifndef CDROM1			
-			if(Enabled240p)
-				set_map_data(grid320_240_map, 40, 30);
-			else
-				set_map_data(grid320_224_map, 40, 28);
-			set_tile_data(grid_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, Enabled240p ? 30 : 28);
-			load_palette(0, grid_pal, 1);  
-#else
-#endif
-         
-            redraw = 0;
-			disp_on();
-			set_xres(320, xres_flags);
-        }
-
-        controller = joytrg(0);
-		
-		if (controller & JOY_RUN)
-		{
-			showHelp(GRID_HELP);
-			redraw = 1;
-		}
-        
-		if (controller & JOY_II)
-			end = 1;
-			
-		if(controller & JOY_I)
-		{
-			showcolor = !showcolor;
-			if(showcolor)
-				set_color_rgb(256, 7, 7, 7);
-			else
-				set_color_rgb(256, 0, 0, 0);
-		}
-    }
-}
-
-void DrawGrid512()
-{
-	unsigned char end = 0;
-	unsigned char showcolor = 0;
-
-	redraw = 1;
-    while(!end)
-    {   
-		vsync();
-		
-        if(redraw)
-        {
-			ResetVideo();
-			
-#ifndef CDROM1			
-			if(Enabled240p)
-				set_map_data(grid512_240_map, 64, 30);
-			else
-				set_map_data(grid512_224_map, 64, 28);
-			set_tile_data(grid_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 64, Enabled240p ? 30 : 28);
-			load_palette(0, grid_pal, 1);  
-#else
-#endif
-         
-            redraw = 0;
-			disp_on();
-			set_xres(512, xres_flags);
-        }
-		
-        controller = joytrg(0);
-		
-		if (controller & JOY_RUN)
-		{
-			showHelp(GRID_HELP);
-			redraw = 1;
-		}
-        
-		if (controller & JOY_II)
-			end = 1;
-			
-		if(controller & JOY_I)
-		{
-			showcolor = !showcolor;
-			if(showcolor)
-				set_color_rgb(256, 7, 7, 7);
-			else
-				set_color_rgb(256, 0, 0, 0);
-		}
-    }
-}
 
 void DrawWhite()
 {
@@ -1364,13 +1284,13 @@ void DrawRightLines(int top, int bottom, int left, int right, unsigned char prev
 void Draw100IRE()
 {
 	unsigned char end = 0;
-	int color = 7;
 	unsigned char mode = 0;
-	unsigned char text = 0;
 	unsigned char refresh = 0;
 	int factor = 14; // aproximate for IRE
 
+	text = 0;
 	redraw = 1;
+	color = 7;
 	set_color_rgb(0, 0, 0, 0);
     while(!end)
     {   
@@ -1387,11 +1307,7 @@ void Draw100IRE()
 		
 		if(refresh)
 		{
-			set_color_rgb(!mode, color, color, color);	
-			if(mode)
-				SetFontColors(14, RGB(color, color, color), RGB(6, 6, 6), RGB(3, 3, 3));
-			else
-				SetFontColors(14, 0, RGB(6, 6, 6), RGB(3, 3, 3));		
+			Refresh100IRE(mode);
 			refresh = 0;
 		}
 
@@ -1460,7 +1376,7 @@ void Draw100IRE()
 			else
 			{
 				color = 7;
-				set_color_rgb(0, 0, 0, 0);
+				set_color(0, 0);
 				refresh = 1;
 				put_string("RANGE 0-100 IRE  ", 20, 26);
 				factor = 14;
@@ -1484,6 +1400,15 @@ void Draw100IRE()
 			}
 		}
     }
+}
+
+void Refresh100IRE(unsigned char mode)
+{
+	set_color_rgb(!mode, color, color, color);	
+	if(mode)
+		SetFontColors(14, RGB(color, color, color), RGB(6, 6, 6), RGB(3, 3, 3));
+	else
+		SetFontColors(14, 0, RGB(6, 6, 6), RGB(3, 3, 3));		
 }
 
 void Redraw100IRE(unsigned char mode, unsigned char color)

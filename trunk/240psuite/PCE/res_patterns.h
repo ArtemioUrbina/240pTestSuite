@@ -19,40 +19,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef CDROM
+#ifdef CDROM1
 /*
             GRAPHICS
 */
 
 #incchr(my_font, "graphics/font.pcx", 32, 3);
-
-#ifdef CDROM1
 #include "graphics.h"
-#elseif
-
-#incbin(MB_map, "graphics/mainbg.fmp");
-#incchr_ex(MB_bg, "graphics/mainbg.pcx", 0, 0, 20, 7, 0);
-
-#incbin(MB512_map, "graphics/back512.fmp");
-#incchr_ex(MB512_bg, "graphics/back512.pcx", 0, 0, 4, 36, 0);
-
-/*
-			TEST 
-*/
-
-#incbin(fs_map, "graphics/fullscreen.fmp");
-#incchr_ex(white_bg, "graphics/check.pcx", 8, 8, 1, 1, 0);
-#incpal(check_pal, "graphics/check.pcx", 0, 1);
 
 #endif
 
-#endif
 
 /*
 			PATTERNS
 */
 
 #ifndef CDROM1
+
 #incbin(pluge_map, "graphics/pluge.fmp");
 #incchr_ex(pluge_bg, "graphics/pluge.pcx", 0, 0, 2, 23, 0);
 
@@ -97,16 +80,6 @@
 
 #incbin(ire100_map, "graphics/100IRE.fmp");
 #incchr_ex(ire100_bg, "graphics/100IRE.pcx", 0, 0, 2, 2, 0);
-
-/*
-		SPRITES
-*/
-#ifdef CDROM
-
-#incspr(SD_sp, "graphics/SD.pcx", 0, 0, 4, 7);
-
-#endif
-
 #endif
 
 
@@ -126,7 +99,7 @@
 #incpal(pluge_pal, "graphics/pluge.pcx", 0, 1);
 #incpal(sharpness_pal, "graphics/sharpness.pcx", 0, 1);
 
-#ifdef CDROM
+#ifdef CDROM1
 #incpal(MB_pal, "graphics/mainbg.pcx", 0, 1);
 #incpal(MB512_pal, "graphics/back512.pcx", 0, 1);
 #incpal(SD_pal, "graphics/SD.pcx", 0, 1);

@@ -28,7 +28,7 @@
 #include "video.h"
 #include "help.h"
 
-#ifndef CDROM
+#ifndef CDROM1
 #include "graphics.h"
 #endif
 
@@ -37,17 +37,7 @@
 extern char palCD[];
 #endif
 
-#ifdef CDROM
-extern int xres_flags;
-extern unsigned char Enabled240p;
-extern unsigned char UseDefault;
-extern unsigned char EnabledSoft;
-extern unsigned char Enabled_C_BW;
-
-extern char MB512_map[];
-extern int MB512_bg[];
-extern int MB512_pal[];
-#endif
+#ifndef CDROM1
 
 void showHelp(char data)
 {
@@ -69,16 +59,10 @@ void showHelp(char data)
 			
 			SetFontColors(13, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 			SetFontColors(15, RGB(2, 2, 2), RGB(0, 6, 0), 0);
-
-#ifndef CDROM1			
+		
 			set_tile_data(MB512_bg);
 			load_tile(0x1000);
 			load_palette(0, MB512_pal, 1);  
-#else
-			cd_loadvram(4, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
-			cd_loaddata(4, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
-			set_bgpal(0, palCD); 
-#endif
 			
 			Center224in240();
 			
@@ -90,14 +74,9 @@ void showHelp(char data)
 		
 		if(refresh)
 		{
-#ifndef CDROM1
 			set_map_data(MB512_map, 64, 30);
 			load_map(0, 0, 0, 0, 64, 30);
-#else
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(4, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
-#endif
-			
+		
 			set_font_pal(15);
 			switch(data)
 			{
@@ -191,7 +170,6 @@ void showHelp(char data)
 					DrawIre100Help();
 					break;
 			}
-			//DrawGeneralHelp(page);
 			
 			set_font_pal(13);
 			if(total > 1 && page != total)
@@ -228,6 +206,23 @@ void showHelp(char data)
 	disp_off();
 	read = controller = 0;
 }
+
+#else
+
+void showHelp(char data)
+{
+	/*
+	cd_loadvram(4, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
+	cd_loaddata(4, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
+	set_bgpal(0, palCD); 
+
+	set_screen_size(SCR_SIZE_64x32); 
+	cd_loadvram(4, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+	*/
+	return;
+}
+
+#endif
 
 #ifndef CDROM1
 /* This is defined in C to use up the constants bank */

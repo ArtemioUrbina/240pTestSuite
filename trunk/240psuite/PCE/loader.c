@@ -61,20 +61,11 @@ void main()
 	DrawIntro();
 	
 	cls();
+	vsync();
 #ifndef CDROM1
 	SetFontColors(14, 0, RGB(4, 4, 4), 0);
-    
-	vsync();
-	if(ac_exists())
-	{
-		put_string("Loading to AC...", 24, 26);
-		cd_execoverlay(4); // Arcade Card
-	}
-	else
-	{
-		put_string("Loading...", 28, 26);
-		cd_execoverlay(2); // Super CD-ROM2
-	}
+	put_string("Loading...", 28, 26);
+	cd_execoverlay(2); // Super CD-ROM2
 #else
 	cd_execoverlay(2); // CD-ROM2
 #endif
