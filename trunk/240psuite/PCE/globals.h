@@ -29,4 +29,3 @@ unsigned char Enabled240p_g;
 unsigned char UseDefault_g;
 unsigned char EnabledSoft_g;
 unsigned char Enabled_C_BW_g;
-unsigned char global_init;

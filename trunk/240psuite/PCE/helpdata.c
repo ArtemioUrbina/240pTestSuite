@@ -356,7 +356,7 @@ void display_manuallag_00()
 	p_string	manuallag_00_02,6,8
 	p_string	manuallag_00_03,6,9
 	p_string	manuallag_00_04,6,10
-	p_string	manuallag_00_05,6,11
+	p_string	manuallag_00_05,6,12
 	p_string	manuallag_00_06,6,13
 	p_string	manuallag_00_07,6,14
 	p_string	manuallag_00_08,6,15
@@ -367,7 +367,6 @@ void display_manuallag_00()
 	p_string	manuallag_00_13,6,20
 	p_string	manuallag_00_14,6,21
 	p_string	manuallag_00_15,6,22
-	p_string	manuallag_00_16,6,23
 	rts
 
 manuallag_00_00:	.db	"MANUAL LAG TEST (1/2)"
@@ -376,33 +375,31 @@ manuallag_00_01:	.db	"The main intention is to show a changing pattern"
 			.db	0
 manuallag_00_02:	.db	"on the screen, which can be complemented with"
 			.db	0
-manuallag_00_03:	.db	"audio and vibration on the controller if set."
+manuallag_00_03:	.db	"audio. This should show to some degree any lag"
 			.db	0
-manuallag_00_04:	.db	"This should show to some degree any lag when"
+manuallag_00_04:	.db	"when processing the signal."
 			.db	0
-manuallag_00_05:	.db	"processing the signal."
+manuallag_00_05:	.db	"As an added feature, the user can click button I"
 			.db	0
-manuallag_00_06:	.db	"As an added feature, the user can click the $A"
+manuallag_00_06:	.db	"when the sprite is aligned with the one on the"
 			.db	0
-manuallag_00_07:	.db	"button when the sprite is aligned with the one on"
+manuallag_00_07:	.db	"background, and the offset in frames from the"
 			.db	0
-manuallag_00_08:	.db	"the background, and the offset in frames from the"
+manuallag_00_08:	.db	"actual intersection will be shown on screen. This"
 			.db	0
-manuallag_00_09:	.db	"actual intersection will be shown on screen. This"
+manuallag_00_09:	.db	"can be repeated ten times and the software will"
 			.db	0
-manuallag_00_10:	.db	"can be repeated ten times and the software will"
+manuallag_00_10:	.db	"calculate the average. Whenever the button was"
 			.db	0
-manuallag_00_11:	.db	"calculate the average. Whenever the button was"
+manuallag_00_11:	.db	"pressed before the actual intersection frame, the"
 			.db	0
-manuallag_00_12:	.db	"pressed before the actual intersection frame, the"
+manuallag_00_12:	.db	"result will be ignored (but still shown on screen)."
 			.db	0
-manuallag_00_13:	.db	"result will be ignored (but still shown on screen)."
+manuallag_00_13:	.db	"SELECT can be used to change the direction"
 			.db	0
-manuallag_00_14:	.db	"SELECT can be used to change the direction"
+manuallag_00_14:	.db	"of the sprite from vertical to horizontal, or"
 			.db	0
-manuallag_00_15:	.db	"of the sprite from vertical to horizontal, or"
-			.db	0
-manuallag_00_16:	.db	"display both at the same time."
+manuallag_00_15:	.db	"display both at the same time."
 			.db	0
 #endasm
 }
@@ -476,11 +473,11 @@ options_00_00:	.db	"OPTIONS"
 			.db	0
 options_00_01:	.db	"Vertical resolution: This system can display either"
 			.db	0
-options_00_02:	.db	"240p or 224 video. Although the system is capable of"
+options_00_02:	.db	"240p or 224 video. Although capable of displaying"
 			.db	0
-options_00_03:	.db	"displaying all the 240 vertical lines, games tend to"
+options_00_03:	.db	"all the 240 vertical lines, games tend to use only"
 			.db	0
-options_00_04:	.db	"use only 239 active lines for unkown reasons."
+options_00_04:	.db	"239 active lines for unknown reasons."
 			.db	0
 options_00_05:	.db	"The suite uses the full 240 mode by default, but you"
 			.db	0
@@ -490,15 +487,15 @@ options_00_07:	.db	"line 24 instead of 22. This will clip the last line"
 			.db	0
 options_00_08:	.db	"in patterns, but show the real area used by games."
 			.db	0
-options_00_09:	.db	"Composite Filter: When in this mode, the system"
+options_00_09:	.db	"Composite Filter: The system outputs an extra video"
 			.db	0
-options_00_10:	.db	"outputs an extra video line, and uses filtering to"
+options_00_10:	.db	"line (266) and creates a comb filter with every other"
 			.db	0
-options_00_11:	.db	"enhance the composite video signal. This extra line"
+options_00_11:	.db	"frame to reduce artifacts in the composite signal."
 			.db	0
-options_00_12:	.db	"is a result of the filer, and not a complement to the"
+options_00_12:	.db	"This extra line is at the contains no data; but since"
 			.db	0
-options_00_13:	.db	"239 visible lines. (signal ends at line 262)"
+options_00_13:	.db	"the video is taller, CRTs shift vertically."
 			.db	0
 options_00_14:	.db	"Composite B&W: This option works only in composite."
 			.db	0
@@ -657,21 +654,21 @@ void display_scroll_00()
 
 scroll_00_00:	.db	"SCROLL TEST"
 			.db	0
-scroll_00_01:	.db	"This test shows a two layer background from Sonic"
+scroll_00_01:	.db	"This test shows a background from Sonic the "
 			.db	0
-scroll_00_02:	.db	"the Hedgehog. The speed can be varied with the"
+scroll_00_02:	.db	"Hedgehog. The speed can be varied with the d-pad,"
 			.db	0
-scroll_00_03:	.db	"d-pad, and change direction with the Select"
+scroll_00_03:	.db	"and change direction with SELECT. Button I stops"
 			.db	0
-scroll_00_04:	.db	"Button I stops the scroll."
+scroll_00_04:	.db	"the scroll."
 			.db	0
 scroll_00_05:	.db	"This can be used to notice any drops in framerate"
 			.db	0
 scroll_00_06:	.db	"when using a video processor."
 			.db	0
-scroll_00_07:	.db	"Sonic The Hedgehog is a trademark of"
+scroll_00_07:	.db	"Sonic The Hedgehog is a trademark of Sega"
 			.db	0
-scroll_00_08:	.db	"Sega Enterprises Ltd."
+scroll_00_08:	.db	"Enterprises Ltd."
 			.db	0
 #endasm
 }

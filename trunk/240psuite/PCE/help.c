@@ -358,13 +358,12 @@ void DrawStripesHelp(char page)
 			set_font_pal(14);
 			row++;
 			put_string("This pattern is designed to show if all lines are", 6, row++);
-			put_string("visible in your setup, and how your video", 6, row++);
-			put_string("processor is handling 240p video.", 6, row++);
+			put_string("visible in your setup, and it handles 240p signals.", 6, row++);
 			row++;
 			put_string("You should see a pattern of lines, each one pixel", 6, row++);
 			put_string("in height, starting with a white one at the top of", 6, row++);
 			put_string("the screen. You can toggle the pattern with", 6, row++);
-			put_string("Select, or turn on auto-toggle each frame with I.", 6, row++);
+			put_string("SELECT, or turn on auto-toggle each frame with I.", 6, row++);
 			row++;
 			put_string("When auto-toggle is set, you should see the lines", 6, row++);
 			put_string("alternating rapidly. On some setups, the pattern", 6, row++);
@@ -402,8 +401,8 @@ void DrawPassiveLagHelp()
 	row++;
 	put_string("Using a camera, a picture should be taken of both", 6, row++);
 	put_string("screens at the same time. The picture will show", 6, row++);
-	put_string("the frame discrepancy between them", 6, row++);
-	put_string("even when the numbers are blurry.", 6, row++);
+	put_string("the frame discrepancy between them even when the", 6, row++);
+	put_string("numbers are blurry.", 6, row++);
 	row++;
 	put_string("The Sega Genesis version of the test can be used", 6, row++);
 	put_string("with a Nomad as the reference display.", 6, row++);
