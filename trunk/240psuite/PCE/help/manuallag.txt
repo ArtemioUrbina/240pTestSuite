@@ -13,8 +13,8 @@ actual intersection will be shown on screen. This
 can be repeated ten times and the software will
 calculate the average. Whenever the button was
 pressed before the actual intersection frame, the
-result will be ignored (but still shown onscreen).
-Button $X can be used to change the direction
+result will be ignored (but still shown on screen).
+SELECT can be used to change the direction
 of the sprite from vertical to horizontal, or
 display both at the same time.
 

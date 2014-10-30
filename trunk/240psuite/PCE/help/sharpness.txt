@@ -1,5 +1,6 @@
                     SHARPNESS
 
+
 You should set the sharpness of your CRT to a
 value that shows clean black and gray transitions,
 with no white ghosting in between.

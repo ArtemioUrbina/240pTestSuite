@@ -172,7 +172,7 @@ void DrawStripes()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(STRIPES_HELP);
 			redraw = 1;
 		}
 		
@@ -309,7 +309,7 @@ void DropShadow()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(DSHADOW_HELP);
 			redraw = 1;
 		}
 		
@@ -559,7 +559,7 @@ void StripedSprite()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(STRIPED_HELP);
 			redraw = 1;
 		}
 		
@@ -722,7 +722,7 @@ void ScrollTest()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(SCROLL_HELP);
 			redraw = 1;
 		}
 		
@@ -1087,7 +1087,7 @@ void LagTest()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(PASSIVE_HELP);
 			redraw = 1;
 			update = 1;
 		}
@@ -1148,7 +1148,7 @@ void VScrollTest()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(GRIDSCROLL_HELP);
 			redraw = 1;
 		}
         
@@ -1329,7 +1329,7 @@ void SoundTest()
 		if (controller & JOY_RUN)
 		{
 			StopAudio();
-			showHelp(GENERAL_HELP);
+			showHelp(SOUND_HELP);
 			redraw = 1;
 		}
         
@@ -1609,7 +1609,7 @@ void ManualLagTest()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(MANUALLAG_HELP);
 			redraw = 1;
 		}
         

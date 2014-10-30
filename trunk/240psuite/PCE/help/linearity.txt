@@ -1,5 +1,6 @@
                     LINEARITY
 
+
 This pattern shows 5 circles, that are matched
 to the 10:11 NTSC pixel aspect ratio.
 

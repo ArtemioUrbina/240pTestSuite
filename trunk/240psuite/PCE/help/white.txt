@@ -1,5 +1,6 @@
                   WHITE SCREEN
 
+
 This pattern can be changed between white, black,
 red, green, blue and custom color full screens by
 using button I.

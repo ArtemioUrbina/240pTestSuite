@@ -332,7 +332,7 @@ void DrawPluge()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(PLUGE_HELP);
 			redraw = 1;
 		}
 
@@ -378,7 +378,7 @@ void DrawColor()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(COLORS_HELP);
 			redraw = 1;
 		}
 
@@ -419,7 +419,7 @@ void DrawCB601()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(COLOR601_HELP);
 			redraw = 1;
 		}
         
@@ -530,7 +530,7 @@ void DrawSMPTE()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(SMPTECOLOR_HELP);
 			redraw = 1;
 		}
         
@@ -611,7 +611,7 @@ void DrawGrid256()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(GRID_HELP);
 			redraw = 1;
 		}
         
@@ -664,7 +664,7 @@ void DrawGrid320()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(GRID_HELP);
 			redraw = 1;
 		}
         
@@ -717,7 +717,7 @@ void DrawGrid512()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(GRID_HELP);
 			redraw = 1;
 		}
         
@@ -768,7 +768,7 @@ void DrawWhite()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(WHITE_HELP);
 			redraw = 1;
 		}
         
@@ -959,7 +959,7 @@ void DrawLinearity()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(LINEARITY_HELP);
 			redraw = 1;
 		}
         
@@ -1011,7 +1011,7 @@ void DrawLinearity256()
 				else
 					Set239p();
 			}
-			showHelp(GENERAL_HELP);
+			showHelp(LINEARITY256_HELP);
 			redraw = 1;
 		}
         
@@ -1058,7 +1058,7 @@ void DrawSharpness()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(SHARPNESS_HELP);
 			redraw = 1;
 		}
         
@@ -1099,7 +1099,7 @@ void DrawGray()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(GRAY_HELP);
 			redraw = 1;
 		}
         
@@ -1152,7 +1152,7 @@ void DrawOverscan()
 		
 		if(refresh)
 		{
-			RefreshOverscan(sel, top, bottom, left, right);
+			RefreshOverscan(sel, top, bottom, left, right, screen);
 			
 			refresh = 0;
 		}
@@ -1161,7 +1161,7 @@ void DrawOverscan()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(OVERSCAN_HELP);
 			redraw = 1;
 		}
 
@@ -1272,29 +1272,39 @@ void RedrawOverscan()
 	set_xres(256, xres_flags);
 }
 
-void RefreshOverscan(int sel, int top, int bottom, int left, int right)
+void RefreshOverscan(int sel, int top, int bottom, int left, int right, int screen)
 {
+	int val;
+	
 	setupFont();
 			
 	set_font_pal(sel == 0 ? 15 : 14);
-	put_string("Top: ", 7, 12);
-	put_number(top, 3, 14, 12);
-	put_string("pixels", 18, 12);
+	put_string("Top: ", 5, 12);
+	put_number(top, 3, 12, 12);
+	put_string("pixels (  %)", 16, 12);
+	val = (top*100)/screen;
+	put_number(val, 2, 24, 12);
 	
 	set_font_pal(sel == 1 ? 15 : 14);
-	put_string("Bottom: ", 7, 13);
-	put_number(bottom, 3, 14, 13);
-	put_string("pixels", 18, 13);
+	put_string("Bottom: ", 5, 13);
+	put_number(bottom, 3, 12, 13);
+	put_string("pixels (  %)", 16, 13);
+	val = (bottom*100)/screen;
+	put_number(val, 2, 24, 13);
 	
 	set_font_pal(sel == 2 ? 15 : 14);
-	put_string("Left: ", 7, 14);
-	put_number(left, 3, 14, 14);
-	put_string("pixels", 18, 14);
+	put_string("Left: ", 5, 14);
+	put_number(left, 3, 12, 14);
+	put_string("pixels (  %)", 16, 14);
+	val = (left*100)/256;
+	put_number(val, 2, 24, 14);
 	
 	set_font_pal(sel == 3 ? 15 : 14);
-	put_string("Right: ", 7, 15);
-	put_number(right, 3, 14, 15);
-	put_string("pixels", 18, 15);
+	put_string("Right: ", 5, 15);
+	put_number(right, 3, 12, 15);
+	put_string("pixels (  %)", 16, 15);
+	val = (right*100)/256;
+	put_number(val, 2, 24, 15);
 }
 
 void DrawOverscanLines(int sel, int top, int bottom, int left, int right, int screen, unsigned char previous)
@@ -1389,7 +1399,7 @@ void Draw100IRE()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(IRE100HELP);
 			redraw = 1;			
 		}
 		

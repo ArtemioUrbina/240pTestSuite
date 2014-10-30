@@ -49,7 +49,7 @@ extern int MB512_bg[];
 extern int MB512_pal[];
 #endif
 
-void showHelp(unsigned char data)
+void showHelp(char data)
 {
 	unsigned char end = 0;
 	unsigned char page = 1;
@@ -99,9 +99,99 @@ void showHelp(unsigned char data)
 #endif
 			
 			set_font_pal(15);
-#ifndef CDROM1
-			DrawGeneralHelp(page);
-#endif
+			switch(data)
+			{
+				case COLOR601_HELP:
+					display_color601_00();
+					break;
+				case COLORS_HELP:
+					total = 2;
+					if(page == 1)
+						display_colors_00();
+					else if (page == 2)
+						display_colors_01();
+					break;
+				case DSHADOW_HELP:
+					display_dshadow_00();
+					break;
+				case GRAY_HELP:
+					display_gray_00();
+					break;
+				case GRID_HELP:
+					display_grid_00();
+					break;
+				case GRIDSCROLL_HELP:
+					display_gridscroll_00();
+					break;
+				case LINEARITY_HELP:
+					display_linearity_00();
+					break;
+				case LINEARITY256_HELP:
+					display_linearity256_00();
+					break;
+				case MANUALLAG_HELP:
+					total = 2;
+					if(page == 1)
+						display_manuallag_00();
+					else if(page == 2)
+						display_manuallag_01();
+					break;
+				case OPTIONS_HELP:
+					display_options_00();
+					break;
+				case OVERSCAN_HELP:
+					display_overscan_00();
+					break;
+				case PLUGE_HELP:
+					total = 2;
+					if(page == 1)
+						display_pluge_00();
+					else if(page == 2)
+						display_pluge_01();
+					break;
+				case SCROLL_HELP:
+					display_scroll_00();
+					break;
+				case SHARPNESS_HELP:
+					display_sharpness_00();
+					break;
+				case SMPTECOLOR_HELP:
+					display_SMPTEColor_00();
+					break;
+				case SOUND_HELP:
+					display_sound_00();
+					break;
+				case STRIPED_HELP:
+					display_striped_00();
+					break;
+				case WHITE_HELP:
+					display_white_00();
+					break;	
+				case GENERAL_HELP:
+					total = 2;
+					DrawGeneralHelp(page);
+					break;
+				case BACKLIT_HELP:
+					DrawBacklitHelp();
+					break;
+				case BLEED_HELP:
+					DrawBleedHelp();
+					break;
+				case CHECK_HELP:
+					DrawChecksHelp();
+					break;
+				case STRIPES_HELP:
+					total = 2;
+					DrawStripesHelp(page);
+					break;
+				case PASSIVE_HELP:
+					DrawPassiveLagHelp(page);
+					break;
+				case IRE100HELP:
+					DrawIre100Help();
+					break;
+			}
+			//DrawGeneralHelp(page);
 			
 			set_font_pal(13);
 			if(total > 1 && page != total)
@@ -253,7 +343,7 @@ void DrawBleedHelp()
 	
 	put_string("COLOR BLEED", 6+20, row++);
 	set_font_pal(14);
-	row++;
+	row+=3;
 	put_string("This pattern helps diagnose unneeded color", 6, row++);
 	put_string("upsampling. It consists of one pixel width color", 6, row++);
 	put_string("bars alternating with one pixel width black bars.", 6, row++);
@@ -291,7 +381,7 @@ void DrawStripesHelp(char page)
 			put_string("pressing left.", 6, row++);
 			break;
 		case 2:
-			put_string("HORIZONTAL STRIPES (2/2)", 26, row++);
+			put_string("HORIZONTAL STRIPES (2/2)", 19, row++);
 			set_font_pal(14);
 			row++;
 			put_string("You can also display vertical bars by pressing up,", 6, row++);
@@ -334,6 +424,7 @@ void DrawIre100Help()
 	
 	put_string("100 IRE", 26, row++);
 	set_font_pal(14);
+	row+=2;
 	put_string("An IRE is a unit used in the measurement of", 6, row++);
 	put_string("composite video signals. Its name is derived from", 6, row++);
 	put_string("the initials of the Institute of Radio Engineers.", 6, row++);

@@ -1,14 +1,16 @@
                        GRID
 
-This grid uses a 320x240 pattern, and should fill
-all of the 4:3 visible area.
+These grid tests change horizontal resolution
+between 256, 320 and 512. You can also vary the
+vertical resolution from the options menu. The
+pattern should fill all of the 4:3 screen area.
 
 You can use it to verify that all the visible area
 is being displayed, and that there is no distortion
 present. Consumer TVs may not show the red squares.
-
-The 240 test suite draws from line 22 onwards from
-the blanking interval of NTSC signals
+The area covered in the display with each resolution
+might vary slighly, but the aspect ratio should be
+kept.
 
 You can press button I to fill all the video signal
 background area.

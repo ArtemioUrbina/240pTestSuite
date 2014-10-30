@@ -1,5 +1,7 @@
             COLOR BARS WITH GRAY SCALE
 
+
+
 This pattern idea and layout borrows from the
 Digital Video Essentials color adjust pattern.
 

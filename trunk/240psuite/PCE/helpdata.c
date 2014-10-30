@@ -4,12 +4,13 @@ void display_color601_00()
 	p_string	color601_00_00,18,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	color601_00_01,6,7
-	p_string	color601_00_02,6,8
-	p_string	color601_00_03,6,10
-	p_string	color601_00_04,6,11
-	p_string	color601_00_05,6,12
-	p_string	color601_00_06,6,13
+	p_string	color601_00_01,6,9
+	p_string	color601_00_02,6,10
+	p_string	color601_00_03,6,12
+	p_string	color601_00_04,6,13
+	p_string	color601_00_05,6,14
+	p_string	color601_00_06,6,15
+	p_string	color601_00_07,6,16
 	rts
 
 color601_00_00:	.db	"COLOR BARS WITH GRAY SCALE"
@@ -38,17 +39,17 @@ void display_colors_00()
 	p_string	colors_00_00,23,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	colors_00_01,6,7
-	p_string	colors_00_02,6,8
-	p_string	colors_00_03,6,10
-	p_string	colors_00_04,6,11
-	p_string	colors_00_05,6,12
-	p_string	colors_00_06,6,13
-	p_string	colors_00_07,6,15
-	p_string	colors_00_08,6,16
-	p_string	colors_00_09,6,17
-	p_string	colors_00_10,6,18
-	p_string	colors_00_11,6,19
+	p_string	colors_00_01,6,9
+	p_string	colors_00_02,6,10
+	p_string	colors_00_03,6,12
+	p_string	colors_00_04,6,13
+	p_string	colors_00_05,6,14
+	p_string	colors_00_06,6,15
+	p_string	colors_00_07,6,17
+	p_string	colors_00_08,6,18
+	p_string	colors_00_09,6,19
+	p_string	colors_00_10,6,20
+	p_string	colors_00_11,6,21
 	rts
 
 colors_00_00:	.db	"COLORBARS (1/2)"
@@ -85,13 +86,13 @@ void display_colors_01()
 	p_string	colors_01_00,23,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	colors_01_01,6,7
-	p_string	colors_01_02,6,8
-	p_string	colors_01_03,6,9
-	p_string	colors_01_04,6,10
-	p_string	colors_01_05,6,11
-	p_string	colors_01_06,6,12
-	p_string	colors_01_07,6,14
+	p_string	colors_01_01,6,9
+	p_string	colors_01_02,6,10
+	p_string	colors_01_03,6,11
+	p_string	colors_01_04,6,12
+	p_string	colors_01_05,6,13
+	p_string	colors_01_06,6,14
+	p_string	colors_01_07,6,16
 	rts
 
 colors_01_00:	.db	"COLORBARS (2/2)"
@@ -120,15 +121,16 @@ void display_dshadow_00()
 	p_string	dshadow_00_00,23,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	dshadow_00_01,6,7
-	p_string	dshadow_00_02,6,8
-	p_string	dshadow_00_03,6,9
-	p_string	dshadow_00_04,6,10
-	p_string	dshadow_00_05,6,11
-	p_string	dshadow_00_06,6,12
-	p_string	dshadow_00_07,6,13
-	p_string	dshadow_00_08,6,15
-	p_string	dshadow_00_09,6,16
+	p_string	dshadow_00_01,6,8
+	p_string	dshadow_00_02,6,9
+	p_string	dshadow_00_03,6,10
+	p_string	dshadow_00_04,6,11
+	p_string	dshadow_00_05,6,12
+	p_string	dshadow_00_06,6,13
+	p_string	dshadow_00_07,6,14
+	p_string	dshadow_00_08,6,16
+	p_string	dshadow_00_09,6,17
+	p_string	dshadow_00_10,6,18
 	rts
 
 dshadow_00_00:	.db	"DROP SHADOW TEST"
@@ -163,17 +165,12 @@ void display_gray_00()
 	p_string	gray_00_00,26,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	gray_00_01,6,7
-	p_string	gray_00_02,6,8
-	p_string	gray_00_03,6,10
-	p_string	gray_00_04,6,11
-	p_string	gray_00_05,6,12
-	p_string	gray_00_06,6,13
-	p_string	gray_00_07,6,15
-	p_string	gray_00_08,6,16
-	p_string	gray_00_09,6,17
-	p_string	gray_00_10,6,18
-	p_string	gray_00_11,6,19
+	p_string	gray_00_01,6,8
+	p_string	gray_00_02,6,9
+	p_string	gray_00_03,6,11
+	p_string	gray_00_04,6,12
+	p_string	gray_00_05,6,13
+	p_string	gray_00_06,6,14
 	rts
 
 gray_00_00:	.db	"GRAY RAMP"
@@ -190,18 +187,6 @@ gray_00_05:	.db	"individual color settings, or the tint control"
 			.db	0
 gray_00_06:	.db	"in NTSC displays."
 			.db	0
-gray_00_07:	.db	"In order to adjust white level, you need to use"
-			.db	0
-gray_00_08:	.db	"the contrast control of your TV set. Raise the"
-			.db	0
-gray_00_09:	.db	"contrast to the point where the white bars on the"
-			.db	0
-gray_00_10:	.db	"sides are undistinguishable from each other, and"
-			.db	0
-gray_00_11:	.db	"then lower it to the point where you can clearly"
-			.db	0
-gray_00_12:	.db	"identify both."
-			.db	0
 #endasm
 }
 
@@ -214,74 +199,43 @@ void display_grid_00()
 	call		_set_font_pal
 	p_string	grid_00_01,6,7
 	p_string	grid_00_02,6,8
-	p_string	grid_00_03,6,10
-	p_string	grid_00_04,6,11
+	p_string	grid_00_03,6,9
+	p_string	grid_00_04,6,10
 	p_string	grid_00_05,6,12
-	p_string	grid_00_06,6,14
-	p_string	grid_00_07,6,15
-	p_string	grid_00_08,6,17
-	p_string	grid_00_09,6,18
+	p_string	grid_00_06,6,13
+	p_string	grid_00_07,6,14
+	p_string	grid_00_08,6,15
+	p_string	grid_00_09,6,16
+	p_string	grid_00_10,6,17
+	p_string	grid_00_11,6,19
+	p_string	grid_00_12,6,20
 	rts
 
 grid_00_00:	.db	"GRID"
 			.db	0
-grid_00_01:	.db	"This grid uses a 320x240 pattern, and should fill"
+grid_00_01:	.db	"These grid tests change horizontal resolution"
 			.db	0
-grid_00_02:	.db	"all of the 4:3 visible area."
+grid_00_02:	.db	"between 256, 320 and 512. You can also vary the"
 			.db	0
-grid_00_03:	.db	"You can use it to verify that all the visible area"
+grid_00_03:	.db	"vertical resolution from the options menu. The"
 			.db	0
-grid_00_04:	.db	"is being displayed, and that there is no distortion"
+grid_00_04:	.db	"pattern should fill all of the 4:3 screen area."
 			.db	0
-grid_00_05:	.db	"present. Consumer TVs may not show the red squares."
+grid_00_05:	.db	"You can use it to verify that all the visible area"
 			.db	0
-grid_00_06:	.db	"The 240 test suite draws from line 22 onwards from"
+grid_00_06:	.db	"is being displayed, and that there is no distortion"
 			.db	0
-grid_00_07:	.db	"the blanking interval of NTSC signals"
+grid_00_07:	.db	"present. Consumer TVs may not show the red squares."
 			.db	0
-grid_00_08:	.db	"You can press button I to fill all the video signal"
+grid_00_08:	.db	"The area covered in the display with each resolution"
 			.db	0
-grid_00_09:	.db	"background area."
+grid_00_09:	.db	"might vary slighly, but the aspect ratio should be"
 			.db	0
-#endasm
-}
-
-
-void display_grid224_00()
-{
-#asm
-	p_string	grid224_00_00,26,5
-	__ldwi		14
-	call		_set_font_pal
-	p_string	grid224_00_01,6,7
-	p_string	grid224_00_02,6,8
-	p_string	grid224_00_03,6,9
-	p_string	grid224_00_04,6,10
-	p_string	grid224_00_05,6,12
-	p_string	grid224_00_06,6,13
-	p_string	grid224_00_07,6,14
-	p_string	grid224_00_08,6,16
-	rts
-
-grid224_00_00:	.db	"GRID 224p"
+grid_00_10:	.db	"kept."
 			.db	0
-grid224_00_01:	.db	"This grid uses a 320x224 pattern in a 224p signal."
+grid_00_11:	.db	"You can press button I to fill all the video signal"
 			.db	0
-grid224_00_02:	.db	"This vertical resolution is also used by other"
-			.db	0
-grid224_00_03:	.db	"consoles, such as the SNES, Sega Genesis and"
-			.db	0
-grid224_00_04:	.db	"Playstation."
-			.db	0
-grid224_00_05:	.db	"You can use it to verify that all the visible area"
-			.db	0
-grid224_00_06:	.db	"is being displayed, and that there is no distortion"
-			.db	0
-grid224_00_07:	.db	"present. Consumer TVs may not show the red squares."
-			.db	0
-grid224_00_08:	.db	"You can press button I to fill all the video signal"
-			.db	0
-grid224_00_09:	.db	"background area."
+grid_00_12:	.db	"background area."
 			.db	0
 #endasm
 }
@@ -293,14 +247,14 @@ void display_gridscroll_00()
 	p_string	gridscroll_00_00,23,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	gridscroll_00_01,6,7
-	p_string	gridscroll_00_02,6,8
-	p_string	gridscroll_00_03,6,9
-	p_string	gridscroll_00_04,6,10
-	p_string	gridscroll_00_05,6,12
-	p_string	gridscroll_00_06,6,13
-	p_string	gridscroll_00_07,6,14
-	p_string	gridscroll_00_08,6,15
+	p_string	gridscroll_00_01,6,8
+	p_string	gridscroll_00_02,6,9
+	p_string	gridscroll_00_03,6,10
+	p_string	gridscroll_00_04,6,11
+	p_string	gridscroll_00_05,6,13
+	p_string	gridscroll_00_06,6,14
+	p_string	gridscroll_00_07,6,15
+	p_string	gridscroll_00_08,6,16
 	rts
 
 gridscroll_00_00:	.db	"GRID SCROLL TEST"
@@ -331,11 +285,12 @@ void display_linearity_00()
 	p_string	linearity_00_00,26,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	linearity_00_01,6,7
-	p_string	linearity_00_02,6,8
-	p_string	linearity_00_03,6,10
-	p_string	linearity_00_04,6,11
-	p_string	linearity_00_05,6,12
+	p_string	linearity_00_01,6,8
+	p_string	linearity_00_02,6,9
+	p_string	linearity_00_03,6,11
+	p_string	linearity_00_04,6,12
+	p_string	linearity_00_05,6,13
+	p_string	linearity_00_06,6,14
 	rts
 
 linearity_00_00:	.db	"LINEARITY"
@@ -356,32 +311,36 @@ linearity_00_06:	.db	"directions."
 }
 
 
-void display_linearity224_00()
+void display_linearity256_00()
 {
 #asm
-	p_string	linearity224_00_00,22,5
+	p_string	linearity256_00_00,22,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	linearity224_00_01,6,7
-	p_string	linearity224_00_02,6,8
-	p_string	linearity224_00_03,6,10
-	p_string	linearity224_00_04,6,11
-	p_string	linearity224_00_05,6,12
+	p_string	linearity256_00_01,6,8
+	p_string	linearity256_00_02,6,9
+	p_string	linearity256_00_03,6,10
+	p_string	linearity256_00_04,6,12
+	p_string	linearity256_00_05,6,13
+	p_string	linearity256_00_06,6,14
+	p_string	linearity256_00_07,6,15
 	rts
 
-linearity224_00_00:	.db	"LINEARITY 224p"
+linearity256_00_00:	.db	"LINEARITY 256"
 			.db	0
-linearity224_00_01:	.db	"This pattern shows 5 circles, that are matched"
+linearity256_00_01:	.db	"This pattern shows 5 circles, that are matched"
 			.db	0
-linearity224_00_02:	.db	"to the 10:11 NTSC, but limited to a 320x224 mode."
+linearity256_00_02:	.db	"to the 10:11 NTSC, but using the 256 horizontal"
 			.db	0
-linearity224_00_03:	.db	"The linearity of the display or upscaler can be "
+linearity256_00_03:	.db	"resolution."
 			.db	0
-linearity224_00_04:	.db	"verified by measuring the diameter of the circles."
+linearity256_00_04:	.db	"The linearity of the display or upscaler can be "
 			.db	0
-linearity224_00_05:	.db	"Of course the linearity should be kept in all"
+linearity256_00_05:	.db	"verified by measuring the diameter of the circles."
 			.db	0
-linearity224_00_06:	.db	"directions."
+linearity256_00_06:	.db	"Of course the linearity should be kept in all"
+			.db	0
+linearity256_00_07:	.db	"directions, no distortion should be present."
 			.db	0
 #endasm
 }
@@ -437,9 +396,9 @@ manuallag_00_11:	.db	"calculate the average. Whenever the button was"
 			.db	0
 manuallag_00_12:	.db	"pressed before the actual intersection frame, the"
 			.db	0
-manuallag_00_13:	.db	"result will be ignored (but still shown onscreen)."
+manuallag_00_13:	.db	"result will be ignored (but still shown on screen)."
 			.db	0
-manuallag_00_14:	.db	"Button $X can be used to change the direction"
+manuallag_00_14:	.db	"SELECT can be used to change the direction"
 			.db	0
 manuallag_00_15:	.db	"of the sprite from vertical to horizontal, or"
 			.db	0
@@ -511,6 +470,7 @@ void display_options_00()
 	p_string	options_00_13,10,19
 	p_string	options_00_14,6,21
 	p_string	options_00_15,10,22
+	p_string	options_00_16,10,23
 	rts
 
 options_00_00:	.db	"OPTIONS (1/2)"
@@ -557,13 +517,16 @@ void display_overscan_00()
 	p_string	overscan_00_00,27,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	overscan_00_01,6,7
-	p_string	overscan_00_02,6,8
-	p_string	overscan_00_03,6,9
-	p_string	overscan_00_04,6,11
-	p_string	overscan_00_05,6,12
-	p_string	overscan_00_06,6,13
-	p_string	overscan_00_07,6,14
+	p_string	overscan_00_01,6,8
+	p_string	overscan_00_02,6,9
+	p_string	overscan_00_03,6,10
+	p_string	overscan_00_04,6,12
+	p_string	overscan_00_05,6,13
+	p_string	overscan_00_06,6,14
+	p_string	overscan_00_07,6,15
+	p_string	overscan_00_08,6,17
+	p_string	overscan_00_09,6,18
+	p_string	overscan_00_10,6,19
 	rts
 
 overscan_00_00:	.db	"OVERSCAN"
@@ -582,7 +545,13 @@ overscan_00_06:	.db	"The resulting number is the amount of overscan"
 			.db	0
 overscan_00_07:	.db	"in pixels in each direction."
 			.db	0
-overscan_00_08:	.db	"This pattern follows the current video options."
+overscan_00_08:	.db	"This pattern follows the current video options,"
+			.db	0
+overscan_00_09:	.db	"so you can check how it handles in 239, 240, and"
+			.db	0
+overscan_00_10:	.db	"224 modes. Keep in mind the horizontal resolution"
+			.db	0
+overscan_00_11:	.db	"is fixed at 256 pixels."
 			.db	0
 #endasm
 }
@@ -594,18 +563,18 @@ void display_pluge_00()
 	p_string	pluge_00_00,25,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	pluge_00_01,6,7
-	p_string	pluge_00_02,6,8
-	p_string	pluge_00_03,6,9
-	p_string	pluge_00_04,6,11
-	p_string	pluge_00_05,6,12
-	p_string	pluge_00_06,6,13
-	p_string	pluge_00_07,6,15
-	p_string	pluge_00_08,6,16
-	p_string	pluge_00_09,6,17
-	p_string	pluge_00_10,6,19
-	p_string	pluge_00_11,6,20
-	p_string	pluge_00_12,6,21
+	p_string	pluge_00_01,6,8
+	p_string	pluge_00_02,6,9
+	p_string	pluge_00_03,6,10
+	p_string	pluge_00_04,6,12
+	p_string	pluge_00_05,6,13
+	p_string	pluge_00_06,6,14
+	p_string	pluge_00_07,6,16
+	p_string	pluge_00_08,6,17
+	p_string	pluge_00_09,6,18
+	p_string	pluge_00_10,6,20
+	p_string	pluge_00_11,6,21
+	p_string	pluge_00_12,6,22
 	rts
 
 pluge_00_00:	.db	"PLUGE (1/2)"
@@ -628,9 +597,9 @@ pluge_00_08:	.db	"to be black is actually black, and allows all"
 			.db	0
 pluge_00_09:	.db	"detail to be seen on dark scenes."
 			.db	0
-pluge_00_10:	.db	"The button I changes the inner bars between gray"
+pluge_00_10:	.db	"Button I changes the inner bars between gray and"
 			.db	0
-pluge_00_11:	.db	"and the lowest R,G,B values, which are lower in"
+pluge_00_11:	.db	"the lowest R,G,B values, which are lower in"
 			.db	0
 pluge_00_12:	.db	"luminance in order not to crush detail."
 			.db	0
@@ -644,12 +613,13 @@ void display_pluge_01()
 	p_string	pluge_01_00,25,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	pluge_01_01,6,6
-	p_string	pluge_01_02,6,7
-	p_string	pluge_01_03,6,8
-	p_string	pluge_01_04,6,9
-	p_string	pluge_01_05,6,11
-	p_string	pluge_01_06,6,12
+	p_string	pluge_01_01,6,8
+	p_string	pluge_01_02,6,9
+	p_string	pluge_01_03,6,10
+	p_string	pluge_01_04,6,11
+	p_string	pluge_01_05,6,13
+	p_string	pluge_01_06,6,14
+	p_string	pluge_01_07,6,15
 	rts
 
 pluge_01_00:	.db	"PLUGE (2/2)"
@@ -678,13 +648,14 @@ void display_scroll_00()
 	p_string	scroll_00_00,26,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	scroll_00_01,6,7
-	p_string	scroll_00_02,6,8
-	p_string	scroll_00_03,6,9
-	p_string	scroll_00_04,6,10
-	p_string	scroll_00_05,6,12
-	p_string	scroll_00_06,6,13
-	p_string	scroll_00_07,6,15
+	p_string	scroll_00_01,6,8
+	p_string	scroll_00_02,6,9
+	p_string	scroll_00_03,6,10
+	p_string	scroll_00_04,6,11
+	p_string	scroll_00_05,6,13
+	p_string	scroll_00_06,6,14
+	p_string	scroll_00_07,6,16
+	p_string	scroll_00_08,6,17
 	rts
 
 scroll_00_00:	.db	"SCROLL TEST"
@@ -715,13 +686,14 @@ void display_sharpness_00()
 	p_string	sharpness_00_00,26,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	sharpness_00_01,6,7
-	p_string	sharpness_00_02,6,8
-	p_string	sharpness_00_03,6,9
-	p_string	sharpness_00_04,6,11
-	p_string	sharpness_00_05,6,12
-	p_string	sharpness_00_06,6,13
-	p_string	sharpness_00_07,6,15
+	p_string	sharpness_00_01,6,8
+	p_string	sharpness_00_02,6,9
+	p_string	sharpness_00_03,6,10
+	p_string	sharpness_00_04,6,12
+	p_string	sharpness_00_05,6,13
+	p_string	sharpness_00_06,6,14
+	p_string	sharpness_00_07,6,16
+	p_string	sharpness_00_08,6,17
 	rts
 
 sharpness_00_00:	.db	"SHARPNESS"
@@ -752,10 +724,11 @@ void display_SMPTEColor_00()
 	p_string	SMPTEColor_00_00,22,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	SMPTEColor_00_01,6,7
-	p_string	SMPTEColor_00_02,6,8
-	p_string	SMPTEColor_00_03,6,9
-	p_string	SMPTEColor_00_04,6,11
+	p_string	SMPTEColor_00_01,6,9
+	p_string	SMPTEColor_00_02,6,10
+	p_string	SMPTEColor_00_03,6,11
+	p_string	SMPTEColor_00_04,6,13
+	p_string	SMPTEColor_00_05,6,14
 	rts
 
 SMPTEColor_00_00:	.db	"SMPTE COLOR BARS"
@@ -780,10 +753,10 @@ void display_sound_00()
 	p_string	sound_00_00,28,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	sound_00_01,6,7
-	p_string	sound_00_02,6,8
-	p_string	sound_00_03,6,10
-	p_string	sound_00_04,6,11
+	p_string	sound_00_01,6,9
+	p_string	sound_00_02,6,10
+	p_string	sound_00_03,6,12
+	p_string	sound_00_04,6,13
 	rts
 
 sound_00_00:	.db	"SOUND"
@@ -806,12 +779,12 @@ void display_striped_00()
 	p_string	striped_00_00,21,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	striped_00_01,6,7
-	p_string	striped_00_02,6,8
-	p_string	striped_00_03,6,9
-	p_string	striped_00_04,6,10
-	p_string	striped_00_05,6,11
-	p_string	striped_00_06,6,13
+	p_string	striped_00_01,6,8
+	p_string	striped_00_02,6,9
+	p_string	striped_00_03,6,10
+	p_string	striped_00_04,6,11
+	p_string	striped_00_05,6,12
+	p_string	striped_00_06,6,14
 	rts
 
 striped_00_00:	.db	"STRIPED SPRITE TEST"
@@ -838,15 +811,16 @@ void display_white_00()
 	p_string	white_00_00,24,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	white_00_01,6,7
-	p_string	white_00_02,6,8
-	p_string	white_00_03,6,9
-	p_string	white_00_04,6,11
-	p_string	white_00_05,6,12
-	p_string	white_00_06,6,13
-	p_string	white_00_07,6,15
-	p_string	white_00_08,6,16
-	p_string	white_00_09,6,18
+	p_string	white_00_01,6,8
+	p_string	white_00_02,6,9
+	p_string	white_00_03,6,10
+	p_string	white_00_04,6,12
+	p_string	white_00_05,6,13
+	p_string	white_00_06,6,14
+	p_string	white_00_07,6,16
+	p_string	white_00_08,6,17
+	p_string	white_00_09,6,19
+	p_string	white_00_10,6,20
 	rts
 
 white_00_00:	.db	"WHITE SCREEN"
