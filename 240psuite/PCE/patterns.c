@@ -107,11 +107,8 @@ void main()
 
         controller = joytrg(0);
 		
-		if (controller & JOY_RUN)
-		{
-			showHelp(GENERAL_HELP);
-			redraw = 1;
-		}
+		if (controller & JOY_II)
+			end = 1;
 		
 		if (controller & JOY_SEL)
 		{
@@ -134,10 +131,6 @@ void main()
                 sel = 15;
             refresh = 1;
         }
-		
-				
-		if (controller & JOY_II)
-			end = 1;
 		
 		if (controller & JOY_I)
 		{

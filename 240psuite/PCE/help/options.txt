@@ -1,20 +1,20 @@
                      OPTIONS
 
 Vertical resolution: This system can display either
-240p or 224 video. Although the system is capable of
-displaying all the 240 vertical lines, games tend to
-use only 239 active lines for unkown reasons.
+240p or 224 video. Although capable of displaying
+all the 240 vertical lines, games tend to use only
+239 active lines for unknown reasons.
 
 The suite uses the full 240 mode by default, but you
 can enable the one games use by selecting to start at
 line 24 instead of 22. This will clip the last line
 in patterns, but show the real area used by games.
 
-Composite Filter: When in this mode, the system
-outputs an extra video line, and uses filtering to
-enhance the composite video signal. This extra line
-is a result of the filer, and not a complement to the
-239 visible lines. (signal ends at line 262)
+Composite Filter: The system outputs an extra video
+line (266) and creates a comb filter with every other
+frame to reduce artifacts in the composite signal.
+This extra line is at the contains no data; but since
+the video is taller, CRTs shift vertically.
 
 Composite B&W: This option works only in composite.
 It disables the NTSC color burst, eliminating color.

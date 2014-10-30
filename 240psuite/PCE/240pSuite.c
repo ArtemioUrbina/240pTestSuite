@@ -48,24 +48,23 @@ void main()
 	redraw = 1;
 	refresh = 1;
 	
-	if(!global_init)
-	{
-		xres_flags = XRES_SOFT;
-		Enabled240p = 1;
-		UseDefault = 0;
-		EnabledSoft = 1;
-		Enabled_C_BW = 0;
-		global_init = 1;
-	}
-#ifdef CDROM1
-	else
-	{
-		xres_flags = xres_flags_g;
-		Enabled240p = Enabled240p_g;
-		UseDefault = UseDefault_g;
-		EnabledSoft = EnabledSoft_g;
-		Enabled_C_BW = Enabled_C_BW_g;
-	}
+
+#ifndef CDROM1
+#ifndef SCDROM	
+	xres_flags = XRES_SOFT;
+	Enabled240p = 1;
+	UseDefault = 0;
+	EnabledSoft = 1;
+	Enabled_C_BW = 0;
+#endif
+#endif
+
+#ifdef CDROM1 || SCDROM
+	xres_flags = xres_flags_g;
+	Enabled240p = Enabled240p_g;
+	UseDefault = UseDefault_g;
+	EnabledSoft = EnabledSoft_g;
+	Enabled_C_BW = Enabled_C_BW_g;
 #endif
 
 	disp_off();

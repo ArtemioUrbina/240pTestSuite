@@ -62,6 +62,13 @@ void main()
 	
 	cls();
 	vsync();
+	
+	xres_flags = XRES_SOFT;
+	Enabled240p = 1;
+	UseDefault = 0;
+	EnabledSoft = 1;
+	Enabled_C_BW = 0;
+	
 #ifndef CDROM1
 	SetFontColors(14, 0, RGB(4, 4, 4), 0);
 	put_string("Loading...", 28, 26);
