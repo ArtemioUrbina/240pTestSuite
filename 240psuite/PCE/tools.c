@@ -143,7 +143,6 @@ void Options()
 			refresh = 1;
             redraw = 0;
 			disp_on();
-			set_xres(512, xres_flags);
         }
 		
 		if(refresh)
@@ -206,6 +205,8 @@ void RedrawOptions()
 	SetFontColors(12, RGB(3, 3, 3), RGB(4, 4, 4), 0);
 	SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), 0);
 	SetFontColors(11, RGB(3, 3, 3), RGB(0, 6, 0), 0);
+	
+	set_xres(512, xres_flags);
 #ifndef CDROM1
 	set_map_data(MB512_map, 64, 30);
 	set_tile_data(MB512_bg);
@@ -213,6 +214,7 @@ void RedrawOptions()
 	load_map(0, 0, 0, 0, 64, 30);
 	load_palette(0, MB512_pal, 1);  
 #else
+	gfx_clear(0x1000);
 	set_screen_size(SCR_SIZE_64x32); 
 	cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
 	cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);

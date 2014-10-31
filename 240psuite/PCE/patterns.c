@@ -355,9 +355,7 @@ void DrawColor()
 #ifndef CDROM1	
 			load_background(color_bg, color_pal, color_map, 40, 30);
 #else
-			set_screen_size(SCR_SIZE_64x32); 
-			//cd_loadvram(GPHX_OVERLAY, OFS_color_DATA_bin, 0x1000, SIZE_color_DATA_bin);
-			//cd_loadvram(GPHX_OVERLAY, OFS_color_BAT_bin, 0, SIZE_color_BAT_bin);
+
 #endif
 			Center224in240();
             redraw = 0;
@@ -398,6 +396,11 @@ void DrawCB601()
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, cb601_pal, 1);  
 #else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(GPHX_OVERLAY, OFS_cb601_BAT_bin, 0x0000, SIZE_cb601_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_cb601_DATA_bin, 0x1000, SIZE_cb601_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_cb601_PAL_bin, palCD, OFS_cb601_PAL_bin); 
+			set_bgpal(0, palCD, 1); 
 #endif
 			Center224in240();
 			
@@ -442,6 +445,15 @@ void DrawColorBleed()
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, colorbleed_pal, 1);  
 #else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(GPHX_OVERLAY, OFS_colorbleed_BAT_bin, 0x0000, SIZE_colorbleed_BAT_bin);
+			if(check)
+				cd_loadvram(GPHX_OVERLAY, OFS_colorbldchk_DATA_bin, 0x1000, SIZE_colorbleed_DATA_bin);
+			else
+				cd_loadvram(GPHX_OVERLAY, OFS_colorbleed_DATA_bin, 0x1000, SIZE_colorbleed_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_colorbleed_DATA_bin, 0x1000, SIZE_colorbleed_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_colorbleed_PAL_bin, palCD, SIZE_colorbleed_PAL_bin); 
+			set_bgpal(0, palCD);
 #endif
 			Center224in240();
 			
@@ -467,6 +479,7 @@ void DrawColorBleed()
 				set_tile_data(colorbleed_bg);
 				load_tile(0x1000);
 #else
+				cd_loadvram(GPHX_OVERLAY, OFS_colorbleed_DATA_bin, 0x1000, SIZE_colorbleed_DATA_bin);
 #endif
 				check = 0;
 			}
@@ -476,6 +489,7 @@ void DrawColorBleed()
 				set_tile_data(colorbleedchk_bg);
 				load_tile(0x1000);
 #else
+				cd_loadvram(GPHX_OVERLAY, OFS_colorbldchk_DATA_bin, 0x1000, SIZE_colorbleed_DATA_bin);
 #endif
 				check = 1;
 			}
@@ -509,6 +523,14 @@ void DrawSMPTE()
 			else
 				load_palette(0, SMPTE75_pal, 1);
 #else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(GPHX_OVERLAY, OFS_SMPTE75_BAT_bin, 0x0000, SIZE_SMPTE75_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_SMPTE75_DATA_bin, 0x1000, SIZE_SMPTE75_DATA_bin);
+			if(is100)
+				cd_loaddata(GPHX_OVERLAY, OFS_SMPTE100_PAL_bin, palCD, SIZE_SMPTE100_PAL_bin); 
+			else
+				cd_loaddata(GPHX_OVERLAY, OFS_SMPTE75_PAL_bin, palCD, SIZE_SMPTE75_PAL_bin); 
+			set_bgpal(0, palCD, 1); 
 #endif
 			Center224in240();  
 			
@@ -533,6 +555,8 @@ void DrawSMPTE()
 #ifndef CDROM1
 				load_palette(0, SMPTE75_pal, 1);  
 #else
+				cd_loaddata(GPHX_OVERLAY, OFS_SMPTE75_PAL_bin, palCD, SIZE_SMPTE75_PAL_bin); 
+				set_bgpal(0, palCD, 1); 
 #endif
 				is100 = 0;
 				put_string(" 75%", 30, 2);
@@ -543,6 +567,8 @@ void DrawSMPTE()
 #ifndef CDROM1
 				load_palette(0, SMPTE100_pal, 1);  
 #else
+				cd_loaddata(GPHX_OVERLAY, OFS_SMPTE100_PAL_bin, palCD, SIZE_SMPTE100_PAL_bin); 
+				set_bgpal(0, palCD, 1); 
 #endif
 				is100 = 1;
 				put_string("100%", 30, 2);
@@ -559,6 +585,7 @@ void DrawSMPTE()
 				set_map_data(SMPTE75_map, 40, 3);
 				load_map(0, 0, 0, 0, 40, 3);
 #else
+				cd_loadvram(GPHX_OVERLAY, OFS_SMPTE75_BAT_bin, 0x0000, SIZE_SMPTE75_BAT_bin);
 #endif
 			}
 		}
@@ -613,6 +640,12 @@ void DrawGrid(char type)
 			
 			load_palette(0, grid_pal, 1);  
 #else
+			gfx_clear(0x1000);
+			set_screen_size(SCR_SIZE_32x32); 
+			cd_loadvram(GPHX_OVERLAY, OFS_grid256_240_BAT_bin, 0x0000, SIZE_grid256_240_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_grid256_240_DATA_bin, 0x1000, SIZE_grid256_240_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_grid256_240_PAL_bin, palCD, SIZE_grid256_240_PAL_bin); 
+			set_bgpal(0, palCD); 
 #endif
          
             redraw = 0;
@@ -960,6 +993,11 @@ void DrawSharpness()
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, sharpness_pal, 1);  
 #else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loadvram(GPHX_OVERLAY, OFS_sharpness_BAT_bin, 0x0000, SIZE_sharpness_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_sharpness_DATA_bin, 0x1000, SIZE_sharpness_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_sharpness_PAL_bin, palCD, SIZE_sharpness_PAL_bin); 
+			set_bgpal(0, palCD);
 #endif
 			Center224in240();
 
@@ -1389,6 +1427,7 @@ void Draw100IRE()
 				set_map_data(ire100_map, 40, 30);
 				load_map(0, 0, 0, 0, 40, 30);
 #else
+				cd_loadvram(GPHX_OVERLAY, OFS_100IRE_BAT_bin, 0x0000, SIZE_100IRE_BAT_bin);
 #endif
 			}
 		}
@@ -1426,6 +1465,11 @@ void Redraw100IRE(unsigned char mode, unsigned char color)
 	load_tile(0x1000);
 	load_map(0, 0, 0, 0, 40, 30);	
 #else
+	set_screen_size(SCR_SIZE_64x32); 
+	cd_loadvram(GPHX_OVERLAY, OFS_100IRE_BAT_bin, 0x0000, SIZE_100IRE_BAT_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_100IRE_DATA_bin, 0x1000, SIZE_100IRE_DATA_bin);
+	cd_loaddata(GPHX_OVERLAY, OFS_100IRE_PAL_bin, palCD, SIZE_100IRE_PAL_bin); 
+	set_bgpal(0, palCD); 
 #endif
 	Center224in240();
 }

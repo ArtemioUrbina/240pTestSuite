@@ -14,12 +14,12 @@ del gdata.*
 cd cdrom_bin
 
 grep "\.incspr" 240pSuite.s | grep -v "include" | sed 's/graphics/..\/graphics/g'> data.s 
-pceas -raw -scd -overlay data.s
-copy ..\graphics\*.bin .
+pceas -raw -cd -overlay data.s
+copy src\*.bin .
 pcecdpak 0 gdata.bin gdata.h *.bin
 
 move gdata.* ..
-@REM del *.bin
+del *.bin
 del *.ovl
 del *.s
 del *.sym

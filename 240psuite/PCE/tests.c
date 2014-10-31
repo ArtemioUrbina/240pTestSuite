@@ -268,6 +268,7 @@ void DropShadow()
 #ifndef CDROM1
 					load_bat(0, motoko_map, 40, 3);
 #else
+					cd_loadvram(GPHX_OVERLAY, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
 #endif
 					break;
 				case 1:
@@ -398,13 +399,16 @@ void RedrawDropShadow(unsigned char back, int x, int y)
 {
 	switch(back)
 	{
-		case 0:
+ 		case 0:
 #ifndef CDROM1
 			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(GPHX_OVERLAY, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_motoko_PAL_bin, palCD, 32); 
+			set_bgpal(0, palCD, 16); 
+
 #endif
 			break;
 		case 1:
@@ -420,6 +424,8 @@ void RedrawDropShadow(unsigned char back, int x, int y)
 			set_screen_size(SCR_SIZE_64x32); 
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, OFS_sonic_PAL_bin); 
+			set_bgpal(0, palCD, 16); 
 #endif
 			break;
 		case 2:
@@ -450,9 +456,10 @@ void RedrawDropShadow(unsigned char back, int x, int y)
 	set_color_rgb(241, 0, 0, 0); 
 #ifndef CDROM1		
 	load_vram(0x6000, shadow_sp, 0x100);
-	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
 #else
+	cd_loadvram(GPHX_OVERLAY, OFS_shadow_tile_bin, 0x6000, SIZE_shadow_tile_bin);
 #endif
+	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
 	if(back == 1)
 		DrawPalm();
 	satb_update();
@@ -580,6 +587,8 @@ void RefreshStriped(char back)
 			set_screen_size(SCR_SIZE_64x32); 
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, OFS_sonic_PAL_bin); 
+			set_bgpal(0, palCD, 16); 
 #endif
 			break;
 		case 2:
@@ -609,9 +618,10 @@ void RefreshStriped(char back)
 	set_color_rgb(241, 0, 0, 0);
 #ifndef CDROM1		 
 	load_vram(0x6000, striped_sp, 0x100);
-	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
 #else
+	cd_loadvram(GPHX_OVERLAY, OFS_striped_tile_bin, 0x6000, SIZE_striped_tile_bin);
 #endif
+	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
 	if(back == 1)
 		DrawPalm();
 	satb_update();
@@ -645,10 +655,11 @@ void DrawPalm()
 	int pos = 0;
 	unsigned char count = 0;
 	
-#ifndef CDROM1
 	load_palette(16, palm_pal, 1);
+#ifndef CDROM1
 	load_vram(vram, palm_sp, 0x8C0);
 #else
+	cd_loadvram(GPHX_OVERLAY, OFS_palm_tile_bin, 0x5000, SIZE_palm_tile_bin);
 #endif
 
 	x2 = 500;
@@ -715,9 +726,10 @@ void ScrollTest()
 #ifndef CDROM1
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, OFS_sonic_PAL_bin); 
+			set_bgpal(0, palCD, 16); 
 #endif
 			
 			init_satb();
@@ -840,9 +852,10 @@ void LEDZoneTest()
 			set_color_rgb(257, 7, 7, 7); 
 #ifndef CDROM1		
 			load_vram(0x5000, LED_sp, 0x100);
-			spr_make(0, x, y, 0x5000+0x40*sel, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
 #else
+			cd_loadvram(GPHX_OVERLAY, OFS_LEDsprites_tile_bin, 0x5000, SIZE_LEDsprites_tile_bin);
 #endif
+			spr_make(0, x, y, 0x5000+0x40*sel, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
 			satb_update();
 			refresh = 0;
 		}
@@ -1022,6 +1035,11 @@ void LagTest()
 			load_map(0, 0, 0, 0, 32, 30);
 			load_palette(0, lagback_pal, 1); 
 #else
+			set_screen_size(SCR_SIZE_32x32); 
+			cd_loadvram(GPHX_OVERLAY, OFS_lagback_BAT_bin, 0x0000, SIZE_lagback_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_lagback_DATA_bin, 0x1000, SIZE_lagback_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_lagback_PAL_bin, palCD, SIZE_lagback_PAL_bin); 
+			set_bgpal(0, palCD);
 #endif
 			put_string("hours", 1, 3);
 			put_string("minutes", 9, 3);

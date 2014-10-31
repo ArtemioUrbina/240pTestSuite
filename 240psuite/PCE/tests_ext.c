@@ -366,11 +366,13 @@ void ManualLagTestSprites()
 
 #ifndef CDROM1		
 	load_vram(0x5000, lagspr_sp, 0x100);
+#else
+	cd_loadvram(GPHX_OVERLAY, OFS_lagspr_tile_bin, 0x5000, SIZE_lagspr_tile_bin);
+#endif
 	spr_make(0, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
 	spr_make(1, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
 	spr_make(2, x, 96, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 2);
-#else
-#endif
+	
 	satb_update();
 }
 
