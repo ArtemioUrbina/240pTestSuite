@@ -64,12 +64,20 @@ int right;
 unsigned char previous;
 unsigned char screen;
 
+#ifdef CDROM1
+#include "graphics.h"
+#endif
 
 void ResetVideo()
 {
 #ifdef CDROM1
-	gfx_clear(0x1000);
+	set_map_data(fs_map, 40, 30);
+	set_tile_data(white_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 40, 30);
+	set_color_rgb(1, 0, 0, 0); 
 #endif
+
 	cls();
 
 	init_satb();

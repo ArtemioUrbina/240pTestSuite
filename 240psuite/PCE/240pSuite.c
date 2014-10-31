@@ -84,6 +84,11 @@ void main()
     {   	
 		vsync();
 	
+#ifdef CDROM1
+		if(!HelpItem)
+		{
+#endif
+
         if(redraw)
         {
 			RedrawMain();
@@ -105,6 +110,9 @@ void main()
 		
 		if (controller & JOY_SEL)
 		{
+#ifdef CDROM1
+			x_g = 0;
+#endif
 			Options();
 			redraw = 1;
 		}
@@ -130,6 +138,19 @@ void main()
 			showHelp(GENERAL_HELP);
 			redraw = 1;
 		}
+#ifdef CDROM1
+		}
+		else
+		{
+			if(HelpItem <= SOUND_HELP)
+			{
+				sel = HelpItem;
+				controller = JOY_I;
+			}
+				
+			HelpItem = 0;
+		}
+#endif
 		
 		if (controller & JOY_I)
 		{
@@ -186,6 +207,9 @@ void main()
 					Options();
 					break;
 				case 12:
+#ifdef CDROM1
+					prev_select = sel;
+#endif
 					showHelp(GENERAL_HELP);
 					break;
 				case 13:

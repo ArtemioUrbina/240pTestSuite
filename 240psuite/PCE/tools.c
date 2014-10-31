@@ -34,6 +34,8 @@ extern unsigned char Enabled240p;
 extern unsigned char UseDefault;
 extern unsigned char EnabledSoft;
 extern unsigned char Enabled_C_BW;
+
+extern int x_g;
 #endif
 
 #define HPOS 5
@@ -161,6 +163,11 @@ void Options()
 
 		if (controller & JOY_RUN)
 		{
+#ifdef CDROM1
+			if(x_g)
+				showHelp(OPTIONS_HELP2);
+			else
+#endif
 			showHelp(OPTIONS_HELP);
 			redraw = 1;
 		}
