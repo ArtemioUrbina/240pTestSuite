@@ -49,19 +49,19 @@ void main()
 	refresh = 1;
 	
 
-#ifndef CDROM1
-#ifndef SCDROM	
+#ifndef CDROM
 	xres_flags = XRES_SOFT;
 	Enabled240p = 1;
 	UseDefault = 0;
 	EnabledSoft = 1;
 	Enabled_C_BW = 0;
 #endif
+
+#ifdef CDROM
+	RestoreGlobals();
 #endif
 
-#ifdef CDROM1 || SCDROM
-	RestoreGlobals();
-	
+#ifdef CDROM1	
 	if(prev_select)
 	{
 		sel = prev_select;
@@ -74,12 +74,10 @@ void main()
 	if(Enabled240p)
 		Set240p();
 
-#ifndef CDROM1
-#ifndef SCDROM
+#ifndef CDROM
 	disp_on();
 	DrawIntro();
 	disp_off();
-#endif
 #endif
 
     while(1)
@@ -434,7 +432,7 @@ void RefreshCredits()
 
 	set_font_pal(14);	
 	put_string("Ver. 1.00", 50, 7);
-	put_string("29/10/2014", 49, 8);
+	put_string("31/10/2014", 49, 8);
 }
 
 #ifndef CDROM1

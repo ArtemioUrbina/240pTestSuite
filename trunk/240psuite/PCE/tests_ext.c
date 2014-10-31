@@ -44,11 +44,7 @@ extern unsigned char Enabled_C_BW;
 #ifdef CDROM1
 void main()
 {
-	xres_flags = xres_flags_g;
-	Enabled240p = Enabled240p_g;
-	UseDefault = UseDefault_g;
-	EnabledSoft = EnabledSoft_g;
-	Enabled_C_BW = Enabled_C_BW_g;
+	RestoreGlobals();
 	
 	switch(ToolItem)
 	{

@@ -1167,6 +1167,9 @@ void DrawOverscan()
 		
 		if (controller & JOY_RUN)
 		{
+#ifdef CDROM
+			RedrawWhite();
+#endif
 			showHelp(OVERSCAN_HELP);
 			redraw = 1;
 		}
@@ -1261,7 +1264,7 @@ void DrawOverscan()
 			draw = 1;
 		}
     }
-#ifdef CDROM1
+#ifdef CDROM
 	RedrawWhite();
 #endif
 }

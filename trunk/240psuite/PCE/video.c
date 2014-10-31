@@ -64,6 +64,41 @@ int right;
 unsigned char previous;
 unsigned char screen;
 
+
+void ResetVideo()
+{
+#ifdef CDROM1
+	gfx_clear(0x1000);
+#endif
+	cls();
+
+	init_satb();
+	satb_update();
+			
+	ResetScroll();
+	set_xres(320, xres_flags);
+	set_screen_size(SCR_SIZE_64x32);
+}
+
+void ResetScroll()
+{
+	scroll(0, 0, 0, 0, 240, 0xC0);
+	scroll(1, 0, 0, 0, 240, 0xC0);
+	scroll(2, 0, 0, 0, 240, 0xC0);
+	scroll(3, 0, 0, 0, 240, 0xC0);
+}
+
+
+void Center224in240()
+{
+	if(!Enabled240p)
+		scroll(0, 0, 8, 0, 240, 0xC0);
+}
+
+
+
+#ifndef HELP_OVL
+
 void Set224p()
 {
 	Enabled240p = 0;
@@ -140,35 +175,6 @@ void Set240p()
 	
 	rts
 #endasm	
-}
-
-void Center224in240()
-{
-	if(!Enabled240p)
-		scroll(0, 0, 8, 0, 240, 0xC0);
-}
-
-void ResetVideo()
-{
-#ifdef CDROM1
-	gfx_clear(0x1000);
-#endif
-	cls();
-
-	init_satb();
-	satb_update();
-			
-	ResetScroll();
-	set_xres(320, xres_flags);
-	set_screen_size(SCR_SIZE_64x32);
-}
-
-void ResetScroll()
-{
-	scroll(0, 0, 0, 0, 240, 0xC0);
-	scroll(1, 0, 0, 0, 240, 0xC0);
-	scroll(2, 0, 0, 0, 240, 0xC0);
-	scroll(3, 0, 0, 0, 240, 0xC0);
 }
 
 /*
@@ -295,7 +301,9 @@ void spr_make(int spriteno, int spritex, int spritey, int spritepattern, int ctr
 	spr_pri(sprpri);
 }
 
-#ifdef CDROM1 || SCDROM
+#endif // HELP_OVL
+
+#ifdef CDROM
 
 extern int xres_flags_g;
 extern unsigned char Enabled240p_g;

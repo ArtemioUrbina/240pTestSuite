@@ -38,6 +38,7 @@ extern unsigned char Enabled_C_BW;
 
 #define HPOS 5
  
+#ifndef HELP_OVL
 void DrawSP()
 {
 	int pos = 0;
@@ -47,7 +48,7 @@ void DrawSP()
 	y2 = 84;	
 	
 	load_palette(16, SD_pal, 1);
-#ifndef CDROM1		
+#ifndef CDROM1
 	load_vram(0x5000, SD_sp, 0x700);
 #else
 	cd_loadvram(GPHX_OVERLAY, OFS_SD_tile_bin, 0x5000, SIZE_SD_tile_bin);
@@ -62,6 +63,7 @@ void DrawSP()
 		}
 	}
 }
+#endif
 
 unsigned char region;
 unsigned char *io;
@@ -91,6 +93,7 @@ char DetectCDROM()
 		return 0;
 }
 
+#ifndef HELP_OVL
 void DisplaySystemInfo()
 {
 	SetFontColors(13, RGB(2, 4, 7), RGB(7, 7, 7), RGB(1, 3, 7));
@@ -347,3 +350,4 @@ int ExecuteOptions(int sel)
 	return val;
 }
 
+#endif
