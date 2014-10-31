@@ -32,20 +32,33 @@
 #include "graphics.h"
 #endif
 
-#ifdef CDROM1
+#ifdef CDROM1 || HELP_OVL
 #include "gdata.h"
 extern char palCD[];
 #endif
 
 #ifndef CDROM1
-
+#ifndef HELP_OVL
 void showHelp(char data)
+#else
+#include "gdata.h"
+#incchr(my_font, "graphics/font.pcx", 32, 3);
+char palCD[512];
+
+void main()
+#endif
 {
 	unsigned char end = 0;
 	unsigned char page = 1;
 	unsigned char total = 1;
 	unsigned char count = 1;
 
+#ifdef HELP_OVL
+	char data;
+	
+	RestoreGlobals();
+	data = HelpItem;
+#endif
 	redraw = 1;
 	refresh = 1;
     while(!end)
@@ -59,10 +72,18 @@ void showHelp(char data)
 			
 			SetFontColors(13, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 			SetFontColors(15, RGB(2, 2, 2), RGB(0, 6, 0), 0);
-		
+
+#ifndef HELP_OVL
 			set_tile_data(MB512_bg);
 			load_tile(0x1000);
 			load_palette(0, MB512_pal, 1);  
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
+			set_bgpal(0, palCD); 
+			cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+#endif
 			
 			Center224in240();
 			
@@ -74,8 +95,12 @@ void showHelp(char data)
 		
 		if(refresh)
 		{
+#ifndef HELP_OVL
 			set_map_data(MB512_map, 64, 30);
 			load_map(0, 0, 0, 0, 64, 30);
+#else
+			cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+#endif
 		
 			set_font_pal(15);
 			switch(data)
@@ -205,21 +230,19 @@ void showHelp(char data)
     }	
 	disp_off();
 	read = controller = 0;
+#ifdef HELP_OVL
+	cd_execoverlay(MAIN_OVERLAY);
+#endif
 }
 
 #else
 
+extern int HelpItem;
+
 void showHelp(char data)
 {
-	/*
-	cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
-	cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
-	load_palette(0, palCD, 1); 
-
-	set_screen_size(SCR_SIZE_64x32); 
-	cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
-	*/
-	return;
+	HelpItem = data;
+	cd_execoverlay(HELP_OVERLAY);
 }
 
 #endif
