@@ -60,11 +60,7 @@ void main()
 #endif
 
 #ifdef CDROM1 || SCDROM
-	xres_flags = xres_flags_g;
-	Enabled240p = Enabled240p_g;
-	UseDefault = UseDefault_g;
-	EnabledSoft = EnabledSoft_g;
-	Enabled_C_BW = Enabled_C_BW_g;
+	RestoreGlobals();
 #endif
 
 	disp_off();
@@ -210,12 +206,11 @@ void RedrawMain()
 	set_map_data(MB_map, 40, 30);
 	load_map(0, 0, 0, 0, 40, 30);	
 #else
-	gfx_clear(0x1000);
 	set_screen_size(SCR_SIZE_64x32); 
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
 	cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
-	set_bgpal(0, palCD); 
+	load_palette(0, palCD, 1); 
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
 #endif
    
 	init_satb();
@@ -290,18 +285,19 @@ void DrawN()
 		end = 1;
         if(redraw)
         {
-			cls();
+			ResetVideo();
 			set_xres(256, xres_flags);
 			scroll(0, 0, -32, 0, 240, 0xC0);
 #ifndef CDROM1
 			load_background(n_bg, n_pal, n_map, 32, 22);
 #else
-			gfx_clear(0x1000);
 			set_screen_size(SCR_SIZE_32x32); 
-			cd_loadvram(GPHX_OVERLAY, OFS_N_BAT_bin, 0, SIZE_N_BAT_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_N_PAL_bin, palCD, SIZE_N_PAL_bin); 
+			load_palette(0, palCD, 16); 
 			cd_loadvram(GPHX_OVERLAY, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
-			cd_loaddata(GPHX_OVERLAY, OFS_N_PAL_bin, palCD, OFS_N_PAL_bin); 
-			set_bgpal(0, palCD, 16); 
+			cd_loadvram(GPHX_OVERLAY, OFS_N_BAT_bin, 0, SIZE_N_BAT_bin);
+			// Why these get zapped to 0 when in CDROM1...
+			RestoreGlobals();
 #endif
             redraw = 0;
 			disp_on();
@@ -342,13 +338,12 @@ void DrawCredits()
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 64, 30);
 			load_palette(0, MB512_pal, 1);  
-#else
-			gfx_clear(0x1000);
+#else		
 			set_screen_size(SCR_SIZE_64x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
-			set_bgpal(0, palCD); 
-			cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+			load_palette(0, palCD, 1);
 			cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);			
+			cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
 #endif
 			
 			Center224in240();

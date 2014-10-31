@@ -214,7 +214,7 @@ void showHelp(char data)
 	/*
 	cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
 	cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
-	set_bgpal(0, palCD); 
+	load_palette(0, palCD, 1); 
 
 	set_screen_size(SCR_SIZE_64x32); 
 	cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);

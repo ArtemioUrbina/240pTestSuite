@@ -143,6 +143,9 @@ void Center224in240()
 void ResetVideo()
 {
 	cls();
+#ifdef CDROM1
+	gfx_clear(0x1000);
+#endif
 	set_screen_size(SCR_SIZE_64x32);
 	init_satb();
 	satb_update();
@@ -282,3 +285,21 @@ void spr_make(int spriteno, int spritex, int spritey, int spritepattern, int ctr
 	spr_pal(sprpal);
 	spr_pri(sprpri);
 }
+
+#ifdef CDROM1 || SCDROM
+
+extern int xres_flags_g;
+extern unsigned char Enabled240p_g;
+extern unsigned char UseDefault_g;
+extern unsigned char EnabledSoft_g;
+extern unsigned char Enabled_C_BW_g;
+
+void RestoreGlobals()
+{
+	xres_flags = xres_flags_g;
+	Enabled240p = Enabled240p_g;
+	UseDefault = UseDefault_g;
+	EnabledSoft = EnabledSoft_g;
+	Enabled_C_BW = Enabled_C_BW_g;
+}
+#endif

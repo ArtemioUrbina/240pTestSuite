@@ -214,12 +214,11 @@ void RedrawOptions()
 	load_map(0, 0, 0, 0, 64, 30);
 	load_palette(0, MB512_pal, 1);  
 #else
-	gfx_clear(0x1000);
 	set_screen_size(SCR_SIZE_64x32); 
-	cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
-	cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
 	cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
 	set_bgpal(0, palCD); 
+	cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
 #endif
 	
 	Center224in240();
@@ -347,3 +346,4 @@ int ExecuteOptions(int sel)
 	}
 	return val;
 }
+

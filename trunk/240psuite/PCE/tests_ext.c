@@ -32,7 +32,7 @@
 #include "help.h"
 #include "tools.h"
 
-char palCD[32];
+char palCD[512];
 
 extern int xres_flags;
 extern unsigned char Enabled240p;
@@ -257,10 +257,10 @@ void SoundTest()
 			load_palette(0, MB_pal, 1);  
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
 			cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
 			set_bgpal(0, palCD); 
+			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
 #endif
 			
 			set_font_pal(13);
@@ -492,10 +492,10 @@ void ManualLagTestResultsBack()
 	load_palette(0, MB_pal, 1);  
 #else
 	set_screen_size(SCR_SIZE_64x32); 
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
 	cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
 	set_bgpal(0, palCD); 
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
 #endif
 	Center224in240();
 }
