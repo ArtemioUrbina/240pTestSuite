@@ -24,12 +24,5 @@
  */
  
 #include "helpdata.h"
-#define GENERAL_HELP	20
-#define BACKLIT_HELP	21
-#define BLEED_HELP		22
-#define CHECK_HELP		23
-#define PASSIVE_HELP	24
-#define IRE100HELP		25
-#define STRIPES_HELP	26
  
 void showHelp(int data);

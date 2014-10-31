@@ -26,7 +26,7 @@
 #include "video.h"
 #include "font.h"
 
-#incchr(my_font, "graphics/font.pcx", 32, 3);
+#include "res.h"
 
 void DrawIntro()
 {

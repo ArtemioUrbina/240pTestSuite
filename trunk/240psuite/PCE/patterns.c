@@ -65,6 +65,10 @@ void main()
     {   
 		vsync();
 		
+#ifdef CDROM1
+		if(!HelpItem)
+		{
+#endif
         if(redraw)
         {
 			ResetVideo();
@@ -109,6 +113,9 @@ void main()
 		
 		if (controller & JOY_SEL)
 		{
+#ifdef CDROM1
+			x_g = 1;
+#endif
 			Options();
 			redraw = 1;
 		}
@@ -128,6 +135,29 @@ void main()
                 sel = 15;
             refresh = 1;
         }
+		
+		if (controller & JOY_RUN)
+		{
+#ifdef CDROM1
+			showHelp(GENERAL_HELP2);
+#else
+			showHelp(GENERAL_HELP);
+#endif
+			redraw = 1;
+		}
+#ifdef CDROM1
+		}
+		else
+		{
+			if(HelpItem <= OVERSCAN_HELP)
+			{
+				sel = HelpItem - HELP_PART_2;
+				controller = JOY_I;
+			}
+				
+			HelpItem = 0;
+		}
+#endif
 		
 		if (controller & JOY_I)
 		{
@@ -698,7 +728,11 @@ void DrawGrid(char type)
 		
 		if (controller & JOY_RUN)
 		{
+#ifdef CDROM1
+			showHelp(GRID_HELP+type-1);
+#else
 			showHelp(GRID_HELP);
+#endif
 			redraw = 1;
 		}
         
