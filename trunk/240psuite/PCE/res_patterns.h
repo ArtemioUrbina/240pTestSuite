@@ -25,6 +25,17 @@
 */
 
 #incchr(my_font, "graphics/font.pcx", 32, 3);
+
+#incbin(fs_map, "graphics/fullscreen.fmp");
+#incchr_ex(check_bg, "graphics/check.pcx", 0, 0, 1, 1, 0);
+#incpal(check_pal, "graphics/check.pcx", 0, 1);
+
+#incchr_ex(hstripes_bg, "graphics/check.pcx", 8, 0, 1, 1, 0);
+#incchr_ex(vstripes_bg, "graphics/check.pcx", 0, 8, 1, 1, 0);
+#incchr_ex(white_bg, "graphics/check.pcx", 8, 8, 1, 1, 0);
+
+#incchr_ex(cgrid_bg, "graphics/circles_grid.pcx", 0, 0, 1, 1, 0);
+
 #include "graphics.h"
 
 #endif
@@ -78,9 +89,10 @@
 #incbin(sharpness_map, "graphics/sharpness.fmp");
 #incchr_ex(sharpness_bg, "graphics/sharpness.pcx", 0, 0, 4, 51, 0);
 
-#incbin(ire100_map, "graphics/100IRE.fmp");
 #incchr_ex(ire100_bg, "graphics/100IRE.pcx", 0, 0, 2, 2, 0);
 #endif
+
+#incbin(ire100_map, "graphics/100IRE.fmp");
 
 
 /*

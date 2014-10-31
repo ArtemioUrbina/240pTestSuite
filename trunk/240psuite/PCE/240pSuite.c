@@ -61,6 +61,12 @@ void main()
 
 #ifdef CDROM1 || SCDROM
 	RestoreGlobals();
+	
+	if(prev_select)
+	{
+		sel = prev_select;
+		prev_select = 0;
+	}
 #endif
 
 	disp_off();
@@ -217,7 +223,8 @@ void RedrawMain()
 	DrawSP();
 	satb_update();
 	
-	Center224in240();		
+	Center224in240();
+	DisplaySystemInfo();		
 }
 
 void RefreshMain(int sel)
@@ -260,8 +267,6 @@ void RefreshMainAux(int sel, int row)
 	put_string("Help", HPOS, ++row);
 	set_font_pal(sel == 13 ? 15 : 14);
 	put_string("Credits", HPOS, ++row);
-	
-	DisplaySystemInfo();
 }
 
 

@@ -25,6 +25,17 @@
 
 #incchr(my_font, "graphics/font.pcx", 32, 3);
 
+/* TEST*/
+#incbin(fs_map, "graphics/fullscreen.fmp");
+#incchr_ex(check_bg, "graphics/check.pcx", 0, 0, 1, 1, 0);
+#incpal(check_pal, "graphics/check.pcx", 0, 1);
+
+#incchr_ex(hstripes_bg, "graphics/check.pcx", 8, 0, 1, 1, 0);
+#incchr_ex(vstripes_bg, "graphics/check.pcx", 0, 8, 1, 1, 0);
+#incchr_ex(white_bg, "graphics/check.pcx", 8, 8, 1, 1, 0);
+
+#incchr_ex(cgrid_bg, "graphics/circles_grid.pcx", 0, 0, 1, 1, 0);
+
 #ifdef CDROM1
 #include "graphics.h"
 #elseif
@@ -45,14 +56,6 @@
 			TEST 
 */
 
-#incbin(fs_map, "graphics/fullscreen.fmp");
-#incchr_ex(check_bg, "graphics/check.pcx", 0, 0, 1, 1, 0);
-#incpal(check_pal, "graphics/check.pcx", 0, 1);
-
-#incchr_ex(hstripes_bg, "graphics/check.pcx", 8, 0, 1, 1, 0);
-#incchr_ex(vstripes_bg, "graphics/check.pcx", 0, 8, 1, 1, 0);
-#incchr_ex(white_bg, "graphics/check.pcx", 8, 8, 1, 1, 0);
-
 #incbin(motoko_map, "graphics/motoko_BAT.bin");
 #incbin(motoko_bg, "graphics/motoko_DATA.bin");
 #incbin(motoko_pal, "graphics/motoko_PAL.bin");
@@ -64,8 +67,6 @@
 #incbin(lagback_map, "graphics/lagback.fmp");
 #incchr_ex(lagback_bg, "graphics/lagback.pcx", 0, 0, 2, 35, 0);
 #incpal(lagback_pal, "graphics/lagback.pcx", 0, 1);
-
-#incchr_ex(cgrid_bg, "graphics/circles_grid.pcx", 0, 0, 1, 1, 0);
 
 
 /*

@@ -34,6 +34,7 @@
 #define TOOL_VSCROLL	1
 #define TOOL_SOUND		2
 #define TOOL_MANUAL		3
+#define	TOOL_PASSIVE	4
 
 #endif
  
@@ -70,6 +71,14 @@ extern unsigned char change;
 extern unsigned char audio;
 extern unsigned char view;
 extern int vary;
+
+extern unsigned char draw;
+extern int top;
+extern int bottom;
+extern int left;
+extern int right;
+extern unsigned char previous;
+extern unsigned char screen;
  
 void Set224p();
 void Set240p();

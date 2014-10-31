@@ -56,6 +56,14 @@ unsigned char audio;
 unsigned char view;
 int vary;
 
+unsigned char draw;
+int top;
+int bottom;
+int left;
+int right;
+unsigned char previous;
+unsigned char screen;
+
 void Set224p()
 {
 	Enabled240p = 0;
@@ -142,16 +150,17 @@ void Center224in240()
 
 void ResetVideo()
 {
-	cls();
 #ifdef CDROM1
 	gfx_clear(0x1000);
 #endif
-	set_screen_size(SCR_SIZE_64x32);
+	cls();
+
 	init_satb();
 	satb_update();
 			
 	ResetScroll();
 	set_xres(320, xres_flags);
+	set_screen_size(SCR_SIZE_64x32);
 }
 
 void ResetScroll()
