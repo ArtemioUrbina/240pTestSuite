@@ -36,7 +36,7 @@ void DrawIntro();
 
 
 #ifdef CDROM1
-char palCD[32];
+char palCD[512];
 #endif
 
 #define HPOS 5
@@ -204,12 +204,13 @@ void RedrawMain()
 	setupFont();
 
 #ifndef CDROM1
-	set_map_data(MB_map, 40, 30);
 	set_tile_data(MB_bg);
 	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 40, 30);
 	load_palette(0, MB_pal, 1);  
+	set_map_data(MB_map, 40, 30);
+	load_map(0, 0, 0, 0, 40, 30);	
 #else
+	gfx_clear(0x1000);
 	set_screen_size(SCR_SIZE_64x32); 
 	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
 	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
@@ -290,18 +291,20 @@ void DrawN()
         if(redraw)
         {
 			cls();
+			set_xres(256, xres_flags);
+			scroll(0, 0, -32, 0, 240, 0xC0);
 #ifndef CDROM1
 			load_background(n_bg, n_pal, n_map, 32, 22);
 #else
+			gfx_clear(0x1000);
 			set_screen_size(SCR_SIZE_32x32); 
-			cd_loadvram(GPHX_OVERLAY, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_N_BAT_bin, 0, SIZE_N_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_N_PAL_bin, palCD, OFS_N_PAL_bin); 
+			set_bgpal(0, palCD, 16); 
 #endif
-
-			scroll(0, 0, -32, 0, 240, 0xC0);
             redraw = 0;
 			disp_on();
-			set_xres(256, xres_flags);
         }
 
         controller = joy(0);
@@ -331,6 +334,8 @@ void DrawCredits()
 			SetFontColors(15, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 			SetFontColors(13, RGB(3, 3, 3), RGB(1, 6, 6), 0);
 
+			set_xres(512, xres_flags);
+			
 #ifndef CDROM1			
 			set_map_data(MB512_map, 64, 30);
 			set_tile_data(MB512_bg);
@@ -338,11 +343,12 @@ void DrawCredits()
 			load_map(0, 0, 0, 0, 64, 30);
 			load_palette(0, MB512_pal, 1);  
 #else
+			gfx_clear(0x1000);
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
 			cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
 			set_bgpal(0, palCD); 
+			cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);			
 #endif
 			
 			Center224in240();
@@ -350,7 +356,6 @@ void DrawCredits()
             redraw = 0;
 			refresh = 1;
 			disp_on();
-			set_xres(512, xres_flags);
         }
 		
 		if(refresh)
