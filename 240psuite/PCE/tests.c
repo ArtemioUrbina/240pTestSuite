@@ -404,28 +404,29 @@ void RedrawDropShadow(unsigned char back, int x, int y)
 			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loadvram(GPHX_OVERLAY, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_motoko_PAL_bin, palCD, SIZE_motoko_PAL_bin); 
+			load_palette(0, palCD, 16); 
 			cd_loadvram(GPHX_OVERLAY, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
-			cd_loaddata(GPHX_OVERLAY, OFS_motoko_PAL_bin, palCD, 32); 
-			set_bgpal(0, palCD, 16); 
-
+			cd_loadvram(GPHX_OVERLAY, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+			RestoreGlobals();
 #endif
 			break;
 		case 1:
 			set_screen_size(SCR_SIZE_32x32);
 
-			scroll(0, 0, y, 0, 76, 0xC0);
+			scroll(0, 0, 0, 0, 76, 0xC0);
 			scroll(1, 0, 76, 76, 160, 0xC0);
 			scroll(2, 0, 160, 160, 208, 0xC0);
 			scroll(3, 0, 208, 208, 240, 0xC0);
 #ifndef CDROM1
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
-			set_screen_size(SCR_SIZE_64x32); 
+			set_screen_size(SCR_SIZE_32x32); 
+			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, SIZE_sonic_PAL_bin); 
+			load_palette(0, palCD, 16);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
-			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, OFS_sonic_PAL_bin); 
-			set_bgpal(0, palCD, 16); 
+			RestoreGlobals()
 #endif
 			break;
 		case 2:
@@ -570,8 +571,11 @@ void RefreshStriped(char back)
 			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
+			cd_loaddata(GPHX_OVERLAY, OFS_motoko_PAL_bin, palCD, SIZE_motoko_PAL_bin); 
+			load_palette(0, palCD, 16); 
 			cd_loadvram(GPHX_OVERLAY, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+			RestoreGlobals();
 #endif
 			break;
 		case 1:
@@ -584,11 +588,12 @@ void RefreshStriped(char back)
 #ifndef CDROM1
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
-			set_screen_size(SCR_SIZE_64x32); 
+			set_screen_size(SCR_SIZE_32x32); 
+			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, SIZE_sonic_PAL_bin); 
+			load_palette(0, palCD, 16);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
-			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, OFS_sonic_PAL_bin); 
-			set_bgpal(0, palCD, 16); 
+			RestoreGlobals();
 #endif
 			break;
 		case 2:
@@ -659,7 +664,7 @@ void DrawPalm()
 #ifndef CDROM1
 	load_vram(vram, palm_sp, 0x8C0);
 #else
-	cd_loadvram(GPHX_OVERLAY, OFS_palm_tile_bin, 0x5000, SIZE_palm_tile_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_sonicpalm_tile_bin, vram, SIZE_sonicpalm_tile_bin);
 #endif
 
 	x2 = 500;
@@ -726,10 +731,11 @@ void ScrollTest()
 #ifndef CDROM1
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
-			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, SIZE_sonic_PAL_bin); 
+			load_palette(0, palCD, 16);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
-			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, OFS_sonic_PAL_bin); 
-			set_bgpal(0, palCD, 16); 
+			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+			RestoreGlobals();
 #endif
 			
 			init_satb();
@@ -1028,6 +1034,7 @@ void LagTest()
 			setupFont();
 			SetFontColors(14, RGB(7, 7, 7), 0, RGB(7, 7, 7));
 			
+			set_xres(256, xres_flags);
 #ifndef CDROM1
 			set_map_data(lagback_map, 32, 30);
 			set_tile_data(lagback_bg);
@@ -1036,10 +1043,10 @@ void LagTest()
 			load_palette(0, lagback_pal, 1); 
 #else
 			set_screen_size(SCR_SIZE_32x32); 
-			cd_loadvram(GPHX_OVERLAY, OFS_lagback_BAT_bin, 0x0000, SIZE_lagback_BAT_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_lagback_DATA_bin, 0x1000, SIZE_lagback_DATA_bin);
 			cd_loaddata(GPHX_OVERLAY, OFS_lagback_PAL_bin, palCD, SIZE_lagback_PAL_bin); 
 			set_bgpal(0, palCD);
+			cd_loadvram(GPHX_OVERLAY, OFS_lagback_DATA_bin, 0x1000, SIZE_lagback_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_lagback_BAT_bin, 0x0000, SIZE_lagback_BAT_bin);
 #endif
 			put_string("hours", 1, 3);
 			put_string("minutes", 9, 3);
@@ -1049,7 +1056,6 @@ void LagTest()
          
             redraw = 0;
 			disp_on();
-			set_xres(256, xres_flags);
         }
 		
 		if(running || update)
