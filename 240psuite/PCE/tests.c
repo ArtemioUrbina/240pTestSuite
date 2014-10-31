@@ -37,6 +37,13 @@ extern unsigned char Enabled240p;
 extern unsigned char UseDefault;
 extern unsigned char EnabledSoft;
 extern unsigned char Enabled_C_BW;
+
+extern int HelpItem;
+extern int ToolItem;
+
+extern int prev_select;
+extern int x_g;
+extern int y_g;
 #endif
 
 void DrawCheck()
@@ -99,11 +106,8 @@ void DrawCheck()
 			drawframe = !drawframe;
 			if(!drawframe)
 			{
-#ifndef CDROM1
 				set_map_data(fs_map, 40, 30);
 				load_map(0, 0, 0, 0, 40, 30);
-#else
-#endif
 			}
 		}
         
@@ -117,14 +121,11 @@ void RedrawCheck()
 	ResetVideo();
 	setupFont();
 
-#ifndef CDROM1			
 	set_map_data(fs_map, 40, 30);
 	set_tile_data(check_bg);
 	load_tile(0x1000);
 	load_map(0, 0, 0, 0, 40, 30);
 	load_palette(0, check_pal, 1); 
-#else
-#endif
 
 	Center224in240(); 
 }
@@ -193,29 +194,20 @@ void DrawStripes()
 			drawframe = !drawframe;
 			if(!drawframe)
 			{
-#ifndef CDROM1
 				set_map_data(fs_map, 40, 30);
 				load_map(0, 0, 0, 0, 40, 30);
-#else
-#endif
 			}
 		}
 			
 		if (controller & JOY_UP)
 		{
-#ifndef CDROM1
 			set_tile_data(vstripes_bg);
 			load_tile(0x1000);
-#else
-#endif
 		}
 		if (controller & JOY_DOWN)
 		{
-#ifndef CDROM1
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
-#else
-#endif
 		}
     }
 }
@@ -224,15 +216,12 @@ void RedrawStripes()
 {
 	ResetVideo();
 	setupFont();
-
-#ifndef CDROM1			
+		
 	set_map_data(fs_map, 40, 30);
 	set_tile_data(hstripes_bg);
 	load_tile(0x1000);
 	load_map(0, 0, 0, 0, 40, 30);
 	load_palette(0, check_pal, 1);  
-#else
-#endif
 	
 	Center224in240();
 }
@@ -255,7 +244,7 @@ void DropShadow()
         if(redraw)
         {	
 			ResetVideo();
-			RedrawDropShadow(back, x, y);
+			RedrawDropShadow(back);
 			redraw = 0;
         }
 		
@@ -275,21 +264,16 @@ void DropShadow()
 #ifndef CDROM1
 					load_bat(0, sonic_map, 40, 30);
 #else
+					cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
 #endif
 					break;
 				case 2:
-#ifndef CDROM1
 					set_map_data(fs_map, 40, 3);
 					load_map(0, 0, 0, 0, 40, 3);
-#else
-#endif
 					break;
 				case 3:
-#ifndef CDROM1
 					set_map_data(fs_map, 40, 3);
 					load_map(0, 0, 0, 0, 40, 3);
-#else
-#endif
 					break;
 			}
 		}
@@ -395,7 +379,7 @@ void DropShadow()
     }
 }
 
-void RedrawDropShadow(unsigned char back, int x, int y)
+void RedrawDropShadow(unsigned char back)
 {
 	switch(back)
 	{
@@ -414,40 +398,38 @@ void RedrawDropShadow(unsigned char back, int x, int y)
 		case 1:
 			set_screen_size(SCR_SIZE_32x32);
 
-			scroll(0, 0, 0, 0, 76, 0xC0);
-			scroll(1, 0, 76, 76, 160, 0xC0);
-			scroll(2, 0, 160, 160, 208, 0xC0);
-			scroll(3, 0, 208, 208, 240, 0xC0);
+			scroll(0, x, 0, 0, 76, 0xC0);
+			scroll(1, 2*x, 76, 76, 160, 0xC0);
+			scroll(2, 3*x, 160, 160, 208, 0xC0);
+			scroll(3, 4*x, 208, 208, 240, 0xC0);
 #ifndef CDROM1
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
+			x_g = x;
+			y_g = y;
 			set_screen_size(SCR_SIZE_32x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, SIZE_sonic_PAL_bin); 
 			load_palette(0, palCD, 16);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
-			RestoreGlobals()
+			RestoreGlobals();
+			x = x_g;
+			y = y_g;
 #endif
 			break;
 		case 2:
-#ifndef CDROM1
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1); 
-#else
-#endif
 			break;
 		case 3:
-#ifndef CDROM1
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(check_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1);
-#else
-#endif
 			break;
 	}
 	setupFont();
@@ -581,40 +563,38 @@ void RefreshStriped(char back)
 		case 1:
 			set_screen_size(SCR_SIZE_32x32);
 
-			scroll(0, 0, y, 0, 76, 0xC0);
-			scroll(1, 0, 76, 76, 160, 0xC0);
-			scroll(2, 0, 160, 160, 208, 0xC0);
-			scroll(3, 0, 208, 208, 240, 0xC0);
+			scroll(0, x, 0, 0, 76, 0xC0);
+			scroll(1, 2*x, 76, 76, 160, 0xC0);
+			scroll(2, 3*x, 160, 160, 208, 0xC0);
+			scroll(3, 4*x, 208, 208, 240, 0xC0);
 #ifndef CDROM1
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
+			x_g = x;
+			y_g = y;
 			set_screen_size(SCR_SIZE_32x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, SIZE_sonic_PAL_bin); 
 			load_palette(0, palCD, 16);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
 			RestoreGlobals();
+			x = x_g;
+			y = y_g;
 #endif
 			break;
 		case 2:
-#ifndef CDROM1
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1);
-#else
-#endif
 			break;
 		case 3:
-#ifndef CDROM1
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(check_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			load_palette(0, check_pal, 1);
-#else
-#endif
 			break;
 	}
 	setupFont();
@@ -834,14 +814,11 @@ void LEDZoneTest()
         {
 			ResetVideo();
 
-#ifndef CDROM1			
 			set_map_data(fs_map, 40, 30);
 			set_tile_data(white_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			set_color_rgb(1, 0, 0, 0); 
-#else
-#endif
 
 			Center224in240();
 			
@@ -929,241 +906,38 @@ void LEDZoneTest()
     }
 }
 
-void DrawNumber(int x, int y, int sprite, int number, int palette)
-{
-	spr_make(sprite, x, y, 0x100*number+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, palette, 1);
-}
-
-void ChangeNumber(int sprite, int number)
-{
-	spr_set(sprite);
-	spr_pattern(0x100*number+0x5000);
-}
-
-void DrawCircle(int pos)
-{
-	x2 = 0;
-	y2 = 78;
-	
-	if(pos > 4)
-		x2 = 64*(pos-5);
-	else
-		x2 = 64*(pos-1);
-	
-	if(pos > 4)
-		y2 = 148;
-		
-	spr_make(16, x2, y2, 0x5A00, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 2, 2);
-	spr_make(17, x2+32, y2, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_X|SZ_32x32, 2, 2);
-	y2+=32;
-	spr_make(18, x2, y2, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_Y|SZ_32x32, 2, 2);
-	spr_make(19, x2+32, y2, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_X|FLIP_Y|SZ_32x32, 2, 2);
-}
-
-void LoadNumbers()
-{
-	set_color_rgb(256, 0, 0, 0);
-	set_color_rgb(258, 0, 0, 0);
-	
-	set_color_rgb(272, 7, 7, 7);
-	set_color_rgb(274, 7, 7, 7);
-	
-	set_color_rgb(288, 7, 7, 7);
-	set_color_rgb(289, 7, 0, 0);
-	
-#ifndef CDROM1		
-	load_vram(0x5000, numbers_sp, 0xB00);
-#else
-	cd_loadvram(GPHX_OVERLAY, OFS_numbers_tile_bin, 0x5000, SIZE_numbers_tile_bin);
-#endif
-
-	init_satb();
-	
-	// Hours			
-	DrawNumber(5, 32, 0, 0, 0);	
-	DrawNumber(30, 32, 1, 0, 0);	
-	
-	// Minutes
-	DrawNumber(70, 32, 2, 0, 0);	
-	DrawNumber(95, 32, 3, 0, 0);	
-	
-	//Seconds
-	DrawNumber(135, 32, 4, 0, 0);	
-	DrawNumber(160, 32, 5, 0, 0);	
-	
-	// Frames
-	DrawNumber(200, 32, 6, 0, 0);	
-	DrawNumber(225, 32, 7, 0, 0);	
-	
-	/*****Numbers on Circles*****/
-	DrawNumber(20, 92, 8, 1, 1);	
-	DrawNumber(84, 92, 9, 2, 1);
-	DrawNumber(148, 92, 10, 3, 1);	
-	DrawNumber(212, 92, 11, 4, 1);	
-	
-	DrawNumber(20, 162, 12, 5, 1);	
-	DrawNumber(84, 162, 13, 6, 1);	
-	DrawNumber(148, 162, 14, 7, 1);	
-	DrawNumber(212, 162, 15, 8, 1);	
-		
-	DrawCircle(1);
-	
-	satb_update();
-}
-
-void LagTest()
-{
-	unsigned char end = 0;
-	int framecnt = 0;
-	int frames = 0;
-	int seconds = 0;
-	int minutes = 0;
-	int hours = 0;
-	unsigned char running = 0;
-	int lsd = 0;
-	int msd = 0;
-	unsigned char update = 0;
-
-	redraw = 1;
-    while(!end)
-    {   
-		vsync();
-        if(redraw)
-        {
-			ResetVideo();
-			setupFont();
-			SetFontColors(14, RGB(7, 7, 7), 0, RGB(7, 7, 7));
-			
-			set_xres(256, xres_flags);
-#ifndef CDROM1
-			set_map_data(lagback_map, 32, 30);
-			set_tile_data(lagback_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 32, 30);
-			load_palette(0, lagback_pal, 1); 
-#else
-			set_screen_size(SCR_SIZE_32x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_lagback_PAL_bin, palCD, SIZE_lagback_PAL_bin); 
-			set_bgpal(0, palCD);
-			cd_loadvram(GPHX_OVERLAY, OFS_lagback_DATA_bin, 0x1000, SIZE_lagback_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_lagback_BAT_bin, 0x0000, SIZE_lagback_BAT_bin);
-#endif
-			put_string("hours", 1, 3);
-			put_string("minutes", 9, 3);
-			put_string("seconds", 17, 3);
-			put_string("frames", 25, 3);
-			LoadNumbers();
-         
-            redraw = 0;
-			disp_on();
-        }
-		
-		if(running || update)
-		{	
-			if(framecnt > 7)
-				framecnt = 0;
-				
-			if(frames > 59)
-			{
-				frames = 0;
-				seconds ++;	
-			}
-			
-			if(seconds > 59)
-			{
-				seconds = 0;
-				minutes ++;
-			}
-
-			if(minutes > 59)
-			{
-				minutes = 0;
-				hours ++;
-			}
-
-			if(hours > 99)
-				hours = 0;
-			
-			lsd = hours % 10;
-			msd = hours / 10;
-			ChangeNumber(0, msd);
-			ChangeNumber(1, lsd);
-			
-			lsd = minutes % 10;
-			msd = minutes / 10;
-			ChangeNumber(2, msd);
-			ChangeNumber(3, lsd);
-			
-			lsd = seconds % 10;
-			msd = seconds / 10;
-			ChangeNumber(4, msd);
-			ChangeNumber(5, lsd);
-			
-			lsd = frames % 10;
-			msd = frames / 10;
-			ChangeNumber(6, msd);
-			ChangeNumber(7, lsd);
-			
-			DrawCircle(framecnt+1);
-			
-			satb_update();
-		
-			if(running)
-			{
-				frames ++;
-				framecnt ++;
-			}
-			
-			update = 0;
-		}
-			
-        controller = joytrg(0);
-		
-		if (controller & JOY_RUN)
-		{
-			showHelp(PASSIVE_HELP);
-			redraw = 1;
-			update = 1;
-		}
-        
-		if (controller & JOY_II)
-			end = 1;
-			
-		if (controller & JOY_I)
-			running = !running;
-			
-		if (controller & JOY_SEL && !running)
-		{
-			frames = hours = minutes = seconds = 0;
-			framecnt = 0;
-			update = 1;
-		}
-    }
-}
-
 #ifndef CDROM1
 #include "tests_ext.c"
 #else
 
-extern int HelpItem;
-extern int ToolItem;
 
 void VScrollTest()
 {
 	ToolItem = TOOL_VSCROLL;
+	prev_select = 6;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
 void SoundTest()
 {
+	prev_select = 10;
 	ToolItem = TOOL_SOUND;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
 void ManualLagTest()
 {
+	prev_select = 4;
 	ToolItem = TOOL_MANUAL;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
+
+void LagTest()
+{
+	prev_select = 3;
+	ToolItem = TOOL_PASSIVE;
+	cd_execoverlay(TEST_EXT_OVERLAY);
+}
+
 
 #endif

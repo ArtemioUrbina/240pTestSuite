@@ -85,6 +85,7 @@ void main()
 #endif
 			
 			Center224in240();
+			DisplaySystemInfo();
          
 			init_satb();
 			DrawSP();
@@ -255,9 +256,6 @@ void RefreshTestPatternsAux(int sel)
 
 	set_font_pal(sel == 15 ? 15 : 14);
 	put_string("Back to Main Menu", HPOS, ++row);
-
-	DisplaySystemInfo();
-
 }
 
 void DrawPluge()
@@ -283,8 +281,10 @@ void DrawPluge()
 			load_palette(0, pluge_pal, 1);  
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			//cd_loadvram(GPHX_OVERLAY, OFS_pluge_tile_bin, 0x1000, SIZE_pluge_tile_bin);
-			//cd_loadvram(GPHX_OVERLAY, OFS_pluge_map_bin, 0, SIZE_pluge_map_bin);
+			cd_loaddata(GPHX_OVERLAY, OFS_pluge_PAL_bin, palCD, SIZE_pluge_PAL_bin); 
+			set_bgpal(0, palCD); 
+			cd_loadvram(GPHX_OVERLAY, OFS_pluge_DATA_bin, 0x1000, SIZE_pluge_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_pluge_BAT_bin, 0x0000, SIZE_pluge_BAT_bin);
 #endif
 
 			Center224in240();
@@ -298,6 +298,7 @@ void DrawPluge()
 		{
 			switch(col)
 			{
+#ifndef CDROM1		
 				case 0:
 					set_color_rgb(1, 1, 1, 1);
 					break;
@@ -310,6 +311,20 @@ void DrawPluge()
 				case 3:
 					set_color_rgb(1, 1, 0, 0);
 					break;
+#else
+				case 0:
+					set_color_rgb(2, 1, 1, 1);
+					break;
+				case 1:
+					set_color_rgb(2, 0, 0, 1);
+					break;
+				case 2:
+					set_color_rgb(2, 0, 1, 0);
+					break;
+				case 3:
+					set_color_rgb(2, 1, 0, 0);
+					break;
+#endif
 			}
 			refresh = 0;
 		}
@@ -351,7 +366,11 @@ void DrawColor()
 #ifndef CDROM1	
 			load_background(color_bg, color_pal, color_map, 40, 30);
 #else
-
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loaddata(GPHX_OVERLAY, OFS_color_PAL_bin, palCD, SIZE_color_PAL_bin); 
+			load_palette(0, palCD, 16); 
+			cd_loadvram(GPHX_OVERLAY, OFS_color_DATA_bin, 0x1000, SIZE_color_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_color_BAT_bin, 0x0000, SIZE_color_BAT_bin);
 #endif
 			Center224in240();
             redraw = 0;
@@ -641,11 +660,34 @@ void DrawGrid(char type)
 			
 			load_palette(0, grid_pal, 1);  
 #else
-			set_screen_size(SCR_SIZE_32x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_grid256_240_PAL_bin, palCD, SIZE_grid256_240_PAL_bin); 
 			set_bgpal(0, palCD); 
+			
 			cd_loadvram(GPHX_OVERLAY, OFS_grid256_240_DATA_bin, 0x1000, SIZE_grid256_240_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_grid256_240_BAT_bin, 0x0000, SIZE_grid256_240_BAT_bin);
+			switch(type)
+			{
+				case 1:
+					set_screen_size(SCR_SIZE_32x32); 
+					if(Enabled240p)
+						cd_loadvram(GPHX_OVERLAY, OFS_grid256_240_BAT_bin, 0x0000, SIZE_grid256_240_BAT_bin);
+					else
+						cd_loadvram(GPHX_OVERLAY, OFS_grid256_224_BAT_bin, 0x0000, SIZE_grid256_224_BAT_bin);
+					break;
+				case 2:
+					set_screen_size(SCR_SIZE_64x32); 
+					if(Enabled240p)
+						cd_loadvram(GPHX_OVERLAY, OFS_grid320_240_BAT_bin, 0x0000, SIZE_grid320_240_BAT_bin);
+					else
+						cd_loadvram(GPHX_OVERLAY, OFS_grid320_224_BAT_bin, 0x0000, SIZE_grid320_224_BAT_bin);
+					break;
+				case 3:
+					set_screen_size(SCR_SIZE_64x32); 
+					if(Enabled240p)
+						cd_loadvram(GPHX_OVERLAY, OFS_grid512_240_BAT_bin, 0x0000, SIZE_grid512_240_BAT_bin);
+					else
+						cd_loadvram(GPHX_OVERLAY, OFS_grid512_224_BAT_bin, 0x0000, SIZE_grid512_224_BAT_bin);
+					break;
+			}
 #endif
          
             redraw = 0;
@@ -805,14 +847,11 @@ void RedrawWhite()
 {
 	ResetVideo();
 
-#ifndef CDROM1
 	set_map_data(fs_map, 40, 30);
 	set_tile_data(white_bg);
 	load_tile(0x1000);
 	load_map(0, 0, 0, 0, 40, 30);
 	load_palette(0, check_pal, 1);  
-#else
-#endif
 	Center224in240();
 }
 
@@ -877,6 +916,11 @@ void DrawLinearity()
 				load_map(0, 0, 0, 0, 40, 30);
 				load_palette(0, linearity240_pal, 1);  
 #else
+				set_screen_size(SCR_SIZE_64x32); 
+				cd_loaddata(GPHX_OVERLAY, OFS_lin240_PAL_bin, palCD, SIZE_lin240_PAL_bin); 
+				set_bgpal(0, palCD); 
+				cd_loadvram(GPHX_OVERLAY, OFS_lin240_DATA_bin, 0x1000, SIZE_lin240_DATA_bin);
+				cd_loadvram(GPHX_OVERLAY, OFS_lin240_BAT_bin, 0x0000, SIZE_lin240_BAT_bin);
 #endif
 			}
 			else
@@ -888,6 +932,11 @@ void DrawLinearity()
 				load_map(0, 0, 0, 0, 40, 28);
 				load_palette(0, linearity224_pal, 1);  
 #else
+				set_screen_size(SCR_SIZE_64x32); 
+				cd_loaddata(GPHX_OVERLAY, OFS_lin224_PAL_bin, palCD, SIZE_lin224_PAL_bin); 
+				set_bgpal(0, palCD); 
+				cd_loadvram(GPHX_OVERLAY, OFS_lin224_DATA_bin, 0x1000, SIZE_lin224_DATA_bin);
+				cd_loadvram(GPHX_OVERLAY, OFS_lin224_BAT_bin, 0x0000, SIZE_lin224_BAT_bin);
 #endif
 			}
 			
@@ -928,6 +977,11 @@ void DrawLinearity256()
 			load_map(0, 0, 0, 0, 32, 28);
 			load_palette(0, linearity256_pal, 1);  
 #else
+			set_screen_size(SCR_SIZE_32x32); 
+			cd_loaddata(GPHX_OVERLAY, OFS_lin256_PAL_bin, palCD, SIZE_lin256_PAL_bin); 
+			set_bgpal(0, palCD); 
+			cd_loadvram(GPHX_OVERLAY, OFS_lin256_DATA_bin, 0x1000, SIZE_lin256_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_lin256_BAT_bin, 0x0000, SIZE_lin256_BAT_bin);
 #endif
 			
             redraw = 0;
@@ -1060,15 +1114,17 @@ void DrawGray()
 
 void DrawOverscan()
 {
-	unsigned char end = 0;
-	unsigned char draw = 0;
 	int sel = 0;
-	int top = 0;
-	int bottom = 0;
-	int left = 0;
-	int right = 0;
-	unsigned char previous = 0;
-	unsigned char screen = 0;
+	unsigned char end = 0;
+	
+	draw = 0;
+	sel = 0;
+	top = 0;
+	bottom = 0;
+	left = 0;
+	right = 0;
+	previous = 0;
+	screen = 0;
 	
 	redraw = 1;
 	refresh = 0;
@@ -1096,13 +1152,13 @@ void DrawOverscan()
 		
 		if(draw)
 		{
-			DrawOverscanLines(sel, top, bottom, left, right, screen, previous);
+			DrawOverscanLines(sel);
 			draw = 0;
 		}
 		
 		if(refresh)
 		{
-			RefreshOverscan(sel, top, bottom, left, right, screen);
+			RefreshOverscan(sel);
 			
 			refresh = 0;
 		}
@@ -1205,6 +1261,9 @@ void DrawOverscan()
 			draw = 1;
 		}
     }
+#ifdef CDROM1
+	RedrawWhite();
+#endif
 }
 
 void RedrawOverscan()
@@ -1222,7 +1281,7 @@ void RedrawOverscan()
 	set_xres(256, xres_flags);
 }
 
-void RefreshOverscan(int sel, int top, int bottom, int left, int right, int screen)
+void RefreshOverscan(int sel)
 {
 	int val;
 	
@@ -1257,26 +1316,26 @@ void RefreshOverscan(int sel, int top, int bottom, int left, int right, int scre
 	put_number(val, 2, 24, 15);
 }
 
-void DrawOverscanLines(int sel, int top, int bottom, int left, int right, int screen, unsigned char previous)
+void DrawOverscanLines(int sel)
 {
 	switch(sel)
 	{
 		case 0:
-			DrawTopLines(top, bottom, left, right, previous);
+			DrawTopLines();
 			break;
 		case 1:
-			DrawBottomLines(top, bottom, left, right, previous, screen);
+			DrawBottomLines();
 			break;
 		case 2:
-			DrawLeftLines(top, bottom, left, right, previous, screen);
+			DrawLeftLines();
 			break;
 		case 3:
-			DrawRightLines(top, bottom, left, right, previous, screen);
+			DrawRightLines();
 			break;
 	}
 }
 
-void DrawTopLines(int top, int bottom, int left, int right, unsigned char previous)
+void DrawTopLines()
 {
 	if(previous < top)
 		gfx_line(left, top-1, 255-right, top-1, 1);
@@ -1284,7 +1343,7 @@ void DrawTopLines(int top, int bottom, int left, int right, unsigned char previo
 		gfx_line(left, previous-1, 255-right, previous-1, 0);
 }
 
-void DrawBottomLines(int top, int bottom, int left, int right, unsigned char previous, unsigned char screen)
+void DrawBottomLines()
 {
 	if(previous < bottom)
 		gfx_line(left, screen-bottom, 255-right, screen-bottom, 1);
@@ -1292,7 +1351,7 @@ void DrawBottomLines(int top, int bottom, int left, int right, unsigned char pre
 		gfx_line(left, screen-previous, 255-right, screen-previous, 0);
 }
 
-void DrawLeftLines(int top, int bottom, int left, int right, unsigned char previous, unsigned char screen)
+void DrawLeftLines()
 {
 	if(previous < left)
 		gfx_line(left-1, top, left-1, screen-bottom, 1);
@@ -1300,7 +1359,7 @@ void DrawLeftLines(int top, int bottom, int left, int right, unsigned char previ
 		gfx_line(previous-1, top, previous-1, screen-bottom, 0);
 }
 
-void DrawRightLines(int top, int bottom, int left, int right, unsigned char previous, unsigned char screen)
+void DrawRightLines()
 {
 	if(previous < right)
 		gfx_line(256-right, top, 256-right, screen-bottom, 1);
@@ -1362,6 +1421,7 @@ void Draw100IRE()
 			set_map_data(ire100_map, 40, 30);
 			load_map(0, 0, 0, 0, 40, 30);
 #else
+			cd_loadvram(GPHX_OVERLAY, OFS_100IRE_BAT_bin, 0x0000, SIZE_100IRE_BAT_bin);
 #endif	
 			if(!mode)
 				put_number(factor*color+(color > 4 ? 2 : 0), 3, 28, 26);
@@ -1383,6 +1443,7 @@ void Draw100IRE()
 			set_map_data(ire100_map, 40, 30);
 			load_map(0, 0, 0, 0, 40, 30);
 #else
+			cd_loadvram(GPHX_OVERLAY, OFS_100IRE_BAT_bin, 0x0000, SIZE_100IRE_BAT_bin);
 #endif	
 			if(!mode)
 				put_number(factor*color+(color > 4 ? 2 : 0), 3, 28, 26);
@@ -1398,7 +1459,11 @@ void Draw100IRE()
 			if(mode)
 			{
 				color = 0;
+#ifndef CDROM1
 				set_color_rgb(1, 7, 7, 7);
+#else
+				set_color_rgb(2, 7, 7, 7);
+#endif
 				refresh = 1;
 				put_string("RANGE 100-140 IRE", 20, 26);
 				factor = 6;
@@ -1435,7 +1500,14 @@ void Draw100IRE()
 
 void Refresh100IRE(unsigned char mode)
 {
+#ifndef CDROM1
 	set_color_rgb(!mode, color, color, color);	
+#else
+	if(!mode)
+		set_color_rgb(2, color, color, color);	
+	else
+		set_color_rgb(0, color, color, color);	
+#endif
 	if(mode)
 		SetFontColors(14, RGB(color, color, color), RGB(6, 6, 6), RGB(3, 3, 3));
 	else

@@ -28,6 +28,15 @@
 extern char palCD[];
 #endif
 
+
+extern char fs_map[];
+extern int white_bg[];
+
+extern int hstripes_bg[];
+extern int vstripes_bg[];
+
+extern int check_bg[];
+
 #ifndef CDROM1
  
 extern char MB_map[];
@@ -44,14 +53,6 @@ extern int LED_sp[];
 extern char MB512_map[];
 extern int MB512_bg[];
 
-extern char fs_map[];
-extern int white_bg[];
-
-extern int hstripes_bg[];
-extern int vstripes_bg[];
-
-extern int check_bg[];
-
 extern char motoko_map[];
 extern int motoko_bg[];
 
@@ -65,16 +66,16 @@ extern int lagback_bg[];
 
 extern char cgrid_bg[];
 
-#endif
-
 extern int MB512_pal[];
-extern int check_pal[];
 extern int motoko_pal[];
-extern int SD_pal[];
-extern int palm_pal[];
-extern int sonic_pal[];
 extern int lagback_pal[];
 extern int MB_pal[];
 extern int n_pal[];
+#endif
+
+extern int check_pal[];
+extern int SD_pal[];
+extern int palm_pal[];
+extern int sonic_pal[];
 
 

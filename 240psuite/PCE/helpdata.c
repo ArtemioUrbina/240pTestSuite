@@ -493,9 +493,9 @@ options_00_10:	.db	"line (266) and creates a comb filter with every other"
 			.db	0
 options_00_11:	.db	"frame to reduce artifacts in the composite signal."
 			.db	0
-options_00_12:	.db	"This extra line is at the contains no data; but since"
+options_00_12:	.db	"This extra line contains no data; but since the"
 			.db	0
-options_00_13:	.db	"the video is taller, CRTs shift vertically."
+options_00_13:	.db	"video signal is taller, CRTs shift vertically."
 			.db	0
 options_00_14:	.db	"Composite B&W: This option works only in composite."
 			.db	0
