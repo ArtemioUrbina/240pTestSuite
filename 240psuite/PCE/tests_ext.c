@@ -650,7 +650,7 @@ void ManualLagTestResults()
 			put_number(totalms, 2, 16, 19);
 			put_string("frames", 19, 19);
 			if(totalms == 1)
-				put_string(" ", 19, 19);
+				put_string(" ", 24, 19);
 			totalms = total/x*16;
 			put_number(totalms, 2, 16, 20);
 			put_string("milliseconds", 19, 20);
