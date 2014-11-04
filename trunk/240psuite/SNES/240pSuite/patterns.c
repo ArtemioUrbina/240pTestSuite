@@ -287,7 +287,7 @@ void Drawcircles()
 void DrawPluge() 
 {	
 	u16 pressed, end = 0, text = 0;
-	u16 redraw = 1, fullrange = 0;
+	u16 redraw = 1, fullrange = 0, color = 0;
 		
 	while(!end) 
 	{		
@@ -317,6 +317,28 @@ void DrawPluge()
 		{
 			DrawHelp(HELP_PLUGE);
 			redraw = 1;
+		}
+		
+		if(pressed == KEY_X)
+		{
+			color ++;
+			if(color > 3)
+				color = 0;
+			switch(color)
+			{
+				case 0:
+					setPaletteColor(1, RGB5(1, 1, 1));
+					break;
+				case 1:
+					setPaletteColor(1, RGB5(1, 0, 0));
+					break;
+				case 2:
+					setPaletteColor(1, RGB5(0, 1, 0));
+					break;
+				case 3:
+					setPaletteColor(1, RGB5(0, 0, 1));
+					break;
+			}
 		}
 		
 		if(pressed == KEY_A)
@@ -750,6 +772,9 @@ void DrawWhite()
 	
 	return;
 }
+
+// 100 IRE 
+// 720mV, 624mV. 512mV, 424mV, 312mV, 208mV, 96mV, 0mV
 
 void Draw100IRE() 
 {	
