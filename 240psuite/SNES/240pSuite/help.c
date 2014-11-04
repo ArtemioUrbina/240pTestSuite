@@ -33,13 +33,13 @@ void DrawHelp(u16 option)
 		
 	switch(option)
 	{
-		case HELP_PLUGE:
 		case HELP_COLORS:	
 		case HELP_SHADOW:	
 		case HELP_LED:
 		case HELP_LAG:
 			totalpages = 2;
 			break;		
+		case HELP_PLUGE:
 		case HELP_GENERAL:
 		case HELP_MANUALLAG:
 		case HELP_STRIPES:	
@@ -144,7 +144,7 @@ void DrawHelp(u16 option)
 					switch(page)
 					{
 						case 1:
-							drawText(3, 4  , 6, "        PLUGE (1/2)"); 
+							drawText(3, 4  , 6, "        PLUGE (1/3)"); 
 							drawText(3, y++, 7, "The PLUGE pattern is used"); 
 							drawText(3, y++, 7, "to help adjust the black");
 							drawText(3, y++, 7, "level to a correct value.");
@@ -163,7 +163,7 @@ void DrawHelp(u16 option)
 							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
-							drawText(3, 4  , 6, "        PLUGE (2/2)"); 
+							drawText(3, 4  , 6, "        PLUGE (2/3)"); 
 							drawText(3, y++, 7, "visible, adjust the");
 							drawText(3, y++, 7, "\"brightness\" control until");
 							drawText(3, y++, 7, "they are.");					
@@ -178,7 +178,20 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "In PAL - and console games"); 
 							drawText(3, y++, 7, "in general - it is adviced");
 							drawText(3, y++, 7, "to use the full range");
-							drawText(3, y++, 7, "1 IRE value as black.");														
+							drawText(3, y++, 7, "1 IRE value as black.");		
+							drawText(20, 22, 4, "(cont...)");													
+							break;
+						case 3:
+							drawText(3, 4  , 6, "        PLUGE (3/3)"); 
+							drawText(3, y++, 7, "Although this system can");
+							drawText(3, y++, 7, "only output 3.5 IRE in");
+							drawText(3, y++, 7, "gray, it can output lower.");					
+							drawText(3, y++, 7, "luminance levels in each"); 
+							drawText(3, y++, 7, "pure color.");
+							y++;
+							drawText(3, y++, 7, "You can switch between"); 
+							drawText(3, y++, 7, "these values for the inner");
+							drawText(3, y++, 7, "bars with the X button.");
 							break;
 					}
 					break;
