@@ -477,7 +477,7 @@ options_00_02:	.db	"240p or 224 video. Although capable of displaying"
 			.db	0
 options_00_03:	.db	"all the 240 vertical lines, games tend to use only"
 			.db	0
-options_00_04:	.db	"239 active lines for unknown reasons."
+options_00_04:	.db	"239 probably to gain four more lines during vblank."
 			.db	0
 options_00_05:	.db	"The suite uses the full 240 mode by default, but you"
 			.db	0

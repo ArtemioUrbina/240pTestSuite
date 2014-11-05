@@ -36,12 +36,14 @@ int main(int argc, char **argv)
         return 0;
     }
 
+/*
     hfile = fopen("helpdata.h", "w");
     if(!hfile)
     {
         fprintf(stderr, "Could not open results  file\n");
         return 0;
     }
+*/
 
     pages = &realpages;
     npages = &realnpages;
@@ -52,6 +54,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
+/*
 	for(c = 1; c < argc; c++)
 	{
 		int pos = strlen(argv[c]);
@@ -64,6 +67,7 @@ int main(int argc, char **argv)
 	}
 
 	fclose(hfile);
+*/
 
     for(c = 1; c < argc; c++)
     {
