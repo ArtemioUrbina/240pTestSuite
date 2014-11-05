@@ -824,7 +824,7 @@ void ManualLagTest()
 			change = 1;
 			if(variation)
 			{
-				if(random(1))
+				if(random(2))
 					vary = random(7);
 				else
 					vary = -1 * random(7);
@@ -837,7 +837,7 @@ void ManualLagTest()
 			change = 1;
 			if(variation)
 			{
-				if(random(1))
+				if(random(2))
 					vary = random(7);
 				else
 					vary = -1 * random(7);

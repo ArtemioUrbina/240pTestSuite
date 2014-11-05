@@ -78,6 +78,8 @@
 
 #incspr(palm_sp, "graphics/sonicpalm.pcx", 0, 0, 5, 7);
 
+#incspr(bee_sp, "graphics/bee.pcx", 0, 0, 2, 4);
+
 #incspr(shadow_sp, "graphics/shadow.pcx", 0, 0, 2, 2);
 #incspr(striped_sp, "graphics/striped.pcx", 0, 0, 2, 2);
 #incspr(lagspr_sp, "graphics/lagspr.pcx", 0, 0, 2, 2);
@@ -98,3 +100,4 @@
 
 #incpal(SD_pal, "graphics/SD.pcx", 0, 1);
 #incpal(palm_pal, "graphics/sonicpalm.pcx", 0, 1);
+#incpal(bee_pal, "graphics/bee.pcx", 0, 1);

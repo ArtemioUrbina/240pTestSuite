@@ -142,7 +142,7 @@ void main()
 		}
 		else
 		{
-			if(HelpItem <= SOUND_HELP)
+			if(HelpItem <= OPTIONS_HELP)
 			{
 				sel = HelpItem;
 				controller = JOY_I;
@@ -204,6 +204,9 @@ void main()
 					SoundTest();
 					break;
 				case 11:
+#ifdef CDROM1
+					prev_select = sel;
+#endif
 					Options();
 					break;
 				case 12:

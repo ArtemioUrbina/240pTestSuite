@@ -43,6 +43,7 @@ extern char MB_map[];
 extern int MB_bg[];
 
 extern int SD_sp[];
+extern int bee_sp[];
 extern int shadow_sp[];
 extern int striped_sp[];
 extern int numbers_sp[];
@@ -77,5 +78,6 @@ extern int check_pal[];
 extern int SD_pal[];
 extern int palm_pal[];
 extern int sonic_pal[];
+extern int bee_pal[];
 
 

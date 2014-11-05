@@ -237,6 +237,9 @@ void DropShadow()
 	redraw = 1;
 	x = 144;
 	y = 100;
+	srand(clock_tt());
+	vary = random(2);
+	right = 0;
     while(!end)
     {   
 		vsync();
@@ -348,10 +351,30 @@ void DropShadow()
 			y++;
 		
 		if (controller & JOY_LEFT)
+		{
 			x--;
+			if(right)
+			{
+				spr_set(0);
+				spr_ctrl(FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32);
+				spr_set(1);
+				spr_ctrl(FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32);
+				right = 0;
+			}
+		}
 		
 		if (controller & JOY_RIGHT)
+		{
 			x++;
+			if(!right)
+			{
+				spr_set(0);
+				spr_ctrl(FLIP_MAS|SIZE_MAS, FLIP_X|SZ_32x32);
+				spr_set(1);
+				spr_ctrl(FLIP_MAS|SIZE_MAS, FLIP_X|SZ_32x32);
+				right = 1;
+			}
+		}
 			
 		if(x < 0)
 			x = 0;
@@ -362,7 +385,7 @@ void DropShadow()
 		if(y > (Enabled240p ? 208 : 192))
 			y = (Enabled240p ? 208 : 192);
 		
-		spr_set(0);	
+		spr_set(!vary);	
 		if(show)
 		{
 			spr_x(x);
@@ -374,6 +397,12 @@ void DropShadow()
 			spr_x(512);
 			spr_y(512);
 			show = 1;
+		}
+		if(!vary)
+		{
+			spr_set(0);	
+			spr_x(x-10);
+			spr_y(y-10);
 		}
 		satb_update();
     }
@@ -435,14 +464,25 @@ void RedrawDropShadow(unsigned char back)
 	setupFont();
 	
 	init_satb();
+#ifndef CDROM1	
+	if(vary)
+		load_vram(0x6000, shadow_sp, 0x100);
+	else
+		load_vram(0x6000, bee_sp, 0x200);
+#else
+	if(vary)
+		cd_loadvram(GPHX_OVERLAY, OFS_shadow_tile_bin, 0x6000, SIZE_shadow_tile_bin);
+	else
+		cd_loadvram(GPHX_OVERLAY, OFS_bee_tile_bin, 0x6000, SIZE_bee_tile_bin);
+#endif
+	load_palette(17, bee_pal, 1); 
 	set_color_rgb(240, 0, 0, 0); 
 	set_color_rgb(241, 0, 0, 0); 
-#ifndef CDROM1		
-	load_vram(0x6000, shadow_sp, 0x100);
-#else
-	cd_loadvram(GPHX_OVERLAY, OFS_shadow_tile_bin, 0x6000, SIZE_shadow_tile_bin);
-#endif
-	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+	
+	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, (!right ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 1);
+	if(!vary)
+		spr_make(1, x+10, y+10, 0x6100, FLIP_MAS|SIZE_MAS, (!right ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 2);
+		
 	if(back == 1)
 		DrawPalm();
 	satb_update();
