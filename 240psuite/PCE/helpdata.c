@@ -471,13 +471,13 @@ void display_options_00()
 
 options_00_00:	.db	"OPTIONS"
 			.db	0
-options_00_01:	.db	"Vertical resolution: This system can display either"
+options_00_01:	.db	"Vertical resolution: This system outputs either 224"
 			.db	0
-options_00_02:	.db	"240p or 224 video. Although capable of displaying"
+options_00_02:	.db	"or 240p video. Although capable of displaying all 240"
 			.db	0
-options_00_03:	.db	"all the 240 vertical lines, games tend to use only"
+options_00_03:	.db	"vertical lines games tend to use only 239; probably"
 			.db	0
-options_00_04:	.db	"239 probably to gain four more lines during vblank."
+options_00_04:	.db	"to gain the CPU time of 4 extra lines during vblank."
 			.db	0
 options_00_05:	.db	"The suite uses the full 240 mode by default, but you"
 			.db	0

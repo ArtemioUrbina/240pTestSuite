@@ -1,9 +1,9 @@
                      OPTIONS
 
-Vertical resolution: This system can display either
-240p or 224 video. Although capable of displaying
-all the 240 vertical lines, games tend to use only
-239 probably to gain four more lines during vblank.
+Vertical resolution: This system outputs either 224
+or 240p video. Although capable of displaying all 240
+vertical lines games tend to use only 239; probably
+to gain the CPU time of 4 extra lines during vblank.
 
 The suite uses the full 240 mode by default, but you
 can enable the one games use by selecting to start at
