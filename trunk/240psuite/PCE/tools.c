@@ -110,7 +110,7 @@ void DisplaySystemInfo()
 	else
 	{
 		if(DetectCDROM())
-			put_string("PCE+CDROM2", 26, 27);
+			put_string("PCE+CDROM2", 27, 27);
 		else
 			put_string("PCE", 34, 27);
 	}

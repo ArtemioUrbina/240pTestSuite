@@ -5,7 +5,6 @@
 @set PCE_INCLUDE=%HUC_HOME%/include/pce
 
 @REM Compile, assemble, and link
-@REM -msmall causes scroll to crash
 CALL makeclean.bat
-huc -s -t -O2 -fno-recursive 240pSuite.c font.c video.c patterns.c tests.c help.c tools.c
+huc -s -t -O2 -fno-recursive -msmall 240pSuite.c font.c video.c patterns.c tests.c help.c tools.c
 pceas -s -raw 240pSuite.s
