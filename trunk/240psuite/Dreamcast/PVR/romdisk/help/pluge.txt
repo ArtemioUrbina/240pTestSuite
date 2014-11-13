@@ -36,12 +36,12 @@ closer to the center are at 4%, the center ones at
 (5-6-5 in reality), 4% is the lowest level of
 black it can display.
 
-When calibrating for NTSC material, the 7.5 IRE
-bars should blend in the background. The 7.5 IRE
-in NTSC is the black level, also known as setup.
-
-When in PAL mode or #GRGB Full Range#G, the 4 IRE 
+For games always use #GRGB Full Range#G. The 4 IRE 
 bars are the ones you should calibrate against,
 and the 3 IRE bars are invisible due to HW
 limitations, that's why they are marked as 0 IRE
 in the highlight.
+
+When calibrating for NTSC material, the 7.5 IRE
+bars should blend in the background. The 7.5 IRE
+in NTSC is the black level, also known as setup.
