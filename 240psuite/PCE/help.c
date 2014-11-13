@@ -309,6 +309,13 @@ void DrawGeneralHelp(char page)
 			put_string("including: Sega Genesis/Mega Drive, Sega CD/", 6, row++);
 			put_string("Mega CD, Super Nintendo, Nintendo GameCube,", 6, row++);
 			put_string("Nintendo Wii and Sega Dreamcast.", 6, row++);
+			
+#ifdef HELP_OVL
+			set_font_pal(13);
+			x = cd_getver() >> 8;
+			if(x > 2)
+				put_string("With Sys Card 3 you can use the SCD ver of the suite.", 6, ++row);
+#endif
 			break;
 	}
 }
@@ -317,7 +324,7 @@ void DrawBacklitHelp()
 {
 	row = 5;
 	
-	put_string("BACKLIT TEST", 6+20, row++);
+	put_string("BACKLIT TEST", 26, row++);
 	set_font_pal(14);
 	row++;
 	put_string("This test allows you to check how the display's", 6, row++);
@@ -343,7 +350,7 @@ void DrawChecksHelp()
 {
 	row = 5;
 					
-	put_string("CHECKERBOARD", 6+20, row++);
+	put_string("CHECKERBOARD", 26, row++);
 	set_font_pal(14);
 	row++;
 	put_string("This pattern shows all the visible pixels in an", 6, row++);
@@ -366,7 +373,7 @@ void DrawBleedHelp()
 {
 	row = 5;
 	
-	put_string("COLOR BLEED", 6+20, row++);
+	put_string("COLOR BLEED", 26, row++);
 	set_font_pal(14);
 	row+=3;
 	put_string("This pattern helps diagnose unneeded color", 6, row++);
