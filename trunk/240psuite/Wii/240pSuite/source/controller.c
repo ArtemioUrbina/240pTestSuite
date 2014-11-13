@@ -641,7 +641,7 @@ u8 ControllerBattery(int chan)
 #ifdef WII_VERSION   
 	level = WPAD_BatteryLevel(chan);	
 #endif
-	return(level);
+	return level;
 }
 	
 void ControllerRumble(int chan, int rumble)

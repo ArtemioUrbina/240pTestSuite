@@ -69,31 +69,21 @@ void DrawPluge()
 	black->g = 0x0;
 	black->b = 0x0;	
 	
+	back = backPAL;
 	if(!IsPAL)
-	{
-		back = backNTSC;
 		black->h = 240;
-	}
 	else
-	{
-		back = backPAL;
 		black->h = 264;	
-	}
 			
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
 		{
+			back = backNTSC;
 			if(!IsPAL)
-			{
-				back = backNTSC;
 				black->h = 240;
-			}
 			else
-			{
-				back = backPAL;
 				black->h = 264;
-			}
 			oldvmode = vmode;
 		}
 				
@@ -109,39 +99,32 @@ void DrawPluge()
 			highlight->b = 0x0;
 			
 			highlight->y = 39;
-						
+
 			DrawStringB(14, 205, 0xff, 0x00, 0, back == backNTSC ? "11.5" : "3.5");
 			highlight->x = 14;			
 			DrawImage(highlight);
-						
-			highlight->r = 0x0;
-			highlight->g = 0xff;							
+			
 			DrawStringB(44, 205, 0xff, 0x00, 0, back == backNTSC ? "7.5" : "2");
 			highlight->x = 44;			
 			DrawImage(highlight);
 						
-			highlight->r = 0xff;
-			highlight->g = 0x0;							
+			highlight->r = 0x0;
+			highlight->g = 0xff;							
 			DrawStringB(74, 205, 0xff, 0x00, 0, back == backNTSC ? "3.5" : "1");
 			highlight->x = 74;			
 			DrawImage(highlight);
 			
 			
-			highlight->r = 0xff;
-			highlight->g = 0x0;							
 			DrawStringB(228, 205, 0xff, 0x00, 0, back == backNTSC ? "3.5" : "1");
 			highlight->x = 228;			
 			DrawImage(highlight);
 						
-			highlight->r = 0x0;
-			highlight->g = 0xff;							
+			highlight->r = 0xff;
+			highlight->g = 0x0;
 			DrawStringB(259, 205, 0xff, 0x00, 0, back == backNTSC ? "7.5" : "2");
 			highlight->x = 259;			
 			DrawImage(highlight);
 			
-			highlight->r = 0xff;
-			highlight->g = 0x0;
-			highlight->b = 0x0;	
 			DrawStringB(289, 205, 0xff, 0x00, 0, back == backNTSC ? "11.5" : "3.5");
 			highlight->x = 289;			
 			DrawImage(highlight);
@@ -800,7 +783,7 @@ void DrawGrid224()
 				back = LoadImage(GRID224IMG, 0);
 				if(!back)
 					return;	
-				back->y = (240-224)/2; //SNES
+				back->y = (240-224)/2 + 1; //SNES
 			}
 			
 			IgnoreOffset(back);
@@ -837,12 +820,12 @@ void DrawGrid224()
 			
 			if(genny)
 			{
-				back->y = (240-224)/2 + 1;
+				back->y = (240-224)/2 + 2;
 				sprintf(msg, "Genesis");
 			}
 			else
 			{
-				back->y = (240-224)/2; // SNES
+				back->y = (240-224)/2 + 1; // SNES
 				sprintf(msg, "SNES");
 			}
 			
@@ -1066,7 +1049,7 @@ void DrawLinearity224()
 		}	
 	}
 
-	ChangeVideoEnabled = 0;
+	ChangeVideoEnabled = 1;
 	
 	FreeImage(&gridd);
 	FreeImage(&grid);

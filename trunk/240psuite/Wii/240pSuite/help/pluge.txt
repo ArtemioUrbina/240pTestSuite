@@ -26,15 +26,16 @@ slowly raise it until they are #Gjust#G visible,
 and go back one notch where they blend with the
 background. 
 
+For games always use #GRGB Full Range#G. The 1 IRE 
+bars are the ones you should calibrate against.
+The values of the bars are: 1, 2 and 3.5 IRE.
+                                         #C(cont...)#C
+                   PLUGE (3/3)
+
 Values for the bars when in NTSC mode are:  
 closest to the center 3.5 IRE, central ones 
 7.5 IRE, and outer ones 11.5 IRE. 
-                                         #C(cont...)#C
-                   PLUGE (3/3)
 
 When calibrating for NTSC material, the 7.5 IRE
 bars should blend in the background. The 7.5 IRE
 in NTSC is the black level, also known as setup.
-
-When in PAL mode or #GRGB Full Range#G, the 2 IRE 
-bars are the ones you should calibrate against.

@@ -34,5 +34,5 @@ options menu.
 
 The 240p suite is also available in other systems,
 including: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/
-#YMega CD#Y, #YSuper Nintendo#Y, #YNintendo GameCube#Y, 
-#YNintendo Wii#Y and #YSega Dreamcast#Y.
+#YMega CD#Y, #YPC Engine#Y/#YTG-16#Y, #YSuper Nintendo#Y/#YSFC#Y,
+#YNintendo GameCube#Y, #YNintendo Wii#Y and #YSega Dreamcast#Y.
