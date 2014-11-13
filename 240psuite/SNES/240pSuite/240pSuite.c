@@ -458,7 +458,7 @@ void DrawCredits(void)
 		if(redraw)
 		{
 			u16 size = 0;
-			u16 pos = 8;
+			u16 pos = 7;
 			
 			StartDMA();
 			
@@ -489,12 +489,13 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Advisor:"); pos ++;
 			drawText(4, pos, 7, "Fudoh"); pos ++;
 			drawText(3, pos, 6, "Collaboration:"); pos ++;
-			drawText(4, pos, 7, "Konsolkongen & shmups"); pos ++;
+			drawText(4, pos, 7, "Konsolkongen, Drew"); pos ++;
+			drawText(4, pos, 7, "& shmups regulars"); pos ++;
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(19, 6, 5, "Ver. 1.03");
-			drawText(19, 7, 7, "03/11/2014");
+			drawText(6, 4, 5, "Ver. 1.03");
+			drawText(19, 4, 7, "12/11/2014");
 			
 			EndDMA();	
 			if(redraw)
@@ -502,11 +503,11 @@ void DrawCredits(void)
 		}
 				
 		if(counter == 1)
-			drawText(4, 9, 7, "Artemio Urbina      ");
+			drawText(4, 8, 7, "Artemio Urbina      ");
 		if(counter == 60*4)
-			drawText(4, 9, 7, "@Artemio (twitter)  ");  
+			drawText(4, 8, 7, "@Artemio (twitter)  ");  
 		if(counter == 60*8)
-			drawText(4, 9, 7, "aurbina@junkerhq.net");
+			drawText(4, 8, 7, "aurbina@junkerhq.net");
 		if(counter == 60*16)
 			counter = 0;
 	
