@@ -286,8 +286,8 @@ void Drawcircles()
 
 void DrawPluge() 
 {	
-	u16 pressed, end = 0, text = 0;
-	u16 redraw = 1, fullrange = 0, color = 0;
+	u16 pressed, end = 0, text = 0, refresh = 0;
+	u16 redraw = 1, fullrange = 1, color = 3;
 		
 	while(!end) 
 	{		
@@ -297,7 +297,7 @@ void DrawPluge()
 			
 			consoleInitTextMine(0, 7, &font);	
 						
-			bgInitTileSetMine(1, &pluge_tiles, &pluge_pal, 0, (&pluge_tiles_end - &pluge_tiles), 16*2, BG_16COLORS, 0x4000);	
+			bgInitTileSetMine(1, &pluge_tiles, &plugePAL_pal, 0, (&pluge_tiles_end - &pluge_tiles), 16*2, BG_16COLORS, 0x4000);	
 			bgInitMapSetMine(1, &pluge_map, (&pluge_map_end - &pluge_map), SC_32x32, 0x2000);
 			
 			InitTextColor(0, 7, RGB5(31, 0, 0), RGB5(0, 0, 0));
@@ -308,8 +308,39 @@ void DrawPluge()
 			bgSetScroll(1, 0, -1);
 			EndDMA();
 			redraw = 0;
+			refresh = 1;
 		}
+		
 		WaitForVBlank();
+		if(refresh)
+		{
+			if(fullrange)
+			{
+				dmaCopyCGram(&plugePAL_pal, 0, 16*2);
+				switch(color)
+				{
+					case 0:
+						setPaletteColor(1, RGB5(1, 1, 1));
+						setPaletteColor(2, RGB5(2, 2, 2));
+						break;
+					case 1:
+						setPaletteColor(1, RGB5(1, 0, 0));
+						setPaletteColor(2, RGB5(2, 0, 0));
+						break;
+					case 2:
+						setPaletteColor(1, RGB5(0, 1, 0));
+						setPaletteColor(2, RGB5(0, 2, 0));
+						break;
+					case 3:
+						setPaletteColor(1, RGB5(0, 0, 1));
+						setPaletteColor(2, RGB5(0, 0, 2));
+						break;
+				}
+			}
+			else
+				dmaCopyCGram(&pluge_pal, 0, 16*2);
+			refresh = 0;
+		}
 		
 		pressed = PadPressed(0);
 		
@@ -324,21 +355,7 @@ void DrawPluge()
 			color ++;
 			if(color > 3)
 				color = 0;
-			switch(color)
-			{
-				case 0:
-					setPaletteColor(1, RGB5(1, 1, 1));
-					break;
-				case 1:
-					setPaletteColor(1, RGB5(1, 0, 0));
-					break;
-				case 2:
-					setPaletteColor(1, RGB5(0, 1, 0));
-					break;
-				case 3:
-					setPaletteColor(1, RGB5(0, 0, 1));
-					break;
-			}
+			refresh = 1;
 		}
 		
 		if(pressed == KEY_A)
@@ -350,12 +367,7 @@ void DrawPluge()
 				drawText(16, 1, 7, "NTSC 7.5 IRE  ");
 				
 			text = 30;
-			
-			WaitForVBlank();			
-			if(fullrange)
-				dmaCopyCGram(&plugePAL_pal, 0, 16*2);
-			else
-				dmaCopyCGram(&pluge_pal, 0, 16*2);
+			refresh = 1;
 		}
 		
 		if(pressed == KEY_B)
