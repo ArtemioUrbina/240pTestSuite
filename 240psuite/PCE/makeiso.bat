@@ -9,8 +9,6 @@
 CALL makeclean.bat
 huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay loader.c font.c video.c
 pceas -DSCDROM -DCDROM -s -msmall -scd -overlay loader.s
-copy 240pSuite.c 240pArcade.c
-huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay 240pArcade.c font.c video.c tests.c patterns.c tools.c help.c 
-pceas -DSCDROM -DCDROM -s -msmall -scd -overlay 240pArcade.s
-isolink 240pSuite.iso loader.ovl 240pArcade.ovl
-del 240pArcade.c
+huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay 240pSuite.c font.c video.c tests.c patterns.c tools.c help.c 
+pceas -DSCDROM -DCDROM -s -msmall -scd -overlay 240pSuite.s
+isolink 240pSuite.iso loader.ovl 240pSuite.ovl

@@ -10,12 +10,12 @@ adjust the black level. The control for setting
 this on your TV is usually named Brightness.
 
 This adjustment ensures that anything intended
-to be black is actually black, and allows all
+to be displayed is actually shown, and allows all
 detail to be seen on dark scenes.
 
-Button I changes the inner bars between gray and
-the lowest R,G,B values, which are lower in
-luminance in order not to crush detail.
+Button I changes the inner bars between the
+lowest B,G,R values and gray. You should use the
+blue one in order not to crush detail.
 
 
                    PLUGE (2/2)

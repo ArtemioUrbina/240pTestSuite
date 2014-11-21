@@ -1,3 +1,32 @@
+void display_SMPTEColor_00()
+{
+#asm
+	p_string	SMPTEColor_00_00,22,5
+	__ldwi		14
+	call		_set_font_pal
+	p_string	SMPTEColor_00_01,6,9
+	p_string	SMPTEColor_00_02,6,10
+	p_string	SMPTEColor_00_03,6,11
+	p_string	SMPTEColor_00_04,6,13
+	p_string	SMPTEColor_00_05,6,14
+	rts
+
+SMPTEColor_00_00:	.db	"SMPTE COLOR BARS"
+			.db	0
+SMPTEColor_00_01:	.db	"This pattern can be used to calibrate colors, but"
+			.db	0
+SMPTEColor_00_02:	.db	"black level does not comply to the standard due"
+			.db	0
+SMPTEColor_00_03:	.db	"to console capabilities."
+			.db	0
+SMPTEColor_00_04:	.db	"You can toggle between 75% and 100% SMPTE color"
+			.db	0
+SMPTEColor_00_05:	.db	"bars by pressing I."
+			.db	0
+#endasm
+}
+
+
 void display_color601_00()
 {
 #asm
@@ -587,15 +616,15 @@ pluge_00_06:	.db	"this on your TV is usually named Brightness."
 			.db	0
 pluge_00_07:	.db	"This adjustment ensures that anything intended"
 			.db	0
-pluge_00_08:	.db	"to be black is actually black, and allows all"
+pluge_00_08:	.db	"to be displayed is actually shown, and allows all"
 			.db	0
 pluge_00_09:	.db	"detail to be seen on dark scenes."
 			.db	0
-pluge_00_10:	.db	"Button I changes the inner bars between gray and"
+pluge_00_10:	.db	"Button I changes the inner bars between the"
 			.db	0
-pluge_00_11:	.db	"the lowest R,G,B values, which are lower in"
+pluge_00_11:	.db	"lowest B,G,R values and gray. You should use the"
 			.db	0
-pluge_00_12:	.db	"luminance in order not to crush detail."
+pluge_00_12:	.db	"blue one in order not to crush detail."
 			.db	0
 #endasm
 }
@@ -707,35 +736,6 @@ sharpness_00_06:	.db	"should be set to zero, or in the middle."
 sharpness_00_07:	.db	"In some PVM/BVM displays this is also referred"
 			.db	0
 sharpness_00_08:	.db	"to as aperture."
-			.db	0
-#endasm
-}
-
-
-void display_SMPTEColor_00()
-{
-#asm
-	p_string	SMPTEColor_00_00,22,5
-	__ldwi		14
-	call		_set_font_pal
-	p_string	SMPTEColor_00_01,6,9
-	p_string	SMPTEColor_00_02,6,10
-	p_string	SMPTEColor_00_03,6,11
-	p_string	SMPTEColor_00_04,6,13
-	p_string	SMPTEColor_00_05,6,14
-	rts
-
-SMPTEColor_00_00:	.db	"SMPTE COLOR BARS"
-			.db	0
-SMPTEColor_00_01:	.db	"This pattern can be used to calibrate for NTSC"
-			.db	0
-SMPTEColor_00_02:	.db	"levels regarding contrast and brightness, and"
-			.db	0
-SMPTEColor_00_03:	.db	"appropiate colors as well."
-			.db	0
-SMPTEColor_00_04:	.db	"You can toggle between 75% and 100% SMPTE color"
-			.db	0
-SMPTEColor_00_05:	.db	"bars by pressing I."
 			.db	0
 #endasm
 }
