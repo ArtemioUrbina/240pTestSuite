@@ -291,7 +291,7 @@ void RefreshTestPatternsAux(int sel)
 void DrawPluge()
 {
 	unsigned char end = 0;
-	unsigned char col = 0;
+	unsigned char col = 1;
 
 	redraw = 1;
 	refresh = 0;
