@@ -479,18 +479,10 @@ void DrawIre100Help()
 #asm
 p_string	.macro
 	__ldwi	\1
-	ldx	#low(\1)
-	lda	#high(\1)
-	__stw	_si
-	stx	_si
-	sta	_si+1
+	__stw	si
 	__ldwi	\2
-	ldx	#low(\2)
-	lda	#high(\2)
-	stx	_bl
+	  stx	bl
 	__ldwi	\3
-	ldx	#low(\3)
-	lda	#high(\3)
 	call	_put_string.3
 	.endm
 #endasm
