@@ -33,12 +33,80 @@
 #include "controller.h"
 #include "font.h"
 
-#define OPTIONS_PATH "sd:/240pSuite"
+#define SD_OPTIONS_PATH "sd:/240pSuite"
+#define USB_OPTIONS_PATH "usb:/240pSuite"
 #define OPTIONS_FILE "options.xml"
+
+#define FS_SD 1
+#define FS_USB 2
 
 u8 FSActive = 0;
 
 #ifdef WII_VERSION
+
+#include <sdcard/wiisd_io.h>
+
+bool InitSD()
+{
+	if(!__io_wiisd.startup() || !__io_wiisd.isInserted())
+		return false;
+
+	return(fatMountSimple("sd", &__io_wiisd));
+}
+ 
+void DeInitSD() 
+{
+	fatUnmount("sd:/");
+	__io_wiisd.shutdown();
+} 
+
+bool InitUSB()
+{ 
+	bool isMounted = false;
+	bool isInserted = false;
+	
+	time_t start = time(0);
+
+	while(time(0) - start < 10) // 10 sec
+	{
+		if(__io_usbstorage.startup() && __io_usbstorage.isInserted())
+				break;
+		usleep(200000); // 1/5 sec
+	}
+	
+	if(!__io_usbstorage.startup() || !__io_usbstorage.isInserted())
+        return false;
+	
+	isMounted = fatMountSimple("usb", &__io_usbstorage);	
+	
+	if(!isMounted)
+	{
+		fatUnmount("usb:/");
+		isMounted = fatMountSimple("usb", &__io_usbstorage);	
+		isInserted = __io_usbstorage.isInserted();
+		if(isInserted)
+		{
+			int retry = 10;
+ 
+			while(retry)
+			{  
+				isMounted = fatMountSimple("usb", &__io_usbstorage);
+				if(isMounted) 
+					break;
+				sleep(1);
+				retry--; 
+			}
+		}
+	}
+	
+	return(isMounted);
+} 
+
+void DeInitUSB()
+{
+	fatUnmount("usb:/");
+	__io_usbstorage.shutdown(); 
+}
 
 u8 LoadOptions()
 {
@@ -264,34 +332,44 @@ u8 SaveOptions()
 
 u8 InitFS()
 {
-	int retry = 0;
 	int fatMounted = 0;
+	int	fsType = 0;
+	char *path = NULL;
 			
 	if(FSActive)
 		return 1;
-		
-	while (!fatMounted && (retry < 12))
-	{		
-		fatMounted = fatInitDefault();
-		usleep(250000);
-		retry++;
+	
+	if(InitSD())
+	{
+		fatMounted = 1;
+		path = SD_OPTIONS_PATH;
+		fsType = FS_SD;
+	}
+	else
+	{
+		if(InitUSB())
+		{
+			fatMounted = 1;
+			path = USB_OPTIONS_PATH;
+			fsType = FS_USB;
+		}
 	}
 	
 	if (fatMounted)
 	{			
 		DIR *dir = NULL;
 				
-		dir = opendir(OPTIONS_PATH);
+		dir = opendir(path);
 		if (dir) 
 		{			
 			closedir(dir);
 		}
 		else
 		{		
-			mkdir(OPTIONS_PATH,S_IRWXU);
+			mkdir(path, S_IRWXU);
 		}
-		chdir(OPTIONS_PATH);
-		FSActive = 1;
+		chdir(path);
+		FSActive = fsType;
 	}
 	else
 		FSActive = 0;
@@ -303,7 +381,10 @@ void CloseFS()
 {	
 	if(FSActive)
 	{
-		fatUnmount("sd");
+		if(FSActive == FS_SD)
+			DeInitSD();
+		if(FSActive == FS_USB)
+			DeInitUSB();
 		FSActive = 0;
 	}
 }
