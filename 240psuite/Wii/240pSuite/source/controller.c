@@ -435,8 +435,8 @@ u32 Controller_ButtonsDown(int chan)
 	{
 		u32 held = Controller_ButtonsHeld(0);
 		
-		if(held & PAD_BUTTON_DOWN && 
-			held & PAD_TRIGGER_R && held && PAD_TRIGGER_L)
+		if((held & PAD_BUTTON_DOWN) && 
+			(held & PAD_TRIGGER_R) && (held & PAD_TRIGGER_L))
 			EndProgram = 1;
 	}
     return retval;
