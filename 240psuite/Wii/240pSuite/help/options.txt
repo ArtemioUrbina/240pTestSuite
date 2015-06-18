@@ -64,14 +64,14 @@
                                         #C(cont...)#C
                   OPTIONS (5/5)
 
-#G480p Scanlines:#G This setting allows the display
-    or EVEN or ODD scanline display in 480p line
-    doubled mode.
+#G480p Scanlines:#G This setting displays EVEN or
+    ODD scanlines in 480p line doubled mode.
 
 #GSFC Classic Controller:#G The #YSuper Famicom#Y
     version of the #YClassic Controller#Y needs a 
     different button layout since it doesn't have
     a HOME button. This changes the layout for it.
+
 
 Holding $L and $R buttons while in the options menu
 will reset all options to their defaults.

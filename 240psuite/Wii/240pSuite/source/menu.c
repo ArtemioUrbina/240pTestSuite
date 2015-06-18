@@ -1120,8 +1120,10 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x, y, 0x00, 0xba, 0xba, "This program is free Software.");  y += fh;
 		DrawStringS(x, y, 0x00, 0xba, 0xba, "Source code is available under GPL.");  y += fh;
 #ifdef WII_VERSION
-		DrawStringS(x, y, 0x00, 0xba, 0xba, "Includes libcheckregion.");
+		DrawStringS(x, y, 0x00, 0xba, 0xba, "Includes libcheckregion."); y += fh;
 #endif
+		DrawStringS(200, y, 0x00, 0xba, 0xba, "Dedicated to Elisa.");
+		
 		y = 58;
 		
 		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_NUMBER); y += fh;
@@ -1138,7 +1140,30 @@ void DrawCredits(ImagePtr Back)
 		pressed = Controller_ButtonsDown(0);
 				
         if (pressed & PAD_TRIGGER_R)
-			DrawIntro();
+		{
+			int 		check = 0;
+			u32			press;		
+			ImagePtr	nish;	
+			
+			nish = LoadImage(NISHIMG, 0);
+			if(nish)
+			{					
+				while(!check) 
+				{		
+					check = 1;
+					StartScene();
+					DrawImage(nish);
+					EndScene();
+					ControllerScan();
+					press = Controller_ButtonsHeld(0);
+							
+					if (press & PAD_TRIGGER_R)
+						check =	0;								
+				}
+				FreeImage(&nish);
+			}
+		}
+		
 		if (pressed & PAD_BUTTON_B)
 			done =	1;		
 			
