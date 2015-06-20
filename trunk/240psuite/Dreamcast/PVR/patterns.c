@@ -74,34 +74,14 @@ void DrawPluge()
 	black->g = 0x0;
 	black->b = 0x0;	
 
-	if(!IsPAL)
-	{
-		back = backNTSC;
-		black->h = 240;
-	}
-	else
-	{
-		back = backPAL;
-		black->h = 264;	
-	}
+	back = backPAL;
+	black->h = 264;	
 		
 	updateVMU(" Pluge ", "", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
-		{
-			if(!IsPAL)
-			{
-				back = backNTSC;
-				black->h = 240;
-			}
-			else
-			{
-				back = backPAL;
-				black->h = 264;
-			}
 			oldvmode = vmode;
-		}
 
 		StartScene();
 
