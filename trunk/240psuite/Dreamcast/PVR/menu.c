@@ -1157,7 +1157,11 @@ void DrawCredits(ImagePtr back)
 				done = 1;
 
 			if (pressed & CONT_RTRIGGER)
+			{
 				DrawNish();
+				updateVMU("	Credits", "", 1);
+			}
+
 		}
 	}
 
