@@ -1947,6 +1947,7 @@ void SIPLagTest()
 				if(rec_buffer.pos == 0)
 				{
 					sprintf(DStatus, "#YPlease remove and reinsert Microphone#Y");
+					updateVMU("Reinsert", "micro", 1);
 					cycle = 0;
 					rec_buffer.recording = 0;
 					status = 0;
@@ -1980,16 +1981,36 @@ void SIPLagTest()
 				double value;
 
 				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount, showframes);
+				updateVMU("Analyzing", "", 1);
 				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2,
 					11025, (IsPAL ? 50.0 : 60.0)*accuracy, 1000);          
 				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
+				{
 					sprintf(DStatus, "#YNoise at 1khz#Y");
+					updateVMU("Noise at", "1Khz", 1);
+				}
 				if(value == FFT_OM)
+				{
 					sprintf(DStatus, "#ROut of Memory#R");
+					updateVMU("Out of", "memory", 1);
+				}
 				if(value == FFT_NOT_FOUND)
+				{
 					sprintf(DStatus, "#YCheck audio system#Y");
+					updateVMU("Check", "audio", 1);
+				}
 				if(value >= 0)
-					sprintf(DStatus, "Lag is #C%g#C frames\n       #C%0.2f#C ms", value, value*16.66);
+				{
+					char vmtext[10];
+
+					sprintf(DStatus, "Lag is #C%g#C frames\n       #C%0.2f#C ms",
+						value, value*16.66);
+					if(showframes)
+						sprintf(vmtext, "%g f", value);
+					else
+						sprintf(vmtext, "%g ms", value*16.66);
+					updateVMU("Lag is:", vmtext, 1);
+				}
 
 				if(ResCount == RESULTS_MAX)
 				{
@@ -2002,7 +2023,10 @@ void SIPLagTest()
 				Results[ResCount++] = value;
 			}        
 			else
+			{
 				sprintf(DStatus, "#YRecording failed#Y");
+				updateVMU("Record", "failed", 1);
+			}
 
 			rec_buffer.pos = 0;
 			status = 0;

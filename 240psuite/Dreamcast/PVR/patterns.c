@@ -637,9 +637,9 @@ void DrawGrid(int full)
 	controller	*st;
 
 	if(full)
-		updateVMU(" 	Grid	", "", 1);
+		updateVMU("  Grid	", "", 1);
 	else
-		updateVMU("  Grid 224p", "", 1);
+		updateVMU("Grid 224", "", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -759,7 +759,7 @@ void DrawLinearity(int full)
 	if(full)
 		updateVMU("Linearity", "", 1);
 	else
-		updateVMU("Linearity 224p", "", 1);
+		updateVMU("Linearity", "224", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
