@@ -649,14 +649,17 @@ void DrawColorBleed()
 	return;
 }
 
-void DrawGrid()
+void DrawGrid(int full)
 {
 	int 		done = 0, oldvmode = vmode;
 	uint16		pressed;		
 	ImagePtr	back = NULL;
 	controller	*st;
 
-	updateVMU(" 	Grid	", "", 1);
+	if(full)
+		updateVMU(" 	Grid	", "", 1);
+	else
+		updateVMU("  Grid 224p", "", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -667,25 +670,34 @@ void DrawGrid()
 		
 		if(!back)
 		{
-			if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
+			if(full)
 			{
-				back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
-				if(!back)
-					return;
-				back->scale = 0;		
-			}
+				if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
+				{
+					back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
+					if(!back)
+						return;
+					back->scale = 0;		
+				}
 			
-			if(vmode == VIDEO_288P)
-			{
-				back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
-				if(!back)
-					return;        	
+				if(vmode == VIDEO_288P)
+				{
+					back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
+					if(!back)
+						return;        	
+				}
 			}
 			
 			// Use 240p Grid
 			if(!back)
 			{
-				back = LoadKMG("/rd/grid.kmg.gz", 0);
+				if(full)
+					back = LoadKMG("/rd/grid.kmg.gz", 0);
+				else
+				{
+					back = LoadKMG("/rd/grid224.kmg.gz", 0);
+					back->y = 8;
+				}
 				if(!back)
 					return;		
 			}
@@ -705,7 +717,12 @@ void DrawGrid()
 			if (pressed & CONT_B)
 				done =	1;											
 			if (pressed & CONT_START)
-				ShowMenu(GRIDHELP);
+			{
+				if(full)
+					ShowMenu(GRIDHELP);
+				else
+					ShowMenu(GRID224HELP);
+			}
 		}
 	}
 
@@ -713,7 +730,7 @@ void DrawGrid()
 	return;
 }
 
-void DrawLinearity()
+void DrawLinearity(int full)
 {
 	int 		done = 0, oldvmode = vmode, gridmode = 0;
 	uint16		pressed;
@@ -742,12 +759,27 @@ void DrawLinearity()
 		return;
 	}
 	
-	grid->w = 320;
-        grid->h = IsPAL ? 264 : 240;
-        gridd->w = 320;
-        gridd->h = IsPAL ? 264 : 240;
+	if(full)
+	{
+		grid->w = 320;
+        	grid->h = IsPAL ? 264 : 240;
+        	gridd->w = 320;
+        	gridd->h = IsPAL ? 264 : 240;
+	}
+	else
+	{
+		grid->w = 320;
+        	grid->h = 224;
+        	gridd->w = 320;
+        	gridd->h = 224;
+        	grid->y = 8;
+        	gridd->y = 8;
+	}
 		
-	updateVMU("Linearity", "", 1);
+	if(full)
+		updateVMU("Linearity", "", 1);
+	else
+		updateVMU("Linearity 224p", "", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -755,40 +787,62 @@ void DrawLinearity()
 			FreeImage(&circles);		
 			oldvmode = vmode;
 
-			grid->w = 320;
-                        grid->h = IsPAL ? 264 : 240;
-                        gridd->w = 320;
-                        gridd->h = IsPAL ? 264 : 240;
+			if(full)
+			{
+				grid->w = 320;
+                        	grid->h = IsPAL ? 264 : 240;
+                        	gridd->w = 320;
+                        	gridd->h = IsPAL ? 264 : 240;
+			}
+			else
+			{
+				grid->w = 320;
+        			grid->h = 224;
+        			gridd->w = 320;
+        			gridd->h = 224;
+        			grid->y = 8;
+        			gridd->y = 8;
+			}
 			CalculateUV(0, 0, dW, dH, grid);
 			CalculateUV(0, 0, dW, dH, gridd);
 		}    
 		
 		if(!circles)
 		{
-			if(vmode >= VIDEO_480P_SL)
+			if(full)
 			{
-				circles = LoadKMG("/rd/circlesVGA.kmg.gz", 0);
-				if(!circles)
-					return;
-			}
-			else
-			{
-				if(!IsPAL)
+				if(vmode >= VIDEO_480P_SL)
 				{
-					circles = LoadKMG("/rd/circles.kmg.gz", 0);
+					circles = LoadKMG("/rd/circlesVGA.kmg.gz", 0);
 					if(!circles)
 						return;
 				}
 				else
 				{
-					if(vmode == VIDEO_288P)
-						circles = LoadKMG("/rd/circlesPAL.kmg.gz", 0);
+					if(!IsPAL)
+					{
+						circles = LoadKMG("/rd/circles.kmg.gz", 0);
+						if(!circles)
+							return;
+					}
 					else
-						circles = LoadKMG("/rd/circlesPAL240.kmg.gz", 0);
-					if(!circles)
-						return;
-					IgnoreOffset(circles);
+					{
+						if(vmode == VIDEO_288P)
+							circles = LoadKMG("/rd/circlesPAL.kmg.gz", 0);
+						else
+							circles = LoadKMG("/rd/circlesPAL240.kmg.gz", 0);
+						if(!circles)
+							return;
+						IgnoreOffset(circles);
+					}
 				}
+			}
+			else
+			{
+				circles = LoadKMG("/rd/circles_224.kmg.gz", 0);
+				circles->y = 8;
+				if(!circles)
+					return;
 			}
 		}
 	
@@ -820,7 +874,12 @@ void DrawLinearity()
 				done =	1;				
 
 			if (pressed & CONT_START)
-				ShowMenu(LINEARITYHELP);
+			{
+				if(full)
+					ShowMenu(LINEARITYHELP);
+				else
+					ShowMenu(LIN224HELP);
+			}
 
 			if(gridmode < 0)
                         	gridmode = 2;

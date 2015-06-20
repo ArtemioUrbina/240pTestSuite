@@ -1115,6 +1115,8 @@ void DrawCredits(ImagePtr back)
 		y = 10;
 		DrawStringS(200, y, 1.0, 1.0, 1.0, VERSION_NUMBER); y += fh; 
 		DrawStringS(200, y, 1.0, 1.0, 1.0, VERSION_DATE); y += fh; 
+		y += fh*16;
+		DrawStringS(200, y, 0.0, 0.75, 0.75, "Dedicated to Elisa"); 
 
 		EndScene();
 		counter ++;
