@@ -1046,6 +1046,35 @@ void SelectVideoMode(ImagePtr screen)
 	return;
 }
 
+void DrawNish()
+{
+	uint16 			done  = 0, held = 0;
+	controller		*st;
+	ImagePtr		nish;
+
+	nish = LoadKMG("/rd/nish.kmg.gz", 1);
+	if(!nish)
+		return;
+
+	updateVMU(" Nishka", "", 1);
+	while(!done)
+	{
+		done = 1;
+
+		StartScene();
+		//DrawStringS(120, 115, 1.0, 1.0, 1.0, "KORDAMP PRESENTS");
+		DrawImage(nish);
+		EndScene();
+
+		st = ReadController(0, &held);
+
+		if(st && st->buttons & CONT_RTRIGGER)
+			done = 0;
+	}
+	FreeImage(&nish);
+}
+
+
 void DrawCredits(ImagePtr back)
 {
 	int 		done = 0;
@@ -1128,7 +1157,7 @@ void DrawCredits(ImagePtr back)
 				done = 1;
 
 			if (pressed & CONT_RTRIGGER)
-				DrawIntro();
+				DrawNish();
 		}
 	}
 
