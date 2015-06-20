@@ -1,0 +1,12 @@
+                  LINEARITY 224
+
+This pattern shows 5 circles, that are matched
+to the 10:11 NTSC aspect ratio.
+
+The linearity of the display or upscaler can be 
+verified by measuring the diameter of the circles.
+Of course the linearity should be kept in all 
+directions.
+
+A grid is also available with the #GX#G and #GY#G 
+buttons.

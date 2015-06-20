@@ -1703,7 +1703,7 @@ typedef struct recording {
 
 recording rec_buffer;
 
-void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, double *Results, int ResCount)
+void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, double *Results, int ResCount, int showframes)
 {
 	int	i = 0;
 	char	DPres[40];
@@ -1730,7 +1730,9 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 	}
 
 	DrawStringS(40, 60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone & Fast Fourier Transform"); 
-	DrawStringS(50, 120, 1.0f, 1.0f, 1.0f, Status);
+	DrawStringS(40, 120, 1.0f, 1.0f, 1.0f, Status);
+	DrawStringS(38, 180, 1.0f, 1.0f, 1.0f, "Press X to toggle between milliseconds and frames");
+	DrawStringS(38, 190, 1.0f, 1.0f, 1.0f, "Press Y to toggle loop mode");
 	DrawStringS(120, 200, 0.0f, 1.0f, 0.0f, DPres);
 
 	if(ResCount)
@@ -1739,7 +1741,7 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 			sprintf(Header, "Last result:");
 		else
 			sprintf(Header, "Last %d results:", ResCount);
-		DrawStringS(170, 90, 0.0f, 1.0f,	0.0f, Header);
+		DrawStringS(174, 80, 0.0f, 1.0f, 0.0f, Header);
 		for(i = 1; i <= ResCount; i++)
 		{
 			if(Results[i-1] < 0 && Results[i-1] != FFT_OM && Results[i-1] != FFT_NOT_FOUND)
@@ -1749,8 +1751,13 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 			if(Results[i-1] == FFT_NOT_FOUND)
 				sprintf(Res, "#G%.2d#G #RNo tone detected#R", i);
 			if(Results[i-1] >= 0)
-				sprintf(Res, "#G%.2d#G Lag was #C%g#C frames", i, Results[i-1]);
-			DrawStringS(160, 90+i*fh, 1.0f, 1.0f,	1.0f, Res);
+			{
+				if(showframes)
+					sprintf(Res, "#G%.2d#G Lag was #C%g#C frames", i, Results[i-1]);
+				else
+					sprintf(Res, "#G%.2d#G Lag was #C%0.2f#C ms", i, Results[i-1]*16.666);
+			}
+			DrawStringS(164, 80+i*fh, 1.0f, 1.0f, 1.0f, Res);
 		}
 	}
 	EndScene();
@@ -1791,7 +1798,8 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 
 void SIPLagTest()
 {
-	int 		done = 0, status = 0, counter = 0, accuracy = 1;
+	int 		done = 0, status = 0, counter = 0;
+	int		showframes = 0, accuracy = 1, cycle = 0;
 	uint16		pressed;		
 	ImagePtr	back, wave;
 	sfxhnd_t	beep;  
@@ -1877,23 +1885,23 @@ void SIPLagTest()
 			}
 		}
 
-		DrawSIPScreen(back, wave, DStatus, accuracy, Results, ResCount);
+		DrawSIPScreen(back, wave, DStatus, accuracy, Results, ResCount, showframes);
 
 		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 		if(!sip)
 			done = 1;
 	
-		if(status == 0) // no input if we are sampling
+		st = ReadController(0, &pressed);
+		if(st) 
 		{
-			st = ReadController(0, &pressed);
-			if(st)
+			if(status == 0) // these are not allowed while sampling
 			{
 				if (pressed & CONT_START)
 					ShowMenu(FFTHELP);
-
-				if (pressed & CONT_B)
-					done =1;				
 	
+				if (pressed & CONT_B)
+					done = 1;
+
 				if (pressed & CONT_A)
 					status = 1;
 
@@ -1909,6 +1917,15 @@ void SIPLagTest()
 				if(accuracy < 1)
 					accuracy = 1;
 			}
+
+			if (pressed & CONT_Y)
+				cycle = !cycle;
+
+			if (pressed & CONT_X)
+				showframes = !showframes;
+
+			if(cycle && !status)
+				status = 1;
 		}
 
 		if(status == 2 || status == 4)
@@ -1930,6 +1947,7 @@ void SIPLagTest()
 				if(rec_buffer.pos == 0)
 				{
 					sprintf(DStatus, "#YPlease remove and reinsert Microphone#Y");
+					cycle = 0;
 					rec_buffer.recording = 0;
 					status = 0;
 				}
@@ -1961,7 +1979,7 @@ void SIPLagTest()
 			{
 				double value;
 
-				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount);
+				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount, showframes);
 				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2,
 					11025, (IsPAL ? 50.0 : 60.0)*accuracy, 1000);          
 				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
@@ -1971,7 +1989,7 @@ void SIPLagTest()
 				if(value == FFT_NOT_FOUND)
 					sprintf(DStatus, "#YCheck audio system#Y");
 				if(value >= 0)
-					sprintf(DStatus, "Lag is #C%g#C frames", value);
+					sprintf(DStatus, "Lag is #C%g#C frames\n       #C%0.2f#C ms", value, value*16.66);
 
 				if(ResCount == RESULTS_MAX)
 				{

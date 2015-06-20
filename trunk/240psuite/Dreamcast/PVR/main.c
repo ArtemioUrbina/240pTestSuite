@@ -368,7 +368,9 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid 224p"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity 224p"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White & RGB screens"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;
@@ -478,27 +480,33 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 						DrawColorBleed();
 						break;
 					case 6:
-						DrawGrid();
+						DrawGrid(1);
 						break;
 					case 7:
-						DrawLinearity();
-						break;					
+						DrawGrid(0);
+						break;
 					case 8:
+						DrawLinearity(1);
+						break;					
+					case 9:
+						DrawLinearity(0);
+						break;					
+					case 10:
 						DrawGrayRamp();
 						break;
-					case 9:
+					case 11:
 						DrawWhiteScreen();
 						break;
-					case 10:
+					case 12:
 						Draw100IRE();
 						break;
-					case 11:
+					case 13:
 						DrawSharpness();
 						break;
-					case 12:
+					case 14:
 						DrawOverscan();
 						break;
-					case 13:
+					case 15:
 						done = 1;
 						break;
 				} 												

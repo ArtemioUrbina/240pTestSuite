@@ -1,0 +1,8 @@
+                     GRID 224
+
+This grid uses a 320x224 pattern, it fills the 
+area used by Genesis, SNES and Playstation games.
+
+You can use it to verify that all the visible area
+is being displayed, and that there is no distortion
+present.
