@@ -34,6 +34,7 @@ void LEDZoneTest();
 void PassiveLagTest();
 void Alternate240p480i();
 void TestVideoMode();
+void DiagonalPatternTest();
 
 #endif
 

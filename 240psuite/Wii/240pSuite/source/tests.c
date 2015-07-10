@@ -864,16 +864,29 @@ void ScrollTest()
 void GridScrollTest()
 {
 	int 			done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, direction = 0;
+	int				angle = 0;
 	u32			    pressed;		
-	ImagePtr		back;
+	ImagePtr		back, backsquares, backdiag;
 		
-	back = LoadImage(CIRCLESGRIDIMG, 1);
-	if(!back)
+	backdiag = LoadImage(DIAGONALIMG, 1);
+	if(!backdiag)
 		return;  
-
+	backsquares = LoadImage(CIRCLESGRIDIMG, 1);
+	if(!backsquares)
+	{
+		FreeImage(&backdiag);  
+		return;  
+	}
+		
+	backsquares->x = -0.5*dW;
+	backsquares->y = -0.5*dH;
+	back = backsquares;
+	
 	while(!done && !EndProgram) 
 	{	
-		StartScene();
+		Mtx m;
+		
+		StartSceneMtx(&m);
 
 		if(speed > 5)
 			speed = 5;
@@ -889,14 +902,37 @@ void GridScrollTest()
 				y += speed * acc;
 		}	
 				
-		CalculateUV(x, y, dW, dH, back);    
-		DrawImage(back);
+		CalculateUV(x, y, dW*2, dH*2, back);    
+		DrawImageRotate(back, angle, &m);
 	
 		EndScene();
 
 		ControllerScan();
 				
         pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_TRIGGER_R)
+		{
+			if(angle)
+				angle = 0;
+			else
+			{
+				angle = 45;
+				back = backsquares;
+			}
+		}
+		
+		if (pressed & PAD_TRIGGER_L)
+		{
+			if(back == backsquares)
+			{
+				back = backdiag;
+				if(angle)
+					angle = 0;
+			}
+			else
+				back = backsquares;
+		}
+
 		if (pressed & PAD_BUTTON_UP)
 			speed ++;
 
@@ -921,7 +957,8 @@ void GridScrollTest()
 			HelpData = GRIDSCROLL;
 		}							
 	}
-	FreeImage(&back);  
+	FreeImage(&backsquares); 
+	FreeImage(&backdiag);   
 	return;
 }
 
@@ -1763,3 +1800,115 @@ void Alternate240p480i()
 	FreeImage(&back);
 }
 
+void DiagonalPatternTest()
+{	
+	int		    done = 0, autorotate = 0;
+	float		angle = 0, speed = 1.0f;
+	u32		    pressed;
+	ImagePtr	back, sprite;
+	char		str[40];
+	Mtx 		m;
+	
+	back = LoadImage(WHITEIMG, 1);
+	if(!back)
+		return;
+
+	back->r = 0x00;
+	back->g = 0x00;
+	back->b = 0x00;
+			
+	sprite = LoadImage(STRIPESPOSIMG, 0);
+	if(!sprite)
+		return;
+		
+	while(!done && !EndProgram) 
+	{
+		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
+			vmode != VIDEO_576I)
+		{
+			sprite->x = 60;
+			sprite->y = 100;
+			sprite->w = 200;
+			sprite->h = 40;
+		}
+		else
+		{
+			sprite->x = 120;
+			sprite->y = 200;
+			sprite->w = 400;
+			sprite->h = 80;
+		}
+			
+		StartSceneMtx(&m);
+		
+		DrawImage(back);		
+
+		sprintf(str, "Angle: %0.2f", angle);
+		DrawStringS(10, 10, 0x00, 0xff, 0x00, str); 
+		sprintf(str, "Speed: 1/%d per frame", (int)speed);
+		DrawStringS(10, 20, 0x00, 0xff, 0x00, str); 
+	
+		DrawImageRotate(sprite, -1*angle, &m);
+		
+		EndScene();
+
+		ControllerScan();
+			
+        pressed = Controller_ButtonsDown(0);
+
+		if (pressed & PAD_BUTTON_X)
+			speed+=1;
+			
+		if (pressed & PAD_BUTTON_Y)
+			speed-=1;
+			
+		if(speed > 20)
+			speed = 20;
+			
+		if(speed < 1)
+			speed = 1;
+			
+		if (pressed & PAD_BUTTON_B)
+			done =	1;
+			
+		if (pressed & PAD_BUTTON_A)
+			autorotate = !autorotate;
+					
+		if(!autorotate)
+		{
+			if (pressed & PAD_TRIGGER_L)
+			{
+				if(angle > 0)
+					angle -= 1/speed;
+				else
+					angle = 359;
+			}
+		
+			if (pressed & PAD_TRIGGER_R)
+			{
+				if(angle < 359)
+					angle += 1/speed;
+				else
+					angle = 0;
+			}
+		}
+		
+		if(autorotate)
+		{
+			angle += 1/speed;
+			if(angle > 360)
+				angle = 0;
+		}
+
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = BACKLITHELP;
+		}																			
+		
+
+	}
+	FreeImage(&back);
+	FreeImage(&sprite);
+	return;
+}

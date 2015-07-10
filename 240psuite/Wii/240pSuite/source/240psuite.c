@@ -126,6 +126,7 @@ int main(int argc, char **argv)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Diagonal test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
 		if(vmode == VIDEO_480P || vmode == VIDEO_480P_SL)
 		{
@@ -209,21 +210,24 @@ int main(int argc, char **argv)
 					break;
 				case 9:
 					DrawCheckBoard();
-					break;				
+					break;			
 				case 10:
-					LEDZoneTest();
+					DiagonalPatternTest();
 					break;
 				case 11:
+					LEDZoneTest();
+					break;
+				case 12:
 					if(vmode != VIDEO_480P && vmode != VIDEO_480P_SL)
 						Alternate240p480i();					
 					break;					
-				case 12:
+				case 13:
 					SoundTest();
 					break;				
-				case 13:
+				case 14:
 					SelectVideoMode(Back);					
 					break;
-				case 14:
+				case 15:
 					ChangeOptions(Back);
 					break;								
 			} 									
