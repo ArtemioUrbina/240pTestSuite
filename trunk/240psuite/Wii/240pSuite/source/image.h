@@ -76,6 +76,7 @@ struct image_st{
 u8 InitGX();
 void SetupGX();
 void StartScene();
+inline void StartSceneMtx(Mtx *GXmodelView2D);
 void EndScene();
 void EndSceneScreenShot();
 void EndGX();
@@ -92,6 +93,7 @@ void FlipH(ImagePtr image, u16 flip);
 void FlipV(ImagePtr image, u16 flip);
 void FlipHV(ImagePtr image, u16 flip);
 void DrawImage(ImagePtr image);
+void DrawImageRotate(ImagePtr image, float angle, Mtx *m);
 void IgnoreOffset(ImagePtr image);
 
 /************************/

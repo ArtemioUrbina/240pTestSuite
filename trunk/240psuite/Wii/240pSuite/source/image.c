@@ -198,6 +198,41 @@ inline void StartScene()
 	}
 }
 
+inline void StartSceneMtx(Mtx *GXmodelView2D)
+{
+	GX_SetViewport(0,0,rmode->fbWidth,rmode->efbHeight,0,1);
+	GX_InvVtxCache();
+
+	GX_ClearVtxDesc();
+	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);	
+	GX_SetVtxDesc (GX_VA_CLR0, GX_DIRECT);
+	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+		
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_F32, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_F32, 0);
+
+	guMtxIdentity(*GXmodelView2D);
+	guMtxTransApply (*GXmodelView2D, *GXmodelView2D, 0.0F, 0.0F, -5.0F);
+	GX_LoadPosMtxImm(*GXmodelView2D,GX_PNMTX0);
+	
+	if(Options.EnablePALBG && IsPAL)
+	{
+		ImagePtr back = NULL;
+		
+		back = LoadImage(WHITEIMG, 1);
+		if(back)
+		{
+			back->r = Options.PalBackR; 
+			back->g = Options.PalBackG;
+			back->b = Options.PalBackB;
+			
+			DrawImage(back);
+			FreeImage(&back);
+		}
+	}
+}
+
 inline void EndScene()
 {
 	DrawScanlines();	
@@ -482,6 +517,63 @@ void DrawImage(ImagePtr image)
 		GX_TexCoord2f32(image->u2, image->v2);
 		
 		GX_Position2f32(x,y+h);				// Bottom Left
+		GX_Color4u8(image->r, image->g, image->b, image->alpha);
+		GX_TexCoord2f32(image->u1, image->v2);		
+	GX_End();		
+	GX_DrawDone();							// Done Drawing The Quad 
+}
+
+void DrawImageRotate(ImagePtr image, float angle, Mtx *m)
+{ 	
+	float 		x, y, w, h; 	
+	guVector 	axis;
+
+	
+	if(!image)
+		return;
+	
+	x = image->x;
+	y = image->y;
+	w = image->w;
+	h = image->h;	
+	
+	// Center display vertically in PAL modes, since images are mostly NTSC
+	if(!image->IgnoreOffsetY)
+		y+= offsetY;
+		
+	if(image->scale && (vmode == VIDEO_480I_A240 || 
+						vmode == VIDEO_480P_SL || 
+						vmode == VIDEO_576I_A264))
+	{
+		x *= 2;
+		y *= 2;
+		w *= 2;
+		h *= 2;
+	}	
+
+	axis.x = 0;
+	axis.y = 0;
+	axis.z = 1.0f;
+	guMtxRotAxisDeg(*m, &axis, angle);
+	guMtxTransApply(*m, *m, x + (w/2), y + (h/2), 0.0f);
+	GX_LoadPosMtxImm(*m, GX_PNMTX0);	
+		
+	GX_LoadTexObj(&image->tex, GX_TEXMAP0);	
+		
+	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);		// Draw A Quad
+		GX_Position2f32(-(w/2), -(h/2));				// Top Left
+		GX_Color4u8(image->r, image->g, image->b, image->alpha);
+		GX_TexCoord2f32(image->u1, image->v1);				
+		
+		GX_Position2f32(w/2, -(h/2));			// Top Right
+		GX_Color4u8(image->r, image->g, image->b, image->alpha);
+		GX_TexCoord2f32(image->u2, image->v1);		
+		
+		GX_Position2f32(w/2, h/2);			// Bottom Right
+		GX_Color4u8(image->r, image->g, image->b, image->alpha);
+		GX_TexCoord2f32(image->u2, image->v2);
+		
+		GX_Position2f32(-(w/2), h/2);				// Bottom Left
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
 		GX_TexCoord2f32(image->u1, image->v2);		
 	GX_End();		

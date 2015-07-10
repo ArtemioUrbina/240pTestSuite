@@ -92,7 +92,7 @@ char *grid224_txt[] = {
 NULL
 };
 char *gridscroll_txt[] = { 
-"                 GRID SCROLL TEST\n\nA grid is scrolled vertically or horizontally,\nwhich can be used to test linearity of the signal\nand how well the display or video processor copes\nwith scrolling and framerate.\n\nButton $Y can be used to toggle between horizontal\nand vertical, while the d-pad regulates speed. \nButton $A stops the scroll and button $X changes\ndirection. \n",
+"                 GRID SCROLL TEST\n\nA grid is scrolled vertically, horizontally and\ndiagonally which can be used to test linearity of\nthe displayor video processor; and how it copes\nwith scrolling and framerate.\n\nButton $Y can be used to switch between horizontal\nand vertical, while the d-pad regulates speed. \n\nDiagonal scroll can be enabled with the $R button.\n\nButton $A stops the scroll and button $X changes\ndirection. \n",
 NULL
 };
 char *ire100_txt[] = { 
@@ -105,7 +105,7 @@ char *linearity_txt[] = {
 NULL
 };
 char *linearity224_txt[] = { 
-"                LINEARITY 224p\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC, but limited to a 320x224 area.\nThis is a mock-up of teh area shown in several\nconsoles, such as the SNES, Genesis and\nPlaystation, and also useful in monitors with\nregular overscan.\n\nThe linearity of the display or upscaler can be \nverified by measuring the diameter of the circles.\nOf course the linearity should be kept in all \ndirections.\n\nA grid is also available with the $L and $R \nbuttons.",
+"                LINEARITY 224p\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC, but limited to a 320x224 area.\nThis is a mock-up of the area shown in several\nconsoles, such as the SNES, Genesis and\nPlaystation, and also useful in monitors with\nregular overscan.\n\nThe linearity of the display or upscaler can be \nverified by measuring the diameter of the circles.\nOf course the linearity should be kept in all \ndirections.\n\nA grid is also available with the $L and $R \nbuttons.",
 NULL
 };
 char *manuallag_txt[] = { 

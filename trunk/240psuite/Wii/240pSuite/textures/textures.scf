@@ -25,6 +25,7 @@
 <filepath="sonicfloor.png" id="SONICFLOORIMG" colfmt=6 />
 <filepath="stripespos.png" id="STRIPESPOSIMG" colfmt=6 />
 <filepath="stripesneg.png" id="STRIPESNEGIMG" colfmt=6 />
+<filepath="diagonal.png" id="DIAGONALIMG" colfmt=6 />
 <filepath="motoko.png" id="MOTOKOIMG" colfmt=6 />
 <filepath="motoko-480.png" id="MOTOKO480IMG" colfmt=6 />
 <filepath="buzzbomber.png" id="BUZZBOMBERIMG" colfmt=6 />
