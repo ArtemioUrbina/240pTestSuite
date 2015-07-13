@@ -138,6 +138,7 @@ int main(void)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Diagonal Test"); y += fh; c++;
 		if(vcable == CT_VGA)
 		{
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
@@ -295,23 +296,26 @@ int main(void)
 						LEDZoneTest();
 						break;
 					case 11:
+						DiagonalPatternTest();
+						break;
+					case 12:
 						if(vcable != CT_VGA)
 							Alternate240p480i();
 						break;
-					case 12:
+					case 13:
 						SoundTest();
 						break;
-					case 13:
+					case 14:
 						SelectVideoMode(title);
 						break;
-					case 14:
+					case 15:
 						ChangeOptions(title);
 						break;
-					case 15:
+					case 16:
 						HelpWindow(GENERALHELP, title);
 						break;
 #ifdef SERIAL
-					case 16:
+					case 17:
 						TestVideoMode(vmode);
 						break;
 #endif

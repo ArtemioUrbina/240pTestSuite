@@ -1259,6 +1259,72 @@ void LEDZoneTest()
 	return;
 }
 
+void DiagonalPatternTest()
+{	
+	int 		done = 0, autorotate = 0;
+	float 		angle = 0.0, step = 1;
+	uint16		pressed;
+	ImagePtr	back, sprite;
+	controller 	*st;
+
+	back = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!back)
+		return;
+
+	back->r = 0.0f;
+	back->g = 0.0f;
+	back->b = 0.0f;
+			
+	sprite = LoadKMG("/rd/sonicback.kmg.gz", 0);
+	if(!sprite)
+		return;
+
+	sprite->x = 32;
+	sprite->y = 0;
+	
+	updateVMU("Diagonal", "", 1);
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		DrawImage(back);		
+		
+		DrawImageRotate(sprite, angle);
+		EndScene();
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;
+						
+			if (pressed & CONT_LTRIGGER)
+			{
+				
+			}
+		
+			if (pressed & CONT_RTRIGGER)
+			{
+				
+			}
+
+			if (pressed & CONT_A)
+				autorotate = !autorotate;
+
+			if (pressed & CONT_START)
+				ShowMenu(BACKLITHELP);
+		}
+		
+		if(autorotate)
+			angle += 1/step;
+		if(angle > 360)
+			angle = 0;
+
+	}
+	FreeImage(&back);
+	FreeImage(&sprite);	
+	return;
+}
+
 void PassiveLagTest()
 {
 	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;

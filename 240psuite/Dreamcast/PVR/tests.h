@@ -32,6 +32,7 @@ void DrawCheckBoard();
 void SoundTest();
 void LEDZoneTest();
 void PassiveLagTest();
+void DiagonalPatternTest();
 void Alternate240p480i();
 #ifdef USE_FFTW
 void SIPLagTest();
