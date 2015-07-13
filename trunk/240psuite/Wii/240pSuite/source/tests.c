@@ -1800,11 +1800,59 @@ void Alternate240p480i()
 	FreeImage(&back);
 }
 
+void FixSpriteSize(ImagePtr sprite, int full)
+{
+	if(!sprite)
+		return;
+		
+	if(!full)
+	{
+		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
+				vmode != VIDEO_576I)
+		{
+			sprite->x = 60;
+			sprite->y = 100;
+			
+			sprite->w = 200;
+			sprite->h = 40;
+		}
+		else
+		{
+			sprite->x = 120;
+			sprite->y = 200;
+			
+			sprite->w = 400;
+			sprite->h = 80;
+		}
+	}
+	else
+	{
+		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
+				vmode != VIDEO_576I)
+		{
+			sprite->x = -160;
+			sprite->y = -120;
+			
+			sprite->w = 640;
+			sprite->h = 480;
+		}
+		else
+		{
+			sprite->x = -320;
+			sprite->y = -240;
+			
+			sprite->w = 1280;
+			sprite->h = 960;
+		}
+
+	}
+}
+
 void DiagonalPatternTest()
 {	
-	int		    done = 0, autorotate = 0;
+	int		    done = 0, autorotate = 0, full = 0;
 	float		angle = 0, speed = 1.0f;
-	u32		    pressed;
+	u32		    pressed, oldvmode = vmode;
 	ImagePtr	back, sprite;
 	char		str[40];
 	Mtx 		m;
@@ -1817,26 +1865,22 @@ void DiagonalPatternTest()
 	back->g = 0x00;
 	back->b = 0x00;
 			
-	sprite = LoadImage(STRIPESPOSIMG, 0);
+	sprite = LoadImage(LONGRECTANGLEIMG, 0);
 	if(!sprite)
 		return;
 		
+	FixSpriteSize(sprite, full);
+	
 	while(!done && !EndProgram) 
 	{
-		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
-			vmode != VIDEO_576I)
+		if(oldvmode != vmode)
 		{
-			sprite->x = 60;
-			sprite->y = 100;
-			sprite->w = 200;
-			sprite->h = 40;
-		}
-		else
-		{
-			sprite->x = 120;
-			sprite->y = 200;
-			sprite->w = 400;
-			sprite->h = 80;
+			FreeImage(&sprite);
+			sprite = LoadImage(LONGRECTANGLEIMG, 0);
+			if(!sprite)
+				return;
+			oldvmode = vmode;
+			FixSpriteSize(sprite, full);
 		}
 			
 		StartSceneMtx(&m);
@@ -1855,6 +1899,12 @@ void DiagonalPatternTest()
 		ControllerScan();
 			
         pressed = Controller_ButtonsDown(0);
+		
+		if (pressed & PAD_BUTTON_UP)
+		{
+			full = !full;			
+			FixSpriteSize(sprite, full);			
+		}
 
 		if (pressed & PAD_BUTTON_X)
 			speed+=1;
