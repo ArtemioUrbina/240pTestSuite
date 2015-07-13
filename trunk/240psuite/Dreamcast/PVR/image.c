@@ -558,6 +558,82 @@ void DrawImage(ImagePtr image)
 	pvr_prim(&vert, sizeof(vert));
 }
 
+void DrawImageRotate(ImagePtr image, float angle)
+{ 	
+	float x, y, w, h; 
+
+	pvr_poly_cxt_t cxt;
+	pvr_poly_hdr_t hdr;
+	pvr_vertex_t vert, verttx;
+	
+	if(!image || !image->tex)
+		return;
+
+	x = image->x;
+	y = image->y;
+	w = image->w;
+	h = image->h;
+
+	mat_identity(); 
+	mat_translate(x + (w/2), y + (h/2), 0);
+        mat_rotate_z(angle); 
+	
+	// Center display vertically in PAL modes, since images are mostly NTSC
+	if(!image->IgnoreOffsetY)
+		y+= offsetY;
+
+	if(image->scale && (vmode == VIDEO_480P_SL
+			|| vmode == VIDEO_480I_A240
+			|| vmode == VIDEO_576I_A264))
+	{
+		x *= 2;
+		y *= 2;
+		w *= 2;
+		h *= 2;
+	}
+		
+	pvr_poly_cxt_txr(&cxt, PVR_LIST_TR_POLY, image->texFormat, image->tw, image->th, image->tex, PVR_FILTER_NONE);
+	pvr_poly_compile(&hdr, &cxt);
+	pvr_prim(&hdr, sizeof(hdr));
+
+	vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);		
+	vert.oargb = 0;
+	vert.flags = PVR_CMD_VERTEX;
+	
+	vert.x = -(w/2);
+	vert.y = -(h/2);
+	vert.z = image->layer;
+	vert.u = image->u1;
+	vert.v = image->v1;
+	mat_transform_sq(&vert, &verttx, 1);
+        pvr_prim(&verttx, sizeof(verttx));
+	
+	vert.x = w/2;
+	vert.y = -(h/2);
+	vert.z = image->layer;
+	vert.u = image->u2;
+	vert.v = image->v1;
+	mat_transform_sq(&vert, &verttx, 1);
+        pvr_prim(&verttx, sizeof(verttx));
+	
+	vert.x = -(w/2);
+	vert.y = h/2;
+	vert.z = image->layer;
+	vert.u = image->u1;
+	vert.v = image->v2;
+	mat_transform_sq(&vert, &verttx, 1);
+        pvr_prim(&verttx, sizeof(verttx));
+	
+	vert.x = w/2;
+	vert.y = h/2;
+	vert.z = image->layer;
+	vert.u = image->u2;
+	vert.v = image->v2;
+	vert.flags = PVR_CMD_VERTEX_EOL;
+	mat_transform_sq(&vert, &verttx, 1);
+        pvr_prim(&verttx, sizeof(verttx));
+}
+
 inline void StartScene()
 {
 	pvr_scene_begin();
