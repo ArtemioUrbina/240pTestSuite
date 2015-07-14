@@ -558,6 +558,8 @@ void DrawImage(ImagePtr image)
 	pvr_prim(&vert, sizeof(vert));
 }
 
+#define RAD_CONV 0.0174532925199
+
 void DrawImageRotate(ImagePtr image, float angle)
 { 	
 	float x, y, w, h; 
@@ -568,6 +570,8 @@ void DrawImageRotate(ImagePtr image, float angle)
 	
 	if(!image || !image->tex)
 		return;
+
+	angle *= RAD_CONV;
 
 	x = image->x;
 	y = image->y;
