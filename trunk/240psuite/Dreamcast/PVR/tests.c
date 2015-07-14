@@ -1266,8 +1266,7 @@ void FixSpriteSize(ImagePtr sprite, int full)
 		
 	if(!full)
 	{
-		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
-				vmode != VIDEO_576I)
+		if(vmode != VIDEO_480I && vmode != VIDEO_480P)
 		{
 			sprite->x = 60;
 			sprite->y = 100;
@@ -1283,12 +1282,10 @@ void FixSpriteSize(ImagePtr sprite, int full)
 			sprite->w = 400;
 			sprite->h = 80;
 		}
-		CalculateUV(0, 0, sprite->w, sprite->h, sprite);
 	}
 	else
 	{
-		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
-				vmode != VIDEO_576I)
+		if(vmode != VIDEO_480I && vmode != VIDEO_480P)
 		{
 			sprite->x = -160;
 			sprite->y = -120;
@@ -1304,8 +1301,8 @@ void FixSpriteSize(ImagePtr sprite, int full)
 			sprite->w = 1280;
 			sprite->h = 960;
 		}
-		CalculateUV(0, 0, sprite->w, sprite->h, sprite);
 	}
+	CalculateUV(0, 0, sprite->w, sprite->h, sprite);
 }
 
 void DiagonalPatternTest()
@@ -1330,6 +1327,7 @@ void DiagonalPatternTest()
 		sprite = LoadKMG("/rd/longrectangle.kmg.gz", 1);
 	else
 		sprite = LoadKMG("/rd/longrectanglefull.kmg.gz", 1);
+
 	if(!sprite)
 	{
 		FreeImage(&back);

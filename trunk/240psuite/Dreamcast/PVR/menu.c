@@ -1090,9 +1090,9 @@ void DrawCredits(ImagePtr back)
 		g = back->b;
 		b = back->g;
 
-		back->r = 0.2;
-		back->g = 0.2;
-		back->b = 0.2;
+		back->r = 0.4;
+		back->g = 0.4;
+		back->b = 0.4;
 	}
 
 	srand((int)(time(0) ^ getpid()));
