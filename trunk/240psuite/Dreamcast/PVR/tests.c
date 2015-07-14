@@ -1259,15 +1259,66 @@ void LEDZoneTest()
 	return;
 }
 
+void FixSpriteSize(ImagePtr sprite, int full)
+{
+	if(!sprite)
+		return;
+		
+	if(!full)
+	{
+		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
+				vmode != VIDEO_576I)
+		{
+			sprite->x = 60;
+			sprite->y = 100;
+			
+			sprite->w = 200;
+			sprite->h = 40;
+		}
+		else
+		{
+			sprite->x = 120;
+			sprite->y = 200;
+			
+			sprite->w = 400;
+			sprite->h = 80;
+		}
+		CalculateUV(0, 0, sprite->w, sprite->h, sprite);
+	}
+	else
+	{
+		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
+				vmode != VIDEO_576I)
+		{
+			sprite->x = -160;
+			sprite->y = -120;
+			
+			sprite->w = 640;
+			sprite->h = 480;
+		}
+		else
+		{
+			sprite->x = -320;
+			sprite->y = -240;
+			
+			sprite->w = 1280;
+			sprite->h = 960;
+		}
+		CalculateUV(0, 0, sprite->w, sprite->h, sprite);
+	}
+}
+
 void DiagonalPatternTest()
 {	
-	int 		done = 0, autorotate = 0;
+	int 		done = 0, autorotate = 0, full = 0;
+	int		oldvmode = vmode;
 	float 		angle = 0.0, step = 1;
 	uint16		pressed;
 	ImagePtr	back, sprite;
 	controller 	*st;
+	char		buffer[20];
 
-	back = LoadKMG("/rd/white.kmg.gz", 1);
+	back = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!back)
 		return;
 
@@ -1275,18 +1326,44 @@ void DiagonalPatternTest()
 	back->g = 0.0f;
 	back->b = 0.0f;
 			
-	sprite = LoadKMG("/rd/sonicback.kmg.gz", 0);
+	if(vmode != VIDEO_480I && vmode != VIDEO_480P)
+		sprite = LoadKMG("/rd/longrectangle.kmg.gz", 1);
+	else
+		sprite = LoadKMG("/rd/longrectanglefull.kmg.gz", 1);
 	if(!sprite)
+	{
+		FreeImage(&back);
 		return;
+	}
 
-	sprite->x = 32;
-	sprite->y = 0;
+	FixSpriteSize(sprite, full);
 	
 	updateVMU("Diagonal", "", 1);
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			FreeImage(&sprite);
+			if(vmode != VIDEO_480I && vmode != VIDEO_480P)
+				sprite = LoadKMG("/rd/longrectangle.kmg.gz", 1);
+			else
+				sprite = LoadKMG("/rd/longrectanglefull.kmg.gz", 1);
+			if(!sprite)
+			{
+				FreeImage(&back);
+				return;
+			}
+			oldvmode = vmode;
+			FixSpriteSize(sprite, full);
+		}
+
 		StartScene();
 		DrawImage(back);		
+
+		sprintf(buffer, "Angle: %0.2f", (double)angle);
+		DrawString(32, 32, 0.0, 1.0, 0.0, buffer);
+		sprintf(buffer, "Step: 1/%d", (int)step);
+		DrawString(32, 42, 0.0, 1.0, 0.0, buffer);
 		
 		DrawImageRotate(sprite, angle);
 		EndScene();
@@ -1297,18 +1374,28 @@ void DiagonalPatternTest()
 			if (pressed & CONT_B)
 				done =	1;
 						
-			if (pressed & CONT_LTRIGGER)
+			if(!autorotate)
 			{
-				
-			}
-		
-			if (pressed & CONT_RTRIGGER)
-			{
-				
+				if (pressed & CONT_LTRIGGER)
+					angle += 1/step;
+			
+				if (pressed & CONT_RTRIGGER)
+					angle -= 1/step;
 			}
 
 			if (pressed & CONT_A)
 				autorotate = !autorotate;
+
+			if (pressed & CONT_X)
+				step -= 1;
+
+			if (pressed & CONT_Y)
+				step += 1;
+
+			if(step > 20)
+				step = 20;
+			if(step < 1)
+				step = 1;
 
 			if (pressed & CONT_START)
 				ShowMenu(BACKLITHELP);
@@ -1316,9 +1403,11 @@ void DiagonalPatternTest()
 		
 		if(autorotate)
 			angle += 1/step;
-		if(angle > 360)
-			angle = 0;
 
+		if(angle <= 0)
+			angle += 360;
+		if(angle >= 360)
+			angle -= 360;
 	}
 	FreeImage(&back);
 	FreeImage(&sprite);	
