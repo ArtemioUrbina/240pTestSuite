@@ -578,10 +578,6 @@ void DrawImageRotate(ImagePtr image, float angle)
 	w = image->w;
 	h = image->h;
 
-	mat_identity(); 
-	mat_translate(x + (w/2), y + (h/2), 0);
-        mat_rotate_z(angle); 
-	
 	// Center display vertically in PAL modes, since images are mostly NTSC
 	if(!image->IgnoreOffsetY)
 		y+= offsetY;
@@ -595,6 +591,10 @@ void DrawImageRotate(ImagePtr image, float angle)
 		w *= 2;
 		h *= 2;
 	}
+
+	mat_identity(); 
+	mat_translate(x + (w/2), y + (h/2), 0);
+        mat_rotate_z(angle); 
 		
 	pvr_poly_cxt_txr(&cxt, PVR_LIST_TR_POLY, image->texFormat, image->tw, image->th, image->tex, PVR_FILTER_NONE);
 	pvr_poly_compile(&hdr, &cxt);
