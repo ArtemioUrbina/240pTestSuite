@@ -27,7 +27,7 @@
 #G480p Scanline Intensity:#G When in line doubled
     480p mode, the suite allows the display of
     rendered scanlines. This determines the alpha
-    value for them, 0% to eliminates them.
+    value for them, 0% eliminates them.
 
                                         #C(cont...)#C
                   OPTIONS (3/3)

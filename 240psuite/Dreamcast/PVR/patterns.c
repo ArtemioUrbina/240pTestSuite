@@ -791,7 +791,7 @@ void DrawLinearity(int full)
 		{
 			if(full)
 			{
-				if(vmode >= VIDEO_480P_SL)
+				if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
 				{
 					circles = LoadKMG("/rd/circlesVGA.kmg.gz", 0);
 					if(!circles)
