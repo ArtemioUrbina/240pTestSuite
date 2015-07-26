@@ -25,7 +25,7 @@
 #include "image.h"
 
 #define VERSION_NUMBER "Dreamcast Ver. 1.22"
-#define VERSION_DATE "17/07/2015"
+#define VERSION_DATE "20/07/2015"
 
 #define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7};
 

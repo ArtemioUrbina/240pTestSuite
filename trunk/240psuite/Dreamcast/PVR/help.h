@@ -54,6 +54,7 @@ extern char *HelpData;
 #define OVERSCANHELP	"/rd/help/overscan.txt"
 #define OPTIONSHELP	"/rd/help/options.txt"
 #define VIDEOHELP	"/rd/help/vmode.txt"
+#define DIAGONALHELP	"/rd/help/diagonal.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);
