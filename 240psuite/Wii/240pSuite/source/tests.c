@@ -984,6 +984,7 @@ void DrawStripes()
 	if(!vstripesneg)
 		return;
 
+	ChangeVideoEnabled = 0;
 	while(!done && !EndProgram) 
 	{   
 		StartScene();
@@ -1058,6 +1059,8 @@ void DrawStripes()
 			HelpData = STRIPESHELP;
 		}												
 	}
+	
+	ChangeVideoEnabled = 1;
 
 	FreeImage(&vstripespos);
 	FreeImage(&vstripesneg);
@@ -1851,7 +1854,7 @@ void FixSpriteSize(ImagePtr sprite, int full)
 void DiagonalPatternTest()
 {	
 	int		    done = 0, autorotate = 0, full = 0;
-	float		angle = 0, speed = 1.0f;
+	float		angle = 45, speed = 1.0f;
 	u32		    pressed, oldvmode = vmode;
 	ImagePtr	back, sprite;
 	char		str[40];
@@ -1889,7 +1892,7 @@ void DiagonalPatternTest()
 
 		sprintf(str, "Angle: %0.2f", angle);
 		DrawStringS(10, 10, 0x00, 0xff, 0x00, str); 
-		sprintf(str, "Speed: 1/%d per frame", (int)speed);
+		sprintf(str, "Angle increment: %s%d", speed != 1 ? "1/" : "", (int)speed);
 		DrawStringS(10, 20, 0x00, 0xff, 0x00, str); 
 	
 		DrawImageRotate(sprite, -1*angle, &m);
@@ -1953,7 +1956,7 @@ void DiagonalPatternTest()
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = BACKLITHELP;
+			HelpData = DIAGONALHELP;
 		}																			
 		
 

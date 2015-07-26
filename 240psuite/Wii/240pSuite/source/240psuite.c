@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 		DrawImage(Back);
         DrawImage(sd);
 		
-        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
+        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns >"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
@@ -139,8 +139,8 @@ int main(int argc, char **argv)
 				IsPAL ? "Alternating 288p/576i Test" : "Alternating 240p/480i Test"); y += fh; c++;
 		}        
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
 		
-		y += fh;
         GetVideoModeStr(res, 0);
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); 
@@ -225,9 +225,12 @@ int main(int argc, char **argv)
 					SoundTest();
 					break;				
 				case 14:
-					SelectVideoMode(Back);					
+					HelpWindow(Back);
 					break;
 				case 15:
+					SelectVideoMode(Back);					
+					break;
+				case 16:
 					ChangeOptions(Back);
 					break;								
 			} 									
@@ -283,9 +286,25 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid 224p"); y += fh; c++;
+		if(vmode != VIDEO_240P)
+		{
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, 
+					sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Grid 224p"); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid 224p"); y += fh; c++;   
+		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;		
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity 224p"); y += fh; c++;	
+		if(vmode != VIDEO_240P)
+		{
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, 
+					sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Linearity 224p"); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity 224p"); y += fh; c++;	
+		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White & RGB Screens"); y += fh; c++;				
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;				
@@ -349,13 +368,15 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					DrawGrid();
 					break;	
 				case 7:
-					DrawGrid224();
+					if(vmode == VIDEO_240P)
+						DrawGrid224();
 					break;
 				case 8:
 					DrawLinearity();
 					break;
 				case 9:
-					DrawLinearity224();
+					if(vmode == VIDEO_240P)
+						DrawLinearity224();
 					break;
 				case 10:
 					DrawGrayRamp();

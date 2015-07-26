@@ -1145,7 +1145,11 @@ void DrawCredits(ImagePtr Back)
 			u32			press;		
 			ImagePtr	nish;	
 			
+#ifdef WII_VERSION
 			nish = LoadImage(NISHIMG, 0);
+#else
+			nish = LoadImage(NISHGCIMG, 0);
+#endif
 			if(nish)
 			{					
 				while(!check) 
