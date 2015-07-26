@@ -752,17 +752,14 @@ void DrawGrid()
 
 void DrawGrid224()
 {
-	int 		done = 0, oldvmode = vmode, genny = 0, text = 0;
+	int 		done = 0, genny = 0, text = 0;
 	u32			pressed;		
 	ImagePtr	back = NULL;
 	char		msg[50];
 	
-	if(oldvmode != VIDEO_240P) 
-	{
-		SetVideoMode(VIDEO_240P);
-		SetupGX();	
-	}
-	
+	if(vmode != VIDEO_240P) 
+		return;
+		
 	ChangeVideoEnabled = 0;
 	
 	while(!done && !EndProgram) 
@@ -835,12 +832,6 @@ void DrawGrid224()
 
 	ChangeVideoEnabled = 1;
 	FreeImage(&back);
-	
-	if(oldvmode != vmode)
-	{
-		SetVideoMode(oldvmode);
-		SetupGX();	
-	}
 	
 	return;
 }
@@ -943,11 +934,14 @@ void DrawLinearity()
 
 void DrawLinearity224()
 {
-	int 		done = 0, oldvmode = vmode, gridmode = 0;
+	int 		done = 0, gridmode = 0;
 	u32			pressed;
 	ImagePtr	circles = NULL, grid, gridd;
 	
 
+	if(vmode != VIDEO_240P)
+		return;
+		
 	grid = LoadImage(CIRCLESGRIDIMG, 0);
 	if(!grid)
 		return;
@@ -969,27 +963,10 @@ void DrawLinearity224()
 	CalculateUV(0, 0, 320, 224, grid);
 	CalculateUV(0, 0, 320, 224, gridd);
 	
-	if(oldvmode != VIDEO_240P) 
-	{
-		SetVideoMode(VIDEO_240P);
-		SetupGX();
-	}
-	
 	ChangeVideoEnabled = 0;
 		
 	while(!done && !EndProgram) 
 	{    
-		if(oldvmode != vmode)
-		{
-			FreeImage(&circles);		
-			oldvmode = vmode;
-			
-			grid->w = 320;
-			grid->h = IsPAL ? 264 : 224;
-			gridd->w = 320;
-			gridd->h = IsPAL ? 264 : 224;
-		}    
-		
 		if(!circles)
 		{
 			if(IsPAL)
@@ -1054,12 +1031,6 @@ void DrawLinearity224()
 	FreeImage(&gridd);
 	FreeImage(&grid);
 	FreeImage(&circles);
-	
-	if(oldvmode != vmode)
-	{
-		SetVideoMode(oldvmode);
-		SetupGX();	
-	}
 	
 	return;
 }

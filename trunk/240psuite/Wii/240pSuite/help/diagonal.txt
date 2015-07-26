@@ -1,0 +1,14 @@
+            Diagonal line patterns
+
+These patterns can be used to adjust the vertical
+and horizontal scaling in video procesors in
+different resolutions. The test uses higher 
+resolution assets for 480p when in that mode.
+
+The angle increment for line rotation can be
+adjusted by fractions up to 1/20th of a degree
+with $X and $Y. The angle can be adjusted with
+$L and $R.
+
+The bars can be set to autorotate with $A and the
+bars can be toggled to full screen by pressing Up.

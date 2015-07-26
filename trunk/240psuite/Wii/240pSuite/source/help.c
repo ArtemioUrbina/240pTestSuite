@@ -67,12 +67,16 @@ char *colors_txt[] = {
 "                 COLORBARS (2/2)\n\nThe same procedure should be used with each\ncolor, raise the control that adjusts the\nindividual color level (not the #Ycolor#Y/#Ytint#Y one)\nuntil you can't tell the rightmost box under #GF#G\nfrom the one to its left, and then lower it until\nyou can distinguish them clearly. \n\nRepeat for each color and you are set.\n\n\n\n\n",
 NULL
 };
+char *diagonal_txt[] = { 
+"            Diagonal line patterns\n\nThese patterns can be used to adjust the vertical\nand horizontal scaling in video procesors in\ndifferent resolutions. The test uses higher \nresolution assets for 480p when in that mode.\n\nThe angle increment for line rotation can be\nadjusted by fractions up to 1/20th of a degree\nwith $X and $Y. The angle can be adjusted with\n$L and $R.\n\nThe bars can be set to autorotate with $A and the\nbars can be toggled to full screen by pressing Up.",
+NULL
+};
 char *dshadow_txt[] = { 
 "                 DROP SHADOW TEST \n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\n(25Hz) shadow on a 60hz (50hz) signal. No \nbackground detail should be lost and the shadow \nshould be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button $X. Backgrounds can be\nswitched with the $A button and button $Y\ntoggles sprites. ",
 NULL
 };
 char *general_txt[] = { 
-"                    HELP (1/3)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp is available on some patterns by pressing the\n$S button.\n\n                                         #C(cont...)#C",
+"                    HELP (1/3)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp and options are available everywhere by \npressing the $S button.\n#Y[Please press right for next help page]#Y\n                                         #C(cont...)#C",
 "                    HELP (2/3)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is capable\nof drawing the whole visible signal, 264 and 528\nlines respectively. However, since most screens\nare only 240p tall, the suite centers them \nvertically. Grids and other 264p patterns are \nshown using the full resolution.\n\nPAL and 480p modes must be enabled from the \noptions menu. \n                                         #C(cont...)#C",
 "                    HELP (3/3)\n\nThe 240p suite is also available in other systems,\nincluding: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/\n#YMega CD#Y, #YPC Engine#Y/#YTG-16#Y, #YSuper Nintendo#Y/#YSFC#Y,\n#YNintendo GameCube#Y, #YNintendo Wii#Y and #YSega Dreamcast#Y.",
 NULL
@@ -184,7 +188,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	31
+#define	HELPCOUNT	32
 char **HelpArray[HELPCOUNT] = {
 	SMPTEColor_txt,
 	alt240p_txt,
@@ -194,6 +198,7 @@ char **HelpArray[HELPCOUNT] = {
 	check480pWii_txt,
 	color601_txt,
 	colors_txt,
+	diagonal_txt,
 	dshadow_txt,
 	general_txt,
 	gray_txt,

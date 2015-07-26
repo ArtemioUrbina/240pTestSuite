@@ -10,9 +10,9 @@ sets and video processing equipment; and
 game console to help in properly calibrating the
 display's black, white and color levels.
 
-Help is available on some patterns by pressing the
-$S button.
-
+Help and options are available everywhere by 
+pressing the $S button.
+#Y[Please press right for next help page]#Y
                                          #C(cont...)#C
                     HELP (2/3)
 
