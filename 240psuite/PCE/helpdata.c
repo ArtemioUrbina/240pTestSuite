@@ -550,6 +550,7 @@ void display_overscan_00()
 	p_string	overscan_00_08,6,17
 	p_string	overscan_00_09,6,18
 	p_string	overscan_00_10,6,19
+	p_string	overscan_00_11,6,20
 	rts
 
 overscan_00_00:	.db	"OVERSCAN"
