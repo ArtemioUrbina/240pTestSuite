@@ -127,15 +127,17 @@ void DrawHelp(int option)
 				      }
 				      else
 				      {
-				      	VDP_drawTextBG(APLAN, "Help can be shown by pressing 'Z'", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      	VDP_drawTextBG(APLAN, "in any test or pattern.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      	VDP_drawTextBG(APLAN, "Help can be shown with 'Z' in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      	VDP_drawTextBG(APLAN, "any test or pattern.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      }				      
 				      y++;		      	
 				      VDP_drawTextBG(APLAN, "The 240p suite is also available", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "in GameCube, Wii, Super Nintendo,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "and Sega Dreamcast.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				          
+				      VDP_drawTextBG(APLAN, "in GameCube, Nintendo Wii,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "PC Engine/TG-16, Super CD,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "CD-ROM2, and Sega Dreamcast.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				          
 				      y++;
-				      VDP_drawTextBG(APLAN, "Visit: http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "Visit:", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					  VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "for more information.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				    	break;
 		    	}
@@ -145,6 +147,23 @@ void DrawHelp(int option)
 		    	{
 			    	case 1:
 				      VDP_drawTextBG(APLAN, "         PLUGE (1/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+					  VDP_drawTextBG(APLAN, "NTSC levels require black to be", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "at 7.5 IRE for video. This HW", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "lowest is 6 IRE (6%), so using", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);      
+				      VDP_drawTextBG(APLAN, "this value for general 240p use", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);      				      
+				      VDP_drawTextBG(APLAN, "is not recommended.", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+				      y++;
+				      VDP_drawTextBG(APLAN, "Of course using it as reference", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "will work perfectly for games", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				      
+				      VDP_drawTextBG(APLAN, "in this platform.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      y++;
+				      VDP_drawTextBG(APLAN, "In PAL - and console gaming in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "general - it is adviced to use", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      VDP_drawTextBG(APLAN, "a value of 2 IRE as black.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
+				      VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+				      break;				      
+				    case 2:
+				    	VDP_drawTextBG(APLAN, "         PLUGE (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
 				      VDP_drawTextBG(APLAN, "The PLUGE pattern is used to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "help adjust the black level to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "a correct value. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);      
@@ -158,23 +177,6 @@ void DrawHelp(int option)
 				      VDP_drawTextBG(APLAN, "You should lower it until they", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "are not visible, and raise it", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "until they show.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
-				      break;				      
-				    case 2:
-				    	VDP_drawTextBG(APLAN, "         PLUGE (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
-				      VDP_drawTextBG(APLAN, "NTSC levels require black to be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "at 7.5 IRE for video. This HW", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "can produce 6 IRE (6%), so using", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);      
-				      VDP_drawTextBG(APLAN, "this value for general 240p use", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);      				      
-				      VDP_drawTextBG(APLAN, "is not recommended.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      y++;
-				      VDP_drawTextBG(APLAN, "Of course using it as reference", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "will work perfectly for games", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				      
-				      VDP_drawTextBG(APLAN, "in this platform.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      y++;
-				      VDP_drawTextBG(APLAN, "In PAL - and console gaming in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "general - it is adviced to use", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
-				      VDP_drawTextBG(APLAN, "a value of 2 IRE as black.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		
 				      break;				      
 				  }
 		      break;
@@ -279,7 +281,9 @@ void DrawHelp(int option)
 		      VDP_drawTextBG(APLAN, "You can use color filters or the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 		      VDP_drawTextBG(APLAN, "blue only option in your display", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 		      VDP_drawTextBG(APLAN, "-if available- to confirm color", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-		      VDP_drawTextBG(APLAN, "balance.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      VDP_drawTextBG(APLAN, "balance.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+			  y++;		      
+			  VDP_drawTextBG(APLAN, "This HW lowest black is 6%.", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);			  
 		      break;      
 		    case HELP_LINEARITY:
 		      VDP_drawTextBG(APLAN, "          LINEARITY", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
@@ -596,27 +600,29 @@ void DrawHelp(int option)
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;    
 
-		if(joytype != JOY_TYPE_PAD6)
+	if(joytype != JOY_TYPE_PAD6)
+	{
+		VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
+		VDP_drawTextBG(APLAN, "Show HELP (A):", TILE_ATTR(PAL0, 0, 0, 0), 14, 26);
+		VDP_drawTextBG(APLAN, showhelp == 0 ? "No " : "Yes" , TILE_ATTR(PAL1, 0, 0, 0), 29, 26);
+			
+		if (pressedButtons & BUTTON_START)      	
+			exit = 1;
+	
+		if (pressedButtons & BUTTON_A)
 		{
-			VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
-  		VDP_drawTextBG(APLAN, "Show HELP (A):", TILE_ATTR(PAL0, 0, 0, 0), 14, 26);
-  		VDP_drawTextBG(APLAN, showhelp == 0 ? "No " : "Yes" , TILE_ATTR(PAL1, 0, 0, 0), 29, 26);
-  				
-    	if (pressedButtons & BUTTON_START)      	
-      	exit = 1;
-      	
-      if (pressedButtons & BUTTON_A)
-	    {
-	      showhelp = !showhelp;
-	      redraw = 1;
-	    }
+			showhelp = !showhelp;
+			redraw = 1;
+		}
     }
     else
     {
     	VDP_drawTextBG(APLAN, "Press Z to exit help", TILE_ATTR(PAL0, 0, 0, 0), 11, 24);
     	
     	if (pressedButtons & BUTTON_Z)
-      	exit = 1;      	      
+			exit = 1;      	      
+		if (pressedButtons & BUTTON_START)      	
+			exit = 1;
     }
     
     if (pressedButtons & BUTTON_LEFT)
