@@ -68,52 +68,80 @@ void DrawSP()
 #endif
 
 unsigned char region;
+unsigned char cdrom;
 unsigned char *io;
 
-// returns 1 if US system
-char DetectTG16()
+
+void DetectPCEType()
 {
 	io = 0x1000;
 	region = *io;
 	
-	if((region & 0x40) == 0)
-		return 1;
-	else
-		return 0;
+	region = ((region & 0xF0)>>4);
 }
 
 // returns 1 if CD detected
-char DetectCDROM()
+void DetectCDROM()
 {
-	io = 0x1000;
-	region = *io;
+	io = 0x1800;
+	cdrom = *io;
 	
-	region = *io;
-	if((region & 0x80) == 0)
-		return 1;
+	if(cdrom == 0x00)
+		cdrom = 1;
 	else
-		return 0;
+		cdrom = 0;
 }
 
 #ifndef HELP_OVL
 void DisplaySystemInfo()
-{
+{	
 	SetFontColors(13, RGB(2, 4, 7), RGB(7, 7, 7), RGB(1, 3, 7));
 	set_font_pal(13);
-	if(DetectTG16())
+	
+	DetectPCEType();
+	DetectCDROM();
+#ifdef SGFX
+	if(sgx_detect())
 	{
-		if(DetectCDROM())
-			put_string("TG-16+CDROM", 26, 27);
+		if(cdrom)
+		{
+			put_string("SuperGrafx+CDROM2", 20, 27);
+			left = 20;
+		}
 		else
-			put_string("TG-16", 32, 27);
+			put_string("SuperGrafx", 27, 27);
 	}
 	else
 	{
-		if(DetectCDROM())
-			put_string("PCE+CDROM2", 27, 27);
-		else
-			put_string("PCE", 34, 27);
+#endif
+		switch(region)
+		{
+			case	0x0F: // Stand alone original PCE
+					{
+						put_string("PC Engine", 28, 27);
+					}
+					break;
+			case	0x07: // PCE+IFU30
+					{
+						put_string("PCE+CDROM2", 27, 27);
+						left = 27;
+					}
+					break;
+			case	0x03: // Duo or TG-16
+					{
+						put_string("Duo|TG-16+CD", 25, 27);
+						left = 25;
+					}
+					break;
+			case 	0x0B: // TG-16
+					{
+						put_string("TG-16", 32, 27);
+					}
+					break;
+		}
+#ifdef SGFX
 	}
+#endif
 	if(Enabled240p)
 	{
 		if(UseDefault)
@@ -126,7 +154,7 @@ void DisplaySystemInfo()
 		
 #ifdef SCDROM
 	if(ac_exists())
-		put_string("AC+", 23, 27);	
+		put_string("AC+", left-3, 27);	
 #endif
 }
 
