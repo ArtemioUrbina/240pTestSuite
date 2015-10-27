@@ -27,6 +27,7 @@
 #include "font.h"
 #include "video.h"
 #include "help.h"
+#include "tools.h"
 
 #ifndef CDROM1
 #include "graphics.h"
@@ -281,10 +282,11 @@ void DrawGeneralHelp(char page)
 			put_string("help pages. Options can be changed via SELECT", 6, row++);
 			put_string("when in the main menus.",6, row++);
 			row++;
-			if(!DetectTG16())
-				put_string("The PC Engine version of the suite is", 6, row++);
-			else
+			DetectPCEType();
+			if(region == 0x0B)
 				put_string("The TurboGrafx-16 version of the suite is in", 6, row++);
+			else
+				put_string("The PC Engine version of the suite is", 6, row++);
 			put_string("320x240 by default, but can be changed to 320x224p.", 6, row++);
 			put_string("Grids and other screens are also available in", 6, row++);
 			break;

@@ -24,10 +24,11 @@
  */
 
 
+extern unsigned char region;
+extern unsigned char cdrom;
+
 void DrawSP();
-// returns 1 if US system
-char DetectTG16();
-// returns 1 if CD detected
-char DetectCDROM();
+void DetectPCEType();
+void DetectCDROM();
 void DisplaySystemInfo();
 void Options();
