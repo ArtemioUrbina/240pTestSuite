@@ -66,26 +66,40 @@ tvSystem:      .res 1
   jsr getTVSystem
   sta tvSystem
   jsr do_credits
-;  jsr do_drop_shadow_sprite
+;  jsr do_overclock
 
 forever:
   ldx #helpsect_240p_test_suite_menu
   lda #KEY_A|KEY_START|KEY_UP|KEY_DOWN|KEY_LEFT|KEY_RIGHT
   jsr helpscreen
-  
-  ; At this point, page A line Y
-  cmp #1
+
+  ; The user chose line Y of (relative) page A of the menu document
+  lsr a  ; carry clear for 0 or set for 1
+
+  ; Save position on menu to be restored even if the user views
+  ; a different help page, Sound test, About, or Credits.
+  lda help_cur_page
+  pha
   tya
+  pha
+
+  ; Calculate which routine to call
   bcc :+
-    adc #11-1
+    adc #page2start-1
   :
+  asl a
+  tax
   jsr main_dispatch
+
+  ; Restore position on menu
+  pla
+  sta help_cursor_y
+  pla
+  sta help_cur_page
   jmp forever
 .endproc
 
 .proc main_dispatch
-  asl a
-  tax
   lda routines+1,x
   pha
   lda routines,x
@@ -105,7 +119,8 @@ routines:
   .addr do_solid_color-1
   .addr do_ire-1
   .addr do_sharpness-1
-
+  .addr do_overclock-1
+::page2start = (* - routines)/2
   .addr do_overscan-1
   .addr do_drop_shadow_sprite-1
   .addr do_stopwatch-1

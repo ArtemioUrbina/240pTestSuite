@@ -1,4 +1,3 @@
-
 == 240p Test Suite: Menu ==
 
 	PLUGE
@@ -12,6 +11,7 @@
 	Solid color screen
 	IRE
 	Sharpness
+	CPU clock speed
 ----
 	Overscan
 	Shadow sprite
@@ -265,6 +265,39 @@ middle as no change, high
 as enhancement, and low
 as blurring.
 
+== CPU clock speed ==
+
+Kevin Horton's Hi-Def NES
+mod includes a feature to
+overclock the NES CPU to
+reduce slowdown in games.
+This test measures the CPU's
+clock rate using the length
+of a scanline as a time base.
+
+Though the NES has no
+real-time clock, a program
+can measure the clock rate
+relative to the PPU's roughly
+15.7 kHz horizontal retrace.
+This frequency cannot be
+changed without causing
+the display to lose color
+or even lose sync.
+----
+Then it uses NMI and sprite
+0 timing to measure cycles
+per frame and per scanline.
+It guesses the hsync rate
+based on whether the PPU
+is making 262 or 312 lines:
+
+  NTSC: 15745.80 Hz
+  PAL:   15602.18 Hz
+
+From this, it calculates
+CPU clock speed.
+
 == Overscan ==
 
 With this pattern you can
@@ -289,18 +322,19 @@ Hold A + ↑↓←→:
 ----
 Move each edge inward until
 you see the white border,
-then move it back out one
-pixel. The resulting number
-is the amount of overscan in
-pixels in each direction.
+then go back one pixel. Or
+leave one white pixel visible
+and subtract 1. The result
+is the amount of overscan
+in pixels in each direction.
 
 The NES picture is 256x240
-pixels. The nominal 4:3
-frame on NTSC is 280x240,
-including 12 pixels of border
-at the left and right sides.
-This border is not included
-in the displayed amounts.
+pixels. The nominal 4:3 frame
+on NTSC is 280x240, including
+12 pixels of border at left
+and right. This border is not
+included in the displayed
+amounts.
 
 PAL NES border is always
 black. It covers 2 pixels
@@ -525,12 +559,12 @@ even for MERCHANTABILITY
 or FITNESS FOR A
 PARTICULAR PURPOSE.
 
-Version 0.05 (2015-11-18)
-Initial PAL support
+Version 0.06 (2015-11-20)
+Now with overclock
 ----
 You can help this project:
 
-1. Testing on Dendy
+1. Testing on Dendy famiclone
 2. Testing with high-quality
    displays and scalers
 3. Detailed instructions

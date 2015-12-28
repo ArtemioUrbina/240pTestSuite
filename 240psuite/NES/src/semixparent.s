@@ -531,8 +531,10 @@ tileloop:
 .segment "RODATA"
 max_shadow_frame_for_type:  .byte 2, 3
 
-.segment "BANK00"
+.segment "RODATA"
 gus_portrait_sb53:  .incbin "obj/nes/gus_portrait.sb53"
+
+.segment "BANK01"
 shadow_reticle_pb53:.incbin "obj/nes/shadow_reticle.chr.pb53"
 hepsie_pb53:        .incbin "obj/nes/hepsie.chr.pb53"
 hepsie_palette:

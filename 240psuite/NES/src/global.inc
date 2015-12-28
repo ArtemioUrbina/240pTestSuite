@@ -38,6 +38,8 @@
 ; helpscreen.s
 .global helpscreen, load_sb53_ay, load_sb53, help_reload
 .global txtlinebuf, vram_copydstlo, vram_copydsthi
+; these are for "save your place on the main menu" functionality
+.global help_cursor_y, help_cur_page
 
 ; unpb53.s
 .global unpb53_some, unpb53_xtiles, unpb53_ay_xtiles, PB53_outbuf
@@ -84,9 +86,19 @@
 ; bcd.s
 .global bcd8bit
 bcd_highdigits = $0000
+.global bcdConvert24, bcdWrite
+.globalzp bcdNum, bcdResult
 
 ; random.s
 .globalzp CRCLO, CRCHI
 .global rand_crc, crc16_update
 
+; overclock.s
+.global do_overclock
+
+; muldiv.s
+.globalzp prodlo, prodmlo, prodmhi, prodhi, fac1lo, fac1hi, fac2lo, fac2hi
+.global mul16x16, div32x16
+
 .endif
+

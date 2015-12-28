@@ -568,6 +568,9 @@ loop:
   jmp loop
 
 done:
+  lda #$00   ; Turn off triangle
+  sta $4008
+  sta $400B
   rts
 .endproc
 

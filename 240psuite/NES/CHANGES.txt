@@ -1,3 +1,17 @@
+0.06 (2015-11-20)
+* First attempt at a ceiling for the help screen background
+* Added CPU clock speed test for Hi-Def NES users
+  (requested by Ice Man)
+* Saves and restores position on main menu even if the user views
+  a help page or the Sound test submenu (requested by 43110)
+* SMPTE color bars, 601 color bars: Silences beep when closing
+  (reported by 43110)
+* Overscan: Uploads OAM before palette because some capture cards
+  (and presumably underscanning displays) capture the start of vblank
+  and can see the palette update rainbow streak (requested by thefox)
+* Overscan: Clarified meaning of leaving one white pixel
+  on the screen (requested by thefox)
+
 0.05 (2015-11-18)
 * Menu: Displays TV system name (NTSC, PAL, or Dendy) in corner
 * Made some tests' help pages more concise
@@ -8,7 +22,7 @@
   and 239 pixels tall on PAL
 * Linearity: Moved small circles 2 pixels away from the sides on PAL
 * IRE: Incorporates signal measurements by lidnariq
-* Overscan: Explained PAL border in help page
+* Overscan: Help page explains PAL border
 * Overscan: Redraws borders after returning from help page
   (reported by thefox)
 * Hill zone scroll test: Corrected parallax strip height on PAL NES
