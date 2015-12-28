@@ -1,0 +1,485 @@
+== About ==
+
+The 240p Test Suite was
+designed with two goals in
+mind:
+
+1. Evaluate TV sets and
+   video processors for ability
+   to handle 240p signals.
+2. Turn a game console into
+   a test signal generator
+   to help in calibrating the
+   black, white, and color
+   levels of a display.
+
+The Nintendo Entertainment
+System (NES) can output 240
+picture lines in a progressive
+"double struck" mode. It does
+not support interlaced video,
+and its 52-color palette is
+closer to HSV than RGB.
+----
+Press Start in any test
+pattern to show help for
+that pattern.
+
+The test suite is also
+available for several other
+consoles. For more info, visit
+http://junkerhq.net/240p
+
+== PLUGE ==
+
+The PLUGE (picture line-up
+generation equipment)
+pattern is used to help
+adjust the black level
+to a correct value.
+
+The inner bars are a signal
+level slightly lower than
+standard black. The outer
+bars are the darkest mix
+of colors the NES can show.
+
+You should adjust the TV's
+"brightness" control until the
+outer bars are clearly visible
+and inner bars are not.
+
+== Gradient color bars ==
+
+This pattern allows you to
+calibrate the red, green, and
+blue colors on your TV.
+
+Use the TV's "contrast"
+control to adjust the white
+level such that four levels
+each of red, green, and blue
+and three levels of white are
+visible, and that the lightest
+level of each color is distinct
+from white.
+
+Press A to hide or show
+the 16px grid.
+
+== SMPTE color bars ==
+
+This pattern can be used to
+calibrate for approximate
+color levels.
+
+A: Switch between light and
+dark versions of the bars
+Select: Toggle 1 kHz tone
+
+With some TVs, you can turn
+on blue-only mode to confirm
+color balance. But because
+the NES's composite encoder
+does not attempt to produce
+accurate RGB hues, these
+colors will not be pure.
+
+== 601 color bars ==
+
+This pattern idea and
+layout borrows form the
+Digital Video Essentials
+color adjust pattern.
+It has a gray background
+as reference and can be
+used with color filters
+to adjust color accuracy. 
+
+A: Switch between light and
+dark versions of the bars
+Select: Toggle 1 kHz tone
+
+With some TVs, you can turn
+on blue-only mode to confirm
+color balance. But because
+the NES's composite encoder
+does not attempt to produce
+accurate RGB hues, these
+colors will not be pure.
+
+== Color bleed ==
+
+This pattern helps diagnose
+color bleed caused by
+incorrect color resampling.
+
+↑↓←→: Move the pattern
+by one pixel
+Hold ↑↓←→: Move the
+pattern every frame
+A: Switch among
+horizontal, vertical, and
+checkerboard patterns
+Select: Show or hide a
+frame counter
+
+Concept by Konsolkongen
+
+== Grid ==
+
+This pattern uses the full
+resolution of the screen.
+
+You can use it to verify that
+the entire picture is visible,
+including the entire red
+border, and that no distortion
+is present.
+
+A: Change between 256x224
+and 256x240 pixel grids.
+Be aware that many games
+designed for NTSC display
+may show artifacts outside
+the 256x224 pixel area.
+
+== Linearity ==
+
+This pattern shows five
+circles at the 8:7 pixel
+aspect ratio of the NES PPU.
+
+You can use it to verify that
+a display or scaler has its
+horizontal to vertical size
+ratio set correctly or to
+verify the lack of barrel
+distortion on a CRT.
+
+The diameter of each circle
+should be the same in all
+directions, and the diameter
+of all four small circles
+should be the same.
+
+A: Hide or show a
+square grid
+
+== Gray ramp ==
+
+This gray ramp should not
+have a red, green, or blue
+tint to it.
+
+Some cheaper LCDs can have
+different gamma curves for
+the different components.
+
+== Solid color screen ==
+
+Some displays and scalers
+have problems when changing
+between solid black and solid
+white or bright colors.
+Some cables produce audio
+buzzing while a white
+screen is displayed.
+
+←→: Change among solid
+white, black, red, green,
+and blue screens.
+A on black screen: Switch
+between black and below
+black.
+A on white screen: Enter
+or leave custom color mode
+↑↓: Change brightness
+←→: Change hue
+
+== IRE ==
+
+Press Left and Right to
+change the background
+intensity.
+
+Press A to change between a
+light rectangle on black and
+a dark rectangle on white.
+
+== Sharpness ==
+
+You should set the sharpness
+of your TV to a value that
+shows clean black and gray
+transitions without white
+ghost lines on the side.
+
+On modern TVs, the
+"sharpness" control performs
+edge enhancement, which
+is designed for live action
+sources received through RF.
+Some TVs have zero as
+no change and high as
+enhancement. Others have
+middle as no change, high as
+enhancement, and low as
+blurring.
+
+== Overscan ==
+
+With this pattern you can
+discover how much of the
+picture edge your TV hides.
+
+Historically, CRT TVs have
+been calibrated to
+"overscan", or draw the
+picture slightly past the
+visible area, in case aging
+capacitors cause the picture
+to shrink over time. This
+continues into the modern
+era, as a lot of productions
+have unwanted information
+in this overscan area.
+----
+Press a direction to choose
+an edge of the screen. Then
+hold A and press toward or
+away from the edge to move
+it. Move it inward until you
+see the white border, then
+move it back out one pixel.
+The resulting number is the
+amount of overscan in pixels
+in each direction.
+
+The NES picture is 256x240
+pixels, with 12 pixels of
+built-in border at the left
+and right sides. This border
+is not included in the
+displayed amounts.
+
+== Drop shadow sprite ==
+
+This test draws a shadow
+sprite on every other frame,
+flickering at 30 or 25 Hz.
+Such a flickering effect is
+commonly used in games to
+show transparency, such as
+during mercy invincibility.
+
+Use the Control Pad to move
+the sprite. Whether still or
+moving, no background detail
+must be lost, and the shadow
+must be shown without
+horizontal stripes.
+
+Press Select to change the
+sprite's shape, or hold Select
+and press Left or Right to
+switch backgrounds.
+
+== Striped sprite ==
+
+Some deinterlacers can
+display drop shadows
+correctly but still interpret
+240p as 480i. This striped
+sprite should make it easier
+to tell if a processor is trying
+to deinterlace an image.
+
+Use the Control Pad to
+move the sprite. Hold Select
+and press Left or Right to
+switch backgrounds.
+
+== Stopwatch ==
+
+Use this test with two
+displays connected at once.
+One of them is being tested,
+and the other (the reference)
+should be either a CRT or
+a display with known lag.
+
+Use a digital camera to take
+a picture of both screens at
+the same time. The picture
+will show the difference in
+image processing latency
+between them. For some
+consumer LCD TVs, this
+may exceed five frames.
+
+The clock display at the
+bottom helps determine
+the frame even when the
+numbers above are blurry.
+----
+You can also use this test
+as a stopwatch.
+
+A: Start/stop
+Select when stopped: Reset
+Select when running: Lap
+
+== Manual lag test ==
+
+This helps quantify a
+display's processing lag by
+showing a changing pattern
+on the screen, optionally with
+audio.
+
+Press A when the moving
+reticle aligns with the still
+one to display the offset in
+frames from the actual
+intersection and whether it
+was early or late. After ten
+presses that are not early,
+their average is shown.
+----
+Use the Control Pad to
+change the direction of the
+moving reticle (horizontal,
+vertical, or both).
+
+Results will be more accurate
+if you are skilled at rhythm
+games such as Konami's
+Dance Dance Revolution or
+Activision's Guitar Hero.
+
+== Hill zone scroll test ==
+
+This test shows a background
+from a video game. It can be
+used to notice any drops in
+frame rate.
+
+Press Up or Down to change
+the speed. Press Left or
+Right to change the direction.
+Press A to stop or start.
+
+== Grid scroll test ==
+
+A grid is scrolled vertically
+or horizontally, which can be
+used to test linearity and how
+well the display copes with
+scrolling and frame rate.
+
+Press Up or Down to change
+the speed. Hold A and press a
+direction to change direction.
+Press A to stop or start.
+
+== Full screen stripes ==
+
+You should see a pattern of
+lines, each one pixel in height.
+
+↑↓←→: Move the pattern
+by one pixel
+Hold ↑↓←→: Move the
+pattern every frame
+A: Switch among
+horizontal, vertical, and
+checkerboard patterns
+Select: Show or hide a
+frame counter
+----
+When the pattern is moving
+continuously, you should see
+the lines flicker. If continuous
+movement produces a still
+image, your processor is
+treating the signal as
+interlaced and either
+discarding every other frame
+or combining them incorrectly.
+
+== Backlight zone test ==
+
+This test lets you check how
+the display's backlight works
+with small bright areas. Some
+LED-lit LCDs dim darker
+areas in order to achieve
+blacker blacks, but this
+causes problems with scenes
+such as starfields.
+
+Use the Control Pad to move
+a small square. Press Select
+to change its size among 1, 2,
+4, or 8 pixels on a side.
+Press A to hide or show it in
+order to test transitions to
+and from a black screen.
+
+== Sound test ==
+
+Use this test to ensure that
+the audio output is working
+and that audio and video are
+synchronized.
+
+Press A to play a sound and
+show a sprite while it is
+playing.
+
+== Credits ==
+
+Concept by Artemio Urbina
+  🐦 @Artemio
+Program by Damian Yerrick
+  🐦 @PinoBatch
+
+© 2011-2014 Artemio Urbina
+© 2015 Damian Yerrick
+This is free software; see the
+source for copying conditions.
+There is NO warranty, not
+even for MERCHANTABILITY
+or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+Version 0.01 (2015-10-23)
+Completeness: 13 of 23
+
+== 240p Test Suite: Menu ==
+
+	PLUGE
+	Gradient color bars
+	SMPTE color bars
+	601 color bars
+	Color bleed
+	Grid
+	Linearity
+	Gray ramp
+	(no) Solid color screen
+	IRE
+	Sharpness
+----
+	(no) Overscan
+	(no) Drop shadow sprite
+	(no) Striped sprite
+	(no) Stopwatch
+	(no) Manual lag test
+	(no) Hill zone scroll test
+	(no) Grid scroll test
+	Full screen stripes
+	(no) Backlight zone test
+	(no) Sound test
+	About
+	Credits
