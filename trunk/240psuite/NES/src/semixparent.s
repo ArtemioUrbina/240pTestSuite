@@ -1,3 +1,22 @@
+;
+; Semitransparent sprite tests for 240p test suite
+; Copyright 2015 Damian Yerrick
+;
+; This program is free software; you can redistribute it and/or modify
+; it under the terms of the GNU General Public License as published by
+; the Free Software Foundation; either version 2 of the License, or
+; (at your option) any later version.
+;
+; This program is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+; GNU General Public License for more details.
+;
+; You should have received a copy of the GNU General Public License along
+; with this program; if not, write to the Free Software Foundation, Inc.,
+; 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+;
+
 .include "nes.inc"
 .include "global.inc"
 .include "rectfill.inc"
@@ -530,6 +549,9 @@ tileloop:
 
 .segment "RODATA"
 max_shadow_frame_for_type:  .byte 2, 3
+hepsie_palette:
+  .byte $0F,$1A,$27,$FF,$0F,$14,$27,$FF,$0F,$0F,$0F
+hepsie_palette_len = * - hepsie_palette
 
 .segment "RODATA"
 gus_portrait_sb53:  .incbin "obj/nes/gus_portrait.sb53"
@@ -537,9 +559,6 @@ gus_portrait_sb53:  .incbin "obj/nes/gus_portrait.sb53"
 .segment "BANK01"
 shadow_reticle_pb53:.incbin "obj/nes/shadow_reticle.chr.pb53"
 hepsie_pb53:        .incbin "obj/nes/hepsie.chr.pb53"
-hepsie_palette:
-  .byte $0F,$1A,$27,$FF,$0F,$14,$27,$FF,$0F,$0F,$0F
-hepsie_palette_len = * - hepsie_palette
 frame_names:
   .byte "odd frames",10
   .byte "even frames",10

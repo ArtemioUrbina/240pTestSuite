@@ -24,20 +24,7 @@ Usage
 Load 240pee.nes onto a [PowerPak] and run it.
 
 You can also burn it to an NES cartridge with an UNROM board.
-
-1. Chop off the first 16 bytes, which contain the iNES header.
-2. Write the remaining 65536 bytes to a 27C512, 29F512, or
-   equivalent 64Kx8-bit 5 V EPROM or flash memory.
-3. Open the Game Pak's case with a GameBit screwdriver.
-4. Desolder the existing PRG ROM from the board.  Don't desolder
-   the short skinny chips (mapper and CIC) or the CHR RAM.
-5. Make sure the UNROM board's H pad has a solder blob and the V pad
-   is not covered.  The suite uses horizontal nametable arrangement,
-   called "vertical mirroring" by the emulation community.
-6. Compare the memory's pinout to the pinout for the mask ROM on
-   the UNROM board to see which pins need to be lifted and connected
-   through patch wires to a different hole.
-7. Solder the memory in place, and add necessary patch wires.
+Full instructions are in `making-carts.md`.
 
 Once the test is running, the credits will appear.  You can navigate
 the menu with the Control Pad and the A and B Buttons.  There are
@@ -69,7 +56,7 @@ There are as of November 2015 six other platforms that run the suite:
 * The Sega Dreamcast version was coded using KallistiOS and runs on
   any MIL-CD compatible Dreamcast console.
 * The Super NES version was coded using PVSnesLib.  It runs mostly
-  in 256x224p, with a few tests in the less common 356x239p mode.
+  in 256x224p, with a few tests in the less common 256x239p mode.
 * The GameCube version supports 240p, 480i and 480p modes in NTSC
   and their PAL counterparts on any homebrew-capable GameCube.
 * The Wii version is identical to the GameCube version.  It runs on
@@ -94,8 +81,8 @@ to post in its [development thread].  We seek experts in the following:
 * Testing on PAL NES
 * Testing on Dendy
 * Testing with high-quality displays and scalers
-* Measuring the actual IRE levels of NES video with an oscilloscope
-* Putting 27C512 onto an UNROM-compatible board
+* Measuring the actual IRE levels of PAL NES and Dendy video with
+  an oscilloscope
 
 [@Artemio]: https://twitter.com/Artemio
 [@PinoBatch]: https://twitter.com/PinoBatch

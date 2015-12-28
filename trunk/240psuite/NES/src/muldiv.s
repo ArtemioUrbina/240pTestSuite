@@ -1,3 +1,12 @@
+;
+; Multiply and divide routines
+; Copyright 2012-2015 Damian Yerrick
+;
+; Copying and distribution of this file, with or without
+; modification, are permitted in any medium without royalty provided
+; the copyright notice and this notice are preserved in all source
+; code copies.  This file is offered as-is, without any warranty.
+;
 .exportzp prodlo, prodmlo, prodmhi, prodhi, fac1lo, fac1hi, fac2lo, fac2hi
 .export mul16x16, div32x16
 
