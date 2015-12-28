@@ -11,7 +11,7 @@
 
 # These are used in the title of the NES program and the zip file.
 title = 240pee
-version = 0.03
+version = 0.04
 
 # Space-separated list of assembly language files that make up the
 # PRG ROM.  If it gets too long for one line, you can add a backslash
@@ -51,7 +51,7 @@ run: $(title).nes
 # README as a heuristic for when something was changed.
 dist: zip
 zip: $(title)-$(version).zip
-$(title)-$(version).zip: zip.in $(title).nes README.txt CHANGES.txt $(objdir)/index.txt
+$(title)-$(version).zip: zip.in $(title).nes README.md CHANGES.txt $(objdir)/index.txt
 	zip -9 -u $@ -@ < $<
 
 $(objdir)/index.txt: makefile
@@ -89,13 +89,14 @@ $(objdir)/stopwatch.o: \
 $(objdir)/backlight.o: \
   $(objdir)/backlight_sprites.chr.pb53
 $(objdir)/scrolling.o: \
-  $(srcdir)/rectfill.inc
+  $(srcdir)/rectfill.inc $(objdir)/greenhillzone.sb53
 $(objdir)/overscan.o: \
   $(objdir)/overscan.chr.pb53 $(srcdir)/rectfill.inc
 $(objdir)/megaton.o: \
   $(objdir)/megatontiles.chr.pb53 $(srcdir)/rectfill.inc
 $(objdir)/semixparent.o: \
-  $(objdir)/gus_portrait.sb53 $(srcdir)/rectfill.inc
+  $(objdir)/gus_portrait.sb53 $(srcdir)/rectfill.inc \
+  $(objdir)/shadow_reticle.chr.pb53 $(objdir)/hepsie.chr.pb53
 
 # Generic rules for CHR
 
@@ -124,6 +125,8 @@ $(objdir)/vwf7.s: $(imgdir)/vwf7.png
 	tools/vwfbuild.py $< $@
 $(objdir)/gus_portrait.sav: $(imgdir)/gus_portrait.png
 	tools/savtool.py --palette 0F2012370F2028100F2027370F122810 $< $@
+$(objdir)/greenhillzone.sb53: $(imgdir)/greenhillzone.png
+	tools/widesb53.py $< 2208322022081A29220818282208181A $@
 
 # Help me!
 $(objdir)/%.hlp.s: $(srcdir)/%.txt

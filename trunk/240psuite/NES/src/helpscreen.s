@@ -528,6 +528,8 @@ vwfmap_tileloop:
 ; nametable.
 ; Leaves ciSrc at the start of the palette and the VRAM address
 ; at the end of the background palette.
+; X bit 7: true for 2 pattern tables
+; X bit 6: true for 2 nametables
 ; X bit 4: pattern table base ($0000 or $1000)
 ; X bits 3-2: nametable base ($2000, $2400, $2800, or $2C00)
 .proc load_sb53_ay
@@ -548,6 +550,7 @@ vwfmap_tileloop:
   sty PPUADDR
 
   ; Read the number of used tiles and decompress that many tiles
+anotherpattable:
   lda (ciSrc),y
   inc ciSrc
   bne :+
@@ -555,15 +558,24 @@ vwfmap_tileloop:
   :
   tax
   jsr unpb53_xtiles
+  pla
+  bpl have_all_pat
+  and #$7F
+  pha
+  bpl anotherpattable
+have_all_pat:
 
   ; Decompress the nametable
-  pla
+  ldx #1024/16  ; Calculate number of NTs to decompress
+  cmp #$40
+  bcc onlyonent
+    ldx #2048/16
+  onlyonent:
   and #$0C
   ora #$20
   sta PPUADDR
   lda #$00
   sta PPUADDR
-  ldx #1024/16
   jsr unpb53_xtiles
 
   ; Load the palette
