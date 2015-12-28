@@ -44,23 +44,30 @@ in 6502 assembly language using [ca65], with image conversion tools
 written in Python 3 and [Pillow] (Python Imaging Library).  It was
 tested on authentic NTSC and PAL NES consoles using a [PowerPak].
 
-Since version 0.05, the suite for NES compensates for differences
-between NTSC and PAL NES.  It should work on a Dendy famiclone,
-though this hasn't been tested yet.
+Since version 0.05, it compensates for differences between NTSC and
+PAL NES.  It should work on PAL famiclones such as Dendy, though
+this hasn't been tested yet.
 
-There are as of November 2015 six other platforms that run the suite:
+There are as of late 2015 five other platforms that run the suite:
 
 * It was first developed in C for the Sega Genesis using the SGDK,
-  using 320x224p pixel resolution.
-* The Genesis version is also available as a disc image for Sega CD.
-* The Sega Dreamcast version was coded using KallistiOS and runs on
-  any MIL-CD compatible Dreamcast console.
+  using 320x224p pixel resolution.  It comes as a cartridge image
+  or as a disc image for Sega CD.
+* The TurboGrafx-16 version was made with HuC.  It supports widths
+  256, 320, and 512, and heights 224 and 239.  It comes as a HuCard
+  image for Turbo EverDrive, a disc image for CD-ROM2 (TurboGrafx-CD
+  with System Card 1/2), and a disc image for Super CD-ROM2
+  (TurboDuo or Super System Card) that loads completely into RAM.
 * The Super NES version was coded using PVSnesLib.  It runs mostly
   in 256x224p, with a few tests in the less common 256x239p mode.
-* The GameCube version supports 240p, 480i and 480p modes in NTSC
-  and their PAL counterparts on any homebrew-capable GameCube.
-* The Wii version is identical to the GameCube version.  It runs on
-  a Wii console with the Homebrew Channel installed.
+* The Sega Dreamcast version was made with KallistiOS and runs on
+  any MIL-CD compatible Dreamcast console.  It supports 240i, 480i,
+  480p, 288p, and 576i resolutions, cables and crystals permitting.
+* The Nintendo GameCube version was made with devkitPPC and runs on
+  any homebrew-capable GameCube or Wii console.  It supports the same
+  resolutions as the Dreamcast version.  It comes as a disc image for
+  a modded GameCube, a DOL file for SD Media Launcher on GameCube,
+  and a DOL file for Homebrew Channel on Wii.
 
 [ca65]: https://cc65.github.io/cc65/
 [Pillow]: https://pillow.readthedocs.org/
@@ -76,13 +83,9 @@ Contributors
 * Extra patterns and collaboration: Konsolkongen & [shmups] regulars
 
 If you're interested in contributing to the NES port, you're invited
-to post in its [development thread].  We seek experts in the following:
-
-* Testing on PAL NES
-* Testing on Dendy
-* Testing with high-quality displays and scalers
-* Measuring the actual IRE levels of PAL NES and Dendy video with
-  an oscilloscope
+to post in its [development thread].  We seek experts with authentic
+NES and clone consoles, both NTSC and PAL, who can run the suite on  
+high-quality displays and scalers.
 
 [@Artemio]: https://twitter.com/Artemio
 [@PinoBatch]: https://twitter.com/PinoBatch

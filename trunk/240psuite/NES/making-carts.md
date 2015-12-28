@@ -35,17 +35,19 @@ For 28-pin EPROMs (27c512):
 1. Bend up pin 22
 2. Solder pin 22 to GND (/OE)
 
-For 32-pin EPROMs (27c040):
+For 32-pin EPROMs (27c010, 27c020, 27c040):
 1. Bend up pin 1, 2, 24, 31 and 32
 2. Solder pin 2 to hole 22 (A16)
 3. Solder pin 24 to GND (/OE)
-4. Solder pin 31 to hole 28 (+5V)
+4. Solder pin 30 to hole 28 (+5V), or leave NC for 27c010
 5. Solder pin 32 to hole 28 (+5V)
 
 When using a 32 pin EPROM, make sure the capacitor on the right side
 of the PRG ROM is removed and soldered in from the bottom of the
 board.  Otherwise the EPROM will not fit in properly, and the cart
 won't close.  Take care to solder it back in with correct polarity.
+You may also have to cut off some plastic next to one of the screw
+holes in the case to fit the larger EPROM.
 
 Finally, set the nametable arrangement to horizontal.  On Nintendo
 donor boards, make sure H is closed with solder and V is open.
