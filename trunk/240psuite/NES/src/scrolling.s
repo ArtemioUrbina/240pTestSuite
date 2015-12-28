@@ -303,7 +303,12 @@ done:
     bit PPUSTATUS
     beq :-
 
+  lda tvSystem
+  lsr a  ; C set: PAL NES; C clear: NTSC or Dendy
   ldy #0
+  bcc :+
+    ldy #splittable_pal-splittable_ntsc
+  :
   sty $FF
 splitloop:
   ldx splittable_ntsc,y
@@ -369,6 +374,15 @@ splittable_ntsc:
   .word -3236 & $FFFF
   .byte 0
   .word 0
+splittable_pal:
+  .word -115 & $FFFF
+  .byte 3
+  .word -818 & $FFFF
+  .byte 2
+  .word -3030 & $FFFF
+  .byte 0
+  .word 0
+
 
 .segment "BANK00"
 greenhillzone_sb53: .incbin "obj/nes/greenhillzone.sb53"

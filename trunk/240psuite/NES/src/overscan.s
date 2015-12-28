@@ -119,6 +119,21 @@ restart:
     inc ciSrc+1
   :
   jsr rf_draw_labels
+
+  lda #3
+  jsr overscan_prepare_side_a
+  jsr overscan_copy4cols
+  lda #2
+  jsr overscan_prepare_side_a
+  jsr overscan_copy4cols
+  lda #VBLANK_NMI
+  sta PPUCTRL
+  lda #1
+  jsr overscan_prepare_side_a
+  jsr rf_copy8tiles
+  lda #0
+  jsr overscan_prepare_side_a
+  jsr rf_copy8tiles
   jsr overscan_prepare_pxcounts
   jsr rf_copy8tiles
   jsr overscan_prepare_pctages
@@ -139,7 +154,8 @@ loop:
   ; Find something to update
   ldy upd_progress
   bne upd_not0
-    jsr overscan_prepare_cur_side
+    lda change_dir
+    jsr overscan_prepare_side_a
     inc upd_progress
     bne upd_done
   upd_not0:
@@ -735,8 +751,7 @@ bottompos = $03
   rts
 .endproc
 
-.proc overscan_prepare_cur_side
-  lda change_dir
+.proc overscan_prepare_side_a
   asl a
   tax
   lda sideprocs+1,x

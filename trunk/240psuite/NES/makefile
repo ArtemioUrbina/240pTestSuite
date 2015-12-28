@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 #
-# Makefile for NES game
+# Makefile for 240p test suite
 # Copyright 2011-2015 Damian Yerrick
 #
 # Copying and distribution of this file, with or without
@@ -11,7 +11,7 @@
 
 # These are used in the title of the NES program and the zip file.
 title = 240pee
-version = 0.04
+version = 0.05
 
 # Space-separated list of assembly language files that make up the
 # PRG ROM.  If it gets too long for one line, you can add a backslash

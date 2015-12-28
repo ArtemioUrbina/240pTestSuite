@@ -1,3 +1,21 @@
+0.05 (2015-11-18)
+* Menu: Displays TV system name (NTSC, PAL, or Dendy) in corner
+* Made some tests' help pages more concise
+* Color bleed, Stopwatch, Full screen stripes:
+  Frame counter wraps at 50 instead of 60 on PAL NES and Dendy
+* Linearity: Added a dot at dead center
+* Linearity: Reduced the large circle to 224 pixels tall on NTSC
+  and 239 pixels tall on PAL
+* Linearity: Moved small circles 2 pixels away from the sides on PAL
+* IRE: Incorporates signal measurements by lidnariq
+* Overscan: Explained PAL border in help page
+* Overscan: Redraws borders after returning from help page
+  (reported by thefox)
+* Hill zone scroll test: Corrected parallax strip height on PAL NES
+* Sound test, SMPTE color bars, 601 color bars:
+  Corrected frequency on PAL NES
+* Sound test: Corrected emphasis color on PAL NES and Dendy
+
 0.04 (2015-11-16)
 * IRE: Added emphasis and $2D/$3D grays
 * Shadow sprite: Added full functionality

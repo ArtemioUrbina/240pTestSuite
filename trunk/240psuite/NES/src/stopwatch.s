@@ -126,7 +126,8 @@ loop:
     ldy #0
     inc sw_frames
     lda sw_frames
-    cmp #60
+    ldx tvSystem
+    cmp tvSystemFPS,x
     bcc not_counting
     sty sw_frames
     inc sw_seconds

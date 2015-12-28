@@ -4,7 +4,7 @@
 	PLUGE
 	Gradient color bars
 	SMPTE color bars
-	601 color bars
+	Color bars on gray
 	Color bleed
 	Grid
 	Linearity
@@ -83,9 +83,9 @@ between gray and color
 
 The emphasis filter and gray
 outer bars may misbehave on
-NES consoles modded with a
-2C03 or 2C05 RGB PPU
-pulled from a Vs. System or
+NES consoles modded with
+a 2C03 or 2C05 RGB PPU
+taken from a Vs. System or
 PlayChoice 10 arcade board.
 
 == Gradient color bars ==
@@ -98,13 +98,12 @@ Use the TV's "contrast"
 control to adjust the white
 level such that four levels
 each of red, green, and blue
-and three levels of white are
-visible, and that the lightest
-level of each color is distinct
-from white.
+and three levels of white
+are visible, and the lightest
+level of each color is
+distinct from white.
 
-Press A to hide or show
-the 16px grid.
+A: Hide or show 16px grid
 
 == SMPTE color bars ==
 
@@ -124,28 +123,23 @@ does not attempt to produce
 accurate RGB hues, these
 colors will not be pure.
 
-== 601 color bars ==
+== Color bars on gray ==
 
-This pattern idea and
-layout borrows form the
-Digital Video Essentials
-color adjust pattern.
-It has a gray background
-as reference and can be
-used with color filters
-to adjust color accuracy. 
+This pattern shows color
+bars on a gray background.
+Ideally, it would be used
+with color filters to adjust
+color balance. But as with
+SMPTE bars, the NES PPU's
+non-RGB model breaks the
+blue filter trick.
 
 A: Switch between light and
 dark versions of the bars
 Select: Toggle 1 kHz tone
 
-With some TVs, you can turn
-on blue-only mode to confirm
-color balance. But because
-the NES's composite encoder
-does not attempt to produce
-accurate RGB hues, these
-colors will not be pure.
+Based on Digital Video
+Essentials: HD Basics
 
 == Color bleed ==
 
@@ -153,15 +147,15 @@ This pattern helps diagnose
 color bleed caused by
 incorrect color resampling.
 
-↑↓←→: Move the pattern
-by one pixel
+↑↓←→: Move the
+  pattern by one pixel
 Hold ↑↓←→: Move the
-pattern every frame
+  pattern every frame
 A: Switch among
-horizontal, vertical, and
-checkerboard patterns
-Select: Show or hide a
-frame counter
+  horizontal, vertical,
+  and diagonal patterns
+Select: Show or hide
+  frame counter
 
 Concept by Konsolkongen
 
@@ -169,15 +163,14 @@ Concept by Konsolkongen
 
 This pattern uses the full
 resolution of the screen.
-
 You can use it to verify that
 the entire picture is visible,
 including the entire red
-border, and that no distortion
-is present.
+border, with no distortion.
 
 A: Change between 256x224
-and 256x240 pixel grids.
+   and 256x240 pixel grids
+
 Be aware that many games
 designed for NTSC display
 may show artifacts outside
@@ -203,7 +196,7 @@ of all four small circles
 should be the same.
 
 A: Hide or show a
-square grid
+   square grid
 
 == Gray ramp ==
 
@@ -226,29 +219,31 @@ buzzing while a white
 screen is displayed.
 
 ←→: Change among solid
-white, black, red, green,
-and blue screens
-A on black screen: Switch
-between black and below
-black
-A on white screen: Enter
-or leave custom color mode
+  white, black, red, green,
+  and blue screens
+A on black screen:
+  Switch between black
+  and below black
+A on white screen: Enter or
+  leave custom color mode
 ↑↓: Change brightness
 ←→: Change hue
 
 == IRE ==
 
-This test displays a rectangle
-centered in the screen.
+This test shows a rectangle
+centered on the screen and
+displays its brightness as a
+percentage of standard white.
+The display should not lose
+sync even when brightness
+becomes negative.
 
 ←→: Change brightness
 A: Toggle emphasis
 
-Percentage values are only
-estimates. You can help by
-precisely measuring the
-signal levels that the
-NES produces.
+Percentage values measured
+by lidnariq of NESdev BBS
 
 == Sharpness ==
 
@@ -276,8 +271,8 @@ With this pattern you can
 discover how much of the
 picture edge your TV hides.
 
-Historically, CRT TVs have
-been calibrated to
+Historically, CRT TVs
+have been calibrated to
 "overscan", or draw the
 picture slightly past the
 visible area, in case aging
@@ -287,25 +282,30 @@ continues into the modern
 era, as a lot of productions
 have unwanted information
 in this overscan area.
+
+↑↓←→: Choose an edge
+Hold A + ↑↓←→:
+  Move that edge
 ----
-Press a direction to choose
-an edge of the screen. Then
-hold A and press toward or
-away from the edge to move
-it. Move it inward until you
-see the white border, then
-move it back out one pixel.
-The resulting number is the
-amount of overscan in pixels
-in each direction.
+Move each edge inward until
+you see the white border,
+then move it back out one
+pixel. The resulting number
+is the amount of overscan in
+pixels in each direction.
 
 The NES picture is 256x240
 pixels. The nominal 4:3
-frame is 280x240, including
-12 pixels of border at the
-left and right sides.
+frame on NTSC is 280x240,
+including 12 pixels of border
+at the left and right sides.
 This border is not included
 in the displayed amounts.
+
+PAL NES border is always
+black. It covers 2 pixels
+of the left and right sides
+and 1 on the top.
 
 == Shadow sprite ==
 
@@ -447,27 +447,26 @@ A + ↑↓←→: Change direction
 == Full screen stripes ==
 
 You should see a pattern of
-lines, each one pixel in height.
+lines, each one pixel wide.
 
-↑↓←→: Move the pattern
-by one pixel
+↑↓←→: Move the
+  pattern by one pixel
 Hold ↑↓←→: Move the
-pattern every frame
+  pattern every frame
 A: Switch among
-horizontal, vertical, and
-checkerboard patterns
-Select: Show or hide a
-frame counter
+  horizontal, vertical,
+  and diagonal patterns
+Select: Show or hide
+  frame counter
 ----
-When the pattern is moving
-continuously, you should see
-the lines flicker. If continuous
-movement produces a still
-image, your processor is
-treating the signal as
+While you hold the Control
+Pad, the lines should flicker.
+If holding a direction makes
+a still image, your processor
+is treating the signal as
 interlaced and either
 discarding every other frame
-or combining them incorrectly.
+or weaving them incorrectly.
 
 == Backlight zone test ==
 
@@ -476,15 +475,14 @@ moving square, letting you
 check how a display's
 backlight works with small
 bright areas. Some LED-lit
-LCDs dim darker areas in
-order to make black areas
-darker, but this causes
-problems with scenes
-such as starfields.
+LCDs dim darker areas to
+make black areas darker,
+which causes problems with
+scenes such as starfields.
 
 ↑↓←→: Move the square
 Select: Change its size among
-1, 2, 4, or 8 pixels on a side
+  1, 2, 4, or 8 pixels on a side
 A: Hide or show the square
 
 == Sound test: Frequency ==
@@ -527,18 +525,16 @@ even for MERCHANTABILITY
 or FITNESS FOR A
 PARTICULAR PURPOSE.
 
-Version 0.04 (2015-11-16)
-All tests present
+Version 0.05 (2015-11-18)
+Initial PAL support
 ----
-Future directions
+You can help this project:
 
-We seek a PAL NES tester,
-a Dendy tester, results from
-testing with high-quality
-displays and scalers, 
-precise IRE measurements,
-and detailed instructions for
-building an NES cartridge.
+1. Testing on Dendy
+2. Testing with high-quality
+   displays and scalers
+3. Detailed instructions
+   for building a cartridge
 
 Interested? Apply at
 http://goo.gl/XF8ef6
