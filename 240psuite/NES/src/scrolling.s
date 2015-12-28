@@ -371,7 +371,7 @@ splittable_ntsc:
   .byte 3
   .word -872 & $FFFF
   .byte 2
-  .word -3236 & $FFFF
+  .word -3234 & $FFFF
   .byte 0
   .word 0
 splittable_pal:

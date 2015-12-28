@@ -297,6 +297,11 @@ is making 262 or 312 lines:
 
 From this, it calculates
 CPU clock speed.
+It repeats this calculation
+every few frames, so if you
+change the CPU's speed
+while the test runs, the
+displayed value will update.
 
 == Overscan ==
 
@@ -382,7 +387,8 @@ Hill zone by mikejmoffitt
 == Stopwatch ==
 
 This stopwatch helps you
-measure a TV's lag or just
+measure a TV's lag, detect
+dropped frames, or just
 count how long your spouse
 has been on the phone.
 
@@ -390,17 +396,23 @@ A: Start/stop
 Select when stopped: Reset
 Select when running: Lap
 
-Use this test with two
-displays connected at once.
-One of them is being tested,
-and the other (the reference)
-should be either a CRT or
+The throbber at the bottom
+helps determine the frame
+even when the numbers above
+are blurry.
+----
+Lag measurement
+
+Connect two displays at once.
+One is being tested, and the
+other (the reference) should
+be either a CRT SDTV or
 a display with known lag.
 For example, on a front-
 loading NES, you can connect
 an old CRT to the RF out
 and your scaler to the AV.
-----
+
 Use a digital camera to take
 a picture of both screens at
 the same time. The picture
@@ -409,11 +421,27 @@ image processing latency
 between them. For some
 consumer LCD TVs, this
 may exceed five frames.
+----
+Dropped frames
 
-The clock display at the
-bottom helps determine
-the frame even when the
-numbers above are blurry.
+A scaler with a frame buffer
+may drop frames because the
+frame rate of the NTSC NES
+and Super NES (60.10 Hz) is
+faster than standard (59.94
+Hz).
+
+At 59.94 Hz, it would drop
+one frame out of 345: one per
+5.75 seconds or two per 11.5.
+At 60.00 Hz, it would drop
+one frame out of 607: one per
+10.12 s or two per 20.24.
+
+Kevin Horton's Hi-Def NES
+mod compensates for this
+difference by slowing down
+the CPU and PPU.
 
 == Manual lag test ==
 
@@ -559,8 +587,7 @@ even for MERCHANTABILITY
 or FITNESS FOR A
 PARTICULAR PURPOSE.
 
-Version 0.06 (2015-11-20)
-Now with overclock
+Version 0.07 (2015-11-25)
 ----
 You can help this project:
 

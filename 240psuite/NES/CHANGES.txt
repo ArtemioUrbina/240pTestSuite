@@ -1,3 +1,8 @@
+0.07 (2015-11-25)
+* CPU clock speed: Help page mentions real time updates
+* Stopwatch: Help page mentions use as a dropped frames test
+* Hill zone scroll test (NTSC): Adjusted bottom split's timing
+
 0.06 (2015-11-20)
 * First attempt at a ceiling for the help screen background
 * Added CPU clock speed test for Hi-Def NES users
