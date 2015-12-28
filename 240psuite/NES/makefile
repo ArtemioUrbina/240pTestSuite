@@ -11,7 +11,7 @@
 
 # These are used in the title of the NES program and the zip file.
 title = 240pee
-version = 0.07
+version = 0.08
 
 # Space-separated list of assembly language files that make up the
 # PRG ROM.  If it gets too long for one line, you can add a backslash

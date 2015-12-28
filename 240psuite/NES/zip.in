@@ -1,6 +1,7 @@
 240pee.nes
 README.md
 CHANGES.txt
+making-carts.md
 makefile
 unrom512kbit.cfg
 zip.in
@@ -52,6 +53,7 @@ tilesets/sharpness.png
 tilesets/stdtiles.png
 tilesets/vwf7.png
 tools/chnutils.py
+tools/nestobin.py
 tools/paginate_help.py
 tools/pb53.py
 tools/pilbmp2nes.py

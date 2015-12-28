@@ -1,3 +1,13 @@
+0.08 (2015-11-26)
+* Shadow sprite: Restored Hepsie's colors (regression reported by
+  43110)
+* CPU clock speed: Displays NMI scanline to distinguish a Dendy
+  famiclone from an overclocked PAL NES (requested by Ice Man)
+* CPU clock speed: Reads controller while drawing results
+  to make hotkeys on Hi-Def NES more responsive
+* Added guide to making carts based on Ice Man's guide
+* Includes a Python program to split iNES ROMs into PRG and CHR
+
 0.07 (2015-11-25)
 * CPU clock speed: Help page mentions real time updates
 * Stopwatch: Help page mentions use as a dropped frames test

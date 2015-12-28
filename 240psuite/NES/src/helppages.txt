@@ -587,15 +587,17 @@ even for MERCHANTABILITY
 or FITNESS FOR A
 PARTICULAR PURPOSE.
 
-Version 0.07 (2015-11-25)
+Version 0.08 (2015-11-27)
+Distinguishes Dendy from
+overclocked PAL NES
 ----
-You can help this project:
-
-1. Testing on Dendy famiclone
-2. Testing with high-quality
-   displays and scalers
-3. Detailed instructions
-   for building a cartridge
+You can help this project by
+running the test on authentic
+and clone NES consoles, both
+straight to the TV and with
+high-quality external scalers,
+and spreading the word about
+the project.
 
 Interested? Apply at
 http://goo.gl/XF8ef6

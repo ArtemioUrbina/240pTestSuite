@@ -1,3 +1,22 @@
+;
+; CPU clock speed test for 240p test suite
+; Copyright 2015 Damian Yerrick
+;
+; This program is free software; you can redistribute it and/or modify
+; it under the terms of the GNU General Public License as published by
+; the Free Software Foundation; either version 2 of the License, or
+; (at your option) any later version.
+;
+; This program is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+; GNU General Public License for more details.
+;
+; You should have received a copy of the GNU General Public License along
+; with this program; if not, write to the Free Software Foundation, Inc.,
+; 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+;
+
 .include "nes.inc"
 .include "global.inc"
 .include "rectfill.inc"
@@ -10,7 +29,7 @@ s0_y = nine_y + 24
 
 overclock_rects:
   rf_rect   0,  0,256,240,$00, 0
-  rf_rect 128,104,192,144,$80, RF_INCR  ; text area
+  rf_rect 128,104,192,152,$80, RF_INCR  ; text area
   .byte 0
 
   rf_attr   0,  0,256,240, 0
@@ -21,10 +40,12 @@ overclock_rects:
   rf_label  64,112, 2, 0
   .byte "Lines/frame:",0
   rf_label  64,120, 2, 0
-  .byte "TV system:",0
+  .byte "NMI scanline:",0
   rf_label  64,128, 2, 0
-  .byte "Frame rate:",0
+  .byte "TV system:",0
   rf_label  64,136, 2, 0
+  .byte "Frame rate:",0
+  rf_label  64,144, 2, 0
   .byte "CPU speed:",0
   .byte 0
 
@@ -50,14 +71,16 @@ hsync_4096_hi: .hibytes NTSC_HSYNC_4096, PAL_HSYNC_4096
 
 frame_time      = test_state + 0
 time_192_lines  = test_state + 2
+time_s0_nmi     = test_state + 4
 
 ; Intermediate results
-cyc_10_lines    = test_state + 4
-lines_per_field = test_state + 6
-oc_tvSystem     = test_state + 8
+cyc_10_lines    = test_state + 6
+lines_per_field = test_state + 8
+nmi_line        = test_state + 10
+oc_tvSystem     = test_state + 12
 ; Printing
 prpos           = vram_copydstlo
-string_buffer   = test_state + 9
+string_buffer   = test_state + 13
 
 .segment "CODE"
 
@@ -65,6 +88,7 @@ string_buffer   = test_state + 9
   lda #VBLANK_NMI
   sta PPUCTRL
   sta help_reload
+  sta vram_copydsthi
   asl a
   sta rf_curpattable
   sta PPUMASK
@@ -98,11 +122,10 @@ string_buffer   = test_state + 9
   jsr ppu_clear_nt  ; blank the text window
 
 loop:
+  lda #0
+  sta new_keys
   jsr run_tests_once
   jsr display_results
-
-  jsr oc_present
-  jsr read_pads
 
   lda new_keys+0
   and #KEY_START
@@ -126,7 +149,11 @@ done:
 :
   cmp nmis
   beq :-
-  
+
+  lda vram_copydsthi
+  bmi :+
+    jsr rf_copy8tiles
+  :
   ldx #0
   lda #>OAM
   stx OAMADDR
@@ -134,7 +161,16 @@ done:
   ldy #0
   lda #VBLANK_NMI|BG_0000
   sec
-  jmp ppu_screen_on
+  jsr ppu_screen_on
+
+  ; OR together all new keypresses during lag frames
+  lda new_keys+0
+  pha
+  jsr read_pads
+  pla
+  ora new_keys+0
+  sta new_keys+0
+  rts
 .endproc
 
 .proc display_results
@@ -187,37 +223,24 @@ done:
 
   ; lines per field = (384 * frame_time / time_192_lines + 1) / 2
   ; 128 * frame_time
-  sta $FF
-  lda frame_time+1
-  lsr a
-  sta prodmhi
-  lda frame_time
-  ror a
-  sta prodmlo
-  lda #0
-  sta prodhi
-  ror a
-  sta prodlo
-  ; + 256 * frame_time
-  lda prodmlo
-  adc frame_time
-  sta prodmlo
-  lda prodmhi
-  adc frame_time+1
-  sta prodmhi
-  lda time_192_lines+1
-  sta fac2hi
-  lda time_192_lines
-  sta fac2lo
-  jsr div32x16
-  lsr prodmlo
-  lda prodlo
-  ror a
+  ldy frame_time+1
+  ldx frame_time
+  jsr iters_to_scanlines
+  stx lines_per_field
+  sty lines_per_field+1
+
+  ; lines s0 to nmi = (384 * time_s0_nmi / time_192_lines + 1) / 2
+  ; 128 * frame_time
+  ldy time_s0_nmi+1
+  ldx time_s0_nmi
+  jsr iters_to_scanlines
+  clc
+  txa
+  adc #s0_y * 8
+  sta nmi_line
+  tya
   adc #0
-  sta lines_per_field
-  lda prodmlo
-  adc #0
-  sta lines_per_field+1
+  sta nmi_line+1
 
   ; Now we're ready to start printing things.  Results start at $0800
   lda #$08
@@ -232,6 +255,11 @@ done:
 
   lda lines_per_field+1
   ldy lines_per_field
+  ldx #0
+  jsr write_16bit_number
+
+  lda nmi_line+1
+  ldy nmi_line
   ldx #0
   jsr write_16bit_number
 
@@ -289,9 +317,47 @@ done:
   rts
 .endproc
 
+
+;;
+; @param Y:X number of iterations (high)
+; @param Y:X number of scanlines
+.proc iters_to_scanlines
+  tya
+  lsr a
+  sta prodmhi
+  txa
+  ror a
+  sta prodmlo
+  lda #0
+  sta prodhi
+  ror a
+  sta prodlo
+  ; + 256 * frame_time
+  txa
+  adc prodmlo
+  sta prodmlo
+  tya
+  adc prodmhi
+  sta prodmhi
+  lda time_192_lines+1
+  sta fac2hi
+  lda time_192_lines
+  sta fac2lo
+  jsr div32x16
+  lsr prodmlo
+  lda prodlo
+  ror a
+  adc #0
+  tax
+  lda prodmlo
+  adc #0
+  tay
+  rts
+.endproc
+
 ;;
 ; Writes a 16-bit number to a line of result.
-; @param AY address
+; @param AY value
 ; @param X number of decimal places
 .proc write_16bit_number
   stx string_buffer
@@ -331,21 +397,8 @@ done:
   jsr vwfPuts0
   lda #%0011
   jsr rf_color_lineImgBuf
-
-  ; Wait for vblank to write this
-  ldy nmis
-vw3:
-  cpy nmis
-  beq vw3
   
-  jsr rf_copy8tiles
-  
-  ; Turn the screen on
-  ldx #0
-  ldy #0
-  lda #VBLANK_NMI|BG_0000|OBJ_0000
-  sec
-  jsr ppu_screen_on
+  jsr oc_present
   lda prpos
   tax
   clc
@@ -413,6 +466,10 @@ clrloop:
   jsr sov_to_s0
   stx time_192_lines+0
   sty time_192_lines+1
+  
+  jsr now_to_nmi
+  stx time_s0_nmi+0
+  sty time_s0_nmi+1
 
   ; If frame_time > time_192_lines + time_192_lines / 2
   ; then there are more than 288 lines, that is, PAL
@@ -472,5 +529,20 @@ loop3:
 :
   bit PPUSTATUS
   bvc loop3
+  rts
+.endproc
+
+.proc now_to_nmi
+  ldx #5  ; account for s0 storage overhead
+  ldy #0
+  lda nmis
+loop:
+  inx
+  bne :+
+    iny
+  :
+  cmp a:nmis
+  beq loop
+  .assert >*=>loop, error, "now_to_nmi crosses page"
   rts
 .endproc
