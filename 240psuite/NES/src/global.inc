@@ -56,7 +56,7 @@
 .global do_linearity, do_sharpness, do_ire, do_smpte, do_601bars
 .global do_pluge, do_gcbars, do_cpsgrid, do_gray_ramp, do_color_bleed
 .global do_full_stripes, do_solid_color
-.global test_state
+.global test_state, tvSystemFPS
 
 ; stopwatch.s
 .global do_stopwatch

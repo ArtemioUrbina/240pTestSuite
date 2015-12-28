@@ -21,7 +21,7 @@
 .include "global.inc"
 .include "rectfill.inc"
 .importzp helpsect_linearity, helpsect_sharpness, helpsect_ire
-.importzp helpsect_smpte_color_bars, helpsect_601_color_bars
+.importzp helpsect_smpte_color_bars, helpsect_color_bars_on_gray
 .importzp helpsect_pluge, helpsect_grid, helpsect_gradient_color_bars
 .importzp helpsect_gray_ramp, helpsect_color_bleed
 .importzp helpsect_full_screen_stripes, helpsect_solid_color_screen
@@ -169,46 +169,47 @@ ire_texts:
   .byte $00
 .endif
 
-ire_msgs:
-  .addr ire_msg0,   ire_msg1,   ire_msg2,   ire_msg3,   ire_msg4
-  .addr ire_msg5,   ire_msg6,   ire_msg7,   ire_msg8,   ire_msg9
-  .addr ire_msg0em, ire_msg1em, ire_msg2em, ire_msg3em, ire_msg4em
-  .addr ire_msg5em, ire_msg6em, ire_msg7em, ire_msg8em, ire_msg9em
+ire_msgs2:
+  .byte ire_msg00-ire_msgbase,   ire_msg0D-ire_msgbase
+  .byte ire_msg10-ire_msgbase,   ire_msg1D-ire_msgbase
+  .byte ire_msg20-ire_msgbase,   ire_msg2D-ire_msgbase
+  .byte ire_msg30-ire_msgbase,   ire_msg3D-ire_msgbase
+  .byte ire_msg00em-ire_msgbase, ire_msg0Dem-ire_msgbase
+  .byte ire_msg10em-ire_msgbase, ire_msg1Dem-ire_msgbase
+  .byte ire_msg20em-ire_msgbase, ire_msg2Dem-ire_msgbase
+  .byte ire_msg30em-ire_msgbase, ire_msg3Dem-ire_msgbase
 
-ire_msg0:    .byte "0 on below",0
-ire_msg1:    .byte "0 on 0",0
-ire_msg2:    .byte "30 on 0",0
-ire_msg3:    .byte "40 on 0",0
-ire_msg4:    .byte "70 on 0",0
+; Using lidnariq's measurements from
+; http://wiki.nesdev.com/w/index.php/NTSC_video#Terminated_measurement
+ire_msgbase:
+ire_msg00:   .byte "43",0
+ire_msg10:   .byte "74",0
+ire_msg20:
+ire_msg30:   .byte "110",0
+ire_msg0D:   .byte "-12",0
+ire_msg1D:   .byte "0", 0
+ire_msg2D:   .byte "34",0
+ire_msg3D:   .byte "80",0
+ire_msg00em: .byte "26",0
+ire_msg10em: .byte "51",0
+ire_msg20em:
+ire_msg30em: .byte "82",0
+ire_msg0Dem: .byte "-17",0
+ire_msg1Dem: .byte "-8",0
+ire_msg2Dem: .byte "19",0
+ire_msg3Dem: .byte "56",0
+ire_sepmsg:  .byte "on",0
 
-ire_msg5:    .byte "72 on 0",0
-ire_msg6:    .byte "100 on 0",0
-ire_msg7:    .byte "100 on 40",0
-ire_msg8:    .byte "100 on 70",0
-ire_msg9:    .byte "100 on 100",0
-
-ire_msg0em:  .byte "0 on belem",0
-ire_msg1em:  .byte "0 on 0+em",0
-ire_msg2em:  .byte "30 on 0+em",0
-ire_msg3em:  .byte "40 on 0+em",0
-ire_msg4em:  .byte "70 on 0+em",0
-
-ire_msg5em:  .byte "72 on 0+em",0
-ire_msg6em:  .byte "100 on 0em",0
-ire_msg7em:  .byte "100 on 40em",0
-ire_msg8em:  .byte "100 on 70em",0
-ire_msg9em:  .byte "100 on 100em",0
-
-irelevel_bg: .byte $0D,$0F,$0F,$0F,$0F, $0F,$0F,$00,$10,$20
-irelevel_fg: .byte $0F,$0F,$2D,$00,$10, $3D,$20,$20,$20,$20
+irelevel_bg: .byte $0D,$1D,$1D,$1D,$1D, $1D,$1D,$00,$10,$20
+irelevel_fg: .byte $1D,$1D,$2D,$00,$10, $3D,$20,$20,$20,$20
 NUM_IRE_LEVELS = * - irelevel_fg
 
 .segment "CODE"
+ire_emph = test_state+3
 .proc do_ire
 ire_level = test_state+0
 need_reload = test_state+1
 disappear_time = test_state+2
-ire_emph = test_state+3
 
   lda #6
   sta ire_level
@@ -235,17 +236,30 @@ loop:
     lda #120
     sta disappear_time
     jsr clearLineImg
-    lda ire_level
-    asl a
-    ldx ire_emph
-    beq :+
-      adc #NUM_IRE_LEVELS * 2
-    :
+
+    ; Draw foreground level
+    ldx ire_level
+    lda irelevel_fg,x
+    jsr ire_get_msgbase
+    jsr vwfStrWidth
+    sec
+    eor #$FF
+    adc #24
     tax
-    lda ire_msgs+1,x
-    ldy ire_msgs,x
-    ldx #8
+    jsr vwfPuts0
+
+    ; Draw background level
+    lda #>ire_sepmsg
+    ldy #<ire_sepmsg
+    ldx #27
     jsr vwfPuts
+    ldx ire_level
+    lda irelevel_bg,x
+    jsr ire_get_msgbase
+    ldx #40
+    jsr vwfPuts
+
+    ; Prepare for blitting    
     lda #%0111
     jsr rf_color_lineImgBuf
     lda #$0F
@@ -349,6 +363,27 @@ done:
   rts
 .endproc
 
+;;
+; Given in A and an emphasis value in X, gets a pointer
+; to its IRE value as text in A:Y.
+.proc ire_get_msgbase
+  lsr a
+  lsr a
+  lsr a
+  ldx ire_emph
+  beq :+
+    ora #$08
+  :
+  tax
+  clc
+  lda ire_msgs2,x
+  adc #<ire_msgbase
+  tay
+  lda #0
+  adc #>ire_msgbase
+  rts
+.endproc
+
 ; SMPTE color bars ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .segment "RODATA"
@@ -386,7 +421,7 @@ smpte_rects:
   rf_attr 160,176,256,240, 3  ; 0d
   .byte $00
 
-_601_rects:
+cbgray_rects:
   rf_rect   0,  0,256,240,$04, 0  ; bar 1 and bg
 
   rf_rect  32, 48, 40, 96,$10, 0  ; bar 1-2
@@ -424,8 +459,10 @@ smpte_palettes:
 smpte_types:
   .addr smpte_rects
   .byte helpsect_smpte_color_bars
-  .addr _601_rects
-  .byte helpsect_601_color_bars
+  .addr cbgray_rects
+  .byte helpsect_color_bars_on_gray
+
+tvSystemkHz: .byte 55, 51, 55
 
 .segment "CODE"
 
@@ -492,7 +529,8 @@ loop:
     lda #$88
   :
   sta $4008
-  lda #55  ; FIXME: change this for PAL NES and Dendy
+  ldx tvSystem
+  lda tvSystemkHz,x
   sta $400A
   lda #0
   sta $400B
@@ -998,6 +1036,7 @@ bleed_types:
   .addr fullstripes_rects
   .byte helpsect_full_screen_stripes
 
+tvSystemFPS:  .byte 60, 50, 50
 .segment "CODE"
 ;;
 ; Sets tile 0 to solid color 0 and tile 1 to the color bleed tile
@@ -1164,9 +1203,11 @@ loop:
   :
   ldx #0
   jsr autorepeat
+
   inc frame_count
   lda frame_count
-  cmp #60
+  ldx tvSystem
+  cmp tvSystemFPS,x
   bcc :+
     lda #0
     sta frame_count

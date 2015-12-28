@@ -242,8 +242,15 @@ not_title_line:
     lda #>b_exit_msg
     ldy #<b_exit_msg
     ldx #96
-    jsr vwfPuts
+    jmp have_lower_right_msg
   no_draw_b_exit:
+    ; Draw TV system instead
+    ldx tvSystem
+    lda tvSystemNameHi,x
+    ldy tvSystemNameLo,x
+    ldx #100
+  have_lower_right_msg:
+  jsr vwfPuts
 
   lda help_ok_keys
   and #KEY_DOWN
@@ -622,5 +629,9 @@ pagenum_template:  .byte 134," 1/1 ",135,0
 updowna_msg:       .byte 132,133,"A: Select",0
 b_exit_msg:        .byte "B: Exit",0
 
-
+tvSystemNameLo: .lobytes name_ntsc, name_pal, name_dendy
+tvSystemNameHi: .hibytes name_ntsc, name_pal, name_dendy
+name_ntsc:   .byte "NTSC",0
+name_pal:    .byte "PAL",0
+name_dendy:  .byte "Dendy",0
 

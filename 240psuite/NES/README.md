@@ -26,8 +26,8 @@ Load 240pee.nes onto a [PowerPak] and run it.
 You can also burn it to an NES cartridge with an UNROM board.
 
 1. Chop off the first 16 bytes, which contain the iNES header.
-2. Write the remaining 65536 bytes to a 27C512 or equivalent
-   64Kx8-bit EPROM or flash memory.
+2. Write the remaining 65536 bytes to a 27C512, 29F512, or
+   equivalent 64Kx8-bit 5 V EPROM or flash memory.
 3. Open the Game Pak's case with a GameBit screwdriver.
 4. Desolder the existing PRG ROM from the board.  Don't desolder
    the short skinny chips (mapper and CIC) or the CHR RAM.
@@ -55,16 +55,13 @@ interlaced video, and its 52-color palette is closer to HSV than RGB.
 The 240p test suite for Nintendo Entertainment System was developed
 in 6502 assembly language using [ca65], with image conversion tools
 written in Python 3 and [Pillow] (Python Imaging Library).  It was
-tested on an authentic NES console using a [PowerPak].
+tested on authentic NTSC and PAL NES consoles using a [PowerPak].
 
-As of version 0.04, the suite for NES fully supports only the NTSC
-NES.  Timing in the Stopwatch and Manual lag test is slow on PAL NES
-and Dendy famiclones.  Hill zone test should appear correct on
-Dendy famiclones but will show incorrect split points on PAL NES.
-Fixes for PAL are planned pending recruitment of testers with
-appropriate hardware.
+Since version 0.05, the suite for NES compensates for differences
+between NTSC and PAL NES.  It should work on a Dendy famiclone,
+though this hasn't been tested yet.
 
-There are currently six other platforms that run the suite:
+There are as of November 2015 six other platforms that run the suite:
 
 * It was first developed in C for the Sega Genesis using the SGDK,
   using 320x224p pixel resolution.

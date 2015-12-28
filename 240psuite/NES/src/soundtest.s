@@ -2,14 +2,36 @@
 .include "global.inc"
 .importzp helpsect_sound_test_frequency, helpsect_sound_test
 
+; Assuming time constant is 56000 Hz for NTSC and 52000 Hz for PAL
+; (actual values are 55930.4 Hz and 51956.5 Hz respectively)
+
+.segment "RODATA"
 tonefreqs_lo:
+  ; NTSC
   .repeat 9, I
     .byte <((7 << I) - 1)
   .endrepeat
+  ; PAL
+  .byte 6
+  .repeat 8, I
+    .byte <((13 << I) - 1)
+  .endrepeat
 tonefreqs_hi:
+  ; NTSC
   .repeat 9, I
     .byte >((7 << I) - 1)
   .endrepeat
+  ; PAL
+  .byte 0
+  .repeat 8, I
+    .byte >((13 << I) - 1)
+  .endrepeat
+
+; PAL NES and Dendy swap the red and green emphasis bits
+tvSystem_redtint:
+  .byte LIGHTGRAY|BG_ON|OBJ_ON|TINT_R
+  .byte LIGHTGRAY|BG_ON|OBJ_ON|TINT_G
+  .byte LIGHTGRAY|BG_ON|OBJ_ON|TINT_G
 
 .segment "CODE"
 
@@ -46,22 +68,19 @@ done:
 
 .proc beep_octave_y
   ; Demo of tone (for SMPTE bars and tone)
-  ; frequency on NTSC NES is very nearly 1000 Hz
   lda #$88
   sta $4008
-
-  ; TO DO: Y tables for PAL NES and Dendy
-  lda tonefreqs_lo,y
+  jsr octave_y_to_xa
   sta $400A
-  lda tonefreqs_hi,y
-  sta $400B
+  stx $400B
   ldx #20
+  ldy tvSystem
 delayloop:
   lda nmis
 :
   cmp nmis
   beq :-
-  lda #LIGHTGRAY|BG_ON|OBJ_ON|TINT_R
+  lda tvSystem_redtint,y
   sta PPUMASK
   dex
   bne delayloop
@@ -79,10 +98,10 @@ delayloop:
   sta $4000
   lda #$08
   sta $4001
-  lda tonefreqs_lo+4
+  ldy #4
+  jsr octave_y_to_xa
   sta $4002
-  lda tonefreqs_hi+4
-  sta $4003
+  stx $4003
   ldx #20
 delayloop:
   lda nmis
@@ -95,5 +114,23 @@ delayloop:
   bne delayloop
   lda #$B0
   sta $4000
+  rts
+.endproc
+
+;;
+; @param Y octave number (0=highest, 8=lowest)
+; @param tvSystem bit 0 clear for NTSC/Dendy or set for PAL NES
+; @return period-1 value with high byte in X and low byte in Y
+.proc octave_y_to_xa
+  lda tvSystem
+  lsr a  ; Sets carry iff PAL NES
+  bcc :+
+    tya
+    clc
+    adc #9
+    tay
+  :
+  lda tonefreqs_lo,y
+  ldx tonefreqs_hi,y
   rts
 .endproc
