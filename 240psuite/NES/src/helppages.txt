@@ -1,3 +1,31 @@
+
+== 240p Test Suite: Menu ==
+
+	PLUGE
+	Gradient color bars
+	SMPTE color bars
+	601 color bars
+	Color bleed
+	Grid
+	Linearity
+	Gray ramp
+	Solid color screen
+	IRE
+	Sharpness
+----
+	Overscan
+	(©!) Drop shadow sprite
+	(©!) Striped sprite
+	Stopwatch
+	Manual lag test
+	(©!) Hill zone scroll test
+	Grid scroll test
+	Full screen stripes
+	Backlight zone test
+	Sound test
+	About
+	Credits
+
 == About ==
 
 The 240p Test Suite was
@@ -180,18 +208,18 @@ the different components.
 
 Some displays and scalers
 have problems when changing
-between solid black and solid
-white or bright colors.
+between solid black and
+solid white or bright colors.
 Some cables produce audio
 buzzing while a white
 screen is displayed.
 
 ←→: Change among solid
 white, black, red, green,
-and blue screens.
+and blue screens
 A on black screen: Switch
 between black and below
-black.
+black
 A on white screen: Enter
 or leave custom color mode
 ↑↓: Change brightness
@@ -199,13 +227,10 @@ or leave custom color mode
 
 == IRE ==
 
-Press Left and Right to
-change the background
-intensity.
+This test displays a rectangle
+centered in the screen.
 
-Press A to change between a
-light rectangle on black and
-a dark rectangle on white.
+←→: Change brightness
 
 == Sharpness ==
 
@@ -223,9 +248,9 @@ sources received through RF.
 Some TVs have zero as
 no change and high as
 enhancement. Others have
-middle as no change, high as
-enhancement, and low as
-blurring.
+middle as no change, high
+as enhancement, and low
+as blurring.
 
 == Overscan ==
 
@@ -257,11 +282,12 @@ amount of overscan in pixels
 in each direction.
 
 The NES picture is 256x240
-pixels, with 12 pixels of
-built-in border at the left
-and right sides. This border
-is not included in the
-displayed amounts.
+pixels. The nominal 4:3
+frame is 280x240, including
+12 pixels of border at the
+left and right sides.
+This border is not included
+in the displayed amounts.
 
 == Drop shadow sprite ==
 
@@ -302,13 +328,26 @@ switch backgrounds.
 
 == Stopwatch ==
 
+This stopwatch helps you
+measure a TV's lag or just
+count how long your spouse
+has been on the phone.
+
+A: Start/stop
+Select when stopped: Reset
+Select when running: Lap
+
 Use this test with two
 displays connected at once.
 One of them is being tested,
 and the other (the reference)
 should be either a CRT or
 a display with known lag.
-
+For example, on a front-
+loading NES, you can connect
+an old CRT to the RF out
+and your scaler to the AV.
+----
 Use a digital camera to take
 a picture of both screens at
 the same time. The picture
@@ -322,35 +361,33 @@ The clock display at the
 bottom helps determine
 the frame even when the
 numbers above are blurry.
-----
-You can also use this test
-as a stopwatch.
-
-A: Start/stop
-Select when stopped: Reset
-Select when running: Lap
 
 == Manual lag test ==
 
 This helps quantify a
 display's processing lag by
 showing a changing pattern
-on the screen, optionally with
-audio.
+on the screen, optionally
+with audio.
 
 Press A when the moving
 reticle aligns with the still
-one to display the offset in
-frames from the actual
+one to display the offset
+in frames from the actual
 intersection and whether it
 was early or late. After ten
 presses that are not early,
 their average is shown.
 ----
-Use the Control Pad to
-change the direction of the
-moving reticle (horizontal,
-vertical, or both).
+↑↓: Choose a setting
+←→: Change setting's value
+
+Settings include the direction
+of the moving reticle
+(horizontal, vertical, or both),
+whether the movement timing
+is randomized, and whether to
+beep when the reticles align.
 
 Results will be more accurate
 if you are skilled at rhythm
@@ -373,15 +410,16 @@ Press A to stop or start.
 == Grid scroll test ==
 
 A grid is scrolled vertically
-or horizontally, which can be
-used to test linearity and how
-well the display copes with
-scrolling and frame rate.
+or horizontally. This can be
+used to test linearity and
+how well the display copes
+with scrolling and frame rate.
+Some scalers may produce a
+still image at maximum speed.
 
-Press Up or Down to change
-the speed. Hold A and press a
-direction to change direction.
-Press A to stop or start.
+↑↓: Change speed
+A: Stop or start
+A + ↑↓←→: Change direction
 
 == Full screen stripes ==
 
@@ -410,22 +448,33 @@ or combining them incorrectly.
 
 == Backlight zone test ==
 
-This test lets you check how
-the display's backlight works
-with small bright areas. Some
-LED-lit LCDs dim darker
-areas in order to achieve
-blacker blacks, but this
-causes problems with scenes
+This test displays a small
+moving square, letting you
+check how a display's
+backlight works with small
+bright areas. Some LED-lit
+LCDs dim darker areas in
+order to make black areas
+darker, but this causes
+problems with scenes
 such as starfields.
 
-Use the Control Pad to move
-a small square. Press Select
-to change its size among 1, 2,
-4, or 8 pixels on a side.
-Press A to hide or show it in
-order to test transitions to
-and from a black screen.
+↑↓←→: Move the square
+Select: Change its size among
+1, 2, 4, or 8 pixels on a side
+A: Hide or show the square
+
+== Sound test: Frequency ==
+
+	8000 Hz
+	4000 Hz
+	2000 Hz
+	1000 Hz
+	500 Hz
+	250 Hz
+	125 Hz
+	62 Hz
+	31 Hz
 
 == Sound test ==
 
@@ -435,8 +484,8 @@ and that audio and video are
 synchronized.
 
 Press A to play a sound and
-show a sprite while it is
-playing.
+change the screen color
+while it is playing.
 
 == Credits ==
 
@@ -454,32 +503,21 @@ even for MERCHANTABILITY
 or FITNESS FOR A
 PARTICULAR PURPOSE.
 
-Version 0.01 (2015-10-23)
-Completeness: 13 of 23
-
-== 240p Test Suite: Menu ==
-
-	PLUGE
-	Gradient color bars
-	SMPTE color bars
-	601 color bars
-	Color bleed
-	Grid
-	Linearity
-	Gray ramp
-	(no) Solid color screen
-	IRE
-	Sharpness
+Version 0.02 (2015-10-28)
+Completeness: 20 of 23
 ----
-	(no) Overscan
-	(no) Drop shadow sprite
-	(no) Striped sprite
-	(no) Stopwatch
-	(no) Manual lag test
-	(no) Hill zone scroll test
-	(no) Grid scroll test
-	Full screen stripes
-	(no) Backlight zone test
-	(no) Sound test
-	About
-	Credits
+Status notice from Pino
+
+For the last three tests
+(Drop shadow sprite,
+Striped sprite, and Hill
+zone scroll test), I need
+a still background not
+from Ghost in the Shell,
+a scrolling background not
+from Sonic, and a 32x32
+enemy sprite not from Sonic.
+I have plenty of space left
+in the ROM (about 27K), but
+I just need someone to draw
+some original graphics.

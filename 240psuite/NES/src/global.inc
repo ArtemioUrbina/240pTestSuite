@@ -36,8 +36,8 @@
 .global ppu_clear_nt, ppu_clear_oam, ppu_screen_on
 
 ; helpscreen.s
-.global helpscreen, load_sb53_ay, load_sb53
-.global help_reload, vram_copydstlo, vram_copydsthi
+.global helpscreen, load_sb53_ay, load_sb53, help_reload
+.global txtlinebuf, vram_copydstlo, vram_copydsthi
 
 ; unpb53.s
 .global unpb53_some, unpb53_xtiles, unpb53_ay_xtiles, PB53_outbuf
@@ -55,10 +55,33 @@
 ; stills.s
 .global do_linearity, do_sharpness, do_ire, do_smpte, do_601bars
 .global do_pluge, do_gcbars, do_cpsgrid, do_gray_ramp, do_color_bleed
-.global do_full_stripes
+.global do_full_stripes, do_solid_color
+.global test_state
+
+; stopwatch.s
+.global do_stopwatch
+
+; backlight.s
+.global do_backlight
+
+; scrolling.s
+.global do_grid_scroll
+
+; soundtest.s
+.global do_sound_test
+
+; overscan.s
+.global do_overscan
+
+; megaton.s
+.global do_manual_lag
 
 ; bcd.s
 .global bcd8bit
 bcd_highdigits = $0000
+
+; random.s
+.globalzp CRCLO, CRCHI
+.global rand_crc, crc16_update
 
 .endif
