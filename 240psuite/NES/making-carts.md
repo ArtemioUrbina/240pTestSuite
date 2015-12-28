@@ -49,13 +49,27 @@ won't close.  Take care to solder it back in with correct polarity.
 You may also have to cut off some plastic next to one of the screw
 holes in the case to fit the larger EPROM.
 
+Some copies of UNROM games published by Konami have a white "24" on
+the back label.  Instead of a Nintendo UNROM board, these contain a
+compatible board produced by Konami that has two key differences.
+First, the ROM pinout is more similar to that of EPROM, needing much
+less rework.  Second, the ROM is installed pointing to the front and
+back instead of left and right, leaving more room for a 32-pin
+memory.  See the [CrackOut prototype] for an example.
+
 Finally, set the nametable arrangement to horizontal.  On Nintendo
 donor boards, make sure H is closed with solder and V is open.
 The majority of UNROM games have H closed, but a few have V closed,
 so you'll need to resolder the pads.  RetroStage boards use the
 "mirroring" convention, so close VERT and leave HORIZ open.
 
+Version 0.08 repack 2 of the suite also contains a mapper hack to use
+the BNROM board (iNES mapper 34), which will run on a Deadly Towers
+board or on an AMROM/ANROM board modified to use vertical mirroring
+instead of 1-screen mirroring.
+
 [Ice Man's post]: http://forums.nesdev.com/viewtopic.php?p=159747#p159747
 [UNROM board]: http://bootgod.dyndns.org:7777/pcb.php?PcbID=425+426+427+428+429+430+432+433+434
-[game using UNROM]: [http://bootgod.dyndns.org:7777/search.php?keywords=unrom&kwtype=pcb&group=groupid]
+[game using UNROM]: http://bootgod.dyndns.org:7777/search.php?keywords=unrom&kwtype=pcb&group=groupid
 [discrete repro board]: http://www.retrostage.net/nes_discretes.htm
+[CrackOut prototype]: http://bootgod.dyndns.org:7777/profile.php?id=4618
