@@ -1,4 +1,6 @@
 240pee.nes
+README.txt
+CHANGES.txt
 makefile
 unrom512kbit.cfg
 zip.in
@@ -22,6 +24,7 @@ src/random.s
 src/rectfill.inc
 src/rectfill.s
 src/scrolling.s
+src/semixparent.s
 src/soundtest.s
 src/stills.s
 src/stopwatch.s
@@ -31,6 +34,7 @@ src/vwf_draw.s
 tilesets/backlight_sprites.png
 tilesets/fizzter_digits.png
 tilesets/gus_bg.png
+tilesets/gus_portrait.png
 tilesets/gus_sprite.png
 tilesets/lag_clock_balls.png
 tilesets/lag_clock_face.png

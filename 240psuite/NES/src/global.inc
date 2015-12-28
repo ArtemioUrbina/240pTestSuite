@@ -76,6 +76,9 @@
 ; megaton.s
 .global do_manual_lag
 
+; semixparent.s
+.global do_drop_shadow_sprite
+
 ; bcd.s
 .global bcd8bit
 bcd_highdigits = $0000
