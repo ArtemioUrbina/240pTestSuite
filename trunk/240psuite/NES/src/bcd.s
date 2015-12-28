@@ -42,7 +42,7 @@ highDigits = 0
 
   ; Each iteration takes 11 if subtraction occurs or 10 if not.
   ; But if 80 is subtracted, 40 and 20 aren't, and if 200 is
-  ; subtracted, 80 is not, and at least one of 40 and 20 is not.
+  ; subtracted, then 100, 80, and one of 40 and 20 aren't.
   ; So this part takes up to 6*11-2 cycles.
   bcd8bit_iter #200
   bcd8bit_iter #100

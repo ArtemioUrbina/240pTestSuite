@@ -1,3 +1,9 @@
+0.08.2 (2015-12-25)
+* Includes a BNROM mapper hack produced by mirroring the fixed bank
+  into the top half of both 32K banks
+* making-carts.md: Mentions less rework needed for Konami "24" boards
+  (requested by FrankWDoom)
+
 0.08.1 (2015-12-04)
 * Mentions the TG16 port (reported by Artemio)
 * Mentions modifying the case for 32-pin EPROMs (reported by Ice Man)

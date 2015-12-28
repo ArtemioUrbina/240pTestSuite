@@ -11,7 +11,7 @@
 
 # These are used in the title of the NES program and the zip file.
 title = 240pee
-version = 0.08.1
+version = 0.08.2
 
 # Space-separated list of assembly language files that make up the
 # PRG ROM.  If it gets too long for one line, you can add a backslash
@@ -51,7 +51,7 @@ run: $(title).nes
 # README as a heuristic for when something was changed.
 dist: zip
 zip: $(title)-$(version).zip
-$(title)-$(version).zip: zip.in $(title).nes README.md CHANGES.txt making-carts.md $(objdir)/index.txt
+$(title)-$(version).zip: zip.in $(title)-bnrom.nes README.md CHANGES.txt making-carts.md $(objdir)/index.txt
 	zip -9 -u $@ -@ < $<
 
 $(objdir)/index.txt: makefile
@@ -66,6 +66,9 @@ objlisto = $(foreach o,$(objlist),$(objdir)/$(o).o)
 
 map.txt $(title).nes: unrom512kbit.cfg $(objlisto)
 	$(LD65) -o $(title).nes -m map.txt -C $^
+
+$(title)-bnrom.nes: tools/untobn.py $(title).nes
+	$^ $@
 
 $(objdir)/%.o: $(srcdir)/%.s $(srcdir)/nes.inc $(srcdir)/global.inc
 	$(AS65) $(CFLAGS65) $< -o $@

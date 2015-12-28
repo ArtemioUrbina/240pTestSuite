@@ -21,7 +21,7 @@ This is free software, with full source code available under the GPL.
 
 Usage
 -----
-Load 240pee.nes onto a [PowerPak] and run it.
+Load 240pee.nes onto a [PowerPak] or [EverDrive-N8] and run it.
 
 You can also burn it to an NES cartridge with an UNROM board.
 Full instructions are in `making-carts.md`.
@@ -72,6 +72,7 @@ There are as of late 2015 five other platforms that run the suite:
 [ca65]: https://cc65.github.io/cc65/
 [Pillow]: https://pillow.readthedocs.org/
 [PowerPak]: http://www.retrousb.com/product_info.php?cPath=24&products_id=34
+[EverDrive-N8]: http://www.stoneagegamer.com/everdrive-n8-deluxe-nes.html
 
 Contributors
 ------------
