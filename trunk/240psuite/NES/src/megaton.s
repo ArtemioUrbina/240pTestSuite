@@ -330,7 +330,7 @@ no_beep_this_frame:
   notA:
 
   ; If Start is pressed, pause and show help screen
-  lda new_keys
+  lda new_keys+0
   and #KEY_START
   beq not_help
     ldx #$B0  ; turn off beeper
@@ -341,13 +341,13 @@ no_beep_this_frame:
     jmp restart
   not_help:
   
-  lda new_keys
+  lda new_keys+0
   jsr handle_cursor_move
 
   ldy num_tests
   cpy #MAX_TESTS
   bcs megaton_show_results
-  lda new_keys
+  lda new_keys+0
   and #KEY_B
   bne done
   jmp loop

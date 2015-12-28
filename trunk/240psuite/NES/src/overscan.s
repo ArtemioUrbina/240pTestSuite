@@ -176,6 +176,13 @@ loop:
   cmp nmis
   beq :-
 
+  ; Upload OAM first because some capture cards capture the start of
+  ; vblank and can see the palette update rainbow
+  lda #$00
+  sta OAMADDR
+  lda #>OAM
+  sta OAM_DMA
+
   ; Set palette for arrows based on A
   lda #$3F
   sta PPUADDR
@@ -198,10 +205,8 @@ loop:
     lda #$FF
     sta vram_copydsthi
   isnocopy:
+
   ldx #0
-  stx OAMADDR
-  lda #>OAM
-  sta OAM_DMA
   ldy #0
   lda #VBLANK_NMI|BG_0000|OBJ_0000
   sec

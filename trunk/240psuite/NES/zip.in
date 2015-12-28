@@ -14,7 +14,9 @@ src/helpscreen.s
 src/init.s
 src/main.s
 src/megaton.s
+src/muldiv.s
 src/nes.inc
+src/overclock.s
 src/overscan.s
 src/pads.s
 src/paldetect.s

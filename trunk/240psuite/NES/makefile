@@ -11,15 +11,15 @@
 
 # These are used in the title of the NES program and the zip file.
 title = 240pee
-version = 0.05
+version = 0.06
 
 # Space-separated list of assembly language files that make up the
 # PRG ROM.  If it gets too long for one line, you can add a backslash
 # (the \ character) at the end of the line and continue on the next.
 objlist = vwf7 init paldetect vwf_draw unrom \
   main helpscreen helppages.hlp stills stopwatch backlight \
-  scrolling soundtest overscan megaton semixparent \
-  pads ppuclear unpb53 bcd random rectfill \
+  scrolling soundtest overscan megaton semixparent overclock \
+  pads ppuclear unpb53 bcd random rectfill muldiv
 
 AS65 = ca65
 LD65 = ld65
@@ -97,6 +97,8 @@ $(objdir)/megaton.o: \
 $(objdir)/semixparent.o: \
   $(objdir)/gus_portrait.sb53 $(srcdir)/rectfill.inc \
   $(objdir)/shadow_reticle.chr.pb53 $(objdir)/hepsie.chr.pb53
+$(objdir)/overclock.o: \
+  $(srcdir)/rectfill.inc
 
 # Generic rules for CHR
 

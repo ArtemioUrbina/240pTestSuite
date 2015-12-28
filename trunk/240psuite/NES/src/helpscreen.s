@@ -24,7 +24,7 @@
 .importzp HELP_NUM_PAGES, HELP_NUM_SECTS, HELP_BANK
 
 .segment "BSS"
-help_cur_seg:   .res 1
+help_cur_doc:   .res 1
 help_cur_page:  .res 1
 help_cur_line:  .res 1
 help_reload:    .res 1
@@ -44,14 +44,13 @@ txtlinebuf:     .res 32
 ;   usually this includes KEY_LEFT|KEY_RIGHT
 ;   for menu selection, use KEY_UP|KEY_DOWN|KEY_A|KEY_START
 ;   for going back, use KEY_B
-; @param X the segment number
+; @param X the document number
 ; @param help_cur_page the page to start on.
 ;   If not within the segment, goes to the segment's first page.
 ; @return A: number of page within segment; Y: cursor Y position
 .proc helpscreen
-
   sta help_ok_keys
-  stx help_cur_seg
+  stx help_cur_doc
 hbset:
   lda #HELP_BANK
   sta hbset+1
@@ -65,7 +64,7 @@ hbset:
   jsr helpscreen_load_oam
 
   ; If not within this document, move to the first page
-  ldx help_cur_seg
+  ldx help_cur_doc
   lda help_cur_page
   cmp help_cumul_pages,x
   bcc movetofirstpage
@@ -128,7 +127,7 @@ vramdone:
 
   and #KEY_RIGHT
   beq notNextPage
-  ldx help_cur_seg
+  ldx help_cur_doc
   lda help_cumul_pages+1,x
   sec
   sbc help_cur_page
@@ -143,7 +142,7 @@ notNextPage:
   lda new_keys+0
   and #KEY_LEFT
   beq notPrevPage
-  ldx help_cur_seg
+  ldx help_cur_doc
   lda help_cumul_pages,x
   cmp help_cur_page
   bcs notPrevPage
@@ -193,7 +192,7 @@ notPressA:
 
   jmp loop
 done:
-  ldx help_cur_seg
+  ldx help_cur_doc
   lda help_cur_page
   sec
   sbc help_cumul_pages,x
@@ -213,7 +212,7 @@ done:
   sta ciSrc+1
   lda helppages_lo,x
   sta ciSrc+0
-  ldx help_cur_seg
+  ldx help_cur_doc
   lda helptitles_hi,x
   ldy helptitles_lo,x
 have_ay:
@@ -270,7 +269,7 @@ pagenum_template_loop:
   bne pagenum_template_loop
 pagenum_template_done:
   
-  ldx help_cur_seg
+  ldx help_cur_doc
   lda help_cur_page
   sec
   sbc help_cumul_pages,x
