@@ -1,3 +1,8 @@
+0.08.1 (2015-12-04)
+* Mentions the TG16 port (reported by Artemio)
+* Mentions modifying the case for 32-pin EPROMs (reported by Ice Man)
+* Corrected pins 30/31 for 32-pin EPROMs (reported by Ice Man)
+
 0.08 (2015-11-26)
 * Shadow sprite: Restored Hepsie's colors (regression reported by
   43110)
