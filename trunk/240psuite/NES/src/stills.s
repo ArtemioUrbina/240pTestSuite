@@ -171,17 +171,19 @@ ire_texts:
 
 ire_msgs:
   .addr ire_msg0, ire_msg1, ire_msg2, ire_msg3, ire_msg4
-  .addr ire_msg5, ire_msg6
-ire_msg0:  .byte "0 on 0",0
-ire_msg1:  .byte "40 on 0",0
-ire_msg2:  .byte "70 on 0",0
-ire_msg3:  .byte "100 on 0",0
-ire_msg4:  .byte "100 on 40",0
-ire_msg5:  .byte "100 on 70",0
-ire_msg6:  .byte "100 on 100",0
+  .addr ire_msg5, ire_msg6, ire_msg7
+ire_msg0:  .byte "0 on below",0
+ire_msg1:  .byte "0 on 0",0
+ire_msg2:  .byte "40 on 0",0
+ire_msg3:  .byte "70 on 0",0
+ire_msg4:  .byte "100 on 0",0
+ire_msg5:  .byte "100 on 40",0
+ire_msg6:  .byte "100 on 70",0
+ire_msg7:  .byte "100 on 100",0
 
-irelevel_bg: .byte $0F,$0F,$0F
-irelevel_fg: .byte $0F,$00,$10,$20,$20,$20,$20
+irelevel_bg: .byte $0D,$0F,$0F
+irelevel_fg: .byte $0F,$0F,$00,$10,$20,$20,$20,$20
+NUM_IRE_LEVELS = 8
 
 .segment "CODE"
 .proc do_ire
@@ -189,7 +191,7 @@ ire_level = test_state+0
 need_reload = test_state+1
 disappear_time = test_state+2
 
-  lda #3
+  lda #4
   sta ire_level
 restart:
   jsr rf_load_tiles
@@ -282,7 +284,7 @@ loop:
   and #KEY_RIGHT
   beq not_increase
   lda ire_level
-  cmp #6
+  cmp #NUM_IRE_LEVELS - 1
   bcs not_increase
     inc ire_level
     inc need_reload
@@ -508,25 +510,28 @@ pluge_rects:
   .byte $00
 pluge_palette:
   .byte $0F,$0D,$04,$0A, $0F,$00,$10,$20
-
+pluge_both_palettes:
+  .byte $04,$0A,$2D,$2D
+  
 .segment "CODE"
 .proc do_pluge
+palettechoice = test_state+0
+emphasis = test_state+1
+
+restart:
   jsr rf_load_tiles
   lda #$20
   sta rf_curnametable
   lda #$00
   sta rf_curpattable
+  sta palettechoice
+  lda #BG_ON
+  sta emphasis
   ldy #<pluge_rects
   lda #>pluge_rects
   jsr rf_draw_rects_attrs_ay
-
-loop:
-  lda nmis
-:
-  cmp nmis
-  beq :-
-
-  ; Update palette
+  
+  ; Load initial palette
   lda #$3F
   sta PPUADDR
   ldx #$00
@@ -538,12 +543,32 @@ loop:
     cpx #8
     bcc :-
 
+loop:
+  lda nmis
+:
+  cmp nmis
+  beq :-
+
+  ; Update palette
+  lda #$3F
+  sta PPUADDR
+  lda #$02
+  sta PPUADDR
+  ldx palettechoice
+  .repeat 2, I
+    lda pluge_both_palettes+I,x
+    sta PPUDATA
+  .endrepeat
+
   ; And turn the display on
-  ldx #0
-  ldy #0
+  ; ppu_screen_on doesn't support emphasis
+  lda #0
+  sta PPUSCROLL
+  sta PPUSCROLL
   lda #VBLANK_NMI|BG_0000
-  clc
-  jsr ppu_screen_on
+  sta PPUCTRL
+  lda emphasis
+  sta PPUMASK
 
   jsr read_pads
   lda new_keys+0
@@ -552,8 +577,24 @@ loop:
     lda #KEY_B|KEY_A|KEY_START|KEY_LEFT|KEY_RIGHT
     ldx #helpsect_pluge
     jsr helpscreen
-    jmp do_pluge
+    jmp restart
   not_help:
+
+  lda new_keys+0
+  and #KEY_A
+  beq not_emphasis
+    lda #$E0
+    eor emphasis
+    sta emphasis
+  not_emphasis:
+
+  lda new_keys+0
+  and #KEY_SELECT
+  beq not_2d
+    lda #$02
+    eor palettechoice
+    sta palettechoice
+  not_2d:
 
   lda new_keys+0
   and #KEY_B

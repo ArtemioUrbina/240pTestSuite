@@ -11,14 +11,14 @@
 
 # These are used in the title of the NES program and the zip file.
 title = 240pee
-version = 0.02
+version = 0.03
 
 # Space-separated list of assembly language files that make up the
 # PRG ROM.  If it gets too long for one line, you can add a backslash
 # (the \ character) at the end of the line and continue on the next.
 objlist = vwf7 init paldetect vwf_draw unrom \
-  main helpscreen helppages.hlp \
-  stills stopwatch backlight scrolling soundtest overscan megaton \
+  main helpscreen helppages.hlp stills stopwatch backlight \
+  scrolling soundtest overscan megaton semixparent \
   pads ppuclear unpb53 bcd random rectfill \
 
 AS65 = ca65
@@ -94,6 +94,8 @@ $(objdir)/overscan.o: \
   $(objdir)/overscan.chr.pb53 $(srcdir)/rectfill.inc
 $(objdir)/megaton.o: \
   $(objdir)/megatontiles.chr.pb53 $(srcdir)/rectfill.inc
+$(objdir)/semixparent.o: \
+  $(objdir)/gus_portrait.sb53 $(srcdir)/rectfill.inc
 
 # Generic rules for CHR
 
@@ -120,6 +122,8 @@ $(objdir)/lag_clock_face.sav: $(imgdir)/lag_clock_face.png
 	tools/savtool.py --palette 20100f24202424242021112420261624 $< $@
 $(objdir)/vwf7.s: $(imgdir)/vwf7.png
 	tools/vwfbuild.py $< $@
+$(objdir)/gus_portrait.sav: $(imgdir)/gus_portrait.png
+	tools/savtool.py --palette 0F2012370F2028100F2027370F122810 $< $@
 
 # Help me!
 $(objdir)/%.hlp.s: $(srcdir)/%.txt

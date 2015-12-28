@@ -1,0 +1,21 @@
+0.03 (2015-11-05)
+* PLUGE: Added choice of gray ($2D) instead of color ($04+$0A)
+  outer bars (requested by lidnariq)
+* PLUGE: Added choice of gray emphasis (requested by lidnariq)
+* IRE: Added bottom level of black on below-black
+* Unified planned Drop shadow sprite and Striped sprite
+* Shadow sprite: Added an anime-style illustration of the mascot
+  by darryl.revok, replacing motoko.bmp
+
+0.02 (2015-10-28)
+* Added Solid color screen
+* Added Overscan
+* Added Stopwatch
+* Added Manual lag test
+* Addded Grid scroll test
+* Added Backlight zone test
+* Added Sound test
+* Weakened tsurime shape of mascot's eyelids
+
+0.01 (2015-10-23)
+* initial release

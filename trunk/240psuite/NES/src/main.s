@@ -66,7 +66,7 @@ tvSystem:      .res 1
   jsr getTVSystem
   sta tvSystem
   jsr do_credits
-;  jsr do_manual_lag
+;  jsr do_drop_shadow_sprite
 
 forever:
   ldx #helpsect_240p_test_suite_menu
@@ -107,8 +107,7 @@ routines:
   .addr do_sharpness-1
 
   .addr do_overscan-1
-  .addr beep-1
-  .addr beep-1
+  .addr do_drop_shadow_sprite-1
   .addr do_stopwatch-1
   .addr do_manual_lag-1
   .addr beep-1

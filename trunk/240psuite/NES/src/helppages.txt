@@ -14,8 +14,7 @@
 	Sharpness
 ----
 	Overscan
-	(©!) Drop shadow sprite
-	(©!) Striped sprite
+	(wip) Shadow sprite
 	Stopwatch
 	Manual lag test
 	(©!) Hill zone scroll test
@@ -76,6 +75,18 @@ You should adjust the TV's
 "brightness" control until the
 outer bars are clearly visible
 and inner bars are not.
+----
+A: Darken the entire screen
+by 25% with emphasis filter
+Select: Switch outer bars
+between gray and color
+
+The emphasis filter and gray
+outer bars may misbehave on
+NES consoles modded with a
+2C03 or 2C05 RGB PPU
+pulled from a Vs. System or
+PlayChoice 10 arcade board.
 
 == Gradient color bars ==
 
@@ -294,24 +305,10 @@ in the displayed amounts.
 This test draws a shadow
 sprite on every other frame,
 flickering at 30 or 25 Hz.
-Such a flickering effect is
-commonly used in games to
-show transparency, such as
+Many games use such a
+flickering effect to show
+transparency, such as
 during mercy invincibility.
-
-Use the Control Pad to move
-the sprite. Whether still or
-moving, no background detail
-must be lost, and the shadow
-must be shown without
-horizontal stripes.
-
-Press Select to change the
-sprite's shape, or hold Select
-and press Left or Right to
-switch backgrounds.
-
-== Striped sprite ==
 
 Some deinterlacers can
 display drop shadows
@@ -320,11 +317,25 @@ correctly but still interpret
 sprite should make it easier
 to tell if a processor is trying
 to deinterlace an image.
+----
+↑↓←→: Move sprite
+A: Stop or start flicker
+A+←→: Change flicker pattern
+  (solid, horizontal, vertical,
+  or diagonal)
+A+↑↓: Change shape
+Select: Change background
 
-Use the Control Pad to
-move the sprite. Hold Select
-and press Left or Right to
-switch backgrounds.
+Whether still or moving, no
+background detail must be
+lost. The solid pattern
+must not have horizontal
+stripes, and the striped
+patterns must flicker
+continuously.
+
+Portrait of Gus by
+  darryl.revok
 
 == Stopwatch ==
 
@@ -503,21 +514,21 @@ even for MERCHANTABILITY
 or FITNESS FOR A
 PARTICULAR PURPOSE.
 
-Version 0.02 (2015-10-28)
+Version 0.03 (2015-11-05)
 Completeness: 20 of 23
 ----
 Status notice from Pino
 
-For the last three tests
-(Drop shadow sprite,
-Striped sprite, and Hill
-zone scroll test), I need
-a still background not
-from Ghost in the Shell,
-a scrolling background not
-from Sonic, and a 32x32
-enemy sprite not from Sonic.
-I have plenty of space left
-in the ROM (about 27K), but
-I just need someone to draw
-some original graphics.
+I had darryl.revok of NESdev
+draw me a new background
+for Shadow sprite. But for
+the last two tests (Shadow
+sprite and Hill zone scroll
+test), I need a scrolling
+background not from Sonic
+and a 32x32 enemy sprite
+not from Sonic. I have plenty
+of space left in the ROM
+(about 24K), but I just need
+someone to draw some
+original graphics.
