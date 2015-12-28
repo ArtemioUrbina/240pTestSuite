@@ -35,7 +35,7 @@ help_cursor_y:  .res 1
 cursor_dirty:   .res 1
 vram_copydstlo: .res 1
 vram_copydsthi: .res 1
-pagenumberbuf:  .res 32
+txtlinebuf:     .res 32
 
 .segment "CODE"
 
@@ -49,8 +49,12 @@ pagenumberbuf:  .res 32
 ;   If not within the segment, goes to the segment's first page.
 ; @return A: number of page within segment; Y: cursor Y position
 .proc helpscreen
+
   sta help_ok_keys
   stx help_cur_seg
+hbset:
+  lda #HELP_BANK
+  sta hbset+1
   lda help_reload
   bpl :+
     jsr helpscreen_load
@@ -58,6 +62,7 @@ pagenumberbuf:  .res 32
     sta prev_nonblank
     sta help_reload
   :
+  jsr helpscreen_load_oam
 
   ; If not within this document, move to the first page
   ldx help_cur_seg
@@ -252,7 +257,7 @@ not_title_line:
   ldy #0
 pagenum_template_loop:
   lda pagenum_template,y
-  sta pagenumberbuf,y
+  sta txtlinebuf,y
   beq pagenum_template_done
   iny
   bne pagenum_template_loop
@@ -264,17 +269,17 @@ pagenum_template_done:
   sbc help_cumul_pages,x
   clc
   adc #'1'  ; Currently do not allow more than 9 pages per document
-  sta pagenumberbuf+2
+  sta txtlinebuf+2
   lda help_cumul_pages+1,x
   sec
   sbc help_cumul_pages,x
   clc
   adc #'0'
-  sta pagenumberbuf+4
+  sta txtlinebuf+4
   lda #2
   sta cur_nonblank
-  lda #>pagenumberbuf
-  ldy #<pagenumberbuf
+  lda #>txtlinebuf
+  ldy #<txtlinebuf
   jmp have_ay
 
 not_pagenum_line:
@@ -377,12 +382,53 @@ hello_msg:  .byte "Hello from VWF",0
 ; Help screen background ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .segment "CODE"
+.proc helpscreen_load_oam
+  ; Prepare Gus sprite
+strip_y = $00
+strip_height = $01
+tilenum = $02
+
+  ldx #0
+  ldy #0
+sprstriploop:
+  lda gus_sprite_strips+0,y
+  cmp #$FF
+  bcs sprstripdone
+  sta strip_y
+  lda gus_sprite_strips+1,y
+  sta tilenum
+  lda gus_sprite_strips+4,y
+  sta strip_height
+sprstripentryloop:
+  lda strip_y
+  sta OAM,x
+  inx
+  clc
+  adc #16
+  sta strip_y
+  lda tilenum
+  inc tilenum
+  inc tilenum
+  sta OAM,x
+  inx
+  lda gus_sprite_strips+2,y
+  sta OAM,x
+  inx
+  lda gus_sprite_strips+3,y
+  sta OAM,x
+  inx
+  dec strip_height
+  bne sprstripentryloop
+  tya
+  clc
+  adc #5
+  tay
+  bcc sprstriploop
+sprstripdone:
+  jmp ppu_clear_oam
+.endproc
+
 .proc helpscreen_load
-
-hbset:
-  lda #HELP_BANK
-  sta hbset+1
-
   ldy #<gus_bg
   lda #>gus_bg
   ldx #$00  ; bit 4: pattern table; bits 3-2: nametable
@@ -458,52 +504,7 @@ vwfmap_rowloop:
   ldx #$08
   jsr ppu_clear_nt
   ldx #$0C
-  jsr ppu_clear_nt
-
-  ; Prepare Gus sprite
-strip_y = $00
-strip_height = $01
-
-  ldx #0
-  ldy #0
-sprstriploop:
-  lda gus_sprite_strips+0,y
-  cmp #$FF
-  bcs sprstripdone
-  sta strip_y
-  lda gus_sprite_strips+1,y
-  sta tilenum
-  lda gus_sprite_strips+4,y
-  sta strip_height
-sprstripentryloop:
-  lda strip_y
-  sta OAM,x
-  inx
-  clc
-  adc #16
-  sta strip_y
-  lda tilenum
-  inc tilenum
-  inc tilenum
-  sta OAM,x
-  inx
-  lda gus_sprite_strips+2,y
-  sta OAM,x
-  inx
-  lda gus_sprite_strips+3,y
-  sta OAM,x
-  inx
-  dec strip_height
-  bne sprstripentryloop
-  tya
-  clc
-  adc #5
-  tay
-  bcc sprstriploop
-sprstripdone:
-  jsr ppu_clear_oam
-  
-  rts
+  jmp ppu_clear_nt
 
 setup_one_vwf_line:
   sta PPUADDR
@@ -525,6 +526,8 @@ vwfmap_tileloop:
 ;;
 ; Loads an SB53 file at address AAYY to the pattern table and
 ; nametable.
+; Leaves ciSrc at the start of the palette and the VRAM address
+; at the end of the background palette.
 ; X bit 4: pattern table base ($0000 or $1000)
 ; X bits 3-2: nametable base ($2000, $2400, $2800, or $2C00)
 .proc load_sb53_ay

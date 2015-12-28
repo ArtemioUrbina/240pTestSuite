@@ -13,6 +13,7 @@ RECTFILL_INC = 1
 .global rf_curnametable, rf_curpattable, rf_tilenum
 .global rf_draw_rects, rf_draw_attrs, rf_push_attrs, rf_draw_labels
 .global rf_load_tiles, rf_color_lineImgBuf, rf_copy8tiles
+.global rf_draw_rects_attrs_ay, rf_load_yrgb_palette
 
 ; Macros for 
 

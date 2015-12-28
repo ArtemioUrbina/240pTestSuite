@@ -11,14 +11,15 @@
 
 # These are used in the title of the NES program and the zip file.
 title = 240pee
-version = 0.01
+version = 0.02
 
 # Space-separated list of assembly language files that make up the
 # PRG ROM.  If it gets too long for one line, you can add a backslash
 # (the \ character) at the end of the line and continue on the next.
 objlist = vwf7 init paldetect vwf_draw unrom \
-  main helpscreen stills helppages.hlp \
-  pads ppuclear unpb53 bcd rectfill \
+  main helpscreen helppages.hlp \
+  stills stopwatch backlight scrolling soundtest overscan megaton \
+  pads ppuclear unpb53 bcd random rectfill \
 
 AS65 = ca65
 LD65 = ld65
@@ -74,15 +75,25 @@ $(objdir)/%.o: $(objdir)/%.s
 
 # Files that depend on included files (.include, .incbin)
 
+$(objdir)/helpscreen.o: \
+  $(objdir)/gus_bg.sb53 $(objdir)/gus_sprite.chr.pb53
 $(objdir)/stills.o: \
   $(objdir)/linearity_ntscgray.sb53 $(objdir)/linearity_palgray.sb53 \
   $(objdir)/linearity_grid_ntscgray.sb53 $(objdir)/linearity_grid_palgray.sb53 \
   $(objdir)/sharpnessgray.sb53 $(srcdir)/rectfill.inc
-$(objdir)/helpscreen.o: \
-  $(objdir)/gus_bg.sb53 $(objdir)/gus_sprite.chr.pb53
 $(objdir)/rectfill.o: \
   $(objdir)/stdtiles.chr.pb53 $(srcdir)/rectfill.inc
-  
+$(objdir)/stopwatch.o: \
+  $(objdir)/lag_clock_face.sb53 $(objdir)/fizzter_digits.chr.pb53 \
+  $(objdir)/lag_clock_balls.chr.pb53 $(srcdir)/rectfill.inc
+$(objdir)/backlight.o: \
+  $(objdir)/backlight_sprites.chr.pb53
+$(objdir)/scrolling.o: \
+  $(srcdir)/rectfill.inc
+$(objdir)/overscan.o: \
+  $(objdir)/overscan.chr.pb53 $(srcdir)/rectfill.inc
+$(objdir)/megaton.o: \
+  $(objdir)/megatontiles.chr.pb53 $(srcdir)/rectfill.inc
 
 # Generic rules for CHR
 
@@ -101,8 +112,12 @@ $(objdir)/%.pb53: $(objdir)/%
 
 $(objdir)/gus_sprite.chr: $(imgdir)/gus_sprite.png
 	tools/pilbmp2nes.py -H 128 --planes "0;1" $< $@
+$(objdir)/fizzter_digits.chr: $(imgdir)/fizzter_digits.png
+	tools/pilbmp2nes.py -H 24 --planes "0;1" $< $@
 $(objdir)/gus_bg.sav: $(imgdir)/gus_bg.png
 	tools/savtool.py --palette 0f0820180f1a202a0f060f160f0f1424 $< $@
+$(objdir)/lag_clock_face.sav: $(imgdir)/lag_clock_face.png
+	tools/savtool.py --palette 20100f24202424242021112420261624 $< $@
 $(objdir)/vwf7.s: $(imgdir)/vwf7.png
 	tools/vwfbuild.py $< $@
 

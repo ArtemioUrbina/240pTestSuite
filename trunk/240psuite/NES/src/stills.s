@@ -24,12 +24,12 @@
 .importzp helpsect_smpte_color_bars, helpsect_601_color_bars
 .importzp helpsect_pluge, helpsect_grid, helpsect_gradient_color_bars
 .importzp helpsect_gray_ramp, helpsect_color_bleed
-.importzp helpsect_full_screen_stripes
+.importzp helpsect_full_screen_stripes, helpsect_solid_color_screen
 
 ; sb53-based stills ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .segment "BSS"
-test_state: .res 4
+test_state: .res 24
 
 .segment "CODE"
 
@@ -201,7 +201,7 @@ restart:
   sta rf_curpattable
   ldy #<ire_rects
   lda #>ire_rects
-  jsr load_rects_and_attrs_ay
+  jsr rf_draw_rects_attrs_ay
 
 loop:
   lda need_reload
@@ -411,7 +411,7 @@ restart:
   ldx smpte_type
   ldy smpte_types+0,x
   lda smpte_types+1,x
-  jsr load_rects_and_attrs_ay
+  jsr rf_draw_rects_attrs_ay
 
 loop:
   lda nmis
@@ -509,6 +509,7 @@ pluge_rects:
 pluge_palette:
   .byte $0F,$0D,$04,$0A, $0F,$00,$10,$20
 
+.segment "CODE"
 .proc do_pluge
   jsr rf_load_tiles
   lda #$20
@@ -517,7 +518,7 @@ pluge_palette:
   sta rf_curpattable
   ldy #<pluge_rects
   lda #>pluge_rects
-  jsr load_rects_and_attrs_ay
+  jsr rf_draw_rects_attrs_ay
 
 loop:
   lda nmis
@@ -602,43 +603,22 @@ gcbars_nogrid:
   rf_label  48,184, 3, 0
   .byte "White",0
   .byte $00
-gcbars_palette:
-  .byte $0F,$00,$10,$20, $0F,$06,$16,$26, $0F,$0A,$1A,$2A, $0F,$02,$12,$22
-  .byte $0F,$FF,$FF,$36, $0F,$FF,$FF,$3A, $0F,$FF,$FF,$32
 
 .segment "CODE"
-.proc load_yrgb_palette
-  ; Load palette
-  lda nmis
-:
-  cmp nmis
-  beq :-
-  lda #$3F
-  sta PPUADDR
-  ldy #$00
-  sty PPUADDR
-  palloop:
-    lda gcbars_palette,y
-    sta PPUDATA
-    iny
-    cpy #28
-    bcc palloop
-  rts
-.endproc
 
 .proc do_gcbars
   lda #VBLANK_NMI|BG_0000|OBJ_8X16
   sta test_state+0
 restart:
   jsr rf_load_tiles
-  jsr load_yrgb_palette
+  jsr rf_load_yrgb_palette
 
   ; On $2400, draw a CPS-2 grid and no labels
   ldx #$24
   stx rf_curnametable
   ldy #<gcbars_grid
   lda #>gcbars_grid
-  jsr load_rects_and_attrs_ay
+  jsr rf_draw_rects_attrs_ay
 
   ldx #$20
   stx rf_curnametable
@@ -649,7 +629,7 @@ restart:
   jsr ppu_clear_nt
   ldy #<gcbars_nogrid
   lda #>gcbars_nogrid
-  jsr load_rects_and_attrs_ay
+  jsr rf_draw_rects_attrs_ay
   inc ciSrc
   bne :+
     inc ciSrc+1
@@ -775,19 +755,19 @@ cpsgrid_240p_rects:
   sta test_state+0
 restart:
   jsr rf_load_tiles
-  jsr load_yrgb_palette
+  jsr rf_load_yrgb_palette
 
   ; On $2400, draw a CPS-2 grid and no labels
   ldx #$20
   stx rf_curnametable
   ldy #<cpsgrid_224p_rects
   lda #>cpsgrid_224p_rects
-  jsr load_rects_and_attrs_ay
+  jsr rf_draw_rects_attrs_ay
   ldx #$24
   stx rf_curnametable
   ldy #<cpsgrid_240p_rects
   lda #>cpsgrid_240p_rects
-  jsr load_rects_and_attrs_ay
+  jsr rf_draw_rects_attrs_ay
   
 loop:
   lda nmis
@@ -863,7 +843,7 @@ gray_ramp_rects:
 
 .proc do_gray_ramp
   jsr rf_load_tiles
-  jsr load_yrgb_palette
+  jsr rf_load_yrgb_palette
   ldx #$20
   stx rf_curnametable
   lda #$00
@@ -998,20 +978,6 @@ bleed_types:
   rts 
 .endproc
 
-.proc load_rects_and_attrs_ay
-  sty ciSrc
-  sta ciSrc+1
-.endproc
-.proc load_rects_and_attrs
-  jsr rf_draw_rects
-  inc ciSrc
-  bne :+
-    inc ciSrc+1
-  :
-  jsr rf_draw_attrs
-  jmp rf_push_attrs
-.endproc
-
 .proc do_full_stripes
   ldx #3
   bpl do_generic_color_bleed
@@ -1060,7 +1026,7 @@ restart:
   tax
   ldy bleed_types+0,x
   lda bleed_types+1,x
-  jsr load_rects_and_attrs_ay
+  jsr rf_draw_rects_attrs_ay
   
   ; Set up the frame counter sprites
   ldx #0
@@ -1169,4 +1135,245 @@ loop:
   jmp loop
 done:
   rts
+.endproc
+
+; SOLID COLOR SCREEN ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.segment "RODATA"
+
+; cur_color=0-2: use one of these
+; cur_color=3: use white_color
+; cur_color=4: use black_color
+solid_color_rgb: .byte $16,$1A,$12
+
+solid_color_rects:
+  rf_rect   0,  0,256,240,$00, 0
+  rf_rect 160, 32,224, 40,$20, RF_INCR
+  .byte $00
+  rf_attr   0,  0,256,240, 0
+  .byte $00
+color_msg:  .byte "Color:",0
+
+.segment "CODE"
+
+.proc do_solid_color
+cur_color = test_state+0
+color_box_open = test_state+1
+white_color = test_state+2
+black_color = test_state+3
+cur_bg_color = lineImgBuf+128
+text_dark_color = lineImgBuf+129
+text_light_color = lineImgBuf+130
+
+  lda #3
+  sta cur_color
+  lda #0
+  sta color_box_open
+  lda #$20
+  sta white_color
+  lda #$0F
+  sta black_color
+restart:
+  jsr rf_load_tiles
+  ldx #$20
+  stx rf_curnametable
+  ldy #<solid_color_rects
+  lda #>solid_color_rects
+  jsr rf_draw_rects_attrs_ay
+
+loop:
+  ; Prepare color display
+  jsr clearLineImg
+  lda white_color
+  lsr a
+  lsr a
+  lsr a
+  lsr a
+  ldx #44
+  jsr vwfPutNibble
+  lda white_color
+  and #$0F
+  ldx #50
+  jsr vwfPutNibble
+  ldy #<color_msg
+  lda #>color_msg
+  ldx #8
+  jsr vwfPuts
+
+  lda #%1001
+  jsr rf_color_lineImgBuf
+  lda #$02
+  sta vram_copydsthi
+  lda #$00
+  sta vram_copydstlo
+  
+  ; Choose palette display
+  ; 0-2: RGB, no box
+  ; 3: white, optional box
+  ; 4: black, no box
+  ldx cur_color
+  cpx #3
+  beq load_palette_white
+  bcs load_palette_black
+  lda solid_color_rgb,x
+  bcc have_bg_color_no_text
+load_palette_white:
+  lda white_color
+  ldx color_box_open
+  beq have_bg_color_no_text
+  ldx #$02
+  stx text_dark_color
+  ldx #$38
+  stx text_light_color
+  bne have_bg_color
+load_palette_black:
+  lda black_color
+have_bg_color_no_text:
+  sta text_dark_color
+  sta text_light_color
+have_bg_color:
+  sta cur_bg_color
+
+  lda nmis
+:
+  cmp nmis
+  beq :-
+  lda #$3F
+  sta PPUADDR
+  lda #$00
+  sta PPUADDR
+  lda cur_bg_color
+  sta PPUDATA 
+  sta PPUDATA
+  lda text_dark_color
+  sta PPUDATA
+  lda text_light_color
+  sta PPUDATA
+  jsr rf_copy8tiles
+  ldx #0
+  ldy #0
+  lda #VBLANK_NMI|BG_0000
+  jsr ppu_screen_on
+
+  jsr read_pads
+  lda new_keys+0
+  and #KEY_START
+  beq not_help
+    lda #KEY_B|KEY_A|KEY_START|KEY_LEFT|KEY_RIGHT
+    ldx #helpsect_solid_color_screen
+    jsr helpscreen
+    jmp restart
+  not_help:
+
+  lda new_keys+0
+  and #KEY_RIGHT
+  beq not_right
+  lda color_box_open
+  beq next_color
+    lda white_color
+    and #$0F
+    clc
+    adc #1
+    cmp #$0D
+    bcc :+
+      lda #$00
+    :
+    eor white_color
+    and #$0F
+    eor white_color
+    sta white_color
+    jmp not_right
+  next_color:
+    inc cur_color
+    lda cur_color
+    cmp #5
+    bcc not_right
+      lda #0
+      sta cur_color
+  not_right:
+
+  lda new_keys+0
+  and #KEY_LEFT
+  beq not_left
+  lda color_box_open
+  beq prev_color
+    lda white_color
+    and #$0F
+    clc
+    adc #<-1
+    bpl :+
+      lda #$0C
+    :
+    eor white_color
+    and #$0F
+    eor white_color
+    sta white_color
+    jmp not_left
+  prev_color:
+    dec cur_color
+    bpl not_left
+      lda #4
+      sta cur_color
+  not_left:
+
+  lda new_keys+0
+  and #KEY_UP
+  beq not_up
+  lda color_box_open
+  beq not_up
+    lda white_color
+    clc
+    adc #16
+    cmp #$40
+    bcc :+
+      lda #$30
+    :
+    sta white_color
+  not_up:
+
+  lda new_keys+0
+  and #KEY_DOWN
+  beq not_down
+  lda color_box_open
+  beq not_down
+    lda white_color
+    sec
+    sbc #16
+    bcs :+
+      lda #$00
+    :
+    sta white_color
+  not_down:
+
+  lda new_keys+0
+  and #KEY_A
+  beq notA
+  lda cur_color
+  cmp #3
+  bcc notA
+  bne A_toggle_black
+    lda #$01
+    eor color_box_open
+    sta color_box_open
+    bcs notA
+  A_toggle_black:
+    lda #$0D ^ $0F
+    eor black_color
+    sta black_color
+  notA:
+
+  lda new_keys+0
+  and #KEY_B
+  bne done
+  jmp loop
+done:
+  rts
+.endproc
+
+.proc vwfPutNibble
+  cmp #10
+  bcc :+
+    adc #'A'-'9'-2
+  :
+  adc #'0'
+  jmp vwfPutTile
 .endproc

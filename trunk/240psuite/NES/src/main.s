@@ -66,6 +66,7 @@ tvSystem:      .res 1
   jsr getTVSystem
   sta tvSystem
   jsr do_credits
+;  jsr do_manual_lag
 
 forever:
   ldx #helpsect_240p_test_suite_menu
@@ -101,20 +102,20 @@ routines:
   .addr do_cpsgrid-1
   .addr do_linearity-1
   .addr do_gray_ramp-1
-  .addr beep-1
+  .addr do_solid_color-1
   .addr do_ire-1
   .addr do_sharpness-1
 
+  .addr do_overscan-1
   .addr beep-1
   .addr beep-1
+  .addr do_stopwatch-1
+  .addr do_manual_lag-1
   .addr beep-1
-  .addr beep-1
-  .addr beep-1
-  .addr beep-1
-  .addr beep-1
+  .addr do_grid_scroll-1
   .addr do_full_stripes-1
-  .addr beep-1
-  .addr beep-1
+  .addr do_backlight-1
+  .addr do_sound_test-1
   .addr do_about-1
   .addr do_credits-1
 .popseg

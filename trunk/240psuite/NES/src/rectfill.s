@@ -275,6 +275,20 @@ bmask     = $08
   jmp rf_draw_attrs
 .endproc 
 
+
+.proc rf_draw_rects_attrs_ay
+  sty ciSrc
+  sta ciSrc+1
+.endproc
+.proc load_rects_and_attrs
+  jsr rf_draw_rects
+  inc ciSrc
+  bne :+
+    inc ciSrc+1
+  :
+  jsr rf_draw_attrs
+  ; fall through
+.endproc
 .proc rf_push_attrs
   lda rf_curnametable
   ora #$03
@@ -448,6 +462,10 @@ curplanexor = $09
   rts
 .endproc
 
+
+;;
+; Copies 128 bytes from lineImgBuf to VRAM starting at vram_copydst.
+; Does not modify Y or CPU memory.
 .proc rf_copy8tiles
   lda vram_copydsthi
   sta PPUADDR
@@ -470,11 +488,13 @@ curplanexor = $09
 ;;
 ; Adds foreground and background color to the VWF tiles for
 ; a dynamic text area.
+; It overwrites memory that the VWF engine already uses.
+; In particular, it preserves the VWF text pointer ($00-$01).
 ; @param A bits 3-2: bgcolor; bits 1-0: fgcolor
 .proc rf_color_lineImgBuf
-srcptr = $00
 curplaneand = $08
 curplanexor = $09
+srcptr = $0A
   jsr rf_calcandxormasks
   .assert >(lineImgBuf + 64) = >lineImgBuf, error, "page-crossing lineImgBuf not supported"
   lda #<(lineImgBuf+64)
@@ -516,9 +536,30 @@ colorize_one_plane:
   rts
 .endproc
 
+.proc rf_load_yrgb_palette
+  ; Load palette
+  lda nmis
+:
+  cmp nmis
+  beq :-
+  lda #$3F
+  sta PPUADDR
+  ldy #$00
+  sty PPUADDR
+  palloop:
+    lda gcbars_palette,y
+    sta PPUDATA
+    iny
+    cpy #28
+    bcc palloop
+  rts
+.endproc
 .segment "RODATA"
 times85:
   .byte $00, $55, $AA, $FF
+gcbars_palette:
+  .byte $0F,$00,$10,$20, $0F,$06,$16,$26, $0F,$0A,$1A,$2A, $0F,$02,$12,$22
+  .byte $0F,$FF,$FF,$36, $0F,$FF,$FF,$3A, $0F,$FF,$FF,$32
 
 .segment "BANK01"
 stdtiles_bank = 1
