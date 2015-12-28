@@ -20,6 +20,11 @@ tonefreqs_hi:
   lda new_keys+0
   and #KEY_A
   beq not_beep
+    cpy #9
+    bcc istribeep
+    jsr pulse_beep
+    jmp do_sound_test
+  istribeep:
     jsr beep_octave_y
     jmp do_sound_test
   not_beep:
@@ -64,5 +69,31 @@ delayloop:
   sta $4008
   lda #$FF
   sta $400B
+  rts
+.endproc
+
+.proc pulse_beep
+  ; Demo of tone (for SMPTE bars and tone)
+  ; frequency on NTSC NES is very nearly 1000 Hz
+  lda #$B8
+  sta $4000
+  lda #$08
+  sta $4001
+  lda tonefreqs_lo+4
+  sta $4002
+  lda tonefreqs_hi+4
+  sta $4003
+  ldx #20
+delayloop:
+  lda nmis
+:
+  cmp nmis
+  beq :-
+  lda #LIGHTGRAY|BG_ON|OBJ_ON|TINT_R
+  sta PPUMASK
+  dex
+  bne delayloop
+  lda #$B0
+  sta $4000
   rts
 .endproc

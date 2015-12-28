@@ -170,29 +170,50 @@ ire_texts:
 .endif
 
 ire_msgs:
-  .addr ire_msg0, ire_msg1, ire_msg2, ire_msg3, ire_msg4
-  .addr ire_msg5, ire_msg6, ire_msg7
-ire_msg0:  .byte "0 on below",0
-ire_msg1:  .byte "0 on 0",0
-ire_msg2:  .byte "40 on 0",0
-ire_msg3:  .byte "70 on 0",0
-ire_msg4:  .byte "100 on 0",0
-ire_msg5:  .byte "100 on 40",0
-ire_msg6:  .byte "100 on 70",0
-ire_msg7:  .byte "100 on 100",0
+  .addr ire_msg0,   ire_msg1,   ire_msg2,   ire_msg3,   ire_msg4
+  .addr ire_msg5,   ire_msg6,   ire_msg7,   ire_msg8,   ire_msg9
+  .addr ire_msg0em, ire_msg1em, ire_msg2em, ire_msg3em, ire_msg4em
+  .addr ire_msg5em, ire_msg6em, ire_msg7em, ire_msg8em, ire_msg9em
 
-irelevel_bg: .byte $0D,$0F,$0F
-irelevel_fg: .byte $0F,$0F,$00,$10,$20,$20,$20,$20
-NUM_IRE_LEVELS = 8
+ire_msg0:    .byte "0 on below",0
+ire_msg1:    .byte "0 on 0",0
+ire_msg2:    .byte "30 on 0",0
+ire_msg3:    .byte "40 on 0",0
+ire_msg4:    .byte "70 on 0",0
+
+ire_msg5:    .byte "72 on 0",0
+ire_msg6:    .byte "100 on 0",0
+ire_msg7:    .byte "100 on 40",0
+ire_msg8:    .byte "100 on 70",0
+ire_msg9:    .byte "100 on 100",0
+
+ire_msg0em:  .byte "0 on belem",0
+ire_msg1em:  .byte "0 on 0+em",0
+ire_msg2em:  .byte "30 on 0+em",0
+ire_msg3em:  .byte "40 on 0+em",0
+ire_msg4em:  .byte "70 on 0+em",0
+
+ire_msg5em:  .byte "72 on 0+em",0
+ire_msg6em:  .byte "100 on 0em",0
+ire_msg7em:  .byte "100 on 40em",0
+ire_msg8em:  .byte "100 on 70em",0
+ire_msg9em:  .byte "100 on 100em",0
+
+irelevel_bg: .byte $0D,$0F,$0F,$0F,$0F, $0F,$0F,$00,$10,$20
+irelevel_fg: .byte $0F,$0F,$2D,$00,$10, $3D,$20,$20,$20,$20
+NUM_IRE_LEVELS = * - irelevel_fg
 
 .segment "CODE"
 .proc do_ire
 ire_level = test_state+0
 need_reload = test_state+1
 disappear_time = test_state+2
+ire_emph = test_state+3
 
-  lda #4
+  lda #6
   sta ire_level
+  lda #0
+  sta ire_emph
 restart:
   jsr rf_load_tiles
   lda #$20
@@ -216,6 +237,10 @@ loop:
     jsr clearLineImg
     lda ire_level
     asl a
+    ldx ire_emph
+    beq :+
+      adc #NUM_IRE_LEVELS * 2
+    :
     tax
     lda ire_msgs+1,x
     ldy ire_msgs,x
@@ -265,10 +290,17 @@ loop:
     
   ; And turn the display on
   ldx #0
-  ldy #0
+  stx PPUSCROLL
+  stx PPUSCROLL
   lda #VBLANK_NMI|BG_0000
-  clc
-  jsr ppu_screen_on
+  sta PPUCTRL
+  lda #BG_ON
+  ldx ire_emph
+  beq :+
+    ora #TINT_R|TINT_G|TINT_B
+  :
+  sta PPUMASK
+
   jsr read_pads
 
   lda new_keys+0
@@ -279,6 +311,15 @@ loop:
     jsr helpscreen
     jmp restart
   not_help:
+
+  lda new_keys+0
+  and #KEY_A
+  beq not_toggle_emph
+    lda ire_emph
+    eor #$01
+    sta ire_emph
+    inc need_reload
+  not_toggle_emph:
 
   lda new_keys+0
   and #KEY_RIGHT

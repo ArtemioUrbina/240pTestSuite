@@ -14,10 +14,10 @@
 	Sharpness
 ----
 	Overscan
-	(wip) Shadow sprite
+	Shadow sprite
 	Stopwatch
 	Manual lag test
-	(©!) Hill zone scroll test
+	Hill zone scroll test
 	Grid scroll test
 	Full screen stripes
 	Backlight zone test
@@ -242,6 +242,13 @@ This test displays a rectangle
 centered in the screen.
 
 ←→: Change brightness
+A: Toggle emphasis
+
+Percentage values are only
+estimates. You can help by
+precisely measuring the
+signal levels that the
+NES produces.
 
 == Sharpness ==
 
@@ -300,7 +307,7 @@ left and right sides.
 This border is not included
 in the displayed amounts.
 
-== Drop shadow sprite ==
+== Shadow sprite ==
 
 This test draws a shadow
 sprite on every other frame,
@@ -319,23 +326,24 @@ to tell if a processor is trying
 to deinterlace an image.
 ----
 ↑↓←→: Move sprite
-A: Stop or start flicker
-A+←→: Change flicker pattern
-  (solid, horizontal, vertical,
-  or diagonal)
-A+↑↓: Change shape
-Select: Change background
+A: Skip flicker frame or
+  change stripe direction
+A+↑: Change shadow type
+  (flicker or stripes)
+A+←→: Change background
+Select: Change sprite shape
 
 Whether still or moving, no
 background detail must be
-lost. The solid pattern
-must not have horizontal
-stripes, and the striped
-patterns must flicker
-continuously.
+lost, and the shadow must
+not disappear. The flicker
+pattern must not have
+horizontal stripes.
 
 Portrait of Gus by
   darryl.revok
+Hill zone by mikejmoffitt
+  & Damian Yerrick
 
 == Stopwatch ==
 
@@ -408,15 +416,19 @@ Activision's Guitar Hero.
 
 == Hill zone scroll test ==
 
-This test shows a background
-from a video game. It can be
-used to notice any drops in
-frame rate.
+This test shows a scrolling
+background resembling a
+popular video game, with
+several parallax strips.
+It can be used to notice
+any drops in frame rate.
 
-Press Up or Down to change
-the speed. Press Left or
-Right to change the direction.
-Press A to stop or start.
+↑↓: Change speed
+←→: Change direction
+A: Stop or start
+
+Hill zone by mikejmoffitt
+  & Damian Yerrick
 
 == Grid scroll test ==
 
@@ -486,6 +498,7 @@ A: Hide or show the square
 	125 Hz
 	62 Hz
 	31 Hz
+	1000 Hz (pulse)
 
 == Sound test ==
 
@@ -514,21 +527,18 @@ even for MERCHANTABILITY
 or FITNESS FOR A
 PARTICULAR PURPOSE.
 
-Version 0.03 (2015-11-05)
-Completeness: 20 of 23
+Version 0.04 (2015-11-16)
+All tests present
 ----
-Status notice from Pino
+Future directions
 
-I had darryl.revok of NESdev
-draw me a new background
-for Shadow sprite. But for
-the last two tests (Shadow
-sprite and Hill zone scroll
-test), I need a scrolling
-background not from Sonic
-and a 32x32 enemy sprite
-not from Sonic. I have plenty
-of space left in the ROM
-(about 24K), but I just need
-someone to draw some
-original graphics.
+We seek a PAL NES tester,
+a Dendy tester, results from
+testing with high-quality
+displays and scalers, 
+precise IRE measurements,
+and detailed instructions for
+building an NES cartridge.
+
+Interested? Apply at
+http://goo.gl/XF8ef6

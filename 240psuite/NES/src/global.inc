@@ -65,7 +65,9 @@
 .global do_backlight
 
 ; scrolling.s
-.global do_grid_scroll
+.global do_grid_scroll, do_hill_zone_scroll
+.global hill_zone_load, hill_zone_do_raster
+.global hill_zone_xlo, hill_zone_xhi
 
 ; soundtest.s
 .global do_sound_test

@@ -1,11 +1,10 @@
 240pee.nes
-README.txt
+README.md
 CHANGES.txt
 makefile
 unrom512kbit.cfg
 zip.in
 docs/lj65gus32x64.xcf
-docs/lj65gus64x128.xcf
 obj/nes/index.txt
 src/backlight.s
 src/bcd.s
@@ -33,9 +32,11 @@ src/unrom.s
 src/vwf_draw.s
 tilesets/backlight_sprites.png
 tilesets/fizzter_digits.png
+tilesets/greenhillzone.png
 tilesets/gus_bg.png
 tilesets/gus_portrait.png
 tilesets/gus_sprite.png
+tilesets/hepsie.png
 tilesets/lag_clock_balls.png
 tilesets/lag_clock_face.png
 tilesets/linearity_grid_ntsc.png
@@ -44,6 +45,7 @@ tilesets/linearity_ntsc.png
 tilesets/linearity_pal.png
 tilesets/megatontiles.png
 tilesets/overscan.png
+tilesets/shadow_reticle.png
 tilesets/sharpness.png
 tilesets/stdtiles.png
 tilesets/vwf7.png
@@ -53,6 +55,6 @@ tools/pb53.py
 tools/pilbmp2nes.py
 tools/sav2sb53.py
 tools/savtool.py
-tools/test.sb53
 tools/vwfbuild.py
+tools/widesb53.py
 GPLv2.txt

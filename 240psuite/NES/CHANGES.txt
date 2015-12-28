@@ -1,3 +1,11 @@
+0.04 (2015-11-16)
+* IRE: Added emphasis and $2D/$3D grays
+* Shadow sprite: Added full functionality
+* Added Hill zone scroll test with Green Hill Zone-inspired
+  background by mikejmoffitt
+* Sound test: Added pulse beep (requested by mikejmoffitt)
+* Full README file
+
 0.03 (2015-11-05)
 * PLUGE: Added choice of gray ($2D) instead of color ($04+$0A)
   outer bars (requested by lidnariq)

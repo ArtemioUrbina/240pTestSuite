@@ -110,7 +110,7 @@ routines:
   .addr do_drop_shadow_sprite-1
   .addr do_stopwatch-1
   .addr do_manual_lag-1
-  .addr beep-1
+  .addr do_hill_zone_scroll-1
   .addr do_grid_scroll-1
   .addr do_full_stripes-1
   .addr do_backlight-1
