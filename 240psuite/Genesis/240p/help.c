@@ -132,7 +132,7 @@ void DrawHelp(int option)
 				      }				      
 				      y++;		      	
 				      VDP_drawTextBG(APLAN, "The 240p suite is also available", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				      VDP_drawTextBG(APLAN, "in GameCube, Nintendo Wii,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				      VDP_drawTextBG(APLAN, "in GameCube, Nintendo Wii, NES,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "PC Engine/TG-16, Super CD,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				      VDP_drawTextBG(APLAN, "CD-ROM2, and Sega Dreamcast.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);				          
 				      y++;
@@ -588,6 +588,19 @@ void DrawHelp(int option)
 				      break;
 			    }
 			    break;
+			case HELP_ALTERNATE:
+		    	VDP_drawTextBG(APLAN, "       ALTERNATE 240p/480i", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
+		      VDP_drawTextBG(APLAN, "Some devices have a delay when", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "the source changes between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "resolutions, which happens in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      VDP_drawTextBG(APLAN, "some games. This test allows to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+			  VDP_drawTextBG(APLAN, "time that delay manually.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+		      y++;
+		      VDP_drawTextBG(APLAN, "Press A to switch the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+			  VDP_drawTextBG(APLAN, "resolution; press it again when", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+			  VDP_drawTextBG(APLAN, "you are able to see the screen", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+			  VDP_drawTextBG(APLAN, "back in your display.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);		      
+		      break;
 		    default:
 		    	exit = 1;
 		    	break; 

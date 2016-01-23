@@ -45,6 +45,7 @@
 #define HELP_SOUND			21
 #define HELP_LED				23
 #define HELP_LAG				24
+#define HELP_ALTERNATE		25
 
 extern u8	showhelp;
 

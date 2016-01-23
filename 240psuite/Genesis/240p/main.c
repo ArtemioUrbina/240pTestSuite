@@ -51,6 +51,7 @@ int main()
   u16 cursel = 1, pos, reload = 1;
   u16 buttons, oldButtons = 0xffff, pressedButtons;
   u16 ind = 0, size = 0;
+  u16 interlaced = 0;
   char md_ver[30];
   
   VDP_init(); 
@@ -107,39 +108,45 @@ int main()
     VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);    
-    VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+	VDP_drawTextBG(APLAN, "Alternate 240p/480i", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+    VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);    
+    VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
     if(IsPALVDP)
-      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+	{
+		if(VDP_Detect_Interlace())
+            VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x480i " : "PAL VDP 320x448i ", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        else
+            VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+	}
     else
     {
         if(VDP_Detect_Interlace())
             VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
         else
-            VDP_drawTextBG(APLAN, "NTSC VDP 320x224i", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+            VDP_drawTextBG(APLAN, "NTSC VDP 320x448i", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
     }
-    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos); 
+    VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos); 
         	    
- 		Detect_MD(md_ver);
- 		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);   		
+ 	Detect_MD(md_ver);
+ 	VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);   		
  		
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 		
-		if (pressedButtons & BUTTON_Z)
-		{								
-			DrawHelp(HELP_GENERAL);  			
-     	reload = 1;   			
-		}
+	if (pressedButtons & BUTTON_Z)
+	{								
+		DrawHelp(HELP_GENERAL);  			
+    	reload = 1;   			
+	}
 		
     if (pressedButtons & BUTTON_DOWN)
     {
       cursel ++;
       if(cursel > pos - 6)
         cursel = 1;
-      if(cursel == 13 && !IsPALVDP)
-        cursel = 14;
+      if(cursel == 14 && !IsPALVDP)
+        cursel = 15;
     }
 
     if (pressedButtons & BUTTON_UP)
@@ -147,9 +154,18 @@ int main()
       cursel --;
       if(cursel < 1)
         cursel = pos - 6;
-      if(cursel == 13 && !IsPALVDP)
-        cursel = 12;
+      if(cursel == 14 && !IsPALVDP)
+        cursel = 13;
     }
+	
+	if (pressedButtons & BUTTON_C)
+	{
+		interlaced = !interlaced;
+		if(interlaced)
+			VDP_setScanMode(INTERLACED_MODE1);
+		else
+			VDP_setScanMode(INTERLACED_NONE);
+	}
 
     if (pressedButtons & BUTTON_A)
     {       
@@ -185,13 +201,16 @@ int main()
         case 10: 
           LEDZoneTest();                                   
           break;  
-        case 11: 
+		case 11: 
+          Alternate240p480i();
+          break; 
+        case 12: 
           SoundTest();                                   
           break;          
-        case 12: 
+        case 13: 
           DrawHelp(HELP_GENERAL);                                   
           break;
-        case 13:
+        case 14:
           if(IsPALVDP)
           {
             if(!pal_240)
@@ -206,13 +225,13 @@ int main()
             }
           }
           break;
-        case 14: 
+        case 15: 
           DrawCredits();                                   
           break;
       }      
 
-			FadeAndCleanUp();
-      reload = 1;      
+		FadeAndCleanUp();
+		reload = 1;      
     }
     VDP_waitVSync();
   }
@@ -265,32 +284,42 @@ void TestPatternMenu()
     VDP_drawTextBG(APLAN, "Sharpness", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     VDP_drawTextBG(APLAN, "Overscan", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);     
     if(IsPALVDP)
-      VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+	{
+		if(VDP_Detect_Interlace())
+            VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x480i " : "PAL VDP 320x448i ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+        else
+            VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : "PAL VDP 320x224p ", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+	}
     else
-      VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);           
+    {
+        if(VDP_Detect_Interlace())
+            VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+        else
+            VDP_drawTextBG(APLAN, "NTSC VDP 320x448i", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+    }
     VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);    
     
     buttons = JOY_readJoypad(JOY_1);
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
     
-     if(VDPChanged)
+    if (VDPChanged)
     {      
       if(cursel == 14)
         cursel = 15;
     }   
     
- 		if(pal_240 && !IsPALVDP)
+ 	if (pal_240 && !IsPALVDP)
     {      
       if(cursel == 14)
         cursel = 15;
     }  
     
-		if (pressedButtons & BUTTON_Z)
-		{				
-			DrawHelp(HELP_GENERAL);  			
+	if (pressedButtons & BUTTON_Z)
+	{				
+		DrawHelp(HELP_GENERAL);  			
      	reload = 1;   			
-		}
+	}
 		
     if (pressedButtons & BUTTON_DOWN)
     {
@@ -474,8 +503,8 @@ void DrawCredits()
   VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
   VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-  VDP_drawTextBG(APLAN, "Ver. 1.14", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
-  VDP_drawTextBG(APLAN, "27/06/2014", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+  VDP_drawTextBG(APLAN, "Ver. 1.15", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
+  VDP_drawTextBG(APLAN, "22/01/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
   
 #ifdef SEGACD
 	pos = 7;
@@ -504,7 +533,7 @@ void DrawCredits()
     counter ++;
   }
 
-	VDP_fadeOutAll(FADE_TIME, 0);
+  VDP_fadeOutAll(FADE_TIME, 0);
   VDP_setVerticalScroll(PLAN_A, 0);
 }
 
@@ -512,11 +541,11 @@ void FadeAndCleanUp()
 {
 	VDP_fadeOutAll(FADE_TIME, 0);
 	VDP_resetSprites();
-  VDP_updateSprites();
-  VDP_setHorizontalScroll(PLAN_B, 0);
-  VDP_setHorizontalScroll(PLAN_A, 0);
-  VDP_setVerticalScroll(PLAN_A, 0);
-  VDP_setHilightShadow(0);
-  VDP_setScreenWidth320(); 		
+	VDP_updateSprites();
+	VDP_setHorizontalScroll(PLAN_B, 0);
+	VDP_setHorizontalScroll(PLAN_A, 0);
+	VDP_setVerticalScroll(PLAN_A, 0);
+	VDP_setHilightShadow(0);
+	VDP_setScreenWidth320(); 		
 	VDP_resetScreen();
 }
