@@ -26,6 +26,15 @@
 #include "help.h"
 #include "main.h"
 
+typedef struct timecode{
+	u16 hours;
+	u16 minutes;
+	u16 seconds;
+	u16 frames;
+	u16 type;
+	u16 res;
+} timecode;
+
 void DrawCheckBoard()
 {
   char cntstr[4];
@@ -1514,78 +1523,78 @@ void PassiveLagTest()
   {   
   	if(loadvram)
   	{
-  		VDP_setPalette(PAL1, btw_pal);
-		  VDP_setPalette(PAL2, btw_pal);
-		  VDP_setPalette(PAL3, bw_pal);
-		
-		  numbers[0] = TILE_USERINDEX; 
-		  size = sizeof(tiles_0) / 32; 
-		
-		  VDP_loadTileData(tiles_0, numbers[0], size, USE_DMA); 
-		  numbers[1] = numbers[0] + size;  
-		  VDP_loadTileData(tiles_1, numbers[1], size, USE_DMA); 
-		  numbers[2] = numbers[1] + size;  
-		  VDP_loadTileData(tiles_2, numbers[2], size, USE_DMA); 
-		  numbers[3] = numbers[2] + size;  
-		  VDP_loadTileData(tiles_3, numbers[3], size, USE_DMA); 
-		  numbers[4] = numbers[3] + size;  
-		  VDP_loadTileData(tiles_4, numbers[4], size, USE_DMA); 
-		  numbers[5] = numbers[4] + size;  
-		  VDP_loadTileData(tiles_5, numbers[5], size, USE_DMA); 
-		  numbers[6] = numbers[5] + size;  
-		  VDP_loadTileData(tiles_6, numbers[6], size, USE_DMA); 
-		  numbers[7] = numbers[6] + size;  
-		  VDP_loadTileData(tiles_7, numbers[7], size, USE_DMA); 
-		  numbers[8] = numbers[7] + size;  
-		  VDP_loadTileData(tiles_8, numbers[8], size, USE_DMA); 
-		  numbers[9] = numbers[8] + size;  
-		  VDP_loadTileData(tiles_9, numbers[9], size, USE_DMA); 
-		  numbers[10] = numbers[9] + size;  
-		  VDP_loadTileData(tiles_c, numbers[10], size, USE_DMA); 
-		
-		  circle = numbers[10] + size;
-		  size = sizeof(circle56_tiles) / 32; 
-		  VDP_loadTileData(circle56_tiles, circle, size, USE_DMA); 
-		
-		  solid = circle + size;
-		  size = sizeof(solidw_tiles) / 32; 
-		  VDP_loadTileData(solidw_tiles, solid, size, USE_DMA);   
-		    
-		  VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);   
-		  VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);   
-		  
-		  VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + solid, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
-		
-		  VDP_drawTextBG(APLAN, "hours", TILE_ATTR(PAL1, 0, 0, 0), 4, 1);
-		  VDP_drawTextBG(APLAN, "minutes", TILE_ATTR(PAL1, 0, 0, 0), 13, 1);
-		  VDP_drawTextBG(APLAN, "seconds", TILE_ATTR(PAL1, 0, 0, 0), 22, 1);
-		  VDP_drawTextBG(APLAN, "frames", TILE_ATTR(PAL1, 0, 0, 0), 31, 1);
-		
-		  // Draw Frame divisor numbers
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[1], 4, 10, 3, 5);  
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[2], 14, 10, 3, 5);  
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[3], 24, 10, 3, 5);  
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[4], 34, 10, 3, 5);  
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[5], 4, 18, 3, 5);  
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[6], 14, 18, 3, 5);  
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[7], 24, 18, 3, 5);  
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[8], 34, 18, 3, 5);  
-		
-		  // Draw counter separators
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 10, 2, 3, 5);  
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 19, 2, 3, 5);  
-		  VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 28, 2, 3, 5);  
-		
-		  //Draw initial circles
-		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 9, 7, 7);  
-		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 9, 7, 7);  
-		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 9, 7, 7);  
-		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 32, 9, 7, 7);  
-		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 17, 7, 7);  
-		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 17, 7, 7);  
-		  VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 17, 7, 7); 
-		  
-		  loadvram = 0;   
+		VDP_setPalette(PAL1, btw_pal);
+		VDP_setPalette(PAL2, btw_pal);
+		VDP_setPalette(PAL3, bw_pal);
+
+		numbers[0] = TILE_USERINDEX; 
+		size = sizeof(tiles_0) / 32; 
+
+		VDP_loadTileData(tiles_0, numbers[0], size, USE_DMA); 
+		numbers[1] = numbers[0] + size;  
+		VDP_loadTileData(tiles_1, numbers[1], size, USE_DMA); 
+		numbers[2] = numbers[1] + size;  
+		VDP_loadTileData(tiles_2, numbers[2], size, USE_DMA); 
+		numbers[3] = numbers[2] + size;  
+		VDP_loadTileData(tiles_3, numbers[3], size, USE_DMA); 
+		numbers[4] = numbers[3] + size;  
+		VDP_loadTileData(tiles_4, numbers[4], size, USE_DMA); 
+		numbers[5] = numbers[4] + size;  
+		VDP_loadTileData(tiles_5, numbers[5], size, USE_DMA); 
+		numbers[6] = numbers[5] + size;  
+		VDP_loadTileData(tiles_6, numbers[6], size, USE_DMA); 
+		numbers[7] = numbers[6] + size;  
+		VDP_loadTileData(tiles_7, numbers[7], size, USE_DMA); 
+		numbers[8] = numbers[7] + size;  
+		VDP_loadTileData(tiles_8, numbers[8], size, USE_DMA); 
+		numbers[9] = numbers[8] + size;  
+		VDP_loadTileData(tiles_9, numbers[9], size, USE_DMA); 
+		numbers[10] = numbers[9] + size;  
+		VDP_loadTileData(tiles_c, numbers[10], size, USE_DMA); 
+
+		circle = numbers[10] + size;
+		size = sizeof(circle56_tiles) / 32; 
+		VDP_loadTileData(circle56_tiles, circle, size, USE_DMA); 
+
+		solid = circle + size;
+		size = sizeof(solidw_tiles) / 32; 
+		VDP_loadTileData(solidw_tiles, solid, size, USE_DMA);   
+
+		VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);   
+		VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);   
+
+		VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + solid, 0, 0, 320/8, (pal_240 ? 240 : 224)/8); 
+
+		VDP_drawTextBG(APLAN, "hours", TILE_ATTR(PAL1, 0, 0, 0), 4, 1);
+		VDP_drawTextBG(APLAN, "minutes", TILE_ATTR(PAL1, 0, 0, 0), 13, 1);
+		VDP_drawTextBG(APLAN, "seconds", TILE_ATTR(PAL1, 0, 0, 0), 22, 1);
+		VDP_drawTextBG(APLAN, "frames", TILE_ATTR(PAL1, 0, 0, 0), 31, 1);
+
+		// Draw Frame divisor numbers
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[1], 4, 10, 3, 5);  
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[2], 14, 10, 3, 5);  
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[3], 24, 10, 3, 5);  
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[4], 34, 10, 3, 5);  
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[5], 4, 18, 3, 5);  
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[6], 14, 18, 3, 5);  
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[7], 24, 18, 3, 5);  
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + numbers[8], 34, 18, 3, 5);  
+
+		// Draw counter separators
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 10, 2, 3, 5);  
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 19, 2, 3, 5);  
+		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[10], 28, 2, 3, 5);  
+
+		//Draw initial circles
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 9, 7, 7);  
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 9, 7, 7);  
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 9, 7, 7);  
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 32, 9, 7, 7);  
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 17, 7, 7);  
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 17, 7, 7);  
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 17, 7, 7); 
+
+		loadvram = 0;   
   	}
   	          
     if(framecnt > 8)
@@ -1679,11 +1688,11 @@ void PassiveLagTest()
     pressedButtons = buttons & ~oldButtons;
     oldButtons = buttons;
 
-		if (pressedButtons & BUTTON_Z)
-		{		
-			DrawHelp(HELP_LAG);  
-			loadvram = 1;
-		}
+	if (pressedButtons & BUTTON_Z)
+	{		
+		DrawHelp(HELP_LAG);  
+		loadvram = 1;
+	}
 		
     if (pressedButtons & BUTTON_A)
       pause = !pause;
@@ -1710,7 +1719,7 @@ void PassiveLagTest()
         VDP_setPalette(PAL3, redw_pal);
   		}
   		
-  		if(color)  		
+	  if(color)  		
         bgcol = PAL3;
       else
         bgcol = PAL2;
@@ -1726,6 +1735,251 @@ void PassiveLagTest()
     }
     VDP_waitVSync();
   }
+}
+
+u16 ConvertToFrames(timecode *time)
+{
+	u16	frames = 0;
+
+	if(!time)
+		return frames;
+
+	frames = time->frames;
+	if(Detect_VDP_PAL())
+		frames += time->seconds*50;
+	else
+		frames += time->seconds*60;
+	frames += time->minutes*3600;
+	frames += time->hours*216000;
+	return frames;
+}
+
+void ConvertFromFrames(timecode *value, u16 Frames)
+{
+	if(!value)
+		return;
+	value->hours = Frames / 216000;
+	Frames = Frames % 216000;
+	value->minutes = Frames / 3600;
+	Frames = Frames % 3600;
+	if(Detect_VDP_PAL())
+	{
+		value->seconds = Frames / 50;
+		value->frames = Frames % 50;
+	}
+	else
+	{
+		value->seconds = Frames / 60;
+		value->frames = Frames % 60;
+	}
+}
+
+void Alternate240p480i()
+{
+  u16 frames = 0, seconds = 0, minutes = 0, hours = 0;
+  u16 exit = 0, loadvram = 1;
+  u16 buttons, oldButtons = 0xffff, pressedButtons;
+  u16 oldinterlaced, res = 0, current = 0, status = 0, changed = 1;
+  u16 redraw = 1;
+  timecode times[20];
+  char str[10];
+  
+  CleanOrShowHelp(HELP_ALTERNATE);  
+  
+  oldinterlaced = VDP_Detect_Interlace();
+  
+  VDP_setScanMode(INTERLACED_NONE);
+      
+  while(!exit)
+  {   
+  	if(loadvram)
+  	{
+		VDP_clearTileMapRect(BPLAN, 0, 0, 320/8, 224/8);
+		VDP_clearTileMapRect(APLAN, 0, 0, 320/8, 224/8);
+		
+		VDP_setPalette(PAL0, palette_grey);
+		VDP_setPalette(PAL1, palette_green); 
+		VDP_setPalette(PAL2, palette_red);  
+
+		VDP_drawText("Elapsed Timer: 00:00:00:00", 7, 3);
+		loadvram = 0;   
+		changed = 1;
+  	}
+	
+	intToStr(hours, str, 2);
+	VDP_drawText(str, 22, 3);
+	intToStr(minutes, str, 2);
+	VDP_drawText(str, 25, 3);
+	intToStr(seconds, str, 2);
+	VDP_drawText(str, 28, 3);
+	intToStr(frames, str, 2);
+	VDP_drawText(str, 31, 3);
+
+	if(changed)
+	{
+		u16 i = 0;
+			
+		if(redraw)
+		{
+			i = 0;
+			redraw = 0;
+		}
+		else 
+			i = current - 1;
+			
+		VDP_drawTextBG(APLAN, "Current Resolution:", TILE_ATTR(PAL1, 0, 0, 0), 7, 2);
+		if(res == 0)
+			VDP_drawTextBG(APLAN, "240p", TILE_ATTR(PAL1, 0, 0, 0), 27, 2);
+		else
+			VDP_drawTextBG(APLAN, "480i", TILE_ATTR(PAL1, 0, 0, 0), 27, 2);
+		
+		if(current)
+		{
+			for(i = 0; i < current; i++)
+			{
+				u8 len = 0;
+				
+				if(times[i].type == 0)
+				{
+					VDP_drawTextBG(APLAN, "Switched     :", TILE_ATTR(PAL1, 0, 0, 0), 1, i+5);
+					VDP_drawTextBG(APLAN, times[i].res == 0 ? "240p" : "480i", TILE_ATTR(PAL1, 0, 0, 0), 10, i+5);					
+					len = 14;
+				}
+				else
+				{
+					VDP_drawTextBG(APLAN, "Viewed:", TILE_ATTR(PAL1, 0, 0, 0), 1, i+5);
+					len = 8;
+				}
+
+				VDP_drawText("00:00:00:00", 3+len, i+5);
+				intToStr(times[i].hours, str, 2);
+				VDP_drawText(str, 3+len, i+5);
+				intToStr(times[i].minutes, str, 2);
+				VDP_drawText(str, 6+len, i+5);
+				intToStr(times[i].seconds, str, 2);
+				VDP_drawText(str, 9+len, i+5);
+				intToStr(times[i].frames, str, 2);
+				VDP_drawText(str, 12+len, i+5);
+				
+				if(times[i].type != 0 && i >= 1 && i <= 19)
+				{
+					u16 		framesA = 0, framesB = 0, res = 0;
+					timecode 	len;
+
+					framesB = ConvertToFrames(&times[i]);
+					framesA = ConvertToFrames(&times[i - 1]);
+					res = framesB - framesA;
+					ConvertFromFrames(&len, res);
+	
+					VDP_drawTextBG(APLAN, "00:00:00:00", TILE_ATTR(PAL2, 0, 0, 0), 24, i+5);					
+					intToStr(len.hours, str, 2);
+					VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL2, 0, 0, 0), 24, i+5);
+					intToStr(len.minutes, str, 2);
+					VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL2, 0, 0, 0), 27, i+5);
+					intToStr(len.seconds, str, 2);
+					VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL2, 0, 0, 0), 30, i+5);
+					intToStr(len.frames, str, 2);
+					VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL2, 0, 0, 0), 33, i+5);
+				}
+			}
+		}
+		changed = 0;
+	}
+
+    buttons = JOY_readJoypad(JOY_1);
+    pressedButtons = buttons & ~oldButtons;
+    oldButtons = buttons;
+
+	if (pressedButtons & BUTTON_Z)
+	{		
+		DrawHelp(HELP_ALTERNATE);  
+		loadvram = 1;
+	}
+		
+    if (pressedButtons & BUTTON_A)
+    {
+		if(current <= 19)
+			current ++;
+		else
+		{
+			current = 1;
+			loadvram = 1;
+		}
+
+		times[current - 1].frames = frames;
+		times[current - 1].minutes = minutes;
+		times[current - 1].seconds = seconds;
+		times[current - 1].hours = hours;
+
+		status ++;
+		if(status == 1)
+		{
+			times[current - 1].type = 0;
+			res = !res;
+			times[current - 1].res = res;	
+			if(!res)
+				VDP_setScanMode(INTERLACED_NONE);
+			else
+				VDP_setScanMode(INTERLACED_MODE1);
+		}
+		if(status == 2)
+		{
+			times[current - 1].type = 1;
+			times[current - 1].res = res;
+			status = 0;
+		}
+		changed = 1;
+	}
+
+    if (pressedButtons & BUTTON_START)
+      exit = 1;
+
+
+	frames ++;
+    
+	if(Detect_VDP_PAL())
+    {
+      if(frames > 49)
+      {
+        frames = 0;
+        seconds ++;
+      }
+    }
+    else
+    {
+      if(frames > 59)
+      {
+        frames = 0;
+        seconds ++;
+      }
+    }
+    
+    if(seconds > 59)
+    {
+      seconds = 0;
+      minutes ++;
+    }
+
+    if(minutes > 59)
+    {
+      minutes = 0;
+      hours ++;
+    }
+
+    if(hours > 99)
+      hours = 0;
+
+	VDP_waitVSync();
+  }
+
+
+
+  if(oldinterlaced)
+    VDP_setScanMode(INTERLACED_MODE1);
+  else
+    VDP_setScanMode(INTERLACED_NONE);
+
+  return;
 }
 
 /*

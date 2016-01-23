@@ -32,6 +32,7 @@ void DrawCheckBoard();
 void SoundTest();
 void LEDZoneTest();
 void PassiveLagTest();
+void Alternate240p480i();
 //void VAPanelScrollTest();
 
 #endif
