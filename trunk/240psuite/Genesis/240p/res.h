@@ -31,7 +31,7 @@ extern u16 cb601_pal[16];
 extern u16 cb601_map[2240/2]; 
 
 // Title screen
-extern u32 back_tiles[3232/4]; 
+extern u32 back_tiles[3200/4]; 
 extern u16 back_pal[16]; 
 extern u16 back_map[2240/2]; 
 
@@ -62,6 +62,12 @@ extern u32 circlesPAL_tiles[1824/4];
 extern u16 circlesPAL_map[2240/2];
 extern u32 circles_grid_tiles[32/4]; 
 extern u32 circles_griddot_tiles[32/4]; 
+
+extern u32 Linearity256_tiles[1120/4]; 
+extern u16 Linearity256_map[1792/2];
+
+extern u32 Lin256PAL_tiles[1344/4]; 
+extern u16 Lin256PAL_map[1792/2];
 
 extern u32 grid_tiles[64/4]; 
 extern u16 grid_pal[16]; 

@@ -28,24 +28,25 @@
 #define	HELP_GRID		    4
 #define	HELP_BLEED			5
 #define	HELP_IRE   			6
-#define HELP_601CB      7
-#define HELP_SHARPNESS	8
+#define HELP_601CB      	7
+#define HELP_SHARPNESS		8
 #define HELP_OVERSCAN		9
 #define HELP_SMPTE			10
-#define HELP_LINEARITY	11
-#define HELP_GRAY				12
+#define HELP_LINEARITY		11
+#define HELP_GRAY			12
 #define HELP_WHITE			13
 #define HELP_CHECK			14
 #define HELP_STRIPES		15
 #define HELP_SHADOW			16
 #define HELP_STRIPED		17
-#define HELP_MANUALLAG	18
+#define HELP_MANUALLAG		18
 #define HELP_HSCROLL		19
 #define HELP_VSCROLL		20
 #define HELP_SOUND			21
-#define HELP_LED				23
-#define HELP_LAG				24
+#define HELP_LED			23
+#define HELP_LAG			24
 #define HELP_ALTERNATE		25
+#define	HELP_VIDEO			26
 
 extern u8	showhelp;
 

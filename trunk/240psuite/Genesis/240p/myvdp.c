@@ -26,52 +26,53 @@ u16 pal_240;
 
 void VDP_setSpriteAttr(u16 index, u16 tile_attr)
 {
-    SpriteDef *sprite;    
+	SpriteDef *sprite;
 
-    sprite = &vdpSpriteCache[index];
-    
-    sprite->tile_attr = tile_attr;    
+	sprite = &vdpSpriteCache[index];
+
+	sprite->tile_attr = tile_attr;
 }
 
 u16 Detect_VDP_PAL()
 {
-  return(GET_VDPSTATUS(IS_PALSYSTEM));
+	return (GET_VDPSTATUS(IS_PALSYSTEM));
 }
 
-void VDP_setMyTileMapRect(u16 plan, const u16 *data, u16 basetile, u16 x, u16 y, u16 w, u16 h)
+void VDP_setMyTileMapRect(u16 plan, const u16 * data, u16 basetile, u16 x, u16 y, u16 w, u16 h)
 {
-    vu32 *plctrl;
-    vu16 *pwdata;
-    const u16 *src;
-    u32 addr;
-    u32 planwidth;
-    u16 i, j;
+	vu32 *plctrl;
+	vu16 *pwdata;
+	const u16 *src;
+	u32 addr;
+	u32 planwidth;
+	u16 i, j;
 
-    VDP_setAutoInc(2);
+	VDP_setAutoInc(2);
 
-    /* point to vdp port */
-    plctrl = (u32 *) GFX_CTRL_PORT;
-    pwdata = (u16 *) GFX_DATA_PORT;
+	/* point to vdp port */
+	plctrl = (u32 *) GFX_CTRL_PORT;
+	pwdata = (u16 *) GFX_DATA_PORT;
 
-    planwidth = VDP_getPlanWidth();
-    addr = plan + (2 * (x + (planwidth * y)));
-    src = data;
+	planwidth = VDP_getPlanWidth();
+	addr = plan + (2 * (x + (planwidth * y)));
+	src = data;
 
-    i = h;
-    while (i--)
-    {
-	    *plctrl = GFX_WRITE_VRAM_ADDR(addr);
+	i = h;
+	while(i--)
+	{
+		*plctrl = GFX_WRITE_VRAM_ADDR(addr);
 
-        j = w;
-        while (j--) *pwdata = basetile + *src++;
+		j = w;
+		while(j--)
+			*pwdata = basetile + *src++;
 
 		addr += planwidth * 2;
 	}
 }
 
-u16 VDP_Detect_Interlace()
-{  
-  if(VDP_getReg(0x0C) & 0x02)
-     return 0;
-  return 1;
+u8 VDP_Detect_Interlace()
+{
+	if(VDP_getReg(0x0C) & 0x02)
+		return 1;
+	return 0;
 }
