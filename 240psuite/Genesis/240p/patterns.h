@@ -31,6 +31,7 @@ void Draw601ColorBars();
 void DrawGrid(u16 gridtype);
 void DrawColorBleed();
 void DrawLinearity();
+void DrawLinearity256();
 void DrawGrayRamp();
 void DrawWhiteScreen();
 void Draw100IRE();
