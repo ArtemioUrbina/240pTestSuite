@@ -1985,6 +1985,125 @@ void Alternate240p480i()
 	return;
 }
 
+void AudioSyncTest()
+{
+	u16 loadvram = 1, exit = 0, status = 0, cycle = 0;
+	u16 size, tiles, i;
+	u16 buttons, pressedButtons, oldButtons = 0xffff;
+	u16 black_pal[16], white_pal[16];
+
+	CleanOrShowHelp(HELP_MANUALLAG);
+
+	PSG_init();
+	PSG_setFrequency(0, 1000);
+
+	for(i = 0; i < 16; i++)
+	{
+		black_pal[i] = 0x0;
+		white_pal[i] = 0x0FFF;
+	}
+	while(!exit)
+	{
+		if(loadvram)
+		{
+			VDP_setPalette(PAL0, black_pal);
+			VDP_setPalette(PAL3, palette_green);
+			
+			tiles = TILE_USERINDEX;
+			size = sizeof(color_tiles) / 32;
+			VDP_loadTileData(color_tiles, tiles, size, USE_DMA);
+			
+			VDP_drawTextBG(APLAN, "Press the \"A\" button to start/stop", TILE_ATTR(PAL3, 0, 0, 0), 2, 16);
+			
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 6) + tiles, 2, 6, 2, 4);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 6, 6, 2, 4);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 8, 6, 2, 4);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 3) + tiles, 12, 6, 2, 4);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 2) + tiles, 18, 6, 2, 4);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 1) + tiles, 22, 6, 2, 4);
+			loadvram = 0;
+		}
+
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		if(pressedButtons & BUTTON_Z)
+		{
+			DrawHelp(HELP_MANUALLAG);
+			loadvram = 1;
+		}
+
+		if(pressedButtons & BUTTON_A)
+		{
+			cycle = !cycle;
+			if(!cycle)
+				status = 29;
+		}
+		
+		if(cycle == 1)
+		{
+			if(status == 0)
+				status = 1;
+		}
+		
+		if(pressedButtons & BUTTON_START)
+			exit = 1;
+
+		if(status == 1)
+		{
+			PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+			VDP_setPalette(PAL0, white_pal);
+		}
+		
+		if(status >= 1)
+			status ++;
+			
+		if(status == 30)
+		{
+			for(i = 0; i < 16; i++)
+				black_pal[i] = 0x0;
+				
+			PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+			VDP_setPalette(PAL0, black_pal);
+			if(!cycle)
+				status = 0;
+		}
+		
+		if(status > 30)
+		{
+			switch(status)
+			{
+				case 40:
+					black_pal[6] = 0x0FFF;
+					break;
+				case 50:
+					black_pal[5] = 0x0FFF;
+					break;
+				case 60:
+					black_pal[4] = 0x0FFF;
+					break;
+				case 70:
+					black_pal[3] = 0x0FFF;
+					break;
+				case 80:
+					black_pal[2] = 0x0FFF;
+					break;
+				case 90:
+					black_pal[1] = 0x0FFF;
+					break;
+			}
+			
+			VDP_setPalette(PAL0, black_pal);
+		}
+		
+		if(status == 90)
+			status = 0;
+		
+		VDP_waitVSync();
+	}
+}
+
 /*
 void VAPanelScrollTest()
 {    

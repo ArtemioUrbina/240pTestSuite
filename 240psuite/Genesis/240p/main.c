@@ -92,9 +92,10 @@ int main()
 		VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Alternate 240p/480i", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Video Options", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+		VDP_drawTextBG(APLAN, "Audio Sync Test", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Video Options", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
 		DrawResolution();
 
 		Detect_MD(md_ver);
@@ -172,12 +173,15 @@ int main()
 				SoundTest();
 				break;
 			case 13:
-				DrawHelp(HELP_GENERAL);
+				AudioSyncTest();
 				break;
 			case 14:
-				VideoOptions();
+				DrawHelp(HELP_GENERAL);
 				break;
 			case 15:
+				VideoOptions();
+				break;
+			case 16:
 				DrawCredits();
 				break;
 			}

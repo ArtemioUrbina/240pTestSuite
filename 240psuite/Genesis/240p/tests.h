@@ -33,6 +33,7 @@ void SoundTest();
 void LEDZoneTest();
 void PassiveLagTest();
 void Alternate240p480i();
+void AudioSyncTest();
 //void VAPanelScrollTest();
 
 #endif
