@@ -713,6 +713,8 @@ void StripedSpriteTest()
 	}
 }
 
+
+
 void LagTest()
 {
 	char str[10];
@@ -722,8 +724,7 @@ void LagTest()
 	u16 x = 0, y = 0, x2 = 0, y2 = 0, exit = 0, variation = 1, draw = 1;
 	u16 buttons, pressedButtons, oldButtons = 0xffff;
 	u16 pos = 0, view = 0, audio = 0, drawoffset = 0;
-	u32 len = 0;
-
+	u16 first_pal[16], oldColor = 0;
 	s16 clicks[10];
 
 	CleanOrShowHelp(HELP_MANUALLAG);
@@ -733,6 +734,9 @@ void LagTest()
 
 	x2 = 108;
 	y2 = 96;
+	
+	PSG_init();
+	PSG_setFrequency(0, 1000);
 
 	while(!exit)
 	{
@@ -761,7 +765,6 @@ void LagTest()
 			VDP_drawTextBG(APLAN, "\"C\" button toggles audio", TILE_ATTR(PAL3, 0, 0, 0), 2, 25);
 			VDP_drawTextBG(APLAN, "DOWN toggles random/rhythmic", TILE_ATTR(PAL3, 0, 0, 0), 2, 26);
 
-			len = sizeof(beep);
 			loadvram = 0;
 			draw = 1;
 
@@ -941,14 +944,22 @@ void LagTest()
 		if(y == 96)	// half the screen?        
 		{
 			if(audio)
-			{
-				if(speed == 1)
-					SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_LEFT, 0);
-				else
-					SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_RIGHT, 0);
-			}
-		}
+				PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
 
+			VDP_getPalette(PAL0, first_pal);
+			oldColor = first_pal[0];
+			first_pal[0] = 0x0666;
+			VDP_setPalette(PAL0, first_pal);
+		}
+		else
+		{
+			if(audio)
+				PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+
+			VDP_getPalette(PAL0, first_pal);
+			first_pal[0] = oldColor;
+			VDP_setPalette(PAL0, first_pal);
+		}
 		VDP_waitVSync();
 	}
 
