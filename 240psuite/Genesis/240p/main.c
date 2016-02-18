@@ -251,7 +251,6 @@ void TestPatternMenu()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-
 		if(pressedButtons & BUTTON_Z)
 		{
 			DrawHelp(HELP_GENERAL);
@@ -431,8 +430,8 @@ void DrawCredits()
 	VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 	VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-	VDP_drawTextBG(APLAN, "Ver. 1.15", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
-	VDP_drawTextBG(APLAN, "22/01/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+	VDP_drawTextBG(APLAN, "Ver. 1.15b", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
+	VDP_drawTextBG(APLAN, "18/02/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 
 #ifdef SEGACD
 	pos = 7;
@@ -540,13 +539,13 @@ void VideoOptions()
 			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
 			loadvram = 0;
 		}
-		
+
 		VDP_drawTextBG(APLAN, "Video Options", TILE_ATTR(PAL1, 0, 0, 0), 14, 8);
-		
+
 		DrawResolution();
-		
+
 		VDP_drawTextBG(APLAN, "Enable 480i mode:", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 5, 12);
-		VDP_drawTextBG(APLAN, VDP_Detect_Interlace() ? "ON " : "OFF", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 25, 12);
+		VDP_drawTextBG(APLAN, VDP_Detect_Interlace()? "ON " : "OFF", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 25, 12);
 		VDP_drawTextBG(APLAN, "Enable 240 in PAL:", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 5, 13);
 		VDP_drawTextBG(APLAN, pal_240 ? "ON " : "OFF", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 25, 13);
 
@@ -567,14 +566,14 @@ void VideoOptions()
 
 		if(pressedButtons & BUTTON_UP)
 		{
-			sel --;
+			sel--;
 			if(sel < 0)
 				sel = 2;
 		}
 
 		if(pressedButtons & BUTTON_DOWN)
 		{
-			sel ++;
+			sel++;
 			if(sel > 2)
 				sel = 0;
 		}
@@ -590,9 +589,9 @@ void VideoOptions()
 				else
 					VDP_setScanMode(INTERLACED_MODE1);
 			}
-			
+
 			if(sel == 1 && IsPALVDP)
-			{				
+			{
 				if(IsPALVDP)
 				{
 					if(!pal_240)
@@ -608,7 +607,7 @@ void VideoOptions()
 				}
 			}
 		}
-		
+
 		if(pressedButtons & BUTTON_A && sel == 2)
 		{
 			exit = 1;

@@ -609,6 +609,14 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
+			case HELP_AUDIOSYNC:
+				VDP_drawTextBG(APLAN, "AUDIO SYNC", TILE_ATTR(PAL1, 0, 0, 0), 15, 4);
+				VDP_drawTextBG(APLAN, "", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				break;
 			default:
 				exit = 1;
 				break;

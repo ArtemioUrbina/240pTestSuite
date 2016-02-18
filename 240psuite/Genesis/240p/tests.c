@@ -1987,40 +1987,65 @@ void Alternate240p480i()
 
 void AudioSyncTest()
 {
-	u16 loadvram = 1, exit = 0, status = 0, cycle = 0;
-	u16 size, tiles, i;
+	u16 loadvram = 1, exit = 0, cycle = 0;
+	u16 size, tiles, i, sprite = 0, x = 160, y = 160;
 	u16 buttons, pressedButtons, oldButtons = 0xffff;
-	u16 black_pal[16], white_pal[16];
+	u16 black_pal[16];
+	s16 acc = 1, status = -1;
 
-	CleanOrShowHelp(HELP_MANUALLAG);
+	CleanOrShowHelp(HELP_AUDIOSYNC);
 
 	PSG_init();
 	PSG_setFrequency(0, 1000);
 
 	for(i = 0; i < 16; i++)
-	{
 		black_pal[i] = 0x0;
-		white_pal[i] = 0x0FFF;
-	}
+
 	while(!exit)
 	{
 		if(loadvram)
 		{
 			VDP_setPalette(PAL0, black_pal);
-			VDP_setPalette(PAL3, palette_green);
-			
+			VDP_setPaletteColor(17, 0x0ddd);
+			VDP_setPaletteColor(34, 0x0ddd);
+
 			tiles = TILE_USERINDEX;
 			size = sizeof(color_tiles) / 32;
 			VDP_loadTileData(color_tiles, tiles, size, USE_DMA);
-			
-			VDP_drawTextBG(APLAN, "Press the \"A\" button to start/stop", TILE_ATTR(PAL3, 0, 0, 0), 2, 16);
-			
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 6) + tiles, 2, 6, 2, 4);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 6, 6, 2, 4);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 8, 6, 2, 4);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 3) + tiles, 12, 6, 2, 4);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 2) + tiles, 18, 6, 2, 4);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 1) + tiles, 22, 6, 2, 4);
+
+			sprite = tiles + size;
+			size = sizeof(size0led_t) / 32;
+			VDP_loadTileData(size0led_t, sprite, size, USE_DMA);
+
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 0, 6, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 4, 6, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 3) + tiles, 8, 6, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 2) + tiles, 12, 6, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 1) + tiles, 16, 6, 4, 2);
+
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 1) + tiles, 20, 6, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 2) + tiles, 24, 6, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 3) + tiles, 28, 6, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 32, 6, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 36, 6, 4, 2);
+
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 0, 11, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 4, 11, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 3) + tiles, 8, 11, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 2) + tiles, 12, 11, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 1) + tiles, 16, 11, 4, 2);
+
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 1) + tiles, 20, 11, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 2) + tiles, 24, 11, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 3) + tiles, 28, 11, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 32, 11, 4, 2);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 36, 11, 4, 2);
+
+			VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite, 0);
+			VDP_setSpritePosition(0, x, y);
+
+			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL2, 1, 0, 0, 1) + tiles, 0, 20, 40, 1);
+
 			loadvram = 0;
 		}
 
@@ -2030,7 +2055,11 @@ void AudioSyncTest()
 
 		if(pressedButtons & BUTTON_Z)
 		{
-			DrawHelp(HELP_MANUALLAG);
+			PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+			VDP_resetSprites();
+			VDP_updateSprites();
+
+			DrawHelp(HELP_AUDIOSYNC);
 			loadvram = 1;
 		}
 
@@ -2038,70 +2067,79 @@ void AudioSyncTest()
 		{
 			cycle = !cycle;
 			if(!cycle)
-				status = 29;
+				status = 89;
 		}
-		
-		if(cycle == 1)
+
+		if(cycle == 1 && status == -1)
 		{
-			if(status == 0)
-				status = 1;
+			status = 0;
+			acc = -1;
 		}
-		
+
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
 
-		if(status == 1)
+		if(status > -1)
+		{
+			status++;
+			if(status <= 60)
+			{
+				y += acc;
+				VDP_setSpritePosition(0, x, y);
+			}
+		}
+
+		if(status >= 10 && status <= 60)
+		{
+			switch (status)
+			{
+			case 10:
+				black_pal[7] = 0x0ddd;
+				break;
+			case 20:
+				black_pal[6] = 0x0ddd;
+				break;
+			case 30:
+				acc = 1;
+				black_pal[5] = 0x0ddd;
+				break;
+			case 40:
+				black_pal[4] = 0x0ddd;
+				break;
+			case 50:
+				black_pal[3] = 0x0ddd;
+				break;
+			case 60:
+				black_pal[2] = 0x0ddd;
+				break;
+			}
+
+			VDP_setPalette(PAL0, black_pal);
+		}
+
+		if(status == 60)
 		{
 			PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-			VDP_setPalette(PAL0, white_pal);
+			black_pal[0] = 0xFFF;
+			VDP_setPalette(PAL0, black_pal);
 		}
-		
-		if(status >= 1)
-			status ++;
-			
-		if(status == 30)
+
+		if(status == 90)
 		{
 			for(i = 0; i < 16; i++)
 				black_pal[i] = 0x0;
-				
+
 			PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
 			VDP_setPalette(PAL0, black_pal);
-			if(!cycle)
-				status = 0;
+			status = -1;
 		}
-		
-		if(status > 30)
-		{
-			switch(status)
-			{
-				case 40:
-					black_pal[6] = 0x0FFF;
-					break;
-				case 50:
-					black_pal[5] = 0x0FFF;
-					break;
-				case 60:
-					black_pal[4] = 0x0FFF;
-					break;
-				case 70:
-					black_pal[3] = 0x0FFF;
-					break;
-				case 80:
-					black_pal[2] = 0x0FFF;
-					break;
-				case 90:
-					black_pal[1] = 0x0FFF;
-					break;
-			}
-			
-			VDP_setPalette(PAL0, black_pal);
-		}
-		
-		if(status == 90)
-			status = 0;
-		
+
+		VDP_updateSprites();
 		VDP_waitVSync();
 	}
+	VDP_resetSprites();
+	VDP_updateSprites();
+	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
 }
 
 /*

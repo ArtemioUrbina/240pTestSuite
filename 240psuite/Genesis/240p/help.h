@@ -47,6 +47,7 @@
 #define HELP_LAG			24
 #define HELP_ALTERNATE		25
 #define	HELP_VIDEO			26
+#define HELP_AUDIOSYNC		27
 
 extern u8	showhelp;
 
