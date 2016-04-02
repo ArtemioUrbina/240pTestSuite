@@ -720,10 +720,10 @@ void LagTest()
 	char str[10];
 	u16 pal = PAL0, change = 1, loadvram = 1;
 	s16 speed = 1, vary = 0;
-	u16 size, ind = 0;
+	u16 size, ind = 0, usersound = 0;
 	u16 x = 0, y = 0, x2 = 0, y2 = 0, exit = 0, variation = 1, draw = 1;
 	u16 buttons, pressedButtons, oldButtons = 0xffff;
-	u16 pos = 0, view = 0, audio = 0, drawoffset = 0;
+	u16 pos = 0, view = 0, audio = 1, drawoffset = 0;
 	u16 first_pal[16], oldColor = 0;
 	s16 clicks[10];
 
@@ -799,6 +799,22 @@ void LagTest()
 				}
 			}
 		}
+		
+		if(y == 96)	// half the screen?        
+		{
+			if(audio && !usersound)
+				PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+
+			VDP_getPalette(PAL0, first_pal);
+			first_pal[0] = oldColor;
+			VDP_setPalette(PAL0, first_pal);
+		}
+		
+		if(usersound)
+		{
+			PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+			usersound = 0;
+		}
 
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
@@ -818,6 +834,17 @@ void LagTest()
 				drawoffset = 1;
 				if(clicks[pos] >= 0)
 					change = 0;
+					
+				if(audio)
+				{
+					if(clicks[pos] == 0)
+						PSG_setFrequency(0, 1000);
+					else
+						PSG_setFrequency(0, 500);
+						
+					PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+					usersound = 1;
+				}
 			}
 		}
 
@@ -944,20 +971,14 @@ void LagTest()
 		if(y == 96)	// half the screen?        
 		{
 			if(audio)
+			{
+				PSG_setFrequency(0, 1000);
 				PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+			}
 
 			VDP_getPalette(PAL0, first_pal);
 			oldColor = first_pal[0];
 			first_pal[0] = 0x0666;
-			VDP_setPalette(PAL0, first_pal);
-		}
-		else
-		{
-			if(audio)
-				PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-
-			VDP_getPalette(PAL0, first_pal);
-			first_pal[0] = oldColor;
 			VDP_setPalette(PAL0, first_pal);
 		}
 		VDP_waitVSync();
@@ -1301,16 +1322,6 @@ void SoundTest()
 		if(sel < 0)
 			sel = 2;
 
-		/*
-		   When Bit 5 of YM Register $2C is set to 1, Panning gets affected by the L/R part of the L/R/AMS/FMS reg of these channels:
-
-		   $B4 in Bank 1 of the YM2612 for Channel FM1
-		   $B5 in Bank 1 of the YM2612 for Channel FM2
-		   $B6 in Bank 1 of the YM2612 for Channel FM3
-		   $B4 in Bank 2 of the YM2612 for Channel FM4
-		   $B6 in Bank 2 of the YM2612 for Channel FM6
-		   http://forums.sonicretro.org/index.php?showtopic=28589
-		 */
 		if(pressedButtons & BUTTON_A)
 		{
 			if(sel == 0)
@@ -1318,43 +1329,18 @@ void SoundTest()
 				SND_stopPlay_TFM();
 				SND_stopPlay_PCM();
 				SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_LEFT, 0);
-
-				/*
-				   YM2612_writeReg(0, 0xb4, 0x80);
-				   YM2612_writeReg(0, 0xb5, 0x80);
-				   YM2612_writeReg(0, 0xb6, 0x80);
-				   YM2612_writeReg(1, 0xb4, 0x80);              
-				   YM2612_writeReg(1, 0xb5, 0x80);      
-				   YM2612_writeReg(1, 0xb6, 0x80);
-				 */
 			}
 			if(sel == 1)
 			{
 				SND_stopPlay_TFM();
 				SND_stopPlay_PCM();
 				SND_startPlay_TFM(center);
-
-				/*
-				   YM2612_writeReg(0, 0xb5, 0xc0);
-				   YM2612_writeReg(0, 0xb6, 0xc0);
-				   YM2612_writeReg(1, 0xb4, 0xc0);              
-				   YM2612_writeReg(1, 0xb5, 0xc0);      
-				   YM2612_writeReg(1, 0xb6, 0xc0);
-				 */
 			}
 			if(sel == 2)
 			{
 				SND_stopPlay_TFM();
 				SND_stopPlay_PCM();
 				SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_RIGHT, 0);
-				/*
-				   YM2612_writeReg(0, 0xb4, 0x40);
-				   YM2612_writeReg(0, 0xb5, 0x40);
-				   YM2612_writeReg(0, 0xb6, 0x40);
-				   YM2612_writeReg(1, 0xb4, 0x40);              
-				   YM2612_writeReg(1, 0xb5, 0x40);      
-				   YM2612_writeReg(1, 0xb6, 0x40);
-				 */
 			}
 		}
 
@@ -1362,13 +1348,6 @@ void SoundTest()
 		VDP_drawTextBG(APLAN, "Left Channel", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 5, 12);
 		VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 14, 14);
 		VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 22, 12);
-
-/*
-		VDP_drawTextBG(APLAN, "The Model 1 headphone jack", TILE_ATTR(PAL1, 0, 0, 0), 7, 17);
-		VDP_drawTextBG(APLAN, "channels are inverted when", TILE_ATTR(PAL1, 0, 0, 0), 7, 18);
-		VDP_drawTextBG(APLAN, "compared against all the", TILE_ATTR(PAL1, 0, 0, 0), 7, 19);
-		VDP_drawTextBG(APLAN, "later hardware revisions.", TILE_ATTR(PAL1, 0, 0, 0), 7, 20);
-*/
 
 		VDP_drawTextBG(APLAN, "Space Standart track by Shiru", TILE_ATTR(PAL0, 0, 0, 0), 5, 22);
 
@@ -2014,8 +1993,8 @@ void AudioSyncTest()
 			VDP_loadTileData(color_tiles, tiles, size, USE_DMA);
 
 			sprite = tiles + size;
-			size = sizeof(size0led_t) / 32;
-			VDP_loadTileData(size0led_t, sprite, size, USE_DMA);
+			size = sizeof(size1led_t) / 32;
+			VDP_loadTileData(size1led_t, sprite, size, USE_DMA);
 
 			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 0, 6, 4, 2);
 			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 4, 6, 4, 2);
@@ -2029,20 +2008,9 @@ void AudioSyncTest()
 			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 32, 6, 4, 2);
 			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 36, 6, 4, 2);
 
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 0, 11, 4, 2);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 4, 11, 4, 2);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 3) + tiles, 8, 11, 4, 2);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 2) + tiles, 12, 11, 4, 2);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 1) + tiles, 16, 11, 4, 2);
-
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 1) + tiles, 20, 11, 4, 2);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 2) + tiles, 24, 11, 4, 2);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 3) + tiles, 28, 11, 4, 2);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 4) + tiles, 32, 11, 4, 2);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL0, 1, 0, 0, 5) + tiles, 36, 11, 4, 2);
-
 			VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite, 0);
 			VDP_setSpritePosition(0, x, y);
+			VDP_updateSprites();	
 
 			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL2, 1, 0, 0, 1) + tiles, 0, 20, 40, 1);
 
@@ -2053,21 +2021,13 @@ void AudioSyncTest()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-			VDP_resetSprites();
-			VDP_updateSprites();
-
-			DrawHelp(HELP_AUDIOSYNC);
-			loadvram = 1;
-		}
-
 		if(pressedButtons & BUTTON_A)
 		{
 			cycle = !cycle;
 			if(!cycle)
-				status = 89;
+				status = 121;
+			else
+				y = 160;
 		}
 
 		if(cycle == 1 && status == -1)
@@ -2082,60 +2042,70 @@ void AudioSyncTest()
 		if(status > -1)
 		{
 			status++;
-			if(status <= 60)
+			if(status <= 120)
 			{
 				y += acc;
 				VDP_setSpritePosition(0, x, y);
+				VDP_updateSprites();
 			}
 		}
 
-		if(status >= 10 && status <= 60)
+		if(status >= 20 && status <= 120)
 		{
 			switch (status)
 			{
-			case 10:
+			case 20:
 				black_pal[7] = 0x0ddd;
 				break;
-			case 20:
+			case 40:
 				black_pal[6] = 0x0ddd;
 				break;
-			case 30:
+			case 60:
 				acc = 1;
 				black_pal[5] = 0x0ddd;
 				break;
-			case 40:
+			case 80:
 				black_pal[4] = 0x0ddd;
 				break;
-			case 50:
+			case 100:
 				black_pal[3] = 0x0ddd;
 				break;
-			case 60:
+			case 120:
 				black_pal[2] = 0x0ddd;
 				break;
 			}
 
 			VDP_setPalette(PAL0, black_pal);
 		}
-
-		if(status == 60)
+		
+		if(status == 120)
 		{
 			PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
 			black_pal[0] = 0xFFF;
 			VDP_setPalette(PAL0, black_pal);
 		}
 
-		if(status == 90)
+		if(status == 122)
 		{
-			for(i = 0; i < 16; i++)
+			for(i = 0; i < 8; i++)
 				black_pal[i] = 0x0;
 
 			PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
 			VDP_setPalette(PAL0, black_pal);
 			status = -1;
 		}
-
-		VDP_updateSprites();
+		
 		VDP_waitVSync();
+		
+		if(pressedButtons & BUTTON_Z)
+		{
+			PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+			VDP_resetSprites();
+			VDP_updateSprites();
+
+			DrawHelp(HELP_AUDIOSYNC);
+			loadvram = 1;
+		}
 	}
 	VDP_resetSprites();
 	VDP_updateSprites();

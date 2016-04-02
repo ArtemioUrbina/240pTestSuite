@@ -386,6 +386,8 @@ void Detect_MD(char *str)
 		strcat(str, "MegaDrive JP");
 }
 
+//#define DBELEC
+
 void DrawCredits()
 {
 	u16 ind = 0, size = 0, exit = 0, pos = 8, counter = 1;
@@ -404,9 +406,14 @@ void DrawCredits()
 	VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
 
 	VDP_setVerticalScroll(PLAN_A, 4);
+	VDP_setHorizontalScroll(PLAN_A, -4);
 
 #ifdef SEGACD
 	pos = 6;
+#endif
+
+#ifdef DBELEC
+	pos = 7;
 #endif
 
 	VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
@@ -414,7 +421,7 @@ void DrawCredits()
 	VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 	VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 	VDP_drawTextBG(APLAN, "SDK:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "http://code.google.com/p/sgdk/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+	VDP_drawTextBG(APLAN, "http://stephane-d.github.io/SGDK", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 	VDP_drawTextBG(APLAN, "SDK Consultor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 	VDP_drawTextBG(APLAN, "Stef", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 #ifdef SEGACD
@@ -429,15 +436,27 @@ void DrawCredits()
 	VDP_drawTextBG(APLAN, "Konsolkongen & shmups regulars", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 	VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 	VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+	
+#ifdef DBELEC
+	VDP_drawTextBG(APLAN, "Cartridge and distribution by:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+	VDP_drawTextBG(APLAN, "http://db-electronics.ca/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+#endif
 
-	VDP_drawTextBG(APLAN, "Ver. 1.15b", TILE_ATTR(PAL0, 0, 0, 0), 26, 6);
-	VDP_drawTextBG(APLAN, "18/02/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+	VDP_drawTextBG(APLAN, "Ver. 1.15b", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+	VDP_drawTextBG(APLAN, "23/02/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+	
+	VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 
 #ifdef SEGACD
 	pos = 7;
 #else
+#ifdef DBELEC
+	pos = 8;
+#else
 	pos = 9;
 #endif
+#endif
+
 	while(!exit)
 	{
 		buttons = JOY_readJoypad(JOY_1);
