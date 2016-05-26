@@ -989,6 +989,7 @@ void LagTest()
 		fix32 totald = 0, cnt, tot;
 		u16 total = 0, count = 0, c = 0;
 
+		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
 		VDP_resetSprites();
 		VDP_updateSprites();
 
