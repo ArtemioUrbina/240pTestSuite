@@ -438,12 +438,14 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "one on the background, and the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "offset in frames from the actual", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "intersection will be shown on", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "screen. This can be repeated ten", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "times and the software will", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "screen. A 1khz tone will be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "played for 1 frame when pressed.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
 					break;
 				case 2:
 					VDP_drawTextBG(APLAN, "MANUAL LAG TEST (2/3)", TILE_ATTR(PAL1, 0, 0, 0), 9, 4);
+					VDP_drawTextBG(APLAN, "This can be repeated ten", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "times and the software will", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "calculate the average. Whenever", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "the button was pressed before", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "the actual intersection frame,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -457,12 +459,12 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "Of course the evaluation is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "dependent on reflexes and/or", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "rhythm more than anything. The", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "visual and audio cues are the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "more revealing aspects which", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
 					break;
 				case 3:
 					VDP_drawTextBG(APLAN, "MANUAL LAG TEST (3/3)", TILE_ATTR(PAL1, 0, 0, 0), 9, 4);
+					VDP_drawTextBG(APLAN, "visual and audio cues are the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "more revealing aspects which", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "the user should consider, of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "course the interactive factor", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "can give an experienced player", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
