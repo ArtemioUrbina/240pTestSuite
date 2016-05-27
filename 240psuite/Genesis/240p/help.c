@@ -77,6 +77,7 @@ void DrawHelp(int option)
 	case HELP_SHADOW:
 	case HELP_LED:
 	case HELP_LAG:
+	case HELP_HSCROLL:
 		totalpages = 2;
 		break;
 	case HELP_MANUALLAG:
@@ -475,22 +476,34 @@ void DrawHelp(int option)
 				}
 				break;
 			case HELP_HSCROLL:
-				VDP_drawTextBG(APLAN, "SCROLL TEST", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
-				VDP_drawTextBG(APLAN, "This test shows a two layer", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "background from Sonic the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "Hedgehog. The speed can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "varied with the d-pad, and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "change direction with the button", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "'B'. The 'A' button stops the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "scroll.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				y++;
-				VDP_drawTextBG(APLAN, "This can be used to notice any", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "drops in frameratewhen using a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "video processor.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				y++;
-				VDP_drawTextBG(APLAN, "Sonic The Hedgehog is a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "trademark of Sega Enterprises", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "Ltd.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				switch (page)
+				{
+				case 1:
+					VDP_drawTextBG(APLAN, "SCROLL TEST (1/2)", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);
+					VDP_drawTextBG(APLAN, "This test shows either an", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "horizontal background from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "Sonic or a vertical one from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "Kiki Kaikai.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "Speed can be varied with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "d-pad and scroll direction with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "'B'. The 'A' button stops the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "scroll and 'C' toggles between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "vertical and horizontal.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "This can be used to notice any", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "drops in framerate, or pixel", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "width inconsistencies.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					
+					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+					break;					
+				case 2:
+					VDP_drawTextBG(APLAN, "SCROLL TEST (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);
+					VDP_drawTextBG(APLAN, "Sonic is a trademark of Sega", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "Enterprises Ltd. Kiki Kaikai", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "is a trademark of Namco Bandai.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					break;
+				}
 				break;
 			case HELP_VSCROLL:
 				VDP_drawTextBG(APLAN, "GRID SCROLL TEST", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);

@@ -442,8 +442,8 @@ void DrawCredits()
 	VDP_drawTextBG(APLAN, "http://db-electronics.ca/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 #endif
 
-	VDP_drawTextBG(APLAN, "Ver. 1.15", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-	VDP_drawTextBG(APLAN, "23/02/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+	VDP_drawTextBG(APLAN, "Ver. 1.16", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+	VDP_drawTextBG(APLAN, "26/05/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 	
 	VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 

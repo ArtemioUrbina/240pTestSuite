@@ -27,16 +27,16 @@
 extern u32 color_tiles[224/4]; ; 
 
 extern u32 cb601_tiles[2144/4]; 
-extern u16 cb601_pal[16];
+extern u16 cb601_pal[16/2];
 extern u16 cb601_map[2240/2]; 
 
 // Title screen
 extern u32 back_tiles[3200/4]; 
-extern u16 back_pal[16]; 
+extern u16 back_pal[16/2]; 
 extern u16 back_map[2240/2]; 
 
 extern u32 gillian_tiles[2912/4]; 
-extern u16 gillian_pal[16]; 
+extern u16 gillian_pal[16/2]; 
 
 // Font
 extern u32 font_tiles[3072/4];
@@ -53,7 +53,7 @@ extern u32 wb_tile[32/4];
 extern u32 vstripes_tiles[32/4]; 
 extern u32 vstripesneg_tiles[32/4]; 
 
-extern u16 bw_pal[16]; 
+extern u16 bw_pal[16/2]; 
 
 // Grid
 extern u32 circles_tiles[1888/4]; 
@@ -70,7 +70,7 @@ extern u32 Lin256PAL_tiles[1344/4];
 extern u16 Lin256PAL_map[1792/2];
 
 extern u32 grid_tiles[64/4]; 
-extern u16 grid_pal[16]; 
+extern u16 grid_pal[16/2]; 
 
 extern u16 grid_map[2240/2];
 extern u16 grid_256_map[1792/2];
@@ -82,12 +82,12 @@ extern u32 sonicfloor_tiles[2592/4];
 extern u16 sonicfloor_map[1024/2];
 extern u32 sonicback_tiles[6432/4]; 
 extern u16 sonicback_map[1216/2];
-extern u16 sonicback_pal[16]; 
+extern u16 sonicback_pal[16/2]; 
 extern u32 sonicwater_tiles[704/4];
 extern u16 sonicwater_map[384/2]; 
-extern u16 sonicwater_pal[16]; 
-extern u16 sonicwater2_pal[16]; 
-extern u16 sonicwater3_pal[16]; 
+extern u16 sonicwater_pal[16/2]; 
+extern u16 sonicwater2_pal[16/2]; 
+extern u16 sonicwater3_pal[16/2]; 
 
 // Waterfall sprite
 extern u32 waterfall_tiles[512/4]; 
@@ -95,19 +95,19 @@ extern u32 waterfall_tiles[512/4];
 // Motoko background
 extern u32 motoko_tiles[20896/4]; 
 extern u16 motoko_map[2240/2];
-extern u16 motoko_pal[16]; 
+extern u16 motoko_pal[16/2]; 
 
 //Striped Sprite
 extern u32 striped_tiles[512/4]; 
 
 // Shadow Sprite
 extern u32 shadow_tiles[512/4]; 
-extern u16 wb_pal[16]; 
+extern u16 wb_pal[16/2]; 
 
 // buzz Sprite
 extern u32 buzz_tiles[512/4]; 
 extern u32 buzzShadow_tiles[512/4]; 
-extern u16 buzz_pal[16]; 
+extern u16 buzz_pal[16/2]; 
 
 // Lag sprite
 extern u32 lag_tiles[512/4]; 
@@ -137,17 +137,17 @@ extern u32 tiles_c[480/4];
 
 extern u32 circle56_tiles[1568/4];
 
-extern u16 btw_pal[16]; 
-extern u16 redw_pal[16]; 
-extern u16 bluew_pal[16]; 
-extern u16 greenw_pal[16]; 
+extern u16 btw_pal[16/2]; 
+extern u16 redw_pal[16/2]; 
+extern u16 bluew_pal[16/2]; 
+extern u16 greenw_pal[16/2]; 
 
 extern u32 solidw_tiles[32/4]; 
 
 // SMPTE
 extern u32 SMPTECB75_tiles[1440/4]; 
-extern u16 SMPTECB75_pal[16]; 
-extern u16 SMPTECB100_pal[16]; 
+extern u16 SMPTECB75_pal[16/2]; 
+extern u16 SMPTECB100_pal[16/2]; 
 extern u16 SMPTECB75_map[2240/2]; 
 
 // EBU
@@ -156,14 +156,19 @@ extern u16 EBUColorBars75_map[2240/2];
 
 // Sharpness
 extern u32 sharpness_tiles[4064/4]; 
-extern u16 sharpness_pal[16]; 
+extern u16 sharpness_pal[16/2]; 
 extern u16 sharpness_map[2240/2]; 
+
+// vertical Scroll
+extern u32 kiki_tiles[800/4]; 
+extern u16 kiki_pal[16/2]; 
+extern u16 kiki_map[4096/2]; 
 
 /*
 // VA Panel Test, from MM
 extern u32 VAPanel_tiles[1856/4]; 
 extern u16 VAPanel_map[272/2];
-extern u16 VAPanel_pal[16]; 
+extern u16 VAPanel_pal[16/2]; 
 */
 
 #endif

@@ -1087,60 +1087,87 @@ void LagTest()
 void HScrollTest()
 {
 	u16 size, sonic_floor, sonic_water, waterfall, loadvram = 1;
-	u16 exit = 0, frame = 1;
+	u16 exit = 0, frame = 1, vertical = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	int x = 0, speed = 1, acc = -1, pause = 0;
+	int x = 0, y = 0, speed = 1, acc = -1, pause = 0;
 
 	CleanOrShowHelp(HELP_HSCROLL);
 
 	while(!exit)
 	{
 		if(loadvram)
-		{
-			VDP_setPalette(PAL0, sonicback_pal);
-			VDP_setPalette(PAL1, sonicwater_pal);
+		{	
+			if(!vertical)
+			{	
+				VDP_setScreenWidth320();
+				
+				VDP_setVerticalScroll(PLAN_A, 0);
+				VDP_setHorizontalScroll(PLAN_A, x);
+				VDP_setHorizontalScroll(PLAN_B, x / 2);				
 
-			size = sizeof(sonicback_tiles) / 32;
-			VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, USE_DMA);
+				VDP_setPalette(PAL0, sonicback_pal);
+				VDP_setPalette(PAL1, sonicwater_pal);
+				
+				size = sizeof(sonicback_tiles) / 32;
+				VDP_loadTileData(sonicback_tiles, TILE_USERINDEX, size, USE_DMA);
 
-			sonic_water = TILE_USERINDEX + size;
-			size = sizeof(sonicwater_tiles) / 32;
-			VDP_loadTileData(sonicwater_tiles, sonic_water, size, USE_DMA);
+				sonic_water = TILE_USERINDEX + size;
+				size = sizeof(sonicwater_tiles) / 32;
+				VDP_loadTileData(sonicwater_tiles, sonic_water, size, USE_DMA);
 
-			sonic_floor = sonic_water + size;
-			size = sizeof(sonicfloor_tiles) / 32;
-			VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, USE_DMA);
+				sonic_floor = sonic_water + size;
+				size = sizeof(sonicfloor_tiles) / 32;
+				VDP_loadTileData(sonicfloor_tiles, sonic_floor, size, USE_DMA);
 
-			waterfall = sonic_floor + size;
-			size = sizeof(waterfall_tiles) / 32;
-			VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);
+				waterfall = sonic_floor + size;
+				size = sizeof(waterfall_tiles) / 32;
+				VDP_loadTileData(waterfall_tiles, waterfall, size, USE_DMA);
 
-			VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 0, 0, 256 / 8, 152 / 8);
-			VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 256 / 8, 0, 256 / 8, 152 / 8);
+				VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 0, 0, 256 / 8, 152 / 8);
+				VDP_setMyTileMapRect(BPLAN, sonicback_map, TILE_USERINDEX, 256 / 8, 0, 256 / 8, 152 / 8);
 
-			VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152 / 8, 256 / 8, 48 / 8);
-			VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 256 / 8, 152 / 8, 256 / 8, 48 / 8);
+				VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 0, 152 / 8, 256 / 8, 48 / 8);
+				VDP_setMyTileMapRect(BPLAN, sonicwater_map, sonic_water, 256 / 8, 152 / 8, 256 / 8, 48 / 8);
 
-			VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96 / 8, 256 / 8, 128 / 8);
-			VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256 / 8, 96 / 8, 256 / 8, 128 / 8);
+				VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 0, 96 / 8, 256 / 8, 128 / 8);
+				VDP_setMyTileMapRect(APLAN, sonicfloor_map, sonic_floor, 256 / 8, 96 / 8, 256 / 8, 128 / 8);
 
-			VDP_setSprite(0, 72, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 1);
-			VDP_setSprite(1, 328, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);
+				VDP_setSprite(0, 72, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 1);
+				VDP_setSprite(1, 328, 120, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);
+			}
+			else
+			{
+				VDP_resetSprites();
+				VDP_updateSprites();
+				VDP_setHorizontalScroll(PLAN_B, 0);
+				VDP_setHorizontalScroll(PLAN_A, 0);
+								
+				VDP_setScreenWidth256();
+
+				VDP_setPalette(PAL0, kiki_pal);
+				size = sizeof(kiki_tiles) / 32;
+				VDP_loadTileData(kiki_tiles, TILE_USERINDEX, size, USE_DMA);
+
+				VDP_setMyTileMapRect(APLAN, kiki_map, TILE_USERINDEX, 0, 0, 256 / 8, 512 / 8);
+			}
 
 			loadvram = 0;
 		}
 
-		switch (frame)
+		if(!vertical)
 		{
-		case 30:
-			VDP_setPalette(PAL1, sonicwater3_pal);
-			break;
-		case 60:
-			VDP_setPalette(PAL1, sonicwater2_pal);
-			break;
-		case 90:
-			VDP_setPalette(PAL1, sonicwater_pal);
-			break;
+			switch (frame)
+			{
+			case 30:
+				VDP_setPalette(PAL1, sonicwater3_pal);
+				break;
+			case 60:
+				VDP_setPalette(PAL1, sonicwater2_pal);
+				break;
+			case 90:
+				VDP_setPalette(PAL1, sonicwater_pal);
+				break;
+			}
 		}
 
 		frame++;
@@ -1178,21 +1205,44 @@ void HScrollTest()
 
 		if(pressedButtons & BUTTON_B)
 			acc *= -1;
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			vertical = !vertical;
+			loadvram = 1;
+			FadeAndCleanUp();
+		}
 
-		if(!pause)
-			x += acc * speed;
+		if(!vertical)
+		{
+			if(!pause)
+				x += acc * speed;
+			
+			if(x >= 512)
+				x = x % 512;
 
-		if(x >= 512)
-			x = x % 512;
+			if(x <= -512)
+				x = x % -512;
 
-		if(x <= -512)
-			x = x % -512;
+			VDP_setSpritePosition(0, x / 2 + 79, 120);
+			VDP_setSpritePosition(1, x / 2 + 335, 120);
+			VDP_updateSprites();
+			VDP_setHorizontalScroll(PLAN_A, x);
+			VDP_setHorizontalScroll(PLAN_B, x / 2);
+		}
+		else
+		{
+			if(!pause)
+				y += acc * speed;
+			
+			if(y >= 672)
+				y = y % 672;
 
-		VDP_setSpritePosition(0, x / 2 + 79, 120);
-		VDP_setSpritePosition(1, x / 2 + 335, 120);
-		VDP_updateSprites();
-		VDP_setHorizontalScroll(PLAN_A, x);
-		VDP_setHorizontalScroll(PLAN_B, x / 2);
+			if(x <= -672)
+				y = y % -672;
+
+			VDP_setVerticalScroll(PLAN_A, y);
+		}
 		VDP_waitVSync();
 	}
 }
