@@ -1047,7 +1047,7 @@ void LagTest()
 			VDP_drawTextBG(APLAN, "=", TILE_ATTR(PAL1, 0, 0, 0), h++, v);
 
 			totald = fix32Div(tot, cnt);
-			fix32ToStr(totald, str, 2);
+			fix32ToStr(totald, str, 4);
 			VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL3, 0, 0, 0), h, v);
 			h += strlen(str);
 			h -= 2;
