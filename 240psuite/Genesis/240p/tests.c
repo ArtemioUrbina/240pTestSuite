@@ -1235,11 +1235,11 @@ void HScrollTest()
 			if(!pause)
 				y += acc * speed;
 			
-			if(y >= 672)
-				y = y % 672;
+			if(y >= 512)
+				y = y % 512;
 
-			if(x <= -672)
-				y = y % -672;
+			if(x <= -512)
+				y = y % -512;
 
 			VDP_setVerticalScroll(PLAN_A, y);
 		}

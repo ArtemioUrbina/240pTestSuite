@@ -388,77 +388,111 @@ void Detect_MD(char *str)
 
 //#define DBELEC
 
+void DrawN()
+{
+	u16 size;
+	u16 exit = 0;
+	u16 buttons;
+
+	
+	FadeAndCleanUp();
+	size = sizeof(n_tiles) / 32;
+	VDP_setPalette(PAL0, n_pal);
+	VDP_loadTileData(n_tiles, TILE_USERINDEX, size, USE_DMA);
+	VDP_setMyTileMapRect(BPLAN, n_map, TILE_USERINDEX, 112 / 8, 64 / 8, 96 / 8, 96 / 8);
+	
+	while(!exit)
+	{
+		buttons = JOY_readJoypad(JOY_1);
+
+		if(!(buttons & BUTTON_C))
+			exit = 1;
+
+		VDP_waitVSync();
+	}
+}
+
 void DrawCredits()
 {
 	u16 ind = 0, size = 0, exit = 0, pos = 8, counter = 1;
-	u16 buttons, oldButtons = 0xffff, pressedButtons;
+	u16 buttons, oldButtons = 0xffff, pressedButtons, loadvram = 1;
 
 	FadeAndCleanUp();
-	VDP_setPalette(PAL0, palette_grey);
-	VDP_setPalette(PAL1, palette_green);
-	VDP_setPalette(PAL2, back_pal);
-	VDP_setPalette(PAL3, bw_pal);
-
-	ind = TILE_USERINDEX;
-	size = sizeof(back_tiles) / 32;
-	VDP_loadTileData(back_tiles, ind, size, USE_DMA);
-
-	VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
-
-	VDP_setVerticalScroll(PLAN_A, 4);
-	VDP_setHorizontalScroll(PLAN_A, -4);
-
-#ifdef SEGACD
-	pos = 6;
-#endif
-
-#ifdef DBELEC
-	pos = 7;
-#endif
-
-	VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	pos++;
-	VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-	VDP_drawTextBG(APLAN, "SDK:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "http://stephane-d.github.io/SGDK", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-	VDP_drawTextBG(APLAN, "SDK Consultor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "Stef", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-#ifdef SEGACD
-	VDP_drawTextBG(APLAN, "SEGA CD Loader by:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "Luke Usher/SoullessSentinel", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-	VDP_drawTextBG(APLAN, "SEGA CD Consultors:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "Chilly Willy & TascoDLX", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-#endif
-	VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-	VDP_drawTextBG(APLAN, "Collaboration:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "Konsolkongen & shmups regulars", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-	VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 	
-#ifdef DBELEC
-	VDP_drawTextBG(APLAN, "Cartridge and distribution by:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-	VDP_drawTextBG(APLAN, "http://db-electronics.ca/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
-#endif
-
-	VDP_drawTextBG(APLAN, "Ver. 1.16", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-	VDP_drawTextBG(APLAN, "26/05/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
-	
-	VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
-
-#ifdef SEGACD
-	pos = 7;
-#else
-#ifdef DBELEC
-	pos = 8;
-#else
-	pos = 9;
-#endif
-#endif
-
 	while(!exit)
 	{
+		if(loadvram)
+		{
+			ind = 0;
+			size = 0;
+			pos = 8;
+			counter = 1;
+			
+			VDP_setPalette(PAL0, palette_grey);
+			VDP_setPalette(PAL1, palette_green);
+			VDP_setPalette(PAL2, back_pal);
+			VDP_setPalette(PAL3, bw_pal);
+
+			ind = TILE_USERINDEX;
+			size = sizeof(back_tiles) / 32;
+			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
+
+			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+
+			VDP_setVerticalScroll(PLAN_A, 4);
+			VDP_setHorizontalScroll(PLAN_A, -4);
+
+#ifdef SEGACD
+			pos = 6;
+#endif
+
+#ifdef DBELEC
+			pos = 7;
+#endif
+
+			VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			pos++;
+			VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "SDK:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "http://stephane-d.github.io/SGDK", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "SDK Consultor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "Stef", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+#ifdef SEGACD
+			VDP_drawTextBG(APLAN, "SEGA CD Loader by:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "Luke Usher/SoullessSentinel", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "SEGA CD Consultors:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "Chilly Willy & TascoDLX", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+#endif
+			VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Collaboration:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "Konsolkongen & shmups regulars", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+	
+#ifdef DBELEC
+			VDP_drawTextBG(APLAN, "Cartridge and distribution by:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "http://db-electronics.ca/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+#endif
+
+			VDP_drawTextBG(APLAN, "Ver. 1.15", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "27/05/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			
+			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
+
+#ifdef SEGACD
+			pos = 7;
+#else
+#ifdef DBELEC
+			pos = 8;
+#else
+			pos = 9;
+#endif
+#endif
+			loadvram = 0;
+		}
+
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
@@ -474,6 +508,12 @@ void DrawCredits()
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			DrawN();
+			loadvram = 1;
+		}
 
 		VDP_waitVSync();
 		counter++;

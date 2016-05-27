@@ -2,101 +2,11 @@
 .global motoko_tiles
 motoko_tiles:
 * ---------------------------
-* size:20896 bytes
+* size:19424 bytes
 
 
 * ---------------------------
-	dc.l 0x88886666
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xfffffeee
-	dc.l 0xffffffee
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x86686886
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeffeeee
-	dc.l 0xfefeeeee
-	dc.l 0xffffffee
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x66888888
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeffffff
-	dc.l 0xfeefffff
-	dc.l 0xeeffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x88888888
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xffffeeee
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x88888888
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x88888888
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeefeeeee
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x89999999
-	dc.l 0xeeeeeeee
-	dc.l 0xefffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x99999999
-	dc.l 0xeeeeeeee
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x99999999
-	dc.l 0xeeefefef
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x99999999
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
@@ -106,144 +16,34 @@ motoko_tiles:
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0x999999b9
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
+	dc.l 0xfffffdbf
+	dc.l 0xfffff6af
+	dc.l 0xffff66af
+	dc.l 0xfff9666f
+	dc.l 0xffa6a98f
+	dc.l 0xfd66968f
 
 * ---------------------------
-	dc.l 0xbbbbbbbb
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0xb9bbbbbb
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0xbbbb9999
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0xb9999999
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x99999988
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x88888888
-	dc.l 0xfeeeeeee
-	dc.l 0xffffedbe
-	dc.l 0xfffee8ae
-	dc.l 0xfffe88ae
-	dc.l 0xffe9888e
-	dc.l 0xffa8a97e
-	dc.l 0xfd88987e
-
-* ---------------------------
-	dc.l 0x88888888
-	dc.l 0xeeeeeeee
-	dc.l 0xffffeeef
-	dc.l 0xffffd8ef
-	dc.l 0xfffe89ef
-	dc.l 0xfffd8bef
+	dc.l 0xffffd6ff
+	dc.l 0xffff69ff
+	dc.l 0xfffd6bff
 	dc.l 0xfffaadff
-	dc.l 0xffe8beff
-
-* ---------------------------
-	dc.l 0x88888888
-	dc.l 0xeeeeeeee
-	dc.l 0xfeaadeef
-	dc.l 0xffedabef
-	dc.l 0xffedaaef
-	dc.l 0xfea8abef
-	dc.l 0xfeb8adef
-	dc.l 0xffedadef
-
-* ---------------------------
-	dc.l 0x88888866
-	dc.l 0xeefffeee
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x66666666
-	dc.l 0xeeeeeeee
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x66668866
-	dc.l 0xeeeeeeee
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x66686666
-	dc.l 0xeeeeeeee
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
+	dc.l 0xfff6bfff
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
+	dc.l 0xffaadfff
+	dc.l 0xfffdabff
+	dc.l 0xfffdaaff
+	dc.l 0xffa6abff
+	dc.l 0xffb6adff
+	dc.l 0xfffdadff
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -256,54 +56,34 @@ motoko_tiles:
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xe8aaa98e
-	dc.l 0xaadeebae
-	dc.l 0x8beffebe
-	dc.l 0xdeffffef
-	dc.l 0xeeffffff
+	dc.l 0xf6aaa96f
+	dc.l 0xaadffbaf
+	dc.l 0x6bffffbf
+	dc.l 0xdfffffff
+	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 
 * ---------------------------
 	dc.l 0xffdadfff
-	dc.l 0xffaaefeb
-	dc.l 0xffbaeffd
-	dc.l 0xfffeffff
+	dc.l 0xffaafffb
+	dc.l 0xffbafffd
+	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xeeedaaef
-	dc.l 0xaa8aadef
-	dc.l 0xbddeeeff
-	dc.l 0xeeeeefff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffdfff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
+	dc.l 0xfffdaaff
+	dc.l 0xaa6aadff
+	dc.l 0xbddfffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffefff
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -311,49 +91,39 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xfffffffd
-	dc.l 0xffffffed
-	dc.l 0xfffffebd
-	dc.l 0xffffed96
+	dc.l 0xfffffffd
+	dc.l 0xffffffbd
+	dc.l 0xfffffd97
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xfdefffff
-	dc.l 0xdeefffff
-	dc.l 0xdeeffffe
-	dc.l 0xeeeeefdd
-	dc.l 0xeb6bebde
-	dc.l 0x9116beee
+	dc.l 0xfdffffff
+	dc.l 0xdfffffff
+	dc.l 0xdfffffff
+	dc.l 0xffffffdd
+	dc.l 0xfb7bfbdf
+	dc.l 0x9117bfff
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffedefff
-	dc.l 0xfddeefff
-	dc.l 0xbeeeefff
-	dc.l 0xeeeffffe
-	dc.l 0xeeffffed
-	dc.l 0xffffffeb
-
-* ---------------------------
+	dc.l 0xfffdffff
+	dc.l 0xfddfffff
+	dc.l 0xbfffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffefffff
-	dc.l 0xfdeeffff
-	dc.l 0xedeeffff
-	dc.l 0xbeeeeeee
-	dc.l 0xdeeeeeee
-	dc.l 0x99999988
+	dc.l 0xfffffffd
+	dc.l 0xfffffffb
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0x88999999
+	dc.l 0xfdffffff
+	dc.l 0xfdffffff
+	dc.l 0xbfffffff
+	dc.l 0xdfffffff
+	dc.l 0x99999966
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -361,8 +131,18 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0x66999999
+
+* ---------------------------
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 	dc.l 0x99999999
 
 * ---------------------------
@@ -371,18 +151,18 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
-	dc.l 0xeedb9999
-	dc.l 0x61111000
+	dc.l 0xffffffff
+	dc.l 0xffdb9999
+	dc.l 0x71111000
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xfeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0x65111169
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0x75111179
 	dc.l 0x00000000
 
 * ---------------------------
@@ -390,19 +170,19 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xfffeffff
-	dc.l 0xeedeefff
-	dc.l 0xbedeeeee
-	dc.l 0x1bdeeed8
+	dc.l 0xffffffff
+	dc.l 0xffdfffff
+	dc.l 0xbfdfffff
+	dc.l 0x1bdfffd6
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffffeeef
-	dc.l 0xedefddef
-	dc.l 0xbeedbdee
+	dc.l 0xffffffff
+	dc.l 0xfdffddff
+	dc.l 0xbffdbdff
 	dc.l 0x55dbdb99
 
 * ---------------------------
@@ -411,17 +191,17 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
-	dc.l 0xeeddb986
-	dc.l 0x61111100
+	dc.l 0xffffffff
+	dc.l 0xffddb967
+	dc.l 0x71111100
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xfeeeeeee
-	dc.l 0xeeeeeddd
+	dc.l 0xffffffff
+	dc.l 0xfffffddd
 	dc.l 0x55111111
 	dc.l 0x00000000
 
@@ -430,7 +210,7 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
+	dc.l 0xffffffff
 	dc.l 0xddb99999
 	dc.l 0x11100000
 	dc.l 0x00000000
@@ -440,8 +220,8 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
-	dc.l 0x99999988
+	dc.l 0xffffffff
+	dc.l 0x99999966
 	dc.l 0x00000000
 	dc.l 0x00000000
 
@@ -450,8 +230,8 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
-	dc.l 0x88899bde
+	dc.l 0xffffffff
+	dc.l 0x66699bdf
 	dc.l 0x00001115
 	dc.l 0x00000000
 
@@ -460,9 +240,9 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffeeffff
-	dc.l 0xee9deeff
-	dc.l 0x9516beee
+	dc.l 0xffffffff
+	dc.l 0xff9dffff
+	dc.l 0x9517bfff
 	dc.l 0x10059baa
 
 * ---------------------------
@@ -472,8 +252,8 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
-	dc.l 0xaa998488
+	dc.l 0xffffffff
+	dc.l 0xaa996266
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -482,8 +262,8 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
-	dc.l 0x88888888
+	dc.l 0xffffffff
+	dc.l 0x66666666
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -492,8 +272,8 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
-	dc.l 0x88888889
+	dc.l 0xffffffff
+	dc.l 0x66666669
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -502,7 +282,7 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
+	dc.l 0xffffffff
 	dc.l 0xaabddbba
 
 * ---------------------------
@@ -512,32 +292,32 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeefff
-	dc.l 0xaabdeeee
+	dc.l 0xffffffff
+	dc.l 0xaabdffff
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffef
+	dc.l 0xffffffff
 	dc.l 0xfffffddf
-	dc.l 0xffffedde
-	dc.l 0xeefedddb
+	dc.l 0xfffffddf
+	dc.l 0xffffdddb
 
 * ---------------------------
-	dc.l 0xffffdeff
-	dc.l 0xfffedeff
-	dc.l 0xfffddeff
-	dc.l 0xffeddeff
-	dc.l 0xffdedeff
-	dc.l 0xfededeff
-	dc.l 0xedeedeff
-	dc.l 0xddeedeed
+	dc.l 0xffffdfff
+	dc.l 0xffffdfff
+	dc.l 0xfffddfff
+	dc.l 0xfffddfff
+	dc.l 0xffdedfff
+	dc.l 0xffdedfff
+	dc.l 0xfdeedfff
+	dc.l 0xddeedffd
 
 * ---------------------------
 	dc.l 0xffffffff
-	dc.l 0xfffffffe
+	dc.l 0xffffffff
 	dc.l 0xfffffffd
 	dc.l 0xfffffffb
 	dc.l 0xfffffffd
@@ -547,13 +327,13 @@ motoko_tiles:
 
 * ---------------------------
 	dc.l 0xffffffff
-	dc.l 0xeeffefee
-	dc.l 0xdeffdede
-	dc.l 0xdeffddee
-	dc.l 0xefffddef
-	dc.l 0xeffdbeef
-	dc.l 0xfffdeeff
-	dc.l 0xfffeeeee
+	dc.l 0xffffffff
+	dc.l 0xdfffdfdf
+	dc.l 0xdfffddff
+	dc.l 0xffffddff
+	dc.l 0xfffdbfff
+	dc.l 0xfffdffff
+	dc.l 0xffffffff
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -563,57 +343,27 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
+	dc.l 0xffddddff
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xfeffefff
-	dc.l 0xeeeeeeee
-
-* ---------------------------
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xfeeeeeee
-	dc.l 0xeeddddee
-
-* ---------------------------
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffee
-	dc.l 0xffffffee
-	dc.l 0xffffffed
-	dc.l 0xffffffed
 	dc.l 0xfffffffd
-	dc.l 0xeeeeefed
-
-* ---------------------------
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xfeffffef
-	dc.l 0xedfffdef
-	dc.l 0xedefffde
-	dc.l 0xddefffde
-	dc.l 0xddefffed
-	dc.l 0xdbdeeeed
+	dc.l 0xfffffffd
+	dc.l 0xfffffffd
+	dc.l 0xfffffffd
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xefeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xa8984488
+	dc.l 0xfdfffdff
+	dc.l 0xfdffffdf
+	dc.l 0xddffffdf
+	dc.l 0xddfffffd
+	dc.l 0xdbdffffd
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -621,9 +371,19 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeee
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xa6962266
+
+* ---------------------------
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 	dc.l 0xbdbbaaaa
-	dc.l 0x84444444
+	dc.l 0x62222222
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -631,39 +391,39 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xeeeeeeef
-	dc.l 0x9888a9de
-	dc.l 0x4444449e
+	dc.l 0xffffffff
+	dc.l 0x9666a9df
+	dc.l 0x2222229f
 
 * ---------------------------
-	dc.l 0xffffe611
+	dc.l 0xfffff711
 	dc.l 0xffffd100
 	dc.l 0xffff9100
-	dc.l 0xfffe1001
-	dc.l 0xfffb1016
-	dc.l 0xfff6115b
+	dc.l 0xffff1001
+	dc.l 0xfffb1017
+	dc.l 0xfff7115b
 	dc.l 0xffd115bd
-	dc.l 0xffb159de
+	dc.l 0xffb159df
 
 * ---------------------------
-	dc.l 0x1116deef
-	dc.l 0x116beeff
-	dc.l 0x16bdefff
-	dc.l 0x6bdeefff
-	dc.l 0xbdefffff
-	dc.l 0xdeefffff
-	dc.l 0xeeffffff
-	dc.l 0xefffffff
+	dc.l 0x1117dfff
+	dc.l 0x117bffff
+	dc.l 0x17bdffff
+	dc.l 0x7bdfffff
+	dc.l 0xbdffffff
+	dc.l 0xdfffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 
 * ---------------------------
 	dc.l 0xffffffd5
 	dc.l 0xffffff90
-	dc.l 0xfffffe50
+	dc.l 0xffffff50
 	dc.l 0xfffffd10
-	dc.l 0xffffe900
-	dc.l 0xffffe100
+	dc.l 0xfffff900
+	dc.l 0xfffff100
 	dc.l 0xffffb100
-	dc.l 0xffff6000
+	dc.l 0xffff7000
 
 * ---------------------------
 	dc.l 0x00000000
@@ -686,8 +446,8 @@ motoko_tiles:
 	dc.l 0x00000022
 
 * ---------------------------
-	dc.l 0x14444410
-	dc.l 0x12424100
+	dc.l 0x13333310
+	dc.l 0x12323100
 	dc.l 0x22221000
 	dc.l 0x22210000
 	dc.l 0x22200000
@@ -696,7 +456,7 @@ motoko_tiles:
 	dc.l 0x10000000
 
 * ---------------------------
-	dc.l 0x00561000
+	dc.l 0x00571000
 	dc.l 0x00100000
 	dc.l 0x01000000
 	dc.l 0x00000000
@@ -716,8 +476,8 @@ motoko_tiles:
 	dc.l 0x00000012
 
 * ---------------------------
-	dc.l 0x00124444
-	dc.l 0x00222424
+	dc.l 0x00122222
+	dc.l 0x00222222
 	dc.l 0x01222222
 	dc.l 0x02222222
 	dc.l 0x12221222
@@ -726,9 +486,9 @@ motoko_tiles:
 	dc.l 0x10122222
 
 * ---------------------------
-	dc.l 0x44444444
-	dc.l 0x22442224
-	dc.l 0x22222224
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222210
 	dc.l 0x22222001
@@ -736,9 +496,9 @@ motoko_tiles:
 	dc.l 0x21000122
 
 * ---------------------------
-	dc.l 0x44444444
-	dc.l 0x44442422
-	dc.l 0x42222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
 	dc.l 0x11222222
 	dc.l 0x12222222
 	dc.l 0x22222222
@@ -746,7 +506,17 @@ motoko_tiles:
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x44444444
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+
+* ---------------------------
+	dc.l 0x2222269b
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
@@ -756,78 +526,48 @@ motoko_tiles:
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x44444444
-	dc.l 0x44422224
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-
-* ---------------------------
-	dc.l 0x4444489b
-	dc.l 0x42244444
-	dc.l 0x22222224
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-
-* ---------------------------
-	dc.l 0xeeeddddb
-	dc.l 0x488aaaaa
-	dc.l 0x44888888
-	dc.l 0x24888888
-	dc.l 0x28888888
-	dc.l 0x28888888
-	dc.l 0x48888888
-	dc.l 0x88888888
+	dc.l 0xfffddddb
+	dc.l 0x266aaaaa
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x26666666
+	dc.l 0x26666666
+	dc.l 0x26666666
+	dc.l 0x66666666
 
 * ---------------------------
 	dc.l 0xbdeedddb
-	dc.l 0xa899abbb
-	dc.l 0x88888484
-	dc.l 0x88888884
-	dc.l 0x88888882
-	dc.l 0x88888882
-	dc.l 0x88888882
-	dc.l 0x48888882
+	dc.l 0xa699abbb
+	dc.l 0x66666362
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x26666662
 
 * ---------------------------
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeddbaa
-	dc.l 0x88444444
-	dc.l 0x24422422
-	dc.l 0x22822222
-	dc.l 0x22842222
-	dc.l 0x22842222
-	dc.l 0x22882222
+	dc.l 0xffffffff
+	dc.l 0xfffddbaa
+	dc.l 0x66222222
+	dc.l 0x22222222
+	dc.l 0x22622222
+	dc.l 0x22622222
+	dc.l 0x22622222
+	dc.l 0x22662222
 
 * ---------------------------
-	dc.l 0xeeeeeeee
-	dc.l 0x99888844
-	dc.l 0x44444444
-	dc.l 0x48222244
-	dc.l 0x48222284
-	dc.l 0x48222284
-	dc.l 0x88422284
-	dc.l 0x88422484
+	dc.l 0xffffffff
+	dc.l 0x99666622
+	dc.l 0x22222222
+	dc.l 0x26222222
+	dc.l 0x26222262
+	dc.l 0x26222262
+	dc.l 0x66222262
+	dc.l 0x66222262
 
 * ---------------------------
-	dc.l 0xedba9888
-	dc.l 0x44444444
-	dc.l 0x42222222
+	dc.l 0xfdba9666
 	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-
-* ---------------------------
-	dc.l 0x44444888
-	dc.l 0x42224244
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
@@ -836,8 +576,8 @@ motoko_tiles:
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x84444444
-	dc.l 0x42222222
+	dc.l 0x22222666
+	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
@@ -846,84 +586,94 @@ motoko_tiles:
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x88adeedb
-	dc.l 0x24448848
-	dc.l 0x22242224
-	dc.l 0x22222224
-	dc.l 0x22222224
-	dc.l 0x22222224
-	dc.l 0x22222424
-	dc.l 0x22222844
+	dc.l 0x62222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0xbaabaa98
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888884
+	dc.l 0x66adffdb
+	dc.l 0x22226626
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222622
 
 * ---------------------------
-	dc.l 0x44884444
-	dc.l 0x82484222
-	dc.l 0x82488222
-	dc.l 0x84288222
-	dc.l 0x88248422
-	dc.l 0x88228422
-	dc.l 0x88228422
-	dc.l 0x88224822
+	dc.l 0xbaabaa96
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666662
 
 * ---------------------------
-	dc.l 0x88444444
-	dc.l 0x48242222
-	dc.l 0x48422222
-	dc.l 0x48822222
-	dc.l 0x28822222
-	dc.l 0x28842222
-	dc.l 0x24882222
-	dc.l 0x24884222
+	dc.l 0x22662222
+	dc.l 0x62262222
+	dc.l 0x62266222
+	dc.l 0x62266222
+	dc.l 0x66226222
+	dc.l 0x66226222
+	dc.l 0x66226222
+	dc.l 0x66222622
 
 * ---------------------------
-	dc.l 0x4222225d
+	dc.l 0x66222222
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x26622222
+	dc.l 0x26622222
+	dc.l 0x26622222
+	dc.l 0x22662222
+	dc.l 0x22662222
+
+* ---------------------------
+	dc.l 0x2222225d
 	dc.l 0x2222222b
-	dc.l 0x22222226
+	dc.l 0x22222227
 	dc.l 0x22222225
 	dc.l 0x22222222
-	dc.l 0x22222242
-	dc.l 0x22222242
+	dc.l 0x22222222
+	dc.l 0x22222222
 	dc.l 0x22222222
 
 * ---------------------------
 	dc.l 0xffffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 	dc.l 0xdfffffff
 	dc.l 0xbfffffff
-	dc.l 0x9effffff
-	dc.l 0x6dffffff
+	dc.l 0x9fffffff
+	dc.l 0x7dffffff
 	dc.l 0x5dffffff
 
 * ---------------------------
-	dc.l 0xff919dee
-	dc.l 0xff79deef
-	dc.l 0xffbdeeef
-	dc.l 0xffeeeeff
-	dc.l 0xfffeefff
+	dc.l 0xff919dff
+	dc.l 0xff89dfff
+	dc.l 0xffbdffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xfffe1000
+	dc.l 0xffff1000
 	dc.l 0xfffd1000
-	dc.l 0xffeb0000
-	dc.l 0xffe90000
-	dc.l 0xfee50000
-	dc.l 0xfeb10000
-	dc.l 0xfe500000
-	dc.l 0xe9100000
+	dc.l 0xfffb0000
+	dc.l 0xfff90000
+	dc.l 0xfff50000
+	dc.l 0xffb10000
+	dc.l 0xff500000
+	dc.l 0xf9100000
 
 * ---------------------------
 	dc.l 0x00000121
@@ -958,7 +708,7 @@ motoko_tiles:
 * ---------------------------
 	dc.l 0x00000222
 	dc.l 0x00001222
-	dc.l 0x00014222
+	dc.l 0x00012222
 	dc.l 0x00022222
 	dc.l 0x00122222
 	dc.l 0x01222222
@@ -966,23 +716,13 @@ motoko_tiles:
 	dc.l 0x12222222
 
 * ---------------------------
-	dc.l 0x22422222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-
-* ---------------------------
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222221
 	dc.l 0x22222210
 	dc.l 0x22222100
-	dc.l 0x42221001
-	dc.l 0x42210001
+	dc.l 0x22221001
+	dc.l 0x22210001
 	dc.l 0x22100002
 
 * ---------------------------
@@ -996,74 +736,54 @@ motoko_tiles:
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x22222224
-	dc.l 0x22222224
-	dc.l 0x22222228
-	dc.l 0x22222248
-	dc.l 0x22222248
-	dc.l 0x22222284
-	dc.l 0x22222282
-	dc.l 0x22222442
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222262
+	dc.l 0x22222262
+	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x88888884
-	dc.l 0x88888882
-	dc.l 0x88888422
-	dc.l 0x48888222
-	dc.l 0x28888222
-	dc.l 0x28884222
-	dc.l 0x48882222
-	dc.l 0x48842222
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666222
+	dc.l 0x26666222
+	dc.l 0x26666222
+	dc.l 0x26662222
+	dc.l 0x26662222
+	dc.l 0x26622222
 
 * ---------------------------
-	dc.l 0x28888882
-	dc.l 0x28888882
-	dc.l 0x28888882
-	dc.l 0x28888882
-	dc.l 0x28888882
-	dc.l 0x48884882
-	dc.l 0x28884482
-	dc.l 0x28882482
+	dc.l 0x26666662
+	dc.l 0x26666662
+	dc.l 0x26666662
+	dc.l 0x26666662
+	dc.l 0x26666662
+	dc.l 0x26662662
+	dc.l 0x26662262
+	dc.l 0x26662262
 
 * ---------------------------
-	dc.l 0x22882222
-	dc.l 0x22882224
-	dc.l 0x22884224
-	dc.l 0x22888224
-	dc.l 0x22888228
-	dc.l 0x22888428
-	dc.l 0x24888828
-	dc.l 0x22888848
+	dc.l 0x22662222
+	dc.l 0x22662222
+	dc.l 0x22662222
+	dc.l 0x22666222
+	dc.l 0x22666226
+	dc.l 0x22666226
+	dc.l 0x22666626
+	dc.l 0x22666626
 
 * ---------------------------
-	dc.l 0x88822484
-	dc.l 0x88822884
-	dc.l 0x88844888
-	dc.l 0x88848888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-
-* ---------------------------
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x42222222
-
-* ---------------------------
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x24422222
-	dc.l 0x24822222
-	dc.l 0x22842222
+	dc.l 0x66622262
+	dc.l 0x66622662
+	dc.l 0x66622666
+	dc.l 0x66626666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
 
 * ---------------------------
 	dc.l 0x22222222
@@ -1072,78 +792,78 @@ motoko_tiles:
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
+	dc.l 0x22622222
+	dc.l 0x22622222
+
+* ---------------------------
+	dc.l 0x22222662
+	dc.l 0x22222262
+	dc.l 0x22222262
+	dc.l 0x22222266
+	dc.l 0x22222266
+	dc.l 0x22222266
+	dc.l 0x22222266
+	dc.l 0x22222266
+
+* ---------------------------
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+
+* ---------------------------
+	dc.l 0x66222622
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x26222222
 	dc.l 0x22222222
 	dc.l 0x22222222
-
-* ---------------------------
-	dc.l 0x22222884
-	dc.l 0x22222484
-	dc.l 0x22222484
-	dc.l 0x22222488
-	dc.l 0x22222288
-	dc.l 0x22222288
-	dc.l 0x22222288
-	dc.l 0x22222288
-
-* ---------------------------
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-
-* ---------------------------
-	dc.l 0x88422822
-	dc.l 0x48422442
-	dc.l 0x48422242
-	dc.l 0x28422222
-	dc.l 0x28422222
-	dc.l 0x24422222
-	dc.l 0x24422222
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x22884222
-	dc.l 0x22888222
-	dc.l 0x22888422
-	dc.l 0x22488422
-	dc.l 0x22488822
-	dc.l 0x22288842
-	dc.l 0x22288842
-	dc.l 0x22288882
+	dc.l 0x22662222
+	dc.l 0x22666222
+	dc.l 0x22666222
+	dc.l 0x22266222
+	dc.l 0x22266622
+	dc.l 0x22266622
+	dc.l 0x22266622
+	dc.l 0x22266662
 
 * ---------------------------
-	dc.l 0x2befffff
-	dc.l 0x26efffff
-	dc.l 0x26dfffff
+	dc.l 0x2bffffff
+	dc.l 0x27ffffff
+	dc.l 0x27dfffff
 	dc.l 0x25dfffff
-	dc.l 0x22beffff
-	dc.l 0x427effff
-	dc.l 0x246dffff
+	dc.l 0x22bfffff
+	dc.l 0x228fffff
+	dc.l 0x227dffff
 	dc.l 0x225dffff
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xfffffffe
+	dc.l 0xffffffff
 	dc.l 0xfffffffd
 	dc.l 0xfffffffb
-	dc.l 0xfffffff7
-	dc.l 0xffffffe5
+	dc.l 0xfffffff8
+	dc.l 0xfffffff5
 	dc.l 0xffffffd1
 
 * ---------------------------
-	dc.l 0xe5000000
+	dc.l 0xf5000000
 	dc.l 0xb1000000
-	dc.l 0x60000000
+	dc.l 0x70000000
 	dc.l 0x10000000
 	dc.l 0x10001500
-	dc.l 0x00006500
+	dc.l 0x00007500
 	dc.l 0x00019500
-	dc.l 0x0006b100
+	dc.l 0x0007b100
 
 * ---------------------------
 	dc.l 0x00000011
@@ -1171,7 +891,7 @@ motoko_tiles:
 	dc.l 0x22102222
 	dc.l 0x22012222
 	dc.l 0x20012222
-	dc.l 0x00022242
+	dc.l 0x00022222
 	dc.l 0x00122222
 	dc.l 0x00222222
 
@@ -1180,7 +900,7 @@ motoko_tiles:
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222221
-	dc.l 0x22224210
+	dc.l 0x22222210
 	dc.l 0x22222100
 	dc.l 0x22222000
 	dc.l 0x22221000
@@ -1206,124 +926,124 @@ motoko_tiles:
 	dc.l 0x01222222
 
 * ---------------------------
-	dc.l 0x48842222
-	dc.l 0x88822222
-	dc.l 0x88422222
-	dc.l 0x88422222
-	dc.l 0x88222222
-	dc.l 0x88222222
-	dc.l 0x84222222
-	dc.l 0x84222222
+	dc.l 0x26622222
+	dc.l 0x66622222
+	dc.l 0x66222222
+	dc.l 0x66222222
+	dc.l 0x66222222
+	dc.l 0x66222222
+	dc.l 0x62222222
+	dc.l 0x62222222
 
 * ---------------------------
-	dc.l 0x28882282
-	dc.l 0x28882242
-	dc.l 0x28842222
-	dc.l 0x28822222
-	dc.l 0x28822222
-	dc.l 0x24822222
-	dc.l 0x24822222
-	dc.l 0x24822222
+	dc.l 0x26662262
+	dc.l 0x26662222
+	dc.l 0x26622222
+	dc.l 0x26622222
+	dc.l 0x26622222
+	dc.l 0x22622222
+	dc.l 0x22622222
+	dc.l 0x22622222
 
 * ---------------------------
-	dc.l 0x22888888
-	dc.l 0x22888888
-	dc.l 0x22888888
-	dc.l 0x22888888
-	dc.l 0x22888888
-	dc.l 0x22888888
-	dc.l 0x22888888
-	dc.l 0x22888888
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22666666
 
 * ---------------------------
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x84888888
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x62666666
 
 * ---------------------------
-	dc.l 0x42222222
-	dc.l 0x82222222
-	dc.l 0x82222222
-	dc.l 0x82222222
-	dc.l 0x82222222
-	dc.l 0x84222222
-	dc.l 0x84222222
-	dc.l 0x84222222
+	dc.l 0x22222222
+	dc.l 0x62222222
+	dc.l 0x62222222
+	dc.l 0x62222222
+	dc.l 0x62222222
+	dc.l 0x62222222
+	dc.l 0x62222222
+	dc.l 0x62222222
 
 * ---------------------------
-	dc.l 0x22882222
-	dc.l 0x22884222
-	dc.l 0x22888222
-	dc.l 0x22488422
-	dc.l 0x22488822
-	dc.l 0x22488842
-	dc.l 0x22288842
-	dc.l 0x22288882
+	dc.l 0x22662222
+	dc.l 0x22662222
+	dc.l 0x22666222
+	dc.l 0x22266222
+	dc.l 0x22266622
+	dc.l 0x22266622
+	dc.l 0x22266622
+	dc.l 0x22266662
 
 * ---------------------------
-	dc.l 0x22222248
-	dc.l 0x22222248
-	dc.l 0x22222248
-	dc.l 0x22222248
-	dc.l 0x22222248
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222226
 
 * ---------------------------
-	dc.l 0x88888888
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888884
-	dc.l 0x88888882
+	dc.l 0x66666666
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
+	dc.l 0x66666662
 
 * ---------------------------
-	dc.l 0x22248482
-	dc.l 0x22248282
-	dc.l 0x22248284
-	dc.l 0x22228244
-	dc.l 0x22224224
+	dc.l 0x22226262
+	dc.l 0x22226262
+	dc.l 0x22226262
+	dc.l 0x22226222
+	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 
 * ---------------------------
 	dc.l 0x222bffff
-	dc.l 0x2229efff
-	dc.l 0x2226efff
+	dc.l 0x2229ffff
+	dc.l 0x2227ffff
 	dc.l 0x2225dfff
 	dc.l 0x2225dfff
 	dc.l 0x2221bfff
-	dc.l 0x22429fff
-	dc.l 0x22229eff
+	dc.l 0x22229fff
+	dc.l 0x22229fff
 
 * ---------------------------
 	dc.l 0xffffffb0
+	dc.l 0xffffff80
 	dc.l 0xffffff70
-	dc.l 0xffffff60
-	dc.l 0xfffffe50
-	dc.l 0xfffffe50
+	dc.l 0xffffff50
+	dc.l 0xffffff50
 	dc.l 0xfffffd10
 	dc.l 0xfffffd10
 	dc.l 0xfffffd11
 
 * ---------------------------
 	dc.l 0x0019d100
-	dc.l 0x006dd100
+	dc.l 0x007dd100
 	dc.l 0x019dd000
-	dc.l 0x05beb000
-	dc.l 0x16deb000
-	dc.l 0x1beeb000
-	dc.l 0x5deeb000
-	dc.l 0x9deed100
+	dc.l 0x05bfb000
+	dc.l 0x17dfb000
+	dc.l 0x1bffb000
+	dc.l 0x5dffb000
+	dc.l 0x9dffd100
 
 * ---------------------------
 	dc.l 0x00000000
@@ -1426,124 +1146,104 @@ motoko_tiles:
 	dc.l 0x01222012
 
 * ---------------------------
-	dc.l 0x82222222
-	dc.l 0x82222222
-	dc.l 0x42222222
+	dc.l 0x62222222
+	dc.l 0x62222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-
-* ---------------------------
-	dc.l 0x22422222
-	dc.l 0x22422222
-	dc.l 0x22422222
-	dc.l 0x22222222
-	dc.l 0x24222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x22888888
-	dc.l 0x22888848
-	dc.l 0x22888848
-	dc.l 0x24888824
-	dc.l 0x24888822
-	dc.l 0x24888422
-	dc.l 0x24888222
-	dc.l 0x24888222
+	dc.l 0x22666666
+	dc.l 0x22666626
+	dc.l 0x22666626
+	dc.l 0x22666622
+	dc.l 0x22666622
+	dc.l 0x22666222
+	dc.l 0x22666222
+	dc.l 0x22666222
 
 * ---------------------------
-	dc.l 0x44888888
-	dc.l 0x22888888
-	dc.l 0x22888848
-	dc.l 0x22888828
-	dc.l 0x22888428
-	dc.l 0x22888424
-	dc.l 0x22888222
-	dc.l 0x22842222
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22666626
+	dc.l 0x22666626
+	dc.l 0x22666226
+	dc.l 0x22666222
+	dc.l 0x22666222
+	dc.l 0x22622222
 
 * ---------------------------
-	dc.l 0x88222222
-	dc.l 0x88222222
-	dc.l 0x88222222
-	dc.l 0x88222222
-	dc.l 0x88222222
-	dc.l 0x88422222
-	dc.l 0x88422222
-	dc.l 0x88422222
+	dc.l 0x66222222
+	dc.l 0x66222222
+	dc.l 0x66222222
+	dc.l 0x66222222
+	dc.l 0x66222222
+	dc.l 0x66222222
+	dc.l 0x66222222
+	dc.l 0x66222222
 
 * ---------------------------
-	dc.l 0x22288884
-	dc.l 0x22288888
-	dc.l 0x22288888
-	dc.l 0x22288888
-	dc.l 0x22248888
-	dc.l 0x22248848
-	dc.l 0x22248428
-	dc.l 0x22248424
+	dc.l 0x22266662
+	dc.l 0x22266666
+	dc.l 0x22266666
+	dc.l 0x22266666
+	dc.l 0x22226666
+	dc.l 0x22226626
+	dc.l 0x22226226
+	dc.l 0x22226222
 
 * ---------------------------
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
-	dc.l 0x42222222
-	dc.l 0x42222222
-	dc.l 0x82222222
-	dc.l 0x82222222
-	dc.l 0x82222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x62222222
+	dc.l 0x62222222
+	dc.l 0x62222222
 
 * ---------------------------
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
+	dc.l 0x66266662
+	dc.l 0x66266662
+	dc.l 0x66226662
+	dc.l 0x66226662
+	dc.l 0x66226662
+	dc.l 0x66226662
+	dc.l 0x62226662
+	dc.l 0x62222662
 
 * ---------------------------
-	dc.l 0x88488882
-	dc.l 0x88488882
-	dc.l 0x88448882
-	dc.l 0x88248882
-	dc.l 0x88228882
-	dc.l 0x88228882
-	dc.l 0x84228882
-	dc.l 0x84224882
-
-* ---------------------------
-	dc.l 0x22226eff
-	dc.l 0x22226eff
+	dc.l 0x22227fff
+	dc.l 0x22227fff
 	dc.l 0x22225dff
-	dc.l 0x22245dff
-	dc.l 0x22244bff
-	dc.l 0x222249ff
-	dc.l 0x222249ff
-	dc.l 0x222229ef
+	dc.l 0x22225dff
+	dc.l 0x22222bff
+	dc.l 0x222229ff
+	dc.l 0x222229ff
+	dc.l 0x222229ff
 
 * ---------------------------
 	dc.l 0xfffffd11
 	dc.l 0xfffffd15
-	dc.l 0xfffffb16
-	dc.l 0xfffffd16
+	dc.l 0xfffffb17
+	dc.l 0xfffffd17
 	dc.l 0xfffffd59
-	dc.l 0xfffffe6b
+	dc.l 0xffffff7b
 	dc.l 0xffffff9b
 	dc.l 0xffffffbd
 
 * ---------------------------
-	dc.l 0x9eeed100
-	dc.l 0xbeeed100
-	dc.l 0xdeffd100
-	dc.l 0xdfffe100
-	dc.l 0xefffe500
-	dc.l 0xefffe600
-	dc.l 0xefffe900
-	dc.l 0xffffeb00
+	dc.l 0x9fffd100
+	dc.l 0xbfffd100
+	dc.l 0xdfffd100
+	dc.l 0xdffff100
+	dc.l 0xfffff500
+	dc.l 0xfffff700
+	dc.l 0xfffff900
+	dc.l 0xfffffb00
 
 * ---------------------------
 	dc.l 0x00000000
@@ -1568,12 +1268,12 @@ motoko_tiles:
 * ---------------------------
 	dc.l 0x00000000
 	dc.l 0x00000001
-	dc.l 0x00000016
-	dc.l 0x00000166
-	dc.l 0x00005675
-	dc.l 0x00156761
-	dc.l 0x01667650
-	dc.l 0x01677610
+	dc.l 0x00000017
+	dc.l 0x00000177
+	dc.l 0x00005785
+	dc.l 0x00157871
+	dc.l 0x01778750
+	dc.l 0x01788710
 
 * ---------------------------
 	dc.l 0x01000000
@@ -1586,14 +1286,14 @@ motoko_tiles:
 	dc.l 0x00000000
 
 * ---------------------------
-	dc.l 0x00000016
-	dc.l 0x00000056
-	dc.l 0x00000565
-	dc.l 0x00001661
-	dc.l 0x00016750
-	dc.l 0x00057610
-	dc.l 0x00567600
-	dc.l 0x05776100
+	dc.l 0x00000017
+	dc.l 0x00000057
+	dc.l 0x00000575
+	dc.l 0x00001771
+	dc.l 0x00017850
+	dc.l 0x00058710
+	dc.l 0x00578700
+	dc.l 0x05887100
 
 * ---------------------------
 	dc.l 0x00000000
@@ -1666,48 +1366,18 @@ motoko_tiles:
 	dc.l 0x21002222
 
 * ---------------------------
-	dc.l 0x28884222
-	dc.l 0x28882222
-	dc.l 0x28842222
-	dc.l 0x28822222
-	dc.l 0x48422222
-	dc.l 0x48222222
-	dc.l 0x44222222
-	dc.l 0x22222222
-
-* ---------------------------
-	dc.l 0x22822222
-	dc.l 0x22422222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
+	dc.l 0x26662222
+	dc.l 0x26662222
+	dc.l 0x26622222
+	dc.l 0x26622222
+	dc.l 0x26222222
+	dc.l 0x26222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x88422222
-	dc.l 0x48422222
-	dc.l 0x48422222
-	dc.l 0x28422222
-	dc.l 0x28422222
-	dc.l 0x28422222
-	dc.l 0x24422222
-	dc.l 0x24422222
-
-* ---------------------------
-	dc.l 0x22248222
-	dc.l 0x22248222
-	dc.l 0x22248222
-	dc.l 0x22244222
-	dc.l 0x22244222
+	dc.l 0x22622222
 	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-
-* ---------------------------
-	dc.l 0x82222222
-	dc.l 0x42222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
@@ -1716,21 +1386,41 @@ motoko_tiles:
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
+	dc.l 0x66222222
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+
+* ---------------------------
+	dc.l 0x22226222
+	dc.l 0x22226222
+	dc.l 0x22226222
+	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x82224842
-	dc.l 0x82222842
-	dc.l 0x42222842
-	dc.l 0x22222822
-	dc.l 0x22222422
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+
+* ---------------------------
+	dc.l 0x62222622
+	dc.l 0x62222622
+	dc.l 0x22222622
+	dc.l 0x22222622
+	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
@@ -1766,38 +1456,28 @@ motoko_tiles:
 	dc.l 0x12222222
 
 * ---------------------------
-	dc.l 0x222246ef
-	dc.l 0x222246ef
-	dc.l 0x222226ef
-	dc.l 0x222246ef
-	dc.l 0x222246ef
-	dc.l 0x222246df
-	dc.l 0x222226df
-	dc.l 0x222245df
-
-* ---------------------------
-	dc.l 0xffffffee
-	dc.l 0xfffffffe
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
+	dc.l 0x222227ff
+	dc.l 0x222227ff
+	dc.l 0x222227ff
+	dc.l 0x222227ff
+	dc.l 0x222227ff
+	dc.l 0x222227df
+	dc.l 0x222227df
+	dc.l 0x222225df
 
 * ---------------------------
 	dc.l 0xfffffd10
-	dc.l 0xfffffe10
-	dc.l 0xfffffe70
-	dc.l 0xfffffe90
+	dc.l 0xffffff10
+	dc.l 0xffffff80
+	dc.l 0xffffff90
 	dc.l 0xffffffd1
-	dc.l 0xffffffe5
+	dc.l 0xfffffff5
 	dc.l 0xfffffff9
 	dc.l 0xfffffffd
 
 * ---------------------------
 	dc.l 0x55000000
-	dc.l 0x56000000
+	dc.l 0x57000000
 	dc.l 0x59000000
 	dc.l 0x5b000000
 	dc.l 0x5b100000
@@ -1820,40 +1500,40 @@ motoko_tiles:
 	dc.l 0x12000000
 	dc.l 0x22000000
 	dc.l 0x21000005
-	dc.l 0x20000006
-	dc.l 0x00000056
-	dc.l 0x00000167
-	dc.l 0x00000666
+	dc.l 0x20000007
+	dc.l 0x00000057
+	dc.l 0x00000178
+	dc.l 0x00000777
 
 * ---------------------------
-	dc.l 0x06666500
-	dc.l 0x56666000
-	dc.l 0x56761000
-	dc.l 0x66650000
-	dc.l 0x77500000
-	dc.l 0x66100000
-	dc.l 0x61000000
+	dc.l 0x07777500
+	dc.l 0x57777000
+	dc.l 0x57871000
+	dc.l 0x77750000
+	dc.l 0x88500000
+	dc.l 0x77100000
+	dc.l 0x71000000
 	dc.l 0x50000005
 
 * ---------------------------
 	dc.l 0x00000000
 	dc.l 0x00000005
-	dc.l 0x00000056
-	dc.l 0x00001676
-	dc.l 0x00016666
-	dc.l 0x00566666
-	dc.l 0x16666666
-	dc.l 0x66677767
+	dc.l 0x00000057
+	dc.l 0x00001787
+	dc.l 0x00017777
+	dc.l 0x00577777
+	dc.l 0x17777777
+	dc.l 0x77788878
 
 * ---------------------------
-	dc.l 0x57775000
-	dc.l 0x67761000
-	dc.l 0x77750000
-	dc.l 0x67610000
-	dc.l 0x67500000
-	dc.l 0x66100000
-	dc.l 0x65000000
-	dc.l 0x60000000
+	dc.l 0x58885000
+	dc.l 0x78871000
+	dc.l 0x88850000
+	dc.l 0x78710000
+	dc.l 0x78500000
+	dc.l 0x77100000
+	dc.l 0x75000000
+	dc.l 0x70000000
 
 * ---------------------------
 	dc.l 0x00001000
@@ -1877,13 +1557,13 @@ motoko_tiles:
 
 * ---------------------------
 	dc.l 0x00000150
-	dc.l 0x00001650
-	dc.l 0x00015750
-	dc.l 0x00116650
-	dc.l 0x00156710
-	dc.l 0x01567710
-	dc.l 0x11677610
-	dc.l 0x16777610
+	dc.l 0x00001750
+	dc.l 0x00015850
+	dc.l 0x00117750
+	dc.l 0x00157810
+	dc.l 0x01578810
+	dc.l 0x11788710
+	dc.l 0x17888710
 
 * ---------------------------
 	dc.l 0x00011111
@@ -1966,64 +1646,54 @@ motoko_tiles:
 	dc.l 0x01222222
 
 * ---------------------------
-	dc.l 0x222246df
-	dc.l 0x222245df
-	dc.l 0x222245df
+	dc.l 0x222227df
 	dc.l 0x222225df
-	dc.l 0x524245df
-	dc.l 0x544425df
-	dc.l 0x664226ef
-	dc.l 0x964426ef
-
-* ---------------------------
-	dc.l 0xfffffffe
-	dc.l 0xfffffffe
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xfffffffe
-	dc.l 0xffffffee
-	dc.l 0xfffffeee
+	dc.l 0x222225df
+	dc.l 0x222225df
+	dc.l 0x522225df
+	dc.l 0x522225df
+	dc.l 0x772227ff
+	dc.l 0x972227ff
 
 * ---------------------------
 	dc.l 0x5bd10000
 	dc.l 0xb9d50000
-	dc.l 0xe9d50000
-	dc.l 0xede61100
-	dc.l 0xeee91100
-	dc.l 0xeeeb5000
-	dc.l 0xeee95000
-	dc.l 0xed500000
+	dc.l 0xf9d50000
+	dc.l 0xfdf71100
+	dc.l 0xfff91100
+	dc.l 0xfffb5000
+	dc.l 0xfff95000
+	dc.l 0xfd500000
 
 * ---------------------------
-	dc.l 0x00005765
-	dc.l 0x00056650
-	dc.l 0x00166500
-	dc.l 0x00165001
-	dc.l 0x00150156
-	dc.l 0x00155666
-	dc.l 0x00167556
-	dc.l 0x00167651
+	dc.l 0x00005875
+	dc.l 0x00057750
+	dc.l 0x00177500
+	dc.l 0x00175001
+	dc.l 0x00150157
+	dc.l 0x00155777
+	dc.l 0x00178557
+	dc.l 0x00178751
 
 * ---------------------------
-	dc.l 0x00000156
-	dc.l 0x00015677
-	dc.l 0x01566677
-	dc.l 0x56776677
-	dc.l 0x67666667
-	dc.l 0x66666666
-	dc.l 0x66666666
-	dc.l 0x67666677
+	dc.l 0x00000157
+	dc.l 0x00015788
+	dc.l 0x01577788
+	dc.l 0x57887788
+	dc.l 0x78777778
+	dc.l 0x77777777
+	dc.l 0x77777777
+	dc.l 0x78777788
 
 * ---------------------------
-	dc.l 0x66677766
-	dc.l 0x67677765
-	dc.l 0x77777760
-	dc.l 0x77777610
-	dc.l 0x77777500
-	dc.l 0x67775000
-	dc.l 0x67761000
-	dc.l 0x77710000
+	dc.l 0x77788877
+	dc.l 0x78788875
+	dc.l 0x88888870
+	dc.l 0x88888710
+	dc.l 0x88888500
+	dc.l 0x78885000
+	dc.l 0x78871000
+	dc.l 0x88810000
 
 * ---------------------------
 	dc.l 0x10000001
@@ -2032,8 +1702,8 @@ motoko_tiles:
 	dc.l 0x00000110
 	dc.l 0x00000510
 	dc.l 0x00001500
-	dc.l 0x00056100
-	dc.l 0x00571000
+	dc.l 0x00057100
+	dc.l 0x00581000
 
 * ---------------------------
 	dc.l 0x20000000
@@ -2043,37 +1713,37 @@ motoko_tiles:
 	dc.l 0x00015000
 	dc.l 0x00151000
 	dc.l 0x01550000
-	dc.l 0x16500000
+	dc.l 0x17500000
 
 * ---------------------------
 	dc.l 0x00000011
 	dc.l 0x00000015
-	dc.l 0x00000116
-	dc.l 0x00000167
-	dc.l 0x00001676
-	dc.l 0x00015777
-	dc.l 0x00157777
-	dc.l 0x01566666
+	dc.l 0x00000117
+	dc.l 0x00000178
+	dc.l 0x00001787
+	dc.l 0x00015888
+	dc.l 0x00158888
+	dc.l 0x01577777
 
 * ---------------------------
-	dc.l 0x56777600
-	dc.l 0x77777500
-	dc.l 0x77777100
-	dc.l 0x77776000
-	dc.l 0x77775001
-	dc.l 0x77761005
-	dc.l 0x77761016
-	dc.l 0x66750057
+	dc.l 0x57888700
+	dc.l 0x88888500
+	dc.l 0x88888100
+	dc.l 0x88887000
+	dc.l 0x88885001
+	dc.l 0x88871005
+	dc.l 0x88871017
+	dc.l 0x77850058
 
 * ---------------------------
 	dc.l 0x05100000
-	dc.l 0x06100000
-	dc.l 0x16100000
-	dc.l 0x56100000
-	dc.l 0x66100000
-	dc.l 0x66100000
-	dc.l 0x76100000
-	dc.l 0x76000000
+	dc.l 0x07100000
+	dc.l 0x17100000
+	dc.l 0x57100000
+	dc.l 0x77100000
+	dc.l 0x77100000
+	dc.l 0x87100000
+	dc.l 0x87000000
 
 * ---------------------------
 	dc.l 0x00000000
@@ -2082,8 +1752,8 @@ motoko_tiles:
 	dc.l 0x00000001
 	dc.l 0x00000015
 	dc.l 0x00000055
-	dc.l 0x00000165
-	dc.l 0x00000166
+	dc.l 0x00000175
+	dc.l 0x00000177
 
 * ---------------------------
 	dc.l 0x00000000
@@ -2103,17 +1773,17 @@ motoko_tiles:
 	dc.l 0x01000125
 	dc.l 0x01100125
 	dc.l 0x11100225
-	dc.l 0x15100226
+	dc.l 0x15100227
 
 * ---------------------------
-	dc.l 0x61000000
-	dc.l 0x65000000
-	dc.l 0x66100000
-	dc.l 0x76500000
-	dc.l 0x77500000
-	dc.l 0x77600000
-	dc.l 0x67610000
-	dc.l 0x77750000
+	dc.l 0x71000000
+	dc.l 0x75000000
+	dc.l 0x77100000
+	dc.l 0x87500000
+	dc.l 0x88500000
+	dc.l 0x88700000
+	dc.l 0x78710000
+	dc.l 0x88850000
 
 * ---------------------------
 	dc.l 0x00000002
@@ -2150,30 +1820,20 @@ motoko_tiles:
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22242222
-	dc.l 0x22222222
+	dc.l 0x22222262
+	dc.l 0x22222262
+	dc.l 0x22222226
+	dc.l 0x22222226
 
 * ---------------------------
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222442
-	dc.l 0x22222282
-	dc.l 0x22222284
-	dc.l 0x22222248
-	dc.l 0x22222248
-
-* ---------------------------
-	dc.l 0x84222222
-	dc.l 0x88222222
-	dc.l 0x48222222
-	dc.l 0x48222222
-	dc.l 0x48422222
-	dc.l 0x48422222
-	dc.l 0x88422222
-	dc.l 0x88822222
+	dc.l 0x62222222
+	dc.l 0x66222222
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x26222222
+	dc.l 0x66222222
+	dc.l 0x66622222
 
 * ---------------------------
 	dc.l 0x22222222
@@ -2206,47 +1866,47 @@ motoko_tiles:
 	dc.l 0x01210000
 
 * ---------------------------
-	dc.l 0x01222224
-	dc.l 0x01222224
-	dc.l 0x01222224
 	dc.l 0x01222222
-	dc.l 0x01222224
+	dc.l 0x01222222
+	dc.l 0x01222222
+	dc.l 0x01222222
+	dc.l 0x01222222
 	dc.l 0x01222225
 	dc.l 0x01222225
 	dc.l 0x01222225
 
 * ---------------------------
-	dc.l 0x994226ef
-	dc.l 0x9b2426ef
-	dc.l 0xbd2429ef
-	dc.l 0xbe5429ef
-	dc.l 0xbe6429ff
-	dc.l 0xbe842bff
-	dc.l 0xde944bff
-	dc.l 0xdeb45dff
+	dc.l 0x992227ff
+	dc.l 0x9b2227ff
+	dc.l 0xbd2229ff
+	dc.l 0xbf5229ff
+	dc.l 0xbf7229ff
+	dc.l 0xbf622bff
+	dc.l 0xdf922bff
+	dc.l 0xdfb25dff
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xfffffffe
-	dc.l 0xfffffffe
-	dc.l 0xffffffed
-	dc.l 0xffffeed1
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffffd
+	dc.l 0xffffffd1
 
 * ---------------------------
-	dc.l 0xfffffeed
-	dc.l 0xffffeeb1
-	dc.l 0xffeed600
-	dc.l 0xfeeb1000
-	dc.l 0xee900000
-	dc.l 0xd6000000
+	dc.l 0xfffffffd
+	dc.l 0xffffffb1
+	dc.l 0xffffd700
+	dc.l 0xfffb1000
+	dc.l 0xff900000
+	dc.l 0xd7000000
 	dc.l 0x50000000
 	dc.l 0x00000000
 
 * ---------------------------
-	dc.l 0x71000000
+	dc.l 0x81000000
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000000
@@ -2256,124 +1916,124 @@ motoko_tiles:
 	dc.l 0x00000000
 
 * ---------------------------
-	dc.l 0x00166665
-	dc.l 0x00166666
-	dc.l 0x00166666
-	dc.l 0x00566666
-	dc.l 0x00566667
-	dc.l 0x00566667
-	dc.l 0x00566777
-	dc.l 0x00577776
+	dc.l 0x00177775
+	dc.l 0x00177777
+	dc.l 0x00177777
+	dc.l 0x00577777
+	dc.l 0x00577778
+	dc.l 0x00577778
+	dc.l 0x00577888
+	dc.l 0x00588887
 
 * ---------------------------
-	dc.l 0x15676677
-	dc.l 0x51156777
-	dc.l 0x66101566
-	dc.l 0x67610015
-	dc.l 0x77665100
-	dc.l 0x77667510
-	dc.l 0x77676101
-	dc.l 0x67751156
+	dc.l 0x15787788
+	dc.l 0x51157888
+	dc.l 0x77101577
+	dc.l 0x78710015
+	dc.l 0x88775100
+	dc.l 0x88778510
+	dc.l 0x88787101
+	dc.l 0x78851157
 
 * ---------------------------
-	dc.l 0x76500000
-	dc.l 0x75000001
-	dc.l 0x51000056
-	dc.l 0x10001566
-	dc.l 0x00056676
-	dc.l 0x00156661
+	dc.l 0x87500000
+	dc.l 0x85000001
+	dc.l 0x51000057
+	dc.l 0x10001577
+	dc.l 0x00057787
+	dc.l 0x00157771
 	dc.l 0x10000101
-	dc.l 0x65000000
-
-* ---------------------------
-	dc.l 0x15650001
-	dc.l 0x67500056
-	dc.l 0x76100566
-	dc.l 0x61015775
-	dc.l 0x10167661
-	dc.l 0x15676510
-	dc.l 0x66665100
-	dc.l 0x15651001
-
-* ---------------------------
-	dc.l 0x66100000
-	dc.l 0x61000001
-	dc.l 0x50000016
-	dc.l 0x00000167
-	dc.l 0x00005666
-	dc.l 0x00156766
-	dc.l 0x01667777
-	dc.l 0x56776777
-
-* ---------------------------
-	dc.l 0x15666666
-	dc.l 0x66666677
-	dc.l 0x66666777
-	dc.l 0x66666777
-	dc.l 0x77777777
-	dc.l 0x77777776
-	dc.l 0x77777775
-	dc.l 0x76666761
-
-* ---------------------------
-	dc.l 0x66610166
-	dc.l 0x76501677
-	dc.l 0x76105666
-	dc.l 0x65017666
-	dc.l 0x61167767
-	dc.l 0x11667667
-	dc.l 0x15776666
-	dc.l 0x57766666
-
-* ---------------------------
-	dc.l 0x76000000
 	dc.l 0x75000000
-	dc.l 0x65000000
-	dc.l 0x61000000
-	dc.l 0x60000000
+
+* ---------------------------
+	dc.l 0x15750001
+	dc.l 0x78500057
+	dc.l 0x87100577
+	dc.l 0x71015885
+	dc.l 0x10178771
+	dc.l 0x15787510
+	dc.l 0x77775100
+	dc.l 0x15751001
+
+* ---------------------------
+	dc.l 0x77100000
+	dc.l 0x71000001
+	dc.l 0x50000017
+	dc.l 0x00000178
+	dc.l 0x00005777
+	dc.l 0x00157877
+	dc.l 0x01778888
+	dc.l 0x57887888
+
+* ---------------------------
+	dc.l 0x15777777
+	dc.l 0x77777788
+	dc.l 0x77777888
+	dc.l 0x77777888
+	dc.l 0x88888888
+	dc.l 0x88888887
+	dc.l 0x88888885
+	dc.l 0x87777871
+
+* ---------------------------
+	dc.l 0x77710177
+	dc.l 0x87501788
+	dc.l 0x87105777
+	dc.l 0x75018777
+	dc.l 0x71178878
+	dc.l 0x11778778
+	dc.l 0x15887777
+	dc.l 0x58877777
+
+* ---------------------------
+	dc.l 0x87000000
+	dc.l 0x85000000
+	dc.l 0x75000000
+	dc.l 0x71000000
+	dc.l 0x70000000
 	dc.l 0x50000000
 	dc.l 0x50000000
 	dc.l 0x10000000
 
 * ---------------------------
-	dc.l 0x00000576
-	dc.l 0x00001676
-	dc.l 0x00005666
-	dc.l 0x00016666
-	dc.l 0x00056666
-	dc.l 0x00166666
-	dc.l 0x00576666
-	dc.l 0x01666666
+	dc.l 0x00000587
+	dc.l 0x00001787
+	dc.l 0x00005777
+	dc.l 0x00017777
+	dc.l 0x00057777
+	dc.l 0x00177777
+	dc.l 0x00587777
+	dc.l 0x01777777
 
 * ---------------------------
 	dc.l 0x00001201
 	dc.l 0x00002212
 	dc.l 0x00012222
 	dc.l 0x00012222
-	dc.l 0x00022226
-	dc.l 0x00122156
-	dc.l 0x00222166
-	dc.l 0x01222676
+	dc.l 0x00022227
+	dc.l 0x00122157
+	dc.l 0x00222177
+	dc.l 0x01222787
 
 * ---------------------------
-	dc.l 0x16101216
-	dc.l 0x16102226
-	dc.l 0x56102256
-	dc.l 0x66112256
-	dc.l 0x66022166
-	dc.l 0x66122266
-	dc.l 0x65122566
-	dc.l 0x65222666
+	dc.l 0x17101217
+	dc.l 0x17102227
+	dc.l 0x57102257
+	dc.l 0x77112257
+	dc.l 0x77022177
+	dc.l 0x77122277
+	dc.l 0x75122577
+	dc.l 0x75222777
 
 * ---------------------------
-	dc.l 0x67750000
-	dc.l 0x67761000
-	dc.l 0x77761000
-	dc.l 0x67765000
-	dc.l 0x77765000
-	dc.l 0x67766000
-	dc.l 0x67766000
-	dc.l 0x67776100
+	dc.l 0x78850000
+	dc.l 0x78871000
+	dc.l 0x88871000
+	dc.l 0x78875000
+	dc.l 0x88875000
+	dc.l 0x78877000
+	dc.l 0x78877000
+	dc.l 0x78887100
 
 * ---------------------------
 	dc.l 0x00000000
@@ -2382,8 +2042,8 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00010000
 	dc.l 0x00015000
-	dc.l 0x00056000
-	dc.l 0x00056100
+	dc.l 0x00057000
+	dc.l 0x00057100
 
 * ---------------------------
 	dc.l 0x01222222
@@ -2416,24 +2076,14 @@ motoko_tiles:
 	dc.l 0x22220012
 
 * ---------------------------
-	dc.l 0x22222248
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222228
-	dc.l 0x22222224
-	dc.l 0x22222224
-	dc.l 0x22222224
-	dc.l 0x22222224
-
-* ---------------------------
-	dc.l 0x88822222
-	dc.l 0x88822222
-	dc.l 0x88822222
-	dc.l 0x88822222
-	dc.l 0x88822222
-	dc.l 0x88822222
-	dc.l 0x88822222
-	dc.l 0x88822222
+	dc.l 0x66622222
+	dc.l 0x66622222
+	dc.l 0x66622222
+	dc.l 0x66622222
+	dc.l 0x66622222
+	dc.l 0x66622222
+	dc.l 0x66622222
+	dc.l 0x66622222
 
 * ---------------------------
 	dc.l 0x21222222
@@ -2483,17 +2133,17 @@ motoko_tiles:
 	dc.l 0x01122225
 	dc.l 0x01022225
 	dc.l 0x05022225
-	dc.l 0x16022226
+	dc.l 0x17022227
 
 * ---------------------------
-	dc.l 0xdeb45dff
-	dc.l 0xded46eff
-	dc.l 0xded46eff
+	dc.l 0xdfb25dff
+	dc.l 0xdfd27fff
+	dc.l 0xdfd27fff
 	dc.l 0xdfd29fff
-	dc.l 0xdfe5bfff
-	dc.l 0xdfe7dfff
-	dc.l 0xefddefff
-	dc.l 0xeffeffff
+	dc.l 0xdff5bfff
+	dc.l 0xdff8dfff
+	dc.l 0xffddffff
+	dc.l 0xffffffff
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -2501,109 +2151,109 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xfffffffe
-	dc.l 0xffffffee
-	dc.l 0xfffffee9
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffff9
 
 * ---------------------------
-	dc.l 0xffffed10
-	dc.l 0xffeed100
-	dc.l 0xfeed1000
-	dc.l 0xfed10000
-	dc.l 0xed100000
+	dc.l 0xfffffd10
+	dc.l 0xffffd100
+	dc.l 0xfffd1000
+	dc.l 0xffd10000
+	dc.l 0xfd100000
 	dc.l 0xd5000000
-	dc.l 0x60000000
+	dc.l 0x70000000
 	dc.l 0x00000000
 
 * ---------------------------
-	dc.l 0x00567776
-	dc.l 0x00667777
-	dc.l 0x00667777
-	dc.l 0x01667777
-	dc.l 0x01667777
-	dc.l 0x05667777
-	dc.l 0x05777777
-	dc.l 0x06777777
+	dc.l 0x00578887
+	dc.l 0x00778888
+	dc.l 0x00778888
+	dc.l 0x01778888
+	dc.l 0x01778888
+	dc.l 0x05778888
+	dc.l 0x05888888
+	dc.l 0x07888888
 
 * ---------------------------
-	dc.l 0x66555666
-	dc.l 0x76666779
-	dc.l 0x7667779b
-	dc.l 0x776556bb
-	dc.l 0x77765116
-	dc.l 0x77669951
-	dc.l 0x7779bbaa
-	dc.l 0x779bdbaa
+	dc.l 0x77555777
+	dc.l 0x87777889
+	dc.l 0x8778889b
+	dc.l 0x887557bb
+	dc.l 0x88875117
+	dc.l 0x88779951
+	dc.l 0x8889bbaa
+	dc.l 0x889bdbaa
 
 * ---------------------------
-	dc.l 0x66510000
-	dc.l 0x77765100
-	dc.l 0x77777650
-	dc.l 0x77666651
-	dc.l 0x66655566
-	dc.l 0x01556655
-	dc.l 0x71000556
-	dc.l 0xaa755101
+	dc.l 0x77510000
+	dc.l 0x88875100
+	dc.l 0x88888750
+	dc.l 0x88777751
+	dc.l 0x77755577
+	dc.l 0x01557755
+	dc.l 0x81000557
+	dc.l 0xaa855101
 
 * ---------------------------
-	dc.l 0x00100016
-	dc.l 0x00000156
+	dc.l 0x00100017
+	dc.l 0x00000157
 	dc.l 0x00000001
 	dc.l 0x11000000
-	dc.l 0x67500000
-	dc.l 0x56661000
-	dc.l 0x65556510
-	dc.l 0x56665566
+	dc.l 0x78500000
+	dc.l 0x57771000
+	dc.l 0x75557510
+	dc.l 0x57775577
 
 * ---------------------------
-	dc.l 0x76766677
-	dc.l 0x76677777
-	dc.l 0x56677777
-	dc.l 0x01567777
-	dc.l 0x00016667
-	dc.l 0x00001556
+	dc.l 0x87877788
+	dc.l 0x87788888
+	dc.l 0x57788888
+	dc.l 0x01578888
+	dc.l 0x00017778
+	dc.l 0x00001557
 	dc.l 0x00000015
 	dc.l 0x50000001
 
 * ---------------------------
-	dc.l 0x76666656
-	dc.l 0x76676567
-	dc.l 0x76666666
-	dc.l 0x76666666
-	dc.l 0x66666666
-	dc.l 0x66666666
-	dc.l 0x67666777
-	dc.l 0x56766777
+	dc.l 0x87777757
+	dc.l 0x87787578
+	dc.l 0x87777777
+	dc.l 0x87777777
+	dc.l 0x77777777
+	dc.l 0x77777777
+	dc.l 0x78777888
+	dc.l 0x57877888
 
 * ---------------------------
-	dc.l 0x77766666
-	dc.l 0x66666675
-	dc.l 0x66666665
-	dc.l 0x66666661
-	dc.l 0x77777750
-	dc.l 0x77777610
-	dc.l 0x77767600
-	dc.l 0x77776100
+	dc.l 0x88877777
+	dc.l 0x77777785
+	dc.l 0x77777775
+	dc.l 0x77777771
+	dc.l 0x88888850
+	dc.l 0x88888710
+	dc.l 0x88878700
+	dc.l 0x88887100
 
 * ---------------------------
 	dc.l 0x10000000
 	dc.l 0x00000000
 	dc.l 0x00000005
-	dc.l 0x00000016
-	dc.l 0x00000167
-	dc.l 0x00001667
-	dc.l 0x00016677
-	dc.l 0x00166667
+	dc.l 0x00000017
+	dc.l 0x00000178
+	dc.l 0x00001778
+	dc.l 0x00017788
+	dc.l 0x00177778
 
 * ---------------------------
-	dc.l 0x06666665
-	dc.l 0x57777665
-	dc.l 0x67777665
-	dc.l 0x77777665
-	dc.l 0x77666661
-	dc.l 0x77666661
-	dc.l 0x77776760
-	dc.l 0x77777660
+	dc.l 0x07777775
+	dc.l 0x58888775
+	dc.l 0x78888775
+	dc.l 0x88888775
+	dc.l 0x88777771
+	dc.l 0x88777771
+	dc.l 0x88887870
+	dc.l 0x88888770
 
 * ---------------------------
 	dc.l 0x00000000
@@ -2616,44 +2266,44 @@ motoko_tiles:
 	dc.l 0x00000122
 
 * ---------------------------
-	dc.l 0x02225666
-	dc.l 0x12226666
-	dc.l 0x22226666
-	dc.l 0x22266676
-	dc.l 0x22266667
-	dc.l 0x22666666
-	dc.l 0x24666666
-	dc.l 0x26666665
+	dc.l 0x02225777
+	dc.l 0x12227777
+	dc.l 0x22227777
+	dc.l 0x22277787
+	dc.l 0x22277778
+	dc.l 0x22777777
+	dc.l 0x23777777
+	dc.l 0x27777775
 
 * ---------------------------
-	dc.l 0x61222666
-	dc.l 0x62225776
-	dc.l 0x61226666
-	dc.l 0x52247766
-	dc.l 0x52256677
-	dc.l 0x22266677
-	dc.l 0x22577777
-	dc.l 0x21667777
+	dc.l 0x71222777
+	dc.l 0x72225887
+	dc.l 0x71227777
+	dc.l 0x52238877
+	dc.l 0x52257788
+	dc.l 0x22277788
+	dc.l 0x22588888
+	dc.l 0x21778888
 
 * ---------------------------
-	dc.l 0x77776100
-	dc.l 0x67776100
-	dc.l 0x67776500
-	dc.l 0x77776500
-	dc.l 0x77766500
-	dc.l 0x77776500
-	dc.l 0x77766500
-	dc.l 0x77777500
+	dc.l 0x88887100
+	dc.l 0x78887100
+	dc.l 0x78887500
+	dc.l 0x88887500
+	dc.l 0x88877500
+	dc.l 0x88887500
+	dc.l 0x88877500
+	dc.l 0x88888500
 
 * ---------------------------
-	dc.l 0x00067500
-	dc.l 0x00166500
-	dc.l 0x00566610
-	dc.l 0x00566610
-	dc.l 0x01666650
-	dc.l 0x05766750
-	dc.l 0x06777660
-	dc.l 0x16777760
+	dc.l 0x00078500
+	dc.l 0x00177500
+	dc.l 0x00577710
+	dc.l 0x00577710
+	dc.l 0x01777750
+	dc.l 0x05877850
+	dc.l 0x07888770
+	dc.l 0x17888870
 
 * ---------------------------
 	dc.l 0x00012222
@@ -2706,14 +2356,14 @@ motoko_tiles:
 	dc.l 0x12222221
 
 * ---------------------------
-	dc.l 0x88822222
-	dc.l 0x88822222
-	dc.l 0x88822221
-	dc.l 0x88822220
-	dc.l 0x88822220
-	dc.l 0x88822220
-	dc.l 0x48822220
-	dc.l 0x48422220
+	dc.l 0x66622222
+	dc.l 0x66622222
+	dc.l 0x66622221
+	dc.l 0x66622220
+	dc.l 0x66622220
+	dc.l 0x66622220
+	dc.l 0x36622220
+	dc.l 0x36222220
 
 * ---------------------------
 	dc.l 0x00122220
@@ -2750,40 +2400,30 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000001
-	dc.l 0x00000006
+	dc.l 0x00000007
 	dc.l 0x00000009
 	dc.l 0x0000001d
-	dc.l 0x0000006d
+	dc.l 0x0000007d
 
 * ---------------------------
-	dc.l 0x59022226
-	dc.l 0x6b022229
+	dc.l 0x59022227
+	dc.l 0x7b022229
 	dc.l 0x9d122229
-	dc.l 0xbd12224b
+	dc.l 0xbd12222b
 	dc.l 0xdd12225d
-	dc.l 0xed12245d
-	dc.l 0xed12226d
-	dc.l 0xed12226e
+	dc.l 0xfd12225d
+	dc.l 0xfd12227d
+	dc.l 0xfd12227f
 
 * ---------------------------
-	dc.l 0xefffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0xfffffeb1
-	dc.l 0xffffed50
-	dc.l 0xfffee600
-	dc.l 0xffee9000
-	dc.l 0xffed1000
-	dc.l 0xfee60000
-	dc.l 0xee910000
-	dc.l 0xed100000
+	dc.l 0xffffffb1
+	dc.l 0xfffffd50
+	dc.l 0xfffff700
+	dc.l 0xffff9000
+	dc.l 0xfffd1000
+	dc.l 0xfff70000
+	dc.l 0xff910000
+	dc.l 0xfd100000
 
 * ---------------------------
 	dc.l 0x00000000
@@ -2826,17 +2466,17 @@ motoko_tiles:
 	dc.l 0x00000005
 
 * ---------------------------
-	dc.l 0x16777777
-	dc.l 0x16667776
-	dc.l 0x57697779
-	dc.l 0x5669779b
-	dc.l 0x666b69bd
-	dc.l 0x67997bdd
-	dc.l 0x67b9bddd
-	dc.l 0x66bbdddd
+	dc.l 0x17888888
+	dc.l 0x17778887
+	dc.l 0x58798889
+	dc.l 0x5779889b
+	dc.l 0x777b79bd
+	dc.l 0x78998bdd
+	dc.l 0x78b9bddd
+	dc.l 0x77bbdddd
 
 * ---------------------------
-	dc.l 0x79bddaaa
+	dc.l 0x89bddaaa
 	dc.l 0x9bddbaaa
 	dc.l 0xddddbaaa
 	dc.l 0xdddd9aaa
@@ -2846,124 +2486,124 @@ motoko_tiles:
 	dc.l 0xdddd9aaa
 
 * ---------------------------
-	dc.l 0xaaaa8750
-	dc.l 0xaaaaaaa8
-	dc.l 0xaaaaaa77
-	dc.l 0xaaaaa78a
-	dc.l 0xaaaa8acc
-	dc.l 0xaba8acca
+	dc.l 0xaaaa6850
+	dc.l 0xaaaaaaa6
+	dc.l 0xaaaaaa88
+	dc.l 0xaaaaa86a
+	dc.l 0xaaaa6acc
+	dc.l 0xaba6acca
 	dc.l 0xeeedacaa
-	dc.l 0xdeeeeaa8
+	dc.l 0xdeeeeaa6
 
 * ---------------------------
-	dc.l 0x00156655
-	dc.l 0x75111566
-	dc.l 0x88886101
-	dc.l 0xcccaa861
+	dc.l 0x00157755
+	dc.l 0x85111577
+	dc.l 0x66667101
+	dc.l 0xcccaa671
 	dc.l 0xcccccca9
 	dc.l 0xacccccca
-	dc.l 0xa88acccc
+	dc.l 0xa66acccc
 	dc.l 0x0000accc
 
 * ---------------------------
-	dc.l 0x56100000
-	dc.l 0x65551000
-	dc.l 0x57651100
-	dc.l 0x01676510
-	dc.l 0x51156651
-	dc.l 0x9b105665
-	dc.l 0x8bb50567
-	dc.l 0xabedb116
+	dc.l 0x57100000
+	dc.l 0x75551000
+	dc.l 0x58751100
+	dc.l 0x01787510
+	dc.l 0x51157751
+	dc.l 0x9b105775
+	dc.l 0x6bb50578
+	dc.l 0xabedb117
 
 * ---------------------------
-	dc.l 0x05666777
-	dc.l 0x00567777
-	dc.l 0x00067777
-	dc.l 0x00016777
-	dc.l 0x00006777
-	dc.l 0x10005777
-	dc.l 0x51001676
-	dc.l 0x61101666
+	dc.l 0x05777888
+	dc.l 0x00578888
+	dc.l 0x00078888
+	dc.l 0x00017888
+	dc.l 0x00007888
+	dc.l 0x10005888
+	dc.l 0x51001787
+	dc.l 0x71101777
 
 * ---------------------------
-	dc.l 0x77675000
-	dc.l 0x66761000
-	dc.l 0x66650015
-	dc.l 0x67610166
-	dc.l 0x76105669
-	dc.l 0x6515777b
-	dc.l 0x556776bd
-	dc.l 0x67777bdd
+	dc.l 0x88785000
+	dc.l 0x77871000
+	dc.l 0x77750015
+	dc.l 0x78710177
+	dc.l 0x87105779
+	dc.l 0x7515888b
+	dc.l 0x557887bd
+	dc.l 0x78888bdd
 
 * ---------------------------
-	dc.l 0x01667667
-	dc.l 0x56777777
-	dc.l 0x69777777
-	dc.l 0x9b977777
-	dc.l 0xbd967777
-	dc.l 0xddb67777
-	dc.l 0xddb66666
-	dc.l 0xddb66666
+	dc.l 0x01778778
+	dc.l 0x57888888
+	dc.l 0x79888888
+	dc.l 0x9b988888
+	dc.l 0xbd978888
+	dc.l 0xddb78888
+	dc.l 0xddb77777
+	dc.l 0xddb77777
 
 * ---------------------------
-	dc.l 0x77777650
-	dc.l 0x77666750
-	dc.l 0x77666610
-	dc.l 0x77667500
-	dc.l 0x77666110
-	dc.l 0x77666150
-	dc.l 0x66775510
-	dc.l 0x66665500
+	dc.l 0x88888750
+	dc.l 0x88777850
+	dc.l 0x88777710
+	dc.l 0x88778500
+	dc.l 0x88777110
+	dc.l 0x88777150
+	dc.l 0x77885510
+	dc.l 0x77775500
 
 * ---------------------------
 	dc.l 0x00000222
 	dc.l 0x00001225
-	dc.l 0x00002226
-	dc.l 0x00012166
-	dc.l 0x00122566
-	dc.l 0x00225666
+	dc.l 0x00002227
+	dc.l 0x00012177
+	dc.l 0x00122577
+	dc.l 0x00225777
 	dc.l 0x01201000
 	dc.l 0x12000000
 
 * ---------------------------
-	dc.l 0x56666662
-	dc.l 0x66666661
-	dc.l 0x66666651
-	dc.l 0x66667612
-	dc.l 0x66666516
-	dc.l 0x66666156
-	dc.l 0x01111156
+	dc.l 0x57777772
+	dc.l 0x77777771
+	dc.l 0x77777751
+	dc.l 0x77778712
+	dc.l 0x77777517
+	dc.l 0x77777157
+	dc.l 0x01111157
 	dc.l 0x00000001
 
 * ---------------------------
-	dc.l 0x25677777
-	dc.l 0x26677766
-	dc.l 0x56677766
-	dc.l 0x66677766
-	dc.l 0x66677766
-	dc.l 0x76677766
-	dc.l 0x66666777
-	dc.l 0x11155566
+	dc.l 0x25788888
+	dc.l 0x27788877
+	dc.l 0x57788877
+	dc.l 0x77788877
+	dc.l 0x77788877
+	dc.l 0x87788877
+	dc.l 0x77777888
+	dc.l 0x11155577
 
 * ---------------------------
-	dc.l 0x77766500
-	dc.l 0x77767501
-	dc.l 0x77767105
-	dc.l 0x77777116
-	dc.l 0x77766057
-	dc.l 0x77775567
-	dc.l 0x77775666
-	dc.l 0x66766666
+	dc.l 0x88877500
+	dc.l 0x88878501
+	dc.l 0x88878105
+	dc.l 0x88888117
+	dc.l 0x88877058
+	dc.l 0x88885578
+	dc.l 0x88885777
+	dc.l 0x77877777
 
 * ---------------------------
-	dc.l 0x57677761
-	dc.l 0x77777761
-	dc.l 0x77777761
-	dc.l 0x77777765
-	dc.l 0x77777765
-	dc.l 0x77777775
-	dc.l 0x77777766
-	dc.l 0x77777766
+	dc.l 0x58788871
+	dc.l 0x88888871
+	dc.l 0x88888871
+	dc.l 0x88888875
+	dc.l 0x88888875
+	dc.l 0x88888885
+	dc.l 0x88888877
+	dc.l 0x88888877
 
 * ---------------------------
 	dc.l 0x00001100
@@ -2991,9 +2631,9 @@ motoko_tiles:
 	dc.l 0x11222222
 	dc.l 0x02222122
 	dc.l 0x02222552
-	dc.l 0x22221672
-	dc.l 0x22225664
-	dc.l 0x22226665
+	dc.l 0x22221782
+	dc.l 0x22225772
+	dc.l 0x22227775
 
 * ---------------------------
 	dc.l 0x22210000
@@ -3016,12 +2656,12 @@ motoko_tiles:
 	dc.l 0x01222000
 
 * ---------------------------
-	dc.l 0x48422220
-	dc.l 0x48222200
-	dc.l 0x48222200
-	dc.l 0x58222200
-	dc.l 0x54222000
-	dc.l 0x42220000
+	dc.l 0x36222220
+	dc.l 0x36222200
+	dc.l 0x36222200
+	dc.l 0x56222200
+	dc.l 0x52222000
+	dc.l 0x22220000
 	dc.l 0x12210000
 	dc.l 0x12200000
 
@@ -3066,37 +2706,37 @@ motoko_tiles:
 	dc.l 0x20022220
 
 * ---------------------------
-	dc.l 0x000001be
-	dc.l 0x000005de
-	dc.l 0x000009ee
-	dc.l 0x00001bef
-	dc.l 0x00006dff
-	dc.l 0x0001beff
-	dc.l 0x0006dfff
-	dc.l 0x0019efff
+	dc.l 0x000001bf
+	dc.l 0x000005df
+	dc.l 0x000009ff
+	dc.l 0x00001bff
+	dc.l 0x00007dff
+	dc.l 0x0001bfff
+	dc.l 0x0007dfff
+	dc.l 0x0019ffff
 
 * ---------------------------
-	dc.l 0xed22229f
-	dc.l 0xed4225df
-	dc.l 0xfb2226ef
-	dc.l 0xfb224bef
-	dc.l 0xf9226dff
-	dc.l 0xf9229eff
-	dc.l 0xf845dfff
-	dc.l 0xf829efff
+	dc.l 0xfd22229f
+	dc.l 0xfd2225df
+	dc.l 0xfb2227ff
+	dc.l 0xfb222bff
+	dc.l 0xf9227dff
+	dc.l 0xf9229fff
+	dc.l 0xf625dfff
+	dc.l 0xf629ffff
 
 * ---------------------------
-	dc.l 0xfffffffe
-	dc.l 0xfffffffe
-	dc.l 0xffffffee
-	dc.l 0xffffffeb
-	dc.l 0xfffffee5
-	dc.l 0xfffffed1
-	dc.l 0xffffee91
-	dc.l 0xfffeee50
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffffb
+	dc.l 0xfffffff5
+	dc.l 0xffffffd1
+	dc.l 0xffffff91
+	dc.l 0xffffff50
 
 * ---------------------------
-	dc.l 0xe6000000
+	dc.l 0xf7000000
 	dc.l 0xb1000000
 	dc.l 0x50000000
 	dc.l 0x00000000
@@ -3136,31 +2776,21 @@ motoko_tiles:
 	dc.l 0x00000000
 
 * ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000110
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000000
-
-* ---------------------------
 	dc.l 0x00000005
-	dc.l 0x00000016
-	dc.l 0x00000016
-	dc.l 0x00000057
-	dc.l 0x00000057
-	dc.l 0x00000057
-	dc.l 0x00000067
-	dc.l 0x00000167
+	dc.l 0x00000017
+	dc.l 0x00000017
+	dc.l 0x00000058
+	dc.l 0x00000058
+	dc.l 0x00000058
+	dc.l 0x00000078
+	dc.l 0x00000178
 
 * ---------------------------
-	dc.l 0x69dddddd
-	dc.l 0x6bdddddd
-	dc.l 0x6bdddddd
-	dc.l 0x6bdddddd
-	dc.l 0x7ddddddd
+	dc.l 0x79dddddd
+	dc.l 0x7bdddddd
+	dc.l 0x7bdddddd
+	dc.l 0x7bdddddd
+	dc.l 0x8ddddddd
 	dc.l 0x9ddddddd
 	dc.l 0x9ddddddd
 	dc.l 0x9ddddddb
@@ -3168,7 +2798,7 @@ motoko_tiles:
 * ---------------------------
 	dc.l 0xdddd9aaa
 	dc.l 0xddddb9aa
-	dc.l 0xddddb7aa
+	dc.l 0xddddb8aa
 	dc.l 0xddddd9aa
 	dc.l 0xddddd99a
 	dc.l 0xddbbbb9a
@@ -3178,82 +2808,82 @@ motoko_tiles:
 * ---------------------------
 	dc.l 0xaeeeeaa1
 	dc.l 0xaabdaaa1
-	dc.l 0xaa8888a8
-	dc.l 0xaaa8aa8a
-	dc.l 0xaaa8aca8
-	dc.l 0xaaa88aca
-	dc.l 0xaaaa78aa
-	dc.l 0x9aaaa98a
+	dc.l 0xaa6666a6
+	dc.l 0xaaa6aa6a
+	dc.l 0xaaa6aca6
+	dc.l 0xaaa66aca
+	dc.l 0xaaaa86aa
+	dc.l 0x9aaaa96a
 
 * ---------------------------
-	dc.l 0x00004ccc
-	dc.l 0x00004ccc
+	dc.l 0x00003ccc
+	dc.l 0x00003ccc
 	dc.l 0x1000accc
-	dc.l 0x874acaca
-	dc.l 0x8acccaaa
+	dc.l 0x683acaca
+	dc.l 0x6acccaaa
 	dc.l 0xacceecaa
 	dc.l 0xccceeaa9
-	dc.l 0xaaaaa8be
+	dc.l 0xaaaaa6be
 
 * ---------------------------
-	dc.l 0xabeed655
-	dc.l 0xabeed666
-	dc.l 0xabeed676
-	dc.l 0x8beed677
-	dc.l 0x9eeed677
-	dc.l 0xbeeed677
-	dc.l 0xeeeed677
-	dc.l 0xeeeeb777
+	dc.l 0xabeed755
+	dc.l 0xabeed777
+	dc.l 0xabeed787
+	dc.l 0x6beed788
+	dc.l 0x9eeed788
+	dc.l 0xbeeed788
+	dc.l 0xeeeed788
+	dc.l 0xeeeeb888
 
 * ---------------------------
-	dc.l 0x65211677
-	dc.l 0x55122677
-	dc.l 0x65122677
-	dc.l 0x76422567
-	dc.l 0x67522566
-	dc.l 0x6762256b
-	dc.l 0x676225bd
-	dc.l 0x675225bd
+	dc.l 0x75211788
+	dc.l 0x55122788
+	dc.l 0x75122788
+	dc.l 0x87322578
+	dc.l 0x78522577
+	dc.l 0x7872257b
+	dc.l 0x787225bd
+	dc.l 0x785225bd
 
 * ---------------------------
-	dc.l 0x77779ddd
-	dc.l 0x7779dddd
-	dc.l 0x779ddddd
-	dc.l 0x69dddddd
+	dc.l 0x88889ddd
+	dc.l 0x8889dddd
+	dc.l 0x889ddddd
+	dc.l 0x79dddddd
 	dc.l 0x9ddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xddd66666
-	dc.l 0xddd66667
-	dc.l 0xddd66667
-	dc.l 0xddd67777
-	dc.l 0xddd67777
-	dc.l 0xddb77777
-	dc.l 0xddb67776
-	dc.l 0xddb67776
+	dc.l 0xddd77777
+	dc.l 0xddd77778
+	dc.l 0xddd77778
+	dc.l 0xddd78888
+	dc.l 0xddd78888
+	dc.l 0xddb88888
+	dc.l 0xddb78887
+	dc.l 0xddb78887
 
 * ---------------------------
-	dc.l 0x76651000
-	dc.l 0x76511001
-	dc.l 0x66500011
-	dc.l 0x65151110
-	dc.l 0x55651155
-	dc.l 0x67512667
-	dc.l 0x76116666
-	dc.l 0x65166666
+	dc.l 0x87751000
+	dc.l 0x87511001
+	dc.l 0x77500011
+	dc.l 0x75151110
+	dc.l 0x55751155
+	dc.l 0x78512778
+	dc.l 0x87117777
+	dc.l 0x75177777
 
 * ---------------------------
 	dc.l 0x20000000
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x01111100
-	dc.l 0x66665222
-	dc.l 0x77662222
-	dc.l 0x66622255
-	dc.l 0x66415566
+	dc.l 0x77775222
+	dc.l 0x88772222
+	dc.l 0x77722255
+	dc.l 0x77315577
 
 * ---------------------------
 	dc.l 0x00000000
@@ -3261,9 +2891,9 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x22211215
-	dc.l 0x15556666
-	dc.l 0x66776667
-	dc.l 0x66551111
+	dc.l 0x15557777
+	dc.l 0x77887778
+	dc.l 0x77551111
 
 * ---------------------------
 	dc.l 0x00000001
@@ -3271,29 +2901,29 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x11000000
 	dc.l 0x51111121
-	dc.l 0x66655552
-	dc.l 0x76677766
-	dc.l 0x11555566
+	dc.l 0x77755552
+	dc.l 0x87788877
+	dc.l 0x11555577
 
 * ---------------------------
-	dc.l 0x11556666
+	dc.l 0x11557777
 	dc.l 0x00000111
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x11511111
-	dc.l 0x11256666
-	dc.l 0x65522567
-	dc.l 0x67665525
+	dc.l 0x11257777
+	dc.l 0x75522578
+	dc.l 0x78775525
 
 * ---------------------------
-	dc.l 0x67777665
-	dc.l 0x55566665
+	dc.l 0x78888775
+	dc.l 0x55577775
 	dc.l 0x00001155
 	dc.l 0x00000000
 	dc.l 0x10000000
-	dc.l 0x66666551
-	dc.l 0x77777671
-	dc.l 0x67777761
+	dc.l 0x77777551
+	dc.l 0x88888781
+	dc.l 0x78888871
 
 * ---------------------------
 	dc.l 0x00000002
@@ -3301,29 +2931,29 @@ motoko_tiles:
 	dc.l 0x00000022
 	dc.l 0x00000122
 	dc.l 0x00000222
-	dc.l 0x00015224
-	dc.l 0x00162226
-	dc.l 0x00542266
+	dc.l 0x00015222
+	dc.l 0x00172227
+	dc.l 0x00522277
 
 * ---------------------------
-	dc.l 0x22266776
-	dc.l 0x22567777
-	dc.l 0x22667776
-	dc.l 0x26777776
-	dc.l 0x56777776
-	dc.l 0x67777777
-	dc.l 0x67777777
-	dc.l 0x66777776
+	dc.l 0x22277887
+	dc.l 0x22578888
+	dc.l 0x22778887
+	dc.l 0x27888887
+	dc.l 0x57888887
+	dc.l 0x78888888
+	dc.l 0x78888888
+	dc.l 0x77888887
 
 * ---------------------------
 	dc.l 0x22110000
 	dc.l 0x22150000
-	dc.l 0x22161000
-	dc.l 0x22161000
-	dc.l 0x41165000
-	dc.l 0x50175000
-	dc.l 0x50575000
-	dc.l 0x10575000
+	dc.l 0x22171000
+	dc.l 0x22171000
+	dc.l 0x21175000
+	dc.l 0x50185000
+	dc.l 0x50585000
+	dc.l 0x10585000
 
 * ---------------------------
 	dc.l 0x01222000
@@ -3356,14 +2986,14 @@ motoko_tiles:
 	dc.l 0x12222222
 
 * ---------------------------
-	dc.l 0x22244222
-	dc.l 0x22248222
-	dc.l 0x22228422
-	dc.l 0x22228822
-	dc.l 0x22228842
-	dc.l 0x22224882
-	dc.l 0x22224884
-	dc.l 0x22224888
+	dc.l 0x22222222
+	dc.l 0x22226222
+	dc.l 0x22226222
+	dc.l 0x22226622
+	dc.l 0x22226622
+	dc.l 0x22222662
+	dc.l 0x22222662
+	dc.l 0x22222666
 
 * ---------------------------
 	dc.l 0x20012210
@@ -3373,37 +3003,37 @@ motoko_tiles:
 	dc.l 0x22210100
 	dc.l 0x22222100
 	dc.l 0x22222211
-	dc.l 0x42222222
+	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x005defff
-	dc.l 0x009eefff
-	dc.l 0x01beffff
-	dc.l 0x09eeffff
-	dc.l 0x5deeffff
-	dc.l 0x9eefffff
-	dc.l 0x9eeeffff
-	dc.l 0x6bdeefff
+	dc.l 0x005dffff
+	dc.l 0x009fffff
+	dc.l 0x01bfffff
+	dc.l 0x09ffffff
+	dc.l 0x5dffffff
+	dc.l 0x9fffffff
+	dc.l 0x9fffffff
+	dc.l 0x7bdfffff
 
 * ---------------------------
-	dc.l 0xf84befff
-	dc.l 0xe47dffff
-	dc.l 0xd5beffff
-	dc.l 0xd9efffff
-	dc.l 0xdeffffff
-	dc.l 0xfeffffff
+	dc.l 0xf62bffff
+	dc.l 0xf38dffff
+	dc.l 0xd5bfffff
+	dc.l 0xd9ffffff
+	dc.l 0xdfffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xfffeeb10
-	dc.l 0xfffee600
-	dc.l 0xffeeb100
-	dc.l 0xffee6000
-	dc.l 0xffeb1001
-	dc.l 0xfee60012
-	dc.l 0xfeb10012
-	dc.l 0xee500122
+	dc.l 0xfffffb10
+	dc.l 0xfffff700
+	dc.l 0xffffb100
+	dc.l 0xffff7000
+	dc.l 0xfffb1001
+	dc.l 0xfff70012
+	dc.l 0xffb10012
+	dc.l 0xff500122
 
 * ---------------------------
 	dc.l 0x00012222
@@ -3436,14 +3066,14 @@ motoko_tiles:
 	dc.l 0x00000000
 
 * ---------------------------
-	dc.l 0x00000166
-	dc.l 0x00000576
-	dc.l 0x00000576
-	dc.l 0x00000666
-	dc.l 0x00000679
-	dc.l 0x00001679
-	dc.l 0x00001679
-	dc.l 0x00001679
+	dc.l 0x00000177
+	dc.l 0x00000587
+	dc.l 0x00000587
+	dc.l 0x00000777
+	dc.l 0x00000789
+	dc.l 0x00001789
+	dc.l 0x00001789
+	dc.l 0x00001789
 
 * ---------------------------
 	dc.l 0xbddddddb
@@ -3456,9 +3086,9 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0x979bbddd
-	dc.l 0xb969bdbb
-	dc.l 0xddb96bbd
+	dc.l 0x989bbddd
+	dc.l 0xb979bdbb
+	dc.l 0xddb97bbd
 	dc.l 0xddddbbdd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
@@ -3486,24 +3116,24 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xeeeeb677
-	dc.l 0xeeee9677
-	dc.l 0xeeebb677
-	dc.l 0xedbbb667
-	dc.l 0xbdddb966
-	dc.l 0xddbbb677
-	dc.l 0xddddb777
-	dc.l 0xddddd977
+	dc.l 0xeeeeb788
+	dc.l 0xeeee9788
+	dc.l 0xeeebb788
+	dc.l 0xedbbb778
+	dc.l 0xbdddb977
+	dc.l 0xddbbb788
+	dc.l 0xddddb888
+	dc.l 0xddddd988
 
 * ---------------------------
-	dc.l 0x665225bd
-	dc.l 0x752225bd
-	dc.l 0x642456bd
-	dc.l 0x525666bd
-	dc.l 0x556676dd
-	dc.l 0x777769dd
-	dc.l 0x77776bdd
-	dc.l 0x77776ddd
+	dc.l 0x775225bd
+	dc.l 0x852225bd
+	dc.l 0x732357bd
+	dc.l 0x525777bd
+	dc.l 0x557787dd
+	dc.l 0x888879dd
+	dc.l 0x88887bdd
+	dc.l 0x88887ddd
 
 * ---------------------------
 	dc.l 0xdddddddd
@@ -3516,40 +3146,40 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xdd967777
-	dc.l 0xdd666776
-	dc.l 0xdb767777
-	dc.l 0xd9777777
-	dc.l 0xd977777b
-	dc.l 0xb77779bd
-	dc.l 0x9766bddd
-	dc.l 0x679bdddd
+	dc.l 0xdd978888
+	dc.l 0xdd777887
+	dc.l 0xdb878888
+	dc.l 0xd9888888
+	dc.l 0xd988888b
+	dc.l 0xb88889bd
+	dc.l 0x9877bddd
+	dc.l 0x789bdddd
 
 * ---------------------------
-	dc.l 0x65677776
-	dc.l 0x66777776
-	dc.l 0x79777765
-	dc.l 0xbb677622
-	dc.l 0xdb666222
-	dc.l 0xdb662225
-	dc.l 0xdd962225
-	dc.l 0xddb75226
+	dc.l 0x75788887
+	dc.l 0x77888887
+	dc.l 0x89888875
+	dc.l 0xbb788722
+	dc.l 0xdb777222
+	dc.l 0xdb772225
+	dc.l 0xdd972225
+	dc.l 0xddb85227
 
 * ---------------------------
-	dc.l 0x64566666
-	dc.l 0x55667655
-	dc.l 0x26766667
-	dc.l 0x47777777
-	dc.l 0x67777777
-	dc.l 0x6777776b
-	dc.l 0x6777779d
-	dc.l 0x777779db
+	dc.l 0x73577777
+	dc.l 0x55778755
+	dc.l 0x27877778
+	dc.l 0x38888888
+	dc.l 0x78888888
+	dc.l 0x7888887b
+	dc.l 0x7888889d
+	dc.l 0x888889db
 
 * ---------------------------
 	dc.l 0x51110110
-	dc.l 0x66666777
-	dc.l 0x79b99aaa
-	dc.l 0x7b99aaaa
+	dc.l 0x77777888
+	dc.l 0x89b99aaa
+	dc.l 0x8b99aaaa
 	dc.l 0xbb9aaaaa
 	dc.l 0xb9aaaaaa
 	dc.l 0x99aaaaaa
@@ -3557,31 +3187,31 @@ motoko_tiles:
 
 * ---------------------------
 	dc.l 0x01000001
-	dc.l 0x8a850111
-	dc.l 0xaa778888
-	dc.l 0xaa888aaa
-	dc.l 0xa88acccc
-	dc.l 0x98acaacc
-	dc.l 0x8acaaaaa
-	dc.l 0xdccaa800
+	dc.l 0x6a650111
+	dc.l 0xaa886666
+	dc.l 0xaa666aaa
+	dc.l 0xa66acccc
+	dc.l 0x96acaacc
+	dc.l 0x6acaaaaa
+	dc.l 0xdccaa600
 
 * ---------------------------
-	dc.l 0x15566675
-	dc.l 0x10001156
-	dc.l 0x85510000
-	dc.l 0x8a856911
-	dc.l 0xccca8a6b
-	dc.l 0xccccca8b
+	dc.l 0x15577785
+	dc.l 0x10001157
+	dc.l 0x65510000
+	dc.l 0x6a657911
+	dc.l 0xccca6a7b
+	dc.l 0xccccca6b
 	dc.l 0xacccccab
-	dc.l 0x02cccca8
+	dc.l 0x02cccca6
 
 * ---------------------------
-	dc.l 0x55666650
-	dc.l 0x66665510
-	dc.l 0x15566600
+	dc.l 0x55777750
+	dc.l 0x77775510
+	dc.l 0x15577700
 	dc.l 0x00001100
 	dc.l 0xb1110000
-	dc.l 0xea6b1000
+	dc.l 0xea7b1000
 	dc.l 0xee990000
 	dc.l 0xeed10000
 
@@ -3589,41 +3219,41 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000001
-	dc.l 0x00000016
-	dc.l 0x00000166
-	dc.l 0x00001677
-	dc.l 0x00011556
-	dc.l 0x00555566
+	dc.l 0x00000017
+	dc.l 0x00000177
+	dc.l 0x00001788
+	dc.l 0x00011557
+	dc.l 0x00555577
 
 * ---------------------------
-	dc.l 0x05612667
-	dc.l 0x56216667
-	dc.l 0x65167667
-	dc.l 0x65777777
-	dc.l 0x56777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77779977
+	dc.l 0x05712778
+	dc.l 0x57217778
+	dc.l 0x75178778
+	dc.l 0x75888888
+	dc.l 0x57888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88889988
 
 * ---------------------------
-	dc.l 0x77777776
-	dc.l 0x77777776
-	dc.l 0x77777775
-	dc.l 0x77777771
-	dc.l 0x77777761
-	dc.l 0x77777765
-	dc.l 0x77776656
-	dc.l 0x77777667
+	dc.l 0x88888887
+	dc.l 0x88888887
+	dc.l 0x88888885
+	dc.l 0x88888881
+	dc.l 0x88888871
+	dc.l 0x88888875
+	dc.l 0x88887757
+	dc.l 0x88888778
 
 * ---------------------------
-	dc.l 0x10675000
-	dc.l 0x05771000
-	dc.l 0x06761000
-	dc.l 0x16761000
-	dc.l 0x66761000
-	dc.l 0x67760000
-	dc.l 0x77760000
-	dc.l 0x66650000
+	dc.l 0x10785000
+	dc.l 0x05881000
+	dc.l 0x07871000
+	dc.l 0x17871000
+	dc.l 0x77871000
+	dc.l 0x78870000
+	dc.l 0x88870000
+	dc.l 0x77750000
 
 * ---------------------------
 	dc.l 0x00000000
@@ -3666,64 +3296,64 @@ motoko_tiles:
 	dc.l 0x22222222
 
 * ---------------------------
-	dc.l 0x22242888
-	dc.l 0x22244488
-	dc.l 0x22228488
-	dc.l 0x22228888
-	dc.l 0x22224888
-	dc.l 0x22222888
-	dc.l 0x22222888
-	dc.l 0x22222488
+	dc.l 0x22222666
+	dc.l 0x22222266
+	dc.l 0x22226266
+	dc.l 0x22226666
+	dc.l 0x22222666
+	dc.l 0x22222666
+	dc.l 0x22222666
+	dc.l 0x22222266
 
 * ---------------------------
-	dc.l 0x82222222
-	dc.l 0x84222222
-	dc.l 0x88422222
-	dc.l 0x88822422
-	dc.l 0x88882482
-	dc.l 0x88884288
-	dc.l 0x88888448
-	dc.l 0x88888848
+	dc.l 0x62222222
+	dc.l 0x62222222
+	dc.l 0x66222222
+	dc.l 0x66622222
+	dc.l 0x66662262
+	dc.l 0x66662266
+	dc.l 0x66666226
+	dc.l 0x66666626
 
 * ---------------------------
-	dc.l 0x25bdeeff
-	dc.l 0x2249deef
-	dc.l 0x22226bde
-	dc.l 0x2222449d
-	dc.l 0x22222227
+	dc.l 0x25bdffff
+	dc.l 0x2229dfff
+	dc.l 0x22227bdf
+	dc.l 0x2222229d
+	dc.l 0x22222228
 	dc.l 0x22222222
-	dc.l 0x82222222
-	dc.l 0x84222222
+	dc.l 0x62222222
+	dc.l 0x62222222
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xefffffff
-	dc.l 0xeeffffff
-	dc.l 0xdeefffff
-	dc.l 0x5bdeffff
-	dc.l 0x249defff
-	dc.l 0x2226deff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xdfffffff
+	dc.l 0x5bdfffff
+	dc.l 0x229dffff
+	dc.l 0x2227dfff
 
 * ---------------------------
 	dc.l 0xffffffff
-	dc.l 0xfffffffe
-	dc.l 0xffffffee
-	dc.l 0xffffffed
-	dc.l 0xffffffeb
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffffd
+	dc.l 0xfffffffb
 	dc.l 0xffffffdd
-	dc.l 0xfffffebb
+	dc.l 0xffffffbb
 	dc.l 0xfffffddb
 
 * ---------------------------
-	dc.l 0xe9100222
-	dc.l 0xd6111222
+	dc.l 0xf9100222
+	dc.l 0xd7111222
 	dc.l 0xb1512222
 	dc.l 0x91522221
-	dc.l 0x66522221
-	dc.l 0x59442252
-	dc.l 0x77222552
-	dc.l 0xb4224642
+	dc.l 0x77522221
+	dc.l 0x59332252
+	dc.l 0x88222552
+	dc.l 0xb3223732
 
 * ---------------------------
 	dc.l 0x22222221
@@ -3734,16 +3364,6 @@ motoko_tiles:
 	dc.l 0x22100000
 	dc.l 0x21000000
 	dc.l 0x10000000
-
-* ---------------------------
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00000100
-	dc.l 0x00000000
-	dc.l 0x00000000
-	dc.l 0x00001000
-	dc.l 0x00000000
-	dc.l 0x00000000
 
 * ---------------------------
 	dc.l 0x00000000
@@ -3760,20 +3380,20 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00100000
-	dc.l 0x06500000
+	dc.l 0x07500000
 	dc.l 0x9b100000
 	dc.l 0xd5000000
 	dc.l 0xb1000000
 
 * ---------------------------
-	dc.l 0x00001679
-	dc.l 0x00001679
-	dc.l 0x00005679
-	dc.l 0x00005669
-	dc.l 0x00005669
+	dc.l 0x00001789
+	dc.l 0x00001789
+	dc.l 0x00005789
 	dc.l 0x00005779
-	dc.l 0x00005777
-	dc.l 0x00005777
+	dc.l 0x00005779
+	dc.l 0x00005889
+	dc.l 0x00005888
+	dc.l 0x00005888
 
 * ---------------------------
 	dc.l 0xdddddddd
@@ -3791,29 +3411,29 @@ motoko_tiles:
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddb
-	dc.l 0xdddddd97
-	dc.l 0xddddb977
-	dc.l 0xdddb9677
+	dc.l 0xdddddd98
+	dc.l 0xddddb988
+	dc.l 0xdddb9788
 
 * ---------------------------
-	dc.l 0xddddb777
-	dc.l 0xdddb6677
-	dc.l 0xdd977777
-	dc.l 0xb9677777
-	dc.l 0x66677777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0xddddb888
+	dc.l 0xdddb7788
+	dc.l 0xdd988888
+	dc.l 0xb9788888
+	dc.l 0x77788888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
 
 * ---------------------------
-	dc.l 0x77779ddd
-	dc.l 0x7776bddd
-	dc.l 0x7776dddd
-	dc.l 0x7769dddd
-	dc.l 0x776bdddd
-	dc.l 0x676ddddd
-	dc.l 0x779ddddd
-	dc.l 0x76bddddd
+	dc.l 0x88889ddd
+	dc.l 0x8887bddd
+	dc.l 0x8887dddd
+	dc.l 0x8879dddd
+	dc.l 0x887bdddd
+	dc.l 0x787ddddd
+	dc.l 0x889ddddd
+	dc.l 0x87bddddd
 
 * ---------------------------
 	dc.l 0xdddddddb
@@ -3826,7 +3446,7 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0x69dddddd
+	dc.l 0x79dddddd
 	dc.l 0xbddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
@@ -3836,21 +3456,21 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xddd96556
-	dc.l 0xdddb6677
-	dc.l 0xdddb7777
-	dc.l 0xdddd6766
-	dc.l 0xdddddb96
+	dc.l 0xddd97557
+	dc.l 0xdddb7788
+	dc.l 0xdddb8888
+	dc.l 0xdddd7877
+	dc.l 0xdddddb97
 	dc.l 0xdddddddb
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0x7776bddb
-	dc.l 0x777bddbb
-	dc.l 0x77bdddbb
-	dc.l 0x69dddbbb
-	dc.l 0x7bdd9bdb
+	dc.l 0x8887bddb
+	dc.l 0x888bddbb
+	dc.l 0x88bdddbb
+	dc.l 0x79dddbbb
+	dc.l 0x8bdd9bdb
 	dc.l 0xbddd9ddd
 	dc.l 0xdddd9ddd
 	dc.l 0xdddddbbb
@@ -3859,7 +3479,7 @@ motoko_tiles:
 	dc.l 0x9aaadeee
 	dc.l 0x9aaaaeee
 	dc.l 0xaaaaaabd
-	dc.l 0xaaaaaaa8
+	dc.l 0xaaaaaaa6
 	dc.l 0x9aaaaaa9
 	dc.l 0x9aaaaaab
 	dc.l 0xbaaaaaad
@@ -3867,73 +3487,73 @@ motoko_tiles:
 
 * ---------------------------
 	dc.l 0xeeaaa000
-	dc.l 0xeeaa8000
-	dc.l 0xecaa8000
+	dc.l 0xeeaa6000
+	dc.l 0xecaa6000
 	dc.l 0xaccaa100
-	dc.l 0xacca8a84
+	dc.l 0xacca6a63
 	dc.l 0xaaccaaaa
 	dc.l 0xaaccccaa
 	dc.l 0xe9aacccc
 
 * ---------------------------
-	dc.l 0x008cccc8
-	dc.l 0x004cacc8
-	dc.l 0x008aaac8
-	dc.l 0x03cccca4
-	dc.l 0x8ccccc81
-	dc.l 0xcedac811
-	dc.l 0xceec815d
-	dc.l 0xccca88de
+	dc.l 0x006cccc6
+	dc.l 0x003cacc6
+	dc.l 0x006aaac6
+	dc.l 0x04cccca3
+	dc.l 0x6ccccc61
+	dc.l 0xcedac611
+	dc.l 0xceec615d
+	dc.l 0xccca66de
 
 * ---------------------------
-	dc.l 0xde600000
+	dc.l 0xde700000
 	dc.l 0xd9000002
 	dc.l 0x9000019e
-	dc.l 0x00016dee
+	dc.l 0x00017dee
 	dc.l 0x015beee9
-	dc.l 0x6beeeedb
+	dc.l 0x7beeeedb
 	dc.l 0xeeeeedbd
 	dc.l 0xeeeedbdd
 
 * ---------------------------
-	dc.l 0x16777667
-	dc.l 0xb8777667
-	dc.l 0xb677779b
-	dc.l 0x6677bbdd
-	dc.l 0x79bddddd
+	dc.l 0x17888778
+	dc.l 0xb6888778
+	dc.l 0xb788889b
+	dc.l 0x7788bbdd
+	dc.l 0x89bddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0x669bbb77
-	dc.l 0x9bdddb77
-	dc.l 0xdddddb77
-	dc.l 0xdddddb77
-	dc.l 0xddddd977
-	dc.l 0xddddd977
-	dc.l 0xddddb676
-	dc.l 0xddddb677
+	dc.l 0x779bbb88
+	dc.l 0x9bdddb88
+	dc.l 0xdddddb88
+	dc.l 0xdddddb88
+	dc.l 0xddddd988
+	dc.l 0xddddd988
+	dc.l 0xddddb787
+	dc.l 0xddddb788
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x66777777
-	dc.l 0x66777776
-	dc.l 0x66777776
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x77888888
+	dc.l 0x77888887
+	dc.l 0x77888887
 
 * ---------------------------
-	dc.l 0x76710000
-	dc.l 0x77710000
-	dc.l 0x77600022
-	dc.l 0x77500122
-	dc.l 0x76101222
-	dc.l 0x65052222
-	dc.l 0x61552222
-	dc.l 0x65652222
+	dc.l 0x87810000
+	dc.l 0x88810000
+	dc.l 0x88700022
+	dc.l 0x88500122
+	dc.l 0x87101222
+	dc.l 0x75052222
+	dc.l 0x71552222
+	dc.l 0x75752222
 
 * ---------------------------
 	dc.l 0x00000000
@@ -3942,7 +3562,7 @@ motoko_tiles:
 	dc.l 0x22100000
 	dc.l 0x22201000
 	dc.l 0x22222210
-	dc.l 0x22224221
+	dc.l 0x22223221
 	dc.l 0x22222222
 
 * ---------------------------
@@ -3958,7 +3578,7 @@ motoko_tiles:
 * ---------------------------
 	dc.l 0x22222222
 	dc.l 0x22222222
-	dc.l 0x22242222
+	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222221
@@ -3966,40 +3586,40 @@ motoko_tiles:
 	dc.l 0x22222221
 
 * ---------------------------
-	dc.l 0x22222288
-	dc.l 0x22222248
-	dc.l 0x22222228
-	dc.l 0x22222224
-	dc.l 0x22222224
+	dc.l 0x22222266
+	dc.l 0x22222226
+	dc.l 0x22222226
+	dc.l 0x22222222
+	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x12222222
 	dc.l 0x02222222
 
 * ---------------------------
-	dc.l 0x88888884
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x88888888
-	dc.l 0x48888888
-	dc.l 0x28888888
+	dc.l 0x66666663
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x66666666
+	dc.l 0x26666666
+	dc.l 0x26666666
 
 * ---------------------------
-	dc.l 0x88422222
-	dc.l 0x88842222
-	dc.l 0x88882222
-	dc.l 0x88888242
-	dc.l 0x88888422
-	dc.l 0x88888822
-	dc.l 0x88888842
-	dc.l 0x88888882
+	dc.l 0x66222222
+	dc.l 0x66622222
+	dc.l 0x66662222
+	dc.l 0x66666222
+	dc.l 0x66666222
+	dc.l 0x66666622
+	dc.l 0x66666622
+	dc.l 0x66666662
 
 * ---------------------------
-	dc.l 0x22245bee
-	dc.l 0x222244be
-	dc.l 0x22222449
-	dc.l 0x22222224
+	dc.l 0x22225bff
+	dc.l 0x222222bf
+	dc.l 0x22222229
+	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
@@ -4007,33 +3627,33 @@ motoko_tiles:
 
 * ---------------------------
 	dc.l 0xffffffff
-	dc.l 0xefffffff
+	dc.l 0xffffffff
 	dc.l 0xdfffffff
-	dc.l 0xbeefffff
-	dc.l 0x5befffff
-	dc.l 0x25beffff
-	dc.l 0x245befff
-	dc.l 0x2246deff
+	dc.l 0xbfffffff
+	dc.l 0x5bffffff
+	dc.l 0x25bfffff
+	dc.l 0x225bffff
+	dc.l 0x2227dfff
 
 * ---------------------------
-	dc.l 0xfffffdeb
-	dc.l 0xffffffeb
-	dc.l 0xffffffee
-	dc.l 0xffffffee
-	dc.l 0xffffffed
-	dc.l 0xffffffeb
-	dc.l 0xffffffe9
-	dc.l 0xffffffe6
+	dc.l 0xfffffdfb
+	dc.l 0xfffffffb
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffffd
+	dc.l 0xfffffffb
+	dc.l 0xfffffff9
+	dc.l 0xfffffff7
 
 * ---------------------------
-	dc.l 0xb4226621
-	dc.l 0xb4259410
-	dc.l 0x84497100
-	dc.l 0x426b5100
-	dc.l 0x44991000
-	dc.l 0x46d50000
-	dc.l 0x4bb10000
-	dc.l 0x6d900000
+	dc.l 0xb3227721
+	dc.l 0xb3259310
+	dc.l 0x63398100
+	dc.l 0x327b5100
+	dc.l 0x33991000
+	dc.l 0x37d50000
+	dc.l 0x3bb10000
+	dc.l 0x7d900000
 
 * ---------------------------
 	dc.l 0x00000000
@@ -4041,8 +3661,8 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000005
-	dc.l 0x00000069
-	dc.l 0x000006b6
+	dc.l 0x00000079
+	dc.l 0x000007b7
 	dc.l 0x00005bb1
 
 * ---------------------------
@@ -4050,7 +3670,7 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x01100000
 	dc.l 0x55000000
-	dc.l 0x60000000
+	dc.l 0x70000000
 	dc.l 0x10000000
 	dc.l 0x00000000
 	dc.l 0x00000000
@@ -4061,22 +3681,22 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000019
-	dc.l 0x000006de
-	dc.l 0x00019dee
-	dc.l 0x005bdeee
+	dc.l 0x000007df
+	dc.l 0x00019dff
+	dc.l 0x005bdfff
 
 * ---------------------------
-	dc.l 0x00006dee
-	dc.l 0x0019deed
-	dc.l 0x05bdeee9
-	dc.l 0x6deeeee1
-	dc.l 0xdeeeeeb0
-	dc.l 0xeeeeee60
-	dc.l 0xeeefee10
-	dc.l 0xffffed00
+	dc.l 0x00007dff
+	dc.l 0x0019dffd
+	dc.l 0x05bdfff9
+	dc.l 0x7dfffff1
+	dc.l 0xdfffffb0
+	dc.l 0xffffff70
+	dc.l 0xffffff10
+	dc.l 0xfffffd00
 
 * ---------------------------
-	dc.l 0x60000000
+	dc.l 0x70000000
 	dc.l 0x10000000
 	dc.l 0x00000000
 	dc.l 0x00000000
@@ -4091,64 +3711,64 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000000
-	dc.l 0x00000006
+	dc.l 0x00000007
 	dc.l 0x0000005d
-	dc.l 0x000001be
+	dc.l 0x000001bf
 
 * ---------------------------
+	dc.l 0x00005888
+	dc.l 0x00005888
+	dc.l 0x00005888
 	dc.l 0x00005777
-	dc.l 0x00005777
-	dc.l 0x00005777
-	dc.l 0x00005666
-	dc.l 0x10005666
-	dc.l 0x50005667
-	dc.l 0x50005667
-	dc.l 0x50005667
+	dc.l 0x10005777
+	dc.l 0x50005778
+	dc.l 0x50005778
+	dc.l 0x50005778
 
 * ---------------------------
 	dc.l 0xbddddddd
 	dc.l 0x9ddddddd
 	dc.l 0x9ddddddd
-	dc.l 0x6bdddddd
-	dc.l 0x6bdddddd
-	dc.l 0x79dddddd
-	dc.l 0x77bddddd
-	dc.l 0x77bddddd
+	dc.l 0x7bdddddd
+	dc.l 0x7bdddddd
+	dc.l 0x89dddddd
+	dc.l 0x88bddddd
+	dc.l 0x88bddddd
 
 * ---------------------------
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddb
-	dc.l 0xddddddb6
-	dc.l 0xdddddb77
-	dc.l 0xddddb677
-	dc.l 0xdddb7677
+	dc.l 0xddddddb7
+	dc.l 0xdddddb88
+	dc.l 0xddddb788
+	dc.l 0xdddb8788
 
 * ---------------------------
-	dc.l 0xddb67777
-	dc.l 0xdb677777
-	dc.l 0xb7777777
-	dc.l 0x67777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0xddb78888
+	dc.l 0xdb788888
+	dc.l 0xb8888888
+	dc.l 0x78888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777779
-	dc.l 0x7777777b
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888889
+	dc.l 0x8888888b
 
 * ---------------------------
-	dc.l 0x77dddddd
-	dc.l 0x79dddddd
-	dc.l 0x7bdddddd
+	dc.l 0x88dddddd
+	dc.l 0x89dddddd
+	dc.l 0x8bdddddd
 	dc.l 0x9ddddddd
 	dc.l 0x9ddddddd
 	dc.l 0xbddddddd
@@ -4158,9 +3778,9 @@ motoko_tiles:
 * ---------------------------
 	dc.l 0xdddddddb
 	dc.l 0xdddbbbbd
-	dc.l 0xdddb9666
-	dc.l 0xddddd966
-	dc.l 0xdddddd96
+	dc.l 0xdddb9777
+	dc.l 0xddddd977
+	dc.l 0xdddddd97
 	dc.l 0xddddddd9
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
@@ -4169,25 +3789,25 @@ motoko_tiles:
 	dc.l 0xbb9aaaac
 	dc.l 0xdddb9aae
 	dc.l 0x9bddbbde
-	dc.l 0x66bdddbb
-	dc.l 0x6669bddd
-	dc.l 0x666679bb
-	dc.l 0xb9967779
+	dc.l 0x77bdddbb
+	dc.l 0x7779bddd
+	dc.l 0x777789bb
+	dc.l 0xb9978889
 	dc.l 0xdddbbb99
 
 * ---------------------------
 	dc.l 0xeebaaaac
-	dc.l 0xeeedb988
+	dc.l 0xeeedb966
 	dc.l 0xeeeeeeed
 	dc.l 0xdeeeeeee
 	dc.l 0xbbbdeeee
 	dc.l 0xddbbbbbb
 	dc.l 0xbdbddddd
-	dc.l 0x69bddddd
+	dc.l 0x79bddddd
 
 * ---------------------------
-	dc.l 0xcaaa8bee
-	dc.l 0xa88adeee
+	dc.l 0xcaaa6bee
+	dc.l 0xa66adeee
 	dc.l 0xbdeeeeee
 	dc.l 0xeeeeeedb
 	dc.l 0xeeedbbdd
@@ -4206,24 +3826,24 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xdddd9777
-	dc.l 0xdddd7777
-	dc.l 0xdddb6676
-	dc.l 0xddd9666b
-	dc.l 0xddd6669d
-	dc.l 0xddb679dd
-	dc.l 0xdd969ddd
-	dc.l 0xdb79dddd
+	dc.l 0xdddd9888
+	dc.l 0xdddd8888
+	dc.l 0xdddb7787
+	dc.l 0xddd9777b
+	dc.l 0xddd7779d
+	dc.l 0xddb789dd
+	dc.l 0xdd979ddd
+	dc.l 0xdb89dddd
 
 * ---------------------------
-	dc.l 0x69777777
-	dc.l 0x9b777776
-	dc.l 0xbb777775
-	dc.l 0xd9776762
-	dc.l 0xd9777652
-	dc.l 0xd9777522
-	dc.l 0xd6776552
-	dc.l 0xb7796664
+	dc.l 0x79888888
+	dc.l 0x9b888887
+	dc.l 0xbb888885
+	dc.l 0xd9887872
+	dc.l 0xd9888752
+	dc.l 0xd9888522
+	dc.l 0xd7887552
+	dc.l 0xb8897773
 
 * ---------------------------
 	dc.l 0x55522222
@@ -4231,7 +3851,7 @@ motoko_tiles:
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
-	dc.l 0x22222421
+	dc.l 0x22222321
 	dc.l 0x22222111
 	dc.l 0x22221125
 
@@ -4242,8 +3862,8 @@ motoko_tiles:
 	dc.l 0x22212222
 	dc.l 0x22122220
 	dc.l 0x11222200
-	dc.l 0x24652100
-	dc.l 0x67661000
+	dc.l 0x23752100
+	dc.l 0x78771000
 
 * ---------------------------
 	dc.l 0x22000000
@@ -4258,7 +3878,7 @@ motoko_tiles:
 * ---------------------------
 	dc.l 0x00021222
 	dc.l 0x00021222
-	dc.l 0x00024222
+	dc.l 0x00022222
 	dc.l 0x00022222
 	dc.l 0x00012222
 	dc.l 0x00012222
@@ -4286,64 +3906,64 @@ motoko_tiles:
 	dc.l 0x10001222
 
 * ---------------------------
-	dc.l 0x24888888
-	dc.l 0x22888888
-	dc.l 0x22888888
-	dc.l 0x22488884
-	dc.l 0x22288882
-	dc.l 0x22288882
-	dc.l 0x22248882
-	dc.l 0x22228882
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22266662
+	dc.l 0x22266662
+	dc.l 0x22266662
+	dc.l 0x22226662
+	dc.l 0x22226662
 
 * ---------------------------
-	dc.l 0x48888884
-	dc.l 0x48888888
-	dc.l 0x44888888
-	dc.l 0x42888888
-	dc.l 0x42484888
-	dc.l 0x22288488
-	dc.l 0x22248288
-	dc.l 0x22228248
+	dc.l 0x26666662
+	dc.l 0x26666666
+	dc.l 0x22666666
+	dc.l 0x22666666
+	dc.l 0x22263666
+	dc.l 0x22266266
+	dc.l 0x22226266
+	dc.l 0x22226226
 
 * ---------------------------
-	dc.l 0x22222224
 	dc.l 0x22222222
-	dc.l 0x42222222
-	dc.l 0x42222222
-	dc.l 0x81222222
-	dc.l 0x81222222
-	dc.l 0x84122222
-	dc.l 0x88122222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x61222222
+	dc.l 0x61222222
+	dc.l 0x63122222
+	dc.l 0x66122222
 
 * ---------------------------
-	dc.l 0x24446def
-	dc.l 0x242428df
-	dc.l 0x2224429e
-	dc.l 0x2222244b
-	dc.l 0x22222246
-	dc.l 0x22222244
-	dc.l 0x22222244
-	dc.l 0x22222244
+	dc.l 0x22227dff
+	dc.l 0x222226df
+	dc.l 0x2222229f
+	dc.l 0x2222222b
+	dc.l 0x22222227
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
 
 * ---------------------------
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xefffffff
-	dc.l 0xdeffffff
-	dc.l 0x6defffff
-	dc.l 0x49dfffff
-	dc.l 0x45beffff
+	dc.l 0xffffffff
+	dc.l 0xdfffffff
+	dc.l 0x7dffffff
+	dc.l 0x29dfffff
+	dc.l 0x25bfffff
 
 * ---------------------------
-	dc.l 0xffffffe5
-	dc.l 0xfffffed9
+	dc.l 0xfffffff5
+	dc.l 0xffffffd9
 	dc.l 0xffffffdb
-	dc.l 0xfffffedd
-	dc.l 0xffffffde
-	dc.l 0xffffffee
-	dc.l 0xffffffee
-	dc.l 0xffffffee
+	dc.l 0xffffffdd
+	dc.l 0xffffffdf
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 
 * ---------------------------
 	dc.l 0xbd500000
@@ -4359,81 +3979,81 @@ motoko_tiles:
 	dc.l 0x0005bd50
 	dc.l 0x005bdb00
 	dc.l 0x01bde500
-	dc.l 0x19deb100
-	dc.l 0x7dee6000
-	dc.l 0xdeed1000
-	dc.l 0xdee90000
-	dc.l 0xeee50000
+	dc.l 0x19dfb100
+	dc.l 0x8dff7000
+	dc.l 0xdffd1000
+	dc.l 0xdff90000
+	dc.l 0xfff50000
 
 * ---------------------------
 	dc.l 0x00000000
 	dc.l 0x00000001
 	dc.l 0x0000005b
-	dc.l 0x000006be
-	dc.l 0x00007dee
-	dc.l 0x0019deee
-	dc.l 0x019deeef
-	dc.l 0x19deeeff
+	dc.l 0x000007bf
+	dc.l 0x00008dff
+	dc.l 0x0019dfff
+	dc.l 0x019dffff
+	dc.l 0x19dfffff
 
 * ---------------------------
-	dc.l 0x16deeeef
-	dc.l 0x9deeefff
-	dc.l 0xdeeeffff
-	dc.l 0xeeefffff
-	dc.l 0xeeffffff
+	dc.l 0x17dfffff
+	dc.l 0x9dffffff
+	dc.l 0xdfffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xffffe900
-	dc.l 0xffffe500
-	dc.l 0xffffe100
+	dc.l 0xfffff900
+	dc.l 0xfffff500
+	dc.l 0xfffff100
 	dc.l 0xffffd100
 	dc.l 0xffffb100
 	dc.l 0xffffb500
 	dc.l 0xffffd100
-	dc.l 0xfffed100
+	dc.l 0xffffd100
 
 * ---------------------------
 	dc.l 0x00000190
 	dc.l 0x000019b0
-	dc.l 0x00006db0
-	dc.l 0x0005deb0
-	dc.l 0x0009ee90
-	dc.l 0x005dee90
-	dc.l 0x019eee90
-	dc.l 0x05deee90
+	dc.l 0x00007db0
+	dc.l 0x0005dfb0
+	dc.l 0x0009ff90
+	dc.l 0x005dff90
+	dc.l 0x019fff90
+	dc.l 0x05dfff90
 
 * ---------------------------
-	dc.l 0x000009ee
-	dc.l 0x00005dee
-	dc.l 0x0001beee
-	dc.l 0x0006deee
-	dc.l 0x001beefe
-	dc.l 0x009defff
-	dc.l 0x05deefff
-	dc.l 0x09eeffff
+	dc.l 0x000009ff
+	dc.l 0x00005dff
+	dc.l 0x0001bfff
+	dc.l 0x0007dfff
+	dc.l 0x001bffff
+	dc.l 0x009dffff
+	dc.l 0x05dfffff
+	dc.l 0x09ffffff
 
 * ---------------------------
-	dc.l 0x50005667
-	dc.l 0x50057667
-	dc.l 0x600b9667
-	dc.l 0x701db667
-	dc.l 0xb05dd677
-	dc.l 0xd16ed676
-	dc.l 0xe59ee676
-	dc.l 0xe9bee977
+	dc.l 0x50005778
+	dc.l 0x50058778
+	dc.l 0x700b9778
+	dc.l 0x801db778
+	dc.l 0xb05dd788
+	dc.l 0xd17fd787
+	dc.l 0xf59ff787
+	dc.l 0xf9bff988
 
 * ---------------------------
-	dc.l 0x779ddddd
-	dc.l 0x776bdddd
-	dc.l 0x7779dddd
-	dc.l 0x7776bddd
-	dc.l 0x77769ddd
-	dc.l 0x66666bdd
-	dc.l 0x666669dd
-	dc.l 0x777766bd
+	dc.l 0x889ddddd
+	dc.l 0x887bdddd
+	dc.l 0x8889dddd
+	dc.l 0x8887bddd
+	dc.l 0x88879ddd
+	dc.l 0x77777bdd
+	dc.l 0x777779dd
+	dc.l 0x888877bd
 
 * ---------------------------
 	dc.l 0xdddddddd
@@ -4441,39 +4061,39 @@ motoko_tiles:
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddb
-	dc.l 0xddddddb6
-	dc.l 0xdddddb96
-	dc.l 0xddddd977
+	dc.l 0xddddddb7
+	dc.l 0xdddddb97
+	dc.l 0xddddd988
 
 * ---------------------------
-	dc.l 0xddb66677
-	dc.l 0xdb966677
-	dc.l 0xd9777777
-	dc.l 0x97777777
-	dc.l 0x67777777
-	dc.l 0x67777777
-	dc.l 0x67777777
-	dc.l 0x77777777
+	dc.l 0xddb77788
+	dc.l 0xdb977788
+	dc.l 0xd9888888
+	dc.l 0x98888888
+	dc.l 0x78888888
+	dc.l 0x78888888
+	dc.l 0x78888888
+	dc.l 0x88888888
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
 
 * ---------------------------
-	dc.l 0x7777777b
-	dc.l 0x7777779d
-	dc.l 0x777777bd
-	dc.l 0x777777bd
-	dc.l 0x777779dd
-	dc.l 0x77777bdd
-	dc.l 0x77777ddd
-	dc.l 0x77779ddd
+	dc.l 0x8888888b
+	dc.l 0x8888889d
+	dc.l 0x888888bd
+	dc.l 0x888888bd
+	dc.l 0x888889dd
+	dc.l 0x88888bdd
+	dc.l 0x88888ddd
+	dc.l 0x88889ddd
 
 * ---------------------------
 	dc.l 0xdddddddd
@@ -4526,30 +4146,30 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xb79b6666
-	dc.l 0x9bd97666
-	dc.l 0xdddb7776
-	dc.l 0xdddd9777
-	dc.l 0xddddb777
-	dc.l 0xdddddb67
-	dc.l 0xddddddb7
+	dc.l 0xb89b7777
+	dc.l 0x9bd98777
+	dc.l 0xdddb8887
+	dc.l 0xdddd9888
+	dc.l 0xddddb888
+	dc.l 0xdddddb78
+	dc.l 0xddddddb8
 	dc.l 0xdddddddb
 
 * ---------------------------
-	dc.l 0x55125567
-	dc.l 0x77667777
-	dc.l 0x67777777
-	dc.l 0x77777777
-	dc.l 0x77777776
-	dc.l 0x77777765
-	dc.l 0x77777650
-	dc.l 0xbb967610
+	dc.l 0x55125578
+	dc.l 0x88778888
+	dc.l 0x78888888
+	dc.l 0x88888888
+	dc.l 0x88888887
+	dc.l 0x88888875
+	dc.l 0x88888750
+	dc.l 0xbb978710
 
 * ---------------------------
-	dc.l 0x77650000
-	dc.l 0x77600000
-	dc.l 0x76100000
-	dc.l 0x61000000
+	dc.l 0x88750000
+	dc.l 0x88700000
+	dc.l 0x87100000
+	dc.l 0x71000000
 	dc.l 0x50000000
 	dc.l 0x00000000
 	dc.l 0x00000000
@@ -4586,184 +4206,174 @@ motoko_tiles:
 	dc.l 0x00000002
 
 * ---------------------------
-	dc.l 0x22228882
-	dc.l 0x22224882
-	dc.l 0x22222882
-	dc.l 0x22222882
-	dc.l 0x22222882
-	dc.l 0x22222482
-	dc.l 0x22222482
-	dc.l 0x22222482
+	dc.l 0x22226662
+	dc.l 0x22222662
+	dc.l 0x22222662
+	dc.l 0x22222662
+	dc.l 0x22222662
+	dc.l 0x22222262
+	dc.l 0x22222262
+	dc.l 0x22222262
 
 * ---------------------------
-	dc.l 0x22224228
-	dc.l 0x22222224
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
-	dc.l 0x22222222
+	dc.l 0x66122222
+	dc.l 0x66112222
+	dc.l 0x66112222
+	dc.l 0x66502222
+	dc.l 0x26501222
+	dc.l 0x26501222
+	dc.l 0x26500222
+	dc.l 0x22200122
 
 * ---------------------------
-	dc.l 0x88122222
-	dc.l 0x88112222
-	dc.l 0x88112222
-	dc.l 0x88502222
-	dc.l 0x48501222
-	dc.l 0x28501222
-	dc.l 0x28500222
-	dc.l 0x24400122
-
-* ---------------------------
-	dc.l 0x22222224
-	dc.l 0x22222244
-	dc.l 0x22222224
-	dc.l 0x22222224
-	dc.l 0x22422224
-	dc.l 0x22222224
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
 	dc.l 0x22222212
-	dc.l 0x22222226
+	dc.l 0x22222227
 
 * ---------------------------
-	dc.l 0x446dffff
-	dc.l 0x4449efff
-	dc.l 0x4445bfff
-	dc.l 0x44446eff
-	dc.l 0x44445bff
-	dc.l 0x444429ef
-	dc.l 0x244445df
-	dc.l 0x4444449e
+	dc.l 0x227dffff
+	dc.l 0x2229ffff
+	dc.l 0x2225bfff
+	dc.l 0x22227fff
+	dc.l 0x22225bff
+	dc.l 0x222229ff
+	dc.l 0x222225df
+	dc.l 0x2222229f
 
 * ---------------------------
-	dc.l 0xffffffed
-	dc.l 0xffffffeb
-	dc.l 0xffffffe9
-	dc.l 0xffffffe6
-	dc.l 0xfffffee5
-	dc.l 0xfffffed1
-	dc.l 0xfffffed1
-	dc.l 0xfffffeb1
+	dc.l 0xfffffffd
+	dc.l 0xfffffffb
+	dc.l 0xfffffff9
+	dc.l 0xfffffff7
+	dc.l 0xfffffff5
+	dc.l 0xffffffd1
+	dc.l 0xffffffd1
+	dc.l 0xffffffb1
 
 * ---------------------------
-	dc.l 0x100005de
-	dc.l 0x10001bde
-	dc.l 0x10006dee
-	dc.l 0x0001beee
-	dc.l 0x0006deee
-	dc.l 0x001beeee
-	dc.l 0x006deeee
-	dc.l 0x01beeeee
+	dc.l 0x100005df
+	dc.l 0x10001bdf
+	dc.l 0x10007dff
+	dc.l 0x0001bfff
+	dc.l 0x0007dfff
+	dc.l 0x001bffff
+	dc.l 0x007dffff
+	dc.l 0x01bfffff
 
 * ---------------------------
-	dc.l 0xeed10000
-	dc.l 0xee910006
-	dc.l 0xee50005b
-	dc.l 0xed10019d
-	dc.l 0xeb1006de
-	dc.l 0xe9001bee
-	dc.l 0xe6019dee
-	dc.l 0xe505deee
+	dc.l 0xffd10000
+	dc.l 0xff910007
+	dc.l 0xff50005b
+	dc.l 0xfd10019d
+	dc.l 0xfb1007df
+	dc.l 0xf9001bff
+	dc.l 0xf7019dff
+	dc.l 0xf505dfff
 
 * ---------------------------
-	dc.l 0x6deeefff
-	dc.l 0xdeeeffff
-	dc.l 0xeeefffff
-	dc.l 0xeeffffff
-	dc.l 0xeeffffff
-	dc.l 0xefffffff
+	dc.l 0x7dffffff
+	dc.l 0xdfffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xfffed100
-	dc.l 0xfffed100
+	dc.l 0xffffd100
+	dc.l 0xffffd100
 	dc.l 0xffffd100
 	dc.l 0xffffd100
 	dc.l 0xffffd101
-	dc.l 0xffffe105
-	dc.l 0xffffe106
-	dc.l 0xffffe516
+	dc.l 0xfffff105
+	dc.l 0xfffff107
+	dc.l 0xfffff517
 
 * ---------------------------
-	dc.l 0x09deee90
-	dc.l 0x1beefeb1
-	dc.l 0x5deefeb1
-	dc.l 0x9eefffd6
-	dc.l 0xbeffffeb
-	dc.l 0xdeffffed
-	dc.l 0xdefffffe
-	dc.l 0xefffffff
+	dc.l 0x09dfff90
+	dc.l 0x1bffffb1
+	dc.l 0x5dffffb1
+	dc.l 0x9fffffd7
+	dc.l 0xbffffffb
+	dc.l 0xdffffffd
+	dc.l 0xdfffffff
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0x1befffff
-	dc.l 0x6defffff
-	dc.l 0xbeffffff
-	dc.l 0xdeffffff
-	dc.l 0xeeffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
-	dc.l 0xfffffffe
+	dc.l 0x1bffffff
+	dc.l 0x7dffffff
+	dc.l 0xbfffffff
+	dc.l 0xdfffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xfdbee977
-	dc.l 0xffeeeb67
-	dc.l 0xffeeed66
-	dc.l 0xffffee76
-	dc.l 0xffffee96
-	dc.l 0xfeeeeeb6
-	dc.l 0xfeeeed95
-	dc.l 0xeeed9335
+	dc.l 0xfdbff988
+	dc.l 0xfffffb78
+	dc.l 0xfffffd77
+	dc.l 0xffffff87
+	dc.l 0xffffff97
+	dc.l 0xffffffb7
+	dc.l 0xfffffd95
+	dc.l 0xfffd9445
 
 * ---------------------------
-	dc.l 0x7777769d
-	dc.l 0x77776669
-	dc.l 0x66666667
-	dc.l 0x66666667
-	dc.l 0x66666667
-	dc.l 0x66666667
-	dc.l 0x66666667
-	dc.l 0x67666666
+	dc.l 0x8888879d
+	dc.l 0x88887779
+	dc.l 0x77777778
+	dc.l 0x77777778
+	dc.l 0x77777778
+	dc.l 0x77777778
+	dc.l 0x77777778
+	dc.l 0x78777777
 
 * ---------------------------
-	dc.l 0xddddb777
-	dc.l 0xdddb7777
-	dc.l 0xbdd97777
-	dc.l 0x6bb67777
-	dc.l 0x77777777
-	dc.l 0x77777776
-	dc.l 0x77777776
-	dc.l 0x67777777
+	dc.l 0xddddb888
+	dc.l 0xdddb8888
+	dc.l 0xbdd98888
+	dc.l 0x7bb78888
+	dc.l 0x88888888
+	dc.l 0x88888887
+	dc.l 0x88888887
+	dc.l 0x78888888
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x67777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x78888888
+	dc.l 0x88888888
+	dc.l 0x88888888
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x76667777
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x87778888
 
 * ---------------------------
-	dc.l 0x7776bddd
-	dc.l 0x7779dddd
-	dc.l 0x777bdddd
-	dc.l 0x777bdddd
-	dc.l 0x779ddddd
-	dc.l 0x77bddddd
-	dc.l 0x77bddddd
-	dc.l 0x79dddddd
+	dc.l 0x8887bddd
+	dc.l 0x8889dddd
+	dc.l 0x888bdddd
+	dc.l 0x888bdddd
+	dc.l 0x889ddddd
+	dc.l 0x88bddddd
+	dc.l 0x88bddddd
+	dc.l 0x89dddddd
 
 * ---------------------------
 	dc.l 0xddddddee
@@ -4783,7 +4393,7 @@ motoko_tiles:
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xddddddbb
-	dc.l 0xddddd611
+	dc.l 0xddddd711
 
 * ---------------------------
 	dc.l 0xdddddddd
@@ -4792,15 +4402,15 @@ motoko_tiles:
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xddddddb9
-	dc.l 0x99996510
+	dc.l 0x99997510
 	dc.l 0x10000000
 
 * ---------------------------
-	dc.l 0xdddb6100
+	dc.l 0xdddb7100
 	dc.l 0xdddb5000
 	dc.l 0xddd90000
 	dc.l 0xdd910000
-	dc.l 0xb6100000
+	dc.l 0xb7100000
 	dc.l 0x50000000
 	dc.l 0x00000000
 	dc.l 0x00000000
@@ -4822,8 +4432,8 @@ motoko_tiles:
 	dc.l 0x00000222
 	dc.l 0x00000222
 	dc.l 0x00000222
-	dc.l 0x00000224
-	dc.l 0x00000224
+	dc.l 0x00000222
+	dc.l 0x00000222
 
 * ---------------------------
 	dc.l 0x22222210
@@ -4846,10 +4456,10 @@ motoko_tiles:
 	dc.l 0x00000000
 
 * ---------------------------
-	dc.l 0x22222482
-	dc.l 0x22222442
-	dc.l 0x22222242
-	dc.l 0x22222242
+	dc.l 0x22222262
+	dc.l 0x22222222
+	dc.l 0x22222222
+	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x22222222
 	dc.l 0x12222222
@@ -4866,24 +4476,24 @@ motoko_tiles:
 	dc.l 0x22100002
 
 * ---------------------------
-	dc.l 0x24222229
-	dc.l 0x24222229
-	dc.l 0x24222229
-	dc.l 0x21222429
-	dc.l 0x21222429
-	dc.l 0x11222429
-	dc.l 0x11222429
-	dc.l 0x1124242b
+	dc.l 0x22222229
+	dc.l 0x22222229
+	dc.l 0x22222229
+	dc.l 0x21222229
+	dc.l 0x21222229
+	dc.l 0x11222229
+	dc.l 0x11222229
+	dc.l 0x1122222b
 
 * ---------------------------
-	dc.l 0x8444446e
-	dc.l 0xd444445d
-	dc.l 0xe944444b
-	dc.l 0xee444429
-	dc.l 0xffb44449
-	dc.l 0xffe44446
-	dc.l 0xfff94446
-	dc.l 0xfffe4445
+	dc.l 0x6222227f
+	dc.l 0xd222225d
+	dc.l 0xf922222b
+	dc.l 0xff222229
+	dc.l 0xffb22229
+	dc.l 0xfff22227
+	dc.l 0xfff92227
+	dc.l 0xffff2225
 
 * ---------------------------
 	dc.l 0xffffffff
@@ -4891,119 +4501,109 @@ motoko_tiles:
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 	dc.l 0xdfffffff
 
 * ---------------------------
-	dc.l 0xfffffeb1
-	dc.l 0xfffffe91
-	dc.l 0xfffffe91
-	dc.l 0xfffffe91
-	dc.l 0xfffffe71
-	dc.l 0xfffffe91
-	dc.l 0xfffffe95
-	dc.l 0xfffffeb9
+	dc.l 0xffffffb1
+	dc.l 0xffffff91
+	dc.l 0xffffff91
+	dc.l 0xffffff91
+	dc.l 0xffffff81
+	dc.l 0xffffff91
+	dc.l 0xffffff95
+	dc.l 0xffffffb9
 
 * ---------------------------
-	dc.l 0x15deeeee
-	dc.l 0x19deeeee
-	dc.l 0x1beeeeee
-	dc.l 0x6deefeee
-	dc.l 0x9eeefffe
-	dc.l 0xbeeefffe
-	dc.l 0xdeeffffe
-	dc.l 0xdeefffff
+	dc.l 0x15dfffff
+	dc.l 0x19dfffff
+	dc.l 0x1bffffff
+	dc.l 0x7dffffff
+	dc.l 0x9fffffff
+	dc.l 0xbfffffff
+	dc.l 0xdfffffff
+	dc.l 0xdfffffff
 
 * ---------------------------
-	dc.l 0xe119deee
-	dc.l 0xe15beeef
-	dc.l 0xd16deeef
-	dc.l 0xd1beeeff
-	dc.l 0xd7deefff
-	dc.l 0xdbdeffff
-	dc.l 0xeeeeffff
-	dc.l 0xfeefffff
+	dc.l 0xf119dfff
+	dc.l 0xf15bffff
+	dc.l 0xd17dffff
+	dc.l 0xd1bfffff
+	dc.l 0xd8dfffff
+	dc.l 0xdbdfffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xfffff619
-	dc.l 0xffffe719
+	dc.l 0xfffff719
+	dc.l 0xfffff819
 	dc.l 0xfffffb1b
 	dc.l 0xfffffd5b
-	dc.l 0xfffffe6b
+	dc.l 0xffffff7b
 	dc.l 0xffffff9d
 	dc.l 0xffffffdb
-	dc.l 0xfffffffe
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xefffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
-	dc.l 0xeffffffe
-	dc.l 0xefffffee
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffff9
+	dc.l 0xfffffd84
+	dc.l 0xffffb444
+	dc.l 0xfff94444
+	dc.l 0xff944444
+	dc.l 0xf9444444
 
 * ---------------------------
-	dc.l 0xffffeeee
-	dc.l 0xffffeeee
-	dc.l 0xffeeeee9
-	dc.l 0xfeeeed73
-	dc.l 0xfeeeb333
-	dc.l 0xeee93333
-	dc.l 0xee933333
-	dc.l 0xe9333333
+	dc.l 0xff954445
+	dc.l 0xb8444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
 
 * ---------------------------
-	dc.l 0xee953335
-	dc.l 0xb7333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
+	dc.l 0x78777777
+	dc.l 0x78777778
+	dc.l 0x57777778
+	dc.l 0x57777788
+	dc.l 0x47778888
+	dc.l 0x45778888
+	dc.l 0x45787888
+	dc.l 0x44578888
 
 * ---------------------------
-	dc.l 0x67666666
-	dc.l 0x67666667
-	dc.l 0x56666667
-	dc.l 0x56666677
-	dc.l 0x36667777
-	dc.l 0x35667777
-	dc.l 0x35676777
-	dc.l 0x33567777
+	dc.l 0x77888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
 
 * ---------------------------
-	dc.l 0x66777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x87788788
+	dc.l 0x88888778
+	dc.l 0x88888777
+	dc.l 0x88887857
+	dc.l 0x88888877
+	dc.l 0x88888887
+	dc.l 0x88888888
+	dc.l 0x88888888
 
 * ---------------------------
-	dc.l 0x76677677
-	dc.l 0x77777667
-	dc.l 0x77777666
-	dc.l 0x77776756
-	dc.l 0x77777766
-	dc.l 0x77777776
-	dc.l 0x77777777
-	dc.l 0x77777777
-
-* ---------------------------
-	dc.l 0x7bdddddd
+	dc.l 0x8bdddddd
 	dc.l 0x9ddddddd
 	dc.l 0xbddddddd
 	dc.l 0x9ddddddd
 	dc.l 0x9ddddddd
-	dc.l 0x6bdddddd
-	dc.l 0x69dddddd
-	dc.l 0x66dddddd
+	dc.l 0x7bdddddd
+	dc.l 0x79dddddd
+	dc.l 0x77dddddd
 
 * ---------------------------
 	dc.l 0xddddeeed
@@ -5029,11 +4629,11 @@ motoko_tiles:
 	dc.l 0xdddd9100
 	dc.l 0xdddb1000
 	dc.l 0xddd90000
-	dc.l 0xddb60000
-	dc.l 0xddb60000
-	dc.l 0xdbd60000
-	dc.l 0xbbd60000
-	dc.l 0xbdd60000
+	dc.l 0xddb70000
+	dc.l 0xddb70000
+	dc.l 0xdbd70000
+	dc.l 0xbbd70000
+	dc.l 0xbdd70000
 
 * ---------------------------
 	dc.l 0x00000000
@@ -5052,8 +4652,8 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000000
-	dc.l 0x00019610
-	dc.l 0x0001bed7
+	dc.l 0x00019710
+	dc.l 0x0001bfd8
 
 * ---------------------------
 	dc.l 0x00000221
@@ -5106,24 +4706,24 @@ motoko_tiles:
 	dc.l 0x10000000
 
 * ---------------------------
-	dc.l 0x0122224b
+	dc.l 0x0122222b
 	dc.l 0x0122225d
-	dc.l 0x0122445d
-	dc.l 0x0122226e
-	dc.l 0x0122229e
-	dc.l 0x022224bf
+	dc.l 0x0122225d
+	dc.l 0x0122227f
+	dc.l 0x0122229f
+	dc.l 0x022222bf
 	dc.l 0x021225df
-	dc.l 0x021226df
+	dc.l 0x021227df
 
 * ---------------------------
-	dc.l 0xffff9445
-	dc.l 0xffffd445
-	dc.l 0xffffe845
-	dc.l 0xfffff945
-	dc.l 0xfffffb45
-	dc.l 0xfffffe45
+	dc.l 0xffff9225
+	dc.l 0xffffd225
+	dc.l 0xfffff625
+	dc.l 0xfffff925
+	dc.l 0xfffffb25
+	dc.l 0xffffff25
 	dc.l 0xffffff55
-	dc.l 0xffffff85
+	dc.l 0xffffff65
 
 * ---------------------------
 	dc.l 0xdfffffff
@@ -5136,27 +4736,7 @@ motoko_tiles:
 	dc.l 0xdfffffff
 
 * ---------------------------
-	dc.l 0xfffffedb
-	dc.l 0xffffffee
-	dc.l 0xfffffffe
-	dc.l 0xfffffffe
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0xeeefffff
-	dc.l 0xeeffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0xfeefffff
+	dc.l 0xffffffdb
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
@@ -5166,88 +4746,88 @@ motoko_tiles:
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xffffffee
-	dc.l 0xffffeeeb
-	dc.l 0xfffeeed3
-	dc.l 0xfffeee73
-	dc.l 0xffeee933
-	dc.l 0xffeed333
-	dc.l 0xfeee7333
-	dc.l 0xeee93333
+	dc.l 0xffffffff
+	dc.l 0xfffffffb
+	dc.l 0xffffffd4
+	dc.l 0xffffff84
+	dc.l 0xfffff944
+	dc.l 0xffffd444
+	dc.l 0xffff8444
+	dc.l 0xfff94444
 
 * ---------------------------
-	dc.l 0x93333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
+	dc.l 0x94444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
 
 * ---------------------------
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
 
 * ---------------------------
-	dc.l 0x33567777
-	dc.l 0x33567777
-	dc.l 0x33357777
-	dc.l 0x33356777
-	dc.l 0x33335777
-	dc.l 0x33335777
-	dc.l 0x33333577
-	dc.l 0x33333567
+	dc.l 0x44578888
+	dc.l 0x44578888
+	dc.l 0x44458888
+	dc.l 0x44457888
+	dc.l 0x44445888
+	dc.l 0x44445888
+	dc.l 0x44444588
+	dc.l 0x44444578
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77797777
-	dc.l 0x76bb7777
-	dc.l 0x79db7777
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88898888
+	dc.l 0x87bb8888
+	dc.l 0x89db8888
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x7777779b
-	dc.l 0x777777bd
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x8888889b
+	dc.l 0x888888bd
 
 * ---------------------------
-	dc.l 0x76bddddd
-	dc.l 0x766bdddd
-	dc.l 0x7766bddd
-	dc.l 0x777669b9
-	dc.l 0x77767667
-	dc.l 0x779b9977
-	dc.l 0x9bdddb6b
+	dc.l 0x87bddddd
+	dc.l 0x877bdddd
+	dc.l 0x8877bddd
+	dc.l 0x888779b9
+	dc.l 0x88878778
+	dc.l 0x889b9988
+	dc.l 0x9bdddb7b
 	dc.l 0xdddddb9d
 
 * ---------------------------
-	dc.l 0xdddddb96
-	dc.l 0xdddb6666
-	dc.l 0xb9667779
-	dc.l 0x66679bdd
-	dc.l 0x769bdddd
+	dc.l 0xdddddb97
+	dc.l 0xdddb7777
+	dc.l 0xb9778889
+	dc.l 0x77789bdd
+	dc.l 0x879bdddd
 	dc.l 0xbddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0x669bdddd
-	dc.l 0x7bdddddd
+	dc.l 0x779bdddd
+	dc.l 0x8bdddddd
 	dc.l 0xbddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
@@ -5271,39 +4851,39 @@ motoko_tiles:
 	dc.l 0xdddb0000
 	dc.l 0xdddb0000
 	dc.l 0xdddb1005
-	dc.l 0xdddb117d
-	dc.l 0xdddd5bde
-	dc.l 0xdddd5dee
+	dc.l 0xdddb118d
+	dc.l 0xdddd5bdf
+	dc.l 0xdddd5dff
 
 * ---------------------------
 	dc.l 0x00001bd1
-	dc.l 0x0005beb0
-	dc.l 0x005dee90
-	dc.l 0x16deee60
-	dc.l 0xbdeeed10
-	dc.l 0xeeeee600
-	dc.l 0xeeeeb101
-	dc.l 0xeeed501b
+	dc.l 0x0005bfb0
+	dc.l 0x005dff90
+	dc.l 0x17dfff70
+	dc.l 0xbdfffd10
+	dc.l 0xfffff700
+	dc.l 0xffffb101
+	dc.l 0xfffd501b
 
 * ---------------------------
-	dc.l 0x0005deee
-	dc.l 0x0006eeee
-	dc.l 0x001beeee
-	dc.l 0x007deeef
-	dc.l 0x05deefff
-	dc.l 0x1beeffff
-	dc.l 0xbeeeffff
-	dc.l 0xeeefffff
+	dc.l 0x0005dfff
+	dc.l 0x0007ffff
+	dc.l 0x001bffff
+	dc.l 0x008dffff
+	dc.l 0x05dfffff
+	dc.l 0x1bffffff
+	dc.l 0xbfffffff
+	dc.l 0xffffffff
 
 * ---------------------------
 	dc.l 0xb1000000
-	dc.l 0xed100000
-	dc.l 0xeeb10000
-	dc.l 0xeee60000
-	dc.l 0xeeed1000
-	dc.l 0xeeee5000
-	dc.l 0xffee6000
-	dc.l 0xffee7000
+	dc.l 0xfd100000
+	dc.l 0xffb10000
+	dc.l 0xfff70000
+	dc.l 0xfffd1000
+	dc.l 0xffff5000
+	dc.l 0xffff7000
+	dc.l 0xffff8000
 
 * ---------------------------
 	dc.l 0x00000000
@@ -5346,104 +4926,94 @@ motoko_tiles:
 	dc.l 0x22000000
 
 * ---------------------------
-	dc.l 0x011229ef
+	dc.l 0x011229ff
 	dc.l 0x10122bff
-	dc.l 0x00126dff
-	dc.l 0x00229eff
+	dc.l 0x00127dff
+	dc.l 0x00229fff
 	dc.l 0x0025dfff
-	dc.l 0x0126efff
-	dc.l 0x012befff
-	dc.l 0x016dffff
+	dc.l 0x0127ffff
+	dc.l 0x012bffff
+	dc.l 0x017dffff
 
 * ---------------------------
-	dc.l 0xffffff96
+	dc.l 0xffffff97
 	dc.l 0xffffff99
 	dc.l 0xffffff9b
 	dc.l 0xffffffbd
-	dc.l 0xffffffde
-	dc.l 0xffffffef
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0xefffffff
-	dc.l 0xefffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xffffffff
+	dc.l 0xffffffdf
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xfffffffe
-	dc.l 0xfffffffe
-	dc.l 0xfffffffe
-	dc.l 0xffffffee
-	dc.l 0xfffffeee
-	dc.l 0xfffffeee
-	dc.l 0xffffeeed
-	dc.l 0xffffeee9
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffffd
+	dc.l 0xfffffff9
 
 * ---------------------------
-	dc.l 0xeed33333
-	dc.l 0xee933333
-	dc.l 0xeb333333
-	dc.l 0xe7333333
-	dc.l 0xb3333333
-	dc.l 0x83333333
-	dc.l 0x33333333
-	dc.l 0x33333333
+	dc.l 0xffd44444
+	dc.l 0xff944444
+	dc.l 0xfb444444
+	dc.l 0xf8444444
+	dc.l 0xb4444444
+	dc.l 0x64444444
+	dc.l 0x44444444
+	dc.l 0x44444444
 
 * ---------------------------
-	dc.l 0x33333357
-	dc.l 0x33333356
-	dc.l 0x33333335
-	dc.l 0x33333335
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
+	dc.l 0x44444458
+	dc.l 0x44444457
+	dc.l 0x44444445
+	dc.l 0x44444445
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x67777777
-	dc.l 0x67777777
-	dc.l 0x57777777
-	dc.l 0x56777777
-	dc.l 0x36777777
-	dc.l 0x35677777
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x78888888
+	dc.l 0x78888888
+	dc.l 0x58888888
+	dc.l 0x57888888
+	dc.l 0x47888888
+	dc.l 0x45788888
 
 * ---------------------------
-	dc.l 0x79db7777
-	dc.l 0x79dd6667
-	dc.l 0x79bd9677
-	dc.l 0x769b7777
-	dc.l 0x77677777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x89db8888
+	dc.l 0x89dd7778
+	dc.l 0x89bd9788
+	dc.l 0x879b8888
+	dc.l 0x88788888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
 
 * ---------------------------
-	dc.l 0x6666779d
-	dc.l 0x66556779
-	dc.l 0x76775566
-	dc.l 0x77776656
-	dc.l 0x77777666
-	dc.l 0x77777776
-	dc.l 0x77777776
-	dc.l 0x77777777
+	dc.l 0x7777889d
+	dc.l 0x77557889
+	dc.l 0x87885577
+	dc.l 0x88887757
+	dc.l 0x88888777
+	dc.l 0x88888887
+	dc.l 0x88888887
+	dc.l 0x88888888
 
 * ---------------------------
 	dc.l 0xdddddddd
 	dc.l 0xbddddddd
 	dc.l 0x9bdddddd
-	dc.l 0x669bdddd
-	dc.l 0x7766799b
-	dc.l 0x67776666
-	dc.l 0x66677776
-	dc.l 0x76766767
+	dc.l 0x779bdddd
+	dc.l 0x8877899b
+	dc.l 0x78887777
+	dc.l 0x77788887
+	dc.l 0x87877878
 
 * ---------------------------
 	dc.l 0xdddddddd
@@ -5451,9 +5021,9 @@ motoko_tiles:
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
-	dc.l 0x79bddddd
-	dc.l 0x66799bdd
-	dc.l 0x77666669
+	dc.l 0x89bddddd
+	dc.l 0x77899bdd
+	dc.l 0x88777779
 
 * ---------------------------
 	dc.l 0xdddddddd
@@ -5486,52 +5056,42 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xdddd6dee
-	dc.l 0xdddd6dee
-	dc.l 0xdddd6dee
-	dc.l 0xdddd6dee
-	dc.l 0xdddd6dee
-	dc.l 0xdddd6dee
-	dc.l 0xdddd6dee
-	dc.l 0xdddd6dee
+	dc.l 0xdddd7dff
+	dc.l 0xdddd7dff
+	dc.l 0xdddd7dff
+	dc.l 0xdddd7dff
+	dc.l 0xdddd7dff
+	dc.l 0xdddd7dff
+	dc.l 0xdddd7dff
+	dc.l 0xdddd7dff
 
 * ---------------------------
-	dc.l 0xeee616de
-	dc.l 0xee959dee
-	dc.l 0xeb6deeee
-	dc.l 0xddeeeeee
-	dc.l 0xeeeeeeef
-	dc.l 0xfeeefeef
-	dc.l 0xeeefffff
-	dc.l 0xeeffffff
-
-* ---------------------------
-	dc.l 0xeeefffff
-	dc.l 0xeeffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
+	dc.l 0xfff717df
+	dc.l 0xff959dff
+	dc.l 0xfb7dffff
+	dc.l 0xddffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
-	dc.l 0xfffffffe
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xffee7000
-	dc.l 0xfeee5000
-	dc.l 0xfeee1000
-	dc.l 0xeeeb0000
-	dc.l 0xeee60000
-	dc.l 0xeed10000
-	dc.l 0xee700017
-	dc.l 0xed10019d
+	dc.l 0xffff8000
+	dc.l 0xffff5000
+	dc.l 0xffff1000
+	dc.l 0xfffb0000
+	dc.l 0xfff70000
+	dc.l 0xffd10000
+	dc.l 0xff800018
+	dc.l 0xfd10019d
 
 * ---------------------------
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00100000
 	dc.l 0x01500000
-	dc.l 0x06100000
-	dc.l 0x69000000
+	dc.l 0x07100000
+	dc.l 0x79000000
 	dc.l 0xb5000000
 	dc.l 0x90000000
 
@@ -5550,20 +5110,20 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000001
-	dc.l 0x00000006
+	dc.l 0x00000007
 	dc.l 0x0000005d
-	dc.l 0x000005be
-	dc.l 0x00001bee
+	dc.l 0x000005bf
+	dc.l 0x00001bff
 
 * ---------------------------
 	dc.l 0x00000000
-	dc.l 0x06500000
+	dc.l 0x07500000
 	dc.l 0x1b900000
 	dc.l 0x9d900000
-	dc.l 0xde900000
-	dc.l 0xee900000
-	dc.l 0xee600000
-	dc.l 0xee500000
+	dc.l 0xdf900000
+	dc.l 0xff900000
+	dc.l 0xff700000
+	dc.l 0xff500000
 
 * ---------------------------
 	dc.l 0x21000000
@@ -5582,48 +5142,48 @@ motoko_tiles:
 	dc.l 0x00021000
 	dc.l 0x00220001
 	dc.l 0x01210009
-	dc.l 0x1220006d
-	dc.l 0x221005de
+	dc.l 0x1220007d
+	dc.l 0x221005df
 
 * ---------------------------
-	dc.l 0x01beffff
-	dc.l 0x16dfffff
-	dc.l 0x1befffff
-	dc.l 0x6effffff
-	dc.l 0xdeffffff
-	dc.l 0xefffffff
-	dc.l 0xefffffff
+	dc.l 0x01bfffff
+	dc.l 0x17dfffff
+	dc.l 0x1bffffff
+	dc.l 0x7fffffff
+	dc.l 0xdfffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xffffeed3
-	dc.l 0xffffee93
-	dc.l 0xfffeee73
-	dc.l 0xffeeed33
-	dc.l 0xffeee933
-	dc.l 0xffeee333
-	dc.l 0xffeeb333
-	dc.l 0xfeee9333
+	dc.l 0xffffffd4
+	dc.l 0xffffff94
+	dc.l 0xffffff84
+	dc.l 0xfffffd44
+	dc.l 0xfffff944
+	dc.l 0xfffff444
+	dc.l 0xffffb444
+	dc.l 0xffff9444
 
 * ---------------------------
-	dc.l 0x35677777
-	dc.l 0x33577777
-	dc.l 0x33567777
-	dc.l 0x33367777
-	dc.l 0x33357777
-	dc.l 0x33356777
-	dc.l 0x33336767
-	dc.l 0x33335677
+	dc.l 0x45788888
+	dc.l 0x44588888
+	dc.l 0x44578888
+	dc.l 0x44478888
+	dc.l 0x44458888
+	dc.l 0x44457888
+	dc.l 0x44447878
+	dc.l 0x44445788
 
 * ---------------------------
-	dc.l 0x777777bd
-	dc.l 0x77777bdd
-	dc.l 0x66777ddd
-	dc.l 0x66776bdd
-	dc.l 0x766779bd
-	dc.l 0x7666779d
-	dc.l 0x77666669
-	dc.l 0x76777666
+	dc.l 0x888888bd
+	dc.l 0x88888bdd
+	dc.l 0x77888ddd
+	dc.l 0x77887bdd
+	dc.l 0x877889bd
+	dc.l 0x8777889d
+	dc.l 0x88777779
+	dc.l 0x87888777
 
 * ---------------------------
 	dc.l 0xdbbbbdb9
@@ -5633,10 +5193,10 @@ motoko_tiles:
 	dc.l 0xddddddee
 	dc.l 0xdddddddd
 	dc.l 0xbddddddd
-	dc.l 0x699bdddd
+	dc.l 0x799bdddd
 
 * ---------------------------
-	dc.l 0x66676776
+	dc.l 0x77787887
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddedd
@@ -5646,7 +5206,7 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0x6699bddd
+	dc.l 0x7799bddd
 	dc.l 0xddddb9bd
 	dc.l 0xddddddb9
 	dc.l 0xdddddddd
@@ -5686,54 +5246,54 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xdddd6dee
-	dc.l 0xdddd6dee
-	dc.l 0xdddd6bee
-	dc.l 0xdddd6bee
-	dc.l 0xdddd99de
+	dc.l 0xdddd7dff
+	dc.l 0xdddd7dff
+	dc.l 0xdddd7bff
+	dc.l 0xdddd7bff
+	dc.l 0xdddd99df
 	dc.l 0xdddd95bd
 	dc.l 0xddddb559
-	dc.l 0xddddd735
+	dc.l 0xddddd845
 
 * ---------------------------
-	dc.l 0xefefffff
-	dc.l 0xefefffff
-	dc.l 0xefffffff
-	dc.l 0xeeefffff
-	dc.l 0xeeeeefff
-	dc.l 0xeeeeeeff
-	dc.l 0xdeeeeeee
-	dc.l 0x9bdeeeee
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xdfffffff
+	dc.l 0x9bdfffff
 
 * ---------------------------
-	dc.l 0xffffffee
-	dc.l 0xfffffeee
-	dc.l 0xfffffee9
-	dc.l 0xfffffe99
-	dc.l 0xffffedee
-	dc.l 0xfffffeee
-	dc.l 0xeeffeeee
-	dc.l 0xeeeeeee9
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffff9
+	dc.l 0xffffff99
+	dc.l 0xfffffdff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffff9
 
 * ---------------------------
-	dc.l 0xe5005bdb
-	dc.l 0x6116ddd6
-	dc.l 0x16bddd90
-	dc.l 0xbdeedb10
-	dc.l 0xeeed6100
-	dc.l 0xee951159
-	dc.l 0xd6159bdd
-	dc.l 0x56bdeedb
+	dc.l 0xf5005bdb
+	dc.l 0x7117ddd7
+	dc.l 0x17bddd90
+	dc.l 0xbdffdb10
+	dc.l 0xfffd7100
+	dc.l 0xff951159
+	dc.l 0xd7159bdd
+	dc.l 0x57bdffdb
 
 * ---------------------------
 	dc.l 0x10000000
 	dc.l 0x00000000
 	dc.l 0x00000000
 	dc.l 0x00000000
-	dc.l 0x15695000
+	dc.l 0x15795000
 	dc.l 0xbd950000
 	dc.l 0xd9100000
-	dc.l 0x61000055
+	dc.l 0x71000055
 
 * ---------------------------
 	dc.l 0x00000000
@@ -5742,28 +5302,28 @@ motoko_tiles:
 	dc.l 0x00000000
 	dc.l 0x00000001
 	dc.l 0x0000001b
-	dc.l 0x000001be
-	dc.l 0x00005dee
+	dc.l 0x000001bf
+	dc.l 0x00005dff
 
 * ---------------------------
-	dc.l 0x0001beee
-	dc.l 0x001beeee
-	dc.l 0x01beeeee
-	dc.l 0x1beeeeee
-	dc.l 0xbeeeeeee
-	dc.l 0xeeeeeefe
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
+	dc.l 0x0001bfff
+	dc.l 0x001bffff
+	dc.l 0x01bfffff
+	dc.l 0x1bffffff
+	dc.l 0xbfffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xee101000
-	dc.l 0xed111000
-	dc.l 0xeb140000
-	dc.l 0xe6220000
-	dc.l 0xe4220000
+	dc.l 0xff101000
+	dc.l 0xfd111000
+	dc.l 0xfb130000
+	dc.l 0xf7220000
+	dc.l 0xf3220000
 	dc.l 0xb2210000
-	dc.l 0x82210000
-	dc.l 0x42200000
+	dc.l 0x62210000
+	dc.l 0x32200000
 
 * ---------------------------
 	dc.l 0x00000002
@@ -5776,69 +5336,59 @@ motoko_tiles:
 	dc.l 0x2222215d
 
 * ---------------------------
-	dc.l 0x22001bee
-	dc.l 0x2101beef
-	dc.l 0x2019eeff
-	dc.l 0x019eefff
-	dc.l 0x09deffff
-	dc.l 0x9deeffff
-	dc.l 0xdeefffff
-	dc.l 0xefffffff
-
-* ---------------------------
+	dc.l 0x22001bff
+	dc.l 0x2101bfff
+	dc.l 0x2019ffff
+	dc.l 0x019fffff
+	dc.l 0x09dfffff
+	dc.l 0x9dffffff
+	dc.l 0xdfffffff
 	dc.l 0xffffffff
-	dc.l 0xffffffff
-	dc.l 0xfffffffe
-	dc.l 0xfffffffe
-	dc.l 0xffffffee
-	dc.l 0xfffffffe
-	dc.l 0xfffffffe
-	dc.l 0xffffeffe
 
 * ---------------------------
-	dc.l 0xeeee3333
-	dc.l 0xeeed3333
-	dc.l 0xeeeb3333
-	dc.l 0xeee73333
-	dc.l 0xeee73334
-	dc.l 0xeed33333
-	dc.l 0xee933333
-	dc.l 0xee833333
+	dc.l 0xffff4444
+	dc.l 0xfffd4444
+	dc.l 0xfffb4444
+	dc.l 0xfff84444
+	dc.l 0xfff84443
+	dc.l 0xffd44444
+	dc.l 0xff944444
+	dc.l 0xff644444
 
 * ---------------------------
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x43333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x34444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
 
 * ---------------------------
-	dc.l 0x33333667
-	dc.l 0x33333577
-	dc.l 0x33333567
-	dc.l 0x33335667
-	dc.l 0x33356767
-	dc.l 0x33567666
-	dc.l 0x35677766
-	dc.l 0x56777775
+	dc.l 0x44444778
+	dc.l 0x44444588
+	dc.l 0x44444578
+	dc.l 0x44445778
+	dc.l 0x44457878
+	dc.l 0x44578777
+	dc.l 0x45788877
+	dc.l 0x57888885
 
 * ---------------------------
-	dc.l 0x77777997
-	dc.l 0x77779ddd
-	dc.l 0x77779ddd
-	dc.l 0x77777ddd
-	dc.l 0x77777bdd
-	dc.l 0x777779dd
-	dc.l 0x777777dd
-	dc.l 0x777777bd
+	dc.l 0x88888998
+	dc.l 0x88889ddd
+	dc.l 0x88889ddd
+	dc.l 0x88888ddd
+	dc.l 0x88888bdd
+	dc.l 0x888889dd
+	dc.l 0x888888dd
+	dc.l 0x888888bd
 
 * ---------------------------
-	dc.l 0x67777776
-	dc.l 0xb9777777
-	dc.l 0xdddb9776
+	dc.l 0x78888887
+	dc.l 0xb9888888
+	dc.l 0xdddb9887
 	dc.l 0xdddddbb9
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
@@ -5846,11 +5396,11 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0x66669bdd
-	dc.l 0x77666669
-	dc.l 0x67777666
-	dc.l 0x77777776
-	dc.l 0xbb977766
+	dc.l 0x77779bdd
+	dc.l 0x88777779
+	dc.l 0x78888777
+	dc.l 0x88888887
+	dc.l 0xbb988877
 	dc.l 0xddddbbbb
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
@@ -5858,9 +5408,9 @@ motoko_tiles:
 * ---------------------------
 	dc.l 0xdddddddd
 	dc.l 0xbbdddddd
-	dc.l 0x66679999
-	dc.l 0x66666666
-	dc.l 0x6799bbbb
+	dc.l 0x77789999
+	dc.l 0x77777777
+	dc.l 0x7899bbbb
 	dc.l 0xbddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
@@ -5869,7 +5419,7 @@ motoko_tiles:
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0x99bbdddd
-	dc.l 0x6699bbdd
+	dc.l 0x7799bbdd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
@@ -5896,79 +5446,79 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xddddd933
-	dc.l 0xdddddb33
-	dc.l 0xdddddd63
-	dc.l 0xdddddd93
+	dc.l 0xddddd944
+	dc.l 0xdddddb44
+	dc.l 0xdddddd74
+	dc.l 0xdddddd94
 	dc.l 0xddddddd5
 	dc.l 0xddddddd9
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0x36bdeeee
-	dc.l 0x3369ddee
-	dc.l 0x33349bde
-	dc.l 0x333336bd
-	dc.l 0x33333359
-	dc.l 0x33333334
-	dc.l 0x63333333
-	dc.l 0x93333333
+	dc.l 0x47bdffff
+	dc.l 0x4479ddff
+	dc.l 0x44439bdf
+	dc.l 0x444447bd
+	dc.l 0x44444459
+	dc.l 0x44444443
+	dc.l 0x74444444
+	dc.l 0x94444444
 
 * ---------------------------
-	dc.l 0xeeeeed99
-	dc.l 0xeeeedbde
-	dc.l 0xeeedeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xbdeeeeee
-	dc.l 0x9bdeeeb6
-	dc.l 0x46bbbbbd
-	dc.l 0x3359bdde
+	dc.l 0xfffffd99
+	dc.l 0xffffdbdf
+	dc.l 0xfffdffff
+	dc.l 0xffffffff
+	dc.l 0xbdffffff
+	dc.l 0x9bdfffb7
+	dc.l 0x37bbbbbd
+	dc.l 0x4459bddf
 
 * ---------------------------
-	dc.l 0xdeeeed95
-	dc.l 0xeeeed611
-	dc.l 0xeeeb5111
-	dc.l 0xed61159d
-	dc.l 0x9516bded
-	dc.l 0x6bdeeed9
-	dc.l 0xeeeeed67
-	dc.l 0xeeeeedee
+	dc.l 0xdffffd95
+	dc.l 0xffffd711
+	dc.l 0xfffb5111
+	dc.l 0xfd71159d
+	dc.l 0x9517bded
+	dc.l 0x7bdfffd9
+	dc.l 0xfffffd78
+	dc.l 0xfffffdff
 
 * ---------------------------
-	dc.l 0x10015960
-	dc.l 0x016bb500
-	dc.l 0x6bdb5001
+	dc.l 0x10015970
+	dc.l 0x017bb500
+	dc.l 0x7bdb5001
 	dc.l 0xdd91119d
-	dc.l 0xb6119dee
-	dc.l 0x559deeee
-	dc.l 0xbeeeeeee
-	dc.l 0xeeeeeeee
+	dc.l 0xb7119dff
+	dc.l 0x559dffff
+	dc.l 0xbfffffff
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0x0019deee
-	dc.l 0x05beeeee
-	dc.l 0x9deeefef
-	dc.l 0xeeeeefff
-	dc.l 0xeeeeffef
-	dc.l 0xeeeeefff
-	dc.l 0xeeeeefee
-	dc.l 0xeeefeeee
+	dc.l 0x0019dfff
+	dc.l 0x05bfffff
+	dc.l 0x9dffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xffefeeeb
-	dc.l 0xffffeee4
-	dc.l 0xffffee94
-	dc.l 0xffeeed44
-	dc.l 0xfeeee842
-	dc.l 0xfeeed420
-	dc.l 0xeeee4100
-	dc.l 0xeee91000
+	dc.l 0xfffffffb
+	dc.l 0xfffffff3
+	dc.l 0xffffff93
+	dc.l 0xfffffd33
+	dc.l 0xfffff632
+	dc.l 0xffffd320
+	dc.l 0xffff3100
+	dc.l 0xfff91000
 
 * ---------------------------
 	dc.l 0x22200000
-	dc.l 0x44100000
-	dc.l 0x42000000
+	dc.l 0x33100000
+	dc.l 0x32000000
 	dc.l 0x20000000
 	dc.l 0x00000000
 	dc.l 0x00000000
@@ -5978,72 +5528,62 @@ motoko_tiles:
 * ---------------------------
 	dc.l 0x00000002
 	dc.l 0x00000122
-	dc.l 0x00001242
-	dc.l 0x00012224
+	dc.l 0x00001232
+	dc.l 0x00012223
 	dc.l 0x01222222
-	dc.l 0x12222224
-	dc.l 0x22222244
-	dc.l 0x1222445b
+	dc.l 0x12222223
+	dc.l 0x22222233
+	dc.l 0x1222335b
 
 * ---------------------------
-	dc.l 0x222214be
-	dc.l 0x42224bee
-	dc.l 0x22249eef
-	dc.l 0x2449eeff
-	dc.l 0x249eeeff
-	dc.l 0x4beeefff
-	dc.l 0xbeefffff
-	dc.l 0xeeefffff
+	dc.l 0x222213bf
+	dc.l 0x32223bff
+	dc.l 0x22239fff
+	dc.l 0x2339ffff
+	dc.l 0x239fffff
+	dc.l 0x3bffffff
+	dc.l 0xbfffffff
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xfffffeee
-	dc.l 0xfffffeee
-	dc.l 0xffffeefe
-	dc.l 0xffffeeee
-	dc.l 0xffffeeee
-	dc.l 0xfffeeeee
-	dc.l 0xfffeeeee
-	dc.l 0xfffffeee
+	dc.l 0xff844444
+	dc.l 0xfd344444
+	dc.l 0xfb444444
+	dc.l 0xf9444444
+	dc.l 0xf8444444
+	dc.l 0xd4444444
+	dc.l 0x94444444
+	dc.l 0x84444444
 
 * ---------------------------
-	dc.l 0xee733333
-	dc.l 0xed433333
-	dc.l 0xeb333333
-	dc.l 0xe9333333
-	dc.l 0xe7333333
-	dc.l 0xd3333333
-	dc.l 0x93333333
-	dc.l 0x73333333
+	dc.l 0x44444445
+	dc.l 0x44444457
+	dc.l 0x44444578
+	dc.l 0x44445788
+	dc.l 0x44457788
+	dc.l 0x44458888
+	dc.l 0x44588888
+	dc.l 0x45888888
 
 * ---------------------------
-	dc.l 0x33333335
-	dc.l 0x33333356
-	dc.l 0x33333567
-	dc.l 0x33335677
-	dc.l 0x33356677
-	dc.l 0x33357777
-	dc.l 0x33577777
-	dc.l 0x35777777
+	dc.l 0x78888877
+	dc.l 0x88888778
+	dc.l 0x88887778
+	dc.l 0x88887787
+	dc.l 0x88887788
+	dc.l 0x88877888
+	dc.l 0x88877888
+	dc.l 0x88778888
 
 * ---------------------------
-	dc.l 0x67777766
-	dc.l 0x77777667
-	dc.l 0x77776667
-	dc.l 0x77776676
-	dc.l 0x77776677
-	dc.l 0x77766777
-	dc.l 0x77766777
-	dc.l 0x77667777
-
-* ---------------------------
-	dc.l 0x677777bd
-	dc.l 0x667777bd
-	dc.l 0x667777bd
-	dc.l 0x766777bd
-	dc.l 0x666777bd
-	dc.l 0x776677bd
-	dc.l 0x776667bd
-	dc.l 0x777666bd
+	dc.l 0x788888bd
+	dc.l 0x778888bd
+	dc.l 0x778888bd
+	dc.l 0x877888bd
+	dc.l 0x777888bd
+	dc.l 0x887788bd
+	dc.l 0x887778bd
+	dc.l 0x888777bd
 
 * ---------------------------
 	dc.l 0xdddddddd
@@ -6066,144 +5606,144 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xd6333333
-	dc.l 0xdb333333
-	dc.l 0xdd633333
-	dc.l 0xddb53333
-	dc.l 0xddd93333
-	dc.l 0xdddd6333
-	dc.l 0xddddb333
-	dc.l 0xddddd933
+	dc.l 0xd7444444
+	dc.l 0xdb444444
+	dc.l 0xdd744444
+	dc.l 0xddb54444
+	dc.l 0xddd94444
+	dc.l 0xdddd7444
+	dc.l 0xddddb444
+	dc.l 0xddddd944
 
 * ---------------------------
-	dc.l 0x33336bdd
-	dc.l 0x3333359b
-	dc.l 0x33333336
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
+	dc.l 0x44447bdd
+	dc.l 0x4444459b
+	dc.l 0x44444447
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
 
 * ---------------------------
-	dc.l 0xeeeeeeee
-	dc.l 0xdeeeeeee
-	dc.l 0xbbdeeeee
-	dc.l 0x59bdeeee
-	dc.l 0x356bddee
-	dc.l 0x33779bde
-	dc.l 0x3333779b
-	dc.l 0x33333799
+	dc.l 0xffffffff
+	dc.l 0xdfffffff
+	dc.l 0xbbdfffff
+	dc.l 0x59bdffff
+	dc.l 0x457bddff
+	dc.l 0x44889bdf
+	dc.l 0x4444889b
+	dc.l 0x44444899
 
 * ---------------------------
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeefee
-	dc.l 0xeeefeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xdeeeeeed
-	dc.l 0xbdeeddb9
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xdffffffd
+	dc.l 0xbdffddb9
 
 * ---------------------------
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeeb
-	dc.l 0xeeeeed91
-	dc.l 0xeeedb510
-	dc.l 0xedb61100
-	dc.l 0xd6111015
-	dc.l 0x111159be
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xfffffffb
+	dc.l 0xfffffd91
+	dc.l 0xfffdb510
+	dc.l 0xfdb71100
+	dc.l 0xd7111015
+	dc.l 0x111159bf
 
 * ---------------------------
-	dc.l 0xeeb10000
+	dc.l 0xffb10000
 	dc.l 0xd9100000
 	dc.l 0x51000001
 	dc.l 0x10000115
-	dc.l 0x000157bd
-	dc.l 0x1169dddb
-	dc.l 0x9ddeed91
-	dc.l 0xeeeed610
+	dc.l 0x000158bd
+	dc.l 0x1179dddb
+	dc.l 0x9ddffd91
+	dc.l 0xffffd710
 
 * ---------------------------
 	dc.l 0x00012101
 	dc.l 0x01221002
-	dc.l 0x14750012
+	dc.l 0x13850012
 	dc.l 0x9b500122
-	dc.l 0xb5001224
-	dc.l 0x5000228d
-	dc.l 0x00014bee
-	dc.l 0x015beeee
+	dc.l 0xb5001223
+	dc.l 0x5000226d
+	dc.l 0x00013bff
+	dc.l 0x015bffff
 
 * ---------------------------
-	dc.l 0x222247de
-	dc.l 0x22247dee
-	dc.l 0x2249eeef
-	dc.l 0x47beeeff
-	dc.l 0x9deeefff
-	dc.l 0xeeeeffff
-	dc.l 0xeeefffff
-	dc.l 0xefffffff
+	dc.l 0x222238df
+	dc.l 0x22238dff
+	dc.l 0x2239ffff
+	dc.l 0x38bfffff
+	dc.l 0x9dffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xffeeeeeb
-	dc.l 0xffeeeee7
-	dc.l 0xffefeed3
-	dc.l 0xffeeee93
-	dc.l 0xffeeed53
-	dc.l 0xffeee933
-	dc.l 0xffeed333
-	dc.l 0xffee9333
+	dc.l 0xfffffffb
+	dc.l 0xfffffff8
+	dc.l 0xffffffd4
+	dc.l 0xffffff94
+	dc.l 0xfffffd54
+	dc.l 0xfffff944
+	dc.l 0xffffd444
+	dc.l 0xffff9444
 
 * ---------------------------
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333335
-	dc.l 0x33333335
-	dc.l 0x33333356
-	dc.l 0x33333357
-	dc.l 0x33333567
-	dc.l 0x33333577
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444445
+	dc.l 0x44444445
+	dc.l 0x44444457
+	dc.l 0x44444458
+	dc.l 0x44444578
+	dc.l 0x44444588
 
 * ---------------------------
-	dc.l 0x56777777
-	dc.l 0x56777777
-	dc.l 0x67777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x57888888
+	dc.l 0x57888888
+	dc.l 0x78888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
 
 * ---------------------------
-	dc.l 0x77667777
-	dc.l 0x77667777
-	dc.l 0x77667777
-	dc.l 0x77667777
-	dc.l 0x76677777
-	dc.l 0x76777777
-	dc.l 0x75677777
-	dc.l 0x76667777
+	dc.l 0x88778888
+	dc.l 0x88778888
+	dc.l 0x88778888
+	dc.l 0x88778888
+	dc.l 0x87788888
+	dc.l 0x87888888
+	dc.l 0x85788888
+	dc.l 0x87778888
 
 * ---------------------------
-	dc.l 0x7776679d
-	dc.l 0x77776569
-	dc.l 0x77777667
-	dc.l 0x77777766
-	dc.l 0x77777775
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
+	dc.l 0x8887789d
+	dc.l 0x88887579
+	dc.l 0x88888778
+	dc.l 0x88888877
+	dc.l 0x88888885
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
 
 * ---------------------------
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
 	dc.l 0xbddddddd
-	dc.l 0x6bdddddd
-	dc.l 0x67bddddd
-	dc.l 0x6679dddd
-	dc.l 0x66679bdd
-	dc.l 0x776667bd
+	dc.l 0x7bdddddd
+	dc.l 0x78bddddd
+	dc.l 0x7789dddd
+	dc.l 0x77789bdd
+	dc.l 0x887778bd
 
 * ---------------------------
 	dc.l 0xdddddddd
@@ -6236,9 +5776,9 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0xdddddd53
-	dc.l 0xddddddb3
-	dc.l 0xddddddd7
+	dc.l 0xdddddd54
+	dc.l 0xddddddb4
+	dc.l 0xddddddd8
 	dc.l 0xdddddddb
 	dc.l 0xdddddddd
 	dc.l 0xdddddddd
@@ -6246,172 +5786,172 @@ motoko_tiles:
 	dc.l 0xdddddddd
 
 * ---------------------------
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x93333333
-	dc.l 0xd6333333
-	dc.l 0xd9333333
-	dc.l 0xdd733333
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x94444444
+	dc.l 0xd7444444
+	dc.l 0xd9444444
+	dc.l 0xdd844444
 
 * ---------------------------
-	dc.l 0x3333337a
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
+	dc.l 0x4444448a
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
 
 * ---------------------------
-	dc.l 0x79bb9511
-	dc.l 0x7651569d
-	dc.l 0x57779bdd
-	dc.l 0x337a99bd
-	dc.l 0x3337aa99
-	dc.l 0x33339aaa
-	dc.l 0x333339aa
-	dc.l 0x333333aa
+	dc.l 0x89bb9511
+	dc.l 0x8751579d
+	dc.l 0x58889bdd
+	dc.l 0x448a99bd
+	dc.l 0x4448aa99
+	dc.l 0x44449aaa
+	dc.l 0x444449aa
+	dc.l 0x444444aa
 
 * ---------------------------
-	dc.l 0x169deeee
-	dc.l 0xeeeeeeee
-	dc.l 0xeeeeeeee
-	dc.l 0xdeeefeeb
-	dc.l 0xbdeffebb
-	dc.l 0x9befeefe
+	dc.l 0x179dffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xdffffffb
+	dc.l 0xbdffffbb
+	dc.l 0x9bffffff
 	dc.l 0xa9dfffff
-	dc.l 0xa7bffffe
+	dc.l 0xa8bfffff
 
 * ---------------------------
-	dc.l 0xeeed5111
-	dc.l 0xee91116b
-	dc.l 0xd6159dee
-	dc.l 0x59beeeee
-	dc.l 0xeeeeeeef
-	dc.l 0xeeefefff
-	dc.l 0xefffffff
-	dc.l 0xffffffff
-
-* ---------------------------
-	dc.l 0x5bdeeeee
-	dc.l 0xeeeeefff
-	dc.l 0xeeefffff
-	dc.l 0xeeffffff
+	dc.l 0xfffd5111
+	dc.l 0xff91117b
+	dc.l 0xd7159dff
+	dc.l 0x59bfffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 	dc.l 0xffffffff
 
 * ---------------------------
-	dc.l 0xfeed3333
-	dc.l 0xfee93333
-	dc.l 0xfed33333
-	dc.l 0xfeb33333
-	dc.l 0xeddb8388
-	dc.l 0xedeeeeee
+	dc.l 0x5bdfffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff
+
+* ---------------------------
+	dc.l 0xfffd4444
+	dc.l 0xfff94444
+	dc.l 0xffd44444
+	dc.l 0xffb44444
+	dc.l 0xfddb6466
+	dc.l 0xfdeeeeee
 	dc.l 0xdeeeeeee
 	dc.l 0xdeefeeee
 
 * ---------------------------
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33331333
-	dc.l 0x88883888
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44441444
+	dc.l 0x66664666
 	dc.l 0xeeee9dee
 	dc.l 0xeeee9eee
 	dc.l 0xeeee9eee
 
 * ---------------------------
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x83388888
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x64466666
 	dc.l 0xebbeeeee
 	dc.l 0xee9eeeee
 	dc.l 0xee9eeeee
 
 * ---------------------------
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x888889bb
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x666669bb
 	dc.l 0xeeeeeeee
 	dc.l 0xeeeeeeee
 	dc.l 0xeeeeeeee
 
 * ---------------------------
-	dc.l 0x33333677
-	dc.l 0x33335777
-	dc.l 0x33336777
-	dc.l 0x33356777
-	dc.l 0xba977777
+	dc.l 0x44444788
+	dc.l 0x44445888
+	dc.l 0x44447888
+	dc.l 0x44457888
+	dc.l 0xba988888
 	dc.l 0xeebdedbb
 	dc.l 0xeebeeeee
 	dc.l 0xedbeeeee
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0xb9977777
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0xb9988888
 	dc.l 0xeeeeedbb
 	dc.l 0xeeeeeeee
 
 * ---------------------------
-	dc.l 0x66777777
-	dc.l 0x66777777
-	dc.l 0x66777777
-	dc.l 0x77777777
-	dc.l 0x77777776
-	dc.l 0x77777767
+	dc.l 0x77888888
+	dc.l 0x77888888
+	dc.l 0x77888888
+	dc.l 0x88888888
+	dc.l 0x88888887
+	dc.l 0x88888878
 	dc.l 0xb9999bbb
 	dc.l 0xeeeeeeee
 
 * ---------------------------
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x67777777
-	dc.l 0x76666666
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x78888888
+	dc.l 0x87777777
 	dc.l 0xbbbbbbbb
 	dc.l 0xeeeeeeee
 
 * ---------------------------
-	dc.l 0x77776569
-	dc.l 0x77777766
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x77777777
-	dc.l 0x66767677
+	dc.l 0x88887579
+	dc.l 0x88888877
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x88888888
+	dc.l 0x77878788
 	dc.l 0xbbbbbb99
 	dc.l 0xeeeeeeee
 
 * ---------------------------
 	dc.l 0xbddddddd
-	dc.l 0x699bbbbb
-	dc.l 0x76666666
-	dc.l 0x77767677
-	dc.l 0x77767677
-	dc.l 0x77767777
-	dc.l 0x99979bbd
+	dc.l 0x799bbbbb
+	dc.l 0x87777777
+	dc.l 0x88878788
+	dc.l 0x88878788
+	dc.l 0x88878888
+	dc.l 0x99989bbd
 	dc.l 0xeeebdeee
 
 * ---------------------------
 	dc.l 0xddddddbb
 	dc.l 0x9999bbbd
-	dc.l 0x667bdddd
-	dc.l 0x7779dddd
-	dc.l 0x7777bddd
-	dc.l 0x7777bddd
+	dc.l 0x778bdddd
+	dc.l 0x8889dddd
+	dc.l 0x8888bddd
+	dc.l 0x8888bddd
 	dc.l 0xedddddee
 	dc.l 0xeeeeebee
 
@@ -6496,41 +6036,41 @@ motoko_tiles:
 	dc.l 0xeeeeeefe
 
 * ---------------------------
-	dc.l 0xddb33333
-	dc.l 0xddd63333
-	dc.l 0xddd93333
-	dc.l 0xdddb7333
+	dc.l 0xddb44444
+	dc.l 0xddd74444
+	dc.l 0xddd94444
+	dc.l 0xdddb8444
 	dc.l 0xdddebddd
 	dc.l 0xeeeeddee
 	dc.l 0xeeeeebee
 	dc.l 0xeeeefbde
 
 * ---------------------------
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
-	dc.l 0x33333333
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
+	dc.l 0x44444444
 	dc.l 0xdbbbbbdd
 	dc.l 0xeeeeeeee
 	dc.l 0xeeeeeeee
 	dc.l 0xefeeefee
 
 * ---------------------------
-	dc.l 0x3333337a
-	dc.l 0x3333337a
-	dc.l 0x3333337a
-	dc.l 0x3333337a
+	dc.l 0x4444448a
+	dc.l 0x4444448a
+	dc.l 0x4444448a
+	dc.l 0x4444448a
 	dc.l 0xddeea9be
 	dc.l 0xeeeedbed
 	dc.l 0xeeedbeeb
-	dc.l 0xeee9eebe
+	dc.l 0xeee9eebf
 
 * ---------------------------
 	dc.l 0xaabfffff
 	dc.l 0xaabfffff
 	dc.l 0xa9dfffff
-	dc.l 0xabefffff
-	dc.l 0xbdefffff
-	dc.l 0xdeffffff
-	dc.l 0xeeffffff
-	dc.l 0xefffffff
+	dc.l 0xabffffff
+	dc.l 0xbdffffff
+	dc.l 0xdfffffff
+	dc.l 0xffffffff
+	dc.l 0xffffffff

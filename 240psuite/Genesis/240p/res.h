@@ -93,7 +93,7 @@ extern u16 sonicwater3_pal[16/2];
 extern u32 waterfall_tiles[512/4]; 
 
 // Motoko background
-extern u32 motoko_tiles[20896/4]; 
+extern u32 motoko_tiles[19424/4]; 
 extern u16 motoko_map[2240/2];
 extern u16 motoko_pal[16/2]; 
 
@@ -144,6 +144,11 @@ extern u16 greenw_pal[16/2];
 
 extern u32 solidw_tiles[32/4]; 
 
+// n
+extern u32 n_tiles[4320/4]; 
+extern u16 n_pal[16/2]; 
+extern u16 n_map[288/2]; 
+
 // SMPTE
 extern u32 SMPTECB75_tiles[1440/4]; 
 extern u16 SMPTECB75_pal[16/2]; 
@@ -155,12 +160,12 @@ extern u32 EBUColorBars75_tiles[256/4];
 extern u16 EBUColorBars75_map[2240/2]; 
 
 // Sharpness
-extern u32 sharpness_tiles[4064/4]; 
+extern u32 sharpness_tiles[3136/4]; 
 extern u16 sharpness_pal[16/2]; 
 extern u16 sharpness_map[2240/2]; 
 
 // vertical Scroll
-extern u32 kiki_tiles[800/4]; 
+extern u32 kiki_tiles[768/4]; 
 extern u16 kiki_pal[16/2]; 
 extern u16 kiki_map[4096/2]; 
 
