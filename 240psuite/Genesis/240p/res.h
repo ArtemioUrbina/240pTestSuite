@@ -145,9 +145,9 @@ extern u16 greenw_pal[16/2];
 extern u32 solidw_tiles[32/4]; 
 
 // n
-extern u32 n_tiles[4320/4]; 
+extern u32 n_tiles[3040/4]; 
 extern u16 n_pal[16/2]; 
-extern u16 n_map[288/2]; 
+extern u16 n_map[200/2]; 
 
 // SMPTE
 extern u32 SMPTECB75_tiles[1440/4]; 

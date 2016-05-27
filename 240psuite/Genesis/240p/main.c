@@ -399,7 +399,7 @@ void DrawN()
 	size = sizeof(n_tiles) / 32;
 	VDP_setPalette(PAL0, n_pal);
 	VDP_loadTileData(n_tiles, TILE_USERINDEX, size, USE_DMA);
-	VDP_setMyTileMapRect(BPLAN, n_map, TILE_USERINDEX, 112 / 8, 64 / 8, 96 / 8, 96 / 8);
+	VDP_setMyTileMapRect(BPLAN, n_map, TILE_USERINDEX, 120 / 8, 72 / 8, 80 / 8, 80 / 8);
 	
 	while(!exit)
 	{
@@ -414,7 +414,7 @@ void DrawN()
 
 void DrawCredits()
 {
-	u16 ind = 0, size = 0, exit = 0, pos = 8, counter = 1;
+	u16 ind, size, exit = 0, pos = 0, counter = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons, loadvram = 1;
 
 	FadeAndCleanUp();
@@ -428,6 +428,13 @@ void DrawCredits()
 			pos = 8;
 			counter = 1;
 			
+#ifdef SEGACD
+			pos = 6;
+#endif
+
+#ifdef DBELEC
+			pos = 7;
+#endif
 			VDP_setPalette(PAL0, palette_grey);
 			VDP_setPalette(PAL1, palette_green);
 			VDP_setPalette(PAL2, back_pal);
@@ -441,14 +448,6 @@ void DrawCredits()
 
 			VDP_setVerticalScroll(PLAN_A, 4);
 			VDP_setHorizontalScroll(PLAN_A, -4);
-
-#ifdef SEGACD
-			pos = 6;
-#endif
-
-#ifdef DBELEC
-			pos = 7;
-#endif
 
 			VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			pos++;
