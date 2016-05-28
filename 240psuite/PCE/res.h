@@ -41,7 +41,7 @@
 #elseif
 
 #incbin(MB_map, "graphics/mainbg.fmp");
-#incchr_ex(MB_bg, "graphics/mainbg.pcx", 0, 0, 20, 7, 0);
+#incchr_ex(MB_bg, "graphics/mainbg.pcx", 0, 0, 4, 31, 0);
 #incpal(MB_pal, "graphics/mainbg.pcx", 0, 1);
 
 #incbin(MB512_map, "graphics/back512.fmp");
