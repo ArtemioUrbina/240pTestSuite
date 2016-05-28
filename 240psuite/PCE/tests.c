@@ -725,6 +725,7 @@ void ScrollTest()
 	int dir = 1;
 	int spd = 1;
 	int colswap = 0;
+	int vertical = 0;
 
 	x1 = 0;
 	x2 = 0;
@@ -741,28 +742,42 @@ void ScrollTest()
         if(redraw)
         {
 			ResetVideo();
-			set_screen_size(SCR_SIZE_32x32);
-	
-			scroll(0, x1, 0, 0, 76, 0xC0);
-			scroll(1, x2, 76, 76, 160, 0xC0);
-			scroll(2, x3, 160, 160, 208, 0xC0);
-			scroll(3, x4, 208, 208, 240, 0xC0);
+			
+			if(!vertical)
+			{
+				set_xres(320, xres_flags);
+				set_screen_size(SCR_SIZE_32x32);
 	
 #ifndef CDROM1
-			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
+				load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
-			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, SIZE_sonic_PAL_bin); 
-			load_palette(0, palCD, 16);
-			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
-			RestoreGlobals();
+				cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, SIZE_sonic_PAL_bin); 
+				load_palette(0, palCD, 16);
+				cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
+				cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
+				RestoreGlobals();
 #endif
-			
-			init_satb();
-			DrawPalm();
-			satb_update();
-			
-			MovePalm(4*spd*dir);
+				
+				init_satb();
+				DrawPalm();
+				satb_update();
+				
+				MovePalm(4*spd*dir);
+			}
+			else
+			{
+				set_xres(256, xres_flags);
+				set_screen_size(SCR_SIZE_32x64);
+#ifndef CDROM1
+				load_background(kiki_bg, kiki_pal, kiki_map, 32, 64);
+#else
+				cd_loaddata(GPHX_OVERLAY, OFS_kiki_PAL_bin, palCD, SIZE_kiki_PAL_bin); 
+				load_palette(0, palCD, 16);
+				cd_loadvram(GPHX_OVERLAY, OFS_kiki_DATA_bin, 0x1000, SIZE_kiki_DATA_bin);
+				cd_loadvram(GPHX_OVERLAY, OFS_kiki_BAT_bin, 0, SIZE_kiki_BAT_bin);
+				RestoreGlobals();
+#endif
+			}
 			
             redraw = 0;
 			disp_on();
@@ -799,32 +814,56 @@ void ScrollTest()
 				pause = 1;
 		}
 		
-		if(colswap == 60)
-		{
-			SwapPalette(6, 4);
-			SwapPalette(7, 8);
-			
-			colswap = 0;
-		}
-		colswap++;
-		
 		if (controller & JOY_SEL)
-			dir *= -1;
-		
-		if(!pause)
 		{
-			x1 += 1*spd*dir;
-			x2 += 2*spd*dir;
-			x3 += 3*spd*dir;
-			x4 += 4*spd*dir;
+			vertical = !vertical;
+			redraw = 1;
 		}
 		
-		MovePalm(x4);
+		if (controller & JOY_LEFT)
+			dir = 1;
+			
+		if (controller & JOY_RIGHT)
+			dir = -1;
 		
-		scroll(0, x1, 0, 0, 76, 0xC0);
-		scroll(1, x2, 76, 76, 160, 0xC0);
-		scroll(2, x3, 160, 160, 208, 0xC0);
-		scroll(3, x4, 208, 208, 240, 0xC0);
+		if(!vertical)
+		{
+			if(colswap == 60)
+			{
+				SwapPalette(6, 4);
+				SwapPalette(7, 8);
+				
+				colswap = 0;
+			}
+			colswap++;
+			
+			if(!pause)
+			{
+				x1 += 1*spd*dir;
+				x2 += 2*spd*dir;
+				x3 += 3*spd*dir;
+				x4 += 4*spd*dir;
+			}
+			
+			MovePalm(x4);
+			
+			scroll(0, x1, 0, 0, 76, 0xC0);
+			scroll(1, x2, 76, 76, 160, 0xC0);
+			scroll(2, x3, 160, 160, 208, 0xC0);
+			scroll(3, x4, 208, 208, 240, 0xC0);
+		}	
+		else
+		{
+			if(!pause)
+				y += spd*dir;
+				
+			if(y > 512)
+				y = 0;
+			if(y < 0)
+				y = 512;
+			
+			scroll(0, 0, y, 0, 240, 0xC0);
+		}
     }
 	set_screen_size(SCR_SIZE_64x32);
 }

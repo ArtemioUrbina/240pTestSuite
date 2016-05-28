@@ -45,7 +45,7 @@
 #incpal(MB_pal, "graphics/mainbg.pcx", 0, 1);
 
 #incbin(MB512_map, "graphics/back512.fmp");
-#incchr_ex(MB512_bg, "graphics/back512.pcx", 0, 0, 4, 36, 0);
+#incchr_ex(MB512_bg, "graphics/back512.pcx", 0, 0, 4, 35, 0);
 #incpal(MB512_pal, "graphics/back512.pcx", 0, 1);
 
 #incbin(n_map, "graphics/N_BAT.bin");
@@ -63,6 +63,10 @@
 #incbin(sonic_map, "graphics/sonic_BAT.bin");
 #incbin(sonic_bg, "graphics/sonic_DATA.bin");
 #incbin(sonic_pal, "graphics/sonic_PAL.bin");
+
+#incbin(kiki_map, "graphics/kiki_BAT.bin");
+#incbin(kiki_bg, "graphics/kiki_DATA.bin");
+#incbin(kiki_pal, "graphics/kiki_PAL.bin");
 
 #incbin(lagback_map, "graphics/lagback.fmp");
 #incchr_ex(lagback_bg, "graphics/lagback.pcx", 0, 0, 2, 35, 0);

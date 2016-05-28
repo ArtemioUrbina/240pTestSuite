@@ -62,6 +62,9 @@ extern int palm_sp[];
 extern char sonic_map[];
 extern int sonic_bg[];
 
+extern char kiki_map[];
+extern int kiki_bg[];
+
 extern char lagback_map[];
 extern int lagback_bg[];
 
@@ -78,6 +81,7 @@ extern int check_pal[];
 extern int SD_pal[];
 extern int palm_pal[];
 extern int sonic_pal[];
+extern int kiki_pal[];
 extern int bee_pal[];
 
 

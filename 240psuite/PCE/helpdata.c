@@ -674,31 +674,37 @@ void display_scroll_00()
 	call		_set_font_pal
 	p_string	scroll_00_01,6,8
 	p_string	scroll_00_02,6,9
-	p_string	scroll_00_03,6,10
-	p_string	scroll_00_04,6,11
+	p_string	scroll_00_03,6,11
+	p_string	scroll_00_04,6,12
 	p_string	scroll_00_05,6,13
 	p_string	scroll_00_06,6,14
 	p_string	scroll_00_07,6,16
 	p_string	scroll_00_08,6,17
+	p_string	scroll_00_09,6,19
+	p_string	scroll_00_10,6,20
 	rts
 
 scroll_00_00:	.db	"SCROLL TEST"
 			.db	0
-scroll_00_01:	.db	"This test shows a background from Sonic the "
+scroll_00_01:	.db	"This test shows either an horizontal background"
 			.db	0
-scroll_00_02:	.db	"Hedgehog. The speed can be varied with the d-pad,"
+scroll_00_02:	.db	"from Sonic or a vertical one from Kiki Kaikai."
 			.db	0
-scroll_00_03:	.db	"and change direction with SELECT. Button I stops"
+scroll_00_03:	.db	"Speed can be varied with up & down on the"
 			.db	0
-scroll_00_04:	.db	"the scroll."
+scroll_00_04:	.db	"d-pad and scroll direction with left or right."
 			.db	0
-scroll_00_05:	.db	"This can be used to notice any drops in framerate"
+scroll_00_05:	.db	"Button I stops the screen and SELECT toggles"
 			.db	0
-scroll_00_06:	.db	"when using a video processor."
+scroll_00_06:	.db	"between vertical and horizontal scroll."
 			.db	0
-scroll_00_07:	.db	"Sonic The Hedgehog is a trademark of Sega"
+scroll_00_07:	.db	"This can be used to notice any drops in"
 			.db	0
-scroll_00_08:	.db	"Enterprises Ltd."
+scroll_00_08:	.db	"framerate, or pixel width inconsistencies."
+			.db	0
+scroll_00_09:	.db	"Sonic is a trademark of Sega Enterprises Ltd."
+			.db	0
+scroll_00_10:	.db	"Kiki Kaikai is a trademark of Namco Bandai."
 			.db	0
 #endasm
 }

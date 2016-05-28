@@ -1,13 +1,16 @@
                     SCROLL TEST
 
 
-This test shows a background from Sonic the 
-Hedgehog. The speed can be varied with the d-pad,
-and change direction with SELECT. Button I stops
-the scroll.
+This test shows either an horizontal background
+from Sonic or a vertical one from Kiki Kaikai.
 
-This can be used to notice any drops in framerate
-when using a video processor.
+Speed can be varied with up & down on the
+d-pad and scroll direction with left or right.
+Button I stops the screen and SELECT toggles
+between vertical and horizontal scroll.
 
-Sonic The Hedgehog is a trademark of Sega
-Enterprises Ltd.
+This can be used to notice any drops in
+framerate, or pixel width inconsistencies.
+
+Sonic is a trademark of Sega Enterprises Ltd.
+Kiki Kaikai is a trademark of Namco Bandai.

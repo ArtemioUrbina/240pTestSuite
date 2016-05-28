@@ -344,7 +344,7 @@ void DrawN()
 			set_xres(256, xres_flags);
 			scroll(0, 0, -32, 0, 240, 0xC0);
 #ifndef CDROM1
-			load_background(n_bg, n_pal, n_map, 32, 22);
+			load_background(n_bg, n_pal, n_map, 32, 20);
 #else
 			set_screen_size(SCR_SIZE_32x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_N_PAL_bin, palCD, SIZE_N_PAL_bin); 
@@ -415,6 +415,7 @@ void DrawCredits()
 			refresh = 0;
 		}
 		
+		set_font_pal(14);
 		if(counter == 1)
 			put_string("Artemio Urbina      ", HPOS+2, 8);
 		if(counter == 60*4)
@@ -446,8 +447,7 @@ void RefreshCredits()
 	set_font_pal(15);
 	put_string("Code and Patterns:", HPOS+2, row++);
 	set_font_pal(14);
-	put_string("Artemio Urbina", HPOS+2, row++);
-	row++;
+	row+=2;
 	
 	set_font_pal(15);
 	put_string("SDK:", HPOS+2, row++);
@@ -478,19 +478,21 @@ void RefreshCredits()
 	set_font_pal(14);
 	put_string("http://junkerhq.net/240p/", HPOS+2, row++);
 	set_font_pal(13);
-	put_string("This program is free software and open source.", HPOS+2, row++);
-	put_string("Source code is available under GPL.", HPOS+2, row++);
-	row++;
+	put_string("This is free software and is open source under GPL.", HPOS+1, row++);
 
 	set_font_pal(14);	
-	put_string("Ver. 1.01", 50, 7);
-	put_string("20/11/2014", 49, 8);
+	put_string("Ver. 1.02", 50, 7);
+	put_string("27/05/2016", 49, 8);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;
 	put_string("System Card", 46, 9);
 	put_number(x, 1, 58, 9);
 #endif
+
+	set_font_pal(15);
+	put_string("Dedicated to Elisa", 40, 25);
+	
 }
 
 #ifndef CDROM1

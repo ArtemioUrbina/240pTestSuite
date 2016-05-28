@@ -95,11 +95,23 @@ int main(int argc, char **argv)
 	    memset(buffer, 0x0, sizeof(char)*size);
 	    fread(buffer, sizeof(char), size-1, fp);
 	    fclose(fp);
-    
-	    for(i = 0; i < size; i++)
-		    if(buffer[i] == '\n')
+		// destroy the line feeds 0x0A
+		for(i = 0; i < size; i++)
+		{
+			if(buffer[i] == '\r')
+			{
+				long j = 0;
+				for(j = i; j < size - 1; j++)
+					buffer[j] = buffer [j+1];
+				size --;
+			}
+			if(buffer[i] == '\n')
 			    lines ++;
-    
+		}
+
+		if(buffer[size - 2] != '\n')
+			printf("File %s doens't end with \\n, might miss a line\n",argv[c]);
+
 	    *npages = (lines / LINESPERPAGE);
 	    if(lines % LINESPERPAGE && lines > LINESPERPAGE)
 		    (*npages) ++;
