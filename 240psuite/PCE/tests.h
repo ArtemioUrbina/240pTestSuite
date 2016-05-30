@@ -32,6 +32,7 @@ void StripedSprite();
 void LagTest();
 void VScrollTest();
 void SoundTest();
+void AudioSyncTest();
 void ManualLagTest();
 
 void RedrawDropShadow(int back, int x, int y);

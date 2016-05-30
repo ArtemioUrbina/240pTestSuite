@@ -36,6 +36,7 @@
 #define TOOL_SOUND		2
 #define TOOL_MANUAL		3
 #define	TOOL_PASSIVE	4
+#define TOOL_AUDIOSYNC	5
 
 #endif
 
@@ -52,6 +53,7 @@
 #define TOOL_SOUND		2
 #define TOOL_MANUAL		3
 #define	TOOL_PASSIVE	4
+#define TOOL_AUDIOSYNC	5
 
 #endif
  

@@ -60,6 +60,9 @@ void main()
 		case TOOL_PASSIVE:
 			LagTest();
 			break;
+		case TOOL_AUDIOSYNC:
+			AudioSyncTest();
+			break;
 	}
 	cd_execoverlay(MAIN_OVERLAY);
 }
@@ -389,6 +392,30 @@ sine:   db      18,22,24,26,28,28,30,30
 		db      30,30,28,28,26,24,22,18
 		db      12,8,6,4,2,2,0,0
 		db      0,0,2,2,4,6,8,12
+#endasm		
+}
+
+void SetWave1000()
+{
+#asm	
+		lda     #LOW(112)
+		sta     $0802
+		lda     #HIGH(112)
+		sta     $0803
+	
+		rts
+#endasm		
+}
+
+void SetWave500()
+{
+#asm	
+		lda     #LOW(224)
+		sta     $0802
+		lda     #HIGH(224)
+		sta     $0803
+	
+		rts
 #endasm		
 }
 
@@ -757,6 +784,12 @@ void ManualLagTest()
 			refresh = 0;
 		}
 		
+		if(audio) // n more that one frame with audio
+			StopAudio();
+				
+		if(y == 96) // remove full screen flash
+			set_color_rgb(1, 0, 0, 0);
+		
 		controller = joytrg(0);
 		
 		if (controller & JOY_I)
@@ -764,6 +797,12 @@ void ManualLagTest()
 			if(change)
 			{
 				clicks[pos] = (y - 96) *speed;
+				
+				if(audio && clicks[pos] != 0)
+				{
+					SetWave500();
+					PlayCenter();
+				}
 	
 				if(clicks[pos] >= 0)
 				{
@@ -864,19 +903,23 @@ void ManualLagTest()
 		if(y == 96)
 		{			
 			if(audio)
+			{
+				SetWave1000();
 				PlayCenter();
+			}
 			
 			spr_set(0);
 			spr_pal(1);
 			
 			spr_set(1);
 			spr_pal(1);
+			set_color_rgb(1, 7, 7, 7);   
 		}
 		else
 		{
 			if(y == 97 || y == 95) // one pixel off
 			{
-				StopAudio();
+				//StopAudio();
 				
 				spr_set(0);
 				spr_pal(2);
@@ -946,4 +989,111 @@ void ManualLagTestClickRefresh()
 				put_string(" ", 19, 2+x2);
 		}
 	}
+}
+
+
+void AudioSyncTest()
+{
+	unsigned char end = 0;
+	int count = 0;
+	int sel = 1;
+
+	redraw = 1;
+	refresh = 0;
+	
+	LoadWave();
+	
+    while(!end)
+    {   
+		vsync();
+        if(redraw)
+        {
+			ResetVideo();
+			setupFont();
+
+			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
+#ifndef CDROM1
+			set_map_data(MB_map, 40, 30);
+			set_tile_data(MB_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 40, 30);
+			load_palette(0, MB_pal, 1);  
+#else
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
+			set_bgpal(0, palCD); 
+			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+#endif
+			
+			set_font_pal(13);
+            put_string("Audio Sync Test", 15, 5);
+			
+			Center224in240();
+			
+            redraw = 0;
+			refresh = 1;
+			disp_on();
+		}
+		
+		if(refresh)
+		{
+			set_font_pal(sel == 0 ? 15 : 14);
+            put_string("Left", 9, 14);
+            set_font_pal(sel == 1 ? 15 : 14);
+            put_string("Center", 17, 16);
+            set_font_pal(sel == 2 ? 15 : 14);
+            put_string("Right", 26, 14);
+		}
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			StopAudio();
+			showHelp(SOUND_HELP);
+			redraw = 1;
+		}
+        
+		if (controller & JOY_II)
+			end = 1;
+			
+		if (controller & JOY_I)
+		{
+			switch(sel)
+			{
+				case 0:
+					PlayLeft();
+					break;
+				case 1:
+					PlayCenter();
+					break;
+				case 2:
+					PlayRight();
+					break;
+			}
+			count = 20;
+		}
+			
+		if (controller & JOY_LEFT)
+			sel --;
+			
+		if (controller & JOY_RIGHT)
+			sel ++;
+	
+		if(sel < 0)
+			sel = 0;
+		if(sel > 2)
+			sel = 2;
+			
+		if(count)
+			count--;
+			
+		if(count == 1)
+		{
+			StopAudio();
+			count = 0;
+		}
+    }
+	StopAudio();
 }

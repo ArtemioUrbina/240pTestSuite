@@ -123,7 +123,7 @@ void main()
         if (controller & JOY_DOWN) 
         {
             sel++;
-            if(sel > 13)
+            if(sel > 14)
                 sel = 0;
             refresh = 1;
         }
@@ -132,7 +132,7 @@ void main()
         {
             sel--;
             if(sel < 0)
-                sel = 13;
+                sel = 14;
             refresh = 1;
         }
 		
@@ -207,18 +207,21 @@ void main()
 					SoundTest();
 					break;
 				case 11:
-#ifdef CDROM1
-					prev_select = sel;
-#endif
-					Options();
+					AudioSyncTest();
 					break;
 				case 12:
 #ifdef CDROM1
 					prev_select = sel;
 #endif
-					showHelp(GENERAL_HELP);
+					Options();
 					break;
 				case 13:
+#ifdef CDROM1
+					prev_select = sel;
+#endif
+					showHelp(GENERAL_HELP);
+					break;
+				case 14:
 					DrawCredits();
 					break;
 			}
@@ -309,13 +312,15 @@ void RefreshMainAux(int sel, int row)
 	put_string("Backlit Zone Test", HPOS, row++);
 	set_font_pal(sel == 10 ? 15 : 14);
 	put_string("Sound Test", HPOS, row++);
-	
 	set_font_pal(sel == 11 ? 15 : 14);
-	put_string("Options", HPOS, ++row);
+	put_string("Audio Sync Test", HPOS, row++);
 	
 	set_font_pal(sel == 12 ? 15 : 14);
-	put_string("Help", HPOS, ++row);
+	put_string("Video Options", HPOS, ++row);
+	
 	set_font_pal(sel == 13 ? 15 : 14);
+	put_string("Help", HPOS, ++row);
+	set_font_pal(sel == 14 ? 15 : 14);
 	put_string("Credits", HPOS, ++row);
 }
 

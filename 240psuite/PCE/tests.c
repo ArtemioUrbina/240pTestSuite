@@ -742,7 +742,7 @@ void ScrollTest()
         if(redraw)
         {
 			ResetVideo();
-			
+			disp_off();
 			if(!vertical)
 			{
 				set_xres(320, xres_flags);
@@ -757,7 +757,7 @@ void ScrollTest()
 				cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
 				RestoreGlobals();
 #endif
-				
+
 				init_satb();
 				DrawPalm();
 				satb_update();
@@ -1018,5 +1018,11 @@ void LagTest()
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
+void AudioSyncTest()
+{
+	prev_select = 11;
+	ToolItem = TOOL_AUDIOSYNC;
+	cd_execoverlay(TEST_EXT_OVERLAY);
+}
 
 #endif
