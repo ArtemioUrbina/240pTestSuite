@@ -69,9 +69,11 @@
 #incbin(kiki_pal, "graphics/kiki_PAL.bin");
 
 #incbin(lagback_map, "graphics/lagback.fmp");
-#incchr_ex(lagback_bg, "graphics/lagback.pcx", 0, 0, 2, 35, 0);
+#incchr_ex(lagback_bg, "graphics/lagback.pcx", 0, 0, 2, 29, 0);
 #incpal(lagback_pal, "graphics/lagback.pcx", 0, 1);
 
+#incbin(audiosync_map, "graphics/audiosync.fmp");
+#incchr_ex(audiosync_bg, "graphics/audiosync.pcx", 0, 0, 2, 4, 0);
 
 /*
 		SPRITES

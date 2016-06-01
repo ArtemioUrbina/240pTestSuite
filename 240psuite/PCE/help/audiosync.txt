@@ -1,0 +1,9 @@
+                  AUDIO SYNC
+
+This test flashes the whole screen white for 2
+frames, along with a 1khz test tone.
+
+You can verify the sync between audio and video
+with recording equipment or specialized hardware.
+
+Press I to start/stop the test.

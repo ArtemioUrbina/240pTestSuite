@@ -199,6 +199,9 @@ void main()
 				case IRE100HELP:
 					DrawIre100Help();
 					break;
+				case AUDIOSYNC_HELP:
+					display_audiosync_00();
+					break;
 			}
 			
 			set_font_pal(13);

@@ -8,29 +8,30 @@
 #define CHECK_HELP			8
 #define BACKLIT_HELP		9
 #define	SOUND_HELP			10
+#define AUDIOSYNC_HELP		11
 
-#define	OPTIONS_HELP		11
-#define GENERAL_HELP		12
+#define	OPTIONS_HELP		12
+#define GENERAL_HELP		13
 
 /*****************************/
 
-#define HELP_PART_2			13
+#define HELP_PART_2			20
 
-#define	PLUGE_HELP			13
-#define	COLORS_HELP			14
-#define	SMPTECOLOR_HELP		15
-#define	COLOR601_HELP		16
-#define BLEED_HELP			17
-#define	GRID_HELP			18
-#define	GRID_HELP2			19
-#define	GRID_HELP3			20
-#define	LINEARITY_HELP		21
-#define	LINEARITY256_HELP	22
-#define	GRAY_HELP			23
-#define	WHITE_HELP			24
-#define IRE100HELP			25
-#define	SHARPNESS_HELP		26
-#define	OVERSCAN_HELP		27
+#define	PLUGE_HELP			20
+#define	COLORS_HELP			21
+#define	SMPTECOLOR_HELP		22
+#define	COLOR601_HELP		23
+#define BLEED_HELP			24
+#define	GRID_HELP			25
+#define	GRID_HELP2			26
+#define	GRID_HELP3			27
+#define	LINEARITY_HELP		28
+#define	LINEARITY256_HELP	29
+#define	GRAY_HELP			30
+#define	WHITE_HELP			31
+#define IRE100HELP			32
+#define	SHARPNESS_HELP		33
+#define	OVERSCAN_HELP		34
 
-#define	OPTIONS_HELP2		28
-#define GENERAL_HELP2		29
+#define	OPTIONS_HELP2		35
+#define GENERAL_HELP2		36

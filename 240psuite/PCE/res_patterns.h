@@ -48,7 +48,7 @@
 #ifndef CDROM1
 
 #incbin(pluge_map, "graphics/pluge.fmp");
-#incchr_ex(pluge_bg, "graphics/pluge.pcx", 0, 0, 2, 23, 0);
+#incchr_ex(pluge_bg, "graphics/pluge.pcx", 0, 0, 2, 4, 0);
 
 #incchr_ex(grid_bg, "graphics/grid.pcx", 0, 0, 2, 4, 0);
 
@@ -68,7 +68,7 @@
 #incchr_ex(gray_bg, "graphics/gray.pcx", 0, 0, 4, 2, 0);
 
 #incbin(cb601_map, "graphics/cb601.fmp");
-#incchr_ex(cb601_bg, "graphics/cb601.pcx", 0, 0, 2, 34, 0);
+#incchr_ex(cb601_bg, "graphics/cb601.pcx", 0, 0, 2, 4, 0);
 
 #incbin(colorbleed_map, "graphics/colorbleed.fmp");
 #incchr_ex(colorbleed_bg, "graphics/colorbleed.pcx", 0, 0, 2, 3, 0);

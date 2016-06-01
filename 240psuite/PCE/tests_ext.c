@@ -991,12 +991,12 @@ void ManualLagTestClickRefresh()
 	}
 }
 
-
 void AudioSyncTest()
 {
 	unsigned char end = 0;
-	int count = 0;
-	int sel = 1;
+	int status = -1;
+	int acc = -1;
+	y = 160;
 
 	redraw = 1;
 	refresh = 0;
@@ -1008,92 +1008,130 @@ void AudioSyncTest()
 		vsync();
         if(redraw)
         {
+			disp_off();
 			ResetVideo();
 			setupFont();
 
 			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
+			
+			for(x = 0; x < 16; x++)
+				set_color(x, 0);
+				
+			set_color(2, RGB(7, 7, 7));
+				
 #ifndef CDROM1
-			set_map_data(MB_map, 40, 30);
-			set_tile_data(MB_bg);
+			set_map_data(audiosync_map, 40, 32);
+			set_tile_data(audiosync_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, MB_pal, 1);  
+			load_map(0, 0, 0, 0, 40, 32);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
-			set_bgpal(0, palCD); 
-			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_audiosync_DATA_bin, 0x1000, SIZE_audiosync_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_audiosync_BAT_bin, 0x0000, SIZE_audiosync_BAT_bin);
 #endif
-			
-			set_font_pal(13);
-            put_string("Audio Sync Test", 15, 5);
+
+			init_satb();
+			set_color_rgb(256, 0, 0, 0); 
+			set_color_rgb(257, 7, 7, 7); 
+#ifndef CDROM1		
+			load_vram(0x5000, LED_sp, 0x100);
+#else
+			cd_loadvram(GPHX_OVERLAY, OFS_LEDsprites_tile_bin, 0x5000, SIZE_LEDsprites_tile_bin);
+#endif
+			spr_make(0, 160, y, 0x5000+0x40, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			satb_update();
 			
 			Center224in240();
 			
             redraw = 0;
-			refresh = 1;
 			disp_on();
-		}
-		
-		if(refresh)
-		{
-			set_font_pal(sel == 0 ? 15 : 14);
-            put_string("Left", 9, 14);
-            set_font_pal(sel == 1 ? 15 : 14);
-            put_string("Center", 17, 16);
-            set_font_pal(sel == 2 ? 15 : 14);
-            put_string("Right", 26, 14);
 		}
 
         controller = joytrg(0);
-		
-		if (controller & JOY_RUN)
-		{
-			StopAudio();
-			showHelp(SOUND_HELP);
-			redraw = 1;
-		}
         
 		if (controller & JOY_II)
 			end = 1;
 			
 		if (controller & JOY_I)
 		{
-			switch(sel)
-			{
-				case 0:
-					PlayLeft();
-					break;
-				case 1:
-					PlayCenter();
-					break;
-				case 2:
-					PlayRight();
-					break;
-			}
-			count = 20;
+			refresh = !refresh;
+			if(!refresh)
+				status = 121;
+			else
+				y = 160;
 		}
+		
+		if(refresh && status == -1)
+		{
+			status = 0;
+			acc = -1;
+		}
+		
+		if(status > -1)
+		{
+			status++;
+			if(status <= 120)
+			{
+				y += acc;
+				spr_set(0);				
+				spr_x(160);
+				spr_y(y);			
+				satb_update();
+			}
+		}
+
+		if(status >= 20 && status <= 120)
+		{
+			switch (status)
+			{
+			case 20:
+				break;
+			case 40:
+				set_color(3, RGB(7, 7, 7));
+				break;
+			case 60:
+				acc = 1;
+				set_color(4, RGB(7, 7, 7));
+				break;
+			case 80:
+				set_color(5, RGB(7, 7, 7));
+				break;
+			case 100:
+				set_color(6, RGB(7, 7, 7));
+				break;
+			case 120:
+				set_color(7, RGB(7, 7, 7));
+				break;
+			}
+		}
+		
+		if(status == 120)
+		{
+			PlayCenter();
+			set_color(0, RGB(7, 7, 7));
+		}
+
+		if(status == 122)
+		{
+			set_color(0, 0);
 			
-		if (controller & JOY_LEFT)
-			sel --;
-			
-		if (controller & JOY_RIGHT)
-			sel ++;
-	
-		if(sel < 0)
-			sel = 0;
-		if(sel > 2)
-			sel = 2;
-			
-		if(count)
-			count--;
-			
-		if(count == 1)
+			for(x = 3; x < 8; x++)
+				set_color(x, 0);
+
+			StopAudio();
+			status = -1;
+		}
+		
+		if (controller & JOY_RUN)
 		{
 			StopAudio();
-			count = 0;
+			showHelp(AUDIOSYNC_HELP);
+			redraw = 1;
+			refresh = 0;
+			status = 121;
+			y = 160;
 		}
+		
     }
 	StopAudio();
 }

@@ -26,7 +26,12 @@
 #include "video.h"
 #include "font.h"
 
-#include "res.h"
+
+// Include them directly in order to reduce ovl and loading times.
+
+#incchr(my_font, "graphics/font.pcx", 32, 3);
+#incbin(fs_map, "graphics/fullscreen.fmp");
+#incchr_ex(white_bg, "graphics/check.pcx", 8, 8, 1, 1, 0);
 
 void DrawIntro()
 {
@@ -79,6 +84,15 @@ void main()
 	put_string("Loading...", 28, 26);
 	cd_execoverlay(2); // Super CD-ROM2
 #else
+	x = cd_getver() >> 8;
+	if(x == 3)
+	{
+		SetFontColors(14, 0, RGB(7, 7, 7), 0);
+		put_string("There is a version of this software", 1, 10);
+		put_string("for System Card 3 so you don't have", 1, 12);
+		put_string("loading times", 10, 14);
+		vsync(200);
+	}
 	cd_execoverlay(MAIN_OVERLAY); // CD-ROM2
 #endif
 }

@@ -8,17 +8,23 @@ when processing the signal.
 As an added feature, the user can click button I
 when the sprite is aligned with the one on the
 background, and the offset in frames from the
-actual intersection will be shown on screen. This
+actual intersection will be shown on screen. 
+
+A one frame 1khz tone is played when audio is
+enabled and the sprites are aligned, and a 500hz
+tone is played when button I is pressed. This
 can be repeated ten times and the software will
 calculate the average. Whenever the button was
 pressed before the actual intersection frame, the
-result will be ignored (but still shown on screen).
-SELECT can be used to change the direction
-of the sprite from vertical to horizontal, or
-display both at the same time.
 
 
               MANUAL LAG TEST (2/2)
+
+result will be ignored (but still shown on screen).
+
+SELECT can be used to change the direction
+of the sprite from vertical to horizontal, or
+display both at the same time
 
 Of course the evaluation is dependent on reflexes
 and/or rhythm more than anything. The visual and

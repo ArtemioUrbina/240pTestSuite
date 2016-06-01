@@ -80,6 +80,13 @@ Gamecube:
 This version has the same features as the Wii version, can be ran from CD or
 an SD card media launcher.
 
+NES/Famicom:
+---------
+The Nintendo Entertainment System (NES) can output 240 picture
+lines in a progressive "double struck" mode.  It does not support
+interlaced video, and its 52-color palette is closer to HSV than RGB.
+It was developed by Damian Yerrick.
+
 Contributors
 ===============================================================================
     * Code: Artemio Urbina
@@ -96,4 +103,4 @@ For full documentation and source code, please visit:
 http://junkerhq.net/240p/
 
 ===============================================================================
-2011-2014 Artemio Urbina
+2011-2016 Artemio Urbina
