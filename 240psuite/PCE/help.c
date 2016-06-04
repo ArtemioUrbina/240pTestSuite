@@ -291,12 +291,12 @@ void DrawGeneralHelp(char page)
 			else
 				put_string("The PC Engine version of the suite is", 6, row++);
 			put_string("320x240 by default, but can be changed to 320x224p.", 6, row++);
-			put_string("Grids and other screens are also available in", 6, row++);
 			break;
 		case 2:
 			put_string("HELP (2/2)", 26, row++);
 			set_font_pal(14);
 			row++;
+			put_string("Grids and other screens are also available in", 6, row++);
 			put_string("256x224, 256x240, 512x224 and 512x240 resolutions.", 6, row++);
 			row++;
 			put_string("When in 240p mode the system can start drawing", 6, row++);
@@ -312,8 +312,12 @@ void DrawGeneralHelp(char page)
 
 			put_string("The 240p suite is also available in other systems,", 6, row++);
 			put_string("including: Sega Genesis/Mega Drive, Sega CD/", 6, row++);
-			put_string("Mega CD, Super Nintendo, Nintendo GameCube,", 6, row++);
+			put_string("Mega CD, NES, Super Nintendo, Nintendo GameCube,", 6, row++);
 			put_string("Nintendo Wii and Sega Dreamcast.", 6, row++);
+			row++;
+			put_string("Full info available at:", 6, row);
+			set_font_pal(13);
+			put_string("http://junkerhq.net/240p/", 30, row);
 			
 #ifdef HELP_OVL
 			set_font_pal(13);

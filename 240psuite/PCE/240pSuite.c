@@ -445,6 +445,8 @@ void DrawCredits()
     }	
 }
 
+//#define DISTRIBUTE
+
 void RefreshCredits()
 {
 	row = 7;
@@ -484,10 +486,13 @@ void RefreshCredits()
 	put_string("http://junkerhq.net/240p/", HPOS+2, row++);
 	set_font_pal(13);
 	put_string("This is free software and is open source under GPL.", HPOS+1, row++);
+#ifdef DISTRIBUTE
+	put_string("To be distributed for free", HPOS+1, row++);
+#endif
 
 	set_font_pal(14);	
 	put_string("Ver. 1.02", 50, 7);
-	put_string("27/05/2016", 49, 8);
+	put_string("01/06/2016", 49, 8);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;
