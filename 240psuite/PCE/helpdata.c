@@ -587,8 +587,10 @@ void display_overscan_00()
 	p_string	overscan_00_07,6,15
 	p_string	overscan_00_08,6,17
 	p_string	overscan_00_09,6,18
-	p_string	overscan_00_10,6,19
-	p_string	overscan_00_11,6,20
+	p_string	overscan_00_10,6,20
+	p_string	overscan_00_11,6,21
+	p_string	overscan_00_12,6,22
+	p_string	overscan_00_13,6,23
 	rts
 
 overscan_00_00:	.db	"OVERSCAN"
@@ -607,13 +609,17 @@ overscan_00_06:	.db	"The resulting number is the amount of overscan"
 			.db	0
 overscan_00_07:	.db	"in pixels in each direction."
 			.db	0
-overscan_00_08:	.db	"This pattern follows the current video options,"
+overscan_00_08:	.db	"The SELECT button allows faster movement of the"
 			.db	0
-overscan_00_09:	.db	"so you can check how it handles in 239, 240, and"
+overscan_00_09:	.db	"borders."
 			.db	0
-overscan_00_10:	.db	"224 modes. Keep in mind the horizontal resolution"
+overscan_00_10:	.db	"This pattern follows the current video options,"
 			.db	0
-overscan_00_11:	.db	"is fixed at 256 pixels."
+overscan_00_11:	.db	"so you can check how it handles in 239, 240, and"
+			.db	0
+overscan_00_12:	.db	"224 modes. Keep in mind the horizontal resolution"
+			.db	0
+overscan_00_13:	.db	"is fixed at 256 pixels."
 			.db	0
 #endasm
 }

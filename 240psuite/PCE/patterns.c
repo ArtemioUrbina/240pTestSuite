@@ -1019,13 +1019,13 @@ void DrawLinearity256()
 #endif
 			
             redraw = 0;
-			disp_on();
-			set_xres(256, xres_flags);
 			if(Enabled240p)
 			{
 				Set224p();
 				Enabled240p = 1;
 			}
+			set_xres(256, xres_flags);
+			disp_on();
         }
 
         controller = joytrg(0);
@@ -1150,6 +1150,7 @@ void DrawOverscan()
 {
 	int sel = 0;
 	unsigned char end = 0;
+	int continuous = 0;
 	
 	draw = 0;
 	sel = 0;
@@ -1216,6 +1217,9 @@ void DrawOverscan()
 			left = right = bottom = top = 0;
 			redraw = 1;
 		}
+		
+		if (controller & JOY_SEL)
+			continuous = !continuous;
 			
 		if (controller & JOY_UP)
 		{
@@ -1234,6 +1238,9 @@ void DrawOverscan()
 		if(sel > 3)
 			sel = 0;
 		
+		if(continuous)
+			controller = joy(0);
+			
 		if (controller & JOY_LEFT)
 		{
 			int *data = 0;
@@ -1258,12 +1265,13 @@ void DrawOverscan()
 			
 			if(data)
 			{
-				(*data) --;
-				if(*data < 0)
-					*data = 0;
+				if(*data > 0)
+				{
+					(*data) --;
+					refresh = 1;
+					draw = 1;
+				}
 			}
-			refresh = 1;
-			draw = 1;
 		}
 		
 		if (controller & JOY_RIGHT)
@@ -1290,12 +1298,13 @@ void DrawOverscan()
 			
 			if(data)
 			{
-				(*data) ++;
-				if(*data > 99)
-					*data = 99;
+				if(*data < 99)
+				{
+					(*data) ++;
+					refresh = 1;
+					draw = 1;
+				}
 			}
-			refresh = 1;
-			draw = 1;
 		}
     }
 #ifdef CDROM
@@ -1322,8 +1331,6 @@ void RefreshOverscan(int sel)
 {
 	int val;
 	
-	setupFont();
-			
 	set_font_pal(sel == 0 ? 15 : 14);
 	put_string("Top: ", 5, 12);
 	put_number(top, 3, 12, 12);
@@ -1391,18 +1398,19 @@ void DrawBottomLines()
 void DrawLeftLines()
 {
 	if(previous < left)
-		gfx_line(left-1, top, left-1, screen-bottom, 1);
+		gfx_line(left-1, top, left-1, screen-bottom-1, 1);
 	else
-		gfx_line(previous-1, top, previous-1, screen-bottom, 0);
+		gfx_line(previous-1, top, previous-1, screen-bottom-1, 0);
 }
 
 void DrawRightLines()
 {
 	if(previous < right)
-		gfx_line(256-right, top, 256-right, screen-bottom, 1);
+		gfx_line(256-right, top, 256-right, screen-bottom-1, 1);
 	else
-		gfx_line(256-previous, top, 256-previous, screen-bottom, 0);
+		gfx_line(256-previous, top, 256-previous, screen-bottom-1, 0);
 }
+
 // 100 IRE 
 // 720mV, 624mV, 512mV, 424mV, 312mV, 208mV, 96mV, 0mV
 // 100, 86.6, 71.1, 58.8, 43.3, 28.8, 13.3, 0

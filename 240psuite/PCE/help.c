@@ -318,13 +318,6 @@ void DrawGeneralHelp(char page)
 			put_string("Full info available at:", 6, row);
 			set_font_pal(13);
 			put_string("http://junkerhq.net/240p/", 30, row);
-			
-#ifdef HELP_OVL
-			set_font_pal(13);
-			x = cd_getver() >> 8;
-			if(x > 2)
-				put_string("With Sys Card 3 you can use the SCD ver of the suite.", 6, ++row);
-#endif
 			break;
 	}
 }
