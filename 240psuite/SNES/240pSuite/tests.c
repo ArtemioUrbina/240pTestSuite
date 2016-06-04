@@ -862,8 +862,8 @@ void PassiveLagTest()
 
 void HScrollTest() 
 {	
-	u16 pressed, end = 0;
-	u16 redraw = 1, x = 0, pause = 0, frame = 0;
+	u16 pressed, end = 0, vertical = 0;
+	u16 redraw = 1, x = 0, y = 0, pause = 0, frame = 0;
 	s16 speed = 1, acc = 1;
 		
 	while(!end) 
@@ -872,39 +872,64 @@ void HScrollTest()
 		{
 			StartDMA();
 						
-			bgInitTileSetMine(0, &sonicback_tiles, &sonicback_pal, 0, (&sonicback_tiles_end - &sonicback_tiles), 32*2, BG_256COLORS, 0x3000);	
-			bgInitMapSetMine(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
+			if(!vertical)
+			{
+				bgInitTileSetMine(0, &sonicback_tiles, &sonicback_pal, 0, (&sonicback_tiles_end - &sonicback_tiles), 32*2, BG_256COLORS, 0x3000);	
+				bgInitMapSetMine(0, &sonicback_map, (&sonicback_map_end - &sonicback_map), SC_32x32, 0x1000);
+				
+				bgInitTileSetMine(1, &sonicfloor_tiles, &sonicfloor_pal, 2, (&sonicfloor_tiles_end - &sonicfloor_tiles), 16*2, BG_16COLORS, 0x6000);	
+				bgInitMapSetMine(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);			
+				
+				setMode(BG_MODE3,0); 			
+				
+				bgSetScroll(0, 0, -1);
+				bgSetScroll(1, 0, -97);
+			}
+			else
+			{			
+				bgInitTileSetMine(0, &kiki_tiles, &kiki_pal, 0, (&kiki_tiles_end - &kiki_tiles), 16*2, BG_16COLORS, 0x6000);	
+				bgInitMapSetMine(0, &kiki_map, (&kiki_map_end - &kiki_map), SC_32x64, 0x1000);
+				
+				setMode(BG_MODE1,0); 
+				bgSetDisable(1);
+				bgSetDisable(2);
+				
+				bgSetScroll(0, 0, -1);
+			}
 			
-			bgInitTileSetMine(1, &sonicfloor_tiles, &sonicfloor_pal, 2, (&sonicfloor_tiles_end - &sonicfloor_tiles), 16*2, BG_16COLORS, 0x6000);	
-			bgInitMapSetMine(1, &sonicfloor_map, (&sonicfloor_map_end - &sonicfloor_map), SC_32x32, 0x5400);			
-			
-			setMode(BG_MODE3,0); 			
-			
-			bgSetScroll(0, 0, -1);
-			bgSetScroll(1, 0, -97);
 			EndDMA();
 			redraw = 0;
 		}
 		
-		switch(frame)
+		if(!vertical)
 		{
-			case 30:
-				ShiftPalette(1, 3);
-				break;
-			case 60:
-				ShiftPalette(1, 2);
-				break;
-			case 90:
-				ShiftPalette(1, 1);
-				break;
+			switch(frame)
+			{
+				case 30:
+					ShiftPalette(1, 3);
+					break;
+				case 60:
+					ShiftPalette(1, 2);
+					break;
+				case 90:
+					ShiftPalette(1, 1);
+					break;
+			}
 		}
 
 		frame ++;
 		if(frame > 90)
 			frame = 1;
 		
-		bgSetScroll(0, x/2, -1);
-		bgSetScroll(1, x, -97);	
+		if(!vertical)
+		{
+			bgSetScroll(0, x/2, -1);
+			bgSetScroll(1, x, -97);
+		}
+		else
+		{
+			bgSetScroll(0, 0, y/2);
+		}
 		
 		WaitForVBlank();
 		
@@ -936,9 +961,20 @@ void HScrollTest()
 
 		if (pressed & KEY_X)
 			acc *= -1;
+		
+		if (pressed & KEY_Y)
+		{
+			vertical = !vertical;
+			redraw = 1;
+		}
 
 		if(!pause)
-			x += acc*speed;
+		{
+			if(!vertical)
+				x += acc*speed;
+			else
+				y -= acc*speed;
+		}
 	}	
 	Transition();
 	
@@ -1797,68 +1833,5 @@ void Alternate240p480i()
 	else
 		ClearInterlaced();
 
-	return;
-}
-
-void ControllerTest()
-{
-	u16 redraw = 1, change = 0, end = 0;
-	u16 pressed;	
-
-	while(!end) 
-	{
-		if(redraw)
-		{
-			u16 size = 0;
-					
-			StartDMA();	
-			
-			CleanFontMap();
-			consoleInitTextMine(1, 7, &font);
-			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
-			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
-			AddTextColor(5, RGB5(31, 0, 0), RGB5(0, 0, 0));
-			
-			size = (&controller_tiles_end - &controller_tiles);
-			bgInitTileSetMine(0, &controller_tiles, &controller_pal, 2, size, 16*2, BG_16COLORS, 0x4000);
-			
-			size = (&controller_map_end - &controller_map);	
-			bgInitMapSetMine(0, &controller_map, size, SC_32x32, 0x6800);
-		
-			setMode(BG_MODE1,0); 
-			bgSetDisable(2);	
-			
-			bgSetScroll(0, -24, -70);
-			bgSetScroll(1, 0, -1);
-			
-			redraw = 0;
-			change = 1;
-		}			
-		
-		if(change)
-		{
-			u16 y = 7;						
-			
-			drawText(8, 2, 6, "Controller Test");			
-			change = 0;
-		}	
-
-		spcProcess();	
-		WaitForVBlank();	
-		
-		pressed = PadPressed(0);
-		
-		if(pressed == KEY_START)
-		{
-			//DrawHelp(HELP_SOUND);
-			redraw = 1;
-		}
-	
-		if(pressed == KEY_B)
-			end = 1;	
-		
-	}
-
-	Transition();
 	return;
 }

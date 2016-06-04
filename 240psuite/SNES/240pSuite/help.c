@@ -131,9 +131,9 @@ void DrawHelp(u16 option)
 							drawText(3, 4  , 6, "        HELP (3/3)"); 
 							drawText(3, y++, 7, "The 240p suite is also"); 
 							drawText(3, y++, 7, "available in GameCube,");
-							drawText(3, y++, 7, "PC Engine/TG-16, Wii,");
-							drawText(3, y++, 7, "Genesis/MD, Sega CD");
-							drawText(3, y++, 7, "and Dreamcast.");		
+							drawText(3, y++, 7, "NES, Wii, Genesis/MD,");
+							drawText(3, y++, 7, "Sega CD, PC Engine/");
+							drawText(3, y++, 7, "TG-16 and Dreamcast.");		
 							y++;
 							drawText(3, y++, 7, "Please visit:"); 
 							drawText(3, y++, 5, "http://junkerhq.net/240p");
@@ -489,20 +489,22 @@ void DrawHelp(u16 option)
 					break;
 				case HELP_HSCROLL:
 							drawText(3, 4  , 6, "       SCROLL TEST"); 
-							drawText(3, y++, 7, "This test shows a two"); 
-							drawText(3, y++, 7, "layer background from");
-							drawText(3, y++, 7, "Sonic the Hedgehog. The");
-							drawText(3, y++, 7, "speed can be varied with");
-							drawText(3, y++, 7, "the d-pad, and direction");
-							drawText(3, y++, 7, "can be changed with X.");
-							drawText(3, y++, 7, "The A button stops the");
-							drawText(3, y++, 7, "scroll. This can be used");
-							drawText(3, y++, 7, "to notice any drops in");
+							drawText(3, y++, 7, "This test shows a 2 layer"); 
+							drawText(3, y++, 7, "background or a single");
+							drawText(3, y++, 7, "vertical one. Speed can");
+							drawText(3, y++, 7, "be varied with the d-pad");
+							drawText(3, y++, 7, "and direction can be");
+							drawText(3, y++, 7, "changed with X. The A");
+							drawText(3, y++, 7, "button stops the scroll");
+							drawText(3, y++, 7, "and Y switches between");
+							drawText(3, y++, 7, "vertical and horizontal.");
+							drawText(3, y++, 7, "This can be used to");
+							drawText(3, y++, 7, "notice any drops in");
 							drawText(3, y++, 7, "framerate.");
 							y++;						
-							drawText(3, y++, 7, "Sonic The Hedgehog is a");
-							drawText(3, y++, 7, "trademark of Sega");
-							drawText(3, y++, 7, "Enterprises Ltd.");
+							drawText(3, y++, 7, "Sonic is a trademark of");
+							drawText(3, y++, 7, "Sega Ltd and Kiki Kaikai");
+							drawText(3, y++, 7, "of Namco/Bandai.");
 					break;
 				case HELP_VSCROLL:
 							drawText(3, 4  , 6, "      GRID SCROLL TEST"); 

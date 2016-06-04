@@ -31,10 +31,6 @@ extern char grid240_map, grid240_map_end;
 extern char grid_pal, grid_pal_end;
 extern char grid_map, grid_map_end;
 
-extern char grid512_tiles, grid512_tiles_end;
-extern char grid512_map, grid512_map_end;
-extern char grid512_pal, grid512_pal_end;
-
 extern char motoko_tiles1, motoko_tiles1_end;
 extern char motoko_tiles2, motoko_tiles2_end;
 extern char motoko_pal, motoko_pal_end;
@@ -135,9 +131,9 @@ extern char lagspr_pal, lagspr_pal_end;
 extern char mode7_tiles, mode7_tiles_end;
 extern char mode7_map, mode7_map_end;
 
-extern char controller_tiles, controller_tiles_end;
-extern char controller_pal, controller_pal_end;
-extern char controller_map, controller_map_end;
+extern char kiki_tiles, kiki_tiles_end;
+extern char kiki_pal, kiki_pal_end;
+extern char kiki_map, kiki_map_end;
 
 extern char font;
 extern char fontback;

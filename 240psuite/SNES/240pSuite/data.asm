@@ -380,13 +380,17 @@ color_grid_tiles:
 .incbin "color_grid.pic"
 color_grid_tiles_end:
 
-controller_pal:
-.incbin "controller.pal"
-controller_pal_end:
+kiki_tiles:
+.incbin "kiki.pic"
+kiki_tiles_end:
 
-controller_map:
-.incbin "controller.map"
-controller_map_end:
+kiki_map:
+.incbin "kiki.map"
+kiki_map_end:
+
+kiki_pal:
+.incbin "kiki.pal"
+kiki_pal_end:
 
 .ends
 
@@ -395,25 +399,5 @@ controller_map_end:
 mode7_map:
 .incbin "gridm7.mp7"
 mode7_map_end:
-
-grid512_tiles:
-.incbin "grid512.pic"
-grid512_tiles_end:
-
-grid512_map:
-.incbin "grid512.map"
-grid512_map_end:
-
-grid512_pal:
-.incbin "grid512.pal"
-grid512_pal_end:
-
-.ends
-
-.section ".rodata10" superfree
-
-controller_tiles:
-.incbin "controller.pic"
-controller_tiles_end:
 
 .ends

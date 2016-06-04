@@ -147,10 +147,6 @@ fullscreen256.pic: fullscreen256.bmp
 	@echo convert font 256 with no color reduction ... $(notdir $@)
 	$(GFXCONV) -pc256 -n -gs8 -pe0 -fbmp -m $<
 	
-grid512.pic: grid512.bmp
-	@echo convert bitmap in 16 colors and 16 pixel wide tiles ... $(notdir $@)
-	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
-	
 sonicback.pic: sonicback.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc256 -n -gs8 -pe0 -fbmp -m $<
@@ -195,9 +191,9 @@ gridm7.pc7	: gridm7.bmp
 	@echo convert bitmap ... $(notdir $@)
 	$(GFXCONV) -n -fbmp -m7 $<
 	
-controller.pic: controller.bmp
+kiki.pic: kiki.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
-	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe2 -fbmp -mp -m $<
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 	
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
 	SMPTECB100.pic color.pic circles.pic pluge.pic grayramp.pic colorbleed.pic\
@@ -205,7 +201,7 @@ bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB7
 	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic 100IRE.pic\
 	numbers.pic lagtest.pic sonicback.pic sonicfloor.pic circles_grid.pic\
 	LEDsprites.pic striped.pic color_grid.pic lag-spr.pic soundbank.asm gridm7.pc7\
-	circlesPAL.pic EBUCB100.pic EBUCB75.pic grid512.pic controller.pic plugePAL.pic
+	circlesPAL.pic EBUCB100.pic EBUCB75.pic kiki.pic plugePAL.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)
