@@ -135,6 +135,9 @@ extern char kiki_tiles, kiki_tiles_end;
 extern char kiki_pal, kiki_pal_end;
 extern char kiki_map, kiki_map_end;
 
+extern char audiosync_tiles, audiosync_tiles_end;
+extern char audiosync_map, audiosync_map_end;
+
 extern char font;
 extern char fontback;
 

@@ -636,7 +636,7 @@ void DrawHelp(u16 option)
 				case HELP_ALTERNATE:
 							drawText(3, 4  , 6, "  ALTERNATING 240p/480i"); 
 							drawText(3, y++, 7, "Some devices have a delay"); 
-							drawText(3, y++, 7, "when the source changes      ");
+							drawText(3, y++, 7, "when the source changes");
 							drawText(3, y++, 7, "between resolutions, which ");							
 							drawText(3, y++, 7, "happens in some games.");
 							y++;
@@ -647,6 +647,21 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "press it again when you");
 							drawText(3, y++, 7, "are able to see the screen");
 							drawText(3, y++, 7, "back in your display.");
+					break;
+				case HELP_AUDIOSYNC:
+							drawText(3, 4  , 6, "      AUDIO SYNC TEST"); 
+							drawText(3, y++, 7, "This test flashes the"); 
+							drawText(3, y++, 7, "whole screen white for two");
+							drawText(3, y++, 7, "frames, along with a 1khz");							
+							drawText(3, y++, 7, "test tone.");
+							y++;
+							drawText(3, y++, 7, "You can verify the sync");
+							drawText(3, y++, 7, "between audio and video");
+							drawText(3, y++, 7, "with recording equipment");
+							drawText(3, y++, 7, "or specialized hardware.");
+							y++;
+							drawText(3, y++, 7, "Press A to start/stop");
+							drawText(3, y++, 7, "the test.");
 					break;
 				case HELP_MANUALLAG:
 					switch(page)

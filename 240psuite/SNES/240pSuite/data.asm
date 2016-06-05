@@ -392,6 +392,14 @@ kiki_pal:
 .incbin "kiki.pal"
 kiki_pal_end:
 
+audiosync_tiles:
+.incbin "audiosync.pic"
+audiosync_tiles_end:
+
+audiosync_map:
+.incbin "audiosync.map"
+audiosync_map_end:
+
 .ends
 
 .section ".rodata9" superfree

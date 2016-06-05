@@ -45,6 +45,7 @@ int main(void)
 	spcLoad(0);
 	spcLoadEffect(0);
 	spcLoadEffect(1);
+	spcLoadEffect(2);
 	
 	// Main loop
 	DrawIntro();
@@ -95,9 +96,10 @@ int main(void)
 			drawText(3, pos, sel == 9 ? 6 : 7, "Backlit Zone Test"); pos ++;
 			drawText(3, pos, sel == 10 ? 6 : 7, "Alternate 240p/480i"); pos ++;
 			drawText(3, pos, sel == 11 ? 6 : 7, "Sound Test"); pos ++;
-			drawText(3, pos, sel == 12 ? 6 : 7, "Help"); pos ++;	
-			drawText(3, pos, sel == 13 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos += 2;	
-			drawText(3, pos, sel == 14 ? 6 : 5, "Credits"); 
+			drawText(3, pos, sel == 12 ? 6 : 7, "Audio Sync Test"); pos ++;
+			drawText(3, pos, sel == 13 ? 6 : 7, "Help"); pos ++;	
+			drawText(3, pos, sel == 14 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos += 2;	
+			drawText(3, pos, sel == 15 ? 6 : 5, "Credits"); 
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 			
 				
@@ -131,9 +133,9 @@ int main(void)
 		}	
 
 		if(sel < 0)
-			sel = 14;
+			sel = 15;
 			
-		if(sel > 14)
+		if(sel > 15)
 			sel = 0;
 			
 		if(pressed == KEY_START)
@@ -143,7 +145,7 @@ int main(void)
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A && sel == 13)
+		if(pressed == KEY_A && sel == 14)
 		{
 			if(interlaced)
 				ClearInterlaced();
@@ -152,7 +154,7 @@ int main(void)
 			redraw = 1;
 		}
 			
-		if(pressed == KEY_A && sel != 13)
+		if(pressed == KEY_A && sel != 14)
 		{							
 			Transition();
 			oamClear(0, 0);
@@ -196,11 +198,14 @@ int main(void)
 					SoundTest();
 					break;
 				case 12:
-					DrawHelp(HELP_GENERAL);
+					AudioSyncTest();
 					break;
 				case 13:
+					DrawHelp(HELP_GENERAL);
 					break;
 				case 14:
+					break;
+				case 15:
 					DrawCredits();
 					break;
 			}

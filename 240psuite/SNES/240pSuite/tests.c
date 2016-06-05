@@ -1260,7 +1260,7 @@ void SoundTest()
 
 void ManualLagTest() 
 {	
-	u16 pressed, end = 0, change = 1, draw = 0, audio = 0, sound = 0;
+	u16 pressed, end = 0, change = 1, draw = 0, audio = 1, sound = 0;
 	u16 redraw = 1, changed = 0, variation = 1, pos = 0, drawoffset = 0;
 	s16 x = 112, y = 96, x2 = 112, y2 = 96, speed = 1, vary = 1;
 	s16 clicks[10], pal = 7, sprpal = 7, view = 0;
@@ -1396,7 +1396,8 @@ void ManualLagTest()
 		{
 			if(y == 96)
 			{
-				spcEffect(2, 1, 15*16+sound);
+				spcEffect(4, 1, 15*16+sound);
+				setPaletteColor(0, RGB5(0xff, 0xff, 0xff));
 				if(sound == 0)
 					sound = 15;
 				else
@@ -1445,11 +1446,13 @@ void ManualLagTest()
 		{
 			sprpal = 6;
 			changed = 1;
+			setPaletteColor(0, RGB5(0, 0, 0));
 		}
 		if(y == 98 || y == 94) //Back to white two pixels before or after
 		{
 			sprpal = 7;
 			changed = 1;
+			setPaletteColor(0, RGB5(0, 0, 0));
 		}
 		
 		if(view == 0 || view == 2)
@@ -1477,6 +1480,8 @@ void ManualLagTest()
 				drawoffset = 1;
 				if(clicks[pos] >= 0)
 					change = 0;
+				if(audio && clicks[pos] != 0)
+					spcEffect(2, 1, 15*16+sound); // play 500hz tone
 			}      
 		}
 		
@@ -1833,5 +1838,149 @@ void Alternate240p480i()
 	else
 		ClearInterlaced();
 
+	return;
+}
+
+void RedrawAudioSync()
+{	
+	u16 i = 0;
+	
+	StartDMA();
+			
+	bgInitTileSetMine(0, &audiosync_tiles, &LEDsprites_pal, 0, &audiosync_tiles_end - &audiosync_tiles, 16*2, BG_16COLORS, 0x3000);		
+	
+	bgInitMapSetMine(0, &audiosync_map, (&audiosync_map_end - &audiosync_map), SC_32x32, 0x7000);
+				
+	setMode(BG_MODE1,0); 					
+	bgSetDisable(1);
+	bgSetDisable(2);
+	
+	// back
+	setPaletteColor(0, RGB5(0, 0, 0));
+	
+	// tiles in background
+	for(i = 3; i < 8; i++)
+	{
+		setPaletteColor(i, RGB5(0, 0, 0));
+	}
+	
+	bgSetScroll(0, 0, -1);
+	
+	EndDMA();
+}
+
+void AudioSyncTest(void) 
+{	
+	u16 pressed, end = 0;
+	u16 redraw = 1, refresh = 0;
+	s16 status = -1, acc = -1, x = 128, y = 160;
+	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			RedrawAudioSync();
+			
+			oamInitGfxSetMine(&LEDsprites_tiles, (&LEDsprites_tiles_end - &LEDsprites_tiles), &LEDsprites_pal, 16*2, 7, 0, OBJ_SIZE8);
+			oamSet(0, x, y, 2, 0, 0, 1, 7);
+			oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
+			oamSetVisible(0, OBJ_SHOW);
+			redraw = 0;
+		}
+		
+		spcProcess();
+		WaitForVBlank();
+				
+		if(refresh && status == -1)
+		{
+			status = 0;
+			acc = -1;
+		}
+		
+		if(status > -1)
+		{
+			status++;
+			if(status <= 120)
+			{
+				y += acc;
+			}
+		}
+
+		if(status >= 20 && status <= 120)
+		{
+			switch (status)
+			{
+			case 20:
+				break;
+			case 40:
+				setPaletteColor(3, RGB5(0xff, 0xff, 0xff));
+				break;
+			case 60:
+				acc = 1;
+				setPaletteColor(4, RGB5(0xff, 0xff, 0xff));
+				break;
+			case 80:
+				setPaletteColor(5, RGB5(0xff, 0xff, 0xff));
+				break;
+			case 100:
+				setPaletteColor(6, RGB5(0xff, 0xff, 0xff));
+				break;
+			case 120:
+				setPaletteColor(7, RGB5(0xff, 0xff, 0xff));
+				break;
+			}
+		}
+		
+		if(status == 120)
+		{
+			spcEffect(4, 2, 15*16+1);
+			setPaletteColor(0, RGB5(0xff, 0xff, 0xff));
+		}
+
+		if(status == 122)
+		{
+			u16 pal = 0;
+			
+			//spcStop(); No need, sample is 2 frames long
+			setPaletteColor(0, RGB5(0, 0, 0));
+			
+			for(pal = 3; pal < 8; pal++)
+			{
+				setPaletteColor(pal, RGB5(0, 0, 0));
+			}
+
+			status = -1;
+		}
+		
+		pressed = PadPressed(0);
+		
+		if(pressed == KEY_START)
+		{
+			oamClear(0, 0);
+			DrawHelp(HELP_AUDIOSYNC);
+			
+			redraw = 1;
+			refresh = 0;
+			status = 121;
+			y = 160;
+		}
+		
+		if(pressed == KEY_B)
+			end = 1;		
+			
+		if(pressed == KEY_A)
+		{
+			refresh = !refresh;
+			if(!refresh)
+				status = 121;
+			else
+				y = 160;
+		}
+		
+		oamSetXY(0, x, y);
+	}	
+	Transition();
+	oamClear(0, 0);
+	
 	return;
 }
