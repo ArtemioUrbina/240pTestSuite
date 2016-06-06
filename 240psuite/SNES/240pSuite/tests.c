@@ -823,7 +823,7 @@ void PassiveLagTest()
 		count = framecnt;
 		if(count > 3)
 		{
-			count -= 3;
+			count -= 4;
 			mul = 2;
 		}
 			
