@@ -500,7 +500,7 @@ void DrawCredits(void)
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
 			drawText(6, 4, 5, "Ver. 1.03");
-			drawText(19, 4, 7, "04/06/2016");
+			drawText(19, 4, 7, "06/06/2016");
 			
 			EndDMA();	
 			if(redraw)
