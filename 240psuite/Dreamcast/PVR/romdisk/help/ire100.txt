@@ -13,7 +13,7 @@ is normally 40 IRE below the zero value, so, peak
 to peak, an all white signal should be equal to
 140 IRE.
 
-                                     (cont...)
+                                    #C(cont...)#C
                   100 IRE(2/2)
 
 The reason IRE is a relative measurement (percent)
@@ -25,5 +25,5 @@ defines PAL, NTSC and SECAM
 You can use the R and L triggers to change between
 100 IRE to 0 IRE in steps of 10 IRE.
 
-With #GA#Gyou can change the range to 100 and 140 IRE
+With #GA#G you can change the range to 100 and 140 IRE
 in 5 IRE steps.

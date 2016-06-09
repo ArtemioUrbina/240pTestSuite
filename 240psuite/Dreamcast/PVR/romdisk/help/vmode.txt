@@ -145,7 +145,8 @@ only available when a #YVGA Box#Y is present.
                 VIDEO MODES (10/10)
 
     As a result, most screens end up filling 1/4th
-    of the display in 1:1 pixel mode. However, 
-    there are several patterns in 480 resolution
-    that fill the screen, such as the grid, scroll
-    and overscan.
+    of the display in 1:1 (PAR) pixel mode.
+
+    However, there are several patterns in 480
+    resolution that fill the screen, such as the
+    grid, scroll, linearity (1:1 PAR) and overscan.

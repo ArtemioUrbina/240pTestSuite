@@ -741,10 +741,20 @@ void DrawLinearity(int full)
 	
 	if(full)
 	{
-		grid->w = 320;
-        	grid->h = IsPAL ? 264 : 240;
-        	gridd->w = 320;
-        	gridd->h = IsPAL ? 264 : 240;
+		if(vmode == VIDEO_480P)
+		{
+			grid->w = 640;
+        		grid->h = 480;
+        		gridd->w = 640;
+        		gridd->h = 480;
+		}
+		else
+		{
+			grid->w = 320;
+        		grid->h = IsPAL ? 264 : 240;
+        		gridd->w = 320;
+        		gridd->h = IsPAL ? 264 : 240;
+		}
 	}
 	else
 	{
@@ -769,10 +779,20 @@ void DrawLinearity(int full)
 
 			if(full)
 			{
-				grid->w = 320;
-                        	grid->h = IsPAL ? 264 : 240;
-                        	gridd->w = 320;
-                        	gridd->h = IsPAL ? 264 : 240;
+				if(vmode == VIDEO_480P)
+				{
+					grid->w = 640;
+        				grid->h = 480;
+        				gridd->w = 640;
+        				gridd->h = 480;
+				}
+				else
+				{
+					grid->w = 320;
+                        		grid->h = IsPAL ? 264 : 240;
+                        		gridd->w = 320;
+                        		gridd->h = IsPAL ? 264 : 240;
+				}
 			}
 			else
 			{
@@ -791,7 +811,7 @@ void DrawLinearity(int full)
 		{
 			if(full)
 			{
-				if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
+				if(vmode == VIDEO_480P)
 				{
 					circles = LoadKMG("/rd/circlesVGA.kmg.gz", 0);
 					if(!circles)

@@ -353,7 +353,13 @@ void DrawShowMenu()
 		{     
 			switch(sel)
 			{			
-					case 1:			
+					case 1:	
+						// Cludge for special cases
+						if(strcmp(HelpData, LINEARITYHELP) == 0 && vmode == VIDEO_480P)
+							HelpData = LINEARVGAHELP;
+						if(strcmp(HelpData, LINEARVGAHELP) == 0 && vmode != VIDEO_480P)
+							HelpData = LINEARITYHELP;
+
 						HelpWindow(HelpData, fbtexture);
 						break;					
 					case 2:		

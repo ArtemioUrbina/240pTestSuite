@@ -18,4 +18,4 @@ with a #YNomad#Y as the reference display.   #C(cont...)#C
 
 You can also chain the output ports of a #YPVM/BVM#Y
 to an upscaler and use the CRT as reference.
-~                                               
+

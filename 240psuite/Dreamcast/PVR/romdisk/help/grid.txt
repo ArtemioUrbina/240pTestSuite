@@ -13,7 +13,7 @@ video modes.
 In PAL resolutions, there are also two different 
 grids. 
 
-                                    (cont...)
+                                   #C(cont...)#C
                     GRID (2/2)
 
 In the 288p PAL video, only 264 are visible lines.

@@ -47,6 +47,7 @@ extern char *HelpData;
 #define SMPTECOLOR	"/rd/help/SMPTEColor.txt"
 #define COLOR601	"/rd/help/color601.txt"
 #define WHITEHELP	"/rd/help/white.txt"
+#define LINEARVGAHELP	"/rd/help/linearityvga.txt"
 #define LINEARITYHELP	"/rd/help/linearity.txt"
 #define LIN224HELP	"/rd/help/linearity224.txt"
 #define FFTHELP		"/rd/help/fft.txt"
