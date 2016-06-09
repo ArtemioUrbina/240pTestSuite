@@ -95,6 +95,7 @@ void FlipHV(ImagePtr image, u16 flip);
 void DrawImage(ImagePtr image);
 void DrawImageRotate(ImagePtr image, float angle, Mtx *m);
 void IgnoreOffset(ImagePtr image);
+void MapToScreen(ImagePtr image);
 
 /************************/
 /*    Scanline Functions   */

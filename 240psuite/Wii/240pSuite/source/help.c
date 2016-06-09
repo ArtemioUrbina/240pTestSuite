@@ -30,12 +30,6 @@
 #include "controller.h"
 #include "options.h"
 
-char *SMPTEColor_txt[] = { 
-"              SMPTE COLOR BARS (1/3)\n\nThis pattern can be used to calibrate for NTSC\nlevels regarding contrast and brightness, and \nappropiate colors as well. \n\nYou can toggle between 75% and 100% SMPTE color \nbars by pressing $A.\n\nWhen in PAL this pattern shows the #YEBU#Y color\nbars intead, since setup starts at 0mV.\n\nRemember that the black level in the SMPTE pattern\nrefers to 7.5 IRE for video, console games usually\nstart at 0 IRE. This pattern can be used to \n                                         #C(cont...)#C",
-"              SMPTE COLOR BARS (2/3)\n\ncalibrate colors - or auto calibrated in a \nprofessional display - and then black levels can\nbe adjusted with the PLUGE pattern using the #GFull \nRGB Mode#G.\n\nIn an SMPTE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on \n                                         #C(cont...)#C",
-"              SMPTE COLOR BARS (3/3)\n\nand off between every bar, red cycling on and \noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
-NULL
-};
 char *alt240p_txt[] = { 
 "              ALTERNATING 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress $A to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
 NULL
@@ -78,7 +72,7 @@ NULL
 char *general_txt[] = { 
 "                    HELP (1/3)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp and options are available everywhere by \npressing the $S button.\n#Y[Please press right for next help page]#Y\n                                         #C(cont...)#C",
 "                    HELP (2/3)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is capable\nof drawing the whole visible signal, 264 and 528\nlines respectively. However, since most screens\nare only 240p tall, the suite centers them \nvertically. Grids and other 264p patterns are \nshown using the full resolution.\n\nPAL and 480p modes must be enabled from the \noptions menu. \n                                         #C(cont...)#C",
-"                    HELP (3/3)\n\nThe 240p suite is also available in other systems,\nincluding: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/\n#YMega CD#Y, #YPC Engine#Y/#YTG-16#Y, #YSuper Nintendo#Y/#YSFC#Y,\n#YNintendo GameCube#Y, #YNintendo Wii#Y and #YSega Dreamcast#Y.",
+"                    HELP (3/3)\n\nThe 240p suite is also available in other systems,\nincluding: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/\n#YMega CD#Y, #YPC Engine#Y/#YTG-16#Y, #YSuper Nintendo#Y/#YSFC#Y, #YNES#Y,\n#YNintendo GameCube#Y, #YNintendo Wii#Y and #YSega Dreamcast#Y.",
 NULL
 };
 char *gray_txt[] = { 
@@ -149,11 +143,17 @@ char *pluge_txt[] = {
 NULL
 };
 char *scroll_txt[] = { 
-"                    SCROLL TEST\n\nThis test shows a two layer background from #YSonic\nthe Hedgehog#Y. The speed can be varied with the\nd-pad, and change direction with the button $X.\nThe $A button stops the scroll. \n\nThis can be used to notice any drops in framerate\nwhen using a video processor.\n\n#YSonic The Hedgehog#Y is a trademark of \n#YSega Enterprises Ltd#Y.",
+"                    SCROLL TEST\n\nThis test shows a two layer background from #YSonic\nthe Hedgehog#Y or a single one from #YKiki Kaikai#Y.\nThe speed can be varied with the d-pad, and\ndirection changed with the button #GX#G.\n\nVertical and horizntal patterns can be swapped with\nthe #GY#G button, and #GA#G stops the scroll.\n\nThis can be used to notice any drops in framerate\nwhen using a video processor.\n\n#YSonic The Hedgehog#Y is a trademark of #YSega\nEnterprises Ltd#Y. #YKiki Kaikai#Y is a trademark\nof #YNamco/Bandai#Y. \n",
 NULL
 };
 char *sharpness_txt[] = { 
 "                    SHARPNESS\n\nYou should set the sharpness of your CRT to a\nvalue that shows clean black and gray transitions,\nwith no white ghosting in between.\n\nOn most modern displays, the #Ysharpness#Y control is \nan edge-enhancement control, and most probably\nshould be set to zero, or in the middle.\n\nIn some #YPVM#Y/#YBVM#Y displays this is also referred \nto as #Yaperture#Y.",
+NULL
+};
+char *SMPTEColor_txt[] = { 
+"              SMPTE COLOR BARS (1/3)\n\nThis pattern can be used to calibrate for NTSC\nlevels regarding contrast and brightness, and \nappropiate colors as well. \n\nYou can toggle between 75% and 100% SMPTE color \nbars by pressing $A.\n\nWhen in PAL this pattern shows the #YEBU#Y color\nbars intead, since setup starts at 0mV.\n\nRemember that the black level in the SMPTE pattern\nrefers to 7.5 IRE for video, console games usually\nstart at 0 IRE. This pattern can be used to \n                                         #C(cont...)#C",
+"              SMPTE COLOR BARS (2/3)\n\ncalibrate colors - or auto calibrated in a \nprofessional display - and then black levels can\nbe adjusted with the PLUGE pattern using the #GFull \nRGB Mode#G.\n\nIn an SMPTE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on \n                                         #C(cont...)#C",
+"              SMPTE COLOR BARS (3/3)\n\nand off between every bar, red cycling on and \noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
 NULL
 };
 char *sound_txt[] = { 
@@ -190,7 +190,6 @@ NULL
 
 #define	HELPCOUNT	32
 char **HelpArray[HELPCOUNT] = {
-	SMPTEColor_txt,
 	alt240p_txt,
 	backlit_txt,
 	bleed_txt,
@@ -216,6 +215,7 @@ char **HelpArray[HELPCOUNT] = {
 	pluge_txt,
 	scroll_txt,
 	sharpness_txt,
+	SMPTEColor_txt,
 	sound_txt,
 	striped_txt,
 	stripes_txt,

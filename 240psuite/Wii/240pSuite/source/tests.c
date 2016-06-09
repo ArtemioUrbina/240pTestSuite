@@ -49,61 +49,35 @@ void DropShadowTest()
 {
 	char		msg[50];
 	int		    done = 0, x = dW/2, y = dH/2, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
-	int			oldvmode = vmode;
-	u32		    pressed, held;		
-	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay;	
+	int			oldvmode = vmode, i = 0, currentsonic = 0, currentframe = 0;
+	u32		    pressed, held, reload = 0;		
+	ImagePtr	back[4], sonicback[4], ssprite, shadow, buzz, buzzshadow, overlay;	
 
-	if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
-		vmode != VIDEO_576I)
-	{		
-		back[0] = LoadImage(MOTOKOIMG, 0);
-		if(!back[0])
-			return;
-		back[1] = LoadImage(SONICBACKIMG, 0);
-		if(!back[1])
-			return;
-		back[2] = LoadImage(CHECKPOSIMG, 1);
-		if(!back[2])
-			return;
-		back[3] = LoadImage(STRIPESPOSIMG, 1);
-		if(!back[3])
-			return;
-		overlay = LoadImage(SONICFLOORIMG, 0);
-		if(!overlay)
-			return;
-	}
-	else
-	{
-		back[0] = LoadImage(MOTOKO480IMG, 0);
-		if(!back[0])
-			return;
-		back[1] = LoadImage(SONICBACKIMG, 0);
-		if(!back[1])
-			return;
-		back[2] = LoadImage(CHECKPOSIMG, 1);
-		if(!back[2])
-			return;
-		back[3] = LoadImage(STRIPESPOSIMG, 1);
-		if(!back[3])
-			return;
-		overlay = LoadImage(SONICFLOORIMG, 0);
-		if(!overlay)
-			return;
+	sonicback[0] = LoadImage(SONICBACK1IMG, 0);
+	if(!sonicback[0])
+		return;
+	sonicback[1] = LoadImage(SONICBACK2IMG, 0);
+	if(!sonicback[1])
+		return;
+	sonicback[2] = LoadImage(SONICBACK3IMG, 0);
+	if(!sonicback[2])
+		return;
+	sonicback[3] = LoadImage(SONICBACK4IMG, 0);
+	if(!sonicback[3])
+		return;
 
-		back[0]->scale = 0;
-		back[1]->scale = 0;
-		back[2]->scale = 0;
-		back[3]->scale = 0;
-		overlay->scale = 0;
-
-		back[1]->y = (dH - 240)/2;
-		overlay->y = (dH - 240)/2;
-		if(offsetY)  // center in PAL modes
-		{
-			back[1]->y -= offsetY;
-			overlay->y -= offsetY;
-		}
-	}
+	for(i = 0; i < 4; i++)
+		back[i] = NULL;
+		
+	back[1] = sonicback[0];
+	if(!back[1])
+		return;
+	
+	overlay = LoadImage(SONICFLOORIMG, 0);
+	if(!overlay)
+		return;
+	
+	reload = 1;
 		
 	ssprite = LoadImage(SHADOWIMG, 0);	
 	if(!ssprite)
@@ -124,15 +98,58 @@ void DropShadowTest()
 	
 	while(!done && !EndProgram) 
 	{
-		if(oldvmode != vmode)
+		if(reload || oldvmode != vmode)
 		{
-			back[1]->y = (dH - 240)/2;
-			overlay->y = (dH - 240)/2;
-			if(offsetY)  // center in PAL modes
-			{
-				back[1]->y -= offsetY;
-				overlay->y -= offsetY;
+			FreeImage(&back[0]);
+			FreeImage(&back[2]);
+			FreeImage(&back[3]);
+
+			back[2] = LoadImage(CHECKPOSIMG, 1);
+			if(!back[2])
+				return;
+			back[3] = LoadImage(STRIPESPOSIMG, 1);
+			if(!back[3])
+				return;
+			
+			if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
+				vmode != VIDEO_576I)
+			{		
+				back[0] = LoadImage(MOTOKOIMG, 0);
+				if(!back[0])
+					return;
+				
+				for(i = 0; i < 4; i++)
+					sonicback[i]->scale = 1;
+				back[0]->scale = 1;
+				overlay->scale = 1;
+				
+				for(i = 0; i < 4; i++)
+					sonicback[i]->y = 0;
+				overlay->y = 0;
 			}
+			else
+			{	
+				back[0] = LoadImage(MOTOKO480IMG, 0);
+				if(!back[0])
+					return;
+				
+				back[0]->scale = 0;
+				overlay->scale = 0;
+				for(i = 0; i < 4; i++)
+				{
+					sonicback[i]->scale = 0;
+					sonicback[i]->y = (dH - 240)/2;
+				}
+
+				overlay->y = (dH - 240)/2;
+				if(offsetY)  // center in PAL modes
+				{
+					for(i = 0; i < 4; i++)
+						sonicback[i]->y -= offsetY;
+					overlay->y -= offsetY;
+				}
+			}
+			reload = 0;
 			oldvmode = vmode;
 		}
 		
@@ -247,90 +264,119 @@ void DropShadowTest()
 		if(x > back[selback]->w + back[selback]->x - shadow->w)
 			x = back[selback]->w + back[selback]->x - shadow->w;
 		if(y > back[selback]->h + back[selback]->y - shadow->h)
-			y = back[selback]->h + back[selback]->y - shadow->h;			
+			y = back[selback]->h + back[selback]->y - shadow->h;
+
+		currentframe ++;
+		if(currentframe > 10)
+		{
+			currentsonic++;
+			if(currentsonic > 3)
+				currentsonic = 0;
+			currentframe = 0;
+			back[1] = sonicback[currentsonic];
+		}
 	}
 	FreeImage(&back[0]);
-	FreeImage(&back[1]);
+	for(i = 0; i < 4; i++)
+		FreeImage(&sonicback[i]);
 	FreeImage(&back[2]);
 	FreeImage(&back[3]);
 	FreeImage(&overlay);
 	FreeImage(&ssprite);
 	FreeImage(&buzz);
 	FreeImage(&buzzshadow);
-	return;
 }
 
 void StripedSpriteTest()
 {	
 	int		    done = 0, x = dW/2, y = dH/2, selback = 0;
-	int			oldvmode = vmode;
-	u32		    pressed, held;	
-	ImagePtr	back[4], striped, overlay;	
+	int			oldvmode = vmode, currentsonic = 0, currentframe = 0, i;
+	u32		    pressed, held, reload = 0;	
+	ImagePtr	back[4], sonicback[4], striped, overlay;	
 
-	if(vmode != VIDEO_480P && vmode != VIDEO_480I && 
-		vmode != VIDEO_576I)
-	{		
-		back[0] = LoadImage(MOTOKOIMG, 0);
-		if(!back[0])
-			return;
-		back[1] = LoadImage(SONICBACKIMG, 0);
-		if(!back[1])
-			return;
-		back[2] = LoadImage(CHECKPOSIMG, 1);
-		if(!back[2])
-			return;
-		back[3] = LoadImage(STRIPESPOSIMG, 1);
-		if(!back[3])
-			return;
-		overlay = LoadImage(SONICFLOORIMG, 0);
-		if(!overlay)
-			return;
-	}
-	else
-	{
-		back[0] = LoadImage(MOTOKO480IMG, 0);
-		if(!back[0])
-			return;
-		back[0]->scale = 0;
-		back[1] = LoadImage(SONICBACKIMG, 0);
-		if(!back[1])
-			return;
-		back[1]->scale = 0;
-		back[2] = LoadImage(CHECKPOSIMG, 1);
-		if(!back[2])
-			return;
-		back[2]->scale = 0;
-		back[3] = LoadImage(STRIPESPOSIMG, 1);
-		if(!back[3])
-			return;
-		back[3]->scale = 0;
-		overlay = LoadImage(SONICFLOORIMG, 0);
-		if(!overlay)
-			return;
-
-		back[1]->y = (dH - 240)/2;
-		overlay->y = (dH - 240)/2;
-		if(offsetY)  // center in PAL modes
-		{
-			back[1]->y -= offsetY;
-			overlay->y -= offsetY;
-		}
-	}
+	sonicback[0] = LoadImage(SONICBACK1IMG, 0);
+	if(!sonicback[0])
+		return;
+	sonicback[1] = LoadImage(SONICBACK2IMG, 0);
+	if(!sonicback[1])
+		return;
+	sonicback[2] = LoadImage(SONICBACK3IMG, 0);
+	if(!sonicback[2])
+		return;
+	sonicback[3] = LoadImage(SONICBACK4IMG, 0);
+	if(!sonicback[3])
+		return;
+	
+	for(i = 0; i < 4; i++)
+		back[i] = NULL;
+		
+	back[1] = sonicback[0];
+	if(!back[1])
+		return;
+	
+	overlay = LoadImage(SONICFLOORIMG, 0);
+	if(!overlay)
+		return;
+	
+	reload = 1;
 	striped = LoadImage(STRIPEDIMG, 0);
 	if(!striped)
 		return;
 			
 	while(!done && !EndProgram) 
 	{	
-		if(oldvmode != vmode)
+		if(reload || oldvmode != vmode)
 		{
-			back[1]->y = (dH - 240)/2;
-			overlay->y = (dH - 240)/2;
-			if(offsetY)  // center in PAL modes
-			{
-				back[1]->y -= offsetY;
-				overlay->y -= offsetY;
+			FreeImage(&back[0]);
+			FreeImage(&back[2]);
+			FreeImage(&back[3]);
+				
+			back[2] = LoadImage(CHECKPOSIMG, 1);
+			if(!back[2])
+				return;
+			back[3] = LoadImage(STRIPESPOSIMG, 1);
+			if(!back[3])
+				return;
+				
+			if(vmode != VIDEO_480P && vmode != VIDEO_480I && 
+				vmode != VIDEO_576I)
+			{	
+				back[0] = LoadImage(MOTOKOIMG, 0);
+				if(!back[0])
+					return;
+					
+				for(i = 0; i < 4; i++)
+					sonicback[i]->scale = 1;
+				back[0]->scale = 1;
+				overlay->scale = 1;
+				
+				for(i = 0; i < 4; i++)
+					sonicback[i]->y = 0;
+				overlay->y = 0;
 			}
+			else
+			{	
+				back[0] = LoadImage(MOTOKO480IMG, 0);
+				if(!back[0])
+					return;
+	
+				back[0]->scale = 0;
+				overlay->scale = 0;
+				for(i = 0; i < 4; i++)
+				{
+					sonicback[i]->scale = 0;
+					sonicback[i]->y = (dH - 240)/2;
+				}
+
+				overlay->y = (dH - 240)/2;
+				if(offsetY)  // center in PAL modes
+				{
+					for(i = 0; i < 4; i++)
+						sonicback[i]->y -= offsetY;
+					overlay->y -= offsetY;
+				}
+			}
+			reload = 0;
 			oldvmode = vmode;
 		}
 	
@@ -393,14 +439,24 @@ void StripedSpriteTest()
 			x = back[selback]->w + back[selback]->x - striped->w;
 		if(y > back[selback]->h + back[selback]->y - striped->h)
 			y = back[selback]->h + back[selback]->y - striped->h;
+			
+		currentframe ++;
+		if(currentframe > 10)
+		{
+			currentsonic++;
+			if(currentsonic > 3)
+				currentsonic = 0;
+			currentframe = 0;
+			back[1] = sonicback[currentsonic];
+		}
 	}
 	FreeImage(&back[0]);
-	FreeImage(&back[1]);
+	for(i = 0; i < 4; i++)
+		FreeImage(&sonicback[i]);
 	FreeImage(&back[2]);
 	FreeImage(&back[3]);
 	FreeImage(&overlay);
 	FreeImage(&striped);
-	return;
 }
 
 void LagTest()
@@ -775,35 +831,56 @@ void LagTest()
 
 void ScrollTest()
 {
-	int 	done = 0, speed = 1, acc = 1, x = 0, pause = 0;
-	int		oldvmode = vmode;
+	int 	done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, vertical = 0;
+	int		oldvmode = vmode, i = 0, currentsonic = 0, currentframe = 0;
 	u32		pressed;		
-	ImagePtr	back, overlay;	
+	ImagePtr	sonicback[4], overlay, kiki;	
 	
-	back = LoadImage(SONICBACKIMG, 0);
-	if(!back)
+	sonicback[0] = LoadImage(SONICBACK1IMG, 0);
+	if(!sonicback[0])
 		return;
+	sonicback[1] = LoadImage(SONICBACK2IMG, 0);
+	if(!sonicback[1])
+		return;
+	sonicback[2] = LoadImage(SONICBACK3IMG, 0);
+	if(!sonicback[2])
+		return;
+	sonicback[3] = LoadImage(SONICBACK4IMG, 0);
+	if(!sonicback[3])
+		return;
+
 	overlay = LoadImage(SONICFLOORIMG, 0);
 	if(!overlay)
 		return;
-	
-	back->y = (dH - 240)/2;
+		
+	kiki = LoadImage(KIKIBACKIMG, 0);
+	if(!kiki)
+		return;
+
+	for(i = 0; i < 4; i++)
+		sonicback[i]->y = (dH - 240)/2;
 	overlay->y = (dH - 240)/2;
 	
-	IgnoreOffset(back);
+	for(i = 0; i < 4; i++)
+		IgnoreOffset(sonicback[i]);
 	IgnoreOffset(overlay);
+	kiki->x = (dW-256)/2;
+	IgnoreOffset(kiki);
 
 	while(!done && !EndProgram) 
 	{		
 		if(oldvmode != vmode)
 		{
-			back->y = (dH - 240)/2;
+			for(i = 0; i < 4; i++)	
+				sonicback[i]->y = (dH - 240)/2;
 			overlay->y = (dH - 240)/2;
 			if(offsetY)  // center in PAL modes
 			{
-				back->y -= offsetY;
+				for(i = 0; i < 4; i++)	
+					sonicback[i]->y -= offsetY;
 				overlay->y -= offsetY;
 			}
+			kiki->x = (dW-256)/2;
 			oldvmode = vmode;
 		}
 		
@@ -816,18 +893,37 @@ void ScrollTest()
 			speed = 1;
 
 		if(!pause)
-			x += speed * acc;
-		
-		if(x > overlay->tw)
-			x = 1;
+		{
+			if(!vertical)
+				x += speed * acc;
+			else
+				y -= speed * acc;
+		}
 
-		if(x < -1*overlay->tw)
-			x = -1;
+		if(!vertical)
+		{
+			if(x > overlay->tw)
+				x = 1;
 
-		CalculateUV(x, 0, dW, 240, back);
-		CalculateUV(x*2, 0, dW, 240, overlay);
-		DrawImage(back);
-		DrawImage(overlay);
+			if(x < -1*overlay->tw)
+				x = -1;
+				
+			CalculateUV(x, 0, dW, 240, sonicback[currentsonic]);
+			CalculateUV(x*2, 0, dW, 240, overlay);
+			DrawImage(sonicback[currentsonic]);
+			DrawImage(overlay);
+		}
+		else
+		{
+			if(y > kiki->th)
+				y = 1;
+
+			if(y < -1*kiki->th)
+				y = -1;
+				
+			CalculateUV(0, y, 256, dH, kiki);
+			DrawImage(kiki);
+		}
 		
 		EndScene();
 
@@ -849,16 +945,32 @@ void ScrollTest()
 
 		if (pressed & PAD_BUTTON_X)
 			acc *= -1;
+			
+		if (pressed & PAD_BUTTON_Y)
+			vertical = !vertical;
 
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
 			HelpData = SCROLL;
-		}				
+		}	
+
+		if(!vertical)
+		{
+			currentframe ++;
+			if(currentframe > 10)
+			{
+				currentsonic++;
+				if(currentsonic > 3)
+					currentsonic = 0;
+				currentframe = 0;
+			}
+		}			
 	}
-	FreeImage(&back);
+	for(i = 0; i < 4; i++)
+		FreeImage(&sonicback[i]);
 	FreeImage(&overlay);
-	return;
+	FreeImage(&kiki);
 }
 
 void GridScrollTest()

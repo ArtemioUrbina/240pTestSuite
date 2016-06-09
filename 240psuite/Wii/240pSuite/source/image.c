@@ -310,16 +310,22 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	image->IgnoreOffsetY = 0;	
 	
 	if(maptoscreen)
-	{
-		if(image->w < dW && image->w != 8)
-			CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
-		else
-			CalculateUV(0, 0, dW, dH, image);		
-			
-		IgnoreOffset(image);
-	}	
+		MapToScreen(image);
 
 	return image;
+}
+
+void MapToScreen(ImagePtr image)
+{
+	if(!image)
+		return;
+		
+	if(image->w < dW && image->w != 8)
+		CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
+	else
+		CalculateUV(0, 0, dW, dH, image);		
+		
+	IgnoreOffset(image);
 }
 
 ImagePtr CopyFrameBufferToImage()
