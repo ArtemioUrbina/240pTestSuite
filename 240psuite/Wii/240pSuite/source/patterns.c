@@ -421,12 +421,18 @@ void DrawWhiteScreen()
 
 void DrawColorBars()
 {
-	int 		done = 0, type = 0;
+	int 		done = 0, type = 2;
 	u32         pressed;		
-	ImagePtr	back, backgrid;
+	ImagePtr	back, backhigh, backlow, backgrid;
 	
 	back = LoadImage(COLORIMG, 0);
 	if(!back)
+		return;
+	backlow = LoadImage(COLORLOWIMG, 0);
+	if(!backlow)
+		return;
+	backhigh = LoadImage(COLORHIGHIMG, 0);
+	if(!backhigh)
 		return;
 	backgrid = LoadImage(COLORGRIDIMG, 0);
 	if(!backgrid)
@@ -439,10 +445,21 @@ void DrawColorBars()
 	{				
 		StartScene();
 		        
-		if(!type)
-			DrawImage(back);
-		else
-			DrawImage(backgrid);
+		switch(type)
+		{
+			case 1:
+				DrawImage(backlow);
+				break;
+			case 2:
+				DrawImage(back);
+				break;
+			case 3:
+				DrawImage(backhigh);
+				break;
+			case 4:
+				DrawImage(backgrid);
+				break;
+		}
 		
         EndScene();	
 
@@ -452,9 +469,17 @@ void DrawColorBars()
 		
 		if (pressed & PAD_BUTTON_B)
 			done =	1;								
-
-		if (pressed & PAD_BUTTON_A)
-			type = !type;
+		
+		if (pressed & PAD_BUTTON_LEFT)
+			type--;
+			
+		if (pressed & PAD_BUTTON_RIGHT)
+			type++;
+			
+		if(type < 1)
+			type = 1;
+		if(type > 4)
+			type = 4;
 
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
@@ -463,6 +488,8 @@ void DrawColorBars()
 		}			
 	}
 	FreeImage(&backgrid);
+	FreeImage(&backlow);
+	FreeImage(&backhigh);
 	FreeImage(&back);
 	return;
 }
