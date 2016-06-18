@@ -33,7 +33,7 @@ drive.dfs:
 all: $(PROG_NAME).v64
 
 clean:
-	rm -f *.v64 *.elf *.o *.bin *.dfs filesystem/*.sprite
+	rm -f *.v64 *.elf *.o *.bin *.dfs filesystem/*.bin
 
 .PHONY: bitmaps all
 
