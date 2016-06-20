@@ -24,8 +24,8 @@ $(PROG_NAME).v64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(CHKSUM64PATH) $(PROG_NAME).v64
 	$(UCON64) --nbak --dint $(PROG_NAME).v64
 
-$(PROG_NAME).elf : $(PROG_NAME).o utils.o image.o video.o
-	$(LD) -o $(PROG_NAME).elf $(PROG_NAME).o utils.o image.o video.o $(LINK_FLAGS)
+$(PROG_NAME).elf : $(PROG_NAME).o utils.o image.o video.o tests.o
+	$(LD) -o $(PROG_NAME).elf $(PROG_NAME).o utils.o image.o video.o tests.o $(LINK_FLAGS)
 
 drive.dfs:
 	$(MKDFSPATH) drive.dfs ./filesystem/
@@ -37,15 +37,28 @@ clean:
 
 .PHONY: bitmaps all
 
-bitmaps : filesystem/back.bin filesystem/sd.bin
+bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem/shadow.bin\
+    filesystem/buzzbomber.bin
 
 filesystem/back.bin: graphics/back.png
 	@echo convert PNG ... $(notdir $@)
-	$(MKSPRITEPATH) 32 1 1 $< $@
+	$(MKSPRITEPATH) 32 $< $@
 
 filesystem/sd.bin: graphics/sd.png
 	@echo convert PNG ... $(notdir $@)
-	$(MKSPRITEPATH) 32 1 1 $< $@
+	$(MKSPRITEPATH) 32 $< $@
+
+filesystem/motoko.bin: graphics/motoko.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) 32 $< $@
+
+filesystem/shadow.bin: graphics/shadow.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) 32 $< $@
+
+filesystem/buzzbomber.bin: graphics/buzzbomber.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) 32 $< $@
 
 run:
 	$(LOADER)  $(PROG_NAME).v64

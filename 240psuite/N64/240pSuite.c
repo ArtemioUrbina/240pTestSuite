@@ -5,6 +5,7 @@
 #include <libdragon.h>
 #include "image.h"
 #include "utils.h"
+#include "tests.h"
 
 int main(void)
 {
@@ -14,9 +15,6 @@ int main(void)
 
 	init_n64();
 	
-    back = LoadImage("/back.bin");
-    sd = LoadImage("/sd.bin");
-	
     while(1) 
     {
 		int x = 38, y = 62, r = 0xff, g = 0xff, b = 0xff, c = 1;
@@ -25,6 +23,11 @@ int main(void)
 		
 		if(redraw)
 		{
+			if(!back)
+				back = LoadImage("/back.bin");
+			if(!sd)
+				sd = LoadImage("/sd.bin");
+	
 			SoftDrawImage(0, 0, back);
 			SoftDrawImage(221, 86, sd);
 		
@@ -54,7 +57,7 @@ int main(void)
 		else
 			DrawStringS(255, 216, 0xfa, 0xfa, 0xfa, "N64 PAL"); 
 
-        display_show(disp);
+        WaitVsync();
 
         controller_scan();
         keys = get_keys_down();
@@ -72,11 +75,26 @@ int main(void)
 			
 		if(keys.c[0].A)
 		{
+			/*
 			current_resolution++;
 			if(current_resolution > RESOLUTION_512x480)
 				current_resolution = RESOLUTION_320x240;
 			display_close();
 			set_video();
+			redraw = 1;
+			*/
+			
+			FreeImage(&back);
+			FreeImage(&sd);
+			switch(sel)
+			{
+				case 2:
+					DropShadowTest();
+					break;
+				default:
+					break;
+			}
+			
 			redraw = 1;
 		}
 	}

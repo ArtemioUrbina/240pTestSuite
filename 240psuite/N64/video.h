@@ -7,6 +7,11 @@ extern int current_gamma;
 extern int current_antialias;
 extern display_context_t disp;
 
+extern int dW;
+extern int dH;
+
 void GetDisplay();
 int isNTSC();
+void init_video();
 void set_video();
+void WaitVsync();

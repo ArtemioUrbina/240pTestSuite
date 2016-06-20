@@ -20,6 +20,15 @@ sprite_t *LoadImage(char *name)
 	return image;
 }
 
+void FreeImage(sprite_t **image)
+{
+	if(*image)
+	{
+		free(*image);
+		*image = NULL;
+	}
+}
+
 void SoftDrawImage(int x, int y, sprite_t *image)
 {
 	graphics_draw_sprite_trans(disp, x, y, image);
@@ -33,14 +42,14 @@ void rdp_start()
 	rdp_attach_display(disp);
 }
 
-void rdp_end()
-{
-	rdp_detach_display();
-}
-
 void HardDrawImage(int x, int y, sprite_t *image)
 {	
 	rdp_sync(SYNC_PIPE);
 	rdp_load_texture(0, 0, MIRROR_DISABLED, image);
 	rdp_draw_sprite(0, x, y);
+}
+
+void rdp_end()
+{
+	rdp_detach_display();
 }

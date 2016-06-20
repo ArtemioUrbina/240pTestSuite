@@ -6,6 +6,8 @@
 #include "video.h"
 
 sprite_t *LoadImage(char *name);
+void FreeImage(sprite_t **image);
+
 void rdp_start();
 void rdp_end();
 void HardDrawImage(int x, int y, sprite_t *image);
