@@ -1,4 +1,10 @@
 #include <libdragon.h>
+#include "image.h"
+#include "video.h"
 
-void DrawStringS(display_context_t disp, int x, int y, int r, int g, int b, char *str);
-int isNTSC();
+extern int fh;
+
+void init_n64();
+
+void DrawString(int x, int y, int r, int g, int b, char *str);
+void DrawStringS(int x, int y, int r, int g, int b, char *str);

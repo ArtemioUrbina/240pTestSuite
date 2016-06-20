@@ -24,8 +24,8 @@ $(PROG_NAME).v64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(CHKSUM64PATH) $(PROG_NAME).v64
 	$(UCON64) --nbak --dint $(PROG_NAME).v64
 
-$(PROG_NAME).elf : $(PROG_NAME).o utils.o 
-	$(LD) -o $(PROG_NAME).elf $(PROG_NAME).o utils.o $(LINK_FLAGS)
+$(PROG_NAME).elf : $(PROG_NAME).o utils.o image.o video.o
+	$(LD) -o $(PROG_NAME).elf $(PROG_NAME).o utils.o image.o video.o $(LINK_FLAGS)
 
 drive.dfs:
 	$(MKDFSPATH) drive.dfs ./filesystem/
