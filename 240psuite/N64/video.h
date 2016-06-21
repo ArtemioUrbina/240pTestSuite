@@ -5,7 +5,8 @@ extern int current_bitdepth;
 extern int current_buffers;
 extern int current_gamma;
 extern int current_antialias;
-extern display_context_t disp;
+
+extern display_context_t __dc;
 
 extern int dW;
 extern int dH;

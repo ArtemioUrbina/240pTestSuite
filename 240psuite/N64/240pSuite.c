@@ -28,7 +28,7 @@ int main(void)
 			if(!sd)
 				sd = LoadImage("/sd.bin");
 	
-			SoftDrawImage(0, 0, back);
+			SoftDrawImageSolid(0, 0, back);
 			SoftDrawImage(221, 86, sd);
 		
 			redraw++;

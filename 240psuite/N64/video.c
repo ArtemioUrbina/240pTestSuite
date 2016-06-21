@@ -6,7 +6,7 @@ int current_buffers = 0;
 int current_gamma = 0;
 int current_antialias = 0;
 
-display_context_t disp = 0;
+display_context_t __dc = 0;
 int dW = 0;
 int dH = 0;
 
@@ -18,7 +18,7 @@ void init_video()
 	current_bitdepth = DEPTH_32_BPP;
 	current_buffers = 2;
 	current_gamma = GAMMA_NONE;
-	current_antialias = ANTIALIAS_OFF;
+	current_antialias = ANTIALIAS_RESAMPLE; // ANTIALIAS_OFF doesn't work in 16BPP
 
 	video_set = 0;
 }
@@ -32,8 +32,8 @@ void set_video()
 		video_set = 0;
 	}
 	
-	rdp_init();
 	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
+	rdp_init();
 	
 	switch(current_resolution)
 	{
@@ -58,11 +58,8 @@ void set_video()
 }
 
 void GetDisplay()
-{
-	if(disp)
-		disp = 0;
-		
-	while(!(disp = display_lock()));
+{	
+	while(!(__dc = display_lock()));
 }
 
 int isNTSC()
@@ -75,6 +72,5 @@ int isNTSC()
 
 void WaitVsync()
 {
-	if(disp)
-		display_show(disp);
+	display_show(__dc);
 }

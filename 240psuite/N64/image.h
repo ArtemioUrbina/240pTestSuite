@@ -12,4 +12,5 @@ void rdp_start();
 void rdp_end();
 void HardDrawImage(int x, int y, sprite_t *image);
 void SoftDrawImage(int x, int y, sprite_t *image);
+void SoftDrawImageSolid(int x, int y, sprite_t *image);
 

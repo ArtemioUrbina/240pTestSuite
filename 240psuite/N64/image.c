@@ -31,7 +31,12 @@ void FreeImage(sprite_t **image)
 
 void SoftDrawImage(int x, int y, sprite_t *image)
 {
-	graphics_draw_sprite_trans(disp, x, y, image);
+	graphics_draw_sprite_trans(__dc, x, y, image);
+}
+
+void SoftDrawImageSolid(int x, int y, sprite_t *image)
+{
+	graphics_draw_sprite(__dc, x, y, image);
 }
 
 void rdp_start()
@@ -39,7 +44,7 @@ void rdp_start()
 	rdp_sync(SYNC_PIPE);
 	rdp_set_default_clipping();
 	rdp_enable_texture_copy();
-	rdp_attach_display(disp);
+	rdp_attach_display(__dc);
 }
 
 void HardDrawImage(int x, int y, sprite_t *image)
