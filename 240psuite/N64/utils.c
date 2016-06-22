@@ -33,11 +33,9 @@ void DrawStringS(int x, int y, int r, int g, int b, char *str)
 	graphics_draw_text(__dc, x, y, str);
 }
 
-int DetectExpansionPack()
+int DetectRamSize()
 {
 	int available_memory_size = *(int *)(0x80000318);
 
-	if(available_memory_size != 0x800000)
-		return 0;
-	return 1;
+	return (available_memory_size/0x100000);
 }

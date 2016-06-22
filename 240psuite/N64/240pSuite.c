@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <malloc.h>
 #include <string.h>
 #include <stdint.h>
 #include <libdragon.h>
@@ -12,8 +11,11 @@ int main(void)
 	int sel = 1, redraw = 1;
 	sprite_t *back = NULL, *sd = NULL;
 	struct controller_data keys;
+	char str[10];
 
 	init_n64();
+	
+	ClearScreen();
 	
     while(1) 
     {
@@ -28,7 +30,7 @@ int main(void)
 			if(!sd)
 				sd = LoadImage("/sd.bin");
 	
-			SoftDrawImageSolid(0, 0, back);
+			drawBackground(back);
 			SoftDrawImage(221, 86, sd);
 		
 			redraw++;
@@ -53,9 +55,12 @@ int main(void)
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); 
 		
 		if(isNTSC())
-			DrawStringS(255, 216, 0xfa, 0xfa, 0xfa, "N64 NTSC");
+			DrawStringS(254, 216, 0xfa, 0xfa, 0xfa, "N64 NTSC");
 		else
-			DrawStringS(255, 216, 0xfa, 0xfa, 0xfa, "N64 PAL"); 
+			DrawStringS(254, 216, 0xfa, 0xfa, 0xfa, "N64 PAL"); 
+		
+		sprintf(str, "RAM %d MB", DetectRamSize());
+		DrawStringS(254, 224, 0xfa, 0xfa, 0xfa, str);
 
         WaitVsync();
 
@@ -74,29 +79,34 @@ int main(void)
 			sel = 1;
 			
 		if(keys.c[0].A)
-		{
-			/*
-			current_resolution++;
-			if(current_resolution > RESOLUTION_512x480)
-				current_resolution = RESOLUTION_320x240;
-			display_close();
-			set_video();
-			redraw = 1;
-			*/
-			
+		{	
 			FreeImage(&back);
 			FreeImage(&sd);
+			
+			ClearScreen();
+			
 			switch(sel)
 			{
 				case 2:
 					DropShadowTest();
+					break;
+				case 14:
+					current_resolution++;
+					if(current_resolution > RESOLUTION_512x480)
+						current_resolution = RESOLUTION_320x240;
+					set_video();
+					redraw = 1;
 					break;
 				default:
 					break;
 			}
 			
 			redraw = 1;
+			ClearScreen();
 		}
 	}
+	
+	FreeImage(&back);
+	FreeImage(&sd);
 }
 

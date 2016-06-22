@@ -8,14 +8,15 @@ MKSPRITEPATH = $(ROOTDIR)/bin/mksprite
 UCON64 = $(ROOTDIR)/bin/ucon64
 LOADER = $(ROOTDIR)/bin/loader64
 HEADERNAME = header
-LINK_FLAGS = -L$(ROOTDIR)/mips64-elf/lib -ldragon -lc -lm -ldragonsys -Tn64ld.x
+LINK_FLAGS = -L$(ROOTDIR)/mips64-elf/lib -ldragon -lc -lm -ldragonsys -ln64memory -Tn64ld.x 
 PROG_NAME = 240pSuite
-CFLAGS = -std=gnu99 -march=vr4300 -mtune=vr4300 -O2 -Wall -Werror -I$(ROOTDIR)/mips64-elf/include
+CFLAGS = -DUSE_N64MEM -std=gnu99 -march=vr4300 -mtune=vr4300 -O2 -Wall -Werror -I$(ROOTDIR)/mips64-elf/include
 ASFLAGS = -mtune=vr4300 -march=vr4300
 CC = $(GCCN64PREFIX)gcc
 AS = $(GCCN64PREFIX)as
 LD = $(GCCN64PREFIX)ld
 OBJCOPY = $(GCCN64PREFIX)objcopy
+BITDEPTH = 16
 
 $(PROG_NAME).v64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(OBJCOPY) $(PROG_NAME).elf $(PROG_NAME).bin -O binary
@@ -42,23 +43,23 @@ bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem
 
 filesystem/back.bin: graphics/back.png
 	@echo convert PNG ... $(notdir $@)
-	$(MKSPRITEPATH) 32 $< $@
+	$(MKSPRITEPATH) $(BITDEPTH) $< $@
 
 filesystem/sd.bin: graphics/sd.png
 	@echo convert PNG ... $(notdir $@)
-	$(MKSPRITEPATH) 32 $< $@
+	$(MKSPRITEPATH) $(BITDEPTH) $< $@
 
 filesystem/motoko.bin: graphics/motoko.png
 	@echo convert PNG ... $(notdir $@)
-	$(MKSPRITEPATH) 32 $< $@
+	$(MKSPRITEPATH) $(BITDEPTH) 10 15 $< $@
 
 filesystem/shadow.bin: graphics/shadow.png
 	@echo convert PNG ... $(notdir $@)
-	$(MKSPRITEPATH) 32 $< $@
+	$(MKSPRITEPATH) $(BITDEPTH) $< $@
 
 filesystem/buzzbomber.bin: graphics/buzzbomber.png
 	@echo convert PNG ... $(notdir $@)
-	$(MKSPRITEPATH) 32 $< $@
+	$(MKSPRITEPATH) $(BITDEPTH) $< $@
 
 run:
 	$(LOADER)  $(PROG_NAME).v64
