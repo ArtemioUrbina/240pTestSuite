@@ -39,7 +39,7 @@ clean:
 .PHONY: bitmaps all
 
 bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem/shadow.bin\
-    filesystem/buzzbomber.bin
+    filesystem/buzzbomber.bin filesystem/checkpos.bin filesystem/checkneg.bin
 
 filesystem/back.bin: graphics/back.png
 	@echo convert PNG ... $(notdir $@)
@@ -58,6 +58,14 @@ filesystem/shadow.bin: graphics/shadow.png
 	$(MKSPRITEPATH) $(BITDEPTH) $< $@
 
 filesystem/buzzbomber.bin: graphics/buzzbomber.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) $(BITDEPTH) $< $@
+
+filesystem/checkpos.bin: graphics/checkpos.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) $(BITDEPTH) $< $@
+
+filesystem/checkneg.bin: graphics/checkneg.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITEPATH) $(BITDEPTH) $< $@
 

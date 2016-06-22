@@ -72,5 +72,44 @@ void DropShadowTest()
 	}
 	FreeImage(&back);
 	FreeImage(&shadow);
-	FreeScreenBuffer();
 }
+
+void DrawCheckerboard()
+{
+	int end = 0, type = 0;
+	sprite_t *pos = NULL, *neg = NULL;
+	struct controller_data keys;
+	
+	if(!pos)
+		pos = LoadImage("/checkpos.bin");
+	if(!neg)
+		neg = LoadImage("/checkneg.bin");
+			
+    while(!end)
+    {	
+		GetDisplay();
+
+		rdp_start();
+		if(type)
+			FillScreenWithTexture(pos);
+		else
+			FillScreenWithTexture(neg);
+		rdp_end();
+		
+		WaitVsync();
+		
+		controller_scan();
+		keys = get_keys_down();
+		
+		if(keys.c[0].A)
+			type = !type;
+			
+		if(keys.c[0].B)
+			end = 1;
+	}
+	
+	FreeImage(&pos);
+	FreeImage(&neg);
+}
+
+

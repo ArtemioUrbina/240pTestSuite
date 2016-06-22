@@ -11,7 +11,7 @@ int main(void)
 	int sel = 1, redraw = 1;
 	sprite_t *back = NULL, *sd = NULL;
 	struct controller_data keys;
-	char str[10];
+	char str[20];
 
 	init_n64();
 	
@@ -90,19 +90,21 @@ int main(void)
 				case 2:
 					DropShadowTest();
 					break;
+				case 9:
+					DrawCheckerboard();
+					break;
 				case 14:
 					current_resolution++;
 					if(current_resolution > RESOLUTION_512x480)
 						current_resolution = RESOLUTION_320x240;
 					set_video();
-					redraw = 1;
 					break;
 				default:
 					break;
 			}
 			
-			redraw = 1;
 			ClearScreen();
+			redraw = 1;
 		}
 	}
 	

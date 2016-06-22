@@ -86,12 +86,19 @@ void rdp_end()
 	rdp_detach_display();
 }
 
+void FillScreenWithTexture(sprite_t *image)
+{
+	rdp_sync(SYNC_PIPE);
+	rdp_load_texture(0, 0, MIRROR_DISABLED, image);
+	rdp_draw_textured_rectangle (0, 0, 0, dW, dH);
+}
+
 void drawPatchBackgroundFromCapture(int x, int y, sprite_t *sprite) 
 { 
     unsigned char*	target, *src; 
 	int 	size = 0, width = 0, height = 0;
 	
-	if(!sprite)
+	if(!sprite || !__screen_buffer)
 		return;
 		
 	width = sprite->width+2;
@@ -131,7 +138,7 @@ void drawPatchBackground(int x, int y, sprite_t *sprite, sprite_t *backgd)
     unsigned char*	target, *src; 
 	int 	size = 0, width = 0, height = 0;
 	
-	if(!sprite)
+	if(!sprite || !backgd)
 		return;
 		
 	width = sprite->width+2;
