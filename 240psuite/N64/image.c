@@ -164,6 +164,7 @@ void ClearScreen()
 	//FillScreen(0xff, 0x0, 0xff);
 }
 
+// x must be a multiple of four
 void drawImageDMA(int x, int y, sprite_t *image) 
 { 
     unsigned char*	target; 
@@ -191,8 +192,13 @@ void drawImageDMA(int x, int y, sprite_t *image)
 	end = y + height;
 	if(end > dH)
 		end = dH;
+		
+	/*
+	if((x & 0x3) != 0)
+		x += 4 - x % 4;
+	*/
 	
-	data_cache_hit_writeback_invalidate(target, t_rowsize*dH);	
+	data_cache_hit_writeback_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
 	for(uint32_t line = start; line < end; line ++)
 	{
 		/* DMA to DMEM */
@@ -207,7 +213,7 @@ void drawImageDMA(int x, int y, sprite_t *image)
 		DMA_RADDR = (uint32_t)target+t_rowsize*line+x*bD;
 		DMA_WRLEN = chunk;
 	}
-	data_cache_hit_invalidate(target, t_rowsize*dH);	
+	data_cache_hit_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
 }
 
 void drawPatchBackgroundFromCapture(int x, int y, sprite_t *sprite) 

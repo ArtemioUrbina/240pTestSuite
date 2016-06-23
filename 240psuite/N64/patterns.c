@@ -50,7 +50,7 @@ void DrawPLUGE()
 
 void DrawColorBars()
 {
-	int end = 0, type;
+	int end = 0, type, redraw = 0;
 	sprite_t *back[4];
 	struct controller_data keys;
 	
@@ -71,7 +71,8 @@ void DrawColorBars()
     {	
 		GetDisplay();
 		
-		drawImageDMA(0, 0, back[type]);
+		if(redraw++ < 2)
+			drawImageDMA(0, 0, back[type]);
 		
 		WaitVsync();
 		
@@ -81,9 +82,15 @@ void DrawColorBars()
 			end = 1;
 			
 		if(keys.c[0].left)
+		{
 			type --;
+			redraw = 0;
+		}
 		if(keys.c[0].right)
+		{
 			type ++;
+			redraw = 0;
+		}
 			
 		if(type < 0)
 			type = 0;
@@ -96,4 +103,34 @@ void DrawColorBars()
 		
 	current_bitdepth = DEPTH_16_BPP;
 	set_video();
+}
+
+void DrawGrid()
+{
+	int end = 0;
+	sprite_t *back = NULL;
+	struct controller_data keys;
+	
+	if(dH == 240)
+		back = LoadImage("/grid.bin");
+	if(dH == 480)
+		back = LoadImage("/grid480.bin");
+	if(!back)
+		return;
+		
+    while(!end)
+    {	
+		GetDisplay();
+		
+		SoftDrawImage(0, 0, back);
+		
+		WaitVsync();
+		
+		controller_scan();
+		keys = get_keys_down();
+		if(keys.c[0].B)
+			end = 1;
+	}
+	
+	FreeImage(&back);
 }

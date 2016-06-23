@@ -228,6 +228,9 @@ void DrawPatternsMenu()
 				case 2:
 					DrawColorBars();
 					break;
+				case 6:
+					DrawGrid();
+					break;
 				case 15:
 					end = 1;
 					break;

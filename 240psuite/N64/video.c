@@ -34,8 +34,18 @@ int dH = 0;
 int bD = 0;
 
 int video_set = 0;
-
 unsigned char *__screen_buffer = NULL;
+
+// vblank callback so we can wait for vsync
+
+/*
+volatile int __frames;
+
+void vblCallback(void)
+{
+    __frames++;
+}
+*/
 
 void init_video()
 {
@@ -52,6 +62,7 @@ void set_video()
 {
 	if(video_set)
 	{
+		//unregister_VI_handler(vblCallback);
 		FreeScreenBuffer();
 		rdp_close();
 		display_close();
@@ -60,6 +71,7 @@ void set_video()
 	
 	video_set = 0;
 	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
+	//register_VI_handler(vblCallback);
 	rdp_init();
 	
 	switch(current_resolution)
@@ -95,7 +107,9 @@ void set_video()
 
 void GetDisplay()
 {	
-	while(!(__dc = display_lock()));
+	do
+	{	__dc = display_lock();}
+	while(!__dc);
 }
 
 int isNTSC()
@@ -108,7 +122,11 @@ int isNTSC()
 
 void WaitVsync()
 {
+	//int nextframe;
+	
+	//nextframe = __frames + 1;
 	display_show(__dc);
+	//while (nextframe > __frames) ;
 }
 
 void CreateScreenBuffer()
