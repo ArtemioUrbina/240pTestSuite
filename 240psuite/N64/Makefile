@@ -18,6 +18,8 @@ LD = $(GCCN64PREFIX)ld
 OBJCOPY = $(GCCN64PREFIX)objcopy
 BITDEPTH = 16
 
+OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o
+
 $(PROG_NAME).v64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(OBJCOPY) $(PROG_NAME).elf $(PROG_NAME).bin -O binary
 	rm -f $(PROG_NAME).v64
@@ -25,10 +27,10 @@ $(PROG_NAME).v64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(CHKSUM64PATH) $(PROG_NAME).v64
 	$(UCON64) --nbak --dint $(PROG_NAME).v64
 
-$(PROG_NAME).elf : $(PROG_NAME).o utils.o image.o video.o tests.o
-	$(LD) -o $(PROG_NAME).elf $(PROG_NAME).o utils.o image.o video.o tests.o $(LINK_FLAGS)
+$(PROG_NAME).elf : $(OBJS)
+	$(LD) -o $(PROG_NAME).elf $(OBJS) $(LINK_FLAGS)
 
-drive.dfs:
+drive.dfs: bitmaps
 	$(MKDFSPATH) drive.dfs ./filesystem/
 
 all: $(PROG_NAME).v64
@@ -39,7 +41,8 @@ clean:
 .PHONY: bitmaps all
 
 bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem/shadow.bin\
-    filesystem/buzzbomber.bin filesystem/checkpos.bin filesystem/checkneg.bin
+    filesystem/buzzbomber.bin filesystem/checkpos.bin filesystem/checkneg.bin filesystem/pluge.bin\
+	filesystem/color.bin filesystem/color_grid.bin filesystem/colorlow.bin filesystem/colorhigh.bin 
 
 filesystem/back.bin: graphics/back.png
 	@echo convert PNG ... $(notdir $@)
@@ -51,7 +54,27 @@ filesystem/sd.bin: graphics/sd.png
 
 filesystem/motoko.bin: graphics/motoko.png
 	@echo convert PNG ... $(notdir $@)
-	$(MKSPRITEPATH) $(BITDEPTH) 10 15 $< $@
+	$(MKSPRITEPATH) $(BITDEPTH) $< $@
+	
+filesystem/pluge.bin: graphics/pluge.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) $(BITDEPTH) $< $@
+	
+filesystem/color.bin: graphics/color.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) 32 $< $@
+
+filesystem/color_grid.bin: graphics/color_grid.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) 32 $< $@
+
+filesystem/colorlow.bin: graphics/colorlow.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) 32 $< $@
+	
+filesystem/colorhigh.bin: graphics/colorhigh.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITEPATH) 32 $< $@
 
 filesystem/shadow.bin: graphics/shadow.png
 	@echo convert PNG ... $(notdir $@)

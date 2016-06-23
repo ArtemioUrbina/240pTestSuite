@@ -1,3 +1,24 @@
+/* 
+ * 240p Test Suite for Nintendo 64
+ * Copyright (C)2016 Artemio Urbina
+ *
+ * This file is part of the 240p Test Suite
+ *
+ * The 240p Test Suite is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The 240p Test Suite is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with 240p Test Suite; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
+ */
+
 #include "video.h"
 #include "utils.h"
 
@@ -7,9 +28,10 @@ int current_buffers = 0;
 int current_gamma = 0;
 int current_antialias = 0;
 
-display_context_t __dc = 0;
+volatile display_context_t __dc = 0;
 int dW = 0;
 int dH = 0;
+int bD = 0;
 
 int video_set = 0;
 
@@ -30,11 +52,13 @@ void set_video()
 {
 	if(video_set)
 	{
+		FreeScreenBuffer();
 		rdp_close();
 		display_close();
 		video_set = 0;
 	}
 	
+	video_set = 0;
 	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
 	rdp_init();
 	
@@ -58,21 +82,15 @@ void set_video()
 			break;
 	}
 	
-	CreateScreenBuffer();
-	video_set = 1;
-}
-
-int getBitDepthSize()
-{
-	int size = 0;
-	
 	if(current_bitdepth == DEPTH_16_BPP)
-		size = 2;
+		bD = 2;
 		
 	if(current_bitdepth == DEPTH_32_BPP)
-		size = 4;
+		bD = 4;
 		
-	return size;
+	video_set = 1;
+	ClearScreen();
+	CreateScreenBuffer();
 }
 
 void GetDisplay()
@@ -98,9 +116,16 @@ void CreateScreenBuffer()
 	FreeScreenBuffer();
 		
 #ifdef USE_N64MEM		
-	__screen_buffer = n64_malloc(dW*dH*getBitDepthSize());
+	__screen_buffer = n64_malloc(dW*dH*bD);
 #else
-	__screen_buffer = malloc(dW*dH*getBitDepthSize());
+	__screen_buffer = malloc(dW*dH*bD);
+#endif
+
+	if(__screen_buffer)
+#ifdef USE_N64MEM		
+		n64_memset(__screen_buffer, 0, dW*dH*bD);
+#else
+		memset(__screen_buffer, 0, dW*dH*bD);
 #endif
 }
 
@@ -124,9 +149,9 @@ void CopyScreen()
 		return;
 
 #ifdef USE_N64MEM
-    n64_memcpy(__screen_buffer, __safe_buffer[(__dc)-1], dW*dH*getBitDepthSize());
+    n64_memcpy(__screen_buffer, __safe_buffer[(__dc)-1], dW*dH*bD);
 #else
-	memcpy(__screen_buffer, __safe_buffer[(__dc)-1], dW*dH*getBitDepthSize());
+	memcpy(__screen_buffer, __safe_buffer[(__dc)-1], dW*dH*bD);
 #endif
 }
 
@@ -136,9 +161,9 @@ void FillScreenFromBuffer()
 		return;
 
 #ifdef USE_N64MEM
-    n64_memcpy(__safe_buffer[(__dc)-1], __screen_buffer, dW*dH*getBitDepthSize());
+    n64_memcpy(__safe_buffer[(__dc)-1], __screen_buffer, dW*dH*bD);
 #else
-	memcpy(__safe_buffer[(__dc)-1], __screen_buffer, dW*dH*getBitDepthSize());
+	memcpy(__safe_buffer[(__dc)-1], __screen_buffer, dW*dH*bD);
 #endif
 }
 

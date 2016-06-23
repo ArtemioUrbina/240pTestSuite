@@ -1,5 +1,40 @@
+/* 
+ * 240p Test Suite for Nintendo 64
+ * Copyright (C)2016 Artemio Urbina
+ *
+ * This file is part of the 240p Test Suite
+ *
+ * The 240p Test Suite is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The 240p Test Suite is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with 240p Test Suite; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
+ */
+
 #include "image.h"
 #include "utils.h"
+
+// RSP local memory
+#define DMEM 0xA4000000
+#define IMEM 0xA4001000
+
+// RSP DMA registers
+#define DMA_LADDR (*(volatile uint32_t *)0xA4040000)
+#define DMA_RADDR (*(volatile uint32_t *)0xA4040004)
+#define DMA_RDLEN (*(volatile uint32_t *)0xA4040008)
+#define DMA_WRLEN (*(volatile uint32_t *)0xA404000C)
+#define DMA_FULL  (*(volatile uint32_t *)0xA4040014)
+#define DMA_BUSY  (*(volatile uint32_t *)0xA4040018)
+
+#define IMEM_SIZE 4000
 
 sprite_t *LoadImage(char *name)
 {
@@ -71,7 +106,7 @@ void HardDrawImage(int x, int y, sprite_t *image)
 	if(!image)
 		return;
 		
-	if(getBitDepthSize() == 2 && image->width < 20 && image->height < 20)
+	if(bD == 2 && image->width < 20 && image->height < 20)
 	{
 		rdp_sync(SYNC_PIPE);
 		rdp_load_texture(0, 0, MIRROR_DISABLED, image);
@@ -93,10 +128,92 @@ void FillScreenWithTexture(sprite_t *image)
 	rdp_draw_textured_rectangle (0, 0, 0, dW, dH);
 }
 
+void FillScreen(int r, int g, int b)
+{
+	for(int i = 0; i < current_buffers; i++)
+	{
+		GetDisplay();
+		rdp_sync(SYNC_PIPE);
+		rdp_set_default_clipping();
+		rdp_enable_primitive_fill();
+		rdp_attach_display(__dc);
+		rdp_sync(SYNC_PIPE);
+		rdp_set_primitive_color(graphics_make_color(r, g, b, 0xff));
+		rdp_draw_filled_rectangle(0, 0, dW, dH);
+		rdp_detach_display();
+		WaitVsync();
+	}
+	
+	/*
+	for(int i = 0; i < current_buffers; i++)
+	{
+		GetDisplay();
+#ifdef USE_N64MEM
+		n64_memset(__safe_buffer[(__dc)-1], 0, dW*dH*bD);
+#else
+		memset(__safe_buffer[(__dc)-1], 0, dW*dH*bD);
+#endif
+		WaitVsync();
+	}
+	*/
+}
+
+void ClearScreen()
+{
+	FillScreen(0, 0, 0);
+	//FillScreen(0xff, 0x0, 0xff);
+}
+
+void drawImageDMA(int x, int y, sprite_t *image) 
+{ 
+    unsigned char*	target; 
+	uint32_t 		t_rowsize = 0, chunk = 0, width = 0;
+	uint32_t 		height = 0, s_rowsize = 0;
+	uint32_t 		start = 0, end = 0;
+	
+	if(!image || !__dc)
+		return;
+		
+	width = image->width;
+	height = image->height;
+	
+	if(width + x > dW)
+		width = dW - x;
+	if(height > dH)
+		height = dH;
+	
+	target = __safe_buffer[(__dc)-1]; 	
+	chunk = width*bD;
+	s_rowsize = image->width*bD;
+	t_rowsize = dW*bD;
+	
+	start = y;
+	end = y + height;
+	if(end > dH)
+		end = dH;
+	
+	data_cache_hit_writeback_invalidate(target, t_rowsize*dH);	
+	for(uint32_t line = start; line < end; line ++)
+	{
+		/* DMA to DMEM */
+		while (DMA_BUSY) ;
+		DMA_LADDR = 0x0000;
+		DMA_RADDR = (uint32_t)image->data+s_rowsize*(line-start);
+		DMA_RDLEN = chunk;
+
+		/* DMA to frame buffer */
+		while (DMA_BUSY) ;
+		DMA_LADDR = 0x0000;
+		DMA_RADDR = (uint32_t)target+t_rowsize*line+x*bD;
+		DMA_WRLEN = chunk;
+	}
+	data_cache_hit_invalidate(target, t_rowsize*dH);	
+}
+
 void drawPatchBackgroundFromCapture(int x, int y, sprite_t *sprite) 
 { 
     unsigned char*	target, *src; 
-	int 	size = 0, width = 0, height = 0;
+	int 			width = 0, height = 0;
 	
 	if(!sprite || !__screen_buffer)
 		return;
@@ -115,21 +232,19 @@ void drawPatchBackgroundFromCapture(int x, int y, sprite_t *sprite)
 		y = 0;
 	if(y+height > dH)
 		y = dH - height;
- 
-	size = getBitDepthSize();
 		
-	src = __screen_buffer + y*dW*size + x*size; 
-    target = __safe_buffer[(__dc)-1] + y*dW*size + x*size; 
+	src = __screen_buffer + y*dW*bD + x*bD; 
+    target = __safe_buffer[(__dc)-1] + y*dW*bD + x*bD; 
 
     while (height--) 
     { 
 #ifdef USE_N64MEM
-		n64_memcpy(target, src, width*size); 
+		n64_memcpy(target, src, width*bD); 
 #else
-		memcpy(target, src, width*size); 
+		memcpy(target, src, width*bD); 
 #endif
-		target += dW*size; 
-		src += dW*size; 
+		target += dW*bD; 
+		src += dW*bD; 
     } 
 } 
 
@@ -156,7 +271,7 @@ void drawPatchBackground(int x, int y, sprite_t *sprite, sprite_t *backgd)
 	if(y+height > dH)
 		y = dH - height;
  
-	size = getBitDepthSize();
+	size = bD;
 		
 	src = (unsigned char*)backgd->data + y*backgd->width*size + x*size;
     target = __safe_buffer[(__dc)-1] + y*dW*size + x*size; 
@@ -172,60 +287,3 @@ void drawPatchBackground(int x, int y, sprite_t *sprite, sprite_t *backgd)
 		src += backgd->width*size; 
     } 
 } 
-
-void drawBackground(sprite_t *backgd) 
-{ 
-    unsigned char*	target, *src; 
-	int 	size = 0, width = 0, height = 0;
-	
-	if(!backgd)
-		return;
-		
-	width = backgd->width;
-	height = backgd->height;
-	
-	if(width > dW)
-		width = dW;
-	if(height > dH)
-		height = dH;
-	
-	size = getBitDepthSize();
-		
-	src = (unsigned char*)backgd->data;
-    target = __safe_buffer[(__dc)-1]; 
-
-    while (height--) 
-    { 
-#ifdef USE_N64MEM
-		n64_memcpy(target, src, width*size); 
-#else
-		memcpy(target, src, width*size); 
-#endif
-		target += dW*size; 
-		src += backgd->width*size; 
-    } 
-}
-
-void FillScreen(int r, int g, int b)
-{
-	for(int i = 0; i < current_buffers; i++)
-	{
-		GetDisplay();
-		
-		rdp_sync(SYNC_PIPE);
-		rdp_set_default_clipping();
-		rdp_enable_primitive_fill();
-		rdp_attach_display(__dc);
-		rdp_sync(SYNC_PIPE);
-		rdp_set_primitive_color(graphics_make_color(r, g, b, 0xff));
-		rdp_draw_filled_rectangle(0, 0, dW, dH);
-		rdp_detach_display();
-		
-		WaitVsync();
-	}
-}
-
-void ClearScreen()
-{
-	FillScreen(0, 0, 0);
-}

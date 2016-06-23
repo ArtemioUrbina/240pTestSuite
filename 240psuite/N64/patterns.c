@@ -19,107 +19,81 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
-#include "tests.h"
-#include "utils.h"
+#include "patterns.h"
 
-void DropShadowTest()
+void DrawPLUGE()
 {
-	int end = 0, show = 1;
-	int x = 0, y = 0, xlast = 0, ylast = 0;
-	sprite_t *back = NULL, *shadow = NULL;
+	int end = 0;
+	sprite_t *back = NULL;
 	struct controller_data keys;
 	
-	back = LoadImage("/motoko.bin");
-	shadow = LoadImage("/shadow.bin");
+	back = LoadImage("/pluge.bin");
+	if(!back)
+		return;
+		
     while(!end)
     {	
 		GetDisplay();
 		
 		drawImageDMA(0, 0, back);
-			
-		if(show)
-		{
-			rdp_start();
-			HardDrawImage(x, y, shadow);
-			rdp_end();
-		}
-		
-		show = !show;
-		
-		WaitVsync();
-		
-		xlast = x;
-		ylast = y;
-
-        controller_scan();
-		keys = get_keys_held();
-
-		if(keys.c[0].up)
-			y--;
-
-		if(keys.c[0].down)
-			y++;
-		
-		if(y > dH - shadow->height)
-			y = dH - shadow->height;
-		if(y < 0)
-			y = 0;
-			
-		if(keys.c[0].left)
-			x--;
-
-		if(keys.c[0].right)
-			x++;
-			
-		if(x > dW - shadow->width)
-			x = dW - shadow->width;
-		if(x < 0)
-			x = 0;
-		
-		keys = get_keys_down();
-		if(keys.c[0].B)
-			end = 1;
-	}
-	FreeImage(&back);
-	FreeImage(&shadow);
-}
-
-void DrawCheckerboard()
-{
-	int end = 0, type = 0;
-	sprite_t *pos = NULL, *neg = NULL;
-	struct controller_data keys;
-	
-	if(!pos)
-		pos = LoadImage("/checkpos.bin");
-	if(!neg)
-		neg = LoadImage("/checkneg.bin");
-			
-    while(!end)
-    {	
-		GetDisplay();
-
-		rdp_start();
-		if(type)
-			FillScreenWithTexture(pos);
-		else
-			FillScreenWithTexture(neg);
-		rdp_end();
 		
 		WaitVsync();
 		
 		controller_scan();
 		keys = get_keys_down();
-		
-		if(keys.c[0].A)
-			type = !type;
-			
 		if(keys.c[0].B)
 			end = 1;
 	}
 	
-	FreeImage(&pos);
-	FreeImage(&neg);
+	FreeImage(&back);
 }
 
-
+void DrawColorBars()
+{
+	int end = 0, type;
+	sprite_t *back[4];
+	struct controller_data keys;
+	
+	for(type = 0; type < 4; type++)
+		back[type] = NULL;
+		
+	type = 1;
+	
+	back[0] = LoadImage("/colorlow.bin");			
+	back[1] = LoadImage("/color.bin");					
+	back[2] = LoadImage("/colorhigh.bin");		
+	back[3] = LoadImage("/color_grid.bin");
+	
+	current_bitdepth = DEPTH_32_BPP;
+	set_video();
+	
+    while(!end)
+    {	
+		GetDisplay();
+		
+		drawImageDMA(0, 0, back[type]);
+		
+		WaitVsync();
+		
+		controller_scan();
+		keys = get_keys_down();
+		if(keys.c[0].B)
+			end = 1;
+			
+		if(keys.c[0].left)
+			type --;
+		if(keys.c[0].right)
+			type ++;
+			
+		if(type < 0)
+			type = 0;
+		if(type > 3)
+			type = 3;
+	}
+	
+	for(type = 0; type < 4; type++)
+		FreeImage(&back[type]);
+		
+	current_bitdepth = DEPTH_16_BPP;
+	set_video();
+}
