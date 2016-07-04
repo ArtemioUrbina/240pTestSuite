@@ -705,6 +705,8 @@ void PassiveLagTest()
 			bgInitTileSetMine(1, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
 			bgInitMapSetMine(1, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
 			
+			setPaletteColor(0x01, RGB5(255, 255, 255));
+			
 			drawText(1, 1, 7, "hours   minutes seconds frames");
 			
 			oamInitGfxSetMine(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
@@ -758,9 +760,15 @@ void PassiveLagTest()
 		if(running && color)
 		{
 			if(bgcol == 0xa)
+			{
 				bgcol = 0xb;
-			else
+				setPaletteColor(0x01, RGB5(0, 0, 0));
+			}
+			else 
+			{
 				bgcol = 0xa;
+				setPaletteColor(0x01, RGB5(255, 255, 255));
+			}
 		}
 	
 		if(snes_50hz)	

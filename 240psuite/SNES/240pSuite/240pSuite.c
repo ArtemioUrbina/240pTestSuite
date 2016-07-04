@@ -501,6 +501,7 @@ void DrawCredits(void)
 			
 			drawText(6, 4, 5, "Ver. 1.03");
 			drawText(19, 4, 7, "06/06/2016");
+			drawText(10, pos, 5, "Dedicated to Elisa");
 			
 			EndDMA();	
 			if(redraw)
