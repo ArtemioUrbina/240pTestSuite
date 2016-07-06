@@ -49,7 +49,7 @@ void DrawStringS(int x, int y, int r, int g, int b, char *str)
 
 	color = graphics_make_color(r, g, b, 0xff);
     graphics_set_color(0x00000000, 0x00000000);
-	graphics_draw_text(__dc, x+2, y+2, str);
+	graphics_draw_text(__dc, x+1, y+1, str);
 	graphics_set_color(color, 0x00000000);
 	graphics_draw_text(__dc, x, y, str);
 }

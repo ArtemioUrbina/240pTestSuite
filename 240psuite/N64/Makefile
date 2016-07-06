@@ -29,7 +29,7 @@ PROG_NAME = 240pSuite
 LIBS = -ldragon -lc -lm -ldragonsys -ln64memory 
 BITDEPTH = 16
 
-OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o
+OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o
 
 $(PROG_NAME).v64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(OBJCOPY) $(PROG_NAME).elf $(PROG_NAME).bin -O binary
@@ -45,7 +45,7 @@ drive.dfs: bitmaps
 	$(MKDFS) drive.dfs ./filesystem/
 
 %.o: %.c
-	$(CC) $(CCFLAGS) $< -o $@
+	$(CC) $(CCFLAGS) $< -o $@ 
 
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
@@ -53,7 +53,7 @@ drive.dfs: bitmaps
 all: $(PROG_NAME).v64
 
 clean:
-	rm -f *.v64 *.elf *.o *.bin *.dfs filesystem/*.bin
+	rm -f *.v64 *.elf *.o *.bin *.dfs filesystem/*.bin map.txt
 
 .PHONY: bitmaps all
 

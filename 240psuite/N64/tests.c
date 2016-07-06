@@ -21,6 +21,7 @@
 
 #include "tests.h"
 #include "utils.h"
+#include "controller.h"
 
 void DropShadowTest()
 {
@@ -39,8 +40,8 @@ void DropShadowTest()
 			
 		if(show)
 		{
-			rdp_start();
-			HardDrawImage(x, y, shadow);
+			rdp_texture_start();
+			rdp_DrawImage(x, y, shadow);
 			rdp_end();
 		}
 		
@@ -52,7 +53,7 @@ void DropShadowTest()
 		ylast = y;
 
         controller_scan();
-		keys = get_keys_held();
+		keys = Controller_ButtonsHeld();
 
 		if(keys.c[0].up)
 			y--;
@@ -76,9 +77,11 @@ void DropShadowTest()
 		if(x < 0)
 			x = 0;
 		
-		keys = get_keys_down();
+		keys = Controller_ButtonsDown();
 		if(keys.c[0].B)
 			end = 1;
+		if(keys.c[0].A)
+			show = !show;
 	}
 	FreeImage(&back);
 	FreeImage(&shadow);
@@ -99,17 +102,17 @@ void DrawCheckerboard()
     {	
 		GetDisplay();
 
-		rdp_start();
+		rdp_texture_start();
 		if(type)
-			FillScreenWithTexture(pos);
+			rdp_FillScreenWithTexture(pos);
 		else
-			FillScreenWithTexture(neg);
+			rdp_FillScreenWithTexture(neg);
 		rdp_end();
 		
 		WaitVsync();
 		
 		controller_scan();
-		keys = get_keys_down();
+		keys = Controller_ButtonsDown();
 		
 		if(keys.c[0].A)
 			type = !type;

@@ -4,3 +4,5 @@
 void DrawPLUGE();
 void DrawColorBars();
 void DrawGrid();
+void DrawSolidColor();
+void DrawOverscan();

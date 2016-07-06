@@ -27,6 +27,7 @@ int current_bitdepth = 0;
 int current_buffers = 0;
 int current_gamma = 0;
 int current_antialias = 0;
+int useNTSC = 1;
 
 volatile display_context_t __dc = 0;
 int dW = 0;
@@ -38,17 +39,17 @@ unsigned char *__screen_buffer = NULL;
 
 // vblank callback so we can wait for vsync
 
-/*
 volatile int __frames;
 
 void vblCallback(void)
 {
     __frames++;
 }
-*/
 
 void init_video()
 {
+	useNTSC = 1;
+	
 	current_resolution = RESOLUTION_320x240;
 	current_bitdepth = DEPTH_16_BPP;
 	current_buffers = 2;
@@ -62,7 +63,7 @@ void set_video()
 {
 	if(video_set)
 	{
-		//unregister_VI_handler(vblCallback);
+		unregister_VI_handler(vblCallback);
 		FreeScreenBuffer();
 		rdp_close();
 		display_close();
@@ -70,8 +71,8 @@ void set_video()
 	}
 	
 	video_set = 0;
-	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
-	//register_VI_handler(vblCallback);
+	display_init_ex(useNTSC, current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
+	register_VI_handler(vblCallback);
 	rdp_init();
 	
 	switch(current_resolution)
@@ -122,11 +123,11 @@ int isNTSC()
 
 void WaitVsync()
 {
-	//int nextframe;
+	int nextframe;
 	
-	//nextframe = __frames + 1;
+	nextframe = __frames + 1;
 	display_show(__dc);
-	//while (nextframe > __frames) ;
+	while (nextframe > __frames) ;
 }
 
 void CreateScreenBuffer()

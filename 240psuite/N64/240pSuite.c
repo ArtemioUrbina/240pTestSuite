@@ -27,6 +27,7 @@
 #include "utils.h"
 #include "tests.h"
 #include "patterns.h"
+#include "controller.h"
 
 void DrawPatternsMenu();
 
@@ -89,7 +90,7 @@ int main(void)
         WaitVsync();
 
         controller_scan();
-        keys = get_keys_down();
+        keys = Controller_ButtonsDown();
 
 		if(keys.c[0].up)
 			sel--;
@@ -107,7 +108,7 @@ int main(void)
 			FreeImage(&back);
 			FreeImage(&sd);
 			
-			ClearScreen();
+			//ClearScreen();
 			
 			switch(sel)
 			{
@@ -200,7 +201,7 @@ void DrawPatternsMenu()
         WaitVsync();
 
         controller_scan();
-        keys = get_keys_down();
+        keys = Controller_ButtonsDown();
 
 		if(keys.c[0].up)
 			sel--;
@@ -218,7 +219,7 @@ void DrawPatternsMenu()
 			FreeImage(&back);
 			FreeImage(&sd);
 			
-			ClearScreen();
+			//ClearScreen();
 			
 			switch(sel)
 			{
@@ -230,6 +231,12 @@ void DrawPatternsMenu()
 					break;
 				case 6:
 					DrawGrid();
+					break;
+				case 11:
+					DrawSolidColor();
+					break;
+				case 14:
+					DrawOverscan();
 					break;
 				case 15:
 					end = 1;

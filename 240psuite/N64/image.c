@@ -93,7 +93,15 @@ void SoftDrawImageSolid(int x, int y, sprite_t *image)
 	graphics_draw_sprite(__dc, x, y, image);
 }
 
-void rdp_start()
+void rdp_fill_start()
+{
+	rdp_sync(SYNC_PIPE);
+	rdp_set_default_clipping();
+	rdp_enable_primitive_fill();
+	rdp_attach_display(__dc);
+}
+
+void rdp_texture_start()
 {
 	rdp_sync(SYNC_PIPE);
 	rdp_set_default_clipping();
@@ -101,7 +109,13 @@ void rdp_start()
 	rdp_attach_display(__dc);
 }
 
-void HardDrawImage(int x, int y, sprite_t *image)
+void rdp_rectangle(int x0, int y0, int x1, int y1, int r, int g, int b)
+{
+	rdp_set_primitive_color(graphics_make_color(r, g, b, 0xff));
+	rdp_draw_filled_rectangle(x0, y0, x1, y1);
+}
+
+void rdp_DrawImage(int x, int y, sprite_t *image)
 {	
 	if(!image)
 		return;
@@ -121,30 +135,15 @@ void rdp_end()
 	rdp_detach_display();
 }
 
-void FillScreenWithTexture(sprite_t *image)
+void rdp_FillScreenWithTexture(sprite_t *image)
 {
 	rdp_sync(SYNC_PIPE);
 	rdp_load_texture(0, 0, MIRROR_DISABLED, image);
 	rdp_draw_textured_rectangle (0, 0, 0, dW, dH);
 }
 
-void FillScreen(int r, int g, int b)
+void ClearScreen()
 {
-	for(int i = 0; i < current_buffers; i++)
-	{
-		GetDisplay();
-		rdp_sync(SYNC_PIPE);
-		rdp_set_default_clipping();
-		rdp_enable_primitive_fill();
-		rdp_attach_display(__dc);
-		rdp_sync(SYNC_PIPE);
-		rdp_set_primitive_color(graphics_make_color(r, g, b, 0xff));
-		rdp_draw_filled_rectangle(0, 0, dW, dH);
-		rdp_detach_display();
-		WaitVsync();
-	}
-	
-	/*
 	for(int i = 0; i < current_buffers; i++)
 	{
 		GetDisplay();
@@ -155,13 +154,6 @@ void FillScreen(int r, int g, int b)
 #endif
 		WaitVsync();
 	}
-	*/
-}
-
-void ClearScreen()
-{
-	FillScreen(0, 0, 0);
-	//FillScreen(0xff, 0x0, 0xff);
 }
 
 // x must be a multiple of four
@@ -192,11 +184,6 @@ void drawImageDMA(int x, int y, sprite_t *image)
 	end = y + height;
 	if(end > dH)
 		end = dH;
-		
-	/*
-	if((x & 0x3) != 0)
-		x += 4 - x % 4;
-	*/
 	
 	data_cache_hit_writeback_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
 	for(uint32_t line = start; line < end; line ++)
@@ -208,7 +195,7 @@ void drawImageDMA(int x, int y, sprite_t *image)
 		DMA_RDLEN = chunk;
 
 		/* DMA to frame buffer */
-		while (DMA_BUSY) ;
+		while (DMA_FULL) ;
 		DMA_LADDR = 0x0000;
 		DMA_RADDR = (uint32_t)target+t_rowsize*line+x*bD;
 		DMA_WRLEN = chunk;
