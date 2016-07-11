@@ -6,4 +6,4 @@ interpret 240p as 480i. With a striped sprite it
 should be easy to tell if a processor tries to
 deinterlace (plus interpolate) or not.
 
-You can change backgrounds with $A.
+You can change backgrounds with #GA#G.

@@ -5,7 +5,7 @@ levels regarding contrast and brightness, and
 appropiate colors as well. 
 
 You can toggle between 75% and 100% SMPTE color 
-bars by pressing $A.
+bars by pressing #GA#G.
 
 When in PAL this pattern shows the #YEBU#Y color
 bars intead, since setup starts at 0mV.

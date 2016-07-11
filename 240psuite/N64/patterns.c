@@ -25,19 +25,80 @@
 
 void DrawPLUGE()
 {
-	int end = 0;
-	sprite_t *back = NULL;
+	int end = 0, ShowHelp = 0, text = 0;
+	sprite_t *backNTSC = NULL, *backPAL = NULL;
+	sprite_t *back = NULL, *highlight = NULL;
 	struct controller_data keys;
+	char		msg[50];
 	
-	back = LoadImage("/pluge.bin");
-	if(!back)
-		return;
-		
+	backPAL = LoadImage("/plugePAL.bin");
+	backNTSC = LoadImage("/pluge.bin");
+	highlight = LoadImage("/PLUGEBorder.bin");
+	
+	back = backPAL;
     while(!end)
     {	
 		GetDisplay();
 		
 		drawImageDMA(0, 0, back);
+		
+		if(ShowHelp)
+		{
+			int r = 0xff, g = 0x00, b = 0x00;
+			
+			DrawStringB(14, 205, r, g, b, back == backNTSC ? "11.5" : "3.5");	
+			SoftDrawImage(14, 39, highlight);
+			
+			if(back == backNTSC)
+			{
+				r = 0x00;
+				g = 0xff;
+			}
+			DrawStringB(44, 205, r, g, b, back == backNTSC ? "7.5" : "2");
+			SoftDrawImage(44, 39, highlight);
+			
+			if(back != backNTSC)
+			{
+				r = 0x00;
+				g = 0xff;
+			}
+			else
+			{
+				r = 0xff;
+				g = 0x00;
+			}
+			DrawStringB(74, 205, r, g, b, back == backNTSC ? "3.5" : "1");	
+			SoftDrawImage(74, 39, highlight);
+			
+			DrawStringB(228, 205, r, g, b, back == backNTSC ? "3.5" : "1");	
+			SoftDrawImage(228, 39, highlight);
+			
+			if(back == backNTSC)
+			{
+				r = 0x00;
+				g = 0xff;
+			}		
+			else
+			{
+				r = 0xff;
+				g = 0x00;
+			}
+			DrawStringB(259, 205, r, g, b, back == backNTSC ? "7.5" : "2");
+			SoftDrawImage(259, 39, highlight);
+			
+			r = 0xff;
+			g = 0x00;
+			DrawStringB(289, 205, r, g, b, back == backNTSC ? "11.5" : "3.5");	
+			SoftDrawImage(289, 39, highlight);
+
+			ShowHelp--;
+		}
+		
+		if(text)
+		{			
+			DrawStringB(228, 20, 0, 0xff, 0, msg);
+			text --;
+		}
 		
 		CheckMenu(PLUGEHELP);
 		WaitVsync();
@@ -47,11 +108,35 @@ void DrawPLUGE()
 		
 		if(keys.c[0].B)
 			end = 1;
+			
+		if(keys.c[0].A)
+		{
+			if(useNTSC)
+			{
+				if(back == backNTSC)
+				{
+					sprintf(msg, "RGB Full Range");
+					back = backPAL;
+				}
+				else
+				{
+					sprintf(msg, "NTSC 7.5 IRE");
+					back = backNTSC;
+				}
+					
+				text = 60;				
+			}
+		}
+		
+		if(keys.c[0].C_right)
+			ShowHelp = 100;
 		
 		CheckStart(keys);
 	}
 	
-	FreeImage(&back);
+	FreeImage(&backPAL);
+	FreeImage(&backNTSC);
+	FreeImage(&highlight);
 }
 
 void DrawColorBars()
@@ -90,12 +175,12 @@ void DrawColorBars()
 			
 		CheckStart(keys);
 			
-		if(keys.c[0].left)
+		if(keys.c[0].left || keys.c[0].L)
 		{
 			type --;
 			redraw = 0;
 		}
-		if(keys.c[0].right)
+		if(keys.c[0].right || keys.c[0].R)
 		{
 			type ++;
 			redraw = 0;
@@ -122,7 +207,7 @@ void DrawGrid()
 		
     while(!end)
     {	
-		if(reload)
+		if(ChangedVideoFormat || ChangedResolution || reload)
 		{
 			if(back)
 				FreeImage(&back);
@@ -132,6 +217,7 @@ void DrawGrid()
 			if(dH == 480)
 				back = LoadImage("/grid480.bin");
 			reload = 0;
+			ChangedVideoFormat = ChangedResolution = 0;
 		}
 		
 		GetDisplay();
@@ -153,16 +239,37 @@ void DrawGrid()
 
 void DrawSolidColor()
 {
-	int end = 0;
+	int end = 0, color = 0, BlackLevel = 0x00, text = 0;
+	int	cr, cb, cg, drawr, drawg, drawb, sel = 1, editmode = 0;
 	struct controller_data keys;
+	char		msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
 	
+	if(useNTSC)
+		BlackLevel = 0x13; // 7.5 IRE
+	else
+		BlackLevel = 0x00; // 0 IRE
+	
+	current_bitdepth = DEPTH_32_BPP;
+	set_video();
+	
+	cr = cb = cg = 0xff; // white	
+	drawr = drawg = drawb = 0xff; // white	
 	while(!end)
     {	
+		if(!useNTSC)
+			BlackLevel = 0x00;
+			
 		GetDisplay();
 		
 		rdp_fill_start();
-		rdp_rectangle(0, 0, dW, dH, 0xff, 0xff, 0xff);
+		rdp_rectangle(0, 0, dW, dH, drawr, drawg, drawb);
 		rdp_end();
+		
+		if(text)
+		{						
+			DrawStringB(200, 20, 0xff, 0xff, 0xff, msg);			
+			text --;
+		}	
 		
 		CheckMenu(WHITEHELP);
 		WaitVsync();
@@ -172,7 +279,155 @@ void DrawSolidColor()
 		if(keys.c[0].B)
 			end = 1;
 		CheckStart(keys);
+		
+		if(keys.c[0].A && color == 1 && useNTSC)
+		{
+			if(!BlackLevel)
+			{
+				BlackLevel = 0x13;
+				sprintf(msg, "#GBlack Level: 7.5 IRE#G");
+			}
+			else
+			{
+				BlackLevel = 0x0;
+				sprintf(msg, "#GBlack Level: 0 IRE#G");
+			}
+			text = 140;
+		}
+		
+		if(keys.c[0].C_right || keys.c[0].R)
+		{
+			color ++;
+			if(color > 4)
+				color = 0;		
+			
+			editmode = 0;
+			if(color == 0 && cr + cb + cg != 3*0xff)
+				sprintf(msg, "%s [EDITED]", mode[color]);
+			else
+				sprintf(msg, "%s", mode[color]);
+			text = 30;
+		}
+
+		if(keys.c[0].C_left || keys.c[0].L)
+		{			
+			color --;
+			if(color < 0)
+				color = 4;			
+				
+			editmode = 0;
+			if(color == 0 && cr + cb + cg != 3*0xff)
+				sprintf(msg, "%s [edited]", mode[color]);
+			else
+				sprintf(msg, "%s", mode[color]);
+			text = 30;
+		}
+		
+		if(keys.c[0].A && color == 0)
+			editmode = !editmode;
+			
+		if(editmode)
+		{
+			int *current = NULL;
+							
+			sprintf(msg, "#%cR:0x%x#W #%cG:0x%x#W #%cB:0x%x#W", 
+					sel == 1 ? 'G' : 'W', cr,
+					sel == 2 ? 'G' : 'W', cg, 
+					sel == 3 ? 'G' : 'W', cb);
+			text = 1;
+
+			if(keys.c[0].left)
+			{
+				sel --;
+				if(sel < 1)
+					sel = 3;
+			}
+			
+			if(keys.c[0].right)
+			{
+				sel ++;
+				if(sel > 3)
+					sel = 1;
+			}
+			
+			switch(sel)
+			{
+				case 1:
+					current = &cr;
+					break;
+				case 2:
+					current = &cg;
+					break;
+				case 3:
+					current = &cb;
+					break;
+			}
+			
+			if(keys.c[0].up)
+			{				
+				if(current)
+				{
+					(*current) ++;
+					if(*current > 0xff)
+						*current = 0xff;
+				}
+			}
+			
+			if(keys.c[0].down)
+			{			
+				if(current)
+				{
+					(*current) --;
+					if(*current < 0)
+						*current = 0;
+				}
+			}	
+
+			if(keys.c[0].C_up)
+			{				
+				if(current)			
+					*current  = 0;					
+			}
+			
+			if(keys.c[0].C_down)
+			{			
+				if(current)				
+					*current = 0xff;
+			}	
+		}
+		
+		switch(color)
+		{
+				case 0:
+					drawr = cr;
+					drawg = cg;
+					drawb = cb;
+					break;
+				case 1:
+					drawr = BlackLevel;
+					drawg = BlackLevel;
+					drawb = BlackLevel;
+					break;
+				case 2:
+					drawr = 0xff;
+					drawg = 0x00;
+					drawb = 0x00;
+					break;
+				case 3:
+					drawr = 0x00;
+					drawg = 0xff;
+					drawb = 0x00;
+					break;
+				case 4:
+					drawr = 0x00;
+					drawg = 0x00;
+					drawb = 0xff;
+					break;
+		}
 	}
+	
+	current_bitdepth = DEPTH_16_BPP;
+	set_video();
 }
 
 void DrawOverscan()
@@ -187,13 +442,14 @@ void DrawOverscan()
     {	
 		int x = 0, y = 0;
 		
-		if(reset)
+		if(ChangedResolution || reset)
 		{
 			oTop = oLeft = oBottom = oRight = 0;
 			square_x = square_y = 0;
 			square_w = dW;
 			square_h = dH;
 			reset = 0;
+			ChangedResolution = 0;
 		}
 		
 		GetDisplay();
@@ -428,22 +684,33 @@ void DrawGrayRamp()
 
 void DrawSMPTE()
 {
-	int 		end = 0, draw100 = 0, text = 0;
+	int 		end = 0, draw100 = 0, text = 0, load = 1;
 	sprite_t 	*back = NULL, *back100 = NULL;
 	char		msg[40];
 	struct controller_data keys;
 	
-	back = LoadImage("/SMPTECB75.bin");
-	if(!back)
-		return;
-		
-	back100 = LoadImage("/SMPTECB100.bin");
-	if(!back100)
-		return;
-		
     while(!end)
     {	
 		GetDisplay();
+		
+		if(load || ChangedVideoFormat)
+		{
+			FreeImage(&back);
+			FreeImage(&back100);
+			
+			if(useNTSC)
+			{
+				back = LoadImage("/SMPTECB75.bin");
+				back100 = LoadImage("/SMPTECB100.bin");
+			}
+			else
+			{
+				back = LoadImage("/EBUColorBars75.bin");
+				back100 = LoadImage("/EBUColorBars100.bin");
+			}
+			load = 0;
+			ChangedVideoFormat = 0;
+		}
 		
 		drawImageDMA(0, 0, draw100 ? back100 : back); 
 		

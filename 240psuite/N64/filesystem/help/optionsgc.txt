@@ -57,5 +57,5 @@
     or EVEN or ODD scanline display in 480p line
     doubled mode.
 
-Holding $L and $R buttons while in the options menu
+Holding #GL#G and #GR#G buttons while in the options menu
 will reset all options to their defaults.

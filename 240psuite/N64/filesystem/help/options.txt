@@ -73,5 +73,5 @@
     a HOME button. This changes the layout for it.
 
 
-Holding $L and $R buttons while in the options menu
+Holding #GL#G and #GR#G buttons while in the options menu
 will reset all options to their defaults.

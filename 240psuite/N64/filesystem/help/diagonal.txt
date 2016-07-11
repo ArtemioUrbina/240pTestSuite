@@ -7,8 +7,8 @@ resolution assets for 480p when in that mode.
 
 The angle increment for line rotation can be
 adjusted by fractions up to 1/20th of a degree
-with $X and $Y. The angle can be adjusted with
-$L and $R.
+with #GCL#G and #GCR#G. The angle can be adjusted with
+#GL#G and #GR#G.
 
-The bars can be set to autorotate with $A and the
+The bars can be set to autorotate with #GA#G and the
 bars can be toggled to full screen by pressing Up.

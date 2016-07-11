@@ -12,6 +12,9 @@ extern int dW;
 extern int dH;
 extern int bD;
 
+extern int EnablePAL;
+extern int useNTSC;
+
 extern void *__safe_buffer[];
 extern unsigned char *__screen_buffer;
 

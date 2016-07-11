@@ -23,9 +23,13 @@
 #include "help.h"
 
 void showMenu();
+void SelectVideoMode(int usebuffer);
+void DrawCredits(int usebuffer);
 
 void CheckMenu(char *help);
 void CheckStart(struct controller_data keys);
 
 extern int ChangeVideoEnabled; 
 extern int ShowMenu; 
+extern int ChangedVideoFormat;
+extern int ChangedResolution;

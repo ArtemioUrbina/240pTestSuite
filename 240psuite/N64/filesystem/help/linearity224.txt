@@ -12,5 +12,5 @@ verified by measuring the diameter of the circles.
 Of course the linearity should be kept in all 
 directions.
 
-A grid is also available with the $L and $R 
+A grid is also available with the #GL#G and #GR#G 
 buttons.

@@ -6,7 +6,7 @@ audio and vibration on the controller if set.
 This should show to some degree any lag when  
 processing the signal.
 
-As an added feature, the user can click the $A
+As an added feature, the user can click the #GA#G
 button when the sprite is aligned with the one on
 the background, and the offset in frames from the
 actual intersection will be shown on screen. This
@@ -17,7 +17,7 @@ pressed before the actual intersection frame, the
               MANUAL LAG TEST (2/3)
 
 result will be ignored (but still shown onscreen).
-Button $X can be used to change the direction
+Button #GCL#G can be used to change the direction
 of the sprite from vertical to horizontal, or
 display both at the same time.
 

@@ -9,5 +9,5 @@ You can use it to verify that all the visible area
 is being displayed, and that there is no distortion
 present. Consumer TVs may not show the red squares.
 
-You can press $A to toggle the starting scanline.
+You can press #GA#G to toggle the starting scanline.
 The current modes simulate the Genesis and SNES.

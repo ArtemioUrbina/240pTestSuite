@@ -153,11 +153,11 @@ void  HelpWindow(char *filename, int usebuffer)
 
 		if(usebuffer)
 			drawScreenBufferDMA(0, 0);
-		SoftDrawImage(20, 28, back);
+		SoftDrawImage(21, 37, back);
 		
-		DrawStringS(34, 38, 0xff, 0xff, 0xff, pages[page]); 
+		DrawStringS(34, 42, 0xff, 0xff, 0xff, pages[page]); 
 
-		DrawStringS(110, 200, 0x0, 0x0, 0x90, "Press B to return"); 
+		DrawStringS(110, 200, 0xBB, 0xBB, 0xBB, "Press B to return"); 
 		WaitVsync();
 
 		controller_scan();

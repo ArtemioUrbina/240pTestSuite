@@ -34,6 +34,9 @@ int main(void)
 	struct controller_data keys;
 	char str[20];
 
+	if(!isNTSC())
+		EnablePAL = 1;
+		
 	init_n64();
 	
 	ClearScreen();
@@ -72,6 +75,7 @@ int main(void)
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Diagonal Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Alternating 240p/480i Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Sound Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Video Mode"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Options"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); 
 		
@@ -122,10 +126,10 @@ int main(void)
 					DrawCheckerboard();
 					break;
 				case 14:
-					current_resolution++;
-					if(current_resolution > RESOLUTION_512x480)
-						current_resolution = RESOLUTION_320x240;
-					set_video();
+					SelectVideoMode(0);
+					break;
+				case 16:
+					HelpWindow(GENERALHELP, 0);
 					break;
 				default:
 					break;

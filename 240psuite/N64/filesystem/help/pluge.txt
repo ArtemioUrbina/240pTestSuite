@@ -13,10 +13,10 @@ to be black is actually black, and allows all
 detail to be seen on dark scenes.
 
 There are three bars at each side, you can 
-highlight them with the $X button.        #C(cont...)#C
+highlight them with the #GCL#G button.        #C(cont...)#C
                    PLUGE (2/3)
 
-The $A button changes between #GNTSC#G and #GRGB Full 
+The #GA#G button changes between #GNTSC#G and #GRGB Full 
 Range#G [0-255] when in any NTSC mode.        
                                          
 The values of the bars depend on your current

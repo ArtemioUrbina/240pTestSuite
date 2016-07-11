@@ -3,8 +3,8 @@
 This pattern shows all the visible pixels in an
 alternating white and black grid array. 
 
-You can toggle the pattern with button $X, or
-turn on auto-toggle each frame with the $A button.
+You can toggle the pattern with button #GCL#G, or
+turn on auto-toggle each frame with the #GA#G button.
 
 When auto-toggle is set, you should see it
 alternating rapidly. On some setups, the pattern
@@ -17,7 +17,7 @@ frames are being discarded completely.
                 CHECKERBOARD (2/2)
 
 A frame counter can be displayed on screen by 
-pressing button $Y.
+pressing button #GCR#G.
 
 Unfortunately the Wii cannot resolve this pattern
 correctly in full 480p mode as other consoles,

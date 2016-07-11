@@ -29,6 +29,7 @@ int current_buffers = 0;
 int current_gamma = 0;
 int current_antialias = 0;
 int useNTSC = 1;
+int EnablePAL = 1;
 
 volatile display_context_t __dc = 0;
 int dW = 0;
@@ -58,6 +59,7 @@ void init_video()
 	current_antialias = ANTIALIAS_RESAMPLE; // ANTIALIAS_OFF doesn't work in 16BPP
 	__screen_buffer = NULL;
 	video_set = 0;
+	CreateScreenBuffer();
 }
 
 void set_video()
@@ -65,7 +67,7 @@ void set_video()
 	if(video_set)
 	{
 		unregister_VI_handler(vblCallback);
-		FreeScreenBuffer();
+		//FreeScreenBuffer();
 		rdp_close();
 		display_close();
 		video_set = 0;
@@ -104,7 +106,7 @@ void set_video()
 		
 	video_set = 1;
 	ClearScreen();
-	CreateScreenBuffer();
+	//CreateScreenBuffer();
 }
 
 void GetDisplay()
@@ -140,11 +142,6 @@ void GetVideoModeStr(char *res, int shortdesc)
 			case RESOLUTION_320x240:
 				sprintf(res, "Video: 240p");				
 				break;		
-			/*
-			case RESOLUTION_640x480:
-				sprintf(res, "Video: 480i (scaled 240p)");
-				break;
-			*/
 			case RESOLUTION_640x480:
 				sprintf(res, "Video: 480i (Scaling disabled)");
 				break;
@@ -163,19 +160,14 @@ void GetVideoModeStr(char *res, int shortdesc)
 			case RESOLUTION_320x240:
 				sprintf(res, "[240p]");				
 				break;
-			/*
 			case RESOLUTION_640x480:
-				sprintf(res, "[480i LD]");
-				break;
-			*/
-			case RESOLUTION_640x480:
-				sprintf(res, "[480i 1:1]");
+				sprintf(res, "[480i]");
 				break;
 			case RESOLUTION_256x240:
-				sprintf(res, "[256x240]");
+				sprintf(res, "[256]");
 				break;
 			case RESOLUTION_512x480:
-				sprintf(res, "[512x480]");
+				sprintf(res, "[512]");
 				break;
 		}
 
@@ -188,16 +180,16 @@ void CreateScreenBuffer()
 	FreeScreenBuffer();
 		
 #ifdef USE_N64MEM		
-	__screen_buffer = n64_malloc(dW*dH*bD);
+	__screen_buffer = n64_malloc(640*480*4);
 #else
-	__screen_buffer = malloc(dW*dH*bD);
+	__screen_buffer = malloc(640*480*4);
 #endif
 
 	if(__screen_buffer)
 #ifdef USE_N64MEM		
-		n64_memset(__screen_buffer, 0, dW*dH*bD);
+		n64_memset(__screen_buffer, 0, 640*480*4);
 #else
-		memset(__screen_buffer, 0, dW*dH*bD);
+		memset(__screen_buffer, 0, 640*480*4);
 #endif
 }
 
@@ -275,6 +267,38 @@ void DarkenScreenBuffer(int amount)
 					cb = 0;
 
 				screen[x + (y * dW)] = (uint16_t)graphics_make_color(cr, cg, cb, 255);
+			}
+		}
+	}
+	
+	if(bD == 4)
+	{
+		uint32_t *screen = (uint32_t *)__screen_buffer;
+		for(int y = 0; y < dH; y++)
+		{
+			for(int x = 0; x < dW; x++)
+			{
+				uint32_t cur_color = screen[x + (y * dW)];
+
+				/* Get current color */
+				uint32_t cr = (cur_color >> 24) & 0xFF;
+				uint32_t cg = (cur_color >> 16) & 0xFF;
+				uint32_t cb = (cur_color >> 8) & 0xFF;
+				
+				if(cr > amount)
+					cr -= amount;
+				else
+					cr = 0;
+				if(cg > amount)
+					cg -= amount;
+				else
+					cg = 0;
+				if(cb > amount)
+					cb -= amount;
+				else
+					cb = 0;
+
+				screen[x + (y * dW)] = (uint32_t)graphics_make_color(cr, cg, cb, 255);
 			}
 		}
 	}

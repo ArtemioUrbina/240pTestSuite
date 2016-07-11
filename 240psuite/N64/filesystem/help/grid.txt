@@ -33,4 +33,4 @@ mapping modes.
                     GRID (3/3)
 
 The d-pad can be used to move the grid around the
-video signal. $A button resets it to its position.
+video signal. #GA#G button resets it to its position.

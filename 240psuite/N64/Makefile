@@ -62,8 +62,25 @@ bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem
 	filesystem/color.bin filesystem/color_grid.bin filesystem/colorlow.bin filesystem/colorhigh.bin\
     filesystem/grid.bin filesystem/grid480.bin filesystem/menu.bin filesystem/help.bin\
 	filesystem/601701cb.bin filesystem/sharpness.bin filesystem/grayramp.bin filesystem/SMPTECB75.bin\
-	filesystem/SMPTECB100.bin
+	filesystem/SMPTECB100.bin filesystem/nish.bin filesystem/EBUColorBars75.bin filesystem/EBUColorBars100.bin\
+	filesystem/PLUGEBorder.bin filesystem/plugePAL.bin
 
+filesystem/plugePAL.bin: graphics/plugePAL.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/PLUGEBorder.bin: graphics/PLUGEBorder.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+
+filesystem/EBUColorBars75.bin: graphics/EBUColorBars75.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/EBUColorBars100.bin: graphics/EBUColorBars100.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
 filesystem/SMPTECB100.bin: graphics/SMPTECB100.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
@@ -137,6 +154,10 @@ filesystem/checkpos.bin: graphics/checkpos.png
 	$(MKSPRITE) $(BITDEPTH) $< $@
 
 filesystem/checkneg.bin: graphics/checkneg.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/nish.bin: graphics/nish.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
 	

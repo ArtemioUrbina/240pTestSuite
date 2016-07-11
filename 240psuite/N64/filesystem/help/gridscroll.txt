@@ -5,10 +5,10 @@ diagonally which can be used to test linearity of
 the displayor video processor; and how it copes
 with scrolling and framerate.
 
-Button $Y can be used to switch between horizontal
+Button #GCR#G can be used to switch between horizontal
 and vertical, while the d-pad regulates speed. 
 
-Diagonal scroll can be enabled with the $R button.
+Diagonal scroll can be enabled with the #GR#G button.
 
-Button $A stops the scroll and button $X changes
+Button #GA#G stops the scroll and button #GCL#G changes
 direction. 

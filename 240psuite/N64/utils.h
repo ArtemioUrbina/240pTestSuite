@@ -10,6 +10,8 @@
 #define UTILS_H
 
 #define VERSION_NUMBER "N64 Beta 0.1"
+#define VERSION_DATE "2016/07/11"
+
 typedef unsigned char byte;
 
 extern int fh;
