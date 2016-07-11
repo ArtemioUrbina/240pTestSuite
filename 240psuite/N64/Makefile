@@ -60,8 +60,30 @@ clean:
 bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem/shadow.bin\
     filesystem/buzzbomber.bin filesystem/checkpos.bin filesystem/checkneg.bin filesystem/pluge.bin\
 	filesystem/color.bin filesystem/color_grid.bin filesystem/colorlow.bin filesystem/colorhigh.bin\
-    filesystem/grid.bin filesystem/grid480.bin filesystem/menu.bin filesystem/help.bin 
+    filesystem/grid.bin filesystem/grid480.bin filesystem/menu.bin filesystem/help.bin\
+	filesystem/601701cb.bin filesystem/sharpness.bin filesystem/grayramp.bin filesystem/SMPTECB75.bin\
+	filesystem/SMPTECB100.bin
 
+filesystem/SMPTECB100.bin: graphics/SMPTECB100.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/SMPTECB75.bin: graphics/SMPTECB75.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+
+filesystem/601701cb.bin: graphics/601701cb.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/sharpness.bin: graphics/sharpness.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/grayramp.bin: graphics/grayramp.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
 filesystem/back.bin: graphics/back.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@

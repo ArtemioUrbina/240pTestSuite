@@ -116,22 +116,27 @@ void DrawColorBars()
 
 void DrawGrid()
 {
-	int end = 0;
+	int end = 0, reload = 1;
 	sprite_t *back = NULL;
 	struct controller_data keys;
-	
-	if(dH == 240)
-		back = LoadImage("/grid.bin");
-	if(dH == 480)
-		back = LoadImage("/grid480.bin");
-	if(!back)
-		return;
 		
     while(!end)
     {	
+		if(reload)
+		{
+			if(back)
+				FreeImage(&back);
+				
+			if(dH == 240)
+				back = LoadImage("/grid.bin");
+			if(dH == 480)
+				back = LoadImage("/grid480.bin");
+			reload = 0;
+		}
+		
 		GetDisplay();
 		
-		SoftDrawImage(0, 0, back);
+		drawImageDMA(0, 0, back);
 		
 		CheckMenu(GRIDHELP);
 		WaitVsync();
@@ -326,4 +331,147 @@ void DrawOverscan()
 			
 		CheckStart(keys);
 	}
+}
+
+void DrawCB601()
+{
+	int end = 0;
+	sprite_t *back = NULL;
+	struct controller_data keys;
+	
+	back = LoadImage("/601701cb.bin");
+	if(!back)
+		return;
+		
+    while(!end)
+    {	
+		GetDisplay();
+		
+		drawImageDMA(0, 0, back);
+		
+		CheckMenu(COLOR601);
+		WaitVsync();
+		
+		controller_scan();
+		keys = Controller_ButtonsDown();
+		
+		if(keys.c[0].B)
+			end = 1;
+		
+		CheckStart(keys);
+	}
+	
+	FreeImage(&back);
+}
+
+void DrawSharpness()
+{
+	int end = 0;
+	sprite_t *back = NULL;
+	struct controller_data keys;
+	
+	back = LoadImage("/sharpness.bin");
+	if(!back)
+		return;
+		
+    while(!end)
+    {	
+		GetDisplay();
+		
+		drawImageDMA(0, 0, back);
+		
+		CheckMenu(SHARPNESSHELP);
+		WaitVsync();
+		
+		controller_scan();
+		keys = Controller_ButtonsDown();
+		
+		if(keys.c[0].B)
+			end = 1;
+		
+		CheckStart(keys);
+	}
+	
+	FreeImage(&back);
+}
+
+void DrawGrayRamp()
+{
+	int end = 0;
+	sprite_t *back = NULL;
+	struct controller_data keys;
+	
+	back = LoadImage("/grayramp.bin");
+	if(!back)
+		return;
+		
+    while(!end)
+    {	
+		GetDisplay();
+		
+		drawImageDMA(0, 0, back);
+		
+		CheckMenu(GRAYHELP);
+		WaitVsync();
+		
+		controller_scan();
+		keys = Controller_ButtonsDown();
+		
+		if(keys.c[0].B)
+			end = 1;
+		
+		CheckStart(keys);
+	}
+	
+	FreeImage(&back);
+}
+
+void DrawSMPTE()
+{
+	int 		end = 0, draw100 = 0, text = 0;
+	sprite_t 	*back = NULL, *back100 = NULL;
+	char		msg[40];
+	struct controller_data keys;
+	
+	back = LoadImage("/SMPTECB75.bin");
+	if(!back)
+		return;
+		
+	back100 = LoadImage("/SMPTECB100.bin");
+	if(!back100)
+		return;
+		
+    while(!end)
+    {	
+		GetDisplay();
+		
+		drawImageDMA(0, 0, draw100 ? back100 : back); 
+		
+		if(text)
+		{
+			DrawStringB(260, 20, 0, 0xff, 0, msg);
+			text --;
+		}
+		
+		CheckMenu(SMPTECOLOR);
+		WaitVsync();
+		
+		controller_scan();
+		keys = Controller_ButtonsDown();
+		
+		if(keys.c[0].B)
+			end = 1;
+			
+		if(keys.c[0].A)
+		{
+			draw100 = !draw100;
+			sprintf(msg, "%s%%", draw100 ? "100" : "75");
+			text = 30;
+		}
+		
+		CheckStart(keys);
+	}
+	
+	FreeImage(&back);
+	FreeImage(&back100);
 }

@@ -19,6 +19,7 @@ int DetectRamSize();
 
 void DrawString(int x, int y, int r, int g, int b, char *str);
 void DrawStringS(int x, int y, int r, int g, int b, char *str);
+void DrawStringB(int x, int y, int r, int g, int b, char *str);
 
 // from n64memory
 #ifdef USE_N64MEM

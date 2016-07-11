@@ -233,11 +233,23 @@ void DrawPatternsMenu()
 				case 2:
 					DrawColorBars();
 					break;
+				case 3:
+					DrawSMPTE();
+					break;
+				case 4:
+					DrawCB601();
+					break;
 				case 6:
 					DrawGrid();
 					break;
+				case 10:
+					DrawGrayRamp();
+					break;
 				case 11:
 					DrawSolidColor();
+					break;
+				case 13:
+					DrawSharpness();
 					break;
 				case 14:
 					DrawOverscan();

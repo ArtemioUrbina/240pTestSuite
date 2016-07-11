@@ -26,3 +26,7 @@ void DrawColorBars();
 void DrawGrid();
 void DrawSolidColor();
 void DrawOverscan();
+void DrawGrayRamp();
+void DrawCB601();
+void DrawSharpness();
+void DrawSMPTE();

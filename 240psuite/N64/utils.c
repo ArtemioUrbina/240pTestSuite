@@ -54,6 +54,49 @@ void DrawStringS(int x, int y, int r, int g, int b, char *str)
 	graphics_draw_text(__dc, x, y, str);
 }
 
+int MeasureString(char *str)
+{
+	int len = 0, count = 0;
+	char *pos = NULL, *check = str;
+	
+	if(!str)
+		return len;
+		
+	len = strlen(str);
+	
+	do
+	{
+		pos = strchr(check, '#');
+		if(pos)
+		{
+			check = pos + 1;
+			count ++;
+		}
+	}while(pos);
+	
+	len = len - 2*count;
+	
+	if(len < 0)
+		len = 0;
+		
+	return len;
+}
+
+void DrawStringB(int x, int y, int r, int g, int b, char *str)
+{
+	int len = 0;
+	uint32_t color = 0;
+				
+	len = MeasureString(str);
+	len *= 5;
+	
+	color = graphics_make_color(r, g, b, 0xff);
+	
+    graphics_draw_box(__dc, x, y-1, len + 3, fh, graphics_make_color(0, 0, 0, 0));
+	graphics_set_color(color, 0x00000000);
+	graphics_draw_text(__dc, x, y, str);
+}
+
 int DetectRamSize()
 {
 	int available_memory_size = *(int *)(0x80000318);
