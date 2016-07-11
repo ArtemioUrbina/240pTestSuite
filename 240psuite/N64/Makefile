@@ -29,7 +29,7 @@ PROG_NAME = 240pSuite
 LIBS = -ldragon -lc -lm -ldragonsys -ln64memory 
 BITDEPTH = 16
 
-OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o menu.o
+OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o menu.o help.o
 
 $(PROG_NAME).v64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(OBJCOPY) $(PROG_NAME).elf $(PROG_NAME).bin -O binary
@@ -60,7 +60,7 @@ clean:
 bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem/shadow.bin\
     filesystem/buzzbomber.bin filesystem/checkpos.bin filesystem/checkneg.bin filesystem/pluge.bin\
 	filesystem/color.bin filesystem/color_grid.bin filesystem/colorlow.bin filesystem/colorhigh.bin\
-    filesystem/grid.bin filesystem/grid480.bin filesystem/menu.bin 
+    filesystem/grid.bin filesystem/grid480.bin filesystem/menu.bin filesystem/help.bin 
 
 filesystem/back.bin: graphics/back.png
 	@echo convert PNG ... $(notdir $@)
@@ -122,5 +122,9 @@ filesystem/menu.bin: graphics/menu.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
 
+filesystem/help.bin: graphics/help.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
 run:
 	$(LOADER)  $(PROG_NAME).v64

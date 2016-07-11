@@ -100,6 +100,10 @@ extern void *__safe_buffer[];
  * This is white on 16 and 32 BPP modes 
  */
 static uint32_t f_color = 0xFFFFFFFF;
+
+static uint32_t old_f_color = 0xFFFFFFFF;
+
+static int highlight = 0;
 /** 
  * @brief Generic background color
  *
@@ -753,14 +757,54 @@ void graphics_draw_text( display_context_t disp, int x, int y, const char * cons
                 ty += 8;
                 break;
             case ' ':
-                tx += 5;
+                tx += 5; // My font
                 break;
             case '\t':
-                tx += 5 * 5;
+                tx += 5 * 5; ; // My font
                 break;
+			case '#':
+				highlight = !highlight;
+
+				if(highlight)
+				{
+					old_f_color = f_color;
+					text++;
+					if(f_color != 0x00000000)
+						switch(*text)
+						{
+							case 'R':
+								f_color = graphics_make_color(0xff, 0x00, 0x00, 0xff);
+								break;
+							case 'G':
+								f_color = graphics_make_color(0x00, 0xff, 0x00, 0xff);
+								break;
+							case 'B':
+								f_color = graphics_make_color(0x00, 0x00, 0xff, 0xff);
+								break;
+							case 'Y':
+								f_color = graphics_make_color(0xff, 0xff, 0x00, 0xff);
+								break;
+							case 'C':
+								f_color = graphics_make_color(0x00, 0xff, 0xff, 0xff);
+								break;
+							case 'M':
+								f_color = graphics_make_color(0xff, 0xff, 0x00, 0xff);
+								break;
+							case 'W':
+							default:
+								f_color = graphics_make_color(0xff, 0xff, 0xff, 0xff);
+								break;					
+						}
+				}			
+				else
+				{
+					f_color = old_f_color;
+					text++;
+				}
+				break;
             default:
                 graphics_draw_character( disp, tx, ty, *text );
-                tx += 5;
+                tx += 5; ; // My font
                 break;
         }
 

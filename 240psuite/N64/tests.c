@@ -21,6 +21,7 @@
 
 #include "tests.h"
 #include "utils.h"
+#include "menu.h"
 
 void DropShadowTest()
 {
@@ -46,6 +47,7 @@ void DropShadowTest()
 		
 		show = !show;
 		
+		CheckMenu(DROPSHADOW);
 		WaitVsync();
 		
 		xlast = x;
@@ -81,6 +83,7 @@ void DropShadowTest()
 			end = 1;
 		if(keys.c[0].A)
 			show = !show;
+		CheckStart(keys);
 	}
 	FreeImage(&back);
 	FreeImage(&shadow);
@@ -108,6 +111,7 @@ void DrawCheckerboard()
 			rdp_FillScreenWithTexture(neg);
 		rdp_end();
 		
+		CheckMenu(CHECKHELP);
 		WaitVsync();
 		
 		controller_scan();
@@ -118,6 +122,7 @@ void DrawCheckerboard()
 			
 		if(keys.c[0].B)
 			end = 1;
+		CheckStart(keys);
 	}
 	
 	FreeImage(&pos);

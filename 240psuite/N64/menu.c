@@ -20,8 +20,28 @@
  */
 
 #include "menu.h"
+#include "help.h"
 
 int ChangeVideoEnabled = 1;
+int ShowMenu = 0;
+
+inline void CheckMenu(char *help)
+{
+	if(ShowMenu)
+	{
+		HelpData = help;
+		showMenu();
+		ShowMenu = 0;
+		ClearScreen();
+	}
+}
+
+inline void CheckStart(struct controller_data keys)
+{
+	if(keys.c[0].start)
+		ShowMenu = 1;
+}
+ 
  
 void showMenu()
 {
@@ -70,9 +90,8 @@ void showMenu()
 			DrawStringS(x+6*5, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, videomode); y += fh; c++;		
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;		
-        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Credits"); y += fh; c++;		
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu"); y += 2* fh; c++;			
-		DrawStringS(x, y, r-0x40, sel == c ? 0 : g,	sel == c ? 0 : b, "Exit 240p Suite"); y += 2* fh; 		
+        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Credits"); y += 2* fh; c++;
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu"); 
 		
 		WaitVsync();
 		
@@ -97,10 +116,10 @@ void showMenu()
 		{	
 			switch(sel)
 			{
-				case 5:
-					end = 1;
+				case 1:
+					HelpWindow(HelpData, 1);
 					break;
-				case 6:
+				case 5:
 					end = 1;
 					break;
 				default:

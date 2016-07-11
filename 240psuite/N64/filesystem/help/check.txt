@@ -1,0 +1,27 @@
+                CHECKERBOARD (1/2)
+
+This pattern shows all the visible pixels in an
+alternating white and black grid array. 
+
+You can toggle the pattern with button $X, or
+turn on auto-toggle each frame with the $A button.
+
+When auto-toggle is set, you should see it
+alternating rapidly. On some setups, the pattern
+doesn't change at all. This means that the signal
+is being treated as 480i/576i and odd or even 
+frames are being discarded completely.
+
+
+                                         #C(cont...)#C
+                CHECKERBOARD (2/2)
+
+A frame counter can be displayed on screen by 
+pressing button $Y.
+
+Unfortunately the Wii cannot resolve this pattern
+correctly in full 480p mode as other consoles,
+but 240p and 480i resolve just fine.
+
+The GameCube can give a better output, but it is
+not fully visible under most conditions either.

@@ -1,0 +1,36 @@
+                    GRID (1/3)
+
+This grid uses a 320x240 pattern, and should fill
+all of the 4:3 visible area. 
+
+You can use it to verify that all the visible area
+is being displayed, and that there is no distortion
+present. Consumer TVs may not show the red squares.
+
+A 640x480 Grid can be shown in compatible NTSC
+video modes. 
+
+In PAL resolutions, there are also two different 
+grids. 
+
+                                    #C(cont...)#C
+                    GRID (2/3)
+
+In the 288p PAL video, only 264 are visible lines.
+Since 264 is not an exact multiple of 16, there is
+a centered line of smaller blue rectangles. 
+
+In 576i unscaled 1:1 mode, a full 640x528 grid is
+shown. You can also use the 576i stretched option 
+to fill the whole screen at the cost of 1:1 pixel 
+mapping.
+
+The 240 test suite draws from line 22 onwards from 
+the blanking interval of NTSC signals, and line 23
+for PAL. You can adjust this value for PAL in 1:1
+mapping modes.
+                                    #C(cont...)#C
+                    GRID (3/3)
+
+The d-pad can be used to move the grid around the
+video signal. $A button resets it to its position.

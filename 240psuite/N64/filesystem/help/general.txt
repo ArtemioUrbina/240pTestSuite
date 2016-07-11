@@ -1,0 +1,38 @@
+                    HELP (1/3)
+
+The 240p Test Suite was designed with two goals
+in mind:
+
+1) Evaluate 240p signal processing on modern TV
+sets and video processing equipment; and 
+
+2) Provide calibration patterns generated on your
+game console to help in properly calibrating the
+display's black, white and color levels.
+
+Help and options are available everywhere by 
+pressing the $S button.
+#Y[Please press right for next help page]#Y
+                                         #C(cont...)#C
+                    HELP (2/3)
+
+This version of the suite supports 240p, 288p, 
+576i, 480i and 480p video modes. However, 480p is
+only available via component cables. 
+
+In 288p and 576i PAL modes, the system is capable
+of drawing the whole visible signal, 264 and 528
+lines respectively. However, since most screens
+are only 240p tall, the suite centers them 
+vertically. Grids and other 264p patterns are 
+shown using the full resolution.
+
+PAL and 480p modes must be enabled from the 
+options menu. 
+                                         #C(cont...)#C
+                    HELP (3/3)
+
+The 240p suite is also available in other systems,
+including: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/
+#YMega CD#Y, #YPC Engine#Y/#YTG-16#Y, #YSuper Nintendo#Y/#YSFC#Y, #YNES#Y,
+#YNintendo GameCube#Y, #YNintendo Wii#Y and #YSega Dreamcast#Y.

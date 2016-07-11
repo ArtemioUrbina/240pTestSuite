@@ -1,0 +1,41 @@
+                   PLUGE (1/3)
+
+The #Ypicture line-up generation equipment#Y (PLUGE)
+is a test pattern used to adjust the black level
+and contrast of a video signal.
+
+The pattern in this suite is mainly designed to
+adjust the black level. The control for setting 
+this on your TV is usually named #YBrightness#Y.
+
+This adjustment ensures that anything intended
+to be black is actually black, and allows all
+detail to be seen on dark scenes.
+
+There are three bars at each side, you can 
+highlight them with the $X button.        #C(cont...)#C
+                   PLUGE (2/3)
+
+The $A button changes between #GNTSC#G and #GRGB Full 
+Range#G [0-255] when in any NTSC mode.        
+                                         
+The values of the bars depend on your current
+video mode. Reduce the #YBrightness#Y until the 
+desired bars are no longer visible, and then 
+slowly raise it until they are #Gjust#G visible,
+and go back one notch where they blend with the
+background. 
+
+For games always use #GRGB Full Range#G. The 1 IRE 
+bars are the ones you should calibrate against.
+The values of the bars are: 1, 2 and 3.5 IRE.
+                                         #C(cont...)#C
+                   PLUGE (3/3)
+
+Values for the bars when in NTSC mode are:  
+closest to the center 3.5 IRE, central ones 
+7.5 IRE, and outer ones 11.5 IRE. 
+
+When calibrating for NTSC material, the 7.5 IRE
+bars should blend in the background. The 7.5 IRE
+in NTSC is the black level, also known as setup.

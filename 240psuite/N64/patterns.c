@@ -21,6 +21,7 @@
 
 #include "patterns.h"
 #include "utils.h"
+#include "menu.h"
 
 void DrawPLUGE()
 {
@@ -38,12 +39,16 @@ void DrawPLUGE()
 		
 		drawImageDMA(0, 0, back);
 		
+		CheckMenu(PLUGEHELP);
 		WaitVsync();
 		
 		controller_scan();
 		keys = Controller_ButtonsDown();
+		
 		if(keys.c[0].B)
 			end = 1;
+		
+		CheckStart(keys);
 	}
 	
 	FreeImage(&back);
@@ -74,12 +79,16 @@ void DrawColorBars()
 		
 		drawImageDMA(0, 0, back[type]);
 		
+		CheckMenu(COLORBARSHELP);
 		WaitVsync();
 		
 		controller_scan();
 		keys = Controller_ButtonsDown();
+		
 		if(keys.c[0].B)
 			end = 1;
+			
+		CheckStart(keys);
 			
 		if(keys.c[0].left)
 		{
@@ -124,12 +133,14 @@ void DrawGrid()
 		
 		SoftDrawImage(0, 0, back);
 		
+		CheckMenu(GRIDHELP);
 		WaitVsync();
 		
 		controller_scan();
 		keys = Controller_ButtonsDown();
 		if(keys.c[0].B)
 			end = 1;
+		CheckStart(keys);
 	}
 	
 	FreeImage(&back);
@@ -148,12 +159,14 @@ void DrawSolidColor()
 		rdp_rectangle(0, 0, dW, dH, 0xff, 0xff, 0xff);
 		rdp_end();
 		
+		CheckMenu(WHITEHELP);
 		WaitVsync();
 		
 		controller_scan();
 		keys = Controller_ButtonsDown();
 		if(keys.c[0].B)
 			end = 1;
+		CheckStart(keys);
 	}
 }
 
@@ -212,6 +225,7 @@ void DrawOverscan()
 		sprintf(msg, "%d pixels (%g%%)", oRight, (oRight*100.0f)/(dW/2));
 		DrawStringS(x+20, y, 0xee, 0xee, 0xff, msg);
 		
+		CheckMenu(OVERSCANHELP);
 		WaitVsync();
 		
 		controller_scan();
@@ -309,5 +323,7 @@ void DrawOverscan()
 			
 		if(keys.c[0].B)
 			end = 1;
+			
+		CheckStart(keys);
 	}
 }

@@ -29,7 +29,7 @@ void DrawPatternsMenu();
 
 int main(void)
 {
-	int sel = 1, reload = 0, showmenu = 0;
+	int sel = 1, reload = 0;
 	sprite_t *back = NULL, *sd = NULL;
 	struct controller_data keys;
 	char str[20];
@@ -82,14 +82,9 @@ int main(void)
 		
 		sprintf(str, "RAM %d MB", DetectRamSize());
 		DrawStringS(254, 224, 0xfa, 0xfa, 0xfa, str);
-		
-		if(showmenu)
-		{
-			showMenu();
-			showmenu = 0;
-			ClearScreen();
-		}
 
+		CheckMenu(GENERALHELP);
+		
         WaitVsync();
 
         controller_scan();
@@ -101,8 +96,7 @@ int main(void)
 		if(keys.c[0].down)
 			sel++;
 		
-		if(keys.c[0].start)
-			showmenu = 1;
+		CheckStart(keys);
 		
 		if(sel > c)
 			sel = 1;
@@ -204,6 +198,8 @@ void DrawPatternsMenu()
 		sprintf(str, "RAM %d MB", DetectRamSize());
 		DrawStringS(254, 224, 0xfa, 0xfa, 0xfa, str);
 
+		CheckMenu(GENERALHELP);
+		
         WaitVsync();
 
         controller_scan();
@@ -214,6 +210,8 @@ void DrawPatternsMenu()
 
 		if(keys.c[0].down)
 			sel++;
+			
+		CheckStart(keys);
 		
 		if(sel > c)
 			sel = 1;

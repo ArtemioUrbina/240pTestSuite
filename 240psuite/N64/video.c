@@ -21,6 +21,7 @@
 
 #include "video.h"
 #include "utils.h"
+#include "menu.h"
 
 int current_resolution = 0;
 int current_bitdepth = 0;
