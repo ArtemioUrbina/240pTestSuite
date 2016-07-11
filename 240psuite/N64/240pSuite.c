@@ -19,21 +19,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <libdragon.h>
-#include "image.h"
+
 #include "utils.h"
 #include "tests.h"
 #include "patterns.h"
-#include "controller.h"
+#include "menu.h"
 
 void DrawPatternsMenu();
 
 int main(void)
 {
-	int sel = 1, reload = 0;
+	int sel = 1, reload = 0, showmenu = 0;
 	sprite_t *back = NULL, *sd = NULL;
 	struct controller_data keys;
 	char str[20];
@@ -86,6 +82,13 @@ int main(void)
 		
 		sprintf(str, "RAM %d MB", DetectRamSize());
 		DrawStringS(254, 224, 0xfa, 0xfa, 0xfa, str);
+		
+		if(showmenu)
+		{
+			showMenu();
+			showmenu = 0;
+			ClearScreen();
+		}
 
         WaitVsync();
 
@@ -97,6 +100,9 @@ int main(void)
 
 		if(keys.c[0].down)
 			sel++;
+		
+		if(keys.c[0].start)
+			showmenu = 1;
 		
 		if(sel > c)
 			sel = 1;

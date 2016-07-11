@@ -21,7 +21,6 @@
 
 #include "tests.h"
 #include "utils.h"
-#include "controller.h"
 
 void DropShadowTest()
 {

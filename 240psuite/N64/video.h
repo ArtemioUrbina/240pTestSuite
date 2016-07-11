@@ -25,3 +25,5 @@ void FreeScreenBuffer();
 void CreateScreenBuffer();
 void CopyScreen();
 void FillScreenFromBuffer();
+void DarkenScreenBuffer(int amount);
+void GetVideoModeStr(char *res, int shortdesc);

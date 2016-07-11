@@ -1,7 +1,15 @@
 #include <libdragon.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
 #include "image.h"
+#include "controller.h"
 #include "video.h"
 
+#ifndef UTILS_H
+#define UTILS_H
+
+#define VERSION_NUMBER "N64 Beta 0.1"
 typedef unsigned char byte;
 
 extern int fh;
@@ -20,4 +28,6 @@ extern void *n64_memset(void *p, int v, size_t n);
 extern void n64_free(void *buf);
 #else
 #include <malloc.h>
+#endif
+
 #endif

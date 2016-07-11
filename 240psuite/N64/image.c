@@ -203,6 +203,54 @@ void drawImageDMA(int x, int y, sprite_t *image)
 	data_cache_hit_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
 }
 
+// x must be a multiple of four
+void drawScreenBufferDMA(int x, int y) 
+{ 
+    unsigned char*	target; 
+	uint32_t 		t_rowsize = 0, chunk = 0, width = 0;
+	uint32_t 		height = 0, s_rowsize = 0;
+	uint32_t 		start = 0, end = 0;
+	
+	if(!__screen_buffer || !__dc)
+		return;
+		
+	width = dW;
+	height = dH;
+	
+	if(width + x > dW)
+		width = dW - x;
+	if(height > dH)
+		height = dH;
+	
+	target = __safe_buffer[(__dc)-1]; 	
+	chunk = width*bD;
+	s_rowsize = dW*bD;
+	t_rowsize = dW*bD;
+	
+	start = y;
+	end = y + height;
+	if(end > dH)
+		end = dH;
+	
+	data_cache_hit_writeback_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
+	for(uint32_t line = start; line < end; line ++)
+	{
+		/* DMA to DMEM */
+		while (DMA_BUSY) ;
+		DMA_LADDR = 0x0000;
+		DMA_RADDR = (uint32_t)__screen_buffer+s_rowsize*(line-start);
+		DMA_RDLEN = chunk;
+
+		/* DMA to frame buffer */
+		while (DMA_FULL) ;
+		DMA_LADDR = 0x0000;
+		DMA_RADDR = (uint32_t)target+t_rowsize*line+x*bD;
+		DMA_WRLEN = chunk;
+	}
+	data_cache_hit_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
+}
+
+
 void drawPatchBackgroundFromCapture(int x, int y, sprite_t *sprite) 
 { 
     unsigned char*	target, *src; 

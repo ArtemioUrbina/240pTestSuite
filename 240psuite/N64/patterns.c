@@ -21,7 +21,6 @@
 
 #include "patterns.h"
 #include "utils.h"
-#include "controller.h"
 
 void DrawPLUGE()
 {
@@ -235,7 +234,6 @@ void DrawOverscan()
 			if(square_y + 1 <= dH/2 && oTop + 1 <= dH/2)
 			{				
 				square_y++;
-				//square_h--;
 				oTop++;
 			}
 		}
@@ -245,7 +243,6 @@ void DrawOverscan()
 			if(square_y - 1 >= 0 && oTop - 1 >= 0)
 			{				
 				square_y--;
-				//square_h++;	
 				oTop--;
 			}
 		}
@@ -275,7 +272,6 @@ void DrawOverscan()
 			if(square_x + 1 <= dW/2 && oLeft + 1 <= dW/2)
 			{				
 				square_x++;
-				//square_w--;
 				oLeft++;
 			}
 		}
@@ -285,7 +281,6 @@ void DrawOverscan()
 			if(square_x - 1 >= 0 && oLeft - 1 >= 0)
 			{				
 				square_x--;
-				//square_w++;
 				oLeft--;
 			}
 		}

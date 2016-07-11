@@ -18,6 +18,7 @@ void rdp_end();
 void SoftDrawImage(int x, int y, sprite_t *image);
 void SoftDrawImageSolid(int x, int y, sprite_t *image);
 void drawImageDMA(int x, int y, sprite_t *backgd);
+void drawScreenBufferDMA(int x, int y);
 
 void ClearScreen();
 
