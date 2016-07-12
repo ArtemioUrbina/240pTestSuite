@@ -58,6 +58,9 @@ extern char *HelpData;
 #define VIDEOHELP		"/help/vmode.txt"
 #define DIAGONALHELP	"/help/diagonal.txt"
 
+#define OVERSCANWARNING	"/help/warningoverscan.txt"
+#define GRIDWARNING		"/help/warninggrid.txt"
+
 void HelpWindow(char *filename, int usebuffer);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);
 

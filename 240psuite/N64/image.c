@@ -142,6 +142,13 @@ void rdp_FillScreenWithTexture(sprite_t *image)
 	rdp_draw_textured_rectangle (0, 0, 0, dW, dH);
 }
 
+void rdp_FillScreenWithTextureXY(int x, int y, sprite_t *image)
+{
+	rdp_sync(SYNC_PIPE);
+	rdp_load_texture(0, 0, MIRROR_DISABLED, image);
+	rdp_draw_textured_rectangle (0, x, y, dW, dH);
+}
+
 void ClearScreen()
 {
 	for(int i = 0; i < current_buffers; i++)

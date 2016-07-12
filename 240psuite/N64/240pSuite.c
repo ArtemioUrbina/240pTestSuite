@@ -122,6 +122,12 @@ int main(void)
 				case 2:
 					DropShadowTest();
 					break;
+				case 7:
+					DrawGridScroll();
+					break;
+				case 8:
+					DrawStripes();
+					break;
 				case 9:
 					DrawCheckerboard();
 					break;
@@ -242,6 +248,9 @@ void DrawPatternsMenu()
 					break;
 				case 4:
 					DrawCB601();
+					break;
+				case 5:
+					DrawColorBleed();
 					break;
 				case 6:
 					DrawGrid();

@@ -13,6 +13,7 @@ void rdp_fill_start();
 void rdp_rectangle(int x0, int y0, int x1, int y1, int r, int g, int b);
 void rdp_DrawImage(int x, int y, sprite_t *image);
 void rdp_FillScreenWithTexture(sprite_t *image);
+void rdp_FillScreenWithTextureXY(int x, int y, sprite_t *image);
 void rdp_end();
 
 void SoftDrawImage(int x, int y, sprite_t *image);

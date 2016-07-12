@@ -1,0 +1,15 @@
+                   #RWARNING#R
+
+The #CNintendo 64#C system can not display the full
+320x240 information drawn into the frame buffer.
+
+As a result, several pixels are never shown on
+screen. This is completely normal, and official
+games have this same behaviour.
+
+#YAs such, it is recommended you don't use these
+tests for multi console setups, but they work
+perfectly fine for Nintendo 64.#Y
+
+Top:  1 pixel   Bottom: 3 pixels
+Left: 3 pixels  Right:  4 pixels

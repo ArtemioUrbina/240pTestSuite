@@ -36,7 +36,8 @@ $(PROG_NAME).v64: bitmaps $(PROG_NAME).elf drive.dfs
 	rm -f $(PROG_NAME).v64
 	$(N64TOOL) -b -l 2M -t "240p Test Suite" -h $(HEADER) -o $(PROG_NAME).v64 $(PROG_NAME).bin -s 1M drive.dfs
 	$(CHKSUM64) $(PROG_NAME).v64
-	$(UCON64) --nbak --dint $(PROG_NAME).v64
+	$(UCON64) --nbak --z64 $(PROG_NAME).v64
+	rm -f $(PROG_NAME).v64
 
 $(PROG_NAME).elf : $(OBJS)
 	$(LD) -o $(PROG_NAME).elf $(OBJS) $(LINK_FLAGS) $(LIBPATH) $(LIBS)
@@ -53,7 +54,7 @@ drive.dfs: bitmaps
 all: $(PROG_NAME).v64
 
 clean:
-	rm -f *.v64 *.elf *.o *.bin *.dfs filesystem/*.bin map.txt
+	rm -f *.v64 *.z64 *.elf *.o *.bin *.dfs filesystem/*.bin map.txt
 
 .PHONY: bitmaps all
 
@@ -63,8 +64,38 @@ bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem
     filesystem/grid.bin filesystem/grid480.bin filesystem/menu.bin filesystem/help.bin\
 	filesystem/601701cb.bin filesystem/sharpness.bin filesystem/grayramp.bin filesystem/SMPTECB75.bin\
 	filesystem/SMPTECB100.bin filesystem/nish.bin filesystem/EBUColorBars75.bin filesystem/EBUColorBars100.bin\
-	filesystem/PLUGEBorder.bin filesystem/plugePAL.bin
+	filesystem/PLUGEBorder.bin filesystem/plugePAL.bin filesystem/colorbleedchk.bin filesystem/colorbleed.bin\
+	filesystem/stripespos.bin filesystem/stripesneg.bin filesystem/vertstripespos.bin filesystem/vertstripesneg.bin\
+	filesystem/circles_grid.bin
 
+filesystem/circles_grid.bin: graphics/circles_grid.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/vertstripespos.bin: graphics/vertstripespos.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/vertstripesneg.bin: graphics/vertstripesneg.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/stripespos.bin: graphics/stripespos.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/stripesneg.bin: graphics/stripesneg.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/colorbleed.bin: graphics/colorbleed.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/colorbleedchk.bin: graphics/colorbleedchk.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
 filesystem/plugePAL.bin: graphics/plugePAL.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
@@ -170,4 +201,4 @@ filesystem/help.bin: graphics/help.png
 	$(MKSPRITE) $(BITDEPTH) $< $@
 	
 run:
-	$(LOADER)  $(PROG_NAME).v64
+	$(LOADER)  $(PROG_NAME).z64 

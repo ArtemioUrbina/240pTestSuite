@@ -205,6 +205,7 @@ void DrawGrid()
 	sprite_t *back = NULL;
 	struct controller_data keys;
 		
+	HelpWindow(GRIDWARNING, 0);	
     while(!end)
     {	
 		if(ChangedVideoFormat || ChangedResolution || reload)
@@ -438,6 +439,7 @@ void DrawOverscan()
 	struct controller_data keys, held;
 	char msg[50];
 	
+	HelpWindow(OVERSCANWARNING, 0);	
     while(!end)
     {	
 		int x = 0, y = 0;
@@ -741,4 +743,44 @@ void DrawSMPTE()
 	
 	FreeImage(&back);
 	FreeImage(&back100);
+}
+
+void DrawColorBleed()
+{
+	int end = 0;
+	sprite_t *back = NULL, *check = NULL, *normal = NULL;
+	struct controller_data keys;
+	
+	normal = LoadImage("/colorbleed.bin");
+	check = LoadImage("/colorbleedchk.bin");
+	
+	back = normal;	
+    while(!end)
+    {	
+		GetDisplay();
+		
+		drawImageDMA(0, 0, back);
+		
+		CheckMenu(COLORBLEEDHELP);
+		WaitVsync();
+		
+		controller_scan();
+		keys = Controller_ButtonsDown();
+		
+		if(keys.c[0].B)
+			end = 1;
+		
+		if(keys.c[0].A)
+		{
+			if(back == normal)
+				back = check;
+			else
+				back = normal;
+		}
+		
+		CheckStart(keys);
+	}
+	
+	FreeImage(&check);
+	FreeImage(&normal);
 }
