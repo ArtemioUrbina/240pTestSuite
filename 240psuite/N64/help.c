@@ -71,7 +71,7 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 	if(dfs_read(buffer, 1, size, fp) < 0)
 	{
 		dfs_close(fp);
-#ifndef USE_N64Mem
+#ifdef USE_N64Mem
 		n64_free(buffer);
 #else
 		free(buffer);
@@ -100,7 +100,7 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 	if(!*pages)
 	{
 		//fprintf(stderr, "Could not malloc array of pages %s\n", filename);
-#ifndef USE_N64Mem
+#ifdef USE_N64Mem
 		n64_free(buffer);
 #else
 		free(buffer);
@@ -139,6 +139,12 @@ void  HelpWindow(char *filename, int usebuffer)
 	char			*buffer = NULL, **pages = NULL;
 	struct controller_data keys;
 
+	if(!usebuffer)
+	{
+		CopyScreen();
+		WaitVsync();
+	}
+	
 	buffer = LoadHelpFile(filename, &pages, &npages);
 	if(!buffer)
 		return;
@@ -151,8 +157,7 @@ void  HelpWindow(char *filename, int usebuffer)
 	{
 		GetDisplay();
 
-		if(usebuffer)
-			drawScreenBufferDMA(0, 0);
+		drawScreenBufferDMA(0, 0);
 		SoftDrawImage(21, 37, back);
 		
 		DrawStringS(34, 42, 0xff, 0xff, 0xff, pages[page]); 
@@ -163,7 +168,7 @@ void  HelpWindow(char *filename, int usebuffer)
 		controller_scan();
 		keys = Controller_ButtonsDown();
 
-		if(keys.c[0].B)
+		if(keys.c[0].B || keys.c[0].start)
 			done = 1;
 		if(keys.c[0].left)
 			page--;
@@ -181,13 +186,13 @@ void  HelpWindow(char *filename, int usebuffer)
 	}
 
 	if(buffer)
-#ifndef USE_N64Mem
+#ifdef USE_N64Mem
 		n64_free(buffer);
 #else
 		free(buffer);
 #endif
 	if(pages)
-#ifndef USE_N64Mem
+#ifdef USE_N64Mem
 		n64_free(pages);
 #else
 		free(pages);

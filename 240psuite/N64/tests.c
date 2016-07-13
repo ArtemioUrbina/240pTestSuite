@@ -26,7 +26,7 @@
 void DropShadowTest()
 {
 	int end = 0, show = 1;
-	int x = 0, y = 0, xlast = 0, ylast = 0;
+	int x = 0, y = 0;
 	sprite_t *back = NULL, *shadow = NULL;
 	struct controller_data keys;
 	
@@ -50,9 +50,6 @@ void DropShadowTest()
 		CheckMenu(DROPSHADOW);
 		WaitVsync();
 		
-		xlast = x;
-		ylast = y;
-
         controller_scan();
 		keys = Controller_ButtonsHeld();
 
@@ -78,6 +75,7 @@ void DropShadowTest()
 		if(x < 0)
 			x = 0;
 		
+		// Test code for DMA
 		keys = Controller_ButtonsDown();
 		if(keys.c[0].B)
 			end = 1;
@@ -324,6 +322,109 @@ void DrawGridScroll()
 	
 	FreeImage(&grid);
 }
+
+void DrawScroll()
+{
+	int end = 0, x = 0, y = 0, currentsonic = 0, currentframe = 0;
+	int speed = 4, acc = -1, pause = 0, vertical = 0;
+	sprite_t *sonicback[4], *overlay, *palm= NULL;	
+	struct controller_data keys;
+	
+	sonicback[0] = LoadImage("/sonicback1.bin");
+	sonicback[1] = LoadImage("/sonicback2.bin");
+	sonicback[2] = LoadImage("/sonicback3.bin");
+	sonicback[3] = LoadImage("/sonicback4.bin");
+	
+	palm = LoadImage("/sonicpalm.bin");
+	overlay = LoadImage("/sonicfloor.bin");
+	
+    while(!end)
+    {	
+		GetDisplay();
+
+		if(x > 0)
+			drawImageDMA(x-256, 0, sonicback[currentsonic]);
+		drawImageDMA(x, 0, sonicback[currentsonic]);
+		if(x < 64)
+			drawImageDMA(x+256, 0, sonicback[currentsonic]);
+		
+		if(x > 0)
+			drawImageDMA(2*x-512, 210, overlay);
+		drawImageDMA(2*x, 210, overlay);
+		if(x < 64)
+			drawImageDMA(2*x+512, 210, overlay);
+			
+		SoftDrawImage(x*2+96, 112, palm);
+		
+		CheckMenu(SCROLL);
+		WaitVsync();
+		
+		if(!pause)
+		{
+			if(!vertical)
+				x += speed * acc;
+			else
+				y -= speed * acc;
+		}
+		
+		controller_scan();
+		keys = Controller_ButtonsDown();
+			
+		if(keys.c[0].up)
+			speed += 4;
+
+		if(keys.c[0].down)
+			speed -= 4;
+			
+		if(keys.c[0].B)
+			end = 1;
+		
+		if(keys.c[0].A)
+			pause = !pause;
+			
+		if(keys.c[0].C_left)
+			acc *= -1;
+
+		if(keys.c[0].C_right)
+			vertical = !vertical;
+		
+		if(x < -128)
+			x = 128 - speed;
+		if(x > 128)
+			x = -128 + speed;
+			
+		if(y < -7)
+			y = 0;
+		if(y > 7)
+			y = 0;
+			
+		if(speed > 16)
+			speed = 16;
+
+		if(speed < 4)
+			speed = 4;
+			
+		if(!vertical)
+		{
+			currentframe ++;
+			if(currentframe > 10)
+			{
+				currentsonic++;
+				if(currentsonic > 3)
+					currentsonic = 0;
+				currentframe = 0;
+			}
+		}
+			
+		CheckStart(keys);
+	}
+	
+	for(x = 0; x < 4; x++)
+		FreeImage(&sonicback[x]);
+	FreeImage(&overlay);
+	FreeImage(&palm);
+}
+
 
 
 

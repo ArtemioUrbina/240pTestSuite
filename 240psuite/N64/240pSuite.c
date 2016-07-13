@@ -39,8 +39,6 @@ int main(void)
 		
 	init_n64();
 	
-	ClearScreen();
-	
 	back = LoadImage("/back.bin");
 	sd = LoadImage("/sd.bin");
     while(1) 
@@ -112,8 +110,6 @@ int main(void)
 			FreeImage(&back);
 			FreeImage(&sd);
 			
-			//ClearScreen();
-			
 			switch(sel)
 			{
 				case 1:
@@ -121,6 +117,9 @@ int main(void)
 					break;
 				case 2:
 					DropShadowTest();
+					break;
+				case 6:
+					DrawScroll();
 					break;
 				case 7:
 					DrawGridScroll();
@@ -141,7 +140,6 @@ int main(void)
 					break;
 			}
 			
-			ClearScreen();
 			reload = 1;
 		}
 	}
@@ -232,9 +230,7 @@ void DrawPatternsMenu()
 		{	
 			FreeImage(&back);
 			FreeImage(&sd);
-			
-			//ClearScreen();
-			
+						
 			switch(sel)
 			{
 				case 1:
@@ -255,6 +251,9 @@ void DrawPatternsMenu()
 				case 6:
 					DrawGrid();
 					break;
+				case 8:
+					DrawLinearity();
+					break;
 				case 10:
 					DrawGrayRamp();
 					break;
@@ -274,7 +273,6 @@ void DrawPatternsMenu()
 					break;
 			}
 			
-			ClearScreen();
 			reload = 1;
 		}
 		

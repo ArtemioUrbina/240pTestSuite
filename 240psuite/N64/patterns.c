@@ -784,3 +784,42 @@ void DrawColorBleed()
 	FreeImage(&check);
 	FreeImage(&normal);
 }
+
+void DrawLinearity()
+{
+	int 		end = 0, load = 1;
+	sprite_t 	*back = NULL;
+	struct controller_data keys;
+	
+    while(!end)
+    {	
+		GetDisplay();
+		
+		if(load || ChangedVideoFormat)
+		{
+			FreeImage(&back);
+			
+			if(useNTSC)
+				back = LoadImage("/circlesNTSC.bin");
+			else
+				back = LoadImage("/circlesPAL.bin");
+			load = 0;
+			ChangedVideoFormat = 0;
+		}
+		
+		drawImageDMA(0, 0, back); 
+		
+		CheckMenu(LINEARITYHELP);
+		WaitVsync();
+		
+		controller_scan();
+		keys = Controller_ButtonsDown();
+		
+		if(keys.c[0].B)
+			end = 1;
+		
+		CheckStart(keys);
+	}
+	
+	FreeImage(&back);
+}

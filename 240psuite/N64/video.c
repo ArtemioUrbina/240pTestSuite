@@ -59,7 +59,6 @@ void init_video()
 	current_antialias = ANTIALIAS_RESAMPLE; // ANTIALIAS_OFF doesn't work in 16BPP
 	__screen_buffer = NULL;
 	video_set = 0;
-	CreateScreenBuffer();
 }
 
 void set_video()
@@ -67,7 +66,7 @@ void set_video()
 	if(video_set)
 	{
 		unregister_VI_handler(vblCallback);
-		//FreeScreenBuffer();
+		FreeScreenBuffer();
 		rdp_close();
 		display_close();
 		video_set = 0;
@@ -77,6 +76,8 @@ void set_video()
 	display_init_ex(useNTSC, current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
 	register_VI_handler(vblCallback);
 	rdp_init();
+	
+	ClearScreen();
 	
 	switch(current_resolution)
 	{
@@ -105,8 +106,7 @@ void set_video()
 		bD = 4;
 		
 	video_set = 1;
-	ClearScreen();
-	//CreateScreenBuffer();
+	CreateScreenBuffer();
 }
 
 void GetDisplay()
@@ -114,6 +114,8 @@ void GetDisplay()
 	do
 	{	__dc = display_lock();}
 	while(!__dc);
+	
+	ClearScreen();
 }
 
 int isNTSC()
@@ -180,16 +182,16 @@ void CreateScreenBuffer()
 	FreeScreenBuffer();
 		
 #ifdef USE_N64MEM		
-	__screen_buffer = n64_malloc(640*480*4);
+	__screen_buffer = n64_malloc(dW*dH*bD);
 #else
-	__screen_buffer = malloc(640*480*4);
+	__screen_buffer = malloc(dW*dH*bD);
 #endif
 
 	if(__screen_buffer)
 #ifdef USE_N64MEM		
-		n64_memset(__screen_buffer, 0, 640*480*4);
+		n64_memset(__screen_buffer, 0, dW*dH*bD);
 #else
-		memset(__screen_buffer, 0, 640*480*4);
+		memset(__screen_buffer, 0, dW*dH*bD);
 #endif
 }
 

@@ -45,9 +45,9 @@ sprite_t *LoadImage(char *name)
 	if(fp == DFS_ESUCCESS)
 		return NULL;
 #ifdef USE_N64MEM
-    image = n64_malloc(dfs_size( fp ));
+    image = n64_malloc(dfs_size(fp));
 #else
-	image = malloc(dfs_size( fp ));
+	image = malloc(dfs_size(fp));
 #endif
 	if(!image)
 		return NULL;
@@ -151,25 +151,21 @@ void rdp_FillScreenWithTextureXY(int x, int y, sprite_t *image)
 
 void ClearScreen()
 {
-	for(int i = 0; i < current_buffers; i++)
-	{
-		GetDisplay();
-#ifdef USE_N64MEM
-		n64_memset(__safe_buffer[(__dc)-1], 0, dW*dH*bD);
-#else
-		memset(__safe_buffer[(__dc)-1], 0, dW*dH*bD);
-#endif
-		WaitVsync();
-	}
+	rdp_fill_start();
+	rdp_rectangle(0, 0, dW, dH, 0x0, 0x0, 0x0);
+	rdp_end();
 }
 
 // x must be a multiple of four
 void drawImageDMA(int x, int y, sprite_t *image) 
 { 
     unsigned char*	target; 
-	uint32_t 		t_rowsize = 0, chunk = 0, width = 0;
-	uint32_t 		height = 0, s_rowsize = 0;
-	uint32_t 		start = 0, end = 0;
+	int32_t 		t_rowsize = 0, chunk = 0, width = 0;
+	int32_t 		height = 0, s_rowsize = 0;
+	int32_t 		start = 0, end = 0, sx_start = 0, sy_start = 0;
+	
+	//SoftDrawImage(x, y, image);
+	//return;
 	
 	if(!image || !__dc)
 		return;
@@ -179,9 +175,26 @@ void drawImageDMA(int x, int y, sprite_t *image)
 	
 	if(width + x > dW)
 		width = dW - x;
-	if(height > dH)
-		height = dH;
+	if(height + y > dH)
+		height = dH - y;
 	
+	if(x < 0)
+	{
+		width += x;
+		sx_start = -1*x*bD;
+		x = 0;
+	}
+	
+	if(y < 0)
+	{
+		height += y;
+		sy_start = -1*y;
+		y = 0;
+	}
+	
+	if(width <= 0 || height <= 0)
+		return;
+		
 	target = __safe_buffer[(__dc)-1]; 	
 	chunk = width*bD;
 	s_rowsize = image->width*bD;
@@ -189,16 +202,14 @@ void drawImageDMA(int x, int y, sprite_t *image)
 	
 	start = y;
 	end = y + height;
-	if(end > dH)
-		end = dH;
 	
-	data_cache_hit_writeback_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
+	data_cache_hit_writeback_invalidate(target+t_rowsize*(end-1), t_rowsize*((end-start)/10));
 	for(uint32_t line = start; line < end; line ++)
 	{
 		/* DMA to DMEM */
 		while (DMA_BUSY) ;
 		DMA_LADDR = 0x0000;
-		DMA_RADDR = (uint32_t)image->data+s_rowsize*(line-start);
+		DMA_RADDR = (uint32_t)image->data+s_rowsize*(line-start+sy_start)+sx_start;
 		DMA_RDLEN = chunk;
 
 		/* DMA to frame buffer */
@@ -207,16 +218,16 @@ void drawImageDMA(int x, int y, sprite_t *image)
 		DMA_RADDR = (uint32_t)target+t_rowsize*line+x*bD;
 		DMA_WRLEN = chunk;
 	}
-	data_cache_hit_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
+	data_cache_hit_invalidate(target+t_rowsize*(end-1), t_rowsize*((end-start)/10));	
 }
 
 // x must be a multiple of four
 void drawScreenBufferDMA(int x, int y) 
 { 
     unsigned char*	target; 
-	uint32_t 		t_rowsize = 0, chunk = 0, width = 0;
-	uint32_t 		height = 0, s_rowsize = 0;
-	uint32_t 		start = 0, end = 0;
+	int32_t 		t_rowsize = 0, chunk = 0, width = 0;
+	int32_t 		height = 0, s_rowsize = 0;
+	int32_t 		start = 0, end = 0, sx_start = 0, sy_start = 0;
 	
 	if(!__screen_buffer || !__dc)
 		return;
@@ -224,10 +235,28 @@ void drawScreenBufferDMA(int x, int y)
 	width = dW;
 	height = dH;
 	
+
 	if(width + x > dW)
 		width = dW - x;
-	if(height > dH)
-		height = dH;
+	if(height + y > dH)
+		height = dH - y;
+	
+	if(x < 0)
+	{
+		width += x;
+		sx_start = -1*x*bD;
+		x = 0;
+	}
+	
+	if(y < 0)
+	{
+		height += y;
+		sy_start = -1*y;
+		y = 0;
+	}
+	
+	if(width <= 0 || height <= 0)
+		return;
 	
 	target = __safe_buffer[(__dc)-1]; 	
 	chunk = width*bD;
@@ -239,13 +268,13 @@ void drawScreenBufferDMA(int x, int y)
 	if(end > dH)
 		end = dH;
 	
-	data_cache_hit_writeback_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
+	data_cache_hit_writeback_invalidate(target+t_rowsize*(end-1), t_rowsize*((end-start)/10));
 	for(uint32_t line = start; line < end; line ++)
 	{
 		/* DMA to DMEM */
 		while (DMA_BUSY) ;
 		DMA_LADDR = 0x0000;
-		DMA_RADDR = (uint32_t)__screen_buffer+s_rowsize*(line-start);
+		DMA_RADDR = (uint32_t)__screen_buffer+s_rowsize*(line-start+sy_start)+sx_start;
 		DMA_RDLEN = chunk;
 
 		/* DMA to frame buffer */
@@ -254,7 +283,7 @@ void drawScreenBufferDMA(int x, int y)
 		DMA_RADDR = (uint32_t)target+t_rowsize*line+x*bD;
 		DMA_WRLEN = chunk;
 	}
-	data_cache_hit_invalidate(target+t_rowsize*(end-1), t_rowsize*(end-1));	
+	data_cache_hit_invalidate(target+t_rowsize*(end-1), t_rowsize*((end-start)/10));	
 }
 
 

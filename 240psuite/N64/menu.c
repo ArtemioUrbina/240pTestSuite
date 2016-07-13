@@ -127,6 +127,9 @@ void showMenu()
 		if(sel < 1)
 			sel = c;
 			
+		if(keys.c[0].B || keys.c[0].start)
+			end = 1;
+			
 		if(keys.c[0].A)
 		{	
 			switch(sel)

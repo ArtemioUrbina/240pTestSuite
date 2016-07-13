@@ -66,8 +66,42 @@ bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem
 	filesystem/SMPTECB100.bin filesystem/nish.bin filesystem/EBUColorBars75.bin filesystem/EBUColorBars100.bin\
 	filesystem/PLUGEBorder.bin filesystem/plugePAL.bin filesystem/colorbleedchk.bin filesystem/colorbleed.bin\
 	filesystem/stripespos.bin filesystem/stripesneg.bin filesystem/vertstripespos.bin filesystem/vertstripesneg.bin\
-	filesystem/circles_grid.bin
+	filesystem/circles_grid.bin filesystem/circlesNTSC.bin filesystem/circlesPAL.bin\
+	filesystem/sonicback1.bin filesystem/sonicback2.bin filesystem/sonicback3.bin filesystem/sonicback4.bin\
+	filesystem/sonicfloor.bin filesystem/sonicpalm.bin
 
+filesystem/sonicfloor.bin: graphics/sonicfloor.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+
+filesystem/sonicpalm.bin: graphics/sonicpalm.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/sonicback1.bin: graphics/sonicback1.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/sonicback2.bin: graphics/sonicback2.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/sonicback3.bin: graphics/sonicback3.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/sonicback4.bin: graphics/sonicback4.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/circlesNTSC.bin: graphics/circlesNTSC.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
+filesystem/circlesPAL.bin: graphics/circlesPAL.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
 filesystem/circles_grid.bin: graphics/circles_grid.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
