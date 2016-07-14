@@ -57,7 +57,10 @@ int main(void)
 		
 		GetDisplay();
 		
-		drawImageDMA(0, 0, back);
+		rdp_texture_start();
+		rdp_DrawImage(0, 0, back);
+		rdp_end();
+		
 		SoftDrawImage(221, 86, sd);		
 		
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Test Patterns >"); y += fh; c++;

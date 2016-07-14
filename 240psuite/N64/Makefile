@@ -168,7 +168,7 @@ filesystem/grayramp.bin: graphics/grayramp.png
 	
 filesystem/back.bin: graphics/back.png
 	@echo convert PNG ... $(notdir $@)
-	$(MKSPRITE) $(BITDEPTH) $< $@
+	$(MKSPRITE) $(BITDEPTH) 10 15 $< $@
 
 filesystem/sd.bin: graphics/sd.png
 	@echo convert PNG ... $(notdir $@)

@@ -106,6 +106,7 @@ void rdp_texture_start()
 	rdp_sync(SYNC_PIPE);
 	rdp_set_default_clipping();
 	rdp_enable_texture_copy();
+	rdp_set_texture_flush(FLUSH_STRATEGY_NONE);
 	rdp_attach_display(__dc);
 }
 
@@ -120,14 +121,29 @@ void rdp_DrawImage(int x, int y, sprite_t *image)
 	if(!image)
 		return;
 		
-	if(bD == 2 && image->width < 20 && image->height < 20)
+	if((image->width * image->height * bD) < 4096) // TMEM is 4K
 	{
 		rdp_sync(SYNC_PIPE);
 		rdp_load_texture(0, 0, MIRROR_DISABLED, image);
 		rdp_draw_sprite(0, x, y);
 	}
 	else
-		SoftDrawImage(x, y, image);
+	{
+		int pos = 0;
+		
+		int sizex = image->width / 32;
+		int sizey = image->height / 16;
+		
+		for(int i = 0; i < sizey; i++)
+		{
+			for(int j = 0; j < sizex; j++)
+			{
+				rdp_sync(SYNC_PIPE);
+				rdp_load_texture_stride(0, 0, MIRROR_DISABLED, image, pos++);
+				rdp_draw_sprite(0, x+j*32, y+i*16);
+			}
+		}
+	}
 }
 
 void rdp_end()
@@ -196,7 +212,7 @@ void drawImageDMA(int x, int y, sprite_t *image)
 		return;
 		
 	target = __safe_buffer[(__dc)-1]; 	
-	chunk = width*bD;
+	chunk = width*bD - 1;
 	s_rowsize = image->width*bD;
 	t_rowsize = dW*bD;
 	
@@ -213,7 +229,7 @@ void drawImageDMA(int x, int y, sprite_t *image)
 		DMA_RDLEN = chunk;
 
 		/* DMA to frame buffer */
-		while (DMA_FULL) ;
+		while (DMA_BUSY) ;
 		DMA_LADDR = 0x0000;
 		DMA_RADDR = (uint32_t)target+t_rowsize*line+x*bD;
 		DMA_WRLEN = chunk;
@@ -259,7 +275,7 @@ void drawScreenBufferDMA(int x, int y)
 		return;
 	
 	target = __safe_buffer[(__dc)-1]; 	
-	chunk = width*bD;
+	chunk = width*bD - 1;
 	s_rowsize = dW*bD;
 	t_rowsize = dW*bD;
 	
@@ -278,7 +294,7 @@ void drawScreenBufferDMA(int x, int y)
 		DMA_RDLEN = chunk;
 
 		/* DMA to frame buffer */
-		while (DMA_FULL) ;
+		while (DMA_BUSY) ;
 		DMA_LADDR = 0x0000;
 		DMA_RADDR = (uint32_t)target+t_rowsize*line+x*bD;
 		DMA_WRLEN = chunk;
