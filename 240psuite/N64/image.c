@@ -36,6 +36,8 @@
 
 #define IMEM_SIZE 4000
 
+int updatecache = 1;
+
 sprite_t *LoadImage(char *name)
 {
 	int fp = 0;
@@ -106,7 +108,6 @@ void rdp_texture_start()
 	rdp_sync(SYNC_PIPE);
 	rdp_set_default_clipping();
 	rdp_enable_texture_copy();
-	rdp_set_texture_flush(FLUSH_STRATEGY_NONE);
 	rdp_attach_display(__dc);
 }
 
@@ -114,6 +115,11 @@ void rdp_rectangle(int x0, int y0, int x1, int y1, int r, int g, int b)
 {
 	rdp_set_primitive_color(graphics_make_color(r, g, b, 0xff));
 	rdp_draw_filled_rectangle(x0, y0, x1, y1);
+}
+
+void rdp_updatecache(int set)
+{
+	updatecache = set;
 }
 
 void rdp_DrawImage(int x, int y, sprite_t *image)
@@ -129,19 +135,41 @@ void rdp_DrawImage(int x, int y, sprite_t *image)
 	}
 	else
 	{
-		int pos = 0;
+		int offset = 0;
+		int sizex = 0;
+		int sizey = 0;
+		int hsize = 64;  // power of 2 size sprite in 16 bits
+		int vsize = 16;
 		
-		int sizex = image->width / 32;
-		int sizey = image->height / 16;
+		if(image->bitdepth != 2)
+			return;
 		
-		for(int i = 0; i < sizey; i++)
+		sizex = image->width / hsize;
+		sizey = image->height / vsize;
+		
+		image->hslices = sizex;
+		image->vslices = sizey;
+		
+		rdp_set_texture_flush(FLUSH_STRATEGY_NONE);
+		for(int j = 0; j < sizey; j++)
 		{
-			for(int j = 0; j < sizex; j++)
+			if(y+j*vsize >= dH || y+(j+1)*vsize > 0)
 			{
-				rdp_sync(SYNC_PIPE);
-				rdp_load_texture_stride(0, 0, MIRROR_DISABLED, image, pos++);
-				rdp_draw_sprite(0, x+j*32, y+i*16);
+				for(int i = 0; i < sizex; i++)
+				{
+					if(x+i*hsize >= dW || x+(i+1)*hsize > 0)
+					{
+						if(updatecache && j == sizey - 1 && i == sizex - 1)
+							rdp_set_texture_flush(FLUSH_STRATEGY_AUTOMATIC);
+						rdp_sync(SYNC_PIPE);
+						rdp_load_texture_stride(0, 0, MIRROR_DISABLED, image, offset);
+						rdp_draw_sprite(0, x+i*hsize, y+j*vsize);
+					}
+					offset++;
+				}
 			}
+			else
+				offset += sizex;
 		}
 	}
 }
@@ -179,10 +207,7 @@ void drawImageDMA(int x, int y, sprite_t *image)
 	int32_t 		t_rowsize = 0, chunk = 0, width = 0;
 	int32_t 		height = 0, s_rowsize = 0;
 	int32_t 		start = 0, end = 0, sx_start = 0, sy_start = 0;
-	
-	//SoftDrawImage(x, y, image);
-	//return;
-	
+		
 	if(!image || !__dc)
 		return;
 		

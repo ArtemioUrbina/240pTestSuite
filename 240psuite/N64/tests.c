@@ -36,14 +36,13 @@ void DropShadowTest()
     {	
 		GetDisplay();
 		
-		drawImageDMA(0, 0, back);
+		rdp_texture_start();
+		rdp_DrawImage(0, 0, back);
 			
 		if(show)
-		{
-			rdp_texture_start();
 			rdp_DrawImage(x, y, shadow);
-			rdp_end();
-		}
+		
+		rdp_end();
 		
 		show = !show;
 		
@@ -326,8 +325,8 @@ void DrawGridScroll()
 void DrawScroll()
 {
 	int end = 0, x = 0, y = 0, currentsonic = 0, currentframe = 0;
-	int speed = 4, acc = -1, pause = 0, vertical = 0;
-	sprite_t *sonicback[4], *overlay, *palm= NULL;	
+	int speed = 1, acc = -1, pause = 0, vertical = 0;
+	sprite_t *sonicback[4], *overlay;	
 	struct controller_data keys;
 	
 	sonicback[0] = LoadImage("/sonicback1.bin");
@@ -335,46 +334,48 @@ void DrawScroll()
 	sonicback[2] = LoadImage("/sonicback3.bin");
 	sonicback[3] = LoadImage("/sonicback4.bin");
 	
-	palm = LoadImage("/sonicpalm.bin");
 	overlay = LoadImage("/sonicfloor.bin");
 	
     while(!end)
     {	
 		GetDisplay();
 
+		rdp_texture_start();
+
+		rdp_updatecache(0);
 		if(x > 0)
-			drawImageDMA(x-256, 0, sonicback[currentsonic]);
-		drawImageDMA(x, 0, sonicback[currentsonic]);
+			rdp_DrawImage(x-256, 0, sonicback[currentsonic]);
+		rdp_DrawImage(x, 0, sonicback[currentsonic]);
 		if(x < 64)
-			drawImageDMA(x+256, 0, sonicback[currentsonic]);
+			rdp_DrawImage(x+256, 0, sonicback[currentsonic]);
+		rdp_updatecache(1);
+
+		if(x > 0)
+			rdp_DrawImage(2*x-256, 112, overlay);
+		rdp_DrawImage(2*x, 112, overlay);
+		if(x < 64)
+			rdp_DrawImage(2*x+256, 112, overlay);
+		// Extra gap
+		if(x < -96)
+			rdp_DrawImage(2*x+512, 112, overlay);
 		
-		if(x > 0)
-			drawImageDMA(2*x-512, 210, overlay);
-		drawImageDMA(2*x, 210, overlay);
-		if(x < 64)
-			drawImageDMA(2*x+512, 210, overlay);
-			
-		SoftDrawImage(x*2+96, 112, palm);
+		char pos[100];
+		sprintf(pos, "%d,%d", x, y);
+		DrawStringB(100, 100, 0xff, 0xff, 0xff, pos);
+		
+		rdp_end();
 		
 		CheckMenu(SCROLL);
 		WaitVsync();
-		
-		if(!pause)
-		{
-			if(!vertical)
-				x += speed * acc;
-			else
-				y -= speed * acc;
-		}
 		
 		controller_scan();
 		keys = Controller_ButtonsDown();
 			
 		if(keys.c[0].up)
-			speed += 4;
+			speed += 1;
 
 		if(keys.c[0].down)
-			speed -= 4;
+			speed -= 1;
 			
 		if(keys.c[0].B)
 			end = 1;
@@ -387,6 +388,14 @@ void DrawScroll()
 
 		if(keys.c[0].C_right)
 			vertical = !vertical;
+			
+		if(!pause)
+		{
+			if(!vertical)
+				x += speed * acc;
+			else
+				y -= speed * acc;
+		}
 		
 		if(x < -128)
 			x = 128 - speed;
@@ -401,8 +410,8 @@ void DrawScroll()
 		if(speed > 16)
 			speed = 16;
 
-		if(speed < 4)
-			speed = 4;
+		if(speed < 1)
+			speed = 1;
 			
 		if(!vertical)
 		{
@@ -422,7 +431,6 @@ void DrawScroll()
 	for(x = 0; x < 4; x++)
 		FreeImage(&sonicback[x]);
 	FreeImage(&overlay);
-	FreeImage(&palm);
 }
 
 

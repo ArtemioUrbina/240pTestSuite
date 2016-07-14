@@ -15,6 +15,7 @@ void rdp_DrawImage(int x, int y, sprite_t *image);
 void rdp_FillScreenWithTexture(sprite_t *image);
 void rdp_FillScreenWithTextureXY(int x, int y, sprite_t *image);
 void rdp_end();
+void rdp_updatecache(int set);
 
 void SoftDrawImage(int x, int y, sprite_t *image);
 void SoftDrawImageSolid(int x, int y, sprite_t *image);
