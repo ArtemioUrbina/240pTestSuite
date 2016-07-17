@@ -57,8 +57,9 @@ int main(void)
 		
 		GetDisplay();
 		
+		drawImageDMA(0, 0, back);
+		
 		rdp_texture_start();
-		rdp_DrawImage(0, 0, back);
 		rdp_DrawImage(221, 86, sd);		
 		rdp_end();
 		
@@ -175,8 +176,8 @@ void DrawPatternsMenu()
 		
 		GetDisplay();
 		
+		drawImageDMA(0, 0, back);
 		rdp_texture_start();
-		rdp_DrawImage(0, 0, back);
 		rdp_DrawImage(221, 86, sd);
 		rdp_end();
 		

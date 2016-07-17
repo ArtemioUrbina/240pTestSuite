@@ -16,7 +16,7 @@ LINK_FLAGS = -T$(LDSCRIPTSDIR)/n64.ld -Map map.txt -nostdlib
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/lib/gcc/mips64-elf/4.4.0 -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
-CCFLAGS = -DUSE_N64MEM -std=gnu99 -march=vr4300 -mtune=vr4300 -G 0 -O2 -Wall -Werror -c $(INCPATH)
+CCFLAGS = -DDEBUG_BENCHMARK -DUSE_N64MEM -std=gnu99 -march=vr4300 -mtune=vr4300 -G 0 -O2 -Wall -Werror -c $(INCPATH)
 ASFLAGS = -mtune=vr4300 -march=vr4300
 
 N64PREFIX = $(ROOTDIR)/bin/mips64-elf-
@@ -31,13 +31,11 @@ BITDEPTH = 16
 
 OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o menu.o help.o
 
-$(PROG_NAME).v64: bitmaps $(PROG_NAME).elf drive.dfs
+$(PROG_NAME).z64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(OBJCOPY) $(PROG_NAME).elf $(PROG_NAME).bin -O binary
-	rm -f $(PROG_NAME).v64
-	$(N64TOOL) -b -l 2M -t "240p Test Suite" -h $(HEADER) -o $(PROG_NAME).v64 $(PROG_NAME).bin -s 1M drive.dfs
-	$(CHKSUM64) $(PROG_NAME).v64
-	$(UCON64) --nbak --z64 $(PROG_NAME).v64
-	rm -f $(PROG_NAME).v64
+	rm -f $(PROG_NAME).z64
+	$(N64TOOL) -l 6M -t "240p Test Suite" -h $(HEADER) -o $(PROG_NAME).z64 $(PROG_NAME).bin -s 1M drive.dfs
+	$(CHKSUM64) $(PROG_NAME).z64
 
 $(PROG_NAME).elf : $(OBJS)
 	$(LD) -o $(PROG_NAME).elf $(OBJS) $(LINK_FLAGS) $(LIBPATH) $(LIBS)
@@ -54,7 +52,7 @@ drive.dfs: bitmaps
 all: $(PROG_NAME).v64
 
 clean:
-	rm -f *.v64 *.z64 *.elf *.o *.bin *.dfs filesystem/*.bin map.txt
+	rm -f *.z64 *.elf *.o *.bin *.dfs filesystem/*.bin map.txt
 
 .PHONY: bitmaps all
 

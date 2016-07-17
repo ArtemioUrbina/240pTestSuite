@@ -158,7 +158,10 @@ void  HelpWindow(char *filename, int usebuffer)
 		GetDisplay();
 
 		drawScreenBufferDMA(0, 0);
-		SoftDrawImage(21, 37, back);
+		
+		rdp_texture_start();
+		rdp_DrawImage(0, 37, back);
+		rdp_end();  
 		
 		DrawStringS(34, 42, 0xff, 0xff, 0xff, pages[page]); 
 

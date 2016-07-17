@@ -38,6 +38,32 @@
 
 int updatecache = 1;
 
+#ifdef DEBUG_BENCHMARK
+static unsigned long __count_start = 0;
+
+void start_counter()
+{
+	__count_start = get_ticks_ms();
+}
+
+long long end_counter()
+{
+	long long count;
+	
+	count = get_ticks_ms() - __count_start;
+	return count;
+}
+
+void Draw_counter(int x, int y, long long len)
+{
+	char str[100];
+	
+	sprintf(str, "%2lldms", len);
+	DrawStringB(x, y, len >= 16 ? 0xff : 0x00, len < 16 ? 0xff : 0x00, 0x00, str);
+}
+
+#endif
+
 sprite_t *LoadImage(char *name)
 {
 	int fp = 0;
@@ -122,12 +148,26 @@ void rdp_updatecache(int set)
 	updatecache = set;
 }
 
+void rdp_DrawImageClipped(int x, int y, sprite_t *image, int CX, int CY)
+{
+	int o_dW, o_dH;
+	
+	o_dW = dW;
+	o_dH = dH;
+	dW = CX;
+	dH = CY;
+	rdp_set_clipping(0, 0, CX, CY);
+	rdp_DrawImage(x, y, image);
+	dW = o_dW;
+	dH = o_dH;
+}
+
 void rdp_DrawImage(int x, int y, sprite_t *image)
 {	
 	if(!image)
 		return;
 		
-	if((image->width * image->height * bD) < 4096) // TMEM is 4K
+	if((image->width * image->height * bD) < 4000) // TMEM is 4K, but better safe than sorry
 	{
 		rdp_sync(SYNC_PIPE);
 		rdp_load_texture(0, 0, MIRROR_DISABLED, image);
@@ -153,11 +193,11 @@ void rdp_DrawImage(int x, int y, sprite_t *image)
 		rdp_set_texture_flush(FLUSH_STRATEGY_NONE);
 		for(int j = 0; j < sizey; j++)
 		{
-			if(y+j*vsize >= dH || y+(j+1)*vsize > 0)
+			if((y+(j+1)*vsize > 0) && !(y+j*vsize >= dH))
 			{
 				for(int i = 0; i < sizex; i++)
 				{
-					if(x+i*hsize >= dW || x+(i+1)*hsize > 0)
+					if((x+(i+1)*hsize > 0) && !(x+i*hsize >= dW))
 					{
 						if(updatecache && j == sizey - 1 && i == sizex - 1)
 							rdp_set_texture_flush(FLUSH_STRATEGY_AUTOMATIC);

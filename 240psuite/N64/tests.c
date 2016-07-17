@@ -36,13 +36,13 @@ void DropShadowTest()
     {	
 		GetDisplay();
 		
-		rdp_texture_start();
-		rdp_DrawImage(0, 0, back);
-			
+		drawImageDMA(0, 0, back);
 		if(show)
+		{
+			rdp_texture_start();	
 			rdp_DrawImage(x, y, shadow);
-		
-		rdp_end();
+			rdp_end();
+		}
 		
 		show = !show;
 		
@@ -341,27 +341,22 @@ void DrawScroll()
 		GetDisplay();
 
 		rdp_texture_start();
-
 		rdp_updatecache(0);
 		if(x > 0)
-			rdp_DrawImage(x-256, 0, sonicback[currentsonic]);
-		rdp_DrawImage(x, 0, sonicback[currentsonic]);
+			rdp_DrawImageClipped(x-256, 0, sonicback[currentsonic], 320, 240);
+		rdp_DrawImageClipped(x, 0, sonicback[currentsonic], 320, 240);
 		if(x < 64)
-			rdp_DrawImage(x+256, 0, sonicback[currentsonic]);
+			rdp_DrawImageClipped(x+256, 0, sonicback[currentsonic], 320, 420);
 		rdp_updatecache(1);
 
 		if(x > 0)
-			rdp_DrawImage(2*x-256, 112, overlay);
-		rdp_DrawImage(2*x, 112, overlay);
+			rdp_DrawImageClipped(2*x-256, 112, overlay, 320, 240);
+		rdp_DrawImageClipped(2*x, 112, overlay, 320, 240);
 		if(x < 64)
-			rdp_DrawImage(2*x+256, 112, overlay);
+			rdp_DrawImageClipped(2*x+256, 112, overlay, 320, 240);
 		// Extra gap
 		if(x < -96)
-			rdp_DrawImage(2*x+512, 112, overlay);
-		
-		char pos[100];
-		sprintf(pos, "%d,%d", x, y);
-		DrawStringB(100, 100, 0xff, 0xff, 0xff, pos);
+			rdp_DrawImageClipped(2*x+512, 112, overlay, 320, 240);
 		
 		rdp_end();
 		

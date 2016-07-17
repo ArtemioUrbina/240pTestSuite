@@ -115,6 +115,9 @@ void GetDisplay()
 	{	__dc = display_lock();}
 	while(!__dc);
 	
+#ifdef DEBUG_BENCHMARK
+	start_counter();
+#endif
 	ClearScreen();
 }
 
@@ -130,6 +133,9 @@ void WaitVsync()
 {
 	int nextframe;
 	
+#ifdef DEBUG_BENCHMARK
+	Draw_counter(10, 10, end_counter());
+#endif
 	nextframe = __frames + 1;
 	display_show(__dc);
 	while (nextframe > __frames) ;

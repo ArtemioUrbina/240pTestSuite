@@ -1,0 +1,11 @@
+320x240 full screen 16 bit
+
+1 frame				16-17 ms
+drawImageDMA 			2     ms
+rdp_DrawImage 			6-7   ms
+SoftDrawImage 			20    ms
+SoftDrawImageSolid 		20    ms
+rdp_FillScreenWithTexture	1     ms
+
+
+ScrollTest 	7-11 ms

@@ -88,7 +88,9 @@ void showMenu()
 		if(!color32)
 			drawScreenBufferDMA(0, 0);
 			
-		SoftDrawImage(px, py, menu);   
+		rdp_texture_start();
+		rdp_DrawImage(px, py, menu);
+		rdp_end();  
 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
 		
@@ -198,7 +200,9 @@ void SelectVideoMode(int usebuffer)
 		GetDisplay();
 
 		drawScreenBufferDMA(0, 0);
-		SoftDrawImage(21, 37, back);     
+		rdp_texture_start();
+		rdp_DrawImage(0, 37, back);
+		rdp_end();  
 
 		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 3*fh; 
 		
@@ -329,7 +333,9 @@ void DrawCredits(int usebuffer)
 
 		if(usebuffer)
 			drawScreenBufferDMA(0, 0);
-		SoftDrawImage(21, 42, back);     
+		rdp_texture_start();
+		rdp_DrawImage(0, 37, back);
+		rdp_end();  
 		
         DrawStringS(x, y, 0x00, 0xff, 0x00, "Code and Patterns:"); y += fh; 
         DrawStringS(x, y, 0xff, 0xff, 0xff, "Artemio Urbina"); y += fh; 
