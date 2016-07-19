@@ -29,7 +29,9 @@ int current_buffers = 0;
 int current_gamma = 0;
 int current_antialias = 0;
 int useNTSC = 1;
-int EnablePAL = 1;
+int EnablePAL = 0;
+int EnableDivot = 0;
+int EnableDither = 0;
 
 volatile display_context_t __dc = 0;
 int dW = 0;
@@ -48,16 +50,39 @@ void vblCallback(void)
     __frames++;
 }
 
-void init_video()
+int GetFrameCount()
 {
-	useNTSC = 1;
-	
+	return __frames;
+}
+
+void reset_video_vars()
+{
 	current_resolution = RESOLUTION_320x240;
 	current_bitdepth = DEPTH_16_BPP;
 	current_buffers = 2;
 	current_gamma = GAMMA_NONE;
 	current_antialias = ANTIALIAS_RESAMPLE; // ANTIALIAS_OFF doesn't work in 16BPP
+	EnablePAL = 0;
+	EnableDivot = 1;
+	EnableDither = 0;
+	useNTSC = 1;
+}
+
+void reset_video()
+{
+	reset_video_vars();
+	set_video();
+	
+	// Better to clean up
+	ChangedVideoFormat = 1;
+	ChangedResolution = 1;
+}
+
+void init_video()
+{
 	__screen_buffer = NULL;
+
+	reset_video_vars();
 	video_set = 0;
 }
 
@@ -65,19 +90,18 @@ void set_video()
 {
 	if(video_set)
 	{
-		unregister_VI_handler(vblCallback);
 		FreeScreenBuffer();
+		
 		rdp_close();
+		unregister_VI_handler(vblCallback);
 		display_close();
-		video_set = 0;
 	}
 	
 	video_set = 0;
+	
 	display_init_ex(useNTSC, current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
 	register_VI_handler(vblCallback);
 	rdp_init();
-	
-	ClearScreen();
 	
 	switch(current_resolution)
 	{
@@ -99,13 +123,17 @@ void set_video()
 			break;
 	}
 	
-	if(current_bitdepth == DEPTH_16_BPP)
+	if(current_bitdepth == DEPTH_16_BPP || current_bitdepth == DEPTH_16_BPP_DITHER)
 		bD = 2;
 		
 	if(current_bitdepth == DEPTH_32_BPP)
 		bD = 4;
 		
 	video_set = 1;
+	
+	GetDisplay();
+	WaitVsync();
+	
 	CreateScreenBuffer();
 }
 

@@ -52,7 +52,7 @@ void showMenu()
 	sprite_t *menu = NULL;
 	struct controller_data keys;
 	
-	if(current_bitdepth == DEPTH_16_BPP)
+	if(current_bitdepth != DEPTH_32_BPP)
 	{
 		CopyScreen();
 		WaitVsync();
@@ -146,6 +146,9 @@ void showMenu()
 						px = (dW - menu->width) / 2;
 						py = (dH - menu->height) / 2;
 					}
+					break;
+				case 3:
+					ShowOptions(1);
 					break;
 				case 4:
 					DrawCredits(1);
@@ -406,5 +409,235 @@ void DrawCredits(int usebuffer)
 		counter ++;			
 	}
 	
+	FreeImage(&back);
+}
+
+void ShowOptions(int usebuffer)
+{
+	int 		sel = 1, close = 0, last_frame = 0, warning = 0;
+	sprite_t 	*back;
+	struct controller_data keys;
+	char		str[100];
+	int			o_current_antialias, o_EnableDither, o_current_bitdepth, 
+				o_EnableDivot, o_current_gamma;
+	
+	if(!usebuffer)
+	{
+		CopyScreen();
+		WaitVsync();
+	}
+	
+	back = LoadImage("/help.bin");
+	if(!back)
+		return;
+	
+	o_current_antialias = current_antialias;
+	o_EnableDither = EnableDither;
+	o_current_bitdepth = current_bitdepth;
+	o_EnableDivot = EnableDivot;
+	o_current_gamma = current_gamma;
+	
+	while(!close)
+	{		
+		int     r = 0xff;
+		int     g = 0xff;
+		int     b = 0xff;
+		int   	c = 1;   
+		int     x = 70;
+		int     y = 58;
+				
+		GetDisplay();
+
+		drawScreenBufferDMA(0, 0);
+		rdp_texture_start();
+		rdp_DrawImage(0, 37, back);
+		rdp_end();  
+
+		DrawStringS(x, y, 0x00, 0xff, 0x00, "Options Menu"); y += 3*fh; 
+
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable PAL:");
+		DrawStringS(x+100, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, EnablePAL ? "ON" : "OFF");
+		y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gamma:");
+		switch(o_current_gamma)
+		{
+			case GAMMA_NONE:
+				sprintf(str, "None");
+				break;
+			case GAMMA_CORRECT:
+				sprintf(str, "Correct");
+				break;
+			case GAMMA_CORRECT_DITHER:
+				sprintf(str, "Correct+Dither");
+				break;
+		}
+		DrawStringS(x+100, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, str);
+		y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Divot:");
+		DrawStringS(x+100, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, o_EnableDivot ? "ON" : "OFF");
+		y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Antialias:");
+		switch(o_current_antialias)
+		{
+			case ANTIALIAS_OFF:
+				sprintf(str, "OFF");
+				break;
+			case ANTIALIAS_RESAMPLE:
+			case ANTIALIAS_RESAMPLE_NODIVOT:
+				sprintf(str, "Resample");
+				break;
+			case ANTIALIAS_RESAMPLE_FETCH_NEEDED:
+			case ANTIALIAS_RESAMPLE_FETCH_NEEDED_NODIVOT:
+				sprintf(str, "Fetch Needed");
+				break;
+			case ANTIALIAS_RESAMPLE_FETCH_ALWAYS:
+			case ANTIALIAS_RESAMPLE_FETCH_ALWAYS_NODIVOT:
+				sprintf(str, "Fetch Always");
+				break;
+			default:
+				sprintf(str, "Error");
+				break;
+		}
+		DrawStringS(x+100, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, str);
+		y += fh; c++;
+		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Dither Filter:");
+		DrawStringS(x+100, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, o_EnableDither ? "ON" : "OFF");
+		y += fh*2; c++;
+		
+		if(current_antialias != o_current_antialias || EnableDither != o_EnableDither || 
+							current_bitdepth != o_current_bitdepth || EnableDivot != o_EnableDivot || 
+							current_gamma != o_current_gamma)
+			DrawStringS(x, y, r, sel == c ? 0 : g,	0, "Save Options");
+		else
+			DrawStringS(x, y, sel == c ? 0x66 : 0x99, sel == c ? 0x66 : 0x99, sel == c ? 0x66 : 0x99, "Save Options");
+		y += fh; c++;
+		
+		y += fh/2;
+		
+		DrawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		DrawStringS(x+40, 200, r, g, b, "Press START for help");
+		
+		if(warning)
+		{
+			DrawStringS(x, 160, 0, 0xff, 0xff, "Values have not been saved!");
+			DrawStringS(x, 168, 0, 0xff, 0xff, "(B to exit without saving)");
+			warning --;
+		}
+	
+		WaitVsync();
+
+		controller_scan();
+		keys = Controller_ButtonsDown();
+		
+		if(keys.c[0].up)
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if(keys.c[0].down)
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }	
+
+		if(keys.c[0].start)
+		{
+			char *oldHelp = HelpData;
+			
+			HelpWindow(OPTIONSHELP, 1);
+			HelpData = oldHelp;
+		}		
+			
+		if(keys.c[0].B)
+			close = 1;	
+	
+		if(keys.c[0].A)
+		{     
+			switch(sel)
+			{			
+					case 1:						
+						EnablePAL = !EnablePAL;
+						break;
+					case 2:
+						o_current_gamma++;
+						if(o_current_gamma > GAMMA_CORRECT_DITHER)
+							o_current_gamma = GAMMA_NONE;
+						break;
+					case 3:
+						o_EnableDivot = !o_EnableDivot;
+						if(o_EnableDivot)
+						{
+							if(o_current_antialias >= ANTIALIAS_RESAMPLE_NODIVOT)
+								o_current_antialias -= 3;
+						}
+						else
+						{
+							if(o_current_antialias < ANTIALIAS_RESAMPLE_NODIVOT)
+								o_current_antialias += 3;
+						}
+						break;
+					case 4:
+						if(o_EnableDivot)
+						{
+							o_current_antialias++;
+							if(o_current_antialias > ANTIALIAS_RESAMPLE_FETCH_ALWAYS)
+								o_current_antialias = ANTIALIAS_RESAMPLE;
+						}
+						else
+						{
+							o_current_antialias++;
+							if(o_current_antialias > ANTIALIAS_RESAMPLE_FETCH_ALWAYS_NODIVOT)
+								o_current_antialias = ANTIALIAS_RESAMPLE_NODIVOT;
+						}
+						break;
+					case 5:						
+						o_EnableDither = !o_EnableDither;
+						if(o_current_bitdepth != DEPTH_32_BPP)
+						{
+							if(o_EnableDither)
+								o_current_bitdepth = DEPTH_16_BPP_DITHER;
+							else
+								o_current_bitdepth = DEPTH_16_BPP;
+						}
+						break;
+					case 7:
+						if(current_antialias != o_current_antialias || EnableDither != o_EnableDither || 
+							current_bitdepth != o_current_bitdepth || EnableDivot != o_EnableDivot || 
+							current_gamma != o_current_gamma)
+							warning = 100;
+						else
+							close = 1;
+						break;
+			} 	
+		}		
+		
+		if(keys.c[0].A && last_frame + 120 < GetFrameCount())
+		{     
+			switch(sel)
+			{		
+				case 6:
+					if(current_antialias != o_current_antialias || EnableDither != o_EnableDither || 
+							current_bitdepth != o_current_bitdepth || EnableDivot != o_EnableDivot || 
+							current_gamma != o_current_gamma)
+					{
+						warning = 0;
+						
+						current_antialias = o_current_antialias;
+						EnableDither = o_EnableDither;
+						current_bitdepth = o_current_bitdepth;
+						EnableDivot = o_EnableDivot;
+						current_gamma = o_current_gamma;
+						
+						set_video();
+						last_frame = GetFrameCount();
+					}
+					break;
+			} 	
+		}		
+	}
 	FreeImage(&back);
 }

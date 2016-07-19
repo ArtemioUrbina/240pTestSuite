@@ -25,6 +25,7 @@
 void showMenu();
 void SelectVideoMode(int usebuffer);
 void DrawCredits(int usebuffer);
+void ShowOptions(int usebuffer);
 
 void CheckMenu(char *help);
 void CheckStart(struct controller_data keys);

@@ -58,7 +58,7 @@ void Draw_counter(int x, int y, long long len)
 {
 	char str[100];
 	
-	sprintf(str, "%2lldms", len);
+	sprintf(str, "Frame length: %2lldms", len);
 	DrawStringB(x, y, len >= 16 ? 0xff : 0x00, len < 16 ? 0xff : 0x00, 0x00, str);
 }
 
@@ -133,7 +133,7 @@ void rdp_texture_start()
 {
 	rdp_sync(SYNC_PIPE);
 	rdp_set_default_clipping();
-	rdp_enable_texture_copy();
+	rdp_enable_texture_copy_flags(0xEFA000FF, 0x00004001);
 	rdp_attach_display(__dc);
 }
 
@@ -167,7 +167,7 @@ void rdp_DrawImage(int x, int y, sprite_t *image)
 	if(!image)
 		return;
 		
-	if((image->width * image->height * bD) < 4000) // TMEM is 4K, but better safe than sorry
+	if((image->width * image->height * bD) < 4096) // TMEM is 4K
 	{
 		rdp_sync(SYNC_PIPE);
 		rdp_load_texture(0, 0, MIRROR_DISABLED, image);

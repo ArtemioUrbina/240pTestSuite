@@ -74,7 +74,6 @@ void DropShadowTest()
 		if(x < 0)
 			x = 0;
 		
-		// Test code for DMA
 		keys = Controller_ButtonsDown();
 		if(keys.c[0].B)
 			end = 1;
