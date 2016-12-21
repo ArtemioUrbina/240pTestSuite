@@ -704,10 +704,11 @@ void DrawGrayRamp()
 void DrawSMPTE()
 {
 	int 		end = 0, draw100 = 0, text = 0, load = 1;
-	sprite_t 	*back = NULL, *back100 = NULL;
+	sprite_t 	*back = NULL, *back100 = NULL, *font = NULL;
 	char		msg[40];
 	struct controller_data keys;
 	
+	font = LoadImage("/font.bin");
     while(!end)
     {	
 		GetDisplay();
@@ -731,7 +732,10 @@ void DrawSMPTE()
 			ChangedVideoFormat = 0;
 		}
 		
-		drawImageDMA(0, 0, draw100 ? back100 : back); 
+		//drawImageDMA(0, 0, draw100 ? back100 : back); 
+		rdp_texture_start();
+		rdp_DrawImage(60, 60, font);		
+		rdp_end();
 		
 		if(text)
 		{

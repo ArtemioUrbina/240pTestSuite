@@ -16,7 +16,7 @@ LINK_FLAGS = -T$(LDSCRIPTSDIR)/n64.ld -Map map.txt -nostdlib
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/lib/gcc/mips64-elf/4.4.0 -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
-CCFLAGS = -DDEBUG_BENCHMARK -DUSE_N64MEM -std=gnu99 -march=vr4300 -mtune=vr4300 -G 0 -O2 -Wall -Werror -c $(INCPATH)
+CCFLAGS = -DUSE_N64MEM -std=gnu99 -march=vr4300 -mtune=vr4300 -G 0 -O2 -Wall -Werror -c $(INCPATH)
 ASFLAGS = -mtune=vr4300 -march=vr4300
 
 N64PREFIX = $(ROOTDIR)/bin/mips64-elf-
@@ -66,8 +66,12 @@ bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem
 	filesystem/stripespos.bin filesystem/stripesneg.bin filesystem/vertstripespos.bin filesystem/vertstripesneg.bin\
 	filesystem/circles_grid.bin filesystem/circlesNTSC.bin filesystem/circlesPAL.bin\
 	filesystem/sonicback1.bin filesystem/sonicback2.bin filesystem/sonicback3.bin filesystem/sonicback4.bin\
-	filesystem/sonicfloor.bin 
+	filesystem/sonicfloor.bin filesystem/font.bin 
 
+filesystem/font.bin: graphics/font.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+	
 filesystem/sonicfloor.bin: graphics/sonicfloor.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@

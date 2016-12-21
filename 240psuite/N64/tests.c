@@ -349,13 +349,13 @@ void DrawScroll()
 		rdp_updatecache(1);
 
 		if(x > 0)
-			rdp_DrawImageClipped(2*x-256, 112, overlay, 320, 240);
-		rdp_DrawImageClipped(2*x, 112, overlay, 320, 240);
+			rdp_DrawImageClipped(2*x-256, 48, overlay, 320, 240);
+		rdp_DrawImageClipped(2*x, 48, overlay, 320, 240);
 		if(x < 64)
-			rdp_DrawImageClipped(2*x+256, 112, overlay, 320, 240);
+			rdp_DrawImageClipped(2*x+256, 48, overlay, 320, 240);
 		// Extra gap
 		if(x < -96)
-			rdp_DrawImageClipped(2*x+512, 112, overlay, 320, 240);
+			rdp_DrawImageClipped(2*x+512, 48, overlay, 320, 240);
 		
 		rdp_end();
 		
@@ -382,7 +382,13 @@ void DrawScroll()
 
 		if(keys.c[0].C_right)
 			vertical = !vertical;
-			
+		
+		if(speed > 16)
+			speed = 16;
+
+		if(speed < 1)
+			speed = 1;
+
 		if(!pause)
 		{
 			if(!vertical)
@@ -400,12 +406,6 @@ void DrawScroll()
 			y = 0;
 		if(y > 7)
 			y = 0;
-			
-		if(speed > 16)
-			speed = 16;
-
-		if(speed < 1)
-			speed = 1;
 			
 		if(!vertical)
 		{
