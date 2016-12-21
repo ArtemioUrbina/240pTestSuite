@@ -20,7 +20,6 @@
  */
  
 #include "controller.h"
-#include "video.h"
 
 #define JOYTHSHLD 15			// min value for joystick to be a read
 #define MINFRAMES 5				// Frames to count joystick held as pad
@@ -81,10 +80,7 @@ struct controller_data Controller_ButtonsDown()
 			keys.c[0].down = 1;
 			JoyCountY = 0;
 		}
-	}
-
-	if(held.c[0].C_down && held.c[0].R && held.c[0].L)
-		reset_video();
+	}	
 	return keys;
 }
 
@@ -107,7 +103,5 @@ struct controller_data Controller_ButtonsHeld()
 	if (y < -JOYTHSHLD) 
 		held.c[0].down = 1;
 	
-	if(held.c[0].C_down && held.c[0].R && held.c[0].L)
-		reset_video();
 	return held;
 }

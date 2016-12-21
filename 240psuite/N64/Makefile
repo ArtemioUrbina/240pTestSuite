@@ -232,5 +232,5 @@ filesystem/help.bin: graphics/help.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
 	
-run: $(PROG_NAME).z64
+run:
 	$(LOADER)  $(PROG_NAME).z64 

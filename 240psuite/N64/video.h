@@ -13,8 +13,6 @@ extern int dH;
 extern int bD;
 
 extern int EnablePAL;
-extern int EnableDivot;
-extern int EnableDither;
 extern int useNTSC;
 
 extern void *__safe_buffer[];
@@ -32,5 +30,3 @@ void CopyScreen();
 void FillScreenFromBuffer();
 void DarkenScreenBuffer(int amount);
 void GetVideoModeStr(char *res, int shortdesc);
-int GetFrameCount();
-void reset_video();
