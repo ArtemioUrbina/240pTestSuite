@@ -58,7 +58,7 @@ void Draw_counter(int x, int y, long long len)
 {
 	char str[100];
 	
-	sprintf(str, "%2lldms", len);
+	sprintf(str, "Frame length: %2lldms", len);
 	DrawStringB(x, y, len >= 16 ? 0xff : 0x00, len < 16 ? 0xff : 0x00, 0x00, str);
 }
 
@@ -187,7 +187,7 @@ void rdp_DrawImage(int x, int y, sprite_t *image)
 	if(!image)
 		return;
 		
-	if((image->width * image->height * bD) < 4000) // TMEM is 4K, but better safe than sorry
+	if((image->width * image->height * bD) < 4096) // TMEM is 4K
 	{
 		rdp_sync(SYNC_PIPE);
 		rdp_load_texture(0, 0, MIRROR_DISABLED, image);

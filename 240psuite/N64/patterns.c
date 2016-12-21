@@ -141,7 +141,7 @@ void DrawPLUGE()
 
 void DrawColorBars()
 {
-	int end = 0, type, redraw = 0;
+	int end = 0, type, reload = 1;
 	sprite_t *back[4];
 	struct controller_data keys;
 	
@@ -153,16 +153,33 @@ void DrawColorBars()
 	current_bitdepth = DEPTH_32_BPP;
 	set_video();
 	
-	back[0] = LoadImage("/colorlow.bin");			
-	back[1] = LoadImage("/color.bin");					
-	back[2] = LoadImage("/colorhigh.bin");		
-	back[3] = LoadImage("/color_grid.bin");
-	
     while(!end)
     {	
+		if(current_bitdepth == DEPTH_16_BPP)
+		{
+			current_bitdepth = DEPTH_32_BPP;
+			set_video();
+		}
+		
+		if(reload)
+		{
+			back[0] = LoadImage("/colorlow.bin");			
+			back[1] = LoadImage("/color.bin");					
+			back[2] = LoadImage("/colorhigh.bin");		
+			back[3] = LoadImage("/color_grid.bin");	
+			reload = 0;
+		}
+		
 		GetDisplay();
 		
 		drawImageDMA(0, 0, back[type]);
+		
+		if(ShowMenu)
+		{
+			for(int i = 0; i < 4; i++)
+				FreeImage(&back[i]);
+			reload = 1;
+		}
 		
 		CheckMenu(COLORBARSHELP);
 		WaitVsync();
@@ -176,15 +193,9 @@ void DrawColorBars()
 		CheckStart(keys);
 			
 		if(keys.c[0].left || keys.c[0].L)
-		{
 			type --;
-			redraw = 0;
-		}
 		if(keys.c[0].right || keys.c[0].R)
-		{
 			type ++;
-			redraw = 0;
-		}
 			
 		if(type < 0)
 			type = 0;
@@ -259,6 +270,12 @@ void DrawSolidColor()
     {	
 		if(!useNTSC)
 			BlackLevel = 0x00;
+			
+		if(current_bitdepth == DEPTH_16_BPP)
+		{
+			current_bitdepth = DEPTH_32_BPP;
+			set_video();
+		}
 			
 		GetDisplay();
 		

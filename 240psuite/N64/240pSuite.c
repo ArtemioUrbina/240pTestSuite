@@ -34,10 +34,10 @@ int main(void)
 	struct controller_data keys;
 	char str[20];
 
+	init_n64();
+	
 	if(!isNTSC())
 		EnablePAL = 1;
-		
-	init_n64();
 	
 	back = LoadImage("/back.bin");
 	sd = LoadImage("/sd.bin");
@@ -135,6 +135,9 @@ int main(void)
 					break;
 				case 14:
 					SelectVideoMode(0);
+					break;
+				case 15:
+					ShowOptions(0);
 					break;
 				case 16:
 					HelpWindow(GENERALHELP, 0);
