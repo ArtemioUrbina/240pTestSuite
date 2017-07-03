@@ -2429,7 +2429,10 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 		//printf("Analyzing results\n");
 #endif
 		root = sqrt(arraysize);
-		for(i = 0; i < arraysize/2+1; i++)
+		
+		//for(i = 0; i < arraysize/2+1; i++)
+		//limit search from 600hz to 2khz
+		for(i = 600*boxsize; i < 2000*boxsize; i++)
 		{
 			double r1 = creal(out[i]);
 			double i1 = cimag(out[i]);
