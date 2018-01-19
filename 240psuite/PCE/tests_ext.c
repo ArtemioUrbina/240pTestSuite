@@ -606,7 +606,7 @@ void ManualLagTestSprites()
 #endif
 	spr_make(0, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
 	spr_make(1, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
-	spr_make(2, x, 96, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 2);
+	spr_make(2, x,  96, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 2);
 	
 	satb_update();
 }
@@ -965,17 +965,17 @@ void RefreshManualLagTest()
 
 void ManualLagTestClickRefresh()
 {
-	for(x2 = 0; x2 < 10; x2++)
+	for(x3 = 0; x3 < 10; x3++)
 	{
-		if(clicks[x2] != 0xFF)
+		if(clicks[x3] != 0xFF)
 		{
 			set_font_pal(14);
-			put_string("Offset  :", 2, 2+x2);
-			put_number(x2+1, 2, 8, 2+x2); 
+			put_string("Offset  :", 2, 2+x3);
+			put_number(x3+1, 2, 8, 2+x3); 
 			
-			if(clicks[x2] >= 0)
+			if(clicks[x3] >= 0)
 			{
-				if(clicks[x2] == 0)
+				if(clicks[x3] == 0)
 					set_font_pal(13);
 				else
 					set_font_pal(14);
@@ -983,10 +983,10 @@ void ManualLagTestClickRefresh()
 			else
 				set_font_pal(15);
 			
-			put_number(clicks[x2], 2, 11, 2+x2); 
-			put_string("frames", 14, 2+x2);
-			if(clicks[x2] == 1 || clicks[x2] == -1)
-				put_string(" ", 19, 2+x2);
+			put_number(clicks[x3], 2, 11, 2+x3); 
+			put_string("frames", 14, 2+x3);
+			if(clicks[x3] == 1 || clicks[x3] == -1)
+				put_string(" ", 19, 2+x3);
 		}
 	}
 }
