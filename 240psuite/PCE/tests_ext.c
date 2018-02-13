@@ -606,13 +606,15 @@ void SoundTest()
 			if(type == 1)
 			{
 				if(cd_status(0) == 0)
-					cd_playtrk(0, 0, CDPLAY_NORMAL);
+					cd_playtrk(3, CDPLAY_ENDOFDISC, CDPLAY_NORMAL);
 				else
 				  cd_pause();
 			}
 			
 			if(type == 2)
 			{
+				if(ad_stat())
+					ad_stop();
 				ad_play(0, 9595, 14, 0);
 			}
 	#endif
