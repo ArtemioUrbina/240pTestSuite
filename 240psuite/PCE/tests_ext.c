@@ -470,9 +470,22 @@ void SoundTest()
 	int count = 0;
 	int sel = 1;
 
+#ifdef CDROM
+	int type = 0;
+#endif
+
 	redraw = 1;
 	refresh = 0;
 	
+#ifdef CDROM
+	ad_reset();
+#ifndef CDROM1
+	ad_trans(3, 0, 5, 0);
+#else
+	ad_trans(ADPCM_OVL, 0, 5, 0);
+#endif
+#endif
+
 	LoadWave();
 	
     while(!end)
@@ -483,6 +496,7 @@ void SoundTest()
 			ResetVideo();
 			setupFont();
 
+			SetFontColors(12, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
 #ifndef CDROM1
 			set_map_data(MB_map, 40, 30);
@@ -510,12 +524,49 @@ void SoundTest()
 		
 		if(refresh)
 		{
+#ifndef CDROM
 			set_font_pal(sel == 0 ? 15 : 14);
             put_string("Left", 9, 14);
             set_font_pal(sel == 1 ? 15 : 14);
             put_string("Center", 17, 16);
             set_font_pal(sel == 2 ? 15 : 14);
             put_string("Right", 26, 14);
+#else
+
+			if(type == 0)
+				set_font_pal(12);
+			else
+				set_font_pal(14);
+			put_string("PSG", 18, 8);
+			if(type == 1)
+				set_font_pal(12);
+			else
+				set_font_pal(14);
+			put_string("CDDA", 18, 18);
+			if(type == 2)
+				set_font_pal(12);
+			else
+				set_font_pal(14);
+			put_string("ADPCM", 18, 20);
+			
+			if(type == 0)
+			{
+				set_font_pal(sel == 0 ? 15 : 14);
+				put_string("Left", 9, 10);
+				set_font_pal(sel == 1 ? 15 : 14);
+				put_string("Center", 17, 12);
+				set_font_pal(sel == 2 ? 15 : 14);
+				put_string("Right", 26, 10);
+			}
+			else
+			{
+				set_font_pal(14);
+				put_string("Left", 9, 10);
+				put_string("Center", 17, 12);
+				put_string("Right", 26, 10);
+			}
+#endif
+			refresh = 0;
 		}
 
         controller = joytrg(0);
@@ -532,31 +583,84 @@ void SoundTest()
 			
 		if (controller & JOY_I)
 		{
-			switch(sel)
+	#ifdef CDROM
+			if(type == 0)
 			{
-				case 0:
-					PlayLeft();
-					break;
-				case 1:
-					PlayCenter();
-					break;
-				case 2:
-					PlayRight();
-					break;
+	#endif
+				switch(sel)
+				{
+					case 0:
+						PlayLeft();
+						break;
+					case 1:
+						PlayCenter();
+						break;
+					case 2:
+						PlayRight();
+						break;
+				}
+				count = 20;
+#ifdef CDROM
 			}
-			count = 20;
+	
+			if(type == 1)
+			{
+				if(cd_status(0) == 0)
+					cd_playtrk(0, 0, CDPLAY_NORMAL);
+				else
+				  cd_pause();
+			}
+			
+			if(type == 2)
+			{
+				ad_play(0, 9595, 14, 0);
+			}
+	#endif
+		}
+		
+	#ifdef CDROM
+		if(type == 0)
+		{
+	#endif
+		if (controller & JOY_LEFT)
+		{
+			sel --;
+			refresh = 1;
 		}
 			
-		if (controller & JOY_LEFT)
-			sel --;
-			
 		if (controller & JOY_RIGHT)
+		{
 			sel ++;
+			refresh = 1;
+		}
 	
 		if(sel < 0)
 			sel = 0;
 		if(sel > 2)
 			sel = 2;
+			
+#ifdef CDROM
+		}
+#endif
+	
+#ifdef CDROM		
+		if (controller & JOY_UP)
+		{
+			type --;
+			refresh = 1;
+		}
+			
+		if (controller & JOY_DOWN)
+		{
+			type ++;
+			refresh = 1;
+		}
+	
+		if(type < 0)
+			type = 2;
+		if(type > 2)
+			type = 0;
+#endif
 			
 		if(count)
 			count--;
@@ -568,6 +672,13 @@ void SoundTest()
 		}
     }
 	StopAudio();
+	
+#ifdef CDROM
+	if(cd_status(0) != 0)
+		cd_pause();
+	if(ad_stat())
+		ad_stop();
+#endif
 }
 
 

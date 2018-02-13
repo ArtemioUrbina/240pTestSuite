@@ -31,6 +31,7 @@
 #define TEST_EXT_OVERLAY 	4
 #define GPHX_OVERLAY 		5
 #define HELP_OVERLAY		6
+#define ADPCM_OVL			7
 
 #define TOOL_VSCROLL	1
 #define TOOL_SOUND		2

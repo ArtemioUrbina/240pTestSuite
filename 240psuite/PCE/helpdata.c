@@ -794,6 +794,7 @@ sharpness_00_08:	.db	"to as aperture."
 
 void display_sound_00()
 {
+#ifndef CDROM
 #asm
 	p_string	sound_00_00,28,5
 	__ldwi		14
@@ -815,6 +816,35 @@ sound_00_03:	.db	"It can be used to determine if the audio chain is"
 sound_00_04:	.db	"working properly."
 			.db	0
 #endasm
+#else
+#asm
+	p_string	sound_00_00,28,5
+	__ldwi		14
+	call		_set_font_pal
+	p_string	sound_00_01,6,9
+	p_string	sound_00_02,6,10
+	p_string	sound_00_03,6,12
+	p_string	sound_00_04,6,13
+	p_string	sound_00_05,6,15
+	p_string	sound_00_06,6,16
+	rts
+
+sound_00_00:	.db	"SOUND"
+			.db	0
+sound_00_01:	.db	"This simple test plays a PSG sound in either"
+			.db	0
+sound_00_02:	.db	"or both channels."
+			.db	0
+sound_00_03:	.db	"Aside from PSG, it can also play CDDA and"
+			.db	0
+sound_00_04:	.db	"ADPCM audio."
+			.db	0
+sound_00_05:	.db	"It can be used to determine if the audio chain is"
+			.db	0
+sound_00_06:	.db	"working properly."
+			.db	0
+#endasm
+#endif
 }
 
 
