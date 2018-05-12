@@ -43,12 +43,15 @@ void DrawCheckBoard()
 	u16 field = 1, alternate = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
-	CleanOrShowHelp(HELP_CHECK);
-
 	while(!exit)
 	{
 		if(loadvram)
 		{
+			if(enable_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+				
 			VDP_setPalette(PAL1, bw_pal);
 
 			ind = TILE_USERINDEX;
@@ -100,11 +103,8 @@ void DrawCheckBoard()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_CHECK);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_CHECK))
 			loadvram = 1;
-		}
 
 		if(pressedButtons & BUTTON_A)
 			alternate = ~alternate;
@@ -128,7 +128,7 @@ void DrawCheckBoard()
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
-
+	
 		VDP_waitVSync();
 	}
 }
@@ -138,14 +138,17 @@ void DrawStripes()
 	char cntstr[4];
 	u16 hor1 = 0, hor2 = 0, ver1 = 0, ver2 = 0, size = 0, count = 0, docounter = 0, loadvram = 1;
 	u16 field = 1, alternate = 0, exit = 0, vertical = 0, redraw = 0;
-	u16 buttons = 0, oldButtons = 0xffff, pressedButtons = 0;
-
-	CleanOrShowHelp(HELP_STRIPES);
+	u16 buttons = 0, oldButtons = 0xffff, pressedButtons = 0;	
 
 	while(!exit)
 	{
 		if(loadvram)
 		{
+			if(enable_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+				
 			VDP_setPalette(PAL1, bw_pal);
 
 			hor1 = TILE_USERINDEX;
@@ -161,7 +164,7 @@ void DrawStripes()
 			size = sizeof(vstripesneg_tiles) / 32;
 			VDP_loadTileData(vstripesneg_tiles, ver2, size, USE_DMA);
 
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			redraw = 1;
 			loadvram = 0;
 		}
 
@@ -209,11 +212,8 @@ void DrawStripes()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_STRIPES);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_STRIPES))
 			loadvram = 1;
-		}
 
 		if(pressedButtons & BUTTON_A)
 			alternate = ~alternate;
@@ -238,7 +238,7 @@ void DrawStripes()
 			}
 		}
 
-		if(pressedButtons & BUTTON_UP)
+		if(pressedButtons & BUTTON_LEFT || pressedButtons & BUTTON_RIGHT)
 		{
 			vertical = ~vertical;
 			redraw = 1;
@@ -260,8 +260,6 @@ void DropShadowTest()
 	u16 size = 0, ind = 0, back = 0, changeback = 1, invert = 0, sprite = 0, redraw = 0;
 	u16 field = 1, x = 0, y = 0, exit = 0, text = 0, shadowpos = 0, buzzpos = 0, buzzshadowpos = 0, waterfall = 0;
 	u16 buttons = 0, pressedButtons = 0, oldButtons = 0xffff;
-
-	CleanOrShowHelp(HELP_SHADOW);
 
 	while(!exit)
 	{
@@ -419,6 +417,9 @@ void DropShadowTest()
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
+		
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SHADOW))
+			loadvram = 1;
 
 		if(buttons & BUTTON_UP)
 		{
@@ -521,16 +522,6 @@ void DropShadowTest()
 			sprite = !sprite;
 		}
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			VDP_resetSprites();
-			VDP_updateSprites();
-			VDP_setHorizontalScroll(PLAN_B, 0);
-			VDP_setHorizontalScroll(PLAN_A, 0);
-			DrawHelp(HELP_SHADOW);
-			loadvram = 1;
-		}
-
 		VDP_updateSprites();
 		VDP_waitVSync();
 	}
@@ -542,8 +533,6 @@ void StripedSpriteTest()
 	u16 size, ind = 0, back = 0, changeback = 1, loadvram = 1;
 	u16 x = 0, y = 0, exit = 0;
 	u16 buttons, pressedButtons, oldButtons = 0xffff;
-
-	CleanOrShowHelp(HELP_STRIPED);
 
 	while(!exit)
 	{
@@ -630,11 +619,8 @@ void StripedSpriteTest()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_STRIPED);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_STRIPED))
 			loadvram = 1;
-		}
 
 		if(buttons & BUTTON_UP)
 		{
@@ -727,8 +713,6 @@ void LagTest()
 	u16 first_pal[16], oldColor = 0;
 	s16 clicks[10];
 
-	CleanOrShowHelp(HELP_MANUALLAG);
-
 	x = 144;
 	y = 60;
 
@@ -820,11 +804,8 @@ void LagTest()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_MANUALLAG);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_MANUALLAG))
 			loadvram = 1;
-		}
 
 		if(pressedButtons & BUTTON_A)
 		{
@@ -1091,15 +1072,16 @@ void HScrollTest()
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	int x = 0, y = 0, speed = 1, acc = -1, pause = 0;
 
-	CleanOrShowHelp(HELP_HSCROLL);
-
 	while(!exit)
 	{
 		if(loadvram)
 		{	
 			if(!vertical)
 			{	
-				VDP_setScreenWidth320();
+				if(enable_256)
+					VDP_setScreenWidth256();
+				else
+					VDP_setScreenWidth320();
 				
 				VDP_setVerticalScroll(PLAN_A, 0);
 				VDP_setHorizontalScroll(PLAN_A, x);
@@ -1178,13 +1160,9 @@ void HScrollTest()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_HSCROLL);
-
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_HSCROLL))
 			loadvram = 1;
-		}
-
+		
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
 
@@ -1254,12 +1232,15 @@ void VScrollTest()
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	int pos = 0, speed = 1, acc = -1, pause = 0, direction = 0;
 
-	CleanOrShowHelp(HELP_VSCROLL);
-
 	while(!exit)
 	{
 		if(loadvram)
 		{
+			if(enable_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+				
 			VDP_setPalette(PAL0, bw_pal);
 
 			size = sizeof(circles_grid_tiles) / 32;
@@ -1273,12 +1254,8 @@ void VScrollTest()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_VSCROLL);
-
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_VSCROLL))
 			loadvram = 1;
-		}
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
@@ -1328,7 +1305,6 @@ void SoundTest()
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 len = 0;
 
-	CleanOrShowHelp(HELP_SOUND);
 
 	while(!exit)
 	{
@@ -1352,11 +1328,8 @@ void SoundTest()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_SOUND);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
 			loadvram = 1;
-		}
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
@@ -1377,19 +1350,16 @@ void SoundTest()
 		{
 			if(sel == 0)
 			{
-				SND_stopPlay_TFM();
 				SND_stopPlay_PCM();
 				SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_LEFT, 0);
 			}
 			if(sel == 1)
 			{
-				SND_stopPlay_TFM();
 				SND_stopPlay_PCM();
-				SND_startPlay_TFM(center);
+				SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_CENTER, 0);
 			}
 			if(sel == 2)
 			{
-				SND_stopPlay_TFM();
 				SND_stopPlay_PCM();
 				SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_RIGHT, 0);
 			}
@@ -1400,12 +1370,9 @@ void SoundTest()
 		VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 14, 14);
 		VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 22, 12);
 
-		VDP_drawTextBG(APLAN, "Space Standart track by Shiru", TILE_ATTR(PAL0, 0, 0, 0), 5, 22);
-
 		VDP_waitVSync();
 	}
 	SND_stopPlay_PCM();
-	SND_stopPlay_TFM();
 }
 
 void LEDZoneTest()
@@ -1414,12 +1381,18 @@ void LEDZoneTest()
 	u16 x = 160, y = 112, exit = 0, sprite = 1, change = 0, draw = 1;
 	u16 buttons, pressedButtons, oldButtons = 0xffff, loadvram = 1;
 
-	CleanOrShowHelp(HELP_LED);
-
+	if(enable_256)
+		x = 128;
+		
 	while(!exit)
 	{
 		if(loadvram)
 		{
+			if(enable_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+				
 			VDP_setPalette(PAL1, bw_pal);
 
 			size = sizeof(size0led_t) / 32;
@@ -1446,6 +1419,9 @@ void LEDZoneTest()
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
+		
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_LED))
+			loadvram = 1;
 
 		if(draw)
 		{
@@ -1457,7 +1433,7 @@ void LEDZoneTest()
 
 			if(buttons & BUTTON_DOWN)
 			{
-				if(y < pal_240 ? 240 : 224 - size)
+				if(y + size < (pal_240 ? 240 : 224))
 					y++;
 			}
 
@@ -1469,22 +1445,19 @@ void LEDZoneTest()
 
 			if(buttons & BUTTON_RIGHT)
 			{
-				if(x < 320 - size)
+				if(x + size < (enable_256 ? 256 : 320))
 					x++;
 			}
 		}
+		
+		if(enable_256 && x > (256 - size))
+			x = 256 - size;
+			
+		if(!pal_240 && y > (224 - size))
+			y = 224 - size;
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
-
-		if(pressedButtons & BUTTON_Z)
-		{
-			VDP_resetSprites();
-			VDP_updateSprites();
-
-			DrawHelp(HELP_LED);
-			loadvram = 1;
-		}
 
 		if(pressedButtons & BUTTON_A)
 		{
@@ -1554,14 +1527,14 @@ void PassiveLagTest()
 	u16 frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, bgcol = PAL2;
 	u16 exit = 0, color = 1, loadvram = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 numbers[11], size, lsd, msd, pause = 0, circle = 0, cposx = 32, cposy = 17, solid;
-
-	CleanOrShowHelp(HELP_LAG);
+	u16 numbers[11], size, lsd, msd, pause = 0, circle = 0, cposx = 32, cposy = 17, solid, bars;
 
 	while(!exit)
 	{
 		if(loadvram)
 		{
+			int i = 0;
+			
 			VDP_setPalette(PAL1, btw_pal);
 			VDP_setPalette(PAL2, bluew_pal);
 			VDP_setPalette(PAL3, redw_pal);
@@ -1603,6 +1576,18 @@ void PassiveLagTest()
 			VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
 
 			VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + solid, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			
+			// Load side bars
+			bars = solid + size;
+			size = sizeof(vbars_tiles) / 32;
+			VDP_loadTileData(vbars_tiles, bars, size, USE_DMA);
+			
+			//Draw Side bars
+			for(i = 0; i < 28; i++)
+			{
+				VDP_fillTileMapInc(BPLAN, TILE_ATTR_FULL(PAL0, 0, 0, 0, 0) + bars,    i*64, 1);
+				VDP_fillTileMapInc(BPLAN, TILE_ATTR_FULL(PAL0, 0, 0, 1, 0) + bars, 39+i*64, 1);
+			}
 
 			VDP_drawTextBG(APLAN, "hours", TILE_ATTR(PAL1, 0, 0, 0), 4, 1);
 			VDP_drawTextBG(APLAN, "minutes", TILE_ATTR(PAL1, 0, 0, 0), 13, 1);
@@ -1642,9 +1627,15 @@ void PassiveLagTest()
 		if(!pause && color)
 		{
 			if(bgcol == PAL2)
+			{
 				bgcol = PAL3;
+				VDP_setPaletteColor(0xE, 0x0);
+			}
 			else
+			{
 				bgcol = PAL2;
+				VDP_setPaletteColor(0xE, 0x0fff);
+			}
 		}
 
 		if(Detect_VDP_PAL())
@@ -1724,11 +1715,8 @@ void PassiveLagTest()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_LAG);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_LAG))
 			loadvram = 1;
-		}
 
 		if(pressedButtons & BUTTON_A)
 			pause = !pause;
@@ -1819,8 +1807,6 @@ void Alternate240p480i()
 	u16 redraw = 1;
 	timecode times[20];
 	char str[10];
-
-	CleanOrShowHelp(HELP_ALTERNATE);
 
 	oldinterlaced = VDP_Detect_Interlace();
 
@@ -1926,11 +1912,8 @@ void Alternate240p480i()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_ALTERNATE);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_ALTERNATE))
 			loadvram = 1;
-		}
 
 		if(pressedButtons & BUTTON_A)
 		{
@@ -2023,8 +2006,6 @@ void AudioSyncTest()
 	u16 black_pal[16];
 	s16 acc = 1, status = -1;
 
-	CleanOrShowHelp(HELP_AUDIOSYNC);
-
 	PSG_init();
 	PSG_setFrequency(0, 1000);
 
@@ -2071,6 +2052,9 @@ void AudioSyncTest()
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
+		
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_AUDIOSYNC))
+			loadvram = 1;
 
 		if(pressedButtons & BUTTON_A)
 		{
@@ -2147,16 +2131,6 @@ void AudioSyncTest()
 		}
 		
 		VDP_waitVSync();
-		
-		if(pressedButtons & BUTTON_Z)
-		{
-			PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-			VDP_resetSprites();
-			VDP_updateSprites();
-
-			DrawHelp(HELP_AUDIOSYNC);
-			loadvram = 1;
-		}
 	}
 	VDP_resetSprites();
 	VDP_updateSprites();

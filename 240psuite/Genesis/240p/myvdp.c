@@ -23,6 +23,7 @@
 #include "myvdp.h"
 
 u16 pal_240;
+u16 enable_256;
 
 void VDP_setSpriteAttr(u16 index, u16 tile_attr)
 {

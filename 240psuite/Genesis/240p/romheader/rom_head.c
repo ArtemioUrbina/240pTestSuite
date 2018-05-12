@@ -23,7 +23,7 @@ const struct
     char region[16];                /* Country Support (16) */
 } rom_header = {
     "SEGA MEGA DRIVE ",
-    "    AUG 2016 FEB",
+    "    AUG 2018 MAY",
     "240P TEST SUITE                                 ",
     "240P TEST SUITE                                 ",
     "GM 00002501-01",
@@ -38,6 +38,6 @@ const struct
     0x00000000,
     0x00000000,
     "            ",
-    "ARTEMIO URBINA 2016                     ",
+    "ARTEMIO URBINA 2018                     ",
     "JUE             "
 };

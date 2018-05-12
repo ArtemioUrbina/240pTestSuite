@@ -38,6 +38,8 @@ void DrawCredits();
 void DrawIntro();
 void Detect_MD(char *str);
 void FadeAndCleanUp();
+void CleanUp();
+u8 CheckHelpAndVO(u16 *buttons, u16 *pressedButtons, int option);
 
 extern u8	joytype;
 

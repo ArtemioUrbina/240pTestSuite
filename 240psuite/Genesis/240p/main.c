@@ -40,6 +40,7 @@ int main()
 	JOY_init();
 
 	SYS_setVIntCallback(VBlankIntCallback);
+	enable_256 = 0;
 	VDP_setScreenWidth320();
 	if(Detect_VDP_PAL())
 	{
@@ -105,11 +106,8 @@ int main()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_GENERAL);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_GENERAL))
 			reload = 1;
-		}
 
 		if(pressedButtons & BUTTON_DOWN)
 		{
@@ -134,6 +132,7 @@ int main()
 
 		if(pressedButtons & BUTTON_A)
 		{
+			FadeAndCleanUp();
 			switch (cursel)
 			{
 			case 1:
@@ -251,11 +250,8 @@ void TestPatternMenu()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_GENERAL);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_GENERAL))
 			reload = 1;
-		}
 
 		if(pressedButtons & BUTTON_DOWN)
 		{
@@ -280,6 +276,7 @@ void TestPatternMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
+			FadeAndCleanUp();
 			switch (cursel)
 			{
 			case 1:
@@ -475,8 +472,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "http://db-electronics.ca/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 #endif
 
-			VDP_drawTextBG(APLAN, "Ver. 1.15", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "27/05/2016", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.16", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "11/05/2018", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 
@@ -522,15 +519,23 @@ void DrawCredits()
 	VDP_setVerticalScroll(PLAN_A, 0);
 }
 
-void FadeAndCleanUp()
+void CleanUp()
 {
-	VDP_fadeOutAll(FADE_TIME, 0);
+	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
 	VDP_resetSprites();
 	VDP_updateSprites();
 	VDP_setHorizontalScroll(PLAN_B, 0);
 	VDP_setHorizontalScroll(PLAN_A, 0);
 	VDP_setVerticalScroll(PLAN_A, 0);
 	VDP_setHilightShadow(0);
+	VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
+	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
+}
+
+void FadeAndCleanUp()
+{
+	VDP_fadeOutAll(FADE_TIME, 0);
+	CleanUp();
 	VDP_setScreenWidth320();
 	VDP_resetScreen();
 }
@@ -579,12 +584,14 @@ void VideoOptions()
 	u16 ind = 0, size = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
-	CleanOrShowHelp(HELP_VIDEO);
-
+	FadeAndCleanUp();
+	
 	while(!exit)
 	{
 		if(loadvram)
 		{
+			VDP_setScreenWidth320();
+			
 			VDP_setPalette(PAL0, palette_grey);
 			VDP_setPalette(PAL1, palette_green);
 			VDP_setPalette(PAL2, back_pal);
@@ -602,22 +609,21 @@ void VideoOptions()
 
 		DrawResolution();
 
-		VDP_drawTextBG(APLAN, "Enable 480i mode:", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 5, 12);
-		VDP_drawTextBG(APLAN, VDP_Detect_Interlace()? "ON " : "OFF", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 25, 12);
-		VDP_drawTextBG(APLAN, "Enable 240 in PAL:", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 5, 13);
-		VDP_drawTextBG(APLAN, pal_240 ? "ON " : "OFF", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 25, 13);
+		VDP_drawTextBG(APLAN, "Enable Horizontal 256:", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 5, 11);
+		VDP_drawTextBG(APLAN, enable_256 ? "ON " : "OFF", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 28, 11);
+		VDP_drawTextBG(APLAN, "Enable 480i mode:", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 5, 12);
+		VDP_drawTextBG(APLAN, VDP_Detect_Interlace()? "ON " : "OFF", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 28, 12);
+		VDP_drawTextBG(APLAN, "Enable 240 in PAL:", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 5, 13);
+		VDP_drawTextBG(APLAN, pal_240 ? "ON " : "OFF", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 28, 13);
 
-		VDP_drawTextBG(APLAN, "Back To Menu", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 5, 16);
+		VDP_drawTextBG(APLAN, "Back", TILE_ATTR(sel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, 16);
 
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(pressedButtons & BUTTON_Z)
-		{
-			DrawHelp(HELP_VIDEO);
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_VIDEO))
 			loadvram = 1;
-		}
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
@@ -626,13 +632,13 @@ void VideoOptions()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 2;
+				sel = 3;
 		}
 
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			sel++;
-			if(sel > 2)
+			if(sel > 3)
 				sel = 0;
 		}
 		
@@ -642,13 +648,18 @@ void VideoOptions()
 		{
 			if(sel == 0)
 			{
+				enable_256 = !enable_256;
+			}
+			
+			if(sel == 1)
+			{
 				if(VDP_Detect_Interlace())
 					VDP_setScanMode(INTERLACED_NONE);
 				else
 					VDP_setScanMode(INTERLACED_MODE1);
 			}
 
-			if(sel == 1 && IsPALVDP)
+			if(sel == 2 && IsPALVDP)
 			{
 				if(IsPALVDP)
 				{
@@ -666,11 +677,53 @@ void VideoOptions()
 			}
 		}
 
-		if(pressedButtons & BUTTON_A && sel == 2)
+		if((pressedButtons & BUTTON_A && sel == 3) ||
+			pressedButtons & BUTTON_Y || pressedButtons & BUTTON_START)
 		{
 			exit = 1;
 		}
 
 		VDP_waitVSync();
 	}
+	
+	VDP_fadeOutAll(FADE_TIME, 0);
+	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
+	VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
+	VDP_resetScreen();
+}
+
+u8 CheckHelpAndVO(u16 *buttons, u16 *pressedButtons, int option)
+{
+	if(joytype != JOY_TYPE_PAD6)
+	{
+		if(option != HELP_VIDEO && *buttons & BUTTON_UP && *buttons & BUTTON_START)
+		{
+			*buttons = 0;
+			*pressedButtons = 0;
+			VideoOptions();
+			return 1;
+		}
+
+		if(*buttons & BUTTON_DOWN && *buttons & BUTTON_START)
+		{
+			*buttons = 0;
+			*pressedButtons = 0;
+			DrawHelp(option);
+			return 1;
+		}
+	}
+	else
+	{
+		if(option != HELP_VIDEO && *pressedButtons & BUTTON_Y)
+		{
+			VideoOptions();
+			return 1;
+		}
+		if(*pressedButtons & BUTTON_Z)
+		{
+			DrawHelp(option);
+			return 1;
+		}
+	}
+	return 0;
 }

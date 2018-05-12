@@ -48,11 +48,10 @@
 #define HELP_ALTERNATE		25
 #define	HELP_VIDEO			26
 #define HELP_AUDIOSYNC		27
+#define HELP_CONTRAST		28
 
 extern u8	showhelp;
 
 void DrawHelp(int option);
-void CleanOrShowHelp(int option);
-void FadeAndCleanUp();
 
 #endif

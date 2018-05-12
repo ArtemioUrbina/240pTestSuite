@@ -25,31 +25,6 @@
 #include "myvdp.h"
 #include "main.h"
 
-u8 showhelp = 0;
-
-void CleanOrShowHelp(int option)
-{
-	if(joytype != JOY_TYPE_PAD6)
-	{
-		if(showhelp)
-			DrawHelp(option);
-		else
-		{
-			VDP_fadeOutAll(FADE_TIME, 0);
-			VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
-			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
-			VDP_resetScreen();
-		}
-	}
-	else
-	{
-		VDP_fadeOutAll(FADE_TIME, 0);
-		VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
-		VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
-		VDP_resetScreen();
-	}
-}
-
 void DrawHelp(int option)
 {
 	u16 ind = 0, size = 0, exit = 0, redraw = 1, totalpages = 1, page = 1;
@@ -65,9 +40,6 @@ void DrawHelp(int option)
 	ind = TILE_USERINDEX;
 	size = sizeof(back_tiles) / 32;
 	VDP_loadTileData(back_tiles, ind, size, USE_DMA);
-
-	if(option == HELP_GENERAL)
-		showhelp = 1;
 
 	switch (option)
 	{
@@ -123,13 +95,15 @@ void DrawHelp(int option)
 					y++;
 					if(joytype != JOY_TYPE_PAD6)
 					{
-						VDP_drawTextBG(APLAN, "When enabled, help will be shown", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						VDP_drawTextBG(APLAN, "after selecting a test/pattern.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "Help is available everywhere", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "with DOWN+START. Video Options", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "can be changed with UP+START.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					}
 					else
 					{
 						VDP_drawTextBG(APLAN, "Help can be shown with 'Z' in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						VDP_drawTextBG(APLAN, "any test or pattern.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "any test. Video Options can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "changed with 'Y'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					}
 					y++;
 					VDP_drawTextBG(APLAN, "The 240p suite is also available", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -252,6 +226,11 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "enhancement control, and most", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "probably should be set to zero,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "or in the middle.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "Pressing C toggles a diagonal", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "brick tileset.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "Bricks are 256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			case HELP_OVERSCAN:
 				VDP_drawTextBG(APLAN, "OVERSCAN", TILE_ATTR(PAL1, 0, 0, 0), 16, 4);
@@ -266,6 +245,8 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "pixel. The resulting number is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "the amount of overscan in pixels", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "in each direction.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			case HELP_SMPTE:
 				VDP_drawTextBG(APLAN, "SMPTE COLOR BARS", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
@@ -339,6 +320,8 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "auto-toggle each frame with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "'A' button. A frame counter is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "also available with 'C'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			case HELP_STRIPES:
 				switch (page)
@@ -369,12 +352,14 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "are being discarded completely.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "You can also display vertical", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "bars by pressing 'UP'. That", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "bars by pressing 'LEFT'. That", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "pattern will help you ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "evaluate if the signal is not", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "distorted horizontaly, since", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "all lines should be one pixel", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "wide.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;
@@ -481,9 +466,9 @@ void DrawHelp(int option)
 				case 1:
 					VDP_drawTextBG(APLAN, "SCROLL TEST (1/2)", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);
 					VDP_drawTextBG(APLAN, "This test shows either an", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "horizontal background from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "Sonic or a vertical one from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "Kiki Kaikai.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "horizontal 320x224 back from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "Sonic or a vertical 256x224", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "back from Kiki Kaikai.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "Speed can be varied with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "d-pad and scroll direction with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -501,7 +486,9 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "SCROLL TEST (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);
 					VDP_drawTextBG(APLAN, "Sonic is a trademark of Sega", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "Enterprises Ltd. Kiki Kaikai", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "is a trademark of Namco Bandai.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "is a trademark of Taito.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;
@@ -520,12 +507,13 @@ void DrawHelp(int option)
 				y++;
 				VDP_drawTextBG(APLAN, "Button 'A' stops the scroll and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "button 'B' changes direction.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			case HELP_SOUND:
 				VDP_drawTextBG(APLAN, "SOUND TEST", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
 				VDP_drawTextBG(APLAN, "This simple test plays a beep", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "in either channel, or a synth", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "track by shiru in both.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "in either channel or both.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "It can be used to determine if", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "the audio chain is working", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -569,6 +557,8 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "evaluate full-backlit displays", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "by adjusting brightness", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "accordingly for this test.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;
@@ -604,6 +594,10 @@ void DrawHelp(int option)
 					y++;
 					VDP_drawTextBG(APLAN, "You can also split the video", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "signal and feed both displays.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "The vertical bars on the sides", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "change color each frame to help", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "when using LCD photos.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;
@@ -622,8 +616,10 @@ void DrawHelp(int option)
 				break;
 			case HELP_VIDEO:
 				VDP_drawTextBG(APLAN, "VIDEO OPTIONS", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
-				VDP_drawTextBG(APLAN, "Here you can enable 480i mode", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "for the whole test suite.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "Here you can enable interlaced", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "(480i) mode for the whole suite", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "and horizontal 256 in compatible", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "screens (indicated on help).", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "For PAL consoles, you can also", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "enable full 240p, instead of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -642,6 +638,19 @@ void DrawHelp(int option)
 				y++;
 				VDP_drawTextBG(APLAN, "Press A to start/stop the test.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
+			case HELP_CONTRAST:
+				VDP_drawTextBG(APLAN, "PLUGE CONTRAST", TILE_ATTR(PAL1, 0, 0, 0), 15, 4);
+				VDP_drawTextBG(APLAN, "This sub test fills the screen", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "with a pattern. By default it", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "is drawn in color.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "You can change palettes with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "A to display a dark or white", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "pattern in order to check", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "contrast and brightness.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "The C button returns to PLUGE.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				break;
 			default:
 				exit = 1;
 				break;
@@ -657,18 +666,11 @@ void DrawHelp(int option)
 		if(joytype != JOY_TYPE_PAD6)
 		{
 			VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
-			VDP_drawTextBG(APLAN, "Show HELP (A):", TILE_ATTR(PAL0, 0, 0, 0), 14, 26);
-			VDP_drawTextBG(APLAN, showhelp == 0 ? "No " : "Yes", TILE_ATTR(PAL1, 0, 0, 0), 29, 26);
 
 			if(pressedButtons & BUTTON_START)
 				exit = 1;
 			if(pressedButtons & BUTTON_B)
 				exit = 1;
-			if(pressedButtons & BUTTON_A)
-			{
-				showhelp = !showhelp;
-				redraw = 1;
-			}
 		}
 		else
 		{

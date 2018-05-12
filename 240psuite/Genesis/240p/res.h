@@ -135,6 +135,8 @@ extern u32 tiles_8[480/4];
 extern u32 tiles_9[480/4]; 
 extern u32 tiles_c[480/4]; 
 
+extern u32 vbars_tiles[32/4]; 
+
 extern u32 circle56_tiles[1568/4];
 
 extern u16 btw_pal[16/2]; 
@@ -164,10 +166,19 @@ extern u32 sharpness_tiles[3136/4];
 extern u16 sharpness_pal[16/2]; 
 extern u16 sharpness_map[2240/2]; 
 
+extern u32 bricks_tiles[32/4]; 
+extern u16 bricks_pal[16/2]; 
+
 // vertical Scroll
 extern u32 kiki_tiles[768/4]; 
 extern u16 kiki_pal[16/2]; 
 extern u16 kiki_map[4096/2]; 
+
+// FireShark
+extern u32 FireShark_tiles[512/4]; 
+extern u16 FireShark_pal[16/2]; 
+extern u16 FireSharkBL_pal[16/2]; 
+extern u16 FireSharkWH_pal[16/2]; 
 
 /*
 // VA Panel Test, from MM
