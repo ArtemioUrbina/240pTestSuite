@@ -44,7 +44,6 @@ void DrawHelp(int option)
 	switch (option)
 	{
 	case HELP_GENERAL:
-	case HELP_PLUGE:
 	case HELP_STRIPES:
 	case HELP_SHADOW:
 	case HELP_LED:
@@ -52,6 +51,7 @@ void DrawHelp(int option)
 	case HELP_HSCROLL:
 		totalpages = 2;
 		break;
+	case HELP_PLUGE:
 	case HELP_MANUALLAG:
 		totalpages = 3;
 		break;
@@ -85,7 +85,7 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "black, white and color levels.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "The Genesis/MegaDrive can output", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "224 active video lines. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "224 active video lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
 					break;
 				case 2:
@@ -112,7 +112,7 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "CD-ROM2, and Sega Dreamcast.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "Visit:", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "for more information.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
@@ -121,12 +121,12 @@ void DrawHelp(int option)
 				switch (page)
 				{
 				case 1:
-					VDP_drawTextBG(APLAN, "PLUGE (1/2)", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
-					VDP_drawTextBG(APLAN, "NTSC levels require black to be", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "at 7.5 IRE for video. This HW", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "lowest is 6 IRE (6%), so using", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "this value for general 240p use", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "is not recommended.", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "PLUGE (1/3)", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
+					VDP_drawTextBG(APLAN, "NTSC levels require black to be", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "at 7.5 IRE for video. This HW", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "lowest is 6 IRE (6%), so using", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "this value for general 240p use", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "is not recommended.", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "Of course using it as reference", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "will work perfectly for games", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -138,20 +138,31 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
 					break;
 				case 2:
-					VDP_drawTextBG(APLAN, "PLUGE (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
+					VDP_drawTextBG(APLAN, "PLUGE (2/3)", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
 					VDP_drawTextBG(APLAN, "The PLUGE pattern is used to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "help adjust the black level to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "a correct value. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "a correct value.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "The inner bars on the sides are", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "black at 6%, the outer at 12%. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "If these bars are not visible, ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "black at 6%, the outer at 12%.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "If these bars are not visible,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "adjust the \"brightness\" control", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "until they are.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "You should lower it until they", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "are not visible, and raise it", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "until they show.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+					break;
+				case 3:
+					VDP_drawTextBG(APLAN, "PLUGE (3/3)", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
+					VDP_drawTextBG(APLAN, "You can change to a contrast", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "test with C.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "Within it A button changes", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "palettes between the original,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "highest and lowest values the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "hardware can display.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;
@@ -161,7 +172,7 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "calibrate each color: Red, Green", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "and Blue; as well as white.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "Adjust the white level first, ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "Adjust the white level first,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "using the \"Contrast\" control", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "on your TV set. Raise it until", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "you cannot distinguish between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -182,8 +193,8 @@ void DrawHelp(int option)
 				else
 					VDP_drawTextBG(APLAN, "resolution.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "You can use it to verify that ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "all the visible area is being ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "You can use it to verify that", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "all the visible area is being", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "displayed, and that there is no", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "distortion present.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
@@ -195,7 +206,7 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "COLOR BLEED", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
 				VDP_drawTextBG(APLAN, "This pattern helps diagnose", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "color bleed caused by", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "unneeded color upsampling. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "unneeded color upsampling.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "You can toggle between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "vertical bars and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -221,11 +232,11 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "clean black and gray transitions", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "with no white ghosting between.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "On most modern displays, the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "sharpness control is an edge-", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "enhancement control, and most", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "probably should be set to zero,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "or in the middle.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "On most digitally controlled", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "displays, the sharpness control", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "is an edge-enhancement control,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "and most probably should be set", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "to zero, or at the middle.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "Pressing C toggles a diagonal", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "brick tileset.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -253,7 +264,7 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "This pattern can be used to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "calibrate for NTSC levels", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "regarding contrast,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "brightness and colors. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "brightness and colors.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "You can toggle between 75% and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "100% SMPTE color bars with A.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -265,7 +276,7 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "-if available- to confirm color", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "balance.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "This HW lowest black is 6%.", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "This HW lowest black is 6%.", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
 				break;
 			case HELP_LINEARITY:
 				VDP_drawTextBG(APLAN, "LINEARITY", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
@@ -353,7 +364,7 @@ void DrawHelp(int option)
 					y++;
 					VDP_drawTextBG(APLAN, "You can also display vertical", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "bars by pressing 'LEFT'. That", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "pattern will help you ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "pattern will help you", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "evaluate if the signal is not", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "distorted horizontaly, since", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "all lines should be one pixel", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -389,7 +400,7 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "used to draw the shadow with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "button 'A'. Backgrounds can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "switched with the 'B' button and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "button 'C' toggles sprites. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "button 'C' toggles sprites.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;
@@ -503,7 +514,7 @@ void DrawHelp(int option)
 				y++;
 				VDP_drawTextBG(APLAN, "Button 'C' can be used to toggle", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "between horizontal and vertical,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "while the d-pad regulates speed. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "while the d-pad regulates speed.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "Button 'A' stops the scroll and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "button 'B' changes direction.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -511,17 +522,22 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			case HELP_SOUND:
-				VDP_drawTextBG(APLAN, "SOUND TEST", TILE_ATTR(PAL1, 0, 0, 0), 4, 4);
-				VDP_drawTextBG(APLAN, "This simple test plays a beep", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "in either channel or both.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "SOUND TEST", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
+				VDP_drawTextBG(APLAN, "You can test the FM Sound from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "the Yamaha 2612 here. The first", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "5 channels have a Piano mapped", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "and you can change the octave.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "It can be used to determine if", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "the audio chain is working", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "properly.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "Channel 6 plays a 1khz PCM tone", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "that can be panned.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "The Model 2 and later hardware", TILE_ATTR(PAL1, 0, 0, 0), 5, 17);
-				VDP_drawTextBG(APLAN, "revisions may have the channels", TILE_ATTR(PAL1, 0, 0, 0), 5, 18);
-				VDP_drawTextBG(APLAN, "inverted.", TILE_ATTR(PAL1, 0, 0, 0), 5, 19);
+				VDP_drawTextBG(APLAN, "PSG has 200hz, 2khz and 4khz", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "tones on its channels and white", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "noise at 500hz.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "The Model 2 and later hardware", TILE_ATTR(PAL1, 0, 0, 0), 5, y++);
+				VDP_drawTextBG(APLAN, "revisions may have the channels", TILE_ATTR(PAL1, 0, 0, 0), 5, y++);
+				VDP_drawTextBG(APLAN, "inverted.", TILE_ATTR(PAL1, 0, 0, 0), 5, y++);
 				break;
 			case HELP_LED:
 				switch (page)
@@ -578,7 +594,7 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "be taken of both screens at the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "same time. The picture will show", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "the frame discrepancy between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "them. ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "them.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "The circles in the bottom help", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "determine the frame even when", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -598,6 +614,9 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "The vertical bars on the sides", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "change color each frame to help", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "when using LCD photos.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "Press A to start/stop, B to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "reset and C for B&W test.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;

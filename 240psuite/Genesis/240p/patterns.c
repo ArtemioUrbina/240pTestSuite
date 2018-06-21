@@ -1007,16 +1007,16 @@ void DrawOverscan()
 {
 	u32 _tile_l[8], _tile_r[8], _tile_t[8], _tile_b[8];
 	u32 _tile_lb[8], _tile_lt[8], _tile_rt[8], _tile_rb[8];
+	u16 vram = TILE_USERINDEX;
+	int left = 0, right = 0, top = 0, bottom = 0, exit = 0;
+	u16 buttons, oldButtons = 0xffff, pressedButtons, redraw = 1;
+	int sel = 0, maxTileVert = 0, maxTileHor = 0, loadvram = 1;
 	const u32 back[8] = { 0x44444444, 0x44444444, 0x44444444, 0x44444444,
 		0x44444444, 0x44444444, 0x44444444, 0x44444444
 	};
 	const u32 white[8] = { 0x77777777, 0x77777777, 0x77777777, 0x77777777,
 		0x77777777, 0x77777777, 0x77777777, 0x77777777
 	};
-	u16 vram = TILE_USERINDEX;
-	int left = 0, right = 0, top = 0, bottom = 0, exit = 0;
-	u16 buttons, oldButtons = 0xffff, pressedButtons, redraw = 1;
-	int sel = 0, maxTileVert = 0, maxTileHor = 0, loadvram = 1;
 
 	tile_l = _tile_l;
 	tile_r = _tile_r;
@@ -1040,13 +1040,9 @@ void DrawOverscan()
 			VDP_loadTileData(white, vram + 9, 1, USE_DMA);
 
 			VDP_setPalette(PAL3, palette_grey);
-			VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + vram, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + vram, 0, 0, (enable_256 ? 256 : 320) / 8, (pal_240 ? 240 : 224) / 8);
 			loadvram = 0;
 		}
-
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
 
 		if(redraw)
 		{
@@ -1068,9 +1064,9 @@ void DrawOverscan()
 
 			// Left
 			VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 1, l, t + 1, 1, (maxTileVert - 2) - b - t);
+			
 			// Right
 			VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 2, (maxTileHor - 1) - r, t + 1, 1, (maxTileVert - 2) - b - t);
-
 			// Top
 			VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 3, l + 1, t, (maxTileHor - 2) - r - l, 1);
 			// Bottom
@@ -1088,13 +1084,11 @@ void DrawOverscan()
 			VDP_setTileMapXY(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 8, (maxTileHor - 1) - r, (maxTileVert - 1) - b);
 
 			// Whites
-			// Left
 			if(l)
-				VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 0, l, maxTileVert);
+				VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, t, l, maxTileVert - b - t);
 			// Right
 			if(r)
-				VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, maxTileHor - r, 0, r, maxTileVert);
-
+				VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, maxTileHor - r, t, r, maxTileVert - b - t);
 			// Top
 			if(t)
 				VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + vram + 9, 0, 0, maxTileHor, t);
@@ -1125,6 +1119,13 @@ void DrawOverscan()
 
 			redraw = 0;
 		}
+		
+		VDP_waitVSync();
+		
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
 
 		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_OVERSCAN))
 		{
@@ -1215,8 +1216,6 @@ void DrawOverscan()
 			left = right = bottom = top = 0;
 			redraw = 1;
 		}
-
-		VDP_waitVSync();
 	}
 }
 

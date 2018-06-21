@@ -1298,14 +1298,147 @@ void VScrollTest()
 	}
 }
 
+const u16 PITCHES[12] = {
+	617,653,692,733,777,823,872,924,979,1037,1099,1164
+};
+
+struct {
+	u8 msb[12];
+	u8 lsb[12];
+} pitchTable;
+
+u8 part = 0; //0 or 1
+
+static void init(){
+	u8 i,j,f1,f2;
+	u16 temp=0;
+
+	//separate pitches into two chars
+	for (i=0; i<12; i++){
+		temp = PITCHES[i];
+		for (j=f1=f2=0; j<11; j++){
+			//set each bit to remainder (0 or 1) starting from lsb
+			if (j<8) f1 += (temp % 2) << j;
+			//do the same for second char
+			else f2 += (temp % 2) << (j - 8);
+			temp /= 2;
+		}
+		pitchTable.lsb[i] = f1;
+		pitchTable.msb[i] = f2;
+	}
+
+	Z80_requestBus(1);
+	YM2612_reset();
+	Z80_releaseBus();
+}
+
+void ymTest(u8 channel, u8 octave)
+{
+	if(channel < 3)
+		part = 0;
+	else
+	{
+		part = 1;
+		channel = channel - 3;
+	}
+		
+	Z80_requestBus(1);
+	
+	// Register 22H - LFO (General)
+	YM2612_writeReg(part,0x22,0); 
+	// Register 27H - Timers; Ch3/6 mode
+	YM2612_writeReg(part,0x27,0); 
+
+	// Register 30H+ - detune & multiple
+	YM2612_writeReg(part,0x30+channel,0x71); // OP1
+	YM2612_writeReg(part,0x34+channel,0x0D); // OP3
+	YM2612_writeReg(part,0x38+channel,0x33); // OP2
+	YM2612_writeReg(part,0x3C+channel,0x01); // OP4
+
+	// Register 40H+ - total level: 0 being the largest and 127 (decimal) the smallest.
+	YM2612_writeReg(part,0x40+channel,0x23); // OP1
+	YM2612_writeReg(part,0x44+channel,0x2D); // OP3
+	YM2612_writeReg(part,0x48+channel,0x26); // OP2
+	YM2612_writeReg(part,0x4C+channel,0x00); // OP4
+
+	// Register 50H+ - rate scaling; attack rate
+	YM2612_writeReg(part,0x50+channel,0x5F); // OP1
+	YM2612_writeReg(part,0x54+channel,0x99); // OP3
+	YM2612_writeReg(part,0x58+channel,0x5F); // OP2
+	YM2612_writeReg(part,0x5C+channel,0x94); // OP4
+
+	// Register 60H+ - first decay rate; amplitude modulation
+	YM2612_writeReg(part,0x60+channel,0x5); // OP1
+	YM2612_writeReg(part,0x64+channel,0x5); // OP3
+	YM2612_writeReg(part,0x68+channel,0x5); // OP2
+	YM2612_writeReg(part,0x6C+channel,0x7); // OP4
+
+	// Register 70H+ - secondary decay rate
+	YM2612_writeReg(part,0x70+channel,0x2); // OP1
+	YM2612_writeReg(part,0x74+channel,0x2); // OP3
+	YM2612_writeReg(part,0x78+channel,0x2); // OP2
+	YM2612_writeReg(part,0x7C+channel,0x2); // OP4
+
+	// Register 80H+ - secondary amplitude; release rate
+	YM2612_writeReg(part,0x80+channel,0x11); // OP1
+	YM2612_writeReg(part,0x84+channel,0x11); // OP3
+	YM2612_writeReg(part,0x88+channel,0x11); // OP2
+	YM2612_writeReg(part,0x8C+channel,0xA6); // OP4
+
+	// Register 90H+ - proprietary
+	YM2612_writeReg(part,0x90+channel,0); // OP1
+	YM2612_writeReg(part,0x94+channel,0); // OP3
+	YM2612_writeReg(part,0x98+channel,0); // OP2
+	YM2612_writeReg(part,0x9C+channel,0); // OP4
+
+	// Register B0H+ - feedback; algorithm
+	YM2612_writeReg(part,0xB0+channel,0x32); 
+	
+	// Register B4H+ - stereo; LFO sensitivity
+	YM2612_writeReg(part,0xB4+channel,0xC0); 
+	
+	// Register 28H - Key on/off
+	YM2612_writeReg(0,0x28,0x00+(part ? channel+4 : channel));
+
+	/*
+	Registers A0H-AFH - frequency
+	Channel 1's frequency is in A0 and A4H.
+	Channel 2's frequency is in A1 and A5H.
+	Channel 3's frequency, if it is in normal mode is in A2 and A6H.
+	*/
+	YM2612_writeReg(part,0xA4+channel,octave + pitchTable.msb[(part ? channel+4 : channel)*2]);
+	YM2612_writeReg(part,0xA0+channel,pitchTable.lsb[(part ? channel+4 : channel)*2]);
+	
+	// Register 28H - Key on/off
+	YM2612_writeReg(0,0x28,0xF0+(part ? channel+4 : channel));
+	
+	{
+		char buffer[2];
+		
+		intToHex(0xF0+(part ? channel+4 : channel), buffer, 2);
+		//VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL3, 0, 0, 0), 18, 14);
+	}
+		
+	Z80_releaseBus();
+}
+
+void ym2612_keyoff()
+{
+	Z80_requestBus(1);
+	YM2612_reset();
+	Z80_releaseBus();
+}
+
 void SoundTest()
 {
-	int sel = 1, loadvram = 1;
+	int sel = 2, loadvram = 1, type = 0, psgoff = 0;
 	u16 ind = 0, size = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 len = 0;
+	u16 len = 0, redraw = 0, selmax = 4;
+	u8 octave = 24;
 
-
+	init();
+	PSG_init();
 	while(!exit)
 	{
 		if(loadvram)
@@ -1322,6 +1455,41 @@ void SoundTest()
 
 			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
 			loadvram = 0;
+			redraw = 1;
+		}
+		
+		if(redraw)
+		{
+			int y = 9;
+			char buffer[2];
+			
+			VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL1, 0, 0, 0), 14, 6);
+			
+			VDP_drawTextBG(APLAN, "YM2612 FM", TILE_ATTR(PAL1, 0, 0, 0), 14, y++);
+			VDP_drawTextBG(APLAN, "1", TILE_ATTR((type == 0 && sel == 0) ? PAL3 : PAL0, 0, 0, 0), 14, y);
+			VDP_drawTextBG(APLAN, "2", TILE_ATTR((type == 0 && sel == 1) ? PAL3 : PAL0, 0, 0, 0), 16, y);
+			VDP_drawTextBG(APLAN, "3", TILE_ATTR((type == 0 && sel == 2) ? PAL3 : PAL0, 0, 0, 0), 18, y);
+			VDP_drawTextBG(APLAN, "4", TILE_ATTR((type == 0 && sel == 3) ? PAL3 : PAL0, 0, 0, 0), 20, y);
+			VDP_drawTextBG(APLAN, "5", TILE_ATTR((type == 0 && sel == 4) ? PAL3 : PAL0, 0, 0, 0), 22, y);
+			y++;
+			VDP_drawTextBG(APLAN, "FM Octave:", TILE_ATTR((type == 1 && sel == 0) ? PAL3 : PAL0, 0, 0, 0), 12, y);
+			intToStr(octave, buffer, 2);
+			VDP_drawTextBG(APLAN, buffer, TILE_ATTR((type == 1 && sel == 0) ? PAL3 : PAL0, 0, 0, 0), 23, y);
+			
+			y+=2;
+			VDP_drawTextBG(APLAN, "YM2612 PCM (CH6)", TILE_ATTR(PAL1, 0, 0, 0), 11, y++);
+			VDP_drawTextBG(APLAN, "Left", 		TILE_ATTR((type == 2 && sel == 0) ? PAL3 : PAL0, 0, 0, 0), 10, y);
+			VDP_drawTextBG(APLAN, "Center", 	TILE_ATTR((type == 2 && sel == 1) ? PAL3 : PAL0, 0, 0, 0), 15, y);
+			VDP_drawTextBG(APLAN, "Right", 		TILE_ATTR((type == 2 && sel == 2) ? PAL3 : PAL0, 0, 0, 0), 22, y);
+			
+			y+=2;
+			VDP_drawTextBG(APLAN, "PSG CHANNEL", TILE_ATTR(PAL1, 0, 0, 0), 13, y++);
+			VDP_drawTextBG(APLAN, "0", TILE_ATTR((type == 3 && sel == 0) ? PAL3 : PAL0, 0, 0, 0), 15, y);
+			VDP_drawTextBG(APLAN, "1", TILE_ATTR((type == 3 && sel == 1) ? PAL3 : PAL0, 0, 0, 0), 17, y);
+			VDP_drawTextBG(APLAN, "2", TILE_ATTR((type == 3 && sel == 2) ? PAL3 : PAL0, 0, 0, 0), 19, y);
+			VDP_drawTextBG(APLAN, "3", TILE_ATTR((type == 3 && sel == 3) ? PAL3 : PAL0, 0, 0, 0), 21, y);
+			
+			redraw = 0;
 		}
 
 		buttons = JOY_readJoypad(JOY_1);
@@ -1334,45 +1502,142 @@ void SoundTest()
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
 
+		if(pressedButtons & BUTTON_UP)
+		{
+			type--;
+			redraw = 1;
+		}
+
+		if(pressedButtons & BUTTON_DOWN)
+		{
+			type++;
+			redraw = 1;
+		}
+		
+		if(type > 3)
+			type = 0;
+
+		if(type < 0)
+			type = 3;
+		
+		if(redraw)
+			switch(type)
+			{
+				case 0:
+					selmax = 4;
+					break;
+				case 1:
+					selmax = 0;
+					break;
+				case 2:
+					selmax = 2;
+					break;
+				case 3:
+					selmax = 3;
+					break;
+				default:
+					break;
+			}
+		
 		if(pressedButtons & BUTTON_LEFT)
+		{
 			sel--;
+			redraw = 1;
+		}
 
 		if(pressedButtons & BUTTON_RIGHT)
+		{
 			sel++;
+			redraw = 1;
+		}
 
-		if(sel > 2)
+		if(sel > selmax)
 			sel = 0;
 
 		if(sel < 0)
-			sel = 2;
+			sel = selmax;
 
 		if(pressedButtons & BUTTON_A)
 		{
-			if(sel == 0)
+			switch(type)
 			{
-				SND_stopPlay_PCM();
-				SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_LEFT, 0);
-			}
-			if(sel == 1)
-			{
-				SND_stopPlay_PCM();
-				SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_CENTER, 0);
-			}
-			if(sel == 2)
-			{
-				SND_stopPlay_PCM();
-				SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_RIGHT, 0);
+				case 0: //YM2612
+				{
+					ymTest(sel, octave);
+				}
+				break;
+				case 1:
+				{
+					octave += 8;
+					if(octave > 56)
+						octave = 0;
+					redraw = 1;
+				}
+				break;
+				case 2: // PCM
+				{
+					if(sel == 0)
+					{
+						SND_stopPlay_PCM();
+						SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_LEFT, 0);
+					}
+					if(sel == 1)
+					{
+						SND_stopPlay_PCM();
+						SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_CENTER, 0);
+					}
+					if(sel == 2)
+					{
+						SND_stopPlay_PCM();
+						SND_startPlay_PCM(beep, len, (u8) 16000, SOUND_PAN_RIGHT, 0);
+					}
+				}
+				break;
+				case 3: // PSG
+				{
+					if(sel == 0)
+					{
+						PSG_setFrequency(0, 200);
+						PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+					}
+					if(sel == 1)
+					{
+						PSG_setFrequency(1, 2000);
+						PSG_setEnvelope(1, PSG_ENVELOPE_MAX);
+					}
+					if(sel == 2)
+					{
+						PSG_setFrequency(2, 4095);
+						PSG_setEnvelope(2, PSG_ENVELOPE_MAX);
+					}
+					if(sel == 3)
+					{
+						PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_TONE3);
+						PSG_setFrequency(3, 500);
+						PSG_setEnvelope(3, PSG_ENVELOPE_MAX);
+					}
+					
+					psgoff = 60;
+				}
+				break;
+				default:
+					break;
 			}
 		}
+		
+		if(psgoff)
+		{
+			psgoff --;
+			if(psgoff == 0)
+				StopPSG();
+		}
 
-		VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL1, 0, 0, 0), 14, 6);
-		VDP_drawTextBG(APLAN, "Left Channel", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 5, 12);
-		VDP_drawTextBG(APLAN, "Center Channel", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 14, 14);
-		VDP_drawTextBG(APLAN, "Right Channel", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 22, 12);
 
 		VDP_waitVSync();
 	}
+	ym2612_keyoff();
 	SND_stopPlay_PCM();
+	StopPSG();
 }
 
 void LEDZoneTest()
@@ -1448,14 +1713,15 @@ void LEDZoneTest()
 				if(x + size < (enable_256 ? 256 : 320))
 					x++;
 			}
+			
+			if(enable_256 && x > (256 - size))
+				x = 256 - size;
+			
+			if(!pal_240 && y > (224 - size))
+				y = 224 - size;
+
 		}
 		
-		if(enable_256 && x > (256 - size))
-			x = 256 - size;
-			
-		if(!pal_240 && y > (224 - size))
-			y = 224 - size;
-
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
 
@@ -1617,6 +1883,7 @@ void PassiveLagTest()
 			VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 2, 17, 7, 7);
 			VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 12, 17, 7, 7);
 			VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 17, 7, 7);
+			VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 32, 17, 7, 7);
 
 			loadvram = 0;
 		}

@@ -472,8 +472,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "http://db-electronics.ca/", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 #endif
 
-			VDP_drawTextBG(APLAN, "Ver. 1.16", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "11/05/2018", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.17", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "21/06/2018", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 
@@ -521,7 +521,7 @@ void DrawCredits()
 
 void CleanUp()
 {
-	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	StopPSG();
 	VDP_resetSprites();
 	VDP_updateSprites();
 	VDP_setHorizontalScroll(PLAN_B, 0);
@@ -726,4 +726,12 @@ u8 CheckHelpAndVO(u16 *buttons, u16 *pressedButtons, int option)
 		}
 	}
 	return 0;
+}
+
+void StopPSG()
+{
+	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	PSG_setEnvelope(1, PSG_ENVELOPE_MIN);
+	PSG_setEnvelope(2, PSG_ENVELOPE_MIN);
+	PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
 }
