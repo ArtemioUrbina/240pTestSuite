@@ -1,0 +1,20 @@
+Version 1.24
+============
+Aesthetic details for GDEMU_SD
+- Updated IP.bin with date and version
+- Added 0GDTEX.pvr for icon display 
+
+General
+- Cleaned up Makefile
+- Fixed Diagonal test help
+- Changed Vertical Scrolling background to 320 instead of 256
+
+
+Version 1.23
+============
+- Fixed linearity help
+- Updated Linearity with proper values for grid.
+- Finally, sonic water "palette swap" (texture swap in this case)
+- Fixed several bugs when changing resolutions in VGA mode
+- Fixed help typos
+- Added vertical scroll
