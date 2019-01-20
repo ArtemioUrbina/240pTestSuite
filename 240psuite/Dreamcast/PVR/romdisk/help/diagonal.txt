@@ -10,5 +10,4 @@ adjusted by fractions up to 1/20th of a degree
 with #GX#G and #GY#G The angle can be adjusted with
 #GL#G and #GR#G
 
-The bars can be set to autorotate with #GA#G and the
-bars can be toggled to full screen by pressing Up.
+The bars can be set to autorotate with #GA#G.

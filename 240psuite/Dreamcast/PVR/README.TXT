@@ -1,7 +1,8 @@
 240p Test Suite
+
 ===============================================================================
-For full dcoumentation and source code, please visit:
-http://junkerhq.net/xrgb/index.php/240p_test_suite
+For full documentation and source code, please visit:
+http://junkerhq.net/240p/
 ===============================================================================
 
 The 240p test suite is a homebrew software suite for video game consoles 
@@ -63,4 +64,4 @@ For full documentation and source code, please visit:
 http://junkerhq.net/240p/
 
 ===============================================================================
-2011-2014 Artemio Urbina
+2011-2019 Artemio Urbina

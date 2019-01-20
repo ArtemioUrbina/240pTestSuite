@@ -858,7 +858,7 @@ void ScrollTest()
 	for(i = 0; i < 4; i++)
 		back[i]->y = (dH - 240)/2;
 	overlay->y = (dH - 240)/2;
-	kiki->x = (dW - 256)/2;
+	kiki->x = (dW - 320)/2;
 
 	for(i = 0; i < 4; i++)
 		IgnoreOffset(back[i]);
@@ -878,7 +878,7 @@ void ScrollTest()
 					back[i]->y -= offsetY;
 				overlay->y -= offsetY;
 			}
-			kiki->x = (dW - 256)/2;
+			kiki->x = (dW - 320)/2;
 			oldvmode = vmode;
 		}
 
@@ -2429,10 +2429,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 		//printf("Analyzing results\n");
 #endif
 		root = sqrt(arraysize);
-		
-		//for(i = 0; i < arraysize/2+1; i++)
-		//limit search from 600hz to 2khz
-		for(i = 600*boxsize; i < 2000*boxsize; i++)
+		for(i = 0; i < arraysize/2+1; i++)
 		{
 			double r1 = creal(out[i]);
 			double i1 = cimag(out[i]);

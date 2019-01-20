@@ -162,17 +162,15 @@ int main(void)
 		res[0] = '\0';
 		GetVideoModeStr(res, 0);
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
-		DrawStringS(x, y, r-0.2, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
-		DrawStringS(x, y, r-0.2, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); 
+		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Configuration"); y += fh; c++;
+		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); 
 
 #ifdef SERIAL
-		/*
-		//if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)
+		if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)
 		{
 			c++;
 			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video Settings"); 
 		}    
-		*/
 #endif
 
 		r = 0.8f;
@@ -309,7 +307,7 @@ int main(void)
 						SelectVideoMode(title);
 						break;
 					case 15:
-						ChangeOptions(title);
+						ShowMenu(GENERALHELP);
 						break;
 					case 16:
 						HelpWindow(GENERALHELP, title);

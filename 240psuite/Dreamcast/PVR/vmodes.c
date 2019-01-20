@@ -21,8 +21,8 @@ vid_mode_t custom_vga =
 	VID_INTERLACE,
 	CT_VGA,
 	PM_RGB565,
-	526, 855,
-	175, 36,
+	524, 857,
+	172, 40,
 	21, 260,
 	135, 855,
 	36, 516,
@@ -662,6 +662,10 @@ void TestVideoMode(int mode)
 		source_mode = &custom_576;
 	if(mode == VIDEO_288P)
 		source_mode = &custom_288;
+	if(mode == VIDEO_480P)
+		source_mode = &custom_vga;
+	if(mode == VIDEO_480P_SL)
+		source_mode = &custom_vga;
 
 	if(!source_mode)
 		return;

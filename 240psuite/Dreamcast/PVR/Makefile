@@ -1,15 +1,16 @@
 TARGET = main
 
 #optional -DUSE_FFTW -DSERIAL 
-OPTFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DUSE_FFTW -DSERIAL
+CFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DUSE_FFTW 
 
-KOS_CFLAGS+= $(OPTFLAGS) 
+KOS_CFLAGS+= $(CFLAGS) 
 
 all: $(TARGET).bin
 
 include $(KOS_BASE)/Makefile.rules
 
-.SRCS	=	main.c \
+.SRCS	=\
+            main.c \
             image.c \
             font.c \
             help.c \
@@ -21,6 +22,19 @@ include $(KOS_BASE)/Makefile.rules
             vmufs.c \
             vmu.c \
             menu.c \
+
+HEADERS	=\
+            image.h \
+            font.h \
+            help.h \
+            tests.h \
+            patterns.h \
+            vmodes.h \
+            vmu_print.h \
+            controller.h \
+            vmufs.h \
+            vmu.h \
+            menu.h \
 
 OBJS = $(.SRCS:.c=.o)
 
@@ -60,18 +74,18 @@ $(TARGET).bin: $(TARGET).elf
 #	strip $(TARGET).elf
 
 run: $(TARGET).bin
-	$(KOS_LOADER) $(TARGET).bin
+	$(KOS_LOADER) $(TARGET).bin -t 192.168.1.251
 
 cdi: $(TARGET).bin
 	scramble $(TARGET).bin 1ST_READ.BIN
-	mkisofs -C 0,11702 -V 240pPVR -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 1ST_READ.BIN
-	cdi4dc 240p.iso 240pPVR.cdi
+	mkisofs -C 0,11702 -V 240pSuite -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN
+	cdi4dc 240p.iso 240pSuite.cdi
 	rm 240p.iso 1ST_READ.BIN
 
 zip: $(TARGET).bin
 	scramble $(TARGET).bin 1ST_READ.BIN
-	mkisofs -C 0,11702 -V 240pPVR -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 1ST_READ.BIN
-	cdi4dc 240p.iso 240pPVR.cdi
-	zip 240p-DC-PVR-1.x.zip  README.TXT 240pPVR.cdi
-	rm 240p.iso 1ST_READ.BIN 240pPVR.cdi
+	mkisofs -C 0,11702 -V 240pSuite -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN
+	cdi4dc 240p.iso 240pSuite.cdi 
+	zip 240p-DC-PVR-1.x.zip  README.TXT 240pSuite.cdi
+	rm 240p.iso 1ST_READ.BIN 240pSuite.cdi
 
