@@ -91,7 +91,7 @@ void main()
             redraw = 0;
 			refresh = 1;
 			disp_on();
-			set_xres(512, xres_flags);
+			Set512H();
         }
 		
 		if(refresh)
@@ -167,7 +167,11 @@ void main()
 					display_SMPTEColor_00();
 					break;
 				case SOUND_HELP:
+#ifdef CDROM
+					display_soundCD_00();
+#else
 					display_sound_00();
+#endif
 					break;
 				case STRIPED_HELP:
 					display_striped_00();
@@ -358,6 +362,9 @@ void DrawChecksHelp()
 	put_string("This pattern shows all the visible pixels in an", 6, row++);
 	put_string("alternating white and black grid array.", 6, row++);
 	row++;
+	put_string("You can switch between all supported resolutions", 6, row++);
+	put_string("by pressing left or right.", 6, row++);
+	row++;
 	put_string("You can toggle the pattern with SELECT, or turn", 6, row++);
 	put_string("on auto-toggle each frame with the I button.", 6, row++);
 	row++;
@@ -368,7 +375,7 @@ void DrawChecksHelp()
 	put_string("frames are being discarded completely.", 6, row++);
 	row++;
 	put_string("A frame counter can be displayed on screen by", 6, row++);
-	put_string("pressing left on the d-pad.", 6, row++);
+	put_string("pressing up on the d-pad.", 6, row++);
 }
 
 void DrawBleedHelp()

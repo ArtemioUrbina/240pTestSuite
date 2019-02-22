@@ -13,7 +13,7 @@ This adjustment ensures that anything intended
 to be displayed is actually shown, and allows all
 detail to be seen on dark scenes.
 
-Button I changes the inner bars between the
+- Button I changes the inner bars between the
 lowest B,G,R values and gray. You should use the
 blue one in order not to crush detail.
 

@@ -6,7 +6,9 @@ which can be used to test linearity of the signal
 and how well the display or video processor copes
 with scrolling and framerate.
 
-Select can be used to toggle between horizontal
+- Select can be used to toggle between horizontal
 and vertical, while the d-pad up or down
-regulates speed. Button I stops the scroll and
+regulates speed.
+
+- Button I stops the scroll and
 d-pad left or right changes direction.

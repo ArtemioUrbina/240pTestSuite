@@ -54,6 +54,7 @@
 
 #incbin(grid320_240_map, "graphics/grid320_240.fmp");
 #incbin(grid320_224_map, "graphics/grid320_224.fmp");
+#incbin(grid352_240_map, "graphics/grid352_240.fmp");
 
 #incbin(grid256_224_map, "graphics/grid256_224.fmp");
 #incbin(grid256_240_map	, "graphics/grid256_240.fmp");

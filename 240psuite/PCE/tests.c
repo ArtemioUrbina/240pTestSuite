@@ -53,15 +53,25 @@ void DrawCheck()
 	unsigned char pos = 0;
 	unsigned char drawframe = 0;
 	int frame = 0;
+	int res = 2;
+	int text = 0;
 
 	redraw = 1;
     while(!end)
     {   
 		vsync();
 		
+		if(text)
+		{
+			CheckDrawText(res);
+			text --;
+			if(!text)
+				RefreshFS();
+		}
+		
         if(redraw)
         {
-			RedrawCheck();
+			RedrawCheck(res);
             redraw = 0;
 			disp_on();
         }
@@ -98,38 +108,93 @@ void DrawCheck()
 			pos = !pos;
 		}
 		
-		if (controller & JOY_I)
-			alternate = !alternate;
-        
-		if (controller & JOY_LEFT)
+		if (controller & JOY_UP)
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
-			{
-				set_map_data(fs_map, 40, 30);
-				load_map(0, 0, 0, 0, 40, 30);
-			}
+				RefreshFS();
 		}
+		
+		if (controller & JOY_LEFT)
+		{
+			redraw = 1;
+			res --;
+			text = 60;
+		}
+			
+		if (controller & JOY_RIGHT)
+		{
+			redraw = 1;
+			res ++;
+			text = 60;
+		}
+			
+		if(res < 1)
+			res = 4;
+			
+		if(res > 4)
+			res = 1;
+        
+		if (controller & JOY_I)
+			alternate = !alternate;
         
 		if (controller & JOY_II)
 			end = 1;
     }
 }
 
-void RedrawCheck()
+void RedrawCheck(int res)
 {
 	ResetVideo();
 	setupFont();
 
-	set_map_data(fs_map, 40, 30);
+	if(res == 1)
+		Set256H();
+	else if(res == 2)
+		Set320H();
+	else if(res == 3)
+		Set512H();
+	else if(res == 4)
+		Set352H();
+	
+	set_screen_size(SCR_SIZE_64x32); 
+	
+	set_map_data(fs_map, 64, 32);
 	set_tile_data(check_bg);
 	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 40, 30);
+	load_map(0, 0, 0, 0, 64, 32);
 	load_palette(0, check_pal, 1); 
-
+	
 	Center224in240(); 
 }
 
+void CheckDrawText(int res)
+{
+	if(res == 1)
+		put_string("256x", 2, 2);
+	if(res == 2)
+		put_string("320x", 2, 2);
+	if(res == 3)
+		put_string("512x", 2, 2);
+	if(res == 4)
+		put_string("352x   (R-Type)", 2, 2);
+				
+	if(Enabled240p)
+	{
+		if(UseDefault)
+			put_string("239", 6, 2);
+		else
+			put_string("240", 6, 2);
+	}
+	else
+		put_string("224", 6, 2);
+}
+
+void RefreshFS()
+{
+	set_map_data(fs_map, 64, 32);
+	load_map(0, 0, 0, 0, 64, 32);
+}
 
 void DrawStripes()
 {
@@ -194,8 +259,8 @@ void DrawStripes()
 			drawframe = !drawframe;
 			if(!drawframe)
 			{
-				set_map_data(fs_map, 40, 30);
-				load_map(0, 0, 0, 0, 40, 30);
+				set_map_data(fs_map, 64, 32);
+				load_map(0, 0, 0, 0, 64, 32);
 			}
 		}
 			
@@ -217,10 +282,10 @@ void RedrawStripes()
 	ResetVideo();
 	setupFont();
 		
-	set_map_data(fs_map, 40, 30);
+	set_map_data(fs_map, 64, 32);
 	set_tile_data(hstripes_bg);
 	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 40, 30);
+	load_map(0, 0, 0, 0, 64, 32);
 	load_palette(0, check_pal, 1);  
 	
 	Center224in240();
@@ -271,12 +336,12 @@ void DropShadow()
 #endif
 					break;
 				case 2:
-					set_map_data(fs_map, 40, 3);
-					load_map(0, 0, 0, 0, 40, 3);
+					set_map_data(fs_map, 64, 3);
+					load_map(0, 0, 0, 0, 64, 3);
 					break;
 				case 3:
-					set_map_data(fs_map, 40, 3);
-					load_map(0, 0, 0, 0, 40, 3);
+					set_map_data(fs_map, 64, 3);
+					load_map(0, 0, 0, 0, 64, 3);
 					break;
 			}
 		}
@@ -447,17 +512,17 @@ void RedrawDropShadow(unsigned char back)
 #endif
 			break;
 		case 2:
-			set_map_data(fs_map, 40, 30);
+			set_map_data(fs_map, 64, 32);
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
+			load_map(0, 0, 0, 0, 64, 32);
 			load_palette(0, check_pal, 1); 
 			break;
 		case 3:
-			set_map_data(fs_map, 40, 30);
+			set_map_data(fs_map, 64, 32);
 			set_tile_data(check_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
+			load_map(0, 0, 0, 0, 64, 32);
 			load_palette(0, check_pal, 1);
 			break;
 	}
@@ -623,17 +688,17 @@ void RefreshStriped(char back)
 #endif
 			break;
 		case 2:
-			set_map_data(fs_map, 40, 30);
+			set_map_data(fs_map, 64, 32);
 			set_tile_data(hstripes_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
+			load_map(0, 0, 0, 0, 64, 32);
 			load_palette(0, check_pal, 1);
 			break;
 		case 3:
-			set_map_data(fs_map, 40, 30);
+			set_map_data(fs_map, 64, 32);
 			set_tile_data(check_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
+			load_map(0, 0, 0, 0, 64, 32);
 			load_palette(0, check_pal, 1);
 			break;
 	}
@@ -745,7 +810,7 @@ void ScrollTest()
 			disp_off();
 			if(!vertical)
 			{
-				set_xres(320, xres_flags);
+				Set320H();
 				set_screen_size(SCR_SIZE_32x32);
 	
 #ifndef CDROM1
@@ -766,7 +831,7 @@ void ScrollTest()
 			}
 			else
 			{
-				set_xres(256, xres_flags);
+				Set256H();
 				set_screen_size(SCR_SIZE_32x64);
 #ifndef CDROM1
 				load_background(kiki_bg, kiki_pal, kiki_map, 32, 64);
@@ -855,7 +920,7 @@ void ScrollTest()
 		else
 		{
 			if(!pause)
-				y += spd*dir;
+				y -= spd*dir;
 				
 			if(y > 512)
 				y = 0;
@@ -893,10 +958,10 @@ void LEDZoneTest()
         {
 			ResetVideo();
 
-			set_map_data(fs_map, 40, 30);
+			set_map_data(fs_map, 64, 32);
 			set_tile_data(white_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
+			load_map(0, 0, 0, 0, 64, 32);
 			set_color_rgb(1, 0, 0, 0); 
 
 			Center224in240();

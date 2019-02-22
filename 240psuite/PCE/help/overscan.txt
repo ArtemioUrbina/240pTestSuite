@@ -5,13 +5,13 @@ With this pattern you can interactively find out
 the overscan in pixels and percentage of each
 edge in a display.
 
-Increment the overscan with left and right until
+- Increment the overscan with left and right until
 you see the white border, then go back one pixel.
 The resulting number is the amount of overscan
 in pixels in each direction.
 
-The SELECT button allows faster movement of the
-borders.
+- The SELECT button allows faster movement of 
+the borders.
 
 This pattern follows the current video options,
 so you can check how it handles in 239, 240, and

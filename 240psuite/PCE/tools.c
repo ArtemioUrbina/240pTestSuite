@@ -244,7 +244,8 @@ void RedrawOptions()
 	SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), 0);
 	SetFontColors(11, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 	
-	set_xres(512, xres_flags);
+	Set512H();
+
 #ifndef CDROM1
 	set_map_data(MB512_map, 64, 30);
 	set_tile_data(MB512_bg);
@@ -361,7 +362,7 @@ int ExecuteOptions(int sel)
 			
 			val = 2;
 			
-			set_xres(512, xres_flags);
+			Set512H();
 			break;
 		case 3:
 			if(Enabled_C_BW)
@@ -376,7 +377,7 @@ int ExecuteOptions(int sel)
 			}
 			val = 2;
 			
-			set_xres(512, xres_flags);
+			Set512H();
 			break;
 		case 4:
 			val = 3;

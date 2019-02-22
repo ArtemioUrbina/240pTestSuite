@@ -173,7 +173,7 @@ void LagTest()
 			setupFont();
 			SetFontColors(14, RGB(7, 7, 7), 0, RGB(7, 7, 7));
 			
-			set_xres(256, xres_flags);
+			Set256H();
 #ifndef CDROM1
 			set_map_data(lagback_map, 32, 30);
 			set_tile_data(lagback_bg);
@@ -302,10 +302,10 @@ void VScrollTest()
 			
 			set_screen_size(SCR_SIZE_32x32);
 			scroll(0, x, y, 0, 240, 0xC0);
-			set_map_data(fs_map, 40, 32);
+			set_map_data(fs_map, 64, 32);
 			set_tile_data(cgrid_bg);
 			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 32);
+			load_map(0, 0, 0, 0, 64, 32);
 			load_palette(0, check_pal, 1); 
 
 			Center224in240(); 
@@ -383,7 +383,7 @@ load:   lda     sine,x
 		lda     #HIGH(112)
 		sta     $0803
 		
-		lda     #$EE
+		lda     #$FF
 		sta     $0801		
 		
 		rts
@@ -693,10 +693,10 @@ void RedrawManualLagTest()
 	SetFontColors(15, 0, RGB(7, 0, 0), 0);
 
 #ifndef CDROM1			
-	set_map_data(fs_map, 40, 30);
+	set_map_data(fs_map, 64, 32);
 	set_tile_data(white_bg);
 	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 40, 30);
+	load_map(0, 0, 0, 0, 64, 32);
 	set_color_rgb(1, 0, 0, 0);   
 #else
 #endif

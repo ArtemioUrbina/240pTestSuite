@@ -6,4 +6,4 @@ frames, along with a 1khz test tone.
 You can verify the sync between audio and video
 with recording equipment or specialized hardware.
 
-Press I to start/stop the test.
+- Press I to start/stop the test.

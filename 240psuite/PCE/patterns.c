@@ -641,6 +641,7 @@ void DrawGrid(char type)
 {
 	unsigned char end = 0;
 	unsigned char showcolor = 0;
+	unsigned char rt = 0;
 
 	redraw = 1;
     while(!end)
@@ -652,11 +653,17 @@ void DrawGrid(char type)
 			ResetVideo();
 
 			if(type == 1)
-				set_xres(256, xres_flags);
+				Set256H();
 			else if(type == 2)
-				set_xres(320, xres_flags);
+			{
+				if(!rt)
+					Set320H();
+				else
+					Set352H();
+			}
 			else if(type == 3)
-				set_xres(512, xres_flags);
+				Set512H();
+			
 #ifndef CDROM1		
 			set_tile_data(grid_bg);
 			load_tile(0x1000);
@@ -672,12 +679,20 @@ void DrawGrid(char type)
 					load_map(0, 0, 0, 0, 32, Enabled240p ? 30 : 28);
 					break;
 				case 2:
-					if(Enabled240p)
-						set_map_data(grid320_240_map, 40, 30);
-					else
-						set_map_data(grid320_224_map, 40, 28);
+					if(!rt)
+					{
+						if(Enabled240p)
+							set_map_data(grid320_240_map, 40, 30);
+						else
+							set_map_data(grid320_224_map, 40, 28);
 
-					load_map(0, 0, 0, 0, 40, Enabled240p ? 30 : 28);
+						load_map(0, 0, 0, 0, 40, Enabled240p ? 30 : 28);
+					}
+					else
+					{
+						set_map_data(grid352_240_map, 44, 30);
+						load_map(0, 0, 0, 0, 44, 30);
+					}
 					break;
 				case 3:
 					if(Enabled240p)
@@ -705,10 +720,15 @@ void DrawGrid(char type)
 					break;
 				case 2:
 					set_screen_size(SCR_SIZE_64x32); 
-					if(Enabled240p)
-						cd_loadvram(GPHX_OVERLAY, OFS_grid320_240_BAT_bin, 0x0000, SIZE_grid320_240_BAT_bin);
+					if(!rt)
+					{
+						if(Enabled240p)
+							cd_loadvram(GPHX_OVERLAY, OFS_grid320_240_BAT_bin, 0x0000, SIZE_grid320_240_BAT_bin);
+						else
+							cd_loadvram(GPHX_OVERLAY, OFS_grid320_224_BAT_bin, 0x0000, SIZE_grid320_224_BAT_bin);
+					}
 					else
-						cd_loadvram(GPHX_OVERLAY, OFS_grid320_224_BAT_bin, 0x0000, SIZE_grid320_224_BAT_bin);
+						cd_loadvram(GPHX_OVERLAY, OFS_grid352_240_BAT_bin, 0x0000, SIZE_grid352_240_BAT_bin);
 					break;
 				case 3:
 					set_screen_size(SCR_SIZE_64x32); 
@@ -746,6 +766,12 @@ void DrawGrid(char type)
 				set_color_rgb(256, 7, 7, 7);
 			else
 				set_color_rgb(256, 0, 0, 0);
+		}
+		
+		if (controller & JOY_UP && type == 2)
+		{
+			redraw = 1;
+			rt = !rt;
 		}
     }
 }
@@ -881,10 +907,10 @@ void RedrawWhite()
 {
 	ResetVideo();
 
-	set_map_data(fs_map, 40, 30);
+	set_map_data(fs_map, 64, 32);
 	set_tile_data(white_bg);
 	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 40, 30);
+	load_map(0, 0, 0, 0, 64, 32);
 	load_palette(0, check_pal, 1);  
 	Center224in240();
 }
@@ -1019,12 +1045,12 @@ void DrawLinearity256()
 #endif
 			
             redraw = 0;
+			Set256H();
 			if(Enabled240p)
 			{
 				Set224p();
 				Enabled240p = 1;
 			}
-			set_xres(256, xres_flags);
 			disp_on();
         }
 
@@ -1112,7 +1138,7 @@ void DrawGray()
         if(redraw)
         {
 			ResetVideo();
-			set_xres(256, xres_flags);
+			Set256H();
 
 #ifndef CDROM1			
 			set_map_data(gray_map, 32, 30);
@@ -1324,7 +1350,7 @@ void RedrawOverscan()
 	
 	set_color_rgb(1, 7, 7, 7);
 	disp_on();
-	set_xres(256, xres_flags);
+	Set256H();
 }
 
 void RefreshOverscan(int sel)

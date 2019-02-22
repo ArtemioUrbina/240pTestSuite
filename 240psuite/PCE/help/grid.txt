@@ -1,17 +1,20 @@
                        GRID
 
 These grid tests change horizontal resolution
-between 256, 320 and 512. You can also vary the
+between 256, 320, 352, and 512. You can vary the
 vertical resolution from the options menu. The
-pattern should fill all of the 4:3 screen area.
+pattern should fill the 4:3 screen area.
 
-You can use it to verify that all the visible area
-is being displayed, and that there is no distortion
-present. Consumer TVs may not show the red squares.
+You can use it to verify the visible area is being
+displayed, and to check for distortion. Consumer
+TVs may not show the red squares due to overscan.
 
 The Grids are not perfectly centered within the
 NTSC signal, and that is normal. It is the way
-Hudson uses each resolution.
+Hudson/NEC used each resolution.
 
-You can press button I to fill all the video signal
-background area.
+- You can press button I to fill all the video
+signal background area.
+
+- The 352x240 resolution used by R-Type can be
+selected by pressing up while in the 320 grid.

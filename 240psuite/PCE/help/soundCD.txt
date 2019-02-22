@@ -1,0 +1,12 @@
+                      SOUND
+
+
+
+This simple test plays a PSG sound in either
+or both channels.
+
+Aside from PSG, it can also play CDDA and
+ADPCM audio.
+
+It can be used to determine if the audio chain is
+working properly.

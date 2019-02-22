@@ -1,11 +1,11 @@
                   WHITE SCREEN
 
 
-This pattern can be changed between white, black,
+- This pattern can be changed between white, black,
 red, green, blue and custom color full screens by
 using button I.
 
-Pressing Select while displaying the white screen
+- Pressing Select while displaying the white screen
 will enter color edit mode, to select the RGB
 color to fill the screen with.
 
@@ -13,4 +13,4 @@ Some displays and scalers have issues when
 changing between a black 0 IRE and a white screen.
 
 This pattern can also be used to check color
-purity, and for dead pixels in some displays.
+purity, and for dead pixels in digital displays.

@@ -6,5 +6,5 @@ This pattern can be used to calibrate colors, but
 black level does not comply to the standard due
 to console capabilities.
 
-You can toggle between 75% and 100% SMPTE color
+- You can toggle between 75% and 100% SMPTE color
 bars by pressing I.

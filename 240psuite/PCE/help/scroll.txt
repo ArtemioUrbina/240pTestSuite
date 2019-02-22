@@ -4,13 +4,16 @@
 This test shows either an horizontal background
 from Sonic or a vertical one from Kiki Kaikai.
 
-Speed can be varied with up & down on the
+- Speed can be varied with up & down on the
 d-pad and scroll direction with left or right.
-Button I stops the screen and SELECT toggles
-between vertical and horizontal scroll.
+
+- Button I stops the screen
+
+- SELECT toggles between vertical and horizontal
+scroll.
 
 This can be used to notice any drops in
 framerate, or pixel width inconsistencies.
 
 Sonic is a trademark of Sega Enterprises Ltd.
-Kiki Kaikai is a trademark of Namco Bandai.
+Kiki Kaikai is a trademark of Taito/Square.

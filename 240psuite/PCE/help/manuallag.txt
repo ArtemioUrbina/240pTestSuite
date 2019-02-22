@@ -22,11 +22,11 @@ pressed before the actual intersection frame, the
 
 result will be ignored (but still shown on screen).
 
-SELECT can be used to change the direction
+- SELECT can be used to change the direction
 of the sprite from vertical to horizontal, or
 display both at the same time
 
-Of course the evaluation is dependent on reflexes
+WARNING: the evaluation is dependent on reflexes
 and/or rhythm more than anything. The visual and
 audio cues are the more revealing aspects which
 the user should consider, of course the interactive

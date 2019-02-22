@@ -63,6 +63,7 @@ extern char grid256_224_map[];
 extern char grid256_240_map[];
 extern char grid320_224_map[];
 extern char grid320_240_map[];
+extern char	grid352_240_map[];
 extern char grid512_224_map[];
 extern char grid512_240_map[];
 

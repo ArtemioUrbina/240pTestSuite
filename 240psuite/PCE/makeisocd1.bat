@@ -34,5 +34,5 @@ pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay loader.s
 pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay 240pSuite.s
 pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay patterns.s
 pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay tests_ext.s
-pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay help.s
+pceas -DCDROM -DHELP_OVL -s -msmall -cd -overlay help.s
 isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl tests_ext.ovl gdata.bin help.ovl adpcm.vox

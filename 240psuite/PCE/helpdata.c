@@ -19,7 +19,7 @@ SMPTEColor_00_02:	.db	"black level does not comply to the standard due"
 			.db	0
 SMPTEColor_00_03:	.db	"to console capabilities."
 			.db	0
-SMPTEColor_00_04:	.db	"You can toggle between 75% and 100% SMPTE color"
+SMPTEColor_00_04:	.db	"- You can toggle between 75% and 100% SMPTE color"
 			.db	0
 SMPTEColor_00_05:	.db	"bars by pressing I."
 			.db	0
@@ -50,7 +50,7 @@ audiosync_00_03:	.db	"You can verify the sync between audio and video"
 			.db	0
 audiosync_00_04:	.db	"with recording equipment or specialized hardware."
 			.db	0
-audiosync_00_05:	.db	"Press I to start/stop the test."
+audiosync_00_05:	.db	"- Press I to start/stop the test."
 			.db	0
 #endasm
 }
@@ -183,12 +183,14 @@ void display_dshadow_00()
 	p_string	dshadow_00_02,6,9
 	p_string	dshadow_00_03,6,10
 	p_string	dshadow_00_04,6,11
-	p_string	dshadow_00_05,6,12
-	p_string	dshadow_00_06,6,13
-	p_string	dshadow_00_07,6,14
+	p_string	dshadow_00_05,6,13
+	p_string	dshadow_00_06,6,14
+	p_string	dshadow_00_07,6,15
 	p_string	dshadow_00_08,6,16
-	p_string	dshadow_00_09,6,17
-	p_string	dshadow_00_10,6,18
+	p_string	dshadow_00_09,6,18
+	p_string	dshadow_00_10,6,19
+	p_string	dshadow_00_11,6,21
+	p_string	dshadow_00_12,6,22
 	rts
 
 dshadow_00_00:	.db	"DROP SHADOW TEST"
@@ -199,19 +201,23 @@ dshadow_00_02:	.db	"It displays a simple sprite shadow (32x32 pixels)"
 			.db	0
 dshadow_00_03:	.db	"against a background, but the shadow is shown only"
 			.db	0
-dshadow_00_04:	.db	"on each other frame. On a CRT this achieves a"
+dshadow_00_04:	.db	"on each other frame. "
 			.db	0
-dshadow_00_05:	.db	"transparency effect, since you are watching a 30hz"
+dshadow_00_05:	.db	"On a CRT this achieves a transparency effect,"
 			.db	0
-dshadow_00_06:	.db	"shadow on a 60hz signal. No background detail"
+dshadow_00_06:	.db	"since you are watching a 30hz shadow on a 60hz"
 			.db	0
-dshadow_00_07:	.db	"should be lost and the shadow should be visible."
+dshadow_00_07:	.db	"signal. No background detail should be lost and"
 			.db	0
-dshadow_00_08:	.db	"The user can toggle the frame used to draw the"
+dshadow_00_08:	.db	"the shadow should be visible."
 			.db	0
-dshadow_00_09:	.db	"shadow with SELECT. Backgrounds can be"
+dshadow_00_09:	.db	"- The user can toggle the frame used to draw the"
 			.db	0
-dshadow_00_10:	.db	"switched with button I."
+dshadow_00_10:	.db	"shadow with SELECT. "
+			.db	0
+dshadow_00_11:	.db	"- Backgrounds can be"
+			.db	0
+dshadow_00_12:	.db	"switched with button I."
 			.db	0
 #endasm
 }
@@ -267,33 +273,39 @@ void display_grid_00()
 	p_string	grid_00_10,6,18
 	p_string	grid_00_11,6,20
 	p_string	grid_00_12,6,21
+	p_string	grid_00_13,6,23
+	p_string	grid_00_14,6,24
 	rts
 
 grid_00_00:	.db	"GRID"
 			.db	0
 grid_00_01:	.db	"These grid tests change horizontal resolution"
 			.db	0
-grid_00_02:	.db	"between 256, 320 and 512. You can also vary the"
+grid_00_02:	.db	"between 256, 320, 352, and 512. You can vary the"
 			.db	0
 grid_00_03:	.db	"vertical resolution from the options menu. The"
 			.db	0
-grid_00_04:	.db	"pattern should fill all of the 4:3 screen area."
+grid_00_04:	.db	"pattern should fill the 4:3 screen area."
 			.db	0
-grid_00_05:	.db	"You can use it to verify that all the visible area"
+grid_00_05:	.db	"You can use it to verify the visible area is being"
 			.db	0
-grid_00_06:	.db	"is being displayed, and that there is no distortion"
+grid_00_06:	.db	"displayed, and to check for distortion. Consumer"
 			.db	0
-grid_00_07:	.db	"present. Consumer TVs may not show the red squares."
+grid_00_07:	.db	"TVs may not show the red squares due to overscan."
 			.db	0
 grid_00_08:	.db	"The Grids are not perfectly centered within the"
 			.db	0
 grid_00_09:	.db	"NTSC signal, and that is normal. It is the way"
 			.db	0
-grid_00_10:	.db	"Hudson uses each resolution."
+grid_00_10:	.db	"Hudson/NEC used each resolution."
 			.db	0
-grid_00_11:	.db	"You can press button I to fill all the video signal"
+grid_00_11:	.db	"- You can press button I to fill all the video"
 			.db	0
-grid_00_12:	.db	"background area."
+grid_00_12:	.db	"signal background area."
+			.db	0
+grid_00_13:	.db	"- The 352x240 resolution used by R-Type can be"
+			.db	0
+grid_00_14:	.db	"selected by pressing up while in the 320 grid."
 			.db	0
 #endasm
 }
@@ -312,7 +324,8 @@ void display_gridscroll_00()
 	p_string	gridscroll_00_05,6,13
 	p_string	gridscroll_00_06,6,14
 	p_string	gridscroll_00_07,6,15
-	p_string	gridscroll_00_08,6,16
+	p_string	gridscroll_00_08,6,17
+	p_string	gridscroll_00_09,6,18
 	rts
 
 gridscroll_00_00:	.db	"GRID SCROLL TEST"
@@ -325,13 +338,15 @@ gridscroll_00_03:	.db	"and how well the display or video processor copes"
 			.db	0
 gridscroll_00_04:	.db	"with scrolling and framerate."
 			.db	0
-gridscroll_00_05:	.db	"Select can be used to toggle between horizontal"
+gridscroll_00_05:	.db	"- Select can be used to toggle between horizontal"
 			.db	0
 gridscroll_00_06:	.db	"and vertical, while the d-pad up or down"
 			.db	0
-gridscroll_00_07:	.db	"regulates speed. Button I stops the scroll and"
+gridscroll_00_07:	.db	"regulates speed."
 			.db	0
-gridscroll_00_08:	.db	"d-pad left or right changes direction."
+gridscroll_00_08:	.db	"- Button I stops the scroll and"
+			.db	0
+gridscroll_00_09:	.db	"d-pad left or right changes direction."
 			.db	0
 #endasm
 }
@@ -485,13 +500,13 @@ manuallag_01_00:	.db	"MANUAL LAG TEST (2/2)"
 			.db	0
 manuallag_01_01:	.db	"result will be ignored (but still shown on screen)."
 			.db	0
-manuallag_01_02:	.db	"SELECT can be used to change the direction"
+manuallag_01_02:	.db	"- SELECT can be used to change the direction"
 			.db	0
 manuallag_01_03:	.db	"of the sprite from vertical to horizontal, or"
 			.db	0
 manuallag_01_04:	.db	"display both at the same time"
 			.db	0
-manuallag_01_05:	.db	"Of course the evaluation is dependent on reflexes"
+manuallag_01_05:	.db	"WARNING: the evaluation is dependent on reflexes"
 			.db	0
 manuallag_01_06:	.db	"and/or rhythm more than anything. The visual and"
 			.db	0
@@ -601,7 +616,7 @@ overscan_00_02:	.db	"the overscan in pixels and percentage of each"
 			.db	0
 overscan_00_03:	.db	"edge in a display."
 			.db	0
-overscan_00_04:	.db	"Increment the overscan with left and right until"
+overscan_00_04:	.db	"- Increment the overscan with left and right until"
 			.db	0
 overscan_00_05:	.db	"you see the white border, then go back one pixel."
 			.db	0
@@ -609,9 +624,9 @@ overscan_00_06:	.db	"The resulting number is the amount of overscan"
 			.db	0
 overscan_00_07:	.db	"in pixels in each direction."
 			.db	0
-overscan_00_08:	.db	"The SELECT button allows faster movement of the"
+overscan_00_08:	.db	"- The SELECT button allows faster movement of "
 			.db	0
-overscan_00_09:	.db	"borders."
+overscan_00_09:	.db	"the borders."
 			.db	0
 overscan_00_10:	.db	"This pattern follows the current video options,"
 			.db	0
@@ -665,7 +680,7 @@ pluge_00_08:	.db	"to be displayed is actually shown, and allows all"
 			.db	0
 pluge_00_09:	.db	"detail to be seen on dark scenes."
 			.db	0
-pluge_00_10:	.db	"Button I changes the inner bars between the"
+pluge_00_10:	.db	"- Button I changes the inner bars between the"
 			.db	0
 pluge_00_11:	.db	"lowest B,G,R values and gray. You should use the"
 			.db	0
@@ -720,12 +735,13 @@ void display_scroll_00()
 	p_string	scroll_00_02,6,9
 	p_string	scroll_00_03,6,11
 	p_string	scroll_00_04,6,12
-	p_string	scroll_00_05,6,13
-	p_string	scroll_00_06,6,14
-	p_string	scroll_00_07,6,16
-	p_string	scroll_00_08,6,17
-	p_string	scroll_00_09,6,19
-	p_string	scroll_00_10,6,20
+	p_string	scroll_00_05,6,14
+	p_string	scroll_00_06,6,16
+	p_string	scroll_00_07,6,17
+	p_string	scroll_00_08,6,19
+	p_string	scroll_00_09,6,20
+	p_string	scroll_00_10,6,22
+	p_string	scroll_00_11,6,23
 	rts
 
 scroll_00_00:	.db	"SCROLL TEST"
@@ -734,21 +750,23 @@ scroll_00_01:	.db	"This test shows either an horizontal background"
 			.db	0
 scroll_00_02:	.db	"from Sonic or a vertical one from Kiki Kaikai."
 			.db	0
-scroll_00_03:	.db	"Speed can be varied with up & down on the"
+scroll_00_03:	.db	"- Speed can be varied with up & down on the"
 			.db	0
 scroll_00_04:	.db	"d-pad and scroll direction with left or right."
 			.db	0
-scroll_00_05:	.db	"Button I stops the screen and SELECT toggles"
+scroll_00_05:	.db	"- Button I stops the screen"
 			.db	0
-scroll_00_06:	.db	"between vertical and horizontal scroll."
+scroll_00_06:	.db	"- SELECT toggles between vertical and horizontal"
 			.db	0
-scroll_00_07:	.db	"This can be used to notice any drops in"
+scroll_00_07:	.db	"scroll."
 			.db	0
-scroll_00_08:	.db	"framerate, or pixel width inconsistencies."
+scroll_00_08:	.db	"This can be used to notice any drops in"
 			.db	0
-scroll_00_09:	.db	"Sonic is a trademark of Sega Enterprises Ltd."
+scroll_00_09:	.db	"framerate, or pixel width inconsistencies."
 			.db	0
-scroll_00_10:	.db	"Kiki Kaikai is a trademark of Namco Bandai."
+scroll_00_10:	.db	"Sonic is a trademark of Sega Enterprises Ltd."
+			.db	0
+scroll_00_11:	.db	"Kiki Kaikai is a trademark of Taito/Square."
 			.db	0
 #endasm
 }
@@ -794,7 +812,6 @@ sharpness_00_08:	.db	"to as aperture."
 
 void display_sound_00()
 {
-#ifndef CDROM
 #asm
 	p_string	sound_00_00,28,5
 	__ldwi		14
@@ -816,35 +833,38 @@ sound_00_03:	.db	"It can be used to determine if the audio chain is"
 sound_00_04:	.db	"working properly."
 			.db	0
 #endasm
-#else
+}
+
+
+void display_soundCD_00()
+{
 #asm
-	p_string	sound_00_00,28,5
+	p_string	soundCD_00_00,28,5
 	__ldwi		14
 	call		_set_font_pal
-	p_string	sound_00_01,6,9
-	p_string	sound_00_02,6,10
-	p_string	sound_00_03,6,12
-	p_string	sound_00_04,6,13
-	p_string	sound_00_05,6,15
-	p_string	sound_00_06,6,16
+	p_string	soundCD_00_01,6,9
+	p_string	soundCD_00_02,6,10
+	p_string	soundCD_00_03,6,12
+	p_string	soundCD_00_04,6,13
+	p_string	soundCD_00_05,6,15
+	p_string	soundCD_00_06,6,16
 	rts
 
-sound_00_00:	.db	"SOUND"
+soundCD_00_00:	.db	"SOUND"
 			.db	0
-sound_00_01:	.db	"This simple test plays a PSG sound in either"
+soundCD_00_01:	.db	"This simple test plays a PSG sound in either"
 			.db	0
-sound_00_02:	.db	"or both channels."
+soundCD_00_02:	.db	"or both channels."
 			.db	0
-sound_00_03:	.db	"Aside from PSG, it can also play CDDA and"
+soundCD_00_03:	.db	"Aside from PSG, it can also play CDDA and"
 			.db	0
-sound_00_04:	.db	"ADPCM audio."
+soundCD_00_04:	.db	"ADPCM audio."
 			.db	0
-sound_00_05:	.db	"It can be used to determine if the audio chain is"
+soundCD_00_05:	.db	"It can be used to determine if the audio chain is"
 			.db	0
-sound_00_06:	.db	"working properly."
+soundCD_00_06:	.db	"working properly."
 			.db	0
 #endasm
-#endif
 }
 
 
@@ -874,7 +894,7 @@ striped_00_04:	.db	"should be easy to tell if a processor tries to"
 			.db	0
 striped_00_05:	.db	"deinterlace (plus interpolate) or not."
 			.db	0
-striped_00_06:	.db	"You can change backgrounds with I."
+striped_00_06:	.db	"- You can change backgrounds with I."
 			.db	0
 #endasm
 }
@@ -900,13 +920,13 @@ void display_white_00()
 
 white_00_00:	.db	"WHITE SCREEN"
 			.db	0
-white_00_01:	.db	"This pattern can be changed between white, black,"
+white_00_01:	.db	"- This pattern can be changed between white, black,"
 			.db	0
 white_00_02:	.db	"red, green, blue and custom color full screens by"
 			.db	0
 white_00_03:	.db	"using button I."
 			.db	0
-white_00_04:	.db	"Pressing Select while displaying the white screen"
+white_00_04:	.db	"- Pressing Select while displaying the white screen"
 			.db	0
 white_00_05:	.db	"will enter color edit mode, to select the RGB"
 			.db	0
@@ -918,7 +938,7 @@ white_00_08:	.db	"changing between a black 0 IRE and a white screen."
 			.db	0
 white_00_09:	.db	"This pattern can also be used to check color"
 			.db	0
-white_00_10:	.db	"purity, and for dead pixels in some displays."
+white_00_10:	.db	"purity, and for dead pixels in digital displays."
 			.db	0
 #endasm
 }

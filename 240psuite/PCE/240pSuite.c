@@ -73,7 +73,8 @@ void main()
 #endif
 
 	disp_off();
-	set_xres(320, xres_flags);
+	Set320H();
+
 	if(Enabled240p)
 		Set240p();
 
@@ -346,7 +347,7 @@ void DrawN()
         if(redraw)
         {
 			ResetVideo();
-			set_xres(256, xres_flags);
+			Set256H();
 			scroll(0, 0, -32, 0, 240, 0xC0);
 #ifndef CDROM1
 			load_background(n_bg, n_pal, n_map, 32, 20);
@@ -390,7 +391,7 @@ void DrawCredits()
 			SetFontColors(15, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 			SetFontColors(13, RGB(3, 3, 3), RGB(1, 6, 6), 0);
 
-			set_xres(512, xres_flags);
+			Set512H();
 			
 #ifndef CDROM1			
 			set_map_data(MB512_map, 64, 30);
