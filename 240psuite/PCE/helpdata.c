@@ -1,32 +1,3 @@
-void display_SMPTEColor_00()
-{
-#asm
-	p_string	SMPTEColor_00_00,22,5
-	__ldwi		14
-	call		_set_font_pal
-	p_string	SMPTEColor_00_01,6,9
-	p_string	SMPTEColor_00_02,6,10
-	p_string	SMPTEColor_00_03,6,11
-	p_string	SMPTEColor_00_04,6,13
-	p_string	SMPTEColor_00_05,6,14
-	rts
-
-SMPTEColor_00_00:	.db	"SMPTE COLOR BARS"
-			.db	0
-SMPTEColor_00_01:	.db	"This pattern can be used to calibrate colors, but"
-			.db	0
-SMPTEColor_00_02:	.db	"black level does not comply to the standard due"
-			.db	0
-SMPTEColor_00_03:	.db	"to console capabilities."
-			.db	0
-SMPTEColor_00_04:	.db	"- You can toggle between 75% and 100% SMPTE color"
-			.db	0
-SMPTEColor_00_05:	.db	"bars by pressing I."
-			.db	0
-#endasm
-}
-
-
 void display_audiosync_00()
 {
 #asm
@@ -810,6 +781,7 @@ sharpness_00_08:	.db	"to as aperture."
 }
 
 
+#ifndef CDROM
 void display_sound_00()
 {
 #asm
@@ -834,8 +806,9 @@ sound_00_04:	.db	"working properly."
 			.db	0
 #endasm
 }
+#endif
 
-
+#ifdef CDROM
 void display_soundCD_00()
 {
 #asm
@@ -866,6 +839,7 @@ soundCD_00_06:	.db	"working properly."
 			.db	0
 #endasm
 }
+#endif
 
 
 void display_striped_00()

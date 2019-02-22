@@ -164,7 +164,7 @@ void main()
 					display_sharpness_00();
 					break;
 				case SMPTECOLOR_HELP:
-					display_SMPTEColor_00();
+					DrawSMPTECBHelp();
 					break;
 				case SOUND_HELP:
 #ifdef CDROM
@@ -481,6 +481,22 @@ void DrawIre100Help()
 	put_string("steps in the selected range.", 6, row++);
 	put_string("Button I toggles the range between [0-100] and", 6, row++);
 	put_string("[100-140] IRE.", 6, row++);
+}
+
+
+void DrawSMPTECBHelp()
+{
+	row = 5;
+	
+	put_string("SMPTE COLOR BARS", 22, row++);
+	set_font_pal(14);
+	row+=2;
+	put_string("This pattern can be used to calibrate colors, but", 6, row++);
+	put_string("black level does not comply to the standard due", 6, row++);
+	put_string("to console capabilities..", 6, row++);
+	row++;
+	put_string("- You can toggle between 75% and 100% SMPTE color", 6, row++);
+	put_string("bars by pressing I.", 6, row++);
 }
 
 #endif
