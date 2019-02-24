@@ -853,6 +853,8 @@ void ManualLagTest()
 	unsigned char end = 0;
 	int pos = 0;
 
+	showHelp(MANUALLAG_HELP);
+	
 	x = 0;
 	y = 0;
 	x2 = 0;
@@ -879,6 +881,7 @@ void ManualLagTest()
 	y2 = 96;
 	
 	LoadWave();
+	
     while(!end)
     {   
 		vsync();

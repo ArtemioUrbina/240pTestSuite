@@ -1,5 +1,12 @@
               MANUAL LAG TEST (1/2)
 
+WARNING: This evaluation is dependent on reflexes
+and/or rhythm more than anything. The visual and
+audio cues are the more revealing aspects which
+the user should consider, of course the interactive
+factor can give an experienced player the hang of
+the system when testing via different connections.
+
 The main intention is to show a changing pattern
 on the screen, which can be complemented with
 audio. This should show to some degree any lag
@@ -10,28 +17,20 @@ when the sprite is aligned with the one on the
 background, and the offset in frames from the
 actual intersection will be shown on screen. 
 
+
+              MANUAL LAG TEST (2/2)
+
 A one frame 1khz tone is played when audio is
 enabled and the sprites are aligned, and a 500hz
 tone is played when button I is pressed. This
 can be repeated ten times and the software will
 calculate the average. Whenever the button was
 pressed before the actual intersection frame, the
-
-
-              MANUAL LAG TEST (2/2)
-
 result will be ignored (but still shown on screen).
 
 - SELECT can be used to change the direction
 of the sprite from vertical to horizontal, or
 display both at the same time
-
-WARNING: the evaluation is dependent on reflexes
-and/or rhythm more than anything. The visual and
-audio cues are the more revealing aspects which
-the user should consider, of course the interactive
-factor can give an experienced player the hang of
-the system when testing via different connections.
 
 Since a frame is around 16 ms (1000/60) in NTSC
 that value must be considered the general error

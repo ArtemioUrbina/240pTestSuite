@@ -400,12 +400,12 @@ void display_manuallag_00()
 	p_string	manuallag_00_02,6,8
 	p_string	manuallag_00_03,6,9
 	p_string	manuallag_00_04,6,10
-	p_string	manuallag_00_05,6,12
-	p_string	manuallag_00_06,6,13
+	p_string	manuallag_00_05,6,11
+	p_string	manuallag_00_06,6,12
 	p_string	manuallag_00_07,6,14
 	p_string	manuallag_00_08,6,15
-	p_string	manuallag_00_09,6,17
-	p_string	manuallag_00_10,6,18
+	p_string	manuallag_00_09,6,16
+	p_string	manuallag_00_10,6,17
 	p_string	manuallag_00_11,6,19
 	p_string	manuallag_00_12,6,20
 	p_string	manuallag_00_13,6,21
@@ -414,33 +414,33 @@ void display_manuallag_00()
 
 manuallag_00_00:	.db	"MANUAL LAG TEST (1/2)"
 			.db	0
-manuallag_00_01:	.db	"The main intention is to show a changing pattern"
+manuallag_00_01:	.db	"WARNING: This evaluation is dependent on reflexes"
 			.db	0
-manuallag_00_02:	.db	"on the screen, which can be complemented with"
+manuallag_00_02:	.db	"and/or rhythm more than anything. The visual and"
 			.db	0
-manuallag_00_03:	.db	"audio. This should show to some degree any lag"
+manuallag_00_03:	.db	"audio cues are the more revealing aspects which"
 			.db	0
-manuallag_00_04:	.db	"when processing the signal."
+manuallag_00_04:	.db	"the user should consider, of course the interactive"
 			.db	0
-manuallag_00_05:	.db	"As an added feature, the user can click button I"
+manuallag_00_05:	.db	"factor can give an experienced player the hang of"
 			.db	0
-manuallag_00_06:	.db	"when the sprite is aligned with the one on the"
+manuallag_00_06:	.db	"the system when testing via different connections."
 			.db	0
-manuallag_00_07:	.db	"background, and the offset in frames from the"
+manuallag_00_07:	.db	"The main intention is to show a changing pattern"
 			.db	0
-manuallag_00_08:	.db	"actual intersection will be shown on screen. "
+manuallag_00_08:	.db	"on the screen, which can be complemented with"
 			.db	0
-manuallag_00_09:	.db	"A one frame 1khz tone is played when audio is"
+manuallag_00_09:	.db	"audio. This should show to some degree any lag"
 			.db	0
-manuallag_00_10:	.db	"enabled and the sprites are aligned, and a 500hz"
+manuallag_00_10:	.db	"when processing the signal."
 			.db	0
-manuallag_00_11:	.db	"tone is played when button I is pressed. This"
+manuallag_00_11:	.db	"As an added feature, the user can click button I"
 			.db	0
-manuallag_00_12:	.db	"can be repeated ten times and the software will"
+manuallag_00_12:	.db	"when the sprite is aligned with the one on the"
 			.db	0
-manuallag_00_13:	.db	"calculate the average. Whenever the button was"
+manuallag_00_13:	.db	"background, and the offset in frames from the"
 			.db	0
-manuallag_00_14:	.db	"pressed before the actual intersection frame, the"
+manuallag_00_14:	.db	"actual intersection will be shown on screen. "
 			.db	0
 #endasm
 }
@@ -453,41 +453,41 @@ void display_manuallag_01()
 	__ldwi		14
 	call		_set_font_pal
 	p_string	manuallag_01_01,6,7
-	p_string	manuallag_01_02,6,9
-	p_string	manuallag_01_03,6,10
-	p_string	manuallag_01_04,6,11
-	p_string	manuallag_01_05,6,13
-	p_string	manuallag_01_06,6,14
-	p_string	manuallag_01_07,6,15
-	p_string	manuallag_01_08,6,16
-	p_string	manuallag_01_09,6,17
-	p_string	manuallag_01_10,6,18
-	p_string	manuallag_01_11,6,20
-	p_string	manuallag_01_12,6,21
-	p_string	manuallag_01_13,6,22
+	p_string	manuallag_01_02,6,8
+	p_string	manuallag_01_03,6,9
+	p_string	manuallag_01_04,6,10
+	p_string	manuallag_01_05,6,11
+	p_string	manuallag_01_06,6,12
+	p_string	manuallag_01_07,6,13
+	p_string	manuallag_01_08,6,15
+	p_string	manuallag_01_09,6,16
+	p_string	manuallag_01_10,6,17
+	p_string	manuallag_01_11,6,19
+	p_string	manuallag_01_12,6,20
+	p_string	manuallag_01_13,6,21
 	rts
 
 manuallag_01_00:	.db	"MANUAL LAG TEST (2/2)"
 			.db	0
-manuallag_01_01:	.db	"result will be ignored (but still shown on screen)."
+manuallag_01_01:	.db	"A one frame 1khz tone is played when audio is"
 			.db	0
-manuallag_01_02:	.db	"- SELECT can be used to change the direction"
+manuallag_01_02:	.db	"enabled and the sprites are aligned, and a 500hz"
 			.db	0
-manuallag_01_03:	.db	"of the sprite from vertical to horizontal, or"
+manuallag_01_03:	.db	"tone is played when button I is pressed. This"
 			.db	0
-manuallag_01_04:	.db	"display both at the same time"
+manuallag_01_04:	.db	"can be repeated ten times and the software will"
 			.db	0
-manuallag_01_05:	.db	"WARNING: the evaluation is dependent on reflexes"
+manuallag_01_05:	.db	"calculate the average. Whenever the button was"
 			.db	0
-manuallag_01_06:	.db	"and/or rhythm more than anything. The visual and"
+manuallag_01_06:	.db	"pressed before the actual intersection frame, the"
 			.db	0
-manuallag_01_07:	.db	"audio cues are the more revealing aspects which"
+manuallag_01_07:	.db	"result will be ignored (but still shown on screen)."
 			.db	0
-manuallag_01_08:	.db	"the user should consider, of course the interactive"
+manuallag_01_08:	.db	"- SELECT can be used to change the direction"
 			.db	0
-manuallag_01_09:	.db	"factor can give an experienced player the hang of"
+manuallag_01_09:	.db	"of the sprite from vertical to horizontal, or"
 			.db	0
-manuallag_01_10:	.db	"the system when testing via different connections."
+manuallag_01_10:	.db	"display both at the same time"
 			.db	0
 manuallag_01_11:	.db	"Since a frame is around 16 ms (1000/60) in NTSC"
 			.db	0
@@ -807,6 +807,7 @@ sound_00_04:	.db	"working properly."
 #endasm
 }
 #endif
+
 
 #ifdef CDROM
 void display_soundCD_00()

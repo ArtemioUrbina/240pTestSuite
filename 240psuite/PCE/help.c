@@ -300,8 +300,8 @@ void DrawGeneralHelp(char page)
 			put_string("HELP (2/2)", 26, row++);
 			set_font_pal(14);
 			row++;
-			put_string("Grids and other screens are also available in", 6, row++);
-			put_string("256x224, 256x240, 512x224 and 512x240 resolutions.", 6, row++);
+			put_string("Grids and other screens are available in 256x224,", 6, row++);
+			put_string("256x240, 352x240, 512x224 and 512x240 resolutions.", 6, row++);
 			row++;
 			put_string("When in 240p mode the system can start drawing", 6, row++);
 			put_string("from video line 22, which is the default of this", 6, row++);
@@ -362,10 +362,10 @@ void DrawChecksHelp()
 	put_string("This pattern shows all the visible pixels in an", 6, row++);
 	put_string("alternating white and black grid array.", 6, row++);
 	row++;
-	put_string("You can switch between all supported resolutions", 6, row++);
+	put_string("- You can switch between all supported resolutions", 6, row++);
 	put_string("by pressing left or right.", 6, row++);
 	row++;
-	put_string("You can toggle the pattern with SELECT, or turn", 6, row++);
+	put_string("- You can toggle the pattern with SELECT, or turn", 6, row++);
 	put_string("on auto-toggle each frame with the I button.", 6, row++);
 	row++;
 	put_string("When auto-toggle is set, you should see it", 6, row++);
@@ -374,7 +374,7 @@ void DrawChecksHelp()
 	put_string("is being treated as 480i/576i and odd or even", 6, row++);
 	put_string("frames are being discarded completely.", 6, row++);
 	row++;
-	put_string("A frame counter can be displayed on screen by", 6, row++);
+	put_string("- A frame counter can be displayed on screen by", 6, row++);
 	put_string("pressing up on the d-pad.", 6, row++);
 }
 
@@ -389,7 +389,7 @@ void DrawBleedHelp()
 	put_string("upsampling. It consists of one pixel width color", 6, row++);
 	put_string("bars alternating with one pixel width black bars.", 6, row++);
 	row++;
-	put_string("You can change the vertical bars to a checker", 6, row++);
+	put_string("- You can change the vertical bars to a checker", 6, row++);
 	put_string("board with button I.", 6, row++);
 }
 
@@ -417,14 +417,14 @@ void DrawStripesHelp(char page)
 			put_string("is being treated as 480i and odd or even",6, row++);
 			put_string("frames are being discarded completely.", 6, row++);
 			row++;
-			put_string("A frame counter can be displayed on screen by", 6, row++);
+			put_string("- A frame counter can be displayed on screen by", 6, row++);
 			put_string("pressing left.", 6, row++);
 			break;
 		case 2:
 			put_string("HORIZONTAL STRIPES (2/2)", 19, row++);
 			set_font_pal(14);
 			row++;
-			put_string("You can also display vertical bars by pressing up,", 6, row++);
+			put_string("- You can also display vertical bars by pressing up,", 6, row++);
 			put_string("that pattern will help you evaluate if the signal", 6, row++);
 			put_string("is not distorted horizontaly, since all lines", 6, row++);
 			put_string("should be one pixel wide.", 6, row++);
@@ -477,7 +477,7 @@ void DrawIre100Help()
 	put_string("to peak, an all white signal should be equal to", 6, row++);
 	put_string("140 IRE.", 6, row++);
 	row++;
-	put_string("You can press left and right to advance in IRE", 6, row++);
+	put_string("- You can press left and right to advance in IRE", 6, row++);
 	put_string("steps in the selected range.", 6, row++);
 	put_string("Button I toggles the range between [0-100] and", 6, row++);
 	put_string("[100-140] IRE.", 6, row++);

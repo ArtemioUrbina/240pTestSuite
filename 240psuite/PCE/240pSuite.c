@@ -493,7 +493,7 @@ void RefreshCredits()
 
 	set_font_pal(14);	
 	put_string("Ver. 1.05", 50, 7);
-	put_string("22/02/2019", 49, 8);
+	put_string("24/02/2019", 49, 8);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;

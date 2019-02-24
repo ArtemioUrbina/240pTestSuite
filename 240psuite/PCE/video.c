@@ -483,7 +483,7 @@ void Set320H()
 
 void Set512H()
 {
-//HSR     0A05 -> 0C03
+//HSR     0A05 -> 0B03
 //HDR     083F
 #asm
 	lda	_xres_flags
@@ -505,7 +505,7 @@ void Set512H()
 	lda	#$03				; 'HSW' Horizontal synchronous pulse width, R-Type uses 03
 	sta	video_data_l
 	sta	_vdc,X
-	lda	#$0C				; 'HDS' Horizontal display start position -1, R-Type uses 03
+	lda	#$0B				; 'HDS' Horizontal display start position -1, R-Type uses 03
 	sta	video_data_h
 	sta	_vdc+1,X
 
