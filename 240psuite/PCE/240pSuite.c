@@ -124,7 +124,7 @@ void main()
         if (controller & JOY_DOWN) 
         {
             sel++;
-            if(sel > 14)
+            if(sel > 15)
                 sel = 0;
             refresh = 1;
         }
@@ -133,7 +133,7 @@ void main()
         {
             sel--;
             if(sel < 0)
-                sel = 14;
+                sel = 15;
             refresh = 1;
         }
 		
@@ -211,18 +211,21 @@ void main()
 					AudioSyncTest();
 					break;
 				case 12:
-#ifdef CDROM1
-					prev_select = sel;
-#endif
-					Options();
+					MDFourier();
 					break;
 				case 13:
 #ifdef CDROM1
 					prev_select = sel;
 #endif
-					showHelp(GENERAL_HELP);
+					Options();
 					break;
 				case 14:
+#ifdef CDROM1
+					prev_select = sel;
+#endif
+					showHelp(GENERAL_HELP);
+					break;
+				case 15:
 					DrawCredits();
 					break;
 			}
@@ -283,7 +286,7 @@ void RedrawMain()
 
 void RefreshMain(int sel)
 {
-	int row = 8;
+	row = 7;
 
 	set_font_pal(sel == 0 ? 15 : 14);
 	put_string("Test Patterns", HPOS, row++);
@@ -315,13 +318,15 @@ void RefreshMainAux(int sel, int row)
 	put_string("Sound Test", HPOS, row++);
 	set_font_pal(sel == 11 ? 15 : 14);
 	put_string("Audio Sync Test", HPOS, row++);
-	
 	set_font_pal(sel == 12 ? 15 : 14);
-	put_string("Video Options", HPOS, ++row);
+	put_string("MDFourier", HPOS, row++);
 	
 	set_font_pal(sel == 13 ? 15 : 14);
-	put_string("Help", HPOS, ++row);
+	put_string("Video Options", HPOS, ++row);
+	
 	set_font_pal(sel == 14 ? 15 : 14);
+	put_string("Help", HPOS, ++row);
+	set_font_pal(sel == 15 ? 15 : 14);
 	put_string("Credits", HPOS, ++row);
 }
 
@@ -336,8 +341,7 @@ void RefreshMainAux(int sel, int row)
  
 void DrawN()
 {
-	unsigned char end = 1;
-
+	end = 1;
 	redraw = 1;
     do
     {   
@@ -348,11 +352,13 @@ void DrawN()
         {
 			ResetVideo();
 			Set256H();
-			scroll(0, 0, -32, 0, 240, 0xC0);
 #ifndef CDROM1
-			load_background(n_bg, n_pal, n_map, 32, 20);
+			scroll(0, -26, -47, 0, 240, 0xC0);		
+			load_background(n_bg, n_pal, n_map, 25, 18);
 #else
+			scroll(0, 0, -32, 0, 240, 0xC0);
 			set_screen_size(SCR_SIZE_32x32); 
+
 			cd_loaddata(GPHX_OVERLAY, OFS_N_PAL_bin, palCD, SIZE_N_PAL_bin); 
 			load_palette(0, palCD, 16); 
 			cd_loadvram(GPHX_OVERLAY, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
@@ -369,14 +375,14 @@ void DrawN()
 		if(controller & JOY_SEL)
 			end = 0;
     }while(!end);
+	end = 0;
 }
 
 
 void DrawCredits()
-{
-	unsigned char end = 0;
-	int counter = 0;
-
+{	
+	i = 0;
+	end = 0;
 	redraw = 1;
 	refresh = 1;
     while(!end)
@@ -422,16 +428,16 @@ void DrawCredits()
 		}
 		
 		set_font_pal(14);
-		if(counter == 1)
+		if(i == 1)
 			put_string("Artemio Urbina      ", HPOS+2, 8);
-		if(counter == 60*4)
+		if(i == 60*4)
 			put_string("@Artemio (twitter)  ", HPOS+2, 8);
-		if(counter == 60*8)
+		if(i == 60*8)
 			put_string("aurbina@junkerhq.net", HPOS+2, 8);
-		if(counter == 60*16)
-			counter = 0;
+		if(i == 60*16)
+			i = 0;
 			
-		counter++;
+		i++;
 
         controller = joytrg(0);
         
@@ -492,8 +498,8 @@ void RefreshCredits()
 #endif
 
 	set_font_pal(14);	
-	put_string("Ver. 1.05", 50, 7);
-	put_string("24/02/2019", 49, 8);
+	put_string("Ver. 1.06", 50, 7);
+	put_string("01/08/2019", 49, 8);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;
@@ -510,9 +516,7 @@ void RefreshCredits()
 #ifndef SCDROM
 
 void DrawIntro()
-{
-	unsigned char frame;
-	
+{	
 	ResetVideo();
 	setupFont();
 	
@@ -520,19 +524,19 @@ void DrawIntro()
 	set_color(1, 0);
 	SetFontColors(14, 0, 0, 0);
 	put_string("KORDAMP PRESENTS", 12, 14);
-	for(frame = 0; frame < 7; frame ++)
+	for(i = 0; i < 7; i ++)
 	{
-		SetFontColors(14, 0, RGB(frame, frame, frame), 0);
+		SetFontColors(14, 0, RGB(i, i, i), 0);
 		vsync(3);
 	}
 	
-	frame = 5;
-	while(frame)
-		frame --;
+	i = 5;
+	while(i)
+		i --;
 	
-	for(frame = 7; frame > 0; frame --)
+	for(i = 7; i > 0; i --)
 	{
-		SetFontColors(14, 0, RGB(frame, frame, frame), 0);
+		SetFontColors(14, 0, RGB(i, i, i), 0);
 		vsync(3);
 	}
 }

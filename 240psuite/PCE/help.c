@@ -49,10 +49,8 @@ char palCD[512];
 void main()
 #endif
 {
-	unsigned char end = 0;
 	unsigned char page = 1;
 	unsigned char total = 1;
-	unsigned char count = 1;
 
 #ifdef HELP_OVL
 	char data;
@@ -60,8 +58,12 @@ void main()
 	RestoreGlobals();
 	data = HelpItem;
 #endif
+
+	end = 0;
 	redraw = 1;
 	refresh = 1;
+	i = 1;
+	
     while(!end)
     {   
 		vsync();
@@ -164,7 +166,7 @@ void main()
 					display_sharpness_00();
 					break;
 				case SMPTECOLOR_HELP:
-					DrawSMPTECBHelp();
+					display_smptecb_00();
 					break;
 				case SOUND_HELP:
 #ifdef CDROM
@@ -188,7 +190,7 @@ void main()
 					DrawBacklitHelp();
 					break;
 				case BLEED_HELP:
-					DrawBleedHelp();
+					display_colorbleed_00();
 					break;
 				case CHECK_HELP:
 					DrawChecksHelp();
@@ -205,6 +207,9 @@ void main()
 					break;
 				case AUDIOSYNC_HELP:
 					display_audiosync_00();
+					break;
+				case MDFOURIER_HELP:
+					display_mdfourier_00();
 					break;
 			}
 			
@@ -224,24 +229,24 @@ void main()
 			end = 1;
 			
 		if (controller & JOY_LEFT)
-			count--;
+			i--;
 		
 		if (controller & JOY_RIGHT)
-			count++;
+			i++;
 			
-		if(count > total)
-			count = total;
-		if(count < 1)
-			count = 1;
+		if(i > total)
+			i = total;
+		if(i < 1)
+			i = 1;
 			
-		if(page != count)
+		if(page != i)
 		{
 			refresh = 1;
-			page = count;
+			page = i;
 		}
     }	
 	disp_off();
-	read = controller = 0;
+	end = read = controller = 0;
 #ifdef HELP_OVL
 	if(data < HELP_PART_2)
 		cd_execoverlay(MAIN_OVERLAY);
@@ -252,7 +257,9 @@ void main()
 
 #else
 
+#ifndef HELP_OVL
 extern int HelpItem;
+#endif
 
 void showHelp(char data)
 {
@@ -378,21 +385,6 @@ void DrawChecksHelp()
 	put_string("pressing up on the d-pad.", 6, row++);
 }
 
-void DrawBleedHelp()
-{
-	row = 5;
-	
-	put_string("COLOR BLEED", 26, row++);
-	set_font_pal(14);
-	row+=3;
-	put_string("This pattern helps diagnose unneeded color", 6, row++);
-	put_string("upsampling. It consists of one pixel width color", 6, row++);
-	put_string("bars alternating with one pixel width black bars.", 6, row++);
-	row++;
-	put_string("- You can change the vertical bars to a checker", 6, row++);
-	put_string("board with button I.", 6, row++);
-}
-
 void DrawStripesHelp(char page)
 {	
 	row = 5;
@@ -483,21 +475,6 @@ void DrawIre100Help()
 	put_string("[100-140] IRE.", 6, row++);
 }
 
-
-void DrawSMPTECBHelp()
-{
-	row = 5;
-	
-	put_string("SMPTE COLOR BARS", 22, row++);
-	set_font_pal(14);
-	row+=2;
-	put_string("This pattern can be used to calibrate colors, but", 6, row++);
-	put_string("black level does not comply to the standard due", 6, row++);
-	put_string("to console capabilities..", 6, row++);
-	row++;
-	put_string("- You can toggle between 75% and 100% SMPTE color", 6, row++);
-	put_string("bars by pressing I.", 6, row++);
-}
 
 #endif
 

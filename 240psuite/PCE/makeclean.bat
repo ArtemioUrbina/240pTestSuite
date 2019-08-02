@@ -5,3 +5,4 @@ del *.sym
 del *.pce
 del *.iso
 del *.lst
+del gdata.*

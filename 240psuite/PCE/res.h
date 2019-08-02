@@ -49,8 +49,9 @@
 #incpal(MB512_pal, "graphics/back512.pcx", 0, 1);
 
 #incbin(n_map, "graphics/N_BAT.bin");
-#incbin(n_bg, "graphics/N_DATA.bin");
 #incbin(n_pal, "graphics/N_PAL.bin");
+#incbin(n_bg, "graphics/N_DATA.bin");
+
 
 /*
 			TEST 

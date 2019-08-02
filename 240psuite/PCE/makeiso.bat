@@ -5,11 +5,12 @@
 @path=%path%;%HUC_HOME%\bin
 @set PCE_INCLUDE=%HUC_HOME%/include/pce
 
+CALL makeclean.bat
+
 @REM Compile, assemble, and link
 @REM -fno-recursive makes globals fail
-CALL makeclean.bat
 huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay loader.c font.c video.c
 pceas -DSCDROM -DCDROM -s -msmall -scd -overlay loader.s
 huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay 240pSuite.c font.c video.c tests.c patterns.c tools.c help.c 
 pceas -DSCDROM -DCDROM -s -msmall -scd -overlay 240pSuite.s
-isolink 240pSuite.iso loader.ovl 240pSuite.ovl adpcm.vox
+isolink 240pSuite.iso loader.ovl 240pSuite.ovl adpcm.vox sweep.vox

@@ -63,6 +63,9 @@ void main()
 		case TOOL_AUDIOSYNC:
 			AudioSyncTest();
 			break;
+		case TOOL_MDFOURIER:
+			MDFourier();
+			break;
 	}
 	cd_execoverlay(MAIN_OVERLAY);
 }
@@ -152,17 +155,17 @@ void LoadNumbers()
 
 void LagTest()
 {
-	unsigned char end = 0;
 	int framecnt = 0;
 	int frames = 0;
 	int seconds = 0;
 	int minutes = 0;
 	int hours = 0;
-	unsigned char running = 0;
 	int lsd = 0;
 	int msd = 0;
+	unsigned char running = 0;
 	unsigned char update = 0;
 
+	end = 0;
 	redraw = 1;
     while(!end)
     {   
@@ -282,13 +285,13 @@ void LagTest()
 
 void VScrollTest()
 {
-	unsigned char end = 0;
 	int x = 0;
 	int y = 0;
 	int *pos = 0;
 	unsigned char pause = 0;
 	int acc = 1;
 
+	end = 0;
 	redraw = 1;
 	pos = &x;
 	speed = 1;
@@ -359,163 +362,405 @@ void VScrollTest()
 	set_screen_size(SCR_SIZE_64x32);
 }
 
-void LoadWave()
-{
-#asm
-		lda     #0
-		sta     $0800
-		lda     #%010_00000
-		sta     $0804
-		lda     #%000_00000
-		sta     $0804
-		
-		clx   
-				
-load:   lda     sine,x
-		sta     $0806 
-		inx           
-		cpx     #32   
-		bne     load
-		
-		
-		lda     #LOW(112)
-		sta     $0802
-		lda     #HIGH(112)
-		sta     $0803
-		
-		lda     #$FF
-		sta     $0801		
-		
-		rts
-		
-sine:   db      18,22,24,26,28,28,30,30
-		db      30,30,28,28,26,24,22,18
-		db      12,8,6,4,2,2,0,0
-		db      0,0,2,2,4,6,8,12
-#endasm		
-}
+const unsigned char *psg_ch = 0x800;
+const unsigned char *psg_bal = 0x801;
+const unsigned char *psg_freqlo = 0x802;
+const unsigned char *psg_freqhi = 0x803;
+const unsigned char *psg_ctrl = 0x804;
+const unsigned char *psg_chbal = 0x805;
+const unsigned char *psg_data = 0x806;
+const unsigned char *psg_noise = 0x807;
+const unsigned char *psg_lfofreq = 0x808;
+const unsigned char *psg_lfoctrl = 0x809;
 
-void SetWave1000()
-{
-#asm	
-		lda     #LOW(112)
-		sta     $0802
-		lda     #HIGH(112)
-		sta     $0803
+#define PULSE_TRAIN_FREQ 	13
+#define PULSE_INTERNAL_FREQ	9
+#define PULSE_SKIP_EMU		4
+
+
+/*
+http://ppmck.web.fc2.com/wavetable_js.html
+*/
+
+const unsigned char sine1x[32] = {	0x11, 0x14, 0x17, 0x1a, 0x1c, 0x1e, 0x1f, 0x1f,
+									0x1f, 0x1f, 0x1e, 0x1c, 0x1a, 0x17, 0x14, 0x11,
+									0x0e, 0x0b, 0x08, 0x05, 0x03, 0x01, 0x00, 0x00,
+									0x00, 0x00, 0x01, 0x03, 0x05, 0x08, 0x0b, 0x0e };
+/*									
+const unsigned char sine2x[32] = {	0x13, 0x18, 0x1d, 0x1f, 0x1f, 0x1d, 0x18, 0x13, 
+									0x0c, 0x07, 0x02, 0x00, 0x00, 0x02, 0x07, 0x0c, 
+									0x13, 0x18,	0x1d, 0x1f, 0x1f, 0x1d, 0x18, 0x13,
+									0x0c, 0x07, 0x02, 0x00, 0x00, 0x02, 0x07, 0x0c };
+*/
 	
-		rts
-#endasm		
+const unsigned char sine4x[32] = {	0x16, 0x1e, 0x1e, 0x16, 0x09, 0x01, 0x01, 0x09, 
+									0x16, 0x1e, 0x1e, 0x16, 0x09, 0x01, 0x01, 0x09,
+									0x16, 0x1e, 0x1e, 0x16, 0x09, 0x01, 0x01, 0x09,
+									0x16, 0x1e, 0x1e, 0x16, 0x09, 0x01, 0x01, 0x09 };
+/*
+const unsigned char sqstep[32] = { 	0x18, 0x1C, 0x1C, 0x1C,	0x00, 0x1C, 0x04, 0x1C,
+									0x08, 0x1C, 0x0C, 0x1C,	0x10, 0x1C, 0x14, 0x1C,
+									0x18, 0x1C, 0x1C, 0x1C,	0x00, 0x1C, 0x00, 0x1C,
+									0x00, 0x1C, 0x00, 0x1C,	0x04, 0x1C, 0x08, 0x1C };				
+			
+const unsigned char square[32] = {	0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 
+									0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 
+									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+*/
+/*			
+const unsigned char tiangle[32] = {	0x01, 0x03, 0x05, 0x07, 0x09, 0x0b, 0x0d, 0x0f, 
+									0x11, 0x13, 0x15, 0x17, 0x19, 0x1b, 0x1d, 0x1f,
+									0x1f, 0x1d, 0x1b, 0x19, 0x17, 0x15, 0x13, 0x11,
+									0x0f, 0x0d, 0x0b, 0x09, 0x07, 0x05, 0x03, 0x01 };
+			
+const unsigned char saw[32] = {		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+									0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+									0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+									0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f };
+			
+const unsigned char sinesaw[32] = {	0x10, 0x13, 0x16, 0x18, 0x1B, 0x1D, 0x1E, 0x1F,
+									0x1F, 0x1F, 0x1E, 0x1D, 0x1B, 0x18, 0x16, 0x13,
+									0x01, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E,
+									0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x1E };
+*/
+
+void LoadWave(unsigned char chan, unsigned char *wave)
+{	
+	__sei();
+	*psg_ch = chan;
+	*psg_ctrl = 0;
+	for(i = 0; i < 32; i++)
+	{
+		*psg_data = *wave;
+		wave++;
+	}
+	*psg_bal = 0xff;
+	*psg_noise = 0;
+	__cli();
 }
 
-void SetWave500()
+void PlayLeft(unsigned char chan)
 {
-#asm	
-		lda     #LOW(224)
-		sta     $0802
-		lda     #HIGH(224)
-		sta     $0803
+	__sei();
+	*psg_ch = chan;
+	*psg_chbal = 0xf0;
+	*psg_ctrl = 0x9f;
+	__cli();
+}
+
+void PlayRight(unsigned char chan)
+{
+	__sei();
+	*psg_ch = chan;
+	*psg_chbal = 0x0f;
+	*psg_ctrl = 0x9f;
+	__cli();
+}
+
+
+void PlayCenter(unsigned char chan)
+{
+	__sei();
+	*psg_ch = chan;
+	*psg_chbal = 0xff;
+	*psg_ctrl = 0x9f;
+	__cli();
+}
+
+void StopAudio(unsigned char chan)
+{
+	__sei();
+	*psg_ch = chan;
+	*psg_ctrl = 0;
+	__cli();
+}
+
+void StopAllAudio()
+{
+	for(i = 0; i < 6; i++)
+		StopAudio(i);
+}
+
+
+/*
+
+                       3580000
+ 12 bit value = ---------------------
+                 32 x frequency (Hz)
+				 
+12 as value -> 9322.91Hz
+13 as value -> 8605.76Hz
+
+2044 as value -> 54.73Hz
+4    as value -> 27968.75Hz
+*/
+
+
+void SetWaveFreq(unsigned char chan, unsigned int freq)
+{
+	__sei();
+	*psg_ch = chan;
+	*psg_freqlo = freq & 0xff;
+	*psg_freqhi = freq >> 8;
+	__cli();
+}
+
+void SetNoiseFreq(unsigned int chan, unsigned int freq)
+{
+	__sei();
+	*psg_ch = chan;
+	*psg_noise = 0x80 | (freq & 0x1F)^0x1F;
+	__cli();
+}
+
+void StopNoise(unsigned int chan)
+{
+	__sei();
+	*psg_ch = chan;
+	*psg_noise = 0;
+	*psg_ctrl = 0;
+	__cli();
+}
+
+void ExecutePulseTrain(unsigned int chann)
+{
+	//Sync
 	
-		rts
-#endasm		
+	SetWaveFreq(chann, PULSE_TRAIN_FREQ);
+	for(i = 0; i < 10; i++)
+	{
+		PlayCenter(chann);
+		vsync();
+		StopAudio(chann);
+		vsync();
+	}
 }
 
-void PlayLeft()
+void ExecuteSilence()
 {
-#asm
-		lda     #$F0
-		sta     $0805
+	//Silence
+	for(i = 0; i < 20; i++)
+		vsync();
+}
+
+void PlayRampChannel(int chann)
+{
+	//54Hz to 22375Hz
+	PlayCenter(chann);
+	for(i = 2044; i > 4; i-=6)
+	{
+		SetWaveFreq(chann, i);
+		vsync();
+	}
+	StopAudio(chann);
+}
+
+/*
+void PlayBothRampChannel(int chann1, int chann2)
+{
+	//54Hz to 22375Hz
+	PlayLeft(chann1);
+	PlayRight(chann2);
+	for(i = 2044; i > 4; i-=6)
+	{
+		SetWaveFreq(chann1, i);
+		SetWaveFreq(chann2, i);
+		vsync();
+	}
+	StopAudio(chann1);
+	StopAudio(chann2);
+}
+*/
+
+#define SetupToneCommand(command) SetWaveFreq(0, PULSE_INTERNAL_FREQ); PlayCenter(0); vsync(); StopAudio(0); command;
+
+void MDFourierExecute()
+{
+	int s, e;
+	
+	StopAllAudio();
+	
+#ifdef CDROM
+	if(cd_status(0) != 0)
+	  cd_pause();
+	  
+	if(ad_stat())
+		ad_stop();
+#endif
+
+	vsync();
+	ExecutePulseTrain(0);
+	ExecuteSilence();
+	
+	PlayRampChannel(0);  // sine 1x
+	PlayRampChannel(1);  // sine 4x
+	
+	PlayCenter(4);
+	SetNoiseFreq(4, 0);
+	for(i = 0; i < 200; i++)	
+		vsync();
+	StopNoise(4);
+	
+	ExecuteSilence();
+	ExecutePulseTrain(0);
+	
+#ifdef CDROM
+	
+	// Wait PAUSE
+	for(i = 0; i < 4; i++)	
+		vsync();
 		
-		lda     #%100_11111
-		sta     $0804
-		rts
-#endasm
+	// ADPCM
+	//
+	SetupToneCommand(ad_play(0, 64000, 15, 0));
+	
+	//Wait for ADPCM to end
+	for(i = 0; i < 280; i++)	
+		vsync();
+	SetupToneCommand(vsync());
+
+	clock_reset();
+	// CD-DA	
+	s = clock_tt();
+	SetupToneCommand(cd_playtrk(4, 5, CDPLAY_NORMAL));
+	//cd_playtrk(4, 5, CDPLAY_NORMAL);
+	e = clock_tt();
+	
+	put_string("Play", 4, 14);
+	put_number(e-s, 4, 4, 15);
+	
+	//Wait for the cd audio track to end
+	for(i = 0; i < 640; i++)	
+		vsync();
+
+	SetupToneCommand(cd_pause());
+	
+#endif
+
 }
 
-void PlayRight()
+void RedrawSound()
 {
-#asm
-		lda     #$0F
-		sta     $0805
+	ResetVideo();
+	setupFont();
+
+	SetFontColors(12, RGB(3, 3, 3), RGB(0, 6, 0), 0);
+	SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
+#ifndef CDROM1
+	set_map_data(MB_map, 40, 30);
+	set_tile_data(MB_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 40, 30);
+	load_palette(0, MB_pal, 1);  
+#else
+	set_screen_size(SCR_SIZE_64x32); 
+	cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
+	set_bgpal(0, palCD); 
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+#endif
+	
+	set_font_pal(13);
+}
+
+void MDFourier()
+{
+ 	end = 0;
+	redraw = 1;
+	refresh = 1;
+	
+#ifdef CDROM
+	ad_reset();
+	
+	ad_trans(ADPCM_SWEEP_OVL, 0, 32, 0);
+#endif
+	LoadWave(0, sine1x);
+	LoadWave(1, sine4x);
+	  
+	/* 	Some emulators and FPGA implementations
+		have issues with the first frame of the
+		first sound that is played back
+		Do so before the tests.
+	*/
+	
+	SetWaveFreq(0, PULSE_SKIP_EMU);
+	PlayCenter(0);
+	vsync();
+	StopAudio(0);
+	
+    while(!end)
+    {   
+		vsync();
 		
-		lda     #%100_11111
-		sta     $0804
-		rts
-#endasm
-}
-
-void PlayCenter()
-{
-#asm
-		lda     #$FF
-		sta     $0805
+        if(redraw)
+        {
+			RedrawSound();
+         
+            put_string("MDFourier", 16, 5);
+			refresh = 1;
+            redraw = 0;
+			disp_on();
+        }
 		
-		lda     #%100_11111
-		sta     $0804
-		rts
-#endasm
-}
+		if(refresh)
+		{
+			set_font_pal(14);
+            put_string("Start recording and press I", 6, 12);
+			set_font_pal(13);
+			put_string("Press START for HELP", 10, 25);
+		}
 
-void StopAudio()
-{
-#asm
-		lda     #%000_11111
-		sta     $0804
-		rts
-#endasm
+        controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(MDFOURIER_HELP);
+			redraw = 1;
+		}
+		
+		if (controller & JOY_II)
+			end = 1;
+		
+		if (controller & JOY_I)
+		{
+			set_font_pal(15);
+            put_string("Please wait while recording", 6, 12);
+			MDFourierExecute();
+			//refresh = 1;
+		}
+    }
 }
 
 void SoundTest()
 {
-	unsigned char end = 0;
-	int count = 0;
 	int sel = 1;
 
 #ifdef CDROM
 	int type = 0;
 #endif
 
+	end = 0;
 	redraw = 1;
 	refresh = 0;
+	i = 0;
 	
 #ifdef CDROM
 	ad_reset();
-#ifndef CDROM1
-	ad_trans(3, 0, 5, 0);
-#else
-	ad_trans(ADPCM_OVL, 0, 5, 0);
-#endif
+	
+	ad_trans(ADPCM_VOICE_OVL, 0, 5, 0);
 #endif
 
-	LoadWave();
+	LoadWave(0, sine1x);
+	SetWaveFreq(0, 112);
 	
     while(!end)
     {   
 		vsync();
         if(redraw)
-        {
-			ResetVideo();
-			setupFont();
-
-			SetFontColors(12, RGB(3, 3, 3), RGB(0, 6, 0), 0);
-			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
-#ifndef CDROM1
-			set_map_data(MB_map, 40, 30);
-			set_tile_data(MB_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, MB_pal, 1);  
-#else
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
-			set_bgpal(0, palCD); 
-			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-#endif
-			
-			set_font_pal(13);
-            put_string("Sound Test", 15, 5);
-			
-			Center224in240();
+		{
+			RedrawSound();
+			put_string("Sound Test", 15, 5);
 			
             redraw = 0;
 			refresh = 1;
@@ -573,7 +818,7 @@ void SoundTest()
 		
 		if (controller & JOY_RUN)
 		{
-			StopAudio();
+			StopAudio(0);
 			showHelp(SOUND_HELP);
 			redraw = 1;
 		}
@@ -590,23 +835,23 @@ void SoundTest()
 				switch(sel)
 				{
 					case 0:
-						PlayLeft();
+						PlayLeft(0);
 						break;
 					case 1:
-						PlayCenter();
+						PlayCenter(0);
 						break;
 					case 2:
-						PlayRight();
+						PlayRight(0);
 						break;
 				}
-				count = 20;
+				i = 20;
 #ifdef CDROM
 			}
 	
 			if(type == 1)
 			{
 				if(cd_status(0) == 0)
-					cd_playtrk(3, CDPLAY_ENDOFDISC, CDPLAY_NORMAL);
+					cd_playtrk(3, 4, CDPLAY_NORMAL);
 				else
 				  cd_pause();
 			}
@@ -664,16 +909,13 @@ void SoundTest()
 			type = 0;
 #endif
 			
-		if(count)
-			count--;
+		if(i)
+			i--;
 			
-		if(count == 1)
-		{
-			StopAudio();
-			count = 0;
-		}
+		if(i == 1)
+			StopAudio(0);
     }
-	StopAudio();
+	StopAllAudio(0);
 	
 #ifdef CDROM
 	if(cd_status(0) != 0)
@@ -742,7 +984,6 @@ void ManualLagTestText()
 
 void ManualLagTestResults()
 {
-	unsigned char end = 0;
 	int total = 0;
 	int totalms = 0;
 	int val = 0;
@@ -850,9 +1091,10 @@ void ManualLagTestResultsBack()
 
 void ManualLagTest()
 {
-	unsigned char end = 0;
 	int pos = 0;
 
+	end = 0;
+	
 	showHelp(MANUALLAG_HELP);
 	
 	x = 0;
@@ -880,7 +1122,7 @@ void ManualLagTest()
 	x2 = 108;
 	y2 = 96;
 	
-	LoadWave();
+	LoadWave(0, sine1x);
 	
     while(!end)
     {   
@@ -901,7 +1143,7 @@ void ManualLagTest()
 		}
 		
 		if(audio) // n more that one frame with audio
-			StopAudio();
+			StopAudio(0);
 				
 		if(y == 96) // remove full screen flash
 			set_color_rgb(1, 0, 0, 0);
@@ -916,8 +1158,8 @@ void ManualLagTest()
 				
 				if(audio && clicks[pos] != 0)
 				{
-					SetWave500();
-					PlayCenter();
+					SetWaveFreq(0, 224);
+					PlayCenter(0);
 				}
 	
 				if(clicks[pos] >= 0)
@@ -1020,8 +1262,8 @@ void ManualLagTest()
 		{			
 			if(audio)
 			{
-				SetWave1000();
-				PlayCenter();
+				SetWaveFreq(0, 112);
+				PlayCenter(0);
 			}
 			
 			spr_set(0);
@@ -1035,7 +1277,7 @@ void ManualLagTest()
 		{
 			if(y == 97 || y == 95) // one pixel off
 			{
-				//StopAudio();
+				//StopAudio(0);
 				
 				spr_set(0);
 				spr_pal(2);
@@ -1057,7 +1299,7 @@ void ManualLagTest()
 		satb_update();
     }
 	
-	StopAudio();
+	StopAudio(0);
 	
 	if(pos > 9)
 		ManualLagTestResults();
@@ -1109,16 +1351,16 @@ void ManualLagTestClickRefresh()
 
 void AudioSyncTest()
 {
-	unsigned char end = 0;
 	int status = -1;
 	int acc = -1;
+	
 	y = 160;
-
+	end = 0;
 	redraw = 1;
 	refresh = 0;
 	
-	LoadWave();
-	
+	LoadWave(0, sine1x);
+	SetWaveFreq(0, 112);
     while(!end)
     {   
 		vsync();
@@ -1223,7 +1465,7 @@ void AudioSyncTest()
 		
 		if(status == 120)
 		{
-			PlayCenter();
+			PlayCenter(0);
 			set_color(0, RGB(7, 7, 7));
 		}
 
@@ -1234,13 +1476,13 @@ void AudioSyncTest()
 			for(x = 3; x < 8; x++)
 				set_color(x, 0);
 
-			StopAudio();
+			StopAudio(0);
 			status = -1;
 		}
 		
 		if (controller & JOY_RUN)
 		{
-			StopAudio();
+			StopAudio(0);
 			showHelp(AUDIOSYNC_HELP);
 			redraw = 1;
 			refresh = 0;
@@ -1249,5 +1491,5 @@ void AudioSyncTest()
 		}
 		
     }
-	StopAudio();
+	StopAudio(0);
 }

@@ -46,6 +46,9 @@ int x4;
 int y;
 int y2;
 
+int i;
+unsigned char end;
+
 int speed;
 int color;
 int clicks[10];

@@ -48,7 +48,6 @@ extern int y_g;
 
 void DrawCheck()
 {
-	unsigned char end = 0;
 	unsigned char alternate = 0;
 	unsigned char pos = 0;
 	unsigned char drawframe = 0;
@@ -56,6 +55,7 @@ void DrawCheck()
 	int res = 2;
 	int text = 0;
 
+	end = 0;
 	redraw = 1;
     while(!end)
     {   
@@ -198,12 +198,12 @@ void RefreshFS()
 
 void DrawStripes()
 {
-	unsigned char end = 0;
 	unsigned char alternate = 0;
 	unsigned char pos = 0;
 	unsigned char drawframe = 0;
 	int frame = 0;
 
+	end = 0;
 	redraw = 1;
     while(!end)
     {   
@@ -293,11 +293,11 @@ void RedrawStripes()
 
 void DropShadow()
 {
-	unsigned char end = 0;
 	unsigned char show = 1;
 	unsigned char back = 0;
 	int colswap = 0;
 
+	end = 0;
 	text = 0;
 	redraw = 1;
 	x = 144;
@@ -558,10 +558,10 @@ void RedrawDropShadow(unsigned char back)
 
 void StripedSprite()
 {
-	unsigned char end = 0;
 	unsigned char back = 0;
 	int colswap = 0;
 
+	end = 0;
 	x = 144;
 	y = 100;
 	redraw = 1;
@@ -785,13 +785,13 @@ void MovePalm(int x)
 
 void ScrollTest()
 {
-	unsigned char end = 0;
 	unsigned char pause = 0;
 	int dir = 1;
 	int spd = 1;
 	int colswap = 0;
 	int vertical = 0;
 
+	end = 0;
 	x1 = 0;
 	x2 = 0;
 	x3 = 0;
@@ -935,12 +935,12 @@ void ScrollTest()
 
 void LEDZoneTest()
 {
-	unsigned char end = 0;
 	int sel = 0;
 	unsigned char refresh = 0;
 	unsigned char visible = 1;
 	int size[4];
 
+	end = 0;
 	x = 144;
 	y = 120;
 	redraw = 1;
@@ -1057,8 +1057,8 @@ void LEDZoneTest()
 
 void VScrollTest()
 {
-	ToolItem = TOOL_VSCROLL;
 	prev_select = 6;
+	ToolItem = TOOL_VSCROLL;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
@@ -1066,6 +1066,13 @@ void SoundTest()
 {
 	prev_select = 10;
 	ToolItem = TOOL_SOUND;
+	cd_execoverlay(TEST_EXT_OVERLAY);
+}
+
+void MDFourier()
+{
+	prev_select = 11;
+	ToolItem = TOOL_MDFOURIER;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
@@ -1085,7 +1092,7 @@ void LagTest()
 
 void AudioSyncTest()
 {
-	prev_select = 11;
+	prev_select = 12;
 	ToolItem = TOOL_AUDIOSYNC;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }

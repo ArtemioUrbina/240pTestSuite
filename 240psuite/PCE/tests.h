@@ -45,13 +45,21 @@ void ChangeNumber(int sprite, int number);
 void DrawCircle(int pos);
 void LoadNumbers();
 void VScrollTest();
-void LoadWave();
-void PlayLeft();
-void PlayRight();
-void PlayCenter();
-void StopAudio();
+
 void RedrawManualLagTest();
 void ManualLagTestSprites();
 void ManualLagTestText();
 void ManualLagTestResults();
 void ManualLagTestResultsBack();
+
+void LoadWave(unsigned char chan, unsigned char *wave);
+void SetWaveFreq(unsigned char chan, unsigned int freq);
+void SetNoiseFreq(unsigned int chan, unsigned int freq);
+void StopNoise(unsigned int chann);
+void PlayLeft(unsigned char chan);
+void PlayRight(unsigned char chan);
+void PlayCenter(unsigned char chan);
+void StopAudio(unsigned char chan);
+void StopAllAudio();
+void MDFourier();
+			

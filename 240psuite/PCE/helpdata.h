@@ -9,9 +9,10 @@
 #define BACKLIT_HELP		9
 #define	SOUND_HELP			10
 #define AUDIOSYNC_HELP		11
+#define MDFOURIER_HELP		12
 
-#define	OPTIONS_HELP		12
-#define GENERAL_HELP		13
+#define	OPTIONS_HELP		13
+#define GENERAL_HELP		14
 
 /*****************************/
 

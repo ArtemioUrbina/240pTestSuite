@@ -27,5 +27,5 @@ until they are just visible, and go back one
 notch where they blend with the background.
 
 Please keep in mind that black levels are lower
-in other game consoles, the are just the lowest
+in other game consoles, they are just the lowest
 values available in this system.

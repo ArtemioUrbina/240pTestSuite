@@ -75,21 +75,14 @@ unsigned char *io;
 void DetectPCEType()
 {
 	io = 0x1000;
-	region = *io;
-	
-	region = ((region & 0xF0)>>4);
+	region = (((*io) & 0xF0)>>4);
 }
 
 // returns 1 if CD detected
 void DetectCDROM()
 {
 	io = 0x1800;
-	cdrom = *io;
-	
-	if(cdrom == 0x00)
-		cdrom = 1;
-	else
-		cdrom = 0;
+	cdrom = !(*io);
 }
 
 #ifndef HELP_OVL
@@ -161,8 +154,8 @@ void DisplaySystemInfo()
 void Options()
 {
     int sel = 0;
-	unsigned char end = 0;
-
+	
+	end = 0;
 	redraw = 1;
 	refresh = 1;
     while(!end)
@@ -222,14 +215,12 @@ void Options()
 		
 		if (controller & JOY_I)
 		{
-			int val = 0;
-			
-			val = ExecuteOptions(sel);
-			if(val == 1)
+			i = ExecuteOptions(sel);
+			if(i == 1)
 				redraw = 1;
-			if(val == 2)
+			if(i == 2)
 				refresh = 1;
-			if(val == 3)
+			if(i == 3)
 				end = 1;
 		}
     }
@@ -298,6 +289,7 @@ void RefreshOptions(int sel)
 		put_string("Off", HPOS+26, row);
 	row++;
 	
+	
 	set_font_pal(sel == 3 ? 15 : 14);
 	put_string("Composite B&W:", HPOS+1, row);
 	if(Enabled_C_BW)
@@ -307,8 +299,8 @@ void RefreshOptions(int sel)
 	row++;
 	
 	set_font_pal(sel == 4 ? 15 : 14);
-	put_string("Back to Main Menu", HPOS+1, ++row);
 
+	put_string("Back to Main Menu", HPOS+1, ++row);
 }
 
 int ExecuteOptions(int sel)

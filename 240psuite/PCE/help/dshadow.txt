@@ -14,5 +14,4 @@ the shadow should be visible.
 - The user can toggle the frame used to draw the
 shadow with SELECT. 
 
-- Backgrounds can be
-switched with button I.
+- Backgrounds can be switched with button I.
