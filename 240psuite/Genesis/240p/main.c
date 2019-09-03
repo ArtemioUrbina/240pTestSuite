@@ -20,6 +20,7 @@
  */
 
 #include "main.h"
+#include "mdfourier.h"
 
 u8 joytype = JOY_TYPE_UNKNOWN;
 u8 IsPALVDP = 0;
@@ -29,11 +30,301 @@ void VBlankIntCallback();
 void DrawResolution();
 void VideoOptions();
 
+int memcmp(const void *s1, const void *s2, int n)
+{
+    unsigned char u1, u2;
+
+    for ( ; n-- ; s1++, s2++) {
+	u1 = * (unsigned char *) s1;
+	u2 = * (unsigned char *) s2;
+	if ( u1 != u2) {
+	    return (u1-u2);
+	}
+    }
+    return 0;
+}
+
+// from ChillyWilly Example of Mode1 playback
+/*
+ * Check for CD BIOS
+ * When a cart is inserted in the MD, the CD hardware is mapped to
+ * 0x400000 instead of 0x000000. So the BIOS ROM is at 0x400000, the
+ * Program RAM bank is at 0x420000, and the Word RAM is at 0x600000.
+ */
+int DetectSCDBIOS()
+{
+    uint8_t *bios;
+	
+    bios = (uint8_t *)0x415800;
+    if (memcmp(bios + 0x6D, "SEGA", 4))
+    {
+        bios = (uint8_t *)0x416000;
+        if (memcmp(bios + 0x6D, "SEGA", 4))
+        {
+            // check for WonderMega/X'Eye
+            if (memcmp(bios + 0x6D, "WONDER", 6))
+            {
+                bios = (uint8_t *)0x41AD00; // might also be 0x40D500
+                // check for LaserActive
+                if (memcmp(bios + 0x6D, "SEGA", 4))
+					return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+int ShowBIOSData()
+{
+    int possible[] = {0x415800, 0x416000, 0x41AD00, 0x40D500}, i;
+	
+	for(i = 0; i < 4; i++)
+	{
+		char buffer[10];
+		uint8_t *bios = NULL;
+		
+		bios = (uint8_t*)possible[i];
+	
+		VDP_drawTextBG(APLAN, "BIOS 0x", TILE_ATTR(PAL0, 0, 0, 0), 4, 8+i*3);
+		intToHex((int)bios, buffer, 6);
+		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 11, 8+i*3);
+		
+		VDP_drawTextBG(APLAN, "ASCII:", TILE_ATTR(PAL1, 0, 0, 0), 19, 9+i*3);
+		buffer[0] = bios[0x6D];
+		buffer[1] = bios[0x6E];
+		buffer[2] = bios[0x6F];
+		buffer[3] = bios[0x70];
+		buffer[4] = '\0';
+		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 26, 9+i*3);
+		
+		VDP_drawTextBG(APLAN, "Hex:", TILE_ATTR(PAL1, 0, 0, 0), 21, 10+i*3);
+		intToHex(bios[0x6D], buffer+0, 2);
+		intToHex(bios[0x6E], buffer+2, 2);
+		intToHex(bios[0x6F], buffer+4, 2);
+		intToHex(bios[0x70], buffer+6, 2);
+		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 26, 10+i*3);
+	}
+    return 1;
+}
+
+#define MEMORY_OK 0xfffff
+
+int CheckSCDRegion(char value)
+{
+	int 			address = 0;
+	unsigned char	*word_ram = (void*)0x600000;
+	
+	for(address = 0; address < 0x1ffff; address++)
+		word_ram[address] = value;
+	
+	for(address = 0; address < 0x1ffff; address++)
+	{
+		if(word_ram[address] != 0)
+			return address;
+	}
+	
+	return MEMORY_OK;
+}
+
+int CheckSCDRAMWithValue(char * message, char value, int pos)
+{
+	int memoryFail = 0;
+	
+	
+	VDP_drawTextBG(APLAN, message, TILE_ATTR(PAL1, 0, 0, 0), 14, pos);
+	memoryFail = CheckSCDRegion(value);
+	
+	if(memoryFail != MEMORY_OK)
+	{
+		char buffer[10];
+		
+		VDP_drawTextBG(APLAN, "FAILED 0x", TILE_ATTR(PAL2, 0, 0, 0), 12, pos+1);
+		intToHex(memoryFail, buffer, 6);
+		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL2, 0, 0, 0), 21, pos+1);
+		return 0;
+	}
+	
+	VDP_drawTextBG(APLAN, "ALL OK", TILE_ATTR(PAL2, 0, 0, 0), 18, pos+1);
+	return 1;
+}
+
+void write_byte(void *dst, unsigned char val)
+{
+    asm("movea.l 4(%sp),%a0");
+    asm("move.l  8(%sp),%d0");
+    asm("move.b  %d0,(%a0)");
+}
+
+void write_word(void *dst, unsigned short val)
+{
+    asm("movea.l 4(%sp),%a0");
+    asm("move.l  8(%sp),%d0");
+    asm("move.w  %d0,(%a0)");
+}
+
+unsigned char read_byte(void *src)
+{
+	return(*((unsigned char*)src));
+}
+
+// from ChillyWilly Example of Mode1 playback
+void InitSCD()
+{
+	
+	/*
+	 * Reset the Gate Array - this specific sequence of writes is recognized by
+	 * the gate array as a reset sequence, clearing the entire internal state -
+	 * this is needed for the LaserActive
+	 */
+	write_word((void*)0xA12002, 0xFF00);
+	write_byte((void*)0xA12001, 0x03);
+	write_byte((void*)0xA12001, 0x02);
+	write_byte((void*)0xA12001, 0x00);
+
+    /*
+     * Reset the Sub-CPU, request the bus
+     */
+    //write_byte((void*)0xA12001, 0x02);
+    //while (!(read_byte((void*)0xA12001) & 2)) write_byte((void*)0xA12001, 0x02); // wait on bus acknowledge
+	
+    write_word((void*)0xA12002, 0x00FA); // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
+	
+	write_byte((void*)0xA12003, 0x00); // assign word RAM to main CPU
+}
+
+void InitSCD_C()
+{
+	unsigned char	*scd_reg1 = (void*)0xA12001;
+	unsigned int	*scd_reg2 = (void*)0xA12002;
+	unsigned char	*scd_reg3 = (void*)0xA12003;
+	
+	/*
+	 * Reset the Gate Array - this specific sequence of writes is recognized by
+	 * the gate array as a reset sequence, clearing the entire internal state -
+	 * this is needed for the LaserActive
+	 */
+	*scd_reg2 = 0xFF00;
+	*scd_reg1 = 0x03;
+	*scd_reg1 = 0x02;
+	*scd_reg1 = 0x00;
+
+    /*
+     * Reset the Sub-CPU, request the bus
+     */
+    //*scd_reg1 = 0x02;
+    //while (!((*scd_reg1) & 2)) *scd_reg1 = 0x2; // wait on bus acknowledge
+	
+	*scd_reg2 = 0x00FA; // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
+    *scd_reg3 = 0x00; // assign word RAM to main CPU
+}
+
+void SegaCDRAMCheck(int cdpresent)
+{
+	int loadvram = 1, ind = 0, size = 0;
+	u16 exit = 0, redraw = 0;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+	
+	while(!exit)
+	{
+		if(loadvram)
+		{
+			VDP_setPalette(PAL0, palette_grey);
+			VDP_setPalette(PAL1, palette_green);
+			VDP_setPalette(PAL2, back_pal);
+			VDP_setPalette(PAL3, palette_red);
+
+			ind = TILE_USERINDEX;
+			size = sizeof(back_tiles) / 32;
+			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
+
+			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+			loadvram = 0;
+			redraw = 1;
+		}
+		
+		if(redraw)
+		{
+			if(cdpresent)
+				VDP_drawTextBG(APLAN, "Sega CD RAM", TILE_ATTR(PAL1, 0, 0, 0), 14, 6);
+			else
+				ShowBIOSData();
+				
+			redraw = 0;
+		}
+
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		//if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
+			//loadvram = 1;
+
+		if(pressedButtons & BUTTON_START)
+			exit = 1;
+
+		if(pressedButtons & BUTTON_A && cdpresent)
+		{
+			int 			close = 0;
+			
+			CheckSCDRAMWithValue("Setting to Zero", 0x00, 8);
+			CheckSCDRAMWithValue("Setting to 0xAA", 0xAA, 10);
+			CheckSCDRAMWithValue("Setting to 0x55", 0x55, 12);
+			CheckSCDRAMWithValue("Setting to 0xFF", 0xFF, 14);
+
+			VDP_drawTextBG(APLAN, "PRESS A", TILE_ATTR(PAL1, 0, 0, 0), 14, 18);
+			do
+			{
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+				if(pressedButtons & BUTTON_A)
+					close = 1;
+				VDP_waitVSync();
+			}while(!close);
+			
+			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
+			redraw = 1;
+		}
+		
+		if(pressedButtons & BUTTON_B && cdpresent)
+		{
+			unsigned char *request = (void*)0xA12003;
+			unsigned int *mode = (void*)0xA12002;
+			
+			// assign word RAM to sub CPU
+			*request = 0x00;
+			*mode = 0x00FA;
+		}
+			
+		if(pressedButtons & BUTTON_C && cdpresent)
+		{
+			unsigned char *request = (void*)0xA12003;
+			unsigned int *mode = (void*)0xA12002;
+			
+			// assign word RAM to sub CPU
+			*request = 0x01;
+			*mode = 0x00FA;
+		}
+		
+		if(pressedButtons & BUTTON_X && cdpresent)
+			ShowBIOSData();
+			
+		if(pressedButtons & BUTTON_Y && cdpresent)
+			InitSCD();
+			
+		if(pressedButtons & BUTTON_Z && cdpresent)
+			InitSCD_C();
+		
+		
+		VDP_waitVSync();
+	}
+}
+
 int main()
 {
 	u16 cursel = 1, pos, reload = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 ind = 0, size = 0;
+	u16 ind = 0, size = 0, hasSCD = 0;
 	char md_ver[30];
 
 	VDP_init();
@@ -53,6 +344,12 @@ int main()
 		pal_240 = 0;
 	}
 
+	if(DetectSCDBIOS())
+	{
+		//InitSCD_C();
+		hasSCD = 1;
+	}
+	
 	VDP_loadFontData(font_tiles, FONT_LEN, USE_DMA);
 	DrawIntro();
 	while(1)
@@ -94,9 +391,12 @@ int main()
 		VDP_drawTextBG(APLAN, "Alternate 240p/480i", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Audio Sync Test", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Video Options", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+		VDP_drawTextBG(APLAN, "MDFourier", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 17 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		//VDP_drawTextBG(APLAN, "SCD RAM Check", TILE_ATTR(cursel == 18 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+			
 		DrawResolution();
 
 		Detect_MD(md_ver);
@@ -175,14 +475,22 @@ int main()
 				AudioSyncTest();
 				break;
 			case 14:
-				DrawHelp(HELP_GENERAL);
+				MDFourier();
 				break;
 			case 15:
-				VideoOptions();
+				DrawHelp(HELP_GENERAL);
 				break;
 			case 16:
+				VideoOptions();
+				break;
+			case 17:
 				DrawCredits();
 				break;
+			/*
+			case 18:
+				SegaCDRAMCheck(hasSCD);
+				break;
+			*/
 			}
 
 			FadeAndCleanUp();

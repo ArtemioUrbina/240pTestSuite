@@ -22,6 +22,21 @@ push macro code
 pop macro code
 	movem.l	(a7)+,\code
 	endm 
+	
+; Sub cpu PCM SOUND DRIVER EQUATES
+ENVdat		equ	$FF0001
+PANdat		equ	$FF0003
+FDLdat		equ	$FF0005
+FDHdat		equ	$FF0007
+LSLdat		equ	$FF0009
+LSHdat		equ	$FF000B
+STdat		equ	$FF000D
+CTRLdat		equ	$FF000F
+ONOFFdat	equ	$FF0011
+WAVEdat		equ	$FF2001
+
+; clock cycle delay for PCM ops
+PCMREGDELAY	equ	5
 		
 ; =======================================================================================
 ;  Sub Module Header
@@ -44,10 +59,15 @@ JumpTable:	dc.w SP_Init-JumpTable
 ; =======================================================================================
 SP_Init:
 		andi.b	#$FA, $FF8003		; Set WordRAM to 2M Mode
-		bsr	Init9660		; Init ISO filesystem
-		clr.b	$FF800F			; Clear status flag
-		rts				; Return to BIOS (which will then call SP_Main)
+		bsr	Init9660				; Init ISO filesystem
+		clr.b	$FF800F				; Clear status flag
+		rts							; Return to BIOS (which will then call SP_Main)
 
+DriveInit_Params:
+		dc.b	1, $FF			; first track, last track (all)
+		even				    ; just in case
+CDDA_TrkBuf:
+		dc.l	2
 ; =======================================================================================
 ;  SP_Main
 ;  Main routine, this is the core of the SP Operating System
@@ -55,11 +75,11 @@ SP_Init:
 ; =======================================================================================
 SP_Main:
 		tst.b	$FF800E			; Check command
-		bne	SP_Main			; If NOT clear, loop 
+		bne	SP_Main				; If NOT clear, loop 
 		move.b	#1, $FF800F		; Else, set status to ready
 @loop:				
 		tst.b	$FF800E			; Check command
-		beq	@loop			; If none issued, loop
+		beq	@loop				; If none issued, loop
 
 		moveq	#0, d0			; Clear d0
 		move.b	$FF800E, d0		; Store command to d0
@@ -67,7 +87,7 @@ SP_Main:
 		add.w	d0, d0			; Calculate Offset (Double again)
 		jsr	OpTable(pc,d0)		; Execute function from jumptable
 		move.b	#0, $FF800F		; Mark as done
-		bra	SP_Main			; Loop
+		bra	SP_Main				; Loop
 
 ; =======================================================================================
 ;  OpTable
@@ -76,25 +96,242 @@ SP_Main:
 ;  4 bytes = bra opcode (2 bytes) and a relative offset as a word.
 ; =======================================================================================		
 OpTable:
-		bra.w	Op_Null			; Null Operation
+		bra.w	Op_Null			    ; Null Operation
 		bra.w	Op_LoadBootFile		; Load File (from ISO9660 filesystem)
 		bra.w	Op_GetWordRAM		; Give WordRAM to Main CPU
+        bra.w	Op_InitCD		    ; Init
+        bra.w	Op_PlayCD		    ; Play CD-DA Track 2 for the Suite
+        bra.w	Op_StopCD		    ; Stop CD-DA Track
+		bra.w	Op_PlayPCM			; Play Full PCM Memory
+		bra.w	Op_StopPCM			; Stop PCM Playback
+		bra.w	Op_IncremetPCMFreq	; Increment the internal value by 1
+		bra.w	Op_DecrementPCMFreq	; Decrement the internal value by 1
+		bra.w	Op_TestPCM			; Test PCM Frequencies
+		bra.w	Op_SetSamplesSweep	; Back to normal samples for sweep 32552hz
+		bra.w	Op_SetSampSin32000	; Use 32000hz 1khz sample
+		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
+		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
 
 Op_Null:
 		rts
 		
 Op_LoadBootFile:
+		bsr	Op_SetSamplesSweep	; load our basic Sweep PCM file
 		lea	@bootfile(pc),a0	; Name pointer
-		bsr	FindFile		; Find File returns params in the right format for ReadCD
-		move.l	#$80000, a0		; Set destionation to WordRAM
+		bsr	FindFile		    ; Find File returns params in the right format for ReadCD
+		move.l	#$80000, a0		; Set destination to WordRAM
 		bsr	ReadCD
 		rts
+		
 @bootfile:
 		dc.b	'M_INIT.PRG',0
 		align 2
-		
-Op_GetWordRAM:
+
+Op_GetWordRAM:	
 		bset	#0, $FF8003		; Give WordRAM to Main CPU
+		rts
+
+Op_InitCD:
+		moveq	#0,d0
+		lea	DriveInit_Params(pc),a0
+		BIOS_DRVINIT
+		BIOS_CDCSTOP
+		BIOS_CDCSTAT
+        rts
+
+; taken form the sonic 1 on sega cd project 
+; https://info.sonicretro.org/Sonic_the_Hedgehog_1_for_SegaCD
+Op_PlayCD:
+		moveq	#0,d1
+		move.w	$ffff8010,d1
+		addq.b	#2,d1
+		BIOS_MSCSTOP
+		BIOS_CDBTOCREAD
+		BIOS_MSCSTOP			; Just in case
+		move.w	$ffff8010,d1
+		addq.b	#2,d1
+		andi.w	#$FF,d1			; Just in case
+		lea	(CDDA_TrkBuf).l,a0
+		move.w	d1,(a0)
+		BIOS_MSCPLAY1 
+		rts
+
+Op_StopCD:
+		BIOS_MSCSTOP
+
+ 		rts
+
+Op_PlayPCM:
+		move.b	#$FF, ENVdat			; Set ENV to FF - full volume
+		bsr		PCMWait
+			
+		move.b	#$00, STdat				; Set start address to $0000
+		bsr		PCMWait
+
+		move.b	#$FE, ONOFFdat			; Set channel 1 to on
+	    bsr		PCMWait
+
+		rts
+		
+Op_StopPCM:			
+		move.b	#$FF, ONOFFdat			; Set all audio channels to off
+	    bsr		PCMWait
+		
+		move.b	#$00, ENVdat			; Set ENV to 00 - Muted
+		bsr		PCMWait
+		
+		move.b  #$08, FDHdat			; Set H byte of sample rate 16khz at 0x07DD
+	    bsr		PCMWait
+    
+	    move.b  #$00, FDLdat			; Set L byte of sample rate
+	    bsr		PCMWait
+		
+		rts
+
+PCMTestFreq:
+		dc.w	$0800
+		
+Op_IncremetPCMFreq:		
+		add.w	#$1,PCMTestFreq	
+		rts
+		
+Op_DecrementPCMFreq:		
+		sub.w	#$1,PCMTestFreq	
+		rts
+		
+Op_TestPCM:		
+		move.w	PCMTestFreq,d0
+		
+		move.b	d0, FDLdat				; Set L byte of sample rate
+		bsr		PCMWait
+
+		lsr.w	#8, d0					; Get high order byte
+		move.b	d0, FDHdat				; Set H byte of sample rate 
+		bsr		PCMWait
+	
+		bsr		Op_PlayPCM
+		rts
+
+InitPCM:
+	    move.b	#$FF, ONOFFdat			; Set all audio channels to off
+	    bsr		PCMWait
+	
+	    move.b	#$C0, CTRLdat			; Select channel 0
+	    bsr		PCMWait
+    
+	    move.b	#$FF, PANdat			; Set full L/R channels
+	    bsr		PCMWait
+    
+	    move.b	#$00, ENVdat			; Set ENV to 00 - silent
+	    bsr		PCMWait
+    
+	    move.b	#$00, STdat				; Set start address to $0000
+	    bsr		PCMWait
+    
+	    move.b  #$ff, LSHdat			; Set loop high address to $FF
+	    bsr		PCMWait
+    
+	    move.b  #$f0, LSLdat			; Set loop low address to $F0 where FF is at for loop
+	    bsr		PCMWait
+    
+	    move.b  #$08, FDHdat			; Set H byte of sample rate 16khz at 0x08DD (Docs are wrong, check MDFourier site)
+	    bsr		PCMWait
+    
+	    move.b  #$00, FDLdat			; Set L byte of sample rate
+	    bsr		PCMWait
+    
+	    rts
+
+PCMWait:
+	    move.l	d0, -(a7)
+    
+	    move.w  #PCMREGDELAY, d0
+
+PCMWaitLoop:
+	    dbra	d0, PCMWaitLoop
+    
+	    move.l	(a7)+, d0
+    
+	    rts
+
+pcmsweepfile:
+		dc.b	'SWEEP.PCM',0
+		align 2
+		
+Op_SetSamplesSweep:
+		lea		pcmsweepfile(pc),a0	; Sweep 1-16khz
+		bsr		LoadPCMFile
+		rts
+
+pcmssin32000:
+		dc.b	'SIN32000.PCM',0
+		align 2
+		
+Op_SetSampSin32000:
+		lea		pcmssin32000(pc),a0	; 1khz sine wave at 32000hz
+		bsr		LoadPCMFile
+		rts
+		
+pcmsincomm:
+		dc.b	'SIN32552.PCM',0
+		align 2
+		
+Op_SetSampSin32552:
+		lea		pcmsincomm(pc),a0	; 1khz sine wave at 32552hz
+		bsr		LoadPCMFile
+		rts
+		
+pcmsinsega:
+		dc.b	'SIN32604.PCM',0
+		align 2
+		
+Op_SetSampSin32604:
+		lea		pcmsinsega(pc),a0	; 1khz sine wave at 32604hz
+		bsr		LoadPCMFile
+		rts
+
+LoadPCMFile:
+		bsr		FindFile		; Find File returns params in the right format for ReadCD
+		move.l	#$20000, a0		; Set destination to ProgramRAM
+		bsr		ReadCD
+				
+; d1.l has the size from above in sectors (2048)
+; but this code is (still) hard coded for 64kb
+		move.l	#$20000, a2		; A2 - PCM Address
+		move.b	#0,d2			; D2 - start at first bank
+LoadPCMLoop:		
+		move.l	#$1000,d0		; we copy in bank size increments
+		move.l	a2,a0			; A0 - PCM Address
+		move.b	d2,d1			; D1 - current bank
+		bsr		WritePCM
+		add.b	#1,d2			; D1 - Bank
+		add.l	#$1000,a2		; Increment address by 1000h
+		cmp.w   #$10,d2
+		BNE     LoadPCMLoop
+		
+		bsr		InitPCM
+		; our sample already has the FF terminators
+		
+		rts
+
+
+; D0 - Size
+; D1 - Bank
+; A0 - PCM Address
+WritePCM:
+		or.b	#$80, d1				; 1000b - bit 4 = 1 = play on bit 3 = 0 = select bank
+		move.b	d1, CTRLdat				; Select bank to write into
+		bsr		PCMWait
+
+		move.l	#WAVEdat, a1			; Get pointer to start of PCM bank
+
+		sub.l	#1, d0					; Adjust for dbra
+
+@WritePCMLoop:
+		move.b	(a0)+, (a1)
+		add.l	#2, a1
+
+		dbra	d0, @WritePCMLoop
 		rts
 
 ; =======================================================================================
@@ -132,7 +369,7 @@ ReadCD:
 		bcc	@waitTransfer		; If not done, branch
 		BIOS_CDCACK			; Acknowledge transfer
 		addq.l	#1, (a5)		; Increment starting sector
-		addi.l	#$0800, 8(a5)		; Increment destination address
+		addi.l	#$0800, 8(a5)	; Increment destination address
 		subq.l	#1, 4(a5)		; Decrement sectors left
 		bne	@waitSTAT		; If not finished, branch
 		pop	d0-d7/a0-a6		; Restore all registers

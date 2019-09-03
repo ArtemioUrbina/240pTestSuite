@@ -27,7 +27,7 @@ SP_WorkRAM:	dc.l 0
 ;  Game Header
 ; =======================================================================================	
 HardwareType:	dc.b 'SEGA MEGA DRIVE '
-Copyright:	dc.b 'ARTEMIO    2014 '
+Copyright:	dc.b 'ARTEMIO    2019 '
 NativeName:	dc.b '240P TEST SUITE                                 '
 OverseasName:	dc.b '240P TEST SUITE                                 '
 DiscID:		dc.b 'GM 00-2501-14   '

@@ -84,20 +84,11 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "properly calibrating the display", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "black, white and color levels.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
-					VDP_drawTextBG(APLAN, "The Genesis/MegaDrive can output", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "224 active video lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
-					break;
-				case 2:
-					VDP_drawTextBG(APLAN, "HELP (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
-					VDP_drawTextBG(APLAN, "In PAL consoles, it can display", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "either 224 or 240 lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					y++;
 					if(joytype != JOY_TYPE_PAD6)
 					{
-						VDP_drawTextBG(APLAN, "Help is available everywhere", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						VDP_drawTextBG(APLAN, "with DOWN+START. Video Options", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						VDP_drawTextBG(APLAN, "can be changed with UP+START.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "Help is available everywhere", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "with DOWN+START. Video Options", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "can be changed with UP+START.", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
 					}
 					else
 					{
@@ -105,6 +96,14 @@ void DrawHelp(int option)
 						VDP_drawTextBG(APLAN, "any test. Video Options can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "changed with 'Y'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					}
+					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+					break;
+				case 2:
+					VDP_drawTextBG(APLAN, "HELP (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
+					VDP_drawTextBG(APLAN, "The Genesis/MegaDrive can output", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "224 active video lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "In PAL consoles, it can display", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "either 224 or 240 lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);					
 					y++;
 					VDP_drawTextBG(APLAN, "The 240p suite is also available", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "in GameCube, Nintendo Wii, NES,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -112,7 +111,7 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "CD-ROM2, and Sega Dreamcast.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "Visit:", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "for more information.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
@@ -525,19 +524,12 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "SOUND TEST", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
 				VDP_drawTextBG(APLAN, "You can test the FM Sound from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "the Yamaha 2612 here. The first", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "5 channels have a Piano mapped", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "6 channels have a Piano mapped", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "and you can change the octave.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				y++;
-				VDP_drawTextBG(APLAN, "Channel 6 plays a 1khz PCM tone", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "that can be panned.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "PSG has 200hz, 2khz and 4khz", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "tones on its channels and white", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "noise at 500hz.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				y++;
-				VDP_drawTextBG(APLAN, "The Model 2 and later hardware", TILE_ATTR(PAL1, 0, 0, 0), 5, y++);
-				VDP_drawTextBG(APLAN, "revisions may have the channels", TILE_ATTR(PAL1, 0, 0, 0), 5, y++);
-				VDP_drawTextBG(APLAN, "inverted.", TILE_ATTR(PAL1, 0, 0, 0), 5, y++);
 				break;
 			case HELP_LED:
 				switch (page)
