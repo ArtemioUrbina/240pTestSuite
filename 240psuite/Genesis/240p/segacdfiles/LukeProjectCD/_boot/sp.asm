@@ -1,6 +1,7 @@
 ; =======================================================================================
 ;  Sega CD Boot loader by Luke Usher/SoullessSentinel (c) 2010
 ;  Used with permission. This code is not released under the GPL.
+;  Modified by Artemio Urbina for MDFourier and the 240p test Suite
 ; =======================================================================================
 align macro
 	cnop 0,\1
@@ -105,10 +106,15 @@ OpTable:
         bra.w	Op_StopCD		    ; Stop CD-DA Track
 		bra.w	Op_PlayPCM			; Play Full PCM Memory
 		bra.w	Op_StopPCM			; Stop PCM Playback
+		bra.w	Op_SetPCMLeft		; Set PCM for Left Channel
+		bra.w	Op_SetPCMRight		; Set PCM for Right Channel
+		bra.w	Op_SetPCMCenter		; Set PCM for Both Channels
 		bra.w	Op_IncremetPCMFreq	; Increment the internal value by 1
 		bra.w	Op_DecrementPCMFreq	; Decrement the internal value by 1
 		bra.w	Op_TestPCM			; Test PCM Frequencies
-		bra.w	Op_SetSamplesSweep	; Back to normal samples for sweep 32552hz
+		bra.w	Op_SetSamplesSweep	; Normal samples for sweep 32552hz
+		bra.w	Op_SetSamplesTest	; Sound Test PCM 
+		bra.w	Op_SetSamplesTest2	; Sound Test PCM 2
 		bra.w	Op_SetSampSin32000	; Use 32000hz 1khz sample
 		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
@@ -117,11 +123,11 @@ Op_Null:
 		rts
 		
 Op_LoadBootFile:
-		bsr	Op_SetSamplesSweep	; load our basic Sweep PCM file
-		lea	@bootfile(pc),a0	; Name pointer
-		bsr	FindFile		    ; Find File returns params in the right format for ReadCD
+		bsr		InitPCM
+		lea		@bootfile(pc),a0	; Name pointer
+		bsr		FindFile		    ; Find File returns params in the right format for ReadCD
 		move.l	#$80000, a0		; Set destination to WordRAM
-		bsr	ReadCD
+		bsr		ReadCD
 		rts
 		
 @bootfile:
@@ -134,7 +140,7 @@ Op_GetWordRAM:
 
 Op_InitCD:
 		moveq	#0,d0
-		lea	DriveInit_Params(pc),a0
+		lea		DriveInit_Params(pc),a0
 		BIOS_DRVINIT
 		BIOS_CDCSTOP
 		BIOS_CDCSTAT
@@ -258,6 +264,21 @@ InitPCM:
 	    bsr		PCMWait
     
 	    rts
+		
+Op_SetPCMLeft:
+		move.b	#$0F, PANdat			; Set full Left
+	    bsr		PCMWait
+		rts
+		
+Op_SetPCMRight:
+		move.b	#$F0, PANdat			; Set full Right
+	    bsr		PCMWait
+		rts
+		
+Op_SetPCMCenter:
+		move.b	#$FF, PANdat			; Set full L/R channels
+	    bsr		PCMWait
+		rts
 
 PCMWait:
 	    move.l	d0, -(a7)
@@ -301,9 +322,27 @@ Op_SetSampSin32552:
 pcmsinsega:
 		dc.b	'SIN32604.PCM',0
 		align 2
-		
+
 Op_SetSampSin32604:
 		lea		pcmsinsega(pc),a0	; 1khz sine wave at 32604hz
+		bsr		LoadPCMFile
+		rts
+		
+pcmtest:
+		dc.b	'PCMTEST.PCM',0
+		align 2
+		
+Op_SetSamplesTest:
+		lea		pcmtest(pc),a0	; Sweep 1-16khz
+		bsr		LoadPCMFile
+		rts
+		
+pcmtest2:
+		dc.b	'PCMTESZ.PCM',0
+		align 2
+		
+Op_SetSamplesTest2:
+		lea		pcmtest2(pc),a0	; Sweep 1-16khz
 		bsr		LoadPCMFile
 		rts
 
@@ -325,8 +364,6 @@ LoadPCMLoop:
 		add.l	#$1000,a2		; Increment address by 1000h
 		cmp.w   #$10,d2
 		BNE     LoadPCMLoop
-		
-		bsr		InitPCM
 		; our sample already has the FF terminators
 		
 		rts

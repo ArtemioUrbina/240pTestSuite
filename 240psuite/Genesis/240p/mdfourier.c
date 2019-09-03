@@ -588,12 +588,12 @@ void TestPCM(int barrier)
 
 void ChangePCM(int *type)
 {	
-	int command[] = { Op_SetSamplesSweep, Op_SetSampSin32000, Op_SetSampSin32552, Op_SetSampSin32604 };
+	int command[] = { Op_SetSamplesSweep, Op_SetSampSin32000, Op_SetSampSin32552, Op_SetSampSin32604, Op_SetSamplesTest, Op_SetSamplesTest2 };
 	
 	if(*type < 0)
-		*type = 3;
+		*type = 5;
 		
-	if(*type > 3)
+	if(*type > 5)
 		*type = 0;
 	
 	SendSCDCommand(command[*type]);
@@ -647,6 +647,7 @@ void MDFourier()
 
 #ifdef SEGACD	
 	SendSCDCommand(Op_InitCD);
+	SendSCDCommand(Op_SetSamplesTest);
 #endif
 	
 	while(!exit)
@@ -672,12 +673,16 @@ void MDFourier()
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
 			
 			if(debug)
-				VDP_drawTextBG(APLAN, "MDFourier 0.947 (Test mode)", TILE_ATTR(PAL1, 0, 0, 0), 5, 6);
+				VDP_drawTextBG(APLAN, "MDFourier (Test mode)", TILE_ATTR(PAL1, 0, 0, 0), 9, 6);
 			else
-				VDP_drawTextBG(APLAN, "MDFourier 0.947", TILE_ATTR(PAL1, 0, 0, 0), 10, 6);
+				VDP_drawTextBG(APLAN, "MDFourier", TILE_ATTR(PAL1, 0, 0, 0), 14, 6);
 			
 			VDP_drawTextBG(APLAN, "Auto sequence", TILE_ATTR(PAL1, 0, 0, 0), 12, 9);
 			VDP_drawTextBG(APLAN, "Start recording and press A", TILE_ATTR(PAL2, 0, 0, 0), 6, 10);
+			if(!debug)
+				DrawHelpText();
+			else
+				VDP_drawTextBG(APLAN, "Press START to exit", TILE_ATTR(PAL0, 0, 0, 0), 11, 24);
 			if(debug)
 			{
 #ifdef SEGACD	
@@ -703,6 +708,12 @@ void MDFourier()
 					case 3:
 						VDP_drawTextBG(APLAN, "SINE 1Khz@32604hz", TILE_ATTR(PAL1, 0, 0, 0), 12, 19);
 						break;
+					case 4:
+						VDP_drawTextBG(APLAN, "Sount Test 1", TILE_ATTR(PAL1, 0, 0, 0), 12, 19);
+						break;
+					case 5:
+						VDP_drawTextBG(APLAN, "Sount Test 2", TILE_ATTR(PAL1, 0, 0, 0), 12, 19);
+						break;
 				}
 				
 				VDP_drawTextBG(APLAN, "PCM ratio Test [Y]", TILE_ATTR(PAL0, 0, 0, 0), 9, 20);
@@ -718,7 +729,7 @@ void MDFourier()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(!debug && CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
+		if(!debug && CheckHelpAndVO(&buttons, &pressedButtons, HELP_MDFOURIER))
 			loadvram = 1;
 
 		if(pressedButtons & BUTTON_A)
@@ -770,14 +781,14 @@ void MDFourier()
 			if(pressedButtons & BUTTON_Y)
 				TestPCM(1);
 
-			if(pressedButtons & BUTTON_LEFT)
+			if(pressedButtons & BUTTON_RIGHT)
 			{
 				SendSCDCommand(Op_IncremetPCMFreq); 	//Increment the internal value by 1
 				frequency ++;
 				redraw = 1;
 			}
 			
-			if(pressedButtons & BUTTON_RIGHT)
+			if(pressedButtons & BUTTON_LEFT)
 			{
 				SendSCDCommand(Op_DecrementPCMFreq); 	//Decrement the internal value by 1
 				frequency --;
@@ -802,7 +813,6 @@ void MDFourier()
 	}
 	
 	ym2612_keyoffAll();
-	SND_stopPlay_PCM();
 	StopPSG();
 	VDP_waitVSync();
 }

@@ -49,6 +49,7 @@
 #define	HELP_VIDEO			26
 #define HELP_AUDIOSYNC		27
 #define HELP_CONTRAST		28
+#define HELP_MDFOURIER		29
 
 extern u8	showhelp;
 

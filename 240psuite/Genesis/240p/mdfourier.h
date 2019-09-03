@@ -62,10 +62,15 @@ enum SCD_Command{
         Op_StopCD,		    	//Stop CD-DA Track
 		Op_PlayPCM,				//Play Full PCM Memory
 		Op_StopPCM,				//Stop PCM Playback
+		Op_SetPCMLeft, 			//Set PCM for Left Channel
+		Op_SetPCMRight, 		//Set PCM for Right Channel
+		Op_SetPCMCenter, 		//Set PCM for Both Channels
 		Op_IncremetPCMFreq, 	//Increment the internal value by 1
 		Op_DecrementPCMFreq, 	//Decrement the internal value by 1
 		Op_TestPCM, 			//Test PCM Frequencies
 		Op_SetSamplesSweep,		//Back to normal samples for sweep
+		Op_SetSamplesTest,		//Sound Test PCM 
+		Op_SetSamplesTest2,		//Sound Test PCM 2
 		Op_SetSampSin32000,		//Use 32000hz 1khz sample
 		Op_SetSampSin32552,		//Use 32552hz 1khz sample
 		Op_SetSampSin32604		//Use 32604hz 1khz sample

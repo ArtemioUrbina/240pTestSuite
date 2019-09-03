@@ -41,6 +41,7 @@ void FadeAndCleanUp();
 void CleanUp();
 u8 CheckHelpAndVO(u16 *buttons, u16 *pressedButtons, int option);
 void StopPSG();
+void DrawHelpText();
 
 extern u8	joytype;
 

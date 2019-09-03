@@ -1299,19 +1299,32 @@ void VScrollTest()
 	}
 }
 
+enum SounTestValue{
+	stFM,
+	stFMOct,
+	stFMPan,
+	stPSG,
+	stCD,
+	stPCM
+};
+
 void SoundTest()
 {
-	int sel = 2, loadvram = 1, type = 0, psgoff = 0;
+	int sel = 2, loadvram = 1, psgoff = 0, fmpan = 1;
+	int type = stFM;
 	u16 ind = 0, size = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 redraw = 0, selmax = 5;
 	u8 octave = 24;
 #ifdef SEGACD
-	int pcm = 0;
+	int pcm = 0, loaded = 0;
 #endif
 
 	yminit();
 	PSG_init();
+#ifdef SEGACD
+	SendSCDCommand(Op_SetSamplesTest);
+#endif
 	while(!exit)
 	{
 		if(loadvram)
@@ -1334,7 +1347,7 @@ void SoundTest()
 		{
 			int x = 14;
 #ifdef SEGACD
-			int y = 9;
+			int y = 8;
 #else
 			int y = 11;
 #endif
@@ -1344,30 +1357,38 @@ void SoundTest()
 			VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL1, 0, 0, 0), x+1, 6);
 			
 			VDP_drawTextBG(APLAN, "YM2612 FM", TILE_ATTR(PAL1, 0, 0, 0), x+2, y++);
-			VDP_drawTextBG(APLAN, "1", TILE_ATTR((type == 0 && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x+1, y);
-			VDP_drawTextBG(APLAN, "2", TILE_ATTR((type == 0 && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+3, y);
-			VDP_drawTextBG(APLAN, "3", TILE_ATTR((type == 0 && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+5, y);
-			VDP_drawTextBG(APLAN, "4", TILE_ATTR((type == 0 && sel == 3) ? PAL3 : PAL0, 0, 0, 0), x+7, y);
-			VDP_drawTextBG(APLAN, "5", TILE_ATTR((type == 0 && sel == 4) ? PAL3 : PAL0, 0, 0, 0), x+9, y);
-			VDP_drawTextBG(APLAN, "6", TILE_ATTR((type == 0 && sel == 5) ? PAL3 : PAL0, 0, 0, 0), x+11, y);
+			VDP_drawTextBG(APLAN, "1", TILE_ATTR((type == stFM && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x+1, y);
+			VDP_drawTextBG(APLAN, "2", TILE_ATTR((type == stFM && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+3, y);
+			VDP_drawTextBG(APLAN, "3", TILE_ATTR((type == stFM && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+5, y);
+			VDP_drawTextBG(APLAN, "4", TILE_ATTR((type == stFM && sel == 3) ? PAL3 : PAL0, 0, 0, 0), x+7, y);
+			VDP_drawTextBG(APLAN, "5", TILE_ATTR((type == stFM && sel == 4) ? PAL3 : PAL0, 0, 0, 0), x+9, y);
+			VDP_drawTextBG(APLAN, "6", TILE_ATTR((type == stFM && sel == 5) ? PAL3 : PAL0, 0, 0, 0), x+11, y);
 			y++;
-			VDP_drawTextBG(APLAN, "FM Octave:", TILE_ATTR((type == 1 && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x, y);
+			VDP_drawTextBG(APLAN, "FM Octave:", TILE_ATTR((type == stFMOct && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x, y);
 			intToStr(octave, buffer, 2);
-			VDP_drawTextBG(APLAN, buffer, TILE_ATTR((type == 1 && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x+11, y);
+			VDP_drawTextBG(APLAN, buffer, TILE_ATTR((type == stFMOct && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x+11, y);
+			y++;
+			VDP_drawTextBG(APLAN, "Left", TILE_ATTR((type == stFMPan && sel == 0) ? PAL1 : fmpan == 0 ? PAL3 : PAL0, 0, 0, 0), x-1, y);
+			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stFMPan && sel == 1) ? PAL1 : fmpan == 1 ? PAL3 : PAL0, 0, 0, 0), x+4, y);
+			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stFMPan && sel == 2) ? PAL1 : fmpan == 2 ? PAL3 : PAL0, 0, 0, 0), x+11, y);
 			
-			y+=3;
+			y+=2;
 			VDP_drawTextBG(APLAN, "PSG CHANNEL", TILE_ATTR(PAL1, 0, 0, 0), x+1, y++);
-			VDP_drawTextBG(APLAN, "0", TILE_ATTR((type == 2 && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x+3, y);
-			VDP_drawTextBG(APLAN, "1", TILE_ATTR((type == 2 && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+5, y);
-			VDP_drawTextBG(APLAN, "2", TILE_ATTR((type == 2 && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+7, y);
-			VDP_drawTextBG(APLAN, "3", TILE_ATTR((type == 2 && sel == 3) ? PAL3 : PAL0, 0, 0, 0), x+9, y);
+			VDP_drawTextBG(APLAN, "0", TILE_ATTR((type == stPSG && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x+3, y);
+			VDP_drawTextBG(APLAN, "1", TILE_ATTR((type == stPSG && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+5, y);
+			VDP_drawTextBG(APLAN, "2", TILE_ATTR((type == stPSG && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+7, y);
+			VDP_drawTextBG(APLAN, "3", TILE_ATTR((type == stPSG && sel == 3) ? PAL3 : PAL0, 0, 0, 0), x+9, y);
 			
 #ifdef SEGACD
-			y+=3;
-			VDP_drawTextBG(APLAN, "CD-DA", TILE_ATTR((type == 3 && sel == 0) ? PAL3 : PAL1, 0, 0, 0), x+4, y);
-			y+=3;
-			VDP_drawTextBG(APLAN, "PCM", TILE_ATTR((type == 4 && sel == 0) ? PAL3 : PAL1, 0, 0, 0), x+5, y);
+			y+=2;
+			VDP_drawTextBG(APLAN, "CD-DA", TILE_ATTR((type == stCD && sel == 0) ? PAL3 : PAL1, 0, 0, 0), x+4, y);
+			y+=2;
+			VDP_drawTextBG(APLAN, "PCM", TILE_ATTR(PAL1, 0, 0, 0), x+5, y++);
+			VDP_drawTextBG(APLAN, "Left", TILE_ATTR((type == stPCM && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x-1, y);
+			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stPCM && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+4, y);
+			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stPCM && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+11, y);
 #endif
+			DrawHelpText();
 			redraw = 0;
 		}
 
@@ -1394,37 +1415,40 @@ void SoundTest()
 		}
 
 #ifdef SEGACD		
-		if(type > 4)
-			type = 0;
+		if(type > stPCM)
+			type = stFM;
 
-		if(type < 0)
-			type = 4;
+		if(type < stFM)
+			type = stPCM;
 #else
-		if(type > 2)
-			type = 0;
+		if(type > stPSG)
+			type = stFM;
 
-		if(type < 0)
-			type = 2;
+		if(type < stFM)
+			type = stPSG;
 #endif
 		
 		if(redraw)
 			switch(type)
 			{
-				case 0:
+				case stFM:
 					selmax = 5;
 					break;
-				case 1:
+				case stFMOct:
 					selmax = 0;
 					break;
-				case 2:
+				case stFMPan:
+					selmax = 2;
+					break;
+				case stPSG:
 					selmax = 3;
 					break;
 #ifdef SEGACD
-				case 3:
+				case stCD:
 					selmax = 0;
 					break;
-				case 4:
-					selmax = 0;
+				case stPCM:
+					selmax = 2;
 					break;
 #endif
 				default:
@@ -1453,12 +1477,12 @@ void SoundTest()
 		{
 			switch(type)
 			{
-				case 0: //YM2612
+				case stFM: //YM2612
 				{
-					ymPlay(3, sel, octave, STEREO_BOTH);
+					ymPlay(3, sel, octave, fmpan == 0 ? STEREO_LEFT: fmpan == 1 ? STEREO_BOTH : STEREO_RIGHT);
 				}
 				break;
-				case 1:
+				case stFMOct: // Octave
 				{
 					octave += 8;
 					if(octave > 56)
@@ -1466,7 +1490,13 @@ void SoundTest()
 					redraw = 1;
 				}
 				break;
-				case 2: // PSG
+				case stFMPan: // FM Pan
+				{
+					fmpan = sel;
+					redraw = 1;
+				}
+				break;
+				case stPSG: // PSG
 				{
 					if(sel == 0)
 					{
@@ -1494,17 +1524,37 @@ void SoundTest()
 				}
 				break;
 #ifdef SEGACD
-				case 3:  // CD-DA
+				case stCD:  // CD-DA
 					PlayCDTrack(0);
 				break;
-				case 4: // PSG
+				case stPCM: // PCM
 				{
+					if(!loaded && random() % 20 == 7)
+					{
+						SendSCDCommand(Op_SetSamplesTest2);
+						loaded = 1;
+					}
+						
 					if(pcm)
 						SendSCDCommand(Op_StopPCM);
 
-					TestPCM(0);
+					if(sel == 0)
+					{
+						SendSCDCommand(Op_SetPCMLeft);
+						SendSCDCommand(Op_PlayPCM);
+					}
+					if(sel == 1)
+					{
+						SendSCDCommand(Op_SetPCMCenter);
+						SendSCDCommand(Op_PlayPCM);
+					}
+					if(sel == 2)
+					{
+						SendSCDCommand(Op_SetPCMRight);
+						SendSCDCommand(Op_PlayPCM);
+					}
 					
-					pcm = 141;
+					pcm = 110;
 				}
 				break;
 #endif
@@ -1537,6 +1587,7 @@ void SoundTest()
 #ifdef SEGACD
 	SendSCDCommand(Op_StopPCM);
 	SendSCDCommand(Op_StopCD);
+	SendSCDCommand(Op_SetPCMCenter);
 #endif
 }
 

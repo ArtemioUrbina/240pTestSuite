@@ -498,7 +498,7 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "Enterprises Ltd. Kiki Kaikai", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "is a trademark of Taito.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
-					VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "256H compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;
@@ -518,18 +518,28 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "Button 'A' stops the scroll and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "button 'B' changes direction.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "256H compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			case HELP_SOUND:
 				VDP_drawTextBG(APLAN, "SOUND TEST", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
-				VDP_drawTextBG(APLAN, "You can test the FM Sound from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "the Yamaha 2612 here. The first", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "6 channels have a Piano mapped", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "and you can change the octave.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "You can test the Sound from the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#ifndef SEGACD
+				VDP_drawTextBG(APLAN, "Yamaha 2612 and PSG here.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#else				
+				VDP_drawTextBG(APLAN, "YM2612, PSG, CD-DA and PCM here.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#endif
+				y++;
+				VDP_drawTextBG(APLAN, "The octave and panning can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "changed when possible. This can", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "help you identify stereo cabling", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "issues.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "PSG has 200hz, 2khz and 4khz", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "tones on its channels and white", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "noise at 500hz.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "For balance and frequency checks", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "please use MDFourier.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			case HELP_LED:
 				switch (page)
@@ -661,6 +671,26 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "contrast and brightness.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "The C button returns to PLUGE.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				break;
+			case HELP_MDFOURIER:
+				VDP_drawTextBG(APLAN, "MDFourier", TILE_ATTR(PAL1, 0, 0, 0), 16, 4);
+				VDP_drawTextBG(APLAN, "Button A plays the test tone.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "Please record it with your audio", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "card and use the software at:", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "http://junkerhq.net/MDFourier", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "It will generate plots with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "audio signature from this system", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "that can be compared to others.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "X button opens the debug menu", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#ifdef SEGACD
+				VDP_drawTextBG(APLAN, "for various PCM tests.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#else
+				VDP_drawTextBG(APLAN, "for Z80 bus requests.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#endif
 				break;
 			default:
 				exit = 1;
