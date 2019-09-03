@@ -1304,8 +1304,11 @@ void SoundTest()
 	int sel = 2, loadvram = 1, type = 0, psgoff = 0;
 	u16 ind = 0, size = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 len = 0, redraw = 0, selmax = 5;
+	u16 redraw = 0, selmax = 5;
 	u8 octave = 24;
+#ifdef SEGACD
+	int pcm = 0;
+#endif
 
 	yminit();
 	PSG_init();
@@ -1313,7 +1316,6 @@ void SoundTest()
 	{
 		if(loadvram)
 		{
-			len = sizeof(beep);
 			VDP_setPalette(PAL0, palette_grey);
 			VDP_setPalette(PAL1, palette_green);
 			VDP_setPalette(PAL2, back_pal);
@@ -1331,7 +1333,11 @@ void SoundTest()
 		if(redraw)
 		{
 			int x = 14;
-			int y = 10;
+#ifdef SEGACD
+			int y = 9;
+#else
+			int y = 11;
+#endif
 			
 			char buffer[2];
 			
@@ -1356,6 +1362,12 @@ void SoundTest()
 			VDP_drawTextBG(APLAN, "2", TILE_ATTR((type == 2 && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+7, y);
 			VDP_drawTextBG(APLAN, "3", TILE_ATTR((type == 2 && sel == 3) ? PAL3 : PAL0, 0, 0, 0), x+9, y);
 			
+#ifdef SEGACD
+			y+=3;
+			VDP_drawTextBG(APLAN, "CD-DA", TILE_ATTR((type == 3 && sel == 0) ? PAL3 : PAL1, 0, 0, 0), x+4, y);
+			y+=3;
+			VDP_drawTextBG(APLAN, "PCM", TILE_ATTR((type == 4 && sel == 0) ? PAL3 : PAL1, 0, 0, 0), x+5, y);
+#endif
 			redraw = 0;
 		}
 
@@ -1380,12 +1392,20 @@ void SoundTest()
 			type++;
 			redraw = 1;
 		}
-		
+
+#ifdef SEGACD		
+		if(type > 4)
+			type = 0;
+
+		if(type < 0)
+			type = 4;
+#else
 		if(type > 2)
 			type = 0;
 
 		if(type < 0)
 			type = 2;
+#endif
 		
 		if(redraw)
 			switch(type)
@@ -1399,6 +1419,14 @@ void SoundTest()
 				case 2:
 					selmax = 3;
 					break;
+#ifdef SEGACD
+				case 3:
+					selmax = 0;
+					break;
+				case 4:
+					selmax = 0;
+					break;
+#endif
 				default:
 					break;
 			}
@@ -1465,10 +1493,34 @@ void SoundTest()
 					psgoff = 60;
 				}
 				break;
+#ifdef SEGACD
+				case 3:  // CD-DA
+					PlayCDTrack(0);
+				break;
+				case 4: // PSG
+				{
+					if(pcm)
+						SendSCDCommand(Op_StopPCM);
+
+					TestPCM(0);
+					
+					pcm = 141;
+				}
+				break;
+#endif
 				default:
 					break;
 			}
 		}
+
+#ifdef SEGACD		
+		if(pcm)
+		{
+			pcm --;
+			if(pcm == 0)
+				SendSCDCommand(Op_StopPCM);
+		}
+#endif
 		
 		if(psgoff)
 		{
@@ -1481,8 +1533,11 @@ void SoundTest()
 		VDP_waitVSync();
 	}
 	ym2612_keyoffAll();
-	SND_stopPlay_PCM();
 	StopPSG();
+#ifdef SEGACD
+	SendSCDCommand(Op_StopPCM);
+	SendSCDCommand(Op_StopCD);
+#endif
 }
 
 void LEDZoneTest()

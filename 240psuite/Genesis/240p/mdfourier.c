@@ -495,81 +495,95 @@ asm("SendSCDWait2:");
 }
 
 
-void PlayCDTrack()
+void PlayCDTrack(int barrier)
 {
 	int i = 0;
 	
-	PSG_setFrequency(0, 500);
-	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
-	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-		
-	SendSCDCommand(Op_PlayCD);
-	
-	// wait 10012.8 ms 16.688*600 + 20 frames for 300ms sync pulse + 20 frames to capture the whole range
-	for(i = 0; i < 640; i++)
+	if(barrier)
+	{
+		PSG_setFrequency(0, 500);
+		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
 		VDP_waitVSync();
-		
-	SendSCDCommand(Op_StopCD);
-		
-	PSG_setFrequency(0, 500);
-	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
-	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	
+		SendSCDCommand(Op_PlayCDMDF);
+	
+		// wait 10012.8 ms 16.688*600 + 20 frames for 300ms sync pulse + 20 frames to capture the whole range
+		for(i = 0; i < 640; i++)
+			VDP_waitVSync();
+		SendSCDCommand(Op_StopCD);
+
+		PSG_setFrequency(0, 500);
+		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+		VDP_waitVSync();
+		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	}
+	else
+		SendSCDCommand(Op_PlayCD240);
 }
 
-void PlayPCM()
+void PlayPCM(int barrier)
 {	
 	int i = 0;
 	
-	PSG_setFrequency(0, 500);
-	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
-	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	if(barrier)
+	{
+		PSG_setFrequency(0, 500);
+		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+		VDP_waitVSync();
+		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	}
 	
 	SendSCDCommand(Op_PlayPCM);
 	
 	// wait 2048 ms/16.688 = 122.7229 frames.
 	// we wait 140
 	
-	for(i = 0; i < 140; i++)
-		VDP_waitVSync();
-		
-	SendSCDCommand(Op_StopPCM);
-		
-	PSG_setFrequency(0, 500);
-	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
-	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	if(barrier)
+	{
+		for(i = 0; i < 140; i++)
+			VDP_waitVSync();
+		SendSCDCommand(Op_StopPCM);
 	
-	ExecuteSilence();
+		PSG_setFrequency(0, 500);
+		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+		VDP_waitVSync();
+		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	}
+	
+	//ExecuteSilence();
 }
 
-void TestPCM()
+void TestPCM(int barrier)
 {	
 	int i = 0;
 	
-	PSG_setFrequency(0, 500);
-	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
-	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	if(barrier)
+	{
+		PSG_setFrequency(0, 500);
+		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+		VDP_waitVSync();
+		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	}
 	
 	SendSCDCommand(Op_TestPCM);
 	
 	// wait 2048 ms/16.688 = 122.7229 frames.
 	// we wait 140
 	
-	for(i = 0; i < 140; i++)
-		VDP_waitVSync();
-		
-	SendSCDCommand(Op_StopPCM);
-		
-	PSG_setFrequency(0, 500);
-	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
-	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	if(barrier)
+	{
+		for(i = 0; i < 140; i++)
+			VDP_waitVSync();
+		SendSCDCommand(Op_StopPCM);
 	
-	ExecuteSilence();
+		PSG_setFrequency(0, 500);
+		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+		VDP_waitVSync();
+		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	}
+	
+	//ExecuteSilence();
 }
 
 void ChangePCM(int *type)
@@ -585,7 +599,7 @@ void ChangePCM(int *type)
 	SendSCDCommand(command[*type]);
 	
 	// Test it
-	//PlayPCM();
+	//PlayPCM(1);
 }
 
 #endif
@@ -616,8 +630,8 @@ void ExececuteMDF(u16 framelen)
 	for(i = 0; i < 4; i++)	
 		VDP_waitVSync();
 		
-	PlayPCM();
-	PlayCDTrack();
+	PlayPCM(1);
+	PlayCDTrack(1);
 #endif
 }
 
@@ -629,7 +643,7 @@ void MDFourier()
 #endif
 	u16 ind = 0, size = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 len = 0, redraw = 0, framelen = 20;
+	u16 redraw = 0, framelen = 20;
 
 #ifdef SEGACD	
 	SendSCDCommand(Op_InitCD);
@@ -639,7 +653,6 @@ void MDFourier()
 	{
 		if(loadvram)
 		{
-			len = sizeof(beep);
 			VDP_setPalette(PAL0, palette_grey);
 			VDP_setPalette(PAL1, palette_green);
 			VDP_setPalette(PAL2, back_pal);
@@ -705,7 +718,7 @@ void MDFourier()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
+		if(!debug && CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
 			loadvram = 1;
 
 		if(pressedButtons & BUTTON_A)
@@ -745,20 +758,17 @@ void MDFourier()
 		if(debug)
 		{
 			if(pressedButtons & BUTTON_C)
-				PlayPCM();
+				PlayPCM(1);
 			
 			if(pressedButtons & BUTTON_X)
-			{
-				//SendSCDCommand(Op_SeekCD);
-				//PlayCDTrack();
-				
+			{	
 				sampleLoaded ++;
 				ChangePCM(&sampleLoaded);
 				redraw = 1;
 			}
 			
 			if(pressedButtons & BUTTON_Y)
-				TestPCM();
+				TestPCM(1);
 
 			if(pressedButtons & BUTTON_LEFT)
 			{
@@ -772,6 +782,11 @@ void MDFourier()
 				SendSCDCommand(Op_DecrementPCMFreq); 	//Decrement the internal value by 1
 				frequency --;
 				redraw = 1;
+			}
+			
+			if(pressedButtons & BUTTON_UP)
+			{
+				PlayCDTrack(1);
 			}
 		}
 #endif

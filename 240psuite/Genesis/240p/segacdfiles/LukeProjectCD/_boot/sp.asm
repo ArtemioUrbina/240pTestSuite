@@ -100,7 +100,8 @@ OpTable:
 		bra.w	Op_LoadBootFile		; Load File (from ISO9660 filesystem)
 		bra.w	Op_GetWordRAM		; Give WordRAM to Main CPU
         bra.w	Op_InitCD		    ; Init
-        bra.w	Op_PlayCD		    ; Play CD-DA Track 2 for the Suite
+        bra.w	Op_PlayCDMDF	    ; Play CD-DA Track 2 for MDFourier
+		bra.w	Op_PlayCD240	    ; Play CD-DA Track 3 for the Suite
         bra.w	Op_StopCD		    ; Stop CD-DA Track
 		bra.w	Op_PlayPCM			; Play Full PCM Memory
 		bra.w	Op_StopPCM			; Stop PCM Playback
@@ -140,8 +141,9 @@ Op_InitCD:
         rts
 
 ; taken form the sonic 1 on sega cd project 
-; https://info.sonicretro.org/Sonic_the_Hedgehog_1_for_SegaCD
-Op_PlayCD:
+; https://info.sonicretro.org/Sonic_the_Hedgehog_1_for_SegaCD		
+
+Op_PlayCDMDF:
 		moveq	#0,d1
 		move.w	$ffff8010,d1
 		addq.b	#2,d1
@@ -155,7 +157,22 @@ Op_PlayCD:
 		move.w	d1,(a0)
 		BIOS_MSCPLAY1 
 		rts
-
+		
+Op_PlayCD240:
+		moveq	#0,d1
+		move.w	$ffff8010,d1
+		addq.b	#3,d1
+		BIOS_MSCSTOP
+		BIOS_CDBTOCREAD
+		BIOS_MSCSTOP			; Just in case
+		move.w	$ffff8010,d1
+		addq.b	#3,d1
+		andi.w	#$FF,d1			; Just in case
+		lea	(CDDA_TrkBuf).l,a0
+		move.w	d1,(a0)
+		BIOS_MSCPLAY1 
+		rts
+		
 Op_StopCD:
 		BIOS_MSCSTOP
 
