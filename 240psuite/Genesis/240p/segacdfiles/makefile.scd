@@ -56,7 +56,7 @@ OBJ+= $(SRC_ASM:.asm=.o)
 OBJ+= $(SRC_S:.s=.o)
 OBJ+= $(SRC_C:.c=.o)
 
-OBJS = $(addprefix out/, $(OBJ))
+OBJS = $(addprefix outscd/, $(OBJ))
 
 INCS= -I$(INCLUDE) -I$(SRC) -I$(RES) -I$(LIBINCLUDE) -I$(LIBRES)
 DEFAULT_FLAGS= -DSEGACD -m68000 -Wall -fno-builtin $(INCS) -B$(BIN)
@@ -65,10 +65,10 @@ FLAGSZ80= -i$(SRC) -i$(INCLUDE) -i$(RES) -i$(LIBSRC) -i$(LIBINCLUDE)
 
 #release: FLAGS= $(DEFAULT_FLAGS) -O3 -fno-web -fno-gcse -fno-unit-at-a-time -fomit-frame-pointer
 release: FLAGS= $(DEFAULT_FLAGS) -O1 -fomit-frame-pointer
-release: out/rom.bin
+release: outscd/rom.bin
 
 debug: FLAGS= $(DEFAULT_FLAGS) -O1 -ggdb -DDEBUG=1
-debug: out/rom.bin out/rom.out out/symbol.txt
+debug: outscd/rom.bin outscd/rom.out outscd/symbol.txt
 
 
 all: release
@@ -78,60 +78,61 @@ default: release
 
 
 clean:
-	$(RM) -f $(OBJS) out.lst out/cmd_ out/segacd.o out/rom_head.bin out/rom_head.o out/rom.nm out/rom.wch out/rom.out out/rom.bin
+	$(RM) -f $(OBJS) out.lst outscd/cmd_ outscd/segacd.o outscd/rom_head.bin outscd/rom_head.o outscd/rom.nm outscd/rom.wch outscd/rom.out outscd/rom.bin
 
 cleanobj:
-	$(RM) -f $(OBJS) out/segacd.o out/rom_head.bin out/rom_head.o out/rom.out
+	$(RM) -f $(OBJS) outscd/segacd.o outscd/rom_head.bin outscd/rom_head.o outscd/rom.out
 
-out/rom.bin: out/rom.out
-	$(OBJCPY) -O binary out/rom.out out/rom.bin
-	$(SIZEBND) out/rom.bin -sizealign 131072
-	$(OBJCPY) -O binary out/$(ROM).out $(SCD_LOADER)/_filesystem/M_INIT.PRG
-	$(SIZEBND) $(SCD_LOADER)/_filesystem/M_INIT.PRG -sizealign 131072    
+outscd/rom.bin: outscd/rom.out
+	$(NM) outscd/$(ROM).out > outscd/symbol.txt
+	$(OBJCPY) -O binary outscd/$(ROM).out outscd/$(ROM).bin
+	$(SIZEBND) outscd/$(ROM).bin -sizealign 131072
+	$(OBJCPY) -O binary outscd/$(ROM).out $(SCD_LOADER)/_filesystem/M_INIT.PRG
+	
 	$(MKISOFS) -iso-level 1 -o $(SCD_LOADER)/filesystem.img -pad $(SCD_LOADER)/_filesystem
 	$(TRIMFSIMG) $(SCD_LOADER)/filesystem.img $(SCD_LOADER)/filesystem.bin
 	$(RM) -f $(SCD_LOADER)/filesystem.img
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-us.asm, $(SCD_LOADER)/_boot/ip-us.bin
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/sp.asm, $(SCD_LOADER)/_boot/sp.bin
-	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-us.asm, out/240p_SegaCD_USA.iso
+	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-us.asm, outscd/240p_SegaCD_USA.iso
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-eu.asm, $(SCD_LOADER)/_boot/ip-eu.bin
-	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-eu.asm, out/240p_MegaCD_EU.iso
+	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-eu.asm, outscd/240p_MegaCD_EU.iso
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-jp.asm, $(SCD_LOADER)/_boot/ip-jp.bin
-	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-jp.asm, out/240p_MegaCD_JP.iso
+	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-jp.asm, outscd/240p_MegaCD_JP.iso
 	$(RM) -f $(SCD_LOADER)/filesystem.bin
 
-out/symbol.txt: out/rom.out
-	$(NM) out/rom.out > out/symbol.txt
+outscd/symbol.txt: outscd/rom.out
+	$(NM) outscd/$(ROM).out > outscd/symbol.txt
 
-out/rom.out: out/segacd.o out/cmd_ $(LIB)/libmd.a
-	$(CC) -B$(BIN) -n -T $(GDK)/mdcd.ld -nostdlib out/segacd.o @out/cmd_ $(LIB)/libmd.a $(LIB)/libgcc.a -o out/rom.out
-	$(RM) out/cmd_
+outscd/rom.out: outscd/segacd.o outscd/cmd_ $(LIB)/libmd.a
+	$(CC) -B$(BIN) -n -T $(GDK)/mdcd.ld -nostdlib outscd/segacd.o @outscd/cmd_ $(LIB)/libmd.a $(LIB)/libgcc.a -o outscd/rom.out
+	$(RM) outscd/cmd_
 
-out/cmd_: $(OBJS)
-	$(ECHO) "$(OBJS)" > out/cmd_
+outscd/cmd_: $(OBJS)
+	$(ECHO) "$(OBJS)" > outscd/cmd_
 
-out/segacd.o: segacdfiles/segacd.s out/rom_head.bin
-	$(MKDIR) -p out
+outscd/segacd.o: segacdfiles/segacd.s outscd/rom_head.bin
+	$(MKDIR) -p outscd
 	$(CC) $(FLAGS) -c segacdfiles/segacd.s -o $@
 
-out/rom_head.bin: out/rom_head.o
+outscd/rom_head.bin: outscd/rom_head.o
 	$(LD) -T $(GDK)/mdcd.ld -nostdlib --oformat binary -o $@ $<
 
-out/rom_head.o: $(LIBSRC)/boot/rom_head.c
-	$(MKDIR) -p out
+outscd/rom_head.o: $(LIBSRC)/boot/rom_head.c
+	$(MKDIR) -p outscd
 	$(CC) $(FLAGS) -c $< -o $@
 
 
-out/%.o: %.c
-	$(MKDIR) -p out
-	$(MKDIR) -p out/src
-	$(MKDIR) -p out/res
+outscd/%.o: %.c
+	$(MKDIR) -p outscd
+	$(MKDIR) -p outscd/src
+	$(MKDIR) -p outscd/res
 	$(CC) $(FLAGS) -c $< -o $@
 
-out/%.o: %.s
-	$(MKDIR) -p out
-	$(MKDIR) -p out/src
-	$(MKDIR) -p out/res
+outscd/%.o: %.s
+	$(MKDIR) -p outscd
+	$(MKDIR) -p outscd/src
+	$(MKDIR) -p outscd/res
 	$(CC) $(FLAGS) -c $< -o $@
 
 %.s: %.res
