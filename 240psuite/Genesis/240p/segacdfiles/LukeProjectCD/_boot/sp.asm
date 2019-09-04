@@ -60,13 +60,13 @@ JumpTable:	dc.w SP_Init-JumpTable
 ; =======================================================================================
 SP_Init:
 		andi.b	#$FA, $FF8003		; Set WordRAM to 2M Mode
-		bsr	Init9660				; Init ISO filesystem
+		bsr		Init9660			; Init ISO filesystem
 		clr.b	$FF800F				; Clear status flag
 		rts							; Return to BIOS (which will then call SP_Main)
 
 DriveInit_Params:
-		dc.b	1, $FF			; first track, last track (all)
-		even				    ; just in case
+		dc.b	1, $FF				; first track, last track (all)
+		even				    	; just in case
 Buffer:
 		dc.l	2
 ; =======================================================================================
@@ -76,19 +76,19 @@ Buffer:
 ; =======================================================================================
 SP_Main:
 		tst.b	$FF800E			; Check command
-		bne	SP_Main				; If NOT clear, loop 
+		bne		SP_Main			; If NOT clear, loop 
 		move.b	#1, $FF800F		; Else, set status to ready
 @loop:				
 		tst.b	$FF800E			; Check command
-		beq	@loop				; If none issued, loop
+		beq		@loop			; If none issued, loop
 
 		moveq	#0, d0			; Clear d0
 		move.b	$FF800E, d0		; Store command to d0
 		add.w	d0, d0			; Calculate Offset (Double)
 		add.w	d0, d0			; Calculate Offset (Double again)
-		jsr	OpTable(pc,d0)		; Execute function from jumptable
+		jsr		OpTable(pc,d0)	; Execute function from jumptable
 		move.b	#0, $FF800F		; Mark as done
-		bra	SP_Main				; Loop
+		bra		SP_Main			; Loop
 
 ; =======================================================================================
 ;  OpTable
@@ -125,10 +125,9 @@ Op_Null:
 		rts
 		
 Op_LoadBootFile:
-		bsr		InitPCM
 		lea		@bootfile(pc),a0	; Name pointer
 		bsr		FindFile		    ; Find File returns params in the right format for ReadCD
-		move.l	#$80000, a0		; Set destination to WordRAM
+		move.l	#$80000, a0			; Set destination to WordRAM
 		bsr		ReadCD
 		rts
 		
@@ -146,6 +145,7 @@ Op_InitCD:
 		BIOS_DRVINIT
 		BIOS_CDCSTOP
 		BIOS_CDCSTAT
+		bsr		InitPCM
         rts
 	
 Op_PlayCDMDF:
@@ -395,32 +395,32 @@ SP_IRQ:
 ;	  a0.l	destination
 ; =======================================================================================
 ReadCD:
-		push	d0-d7/a0-a6		; Store all registers
-		lea	BiosPacket(pc), a5	; Load bios packet
-		move.l	d0, (a5)		; Write start sector to packet
-		move.l	d1, 4(a5)		; Write size to packet
-		move.l	a0, 8(a5)		; Write destination to packet
-		movea.l	a5, a0			; Put packet to a0 (for BIOS)
-		BIOS_CDCSTOP			; Stop CDC
-		BIOS_ROMREADN			; Begin data read
+		push	d0-d7/a0-a6			; Store all registers
+		lea		BiosPacket(pc), a5	; Load bios packet
+		move.l	d0, (a5)			; Write start sector to packet
+		move.l	d1, 4(a5)			; Write size to packet
+		move.l	a0, 8(a5)			; Write destination to packet
+		movea.l	a5, a0				; Put packet to a0 (for BIOS)
+		BIOS_CDCSTOP				; Stop CDC
+		BIOS_ROMREADN				; Begin data read
 @waitSTAT:
-		BIOS_CDCSTAT			; Check CDC status
-		bcs	@waitSTAT			; If not ready, branch
+		BIOS_CDCSTAT				; Check CDC status
+		bcs		@waitSTAT			; If not ready, branch
 @waitREAD:
-		BIOS_CDCREAD			; Read data
-		bcc	@waitREAD			; If not done, branch
+		BIOS_CDCREAD				; Read data
+		bcc		@waitREAD			; If not done, branch
 @WaitTransfer:
-		movea.l	8(a5), a0		; Get destination address
-		lea	12(a5), a1			; Get header
-		BIOS_CDCTRN				; Transfer sector
-		bcc	@waitTransfer		; If not done, branch
-		BIOS_CDCACK				; Acknowledge transfer
-		addq.l	#1, (a5)		; Increment starting sector
-		addi.l	#$0800, 8(a5)	; Increment destination address
-		subq.l	#1, 4(a5)		; Decrement sectors left
-		bne	@waitSTAT			; If not finished, branch
-		pop	d0-d7/a0-a6			; Restore all registers
-		rts						; Return
+		movea.l	8(a5), a0			; Get destination address
+		lea		12(a5), a1			; Get header
+		BIOS_CDCTRN					; Transfer sector
+		bcc		@waitTransfer		; If not done, branch
+		BIOS_CDCACK					; Acknowledge transfer
+		addq.l	#1, (a5)			; Increment starting sector
+		addi.l	#$0800, 8(a5)		; Increment destination address
+		subq.l	#1, 4(a5)			; Decrement sectors left
+		bne		@waitSTAT			; If not finished, branch
+		pop		d0-d7/a0-a6			; Restore all registers
+		rts							; Return
 
 		
 ; =======================================================================================
@@ -441,10 +441,10 @@ Init9660:
 
 		; Load Volume VolumeDescriptor
 
-		move.l	#$10, d0		; Start Sector
-		move.l  #2, d1			; Size in sector
+		move.l	#$10, d0			; Start Sector
+		move.l  #2, d1				; Size in sector
 		lea.l	SectorBuffer, a0	; Destination
-		bsr	ReadCD				; Read Data
+		bsr		ReadCD				; Read Data
 
 		; Load Root Directory
 
@@ -458,12 +458,12 @@ Init9660:
 		move.b	8(a1),d0		; get next part of sector address
 		lsl.l	#8,d0			; bitshift
 		move.b	9(a1),d0		; get final part of sector address.
-						; d0 now contains start sector address
+								; d0 now contains start sector address
 						
 		move.l	#$20, d1		; Size ($20 Sectors)
 		bsr	ReadCD
 		
-		pop	d0-d7/a0-a6		; Restore all registers		
+		pop	d0-d7/a0-a6			; Restore all registers		
 		rts
 		
 ; =======================================================================================

@@ -57,9 +57,11 @@ enum SCD_Command{
 		Op_LoadBootFile, 		//Load File (from ISO9660 filesystem)
 		Op_GetWordRAM,			//Give WordRAM to Main CPU
         Op_InitCD,		    	//Init
-        Op_PlayCDMDF,		    //Play CD-DA Track 2 for MDFourier
+        Op_SeekCDMDF,		    //Seek CD-DA Track 2 for MDFourier
+		Op_UnPauseCD,		    //Play (unpause) CD-DA Track
+		Op_StopCD,		    	//Stop CD-DA Track
+		Op_PlayCDMDF,		    //Play CD-DA Track 2 for the MDFourier Debug
 		Op_PlayCD240,		    //Play CD-DA Track 3 for the Suite
-        Op_StopCD,		    	//Stop CD-DA Track
 		Op_PlayPCM,				//Play Full PCM Memory
 		Op_StopPCM,				//Stop PCM Playback
 		Op_SetPCMLeft, 			//Set PCM for Left Channel
@@ -76,7 +78,8 @@ enum SCD_Command{
 		Op_SetSampSin32604		//Use 32604hz 1khz sample
 	}; 
 void SendSCDCommand(enum SCD_Command command);
-void PlayCDTrack(int barrier);
+void PlayCDTrack();
+void PlayCDTrackTimed();
 void PlayPCM(int barrier);
 void TestPCM(int barrier);
 void ChangePCM(int *type);

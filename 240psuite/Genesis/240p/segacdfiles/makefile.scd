@@ -88,7 +88,7 @@ outscd/rom.bin: outscd/rom.out
 	$(OBJCPY) -O binary outscd/$(ROM).out outscd/$(ROM).bin
 	$(SIZEBND) outscd/$(ROM).bin -sizealign 131072
 	$(OBJCPY) -O binary outscd/$(ROM).out $(SCD_LOADER)/_filesystem/M_INIT.PRG
-	
+	#$(SIZEBND) $(SCD_LOADER)/_filesystem/M_INIT.PRG -sizealign 131072 -nullfill 0xAA
 	$(MKISOFS) -iso-level 1 -o $(SCD_LOADER)/filesystem.img -pad $(SCD_LOADER)/_filesystem
 	$(TRIMFSIMG) $(SCD_LOADER)/filesystem.img $(SCD_LOADER)/filesystem.bin
 	$(RM) -f $(SCD_LOADER)/filesystem.img

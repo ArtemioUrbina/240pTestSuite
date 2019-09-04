@@ -1304,8 +1304,11 @@ enum SounTestValue{
 	stFMOct,
 	stFMPan,
 	stPSG,
+#ifdef SEGACD
 	stCD,
-	stPCM
+	stPCM,
+#endif
+	SyncTest
 };
 
 void SoundTest()
@@ -1345,11 +1348,11 @@ void SoundTest()
 		
 		if(redraw)
 		{
-			int x = 14;
+			int x = 13;
 #ifdef SEGACD
 			int y = 8;
 #else
-			int y = 11;
+			int y = 9;
 #endif
 			
 			char buffer[2];
@@ -1368,9 +1371,9 @@ void SoundTest()
 			intToStr(octave, buffer, 2);
 			VDP_drawTextBG(APLAN, buffer, TILE_ATTR((type == stFMOct && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x+11, y);
 			y++;
-			VDP_drawTextBG(APLAN, "Left", TILE_ATTR((type == stFMPan && sel == 0) ? PAL1 : fmpan == 0 ? PAL3 : PAL0, 0, 0, 0), x-1, y);
-			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stFMPan && sel == 1) ? PAL1 : fmpan == 1 ? PAL3 : PAL0, 0, 0, 0), x+4, y);
-			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stFMPan && sel == 2) ? PAL1 : fmpan == 2 ? PAL3 : PAL0, 0, 0, 0), x+11, y);
+			VDP_drawTextBG(APLAN, "Left", TILE_ATTR((type == stFMPan && sel == 0) ? PAL1 : fmpan == 0 ? PAL3 : PAL0, 0, 0, 0), x-2, y);
+			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stFMPan && sel == 1) ? PAL1 : fmpan == 1 ? PAL3 : PAL0, 0, 0, 0), x+3, y);
+			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stFMPan && sel == 2) ? PAL1 : fmpan == 2 ? PAL3 : PAL0, 0, 0, 0), x+10, y);
 			
 			y+=2;
 			VDP_drawTextBG(APLAN, "PSG CHANNEL", TILE_ATTR(PAL1, 0, 0, 0), x+1, y++);
@@ -1384,10 +1387,12 @@ void SoundTest()
 			VDP_drawTextBG(APLAN, "CD-DA", TILE_ATTR((type == stCD && sel == 0) ? PAL3 : PAL1, 0, 0, 0), x+4, y);
 			y+=2;
 			VDP_drawTextBG(APLAN, "PCM", TILE_ATTR(PAL1, 0, 0, 0), x+5, y++);
-			VDP_drawTextBG(APLAN, "Left", TILE_ATTR((type == stPCM && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x-1, y);
-			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stPCM && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+4, y);
-			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stPCM && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+11, y);
+			VDP_drawTextBG(APLAN, "Left", TILE_ATTR((type == stPCM && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x-2, y);
+			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stPCM && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+3, y);
+			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stPCM && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+10, y);
 #endif
+			y+=3;
+			VDP_drawTextBG(APLAN, "Audio Sync Test", TILE_ATTR(type == SyncTest ? PAL3 : PAL1, 0, 0, 0), x-1, y);
 			DrawHelpText();
 			redraw = 0;
 		}
@@ -1414,19 +1419,11 @@ void SoundTest()
 			redraw = 1;
 		}
 
-#ifdef SEGACD		
-		if(type > stPCM)
+		if(type > SyncTest)
 			type = stFM;
 
 		if(type < stFM)
-			type = stPCM;
-#else
-		if(type > stPSG)
-			type = stFM;
-
-		if(type < stFM)
-			type = stPSG;
-#endif
+			type = SyncTest;
 		
 		if(redraw)
 			switch(type)
@@ -1451,6 +1448,9 @@ void SoundTest()
 					selmax = 2;
 					break;
 #endif
+				case SyncTest:
+					selmax = 0;
+					break;
 				default:
 					break;
 			}
@@ -1525,11 +1525,13 @@ void SoundTest()
 				break;
 #ifdef SEGACD
 				case stCD:  // CD-DA
-					PlayCDTrack(0);
+				{
+					SendSCDCommand(Op_PlayCD240);
+				}
 				break;
 				case stPCM: // PCM
 				{
-					if(!loaded && random() % 20 == 7)
+					if(!loaded && random() % 40 == 7)
 					{
 						SendSCDCommand(Op_SetSamplesTest2);
 						loaded = 1;
@@ -1558,6 +1560,21 @@ void SoundTest()
 				}
 				break;
 #endif
+				case SyncTest:
+				{
+					FadeAndCleanUp();
+#ifdef SEGACD		
+					ym2612_keyoffAll();
+					StopPSG();
+					SendSCDCommand(Op_StopPCM);
+					SendSCDCommand(Op_StopCD);
+#endif
+					AudioSyncTest();
+					loadvram = 1;
+					
+					FadeAndCleanUp();
+				}
+				break;
 				default:
 					break;
 			}
@@ -1582,6 +1599,7 @@ void SoundTest()
 
 		VDP_waitVSync();
 	}
+	
 	ym2612_keyoffAll();
 	StopPSG();
 #ifdef SEGACD

@@ -92,9 +92,9 @@ void DrawHelp(int option)
 					}
 					else
 					{
-						VDP_drawTextBG(APLAN, "Help can be shown with 'Z' in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						VDP_drawTextBG(APLAN, "any test. Video Options can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						VDP_drawTextBG(APLAN, "changed with 'Y'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "Help can be shown with 'Z' in", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "any test. Video Options can be", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "changed with 'Y'.", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
 					}
 					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
 					break;
@@ -679,7 +679,7 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "Please record it with your audio", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "card and use the software at:", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "http://junkerhq.net/MDFourier", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "http://junkerhq.net/MDFourier", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "It will generate plots with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "audio signature from this system", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);

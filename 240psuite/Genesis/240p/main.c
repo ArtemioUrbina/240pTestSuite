@@ -61,6 +61,10 @@ int main()
 		hasSCD = 1;
 	}
 	*/
+
+#ifdef SEGACD	
+	SendSCDCommand(Op_InitCD);
+#endif
 	
 	VDP_loadFontData(font_tiles, FONT_LEN, USE_DMA);
 	DrawIntro();
@@ -90,7 +94,7 @@ int main()
 		}
 
 		pos = 6;
-		VDP_drawTextBG(APLAN, "Test Patterns", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Test Patterns >", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -102,12 +106,12 @@ int main()
 		VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Alternate 240p/480i", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Audio Sync Test", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "MDFourier", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 17 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		//VDP_drawTextBG(APLAN, "SCD RAM Check", TILE_ATTR(cursel == 18 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+		VDP_drawTextBG(APLAN, "MDFourier", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		pos++;
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		//VDP_drawTextBG(APLAN, "SCD RAM Check", TILE_ATTR(cursel == 17 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
 			
 		DrawResolution();
 
@@ -184,22 +188,19 @@ int main()
 				SoundTest();
 				break;
 			case 13:
-				AudioSyncTest();
-				break;
-			case 14:
 				MDFourier();
 				break;
-			case 15:
+			case 14:
 				DrawHelp(HELP_GENERAL);
 				break;
-			case 16:
+			case 15:
 				VideoOptions();
 				break;
-			case 17:
+			case 16:
 				DrawCredits();
 				break;
 			/*
-			case 18:
+			case 17:
 				SegaCDRAMCheck(hasSCD);
 				break;
 			*/
@@ -493,7 +494,7 @@ void DrawCredits()
 #endif
 
 			VDP_drawTextBG(APLAN, "Ver. 1.18", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "03/09/2019", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "04/09/2019", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 

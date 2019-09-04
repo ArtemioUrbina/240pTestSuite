@@ -495,31 +495,51 @@ asm("SendSCDWait2:");
 }
 
 
-void PlayCDTrack(int barrier)
+void PlayCDTrack()
 {
 	int i = 0;
-	
-	if(barrier)
-	{
-		PSG_setFrequency(0, 500);
-		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-		VDP_waitVSync();
-		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-	
-		SendSCDCommand(Op_PlayCDMDF);
-	
-		// wait 10012.8 ms 16.688*600 + 20 frames for 300ms sync pulse + 20 frames to capture the whole range
-		for(i = 0; i < 640; i++)
-			VDP_waitVSync();
-		SendSCDCommand(Op_StopCD);
+		
+	PSG_setFrequency(0, 500);
+	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+	VDP_waitVSync();
+	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	VDP_waitVSync();
 
-		PSG_setFrequency(0, 500);
-		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+	SendSCDCommand(Op_UnPauseCD);
+
+	// wait 10012.8 ms/16.688=600 + 20 frames for 300ms sync pulse + 60 frames to capture the whole range due to CD-DA delay
+	for(i = 0; i < 680; i++)
 		VDP_waitVSync();
-		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-	}
-	else
-		SendSCDCommand(Op_PlayCD240);
+	SendSCDCommand(Op_StopCD);
+
+	PSG_setFrequency(0, 500);
+	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+	VDP_waitVSync();
+	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	VDP_waitVSync();
+}
+
+void PlayCDTrackTimed()
+{
+	int i = 0;
+		
+	PSG_setFrequency(0, 500);
+	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+	VDP_waitVSync();
+	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	VDP_waitVSync();
+
+	SendSCDCommand(Op_PlayCDMDF);
+
+	for(i = 0; i < 400; i++)
+		VDP_waitVSync();
+	SendSCDCommand(Op_StopCD);
+
+	PSG_setFrequency(0, 500);
+	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+	VDP_waitVSync();
+	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	VDP_waitVSync();
 }
 
 void PlayPCM(int barrier)
@@ -532,6 +552,7 @@ void PlayPCM(int barrier)
 		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
 		VDP_waitVSync();
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+		VDP_waitVSync();
 	}
 	
 	SendSCDCommand(Op_PlayPCM);
@@ -549,9 +570,8 @@ void PlayPCM(int barrier)
 		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
 		VDP_waitVSync();
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+		VDP_waitVSync();
 	}
-	
-	//ExecuteSilence();
 }
 
 void TestPCM(int barrier)
@@ -581,9 +601,8 @@ void TestPCM(int barrier)
 		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
 		VDP_waitVSync();
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+		VDP_waitVSync();
 	}
-	
-	//ExecuteSilence();
 }
 
 void ChangePCM(int *type)
@@ -608,6 +627,8 @@ void ExececuteMDF(u16 framelen)
 {	
 #ifdef SEGACD
 	int i = 0;
+
+	SendSCDCommand(Op_SeekCDMDF);
 #endif
 
 	yminit();
@@ -631,23 +652,37 @@ void ExececuteMDF(u16 framelen)
 		VDP_waitVSync();
 		
 	PlayPCM(1);
-	PlayCDTrack(1);
+	PlayCDTrack();
+	PlayCDTrackTimed();
 #endif
+}
+
+void StartNote()
+{
+	//Give a startup sound so
+	//that the MisTEr Core doesn't
+	//destroy the pulses
+	
+	PSG_setFrequency(0, 100);
+	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+	VDP_waitVSync();
 }
 
 void MDFourier()
 {
 	int loadvram = 1, debug = 0;
-#ifdef SEGACD	
-	int sampleLoaded = 0, frequency = 0x0800;
-#endif
 	u16 ind = 0, size = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 redraw = 0, framelen = 20;
-
 #ifdef SEGACD	
-	SendSCDCommand(Op_InitCD);
-	SendSCDCommand(Op_SetSamplesTest);
+	int sampleLoaded = 0, frequency = 0x0800;
+#endif
+
+	StartNote();
+	
+#ifdef SEGACD	
+	ChangePCM(&sampleLoaded);
 #endif
 	
 	while(!exit)
@@ -692,8 +727,9 @@ void MDFourier()
 				VDP_drawTextBG(APLAN, doLock ? "Z80 BUS Request [B] ON " : "Z80 BUS Request [B] OFF", TILE_ATTR(PAL1, 0, 0, 0), 8, 15);
 
 #ifdef SEGACD	
-				VDP_drawTextBG(APLAN, "PCM tone [C] 0x0800", TILE_ATTR(PAL0, 0, 0, 0), 8, 17);
-				VDP_drawTextBG(APLAN, "PCM Sample used, change w/[X]", TILE_ATTR(PAL0, 0, 0, 0), 5, 18);
+				if(joytype == JOY_TYPE_PAD6)
+					VDP_drawTextBG(APLAN, "CD-DA [X]", TILE_ATTR(PAL0, 0, 0, 0), 14, 17);
+				VDP_drawTextBG(APLAN, "PCM Sample used [Up/Down]", TILE_ATTR(PAL0, 0, 0, 0), 8, 18);
 				switch(sampleLoaded)
 				{
 					case 0:
@@ -716,7 +752,7 @@ void MDFourier()
 						break;
 				}
 				
-				VDP_drawTextBG(APLAN, "PCM ratio Test [Y]", TILE_ATTR(PAL0, 0, 0, 0), 9, 20);
+				VDP_drawTextBG(APLAN, "Play PCM ratio Test [C]", TILE_ATTR(PAL0, 0, 0, 0), 9, 20);
 				VDP_drawTextBG(APLAN, "change w/[L or R]: 0x", TILE_ATTR(PAL0, 0, 0, 0), 7, 21);
 				intToHex(frequency, buffer, 4);
 				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 28, 21);
@@ -734,16 +770,35 @@ void MDFourier()
 
 		if(pressedButtons & BUTTON_A)
 		{
+#ifdef SEGACD	
+			if(sampleLoaded != 0)
+			{
+				sampleLoaded = 0;
+				ChangePCM(&sampleLoaded);
+			}
+			
+			SendSCDCommand(Op_StopCD);
+			SendSCDCommand(Op_StopPCM);
+#endif
 			VDP_drawTextBG(APLAN, "Please wait while recording", TILE_ATTR(PAL3, 0, 0, 0), 6, 10);
 			VDP_waitVSync();
 			
 			ExececuteMDF(framelen);
 			
+			VDP_drawTextBG(APLAN, "You can now stop recording.", TILE_ATTR(PAL0, 0, 0, 0), 6, 10);
+			VDP_drawTextBG(APLAN, "Press any button to continue", TILE_ATTR(PAL3, 0, 0, 0), 6, 12);
+			
+			do
+			{
+				buttons = JOY_readJoypad(JOY_1);
+				pressedButtons = buttons & ~oldButtons;
+				oldButtons = buttons;
+			}
+			while(pressedButtons == oldButtons);
+			
 			redraw = 1;
 			
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
-			//loadvram = 1;
-
 		}
 		
 		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
@@ -757,30 +812,27 @@ void MDFourier()
 				redraw = 1;
 			}
 		}
-		
-		if(!debug && (pressedButtons & BUTTON_X
-		|| (buttons & BUTTON_UP && buttons & BUTTON_B)))
-		{
-			debug = 1;
-			redraw = 1;
-		}
 
 #ifdef SEGACD			
 		if(debug)
 		{
 			if(pressedButtons & BUTTON_C)
-				PlayPCM(1);
+				TestPCM(1);
 			
-			if(pressedButtons & BUTTON_X)
+			if(pressedButtons & BUTTON_DOWN)
 			{	
 				sampleLoaded ++;
 				ChangePCM(&sampleLoaded);
 				redraw = 1;
 			}
 			
-			if(pressedButtons & BUTTON_Y)
-				TestPCM(1);
-
+			if(pressedButtons & BUTTON_UP)
+			{	
+				sampleLoaded --;
+				ChangePCM(&sampleLoaded);
+				redraw = 1;
+			}
+			
 			if(pressedButtons & BUTTON_RIGHT)
 			{
 				SendSCDCommand(Op_IncremetPCMFreq); 	//Increment the internal value by 1
@@ -795,13 +847,20 @@ void MDFourier()
 				redraw = 1;
 			}
 			
-			if(pressedButtons & BUTTON_UP)
+			if(pressedButtons & BUTTON_X)
 			{
-				PlayCDTrack(1);
+				SendSCDCommand(Op_PlayCDMDF);
 			}
 		}
 #endif
 
+		if(!debug && (pressedButtons & BUTTON_X
+		|| (buttons & BUTTON_UP && buttons & BUTTON_B)))
+		{
+			debug = 1;
+			redraw = 1;
+		}
+		
 		if(!debug && pressedButtons & BUTTON_START)
 			exit = 1;
 			
@@ -815,4 +874,8 @@ void MDFourier()
 	ym2612_keyoffAll();
 	StopPSG();
 	VDP_waitVSync();
+#ifdef SEGACD		
+	SendSCDCommand(Op_StopCD);
+	SendSCDCommand(Op_StopPCM);
+#endif
 }
