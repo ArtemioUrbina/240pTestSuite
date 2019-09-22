@@ -23,7 +23,7 @@
 
 int doLock = 0;
 
-const u16 PITCHES[NUMPITCHES] = {
+const static u16 PITCHES[NUMPITCHES] = {
 	277, 293, 311, 329, 349, 369, 
 	391, 415, 439, 465, 493, 522
 };
@@ -44,6 +44,41 @@ void Z80Release()
 	if(doLock)
 		Z80_releaseBus();
 }
+
+void SilenceMDF()
+{
+	ym2612_keyoffAll();
+	StopPSG();
+#ifdef SEGACD		
+	SendSCDCommand(Op_StopCD);
+	SendSCDCommand(Op_StopPCM);
+#endif
+}
+
+/*
+volatile u16 hint_line = 0;
+
+_voidCallback *h_int_mdf(void)
+{
+	hint_line ++;
+	return NULL; 
+}
+*/
+
+void VBlankIntCallbackZero()
+{
+	//hint_line = 0;
+	if(intCancel != 2)
+	{
+		if(JOY_readJoypad(JOY_1) & BUTTON_START)
+			intCancel = 1;
+	}
+}
+
+
+#define VDP_waitVSyncMDF() if(!intCancel)VDP_waitVSync(); else {intCancel=2;return;}
+
+//#define VDP_waitVSyncMDF() VDP_waitVSync();
 
 void ymGrandPianoLoad(u8 channel)
 {
@@ -303,9 +338,9 @@ void ExecutePulseTrain()
 	for(f = 0; f < 10; f++)
 	{
 		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 	}
 }
 
@@ -315,7 +350,7 @@ void ExecuteSilence()
 	
 	//Silence
 	for(frame = 0; frame < 20; frame++)
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 }
 
 void ExecuteFM(u16 framelen)
@@ -342,7 +377,7 @@ void ExecuteFM(u16 framelen)
 						ym2612_keyoff(chann);
 						ym2612_keyoff(chann+3);
 					}
-					VDP_waitVSync();
+					VDP_waitVSyncMDF();
 				}
 				chann ++;
 				if(chann > 2)
@@ -354,7 +389,7 @@ void ExecuteFM(u16 framelen)
 }
 
 
-
+/*
 void ExecuteFMRamp()
 {
 	int type, octave, wait = 0;
@@ -370,17 +405,17 @@ void ExecuteFMRamp()
 			{
 				ymPlay(chann, note, octave, STEREO_RIGHT);
 				ymPlay(chann+3, note, octave, STEREO_LEFT);
-				VDP_waitVSync();
+				VDP_waitVSyncMDF();
 			}
 		}
 	}
 	ym2612_keyoffAll();
 	// wait 4 frame stop get 100 frames, and have decay
 	for(wait = 0; wait < 4; wait++)
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 }
 
-
+*/
 
 void ExecutePSG(u16 framelen)
 {
@@ -396,7 +431,7 @@ void ExecutePSG(u16 framelen)
 		{	
 			if(frame == framelen - 1)
 				StopPSG();
-			VDP_waitVSync();
+			VDP_waitVSyncMDF();
 		}	
 	}
 	StopPSG();
@@ -414,7 +449,7 @@ void ExecutePSGRamp()
 		PSG_setFrequency(chann, psg);	
 		PSG_setEnvelope(chann, PSG_ENVELOPE_MAX);
 
-		VDP_waitVSync();        
+		VDP_waitVSyncMDF();        
 	}
 	StopPSG();
 }
@@ -442,7 +477,7 @@ void ExecuteNoise(u16 framelen)
 						PSG_setEnvelope(3, (int)frame/(framelen/0x0F));
 					if(frame == framelen - 1)
 						StopPSG();
-					VDP_waitVSync();
+					VDP_waitVSyncMDF();
 				}
 			}
 		}
@@ -458,7 +493,7 @@ void ExecuteNoise(u16 framelen)
 		PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_TONE3);
 		PSG_setFrequency(2, noise);
 		PSG_setEnvelope(3, PSG_ENVELOPE_MAX);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 	}
 	
 	for(noise = 0; noise < 20000; noise += 100)
@@ -466,7 +501,7 @@ void ExecuteNoise(u16 framelen)
 		PSG_setNoise(PSG_NOISE_TYPE_PERIODIC, PSG_NOISE_FREQ_TONE3);
 		PSG_setFrequency(2, noise);
 		PSG_setEnvelope(3, PSG_ENVELOPE_MAX);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 	}
 	*/
 	
@@ -501,22 +536,22 @@ void PlayCDTrack()
 		
 	PSG_setFrequency(0, 500);
 	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
+	VDP_waitVSyncMDF();
 	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-	VDP_waitVSync();
+	VDP_waitVSyncMDF();
 
 	SendSCDCommand(Op_UnPauseCD);
 
 	// wait 10012.8 ms/16.688=600 + 20 frames for 300ms sync pulse + 60 frames to capture the whole range due to CD-DA delay
 	for(i = 0; i < 680; i++)
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 	SendSCDCommand(Op_StopCD);
 
 	PSG_setFrequency(0, 500);
 	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
+	VDP_waitVSyncMDF();
 	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-	VDP_waitVSync();
+	VDP_waitVSyncMDF();
 }
 
 void PlayCDTrackTimed()
@@ -525,21 +560,21 @@ void PlayCDTrackTimed()
 		
 	PSG_setFrequency(0, 500);
 	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
+	VDP_waitVSyncMDF();
 	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-	VDP_waitVSync();
+	VDP_waitVSyncMDF();
 
 	SendSCDCommand(Op_PlayCDMDF);
 
 	for(i = 0; i < 400; i++)
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 	SendSCDCommand(Op_StopCD);
 
 	PSG_setFrequency(0, 500);
 	PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-	VDP_waitVSync();
+	VDP_waitVSyncMDF();
 	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-	VDP_waitVSync();
+	VDP_waitVSyncMDF();
 }
 
 void PlayPCM(int barrier)
@@ -550,9 +585,9 @@ void PlayPCM(int barrier)
 	{
 		PSG_setFrequency(0, 500);
 		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 	}
 	
 	SendSCDCommand(Op_PlayPCM);
@@ -563,14 +598,14 @@ void PlayPCM(int barrier)
 	if(barrier)
 	{
 		for(i = 0; i < 140; i++)
-			VDP_waitVSync();
+			VDP_waitVSyncMDF();
 		SendSCDCommand(Op_StopPCM);
 	
 		PSG_setFrequency(0, 500);
 		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 	}
 }
 
@@ -582,7 +617,7 @@ void TestPCM(int barrier)
 	{
 		PSG_setFrequency(0, 500);
 		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
 	}
 	
@@ -594,14 +629,14 @@ void TestPCM(int barrier)
 	if(barrier)
 	{
 		for(i = 0; i < 140; i++)
-			VDP_waitVSync();
+			VDP_waitVSyncMDF();
 		SendSCDCommand(Op_StopPCM);
 	
 		PSG_setFrequency(0, 500);
 		PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 	}
 }
 
@@ -623,17 +658,17 @@ void ChangePCM(int *type)
 
 #endif
 
-void ExececuteMDF(u16 framelen)
+void MDFSequence(u16 framelen)
 {	
 #ifdef SEGACD
 	int i = 0;
 
 	SendSCDCommand(Op_SeekCDMDF);
 #endif
-
+	
 	yminit();
 	PSG_init();
-	VDP_waitVSync();
+	VDP_waitVSyncMDF();
 	
 	ExecutePulseTrain();
 	ExecuteSilence();
@@ -649,12 +684,34 @@ void ExececuteMDF(u16 framelen)
 #ifdef SEGACD
 	// Wait PAUSE
 	for(i = 0; i < 4; i++)	
-		VDP_waitVSync();
+		VDP_waitVSyncMDF();
 		
 	PlayPCM(1);
 	PlayCDTrack();
 	PlayCDTrackTimed();
 #endif
+}
+
+void ExececuteMDF(u16 framelen)
+{
+	intCancel = 0;
+	
+	SYS_disableInts();
+	//SYS_setHIntCallback((_voidCallback *)h_int_mdf);
+	SYS_setVIntCallback(VBlankIntCallbackZero);	
+	//VDP_setHIntCounter(0);
+	//VDP_setHInterrupt(1);
+	SYS_enableInts();
+
+	MDFSequence(framelen);
+	
+	SYS_disableInts();
+	SYS_setVIntCallback(VBlankIntCallback);
+	//SYS_setHIntCallback((_voidCallback *)NULL);
+	//VDP_setHInterrupt(0);
+	SYS_enableInts();
+	
+	SilenceMDF();
 }
 
 void StartNote()
@@ -669,7 +726,7 @@ void StartNote()
 	VDP_waitVSync();
 }
 
-void MDFourier()
+void MDFourier(u8 armedAlert)
 {
 	int loadvram = 1, debug = 0;
 	u16 ind = 0, size = 0, exit = 0;
@@ -684,11 +741,15 @@ void MDFourier()
 #ifdef SEGACD	
 	ChangePCM(&sampleLoaded);
 #endif
+
+	if(armedAlert)
+		ExecutePulseTrain();
 	
 	while(!exit)
 	{
 		if(loadvram)
 		{
+			VDP_Start();
 			VDP_setPalette(PAL0, palette_grey);
 			VDP_setPalette(PAL1, palette_green);
 			VDP_setPalette(PAL2, back_pal);
@@ -699,12 +760,14 @@ void MDFourier()
 			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
 
 			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+			VDP_End();
 			loadvram = 0;
 			redraw = 1;
 		}
 		
 		if(redraw)
 		{	
+			VDP_Start();
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
 			
 			if(debug)
@@ -758,6 +821,7 @@ void MDFourier()
 				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 28, 21);
 #endif
 			}
+			VDP_End();
 			redraw = 0;
 		}
 
@@ -780,29 +844,40 @@ void MDFourier()
 			SendSCDCommand(Op_StopCD);
 			SendSCDCommand(Op_StopPCM);
 #endif
+			VDP_Start();
 			VDP_drawTextBG(APLAN, "Please wait while recording", TILE_ATTR(PAL3, 0, 0, 0), 6, 10);
+			VDP_End();
 			VDP_waitVSync();
 			
 			ExececuteMDF(framelen);
 			
-			VDP_drawTextBG(APLAN, "You can now stop recording.", TILE_ATTR(PAL0, 0, 0, 0), 6, 10);
-			VDP_drawTextBG(APLAN, "Press any button to continue", TILE_ATTR(PAL3, 0, 0, 0), 6, 12);
-			
-			do
+			if(intCancel != 2)
 			{
-				buttons = JOY_readJoypad(JOY_1);
-				pressedButtons = buttons & ~oldButtons;
-				oldButtons = buttons;
+				VDP_Start();
+				VDP_drawTextBG(APLAN, "You can now stop recording.", TILE_ATTR(PAL0, 0, 0, 0), 6, 10);
+				VDP_drawTextBG(APLAN, "Press any button to continue", TILE_ATTR(PAL3, 0, 0, 0), 6, 12);
+				VDP_End();
+				do
+				{
+					buttons = JOY_readJoypad(JOY_1);
+					pressedButtons = buttons & ~oldButtons;
+					oldButtons = buttons;
+				}
+				while(pressedButtons == oldButtons);
 			}
-			while(pressedButtons == oldButtons);
+			else
+				SilenceMDF();
+			
+			oldButtons = BUTTON_START;
+			pressedButtons = 0;
 			
 			redraw = 1;
 			
+			VDP_Start();
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
+			VDP_End();
 		}
 		
-		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
-			loadvram = 1;
 		
 		if(debug)
 		{
@@ -869,13 +944,9 @@ void MDFourier()
 			redraw = 1;
 			debug = 0;
 		}
+		VDP_waitVSync();
 	}
 	
-	ym2612_keyoffAll();
-	StopPSG();
-	VDP_waitVSync();
-#ifdef SEGACD		
-	SendSCDCommand(Op_StopCD);
-	SendSCDCommand(Op_StopPCM);
-#endif
+	SilenceMDF();
+	FadeAndCleanUp();
 }

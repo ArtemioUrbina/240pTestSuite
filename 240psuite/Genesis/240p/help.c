@@ -32,6 +32,7 @@ void DrawHelp(int option)
 
 	FadeAndCleanUp();
 
+	VDP_Start();
 	VDP_setPalette(PAL0, palette_grey);
 	VDP_setPalette(PAL1, palette_green);
 	VDP_setPalette(PAL2, back_pal);
@@ -58,12 +59,15 @@ void DrawHelp(int option)
 	}
 
 	VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+	VDP_End();
+	
 	while(!exit)
 	{
 		if(redraw)
 		{
 			int y = 7;
 
+			VDP_Start();
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
 
 			switch (option)
@@ -486,14 +490,18 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "scroll and 'C' toggles between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "vertical and horizontal.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
-					VDP_drawTextBG(APLAN, "This can be used to notice any", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "drops in framerate, or pixel", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "width inconsistencies.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "The vertical 256 scroll is also", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "used while in 320 mode but it", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "can be positioned with the dpad.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					
 					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
 					break;					
 				case 2:
 					VDP_drawTextBG(APLAN, "SCROLL TEST (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);
+					VDP_drawTextBG(APLAN, "This can be used to notice any", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "drops in framerate, or pixel", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "width inconsistencies.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
 					VDP_drawTextBG(APLAN, "Sonic is a trademark of Sega", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "Enterprises Ltd. Kiki Kaikai", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "is a trademark of Taito.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -674,7 +682,7 @@ void DrawHelp(int option)
 				break;
 			case HELP_MDFOURIER:
 				VDP_drawTextBG(APLAN, "MDFourier", TILE_ATTR(PAL1, 0, 0, 0), 16, 4);
-				VDP_drawTextBG(APLAN, "Button A plays the test tone.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "Button A plays the test tones.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "Please record it with your audio", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "card and use the software at:", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -684,6 +692,8 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "It will generate plots with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "audio signature from this system", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "that can be compared to others.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "START cancels the sequence.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "X button opens the debug menu", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 #ifdef SEGACD
@@ -697,6 +707,7 @@ void DrawHelp(int option)
 				break;
 			}
 
+			VDP_End();
 			redraw = 0;
 		}
 
@@ -706,7 +717,9 @@ void DrawHelp(int option)
 
 		if(joytype != JOY_TYPE_PAD6)
 		{
+			VDP_Start();
 			VDP_drawTextBG(APLAN, "Press START to exit help", TILE_ATTR(PAL0, 0, 0, 0), 9, 24);
+			VDP_End();
 
 			if(pressedButtons & BUTTON_START)
 				exit = 1;
@@ -715,7 +728,9 @@ void DrawHelp(int option)
 		}
 		else
 		{
+			VDP_Start();
 			VDP_drawTextBG(APLAN, "Press Z to exit help", TILE_ATTR(PAL0, 0, 0, 0), 11, 24);
+			VDP_End();
 
 			if(pressedButtons & BUTTON_Z)
 				exit = 1;

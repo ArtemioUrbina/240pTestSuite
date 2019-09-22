@@ -30,8 +30,12 @@
 extern u8		joytype;
 extern u8		IsPALVDP;
 extern u8		VDPChanged;
+extern u8		intCancel;
 
 #define FADE_TIME 10
+
+
+#define SCDTEST
 
 void TestPatternMenu();
 void DrawCredits();
@@ -39,9 +43,11 @@ void DrawIntro();
 void Detect_MD(char *str);
 void FadeAndCleanUp();
 void CleanUp();
+void VBlankIntCallback();
 u8 CheckHelpAndVO(u16 *buttons, u16 *pressedButtons, int option);
 void StopPSG();
 void DrawHelpText();
+void VBlankIntCallbackCancel();
 
 extern u8	joytype;
 

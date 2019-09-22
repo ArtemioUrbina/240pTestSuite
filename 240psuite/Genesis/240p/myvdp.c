@@ -25,6 +25,16 @@
 u16 pal_240;
 u16 enable_256;
 
+inline void VDP_Start()
+{
+	SYS_disableInts();
+}
+
+inline void VDP_End()
+{
+	SYS_enableInts();
+}
+
 void VDP_setSpriteAttr(u16 index, u16 tile_attr)
 {
 	SpriteDef *sprite;

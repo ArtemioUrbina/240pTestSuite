@@ -85,4 +85,4 @@ void TestPCM(int barrier);
 void ChangePCM(int *type);
 #endif
 void ExececuteMDF(u16 framelen);
-void MDFourier();
+void MDFourier(u8 armedAlert);

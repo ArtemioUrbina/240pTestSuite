@@ -180,11 +180,5 @@ extern u16 FireShark_pal[16/2];
 extern u16 FireSharkBL_pal[16/2]; 
 extern u16 FireSharkWH_pal[16/2]; 
 
-/*
-// VA Panel Test, from MM
-extern u32 VAPanel_tiles[1856/4]; 
-extern u16 VAPanel_map[272/2];
-extern u16 VAPanel_pal[16/2]; 
-*/
 
 #endif

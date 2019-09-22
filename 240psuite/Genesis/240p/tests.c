@@ -48,6 +48,8 @@ void DrawCheckBoard()
 	{
 		if(loadvram)
 		{
+			VDP_Start();
+			
 			if(enable_256)
 				VDP_setScreenWidth256();
 			else
@@ -63,6 +65,7 @@ void DrawCheckBoard()
 			VDP_loadTileData(check_tile_inv, ind, size, USE_DMA);
 
 			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			VDP_End();
 			loadvram = 0;
 		}
 
@@ -70,12 +73,16 @@ void DrawCheckBoard()
 		{
 			if(field == 0)
 			{
+				VDP_Start();
 				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+				VDP_End();
 				field = 1;
 			}
 			else
 			{
+				VDP_Start();
 				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+				VDP_End();
 				field = 0;
 			}
 		}
@@ -96,8 +103,10 @@ void DrawCheckBoard()
 			}
 
 			intToStr(count, cntstr, 2);
+			VDP_Start();
 			VDP_drawText("Frame:", 2, 25);
 			VDP_drawText(cntstr, 8, 25);
+			VDP_End();
 		}
 
 		buttons = JOY_readJoypad(JOY_1);
@@ -114,12 +123,16 @@ void DrawCheckBoard()
 		{
 			if(field == 0)
 			{
+				VDP_Start();
 				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+				VDP_End();
 				field = 1;
 			}
 			else
 			{
+				VDP_Start();
 				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+				VDP_End();
 				field = 0;
 			}
 		}
@@ -145,6 +158,7 @@ void DrawStripes()
 	{
 		if(loadvram)
 		{
+			VDP_Start();
 			if(enable_256)
 				VDP_setScreenWidth256();
 			else
@@ -164,6 +178,7 @@ void DrawStripes()
 			ver2 = ver1 + size;
 			size = sizeof(vstripesneg_tiles) / 32;
 			VDP_loadTileData(vstripesneg_tiles, ver2, size, USE_DMA);
+			VDP_End();
 
 			redraw = 1;
 			loadvram = 0;
@@ -171,6 +186,7 @@ void DrawStripes()
 
 		if(alternate || redraw)
 		{
+			VDP_Start();
 			if(field == 0)
 			{
 				if(vertical)
@@ -187,6 +203,7 @@ void DrawStripes()
 					VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor2, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
 				field = 0;
 			}
+			VDP_End();
 			redraw = 0;
 		}
 
@@ -205,8 +222,10 @@ void DrawStripes()
 			}
 
 			intToStr(count, cntstr, 2);
+			VDP_Start();
 			VDP_drawText("Frame:", 2, 25);
 			VDP_drawText(cntstr, 8, 25);
+			VDP_End();
 		}
 
 		buttons = JOY_readJoypad(JOY_1);
@@ -221,6 +240,7 @@ void DrawStripes()
 
 		if(pressedButtons & BUTTON_B && !alternate)
 		{
+			VDP_Start();
 			if(field == 0)
 			{
 				if(vertical)
@@ -237,6 +257,7 @@ void DrawStripes()
 					VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + hor2, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
 				field = 0;
 			}
+			VDP_End();
 		}
 
 		if(pressedButtons & BUTTON_LEFT || pressedButtons & BUTTON_RIGHT)
@@ -266,6 +287,8 @@ void DropShadowTest()
 	{
 		if(loadvram)
 		{
+			VDP_Start();
+			
 			VDP_setPalette(PAL0, palette_green);
 			VDP_setPalette(PAL1, motoko_pal);
 			VDP_setPalette(PAL2, wb_pal);
@@ -309,12 +332,15 @@ void DropShadowTest()
 				VDP_setSpritePosition(0, 320, 224);
 				VDP_setSpritePosition(1, 320, 224);
 			}
+			VDP_End();
 			loadvram = 0;
 			changeback = 1;
 		}
 
 		if(changeback || redraw)
 		{
+			VDP_Start();
+			
 			if(redraw)
 				VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
 
@@ -388,6 +414,7 @@ void DropShadowTest()
 				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320 / 8, 224 / 8);
 				break;
 			}
+			VDP_End();
 			changeback = 0;
 			redraw = 0;
 		}
@@ -400,17 +427,24 @@ void DropShadowTest()
 		}
 
 		if(sprite == 1)
+		{
+			VDP_Start();
 			VDP_setSpritePosition(0, x - 20, y - 20);
+			VDP_End();
+		}
 
 		if(field == invert)
 		{
+			VDP_Start();
 			VDP_setSpritePosition(sprite == 1 ? 1 : 2, x, y);
-
+			VDP_End();
 			field = !field;
 		}
 		else
 		{
+			VDP_Start();
 			VDP_setSpritePosition(sprite == 1 ? 1 : 2, 320, 224);
+			VDP_End();
 
 			field = !field;
 		}
@@ -441,8 +475,10 @@ void DropShadowTest()
 			if(direction == 1)
 			{
 				direction = 0;
+				VDP_Start();
 				VDP_setSpriteAttr(0, TILE_ATTR(PAL3, 0, 0, direction) + buzzpos);
 				VDP_setSpriteAttr(1, TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos);
+				VDP_End();
 			}
 		}
 
@@ -453,8 +489,10 @@ void DropShadowTest()
 			if(direction == 0)
 			{
 				direction = 1;
+				VDP_Start();
 				VDP_setSpriteAttr(0, TILE_ATTR(PAL3, 0, 0, direction) + buzzpos);
 				VDP_setSpriteAttr(1, TILE_ATTR(PAL2, 0, 0, direction) + buzzshadowpos);
+				VDP_End();
 			}
 		}
 
@@ -465,16 +503,19 @@ void DropShadowTest()
 		{
 			invert = !invert;
 
+			VDP_Start();
 			if(invert)
 				VDP_drawText("Shadow on odd frames ", 19, 0);
 			else
 				VDP_drawText("Shadow on even frames", 19, 0);
+			VDP_End();
 
 			text = 60;
 		}
 
 		if(back == 1)
 		{
+			VDP_Start();
 			VDP_setSpritePosition(3, x * -2 + 79, 120);
 			VDP_setSpritePosition(4, x * -2 + 335, 120);
 			VDP_setHorizontalScroll(PLAN_B, x * -2);
@@ -492,6 +533,7 @@ void DropShadowTest()
 				VDP_setPalette(PAL1, sonicwater_pal);
 				break;
 			}
+			VDP_End();
 
 			frame++;
 			if(frame > 90)
@@ -506,12 +548,15 @@ void DropShadowTest()
 				back = 0;
 
 			changeback = 1;
+			VDP_Start();
 			VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
+			VDP_End();
 		}
 
 		if(pressedButtons & BUTTON_C)
 		{
+			VDP_Start();
 			if(!sprite)
 				VDP_setSpritePosition(2, 320, 224);
 			else
@@ -519,11 +564,15 @@ void DropShadowTest()
 				VDP_setSpritePosition(0, 320, 224);
 				VDP_setSpritePosition(1, 320, 224);
 			}
+			VDP_End();
 
 			sprite = !sprite;
 		}
 
+		VDP_Start();
 		VDP_updateSprites();
+		VDP_End();
+		
 		VDP_waitVSync();
 	}
 }
@@ -539,6 +588,7 @@ void StripedSpriteTest()
 	{
 		if(loadvram)
 		{
+			VDP_Start();
 			VDP_setPalette(PAL1, motoko_pal);
 			VDP_setPalette(PAL3, wb_pal);
 
@@ -555,6 +605,8 @@ void StripedSpriteTest()
 			VDP_setSprite(2, 320, 224, SPRITE_SIZE(4, 4), TILE_ATTR(PAL1, 0, 0, 0) + waterfall, 0);
 
 			ind = waterfall + size;
+			
+			VDP_End();
 
 			loadvram = 0;
 			changeback = 1;
@@ -563,6 +615,8 @@ void StripedSpriteTest()
 		if(changeback)
 		{
 			changeback = 0;
+			
+			VDP_Start();
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
 			VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
 			if(back != 1)
@@ -612,9 +666,12 @@ void StripedSpriteTest()
 				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 0, 0, 320 / 8, 224 / 8);
 				break;
 			}
+			VDP_End();
 		}
 
+		VDP_Start();
 		VDP_setSpritePosition(0, x, y);
+		VDP_End();
 
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
@@ -649,6 +706,8 @@ void StripedSpriteTest()
 
 		if(back == 1)
 		{
+			VDP_Start();
+			
 			VDP_setSpritePosition(1, x * -2 + 79, 120);
 			VDP_setSpritePosition(2, x * -2 + 335, 120);
 			VDP_setHorizontalScroll(PLAN_B, x * -2);
@@ -666,6 +725,7 @@ void StripedSpriteTest()
 				VDP_setPalette(PAL1, sonicwater_pal);
 				break;
 			}
+			VDP_End();
 
 			frame++;
 			if(frame > 90)
@@ -695,7 +755,9 @@ void StripedSpriteTest()
 			changeback = 1;
 		}
 
+		VDP_Start();
 		VDP_updateSprites();
+		VDP_End();
 		VDP_waitVSync();
 	}
 }
@@ -727,6 +789,8 @@ void LagTest()
 	{
 		if(loadvram)
 		{
+			VDP_Start();
+			
 			VDP_setPalette(PAL0, palette_grey);
 			VDP_setPalette(PAL1, palette_red);
 			VDP_setPalette(PAL2, bw_pal);
@@ -783,16 +847,19 @@ void LagTest()
 						VDP_drawTextBG(APLAN, " frames   ", TILE_ATTR(pal, 0, 0, 0), pos == 9 ? 13 : 12 + ppos, i);
 				}
 			}
+			VDP_End();
 		}
 		
 		if(y == 96)	// half the screen?        
 		{
+			VDP_Start();
 			if(audio && !usersound)
 				PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
-
+				
 			VDP_getPalette(PAL0, first_pal);
 			first_pal[0] = oldColor;
 			VDP_setPalette(PAL0, first_pal);
+			VDP_End();
 		}
 		
 		if(usersound)
@@ -868,6 +935,7 @@ void LagTest()
 
 			ppos = pos + 1;
 			intToStr(ppos, str, 1);
+			VDP_Start();
 			VDP_drawTextBG(APLAN, "Offset", TILE_ATTR(PAL0, 0, 0, 0), 2, pos);
 			VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL0, 0, 0, 0), 9, pos);
 			VDP_drawTextBG(APLAN, ":", TILE_ATTR(PAL0, 0, 0, 0), pos == 9 ? 11 : 10, pos);
@@ -879,6 +947,7 @@ void LagTest()
 			else
 				VDP_drawTextBG(APLAN, " frames   ", TILE_ATTR(pal, 0, 0, 0), pos == 9 ? 13 : 12 + ppos, pos);
 
+			VDP_End();
 			if(clicks[pos] >= 0)
 				pos++;
 
@@ -889,6 +958,7 @@ void LagTest()
 
 		if(draw)
 		{
+			VDP_Start();
 			VDP_drawTextBG(APLAN, "Audio:", TILE_ATTR(PAL0, 0, 0, 0), 24, 0);
 			if(audio)
 				VDP_drawTextBG(APLAN, "on ", TILE_ATTR(PAL0, 0, 0, 0), 31, 0);
@@ -899,6 +969,7 @@ void LagTest()
 				VDP_drawTextBG(APLAN, "random  ", TILE_ATTR(PAL0, 0, 0, 0), 32, 1);
 			else
 				VDP_drawTextBG(APLAN, "rhythmic", TILE_ATTR(PAL0, 0, 0, 0), 32, 1);
+			VDP_End();
 			draw = 0;
 		}
 
@@ -931,6 +1002,7 @@ void LagTest()
 		y += speed;
 		x2 += speed;
 
+		VDP_Start();
 		if(y == 96)	// Red on the spot
 			VDP_setSpriteAttr(0, TILE_ATTR(PAL1, 0, 0, 0) + ind);
 		if(y == 95 || y == 97)	//Green one pixel before or after
@@ -949,9 +1021,11 @@ void LagTest()
 			VDP_setSpritePosition(2, 320, 224);
 
 		VDP_updateSprites();
+		VDP_End();
 
 		if(y == 96)	// half the screen?        
 		{
+			VDP_Start();
 			if(audio)
 			{
 				PSG_setFrequency(0, 1000);
@@ -962,6 +1036,7 @@ void LagTest()
 			oldColor = first_pal[0];
 			first_pal[0] = 0x0666;
 			VDP_setPalette(PAL0, first_pal);
+			VDP_End();
 		}
 		VDP_waitVSync();
 	}
@@ -971,6 +1046,8 @@ void LagTest()
 		fix32 totald = 0, cnt, tot;
 		u16 total = 0, count = 0, c = 0;
 
+		VDP_Start();
+		
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
 		VDP_resetSprites();
 		VDP_updateSprites();
@@ -983,6 +1060,7 @@ void LagTest()
 		VDP_loadTileData(back_tiles, TILE_USERINDEX, size, USE_DMA);
 
 		VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+		VDP_End();
 		exit = 0;
 
 		for(c = 0; c < 10; c++)
@@ -1002,17 +1080,23 @@ void LagTest()
 					count++;
 				}
 
+				VDP_Start();
 				VDP_drawTextBG(APLAN, str, TILE_ATTR(pal, 0, 0, 0), 10, c + 7);
+				VDP_End();
 			}
 		}
 
+		VDP_Start();
 		VDP_drawTextBG(APLAN, "+", TILE_ATTR(PAL1, 0, 0, 0), 8, 11);
+		VDP_End();
 
 		if(count > 0)
 		{
 			u16 h = 10;
 			u16 v = 18;
 
+			VDP_Start();
+			
 			VDP_drawTextBG(APLAN, "----", TILE_ATTR(PAL0, 0, 0, 0), h - 2, v++);
 
 			cnt = intToFix32(count);
@@ -1051,6 +1135,7 @@ void LagTest()
 				VDP_drawTextBG(APLAN, "EXCELLENT REFLEXES!", TILE_ATTR(PAL1, 0, 0, 0), 14, 15);
 			if(total == 0)
 				VDP_drawTextBG(APLAN, "INCREDIBLE REFLEXES!!", TILE_ATTR(PAL1, 0, 0, 0), 14, 15);
+			VDP_End();
 		}
 
 		while(!exit)
@@ -1071,12 +1156,14 @@ void HScrollTest()
 	u16 size, sonic_floor, sonic_water, waterfall, loadvram = 1;
 	u16 exit = 0, frame = 1, vertical = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	int x = 0, y = 0, speed = 1, acc = -1, pause = 0;
+	int x = 0, y = 0, speed = 1, acc = -1, pause = 0, kikipos = 32;
 
 	while(!exit)
 	{
 		if(loadvram)
 		{	
+			VDP_Start();
+			
 			if(!vertical)
 			{	
 				if(enable_256)
@@ -1123,9 +1210,10 @@ void HScrollTest()
 				VDP_resetSprites();
 				VDP_updateSprites();
 				VDP_setHorizontalScroll(PLAN_B, 0);
-				VDP_setHorizontalScroll(PLAN_A, 0);
-								
-				VDP_setScreenWidth256();
+				VDP_setHorizontalScroll(PLAN_A, !enable_256 ? kikipos : 0);
+				
+				if(enable_256)
+					VDP_setScreenWidth256();
 
 				VDP_setPalette(PAL0, kiki_pal);
 				size = sizeof(kiki_tiles) / 32;
@@ -1134,11 +1222,13 @@ void HScrollTest()
 				VDP_setMyTileMapRect(APLAN, kiki_map, TILE_USERINDEX, 0, 0, 256 / 8, 512 / 8);
 			}
 
+			VDP_End();
 			loadvram = 0;
 		}
 
 		if(!vertical)
 		{
+			VDP_Start();
 			switch (frame)
 			{
 			case 30:
@@ -1151,6 +1241,7 @@ void HScrollTest()
 				VDP_setPalette(PAL1, sonicwater_pal);
 				break;
 			}
+			VDP_End();
 		}
 
 		frame++;
@@ -1203,11 +1294,13 @@ void HScrollTest()
 			if(x <= -512)
 				x = x % -512;
 
+			VDP_Start();
 			VDP_setSpritePosition(0, x / 2 + 79, 120);
 			VDP_setSpritePosition(1, x / 2 + 335, 120);
 			VDP_updateSprites();
 			VDP_setHorizontalScroll(PLAN_A, x);
 			VDP_setHorizontalScroll(PLAN_B, x / 2);
+			VDP_End();
 		}
 		else
 		{
@@ -1220,8 +1313,29 @@ void HScrollTest()
 			if(x <= -512)
 				y = y % -512;
 
+			VDP_Start();
 			VDP_setVerticalScroll(PLAN_A, y);
+			VDP_End();
 		}
+		
+		if(vertical && pressedButtons & BUTTON_LEFT)
+			kikipos -= 32;
+
+		if(vertical && pressedButtons & BUTTON_RIGHT)
+			kikipos += 32;
+			
+		if(kikipos < 0)
+			kikipos = 0;
+		if(kikipos > 64)
+			kikipos = 64;
+		
+		if(vertical && !enable_256)
+		{
+			VDP_Start();
+			VDP_setHorizontalScroll(PLAN_A, kikipos);
+			VDP_End();
+		}
+		
 		VDP_waitVSync();
 	}
 }
@@ -1237,6 +1351,7 @@ void VScrollTest()
 	{
 		if(loadvram)
 		{
+			VDP_Start();
 			if(enable_256)
 				VDP_setScreenWidth256();
 			else
@@ -1248,6 +1363,7 @@ void VScrollTest()
 			VDP_loadTileData(circles_grid_tiles, TILE_USERINDEX, size, USE_DMA);
 
 			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 512 / 8, 512 / 8);
+			VDP_End();
 			loadvram = 0;
 		}
 
@@ -1291,10 +1407,12 @@ void VScrollTest()
 		if(pos <= -512)
 			pos = pos % -512;
 
+		VDP_Start();
 		if(direction)
 			VDP_setHorizontalScroll(PLAN_A, pos);
 		else
 			VDP_setVerticalScroll(PLAN_A, pos);
+		VDP_End();
 		VDP_waitVSync();
 	}
 }
@@ -1313,12 +1431,12 @@ enum SounTestValue{
 
 void SoundTest()
 {
-	int sel = 2, loadvram = 1, psgoff = 0, fmpan = 1;
+	int sel = 2, loadvram = 1, psgoff = 0, fmpan = 1, fmoff = 0;
 	int type = stFM;
 	u16 ind = 0, size = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 redraw = 0, selmax = 5;
-	u8 octave = 24;
+	int octave = 24;
 #ifdef SEGACD
 	int pcm = 0, loaded = 0;
 #endif
@@ -1332,6 +1450,8 @@ void SoundTest()
 	{
 		if(loadvram)
 		{
+			VDP_Start();
+			
 			VDP_setPalette(PAL0, palette_grey);
 			VDP_setPalette(PAL1, palette_green);
 			VDP_setPalette(PAL2, back_pal);
@@ -1342,6 +1462,7 @@ void SoundTest()
 			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
 
 			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+			VDP_End();
 			loadvram = 0;
 			redraw = 1;
 		}
@@ -1357,6 +1478,7 @@ void SoundTest()
 			
 			char buffer[2];
 			
+			VDP_Start();
 			VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL1, 0, 0, 0), x+1, 6);
 			
 			VDP_drawTextBG(APLAN, "YM2612 FM", TILE_ATTR(PAL1, 0, 0, 0), x+2, y++);
@@ -1393,6 +1515,8 @@ void SoundTest()
 #endif
 			y+=3;
 			VDP_drawTextBG(APLAN, "Audio Sync Test", TILE_ATTR(type == SyncTest ? PAL3 : PAL1, 0, 0, 0), x-1, y);
+			VDP_End();
+			
 			DrawHelpText();
 			redraw = 0;
 		}
@@ -1459,12 +1583,28 @@ void SoundTest()
 		{
 			sel--;
 			redraw = 1;
+			
+			if(type == stFMOct)
+			{
+				octave -= 8;
+				if(octave < 0)
+					octave = 56;
+				redraw = 1;
+			}
 		}
 
 		if(pressedButtons & BUTTON_RIGHT)
 		{
 			sel++;
 			redraw = 1;
+			
+			if(type == stFMOct)
+			{
+				octave += 8;
+				if(octave > 56)
+					octave = 0;
+				redraw = 1;
+			}
 		}
 
 		if(sel > selmax)
@@ -1480,6 +1620,7 @@ void SoundTest()
 				case stFM: //YM2612
 				{
 					ymPlay(3, sel, octave, fmpan == 0 ? STEREO_LEFT: fmpan == 1 ? STEREO_BOTH : STEREO_RIGHT);
+					fmoff = 120;
 				}
 				break;
 				case stFMOct: // Octave
@@ -1595,6 +1736,13 @@ void SoundTest()
 			if(psgoff == 0)
 				StopPSG();
 		}
+		
+		if(fmoff)
+		{
+			fmoff --;
+			if(fmoff == 0)
+				ym2612_keyoffAll();
+		}
 
 
 		VDP_waitVSync();
@@ -1622,6 +1770,8 @@ void LEDZoneTest()
 	{
 		if(loadvram)
 		{
+			VDP_Start();
+			
 			if(enable_256)
 				VDP_setScreenWidth256();
 			else
@@ -1645,10 +1795,13 @@ void LEDZoneTest()
 			VDP_setSprite(0, x, y, SPRITE_SIZE(1, 1), TILE_ATTR(PAL1, 0, 0, 0) + sprite1, 0);
 
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			VDP_End();
 			loadvram = 0;
 		}
 
+		VDP_Start();
 		VDP_setSpritePosition(0, x, y);
+		VDP_End();
 
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
@@ -1727,6 +1880,8 @@ void LEDZoneTest()
 
 		if(change)
 		{
+			VDP_Start();
+			
 			switch (sprite)
 			{
 			case 0:
@@ -1750,9 +1905,13 @@ void LEDZoneTest()
 				size = 8;
 				break;
 			}
+			VDP_End();
 		}
 
+		VDP_Start();
 		VDP_updateSprites();
+		VDP_End();
+		
 		VDP_waitVSync();
 	}
 }
@@ -1769,6 +1928,8 @@ void PassiveLagTest()
 		if(loadvram)
 		{
 			int i = 0;
+			
+			VDP_Start();
 			
 			VDP_setPalette(PAL1, btw_pal);
 			VDP_setPalette(PAL2, bluew_pal);
@@ -1854,6 +2015,7 @@ void PassiveLagTest()
 			VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 22, 17, 7, 7);
 			VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, 32, 17, 7, 7);
 
+			VDP_End();
 			loadvram = 0;
 		}
 
@@ -1862,6 +2024,7 @@ void PassiveLagTest()
 
 		if(!pause && color)
 		{
+			VDP_Start();
 			if(bgcol == PAL2)
 			{
 				bgcol = PAL3;
@@ -1872,6 +2035,7 @@ void PassiveLagTest()
 				bgcol = PAL2;
 				VDP_setPaletteColor(0xE, 0x0fff);
 			}
+			VDP_End();
 		}
 
 		if(Detect_VDP_PAL())
@@ -1906,6 +2070,7 @@ void PassiveLagTest()
 		if(hours > 99)
 			hours = 0;
 
+		VDP_Start();
 		// Draw Hours
 		lsd = hours % 10;
 		msd = hours / 10;
@@ -1933,6 +2098,8 @@ void PassiveLagTest()
 		// Draw Frame divisor circles
 
 		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, cposx, cposy, 7, 7);
+		VDP_End();
+		
 		if(framecnt > 4)
 		{
 			cposx = framecnt - 4;
@@ -1945,7 +2112,9 @@ void PassiveLagTest()
 		}
 		cposx = (cposx - 1) * 10 + 2;
 
+		VDP_Start();
 		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + circle, cposx, cposy, 7, 7);
+		VDP_End();
 
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
@@ -1965,6 +2134,7 @@ void PassiveLagTest()
 
 		if(pressedButtons & BUTTON_C)
 		{
+			VDP_Start();
 			color = !color;
 			if(!color)
 			{
@@ -1978,6 +2148,7 @@ void PassiveLagTest()
 				VDP_setPalette(PAL2, bluew_pal);
 				VDP_setPalette(PAL3, redw_pal);
 			}
+			VDP_End();
 
 			if(color)
 				bgcol = PAL3;
@@ -2046,12 +2217,16 @@ void Alternate240p480i()
 
 	oldinterlaced = VDP_Detect_Interlace();
 
+	VDP_Start();
 	VDP_setScanMode(INTERLACED_NONE);
+	VDP_End();
 
 	while(!exit)
 	{
+		VDP_Start();
 		if(loadvram)
 		{
+			VDP_Start();
 			VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
 
@@ -2060,6 +2235,8 @@ void Alternate240p480i()
 			VDP_setPalette(PAL2, palette_red);
 
 			VDP_drawText("Elapsed Timer: 00:00:00:00", 7, 3);
+			VDP_End();
+			
 			loadvram = 0;
 			changed = 1;
 		}
@@ -2141,6 +2318,7 @@ void Alternate240p480i()
 					}
 				}
 			}
+			VDP_End();
 			changed = 0;
 		}
 
@@ -2172,10 +2350,12 @@ void Alternate240p480i()
 				times[current - 1].type = 0;
 				res = !res;
 				times[current - 1].res = res;
+				VDP_Start();
 				if(!res)
 					VDP_setScanMode(INTERLACED_NONE);
 				else
 					VDP_setScanMode(INTERLACED_MODE1);
+				VDP_End();
 			}
 			if(status == 2)
 			{
@@ -2226,10 +2406,12 @@ void Alternate240p480i()
 		VDP_waitVSync();
 	}
 
+	VDP_Start();
 	if(oldinterlaced)
 		VDP_setScanMode(INTERLACED_MODE1);
 	else
 		VDP_setScanMode(INTERLACED_NONE);
+	VDP_End();
 
 	return;
 }
@@ -2252,6 +2434,8 @@ void AudioSyncTest()
 	{
 		if(loadvram)
 		{
+			VDP_Start();
+			
 			VDP_setPalette(PAL0, black_pal);
 			VDP_setPaletteColor(17, 0x0ddd);
 			VDP_setPaletteColor(34, 0x0ddd);
@@ -2281,6 +2465,8 @@ void AudioSyncTest()
 			VDP_updateSprites();	
 
 			VDP_fillTileMapRect(APLAN, TILE_ATTR_FULL(PAL2, 1, 0, 0, 1) + tiles, 0, 20, 40, 1);
+			
+			VDP_End();
 
 			loadvram = 0;
 		}
@@ -2316,8 +2502,10 @@ void AudioSyncTest()
 			if(status <= 120)
 			{
 				y += acc;
+				VDP_Start();
 				VDP_setSpritePosition(0, x, y);
 				VDP_updateSprites();
+				VDP_End();
 			}
 		}
 
@@ -2346,14 +2534,18 @@ void AudioSyncTest()
 				break;
 			}
 
+			VDP_Start();
 			VDP_setPalette(PAL0, black_pal);
+			VDP_End();
 		}
 		
 		if(status == 120)
 		{
 			PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
 			black_pal[0] = 0xFFF;
+			VDP_Start();
 			VDP_setPalette(PAL0, black_pal);
+			VDP_End();
 		}
 
 		if(status == 122)
@@ -2362,85 +2554,18 @@ void AudioSyncTest()
 				black_pal[i] = 0x0;
 
 			PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+			VDP_Start();
 			VDP_setPalette(PAL0, black_pal);
+			VDP_End();
 			status = -1;
 		}
 		
 		VDP_waitVSync();
 	}
+	VDP_Start();
 	VDP_resetSprites();
 	VDP_updateSprites();
+	VDP_End();
 	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
 }
 
-/*
-void VAPanelScrollTest()
-{    
-  u16 size;
-  u16 exit = 0;
-  u16 buttons, oldButtons = 0xffff, pressedButtons;
-  int x = 0, speed = 1, acc = -1, pause = 0;
-  char str[10];
-  
-  VDP_setPalette(PAL0, VAPanel_pal);    
-  VDP_setPalette(PAL1, palette_grey);
-
-  size = sizeof(VAPanel_tiles) / 32; 
-  VDP_loadTileData(VAPanel_tiles, TILE_USERINDEX, size, USE_DMA);       
-
-  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 0, 0, 64/8, 136/8);                            
-  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 64/8, 0, 64/8, 136/8);                            
-  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 128/8, 0, 64/8, 136/8);                            
-  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 192/8, 0, 64/8, 136/8);                            
-  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 256/8, 0, 64/8, 136/8);                            
-  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 320/8, 0, 64/8, 136/8);                            
-  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 384/8, 0, 64/8, 136/8);                            
-  VDP_setMyTileMapRect(APLAN, VAPanel_map, TILE_USERINDEX, 448/8, 0, 64/8, 136/8);                            
-    
-  VDP_drawTextBG(BPLAN, "Scroll Speed:", TILE_ATTR(PAL1, 0, 0, 0), 20, 26);
-  while(!exit)
-  {  
-    buttons = JOY_readJoypad(JOY_1);
-    pressedButtons = buttons & ~oldButtons;
-    oldButtons = buttons;
-        
-    if (pressedButtons & BUTTON_START)
-      exit = 1;
-
-    if (pressedButtons & BUTTON_UP)
-      speed++;
-
-    if (pressedButtons & BUTTON_DOWN)
-      speed--;
-
-    if(speed > 10)        
-      speed = 10;          
-    
-    if(speed < 0)        
-      speed = 0;          
-
-    if (pressedButtons & BUTTON_A)
-      pause = !pause;
-
-    if (pressedButtons & BUTTON_B)
-      acc *= -1;
-
-    if(!pause)
-      x += acc*speed;
-
-    if(x >= 512)
-      x = x % 512;
-
-    if(x <= -512)
-      x = x % -512;
-
-    VDP_drawTextBG(BPLAN, "   ", TILE_ATTR(PAL1, 0, 0, 0), 34, 26);
-    intToStr(speed, str, 1);    
-    VDP_drawTextBG(BPLAN, str, TILE_ATTR(PAL1, 0, 0, 0), 34, 26);
-    
-    VDP_setHorizontalScroll(PLAN_A, x);            
-    VDP_waitVSync();
-  }
-  VDP_setHorizontalScroll(PLAN_A, 0);  
-}
-*/
