@@ -118,6 +118,21 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 	return checksum;
 }
 
+void ShowMessageAndData(char *message, uint32_t address, int len, int palmsg, int xpos, int ypos)
+{
+	int			msglen = 0;
+	char		buffer[40];
+	
+	intToHex(address, buffer, len);
+	
+	msglen = strlen(message);
+	VDP_Start();
+	VDP_drawTextBG(APLAN, message, TILE_ATTR(palmsg, 0, 0, 0), xpos, ypos);
+	VDP_drawTextBG(APLAN, " 0x", TILE_ATTR(PAL0, 0, 0, 0), xpos+msglen, ypos);
+	VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), xpos+msglen+3, ypos);
+	VDP_End();
+}
+
 void ShowBIOSData(uint32_t address)
 {
 	char buffer[10];
@@ -129,11 +144,9 @@ void ShowBIOSData(uint32_t address)
 		
 		bios = (uint8_t*)(possible[i]+address);
 	
-		VDP_Start();
-		VDP_drawTextBG(APLAN, "BIOS 0x", TILE_ATTR(PAL0, 0, 0, 0), 4, 6+i*3);
-		intToHex((int)bios, buffer, 6);
-		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 11, 6+i*3);
+		ShowMessageAndData("BIOS", (uint32_t)bios, 6, PAL0, 4, 6+i*3);
 		
+		VDP_Start();
 		VDP_drawTextBG(APLAN, "ASCII:", TILE_ATTR(PAL1, 0, 0, 0), 19, 7+i*3);
 		buffer[0] = bios[0];
 		buffer[1] = bios[1];
@@ -184,13 +197,7 @@ int CheckSCDRAMWithValue(char * message, u32 start, u32 end, u8 value, int pos)
 	
 	if(memoryFail != MEMORY_OK)
 	{
-		char buffer[10];
-		
-		VDP_Start();
-		VDP_drawTextBG(APLAN, "FAILED 0x", TILE_ATTR(PAL2, 0, 0, 0), 12, pos+1);
-		intToHex(memoryFail, buffer, 6);
-		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL2, 0, 0, 0), 21, pos+1);
-		VDP_End();
+		ShowMessageAndData("FAILED", memoryFail, 6, PAL3, 12, pos+1);
 		return 0;
 	}
 	
@@ -418,7 +425,7 @@ void doBIOSID(uint32_t checksum, uint32_t address)
 		if(checksum == bioslist[i].crc)
 		{
 			VDP_Start();
-			VDP_drawTextBG(APLAN, bioslist[i].name, TILE_ATTR(PAL1, 0, 0, 0), 6, 20);
+			VDP_drawTextBG(APLAN, bioslist[i].name, TILE_ATTR(PAL2, 0, 0, 0), 6, 20);
 			VDP_End();
 			return;
 		}
@@ -443,15 +450,8 @@ void doBIOSID(uint32_t checksum, uint32_t address)
 void CheckSegaCDBIOSCRC(uint32_t address)
 {
 	uint32_t	checksum = 0;
-	char		buffer[8];
 	
-	intToHex(address, buffer, 8);
-	VDP_Start();
-	VDP_drawTextBG(APLAN, "Sega CD BIOS Data at", TILE_ATTR(PAL1, 0, 0, 0), 5, 4);
-	VDP_drawTextBG(APLAN, "0x", TILE_ATTR(PAL0, 0, 0, 0), 25, 4);
-	VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 27, 4);
-	VDP_End();
-	
+	ShowMessageAndData("Sega CD BIOS Data at", address, PAL1, 8, 6, 4);
 	ShowBIOSData(address);
 	
 	VDP_Start();
@@ -464,13 +464,8 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 #else
 	checksum = CalculateCRC(address, 0x20000, 0);
 #endif
-	intToHex(checksum, buffer, 8);
-	
-	VDP_Start();
-	VDP_drawTextBG(APLAN, "CD BIOS CRC32:", TILE_ATTR(PAL1, 0, 0, 0), 6, 19);
-	VDP_drawTextBG(APLAN, "0x", TILE_ATTR(PAL0, 0, 0, 0), 20, 19);
-	VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 22, 19);
-	VDP_End();
+
+	ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
 	
 	doBIOSID(checksum, address);
 
@@ -496,25 +491,23 @@ u16 GetSCDRegisterWRD(u32 reg)
 	return(*scdctrl);
 }
 
-int checkRegisterW(u32 reg, u16 value, char * message, int pos)
+int checkRegisterW(u32 reg, u16 value, u8 half, char * message, int pos)
 {
-	u16 ret = 0;
+	u16 ret = 0, fail =0;
 	
 	VDP_Start();
 	VDP_drawTextBG(APLAN, message, TILE_ATTR(PAL1, 0, 0, 0), 11, pos);
 	VDP_End();
 	
-	SetSCDRegisterWRD(reg, value);
+	SetSCDRegisterWRD(reg, half ? value & 0xFF00 : value);
 	ret = GetSCDRegisterWRD(reg);
-	if(ret != value)
+	if(half)
+		fail = (ret & 0xFF00) != (value & 0xFF00);
+	else
+		fail = ret != value;
+	if(fail)
 	{
-		char buffer[6];
-		
-		VDP_Start();
-		VDP_drawTextBG(APLAN, "Got 0x", TILE_ATTR(PAL2, 0, 0, 0), 14, pos+1);
-		intToHex(ret, buffer, 4);
-		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL2, 0, 0, 0), 20, pos+1);
-		VDP_End();
+		ShowMessageAndData("FAILED", ret, 4, PAL3, 11, pos+1);
 		return 0;
 	}
 	
@@ -528,14 +521,12 @@ void checkRegister(char *title, u32 reg, u8 half)
 {
 	int good = 0;
 	
-	VDP_Start();
-	VDP_drawTextBG(APLAN, title, TILE_ATTR(PAL1, 0, 0, 0), 10, 8);
-	VDP_End();
+	ShowMessageAndData(title, reg, 8, PAL1, 7, 8);
 	
-	good += checkRegisterW(reg, half ? 0x5500 : 0x5555, "Setting to 0x55", 10);
-	good += checkRegisterW(reg, half ? 0xAA00 : 0xAAAA, "Setting to 0xAA", 12);
-	good += checkRegisterW(reg, half ? 0xFF00 : 0xFFFF, "Setting to 0xFF", 14);
-	if(good) checkRegisterW(reg, 0, "Setting to 0x00", 16);
+	good += checkRegisterW(reg, half ? 0x5500 : 0x5555, half, "Setting to 0x55", 10);
+	good += checkRegisterW(reg, half ? 0xAA00 : 0xAAAA, half, "Setting to 0xAA", 12);
+	good += checkRegisterW(reg, half ? 0xFF00 : 0xFFFF, half, "Setting to 0xFF", 14);
+	if(good) checkRegisterW(reg, 0, half, "Setting to 0x00", 16);
 	WaitKey();
 }
 
@@ -545,12 +536,7 @@ void CheckCtrlRegisters()
 	int i = 0;
 	
 	for(i = 0; i < 16; i+=2)
-	{
-		char buffer[20] = { "Comm cmd register 00" };
-		
-		intToHex(i, buffer+18, 2);
-		checkRegister(buffer, CCMD_REGISTER+i, 0);
-	}
+		checkRegister("Command Register", CCMD_REGISTER+i, 0);
 }
 
 int configHint()
@@ -565,14 +551,10 @@ int configHint()
 
 void CheckHintRegister()
 {
-	u8 value = 0;
-	value = configHint();
-	VDP_Start();
-	if(value)
-		VDP_drawTextBG(APLAN, "HINT set OK", TILE_ATTR(PAL2, 0, 0, 0), 14, 15);
+	if(configHint())
+		ShowMessageAndData("HINT set OK", HINT_REGISTER, 8, PAL1, 9, 12);
 	else
-		VDP_drawTextBG(APLAN, "HINT set FAILED", TILE_ATTR(PAL3, 0, 0, 0), 14, 15);
-	VDP_End();
+		ShowMessageAndData("HINT set FAILED", HINT_REGISTER, 8, PAL3, 7, 12);
 	WaitKey();
 }
 
@@ -606,34 +588,28 @@ int TestBankingProgramRAM()
 void CheckSCDProgramRAM()
 {
 	int		i, banks = 4;
-	char 	buffer[4];
 	u16 	*scdctrl = (u16 *)MMOD_REGISTER;
 	
+	ShowMessageAndData("Program RAM", 0x420000, 8, PAL1, 7, 7);
 	if(!TestBankingProgramRAM())
 	{
+		ShowMessageAndData("Bank Switch FAIL", MMOD_REGISTER, 8, PAL3, 5, 8);
+		
 		VDP_Start();
-		VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
-		VDP_drawTextBG(APLAN, "Program RAM", TILE_ATTR(PAL1, 0, 0, 0), 14, 8);
-		VDP_drawTextBG(APLAN, "Bank Switching doesn't work", TILE_ATTR(PAL3, 0, 0, 0), 6, 10);
 		VDP_drawTextBG(APLAN, "Only one bank will be checked", TILE_ATTR(PAL2, 0, 0, 0), 5, 11);
 		VDP_End();
 		
 		banks = 1;
 		WaitKey();
+		VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
 	}
 	
 	for(i = 0; i < banks; i++)
 	{
 		int good = 0;
 		
-		VDP_Start();
-		VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
+		ShowMessageAndData("Bank", i << 6, 2, PAL1, 14, 9);
 		
-		VDP_drawTextBG(APLAN, "Program RAM", TILE_ATTR(PAL1, 0, 0, 0), 12, 8);
-		intToHex(i << 6, buffer, 2);
-		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL1, 0, 0, 0), 24, 8);
-		
-		VDP_End();
 		// Change Program RAM Bank
 		*scdctrl = i << 6;
 		
@@ -652,9 +628,7 @@ void CheckSCDWordRAM()
 {
 	int good = 0;
 	
-	VDP_Start();
-	VDP_drawTextBG(APLAN, "WORD RAM", TILE_ATTR(PAL1, 0, 0, 0), 16, 8);
-	VDP_End();
+	ShowMessageAndData("WORD RAM", 0x600000, 8, PAL1, 9, 8);
 	
 	good = 0;
 	good += CheckSCDRAMWithValue("Setting to 0xAA", 0x600000, 0x640000, 0xAA, 10);	
@@ -883,7 +857,7 @@ void SegaCDMenu()
 				CheckHintRegister();
 				break;
 			case 3:
-				checkRegister("Comm Flag register", CFLG_REGISTER, 1);
+				checkRegister("Flag register", CFLG_REGISTER, 1);
 				break;
 			case 4:				
 				CheckCtrlRegisters();
