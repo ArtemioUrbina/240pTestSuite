@@ -477,37 +477,35 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 #define CFLG_REGISTER	0xA1200E
 #define CCMD_REGISTER	0xA12010
 
-void SetSCDRegisterWRD(u32 reg, u16 value)
+#ifndef SEGACD
+
+void SetSCDRegisterBYTE(u32 reg, u8 value)
 {
-	u16 	*scdctrl = (u16 *)reg; 
+	u8 	*scdctrl = (u8 *)reg; 
 	
 	*scdctrl = value;
 }
 
-u16 GetSCDRegisterWRD(u32 reg)
+u8 GetSCDRegisterBYTE(u32 reg)
 {
-	u16 	*scdctrl = (u16 *)reg; 
+	u8 	*scdctrl = (u8 *)reg; 
 	
 	return(*scdctrl);
 }
 
-int checkRegisterW(u32 reg, u16 value, u8 half, char * message, int pos)
+int checkRegisterBYTE(u32 reg, u8 value, char * message, int pos)
 {
-	u16 ret = 0, fail =0;
+	u8 ret = 0;
 	
 	VDP_Start();
 	VDP_drawTextBG(APLAN, message, TILE_ATTR(PAL1, 0, 0, 0), 11, pos);
 	VDP_End();
 	
-	SetSCDRegisterWRD(reg, half ? value & 0xFF00 : value);
-	ret = GetSCDRegisterWRD(reg);
-	if(half)
-		fail = (ret & 0xFF00) != (value & 0xFF00);
-	else
-		fail = ret != value;
-	if(fail)
+	SetSCDRegisterBYTE(reg, value);
+	ret = GetSCDRegisterBYTE(reg);
+	if(ret != value)
 	{
-		ShowMessageAndData("FAILED", ret, 4, PAL3, 11, pos+1);
+		ShowMessageAndData("FAILED", ret, 2, PAL3, 14, pos+1);
 		return 0;
 	}
 	
@@ -517,16 +515,67 @@ int checkRegisterW(u32 reg, u16 value, u8 half, char * message, int pos)
 	return 1;
 }
 
-void checkRegister(char *title, u32 reg, u8 half)
+void checkRegisterBYTEValues(char *title, u32 reg)
 {
 	int good = 0;
 	
 	ShowMessageAndData(title, reg, 8, PAL1, 7, 8);
 	
-	good += checkRegisterW(reg, half ? 0x5500 : 0x5555, half, "Setting to 0x55", 10);
-	good += checkRegisterW(reg, half ? 0xAA00 : 0xAAAA, half, "Setting to 0xAA", 12);
-	good += checkRegisterW(reg, half ? 0xFF00 : 0xFFFF, half, "Setting to 0xFF", 14);
-	if(good) checkRegisterW(reg, 0, half, "Setting to 0x00", 16);
+	good += checkRegisterBYTE(reg, 0x55, "Setting to 0x55", 10);
+	good += checkRegisterBYTE(reg, 0xAA, "Setting to 0xAA", 12);
+	good += checkRegisterBYTE(reg, 0xFF, "Setting to 0xFF", 14);
+	if(good) checkRegisterBYTE(reg, 0, "Setting to 0x00", 16);
+	WaitKey();
+}
+
+#endif
+
+void SetSCDRegisterWORD(u32 reg, u16 value)
+{
+	u16 	*scdctrl = (u16 *)reg; 
+	
+	*scdctrl = value;
+}
+
+u16 GetSCDRegisterWORD(u32 reg)
+{
+	u16 	*scdctrl = (u16 *)reg; 
+	
+	return(*scdctrl);
+}
+
+int checkRegisterWORD(u32 reg, u16 value, char * message, int pos)
+{
+	u16 ret = 0;
+	
+	VDP_Start();
+	VDP_drawTextBG(APLAN, message, TILE_ATTR(PAL1, 0, 0, 0), 11, pos);
+	VDP_End();
+	
+	SetSCDRegisterWORD(reg, value);
+	ret = GetSCDRegisterWORD(reg);
+	if(ret != value)
+	{
+		ShowMessageAndData("FAILED", ret, 4, PAL3, 13, pos+1);
+		return 0;
+	}
+	
+	VDP_Start();
+	VDP_drawTextBG(APLAN, "All OK", TILE_ATTR(PAL2, 0, 0, 0), 16, pos+1);
+	VDP_End();
+	return 1;
+}
+
+void checkRegisterWORDValues(char *title, u32 reg)
+{
+	int good = 0;
+	
+	ShowMessageAndData(title, reg, 8, PAL1, 7, 8);
+	
+	good += checkRegisterWORD(reg, 0x5555, "Setting to 0x5555", 10);
+	good += checkRegisterWORD(reg, 0xAAAA, "Setting to 0xAAAA", 12);
+	good += checkRegisterWORD(reg, 0xFFFF, "Setting to 0xFFFF", 14);
+	if(good) checkRegisterWORD(reg, 0, "Setting to 0x0000", 16);
 	WaitKey();
 }
 
@@ -536,13 +585,13 @@ void CheckCtrlRegisters()
 	int i = 0;
 	
 	for(i = 0; i < 16; i+=2)
-		checkRegister("Command Register", CCMD_REGISTER+i, 0);
+		checkRegisterWORDValues("Command Register", CCMD_REGISTER+i);
 }
 
 int configHint()
 {
-	SetSCDRegisterWRD(HINT_REGISTER, 0xFD0C);
-	if(GetSCDRegisterWRD(HINT_REGISTER) == 0xFD0C)
+	SetSCDRegisterWORD(HINT_REGISTER, 0xFD0C);
+	if(GetSCDRegisterWORD(HINT_REGISTER) == 0xFD0C)
 		hIntPatchNeeded = 0;
 	else
 		hIntPatchNeeded = 1;
@@ -590,7 +639,7 @@ void CheckSCDProgramRAM()
 	int		i, banks = 4;
 	u16 	*scdctrl = (u16 *)MMOD_REGISTER;
 	
-	ShowMessageAndData("Program RAM", 0x420000, 8, PAL1, 7, 7);
+	ShowMessageAndData("Program RAM", 0x420000, 12, PAL1, 7, 7);
 	if(!TestBankingProgramRAM())
 	{
 		ShowMessageAndData("Bank Switch FAIL", MMOD_REGISTER, 8, PAL3, 5, 8);
@@ -628,7 +677,7 @@ void CheckSCDWordRAM()
 {
 	int good = 0;
 	
-	ShowMessageAndData("WORD RAM", 0x600000, 8, PAL1, 9, 8);
+	ShowMessageAndData("WORD RAM", 0x600000, 8, PAL1, 10, 8);
 	
 	good = 0;
 	good += CheckSCDRAMWithValue("Setting to 0xAA", 0x600000, 0x640000, 0xAA, 10);	
@@ -761,7 +810,7 @@ void SegaCDMenu()
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 ind = 0, size = 0, done = 0;
 #ifdef SEGACD
-	int maxsel = 6;
+	int maxsel = 5;
 #else
 	int	maxsel = 8;
 #endif
@@ -794,15 +843,19 @@ void SegaCDMenu()
 			VDP_drawTextBG(APLAN, "Sega CD Tests", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
 			VDP_drawTextBG(APLAN, "BIOS CRC and info", TILE_ATTR(cursel == 1 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
-			VDP_drawTextBG(APLAN, "Set HINT", TILE_ATTR(cursel == 2 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Check HINT Register", TILE_ATTR(cursel == 2 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+#ifndef SEGACD
 			VDP_drawTextBG(APLAN, "Check Flag Register", TILE_ATTR(cursel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "Check Communication Registers", TILE_ATTR(cursel == 4 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+#else
+			VDP_drawTextBG(APLAN, "Check Communication Registers", TILE_ATTR(cursel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+#endif
 			pos++;
-	#ifndef SEGACD
+#ifndef SEGACD
 			VDP_drawTextBG(APLAN, "Program RAM Check", TILE_ATTR(cursel == 5 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "Word RAM Check", TILE_ATTR(cursel == 6 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
-	#endif
+#endif
 			VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == maxsel - 1 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
 			VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == maxsel ? PAL3 : PAL0, 0, 0, 0), 5, ++pos);
@@ -857,9 +910,11 @@ void SegaCDMenu()
 				CheckHintRegister();
 				break;
 			case 3:
-				checkRegister("Flag register", CFLG_REGISTER, 1);
+#ifndef SEGACD
+				checkRegisterBYTEValues("Flag register", CFLG_REGISTER);
 				break;
-			case 4:				
+			case 4:		
+#endif	
 				CheckCtrlRegisters();
 				break;
 #ifndef SEGACD
@@ -877,11 +932,11 @@ void SegaCDMenu()
 				done = 1;
 				break;
 #else
-			case 5:
+			case 4:
 				FadeAndCleanUp();
 				MemViewer(0);
 				break;
-			case 6:
+			case 5:
 				done = 1;
 				break;
 #endif
