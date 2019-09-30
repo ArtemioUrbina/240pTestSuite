@@ -389,48 +389,126 @@ typedef struct bios_data {
 } BIOSID;
 
 const static BIOSID bioslist[] = {
-{ 0xC6D10268, "M1 US 1.10" },
-{ 0x529ac15a, "M1 EU 1.00" },
-{ 0x3773d5aa, "M1 JP 1.0S" },
-{ 0x69ed6ccd, "M1 JP 1.0G" },
-{ 0x03134289, "M1 JP 1.0L" },
-{ 0xdfa95ee9, "M1 JP 1.0O" },
-{ 0x9d2da8f2, "M1 JP 1.01" },
-{ 0x550f30bb, "M1 AS 1.0" },
-{ 0x2e49d72c, "M2 US 2.11X" },
-{ 0x8af65f58, "M2 US 2.00" },
-{ 0x9f6f6276, "M2 US 2.00W" },
-{ 0x53f1757c, "M2 EU 2.00W" },
-{ 0xcb76f114, "M2 EU 2.00" },
-{ 0x1e4344e6, "M2 JP 2.00C" },
-{ 0x8052c7a0, "AIWA JP 2.11" },
-{ 0x50cd3d23, "Laseractive 1.04" },
-{ 0x3b10cf41, "Laseractive 1.02" },
-{ 0x474aaa44, "Laseractive JP 1.05" },
-{ 0x00eedb3a, "Laseractive JP 1.02" },
-{ 0x290f8e33, "X'eye US 2.00" },
-{ 0xd21fe71d, "WM JP 1.00" },
-{ 0x2b19972f, "WM 2.00" },
-{ 0xd48c44b5, "CDX US 2.21X" },
-{ 0xaacb851e, "MMega 2.21" }, 
-{ 0x73784705, "M1 US 1.10 [RF]"},
+{ 0xC6D10268, "M1 US 1.10" },	// mpr-15045b.bin
+{ 0x529AC15A, "M1 EU 1.00" },	// megacd_model1_bios_1_00_e.bin
+{ 0x79F85384, "M1 JP 1.0S" },	// mpr-14088h.bin swapped in MAME as 0x3773D5AA
+{ 0x9BCE40B2, "M1 JP 1.0G" },	// epr-14088b.bin swapped in MAME as 0x69ED6CCD
+{ 0xF18DDE5B, "M1 JP 1.0L" },	// mpr-14088c.bin swapped in MAME as 0x03134289
+{ 0x2EA250C0, "M1 JP 1.0O" },	// epr-14088d.bin swapped in MAME as 0xDFA95EE9
+{ 0x9D2DA8F2, "M1 JP 1.01" },	// epr-14088e.bin
+{ 0x550F30BB, "M1 AS 1.0" },	// epr-14536h.bin
+{ 0x2E49D72C, "M2 US 2.11X" },	// mpr-15764-t.bin
+{ 0x8AF65F58, "M2 US 2.00" },	// us_scd2_930314.bin
+{ 0x9F6F6276, "M2 US 2.00W" },	// segacd_model2_bios_2_00w_u.bin
+{ 0x4D5CB8DA, "M2 EU 2.00W" },	// mpr-15512a.bin swapped in MAME as 0x53F1757C
+{ 0x0507B590, "M2 EU 2.00" },	// mpr-15512.bin swapped in MAME as 0xCB76F114
+{ 0xDD6CC972, "M2 JP 2.00C" },	// mpr-15398.bin swapped in MAME as 0x1E4344E6
+{ 0x8052C7A0, "AIWA JP 2.11" },	// mpr-15768-t.bin
+{ 0x50CD3D23, "LA 1.04" },		// laseractive_bios_1_04_u.bin
+{ 0x3B10CF41, "LA 1.02" },		// laseractive_bios_1_02_u.bin
+{ 0x474AAA44, "LA JP 1.05" },	// mega-ld 1.05 bios.bin
+{ 0x00EEDB3A, "LA JP 1.02" },	// laseractive_bios_1_02_j.bin
+{ 0x290F8E33, "X'EYE US 2.00"},	// g304.bin
+{ 0xD21FE71D, "WM JP 1.00" },	// g301.bin
+{ 0x2B19972F, "WM 2.00" },		// wondermega_m2_bios_2_00_j.bin
+{ 0xD48C44B5, "CDX US 2.21X" },	// segacdx_bios_2_21_u.bin
+{ 0xAACB851E, "MMEGA 2.21" },	// opr-16140.bin
 { 0, NULL } } ; 
 
-void doBIOSID(uint32_t checksum, uint32_t address)
+typedef struct biosRF_data {
+    uint32_t crcrf;
+    uint32_t crcog;
+} BIOSRF;
+
+// V1
+const static BIOSRF biosnamesRF1[] = {
+{ 0xA94CFE69, 0xC6D10268 },  // hack of mpr-15045b.bin 0xC6D10268 named us_scd1_921011_regionfree_v1.bin
+{ 0xB03B4FF7, 0x529AC15A },  // hack of megacd_model1_bios_1_00_e.bin 0x529AC15A named eu_mcd1_921027_regionfree_v1.bin
+{ 0x193CB234, 0x550F30BB },  // hack of epr-14536h.bin 0x550F30BB named jp_mcd1_911228_region_free_v1.bin
+{ 0x17AF77AC, 0x8AF65F58 },  // hack of us_scd2_930314.bin 0x8AF65F58 named us_scd2_930314_regionfree_v1.bin
+{ 0x3B0FB51B, 0x0DD6CC97 },  // hack of mpr-15398.bin 0xDD6CC97 named JP_MegaCD2_22121992_regionfree_v1.bin
+{ 0x2F56F336, 0x0507B590 },  // hack of mpr-15512.bin 0x0507B590 named EU_MegaCD2_30031993_regionfree_v1.bin
+{ 0x848685FA, 0x290F8E33 },  // hack of g304.bin 0x290F8E33 named US_X'EYE_27121993_regionfree_v1.bin
+{ 0xD2BD281F, 0xD21FE71D },  // hack of g301.bin 0xD21FE71D named JP_Wondermega_02061992_regionfree_v1.bin
+{ 0x5B3A5F22, 0xD48C44B5 },  // hack of segacdx_bios_2_21_u.bin 0xD48C44B5 named US_SEGA_CDX_930907_regionfree_v1.bin
+{ 0, 0 } } ; 
+
+// V2
+const static BIOSRF biosnamesRF2[] = {
+{ 0x73784705, 0xC6D10268 },  // hack of mpr-15045b.bin 0xC6D10268 named us_scd1_921011_regfree.bin
+{ 0xC82EE650, 0x529AC15A },  // hack of megacd_model1_bios_1_00_e.bin 0x529AC15A named eu_mcd1_921027_regfree.bin
+{ 0x8E6943FA, 0x79F85384 },  // hack of mpr-14088h.bin 0x79F85384 named jp_mcd1_911228_regfree.bin
+{ 0x1AEE2672, 0x9D2DA8F2 },  // hack of epr-14088e.bin 0x9D2DA8F2 named jp_mcd1_911217_regfree.bin
+{ 0x29776266, 0x550F30BB },  // hack of epr-14536h.bin 0x550F30BB named jp_mcd1_911228_pal_regfree.bin
+{ 0x6442BA81, 0x2E49D72C },  // hack of mpr-15764-t.bin 0x2E49D72C named us_scd2_930621_regfree.bin
+{ 0x95118134, 0x8AF65F58 },  // hack of us_scd2_930314.bin 0x8AF65F58 named us_scd2_930314_regfree.bin
+{ 0x7E86C5DA, 0x9F6F6276 },  // hack of segacd_model2_bios_2_00w_u.bin 0x9F6F6276 named us_scd2_930601_regfree.bin
+{ 0x056663AD, 0x4D5CB8DA },  // hack of mpr-15512a.bin 0x4D5CB8DA named eu_mcd2_930601_regfree.bin
+{ 0x316F3D80, 0x0507B590 },  // hack of mpr-15512.bin 0x0507B590 named eu_mcd2_930330_regfree.bin
+{ 0x9E140799, 0xDD6CC972 },  // hack of mpr-15398.bin 0xDD6CC972 named jp_mcd2_921222_regfree.bin
+{ 0x8F34F0EE, 0x8052C7A0 },  // hack of mpr-15768-t.bin 0x8052C7A0 named MPR-15768-T_regfree.bin
+{ 0xB72F16D7, 0x290F8E33 },  // hack of g304.bin 0x290F8E33 named us_xeye_931227_regfree.bin
+{ 0xD650FD93, 0xD21FE71D },  // hack of g301.bin 0xD21FE71D named jp_wmg_920206_regfree.bin
+{ 0x3F5112F3, 0x2B19972F },  // hack of wondermega_m2_bios_2_00_j.bin 0x2B19972F named WONDERMEGA-G303_regfree.BIN
+{ 0xC7EB4CC9, 0xD48C44B5 },  // hack of segacdx_bios_2_21_u.bin 0xD48C44B5 named us__cdx_930907_regfree.bin
+{ 0xC6AD0AD7, 0xAACB851E },  // hack of opr-16140.bin 0xAACB851E named eu_mmg_930916_regfree.bin
+{ 0, 0 } } ; 
+
+	// search known Original BIOS
+char *GetBIOSNamebyCRC(uint32_t checksum)
 {
 	int i = 0;
 	
 	while(bioslist[i].crc != 0)
 	{		
 		if(checksum == bioslist[i].crc)
+			return bioslist[i].name;
+		i++;
+	}
+	return NULL;
+}
+
+int FindRegionFreeBios(uint32_t checksum, const BIOSRF* blist)
+{
+	int i = 0;
+	
+	while(blist[i].crcrf != 0)
+	{		
+		if(checksum == blist[i].crcrf)
 		{
+			char *name = NULL;
+			
+			name = GetBIOSNamebyCRC(blist[i].crcog);
 			VDP_Start();
-			VDP_drawTextBG(APLAN, bioslist[i].name, TILE_ATTR(PAL2, 0, 0, 0), 6, 20);
+			VDP_drawTextBG(APLAN, "Region Free", TILE_ATTR(PAL2, 0, 0, 0), 6, 20);
+			VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 18, 20);
 			VDP_End();
-			return;
+			return 1;
 		}
 		i++;
 	}
+	return 0;
+}
+
+void doBIOSID(uint32_t checksum, uint32_t address)
+{
+	char *name = NULL;
+	
+	name = GetBIOSNamebyCRC(checksum);
+	if(name)
+	{
+		VDP_Start();
+		VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 6, 20);
+		VDP_End();
+		return;
+	}
+	
+	// search Region Free BIOS v2
+	if(FindRegionFreeBios(checksum, biosnamesRF2))
+		return;
+	// search Region Free BIOS v1
+	if(FindRegionFreeBios(checksum, biosnamesRF1))
+		return;
 	
 	if(DetectSCDBIOS(address))
 	{
