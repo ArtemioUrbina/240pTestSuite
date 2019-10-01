@@ -10,7 +10,11 @@ CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
 
 
 uint32_t _state = ~0L;
-u8 hIntPatchNeeded = 0;
+#ifndef SEGACD
+u8 hIntPatchNeeded = 1;
+#else
+u8 hIntPatchNeeded = 0;  // Don't do it when booting from Sega CD
+#endif
 
 static const uint32_t crc32_table[] = {
     0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
@@ -104,12 +108,23 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 		data = bios[address];
 
 #ifndef SEGACD		
-		// The BIOS is overwritten by the ASIC in cart mode
-		// with the HINT value, and that alters the CRC
-		if(hIntPatchNeeded && patch && address == 0x72)
-			data = 0xFD;
-		if(hIntPatchNeeded && patch && address == 0x73)
-			data = 0x0C;
+		// The BIOS is overlapped with a shadow of the HINT register by 
+		// the ASIC in cart mode, and that alters the CRC
+		if(hIntPatchNeeded && patch == 1)
+		{
+			if(address == 0x72)
+				data = 0xFD;
+			if(address == 0x73)
+				data = 0x0C;
+		}
+		// Byteswapped ?
+		if(patch == 2)
+		{
+			if(address == 0x73)
+				data = 0xFD;
+			if(address == 0x72)
+				data = 0x0C;
+		}
 #endif
 		CRC32_update(data);
 	}
@@ -133,7 +148,7 @@ void ShowMessageAndData(char *message, uint32_t address, int len, int palmsg, in
 	VDP_End();
 }
 
-void ShowBIOSData(uint32_t address)
+void ShowSEGABIOSData(uint32_t address)
 {
 	char buffer[10];
     int possible[] = { 0x01586D, 0x01606D, 0x01AD6D, 0x00D56D }, i;
@@ -207,140 +222,7 @@ int CheckSCDRAMWithValue(char * message, u32 start, u32 end, u8 value, int pos)
 	return 1;
 }
 
-/*************** experiments **********/
-
-/*
-void write_byte(void *dst, unsigned char val)
-{
-    asm("movea.l 4(%sp),%a0");
-    asm("move.l  8(%sp),%d0");
-    asm("move.b  %d0,(%a0)");
-}
-
-void write_word(void *dst, unsigned short val)
-{
-    asm("movea.l 4(%sp),%a0");
-    asm("move.l  8(%sp),%d0");
-    asm("move.w  %d0,(%a0)");
-}
-
-unsigned char read_byte(void *src)
-{
-	return(*((unsigned char*)src));
-}
-
-// from ChillyWilly Example of Mode1 playback
-void InitSCD()
-{
-	// Reset the Gate Array - this specific sequence of writes is recognized by
-	// the gate array as a reset sequence, clearing the entire internal state -
-	// this is needed for the LaserActive
-	 
-	write_word((void*)0xA12002, 0xFF00);
-	write_byte((void*)0xA12001, 0x03);
-	write_byte((void*)0xA12001, 0x02);
-	write_byte((void*)0xA12001, 0x00);
-
-    
-    // Reset the Sub-CPU, request the bus
-    write_byte((void*)0xA12001, 0x02);
-    while (!(read_byte((void*)0xA12001) & 2)) write_byte((void*)0xA12001, 0x02); // wait on bus acknowledge
-	
-    //write_word((void*)0xA12002, 0x00FA); // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
-	
-	//write_byte((void*)0xA12003, 0x00); // assign word RAM to main CPU
-}
-
-void InitSCD_asm()
-{
-	asm("move.w	#0xff00,0xA12002");
-	asm("move.b	#0x03,0xA12001");
-	asm("move.b	#0x02,0xA12001");
-	asm("move.b	#0x00,0xA12001");
-	
-	asm("lea	0xA12001,%a0");
-asm("WaitSubCPU:");
-	asm("move.b	#0x02,(%a0)");
-	asm("move.b	(%a0),%d0");
-	asm("and.b	#0x02,%d0");
-	asm("beq	WaitSubCPU");
-}
-
-
-void InitSCD_C()
-{
-	u8		*scd_reg1 = (void*)0xA12001;
-	u16		*scd_reg2 = (void*)0xA12002;
-	
-	// Reset the Gate Array - this specific sequence of writes is recognized by
-	// the gate array as a reset sequence, clearing the entire internal state -
-	// this is needed for the LaserActive
-	
-	*scd_reg2 = 0xFF00;
-	*scd_reg1 = 0x03;
-	*scd_reg1 = 0x02;
-	*scd_reg1 = 0x00;
-
-     // Reset the Sub-CPU, request the bus
-	 
-    *scd_reg1 = 0x02;
-    while (!((*scd_reg1) & 2)) *scd_reg1 = 0x2; // wait on bus acknowledge	
-	*scd_reg1 = 0x03;
-	
-	// *scd_reg2 = 0x00FA; // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
-}
-
-int DetectMegaCD()
-{
-    u8 		a1,a2,a3;
-	u8		*scd_reg1_b = (void*)0xA12001;
-	u16		*scd_regE_w = (void*)0xA1200E;
-	u8		*scd_regE_b = (void*)0xA1200E;
-	u8		*scd_regF_b = (void*)0xA1200F;
-	
-    if (((*scd_reg1_b) & 0x20))
-        return 0;
-
-    *scd_regE_w = 0x2233;
-    a1 = *scd_regE_b;
-
-    *scd_regE_b = 0x44;
-    a2 = *scd_regE_b;
-
-    *scd_regF_b = 0x55;
-    a3 = *scd_regE_b;
-
-    if (a1 == 0x22 && a2 == 0x44 && a3 == 0x55)
-        return 1;
-
-    return 0;
-}
-*/
-
-/*
-int DetectMegaCD()
-{
-    u8 a1,a2,a3;
-    if ((HWREGB(0xA10001) & 0x20))
-        return 0;
-
-    HWREG(0xA1200E) = 0x2233;
-    a1 = HWREGB(0xA1200E);
-
-    HWREGB(0xA1200E) = 0x44;
-    a2 = HWREGB(0xA1200E);
-
-    HWREGB(0xA1200F) = 0x55;
-    a3 = HWREGB(0xA1200E);
-
-    if (a1 == 0x22 && a2 == 0x44 && a3 == 0x55)
-        return 1;
-
-    //if (HWREG(0x400100) == 0x5345)
-    //    return 1;
-
-    return 0;
-}*/
+/*************** experiments *******/
 
 //HWREG writes/reads a word to the given register
 //HWREGB writes/reads a byte
@@ -454,6 +336,76 @@ const static BIOSRF biosnamesRF2[] = {
 { 0xC6AD0AD7, 0xAACB851E },  // hack of opr-16140.bin 0xAACB851E named eu_mmg_930916_regfree.bin
 { 0, 0 } } ; 
 
+#ifndef SEGACD
+
+typedef struct biosSwapped_data {
+    uint32_t crcog;
+    uint32_t crcsw;
+} BIOS_SW;
+
+// Reversed
+const static BIOS_SW biosSwapped[] = {
+{ 0x9BCE40B2, 0x69ED6CCD }, // epr-14088b.bin
+{ 0x2EA250C0, 0xDFA95EE9 }, // epr-14088d.bin
+{ 0x9D2DA8F2, 0xE2E70BC8 }, // epr-14088e.bin
+{ 0x550F30BB, 0x47FA8EAC }, // epr-14536h.bin
+{ 0xD21FE71D, 0xCF1D926B }, // g301.bin
+{ 0x290F8E33, 0x6AEDAEA7 }, // g304.bin
+{ 0x00EEDB3A, 0x885B4AD2 }, // laseractive_bios_1_02_j.bin
+{ 0x3B10CF41, 0x3885B28C }, // laseractive_bios_1_02_u.bin
+{ 0x50CD3D23, 0x2365BFBB }, // laseractive_bios_1_04_u.bin
+{ 0x474AAA44, 0x046B1332 }, // mega-ld 1.05 bios.bin
+{ 0x529AC15A, 0x2BF760AF }, // megacd_model1_bios_1_00_e.bin
+{ 0xF18DDE5B, 0x03134289 }, // mpr-14088c.bin
+{ 0x79F85384, 0x3773D5AA }, // mpr-14088h.bin
+{ 0xC6D10268, 0x2461B5ED }, // mpr-15045b.bin
+{ 0xDD6CC972, 0x1E4344E6 }, // mpr-15398.bin
+{ 0x0507B590, 0xCB76F114 }, // mpr-15512.bin
+{ 0x4D5CB8DA, 0x53F1757C }, // mpr-15512a.bin
+{ 0x2E49D72C, 0x9AAB8FE3 }, // mpr-15764-t.bin
+{ 0x8052C7A0, 0x1E628066 }, // mpr-15768-t.bin
+{ 0xAACB851E, 0x527E310B }, // opr-16140.bin
+{ 0xD48C44B5, 0xD1EE6282 }, // segacdx_bios_2_21_u.bin
+{ 0x8AF65F58, 0x0C653035 }, // us_scd2_930314.bin
+{ 0x2B19972F, 0x9E13FDA6 }, // wondermega_m2_bios_2_00_j.bin
+{ 0, 0 } } ; 
+
+// Reversed Region Free V1
+const static BIOS_SW biosSwapRF1[] = {
+{ 0x17AF77AC, 0x8718BBDD }, // us_scd2_930314_regionfree_v1.bin
+{ 0x2F56F336, 0xE7FC3195 }, // EU_MegaCD2_30031993_regionfree_v1.bin
+{ 0x3B0FB51B, 0x2934AC09 }, // JP_MegaCD2_22121992_regionfree_v1.bin
+{ 0xD2BD281F, 0x0D1F20CA }, // JP_Wondermega_02061992_regionfree_v1.bin
+{ 0x5B3A5F22, 0x35BEABD7 }, // US_SEGA_CDX_930907_regionfree_v1.bin
+{ 0x848685FA, 0x80466E1D }, // US_X'EYE_27121993_regionfree_v1.bin
+{ 0xB03B4FF7, 0x5AC18566 }, // eu_mcd1_921027_regionfree_v1.bin
+{ 0x193CB234, 0xAE2E2E77 }, // jp_mcd1_911228_region_free_v1.bin
+{ 0xA94CFE69, 0x1F6E6CD6 }, // us_scd1_921011_regionfree_v1.bin
+{ 0, 0 } } ; 
+
+// Reversed Region Free V2
+const static BIOS_SW biosSwapRF2[] = {
+{ 0x8F34F0EE, 0x7FD5E1A6 }, // MPR-15768-T_regfree.bin
+{ 0x3F5112F3, 0xC73A3A00 }, // WONDERMEGA-G303_regfree.BIN
+{ 0xC82EE650, 0x564DBBFD }, // eu_mcd1_921027_regfree.bin
+{ 0x316F3D80, 0xEE231235 }, // eu_mcd2_930330_regfree.bin
+{ 0x056663AD, 0xCE516F6E }, // eu_mcd2_930601_regfree.bin
+{ 0xC6AD0AD7, 0xFBFED8FC }, // eu_mmg_930916_regfree.bin
+{ 0x1AEE2672, 0x7ED8334C }, // jp_mcd1_911217_regfree.bin
+{ 0x29776266, 0x80505D5B }, // jp_mcd1_911228_pal_regfree.bin
+{ 0x8E6943FA, 0x8D0869A5 }, // jp_mcd1_911228_regfree.bin
+{ 0x9E140799, 0x1F43DC9C }, // jp_mcd2_921222_regfree.bin
+{ 0xD650FD93, 0x6E96D5B5 }, // jp_wmg_920206_regfree.bin
+{ 0xC7EB4CC9, 0xD5F14824 }, // us__cdx_930907_regfree.bin
+{ 0x73784705, 0xA9E527D8 }, // us_scd1_921011_regfree.bin
+{ 0x95118134, 0xBAFF6FE2 }, // us_scd2_930314_regfree.bin
+{ 0x7E86C5DA, 0xB66A44F2 }, // us_scd2_930601_regfree.bin
+{ 0x6442BA81, 0xA8ABBF26 }, // us_scd2_930621_regfree.bin
+{ 0xB72F16D7, 0x8079FBD4 }, // us_xeye_931227_regfree.bin
+{ 0, 0 } } ; 
+
+#endif
+
 	// search known Original BIOS
 char *GetBIOSNamebyCRC(uint32_t checksum)
 {
@@ -490,9 +442,39 @@ int FindRegionFreeBios(uint32_t checksum, const BIOSRF* blist)
 	return 0;
 }
 
+#ifndef SEGACD
+int FindByteSwappedBios(uint32_t checksum, const BIOS_SW* blist)
+{
+	int i = 0;
+	
+	while(blist[i].crcsw != 0)
+	{		
+		if(checksum == blist[i].crcsw)
+		{
+			char *name = NULL;
+			
+			name = GetBIOSNamebyCRC(blist[i].crcog);
+			if(name)
+			{
+				ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
+				
+				VDP_Start();
+				VDP_drawTextBG(APLAN, "Byte swapped", TILE_ATTR(PAL2, 0, 0, 0), 6, 20);
+				VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 19, 20);
+				VDP_End();
+			}
+			return 1;
+		}
+		i++;
+	}
+	return 0;
+}
+#endif
+
 void doBIOSID(uint32_t checksum, uint32_t address)
 {
-	char *name = NULL;
+	char 		*name = NULL;
+	uint32_t	bschecksum = 0;
 	
 	name = GetBIOSNamebyCRC(checksum);
 	if(name)
@@ -510,6 +492,35 @@ void doBIOSID(uint32_t checksum, uint32_t address)
 	if(FindRegionFreeBios(checksum, biosnamesRF1))
 		return;
 	
+#ifndef SEGACD
+	// Check for incorrectly burned Byte Swapped BIOS
+	// Cart only of course
+	
+	// Calculate CRC with byteswapped HINT register
+	VDP_Start();
+	VDP_drawTextBG(APLAN, " working...", TILE_ATTR(PAL0, 0, 0, 0), 20, 19);
+	VDP_End();
+	
+	bschecksum = CalculateCRC(address, 0x20000, 2);
+	
+	ShowMessageAndData("CD BIOS CRC32:", bschecksum, 8, PAL1, 6, 19);
+	
+	// search swapped Official BIOS CRCs
+	if(FindByteSwappedBios(bschecksum, biosSwapped))
+		return;
+		
+	// search swapped Region Free BIOS v2
+	if(FindByteSwappedBios(bschecksum, biosSwapRF2))
+		return;
+		
+	// search swapped Region Free BIOS v2
+	if(FindByteSwappedBios(bschecksum, biosSwapRF1))
+		return;
+	
+	ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
+#endif
+	
+	// No match! check if we find the SEGA string and report
 	if(DetectSCDBIOS(address))
 	{
 		VDP_Start();
@@ -530,7 +541,7 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 	uint32_t	checksum = 0;
 	
 	ShowMessageAndData("Sega CD BIOS Data at", address, PAL1, 8, 6, 4);
-	ShowBIOSData(address);
+	ShowSEGABIOSData(address);
 	
 	VDP_Start();
 	VDP_drawTextBG(APLAN, "Calculating, please wait", TILE_ATTR(PAL3, 0, 0, 0), 6, 19);
@@ -728,7 +739,9 @@ void CheckSCDProgramRAM()
 		
 		banks = 1;
 		WaitKey();
+		VDP_Start();
 		VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
+		VDP_End();
 	}
 	
 	for(i = 0; i < banks; i++)
@@ -748,6 +761,9 @@ void CheckSCDProgramRAM()
 		if(good == 3) CheckSCDRAMWithValue("Setting to 0x00", 0x420000, 0x440000, 0x00, 16);
 
 		WaitKey();
+		VDP_Start();
+		VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
+		VDP_End();
 	}
 }
 
@@ -841,6 +857,8 @@ void MemViewer(uint32_t address)
 		{
 			if(address >= 0x1C0)
 				address -= 0x1C0;
+			else
+				address = 0;
 			
 			if(address >= 0x800000 && address < 0xA00000) // skip
 				address = 0x7F0000;
@@ -862,6 +880,8 @@ void MemViewer(uint32_t address)
 		{
 			if(address >= 0x10000)
 				address -= 0x10000;
+			else
+				address = 0;
 			
 			if(address >= 0x800000 && address < 0xA00000) // skip
 				address = 0x7F0000;
