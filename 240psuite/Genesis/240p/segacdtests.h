@@ -17,4 +17,5 @@ int DetectSCDBIOS();
 void CRC32_reset();
 void CRC32_update(uint8_t data);
 uint32_t CRC32_finalize();
+void MemViewer(uint32_t address);
 

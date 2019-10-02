@@ -50,6 +50,7 @@
 #define HELP_AUDIOSYNC		27
 #define HELP_CONTRAST		28
 #define HELP_MDFOURIER		29
+#define HELP_SEGACD			30
 
 extern u8	showhelp;
 

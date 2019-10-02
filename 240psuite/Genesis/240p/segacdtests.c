@@ -93,6 +93,18 @@ int DetectSCDBIOS(uint32_t address)
     return 1;
 }
 
+#ifndef SEGACD
+int DetectBSSCDBIOS(uint32_t address)
+{
+    uint8_t *bios;
+	
+    bios = (uint8_t *)0x0100+address;
+    if(memcmp(bios, "ESAG", 4))
+		return 0;
+    return 1;
+}
+#endif
+
 uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 {
 	uint8_t *bios = NULL;
@@ -148,6 +160,7 @@ void ShowMessageAndData(char *message, uint32_t address, int len, int palmsg, in
 	VDP_End();
 }
 
+/*
 void ShowSEGABIOSData(uint32_t address)
 {
 	char buffer[10];
@@ -181,8 +194,34 @@ void ShowSEGABIOSData(uint32_t address)
 	
     return;
 }
+*/
 
-int CheckSCDRegion(u8 value, u32 startaddress, u32 size)
+void PrintBIOSInfo(uint32_t address)
+{
+	uint8_t *bios = NULL;	
+	char	buffer[50];
+	int		i = 0, j = 0, data[] = { 16, 16, 17, 15, 16, 48, 14, -2, 16, -4, -4, -4, -4, -2, -2, -4, -4, -12, -40, 16, 0};
+	
+
+	bios = (uint8_t*)(address+0x0100);
+
+	while(data[i] != 0)
+	{
+		if(data[i] > 0)
+		{
+			memcpy(buffer, bios, sizeof(uint8_t)*data[i]);
+			buffer[data[i]] = '\0';
+			VDP_Start();
+			VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 12, 8+j);
+			VDP_End();
+			j++;
+		}
+		bios += data[i] > 0 ? data[i] : -1*data[i];
+		i++;
+	}
+}
+
+void SetSCDRegion(u8 value, u32 startaddress, u32 size)
 {
 	u8		*ram = NULL;
 	u32		address = 0;
@@ -190,7 +229,14 @@ int CheckSCDRegion(u8 value, u32 startaddress, u32 size)
 	ram = (u8*)startaddress;
 	for(address = 0; address < size; address++)
 		ram[address] = value;
+}
+
+int ReadSCDRegion(u8 value, u32 startaddress, u32 size)
+{
+	u8		*ram = NULL;
+	u32		address = 0;
 	
+	ram = (u8*)startaddress;
 	for(address = 0; address < size; address++)
 	{
 		if(ram[address] != value)
@@ -198,6 +244,13 @@ int CheckSCDRegion(u8 value, u32 startaddress, u32 size)
 	}
 	
 	return MEMORY_OK;
+}
+
+int CheckSCDRegion(u8 value, u32 startaddress, u32 size)
+{
+	SetSCDRegion(value, startaddress, size);
+	
+	return(ReadSCDRegion(value, startaddress, size));
 }
 
 int CheckSCDRAMWithValue(char * message, u32 start, u32 end, u8 value, int pos)
@@ -250,7 +303,7 @@ void WaitKey()
 	u16 buttons, oldButtons = 0xffff, pressedButtons, close = 0;
 	
 	VDP_Start();
-	VDP_drawTextBG(APLAN, "PRESS A", TILE_ATTR(PAL1, 0, 0, 0), 14, 22);
+	VDP_drawTextBG(APLAN, "PRESS A", TILE_ATTR(PAL1, 0, 0, 0), 17, 22);
 	VDP_End();
 
 	while(!close)
@@ -474,13 +527,12 @@ int FindByteSwappedBios(uint32_t checksum, const BIOS_SW* blist)
 void doBIOSID(uint32_t checksum, uint32_t address)
 {
 	char 		*name = NULL;
-	uint32_t	bschecksum = 0;
 	
 	name = GetBIOSNamebyCRC(checksum);
 	if(name)
 	{
 		VDP_Start();
-		VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 6, 20);
+		VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 14, 20);
 		VDP_End();
 		return;
 	}
@@ -494,30 +546,36 @@ void doBIOSID(uint32_t checksum, uint32_t address)
 	
 #ifndef SEGACD
 	// Check for incorrectly burned Byte Swapped BIOS
-	// Cart only of course
-	
-	// Calculate CRC with byteswapped HINT register
-	VDP_Start();
-	VDP_drawTextBG(APLAN, " working...", TILE_ATTR(PAL0, 0, 0, 0), 20, 19);
-	VDP_End();
-	
-	bschecksum = CalculateCRC(address, 0x20000, 2);
-	
-	ShowMessageAndData("CD BIOS CRC32:", bschecksum, 8, PAL1, 6, 19);
-	
-	// search swapped Official BIOS CRCs
-	if(FindByteSwappedBios(bschecksum, biosSwapped))
-		return;
+	// Cart only of course, only run if detected
+	if(DetectBSSCDBIOS(address))
+	{
+		uint32_t	bschecksum = 0;
 		
-	// search swapped Region Free BIOS v2
-	if(FindByteSwappedBios(bschecksum, biosSwapRF2))
-		return;
+		//ShowSEGABIOSData(address);
 		
-	// search swapped Region Free BIOS v2
-	if(FindByteSwappedBios(bschecksum, biosSwapRF1))
-		return;
-	
-	ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
+		// Calculate CRC with byteswapped HINT register
+		VDP_Start();
+		VDP_drawTextBG(APLAN, " working...", TILE_ATTR(PAL0, 0, 0, 0), 20, 19);
+		VDP_End();
+		
+		bschecksum = CalculateCRC(address, 0x20000, 2);
+		
+		ShowMessageAndData("CD BIOS CRC32:", bschecksum, 8, PAL1, 6, 19);
+		
+		// search swapped Official BIOS CRCs
+		if(FindByteSwappedBios(bschecksum, biosSwapped))
+			return;
+			
+		// search swapped Region Free BIOS v2
+		if(FindByteSwappedBios(bschecksum, biosSwapRF2))
+			return;
+			
+		// search swapped Region Free BIOS v2
+		if(FindByteSwappedBios(bschecksum, biosSwapRF1))
+			return;
+		
+		ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
+	}
 #endif
 	
 	// No match! check if we find the SEGA string and report
@@ -541,7 +599,7 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 	uint32_t	checksum = 0;
 	
 	ShowMessageAndData("Sega CD BIOS Data at", address, PAL1, 8, 6, 4);
-	ShowSEGABIOSData(address);
+	PrintBIOSInfo(address);
 	
 	VDP_Start();
 	VDP_drawTextBG(APLAN, "Calculating, please wait", TILE_ATTR(PAL3, 0, 0, 0), 6, 19);
@@ -661,6 +719,10 @@ void checkRegisterWORDValues(char *title, u32 reg)
 	
 	ShowMessageAndData(title, reg, 8, PAL1, 7, 8);
 	
+	VDP_Start();
+	VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
+	VDP_End();
+	
 	good += checkRegisterWORD(reg, 0x5555, "Setting to 0x5555", 10);
 	good += checkRegisterWORD(reg, 0xAAAA, "Setting to 0xAAAA", 12);
 	good += checkRegisterWORD(reg, 0xFFFF, "Setting to 0xFFFF", 14);
@@ -684,6 +746,23 @@ int configHint()
 		hIntPatchNeeded = 0;
 	else
 		hIntPatchNeeded = 1;
+		
+	return(!hIntPatchNeeded);
+}
+
+int checkHintShadow()
+{
+#ifdef SEGACD
+	uint8_t *bios = (uint8_t *)0;
+#else
+	uint8_t *bios = (uint8_t *)0x400000;
+#endif
+	
+	if(bios[0x72] == 0xFD && bios[0x73] == 0x0C)
+		hIntPatchNeeded = 0;
+	else
+		hIntPatchNeeded = 1;
+	
 	return(!hIntPatchNeeded);
 }
 
@@ -693,43 +772,82 @@ void CheckHintRegister()
 		ShowMessageAndData("HINT set OK", HINT_REGISTER, 8, PAL1, 9, 12);
 	else
 		ShowMessageAndData("HINT set FAILED", HINT_REGISTER, 8, PAL3, 7, 12);
+	if(checkHintShadow())
+		ShowMessageAndData("HINT Shadow OK", 0x72, 8, PAL1, 6, 13);
+	else
+		ShowMessageAndData("HINT Shadow FAILED", 0x72, 8, PAL3, 4, 13);
 	WaitKey();
 }
 
 #ifndef SEGACD
 
-int TestBankingProgramRAM()
+int TestBankingProgramRAMFast()
 {
 	int		i;
-	char 	data[4] = { '2', '4', '0', 'p' };
-	u16 	*scdctrl = (u16 *)MMOD_REGISTER;
 	u8		*ram = (u8*)0x420000;
 	
 	for(i = 0; i < 4; i++)
 	{
+		u8 value;
+		
 		// Change Program RAM Bank
-		*scdctrl = i << 6;
-		ram[0] = data[i];
+		value = (0x0A+i)*0x11;
+		SetSCDRegisterWORD(MMOD_REGISTER, i << 6);
+		memset(ram, 0, sizeof(u8)*0x1BF);
+		ram[0x000] = value;
+		ram[0x00F] = value;
+		ram[0x1B0] = value;
+		ram[0x1BF] = value;
 	}
 	
-	*scdctrl = 0;
 	for(i = 0; i < 4; i++)
 	{
+		u8 value;
+		
+		value = (0x0A+i)*0x11;
 		// Change Program RAM Bank
-		*scdctrl = i << 6;
-		if(ram[0] != data[i])
+		SetSCDRegisterWORD(MMOD_REGISTER, i << 6);
+		if(ram[0x000] != value)
+			return 0;
+		if(ram[0x00F] != value)
+			return 0;
+		if(ram[0x1B0] != value)
+			return 0;
+		if(ram[0x1BF] != value)
 			return 0;
 	}
 	return 1;
 }
 
+int TestBankingProgramRAMRegisters()
+{
+	int		i;
+	u16		value = 0, ret = 0;
+	
+	for(i = 0; i < 4; i++)
+	{
+		// Change Program RAM Bank
+		value = i << 6;
+		SetSCDRegisterWORD(MMOD_REGISTER, value);
+		ret = GetSCDRegisterWORD(MMOD_REGISTER) & 0xC0;
+		if(value != ret)
+		{
+			ShowMessageAndData("SET", value, 4, PAL3, 14, 9);
+			ShowMessageAndData("GOT", ret, 4, PAL3, 14, 10);
+			return 0;
+		}
+	}
+	
+	return 1;
+}
+
+
 void CheckSCDProgramRAM()
 {
-	int		i, banks = 4;
-	u16 	*scdctrl = (u16 *)MMOD_REGISTER;
+	int		i = 0, banks = 4;
 	
 	ShowMessageAndData("Program RAM", 0x420000, 12, PAL1, 7, 7);
-	if(!TestBankingProgramRAM())
+	if(!TestBankingProgramRAMRegisters())
 	{
 		ShowMessageAndData("Bank Switch FAIL", MMOD_REGISTER, 8, PAL3, 5, 8);
 		
@@ -739,19 +857,41 @@ void CheckSCDProgramRAM()
 		
 		banks = 1;
 		WaitKey();
-		VDP_Start();
-		VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
-		VDP_End();
 	}
+	else
+	{
+		VDP_Start();
+		ShowMessageAndData("Bank Register OK", MMOD_REGISTER, 7, PAL2, 7, 14);
+		VDP_End();
+		WaitKey();
+	}
+	
+	VDP_Start();
+	VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
+	VDP_End();
+	
+	if(banks == 4 && !TestBankingProgramRAMFast())
+	{
+		VDP_Start();
+		VDP_drawTextBG(APLAN, "Fast Check Failed. The register", TILE_ATTR(PAL2, 0, 0, 0), 5, 10);
+		VDP_drawTextBG(APLAN, "did R/W OK, but bank switch was", TILE_ATTR(PAL2, 0, 0, 0), 5, 11);
+		VDP_drawTextBG(APLAN, "either not done or RAM is bad.", TILE_ATTR(PAL2, 0, 0, 0), 5, 12);
+		VDP_drawTextBG(APLAN, "Try Memory Viewer at address", TILE_ATTR(PAL2, 0, 0, 0), 5, 14);
+		VDP_drawTextBG(APLAN, "above and use C.", TILE_ATTR(PAL2, 0, 0, 0), 5, 15);
+		VDP_End();
+		WaitKey();
+		return;
+	}
+	
 	
 	for(i = 0; i < banks; i++)
 	{
 		int good = 0;
 		
-		ShowMessageAndData("Bank", i << 6, 2, PAL1, 14, 9);
+		ShowMessageAndData("Bank Test", i, 2, PAL1, 13, 9);
 		
 		// Change Program RAM Bank
-		*scdctrl = i << 6;
+		SetSCDRegisterWORD(MMOD_REGISTER, i << 6);
 		
 		good = 0;
 		
@@ -783,13 +923,29 @@ void CheckSCDWordRAM()
 }
 #endif
 
-#define	MAX_LOCATIONS	4
+#define	MAX_LOCATIONS	7
 
 void MemViewer(uint32_t address)
 {
-	u8 			redraw = 1, docrc = 0, locpos = 1;
-	uint32_t	crc = 0, locations[MAX_LOCATIONS] = { 0x0, 0x400000, 0x420000, 0x600000 };
+	u8 			redraw = 1, docrc = 0, locpos = 1, bank = 0, i = 0;
+	uint32_t	crc = 0, locations[MAX_LOCATIONS] = { 0, 0x020000, 0x200000, 0x400000, 0x420000, 0x600000, 0xFF0000 };
 	u16 		buttons, oldButtons = 0xffff, pressedButtons, close = 0;
+
+#ifndef SEGACD	
+	TestBankingProgramRAMFast();
+#endif
+
+	// Select Bank 0
+	SetSCDRegisterWORD(MMOD_REGISTER, 0);
+	
+	for(i = 0; i < MAX_LOCATIONS; i++)
+	{
+		if(locations[i] == address)
+		{
+			locpos = i;
+			break;
+		}
+	}
 	
 	while(!close)
 	{
@@ -815,6 +971,12 @@ void MemViewer(uint32_t address)
 				intToHex(crc, buffer, 8);
 				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL2, 0, 0, 0), 32, 14);
 			}
+#ifdef SEGACD
+			if(address >= 0x020000 && address <= 0x040000)
+#else
+			if(address >= 0x420000 && address <= 0x440000)
+#endif
+				ShowMessageAndData("PB", bank, 2, PAL1, 33, 3);
 			VDP_End();
 			
 			for(i = 0; i < 28; i++)
@@ -850,6 +1012,21 @@ void MemViewer(uint32_t address)
 			redraw = 1;
 		}
 		
+		if(pressedButtons & BUTTON_C)
+		{
+		#ifdef SEGACD
+			if(address >= 0x020000 && address <= 0x040000)
+#else
+			if(address >= 0x420000 && address <= 0x440000)
+#endif
+			{
+				if(++bank > 3)
+					bank = 0;
+				SetSCDRegisterWORD(MMOD_REGISTER, bank << 6);
+				redraw = 1;
+			}
+		}
+		
 		if(pressedButtons & BUTTON_START)
 			close = 1;
 		
@@ -860,7 +1037,7 @@ void MemViewer(uint32_t address)
 			else
 				address = 0;
 			
-			if(address >= 0x800000 && address < 0xA00000) // skip
+			if(address >= 0x800000 && address < 0xFF0000) // skip
 				address = 0x7F0000;
 				
 			redraw = 1;
@@ -870,8 +1047,11 @@ void MemViewer(uint32_t address)
 		{
 			address += 0x1C0;
 			
-			if(address >= 0x800000 && address < 0xA00000) // skip
-				address = 0xA00000;
+			if(address >= 0x800000 && address < 0xFF0000) // skip
+				address = 0xFF0000;
+				
+			if(address >= 0xFFFFFF)
+				address = 0xFFFE3F;
 				
 			redraw = 1;
 		}
@@ -883,7 +1063,7 @@ void MemViewer(uint32_t address)
 			else
 				address = 0;
 			
-			if(address >= 0x800000 && address < 0xA00000) // skip
+			if(address >= 0x800000 && address < 0xFF0000) // skip
 				address = 0x7F0000;
 		
 			redraw = 1;
@@ -893,8 +1073,11 @@ void MemViewer(uint32_t address)
 		{
 			address += 0x10000;
 			
-			if(address >= 0x800000 && address < 0xA00000) // skip
-				address = 0xA00000;
+			if(address >= 0x800000 && address < 0xFF0000) // skip
+				address = 0xFF0000;
+				
+			if(address >= 0xFFFFFF)
+				address = 0xFFFE3F;
 
 			redraw = 1;
 		}
@@ -965,8 +1148,8 @@ void SegaCDMenu()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
-		//if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SEGACD))
-			//reload = 1;
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SEGACD))
+			reload = 1;
 
 		if(pressedButtons & BUTTON_DOWN)
 		{

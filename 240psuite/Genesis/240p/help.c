@@ -702,6 +702,22 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "for Z80 bus requests.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 #endif
 				break;
+			case HELP_SEGACD:
+				VDP_drawTextBG(APLAN, "Sega CD", TILE_ATTR(PAL1, 0, 0, 0), 16, 4);
+				VDP_drawTextBG(APLAN, "These tests are intented for SCD", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "diagnostics.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+#ifdef SEGACD
+				VDP_drawTextBG(APLAN, "More options are available", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "when runing as a cart: RAM tests", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "and register tests.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#else
+				VDP_drawTextBG(APLAN, "You can identify some issues", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "on non booting systems with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "these.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#endif
+				y++;
+				break;
 			default:
 				exit = 1;
 				break;
