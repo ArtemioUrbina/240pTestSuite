@@ -79,15 +79,21 @@ void main()
 	
 	cls();
 	vsync();
-	
+#ifndef CDROM1
+	SetFontColors(14, 0, RGB(4, 4, 4), 0);
+	put_string("Loading...", 28, 26);
+	cd_execoverlay(2); // Super CD-ROM2
+#else
 	x = cd_getver() >> 8;
 	if(x == 3)
 	{
-		SetFontColors(14, 0, RGB(4, 4, 4), 0);
-		put_string("Loading...", 28, 26);
-		cd_execoverlay(MAIN_SCD_OVERLAY); // Super CD-ROM2
+		SetFontColors(14, 0, RGB(7, 7, 7), 0);
+		put_string("There is a version of this software", 1, 10);
+		put_string("for System Card 3 so you don't have", 1, 12);
+		put_string("loading times", 10, 14);
+		vsync(200);
 	}
-	else
-		cd_execoverlay(MAIN_CD_OVERLAY); // CD-ROM2
+	cd_execoverlay(MAIN_OVERLAY); // CD-ROM2
+#endif
 }
 
