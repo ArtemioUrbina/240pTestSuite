@@ -249,7 +249,7 @@ void main()
 	end = read = controller = 0;
 #ifdef HELP_OVL
 	if(data < HELP_PART_2)
-		cd_execoverlay(MAIN_OVERLAY);
+		cd_execoverlay(MAIN_CD_OVERLAY);
 	else
 		cd_execoverlay(PATTERNS_OVERLAY);
 #endif

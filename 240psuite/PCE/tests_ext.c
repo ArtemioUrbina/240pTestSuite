@@ -67,7 +67,7 @@ void main()
 			MDFourier();
 			break;
 	}
-	cd_execoverlay(MAIN_OVERLAY);
+	cd_execoverlay(MAIN_CD_OVERLAY);
 }
 #endif
 
