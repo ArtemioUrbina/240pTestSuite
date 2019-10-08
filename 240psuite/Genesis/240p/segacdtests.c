@@ -275,29 +275,6 @@ int CheckSCDRAMWithValue(char * message, u32 start, u32 end, u8 value, int pos)
 	return 1;
 }
 
-/*************** experiments *******/
-
-//HWREG writes/reads a word to the given register
-//HWREGB writes/reads a byte
-
-/*
-	VDP_Start();
-	VDP_drawTextBG(APLAN, "Z80 RAM", TILE_ATTR(PAL1, 0, 0, 0), 14, 8);
-	VDP_End();
-	
-	Z80_requestBus(1);			
-	CheckSCDRAMWithValue("Setting to 0x00", 0xA00000, 0xA01FFF, 0x00, 10);
-	CheckSCDRAMWithValue("Setting to 0xFF", 0xA00000, 0xA01FFF, 0xFF, 12);
-	CheckSCDRAMWithValue("Setting to 0x55", 0xA00000, 0xA01FFF, 0x55, 14);
-	CheckSCDRAMWithValue("Setting to 0xAA", 0xA00000, 0xA01FFF, 0xAA, 16);
-	Z80_releaseBus();
-
-	WaitKey();
-		
-*/
-
-/*************** end experiments **********/
-
 void WaitKey()
 {
 	u16 buttons, oldButtons = 0xffff, pressedButtons, close = 0;
@@ -317,6 +294,29 @@ void WaitKey()
 		VDP_waitVSync();
 	}
 }
+
+
+/*************** Z80 *******/
+
+
+void Z80RamTest()
+{
+	VDP_Start();
+	VDP_drawTextBG(APLAN, "Z80 RAM", TILE_ATTR(PAL1, 0, 0, 0), 14, 8);
+	VDP_End();
+	
+	Z80_requestBus(1);			
+	CheckSCDRAMWithValue("Setting to 0x00", 0xA00000, 0xA01FFF, 0x00, 10);
+	CheckSCDRAMWithValue("Setting to 0xFF", 0xA00000, 0xA01FFF, 0xFF, 12);
+	CheckSCDRAMWithValue("Setting to 0x55", 0xA00000, 0xA01FFF, 0x55, 14);
+	CheckSCDRAMWithValue("Setting to 0xAA", 0xA00000, 0xA01FFF, 0xAA, 16);
+	Z80_releaseBus();
+
+	WaitKey();
+}
+
+/*************** end Z80 **********/
+
 
 typedef struct bios_data {
     uint32_t crc;

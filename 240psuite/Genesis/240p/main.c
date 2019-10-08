@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011-2014 Artemio Urbina
+ * Copyright (C)2011-2019 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -30,6 +30,9 @@ u8 intCancel = 0;
 
 void DrawResolution();
 void VideoOptions();
+void VideoTestsMenu();
+void AudioTestsMenu();
+void HardwareMenu();
 
 int main()
 {
@@ -83,36 +86,21 @@ int main()
 			VDP_loadTileData(gillian_tiles, ind, size, USE_DMA);
 
 			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
-			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 216 / 8, 80 / 8, 56 / 8, 104 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 216 / 8, 72 / 8, 56 / 8, 104 / 8);
 			VDP_End();
 			reload = 0;
 		}
 
-		if(VDPChanged)
-		{
-			if(cursel == 13)
-				cursel = 14;
-		}
-
-		pos = 6;
+		pos = 9;
 		VDP_Start();
-		VDP_drawTextBG(APLAN, "Test Patterns >", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Manual Lag Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Alternate 240p/480i", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "MDFourier", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		pos++;
-		VDP_drawTextBG(APLAN, "Tools & Options", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Test Patterns", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Video tests", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Audio tests", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Hardware tools", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		pos+=4;
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 			
 		DrawResolution();
 		Detect_MD(md_ver);
@@ -130,7 +118,7 @@ int main()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > pos - 7)
+			if(cursel > 7)
 				cursel = 1;
 		}
 
@@ -138,14 +126,7 @@ int main()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = pos - 7;
-		}
-		
-		if(pressedButtons & BUTTON_RIGHT)
-		{
-			TestPatternMenu();
-			FadeAndCleanUp();
-			reload = 1;
+				cursel = 7;
 		}
 
 		if(pressedButtons & BUTTON_A)
@@ -157,48 +138,21 @@ int main()
 				TestPatternMenu();
 				break;
 			case 2:
-				DropShadowTest();
+				VideoTestsMenu();
 				break;
 			case 3:
-				StripedSpriteTest();
+				AudioTestsMenu();
 				break;
 			case 4:
-				PassiveLagTest();
+				HardwareMenu();
 				break;
 			case 5:
-				LagTest();
-				break;
-			case 6:
-				HScrollTest();
-				break;
-			case 7:
-				VScrollTest();
-				break;
-			case 8:
-				DrawStripes();
-				break;
-			case 9:
-				DrawCheckBoard();
-				break;
-			case 10:
-				LEDZoneTest();
-				break;
-			case 11:
-				Alternate240p480i();
-				break;
-			case 12:
-				SoundTest();
-				break;
-			case 13:
-				MDFourier(0);
-				break;
-			case 14:
-				VideoOptions();
-				break;
-			case 15:
 				DrawHelp(HELP_GENERAL);
 				break;
-			case 16:
+			case 6:
+				VideoOptions();
+				break;
+			case 7:
 				DrawCredits();
 				break;
 			}
@@ -261,8 +215,9 @@ void TestPatternMenu()
 		VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Sharpness", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Overscan", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Tools & Options", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, ++pos);
+		pos++;
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
 		Detect_MD(md_ver);
@@ -366,6 +321,370 @@ void TestPatternMenu()
 
 	return;
 }
+
+void VideoTestsMenu()
+{
+	u16 cursel = 1, pos, reload = 1;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+	u16 ind = 0, size = 0, done = 0;
+	char md_ver[30];
+
+	FadeAndCleanUp();
+	while(!done)
+	{
+		if(reload)
+		{
+			VDP_Start();
+			VDP_setPalette(PAL2, back_pal);
+			VDP_setPalette(PAL3, gillian_pal);
+
+			ind = TILE_USERINDEX;
+			size = sizeof(back_tiles) / 32;
+			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
+			ind += size;
+			size = sizeof(gillian_tiles) / 32;
+			VDP_loadTileData(gillian_tiles, ind, size, USE_DMA);
+
+			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 216 / 8, 80 / 8, 56 / 8, 104 / 8);
+			VDP_End();
+
+			reload = 0;
+		}
+
+		pos = 8;
+		VDP_Start();
+		VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Manual Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Horizontal Stripes", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Alternate 240p/480i", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		pos++;
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		
+		DrawResolution();
+		Detect_MD(md_ver);
+		
+		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
+		VDP_End();
+		
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_GENERAL))
+			reload = 1;
+
+		if(pressedButtons & BUTTON_DOWN)
+		{
+			cursel++;
+			if(cursel > 12)
+				cursel = 1;
+		}
+
+		if(pressedButtons & BUTTON_UP)
+		{
+			cursel--;
+			if(cursel < 1)
+				cursel = 12;
+		}
+
+		if(pressedButtons & BUTTON_B || 
+			pressedButtons & BUTTON_START || 
+			pressedButtons & BUTTON_LEFT)
+		{
+			done = 1;
+		}
+
+		if(pressedButtons & BUTTON_A)
+		{
+			FadeAndCleanUp();
+			switch (cursel)
+			{
+			case 1:
+				DropShadowTest();
+				break;
+			case 2:
+				StripedSpriteTest();
+				break;
+			case 3:
+				PassiveLagTest();
+				break;
+			case 4:
+				LagTest();
+				break;
+			case 5:
+				HScrollTest();
+				break;
+			case 6:
+				VScrollTest();
+				break;
+			case 7:
+				DrawStripes();
+				break;
+			case 8:
+				DrawCheckBoard();
+				break;
+			case 9:
+				LEDZoneTest();
+				break;
+			case 10:
+				Alternate240p480i();
+				break;
+			case 11:
+				VideoOptions();
+				break;
+			case 12:
+				done = 1;
+				break;
+			}
+
+			FadeAndCleanUp();
+			buttons = JOY_readJoypad(JOY_1);
+			pressedButtons = buttons & ~oldButtons;
+			oldButtons = buttons;
+
+			reload = 1;
+		}
+
+		VDP_waitVSync();
+	}
+
+	return;
+}
+
+void AudioTestsMenu()
+{
+	u16 cursel = 1, pos, reload = 1;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+	u16 ind = 0, size = 0, done = 0;
+	char md_ver[30];
+
+	FadeAndCleanUp();
+	while(!done)
+	{
+		if(reload)
+		{
+			VDP_Start();
+			VDP_setPalette(PAL2, back_pal);
+			VDP_setPalette(PAL3, gillian_pal);
+
+			ind = TILE_USERINDEX;
+			size = sizeof(back_tiles) / 32;
+			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
+			ind += size;
+			size = sizeof(gillian_tiles) / 32;
+			VDP_loadTileData(gillian_tiles, ind, size, USE_DMA);
+
+			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 216 / 8, 80 / 8, 56 / 8, 104 / 8);
+			VDP_End();
+
+			reload = 0;
+		}
+
+		pos = 12;
+		VDP_Start();
+		VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Audio Sync Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "MDFourier", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		pos++;
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		
+		DrawResolution();
+		Detect_MD(md_ver);
+		
+		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
+		VDP_End();
+		
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_GENERAL))
+			reload = 1;
+
+		if(pressedButtons & BUTTON_DOWN)
+		{
+			cursel++;
+			if(cursel > 5)
+				cursel = 1;
+		}
+
+		if(pressedButtons & BUTTON_UP)
+		{
+			cursel--;
+			if(cursel < 1)
+				cursel = 5;
+		}
+
+		if(pressedButtons & BUTTON_B || 
+			pressedButtons & BUTTON_START || 
+			pressedButtons & BUTTON_LEFT)
+		{
+			done = 1;
+		}
+
+		if(pressedButtons & BUTTON_A)
+		{
+			FadeAndCleanUp();
+			switch (cursel)
+			{
+			case 1:
+				SoundTest();
+				break;
+			case 2:
+				AudioSyncTest();
+				break;
+			case 3:
+				MDFourier(0);
+				break;
+			case 4:
+				VideoOptions();
+				break;
+			case 5:
+				done = 1;
+				break;
+			}
+
+			FadeAndCleanUp();
+			buttons = JOY_readJoypad(JOY_1);
+			pressedButtons = buttons & ~oldButtons;
+			oldButtons = buttons;
+
+			reload = 1;
+		}
+
+		VDP_waitVSync();
+	}
+
+	return;
+}
+
+void HardwareMenu()
+{
+	u16 cursel = 1, pos, reload = 1;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+	u16 ind = 0, size = 0, done = 0;
+	char md_ver[30];
+
+	FadeAndCleanUp();
+	while(!done)
+	{
+		if(reload)
+		{
+			VDP_Start();
+			VDP_setPalette(PAL2, back_pal);
+			VDP_setPalette(PAL3, gillian_pal);
+
+			ind = TILE_USERINDEX;
+			size = sizeof(back_tiles) / 32;
+			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
+			ind += size;
+			size = sizeof(gillian_tiles) / 32;
+			VDP_loadTileData(gillian_tiles, ind, size, USE_DMA);
+
+			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 216 / 8, 80 / 8, 56 / 8, 104 / 8);
+			VDP_End();
+
+			reload = 0;
+		}
+
+		pos = 12;
+		VDP_Start();
+		VDP_drawTextBG(APLAN, "Sega CD Tests", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Z80 RAM Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Controller Tests", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		pos++;
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		
+		DrawResolution();
+		Detect_MD(md_ver);
+		
+		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
+		VDP_End();
+		
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_GENERAL))
+			reload = 1;
+
+		if(pressedButtons & BUTTON_DOWN)
+		{
+			cursel++;
+			if(cursel > 5)
+				cursel = 1;
+		}
+
+		if(pressedButtons & BUTTON_UP)
+		{
+			cursel--;
+			if(cursel < 1)
+				cursel = 5;
+		}
+
+		if(pressedButtons & BUTTON_B || 
+			pressedButtons & BUTTON_START || 
+			pressedButtons & BUTTON_LEFT)
+		{
+			done = 1;
+		}
+
+		if(pressedButtons & BUTTON_A)
+		{
+			if(cursel != 2)
+				FadeAndCleanUp();
+			else
+			{
+				VDP_Start();
+				VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
+				VDP_End();
+			}
+				
+			switch (cursel)
+			{
+			case 1:
+				SegaCDMenu();
+				break;
+			case 2:
+				Z80RamTest();
+				break;
+			case 3:
+				
+				break;
+			case 4:
+				VideoOptions();
+				break;
+			case 5:
+				done = 1;
+				break;
+			}
+
+			FadeAndCleanUp();
+			buttons = JOY_readJoypad(JOY_1);
+			pressedButtons = buttons & ~oldButtons;
+			oldButtons = buttons;
+
+			reload = 1;
+		}
+
+		VDP_waitVSync();
+	}
+
+	return;
+}
+
 
 #define IntCallCheck()	if(intCancel){intCancel=0;SYS_setVIntCallback(VBlankIntCallback);FadeAndCleanUp();MDFourier(1);return;}
 void DrawIntro()
@@ -650,7 +969,7 @@ void VideoOptions()
 			loadvram = 0;
 		}
 
-		VDP_drawTextBG(APLAN, "Tools & Options", TILE_ATTR(PAL1, 0, 0, 0), 12, 8);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(PAL1, 0, 0, 0), 16, 8);
 
 		DrawResolution();
 
@@ -661,9 +980,8 @@ void VideoOptions()
 		VDP_drawTextBG(APLAN, VDP_Detect_Interlace()? "ON " : "OFF", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 28, 12);
 		VDP_drawTextBG(APLAN, "Enable 240 in PAL:", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 5, 13);
 		VDP_drawTextBG(APLAN, pal_240 ? "ON " : "OFF", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 28, 13);
-		VDP_drawTextBG(APLAN, "Sega CD Tools", TILE_ATTR(sel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, 15);
 
-		VDP_drawTextBG(APLAN, "Back", TILE_ATTR(sel == 4 ? PAL3 : PAL0, 0, 0, 0), 5, 18);
+		VDP_drawTextBG(APLAN, "Back", TILE_ATTR(sel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, 18);
 
 		VDP_End();
 		
@@ -681,14 +999,14 @@ void VideoOptions()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 4;
+				sel = 3;
 		}
 
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			sel++;
-			if(sel > 4)
-				sel = 0;
+			if(sel > 3)
+				sel = 3;
 		}
 		
 		if(pressedButtons & BUTTON_LEFT || 
@@ -735,23 +1053,6 @@ void VideoOptions()
 		{
 			exit = 1;
 		}
-		
-		if(pressedButtons & BUTTON_A && sel == 3)
-		{
-			VDP_Start();
-			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
-			VDP_End();
-			
-			SegaCDMenu();
-			FadeAndCleanUp();
-			
-			buttons = JOY_readJoypad(JOY_1);
-			pressedButtons = buttons & ~oldButtons;
-			oldButtons = buttons;
-
-			loadvram = 1;
-		}
-
 
 		VDP_waitVSync();
 	}

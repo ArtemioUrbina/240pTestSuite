@@ -1424,9 +1424,8 @@ enum SounTestValue{
 	stPSG,
 #ifdef SEGACD
 	stCD,
-	stPCM,
+	stPCM
 #endif
-	SyncTest
 };
 
 void SoundTest()
@@ -1513,8 +1512,6 @@ void SoundTest()
 			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stPCM && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+3, y);
 			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stPCM && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+10, y);
 #endif
-			y+=3;
-			VDP_drawTextBG(APLAN, "Audio Sync Test", TILE_ATTR(type == SyncTest ? PAL3 : PAL1, 0, 0, 0), x-1, y);
 			VDP_End();
 			
 			DrawHelpText();
@@ -1543,11 +1540,19 @@ void SoundTest()
 			redraw = 1;
 		}
 
-		if(type > SyncTest)
+#ifndef SEGACD
+		if(type > stPSG)
 			type = stFM;
 
 		if(type < stFM)
-			type = SyncTest;
+			type = stPSG;
+#else
+		if(type > stPCM)
+			type = stFM;
+
+		if(type < stFM)
+			type = stPCM;
+#endif
 		
 		if(redraw)
 			switch(type)
@@ -1572,9 +1577,6 @@ void SoundTest()
 					selmax = 2;
 					break;
 #endif
-				case SyncTest:
-					selmax = 0;
-					break;
 				default:
 					break;
 			}
@@ -1701,21 +1703,6 @@ void SoundTest()
 				}
 				break;
 #endif
-				case SyncTest:
-				{
-					FadeAndCleanUp();
-#ifdef SEGACD		
-					ym2612_keyoffAll();
-					StopPSG();
-					SendSCDCommand(Op_StopPCM);
-					SendSCDCommand(Op_StopCD);
-#endif
-					AudioSyncTest();
-					loadvram = 1;
-					
-					FadeAndCleanUp();
-				}
-				break;
 				default:
 					break;
 			}

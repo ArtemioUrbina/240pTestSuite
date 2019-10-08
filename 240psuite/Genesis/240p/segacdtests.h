@@ -13,6 +13,7 @@
 
 void SegaCDMenu();
 int DetectSCDBIOS();
+void Z80RamTest();
 
 void CRC32_reset();
 void CRC32_update(uint8_t data);
