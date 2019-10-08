@@ -31,6 +31,9 @@ extern u8		joytype;
 extern u8		IsPALVDP;
 extern u8		VDPChanged;
 extern u8		intCancel;
+extern u8		joytype2;
+
+extern u8 		doZ80Lock;
 
 #define FADE_TIME 10
 
@@ -48,6 +51,14 @@ u8 CheckHelpAndVO(u16 *buttons, u16 *pressedButtons, int option);
 void StopPSG();
 void DrawHelpText();
 void VBlankIntCallbackCancel();
+void DrawMainBG();
+void DrawMainBGwithGillian(u8 DrawGillian, u8 GillianX, u8 GillianY);
+void DrawResolution();
+void VideoOptions();
+void VideoTestsMenu();
+void AudioTestsMenu();
+void HardwareMenu();
+void ControllerTest();
 
 extern u8	joytype;
 

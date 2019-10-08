@@ -301,16 +301,17 @@ void WaitKey()
 
 void Z80RamTest()
 {
-	VDP_Start();
-	VDP_drawTextBG(APLAN, "Z80 RAM", TILE_ATTR(PAL1, 0, 0, 0), 14, 8);
-	VDP_End();
+	DrawMainBG();
 	
-	Z80_requestBus(1);			
+	ShowMessageAndData("Z80 RAM", 0xA00000, 15, PAL1, 7, 7);
+	if(doZ80Lock)
+		Z80_requestBus(1);			
 	CheckSCDRAMWithValue("Setting to 0x00", 0xA00000, 0xA01FFF, 0x00, 10);
 	CheckSCDRAMWithValue("Setting to 0xFF", 0xA00000, 0xA01FFF, 0xFF, 12);
 	CheckSCDRAMWithValue("Setting to 0x55", 0xA00000, 0xA01FFF, 0x55, 14);
 	CheckSCDRAMWithValue("Setting to 0xAA", 0xA00000, 0xA01FFF, 0xAA, 16);
-	Z80_releaseBus();
+	if(doZ80Lock)
+		Z80_releaseBus();
 
 	WaitKey();
 }
@@ -1089,7 +1090,7 @@ void SegaCDMenu()
 {
 	u16 cursel = 1, pos, reload = 1, redraw = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 ind = 0, size = 0, done = 0;
+	u16 done = 0;
 #ifdef SEGACD
 	int maxsel = 5;
 #else
@@ -1100,19 +1101,8 @@ void SegaCDMenu()
 	{
 		if(reload)
 		{
-			VDP_Start();
-			VDP_setPalette(PAL0, palette_grey);
-			VDP_setPalette(PAL1, palette_green);
-			VDP_setPalette(PAL2, back_pal);
-			VDP_setPalette(PAL3, palette_red);
-
-			ind = TILE_USERINDEX;
-			size = sizeof(back_tiles) / 32;
-			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
-
-			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
-
-			VDP_End();
+			DrawMainBG();
+			
 			reload = 0;
 			redraw = 1;
 		}

@@ -1045,22 +1045,16 @@ void LagTest()
 	{
 		fix32 totald = 0, cnt, tot;
 		u16 total = 0, count = 0, c = 0;
-
-		VDP_Start();
 		
 		PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+		
+		VDP_Start();
 		VDP_resetSprites();
 		VDP_updateSprites();
-
 		VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
-
-		VDP_setPalette(PAL2, back_pal);
-
-		size = sizeof(back_tiles) / 32;
-		VDP_loadTileData(back_tiles, TILE_USERINDEX, size, USE_DMA);
-
-		VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
 		VDP_End();
+		
+		DrawMainBG();
 		exit = 0;
 
 		for(c = 0; c < 10; c++)
@@ -1432,7 +1426,7 @@ void SoundTest()
 {
 	int sel = 2, loadvram = 1, psgoff = 0, fmpan = 1, fmoff = 0;
 	int type = stFM;
-	u16 ind = 0, size = 0, exit = 0;
+	u16 exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 redraw = 0, selmax = 5;
 	int octave = 24;
@@ -1448,20 +1442,9 @@ void SoundTest()
 	while(!exit)
 	{
 		if(loadvram)
-		{
-			VDP_Start();
+		{	
+			DrawMainBG();
 			
-			VDP_setPalette(PAL0, palette_grey);
-			VDP_setPalette(PAL1, palette_green);
-			VDP_setPalette(PAL2, back_pal);
-			VDP_setPalette(PAL3, palette_red);
-
-			ind = TILE_USERINDEX;
-			size = sizeof(back_tiles) / 32;
-			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
-
-			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
-			VDP_End();
 			loadvram = 0;
 			redraw = 1;
 		}

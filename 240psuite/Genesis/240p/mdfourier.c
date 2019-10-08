@@ -21,7 +21,7 @@
 
 #include "mdfourier.h"
 
-int doLock = 0;
+u8 doZ80Lock = 0;
 
 const static u16 PITCHES[NUMPITCHES] = {
 	277, 293, 311, 329, 349, 369, 
@@ -35,13 +35,13 @@ struct {
 
 void Z80Lock()
 {
-	if(doLock)
+	if(doZ80Lock)
 		Z80_requestBus(1);
 }
 
 void Z80Release()
 {
-	if(doLock)
+	if(doZ80Lock)
 		Z80_releaseBus();
 }
 
@@ -729,7 +729,7 @@ void StartNote()
 void MDFourier(u8 armedAlert)
 {
 	int loadvram = 1, debug = 0;
-	u16 ind = 0, size = 0, exit = 0;
+	u16 exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 redraw = 0, framelen = 20;
 #ifdef SEGACD	
@@ -749,18 +749,8 @@ void MDFourier(u8 armedAlert)
 	{
 		if(loadvram)
 		{
-			VDP_Start();
-			VDP_setPalette(PAL0, palette_grey);
-			VDP_setPalette(PAL1, palette_green);
-			VDP_setPalette(PAL2, back_pal);
-			VDP_setPalette(PAL3, palette_red);
-
-			ind = TILE_USERINDEX;
-			size = sizeof(back_tiles) / 32;
-			VDP_loadTileData(back_tiles, ind, size, USE_DMA);
-
-			VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
-			VDP_End();
+			DrawMainBG();
+			
 			loadvram = 0;
 			redraw = 1;
 		}
@@ -787,7 +777,7 @@ void MDFourier(u8 armedAlert)
 				char buffer[6];
 #endif
 				
-				VDP_drawTextBG(APLAN, doLock ? "Z80 BUS Request [B] ON " : "Z80 BUS Request [B] OFF", TILE_ATTR(PAL1, 0, 0, 0), 8, 15);
+				VDP_drawTextBG(APLAN, doZ80Lock ? "Z80 BUS Request [B] ON " : "Z80 BUS Request [B] OFF", TILE_ATTR(PAL1, 0, 0, 0), 8, 15);
 
 #ifdef SEGACD	
 				if(joytype == JOY_TYPE_PAD6)
@@ -872,10 +862,6 @@ void MDFourier(u8 armedAlert)
 			pressedButtons = 0;
 			
 			redraw = 1;
-			
-			VDP_Start();
-			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
-			VDP_End();
 		}
 		
 		
@@ -883,7 +869,7 @@ void MDFourier(u8 armedAlert)
 		{
 			if(pressedButtons & BUTTON_B)
 			{
-				doLock = !doLock;
+				doZ80Lock = !doZ80Lock;
 				redraw = 1;
 			}
 		}
