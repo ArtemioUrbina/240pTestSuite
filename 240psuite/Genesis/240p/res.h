@@ -180,5 +180,9 @@ extern u16 FireShark_pal[16/2];
 extern u16 FireSharkBL_pal[16/2]; 
 extern u16 FireSharkWH_pal[16/2]; 
 
+// Float
+extern u32 float_tiles[192/4];
+extern u16 float_map[320/2];
+
 
 #endif

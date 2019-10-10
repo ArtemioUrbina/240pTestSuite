@@ -431,9 +431,9 @@ void Draw601ColorBars()
 void DrawSharpness()
 {
 	u16 size, showbricks = 0;
-	u16 exit = 0, loadvram = 1;
+	u16 exit = 0, loadvram = 1, type = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-
+	
 	while(!exit)
 	{
 		if(loadvram)
@@ -450,7 +450,7 @@ void DrawSharpness()
 			}
 			else
 			{	
-				if(enable_256)
+				if(type == RES_256)
 					VDP_setScreenWidth256();
 				else
 					VDP_setScreenWidth320();
@@ -472,7 +472,17 @@ void DrawSharpness()
 
 		if(pressedButtons & BUTTON_C)
 		{
-			showbricks = !showbricks;
+			if(showbricks)
+			{
+				type = DrawFloatMenuResExtra(type, "Sharpness");
+				if(type == 3)
+					showbricks = 0;
+			}
+			else
+			{
+				type = DrawFloatMenuRes(type);
+				showbricks = 1;
+			}
 			loadvram = 1;
 		}
 		
@@ -486,15 +496,21 @@ void DrawSharpness()
 void DrawLinearity()
 {
 	u16 size, ind, grid2 = 0, redraw = 0, loadvram = 1;
-	u16 exit = 0, showgrid = 0, gridpattern = 0;
+	u16 exit = 0, showgrid = 0, gridpattern = 0, type = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+	type = DrawFloatMenuRes(RES_320);
 	while(!exit)
 	{
 		if(loadvram)
 		{
-			VDP_Start();
 			VDP_setPalette(PAL0, bw_pal);
+			if(type == RES_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+				
+			VDP_Start();
 
 			ind = TILE_USERINDEX;
 			size = sizeof(circles_grid_tiles) / 32;
@@ -506,21 +522,41 @@ void DrawLinearity()
 			grid2 = ind;
 
 			ind += size;
-			if(IsPALVDP)
+			if(type == RES_256)
 			{
-				size = sizeof(circlesPAL_tiles) / 32;
-				VDP_loadTileData(circlesPAL_tiles, ind, size, USE_DMA);
-			}
-			else
-			{
-				size = sizeof(circles_tiles) / 32;
-				VDP_loadTileData(circles_tiles, ind, size, USE_DMA);
-			}
+				if(IsPALVDP)
+				{
+					size = sizeof(Lin256PAL_tiles) / 32;
+					VDP_loadTileData(Lin256PAL_tiles, ind, size, USE_DMA);
+				}
+				else
+				{
+					size = sizeof(Linearity256_tiles) / 32;
+					VDP_loadTileData(Linearity256_tiles, ind, size, USE_DMA);
+				}
 
-			if(IsPALVDP)
-				VDP_setMyTileMapRect(APLAN, circlesPAL_map, ind, 0, 0, 320 / 8, 224 / 8);
+				if(IsPALVDP)
+					VDP_setMyTileMapRect(APLAN, Lin256PAL_map, ind, 0, 0, 256 / 8, 224 / 8);
+				else
+					VDP_setMyTileMapRect(APLAN, Linearity256_map, ind, 0, 0, 256 / 8, 224 / 8);
+			}
 			else
-				VDP_setMyTileMapRect(APLAN, circles_map, ind, 0, 0, 320 / 8, 224 / 8);
+			{
+				if(IsPALVDP)
+				{
+					size = sizeof(circlesPAL_tiles) / 32;
+					VDP_loadTileData(circlesPAL_tiles, ind, size, USE_DMA);
+				}
+				else
+				{
+					size = sizeof(circles_tiles) / 32;
+					VDP_loadTileData(circles_tiles, ind, size, USE_DMA);
+				}
+				if(IsPALVDP)
+					VDP_setMyTileMapRect(APLAN, circlesPAL_map, ind, 0, 0, 320 / 8, 224 / 8);
+				else
+					VDP_setMyTileMapRect(APLAN, circles_map, ind, 0, 0, 320 / 8, 224 / 8);
+			}
 
 			VDP_End();
 			loadvram = 0;
@@ -530,15 +566,30 @@ void DrawLinearity()
 		if(redraw)
 		{
 			VDP_Start();
-			if(showgrid)
+			if(type == RES_256)
 			{
-				if(gridpattern == 1)
-					VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+				if(showgrid)
+				{
+					if(gridpattern == 1)
+						VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 256 / 8, (pal_240 ? 240 : 224) / 8);
+					else
+						VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 256 / 8, (pal_240 ? 240 : 224) / 8);
+				}
 				else
-					VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+					VDP_clearTileMapRect(BPLAN, 0, 0, 256 / 8, (pal_240 ? 240 : 224) / 8);
 			}
 			else
-				VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			{
+				if(showgrid)
+				{
+					if(gridpattern == 1)
+						VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+					else
+						VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+				}
+				else
+					VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			}
 			VDP_End();
 			redraw = 0;
 		}
@@ -572,126 +623,41 @@ void DrawLinearity()
 			redraw = 1;
 		}
 
-		VDP_waitVSync();
-	}
-}
-
-void DrawLinearity256()
-{
-	u16 size, ind, grid2 = 0, redraw = 0, loadvram = 1;
-	u16 exit = 0, showgrid = 0, gridpattern = 0;
-	u16 buttons, oldButtons = 0xffff, pressedButtons;
-
-	while(!exit)
-	{
-		if(loadvram)
+		if(pressedButtons & BUTTON_C)
 		{
-			VDP_Start();
-			
-			VDP_setScreenWidth256();
-			VDP_setPalette(PAL0, bw_pal);
-
-			ind = TILE_USERINDEX;
-			size = sizeof(circles_grid_tiles) / 32;
-			VDP_loadTileData(circles_grid_tiles, ind, size, USE_DMA);
-			ind += size;
-			size = sizeof(circles_griddot_tiles) / 32;
-			VDP_loadTileData(circles_griddot_tiles, ind, size, USE_DMA);
-
-			grid2 = ind;
-
-			ind += size;
-			if(IsPALVDP)
-			{
-				size = sizeof(Lin256PAL_tiles) / 32;
-				VDP_loadTileData(Lin256PAL_tiles, ind, size, USE_DMA);
-			}
-			else
-			{
-				size = sizeof(Linearity256_tiles) / 32;
-				VDP_loadTileData(Linearity256_tiles, ind, size, USE_DMA);
-			}
-
-			if(IsPALVDP)
-				VDP_setMyTileMapRect(APLAN, Lin256PAL_map, ind, 0, 0, 256 / 8, 224 / 8);
-			else
-				VDP_setMyTileMapRect(APLAN, Linearity256_map, ind, 0, 0, 256 / 8, 224 / 8);
-
-			VDP_End();
-			loadvram = 0;
-			redraw = 1;
-		}
-
-		if(redraw)
-		{
-			VDP_Start();
-			if(showgrid)
-			{
-				if(gridpattern == 1)
-					VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 256 / 8, (pal_240 ? 240 : 224) / 8);
-				else
-					VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 256 / 8, (pal_240 ? 240 : 224) / 8);
-			}
-			else
-				VDP_clearTileMapRect(BPLAN, 0, 0, 256 / 8, (pal_240 ? 240 : 224) / 8);
-			VDP_End();
-			redraw = 0;
-		}
-
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-
-		if(VDPChanged)
+			type = DrawFloatMenuRes(type);
+			oldButtons |= BUTTON_A;
 			loadvram = 1;
-
-		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_LINEARITY))
-			loadvram = 1;
-
-		if(pressedButtons & BUTTON_START)
-			exit = 1;
-
-		if(pressedButtons & BUTTON_A)
-		{
-			showgrid = !showgrid;
-			redraw = 1;
-		}
-
-		if(pressedButtons & BUTTON_B)
-		{
-			if(gridpattern == 1)
-				gridpattern = 2;
-			else
-				gridpattern = 1;
-
-			redraw = 1;
 		}
 
 		VDP_waitVSync();
 	}
 }
 
-void DrawGrid(u16 gridtype)
+void DrawGrid()
 {
 	u16 size, drawBorder = 0;
-	u16 exit = 0, loadvram = 1;
+	u16 exit = 0, loadvram = 1, type = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 first_pal[16], oldColor = 0;
 
+	type = DrawFloatMenuRes(RES_320);
 	while(!exit)
 	{
 		if(loadvram)
 		{
 			VDP_Start();
 			
-			if(gridtype == GRID_256)
+			if(type == RES_256)
 				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
 
 			VDP_setPalette(PAL0, grid_pal);
 			size = sizeof(grid_tiles) / 32;
 			VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, USE_DMA);
 
-			if(gridtype == GRID_256)
+			if(type == RES_256)
 			{
 				if(pal_240)
 					VDP_setMyTileMapRect(APLAN, grid_PAL_256_map, TILE_USERINDEX, 0, 0, 256 / 8, 240 / 8);
@@ -743,6 +709,13 @@ void DrawGrid(u16 gridtype)
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			type = DrawFloatMenuRes(type);
+			oldButtons |= BUTTON_A;
+			loadvram = 1;
+		}
 
 		VDP_waitVSync();
 	}
@@ -750,15 +723,21 @@ void DrawGrid(u16 gridtype)
 
 void DrawColorBleed()
 {
-	u16 ind = 0, type = 0;
+	u16 ind = 0, Drawtype = 0;
 	u16 size = 0, loadvram = 1;
-	u16 exit = 0;
+	u16 exit = 0, type = 0, redraw = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+	type = DrawFloatMenuRes(RES_320);
 	while(!exit)
 	{
 		if(loadvram)
 		{
+			if(type == RES_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+			
 			VDP_Start();
 			VDP_setPalette(PAL0, palette_red);
 			VDP_setPalette(PAL1, palette_green);
@@ -768,18 +747,35 @@ void DrawColorBleed()
 			ind = TILE_USERINDEX;
 			size = sizeof(vstripes_tiles) / 32;
 
-			if(type)
+			if(Drawtype)
 				VDP_loadTileData(checkbleed_tile, ind, size, USE_DMA);
 			else
 				VDP_loadTileData(vstripes_tiles, ind, size, USE_DMA);
 
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 16 / 8, 40 / 8, 288 / 8, 32 / 8);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 16 / 8, 80 / 8, 288 / 8, 32 / 8);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + ind, 16 / 8, 120 / 8, 288 / 8, 32 / 8);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 16 / 8, 160 / 8, 288 / 8, 32 / 8);
-
 			VDP_End();
 			loadvram = 0;
+			redraw = 1;
+		}
+		if(redraw)
+		{
+			u16 width = 0;
+
+			VDP_Start();			
+			if(Drawtype)
+				VDP_loadTileData(checkbleed_tile, ind, size, USE_DMA);
+			else
+				VDP_loadTileData(vstripes_tiles, ind, size, USE_DMA);
+				
+			if(type == RES_256)
+				width = 224;
+			else
+				width = 288;
+
+			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 16 / 8, 40 / 8, width / 8, 32 / 8);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 16 / 8, 80 / 8, width / 8, 32 / 8);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + ind, 16 / 8, 120 / 8, width / 8, 32 / 8);
+			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 16 / 8, 160 / 8, width / 8, 32 / 8);
+			VDP_End();
 		}
 
 		buttons = JOY_readJoypad(JOY_1);
@@ -794,19 +790,15 @@ void DrawColorBleed()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			type = !type;
-
-			VDP_Start();
-			if(type)
-				VDP_loadTileData(checkbleed_tile, ind, size, USE_DMA);
-			else
-				VDP_loadTileData(vstripes_tiles, ind, size, USE_DMA);
-
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + ind, 16 / 8, 40 / 8, 288 / 8, 32 / 8);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + ind, 16 / 8, 80 / 8, 288 / 8, 32 / 8);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL2, 0, 0, 0) + ind, 16 / 8, 120 / 8, 288 / 8, 32 / 8);
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 16 / 8, 160 / 8, 288 / 8, 32 / 8);
-			VDP_End();
+			Drawtype = !Drawtype;
+			redraw = 1;
+		}
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			type = DrawFloatMenuRes(type);
+			oldButtons |= BUTTON_A;
+			loadvram = 1;
 		}
 
 		VDP_waitVSync();
@@ -1058,7 +1050,7 @@ void DrawOverscan()
 {
 	u32 _tile_l[8], _tile_r[8], _tile_t[8], _tile_b[8];
 	u32 _tile_lb[8], _tile_lt[8], _tile_rt[8], _tile_rb[8];
-	u16 vram = TILE_USERINDEX;
+	u16 vram = TILE_USERINDEX, type = 0;
 	int left = 0, right = 0, top = 0, bottom = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons, redraw = 1;
 	int sel = 0, maxTileVert = 0, maxTileHor = 0, loadvram = 1;
@@ -1078,12 +1070,13 @@ void DrawOverscan()
 	tile_rt = _tile_rt;
 	tile_rb = _tile_rb;
 
+	type = DrawFloatMenuRes(RES_320);
 	while(!exit)
 	{
 		if(loadvram)
 		{
 			VDP_Start();
-			if(enable_256)
+			if(type == RES_256)
 				VDP_setScreenWidth256();
 			else
 				VDP_setScreenWidth320();
@@ -1092,9 +1085,10 @@ void DrawOverscan()
 			VDP_loadTileData(white, vram + 9, 1, USE_DMA);
 
 			VDP_setPalette(PAL3, palette_grey);
-			VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + vram, 0, 0, (enable_256 ? 256 : 320) / 8, (pal_240 ? 240 : 224) / 8);
+			VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + vram, 0, 0, (type == RES_256 ? 256 : 320) / 8, (pal_240 ? 240 : 224) / 8);
 			VDP_End();
 			loadvram = 0;
+			redraw = 1;
 		}
 
 		if(redraw)
@@ -1108,7 +1102,7 @@ void DrawOverscan()
 			b = bottom / 8;
 
 			maxTileVert = (pal_240 ? 240 : 224) / 8;
-			maxTileHor = (enable_256 ? 256 : 320) / 8;
+			maxTileHor = (type == RES_256 ? 256 : 320) / 8;
 
 			VDP_Start();
 			// Clean center
@@ -1152,24 +1146,24 @@ void DrawOverscan()
 
 			// text
 			intToStr(top, data, 1);
-			VDP_drawTextBG(APLAN, "Top:", TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 8 : 12, 12);
-			VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 16 : 20, 12);
-			VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 16 : 20, 12);
+			VDP_drawTextBG(APLAN, "Top:", TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 8 : 12, 12);
+			VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 16 : 20, 12);
+			VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 0 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 16 : 20, 12);
 
 			intToStr(bottom, data, 1);
-			VDP_drawTextBG(APLAN, "Bottom:", TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 8 : 12, 13);
-			VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 16 : 20, 13);
-			VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 16 : 20, 13);
+			VDP_drawTextBG(APLAN, "Bottom:", TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 8 : 12, 13);
+			VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 16 : 20, 13);
+			VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 1 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 16 : 20, 13);
 
 			intToStr(left, data, 1);
-			VDP_drawTextBG(APLAN, "Left:", TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 8 : 12, 14);
-			VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 16 : 20, 14);
-			VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 16 : 20, 14);
+			VDP_drawTextBG(APLAN, "Left:", TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 8 : 12, 14);
+			VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 16 : 20, 14);
+			VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 2 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 16 : 20, 14);
 
 			intToStr(right, data, 1);
-			VDP_drawTextBG(APLAN, "Right:", TILE_ATTR(sel == 3 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 8 : 12, 15);
-			VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 3 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 16 : 20, 15);
-			VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 3 ? PAL1 : PAL0, 0, 0, 0), enable_256 ? 16 : 20, 15);
+			VDP_drawTextBG(APLAN, "Right:", TILE_ATTR(sel == 3 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 8 : 12, 15);
+			VDP_drawTextBG(APLAN, "   pixels", TILE_ATTR(sel == 3 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 16 : 20, 15);
+			VDP_drawTextBG(APLAN, data, TILE_ATTR(sel == 3 ? PAL1 : PAL0, 0, 0, 0), type == RES_256 ? 16 : 20, 15);
 			VDP_End();
 
 			redraw = 0;
@@ -1183,10 +1177,7 @@ void DrawOverscan()
 
 
 		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_OVERSCAN))
-		{
 			loadvram = 1;
-			redraw = 1;
-		}
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
@@ -1270,6 +1261,12 @@ void DrawOverscan()
 		{
 			left = right = bottom = top = 0;
 			redraw = 1;
+		}
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			type = DrawFloatMenuRes(type);
+			loadvram = 1;
 		}
 	}
 }

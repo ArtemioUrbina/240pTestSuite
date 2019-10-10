@@ -37,7 +37,6 @@ extern u8 		doZ80Lock;
 
 #define FADE_TIME 10
 
-
 #define SCDTEST
 
 void TestPatternMenu();
@@ -60,5 +59,18 @@ void AudioTestsMenu();
 void HardwareMenu();
 void ControllerTest();
 
-extern u8	joytype;
 
+#ifndef MENUDATA
+#define MENUDATA
+typedef struct menu_data {
+    u16		id;
+	char	*name;
+} fmenudata;
+#endif
+
+#define RES_320 1
+#define RES_256 2
+
+u16 DrawFloatMenuRes(u16 def);
+u16 DrawFloatMenuResExtra(u16 def, char *option);
+u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size);

@@ -41,16 +41,17 @@ void DrawCheckBoard()
 {
 	char cntstr[4];
 	u16 ind = 0, size = 0, count = 0, docounter = 0, loadvram = 1;
-	u16 field = 1, alternate = 0, exit = 0;
+	u16 field = 1, alternate = 0, exit = 0, type = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+	type = DrawFloatMenuRes(RES_320);
 	while(!exit)
 	{
 		if(loadvram)
 		{
 			VDP_Start();
 			
-			if(enable_256)
+			if(type == RES_256)
 				VDP_setScreenWidth256();
 			else
 				VDP_setScreenWidth320();
@@ -119,7 +120,7 @@ void DrawCheckBoard()
 		if(pressedButtons & BUTTON_A)
 			alternate = ~alternate;
 
-		if(pressedButtons & BUTTON_B && !alternate)
+		if(!alternate && (pressedButtons & BUTTON_UP || pressedButtons & BUTTON_DOWN))
 		{
 			if(field == 0)
 			{
@@ -137,11 +138,18 @@ void DrawCheckBoard()
 			}
 		}
 
-		if(pressedButtons & BUTTON_C)
+		if(pressedButtons & BUTTON_B)
 			docounter = ~docounter;
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
+			
+		if(pressedButtons & BUTTON_C)
+		{
+			type = DrawFloatMenuRes(type);
+			oldButtons |= BUTTON_A;
+			loadvram = 1;
+		}
 	
 		VDP_waitVSync();
 	}
@@ -152,14 +160,15 @@ void DrawStripes()
 	char cntstr[4];
 	u16 hor1 = 0, hor2 = 0, ver1 = 0, ver2 = 0, size = 0, count = 0, docounter = 0, loadvram = 1;
 	u16 field = 1, alternate = 0, exit = 0, vertical = 0, redraw = 0;
-	u16 buttons = 0, oldButtons = 0xffff, pressedButtons = 0;	
+	u16 buttons = 0, oldButtons = 0xffff, pressedButtons = 0, type = 0;	
 
+	type = DrawFloatMenuRes(RES_320);
 	while(!exit)
 	{
 		if(loadvram)
 		{
 			VDP_Start();
-			if(enable_256)
+			if(type == RES_256)
 				VDP_setScreenWidth256();
 			else
 				VDP_setScreenWidth320();
@@ -238,7 +247,7 @@ void DrawStripes()
 		if(pressedButtons & BUTTON_A)
 			alternate = ~alternate;
 
-		if(pressedButtons & BUTTON_B && !alternate)
+		if(!alternate && (pressedButtons & BUTTON_UP || pressedButtons & BUTTON_DOWN))
 		{
 			VDP_Start();
 			if(field == 0)
@@ -266,11 +275,18 @@ void DrawStripes()
 			redraw = 1;
 		}
 
-		if(pressedButtons & BUTTON_C)
+		if(pressedButtons & BUTTON_B)
 			docounter = ~docounter;
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
+			
+		if(pressedButtons & BUTTON_C)
+		{
+			type = DrawFloatMenuRes(type);
+			oldButtons |= BUTTON_A;
+			loadvram = 1;
+		}
 
 		VDP_waitVSync();
 	}
@@ -1148,10 +1164,11 @@ void LagTest()
 void HScrollTest()
 {
 	u16 size, sonic_floor, sonic_water, waterfall, loadvram = 1;
-	u16 exit = 0, frame = 1, vertical = 0;
+	u16 exit = 0, frame = 1, vertical = 0, type = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	int x = 0, y = 0, speed = 1, acc = -1, pause = 0, kikipos = 32;
 
+	type = DrawFloatMenuRes(RES_320);
 	while(!exit)
 	{
 		if(loadvram)
@@ -1160,7 +1177,7 @@ void HScrollTest()
 			
 			if(!vertical)
 			{	
-				if(enable_256)
+				if(type == RES_256)
 					VDP_setScreenWidth256();
 				else
 					VDP_setScreenWidth320();
@@ -1204,9 +1221,9 @@ void HScrollTest()
 				VDP_resetSprites();
 				VDP_updateSprites();
 				VDP_setHorizontalScroll(PLAN_B, 0);
-				VDP_setHorizontalScroll(PLAN_A, !enable_256 ? kikipos : 0);
+				VDP_setHorizontalScroll(PLAN_A, type != RES_256 ? kikipos : 0);
 				
-				if(enable_256)
+				if(type == RES_256)
 					VDP_setScreenWidth256();
 
 				VDP_setPalette(PAL0, kiki_pal);
@@ -1267,10 +1284,10 @@ void HScrollTest()
 		if(pressedButtons & BUTTON_A)
 			pause = !pause;
 
-		if(pressedButtons & BUTTON_B)
+		if(pressedButtons & BUTTON_LEFT)
 			acc *= -1;
 		
-		if(pressedButtons & BUTTON_C)
+		if(pressedButtons & BUTTON_B)
 		{
 			vertical = !vertical;
 			loadvram = 1;
@@ -1312,22 +1329,25 @@ void HScrollTest()
 			VDP_End();
 		}
 		
-		if(vertical && pressedButtons & BUTTON_LEFT)
-			kikipos -= 32;
 
 		if(vertical && pressedButtons & BUTTON_RIGHT)
 			kikipos += 32;
 			
-		if(kikipos < 0)
-			kikipos = 0;
 		if(kikipos > 64)
-			kikipos = 64;
+			kikipos = 0;
 		
-		if(vertical && !enable_256)
+		if(vertical && type != RES_256)
 		{
 			VDP_Start();
 			VDP_setHorizontalScroll(PLAN_A, kikipos);
 			VDP_End();
+		}
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			type = DrawFloatMenuRes(type);
+			oldButtons |= BUTTON_A;
+			loadvram = 1;
 		}
 		
 		VDP_waitVSync();
@@ -1337,16 +1357,17 @@ void HScrollTest()
 void VScrollTest()
 {
 	u16 size, loadvram = 1;
-	u16 exit = 0;
+	u16 exit = 0, type = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	int pos = 0, speed = 1, acc = -1, pause = 0, direction = 0;
 
+	type = DrawFloatMenuRes(RES_320);
 	while(!exit)
 	{
 		if(loadvram)
 		{
 			VDP_Start();
-			if(enable_256)
+			if(type == RES_256)
 				VDP_setScreenWidth256();
 			else
 				VDP_setScreenWidth320();
@@ -1386,11 +1407,18 @@ void VScrollTest()
 		if(pressedButtons & BUTTON_A)
 			pause = !pause;
 
-		if(pressedButtons & BUTTON_B)
+		if(pressedButtons & BUTTON_LEFT)
 			acc *= -1;
 
-		if(pressedButtons & BUTTON_C)
+		if(pressedButtons & BUTTON_B)
 			direction = !direction;
+			
+		if(pressedButtons & BUTTON_C)
+		{
+			type = DrawFloatMenuRes(type);
+			oldButtons |= BUTTON_A;
+			loadvram = 1;
+		}
 
 		if(!pause)
 			pos += acc * speed;
@@ -1731,18 +1759,18 @@ void LEDZoneTest()
 {
 	u16 size = 0, sprite0 = 0, sprite1 = 0, sprite2 = 0, sprite3 = 0, sprite4 = 0, tmp = 0;
 	u16 x = 160, y = 112, exit = 0, sprite = 1, change = 0, draw = 1;
-	u16 buttons, pressedButtons, oldButtons = 0xffff, loadvram = 1;
-
-	if(enable_256)
-		x = 128;
+	u16 buttons, pressedButtons, oldButtons = 0xffff, loadvram = 1, type = 0;
 		
+	type = DrawFloatMenuRes(RES_320);	
+	if(type == RES_256)
+		x = 128;
 	while(!exit)
 	{
 		if(loadvram)
 		{
 			VDP_Start();
 			
-			if(enable_256)
+			if(type == RES_256)
 				VDP_setScreenWidth256();
 			else
 				VDP_setScreenWidth320();
@@ -1802,11 +1830,11 @@ void LEDZoneTest()
 
 			if(buttons & BUTTON_RIGHT)
 			{
-				if(x + size < (enable_256 ? 256 : 320))
+				if(x + size < (type == RES_256 ? 256 : 320))
 					x++;
 			}
 			
-			if(enable_256 && x > (256 - size))
+			if(type == RES_256 && x > (256 - size))
 				x = 256 - size;
 			
 			if(!pal_240 && y > (224 - size))
@@ -1819,15 +1847,6 @@ void LEDZoneTest()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			if(sprite == 0)
-				sprite = 4;
-			else
-				sprite--;
-			change = 1;
-		}
-
-		if(pressedButtons & BUTTON_B)
-		{
 			if(sprite == 4)
 				sprite = 0;
 			else
@@ -1835,7 +1854,8 @@ void LEDZoneTest()
 			change = 1;
 		}
 
-		if(pressedButtons & BUTTON_C)
+
+		if(pressedButtons & BUTTON_B)
 		{
 			draw = !draw;
 			change = 1;
@@ -1846,6 +1866,13 @@ void LEDZoneTest()
 				tmp = x;
 				x = 340;
 			}
+		}
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			type = DrawFloatMenuRes(type);
+			oldButtons |= BUTTON_A;
+			loadvram = 1;
 		}
 
 		if(change)

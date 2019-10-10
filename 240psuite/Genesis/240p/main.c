@@ -38,7 +38,7 @@ int main()
 
 	VDP_init();
 
-	enable_256 = 0;
+	enable_256 = 1;
 	VDP_Start();
 	VDP_setScreenWidth320();
 	if(Detect_VDP_PAL())
@@ -163,7 +163,7 @@ void TestPatternMenu()
 			reload = 0;
 		}
 
-		pos = 6;
+		pos = 7;
 		VDP_Start();
 		VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -171,20 +171,18 @@ void TestPatternMenu()
 			VDP_drawTextBG(APLAN, "SMPTE Color Bars", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		else
 			VDP_drawTextBG(APLAN, "EBU Color Bars", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Color Bars with Gray Reference", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Referenced Color Bars", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Color Bleed Check", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, pal_240 ? "Grid 320x240" : "Grid 320x224", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, pal_240 ? "Grid 256x240" : "Grid 256x224", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Linearity 320x224", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Linearity 256x224", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "White & RGB Screens", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Sharpness", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Overscan", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, pal_240 ? "Grid" : "Grid", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "White & RGB Screens", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Sharpness", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Overscan", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		pos++;
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
 		Detect_MD(md_ver);
@@ -202,7 +200,7 @@ void TestPatternMenu()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > 16)
+			if(cursel > 14)
 				cursel = 1;
 		}
 
@@ -210,7 +208,7 @@ void TestPatternMenu()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = 16;
+				cursel = 14;
 		}
 
 		if(pressedButtons & BUTTON_B || 
@@ -241,36 +239,30 @@ void TestPatternMenu()
 				DrawColorBleed();
 				break;
 			case 6:
-				DrawGrid(GRID_320);
+				DrawGrid();
 				break;
 			case 7:
-				DrawGrid(GRID_256);
-				break;
-			case 8:
 				DrawLinearity();
 				break;
-			case 9:
-				DrawLinearity256();
-				break;
-			case 10:
+			case 8:
 				DrawGrayRamp();
 				break;
-			case 11:
+			case 9:
 				DrawWhiteScreen();
 				break;
-			case 12:
+			case 10:
 				Draw100IRE();
 				break;
-			case 13:
+			case 11:
 				DrawSharpness();
 				break;
-			case 14:
+			case 12:
 				DrawOverscan();
 				break;
-			case 15:
+			case 13:
 				VideoOptions();
 				break;
-			case 16:
+			case 14:
 				done = 1;
 				break;
 			}
@@ -1045,6 +1037,109 @@ void DrawMainBGwithGillian(u8 DrawGillian, u8 GillianX, u8 GillianY)
 	VDP_End();
 }
 
+u16 DrawFloatMenuRes(u16 def)
+{
+	return(DrawFloatMenuResExtra(def, NULL));
+}
+
+u16 DrawFloatMenuResExtra(u16 def, char *option)
+{
+	fmenudata resmenudata[] = { {0, "Display Mode"}, {RES_320, "320x224"}, {RES_256, "256x224"}, {3, NULL} };
+	
+	if(!enable_256)
+		return RES_320;
+		
+	if(option)
+		resmenudata[3].name = option;
+	
+	return(DrawFloatMenu(def, resmenudata, option != NULL ? 4 : 3));
+}
+
+u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size)
+{
+	int	i = 0, sel = 1;
+	u16 len = 0, ix, iy;
+	u16 redraw = 1, loadvram = 1, exit = 0;
+	u16 buttons, pressedButtons, oldButtons = 0xffff;
+	u8 x = 100, y = 72; 
+	
+	sel = def;
+	CleanUp();
+	
+	x = (VDP_getScreenWidth() - 128)/ 2;
+	y = (VDP_getScreenHeight() - 80)/ 2;
+	
+	while(!exit)
+	{
+		if(loadvram)
+		{
+			VDP_Start();
+			VDP_setPalette(PAL0, palette_grey);
+			VDP_setPalette(PAL1, palette_red);
+			VDP_setPalette(PAL2, palette_green);
+
+			VDP_loadTileData(float_tiles, TILE_USERINDEX, sizeof(float_tiles) / 32, USE_DMA);
+			VDP_setMyTileMapRect(BPLAN, float_map, TILE_USERINDEX, x/8, y/8, 128/8, 80/8);
+
+			// Title at index 0
+			len = strlen(data[0].name);	
+			ix = (128/8 - len)/2 + x/8;
+			iy = y/8;
+
+			VDP_drawTextBG(APLAN, data[0].name, TILE_ATTR(PAL2, 0, 0, 0), ix, iy);
+			VDP_End();
+			
+			redraw = 1;
+		}
+			
+		if(redraw)
+		{
+			VDP_Start();
+			
+			for(i = 1; i < size; i++)
+			{	
+				len = strlen(data[i].name);
+				
+				ix = (128/8 - len)/2 + x/8;
+				iy = y/8+2+i+(6-size)/2;
+				
+				VDP_drawTextBG(APLAN, data[i].name, TILE_ATTR(sel == i ? PAL1 : PAL0, 0, 0, 0), ix, iy);
+			}
+			
+			VDP_End();
+			redraw = 0;
+		}
+		
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+		
+		if(pressedButtons & BUTTON_UP)
+		{
+			sel --;
+			if(sel < 1)
+				sel = size - 1;
+			redraw = 1;
+		}
+
+		if(pressedButtons & BUTTON_DOWN)
+		{
+			sel ++;
+			if(sel > size - 1)
+				sel = 1;
+			redraw = 1;
+		}
+		
+		if(pressedButtons & BUTTON_A)
+			exit = 1;
+			
+		VDP_waitVSync();
+	}
+	
+	CleanUp();
+	return data[sel].id;
+}
+
 u16 CheckController(u16 joypad, u16 oldButtons, u16 y)
 {
 	u16	buttons, pos = 0, x = 6, type = JOY_TYPE_UNKNOWN;
@@ -1078,16 +1173,17 @@ u16 CheckController(u16 joypad, u16 oldButtons, u16 y)
 	}
 	else
 		pos = y+1;
-		
+	
+
 	VDP_drawTextBG(APLAN, "A", TILE_ATTR(buttons & BUTTON_A ? PAL3 : PAL0, 0, 0, 0), x+21, pos);
 	VDP_drawTextBG(APLAN, "B", TILE_ATTR(buttons & BUTTON_B ? PAL3 : PAL0, 0, 0, 0), x+23, pos);
 	VDP_drawTextBG(APLAN, "C", TILE_ATTR(buttons & BUTTON_C ? PAL3 : PAL0, 0, 0, 0), x+25, pos);
 	
+	VDP_updateSprites();
 	VDP_End();
 	
 	return buttons;
 }
-
 
 void ControllerTest()
 {
@@ -1102,8 +1198,10 @@ void ControllerTest()
 		if(loadvram)
 		{
 			DrawMainBG();
+
 			loadvram = 0;
 			redraw = 1;
+			
 		}
 		if(redraw)
 		{
