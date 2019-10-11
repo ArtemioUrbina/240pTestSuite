@@ -869,7 +869,7 @@ void MDFourier(u8 armedAlert)
 		{
 			if(pressedButtons & BUTTON_B)
 			{
-				doZ80Lock = !doZ80Lock;
+				doZ80Lock = 1;
 				redraw = 1;
 			}
 		}

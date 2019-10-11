@@ -1097,6 +1097,15 @@ void SegaCDMenu()
 	int	maxsel = 8;
 #endif
 
+#ifndef SEGACD
+	if(!DetectSCDBIOS(0x400000))
+	{
+		fmenudata resmenudata[] = { {0, "SCD not detected"}, {1, "continue"}, {2, "return"} };
+	
+		if(DrawFloatMenu(2, resmenudata, 3) == 2)
+			return;
+	}
+#endif
 	while(!done)
 	{
 		if(reload)

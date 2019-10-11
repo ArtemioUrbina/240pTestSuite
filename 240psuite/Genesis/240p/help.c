@@ -25,6 +25,13 @@
 #include "myvdp.h"
 #include "main.h"
 
+void ChangeResolution(u16 *y)
+{
+	(*y)++;
+	VDP_drawTextBG(APLAN, "Resolution can be changed by", TILE_ATTR(PAL0, 0, 0, 0), 4, (*y)++);
+	VDP_drawTextBG(APLAN, "pressing 'C'.", TILE_ATTR(PAL0, 0, 0, 0), 4, (*y)++);
+}
+
 void DrawHelp(int option)
 {
 	u16 exit = 0, redraw = 1, totalpages = 1, page = 1;
@@ -54,7 +61,7 @@ void DrawHelp(int option)
 	{
 		if(redraw)
 		{
-			int y = 7;
+			u16 y = 7;
 
 			VDP_Start();
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
@@ -203,6 +210,8 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "You can toggle between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "vertical bars and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "checkerboard with 'A'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				
+				ChangeResolution(&y);
 				break;
 			case HELP_IRE:
 				VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
@@ -225,15 +234,13 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "with no white ghosting between.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "On most digitally controlled", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "displays, the sharpness control", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "is an edge-enhancement control,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "and most probably should be set", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "to zero, or at the middle.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "displays, sharpness is an edge-", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "enhancement control and most", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "probably should be set to zero.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "Pressing C toggles a diagonal", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "Pressing B toggles a diagonal", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "brick tileset.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				y++;
-				VDP_drawTextBG(APLAN, "Bricks are 256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				ChangeResolution(&y);
 				break;
 			case HELP_OVERSCAN:
 				VDP_drawTextBG(APLAN, "OVERSCAN", TILE_ATTR(PAL1, 0, 0, 0), 16, 4);
@@ -248,8 +255,7 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "pixel. The resulting number is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "the amount of overscan in pixels", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "in each direction.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				y++;
-				VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				ChangeResolution(&y);
 				break;
 			case HELP_SMPTE:
 				VDP_drawTextBG(APLAN, "SMPTE COLOR BARS", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
@@ -319,12 +325,11 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "grid array.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "You can toggle the pattern with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "button 'B', or turn on", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "button 'Up', or turn on", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "auto-toggle each frame with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "'A' button. A frame counter is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "also available with 'C'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				y++;
-				VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "also available with 'B'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				ChangeResolution(&y);
 				break;
 			case HELP_STRIPES:
 				switch (page)
@@ -336,10 +341,10 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "starting with a white one.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "You can toggle the pattern with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "button 'B', or turn on", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "button 'UP', or turn on", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "auto-toggle each frame with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "'A' button. A frame counter is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "also available with 'C'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "also available with 'B'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "When auto-toggle is set, you", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "should see the lines", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -361,8 +366,8 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "distorted horizontaly, since", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "all lines should be one pixel", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "wide.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					y++;
-					VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					
+					ChangeResolution(&y);
 					break;
 				}
 				break;
@@ -473,15 +478,15 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "Sonic or a vertical 256x224", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "back from Kiki Kaikai.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
-					VDP_drawTextBG(APLAN, "Speed can be varied with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "d-pad and scroll direction with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "'B'. The 'A' button stops the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "scroll and 'C' toggles between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "Speed can be varied with Up &", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "Down and scroll direction with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "Left. The 'A' button stops the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "scroll and 'B' toggles between", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "vertical and horizontal.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "The vertical 256 scroll is also", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "used while in 320 mode but it", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "can be positioned with the dpad.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "can be positioned with 'Right'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					
 					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
 					break;					
@@ -490,12 +495,11 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "This can be used to notice any", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "drops in framerate, or pixel", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "width inconsistencies.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					ChangeResolution(&y);
 					y++;
 					VDP_drawTextBG(APLAN, "Sonic is a trademark of Sega", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "Enterprises Ltd. Kiki Kaikai", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "is a trademark of Taito.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					y++;
-					VDP_drawTextBG(APLAN, "256H compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;
@@ -508,14 +512,13 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "video processor copes with", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "scrolling and framerate.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "Button 'C' can be used to toggle", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "Button 'B' can be used to toggle", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "between horizontal and vertical,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "while the d-pad regulates speed.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "while Up/Down regulate speed.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "Button 'A' stops the scroll and", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "button 'B' changes direction.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				y++;
-				VDP_drawTextBG(APLAN, "256H compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "'Left' changes direction.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				ChangeResolution(&y);
 				break;
 			case HELP_SOUND:
 				VDP_drawTextBG(APLAN, "SOUND TEST", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
@@ -555,8 +558,8 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "The user can move around the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "white pixel arrays with the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "d-pad, and change the size of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "the pixel array with 'A' and 'B'", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "The 'C' button allows the user", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "the pixel array with 'A'.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "The 'B' button allows the user", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "to hide the pixel array in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
 					break;
@@ -572,8 +575,7 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "evaluate full-backlit displays", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "by adjusting brightness", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "accordingly for this test.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					y++;
-					VDP_drawTextBG(APLAN, "256 compatible.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					ChangeResolution(&y);
 					break;
 				}
 				break;
@@ -636,8 +638,8 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "VIDEO OPTIONS", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
 				VDP_drawTextBG(APLAN, "Here you can enable interlaced", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "(480i) mode for the whole suite", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "and horizontal 256 in compatible", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "screens (indicated on help).", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "and disable horizontal 256 in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "compatible screens.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "For PAL consoles, you can also", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "enable full 240p, instead of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
