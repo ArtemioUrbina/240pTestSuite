@@ -1064,6 +1064,9 @@ void DrawMainBGwithGillian(u8 DrawGillian, u8 GillianX, u8 GillianY)
 
 u16 DrawFloatMenuRes(u16 def)
 {
+	if(!enable_256)
+		return RES_320;
+		
 	return(DrawFloatMenuResExtra(def, NULL));
 }
 
@@ -1071,8 +1074,8 @@ u16 DrawFloatMenuResExtra(u16 def, char *option)
 {
 	fmenudata resmenudata[] = { {0, "Display Mode"}, {RES_320, "320x224"}, {RES_256, "256x224"}, {3, NULL} };
 	
-	if(!enable_256)
-		return RES_320;
+	if(!enable_256 && option)
+		return 3;
 		
 	if(option)
 		resmenudata[3].name = option;
