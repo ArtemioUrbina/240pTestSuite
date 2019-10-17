@@ -759,6 +759,9 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "The 'B' button changes to a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "color pattern for transition", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "boundary check.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "In color mode, 'A' toggles", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "black borders.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			default:
 				exit = 1;

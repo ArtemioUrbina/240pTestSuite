@@ -1158,7 +1158,7 @@ u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size)
 			redraw = 1;
 		}
 		
-		if(pressedButtons & BUTTON_A)
+		if(pressedButtons & BUTTON_A || pressedButtons & BUTTON_START)
 			exit = 1;
 			
 		VDP_waitVSync();

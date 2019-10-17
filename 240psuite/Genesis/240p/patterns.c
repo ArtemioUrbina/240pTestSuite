@@ -1361,7 +1361,7 @@ u8 DrawContrast()
 void DrawConvergence()
 {
 	u16 ind = 0, size = 0, loadvram = 1, convtype = CONVGRID;
-	u16 exit = 0, type = 0, dots = 0, redraw = 0;
+	u16 exit = 0, type = 0, dots = 0, redraw = 0, lines = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	type = DrawFloatMenuRes(RES_320);
@@ -1370,13 +1370,13 @@ void DrawConvergence()
 		if(loadvram)
 		{
 			VDP_Start();	
+			if(type == RES_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+
 			if(convtype == CONVGRID)
 			{
-				if(type == RES_256)
-					VDP_setScreenWidth256();
-				else
-					VDP_setScreenWidth320();
-					
 				VDP_setPalette(PAL0, bw_pal);
 
 				ind = TILE_USERINDEX;
@@ -1388,12 +1388,9 @@ void DrawConvergence()
 				ind += size;
 				size = sizeof(convcross_tiles) / 32;
 				VDP_loadTileData(convcross_tiles, ind, size, USE_DMA);
-				redraw = 1;
 			}
 			else
-			{
-				VDP_setScreenWidth320();
-				
+			{	
 				size = sizeof(convcolor_tiles) / 32;
 				VDP_setPalette(PAL0, convcolor_pal);
 				VDP_loadTileData(convcolor_tiles, TILE_USERINDEX, size, USE_DMA);
@@ -1401,12 +1398,21 @@ void DrawConvergence()
 			}
 			VDP_End();
 			loadvram = 0;
+			redraw = 1;
 		}
 		
 		if(redraw)
 		{
 			VDP_Start();
-			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+size*dots, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			if(convtype == CONVGRID)
+				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+size*dots, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			else
+			{
+				if(lines)
+					VDP_setPalette(PAL0, convcolor_lines_pal);
+				else
+					VDP_setPalette(PAL0, convcolor_pal);
+			}
 			VDP_End();
 			redraw = 0;
 		}
@@ -1426,6 +1432,12 @@ void DrawConvergence()
 			redraw = 1;
 		}
 		
+		if(convtype == CONVCOLOR && pressedButtons & BUTTON_A)
+		{
+			lines = !lines;
+			redraw = 1;
+		}
+		
 		if(pressedButtons & BUTTON_B)
 		{
 			convtype = !convtype;
@@ -1435,7 +1447,7 @@ void DrawConvergence()
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
 			
-		if(convtype == CONVGRID && pressedButtons & BUTTON_C)
+		if(pressedButtons & BUTTON_C)
 		{
 			type = DrawFloatMenuRes(type);
 			oldButtons |= BUTTON_A;
