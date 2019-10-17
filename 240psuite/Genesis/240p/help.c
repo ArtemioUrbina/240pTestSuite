@@ -49,6 +49,7 @@ void DrawHelp(int option)
 	case HELP_LED:
 	case HELP_LAG:
 	case HELP_HSCROLL:
+	case HELP_MEMVIEW:
 		totalpages = 2;
 		break;
 	case HELP_PLUGE:
@@ -200,6 +201,7 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "The full active video signal can", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "be filled with gray by pressing", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "the 'A' button.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				ChangeResolution(&y);
 				break;
 			case HELP_BLEED:
 				VDP_drawTextBG(APLAN, "COLOR BLEED", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
@@ -290,6 +292,7 @@ void DrawHelp(int option)
 				y++;
 				VDP_drawTextBG(APLAN, "Of course the linearity should", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "be kept in all directions.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				ChangeResolution(&y);
 				break;
 			case HELP_GRAY:
 				VDP_drawTextBG(APLAN, "GRAY RAMP", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
@@ -695,9 +698,6 @@ void DrawHelp(int option)
 				break;
 			case HELP_SEGACD:
 				VDP_drawTextBG(APLAN, "Sega CD", TILE_ATTR(PAL1, 0, 0, 0), 16, 4);
-				VDP_drawTextBG(APLAN, "These tests are intented for SCD", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "diagnostics.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				y++;
 #ifdef SEGACD
 				VDP_drawTextBG(APLAN, "More options are available", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "when runing as a cart: RAM tests", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -708,6 +708,57 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "these.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 #endif
 				y++;
+				VDP_drawTextBG(APLAN, "Special thanks to Leo Oliveira.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				break;
+			case HELP_MEMVIEW:
+				switch (page)
+				{
+				case 1:
+					VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
+					VDP_drawTextBG(APLAN, "This shows selected regions of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "the main CPU memory map.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "The current address range is", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "shown in red at the right from", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "top to bottom.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "The left part of the screen", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "shows 0x1C0 bytes in hex.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "- Button A enabled CRC of of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "current screen.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					y++;
+					VDP_drawTextBG(APLAN, "- Button B jumps to relevant", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "memory locations", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+					break;
+				case 2:
+					
+					VDP_drawTextBG(APLAN, "- Button C switches banks in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "SCD Program RAM.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#ifndef SEGACD	
+					y++;
+					VDP_drawTextBG(APLAN, "With a working SCD system", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "Program RAM banks should show", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "0xAA for bank 1 (0xBB for bank", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "2 etc.) in all four corners.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#endif
+					break;
+				}
+				break;
+			case HELP_CONVERGENCE:
+				VDP_drawTextBG(APLAN, "CONVERGENCE TESTS", TILE_ATTR(PAL1, 0, 0, 0), 15, 4);
+				VDP_drawTextBG(APLAN, "These are used to adjust color", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "convergence in CRT displays.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "The 'A' button changes the cross", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "hatch pattern between lines,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "dots and crosses.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				ChangeResolution(&y);
+				y++;
+				VDP_drawTextBG(APLAN, "The 'B' button changes to a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "color pattern for transition", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "boundary check.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			default:
 				exit = 1;

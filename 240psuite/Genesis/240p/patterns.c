@@ -639,7 +639,7 @@ void DrawGrid()
 	u16 size, drawBorder = 0;
 	u16 exit = 0, loadvram = 1, type = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 first_pal[16], oldColor = 0;
+	u16 first_pal[16], oldColor = 0, redraw = 1;
 
 	type = DrawFloatMenuRes(RES_320);
 	while(!exit)
@@ -673,7 +673,29 @@ void DrawGrid()
 			}
 			VDP_End();
 
+			oldColor = first_pal[0];
 			loadvram = 0;
+			redraw = 1;
+		}
+		if(redraw)
+		{
+			VDP_Start();
+			if(drawBorder)
+			{
+				VDP_getPalette(PAL0, first_pal);
+				oldColor = first_pal[0];
+				first_pal[0] = 0x0666;
+				VDP_setPalette(PAL0, first_pal);
+				
+			}
+			else
+			{
+				VDP_getPalette(PAL0, first_pal);
+				first_pal[0] = oldColor;
+				VDP_setPalette(PAL0, first_pal);
+			}
+			VDP_End();
+			redraw = 0;
 		}
 
 		if(VDPChanged)
@@ -688,23 +710,8 @@ void DrawGrid()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			VDP_Start();
-			if(!drawBorder)
-			{
-				VDP_getPalette(PAL0, first_pal);
-				oldColor = first_pal[0];
-				first_pal[0] = 0x0666;
-				VDP_setPalette(PAL0, first_pal);
-				drawBorder = 1;
-			}
-			else
-			{
-				VDP_getPalette(PAL0, first_pal);
-				first_pal[0] = oldColor;
-				VDP_setPalette(PAL0, first_pal);
-				drawBorder = 0;
-			}
-			VDP_End();
+			drawBorder = !drawBorder;
+			redraw = 1;
 		}
 
 		if(pressedButtons & BUTTON_START)
@@ -1347,3 +1354,95 @@ u8 DrawContrast()
 	}
 	return(1);
 }
+
+#define CONVGRID	0
+#define CONVCOLOR	1
+
+void DrawConvergence()
+{
+	u16 ind = 0, size = 0, loadvram = 1, convtype = CONVGRID;
+	u16 exit = 0, type = 0, dots = 0, redraw = 0;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+	type = DrawFloatMenuRes(RES_320);
+	while(!exit)
+	{
+		if(loadvram)
+		{
+			VDP_Start();	
+			if(convtype == CONVGRID)
+			{
+				if(type == RES_256)
+					VDP_setScreenWidth256();
+				else
+					VDP_setScreenWidth320();
+					
+				VDP_setPalette(PAL0, bw_pal);
+
+				ind = TILE_USERINDEX;
+				size = sizeof(convgrid_tiles) / 32;
+				VDP_loadTileData(convgrid_tiles, ind, size, USE_DMA);
+				ind += size;
+				size = sizeof(convdot_tiles) / 32;
+				VDP_loadTileData(convdot_tiles, ind, size, USE_DMA);
+				ind += size;
+				size = sizeof(convcross_tiles) / 32;
+				VDP_loadTileData(convcross_tiles, ind, size, USE_DMA);
+				redraw = 1;
+			}
+			else
+			{
+				VDP_setScreenWidth320();
+				
+				size = sizeof(convcolor_tiles) / 32;
+				VDP_setPalette(PAL0, convcolor_pal);
+				VDP_loadTileData(convcolor_tiles, TILE_USERINDEX, size, USE_DMA);
+				VDP_setMyTileMapRect(APLAN, convcolor_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+			}
+			VDP_End();
+			loadvram = 0;
+		}
+		
+		if(redraw)
+		{
+			VDP_Start();
+			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+size*dots, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			VDP_End();
+			redraw = 0;
+		}
+
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_CONVERGENCE))
+			loadvram = 1;
+			
+		if(convtype == CONVGRID && pressedButtons & BUTTON_A)
+		{
+			dots++;
+			if(dots > 2)
+				dots = 0;
+			redraw = 1;
+		}
+		
+		if(pressedButtons & BUTTON_B)
+		{
+			convtype = !convtype;
+			loadvram = 1;
+		}
+
+		if(pressedButtons & BUTTON_START)
+			exit = 1;
+			
+		if(convtype == CONVGRID && pressedButtons & BUTTON_C)
+		{
+			type = DrawFloatMenuRes(type);
+			oldButtons |= BUTTON_A;
+			loadvram = 1;
+		}
+
+		VDP_waitVSync();
+	}
+}
+

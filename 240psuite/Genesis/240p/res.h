@@ -184,5 +184,13 @@ extern u16 FireSharkWH_pal[16/2];
 extern u32 float_tiles[192/4];
 extern u16 float_map[320/2];
 
+// Convergence
+extern u32 convdot_tiles[32/4]; 
+extern u32 convgrid_tiles[32/4]; 
+extern u32 convcross_tiles[32/4]; 
+
+extern u32 convcolor_tiles[864/4]; 
+extern u16 convcolor_pal[16/2]; 
+extern u16 convcolor_map[2240/2]; 
 
 #endif

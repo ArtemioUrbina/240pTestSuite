@@ -934,5 +934,4 @@ void MDFourier(u8 armedAlert)
 	}
 	
 	SilenceMDF();
-	FadeAndCleanUp();
 }

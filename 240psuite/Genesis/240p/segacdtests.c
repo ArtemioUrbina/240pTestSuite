@@ -280,7 +280,7 @@ void WaitKey()
 	u16 buttons, oldButtons = 0xffff, pressedButtons, close = 0;
 	
 	VDP_Start();
-	VDP_drawTextBG(APLAN, "PRESS A", TILE_ATTR(PAL1, 0, 0, 0), 17, 22);
+	VDP_drawTextBG(APLAN, "PRESS A", TILE_ATTR(PAL1, 0, 0, 0), 16, 22);
 	VDP_End();
 
 	while(!close)
@@ -977,7 +977,10 @@ void MemViewer(uint32_t address)
 #else
 			if(address >= 0x420000 && address <= 0x440000)
 #endif
+			{
 				ShowMessageAndData("PB", bank, 2, PAL1, 33, 3);
+				VDP_drawTextBG(APLAN, "C->bank", TILE_ATTR(PAL1, 0, 0, 0), 33, 4);
+			}
 			VDP_End();
 			
 			for(i = 0; i < 28; i++)
@@ -1029,7 +1032,19 @@ void MemViewer(uint32_t address)
 		}
 		
 		if(pressedButtons & BUTTON_START)
-			close = 1;
+		{
+			u16 type = 0;
+			fmenudata resmenudata[] = { {0, "Mem View"}, {1, "Help"}, {2, "exit"} };
+
+			type = DrawFloatMenu(1, resmenudata, 3);
+			if(type == 1)
+				DrawHelp(HELP_MEMVIEW);
+			if(type == 2)
+				close = 1;
+				
+			oldButtons |= BUTTON_A;
+			redraw = 1;
+		}
 		
 		if(pressedButtons & BUTTON_LEFT)
 		{
@@ -1092,9 +1107,9 @@ void SegaCDMenu()
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 done = 0;
 #ifdef SEGACD
-	int maxsel = 5;
+	int maxsel = 6;
 #else
-	int	maxsel = 8;
+	int	maxsel = 9;
 #endif
 
 #ifndef SEGACD
@@ -1110,35 +1125,35 @@ void SegaCDMenu()
 	{
 		if(reload)
 		{
-			DrawMainBG();
-			
+			DrawMainBGwithGillian(1, 216, 72);
 			reload = 0;
 			redraw = 1;
 		}
 
-		pos = 8;
+		pos = 7;
 		if(redraw)
 		{
 			VDP_Start();
 			VDP_drawTextBG(APLAN, "Sega CD Tests", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
-			VDP_drawTextBG(APLAN, "BIOS CRC and info", TILE_ATTR(cursel == 1 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "BIOS CRC and info", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
-			VDP_drawTextBG(APLAN, "Check HINT Register", TILE_ATTR(cursel == 2 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Check HINT Register", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 #ifndef SEGACD
-			VDP_drawTextBG(APLAN, "Check Flag Register", TILE_ATTR(cursel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
-			VDP_drawTextBG(APLAN, "Check Communication Registers", TILE_ATTR(cursel == 4 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Check Flag Register", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Check Comm Registers", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 #else
-			VDP_drawTextBG(APLAN, "Check Communication Registers", TILE_ATTR(cursel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Check Communication Registers", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 #endif
 			pos++;
 #ifndef SEGACD
-			VDP_drawTextBG(APLAN, "Program RAM Check", TILE_ATTR(cursel == 5 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
-			VDP_drawTextBG(APLAN, "Word RAM Check", TILE_ATTR(cursel == 6 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Program RAM Check", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Word RAM Check", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
 #endif
-			VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == maxsel - 1 ? PAL3 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == maxsel - 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
-			VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == maxsel ? PAL3 : PAL0, 0, 0, 0), 5, ++pos);
+			VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == maxsel -1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == maxsel ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			VDP_End();
 			redraw = 0;
 		}
@@ -1174,9 +1189,12 @@ void SegaCDMenu()
 			
 		if(pressedButtons & BUTTON_A)
 		{
-			VDP_Start();
-			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
-			VDP_End();
+			if(cursel < maxsel - 2)
+			{
+				FadeAndCleanUp();
+				DrawMainBG();
+			}
+			
 			switch (cursel)
 			{
 			case 1:
@@ -1205,18 +1223,24 @@ void SegaCDMenu()
 				CheckSCDWordRAM();
 				break;
 			case 7:
-				FadeAndCleanUp();
+				CleanUp();
 				MemViewer(0x400000);
 				break;
 			case 8:
+				DrawHelp(HELP_SEGACD);
+				break;
+			case 9:
 				done = 1;
 				break;
 #else
 			case 4:
-				FadeAndCleanUp();
+				CleanUp();
 				MemViewer(0);
 				break;
 			case 5:
+				DrawHelp(HELP_SEGACD);
+				break;
+			case 6:
 				done = 1;
 				break;
 #endif

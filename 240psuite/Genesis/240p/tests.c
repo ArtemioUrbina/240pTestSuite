@@ -1225,6 +1225,11 @@ void HScrollTest()
 				
 				if(type == RES_256)
 					VDP_setScreenWidth256();
+				else
+				{
+					VDP_setScreenWidth320();
+					VDP_setHorizontalScroll(PLAN_A, kikipos);
+				}
 
 				VDP_setPalette(PAL0, kiki_pal);
 				size = sizeof(kiki_tiles) / 32;
@@ -1330,14 +1335,11 @@ void HScrollTest()
 		}
 		
 
-		if(vertical && pressedButtons & BUTTON_RIGHT)
-			kikipos += 32;
-			
-		if(kikipos > 64)
-			kikipos = 0;
-		
-		if(vertical && type != RES_256)
+		if(vertical && type == RES_320 && pressedButtons & BUTTON_RIGHT)
 		{
+			kikipos += 32;
+			if(kikipos > 64)
+				kikipos = 0;
 			VDP_Start();
 			VDP_setHorizontalScroll(PLAN_A, kikipos);
 			VDP_End();
@@ -2220,7 +2222,6 @@ void Alternate240p480i()
 
 	while(!exit)
 	{
-		VDP_Start();
 		if(loadvram)
 		{
 			VDP_Start();
@@ -2238,6 +2239,7 @@ void Alternate240p480i()
 			changed = 1;
 		}
 
+		VDP_Start();
 		intToStr(hours, str, 2);
 		VDP_drawText(str, 22, 3);
 		intToStr(minutes, str, 2);
@@ -2246,6 +2248,7 @@ void Alternate240p480i()
 		VDP_drawText(str, 28, 3);
 		intToStr(frames, str, 2);
 		VDP_drawText(str, 31, 3);
+		VDP_End();
 
 		if(changed)
 		{
@@ -2259,14 +2262,17 @@ void Alternate240p480i()
 			else
 				i = current - 1;
 
+			VDP_Start();
 			VDP_drawTextBG(APLAN, "Current Resolution:", TILE_ATTR(PAL1, 0, 0, 0), 7, 2);
 			if(res == 0)
 				VDP_drawTextBG(APLAN, "240p", TILE_ATTR(PAL1, 0, 0, 0), 27, 2);
 			else
 				VDP_drawTextBG(APLAN, "480i", TILE_ATTR(PAL1, 0, 0, 0), 27, 2);
+			VDP_End();
 
 			if(current)
 			{
+				VDP_Start();
 				for(i = 0; i < current; i++)
 				{
 					u8 len = 0;
@@ -2314,8 +2320,8 @@ void Alternate240p480i()
 						VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL2, 0, 0, 0), 33, i + 5);
 					}
 				}
+				VDP_End();
 			}
-			VDP_End();
 			changed = 0;
 		}
 

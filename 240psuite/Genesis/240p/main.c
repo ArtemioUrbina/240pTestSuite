@@ -71,16 +71,16 @@ int main()
 			reload = 0;
 		}
 
-		pos = 9;
+		pos = 10;
 		VDP_Start();
-		VDP_drawTextBG(APLAN, "Test Patterns", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Video tests", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Audio tests", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Hardware tools", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Test Patterns", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 6, pos++);
+		VDP_drawTextBG(APLAN, "Video tests", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 6, pos++);
+		VDP_drawTextBG(APLAN, "Audio tests", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 6, pos++);
+		VDP_drawTextBG(APLAN, "Hardware tools", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 6, pos++);
 		pos+=4;
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 6, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 6, pos++);
+		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 6, pos);
 			
 		DrawResolution();
 		Detect_MD(md_ver);
@@ -111,7 +111,8 @@ int main()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			FadeAndCleanUp();
+			if(cursel < 5)
+				FadeAndCleanUp();
 			switch (cursel)
 			{
 			case 1:
@@ -158,12 +159,12 @@ void TestPatternMenu()
 	{
 		if(reload)
 		{
-			DrawMainBGwithGillian(1, 216, 80);
+			DrawMainBGwithGillian(1, 216, 72);
 			
 			reload = 0;
 		}
 
-		pos = 7;
+		pos = 6;
 		VDP_Start();
 		VDP_drawTextBG(APLAN, "Pluge", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Color Bars", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -180,10 +181,11 @@ void TestPatternMenu()
 		VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Sharpness", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Overscan", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Convergence", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		pos++;
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
 		Detect_MD(md_ver);
@@ -201,7 +203,7 @@ void TestPatternMenu()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > 15)
+			if(cursel > 16)
 				cursel = 1;
 		}
 
@@ -209,7 +211,7 @@ void TestPatternMenu()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = 15;
+				cursel = 16;
 		}
 
 		if(pressedButtons & BUTTON_B || 
@@ -221,7 +223,8 @@ void TestPatternMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			FadeAndCleanUp();
+			if(cursel < 14)
+				FadeAndCleanUp();
 			switch (cursel)
 			{
 			case 1:
@@ -261,12 +264,15 @@ void TestPatternMenu()
 				DrawOverscan();
 				break;
 			case 13:
-				DrawHelp(HELP_GENERAL);
+				DrawConvergence();
 				break;
 			case 14:
-				VideoOptions();
+				DrawHelp(HELP_GENERAL);
 				break;
 			case 15:
+				VideoOptions();
+				break;
+			case 16:
 				done = 1;
 				break;
 			}
@@ -297,7 +303,7 @@ void VideoTestsMenu()
 	{
 		if(reload)
 		{
-			DrawMainBGwithGillian(1, 216, 80);
+			DrawMainBGwithGillian(1, 216, 72);
 
 			reload = 0;
 		}
@@ -355,7 +361,8 @@ void VideoTestsMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			FadeAndCleanUp();
+			if(cursel < 11)
+				FadeAndCleanUp();
 			switch (cursel)
 			{
 			case 1:
@@ -425,7 +432,7 @@ void AudioTestsMenu()
 	{
 		if(reload)
 		{
-			DrawMainBGwithGillian(1, 216, 80);
+			DrawMainBGwithGillian(1, 216, 72);
 
 			reload = 0;
 		}
@@ -476,7 +483,8 @@ void AudioTestsMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			FadeAndCleanUp();
+			if(cursel < 4)
+				FadeAndCleanUp();
 			switch (cursel)
 			{
 			case 1:
@@ -525,12 +533,12 @@ void HardwareMenu()
 	{
 		if(reload)
 		{
-			DrawMainBGwithGillian(1, 216, 80);
+			DrawMainBGwithGillian(1, 216, 72);
 
 			reload = 0;
 		}
 
-		pos = 12;
+		pos = 10;
 		VDP_Start();
 		VDP_drawTextBG(APLAN, "Controller Test", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Z80 RAM Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -577,7 +585,8 @@ void HardwareMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			FadeAndCleanUp();
+			if(cursel < 5)
+				FadeAndCleanUp();
 				
 			switch (cursel)
 			{
@@ -734,8 +743,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-			VDP_drawTextBG(APLAN, "Ver. 1.20", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "10/10/2019", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.21", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "16/10/2019", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 			VDP_End();
