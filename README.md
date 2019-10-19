@@ -74,7 +74,7 @@ this hasn't been tested yet.
 Super Nintendo/Super Famicom:
 -----------------------------
 This version of the suite runs in full 256x224p, and has some tests and 
-patterns for the 356x239p mode. It requires a flash cart, such as the
+patterns for the 256x239p mode. It requires a flash cart, such as the
 Super Everdrive.
 
 
