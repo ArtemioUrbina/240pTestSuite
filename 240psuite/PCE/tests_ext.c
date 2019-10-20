@@ -697,7 +697,7 @@ void MDFourier()
         {
 			RedrawSound();
          
-            put_string("MDFourier", 16, 5);
+            put_string("MDFourier", 16, 4);
 			refresh = 1;
             redraw = 0;
 			disp_on();
@@ -708,7 +708,7 @@ void MDFourier()
 			set_font_pal(14);
             put_string("Start recording and press I", 6, 12);
 			set_font_pal(13);
-			put_string("Press START for HELP", 10, 25);
+			put_string("Press START for HELP", 10, 26);
 		}
 
         controller = joytrg(0);
@@ -760,7 +760,7 @@ void SoundTest()
         if(redraw)
 		{
 			RedrawSound();
-			put_string("Sound Test", 15, 5);
+			put_string("Sound Test", 15, 4);
 			
             redraw = 0;
 			refresh = 1;

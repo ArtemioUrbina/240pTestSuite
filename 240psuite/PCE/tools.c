@@ -239,10 +239,10 @@ void RedrawOptions()
 
 #ifndef CDROM1
 	set_map_data(MB512_map, 64, 30);
-	set_tile_data(MB512_bg);
+	set_tile_data(MB_bg);
 	load_tile(0x1000);
 	load_map(0, 0, 0, 0, 64, 30);
-	load_palette(0, MB512_pal, 1);  
+	load_palette(0, MB_pal, 1);  
 #else
 	set_screen_size(SCR_SIZE_64x32); 
 	cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 

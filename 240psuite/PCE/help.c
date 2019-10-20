@@ -77,9 +77,9 @@ void main()
 			SetFontColors(15, RGB(2, 2, 2), RGB(0, 6, 0), 0);
 
 #ifndef HELP_OVL
-			set_tile_data(MB512_bg);
+			set_tile_data(MB_bg);
 			load_tile(0x1000);
-			load_palette(0, MB512_pal, 1);  
+			load_palette(0, MB_pal, 1);  
 #else
 			set_screen_size(SCR_SIZE_64x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
@@ -215,7 +215,7 @@ void main()
 			
 			set_font_pal(13);
 			if(total > 1 && page != total)
-				put_string("(cont...)", 50, 25);
+				put_string("(cont...)", 50, 24);
 
 			refresh = 0;
 		}
@@ -273,7 +273,7 @@ void showHelp(char data)
 /* This is defined in C to use up the constants bank */
 void DrawGeneralHelp(char page)
 {	
-	row = 5;
+	row = 4;
 	
 	switch(page)
 	{
@@ -335,7 +335,7 @@ void DrawGeneralHelp(char page)
 
 void DrawBacklitHelp()
 {
-	row = 5;
+	row = 4;
 	
 	put_string("BACKLIT TEST", 26, row++);
 	set_font_pal(14);
@@ -361,7 +361,7 @@ void DrawBacklitHelp()
 
 void DrawChecksHelp()
 {
-	row = 5;
+	row = 4;
 					
 	put_string("CHECKERBOARD", 26, row++);
 	set_font_pal(14);
@@ -387,7 +387,7 @@ void DrawChecksHelp()
 
 void DrawStripesHelp(char page)
 {	
-	row = 5;
+	row = 4;
 	
 	switch(page)
 	{
@@ -427,7 +427,7 @@ void DrawStripesHelp(char page)
 
 void DrawPassiveLagHelp()
 {
-	row = 5;
+	row = 4;
 					
 	put_string("LAG TEST", 26, row++);
 	set_font_pal(14);
@@ -452,7 +452,7 @@ void DrawPassiveLagHelp()
 
 void DrawIre100Help()
 {
-	row = 5;
+	row = 4;
 	
 	put_string("100 IRE", 26, row++);
 	set_font_pal(14);

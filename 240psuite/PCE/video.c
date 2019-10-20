@@ -104,7 +104,7 @@ void ResetScroll()
 void Center224in240()
 {
 	if(!Enabled240p)
-		scroll(0, 0, 8, 0, 240, 0xC0);
+		scroll(0, 0, 6, 0, 240, 0xC0);
 }
 
 

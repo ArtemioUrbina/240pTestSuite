@@ -41,12 +41,10 @@
 #elseif
 
 #incbin(MB_map, "graphics/mainbg.fmp");
-#incchr_ex(MB_bg, "graphics/mainbg.pcx", 0, 0, 4, 31, 0);
+#incchr_ex(MB_bg, "graphics/mainbg.pcx", 0, 0, 4, 28, 0);
 #incpal(MB_pal, "graphics/mainbg.pcx", 0, 1);
 
 #incbin(MB512_map, "graphics/back512.fmp");
-#incchr_ex(MB512_bg, "graphics/back512.pcx", 0, 0, 4, 35, 0);
-#incpal(MB512_pal, "graphics/back512.pcx", 0, 1);
 
 #incbin(n_map, "graphics/N_BAT.bin");
 #incbin(n_pal, "graphics/N_PAL.bin");

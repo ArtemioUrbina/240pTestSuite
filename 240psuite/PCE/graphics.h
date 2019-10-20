@@ -52,7 +52,6 @@ extern int lagspr_sp[];
 extern int LED_sp[];
 
 extern char MB512_map[];
-extern int MB512_bg[];
 
 extern char motoko_map[];
 extern int motoko_bg[];

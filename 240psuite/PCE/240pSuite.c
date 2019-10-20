@@ -289,7 +289,7 @@ void RefreshMain(int sel)
 	row = 7;
 
 	set_font_pal(sel == 0 ? 15 : 14);
-	put_string("Test Patterns", HPOS, row++);
+	put_string("Test Patterns >", HPOS, row++);
 	set_font_pal(sel == 1 ? 15 : 14);
 	put_string("Drop Shadow Test", HPOS, row++);
 	set_font_pal(sel == 2 ? 15 : 14);
@@ -401,10 +401,10 @@ void DrawCredits()
 			
 #ifndef CDROM1			
 			set_map_data(MB512_map, 64, 30);
-			set_tile_data(MB512_bg);
+			set_tile_data(MB_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 64, 30);
-			load_palette(0, MB512_pal, 1);  
+			load_palette(0, MB_pal, 1);  
 #else		
 			set_screen_size(SCR_SIZE_64x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
@@ -429,11 +429,11 @@ void DrawCredits()
 		
 		set_font_pal(14);
 		if(i == 1)
-			put_string("Artemio Urbina      ", HPOS+2, 8);
+			put_string("Artemio Urbina      ", HPOS+2, 7);
 		if(i == 60*4)
-			put_string("@Artemio (twitter)  ", HPOS+2, 8);
+			put_string("@Artemio (twitter)  ", HPOS+2, 7);
 		if(i == 60*8)
-			put_string("aurbina@junkerhq.net", HPOS+2, 8);
+			put_string("aurbina@junkerhq.net", HPOS+2, 7);
 		if(i == 60*16)
 			i = 0;
 			
@@ -452,11 +452,9 @@ void DrawCredits()
     }	
 }
 
-//#define DISTRIBUTE
-
 void RefreshCredits()
 {
-	row = 7;
+	row = 6;
 			
 	set_font_pal(15);
 	put_string("Code and Patterns:", HPOS+2, row++);
@@ -493,9 +491,6 @@ void RefreshCredits()
 	put_string("http://junkerhq.net/240p/", HPOS+2, row++);
 	set_font_pal(13);
 	put_string("This is free software and is open source under GPL.", HPOS+1, row++);
-#ifdef DISTRIBUTE
-	put_string("To be distributed for free", HPOS+1, row++);
-#endif
 
 	set_font_pal(14);	
 	put_string("Ver. 1.06", 50, 7);
@@ -508,7 +503,7 @@ void RefreshCredits()
 #endif
 
 	set_font_pal(15);
-	put_string("Dedicated to Elisa", 40, 25);
+	put_string("Dedicated to Elisa", 40, 24);
 	
 }
 

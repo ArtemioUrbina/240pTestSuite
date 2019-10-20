@@ -74,6 +74,7 @@ int main(int argc, char **argv)
 
 	for(c = 1; c < argc; c++)
 	{
+		int removed = 0;
 		int pos = strlen(argv[c]);
 		
 		lines = 0;
@@ -81,7 +82,7 @@ int main(int argc, char **argv)
 		strncpy(namebuffer, argv[c], pos);
 		namebuffer[pos - 4] = '\0';
 
-		fp = fopen(argv[c], "r");
+		fp = fopen(argv[c], "rb");
 		if(!fp)
 		{
 			fprintf(stderr, "Failed to open %s\n", argv[0]);
@@ -101,15 +102,16 @@ int main(int argc, char **argv)
 		fread(buffer, sizeof(char), size-1, fp);
 		fclose(fp);
 
-		// destroy the line feeds 0x0A
+		// destroy the line feeds 0x0D
 		for(i = 0; i < size; i++)
 		{
-			if(buffer[i] == '\r')
+			if(buffer[i] == 0x0D)
 			{
 				long j = 0;
 				for(j = i; j < size - 1; j++)
 					buffer[j] = buffer [j+1];
 				size --;
+				removed ++;
 				buffer[size] = '\0';
 			}
 		}
@@ -135,11 +137,12 @@ int main(int argc, char **argv)
 						break;
 				}
 				ifdef[k] = '\0';
-				printf("Found ifdef[%d]: \"%s\"\n", k, ifdef);
+				printf("File %s  Found ifdef[%d]: \"%s\"\n", argv[c], k, ifdef);
 
 				for(j = i-k; j < size - k; j++)
 					buffer[j] = buffer[j+k+1];
-				size = size - k;
+				size = size - k - 1;
+				removed += k;
 				buffer[size] = '\0';
 			}
 		}
@@ -152,7 +155,14 @@ int main(int argc, char **argv)
 		}
 
 		if(buffer[size - 2] != '\n')
-			printf("File %s doesn't end with \\n, might miss a line\n",argv[c]);
+		{
+			int m;
+			
+			for(m = 0; m < 10; m++)
+				printf("%X ", buffer[size - 10 + m]);
+			printf("\n");
+			printf("File %s doesn't end with \\n, might miss a line\n", argv[c]);
+		}
 
 		*npages = (lines / LINESPERPAGE);
 		if(lines % LINESPERPAGE && lines > LINESPERPAGE)
@@ -221,7 +231,7 @@ int main(int argc, char **argv)
 				if(realpages[d][pos] == '\n')
 				{	
 					if(pos - lastpos > 1)
-						fprintf(nfile, "\tp_string\t%s_%0.2d_%0.2d,%d,%d\n", namebuffer, d, dscount++, hpos, row+5);
+						fprintf(nfile, "\tp_string\t%s_%0.2d_%0.2d,%d,%d\n", namebuffer, d, dscount++, hpos, row+4);
 					if(first)
 					{
 						fprintf(nfile, "\t__ldwi\t\t14\n\tcall\t\t_set_font_pal\n");

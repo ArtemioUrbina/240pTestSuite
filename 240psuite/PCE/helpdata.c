@@ -1,14 +1,14 @@
 void display_audiosync_00()
 {
 #asm
-	p_string	audiosync_00_00,24,5
+	p_string	audiosync_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	audiosync_00_01,6,7
-	p_string	audiosync_00_02,6,8
-	p_string	audiosync_00_03,6,10
-	p_string	audiosync_00_04,6,11
-	p_string	audiosync_00_05,6,13
+	p_string	audiosync_00_01,6,6
+	p_string	audiosync_00_02,6,7
+	p_string	audiosync_00_03,6,9
+	p_string	audiosync_00_04,6,10
+	p_string	audiosync_00_05,6,12
 	rts
 
 audiosync_00_00:	.db	"AUDIO SYNC"
@@ -30,16 +30,16 @@ audiosync_00_05:	.db	"- Press I to start/stop the test."
 void display_color601_00()
 {
 #asm
-	p_string	color601_00_00,18,5
+	p_string	color601_00_00,18,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	color601_00_01,6,9
-	p_string	color601_00_02,6,10
-	p_string	color601_00_03,6,12
-	p_string	color601_00_04,6,13
-	p_string	color601_00_05,6,14
-	p_string	color601_00_06,6,15
-	p_string	color601_00_07,6,16
+	p_string	color601_00_01,6,8
+	p_string	color601_00_02,6,9
+	p_string	color601_00_03,6,11
+	p_string	color601_00_04,6,12
+	p_string	color601_00_05,6,13
+	p_string	color601_00_06,6,14
+	p_string	color601_00_07,6,15
 	rts
 
 color601_00_00:	.db	"COLOR BARS WITH GRAY SCALE"
@@ -65,14 +65,14 @@ color601_00_07:	.db	"color balance."
 void display_colorbleed_00()
 {
 #asm
-	p_string	colorbleed_00_00,24,5
+	p_string	colorbleed_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	colorbleed_00_01,6,8
-	p_string	colorbleed_00_02,6,9
-	p_string	colorbleed_00_03,6,10
-	p_string	colorbleed_00_04,6,12
-	p_string	colorbleed_00_05,6,13
+	p_string	colorbleed_00_01,6,7
+	p_string	colorbleed_00_02,6,8
+	p_string	colorbleed_00_03,6,9
+	p_string	colorbleed_00_04,6,11
+	p_string	colorbleed_00_05,6,12
 	rts
 
 colorbleed_00_00:	.db	"COLOR BLEED"
@@ -94,20 +94,20 @@ colorbleed_00_05:	.db	"board with button I."
 void display_colors_00()
 {
 #asm
-	p_string	colors_00_00,23,5
+	p_string	colors_00_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	colors_00_01,6,9
-	p_string	colors_00_02,6,10
-	p_string	colors_00_03,6,12
-	p_string	colors_00_04,6,13
-	p_string	colors_00_05,6,14
-	p_string	colors_00_06,6,15
-	p_string	colors_00_07,6,17
-	p_string	colors_00_08,6,18
-	p_string	colors_00_09,6,19
-	p_string	colors_00_10,6,20
-	p_string	colors_00_11,6,21
+	p_string	colors_00_01,6,8
+	p_string	colors_00_02,6,9
+	p_string	colors_00_03,6,11
+	p_string	colors_00_04,6,12
+	p_string	colors_00_05,6,13
+	p_string	colors_00_06,6,14
+	p_string	colors_00_07,6,16
+	p_string	colors_00_08,6,17
+	p_string	colors_00_09,6,18
+	p_string	colors_00_10,6,19
+	p_string	colors_00_11,6,20
 	rts
 
 colors_00_00:	.db	"COLORBARS (1/2)"
@@ -141,16 +141,16 @@ colors_00_11:	.db	"can clearly tell them apart."
 void display_colors_01()
 {
 #asm
-	p_string	colors_01_00,23,5
+	p_string	colors_01_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	colors_01_01,6,9
-	p_string	colors_01_02,6,10
-	p_string	colors_01_03,6,11
-	p_string	colors_01_04,6,12
-	p_string	colors_01_05,6,13
-	p_string	colors_01_06,6,14
-	p_string	colors_01_07,6,16
+	p_string	colors_01_01,6,8
+	p_string	colors_01_02,6,9
+	p_string	colors_01_03,6,10
+	p_string	colors_01_04,6,11
+	p_string	colors_01_05,6,12
+	p_string	colors_01_06,6,13
+	p_string	colors_01_07,6,15
 	rts
 
 colors_01_00:	.db	"COLORBARS (2/2)"
@@ -176,20 +176,20 @@ colors_01_07:	.db	"Repeat for each color and you are set."
 void display_dshadow_00()
 {
 #asm
-	p_string	dshadow_00_00,23,5
+	p_string	dshadow_00_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	dshadow_00_01,6,8
-	p_string	dshadow_00_02,6,9
-	p_string	dshadow_00_03,6,10
-	p_string	dshadow_00_04,6,11
-	p_string	dshadow_00_05,6,13
-	p_string	dshadow_00_06,6,14
-	p_string	dshadow_00_07,6,15
-	p_string	dshadow_00_08,6,16
-	p_string	dshadow_00_09,6,18
-	p_string	dshadow_00_10,6,19
-	p_string	dshadow_00_11,6,21
+	p_string	dshadow_00_01,6,7
+	p_string	dshadow_00_02,6,8
+	p_string	dshadow_00_03,6,9
+	p_string	dshadow_00_04,6,10
+	p_string	dshadow_00_05,6,12
+	p_string	dshadow_00_06,6,13
+	p_string	dshadow_00_07,6,14
+	p_string	dshadow_00_08,6,15
+	p_string	dshadow_00_09,6,17
+	p_string	dshadow_00_10,6,18
+	p_string	dshadow_00_11,6,20
 	rts
 
 dshadow_00_00:	.db	"DROP SHADOW TEST"
@@ -223,15 +223,15 @@ dshadow_00_11:	.db	"- Backgrounds can be switched with button I."
 void display_gray_00()
 {
 #asm
-	p_string	gray_00_00,26,5
+	p_string	gray_00_00,26,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	gray_00_01,6,8
-	p_string	gray_00_02,6,9
-	p_string	gray_00_03,6,11
-	p_string	gray_00_04,6,12
-	p_string	gray_00_05,6,13
-	p_string	gray_00_06,6,14
+	p_string	gray_00_01,6,7
+	p_string	gray_00_02,6,8
+	p_string	gray_00_03,6,10
+	p_string	gray_00_04,6,11
+	p_string	gray_00_05,6,12
+	p_string	gray_00_06,6,13
 	rts
 
 gray_00_00:	.db	"GRAY RAMP"
@@ -255,23 +255,23 @@ gray_00_06:	.db	"in NTSC displays."
 void display_grid_00()
 {
 #asm
-	p_string	grid_00_00,29,5
+	p_string	grid_00_00,29,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	grid_00_01,6,7
-	p_string	grid_00_02,6,8
-	p_string	grid_00_03,6,9
-	p_string	grid_00_04,6,10
-	p_string	grid_00_05,6,12
-	p_string	grid_00_06,6,13
-	p_string	grid_00_07,6,14
-	p_string	grid_00_08,6,16
-	p_string	grid_00_09,6,17
-	p_string	grid_00_10,6,18
-	p_string	grid_00_11,6,20
-	p_string	grid_00_12,6,21
-	p_string	grid_00_13,6,23
-	p_string	grid_00_14,6,24
+	p_string	grid_00_01,6,6
+	p_string	grid_00_02,6,7
+	p_string	grid_00_03,6,8
+	p_string	grid_00_04,6,9
+	p_string	grid_00_05,6,11
+	p_string	grid_00_06,6,12
+	p_string	grid_00_07,6,13
+	p_string	grid_00_08,6,15
+	p_string	grid_00_09,6,16
+	p_string	grid_00_10,6,17
+	p_string	grid_00_11,6,19
+	p_string	grid_00_12,6,20
+	p_string	grid_00_13,6,22
+	p_string	grid_00_14,6,23
 	rts
 
 grid_00_00:	.db	"GRID"
@@ -311,18 +311,18 @@ grid_00_14:	.db	"selected by pressing up while in the 320 grid."
 void display_gridscroll_00()
 {
 #asm
-	p_string	gridscroll_00_00,23,5
+	p_string	gridscroll_00_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	gridscroll_00_01,6,8
-	p_string	gridscroll_00_02,6,9
-	p_string	gridscroll_00_03,6,10
-	p_string	gridscroll_00_04,6,11
-	p_string	gridscroll_00_05,6,13
-	p_string	gridscroll_00_06,6,14
-	p_string	gridscroll_00_07,6,15
-	p_string	gridscroll_00_08,6,17
-	p_string	gridscroll_00_09,6,18
+	p_string	gridscroll_00_01,6,7
+	p_string	gridscroll_00_02,6,8
+	p_string	gridscroll_00_03,6,9
+	p_string	gridscroll_00_04,6,10
+	p_string	gridscroll_00_05,6,12
+	p_string	gridscroll_00_06,6,13
+	p_string	gridscroll_00_07,6,14
+	p_string	gridscroll_00_08,6,16
+	p_string	gridscroll_00_09,6,17
 	rts
 
 gridscroll_00_00:	.db	"GRID SCROLL TEST"
@@ -352,15 +352,15 @@ gridscroll_00_09:	.db	"d-pad left or right changes direction."
 void display_linearity_00()
 {
 #asm
-	p_string	linearity_00_00,26,5
+	p_string	linearity_00_00,26,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	linearity_00_01,6,8
-	p_string	linearity_00_02,6,9
-	p_string	linearity_00_03,6,11
-	p_string	linearity_00_04,6,12
-	p_string	linearity_00_05,6,13
-	p_string	linearity_00_06,6,14
+	p_string	linearity_00_01,6,7
+	p_string	linearity_00_02,6,8
+	p_string	linearity_00_03,6,10
+	p_string	linearity_00_04,6,11
+	p_string	linearity_00_05,6,12
+	p_string	linearity_00_06,6,13
 	rts
 
 linearity_00_00:	.db	"LINEARITY"
@@ -384,16 +384,16 @@ linearity_00_06:	.db	"directions."
 void display_linearity256_00()
 {
 #asm
-	p_string	linearity256_00_00,22,5
+	p_string	linearity256_00_00,22,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	linearity256_00_01,6,8
-	p_string	linearity256_00_02,6,9
-	p_string	linearity256_00_03,6,10
-	p_string	linearity256_00_04,6,12
-	p_string	linearity256_00_05,6,13
-	p_string	linearity256_00_06,6,14
-	p_string	linearity256_00_07,6,15
+	p_string	linearity256_00_01,6,7
+	p_string	linearity256_00_02,6,8
+	p_string	linearity256_00_03,6,9
+	p_string	linearity256_00_04,6,11
+	p_string	linearity256_00_05,6,12
+	p_string	linearity256_00_06,6,13
+	p_string	linearity256_00_07,6,14
 	rts
 
 linearity256_00_00:	.db	"LINEARITY 256"
@@ -419,23 +419,23 @@ linearity256_00_07:	.db	"directions, no distortion should be present."
 void display_manuallag_00()
 {
 #asm
-	p_string	manuallag_00_00,20,5
+	p_string	manuallag_00_00,20,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	manuallag_00_01,6,7
-	p_string	manuallag_00_02,6,8
-	p_string	manuallag_00_03,6,9
-	p_string	manuallag_00_04,6,10
-	p_string	manuallag_00_05,6,11
-	p_string	manuallag_00_06,6,12
-	p_string	manuallag_00_07,6,14
-	p_string	manuallag_00_08,6,15
-	p_string	manuallag_00_09,6,16
-	p_string	manuallag_00_10,6,17
-	p_string	manuallag_00_11,6,19
-	p_string	manuallag_00_12,6,20
-	p_string	manuallag_00_13,6,21
-	p_string	manuallag_00_14,6,22
+	p_string	manuallag_00_01,6,6
+	p_string	manuallag_00_02,6,7
+	p_string	manuallag_00_03,6,8
+	p_string	manuallag_00_04,6,9
+	p_string	manuallag_00_05,6,10
+	p_string	manuallag_00_06,6,11
+	p_string	manuallag_00_07,6,13
+	p_string	manuallag_00_08,6,14
+	p_string	manuallag_00_09,6,15
+	p_string	manuallag_00_10,6,16
+	p_string	manuallag_00_11,6,18
+	p_string	manuallag_00_12,6,19
+	p_string	manuallag_00_13,6,20
+	p_string	manuallag_00_14,6,21
 	rts
 
 manuallag_00_00:	.db	"MANUAL LAG TEST (1/2)"
@@ -475,22 +475,22 @@ manuallag_00_14:	.db	"actual intersection will be shown on screen. "
 void display_manuallag_01()
 {
 #asm
-	p_string	manuallag_01_00,20,5
+	p_string	manuallag_01_00,20,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	manuallag_01_01,6,7
-	p_string	manuallag_01_02,6,8
-	p_string	manuallag_01_03,6,9
-	p_string	manuallag_01_04,6,10
-	p_string	manuallag_01_05,6,11
-	p_string	manuallag_01_06,6,12
-	p_string	manuallag_01_07,6,13
-	p_string	manuallag_01_08,6,15
-	p_string	manuallag_01_09,6,16
-	p_string	manuallag_01_10,6,17
-	p_string	manuallag_01_11,6,19
-	p_string	manuallag_01_12,6,20
-	p_string	manuallag_01_13,6,21
+	p_string	manuallag_01_01,6,6
+	p_string	manuallag_01_02,6,7
+	p_string	manuallag_01_03,6,8
+	p_string	manuallag_01_04,6,9
+	p_string	manuallag_01_05,6,10
+	p_string	manuallag_01_06,6,11
+	p_string	manuallag_01_07,6,12
+	p_string	manuallag_01_08,6,14
+	p_string	manuallag_01_09,6,15
+	p_string	manuallag_01_10,6,16
+	p_string	manuallag_01_11,6,18
+	p_string	manuallag_01_12,6,19
+	p_string	manuallag_01_13,6,20
 	rts
 
 manuallag_01_00:	.db	"MANUAL LAG TEST (2/2)"
@@ -528,15 +528,15 @@ manuallag_01_13:	.db	"when using the test results."
 void display_mdfourier_00()
 {
 #asm
-	p_string	mdfourier_00_00,24,5
+	p_string	mdfourier_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	mdfourier_00_01,6,7
-	p_string	mdfourier_00_02,6,8
-	p_string	mdfourier_00_03,6,9
-	p_string	mdfourier_00_04,6,11
-	p_string	mdfourier_00_05,6,12
-	p_string	mdfourier_00_06,6,14
+	p_string	mdfourier_00_01,6,6
+	p_string	mdfourier_00_02,6,7
+	p_string	mdfourier_00_03,6,8
+	p_string	mdfourier_00_04,6,10
+	p_string	mdfourier_00_05,6,11
+	p_string	mdfourier_00_06,6,13
 	rts
 
 mdfourier_00_00:	.db	"MDFourier"
@@ -560,24 +560,24 @@ mdfourier_00_06:	.db	"Visit http://junkerhq.net/MDFourier for details."
 void display_options_00()
 {
 #asm
-	p_string	options_00_00,27,5
+	p_string	options_00_00,27,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	options_00_01,6,7
-	p_string	options_00_02,6,8
-	p_string	options_00_03,6,9
-	p_string	options_00_04,6,10
-	p_string	options_00_05,6,12
-	p_string	options_00_06,6,13
-	p_string	options_00_07,6,14
-	p_string	options_00_08,6,15
-	p_string	options_00_09,6,17
-	p_string	options_00_10,6,18
-	p_string	options_00_11,6,19
-	p_string	options_00_12,6,20
-	p_string	options_00_13,6,21
-	p_string	options_00_14,6,23
-	p_string	options_00_15,6,24
+	p_string	options_00_01,6,6
+	p_string	options_00_02,6,7
+	p_string	options_00_03,6,8
+	p_string	options_00_04,6,9
+	p_string	options_00_05,6,11
+	p_string	options_00_06,6,12
+	p_string	options_00_07,6,13
+	p_string	options_00_08,6,14
+	p_string	options_00_09,6,16
+	p_string	options_00_10,6,17
+	p_string	options_00_11,6,18
+	p_string	options_00_12,6,19
+	p_string	options_00_13,6,20
+	p_string	options_00_14,6,22
+	p_string	options_00_15,6,23
 	rts
 
 options_00_00:	.db	"OPTIONS"
@@ -619,22 +619,22 @@ options_00_15:	.db	"It disables the NTSC color burst, eliminating color."
 void display_overscan_00()
 {
 #asm
-	p_string	overscan_00_00,27,5
+	p_string	overscan_00_00,27,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	overscan_00_01,6,8
-	p_string	overscan_00_02,6,9
-	p_string	overscan_00_03,6,10
-	p_string	overscan_00_04,6,12
-	p_string	overscan_00_05,6,13
-	p_string	overscan_00_06,6,14
-	p_string	overscan_00_07,6,15
-	p_string	overscan_00_08,6,17
-	p_string	overscan_00_09,6,18
-	p_string	overscan_00_10,6,20
-	p_string	overscan_00_11,6,21
-	p_string	overscan_00_12,6,22
-	p_string	overscan_00_13,6,23
+	p_string	overscan_00_01,6,7
+	p_string	overscan_00_02,6,8
+	p_string	overscan_00_03,6,9
+	p_string	overscan_00_04,6,11
+	p_string	overscan_00_05,6,12
+	p_string	overscan_00_06,6,13
+	p_string	overscan_00_07,6,14
+	p_string	overscan_00_08,6,16
+	p_string	overscan_00_09,6,17
+	p_string	overscan_00_10,6,19
+	p_string	overscan_00_11,6,20
+	p_string	overscan_00_12,6,21
+	p_string	overscan_00_13,6,22
 	rts
 
 overscan_00_00:	.db	"OVERSCAN"
@@ -672,21 +672,21 @@ overscan_00_13:	.db	"is fixed at 256 pixels."
 void display_pluge_00()
 {
 #asm
-	p_string	pluge_00_00,25,5
+	p_string	pluge_00_00,25,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	pluge_00_01,6,8
-	p_string	pluge_00_02,6,9
-	p_string	pluge_00_03,6,10
-	p_string	pluge_00_04,6,12
-	p_string	pluge_00_05,6,13
-	p_string	pluge_00_06,6,14
-	p_string	pluge_00_07,6,16
-	p_string	pluge_00_08,6,17
-	p_string	pluge_00_09,6,18
-	p_string	pluge_00_10,6,20
-	p_string	pluge_00_11,6,21
-	p_string	pluge_00_12,6,22
+	p_string	pluge_00_01,6,7
+	p_string	pluge_00_02,6,8
+	p_string	pluge_00_03,6,9
+	p_string	pluge_00_04,6,11
+	p_string	pluge_00_05,6,12
+	p_string	pluge_00_06,6,13
+	p_string	pluge_00_07,6,15
+	p_string	pluge_00_08,6,16
+	p_string	pluge_00_09,6,17
+	p_string	pluge_00_10,6,19
+	p_string	pluge_00_11,6,20
+	p_string	pluge_00_12,6,21
 	rts
 
 pluge_00_00:	.db	"PLUGE (1/2)"
@@ -722,16 +722,16 @@ pluge_00_12:	.db	"blue one in order not to crush detail."
 void display_pluge_01()
 {
 #asm
-	p_string	pluge_01_00,25,5
+	p_string	pluge_01_00,25,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	pluge_01_01,6,8
-	p_string	pluge_01_02,6,9
-	p_string	pluge_01_03,6,10
-	p_string	pluge_01_04,6,11
-	p_string	pluge_01_05,6,13
-	p_string	pluge_01_06,6,14
-	p_string	pluge_01_07,6,15
+	p_string	pluge_01_01,6,7
+	p_string	pluge_01_02,6,8
+	p_string	pluge_01_03,6,9
+	p_string	pluge_01_04,6,10
+	p_string	pluge_01_05,6,12
+	p_string	pluge_01_06,6,13
+	p_string	pluge_01_07,6,14
 	rts
 
 pluge_01_00:	.db	"PLUGE (2/2)"
@@ -757,20 +757,20 @@ pluge_01_07:	.db	"values available in this system."
 void display_scroll_00()
 {
 #asm
-	p_string	scroll_00_00,26,5
+	p_string	scroll_00_00,26,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	scroll_00_01,6,8
-	p_string	scroll_00_02,6,9
-	p_string	scroll_00_03,6,11
-	p_string	scroll_00_04,6,12
-	p_string	scroll_00_05,6,14
-	p_string	scroll_00_06,6,16
-	p_string	scroll_00_07,6,17
-	p_string	scroll_00_08,6,19
-	p_string	scroll_00_09,6,20
-	p_string	scroll_00_10,6,22
-	p_string	scroll_00_11,6,23
+	p_string	scroll_00_01,6,7
+	p_string	scroll_00_02,6,8
+	p_string	scroll_00_03,6,10
+	p_string	scroll_00_04,6,11
+	p_string	scroll_00_05,6,13
+	p_string	scroll_00_06,6,15
+	p_string	scroll_00_07,6,16
+	p_string	scroll_00_08,6,18
+	p_string	scroll_00_09,6,19
+	p_string	scroll_00_10,6,21
+	p_string	scroll_00_11,6,22
 	rts
 
 scroll_00_00:	.db	"SCROLL TEST"
@@ -804,17 +804,17 @@ scroll_00_11:	.db	"Kiki Kaikai is a trademark of Taito/Square."
 void display_sharpness_00()
 {
 #asm
-	p_string	sharpness_00_00,26,5
+	p_string	sharpness_00_00,26,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	sharpness_00_01,6,8
-	p_string	sharpness_00_02,6,9
-	p_string	sharpness_00_03,6,10
-	p_string	sharpness_00_04,6,12
-	p_string	sharpness_00_05,6,13
-	p_string	sharpness_00_06,6,14
-	p_string	sharpness_00_07,6,16
-	p_string	sharpness_00_08,6,17
+	p_string	sharpness_00_01,6,7
+	p_string	sharpness_00_02,6,8
+	p_string	sharpness_00_03,6,9
+	p_string	sharpness_00_04,6,11
+	p_string	sharpness_00_05,6,12
+	p_string	sharpness_00_06,6,13
+	p_string	sharpness_00_07,6,15
+	p_string	sharpness_00_08,6,16
 	rts
 
 sharpness_00_00:	.db	"SHARPNESS"
@@ -842,14 +842,14 @@ sharpness_00_08:	.db	"to as aperture."
 void display_smptecb_00()
 {
 #asm
-	p_string	smptecb_00_00,21,5
+	p_string	smptecb_00_00,21,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	smptecb_00_01,6,8
-	p_string	smptecb_00_02,6,9
-	p_string	smptecb_00_03,6,10
-	p_string	smptecb_00_04,6,12
-	p_string	smptecb_00_05,6,13
+	p_string	smptecb_00_01,6,7
+	p_string	smptecb_00_02,6,8
+	p_string	smptecb_00_03,6,9
+	p_string	smptecb_00_04,6,11
+	p_string	smptecb_00_05,6,12
 	rts
 
 smptecb_00_00:	.db	"SMPTE COLOR BARS"
@@ -872,13 +872,13 @@ smptecb_00_05:	.db	"bars by pressing I."
 void display_sound_00()
 {
 #asm
-	p_string	sound_00_00,28,5
+	p_string	sound_00_00,28,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	sound_00_01,6,9
-	p_string	sound_00_02,6,10
-	p_string	sound_00_03,6,12
-	p_string	sound_00_04,6,13
+	p_string	sound_00_01,6,8
+	p_string	sound_00_02,6,9
+	p_string	sound_00_03,6,11
+	p_string	sound_00_04,6,12
 	rts
 
 sound_00_00:	.db	"SOUND"
@@ -900,15 +900,15 @@ sound_00_04:	.db	"working properly."
 void display_soundCD_00()
 {
 #asm
-	p_string	soundCD_00_00,28,5
+	p_string	soundCD_00_00,28,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	soundCD_00_01,6,9
-	p_string	soundCD_00_02,6,10
-	p_string	soundCD_00_03,6,12
-	p_string	soundCD_00_04,6,13
-	p_string	soundCD_00_05,6,15
-	p_string	soundCD_00_06,6,16
+	p_string	soundCD_00_01,6,8
+	p_string	soundCD_00_02,6,9
+	p_string	soundCD_00_03,6,11
+	p_string	soundCD_00_04,6,12
+	p_string	soundCD_00_05,6,14
+	p_string	soundCD_00_06,6,15
 	rts
 
 soundCD_00_00:	.db	"SOUND"
@@ -933,15 +933,15 @@ soundCD_00_06:	.db	"working properly."
 void display_striped_00()
 {
 #asm
-	p_string	striped_00_00,21,5
+	p_string	striped_00_00,21,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	striped_00_01,6,8
-	p_string	striped_00_02,6,9
-	p_string	striped_00_03,6,10
-	p_string	striped_00_04,6,11
-	p_string	striped_00_05,6,12
-	p_string	striped_00_06,6,14
+	p_string	striped_00_01,6,7
+	p_string	striped_00_02,6,8
+	p_string	striped_00_03,6,9
+	p_string	striped_00_04,6,10
+	p_string	striped_00_05,6,11
+	p_string	striped_00_06,6,13
 	rts
 
 striped_00_00:	.db	"STRIPED SPRITE TEST"
@@ -965,19 +965,19 @@ striped_00_06:	.db	"- You can change backgrounds with I."
 void display_white_00()
 {
 #asm
-	p_string	white_00_00,24,5
+	p_string	white_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	white_00_01,6,8
-	p_string	white_00_02,6,9
-	p_string	white_00_03,6,10
-	p_string	white_00_04,6,12
-	p_string	white_00_05,6,13
-	p_string	white_00_06,6,14
-	p_string	white_00_07,6,16
-	p_string	white_00_08,6,17
-	p_string	white_00_09,6,19
-	p_string	white_00_10,6,20
+	p_string	white_00_01,6,7
+	p_string	white_00_02,6,8
+	p_string	white_00_03,6,9
+	p_string	white_00_04,6,11
+	p_string	white_00_05,6,12
+	p_string	white_00_06,6,13
+	p_string	white_00_07,6,15
+	p_string	white_00_08,6,16
+	p_string	white_00_09,6,18
+	p_string	white_00_10,6,19
 	rts
 
 white_00_00:	.db	"WHITE SCREEN"
