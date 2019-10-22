@@ -640,30 +640,6 @@ void MDFourierExecute()
 
 }
 
-void RedrawSound()
-{
-	ResetVideo();
-	setupFont();
-
-	SetFontColors(12, RGB(3, 3, 3), RGB(0, 6, 0), 0);
-	SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
-#ifndef CDROM1
-	set_map_data(MB_map, 40, 30);
-	set_tile_data(MB_bg);
-	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 40, 30);
-	load_palette(0, MB_pal, 1);  
-#else
-	set_screen_size(SCR_SIZE_64x32); 
-	cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
-	set_bgpal(0, palCD); 
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-#endif
-	
-	set_font_pal(13);
-}
-
 void MDFourier()
 {
  	end = 0;
@@ -695,7 +671,7 @@ void MDFourier()
 		
         if(redraw)
         {
-			RedrawSound();
+			RedrawBG();
          
             put_string("MDFourier", 16, 4);
 			refresh = 1;
@@ -759,7 +735,7 @@ void SoundTest()
 		vsync();
         if(redraw)
 		{
-			RedrawSound();
+			RedrawBG();
 			put_string("Sound Test", 15, 4);
 			
             redraw = 0;
@@ -1069,24 +1045,8 @@ void ManualLagTestResults()
 
 void ManualLagTestResultsBack()
 {
-	ResetVideo();
-	setupFont();
+	RedrawBG();
 	SetFontColors(13, RGB(3, 3, 3), RGB(0, 7, 0), 0);
-
-#ifndef CDROM1
-	set_map_data(MB_map, 40, 30);
-	set_tile_data(MB_bg);
-	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 40, 30);
-	load_palette(0, MB_pal, 1);  
-#else
-	set_screen_size(SCR_SIZE_64x32); 
-	cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
-	set_bgpal(0, palCD); 
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-#endif
-	Center224in240();
 }
 
 void ManualLagTest()

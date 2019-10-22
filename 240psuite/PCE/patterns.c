@@ -62,7 +62,7 @@ void main()
 
 	disp_off();
     while(!end)
-    {   
+    {   	
 		vsync();
 		
 #ifdef CDROM1
@@ -71,29 +71,7 @@ void main()
 #endif
         if(redraw)
         {
-			ResetVideo();
-			setupFont();
-			
-#ifndef CDROM1			
-			set_map_data(MB_map, 40, 30);
-			set_tile_data(MB_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, MB_pal, 1);
-#else
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
-			set_bgpal(0, palCD); 
-			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-#endif
-			
-			Center224in240();
-			DisplaySystemInfo();
-         
-			init_satb();
-			DrawSP();
-			satb_update();
+			RedrawMain();
 
 			refresh = 1;
             redraw = 0;

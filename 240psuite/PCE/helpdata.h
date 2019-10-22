@@ -24,15 +24,13 @@
 #define	COLOR601_HELP		23
 #define BLEED_HELP			24
 #define	GRID_HELP			25
-#define	GRID_HELP2			26
-#define	GRID_HELP3			27
-#define	LINEARITY_HELP		28
-#define	LINEARITY256_HELP	29
-#define	GRAY_HELP			30
-#define	WHITE_HELP			31
-#define IRE100HELP			32
-#define	SHARPNESS_HELP		33
-#define	OVERSCAN_HELP		34
+#define	LINEARITY_HELP		26
+#define	LINEARITY256_HELP	27
+#define	GRAY_HELP			28
+#define	WHITE_HELP			29
+#define IRE100HELP			30
+#define	SHARPNESS_HELP		31
+#define	OVERSCAN_HELP		32
 
-#define	OPTIONS_HELP2		35
-#define GENERAL_HELP2		36
+#define	OPTIONS_HELP2		33
+#define GENERAL_HELP2		34

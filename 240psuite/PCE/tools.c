@@ -27,6 +27,7 @@
 #include "video.h"
 #include "graphics.h"
 #include "help.h"
+#include "tools.h"
 
 #ifdef CDROM1
 extern int xres_flags;
@@ -39,7 +40,101 @@ extern int x_g;
 #endif
 
 #define HPOS 5
- 
+
+#ifndef HELP_OVL
+void RedrawMain()
+{
+#ifndef SGFX
+	RedrawBG();
+#else
+	if(sgx_detect())
+	{
+		vpc_win_size(VPC_WIN_A, 0x01ff);
+		vpc_win_size(VPC_WIN_B, 0x01ff);
+		vpc_win_reg(VPC_WIN_A, VDC_ON+VPC_NORM);
+		vpc_win_reg(VPC_WIN_B, VDC_ON+VPC_NORM);
+		vpc_win_reg(VPC_WIN_AB, VDC_ON+VPC_NORM);
+		vpc_win_reg(VPC_WIN_NONE, VDC_ON+VPC_NORM);
+
+		sgx_set_screen_size(SCR_SIZE_32x32);
+		sgx_disp_off();
+		
+		sgx_set_tile_data(SMPTE75_bg);
+		sgx_load_tile(0x1000);		
+		sgx_set_map_data(SMPTE75_map, 40, 30);
+		sgx_load_map(0, 0, 0, 0, 40, 30);	
+		//load_palette(0, SMPTE75_pal, 16);
+		sgx_disp_on();
+		sgx_scroll(40, 40);
+	}
+#endif
+
+	init_satb();
+	DrawSP();
+	satb_update();
+	DisplaySystemInfo();	
+}
+
+void RedrawBG()
+{
+	ResetVideo();
+	setupFont();
+
+#ifndef CDROM1
+	set_tile_data(MB_bg);
+	load_tile(0x1000);
+	set_map_data(MB_map, 40, 30);
+	load_map(0, 0, 0, 0, 40, 30);
+	load_palette(0, MB_pal, 1);  
+#else
+	set_screen_size(SCR_SIZE_64x32); 
+	cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin);  
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
+	set_bgpal(0, palCD);
+#endif
+	
+	set_font_pal(13);
+	SetFontColors(12, RGB(3, 3, 3), RGB(0, 6, 0), 0);
+	SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
+	Center224in240();
+}
+
+#endif
+
+#ifdef CDROM1
+	#define LOAD_OVERLAY
+#endif
+#ifdef HELP_OVL
+	#define LOAD_OVERLAY
+	#include "gdata.h"
+	extern char palCD[];
+#endif
+
+void Rewdraw512Menu()
+{
+	ResetVideo();
+	setupFont();
+	
+	Set512H();
+	
+#ifdef LOAD_OVERLAY
+	set_screen_size(SCR_SIZE_64x32); 
+	cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
+	load_palette(0, palCD, 1);
+	cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);			
+	cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
+#else
+	set_map_data(MB512_map, 64, 30);
+	set_tile_data(MB_bg);
+	load_tile(0x1000);
+	load_map(0, 0, 0, 0, 64, 30);
+	load_palette(0, MB_pal, 1);  
+#endif
+	
+	Center224in240();
+}
+
 #ifndef HELP_OVL
 void DrawSP()
 {
@@ -228,30 +323,11 @@ void Options()
 
 void RedrawOptions()
 {
-	ResetVideo();
-	setupFont();
+	Rewdraw512Menu();
 	
+	SetFontColors(11, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 	SetFontColors(12, RGB(3, 3, 3), RGB(4, 4, 4), 0);
 	SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), 0);
-	SetFontColors(11, RGB(3, 3, 3), RGB(0, 6, 0), 0);
-	
-	Set512H();
-
-#ifndef CDROM1
-	set_map_data(MB512_map, 64, 30);
-	set_tile_data(MB_bg);
-	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 64, 30);
-	load_palette(0, MB_pal, 1);  
-#else
-	set_screen_size(SCR_SIZE_64x32); 
-	cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
-	set_bgpal(0, palCD); 
-	cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
-	cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
-#endif
-	
-	Center224in240();
 }
 
 void RefreshOptions(int sel)

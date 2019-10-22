@@ -121,4 +121,3 @@ void Set224p();
 void Set240p();
 void Set239p();
 
-void spr_make(int spriteno, int spritex, int spritey, int spritepattern, int ctrl1, int ctrl2, int sprpal, int sprpri);

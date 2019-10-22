@@ -32,3 +32,7 @@ void DetectPCEType();
 void DetectCDROM();
 void DisplaySystemInfo();
 void Options();
+void spr_make(int spriteno, int spritex, int spritey, int spritepattern, int ctrl1, int ctrl2, int sprpal, int sprpri);
+void RedrawBG();
+void Rewdraw512Menu();
+

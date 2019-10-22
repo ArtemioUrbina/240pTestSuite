@@ -33,7 +33,7 @@
 #include "graphics.h"
 #endif
 
-#ifdef CDROM1 || HELP_OVL
+#ifdef CDROM1
 #include "gdata.h"
 extern char palCD[];
 #endif
@@ -70,30 +70,15 @@ void main()
 		
         if(redraw)
         {
-			ResetVideo();
-			setupFont();
+			Rewdraw512Menu();
 			
 			SetFontColors(13, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 			SetFontColors(15, RGB(2, 2, 2), RGB(0, 6, 0), 0);
-
-#ifndef HELP_OVL
-			set_tile_data(MB_bg);
-			load_tile(0x1000);
-			load_palette(0, MB_pal, 1);  
-#else
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
-			set_bgpal(0, palCD); 
-			cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
-#endif
-			
-			Center224in240();
 			
             redraw = 0;
 			refresh = 1;
 			disp_on();
-			Set512H();
+
         }
 		
 		if(refresh)
@@ -125,8 +110,6 @@ void main()
 					display_gray_00();
 					break;
 				case GRID_HELP:
-				case GRID_HELP2:
-				case GRID_HELP3:
 					display_grid_00();
 					break;
 				case GRIDSCROLL_HELP:

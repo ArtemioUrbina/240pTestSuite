@@ -79,9 +79,7 @@ void main()
 		Set240p();
 
 #ifndef CDROM
-	disp_on();
 	DrawIntro();
-	disp_off();
 #endif
 
     while(1)
@@ -235,55 +233,6 @@ void main()
     }
 }
 
-void RedrawMain()
-{
-	ResetVideo();
-	setupFont();
-
-#ifndef CDROM1
-	set_tile_data(MB_bg);
-	load_tile(0x1000);
-	load_palette(0, MB_pal, 1);  
-	set_map_data(MB_map, 40, 30);
-	load_map(0, 0, 0, 0, 40, 30);	
-#ifdef SGFX
-	if(sgx_detect())
-	{
-		vpc_win_size(VPC_WIN_A, 0x01ff);
-		vpc_win_size(VPC_WIN_B, 0x01ff);
-		vpc_win_reg(VPC_WIN_A, VDC_ON+VPC_NORM);
-		vpc_win_reg(VPC_WIN_B, VDC_ON+VPC_NORM);
-		vpc_win_reg(VPC_WIN_AB, VDC_ON+VPC_NORM);
-		vpc_win_reg(VPC_WIN_NONE, VDC_ON+VPC_NORM);
-
-		sgx_set_screen_size(SCR_SIZE_32x32);
-		sgx_disp_off();
-		
-		sgx_set_tile_data(SMPTE75_bg);
-		sgx_load_tile(0x1000);		
-		sgx_set_map_data(SMPTE75_map, 40, 30);
-		sgx_load_map(0, 0, 0, 0, 40, 30);	
-		//load_palette(0, SMPTE75_pal, 16);
-		sgx_disp_on();
-		sgx_scroll(40, 40);
-	}
-#endif
-#else
-	set_screen_size(SCR_SIZE_64x32); 
-	cd_loaddata(GPHX_OVERLAY, OFS_mainbg_PAL_bin, palCD, SIZE_mainbg_PAL_bin); 
-	load_palette(0, palCD, 1); 
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_DATA_bin, 0x1000, SIZE_mainbg_DATA_bin);
-	cd_loadvram(GPHX_OVERLAY, OFS_mainbg_BAT_bin, 0x0000, SIZE_mainbg_BAT_bin);
-#endif
-   
-	init_satb();
-	DrawSP();
-	satb_update();
-	
-	Center224in240();
-	DisplaySystemInfo();		
-}
-
 void RefreshMain(int sel)
 {
 	row = 7;
@@ -378,7 +327,6 @@ void DrawN()
 	end = 0;
 }
 
-
 void DrawCredits()
 {	
 	i = 0;
@@ -390,30 +338,11 @@ void DrawCredits()
 		vsync();
 		
         if(redraw)
-        {
-			ResetVideo();
-			setupFont();
+        {	
+			Rewdraw512Menu();
 			
-			SetFontColors(15, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 			SetFontColors(13, RGB(3, 3, 3), RGB(1, 6, 6), 0);
-
-			Set512H();
-			
-#ifndef CDROM1			
-			set_map_data(MB512_map, 64, 30);
-			set_tile_data(MB_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 64, 30);
-			load_palette(0, MB_pal, 1);  
-#else		
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_back512_PAL_bin, palCD, SIZE_back512_PAL_bin); 
-			load_palette(0, palCD, 1);
-			cd_loadvram(GPHX_OVERLAY, OFS_back512_DATA_bin, 0x1000, SIZE_back512_DATA_bin);			
-			cd_loadvram(GPHX_OVERLAY, OFS_back512_BAT_bin, 0, SIZE_back512_BAT_bin);
-#endif
-			
-			Center224in240();
+			SetFontColors(15, RGB(3, 3, 3), RGB(0, 6, 0), 0);
 			
             redraw = 0;
 			refresh = 1;
@@ -512,6 +441,7 @@ void RefreshCredits()
 
 void DrawIntro()
 {	
+	disp_off();
 	ResetVideo();
 	setupFont();
 	
@@ -519,21 +449,19 @@ void DrawIntro()
 	set_color(1, 0);
 	SetFontColors(14, 0, 0, 0);
 	put_string("KORDAMP PRESENTS", 12, 14);
+	disp_on();
 	for(i = 0; i < 7; i ++)
 	{
 		SetFontColors(14, 0, RGB(i, i, i), 0);
 		vsync(3);
 	}
 	
-	i = 5;
-	while(i)
-		i --;
-	
 	for(i = 7; i > 0; i --)
 	{
 		SetFontColors(14, 0, RGB(i, i, i), 0);
 		vsync(3);
 	}
+	disp_off();
 }
 
 #endif
