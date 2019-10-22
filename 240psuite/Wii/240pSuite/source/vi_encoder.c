@@ -487,9 +487,9 @@ void __VISetVBICtrl(u16 data)
 void __VISetTrapFilter(u8 enable)
 {
 	if (enable)
-    __VIWriteI2CRegister8(0x03, 1);
+		__VIWriteI2CRegister8(0x03, 0);
 	else
-    __VIWriteI2CRegister8(0x03, 0);
+		__VIWriteI2CRegister8(0x03, 1);
 }
 
 void __VISet3in1Output(u8 enable)
@@ -556,7 +556,7 @@ void VIDEO_SetGamma(VIGamma gamma)
 
 void VIDEO_SetTrapFilter(bool enable)
 {
-    __VISetTrapFilter(enable ? 1 : 0);
+    __VISetTrapFilter(enable);
 }
 
 #endif
