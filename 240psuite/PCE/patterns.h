@@ -25,9 +25,6 @@
 
 void TestPatterns();
 
-void DrawGrid256();
-void DrawGrid320();
-void DrawGrid512();
 void DrawWhite();
 void DrawPluge();
 void DrawColor();

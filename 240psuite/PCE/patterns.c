@@ -26,6 +26,7 @@
 #include "patterns.h"
 #include "help.h"
 #include "font.h"
+#include "float.h"
 
 #ifndef CDROM1
 #include "graphics.h"
@@ -615,12 +616,12 @@ void DrawSMPTE()
 }
 
 
-void DrawGrid(char type)
+void DrawGrid()
 {
 	unsigned char end = 0;
 	unsigned char showcolor = 0;
-	unsigned char rt = 0;
 
+	type = DrawFloatMenuRes(1);
 	redraw = 1;
     while(!end)
     {   
@@ -630,16 +631,13 @@ void DrawGrid(char type)
         {
 			ResetVideo();
 
-			if(type == 1)
+			if(type == RES_256)
 				Set256H();
-			else if(type == 2)
-			{
-				if(!rt)
-					Set320H();
-				else
-					Set352H();
-			}
-			else if(type == 3)
+			else if(type == RES_320)
+				Set320H();
+			else if(type == RES_352)
+				Set352H();
+			else if(type == RES_512)
 				Set512H();
 			
 #ifndef CDROM1		
@@ -648,7 +646,7 @@ void DrawGrid(char type)
 			
 			switch(type)
 			{
-				case 1:
+				case RES_256:
 					if(Enabled240p)
 						set_map_data(grid256_240_map, 32, 30);
 					else
@@ -656,23 +654,19 @@ void DrawGrid(char type)
 
 					load_map(0, 0, 0, 0, 32, Enabled240p ? 30 : 28);
 					break;
-				case 2:
-					if(!rt)
-					{
-						if(Enabled240p)
-							set_map_data(grid320_240_map, 40, 30);
-						else
-							set_map_data(grid320_224_map, 40, 28);
-
-						load_map(0, 0, 0, 0, 40, Enabled240p ? 30 : 28);
-					}
+				case RES_320:
+					if(Enabled240p)
+						set_map_data(grid320_240_map, 40, 30);
 					else
-					{
-						set_map_data(grid352_240_map, 44, 30);
-						load_map(0, 0, 0, 0, 44, 30);
-					}
+						set_map_data(grid320_224_map, 40, 28);
+
+					load_map(0, 0, 0, 0, 40, Enabled240p ? 30 : 28);
 					break;
-				case 3:
+				case RES_352:
+					set_map_data(grid352_240_map, 44, 30);
+					load_map(0, 0, 0, 0, 44, 30);
+					break;
+				case RES_512:
 					if(Enabled240p)
 						set_map_data(grid512_240_map, 64, 30);
 					else
@@ -689,26 +683,25 @@ void DrawGrid(char type)
 			cd_loadvram(GPHX_OVERLAY, OFS_grid256_240_DATA_bin, 0x1000, SIZE_grid256_240_DATA_bin);
 			switch(type)
 			{
-				case 1:
+				case RES_256:
 					set_screen_size(SCR_SIZE_32x32); 
 					if(Enabled240p)
 						cd_loadvram(GPHX_OVERLAY, OFS_grid256_240_BAT_bin, 0x0000, SIZE_grid256_240_BAT_bin);
 					else
 						cd_loadvram(GPHX_OVERLAY, OFS_grid256_224_BAT_bin, 0x0000, SIZE_grid256_224_BAT_bin);
 					break;
-				case 2:
-					set_screen_size(SCR_SIZE_64x32); 
-					if(!rt)
-					{
-						if(Enabled240p)
-							cd_loadvram(GPHX_OVERLAY, OFS_grid320_240_BAT_bin, 0x0000, SIZE_grid320_240_BAT_bin);
-						else
-							cd_loadvram(GPHX_OVERLAY, OFS_grid320_224_BAT_bin, 0x0000, SIZE_grid320_224_BAT_bin);
-					}
+				case RES_320:
+					set_screen_size(SCR_SIZE_64x32); 				
+					if(Enabled240p)
+						cd_loadvram(GPHX_OVERLAY, OFS_grid320_240_BAT_bin, 0x0000, SIZE_grid320_240_BAT_bin);
 					else
-						cd_loadvram(GPHX_OVERLAY, OFS_grid352_240_BAT_bin, 0x0000, SIZE_grid352_240_BAT_bin);
+						cd_loadvram(GPHX_OVERLAY, OFS_grid320_224_BAT_bin, 0x0000, SIZE_grid320_224_BAT_bin);
 					break;
-				case 3:
+				case RES_352:
+					set_screen_size(SCR_SIZE_64x32); 
+					cd_loadvram(GPHX_OVERLAY, OFS_grid352_240_BAT_bin, 0x0000, SIZE_grid352_240_BAT_bin);
+					break;
+				case RES_512:
 					set_screen_size(SCR_SIZE_64x32); 
 					if(Enabled240p)
 						cd_loadvram(GPHX_OVERLAY, OFS_grid512_240_BAT_bin, 0x0000, SIZE_grid512_240_BAT_bin);
@@ -726,11 +719,7 @@ void DrawGrid(char type)
 		
 		if (controller & JOY_RUN)
 		{
-#ifdef CDROM1
-			showHelp(GRID_HELP+type-1);
-#else
 			showHelp(GRID_HELP);
-#endif
 			redraw = 1;
 		}
         
@@ -745,11 +734,11 @@ void DrawGrid(char type)
 			else
 				set_color_rgb(256, 0, 0, 0);
 		}
-		
-		if (controller & JOY_UP && type == 2)
+	
+		if(controller & JOY_SEL)
 		{
+			type = DrawFloatMenuRes(type);
 			redraw = 1;
-			rt = !rt;
 		}
     }
 }
