@@ -51,41 +51,41 @@ void TestPatterns()
 void main()
 #endif
 {
-    int sel = 0;
-	unsigned char end = 0;
-
 	redraw = 1;
 	refresh = 1;
+	
+	sel = 0;
+	end = 0;
 	
 #ifdef CDROM1
 	RestoreGlobals();
 #endif
 
 	disp_off();
-    while(!end)
-    {   	
+	while(!end)
+	{		
 		vsync();
 		
 #ifdef CDROM1
 		if(!HelpItem)
 		{
 #endif
-        if(redraw)
-        {
+		if(redraw)
+		{
 			RedrawMain();
 
 			refresh = 1;
-            redraw = 0;
+			redraw = 0;
 			disp_on();
-        }
+		}
 		
 		if(refresh)
-        {   
-            RefreshTestPatterns(sel);
-            refresh = 0;
-        }
+		{	
+			RefreshTestPatterns();
+			refresh = 0;
+		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_II)
 			end = 1;
@@ -98,22 +98,22 @@ void main()
 			Options();
 			redraw = 1;
 		}
-        
-        if (controller & JOY_DOWN) 
-        {
-            sel++;
-            if(sel > 15)
-                sel = 0;
-            refresh = 1;
-        }
+		
+		if (controller & JOY_DOWN) 
+		{
+			sel++;
+			if(sel > 12)
+				sel = 0;
+			refresh = 1;
+		}
 
-        if (controller & JOY_UP) 
-        {
-            sel--;
-            if(sel < 0)
-                sel = 15;
-            refresh = 1;
-        }
+		if (controller & JOY_UP) 
+		{
+			sel--;
+			if(sel < 0)
+				sel = 12;
+			refresh = 1;
+		}
 		
 		if (controller & JOY_RUN)
 		{
@@ -160,43 +160,37 @@ void main()
 					DrawColorBleed();
 					break;
 				case 5:
-					DrawGrid(1);
+					DrawGrid();
 					break;
 				case 6:
-					DrawGrid(2);
-					break;
-				case 7:
-					DrawGrid(3);
-					break;
-				case 8:
 					DrawLinearity();
 					break;
-				case 9:
-					DrawLinearity256();
-					break;
-				case 10:
+				case 7:
 					DrawGray();
 					break;
-				case 11:
+				case 8:
 					DrawWhite();
 					break;
-				case 12:
+				case 9:
 					Draw100IRE();
 					break;
-				case 13:
+				case 10:
 					DrawSharpness();
 					break;
-				case 14:
+				case 11:
 					DrawOverscan();
 					break;
-				case 15:
+				case 12:
 					end = 1;
 					break;
 			}
+			if(sel != 12)
+				end = 0;
+				
 			redraw = 1;	
 			disp_off();
 		}
-    }
+	}
 #ifdef CDROM1
 	xres_flags_g = xres_flags;
 	Enabled240p_g = Enabled240p;
@@ -209,11 +203,12 @@ void main()
 	put_string("Loading...", 27, 26);
 	cd_execoverlay(MAIN_OVERLAY);
 #endif
+	sel = 0;
 }
 
-void RefreshTestPatterns(int sel)
+void RefreshTestPatterns()
 {
-    row = 7;
+	row = 9;
 	
 	set_font_pal(sel == 0 ? 15 : 14);
 	put_string("Pluge", HPOS, row++);
@@ -226,60 +221,42 @@ void RefreshTestPatterns(int sel)
 	set_font_pal(sel == 4 ? 15 : 14);
 	put_string("Color Bleed Check", HPOS, row++);
 	set_font_pal(sel == 5 ? 15 : 14);
-	if(Enabled240p)
-		put_string("Grid 256x240", HPOS, row++);
-	else
-		put_string("Grid 256x224", HPOS, row++);
-	set_font_pal(sel == 6 ? 15 : 14);
-	if(Enabled240p)
-		put_string("Grid 320x240", HPOS, row++);
-	else
-		put_string("Grid 320x224", HPOS, row++);
-	set_font_pal(sel == 7 ? 15 : 14);
-	if(Enabled240p)
-		put_string("Grid 512x240", HPOS, row++);
-	else
-		put_string("Grid 512x224", HPOS, row++);
-	RefreshTestPatternsAux(sel);
+	put_string("Grids", HPOS, row++);
+	RefreshTestPatternsAux();
 }
 		
-void RefreshTestPatternsAux(int sel)
+void RefreshTestPatternsAux()
 {
-	set_font_pal(sel == 8 ? 15 : 14);
-	if(Enabled240p)
-		put_string("Linearity 320x240", HPOS, row++);
-	else
-		put_string("Linearity 320x224", HPOS, row++);
-	set_font_pal(sel == 9 ? 15 : 14);
-	put_string("Linearity 256x224", HPOS, row++);
-	set_font_pal(sel == 10 ? 15 : 14);
+	set_font_pal(sel == 6 ? 15 : 14);
+	put_string("Linearity", HPOS, row++);
+	set_font_pal(sel == 7 ? 15 : 14);
 	put_string("Gray Ramp", HPOS, row++);
-	set_font_pal(sel == 11 ? 15 : 14);
+	set_font_pal(sel == 8 ? 15 : 14);
 	put_string("White & RGB Screen", HPOS, row++);
-	set_font_pal(sel == 12 ? 15 : 14);
+	set_font_pal(sel == 9 ? 15 : 14);
 	put_string("100 IRE", HPOS, row++);
-	set_font_pal(sel == 13 ? 15 : 14);
+	set_font_pal(sel == 10 ? 15 : 14);
 	put_string("Sharpness", HPOS, row++);
-	set_font_pal(sel == 14 ? 15 : 14);
+	set_font_pal(sel == 11 ? 15 : 14);
 	put_string("Overscan", HPOS, row++);
 
-	set_font_pal(sel == 15 ? 15 : 14);
+	set_font_pal(sel == 12 ? 15 : 14);
 	put_string("Back to Main Menu", HPOS, ++row);
 }
 
 void DrawPluge()
 {
-	unsigned char end = 0;
 	unsigned char col = 1;
 
+	end = 0;
 	redraw = 1;
 	refresh = 0;
-    while(!end)
-    {   
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			ResetVideo();
 	
 #ifndef CDROM1		
@@ -287,7 +264,7 @@ void DrawPluge()
 			set_tile_data(pluge_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, pluge_pal, 1);  
+			load_palette(0, pluge_pal, 1);	
 #else
 			set_screen_size(SCR_SIZE_64x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_pluge_PAL_bin, palCD, SIZE_pluge_PAL_bin); 
@@ -297,11 +274,11 @@ void DrawPluge()
 #endif
 
 			Center224in240();
-         
-            redraw = 0;
+		 
+			redraw = 0;
 			refresh = 1;
 			disp_on();
-        }
+		}
 		
 		if(refresh)
 		{
@@ -338,7 +315,7 @@ void DrawPluge()
 			refresh = 0;
 		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
@@ -346,7 +323,7 @@ void DrawPluge()
 			redraw = 1;
 		}
 
-        
+		
 		if (controller & JOY_II)
 			end = 1;
 		
@@ -357,20 +334,19 @@ void DrawPluge()
 				col = 0;
 			refresh = 1;
 		}
-    }
+	}
 }
 
 void DrawColor()
 {
-	unsigned char end = 0;
-
+	end = 0;
 	redraw = 1;
-    while(!end)
-    {   
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			ResetVideo();
 #ifndef CDROM1	
 			load_background(color_bg, color_pal, color_map, 40, 30);
@@ -382,11 +358,11 @@ void DrawColor()
 			cd_loadvram(GPHX_OVERLAY, OFS_color_BAT_bin, 0x0000, SIZE_color_BAT_bin);
 #endif
 			Center224in240();
-            redraw = 0;
+			redraw = 0;
 			disp_on();
-        }
+		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
@@ -394,23 +370,22 @@ void DrawColor()
 			redraw = 1;
 		}
 
-        
+		
 		if (controller & JOY_II)
 			end = 1;
-    }
+	}
 }
 
 void DrawCB601()
 {
-	unsigned char end = 0;
-
 	redraw = 1;
-    while(!end)
-    {   
+	end = 0;
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			ResetVideo();
 
 #ifndef CDROM1
@@ -418,7 +393,7 @@ void DrawCB601()
 			set_tile_data(cb601_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, cb601_pal, 1);  
+			load_palette(0, cb601_pal, 1);	
 #else
 			set_screen_size(SCR_SIZE_64x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_cb601_PAL_bin, palCD, OFS_cb601_PAL_bin); 
@@ -428,37 +403,42 @@ void DrawCB601()
 #endif
 			Center224in240();
 			
-            redraw = 0;
+			redraw = 0;
 			disp_on();
-        }
+		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
 			showHelp(COLOR601_HELP);
 			redraw = 1;
 		}
-        
+		
 		if (controller & JOY_II)
 			end = 1;
-    }
+	}
 }
 
 void DrawColorBleed()
 {
-	unsigned char end = 0;
 	unsigned char check = 0;
 
+	end = 0;
+	type = FloatMenuRes320n256(1);
 	redraw = 1;
-    while(!end)
-    {   
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			ResetVideo();
 
+			if(type == RES_320)
+				Set320H();
+			if(type == RES_256)
+				Set256H();
 #ifndef CDROM1			
 			set_map_data(colorbleed_map, 40, 30);
 			if(check)
@@ -480,18 +460,23 @@ void DrawColorBleed()
 #endif
 			Center224in240();
 			
-            redraw = 0;
+			if(type == RES_320)
+				scroll(0, 0, 0, 0, 240, 0xC0);
+			if(type == RES_256)
+				scroll(0, 40, 0, 0, 240, 0xC0);
+			
+			redraw = 0;
 			disp_on();
-        }
+		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
 			showHelp(BLEED_HELP);
 			redraw = 1;
 		}
-        
+		
 		if (controller & JOY_II)
 			end = 1;
 		if (controller & JOY_I)
@@ -517,22 +502,28 @@ void DrawColorBleed()
 				check = 1;
 			}
 		}
-    }
+		
+		if(controller & JOY_SEL)
+		{
+			type = FloatMenuRes320n256(type);
+			redraw = 1;
+		}
+	}
 }
 
 void DrawSMPTE()
 {
-	unsigned char end = 0;
 	unsigned char is100 = 0;
 	unsigned char text = 0;
 
 	redraw = 1;
-    while(!end)
-    {   
+	end = 0;
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			ResetVideo();
 			
 			setupFont();
@@ -557,18 +548,18 @@ void DrawSMPTE()
 #endif
 			Center224in240();  
 			
-            redraw = 0;
+			redraw = 0;
 			disp_on();
-        }
+		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
 			showHelp(SMPTECOLOR_HELP);
 			redraw = 1;
 		}
-        
+		
 		if (controller & JOY_II)
 			end = 1;
 		if (controller & JOY_I)
@@ -612,23 +603,23 @@ void DrawSMPTE()
 #endif
 			}
 		}
-    }
+	}
 }
 
 
 void DrawGrid()
 {
-	unsigned char end = 0;
 	unsigned char showcolor = 0;
 
-	type = DrawFloatMenuRes(1);
+	type = FloatMenuRes(1);
 	redraw = 1;
-    while(!end)
-    {   
+	end = 0;
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			ResetVideo();
 
 			if(type == RES_256)
@@ -710,19 +701,19 @@ void DrawGrid()
 					break;
 			}
 #endif
-         
-            redraw = 0;
+		 
+			redraw = 0;
 			disp_on();
-        }
+		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
 			showHelp(GRID_HELP);
 			redraw = 1;
 		}
-        
+		
 		if (controller & JOY_II)
 			end = 1;
 			
@@ -737,50 +728,52 @@ void DrawGrid()
 	
 		if(controller & JOY_SEL)
 		{
-			type = DrawFloatMenuRes(type);
+			type = FloatMenuRes(type);
 			redraw = 1;
 		}
-    }
+	}
 }
 
 
 void DrawWhite()
 {
-	unsigned char end = 0;
 	unsigned char color = 0;
 	unsigned char edit = 0;
 	int r = 7, g = 7, b = 7;
-	int sel = 0;
 
+	option = 0;
 	redraw = 1;
 	refresh = 0;
-    while(!end)
-    {   
+	end = 0;
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			RedrawWhite();
+			SetFontColors(14, RGB(3, 3, 3), RGB(0, 6, 0), 0);
+			SetFontColors(15, RGB(2, 2, 2), RGB(0, 6, 0), 0);
 			
-            redraw = 0;
+			redraw = 0;
 			refresh = 1;
 			disp_on();
-        }
+		}
 		
 		if(refresh)
 		{
-			RefreshWhite(color, edit, r, g, b, sel);
+			RefreshWhite(color, edit, r, g, b);
 			refresh = 0;
 		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
 			showHelp(WHITE_HELP);
 			redraw = 1;
 		}
-        
+		
 		if (controller & JOY_II)
 			end = 1;
 		if (!edit && controller & JOY_I)
@@ -806,22 +799,22 @@ void DrawWhite()
 		{
 			if (controller & JOY_LEFT)
 			{
-				if(sel > 1)
-					sel --;
+				if(option > 1)
+					option --;
 				else
-					sel = 0;
+					option = 0;
 			}
 			
 			if (controller & JOY_RIGHT)
 			{
-				sel ++;
-				if(sel > 2)
-					sel = 2;
+				option ++;
+				if(option > 2)
+					option = 2;
 			}
 			
 			if (controller & JOY_UP)
 			{
-				switch(sel)
+				switch(option)
 				{
 					case 0:
 						r++;
@@ -844,7 +837,7 @@ void DrawWhite()
 			
 			if (controller & JOY_DOWN)
 			{
-				switch(sel)
+				switch(option)
 				{
 					case 0:
 						r--;
@@ -867,7 +860,7 @@ void DrawWhite()
 			
 			refresh = 1;
 		}
-    }
+	}
 }
 
 void RedrawWhite()
@@ -878,21 +871,21 @@ void RedrawWhite()
 	set_tile_data(white_bg);
 	load_tile(0x1000);
 	load_map(0, 0, 0, 0, 64, 32);
-	load_palette(0, check_pal, 1);  
+	load_palette(0, check_pal, 1);	
 	Center224in240();
 }
 
-void RefreshWhite(unsigned char color, unsigned char edit, int r, int g, int b, int sel)
+void RefreshWhite(unsigned char color, unsigned char edit, int r, int g, int b)
 {
 	if(color == 0 && edit)
 	{
-		set_font_pal(sel == 0 ? 15 : 14);
+		set_font_pal(option == 0 ? 15 : 14);
 		put_string("R:", 24, 2);
 		put_digit(r, 26, 2);
-		set_font_pal(sel == 1 ? 15 : 14);
+		set_font_pal(option == 1 ? 15 : 14);
 		put_string(" G:", 27, 2);
 		put_digit(g, 30, 2);
-		set_font_pal(sel == 2 ? 15 : 14);
+		set_font_pal(option == 2 ? 15 : 14);
 		put_string(" B:", 31, 2);
 		put_digit(b, 34, 2);
 		
@@ -923,123 +916,112 @@ void RefreshWhite(unsigned char color, unsigned char edit, int r, int g, int b, 
 
 void DrawLinearity()
 {
-	unsigned char end = 0;
-
+	type = FloatMenuRes320n256_224(1);
 	redraw = 1;
-    while(!end)
-    {   
+	end = 0;
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			ResetVideo();
 			
-			if(Enabled240p)
+			if(type == RES_320)
 			{
+				if(Enabled240p)
+				{
 #ifndef CDROM1
-				set_map_data(linearity240_map, 40, 30);
-				set_tile_data(linearity240_bg);
-				load_tile(0x1000);
-				load_map(0, 0, 0, 0, 40, 30);
-				load_palette(0, linearity240_pal, 1);  
+					set_map_data(linearity240_map, 40, 30);
+					set_tile_data(linearity240_bg);
+					load_tile(0x1000);
+					load_map(0, 0, 0, 0, 40, 30);
+					load_palette(0, linearity240_pal, 1);  
 #else
-				set_screen_size(SCR_SIZE_64x32); 
-				cd_loaddata(GPHX_OVERLAY, OFS_lin240_PAL_bin, palCD, SIZE_lin240_PAL_bin); 
-				set_bgpal(0, palCD); 
-				cd_loadvram(GPHX_OVERLAY, OFS_lin240_DATA_bin, 0x1000, SIZE_lin240_DATA_bin);
-				cd_loadvram(GPHX_OVERLAY, OFS_lin240_BAT_bin, 0x0000, SIZE_lin240_BAT_bin);
+					set_screen_size(SCR_SIZE_64x32); 
+					cd_loaddata(GPHX_OVERLAY, OFS_lin240_PAL_bin, palCD, SIZE_lin240_PAL_bin); 
+					set_bgpal(0, palCD); 
+					cd_loadvram(GPHX_OVERLAY, OFS_lin240_DATA_bin, 0x1000, SIZE_lin240_DATA_bin);
+					cd_loadvram(GPHX_OVERLAY, OFS_lin240_BAT_bin, 0x0000, SIZE_lin240_BAT_bin);
 #endif
+				}
+				else
+				{
+#ifndef CDROM1
+					set_map_data(linearity224_map, 40, 28);
+					set_tile_data(linearity224_bg);
+					load_tile(0x1000);
+					load_map(0, 0, 0, 0, 40, 28);
+					load_palette(0, linearity224_pal, 1);  
+#else
+					set_screen_size(SCR_SIZE_64x32); 
+					cd_loaddata(GPHX_OVERLAY, OFS_lin224_PAL_bin, palCD, SIZE_lin224_PAL_bin); 
+					set_bgpal(0, palCD); 
+					cd_loadvram(GPHX_OVERLAY, OFS_lin224_DATA_bin, 0x1000, SIZE_lin224_DATA_bin);
+					cd_loadvram(GPHX_OVERLAY, OFS_lin224_BAT_bin, 0x0000, SIZE_lin224_BAT_bin);
+#endif
+				}
+				Set320H();
 			}
-			else
+
+			if(type == RES_256)
 			{
-#ifndef CDROM1
-				set_map_data(linearity224_map, 40, 28);
-				set_tile_data(linearity224_bg);
+#ifndef CDROM1			
+				set_map_data(linearity256_map, 32, 28);
+				set_tile_data(linearity256_bg);
 				load_tile(0x1000);
-				load_map(0, 0, 0, 0, 40, 28);
-				load_palette(0, linearity224_pal, 1);  
+				load_map(0, 0, 0, 0, 32, 28);
+				load_palette(0, linearity256_pal, 1);  
 #else
-				set_screen_size(SCR_SIZE_64x32); 
-				cd_loaddata(GPHX_OVERLAY, OFS_lin224_PAL_bin, palCD, SIZE_lin224_PAL_bin); 
+				set_screen_size(SCR_SIZE_32x32); 
+				cd_loaddata(GPHX_OVERLAY, OFS_lin256_PAL_bin, palCD, SIZE_lin256_PAL_bin); 
 				set_bgpal(0, palCD); 
-				cd_loadvram(GPHX_OVERLAY, OFS_lin224_DATA_bin, 0x1000, SIZE_lin224_DATA_bin);
-				cd_loadvram(GPHX_OVERLAY, OFS_lin224_BAT_bin, 0x0000, SIZE_lin224_BAT_bin);
+				cd_loadvram(GPHX_OVERLAY, OFS_lin256_DATA_bin, 0x1000, SIZE_lin256_DATA_bin);
+				cd_loadvram(GPHX_OVERLAY, OFS_lin256_BAT_bin, 0x0000, SIZE_lin256_BAT_bin);
 #endif
+			
+				redraw = 0;
+				Set256H();
+				if(Enabled240p)
+				{
+					Set224p();
+					Enabled240p = 1;
+				}
 			}
 			
-            redraw = 0;
+			redraw = 0;
 			disp_on();
-        }
+		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
+			if(type == RES_256)
+			{
+				if(Enabled240p)
+				{
+					if(!UseDefault)
+						Set240p();
+					else
+						Set239p();
+				}
+			}
 			showHelp(LINEARITY_HELP);
 			redraw = 1;
 		}
-        
-		if (controller & JOY_II)
-			end = 1;
-    }
-}
 
-void DrawLinearity256()
-{
-	unsigned char end = 0;
-
-	redraw = 1;
-    while(!end)
-    {   
-		vsync();
-		
-        if(redraw)
-        {
-			ResetVideo();
-
-#ifndef CDROM1			
-			set_map_data(linearity256_map, 32, 28);
-			set_tile_data(linearity256_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 32, 28);
-			load_palette(0, linearity256_pal, 1);  
-#else
-			set_screen_size(SCR_SIZE_32x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_lin256_PAL_bin, palCD, SIZE_lin256_PAL_bin); 
-			set_bgpal(0, palCD); 
-			cd_loadvram(GPHX_OVERLAY, OFS_lin256_DATA_bin, 0x1000, SIZE_lin256_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_lin256_BAT_bin, 0x0000, SIZE_lin256_BAT_bin);
-#endif
-			
-            redraw = 0;
-			Set256H();
-			if(Enabled240p)
-			{
-				Set224p();
-				Enabled240p = 1;
-			}
-			disp_on();
-        }
-
-        controller = joytrg(0);
-		
-		if (controller & JOY_RUN)
+		if(controller & JOY_SEL)
 		{
-			if(Enabled240p)
-			{
-				if(!UseDefault)
-					Set240p();
-				else
-					Set239p();
-			}
-			showHelp(LINEARITY256_HELP);
+			type = FloatMenuRes320n256_224(type);
 			redraw = 1;
 		}
-        
+		
 		if (controller & JOY_II)
 			end = 1;
-    }
-	if(Enabled240p)
+	}
+
+	if(type == RES_256 && Enabled240p)
 	{
 		if(!UseDefault)
 			Set240p();
@@ -1050,15 +1032,14 @@ void DrawLinearity256()
 
 void DrawSharpness()
 {
-	unsigned char end = 0;
-
 	redraw = 1;
-    while(!end)
-    {   
+	end = 0;
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			ResetVideo();
 			
 #ifndef CDROM1			
@@ -1066,7 +1047,7 @@ void DrawSharpness()
 			set_tile_data(sharpness_bg);
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, sharpness_pal, 1);  
+			load_palette(0, sharpness_pal, 1);	
 #else
 			set_screen_size(SCR_SIZE_64x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_sharpness_PAL_bin, palCD, SIZE_sharpness_PAL_bin); 
@@ -1076,34 +1057,33 @@ void DrawSharpness()
 #endif
 			Center224in240();
 
-            redraw = 0;
+			redraw = 0;
 			disp_on();
-        }
+		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
 			showHelp(SHARPNESS_HELP);
 			redraw = 1;
 		}
-        
+		
 		if (controller & JOY_II)
 			end = 1;
-    }
+	}
 }
 
 void DrawGray()
 {
-	unsigned char end = 0;
-
 	redraw = 1;
-    while(!end)
-    {   
+	end = 0;
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			ResetVideo();
 			Set256H();
 
@@ -1122,37 +1102,36 @@ void DrawGray()
 #endif
 			Center224in240();
 
-            redraw = 0;
+			redraw = 0;
 			disp_on();
-        }
+		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
 			showHelp(GRAY_HELP);
 			redraw = 1;
 		}
-        
+		
 		if (controller & JOY_II)
 			end = 1;
-    }
+	}
 }
 
 void DrawOverscan()
 {
-	int sel = 0;
-	unsigned char end = 0;
 	int continuous = 0;
 	
 	draw = 0;
-	sel = 0;
+	option = 0;
 	top = 0;
 	bottom = 0;
 	left = 0;
 	right = 0;
 	previous = 0;
 	screen = 0;
+	end = 0;
 	
 	redraw = 1;
 	refresh = 0;
@@ -1167,31 +1146,31 @@ void DrawOverscan()
 		screen = 224;
 	
 
-    while(!end)
-    {   
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			RedrawOverscan();
-            redraw = 0;
+			redraw = 0;
 			refresh = 1;
-        }
+		}
 		
 		if(draw)
 		{
-			DrawOverscanLines(sel);
+			DrawOverscanLines();
 			draw = 0;
 		}
 		
 		if(refresh)
 		{
-			RefreshOverscan(sel);
+			RefreshOverscan();
 			
 			refresh = 0;
 		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
@@ -1216,20 +1195,20 @@ void DrawOverscan()
 			
 		if (controller & JOY_UP)
 		{
-			sel --;
+			option --;
 			refresh = 1;
 		}
 		
 		if (controller & JOY_DOWN)
 		{
-			sel ++;
+			option ++;
 			refresh = 1;
 		}
 		
-		if(sel < 0)
-			sel = 3;
-		if(sel > 3)
-			sel = 0;
+		if(option < 0)
+			option = 3;
+		if(option > 3)
+			option = 0;
 		
 		if(continuous)
 			controller = joy(0);
@@ -1238,7 +1217,7 @@ void DrawOverscan()
 		{
 			int *data = 0;
 			
-			switch(sel)
+			switch(option)
 			{
 				case 0:
 					data = &top;
@@ -1271,7 +1250,7 @@ void DrawOverscan()
 		{
 			int *data = 0;
 			
-			switch(sel)
+			switch(option)
 			{
 				case 0:
 					data = &top;
@@ -1291,7 +1270,7 @@ void DrawOverscan()
 			
 			if(data)
 			{
-				if(*data < 99)
+				if(*data < 30)
 				{
 					(*data) ++;
 					refresh = 1;
@@ -1299,7 +1278,7 @@ void DrawOverscan()
 				}
 			}
 		}
-    }
+	}
 #ifdef CDROM
 	RedrawWhite();
 #endif
@@ -1315,47 +1294,46 @@ void RedrawOverscan()
 	
 	setupFont();
 	
+	set_color_rgb(0, 3, 3, 3);
 	set_color_rgb(1, 7, 7, 7);
 	disp_on();
 	Set256H();
 }
 
-void RefreshOverscan(int sel)
+void RefreshOverscan()
 {
-	int val;
-	
-	set_font_pal(sel == 0 ? 15 : 14);
+	set_font_pal(option == 0 ? 15 : 14);
 	put_string("Top: ", 5, 12);
 	put_number(top, 3, 12, 12);
 	put_string("pixels (  %)", 16, 12);
-	val = (top*100)/screen;
-	put_number(val, 2, 24, 12);
+	x3 = (top*100)/screen;
+	put_number(x3, 2, 24, 12);
 	
-	set_font_pal(sel == 1 ? 15 : 14);
+	set_font_pal(option == 1 ? 15 : 14);
 	put_string("Bottom: ", 5, 13);
 	put_number(bottom, 3, 12, 13);
 	put_string("pixels (  %)", 16, 13);
-	val = (bottom*100)/screen;
-	put_number(val, 2, 24, 13);
+	x3 = (bottom*100)/screen;
+	put_number(x3, 2, 24, 13);
 	
-	set_font_pal(sel == 2 ? 15 : 14);
+	set_font_pal(option == 2 ? 15 : 14);
 	put_string("Left: ", 5, 14);
 	put_number(left, 3, 12, 14);
 	put_string("pixels (  %)", 16, 14);
-	val = (left*100)/256;
-	put_number(val, 2, 24, 14);
+	x3 = (left*100)/256;
+	put_number(x3, 2, 24, 14);
 	
-	set_font_pal(sel == 3 ? 15 : 14);
+	set_font_pal(option == 3 ? 15 : 14);
 	put_string("Right: ", 5, 15);
 	put_number(right, 3, 12, 15);
 	put_string("pixels (  %)", 16, 15);
-	val = (right*100)/256;
-	put_number(val, 2, 24, 15);
+	x3 = (right*100)/256;
+	put_number(x3, 2, 24, 15);
 }
 
-void DrawOverscanLines(int sel)
+void DrawOverscanLines()
 {
-	switch(sel)
+	switch(option)
 	{
 		case 0:
 			DrawTopLines();
@@ -1410,27 +1388,27 @@ void DrawRightLines()
 
 void Draw100IRE()
 {
-	unsigned char end = 0;
 	unsigned char mode = 0;
-	unsigned char refresh = 0;
 	int factor = 14; // aproximate for IRE
 
 	text = 0;
 	redraw = 1;
+	refresh = 0;
 	color = 7;
+	end = 0;
 	set_color_rgb(0, 0, 0, 0);
-    while(!end)
-    {   
+	while(!end)
+	{	
 		vsync();
 		
-        if(redraw)
-        {
+		if(redraw)
+		{
 			Redraw100IRE(mode, color);
 
-            redraw = 0;
+			redraw = 0;
 			refresh = 1;
 			disp_on();
-        }
+		}
 		
 		if(refresh)
 		{
@@ -1438,7 +1416,7 @@ void Draw100IRE()
 			refresh = 0;
 		}
 
-        controller = joytrg(0);
+		controller = joytrg(0);
 		
 		if (controller & JOY_RUN)
 		{
@@ -1516,7 +1494,7 @@ void Draw100IRE()
 			}
 			text = 30;
 		}
-        
+		
 		if (controller & JOY_II)
 			end = 1;
 		
@@ -1533,7 +1511,7 @@ void Draw100IRE()
 #endif
 			}
 		}
-    }
+	}
 }
 
 void Refresh100IRE(unsigned char mode)

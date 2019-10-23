@@ -118,9 +118,6 @@ void main()
 				case LINEARITY_HELP:
 					display_linearity_00();
 					break;
-				case LINEARITY256_HELP:
-					display_linearity256_00();
-					break;
 				case MANUALLAG_HELP:
 					total = 2;
 					if(page == 1)

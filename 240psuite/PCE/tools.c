@@ -138,9 +138,12 @@ void Rewdraw512Menu()
 #ifndef HELP_OVL
 void DrawSP()
 {
-	int pos = 0;
-	int count = 0;
+	// pos x3
+	// count x4
 
+	x3 = 0;
+	x4 = 0;
+	
 	x2 = 210;
 	y2 = 84;	
 	
@@ -153,10 +156,10 @@ void DrawSP()
 
 	for(row = 0; row < 7; row++)
 	{
-		for(pos = 0; pos < 4; pos++)
+		for(x3 = 0; x3 < 4; x3++)
 		{
-			spr_make(count, pos*16+x2, row*16+y2, 0x40*count+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
-			count ++;
+			spr_make(x4, x3*16+x2, row*16+y2, 0x40*x4+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			x4 ++;
 		}
 	}
 }
@@ -180,7 +183,7 @@ void DetectCDROM()
 	cdrom = !(*io);
 }
 
-#ifndef HELP_OVL
+
 void DisplaySystemInfo()
 {	
 	SetFontColors(13, RGB(2, 4, 7), RGB(7, 7, 7), RGB(1, 3, 7));
@@ -246,10 +249,10 @@ void DisplaySystemInfo()
 #endif
 }
 
+#ifndef HELP_OVL
 void Options()
 {
-    int sel = 0;
-	
+    option = 0;
 	end = 0;
 	redraw = 1;
 	refresh = 1;
@@ -268,7 +271,7 @@ void Options()
 		
 		if(refresh)
         {
-			RefreshOptions(sel);
+			RefreshOptions();
             refresh = 0;
         }
 
@@ -290,17 +293,17 @@ void Options()
         
         if (controller & JOY_DOWN) 
         {
-            sel++;
-            if(sel > 4)
-                sel = 0;
+            option++;
+            if(option > 4)
+                option = 0;
             refresh = 1;
         }
 
         if (controller & JOY_UP) 
         {
-            sel--;
-            if(sel < 0)
-                sel = 4;
+            option--;
+            if(option < 0)
+                option = 4;
             refresh = 1;
         }
 		
@@ -310,7 +313,7 @@ void Options()
 		
 		if (controller & JOY_I)
 		{
-			i = ExecuteOptions(sel);
+			i = ExecuteOptions();
 			if(i == 1)
 				redraw = 1;
 			if(i == 2)
@@ -330,14 +333,14 @@ void RedrawOptions()
 	SetFontColors(13, RGB(3, 3, 3), RGB(5, 5, 5), 0);
 }
 
-void RefreshOptions(int sel)
+void RefreshOptions()
 {
 	row = 14;
             
 	set_font_pal(11);
 	put_string("Video Options", 23, 10);
 			
-	set_font_pal(sel == 0 ? 15 : 14);
+	set_font_pal(option == 0 ? 15 : 14);
 	put_string("Vertical Resolution:", HPOS+1, row);
 	if(Enabled240p)
 		put_string("240p", HPOS+26, row);
@@ -346,9 +349,9 @@ void RefreshOptions(int sel)
 	row++;
 	
 	if(Enabled240p)
-		set_font_pal(sel == 1 ? 15 : 14);
+		set_font_pal(option == 1 ? 15 : 14);
 	else
-		set_font_pal(sel == 1 ? 13 : 12);
+		set_font_pal(option == 1 ? 13 : 12);
 	put_string("Start at line:", HPOS+3, row);
 	if(UseDefault)
 		put_string("24 [Standard use in games]", HPOS+26, row);
@@ -357,7 +360,7 @@ void RefreshOptions(int sel)
 	
 	row++;
 	
-	set_font_pal(sel == 2 ? 15 : 14);
+	set_font_pal(option == 2 ? 15 : 14);
 	put_string("Composite filter:", HPOS+1, row);
 	if(EnabledSoft)
 		put_string("On ", HPOS+26, row);
@@ -366,7 +369,7 @@ void RefreshOptions(int sel)
 	row++;
 	
 	
-	set_font_pal(sel == 3 ? 15 : 14);
+	set_font_pal(option == 3 ? 15 : 14);
 	put_string("Composite B&W:", HPOS+1, row);
 	if(Enabled_C_BW)
 		put_string("On ", HPOS+26, row);
@@ -374,16 +377,14 @@ void RefreshOptions(int sel)
 		put_string("Off", HPOS+26, row);
 	row++;
 	
-	set_font_pal(sel == 4 ? 15 : 14);
+	set_font_pal(option == 4 ? 15 : 14);
 
 	put_string("Back to Main Menu", HPOS+1, ++row);
 }
 
-int ExecuteOptions(int sel)
-{
-	int val = 0;
-	
-	switch(sel)
+int ExecuteOptions()
+{	
+	switch(option)
 	{
 		case 0:
 			if(Enabled240p)
@@ -394,7 +395,7 @@ int ExecuteOptions(int sel)
 				else
 					Set240p();
 			disp_off();
-			val = 1;	
+			x3 = 1;	
 			break;
 		case 1:
 			if(Enabled240p)
@@ -410,7 +411,7 @@ int ExecuteOptions(int sel)
 					Set239p();
 				}
 				disp_off();
-				val = 1;	
+				x3 = 1;	
 			}
 			break;
 		case 2:
@@ -428,7 +429,7 @@ int ExecuteOptions(int sel)
 			if(Enabled_C_BW)
 				xres_flags |= XRES_BW;
 			
-			val = 2;
+			x3 = 2;
 			
 			Set512H();
 			break;
@@ -443,15 +444,15 @@ int ExecuteOptions(int sel)
 				Enabled_C_BW = 1;
 				xres_flags = (EnabledSoft ? XRES_SOFT : XRES_SHARP) | XRES_BW;
 			}
-			val = 2;
+			x3 = 2;
 			
 			Set512H();
 			break;
 		case 4:
-			val = 3;
+			x3 = 3;
 			break;
 	}
-	return val;
+	return x3;
 }
 
 #endif

@@ -47,6 +47,8 @@ int y;
 int y2;
 
 int i;
+int sel;
+int option;
 unsigned char end;
 
 int speed;
@@ -73,15 +75,12 @@ unsigned char screen;
 
 void ResetVideo()
 {
-#ifdef CDROM1
-	set_map_data(fs_map, 64, 32);
-	set_tile_data(white_bg);
-	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 64, 32);
-	set_color_rgb(1, 0, 0, 0); 
-#endif
+	disp_off();
 
 	cls();
+
+	for(i = 0; i < 511; i++)
+		set_color(i, 0); 
 
 	init_satb();
 	satb_update();

@@ -46,8 +46,7 @@ char palCD[512];
 
 void main()
 {
-    int sel = 0;
-
+	sel = 0;
 	redraw = 1;
 	refresh = 1;
 	
@@ -103,7 +102,7 @@ void main()
 		
 		if(refresh)
         {
-            RefreshMain(sel);
+            RefreshMain();
 
             refresh = 0;
         }
@@ -233,7 +232,7 @@ void main()
     }
 }
 
-void RefreshMain(int sel)
+void RefreshMain()
 {
 	row = 7;
 
@@ -252,10 +251,10 @@ void RefreshMain(int sel)
 	set_font_pal(sel == 6 ? 15 : 14);
 	put_string("Grid Scroll Test", HPOS, row++);
 	
-	RefreshMainAux(sel, row);
+	RefreshMainAux(row);
 }
 
-void RefreshMainAux(int sel, int row)
+void RefreshMainAux(int row)
 {
 	set_font_pal(sel == 7 ? 15 : 14);
 	put_string("Horizontal Stripes", HPOS, row++);

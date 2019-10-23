@@ -935,11 +935,11 @@ void ScrollTest()
 
 void LEDZoneTest()
 {
-	int sel = 0;
 	unsigned char refresh = 0;
 	unsigned char visible = 1;
 	int size[4];
 
+	x2 = 0;
 	end = 0;
 	x = 144;
 	y = 120;
@@ -982,7 +982,7 @@ void LEDZoneTest()
 #else
 			cd_loadvram(GPHX_OVERLAY, OFS_LEDsprites_tile_bin, 0x5000, SIZE_LEDsprites_tile_bin);
 #endif
-			spr_make(0, x, y, 0x5000+0x40*sel, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			spr_make(0, x, y, 0x5000+0x40*x2, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
 			satb_update();
 			refresh = 0;
 		}
@@ -1009,9 +1009,9 @@ void LEDZoneTest()
 			
 		if (controller & JOY_I)
 		{
-			sel++;
-			if(sel > 3)
-				sel = 0;
+			x2++;
+			if(x2 > 3)
+				x2 = 0;
 			refresh = 1;
 		}
 			
@@ -1033,12 +1033,12 @@ void LEDZoneTest()
 				
 			if(x < 0)
 				x = 0;
-			if(x > 320 - size[sel])
-				x = 320 - size[sel];
+			if(x > 320 - size[x2])
+				x = 320 - size[x2];
 			if(y < 0)
 				y = 0;
-			if(y > (Enabled240p ? 240 - size[sel] : 224 - size[sel]))
-				y = Enabled240p ? 240 - size[sel] : 224 - size[sel];
+			if(y > (Enabled240p ? 240 - size[x2] : 224 - size[x2]))
+				y = Enabled240p ? 240 - size[x2] : 224 - size[x2];
 		
 			spr_set(0);	
 		

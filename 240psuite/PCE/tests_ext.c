@@ -285,12 +285,12 @@ void LagTest()
 
 void VScrollTest()
 {
-	int x = 0;
-	int y = 0;
 	int *pos = 0;
 	unsigned char pause = 0;
 	int acc = 1;
 
+	x = 0;
+	y = 0;
 	end = 0;
 	redraw = 1;
 	pos = &x;
@@ -577,8 +577,6 @@ void PlayBothRampChannel(int chann1, int chann2)
 
 void MDFourierExecute()
 {
-	int s, e;
-	
 	StopAllAudio();
 	
 #ifdef CDROM
@@ -622,13 +620,13 @@ void MDFourierExecute()
 
 	clock_reset();
 	// CD-DA	
-	s = clock_tt();
+	x2 = clock_tt();
 	SetupToneCommand(cd_playtrk(4, 5, CDPLAY_NORMAL));
 	//cd_playtrk(4, 5, CDPLAY_NORMAL);
-	e = clock_tt();
+	x3 = clock_tt();
 	
 	put_string("Play", 4, 14);
-	put_number(e-s, 4, 4, 15);
+	put_number(x3-x2, 4, 4, 15);
 	
 	//Wait for the cd audio track to end
 	for(i = 0; i < 640; i++)	
@@ -710,10 +708,11 @@ void MDFourier()
 
 void SoundTest()
 {
-	int sel = 1;
+	option = 1;
 
 #ifdef CDROM
-	int type = 0;
+	// type is x2 for CDROM
+	x2 = 0;
 #endif
 
 	end = 0;
@@ -746,37 +745,37 @@ void SoundTest()
 		if(refresh)
 		{
 #ifndef CDROM
-			set_font_pal(sel == 0 ? 15 : 14);
+			set_font_pal(option == 0 ? 15 : 14);
             put_string("Left", 9, 14);
-            set_font_pal(sel == 1 ? 15 : 14);
+            set_font_pal(option == 1 ? 15 : 14);
             put_string("Center", 17, 16);
-            set_font_pal(sel == 2 ? 15 : 14);
+            set_font_pal(option == 2 ? 15 : 14);
             put_string("Right", 26, 14);
 #else
 
-			if(type == 0)
+			if(x2 == 0)
 				set_font_pal(12);
 			else
 				set_font_pal(14);
 			put_string("PSG", 18, 8);
-			if(type == 1)
+			if(x2 == 1)
 				set_font_pal(12);
 			else
 				set_font_pal(14);
 			put_string("CDDA", 18, 18);
-			if(type == 2)
+			if(x2 == 2)
 				set_font_pal(12);
 			else
 				set_font_pal(14);
 			put_string("ADPCM", 18, 20);
 			
-			if(type == 0)
+			if(x2 == 0)
 			{
-				set_font_pal(sel == 0 ? 15 : 14);
+				set_font_pal(option == 0 ? 15 : 14);
 				put_string("Left", 9, 10);
-				set_font_pal(sel == 1 ? 15 : 14);
+				set_font_pal(option == 1 ? 15 : 14);
 				put_string("Center", 17, 12);
-				set_font_pal(sel == 2 ? 15 : 14);
+				set_font_pal(option == 2 ? 15 : 14);
 				put_string("Right", 26, 10);
 			}
 			else
@@ -805,10 +804,10 @@ void SoundTest()
 		if (controller & JOY_I)
 		{
 	#ifdef CDROM
-			if(type == 0)
+			if(x2 == 0)
 			{
 	#endif
-				switch(sel)
+				switch(option)
 				{
 					case 0:
 						PlayLeft(0);
@@ -824,7 +823,7 @@ void SoundTest()
 #ifdef CDROM
 			}
 	
-			if(type == 1)
+			if(x2 == 1)
 			{
 				if(cd_status(0) == 0)
 					cd_playtrk(3, 4, CDPLAY_NORMAL);
@@ -832,7 +831,7 @@ void SoundTest()
 				  cd_pause();
 			}
 			
-			if(type == 2)
+			if(x2 == 2)
 			{
 				if(ad_stat())
 					ad_stop();
@@ -842,25 +841,25 @@ void SoundTest()
 		}
 		
 	#ifdef CDROM
-		if(type == 0)
+		if(x2 == 0)
 		{
 	#endif
 		if (controller & JOY_LEFT)
 		{
-			sel --;
+			option --;
 			refresh = 1;
 		}
 			
 		if (controller & JOY_RIGHT)
 		{
-			sel ++;
+			option ++;
 			refresh = 1;
 		}
 	
-		if(sel < 0)
-			sel = 0;
-		if(sel > 2)
-			sel = 2;
+		if(option < 0)
+			option = 0;
+		if(option > 2)
+			option = 2;
 			
 #ifdef CDROM
 		}
@@ -869,20 +868,20 @@ void SoundTest()
 #ifdef CDROM		
 		if (controller & JOY_UP)
 		{
-			type --;
+			x2 --;
 			refresh = 1;
 		}
 			
 		if (controller & JOY_DOWN)
 		{
-			type ++;
+			x2 ++;
 			refresh = 1;
 		}
 	
-		if(type < 0)
-			type = 2;
-		if(type > 2)
-			type = 0;
+		if(x2 < 0)
+			x2 = 2;
+		if(x2 > 2)
+			x2 = 0;
 #endif
 			
 		if(i)

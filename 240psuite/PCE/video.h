@@ -92,6 +92,8 @@ extern int y;
 extern int y2;
 
 extern int i;
+extern int sel;
+extern int option;
 extern unsigned char end;
 
 extern int speed;

@@ -263,46 +263,43 @@ void display_grid_00()
 	p_string	grid_00_03,6,8
 	p_string	grid_00_04,6,9
 	p_string	grid_00_05,6,11
-	p_string	grid_00_06,6,12
-	p_string	grid_00_07,6,13
+	p_string	grid_00_06,6,13
+	p_string	grid_00_07,6,14
 	p_string	grid_00_08,6,15
-	p_string	grid_00_09,6,16
-	p_string	grid_00_10,6,17
-	p_string	grid_00_11,6,19
-	p_string	grid_00_12,6,20
-	p_string	grid_00_13,6,22
-	p_string	grid_00_14,6,23
+	p_string	grid_00_09,6,17
+	p_string	grid_00_10,6,18
+	p_string	grid_00_11,6,20
+	p_string	grid_00_12,6,21
+	p_string	grid_00_13,6,23
 	rts
 
 grid_00_00:	.db	"GRID"
 			.db	0
-grid_00_01:	.db	"These grid tests change horizontal resolution"
+grid_00_01:	.db	"These grid tests change horizontal resolution between"
 			.db	0
-grid_00_02:	.db	"between 256, 320, 352, and 512. You can vary the"
+grid_00_02:	.db	"256, 320, 352, and 512. You can vary the vertical"
 			.db	0
-grid_00_03:	.db	"vertical resolution from the options menu. The"
+grid_00_03:	.db	"resolution from the options menu. The pattern should"
 			.db	0
-grid_00_04:	.db	"pattern should fill the 4:3 screen area."
+grid_00_04:	.db	"fill the 4:3 screen area."
 			.db	0
-grid_00_05:	.db	"You can use it to verify the visible area is being"
+grid_00_05:	.db	"Consumer TVs may not show red squares due to overscan."
 			.db	0
-grid_00_06:	.db	"displayed, and to check for distortion. Consumer"
+grid_00_06:	.db	"The Grids are not perfectly centered within the NTSC"
 			.db	0
-grid_00_07:	.db	"TVs may not show the red squares due to overscan."
+grid_00_07:	.db	"signal, and that is normal. It is the way Hudson/NEC"
 			.db	0
-grid_00_08:	.db	"The Grids are not perfectly centered within the"
+grid_00_08:	.db	"used each resolution."
 			.db	0
-grid_00_09:	.db	"NTSC signal, and that is normal. It is the way"
+grid_00_09:	.db	"- You can press button I to fill all the video signal"
 			.db	0
-grid_00_10:	.db	"Hudson/NEC used each resolution."
+grid_00_10:	.db	"background area."
 			.db	0
-grid_00_11:	.db	"- You can press button I to fill all the video"
+grid_00_11:	.db	"- You can press SELECT to change between grid"
 			.db	0
-grid_00_12:	.db	"signal background area."
+grid_00_12:	.db	"resolutions."
 			.db	0
-grid_00_13:	.db	"- The 352x240 resolution used by R-Type can be"
-			.db	0
-grid_00_14:	.db	"selected by pressing up while in the 320 grid."
+grid_00_13:	.db	"- The 352x240 resolution is used by R-Type"
 			.db	0
 #endasm
 }
@@ -376,41 +373,6 @@ linearity_00_04:	.db	"verified by measuring the diameter of the circles."
 linearity_00_05:	.db	"Of course the linearity should be kept in all"
 			.db	0
 linearity_00_06:	.db	"directions."
-			.db	0
-#endasm
-}
-
-
-void display_linearity256_00()
-{
-#asm
-	p_string	linearity256_00_00,22,4
-	__ldwi		14
-	call		_set_font_pal
-	p_string	linearity256_00_01,6,7
-	p_string	linearity256_00_02,6,8
-	p_string	linearity256_00_03,6,9
-	p_string	linearity256_00_04,6,11
-	p_string	linearity256_00_05,6,12
-	p_string	linearity256_00_06,6,13
-	p_string	linearity256_00_07,6,14
-	rts
-
-linearity256_00_00:	.db	"LINEARITY 256"
-			.db	0
-linearity256_00_01:	.db	"This pattern shows 5 circles, that are matched"
-			.db	0
-linearity256_00_02:	.db	"to the 10:11 NTSC, but using the 256 horizontal"
-			.db	0
-linearity256_00_03:	.db	"resolution."
-			.db	0
-linearity256_00_04:	.db	"The linearity of the display or upscaler can be "
-			.db	0
-linearity256_00_05:	.db	"verified by measuring the diameter of the circles."
-			.db	0
-linearity256_00_06:	.db	"Of course the linearity should be kept in all"
-			.db	0
-linearity256_00_07:	.db	"directions, no distortion should be present."
 			.db	0
 #endasm
 }

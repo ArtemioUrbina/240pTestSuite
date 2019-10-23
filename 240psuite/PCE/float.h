@@ -34,6 +34,7 @@ struct menu_data {
 
 typedef struct menu_data fmenudata;
 
+extern fmenudata resmenudata[];
 #define NULL 0
 #endif
 
@@ -46,6 +47,8 @@ extern char float_map[];
 extern int float_bg[];
 extern int float_pal[];
 
-int DrawFloatMenuRes(int def);
-int DrawFloatMenuResExtra(int def, char *option);
-int DrawFloatMenu(int def, fmenudata *data, int size);
+int FloatMenuRes(int def);
+int FloatMenuResExtra(int def, char *option);
+int FloatMenuRes320n256(int def);
+int FloatMenuRes320n256_224(int def);
+int FloatMenu(int def, int size, char *bottomMsg);
