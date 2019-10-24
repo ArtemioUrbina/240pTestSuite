@@ -30,7 +30,7 @@ void DrawPluge();
 void DrawColor();
 void DrawCB601();
 void DrawColorBleed();
-void DrawSMPTE();
+void DrawSMPTE_EBU(char ebu);
 void DrawLinearity();
 void DrawLinearity256();
 void DrawSharpness();

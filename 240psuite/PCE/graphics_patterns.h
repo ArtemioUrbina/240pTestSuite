@@ -54,6 +54,9 @@ extern int colorbleedchk_bg[];
 extern char SMPTE75_map[];
 extern int SMPTE75_bg[];
 
+extern char EBU_map[];
+extern int EBU_bg[];
+
 extern char cb601_map[];
 extern int cb601_bg[];
 

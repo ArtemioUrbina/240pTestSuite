@@ -148,6 +148,9 @@ void main()
 				case SMPTECOLOR_HELP:
 					display_smptecb_00();
 					break;
+				case EBU_HELP:
+					display_ebucb_00();
+					break;
 				case SOUND_HELP:
 #ifdef CDROM
 					display_soundCD_00();

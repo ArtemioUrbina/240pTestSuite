@@ -220,6 +220,29 @@ dshadow_00_11:	.db	"- Backgrounds can be switched with button I."
 }
 
 
+void display_ebucb_00()
+{
+#asm
+	p_string	ebucb_00_00,22,4
+	__ldwi		14
+	call		_set_font_pal
+	p_string	ebucb_00_01,6,7
+	p_string	ebucb_00_02,6,9
+	p_string	ebucb_00_03,6,10
+	rts
+
+ebucb_00_00:	.db	"EBU COLOR BARS"
+			.db	0
+ebucb_00_01:	.db	"- This pattern can be used to calibrate colors"
+			.db	0
+ebucb_00_02:	.db	"- You can toggle between 75% and 100% saturation"
+			.db	0
+ebucb_00_03:	.db	"by pressing I."
+			.db	0
+#endasm
+}
+
+
 void display_gray_00()
 {
 #asm

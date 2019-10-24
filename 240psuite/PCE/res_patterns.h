@@ -78,6 +78,9 @@
 #incbin(SMPTE75_map, "graphics/SMPTE75.fmp");
 #incchr_ex(SMPTE75_bg, "graphics/SMPTE75.pcx", 0, 0, 2, 27, 0);
 
+#incbin(EBU_map, "graphics/EBUCB.fmp");
+#incchr_ex(EBU_bg, "graphics/EBUCB.pcx", 0, 0, 4, 2, 0);
+
 #incbin(linearity240_map, "graphics/linearity240.fmp");
 #incchr_ex(linearity240_bg, "graphics/linearity240.pcx", 0, 0, 4, 49, 0);
 

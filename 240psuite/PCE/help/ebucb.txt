@@ -1,0 +1,7 @@
+                EBU COLOR BARS
+
+
+- This pattern can be used to calibrate colors
+
+- You can toggle between 75% and 100% saturation
+by pressing I.

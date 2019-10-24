@@ -20,16 +20,17 @@
 
 #define	PLUGE_HELP			20
 #define	COLORS_HELP			21
-#define	SMPTECOLOR_HELP		22
-#define	COLOR601_HELP		23
-#define BLEED_HELP			24
-#define	GRID_HELP			25
-#define	LINEARITY_HELP		26
-#define	GRAY_HELP			27
-#define	WHITE_HELP			28
-#define IRE100HELP			29
-#define	SHARPNESS_HELP		30
-#define	OVERSCAN_HELP		31
+#define	EBU_HELP			22
+#define	SMPTECOLOR_HELP		23
+#define	COLOR601_HELP		24
+#define BLEED_HELP			25
+#define	GRID_HELP			26
+#define	LINEARITY_HELP		27
+#define	GRAY_HELP			28
+#define	WHITE_HELP			29
+#define IRE100HELP			30
+#define	SHARPNESS_HELP		31
+#define	OVERSCAN_HELP		32
 
 #define	OPTIONS_HELP2		33
 #define GENERAL_HELP2		34

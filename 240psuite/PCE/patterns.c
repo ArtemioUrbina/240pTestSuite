@@ -102,7 +102,7 @@ void main()
 		if (controller & JOY_DOWN) 
 		{
 			sel++;
-			if(sel > 12)
+			if(sel > 13)
 				sel = 0;
 			refresh = 1;
 		}
@@ -111,7 +111,7 @@ void main()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 12;
+				sel = 13;
 			refresh = 1;
 		}
 		
@@ -151,40 +151,43 @@ void main()
 					DrawColor();
 					break;
 				case 2:
-					DrawSMPTE();
+					DrawSMPTE_EBU(1);
 					break;
 				case 3:
-					DrawCB601();
+					DrawSMPTE_EBU(0);
 					break;
 				case 4:
-					DrawColorBleed();
+					DrawCB601();
 					break;
 				case 5:
-					DrawGrid();
+					DrawColorBleed();
 					break;
 				case 6:
-					DrawLinearity();
+					DrawGrid();
 					break;
 				case 7:
-					DrawGray();
+					DrawLinearity();
 					break;
 				case 8:
-					DrawWhite();
+					DrawGray();
 					break;
 				case 9:
-					Draw100IRE();
+					DrawWhite();
 					break;
 				case 10:
-					DrawSharpness();
+					Draw100IRE();
 					break;
 				case 11:
+					DrawSharpness();
+					break;
+				case 12:
 					DrawOverscan();
 					break;
 				case 12:
 					end = 1;
 					break;
 			}
-			if(sel != 12)
+			if(sel != 13)
 				end = 0;
 				
 			redraw = 1;	
@@ -215,32 +218,34 @@ void RefreshTestPatterns()
 	set_font_pal(sel == 1 ? 15 : 14);
 	put_string("Color Bars", HPOS, row++);
 	set_font_pal(sel == 2 ? 15 : 14);
-	put_string("SMPTE Color Bars", HPOS, row++);
+	put_string("EBU Color Bars", HPOS, row++);
 	set_font_pal(sel == 3 ? 15 : 14);
-	put_string("Color Bars w/ Gray Ref", HPOS, row++);
+	put_string("SMPTE Color Bars", HPOS, row++);
 	set_font_pal(sel == 4 ? 15 : 14);
-	put_string("Color Bleed Check", HPOS, row++);
+	put_string("Color Bars w/ Gray Ref", HPOS, row++);
 	set_font_pal(sel == 5 ? 15 : 14);
+	put_string("Color Bleed Check", HPOS, row++);
+	set_font_pal(sel == 6 ? 15 : 14);
 	put_string("Grids", HPOS, row++);
 	RefreshTestPatternsAux();
 }
 		
 void RefreshTestPatternsAux()
 {
-	set_font_pal(sel == 6 ? 15 : 14);
-	put_string("Linearity", HPOS, row++);
 	set_font_pal(sel == 7 ? 15 : 14);
-	put_string("Gray Ramp", HPOS, row++);
+	put_string("Linearity", HPOS, row++);
 	set_font_pal(sel == 8 ? 15 : 14);
-	put_string("White & RGB Screen", HPOS, row++);
+	put_string("Gray Ramp", HPOS, row++);
 	set_font_pal(sel == 9 ? 15 : 14);
-	put_string("100 IRE", HPOS, row++);
+	put_string("White & RGB Screen", HPOS, row++);
 	set_font_pal(sel == 10 ? 15 : 14);
-	put_string("Sharpness", HPOS, row++);
+	put_string("100 IRE", HPOS, row++);
 	set_font_pal(sel == 11 ? 15 : 14);
+	put_string("Sharpness", HPOS, row++);
+	set_font_pal(sel == 12 ? 15 : 14);
 	put_string("Overscan", HPOS, row++);
 
-	set_font_pal(sel == 12 ? 15 : 14);
+	set_font_pal(sel == 13 ? 15 : 14);
 	put_string("Back to Main Menu", HPOS, ++row);
 }
 
@@ -511,7 +516,7 @@ void DrawColorBleed()
 	}
 }
 
-void DrawSMPTE()
+void DrawSMPTE_EBU(unsigned char ebu)
 {
 	unsigned char is100 = 0;
 	unsigned char text = 0;
@@ -528,8 +533,16 @@ void DrawSMPTE()
 			
 			setupFont();
 #ifndef CDROM1
-			set_map_data(SMPTE75_map, 40, 30);	
-			set_tile_data(SMPTE75_bg);
+			if(ebu)
+			{
+				set_map_data(EBU_map, 40, 30);	
+				set_tile_data(EBU_bg);
+			}
+			else
+			{
+				set_map_data(SMPTE75_map, 40, 30);	
+				set_tile_data(SMPTE75_bg);
+			}
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
 			if(is100)
@@ -539,12 +552,12 @@ void DrawSMPTE()
 #else
 			set_screen_size(SCR_SIZE_64x32); 
 			if(is100)
-				cd_loaddata(GPHX_OVERLAY, OFS_SMPTE100_PAL_bin, palCD, SIZE_SMPTE100_PAL_bin); 
+				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB100_PAL_bin: OFS_SMPTE100_PAL_bin, palCD, SIZE_SMPTE100_PAL_bin); 
 			else
-				cd_loaddata(GPHX_OVERLAY, OFS_SMPTE75_PAL_bin, palCD, SIZE_SMPTE75_PAL_bin); 
+				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB75_PAL_bin : OFS_SMPTE75_PAL_bin, palCD, SIZE_SMPTE75_PAL_bin); 
 			set_bgpal(0, palCD, 1); 
-			cd_loadvram(GPHX_OVERLAY, OFS_SMPTE75_DATA_bin, 0x1000, SIZE_SMPTE75_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_SMPTE75_BAT_bin, 0x0000, SIZE_SMPTE75_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, ebu ? OFS_EBUCB_DATA_bin : OFS_SMPTE75_DATA_bin, 0x1000, ebu ? SIZE_EBUCB_DATA_bin : SIZE_SMPTE75_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, ebu ? OFS_EBUCB_BAT_bin : OFS_SMPTE75_BAT_bin, 0x0000, ebu ? SIZE_EBUCB_BAT_bin : SIZE_SMPTE75_BAT_bin);
 #endif
 			Center224in240();  
 			
@@ -556,7 +569,7 @@ void DrawSMPTE()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(SMPTECOLOR_HELP);
+			showHelp(ebu ? EBU_HELP : SMPTECOLOR_HELP);
 			redraw = 1;
 		}
 		
@@ -569,7 +582,7 @@ void DrawSMPTE()
 #ifndef CDROM1
 				load_palette(0, SMPTE75_pal, 1);  
 #else
-				cd_loaddata(GPHX_OVERLAY, OFS_SMPTE75_PAL_bin, palCD, SIZE_SMPTE75_PAL_bin); 
+				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB75_PAL_bin : OFS_SMPTE75_PAL_bin, palCD, SIZE_SMPTE75_PAL_bin); 
 				set_bgpal(0, palCD, 1); 
 #endif
 				is100 = 0;
@@ -581,7 +594,7 @@ void DrawSMPTE()
 #ifndef CDROM1
 				load_palette(0, SMPTE100_pal, 1);  
 #else
-				cd_loaddata(GPHX_OVERLAY, OFS_SMPTE100_PAL_bin, palCD, SIZE_SMPTE100_PAL_bin); 
+				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB100_PAL_bin: OFS_SMPTE100_PAL_bin, palCD, SIZE_SMPTE100_PAL_bin); 
 				set_bgpal(0, palCD, 1); 
 #endif
 				is100 = 1;
@@ -596,10 +609,13 @@ void DrawSMPTE()
 			if(!text)
 			{
 #ifndef CDROM1
-				set_map_data(SMPTE75_map, 40, 3);
+				if(ebu)
+					set_map_data(EBU_map, 40, 3);
+				else
+					set_map_data(SMPTE75_map, 40, 3);
 				load_map(0, 0, 0, 0, 40, 3);
 #else
-				cd_loadvram(GPHX_OVERLAY, OFS_SMPTE75_BAT_bin, 0x0000, SIZE_SMPTE75_BAT_bin);
+				cd_loadvram(GPHX_OVERLAY, ebu ? OFS_EBUCB_BAT_bin : OFS_SMPTE75_BAT_bin, 0x0000, ebu ? SIZE_EBUCB_BAT_bin : SIZE_SMPTE75_BAT_bin);
 #endif
 			}
 		}
