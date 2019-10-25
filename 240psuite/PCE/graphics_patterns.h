@@ -85,6 +85,13 @@ extern int sharpness_bg[];
 extern char gray_map[];
 extern int gray_bg[];
 
+extern char convcolor_map[];
+extern int convcolor_bg[];
+
+extern int convlinestile_bg[];
+extern int convcrosstile_bg[];
+extern int convdottile_bg[];
+
 extern char ire100_map[];
 extern int ire100_bg[];
 
@@ -103,3 +110,5 @@ extern int linearity256_pal[];
 extern int sharpness_pal[];
 extern int gray_pal[];
 extern int pluge_pal[];
+extern int convcolor_pal[];
+extern int convlinestile_pal[];

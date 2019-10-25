@@ -73,6 +73,7 @@ void display_colorbleed_00()
 	p_string	colorbleed_00_03,6,9
 	p_string	colorbleed_00_04,6,11
 	p_string	colorbleed_00_05,6,12
+	p_string	colorbleed_00_06,6,14
 	rts
 
 colorbleed_00_00:	.db	"COLOR BLEED"
@@ -86,6 +87,8 @@ colorbleed_00_03:	.db	"bars alternating with one pixel width black bars."
 colorbleed_00_04:	.db	"- You can change the vertical bars to a checker"
 			.db	0
 colorbleed_00_05:	.db	"board with button I."
+			.db	0
+colorbleed_00_06:	.db	"- You can change the resolution with SELECT."
 			.db	0
 #endasm
 }
@@ -168,6 +171,44 @@ colors_01_05:	.db	"from the one to its left, and then lower it until"
 colors_01_06:	.db	"you can distinguish them clearly."
 			.db	0
 colors_01_07:	.db	"Repeat for each color and you are set."
+			.db	0
+#endasm
+}
+
+
+void display_convergence_00()
+{
+#asm
+	p_string	convergence_00_00,23,4
+	__ldwi		14
+	call		_set_font_pal
+	p_string	convergence_00_01,6,6
+	p_string	convergence_00_02,6,7
+	p_string	convergence_00_03,6,9
+	p_string	convergence_00_04,6,10
+	p_string	convergence_00_05,6,11
+	p_string	convergence_00_06,6,13
+	p_string	convergence_00_07,6,14
+	p_string	convergence_00_08,6,16
+	rts
+
+convergence_00_00:	.db	"CONVERGENCE TESTS"
+			.db	0
+convergence_00_01:	.db	"These are used to adjust color convergence in CRT "
+			.db	0
+convergence_00_02:	.db	"displays."
+			.db	0
+convergence_00_03:	.db	"- Button 'I' changes the pattern between cross hatch"
+			.db	0
+convergence_00_04:	.db	"lines, crosses, dots and a color pattern with or"
+			.db	0
+convergence_00_05:	.db	"without a black grid, for transition boundary check."
+			.db	0
+convergence_00_06:	.db	"- Left and Right on the D-Pad allow cycling between"
+			.db	0
+convergence_00_07:	.db	"patterns."
+			.db	0
+convergence_00_08:	.db	"- You can change the resolution with SELECT."
 			.db	0
 #endasm
 }
@@ -290,10 +331,9 @@ void display_grid_00()
 	p_string	grid_00_07,6,14
 	p_string	grid_00_08,6,15
 	p_string	grid_00_09,6,17
-	p_string	grid_00_10,6,18
+	p_string	grid_00_10,6,19
 	p_string	grid_00_11,6,20
-	p_string	grid_00_12,6,21
-	p_string	grid_00_13,6,23
+	p_string	grid_00_12,6,22
 	rts
 
 grid_00_00:	.db	"GRID"
@@ -314,15 +354,13 @@ grid_00_07:	.db	"signal, and that is normal. It is the way Hudson/NEC"
 			.db	0
 grid_00_08:	.db	"used each resolution."
 			.db	0
-grid_00_09:	.db	"- You can press button I to fill all the video signal"
+grid_00_09:	.db	"- You can change the resolution with SELECT."
 			.db	0
-grid_00_10:	.db	"background area."
+grid_00_10:	.db	"- You can press button I to fill all the video signal"
 			.db	0
-grid_00_11:	.db	"- You can press SELECT to change between grid"
+grid_00_11:	.db	"background area."
 			.db	0
-grid_00_12:	.db	"resolutions."
-			.db	0
-grid_00_13:	.db	"- The 352x240 resolution is used by R-Type"
+grid_00_12:	.db	"- The 352x240 resolution is used by R-Type"
 			.db	0
 #endasm
 }
@@ -381,6 +419,7 @@ void display_linearity_00()
 	p_string	linearity_00_04,6,11
 	p_string	linearity_00_05,6,12
 	p_string	linearity_00_06,6,13
+	p_string	linearity_00_07,6,15
 	rts
 
 linearity_00_00:	.db	"LINEARITY"
@@ -396,6 +435,8 @@ linearity_00_04:	.db	"verified by measuring the diameter of the circles."
 linearity_00_05:	.db	"Of course the linearity should be kept in all"
 			.db	0
 linearity_00_06:	.db	"directions."
+			.db	0
+linearity_00_07:	.db	"- You can change the resolution with SELECT."
 			.db	0
 #endasm
 }

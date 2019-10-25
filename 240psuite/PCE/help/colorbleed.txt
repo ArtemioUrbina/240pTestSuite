@@ -7,3 +7,5 @@ bars alternating with one pixel width black bars.
 
 - You can change the vertical bars to a checker
 board with button I.
+
+- You can change the resolution with SELECT.

@@ -11,10 +11,9 @@ The Grids are not perfectly centered within the NTSC
 signal, and that is normal. It is the way Hudson/NEC
 used each resolution.
 
+- You can change the resolution with SELECT.
+
 - You can press button I to fill all the video signal
 background area.
-
-- You can press SELECT to change between grid
-resolutions.
 
 - The 352x240 resolution is used by R-Type

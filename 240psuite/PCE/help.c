@@ -49,8 +49,8 @@ char palCD[512];
 void main()
 #endif
 {
-	unsigned char page = 1;
-	unsigned char total = 1;
+	int page = 1;
+	int total = 1;
 
 #ifdef HELP_OVL
 	char data;
@@ -62,7 +62,6 @@ void main()
 	end = 0;
 	redraw = 1;
 	refresh = 1;
-	i = 1;
 	
     while(!end)
     {   
@@ -194,6 +193,9 @@ void main()
 				case MDFOURIER_HELP:
 					display_mdfourier_00();
 					break;
+				case CONVERGENCE_HELP:
+					display_convergence_00();
+					break;
 			}
 			
 			set_font_pal(13);
@@ -212,21 +214,23 @@ void main()
 			end = 1;
 			
 		if (controller & JOY_LEFT)
-			i--;
+		{
+			page--;
+			if(page < 1)
+				page = 1;
+			else
+				refresh = 1;
+		}
 		
 		if (controller & JOY_RIGHT)
-			i++;
-			
-		if(i > total)
-			i = total;
-		if(i < 1)
-			i = 1;
-			
-		if(page != i)
 		{
-			refresh = 1;
-			page = i;
+			page++;
+			if(page > total)
+				page = total;
+			else
+				refresh = 1;
 		}
+		
     }	
 	disp_off();
 	end = read = controller = 0;

@@ -25,22 +25,31 @@
  
 #ifdef CDROM
 #ifndef CDROM1
+#ifndef HELP_OVL
 #define ADPCM_VOICE_OVL		3
 #define ADPCM_SWEEP_OVL		4
 #endif
 #endif
+#endif
 
 #ifdef CDROM1
+#define OVL_DEFINES
+#endif
 
+#ifdef HELP_OVL
+#define OVL_DEFINES
+#endif
+
+#ifdef OVL_DEFINES
 #define LOADER_OVERLAY 		1
 #define MAIN_OVERLAY 		2
 #define PATTERNS_OVERLAY 	3
-#define TEST_EXT_OVERLAY 	4
-#define GPHX_OVERLAY 		5
-#define HELP_OVERLAY		6
-#define ADPCM_VOICE_OVL		7
-#define ADPCM_SWEEP_OVL		8
-
+#define PATT_EXT_OVERLAY 	4
+#define TEST_EXT_OVERLAY 	5
+#define GPHX_OVERLAY 		6
+#define HELP_OVERLAY		7
+#define ADPCM_VOICE_OVL		8
+#define ADPCM_SWEEP_OVL		9
 
 #define TOOL_VSCROLL	1
 #define TOOL_SOUND		2
@@ -49,23 +58,10 @@
 #define TOOL_AUDIOSYNC	5
 #define TOOL_MDFOURIER	6
 
-#endif
-
-#ifdef HELP_OVL
-
-#define LOADER_OVERLAY 		1
-#define MAIN_OVERLAY 		2
-#define PATTERNS_OVERLAY 	3
-#define TEST_EXT_OVERLAY 	4
-#define GPHX_OVERLAY 		5
-#define HELP_OVERLAY		6
-
-#define TOOL_VSCROLL	1
-#define TOOL_SOUND		2
-#define TOOL_MANUAL		3
-#define	TOOL_PASSIVE	4
-#define TOOL_AUDIOSYNC	5
-
+#define	TOOL_WHITE		8
+#define	TOOL_OVERSCAN	9
+#define TOOL_IRE		10
+#define TOOL_CONVERG	11
 #endif
  
 #define XRES_BW 0x80

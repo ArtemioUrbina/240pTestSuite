@@ -236,6 +236,7 @@ int FloatMenu(int def, int size, char *bottom)
 	}
 	
 	end = 0;
+	controller = 0;
 	disp_off();
 	return resmenudata[option].id;
 }

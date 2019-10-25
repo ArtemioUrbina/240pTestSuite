@@ -40,6 +40,10 @@
 
 #endif
 
+#incchr_ex(convlinestile_bg, "graphics/convlinestile.pcx", 0, 0, 1, 1, 0);
+#incchr_ex(convcrosstile_bg, "graphics/convcrosstile.pcx", 0, 0, 1, 1, 0);
+#incchr_ex(convdottile_bg, "graphics/convdottile.pcx", 0, 0, 1, 1, 0);
+
 
 /*
 			PATTERNS
@@ -93,11 +97,11 @@
 #incbin(sharpness_map, "graphics/sharpness.fmp");
 #incchr_ex(sharpness_bg, "graphics/sharpness.pcx", 0, 0, 4, 51, 0);
 
-#incchr_ex(ire100_bg, "graphics/100IRE.pcx", 0, 0, 2, 2, 0);
-#endif
-
 #incbin(ire100_map, "graphics/100IRE.fmp");
+#incchr_ex(ire100_bg, "graphics/100IRE.pcx", 0, 0, 2, 2, 0);
 
+#incbin(convcolor_map, "graphics/convcolor.fmp");
+#incchr_ex(convcolor_bg, "graphics/convcolor.pcx", 0, 0, 4, 4, 0);
 
 /*
 		Palettes
@@ -114,10 +118,15 @@
 #incpal(linearity256_pal, "graphics/linearity256.pcx", 0, 1);
 #incpal(pluge_pal, "graphics/pluge.pcx", 0, 1);
 #incpal(sharpness_pal, "graphics/sharpness.pcx", 0, 1);
+#incpal(convcolor_pal, "graphics/convcolor.pcx", 0, 1);
+
+#endif
+
+#incpal(convlinestile_pal, "graphics/convlinestile.pcx", 0, 1);
+
 
 #ifdef CDROM1
 #incpal(MB_pal, "graphics/mainbg.pcx", 0, 1);
-#incpal(MB512_pal, "graphics/back512.pcx", 0, 1);
 #incpal(SD_pal, "graphics/SD.pcx", 0, 1);
 #endif
 

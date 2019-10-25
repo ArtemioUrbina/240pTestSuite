@@ -28,14 +28,16 @@ cd ..
 huc -DCDROM -DCDROM1 -s -msmall -t -O2 -cd -overlay loader.c video.c font.c  || goto :error
 huc -DCDROM -DCDROM1 -s -msmall -t -O2 -cd -overlay 240pSuite.c font.c video.c tests.c tools.c help.c   || goto :error
 huc -DCDROM -DCDROM1 -s -msmall -t -O2 -cd -overlay patterns.c font.c video.c tools.c help.c float.c || goto :error
+huc -DCDROM -DCDROM1 -s -msmall -t -O2 -cd -overlay patterns_ext.c font.c video.c tools.c help.c float.c || goto :error
 huc -DCDROM -DCDROM1 -s -msmall -t -O2 -cd -overlay tests_ext.c video.c font.c tools.c help.c  || goto :error
 huc -DCDROM -DHELP_OVL -s -msmall -t -O2 -cd -overlay help.c video.c font.c tools.c || goto :error
 pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay loader.s  || goto :error
 pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay 240pSuite.s  || goto :error
 pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay patterns.s  || goto :error
+pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay patterns_ext.s  || goto :error
 pceas -DCDROM -DCDROM1 -s -msmall -cd -overlay tests_ext.s  || goto :error
 pceas -DCDROM -DHELP_OVL -s -msmall -cd -overlay help.s  || goto :error
-isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl tests_ext.ovl gdata.bin help.ovl adpcm.vox sweep.vox  || goto :error
+isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl patterns_ext.ovl tests_ext.ovl gdata.bin help.ovl adpcm.vox sweep.vox  || goto :error
 
 :; exit 0
 exit /b 0
