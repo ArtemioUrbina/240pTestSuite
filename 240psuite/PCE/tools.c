@@ -282,11 +282,13 @@ void Options()
 
 		if (controller & JOY_RUN)
 		{
+/*
 #ifdef CDROM1
 			if(x_g)
 				showHelp(OPTIONS_HELP2);
 			else
 #endif
+*/
 			showHelp(OPTIONS_HELP);
 			redraw = 1;
 		}

@@ -125,7 +125,6 @@ void main()
 						display_manuallag_01();
 					break;
 				case OPTIONS_HELP:
-				case OPTIONS_HELP2:
 					display_options_00();
 					break;
 				case OVERSCAN_HELP:
@@ -164,7 +163,6 @@ void main()
 					display_white_00();
 					break;	
 				case GENERAL_HELP:
-				case GENERAL_HELP2:
 					total = 2;
 					DrawGeneralHelp(page);
 					break;
@@ -235,7 +233,7 @@ void main()
 	disp_off();
 	end = read = controller = 0;
 #ifdef HELP_OVL
-	if(data < HELP_PART_2)
+	if(data >= VIDEOHELP)
 		cd_execoverlay(MAIN_OVERLAY);
 	else
 		cd_execoverlay(PATTERNS_OVERLAY);

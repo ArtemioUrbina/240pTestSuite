@@ -57,6 +57,7 @@
 #define	TOOL_PASSIVE	4
 #define TOOL_AUDIOSYNC	5
 #define TOOL_MDFOURIER	6
+#define TOOL_LEDZONE	7
 
 #define	TOOL_WHITE		8
 #define	TOOL_OVERSCAN	9

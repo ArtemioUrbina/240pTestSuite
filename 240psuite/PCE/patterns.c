@@ -124,7 +124,7 @@ void main()
 		if (controller & JOY_RUN)
 		{
 #ifdef CDROM1
-			showHelp(GENERAL_HELP2);
+			//showHelp(GENERAL_HELP2);
 #else
 			showHelp(GENERAL_HELP);
 #endif
@@ -136,7 +136,7 @@ void main()
 		{
 			if(HelpItem <= CONVERGENCE_HELP)
 			{
-				sel = HelpItem - HELP_PART_2;
+				sel = HelpItem - PATTERNSHELP;
 				controller = JOY_I;
 			}
 				
@@ -210,6 +210,7 @@ void main()
 	EnabledSoft_g = EnabledSoft;
 	Enabled_C_BW_g = Enabled_C_BW;
 	
+	prev_select = 0;
 	ResetVideo();
 	set_font_pal(13);
 	put_string("Loading...", 27, 26);

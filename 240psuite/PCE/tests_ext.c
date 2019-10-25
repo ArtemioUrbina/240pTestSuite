@@ -66,6 +66,9 @@ void main()
 		case TOOL_MDFOURIER:
 			MDFourier();
 			break;
+		case TOOL_LEDZONE:
+			LEDZoneTest();
+			break;
 	}
 	cd_execoverlay(MAIN_OVERLAY);
 }
@@ -1451,4 +1454,121 @@ void AudioSyncTest()
 		
     }
 	StopAudio(0);
+}
+
+void LEDZoneTest()
+{
+	unsigned char refresh = 0;
+	unsigned char visible = 1;
+	int size[4];
+
+	x2 = 0;
+	end = 0;
+	x = 144;
+	y = 120;
+	redraw = 1;
+	
+	size[0] = 1;
+	size[1] = 2;
+	size[2] = 4;
+	size[3] = 8;
+	
+    while(!end)
+    {   
+		vsync();
+		
+        if(redraw)
+        {
+			ResetVideo();
+
+			set_map_data(fs_map, 64, 32);
+			set_tile_data(white_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 64, 32);
+			set_color_rgb(1, 0, 0, 0); 
+
+			Center224in240();
+			
+			refresh = 1;
+			
+            redraw = 0;
+			disp_on();
+        }
+		
+		if(refresh)
+		{
+			init_satb();
+			set_color_rgb(256, 0, 0, 0); 
+			set_color_rgb(257, 7, 7, 7); 
+#ifndef CDROM1		
+			load_vram(0x5000, LED_sp, 0x100);
+#else
+			cd_loadvram(GPHX_OVERLAY, OFS_LEDsprites_tile_bin, 0x5000, SIZE_LEDsprites_tile_bin);
+#endif
+			spr_make(0, x, y, 0x5000+0x40*x2, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			satb_update();
+			refresh = 0;
+		}
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(BACKLIT_HELP);
+			redraw = 1;
+		}
+        
+		if (controller & JOY_II)
+			end = 1;
+			
+		if (controller & JOY_SEL)
+		{
+			visible = !visible;
+			if(!visible)
+				set_color_rgb(257, 0, 0, 0); 
+			else
+				set_color_rgb(257, 7, 7, 7); 
+		}
+			
+		if (controller & JOY_I)
+		{
+			x2++;
+			if(x2 > 3)
+				x2 = 0;
+			refresh = 1;
+		}
+			
+		if(visible)
+		{
+			controller = joy(0);
+			
+			if (controller & JOY_UP)
+				y--;
+				
+			if (controller & JOY_DOWN)
+				y++;
+			
+			if (controller & JOY_LEFT)
+				x--;
+			
+			if (controller & JOY_RIGHT)
+				x++;
+				
+			if(x < 0)
+				x = 0;
+			if(x > 320 - size[x2])
+				x = 320 - size[x2];
+			if(y < 0)
+				y = 0;
+			if(y > (Enabled240p ? 240 - size[x2] : 224 - size[x2]))
+				y = Enabled240p ? 240 - size[x2] : 224 - size[x2];
+		
+			spr_set(0);	
+		
+			spr_x(x);
+			spr_y(y);
+		
+			satb_update();
+		}
+    }
 }

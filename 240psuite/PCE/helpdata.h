@@ -1,37 +1,51 @@
-#define	DSHADOW_HELP		1
-#define	STRIPED_HELP		2
-#define PASSIVE_HELP		3
-#define	MANUALLAG_HELP		4
-#define	SCROLL_HELP			5
-#define	GRIDSCROLL_HELP		6
-#define STRIPES_HELP		7
-#define CHECK_HELP			8
-#define BACKLIT_HELP		9
-#define	SOUND_HELP			10
-#define AUDIOSYNC_HELP		11
-#define MDFOURIER_HELP		12
 
-#define	OPTIONS_HELP		13
-#define GENERAL_HELP		14
+#define	OPTIONS_HELP		1
+#define GENERAL_HELP		2
 
 /*****************************/
 
-#define HELP_PART_2			20
+#define	PATTERNSHELP		10
 
-#define	PLUGE_HELP			20
-#define	COLORS_HELP			21
-#define	EBU_HELP			22
-#define	SMPTECOLOR_HELP		23
-#define	COLOR601_HELP		24
-#define BLEED_HELP			25
-#define	GRID_HELP			26
-#define	LINEARITY_HELP		27
-#define	GRAY_HELP			28
-#define	WHITE_HELP			29
-#define IRE100HELP			30
-#define	SHARPNESS_HELP		31
-#define	OVERSCAN_HELP		32
-#define CONVERGENCE_HELP	33
+#define	PLUGE_HELP			10
+#define	COLORS_HELP			11
+#define	EBU_HELP			12
+#define	SMPTECOLOR_HELP		13
+#define	COLOR601_HELP		14
+#define BLEED_HELP			15
+#define	GRID_HELP			16
+#define	LINEARITY_HELP		17
+#define	GRAY_HELP			18
+#define	WHITE_HELP			19
+#define IRE100HELP			10
+#define	SHARPNESS_HELP		21
+#define	OVERSCAN_HELP		22
+#define CONVERGENCE_HELP	23
 
-#define	OPTIONS_HELP2		34
-#define GENERAL_HELP2		35
+/*****************************/
+
+#define	VIDEOHELP			30
+
+#define	DSHADOW_HELP		30
+#define	STRIPED_HELP		31
+#define PASSIVE_HELP		32
+#define	MANUALLAG_HELP		33
+#define	SCROLL_HELP			34
+#define	GRIDSCROLL_HELP		35
+#define STRIPES_HELP		36
+#define CHECK_HELP			37
+#define BACKLIT_HELP		38
+
+/*****************************/
+
+#define	AUDIOHELP			50
+
+#define	SOUND_HELP			50
+#define AUDIOSYNC_HELP		51
+#define MDFOURIER_HELP		52
+
+/*****************************/
+
+#define	HARDWAREHELP		60
+
+
+

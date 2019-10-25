@@ -121,7 +121,7 @@ void main()
         if (controller & JOY_DOWN) 
         {
             sel++;
-            if(sel > 15)
+            if(sel > 6)
                 sel = 0;
             refresh = 1;
         }
@@ -130,7 +130,7 @@ void main()
         {
             sel--;
             if(sel < 0)
-                sel = 15;
+                sel = 6;
             refresh = 1;
         }
 		
@@ -143,13 +143,17 @@ void main()
 		}
 		else
 		{
-			if(HelpItem <= OPTIONS_HELP)
+			if(HelpItem)
 			{
-				sel = HelpItem;
+				if(HelpItem < AUDIOHELP)
+					sel = 1;
+				else if(HelpItem < HARDWAREHELP)
+					sel = 2;
+				else
+					sel = 3;
+				
 				controller = JOY_I;
 			}
-				
-			HelpItem = 0;
 		}
 #endif
 		
@@ -175,57 +179,31 @@ void main()
 #endif
 					break;
 				case 1:
-					DropShadow();
-					break;
-				case 2:
-					StripedSprite();
-					break;
-				case 3:
-					LagTest();
+					VideoTests();
 					break;
 				case 4:
-					ManualLagTest();
-					break;
-				case 5:
-					ScrollTest();
-					break;
-				case 6:
-					VScrollTest();
-					break;
-				case 7:
-					DrawStripes();
-					break;
-				case 8:
-					DrawCheck();
-					break;
-				case 9:
-					LEDZoneTest();
-					break;
-				case 10:
-					SoundTest();
-					break;
-				case 11:
-					AudioSyncTest();
-					break;
-				case 12:
-					MDFourier();
-					break;
-				case 13:
 #ifdef CDROM1
 					prev_select = sel;
 #endif
 					Options();
 					break;
-				case 14:
+				case 5:
 #ifdef CDROM1
 					prev_select = sel;
 #endif
 					showHelp(GENERAL_HELP);
 					break;
-				case 15:
+				case 6:
 					DrawCredits();
 					break;
 			}
+#ifdef CDROM1	
+			if(prev_select)
+			{
+				sel = prev_select;
+				prev_select = 0;
+			}
+#endif
 			redraw = 1;			
 			disp_off();
 		}
@@ -234,50 +212,247 @@ void main()
 
 void RefreshMain()
 {
+	row = 11;
+	
+	set_font_pal(sel == 0 ? 15 : 14);
+	put_string("Test Patterns", HPOS, row++);
+	set_font_pal(sel == 1 ? 15 : 14);
+	put_string("Video tests", HPOS, row++);
+	set_font_pal(sel == 2 ? 15 : 14);
+	put_string("Audio tests", HPOS, row++);
+	set_font_pal(sel == 3 ? 15 : 14);
+	put_string("Hardware tools", HPOS, row++);
+	
+	row = 19;
+	
+	set_font_pal(sel == 4 ? 15 : 14);
+	put_string("Options", HPOS, row++);
+	set_font_pal(sel == 5 ? 15 : 14);
+	put_string("Help", HPOS, row++);
+	set_font_pal(sel == 6 ? 15 : 14);
+	put_string("Credits", HPOS, row++);
+}
+
+
+void RefreshVideoTests()
+{
 	row = 7;
 
 	set_font_pal(sel == 0 ? 15 : 14);
-	put_string("Test Patterns >", HPOS, row++);
-	set_font_pal(sel == 1 ? 15 : 14);
 	put_string("Drop Shadow Test", HPOS, row++);
-	set_font_pal(sel == 2 ? 15 : 14);
+	set_font_pal(sel == 1 ? 15 : 14);
 	put_string("Striped Sprite Test", HPOS, row++);
-	set_font_pal(sel == 3 ? 15 : 14);
+	set_font_pal(sel == 2 ? 15 : 14);
 	put_string("Lag Test", HPOS, row++);
-	set_font_pal(sel == 4 ? 15 : 14);
+	set_font_pal(sel == 3 ? 15 : 14);
 	put_string("Manual Lag Test", HPOS, row++);
-	set_font_pal(sel == 5 ? 15 : 14);
+	set_font_pal(sel == 4 ? 15 : 14);
 	put_string("Scroll Test", HPOS, row++);
-	set_font_pal(sel == 6 ? 15 : 14);
+	set_font_pal(sel == 5 ? 15 : 14);
 	put_string("Grid Scroll Test", HPOS, row++);
 	
-	RefreshMainAux(row);
+	RefreshVideoTestsAux(row);
 }
 
-void RefreshMainAux(int row)
+void RefreshVideoTestsAux(int row)
 {
-	set_font_pal(sel == 7 ? 15 : 14);
+	set_font_pal(sel == 6 ? 15 : 14);
 	put_string("Horizontal Stripes", HPOS, row++);
-	set_font_pal(sel == 8 ? 15 : 14);
+	set_font_pal(sel == 7 ? 15 : 14);
 	put_string("Checkerboard", HPOS, row++);
-	set_font_pal(sel == 9 ? 15 : 14);
+	set_font_pal(sel == 8 ? 15 : 14);
 	put_string("Backlit Zone Test", HPOS, row++);
-	set_font_pal(sel == 10 ? 15 : 14);
+	set_font_pal(sel == 9 ? 15 : 14);
 	put_string("Sound Test", HPOS, row++);
-	set_font_pal(sel == 11 ? 15 : 14);
+	set_font_pal(sel == 10 ? 15 : 14);
 	put_string("Audio Sync Test", HPOS, row++);
-	set_font_pal(sel == 12 ? 15 : 14);
+	set_font_pal(sel == 11 ? 15 : 14);
 	put_string("MDFourier", HPOS, row++);
 	
-	set_font_pal(sel == 13 ? 15 : 14);
-	put_string("Video Options", HPOS, ++row);
+	set_font_pal(sel == 12 ? 15 : 14);
+	put_string("Options", HPOS, ++row);
 	
-	set_font_pal(sel == 14 ? 15 : 14);
+	set_font_pal(sel == 13 ? 15 : 14);
 	put_string("Help", HPOS, ++row);
-	set_font_pal(sel == 15 ? 15 : 14);
+	set_font_pal(sel == 14 ? 15 : 14);
 	put_string("Credits", HPOS, ++row);
+	
+	set_font_pal(sel == 15 ? 15 : 14);
+	put_string("Back to Main Menu", HPOS, ++row);
 }
 
+
+void VideoTests()
+{
+	redraw = 1;
+	refresh = 1;
+	
+	sel = 0;
+	end = 0;
+	
+#ifdef CDROM1
+	if(prev_select)
+	{
+		sel = prev_select;
+		prev_select = 0;
+	}
+#endif
+
+	disp_off();
+	while(!end)
+	{		
+		vsync();
+		
+#ifdef CDROM1
+		if(!HelpItem)
+		{
+#endif
+		if(redraw)
+		{
+			RedrawMain();
+
+			refresh = 1;
+			redraw = 0;
+			disp_on();
+		}
+		
+		if(refresh)
+		{	
+			RefreshVideoTests();
+			refresh = 0;
+		}
+
+		controller = joytrg(0);
+		
+		if (controller & JOY_II)
+			end = 1;
+		
+		if (controller & JOY_SEL)
+		{
+#ifdef CDROM1
+			x_g = 1;
+#endif
+			Options();
+			redraw = 1;
+		}
+		
+		if (controller & JOY_DOWN) 
+		{
+			sel++;
+			if(sel > 14)
+				sel = 0;
+			refresh = 1;
+		}
+
+		if (controller & JOY_UP) 
+		{
+			sel--;
+			if(sel < 0)
+				sel = 15;
+			refresh = 1;
+		}
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(GENERAL_HELP);
+			redraw = 1;
+		}
+#ifdef CDROM1
+		}
+		else
+		{
+			if(HelpItem)
+			{
+				sel = HelpItem - VIDEOHELP;
+				controller = JOY_I;
+			}
+				
+			HelpItem = 0;
+		}
+#endif
+		
+		if (controller & JOY_I)
+		{
+			disp_off();
+			ResetVideo();
+			switch(sel)
+			{
+				case 0:
+					DropShadow();
+					break;
+				case 1:
+					StripedSprite();
+					break;
+				case 2:
+					LagTest();
+					break;
+				case 3:
+					ManualLagTest();
+					break;
+				case 4:
+					ScrollTest();
+					break;
+				case 5:
+					VScrollTest();
+					break;
+				case 6:
+					DrawStripes();
+					break;
+				case 7:
+					DrawCheck();
+					break;
+				case 8:
+					LEDZoneTest();
+					break;
+				case 9:
+					SoundTest();
+					break;
+				case 10:
+					AudioSyncTest();
+					break;
+				case 11:
+					MDFourier();
+					break;
+				case 12:
+#ifdef CDROM1
+					prev_select = sel;
+#endif
+					Options();
+					break;
+				case 13:
+#ifdef CDROM1
+					prev_select = sel;
+#endif
+					showHelp(GENERAL_HELP);
+					break;
+				case 14:
+					DrawCredits();
+					break;
+				case 15:
+					end = 1;
+					break;
+			}
+			if(sel != 15)
+				end = 0;
+				
+			redraw = 1;	
+			disp_off();
+			
+#ifdef CDROM1	
+			if(prev_select)
+			{
+				sel = prev_select;
+				prev_select = 0;
+			}
+#endif
+		}
+	}
+	end = 0;
+	sel = 0;
+#ifdef CDROM1
+	prev_select = 1;
+#endif
+}
 
 /*
  *
