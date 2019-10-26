@@ -250,6 +250,7 @@ void DisplaySystemInfo()
 }
 
 #ifndef HELP_OVL
+#ifndef EXT_TOOLS
 void Options()
 {
     option = 0;
@@ -457,4 +458,5 @@ int ExecuteOptions()
 	return x3;
 }
 
+#endif
 #endif

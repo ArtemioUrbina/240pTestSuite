@@ -58,11 +58,12 @@
 #define TOOL_AUDIOSYNC	5
 #define TOOL_MDFOURIER	6
 #define TOOL_LEDZONE	7
+#define TOOL_CHECK		8
 
-#define	TOOL_WHITE		8
-#define	TOOL_OVERSCAN	9
-#define TOOL_IRE		10
-#define TOOL_CONVERG	11
+#define	TOOL_WHITE		9
+#define	TOOL_OVERSCAN	10
+#define TOOL_IRE		11
+#define TOOL_CONVERG	12
 #endif
  
 #define XRES_BW 0x80

@@ -46,155 +46,6 @@ extern int x_g;
 extern int y_g;
 #endif
 
-void DrawCheck()
-{
-	unsigned char alternate = 0;
-	unsigned char pos = 0;
-	unsigned char drawframe = 0;
-	int frame = 0;
-	int res = 2;
-	int text = 0;
-
-	end = 0;
-	redraw = 1;
-    while(!end)
-    {   
-		vsync();
-		
-		if(text)
-		{
-			CheckDrawText(res);
-			text --;
-			if(!text)
-				RefreshFS();
-		}
-		
-        if(redraw)
-        {
-			RedrawCheck(res);
-            redraw = 0;
-			disp_on();
-        }
-		
-		if(drawframe)
-		{
-			put_string("Frame: ", 2, 26);
-			put_number(frame, 2, 8, 26); 
-			frame ++;
-			if(frame == 60)
-				frame = 0;
-		}
-
-        controller = joytrg(0);
-		
-		if (controller & JOY_RUN)
-		{
-			showHelp(CHECK_HELP);
-			redraw = 1;
-		}
-		
-		if(alternate || controller & JOY_SEL)
-		{
-			if(pos)
-			{
-				set_color(0, 0);
-				set_color(1, RGB(7, 7, 7));
-			}
-			else
-			{
-				set_color(1, 0);
-				set_color(0, RGB(7, 7, 7));
-			}
-			pos = !pos;
-		}
-		
-		if (controller & JOY_UP)
-		{
-			drawframe = !drawframe;
-			if(!drawframe)
-				RefreshFS();
-		}
-		
-		if (controller & JOY_LEFT)
-		{
-			redraw = 1;
-			res --;
-			text = 60;
-		}
-			
-		if (controller & JOY_RIGHT)
-		{
-			redraw = 1;
-			res ++;
-			text = 60;
-		}
-			
-		if(res < 1)
-			res = 4;
-			
-		if(res > 4)
-			res = 1;
-        
-		if (controller & JOY_I)
-			alternate = !alternate;
-        
-		if (controller & JOY_II)
-			end = 1;
-    }
-}
-
-void RedrawCheck(int res)
-{
-	ResetVideo();
-	setupFont();
-
-	if(res == 1)
-		Set256H();
-	else if(res == 2)
-		Set320H();
-	else if(res == 3)
-		Set512H();
-	else if(res == 4)
-		Set352H();
-	
-	set_screen_size(SCR_SIZE_64x32); 
-	
-	set_map_data(fs_map, 64, 32);
-	set_tile_data(check_bg);
-	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 64, 32);
-	load_palette(0, check_pal, 1); 
-	
-	Center224in240(); 
-}
-
-void CheckDrawText(int res)
-{
-	if(res == 1)
-		put_string("256x", 2, 2);
-	if(res == 2)
-		put_string("320x", 2, 2);
-	if(res == 3)
-		put_string("512x", 2, 2);
-	if(res == 4)
-		put_string("352x   (R-Type)", 2, 2);
-				
-	if(Enabled240p)
-	{
-		if(UseDefault)
-			put_string("239", 6, 2);
-		else
-			put_string("240", 6, 2);
-	}
-	else
-		put_string("224", 6, 2);
-}
-
-void RefreshFS()
-{
-	set_map_data(fs_map, 64, 32);
-	load_map(0, 0, 0, 0, 64, 32);
-}
 
 void DrawStripes()
 {
@@ -933,10 +784,17 @@ void ScrollTest()
 	set_screen_size(SCR_SIZE_64x32);
 }
 
+
 #ifndef CDROM1
 #include "tests_ext.c"
 #else
 
+void DrawCheck()
+{
+	prev_select = 7;
+	ToolItem = TOOL_CHECK;
+	cd_execoverlay(TEST_EXT_OVERLAY);
+}
 
 void LEDZoneTest()
 {
