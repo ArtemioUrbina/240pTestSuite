@@ -355,9 +355,9 @@ void DrawChecksHelp()
 	put_string("alternating white and black grid array.", 6, row++);
 	row++;
 	put_string("- You can switch between all supported resolutions", 6, row++);
-	put_string("by pressing left or right.", 6, row++);
+	put_string("by pressing SELECT.", 6, row++);
 	row++;
-	put_string("- You can toggle the pattern with SELECT, or turn", 6, row++);
+	put_string("- You can toggle the pattern with L/R, or turn", 6, row++);
 	put_string("on auto-toggle each frame with the I button.", 6, row++);
 	row++;
 	put_string("When auto-toggle is set, you should see it", 6, row++);

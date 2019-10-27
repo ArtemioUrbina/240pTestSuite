@@ -69,6 +69,9 @@ int right;
 unsigned char previous;
 unsigned char screen;
 
+unsigned char back;
+int colswap;
+
 #ifdef CDROM1
 #include "graphics.h"
 #endif

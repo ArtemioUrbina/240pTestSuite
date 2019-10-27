@@ -30,6 +30,7 @@
 #include "font.h"
 #include "help.h"
 #include "tests.h"
+#include "float.h"
 
 #ifdef CDROM1
 extern int xres_flags;
@@ -46,113 +47,17 @@ extern int x_g;
 extern int y_g;
 #endif
 
-
-void DrawStripes()
-{
-	unsigned char alternate = 0;
-	unsigned char pos = 0;
-	unsigned char drawframe = 0;
-	int frame = 0;
-
-	end = 0;
-	redraw = 1;
-    while(!end)
-    {   
-		vsync();
-		
-        if(redraw)
-        {
-			RedrawStripes();
-            redraw = 0;
-			disp_on();
-        }
-		
-		if(drawframe)
-		{
-			put_string("Frame: ", 2, 26);
-			put_number(frame, 2, 8, 26); 
-			frame ++;
-			if(frame == 60)
-				frame = 0;
-		}
-		
-		controller = joytrg(0);
-		
-		if (controller & JOY_RUN)
-		{
-			showHelp(STRIPES_HELP);
-			redraw = 1;
-		}
-		
-		if(alternate || controller & JOY_SEL)
-		{
-			if(pos)
-			{
-				set_color(0, 0);
-				set_color(1, RGB(7, 7, 7));
-			}
-			else
-			{
-				set_color(1, 0);
-				set_color(0, RGB(7, 7, 7));
-			}
-			pos = !pos;
-		}
-		
-		if (controller & JOY_I)
-			alternate = !alternate;
-        
-		if (controller & JOY_II)
-			end = 1;
-		
-		if (controller & JOY_LEFT)
-		{
-			drawframe = !drawframe;
-			if(!drawframe)
-			{
-				set_map_data(fs_map, 64, 32);
-				load_map(0, 0, 0, 0, 64, 32);
-			}
-		}
-			
-		if (controller & JOY_UP)
-		{
-			set_tile_data(vstripes_bg);
-			load_tile(0x1000);
-		}
-		if (controller & JOY_DOWN)
-		{
-			set_tile_data(hstripes_bg);
-			load_tile(0x1000);
-		}
-    }
-}
-
-void RedrawStripes()
-{
-	ResetVideo();
-	setupFont();
-		
-	set_map_data(fs_map, 64, 32);
-	set_tile_data(hstripes_bg);
-	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 64, 32);
-	load_palette(0, check_pal, 1);  
-	
-	Center224in240();
-}
-
 void DropShadow()
-{
-	unsigned char show = 1;
-	unsigned char back = 0;
-	int colswap = 0;
-
+{	
+	view = 0;
+	back = 0;
+	colswap = 0;
 	end = 0;
 	text = 0;
 	redraw = 1;
 	x = 144;
 	y = 100;
+	
 	srand(clock_tt());
 	vary = random(2);
 	right = 0;
@@ -163,7 +68,7 @@ void DropShadow()
         if(redraw)
         {	
 			ResetVideo();
-			RedrawDropShadow(back);
+			RedrawDropShadow();
 			redraw = 0;
         }
 		
@@ -238,14 +143,14 @@ void DropShadow()
 			
 		if (controller & JOY_SEL)
 		{
-			if(show)
+			if(view)
 			{
-				show = 0;
+				view = 0;
 				put_string("Even frames", (back == 1) ? 0 : 26, 2);
 			}
 			else
 			{
-				show = 1;
+				view = 1;
 				put_string("Odd frames ", (back == 1) ? 0 : 26, 2);
 			}
 			text = 60;
@@ -302,17 +207,17 @@ void DropShadow()
 			y = (Enabled240p ? 208 : 192);
 		
 		spr_set(!vary);	
-		if(show)
+		if(view)
 		{
 			spr_x(x);
 			spr_y(y);
-			show = 0;
+			view = 0;
 		}
 		else
 		{
 			spr_x(512);
 			spr_y(512);
-			show = 1;
+			view = 1;
 		}
 		if(!vary)
 		{
@@ -324,7 +229,7 @@ void DropShadow()
     }
 }
 
-void RedrawDropShadow(unsigned char back)
+void RedrawDropShadow()
 {
 	switch(back)
 	{
@@ -409,8 +314,8 @@ void RedrawDropShadow(unsigned char back)
 
 void StripedSprite()
 {
-	unsigned char back = 0;
-	int colswap = 0;
+	back = 0;
+	colswap = 0;
 
 	end = 0;
 	x = 144;
@@ -422,7 +327,7 @@ void StripedSprite()
 		
         if(redraw)
         {	
-			RefreshStriped(back);
+			RefreshStriped();
 			
             redraw = 0;
 			disp_on();
@@ -499,7 +404,7 @@ void StripedSprite()
     }
 }
 
-void RefreshStriped(char back)
+void RefreshStriped()
 {
 	ResetVideo();
 	switch(back)
@@ -571,63 +476,55 @@ void RefreshStriped(char back)
 }
 
 void SwapPalette(int pal, int index)
-{
-	int pos;
-	int tmpcol1 = 0;
-	int tmpcol2 = 0;
-	int tmpcol3 = 0;
-	int tmpcol4 = 0;
+{	
+	vary = index+pal*16;
 	
-	pos = index+pal*16;
-	tmpcol1 = get_color(pos);
-	tmpcol2 = get_color(pos+1);
-	tmpcol3 = get_color(pos+2);
-	tmpcol4 = get_color(pos+3);
+	top = get_color(vary);
+	bottom = get_color(vary+1);
+	left = get_color(vary+2);
+	right = get_color(vary+3);
 		
-	set_color(pos, tmpcol4);
-	set_color(pos+1, tmpcol1);
-	set_color(pos+2, tmpcol2);
-	set_color(pos+3, tmpcol3);		
+	set_color(vary, right);
+	set_color(vary+1, top);
+	set_color(vary+2, bottom);
+	set_color(vary+3, left);		
 }
 
 void DrawPalm()
 {
-	int vram = 0x5000;
-	int pos = 0;
-	unsigned char count = 0;
+	draw = 0;
 	
 	load_palette(16, palm_pal, 1);
 #ifndef CDROM1
-	load_vram(vram, palm_sp, 0x8C0);
+	load_vram(0x5000, palm_sp, 0x8C0);
 #else
-	cd_loadvram(GPHX_OVERLAY, OFS_sonicpalm_tile_bin, vram, SIZE_sonicpalm_tile_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_sonicpalm_tile_bin, 0x5000, SIZE_sonicpalm_tile_bin);
 #endif
 
 	x2 = 500;
 	y2 = 104;
 	for(row = 0; row < 7; row++)
 	{
-		for(pos = 0; pos < 5; pos++)
+		for(i = 0; i < 5; i++)
 		{
-			spr_make(count+2, pos*16+x2, row*16+y2, 0x40*count+vram, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
-			count ++;
+			spr_make(draw+2, i*16+x2, row*16+y2, 0x40*draw+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			draw ++;
 		}
 	}
 }
 
 void MovePalm(int x)
 {
-	unsigned char pos = 0;
-	unsigned char count = 0;
+	draw = 0;
 	
 	x = 4+x*-1;
 	for(row = 0; row < 7; row++)
 	{
-		for(pos = 0; pos < 5; pos++)
+		for(i = 0; i < 5; i++)
 		{
-			spr_set(count+2);
-			spr_x(pos*16+x);
-			count ++;
+			spr_set(draw+2);
+			spr_x(i*16+x);
+			draw ++;
 		}
 	}
 	
@@ -636,12 +533,11 @@ void MovePalm(int x)
 
 void ScrollTest()
 {
-	unsigned char pause = 0;
 	int dir = 1;
 	int spd = 1;
-	int colswap = 0;
-	int vertical = 0;
-
+	
+	option = 0;
+	colswap = 0;
 	end = 0;
 	x1 = 0;
 	x2 = 0;
@@ -649,6 +545,8 @@ void ScrollTest()
 	x4 = 0;
 	
 	y = 0;
+	
+	type = FloatMenuRes320n256(1);
 	
 	redraw = 1;
     while(!end)
@@ -659,9 +557,22 @@ void ScrollTest()
         {
 			ResetVideo();
 			disp_off();
-			if(!vertical)
+			
+			if(type == RES_320)
 			{
 				Set320H();
+				if(option)
+					x = -32;
+			}
+			if(type == RES_256)
+			{
+				Set256H();
+				if(option)
+					x = 0;
+			}
+			
+			if(!option)
+			{
 				set_screen_size(SCR_SIZE_32x32);
 	
 #ifndef CDROM1
@@ -682,7 +593,6 @@ void ScrollTest()
 			}
 			else
 			{
-				Set256H();
 				set_screen_size(SCR_SIZE_32x64);
 #ifndef CDROM1
 				load_background(kiki_bg, kiki_pal, kiki_map, 32, 64);
@@ -724,15 +634,13 @@ void ScrollTest()
 			
 		if (controller & JOY_I)
 		{
-			if(pause)
-				pause = 0;
-			else
-				pause = 1;
+			option = !option;
+			redraw = 1;
 		}
 		
 		if (controller & JOY_SEL)
 		{
-			vertical = !vertical;
+			type = FloatMenuRes320n256(type);
 			redraw = 1;
 		}
 		
@@ -742,7 +650,7 @@ void ScrollTest()
 		if (controller & JOY_RIGHT)
 			dir = -1;
 		
-		if(!vertical)
+		if(!option)
 		{
 			if(colswap == 60)
 			{
@@ -752,14 +660,11 @@ void ScrollTest()
 				colswap = 0;
 			}
 			colswap++;
-			
-			if(!pause)
-			{
-				x1 += 1*spd*dir;
-				x2 += 2*spd*dir;
-				x3 += 3*spd*dir;
-				x4 += 4*spd*dir;
-			}
+						
+			x1 += 1*spd*dir;
+			x2 += 2*spd*dir;
+			x3 += 3*spd*dir;
+			x4 += 4*spd*dir;
 			
 			MovePalm(x4);
 			
@@ -770,15 +675,14 @@ void ScrollTest()
 		}	
 		else
 		{
-			if(!pause)
-				y -= spd*dir;
+			y -= spd*dir;
 				
 			if(y > 512)
 				y = 0;
 			if(y < 0)
 				y = 512;
 			
-			scroll(0, 0, y, 0, 240, 0xC0);
+			scroll(0, x, y, 0, 240, 0xC0);
 		}
     }
 	set_screen_size(SCR_SIZE_64x32);
@@ -805,29 +709,8 @@ void LEDZoneTest()
 
 void VScrollTest()
 {
-	prev_select = 6;
+	prev_select = 5;
 	ToolItem = TOOL_VSCROLL;
-	cd_execoverlay(TEST_EXT_OVERLAY);
-}
-
-void SoundTest()
-{
-	prev_select = 10;
-	ToolItem = TOOL_SOUND;
-	cd_execoverlay(TEST_EXT_OVERLAY);
-}
-
-void MDFourier()
-{
-	prev_select = 11;
-	ToolItem = TOOL_MDFOURIER;
-	cd_execoverlay(TEST_EXT_OVERLAY);
-}
-
-void ManualLagTest()
-{
-	prev_select = 4;
-	ToolItem = TOOL_MANUAL;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
@@ -838,11 +721,46 @@ void LagTest()
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
+void DrawStripes()
+{
+	prev_select = 6;
+	ToolItem = TOOL_STRIPES;
+	cd_execoverlay(TEST_EXT_OVERLAY);
+}
+
+#endif
+
+
+#ifndef CDROM1
+#include "tests_sound.c"
+#else
+
+void SoundTest()
+{
+	prev_select = 10;
+	ToolItem = TOOL_SOUND;
+	cd_execoverlay(TEST_SND_OVERLAY);
+}
+
+void MDFourier()
+{
+	prev_select = 11;
+	ToolItem = TOOL_MDFOURIER;
+	cd_execoverlay(TEST_SND_OVERLAY);
+}
+
 void AudioSyncTest()
 {
 	prev_select = 12;
 	ToolItem = TOOL_AUDIOSYNC;
-	cd_execoverlay(TEST_EXT_OVERLAY);
+	cd_execoverlay(TEST_SND_OVERLAY);
+}
+
+void ManualLagTest()
+{
+	prev_select = 4;
+	ToolItem = TOOL_MANUAL;
+	cd_execoverlay(TEST_SND_OVERLAY);
 }
 
 #endif

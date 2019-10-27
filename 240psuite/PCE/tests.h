@@ -36,7 +36,7 @@ void AudioSyncTest();
 void ManualLagTest();
 
 void RedrawCheck(int res);
-void RedrawDropShadow(int back, int x, int y);
+void RedrawDropShadow();
 void SwapPalette(int pal, int index);
 void DrawPalm();
 void MovePalm(int x);

@@ -7,9 +7,9 @@ from Sonic or a vertical one from Kiki Kaikai.
 - Speed can be varied with up & down on the
 d-pad and scroll direction with left or right.
 
-- Button I stops the screen
+- SELECT changes between 320 and 256 resolutions.
 
-- SELECT toggles between vertical and horizontal
+- Button I toggles between vertical and horizontal
 scroll.
 
 This can be used to notice any drops in

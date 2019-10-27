@@ -30,6 +30,7 @@
 #include "graphics.h"
 
 int type;
+int fmx, fmy, tfmx, tfmy, lfm;
 fmenudata resmenudata[6];
 
 #ifdef CDROM1
@@ -144,7 +145,7 @@ void RedrawFM(char *bottom)
 	set_map_data(float_map, 16, 10);
 	set_tile_data(float_bg);
 	load_tile(0x1100);
-	load_map(12, y/8, 0, 0, 16, 10);
+	load_map(12, fmy/8, 0, 0, 16, 10);
 	load_palette(0, float_pal, 1);  
 
 	Center224in240();
@@ -153,36 +154,35 @@ void RedrawFM(char *bottom)
 	set_color_rgb(1, 0, 0, 0);
 
 	// Title at index 0
-	x4 = strlen(resmenudata[0].name);	
-	x2 = (128/8 - x4)/2 + x/8;
-	y2 = y/8;
+	lfm = strlen(resmenudata[0].name);	
+	tfmx = (128/8 - lfm)/2 + fmx/8;
+	tfmy = fmy/8;
 
 	set_font_pal(13);
-	put_string(resmenudata[0].name, x2, y2);
+	put_string(resmenudata[0].name, tfmx, tfmy);
 	
 	if(bottom)
 	{
-		x4 = strlen(bottom);	
-		x2 = (128/8 - x4)/2 + x/8;
-		y2 = y/8+12;
+		lfm = strlen(bottom);	
+		tfmx = (128/8 - lfm)/2 + fmx/8;
+		tfmy = fmy/8+12;
 
 		SetFontColors(12, 0, RGB(3, 3, 3), RGB(2, 2, 2));
 		set_font_pal(12);
-		put_string(bottom, x2, y2);
+		put_string(bottom, tfmx, tfmy);
 	}
 }
 
 int FloatMenu(int def, int size, char *bottom)
 {
-	x = 100;
-	y = 80; 
+	fmx = 100;
+	fmy = 80; 
 	
 	end = 0;
-	option = def;
 	redraw = 1;
 	
 	if(!Enabled240p)
-		y = 72;
+		fmy = 72;
 
 	while(!end)
 	{
@@ -201,13 +201,13 @@ int FloatMenu(int def, int size, char *bottom)
 		{	
 			for(i = 1; i < size; i++)
 			{	
-				x4 = strlen(resmenudata[i].name);
+				lfm = strlen(resmenudata[i].name);
 				
-				x2 = (128/8 - x4)/2 + x/8;
-				y2 = y/8+2+i+(6-size)/2;
+				tfmx = (128/8 - lfm)/2 + fmx/8;
+				tfmy = fmy/8+2+i+(6-size)/2;
 				
-				set_font_pal(option == i ? 15 : 14);
-				put_string(resmenudata[i].name, x2, y2);
+				set_font_pal(def == i ? 15 : 14);
+				put_string(resmenudata[i].name, tfmx, tfmy);
 			}
 			
 			refresh = 0;
@@ -217,26 +217,26 @@ int FloatMenu(int def, int size, char *bottom)
 		
 		if (controller & JOY_UP) 
 		{
-			option --;
-			if(option < 1)
-				option = size - 1;
+			def --;
+			if(def < 1)
+				def = size - 1;
 			refresh = 1;
 		}
 
 		if (controller & JOY_DOWN) 
 		{
-			option ++;
-			if(option > size - 1)
-				option = 1;
+			def ++;
+			if(def > size - 1)
+				def = 1;
 			refresh = 1;
 		}
 		
-		if (controller & JOY_I)
+		if (controller & JOY_I || controller & JOY_II || controller & JOY_RUN)
 			end = 1;
 	}
 	
 	end = 0;
 	controller = 0;
 	disp_off();
-	return resmenudata[option].id;
+	return resmenudata[def].id;
 }

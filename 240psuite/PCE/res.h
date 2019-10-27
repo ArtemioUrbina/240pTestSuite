@@ -36,9 +36,11 @@
 
 #incchr_ex(cgrid_bg, "graphics/circles_grid.pcx", 0, 0, 1, 1, 0);
 
+#ifndef CDROM1
 #incbin(float_map, "graphics/float.fmp");
 #incchr_ex(float_bg, "graphics/float.pcx", 0, 0, 5, 3, 0);
 #incpal(float_pal, "graphics/float.pcx", 0, 1);
+#endif
 
 #ifdef CDROM1
 #include "graphics.h"

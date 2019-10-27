@@ -36,6 +36,8 @@ typedef struct menu_data fmenudata;
 
 extern fmenudata resmenudata[];
 #define NULL 0
+
+extern int fmx, fmy, tfmx, tfmy, lfm;
 #endif
 
 #define RES_320 1

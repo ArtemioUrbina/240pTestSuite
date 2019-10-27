@@ -46,24 +46,27 @@
 #define PATTERNS_OVERLAY 	3
 #define PATT_EXT_OVERLAY 	4
 #define TEST_EXT_OVERLAY 	5
-#define GPHX_OVERLAY 		6
-#define HELP_OVERLAY		7
-#define ADPCM_VOICE_OVL		8
-#define ADPCM_SWEEP_OVL		9
+#define TEST_SND_OVERLAY 	6
+#define GPHX_OVERLAY 		7
+#define HELP_OVERLAY		8
+#define ADPCM_VOICE_OVL		9
+#define ADPCM_SWEEP_OVL		10
 
 #define TOOL_VSCROLL	1
-#define TOOL_SOUND		2
-#define TOOL_MANUAL		3
-#define	TOOL_PASSIVE	4
-#define TOOL_AUDIOSYNC	5
-#define TOOL_MDFOURIER	6
-#define TOOL_LEDZONE	7
-#define TOOL_CHECK		8
+#define TOOL_MANUAL		2
+#define	TOOL_PASSIVE	3
+#define TOOL_LEDZONE	4
+#define TOOL_CHECK		5
+#define	TOOL_STRIPES	6
 
-#define	TOOL_WHITE		9
-#define	TOOL_OVERSCAN	10
-#define TOOL_IRE		11
-#define TOOL_CONVERG	12
+#define TOOL_SOUND		10
+#define TOOL_AUDIOSYNC	11
+#define TOOL_MDFOURIER	12
+
+#define	TOOL_WHITE		21
+#define	TOOL_OVERSCAN	22
+#define TOOL_IRE		23
+#define TOOL_CONVERG	24
 #endif
  
 #define XRES_BW 0x80
@@ -112,6 +115,9 @@ extern int left;
 extern int right;
 extern unsigned char previous;
 extern unsigned char screen;
+
+extern unsigned char back;
+extern int colswap;
 
 void Set256H();
 void Set320H();

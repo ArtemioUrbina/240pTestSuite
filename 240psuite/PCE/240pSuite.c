@@ -248,7 +248,7 @@ void RefreshMain()
 
 void RefreshVideoTests()
 {
-	row = 7;
+	row = 9;
 
 	set_font_pal(sel == 0 ? 15 : 14);
 	put_string("Drop Shadow Test", HPOS, row++);
@@ -381,6 +381,9 @@ void VideoTests()
 		{
 			disp_off();
 			ResetVideo();
+#ifdef CDROM1
+			prev_select = sel;
+#endif
 			switch(sel)
 			{
 				case 0:
@@ -411,15 +414,9 @@ void VideoTests()
 					LEDZoneTest();
 					break;			
 				case 9:
-#ifdef CDROM1
-					prev_select = sel;
-#endif
 					Options();
 					break;
 				case 10:
-#ifdef CDROM1
-					prev_select = sel;
-#endif
 					showHelp(GENERAL_HELP);
 					break;
 				case 11:

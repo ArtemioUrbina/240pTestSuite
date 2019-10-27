@@ -809,9 +809,9 @@ scroll_00_03:	.db	"- Speed can be varied with up & down on the"
 			.db	0
 scroll_00_04:	.db	"d-pad and scroll direction with left or right."
 			.db	0
-scroll_00_05:	.db	"- Button I stops the screen"
+scroll_00_05:	.db	"- SELECT changes between 320 and 256 resolutions."
 			.db	0
-scroll_00_06:	.db	"- SELECT toggles between vertical and horizontal"
+scroll_00_06:	.db	"- Button I toggles between vertical and horizontal"
 			.db	0
 scroll_00_07:	.db	"scroll."
 			.db	0

@@ -91,7 +91,7 @@ void main()
 		put_string("There is a version of this software", 1, 10);
 		put_string("for System Card 3 so you don't have", 1, 12);
 		put_string("loading times", 10, 14);
-		vsync(200);
+		vsync(40);
 	}
 	cd_execoverlay(MAIN_OVERLAY); // CD-ROM2
 #endif
