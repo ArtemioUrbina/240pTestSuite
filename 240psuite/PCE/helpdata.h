@@ -1,6 +1,6 @@
 
-#define	OPTIONS_HELP		1
-#define GENERAL_HELP		2
+#define	OPTIONS_HELP	4
+#define GENERAL_HELP	5
 
 /*****************************/
 
@@ -21,6 +21,9 @@
 #define	OVERSCAN_HELP		22
 #define CONVERGENCE_HELP	23
 
+#define	OPTIONS_PAT_HELP	24
+#define GENERAL_PAT_HELP	25
+
 /*****************************/
 
 #define	VIDEOHELP			30
@@ -35,6 +38,9 @@
 #define CHECK_HELP			37
 #define BACKLIT_HELP		38
 
+#define	OPTIONS_VID_HELP	39
+#define GENERAL_VID_HELP	40
+
 /*****************************/
 
 #define	AUDIOHELP			50
@@ -42,6 +48,9 @@
 #define	SOUND_HELP			50
 #define AUDIOSYNC_HELP		51
 #define MDFOURIER_HELP		52
+
+#define	OPTIONS_AUD_HELP	53
+#define GENERAL_AUD_HELP	54
 
 /*****************************/
 

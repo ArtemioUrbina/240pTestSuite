@@ -31,7 +31,7 @@ unsigned char EnabledSoft_g;
 unsigned char Enabled_C_BW_g;
 
 #ifdef CDROM
-char HelpItem;
+int HelpItem;
 int ToolItem;
 int prev_select;
 int x_g;

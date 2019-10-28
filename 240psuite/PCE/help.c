@@ -125,6 +125,9 @@ void main()
 						display_manuallag_01();
 					break;
 				case OPTIONS_HELP:
+				case OPTIONS_PAT_HELP:
+				case OPTIONS_VID_HELP:
+				case OPTIONS_AUD_HELP:
 					display_options_00();
 					break;
 				case OVERSCAN_HELP:
@@ -163,6 +166,9 @@ void main()
 					display_white_00();
 					break;	
 				case GENERAL_HELP:
+				case GENERAL_PAT_HELP:
+				case GENERAL_VID_HELP:
+				case GENERAL_AUD_HELP:
 					total = 2;
 					DrawGeneralHelp(page);
 					break;
@@ -233,10 +239,10 @@ void main()
 	disp_off();
 	end = read = controller = 0;
 #ifdef HELP_OVL
-	if(data >= VIDEOHELP)
-		cd_execoverlay(MAIN_OVERLAY);
-	else
+	if(data >= PATTERNSHELP && data < VIDEOHELP)
 		cd_execoverlay(PATTERNS_OVERLAY);
+	else
+		cd_execoverlay(MAIN_OVERLAY);
 #endif
 }
 

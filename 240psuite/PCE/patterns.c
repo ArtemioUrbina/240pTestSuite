@@ -99,7 +99,7 @@ void main()
 		if (controller & JOY_SEL)
 		{
 #ifdef CDROM1
-			x_g = 1;
+			x_g = OPTIONS_PAT_HELP;
 #endif
 			Options();
 			redraw = 1;
@@ -108,7 +108,7 @@ void main()
 		if (controller & JOY_DOWN) 
 		{
 			sel++;
-			if(sel > 14)
+			if(sel > 16)
 				sel = 0;
 			refresh = 1;
 		}
@@ -117,14 +117,14 @@ void main()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 14;
+				sel = 16;
 			refresh = 1;
 		}
 		
 		if (controller & JOY_RUN)
 		{
 #ifdef CDROM1
-			//showHelp(GENERAL_HELP2);
+			showHelp(GENERAL_PAT_HELP);
 #else
 			showHelp(GENERAL_HELP);
 #endif
@@ -134,10 +134,11 @@ void main()
 		}
 		else
 		{
-			if(HelpItem <= CONVERGENCE_HELP)
+			if(HelpItem)
 			{
 				sel = HelpItem - PATTERNSHELP;
-				controller = JOY_I;
+				if(HelpItem <= CONVERGENCE_HELP)
+					controller = JOY_I;
 			}
 				
 			HelpItem = 0;
@@ -193,10 +194,23 @@ void main()
 					DrawConvergence();
 					break;
 				case 14:
+#ifdef CDROM1
+					x_g = 1;
+#endif
+					Options();
+					break;
+				case 15:
+#ifdef CDROM1
+					showHelp(GENERAL_PAT_HELP);
+#else
+					showHelp(GENERAL_HELP);
+#endif
+					break;
+				case 16:
 					end = 1;
 					break;
 			}
-			if(sel != 14)
+			if(sel != 16)
 				end = 0;
 				
 			redraw = 1;	
@@ -256,8 +270,12 @@ void RefreshTestPatternsAux()
 	put_string("Overscan", HPOS, row++);
 	set_font_pal(sel == 13 ? 15 : 14);
 	put_string("Convergence", HPOS, row++);
-
+	
 	set_font_pal(sel == 14 ? 15 : 14);
+	put_string("Options", HPOS, ++row);
+	set_font_pal(sel == 15 ? 15 : 14);
+	put_string("Help", HPOS, ++row);
+	set_font_pal(sel == 16 ? 15 : 14);
 	put_string("Back to Main Menu", HPOS, ++row);
 }
 

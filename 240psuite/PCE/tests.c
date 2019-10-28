@@ -695,35 +695,30 @@ void ScrollTest()
 
 void DrawCheck()
 {
-	prev_select = 7;
 	ToolItem = TOOL_CHECK;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
 void LEDZoneTest()
 {
-	prev_select = 8;
 	ToolItem = TOOL_LEDZONE;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
 void VScrollTest()
 {
-	prev_select = 5;
 	ToolItem = TOOL_VSCROLL;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
 void LagTest()
 {
-	prev_select = 3;
 	ToolItem = TOOL_PASSIVE;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
 void DrawStripes()
 {
-	prev_select = 6;
 	ToolItem = TOOL_STRIPES;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
@@ -737,28 +732,24 @@ void DrawStripes()
 
 void SoundTest()
 {
-	prev_select = 10;
 	ToolItem = TOOL_SOUND;
 	cd_execoverlay(TEST_SND_OVERLAY);
 }
 
 void MDFourier()
 {
-	prev_select = 11;
 	ToolItem = TOOL_MDFOURIER;
 	cd_execoverlay(TEST_SND_OVERLAY);
 }
 
 void AudioSyncTest()
 {
-	prev_select = 12;
 	ToolItem = TOOL_AUDIOSYNC;
 	cd_execoverlay(TEST_SND_OVERLAY);
 }
 
 void ManualLagTest()
 {
-	prev_select = 4;
 	ToolItem = TOOL_MANUAL;
 	cd_execoverlay(TEST_SND_OVERLAY);
 }

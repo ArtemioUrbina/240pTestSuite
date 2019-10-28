@@ -52,21 +52,26 @@
 #define ADPCM_VOICE_OVL		9
 #define ADPCM_SWEEP_OVL		10
 
-#define TOOL_VSCROLL	1
-#define TOOL_MANUAL		2
-#define	TOOL_PASSIVE	3
-#define TOOL_LEDZONE	4
-#define TOOL_CHECK		5
-#define	TOOL_STRIPES	6
-
-#define TOOL_SOUND		10
-#define TOOL_AUDIOSYNC	11
-#define TOOL_MDFOURIER	12
-
-#define	TOOL_WHITE		21
+#define PATTERNTOOL		40
+#define	TOOL_WHITE		19
+#define TOOL_IRE		20
 #define	TOOL_OVERSCAN	22
-#define TOOL_IRE		23
-#define TOOL_CONVERG	24
+#define TOOL_CONVERG	23
+
+#define VIDEOTOOL		40
+#define TOOL_VSCROLL	30
+#define	TOOL_PASSIVE	32
+#define TOOL_MANUAL		33
+#define	TOOL_STRIPES	36
+#define TOOL_CHECK		37
+#define TOOL_LEDZONE	38
+
+#define SOUNDTOOL		40
+#define TOOL_SOUND		40
+#define TOOL_AUDIOSYNC	41
+#define TOOL_MDFOURIER	42
+
+#define HARDWARETOOL	50
 #endif
  
 #define XRES_BW 0x80

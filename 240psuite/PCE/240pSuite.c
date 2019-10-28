@@ -86,7 +86,7 @@ void main()
 		vsync();
 	
 #ifdef CDROM1
-		if(!HelpItem)
+		if(!HelpItem && !ToolItem)
 		{
 #endif
 
@@ -111,9 +111,6 @@ void main()
 		
 		if (controller & JOY_SEL)
 		{
-#ifdef CDROM1
-			x_g = 0;
-#endif
 			Options();
 			redraw = 1;
 		}
@@ -145,9 +142,31 @@ void main()
 		{
 			if(HelpItem)
 			{
-				if(HelpItem < AUDIOHELP)
+				if(HelpItem < PATTERNSHELP)
+				{
+					sel = HelpItem;
+					HelpItem = 0;
+					if(HelpItem < PATTERNSHELP)
+						controller = JOY_I;
+				}
+				else
+				{
+					if(HelpItem < AUDIOHELP)
+						sel = 1;
+					else if(HelpItem < HARDWAREHELP)
+						sel = 2;
+					else
+						sel = 3;
+					controller = JOY_I;
+				}
+			}
+			
+			if(ToolItem)
+			{
+				sel = 0;
+				if(ToolItem < SOUNDTOOL)
 					sel = 1;
-				else if(HelpItem < HARDWAREHELP)
+				else if(ToolItem < HARDWARETOOL)
 					sel = 2;
 				else
 					sel = 3;
@@ -163,6 +182,9 @@ void main()
 			ResetVideo();
 			switch(sel)
 			{
+#ifdef CDROM1
+				prev_select = sel;
+#endif
 				case 0:
 #ifndef CDROM1
 					TestPatterns();
@@ -188,14 +210,11 @@ void main()
 					break;
 				case 4:
 #ifdef CDROM1
-					prev_select = sel;
+					x_g = 0;
 #endif
 					Options();
 					break;
 				case 5:
-#ifdef CDROM1
-					prev_select = sel;
-#endif
 					showHelp(GENERAL_HELP);
 					break;
 				case 6:
@@ -280,10 +299,8 @@ void RefreshVideoTestsAux(int row)
 	
 	set_font_pal(sel == 10 ? 15 : 14);
 	put_string("Help", HPOS, ++row);
-	set_font_pal(sel == 11 ? 15 : 14);
-	put_string("Credits", HPOS, ++row);
 	
-	set_font_pal(sel == 12 ? 15 : 14);
+	set_font_pal(sel == 11 ? 15 : 14);
 	put_string("Back to Main Menu", HPOS, ++row);
 }
 
@@ -295,22 +312,15 @@ void VideoTests()
 	
 	sel = 0;
 	end = 0;
-	
-#ifdef CDROM1
-	if(prev_select)
-	{
-		sel = prev_select;
-		prev_select = 0;
-	}
-#endif
 
+	controller = 0;
 	disp_off();
 	while(!end)
 	{		
 		vsync();
 		
 #ifdef CDROM1
-		if(!HelpItem)
+		if(!HelpItem && !ToolItem)
 		{
 #endif
 		if(redraw)
@@ -336,7 +346,7 @@ void VideoTests()
 		if (controller & JOY_SEL)
 		{
 #ifdef CDROM1
-			x_g = 1;
+			x_g = OPTIONS_VID_HELP;
 #endif
 			Options();
 			redraw = 1;
@@ -345,7 +355,7 @@ void VideoTests()
 		if (controller & JOY_DOWN) 
 		{
 			sel++;
-			if(sel > 12)
+			if(sel > 11)
 				sel = 0;
 			refresh = 1;
 		}
@@ -354,13 +364,13 @@ void VideoTests()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 12;
+				sel = 11;
 			refresh = 1;
 		}
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(GENERAL_VID_HELP);
 			redraw = 1;
 		}
 #ifdef CDROM1
@@ -370,10 +380,16 @@ void VideoTests()
 			if(HelpItem)
 			{
 				sel = HelpItem - VIDEOHELP;
-				controller = JOY_I;
+				if(HelpItem != GENERAL_VID_HELP)
+					controller = JOY_I;
+				HelpItem = 0;
 			}
-				
-			HelpItem = 0;
+			
+			if(ToolItem)
+			{
+				sel = ToolItem - VIDEOTOOL;
+				ToolItem = 0;
+			}
 		}
 #endif
 		
@@ -414,37 +430,35 @@ void VideoTests()
 					LEDZoneTest();
 					break;			
 				case 9:
+#ifdef CDROM1
+					x_g = OPTIONS_VID_HELP;
+#endif
 					Options();
 					break;
 				case 10:
-					showHelp(GENERAL_HELP);
+					showHelp(GENERAL_VID_HELP);
 					break;
 				case 11:
-					DrawCredits();
-					break;
-				case 12:
 					end = 1;
 					break;
 			}
-			if(sel != 12)
+			if(sel != 11)
 				end = 0;
 				
 			redraw = 1;	
 			disp_off();
 			
 #ifdef CDROM1	
-			if(prev_select)
-			{
-				sel = prev_select;
-				prev_select = 0;
-			}
+			sel = prev_select;
+			prev_select = 0;
 #endif
 		}
 	}
 	end = 0;
-	sel = 0;
 #ifdef CDROM1
 	prev_select = 1;
+#else
+	sel = 1;
 #endif
 }
 
@@ -458,7 +472,7 @@ void VideoTests()
 
 void RefreshAudioTests()
 {
-	row = 7;
+	row = 12;
 
 	set_font_pal(sel == 0 ? 15 : 14);
 	put_string("Sound Test", HPOS, row++);
@@ -471,10 +485,8 @@ void RefreshAudioTests()
 	put_string("Options", HPOS, ++row);
 	set_font_pal(sel == 4 ? 15 : 14);
 	put_string("Help", HPOS, ++row);
-	set_font_pal(sel == 5 ? 15 : 14);
-	put_string("Credits", HPOS, ++row);
 	
-	set_font_pal(sel == 6 ? 15 : 14);
+	set_font_pal(sel == 5 ? 15 : 14);
 	put_string("Back to Main Menu", HPOS, ++row);
 }
 
@@ -486,22 +498,15 @@ void AudioTests()
 	
 	sel = 0;
 	end = 0;
+	controller = 0;
 	
-#ifdef CDROM1
-	if(prev_select)
-	{
-		sel = prev_select;
-		prev_select = 0;
-	}
-#endif
-
 	disp_off();
 	while(!end)
 	{		
 		vsync();
 		
 #ifdef CDROM1
-		if(!HelpItem)
+		if(!HelpItem && !ToolItem)
 		{
 #endif
 		if(redraw)
@@ -527,7 +532,7 @@ void AudioTests()
 		if (controller & JOY_SEL)
 		{
 #ifdef CDROM1
-			x_g = 1;
+			x_g = OPTIONS_AUD_HELP;
 #endif
 			Options();
 			redraw = 1;
@@ -536,7 +541,7 @@ void AudioTests()
 		if (controller & JOY_DOWN) 
 		{
 			sel++;
-			if(sel > 6)
+			if(sel > 5)
 				sel = 0;
 			refresh = 1;
 		}
@@ -545,13 +550,13 @@ void AudioTests()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 6;
+				sel = 5;
 			refresh = 1;
 		}
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(GENERAL_HELP);
+			showHelp(GENERAL_AUD_HELP);
 			redraw = 1;
 		}
 #ifdef CDROM1
@@ -560,11 +565,16 @@ void AudioTests()
 		{
 			if(HelpItem)
 			{
-				sel = HelpItem - VIDEOHELP;
-				controller = JOY_I;
+				sel = HelpItem - AUDIOHELP;
+				if(HelpItem != GENERAL_AUD_HELP)
+					controller = JOY_I;
+				HelpItem = 0;
 			}
-				
-			HelpItem = 0;
+			if(ToolItem)
+			{
+				sel = ToolItem - SOUNDTOOL;
+				ToolItem = 0;
+			}
 		}
 #endif
 		
@@ -572,6 +582,9 @@ void AudioTests()
 		{
 			disp_off();
 			ResetVideo();
+#ifdef CDROM1
+			prev_select = sel;
+#endif
 			switch(sel)
 			{
 				case 0:
@@ -585,42 +598,34 @@ void AudioTests()
 					break;
 				case 3:
 #ifdef CDROM1
-					prev_select = sel;
+					x_g = OPTIONS_AUD_HELP;
 #endif
 					Options();
 					break;
 				case 4:
-#ifdef CDROM1
-					prev_select = sel;
-#endif
-					showHelp(GENERAL_HELP);
+					showHelp(GENERAL_AUD_HELP);
 					break;
 				case 5:
-					DrawCredits();
-					break;
-				case 6:
 					end = 1;
 					break;
 			}
-			if(sel != 6)
+			if(sel != 5)
 				end = 0;
 				
 			redraw = 1;	
 			disp_off();
 			
 #ifdef CDROM1	
-			if(prev_select)
-			{
-				sel = prev_select;
-				prev_select = 0;
-			}
+			sel = prev_select;
+			prev_select = 0;
 #endif
 		}
 	}
 	end = 0;
-	sel = 0;
 #ifdef CDROM1
 	prev_select = 2;
+#else
+	sel = 2;
 #endif
 }
 
