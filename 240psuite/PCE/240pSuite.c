@@ -267,6 +267,9 @@ void RefreshMain()
 
 void RefreshVideoTests()
 {
+	//set_font_pal(12);
+	//put_string("Video Tests", 14, 6);
+	
 	row = 9;
 
 	set_font_pal(sel == 0 ? 15 : 14);
@@ -288,7 +291,7 @@ void RefreshVideoTests()
 void RefreshVideoTestsAux(int row)
 {
 	set_font_pal(sel == 6 ? 15 : 14);
-	put_string("Horizontal Stripes", HPOS, row++);
+	put_string("Horiz/Vert Stripes", HPOS, row++);
 	set_font_pal(sel == 7 ? 15 : 14);
 	put_string("Checkerboard", HPOS, row++);
 	set_font_pal(sel == 8 ? 15 : 14);
@@ -472,6 +475,9 @@ void VideoTests()
 
 void RefreshAudioTests()
 {
+	//set_font_pal(12);
+	//put_string("Audio Tests", 14, 6);
+	
 	row = 12;
 
 	set_font_pal(sel == 0 ? 15 : 14);
@@ -678,7 +684,6 @@ void DrawN()
 
 void DrawCredits()
 {	
-	i = 0;
 	end = 0;
 	redraw = 1;
 	refresh = 1;
@@ -760,7 +765,7 @@ void RefreshCredits()
 	set_font_pal(15);
 	put_string("Collaboration:", HPOS+2, row++);
 	set_font_pal(14);
-	put_string("Konsolkongen & shmups regulars", HPOS+2, row++);
+	put_string("shmups regulars", HPOS+2, row++);
 	row++;
 	
 	set_font_pal(15);
@@ -783,6 +788,7 @@ void RefreshCredits()
 	set_font_pal(15);
 	put_string("Dedicated to Elisa", 40, 24);
 	
+	i = 1;
 }
 
 #ifndef CDROM1

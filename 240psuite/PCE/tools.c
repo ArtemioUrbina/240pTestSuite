@@ -323,6 +323,7 @@ void Options()
 				end = 1;
 		}
     }
+	end = 0;
 }
 
 void RedrawOptions()

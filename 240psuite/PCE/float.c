@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2019 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -29,8 +29,8 @@
 #include "video.h"
 #include "graphics.h"
 
-int type;
-int fmx, fmy, tfmx, tfmy, lfm;
+int type, ntype;
+int fmx, fmy, tfmx, tfmy, lfm, fsel;
 fmenudata resmenudata[6];
 
 #ifdef CDROM1
@@ -44,51 +44,56 @@ fmenudata resmenudata[6];
 
 #define CHANGE_VERT "Change vertical res under options"
 
+void ChangeResType()
+{
+	if(type == RES_256)
+		Set256H();
+	else if(type == RES_320)
+		Set320H();
+	else if(type == RES_512)
+		Set512H();
+	else if(type == RES_352)
+		Set352H();
+}
+
 int FloatMenuRes(int def)
 {
 	return(FloatMenuResExtra(def, NULL));
 }
 
+void SetFMRes(int pos, int id, char *res240, char *res224)
+{
+	resmenudata[pos].id = id;
+	if(Enabled240p)
+		resmenudata[pos].name = res240;
+	else
+		resmenudata[pos].name = res224;
+}
+
 void SetFMResTitle()
 {
-	resmenudata[0].id = 0;
+	resmenudata[0].id = FLOAT_CANCEL;
 	resmenudata[0].name = "Display Mode";
 }
 
 void SetFMRes320(int pos)
 {
-	resmenudata[pos].id = RES_320;
-	if(Enabled240p)
-		resmenudata[pos].name = "320x240";
-	else
-		resmenudata[pos].name = "320x224";
+	SetFMRes(pos, RES_320, "320x240", "320x224");
 }
 
 void SetFMRes256(int pos)
 {
-	resmenudata[pos].id = RES_256;
-	if(Enabled240p)
-		resmenudata[pos].name = "256x240";
-	else
-		resmenudata[pos].name = "256x224";
+	SetFMRes(pos, RES_256, "256x240", "256x224");
 }
 
 void SetFMRes512(int pos)
 {
-	resmenudata[pos].id = RES_512;
-	if(Enabled240p)
-		resmenudata[pos].name = "512x240";
-	else
-		resmenudata[pos].name = "512x224";
+	SetFMRes(pos, RES_512, "512x240", "512x224");
 }
 
 void SetFMRes352(int pos)
 {
-	resmenudata[pos].id = RES_352;
-	if(Enabled240p)
-		resmenudata[pos].name = "352x240";
-	else
-		resmenudata[pos].name = "352x224";
+	SetFMRes(pos, RES_352, "352x240", "352x224");
 }
 
 int FloatMenuResExtra(int def, char *option)
@@ -177,6 +182,7 @@ int FloatMenu(int def, int size, char *bottom)
 {
 	fmx = 100;
 	fmy = 80; 
+	fsel = def;
 	
 	end = 0;
 	redraw = 1;
@@ -206,7 +212,7 @@ int FloatMenu(int def, int size, char *bottom)
 				tfmx = (128/8 - lfm)/2 + fmx/8;
 				tfmy = fmy/8+2+i+(6-size)/2;
 				
-				set_font_pal(def == i ? 15 : 14);
+				set_font_pal(fsel == i ? 15 : 14);
 				put_string(resmenudata[i].name, tfmx, tfmy);
 			}
 			
@@ -217,26 +223,32 @@ int FloatMenu(int def, int size, char *bottom)
 		
 		if (controller & JOY_UP) 
 		{
-			def --;
-			if(def < 1)
-				def = size - 1;
+			fsel --;
+			if(fsel < 1)
+				fsel = size - 1;
 			refresh = 1;
 		}
 
 		if (controller & JOY_DOWN) 
 		{
-			def ++;
-			if(def > size - 1)
-				def = 1;
+			fsel ++;
+			if(fsel > size - 1)
+				fsel = 1;
 			refresh = 1;
 		}
 		
-		if (controller & JOY_I || controller & JOY_II || controller & JOY_RUN)
+		if (controller & JOY_I || controller & JOY_RUN)
 			end = 1;
+			
+		if (controller & JOY_II)
+		{
+			fsel = FLOAT_CANCEL;
+			end = 1;
+		}
 	}
 	
 	end = 0;
 	controller = 0;
 	disp_off();
-	return resmenudata[def].id;
+	return resmenudata[fsel].id;
 }

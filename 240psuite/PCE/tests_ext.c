@@ -285,9 +285,12 @@ void LagTest()
 void VScrollTest()
 {
 	int *pos = 0;
-	unsigned char pause = 0;
 	int acc = 1;
 
+	type = FloatMenuRes320n256(1);
+	if(type == FLOAT_CANCEL)
+		return;
+		
 	x = 0;
 	y = 0;
 	end = 0;
@@ -302,7 +305,11 @@ void VScrollTest()
 			ResetVideo();
 			setupFont();
 			
-			set_screen_size(SCR_SIZE_32x32);
+			if(type == RES_256)
+				set_screen_size(SCR_SIZE_32x32);
+			else
+				set_screen_size(SCR_SIZE_64x32);
+			
 			scroll(0, x, y, 0, 240, 0xC0);
 			set_map_data(fs_map, 64, 32);
 			set_tile_data(cgrid_bg);
@@ -313,6 +320,7 @@ void VScrollTest()
 			Center224in240(); 
          
             redraw = 0;
+			ChangeResType();
 			disp_on();
         }
 
@@ -340,25 +348,29 @@ void VScrollTest()
 			speed = 0;          
 
 		if (controller & JOY_I)
-			pause = !pause;
-
-		if (controller & JOY_LEFT || controller & JOY_RIGHT)
-			acc *= -1;
-
-		if(controller & JOY_SEL)
 		{
 			if(pos == &x)
 				pos = &y;
 			else
 				pos = &x;
 		}
+		
 
-		if(!pause)
-			*pos += acc*speed;
+		if (controller & JOY_LEFT || controller & JOY_RIGHT)
+			acc *= -1;
+
+		if(controller & JOY_SEL)
+		{
+			ntype = FloatMenuRes320n256(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			redraw = 1;
+		}
+
+		*pos += acc*speed;
 			
 		scroll(0, x, y, 0, 240, 0xC0);
     }
-	set_screen_size(SCR_SIZE_64x32);
 }
 
 void LEDZoneTest()
@@ -485,6 +497,8 @@ void DrawCheck()
 	// frame == x3
 
 	type = FloatMenuRes(1);
+	if(type == FLOAT_CANCEL)
+		return;
 	
 	option = 0;
 	sel = 0;
@@ -499,7 +513,7 @@ void DrawCheck()
 		
         if(redraw)
         {
-			RedrawCheck(type);
+			RedrawCheck();
             redraw = 0;
 			disp_on();
         }
@@ -545,7 +559,9 @@ void DrawCheck()
 		
 		if (controller & JOY_SEL)
 		{
-			type = FloatMenuRes(type);
+			ntype = FloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
 			redraw = 1;
 		}
 
@@ -557,19 +573,12 @@ void DrawCheck()
     }
 }
 
-void RedrawCheck(int res)
+void RedrawCheck()
 {
 	ResetVideo();
 	setupFont();
 
-	if(res == RES_256)
-		Set256H();
-	else if(res == RES_320)
-		Set320H();
-	else if(res == RES_512)
-		Set512H();
-	else if(res == RES_352)
-		Set352H();
+	ChangeResType();
 	
 	set_screen_size(SCR_SIZE_64x32); 
 	
@@ -591,11 +600,15 @@ void RefreshFS()
 
 void DrawStripes()
 {
-	unsigned char alternate = 0;
-	unsigned char pos = 0;
-	unsigned char drawframe = 0;
-	int frame = 0;
+	type = FloatMenuRes(1);
+	if(type == FLOAT_CANCEL)
+		return;
 
+	option = 0; // frame
+	x = 0; 		// pos
+	vary = 0; 	// toggle
+	draw = 0; 	// alternate
+	y = 0;		// vertical
 	end = 0;
 	redraw = 1;
     while(!end)
@@ -609,13 +622,13 @@ void DrawStripes()
 			disp_on();
         }
 		
-		if(drawframe)
+		if(draw)
 		{
 			put_string("Frame: ", 2, 26);
-			put_number(frame, 2, 8, 26); 
-			frame ++;
-			if(frame == 60)
-				frame = 0;
+			put_number(option, 2, 8, 26); 
+			option ++;
+			if(option == 60)
+				option = 0;
 		}
 		
 		controller = joytrg(0);
@@ -626,9 +639,9 @@ void DrawStripes()
 			redraw = 1;
 		}
 		
-		if(alternate || controller & JOY_SEL)
+		if(vary || controller & JOY_RIGHT)
 		{
-			if(pos)
+			if(x)
 			{
 				set_color(0, 0);
 				set_color(1, RGB(7, 7, 7));
@@ -638,19 +651,19 @@ void DrawStripes()
 				set_color(1, 0);
 				set_color(0, RGB(7, 7, 7));
 			}
-			pos = !pos;
+			x = !x;
 		}
 		
 		if (controller & JOY_I)
-			alternate = !alternate;
+			vary = !vary;
         
 		if (controller & JOY_II)
 			end = 1;
 		
 		if (controller & JOY_LEFT)
 		{
-			drawframe = !drawframe;
-			if(!drawframe)
+			draw = !draw;
+			if(!draw)
 			{
 				set_map_data(fs_map, 64, 32);
 				load_map(0, 0, 0, 0, 64, 32);
@@ -659,25 +672,49 @@ void DrawStripes()
 			
 		if (controller & JOY_UP)
 		{
-			set_tile_data(vstripes_bg);
-			load_tile(0x1000);
+			y = 1;
+			LoadStripesTile();
 		}
 		if (controller & JOY_DOWN)
 		{
-			set_tile_data(hstripes_bg);
-			load_tile(0x1000);
+			y = 0;
+			LoadStripesTile();
+		}
+		
+		if (controller & JOY_SEL)
+		{
+			ntype = FloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			redraw = 1;
 		}
     }
 }
 
+void LoadStripesTile()
+{
+	if(y)
+	{
+		set_tile_data(vstripes_bg);
+		load_tile(0x1000);
+	}
+	else
+	{
+		set_tile_data(hstripes_bg);
+		load_tile(0x1000);
+	}
+}
+	
 void RedrawStripes()
 {
 	ResetVideo();
 	setupFont();
-		
+	
+	ChangeResType();
+	
+	set_screen_size(SCR_SIZE_64x32); 
 	set_map_data(fs_map, 64, 32);
-	set_tile_data(hstripes_bg);
-	load_tile(0x1000);
+	LoadStripesTile();
 	load_map(0, 0, 0, 0, 64, 32);
 	load_palette(0, check_pal, 1);  
 	

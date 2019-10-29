@@ -532,9 +532,10 @@ void MovePalm(int x)
 }
 
 void ScrollTest()
-{
-	int dir = 1;
-	int spd = 1;
+{	
+	type = FloatMenuRes320n256(1);
+	if(type == FLOAT_CANCEL)
+		return;
 	
 	option = 0;
 	colswap = 0;
@@ -544,10 +545,10 @@ void ScrollTest()
 	x3 = 0;
 	x4 = 0;
 	
+	vary = 1;	// dir
+	speed = 1;  
+	
 	y = 0;
-	
-	type = FloatMenuRes320n256(1);
-	
 	redraw = 1;
     while(!end)
     {   
@@ -589,7 +590,7 @@ void ScrollTest()
 				DrawPalm();
 				satb_update();
 				
-				MovePalm(4*spd*dir);
+				MovePalm(4*speed*vary);
 			}
 			else
 			{
@@ -618,16 +619,16 @@ void ScrollTest()
 		}
 		
 		if (controller & JOY_UP)
-			spd++;
+			speed++;
 		
 		if (controller & JOY_DOWN)
-			spd --;
+			speed --;
 			
-		if(spd > 10)
-			spd = 10;
+		if(speed > 10)
+			speed = 10;
 			
-		if(spd < 0)
-			spd = 0;
+		if(speed < 0)
+			speed = 0;
         
 		if (controller & JOY_II)
 			end = 1;
@@ -640,15 +641,17 @@ void ScrollTest()
 		
 		if (controller & JOY_SEL)
 		{
-			type = FloatMenuRes320n256(type);
+			ntype = FloatMenuRes320n256(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
 			redraw = 1;
 		}
 		
 		if (controller & JOY_LEFT)
-			dir = 1;
+			vary = 1;
 			
 		if (controller & JOY_RIGHT)
-			dir = -1;
+			vary = -1;
 		
 		if(!option)
 		{
@@ -661,10 +664,10 @@ void ScrollTest()
 			}
 			colswap++;
 						
-			x1 += 1*spd*dir;
-			x2 += 2*spd*dir;
-			x3 += 3*spd*dir;
-			x4 += 4*spd*dir;
+			x1 += 1*speed*vary;
+			x2 += 2*speed*vary;
+			x3 += 3*speed*vary;
+			x4 += 4*speed*vary;
 			
 			MovePalm(x4);
 			
@@ -675,7 +678,7 @@ void ScrollTest()
 		}	
 		else
 		{
-			y -= spd*dir;
+			y -= speed*vary;
 				
 			if(y > 512)
 				y = 0;
@@ -685,7 +688,6 @@ void ScrollTest()
 			scroll(0, x, y, 0, 240, 0xC0);
 		}
     }
-	set_screen_size(SCR_SIZE_64x32);
 }
 
 

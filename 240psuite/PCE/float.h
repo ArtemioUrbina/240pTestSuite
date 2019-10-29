@@ -24,6 +24,7 @@
  */
  
 extern int type;	// float menu
+extern int ntype;	// float menu
 
 #ifndef MENUDATA
 #define MENUDATA
@@ -40,15 +41,17 @@ extern fmenudata resmenudata[];
 extern int fmx, fmy, tfmx, tfmy, lfm;
 #endif
 
-#define RES_320 1
-#define RES_256 2
-#define RES_512 3
-#define RES_352 4
+#define	FLOAT_CANCEL	0
+#define RES_320 		1
+#define RES_256 		2
+#define RES_512 		3
+#define RES_352 		4
 
 extern char float_map[];
 extern int float_bg[];
 extern int float_pal[];
 
+void ChangeResType();
 int FloatMenuRes(int def);
 int FloatMenuResExtra(int def, char *option);
 int FloatMenuRes320n256(int def);

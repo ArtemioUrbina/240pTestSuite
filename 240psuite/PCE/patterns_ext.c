@@ -247,10 +247,10 @@ void RefreshWhite(unsigned char color, unsigned char edit, int r, int g, int b)
 	}
 }
 
-void DrawOverscan()
+int hres = 256;
+
+void ResetOverscan()
 {
-	int continuous = 0;
-	
 	draw = 0;
 	option = 0;
 	top = 0;
@@ -258,11 +258,12 @@ void DrawOverscan()
 	left = 0;
 	right = 0;
 	previous = 0;
-	screen = 0;
-	end = 0;
 	
-	redraw = 1;
-	refresh = 0;
+	if(type == RES_256)
+		hres = 256;
+	else
+		hres = 320;
+		
 	if(Enabled240p)
 	{
 		if(UseDefault)
@@ -273,6 +274,20 @@ void DrawOverscan()
 	else
 		screen = 224;
 	
+	redraw = 1;
+}
+
+void DrawOverscan()
+{	
+	type = FloatMenuRes320n256(1);
+	if(type == FLOAT_CANCEL)
+		return;
+	
+	ResetOverscan();
+
+	// continuous
+	vary = 0;	
+	end = 0;	
 
 	while(!end)
 	{	
@@ -313,13 +328,16 @@ void DrawOverscan()
 			end = 1;
 		
 		if (controller & JOY_I)
-		{
-			left = right = bottom = top = 0;
-			redraw = 1;
-		}
+			vary = !vary;
 		
 		if (controller & JOY_SEL)
-			continuous = !continuous;
+		{
+			ntype = FloatMenuRes320n256(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			redraw = 1;
+			ResetOverscan();
+		}
 			
 		if (controller & JOY_UP)
 		{
@@ -338,7 +356,7 @@ void DrawOverscan()
 		if(option > 3)
 			option = 0;
 		
-		if(continuous)
+		if(vary)
 			controller = joy(0);
 			
 		if (controller & JOY_LEFT)
@@ -412,20 +430,34 @@ void DrawOverscan()
 #endif
 }
 
+extern char my_font[];
+
+
 void RedrawOverscan()
 {
 	ResetVideo();
-			
-	set_screen_size(SCR_SIZE_32x32); 
-	gfx_clear(0x1200);
-	gfx_init(0x1200);
+
+	if(type == RES_256)
+	{
+		set_screen_size(SCR_SIZE_32x32); 
+		gfx_init(0xa00);
+		gfx_clear(0xa00);
+		Set256H();
+	}
+	else
+	{
+		set_screen_size(SCR_SIZE_64x32); 
+		gfx_init(0xe00);
+		gfx_clear(0xe00);
+		Set320H();
+	}
 	
 	setupFont();
 	
 	set_color_rgb(0, 3, 3, 3);
-	set_color_rgb(1, 7, 7, 7);
+	set_color_rgb(1, 7, 7, 7);	
+
 	disp_on();
-	Set256H();
 }
 
 void RefreshOverscan()
@@ -448,14 +480,14 @@ void RefreshOverscan()
 	put_string("Left: ", 5, 14);
 	put_number(left, 3, 12, 14);
 	put_string("pixels (  %)", 16, 14);
-	x3 = (left*100)/256;
+	x3 = (left*100)/hres;
 	put_number(x3, 2, 24, 14);
 	
 	set_font_pal(option == 3 ? 15 : 14);
 	put_string("Right: ", 5, 15);
 	put_number(right, 3, 12, 15);
 	put_string("pixels (  %)", 16, 15);
-	x3 = (right*100)/256;
+	x3 = (right*100)/hres;
 	put_number(x3, 2, 24, 15);
 }
 
@@ -481,17 +513,17 @@ void DrawOverscanLines()
 void DrawTopLines()
 {
 	if(previous < top)
-		gfx_line(left, top-1, 255-right, top-1, 1);
+		gfx_line(left, top-1, hres-right-1, top-1, 1);
 	else
-		gfx_line(left, previous-1, 255-right, previous-1, 0);
+		gfx_line(left, previous-1, hres-right-1, previous-1, 0);
 }
 
 void DrawBottomLines()
 {
 	if(previous < bottom)
-		gfx_line(left, screen-bottom, 255-right, screen-bottom, 1);
+		gfx_line(left, screen-bottom, hres-right-1, screen-bottom, 1);
 	else
-		gfx_line(left, screen-previous, 255-right, screen-previous, 0);
+		gfx_line(left, screen-previous, hres-right-1, screen-previous, 0);
 }
 
 void DrawLeftLines()
@@ -505,9 +537,9 @@ void DrawLeftLines()
 void DrawRightLines()
 {
 	if(previous < right)
-		gfx_line(256-right, top, 256-right, screen-bottom-1, 1);
+		gfx_line(hres-right, top, hres-right, screen-bottom-1, 1);
 	else
-		gfx_line(256-previous, top, 256-previous, screen-bottom-1, 0);
+		gfx_line(hres-previous, top, hres-previous, screen-bottom-1, 0);
 }
 
 // 100 IRE 
@@ -782,8 +814,10 @@ void RedrawConvergence()
 
 void DrawConvergence()
 {	
-	type = FloatMenuRes320n256(1);
-	
+	type = FloatMenuRes320n256(1);	
+	if(type == FLOAT_CANCEL)
+		return;
+		
 	end = 0;
 	redraw = 1;
 	option = 0;
@@ -840,7 +874,9 @@ void DrawConvergence()
 		
 		if(controller & JOY_SEL)
 		{
-			type = FloatMenuRes320n256(type);
+			ntype = FloatMenuRes320n256(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
 			redraw = 1;
 		}
     }

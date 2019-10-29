@@ -195,7 +195,7 @@ void main()
 					break;
 				case 14:
 #ifdef CDROM1
-					x_g = 1;
+					x_g = OPTIONS_PAT_HELP;
 #endif
 					Options();
 					break;
@@ -235,6 +235,9 @@ void main()
 
 void RefreshTestPatterns()
 {
+	//set_font_pal(12);
+	//put_string("Test Patterns", 14, 6);
+	
 	row = 7;
 	
 	set_font_pal(sel == 0 ? 15 : 14);
@@ -459,8 +462,11 @@ void DrawColorBleed()
 {
 	unsigned char check = 0;
 
-	end = 0;
 	type = FloatMenuRes320n256(1);
+	if(type == FLOAT_CANCEL)
+		return;
+		
+	end = 0;
 	redraw = 1;
 	while(!end)
 	{	
@@ -470,10 +476,7 @@ void DrawColorBleed()
 		{
 			ResetVideo();
 
-			if(type == RES_320)
-				Set320H();
-			if(type == RES_256)
-				Set256H();
+			ChangeResType();
 #ifndef CDROM1			
 			set_map_data(colorbleed_map, 40, 30);
 			if(check)
@@ -540,7 +543,9 @@ void DrawColorBleed()
 		
 		if(controller & JOY_SEL)
 		{
-			type = FloatMenuRes320n256(type);
+			ntype = FloatMenuRes320n256(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
 			redraw = 1;
 		}
 	}
@@ -658,6 +663,8 @@ void DrawGrid()
 	unsigned char showcolor = 0;
 
 	type = FloatMenuRes(1);
+	if(type == FLOAT_CANCEL)
+		return;
 	redraw = 1;
 	end = 0;
 	while(!end)
@@ -668,14 +675,7 @@ void DrawGrid()
 		{
 			ResetVideo();
 
-			if(type == RES_256)
-				Set256H();
-			else if(type == RES_320)
-				Set320H();
-			else if(type == RES_352)
-				Set352H();
-			else if(type == RES_512)
-				Set512H();
+			ChangeResType();
 			
 #ifndef CDROM1		
 			set_tile_data(grid_bg);
@@ -774,7 +774,9 @@ void DrawGrid()
 	
 		if(controller & JOY_SEL)
 		{
-			type = FloatMenuRes(type);
+			ntype = FloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
 			redraw = 1;
 		}
 	}
@@ -784,6 +786,8 @@ void DrawGrid()
 void DrawLinearity()
 {
 	type = FloatMenuRes320n256_224(1);
+	if(type == FLOAT_CANCEL)
+		return;
 	redraw = 1;
 	end = 0;
 	while(!end)
@@ -880,7 +884,9 @@ void DrawLinearity()
 
 		if(controller & JOY_SEL)
 		{
-			type = FloatMenuRes320n256_224(type);
+			ntype = FloatMenuRes320n256_224(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
 			redraw = 1;
 		}
 		

@@ -49,15 +49,16 @@ char palCD[512];
 void main()
 #endif
 {
-	int page = 1;
-	int total = 1;
-
 #ifdef HELP_OVL
 	char data;
 	
 	RestoreGlobals();
 	data = HelpItem;
 #endif
+
+	right = 1;	// page
+	bottom = 1;	// total pages
+
 
 	end = 0;
 	redraw = 1;
@@ -96,10 +97,10 @@ void main()
 					display_color601_00();
 					break;
 				case COLORS_HELP:
-					total = 2;
-					if(page == 1)
+					bottom = 2;
+					if(right == 1)
 						display_colors_00();
-					else if (page == 2)
+					else if (right == 2)
 						display_colors_01();
 					break;
 				case DSHADOW_HELP:
@@ -118,10 +119,10 @@ void main()
 					display_linearity_00();
 					break;
 				case MANUALLAG_HELP:
-					total = 2;
-					if(page == 1)
+					bottom = 2;
+					if(right == 1)
 						display_manuallag_00();
-					else if(page == 2)
+					else if(right == 2)
 						display_manuallag_01();
 					break;
 				case OPTIONS_HELP:
@@ -134,10 +135,10 @@ void main()
 					display_overscan_00();
 					break;
 				case PLUGE_HELP:
-					total = 2;
-					if(page == 1)
+					bottom = 2;
+					if(right == 1)
 						display_pluge_00();
-					else if(page == 2)
+					else if(right == 2)
 						display_pluge_01();
 					break;
 				case SCROLL_HELP:
@@ -169,8 +170,8 @@ void main()
 				case GENERAL_PAT_HELP:
 				case GENERAL_VID_HELP:
 				case GENERAL_AUD_HELP:
-					total = 2;
-					DrawGeneralHelp(page);
+					bottom = 2;
+					DrawGeneralHelp(right);
 					break;
 				case BACKLIT_HELP:
 					DrawBacklitHelp();
@@ -182,11 +183,11 @@ void main()
 					DrawChecksHelp();
 					break;
 				case STRIPES_HELP:
-					total = 2;
-					DrawStripesHelp(page);
+					bottom = 2;
+					DrawStripesHelp(right);
 					break;
 				case PASSIVE_HELP:
-					DrawPassiveLagHelp(page);
+					DrawPassiveLagHelp(right);
 					break;
 				case IRE100HELP:
 					DrawIre100Help();
@@ -203,7 +204,7 @@ void main()
 			}
 			
 			set_font_pal(13);
-			if(total > 1 && page != total)
+			if(bottom > 1 && right != bottom)
 				put_string("(cont...)", 50, 24);
 
 			refresh = 0;
@@ -219,18 +220,18 @@ void main()
 			
 		if (controller & JOY_LEFT)
 		{
-			page--;
-			if(page < 1)
-				page = 1;
+			right--;
+			if(right < 1)
+				right = 1;
 			else
 				refresh = 1;
 		}
 		
 		if (controller & JOY_RIGHT)
 		{
-			page++;
-			if(page > total)
-				page = total;
+			right++;
+			if(right > bottom)
+				right = bottom;
 			else
 				refresh = 1;
 		}
@@ -262,11 +263,11 @@ void showHelp(char data)
 
 #ifndef CDROM1
 /* This is defined in C to use up the constants bank */
-void DrawGeneralHelp(char page)
+void DrawGeneralHelp(char right)
 {	
 	row = 4;
 	
-	switch(page)
+	switch(right)
 	{
 		case 1:
 			put_string("HELP (1/2)", 26, row++);
@@ -284,7 +285,7 @@ void DrawGeneralHelp(char page)
 			row++;
 			put_string("Help is available everywhere by pressing RUN.", 6, row++);
 			put_string("Use right and left in the d-pad to navigate between", 6, row++);
-			put_string("help pages. Options can be changed via SELECT", 6, row++);
+			put_string("help rights. Options can be changed via SELECT", 6, row++);
 			put_string("when in the main menus.",6, row++);
 			row++;
 			DetectPCEType();
@@ -376,11 +377,11 @@ void DrawChecksHelp()
 	put_string("pressing up on the d-pad.", 6, row++);
 }
 
-void DrawStripesHelp(char page)
+void DrawStripesHelp(char right)
 {	
 	row = 4;
 	
-	switch(page)
+	switch(right)
 	{
 		case 1:
 			put_string("HORIZONTAL STRIPES (1/2)", 19, row++);
