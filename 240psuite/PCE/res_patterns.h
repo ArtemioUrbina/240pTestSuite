@@ -44,6 +44,7 @@
 #incchr_ex(convcrosstile_bg, "graphics/convcrosstile.pcx", 0, 0, 1, 1, 0);
 #incchr_ex(convdottile_bg, "graphics/convdottile.pcx", 0, 0, 1, 1, 0);
 
+#incchr_ex(bricks_bg, "graphics/bricks.pcx", 0, 0, 1, 1, 0);
 
 /*
 			PATTERNS
@@ -123,6 +124,7 @@
 #endif
 
 #incpal(convlinestile_pal, "graphics/convlinestile.pcx", 0, 1);
+#incpal(bricks_pal, "graphics/bricks.pcx", 0, 1);
 
 
 #ifdef CDROM1

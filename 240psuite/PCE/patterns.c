@@ -880,6 +880,9 @@ void DrawSharpness()
 {
 	redraw = 1;
 	end = 0;
+	option = 0;
+	type = RES_320;
+	
 	while(!end)
 	{	
 		vsync();
@@ -888,19 +891,34 @@ void DrawSharpness()
 		{
 			ResetVideo();
 			
+			ChangeResType();
+			
+			if(!option)
+			{
 #ifndef CDROM1			
-			set_map_data(sharpness_map, 40, 30);
-			set_tile_data(sharpness_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 40, 30);
-			load_palette(0, sharpness_pal, 1);	
+				set_map_data(sharpness_map, 40, 30);
+				set_tile_data(sharpness_bg);
+				load_tile(0x1000);
+				load_map(0, 0, 0, 0, 40, 30);
+				load_palette(0, sharpness_pal, 1);	
 #else
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_sharpness_PAL_bin, palCD, SIZE_sharpness_PAL_bin); 
-			set_bgpal(0, palCD);
-			cd_loadvram(GPHX_OVERLAY, OFS_sharpness_DATA_bin, 0x1000, SIZE_sharpness_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_sharpness_BAT_bin, 0x0000, SIZE_sharpness_BAT_bin);
+				set_screen_size(SCR_SIZE_64x32); 
+				cd_loaddata(GPHX_OVERLAY, OFS_sharpness_PAL_bin, palCD, SIZE_sharpness_PAL_bin); 
+				set_bgpal(0, palCD);
+				cd_loadvram(GPHX_OVERLAY, OFS_sharpness_DATA_bin, 0x1000, SIZE_sharpness_DATA_bin);
+				cd_loadvram(GPHX_OVERLAY, OFS_sharpness_BAT_bin, 0x0000, SIZE_sharpness_BAT_bin);
 #endif
+			}
+			else
+			{
+				set_tile_data(bricks_bg);
+				load_tile(0x1000);
+				load_palette(0, bricks_pal, 1);  
+				
+				set_map_data(fs_map, 64, 30);
+				load_map(0, 0, 0, 0, 64, 30);
+			}
+			
 			Center224in240();
 
 			redraw = 0;
@@ -917,6 +935,28 @@ void DrawSharpness()
 		
 		if (controller & JOY_II)
 			end = 1;
+			
+		if (controller & JOY_I)
+		{
+			option = !option;
+			if(option)
+			{
+				ntype = FloatMenuRes(type);
+				if(ntype != FLOAT_CANCEL)
+					type = ntype;
+			}
+			else
+				type = RES_320;
+			redraw = 1;
+		}
+		
+		if(option && controller & JOY_SEL)
+		{
+			ntype = FloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			redraw = 1;
+		}
 	}
 }
 

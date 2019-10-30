@@ -77,6 +77,9 @@ extern int motoko_pal[];
 extern int lagback_pal[];
 extern int MB_pal[];
 extern int n_pal[];
+
+extern char bricks_bg[];
+extern int 	bricks_pal[];
 #endif
 
 extern int check_pal[];
@@ -85,5 +88,6 @@ extern int palm_pal[];
 extern int sonic_pal[];
 extern int kiki_pal[];
 extern int bee_pal[];
+
 
 

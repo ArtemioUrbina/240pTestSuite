@@ -601,7 +601,6 @@ void AudioTests()
  *
  */
  
- 
 void DrawN()
 {
 	end = 1;
