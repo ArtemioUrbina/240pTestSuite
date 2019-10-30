@@ -523,6 +523,7 @@ void Set512H()
 #endif
 }
 
+#ifndef HELP_OVL
 void AdjustVertical()
 {
 	if(Enabled240p)
@@ -535,7 +536,7 @@ void AdjustVertical()
 	else
 		Set224p();
 }
-
+#endif
 
 #ifdef CDROM
 

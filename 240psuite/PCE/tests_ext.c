@@ -512,7 +512,7 @@ void LEDZoneTest()
 void DrawCheck()
 {
 	// alternate == option
-	// sel == toggle
+	// vary == toggle
 	// drawframe == x2
 	// frame == x3
 
@@ -521,7 +521,7 @@ void DrawCheck()
 		return;
 	
 	option = 0;
-	sel = 0;
+	vary = 0;
 	x2 = 0;
 	x3 = 0;
 	end = 0;
@@ -557,7 +557,7 @@ void DrawCheck()
 		
 		if(option || controller & JOY_LEFT || controller & JOY_RIGHT)
 		{
-			if(sel)
+			if(vary)
 			{
 				set_color(0, 0);
 				set_color(1, RGB(7, 7, 7));
@@ -567,7 +567,7 @@ void DrawCheck()
 				set_color(1, 0);
 				set_color(0, RGB(7, 7, 7));
 			}
-			sel = !sel;
+			vary = !vary;
 		}
 		
 		if (controller & JOY_UP)

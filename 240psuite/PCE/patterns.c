@@ -225,6 +225,7 @@ void main()
 	Enabled_C_BW_g = Enabled_C_BW;
 	
 	prev_select = 0;
+	ToolItem = 0;
 	ResetVideo();
 	cd_execoverlay(MAIN_OVERLAY);
 #endif

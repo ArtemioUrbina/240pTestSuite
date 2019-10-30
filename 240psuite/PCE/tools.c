@@ -106,6 +106,13 @@ void drawmenutext(int pos, char *text)
 	put_string(text, HPOS, row++);
 }
 
+void DrawMenuBottom(int index, int credits)
+{
+	drawmenutext(index, "Options");
+	drawmenutext(index+1, "Help");
+	drawmenutext(index+2, credits ? "Credits" : "Back to Main Menu");
+}
+
 #endif
 
 #ifdef CDROM1

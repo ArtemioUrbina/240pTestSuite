@@ -36,4 +36,5 @@ void spr_make(int spriteno, int spritex, int spritey, int spritepattern, int ctr
 void RedrawBG();
 void Rewdraw512Menu();
 void drawmenutext(int pos, char *text);
+void DrawMenuBottom(int index, int credits);
 

@@ -235,13 +235,6 @@ void main()
     }
 }
 
-void DrawMenuBottom(int index, int credits)
-{
-	drawmenutext(index, "Options");
-	drawmenutext(index+1, "Help");
-	drawmenutext(index+2, credits ? "Credits" : "Back to Main Menu");
-}
-
 void RefreshMain()
 {
 	row = 11;
@@ -459,7 +452,7 @@ void RefreshAudioTests()
 	drawmenutext(2, "MDFourier");
 	
 	row++;
-	DrawMenuBottom(4, 0);
+	DrawMenuBottom(3, 0);
 }
 
 
