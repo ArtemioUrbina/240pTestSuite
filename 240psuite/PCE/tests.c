@@ -756,4 +756,10 @@ void ManualLagTest()
 	cd_execoverlay(TEST_SND_OVERLAY);
 }
 
+void HardwareTests()
+{
+	ToolItem = HARDWARETOOL;
+	cd_execoverlay(TEST_SND_OVERLAY);
+}
+
 #endif

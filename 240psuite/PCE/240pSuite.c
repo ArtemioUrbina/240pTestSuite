@@ -63,7 +63,7 @@ void main()
 	RestoreGlobals();
 #endif
 
-#ifdef CDROM1	
+#ifdef CDROM
 	if(prev_select)
 	{
 		sel = prev_select;
@@ -85,7 +85,7 @@ void main()
     {   	
 		vsync();
 	
-#ifdef CDROM1
+#ifdef CDROM
 		if(!HelpItem && !ToolItem)
 		{
 #endif
@@ -136,7 +136,7 @@ void main()
 			showHelp(GENERAL_HELP);
 			redraw = 1;
 		}
-#ifdef CDROM1
+#ifdef CDROM
 		}
 		else
 		{
@@ -182,7 +182,7 @@ void main()
 			ResetVideo();
 			switch(sel)
 			{
-#ifdef CDROM1
+#ifdef CDROM
 				prev_select = sel;
 #endif
 				case 0:
@@ -207,6 +207,7 @@ void main()
 					AudioTests();
 					break;
 				case 3:
+					HardwareTests();
 					break;
 				case 4:
 #ifdef CDROM1
@@ -322,7 +323,7 @@ void VideoTests()
 	{		
 		vsync();
 		
-#ifdef CDROM1
+#ifdef CDROM
 		if(!HelpItem && !ToolItem)
 		{
 #endif
@@ -376,7 +377,7 @@ void VideoTests()
 			showHelp(GENERAL_VID_HELP);
 			redraw = 1;
 		}
-#ifdef CDROM1
+#ifdef CDROM
 		}
 		else
 		{
@@ -400,7 +401,7 @@ void VideoTests()
 		{
 			disp_off();
 			ResetVideo();
-#ifdef CDROM1
+#ifdef CDROM
 			prev_select = sel;
 #endif
 			switch(sel)
@@ -511,7 +512,7 @@ void AudioTests()
 	{		
 		vsync();
 		
-#ifdef CDROM1
+#ifdef CDROM
 		if(!HelpItem && !ToolItem)
 		{
 #endif
@@ -565,7 +566,7 @@ void AudioTests()
 			showHelp(GENERAL_AUD_HELP);
 			redraw = 1;
 		}
-#ifdef CDROM1
+#ifdef CDROM
 		}
 		else
 		{
@@ -600,7 +601,7 @@ void AudioTests()
 					AudioSyncTest();
 					break;
 				case 2:
-					MDFourier();
+					MDFourier(0);
 					break;
 				case 3:
 #ifdef CDROM1
@@ -776,8 +777,8 @@ void RefreshCredits()
 	put_string("This is free software and is open source under GPL.", HPOS+1, row++);
 
 	set_font_pal(14);	
-	put_string("Ver. 1.06", 50, 7);
-	put_string("01/08/2019", 49, 8);
+	put_string("Ver. 1.10", 50, 7);
+	put_string("29/08/2019", 49, 8);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;
@@ -794,13 +795,21 @@ void RefreshCredits()
 #ifndef CDROM1
 #ifndef SCDROM
 
+void CheckStart(int sync)
+{
+	vsync(sync);
+	controller = joy(0);
+	if(controller & JOY_RUN)
+		runmdf = 1;
+}
+
 void DrawIntro()
 {	
 	disp_off();
 	ResetVideo();
 	setupFont();
 	
-	vsync();
+	CheckStart(1);
 	set_color(1, 0);
 	SetFontColors(14, 0, 0, 0);
 	put_string("KORDAMP PRESENTS", 12, 14);
@@ -808,15 +817,17 @@ void DrawIntro()
 	for(i = 0; i < 7; i ++)
 	{
 		SetFontColors(14, 0, RGB(i, i, i), 0);
-		vsync(3);
+		CheckStart(3);
 	}
 	
 	for(i = 7; i > 0; i --)
 	{
 		SetFontColors(14, 0, RGB(i, i, i), 0);
-		vsync(3);
+		CheckStart(3);
 	}
 	disp_off();
+	if(runmdf)
+		MDFourier(1);
 }
 
 #endif

@@ -55,6 +55,11 @@
 /*****************************/
 
 #define	HARDWAREHELP		60
+#define	CONTROL_HELP		60
+#define	MEMVIEW_HELP		61
+
+#define	OPTIONS_HW_HELP		62
+#define GENERAL_HW_HELP		63
 
 
 

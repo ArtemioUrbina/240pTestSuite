@@ -32,6 +32,7 @@
 #include "tests.h"
 #include "help.h"
 #include "tools.h"
+#include "float.h"
 
 char palCD[512];
 
@@ -56,226 +57,22 @@ void main()
 			AudioSyncTest();
 			break;
 		case TOOL_MDFOURIER:
-			MDFourier();
+			MDFourier(x_g);
 			break;
 		case TOOL_MANUAL:
 			ManualLagTest();
 			break;
+		case HARDWARETOOL:
+			HardwareTests();
+			break;
 	}
+	if(ToolItem == HARDWARETOOL)
+		ToolItem = 0;
 	cd_execoverlay(MAIN_OVERLAY);
 }
 #endif
 
-const unsigned char *psg_ch = 0x800;
-const unsigned char *psg_bal = 0x801;
-const unsigned char *psg_freqlo = 0x802;
-const unsigned char *psg_freqhi = 0x803;
-const unsigned char *psg_ctrl = 0x804;
-const unsigned char *psg_chbal = 0x805;
-const unsigned char *psg_data = 0x806;
-const unsigned char *psg_noise = 0x807;
-const unsigned char *psg_lfofreq = 0x808;
-const unsigned char *psg_lfoctrl = 0x809;
-
-#define PULSE_TRAIN_FREQ 	13
-#define PULSE_INTERNAL_FREQ	9
-#define PULSE_SKIP_EMU		4
-
-
-/*
-http://ppmck.web.fc2.com/wavetable_js.html
-*/
-
-const unsigned char sine1x[32] = {	0x11, 0x14, 0x17, 0x1a, 0x1c, 0x1e, 0x1f, 0x1f,
-									0x1f, 0x1f, 0x1e, 0x1c, 0x1a, 0x17, 0x14, 0x11,
-									0x0e, 0x0b, 0x08, 0x05, 0x03, 0x01, 0x00, 0x00,
-									0x00, 0x00, 0x01, 0x03, 0x05, 0x08, 0x0b, 0x0e };
-/*									
-const unsigned char sine2x[32] = {	0x13, 0x18, 0x1d, 0x1f, 0x1f, 0x1d, 0x18, 0x13, 
-									0x0c, 0x07, 0x02, 0x00, 0x00, 0x02, 0x07, 0x0c, 
-									0x13, 0x18,	0x1d, 0x1f, 0x1f, 0x1d, 0x18, 0x13,
-									0x0c, 0x07, 0x02, 0x00, 0x00, 0x02, 0x07, 0x0c };
-*/
-	
-const unsigned char sine4x[32] = {	0x16, 0x1e, 0x1e, 0x16, 0x09, 0x01, 0x01, 0x09, 
-									0x16, 0x1e, 0x1e, 0x16, 0x09, 0x01, 0x01, 0x09,
-									0x16, 0x1e, 0x1e, 0x16, 0x09, 0x01, 0x01, 0x09,
-									0x16, 0x1e, 0x1e, 0x16, 0x09, 0x01, 0x01, 0x09 };
-/*
-const unsigned char sqstep[32] = { 	0x18, 0x1C, 0x1C, 0x1C,	0x00, 0x1C, 0x04, 0x1C,
-									0x08, 0x1C, 0x0C, 0x1C,	0x10, 0x1C, 0x14, 0x1C,
-									0x18, 0x1C, 0x1C, 0x1C,	0x00, 0x1C, 0x00, 0x1C,
-									0x00, 0x1C, 0x00, 0x1C,	0x04, 0x1C, 0x08, 0x1C };				
-			
-const unsigned char square[32] = {	0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 
-									0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 
-									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-*/
-/*			
-const unsigned char tiangle[32] = {	0x01, 0x03, 0x05, 0x07, 0x09, 0x0b, 0x0d, 0x0f, 
-									0x11, 0x13, 0x15, 0x17, 0x19, 0x1b, 0x1d, 0x1f,
-									0x1f, 0x1d, 0x1b, 0x19, 0x17, 0x15, 0x13, 0x11,
-									0x0f, 0x0d, 0x0b, 0x09, 0x07, 0x05, 0x03, 0x01 };
-			
-const unsigned char saw[32] = {		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-									0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-									0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
-									0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f };
-			
-const unsigned char sinesaw[32] = {	0x10, 0x13, 0x16, 0x18, 0x1B, 0x1D, 0x1E, 0x1F,
-									0x1F, 0x1F, 0x1E, 0x1D, 0x1B, 0x18, 0x16, 0x13,
-									0x01, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E,
-									0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x1E };
-*/
-
-void LoadWave(unsigned char chan, unsigned char *wave)
-{	
-	__sei();
-	*psg_ch = chan;
-	*psg_ctrl = 0;
-	for(i = 0; i < 32; i++)
-	{
-		*psg_data = *wave;
-		wave++;
-	}
-	*psg_bal = 0xff;
-	*psg_noise = 0;
-	__cli();
-}
-
-void PlayLeft(unsigned char chan)
-{
-	__sei();
-	*psg_ch = chan;
-	*psg_chbal = 0xf0;
-	*psg_ctrl = 0x9f;
-	__cli();
-}
-
-void PlayRight(unsigned char chan)
-{
-	__sei();
-	*psg_ch = chan;
-	*psg_chbal = 0x0f;
-	*psg_ctrl = 0x9f;
-	__cli();
-}
-
-
-void PlayCenter(unsigned char chan)
-{
-	__sei();
-	*psg_ch = chan;
-	*psg_chbal = 0xff;
-	*psg_ctrl = 0x9f;
-	__cli();
-}
-
-void StopAudio(unsigned char chan)
-{
-	__sei();
-	*psg_ch = chan;
-	*psg_ctrl = 0;
-	__cli();
-}
-
-void StopAllAudio()
-{
-	for(i = 0; i < 6; i++)
-		StopAudio(i);
-}
-
-
-/*
-
-                       3580000
- 12 bit value = ---------------------
-                 32 x frequency (Hz)
-				 
-12 as value -> 9322.91Hz
-13 as value -> 8605.76Hz
-
-2044 as value -> 54.73Hz
-4    as value -> 27968.75Hz
-*/
-
-
-void SetWaveFreq(unsigned char chan, unsigned int freq)
-{
-	__sei();
-	*psg_ch = chan;
-	*psg_freqlo = freq & 0xff;
-	*psg_freqhi = freq >> 8;
-	__cli();
-}
-
-void SetNoiseFreq(unsigned int chan, unsigned int freq)
-{
-	__sei();
-	*psg_ch = chan;
-	*psg_noise = 0x80 | (freq & 0x1F)^0x1F;
-	__cli();
-}
-
-void StopNoise(unsigned int chan)
-{
-	__sei();
-	*psg_ch = chan;
-	*psg_noise = 0;
-	*psg_ctrl = 0;
-	__cli();
-}
-
-void ExecutePulseTrain(unsigned int chann)
-{
-	//Sync
-	
-	SetWaveFreq(chann, PULSE_TRAIN_FREQ);
-	for(i = 0; i < 10; i++)
-	{
-		PlayCenter(chann);
-		vsync();
-		StopAudio(chann);
-		vsync();
-	}
-}
-
-void ExecuteSilence()
-{
-	//Silence
-	for(i = 0; i < 20; i++)
-		vsync();
-}
-
-void PlayRampChannel(int chann)
-{
-	//54Hz to 22375Hz
-	PlayCenter(chann);
-	for(i = 2044; i > 4; i-=6)
-	{
-		SetWaveFreq(chann, i);
-		vsync();
-	}
-	StopAudio(chann);
-}
-
-/*
-void PlayBothRampChannel(int chann1, int chann2)
-{
-	//54Hz to 22375Hz
-	PlayLeft(chann1);
-	PlayRight(chann2);
-	for(i = 2044; i > 4; i-=6)
-	{
-		SetWaveFreq(chann1, i);
-		SetWaveFreq(chann2, i);
-		vsync();
-	}
-	StopAudio(chann1);
-	StopAudio(chann2);
-}
-*/
+#include "tests_audio_aux.c"
 
 #define SetupToneCommand(command) SetWaveFreq(0, PULSE_INTERNAL_FREQ); PlayCenter(0); vsync(); StopAudio(0); command;
 
@@ -342,12 +139,16 @@ void MDFourierExecute()
 
 }
 
-void MDFourier()
+void MDFourier(int armed)
 {
  	end = 0;
 	redraw = 1;
 	refresh = 1;
 	
+#ifdef SCDROM
+	armed = runmdf;
+#endif
+
 #ifdef CDROM
 	ad_reset();
 	
@@ -366,6 +167,9 @@ void MDFourier()
 	PlayCenter(0);
 	vsync();
 	StopAudio(0);
+	
+	if(armed)
+		ExecutePulseTrain(0);
 	
     while(!end)
     {   
@@ -408,6 +212,8 @@ void MDFourier()
 			//refresh = 1;
 		}
     }
+	if(armed)
+		redraw = 1;
 }
 
 void SoundTest()
@@ -607,8 +413,8 @@ void SoundTest()
 
 void AudioSyncTest()
 {
-	int status = -1;
-	int acc = -1;
+	option = -1;
+	speed = -1;
 	
 	y = 160;
 	end = 0;
@@ -670,23 +476,23 @@ void AudioSyncTest()
 		{
 			refresh = !refresh;
 			if(!refresh)
-				status = 121;
+				option = 121;
 			else
 				y = 160;
 		}
 		
-		if(refresh && status == -1)
+		if(refresh && option == -1)
 		{
-			status = 0;
-			acc = -1;
+			option = 0;
+			speed = -1;
 		}
 		
-		if(status > -1)
+		if(option > -1)
 		{
-			status++;
-			if(status <= 120)
+			option++;
+			if(option <= 120)
 			{
-				y += acc;
+				y += speed;
 				spr_set(0);				
 				spr_x(160);
 				spr_y(y);			
@@ -694,9 +500,9 @@ void AudioSyncTest()
 			}
 		}
 
-		if(status >= 20 && status <= 120)
+		if(option >= 20 && option <= 120)
 		{
-			switch (status)
+			switch (option)
 			{
 			case 20:
 				break;
@@ -704,7 +510,7 @@ void AudioSyncTest()
 				set_color(3, RGB(7, 7, 7));
 				break;
 			case 60:
-				acc = 1;
+				speed = 1;
 				set_color(4, RGB(7, 7, 7));
 				break;
 			case 80:
@@ -719,13 +525,13 @@ void AudioSyncTest()
 			}
 		}
 		
-		if(status == 120)
+		if(option == 120)
 		{
 			PlayCenter(0);
 			set_color(0, RGB(7, 7, 7));
 		}
 
-		if(status == 122)
+		if(option == 122)
 		{
 			set_color(0, 0);
 			
@@ -733,7 +539,7 @@ void AudioSyncTest()
 				set_color(x, 0);
 
 			StopAudio(0);
-			status = -1;
+			option = -1;
 		}
 		
 		if (controller & JOY_RUN)
@@ -742,7 +548,7 @@ void AudioSyncTest()
 			showHelp(AUDIOSYNC_HELP);
 			redraw = 1;
 			refresh = 0;
-			status = 121;
+			option = 121;
 			y = 160;
 		}
 		
@@ -750,412 +556,271 @@ void AudioSyncTest()
 	StopAudio(0);
 }
 
-
-void RedrawManualLagTest()
-{
-	ResetVideo();
-	setupFont();
-	SetFontColors(13, 0, RGB(0, 7, 0), 0);
-	SetFontColors(14, 0, RGB(7, 7, 7), 0);
-	SetFontColors(15, 0, RGB(7, 0, 0), 0);
-
-#ifndef CDROM1			
-	set_map_data(fs_map, 64, 32);
-	set_tile_data(white_bg);
-	load_tile(0x1000);
-	load_map(0, 0, 0, 0, 64, 32);
-	set_color_rgb(1, 0, 0, 0);   
+#ifndef SCDROM
+#include "tests_manual.c"
 #else
+
+void ManualLagTest()
+{
+	cd_execoverlay(MANUALLAGSCD_OVERLAY);
+}
+
 #endif
-	ManualLagTestSprites();
-	ManualLagTestText();
-}
 
-void ManualLagTestSprites()
+/*
+ *
+ *		Hardware Menu
+ *
+ *
+ */
+ 
+
+#define HPOS 5
+
+void RefreshHardwareTests()
 {
-	init_satb();
-	set_color_rgb(256, 0, 0, 0); 
-	set_color_rgb(257, 7, 7, 7); 
-	set_color_rgb(273, 7, 0, 0); 
-	set_color_rgb(289, 0, 7, 0);
-
-#ifndef CDROM1		
-	load_vram(0x5000, lagspr_sp, 0x100);
-#else
-	cd_loadvram(GPHX_OVERLAY, OFS_lagspr_tile_bin, 0x5000, SIZE_lagspr_tile_bin);
-#endif
-	spr_make(0, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
-	spr_make(1, x, 300, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
-	spr_make(2, x,  96, 0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 2);
+	//set_font_pal(12);
+	//put_string("Hardware Tests", 14, 6);
 	
-	satb_update();
-}
+	row = 14;
 
-
-void ManualLagTestText()
-{
-	set_font_pal(13);
-	put_string("Press \"I\" when the sprite is aligned", 2, 21);
-	put_string("with the background.", 3, 22);
-	put_string("Negative values mean you pressed \"I\"", 2, 23);
-	put_string("before they intersected.", 3, 24);
-	put_string("SELECT toggles horizontal and vertical movement.", 2, 25);
-	put_string("movement.", 3, 26);
-	put_string("D-pad up toggles audio feedback.", 2, 27);
-	put_string("D-pad down toggles rhythmic timing.", 2, 28);
-		
-	Center224in240();
-}
-
-void ManualLagTestResults()
-{
-	int total = 0;
-	int totalms = 0;
-	int val = 0;
+	set_font_pal(sel == 0 ? 15 : 14);
+	put_string("Controller Test", HPOS, row++);
+	set_font_pal(sel == 1 ? 15 : 14);
+	put_string("Memory Viewer", HPOS, row++);
 	
+	set_font_pal(sel == 2 ? 15 : 14);
+	put_string("Options", HPOS, ++row);
+	set_font_pal(sel == 3 ? 15 : 14);
+	put_string("Help", HPOS, ++row);
+	
+	set_font_pal(sel == 4 ? 15 : 14);
+	put_string("Back to Main Menu", HPOS, ++row);
+}
+
+void HardwareTests()
+{
 	redraw = 1;
-	end = 0;
-	x = 0;
-	
-	while(!end)
-	{   	
-		vsync();
+	refresh = 1;
 
+	sel = 0;
+	end = 0;
+	controller = 0;
+	
+	disp_off();
+	while(!end)
+	{		
+		vsync();
+		
+#ifdef CDROM1
+		if(!HelpItem)
+		{
+#endif
 		if(redraw)
 		{
-			ManualLagTestResultsBack();
-			
-			set_font_pal(14);
-			for(x2 = 0; x2 < 10; x2++)
-			{
-				val = clicks[x2];
-				if(val != 0xFF)
-				{
-					put_number(val, 2, 10, 8+x2); 
-					if(val >= 0)
-					{
-						total += val;
-						x ++;
-					}
-				}
-			}
-			
-			set_font_pal(15);
-			put_string("+", 8, 14);
-			put_string("----", 8, 18);
-			
-			totalms = total/x;
-			
-			set_font_pal(14);
-			put_number(total, 7, 5, 19);
-			put_string("/", 12, 19);
-			put_number(x, 2, 13, 19);
-			set_font_pal(15);
-			put_string("=", 15, 19);
-			set_font_pal(14);
-			put_number(totalms, 2, 16, 19);
-			put_string("frames", 19, 19);
-			if(totalms == 1)
-				put_string(" ", 24, 19);
-			totalms = total/x*16;
-			put_number(totalms, 2, 16, 20);
-			put_string("milliseconds", 19, 20);
-			
-			set_font_pal(13);
-			put_string("Keep in mind that a frame is", 6, 21);
-			put_string("16.67 milliseconds.", 6, 22);
-			
-			if(total == 10)
-			{
-				x = 1;
-				for(x2 = 0; x2 < 10; x2++)
-				{
-					if(clicks[x2] != 1)
-						x = 0;
-				}
-				if(x)
-					put_string("Smells like turbo...", 14, 13);
-			}
-			if(total < 5)
-				put_string("EXCELLENT REFLEXES!", 14, 13);
-			if(total == 0)
-				put_string("INCREDIBLE REFLEXES!", 14, 13);
-			
+			RedrawMain();
+
+			refresh = 1;
 			redraw = 0;
 			disp_on();
 		}
 		
+		if(refresh)
+		{	
+			RefreshHardwareTests();
+			refresh = 0;
+		}
+
 		controller = joytrg(0);
 		
 		if (controller & JOY_II)
 			end = 1;
-	}
-}
-
-void ManualLagTestResultsBack()
-{
-	RedrawBG();
-	SetFontColors(13, RGB(3, 3, 3), RGB(0, 7, 0), 0);
-}
-
-void ManualLagTest()
-{
-	int pos = 0;
-
-	end = 0;
-
-#ifndef CDROM1			
-	showHelp(MANUALLAG_HELP);
-#endif
-	
-	x = 0;
-	y = 0;
-	x2 = 0;
-	y2 = 0;
-	
-	speed = 1;
-	
-	variation = 1;
-	change = 1;
-	audio = 1;
-	view = 0;
-	vary = 0;
-	
-	refresh = 0;
-	redraw = 1;
-	srand(clock_tt());
-	
-	for(x2 = 0; x2 < 10; x2++)
-		clicks[x2] = 0xFF;
-	
-	x = 144;
-	y = 60;
-	x2 = 108;
-	y2 = 96;
-	
-	LoadWave(0, sine1x);
-	
-    while(!end)
-    {   
-		vsync();
 		
-        if(redraw)
-        {
-			RedrawManualLagTest();
-            redraw = 0;
-			refresh = 1;
-			disp_on();
-        }
-		
-		if(refresh)
+		if (controller & JOY_SEL)
 		{
-			RefreshManualLagTest();
-			refresh = 0;
+#ifdef CDROM1
+			x_g = OPTIONS_AUD_HELP;
+#endif
+			Options();
+			redraw = 1;
 		}
 		
-		if(audio) // n more that one frame with audio
-			StopAudio(0);
-				
-		if(y == 96) // remove full screen flash
-			set_color_rgb(1, 0, 0, 0);
-		
-		controller = joytrg(0);
-		
-		if (controller & JOY_I)
+		if (controller & JOY_DOWN) 
 		{
-			if(change)
-			{
-				clicks[pos] = (y - 96) *speed;
-				
-				if(audio && clicks[pos] != 0)
-				{
-					SetWaveFreq(0, 224);
-					PlayCenter(0);
-				}
-	
-				if(clicks[pos] >= 0)
-				{
-					change = 0;
-					pos ++;
-				}
-		
-				if(pos > 9)
-					end = 1;
-			}
+			sel++;
+			if(sel > 4)
+				sel = 0;
+			refresh = 1;
+		}
+
+		if (controller & JOY_UP) 
+		{
+			sel--;
+			if(sel < 0)
+				sel = 4;
+			refresh = 1;
 		}
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(MANUALLAG_HELP);
+			showHelp(GENERAL_HW_HELP);
 			redraw = 1;
 		}
-        
+#ifdef CDROM1
+		}
+		else
+		{
+			if(HelpItem)
+			{
+				sel = HelpItem - HARDWAREHELP;
+				if(HelpItem != GENERAL_HW_HELP)
+					controller = JOY_I;
+				HelpItem = 0;
+			}
+		}
+#endif
+		
+		if (controller & JOY_I)
+		{
+			disp_off();
+			ResetVideo();
+#ifdef CDROM1
+			prev_select = sel;
+#endif
+			switch(sel)
+			{
+				case 0:
+					//ControllerTest();
+					break;
+				case 1:
+					MemViewer(0x2000);
+					break;
+				case 2:
+#ifdef CDROM1
+					x_g = OPTIONS_HW_HELP;
+#endif
+					Options();
+					break;
+				case 3:
+					showHelp(GENERAL_HW_HELP);
+					break;
+				case 4:
+					end = 1;
+					break;
+			}
+			if(sel != 4)
+				end = 0;
+				
+			redraw = 1;	
+			disp_off();
+		}
+	}
+	end = 0;
+#ifdef CDROM1
+	xres_flags_g = xres_flags;
+	Enabled240p_g = Enabled240p;
+	UseDefault_g = UseDefault;
+	EnabledSoft_g = EnabledSoft;
+	Enabled_C_BW_g = Enabled_C_BW;
+	
+	prev_select = 3;
+	ResetVideo();
+#else
+	sel = 3;
+#endif
+}
+
+
+void MemViewer(unsigned int address)
+{			
+	end = 0;
+	redraw = 1;
+	refresh = 0;
+	
+	mem = NULL;
+	while(!end)
+	{
+		vsync();
+		
+		if(redraw)
+		{
+			x = 0;
+			y = 0;
+
+			mem = (unsigned char*)address;
+				
+			ResetVideo();
+			load_default_font();
+			set_color(0, 0);
+			
+			SetFontColors(14, RGB(7, 7, 7), 0, 0);	
+			SetFontColors(15, RGB(7, 0, 0), 0, 0);	
+			
+			disp_on();
+
+			set_font_pal(15);
+			put_hex(address    , 4, 36, 0);
+			put_hex(address+448, 4, 36, 27);
+			
+			set_font_pal(14);
+			for(y = 0; y < 28; y++)
+			{
+				for(x = 0; x < 16; x++)
+					put_hex(mem[y*16+x], 2, x*2, y);
+			}
+			
+			redraw = 0;
+		}
+
+		controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(MEMVIEW_HELP);
+			redraw = 1;
+		}
+		
 		if (controller & JOY_II)
 			end = 1;
-			
-		if (controller & JOY_SEL)
+		
+		if (controller & JOY_LEFT)
 		{
-			view ++;
-			if(view > 2)
-				view = 0;
-			if(view == 0)
-			{
-				spr_set(1);
-				spr_y(300);
-			}
-			if(view == 1)
-			{
-				spr_set(0);
-				spr_y(300);
-			}
+			if(address >= 0x1C0)
+				address -= 0x1C0;
+			else
+				address = 0;
+				
+			redraw = 1;
+		}
+		
+		if (controller & JOY_RIGHT)
+		{
+			if(address >= 0xFE3F)
+				address = 0xFE3F;
+			else
+				address += 0x1C0;
+			
+			redraw = 1;
 		}
 		
 		if (controller & JOY_UP)
 		{
-			audio = !audio;
-			refresh = 1;
+			if(address >= 0x2000)
+				address -= 0x2000;
+			else
+				address = 0;
+		
+			redraw = 1;
 		}
 		
 		if (controller & JOY_DOWN)
 		{
-			variation = !variation;
-			refresh = 1;
-			if(!variation)
-				vary = 0;
-		}
-		
-		ManualLagTestClickRefresh();
-		
-		if(y > 132 + vary)
-		{
-			speed = -1;
-			change = 1;
-			if(variation)
-			{
-				if(random(2))
-					vary = random(7);
-				else
-					vary = -1 * random(7);
-			}
-		}
-
-		if(y < 60 + vary)
-		{
-			speed = 1;
-			change = 1;
-			if(variation)
-			{
-				if(random(2))
-					vary = random(7);
-				else
-					vary = -1 * random(7);
-			}
-		}
-		
-		y += speed;
-		x2 += speed;
-		
-		if(view == 0 || view == 2)
-		{
-			spr_set(0);
-			spr_x(x);
-			spr_y(y);
-		}
-		
-		if(view == 1 || view == 2)
-		{
-			spr_set(1);
-			spr_x(x2);
-			spr_y(y2);
-		}
-		
-		if(y == 96)
-		{			
-			if(audio)
-			{
-				SetWaveFreq(0, 112);
-				PlayCenter(0);
-			}
-			
-			spr_set(0);
-			spr_pal(1);
-			
-			spr_set(1);
-			spr_pal(1);
-			set_color_rgb(1, 7, 7, 7);   
-		}
-		else
-		{
-			if(y == 97 || y == 95) // one pixel off
-			{
-				//StopAudio(0);
-				
-				spr_set(0);
-				spr_pal(2);
-			
-				spr_set(1);
-				spr_pal(2);
-			}
-
-			if(y == 98 || y == 94) // two pixels off
-			{
-				spr_set(0);
-				spr_pal(0);
-			
-				spr_set(1);
-				spr_pal(0);
-			}
-		}
-		
-		satb_update();
-    }
-	
-	StopAudio(0);
-	
-	if(pos > 9)
-		ManualLagTestResults();
-}
-
-void RefreshManualLagTest()
-{
-	set_font_pal(13);
-	put_string("Audio:", 25, 2);
-	if(audio)
-		put_string("on ", 32, 2); 
-	else
-		put_string("off", 32, 2);
-		
-	put_string("Timing:", 24, 3);
-	if(variation)
-		put_string("random  ", 32, 3); 
-	else
-		put_string("rhythmic", 32, 3);
-}
-
-void ManualLagTestClickRefresh()
-{
-	for(x3 = 0; x3 < 10; x3++)
-	{
-		if(clicks[x3] != 0xFF)
-		{
-			set_font_pal(14);
-			put_string("Offset  :", 2, 2+x3);
-			put_number(x3+1, 2, 8, 2+x3); 
-			
-			if(clicks[x3] >= 0)
-			{
-				if(clicks[x3] == 0)
-					set_font_pal(13);
-				else
-					set_font_pal(14);
-			}
+			if(address >= 0xDFFF)
+				address = 0xFE3F;
 			else
-				set_font_pal(15);
-			
-			put_number(clicks[x3], 2, 11, 2+x3); 
-			put_string("frames", 14, 2+x3);
-			if(clicks[x3] == 1 || clicks[x3] == -1)
-				put_string(" ", 19, 2+x3);
+				address += 0x2000;
+
+			redraw = 1;
 		}
 	}
 }

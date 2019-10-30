@@ -71,6 +71,8 @@ unsigned char screen;
 
 unsigned char back;
 int colswap;
+unsigned char *mem;
+int runmdf;
 
 #ifdef CDROM1
 #include "graphics.h"

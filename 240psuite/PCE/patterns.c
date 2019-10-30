@@ -226,8 +226,6 @@ void main()
 	
 	prev_select = 0;
 	ResetVideo();
-	set_font_pal(13);
-	put_string("Loading...", 27, 26);
 	cd_execoverlay(MAIN_OVERLAY);
 #endif
 	sel = 0;

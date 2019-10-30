@@ -279,9 +279,12 @@ void ResetOverscan()
 
 void DrawOverscan()
 {	
+	/*
 	type = FloatMenuRes320n256(1);
 	if(type == FLOAT_CANCEL)
 		return;
+	*/
+	type = RES_256;
 	
 	ResetOverscan();
 
@@ -329,7 +332,7 @@ void DrawOverscan()
 		
 		if (controller & JOY_I)
 			vary = !vary;
-		
+		/*
 		if (controller & JOY_SEL)
 		{
 			ntype = FloatMenuRes320n256(type);
@@ -338,6 +341,7 @@ void DrawOverscan()
 			redraw = 1;
 			ResetOverscan();
 		}
+		*/
 			
 		if (controller & JOY_UP)
 		{

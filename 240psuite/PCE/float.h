@@ -23,6 +23,8 @@
  
  */
  
+ #include "stddef.h"
+ 
 extern int type;	// float menu
 extern int ntype;	// float menu
 
@@ -36,7 +38,6 @@ struct menu_data {
 typedef struct menu_data fmenudata;
 
 extern fmenudata resmenudata[];
-#define NULL 0
 
 extern int fmx, fmy, tfmx, tfmy, lfm;
 #endif

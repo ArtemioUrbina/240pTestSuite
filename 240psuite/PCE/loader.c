@@ -25,6 +25,7 @@
 #include "huc.h"
 #include "video.h"
 #include "font.h"
+#include "helpdata.h"
 
 
 // Include them directly in order to reduce ovl and loading times.
@@ -33,6 +34,14 @@
 #incbin(fs_map, "graphics/fullscreen.fmp");
 #incchr_ex(white_bg, "graphics/check.pcx", 8, 8, 1, 1, 0);
 
+void CheckStart(int sync)
+{
+	vsync(sync);
+	controller = joy(0);
+	if(controller & JOY_RUN)
+		runmdf = 1;
+}
+
 void DrawIntro()
 {
 	unsigned char frame;
@@ -40,14 +49,14 @@ void DrawIntro()
 	ResetVideo();
 	setupFont();
 	
-	vsync();
+	CheckStart(1);
 	set_color(1, 0);
 	SetFontColors(14, 0, 0, 0);
 	put_string("KORDAMP PRESENTS", 12, 12);
 	for(frame = 0; frame < 7; frame ++)
 	{
 		SetFontColors(14, 0, RGB(frame, frame, frame), 0);
-		vsync(3);
+		CheckStart(3);
 	}
 	
 	frame = 5;
@@ -57,7 +66,7 @@ void DrawIntro()
 	for(frame = 7; frame > 0; frame --)
 	{
 		SetFontColors(14, 0, RGB(frame, frame, frame), 0);
-		vsync(3);
+		CheckStart(3);
 	}
 }
 
@@ -82,7 +91,6 @@ void main()
 #ifndef CDROM1
 	SetFontColors(14, 0, RGB(4, 4, 4), 0);
 	put_string("Loading...", 28, 26);
-	cd_execoverlay(2); // Super CD-ROM2
 #else
 	x = cd_getver() >> 8;
 	if(x == 3)
@@ -91,9 +99,15 @@ void main()
 		put_string("There is a version of this software", 1, 10);
 		put_string("for System Card 3 so you don't have", 1, 12);
 		put_string("loading times", 10, 14);
-		vsync(40);
+		CheckStart(40);
 	}
-	cd_execoverlay(MAIN_OVERLAY); // CD-ROM2
 #endif
+	if(runmdf)
+	{
+		x_g = 1;
+		HelpItem = MDFOURIER_HELP;
+	}
+	cd_execoverlay(MAIN_OVERLAY); 
 }
+
 

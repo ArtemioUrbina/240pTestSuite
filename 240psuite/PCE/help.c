@@ -129,6 +129,7 @@ void main()
 				case OPTIONS_PAT_HELP:
 				case OPTIONS_VID_HELP:
 				case OPTIONS_AUD_HELP:
+				case OPTIONS_HW_HELP:
 					display_options_00();
 					break;
 				case OVERSCAN_HELP:
@@ -170,6 +171,7 @@ void main()
 				case GENERAL_PAT_HELP:
 				case GENERAL_VID_HELP:
 				case GENERAL_AUD_HELP:
+				case GENERAL_HW_HELP:
 					bottom = 2;
 					DrawGeneralHelp(right);
 					break;
@@ -242,6 +244,11 @@ void main()
 #ifdef HELP_OVL
 	if(data >= PATTERNSHELP && data < VIDEOHELP)
 		cd_execoverlay(PATTERNS_OVERLAY);
+	else if(data >= HARDWAREHELP)
+	{
+		ToolItem = HARDWARETOOL;
+		cd_execoverlay(TEST_SND_OVERLAY);
+	}
 	else
 		cd_execoverlay(MAIN_OVERLAY);
 #endif
@@ -393,7 +400,7 @@ void DrawStripesHelp(char right)
 			put_string("You should see a pattern of lines, each one pixel", 6, row++);
 			put_string("in height, starting with a white one at the top of", 6, row++);
 			put_string("the screen. You can toggle the pattern with", 6, row++);
-			put_string("SELECT, or turn on auto-toggle each frame with I.", 6, row++);
+			put_string("Right, or turn on auto-toggle each frame with I.", 6, row++);
 			row++;
 			put_string("When auto-toggle is set, you should see the lines", 6, row++);
 			put_string("alternating rapidly. On some setups, the pattern", 6, row++);
@@ -412,6 +419,9 @@ void DrawStripesHelp(char right)
 			put_string("that pattern will help you evaluate if the signal", 6, row++);
 			put_string("is not distorted horizontaly, since all lines", 6, row++);
 			put_string("should be one pixel wide.", 6, row++);
+			row++;
+			put_string("- You can switch between all supported resolutions", 6, row++);
+			put_string("by pressing SELECT.", 6, row);
 			break;
 	}
 }

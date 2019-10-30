@@ -10,10 +10,12 @@ CALL makeclean.bat
 @REM Compile, assemble, and link
 @REM -fno-recursive makes globals fail
 huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay loader.c font.c video.c  || goto :error
-pceas -DSCDROM -DCDROM -s -msmall -scd -overlay loader.s  || goto :error
 huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay 240pSuite.c font.c video.c tests.c patterns.c tools.c help.c float.c || goto :error
+huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay tests_manual.c help.c font.c video.c tools.c || goto :error
+pceas -DSCDROM -DCDROM -s -msmall -scd -overlay loader.s  || goto :error
 pceas -DSCDROM -DCDROM -s -msmall -scd -overlay 240pSuite.s  || goto :error
-isolink 240pSuite.iso loader.ovl 240pSuite.ovl adpcm.vox sweep.vox  || goto :error
+pceas -DSCDROM -DCDROM -s -msmall -scd -overlay tests_manual.s  || goto :error
+isolink 240pSuite.iso loader.ovl 240pSuite.ovl tests_manual.ovl adpcm.vox sweep.vox  || goto :error
 
 :; exit 0
 exit /b 0

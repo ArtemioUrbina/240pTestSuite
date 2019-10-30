@@ -380,7 +380,7 @@ void display_gridscroll_00()
 	p_string	gridscroll_00_06,6,13
 	p_string	gridscroll_00_07,6,14
 	p_string	gridscroll_00_08,6,16
-	p_string	gridscroll_00_09,6,17
+	p_string	gridscroll_00_09,6,18
 	rts
 
 gridscroll_00_00:	.db	"GRID SCROLL TEST"
@@ -393,15 +393,15 @@ gridscroll_00_03:	.db	"and how well the display or video processor copes"
 			.db	0
 gridscroll_00_04:	.db	"with scrolling and framerate."
 			.db	0
-gridscroll_00_05:	.db	"- Select can be used to toggle between horizontal"
+gridscroll_00_05:	.db	"- Button I can be used to toggle between horizontal"
 			.db	0
-gridscroll_00_06:	.db	"and vertical, while the d-pad up or down"
+gridscroll_00_06:	.db	"and vertical scroll, while the d-pad up or down"
 			.db	0
 gridscroll_00_07:	.db	"regulates speed."
 			.db	0
-gridscroll_00_08:	.db	"- Button I stops the scroll and"
+gridscroll_00_08:	.db	"- D-pad left or right changes direction."
 			.db	0
-gridscroll_00_09:	.db	"d-pad left or right changes direction."
+gridscroll_00_09:	.db	"- You can change the resolution with SELECT."
 			.db	0
 #endasm
 }
@@ -656,11 +656,10 @@ void display_overscan_00()
 	p_string	overscan_00_06,6,13
 	p_string	overscan_00_07,6,14
 	p_string	overscan_00_08,6,16
-	p_string	overscan_00_09,6,17
+	p_string	overscan_00_09,6,18
 	p_string	overscan_00_10,6,19
 	p_string	overscan_00_11,6,20
 	p_string	overscan_00_12,6,21
-	p_string	overscan_00_13,6,22
 	rts
 
 overscan_00_00:	.db	"OVERSCAN"
@@ -679,17 +678,15 @@ overscan_00_06:	.db	"The resulting number is the amount of overscan"
 			.db	0
 overscan_00_07:	.db	"in pixels in each direction."
 			.db	0
-overscan_00_08:	.db	"- The SELECT button allows faster movement of "
+overscan_00_08:	.db	"- Button I allows faster movement of the borders."
 			.db	0
-overscan_00_09:	.db	"the borders."
+overscan_00_09:	.db	"This pattern follows the current video options,"
 			.db	0
-overscan_00_10:	.db	"This pattern follows the current video options,"
+overscan_00_10:	.db	"so you can check how it handles in 239, 240, and"
 			.db	0
-overscan_00_11:	.db	"so you can check how it handles in 239, 240, and"
+overscan_00_11:	.db	"224 modes. Keep in mind the horizontal resolution"
 			.db	0
-overscan_00_12:	.db	"224 modes. Keep in mind the horizontal resolution"
-			.db	0
-overscan_00_13:	.db	"is fixed at 256 pixels."
+overscan_00_12:	.db	"is fixed at 256 pixels."
 			.db	0
 #endasm
 }

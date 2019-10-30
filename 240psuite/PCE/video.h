@@ -22,14 +22,13 @@
  This version of the suite is compiled with HuC from https://github.com/uli/huc
  
  */
- 
-#ifdef CDROM
-#ifndef CDROM1
-#ifndef HELP_OVL
-#define ADPCM_VOICE_OVL		3
-#define ADPCM_SWEEP_OVL		4
-#endif
-#endif
+
+#ifdef SCDROM
+#define LOADER_OVERLAY 			1
+#define MAIN_OVERLAY 			2
+#define MANUALLAGSCD_OVERLAY 	3
+#define ADPCM_VOICE_OVL			4
+#define ADPCM_SWEEP_OVL			5
 #endif
 
 #ifdef CDROM1
@@ -51,14 +50,16 @@
 #define HELP_OVERLAY		8
 #define ADPCM_VOICE_OVL		9
 #define ADPCM_SWEEP_OVL		10
+#endif
 
-#define PATTERNTOOL		40
+#ifdef CDROM
+#define PATTERNTOOL		10
 #define	TOOL_WHITE		19
 #define TOOL_IRE		20
 #define	TOOL_OVERSCAN	22
 #define TOOL_CONVERG	23
 
-#define VIDEOTOOL		40
+#define VIDEOTOOL		30
 #define TOOL_VSCROLL	30
 #define	TOOL_PASSIVE	32
 #define TOOL_MANUAL		33
@@ -123,6 +124,9 @@ extern unsigned char screen;
 
 extern unsigned char back;
 extern int colswap;
+
+extern unsigned char *mem;
+extern int runmdf;
 
 void Set256H();
 void Set320H();
