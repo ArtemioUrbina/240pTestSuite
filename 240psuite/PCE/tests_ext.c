@@ -305,8 +305,7 @@ void LagTest()
 void VScrollTest()
 {
 	int *pos = 0;
-	int acc = 1;
-
+	
 	type = FloatMenuRes320n256(1);
 	if(type == FLOAT_CANCEL)
 		return;
@@ -317,6 +316,7 @@ void VScrollTest()
 	redraw = 1;
 	pos = &x;
 	speed = 1;
+	option = 1;  // acc
     while(!end)
     {   
 		vsync();
@@ -377,7 +377,7 @@ void VScrollTest()
 		
 
 		if (controller & JOY_LEFT || controller & JOY_RIGHT)
-			acc *= -1;
+			option *= -1;
 
 		if(controller & JOY_SEL)
 		{
@@ -387,7 +387,7 @@ void VScrollTest()
 			redraw = 1;
 		}
 
-		*pos += acc*speed;
+		*pos += option*speed;
 			
 		scroll(0, x, y, 0, 240, 0xC0);
     }
@@ -396,18 +396,18 @@ void VScrollTest()
 void LEDZoneTest()
 {
 	// visible = option
-	int size[4];
 
 	x2 = 0;
 	end = 0;
 	x = 144;
 	y = 120;
 	redraw = 1;
+	option = 1;
 	
-	size[0] = 1;
-	size[1] = 2;
-	size[2] = 4;
-	size[3] = 8;
+	clicks[0] = 1;
+	clicks[1] = 2;
+	clicks[2] = 4;
+	clicks[3] = 8;
 	
     while(!end)
     {   
@@ -492,12 +492,12 @@ void LEDZoneTest()
 				
 			if(x < 0)
 				x = 0;
-			if(x > 320 - size[x2])
-				x = 320 - size[x2];
+			if(x > 320 - clicks[x2])
+				x = 320 - clicks[x2];
 			if(y < 0)
 				y = 0;
-			if(y > (Enabled240p ? 240 - size[x2] : 224 - size[x2]))
-				y = Enabled240p ? 240 - size[x2] : 224 - size[x2];
+			if(y > (Enabled240p ? 240 - clicks[x2] : 224 - clicks[x2]))
+				y = Enabled240p ? 240 - clicks[x2] : 224 - clicks[x2];
 		
 			spr_set(0);	
 		

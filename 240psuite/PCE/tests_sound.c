@@ -556,7 +556,7 @@ void AudioSyncTest()
 	StopAudio(0);
 }
 
-#ifndef SCDROM
+#ifndef SCDROM2
 #include "tests_manual.c"
 #else
 
@@ -582,20 +582,13 @@ void RefreshHardwareTests()
 	//set_font_pal(12);
 	//put_string("Hardware Tests", 14, 6);
 	
-	row = 14;
+	row = 12;
 
-	set_font_pal(sel == 0 ? 15 : 14);
-	put_string("Controller Test", HPOS, row++);
-	set_font_pal(sel == 1 ? 15 : 14);
-	put_string("Memory Viewer", HPOS, row++);
+	drawmenutext(0, "Controller Test");
+	drawmenutext(1, "Memory Viewer");
 	
-	set_font_pal(sel == 2 ? 15 : 14);
-	put_string("Options", HPOS, ++row);
-	set_font_pal(sel == 3 ? 15 : 14);
-	put_string("Help", HPOS, ++row);
-	
-	set_font_pal(sel == 4 ? 15 : 14);
-	put_string("Back to Main Menu", HPOS, ++row);
+	row++;
+	DrawMenuBottom(2, 0);
 }
 
 void HardwareTests()

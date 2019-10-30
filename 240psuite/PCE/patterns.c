@@ -238,52 +238,28 @@ void RefreshTestPatterns()
 	
 	row = 7;
 	
-	set_font_pal(sel == 0 ? 15 : 14);
-	put_string("Pluge", HPOS, row++);
-	set_font_pal(sel == 1 ? 15 : 14);
-	put_string("Color Bars", HPOS, row++);
-	set_font_pal(sel == 2 ? 15 : 14);
-	put_string("EBU Color Bars", HPOS, row++);
-	set_font_pal(sel == 3 ? 15 : 14);
-	put_string("SMPTE Color Bars", HPOS, row++);
-	set_font_pal(sel == 4 ? 15 : 14);
-	put_string("Color Bars w/ Gray Ref", HPOS, row++);
-	set_font_pal(sel == 5 ? 15 : 14);
-	put_string("Color Bleed Check", HPOS, row++);
-	set_font_pal(sel == 6 ? 15 : 14);
-	put_string("Grids", HPOS, row++);
-	RefreshTestPatternsAux();
-}
-		
-void RefreshTestPatternsAux()
-{
-	set_font_pal(sel == 7 ? 15 : 14);
-	put_string("Linearity", HPOS, row++);
-	set_font_pal(sel == 8 ? 15 : 14);
-	put_string("Gray Ramp", HPOS, row++);
-	set_font_pal(sel == 9 ? 15 : 14);
-	put_string("White & RGB Screen", HPOS, row++);
-	set_font_pal(sel == 10 ? 15 : 14);
-	put_string("100 IRE", HPOS, row++);
-	set_font_pal(sel == 11 ? 15 : 14);
-	put_string("Sharpness", HPOS, row++);
-	set_font_pal(sel == 12 ? 15 : 14);
-	put_string("Overscan", HPOS, row++);
-	set_font_pal(sel == 13 ? 15 : 14);
-	put_string("Convergence", HPOS, row++);
+	drawmenutext(0, "Pluge");
+	drawmenutext(1, "Color Bars");
+	drawmenutext(2, "EBU Color Bars");
+	drawmenutext(3, "SMPTE Color Bars");
+	drawmenutext(4, "Color Bars w/ Gray Ref");
+	drawmenutext(5, "Color Bleed Check");
+	drawmenutext(6, "Grids");
+	drawmenutext(7, "Linearity");
+	drawmenutext(8, "Gray Ramp");
+	drawmenutext(9, "White & RGB Screen");
+	drawmenutext(10, "100 IRE");
+	drawmenutext(11, "Sharpness");
+	drawmenutext(12, "Overscan");
+	drawmenutext(13, "Convergence");
 	
-	set_font_pal(sel == 14 ? 15 : 14);
-	put_string("Options", HPOS, ++row);
-	set_font_pal(sel == 15 ? 15 : 14);
-	put_string("Help", HPOS, ++row);
-	set_font_pal(sel == 16 ? 15 : 14);
-	put_string("Back to Main Menu", HPOS, ++row);
+	row++;
+	DrawMenuBottom(14, 0);
 }
 
 void DrawPluge()
 {
-	unsigned char col = 1;
-
+	color = 1;
 	end = 0;
 	redraw = 1;
 	refresh = 0;
@@ -318,7 +294,7 @@ void DrawPluge()
 		
 		if(refresh)
 		{
-			switch(col)
+			switch(color)
 			{
 #ifndef CDROM1		
 				case 0:
@@ -365,9 +341,9 @@ void DrawPluge()
 		
 		if (controller & JOY_I)
 		{
-			col ++;
-			if(col > 3)
-				col = 0;
+			color ++;
+			if(color > 3)
+				color = 0;
 			refresh = 1;
 		}
 	}
@@ -458,12 +434,11 @@ void DrawCB601()
 
 void DrawColorBleed()
 {
-	unsigned char check = 0;
-
 	type = FloatMenuRes320n256(1);
 	if(type == FLOAT_CANCEL)
 		return;
-		
+
+	option = 0;		// check
 	end = 0;
 	redraw = 1;
 	while(!end)
@@ -477,7 +452,7 @@ void DrawColorBleed()
 			ChangeResType();
 #ifndef CDROM1			
 			set_map_data(colorbleed_map, 40, 30);
-			if(check)
+			if(option)
 				set_tile_data(colorbleedchk_bg);
 			else
 				set_tile_data(colorbleed_bg);
@@ -488,7 +463,7 @@ void DrawColorBleed()
 			set_screen_size(SCR_SIZE_64x32); 
 			cd_loaddata(GPHX_OVERLAY, OFS_colorbleed_PAL_bin, palCD, SIZE_colorbleed_PAL_bin); 
 			set_bgpal(0, palCD);
-			if(check)
+			if(option)
 				cd_loadvram(GPHX_OVERLAY, OFS_colorbldchk_DATA_bin, 0x1000, SIZE_colorbleed_DATA_bin);
 			else
 				cd_loadvram(GPHX_OVERLAY, OFS_colorbleed_DATA_bin, 0x1000, SIZE_colorbleed_DATA_bin);
@@ -517,7 +492,7 @@ void DrawColorBleed()
 			end = 1;
 		if (controller & JOY_I)
 		{
-			if(check)
+			if(option)
 			{
 #ifndef CDROM1
 				set_tile_data(colorbleed_bg);
@@ -525,7 +500,7 @@ void DrawColorBleed()
 #else
 				cd_loadvram(GPHX_OVERLAY, OFS_colorbleed_DATA_bin, 0x1000, SIZE_colorbleed_DATA_bin);
 #endif
-				check = 0;
+				option = 0;
 			}
 			else
 			{
@@ -535,7 +510,7 @@ void DrawColorBleed()
 #else
 				cd_loadvram(GPHX_OVERLAY, OFS_colorbldchk_DATA_bin, 0x1000, SIZE_colorbleed_DATA_bin);
 #endif
-				check = 1;
+				option = 1;
 			}
 		}
 		
@@ -551,9 +526,8 @@ void DrawColorBleed()
 
 void DrawSMPTE_EBU(unsigned char ebu)
 {
-	unsigned char is100 = 0;
-	unsigned char text = 0;
-
+	option = 0;  // 100%
+	text = 0;
 	redraw = 1;
 	end = 0;
 	while(!end)
@@ -578,13 +552,13 @@ void DrawSMPTE_EBU(unsigned char ebu)
 			}
 			load_tile(0x1000);
 			load_map(0, 0, 0, 0, 40, 30);
-			if(is100)
+			if(option)
 				load_palette(0, SMPTE100_pal, 1);  
 			else
 				load_palette(0, SMPTE75_pal, 1);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			if(is100)
+			if(option)
 				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB100_PAL_bin: OFS_SMPTE100_PAL_bin, palCD, SIZE_SMPTE100_PAL_bin); 
 			else
 				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB75_PAL_bin : OFS_SMPTE75_PAL_bin, palCD, SIZE_SMPTE75_PAL_bin); 
@@ -610,7 +584,7 @@ void DrawSMPTE_EBU(unsigned char ebu)
 			end = 1;
 		if (controller & JOY_I)
 		{
-			if(is100)
+			if(option)
 			{
 #ifndef CDROM1
 				load_palette(0, SMPTE75_pal, 1);  
@@ -618,7 +592,7 @@ void DrawSMPTE_EBU(unsigned char ebu)
 				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB75_PAL_bin : OFS_SMPTE75_PAL_bin, palCD, SIZE_SMPTE75_PAL_bin); 
 				set_bgpal(0, palCD, 1); 
 #endif
-				is100 = 0;
+				option = 0;
 				put_string(" 75%", 30, 2);
 				text = 30;
 			}
@@ -630,7 +604,7 @@ void DrawSMPTE_EBU(unsigned char ebu)
 				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB100_PAL_bin: OFS_SMPTE100_PAL_bin, palCD, SIZE_SMPTE100_PAL_bin); 
 				set_bgpal(0, palCD, 1); 
 #endif
-				is100 = 1;
+				option = 1;
 				put_string("100%", 30, 2);
 				text = 30;
 			}
@@ -658,11 +632,11 @@ void DrawSMPTE_EBU(unsigned char ebu)
 
 void DrawGrid()
 {
-	unsigned char showcolor = 0;
-
 	type = FloatMenuRes(1);
 	if(type == FLOAT_CANCEL)
 		return;
+		
+	color = 0;
 	redraw = 1;
 	end = 0;
 	while(!end)
@@ -763,8 +737,8 @@ void DrawGrid()
 			
 		if(controller & JOY_I)
 		{
-			showcolor = !showcolor;
-			if(showcolor)
+			color = !color;
+			if(color)
 				set_color_rgb(256, 7, 7, 7);
 			else
 				set_color_rgb(256, 0, 0, 0);

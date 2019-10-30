@@ -23,7 +23,7 @@
  
  */
 
-#ifdef SCDROM
+#ifdef SCDROM2
 #include "huc.h"
 #include "res.h"
 #include "font.h"
@@ -165,6 +165,7 @@ void ManualLagTestResults()
 			put_string("Keep in mind that a frame is", 6, 21);
 			put_string("16.67 milliseconds.", 6, 22);
 			
+			/*
 			if(x3 == 10)
 			{
 				x = 1;
@@ -176,6 +177,7 @@ void ManualLagTestResults()
 				if(x)
 					put_string("Smells like turbo...", 14, 13);
 			}
+			*/
 			if(x3 < 5)
 				put_string("EXCELLENT REFLEXES!", 14, 13);
 			if(x3 == 0)
@@ -206,11 +208,6 @@ void ManualLagTest()
 #ifndef CDROM1			
 	showHelp(MANUALLAG_HELP);
 #endif
-	
-	x = 0;
-	y = 0;
-	x2 = 0;
-	y2 = 0;
 	
 	speed = 1;
 	

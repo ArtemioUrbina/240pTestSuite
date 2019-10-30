@@ -26,9 +26,8 @@
 #ifdef SCDROM
 #define LOADER_OVERLAY 			1
 #define MAIN_OVERLAY 			2
-#define MANUALLAGSCD_OVERLAY 	3
-#define ADPCM_VOICE_OVL			4
-#define ADPCM_SWEEP_OVL			5
+#define ADPCM_VOICE_OVL			3
+#define ADPCM_SWEEP_OVL			4
 #endif
 
 #ifdef CDROM1

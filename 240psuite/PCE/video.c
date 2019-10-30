@@ -314,15 +314,7 @@ void Set256H()
 	trb	<irq_m				; re-enable VSYNC processing
 #endasm	
 
-	if(Enabled240p)
-	{
-		if(UseDefault)
-			Set239p();
-		else
-			Set240p();
-	}
-	else
-		Set224p();
+	AdjustVertical();
 }
 
 
@@ -476,15 +468,7 @@ void Set320H()
 #endasm	
 
 #ifndef HELP_OVL
-	if(Enabled240p)
-	{
-		if(UseDefault)
-			Set239p();
-		else
-			Set240p();
-	}
-	else
-		Set224p();
+	AdjustVertical();
 #endif
 }
 
@@ -535,6 +519,12 @@ void Set512H()
 #endasm
 
 #ifndef HELP_OVL
+	AdjustVertical();
+#endif
+}
+
+void AdjustVertical()
+{
 	if(Enabled240p)
 	{
 		if(UseDefault)
@@ -544,7 +534,6 @@ void Set512H()
 	}
 	else
 		Set224p();
-#endif
 }
 
 

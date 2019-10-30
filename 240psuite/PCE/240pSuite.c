@@ -235,27 +235,23 @@ void main()
     }
 }
 
+void DrawMenuBottom(int index, int credits)
+{
+	drawmenutext(index, "Options");
+	drawmenutext(index+1, "Help");
+	drawmenutext(index+2, credits ? "Credits" : "Back to Main Menu");
+}
+
 void RefreshMain()
 {
 	row = 11;
-	
-	set_font_pal(sel == 0 ? 15 : 14);
-	put_string("Test Patterns", HPOS, row++);
-	set_font_pal(sel == 1 ? 15 : 14);
-	put_string("Video tests", HPOS, row++);
-	set_font_pal(sel == 2 ? 15 : 14);
-	put_string("Audio tests", HPOS, row++);
-	set_font_pal(sel == 3 ? 15 : 14);
-	put_string("Hardware tools", HPOS, row++);
+	drawmenutext(0, "Test Patterns");
+	drawmenutext(1, "Video tests");
+	drawmenutext(2, "Audio tests");
+	drawmenutext(3, "Hardware tools");
 	
 	row = 19;
-	
-	set_font_pal(sel == 4 ? 15 : 14);
-	put_string("Options", HPOS, row++);
-	set_font_pal(sel == 5 ? 15 : 14);
-	put_string("Help", HPOS, row++);
-	set_font_pal(sel == 6 ? 15 : 14);
-	put_string("Credits", HPOS, row++);
+	DrawMenuBottom(4, 1);
 }
 
 /*
@@ -264,7 +260,6 @@ void RefreshMain()
  *
  *
  */
- 
 
 void RefreshVideoTests()
 {
@@ -273,39 +268,17 @@ void RefreshVideoTests()
 	
 	row = 9;
 
-	set_font_pal(sel == 0 ? 15 : 14);
-	put_string("Drop Shadow Test", HPOS, row++);
-	set_font_pal(sel == 1 ? 15 : 14);
-	put_string("Striped Sprite Test", HPOS, row++);
-	set_font_pal(sel == 2 ? 15 : 14);
-	put_string("Lag Test", HPOS, row++);
-	set_font_pal(sel == 3 ? 15 : 14);
-	put_string("Manual Lag Test", HPOS, row++);
-	set_font_pal(sel == 4 ? 15 : 14);
-	put_string("Scroll Test", HPOS, row++);
-	set_font_pal(sel == 5 ? 15 : 14);
-	put_string("Grid Scroll Test", HPOS, row++);
-	
-	RefreshVideoTestsAux(row);
-}
-
-void RefreshVideoTestsAux(int row)
-{
-	set_font_pal(sel == 6 ? 15 : 14);
-	put_string("Horiz/Vert Stripes", HPOS, row++);
-	set_font_pal(sel == 7 ? 15 : 14);
-	put_string("Checkerboard", HPOS, row++);
-	set_font_pal(sel == 8 ? 15 : 14);
-	put_string("Backlit Zone Test", HPOS, row++);
-	
-	set_font_pal(sel == 9 ? 15 : 14);
-	put_string("Options", HPOS, ++row);
-	
-	set_font_pal(sel == 10 ? 15 : 14);
-	put_string("Help", HPOS, ++row);
-	
-	set_font_pal(sel == 11 ? 15 : 14);
-	put_string("Back to Main Menu", HPOS, ++row);
+	drawmenutext(0, "Drop Shadow Test");
+	drawmenutext(1, "Striped Sprite Test");
+	drawmenutext(2, "Lag Test");
+	drawmenutext(3, "Manual Lag Test");
+	drawmenutext(4, "Scroll Test");
+	drawmenutext(5, "Grid Scroll Test");
+	drawmenutext(6, "Horiz/Vert Stripes");
+	drawmenutext(7, "Checkerboard");
+	drawmenutext(8, "Backlit Zone Test");
+	row++;
+	DrawMenuBottom(9, 0);
 }
 
 
@@ -481,20 +454,12 @@ void RefreshAudioTests()
 	
 	row = 12;
 
-	set_font_pal(sel == 0 ? 15 : 14);
-	put_string("Sound Test", HPOS, row++);
-	set_font_pal(sel == 1 ? 15 : 14);
-	put_string("Audio Sync Test", HPOS, row++);
-	set_font_pal(sel == 2 ? 15 : 14);
-	put_string("MDFourier", HPOS, row++);
+	drawmenutext(0, "Sound Test");
+	drawmenutext(1, "Audio Sync Test");
+	drawmenutext(2, "MDFourier");
 	
-	set_font_pal(sel == 3 ? 15 : 14);
-	put_string("Options", HPOS, ++row);
-	set_font_pal(sel == 4 ? 15 : 14);
-	put_string("Help", HPOS, ++row);
-	
-	set_font_pal(sel == 5 ? 15 : 14);
-	put_string("Back to Main Menu", HPOS, ++row);
+	row++;
+	DrawMenuBottom(4, 0);
 }
 
 

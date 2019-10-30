@@ -100,6 +100,12 @@ void RedrawBG()
 	Center224in240();
 }
 
+void drawmenutext(int pos, char *text)
+{
+	set_font_pal(sel == pos ? 15 : 14);
+	put_string(text, HPOS, row++);
+}
+
 #endif
 
 #ifdef CDROM1
@@ -251,6 +257,7 @@ void DisplaySystemInfo()
 
 #ifndef HELP_OVL
 #ifndef EXT_TOOLS
+
 void Options()
 {
     option = 0;
@@ -341,7 +348,7 @@ void RefreshOptions()
             
 	set_font_pal(11);
 	put_string("Video Options", 23, 10);
-			
+		
 	set_font_pal(option == 0 ? 15 : 14);
 	put_string("Vertical Resolution:", HPOS+1, row);
 	if(Enabled240p)

@@ -55,17 +55,18 @@ void DropShadow(int strip)
 	end = 0;
 	text = 0;
 	redraw = 1;
+	speed = 1;
 	x = 144;
 	y = 100;
 	
 	if(!strip)
 	{
 		srand(clock_tt());
-		vary = random(2);
+		option = random(2);
 	}
 	else
-		vary = 1;
-	right = 0;
+		option = 1;
+	change = 0;
     while(!end)
     {   
 		vsync();
@@ -109,21 +110,8 @@ void DropShadow(int strip)
 		
 		if(back == 1)
 		{
-			if(colswap == 60)
-			{
-				SwapPalette(6, 4);
-				SwapPalette(7, 8);
-				
-				colswap = 0;
-			}
-			colswap++;
-			
-			scroll(0, x, 0, 0, 76, 0xC0);
-			scroll(1, 2*x, 76, 76, 160, 0xC0);
-			scroll(2, 3*x, 160, 160, 208, 0xC0);
-			scroll(3, 4*x, 208, 208, 240, 0xC0);
-		
-			MovePalm(4*x);
+			x1 = x2 = x3 = x4 = 0;
+			DoSonicScroll();
 		}
 
         controller = joytrg(0);
@@ -182,26 +170,20 @@ void DropShadow(int strip)
 		if (controller & JOY_LEFT)
 		{
 			x--;
-			if(!strip && right)
+			if(!strip)
 			{
-				spr_set(0);
-				spr_ctrl(FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32);
-				spr_set(1);
-				spr_ctrl(FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32);
-				right = 0;
+				flipSprites();
+				change = 0;
 			}
 		}
 		
 		if (controller & JOY_RIGHT)
 		{
 			x++;
-			if(!strip && !right)
+			if(!strip)
 			{
-				spr_set(0);
-				spr_ctrl(FLIP_MAS|SIZE_MAS, FLIP_X|SZ_32x32);
-				spr_set(1);
-				spr_ctrl(FLIP_MAS|SIZE_MAS, FLIP_X|SZ_32x32);
-				right = 1;
+				flipSprites();
+				change = 1;
 			}
 		}
 			
@@ -216,7 +198,7 @@ void DropShadow(int strip)
 		
 		if(!strip)
 		{
-			spr_set(!vary);
+			spr_set(!option);
 			if(view)
 			{
 				spr_x(x);
@@ -236,7 +218,7 @@ void DropShadow(int strip)
 			spr_x(x);
 			spr_y(y);
 		}
-		if(!vary)
+		if(!option)
 		{
 			spr_set(0);	
 			spr_x(x-10);
@@ -244,6 +226,38 @@ void DropShadow(int strip)
 		}
 		satb_update();
     }
+}
+
+void flipSprites()
+{
+	spr_set(0);
+	spr_ctrl(FLIP_MAS|SIZE_MAS, (change ? FLIP_X : NO_FLIP)|SZ_32x32);
+	spr_set(1);
+	spr_ctrl(FLIP_MAS|SIZE_MAS, (change ? FLIP_X : NO_FLIP)|SZ_32x32);
+}
+
+void DoSonicScroll()
+{
+	if(colswap == 60)
+	{
+		SwapPalette(6, 4);
+		SwapPalette(7, 8);
+		
+		colswap = 0;
+	}
+	colswap++;
+				
+	x1 += 1*speed*x;
+	x2 += 2*speed*x;
+	x3 += 3*speed*x;
+	x4 += 4*speed*x;
+	
+	MovePalm(x4);
+	
+	scroll(0, x1, 0, 0, 76, 0xC0);
+	scroll(1, x2, 76, 76, 160, 0xC0);
+	scroll(2, x3, 160, 160, 208, 0xC0);
+	scroll(3, x4, 208, 208, 240, 0xC0);
 }
 
 void RedrawDropShadow(int strip)
@@ -318,21 +332,21 @@ void RedrawDropShadow(int strip)
 	else
 	{
 #ifndef CDROM1	
-		if(vary)
+		if(option)
 			load_vram(0x6000, shadow_sp, 0x100);
 		else
 			load_vram(0x6000, bee_sp, 0x200);
 #else
-		if(vary)
+		if(option)
 			cd_loadvram(GPHX_OVERLAY, OFS_shadow_tile_bin, 0x6000, SIZE_shadow_tile_bin);
 		else
 			cd_loadvram(GPHX_OVERLAY, OFS_bee_tile_bin, 0x6000, SIZE_bee_tile_bin);
 #endif
 		load_palette(17, bee_pal, 1); 
 		
-		spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, (!right ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 1);
-		if(!vary)
-			spr_make(1, x+10, y+10, 0x6100, FLIP_MAS|SIZE_MAS, (!right ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 2);
+		spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, (!change ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 1);
+		if(!option)
+			spr_make(1, x+10, y+10, 0x6100, FLIP_MAS|SIZE_MAS, (!change ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 2);
 	}
 
 	if(back == 1)
@@ -345,17 +359,17 @@ void RedrawDropShadow(int strip)
 
 void SwapPalette(int pal, int index)
 {	
-	option = index+pal*16;
+	color = index+pal*16;
 	
-	top = get_color(option);
-	bottom = get_color(option+1);
-	left = get_color(option+2);
-	right = get_color(option+3);
+	top = get_color(color);
+	bottom = get_color(color+1);
+	left = get_color(color+2);
+	right = get_color(color+3);
 		
-	set_color(option, right);
-	set_color(option+1, top);
-	set_color(option+2, bottom);
-	set_color(option+3, left);		
+	set_color(color, right);
+	set_color(color+1, top);
+	set_color(color+2, bottom);
+	set_color(color+3, left);		
 }
 
 void DrawPalm()
@@ -413,7 +427,7 @@ void ScrollTest()
 	x3 = 0;
 	x4 = 0;
 	
-	vary = 1;	// dir
+	x = 1;	// dir
 	speed = 1;  
 	
 	y = 0;
@@ -431,13 +445,13 @@ void ScrollTest()
 			{
 				Set320H();
 				if(option)
-					x = -32;
+					vary = -32;
 			}
 			if(type == RES_256)
 			{
 				Set256H();
 				if(option)
-					x = 0;
+					vary = 0;
 			}
 			
 			if(!option)
@@ -458,7 +472,7 @@ void ScrollTest()
 				DrawPalm();
 				satb_update();
 				
-				MovePalm(4*speed*vary);
+				MovePalm(4*speed*x);
 			}
 			else
 			{
@@ -516,44 +530,23 @@ void ScrollTest()
 		}
 		
 		if (controller & JOY_LEFT)
-			vary = 1;
+			x = 1;
 			
 		if (controller & JOY_RIGHT)
-			vary = -1;
+			x = -1;
 		
 		if(!option)
-		{
-			if(colswap == 60)
-			{
-				SwapPalette(6, 4);
-				SwapPalette(7, 8);
-				
-				colswap = 0;
-			}
-			colswap++;
-						
-			x1 += 1*speed*vary;
-			x2 += 2*speed*vary;
-			x3 += 3*speed*vary;
-			x4 += 4*speed*vary;
-			
-			MovePalm(x4);
-			
-			scroll(0, x1, 0, 0, 76, 0xC0);
-			scroll(1, x2, 76, 76, 160, 0xC0);
-			scroll(2, x3, 160, 160, 208, 0xC0);
-			scroll(3, x4, 208, 208, 240, 0xC0);
-		}	
+			DoSonicScroll();
 		else
 		{
-			y -= speed*vary;
+			y -= speed*x;
 				
 			if(y > 512)
 				y = 0;
 			if(y < 0)
 				y = 512;
 			
-			scroll(0, x, y, 0, 240, 0xC0);
+			scroll(0, vary, y, 0, 240, 0xC0);
 		}
     }
 }
