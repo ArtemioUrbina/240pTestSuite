@@ -690,7 +690,7 @@ void HardwareTests()
 			switch(sel)
 			{
 				case 0:
-					//ControllerTest();
+					ControllerTest();
 					break;
 				case 1:
 					MemViewer(0x2000);
@@ -824,3 +824,79 @@ void MemViewer(unsigned int address)
 		}
 	}
 }
+
+
+void CheckController(int joypad, int y)
+{
+	x = 5;
+	
+	controller = joy(joypad);
+	
+	set_font_pal(controller & JOY_UP ? 15 : 14);
+	put_string("Up", x+4, y);
+	set_font_pal(controller & JOY_LEFT ? 15 : 14);
+	put_string("Left", x, y+1);
+	set_font_pal(controller & JOY_RIGHT ? 15 : 14);
+	put_string("Right", x+6, y+1);
+	set_font_pal(controller & JOY_DOWN ? 15 : 14);
+	put_string("Down", x+3, y+2);
+	
+	set_font_pal(controller & JOY_SEL ? 15 : 14);
+	put_string("SEL", x+12, y+1);
+	set_font_pal(controller & JOY_RUN ? 15 : 14);
+	put_string("RUN", x+16, y+1);
+	
+	set_font_pal(controller & JOY_IV ? 15 : 14);
+	put_string("IV", x+20, y);
+	set_font_pal(controller & JOY_V ? 15 : 14);
+	put_string("V", x+24, y);
+	set_font_pal(controller & JOY_VI ? 15 : 14);
+	put_string("VI", x+27, y);
+
+	
+	set_font_pal(controller & JOY_III ? 15 : 14);
+	put_string("III", x+20, y+2);
+	set_font_pal(controller & JOY_II ? 15 : 14);
+	put_string("II", x+24, y+2);
+	set_font_pal(controller & JOY_I ? 15 : 14);
+	put_string("I", x+27, y+2);
+}
+
+void ControllerTest()
+{
+	redraw = 1;
+	
+	while(!end)
+	{	
+		vsync();
+		
+		if(redraw)
+		{
+			RedrawBG();
+			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
+			SetFontColors(15, RGB(2, 2, 2), RGB(7, 7, 7), 0);
+
+			refresh = 1;
+			redraw = 0;
+			disp_on();
+		}
+		if(refresh)
+		{
+			set_font_pal(13);
+			put_string("Controller Test", 12, 4);
+			set_font_pal(15);
+			put_string("Use START+LEFT to exit", 9, 26);
+		}
+		
+		CheckController(0, 6);
+		
+		if(controller & JOY_LEFT && controller & JOY_RUN)
+			end = 1;
+			
+		CheckController(1, 10);
+		CheckController(2, 14);
+		CheckController(3, 18);
+		CheckController(4, 22);
+	}
+}
+

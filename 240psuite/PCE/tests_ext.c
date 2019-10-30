@@ -152,18 +152,18 @@ void LoadNumbers()
 	satb_update();
 }
 
+int framecnt = 0;
+int frames = 0;
+int seconds = 0;
+int minutes = 0;
+int hours = 0;
+int lsd = 0;
+int msd = 0;
+unsigned char running = 0;
+unsigned char update = 0;
+
 void LagTest()
 {
-	int framecnt = 0;
-	int frames = 0;
-	int seconds = 0;
-	int minutes = 0;
-	int hours = 0;
-	int lsd = 0;
-	int msd = 0;
-	unsigned char running = 0;
-	unsigned char update = 0;
-
 	end = 0;
 	redraw = 1;
     while(!end)
