@@ -166,6 +166,7 @@ void LagTest()
 {
 	end = 0;
 	redraw = 1;
+	option = 0;
     while(!end)
     {   
 		vsync();
@@ -194,6 +195,12 @@ void LagTest()
 			put_string("seconds", 17, 3);
 			put_string("frames", 25, 3);
 			LoadNumbers();
+
+#ifndef CDROM1		
+			set_color(2, RGB(7, 7, 7));
+#else
+			set_color(4, RGB(7, 7, 7));
+#endif
          
             redraw = 0;
 			disp_on();
@@ -256,6 +263,19 @@ void LagTest()
 			}
 			
 			update = 0;
+			
+			option = !option;
+#ifndef CDROM1
+			if(option)
+				set_color(2, RGB(0, 0, 0));
+			else
+				set_color(2, RGB(7, 7, 7));
+#else
+			if(option)
+				set_color(4, RGB(0, 0, 0));
+			else
+				set_color(4, RGB(7, 7, 7));
+#endif
 		}
 			
         controller = joytrg(0);
