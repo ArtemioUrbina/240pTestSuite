@@ -47,7 +47,7 @@ extern int x_g;
 extern int y_g;
 #endif
 
-void DropShadow()
+void DropShadow(int strip)
 {	
 	view = 0;
 	back = 0;
@@ -58,8 +58,13 @@ void DropShadow()
 	x = 144;
 	y = 100;
 	
-	srand(clock_tt());
-	vary = random(2);
+	if(!strip)
+	{
+		srand(clock_tt());
+		vary = random(2);
+	}
+	else
+		vary = 1;
 	right = 0;
     while(!end)
     {   
@@ -68,7 +73,7 @@ void DropShadow()
         if(redraw)
         {	
 			ResetVideo();
-			RedrawDropShadow();
+			RedrawDropShadow(strip);
 			redraw = 0;
         }
 		
@@ -125,7 +130,10 @@ void DropShadow()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(DSHADOW_HELP);
+			if(strip)
+				showHelp(STRIPED_HELP);
+			else
+				showHelp(DSHADOW_HELP);
 			redraw = 1;
 		}
 		
@@ -141,7 +149,7 @@ void DropShadow()
 		if (controller & JOY_II)
 			end = 1;
 			
-		if (controller & JOY_SEL)
+		if (!strip && controller & JOY_SEL)
 		{
 			if(view)
 			{
@@ -174,7 +182,7 @@ void DropShadow()
 		if (controller & JOY_LEFT)
 		{
 			x--;
-			if(right)
+			if(!strip && right)
 			{
 				spr_set(0);
 				spr_ctrl(FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32);
@@ -187,7 +195,7 @@ void DropShadow()
 		if (controller & JOY_RIGHT)
 		{
 			x++;
-			if(!right)
+			if(!strip && !right)
 			{
 				spr_set(0);
 				spr_ctrl(FLIP_MAS|SIZE_MAS, FLIP_X|SZ_32x32);
@@ -206,18 +214,27 @@ void DropShadow()
 		if(y > (Enabled240p ? 208 : 192))
 			y = (Enabled240p ? 208 : 192);
 		
-		spr_set(!vary);	
-		if(view)
+		if(!strip)
 		{
-			spr_x(x);
-			spr_y(y);
-			view = 0;
+			spr_set(!vary);
+			if(view)
+			{
+				spr_x(x);
+				spr_y(y);
+				view = 0;
+			}
+			else
+			{
+				spr_x(512);
+				spr_y(512);
+				view = 1;
+			}
 		}
 		else
 		{
-			spr_x(512);
-			spr_y(512);
-			view = 1;
+			spr_set(0);
+			spr_x(x);
+			spr_y(y);
 		}
 		if(!vary)
 		{
@@ -229,7 +246,7 @@ void DropShadow()
     }
 }
 
-void RedrawDropShadow()
+void RedrawDropShadow(int strip)
 {
 	switch(back)
 	{
@@ -285,25 +302,39 @@ void RedrawDropShadow()
 	setupFont();
 	
 	init_satb();
-#ifndef CDROM1	
-	if(vary)
-		load_vram(0x6000, shadow_sp, 0x100);
-	else
-		load_vram(0x6000, bee_sp, 0x200);
-#else
-	if(vary)
-		cd_loadvram(GPHX_OVERLAY, OFS_shadow_tile_bin, 0x6000, SIZE_shadow_tile_bin);
-	else
-		cd_loadvram(GPHX_OVERLAY, OFS_bee_tile_bin, 0x6000, SIZE_bee_tile_bin);
-#endif
-	load_palette(17, bee_pal, 1); 
-	set_color_rgb(240, 0, 0, 0); 
-	set_color_rgb(241, 0, 0, 0); 
 	
-	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, (!right ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 1);
-	if(!vary)
-		spr_make(1, x+10, y+10, 0x6100, FLIP_MAS|SIZE_MAS, (!right ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 2);
+	set_color_rgb(240, 0, 0, 0); 
+	set_color_rgb(241, 0, 0, 0);
+	
+	if(strip)
+	{
+#ifndef CDROM1		 
+		load_vram(0x6000, striped_sp, 0x100);
+#else
+		cd_loadvram(GPHX_OVERLAY, OFS_striped_tile_bin, 0x6000, SIZE_striped_tile_bin);
+#endif
+		spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
+	}
+	else
+	{
+#ifndef CDROM1	
+		if(vary)
+			load_vram(0x6000, shadow_sp, 0x100);
+		else
+			load_vram(0x6000, bee_sp, 0x200);
+#else
+		if(vary)
+			cd_loadvram(GPHX_OVERLAY, OFS_shadow_tile_bin, 0x6000, SIZE_shadow_tile_bin);
+		else
+			cd_loadvram(GPHX_OVERLAY, OFS_bee_tile_bin, 0x6000, SIZE_bee_tile_bin);
+#endif
+		load_palette(17, bee_pal, 1); 
 		
+		spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, (!right ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 1);
+		if(!vary)
+			spr_make(1, x+10, y+10, 0x6100, FLIP_MAS|SIZE_MAS, (!right ? NO_FLIP : FLIP_X)|SZ_32x32, 1, 2);
+	}
+
 	if(back == 1)
 		DrawPalm();
 	satb_update();
@@ -312,182 +343,19 @@ void RedrawDropShadow()
 	disp_on();
 }
 
-void StripedSprite()
-{
-	back = 0;
-	colswap = 0;
-
-	end = 0;
-	x = 144;
-	y = 100;
-	redraw = 1;
-    while(!end)
-    {   
-		vsync();
-		
-        if(redraw)
-        {	
-			RefreshStriped();
-			
-            redraw = 0;
-			disp_on();
-        }
-		
-		if(back == 1)
-		{
-			if(colswap == 60)
-			{
-				SwapPalette(6, 4);
-				SwapPalette(7, 8);
-				
-				colswap = 0;
-			}
-			colswap++;
-			
-			scroll(0, x, 0, 0, 76, 0xC0);
-			scroll(1, 2*x, 76, 76, 160, 0xC0);
-			scroll(2, 3*x, 160, 160, 208, 0xC0);
-			scroll(3, 4*x, 208, 208, 240, 0xC0);
-		
-			MovePalm(4*x);
-		}
-
-        controller = joytrg(0);
-		
-		if (controller & JOY_RUN)
-		{
-			showHelp(STRIPED_HELP);
-			redraw = 1;
-		}
-		
-		if (controller & JOY_I)
-		{
-			back++;
-			if(back > 3)
-				back = 0;
-			redraw = 1;
-			disp_off();
-		}
-        
-		if (controller & JOY_II)
-			end = 1;
-			
-		controller = joy(0);
-		
-		if (controller & JOY_UP)
-			y--;
-			
-		if (controller & JOY_DOWN)
-			y++;
-		
-		if (controller & JOY_LEFT)
-			x--;
-		
-		if (controller & JOY_RIGHT)
-			x++;
-			
-		if(x < 0)
-			x = 0;
-		if(x > 288)
-			x = 288;
-		if(y < 0)
-			y = 0;
-		if(y > (Enabled240p ? 208 : 192))
-			y = (Enabled240p ? 208 : 192);
-		
-		spr_set(0);	
-		
-		spr_x(x);
-		spr_y(y);
-		
-		satb_update();
-    }
-}
-
-void RefreshStriped()
-{
-	ResetVideo();
-	switch(back)
-	{
-		case 0:
-#ifndef CDROM1
-			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
-#else
-			set_screen_size(SCR_SIZE_64x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_motoko_PAL_bin, palCD, SIZE_motoko_PAL_bin); 
-			load_palette(0, palCD, 16); 
-			cd_loadvram(GPHX_OVERLAY, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
-			RestoreGlobals();
-#endif
-			break;
-		case 1:
-			set_screen_size(SCR_SIZE_32x32);
-
-			scroll(0, x, 0, 0, 76, 0xC0);
-			scroll(1, 2*x, 76, 76, 160, 0xC0);
-			scroll(2, 3*x, 160, 160, 208, 0xC0);
-			scroll(3, 4*x, 208, 208, 240, 0xC0);
-#ifndef CDROM1
-			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
-#else
-			x_g = x;
-			y_g = y;
-			set_screen_size(SCR_SIZE_32x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, SIZE_sonic_PAL_bin); 
-			load_palette(0, palCD, 16);
-			cd_loadvram(GPHX_OVERLAY, OFS_sonic_DATA_bin, 0x1000, SIZE_sonic_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
-			RestoreGlobals();
-			x = x_g;
-			y = y_g;
-#endif
-			break;
-		case 2:
-			set_map_data(fs_map, 64, 32);
-			set_tile_data(hstripes_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 64, 32);
-			load_palette(0, check_pal, 1);
-			break;
-		case 3:
-			set_map_data(fs_map, 64, 32);
-			set_tile_data(check_bg);
-			load_tile(0x1000);
-			load_map(0, 0, 0, 0, 64, 32);
-			load_palette(0, check_pal, 1);
-			break;
-	}
-	setupFont();
-	init_satb();
-	set_color_rgb(240, 0, 0, 0); 
-	set_color_rgb(241, 0, 0, 0);
-#ifndef CDROM1		 
-	load_vram(0x6000, striped_sp, 0x100);
-#else
-	cd_loadvram(GPHX_OVERLAY, OFS_striped_tile_bin, 0x6000, SIZE_striped_tile_bin);
-#endif
-	spr_make(0, x, y, 0x6000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, 0, 1);
-	if(back == 1)
-		DrawPalm();
-	satb_update();
-	
-	Center224in240();
-}
-
 void SwapPalette(int pal, int index)
 {	
-	vary = index+pal*16;
+	option = index+pal*16;
 	
-	top = get_color(vary);
-	bottom = get_color(vary+1);
-	left = get_color(vary+2);
-	right = get_color(vary+3);
+	top = get_color(option);
+	bottom = get_color(option+1);
+	left = get_color(option+2);
+	right = get_color(option+3);
 		
-	set_color(vary, right);
-	set_color(vary+1, top);
-	set_color(vary+2, bottom);
-	set_color(vary+3, left);		
+	set_color(option, right);
+	set_color(option+1, top);
+	set_color(option+2, bottom);
+	set_color(option+3, left);		
 }
 
 void DrawPalm()

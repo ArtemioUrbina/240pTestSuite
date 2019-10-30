@@ -407,10 +407,10 @@ void VideoTests()
 			switch(sel)
 			{
 				case 0:
-					DropShadow();
+					DropShadow(0);
 					break;
 				case 1:
-					StripedSprite();
+					DropShadow(1);
 					break;
 				case 2:
 					LagTest();
@@ -778,7 +778,7 @@ void RefreshCredits()
 
 	set_font_pal(14);	
 	put_string("Ver. 1.10", 50, 7);
-	put_string("29/08/2019", 49, 8);
+	put_string("29/10/2019", 49, 8);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;

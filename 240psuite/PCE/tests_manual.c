@@ -108,14 +108,14 @@ void ManualLagTestText()
 }
 
 void ManualLagTestResults()
-{
-	int total = 0;
-	int totalms = 0;
-	int val = 0;
-	
+{	
 	redraw = 1;
 	end = 0;
 	x = 0;
+
+	y = 0;	 // val
+	x3 = 0;  // total	
+	x4 = 0;  // x3ms
 	
 	while(!end)
 	{   	
@@ -128,13 +128,13 @@ void ManualLagTestResults()
 			set_font_pal(14);
 			for(x2 = 0; x2 < 10; x2++)
 			{
-				val = clicks[x2];
-				if(val != 0xFF)
+				y = clicks[x2];
+				if(y != 0xFF)
 				{
-					put_number(val, 2, 10, 8+x2); 
-					if(val >= 0)
+					put_number(y, 2, 10, 8+x2); 
+					if(y >= 0)
 					{
-						total += val;
+						x3 += y;
 						x ++;
 					}
 				}
@@ -144,28 +144,28 @@ void ManualLagTestResults()
 			put_string("+", 8, 14);
 			put_string("----", 8, 18);
 			
-			totalms = total/x;
+			x4 = x3/x;
 			
 			set_font_pal(14);
-			put_number(total, 7, 5, 19);
+			put_number(x3, 7, 5, 19);
 			put_string("/", 12, 19);
 			put_number(x, 2, 13, 19);
 			set_font_pal(15);
 			put_string("=", 15, 19);
 			set_font_pal(14);
-			put_number(totalms, 2, 16, 19);
+			put_number(x4, 2, 16, 19);
 			put_string("frames", 19, 19);
-			if(totalms == 1)
+			if(x4 == 1)
 				put_string(" ", 24, 19);
-			totalms = total/x*16;
-			put_number(totalms, 2, 16, 20);
+			x4 = x3/x*16;
+			put_number(x4, 2, 16, 20);
 			put_string("milliseconds", 19, 20);
 			
 			set_font_pal(13);
 			put_string("Keep in mind that a frame is", 6, 21);
 			put_string("16.67 milliseconds.", 6, 22);
 			
-			if(total == 10)
+			if(x3 == 10)
 			{
 				x = 1;
 				for(x2 = 0; x2 < 10; x2++)
@@ -176,9 +176,9 @@ void ManualLagTestResults()
 				if(x)
 					put_string("Smells like turbo...", 14, 13);
 			}
-			if(total < 5)
+			if(x3 < 5)
 				put_string("EXCELLENT REFLEXES!", 14, 13);
-			if(total == 0)
+			if(x3 == 0)
 				put_string("INCREDIBLE REFLEXES!", 14, 13);
 			
 			redraw = 0;
@@ -200,8 +200,7 @@ void ManualLagTestResultsBack()
 
 void ManualLagTest()
 {
-	int pos = 0;
-
+	option = 0;
 	end = 0;
 
 #ifndef CDROM1			
@@ -265,21 +264,21 @@ void ManualLagTest()
 		{
 			if(change)
 			{
-				clicks[pos] = (y - 96) *speed;
+				clicks[option] = (y - 96) *speed;
 				
-				if(audio && clicks[pos] != 0)
+				if(audio && clicks[option] != 0)
 				{
 					SetWaveFreq(0, 224);
 					PlayCenter(0);
 				}
 	
-				if(clicks[pos] >= 0)
+				if(clicks[option] >= 0)
 				{
 					change = 0;
-					pos ++;
+					option ++;
 				}
 		
-				if(pos > 9)
+				if(option > 9)
 					end = 1;
 			}
 		}
@@ -412,7 +411,7 @@ void ManualLagTest()
 	
 	StopAudio(0);
 	
-	if(pos > 9)
+	if(option > 9)
 		ManualLagTestResults();
 }
 
