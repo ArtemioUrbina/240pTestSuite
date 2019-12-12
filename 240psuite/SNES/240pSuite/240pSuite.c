@@ -28,6 +28,7 @@
 void TestPatterns();
 void DrawCredits();
 void DrawIntro();
+void LoadAudio();
 
 int main(void) 
 {
@@ -36,16 +37,9 @@ int main(void)
 	s16 sel = 0, start = 1;
 	    
 	setBrightness(0);
-	
-	spcBoot();	
 	consoleInit();
 	
-	spcSetBank(&__SOUNDBANK__);
-	spcAllocateSoundRegion(39);
-	spcLoad(0);
-	spcLoadEffect(0);
-	spcLoadEffect(1);
-	spcLoadEffect(2);
+	LoadAudio();
 	
 	// Main loop
 	DrawIntro();
@@ -98,8 +92,9 @@ int main(void)
 			drawText(3, pos, sel == 11 ? 6 : 7, "Sound Test"); pos ++;
 			drawText(3, pos, sel == 12 ? 6 : 7, "Audio Sync Test"); pos ++;
 			drawText(3, pos, sel == 13 ? 6 : 7, "Help"); pos ++;	
-			drawText(3, pos, sel == 14 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos += 2;	
-			drawText(3, pos, sel == 15 ? 6 : 5, "Credits"); 
+			drawText(3, pos, sel == 14 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(3, pos, sel == 15 ? 6 : 5, "Credits"); pos++;
+			drawText(3, pos, sel == 16 ? 6 : 7, "MDFourier beta"); 
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 			
 				
@@ -121,31 +116,31 @@ int main(void)
 		
 		pressed = PadPressed(0);
 					
-		if(pressed == KEY_DOWN)
+		if(pressed & KEY_DOWN)
 		{
 			sel+=1;
 			change = 1;
 		}
-		if(pressed == KEY_UP)
+		if(pressed & KEY_UP)
 		{			
 			sel-=1;
 			change = 1;		
 		}	
 
 		if(sel < 0)
-			sel = 15;
+			sel = 16;
 			
-		if(sel > 15)
+		if(sel > 16)
 			sel = 0;
 			
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			Transition();
 			DrawHelp(HELP_GENERAL);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A && sel == 14)
+		if(pressed & KEY_A && sel == 14)
 		{
 			if(interlaced)
 				ClearInterlaced();
@@ -154,7 +149,7 @@ int main(void)
 			redraw = 1;
 		}
 			
-		if(pressed == KEY_A && sel != 14)
+		if(pressed & KEY_A && sel != 14)
 		{							
 			Transition();
 			oamClear(0, 0);
@@ -207,6 +202,9 @@ int main(void)
 					break;
 				case 15:
 					DrawCredits();
+					break;
+				case 16:
+					MDFourier();
 					break;
 			}
 			redraw = 1;
@@ -287,12 +285,12 @@ void TestPatterns(void)
 		
 		pressed = PadPressed(0);
 					
-		if(pressed == KEY_DOWN)
+		if(pressed & KEY_DOWN)
 		{
 			sel+=1;
 			change = 1;
 		}
-		if(pressed == KEY_UP)
+		if(pressed & KEY_UP)
 		{			
 			sel-=1;
 			change = 1;		
@@ -304,14 +302,14 @@ void TestPatterns(void)
 		if(sel > 15)
 			sel = 0;
 			
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			Transition();
 			DrawHelp(HELP_GENERAL);
 			redraw = 1;
 		}
 			
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{							
 			Transition();
 			oamClear(0, 0);
@@ -370,7 +368,7 @@ void TestPatterns(void)
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 		{
 			exit = 1;
 			Transition();
@@ -412,10 +410,10 @@ void DrawCat(void)
 		pressed = PadPressed(0);
 		held = PadHeld(0);
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;
 		
-		if(held == KEY_L)
+		if(held & KEY_L)
 			count = 0;
 
 		count++;
@@ -499,8 +497,8 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(6, 4, 5, "Ver. 1.03");
-			drawText(19, 4, 7, "06/06/2016");
+			drawText(6, 4, 5, "Ver. MDF B");
+			drawText(19, 4, 7, "12/04/2019");
 			drawText(10, pos, 5, "Dedicated to Elisa");
 			
 			EndDMA();	
@@ -522,10 +520,10 @@ void DrawCredits(void)
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			exit = 1;
 		
-		if(pressed == KEY_L)
+		if(pressed & KEY_L)
 		{			
 			Transition();
 			DrawCat();
@@ -534,4 +532,18 @@ void DrawCredits(void)
 		}
 	}
 	return 0;
+}
+
+void LoadAudio()
+{
+	int i = 0;
+	
+	spcBoot();	
+	spcSetBank(&__SOUNDBANK__);
+	
+	// allocate around 10K of sound ram (40 256-byte blocks)
+	spcAllocateSoundRegion(40);
+	spcLoad(0);
+	for(i = 0; i < 12; i++)
+		spcLoadEffect(i);
 }

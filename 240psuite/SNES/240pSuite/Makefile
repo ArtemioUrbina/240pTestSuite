@@ -36,7 +36,7 @@ CFLAGS	+=	$(INCLUDE)
 # include and lib
 #---------------------------------------------------------------------------------
 LIBDIRS	:=	$(PVSNESLIB)
-LIBOBJS +:=	
+#LIBOBJS +:=	
  
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
  
@@ -80,6 +80,7 @@ clean:
 
 soundbank.asm : $(AUDIOFILES)
 	@echo Compiling Soundbank ... 
+	@echo @$(SMCONV) $(SMCONVFLAGS) $^
 	@$(SMCONV) $(SMCONVFLAGS) $^
 	
 #---------------------------------------------------------------------------------
@@ -195,6 +196,14 @@ kiki.pic: kiki.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 
+fireshark.pic: fireshark.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
+
+bricks.pic: bricks.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
+
 audiosync.pic: audiosync.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
@@ -205,7 +214,8 @@ bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB7
 	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic 100IRE.pic\
 	numbers.pic lagtest.pic sonicback.pic sonicfloor.pic circles_grid.pic\
 	LEDsprites.pic striped.pic color_grid.pic lag-spr.pic soundbank.asm gridm7.pc7\
-	circlesPAL.pic EBUCB100.pic EBUCB75.pic kiki.pic plugePAL.pic audiosync.pic
+	circlesPAL.pic EBUCB100.pic EBUCB75.pic kiki.pic plugePAL.pic audiosync.pic\
+	fireshark.pic bricks.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

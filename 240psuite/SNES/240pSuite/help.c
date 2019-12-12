@@ -39,11 +39,13 @@ void DrawHelp(u16 option)
 		case HELP_LAG:
 			totalpages = 2;
 			break;		
-		case HELP_PLUGE:
 		case HELP_GENERAL:
-		case HELP_MANUALLAG:
 		case HELP_STRIPES:	
 			totalpages = 3;
+			break;
+		case HELP_PLUGE:
+		case HELP_MANUALLAG:
+			totalpages = 4;
 			break;
 	}  
   
@@ -145,7 +147,7 @@ void DrawHelp(u16 option)
 					switch(page)
 					{
 						case 1:
-							drawText(3, 4  , 6, "        PLUGE (1/3)"); 
+							drawText(3, 4  , 6, "        PLUGE (1/4)"); 
 							drawText(3, y++, 7, "The PLUGE pattern is used"); 
 							drawText(3, y++, 7, "to help adjust the black");
 							drawText(3, y++, 7, "level to a correct value.");
@@ -164,7 +166,7 @@ void DrawHelp(u16 option)
 							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
-							drawText(3, 4  , 6, "        PLUGE (2/3)"); 
+							drawText(3, 4  , 6, "        PLUGE (2/4)"); 
 							drawText(3, y++, 7, "You should use the full");
 							drawText(3, y++, 7, "range RGB mode to ensure");	
 							drawText(3, y++, 7, "all detail is shown.");	
@@ -182,7 +184,7 @@ void DrawHelp(u16 option)
 							drawText(20, 22, 4, "(cont...)");													
 							break;
 						case 3:
-							drawText(3, 4  , 6, "        PLUGE (3/3)"); 
+							drawText(3, 4  , 6, "        PLUGE (3/4)"); 
 							drawText(3, y++, 7, "NTSC levels require black"); 
 							drawText(3, y++, 7, "at 7.5 IRE, but for games");
 							drawText(3, y++, 7, "you should always use full");
@@ -197,6 +199,14 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "You can switch between"); 
 							drawText(3, y++, 7, "these values for the inner");
 							drawText(3, y++, 7, "bars with the X button.");
+							y++;
+							drawText(20, 22, 4, "(cont...)");
+							break;
+						case 4:
+							drawText(3, 4  , 6, "        PLUGE (4/4)"); 
+							drawText(3, y++, 7, "You can press L or R"); 
+							drawText(3, y++, 7, "for a tiled brightness");
+							drawText(3, y++, 7, "and contrast sub test.");
 							break;
 					}
 					break;
@@ -285,19 +295,21 @@ void DrawHelp(u16 option)
 					break;
 				case HELP_SHARPNESS:
 							drawText(3, 4  , 6, "         SHARPNESS"); 
-							drawText(3, y++, 7, "You should set the"); 
-							drawText(3, y++, 7, "sharpness of your CRT to a");
-							drawText(3, y++, 7, "value that shows clean");							
-							drawText(3, y++, 7, "black and gray"); 
+							drawText(3, y++, 7, "Sharpness should be set in"); 
+							drawText(3, y++, 7, "your CRT to a value that ");
+							drawText(3, y++, 7, "shows clean black and gray");			
 							drawText(3, y++, 7, "transitions with no white");
-							drawText(3, y++, 7, "ghosting between.");							
+							drawText(3, y++, 7, "ghosting in between.");							
 							y++;
 							drawText(3, y++, 7, "On most modern displays,"); 
-							drawText(3, y++, 7, "the sharpness control is");
-							drawText(3, y++, 7, "an edge-enhancement");
-							drawText(3, y++, 7, "control, and most probably");
-							drawText(3, y++, 7, "should be set to zero, or");
-							drawText(3, y++, 7, "in the middle.");							
+							drawText(3, y++, 7, "sharpness is an edge-");
+							drawText(3, y++, 7, "enhancement control, and");
+							drawText(3, y++, 7, "should probably be set to");
+							drawText(3, y++, 7, "zero, or at the middle.");				
+							y++;
+							drawText(3, y++, 7, "You can toggle to a brick"); 
+							drawText(3, y++, 7, "tileset to verify this");
+							drawText(3, y++, 7, "setting.");
 					break;
 				case HELP_SMPTE:
 							if(!snes_50hz)
@@ -504,7 +516,7 @@ void DrawHelp(u16 option)
 							y++;						
 							drawText(3, y++, 7, "Sonic is a trademark of");
 							drawText(3, y++, 7, "Sega Ltd and Kiki Kaikai");
-							drawText(3, y++, 7, "of Namco/Bandai.");
+							drawText(3, y++, 7, "of Taito.");
 					break;
 				case HELP_VSCROLL:
 							drawText(3, 4  , 6, "      GRID SCROLL TEST"); 
@@ -728,6 +740,20 @@ void DrawHelp(u16 option)
 							break;
 					}
 					break;
+					case HELP_CONTRAST:
+							drawText(3, 4  , 6, "     PLUGE CONTRAST"); 
+							drawText(3, y++, 7, "This sub test fills the"); 
+							drawText(3, y++, 7, "screen with a pattern. By ");
+							drawText(3, y++, 7, "default it is in color.");							
+							y++;
+							drawText(3, y++, 7, "Pressing A changes the"); 
+							drawText(3, y++, 7, "palette to display a dark");
+							drawText(3, y++, 7, "or white pattern in order");
+							drawText(3, y++, 7, "to check contrast and");
+							drawText(3, y++, 7, "brightness for clipping.");
+							y++;
+							drawText(3, y++, 7, "L or R return to PLUGE"); 
+					break;
 			}
 			drawText(5, 24, 5, "Press B to exit help");
 			
@@ -743,13 +769,13 @@ void DrawHelp(u16 option)
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 			end = 1;
 			
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;
 			
-		if(pressed == KEY_LEFT || pressed == KEY_L)
+		if(pressed & KEY_LEFT || pressed & KEY_L)
 		{
 			if(page - 1 > 0)
 			{
@@ -758,7 +784,7 @@ void DrawHelp(u16 option)
 			}
 		}
 			
-		if(pressed == KEY_RIGHT || pressed == KEY_R)
+		if(pressed & KEY_RIGHT || pressed & KEY_R)
 		{
 			if(page + 1 <= totalpages)
 			{

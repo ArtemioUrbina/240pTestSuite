@@ -20,6 +20,7 @@
  */
 
 #include <snes.h>
+#include "video.h"
 
 u16 oldpad = 0xffff;
 
@@ -30,7 +31,16 @@ inline u16 PadPressed(u8 pad)
 	read = padsCurrent(pad);
 	
 	pressed = read & ~oldpad;
-	oldpad = read;		
+	oldpad = read;	
+	
+	if(read & KEY_SELECT && pressed & KEY_UP)
+	{
+		if(!interlaced)
+			SetInterlaced();
+		else
+			ClearInterlaced();
+	}
+	
 	return(pressed);
 }
 
@@ -39,6 +49,5 @@ inline u16 PadHeld(u8 pad)
 	u16 read = 0;
 		
 	read = padsCurrent(pad);
-	
 	return(read);
 }

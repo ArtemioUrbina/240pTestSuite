@@ -25,6 +25,14 @@
 #include "font.h"
 #include "help.h"
 #include "control.h"
+#include "msu.h"
+
+#define PAN_LEFT	0
+#define PAN_CENTER	8
+#define PAN_RIGHT	15
+
+// volpan	volume(0..15) AND panning(0..15) (volume*16+pan) 
+#define playSample(pitch, sfxIndex, volume, pan) spcEffect(pitch, sfxIndex, volume*16+pan)
 
 typedef struct timecode{
 	u16 hours;
@@ -237,7 +245,7 @@ void DropShadowTest(void)
 		pressed = PadPressed(0);
 		held = PadHeld(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_SHADOW);
 			redraw = 1;
@@ -284,16 +292,16 @@ void DropShadowTest(void)
 		if(y < 0)
 			y = 0;
 			
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 			
-		if(pressed == KEY_X)
+		if(pressed & KEY_X)
 		{
 			sprite = !sprite;
 			changesprite = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{		
 			CleanFontMap();	
 			odd = !odd;
@@ -301,7 +309,7 @@ void DropShadowTest(void)
 			text = 30;
 		}
 		
-		if(pressed == KEY_R)
+		if(pressed & KEY_R)
 		{		
 			back ++;
 			redraw = 1;
@@ -310,7 +318,7 @@ void DropShadowTest(void)
 				back = 0;
 		}
 		
-		if(pressed == KEY_L)
+		if(pressed & KEY_L)
 		{		
 			back --;
 			redraw = 1;
@@ -441,7 +449,7 @@ void StripedSpriteTest(void)
 		pressed = PadPressed(0);
 		held = PadHeld(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_STRIPED);
 			redraw = 1;
@@ -465,10 +473,10 @@ void StripedSpriteTest(void)
 		if(y < 0)
 			y = 0;
 			
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 		
-		if(pressed == KEY_R)
+		if(pressed & KEY_R)
 		{		
 			back ++;
 			redraw = 1;
@@ -477,7 +485,7 @@ void StripedSpriteTest(void)
 				back = 0;
 		}
 		
-		if(pressed == KEY_L)
+		if(pressed & KEY_L)
 		{		
 			back --;
 			redraw = 1;
@@ -523,7 +531,7 @@ void DrawStripes(void)
 			redraw = 0;
 		}
 		
-		if(alternate || pressed == KEY_R)
+		if(alternate || pressed & KEY_R)
 		{
 			if(pos)
 			{
@@ -558,29 +566,29 @@ void DrawStripes(void)
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_STRIPES);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 			alternate = !alternate;
 			
-		if(pressed == KEY_X)
+		if(pressed & KEY_X)
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
 				CleanFontMap();
 		}
 			
-		if(pressed == KEY_Y)
+		if(pressed & KEY_Y)
 		{
 			vert = !vert;
 			redraw = 1;
 		}		
 			
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;				
 	}	
 	Transition();
@@ -616,7 +624,7 @@ void DrawCheck(void)
 			redraw = 0;
 		}
 		
-		if(alternate || pressed == KEY_R)
+		if(alternate || pressed & KEY_R)
 		{
 			if(pos)
 			{
@@ -651,23 +659,23 @@ void DrawCheck(void)
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_CHECK);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 			alternate = !alternate;
 			
-		if(pressed == KEY_X)
+		if(pressed & KEY_X)
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
 				CleanFontMap();
 		}
 			
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;
 	}	
 	Transition();
@@ -675,6 +683,7 @@ void DrawCheck(void)
 	return;
 }
 
+//void BobTest();
 void PassiveLagTest()
 {
 	u16 pressed, end = 0;
@@ -685,6 +694,8 @@ void PassiveLagTest()
 	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
 	u16 y = 20, running = 1, redraw = 1, color = 1, bgcol = 0xa;	
 	
+	//BobTest();
+	//return;
 	while(!end) 
 	{	
 		u16 count = 0, mul = 1;
@@ -845,19 +856,19 @@ void PassiveLagTest()
 			
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_LAG);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 			running = !running;
 				
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;
 			
-		if (pressed == KEY_X && !running)
+		if (pressed & KEY_X && !running)
 		{
 			frames = hours = minutes = seconds = 0;
 			framecnt = 0;
@@ -943,19 +954,19 @@ void HScrollTest()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_HSCROLL);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;	
 			
-		if(pressed == KEY_UP)
+		if(pressed & KEY_UP)
 			speed++;	
 			
-		if(pressed == KEY_DOWN)
+		if(pressed & KEY_DOWN)
 			speed--;
 			
 		if(speed > 20)        
@@ -1021,13 +1032,13 @@ void VScrollTest(void)
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_VSCROLL);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;
 		
 		if(pressed & KEY_UP)
@@ -1125,28 +1136,28 @@ void LEDZoneTest()
 		pressed = PadPressed(0);
 		held = PadHeld(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_LED);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			shown = !shown;
 			changed = 1;
 		}
 			
-		if(pressed == KEY_L)
+		if(pressed & KEY_L)
 		{
 			sprite --;
 			changed = 1;
 		}
 			
-		if(pressed == KEY_R)
+		if(pressed & KEY_R)
 		{
 			sprite ++;
 			changed = 1;
@@ -1180,11 +1191,125 @@ void LEDZoneTest()
 	return;
 }
 
-void SoundTest()
+enum sounds{ 	jump, beep, beep2fr,
+				hz250, khz1, khz4,
+				khz8, khz9, khz11,
+				khz13, khz15, khz8fr 	};
+
+void ExecutePulseTrain()
+{
+	s16 f = 0;
+	//Sync
+	
+	for(f = 0; f < 10; f++)
+	{		
+		playSample(8, khz8fr, 15, PAN_CENTER);
+		spcProcess();	
+		WaitForVBlank();
+		
+		spcStop();
+		spcProcess();	
+		WaitForVBlank();
+	}
+}
+
+void ExecuteSilence()
+{
+	s16 frame = 0;
+	
+	//Silence
+	for(frame = 0; frame < 20; frame++)
+	{
+		spcProcess();	
+		WaitForVBlank();
+	}
+}
+
+void PlayScale(enum sounds note, s16 pan)
+{
+	int i, j, volume = 15;
+	
+	// 15 times 20 frames each -> 
+	for(i = 1; i < 16; i++)
+	{
+		//spcStop();
+		for(j = 0; j < 5; j++)
+		{
+			spcProcess();	
+			WaitForVBlank();	
+		}
+		playSample(i, note, 15, pan);
+		for(j = 0; j < 15; j++)
+		{
+			spcProcess();	
+			WaitForVBlank();	
+		}
+	}
+}
+
+/*
+			Let desired DSP pitch be P.
+			
+			https://wiki.superfamicom.org/spc700-reference
+
+Pitch->Hz
+               P
+HZ = 32000 * ------
+              2^12
+
+(HZ = P * 7.8125)
+
+Hz->Pitch
+             HZ
+P = 2^12 * -------
+            32000
+
+(P = HZ / 7.8125)
+
+The highest pitch will reproduce the sound at approx. 2 octaves higher (~128KHz sample rate). The lowest pitch is basically not limited (but you will lose accuracy at lower pitches).
+
+A few pitch->interval relations...
+
+    400h     800h   1000h     2000h   3FFFh
+-----|--------|-------|---------|-------|-----
+   -2oct   -1oct   original   +1oct   +2oct
+                    sound
+                (best quality!)
+
+*/
+// 1 to 15, 8 is 32khz correct
+
+//spcFadeModuleVolume(0, 255); 	
+
+void ExecuteMDFourier()
+{
+	int i = 0;
+	
+	WaitForVBlank();
+	ExecutePulseTrain();
+	ExecuteSilence();
+	
+	for(i = 0; i < 1; i++)
+	{
+		PlayScale(hz250, PAN_CENTER);
+		PlayScale(khz1, PAN_CENTER);
+		PlayScale(khz4, PAN_CENTER);
+		PlayScale(khz8, PAN_CENTER);
+		PlayScale(khz9, PAN_CENTER);
+		PlayScale(khz11, PAN_CENTER);
+		PlayScale(khz13, PAN_CENTER);
+		PlayScale(khz15, PAN_CENTER);
+	}
+	
+	ExecuteSilence();
+	ExecutePulseTrain();
+}
+
+void MDFourier()
 {
 	u16 redraw = 1, change = 0, end = 0;
 	u16 pressed;	
-	s16 sound = 1, effect = 0, pan[3] = { 0, 8, 15 };
+	s16 effect = 0;
 
 	while(!end) 
 	{
@@ -1209,7 +1334,103 @@ void SoundTest()
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
 			
-			bgSetScroll(1, 0, -1);					
+			bgSetScroll(1, 0, -1);			
+			
+			EndDMA();		
+			
+			redraw = 0;
+			change = 1;
+		}			
+		
+		if(change)
+		{
+			u16 y = 7;						
+			
+			drawText(8, 7, 6, "MDFourier Beta 2"); 	
+			if(!msu1available())
+				drawText(11, 16, 7, "Press A");
+			else
+			{
+				drawText(11, 16, 7, "Press A for MDF");
+				drawText(11, 17, 7, "Press X for MSU"); 
+			}
+			
+			change = 0;
+		}	
+
+		WaitForVBlank();	
+		
+		pressed = PadPressed(0);
+		
+		if(pressed & KEY_START)
+		{
+			//DrawHelp(HELP_SOUND);
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_X)
+		{
+			if(msu1available())
+			{
+				int i = 0;
+				
+				drawText(4, 17, 5, "Please wait while recording");
+				ExecuteMDFourier();
+				for(i = 0; i < 4; i++)	
+					WaitForVBlank();
+				msu1play(1);
+				redraw = 1;
+			}
+		}
+
+		if(pressed & KEY_A)
+		{
+			drawText(4, 16, 5, "Please wait while recording");
+			ExecuteMDFourier();
+			redraw = 1;
+		}
+			
+		if(pressed & KEY_B)
+			end = 1;			
+	}
+	spcStop();
+	Transition();
+	return;
+}
+
+
+void SoundTest()
+{
+	u16 redraw = 1, change = 0, end = 0;
+	u16 pressed;	
+	s16 sound = 1, effect = 0, pan[3] = { PAN_LEFT, PAN_CENTER, PAN_RIGHT };
+
+	while(!end) 
+	{
+		if(redraw)
+		{
+			u16 size = 0;
+					
+			StartDMA();	
+			
+			CleanFontMap();
+			consoleInitTextMine(0, 7, &font);
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(0, 31, 0), RGB5(0, 0, 0));	
+			AddTextColor(5, RGB5(31, 0, 0), RGB5(0, 0, 0));
+			
+			size = (&back_tiles_end - &back_tiles);
+			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			
+			size = (&back_map_end - &back_map);	
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
+						
+			setMode(BG_MODE1,0); 	
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);			
+			
+			EndDMA();		
 			
 			redraw = 0;
 			change = 1;
@@ -1231,25 +1452,25 @@ void SoundTest()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_SOUND);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A)
-			spcEffect(2, 0, 15*16+pan[sound]);
+		if(pressed & KEY_A)
+			playSample(2, 0, 15, pan[sound]);
 			
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;	
 		
-		if(pressed == KEY_LEFT)
+		if(pressed & KEY_LEFT)
 		{
 			sound --;
 			change = 1;
 		}
 			
-		if(pressed == KEY_RIGHT)
+		if(pressed & KEY_RIGHT)
 		{
 			sound ++;
 			change = 1;
@@ -1404,12 +1625,12 @@ void ManualLagTest()
 		{
 			if(y == 96)
 			{
-				spcEffect(4, 1, 15*16+sound);
+				playSample(4, beep, 15, sound);
 				setPaletteColor(0, RGB5(0xff, 0xff, 0xff));
-				if(sound == 0)
-					sound = 15;
+				if(sound == PAN_LEFT)
+					sound = PAN_RIGHT;
 				else
-					sound = 0;
+					sound = PAN_LEFT;
 			}
 			spcProcess();	
 		}
@@ -1471,16 +1692,16 @@ void ManualLagTest()
 		
 		pressed = PadPressed(0);		
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_MANUALLAG);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			if(change)
 			{                
@@ -1489,11 +1710,11 @@ void ManualLagTest()
 				if(clicks[pos] >= 0)
 					change = 0;
 				if(audio && clicks[pos] != 0)
-					spcEffect(2, 1, 15*16+sound); // play 500hz tone
+					playSample(2, beep, 15, sound); // play 500hz tone
 			}      
 		}
 		
-		if(pressed == KEY_X)
+		if(pressed & KEY_X)
 		{
 			view ++;
 			if(view > 2)
@@ -1501,7 +1722,7 @@ void ManualLagTest()
 			changed = 1;
 		}
 		
-		if(pressed == KEY_Y)
+		if(pressed & KEY_Y)
 		{
 			variation = !variation;
 			if(!variation)
@@ -1509,7 +1730,7 @@ void ManualLagTest()
 			draw = 1;
 		}
 		
-		if(pressed == KEY_R)
+		if(pressed & KEY_R)
 		{
 			audio = !audio;
 			draw = 1;
@@ -1541,6 +1762,8 @@ void ManualLagTest()
 		
 		size = (&back_map_end - &back_map);	
 		bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
+		
+		EndDMA();
 
 		for(i = 0; i < pos; i++)
 		{
@@ -1603,13 +1826,13 @@ void ManualLagTest()
 		{
 			pressed = PadPressed(0);		
 			
-			if(pressed == KEY_START)
+			if(pressed & KEY_START)
 			{
 				DrawHelp(HELP_MANUALLAG);
 				redraw = 1;
 			}
 			
-			if(pressed == KEY_B)
+			if(pressed & KEY_B)
 				end = 1;
 				
 			WaitForVBlank();
@@ -1693,6 +1916,8 @@ void Alternate240p480i()
 			bgSetDisable(2);
 			
 			bgSetScroll(1, 0, -1);					
+			
+			EndDMA();
 			
 			changed = 1;
 		}			
@@ -1788,13 +2013,13 @@ void Alternate240p480i()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_ALTERNATE);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			if(current <= 19)
 				current ++;
@@ -1829,7 +2054,7 @@ void Alternate240p480i()
 			changed = 1;
 		}
 			
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;	
 
 	}
@@ -1941,7 +2166,7 @@ void AudioSyncTest(void)
 		
 		if(status == 120)
 		{
-			spcEffect(4, 2, 15*16+1);
+			playSample(4, beep2fr, 15, PAN_CENTER);
 			setPaletteColor(0, RGB5(0xff, 0xff, 0xff));
 		}
 
@@ -1962,7 +2187,7 @@ void AudioSyncTest(void)
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			oamClear(0, 0);
 			DrawHelp(HELP_AUDIOSYNC);
@@ -1973,10 +2198,10 @@ void AudioSyncTest(void)
 			y = 160;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 			
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			refresh = !refresh;
 			if(!refresh)
@@ -1992,3 +2217,109 @@ void AudioSyncTest(void)
 	
 	return;
 }
+
+/*
+void BobTest()
+{
+	u16 redraw = 1, end = 0;
+	u16 pressed, frames = 0;
+	u16 frames = 0, seconds = 0, minutes = 0, hours = 0;
+	u8 res = 0, changed = 1, color = 7;
+
+	while(!end) 
+	{
+		WaitForVBlank();
+		
+		if(redraw)
+		{
+			u16 size = 0;
+					
+			StartDMA();	
+			
+			setPaletteColor(0x00, RGB5(0, 0, 0));
+			
+			consoleInitTextMine(0, 7, &font);
+			AddTextColor(6, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(7, RGB5(0, 0, 0), RGB5(31, 31, 31));	
+			
+			ClearScreen(1);
+						
+			setMode(BG_MODE1,0); 	
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);					
+			
+			EndDMA();
+			
+			changed = 1;
+			redraw = 0;
+		}			
+		
+		if(changed)
+		{
+			setPaletteColor(0x00, RGB5(0, 0, 0));
+			color = 7;
+			changed = 0;
+		}
+		
+		frames ++;
+		if(snes_50hz)	
+		{
+			if(frames > 49)
+			{
+				frames = 0;
+				seconds ++;	
+			}
+		}
+		else
+		{
+			if(frames > 59)
+			{
+				frames = 0;
+				seconds ++;	
+			}
+		}
+	
+		if(seconds > 59)
+		{
+		  seconds = 0;
+		  minutes ++;
+		}
+
+		if(minutes > 59)
+		{
+		  minutes = 0;
+		  hours ++;
+		}
+
+		if(hours > 99)
+		  hours = 0;
+		
+		pressed = PadPressed(0);
+		
+		if(pressed & KEY_START)
+		{
+			//DrawHelp(HELP_ALTERNATE);
+			//redraw = 1;
+		}
+		
+		if(pressed & KEY_A)
+		{
+			setPaletteColor(0x00, RGB5(31, 31, 31));			
+			color = 6;
+			changed = 1;
+		}
+			
+		if(pressed & KEY_B)
+			end = 1;	
+			
+		drawText(1,  0, color, "Elapsed Timer: %02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
+		drawText(1,  8, color, "Elapsed Timer: %02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
+		drawText(1, 17, color, "Elapsed Timer: %02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
+		drawText(1, 27, color, "Elapsed Timer: %02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
+	}
+	
+	Transition();
+	return;
+}
+*/

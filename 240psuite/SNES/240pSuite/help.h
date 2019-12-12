@@ -49,5 +49,6 @@
 #define	HELP_VIDEO			27
 #define	HELP_ALTERNATE		28
 #define HELP_AUDIOSYNC		29
+#define HELP_CONTRAST		30
 
 void DrawHelp(u16 help);

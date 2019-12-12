@@ -138,6 +138,14 @@ extern char kiki_map, kiki_map_end;
 extern char audiosync_tiles, audiosync_tiles_end;
 extern char audiosync_map, audiosync_map_end;
 
+extern char fireshark_tiles, fireshark_tiles_end;
+extern char fireshark_map, fireshark_map_end;
+extern char fireshark_pal, fireshark_pal_end;
+
+extern char bricks_tiles, bricks_tiles_end;
+extern char bricks_pal, bricks_pal_end;
+extern char bricks_map, bricks_map_end;
+
 extern char font;
 extern char fontback;
 

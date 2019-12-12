@@ -63,7 +63,7 @@ void DrawGrid(u8 type)
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			if(type)
 			{
@@ -75,7 +75,7 @@ void DrawGrid(u8 type)
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 	}	
 	Transition();
@@ -128,16 +128,16 @@ void DrawSMPTE()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_SMPTE);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			if(type)
 			{
@@ -203,19 +203,19 @@ void DrawColorBars(void)
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_COLORS);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			type = !type;
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 	}	
 	Transition();
@@ -264,16 +264,16 @@ void Drawcircles()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_LINEARITY);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			grid = !grid;
 			redraw = 1;
@@ -344,13 +344,13 @@ void DrawPluge()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_PLUGE);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_X)
+		if(pressed & KEY_X)
 		{
 			color ++;
 			if(color > 3)
@@ -358,7 +358,7 @@ void DrawPluge()
 			refresh = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			fullrange = !fullrange;
 			if(fullrange)
@@ -370,7 +370,15 @@ void DrawPluge()
 			refresh = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_R || pressed & KEY_L)
+		{
+			if(DrawContrast())
+				end = 1;
+			else
+				redraw = 1;
+		}
+		
+		if(pressed & KEY_B)
 			end = 1;
 			
 		if(text)
@@ -412,13 +420,13 @@ void DrawGrayRamp(void)
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_GRAY);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 	}	
 	Transition();
@@ -456,16 +464,16 @@ void DrawColorBleed()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_BLEED);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			toggle = !toggle;			
 			redraw = 1;
@@ -502,13 +510,13 @@ void Draw601CB()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_601CB);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;
 	}	
 	Transition();
@@ -519,7 +527,7 @@ void Draw601CB()
 void DrawSharpness() 
 {	
 	u16 pressed, end = 0;
-	u16 redraw = 1;
+	u16 redraw = 1, mode = 0;
 		
 	while(!end) 
 	{		
@@ -527,8 +535,16 @@ void DrawSharpness()
 		{
 			StartDMA();
 			
-			bgInitTileSetMine(1, &sharpness_tiles, &sharpness_pal, 0, (&sharpness_tiles_end - &sharpness_tiles), 16*2, BG_16COLORS, 0x4000);	
-			bgInitMapSetMine(1, &sharpness_map, (&sharpness_map_end - &sharpness_map), SC_32x32, 0x1000);
+			if(!mode)
+			{
+				bgInitTileSetMine(1, &sharpness_tiles, &sharpness_pal, 0, (&sharpness_tiles_end - &sharpness_tiles), 16*2, BG_16COLORS, 0x4000);	
+				bgInitMapSetMine(1, &sharpness_map, (&sharpness_map_end - &sharpness_map), SC_32x32, 0x1000);
+			}
+			else
+			{
+				bgInitTileSetMine(1, &bricks_tiles, &bricks_pal, 0, (&bricks_tiles_end - &bricks_tiles), 16*2, BG_16COLORS, 0x4000);	
+				bgInitMapSetMine(1, &bricks_map, (&bricks_map_end - &bricks_map), SC_32x32, 0x1000);
+			}
 			
 			setMode(BG_MODE1,0); 
 			bgSetDisable(0);		
@@ -542,14 +558,20 @@ void DrawSharpness()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_SHARPNESS);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
-			end = 1;		
+		if(pressed & KEY_A)
+		{
+			mode = !mode;
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_B)
+			end = 1;
 	}	
 	Transition();
 	
@@ -622,29 +644,29 @@ void DrawWhite()
 		pressed = PadPressed(0);
 		held = PadHeld(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_WHITE);
 			redraw = 1;
 			change = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			custom = !custom;	
 			change = 1;
 		}
 			
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;	
 
-		if(pressed == KEY_R)
+		if(pressed & KEY_R)
 		{
 			sel ++;
 			change = 1;
 		}
 			
-		if(pressed == KEY_L)
+		if(pressed & KEY_L)
 		{
 			sel --;
 			change = 1;
@@ -657,16 +679,16 @@ void DrawWhite()
 			
 		if(custom)
 		{
-			if(pressed == KEY_SELECT)
+			if(pressed & KEY_SELECT)
 				fast = !fast;
 			
-			if(pressed == KEY_RIGHT)
+			if(pressed & KEY_RIGHT)
 			{
 				mod ++;
 				change = 1;
 			}
 				
-			if(pressed == KEY_LEFT)
+			if(pressed & KEY_LEFT)
 			{
 				mod --;
 				change = 1;
@@ -677,7 +699,7 @@ void DrawWhite()
 			if(mod < 0)
 				mod = 2;
 				
-			if(pressed == KEY_UP || fast && held == KEY_UP)
+			if(pressed & KEY_UP || fast && held & KEY_UP)
 			{
 				s16 *edit = NULL;
 	  
@@ -703,7 +725,7 @@ void DrawWhite()
 				}  
 			}
 				
-			if(pressed == KEY_DOWN || fast && held == KEY_DOWN)
+			if(pressed & KEY_DOWN || fast && held & KEY_DOWN)
 			{
 				s16 *edit = NULL;
 	  
@@ -729,7 +751,7 @@ void DrawWhite()
 				}	 
 			}
 			
-			if(pressed == KEY_Y)
+			if(pressed & KEY_Y)
 			{
 				s16 *edit = NULL;
 	  
@@ -754,7 +776,7 @@ void DrawWhite()
 				}  
 			}
 				
-			if(pressed == KEY_X)
+			if(pressed & KEY_X)
 			{
 				s16 *edit = NULL;
 	  
@@ -795,7 +817,7 @@ void Draw100IRE()
 	int	irecount = 10, iremax = 10, changedire = 0; 
 	u8	*irevalues = NULL, invert = 0, text = 0;
 	u8	irevalues100[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
-	u8	irevalues140[5] = { 0, 63, 127, 190, 255 };	
+	u8	irevalues140[8] = { 0, 63, 102, 127, 153, 190, 230, 255 };	
 		
 	irevalues = irevalues100;
 	while(!end) 
@@ -855,22 +877,22 @@ void Draw100IRE()
 		
 		pressed = PadPressed(0);
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			DrawHelp(HELP_IRE);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;		
 			
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			invert = !invert;
 			if(invert)
 			{
 				irecount = 0;
-				iremax = 4;
+				iremax = 7;
 				irevalues = irevalues140;
 			}
 			else
@@ -888,7 +910,7 @@ void Draw100IRE()
 			changedire = 1;
 		}
 			
-		if(pressed == KEY_L)
+		if(pressed & KEY_L)
 		{			
 			if(irecount > 0)
 			{
@@ -898,7 +920,7 @@ void Draw100IRE()
 			text = 30;
 		}
 			
-		if(pressed == KEY_R)
+		if(pressed & KEY_R)
 		{
 			irecount ++;
 				
@@ -1188,13 +1210,13 @@ void DrawOverscan(u8 mode)
 		pressed = PadPressed(0);
 		held = PadHeld(0);
 		
-		if(pressed == KEY_UP)
+		if(pressed & KEY_UP)
 		{
 			sel --;
 			changed = 1;
 		}
 		
-		if(pressed == KEY_DOWN)
+		if(pressed & KEY_DOWN)
 		{
 			sel ++;
 			changed = 1;
@@ -1208,7 +1230,7 @@ void DrawOverscan(u8 mode)
 				sel = 3;
 		}
 		
-		if (pressed == KEY_LEFT || held == KEY_L)    
+		if (pressed & KEY_LEFT || held & KEY_L)    
 		{ 
 			s16 *data = NULL;
 
@@ -1242,7 +1264,7 @@ void DrawOverscan(u8 mode)
 			changedval = 1;
 		}
 
-		if (pressed == KEY_RIGHT || held == KEY_R)     
+		if (pressed & KEY_RIGHT || held & KEY_R)     
 		{
 			s16 *data = NULL;
 
@@ -1272,7 +1294,7 @@ void DrawOverscan(u8 mode)
 			changedval = 1;
 		}
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			if(mode)
 				Set224pMode();
@@ -1282,7 +1304,7 @@ void DrawOverscan(u8 mode)
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			top = bottom = left = right = 0;
 			if(mode)
@@ -1291,7 +1313,7 @@ void DrawOverscan(u8 mode)
 			changedval = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;	
 			
 		WaitForVBlank();
@@ -1330,35 +1352,123 @@ void DrawMode7()
 		held = PadHeld(0);
 		pressed = PadPressed(0);
 		
-		if(held == KEY_L || pressed == KEY_LEFT)
+		if(held & KEY_L || pressed & KEY_LEFT)
 		{
 			angle--; 
 			setMode7Rot(angle);
 		}
 		
-		if(held == KEY_R || pressed == KEY_RIGHT)
+		if(held & KEY_R || pressed & KEY_RIGHT)
 		{
 			angle++; 
 			setMode7Rot(angle);
 		}
 			
-		if(pressed == KEY_A)
+		if(pressed & KEY_A)
 		{
 			angle = 0;
 			setMode7Rot(angle);
 		}
 		
-		if(pressed == KEY_START)
+		if(pressed & KEY_START)
 		{
 			consoleInit();
 			DrawHelp(HELP_MODE7);
 			redraw = 1;
 		}
 		
-		if(pressed == KEY_B)
+		if(pressed & KEY_B)
 			end = 1;
 		
 		WaitForVBlank();
 	}
 	consoleInit();
+}
+
+int DrawContrast() 
+{	
+	u16 pressed, end = 0;
+	u16 redraw = 1, selpal = 0;
+	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			StartDMA();
+			
+			bgInitTileSetMine(1, &fireshark_tiles, &fireshark_pal, 0, (&fireshark_tiles_end - &fireshark_tiles), 16*2, BG_16COLORS, 0x4000);	
+			bgInitTileSetMine(1, &fireshark_tiles, &fireshark_pal, 0, (&fireshark_tiles_end - &fireshark_tiles), 16*2, BG_16COLORS, 0x4000);	
+			bgInitMapSetMine(1, &fireshark_map, (&fireshark_map_end - &fireshark_map), SC_32x32, 0x1000);
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(0);		
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			EndDMA();
+			redraw = 0;
+		}
+		WaitForVBlank();
+		
+		pressed = PadPressed(0);
+		
+		if(pressed & KEY_START)
+		{
+			DrawHelp(HELP_CONTRAST);
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_B)
+			end = 1;		
+		
+		if(pressed & KEY_A)
+		{
+			selpal ++;
+			if(selpal > 3)
+				selpal = 0;
+				
+			switch(selpal)
+			{
+				case 0:
+					StartDMA();
+					dmaCopyCGram(&fireshark_pal, 0, 16*2);
+					EndDMA();
+					break;
+				case 1:					
+					setPaletteColor(1, RGB5(1, 1, 1));
+					setPaletteColor(2, RGB5(2, 2, 2));
+					setPaletteColor(3, RGB5(0, 0, 0));
+					setPaletteColor(4, RGB5(0, 0, 0));
+					setPaletteColor(5, RGB5(3, 3, 3));
+					setPaletteColor(6, RGB5(4, 4, 4));
+					break;
+				case 2:
+					setPaletteColor(1, RGB5(3, 3, 3));
+					setPaletteColor(2, RGB5(4, 4, 4));
+					setPaletteColor(3, RGB5(0, 0, 0));
+					setPaletteColor(4, RGB5(0, 0, 0));
+					setPaletteColor(5, RGB5(5, 5, 5));
+					setPaletteColor(6, RGB5(6, 6, 6));
+					break;
+				case 3:
+					setPaletteColor(0, RGB5(31, 31, 31));
+					setPaletteColor(1, RGB5(30, 30, 30));
+					setPaletteColor(2, RGB5(29, 29, 29));
+					setPaletteColor(3, RGB5(31, 31, 31));
+					setPaletteColor(4, RGB5(31, 31, 31));
+					setPaletteColor(5, RGB5(28, 28, 28));
+					setPaletteColor(6, RGB5(27, 27, 27));
+					break;
+				default:
+					break;
+			}
+			
+		}
+		
+		if(pressed & KEY_R || pressed & KEY_L)
+			return 0;
+	}	
+	Transition();
+	
+	return 1;
 }

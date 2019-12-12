@@ -400,6 +400,30 @@ audiosync_map:
 .incbin "audiosync.map"
 audiosync_map_end:
 
+fireshark_tiles:
+.incbin "fireshark.pic"
+fireshark_tiles_end:
+
+fireshark_map:
+.incbin "fireshark.map"
+fireshark_map_end:
+
+fireshark_pal:
+.incbin "fireshark.pal"
+fireshark_pal_end:
+
+bricks_tiles:
+.incbin "bricks.pic"
+bricks_tiles_end:
+
+bricks_map:
+.incbin "bricks.map"
+bricks_map_end:
+
+bricks_pal:
+.incbin "bricks.pal"
+bricks_pal_end:
+
 .ends
 
 .section ".rodata9" superfree
