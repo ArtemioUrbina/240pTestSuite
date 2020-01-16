@@ -316,7 +316,7 @@ void DrawWhiteScreen()
 	}
 }
 
-void DrawSMPTE()
+void DrawSMPTEorEBU(int EBU)
 {
 	u16 size, Is75 = 1, text = 0;
 	u16 exit = 0, loadvram = 1;
@@ -332,7 +332,7 @@ void DrawSMPTE()
 			else
 				VDP_setPalette(PAL2, SMPTECB75_pal);
 
-			if(IsPALVDP)
+			if( EBU)
 			{
 				size = sizeof(EBUColorBars75_tiles) / 32;
 				VDP_loadTileData(EBUColorBars75_tiles, TILE_USERINDEX, size, USE_DMA);
@@ -431,7 +431,7 @@ void Draw601ColorBars()
 void DrawSharpness()
 {
 	u16 size, showbricks = 0;
-	u16 exit = 0, loadvram = 1, type = 1;
+	u16 exit = 0, loadvram = 1, type = 1, ntype = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	
 	while(!exit)
@@ -474,15 +474,20 @@ void DrawSharpness()
 		{
 			if(showbricks)
 			{
-				type = DrawFloatMenuResExtra(type, "Sharpness");
-				if(type == 3)
+				ntype = DrawFloatMenuResExtra(type, "Sharpness");
+				if(ntype != FLOAT_CANCEL)
+					type = ntype;
+				if(type == FLOAT_OPTION)
 					showbricks = 0;
 			}
 			else
 			{
-				type = DrawFloatMenuRes(type);
+				ntype = DrawFloatMenuRes(type);
+				if(ntype != FLOAT_CANCEL)
+					type = ntype;
 				showbricks = 1;
 			}
+			resetController(&oldButtons);
 			loadvram = 1;
 		}
 		
@@ -496,10 +501,13 @@ void DrawSharpness()
 void DrawLinearity()
 {
 	u16 size, ind, grid2 = 0, redraw = 0, loadvram = 1;
-	u16 exit = 0, showgrid = 0, gridpattern = 0, type = 0;
+	u16 exit = 0, showgrid = 0, gridpattern = 0, type = 0, ntype = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+		
 	while(!exit)
 	{
 		if(loadvram)
@@ -625,8 +633,10 @@ void DrawLinearity()
 
 		if(pressedButtons & BUTTON_C)
 		{
-			type = DrawFloatMenuRes(type);
-			oldButtons |= BUTTON_A;
+			ntype = DrawFloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			resetController(&oldButtons);
 			loadvram = 1;
 		}
 
@@ -637,11 +647,14 @@ void DrawLinearity()
 void DrawGrid()
 {
 	u16 size, drawBorder = 0;
-	u16 exit = 0, loadvram = 1, type = 0;
+	u16 exit = 0, loadvram = 1, type = 0, ntype = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 first_pal[16], oldColor = 0, redraw = 1;
 
 	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+		
 	while(!exit)
 	{
 		if(loadvram)
@@ -719,8 +732,10 @@ void DrawGrid()
 		
 		if(pressedButtons & BUTTON_C)
 		{
-			type = DrawFloatMenuRes(type);
-			oldButtons |= BUTTON_A;
+			ntype = DrawFloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			resetController(&oldButtons);
 			loadvram = 1;
 		}
 
@@ -732,10 +747,13 @@ void DrawColorBleed()
 {
 	u16 ind = 0, Drawtype = 0;
 	u16 size = 0, loadvram = 1;
-	u16 exit = 0, type = 0, redraw = 1;
+	u16 exit = 0, type = 0, ntype = 0, redraw = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+		
 	while(!exit)
 	{
 		if(loadvram)
@@ -803,8 +821,10 @@ void DrawColorBleed()
 		
 		if(pressedButtons & BUTTON_C)
 		{
-			type = DrawFloatMenuRes(type);
-			oldButtons |= BUTTON_A;
+			ntype = DrawFloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			resetController(&oldButtons);
 			loadvram = 1;
 		}
 
@@ -1057,7 +1077,7 @@ void DrawOverscan()
 {
 	u32 _tile_l[8], _tile_r[8], _tile_t[8], _tile_b[8];
 	u32 _tile_lb[8], _tile_lt[8], _tile_rt[8], _tile_rb[8];
-	u16 vram = TILE_USERINDEX, type = 0;
+	u16 vram = TILE_USERINDEX, type = 0, ntype = 0;
 	int left = 0, right = 0, top = 0, bottom = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons, redraw = 1;
 	int sel = 0, maxTileVert = 0, maxTileHor = 0, loadvram = 1;
@@ -1078,6 +1098,9 @@ void DrawOverscan()
 	tile_rb = _tile_rb;
 
 	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+
 	while(!exit)
 	{
 		if(loadvram)
@@ -1272,7 +1295,10 @@ void DrawOverscan()
 		
 		if(pressedButtons & BUTTON_C)
 		{
-			type = DrawFloatMenuRes(type);
+			ntype = DrawFloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			resetController(&oldButtons);
 			loadvram = 1;
 		}
 	}
@@ -1355,16 +1381,16 @@ u8 DrawContrast()
 	return(1);
 }
 
-#define CONVGRID	0
-#define CONVCOLOR	1
-
 void DrawConvergence()
 {
 	u16 ind = 0, size = 0, loadvram = 1, convtype = CONVGRID;
-	u16 exit = 0, type = 0, dots = 0, redraw = 0, lines = 0;
+	u16 exit = 0, type = 0, ntype = 0, dots = 0, redraw = 0, lines = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+		
 	while(!exit)
 	{
 		if(loadvram)
@@ -1449,8 +1475,10 @@ void DrawConvergence()
 			
 		if(pressedButtons & BUTTON_C)
 		{
-			type = DrawFloatMenuRes(type);
-			oldButtons |= BUTTON_A;
+			ntype = DrawFloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			resetController(&oldButtons);
 			loadvram = 1;
 		}
 

@@ -68,9 +68,12 @@ typedef struct menu_data {
 } fmenudata;
 #endif
 
-#define RES_320 1
-#define RES_256 2
+#define FLOAT_CANCEL	0
+#define RES_320 		1
+#define RES_256 		2
+#define FLOAT_OPTION	3
 
 u16 DrawFloatMenuRes(u16 def);
 u16 DrawFloatMenuResExtra(u16 def, char *option);
 u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size);
+void resetController(u16 *oldButtons);

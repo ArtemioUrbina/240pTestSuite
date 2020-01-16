@@ -22,6 +22,10 @@
 #ifndef PATTERNS_H
 #define PATTERNS_H
 
+
+#define CONVGRID	0
+#define CONVCOLOR	1
+
 void DrawPluge();
 void DrawColorBars();
 void Draw601ColorBars();
@@ -31,7 +35,7 @@ void DrawLinearity();
 void DrawGrayRamp();
 void DrawWhiteScreen();
 void Draw100IRE();
-void DrawSMPTE();
+void DrawSMPTEorEBU(int EBU);
 void DrawSharpness();
 void DrawOverscan();
 u8 DrawContrast();

@@ -324,6 +324,7 @@ typedef struct bios_data {
     char *name;
 } BIOSID;
 
+
 const static BIOSID bioslist[] = {
 { 0xC6D10268, "M1 US 1.10" },	// mpr-15045b.bin
 { 0x529AC15A, "M1 EU 1.00" },	// megacd_model1_bios_1_00_e.bin
@@ -332,6 +333,7 @@ const static BIOSID bioslist[] = {
 { 0xF18DDE5B, "M1 JP 1.0L" },	// mpr-14088c.bin swapped in MAME as 0x03134289
 { 0x2EA250C0, "M1 JP 1.0O" },	// epr-14088d.bin swapped in MAME as 0xDFA95EE9
 { 0x9D2DA8F2, "M1 JP 1.01" },	// epr-14088e.bin
+{ 0x4BE18FF6, "M1 JP 1.11" },	// mpr-14837.bin Nyqvist dump, previously noted as SCD2, that's incorrect
 { 0x550F30BB, "M1 AS 1.0" },	// epr-14536h.bin
 { 0x2E49D72C, "M2 US 2.11X" },	// mpr-15764-t.bin
 { 0x8AF65F58, "M2 US 2.00" },	// us_scd2_930314.bin
@@ -413,6 +415,7 @@ const static BIOS_SW biosSwapped[] = {
 { 0xF18DDE5B, 0x03134289 }, // mpr-14088c.bin
 { 0x79F85384, 0x3773D5AA }, // mpr-14088h.bin
 { 0xC6D10268, 0x2461B5ED }, // mpr-15045b.bin
+{ 0x4BE18FF6, 0xE0A6179B }, // 920501 Nyqvist dump, not documented
 { 0xDD6CC972, 0x1E4344E6 }, // mpr-15398.bin
 { 0x0507B590, 0xCB76F114 }, // mpr-15512.bin
 { 0x4D5CB8DA, 0x53F1757C }, // mpr-15512a.bin
