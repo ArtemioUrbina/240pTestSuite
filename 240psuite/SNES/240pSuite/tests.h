@@ -35,3 +35,4 @@ void SoundTest();
 void ManualLagTest();
 void Alternate240p480i();
 void AudioSyncTest();
+void MDFourier();

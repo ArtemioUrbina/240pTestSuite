@@ -34,6 +34,13 @@
 // volpan	volume(0..15) AND panning(0..15) (volume*16+pan) 
 #define playSample(pitch, sfxIndex, volume, pan) spcEffect(pitch, sfxIndex, volume*16+pan)
 
+inline void waitSNDVBlank()
+{
+	spcProcess();
+	spcFlush();
+	WaitForVBlank();
+}
+
 typedef struct timecode{
 	u16 hours;
 	u16 minutes;
@@ -1198,18 +1205,15 @@ enum sounds{ 	jump, beep, beep2fr,
 
 void ExecutePulseTrain()
 {
-	s16 f = 0;
+	s16 f = 0, w = 0;
 	//Sync
 	
-	for(f = 0; f < 10; f++)
+	// Each playback is 4 frames
+	for(f = 0; f < 5; f++)
 	{		
 		playSample(8, khz8fr, 15, PAN_CENTER);
-		spcProcess();	
-		WaitForVBlank();
-		
-		spcStop();
-		spcProcess();	
-		WaitForVBlank();
+		for(w = 0; w < 4; w++)
+			waitSNDVBlank();
 	}
 }
 
@@ -1219,31 +1223,22 @@ void ExecuteSilence()
 	
 	//Silence
 	for(frame = 0; frame < 20; frame++)
-	{
-		spcProcess();	
-		WaitForVBlank();
-	}
+		waitSNDVBlank();
 }
 
 void PlayScale(enum sounds note, s16 pan)
 {
 	int i, j, volume = 15;
 	
-	// 15 times 20 frames each -> 
+	// 15 times 10 frames each -> Only 5 full frames usable for windowing
 	for(i = 1; i < 16; i++)
 	{
-		//spcStop();
-		for(j = 0; j < 5; j++)
-		{
-			spcProcess();	
-			WaitForVBlank();	
-		}
 		playSample(i, note, 15, pan);
-		for(j = 0; j < 15; j++)
-		{
-			spcProcess();	
-			WaitForVBlank();	
-		}
+		for(j = 0; j < 6; j++)
+			waitSNDVBlank();
+		spcStop();
+		for(j = 0; j < 4; j++)
+			waitSNDVBlank();
 	}
 }
 
@@ -1285,7 +1280,7 @@ void ExecuteMDFourier()
 {
 	int i = 0;
 	
-	WaitForVBlank();
+	waitSNDVBlank();
 	ExecutePulseTrain();
 	ExecuteSilence();
 	
@@ -1346,19 +1341,19 @@ void MDFourier()
 		{
 			u16 y = 7;						
 			
-			drawText(8, 7, 6, "MDFourier Beta 2"); 	
+			drawText(8, 7, 6, "MDFourier Beta 3"); 
 			if(!msu1available())
 				drawText(11, 16, 7, "Press A");
 			else
 			{
-				drawText(11, 16, 7, "Press A for MDF");
-				drawText(11, 17, 7, "Press X for MSU"); 
+				drawText(7, 16, 7, "Press A for MDF");
+				drawText(7, 17, 7, "Press X for MSU"); 
 			}
 			
 			change = 0;
 		}	
 
-		WaitForVBlank();	
+		waitSNDVBlank();	
 		
 		pressed = PadPressed(0);
 		
@@ -1374,26 +1369,28 @@ void MDFourier()
 			{
 				int i = 0;
 				
-				drawText(4, 17, 5, "Please wait while recording");
+				drawText(4, 17, 5, "Please record signal");
 				ExecuteMDFourier();
 				for(i = 0; i < 4; i++)	
-					WaitForVBlank();
+					waitSNDVBlank();
 				msu1play(1);
 				redraw = 1;
 			}
 		}
 
+		
 		if(pressed & KEY_A)
 		{
-			drawText(4, 16, 5, "Please wait while recording");
+			drawText(4, 17, 5, "Please record signal");
 			ExecuteMDFourier();
 			redraw = 1;
 		}
-			
+
 		if(pressed & KEY_B)
 			end = 1;			
 	}
 	spcStop();
+	waitSNDVBlank();
 	Transition();
 	return;
 }

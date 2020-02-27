@@ -18,6 +18,11 @@
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
+ // Doesn't link porperly with pvsneslib-2.3.2
+ // Due to error: 
+ // COMPUTE_PENDING_CALCULATIONS: a computation is out of 8bit range.
+ // Please use pvsneslib-2.2.0 (26/07/2014) for the time being
 
 #include "font.h"
 #include "tests.h"
@@ -41,6 +46,7 @@ int main(void)
 	
 	LoadAudio();
 	
+	//MDFourier();
 	// Main loop
 	DrawIntro();
 	while(1) 
@@ -497,8 +503,8 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(6, 4, 5, "Ver. MDF B");
-			drawText(19, 4, 7, "12/04/2019");
+			drawText(6, 4, 5, "Ver. MDF B3");
+			drawText(19, 4, 7, "27/02/2020");
 			drawText(10, pos, 5, "Dedicated to Elisa");
 			
 			EndDMA();	

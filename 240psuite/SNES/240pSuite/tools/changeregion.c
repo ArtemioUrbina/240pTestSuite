@@ -4,22 +4,22 @@
 
 int main(int argc, char **argv)
 {
-	FILE    *sfile, *nfile;
+	FILE	*sfile, *nfile;
 	char 	*buffer = NULL;
 	long 	size = 0;
 
 	if(argc < 3)
-    {
-        fprintf(stderr, "Please specify an inpuit and output sfc file\n");
-        return 0;
-    }
+	{
+		fprintf(stderr, "Please specify an input and output sfc file\n");
+		return 0;
+	}
 
-    sfile = fopen(argv[1], "r");
-    if(!sfile)
-    {
-        fprintf(stderr, "Could not open source ROM %s\n", argv[1]);
-        return 0;
-    }
+	sfile = fopen(argv[1], "r");
+	if(!sfile)
+	{
+		fprintf(stderr, "Could not open source ROM %s\n", argv[1]);
+		return 0;
+	}
 
 	fseek(sfile, 0L, SEEK_END);
 	size = ftell(sfile)+1;
@@ -42,12 +42,12 @@ int main(int argc, char **argv)
 	}
 	
 	nfile = fopen(argv[2], "w");
-    if(!nfile)
-    {
+	if(!nfile)
+	{
 		fclose(sfile);
-        fprintf(stderr, "Could not open target ROM %s\n", argv[2]);
-        return 0;
-    }
+		fprintf(stderr, "Could not open target ROM %s\n", argv[2]);
+		return 0;
+	}
 
 	if(buffer[0x7fd9] != 0x02)
 		buffer[0x7fd9] = 0x02;
