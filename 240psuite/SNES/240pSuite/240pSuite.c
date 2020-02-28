@@ -46,7 +46,6 @@ int main(void)
 	
 	LoadAudio();
 	
-	//MDFourier();
 	// Main loop
 	DrawIntro();
 	while(1) 
@@ -100,7 +99,7 @@ int main(void)
 			drawText(3, pos, sel == 13 ? 6 : 7, "Help"); pos ++;	
 			drawText(3, pos, sel == 14 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
 			drawText(3, pos, sel == 15 ? 6 : 5, "Credits"); pos++;
-			drawText(3, pos, sel == 16 ? 6 : 7, "MDFourier beta"); 
+			drawText(3, pos, sel == 16 ? 6 : 7, "MDFourier beta 4"); 
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 			
 				
@@ -210,7 +209,7 @@ int main(void)
 					DrawCredits();
 					break;
 				case 16:
-					MDFourier();
+					MDFourier(0);
 					break;
 			}
 			redraw = 1;
@@ -450,7 +449,11 @@ void DrawIntro(void)
 	EndDMA();
 	
 	while(i++ < 20)
+	{
+		if(PadPressed(0) & KEY_START || PadHeld(0) & KEY_START)
+			MDFourier(1);
 		WaitForVBlank();
+	}
 		
 	setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
 	WaitForVBlank();

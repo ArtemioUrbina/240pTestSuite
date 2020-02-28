@@ -471,13 +471,13 @@ main_loop:
 	SPROC2
 	call	ProcessComms
 	SPROC
+	call	SFX_Update
+	SPROC
 	call	ProcessFade
 	SPROC
 	call	Module_Update
 	SPROC
 	call	UpdatePorts
-	SPROC
-	call	SFX_Update
 	bra	main_loop
 	
 ;--------------------------------------------------------
@@ -499,6 +499,9 @@ ResetMemory:
 ResetSound:
 ;--------------------------------------------------------
 	SETDSP( DSP_KOF, 0FFh );
+	nop
+	nop
+	SETDSP( DSP_KOF, 0FFh );  Added for the Suite, it sometimes didn't stop
 	SETDSP( DSP_FLG, FLG_ECEN );
 	SETDSP( DSP_PMON, 0 );
 	SETDSP( DSP_EVOL, 0 );

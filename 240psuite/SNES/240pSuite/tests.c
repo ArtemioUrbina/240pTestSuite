@@ -1302,12 +1302,15 @@ void ExecuteMDFourier()
 	ExecutePulseTrain();
 }
 
-void MDFourier()
+void MDFourier(u16 boot)
 {
 	u16 redraw = 1, change = 0, end = 0;
 	u16 pressed;	
 	s16 effect = 0;
 
+	if(boot)
+		ExecutePulseTrain();
+		
 	while(!end) 
 	{
 		if(redraw)
