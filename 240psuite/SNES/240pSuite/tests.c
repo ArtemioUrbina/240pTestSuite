@@ -37,7 +37,7 @@
 inline void waitSNDVBlank()
 {
 	spcProcess();
-	spcFlush();
+	//spcFlush();
 	WaitForVBlank();
 }
 
@@ -1236,9 +1236,11 @@ void PlayScale(enum sounds note, s16 pan)
 		playSample(i, note, 15, pan);
 		for(j = 0; j < 6; j++)
 			waitSNDVBlank();
-		spcStop();
 		for(j = 0; j < 4; j++)
+		{
+			spcStop();
 			waitSNDVBlank();
+		}
 	}
 }
 
@@ -1341,7 +1343,7 @@ void MDFourier()
 		{
 			u16 y = 7;						
 			
-			drawText(8, 7, 6, "MDFourier Beta 3"); 
+			drawText(8, 7, 6, "MDFourier Beta 4"); 
 			if(!msu1available())
 				drawText(11, 16, 7, "Press A");
 			else
