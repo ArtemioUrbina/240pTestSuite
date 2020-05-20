@@ -165,7 +165,6 @@ void ManualLagTestResults()
 			put_string("Keep in mind that a frame is", 6, 21);
 			put_string("16.67 milliseconds.", 6, 22);
 			
-			/*
 			if(x3 == 10)
 			{
 				x = 1;
@@ -177,7 +176,6 @@ void ManualLagTestResults()
 				if(x)
 					put_string("Smells like turbo...", 14, 13);
 			}
-			*/
 			if(x3 < 5)
 				put_string("EXCELLENT REFLEXES!", 14, 13);
 			if(x3 == 0)

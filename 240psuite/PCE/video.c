@@ -398,6 +398,8 @@ void Set352H()
 	lda	#$20
 	trb	<irq_m				; re-enable VSYNC processing
 #endasm	
+
+	AdjustVertical();
 }
 
 

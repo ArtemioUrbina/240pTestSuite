@@ -734,8 +734,8 @@ void RefreshCredits()
 	put_string("This is free software and is open source under GPL.", HPOS+1, row++);
 
 	set_font_pal(14);	
-	put_string("Ver. 1.10", 50, 7);
-	put_string("29/10/2019", 49, 8);
+	put_string("Ver. 1.11", 50, 7);
+	put_string("20/05/2020", 49, 8);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;

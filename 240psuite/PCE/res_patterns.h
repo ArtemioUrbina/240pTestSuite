@@ -60,6 +60,7 @@
 #incbin(grid320_240_map, "graphics/grid320_240.fmp");
 #incbin(grid320_224_map, "graphics/grid320_224.fmp");
 #incbin(grid352_240_map, "graphics/grid352_240.fmp");
+#incbin(grid352_224_map, "graphics/grid352_224.fmp");
 
 #incbin(grid256_224_map, "graphics/grid256_224.fmp");
 #incbin(grid256_240_map	, "graphics/grid256_240.fmp");
@@ -87,10 +88,10 @@
 #incchr_ex(EBU_bg, "graphics/EBUCB.pcx", 0, 0, 4, 2, 0);
 
 #incbin(linearity240_map, "graphics/linearity240.fmp");
-#incchr_ex(linearity240_bg, "graphics/linearity240.pcx", 0, 0, 4, 49, 0);
+#incchr_ex(linearity240_bg, "graphics/linearity240.pcx", 0, 0, 4, 42, 0);
 
 #incbin(linearity224_map, "graphics/linearity224.fmp");
-#incchr_ex(linearity224_bg, "graphics/linearity224.pcx", 0, 0, 2, 71, 0);
+#incchr_ex(linearity224_bg, "graphics/linearity224.pcx", 0, 0, 2, 83, 0);
 
 #incbin(linearity256_map, "graphics/linearity256.fmp");
 #incchr_ex(linearity256_bg, "graphics/linearity256.pcx", 0, 0, 4, 41, 0);

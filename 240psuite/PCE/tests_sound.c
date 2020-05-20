@@ -211,9 +211,53 @@ void MDFourier(int armed)
 			MDFourierExecute();
 			//refresh = 1;
 		}
+		
+		if(controller & JOY_SEL)
+			PlayAllChannelsAtOnce(3);
     }
 	if(armed)
 		redraw = 1;
+}
+
+void PlayAllChannelsAtOnce()
+{
+
+	StopAllAudio();
+	
+#ifdef CDROM
+	if(cd_status(0) != 0)
+	  cd_pause();
+	  
+	if(ad_stat())
+		ad_stop();
+#endif
+
+	vsync();
+	// PSG
+	SetWaveFreq(1, 112);  // at around 1khz
+	PlayCenter(1);
+	
+	// Noise
+	SetNoiseFreq(4, 0);
+	PlayCenter(4);
+	
+#ifdef CDROM
+	// ADPCM
+	ad_play(0, 64000, 15, 0);
+	// CD-DA	
+	cd_playtrk(4, 5, CDPLAY_NORMAL);
+	//Wait for the cd audio track to end
+	for(i = 0; i < 400; i++)	
+		vsync();
+		
+	cd_pause();
+#else
+	// Wait
+	for(i = 0; i < 200; i++)	
+		vsync();
+#endif
+	StopAudio(1);
+	StopNoise(4);
 }
 
 void SoundTest()
@@ -818,6 +862,11 @@ void MemViewer(unsigned int address)
 	}
 }
 
+void contollerstr(int direction, char *str, int posx, int posy)
+{
+	set_font_pal(controller & direction ? 12 : 14);
+	put_string(str, posx, posy);
+}
 
 void CheckController(int joypad, int y)
 {
@@ -825,40 +874,42 @@ void CheckController(int joypad, int y)
 	
 	controller = joy(joypad);
 	
-	set_font_pal(controller & JOY_UP ? 15 : 14);
-	put_string("Up", x+4, y);
-	set_font_pal(controller & JOY_LEFT ? 15 : 14);
-	put_string("Left", x, y+1);
-	set_font_pal(controller & JOY_RIGHT ? 15 : 14);
-	put_string("Right", x+6, y+1);
-	set_font_pal(controller & JOY_DOWN ? 15 : 14);
-	put_string("Down", x+3, y+2);
+	// Bug in HUC, can't tell if there are more real controllers connected
+	if(joypad && controller && controller == joy(0))	
+		return;
+		
+	contollerstr(JOY_UP, "Up", x+4, y);
+	contollerstr(JOY_LEFT, "Left", x, y+1);
+	contollerstr(JOY_RIGHT, "Right", x+6, y+1);
+	contollerstr(JOY_DOWN, "Down", x+3, y+2);
 	
-	set_font_pal(controller & JOY_SEL ? 15 : 14);
-	put_string("SEL", x+12, y+1);
-	set_font_pal(controller & JOY_RUN ? 15 : 14);
-	put_string("RUN", x+16, y+1);
+	contollerstr(JOY_SEL, "SEL", x+12, y+1);
+	contollerstr(JOY_RUN, "RUN", x+16, y+1);
 	
-	set_font_pal(controller & JOY_IV ? 15 : 14);
-	put_string("IV", x+20, y);
-	set_font_pal(controller & JOY_V ? 15 : 14);
-	put_string("V", x+24, y);
-	set_font_pal(controller & JOY_VI ? 15 : 14);
-	put_string("VI", x+27, y);
+	if(controller & JOY_TYPE6)
+	{
+		contollerstr(JOY_IV, "IV", x+20, y);
+		contollerstr(JOY_V, "V", x+24, y);
+		contollerstr(JOY_VI, "VI", x+27, y);
+		contollerstr(JOY_III, "III", x+20, y+2);
+	}
+	else
+	{
+		contollerstr(0, "  ", x+20, y);
+		contollerstr(0, " ", x+24, y);
+		contollerstr(0, "  ", x+27, y);
+		contollerstr(0, "   ", x+20, y+2);
+	}
 
-	
-	set_font_pal(controller & JOY_III ? 15 : 14);
-	put_string("III", x+20, y+2);
-	set_font_pal(controller & JOY_II ? 15 : 14);
-	put_string("II", x+24, y+2);
-	set_font_pal(controller & JOY_I ? 15 : 14);
-	put_string("I", x+27, y+2);
+	contollerstr(JOY_II, "II", x+24, y+2);
+	contollerstr(JOY_I, "I", x+27, y+2);
+	clicks[joypad] = 1;
 }
 
 void ControllerTest()
 {
 	redraw = 1;
-	
+		
 	while(!end)
 	{	
 		vsync();
@@ -866,6 +917,7 @@ void ControllerTest()
 		if(redraw)
 		{
 			RedrawBG();
+			SetFontColors(12, RGB(3, 3, 3), RGB(7, 0, 0), 0);
 			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
 			SetFontColors(15, RGB(2, 2, 2), RGB(7, 7, 7), 0);
 

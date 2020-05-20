@@ -673,8 +673,12 @@ void DrawGrid()
 					load_map(0, 0, 0, 0, 40, Enabled240p ? 30 : 28);
 					break;
 				case RES_352:
-					set_map_data(grid352_240_map, 44, 30);
-					load_map(0, 0, 0, 0, 44, 30);
+					if(Enabled240p)
+						set_map_data(grid352_240_map, 44, 30);
+					else
+						set_map_data(grid352_224_map, 44, 30);
+						
+					load_map(0, 0, 0, 0, 44, Enabled240p ? 30 : 28);
 					break;
 				case RES_512:
 					if(Enabled240p)
