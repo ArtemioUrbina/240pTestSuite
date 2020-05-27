@@ -70,25 +70,28 @@ void display_colorbleed_00()
 	call		_set_font_pal
 	p_string	colorbleed_00_01,6,7
 	p_string	colorbleed_00_02,6,8
-	p_string	colorbleed_00_03,6,9
+	p_string	colorbleed_00_03,6,10
 	p_string	colorbleed_00_04,6,11
-	p_string	colorbleed_00_05,6,12
+	p_string	colorbleed_00_05,6,13
 	p_string	colorbleed_00_06,6,14
+	p_string	colorbleed_00_07,6,16
 	rts
 
 colorbleed_00_00:	.db	"COLOR BLEED"
 			.db	0
-colorbleed_00_01:	.db	"- This pattern helps diagnose unneeded color"
+colorbleed_00_01:	.db	"This pattern helps diagnose color subsampling"
 			.db	0
-colorbleed_00_02:	.db	"upsampling. It consists of one pixel width color"
+colorbleed_00_02:	.db	"(4:4:4 to 4:2:2, etc). "
 			.db	0
-colorbleed_00_03:	.db	"bars alternating with one pixel width black bars."
+colorbleed_00_03:	.db	"It consists of one pixel width color bars "
 			.db	0
-colorbleed_00_04:	.db	"- You can change the vertical bars to a checker"
+colorbleed_00_04:	.db	"alternating with one pixel width black bars."
 			.db	0
-colorbleed_00_05:	.db	"board with button I."
+colorbleed_00_05:	.db	"- You can change the vertical bars to a checker"
 			.db	0
-colorbleed_00_06:	.db	"- You can change the resolution with SELECT."
+colorbleed_00_06:	.db	"board with button I."
+			.db	0
+colorbleed_00_07:	.db	"- You can change the resolution with SELECT."
 			.db	0
 #endasm
 }
@@ -420,6 +423,7 @@ void display_linearity_00()
 	p_string	linearity_00_05,6,12
 	p_string	linearity_00_06,6,13
 	p_string	linearity_00_07,6,15
+	p_string	linearity_00_08,6,16
 	rts
 
 linearity_00_00:	.db	"LINEARITY"
@@ -437,6 +441,8 @@ linearity_00_05:	.db	"Of course the linearity should be kept in all"
 linearity_00_06:	.db	"directions."
 			.db	0
 linearity_00_07:	.db	"- You can change the resolution with SELECT."
+			.db	0
+linearity_00_08:	.db	"- Pattern fixed by paulb_nl"
 			.db	0
 #endasm
 }

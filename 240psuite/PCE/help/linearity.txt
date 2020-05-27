@@ -10,3 +10,4 @@ Of course the linearity should be kept in all
 directions.
 
 - You can change the resolution with SELECT.
+- Pattern fixed by paulb_nl

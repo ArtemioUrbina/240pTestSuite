@@ -78,8 +78,8 @@
 #incchr_ex(cb601_bg, "graphics/cb601.pcx", 0, 0, 2, 4, 0);
 
 #incbin(colorbleed_map, "graphics/colorbleed.fmp");
-#incchr_ex(colorbleed_bg, "graphics/colorbleed.pcx", 0, 0, 2, 3, 0);
-#incchr_ex(colorbleedchk_bg, "graphics/colorbleedcheck.pcx", 0, 0, 2, 3, 0);
+#incchr_ex(colorbleed_bg, "graphics/colorbleed.pcx", 0, 0, 2, 5, 0);
+#incchr_ex(colorbleedchk_bg, "graphics/colorbleedcheck.pcx", 0, 0, 2, 5, 0);
 
 #incbin(SMPTE75_map, "graphics/SMPTE75.fmp");
 #incchr_ex(SMPTE75_bg, "graphics/SMPTE75.pcx", 0, 0, 2, 27, 0);
