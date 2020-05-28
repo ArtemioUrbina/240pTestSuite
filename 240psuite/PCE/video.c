@@ -68,6 +68,7 @@ int left;
 int right;
 unsigned char previous;
 unsigned char screen;
+int hres;
 
 unsigned char back;
 int colswap;
@@ -314,7 +315,10 @@ void Set256H()
 	trb	<irq_m				; re-enable VSYNC processing
 #endasm	
 
+	hres = 256;
+#ifndef HELP_OVL	
 	AdjustVertical();
+#endif
 }
 
 
@@ -399,7 +403,10 @@ void Set352H()
 	trb	<irq_m				; re-enable VSYNC processing
 #endasm	
 
+	hres = 352;
+#ifndef HELP_OVL
 	AdjustVertical();
+#endif
 }
 
 
@@ -469,6 +476,7 @@ void Set320H()
 	trb	<irq_m				; re-enable VSYNC processing
 #endasm	
 
+	hres = 320;
 #ifndef HELP_OVL
 	AdjustVertical();
 #endif
@@ -520,6 +528,7 @@ void Set512H()
 	trb	<irq_m				; re-enable VSYNC processing
 #endasm
 
+	hres = 512;
 #ifndef HELP_OVL
 	AdjustVertical();
 #endif
@@ -538,6 +547,7 @@ void AdjustVertical()
 	else
 		Set224p();
 }
+
 #endif
 
 #ifdef CDROM

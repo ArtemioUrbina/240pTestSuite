@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014-2019 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2020 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -137,6 +137,17 @@ int FloatMenuRes320n256_224(int def)
 	return(FloatMenu(def, 3, CHANGE_VERT));
 }
 
+int FloatMenuResMinus352(int def)
+{
+	SetFMResTitle();
+	
+	SetFMRes320(1);
+	SetFMRes256(2);
+	SetFMRes512(3);
+	
+	return(FloatMenu(def, 4, NULL));
+}
+
 void RedrawFM(char *bottom)
 {
 	ResetVideo();
@@ -150,7 +161,7 @@ void RedrawFM(char *bottom)
 	set_map_data(float_map, 16, 10);
 	set_tile_data(float_bg);
 	load_tile(0x1100);
-	load_map(12, fmy/8, 0, 0, 16, 10);
+	load_map(12, fmy, 0, 0, 16, 10);
 	load_palette(0, float_pal, 1);  
 
 	Center224in240();
@@ -160,8 +171,8 @@ void RedrawFM(char *bottom)
 
 	// Title at index 0
 	lfm = strlen(resmenudata[0].name);	
-	tfmx = (128/8 - lfm)/2 + fmx/8;
-	tfmy = fmy/8;
+	tfmx = (16 - lfm)/2 + fmx;
+	tfmy = fmy;
 
 	set_font_pal(13);
 	put_string(resmenudata[0].name, tfmx, tfmy);
@@ -169,8 +180,8 @@ void RedrawFM(char *bottom)
 	if(bottom)
 	{
 		lfm = strlen(bottom);	
-		tfmx = (128/8 - lfm)/2 + fmx/8;
-		tfmy = fmy/8+12;
+		tfmx = (16 - lfm)/2 + fmx;
+		tfmy = fmy+12;
 
 		SetFontColors(12, 0, RGB(3, 3, 3), RGB(2, 2, 2));
 		set_font_pal(12);
@@ -180,15 +191,15 @@ void RedrawFM(char *bottom)
 
 int FloatMenu(int def, int size, char *bottom)
 {
-	fmx = 100;
-	fmy = 80; 
+	fmx = 12;
+	fmy = 10; 
 	fsel = def;
 	
 	end = 0;
 	redraw = 1;
 	
 	if(!Enabled240p)
-		fmy = 72;
+		fmy = 9;
 
 	while(!end)
 	{
@@ -209,8 +220,8 @@ int FloatMenu(int def, int size, char *bottom)
 			{	
 				lfm = strlen(resmenudata[i].name);
 				
-				tfmx = (128/8 - lfm)/2 + fmx/8;
-				tfmy = fmy/8+2+i+(6-size)/2;
+				tfmx = (16 - lfm)/2 + fmx;
+				tfmy = fmy+2+i+(6-size)/2;
 				
 				set_font_pal(fsel == i ? 15 : 14);
 				put_string(resmenudata[i].name, tfmx, tfmy);

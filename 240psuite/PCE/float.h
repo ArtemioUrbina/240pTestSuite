@@ -57,4 +57,5 @@ int FloatMenuRes(int def);
 int FloatMenuResExtra(int def, char *option);
 int FloatMenuRes320n256(int def);
 int FloatMenuRes320n256_224(int def);
+int FloatMenuResMinus352(int def);
 int FloatMenu(int def, int size, char *bottomMsg);

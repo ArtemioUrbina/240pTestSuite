@@ -11,3 +11,8 @@ should be set to zero, or in the middle.
 
 In some PVM/BVM displays this is also referred
 to as aperture.
+
+- You can change the pattern with I. When using 
+the brick pattern, resolutions can be changed with 
+SELECT.
+

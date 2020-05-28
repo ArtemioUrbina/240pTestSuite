@@ -439,7 +439,6 @@ void ScrollTest()
         if(redraw)
         {
 			ResetVideo();
-			disp_off();
 			
 			if(type == RES_320)
 			{
@@ -454,10 +453,11 @@ void ScrollTest()
 					vary = 0;
 			}
 			
+			disp_off();
+			
 			if(!option)
 			{
 				set_screen_size(SCR_SIZE_32x32);
-	
 #ifndef CDROM1
 				load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
@@ -472,7 +472,8 @@ void ScrollTest()
 				DrawPalm();
 				satb_update();
 				
-				MovePalm(4*speed*x);
+				DoSonicScroll();							
+				//MovePalm(4*speed*x);
 			}
 			else
 			{

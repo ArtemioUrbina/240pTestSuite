@@ -120,6 +120,7 @@ extern int left;
 extern int right;
 extern unsigned char previous;
 extern unsigned char screen;
+extern int hres;
 
 extern unsigned char back;
 extern int colswap;

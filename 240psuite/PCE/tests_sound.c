@@ -209,7 +209,15 @@ void MDFourier(int armed)
 			set_font_pal(15);
             put_string("Please wait while recording", 6, 12);
 			MDFourierExecute();
-			//refresh = 1;
+			set_font_pal(13);
+			put_string("Stop recording and press I ", 6, 12);
+			
+			
+			do {
+				controller = joytrg(0);
+				vsync();
+			} while(!(controller & JOY_I));
+			refresh = 1;
 		}
 		
 		if(controller & JOY_SEL)

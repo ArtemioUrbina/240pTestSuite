@@ -692,7 +692,7 @@ overscan_00_07:	.db	"in pixels in each direction."
 			.db	0
 overscan_00_08:	.db	"- Button I allows faster movement of the borders."
 			.db	0
-overscan_00_09:	.db	"This pattern follows the current video options,"
+overscan_00_09:	.db	"This pattern follows the current vertical option,"
 			.db	0
 overscan_00_10:	.db	"so you can check how it handles in 239, 240, and"
 			.db	0
@@ -850,6 +850,9 @@ void display_sharpness_00()
 	p_string	sharpness_00_06,6,13
 	p_string	sharpness_00_07,6,15
 	p_string	sharpness_00_08,6,16
+	p_string	sharpness_00_09,6,18
+	p_string	sharpness_00_10,6,19
+	p_string	sharpness_00_11,6,20
 	rts
 
 sharpness_00_00:	.db	"SHARPNESS"
@@ -869,6 +872,12 @@ sharpness_00_06:	.db	"should be set to zero, or in the middle."
 sharpness_00_07:	.db	"In some PVM/BVM displays this is also referred"
 			.db	0
 sharpness_00_08:	.db	"to as aperture."
+			.db	0
+sharpness_00_09:	.db	"- You can change the pattern with I. When using "
+			.db	0
+sharpness_00_10:	.db	"the brick pattern, resolutions can be changed with "
+			.db	0
+sharpness_00_11:	.db	"SELECT."
 			.db	0
 #endasm
 }

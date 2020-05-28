@@ -435,7 +435,7 @@ void DrawCB601()
 
 void DrawColorBleed()
 {
-	type = FloatMenuRes320n256(1);
+	type = FloatMenuResMinus352(1);
 	if(type == FLOAT_CANCEL)
 		return;
 
@@ -451,6 +451,14 @@ void DrawColorBleed()
 			ResetVideo();
 
 			ChangeResType();
+			
+			if(type == RES_320)
+				scroll(0, 0, 0, 0, 240, 0xC0);
+			if(type == RES_256)
+				scroll(0, 40, 0, 0, 240, 0xC0);
+			if(type == RES_512)
+				scroll(0, -96, 0, 0, 240, 0xC0);
+			
 #ifndef CDROM1			
 			set_map_data(colorbleed_map, 40, 30);
 			if(option)
@@ -471,11 +479,6 @@ void DrawColorBleed()
 			cd_loadvram(GPHX_OVERLAY, OFS_colorbleed_BAT_bin, 0x0000, SIZE_colorbleed_BAT_bin);
 #endif
 			Center224in240();
-			
-			if(type == RES_320)
-				scroll(0, 0, 0, 0, 240, 0xC0);
-			if(type == RES_256)
-				scroll(0, 40, 0, 0, 240, 0xC0);
 			
 			redraw = 0;
 			disp_on();
@@ -517,7 +520,7 @@ void DrawColorBleed()
 		
 		if(controller & JOY_SEL)
 		{
-			ntype = FloatMenuRes320n256(type);
+			ntype = FloatMenuResMinus352(type);
 			if(ntype != FLOAT_CANCEL)
 				type = ntype;
 			redraw = 1;
@@ -647,7 +650,7 @@ void DrawGrid()
 		if(redraw)
 		{
 			ResetVideo();
-
+			
 			ChangeResType();
 			
 #ifndef CDROM1		
@@ -724,7 +727,6 @@ void DrawGrid()
 					break;
 			}
 #endif
-		 
 			redraw = 0;
 			disp_on();
 		}

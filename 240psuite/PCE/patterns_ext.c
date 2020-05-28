@@ -247,8 +247,6 @@ void RefreshWhite(unsigned char color, unsigned char edit, int r, int g, int b)
 	}
 }
 
-int hres = 256;
-
 void ResetOverscan()
 {
 	draw = 0;
@@ -324,6 +322,7 @@ void DrawOverscan()
 			RedrawWhite();
 #endif
 			showHelp(OVERSCAN_HELP);
+			ResetOverscan();
 			redraw = 1;
 		}
 
@@ -436,6 +435,15 @@ void DrawOverscan()
 
 extern char my_font[];
 
+// draw a yellow line when line 240 shouldn't be visible
+void DrawOverscanLine()
+{
+	if(UseDefault) 
+	{
+		set_color_rgb(4, 7, 7, 0);
+		gfx_line(0, screen, hres, screen, 4);
+	}
+}
 
 void RedrawOverscan()
 {
@@ -460,6 +468,8 @@ void RedrawOverscan()
 	
 	set_color_rgb(0, 3, 3, 3);
 	set_color_rgb(1, 7, 7, 7);	
+
+	DrawOverscanLine();
 
 	disp_on();
 }

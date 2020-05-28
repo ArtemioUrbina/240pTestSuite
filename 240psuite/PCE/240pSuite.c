@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2020 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -735,7 +735,7 @@ void RefreshCredits()
 
 	set_font_pal(14);	
 	put_string("Ver. 1.11", 50, 7);
-	put_string("27/05/2020", 49, 8);
+	put_string("28/05/2020", 49, 8);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;

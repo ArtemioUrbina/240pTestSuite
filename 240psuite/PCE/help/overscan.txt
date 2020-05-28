@@ -12,7 +12,7 @@ in pixels in each direction.
 
 - Button I allows faster movement of the borders.
 
-This pattern follows the current video options,
+This pattern follows the current vertical option,
 so you can check how it handles in 239, 240, and
 224 modes. Keep in mind the horizontal resolution
 is fixed at 256 pixels.
