@@ -81,6 +81,7 @@ int runmdf;
 
 void ResetVideo()
 {
+	vsync();
 	disp_off();
 
 	cls();
@@ -95,6 +96,12 @@ void ResetVideo()
 	Set320H();
 
 	set_screen_size(SCR_SIZE_64x32);
+}
+
+void disp_sync_on()
+{
+	vsync();
+	disp_on();
 }
 
 void ResetScroll()

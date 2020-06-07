@@ -95,7 +95,7 @@ void main()
 			RedrawMain();
             redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
         }
 		
 		set_font_pal(15);
@@ -267,11 +267,12 @@ void RefreshVideoTests()
 	drawmenutext(3, "Manual Lag Test");
 	drawmenutext(4, "Scroll Test");
 	drawmenutext(5, "Grid Scroll Test");
-	drawmenutext(6, "Horiz/Vert Stripes");
-	drawmenutext(7, "Checkerboard");
-	drawmenutext(8, "Backlit Zone Test");
+	drawmenutext(6, "Vertical Stripes");
+	drawmenutext(7, "Horizontal Stripes");
+	drawmenutext(8, "Checkerboard");
+	drawmenutext(9, "Backlit Zone Test");
 	row++;
-	DrawMenuBottom(9, 0);
+	DrawMenuBottom(10, 0);
 }
 
 
@@ -299,7 +300,7 @@ void VideoTests()
 
 			refresh = 1;
 			redraw = 0;
-			disp_on();
+			disp_sync_on();
 		}
 		
 		if(refresh)
@@ -391,28 +392,31 @@ void VideoTests()
 					VScrollTest();
 					break;
 				case 6:
-					DrawStripes();
+					DrawStripes(1);
 					break;
 				case 7:
-					DrawCheck();
+					DrawStripes(0);
 					break;
 				case 8:
+					DrawCheck();
+					break;
+				case 9:
 					LEDZoneTest();
 					break;			
-				case 9:
+				case 10:
 #ifdef CDROM1
 					x_g = OPTIONS_VID_HELP;
 #endif
 					Options();
 					break;
-				case 10:
+				case 11:
 					showHelp(GENERAL_VID_HELP);
 					break;
-				case 11:
+				case 12:
 					end = 1;
 					break;
 			}
-			if(sel != 11)
+			if(sel != 12)
 				end = 0;
 				
 			redraw = 1;	
@@ -450,9 +454,10 @@ void RefreshAudioTests()
 	drawmenutext(0, "Sound Test");
 	drawmenutext(1, "Audio Sync Test");
 	drawmenutext(2, "MDFourier");
+	drawmenutext(3, "Audio Clipping");
 	
 	row++;
-	DrawMenuBottom(3, 0);
+	DrawMenuBottom(4, 0);
 }
 
 
@@ -480,7 +485,7 @@ void AudioTests()
 
 			refresh = 1;
 			redraw = 0;
-			disp_on();
+			disp_sync_on();
 		}
 		
 		if(refresh)
@@ -562,15 +567,18 @@ void AudioTests()
 					MDFourier(0);
 					break;
 				case 3:
+					ConstrInterf();
+					break;
+				case 4:
 #ifdef CDROM1
 					x_g = OPTIONS_AUD_HELP;
 #endif
 					Options();
 					break;
-				case 4:
+				case 5:
 					showHelp(GENERAL_AUD_HELP);
 					break;
-				case 5:
+				case 6:
 					end = 1;
 					break;
 			}
@@ -629,7 +637,7 @@ void DrawN()
 			RestoreGlobals();
 #endif
             redraw = 0;
-			disp_on();
+			disp_sync_on();
         }
 
         controller = joy(0);
@@ -658,7 +666,7 @@ void DrawCredits()
 			
             redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
         }
 		
 		if(refresh)
@@ -735,7 +743,7 @@ void RefreshCredits()
 
 	set_font_pal(14);	
 	put_string("Ver. 1.11", 50, 7);
-	put_string("28/05/2020", 49, 8);
+	put_string("05/06/2020", 49, 8);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;
@@ -770,7 +778,7 @@ void DrawIntro()
 	set_color(1, 0);
 	SetFontColors(14, 0, 0, 0);
 	put_string("KORDAMP PRESENTS", 12, 14);
-	disp_on();
+	disp_sync_on();
 	for(i = 0; i < 7; i ++)
 	{
 		SetFontColors(14, 0, RGB(i, i, i), 0);

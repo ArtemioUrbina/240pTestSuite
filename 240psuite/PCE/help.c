@@ -77,7 +77,7 @@ void main()
 			
             redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
 
         }
 		
@@ -149,7 +149,7 @@ void main()
 					display_sharpness_00();
 					break;
 				case SMPTECOLOR_HELP:
-					display_smptecb_00();
+					DrawSMPTEHelp();
 					break;
 				case EBU_HELP:
 					display_ebucb_00();
@@ -182,11 +182,13 @@ void main()
 					display_colorbleed_00();
 					break;
 				case CHECK_HELP:
-					DrawChecksHelp();
+					display_check_00();
 					break;
-				case STRIPES_HELP:
-					bottom = 2;
-					DrawStripesHelp(right);
+				case VERT_STRIPES_HELP:
+					DrawVertStripesHelp();
+					break;
+				case HORI_STRIPES_HELP:
+					DrawHoriStripesHelp();
 					break;
 				case PASSIVE_HELP:
 					DrawPassiveLagHelp(right);
@@ -199,6 +201,9 @@ void main()
 					break;
 				case MDFOURIER_HELP:
 					display_mdfourier_00();
+					break;
+				case CONSINTER_HELP:
+					display_consinter_00();
 					break;
 				case CONVERGENCE_HELP:
 					display_convergence_00();
@@ -358,72 +363,49 @@ void DrawBacklitHelp()
 	put_string("for this test.", 6, row++);
 }
 
-void DrawChecksHelp()
-{
-	row = 4;
-					
-	put_string("CHECKERBOARD", 26, row++);
-	set_font_pal(14);
-	row++;
-	put_string("This pattern shows all the visible pixels in an", 6, row++);
-	put_string("alternating white and black grid array.", 6, row++);
-	row++;
-	put_string("- You can switch between all supported resolutions", 6, row++);
-	put_string("by pressing SELECT.", 6, row++);
-	row++;
-	put_string("- You can toggle the pattern with L/R, or turn", 6, row++);
-	put_string("on auto-toggle each frame with the I button.", 6, row++);
-	row++;
-	put_string("When auto-toggle is set, you should see it", 6, row++);
-	put_string("alternating rapidly. On some setups, the pattern", 6, row++);
-	put_string("doesn't change at all. This means that the signal", 6, row++);
-	put_string("is being treated as 480i/576i and odd or even", 6, row++);
-	put_string("frames are being discarded completely.", 6, row++);
-	row++;
-	put_string("- A frame counter can be displayed on screen by", 6, row++);
-	put_string("pressing up on the d-pad.", 6, row++);
-}
 
-void DrawStripesHelp(char right)
+void DrawVertStripesHelp()
 {	
 	row = 4;
 	
-	switch(right)
-	{
-		case 1:
-			put_string("HORIZONTAL STRIPES (1/2)", 19, row++);
-			set_font_pal(14);
-			row++;
-			put_string("This pattern is designed to show if all lines are", 6, row++);
-			put_string("visible in your setup, and it handles 240p signals.", 6, row++);
-			row++;
-			put_string("You should see a pattern of lines, each one pixel", 6, row++);
-			put_string("in height, starting with a white one at the top of", 6, row++);
-			put_string("the screen. You can toggle the pattern with", 6, row++);
-			put_string("Right, or turn on auto-toggle each frame with I.", 6, row++);
-			row++;
-			put_string("When auto-toggle is set, you should see the lines", 6, row++);
-			put_string("alternating rapidly. On some setups, the pattern", 6, row++);
-			put_string("doesn't change at all. This means that the signal", 6, row++);
-			put_string("is being treated as 480i and odd or even",6, row++);
-			put_string("frames are being discarded completely.", 6, row++);
-			row++;
-			put_string("- A frame counter can be displayed on screen by", 6, row++);
-			put_string("pressing left.", 6, row++);
-			break;
-		case 2:
-			put_string("HORIZONTAL STRIPES (2/2)", 19, row++);
-			set_font_pal(14);
-			row++;
-			put_string("- You can also display vertical bars by pressing up,", 6, row++);
-			put_string("that pattern will help you evaluate if the signal", 6, row++);
-			put_string("is not distorted horizontaly, since all lines", 6, row++);
-			put_string("should be one pixel wide.", 6, row++);
-			row++;
-			put_string("- You can switch between all supported resolutions", 6, row++);
-			put_string("by pressing SELECT.", 6, row);
-			break;
-	}
+	put_string("VERTICAL STRIPES", 26, row++);
+	set_font_pal(14);
+	row++;
+	put_string("You should see a pattern of lines, each one pixel", 6, row++);
+	put_string("in width. This can help you evaluate if the signal", 6, row++);
+	put_string("is not distorted horizontaly, since all lines", 6, row++);
+	put_string("should be one pixel wide.", 6, row++);
+	row++;
+	put_string("- You can switch between all supported resolutions", 6, row++);
+	put_string("by pressing SELECT.", 6, row);
+	row++;
+	put_string("- A frame counter can be displayed on screen by", 6, row++);
+	put_string("pressing left.", 6, row++);
+}
+
+void DrawHoriStripesHelp()
+{	
+	row = 4;
+	
+	put_string("HORIZONTAL STRIPES", 24, row++);
+	set_font_pal(14);
+	row++;
+	put_string("This pattern is designed to show if all lines are", 6, row++);
+	put_string("visible in your setup, and it handles 240p signals.", 6, row++);
+	row++;
+	put_string("You should see a pattern of lines, each one pixel", 6, row++);
+	put_string("in height, starting with a white one at the top of", 6, row++);
+	put_string("the screen. You can toggle the pattern with", 6, row++);
+	put_string("Right, or turn on auto-toggle each frame with I.", 6, row++);
+	row++;
+	put_string("When auto-toggle is set, you should see the lines", 6, row++);
+	put_string("alternating rapidly. On some setups, the pattern", 6, row++);
+	put_string("doesn't change at all. This means that the signal", 6, row++);
+	put_string("is being treated as 480i and odd or even",6, row++);
+	put_string("frames are being discarded completely.", 6, row++);
+	row++;
+	put_string("- A frame counter can be displayed on screen by", 6, row++);
+	put_string("pressing left.", 6, row++);
 }
 
 
@@ -475,6 +457,20 @@ void DrawIre100Help()
 	put_string("steps in the selected range.", 6, row++);
 	put_string("Button I toggles the range between [0-100] and", 6, row++);
 	put_string("[100-140] IRE.", 6, row++);
+}
+
+void DrawSMPTEHelp()
+{
+	row = 4;
+	
+	put_string("SMPTE COLOR BARS", 24, row++);
+	set_font_pal(14);
+	row+=2;
+	put_string("- This pattern can be used to calibrate colors, but", 6, row++);
+	put_string("black level does not comply to the standard due", 6, row++);
+	put_string("to console capabilities.", 6, row++);
+	row++;
+	put_string("- You can toggle between 75% and 100% bars with I.", 6, row++);
 }
 
 

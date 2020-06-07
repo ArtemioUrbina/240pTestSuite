@@ -62,8 +62,11 @@ void main()
 		case TOOL_CHECK:
 			DrawCheck();
 			break;
-		case TOOL_STRIPES:
-			DrawStripes();
+		case TOOL_H_STRIPES:
+			DrawStripes(0);
+			break;
+		case TOOL_V_STRIPES:
+			DrawStripes(1);
 			break;
 	}
 	cd_execoverlay(MAIN_OVERLAY);
@@ -203,7 +206,7 @@ void LagTest()
 #endif
          
             redraw = 0;
-			disp_on();
+			disp_sync_on();
         }
 		
 		if(running || update)
@@ -341,7 +344,7 @@ void VScrollTest()
          
             redraw = 0;
 			ChangeResType();
-			disp_on();
+			disp_sync_on();
         }
 
         controller = joytrg(0);
@@ -428,7 +431,7 @@ void LEDZoneTest()
 			refresh = 1;
 			
             redraw = 0;
-			disp_on();
+			disp_sync_on();
         }
 		
 		if(refresh)
@@ -535,7 +538,7 @@ void DrawCheck()
         {
 			RedrawCheck();
             redraw = 0;
-			disp_on();
+			disp_sync_on();
         }
 		
 		if(x2)
@@ -618,7 +621,7 @@ void RefreshFS()
 	load_map(0, 0, 0, 0, 64, 32);
 }
 
-void DrawStripes()
+void DrawStripes(int vert)
 {
 	type = FloatMenuRes(1);
 	if(type == FLOAT_CANCEL)
@@ -628,7 +631,7 @@ void DrawStripes()
 	x = 0; 		// pos
 	vary = 0; 	// toggle
 	draw = 0; 	// alternate
-	y = 0;		// vertical
+	y = vert;	// vertical
 	end = 0;
 	redraw = 1;
     while(!end)
@@ -639,7 +642,7 @@ void DrawStripes()
         {
 			RedrawStripes();
             redraw = 0;
-			disp_on();
+			disp_sync_on();
         }
 		
 		if(draw)
@@ -655,7 +658,7 @@ void DrawStripes()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(STRIPES_HELP);
+			showHelp(vert ? VERT_STRIPES_HELP : HORI_STRIPES_HELP);
 			redraw = 1;
 		}
 		
@@ -688,17 +691,6 @@ void DrawStripes()
 				set_map_data(fs_map, 64, 32);
 				load_map(0, 0, 0, 0, 64, 32);
 			}
-		}
-			
-		if (controller & JOY_UP)
-		{
-			y = 1;
-			LoadStripesTile();
-		}
-		if (controller & JOY_DOWN)
-		{
-			y = 0;
-			LoadStripesTile();
 		}
 		
 		if (controller & JOY_SEL)

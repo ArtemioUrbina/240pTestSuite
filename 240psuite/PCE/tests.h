@@ -61,5 +61,6 @@ void PlayRight(unsigned char chan);
 void PlayCenter(unsigned char chan);
 void StopAudio(unsigned char chan);
 void StopAllAudio();
-void MDFourier();
+void MDFourier(int boot);
+void ConstrInterf();
 			

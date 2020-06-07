@@ -59,11 +59,17 @@ void main()
 		case TOOL_MDFOURIER:
 			MDFourier(x_g);
 			break;
-		case TOOL_MANUAL:
-			ManualLagTest();
+		case TOOL_MDFOURIER:
+			MDFourier(x_g);
+			break;
+		case TOOL_CON_INTER:
+			ConstrInterf();
 			break;
 		case HARDWARETOOL:
 			HardwareTests();
+			break;
+		case TOOL_MANUAL:
+			ManualLagTest();
 			break;
 	}
 	if(ToolItem == HARDWARETOOL)
@@ -97,8 +103,7 @@ void MDFourierExecute()
 	
 	PlayCenter(4);
 	SetNoiseFreq(4, 0);
-	for(i = 0; i < 200; i++)	
-		vsync();
+	WaitNFrames(200);
 	StopNoise(4);
 	
 	ExecuteSilence();
@@ -107,33 +112,37 @@ void MDFourierExecute()
 #ifdef CDROM
 	
 	// Wait PAUSE
-	for(i = 0; i < 4; i++)	
-		vsync();
+	WaitNFrames(4);
 		
 	// ADPCM
 	//
 	SetupToneCommand(ad_play(0, 64000, 15, 0));
 	
 	//Wait for ADPCM to end
-	for(i = 0; i < 280; i++)	
-		vsync();
+	WaitNFrames(280);
 	SetupToneCommand(vsync());
 
 	clock_reset();
 	// CD-DA	
 	x2 = clock_tt();
 	SetupToneCommand(cd_playtrk(4, 5, CDPLAY_NORMAL));
-	//cd_playtrk(4, 5, CDPLAY_NORMAL);
 	x3 = clock_tt();
+	y = x3-x2;
 	
-	put_string("Play", 4, 14);
-	put_number(x3-x2, 4, 4, 15);
+	set_font_pal(14);
+	put_string("Play command delay", 4, 14);
+	put_number(y, 4, 4, 15);
 	
 	//Wait for the cd audio track to end
-	for(i = 0; i < 640; i++)	
-		vsync();
+	WaitNFrames(640);
 
+	x2 = clock_tt();
 	SetupToneCommand(cd_pause());
+	x3 = clock_tt();
+	y = x3-x2;
+	
+	put_string("Pause frames", 4, 16);
+	put_number(y, 4, 4, 17);
 	
 #endif
 
@@ -182,7 +191,7 @@ void MDFourier(int armed)
             put_string("MDFourier", 16, 4);
 			refresh = 1;
             redraw = 0;
-			disp_on();
+			disp_sync_on();
         }
 		
 		if(refresh)
@@ -217,55 +226,211 @@ void MDFourier(int armed)
 				controller = joytrg(0);
 				vsync();
 			} while(!(controller & JOY_I));
-			refresh = 1;
+			redraw = 1;
 		}
-		
-		if(controller & JOY_SEL)
-			PlayAllChannelsAtOnce(3);
     }
 	if(armed)
 		redraw = 1;
 }
 
-void PlayAllChannelsAtOnce()
+void ConstrInterf()
 {
+ 	end = 0;
+	redraw = 1;
+	refresh = 1;
 
-	StopAllAudio();
-	
 #ifdef CDROM
-	if(cd_status(0) != 0)
-	  cd_pause();
-	  
-	if(ad_stat())
-		ad_stop();
+	ad_reset();
+	
+	ad_trans(ADPCM_8khz_OVL, 0, 32, 0);
 #endif
-
+	LoadWave(0, sine1x);
+	LoadWave(1, sine1x);
+	LoadWave(2, sine1x);
+	LoadWave(3, sine4x);
+	LoadWave(4, sine4x);
+	  
+	/* 	Some emulators and FPGA implementations
+		have issues with the first frame of the
+		first sound that is played back
+		Do so before the tests.
+	*/
+	
+	SetWaveFreq(0, PULSE_SKIP_EMU);
+	PlayCenter(0);
 	vsync();
-	// PSG
-	SetWaveFreq(1, 112);  // at around 1khz
-	PlayCenter(1);
+	StopAudio(0);
 	
-	// Noise
-	SetNoiseFreq(4, 0);
-	PlayCenter(4);
-	
-#ifdef CDROM
-	// ADPCM
-	ad_play(0, 64000, 15, 0);
-	// CD-DA	
-	cd_playtrk(4, 5, CDPLAY_NORMAL);
-	//Wait for the cd audio track to end
-	for(i = 0; i < 400; i++)	
+    while(!end)
+    {   
 		vsync();
 		
-	cd_pause();
-#else
-	// Wait
-	for(i = 0; i < 200; i++)	
+        if(redraw)
+        {
+			RedrawBG();
+         
+            put_string("Audio Clipping", 12, 4);
+			refresh = 1;
+            redraw = 0;
+			disp_sync_on();
+        }
+		
+		if(refresh)
+		{
+			set_font_pal(14);
+            put_string("Start recording and press I", 6, 12);
+			set_font_pal(13);
+			put_string("Press START for HELP", 10, 26);
+		}
+
+        controller = joytrg(0);
+		
+		if (controller & JOY_RUN)
+		{
+			showHelp(CONSINTER_HELP);
+			redraw = 1;
+		}
+		
+		if (controller & JOY_II)
+			end = 1;
+		
+		if (controller & JOY_I)
+		{
+			set_font_pal(15);
+            put_string("Please wait while recording", 6, 12);
+			ExecuteConstrInterf();
+			set_font_pal(13);
+			put_string("Stop recording and press I ", 6, 12);
+			
+			
+			do {
+				controller = joytrg(0);
+				vsync();
+			} while(!(controller & JOY_I));
+			redraw = 1;
+		}
+    }
+}
+
+void WaitNFrames(int frames)
+{
+	for(i = 0; i < frames; i++)	
 		vsync();
+}
+
+void RandomOnChannel(int channel)
+{
+	if(random(2))
+		PlayCenter(channel);
+	else
+		StopAudio(channel);
+}
+
+void RandomizeChannels()
+{
+	for(i = 0; i < 5; i++)
+		RandomOnChannel(i);
+}
+
+#ifdef CDROM
+void RandomizeADPCM()
+{
+	if(random(2))
+		ad_play(0, 64000, 15, 0x80);
+	else
+		ad_stop();
+}
 #endif
-	StopAudio(1);
-	StopNoise(4);
+
+void PlayAndWait(int channel)
+{
+	PlayCenter(channel);
+	WaitNFrames(30);
+}
+
+void SetContInterFreq()
+{
+	// PSG
+	SetWaveFreq(0, 224);  // at around 500khz
+	SetWaveFreq(1, 112);  // at around 1khz
+	SetWaveFreq(2, 56);  // at around 2khz
+	SetWaveFreq(3, 112);  // at around 4khz, was 28 at 1x
+	SetWaveFreq(4, 56);  // at around 8khz, was 14 at 1x
+	
+	SetNoiseFreq(5, 0);
+}
+
+void ExecuteConstrInterf()
+{
+	srand(clock_tt());
+	StopAllAudio();
+
+	// HuCard
+	vsync();
+	ExecutePulseTrain(0);
+	ExecuteSilence();
+
+	SetContInterFreq();
+
+	// PSG and Noise
+	for(x = 0; x < 6; x++)
+		PlayAndWait(x);
+	
+	for(x = 0; x < 200; x++)
+	{
+		RandomizeChannels();
+		WaitNFrames(3);
+	}
+	
+	StopAllAudio();
+	StopNoise(5);
+	
+	ExecuteSilence();
+	ExecutePulseTrain(0);
+
+#ifdef CDROM
+	// CD-ROM ROM
+	// test starts now after framerate
+	ExecuteSilence();
+	SetContInterFreq();  // reset Pulse tone freq
+	
+	// PSG and Noise
+	for(x = 0; x < 6; x++)
+		PlayAndWait(x);
+	
+	// ADPCM at 8khz
+	ad_play(0, 64000, 15, 0x80);
+	WaitNFrames(30);
+
+	clock_reset();
+	// CD-DA at 16khz
+	x2 = clock_tt();
+	SetupToneCommand(cd_playtrk(5, 6, CDPLAY_NORMAL));	
+	x3 = clock_tt();
+	y = x3-x2;  // holds frame length for play
+	
+	//Wait for the cd audio track for a bit
+	WaitNFrames(120);  
+	
+	for(x = 0; x < 200; x++)
+	{
+		RandomizeChannels();
+		RandomizeADPCM();
+		WaitNFrames(3);
+	}
+	
+	ad_stop();
+	StopAllAudio();
+	StopNoise(5);
+	
+	/*
+	set_font_pal(14);
+	put_string("Play frames", 4, 14);
+	put_number(y, 4, 4, 15);
+	
+	WaitNFrames(30);  
+	*/
+#endif
 }
 
 void SoundTest()
@@ -301,7 +466,7 @@ void SoundTest()
 			
             redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
 		}
 		
 		if(refresh)
@@ -516,7 +681,7 @@ void AudioSyncTest()
 			Center224in240();
 			
             redraw = 0;
-			disp_on();
+			disp_sync_on();
 		}
 
         controller = joytrg(0);
@@ -608,15 +773,13 @@ void AudioSyncTest()
 	StopAudio(0);
 }
 
-#ifndef SCDROM2
+#ifndef SCDROM
 #include "tests_manual.c"
 #else
-
 void ManualLagTest()
 {
 	cd_execoverlay(MANUALLAGSCD_OVERLAY);
 }
-
 #endif
 
 /*
@@ -667,7 +830,7 @@ void HardwareTests()
 
 			refresh = 1;
 			redraw = 0;
-			disp_on();
+			disp_sync_on();
 		}
 		
 		if(refresh)
@@ -801,7 +964,7 @@ void MemViewer(unsigned int address)
 			SetFontColors(14, RGB(7, 7, 7), 0, 0);	
 			SetFontColors(15, RGB(7, 0, 0), 0, 0);	
 			
-			disp_on();
+			disp_sync_on();
 
 			set_font_pal(15);
 			put_hex(address    , 4, 36, 0);
@@ -931,7 +1094,7 @@ void ControllerTest()
 
 			refresh = 1;
 			redraw = 0;
-			disp_on();
+			disp_sync_on();
 		}
 		if(refresh)
 		{

@@ -211,7 +211,7 @@ int FloatMenu(int def, int size, char *bottom)
 			
 			redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
 		}
 			
 		if(refresh)

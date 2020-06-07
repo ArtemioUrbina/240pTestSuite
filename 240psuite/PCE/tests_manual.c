@@ -23,7 +23,7 @@
  
  */
 
-#ifdef SCDROM2
+#ifdef SCDROM
 #include "huc.h"
 #include "res.h"
 #include "font.h"
@@ -182,7 +182,7 @@ void ManualLagTestResults()
 				put_string("INCREDIBLE REFLEXES!", 14, 13);
 			
 			redraw = 0;
-			disp_on();
+			disp_sync_on();
 		}
 		
 		controller = joytrg(0);
@@ -238,7 +238,7 @@ void ManualLagTest()
 			RedrawManualLagTest();
             redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
         }
 		
 		if(refresh)

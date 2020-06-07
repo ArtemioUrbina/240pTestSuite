@@ -90,7 +90,7 @@ void DrawWhite()
 			
 			redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
 		}
 		
 		if(refresh)
@@ -471,7 +471,7 @@ void RedrawOverscan()
 
 	DrawOverscanLine();
 
-	disp_on();
+	disp_sync_on();
 }
 
 void RefreshOverscan()
@@ -581,7 +581,7 @@ void Draw100IRE()
 
 			redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
 		}
 		
 		if(refresh)
@@ -846,7 +846,7 @@ void DrawConvergence()
 			RedrawConvergence();
             redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
         }
 		
 		if(refresh)

@@ -39,7 +39,7 @@ pceas -s -msmall -cd -overlay patterns_ext.s || goto :error
 pceas -s -msmall -cd -overlay tests_ext.s || goto :error
 pceas -s -msmall -cd -overlay tests_sound.s || goto :error
 pceas -s -msmall -cd -overlay help.s  || goto :error
-isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl patterns_ext.ovl tests_ext.ovl tests_sound.ovl gdata.bin help.ovl adpcm.vox sweep.vox  || goto :error
+isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl patterns_ext.ovl tests_ext.ovl tests_sound.ovl gdata.bin help.ovl adpcm.vox adpcmsweep.vox adpcm8khz.vox || goto :error
 
 :; exit 0
 exit /b 0

@@ -354,7 +354,7 @@ void RedrawDropShadow(int strip)
 	satb_update();
 	
 	Center224in240();
-	disp_on();
+	disp_sync_on();
 }
 
 void SwapPalette(int pal, int index)
@@ -490,7 +490,7 @@ void ScrollTest()
 			}
 			
             redraw = 0;
-			disp_on();
+			disp_sync_on();
         }
 
         controller = joytrg(0);
@@ -581,9 +581,12 @@ void LagTest()
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
-void DrawStripes()
+void DrawStripes(int type)
 {
-	ToolItem = TOOL_STRIPES;
+	if(type)
+		ToolItem = TOOL_V_STRIPES;
+	else
+		ToolItem = TOOL_H_STRIPES;
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
@@ -603,6 +606,12 @@ void SoundTest()
 void MDFourier()
 {
 	ToolItem = TOOL_MDFOURIER;
+	cd_execoverlay(TEST_SND_OVERLAY);
+}
+
+void ConstrInterf()
+{
+	ToolItem = TOOL_CON_INTER;
 	cd_execoverlay(TEST_SND_OVERLAY);
 }
 

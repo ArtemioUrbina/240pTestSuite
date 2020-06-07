@@ -1,0 +1,6 @@
+                Audio Clipping
+
+This test generates an audio signal that adds
+several channels using harmonic frequencies in
+order to create constructive interferance and 
+find if the resulting audio signal clips.

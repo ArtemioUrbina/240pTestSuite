@@ -34,12 +34,13 @@
 #define	MANUALLAG_HELP		33
 #define	SCROLL_HELP			34
 #define	GRIDSCROLL_HELP		35
-#define STRIPES_HELP		36
-#define CHECK_HELP			37
-#define BACKLIT_HELP		38
+#define HORI_STRIPES_HELP	36
+#define VERT_STRIPES_HELP	37
+#define CHECK_HELP			38
+#define BACKLIT_HELP		39
 
-#define	OPTIONS_VID_HELP	39
-#define GENERAL_VID_HELP	40
+#define	OPTIONS_VID_HELP	40
+#define GENERAL_VID_HELP	41
 
 /*****************************/
 
@@ -48,9 +49,10 @@
 #define	SOUND_HELP			50
 #define AUDIOSYNC_HELP		51
 #define MDFOURIER_HELP		52
+#define CONSINTER_HELP		53
 
-#define	OPTIONS_AUD_HELP	53
-#define GENERAL_AUD_HELP	54
+#define	OPTIONS_AUD_HELP	54
+#define GENERAL_AUD_HELP	55
 
 /*****************************/
 

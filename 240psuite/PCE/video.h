@@ -26,8 +26,10 @@
 #ifdef SCDROM
 #define LOADER_OVERLAY 			1
 #define MAIN_OVERLAY 			2
-#define ADPCM_VOICE_OVL			3
-#define ADPCM_SWEEP_OVL			4
+#define MANUALLAGSCD_OVERLAY	3
+#define ADPCM_VOICE_OVL			4
+#define ADPCM_SWEEP_OVL			5
+#define ADPCM_8khz_OVL			6
 #endif
 
 #ifdef CDROM1
@@ -49,6 +51,7 @@
 #define HELP_OVERLAY		8
 #define ADPCM_VOICE_OVL		9
 #define ADPCM_SWEEP_OVL		10
+#define ADPCM_8khz_OVL		11
 #endif
 
 #ifdef CDROM
@@ -59,17 +62,19 @@
 #define TOOL_CONVERG	23
 
 #define VIDEOTOOL		30
-#define TOOL_VSCROLL	30
 #define	TOOL_PASSIVE	32
 #define TOOL_MANUAL		33
-#define	TOOL_STRIPES	36
-#define TOOL_CHECK		37
-#define TOOL_LEDZONE	38
+#define TOOL_VSCROLL	35
+#define	TOOL_V_STRIPES	36
+#define	TOOL_H_STRIPES	37
+#define TOOL_CHECK		38
+#define TOOL_LEDZONE	39
 
 #define SOUNDTOOL		40
 #define TOOL_SOUND		40
 #define TOOL_AUDIOSYNC	41
 #define TOOL_MDFOURIER	42
+#define TOOL_CON_INTER	43
 
 #define HARDWARETOOL	50
 #endif

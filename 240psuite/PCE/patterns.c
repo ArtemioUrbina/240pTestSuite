@@ -272,7 +272,7 @@ void DrawPluge()
 		{
 			ResetVideo();
 	
-#ifndef CDROM1		
+#ifndef CDROM1
 			set_map_data(pluge_map, 40, 30);
 			set_tile_data(pluge_bg);
 			load_tile(0x1000);
@@ -290,7 +290,7 @@ void DrawPluge()
 		 
 			redraw = 0;
 			refresh = 1;
-			disp_on();
+			disp_sync_on();
 		}
 		
 		if(refresh)
@@ -372,7 +372,7 @@ void DrawColor()
 #endif
 			Center224in240();
 			redraw = 0;
-			disp_on();
+			disp_sync_on();
 		}
 
 		controller = joytrg(0);

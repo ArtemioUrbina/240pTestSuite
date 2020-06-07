@@ -281,7 +281,7 @@ void Options()
          
 			refresh = 1;
             redraw = 0;
-			disp_on();
+			disp_sync_on();
         }
 		
 		if(refresh)
