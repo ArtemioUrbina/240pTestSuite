@@ -82,10 +82,22 @@ void main()
 
 #define SetupToneCommand(command) SetWaveFreq(0, PULSE_INTERNAL_FREQ); PlayCenter(0); vsync(); StopAudio(0); command;
 
+void ChangeFilterMDF(int setValue)
+{
+	ChangeCompFilter(setValue, setValue);
+	Set320H();
+}
+
+
 void MDFourierExecute()
 {
-	StopAllAudio();
+	x3 = 0; // check composite filter flag
 	
+	StopAllAudio();
+
+	if(!EnabledSoft)
+		ChangeFilterMDF(1);
+
 #ifdef CDROM
 	if(cd_status(0) != 0)
 	  cd_pause();
@@ -146,6 +158,8 @@ void MDFourierExecute()
 	
 #endif
 
+	if(x3) // restore it to disabled
+		ChangeFilterMDF(0);
 }
 
 void MDFourier(int armed)
@@ -217,10 +231,11 @@ void MDFourier(int armed)
 		{
 			set_font_pal(15);
             put_string("Please wait while recording", 6, 12);
+			if(!EnabledSoft)
+				put_string("C. Filter enabled during test", 6, 15);
 			MDFourierExecute();
 			set_font_pal(13);
 			put_string("Stop recording and press I ", 6, 12);
-			
 			
 			do {
 				controller = joytrg(0);

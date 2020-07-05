@@ -203,7 +203,7 @@ void main()
 					display_mdfourier_00();
 					break;
 				case CONSINTER_HELP:
-					display_consinter_00();
+					DrawConsInter();
 					break;
 				case CONVERGENCE_HELP:
 					display_convergence_00();
@@ -471,6 +471,19 @@ void DrawSMPTEHelp()
 	put_string("to console capabilities.", 6, row++);
 	row++;
 	put_string("- You can toggle between 75% and 100% bars with I.", 6, row++);
+}
+
+void DrawConsInter()
+{
+	row = 4;
+	
+	put_string("Audio Clipping", 26, row++);
+	set_font_pal(14);
+	row+=2;
+	put_string("This test generates an audio signal that adds", 6, row++);
+	put_string("several channels using harmonic frequencies in", 6, row++);
+	put_string("order to create constructive interferance and ", 6, row++);
+	put_string("find if the resulting audio signal clips.", 6, row++);
 }
 
 

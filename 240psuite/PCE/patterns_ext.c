@@ -70,6 +70,7 @@ void DrawWhite()
 {
 	x = 0;  // color
 	y = 0;  // edit
+	y2 = 0; // hide edit text
 	x1 = 7;	// R
 	x2 = 7; // G
 	x3 = 7; // B
@@ -95,7 +96,7 @@ void DrawWhite()
 		
 		if(refresh)
 		{
-			RefreshWhite(x, y, x1, x2, x3);
+			RefreshWhite(x, y, y2, x1, x2, x3);
 			refresh = 0;
 		}
 
@@ -109,12 +110,20 @@ void DrawWhite()
 		
 		if (controller & JOY_II)
 			end = 1;
-		if (!y && controller & JOY_I)
+		if (controller & JOY_I)
 		{
-			x++;
-			if(x > 4)
-				x = 0;
-			refresh = 1;
+			if(!y)
+			{
+				x++;
+				if(x > 7)
+					x = 0;
+				refresh = 1;
+			}
+			else
+			{
+				y2 = !y2;
+				redraw = 1;
+			}
 		}
 		
 		if (controller & JOY_SEL)
@@ -208,19 +217,22 @@ void RedrawWhite()
 	Center224in240();
 }
 
-void RefreshWhite(unsigned char color, unsigned char edit, int r, int g, int b)
+void RefreshWhite(unsigned char color, unsigned char edit, unsigned char hide, int r, int g, int b)
 {
 	if(color == 0 && edit)
 	{
-		set_font_pal(option == 0 ? 15 : 14);
-		put_string("R:", 24, 2);
-		put_digit(r, 26, 2);
-		set_font_pal(option == 1 ? 15 : 14);
-		put_string(" G:", 27, 2);
-		put_digit(g, 30, 2);
-		set_font_pal(option == 2 ? 15 : 14);
-		put_string(" B:", 31, 2);
-		put_digit(b, 34, 2);
+		if(!hide)
+		{
+			set_font_pal(option == 0 ? 15 : 14);
+			put_string("R:", 24, 2);
+			put_digit(r, 26, 2);
+			set_font_pal(option == 1 ? 15 : 14);
+			put_string(" G:", 27, 2);
+			put_digit(g, 30, 2);
+			set_font_pal(option == 2 ? 15 : 14);
+			put_string(" B:", 31, 2);
+			put_digit(b, 34, 2);
+		}
 		
 		set_color_rgb(1, r, g, b);
 	}
@@ -242,6 +254,15 @@ void RefreshWhite(unsigned char color, unsigned char edit, int r, int g, int b)
 				break;
 			case 4:
 				set_color_rgb(1, 0, 0, 7);
+				break;
+			case 5:
+				set_color_rgb(1, 7, 0, 7);
+				break;
+			case 6:
+				set_color_rgb(1, 0, 7, 7);
+				break;
+			case 7:
+				set_color_rgb(1, 7, 7, 0);
 				break;
 		}
 	}

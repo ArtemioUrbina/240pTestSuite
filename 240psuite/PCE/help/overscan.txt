@@ -1,6 +1,5 @@
                      OVERSCAN
 
-
 With this pattern you can interactively find out
 the overscan in pixels and percentage of each
 edge in a display.
@@ -16,3 +15,6 @@ This pattern follows the current vertical option,
 so you can check how it handles in 239, 240, and
 224 modes. Keep in mind the horizontal resolution
 is fixed at 256 pixels.
+
+- The rows colored in yellow rows are never shown
+by original hardware.

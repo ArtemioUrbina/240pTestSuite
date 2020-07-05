@@ -189,6 +189,7 @@ void DetectPCEType()
 	region = (((*io) & 0xF0)>>4);
 }
 
+#ifndef HELP_OVL
 // returns 1 if CD detected
 void DetectCDROM()
 {
@@ -261,6 +262,20 @@ void DisplaySystemInfo()
 		put_string("AC+", left-3, 27);	
 #endif
 }
+
+void ChangeCompFilter(int setFlagValue, int setValueX3)
+{
+	EnabledSoft = setFlagValue;
+	xres_flags = XRES_SHARP;
+	
+	if(Enabled_C_BW)
+		xres_flags |= XRES_BW;
+		
+	x3 = setValueX3;
+}
+
+#endif
+
 
 #ifndef HELP_OVL
 #ifndef EXT_TOOLS
@@ -432,20 +447,9 @@ int ExecuteOptions()
 			break;
 		case 2:
 			if(EnabledSoft)
-			{
-				EnabledSoft = 0;
-				xres_flags = XRES_SHARP;
-			}
+				ChangeCompFilter(0, 2);
 			else
-			{
-				EnabledSoft = 1;
-				xres_flags = XRES_SOFT;
-			}
-			
-			if(Enabled_C_BW)
-				xres_flags |= XRES_BW;
-			
-			x3 = 2;
+				ChangeCompFilter(1, 2);
 			
 			Set512H();
 			break;
