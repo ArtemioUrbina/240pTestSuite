@@ -87,7 +87,7 @@ int main(void)
 			drawText(3, pos, sel == 1 ? 6 : 7, "Drop Shadow Test"); pos ++;
 			drawText(3, pos, sel == 2 ? 6 : 7, "Stripped Sprite Test"); pos ++;
 			drawText(3, pos, sel == 3 ? 6 : 7, "Lag Test"); pos ++;
-			drawText(3, pos, sel == 4 ? 6 : 7, "Manual Lag Test"); pos ++;
+			drawText(3, pos, sel == 4 ? 6 : 7, "Timing & Reflex Test"); pos ++;
 			drawText(3, pos, sel == 5 ? 6 : 7, "Scroll Test"); pos ++;
 			drawText(3, pos, sel == 6 ? 6 : 7, "Grid Scroll Test"); pos ++;
 			drawText(3, pos, sel == 7 ? 6 : 7, "Horizontal Stripes"); pos ++;
@@ -99,7 +99,7 @@ int main(void)
 			drawText(3, pos, sel == 13 ? 6 : 7, "Help"); pos ++;	
 			drawText(3, pos, sel == 14 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
 			drawText(3, pos, sel == 15 ? 6 : 5, "Credits"); pos++;
-			drawText(3, pos, sel == 16 ? 6 : 7, "MDFourier beta 4"); 
+			//drawText(3, pos, sel == 16 ? 6 : 7, "MDFourier beta"); 
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 			
 				
@@ -109,8 +109,8 @@ int main(void)
 				EndDMA();
 				if(start)
 				{
-					setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
-					WaitForVBlank();
+					//setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
+					//WaitForVBlank();
 					start = 0;
 				}
 			}
@@ -133,9 +133,9 @@ int main(void)
 		}	
 
 		if(sel < 0)
-			sel = 16;
+			sel = 15;
 			
-		if(sel > 16)
+		if(sel > 15)
 			sel = 0;
 			
 		if(pressed & KEY_START)
@@ -209,7 +209,7 @@ int main(void)
 					DrawCredits();
 					break;
 				case 16:
-					MDFourier(0);
+					MDFourier();
 					break;
 			}
 			redraw = 1;
@@ -389,7 +389,7 @@ void DrawCat(void)
 	u16 held, pressed, end = 0;	 
 	u16 redraw = 1, size = 0, count = 0;	
 	
-	setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
+	//setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
 	while(!end) 
 	{		
 		if(redraw)
@@ -408,7 +408,7 @@ void DrawCat(void)
 						
 			EndDMA();
 			redraw = 0;
-			setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
+			//setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
 		}
 		WaitForVBlank();
 		
@@ -449,14 +449,10 @@ void DrawIntro(void)
 	EndDMA();
 	
 	while(i++ < 20)
-	{
-		if(PadPressed(0) & KEY_START || PadHeld(0) & KEY_START)
-			MDFourier(1);
 		WaitForVBlank();
-	}
 		
-	setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
-	WaitForVBlank();
+	//setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
+	//WaitForVBlank();
 }
 
 void DrawCredits(void) 
@@ -506,8 +502,8 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(6, 4, 5, "Ver. MDF B3");
-			drawText(19, 4, 7, "27/02/2020");
+			drawText(6, 4, 5, "Ver. Reflex");
+			drawText(19, 4, 7, "07/09/2020");
 			drawText(10, pos, 5, "Dedicated to Elisa");
 			
 			EndDMA();	
@@ -543,12 +539,19 @@ void DrawCredits(void)
 	return 0;
 }
 
+// https://forums.nesdev.com/viewtopic.php?f=12&t=7975
+// can only do 32k blocks
+
+// We only need a few bytes, not the 64kb
+// https://en.wikibooks.org/wiki/Super_NES_Programming/Loading_SPC700_programs
+
 void LoadAudio()
 {
 	int i = 0;
-	
+
 	spcBoot();	
 	spcSetBank(&__SOUNDBANK__);
+	
 	
 	// allocate around 10K of sound ram (40 256-byte blocks)
 	spcAllocateSoundRegion(40);

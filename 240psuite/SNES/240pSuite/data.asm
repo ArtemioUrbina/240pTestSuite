@@ -432,4 +432,37 @@ mode7_map:
 .incbin "gridm7.mp7"
 mode7_map_end:
 
+sound1:
+mdf/1khz.brr
+sound1_end:
+
+sound2:
+2khz.brr
+sound2_end:
+
+sound3:
+3khz.brr
+sound3_end:
+
+sound4:
+4khz.brr
+sound4_end:
+
+sound5:
+5khz.brr
+sound5_end:
+
+sound6:
+6khz.brr
+sound6_end:
+
+sound7:
+7khz.brr
+sound7_end:
+
+sound8:
+8khz.brr
+sound8_end:
+
+
 .ends

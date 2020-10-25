@@ -815,11 +815,16 @@ void Draw100IRE()
 	u16 pressed, end = 0;
 	u16 redraw = 1;
 	int	irecount = 10, iremax = 10, changedire = 0; 
-	u8	*irevalues = NULL, invert = 0, text = 0;
-	u8	irevalues100[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
-	u8	irevalues140[8] = { 0, 63, 102, 127, 153, 190, 230, 255 };	
+	s16	*irevalues = NULL, *irevaluesp = NULL, *irevaluesp2 = NULL, invert = 0, text = 0;
+	s16	irevalues100[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
+	s16	irevalues100p[11] = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+	s16	irevalues100p2[11] = { 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140 };
+	s16	irevalues140[8] = { 0, 63, 102, 127, 153, 190, 230, 255 };	
+	s16	irevalues140p[8] = { 0, 25, 40, 50, 60, 75, 90, 100 };	
+	s16	irevalues140p2[8] = { 100, 110, 116, 120, 124, 130, 136, 140 };	
 		
 	irevalues = irevalues100;
+	irevaluesp = irevalues100p;
 	while(!end) 
 	{		
 		if(redraw)
@@ -856,8 +861,7 @@ void Draw100IRE()
 				if(text > 30)
 					drawText(14, 26, 7, "RANGE 0-100 IRE   ");
 				else
-					drawText(14, 26, 7, "         %0.3d IRE", 
-							(s16)((irevalues[irecount]*100.0)/255.0));					
+					drawText(14, 26, 7, "         %0.3d IRE", irevaluesp[irecount]);
 			  	text --;
 			}
 			else
@@ -865,8 +869,7 @@ void Draw100IRE()
 				if(text > 30)
 					drawText(14, 26, 7, "RANGE 100-140 IRE   ");
 				else
-					drawText(14, 26, 7, "         %0.3d IRE  ", 
-							(s16)(100.0f + ((irevalues[irecount] * 40.5)/255.0)));
+					drawText(14, 26, 7, "         %0.3d IRE  ", irevaluesp2[irecount]);
 			  	text --;
 			}
 			
@@ -894,12 +897,16 @@ void Draw100IRE()
 				irecount = 0;
 				iremax = 7;
 				irevalues = irevalues140;
+				irevaluesp = irevalues140p;
+				irevaluesp2 = irevalues140p2;
 			}
 			else
 			{
 				irecount = 10;
 				iremax = 10;
 				irevalues = irevalues100;
+				irevaluesp = irevalues100p;
+				irevaluesp2 = irevalues100p2;
 			}
 			
 			WaitForVBlank();
@@ -934,6 +941,7 @@ void Draw100IRE()
 	
 	return;
 }
+
 
 u8 *empty_over, *tile_l, *tile_r, *tile_t, *tile_b;
 u8 *full_over, *tile_lb, *tile_lt, *tile_rt, *tile_rb;
