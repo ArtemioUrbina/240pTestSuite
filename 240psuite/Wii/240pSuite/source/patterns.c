@@ -668,17 +668,33 @@ void DrawColorBleed()
 
 void DrawGrid()
 {
-	int 		done = 0, oldvmode = vmode, text = 0;
+	int 		done = 0, oldvmode = vmode, text = 0, bggreen = 0;
 	u32			pressed;		
-	ImagePtr	back = NULL;
+	ImagePtr	back = NULL, blckbg = NULL;
 	char		msg[60];
 	
+	
+	blckbg = LoadImage(WHITEIMG, 1);
+	if(!blckbg)
+		return;
+	
+	blckbg->r = 0;
+	blckbg->g = 0;
+	blckbg->b = 0;
+	
+	blckbg->w = dW;
+	blckbg->h = dH;
+		
 	while(!done && !EndProgram) 
 	{		
 		if(oldvmode != vmode)
 		{
-			FreeImage(&back);		
+			if(back)
+				FreeImage(&back);	
 			oldvmode = vmode;
+			
+			blckbg->w = dW;
+			blckbg->h = dH;
 		}
 		
 		if(!back)
@@ -716,7 +732,8 @@ void DrawGrid()
 		}
 		
 		StartScene();
-		        
+		
+		DrawImage(blckbg);        
 		DrawImage(back);
 		
 		if(text)
@@ -769,11 +786,23 @@ void DrawGrid()
 			back->y = 0;
 		}
 		
+		if (pressed & PAD_BUTTON_X)
+		{
+			bggreen = !bggreen;
+			if(bggreen == 1)
+				blckbg->g = 0xff;
+			else
+				blckbg->g = 0x00;
+		}
+		
 		if(text)
 			sprintf(msg, "Grid origin in video signal: [%d,%d]", (int)back->x, (int)back->y);
 	}
 
-	FreeImage(&back);
+	if(back)
+		FreeImage(&back);
+	if(blckbg)
+		FreeImage(&blckbg);
 	return;
 }
 

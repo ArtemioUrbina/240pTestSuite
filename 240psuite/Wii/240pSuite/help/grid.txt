@@ -34,3 +34,5 @@ mapping modes.
 
 The d-pad can be used to move the grid around the
 video signal. $A button resets it to its position.
+
+The $X button toggles a green background.
