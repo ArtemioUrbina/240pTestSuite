@@ -36,6 +36,7 @@ void Draw100IRE();
 void DrawSMPTEColorBars();
 void DrawSharpness();
 void DrawOverscan();
+void DrawConvergence();
 
 #endif
 

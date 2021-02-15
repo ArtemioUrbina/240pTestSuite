@@ -30,6 +30,7 @@
 #include "controller.h"
 #include "options.h"
 
+/* paste from here */
 char *alt240p_txt[] = { 
 "              ALTERNATING 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress $A to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
 NULL
@@ -61,6 +62,10 @@ char *colors_txt[] = {
 "                 COLORBARS (2/2)\n\nAdjust the white level first, this is done using\nthe #YContrast#Y control on your TV set. Raise it\nuntil you cannot distinguish between the two\nblocks under #GF#G, and lower it slowly until you\ncan clearly tell them apart.  \n\nThe same procedure should be used with each\ncolor, raise the control that adjusts the\nindividual color level (not the #Ycolor#Y/#Ytint#Y one)\nuntil you can't tell the rightmost box under #GF#G\nfrom the one to its left, and then lower it until\nyou can distinguish them clearly. \n\nRepeat for each color and you are set.",
 NULL
 };
+char *convergence_txt[] = { 
+"                 CONVERGENCE TESTS\n\nThese are used to adjust color convergence in CRT \ndisplays.\n\n- Button 'A' changes the pattern between cross\nhatch lines, crosses, dots and a color pattern \nwith or without a black grid, for transition \nboundary check.\n\n- Left and Right on the D-Pad allow cycling \nbetween patterns.\n\n",
+NULL
+};
 char *diagonal_txt[] = { 
 "            Diagonal line patterns\n\nThese patterns can be used to adjust the vertical\nand horizontal scaling in video procesors in\ndifferent resolutions. The test uses higher \nresolution assets for 480p when in that mode.\n\nThe angle increment for line rotation can be\nadjusted by fractions up to 1/20th of a degree\nwith $X and $Y. The angle can be adjusted with\n$L and $R.\n\nThe bars can be set to autorotate with $A and the\nbars can be toggled to full screen by pressing Up.",
 NULL
@@ -82,7 +87,7 @@ NULL
 char *grid_txt[] = { 
 "                    GRID (1/3)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. Consumer TVs may not show the red squares.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    #C(cont...)#C",
 "                    GRID (2/3)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. You can also use the 576i stretched option \nto fill the whole screen at the cost of 1:1 pixel \nmapping.\n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 23\nfor PAL. You can adjust this value for PAL in 1:1\nmapping modes.\n                                    #C(cont...)#C",
-"                    GRID (3/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. $A button resets it to its position.\n",
+"                    GRID (3/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. $A button resets it to its position.\n\nThe $X button toggles a green background.\n",
 NULL
 };
 char *grid224_txt[] = { 
@@ -150,7 +155,7 @@ char *sharpness_txt[] = {
 "                    SHARPNESS\n\nYou should set the sharpness of your CRT to a\nvalue that shows clean black and gray transitions,\nwith no white ghosting in between.\n\nOn most modern displays, the #Ysharpness#Y control is \nan edge-enhancement control, and most probably\nshould be set to zero, or in the middle.\n\nIn some #YPVM#Y/#YBVM#Y displays this is also referred \nto as #Yaperture#Y.",
 NULL
 };
-char *SMPTEColor_txt[] = { 
+char *smptecolor_txt[] = { 
 "              SMPTE COLOR BARS (1/3)\n\nThis pattern can be used to calibrate for NTSC\nlevels regarding contrast and brightness, and \nappropiate colors as well. \n\nYou can toggle between 75% and 100% SMPTE color \nbars by pressing $A.\n\nWhen in PAL this pattern shows the #YEBU#Y color\nbars intead, since setup starts at 0mV.\n\nRemember that the black level in the SMPTE pattern\nrefers to 7.5 IRE for video, console games usually\nstart at 0 IRE. This pattern can be used to \n                                         #C(cont...)#C",
 "              SMPTE COLOR BARS (2/3)\n\ncalibrate colors - or auto calibrated in a \nprofessional display - and then black levels can\nbe adjusted with the PLUGE pattern using the #GFull \nRGB Mode#G.\n\nIn an SMPTE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on \n                                         #C(cont...)#C",
 "              SMPTE COLOR BARS (3/3)\n\nand off between every bar, red cycling on and \noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
@@ -188,7 +193,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	32
+#define	HELPCOUNT	33
 char **HelpArray[HELPCOUNT] = {
 	alt240p_txt,
 	backlit_txt,
@@ -197,6 +202,7 @@ char **HelpArray[HELPCOUNT] = {
 	check480pWii_txt,
 	color601_txt,
 	colors_txt,
+	convergence_txt,
 	diagonal_txt,
 	dshadow_txt,
 	general_txt,
@@ -215,7 +221,7 @@ char **HelpArray[HELPCOUNT] = {
 	pluge_txt,
 	scroll_txt,
 	sharpness_txt,
-	SMPTEColor_txt,
+	smptecolor_txt,
 	sound_txt,
 	striped_txt,
 	stripes_txt,
@@ -223,6 +229,7 @@ char **HelpArray[HELPCOUNT] = {
 	white_txt,
 NULL
 };
+/* paste to here */
 
 #define EXTRA_BUFFER 500
 

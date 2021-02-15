@@ -1458,4 +1458,58 @@ void DrawOverscan()
 	return;
 }
 
-
+#define	NUM_CONV	5
+void DrawConvergence()
+{
+    int 		done = 0, current = 0;
+	int			patterns[NUM_CONV] = {CONVERGE01, CONVERGE02, CONVERGE03, CONVERGE04, CONVERGE05};
+	u32			pressed;		
+	ImagePtr	back[NUM_CONV];	
+	
+	for(current = 0; current < NUM_CONV; current++)
+	{
+		back[current] = LoadImage(patterns[current], 0);
+		if(!back[current])
+			return;
+	}
+	
+	current = 0;
+	while(!done && !EndProgram) 
+	{				
+		StartScene();
+		        
+		DrawImage(back[current]);
+		
+        EndScene();
+		
+		ControllerScan();
+		
+		pressed = Controller_ButtonsDown(0);
+				
+		if (pressed & PAD_BUTTON_B)
+			done =	1;								
+	
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = CONVHELP;
+		}
+		
+		if (pressed & PAD_BUTTON_A || pressed & PAD_TRIGGER_R)
+		{
+			current ++;
+			if(current >= NUM_CONV)
+				current = 0;
+		}
+		
+		if (pressed & PAD_TRIGGER_L)
+		{
+			current --;
+			if(current < 0)
+				current = NUM_CONV - 1;
+		}
+	}
+	for(current = 0; current < NUM_CONV; current++)
+		FreeImage(&back[current]);
+	return;
+}
