@@ -1376,8 +1376,8 @@ void VScrollTest()
 				
 			VDP_setPalette(PAL0, bw_pal);
 
-			size = sizeof(circles_grid_tiles) / 32;
-			VDP_loadTileData(circles_grid_tiles, TILE_USERINDEX, size, USE_DMA);
+			size = sizeof(small_grid_tiles) / 32;
+			VDP_loadTileData(small_grid_tiles, TILE_USERINDEX, size, USE_DMA);
 
 			VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 512 / 8, 512 / 8);
 			VDP_End();

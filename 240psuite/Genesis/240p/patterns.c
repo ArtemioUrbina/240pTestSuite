@@ -332,7 +332,7 @@ void DrawSMPTEorEBU(int EBU)
 			else
 				VDP_setPalette(PAL2, SMPTECB75_pal);
 
-			if( EBU)
+			if(EBU)
 			{
 				size = sizeof(EBUColorBars75_tiles) / 32;
 				VDP_loadTileData(EBUColorBars75_tiles, TILE_USERINDEX, size, USE_DMA);
@@ -498,152 +498,6 @@ void DrawSharpness()
 	}
 }
 
-void DrawLinearity()
-{
-	u16 size, ind, grid2 = 0, redraw = 0, loadvram = 1;
-	u16 exit = 0, showgrid = 0, gridpattern = 0, type = 0, ntype = 0;
-	u16 buttons, oldButtons = 0xffff, pressedButtons;
-
-	type = DrawFloatMenuRes(RES_320);
-	if(type == FLOAT_CANCEL)
-		return;
-		
-	while(!exit)
-	{
-		if(loadvram)
-		{
-			VDP_setPalette(PAL0, bw_pal);
-			if(type == RES_256)
-				VDP_setScreenWidth256();
-			else
-				VDP_setScreenWidth320();
-				
-			VDP_Start();
-
-			ind = TILE_USERINDEX;
-			size = sizeof(circles_grid_tiles) / 32;
-			VDP_loadTileData(circles_grid_tiles, ind, size, USE_DMA);
-			ind += size;
-			size = sizeof(circles_griddot_tiles) / 32;
-			VDP_loadTileData(circles_griddot_tiles, ind, size, USE_DMA);
-
-			grid2 = ind;
-
-			ind += size;
-			if(type == RES_256)
-			{
-				if(IsPALVDP)
-				{
-					size = sizeof(Lin256PAL_tiles) / 32;
-					VDP_loadTileData(Lin256PAL_tiles, ind, size, USE_DMA);
-				}
-				else
-				{
-					size = sizeof(Linearity256_tiles) / 32;
-					VDP_loadTileData(Linearity256_tiles, ind, size, USE_DMA);
-				}
-
-				if(IsPALVDP)
-					VDP_setMyTileMapRect(APLAN, Lin256PAL_map, ind, 0, 0, 256 / 8, 224 / 8);
-				else
-					VDP_setMyTileMapRect(APLAN, Linearity256_map, ind, 0, 0, 256 / 8, 224 / 8);
-			}
-			else
-			{
-				if(IsPALVDP)
-				{
-					size = sizeof(circlesPAL_tiles) / 32;
-					VDP_loadTileData(circlesPAL_tiles, ind, size, USE_DMA);
-				}
-				else
-				{
-					size = sizeof(circles_tiles) / 32;
-					VDP_loadTileData(circles_tiles, ind, size, USE_DMA);
-				}
-				if(IsPALVDP)
-					VDP_setMyTileMapRect(APLAN, circlesPAL_map, ind, 0, 0, 320 / 8, 224 / 8);
-				else
-					VDP_setMyTileMapRect(APLAN, circles_map, ind, 0, 0, 320 / 8, 224 / 8);
-			}
-
-			VDP_End();
-			loadvram = 0;
-			redraw = 1;
-		}
-
-		if(redraw)
-		{
-			VDP_Start();
-			if(type == RES_256)
-			{
-				if(showgrid)
-				{
-					if(gridpattern == 1)
-						VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 256 / 8, (pal_240 ? 240 : 224) / 8);
-					else
-						VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 256 / 8, (pal_240 ? 240 : 224) / 8);
-				}
-				else
-					VDP_clearTileMapRect(BPLAN, 0, 0, 256 / 8, (pal_240 ? 240 : 224) / 8);
-			}
-			else
-			{
-				if(showgrid)
-				{
-					if(gridpattern == 1)
-						VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
-					else
-						VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + grid2, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
-				}
-				else
-					VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
-			}
-			VDP_End();
-			redraw = 0;
-		}
-
-		buttons = JOY_readJoypad(JOY_1);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-
-		if(VDPChanged)
-			loadvram = 1;
-
-		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_LINEARITY))
-			loadvram = 1;
-
-		if(pressedButtons & BUTTON_START)
-			exit = 1;
-
-		if(pressedButtons & BUTTON_A)
-		{
-			showgrid = !showgrid;
-			redraw = 1;
-		}
-
-		if(pressedButtons & BUTTON_B)
-		{
-			if(gridpattern == 1)
-				gridpattern = 2;
-			else
-				gridpattern = 1;
-
-			redraw = 1;
-		}
-
-		if(pressedButtons & BUTTON_C)
-		{
-			ntype = DrawFloatMenuRes(type);
-			if(ntype != FLOAT_CANCEL)
-				type = ntype;
-			resetController(&oldButtons);
-			loadvram = 1;
-		}
-
-		VDP_waitVSync();
-	}
-}
-
 void DrawGrid()
 {
 	u16 size, drawBorder = 0;
@@ -729,6 +583,87 @@ void DrawGrid()
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			ntype = DrawFloatMenuRes(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			resetController(&oldButtons);
+			loadvram = 1;
+		}
+
+		VDP_waitVSync();
+	}
+}
+
+void DrawMonoscope()
+{
+	u16 ind;
+	u16 size;
+	u16 exit, loadvram = 1, type = 0, ntype = 0;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+	u16 custom_pal[16];
+	int bright = 1;
+
+	exit = 0;
+	
+	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+
+	memcpy(custom_pal, grid_pal, sizeof(grid_pal));
+	while(!exit)
+	{
+		if(loadvram)
+		{
+			VDP_Start();
+			
+			if(type == RES_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+			
+			VDP_setPalette(PAL0, custom_pal);
+
+			ind = TILE_USERINDEX;
+			
+			if(type == RES_256)
+			{
+				size = sizeof(monoscope_tiles) / 32;
+				VDP_loadTileData(monoscope_tiles, ind, size, USE_DMA);
+				VDP_setMyTileMapRect(APLAN, monoscope_map, TILE_USERINDEX, 0, 0, 256 / 8, 224 / 8);
+			}
+			else
+			{
+				size = sizeof(monoscope320_tiles) / 32;
+				VDP_loadTileData(monoscope320_tiles, ind, size, USE_DMA);
+				VDP_setMyTileMapRect(APLAN, monoscope320_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+			}
+
+			VDP_End();
+
+			loadvram = 0;
+		}
+
+		buttons = JOY_readJoypad(JOY_1);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_MONOSCOPE))
+			loadvram = 1;
+
+		if(pressedButtons & BUTTON_START)
+			exit = 1;
+			
+		if(pressedButtons & BUTTON_A)
+		{
+			bright++;
+			if(bright > 7)
+				bright = 1;
+			custom_pal[2] = btw_pal[bright];
+			VDP_setPalette(PAL0, custom_pal);
+		}
 		
 		if(pressedButtons & BUTTON_C)
 		{

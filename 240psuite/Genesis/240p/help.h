@@ -32,7 +32,7 @@
 #define HELP_SHARPNESS		8
 #define HELP_OVERSCAN		9
 #define HELP_SMPTE			10
-#define HELP_LINEARITY		11
+#define HELP_MONOSCOPE		11
 #define HELP_GRAY			12
 #define HELP_WHITE			13
 #define HELP_CHECK			14

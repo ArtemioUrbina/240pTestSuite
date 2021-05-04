@@ -56,18 +56,7 @@ extern u32 vstripesneg_tiles[32/4];
 extern u16 bw_pal[16/2]; 
 
 // Grid
-extern u32 circles_tiles[1888/4]; 
-extern u16 circles_map[2240/2];
-extern u32 circlesPAL_tiles[1824/4]; 
-extern u16 circlesPAL_map[2240/2];
-extern u32 circles_grid_tiles[32/4]; 
-extern u32 circles_griddot_tiles[32/4]; 
-
-extern u32 Linearity256_tiles[1120/4]; 
-extern u16 Linearity256_map[1792/2];
-
-extern u32 Lin256PAL_tiles[1344/4]; 
-extern u16 Lin256PAL_map[1792/2];
+extern u32 small_grid_tiles[32/4]; 
 
 extern u32 grid_tiles[64/4]; 
 extern u16 grid_pal[16/2]; 
@@ -76,6 +65,12 @@ extern u16 grid_map[2240/2];
 extern u16 grid_256_map[1792/2];
 extern u16 grid_PAL_map[2400/2];
 extern u16 grid_PAL_256_map[1920/2];
+
+extern u32 monoscope_tiles[1728/4]; 
+extern u16 monoscope_map[1792/2];
+
+extern u32 monoscope320_tiles[2784/4]; 
+extern u16 monoscope320_map[2240/2];
 
 // Sonic background
 extern u32 sonicfloor_tiles[2592/4]; 

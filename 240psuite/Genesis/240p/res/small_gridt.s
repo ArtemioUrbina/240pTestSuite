@@ -1,6 +1,6 @@
 * ---------------------------
-.global circles_grid_tiles
-circles_grid_tiles:
+.global small_grid_tiles
+small_grid_tiles:
 * ---------------------------
 * size:32 bytes
 

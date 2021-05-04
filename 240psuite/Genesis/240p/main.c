@@ -172,8 +172,8 @@ void TestPatternMenu()
 		VDP_drawTextBG(APLAN, "SMPTE Color Bars", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Referenced Color Bars", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Color Bleed Check", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, pal_240 ? "Grid" : "Grid", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Linearity", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Monoscope", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Grid", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Gray Ramp", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "White & RGB Screens", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "100 IRE", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -181,9 +181,7 @@ void TestPatternMenu()
 		VDP_drawTextBG(APLAN, "Overscan", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Convergence", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		pos++;
-		// Help removed
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 16 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
 		Detect_MD(md_ver);
@@ -201,7 +199,7 @@ void TestPatternMenu()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > 16)
+			if(cursel > 15)
 				cursel = 1;
 		}
 
@@ -209,7 +207,7 @@ void TestPatternMenu()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = 16;
+				cursel = 15;
 		}
 
 		if(pressedButtons & BUTTON_B || 
@@ -221,7 +219,7 @@ void TestPatternMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			if(cursel < 15)
+			if(cursel < 14)
 				FadeAndCleanUp();
 			switch (cursel)
 			{
@@ -244,10 +242,10 @@ void TestPatternMenu()
 				DrawColorBleed();
 				break;
 			case 7:
-				DrawGrid();
+				DrawMonoscope();
 				break;
 			case 8:
-				DrawLinearity();
+				DrawGrid();
 				break;
 			case 9:
 				DrawGrayRamp();
@@ -268,9 +266,6 @@ void TestPatternMenu()
 				DrawConvergence();
 				break;
 			case 15:
-				VideoOptions();
-				break;
-			case 16:
 				done = 1;
 				break;
 			}
@@ -311,7 +306,7 @@ void VideoTestsMenu()
 		VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Lag Test", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Manual Lag Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Timing & Reflex Test", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Scroll Test", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Horiz/Vert Stripes", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -741,8 +736,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-			VDP_drawTextBG(APLAN, "Ver. 1.21", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "28/10/2019", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.22b", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "30/04/2021", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 			VDP_End();
@@ -1229,7 +1224,8 @@ u16 CheckController(u16 joypad, u16 oldButtons, u16 y)
 
 void ControllerTest()
 {
-	u8 loadvram = 1, redraw = 1;
+	u8 loadvram = 1, redraw = 1, refresh = 0;
+	u8 oldJoyType1 = JOY_TYPE_UNKNOWN, oldJoyType2 = JOY_TYPE_UNKNOWN;
 	u16 exit = 0;
 	u16 buttons1 = 0xffff, buttons2 = 0xffff;
 	
@@ -1237,6 +1233,9 @@ void ControllerTest()
 	
 	while(!exit)
 	{	
+		oldJoyType1 = joytype;
+		oldJoyType2 = joytype2;
+		
 		if(loadvram)
 		{
 			DrawMainBG();
@@ -1255,7 +1254,8 @@ void ControllerTest()
 		}
 		buttons1 = CheckController(JOY_1, buttons1, 10);
 		buttons2 = CheckController(JOY_2, buttons2, 16);
-		
+
+		// self explanatory, no help?
 		//if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_CONTROLLER))
 			//loadvram = 1;
 
@@ -1266,11 +1266,18 @@ void ControllerTest()
 		{
 			joytype = joytype2 = JOY_TYPE_UNKNOWN;
 			JOY_init();
+		}
+		
+		if(oldJoyType1 != joytype || oldJoyType2 != joytype2)
+			refresh = 1;
 			
+		if(refresh)
+		{
 			VDP_Start();
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
 			VDP_End();
 			redraw = 1;
+			refresh = 0;
 		}
 
 		VDP_waitVSync();

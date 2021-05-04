@@ -30,6 +30,7 @@ void DrawPluge();
 void DrawColorBars();
 void Draw601ColorBars();
 void DrawGrid();
+void DrawMonoscope();
 void DrawColorBleed();
 void DrawLinearity();
 void DrawGrayRamp();
