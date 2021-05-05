@@ -1013,7 +1013,7 @@ void VScrollTest(void)
 		{
 			StartDMA();
 			
-			bgInitTileSetMine(0, &circlesgrid_tiles, &grid_pal, 0, (&circlesgrid_tiles_end - &circlesgrid_tiles), 16*2, BG_16COLORS, 0x6000);					
+			bgInitTileSetMine(0, &smallgrid_tiles, &grid_pal, 0, (&smallgrid_tiles_end - &smallgrid_tiles), 16*2, BG_16COLORS, 0x6000);					
 			bgInitMapSetMine(0, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 			
 			setPaletteColor(0x00, RGB5(0, 0, 0));

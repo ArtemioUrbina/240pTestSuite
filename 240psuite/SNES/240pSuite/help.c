@@ -336,24 +336,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "your display-if available-");
 							drawText(3, y++, 7, "to confirm color balance.");								
 					break;
-				case HELP_LINEARITY:
-							drawText(3, 4  , 6, "         LINEARITY"); 
-							drawText(3, y++, 7, "This pattern shows 5"); 
-							drawText(3, y++, 7, "circles, that are matched");
-							if(!snes_50hz)
-								drawText(3, y++, 7, "to the 10:11 NTSC aspect");
-							else
-								drawText(3, y++, 7, "to the 59:54 PAL aspect");
-							drawText(3, y++, 7, "ratio.");
-							y++;
-							drawText(3, y++, 7, "The linearity of the");
-							drawText(3, y++, 7, "display or upscaler can be");
-							drawText(3, y++, 7, "verified by measuring the");
-							drawText(3, y++, 7, "diameter of the circles.");
-							y++;
-							drawText(3, y++, 7, "Of course the linearity"); 
-							drawText(3, y++, 7, "should be kept in all");
-							drawText(3, y++, 7, "directions.");
+				case HELP_MONOSCOPE:
 					break;
 				case HELP_GRAY:
 							drawText(3, 4  , 6, "        GRAY RAMP"); 

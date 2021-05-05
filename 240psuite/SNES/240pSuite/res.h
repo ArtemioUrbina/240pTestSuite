@@ -53,13 +53,6 @@ extern char color_map, color_map_end;
 extern char color_grid_tiles, color_grid_tiles_end;
 extern char color_grid_map, color_grid_map_end;
 
-extern char circles_tiles, circles_tiles_end;
-extern char circles_pal, circles_pal_end;
-extern char circles_map, circles_map_end;
-
-extern char circlesPAL_tiles, circlesPAL_tiles_end;
-extern char circlesPAL_map, circlesPAL_map_end;
-
 extern char pluge_tiles, pluge_tiles_end;
 extern char pluge_pal, pluge_pal_end;
 extern char plugePAL_pal, plugePAL_pal_end;
@@ -117,7 +110,7 @@ extern char nishka_tiles, nishka_tiles_end;
 extern char nishka_pal, nishka_pal_end;
 extern char nishka_map, nishka_map_end;
 
-extern char circlesgrid_tiles, circlesgrid_tiles_end;
+extern char smallgrid_tiles, smallgrid_tiles_end;
 
 extern char LEDsprites_tiles, LEDsprites_tiles_end;
 extern char LEDsprites_pal, LEDsprites_pal_end;
@@ -145,6 +138,10 @@ extern char fireshark_pal, fireshark_pal_end;
 extern char bricks_tiles, bricks_tiles_end;
 extern char bricks_pal, bricks_pal_end;
 extern char bricks_map, bricks_map_end;
+
+extern char monoscope_tiles, monoscope_tiles_end;
+extern char monoscope_pal, monoscope_pal_end;
+extern char monoscope_map, monoscope_map_end;
 
 extern char font;
 extern char fontback;

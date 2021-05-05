@@ -26,7 +26,7 @@
 void DrawGrid(u8 type);
 void DrawSMPTE();
 void DrawColorBars();
-void Drawcircles();
+
 void DrawPluge();
 void DrawGrayRamp();
 void DrawColorBleed();
@@ -37,3 +37,4 @@ void Draw100IRE();
 void DrawOverscan(u8 mode);
 void DrawMode7();
 int DrawContrast();
+void DrawMonoscope();

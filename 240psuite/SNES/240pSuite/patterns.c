@@ -223,66 +223,6 @@ void DrawColorBars(void)
 	return;
 }
 
-void Drawcircles() 
-{	
-	u16 pressed, end = 0, grid = 0;
-	u16 redraw = 1, grid = 0;
-		
-	while(!end) 
-	{		
-		if(redraw)
-		{
-			StartDMA();
-			
-			if(grid)
-			{
-				bgInitTileSetMine(0, &circlesgrid_tiles, &grid_pal, 0, (&circlesgrid_tiles_end - &circlesgrid_tiles), 16*2, BG_16COLORS, 0x6000);
-				bgInitMapSetMine(0, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
-			}
-			
-			if(!snes_50hz)
-			{
-				bgInitTileSetMine(1, &circles_tiles, &circles_pal, 0, (&circles_tiles_end - &circles_tiles), 16*2, BG_16COLORS, 0x4000);	
-				bgInitMapSetMine(1, &circles_map, (&circles_map_end - &circles_map), SC_32x32, 0x1000);
-			}
-			else
-			{
-				bgInitTileSetMine(1, &circlesPAL_tiles, &circles_pal, 0, (&circlesPAL_tiles_end - &circlesPAL_tiles), 16*2, BG_16COLORS, 0x4000);	
-				bgInitMapSetMine(1, &circlesPAL_map, (&circlesPAL_map_end - &circlesPAL_map), SC_32x32, 0x1000);
-			}
-			
-			setMode(BG_MODE1,0); 
-			if(!grid)
-				bgSetDisable(0);
-			bgSetDisable(2);
-			
-			bgSetScroll(1, 0, -1);
-			EndDMA();
-			redraw = 0;
-		}
-		WaitForVBlank();
-		
-		pressed = PadPressed(0);
-		
-		if(pressed & KEY_START)
-		{
-			DrawHelp(HELP_LINEARITY);
-			redraw = 1;
-		}
-		
-		if(pressed & KEY_B)
-			end = 1;		
-		
-		if(pressed & KEY_A)
-		{
-			grid = !grid;
-			redraw = 1;
-		}
-	}	
-	Transition();
-	
-	return;
-}
 
 void DrawPluge() 
 {	
@@ -428,6 +368,55 @@ void DrawGrayRamp(void)
 		
 		if(pressed & KEY_B)
 			end = 1;		
+	}	
+	Transition();
+	
+	return;
+}
+
+void DrawMonoscope(void) 
+{	
+	u16 pressed, end = 0;	 
+	u16 redraw = 1, size = 0;	
+	s16 color = 255;
+	
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			StartDMA();
+			
+			bgInitTileSetMine(1, &monoscope_tiles, &monoscope_pal, 0, (&monoscope_tiles_end - &monoscope_tiles), 16*2, BG_16COLORS, 0x4000);	
+			bgInitMapSetMine(1, &monoscope_map, (&monoscope_map_end - &monoscope_map), SC_32x32, 0x1000);
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(0);		
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			EndDMA();
+			redraw = 0;
+		}
+		WaitForVBlank();
+		
+		pressed = PadPressed(0);
+		
+		if(pressed & KEY_START)
+		{
+			//DrawHelp(HELP_GRAY);
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_B)
+			end = 1;		
+			
+		if(pressed & KEY_A)
+		{
+			color -= 16;
+			if(color < 15)
+				color = 255;
+			setPaletteColor(0x02, RGB8(color, color, color));		
+		}
 	}	
 	Transition();
 	

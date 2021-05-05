@@ -65,7 +65,7 @@ int main(void)
 			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
-			DrawTilesWithSprites(176, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
+			DrawTilesWithSprites(182, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -241,7 +241,7 @@ void TestPatterns(void)
 			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
-			DrawTilesWithSprites(176, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
+			DrawTilesWithSprites(182, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -264,9 +264,9 @@ void TestPatterns(void)
 			drawText(3, pos, sel == 2 ? 6 : 7, snes_50hz ? "EBU Color Bars" : "SMPTE Color Bars"); pos ++;
 			drawText(3, pos, sel == 3 ? 6 : 7, "Color Bars w/ Gray Ref"); pos ++;
 			drawText(3, pos, sel == 4 ? 6 : 7, "Color Bleed Check"); pos ++;
-			drawText(3, pos, sel == 5 ? 6 : 7, "Grid 256x224"); pos ++;
-			drawText(3, pos, sel == 6 ? 6 : 7, "Grid 256x239"); pos ++;
-			drawText(3, pos, sel == 7 ? 6 : 7, "Linearity"); pos ++;
+			drawText(3, pos, sel == 5 ? 6 : 7, "Monoscope"); pos ++;
+			drawText(3, pos, sel == 6 ? 6 : 7, "Grid 256x224"); pos ++;
+			drawText(3, pos, sel == 7 ? 6 : 7, "Grid 256x239"); pos ++;
 			drawText(3, pos, sel == 8 ? 6 : 7, "Gray Ramp"); pos ++;
 			drawText(3, pos, sel == 9 ? 6 : 7, "White & RGB Screen"); pos ++;
 			drawText(3, pos, sel == 10 ? 6 : 7, "100 IRE"); pos ++;	
@@ -337,13 +337,13 @@ void TestPatterns(void)
 					DrawColorBleed();
 					break;
 				case 5:
-					DrawGrid(0);
+					DrawMonoscope();
 					break;
 				case 6:
-					DrawGrid(1);
+					DrawGrid(0);
 					break;
 				case 7:
-					Drawcircles();
+					DrawGrid(1);
 					break;
 				case 8:
 					DrawGrayRamp();

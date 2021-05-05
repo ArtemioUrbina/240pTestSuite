@@ -21,7 +21,6 @@
  
 .include "hdr.asm"
 
-/* has only 40 bytes left */
 .section ".rodata1" superfree
 
 back_tiles:
@@ -32,17 +31,12 @@ gillian_tiles:
 .incbin "gillian.pic"
 gillian_tiles_end:
 
-grid_tiles:
-.incbin "grid.pic"
-grid_tiles_end:
-
 motoko_tiles1:
 .incbin "motoko.pic" read $6000
 motoko_tiles1_end:
 
 .ends
 
-/* Has CC0 bytes free */
 .section ".rodata2" superfree
 
 back_map:
@@ -52,6 +46,10 @@ back_map_end:
 back_pal:
 .incbin "back.pal"
 back_pal_end:
+
+grid_tiles:
+.incbin "grid.pic"
+grid_tiles_end:
 
 grid_map:
 .incbin "grid.map"
@@ -97,13 +95,7 @@ color_pal:
 .incbin "color.pal"
 color_pal_end:
 
-circles_map:
-.incbin "circles.map"
-circles_map_end:
 
-circles_pal:
-.incbin "circles.pal"
-circlesr_pal_end:
 
 pluge_map:
 .incbin "pluge.map"
@@ -236,10 +228,6 @@ color_tiles:
 .incbin "color.pic"
 color_tiles_end:
 
-circles_tiles:
-.incbin "circles.pic"
-circles_tiles_end:
-
 pluge_tiles:
 .incbin "pluge.pic"
 pluge_tiles_end:
@@ -300,9 +288,9 @@ nishka_pal:
 .incbin "n_p.s"
 nishka_pal_end:
 
-circlesgrid_tiles:
-.incbin "circles_grid.pic"
-circlesgrid_tiles_end:
+smallgrid_tiles:
+.incbin "small_grid.pic"
+smallgrid_tiles_end:
 
 .ends
 
@@ -324,13 +312,13 @@ color_grid_map:
 .incbin "color_grid.map"
 color_grid_map_end:
 
-circlesPAL_tiles:
-.incbin "circlesPAL.pic"
-circlesPAL_tiles_end:
+monoscope_tiles:
+.incbin "monoscope.pic"
+monoscope_tiles_end:
 
-circlesPAL_map:
-.incbin "circlesPAL.map"
-circlesPAL_map_end:
+monoscope_pal:
+.incbin "monoscope.pal"
+monoscope_pal_end:
 
 EBUCB75_map:
 .incbin "EBUCB75.map"
@@ -464,5 +452,8 @@ sound8:
 8khz.brr
 sound8_end:
 
+monoscope_map:
+.incbin "monoscope.map"
+monoscope_map_end:
 
 .ends
