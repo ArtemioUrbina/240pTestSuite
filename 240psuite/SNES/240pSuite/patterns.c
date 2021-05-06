@@ -403,7 +403,7 @@ void DrawMonoscope(void)
 		
 		if(pressed & KEY_START)
 		{
-			//DrawHelp(HELP_GRAY);
+			DrawHelp(HELP_MONOSCOPE);
 			redraw = 1;
 		}
 		

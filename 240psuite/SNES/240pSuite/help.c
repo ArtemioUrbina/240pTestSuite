@@ -41,6 +41,7 @@ void DrawHelp(u16 option)
 			break;		
 		case HELP_GENERAL:
 		case HELP_STRIPES:	
+		case HELP_MONOSCOPE:
 			totalpages = 3;
 			break;
 		case HELP_PLUGE:
@@ -337,6 +338,59 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "to confirm color balance.");								
 					break;
 				case HELP_MONOSCOPE:
+					switch(page)
+					{
+						case 1:
+							drawText(3, 4  , 6, "      MONOSCOPE (1/3)"); 
+							drawText(3, y++, 7, "This pattern contains"); 
+							drawText(3, y++, 7, "elements to calibrate"); 
+							drawText(3, y++, 7, "multiple aspects of a CRT."); 
+							drawText(3, y++, 7, "Read your monitor's"); 
+							drawText(3, y++, 7, "service manual to learn"); 
+							drawText(3, y++, 7, "how."); 
+							y++;
+							drawText(3, y++, 7, "Brightness adjustment:"); 
+							drawText(3, y++, 7, "Adjust convergence at low"); 
+							drawText(3, y++, 7, "brightness (e.g. 30 IRE)."); 
+							drawText(3, y++, 7, "An overly bright pattern"); 
+							drawText(3, y++, 7, "can mask bloom issues."); 
+							drawText(20, 22, 4, "(cont...)");	
+							break;
+						case 2:
+							drawText(3, 4  , 6, "      MONOSCOPE (2/3)"); 
+							drawText(3, y++, 7, "Convergence:"); 
+							drawText(3, y++, 7, "Use the center crosshair"); 
+							drawText(3, y++, 7, "to check static (center"); 
+							drawText(3, y++, 7, "of screen) convergence."); 
+							drawText(3, y++, 7, "Use the patterns at the"); 
+							drawText(3, y++, 7, "sides to check dynamic"); 
+							drawText(3, y++, 7, "(edge) convergence."); 
+							y++;
+							drawText(3, y++, 7, "Corners:"); 
+							drawText(3, y++, 7, "After setting center and"); 
+							drawText(3, y++, 7, "edge convergence, use"); 
+							drawText(3, y++, 7, "magnets to adjust corner"); 
+							drawText(3, y++, 7, "purity and geometry."); 
+							drawText(20, 22, 4, "(cont...)");	
+							break;
+						case 3:
+							drawText(3, 4  , 6, "      MONOSCOPE (3/3)"); 
+							drawText(3, y++, 7, "Size and aspect ratio:"); 
+							drawText(3, y++, 7, "If vertical and horizontal"); 
+							drawText(3, y++, 7, "size are correct, the red"); 
+							drawText(3, y++, 7, "squares in the pattern will"); 
+							drawText(3, y++, 7, "be perfect squares."); 
+							drawText(3, y++, 7, "After setting H size, use"); 
+							drawText(3, y++, 7, "a tape measure to adjust"); 
+							drawText(3, y++, 7, "V size to match it."); 
+							y++;
+							drawText(3, y++, 7, "Linearity:"); 
+							drawText(3, y++, 7, "The squares in each corner"); 
+							drawText(3, y++, 7, "should get you started."); 
+							drawText(3, y++, 7, "Confirm your adjustment"); 
+							drawText(3, y++, 7, "using the scroll tests."); 
+							break;
+					}
 					break;
 				case HELP_GRAY:
 							drawText(3, 4  , 6, "        GRAY RAMP"); 
