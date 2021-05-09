@@ -410,11 +410,19 @@ void DrawMonoscope(void)
 		if(pressed & KEY_B)
 			end = 1;		
 			
-		if(pressed & KEY_A)
+		if(pressed & KEY_L)
 		{
 			color -= 16;
 			if(color < 15)
 				color = 255;
+			setPaletteColor(0x02, RGB8(color, color, color));		
+		}
+		
+		if(pressed & KEY_R)
+		{
+			color += 16;
+			if(color > 255)
+				color = 15;
 			setPaletteColor(0x02, RGB8(color, color, color));		
 		}
 	}	
@@ -1468,4 +1476,81 @@ int DrawContrast()
 	Transition();
 	
 	return 1;
+}
+
+void DrawConvergence() 
+{	
+	int type = 0;
+	u16 pressed, end = 0;	 
+	u16 redraw = 1;
+		
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			StartDMA();
+			
+			switch(type)
+			{
+				case 0:
+					bgInitTileSetMine(1, &convdot_tiles, &convdot_pal, 0, (&convdot_tiles_end - &convdot_tiles), 16*2, BG_16COLORS, 0x4000);	
+					bgInitMapSetMine(1, &convdot_map, (&convdot_map_end - &convdot_map), SC_32x32, 0x1000);
+					break;
+				case 1:
+					bgInitTileSetMine(1, &convcross_tiles, &convdot_pal, 0, (&convcross_tiles_end - &convcross_tiles), 16*2, BG_16COLORS, 0x4000);	
+					bgInitMapSetMine(1, &convcross_map, (&convcross_map_end - &convcross_map), SC_32x32, 0x1000);
+					break;
+				case 2:
+					bgInitTileSetMine(1, &convgrid_tiles, &convdot_pal, 0, (&convgrid_tiles_end - &convgrid_tiles), 16*2, BG_16COLORS, 0x4000);	
+					bgInitMapSetMine(1, &convdot_map, (&convdot_map_end - &convdot_map), SC_32x32, 0x1000);
+					break;
+				case 3:
+					bgInitTileSetMine(1, &convcolor_tiles, &convcolor_pal, 0, (&convcolor_tiles_end - &convcolor_tiles), 16*2, BG_16COLORS, 0x4000);	
+					bgInitMapSetMine(1, &convcolor_map, (&convcolor_map_end - &convcolor_map), SC_32x32, 0x1000);
+					break;
+				case 4:
+					bgInitTileSetMine(1, &convcolor_blk_tiles, &convcolor_blk_pal, 0, (&convcolor_blk_tiles_end - &convcolor_blk_tiles), 16*2, BG_16COLORS, 0x4000);	
+					bgInitMapSetMine(1, &convcolor_blk_map, (&convcolor_blk_map_end - &convcolor_blk_map), SC_32x32, 0x1000);
+					break;
+			}
+			
+			setMode(BG_MODE1,0); 
+			bgSetDisable(0);		
+			bgSetDisable(2);
+			
+			EndDMA();
+			redraw = 0;
+		}
+		WaitForVBlank();
+		
+		pressed = PadPressed(0);
+		
+		if(pressed & KEY_START)
+		{
+			DrawHelp(HELP_CONVERGENCE);
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_L)
+		{
+			type --;
+			if(type < 0)
+				type = 4;
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_R)
+		{
+			type ++;
+			if(type > 4)
+				type = 0;
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_B)
+			end = 1;		
+	}	
+	Transition();
+	
+	return;
 }

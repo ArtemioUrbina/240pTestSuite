@@ -143,6 +143,21 @@ extern char monoscope_tiles, monoscope_tiles_end;
 extern char monoscope_pal, monoscope_pal_end;
 extern char monoscope_map, monoscope_map_end;
 
+extern char convdot_tiles, convdot_tiles_end;
+extern char convdot_pal, convdot_pal_end;
+extern char convdot_map, convdot_map_end;
+extern char convcross_map, convcross_map_end;
+extern char convgrid_tiles, convgrid_tiles_end;
+extern char convcross_tiles, convcross_tiles_end;
+
+extern char convcolor_tiles, convcolor_tiles_end;
+extern char convcolor_pal, convcolor_pal_end;
+extern char convcolor_map, convcolor_map_end;
+
+extern char convcolor_blk_tiles, convcolor_blk_tiles_end;
+extern char convcolor_blk_pal, convcolor_blk_pal_end;
+extern char convcolor_blk_map, convcolor_blk_map_end;
+
 extern char font;
 extern char fontback;
 

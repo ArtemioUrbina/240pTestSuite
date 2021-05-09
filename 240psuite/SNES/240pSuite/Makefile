@@ -207,6 +207,15 @@ bricks.pic: bricks.bmp
 monoscope.pic: monoscope.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
+	
+convcolor.pic: convcolor.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
+	
+convcolor_blk.pic: convcolor_blk.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
+	
 
 bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
 	SMPTECB100.pic monoscope.pic color.pic pluge.pic grayramp.pic colorbleed.pic\
@@ -215,7 +224,7 @@ bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB7
 	numbers.pic lagtest.pic sonicback.pic sonicfloor.pic small_grid.pic\
 	LEDsprites.pic striped.pic color_grid.pic lag-spr.pic soundbank.asm gridm7.pc7\
 	EBUCB100.pic EBUCB75.pic kiki.pic plugePAL.pic audiosync.pic fireshark.pic\
-	bricks.pic 
+	bricks.pic convdot.pic convcross.pic convgrid.pic convcolor.pic convcolor_blk.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

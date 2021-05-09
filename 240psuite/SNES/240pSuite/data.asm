@@ -456,4 +456,52 @@ monoscope_map:
 .incbin "monoscope.map"
 monoscope_map_end:
 
+convdot_map:
+.incbin "convdot.map"
+convdot_map_end:
+
+convdot_pal:
+.incbin "convdot.pal"
+convdot_pal_end:
+
+convdot_tiles:
+.incbin "convdot.pic"
+convdot_tiles_end:
+
+convcross_map:
+.incbin "convcross.map"
+convcross_map_end:
+
+convcross_tiles:
+.incbin "convcross.pic"
+convcross_tiles_end:
+
+convgrid_tiles:
+.incbin "convgrid.pic"
+convgrid_tiles_end:
+
+convcolor_map:
+.incbin "convcolor.map"
+convcolor_map_end:
+
+convcolor_pal:
+.incbin "convcolor.pal"
+convcolor_pal_end:
+
+convcolor_tiles:
+.incbin "convcolor.pic"
+convcolor_tiles_end:
+
+convcolor_blk_map:
+.incbin "convcolor_blk.map"
+convcolor_blk_map_end:
+
+convcolor_blk_pal:
+.incbin "convcolor_blk.pal"
+convcolor_blk_pal_end:
+
+convcolor_blk_tiles:
+.incbin "convcolor_blk.pic"
+convcolor_blk_tiles_end:
+
 .ends

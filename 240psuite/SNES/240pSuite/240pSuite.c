@@ -31,6 +31,9 @@
 #include "control.h"
 
 void TestPatterns();
+void VideoTests();
+void AudioTests();
+void HardwareTools();
 void DrawCredits();
 void DrawIntro();
 void LoadAudio();
@@ -65,7 +68,7 @@ int main(void)
 			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
-			DrawTilesWithSprites(182, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
+			DrawTilesWithSprites(176, 72, 64, 112, &gillian_tiles, size, &gillian_pal);				
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -77,29 +80,20 @@ int main(void)
 		
 		if(change)
 		{
-			u16 pos = 7;
+			u16 pos = 10;
 			
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));			
 			AddTextColor(5, RGB5(0, 28, 28), RGB5(0, 0, 0));			
 			
-			drawText(3, pos, sel == 0 ? 6 : 7, "Test Patterns"); pos ++;
-			drawText(3, pos, sel == 1 ? 6 : 7, "Drop Shadow Test"); pos ++;
-			drawText(3, pos, sel == 2 ? 6 : 7, "Stripped Sprite Test"); pos ++;
-			drawText(3, pos, sel == 3 ? 6 : 7, "Lag Test"); pos ++;
-			drawText(3, pos, sel == 4 ? 6 : 7, "Timing & Reflex Test"); pos ++;
-			drawText(3, pos, sel == 5 ? 6 : 7, "Scroll Test"); pos ++;
-			drawText(3, pos, sel == 6 ? 6 : 7, "Grid Scroll Test"); pos ++;
-			drawText(3, pos, sel == 7 ? 6 : 7, "Horizontal Stripes"); pos ++;
-			drawText(3, pos, sel == 8 ? 6 : 7, "Checkerboard"); pos ++;
-			drawText(3, pos, sel == 9 ? 6 : 7, "Backlit Zone Test"); pos ++;
-			drawText(3, pos, sel == 10 ? 6 : 7, "Alternate 240p/480i"); pos ++;
-			drawText(3, pos, sel == 11 ? 6 : 7, "Sound Test"); pos ++;
-			drawText(3, pos, sel == 12 ? 6 : 7, "Audio Sync Test"); pos ++;
-			drawText(3, pos, sel == 13 ? 6 : 7, "Help"); pos ++;	
-			drawText(3, pos, sel == 14 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
-			drawText(3, pos, sel == 15 ? 6 : 5, "Credits"); pos++;
-			//drawText(3, pos, sel == 16 ? 6 : 7, "MDFourier beta"); 
+			drawText(5, pos, sel == 0 ? 6 : 7, "Test Patterns"); pos ++;
+			drawText(5, pos, sel == 1 ? 6 : 7, "Video Tests"); pos ++;
+			drawText(5, pos, sel == 2 ? 6 : 7, "Audio Tests"); pos ++;
+			drawText(5, pos, sel == 3 ? 6 : 7, "Hardware tools"); pos ++;
+			pos = 18;
+			drawText(5, pos, sel == 4 ? 6 : 7, "Help"); pos ++;	
+			drawText(5, pos, sel == 5 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(5, pos, sel == 6 ? 6 : 5, "Credits"); pos++;
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 			
 				
@@ -133,9 +127,9 @@ int main(void)
 		}	
 
 		if(sel < 0)
-			sel = 15;
+			sel = 6;
 			
-		if(sel > 15)
+		if(sel > 6)
 			sel = 0;
 			
 		if(pressed & KEY_START)
@@ -145,7 +139,7 @@ int main(void)
 			redraw = 1;
 		}
 		
-		if(pressed & KEY_A && sel == 14)
+		if(pressed & KEY_A && sel == 5)
 		{
 			if(interlaced)
 				ClearInterlaced();
@@ -154,7 +148,7 @@ int main(void)
 			redraw = 1;
 		}
 			
-		if(pressed & KEY_A && sel != 14)
+		if(pressed & KEY_A && sel != 5)
 		{							
 			Transition();
 			oamClear(0, 0);
@@ -165,52 +159,21 @@ int main(void)
 					TestPatterns();
 					break;
 				case 1:
-					DropShadowTest();
+					VideoTests();
 					break;
 				case 2:
-					StripedSpriteTest();
+					AudioTests();
 					break;
 				case 3:
-					PassiveLagTest();
+					HardwareTools();
 					break;
 				case 4:
-					ManualLagTest();
-					break;
-				case 5:
-					HScrollTest();
-					break;
-				case 6:
-					VScrollTest();
-					break;
-				case 7:
-					DrawStripes();
-					break;
-				case 8:
-					DrawCheck();
-					break;
-				case 9:
-					LEDZoneTest();
-					break;
-				case 10:
-					Alternate240p480i();
-					break;
-				case 11:
-					SoundTest();
-					break;
-				case 12:
-					AudioSyncTest();
-					break;
-				case 13:
 					DrawHelp(HELP_GENERAL);
 					break;
-				case 14:
-					break;
-				case 15:
+				case 6:
 					DrawCredits();
 					break;
-				case 16:
-					MDFourier();
-					break;
+				
 			}
 			redraw = 1;
 		}
@@ -241,7 +204,7 @@ void TestPatterns(void)
 			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
-			DrawTilesWithSprites(182, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
+			DrawTilesWithSprites(176, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -273,8 +236,9 @@ void TestPatterns(void)
 			drawText(3, pos, sel == 11 ? 6 : 7, "Sharpness"); pos++;
 			drawText(3, pos, sel == 12 ? 6 : 7, "Overscan 224p"); pos++;
 			drawText(3, pos, sel == 13 ? 6 : 7, "Overscan 239p"); pos++;
-			drawText(3, pos, sel == 14 ? 6 : 7, "Mode 7"); pos+=2;
-			drawText(3, pos, sel == 15 ? 6 : 5, "Back to Main Menu"); 
+			drawText(3, pos, sel == 14 ? 6 : 7, "Convergence"); pos++;
+			drawText(3, pos, sel == 15 ? 6 : 7, "Mode 7"); pos++;
+			drawText(3, pos, sel == 16 ? 6 : 5, "Back to Main Menu"); 
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
 			
@@ -302,9 +266,9 @@ void TestPatterns(void)
 		}	
 
 		if(sel < 0)
-			sel = 15;
+			sel = 16;
 			
-		if(sel > 15)
+		if(sel > 16)
 			sel = 0;
 			
 		if(pressed & KEY_START)
@@ -364,10 +328,428 @@ void TestPatterns(void)
 					DrawOverscan(1);
 					break;
 				case 14:
+					DrawConvergence();
+					break;
+				case 15:
 					DrawMode7();
 					break;
 				case 15:
 					exit = 1;
+					break;
+			}
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_B)
+		{
+			exit = 1;
+			Transition();
+			oamClear(0, 0);
+		}
+	}
+	return 0;
+}
+
+#define VT_START 3
+void VideoTests(void) 
+{
+	u16 redraw = 1, change = 0;
+	u16 pressed;
+	s16 sel = 0, exit = 0;	    	
+		
+	while(!exit) 
+	{
+		if(redraw)
+		{
+			u16 size = 0;
+					
+			StartDMA();	
+			
+			setPaletteColor(0x00, RGB5(0, 0, 0));
+			consoleInitTextMine(0, 7, &font);				
+			size = (&back_tiles_end - &back_tiles);
+			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			
+			size = (&back_map_end - &back_map);	
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
+			
+			size = (&gillian_tiles_end-&gillian_tiles);
+			DrawTilesWithSprites(176, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
+						
+			setMode(BG_MODE1,0); 	
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);						
+									
+			change = 1;
+		}			
+		
+		if(change)
+		{
+			u16 pos = 7;
+			
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));	
+			AddTextColor(5, RGB5(0, 28, 28), RGB5(0, 0, 0));
+			
+			drawText(VT_START, pos, sel == 0 ? 6 : 7, "Drop Shadow Test"); pos ++;
+			drawText(VT_START, pos, sel == 1 ? 6 : 7, "Stripped Sprite Test"); pos ++;
+			drawText(VT_START, pos, sel == 2 ? 6 : 7, "Lag Test"); pos ++;
+			drawText(VT_START, pos, sel == 3 ? 6 : 7, "Timing & Reflex Test"); pos ++;
+			drawText(VT_START, pos, sel == 4 ? 6 : 7, "Scroll Test"); pos ++;
+			drawText(VT_START, pos, sel == 5 ? 6 : 7, "Grid Scroll Test"); pos ++;
+			drawText(VT_START, pos, sel == 6 ? 6 : 7, "Horiz/Vert Stripes"); pos ++;
+			drawText(VT_START, pos, sel == 7 ? 6 : 7, "Checkerboard"); pos ++;
+			drawText(VT_START, pos, sel == 8 ? 6 : 7, "Backlit Zone Test"); pos ++;
+			drawText(VT_START, pos, sel == 9 ? 6 : 7, "Alternate 240p/480i"); pos ++;
+			pos = 18;
+			drawText(VT_START, pos, sel == 10 ? 6 : 7, "Help"); pos ++;	
+			drawText(VT_START, pos, sel == 11 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(VT_START, pos, sel == 12 ? 6 : 5, "Back to Main Menu"); pos++;
+			
+			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
+			
+			if(redraw)
+			{
+				redraw = 0;
+				EndDMA();
+			}
+						
+			change = 0;			
+		}
+		WaitForVBlank();
+		
+		pressed = PadPressed(0);
+					
+		if(pressed & KEY_DOWN)
+		{
+			sel+=1;
+			change = 1;
+		}
+		if(pressed & KEY_UP)
+		{			
+			sel-=1;
+			change = 1;		
+		}	
+
+		if(sel < 0)
+			sel = 12;
+			
+		if(sel > 12)
+			sel = 0;
+			
+		if(pressed & KEY_START)
+		{
+			Transition();
+			DrawHelp(HELP_GENERAL);
+			redraw = 1;
+		}
+			
+		if(pressed & KEY_A)
+		{							
+			Transition();
+			oamClear(0, 0);
+			
+			switch(sel)
+			{
+				case 0:
+					DropShadowTest();
+					break;
+				case 1:
+					StripedSpriteTest();
+					break;
+				case 2:
+					PassiveLagTest();
+					break;
+				case 3:
+					ManualLagTest();
+					break;
+				case 4:
+					HScrollTest();
+					break;
+				case 5:
+					VScrollTest();
+					break;
+				case 6:
+					DrawStripes();
+					break;
+				case 7:
+					DrawCheck();
+					break;
+				case 8:
+					LEDZoneTest();
+					break;
+				case 9:
+					Alternate240p480i();
+					break;
+				case 10:
+					DrawHelp(HELP_GENERAL);
+					break;
+				case 11:
+					if(interlaced)
+						ClearInterlaced();
+					else
+						SetInterlaced();
+					break;
+				case 12:
+					exit = 1;
+					Transition();
+					oamClear(0, 0);
+					break;
+			}
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_B)
+		{
+			exit = 1;
+			Transition();
+			oamClear(0, 0);
+		}
+	}
+	return 0;
+}
+
+void AudioTests(void) 
+{
+	u16 redraw = 1, change = 0;
+	u16 pressed;
+	s16 sel = 0, exit = 0;	    	
+		
+	while(!exit) 
+	{
+		if(redraw)
+		{
+			u16 size = 0;
+					
+			StartDMA();	
+			
+			setPaletteColor(0x00, RGB5(0, 0, 0));
+			consoleInitTextMine(0, 7, &font);				
+			size = (&back_tiles_end - &back_tiles);
+			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			
+			size = (&back_map_end - &back_map);	
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
+			
+			size = (&gillian_tiles_end-&gillian_tiles);
+			DrawTilesWithSprites(176, 72, 64, 112, &gillian_tiles, size, &gillian_pal);				
+						
+			setMode(BG_MODE1,0); 	
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);						
+									
+			change = 1;
+		}			
+		
+		if(change)
+		{
+			u16 pos = 10;
+			
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));	
+			AddTextColor(5, RGB5(0, 28, 28), RGB5(0, 0, 0));
+			
+			drawText(4, pos, sel == 0 ? 6 : 7, "Sound Test"); pos ++;
+			drawText(4, pos, sel == 1 ? 6 : 7, "Audio Sync Test"); pos ++;
+			drawText(4, pos, sel == 100 ? 6 : 3, "MDFourier"); pos ++;
+			pos = 18;
+			drawText(4, pos, sel == 2 ? 6 : 7, "Help"); pos ++;	
+			drawText(4, pos, sel == 3 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(4, pos, sel == 4 ? 6 : 5, "Back to Main Menu"); pos++;
+			
+			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
+			
+			if(redraw)
+			{
+				redraw = 0;
+				EndDMA();
+			}
+						
+			change = 0;			
+		}
+		WaitForVBlank();
+		
+		pressed = PadPressed(0);
+					
+		if(pressed & KEY_DOWN)
+		{
+			sel+=1;
+			change = 1;
+		}
+		if(pressed & KEY_UP)
+		{			
+			sel-=1;
+			change = 1;		
+		}	
+
+		if(sel < 0)
+			sel = 4;
+			
+		if(sel > 4)
+			sel = 0;
+			
+		if(pressed & KEY_START)
+		{
+			Transition();
+			DrawHelp(HELP_GENERAL);
+			redraw = 1;
+		}
+			
+		if(pressed & KEY_A)
+		{							
+			Transition();
+			oamClear(0, 0);
+			
+			switch(sel)
+			{
+				case 0:
+					SoundTest();
+					break;
+				case 1:
+					AudioSyncTest();
+					break;
+				case 2:
+					DrawHelp(HELP_GENERAL);
+					break;
+				case 3:
+					if(interlaced)
+						ClearInterlaced();
+					else
+						SetInterlaced();
+					break;
+				case 4:
+					exit = 1;
+					Transition();
+					oamClear(0, 0);
+					break;
+			}
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_B)
+		{
+			exit = 1;
+			Transition();
+			oamClear(0, 0);
+		}
+	}
+	return 0;
+}
+
+void HardwareTools(void) 
+{
+	u16 redraw = 1, change = 0;
+	u16 pressed;
+	s16 sel = 0, exit = 0;	    	
+		
+	while(!exit) 
+	{
+		if(redraw)
+		{
+			u16 size = 0;
+					
+			StartDMA();	
+			
+			setPaletteColor(0x00, RGB5(0, 0, 0));
+			consoleInitTextMine(0, 7, &font);				
+			size = (&back_tiles_end - &back_tiles);
+			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
+			
+			size = (&back_map_end - &back_map);	
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
+			
+			size = (&gillian_tiles_end-&gillian_tiles);
+			DrawTilesWithSprites(176, 72, 64, 112, &gillian_tiles, size, &gillian_pal);				
+						
+			setMode(BG_MODE1,0); 	
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);						
+									
+			change = 1;
+		}			
+		
+		if(change)
+		{
+			u16 pos = 10;
+			
+			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
+			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));	
+			AddTextColor(5, RGB5(0, 28, 28), RGB5(0, 0, 0));
+			
+			drawText(4, pos, sel == 0 ? 6 : 7, "Controller Test"); pos ++;
+			drawText(4, pos, sel == 1 ? 6 : 7, "Memory Viewer"); pos ++;
+			pos = 18;
+			drawText(4, pos, sel == 2 ? 6 : 7, "Help"); pos ++;	
+			drawText(4, pos, sel == 3 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(4, pos, sel == 4 ? 6 : 5, "Back to Main Menu"); pos++;
+			
+			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
+			
+			if(redraw)
+			{
+				redraw = 0;
+				EndDMA();
+			}
+						
+			change = 0;			
+		}
+		WaitForVBlank();
+		
+		pressed = PadPressed(0);
+					
+		if(pressed & KEY_DOWN)
+		{
+			sel+=1;
+			change = 1;
+		}
+		if(pressed & KEY_UP)
+		{			
+			sel-=1;
+			change = 1;		
+		}	
+
+		if(sel < 0)
+			sel = 4;
+			
+		if(sel > 4)
+			sel = 0;
+			
+		if(pressed & KEY_START)
+		{
+			Transition();
+			DrawHelp(HELP_GENERAL);
+			redraw = 1;
+		}
+			
+		if(pressed & KEY_A)
+		{							
+			Transition();
+			oamClear(0, 0);
+			
+			switch(sel)
+			{
+				case 0:
+					ControllerTest();
+					break;
+				case 1:
+					MemoryViewer();
+					break;
+				case 2:
+					DrawHelp(HELP_GENERAL);
+					break;
+				case 3:
+					if(interlaced)
+						ClearInterlaced();
+					else
+						SetInterlaced();
+					break;
+				case 4:
+					exit = 1;
+					Transition();
+					oamClear(0, 0);
 					break;
 			}
 			redraw = 1;

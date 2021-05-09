@@ -38,3 +38,4 @@ void DrawOverscan(u8 mode);
 void DrawMode7();
 int DrawContrast();
 void DrawMonoscope();
+void DrawConvergence();

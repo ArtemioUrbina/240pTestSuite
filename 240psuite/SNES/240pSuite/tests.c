@@ -2121,10 +2121,12 @@ void AudioSyncTest(void)
 		{
 			RedrawAudioSync();
 			
+			StartDMA();
 			oamInitGfxSetMine(&LEDsprites_tiles, (&LEDsprites_tiles_end - &LEDsprites_tiles), &LEDsprites_pal, 16*2, 7, 0, OBJ_SIZE8);
 			oamSet(0, x, y, 2, 0, 0, 1, 7);
 			oamSetEx(0, OBJ_SMALL, OBJ_SHOW);
 			oamSetVisible(0, OBJ_SHOW);
+			EndDMA();
 			redraw = 0;
 		}
 		
@@ -2223,6 +2225,14 @@ void AudioSyncTest(void)
 	oamClear(0, 0);
 	
 	return;
+}
+
+void ControllerTest()
+{
+}
+
+void MemoryViewer()
+{
 }
 
 /*

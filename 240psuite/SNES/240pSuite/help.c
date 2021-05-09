@@ -347,9 +347,9 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "multiple aspects of a CRT."); 
 							drawText(3, y++, 7, "Read your monitor's"); 
 							drawText(3, y++, 7, "service manual to learn"); 
-							drawText(3, y++, 7, "how."); 
+							drawText(3, y++, 7, "how. Use L&R to change."); 
 							y++;
-							drawText(3, y++, 7, "Brightness adjustment:"); 
+							drawText(3, y++, 5, "Brightness adjustment:"); 
 							drawText(3, y++, 7, "Adjust convergence at low"); 
 							drawText(3, y++, 7, "brightness (e.g. 30 IRE)."); 
 							drawText(3, y++, 7, "An overly bright pattern"); 
@@ -358,7 +358,7 @@ void DrawHelp(u16 option)
 							break;
 						case 2:
 							drawText(3, 4  , 6, "      MONOSCOPE (2/3)"); 
-							drawText(3, y++, 7, "Convergence:"); 
+							drawText(3, y++, 5, "Convergence:"); 
 							drawText(3, y++, 7, "Use the center crosshair"); 
 							drawText(3, y++, 7, "to check static (center"); 
 							drawText(3, y++, 7, "of screen) convergence."); 
@@ -366,7 +366,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "sides to check dynamic"); 
 							drawText(3, y++, 7, "(edge) convergence."); 
 							y++;
-							drawText(3, y++, 7, "Corners:"); 
+							drawText(3, y++, 5, "Corners:"); 
 							drawText(3, y++, 7, "After setting center and"); 
 							drawText(3, y++, 7, "edge convergence, use"); 
 							drawText(3, y++, 7, "magnets to adjust corner"); 
@@ -375,7 +375,7 @@ void DrawHelp(u16 option)
 							break;
 						case 3:
 							drawText(3, 4  , 6, "      MONOSCOPE (3/3)"); 
-							drawText(3, y++, 7, "Size and aspect ratio:"); 
+							drawText(3, y++, 5, "Size and aspect ratio:"); 
 							drawText(3, y++, 7, "If vertical and horizontal"); 
 							drawText(3, y++, 7, "size are correct, the red"); 
 							drawText(3, y++, 7, "squares in the pattern will"); 
@@ -384,11 +384,13 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "a tape measure to adjust"); 
 							drawText(3, y++, 7, "V size to match it."); 
 							y++;
-							drawText(3, y++, 7, "Linearity:"); 
+							drawText(3, y++, 5, "Linearity:"); 
 							drawText(3, y++, 7, "The squares in each corner"); 
 							drawText(3, y++, 7, "should get you started."); 
 							drawText(3, y++, 7, "Confirm your adjustment"); 
 							drawText(3, y++, 7, "using the scroll tests."); 
+							y++;
+							drawText(3, y++, 4, "Designed by Keith Raney"); 
 							break;
 					}
 					break;
@@ -716,7 +718,7 @@ void DrawHelp(u16 option)
 					switch(page)
 					{
 						case 1:
-							drawText(3, 4  , 6, "  MANUAL LAG TEST (1/4)"); 
+							drawText(3, 4  , 6, "Timing & Reflex Test (1/4)"); 
 							drawText(3, y++, 7, "The main intention is to"); 
 							drawText(3, y++, 7, "show a changing pattern on");
 							drawText(3, y++, 7, "the screen, which can be");
@@ -734,7 +736,7 @@ void DrawHelp(u16 option)
 							drawText(20, 22, 4, "(cont...)");							
 							break;
 						case 2:
-							drawText(3, 4  , 6, "  MANUAL LAG TEST (2/4)"); 
+							drawText(3, 4  , 6, "Timing & Reflex Test (2/4)"); 
 							drawText(3, y++, 7, "actual intersection will"); 
 							drawText(3, y++, 7, "be shown on screen. This");
 							drawText(3, y++, 7, "can be repeated ten times");
@@ -752,7 +754,7 @@ void DrawHelp(u16 option)
 							drawText(20, 22, 4, "(cont...)");
 							break;
 						case 3:
-							drawText(3, 4  , 6, "  MANUAL LAG TEST (3/4)"); 
+							drawText(3, 4  , 6, "Timing & Reflex Test (3/4)"); 
 							drawText(3, y++, 7, "the sprite from vertical"); 
 							drawText(3, y++, 7, "to horizontal, or both");
 							drawText(3, y++, 7, "at the same time.");
@@ -769,7 +771,7 @@ void DrawHelp(u16 option)
 							drawText(20, 22, 4, "(cont...)");
 							break;
 						case 4:
-							drawText(3, 4  , 6, "  MANUAL LAG TEST (4/4)"); 
+							drawText(3, 4  , 6, "Timing & Reflex Test (4/4)");  
 							drawText(3, y++, 7, "experienced player the"); 
 							drawText(3, y++, 7, "hang of the system when");
 							drawText(3, y++, 7, "testing via different");
@@ -790,6 +792,19 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "brightness for clipping.");
 							y++;
 							drawText(3, y++, 7, "L or R return to PLUGE"); 
+					break;
+					case HELP_CONVERGENCE:
+							drawText(3, 4  , 6, "    CONVERGENCE TESTS"); 
+							drawText(3, y++, 7, "These are used to adjust"); 
+							drawText(3, y++, 7, "color convergence in CRTs.");
+							y++;
+							drawText(3, y++, 7, "The 'L/R' button change"); 
+							drawText(3, y++, 7, "the cross hatch pattern");
+							drawText(3, y++, 7, "between lines, dots and");
+							drawText(3, y++, 7, "crosses. Then to a color");
+							drawText(3, y++, 7, "pattern for transition");
+							drawText(3, y++, 7, "boundary check with and"); 
+							drawText(3, y++, 7, "without a black border."); 
 					break;
 			}
 			drawText(5, 24, 5, "Press B to exit help");
