@@ -208,7 +208,8 @@ void DrawHelp(int option)
 						VDP_drawTextBG(APLAN, "of a CRT.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						y++;
 						VDP_drawTextBG(APLAN, "Read your monitor's service", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						VDP_drawTextBG(APLAN, "manual to learn how.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "manual to learn how, and use", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "'A' button to change IRE.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						y++;
 						VDP_drawTextBG(APLAN, "Brightness adjustment: Adjust", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "convergence at low brightness", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -248,6 +249,8 @@ void DrawHelp(int option)
 						VDP_drawTextBG(APLAN, "corner should get you started.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "Confirm your adjustment using", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "the scroll tests.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						y++;
+						VDP_drawTextBG(APLAN, "Designed by Keith Raney.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					break;
 				}
 				break;
@@ -712,21 +715,18 @@ void DrawHelp(int option)
 				}
 				break;
 			case HELP_CONVERGENCE:
-				VDP_drawTextBG(APLAN, "CONVERGENCE TESTS", TILE_ATTR(PAL1, 0, 0, 0), 15, 4);
+				VDP_drawTextBG(APLAN, "CONVERGENCE TESTS", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);
 				VDP_drawTextBG(APLAN, "These are used to adjust color", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "convergence in CRT displays.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "The 'A' button changes the cross", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "hatch pattern between lines,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "dots and crosses.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				ChangeResolution(&y);
-				y++;
-				VDP_drawTextBG(APLAN, "The 'B' button changes to a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "dots and crosses. Then to a ", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "color pattern for transition", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "boundary check.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "boundary check with and without", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "a black border variant.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "In color mode, 'A' toggles", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "black borders.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				ChangeResolution(&y);
 				break;
 			default:
 				exit = 1;

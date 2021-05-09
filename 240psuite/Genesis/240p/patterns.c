@@ -1318,8 +1318,9 @@ u8 DrawContrast()
 
 void DrawConvergence()
 {
-	u16 ind = 0, size = 0, loadvram = 1, convtype = CONVGRID;
-	u16 exit = 0, type = 0, ntype = 0, dots = 0, redraw = 0, lines = 0;
+	int convType = 0;
+	u16 ind = 0, size = 0, loadvram = 1; 
+	u16 exit = 0, type = 0, ntype = 0, redraw = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	type = DrawFloatMenuRes(RES_320);
@@ -1336,7 +1337,7 @@ void DrawConvergence()
 			else
 				VDP_setScreenWidth320();
 
-			if(convtype == CONVGRID)
+			if(convType < 3)
 			{
 				VDP_setPalette(PAL0, bw_pal);
 
@@ -1365,11 +1366,11 @@ void DrawConvergence()
 		if(redraw)
 		{
 			VDP_Start();
-			if(convtype == CONVGRID)
-				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+size*dots, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
+			if(convType < 3)
+				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+size*convType, 0, 0, 320 / 8, (pal_240 ? 240 : 224) / 8);
 			else
 			{
-				if(lines)
+				if(convType == 4)
 					VDP_setPalette(PAL0, convcolor_lines_pal);
 				else
 					VDP_setPalette(PAL0, convcolor_pal);
@@ -1385,24 +1386,22 @@ void DrawConvergence()
 		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_CONVERGENCE))
 			loadvram = 1;
 			
-		if(convtype == CONVGRID && pressedButtons & BUTTON_A)
+		if(pressedButtons & BUTTON_A)
 		{
-			dots++;
-			if(dots > 2)
-				dots = 0;
+			convType--;
+			if(convType < 0)
+				convType = 4;
+			loadvram = 1;
 			redraw = 1;
 		}
-		
-		if(convtype == CONVCOLOR && pressedButtons & BUTTON_A)
-		{
-			lines = !lines;
-			redraw = 1;
-		}
-		
+
 		if(pressedButtons & BUTTON_B)
 		{
-			convtype = !convtype;
+			convType++;
+			if(convType > 4)
+				convType = 0;
 			loadvram = 1;
+			redraw = 1;
 		}
 
 		if(pressedButtons & BUTTON_START)

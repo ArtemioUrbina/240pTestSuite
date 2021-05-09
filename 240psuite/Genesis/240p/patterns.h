@@ -23,9 +23,6 @@
 #define PATTERNS_H
 
 
-#define CONVGRID	0
-#define CONVCOLOR	1
-
 void DrawPluge();
 void DrawColorBars();
 void Draw601ColorBars();
