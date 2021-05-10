@@ -20,6 +20,10 @@ outputs and setups.
 
 This is free software, with full source code available under the GPL.
 
+Downloads
+----------
+https://artemiourbina.itch.io/240p-test-suite
+
 Versions
 ===============================================================================
 
@@ -108,7 +112,7 @@ Contributors
     * Extra patterns and collaboration: Konsolkongen & shmups regulars
 
 ===============================================================================
-Copyright 2011-2016 Artemio Urbina
+Copyright 2011-2021 Artemio Urbina
 
 NES Version Copyright 2015 Damian Yerrick
 
