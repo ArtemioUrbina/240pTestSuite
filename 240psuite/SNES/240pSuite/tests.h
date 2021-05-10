@@ -36,5 +36,3 @@ void ManualLagTest();
 void Alternate240p480i();
 void AudioSyncTest();
 void MDFourier();
-void ControllerTest();
-void MemoryViewer();

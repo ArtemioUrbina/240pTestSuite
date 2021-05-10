@@ -2227,14 +2227,6 @@ void AudioSyncTest(void)
 	return;
 }
 
-void ControllerTest()
-{
-}
-
-void MemoryViewer()
-{
-}
-
 /*
 void BobTest()
 {

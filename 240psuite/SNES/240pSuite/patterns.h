@@ -23,7 +23,7 @@
 #include "video.h"
 
 //---------------------------------------------------------------------------------
-void DrawGrid(u8 type);
+void DrawGrid();
 void DrawSMPTE();
 void DrawColorBars();
 
@@ -34,7 +34,7 @@ void Draw601CB();
 void DrawSharpness();
 void DrawWhite();
 void Draw100IRE();
-void DrawOverscan(u8 mode);
+void DrawOverscan();
 void DrawMode7();
 int DrawContrast();
 void DrawMonoscope();

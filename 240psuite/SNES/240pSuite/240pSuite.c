@@ -29,6 +29,7 @@
 #include "patterns.h"
 #include "help.h"
 #include "control.h"
+#include "hardware.h"
 
 void TestPatterns();
 void VideoTests();
@@ -89,7 +90,8 @@ int main(void)
 			drawText(5, pos, sel == 0 ? 6 : 7, "Test Patterns"); pos ++;
 			drawText(5, pos, sel == 1 ? 6 : 7, "Video Tests"); pos ++;
 			drawText(5, pos, sel == 2 ? 6 : 7, "Audio Tests"); pos ++;
-			drawText(5, pos, sel == 3 ? 6 : 7, "Hardware tools"); pos ++;
+			//drawText(5, pos, sel == 3 ? 6 : 7, "Hardware tools"); pos ++;
+			drawText(5, pos, sel == 3 ? 6 : 7, "Controller Test"); pos ++;
 			pos = 18;
 			drawText(5, pos, sel == 4 ? 6 : 7, "Help"); pos ++;	
 			drawText(5, pos, sel == 5 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
@@ -165,7 +167,8 @@ int main(void)
 					AudioTests();
 					break;
 				case 3:
-					HardwareTools();
+					//HardwareTools();
+					ControllerTest();
 					break;
 				case 4:
 					DrawHelp(HELP_GENERAL);
@@ -204,7 +207,7 @@ void TestPatterns(void)
 			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 			
 			size = (&gillian_tiles_end-&gillian_tiles);
-			DrawTilesWithSprites(176, 80, 64, 112, &gillian_tiles, size, &gillian_pal);				
+			DrawTilesWithSprites(180, 86, 64, 112, &gillian_tiles, size, &gillian_pal);				
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -216,7 +219,7 @@ void TestPatterns(void)
 		
 		if(change)
 		{
-			u16 pos = 6;
+			u16 pos = 7;
 			
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));	
@@ -228,17 +231,15 @@ void TestPatterns(void)
 			drawText(3, pos, sel == 3 ? 6 : 7, "Color Bars w/ Gray Ref"); pos ++;
 			drawText(3, pos, sel == 4 ? 6 : 7, "Color Bleed Check"); pos ++;
 			drawText(3, pos, sel == 5 ? 6 : 7, "Monoscope"); pos ++;
-			drawText(3, pos, sel == 6 ? 6 : 7, "Grid 256x224"); pos ++;
-			drawText(3, pos, sel == 7 ? 6 : 7, "Grid 256x239"); pos ++;
-			drawText(3, pos, sel == 8 ? 6 : 7, "Gray Ramp"); pos ++;
-			drawText(3, pos, sel == 9 ? 6 : 7, "White & RGB Screen"); pos ++;
-			drawText(3, pos, sel == 10 ? 6 : 7, "100 IRE"); pos ++;	
-			drawText(3, pos, sel == 11 ? 6 : 7, "Sharpness"); pos++;
-			drawText(3, pos, sel == 12 ? 6 : 7, "Overscan 224p"); pos++;
-			drawText(3, pos, sel == 13 ? 6 : 7, "Overscan 239p"); pos++;
-			drawText(3, pos, sel == 14 ? 6 : 7, "Convergence"); pos++;
-			drawText(3, pos, sel == 15 ? 6 : 7, "Mode 7"); pos++;
-			drawText(3, pos, sel == 16 ? 6 : 5, "Back to Main Menu"); 
+			drawText(3, pos, sel == 6 ? 6 : 7, "Grid"); pos ++;
+			drawText(3, pos, sel == 7 ? 6 : 7, "Gray Ramp"); pos ++;
+			drawText(3, pos, sel == 8 ? 6 : 7, "White & RGB Screen"); pos ++;
+			drawText(3, pos, sel == 9 ? 6 : 7, "100 IRE"); pos ++;	
+			drawText(3, pos, sel == 10 ? 6 : 7, "Sharpness"); pos++;
+			drawText(3, pos, sel == 11 ? 6 : 7, "Overscan"); pos++;
+			drawText(3, pos, sel == 12 ? 6 : 7, "Convergence"); pos++;
+			drawText(3, pos, sel == 13 ? 6 : 7, "Mode 7"); pos+=2;
+			drawText(3, pos, sel == 14 ? 6 : 5, "Back to Main Menu"); 
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
 			
@@ -266,9 +267,9 @@ void TestPatterns(void)
 		}	
 
 		if(sel < 0)
-			sel = 16;
+			sel = 14;
 			
-		if(sel > 16)
+		if(sel > 14)
 			sel = 0;
 			
 		if(pressed & KEY_START)
@@ -304,36 +305,30 @@ void TestPatterns(void)
 					DrawMonoscope();
 					break;
 				case 6:
-					DrawGrid(0);
+					DrawGrid();
 					break;
 				case 7:
-					DrawGrid(1);
-					break;
-				case 8:
 					DrawGrayRamp();
 					break;
-				case 9:
+				case 8:
 					DrawWhite();
 					break;
-				case 10:
+				case 9:
 					Draw100IRE();
 					break;
-				case 11:
+				case 10:
 					DrawSharpness();
 					break;
+				case 11:
+					DrawOverscan();
+					break;
 				case 12:
-					DrawOverscan(0);
-					break;
-				case 13:
-					DrawOverscan(1);
-					break;
-				case 14:
 					DrawConvergence();
 					break;
-				case 15:
+				case 13:
 					DrawMode7();
 					break;
-				case 15:
+				case 14:
 					exit = 1;
 					break;
 			}
@@ -884,9 +879,9 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(6, 4, 5, "Ver. Reflex");
-			drawText(19, 4, 7, "07/09/2020");
-			drawText(10, pos, 5, "Dedicated to Elisa");
+			drawText(15, 4, 5, "Ver.");
+			drawText(19, 4, 7, "10/05/2021");
+			drawText(10, 24, 5, "Dedicated to Elisa");
 			
 			EndDMA();	
 			if(redraw)

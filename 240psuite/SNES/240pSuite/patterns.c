@@ -25,12 +25,16 @@
 #include "font.h"
 #include "help.h"
 #include "control.h"
+#include "fmenu.h"
 
-void DrawGrid(u8 type) 
+void DrawGrid() 
 {	
 	u16 pressed, end = 0;	 
-	u16 redraw = 1;
+	u16 redraw = 1, type = 0;
 		
+	type = DrawFloatMenu();
+	if(type == FLOAT_CANCEL)
+		return;
 	while(!end) 
 	{		
 		if(redraw)
@@ -39,7 +43,7 @@ void DrawGrid(u8 type)
 			
 			bgInitTileSetMine(1, &grid_tiles, &grid_pal, 0, (&grid_tiles_end - &grid_tiles), 16*2, BG_16COLORS, 0x4000);	
 			
-			if(type)
+			if(type == RES_239)
 			{					
 				bgInitMapSetMine(1, &grid240_map, (&grid240_map_end - &grid240_map), SC_32x32, 0x1000);
 			
@@ -73,6 +77,15 @@ void DrawGrid(u8 type)
 			else
 				DrawHelp(HELP_GRID);
 			redraw = 1;
+		}
+		
+		if(pressed & KEY_SELECT)
+		{
+			int ntype = 0;
+			
+			ntype = DrawFloatMenu();
+			if(type != ntype)
+				redraw = 1;
 		}
 		
 		if(pressed & KEY_B)
@@ -625,9 +638,9 @@ void DrawWhite()
 
 			if(custom && sel == 0)
 			{				
-				drawText(12, 1, mod == 0 ? 6 : 7, "R:%0.3d", r);			
-				drawText(18, 1, mod == 1 ? 6 : 7, "G:%0.3d", g);				
-				drawText(24, 1, mod == 2 ? 6 : 7, "B:%0.3d", b);
+				drawText(12, 1, mod == 0 ? 6 : 7, "R:%0.2X", r);			
+				drawText(18, 1, mod == 1 ? 6 : 7, "G:%0.2X", g);				
+				drawText(24, 1, mod == 2 ? 6 : 7, "B:%0.2X", b);
 			}
 			else			
 				CleanFontMap();
@@ -1114,12 +1127,16 @@ inline void FillTiles(s16 left, s16 right, s16 top, s16 bottom, u8 mode)
 		setBrightness(0xf);
 }
 
-void DrawOverscan(u8 mode)
+void DrawOverscan()
 {
 	u16 pressed, end = 0, held = 0, changed = 0;
 	u16 redraw = 1, changedval = 1, i = 0;
-	s16 top, bottom, left, right, sel = 0;	
+	s16 top, bottom, left, right, sel = 0, mode = 0;	
 	
+	mode = DrawFloatMenu();
+	if(mode == FLOAT_CANCEL)
+		return;
+		
 	setBrightness(0);
 	
 	tiles_over = (u8*)malloc(sizeof(u8)*0x140);
@@ -1150,7 +1167,7 @@ void DrawOverscan(u8 mode)
 	
 	top = bottom = left = right = 0;
 	
-	if(mode)
+	if(mode == RES_239)
 		bottom = 1;  // deal with 239
 	
 	while(!end) 
@@ -1159,7 +1176,7 @@ void DrawOverscan(u8 mode)
 		{
 			StartDMA();
 			
-			if(mode)
+			if(mode == RES_239)
 				Set240pMode();	
 					
 			CleanTile(empty_over);
@@ -1185,15 +1202,15 @@ void DrawOverscan(u8 mode)
 		{
 			if(changedval)
 			{
-				FillTiles(left, right, top, bottom, mode);
+				FillTiles(left, right, top, bottom, mode == RES_239 ? 1 : 0);
 				changedval = 0;
 			}
 			
-			drawText(7, 12+mode, sel == 0 ? 6 : 7, "Top:    %0.2d pixels", top);
-			drawText(7, 13+mode, sel == 1 ? 6 : 7, "Bottom: %0.2d pixels", mode ? bottom - 1 : bottom);
-			drawText(7, 14+mode, sel == 2 ? 6 : 7, "Left:   %0.2d pixels", left);
-			drawText(7, 15+mode, sel == 3 ? 6 : 7, "Right:  %0.2d pixels", right);
-			if(mode)
+			drawText(7, 12+(mode == RES_239 ? 1 : 0), sel == 0 ? 6 : 7, "Top:    %0.2d pixels", top);
+			drawText(7, 13+(mode == RES_239 ? 1 : 0), sel == 1 ? 6 : 7, "Bottom: %0.2d pixels", mode == RES_239 ? bottom - 1 : bottom);
+			drawText(7, 14+(mode == RES_239 ? 1 : 0), sel == 2 ? 6 : 7, "Left:   %0.2d pixels", left);
+			drawText(7, 15+(mode == RES_239 ? 1 : 0), sel == 3 ? 6 : 7, "Right:  %0.2d pixels", right);
+			if(mode == RES_239)
 			{
 				drawText(2, 20, 5, "Screen flashing is normal in");
 				drawText(2, 21, 5, "239p due to forced vblanking");
@@ -1262,7 +1279,7 @@ void DrawOverscan(u8 mode)
 					*data = 0;
 			}
 			
-			if(sel == 1 && mode && bottom == 0)
+			if(sel == 1 && mode == RES_239 && bottom == 0)
 				bottom = 1;
 				
 			changed = 1;
@@ -1301,10 +1318,10 @@ void DrawOverscan(u8 mode)
 		
 		if(pressed & KEY_START)
 		{
-			if(mode)
+			if(mode == RES_239)
 				Set224pMode();
 			DrawHelp(HELP_OVERSCAN);
-			if(mode)
+			if(mode == RES_239)
 				Set240pMode();
 			redraw = 1;
 		}
@@ -1312,7 +1329,7 @@ void DrawOverscan(u8 mode)
 		if(pressed & KEY_A)
 		{
 			top = bottom = left = right = 0;
-			if(mode)
+			if(mode == RES_239)
 				bottom = 1;
 			changed = 1;
 			changedval = 1;
@@ -1320,6 +1337,15 @@ void DrawOverscan(u8 mode)
 		
 		if(pressed & KEY_B)
 			end = 1;	
+			
+		if(pressed & KEY_SELECT)
+		{
+			int nmode = 0;
+			
+			nmode = DrawFloatMenu();
+			if(mode != nmode)
+				redraw = 1;
+		}
 			
 		WaitForVBlank();
 	}
@@ -1334,7 +1360,7 @@ void DrawOverscan(u8 mode)
 		free(map_over);
 		map_over = NULL;
 	}
-	if(mode)
+	if(mode == RES_239)
 		Set224pMode();
 }
 

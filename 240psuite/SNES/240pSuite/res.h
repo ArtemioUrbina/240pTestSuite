@@ -158,6 +158,10 @@ extern char convcolor_blk_tiles, convcolor_blk_tiles_end;
 extern char convcolor_blk_pal, convcolor_blk_pal_end;
 extern char convcolor_blk_map, convcolor_blk_map_end;
 
+extern char float_tiles, float_tiles_end;
+extern char float_pal, float_pal_end;
+extern char float_map, float_map_end;
+
 extern char font;
 extern char fontback;
 

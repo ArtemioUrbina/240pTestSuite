@@ -504,4 +504,16 @@ convcolor_blk_tiles:
 .incbin "convcolor_blk.pic"
 convcolor_blk_tiles_end:
 
+float_map:
+.incbin "float.map"
+float_map_end:
+
+float_pal:
+.incbin "float.pal"
+float_pal_end:
+
+float_tiles:
+.incbin "float.pic"
+float_tiles_end:
+
 .ends

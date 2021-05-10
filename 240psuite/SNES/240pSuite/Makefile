@@ -224,7 +224,8 @@ bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB7
 	numbers.pic lagtest.pic sonicback.pic sonicfloor.pic small_grid.pic\
 	LEDsprites.pic striped.pic color_grid.pic lag-spr.pic soundbank.asm gridm7.pc7\
 	EBUCB100.pic EBUCB75.pic kiki.pic plugePAL.pic audiosync.pic fireshark.pic\
-	bricks.pic convdot.pic convcross.pic convgrid.pic convcolor.pic convcolor_blk.pic
+	bricks.pic convdot.pic convcross.pic convgrid.pic convcolor.pic convcolor_blk.pic\
+	float.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)
