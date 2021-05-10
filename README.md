@@ -2,6 +2,8 @@
 ===============================================================================
 For full documentation and source code, please visit:
 http://junkerhq.net/240p/
+Downloads:
+https://artemiourbina.itch.io/240p-test-suite
 ===============================================================================
 
 The 240p test suite is a homebrew software suite for video game
