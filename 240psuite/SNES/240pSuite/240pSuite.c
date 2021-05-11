@@ -879,7 +879,7 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(15, 4, 5, "Ver.");
+			drawText(4, 4, 5, "Ver. 1.04");
 			drawText(19, 4, 7, "10/05/2021");
 			drawText(10, 24, 5, "Dedicated to Elisa");
 			
