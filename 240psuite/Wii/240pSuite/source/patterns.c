@@ -529,11 +529,77 @@ void Draw601ColorBars()
 	return;
 }
 
+void DrawEBUColorBars()
+{
+	int 		done = 0, is75 = 1, text = 0;
+	u32			pressed;		
+	ImagePtr	backEBU75, backEBU100;
+	char		msg[40];
+		
+	backEBU75 = LoadImage(EBUCB75IMG, 0);
+	if(!backEBU75)
+	{
+		return;
+	}
+		
+	backEBU100 = LoadImage(EBUCB100IMG, 0);
+	if(!backEBU100)
+	{
+		FreeImage(&backEBU75);
+		return;
+	}
+	
+	IgnoreOffset(backEBU75);
+	IgnoreOffset(backEBU100);
+			
+	while(!done && !EndProgram) 
+	{		
+		StartScene();
+		
+		if(is75)
+			DrawImage(backEBU75);
+		else
+			DrawImage(backEBU100);
+		
+		if(text)
+		{			
+			DrawStringB(260, 20, 0, 0xff, 0, msg);
+			text --;
+		}		
+		
+        EndScene();
+		
+		ControllerScan();
+		
+		pressed = Controller_ButtonsDown(0);
+		
+		if (pressed & PAD_BUTTON_B)
+			done =	1;								
+			
+		if (pressed & PAD_BUTTON_A)
+		{
+			is75 = !is75;
+			text = 30;
+			sprintf(msg, "%s%%", is75 ? "75" : "100");
+		}
+	
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = SMPTECOLOR;
+		}		
+
+	}
+	FreeImage(&backEBU75);	
+	FreeImage(&backEBU100);	
+	return;
+}
+
 void DrawSMPTEColorBars()
 {
 	int 		done = 0, is75 = 1, text = 0;
 	u32			pressed;		
-	ImagePtr	backNTSC75, backNTSC100, backPAL75, backPAL100;
+	ImagePtr	backNTSC75, backNTSC100;
 	char		msg[40];
 	
 	backNTSC75 = LoadImage(SMPTECB75IMG, 0);
@@ -546,45 +612,15 @@ void DrawSMPTEColorBars()
 		FreeImage(&backNTSC75);
 		return;
 	}
-		
-	backPAL75 = LoadImage(EBUCB75IMG, 0);
-	if(!backNTSC75)
-	{
-		FreeImage(&backNTSC75);
-		FreeImage(&backNTSC100);
-		return;
-	}
-		
-	backPAL100 = LoadImage(EBUCB100IMG, 0);
-	if(!backNTSC75)
-	{
-		FreeImage(&backNTSC75);
-		FreeImage(&backNTSC100);
-		FreeImage(&backPAL75);
-		return;
-	}
-	
-	IgnoreOffset(backPAL75);
-	IgnoreOffset(backPAL100);
-			
+				
 	while(!done && !EndProgram) 
 	{		
 		StartScene();
 		
-		if(!IsPAL)
-		{
-			if(is75)
-				DrawImage(backNTSC75);
-			else
-				DrawImage(backNTSC100);
-		}
+		if(is75)
+			DrawImage(backNTSC75);
 		else
-		{
-			if(is75)
-				DrawImage(backPAL75);
-			else
-				DrawImage(backPAL100);
-		}
+			DrawImage(backNTSC100);
 
 		if(text)
 		{			
@@ -617,8 +653,6 @@ void DrawSMPTEColorBars()
 	}
 	FreeImage(&backNTSC75);
 	FreeImage(&backNTSC100);
-	FreeImage(&backPAL75);	
-	FreeImage(&backPAL100);	
 	return;
 }
 
@@ -892,67 +926,31 @@ void DrawGrid224()
 	return;
 }
 
-void DrawLinearity()
+void DrawMonoscope()
 {
-	int 		done = 0, oldvmode = vmode, gridmode = 0;
+	int 		done = 0, irecount = 10;
 	u32			pressed;
-	ImagePtr	circles = NULL, grid, gridd;
+	ImagePtr	mono = NULL, linear = NULL;
+	int			irevalues[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
 	
 
-	grid = LoadImage(CIRCLESGRIDIMG, 1);
-	if(!grid)
-		return;
-	gridd = LoadImage(CIRCLESGRIDDOTIMG, 1);
-	if(!gridd)
+	mono = LoadImage(MONOSCOPEIMG, 1);
+	if(!mono)
 		return;
 		
-	grid->w = 320;
-	grid->h = IsPAL ? 264 : 240;
-	gridd->w = 320;
-	gridd->h = IsPAL ? 264 : 240;
-			
+	linear = LoadImage(MONOSCOPELINIMG, 1);
+	if(!linear)
+	{
+		FreeImage(&mono);
+		return;
+	}
+				
 	while(!done && !EndProgram) 
 	{    
-		if(oldvmode != vmode)
-		{
-			FreeImage(&circles);		
-			oldvmode = vmode;
-			
-			grid->w = 320;
-			grid->h = IsPAL ? 264 : 240;
-			gridd->w = 320;
-			gridd->h = IsPAL ? 264 : 240;
-		}    
-		
-		if(!circles)
-		{
-			if(IsPAL)
-			{	
-				circles = LoadImage(CIRCLESPALIMG, 0);
-				if(!circles)
-					return;
-				IgnoreOffset(circles);
-			}
-			else
-			{
-				circles = LoadImage(CIRCLESIMG, 0);
-				if(!circles)
-					return;
-			}
-		}
 		StartScene();		
 		
-		switch(gridmode)
-		{			
-			case 1:
-				DrawImage(grid);
-				break;
-			case 2:
-				DrawImage(gridd);
-				break;
-		}		
-		
-		DrawImage(circles);
+		DrawImage(mono);
+		DrawImage(linear);
 		
         EndScene();
 		
@@ -963,131 +961,35 @@ void DrawLinearity()
 		if (pressed & PAD_BUTTON_B)
 			done =	1;	
 
-		if (pressed & PAD_TRIGGER_R)
-			gridmode ++;
-		
 		if (pressed & PAD_TRIGGER_L)
-			gridmode --;
-			
-		if(gridmode < 0)
-			gridmode = 2;
-			
-		if(gridmode > 2)
-			gridmode = 0;
-			
-		if ( pressed & PAD_BUTTON_START ) 		
 		{
-			DrawMenu = 1;					
-			HelpData = LINEARITYHELP;			
-		}	
-	}
-
-	FreeImage(&gridd);
-	FreeImage(&grid);
-	FreeImage(&circles);
-	return;
-}
-
-void DrawLinearity224()
-{
-	int 		done = 0, gridmode = 0;
-	u32			pressed;
-	ImagePtr	circles = NULL, grid, gridd;
-	
-
-	if(vmode != VIDEO_240P)
-		return;
-		
-	grid = LoadImage(CIRCLESGRIDIMG, 0);
-	if(!grid)
-		return;
-	gridd = LoadImage(CIRCLESGRIDDOTIMG, 0);
-	if(!gridd)
-		return;
-		
-	grid->w = 320;
-	grid->h = IsPAL ? 264 : 224;
-	gridd->w = 320;
-	gridd->h = IsPAL ? 264 : 224;
-	
-	grid->y = (240-224)/2; 
-	gridd->y = (240-224)/2; 
-	
-	IgnoreOffset(grid);
-	IgnoreOffset(gridd);
-	
-	CalculateUV(0, 0, 320, 224, grid);
-	CalculateUV(0, 0, 320, 224, gridd);
-	
-	ChangeVideoEnabled = 0;
-		
-	while(!done && !EndProgram) 
-	{    
-		if(!circles)
-		{
-			if(IsPAL)
-			{	
-				circles = LoadImage(CIRCLESPALIMG, 0);
-				if(!circles)
-					return;
-				IgnoreOffset(circles);
-			}
-			else
-			{
-				circles = LoadImage(LINEARITY224IMG, 0);
-				if(!circles)
-					return;
-			}
-			circles->y = (240-224)/2; 
-		}
-		StartScene();		
-		
-		switch(gridmode)
-		{			
-			case 1:
-				DrawImage(grid);
-				break;
-			case 2:
-				DrawImage(gridd);
-				break;
-		}		
-		
-		DrawImage(circles);
-		
-        EndScene();
-		
-		ControllerScan();
-		
-		pressed = Controller_ButtonsDown(0);
+      		irecount --;
 				
-		if (pressed & PAD_BUTTON_B)
-			done =	1;	
-
-		if (pressed & PAD_TRIGGER_R)
-			gridmode ++;
+			if(irecount < 0)
+				irecount = 10;	    						
+        	
+			mono->alpha = irevalues[irecount];
+		}
 		
-		if (pressed & PAD_TRIGGER_L)
-			gridmode --;
+		if (pressed & PAD_TRIGGER_R)
+		{    
+			irecount ++;
 			
-		if(gridmode < 0)
-			gridmode = 2;
+			if(irecount > 10)
+				irecount = 0;	
+				
+			mono->alpha = irevalues[irecount];				
+		}
 			
-		if(gridmode > 2)
-			gridmode = 0;
-			
-		if ( pressed & PAD_BUTTON_START ) 		
+		if (pressed & PAD_BUTTON_START) 		
 		{
 			DrawMenu = 1;					
-			HelpData = LINEAR224HELP;			
+			HelpData = MONOSCOPEHELP;			
 		}	
 	}
 
-	ChangeVideoEnabled = 1;
-	
-	FreeImage(&gridd);
-	FreeImage(&grid);
-	FreeImage(&circles);
-	
+	FreeImage(&mono);
+	FreeImage(&linear);
 	return;
 }
 

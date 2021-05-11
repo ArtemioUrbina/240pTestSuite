@@ -103,18 +103,17 @@ char *ire100_txt[] = {
 "                   100 IRE(2/2)\n\nThe reason IRE is a relative measurement (percent)\nis because a video signal may be any amplitude.\n\nThis unit is used in the #YITU-R BT.470#Y which\ndefines PAL, NTSC and SECAM\n\nYou can press $R and $L buttons to advance in 10 IRE\nsteps in the selected range.\n\nWith button $A you can toggle the range between\n#C[0-100]#C and #C[100-140]#C IRE.",
 NULL
 };
-char *linearity_txt[] = { 
-"                    LINEARITY\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC and the 59:54 PAL pixel aspect\nratios depending on the currently selected \nresolution.\n\nThe linearity of the display or upscaler can be \nverified by measuring the diameter of the circles.\nOf course the linearity should be kept in all \ndirections.\n\nA grid is also available with the $L and $R \nbuttons.",
-NULL
-};
-char *linearity224_txt[] = { 
-"                LINEARITY 224p\n\nThis pattern shows 5 circles, that are matched\nto the 10:11 NTSC, but limited to a 320x224 area.\nThis is a mock-up of the area shown in several\nconsoles, such as the SNES, Genesis and\nPlaystation, and also useful in monitors with\nregular overscan.\n\nThe linearity of the display or upscaler can be \nverified by measuring the diameter of the circles.\nOf course the linearity should be kept in all \ndirections.\n\nA grid is also available with the $L and $R \nbuttons.",
-NULL
-};
 char *manuallag_txt[] = { 
 "              MANUAL LAG TEST (1/3)\n\nThe main intention is to show a changing pattern\non the screen, which can be complemented with \naudio and vibration on the controller if set. \nThis should show to some degree any lag when  \nprocessing the signal.\n\nAs an added feature, the user can click the $A\nbutton when the sprite is aligned with the one on\nthe background, and the offset in frames from the\nactual intersection will be shown on screen. This\ncan be repeated ten times and the software will\ncalculate the average. Whenever the button was\npressed before the actual intersection frame, the\n                                        #C(cont...)#C",
 "              MANUAL LAG TEST (2/3)\n\nresult will be ignored (but still shown onscreen).\nButton $X can be used to change the direction\nof the sprite from vertical to horizontal, or\ndisplay both at the same time.\n\n\n#ROf course the evaluation is dependent on reflexes\nand/or rhythm more than anything.#R The visual and\naudio cues are the more revealing aspects which \nthe user should consider, of course the interactive\nfactor can give an experienced player the hang of\nthe system when testing via different connections.\n\n                                        #C(cont...)#C",
 "              MANUAL LAG TEST (3/3)\n\nSince a frame is around 16 ms (1000/60) in NTSC \nand 20 ms (1000/50) in PAL, that value must be \nconsidered the general error when using the test \nresults. \n\n",
+NULL
+};
+char *monoscope_txt[] = { 
+"                 MONOSCOPE (1/4)\n\nThe Monoscope Pattern is the traditional tool\nfor calibrating CRTs. This version aims to\nprovide several key elements to ensure you make\ninformed decisions about Convergence and \nDeflection. Refer to your monitor service manual\nfor procedures and safety equipment. \n\n1. #CBrightness Adjustable Pattern#C. Electron Gun\nAlignment, or Convergence, is usually adjusted\nwith a lowered brightness. Full brightness can\nmask issues with excessive bloom, especially \nif your peak white is too high. You can double\ncheck your adjustments against the 30IRE pattern.\n                                         #C(cont...)#C",
+"                 MONOSCOPE (2/4)\n\n2. #CStatic/Center Convergence#C. The center crosshair\nis used to evaluate static or center screen\nconvergence. \n\n3. #CDynamic/Edge#C can be evaluated with the patterns\non the side of the screen.\n\n4. #CCorner Convergence#C, corner purity and corner\ngeometry are tightly linked. Static and Dynamic\nconvergence must be set first before magnets can\nsuccessfully correct corner issues.\n\n\n                                         #C(cont...)#C",
+"                 MONOSCOPE (3/4)\n\n5. #CAspect Ratio#C. A new feature to help set VSIZE\nand HSIZE correctly is the red squares embedded in\nthe pattern. They are calculated to display as\nperfect squares on a properly setup display.\nYou may want to start with a small amount of\nhorizontal overscan, then use a tape measure to\nadjust VSIZE such that the outside edges of the\nred square are the same in width and height.\nThis usually achieves an amount of overscan that\npreserves the Title Safe Area. Some games may not\nadhere to those boundaries, but most do.\n\n\n                                         #C(cont...)#C",
+"                 MONOSCOPE (4/4)\n\n6. #CLinearity#C. Is the hardest part of the deflection\ncircuit. Scrolling tests are the best way to\nconfirm good Linearity but some compensated square\nelements have added to each corner where a tape\nmeasure may help get you started.\n\nYou can press $R and $L buttons to advance in 10 IRE\nsteps in the selected range.\n\n#CPattern designed by Keith Raney#C\n",
 NULL
 };
 char *options_txt[] = { 
@@ -155,7 +154,7 @@ char *sharpness_txt[] = {
 "                    SHARPNESS\n\nYou should set the sharpness of your CRT to a\nvalue that shows clean black and gray transitions,\nwith no white ghosting in between.\n\nOn most modern displays, the #Ysharpness#Y control is \nan edge-enhancement control, and most probably\nshould be set to zero, or in the middle.\n\nIn some #YPVM#Y/#YBVM#Y displays this is also referred \nto as #Yaperture#Y.",
 NULL
 };
-char *smptecolor_txt[] = { 
+char *SMPTEColor_txt[] = { 
 "              SMPTE COLOR BARS (1/3)\n\nThis pattern can be used to calibrate for NTSC\nlevels regarding contrast and brightness, and \nappropiate colors as well. \n\nYou can toggle between 75% and 100% SMPTE color \nbars by pressing $A.\n\nWhen in PAL this pattern shows the #YEBU#Y color\nbars intead, since setup starts at 0mV.\n\nRemember that the black level in the SMPTE pattern\nrefers to 7.5 IRE for video, console games usually\nstart at 0 IRE. This pattern can be used to \n                                         #C(cont...)#C",
 "              SMPTE COLOR BARS (2/3)\n\ncalibrate colors - or auto calibrated in a \nprofessional display - and then black levels can\nbe adjusted with the PLUGE pattern using the #GFull \nRGB Mode#G.\n\nIn an SMPTE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on \n                                         #C(cont...)#C",
 "              SMPTE COLOR BARS (3/3)\n\nand off between every bar, red cycling on and \noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
@@ -193,7 +192,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	33
+#define	HELPCOUNT	32
 char **HelpArray[HELPCOUNT] = {
 	alt240p_txt,
 	backlit_txt,
@@ -211,9 +210,8 @@ char **HelpArray[HELPCOUNT] = {
 	grid224_txt,
 	gridscroll_txt,
 	ire100_txt,
-	linearity_txt,
-	linearity224_txt,
 	manuallag_txt,
+	monoscope_txt,
 	options_txt,
 	optionsgc_txt,
 	overscan_txt,
@@ -221,7 +219,7 @@ char **HelpArray[HELPCOUNT] = {
 	pluge_txt,
 	scroll_txt,
 	sharpness_txt,
-	smptecolor_txt,
+	SMPTEColor_txt,
 	sound_txt,
 	striped_txt,
 	stripes_txt,

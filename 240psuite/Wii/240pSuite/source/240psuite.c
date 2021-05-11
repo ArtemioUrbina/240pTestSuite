@@ -275,16 +275,11 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Pluge"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
-		if(!IsPAL)
-		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SMPTE Color Bars"); y += fh; c++;
-		}
-		else
-		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "EBU Color Bars"); y += fh; c++;
-		}
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SMPTE Color Bars"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "EBU Color Bars"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
 		if(vmode != VIDEO_240P)
 		{
@@ -294,16 +289,6 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		else
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid 224p"); y += fh; c++;   
-		}
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity"); y += fh; c++;		
-		if(vmode != VIDEO_240P)
-		{
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, 
-					sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Linearity 224p"); y += fh; c++;
-		}
-		else
-		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Linearity 224p"); y += fh; c++;	
 		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White & RGB Screens"); y += fh; c++;				
@@ -357,27 +342,26 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					DrawColorBars();
 					break;
 				case 3:
-					DrawSMPTEColorBars();
+					DrawEBUColorBars();
 					break;
 				case 4:
-					Draw601ColorBars();
+					DrawSMPTEColorBars();
 					break;
 				case 5:
-					DrawColorBleed();
+					Draw601ColorBars();
 					break;
 				case 6:
+					DrawColorBleed();
+					break;
+				case 7:
+					DrawMonoscope();
+					break;	
+				case 8:
 					DrawGrid();
 					break;	
-				case 7:
-					if(vmode == VIDEO_240P)
-						DrawGrid224();
-					break;
-				case 8:
-					DrawLinearity();
-					break;
 				case 9:
 					if(vmode == VIDEO_240P)
-						DrawLinearity224();
+						DrawGrid224();
 					break;
 				case 10:
 					DrawGrayRamp();

@@ -983,7 +983,7 @@ void GridScrollTest()
 	backdiag = LoadImage(DIAGONALIMG, 1);
 	if(!backdiag)
 		return;  
-	backsquares = LoadImage(CIRCLESGRIDIMG, 1);
+	backsquares = LoadImage(SMALLGRIDIMG, 1);
 	if(!backsquares)
 	{
 		FreeImage(&backdiag);  

@@ -45,9 +45,8 @@
 #define PASSIVELAG		passivelag_txt
 #define WHITEHELP 		white_txt
 #define COLOR601HELP	color601_txt
-#define SMPTECOLOR 		smptecolor_txt
-#define LINEARITYHELP	linearity_txt
-#define LINEAR224HELP	linearity224_txt
+#define SMPTECOLOR 		SMPTEColor_txt
+#define MONOSCOPEHELP	monoscope_txt
 #define CHECK480PWII	check480pWii_txt
 #define SHARPNESSHELP	sharpness_txt
 #define OVERSCANHELP	overscan_txt
@@ -75,9 +74,8 @@ extern char *grid_txt[];
 extern char *grid224_txt[];
 extern char *gridscroll_txt[];
 extern char *ire100_txt[];
-extern char *linearity_txt[];
-extern char *linearity224_txt[];
 extern char *manuallag_txt[];
+extern char *monoscope_txt[];
 extern char *options_txt[];
 extern char *optionsgc_txt[];
 extern char *overscan_txt[];
@@ -85,7 +83,7 @@ extern char *passivelag_txt[];
 extern char *pluge_txt[];
 extern char *scroll_txt[];
 extern char *sharpness_txt[];
-extern char *smptecolor_txt[];
+extern char *SMPTEColor_txt[];
 extern char *sound_txt[];
 extern char *striped_txt[];
 extern char *stripes_txt[];
