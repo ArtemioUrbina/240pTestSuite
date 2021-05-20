@@ -24,6 +24,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#define ENABLE_MOSAIC 1
+
 void drawText(u16 x, u16 y, u8 palette, char *fmt, ...);
 void InitTextColor(u8 layer, u8 palette, u16 front, u16 back);
 void AddTextColor(u8 palette, u16 front, u16 back);

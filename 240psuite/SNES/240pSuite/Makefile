@@ -208,6 +208,10 @@ monoscope.pic: monoscope.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 	
+monoscope_PAL.pic: monoscope_PAL.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
+	
 convcolor.pic: convcolor.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
@@ -225,7 +229,7 @@ bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB7
 	LEDsprites.pic striped.pic color_grid.pic lag-spr.pic soundbank.asm gridm7.pc7\
 	EBUCB100.pic EBUCB75.pic kiki.pic plugePAL.pic audiosync.pic fireshark.pic\
 	bricks.pic convdot.pic convcross.pic convgrid.pic convcolor.pic convcolor_blk.pic\
-	float.pic
+	float.pic monoscope.pic monoscope_PAL.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

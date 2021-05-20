@@ -143,6 +143,10 @@ extern char monoscope_tiles, monoscope_tiles_end;
 extern char monoscope_pal, monoscope_pal_end;
 extern char monoscope_map, monoscope_map_end;
 
+extern char monoscopePAL_tiles, monoscopePAL_tiles_end;
+extern char monoscopePAL_pal, monoscopePAL_pal_end;
+extern char monoscopePAL_map, monoscopePAL_map_end;
+
 extern char convdot_tiles, convdot_tiles_end;
 extern char convdot_pal, convdot_pal_end;
 extern char convdot_map, convdot_map_end;

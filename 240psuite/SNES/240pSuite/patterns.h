@@ -24,9 +24,9 @@
 
 //---------------------------------------------------------------------------------
 void DrawGrid();
+void DrawEBU();
 void DrawSMPTE();
 void DrawColorBars();
-
 void DrawPluge();
 void DrawGrayRamp();
 void DrawColorBleed();

@@ -105,8 +105,10 @@ int main(void)
 				EndDMA();
 				if(start)
 				{
-					//setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
-					//WaitForVBlank();
+#ifdef ENABLE_MOSAIC
+					setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
+					WaitForVBlank();
+#endif
 					start = 0;
 				}
 			}
@@ -219,7 +221,7 @@ void TestPatterns(void)
 		
 		if(change)
 		{
-			u16 pos = 7;
+			u16 pos = 6;
 			
 			AddTextColor(7, RGB5(31, 31, 31), RGB5(0, 0, 0));
 			AddTextColor(6, RGB5(31, 0, 0), RGB5(0, 0, 0));	
@@ -227,19 +229,20 @@ void TestPatterns(void)
 			
 			drawText(3, pos, sel == 0 ? 6 : 7, "Pluge"); pos ++;
 			drawText(3, pos, sel == 1 ? 6 : 7, "Color Bars"); pos ++;
-			drawText(3, pos, sel == 2 ? 6 : 7, snes_50hz ? "EBU Color Bars" : "SMPTE Color Bars"); pos ++;
-			drawText(3, pos, sel == 3 ? 6 : 7, "Color Bars w/ Gray Ref"); pos ++;
-			drawText(3, pos, sel == 4 ? 6 : 7, "Color Bleed Check"); pos ++;
-			drawText(3, pos, sel == 5 ? 6 : 7, "Monoscope"); pos ++;
-			drawText(3, pos, sel == 6 ? 6 : 7, "Grid"); pos ++;
-			drawText(3, pos, sel == 7 ? 6 : 7, "Gray Ramp"); pos ++;
-			drawText(3, pos, sel == 8 ? 6 : 7, "White & RGB Screen"); pos ++;
-			drawText(3, pos, sel == 9 ? 6 : 7, "100 IRE"); pos ++;	
-			drawText(3, pos, sel == 10 ? 6 : 7, "Sharpness"); pos++;
-			drawText(3, pos, sel == 11 ? 6 : 7, "Overscan"); pos++;
-			drawText(3, pos, sel == 12 ? 6 : 7, "Convergence"); pos++;
-			drawText(3, pos, sel == 13 ? 6 : 7, "Mode 7"); pos+=2;
-			drawText(3, pos, sel == 14 ? 6 : 5, "Back to Main Menu"); 
+			drawText(3, pos, sel == 2 ? 6 : 7, "EBU Color Bars"); pos ++;
+			drawText(3, pos, sel == 3 ? 6 : 7, "SMPTE Color Bars"); pos ++;
+			drawText(3, pos, sel == 4 ? 6 : 7, "Color Bars w/ Gray Ref"); pos ++;
+			drawText(3, pos, sel == 5 ? 6 : 7, "Color Bleed Check"); pos ++;
+			drawText(3, pos, sel == 6 ? 6 : 7, "Monoscope"); pos ++;
+			drawText(3, pos, sel == 7 ? 6 : 7, "Grid"); pos ++;
+			drawText(3, pos, sel == 8 ? 6 : 7, "Gray Ramp"); pos ++;
+			drawText(3, pos, sel == 9 ? 6 : 7, "White & RGB Screen"); pos ++;
+			drawText(3, pos, sel == 10 ? 6 : 7, "100 IRE"); pos ++;	
+			drawText(3, pos, sel == 11 ? 6 : 7, "Sharpness"); pos++;
+			drawText(3, pos, sel == 12 ? 6 : 7, "Overscan"); pos++;
+			drawText(3, pos, sel == 13 ? 6 : 7, "Convergence"); pos++;
+			drawText(3, pos, sel == 14 ? 6 : 7, "Mode 7"); pos+=2;
+			drawText(3, pos, sel == 15 ? 6 : 5, "Back to Main Menu"); 
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
 			
@@ -267,9 +270,9 @@ void TestPatterns(void)
 		}	
 
 		if(sel < 0)
-			sel = 14;
+			sel = 15;
 			
-		if(sel > 14)
+		if(sel > 15)
 			sel = 0;
 			
 		if(pressed & KEY_START)
@@ -293,42 +296,45 @@ void TestPatterns(void)
 					DrawColorBars();
 					break;
 				case 2:
-					DrawSMPTE();
+					DrawEBU();
 					break;
 				case 3:
-					Draw601CB();
+					DrawSMPTE();
 					break;
 				case 4:
-					DrawColorBleed();
+					Draw601CB();
 					break;
 				case 5:
-					DrawMonoscope();
+					DrawColorBleed();
 					break;
 				case 6:
-					DrawGrid();
+					DrawMonoscope();
 					break;
 				case 7:
-					DrawGrayRamp();
+					DrawGrid();
 					break;
 				case 8:
-					DrawWhite();
+					DrawGrayRamp();
 					break;
 				case 9:
-					Draw100IRE();
+					DrawWhite();
 					break;
 				case 10:
-					DrawSharpness();
+					Draw100IRE();
 					break;
 				case 11:
-					DrawOverscan();
+					DrawSharpness();
 					break;
 				case 12:
-					DrawConvergence();
+					DrawOverscan();
 					break;
 				case 13:
-					DrawMode7();
+					DrawConvergence();
 					break;
 				case 14:
+					DrawMode7();
+					break;
+				case 15:
 					exit = 1;
 					break;
 			}
@@ -766,7 +772,9 @@ void DrawCat(void)
 	u16 held, pressed, end = 0;	 
 	u16 redraw = 1, size = 0, count = 0;	
 	
-	//setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
+#ifdef ENABLE_MOSAIC
+	setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
+#endif
 	while(!end) 
 	{		
 		if(redraw)
@@ -785,7 +793,9 @@ void DrawCat(void)
 						
 			EndDMA();
 			redraw = 0;
-			//setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
+#ifdef ENABLE_MOSAIC
+			setMosaicEffect(MOSAIC_OUT, MOSAIC_BG1);
+#endif
 		}
 		WaitForVBlank();
 		
@@ -827,9 +837,11 @@ void DrawIntro(void)
 	
 	while(i++ < 20)
 		WaitForVBlank();
-		
-	//setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
-	//WaitForVBlank();
+
+#ifdef ENABLE_MOSAIC		
+	setMosaicEffect(MOSAIC_IN, MOSAIC_BG1);
+	WaitForVBlank();
+#endif
 }
 
 void DrawCredits(void) 

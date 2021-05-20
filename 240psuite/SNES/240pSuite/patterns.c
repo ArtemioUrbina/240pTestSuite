@@ -97,8 +97,7 @@ void DrawGrid()
 	return;
 }
 
-
-void DrawSMPTE() 
+void DrawEBU() 
 {	
 	u16 pressed, end = 0, type = 0;
 	u16 redraw = 1, text = 0;
@@ -112,16 +111,8 @@ void DrawSMPTE()
 			consoleInitTextMine(0, 7, &font);				
 			
 			setPaletteColor(0x71, RGB5(31, 31, 31));
-			if(!snes_50hz)			
-			{
-				bgInitTileSetMine(1, &SMPTECB75_tiles, &SMPTECB75_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);
-				bgInitMapSetMine(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x2000);
-			}
-			else
-			{
-				bgInitTileSetMine(1, &EBUCB75_tiles, &EBUCB75_pal, 0, (&EBUCB75_tiles_end - &EBUCB75_tiles), 16*2, BG_16COLORS, 0x4000);
-				bgInitMapSetMine(1, &EBUCB75_map, (&EBUCB75_map_end - &EBUCB75_map), SC_32x32, 0x2000);
-			}
+			bgInitTileSetMine(1, &EBUCB75_tiles, &EBUCB75_pal, 0, (&EBUCB75_tiles_end - &EBUCB75_tiles), 16*2, BG_16COLORS, 0x4000);
+			bgInitMapSetMine(1, &EBUCB75_map, (&EBUCB75_map_end - &EBUCB75_map), SC_32x32, 0x2000);
 			
 			setMode(BG_MODE1,0); 			
 			bgSetDisable(2);
@@ -156,19 +147,13 @@ void DrawSMPTE()
 			{
 				drawText(26, 1, 7, " 75%");
 				WaitForVBlank();
-				if(!snes_50hz)	
-					dmaCopyCGram(&SMPTECB75_pal, 0, 16*2);
-				else
-					dmaCopyCGram(&EBUCB75_pal, 0, 16*2);
+				dmaCopyCGram(&EBUCB75_pal, 0, 16*2);
 			}
 			else
 			{
 				drawText(26, 1, 7, "100%");
 				WaitForVBlank();
-				if(!snes_50hz)	
-					dmaCopyCGram(&SMPTECB100_pal, 0, 16*2);
-				else
-					dmaCopyCGram(&EBUCB100_pal, 0, 16*2);
+				dmaCopyCGram(&EBUCB100_pal, 0, 16*2);
 			}
 			text = 30;
 			type = !type;
@@ -178,6 +163,75 @@ void DrawSMPTE()
 	
 	return;
 }
+
+void DrawSMPTE() 
+{	
+	u16 pressed, end = 0, type = 0;
+	u16 redraw = 1, text = 0;
+				
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			StartDMA();
+			
+			consoleInitTextMine(0, 7, &font);				
+			
+			setPaletteColor(0x71, RGB5(31, 31, 31));
+			bgInitTileSetMine(1, &SMPTECB75_tiles, &SMPTECB75_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);
+			bgInitMapSetMine(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x2000);
+			
+			setMode(BG_MODE1,0); 			
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			EndDMA();
+			redraw = 0;
+		}
+		WaitForVBlank();
+		
+		if(text)
+		{
+			text --;
+			if(!text)
+				CleanFontMap();
+		}
+		
+		pressed = PadPressed(0);
+		
+		if(pressed & KEY_START)
+		{
+			DrawHelp(HELP_SMPTE);
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_B)
+			end = 1;		
+		
+		if(pressed & KEY_A)
+		{
+			if(type)
+			{
+				drawText(26, 1, 7, " 75%");
+				WaitForVBlank();
+				dmaCopyCGram(&SMPTECB75_pal, 0, 16*2);
+			}
+			else
+			{
+				drawText(26, 1, 7, "100%");
+				WaitForVBlank();
+				dmaCopyCGram(&SMPTECB100_pal, 0, 16*2);
+			}
+			text = 30;
+			type = !type;
+		}		
+	}	
+	Transition();
+	
+	return;
+}
+
+
 
 void DrawColorBars(void) 
 {	
@@ -399,8 +453,17 @@ void DrawMonoscope(void)
 		{
 			StartDMA();
 			
-			bgInitTileSetMine(1, &monoscope_tiles, &monoscope_pal, 0, (&monoscope_tiles_end - &monoscope_tiles), 16*2, BG_16COLORS, 0x4000);	
-			bgInitMapSetMine(1, &monoscope_map, (&monoscope_map_end - &monoscope_map), SC_32x32, 0x1000);
+			if(!snes_50hz)
+			{
+				bgInitTileSetMine(1, &monoscope_tiles, &monoscope_pal, 0, (&monoscope_tiles_end - &monoscope_tiles), 16*2, BG_16COLORS, 0x4000);	
+				bgInitMapSetMine(1, &monoscope_map, (&monoscope_map_end - &monoscope_map), SC_32x32, 0x1000);
+			}
+			else
+			{
+				bgInitTileSetMine(1, &monoscopePAL_tiles, &monoscopePAL_pal, 0, (&monoscopePAL_tiles_end - &monoscopePAL_tiles), 16*2, BG_16COLORS, 0x4000);	
+				bgInitMapSetMine(1, &monoscopePAL_map, (&monoscopePAL_map_end - &monoscopePAL_map), SC_32x32, 0x1000);
+				Set240pMode();	
+			}
 			
 			setMode(BG_MODE1,0); 
 			bgSetDisable(0);		
@@ -416,7 +479,11 @@ void DrawMonoscope(void)
 		
 		if(pressed & KEY_START)
 		{
+			if(snes_50hz)
+				Set224pMode();	
 			DrawHelp(HELP_MONOSCOPE);
+			if(snes_50hz)
+				Set240pMode();	
 			redraw = 1;
 		}
 		
@@ -440,7 +507,8 @@ void DrawMonoscope(void)
 		}
 	}	
 	Transition();
-	
+	if(snes_50hz)
+		Set224pMode();
 	return;
 }
 

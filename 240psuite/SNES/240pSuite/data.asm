@@ -336,6 +336,18 @@ EBUCB75_tiles:
 .incbin "EBUCB75.pic"
 EBUCB75_tiles_end:
 
+monoscopePAL_map:
+.incbin "monoscope_PAL.map"
+monoscopePAL_map_end:
+
+monoscopePAL_pal:
+.incbin "monoscope_PAL.pal"
+monoscopePAL_pal_end:
+
+float_pal:
+.incbin "float.pal"
+float_pal_end:
+
 .ends
 
 .section ".rodata6" superfree
@@ -352,6 +364,10 @@ mode7_tiles:
 .incbin "gridm7.pc7"
 mode7_tiles_end:
 
+monoscopePAL_tiles:
+.incbin "monoscope_PAL.pic"
+monoscopePAL_tiles_end:
+
 .ends
 
 .section ".rodata7" superfree
@@ -359,6 +375,14 @@ mode7_tiles_end:
 nishka_tiles:
 .incbin "n_t.s"
 nishka_tiles_end:
+
+float_map:
+.incbin "float.map"
+float_map_end:
+
+float_tiles:
+.incbin "float.pic"
+float_tiles_end:
 
 .ends
 
@@ -503,17 +527,5 @@ convcolor_blk_pal_end:
 convcolor_blk_tiles:
 .incbin "convcolor_blk.pic"
 convcolor_blk_tiles_end:
-
-float_map:
-.incbin "float.map"
-float_map_end:
-
-float_pal:
-.incbin "float.pal"
-float_pal_end:
-
-float_tiles:
-.incbin "float.pic"
-float_tiles_end:
 
 .ends
