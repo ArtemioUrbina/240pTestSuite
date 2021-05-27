@@ -30,7 +30,7 @@ INCLUDES	:=
 CFLAGS	= -O2 -Wall $(MACHDEP) $(INCLUDE) -DWII_VERSION
 CXXFLAGS	=	$(CFLAGS)
 
-LDFLAGS	=	-L$(DEVKITPRO)/portlibs/ppc/lib $(MACHDEP) -Wl,-Map,$(notdir $@).map -lz
+LDFLAGS	=	$(MACHDEP) -Wl,-Map,$(notdir $@).map -lz
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
@@ -41,7 +41,7 @@ LIBS	:=	-lfat -lmxml -lwiiuse -lbte -lasnd -logc -lm
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(DEVKITPRO)/portlibs/ppc/
+LIBDIRS	:= $(PORTLIBS)
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -78,10 +78,11 @@ else
 	export LD	:=	$(CXX)
 endif
 
-export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
-					$(addsuffix .o,$(TPLFILES)) \
-					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) \
-					$(sFILES:.s=.o) $(SFILES:.S=.o)
+export OFILES_BIN       :=      $(addsuffix .o,$(BINFILES) $(TPLFILES))
+export OFILES_SOURCES := $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(sFILES:.s=.o) $(SFILES:.S=.o)
+export OFILES := $(OFILES_BIN) $(OFILES_SOURCES)
+
+export HFILES := $(addsuffix .h,$(subst .,_,$(BINFILES) $(TPLFILES)))
 
 #---------------------------------------------------------------------------------
 # build a list of include paths
@@ -103,7 +104,7 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:
@@ -126,32 +127,31 @@ DEPENDS	:=	$(OFILES:.o=.d)
 $(OUTPUT).dol: $(OUTPUT).elf
 $(OUTPUT).elf: $(OFILES)
 
+$(OFILES_SOURCES) : $(HFILES)
+
 #---------------------------------------------------------------------------------
 # This rule links in binary data with the .snd extension // audio
 #---------------------------------------------------------------------------------
-%.snd.o	:	%.snd
+%.snd.o	%_snd.h:	%.snd
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	$(bin2o)
 
-
-
 #---------------------------------------------------------------------------------
 # This rule links in binary data with the .bin extension
 #---------------------------------------------------------------------------------
-%.bin.o	:	%.bin
+%.bin.o	%_bin.h:	%.bin
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
 
 #---------------------------------------------------------------------------------
-%.tpl.o	:	%.tpl
+%.tpl.o	%_tpl.h:	%.tpl
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@mv $< $<.full
 	@$(TOOLS)/cfile $<.full $< comp_textures.h
 	@$(bin2o)
-
 
 -include $(DEPENDS)
 
