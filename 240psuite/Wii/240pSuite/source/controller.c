@@ -178,11 +178,11 @@ u32 Controller_ButtonsDown(int chan)
     if( wiistate & WPAD_BUTTON_MINUS )
         retval |= PAD_TRIGGER_L;  
 		
-	if(found != retval)
-		ControllerType = ControllerWiimote;
+    if(found != retval)
+	ControllerType = ControllerWiimote;
 
-	found = retval;
-// Wii Classic Controller
+    found = retval;
+    // Wii Classic Controller
     WPADData *data = WPAD_Data(0);
     if (data && data->exp.type == WPAD_EXP_CLASSIC)
     {

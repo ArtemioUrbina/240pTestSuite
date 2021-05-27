@@ -20,6 +20,7 @@ BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data  
 TEXTURES	:=	textures 
+TOOLS		:=	$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))/tools
 INCLUDES	:=
 
 #---------------------------------------------------------------------------------
@@ -147,8 +148,8 @@ $(OUTPUT).elf: $(OFILES)
 %.tpl.o	:	%.tpl
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
-	mv $< $<.full
-	cfile $<.full $< comp_textures.h
+	@mv $< $<.full
+	@$(TOOLS)/cfile $<.full $< comp_textures.h
 	@$(bin2o)
 
 

@@ -161,7 +161,7 @@ void SetupGX()
 	GX_SetDither(GX_FALSE);
 }
 
-inline void StartScene()
+void StartScene()
 {
 	Mtx GXmodelView2D;		
 	
@@ -198,7 +198,7 @@ inline void StartScene()
 	}
 }
 
-inline void StartSceneMtx(Mtx *GXmodelView2D)
+void StartSceneMtx(Mtx *GXmodelView2D)
 {
 	GX_SetViewport(0,0,rmode->fbWidth,rmode->efbHeight,0,1);
 	GX_InvVtxCache();
@@ -233,7 +233,7 @@ inline void StartSceneMtx(Mtx *GXmodelView2D)
 	}
 }
 
-inline void EndScene()
+void EndScene()
 {
 	DrawScanlines();	
 			
@@ -660,7 +660,7 @@ u8 GetRawScanlineValue()
 		return 0;
 }
 
-inline void DrawScanlines()
+void DrawScanlines()
 {
 	if(vmode == VIDEO_480P_SL && scanlines)
 		DrawImage(scanlines);
@@ -670,7 +670,7 @@ inline void DrawScanlines()
 #endif
 }
 
-inline void ReleaseScanlines()
+void ReleaseScanlines()
 {
 	FreeImage(&scanlines);
 }

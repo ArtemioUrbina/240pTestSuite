@@ -76,7 +76,7 @@ struct image_st{
 u8 InitGX();
 void SetupGX();
 void StartScene();
-inline void StartSceneMtx(Mtx *GXmodelView2D);
+void StartSceneMtx(Mtx *GXmodelView2D);
 void EndScene();
 void EndSceneScreenShot();
 void EndGX();
@@ -104,8 +104,8 @@ void MapToScreen(ImagePtr image);
 extern ImagePtr scanlines;
 
 void LoadScanlines();
-inline void ReleaseScanlines();
-inline void DrawScanlines();
+void ReleaseScanlines();
+void DrawScanlines();
 u8 GetScanlineIntensity();
 int ScanlinesEven();
 void LowerScanlineIntensity();

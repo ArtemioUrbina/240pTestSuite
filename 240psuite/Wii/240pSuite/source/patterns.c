@@ -1018,8 +1018,8 @@ void Draw100IRE()
 	while(!done && !EndProgram) 
 	{		
 		StartScene();
-    	if(invert)
-      		DrawImage(white);	
+		if(invert)
+			DrawImage(white);	
 		DrawImage(back);		
 
 		if(text)

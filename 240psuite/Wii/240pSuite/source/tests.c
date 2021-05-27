@@ -32,9 +32,7 @@
 #include "options.h"
 #include <asndlib.h>
 
-extern u8 beep_snd_end[];
-extern u8 beep_snd[];
-extern u32 beep_snd_size;
+#include "beep_snd.h"
 
 typedef struct timecode{
 	int hours;
@@ -553,7 +551,7 @@ void LagTest()
 		if(y == 96)
 		{			
 			if(audio)
-				SND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_STEREO_16BIT, 44100, 0, beep_snd, beep_snd_size, speed == -1 ? 0 : 255, speed == -1 ? 255 : 0, NULL);				
+				SND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_STEREO_16BIT, 44100, 0, (void*)beep_snd, beep_snd_size, speed == -1 ? 0 : 255, speed == -1 ? 255 : 0, NULL);				
 				
 			if(rumble)
 				ControllerRumble(0, 1);
@@ -1338,7 +1336,7 @@ void SoundTest()
 
 		if(play)
 		{
-			SND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_STEREO_16BIT, 44100, 0, beep_snd, beep_snd_size, aleft, aright, NULL);				
+			SND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_STEREO_16BIT, 44100, 0, (void*)beep_snd, beep_snd_size, aleft, aright, NULL);				
 			play = 0;
 		}        
 
@@ -1749,8 +1747,8 @@ void Alternate240p480i()
 {
 	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, done =  0, current = 0, res = 0, status = 0;
 	timecode	times[20];
-	u32		    pressed, oldvmode = vmode;		
-	char 		buffer[20];
+	u32		pressed, oldvmode = vmode;		
+	char 		buffer[100];
 	ImagePtr	back;
 	
 	if(IsPAL)
