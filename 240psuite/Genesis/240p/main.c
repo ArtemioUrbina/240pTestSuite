@@ -368,7 +368,7 @@ void VideoTestsMenu()
 				PassiveLagTest();
 				break;
 			case 4:
-				LagTest();
+				ReflexNTiming();
 				break;
 			case 5:
 				HScrollTest();
@@ -736,8 +736,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-			VDP_drawTextBG(APLAN, "Ver. 1.22", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "10/05/2021", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.23d", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "12/08/2021", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 			VDP_End();
@@ -1259,10 +1259,12 @@ void ControllerTest()
 		//if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_CONTROLLER))
 			//loadvram = 1;
 
-		if(buttons1 & BUTTON_LEFT && buttons1 & BUTTON_START)
+		if((buttons1 & BUTTON_LEFT && buttons1 & BUTTON_START) ||
+			(buttons2 & BUTTON_LEFT && buttons2 & BUTTON_START))
 			exit = 1;
 			
-		if(buttons1 & BUTTON_RIGHT && buttons1 & BUTTON_START)
+		if((buttons1 & BUTTON_RIGHT && buttons1 & BUTTON_START) || 
+			(buttons2 & BUTTON_RIGHT && buttons2 & BUTTON_START))
 		{
 			joytype = joytype2 = JOY_TYPE_UNKNOWN;
 			JOY_init();

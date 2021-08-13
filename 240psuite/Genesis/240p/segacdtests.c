@@ -132,10 +132,10 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 		// Byteswapped ?
 		if(patch == 2)
 		{
-			if(address == 0x73)
-				data = 0xFD;
 			if(address == 0x72)
 				data = 0x0C;
+			if(address == 0x73)
+				data = 0xFD;
 		}
 #endif
 		CRC32_update(data);
@@ -340,6 +340,7 @@ const static BIOSID bioslist[] = {
 { 0x9F6F6276, "M2 US 2.00W" },	// segacd_model2_bios_2_00w_u.bin
 { 0x4D5CB8DA, "M2 EU 2.00W" },	// mpr-15512a.bin swapped in MAME as 0x53F1757C
 { 0x0507B590, "M2 EU 2.00" },	// mpr-15512.bin swapped in MAME as 0xCB76F114
+{ 0xC1AA217F, "M2 EU 2.11X" },	// mpr-15811-t.bin swapped in MAME as 0x391a80d2, MK-4102A-50 Sony pcb
 { 0xDD6CC972, "M2 JP 2.00C" },	// mpr-15398.bin swapped in MAME as 0x1E4344E6
 { 0x8052C7A0, "AIWA JP 2.11" },	// mpr-15768-t.bin
 { 0x50CD3D23, "LA 1.04" },		// laseractive_bios_1_04_u.bin
@@ -392,14 +393,12 @@ const static BIOSRF biosnamesRF2[] = {
 { 0xC6AD0AD7, 0xAACB851E },  // hack of opr-16140.bin 0xAACB851E named eu_mmg_930916_regfree.bin
 { 0, 0 } } ; 
 
-#ifndef SEGACD
-
 typedef struct biosSwapped_data {
     uint32_t crcog;
     uint32_t crcsw;
 } BIOS_SW;
 
-// Reversed
+// Reversed, MAME
 const static BIOS_SW biosSwapped[] = {
 { 0x9BCE40B2, 0x69ED6CCD }, // epr-14088b.bin
 { 0x2EA250C0, 0xDFA95EE9 }, // epr-14088d.bin
@@ -419,6 +418,7 @@ const static BIOS_SW biosSwapped[] = {
 { 0xDD6CC972, 0x1E4344E6 }, // mpr-15398.bin
 { 0x0507B590, 0xCB76F114 }, // mpr-15512.bin
 { 0x4D5CB8DA, 0x53F1757C }, // mpr-15512a.bin
+{ 0xC1AA217F, 0x391a80d2 }, // mpr-15811-t.bin
 { 0x2E49D72C, 0x9AAB8FE3 }, // mpr-15764-t.bin
 { 0x8052C7A0, 0x1E628066 }, // mpr-15768-t.bin
 { 0xAACB851E, 0x527E310B }, // opr-16140.bin
@@ -461,8 +461,6 @@ const static BIOS_SW biosSwapRF2[] = {
 { 0xB72F16D7, 0x8079FBD4 }, // us_xeye_931227_regfree.bin
 { 0, 0 } } ; 
 
-#endif
-
 	// search known Original BIOS
 char *GetBIOSNamebyCRC(uint32_t checksum)
 {
@@ -475,6 +473,32 @@ char *GetBIOSNamebyCRC(uint32_t checksum)
 		i++;
 	}
 	return NULL;
+}
+
+uint32_t GetBypeSwappedbyCRC(uint32_t checksum, const BIOS_SW* blist)
+{
+	int i = 0;
+	
+	while(blist[i].crcog != 0)
+	{		
+		if(checksum == blist[i].crcog)
+			return blist[i].crcsw;
+		i++;
+	}
+	return 0;
+}
+	
+uint32_t GetOriginalbyCRC(uint32_t checksum, const BIOS_SW* blist)
+{
+	int i = 0;
+	
+	while(blist[i].crcog != 0)
+	{		
+		if(checksum == blist[i].crcsw)
+			return blist[i].crcog;
+		i++;
+	}
+	return 0;
 }
 
 int FindRegionFreeBios(uint32_t checksum, const BIOSRF* blist)
@@ -502,27 +526,28 @@ int FindRegionFreeBios(uint32_t checksum, const BIOSRF* blist)
 #ifndef SEGACD
 int FindByteSwappedBios(uint32_t checksum, const BIOS_SW* blist)
 {
-	int i = 0;
+	uint32_t f_checksum = 0, bschecksum = 0;
 	
-	while(blist[i].crcsw != 0)
-	{		
-		if(checksum == blist[i].crcsw)
+	f_checksum = GetOriginalbyCRC(checksum, blist);
+	if(f_checksum)
+	{
+		char *name = NULL;
+		
+		name = GetBIOSNamebyCRC(f_checksum);
+		if(name)
 		{
-			char *name = NULL;
+			ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
+
+			bschecksum = GetBypeSwappedbyCRC(checksum, biosSwapped);
 			
-			name = GetBIOSNamebyCRC(blist[i].crcog);
-			if(name)
-			{
-				ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
-				
-				VDP_Start();
-				VDP_drawTextBG(APLAN, "Byte swapped", TILE_ATTR(PAL2, 0, 0, 0), 6, 20);
-				VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 19, 20);
-				VDP_End();
-			}
-			return 1;
+			VDP_Start();
+			VDP_drawTextBG(APLAN, "Byte swapped", TILE_ATTR(PAL2, 0, 0, 0), 6, 20);
+			VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 19, 20);
+			if(bschecksum)
+				ShowMessageAndData("MAME CRC32:", bschecksum, 8, PAL1, 9, 21);
+			VDP_End();
 		}
-		i++;
+		return 1;
 	}
 	return 0;
 }
@@ -531,12 +556,16 @@ int FindByteSwappedBios(uint32_t checksum, const BIOS_SW* blist)
 void doBIOSID(uint32_t checksum, uint32_t address)
 {
 	char 		*name = NULL;
+	uint32_t 	bschecksum = 0;
 	
 	name = GetBIOSNamebyCRC(checksum);
 	if(name)
-	{
+	{	
+		bschecksum = GetBypeSwappedbyCRC(checksum, biosSwapped);
 		VDP_Start();
-		VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 14, 20);
+		if(bschecksum)
+			ShowMessageAndData("MAME CRC32:", bschecksum, 8, PAL1, 9, 20);
+		VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 14, bschecksum == 0 ? 20 : 21);
 		VDP_End();
 		return;
 	}
@@ -557,11 +586,11 @@ void doBIOSID(uint32_t checksum, uint32_t address)
 		
 		//ShowSEGABIOSData(address);
 		
-		// Calculate CRC with byteswapped HINT register
 		VDP_Start();
 		VDP_drawTextBG(APLAN, " working...", TILE_ATTR(PAL0, 0, 0, 0), 20, 19);
 		VDP_End();
 		
+		// Calculate CRC with byteswapped HINT register
 		bschecksum = CalculateCRC(address, 0x20000, 2);
 		
 		ShowMessageAndData("CD BIOS CRC32:", bschecksum, 8, PAL1, 6, 19);
@@ -578,7 +607,7 @@ void doBIOSID(uint32_t checksum, uint32_t address)
 		if(FindByteSwappedBios(bschecksum, biosSwapRF1))
 			return;
 		
-		ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
+		//ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
 	}
 #endif
 	
@@ -592,7 +621,7 @@ void doBIOSID(uint32_t checksum, uint32_t address)
 	else
 	{
 		VDP_Start();
-		VDP_drawTextBG(APLAN, "BIOS not recognized", TILE_ATTR(PAL1, 0, 0, 0), 8, 20);
+		VDP_drawTextBG(APLAN, "No BIOS found", TILE_ATTR(PAL1, 0, 0, 0), 12, 20);
 		VDP_End();
 	}
 	return;
@@ -617,7 +646,8 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 #endif
 
 	ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
-	
+		
+	VDP_waitVSync();	
 	doBIOSID(checksum, address);
 
 	WaitKey();
@@ -1128,7 +1158,11 @@ void SegaCDMenu()
 	{
 		if(reload)
 		{
+#ifndef SEGACD
 			DrawMainBGwithGillian(1, 216, 72);
+#else
+			DrawMainBGwithGillian(1, 216, 90);
+#endif
 			reload = 0;
 			redraw = 1;
 		}

@@ -780,7 +780,7 @@ void StripedSpriteTest()
 
 
 
-void LagTest()
+void ReflexNTiming()
 {
 	char str[10];
 	u16 pal = PAL0, change = 1, loadvram = 1;
