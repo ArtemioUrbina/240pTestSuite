@@ -38,7 +38,7 @@ INCLUDES	:=
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	= -O2 -Wall $(MACHDEP) $(INCLUDE) $(WII_FLAGS)
+CFLAGS	= -O2 -Wall $(MACHDEP) $(INCLUDE) $(WIIFLAGS)
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS	=	$(MACHDEP) -Wl,-Map,$(notdir $@).map
