@@ -112,7 +112,7 @@ void DropShadowTest()
 			if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
 				vmode != VIDEO_576I)
 			{		
-				back[0] = LoadImage(MOTOKOIMG, 0);
+				back[0] = LoadImage(DONNAIMG, 0);
 				if(!back[0])
 					return;
 				
@@ -127,7 +127,7 @@ void DropShadowTest()
 			}
 			else
 			{	
-				back[0] = LoadImage(MOTOKO480IMG, 0);
+				back[0] = LoadImage(DONNA480IMG, 0);
 				if(!back[0])
 					return;
 				
@@ -339,7 +339,7 @@ void StripedSpriteTest()
 			if(vmode != VIDEO_480P && vmode != VIDEO_480I && 
 				vmode != VIDEO_576I)
 			{	
-				back[0] = LoadImage(MOTOKOIMG, 0);
+				back[0] = LoadImage(DONNAIMG, 0);
 				if(!back[0])
 					return;
 					
@@ -354,7 +354,7 @@ void StripedSpriteTest()
 			}
 			else
 			{	
-				back[0] = LoadImage(MOTOKO480IMG, 0);
+				back[0] = LoadImage(DONNA480IMG, 0);
 				if(!back[0])
 					return;
 	
