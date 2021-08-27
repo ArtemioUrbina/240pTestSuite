@@ -306,7 +306,7 @@ void DropShadowTest()
 			VDP_Start();
 			
 			VDP_setPalette(PAL0, palette_green);
-			VDP_setPalette(PAL1, motoko_pal);
+			VDP_setPalette(PAL1, donna_pal);
 			VDP_setPalette(PAL2, wb_pal);
 			VDP_setPalette(PAL3, buzz_pal);
 
@@ -377,11 +377,11 @@ void DropShadowTest()
 			case 0:
 				if(!redraw)
 				{
-					size = sizeof(motoko_tiles) / 32;
-					VDP_loadTileData(motoko_tiles, ind, size, USE_DMA);
-					VDP_setPalette(PAL1, motoko_pal);
+					size = sizeof(donna_tiles) / 32;
+					VDP_loadTileData(donna_tiles, ind, size, USE_DMA);
+					VDP_setPalette(PAL1, donna_pal);
 				}
-				VDP_setMyTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320 / 8, 224 / 8);
+				VDP_setMyTileMapRect(BPLAN, donna_map, ind, 0, 0, 320 / 8, 224 / 8);
 				break;
 			case 1:
 				if(!redraw)
@@ -605,7 +605,7 @@ void StripedSpriteTest()
 		if(loadvram)
 		{
 			VDP_Start();
-			VDP_setPalette(PAL1, motoko_pal);
+			VDP_setPalette(PAL1, donna_pal);
 			VDP_setPalette(PAL3, wb_pal);
 
 			sprite = TILE_USERINDEX;
@@ -646,10 +646,10 @@ void StripedSpriteTest()
 			switch (back)
 			{
 			case 0:
-				size = sizeof(motoko_tiles) / 32;
-				VDP_loadTileData(motoko_tiles, ind, size, USE_DMA);
-				VDP_setPalette(PAL1, motoko_pal);
-				VDP_setMyTileMapRect(BPLAN, motoko_map, ind, 0, 0, 320 / 8, 224 / 8);
+				size = sizeof(donna_tiles) / 32;
+				VDP_loadTileData(donna_tiles, ind, size, USE_DMA);
+				VDP_setPalette(PAL1, donna_pal);
+				VDP_setMyTileMapRect(BPLAN, donna_map, ind, 0, 0, 320 / 8, 224 / 8);
 				break;
 			case 1:
 				VDP_setPalette(PAL0, sonicback_pal);

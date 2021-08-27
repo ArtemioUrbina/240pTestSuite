@@ -87,10 +87,10 @@ extern u16 sonicwater3_pal[16/2];
 // Waterfall sprite
 extern u32 waterfall_tiles[512/4]; 
 
-// Motoko background
-extern u32 motoko_tiles[19424/4]; 
-extern u16 motoko_map[2240/2];
-extern u16 motoko_pal[16/2]; 
+// Donna background
+extern u32 donna_tiles[18272/4]; 
+extern u16 donna_map[2240/2];
+extern u16 donna_pal[16/2]; 
 
 //Striped Sprite
 extern u32 striped_tiles[512/4]; 
