@@ -80,7 +80,10 @@ void main()
 
 #include "tests_audio_aux.c"
 
+// This enables the ADPCM 32, 16, 8, 4 and 2 khz tests
+//#define ADPCMDEBUG
 #define SetupToneCommand(command) SetWaveFreq(0, PULSE_INTERNAL_FREQ); PlayCenter(0); vsync(); StopAudio(0); command;
+#define WaitFrameCommand(command) vsync(); StopAudio(0); command;
 
 void ChangeFilterMDF(int setValue)
 {
@@ -88,6 +91,27 @@ void ChangeFilterMDF(int setValue)
 	Set320H();
 }
 
+#ifdef CDROM
+#ifdef ADPCMDEBUG
+const unsigned char adpcm_val[5] = { 15, 14, 12, 8,  0 }; // ad_play values for 32, 16, 8, 4, 2 khz
+const unsigned char adpcm_len[5] = { 1,   2,  4, 8, 16 }; // lenths multiples of 280 frames
+
+void adpcmcycle()
+{
+	x3 = 0;
+	
+	do
+	{
+		WaitFrameCommand(ad_play(0, 64000, adpcm_val[x3], 0));
+		
+		//Wait for ADPCM to end
+		WaitNFrames(280*adpcm_len[x3]);
+		vsync();
+		x3 ++;
+	}while(x3 < 5);
+}
+#endif
+#endif
 
 void MDFourierExecute()
 {
@@ -125,13 +149,19 @@ void MDFourierExecute()
 	
 	// Wait PAUSE
 	WaitNFrames(4);
-		
-	// ADPCM
-	//
-	SetupToneCommand(ad_play(0, 64000, 15, 0));
+
+// ADPCM
+
+#ifndef ADPCMDEBUG		
+	WaitFrameCommand(ad_play(0, 64000, 15, 0));
 	
 	//Wait for ADPCM to end
 	WaitNFrames(280);
+	SetupToneCommand(vsync());
+#else
+	adpcmcycle();
+#endif
+	
 	SetupToneCommand(vsync());
 
 	clock_reset();
@@ -183,7 +213,7 @@ void MDFourier(int armed)
 	/* 	Some emulators and FPGA implementations
 		have issues with the first frame of the
 		first sound that is played back
-		Do so before the tests.
+		Make a decoy tone when eterion teh menu, before the tests.
 	*/
 	
 	SetWaveFreq(0, PULSE_SKIP_EMU);

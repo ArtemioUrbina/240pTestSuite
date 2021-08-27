@@ -61,9 +61,9 @@
 			TEST 
 */
 
-#incbin(motoko_map, "graphics/motoko_BAT.bin");
-#incbin(motoko_bg, "graphics/motoko_DATA.bin");
-#incbin(motoko_pal, "graphics/motoko_PAL.bin");
+#incbin(donna_map, "graphics/donna_BAT.bin");
+#incbin(donna_bg, "graphics/donna_DATA.bin");
+#incbin(donna_pal, "graphics/donna_PAL.bin");
 
 #incbin(sonic_map, "graphics/sonic_BAT.bin");
 #incbin(sonic_bg, "graphics/sonic_DATA.bin");

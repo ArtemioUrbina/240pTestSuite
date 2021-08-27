@@ -53,8 +53,8 @@ extern int LED_sp[];
 
 extern char MB512_map[];
 
-extern char motoko_map[];
-extern int motoko_bg[];
+extern char donna_map[];
+extern int donna_bg[];
 
 extern int palm_sp[];
 
@@ -73,7 +73,7 @@ extern int lagback_bg[];
 extern char cgrid_bg[];
 
 extern int MB512_pal[];
-extern int motoko_pal[];
+extern int donna_pal[];
 extern int lagback_pal[];
 extern int MB_pal[];
 extern int n_pal[];

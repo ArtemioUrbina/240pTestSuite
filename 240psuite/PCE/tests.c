@@ -85,9 +85,9 @@ void DropShadow(int strip)
 			{
 				case 0:
 #ifndef CDROM1
-					load_bat(0, motoko_map, 40, 3);
+					load_bat(0, donna_map, 40, 30);
 #else
-					cd_loadvram(GPHX_OVERLAY, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+					cd_loadvram(GPHX_OVERLAY, OFS_donna_BAT_bin, 0, SIZE_donna_BAT_bin);
 #endif
 					break;
 				case 1:
@@ -266,13 +266,13 @@ void RedrawDropShadow(int strip)
 	{
  		case 0:
 #ifndef CDROM1
-			load_background(motoko_bg, motoko_pal, motoko_map, 40, 30);
+			load_background(donna_bg, donna_pal, donna_map, 40, 30);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
-			cd_loaddata(GPHX_OVERLAY, OFS_motoko_PAL_bin, palCD, SIZE_motoko_PAL_bin); 
+			cd_loaddata(GPHX_OVERLAY, OFS_donna_PAL_bin, palCD, SIZE_donna_PAL_bin); 
 			load_palette(0, palCD, 16); 
-			cd_loadvram(GPHX_OVERLAY, OFS_motoko_DATA_bin, 0x1000, SIZE_motoko_DATA_bin);
-			cd_loadvram(GPHX_OVERLAY, OFS_motoko_BAT_bin, 0, SIZE_motoko_BAT_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_donna_DATA_bin, 0x1000, SIZE_donna_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_donna_BAT_bin, 0, SIZE_donna_BAT_bin);
 			RestoreGlobals();
 #endif
 			break;
