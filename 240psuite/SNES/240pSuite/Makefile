@@ -124,7 +124,7 @@ back.pic: back.bmp
 	@echo convert bitmap to palette 1... $(notdir $@)
 	$(GFXCONV) -pR! -pr -pc16 -po16 -n -gs8 -pe1 -fbmp -m $<
 	
-motoko.pic: motoko.bmp
+donna.pic: donna.bmp
 	@echo convert bitmap in 256 colors... $(notdir $@)
 	$(GFXCONV) -pR! -pc256 -n -gs8 -pe0 -fbmp -m $<
 	
@@ -221,7 +221,7 @@ convcolor_blk.pic: convcolor_blk.bmp
 	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 	
 
-bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic motoko.pic SMPTECB75.pic\
+bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic donna.pic SMPTECB75.pic\
 	SMPTECB100.pic monoscope.pic color.pic pluge.pic grayramp.pic colorbleed.pic\
 	colorbleedchk.pic 601701cb.pic sharpness.pic fullscreen.pic fullscreen256.pic\
 	hstripes.pic vstripes.pic fontback.pic check.pic sprites.pic 100IRE.pic\

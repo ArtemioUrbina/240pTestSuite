@@ -31,9 +31,9 @@ gillian_tiles:
 .incbin "gillian.pic"
 gillian_tiles_end:
 
-motoko_tiles1:
-.incbin "motoko.pic" read $6000
-motoko_tiles1_end:
+donna_tiles1:
+.incbin "donna.pic" read $6000
+donna_tiles1_end:
 
 .ends
 
@@ -67,13 +67,13 @@ gillian_pal:
 .incbin "gillian.pal"
 gillian_pal_end:
 
-motoko_map:
-.incbin "motoko.map"
-motoko_map_end:
+donna_map:
+.incbin "donna.map"
+donna_map_end:
 
-motoko_pal:
-.incbin "motoko.pal"
-motoko_pal_end:
+donna_pal:
+.incbin "donna.pal"
+donna_pal_end:
 
 SMPTECB75_map:
 .incbin "SMPTECB75.map"
@@ -172,25 +172,9 @@ sonicfloor_pal_end:
 font:
 .incbin "font.pic"
 
-motoko_tiles2:
-.incbin "motoko.pic" skip $6000
-motoko_tiles2_end:
-
-IRE100_map:
-.incbin "100IRE.map"
-IRE100_map_end:
-
-sonicback_map:
-.incbin "sonicback.map"
-sonicback_map_end:
-
-sonicfloor_map:
-.incbin "sonicfloor.map"
-sonicfloor_map_end:	
-
-nishka_map:
-.incbin "n_m.s"
-nishka_map_end:
+donna_tiles2:
+.incbin "donna.pic" skip $6000
+donna_tiles2_end:
 
 LEDsprites_pal:
 .incbin "LEDsprites.pal"
@@ -527,5 +511,25 @@ convcolor_blk_pal_end:
 convcolor_blk_tiles:
 .incbin "convcolor_blk.pic"
 convcolor_blk_tiles_end:
+
+.ends
+
+.section ".rodata10" superfree
+
+IRE100_map:
+.incbin "100IRE.map"
+IRE100_map_end:
+
+sonicback_map:
+.incbin "sonicback.map"
+sonicback_map_end:
+
+sonicfloor_map:
+.incbin "sonicfloor.map"
+sonicfloor_map_end:	
+
+nishka_map:
+.incbin "n_m.s"
+nishka_map_end:
 
 .ends

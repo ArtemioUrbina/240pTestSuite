@@ -880,19 +880,20 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Menu Pixel Art:"); pos ++;
 			drawText(4, pos, 7, "Asher"); pos ++;
 			drawText(3, pos, 6, "SDK:"); pos ++;
-			drawText(4, pos, 7, "PVSnesLib"); pos ++;
-			drawText(3, pos, 6, "SDK Consultor:"); pos ++;
-			drawText(4, pos, 7, "Alekmaul"); pos ++;
+			drawText(4, pos, 7, "PVSnesLib by Alekmaul"); pos ++;
+			drawText(3, pos, 6, "Monoscope Pattern:"); pos ++;
+			drawText(4, pos, 7, "Keith Raney"); pos ++;
+			drawText(3, pos, 6, "Donna Art:"); pos ++;
+			drawText(4, pos, 7, "Jose Salot (@pepe_salot)"); pos ++;
 			drawText(3, pos, 6, "Advisor:"); pos ++;
 			drawText(4, pos, 7, "Fudoh"); pos ++;
 			drawText(3, pos, 6, "Collaboration:"); pos ++;
-			drawText(4, pos, 7, "Konsolkongen, Drew"); pos ++;
-			drawText(4, pos, 7, "& shmups regulars"); pos ++;
+			drawText(4, pos, 7, "shmups regulars"); pos ++;
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(4, 4, 5, "Ver. 1.04");
-			drawText(19, 4, 7, "10/05/2021");
+			drawText(4, 4, 5, "Ver. 1.06b");
+			drawText(19, 4, 7, "20/08/2021");
 			drawText(10, 24, 5, "Dedicated to Elisa");
 			
 			EndDMA();	

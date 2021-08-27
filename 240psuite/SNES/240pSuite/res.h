@@ -31,10 +31,10 @@ extern char grid240_map, grid240_map_end;
 extern char grid_pal, grid_pal_end;
 extern char grid_map, grid_map_end;
 
-extern char motoko_tiles1, motoko_tiles1_end;
-extern char motoko_tiles2, motoko_tiles2_end;
-extern char motoko_pal, motoko_pal_end;
-extern char motoko_map, motoko_map_end;
+extern char donna_tiles1, donna_tiles1_end;
+extern char donna_tiles2, donna_tiles2_end;
+extern char donna_pal, donna_pal_end;
+extern char donna_map, donna_map_end;
 
 extern char SMPTECB75_tiles, SMPTECB75_tiles_end;
 extern char SMPTECB100_pal, SMPTECB100_pal_end;

@@ -81,7 +81,7 @@ void ControllerTest()
 			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
 			
 			drawText(8, 4, 6, "Controller Test");
-			drawText(6, 24, 6, "Use START+LEFT P1 to exit");
+			drawText(3, 24, 6, "Use START+LEFT P1 to exit");
 			
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
