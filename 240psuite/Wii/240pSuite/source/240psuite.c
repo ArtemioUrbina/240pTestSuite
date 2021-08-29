@@ -42,6 +42,7 @@ struct options_st Options = DEFAULT_OPTIONS;
 struct options_st DefaultOptions = DEFAULT_OPTIONS;
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
+void VideoPatternsMenu(ImagePtr title, ImagePtr sd);
 
 #ifdef WII_VERSION
 s8 HWButton = -1; 
@@ -91,25 +92,29 @@ int main(int argc, char **argv)
 		EndProgram = 1;
     }   
 	
-	sd->x = 221;
-    sd->y = 94;		
-				
 #ifdef WII_VERSION	
 	GetWiiRegion();
-#endif
 	
 	if(OffsetH || AspectRatio)
+	{
+		sd->x = 250;
+		sd->y = 80;	
 		ShowVideoWarning(sd);
+	}
+#endif
+	
+	sd->x = 200;
+    sd->y = 80;		
 		
 	while(!close && !EndProgram) 
 	{        
-        char	res[40];
+        char	res[100];
 		u8      r = 0xff;
 		u8      g = 0xff;
 		u8      b = 0xff;
 		u8   	c = 1;				    					   
-		u16     x = 40;
-		u16     y = 55;
+		u16     x = 60;
+		u16     y = 80;
         u32     pressed = 0;
 		
 		StartScene();
@@ -117,33 +122,28 @@ int main(int argc, char **argv)
 		DrawImage(Back);
         DrawImage(sd);
 		
-        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns >"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
-        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Manual Lag Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizontal Stripes"); y += fh; c++;    
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Diagonal test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
-		if(vmode == VIDEO_480P || vmode == VIDEO_480P_SL)
+        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video tests"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Hardware tools"); y += 4*fh; c++;
+		
+		GetVideoModeStr(res, 1);
+		if(ChangeVideoEnabled)
 		{
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, 
-				IsPAL ? "Alternating 288p/576i Test" : "Alternating 240p/480i Test"); y += fh; c++;
+			DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Video");
+			DrawStringS(x+6*fw, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
 		}
 		else
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, 
-				IsPAL ? "Alternating 288p/576i Test" : "Alternating 240p/480i Test"); y += fh; c++;
-		}        
-        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA,	sel == c ? 0x77 : 0xAA, "Video");
+			DrawStringS(x+6*fw, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, res); y += fh; c++;		
+		}
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Options"); y += fh; c++;
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); y += fh; c++;
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); 
 		
         GetVideoModeStr(res, 0);
-		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, res); y += fh; c++;
-		DrawStringS(x, y, r-0x40, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); 
+		DrawStringS(120, 200, r-0x40, g, b, res);
 		
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");
@@ -187,51 +187,34 @@ int main(int argc, char **argv)
 				case 1:
 					TestPatternsMenu(Back, sd);
 					break;
-				case 2:					
-					DropShadowTest();
+				case 2:
+					VideoPatternsMenu(Back, sd);
 					break;
 				case 3:
-					StripedSpriteTest();
+					SoundTest();
 					break;
 				case 4:
-					PassiveLagTest();
-					break;					
-				case 5:
-					LagTest();
-					break;					
+					break;
+				case 5:	
+					if(ChangeVideoEnabled)
+					{
+						Back->alpha = 0xaa;
+						SelectVideoMode(Back);
+						Back->alpha = 0xff;
+					}
+					break;
 				case 6:
-					ScrollTest();
+					{
+						Back->alpha = 0xaa;
+						ChangeOptions(Back);
+						Back->alpha = 0xff;
+					}
 					break;
 				case 7:
-					GridScrollTest();
-					break;
-				case 8:
-					DrawStripes();
-					break;
-				case 9:
-					DrawCheckBoard();
-					break;			
-				case 10:
-					DiagonalPatternTest();
-					break;
-				case 11:
-					LEDZoneTest();
-					break;
-				case 12:
-					if(vmode != VIDEO_480P && vmode != VIDEO_480P_SL)
-						Alternate240p480i();					
-					break;					
-				case 13:
-					SoundTest();
-					break;				
-				case 14:
 					HelpWindow(Back);
 					break;
-				case 15:
-					SelectVideoMode(Back);					
-					break;
-				case 16:
-					ChangeOptions(Back);
+				case 8:
+					DrawCredits(Back);
 					break;								
 			} 									
 		}
@@ -263,10 +246,11 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		u8      r = 0xff;
 		u8      g = 0xff;
 		u8      b = 0xff;
-		u8   	c = 1;				    					   
+		u8   	c = 1;
 		u16     x = 40;
 		u16     y = 55;
         u32     pressed = 0;
+		char	res[100];
 				
 		StartScene();
 		        
@@ -298,6 +282,8 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Convergence"); y += fh; c++;	
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
+		GetVideoModeStr(res, 0);
+		DrawStringS(120, 200, r-0x40, g, b, res);
 		if(VIDEO_HaveComponentCable())		
 			DrawStringS(215, 225, r, g,	 b, "Component");
 		
@@ -384,6 +370,131 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 				case 16:
 					close = 1;
 					break;
+			} 			            										
+		}
+	}
+
+	return;
+}
+
+void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
+{
+	int 	sel = 1, close = 0;		
+	
+	while(!close && !EndProgram) 
+	{		
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1;				    					   
+		u16     x = 40;
+		u16     y = 70;
+        u32     pressed = 0;
+		char	res[100];
+				
+		StartScene();
+		        
+		DrawImage(title);
+        DrawImage(sd);
+
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
+        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Timing & Reflex Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horiz/Vert Stripes"); y += fh; c++;    
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Diagonal test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
+		if(vmode == VIDEO_480P || vmode == VIDEO_480P_SL)
+		{
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, 
+				IsPAL ? "Alternating 288p/576i Test" : "Alternating 240p/480i Test"); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, 
+				IsPAL ? "Alternating 288p/576i Test" : "Alternating 240p/480i Test"); y += fh; c++;
+		}
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
+
+		GetVideoModeStr(res, 0);
+		DrawStringS(120, 200, r-0x40, g, b, res);
+		if(VIDEO_HaveComponentCable())		
+			DrawStringS(215, 225, r, g,	 b, "Component");
+		
+#ifdef WII_VERSION		
+		DrawStringS(215, 215.0f, r, g, b, wiiregion);
+#endif				
+				
+		EndScene();		
+        
+        ControllerScan();
+
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_START ) 		
+			DrawMenu = 1;	
+
+		if ( pressed & PAD_BUTTON_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & PAD_BUTTON_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }			
+			
+		if ( pressed & PAD_BUTTON_B ) 		
+			close = 1;	
+	
+		if (pressed & PAD_BUTTON_A)
+		{            
+			switch(sel)
+			{				
+				case 1:	
+					DropShadowTest();
+					break;
+				case 2:
+					StripedSpriteTest();
+					break;
+				case 3:
+					PassiveLagTest();
+					break;					
+				case 4:
+					TimingReflexTest();
+					break;					
+				case 5:
+					ScrollTest();
+					break;
+				case 6:
+					GridScrollTest();
+					break;
+				case 7:
+					DrawStripes();
+					break;
+				case 8:
+					DrawCheckBoard();
+					break;			
+				case 9:
+					DiagonalPatternTest();
+					break;
+				case 10:
+					LEDZoneTest();
+					break;
+				case 11:
+					if(vmode != VIDEO_480P && vmode != VIDEO_480P_SL)
+						Alternate240p480i();					
+					break;		
+				case 12:
+					close = 1;
+					break;			
 			} 			            										
 		}
 	}

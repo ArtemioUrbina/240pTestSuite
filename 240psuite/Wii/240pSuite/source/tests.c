@@ -457,7 +457,7 @@ void StripedSpriteTest()
 	FreeImage(&striped);
 }
 
-void LagTest()
+void TimingReflexTest()
 {
 	char			msg[60], strings[100];
 	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
@@ -679,7 +679,7 @@ void LagTest()
 		if (pressed & PAD_BUTTON_START)		
 		{
 			DrawMenu = 1;					
-			HelpData = MANUALLAG;
+			HelpData = TIMINGLAG;
 		}
 			
 		if (pressed & PAD_BUTTON_A)
@@ -817,7 +817,7 @@ void LagTest()
 			if (pressed & PAD_BUTTON_START)		
 			{
 				DrawMenu = 1;					
-				HelpData = MANUALLAG;
+				HelpData = TIMINGLAG;
 			}
 		}
 		FreeImage(&wall);
@@ -1285,7 +1285,7 @@ void SoundTest()
 		StartScene();
 		DrawImage(back);
 
-		DrawStringS(130, 60, 0xff, 0xff, 0xff, "Sound Test"); 
+		DrawStringS(130, 60, 0x00, 0xff, 0x00, "Sound Test"); 
 		DrawStringS(80, 120, 0xff, sel == 0 ? 0 : 0xff, sel == 0 ? 0 : 0xff, "Left Channel"); 
 		DrawStringS(120, 130, 0xff, sel == 1 ? 0 : 0xff, sel == 1 ? 0 : 0xff, "Center Channel");
 		DrawStringS(160, 120, 0xff, sel == 2 ? 0 : 0xff, sel == 2 ? 0 : 0xff, "Right Channel");

@@ -24,7 +24,7 @@
 
 void DropShadowTest();
 void StripedSpriteTest();
-void LagTest();
+void TimingReflexTest();
 void ScrollTest();
 void GridScrollTest();
 void DrawStripes();

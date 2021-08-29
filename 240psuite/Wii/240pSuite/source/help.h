@@ -41,7 +41,7 @@
 #define STRIPED			striped_txt
 #define GRIDSCROLL		gridscroll_txt
 #define SCROLL			scroll_txt
-#define MANUALLAG		manuallag_txt
+#define TIMINGLAG		timereflex_txt
 #define PASSIVELAG		passivelag_txt
 #define WHITEHELP 		white_txt
 #define COLOR601HELP	color601_txt
@@ -57,7 +57,6 @@
 #define CONVHELP		convergence_txt
 
 /* paste from here */
-
 extern char *alt240p_txt[];
 extern char *backlit_txt[];
 extern char *bleed_txt[];
@@ -74,7 +73,6 @@ extern char *grid_txt[];
 extern char *grid224_txt[];
 extern char *gridscroll_txt[];
 extern char *ire100_txt[];
-extern char *manuallag_txt[];
 extern char *monoscope_txt[];
 extern char *options_txt[];
 extern char *optionsgc_txt[];
@@ -87,10 +85,9 @@ extern char *SMPTEColor_txt[];
 extern char *sound_txt[];
 extern char *striped_txt[];
 extern char *stripes_txt[];
+extern char *timereflex_txt[];
 extern char *vmode_txt[];
 extern char *white_txt[];
-
-
 /* paste to here */
 
 void HelpWindow(ImagePtr screen);

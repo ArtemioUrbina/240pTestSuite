@@ -23,6 +23,7 @@
 #include "video.h"
 #include "options.h"
 #include "vi_encoder.h"
+#include <string.h>
 
 GXRModeObj Mode_240p;
 GXRModeObj Mode_480i;
@@ -372,6 +373,20 @@ void Set576iLine23Option(s8 set)
 	Options.PALline23 = set;
 }
 
+void padString(char *str)
+{
+	int  len = 0;
+	char buffer[100];
+	
+	len = strlen(str);
+	if(len > 32)
+		return;
+	memset(buffer, ' ', 100);
+    strncpy(buffer+32-len, str, 32);
+	strncpy(str, buffer, 32);
+	str[32] = '\0';
+}
+
 void GetVideoModeStr(char *res, int shortdesc)
 {
 	if(!shortdesc)
@@ -379,39 +394,40 @@ void GetVideoModeStr(char *res, int shortdesc)
 		switch(vmode)
 		{
 			case VIDEO_240P:
-				sprintf(res, "Video: 240p");				
+				sprintf(res, "320x240p");				
 				break;			
 			case VIDEO_480I_A240:
-				sprintf(res, "Video: 480i (scaled 240p)");
+				sprintf(res, "640x480i (scaled 240p)");
 				break;
 			case VIDEO_480I:
-				sprintf(res, "Video: 480i (Scaling disabled)");
+				sprintf(res, "640x480i (Scaling disabled)");
 				break;
 			case VIDEO_288P:
 				if(Options.PALScale576)
-					sprintf(res, "Video: 288p (stretched)");				
+					sprintf(res, "320x288p (stretched)");				
 				else
-					sprintf(res, "Video: 288p");				
+					sprintf(res, "320x288p");				
 				break;			
 			case VIDEO_576I_A264:
 				if(Options.PALScale576)
-					sprintf(res, "Video: 576i (scaled 264p stretched)");
+					sprintf(res, "640x576i (scaled 264p stretched)");
 				else
-					sprintf(res, "Video: 576i (scaled 264p)");
+					sprintf(res, "640x576i (scaled 264p)");
 				break;			
 			case VIDEO_576I:
 				if(Options.PALScale576)
-					sprintf(res, "Video: 576i (no scaling stretched)");
+					sprintf(res, "640x576i (no scaling stretched)");
 				else
-					sprintf(res, "Video: 576i (Scaling disabled)");
+					sprintf(res, "640x576i (Scaling disabled)");
 				break;
 			case VIDEO_480P:
-				sprintf(res, "Video: 480p (Scaling disabled)");
+				sprintf(res, "640x480p (Scaling disabled)");
 				break;
 			case VIDEO_480P_SL:
-				sprintf(res, "Video: 480p (scaled 240p)");
+				sprintf(res, "640x480p (scaled 240p)");
 				break;				
 		}
+		padString(res);
 	}
 	else
 	{

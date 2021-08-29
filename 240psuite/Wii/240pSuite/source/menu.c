@@ -1028,12 +1028,12 @@ void ShowVideoWarning(ImagePtr screen)
 				
 		if(OffsetH != 0)
 		{
-			DrawStringS(x, y, r, g, b, "-Horizontal Offset"); y += fh;
+			DrawStringS(x, y, r, g, b, "- Horizontal Offset"); y += fh;
 		}
 		
 		if(AspectRatio != 0)
 		{
-			DrawStringS(x, y, r, g, b, "-16:9 Aspect Ratio"); y += fh;
+			DrawStringS(x, y, r, g, b, "- 16:9 Aspect Ratio"); y += fh;
 		}
 				
 		DrawStringS(x, Back->y + fh*12, 0, g, b, "Press B to continue"); 
