@@ -42,16 +42,16 @@ void main()
 	EnabledSoft = EnabledSoft_g;
 	Enabled_C_BW = Enabled_C_BW_g;
 	
-	ManualLagTest();
+	ReflexTest();
 	
-	ToolItem = TOOL_MANUAL;
+	ToolItem = TOOL_REFLEX;
 	cd_execoverlay(MAIN_OVERLAY);
 }
 
 #endif
 
 
-void RedrawManualLagTest()
+void RedrawReflexTest()
 {
 	ResetVideo();
 	setupFont();
@@ -67,11 +67,11 @@ void RedrawManualLagTest()
 	set_color_rgb(1, 0, 0, 0);   
 #else
 #endif
-	ManualLagTestSprites();
-	ManualLagTestText();
+	ReflexTestSprites();
+	ReflexTestText();
 }
 
-void ManualLagTestSprites()
+void ReflexTestSprites()
 {
 	init_satb();
 	set_color_rgb(256, 0, 0, 0); 
@@ -92,7 +92,7 @@ void ManualLagTestSprites()
 }
 
 
-void ManualLagTestText()
+void ReflexTestText()
 {
 	set_font_pal(13);
 	put_string("Press \"I\" when the sprite is aligned", 2, 21);
@@ -107,7 +107,7 @@ void ManualLagTestText()
 	Center224in240();
 }
 
-void ManualLagTestResults()
+void ReflexTestResults()
 {	
 	redraw = 1;
 	end = 0;
@@ -123,7 +123,7 @@ void ManualLagTestResults()
 
 		if(redraw)
 		{
-			ManualLagTestResultsBack();
+			ReflexTestResultsBack();
 			
 			set_font_pal(14);
 			for(x2 = 0; x2 < 10; x2++)
@@ -192,19 +192,19 @@ void ManualLagTestResults()
 	}
 }
 
-void ManualLagTestResultsBack()
+void ReflexTestResultsBack()
 {
 	RedrawBG();
 	SetFontColors(13, RGB(3, 3, 3), RGB(0, 7, 0), 0);
 }
 
-void ManualLagTest()
+void ReflexTest()
 {
 	option = 0;
 	end = 0;
 
 #ifndef CDROM1			
-	showHelp(MANUALLAG_HELP);
+	showHelp(REFLEX_HELP);
 #endif
 	
 	speed = 1;
@@ -235,7 +235,7 @@ void ManualLagTest()
 		
         if(redraw)
         {
-			RedrawManualLagTest();
+			RedrawReflexTest();
             redraw = 0;
 			refresh = 1;
 			disp_sync_on();
@@ -243,7 +243,7 @@ void ManualLagTest()
 		
 		if(refresh)
 		{
-			RefreshManualLagTest();
+			RefreshReflexTest();
 			refresh = 0;
 		}
 		
@@ -280,7 +280,7 @@ void ManualLagTest()
 		
 		if (controller & JOY_RUN)
 		{
-			showHelp(MANUALLAG_HELP);
+			showHelp(REFLEX_HELP);
 			redraw = 1;
 		}
         
@@ -318,7 +318,7 @@ void ManualLagTest()
 				vary = 0;
 		}
 		
-		ManualLagTestClickRefresh();
+		ReflexTestClickRefresh();
 		
 		if(y > 132 + vary)
 		{
@@ -407,10 +407,10 @@ void ManualLagTest()
 	StopAudio(0);
 	
 	if(option > 9)
-		ManualLagTestResults();
+		ReflexTestResults();
 }
 
-void RefreshManualLagTest()
+void RefreshReflexTest()
 {
 	set_font_pal(13);
 	put_string("Audio:", 25, 2);
@@ -426,7 +426,7 @@ void RefreshManualLagTest()
 		put_string("rhythmic", 32, 3);
 }
 
-void ManualLagTestClickRefresh()
+void ReflexTestClickRefresh()
 {
 	for(x3 = 0; x3 < 10; x3++)
 	{

@@ -118,12 +118,12 @@ void main()
 				case LINEARITY_HELP:
 					display_linearity_00();
 					break;
-				case MANUALLAG_HELP:
+				case REFLEX_HELP:
 					bottom = 2;
 					if(right == 1)
-						display_manuallag_00();
+						display_reflex_00();
 					else if(right == 2)
-						display_manuallag_01();
+						display_reflex_01();
 					break;
 				case OPTIONS_HELP:
 				case OPTIONS_PAT_HELP:

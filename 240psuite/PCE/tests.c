@@ -621,9 +621,9 @@ void AudioSyncTest()
 	cd_execoverlay(TEST_SND_OVERLAY);
 }
 
-void ManualLagTest()
+void ReflexTest()
 {
-	ToolItem = TOOL_MANUAL;
+	ToolItem = TOOL_REFLEX;
 	cd_execoverlay(TEST_SND_OVERLAY);
 }
 

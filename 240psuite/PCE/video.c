@@ -416,6 +416,93 @@ void Set352H()
 #endif
 }
 
+void Set368H()
+{
+// maximum possible width at this frequency.
+//HSR     0303              starting at 2 cuts first tile
+//HDR     062D
+//VSR/VPR 0F02
+//VDR/VDW 00EF
+//VCR     0003
+
+#asm
+	lda	_xres_flags
+	sta	<cl	
+	
+	lda	#$20				; reset resource-usage flag
+	tsb	<irq_m				; to skip joystick read portion of vsync
+							; (temporarily disable VSYNC processing)
+	
+	lda	#$01				; dot-clock values, 256: 0, 320: 1, 512 2
+	ora	<cl
+	sta	color_ctrl			; dot-clock (x-resolution)
+
+	lda	#$0a				; HSR - 'Horizontal Sync Register' 
+	sta	<vdc_reg
+	sta	video_reg
+	asl	A
+	sax
+	lda	#$03				; 'HSW' Horizontal synchronous pulse width
+	sta	video_data_l
+	sta	_vdc,X
+	lda	#$03				; 'HDS' Horizontal display start position -1
+	sta	video_data_h
+	sta	_vdc+1,X
+
+
+	lda	#$0b				; HDR - 'Horizontal Display Register' 
+	sta	<vdc_reg
+	sta	video_reg
+	asl	A
+	sax
+	lda	#$2D				; 'HDW' Horizontal display width in tiles -1.				
+	sta	video_data_l
+	sta	_vdc,X
+	lda	#$06				; 'HDE' Horizontal display ending period -1.
+	sta	video_data_h
+	sta	_vdc+1,X
+	
+	lda   #$0C				; VPR - 'Vertical synchronous register'
+	sta   <vdc_reg
+	sta   video_reg
+	asl   A
+	tax
+	lda   #$02				; 'VSW' Vertical synchronous pulse width.
+	sta   video_data_l
+	sta   _vdc,X
+	lda   #$0F				; 'VDS' Vertical display start position -2.
+	sta   video_data_h
+	sta   _vdc+1,X
+	
+	lda   #$0D				; VDW - 'Vertical display register'
+	sta   <vdc_reg
+	sta   video_reg
+	asl   A
+	tax
+	lda   #$EF				; Vertical display width in pixels -1.
+	sta   video_data_l
+	sta   _vdc,X
+	
+	lda   #$0E				; VCR - 'Vertical display END position register'
+	sta   <vdc_reg
+	sta   video_reg
+	asl   A
+	tax
+	lda   #$03				; Vertical display end position.
+	sta   video_data_l
+	sta   _vdc,X
+
+
+	lda	#$20
+	trb	<irq_m				; re-enable VSYNC processing
+#endasm	
+
+	hres = 368;
+#ifndef HELP_OVL
+	AdjustVertical();
+#endif
+}
+
 
 // Soldier Blade Arcade Mode 256H
 // HSR 09 03

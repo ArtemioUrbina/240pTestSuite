@@ -33,7 +33,7 @@ void LagTest();
 void VScrollTest();
 void SoundTest();
 void AudioSyncTest();
-void ManualLagTest();
+void ReflexTest();
 
 void RedrawCheck(int res);
 void RedrawDropShadow();
@@ -46,11 +46,11 @@ void DrawCircle(int pos);
 void LoadNumbers();
 void VScrollTest();
 
-void RedrawManualLagTest();
-void ManualLagTestSprites();
-void ManualLagTestText();
-void ManualLagTestResults();
-void ManualLagTestResultsBack();
+void RedrawReflexTest();
+void ReflexTestSprites();
+void ReflexTestText();
+void ReflexTestResults();
+void ReflexTestResultsBack();
 
 void LoadWave(unsigned char chan, unsigned char *wave);
 void SetWaveFreq(unsigned char chan, unsigned int freq);

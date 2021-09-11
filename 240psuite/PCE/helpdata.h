@@ -31,7 +31,7 @@
 #define	DSHADOW_HELP		30
 #define	STRIPED_HELP		31
 #define PASSIVE_HELP		32
-#define	MANUALLAG_HELP		33
+#define	REFLEX_HELP			33
 #define	SCROLL_HELP			34
 #define	GRIDSCROLL_HELP		35
 #define HORI_STRIPES_HELP	36

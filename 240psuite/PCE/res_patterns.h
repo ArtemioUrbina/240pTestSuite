@@ -87,14 +87,8 @@
 #incbin(EBU_map, "graphics/EBUCB.fmp");
 #incchr_ex(EBU_bg, "graphics/EBUCB.pcx", 0, 0, 4, 2, 0);
 
-#incbin(linearity240_map, "graphics/linearity240.fmp");
-#incchr_ex(linearity240_bg, "graphics/linearity240.pcx", 0, 0, 4, 42, 0);
-
-#incbin(linearity224_map, "graphics/linearity224.fmp");
-#incchr_ex(linearity224_bg, "graphics/linearity224.pcx", 0, 0, 2, 83, 0);
-
-#incbin(linearity256_map, "graphics/linearity256.fmp");
-#incchr_ex(linearity256_bg, "graphics/linearity256.pcx", 0, 0, 4, 41, 0);
+#incbin(monoscope_map, "graphics/monoscope.fmp");
+#incchr_ex(monoscope_bg, "graphics/monoscope.pcx", 0, 0, 2, 61, 0);
 
 #incbin(sharpness_map, "graphics/sharpness.fmp");
 #incchr_ex(sharpness_bg, "graphics/sharpness.pcx", 0, 0, 4, 28, 0);
@@ -115,9 +109,7 @@
 #incpal(colorbleed_pal, "graphics/colorbleed.pcx", 0, 1);
 #incpal(SMPTE75_pal, "graphics/SMPTE75.pcx", 0, 1);
 #incpal(SMPTE100_pal, "graphics/SMPTE100.pcx", 0, 1);
-#incpal(linearity240_pal, "graphics/linearity240.pcx", 0, 1);
-#incpal(linearity224_pal, "graphics/linearity224.pcx", 0, 1);
-#incpal(linearity256_pal, "graphics/linearity256.pcx", 0, 1);
+#incpal(monoscope_pal, "graphics/monoscope.pcx", 0, 1);
 #incpal(pluge_pal, "graphics/pluge.pcx", 0, 1);
 #incpal(sharpness_pal, "graphics/sharpness.pcx", 0, 1);
 #incpal(convcolor_pal, "graphics/convcolor.pcx", 0, 1);

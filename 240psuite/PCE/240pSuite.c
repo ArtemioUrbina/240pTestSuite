@@ -33,6 +33,7 @@
 #include <sgx.h>
 #endif
 
+void RefreshCredits();
 void DrawCredits();
 void DisplaySystemInfo();
 void DrawIntro();
@@ -264,7 +265,7 @@ void RefreshVideoTests()
 	drawmenutext(0, "Drop Shadow Test");
 	drawmenutext(1, "Striped Sprite Test");
 	drawmenutext(2, "Lag Test");
-	drawmenutext(3, "Manual Lag Test");
+	drawmenutext(3, "Timing & Reflex Test");
 	drawmenutext(4, "Scroll Test");
 	drawmenutext(5, "Grid Scroll Test");
 	drawmenutext(6, "Vertical Stripes");
@@ -383,7 +384,7 @@ void VideoTests()
 					LagTest();
 					break;
 				case 3:
-					ManualLagTest();
+					ReflexTest();
 					break;
 				case 4:
 					ScrollTest();

@@ -26,7 +26,7 @@
 #ifdef SCDROM
 #define LOADER_OVERLAY 			1
 #define MAIN_OVERLAY 			2
-#define MANUALLAGSCD_OVERLAY	3
+#define REFLEXSCD_OVERLAY		3
 #define ADPCM_VOICE_OVL			4
 #define ADPCM_SWEEP_OVL			5
 #define ADPCM_8khz_OVL			6
@@ -63,7 +63,7 @@
 
 #define VIDEOTOOL		30
 #define	TOOL_PASSIVE	32
-#define TOOL_MANUAL		33
+#define TOOL_REFLEX		33
 #define TOOL_VSCROLL	35
 #define	TOOL_V_STRIPES	36
 #define	TOOL_H_STRIPES	37
@@ -135,6 +135,7 @@ extern int runmdf;
 
 void Set256H();
 void Set320H();
+void Set352H();
 void Set512H();
 
 void Set224p();

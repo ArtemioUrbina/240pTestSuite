@@ -71,14 +71,8 @@ extern char	grid352_224_map[];
 extern char grid512_224_map[];
 extern char grid512_240_map[];
 
-extern char linearity240_map[];
-extern int linearity240_bg[];
-
-extern char linearity224_map[];
-extern int linearity224_bg[];
-
-extern char linearity256_map[];
-extern int linearity256_bg[];
+extern char monoscope_map[];
+extern int monoscope_bg[];
 
 extern char sharpness_map[];
 extern int sharpness_bg[];
@@ -105,9 +99,7 @@ extern int SMPTE100_pal[];
 extern int SMPTE75_pal[];
 extern int cb601_pal[];
 extern int grid_pal[];
-extern int linearity240_pal[];
-extern int linearity224_pal[];
-extern int linearity256_pal[];
+extern int monoscope_pal[];
 extern int sharpness_pal[];
 extern int gray_pal[];
 extern int pluge_pal[];

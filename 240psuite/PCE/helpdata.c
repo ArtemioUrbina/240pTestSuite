@@ -501,115 +501,6 @@ linearity_00_08:	.db	"- Pattern fixed by paulb_nl"
 }
 
 
-void display_manuallag_00()
-{
-#asm
-	p_string	manuallag_00_00,20,4
-	__ldwi		14
-	call		_set_font_pal
-	p_string	manuallag_00_01,6,6
-	p_string	manuallag_00_02,6,7
-	p_string	manuallag_00_03,6,8
-	p_string	manuallag_00_04,6,9
-	p_string	manuallag_00_05,6,10
-	p_string	manuallag_00_06,6,11
-	p_string	manuallag_00_07,6,13
-	p_string	manuallag_00_08,6,14
-	p_string	manuallag_00_09,6,15
-	p_string	manuallag_00_10,6,16
-	p_string	manuallag_00_11,6,18
-	p_string	manuallag_00_12,6,19
-	p_string	manuallag_00_13,6,20
-	p_string	manuallag_00_14,6,21
-	rts
-
-manuallag_00_00:	.db	"MANUAL LAG TEST (1/2)"
-			.db	0
-manuallag_00_01:	.db	"WARNING: This evaluation is dependent on reflexes"
-			.db	0
-manuallag_00_02:	.db	"and/or rhythm more than anything. The visual and"
-			.db	0
-manuallag_00_03:	.db	"audio cues are the more revealing aspects which"
-			.db	0
-manuallag_00_04:	.db	"the user should consider, of course the interactive"
-			.db	0
-manuallag_00_05:	.db	"factor can give an experienced player the hang of"
-			.db	0
-manuallag_00_06:	.db	"the system when testing via different connections."
-			.db	0
-manuallag_00_07:	.db	"The main intention is to show a changing pattern"
-			.db	0
-manuallag_00_08:	.db	"on the screen, which can be complemented with"
-			.db	0
-manuallag_00_09:	.db	"audio. This should show to some degree any lag"
-			.db	0
-manuallag_00_10:	.db	"when processing the signal."
-			.db	0
-manuallag_00_11:	.db	"As an added feature, the user can click button I"
-			.db	0
-manuallag_00_12:	.db	"when the sprite is aligned with the one on the"
-			.db	0
-manuallag_00_13:	.db	"background, and the offset in frames from the"
-			.db	0
-manuallag_00_14:	.db	"actual intersection will be shown on screen. "
-			.db	0
-#endasm
-}
-
-
-void display_manuallag_01()
-{
-#asm
-	p_string	manuallag_01_00,20,4
-	__ldwi		14
-	call		_set_font_pal
-	p_string	manuallag_01_01,6,6
-	p_string	manuallag_01_02,6,7
-	p_string	manuallag_01_03,6,8
-	p_string	manuallag_01_04,6,9
-	p_string	manuallag_01_05,6,10
-	p_string	manuallag_01_06,6,11
-	p_string	manuallag_01_07,6,12
-	p_string	manuallag_01_08,6,14
-	p_string	manuallag_01_09,6,15
-	p_string	manuallag_01_10,6,16
-	p_string	manuallag_01_11,6,18
-	p_string	manuallag_01_12,6,19
-	p_string	manuallag_01_13,6,20
-	rts
-
-manuallag_01_00:	.db	"MANUAL LAG TEST (2/2)"
-			.db	0
-manuallag_01_01:	.db	"A one frame 1khz tone is played when audio is"
-			.db	0
-manuallag_01_02:	.db	"enabled and the sprites are aligned, and a 500hz"
-			.db	0
-manuallag_01_03:	.db	"tone is played when button I is pressed. This"
-			.db	0
-manuallag_01_04:	.db	"can be repeated ten times and the software will"
-			.db	0
-manuallag_01_05:	.db	"calculate the average. Whenever the button was"
-			.db	0
-manuallag_01_06:	.db	"pressed before the actual intersection frame, the"
-			.db	0
-manuallag_01_07:	.db	"result will be ignored (but still shown on screen)."
-			.db	0
-manuallag_01_08:	.db	"- SELECT can be used to change the direction"
-			.db	0
-manuallag_01_09:	.db	"of the sprite from vertical to horizontal, or"
-			.db	0
-manuallag_01_10:	.db	"display both at the same time"
-			.db	0
-manuallag_01_11:	.db	"Since a frame is around 16 ms (1000/60) in NTSC"
-			.db	0
-manuallag_01_12:	.db	"that value must be considered the general error"
-			.db	0
-manuallag_01_13:	.db	"when using the test results."
-			.db	0
-#endasm
-}
-
-
 void display_mdfourier_00()
 {
 #asm
@@ -837,6 +728,115 @@ pluge_01_05:	.db	"Please keep in mind that black levels are lower"
 pluge_01_06:	.db	"in other game consoles, they are just the lowest"
 			.db	0
 pluge_01_07:	.db	"values available in this system."
+			.db	0
+#endasm
+}
+
+
+void display_reflex_00()
+{
+#asm
+	p_string	reflex_00_00,16,4
+	__ldwi		14
+	call		_set_font_pal
+	p_string	reflex_00_01,6,6
+	p_string	reflex_00_02,6,7
+	p_string	reflex_00_03,6,8
+	p_string	reflex_00_04,6,9
+	p_string	reflex_00_05,6,10
+	p_string	reflex_00_06,6,11
+	p_string	reflex_00_07,6,13
+	p_string	reflex_00_08,6,14
+	p_string	reflex_00_09,6,15
+	p_string	reflex_00_10,6,16
+	p_string	reflex_00_11,6,18
+	p_string	reflex_00_12,6,19
+	p_string	reflex_00_13,6,20
+	p_string	reflex_00_14,6,21
+	rts
+
+reflex_00_00:	.db	"Timing & Reflex Test (1/2)"
+			.db	0
+reflex_00_01:	.db	"WARNING: This evaluation is dependent on reflexes"
+			.db	0
+reflex_00_02:	.db	"and/or rhythm more than anything. The visual and"
+			.db	0
+reflex_00_03:	.db	"audio cues are the more revealing aspects which"
+			.db	0
+reflex_00_04:	.db	"the user should consider, of course the interactive"
+			.db	0
+reflex_00_05:	.db	"factor can give an experienced player the hang of"
+			.db	0
+reflex_00_06:	.db	"the system when testing via different connections."
+			.db	0
+reflex_00_07:	.db	"The main intention is to show a changing pattern"
+			.db	0
+reflex_00_08:	.db	"on the screen, which can be complemented with"
+			.db	0
+reflex_00_09:	.db	"audio. This should show to some degree any lag"
+			.db	0
+reflex_00_10:	.db	"when processing the signal."
+			.db	0
+reflex_00_11:	.db	"As an added feature, the user can click button I"
+			.db	0
+reflex_00_12:	.db	"when the sprite is aligned with the one on the"
+			.db	0
+reflex_00_13:	.db	"background, and the offset in frames from the"
+			.db	0
+reflex_00_14:	.db	"actual intersection will be shown on screen. "
+			.db	0
+#endasm
+}
+
+
+void display_reflex_01()
+{
+#asm
+	p_string	reflex_01_00,16,4
+	__ldwi		14
+	call		_set_font_pal
+	p_string	reflex_01_01,6,6
+	p_string	reflex_01_02,6,7
+	p_string	reflex_01_03,6,8
+	p_string	reflex_01_04,6,9
+	p_string	reflex_01_05,6,10
+	p_string	reflex_01_06,6,11
+	p_string	reflex_01_07,6,12
+	p_string	reflex_01_08,6,14
+	p_string	reflex_01_09,6,15
+	p_string	reflex_01_10,6,16
+	p_string	reflex_01_11,6,18
+	p_string	reflex_01_12,6,19
+	p_string	reflex_01_13,6,20
+	rts
+
+reflex_01_00:	.db	"Timing & Reflex Test (2/2)"
+			.db	0
+reflex_01_01:	.db	"A one frame 1khz tone is played when audio is"
+			.db	0
+reflex_01_02:	.db	"enabled and the sprites are aligned, and a 500hz"
+			.db	0
+reflex_01_03:	.db	"tone is played when button I is pressed. This"
+			.db	0
+reflex_01_04:	.db	"can be repeated ten times and the software will"
+			.db	0
+reflex_01_05:	.db	"calculate the average. Whenever the button was"
+			.db	0
+reflex_01_06:	.db	"pressed before the actual intersection frame, the"
+			.db	0
+reflex_01_07:	.db	"result will be ignored (but still shown on screen)."
+			.db	0
+reflex_01_08:	.db	"- SELECT can be used to change the direction"
+			.db	0
+reflex_01_09:	.db	"of the sprite from vertical to horizontal, or"
+			.db	0
+reflex_01_10:	.db	"display both at the same time"
+			.db	0
+reflex_01_11:	.db	"Since a frame is around 16 ms (1000/60) in NTSC"
+			.db	0
+reflex_01_12:	.db	"that value must be considered the general error"
+			.db	0
+reflex_01_13:	.db	"when using the test results."
 			.db	0
 #endasm
 }

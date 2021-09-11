@@ -68,8 +68,8 @@ void main()
 		case HARDWARETOOL:
 			HardwareTests();
 			break;
-		case TOOL_MANUAL:
-			ManualLagTest();
+		case TOOL_REFLEX:
+			ReflexTest();
 			break;
 	}
 	if(ToolItem == HARDWARETOOL)
@@ -819,11 +819,11 @@ void AudioSyncTest()
 }
 
 #ifndef SCDROM
-#include "tests_manual.c"
+#include "tests_reflex.c"
 #else
-void ManualLagTest()
+void ReflexTest()
 {
-	cd_execoverlay(MANUALLAGSCD_OVERLAY);
+	cd_execoverlay(REFLEXSCD_OVERLAY);
 }
 #endif
 

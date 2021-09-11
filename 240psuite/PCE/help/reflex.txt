@@ -1,4 +1,4 @@
-              MANUAL LAG TEST (1/2)
+          Timing & Reflex Test (1/2)
 
 WARNING: This evaluation is dependent on reflexes
 and/or rhythm more than anything. The visual and
@@ -18,7 +18,7 @@ background, and the offset in frames from the
 actual intersection will be shown on screen. 
 
 
-              MANUAL LAG TEST (2/2)
+          Timing & Reflex Test (2/2)
 
 A one frame 1khz tone is played when audio is
 enabled and the sprites are aligned, and a 500hz

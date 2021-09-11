@@ -246,7 +246,7 @@ void RefreshTestPatterns()
 	drawmenutext(4, "Color Bars w/ Gray Ref");
 	drawmenutext(5, "Color Bleed Check");
 	drawmenutext(6, "Grids");
-	drawmenutext(7, "Linearity");
+	drawmenutext(7, "Monoscope");
 	drawmenutext(8, "Gray Ramp");
 	drawmenutext(9, "White & RGB Screen");
 	drawmenutext(10, "100 IRE");
@@ -764,11 +764,15 @@ void DrawGrid()
 
 void DrawLinearity()
 {
+	type = RES_320;
+	/*
 	type = FloatMenuRes320n256_224(1);
 	if(type == FLOAT_CANCEL)
 		return;
+	*/
 	redraw = 1;
 	end = 0;
+	color = 0;
 	while(!end)
 	{	
 		vsync();
@@ -779,49 +783,31 @@ void DrawLinearity()
 			
 			if(type == RES_320)
 			{
-				if(Enabled240p)
-				{
 #ifndef CDROM1
-					set_map_data(linearity240_map, 40, 30);
-					set_tile_data(linearity240_bg);
-					load_tile(0x1000);
-					load_map(0, 0, 0, 0, 40, 30);
-					load_palette(0, linearity240_pal, 1);  
+				set_map_data(monoscope_map, 46, 30);
+				set_tile_data(monoscope_bg);
+				load_tile(0x1000);
+				load_map(0, 0, 0, 0, 46, 30);
+				load_palette(0, monoscope_pal, 1);  
 #else
-					set_screen_size(SCR_SIZE_64x32); 
-					cd_loaddata(GPHX_OVERLAY, OFS_lin240_PAL_bin, palCD, SIZE_lin240_PAL_bin); 
-					set_bgpal(0, palCD); 
-					cd_loadvram(GPHX_OVERLAY, OFS_lin240_DATA_bin, 0x1000, SIZE_lin240_DATA_bin);
-					cd_loadvram(GPHX_OVERLAY, OFS_lin240_BAT_bin, 0x0000, SIZE_lin240_BAT_bin);
+				set_screen_size(SCR_SIZE_64x32); 
+				cd_loaddata(GPHX_OVERLAY, OFS_lin240_PAL_bin, palCD, SIZE_lin240_PAL_bin); 
+				set_bgpal(0, palCD); 
+				cd_loadvram(GPHX_OVERLAY, OFS_lin240_DATA_bin, 0x1000, SIZE_lin240_DATA_bin);
+				cd_loadvram(GPHX_OVERLAY, OFS_lin240_BAT_bin, 0x0000, SIZE_lin240_BAT_bin);
 #endif
-				}
-				else
-				{
-#ifndef CDROM1
-					set_map_data(linearity224_map, 40, 28);
-					set_tile_data(linearity224_bg);
-					load_tile(0x1000);
-					load_map(0, 0, 0, 0, 40, 28);
-					load_palette(0, linearity224_pal, 1);  
-#else
-					set_screen_size(SCR_SIZE_64x32); 
-					cd_loaddata(GPHX_OVERLAY, OFS_lin224_PAL_bin, palCD, SIZE_lin224_PAL_bin); 
-					set_bgpal(0, palCD); 
-					cd_loadvram(GPHX_OVERLAY, OFS_lin224_DATA_bin, 0x1000, SIZE_lin224_DATA_bin);
-					cd_loadvram(GPHX_OVERLAY, OFS_lin224_BAT_bin, 0x0000, SIZE_lin224_BAT_bin);
-#endif
-				}
-				Set320H();
+				Set368H();
 			}
 
+/*
 			if(type == RES_256)
 			{
 #ifndef CDROM1			
-				set_map_data(linearity256_map, 32, 28);
-				set_tile_data(linearity256_bg);
+				set_map_data(monoscope256_map, 32, 28);
+				set_tile_data(monoscope256_bg);
 				load_tile(0x1000);
 				load_map(0, 0, 0, 0, 32, 28);
-				load_palette(0, linearity256_pal, 1);  
+				load_palette(0, monoscope256_pal, 1);  
 #else
 				set_screen_size(SCR_SIZE_32x32); 
 				cd_loaddata(GPHX_OVERLAY, OFS_lin256_PAL_bin, palCD, SIZE_lin256_PAL_bin); 
@@ -832,12 +818,16 @@ void DrawLinearity()
 			
 				redraw = 0;
 				Set256H();
-				if(Enabled240p)
-				{
-					Set224p();
-					Enabled240p = 1;
-				}
 			}
+			*/
+			
+			/*
+			if(Enabled240p)
+			{
+				Set224p();
+				Enabled240p = 1;
+			}
+			*/
 			
 			redraw = 0;
 			disp_on();
@@ -847,20 +837,29 @@ void DrawLinearity()
 		
 		if (controller & JOY_RUN)
 		{
-			if(type == RES_256)
+		/*
+			if(Enabled240p)
 			{
-				if(Enabled240p)
-				{
-					if(!UseDefault)
-						Set240p();
-					else
-						Set239p();
-				}
+				if(!UseDefault)
+					Set240p();
+				else
+					Set239p();
 			}
-			showHelp(LINEARITY_HELP);
-			redraw = 1;
+			*/
+			//showHelp(LINEARITY_HELP);
+			//redraw = 1;
+		}
+		
+		if(controller & JOY_I)
+		{
+			color = !color;
+			if(color)
+				set_color_rgb(256, 7, 7, 7);
+			else
+				set_color_rgb(256, 0, 0, 0);
 		}
 
+/*
 		if(controller & JOY_SEL)
 		{
 			ntype = FloatMenuRes320n256_224(type);
@@ -868,18 +867,21 @@ void DrawLinearity()
 				type = ntype;
 			redraw = 1;
 		}
+		*/
 		
 		if (controller & JOY_II)
 			end = 1;
 	}
 
-	if(type == RES_256 && Enabled240p)
+/*
+	if(Enabled240p)
 	{
 		if(!UseDefault)
 			Set240p();
 		else
 			Set239p();
 	}
+	*/
 }
 
 void DrawSharpness()
