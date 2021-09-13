@@ -23,6 +23,7 @@
  
  */
 
+#define CREDIT_START 6
 
 extern unsigned char region;
 extern unsigned char cdrom;

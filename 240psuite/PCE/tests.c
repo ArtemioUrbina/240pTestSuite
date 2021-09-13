@@ -142,12 +142,12 @@ void DropShadow(int strip)
 			if(view)
 			{
 				view = 0;
-				put_string("Even frames", (back == 1) ? 0 : 26, 2);
+				put_string("Even frames", (back == 1) ? 0 : 2, 3);
 			}
 			else
 			{
 				view = 1;
-				put_string("Odd frames ", (back == 1) ? 0 : 26, 2);
+				put_string("Odd frames ", (back == 1) ? 0 : 2, 3);
 			}
 			text = 60;
 		}
@@ -313,7 +313,9 @@ void RedrawDropShadow(int strip)
 			load_palette(0, check_pal, 1);
 			break;
 	}
-	setupFont();
+	
+	SetFontColors(15, RGB(3, 3, 3), RGB(7, 0, 0), 0);
+	set_font_pal(15);
 	
 	init_satb();
 	

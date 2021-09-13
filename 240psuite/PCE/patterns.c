@@ -173,7 +173,7 @@ void main()
 					DrawGrid();
 					break;
 				case 7:
-					DrawLinearity();
+					DrawMonoscope();
 					break;
 				case 8:
 					DrawGray();
@@ -716,7 +716,10 @@ void DrawGrid()
 					break;
 				case RES_352:
 					set_screen_size(SCR_SIZE_64x32); 
-					cd_loadvram(GPHX_OVERLAY, OFS_grid352_240_BAT_bin, 0x0000, SIZE_grid352_240_BAT_bin);
+					if(Enabled240p)
+						cd_loadvram(GPHX_OVERLAY, OFS_grid352_240_BAT_bin, 0x0000, SIZE_grid352_240_BAT_bin);
+					else
+						cd_loadvram(GPHX_OVERLAY, OFS_grid352_224_BAT_bin, 0x0000, SIZE_grid352_224_BAT_bin);
 					break;
 				case RES_512:
 					set_screen_size(SCR_SIZE_64x32); 
@@ -762,17 +765,14 @@ void DrawGrid()
 }
 
 
-void DrawLinearity()
+void DrawMonoscope()
 {
-	type = RES_320;
-	/*
-	type = FloatMenuRes320n256_224(1);
-	if(type == FLOAT_CANCEL)
-		return;
-	*/
-	redraw = 1;
+	x1 = 1;  // fade color
+	x2 = 0;  // color changed
 	end = 0;
 	color = 0;
+	redraw = 1;
+	
 	while(!end)
 	{	
 		vsync();
@@ -781,53 +781,21 @@ void DrawLinearity()
 		{
 			ResetVideo();
 			
-			if(type == RES_320)
-			{
 #ifndef CDROM1
-				set_map_data(monoscope_map, 46, 30);
-				set_tile_data(monoscope_bg);
-				load_tile(0x1000);
-				load_map(0, 0, 0, 0, 46, 30);
-				load_palette(0, monoscope_pal, 1);  
+			set_map_data(monoscope_map, 46, 30);
+			set_tile_data(monoscope_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 46, 30);
+			load_palette(0, monoscope_pal, 1);  
 #else
-				set_screen_size(SCR_SIZE_64x32); 
-				cd_loaddata(GPHX_OVERLAY, OFS_lin240_PAL_bin, palCD, SIZE_lin240_PAL_bin); 
-				set_bgpal(0, palCD); 
-				cd_loadvram(GPHX_OVERLAY, OFS_lin240_DATA_bin, 0x1000, SIZE_lin240_DATA_bin);
-				cd_loadvram(GPHX_OVERLAY, OFS_lin240_BAT_bin, 0x0000, SIZE_lin240_BAT_bin);
+			set_screen_size(SCR_SIZE_64x32); 
+			cd_loaddata(GPHX_OVERLAY, OFS_monoscope_PAL_bin, palCD, SIZE_monoscope_PAL_bin); 
+			set_bgpal(0, palCD); 
+			cd_loadvram(GPHX_OVERLAY, OFS_monoscope_DATA_bin, 0x1000, SIZE_monoscope_DATA_bin);
+			cd_loadvram(GPHX_OVERLAY, OFS_monoscope_BAT_bin, 0x0000, SIZE_monoscope_BAT_bin);
 #endif
-				Set368H();
-			}
-
-/*
-			if(type == RES_256)
-			{
-#ifndef CDROM1			
-				set_map_data(monoscope256_map, 32, 28);
-				set_tile_data(monoscope256_bg);
-				load_tile(0x1000);
-				load_map(0, 0, 0, 0, 32, 28);
-				load_palette(0, monoscope256_pal, 1);  
-#else
-				set_screen_size(SCR_SIZE_32x32); 
-				cd_loaddata(GPHX_OVERLAY, OFS_lin256_PAL_bin, palCD, SIZE_lin256_PAL_bin); 
-				set_bgpal(0, palCD); 
-				cd_loadvram(GPHX_OVERLAY, OFS_lin256_DATA_bin, 0x1000, SIZE_lin256_DATA_bin);
-				cd_loadvram(GPHX_OVERLAY, OFS_lin256_BAT_bin, 0x0000, SIZE_lin256_BAT_bin);
-#endif
-			
-				redraw = 0;
-				Set256H();
-			}
-			*/
-			
-			/*
-			if(Enabled240p)
-			{
-				Set224p();
-				Enabled240p = 1;
-			}
-			*/
+			Set368H();
+			Center224in240();
 			
 			redraw = 0;
 			disp_on();
@@ -837,15 +805,6 @@ void DrawLinearity()
 		
 		if (controller & JOY_RUN)
 		{
-		/*
-			if(Enabled240p)
-			{
-				if(!UseDefault)
-					Set240p();
-				else
-					Set239p();
-			}
-			*/
 			showHelp(MONOSCOPE_HELP);
 			redraw = 1;
 		}
@@ -859,29 +818,35 @@ void DrawLinearity()
 				set_color_rgb(256, 0, 0, 0);
 		}
 
-/*
-		if(controller & JOY_SEL)
+		if(controller & JOY_UP)
 		{
-			ntype = FloatMenuRes320n256_224(type);
-			if(ntype != FLOAT_CANCEL)
-				type = ntype;
-			redraw = 1;
+			x1 ++;
+			if(x1 > 7)
+				x1 = 0;
+			x2 = 1;
 		}
-		*/
 		
-		if (controller & JOY_II)
+		if(controller & JOY_DOWN)
+		{
+			x1 --;
+			if(x1 < 0)
+				x1 = 7;
+			x2 = 1;
+		}
+		
+		if(x2)
+		{
+#ifndef CDROM1
+			set_color_rgb(5, x1, x1, x1);
+#else
+			set_color_rgb(2, x1, x1, x1);
+#endif
+			x2 = 0;
+		}
+		
+		if(controller & JOY_II)
 			end = 1;
 	}
-
-/*
-	if(Enabled240p)
-	{
-		if(!UseDefault)
-			Set240p();
-		else
-			Set239p();
-	}
-	*/
 }
 
 void DrawSharpness()

@@ -145,7 +145,9 @@ void Rewdraw512Menu()
 	load_palette(0, MB_pal, 1);  
 #endif
 	
+#ifndef HELP_OVL	
 	Center224in240();
+#endif
 }
 
 #ifndef HELP_OVL

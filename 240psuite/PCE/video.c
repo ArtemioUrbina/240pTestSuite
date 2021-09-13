@@ -92,8 +92,10 @@ void ResetVideo()
 	init_satb();
 	satb_update();
 			
+#ifndef HELP_OVL
 	ResetScroll();
 	Set320H();
+#endif
 
 	set_screen_size(SCR_SIZE_64x32);
 }
@@ -104,6 +106,7 @@ void disp_sync_on()
 	disp_on();
 }
 
+#ifndef HELP_OVL
 void ResetScroll()
 {
 	scroll(0, 0, 0, 0, 240, 0xC0);
@@ -112,16 +115,12 @@ void ResetScroll()
 	scroll(3, 0, 0, 0, 240, 0xC0);
 }
 
-
 void Center224in240()
 {
 	if(!Enabled240p)
-		scroll(0, 0, 6, 0, 240, 0xC0);
+		scroll(0, 0, 8, 0, 240, 0xC0);
 }
 
-
-
-#ifndef HELP_OVL
 
 void Set224p()
 {
@@ -323,9 +322,7 @@ void Set256H()
 #endasm	
 
 	hres = 256;
-#ifndef HELP_OVL	
 	AdjustVertical();
-#endif
 }
 
 
@@ -411,9 +408,7 @@ void Set352H()
 #endasm	
 
 	hres = 352;
-#ifndef HELP_OVL
 	AdjustVertical();
-#endif
 }
 
 void Set368H()
@@ -498,9 +493,7 @@ void Set368H()
 #endasm	
 
 	hres = 368;
-#ifndef HELP_OVL
 	AdjustVertical();
-#endif
 }
 
 
@@ -520,8 +513,6 @@ void spr_make(int spriteno, int spritex, int spritey, int spritepattern, int ctr
 	spr_pal(sprpal);
 	spr_pri(sprpri);
 }
-
-#endif // HELP_OVL
 
 void Set320H()
 {
@@ -571,10 +562,11 @@ void Set320H()
 #endasm	
 
 	hres = 320;
-#ifndef HELP_OVL
+
 	AdjustVertical();
-#endif
 }
+
+#endif // HELP_OVL
 
 void Set512H()
 {

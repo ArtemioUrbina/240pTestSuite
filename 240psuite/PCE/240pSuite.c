@@ -147,7 +147,7 @@ void main()
 				{
 					sel = HelpItem;
 					HelpItem = 0;
-					if(HelpItem < PATTERNSHELP)
+					if(sel != 5 && HelpItem < PATTERNSHELP)
 						controller = JOY_I;
 				}
 				else
@@ -623,11 +623,10 @@ void DrawN()
         {
 			ResetVideo();
 			Set256H();
+			scroll(0, -48, -72, 0, 240, 0xC0);		
 #ifndef CDROM1
-			scroll(0, -26, -47, 0, 240, 0xC0);		
-			load_background(n_bg, n_pal, n_map, 25, 18);
+			load_background(n_bg, n_pal, n_map, 20, 12);
 #else
-			scroll(0, 0, -32, 0, 240, 0xC0);
 			set_screen_size(SCR_SIZE_32x32); 
 
 			cd_loaddata(GPHX_OVERLAY, OFS_N_PAL_bin, palCD, SIZE_N_PAL_bin); 
@@ -679,11 +678,11 @@ void DrawCredits()
 		
 		set_font_pal(14);
 		if(i == 1)
-			put_string("Artemio Urbina      ", HPOS+2, 8);
+			put_string("Artemio Urbina      ", HPOS+2, CREDIT_START+1);
 		if(i == 60*4)
-			put_string("@Artemio (twitter)  ", HPOS+2, 8);
+			put_string("@Artemio (twitter)  ", HPOS+2, CREDIT_START+1);
 		if(i == 60*8)
-			put_string("aurbina@junkerhq.net", HPOS+2, 8);
+			put_string("aurbina@junkerhq.net", HPOS+2, CREDIT_START+1);
 		if(i == 60*16)
 			i = 0;
 			
@@ -704,7 +703,7 @@ void DrawCredits()
 
 void RefreshCredits()
 {
-	row = 7;
+	row = CREDIT_START;
 			
 	set_font_pal(15);
 	put_string("Code and Patterns:", HPOS+2, row++);
@@ -715,6 +714,17 @@ void RefreshCredits()
 	put_string("SDK:", HPOS+2, row++);
 	set_font_pal(14);
 	put_string("Enhanced HuC https://github.com/uli/huc", HPOS+2, row++);
+	row++;
+	
+	set_font_pal(15);
+	put_string("Monoscope:", HPOS+2, row++);
+	set_font_pal(14);
+	put_string("Keith Raney", HPOS+2, row++);
+	
+	set_font_pal(15);
+	put_string("Donna Art by:", HPOS+25, row-2);
+	set_font_pal(14);
+	put_string("Jose Salot (@pepe_salot)", HPOS+25, row-1);
 	row++;
 	
 	set_font_pal(15);
@@ -734,15 +744,11 @@ void RefreshCredits()
 	put_string("shmups regulars", HPOS+2, row++);
 	
 	set_font_pal(15);
-	put_string("Donna Art by:", HPOS+25, row-2);
+	put_string("Info on using this suite:", HPOS+25, row-2);
 	set_font_pal(14);
-	put_string("Jose Salot (@pepe_salot)", HPOS+25, row-1);
-	row++;
+	put_string("http://junkerhq.net/240p/", HPOS+25, row-1);
 	
-	set_font_pal(15);
-	put_string("Info on using this suite:", HPOS+2, row++);
-	set_font_pal(14);
-	put_string("http://junkerhq.net/240p/", HPOS+2, row++);
+	
 	set_font_pal(13);
 	put_string("This is free software and is open source under GPL.", HPOS+1, 23);
 

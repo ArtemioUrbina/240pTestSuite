@@ -511,40 +511,35 @@ void display_monoscope_00()
 	p_string	monoscope_00_08,6,16
 	p_string	monoscope_00_09,6,17
 	p_string	monoscope_00_10,6,18
-	p_string	monoscope_00_11,6,19
+	p_string	monoscope_00_11,6,20
 	p_string	monoscope_00_12,6,21
-	p_string	monoscope_00_13,6,22
 	rts
 
 monoscope_00_00:	.db	"MONOSCOPE (1/2)"
 			.db	0
-monoscope_00_01:	.db	"This pattern contains elements to calibrate"
+monoscope_00_01:	.db	"This pattern contains elements to calibrate multiple"
 			.db	0
-monoscope_00_02:	.db	"multiple aspects of a CRT."
+monoscope_00_02:	.db	"aspects of a CRT."
 			.db	0
-monoscope_00_03:	.db	"Read your monitor's service manual to learn how,"
+monoscope_00_03:	.db	"Read your monitor's service manual to learn how, and"
 			.db	0
-monoscope_00_04:	.db	"and use 'A' button to change IRE."
+monoscope_00_04:	.db	"use 'A' button to change IRE."
 			.db	0
 monoscope_00_05:	.db	"Brightness adjustment: Adjust convergence at low"
 			.db	0
-monoscope_00_06:	.db	"brightness (13/25 IRE). An overly bright pattern"
+monoscope_00_06:	.db	"brightness (13/25 IRE). An overly bright pattern can"
 			.db	0
-monoscope_00_07:	.db	"can mask convergence issues."
+monoscope_00_07:	.db	"mask convergence issues."
 			.db	0
-monoscope_00_08:	.db	"Convergence: Use the center crosshair to check"
+monoscope_00_08:	.db	"Convergence: Use the center crosshair to check static"
 			.db	0
-monoscope_00_09:	.db	"static (center of screen) convergence. Use the"
+monoscope_00_09:	.db	"(center of screen) convergence. Use the patterns at"
 			.db	0
-monoscope_00_10:	.db	"patterns at the sides to check dynamic (edge)"
+monoscope_00_10:	.db	"the sides to check dynamic (edge) convergence."
 			.db	0
-monoscope_00_11:	.db	"convergence."
+monoscope_00_11:	.db	"Corners: After setting center and edge convergence,"
 			.db	0
-monoscope_00_12:	.db	"Corners: After setting center and edge"
-			.db	0
-monoscope_00_13:	.db	"convergence, use magnets to adjust corner purity"
-			.db	0
-monoscope_00_14:	.db	"and geometry."
+monoscope_00_12:	.db	"use magnets to adjust corner purity and geometry."
 			.db	0
 #endasm
 }
@@ -560,32 +555,29 @@ void display_monoscope_01()
 	p_string	monoscope_01_02,6,7
 	p_string	monoscope_01_03,6,8
 	p_string	monoscope_01_04,6,9
-	p_string	monoscope_01_05,6,10
+	p_string	monoscope_01_05,6,11
 	p_string	monoscope_01_06,6,12
 	p_string	monoscope_01_07,6,13
-	p_string	monoscope_01_08,6,14
-	p_string	monoscope_01_09,6,16
+	p_string	monoscope_01_08,6,15
 	rts
 
 monoscope_01_00:	.db	"MONOSCOPE (2/2)"
 			.db	0
-monoscope_01_01:	.db	"Size and aspect ratio: If vertical and"
+monoscope_01_01:	.db	"Size and aspect ratio: If vertical and horizontal size"
 			.db	0
-monoscope_01_02:	.db	"horizontal size are correct, the red squares"
+monoscope_01_02:	.db	"are correct, the red squares in the pattern will be"
 			.db	0
-monoscope_01_03:	.db	"in the pattern will be perfect squares. After"
+monoscope_01_03:	.db	"perfect squares. After setting H size, use a tape"
 			.db	0
-monoscope_01_04:	.db	"setting H size, use a tape measure to adjust"
+monoscope_01_04:	.db	"measure to adjust V size to match it."
 			.db	0
-monoscope_01_05:	.db	"V size to match it."
+monoscope_01_05:	.db	"Linearity: The squares in each corner should get you"
 			.db	0
-monoscope_01_06:	.db	"Linearity: The squares in each corner should"
+monoscope_01_06:	.db	"started. Confirm your adjustment using the scroll"
 			.db	0
-monoscope_01_07:	.db	"get you started. Confirm your adjustment using"
+monoscope_01_07:	.db	"tests."
 			.db	0
-monoscope_01_08:	.db	"the scroll tests."
-			.db	0
-monoscope_01_09:	.db	"Designed by Keith Raney."
+monoscope_01_08:	.db	"Designed by Keith Raney."
 			.db	0
 #endasm
 }
