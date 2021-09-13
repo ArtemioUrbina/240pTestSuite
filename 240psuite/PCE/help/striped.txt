@@ -8,3 +8,5 @@ should be easy to tell if a processor tries to
 deinterlace (plus interpolate) or not.
 
 - You can change backgrounds with I.
+
+Donna art by Jose Salot

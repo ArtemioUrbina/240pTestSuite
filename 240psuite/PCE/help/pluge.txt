@@ -9,13 +9,13 @@ The pattern in this suite is mainly designed to
 adjust the black level. The control for setting
 this on your TV is usually named Brightness.
 
-This adjustment ensures that anything intended
-to be displayed is actually shown, and allows all
-detail to be seen on dark scenes.
+This allows all detail to be seen on dark scenes.
 
 - Button I changes the inner bars between the
 lowest B,G,R values and gray. You should use the
 blue one in order not to crush detail.
+
+
 
 
                    PLUGE (2/2)
@@ -27,5 +27,5 @@ until they are just visible, and go back one
 notch where they blend with the background.
 
 Please keep in mind that black levels are lower
-in other game consoles, they are just the lowest
+in other game consoles, these are just the lowest
 values available in this system.

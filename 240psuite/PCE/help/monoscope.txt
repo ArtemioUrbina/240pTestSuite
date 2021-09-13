@@ -4,7 +4,7 @@ This pattern contains elements to calibrate multiple
 aspects of a CRT.
 
 Read your monitor's service manual to learn how, and
-use 'A' button to change IRE.
+use Up/Down to change IRE.
 
 Brightness adjustment: Adjust convergence at low
 brightness (13/25 IRE). An overly bright pattern can

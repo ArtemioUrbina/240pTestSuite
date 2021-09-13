@@ -43,24 +43,23 @@ void display_check_00()
 	p_string	check_00_08,6,16
 	p_string	check_00_09,6,17
 	p_string	check_00_10,6,18
-	p_string	check_00_11,6,19
+	p_string	check_00_11,6,20
 	p_string	check_00_12,6,21
-	p_string	check_00_13,6,22
 	rts
 
 check_00_00:	.db	"CHECKERBOARD"
 			.db	0
 check_00_01:	.db	"This pattern shows all the visible pixels in an"
 			.db	0
-check_00_02:	.db	"alternating white and black grid array."
+check_00_02:	.db	"alternating b&w grid array."
 			.db	0
 check_00_03:	.db	"- You can switch between all supported resolutions"
 			.db	0
-check_00_04:	.db	"by pressing SELECT."
+check_00_04:	.db	"with SELECT."
 			.db	0
 check_00_05:	.db	"- You can toggle the pattern with L/R, or turn"
 			.db	0
-check_00_06:	.db	"on auto-toggle each frame with the I button."
+check_00_06:	.db	"on auto-toggle each frame with button I."
 			.db	0
 check_00_07:	.db	"When auto-toggle is set, you should see it"
 			.db	0
@@ -68,13 +67,11 @@ check_00_08:	.db	"alternating rapidly. On some setups, the pattern"
 			.db	0
 check_00_09:	.db	"doesn't change at all. This means that the signal"
 			.db	0
-check_00_10:	.db	"is being treated as 480i/576i and odd or even"
+check_00_10:	.db	"is being treated as interlaced."
 			.db	0
-check_00_11:	.db	"frames are being discarded completely."
+check_00_11:	.db	"- A frame counter can be displayed on screen by"
 			.db	0
-check_00_12:	.db	"- A frame counter can be displayed on screen by"
-			.db	0
-check_00_13:	.db	"pressing up on the d-pad."
+check_00_12:	.db	"pressing up on the d-pad."
 			.db	0
 #endasm
 }
@@ -287,6 +284,7 @@ void display_dshadow_00()
 	p_string	dshadow_00_09,6,17
 	p_string	dshadow_00_10,6,18
 	p_string	dshadow_00_11,6,20
+	p_string	dshadow_00_12,6,22
 	rts
 
 dshadow_00_00:	.db	"DROP SHADOW TEST"
@@ -312,6 +310,8 @@ dshadow_00_09:	.db	"- The user can toggle the frame used to draw the"
 dshadow_00_10:	.db	"shadow with SELECT. "
 			.db	0
 dshadow_00_11:	.db	"- Backgrounds can be switched with button I."
+			.db	0
+dshadow_00_12:	.db	"Donna art by Jose Salot"
 			.db	0
 #endasm
 }
@@ -483,7 +483,7 @@ mdfourier_00_01:	.db	"This test generates a series of audio signals that"
 			.db	0
 mdfourier_00_02:	.db	"are to be recorded and analyzed for comparison"
 			.db	0
-mdfourier_00_03:	.db	"with the MDFourier tool on a PC."
+mdfourier_00_03:	.db	"with the MDFourier tool on a computer."
 			.db	0
 mdfourier_00_04:	.db	"This allows detailed comparison of the signal"
 			.db	0
@@ -523,7 +523,7 @@ monoscope_00_02:	.db	"aspects of a CRT."
 			.db	0
 monoscope_00_03:	.db	"Read your monitor's service manual to learn how, and"
 			.db	0
-monoscope_00_04:	.db	"use 'A' button to change IRE."
+monoscope_00_04:	.db	"use Up/Down to change IRE."
 			.db	0
 monoscope_00_05:	.db	"Brightness adjustment: Adjust convergence at low"
 			.db	0
@@ -711,11 +711,9 @@ void display_pluge_00()
 	p_string	pluge_00_05,6,12
 	p_string	pluge_00_06,6,13
 	p_string	pluge_00_07,6,15
-	p_string	pluge_00_08,6,16
-	p_string	pluge_00_09,6,17
+	p_string	pluge_00_08,6,17
+	p_string	pluge_00_09,6,18
 	p_string	pluge_00_10,6,19
-	p_string	pluge_00_11,6,20
-	p_string	pluge_00_12,6,21
 	rts
 
 pluge_00_00:	.db	"PLUGE (1/2)"
@@ -732,17 +730,13 @@ pluge_00_05:	.db	"adjust the black level. The control for setting"
 			.db	0
 pluge_00_06:	.db	"this on your TV is usually named Brightness."
 			.db	0
-pluge_00_07:	.db	"This adjustment ensures that anything intended"
+pluge_00_07:	.db	"This allows all detail to be seen on dark scenes."
 			.db	0
-pluge_00_08:	.db	"to be displayed is actually shown, and allows all"
+pluge_00_08:	.db	"- Button I changes the inner bars between the"
 			.db	0
-pluge_00_09:	.db	"detail to be seen on dark scenes."
+pluge_00_09:	.db	"lowest B,G,R values and gray. You should use the"
 			.db	0
-pluge_00_10:	.db	"- Button I changes the inner bars between the"
-			.db	0
-pluge_00_11:	.db	"lowest B,G,R values and gray. You should use the"
-			.db	0
-pluge_00_12:	.db	"blue one in order not to crush detail."
+pluge_00_10:	.db	"blue one in order not to crush detail."
 			.db	0
 #endasm
 }
@@ -775,7 +769,7 @@ pluge_01_04:	.db	"notch where they blend with the background."
 			.db	0
 pluge_01_05:	.db	"Please keep in mind that black levels are lower"
 			.db	0
-pluge_01_06:	.db	"in other game consoles, they are just the lowest"
+pluge_01_06:	.db	"in other game consoles, these are just the lowest"
 			.db	0
 pluge_01_07:	.db	"values available in this system."
 			.db	0
@@ -1060,6 +1054,7 @@ void display_striped_00()
 	p_string	striped_00_04,6,10
 	p_string	striped_00_05,6,11
 	p_string	striped_00_06,6,13
+	p_string	striped_00_07,6,15
 	rts
 
 striped_00_00:	.db	"STRIPED SPRITE TEST"
@@ -1075,6 +1070,8 @@ striped_00_04:	.db	"should be easy to tell if a processor tries to"
 striped_00_05:	.db	"deinterlace (plus interpolate) or not."
 			.db	0
 striped_00_06:	.db	"- You can change backgrounds with I."
+			.db	0
+striped_00_07:	.db	"Donna art by Jose Salot"
 			.db	0
 #endasm
 }
