@@ -846,8 +846,8 @@ void DrawLinearity()
 					Set239p();
 			}
 			*/
-			//showHelp(LINEARITY_HELP);
-			//redraw = 1;
+			showHelp(MONOSCOPE_HELP);
+			redraw = 1;
 		}
 		
 		if(controller & JOY_I)

@@ -419,7 +419,7 @@ void Set352H()
 void Set368H()
 {
 // maximum possible width at this frequency.
-//HSR     0303              starting at 2 cuts first tile
+//HSR     0203              starting at 2 cuts first tile
 //HDR     062D
 //VSR/VPR 0F02
 //VDR/VDW 00EF
@@ -445,7 +445,7 @@ void Set368H()
 	lda	#$03				; 'HSW' Horizontal synchronous pulse width
 	sta	video_data_l
 	sta	_vdc,X
-	lda	#$03				; 'HDS' Horizontal display start position -1
+	lda	#$02				; 'HDS' Horizontal display start position -1
 	sta	video_data_h
 	sta	_vdc+1,X
 

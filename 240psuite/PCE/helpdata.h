@@ -13,7 +13,7 @@
 #define	COLOR601_HELP		14
 #define BLEED_HELP			15
 #define	GRID_HELP			16
-#define	LINEARITY_HELP		17
+#define	MONOSCOPE_HELP		17
 #define	GRAY_HELP			18
 #define	WHITE_HELP			19
 #define IRE100HELP			10

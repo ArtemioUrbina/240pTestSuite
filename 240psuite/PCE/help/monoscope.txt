@@ -1,0 +1,33 @@
+                 MONOSCOPE (1/2)
+
+This pattern contains elements to calibrate
+multiple aspects of a CRT.
+
+Read your monitor's service manual to learn how,
+and use 'A' button to change IRE.
+
+Brightness adjustment: Adjust convergence at low
+brightness (13/25 IRE). An overly bright pattern
+can mask convergence issues.
+
+Convergence: Use the center crosshair to check
+static (center of screen) convergence. Use the
+patterns at the sides to check dynamic (edge)
+convergence.
+
+Corners: After setting center and edge
+convergence, use magnets to adjust corner purity
+and geometry.
+                 MONOSCOPE (2/2)
+
+Size and aspect ratio: If vertical and
+horizontal size are correct, the red squares
+in the pattern will be perfect squares. After
+setting H size, use a tape measure to adjust
+V size to match it.
+
+Linearity: The squares in each corner should
+get you started. Confirm your adjustment using
+the scroll tests.
+
+Designed by Keith Raney.

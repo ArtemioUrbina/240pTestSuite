@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014-2020 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2021 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -679,11 +679,11 @@ void DrawCredits()
 		
 		set_font_pal(14);
 		if(i == 1)
-			put_string("Artemio Urbina      ", HPOS+2, 7);
+			put_string("Artemio Urbina      ", HPOS+2, 8);
 		if(i == 60*4)
-			put_string("@Artemio (twitter)  ", HPOS+2, 7);
+			put_string("@Artemio (twitter)  ", HPOS+2, 8);
 		if(i == 60*8)
-			put_string("aurbina@junkerhq.net", HPOS+2, 7);
+			put_string("aurbina@junkerhq.net", HPOS+2, 8);
 		if(i == 60*16)
 			i = 0;
 			
@@ -704,7 +704,7 @@ void DrawCredits()
 
 void RefreshCredits()
 {
-	row = 6;
+	row = 7;
 			
 	set_font_pal(15);
 	put_string("Code and Patterns:", HPOS+2, row++);
@@ -721,18 +721,22 @@ void RefreshCredits()
 	put_string("Menu Pixel Art:", HPOS+2, row++);
 	set_font_pal(14);
 	put_string("Asher", HPOS+2, row++);
-	row++;
 	
 	set_font_pal(15);
-	put_string("Advisor:", HPOS+2, row++);
+	put_string("Advisor:", HPOS+25, row-2);
 	set_font_pal(14);
-	put_string("Fudoh", HPOS+2, row++);
+	put_string("Fudoh", HPOS+25, row-1);
 	row++;
 	
 	set_font_pal(15);
 	put_string("Collaboration:", HPOS+2, row++);
 	set_font_pal(14);
 	put_string("shmups regulars", HPOS+2, row++);
+	
+	set_font_pal(15);
+	put_string("Donna Art by:", HPOS+25, row-2);
+	set_font_pal(14);
+	put_string("Jose Salot (@pepe_salot)", HPOS+25, row-1);
 	row++;
 	
 	set_font_pal(15);
@@ -740,16 +744,17 @@ void RefreshCredits()
 	set_font_pal(14);
 	put_string("http://junkerhq.net/240p/", HPOS+2, row++);
 	set_font_pal(13);
-	put_string("This is free software and is open source under GPL.", HPOS+1, row++);
+	put_string("This is free software and is open source under GPL.", HPOS+1, 23);
 
-	set_font_pal(14);	
-	put_string("Ver. 1.11", 50, 7);
-	put_string("05/06/2020", 49, 8);
+	set_font_pal(13);
+	put_string("Ver. 1.12", 50, 6);
+	set_font_pal(14);
+	put_string("12/09/2021", 49, 7);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;
-	put_string("System Card", 46, 9);
-	put_number(x, 1, 58, 9);
+	put_string("System Card", 46, 8);
+	put_number(x, 1, 58, 8);
 #endif
 
 	set_font_pal(15);

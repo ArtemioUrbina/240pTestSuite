@@ -115,8 +115,12 @@ void main()
 				case GRIDSCROLL_HELP:
 					display_gridscroll_00();
 					break;
-				case LINEARITY_HELP:
-					display_linearity_00();
+				case MONOSCOPE_HELP:
+					bottom = 2;
+					if(right == 1)
+						display_monoscope_00();
+					else if (right == 2)
+						display_monoscope_01();
 					break;
 				case REFLEX_HELP:
 					bottom = 2;
