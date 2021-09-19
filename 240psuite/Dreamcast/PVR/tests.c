@@ -24,7 +24,7 @@
 #include <dc/sound/sound.h>
 #include <dc/sound/sfxmgr.h>
 
-#ifdef USE_FFTW
+#ifndef NO_FFTW
 	#include <math.h>
 	#include <complex.h>
 	#include <fftw/fftw3.h>
@@ -122,13 +122,13 @@ void DropShadowTest()
         
 	        if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
 	        {		
-		        back[0] = LoadKMG("/rd/motoko.kmg.gz", 0);
+		        back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
 		        if(!back[0])
 			        return;
 	        }
 	        else
 	        {
-		        back[0] = LoadKMG("/rd/480/motoko-480.kmg.gz", 0);
+		        back[0] = LoadKMG("/rd/480/donna-480.kmg.gz", 0);
 		        if(!back[0])
 			        return;
         
@@ -342,7 +342,7 @@ void StripedSpriteTest()
         
 	        if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
 	        {		
-		        back[0] = LoadKMG("/rd/motoko.kmg.gz", 0);
+		        back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
 		        if(!back[0])
 			        return;
 		        back[1] = sonicback[0];
@@ -360,7 +360,7 @@ void StripedSpriteTest()
 	        }
 	        else
 	        {
-		        back[0] = LoadKMG("/rd/480/motoko-480.kmg.gz", 0);
+		        back[0] = LoadKMG("/rd/480/donna-480.kmg.gz", 0);
 		        if(!back[0])
 			        return;
 		        back[0]->scale = 0;
@@ -1983,7 +1983,7 @@ void Alternate240p480i()
 	FreeImage(&back);
 }
 
-#ifdef USE_FFTW
+#ifndef NO_FFTW
 
 #define CUE_FRAMES		5
 #define SECONDS_TO_RECORD	2

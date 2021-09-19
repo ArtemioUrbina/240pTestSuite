@@ -1142,7 +1142,7 @@ void DrawCredits(ImagePtr back)
 		y += fh;
 		DrawStringS(x+20, y, 0.0, .75, .75, "This program is free software and open source.");  y += fh;
                 DrawStringS(x+20, y, 0.0, .75, .75, "Source code is available under GPL.");  y += fh;
-#ifdef USE_FFTW
+#ifndef NO_FFTW
 		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "Includes the #GFastest Fourier Transform in the West#G"); y += fh;
 		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "http://www.fftw.org/"); y += fh;
 #endif

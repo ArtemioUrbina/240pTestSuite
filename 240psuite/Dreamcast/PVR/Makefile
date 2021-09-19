@@ -1,11 +1,25 @@
 TARGET = main
+OPT = -O3
 
-#optional -DUSE_FFTW -DSERIAL 
-CFLAGS=-O3 -fomit-frame-pointer -DDREAMCAST -DUSE_FFTW 
+#Full release compile
+all: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST
+all: LDFLAGS = -lfftw3
+all: $(TARGET).bin
+
+#Serial debug compile (exit to dcloader)
+serial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DSERIAL
+serial: LDFLAGS = -lfftw3
+serial: $(TARGET).bin
+
+#Release without FFTW
+nofft: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW
+nofft: $(TARGET).bin
+
+#Serial debug compile (exit to dcloader) without FFTW
+nofftserial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DSERIAL
+nofftserial: $(TARGET).bin
 
 KOS_CFLAGS+= $(CFLAGS) 
-
-all: $(TARGET).bin
 
 include $(KOS_BASE)/Makefile.rules
 
@@ -49,13 +63,7 @@ kmg:
 	rm -f romdisk.o romdisk.img
 
 romdisk.img:
-	#mv romdisk/.svn svn
-	#mv romdisk/480/.svn 480svn
-	#mv romdisk/help/.svn helpsvn
 	$(KOS_GENROMFS) -f romdisk.img -d romdisk -v
-	#mv svn romdisk/.svn 
-	#mv 480svn romdisk/480/.svn 
-	#mv helpsvn romdisk/help/.svn 
 
 romdisk.o: romdisk.img
 	$(KOS_BASE)/utils/bin2o/bin2o romdisk.img romdisk romdisk.o
@@ -67,14 +75,14 @@ $(OBJS): $(HEADERS) romdisk.o
 
 $(TARGET).elf: $(OBJS) romdisk.o 
 	$(KOS_CC) $(KOS_CFLAGS) $(KOS_LDFLAGS) romdisk.o -o $(TARGET).elf $(KOS_START) \
-	$(OBJS) -lz -lkmg -lkosutils -lfftw3 -lm $(OBJEXTRA) $(KOS_LIBS) 
+	$(OBJS) -lz -lkmg -lkosutils $(LDFLAGS) -lm $(OBJEXTRA) $(KOS_LIBS) 
 
 $(TARGET).bin: $(TARGET).elf
 	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin
 #	strip $(TARGET).elf
 
 run: $(TARGET).bin
-	$(KOS_LOADER) $(TARGET).bin -t 192.168.1.251
+	$(KOS_LOADER) $(TARGET).bin 
 
 cdi: $(TARGET).bin
 	scramble $(TARGET).bin 1ST_READ.BIN

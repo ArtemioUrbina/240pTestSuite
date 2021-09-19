@@ -34,7 +34,7 @@ void LEDZoneTest();
 void PassiveLagTest();
 void DiagonalPatternTest();
 void Alternate240p480i();
-#ifdef USE_FFTW
+#ifndef NO_FFTW
 void SIPLagTest();
 double ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq);
 #endif
