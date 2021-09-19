@@ -42,7 +42,7 @@ vid_mode_t custom_240 =
 	PM_RGB565,
 	262, // Number of scanlines. 262 default
 	857, // Clocks per scanline. 
-	157, // Bitmap X, 157 brings it to 35 2/3 uS centering the signal, 168 is used by the BIOS as documented by Moopthehedgehog
+	164, // Bitmap X, 157 brings it to 35 2/3 uS centering the signal, 168 is used by the BIOS as documented by Moopthehedgehog (153)
 	18, // Bitmap Y 18 starts at NTSC line 22, according to spec
 	21, // First scanline interrupt position. 21 default
 	260, // Second scanline interrupt position (automatically doubled for VGA) 
@@ -56,7 +56,7 @@ vid_mode_t custom_240 =
 
 
 vid_mode_t custom_288 = 
-{
+{	// DM_320x240_PAL
 	DM_320x240,
 	320, // Width
 	264, // Height
