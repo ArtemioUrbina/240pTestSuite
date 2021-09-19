@@ -29,6 +29,7 @@ void DrawColorBars();
 void DrawColorBleed();
 void Draw601ColorBars();
 void DrawGrid(int full);
+void DrawMonoscope();
 void DrawLinearity(int full);
 void Draw100IRE();
 void DrawSMPTEColorBars();

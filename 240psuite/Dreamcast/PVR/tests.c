@@ -1992,7 +1992,6 @@ void Alternate240p480i()
 #define	FFT_OM			-5000
 #define	FFT_NOT_FOUND		-500
 
-#define DEBUG_FFT
 
 typedef struct recording {
 	uint8	*buffer;

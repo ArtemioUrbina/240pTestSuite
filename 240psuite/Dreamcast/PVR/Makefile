@@ -7,7 +7,7 @@ all: LDFLAGS = -lfftw3
 all: $(TARGET).bin
 
 #Serial debug compile (exit to dcloader)
-serial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DSERIAL
+serial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DSERIAL -DBENCHMARK -DDEBUG_FFT
 serial: LDFLAGS = -lfftw3
 serial: $(TARGET).bin
 
@@ -16,7 +16,7 @@ nofft: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW
 nofft: $(TARGET).bin
 
 #Serial debug compile (exit to dcloader) without FFTW
-nofftserial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DSERIAL
+nofftserial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DSERIAL -DBENCHMARK -DDEBUG_FFT
 nofftserial: $(TARGET).bin
 
 KOS_CFLAGS+= $(CFLAGS) 

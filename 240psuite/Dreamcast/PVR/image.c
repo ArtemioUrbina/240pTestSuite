@@ -266,15 +266,25 @@ void IgnoreOffset(ImagePtr image)
 
 ImagePtr LoadKMG(const char *filename, int maptoscreen)
 {	
-	int load, len;
+	int load = -1, len;
 	ImagePtr image;
 	kos_img_t img;
+	file_t testFile;
 #ifdef BENCHMARK
 	uint32 start, end;
 	char	msg[100];
-		
+
 	timer_ms_gettime(NULL, &start);
 #endif
+
+	testFile = fs_open(filename, O_RDONLY);
+	if(testFile == -1)
+	{
+		fprintf(stderr, "Could not find image file %s in filesystem\n", filename);
+		return(NULL);
+	}
+	fs_close(testFile);
+
 	image = (ImagePtr)malloc(sizeof(struct image_st));
 	if(!image)
 	{
@@ -285,8 +295,13 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	len = strlen(filename);
 	if(filename[len - 2] == 'g' && filename[len - 1] == 'z')
 		load = gkmg_to_img(filename, &img);
-	else
+	if(filename[len - 3] == 'k' && filename[len - 2] == 'm' && filename[len - 2] == 'g')
 		load = kmg_to_img(filename, &img);
+#ifdef USE_PNG
+	if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
+		load = png_to_img(filename, PNG_MASK_ALPHA, &img);
+#endif
+
 	if(load != 0)
 	{
 		free(image);
@@ -351,7 +366,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 
 uint8 ReLoadKMG(ImagePtr image, const char *filename)
 {	
-	int load, len;
+	int load = -1, len;
 	kos_img_t img;
 #ifdef BENCHMARK
 	uint32 start, end;
@@ -374,8 +389,13 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 	len = strlen(filename);
 	if(filename[len - 2] == 'g' && filename[len - 1] == 'z')
 		load = gkmg_to_img(filename, &img);
-	else
+	if(filename[len - 3] == 'k' && filename[len - 2] == 'm' && filename[len - 2] == 'g')
 		load = kmg_to_img(filename, &img);
+#ifdef USE_PNG
+	if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
+		load = png_to_img(filename, PNG_MASK_ALPHA, &img);
+#endif
+
 	if(load != 0)
 	{
 		fprintf(stderr, "Could not load %s\n", filename);

@@ -710,6 +710,58 @@ void DrawGrid(int full)
 	return;
 }
 
+void DrawMonoscope()
+{
+	int 		done = 0;
+	uint16		pressed;		
+	ImagePtr	back, rlines;
+	controller	*st;
+
+	back = LoadKMG("/rd/monoscope.kmg.gz", 0);
+	if(!back)
+		return;
+
+	rlines = LoadKMG("/rd/monoscope_lin.kmg.gz", 0);
+	if(!rlines)
+		return;
+		
+	updateVMU("Monoscope", "", 1);
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		DrawImage(back);
+		DrawImage(rlines);
+		EndScene();
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;
+
+			if (pressed & CONT_START)
+				ShowMenu(MONOSCOPEHELP);
+
+			if (pressed & CONT_LTRIGGER)
+			{
+				back->alpha -= 0.1f;
+				if(back->alpha < 0.0f)
+					back->alpha = 0.0f;
+			}
+		
+			if (pressed & CONT_RTRIGGER)
+			{
+				back->alpha += 0.1f;
+				if(back->alpha > 1.0f)
+					back->alpha = 1.0f;
+			}
+		}
+	}
+	FreeImage(&back);
+	FreeImage(&rlines);
+	return;
+}
+
 void DrawLinearity(int full)
 {
 	int 		done = 0, oldvmode = vmode, gridmode = 0;
@@ -950,55 +1002,55 @@ void Draw100IRE()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-     			if (pressed & CONT_LTRIGGER)
+			if (pressed & CONT_LTRIGGER)
 			{
-      				if(!invert)
-        			{
+				if(!invert)
+				{
 					back->alpha -= 0.1f;
 				  	if(back->alpha < 0.0f)
 						back->alpha = 0.0f;
-        			}
-        			else
-        			{
-        				back->alpha += 0.125;
-				  	if(back->alpha > 1.0f)
+				}
+				else
+				{
+					back->alpha += 0.125;
+					if(back->alpha > 1.0f)
 						back->alpha = 1.0f;
-        			}
+				}
 
 				text = 30;
 			}
 		
-     			if (pressed & CONT_RTRIGGER)
+			if (pressed & CONT_RTRIGGER)
 			{
-      				if(!invert)
-        			{
+				if(!invert)
+				{
 					back->alpha += 0.1f;
-				  	if(back->alpha > 1.0f)
+					if(back->alpha > 1.0f)
 						back->alpha = 1.0f;
-        			}
-        			else
-        			{
-        				back->alpha -= 0.125f;
-				  	if(back->alpha < 0.0f)
+				}
+				else
+				{
+					back->alpha -= 0.125f;
+					if(back->alpha < 0.0f)
 						back->alpha = 0.0f;
-        			}
+				}
 
 				text = 30;
 			}
 
-     			if (pressed & CONT_A)
-      			{
+			if (pressed & CONT_A)
+			{
 				invert = !invert;
-        			back->alpha = 1.0f;
+				back->alpha = 1.0f;
 				text = 60;
 				if(!invert)
 					updateVMU(" 100 IRE ", "", 1);
 				else
 					updateVMU(" 140 IRE ", "", 1);
-      			}
+			}
 		
 			if (pressed & CONT_B)
-				done =	1;											
+				done =	1;
 
 			if (pressed & CONT_START)
 				ShowMenu(IREHELP);
