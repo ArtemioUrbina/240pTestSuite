@@ -85,7 +85,7 @@ void DrawPluge()
 
 		StartScene();
 
-		DrawImage(black);  
+		DrawImage(black);
 		DrawImage(back);
 		
 		if(ShowHelp)
@@ -97,39 +97,39 @@ void DrawPluge()
 			highlight->y = 39;
 						
 			DrawStringB(14, 205, 1.0f, 0.0f, 0, back == backNTSC ? "10" : "7");
-			highlight->x = 14;			
+			highlight->x = 14;
 			DrawImage(highlight);
 						
 			highlight->r = 0.0f;
-			highlight->g = 1.0f;							
+			highlight->g = 1.0f;
 			DrawStringB(44, 205, 1.0f, 0.0f, 0, back == backNTSC ? "7.5" : "4");
-			highlight->x = 44;			
+			highlight->x = 44;
 			DrawImage(highlight);
 						
 			highlight->r = 1.0f;
-			highlight->g = 0.0f;							
+			highlight->g = 0.0f;
 			DrawStringB(74, 205, 1.0f, 0.0f, 0, back == backNTSC ? "4" : "0");
-			highlight->x = 74;			
+			highlight->x = 74;
 			DrawImage(highlight);
 			
 			
 			highlight->r = 1.0f;
 			highlight->g = 0.0f;							
 			DrawStringB(228, 205, 1.0f, 0.0f, 0, back == backNTSC ? "4" : "0");
-			highlight->x = 228;			
+			highlight->x = 228;
 			DrawImage(highlight);
 						
 			highlight->r = 0.0f;
-			highlight->g = 1.0f;							
+			highlight->g = 1.0f;
 			DrawStringB(259, 205, 1.0f, 0.0f, 0, back == backNTSC ? "7.5" : "4");
-			highlight->x = 259;			
+			highlight->x = 259;
 			DrawImage(highlight);
 			
 			highlight->r = 1.0f;
 			highlight->g = 0.0f;
 			highlight->b = 0.0f;	
 			DrawStringB(289, 205, 1.0f, 0.0f, 0, back == backNTSC ? "10" : "7");
-			highlight->x = 289;			
+			highlight->x = 289;
 			DrawImage(highlight);
 
 			ShowHelp--;
@@ -148,7 +148,7 @@ void DrawPluge()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;								
+				done =	1;
 
 			if (pressed & CONT_START)
 				ShowMenu(PLUGEHELP);
@@ -1116,14 +1116,14 @@ void DrawSharpness()
 	{		
 		StartScene();
 		DrawImage(back);
-			EndScene();
+		EndScene();
 		
 		st = ReadController(0, &pressed);
 		if(st)
 		{
 			if (pressed & CONT_START )
 				ShowMenu(SHARPNESSHELP);
-			
+
 			if (pressed & CONT_B)
 				done =	1;
 		}
@@ -1138,7 +1138,7 @@ void DrawOverscan()
 	int 		done = 0, oLeft = 0, oTop = 0, 
 				oRight = 0, oBottom = 0, 
 				sel = 0, oldvmode = vmode, reset = 0;
-	uint16		pressed;		
+	uint16		pressed;
 	ImagePtr	square, border;	
 	char		msg[50];
 	controller	*st;

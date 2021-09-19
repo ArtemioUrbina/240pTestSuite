@@ -44,14 +44,14 @@ uint8 EndProgram = 0;
 uint DrawMenu = 0;
 extern char *HelpData;
 ImagePtr fbtexture = NULL;
-uint16  *fbtextureBuffer = NULL;
+uint16	*fbtextureBuffer = NULL;
 
 #define FB_TEX_H	1024
 #define FB_TEX_V	512
 #define FB_TEX_BYTES	sizeof(uint16)
 
 #define rotr(value, shift) \
-    (value >> shift) | (value << (16 - shift))
+	(value >> shift) | (value << (16 - shift))
 
 struct settings_st settings = DEFAULT_OPTIONS;
 struct settings_st default_settings = DEFAULT_OPTIONS;
@@ -86,7 +86,7 @@ void InitTextureFB()
 
 	if(!fbtexture->tex)
 	{
-		fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); //Min  size for 640x480
+		fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); //Min	size for 640x480
 		if(!fbtexture->tex)
 		{
 			FreeTextureFB();
@@ -109,7 +109,7 @@ void InitTextureFB()
 	fbtexture->r = 1.0f;
 	fbtexture->g = 1.0f;
 	fbtexture->b = 1.0f;
-    
+	
 	fbtexture->tw = FB_TEX_H;
 	fbtexture->th = FB_TEX_V;
 	fbtexture->x = 0;
@@ -156,11 +156,11 @@ uint8 ReloadFBTexture()
 void CopyFBToBG()
 {
 	int 	i, numpix, w, tw, th;
-	uint16  npixel;
-	uint32  save;
-	uint32  pixel;  
-	uint16  *fbcopy = NULL;
-	uint16  r, g, b;
+	uint16	npixel;
+	uint32	save;
+	uint32	pixel;	
+	uint16	*fbcopy = NULL;
+	uint16	r, g, b;
 #ifdef BENCHMARK
 	uint32 start, end;
 	char	msg[100];
@@ -262,7 +262,7 @@ void ShowMenu(char *filename)
 void ShowHelpWindow(char *Data)
 {
 	InitTextureFB();
-        CopyFBToBG();
+	CopyFBToBG();
 	HelpWindow(Data, fbtexture);
 	FreeTextureFB();
 }
@@ -293,19 +293,19 @@ void DrawShowMenu()
 	}	
 
 	back->x = (dW - MENUSIZE_W) / 2;
-        back->y = (dH - MENUSIZE_H) / 2;
+	back->y = (dH - MENUSIZE_H) / 2;
 	back->alpha = 0.75f;
 
 	updateVMU("   MENU", "", 1);
 	while(!done && !EndProgram)
 	{
-		float   r = 1.0f;
-		float   g = 1.0f;
-		float   b = 1.0f;
-		int   	c = 1;				    					   
+		float	r = 1.0f;
+		float	g = 1.0f;
+		float	b = 1.0f;
+		int   	c = 1;
 		uint16	x = back->x + 20;
-		uint16  y = back->y + 10;
-        	uint16	pressed = 0;
+		uint16	y = back->y + 10;
+		uint16	pressed = 0;
 				
 		StartScene();
 		
@@ -333,24 +333,24 @@ void DrawShowMenu()
 		ReadController(0, &pressed);
 
 		if ( pressed & CONT_DPAD_UP )
-	    	{
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    	}
-	    
-	    	if ( pressed & CONT_DPAD_DOWN )
-	    	{
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    	}			
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & CONT_DPAD_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}
 			
 		if (pressed & CONT_B || pressed & CONT_START) 		
 			done = 1;	
 	
 		if (pressed & CONT_A)
-		{     
+		{
 			switch(sel)
 			{			
 					case 1:	
@@ -365,7 +365,7 @@ void DrawShowMenu()
 					case 2:		
 						SelectVideoMode(fbtexture);
 						back->x = (dW - MENUSIZE_W) / 2;
-        					back->y = (dH - MENUSIZE_H) / 2;
+						back->y = (dH - MENUSIZE_H) / 2;
 						break;
 					case 3:		
 						ChangeOptions(fbtexture);
@@ -382,7 +382,7 @@ void DrawShowMenu()
 						break;
 					default:
 						break;
-			} 			            										
+			}
 			updateVMU("   MENU", "", 1);
 		}		
 
@@ -397,6 +397,8 @@ void DrawShowMenu()
 	FreeImage(&back);
 	HelpData = GENERALHELP;
 
+	updateVMU("        ", "", 1);
+
 	return;
 }
 
@@ -409,9 +411,9 @@ void ChangeOptions(ImagePtr screen)
 	back = LoadKMG("/rd/help.kmg.gz", 0);
 	if(!back)
 		return;
-		
+
 	back->alpha = 0.75f;
-		
+
 	region = flashrom_get_region();
 	updateVMU("  Options", "", 1);
 	while(!close && !EndProgram) 
@@ -419,18 +421,18 @@ void ChangeOptions(ImagePtr screen)
 		float	r = 1.0f;
 		float	g = 1.0f;
 		float	b = 1.0f;
-		uint8	c = 1;				    					   
+		uint8	c = 1;
 		uint16	x = 50;
 		uint16	y = 41;
 		uint16	OptPos = 160;
-        	uint16	pressed = 0;
+		uint16	pressed = 0;
 		char	intensity[80];
 		int	changedPVR = 0;
-		controller      *st;
+		controller		*st;
 		maple_device_t *dev;
 				
 		StartScene();
-		        
+
 		if(screen)
 			DrawImage(screen);
 		DrawImage(back);
@@ -445,7 +447,7 @@ void ChangeOptions(ImagePtr screen)
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 			settings.Deflicker == 1 ? "ON" : "OFF"); 
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
-			"PVR Deflickering Filter:"); y += fh; c++;			
+			"PVR Deflickering Filter:"); y += fh; c++;
 		*/
 
 		// option 1,  Enable PAL
@@ -454,14 +456,14 @@ void ChangeOptions(ImagePtr screen)
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 				settings.EnablePAL == 1 ? "ON" : "OFF"); 
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
-				"Enable PAL modes:"); y += fh; c++;			
+				"Enable PAL modes:"); y += fh; c++;
 		}
 		else
 		{
 			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
-				settings.EnablePAL  == 1 ? "ON" : "OFF");
+				settings.EnablePAL	== 1 ? "ON" : "OFF");
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
-				"Enable PAL modes:"); y += fh; c++;			
+				"Enable PAL modes:"); y += fh; c++;
 		}
 
 		// option 2,  Enable PAL BG
@@ -484,19 +486,19 @@ void ChangeOptions(ImagePtr screen)
 		if(region == FLASHROM_REGION_EUROPE && settings.EnablePAL)
 		{
 			char BorderColor[100];
-                        
-                        sprintf(BorderColor, "[%0.1f,%0.1f,%0.1f]",
+
+			sprintf(BorderColor, "[%0.1f,%0.1f,%0.1f]",
 				(double)settings.PalBackR, (double)settings.PalBackG, (double)settings.PalBackB); 
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 				BorderColor); 
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
-				"Change PAL Background:"); y += fh; c++;			
+				"Change PAL Background:"); y += fh; c++;
 		}
 		else
 		{
 			char BorderColor[100];
-                        
-                        sprintf(BorderColor, "[%0.1f,%0.1f,%0.1f]",
+
+			sprintf(BorderColor, "[%0.1f,%0.1f,%0.1f]",
 				(double)settings.PalBackR, (double)settings.PalBackG, (double)settings.PalBackB); 
 			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
 				BorderColor);
@@ -587,40 +589,40 @@ void ChangeOptions(ImagePtr screen)
 				"Scanlines are only available in 480p\nLine Doubled mode via D-SUB (VGA)"); 						
 		DrawStringS(x+60, 200, r, g, b, "Press START for help");
 		EndScene();		
-        
+
 		st = ReadController(0, &pressed);
 
 		if ( pressed & CONT_DPAD_UP )
-	    	{
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-                    if(saved != -1 && sel == 7)
-			sel = 6;
-	    	}
-	    
-	    	if ( pressed & CONT_DPAD_DOWN )
-	    	{
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-                    if(saved != -1 && sel == 7)
-			sel = 8;
-	    	}			
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+			if(saved != -1 && sel == 7)
+				sel = 6;
+		}
+		
+		if ( pressed & CONT_DPAD_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+			if(saved != -1 && sel == 7)
+				sel = 8;
+		}
 
 		if ( pressed & CONT_RTRIGGER && sel == 5)
-	    	{
+		{
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
-	    	}
-	    
-	    	if ( pressed & CONT_LTRIGGER && sel == 5)
-	    	{
+		}
+		
+		if ( pressed & CONT_LTRIGGER && sel == 5)
+		{
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
-	    	}			
-			
-	    	if ( st && st->buttons & CONT_LTRIGGER  && st->buttons & CONT_RTRIGGER)
+		}
+
+		if ( st && st->buttons & CONT_LTRIGGER	&& st->buttons & CONT_RTRIGGER)
 		{
 			settings = default_settings;
 			if(region == FLASHROM_REGION_EUROPE)
@@ -634,7 +636,7 @@ void ChangeOptions(ImagePtr screen)
 			HelpWindow(OPTIONSHELP, screen);
 	
 		if (pressed & CONT_A)
-		{     
+		{
 			switch(sel)
 			{		
 					case 1:
@@ -653,7 +655,7 @@ void ChangeOptions(ImagePtr screen)
 					case 3:
 						if(settings.EnablePAL)
 						{
-                                                        ChangePALBackgroundColor(screen);
+							ChangePALBackgroundColor(screen);
 							changedPVR = 1;
 						}
 						break;
@@ -689,8 +691,8 @@ void ChangeOptions(ImagePtr screen)
 						else
 							close = 1;
 						break;
-			} 			            										
-		}		
+			}
+		}
 
 		if(changedPVR)
 		{
@@ -713,21 +715,21 @@ void ChangeOptions(ImagePtr screen)
 
 void ChangePALBackgroundColor(ImagePtr title)
 {
-	int             sel = 1, close = 0;
-	ImagePtr        back, block, blackblock;
-        
+	int 			sel = 1, close = 0;
+	ImagePtr		back, block, blackblock;
+		
 	back = LoadKMG("/rd/help.kmg.gz", 0);
 	if(!back)
 		return;
-                
+
 	block = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!block)
 		return;
-                
+
 	blackblock = LoadKMG("/rd/black.kmg.gz", 0);
 	if(!blackblock)
 		return;
-                
+
 	block->x = 160;
 	block->y = 92;
 	block->w = 20;
@@ -742,11 +744,11 @@ void ChangePALBackgroundColor(ImagePtr title)
 	blackblock->g = 0;
 	blackblock->b = 0;
 	blackblock->layer = 4.0;
-                
+
 	back->alpha = 0.7;
-                
+
 	while(!close && !EndProgram) 
-	{               
+	{
 		float	r = 1.0;
 		float	g = 1.0;
 		float	b = 1.0;
@@ -755,14 +757,14 @@ void ChangePALBackgroundColor(ImagePtr title)
 		uint16	y = 70;
 		uint16	pressed = 0;
 		char	color[80];
-		controller      *st;
+		controller		*st;
 
 		block->r = settings.PalBackR;
 		block->g = settings.PalBackG;
 		block->b = settings.PalBackB;
-                                
+
 		StartScene();
-                        
+
 		DrawImage(title);
 		DrawImage(back);
 		DrawImage(blackblock);
@@ -780,21 +782,21 @@ void ChangePALBackgroundColor(ImagePtr title)
 
 		DrawStringS(x-40, y + 6*fh, r-0.4, g-0.4, b-0.4, "The background color is used to fill the screen");
 		DrawStringS(x-40, y + 7*fh, r-0.4, g-0.4, b-0.4, "to the selected PAL resolution when needed");
-                
+
 		if(sel != c)
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers or Left & Right");
 
 		EndScene();
-        
+
 		st = ReadController(0, &pressed);
-                
+
 		if ( pressed & CONT_DPAD_UP  )
 		{
 			sel --;
 			if(sel < 1)
 				sel = c;
 		}
-            
+
 
 		if ( pressed & CONT_DPAD_DOWN  )
 		{
@@ -889,18 +891,18 @@ void SelectVideoMode(ImagePtr screen)
 	while(!close && !EndProgram) 
 	{		
 		float	r = 1.0f;
-		float   g = 1.0f;
-		float   b = 1.0f;
-		uint8	c = 1;				    					   
+		float	g = 1.0f;
+		float	b = 1.0f;
+		uint8	c = 1;
 		uint16	x = 80;
 		uint16	y = 60;
-        	uint16	pressed = 0;
-				
+		uint16	pressed = 0;
+
 		StartScene();
-		        
+
 		if(screen)
 			DrawImage(screen);
-		DrawImage(back);        
+		DrawImage(back);
 
 		DrawStringS(x - 20, y, 0.0f, 1.0f, 0.0f, "Please select the desired video mode"); y += 2*fh; 
 		
@@ -974,34 +976,34 @@ void SelectVideoMode(ImagePtr screen)
 				"480p is only available though D-SUB (VGA)"); 
 
 		DrawStringS(x+40, 200, r, g, b, "Press START for help");
-		EndScene();		
-        
+		EndScene();
+
 		ReadController(0, &pressed);
 
 		if ( pressed & CONT_DPAD_UP )
-	    	{
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    	}
-	    
-	    	if ( pressed & CONT_DPAD_DOWN )
-	    	{
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    	}			
-			
-		if ( pressed & CONT_B ) 		
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & CONT_DPAD_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;	
+		}
+
+		if ( pressed & CONT_B ) 
 			close = 1;	
-	
-		if ( pressed & CONT_START ) 		
+
+		if ( pressed & CONT_START ) 
 			HelpWindow(VIDEOHELP, screen);
 
 		if (pressed & CONT_A)
-		{     
+		{
 			switch(sel)
-			{			
+			{
 					case 1:
 						if(vcable != CT_VGA)
 							ChangeResolution(VIDEO_240P);
@@ -1039,7 +1041,7 @@ void SelectVideoMode(ImagePtr screen)
 						break;
 					default:
 						break;
-			} 			            										
+			}
 		}		
 		if(oldsel != sel)
 		{
@@ -1084,7 +1086,7 @@ void DrawNish()
 void DrawCredits(ImagePtr back)
 {
 	int 		done = 0;
-	uint16		pressed, counter = 1;		
+	uint16		pressed, counter = 1;
 	char 		data[50];
 	controller	*st;
 	float		r, b, g;
@@ -1113,12 +1115,12 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Code and Patterns:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Artemio Urbina"); y += fh; 
 
-                if(counter == 1)
-                        sprintf(data, "aurbina@junkerhq.net");
-                if(counter == 60*4)
-                        sprintf(data, "@Artemio (twitter)");
-                if(counter == 60*8)
-                        counter = 0;
+		if(counter == 1)
+			sprintf(data, "aurbina@junkerhq.net");
+		if(counter == 60*4)
+			sprintf(data, "@Artemio (twitter)");
+		if(counter == 60*8)
+			counter = 0;
 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Support and suggestions:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, data); y += fh; 
@@ -1141,7 +1143,7 @@ void DrawCredits(ImagePtr back)
 
 		y += fh;
 		DrawStringS(x+20, y, 0.0, .75, .75, "This program is free software and open source.");  y += fh;
-                DrawStringS(x+20, y, 0.0, .75, .75, "Source code is available under GPL.");  y += fh;
+		DrawStringS(x+20, y, 0.0, .75, .75, "Source code is available under GPL.");  y += fh;
 #ifndef NO_FFTW
 		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "Includes the #GFastest Fourier Transform in the West#G"); y += fh;
 		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "http://www.fftw.org/"); y += fh;

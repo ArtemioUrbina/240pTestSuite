@@ -33,74 +33,74 @@ vid_mode_t custom_vga =
 /* 320x240 NTSC 60Hz */
 // oputputs PAL 60 when using composite in Euro Flash ROM
 vid_mode_t custom_240 = 
-    /* DM_320x240_NTSC */
+	/* DM_320x240_NTSC */
 {
-        DM_320x240,
-        320, 240,
-        VID_PIXELDOUBLE | VID_LINEDOUBLE,
-        CT_ANY,
-        PM_RGB565,
-        262, // Number of scanlines. 262 default
+	DM_320x240,
+	320, 240,
+	VID_PIXELDOUBLE | VID_LINEDOUBLE,
+	CT_ANY,
+	PM_RGB565,
+	262, // Number of scanlines. 262 default
 	857, // Clocks per scanline. 
-        164, // Bitmap X, 157 brings it to 35 2/3 uS centering the signal, 164 centers it within the horizontal signal the DC can produce
+	157, // Bitmap X, 157 brings it to 35 2/3 uS centering the signal, 168 is used by the BIOS as documented by Moopthehedgehog
 	18, // Bitmap Y 18 starts at NTSC line 22, according to spec
-        21, // First scanline interrupt position. 21 default
+	21, // First scanline interrupt position. 21 default
 	260, // Second scanline interrupt position (automatically doubled for VGA) 
-        129, // Border X starting. 
+	129, // Border X starting. 
 	840, // Border X stop position. 
-        24, // Border Y starting position.
+	24, // Border Y starting position.
 	264, // Border Y stop position.
-        0, 1,
-        { 0, 0, 0, 0 }
+	0, 1,
+	{ 0, 0, 0, 0 }
 };
 
 
 vid_mode_t custom_288 = 
 {
-        DM_320x240,
-        320, // Width
+	DM_320x240,
+	320, // Width
 	264, // Height
-        VID_PIXELDOUBLE | VID_LINEDOUBLE | VID_PAL,  // flags
-        CT_ANY, // Allowed cable type. 
-        PM_RGB565, // Pixel mode. 
-        312, // Number of scanlines. 312 default, 
+	VID_PIXELDOUBLE | VID_LINEDOUBLE | VID_PAL,  // flags
+	CT_ANY, // Allowed cable type. 
+	PM_RGB565, // Pixel mode. 
+	312, // Number of scanlines. 312 default, 
 	863, // Clocks per scanline. 863, 727 working
-        174, // Bitmap window X position. 
+	174, // Bitmap window X position. 
 	36, // Bitmap window Y (45 defaulty), with 22 starts at line 23 as PAL dictates, 49 is bottom at PAL limit
-        21, // First scanline interrupt position. 21 default
+	21, // First scanline interrupt position. 21 default
 	310, // Second scanline interrupt position (automatically doubled for VGA) 
-        143, // Border X starting position. 
+	143, // Border X starting position. 
 	845, // Border X stop position. 
-        22, // Border Y starting position. 
+	22, // Border Y starting position. 
 	311, // Border Y stop position. 
-        0, // Current framebuffer. 
+	0, // Current framebuffer. 
 	1, // Number of framebuffers. 
-        { 0, 0, 0, 0 } // Offset to framebuffers. 
+	{ 0, 0, 0, 0 } // Offset to framebuffers. 
 };
 
 /* 640x480 PAL 50Hz IL */
  /* DM_640x480_PAL_IL */
 vid_mode_t custom_576 = 
- {
-        DM_640x480_PAL_IL,
-        640,
+{
+	DM_640x480_PAL_IL,
+	640,
 	480,
-        VID_INTERLACE | VID_PAL,
-        CT_ANY,
-        PM_RGB565,
-        624,
+	VID_INTERLACE | VID_PAL,
+	CT_ANY,
+	PM_RGB565,
+	624,
 	863,
-        175,
-	45, //  21 Starts at line #23 in PAL composite, 45 starts centered
-        21,  
+	175,
+	45, //	21 Starts at line #23 in PAL composite, 45 starts centered
+	21,  
 	310,
-        143,
+	143,
 	845,
-        0,
+	0,
 	310, // 620
-        0,
+	0,
 	1,
-        { 0, 0, 0, 0 }
+	{ 0, 0, 0, 0 }
 };
 
 ImagePtr   scanlines = NULL;
@@ -287,8 +287,8 @@ void ChangeResolution(int nvmode)
 			break;
 	}
 
-	regs[0x3A] |= 8;    /* Blank */
-    	regs[0x11] &= ~1;   /* Display disable */
+	regs[0x3A] |= 8;	/* Blank */
+	regs[0x11] &= ~1;	/* Display disable */
 
 	pvr_init_defaults();
 
@@ -296,6 +296,8 @@ void ChangeResolution(int nvmode)
 
 	if(settings.ChangeVideoRegs)
 	{
+		// changed init values to match BIOS as documented by Moopthehedgehog
+		// https://github.com/ArtemioUrbina/240pTestSuite/issues/2
 		dbglog(DBG_KDEBUG, "Changing video registers to match specs\n");
 		if(IsPAL)
 		{
@@ -340,7 +342,7 @@ void ChangeResolution(int nvmode)
 				data = 0x03 << 8 | 0x3f | 0x319 << 12 | 0x0f << 22;
 				regs[0x38] = data;
 			}
-			if(vmode == VIDEO_480I  || vmode == VIDEO_480I_A240)
+			if(vmode == VIDEO_480I || vmode == VIDEO_480I_A240)
 			{	
 				// Video enable 0x100 ORed with PAL mode 0x80.	
 				// Sync should be  negative in vertical and
@@ -385,7 +387,7 @@ void ChangeResolution(int nvmode)
 
 	// Enable display
 	regs[0x3A] &= ~8;
-    	regs[0x11] |= 1;
+	regs[0x11] |= 1;
 
 	if(!settings.drawborder) // Draw back video signal limits?
 		vid_border_color(0, 0, 0);
@@ -516,14 +518,14 @@ void GetVideoModeStr(char *res, int shortdesc)
 				}
 				break;
 			case VIDEO_288P:
-                        	sprintf(res, "Video: 288p");
-                        	break;
+				sprintf(res, "Video: 288p");
+				break;
 			case VIDEO_576I_A264:
-                        	sprintf(res, "Video: 576i (scaled 264p)");
-                        	break;
+				sprintf(res, "Video: 576i (scaled 264p)");
+				break;
 			case VIDEO_576I:
-                        	sprintf(res, "Video: 576i (Scaling disabled)");
-                        	break;
+				sprintf(res, "Video: 576i (Scaling disabled)");
+				break;
 			case VIDEO_480P:
 				if(vcable == CT_VGA)
 					sprintf(res, "Video: 480p (Scaling disabled)");
@@ -551,14 +553,14 @@ void GetVideoModeStr(char *res, int shortdesc)
 					sprintf(res, "[480i 1:1]");
 				break;
 			case VIDEO_288P:
-                        	sprintf(res, "[288p]");
-                        	break;
+				sprintf(res, "[288p]");
+				break;
 			case VIDEO_576I_A264:
-                        	sprintf(res, "[576i LD]");
-                        	break;
+				sprintf(res, "[576i LD]");
+				break;
 			case VIDEO_576I:
-                        	sprintf(res, "[576i 1:1]");
-                        	break;
+				sprintf(res, "[576i 1:1]");
+				break;
 			case VIDEO_480P:
 				if(vcable == CT_VGA)
 					sprintf(res, "[480p 1:1]");
@@ -645,14 +647,14 @@ void PVRStats(char *msg)
 
 void TestVideoMode(int mode)
 {
-	int 			done =  0, oldvmode = vmode;
+	int 			done = 0, oldvmode = vmode;
 	uint16			pressed, update = 0, sel = 1, showback = 1;		
 	controller		*st;
 	char			str[50];
 	ImagePtr		back;
-	vid_mode_t  		test_mode;
-	vid_mode_t  		backup_mode;
-	vid_mode_t  		*source_mode = NULL;
+	vid_mode_t		test_mode;
+	vid_mode_t		backup_mode;
+	vid_mode_t		*source_mode = NULL;
 
 	if(mode == VIDEO_240P)
 		source_mode = &custom_240;
@@ -693,12 +695,12 @@ void TestVideoMode(int mode)
 
 	while(!done && !EndProgram) 
 	{
-		float   r = 1.0f;
-		float   g = 1.0f;
-		float   b = 1.0f;
-		int     c = 1;
-		float   x = 40.0f;
-		float   y = 15.0f;
+		float	r = 1.0f;
+		float	g = 1.0f;
+		float	b = 1.0f;
+		int 	c = 1;
+		float	x = 40.0f;
+		float	y = 15.0f;
 
 		StartScene();
 		if(showback)
@@ -767,7 +769,7 @@ void TestVideoMode(int mode)
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;				
+				done =	1;
 
 			if (pressed & CONT_X)
 			{
@@ -909,8 +911,8 @@ void TestVideoMode(int mode)
 			RefreshLoadedImages();
 			*/
 
-			//regs[0x3A] |= 8;    /* Blank */
-    			//regs[0x11] &= ~1;   /* Display disable */
+			//regs[0x3A] |= 8;	  /* Blank */
+			//regs[0x11] &= ~1;   /* Display disable */
 
 			//PVR_SET(PVR_SCALER_CFG, 0x400);
 			//PVR_SET(PVR_FB_CFG_2, 0x00000001);
@@ -949,7 +951,7 @@ void TestVideoMode(int mode)
 	
 			/* Enable display */
 			//regs[0x3A] &= ~8;
-    			//regs[0x11] |= 1;
+			//regs[0x11] |= 1;
 
 			if(settings.drawborder)
 				vid_border_color(255, 255, 255);

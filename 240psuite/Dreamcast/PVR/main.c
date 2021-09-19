@@ -170,7 +170,7 @@ int main(void)
 		{
 			c++;
 			DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video Settings"); 
-		}    
+		}
 #endif
 
 		r = 0.8f;

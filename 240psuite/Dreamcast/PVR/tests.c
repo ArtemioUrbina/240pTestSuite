@@ -58,10 +58,10 @@ void DropShadowTest()
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay, sonicback[4];
 	controller 	*st;
 
-    reload = 1;
+	reload = 1;
 
-    for(i = 0; i < 4; i++)
-        back[i] = NULL;
+	for(i = 0; i < 4; i++)
+		back[i] = NULL;
 	for(i = 0; i < 4; i++)
 		sonicback[i] = NULL;
 	overlay = NULL;
@@ -87,65 +87,65 @@ void DropShadowTest()
 	{
 		if(reload || oldvmode != vmode)
 		{
-            FreeImage(&back[0]);
-	        for(i = 0; i < 4; i++)
-		        FreeImage(&sonicback[i]);
-	        FreeImage(&back[2]);
-	        FreeImage(&back[3]);
-	        FreeImage(&overlay);
+			FreeImage(&back[0]);
+			for(i = 0; i < 4; i++)
+				FreeImage(&sonicback[i]);
+			FreeImage(&back[2]);
+			FreeImage(&back[3]);
+			FreeImage(&overlay);
 
 			sonicback[0] = LoadKMG("/rd/sonicback1.kmg.gz", 0);
-	        if(!sonicback[0])
-		        return;
-	        sonicback[1] = LoadKMG("/rd/sonicback2.kmg.gz", 0);
-	        if(!sonicback[1])
-		        return;
-	        sonicback[2] = LoadKMG("/rd/sonicback3.kmg.gz", 0);
-	        if(!sonicback[2])
-		        return;
-	        sonicback[3] = LoadKMG("/rd/sonicback4.kmg.gz", 0);
-	        if(!sonicback[3])
-		        return;
-        
-	        back[1] = sonicback[0];
-	        if(!back[1])
-		        return;
-	        back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
-	        if(!back[2])
-		        return;
-	        back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
-	        if(!back[3])
-		        return;
-	        overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
-	        if(!overlay)
-		        return;
-        
-	        if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
-	        {		
-		        back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
-		        if(!back[0])
-			        return;
-	        }
-	        else
-	        {
-		        back[0] = LoadKMG("/rd/480/donna-480.kmg.gz", 0);
-		        if(!back[0])
-			        return;
-        
-		        back[0]->scale = 0;
-		        for(i = 0; i < 4; i++)
-			        sonicback[i]->scale = 0;
-		        back[2]->scale = 0;
-		        back[3]->scale = 0;
-		        overlay->scale = 0;
-        
-		        for(i = 0; i < 4; i++)
-			        sonicback[i]->y = (dH - 240)/2;
-		        overlay->y = (dH - 240)/2;
-	        }
-            CalculateUV(0, 0, dW, dH, back[0]);
+			if(!sonicback[0])
+				return;
+			sonicback[1] = LoadKMG("/rd/sonicback2.kmg.gz", 0);
+			if(!sonicback[1])
+				return;
+			sonicback[2] = LoadKMG("/rd/sonicback3.kmg.gz", 0);
+			if(!sonicback[2])
+				return;
+			sonicback[3] = LoadKMG("/rd/sonicback4.kmg.gz", 0);
+			if(!sonicback[3])
+				return;
+		
+			back[1] = sonicback[0];
+			if(!back[1])
+				return;
+			back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
+			if(!back[2])
+				return;
+			back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
+			if(!back[3])
+				return;
+			overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
+			if(!overlay)
+				return;
+		
+			if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
+			{		
+				back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
+				if(!back[0])
+					return;
+			}
+			else
+			{
+				back[0] = LoadKMG("/rd/480/donna-480.kmg.gz", 0);
+				if(!back[0])
+					return;
+		
+				back[0]->scale = 0;
+				for(i = 0; i < 4; i++)
+					sonicback[i]->scale = 0;
+				back[2]->scale = 0;
+				back[3]->scale = 0;
+				overlay->scale = 0;
+		
+				for(i = 0; i < 4; i++)
+					sonicback[i]->y = (dH - 240)/2;
+				overlay->y = (dH - 240)/2;
+			}
+			CalculateUV(0, 0, dW, dH, back[0]);
 			oldvmode = vmode;
-            reload = 0;
+			reload = 0;
 		}
 
 		StartScene();
@@ -303,10 +303,10 @@ void StripedSpriteTest()
 	ImagePtr	back[4], striped, overlay, sonicback[4];
 	controller *st;
 
-    reload = 1;
+	reload = 1;
 
-    for(i = 0; i < 4; i++)
-        back[i] = NULL;
+	for(i = 0; i < 4; i++)
+		back[i] = NULL;
 	for(i = 0; i < 4; i++)
 		sonicback[i] = NULL;
 	overlay = NULL;
@@ -320,74 +320,74 @@ void StripedSpriteTest()
 	{
 		if(reload || oldvmode != vmode)
 		{
-            FreeImage(&back[0]);
-	        for(i = 0; i < 4; i++)
-		        FreeImage(&sonicback[i]);
-	        FreeImage(&back[2]);
-	        FreeImage(&back[3]);
-	        FreeImage(&overlay);
+			FreeImage(&back[0]);
+			for(i = 0; i < 4; i++)
+				FreeImage(&sonicback[i]);
+			FreeImage(&back[2]);
+			FreeImage(&back[3]);
+			FreeImage(&overlay);
 
 			sonicback[0] = LoadKMG("/rd/sonicback1.kmg.gz", 0);
-	        if(!sonicback[0])
-		        return;
-	        sonicback[1] = LoadKMG("/rd/sonicback2.kmg.gz", 0);
-	        if(!sonicback[1])
-		        return;
-	        sonicback[2] = LoadKMG("/rd/sonicback3.kmg.gz", 0);
-	        if(!sonicback[2])
-		        return;
-	        sonicback[3] = LoadKMG("/rd/sonicback4.kmg.gz", 0);
-	        if(!sonicback[3])
-		        return;
-        
-	        if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
-	        {		
-		        back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
-		        if(!back[0])
-			        return;
-		        back[1] = sonicback[0];
-		        if(!back[1])
-			        return;
-		        back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
-		        if(!back[2])
-			        return;
-		        back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
-		        if(!back[3])
-			        return;
-		        overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
-		        if(!overlay)
-			        return;
-	        }
-	        else
-	        {
-		        back[0] = LoadKMG("/rd/480/donna-480.kmg.gz", 0);
-		        if(!back[0])
-			        return;
-		        back[0]->scale = 0;
-		        back[1] = sonicback[0];
-		        if(!back[1])
-			        return;
-		        for(i = 0; i < 4; i++)
-			        sonicback[i]->scale = 0;
-		        back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
-		        if(!back[2])
-			        return;
-		        back[2]->scale = 0;
-		        back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
-		        if(!back[3])
-			        return;
-		        back[3]->scale = 0;
-		        overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
-		        if(!overlay)
-			        return;
-        
-		        for(i = 0; i < 4; i++)
-			        sonicback[i]->y = (dH - 240)/2;
-		        overlay->y = (dH - 240)/2;
-	        }
-            CalculateUV(0, 0, dW, dH, back[0]);
+			if(!sonicback[0])
+				return;
+			sonicback[1] = LoadKMG("/rd/sonicback2.kmg.gz", 0);
+			if(!sonicback[1])
+				return;
+			sonicback[2] = LoadKMG("/rd/sonicback3.kmg.gz", 0);
+			if(!sonicback[2])
+				return;
+			sonicback[3] = LoadKMG("/rd/sonicback4.kmg.gz", 0);
+			if(!sonicback[3])
+				return;
+		
+			if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
+			{		
+				back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
+				if(!back[0])
+					return;
+				back[1] = sonicback[0];
+				if(!back[1])
+					return;
+				back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
+				if(!back[2])
+					return;
+				back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
+				if(!back[3])
+					return;
+				overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
+				if(!overlay)
+					return;
+			}
+			else
+			{
+				back[0] = LoadKMG("/rd/480/donna-480.kmg.gz", 0);
+				if(!back[0])
+					return;
+				back[0]->scale = 0;
+				back[1] = sonicback[0];
+				if(!back[1])
+					return;
+				for(i = 0; i < 4; i++)
+					sonicback[i]->scale = 0;
+				back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
+				if(!back[2])
+					return;
+				back[2]->scale = 0;
+				back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
+				if(!back[3])
+					return;
+				back[3]->scale = 0;
+				overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
+				if(!overlay)
+					return;
+		
+				for(i = 0; i < 4; i++)
+					sonicback[i]->y = (dH - 240)/2;
+				overlay->y = (dH - 240)/2;
+			}
+			CalculateUV(0, 0, dW, dH, back[0]);
 			oldvmode = vmode;
-            reload = 0;
+			reload = 0;
 		}
 
 		StartScene();
@@ -491,17 +491,17 @@ void StripedSpriteTest()
 
 void LagTest()
 {
-	char				msg[60];
+	char			msg[60];
 	int				clicks[10], done = 0, view = 0;
 	int				speed = 1, change = 1, warning = 1;
 	int				x, y, x2, y2, audio = 0, pos = 0;
 	int				i = 0, vibrate = 1, vary = 0, variation = 1;
-	uint16				pressed;		
-	ImagePtr			back, spriteA, spriteB, fixed;
-	sfxhnd_t			beep;
-	maple_device_t			*purupuru = NULL;
+	uint16			pressed;		
+	ImagePtr		back, spriteA, spriteB, fixed;
+	sfxhnd_t		beep;
+	maple_device_t	*purupuru = NULL;
 	static purupuru_effect_t	effect;
-	controller 			*st;
+	controller 		*st;
 
 	effect.duration = 1;
 	effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1);
@@ -708,7 +708,7 @@ void LagTest()
 			}
 
 			if (pressed & CONT_B)
-				done =	1;				
+				done =	1;
 
 			if (pressed & CONT_START)
 				ShowMenu(MANUALLAG);
@@ -1003,7 +1003,7 @@ void GridScrollTest()
 				y += speed * acc;
 		}	
 				
-		CalculateUV(x, y, dW, dH, back);    
+		CalculateUV(x, y, dW, dH, back);
 		DrawImage(back);
 		EndScene();
 	
@@ -1108,7 +1108,7 @@ void DrawStripes()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;				
+				done =	1;
 						
 			if (pressed & CONT_A)
 			{
@@ -1192,7 +1192,7 @@ void DrawCheckBoard()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;				
+				done =	1;
 						
 			if (pressed & CONT_A)
 			{
@@ -1253,10 +1253,10 @@ void SoundTest()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;								
+				done =	1;
 
 			if (pressed & CONT_A)
-				play =	1; 						
+				play =	1;
 
 			if (pressed & CONT_DPAD_LEFT)
 				sel --;
@@ -1464,9 +1464,9 @@ void FixSpriteSize(ImagePtr sprite, int full)
 
 void DiagonalPatternTest()
 {	
-	int 		done = 0, autorotate = 0, full = 0;
-	int		oldvmode = vmode;
-	float 		angle = 45.0, step = 1;
+	int			done = 0, autorotate = 0, full = 0;
+	int			oldvmode = vmode;
+	float		angle = 45.0, step = 1;
 	uint16		pressed;
 	ImagePtr	back, spritesmall, spritebig, sprite;
 	char		buffer[32];
@@ -1754,7 +1754,7 @@ void PassiveLagTest()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;				
+				done =	1;
 						
 			if (pressed & CONT_X && pause)
 			{
@@ -1930,7 +1930,7 @@ void Alternate240p480i()
 				ShowHelpWindow(ALTERNATE);
 
 			if (pressed & CONT_B)
-				done =	1;				
+				done =	1;
 						
 			if (pressed & CONT_A)
 			{
@@ -2112,9 +2112,9 @@ void SIPLagTest()
 	ImagePtr	back, wave;
 	sfxhnd_t	beep;  
 	controller	*st;
-	maple_device_t  *sip = NULL;  
-	double          Results[RESULTS_MAX];
-	int             ResCount = 0;
+	maple_device_t	*sip = NULL;  
+	double			Results[RESULTS_MAX];
+	int 			ResCount = 0;
 	char		DStatus[100];
 	float		delta = 0.01f;
 
@@ -2275,7 +2275,7 @@ void SIPLagTest()
 			snd_sfx_play(beep, 255, 128);
 			status = 4;
 			counter = SECONDS_TO_RECORD*(IsPAL ? 50 : 60); // record N seconds + CUE frames
-		}    
+		}
 		
 		if(status == 5)
 		{
@@ -2291,7 +2291,7 @@ void SIPLagTest()
 				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount, showframes);
 				updateVMU("Analyzing", "", 1);
 				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2,
-					11025, (IsPAL ? 50.0 : 60.0)*accuracy, 1000);          
+					11025, (IsPAL ? 50.0 : 60.0)*accuracy, 1000);
 				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
 				{
 					sprintf(DStatus, "#YNoise at 1khz#Y");
@@ -2329,7 +2329,7 @@ void SIPLagTest()
 					ResCount --;
 				}
 				Results[ResCount++] = value;
-			}        
+			}
 			else
 			{
 				sprintf(DStatus, "#YRecording failed#Y");
@@ -2338,7 +2338,7 @@ void SIPLagTest()
 
 			rec_buffer.pos = 0;
 			status = 0;
-		}   
+		}
 	}
 
 	if(sip)
@@ -2363,22 +2363,22 @@ void SIPLagTest()
 
 double ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq)
 {
-	long          	samplesize = 0, arraysize = 0;  
-	long          	i = 0, f = 0, framesizernd = 0; 
-	double        	*in, root = 0, framesize = 0;  
-	double        	*MaxFreqArray = NULL;
+	long		  	samplesize = 0, arraysize = 0;	
+	long		  	i = 0, f = 0, framesizernd = 0; 
+	double		  	*in, root = 0, framesize = 0;  
+	double		  	*MaxFreqArray = NULL;
 	fftw_complex  	*out;
 	fftw_plan	p = NULL;
 #ifdef DEBUG_FFT
 	long		time = 0;
 	uint64		start, end;
 #endif
-	double    	mins, maxs;
-	double       	boxsize = 0;
-	int          	casefrq = 0;  
+	double	  	mins, maxs;
+	double		 	boxsize = 0;
+	int 		 	casefrq = 0;  
 	int 		found = 0;
 	long 		pos = 0, count = 0;    
-	long 		tpos = 0, tcount = 0;    
+	long 		tpos = 0, tcount = 0;	 
 	double		value = FFT_NOT_FOUND;
 	
 	samplesize = (long) size;  
@@ -2388,7 +2388,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 
 #ifdef DEBUG_FFT
 	printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n",
-			samplerate, (double)samplesize/samplerate, framesize);    
+			samplerate, (double)samplesize/samplerate, framesize);
 
 	start = timer_ms_gettime64();
 #endif
@@ -2397,7 +2397,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 		return FFT_OM;
 	out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (framesizernd/2+1));  
 	if(!out)
-	{     
+	{
 		 fftw_free(in); 
 		 return FFT_OM;
 	}
@@ -2425,7 +2425,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 #ifdef DEBUG_FFT
 		//printf("Estimating plan\n");
 #endif
-		p = fftw_plan_dft_r2c_1d(arraysize, in, out, FFTW_ESTIMATE);      
+		p = fftw_plan_dft_r2c_1d(arraysize, in, out, FFTW_ESTIMATE);
 
 #ifdef DEBUG_FFT
 		//printf("Executing FFTW\n");
@@ -2447,7 +2447,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 			{
 				max = val;
 				maxind = i;
-			}    
+			}
 		}
 		
 		mainfreq = (double)((double)maxind/boxsize);
@@ -2479,8 +2479,8 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 			printf("Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
 #endif
 			if(count)
-			{       	 	
-				if(MaxFreqArray[f] < mins || MaxFreqArray[f] > maxs)        
+			{
+				if(MaxFreqArray[f] < mins || MaxFreqArray[f] > maxs)
 				{
 					// tentative result if all fails
 					if(!tpos) // only the first result
@@ -2489,7 +2489,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 						tcount = count;
 					}
 	
-					count = 0;          
+					count = 0;
 					pos = 0;
 				}
 				else
@@ -2507,11 +2507,11 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 				}
 			}
 				
-			if(!count && MaxFreqArray[f] >= mins && MaxFreqArray[f] <= maxs)              
+			if(!count && MaxFreqArray[f] >= mins && MaxFreqArray[f] <= maxs)
 			{
-				pos = f;        
+				pos = f;
 				count = 1;
-			}      
+			}
 		}
 	}
 	
