@@ -52,7 +52,7 @@ void DrawPluge()
 	{
 		FreeImage(&backNTSC);	
 		return;
-    	}
+	}
 	black = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!black)
 	{
@@ -155,25 +155,25 @@ void DrawPluge()
 
 			if (pressed & CONT_A)
 			{
-			    if(!IsPAL)
-			    {
-				    if(back == backNTSC)
-				    {
-					    sprintf(msg, "RGB Full Range");
-					    back = backPAL;
-				    }
-				    else
-				    {
-					    sprintf(msg, "NTSC 7.5 IRE");
-					    back = backNTSC;
-				    }
-					    
-				    text = 60;				
-			    }
-		    }
-		    
-		    if (pressed & CONT_X)
-			    ShowHelp = 100;
+				if(!IsPAL)
+				{
+					if(back == backNTSC)
+					{
+						sprintf(msg, "RGB Full Range");
+						back = backPAL;
+					}
+					else
+					{
+						sprintf(msg, "NTSC 7.5 IRE");
+						back = backNTSC;
+					}
+						
+					text = 60;
+				}
+			}
+			
+			if (pressed & CONT_X)
+				ShowHelp = 100;
 		}
 	}
 	FreeImage(&highlight);
@@ -186,7 +186,7 @@ void DrawPluge()
 void DrawSMPTEColorBars()
 {
 	int 		done = 0, is75 = 1, text = 0;
-	uint16		pressed;		
+	uint16		pressed;
 	ImagePtr	backNTSC75, backNTSC100, backPAL75, backPAL100;
 	controller	*st;
 	char		msg[40];
@@ -203,24 +203,24 @@ void DrawSMPTEColorBars()
 	}
 
 	backPAL75 = LoadKMG("/rd/EBUColorBars75.kmg.gz", 0);
-        if(!backNTSC75)
-        {
-                FreeImage(&backNTSC75);
-                FreeImage(&backNTSC100);
-                return;
-        }
+	if(!backNTSC75)
+	{
+		FreeImage(&backNTSC75);
+		FreeImage(&backNTSC100);
+		return;
+	}
 
-        backPAL100 = LoadKMG("/rd/EBUColorBars100.kmg.gz", 0);
-        if(!backNTSC75)
-        {
-                FreeImage(&backNTSC75);
-                FreeImage(&backNTSC100);
-                FreeImage(&backPAL75);
-                return;
-        }
+	backPAL100 = LoadKMG("/rd/EBUColorBars100.kmg.gz", 0);
+	if(!backNTSC75)
+	{
+		FreeImage(&backNTSC75);
+		FreeImage(&backNTSC100);
+		FreeImage(&backPAL75);
+		return;
+	}
 
 	IgnoreOffset(backPAL75);
-        IgnoreOffset(backPAL100);
+		IgnoreOffset(backPAL100);
 		
 	if(IsPAL)
 		updateVMU(" EBU ", "", 1);
@@ -231,25 +231,25 @@ void DrawSMPTEColorBars()
 		StartScene();
 
 		if(!IsPAL)
-                {
-                        if(is75)
-                                DrawImage(backNTSC75);
-                        else
-                                DrawImage(backNTSC100);
-                }
-                else
-                {
-                        if(is75)
-                                DrawImage(backPAL75);
-                        else
-                                DrawImage(backPAL100);
-                }
+		{
+			if(is75)
+				DrawImage(backNTSC75);
+			else
+				DrawImage(backNTSC100);
+		}
+		else
+		{
+			if(is75)
+				DrawImage(backPAL75);
+			else
+				DrawImage(backPAL100);
+		}
 
 		if(text)
-                {
-                        DrawStringB(260, 20, 0, 1.0f, 0, msg);
-                        text --;
-                }
+		{
+			DrawStringB(260, 20, 0, 1.0f, 0, msg);
+			text --;
+		}
 
 		EndScene();
 
@@ -262,8 +262,8 @@ void DrawSMPTEColorBars()
 			if (pressed & CONT_A)
 			{
 				is75 = !is75;
-                        	text = 30;
-                        	sprintf(msg, "%s%%", is75 ? "75" : "100");
+				text = 30;
+				sprintf(msg, "%s%%", is75 ? "75" : "100");
 			}
 
 			if (pressed & CONT_START)
@@ -271,9 +271,9 @@ void DrawSMPTEColorBars()
 		}
 	}
 	FreeImage(&backNTSC75);
-        FreeImage(&backNTSC100);
-        FreeImage(&backPAL75);
-        FreeImage(&backPAL100);
+	FreeImage(&backNTSC100);
+	FreeImage(&backPAL75);
+	FreeImage(&backPAL100);
 	return;
 }
 
@@ -354,14 +354,14 @@ void DrawWhiteScreen()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;								
+				done =	1;
 
 			if (pressed & CONT_RTRIGGER)
 			{
 				color ++;
 				if(color > 4)
 					color = 0;		
-			    
+
 				editmode = 0;
 				if(color == 0 && cr + cb + cg != 3*1.0f)
 					sprintf(msg, "%s [EDITED]", mode[color]);
@@ -376,8 +376,8 @@ void DrawWhiteScreen()
 			{			
 				color --;
 				if(color < 0)
-					color = 4;			
-				    
+					color = 4;
+
 				editmode = 0;
 				if(color == 0 && cr + cb + cg != 3*1.0f)
 					sprintf(msg, "%s [edited]", mode[color]);
@@ -403,35 +403,35 @@ void DrawWhiteScreen()
 					sprintf(msg, "#GBlack Level: 0 IRE#G");
 				}
 				text = 140;
-			}				
-		    
+			}
+
 			if (pressed & CONT_A && color == 0)
 				editmode = !editmode;
 
 			if(editmode)
 			{
 				float *current = NULL;
-							    
+
 				sprintf(msg, "#%cR:%0.2f#W #%cG:%0.2f#W #%cB:%0.2f#W", 
 					sel == 1 ? 'G' : 'W', (double)cr,
 					sel == 2 ? 'G' : 'W', (double)cg, 
 					sel == 3 ? 'G' : 'W', (double)cb);
 				text = 1;
-    
+	
 				if ( pressed & CONT_DPAD_LEFT )
 				{
 					sel --;
 					if(sel < 1)
 						sel = 3;
 				}
-			    
+
 				if ( pressed & CONT_DPAD_RIGHT )
 				{
 					sel ++;
 					if(sel > 3)
 						sel = 1;
 				}
-			    
+
 				switch(sel)
 				{
 					case 1:
@@ -444,7 +444,7 @@ void DrawWhiteScreen()
 						current = &cb;
 						break;
 				}
-			    
+				
 				if ( pressed & CONT_DPAD_UP )
 				{				
 					if(current)
@@ -454,27 +454,27 @@ void DrawWhiteScreen()
 							*current = 1.0f;
 					}
 				}
-			    
+				
 				if ( pressed & CONT_DPAD_DOWN )
 				{			
-				    if(current)
-				    {
-					    (*current) -= .01;
-					    if(*current < 0)
-						    *current = 0;
-				    }
+					if(current)
+					{
+						(*current) -= .01;
+						if(*current < 0)
+							*current = 0;
+					}
 				}	
-    
+	
 				if ( pressed & CONT_X )
 				{				
-				    if(current)			
-					    *current  = 0.0f;					
+					if(current)			
+						*current  = 0.0f;					
 				}
-			    
+				
 				if ( pressed &CONT_Y )
 				{			
-				    if(current)				
-					    *current = 1.0f;
+					if(current)				
+						*current = 1.0f;
 				}	
 			}
 
@@ -541,7 +541,7 @@ void DrawColorBars()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;								
+				done =	1;
 
 			if (pressed & CONT_A)
 				type = !type;
@@ -577,7 +577,7 @@ void Draw601ColorBars()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;								
+				done =	1;
 
 			if (pressed & CONT_START)
 				ShowMenu(COLOR601);
@@ -590,20 +590,43 @@ void Draw601ColorBars()
 void DrawColorBleed()
 {
 	int 		done = 0, type = 0;
-	uint16		pressed;		
-	ImagePtr	back, backchk;
+	uint16		pressed, oldvmode = vmode;
+	ImagePtr	back = NULL, backchk = NULL;
 	controller	*st;
 
-	back = LoadKMG("/rd/colorbleed.kmg.gz", 0);
-	if(!back)
-		return;
-	backchk = LoadKMG("/rd/colorbleedchk.kmg.gz", 0);
-	if(!backchk)
-		return;
-		
 	updateVMU("Bleed CHK", "", 1);
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			FreeImage(&back);		
+			FreeImage(&backchk);		
+			oldvmode = vmode;
+		}
+
+		if(!back)
+		{
+			if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
+			{
+				back = LoadKMG("/rd/480/colorbleed-480.kmg.gz", 0);
+				if(!back)
+					return;
+				back->scale = 0;
+				backchk = LoadKMG("/rd/480/colorbleed-480-chk.kmg.gz", 0);
+				if(!backchk)
+					return;
+				backchk->scale = 0;
+			}
+			else
+			{
+				back = LoadKMG("/rd/colorbleed.kmg.gz", 0);
+				if(!back)
+					return;
+				backchk = LoadKMG("/rd/colorbleedchk.kmg.gz", 0);
+				if(!backchk)
+					return;
+			}
+		}
 		StartScene();
 		if(!type)
 			DrawImage(back);
@@ -615,7 +638,7 @@ void DrawColorBleed()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;								
+				done =	1;
 
 			if (pressed & CONT_A)
 				type = !type;
@@ -631,7 +654,7 @@ void DrawColorBleed()
 
 void DrawGrid(int full)
 {
-	int 		done = 0, oldvmode = vmode;
+	int 		done = 0, oldvmode = vmode, border = 0;
 	uint16		pressed;		
 	ImagePtr	back = NULL;
 	controller	*st;
@@ -657,14 +680,14 @@ void DrawGrid(int full)
 					back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
 					if(!back)
 						return;
-					back->scale = 0;		
+					back->scale = 0;
 				}
 			
 				if(vmode == VIDEO_288P)
 				{
 					back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
 					if(!back)
-						return;        	
+						return;
 				}
 			}
 			
@@ -679,7 +702,7 @@ void DrawGrid(int full)
 					back->y = 8;
 				}
 				if(!back)
-					return;		
+					return;
 			}
 
 			if(back)
@@ -688,16 +711,29 @@ void DrawGrid(int full)
 		}
 		
 		StartScene();
-		DrawImage(back);		
+		DrawImage(back);
 		EndScene();
 
 		st = ReadController(0, &pressed);
 		if(st)
 		{
+			if (pressed & CONT_A)
+			{
+				border = !border;
+				if(!border)
+					vid_border_color(0, 0, 0);
+				else
+					vid_border_color(255, 255, 255);
+			}
 			if (pressed & CONT_B)
-				done =	1;											
+				done =	1;
 			if (pressed & CONT_START)
 			{
+				if(border)
+				{
+					vid_border_color(0, 0, 0);
+					border = 0;
+				}
 				if(full)
 					ShowMenu(GRIDHELP);
 				else
@@ -706,6 +742,8 @@ void DrawGrid(int full)
 		}
 	}
 
+	if(border)
+		 vid_border_color(0, 0, 0);
 	FreeImage(&back);
 	return;
 }
@@ -796,26 +834,26 @@ void DrawLinearity(int full)
 		if(vmode == VIDEO_480P)
 		{
 			grid->w = 640;
-        		grid->h = 480;
-        		gridd->w = 640;
-        		gridd->h = 480;
+			grid->h = 480;
+			gridd->w = 640;
+			gridd->h = 480;
 		}
 		else
 		{
 			grid->w = 320;
-        		grid->h = IsPAL ? 264 : 240;
-        		gridd->w = 320;
-        		gridd->h = IsPAL ? 264 : 240;
+			grid->h = IsPAL ? 264 : 240;
+			gridd->w = 320;
+			gridd->h = IsPAL ? 264 : 240;
 		}
 	}
 	else
 	{
 		grid->w = 320;
-        	grid->h = 224;
-        	gridd->w = 320;
-        	gridd->h = 224;
-        	grid->y = 8;
-        	gridd->y = 8;
+		grid->h = 224;
+		gridd->w = 320;
+		gridd->h = 224;
+		grid->y = 8;
+		gridd->y = 8;
 	}
 		
 	if(full)
@@ -834,30 +872,30 @@ void DrawLinearity(int full)
 				if(vmode == VIDEO_480P)
 				{
 					grid->w = 640;
-        				grid->h = 480;
-        				gridd->w = 640;
-        				gridd->h = 480;
+					grid->h = 480;
+					gridd->w = 640;
+					gridd->h = 480;
 				}
 				else
 				{
 					grid->w = 320;
-                        		grid->h = IsPAL ? 264 : 240;
-                        		gridd->w = 320;
-                        		gridd->h = IsPAL ? 264 : 240;
+					grid->h = IsPAL ? 264 : 240;
+					gridd->w = 320;
+					gridd->h = IsPAL ? 264 : 240;
 				}
 			}
 			else
 			{
 				grid->w = 320;
-        			grid->h = 224;
-        			gridd->w = 320;
-        			gridd->h = 224;
-        			grid->y = 8;
-        			gridd->y = 8;
+				grid->h = 224;
+				gridd->w = 320;
+				gridd->h = 224;
+				grid->y = 8;
+				gridd->y = 8;
 			}
 			CalculateUV(0, 0, dW, dH, grid);
 			CalculateUV(0, 0, dW, dH, gridd);
-		}    
+		}
 		
 		if(!circles)
 		{
@@ -902,14 +940,14 @@ void DrawLinearity(int full)
 
 		DrawImage(back);
 		switch(gridmode)
-                {
-                        case 1:
-                                DrawImage(grid);
-                                break;
-                        case 2:
-                                DrawImage(gridd);
-                                break;
-                }
+		{
+			case 1:
+				DrawImage(grid);
+				break;
+			case 2:
+				DrawImage(gridd);
+				break;
+		}
 		DrawImage(circles);
 		EndScene();
 
@@ -934,10 +972,10 @@ void DrawLinearity(int full)
 			}
 
 			if(gridmode < 0)
-                        	gridmode = 2;
+				gridmode = 2;
 
-                	if(gridmode > 2)
-                        	gridmode = 0;
+			if(gridmode > 2)
+				gridmode = 0;
 		}
 	}
 
@@ -972,30 +1010,30 @@ void Draw100IRE()
 	while(!done && !EndProgram) 
 	{
 		StartScene();
-    		if(invert)
-      			DrawImage(white);	
-		DrawImage(back);		
+		if(invert)
+			DrawImage(white);
+		DrawImage(back);
 
 		if(text)
 		{
-    			if(!invert)
-      			{
+			if(!invert)
+			{
 				if(text > 30)
 					sprintf(msg, "RANGE 0-100 IRE");
 				else
 					sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
-			  	DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
-			  	text --;
-      			}
-      			else
-      			{
+				DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
+				text --;
+			}
+			else
+			{
 				if(text > 30)
 					sprintf(msg, "RANGE 100-140 IRE");
 				else
-			 		sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
-			  	DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
-			  	text --;
-      			}
+					sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
+				DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
+				text --;
+			}
 		}
 
 		EndScene();
@@ -1007,7 +1045,7 @@ void Draw100IRE()
 				if(!invert)
 				{
 					back->alpha -= 0.1f;
-				  	if(back->alpha < 0.0f)
+					if(back->alpha < 0.0f)
 						back->alpha = 0.0f;
 				}
 				else
@@ -1065,7 +1103,7 @@ void Draw100IRE()
 void DrawSharpness()
 {
 	int 		done = 0;
-	uint16		pressed;		
+	uint16		pressed;
 	ImagePtr	back;	
 	controller	*st;
 	
@@ -1078,16 +1116,16 @@ void DrawSharpness()
 	{		
 		StartScene();
 		DrawImage(back);
-        	EndScene();
+			EndScene();
 		
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_START ) 		
+			if (pressed & CONT_START )
 				ShowMenu(SHARPNESSHELP);
 			
 			if (pressed & CONT_B)
-				done =	1;										
+				done =	1;
 		}
 
 	}
@@ -1098,8 +1136,8 @@ void DrawSharpness()
 void DrawOverscan()
 {
 	int 		done = 0, oLeft = 0, oTop = 0, 
-			oRight = 0, oBottom = 0, 
-			sel = 0, oldvmode = vmode, reset = 0;
+				oRight = 0, oBottom = 0, 
+				sel = 0, oldvmode = vmode, reset = 0;
 	uint16		pressed;		
 	ImagePtr	square, border;	
 	char		msg[50];
@@ -1118,11 +1156,11 @@ void DrawOverscan()
 	
 	border->r = 1.0;
 	border->g = 1.0;
-	border->b = 1.0;	
+	border->b = 1.0;
 	
 	square->r = 0.4;
 	square->g = 0.4;
-	square->b = 0.4;	
+	square->b = 0.4;
 			
 	while(!done && !EndProgram) 
 	{			
@@ -1139,7 +1177,7 @@ void DrawOverscan()
 		}		
 		
 		StartScene();
-		        
+				
 		DrawImage(border);
 		DrawImage(square);	
 
@@ -1169,14 +1207,14 @@ void DrawOverscan()
 		DrawStringS(x-100, y, 1.0, 1.0, 1.0, "Right Overscan:");
 		sprintf(msg, "%d pixels (%g%%)", oRight, (double)(oRight*100.0f)/(dW/2));
 		DrawStringS(x+20, y, 1.0, 1.0, 1.0, msg);			
-				
+
 		/*
 		if(IsPAL && Options.PALScale576)
 			DrawStringS(50, 50, 1.0, 1.0, 0x00,
 			"When using PAL stretched modes, the pixel\ncount is inaccurate due to vertical scaling.\nRead the #MHELP#M for details");
 		*/
-			
-        	EndScene();
+
+		EndScene();
 		
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1287,7 +1325,7 @@ void DrawOverscan()
 				reset = 1;
 			
 			if (pressed & CONT_B)
-				done =	1;										
+				done =	1;
 		}
 	}
 	FreeImage(&border);

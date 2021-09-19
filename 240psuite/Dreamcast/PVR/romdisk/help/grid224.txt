@@ -6,3 +6,6 @@ area used by Genesis, SNES and Playstation games.
 You can use it to verify that all the visible area
 is being displayed, and that there is no distortion
 present.
+
+- You can toggle the full video signal white border
+with #GA#G.

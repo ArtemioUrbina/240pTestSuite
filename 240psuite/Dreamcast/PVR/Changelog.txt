@@ -1,6 +1,13 @@
+Version 1.25
+============
+- Added Warning screen to Manual Lag Test
+- Centered 240p signal
+- Added Draw Video Border option to Grid
+
+
 Version 1.24
 ============
-Aesthetic details for GDEMU_SD
+- Aesthetic details for GDEMU_SD
 - Updated IP.bin with date and version
 - Added 0GDTEX.pvr for icon display 
 

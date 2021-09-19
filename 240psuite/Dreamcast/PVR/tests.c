@@ -492,8 +492,10 @@ void StripedSpriteTest()
 void LagTest()
 {
 	char				msg[60];
-	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
-	int				x, y, x2, y2, audio = 0, pos = 0, i = 0, vibrate = 1, vary = 0, variation = 1;
+	int				clicks[10], done = 0, view = 0;
+	int				speed = 1, change = 1, warning = 1;
+	int				x, y, x2, y2, audio = 0, pos = 0;
+	int				i = 0, vibrate = 1, vary = 0, variation = 1;
 	uint16				pressed;		
 	ImagePtr			back, spriteA, spriteB, fixed;
 	sfxhnd_t			beep;
@@ -543,6 +545,12 @@ void LagTest()
 	purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
 	while(!done && !EndProgram) 
 	{
+		if(warning)
+		{
+			ShowHelpWindow(MANUALLAG);
+			warning = 0;
+		}
+
 		StartScene();
 
 		DrawImage(back);

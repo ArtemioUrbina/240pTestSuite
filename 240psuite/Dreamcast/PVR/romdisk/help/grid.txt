@@ -27,3 +27,5 @@ The 240 test suite draws from line 22 onwards from
 the blanking interval of NTSC signals, and line 25
 for PAL. It uses the whole visible area in both.
 
+- You can press #GA#G to toggle the full signal video
+border on and off.

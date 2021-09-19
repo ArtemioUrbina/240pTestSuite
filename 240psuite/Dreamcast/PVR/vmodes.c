@@ -42,7 +42,7 @@ vid_mode_t custom_240 =
         PM_RGB565,
         262, // Number of scanlines. 262 default
 	857, // Clocks per scanline. 
-        174, // Bitmap X, 157 brings it to 35 2/3 uS centering the signal, 164 centers it within the horizontal signal the DC can produce
+        164, // Bitmap X, 157 brings it to 35 2/3 uS centering the signal, 164 centers it within the horizontal signal the DC can produce
 	18, // Bitmap Y 18 starts at NTSC line 22, according to spec
         21, // First scanline interrupt position. 21 default
 	260, // Second scanline interrupt position (automatically doubled for VGA) 
@@ -308,7 +308,7 @@ void ChangeResolution(int nvmode)
 				regs[0x34] = data;
 
 				// Set sync width
-				data = 0x05 | 0x3f << 8 | 0x31F << 12 | 0x1f << 22;
+				data = 0x05 << 8 | 0x3f | 0x31F << 12 | 0x1f << 22;
 				regs[0x38] = data;
 			}
 			if(vmode == VIDEO_576I || vmode == VIDEO_576I_A264)
@@ -321,7 +321,7 @@ void ChangeResolution(int nvmode)
 				regs[0x34] = data;
 
 				// Set sync width
-				data = 0x05 | 0x3f << 8 | 0x16A << 12 | 0x1f << 22;
+				data = 0x05 << 8 | 0x3f | 0x16A << 12 | 0x1f << 22;
 				regs[0x38] = data;
 			}
 		}
@@ -337,7 +337,7 @@ void ChangeResolution(int nvmode)
 				data = 0x100 | 0x40; 
 				regs[0x34] = data;
 
-				data = 0x03 | 0x3f << 8 | 0x319 << 12 | 0x0f << 22;
+				data = 0x03 << 8 | 0x3f | 0x319 << 12 | 0x0f << 22;
 				regs[0x38] = data;
 			}
 			if(vmode == VIDEO_480I  || vmode == VIDEO_480I_A240)
@@ -349,14 +349,14 @@ void ChangeResolution(int nvmode)
 				data = 0x100 | 0x40 | 0x10; 
 				regs[0x34] = data;
 
-				data = 0x06 | 0x3f << 8 | 0x16C << 12 | 0x1f << 22;
+				data = 0x06 << 8 | 0x3f | 0x16C << 12 | 0x1f << 22;
 				regs[0x38] = data;
 			}
 		}
 
 		if(vmode == VIDEO_480P || vmode == VIDEO_480P_SL)
 		{
-			data = 0x03 | 0x3f << 8 | 0x319 << 12 | 0x0f << 22;
+			data = 0x03 << 8 | 0x3f | 0x319 << 12 | 0x0f << 22;
 			regs[0x38] = data;
 		}
 	}
