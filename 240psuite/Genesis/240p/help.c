@@ -214,7 +214,7 @@ void DrawHelp(int option)
 						VDP_drawTextBG(APLAN, "Brightness adjustment: Adjust", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "convergence at low brightness", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "(13/25 IRE). An overly bright", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						VDP_drawTextBG(APLAN, "pattern can mask convergence.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "pattern can mask convergence", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "issues.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						y++;
 						VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
