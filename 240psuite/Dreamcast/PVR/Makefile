@@ -84,13 +84,13 @@ $(TARGET).bin: $(TARGET).elf
 run: $(TARGET).bin
 	$(KOS_LOADER) $(TARGET).bin 
 
-cdi: $(TARGET).bin
+cdi: all
 	scramble $(TARGET).bin 1ST_READ.BIN
 	mkisofs -C 0,11702 -V 240pSuite -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN
 	cdi4dc 240p.iso 240pSuite.cdi
 	rm 240p.iso 1ST_READ.BIN
 
-zip: $(TARGET).bin
+zip: all
 	scramble $(TARGET).bin 1ST_READ.BIN
 	mkisofs -C 0,11702 -V 240pSuite -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN
 	cdi4dc 240p.iso 240pSuite.cdi 

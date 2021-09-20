@@ -784,14 +784,14 @@ void DrawMonoscope()
 			{
 				back->alpha -= 0.1f;
 				if(back->alpha < 0.0f)
-					back->alpha = 0.0f;
+					back->alpha = 1.0f;
 			}
 		
 			if (pressed & CONT_RTRIGGER)
 			{
 				back->alpha += 0.1f;
 				if(back->alpha > 1.0f)
-					back->alpha = 1.0f;
+					back->alpha = 0.0f;
 			}
 		}
 	}
