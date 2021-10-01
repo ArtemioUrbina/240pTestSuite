@@ -24,6 +24,11 @@
 
 u16 oldpad = 0xffff;
 
+void ClearPads(u8 pad)
+{
+	oldpad = padsCurrent(pad);
+}
+
 inline u16 PadPressed(u8 pad)
 {
 	u16 read = 0, pressed = 0;

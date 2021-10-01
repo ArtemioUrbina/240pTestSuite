@@ -1,3 +1,26 @@
+/*
+ * Copyright (C)2019-2021 Artemio Urbina
+ *
+ * This file is part of the 240p Test Suite
+ * It is intended to identify all Sega CD BIOS variants
+ *
+ * You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
+ *
+ *
+ */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <inttypes.h>
@@ -92,7 +115,7 @@ int LoadBIOS(char *name, uint8_t *bios)
 
 	if(read != 0x20000)
 	{
-		//printf("File too small, read 0x%0.8X\n", read);
+		printf("File too small, read 0x%0.8X bytes\n", read);
 		return 0;
 	}
 	return 1;
@@ -240,6 +263,7 @@ const static BIOSID biosnames[] = {
 { 0x9F6F6276, "M2 US 2.00W", "segacd_model2_bios_2_00w_u.bin" },	// 
 { 0x4D5CB8DA, "M2 EU 2.00W", "mpr-15512a.bin" },  		//  swapped in MAME as 0x53F1757C
 { 0x0507B590, "M2 EU 2.00", "mpr-15512.bin" },    		//  swapped in MAME as 0xCB76F114
+{ 0xC1AA217F, "M2 EU 2.11X", "mpr-15811-t.bin" },   // dumped by TwistedTom,  MK-4102A-50 Sony pcb
 { 0xDD6CC972, "M2 JP 2.00C", "mpr-15398.bin" },      	//  swapped in MAME as 0x1E4344E6
 { 0x8052C7A0, "AIWA JP 2.11", "mpr-15768-t.bin" },     	// 
 { 0x50CD3D23, "LA 1.04", "laseractive_bios_1_04_u.bin" }, // 

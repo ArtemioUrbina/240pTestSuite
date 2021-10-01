@@ -225,13 +225,13 @@ void DropShadowTest(void)
 		{			
 			if(odd)
 			{
-				drawText(20, 1, 7, "odd");
-				drawText(24, 1, 7, "frames");
+				drawText(21, 1, 0, "odd");
+				drawText(25, 1, 0, "frames");
 			}
 			else
 			{
-				drawText(20, 1, 7, "even");
-				drawText(25, 1, 7, "frames");
+				drawText(21, 1, 0, "even");
+				drawText(26, 1, 0, "frames");
 			}
 			text --;
 			if(!text)						
@@ -572,10 +572,10 @@ void DrawStripes(void)
 			redraw = 1;
 		}
 		
-		if(pressed & KEY_A)
+		if(pressed & KEY_X)
 			alternate = !alternate;
 			
-		if(pressed & KEY_X)
+		if(pressed & KEY_A)
 		{
 			drawframe = !drawframe;
 			if(!drawframe)
@@ -683,7 +683,6 @@ void DrawCheck(void)
 	return;
 }
 
-//void BobTest();
 void PassiveLagTest()
 {
 	u16 pressed, end = 0;
@@ -693,9 +692,7 @@ void PassiveLagTest()
 	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };	
 	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
 	u16 y = 20, running = 1, redraw = 1, color = 1, bgcol = 0xa;	
-	
-	//BobTest();
-	//return;
+
 	while(!end) 
 	{	
 		u16 count = 0, mul = 1;
@@ -1690,7 +1687,7 @@ void ManualLagTest()
 		if(view == 1 || view == 2)
 			oamSetXY(8, x2, y2);
 		
-		pressed = PadPressed(0);		
+		pressed = PadPressed(0);
 		
 		if(pressed & KEY_START)
 		{
@@ -1812,11 +1809,12 @@ void ManualLagTest()
 			drawText(h, v++, 7, "%d milliseconds", fint);
 			
 			
-			drawText(3, v++, 6, "Keep in mind that a frame");
+			drawText(3, v++, 6, "These are your reflexes,");
+			drawText(3, v++, 6, "not a lag test. A frame is");
 			if(snes_50hz)	
-				drawText(3, v, 6, "is 20 ms in PAL.");
+				drawText(3, v, 6, "20 ms in PAL.");
 			else
-				drawText(3, v, 6, "is around 16.63 ms.");
+				drawText(3, v, 6, "around 16.63 ms.");
 			
 			if(total < 5)
 				drawText(10, 11, 6, "EXCELLENT REFLEXES!");

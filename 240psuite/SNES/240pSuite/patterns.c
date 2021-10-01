@@ -90,7 +90,7 @@ void DrawGrid()
 		
 		if(pressed & KEY_B)
 			end = 1;		
-	}	
+	}
 	Transition();
 	Set224pMode();
 	
@@ -99,7 +99,7 @@ void DrawGrid()
 
 void DrawEBU() 
 {	
-	u16 pressed, end = 0, type = 0;
+	u16 pressed, end = 0, type = 1;
 	u16 redraw = 1, text = 0;
 				
 	while(!end) 
@@ -111,7 +111,7 @@ void DrawEBU()
 			consoleInitTextMine(0, 7, &font);				
 			
 			setPaletteColor(0x71, RGB5(31, 31, 31));
-			bgInitTileSetMine(1, &EBUCB75_tiles, &EBUCB75_pal, 0, (&EBUCB75_tiles_end - &EBUCB75_tiles), 16*2, BG_16COLORS, 0x4000);
+			bgInitTileSetMine(1, &EBUCB75_tiles, &EBUCB100_pal, 0, (&EBUCB75_tiles_end - &EBUCB75_tiles), 16*2, BG_16COLORS, 0x4000);
 			bgInitMapSetMine(1, &EBUCB75_map, (&EBUCB75_map_end - &EBUCB75_map), SC_32x32, 0x2000);
 			
 			setMode(BG_MODE1,0); 			
@@ -166,7 +166,7 @@ void DrawEBU()
 
 void DrawSMPTE() 
 {	
-	u16 pressed, end = 0, type = 0;
+	u16 pressed, end = 0, type = 1;
 	u16 redraw = 1, text = 0;
 				
 	while(!end) 
@@ -178,7 +178,7 @@ void DrawSMPTE()
 			consoleInitTextMine(0, 7, &font);				
 			
 			setPaletteColor(0x71, RGB5(31, 31, 31));
-			bgInitTileSetMine(1, &SMPTECB75_tiles, &SMPTECB75_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);
+			bgInitTileSetMine(1, &SMPTECB75_tiles, &SMPTECB100_pal, 0, (&SMPTECB75_tiles_end - &SMPTECB75_tiles), 16*2, BG_16COLORS, 0x4000);
 			bgInitMapSetMine(1, &SMPTECB75_map, (&SMPTECB75_map_end - &SMPTECB75_map), SC_32x32, 0x2000);
 			
 			setMode(BG_MODE1,0); 			
@@ -1428,6 +1428,7 @@ void DrawOverscan()
 		free(map_over);
 		map_over = NULL;
 	}
+	Transition();
 	if(mode == RES_239)
 		Set224pMode();
 }
@@ -1481,6 +1482,7 @@ void DrawMode7()
 		
 		WaitForVBlank();
 	}
+	Transition();
 	consoleInit();
 }
 

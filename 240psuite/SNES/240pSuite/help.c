@@ -438,9 +438,9 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "You can toggle the pattern");
 							drawText(3, y++, 7, "with button R, or turn on");
 							drawText(3, y++, 7, "auto-toggle each frame");
-							drawText(3, y++, 7, "with the A button. A frame");
+							drawText(3, y++, 7, "with the X button. A frame");
 							drawText(3, y++, 7, "counter is also available");							
-							drawText(3, y++, 7, "with X.");
+							drawText(3, y++, 7, "with button A.");
 					break;
 				case HELP_STRIPES:
 				switch(page)
@@ -454,9 +454,9 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "You can toggle the pattern"); 
 							drawText(3, y++, 7, "with button R, or turn on");
 							drawText(3, y++, 7, "auto-toggle each frame");
-							drawText(3, y++, 7, "with the A button. A frame");
+							drawText(3, y++, 7, "with the X button. A frame");
 							drawText(3, y++, 7, "counter is also available");
-							drawText(3, y++, 7, "with X.");				
+							drawText(3, y++, 7, "with A.");				
 							y++;								
 							drawText(3, y++, 7, "When auto-toggle is set,");
 							drawText(3, y++, 7, "you should see the lines");				
@@ -518,6 +518,8 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "switched with the R and"); 
 							drawText(3, y++, 7, "L buttons, and X toggles");
 							drawText(3, y++, 7, "sprites.");
+							y++;
+							drawText(3, y++, 7, "Donna by Jose Salot");
 							break;						
 					}
 					break;

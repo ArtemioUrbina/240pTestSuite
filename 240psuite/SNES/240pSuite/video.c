@@ -121,7 +121,7 @@ void ClearScreen256(u8 layer)
 
 inline void Transition()
 {
-	//setFadeEffect(FADE_OUT);
+	setFadeEffect(FADE_OUT);
 }
 
 //#define DEBUG_DMA

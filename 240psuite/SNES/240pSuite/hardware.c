@@ -101,7 +101,10 @@ void ControllerTest()
 		
 		if(pressed & KEY_START &&
 			pressed & KEY_LEFT)
-			end = 1;
+			{
+				end = 1;
+				ClearPads(0);
+			}
 
 	}	
 	Transition();

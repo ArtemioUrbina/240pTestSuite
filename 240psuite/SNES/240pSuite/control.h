@@ -22,3 +22,4 @@
 
 inline u16 PadPressed(u8 pad);
 inline u16 PadHeld(u8 pad);
+inline void ClearPads(u8 pad);
