@@ -378,8 +378,8 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 5, "Size and aspect ratio:"); 
 							drawText(3, y++, 7, "If vertical and horizontal"); 
 							drawText(3, y++, 7, "size are correct, the red"); 
-							drawText(3, y++, 7, "squares in the pattern will"); 
-							drawText(3, y++, 7, "be perfect squares."); 
+							drawText(3, y++, 7, "squares in the pattern"); 
+							drawText(3, y++, 7, "will be perfect squares."); 
 							drawText(3, y++, 7, "After setting H size, use"); 
 							drawText(3, y++, 7, "a tape measure to adjust"); 
 							drawText(3, y++, 7, "V size to match it."); 
