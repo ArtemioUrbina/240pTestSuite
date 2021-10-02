@@ -119,9 +119,10 @@ void ClearScreen256(u8 layer)
 	bgInitMapSetMine(layer, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
 }
 
-inline void Transition()
+void Transition()
 {
 	setFadeEffect(FADE_OUT);
+	WaitForVBlank(); 
 }
 
 //#define DEBUG_DMA

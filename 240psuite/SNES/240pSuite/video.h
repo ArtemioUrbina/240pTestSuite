@@ -35,7 +35,7 @@ void ChangeVideo();
 void DrawTilesWithSprites(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 tileSize, u8 * pal);
 void ClearScreen(u8 layer);
 void ClearScreen256(u8 layer);
-inline void Transition();
+void Transition();
 
 void StartDMA();
 void bgInitTileSetMine(u8 bgNumber, u8 *tileSource, u8 *tilePalette, u8 paletteEntry, u16 tileSize, u16 paletteSize, u16 colorMode, u16 address);
