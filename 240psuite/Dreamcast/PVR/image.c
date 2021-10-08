@@ -323,7 +323,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned int)end - start);
+	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned long)end - start);
 	dbglog(DBG_KDEBUG, msg);
 #endif
 
@@ -415,7 +415,7 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned int)end - start);
+	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned long)end - start);
 	dbglog(DBG_KDEBUG, msg);
 #endif
 	return 1;
@@ -685,7 +685,7 @@ inline void StartScene()
 inline void EndScene()
 {
 	DrawScanlines();
-	pvr_list_finish();				
+	pvr_list_finish();
 	pvr_scene_finish();
 	pvr_wait_ready();
 

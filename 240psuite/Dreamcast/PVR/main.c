@@ -54,6 +54,7 @@ int main(void)
 	uint16		pressed;
 	ImagePtr	title, sd;
 	controller	*st;
+	char		error[256];
 
 	vcable = vid_check_cable();
 	region = flashrom_get_region();
@@ -68,7 +69,7 @@ int main(void)
 	LoadFont();
 	LoadScanlines();
 
-	if(!readvmu())
+	if(!readvmu(error))
 	{
 		if(region == FLASHROM_REGION_EUROPE)
 		{
@@ -99,7 +100,7 @@ int main(void)
 		float 	r = 1.0f;
 		float 	g = 1.0f;
 		float 	b = 1.0f;
-		int   	c = 1;				    
+		int   	c = 1;
 		float 	x = 40.0f;
 		float 	y = 55.0f;
 #ifndef NO_FFTW
@@ -129,7 +130,7 @@ int main(void)
 		else
 		{
 #endif
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Manual Lag Test"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Timing & Reflex Test"); y += fh; c++;
 #ifndef NO_FFTW
 		}
 #endif

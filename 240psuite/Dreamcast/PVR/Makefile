@@ -68,8 +68,13 @@ romdisk.img:
 romdisk.o: romdisk.img
 	$(KOS_BASE)/utils/bin2o/bin2o romdisk.img romdisk romdisk.o
 
+ip:
+	makeip -l ../IP/logo.png ../IP/ip.txt ../IP/IP.BIN -f
+
 clean:
-	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin romdisk.o romdisk.img 240pPVR.cdi 240p-DC-PVR*.zip
+	rm -f $(OBJS) $(TARGET).elf $(TARGET).bin romdisk.o romdisk.img
+	rm -f 240pSuite.mdf 240pSuite.mds 240pSuite.cdi 240p-DC-PVR*.zip 
+	rm -f 240p.iso 1ST_READ.BIN
 
 $(OBJS): $(HEADERS) romdisk.o
 
@@ -81,19 +86,29 @@ $(TARGET).bin: $(TARGET).elf
 	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin
 #	strip $(TARGET).elf
 
-run: $(TARGET).bin
+run: clean serial
 	$(KOS_LOADER) $(TARGET).bin 
 
-cdi: all
+cdi-int: all ip
 	scramble $(TARGET).bin 1ST_READ.BIN
 	mkisofs -C 0,11702 -V 240pSuite -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN
-	cdi4dc 240p.iso 240pSuite.cdi
-	rm 240p.iso 1ST_READ.BIN
+	cdi4dc 240p.iso 240pSuite.cdi > /dev/null
 
-zip: all
+mdf-int: all ip
 	scramble $(TARGET).bin 1ST_READ.BIN
 	mkisofs -C 0,11702 -V 240pSuite -G ../IP/IP.BIN -joliet -rock -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN
-	cdi4dc 240p.iso 240pSuite.cdi 
+	mds4dc -a 240pSuite.mdf 240p.iso > /dev/null
+
+cdi: clean cdi-int
+	rm 240p.iso 1ST_READ.BIN 
+
+mdf: clean mdf-int
+	rm 240p.iso 1ST_READ.BIN 
+
+cds: clean cdi-int mdf-int
+	rm 240p.iso 1ST_READ.BIN 
+
+zip: cdi
 	zip 240p-DC-PVR-1.x.zip  README.TXT Changelog.txt 240pSuite.cdi
-	rm 240p.iso 1ST_READ.BIN 240pSuite.cdi
+	rm 240pSuite.cdi
 

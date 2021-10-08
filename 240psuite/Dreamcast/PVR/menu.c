@@ -200,7 +200,7 @@ void CopyFBToBG()
 	memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "FB buffer init took %lu ms\n", (unsigned int)end - start);
+	sprintf(msg, "FB buffer init took %lu ms\n", (unsigned long)(end - start));
 	dbglog(DBG_KDEBUG, msg);
 	timer_ms_gettime(NULL, &start);
 #endif
@@ -231,7 +231,7 @@ void CopyFBToBG()
 
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "FB conversion took %lu ms\n", (unsigned int)end - start);
+	sprintf(msg, "FB conversion took %lu ms\n", (unsigned long)(end - start));
 	dbglog(DBG_KDEBUG, msg);
 	timer_ms_gettime(NULL, &start);
 #endif
@@ -244,7 +244,7 @@ void CopyFBToBG()
 
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "FB texture upload took %lu ms\n", (unsigned int)end - start);
+	sprintf(msg, "FB texture upload took %lu ms\n", (unsigned long)(end - start));
 	dbglog(DBG_KDEBUG, msg);
 #endif
 
@@ -429,7 +429,8 @@ void ChangeOptions(ImagePtr screen)
 		char	intensity[80];
 		int	changedPVR = 0;
 		controller		*st;
-		maple_device_t *dev;
+		maple_device_t	*dev;
+		char			error[256];
 				
 		StartScene();
 
@@ -558,7 +559,7 @@ void ChangeOptions(ImagePtr screen)
 					msg = "#GOptions saved to VMU#G";
 					break;
 				case 0:
-					msg = "#RSave to VMU failed#R";
+					msg = error;
 					break;
 				default:
 				case -1:
@@ -675,15 +676,15 @@ void ChangeOptions(ImagePtr screen)
 					case 7:
 						if(dev && saved != 1)
 						{
-							int icon = 1;
+							int eyecatcher = 0;
 
-							if ( st && st->buttons & CONT_Y )
-								icon = 0;
-							saved = writevmu(icon);
+							if ( st && st->buttons & CONT_RTRIGGER )
+								eyecatcher = 1;
+							saved = writevmu(eyecatcher, error);
 						}
 						break;
 					case 8:
-						if ( st && st->buttons & CONT_Y )
+						if ( st && st->buttons & CONT_RTRIGGER )
 						{
 							settings.drawborder = !settings.drawborder;
 							changedPVR = 1;

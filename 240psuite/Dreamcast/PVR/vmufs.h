@@ -11,7 +11,11 @@
 #include <kos.h>
 #include <kos/string.h>
 
-int readvmu();
-int writevmu(int icon);
+#define VMU_NAME "240PTEST"
+#define SAVE_NUM	120
+#define	DATA_SIZE	32
+#define ICON_ARRAY_SIZE 5
 
+int readvmu(char *error);
+int writevmu(int icon, char *error);
 
