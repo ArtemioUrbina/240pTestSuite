@@ -3,7 +3,7 @@
 
 uint16 OldButtonsInternal = 0;
 
-#ifdef SERIAL
+#ifdef DCLOAD
 #define  SCREENSHOTMODE
 #endif
 

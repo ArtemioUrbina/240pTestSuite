@@ -66,10 +66,7 @@ int main(void)
 	else
 		ChangeResolution(VIDEO_480P_SL);
 
-	LoadFont();
-	LoadScanlines();
-
-	if(!readvmu(error))
+	if(!LoadVMUSave(error))
 	{
 		if(region == FLASHROM_REGION_EUROPE)
 		{
@@ -85,6 +82,9 @@ int main(void)
 			settings.EnablePAL = 0;
 	}
 
+	LoadFont();
+	LoadScanlines();
+	
 	title = LoadKMG("/rd/back.kmg.gz", 0);
 	sd = LoadKMG("/rd/SD.kmg.gz", 0);
 	if(sd)
@@ -166,7 +166,7 @@ int main(void)
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Configuration"); y += fh; c++;
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); 
 
-#ifdef SERIAL
+#ifdef DCLOAD
 		//if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)
 		{
 			c++;
@@ -313,7 +313,7 @@ int main(void)
 					case 16:
 						HelpWindow(GENERALHELP, title);
 						break;
-#ifdef SERIAL
+#ifdef DCLOAD
 					case 17:
 						TestVideoMode(vmode);
 						break;
@@ -332,7 +332,7 @@ int main(void)
 	ReleaseScanlines();
 	ReleaseFont();
 	CleanImages();
-#ifndef SERIAL
+#ifndef DCLOAD
 	arch_menu();
 #endif
 	return 0;

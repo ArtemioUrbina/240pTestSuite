@@ -71,7 +71,7 @@ char *GetPalStartText();
 void Set576iLine23Option(uint8 set);
 void PVRStats(char *msg);
 void Toggle240p480i(int mode);
-#ifdef SERIAL
+#ifdef DCLOAD
 void TestVideoMode(int mode);
 #endif
 

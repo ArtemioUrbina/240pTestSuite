@@ -410,10 +410,10 @@ int saveexists()
 
 	vmufs_shutdown ();
 	free(pkg_in);
-	return (pkg_size >> 9);
+	return (pkg_size >> 9);  // return result in blocks
 }
 
-int readvmu(char *error)
+int LoadVMUSave(char *error)
 {
 	vmu_pkg_t	pkg;
 	uint8		*pkg_in = NULL;
@@ -436,20 +436,30 @@ int readvmu(char *error)
 		free(pkg_in);
 		vmufs_delete (vmu, VMU_NAME);
 		sprintf(error, "#RCorrupt package, deleted save#R");
+#ifdef DCLOAD
+		printf("Corrupt package %s, deleted save from VMU\n", VMU_NAME);
+#endif
 		return 0;
 	}
 
 	free(pkg_in);
+	pkg_in = NULL;
 
 	if(pkg.data_len != DATA_SIZE)
 	{
 		sprintf(error, "#RSave length of unexpected size %d#R", pkg.data_len);
+#ifdef DCLOAD
+		printf("Save length of unexpected size %d\n", pkg.data_len);
+#endif
 		return 0;
 	}
 
 	if(pkg.data[0] != SAVE_NUM)
 	{
 		sprintf(error, "#RVersion # differs, discarding %d != %d#R", SAVE_NUM, pkg.data[0]);
+#ifdef DCLOAD
+		printf("VMU save version # differs, discarding %d != %d\n", SAVE_NUM, pkg.data[0]);
+#endif
 		return 0;
 	}
 
@@ -465,19 +475,23 @@ int readvmu(char *error)
 	SetScanlineIntensity((double)pkg.data[10]);
 	if(!pkg.data[11])
 		ToggleScanlineEvenOdd();
-
+		
+#ifdef DCLOAD
+	printf("Loaded VMU save version #%d\n", pkg.data[0]);
+#endif
 	return 1;
 }
 
-int writevmu(int eyecatch, char *error)
+int WriteVMUSave(int eyecatch, char *error)
 {
-	vmu_pkg_t	pkg;
-	uint8		data[DATA_SIZE], *pkg_out = NULL;
-	int			pkg_size = 0, extra_blocks = 0, icon = 0;
-	maple_device_t *vmu;
-	unsigned char *icon_array[ICON_ARRAY_SIZE] = {
-			sd_data, smpte_data, sdback_data,
-			sdbars_data, sdmono_data };
+	vmu_pkg_t		pkg;
+	uint8			data[DATA_SIZE], *pkg_out = NULL;
+	int				pkg_size = 0, expanded_pkg_size = 0,
+					icon = 0, blocks_needed = 0, blocks_toRelease = 0;
+	maple_device_t	*vmu;
+	unsigned char	*icon_array[ICON_ARRAY_SIZE] = {
+						sd_data, smpte_data, sdback_data,
+						sdbars_data, sdmono_data };
 
 	if(!error)
 		return 0;
@@ -485,7 +499,7 @@ int writevmu(int eyecatch, char *error)
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 	if(!vmu)
 	{
-		sprintf(error, "#RVMU not found#R");
+		sprintf(error, "#RFAIL: VMU not found#R");
 		return 0;
 	}
 
@@ -515,7 +529,7 @@ int writevmu(int eyecatch, char *error)
 	memcpy(&pkg.icon_pal[0], icon_array[icon], 32);
 		pkg.icon_data = icon_array[icon] + 32;
 
-#ifdef SERIAL
+#ifdef DCLOAD
 	printf("Icon %d\n", icon);
 #endif
 
@@ -532,30 +546,58 @@ int writevmu(int eyecatch, char *error)
 
 	if(vmu_pkg_build(&pkg, &pkg_out, &pkg_size) != 0)
 	{
-		sprintf(error, "#RVMU package could not be created#R");
+		sprintf(error, "#RVMU package creation failed#R");
 		return 0;
 	}
-
-	extra_blocks = saveexists();
+	
+	// Do the padding so that no dirty memory is saved to the VMU
+	expanded_pkg_size = ((pkg_size + 511) & ~511);
+	if(expanded_pkg_size > pkg_size)
+	{
+		uint8	*new_pkg_out = NULL;
+		
+		new_pkg_out = (uint8*)malloc(expanded_pkg_size);
+		if(!new_pkg_out)
+		{
+			free(pkg_out);
+			sprintf(error, "#RVMU package padding failed#R");
+			return 0;
+		}
+		memset(new_pkg_out, 0, expanded_pkg_size);
+		memcpy(new_pkg_out, pkg_out, pkg_size);
+		free(pkg_out);
+#ifdef DCLOAD
+		printf("Padded VMU save from %d bytes to %d bytes\n", pkg_size, expanded_pkg_size);
+#endif
+		pkg_out = new_pkg_out;
+		pkg_size = expanded_pkg_size;
+	}
+	
+	blocks_needed = pkg_size >> 9;
+	blocks_toRelease = saveexists();
 	vmufs_init ();
 
-#ifdef SERIAL
-	printf("Free %d To release %d Size %d\n", 
-		vmufs_free_blocks(vmu), extra_blocks, (pkg_size >> 9));
+#ifdef DCLOAD
+	printf("VMU Free %d/Overwrite release %d/Blocks Needed %d\n", 
+		vmufs_free_blocks(vmu), blocks_toRelease, blocks_needed);
 #endif
 
-	if(vmufs_free_blocks(vmu) + extra_blocks < (pkg_size >> 9))
+	if(vmufs_free_blocks(vmu) + blocks_toRelease < blocks_needed)
 	{
-		sprintf(error, "#RNot enough space in VMU#R");
+		free(pkg_out);
+		sprintf(error, "#RFAIL: %d blocks needed in VMU#R", blocks_needed);
 		return 0;
 	}
 
 	if(vmufs_write(vmu, VMU_NAME, pkg_out, pkg_size, VMUFS_OVERWRITE) < 0)
 	{
-		sprintf(error, "#RCould not save file to VMU#R");
+		free(pkg_out);
+		sprintf(error, "#RFAIL: Could not save to VMU#R");
 		return 0;
 	}
+	
 	vmufs_shutdown ();
+	free(pkg_out);
 	return 1;
 }
 

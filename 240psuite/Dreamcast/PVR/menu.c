@@ -407,6 +407,7 @@ void ChangeOptions(ImagePtr screen)
 {	
 	int 		sel = 1, close = 0, region, saved = -1;	
 	ImagePtr	back;
+	char		error[256];
 	
 	back = LoadKMG("/rd/help.kmg.gz", 0);
 	if(!back)
@@ -430,7 +431,6 @@ void ChangeOptions(ImagePtr screen)
 		int	changedPVR = 0;
 		controller		*st;
 		maple_device_t	*dev;
-		char			error[256];
 				
 		StartScene();
 
@@ -551,24 +551,26 @@ void ChangeOptions(ImagePtr screen)
 		dev = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 		if(dev)
 		{
-			char *msg;
+			char *msg = NULL;
 
 			switch(saved)
 			{
 				case 1:
 					msg = "#GOptions saved to VMU#G";
 					break;
+				case -1:
+					msg = "Save Options to VMU";
+					break;
 				case 0:
 					msg = error;
 					break;
 				default:
-				case -1:
-					msg = "Save Options to VMU";
+					msg = "#RUndefined error#R";
+					printf("ERROR: VMU save returned unexpected value %d\n", saved);
 					break;
 			}
 
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
-					msg); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, msg); y += fh; c++;
 		}
 		else
 		{
@@ -680,7 +682,7 @@ void ChangeOptions(ImagePtr screen)
 
 							if ( st && st->buttons & CONT_RTRIGGER )
 								eyecatcher = 1;
-							saved = writevmu(eyecatcher, error);
+							saved = WriteVMUSave(eyecatcher, error);
 						}
 						break;
 					case 8:

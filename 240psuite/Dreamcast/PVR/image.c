@@ -34,8 +34,6 @@ extern uint16 DrawMenu;
 ImageMem Images[MAX_IMAGES];
 uint8 UsedImages = 0;
 
-//#define BENCHMARK 
-
 void InitImages()
 {
 	uint8	i = 0;
@@ -134,13 +132,13 @@ void ReleaseImage(ImagePtr image)
 {
 	uint8   i = 0, deleted = 0;
 
-        for(i = 0; i < MAX_IMAGES && !deleted; i++)
-        {
+	for(i = 0; i < MAX_IMAGES && !deleted; i++)
+	{
 		if(Images[i].image == image)
 		{
 			Images[i].image = NULL;
 			Images[i].state = MEM_RELEASED;
-                        Images[i].name[0] = '\0';
+			Images[i].name[0] = '\0';
 			if(UsedImages)
 				UsedImages --;
 			else
@@ -614,7 +612,7 @@ void DrawImageRotate(ImagePtr image, float angle)
 
 	mat_identity(); 
 	mat_translate(x + (w/2), y + (h/2), 0);
-        mat_rotate_z(angle); 
+	mat_rotate_z(angle); 
 		
 	pvr_poly_cxt_txr(&cxt, PVR_LIST_TR_POLY, image->texFormat, image->tw, image->th, image->tex, PVR_FILTER_NONE);
 	pvr_poly_compile(&hdr, &cxt);
@@ -630,7 +628,7 @@ void DrawImageRotate(ImagePtr image, float angle)
 	vert.u = image->u1;
 	vert.v = image->v1;
 	mat_transform_sq(&vert, &verttx, 1);
-        pvr_prim(&verttx, sizeof(verttx));
+	pvr_prim(&verttx, sizeof(verttx));
 	
 	vert.x = w/2;
 	vert.y = -(h/2);
@@ -638,7 +636,7 @@ void DrawImageRotate(ImagePtr image, float angle)
 	vert.u = image->u2;
 	vert.v = image->v1;
 	mat_transform_sq(&vert, &verttx, 1);
-        pvr_prim(&verttx, sizeof(verttx));
+	pvr_prim(&verttx, sizeof(verttx));
 	
 	vert.x = -(w/2);
 	vert.y = h/2;
@@ -646,7 +644,7 @@ void DrawImageRotate(ImagePtr image, float angle)
 	vert.u = image->u1;
 	vert.v = image->v2;
 	mat_transform_sq(&vert, &verttx, 1);
-        pvr_prim(&verttx, sizeof(verttx));
+	pvr_prim(&verttx, sizeof(verttx));
 	
 	vert.x = w/2;
 	vert.y = h/2;
@@ -655,7 +653,7 @@ void DrawImageRotate(ImagePtr image, float angle)
 	vert.v = image->v2;
 	vert.flags = PVR_CMD_VERTEX_EOL;
 	mat_transform_sq(&vert, &verttx, 1);
-        pvr_prim(&verttx, sizeof(verttx));
+	pvr_prim(&verttx, sizeof(verttx));
 }
 
 inline void StartScene()
@@ -665,20 +663,20 @@ inline void StartScene()
 
 	/*
 	if(IsPAL)
-        {
-                ImagePtr back = NULL;
+	{
+		ImagePtr back = NULL;
 
 		back = LoadKMG("/rd/white.kmg.gz", 1);
-                if(back)
-                {
-                        back->r = 0.4f;
-                        back->g = 0.4f;
-                        back->b = 0.4f;
+		if(back)
+		{
+			back->r = 0.4f;
+			back->g = 0.4f;
+			back->b = 0.4f;
 
-                        DrawImage(back);
-                        FreeImage(&back);
-                }
-        }
+			DrawImage(back);
+			FreeImage(&back);
+		}
+	}
 	*/
 }
 

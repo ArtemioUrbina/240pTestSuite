@@ -6,17 +6,17 @@ all: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST
 all: LDFLAGS = -lfftw3
 all: $(TARGET).bin
 
-#Serial debug compile (exit to dcloader)
-serial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DSERIAL -DBENCHMARK -DDEBUG_FFT
-serial: LDFLAGS = -lfftw3
-serial: $(TARGET).bin
+#DCLOAD debug compile (exit to dcloader)
+dcload: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DDCLOAD -DBENCHMARK -DDEBUG_FFT
+dcload: LDFLAGS = -lfftw3
+dcload: $(TARGET).bin
 
 #Release without FFTW
 nofft: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW
 nofft: $(TARGET).bin
 
-#Serial debug compile (exit to dcloader) without FFTW
-nofftserial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DSERIAL -DBENCHMARK -DDEBUG_FFT
+#DCLOAD debug compile (exit to dcloader) without FFTW
+nofftserial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DDCLOAD -DBENCHMARK
 nofftserial: $(TARGET).bin
 
 KOS_CFLAGS+= $(CFLAGS) 
@@ -86,7 +86,7 @@ $(TARGET).bin: $(TARGET).elf
 	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin
 #	strip $(TARGET).elf
 
-run: clean serial
+run: clean dcload
 	$(KOS_LOADER) $(TARGET).bin 
 
 cdi-int: all ip

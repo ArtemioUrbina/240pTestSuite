@@ -639,7 +639,7 @@ void PVRStats(char *msg)
 			(unsigned int)stats.vbl_count, (unsigned int)stats.frame_last_time, (double)stats.frame_rate, (unsigned int)stats.rnd_last_time);
 }
 
-#ifdef SERIAL
+#ifdef DCLOAD
 
 #include "vmu.h"
 #include "controller.h"
