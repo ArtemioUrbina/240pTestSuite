@@ -52,8 +52,9 @@ typedef struct timecode{
 void DropShadowTest()
 {
 	char		msg[50];
-	int		oldvmode = vmode, frame = 0, text = 0, selback = 0, sprite = 0;
-	int		done = 0, x = dW/2, y = dH/2, invert = 0, reload = 0;
+	int			oldvmode = vmode, frame = 0, text = 0, reload = 0;
+	int			selback = 0, sprite = 0, d_shown = 0;
+	int			done = 0, x = dW/2-50, y = dH/2, invert = 0;
 	uint16		pressed, currentsonic = 0, currentframe = 0, i = 0;
 	ImagePtr	back[4], ssprite, shadow, buzz, buzzshadow, overlay, sonicback[4];
 	controller 	*st;
@@ -82,7 +83,6 @@ void DropShadowTest()
 		shadow = ssprite;
 	else
 		shadow = buzzshadow;
-	updateVMU(" Shadow  ", "  even ", 1);
 	while(!done && !EndProgram) 
 	{
 		if(reload || oldvmode != vmode)
@@ -120,7 +120,7 @@ void DropShadowTest()
 			if(!overlay)
 				return;
 		
-			if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
+			if(vmode < HIGH_RES)
 			{		
 				back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
 				if(!back[0])
@@ -160,10 +160,10 @@ void DropShadowTest()
 
 		if(text)
 		{
-			if(vmode != VIDEO_480I && vmode != VIDEO_480P && vmode != VIDEO_576I)
-				DrawStringB(140, 30, 0, 1.0, 0, msg);
+			if(vmode < HIGH_RES)
+				DrawStringB(10, 20, 0.80, 0.60, 0.60, msg);
 			else
-				DrawStringB(450, 40, 0, 1.0, 0, msg);
+				DrawStringB(20, 40, 0.80, 0.60, 0.60, msg);
 			text --;
 		}
 
@@ -184,6 +184,14 @@ void DropShadowTest()
 			DrawImage(buzz);
 		} 			
 		EndScene();
+		
+		if(refreshVMU)
+		{
+			if(d_shown)
+				d_shown = 0;
+			updateVMU(" Shadow  ", invert ? "  even " : "  odd  ", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -226,15 +234,10 @@ void DropShadowTest()
 			{
 				invert = !invert;
 				if(invert)
-				{
 					sprintf(msg, "Shadow on odd frames");
-					updateVMU(" Shadow  ", "  odd ", 1);
-				}
 				else
-				{
 					sprintf(msg, "Shadow on even frames");
-					updateVMU(" Shadow  ", "  even ", 1);
-				}
+				refreshVMU = 1;
 				text = 60;
 			}
 				
@@ -282,7 +285,35 @@ void DropShadowTest()
 			currentframe = 0;
 			back[1] = sonicback[currentsonic];
 		}
+		
+		if(selback == 0)
+		{
+			int factor = 1;
+			
+			if(vmode >= HIGH_RES)
+				factor = 2;
+			
+			if(x > factor*125 && y > factor*80 && x < factor*220 && y < factor*150)
+			{
+				if(!d_shown)
+				{
+					updateVMUDonna();
+					d_shown = 1;
+				}
+			}
+			else
+			{
+				if(d_shown)
+					refreshVMU = 1;
+			}
+		}
+		else
+		{
+			if(d_shown)
+				refreshVMU = 1;
+		}
 	}
+	
 	FreeImage(&back[0]);
 	for(i = 0; i < 4; i++)
 		FreeImage(&sonicback[i]);
@@ -297,11 +328,11 @@ void DropShadowTest()
 
 void StripedSpriteTest()
 {	
-	int		done = 0, x = dW/2, y = dH/2, selback = 0;
-	int		oldvmode = vmode, reload;
+	int			done = 0, x = dW/2, y = dH/2, selback = 0, d_shown = 0;
+	int			oldvmode = vmode, reload = 0;
 	uint16		pressed, currentsonic = 0, i = 0, currentframe = 0;
 	ImagePtr	back[4], striped, overlay, sonicback[4];
-	controller *st;
+	controller	*st;
 
 	reload = 1;
 
@@ -314,8 +345,7 @@ void StripedSpriteTest()
 	striped = LoadKMG("/rd/striped.kmg.gz", 0);
 	if(!striped)
 		return;
-		
-	updateVMU(" Striped ", "", 1);
+
 	while(!done && !EndProgram) 
 	{
 		if(reload || oldvmode != vmode)
@@ -340,7 +370,7 @@ void StripedSpriteTest()
 			if(!sonicback[3])
 				return;
 		
-			if(vmode != VIDEO_480P && vmode != VIDEO_480I && vmode != VIDEO_576I)
+			if(vmode < HIGH_RES)
 			{		
 				back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
 				if(!back[0])
@@ -404,6 +434,14 @@ void StripedSpriteTest()
 		striped->y = y;
 		DrawImage(striped);
 		EndScene();
+		
+		if(refreshVMU)
+		{
+			if(d_shown)
+				d_shown = 0;
+			updateVMU(" Striped ", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -478,6 +516,34 @@ void StripedSpriteTest()
 			currentframe = 0;
 			back[1] = sonicback[currentsonic];
 		}
+		
+				
+		if(selback == 0)
+		{
+			int factor = 1;
+			
+			if(vmode >= HIGH_RES)
+				factor = 2;
+			
+			if(x > factor*125 && y > factor*80 && x < factor*220 && y < factor*150)
+			{
+				if(!d_shown)
+				{
+					updateVMUDonna();
+					d_shown = 1;
+				}
+			}
+			else
+			{
+				if(d_shown)
+					refreshVMU = 1;
+			}
+		}
+		else
+		{
+			if(d_shown)
+				refreshVMU = 1;
+		}
 	}
 	FreeImage(&back[0]);
 	for(i = 0; i < 4; i++)
@@ -489,11 +555,11 @@ void StripedSpriteTest()
 	return;
 }
 
-void LagTest()
+void ReflexNTimming()
 {
-	char			msg[60];
+	char			msg[60], vmuMsg[60];
 	int				clicks[10], done = 0, view = 0;
-	int				speed = 1, change = 1, warning = 1;
+	int				speed = 1, change = 1;
 	int				x, y, x2, y2, audio = 0, pos = 0;
 	int				i = 0, vibrate = 1, vary = 0, variation = 1;
 	uint16			pressed;		
@@ -519,7 +585,6 @@ void LagTest()
 	back->b = 0.0f;
 			
 	srand((int)(time(0) ^ getpid()));
-	updateVMU("Lag Test ", "", 1);
 	fixed = LoadKMG("/rd/lag-per.kmg.gz", 0);
 	if(!fixed)
 		return;
@@ -542,15 +607,10 @@ void LagTest()
 	for(i = 0; i < 10; i++)
 		clicks[i] = 0xFF;
 
-	purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
+	memset(vmuMsg, 0, sizeof(char)*60);
+	
 	while(!done && !EndProgram) 
 	{
-		if(warning)
-		{
-			ShowHelpWindow(MANUALLAG);
-			warning = 0;
-		}
-
 		StartScene();
 
 		DrawImage(back);
@@ -642,6 +702,7 @@ void LagTest()
 			}
 		}
 
+		purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
 		sprintf(msg, "Audio: %s", audio ? "on" : "off");
 		DrawStringS(200, 20, 1.0f, 1.0f, 1.0f, msg);
 		sprintf(msg, "Timing: %s", variation ? "random" : "rhythmic");
@@ -663,6 +724,12 @@ void LagTest()
 			DrawStringS(20, 170+5*fh, 0.0f, 1.0f, 0.0f, "\"L\" trigger toggles vibration feedback.");
 
 		EndScene();
+		
+		if(refreshVMU)
+		{
+			updateVMU("Reflex   ", vmuMsg, 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -673,8 +740,8 @@ void LagTest()
 				{
 					clicks[pos] = (y - 96) *speed;
 		
-					sprintf(msg, " Off: %d", clicks[pos]);
-					updateVMU("Lag Test ", msg, 1);
+					sprintf(vmuMsg, " Off: %d", clicks[pos]);
+					refreshVMU = 1;
 		
 					if(clicks[pos] >= 0)
 					{
@@ -742,8 +809,6 @@ void LagTest()
 
 		y += speed;
 		x2 += speed;
-
-
 	}
 
 	if(beep != SFXHND_INVALID)
@@ -754,7 +819,9 @@ void LagTest()
 	FreeImage(&spriteB);	
 	snd_shutdown();
 
-	updateVMU("Lag Test ", "-Results-", 1);
+	sprintf(vmuMsg, "-Results-");
+	refreshVMU = 1;
+	
 	if(pos > 9)
 	{
 		int	total = 0;
@@ -802,23 +869,32 @@ void LagTest()
 			DrawStringS(60, 110, 1.0f, 0, 0, "+");
 			DrawStringS(55, 70 + fh*10, 1.0f, 0, 0, "_____");
 			DrawStringS(60, 70 + fh*11, 1.0f, 1.0f, 1.0f, msg);
+			
+			DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that this is not a lag test");
 			if(IsPAL)
-				DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that a frame is around 20 ms");
+				DrawStringS(60, 70 + fh*13, 0.0f, 1.0f, 1.0f, "A frame is around 20 ms");
 			else
-				DrawStringS(60, 70 + fh*12, 0.0f, 1.0f, 1.0f, "Keep in mind that a frame is around 16.68 ms");
+				DrawStringS(60, 70 + fh*13, 0.0f, 1.0f, 1.0f, "A frame is around 16.68 ms");
 
 			if(total && total < 5)
 			{
 				DrawStringS(100, 120, 0.0f, 1.0f, 0.0f, "EXCELLENT REFLEXES!");
-				updateVMUFlash("Lag Test ", " AWESOME", 1);
+				sprintf(vmuMsg, " AWESOME");
+				refreshVMU = 1;
 			}
 			if(total == 0)
 			{
 				DrawStringS(100, 120, 0.0f, 1.0f, 0.0f, "INCREDIBLE REFLEXES!!");
-				updateVMUFlash("Lag Test ", "-PERFECT-", 1);
+				sprintf(vmuMsg, "-PERFECT-");
+				refreshVMU = 1;
 			}
 
 			EndScene();
+			if(refreshVMU)
+			{
+				updateVMU("Reflex   ", vmuMsg, 1);
+				refreshVMU = 0;
+			}
 
 			st = ReadController(0, &pressed);	
 			if(st)
@@ -836,6 +912,7 @@ void LagTest()
 
 void ScrollTest()
 {
+	char		*vmuMsg = " H.Scroll";
 	int 		done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0;
 	int 		oldvmode = vmode, i, currentback = 0, frame = 0;
 	uint16		pressed, vertical = 0;
@@ -872,7 +949,6 @@ void ScrollTest()
 		IgnoreOffset(back[i]);
 	IgnoreOffset(overlay);
 
-	updateVMU(" H.Scroll", "", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -928,6 +1004,11 @@ void ScrollTest()
 		}
 
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU(vmuMsg, "", 1);
+			refreshVMU = 0;
+		}
 		frame ++;
 		if(frame > 10)
 		{
@@ -959,9 +1040,10 @@ void ScrollTest()
 			{
 				vertical = !vertical;
 				if(!vertical)
-					updateVMU(" H.Scroll", "", 1);
+					vmuMsg = " H.Scroll";
 				else
-					updateVMU(" V.Scroll", "", 1);
+					vmuMsg = " V.Scroll";
+				refreshVMU = 1;
 			}
 
 			if (pressed & CONT_START)
@@ -985,7 +1067,6 @@ void GridScrollTest()
 	if(!back)
 		return;  
 	
-	updateVMU("G. Scroll", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1006,6 +1087,12 @@ void GridScrollTest()
 		CalculateUV(x, y, dW, dH, back);
 		DrawImage(back);
 		EndScene();
+		
+		if(refreshVMU)
+		{
+			updateVMU("G. Scroll", "", 1);
+			refreshVMU = 0;
+		}
 	
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1047,11 +1134,12 @@ void GridScrollTest()
 void DrawStripes()
 {
 	int 			done = 0, field = 1, alternate = 0,
-				frame = 0, dframe = 0, vertical = 0;
+					frame = 0, dframe = 0, vertical = 0;
 	uint16			pressed;		
 	ImagePtr		stripespos, stripesneg;
 	ImagePtr		vstripespos, vstripesneg;
-	controller	*st;
+	controller		*st;
+	char			*vmuMsg1 = "H.Stripes", *vmuMsg2 = "still";
 
 	stripespos = LoadKMG("/rd/stripespos.kmg.gz", 1);
 	if(!stripespos)
@@ -1067,7 +1155,6 @@ void DrawStripes()
 	if(!vstripesneg)
 		return;
 
-	updateVMU(" Stripes", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1094,7 +1181,7 @@ void DrawStripes()
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			if(vmode != VIDEO_480P &&  vmode != VIDEO_480I)
+			if(vmode < HIGH_RES)
 				DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
 			else
 				DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
@@ -1103,6 +1190,11 @@ void DrawStripes()
 				frame = 0;
 		}
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU(vmuMsg1, vmuMsg2, 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1114,13 +1206,21 @@ void DrawStripes()
 			{
 				alternate = !alternate;
 				if(alternate)
-					updateVMU(" Stripes", "alternate", 1);
+					vmuMsg2 = "alternate";
 				else
-					updateVMU(" Stripes", " still ", 1);
+					vmuMsg2 = "  still  ";
+				refreshVMU = 1;
 			}
 						
 			if (pressed & CONT_Y)
+			{
 				vertical = !vertical;
+				if(vertical)
+					vmuMsg1 = "V.Stripes";
+				else
+					vmuMsg1 = "H.Stripes";
+				refreshVMU = 1;
+			}
 						
 			if (pressed & CONT_X)
 			{
@@ -1145,11 +1245,12 @@ void DrawStripes()
 
 void DrawCheckBoard()
 {
+	char			*vmuMsg = "";
 	int 			done = 0, field = 1, alternate = 0,
-				frame = 0, dframe = 0;
+					frame = 0, dframe = 0;
 	uint16			pressed;		
 	ImagePtr		checkpos, checkneg;
-	controller	*st;
+	controller		*st;
 
 	checkpos = LoadKMG("/rd/checkpos.kmg.gz", 1);
 	if(!checkpos)
@@ -1161,7 +1262,6 @@ void DrawCheckBoard()
 		return;
 	}
 
-	updateVMU("CHKB PTTN", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1178,7 +1278,7 @@ void DrawCheckBoard()
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			if(vmode != VIDEO_480I && vmode != VIDEO_480P)
+			if(vmode < HIGH_RES)
 				DrawStringB(20, 210, 1.0f, 1.0f, 1.0f, msg);
 			else
 				DrawStringB(20, 460, 1.0f, 1.0f, 1.0f, msg);
@@ -1187,6 +1287,11 @@ void DrawCheckBoard()
 				frame = 0;
 		}
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("CHKB PTTN", vmuMsg, 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1198,9 +1303,10 @@ void DrawCheckBoard()
 			{
 				alternate = !alternate;				
 				if(alternate)
-					updateVMU("CHKB PTTN", "alternate", 1);
+					vmuMsg = "alternate";
 				else
-					updateVMU("CHKB PTTN", " still ", 1);
+					vmuMsg = " still ";
+				refreshVMU = 1;
 			}
 		
 			if (pressed & CONT_X)
@@ -1223,11 +1329,12 @@ void DrawCheckBoard()
 
 void SoundTest()
 {
-	int 		done = 0, sel = 1, play = 0, pan = 0;
+	int 		done = 0, sel = 1, play = 0, pan = 128, prevSel = -1;
 	uint16		pressed;		
 	ImagePtr	back;
 	sfxhnd_t	beep;
 	controller	*st;
+	char		*vmuMsg = "";
 
 	back = LoadKMG("/rd/back.kmg.gz", 0);
 	if(!back)
@@ -1237,7 +1344,6 @@ void SoundTest()
 	if(!beep)
 		return;
 	
-	updateVMU("Sound Test", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1248,6 +1354,12 @@ void SoundTest()
 		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,	sel == 1 ? 0 : 1.0f, "Center Channel");
 		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");
 		EndScene();
+		
+		if(refreshVMU)
+		{
+			updateVMU("Sound Test", vmuMsg, 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1274,17 +1386,25 @@ void SoundTest()
 		if(sel > 2)
 			sel = 0;
 
-		switch(sel)
+		if(sel != prevSel)
 		{
-			case 0:
-				pan = 0;
-				break;
-			case 1:
-				pan = 128;
-				break;
-			case 2:
-				pan = 255;
-				break;
+			switch(sel)
+			{
+				case 0:
+					pan = 0;
+					vmuMsg = "Left      ";
+					break;
+				case 1:
+					pan = 128;
+					vmuMsg = "  Center  ";
+					break;
+				case 2:
+					pan = 255;
+					vmuMsg = "     Right";
+					break;
+			}
+			prevSel = sel;
+			refreshVMU = 1;
 		}
 
 		if(play && beep != SFXHND_INVALID)
@@ -1330,8 +1450,7 @@ void LEDZoneTest()
 	sprite[4] = LoadKMG("/rd/sprite4led.kmg.gz", 0);
 	if(!sprite[4])
 		return;
-		
-	updateVMU("Backlit", "", 1);
+
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1344,6 +1463,11 @@ void LEDZoneTest()
 			DrawImage(sprite[selsprite]);
 		}
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("Backlit", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1423,7 +1547,7 @@ void FixSpriteSize(ImagePtr sprite, int full)
 		
 	if(!full)
 	{
-		if(vmode != VIDEO_480I && vmode != VIDEO_480P)
+		if(vmode < HIGH_RES)
 		{
 			sprite->x = 60;
 			sprite->y = 100;
@@ -1442,7 +1566,7 @@ void FixSpriteSize(ImagePtr sprite, int full)
 	}
 	else
 	{
-		if(vmode != VIDEO_480I && vmode != VIDEO_480P)
+		if(vmode < HIGH_RES)
 		{
 			sprite->x = -160;
 			sprite->y = -120;
@@ -1493,19 +1617,18 @@ void DiagonalPatternTest()
 		return;
 	}
 
-	if(vmode != VIDEO_480I && vmode != VIDEO_480P)
+	if(vmode < HIGH_RES)
 		sprite = spritesmall;
 	else
 		sprite = spritebig;
 
 	FixSpriteSize(sprite, full);
 	
-	updateVMU("Diagonal", "", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
 		{
-			if(vmode != VIDEO_480I && vmode != VIDEO_480P)
+			if(vmode < HIGH_RES)
 				sprite = spritesmall;
 			else
 				sprite = spritebig;
@@ -1523,6 +1646,11 @@ void DiagonalPatternTest()
 		
 		DrawImageRotate(sprite, angle);
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("Diagonal", "", 1);
+			refreshVMU = 0;
+		}
 
 		ReadController(0, &pressed);
 		if (pressed & CONT_B)
@@ -1587,7 +1715,6 @@ void PassiveLagTest()
 	circle->b = 1.0f;
 
 	LoadNumbers();
-	updateVMU("LAG TEST", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1749,6 +1876,11 @@ void PassiveLagTest()
 		DrawDigit(272, 16, 0, 0, 0, lsd);
 
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("LAG TEST", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1833,37 +1965,14 @@ void ConvertFromFrames(timecode *value, uint16 Frames)
 
 void Alternate240p480i()
 {
-	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, done =  0, current = 0, res = 0, status = 0;
+	char		*vmuMsg = NULL;
+	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, done = 0;
+	int			current = 0, res = 0, status = 0, oldvmode = -1;
 	timecode	times[20];
 	uint16		pressed;		
 	char 		buffer[20];
 	controller	*st;
 	ImagePtr	back;
-
-	if(!IsPAL)
-	{
-		updateVMU("240p/480i", "", 1);
-		if(vmode != VIDEO_240P)
-		{
-			ReleaseScanlines();
-			ReleaseFont();
-			Toggle240p480i(res);
-			LoadFont();
-			LoadScanlines();
-		}
-	}
-	else
-	{
-		updateVMU("288p/576i", "", 1);
-		if(vmode != VIDEO_288P)
-		{
-			ReleaseScanlines();
-			ReleaseFont();
-			Toggle240p480i(res);
-			LoadFont();
-			LoadScanlines();
-		}
-	}
 
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
@@ -1875,6 +1984,34 @@ void Alternate240p480i()
 			
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			if(!IsPAL)
+			{
+				vmuMsg = "240p/480i";
+				if(vmode != VIDEO_240P)
+				{
+					ReleaseScanlines();
+					ReleaseFont();
+					Toggle240p480i(res);
+					LoadFont();
+					LoadScanlines();
+				}
+			}
+			else
+			{
+				vmuMsg = "288p/576i";
+				if(vmode != VIDEO_288P)
+				{
+					ReleaseScanlines();
+					ReleaseFont();
+					Toggle240p480i(res);
+					LoadFont();
+					LoadScanlines();
+				}
+			}
+			oldvmode = vmode;
+		}
 		StartScene();
 
 		DrawImage(back);
@@ -1922,12 +2059,20 @@ void Alternate240p480i()
 		}
 
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU(vmuMsg, "", 1);				
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
 		{
 			if (pressed & CONT_START)
+			{
 				ShowHelpWindow(ALTERNATE);
+				refreshVMU = 1;
+			}
 
 			if (pressed & CONT_B)
 				done =	1;
@@ -1950,11 +2095,14 @@ void Alternate240p480i()
 					times[current - 1].type = 0;
 					res = !res;
 					times[current - 1].res = res;
+					
 					ReleaseScanlines();
 					ReleaseFont();
 					Toggle240p480i(res);
 					LoadFont();
 					LoadScanlines();
+					
+					refreshVMU = 1;
 				}
 				if(status == 2)
 				{
@@ -2079,14 +2227,14 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 	if(!rec_buffer.buffer || !rec_buffer.size)
 	{
 #ifdef DEBUG_FFT
-		printf("Invalid buffer or size\n");
+		dbglog(DBG_CRITICAL, "Invalid buffer or size\n");
 #endif
 		return;	
 	}
 	if(!dev || !samples || !len)
 	{
 #ifdef DEBUG_FFT
-		printf("Invalid dev, samples or len\n");
+		dbglog(DBG_CRITICAL, "Invalid dev, samples or len\n");
 #endif
 		return;
 	}
@@ -2095,7 +2243,7 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 	{
 		rec_buffer.overflow = 1;
 #ifdef DEBUG_FFT
-		printf("Buffer overflow\n");
+		dbglog(DBG_CRITICAL, "Buffer overflow\n");
 #endif
 		return;
 	}
@@ -2106,17 +2254,18 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 
 void SIPLagTest()
 {
-	int 		done = 0, status = 0, counter = 0;
-	int		showframes = 0, accuracy = 1, cycle = 0;
-	uint16		pressed;		
-	ImagePtr	back, wave;
-	sfxhnd_t	beep;  
-	controller	*st;
+	int				done = 0, status = 0, counter = 0;
+	int				showframes = 0, accuracy = 1, cycle = 0;
+	uint16			pressed;		
+	ImagePtr		back, wave;
+	sfxhnd_t		beep;  
+	controller		*st;
 	maple_device_t	*sip = NULL;  
 	double			Results[RESULTS_MAX];
-	int 			ResCount = 0;
-	char		DStatus[100];
-	float		delta = 0.01f;
+	int				ResCount = 0;
+	char			DStatus[100];
+	float			delta = 0.01f;
+	char			*vmuMsg1 = "Lag v/Micr", *vmuMsg2 = "";
 
 	DStatus[0] = 0x0;
 	back = LoadKMG("/rd/back.kmg.gz", 0);
@@ -2165,16 +2314,15 @@ void SIPLagTest()
 	if(sip_start_sampling(sip, sip_copy, 1) == MAPLE_EOK)
 	{
 #ifdef DEBUG_FFT
-		printf("Mic ok\n");
+		dbglog(DBG_INFO, "Mic ok\n");
 #endif
 	}
 	else
 	{
-		printf("Mic Recording: Failed\n");
+		dbglog(DBG_CRITICAL, "Mic Recording: Failed\n");
 		done = 1;
 	}
 
-	updateVMU("Lag v/Micr", "", 1);
 	sprintf(DStatus, "Press A");
 	while(!done && !EndProgram) 
 	{		
@@ -2194,6 +2342,11 @@ void SIPLagTest()
 		}
 
 		DrawSIPScreen(back, wave, DStatus, accuracy, Results, ResCount, showframes);
+		if(refreshVMU)
+		{
+			updateVMU(vmuMsg1, vmuMsg2, 1);
+			refreshVMU = 0;
+		}
 
 		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 		if(!sip)
@@ -2255,10 +2408,13 @@ void SIPLagTest()
 				if(rec_buffer.pos == 0)
 				{
 					sprintf(DStatus, "#YPlease remove and reinsert Microphone#Y");
-					updateVMU("Reinsert", "micro", 1);
 					cycle = 0;
 					rec_buffer.recording = 0;
 					status = 0;
+					
+					vmuMsg1 = "Reinsert";
+					vmuMsg2 = "micro";
+					refreshVMU = 1;
 				}
 			}
 		}
@@ -2282,30 +2438,38 @@ void SIPLagTest()
 			sprintf(DStatus, "Stopped sampling");
 
 #ifdef DEBUG_FFT
-			printf("Got %d bytes\n", (int)rec_buffer.pos);
+			dbglog(DBG_INFO, "Got %d bytes\n", (int)rec_buffer.pos);
 #endif
 			if(rec_buffer.buffer && rec_buffer.pos > 0)
 			{
 				double value;
 
 				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount, showframes);
-				updateVMU("Analyzing", "", 1);
+				vmuMsg1 = "Analyzing";
+				vmuMsg2 = "";
+				updateVMU(vmuMsg1, vmuMsg2, 1);
 				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2,
 					11025, (IsPAL ? 50.0 : 60.0)*accuracy, 1000);
 				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
 				{
 					sprintf(DStatus, "#YNoise at 1khz#Y");
-					updateVMU("Noise at", "1Khz", 1);
+					vmuMsg1 = "Noise at";
+					vmuMsg2 = "1Khz";
+					updateVMU(vmuMsg1, vmuMsg2, 1);
 				}
 				if(value == FFT_OM)
 				{
 					sprintf(DStatus, "#ROut of Memory#R");
-					updateVMU("Out of", "memory", 1);
+					vmuMsg1 = "Out of";
+					vmuMsg2 = "memory";
+					updateVMU(vmuMsg1, vmuMsg2, 1);
 				}
 				if(value == FFT_NOT_FOUND)
 				{
 					sprintf(DStatus, "#YCheck audio system#Y");
-					updateVMU("Check", "audio", 1);
+					vmuMsg1 = "Check";
+					vmuMsg2 = "audio";
+					updateVMU(vmuMsg1, vmuMsg2, 1);
 				}
 				if(value >= 0)
 				{
@@ -2317,7 +2481,9 @@ void SIPLagTest()
 						sprintf(vmtext, "%g f", value);
 					else
 						sprintf(vmtext, "%g ms", value*16.66);
-					updateVMU("Lag is:", vmtext, 1);
+					vmuMsg1 = "Lag is:";
+					vmuMsg2 = vmtext;
+					updateVMU(vmuMsg1, vmuMsg2, 1);
 				}
 
 				if(ResCount == RESULTS_MAX)
@@ -2333,7 +2499,9 @@ void SIPLagTest()
 			else
 			{
 				sprintf(DStatus, "#YRecording failed#Y");
-				updateVMU("Record", "failed", 1);
+				vmuMsg1 = "Record";
+				vmuMsg2 = "failed";
+				updateVMU(vmuMsg1, vmuMsg2, 1);
 			}
 
 			rec_buffer.pos = 0;
@@ -2387,8 +2555,8 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	framesizernd = (long)framesize;  
 
 #ifdef DEBUG_FFT
-	printf("Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n",
-			samplerate, (double)samplesize/samplerate, framesize);
+	dbglog(DBG_INFO, "Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n",
+					samplerate, (double)samplesize/samplerate, framesize);
 
 	start = timer_ms_gettime64();
 #endif
@@ -2423,17 +2591,17 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 			in[i] = (double)samples[i+framestart];
 
 #ifdef DEBUG_FFT
-		//printf("Estimating plan\n");
+		dbglog(DBG_INFO, "Estimating plan\n");
 #endif
 		p = fftw_plan_dft_r2c_1d(arraysize, in, out, FFTW_ESTIMATE);
 
 #ifdef DEBUG_FFT
-		//printf("Executing FFTW\n");
+		dbglog(DBG_INFO, "Executing FFTW\n");
 #endif
 		fftw_execute(p); 
 	
 #ifdef DEBUG_FFT
-		//printf("Analyzing results\n");
+		dbglog(DBG_INFO, "Analyzing results\n");
 #endif
 		root = sqrt(arraysize);
 		for(i = 0; i < arraysize/2+1; i++)
@@ -2459,7 +2627,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 #ifdef DEBUG_FFT
 	end = timer_ms_gettime64();
 	time = end - start;
-	printf("FFT for %g frames took %ld\n", samplesize/framesize - 1, time);
+	dbglog(DBG_INFO, "FFT for %g frames took %ld\n", samplesize/framesize - 1, time);
 	start = end;
 #endif
 
@@ -2467,7 +2635,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	mins = (casefrq - 1) / boxsize;
 	maxs = (casefrq + 1) / boxsize;
 #ifdef DEBUG_FFT
-	printf("Searching for %g, due to samplerate, arraysize and accurancy %d it is %g, between %g and %g\n",
+	dbglog(DBG_INFO, "Searching for %g, due to samplerate, arraysize and accurancy %d it is %g, between %g and %g\n",
 		searchfreq, (int)secondunits/(IsPAL ? 50 : 60), casefrq/boxsize, mins, maxs);
 #endif
  
@@ -2476,7 +2644,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 		if(!found)
 		{
 #ifdef DEBUG_FFT
-			printf("Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
+			dbglog(DBG_INFO, "Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
 #endif
 			if(count)
 			{
@@ -2500,7 +2668,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 						pos -= CUE_FRAMES*(secondunits/(IsPAL ? 50.0 : 60.0));
 						value = pos/(secondunits/(IsPAL ? 50.0 : 60.0));
 #ifdef DEBUG_FFT
-						printf("Found at %g frames -> %g sec\n", value, pos/secondunits);
+						dbglog(DBG_INFO, "Found at %g frames -> %g sec\n", value, pos/secondunits);
 #endif
 						found = 1;
 					}
@@ -2520,14 +2688,14 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 		pos = tpos - CUE_FRAMES*(secondunits/(IsPAL ? 50.0 : 60.0));
 		value = pos/(secondunits/(IsPAL ? 50.0 : 60.0));
 #ifdef DEBUG_FFT
-		printf("Found (heur %ld) at %g frames -> %g sec\n", tcount, value, pos/secondunits);
+		dbglog(DBG_INFO, "Found (heur %ld) at %g frames -> %g sec\n", tcount, value, pos/secondunits);
 #endif
 	}
 
 #ifdef DEBUG_FFT
 	end = timer_ms_gettime64();
 	time = end - start;
-	printf("Processing frequencies took %ld\n", time);
+	dbglog(DBG_INFO, "Processing frequencies took %ld\n", time);
 #endif
 
 	free(MaxFreqArray);

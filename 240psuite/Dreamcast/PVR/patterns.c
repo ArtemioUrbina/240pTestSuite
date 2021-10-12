@@ -76,8 +76,7 @@ void DrawPluge()
 
 	back = backPAL;
 	black->h = 264;	
-		
-	updateVMU(" Pluge ", "", 1);
+
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -143,6 +142,11 @@ void DrawPluge()
 		}		
 
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU(" Pluge ", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -220,12 +224,8 @@ void DrawSMPTEColorBars()
 	}
 
 	IgnoreOffset(backPAL75);
-		IgnoreOffset(backPAL100);
+	IgnoreOffset(backPAL100);
 		
-	if(IsPAL)
-		updateVMU(" EBU ", "", 1);
-	else
-		updateVMU(" SMPTE ", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -252,6 +252,14 @@ void DrawSMPTEColorBars()
 		}
 
 		EndScene();
+		if(refreshVMU)
+		{
+			if(IsPAL)
+				updateVMU(" EBU ", "", 1);
+			else
+				updateVMU(" SMPTE ", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -287,13 +295,17 @@ void DrawGrayRamp()
 	back = LoadKMG("/rd/grayramp.kmg.gz", 0);
 	if(!back)
 		return;
-		
-	updateVMU("Gray Ramp", "", 1);
+
 	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("Gray Ramp", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -312,12 +324,13 @@ void DrawGrayRamp()
 void DrawWhiteScreen()
 {
 	int 		done = 0, color = 0, text = 0;
-	int		sel = 1, editmode = 0;
+	int			sel = 1, editmode = 0;
 	float		BlackLevel = 0.0f, cr, cb, cg;
 	uint16		pressed;		
 	ImagePtr	back;
 	controller	*st;
-	char		msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
+	char		*mode[5] = { "White", "Black", "Red", "Green", "Blue" };
+	char		msg[100], *vmuMsg = mode[0];
 
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
@@ -332,7 +345,6 @@ void DrawWhiteScreen()
 		BlackLevel = 0.0f; // 0 IRE
 		
 	cr = cb = cg = 1.0f; // white
-	updateVMU("White scr", "", 1);
 	while(!done && !EndProgram) 
 	{		
 		if(IsPAL)
@@ -349,6 +361,11 @@ void DrawWhiteScreen()
 		}		
 		
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("Color scr", vmuMsg, 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -364,11 +381,17 @@ void DrawWhiteScreen()
 
 				editmode = 0;
 				if(color == 0 && cr + cb + cg != 3*1.0f)
+				{
 					sprintf(msg, "%s [EDITED]", mode[color]);
+					vmuMsg = "Edited";
+				}
 				else
+				{
 					sprintf(msg, "%s", mode[color]);
+					vmuMsg = mode[color];
+				}
 
-				updateVMU("White scr", mode[color], 1);
+				refreshVMU = 1;
 				text = 30;
 			}
 
@@ -380,10 +403,16 @@ void DrawWhiteScreen()
 
 				editmode = 0;
 				if(color == 0 && cr + cb + cg != 3*1.0f)
+				{
 					sprintf(msg, "%s [edited]", mode[color]);
+					vmuMsg = "Edited";
+				}
 				else
+				{
 					sprintf(msg, "%s", mode[color]);
-				updateVMU("White scr", mode[color], 1);
+					vmuMsg = mode[color];
+				}
+				refreshVMU = 1;
 				text = 30;
 			}
 
@@ -471,7 +500,7 @@ void DrawWhiteScreen()
 						*current  = 0.0f;					
 				}
 				
-				if ( pressed &CONT_Y )
+				if ( pressed & CONT_Y )
 				{			
 					if(current)				
 						*current = 1.0f;
@@ -527,7 +556,6 @@ void DrawColorBars()
 	if(!back)
 		return;
 		
-	updateVMU("Colorbars", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -536,6 +564,11 @@ void DrawColorBars()
 		else
 			DrawImage(backgrid);
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("Colorbars", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -565,13 +598,17 @@ void Draw601ColorBars()
 	back = LoadKMG("/rd/601701cb.kmg.gz", 0);
 	if(!back)
 		return;
-		
-	updateVMU("Colorbars", "with gray", 1);
+
 	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("Colorbars", "with gray", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -594,7 +631,6 @@ void DrawColorBleed()
 	ImagePtr	back = NULL, backchk = NULL;
 	controller	*st;
 
-	updateVMU("Bleed CHK", "", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -606,7 +642,7 @@ void DrawColorBleed()
 
 		if(!back)
 		{
-			if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
+			if(vmode >= HIGH_RES)
 			{
 				back = LoadKMG("/rd/480/colorbleed-480.kmg.gz", 0);
 				if(!back)
@@ -633,6 +669,12 @@ void DrawColorBleed()
 		else
 			DrawImage(backchk);
 		EndScene();
+	
+		if(refreshVMU)
+		{
+			updateVMU("Bleed CHK", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -659,10 +701,6 @@ void DrawGrid(int full)
 	ImagePtr	back = NULL;
 	controller	*st;
 
-	if(full)
-		updateVMU("  Grid	", "", 1);
-	else
-		updateVMU("Grid 224", "", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -675,7 +713,7 @@ void DrawGrid(int full)
 		{
 			if(full)
 			{
-				if(vmode == VIDEO_480I || vmode == VIDEO_480P || vmode == VIDEO_576I)
+				if(vmode >= HIGH_RES)
 				{
 					back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
 					if(!back)
@@ -713,6 +751,15 @@ void DrawGrid(int full)
 		StartScene();
 		DrawImage(back);
 		EndScene();
+		
+		if(refreshVMU)
+		{
+			if(full)
+				updateVMU("  Grid  ", "", 1);
+			else
+				updateVMU("Grid 224", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -762,14 +809,18 @@ void DrawMonoscope()
 	rlines = LoadKMG("/rd/monoscope_lin.kmg.gz", 0);
 	if(!rlines)
 		return;
-		
-	updateVMU("Monoscope", "", 1);
+
 	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
 		DrawImage(rlines);
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("Monoscope", "", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -856,10 +907,6 @@ void DrawLinearity(int full)
 		gridd->y = 8;
 	}
 		
-	if(full)
-		updateVMU("Linearity", "", 1);
-	else
-		updateVMU("Linearity", "224", 1);
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -950,6 +997,14 @@ void DrawLinearity(int full)
 		}
 		DrawImage(circles);
 		EndScene();
+		if(refreshVMU)
+		{
+			if(full)
+				updateVMU("Linearity", "", 1);
+			else
+				updateVMU("Linearity", "224", 1);
+			refreshVMU = 0;
+		}
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -992,7 +1047,7 @@ void Draw100IRE()
 	uint16			pressed, text = 0, invert = 0;	
 	ImagePtr		back, white;
 	controller		*st;
-	char			msg[50];
+	char			msg[50], *vmuMsg = " 100 IRE ";
 
 	back = LoadKMG("/rd/100IRE.kmg.gz", 0);
 	if(!back)
@@ -1006,7 +1061,6 @@ void Draw100IRE()
 	white->w = 320;
 	white->h = 240;
 
-	updateVMU(" 100 IRE ", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1037,6 +1091,12 @@ void Draw100IRE()
 		}
 
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU(vmuMsg, "", 1);
+			refreshVMU = 0;
+		}
+		
 		st = ReadController(0, &pressed);
 		if(st)
 		{
@@ -1082,9 +1142,10 @@ void Draw100IRE()
 				back->alpha = 1.0f;
 				text = 60;
 				if(!invert)
-					updateVMU(" 100 IRE ", "", 1);
+					vmuMsg = " 100 IRE ";
 				else
-					updateVMU(" 140 IRE ", "", 1);
+					vmuMsg = " 140 IRE ";
+				refreshVMU = 0;
 			}
 		
 			if (pressed & CONT_B)
@@ -1110,13 +1171,17 @@ void DrawSharpness()
 	back = LoadKMG("/rd/sharpness.kmg.gz", 0);
 	if(!back)
 		return;
-			
-	updateVMU("Sharpness", "", 1);
+
 	while(!done && !EndProgram) 
 	{		
 		StartScene();
 		DrawImage(back);
 		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU("Sharpness", "", 1);
+			refreshVMU = 0;
+		}
 		
 		st = ReadController(0, &pressed);
 		if(st)

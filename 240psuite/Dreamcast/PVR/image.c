@@ -30,6 +30,20 @@
 #include "menu.h"
 #include "help.h"
 
+/**************DrawCylce*******************
+Load Graphics
+while()
+	StartScene();
+	DrawImage
+	DrawString
+	EndScene();
+	updateVMU
+	ReadController
+		Start -> ShowMenu
+			Calls DrawMenu in EndScene
+Release Graphics
+*******************************************/
+
 extern uint16 DrawMenu;
 ImageMem Images[MAX_IMAGES];
 uint8 UsedImages = 0;
@@ -59,7 +73,7 @@ void CleanImages()
 			if(UsedImages)
 				UsedImages --;
 			else
-				dbglog(DBG_ERROR, "Invalid used image index\n");
+				dbglog(DBG_CRITICAL, "Invalid used image index\n");
 		}	
 	}
 }
@@ -75,7 +89,7 @@ void RefreshLoadedImages()
 			if(Images[i].name[0] == 'F' && Images[i].name[1] == 'B')
 			{
 				if(!ReloadFBTexture())
-					dbglog(DBG_ERROR, "Could not reload FrameBuffer\n");
+					dbglog(DBG_CRITICAL, "Could not reload FrameBuffer\n");
 				else
 					Images[i].state = MEM_LOADED;
 			}
@@ -97,7 +111,7 @@ void ReleaseTextures()
 		if(Images[i].state == MEM_LOADED)
 		{
 			if(!FreeImageData(&Images[i].image))
-				dbglog(DBG_ERROR, "Could not free image: %s\n", Images[i].name);
+				dbglog(DBG_CRITICAL, "Could not free image: %s\n", Images[i].name);
 			else
 				Images[i].state = MEM_TEXRELEASED;
 		}	
@@ -122,10 +136,10 @@ void InsertImage(ImagePtr image, char *name)
 			}
 		}
 		if(!placed)
-			dbglog(DBG_ERROR, "Image array full (NO FREE)\n");
+			dbglog(DBG_CRITICAL, "Image array full (NO FREE)\n");
 	}
 	else
-		dbglog(DBG_ERROR, "Image array full\n");
+		dbglog(DBG_CRITICAL, "Image array full\n");
 }
 
 void ReleaseImage(ImagePtr image)
@@ -142,13 +156,13 @@ void ReleaseImage(ImagePtr image)
 			if(UsedImages)
 				UsedImages --;
 			else
-				dbglog(DBG_ERROR, "Invalid used image index\n");
+				dbglog(DBG_CRITICAL, "Invalid used image index\n");
 			deleted = 1;
 		}
 	}
 
 	if(!deleted)
-		dbglog(DBG_ERROR, "Image not found for deletion\n");
+		dbglog(DBG_CRITICAL, "Image not found for deletion\n");
 }
 
 int gkmg_to_img(const char * fn, kos_img_t * rv) {	
@@ -322,7 +336,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
 	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned long)end - start);
-	dbglog(DBG_KDEBUG, msg);
+	dbglog(DBG_ERROR, msg);
 #endif
 
 	image->r = 1.0f;
@@ -414,7 +428,7 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
 	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned long)end - start);
-	dbglog(DBG_KDEBUG, msg);
+	dbglog(DBG_ERROR, msg);
 #endif
 	return 1;
 }
@@ -660,24 +674,6 @@ inline void StartScene()
 {
 	pvr_scene_begin();
 	pvr_list_begin(PVR_LIST_TR_POLY);
-
-	/*
-	if(IsPAL)
-	{
-		ImagePtr back = NULL;
-
-		back = LoadKMG("/rd/white.kmg.gz", 1);
-		if(back)
-		{
-			back->r = 0.4f;
-			back->g = 0.4f;
-			back->b = 0.4f;
-
-			DrawImage(back);
-			FreeImage(&back);
-		}
-	}
-	*/
 }
 
 inline void EndScene()

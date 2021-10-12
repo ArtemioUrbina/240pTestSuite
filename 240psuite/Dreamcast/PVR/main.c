@@ -21,6 +21,7 @@
 
 #include <kos.h>
 #include <stdlib.h>
+#include <sys/cdefs.h>
 #include <dc/sound/sound.h>
 #include <dc/sound/sfxmgr.h>
 
@@ -55,6 +56,11 @@ int main(void)
 	ImagePtr	title, sd;
 	controller	*st;
 	char		error[256];
+
+	if(cdrom_init() != 0)
+		dbglog(DBG_ERROR, "Could not initialize GD-ROM\n");
+	if(cdrom_spin_down() != ERR_OK)
+		dbglog(DBG_ERROR,"Could not stop GD-ROM from spinning\n");
 
 	vcable = vid_check_cable();
 	region = flashrom_get_region();
@@ -94,6 +100,7 @@ int main(void)
 	}
 	
 	DrawIntro();
+	refreshVMU = 1;
 	while(!done && !EndProgram) 
 	{
 		char	res[40];
@@ -106,7 +113,7 @@ int main(void)
 #ifndef NO_FFTW
 		maple_device_t *sip = NULL;
 #endif
-				
+
 		// Check cable again in case it was changed on the fly
 		vcable = vid_check_cable();
 
@@ -117,7 +124,6 @@ int main(void)
 #ifndef NO_FFTW
 		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 #endif
-
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
@@ -207,6 +213,13 @@ int main(void)
 		}
 		
 		EndScene();
+		
+		if(refreshVMU)
+		{
+			updateVMU("240p Test", "", 1);
+			refreshVMU = 0;
+		}
+		
 		st = ReadController(0, &pressed);
 		if(st)
 		{
@@ -226,14 +239,14 @@ int main(void)
 			{
 				sel --;
 				if(sel < 1)
-					sel = c;				
+					sel = c;
 			}
 			
 			if (pressed & CONT_DPAD_DOWN)
 			{
 				sel ++;
 				if(sel > c)
-					sel = 1;				
+					sel = 1;
 			}
 			
 			if(st->joyy != 0)
@@ -248,7 +261,7 @@ int main(void)
 					if(sel < 1)
 						sel = c;
 					if(sel > c)
-						sel = 1;					
+						sel = 1;
 					joycnt = 0;
 				}
 			}
@@ -257,12 +270,13 @@ int main(void)
 			
 			if (pressed & CONT_A)
 			{
+				refreshVMU = 1;
 				switch(sel)
 				{
 					case 1:
 						TestPatternsMenu(title, sd);
 						break;
-					case 2:					
+					case 2:	
 						DropShadowTest();
 						break;
 					case 3:
@@ -277,7 +291,7 @@ int main(void)
 							SIPLagTest();
 						else
 #endif
-							LagTest();
+							ReflexNTimming();
 						break;
 					case 6:
 						ScrollTest();
@@ -318,11 +332,10 @@ int main(void)
 						TestVideoMode(vmode);
 						break;
 #endif
-				} 					
-				updateVMU("240p Test", "", 1);				
+				}
+				refreshVMU = 1;
 			}
 		}
-		updateVMU("240p Test", "", 0);
 	}
 
 	updateVMU(" Goodbye ", " m(_ _)m ", 1);
@@ -332,6 +345,7 @@ int main(void)
 	ReleaseScanlines();
 	ReleaseFont();
 	CleanImages();
+	cdrom_shutdown();
 #ifndef DCLOAD
 	arch_menu();
 #endif
@@ -344,16 +358,15 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 	uint16			pressed;		
 	controller		*st;
 
-	updateVMU("Patterns", "", 1);
 	while(!done && !EndProgram) 
 	{		
 		float 	r = 1.0f;
 		float 	g = 1.0f;
 		float 	b = 1.0f;
-		int			c = 1;				
+		int			c = 1;
 		float 	x = 40.0f;
 		float 	y = 55.0f;
-				
+
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
@@ -414,7 +427,11 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		}
 		
 		EndScene();
-
+		if(refreshVMU)
+		{
+			updateVMU("Patterns", "", 1);
+			refreshVMU = 0;
+		}
 		st = ReadController(0, &pressed);
 		if(st)
 		{
@@ -431,14 +448,14 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 			{
 				sel --;
 				if(sel < 1)
-					sel = c;				
+					sel = c;
 			}
 		
 			if (pressed & CONT_DPAD_DOWN)
 			{
 				sel ++;
 				if(sel > c)
-					sel = 1;				
+					sel = 1;
 			}
 		
 			if(st->joyy != 0)
@@ -453,18 +470,19 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					if(sel < 1)
 						sel = c;
 					if(sel > c)
-						sel = 1;					
+						sel = 1;
 					joycnt = 0;
 				}
 			}
 			else
 				joycnt = 0;
 		
-			if (pressed & CONT_B)			
-				done = 1;			
+			if (pressed & CONT_B)
+				done = 1;
 		
 			if (pressed & CONT_A)
 			{
+				refreshVMU = 1;
 				switch(sel)
 				{
 					case 1:
@@ -513,12 +531,10 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					case 15:
 						done = 1;
 						break;
-				} 												
-				updateVMU("Patterns", "", 1);
+				} 			
+				refreshVMU = 1;
 			}			
 		}
-
-		updateVMU("Patterns", "", 0);
 	}
 
 	return;

@@ -437,7 +437,7 @@ int LoadVMUSave(char *error)
 		vmufs_delete (vmu, VMU_NAME);
 		sprintf(error, "#RCorrupt package, deleted save#R");
 #ifdef DCLOAD
-		printf("Corrupt package %s, deleted save from VMU\n", VMU_NAME);
+		dbglog(DBG_ERROR, "Corrupt package %s, deleted save from VMU\n", VMU_NAME);
 #endif
 		return 0;
 	}
@@ -449,7 +449,7 @@ int LoadVMUSave(char *error)
 	{
 		sprintf(error, "#RSave length of unexpected size %d#R", pkg.data_len);
 #ifdef DCLOAD
-		printf("Save length of unexpected size %d\n", pkg.data_len);
+		dbglog(DBG_ERROR, "Save length of unexpected size %d\n", pkg.data_len);
 #endif
 		return 0;
 	}
@@ -458,7 +458,7 @@ int LoadVMUSave(char *error)
 	{
 		sprintf(error, "#RVersion # differs, discarding %d != %d#R", SAVE_NUM, pkg.data[0]);
 #ifdef DCLOAD
-		printf("VMU save version # differs, discarding %d != %d\n", SAVE_NUM, pkg.data[0]);
+		dbglog(DBG_ERROR, "VMU save version # differs, discarding %d != %d\n", SAVE_NUM, pkg.data[0]);
 #endif
 		return 0;
 	}
@@ -477,7 +477,7 @@ int LoadVMUSave(char *error)
 		ToggleScanlineEvenOdd();
 		
 #ifdef DCLOAD
-	printf("Loaded VMU save version #%d\n", pkg.data[0]);
+	dbglog(DBG_INFO, "Loaded VMU save version #%d\n", pkg.data[0]);
 #endif
 	return 1;
 }
@@ -530,7 +530,7 @@ int WriteVMUSave(int eyecatch, char *error)
 		pkg.icon_data = icon_array[icon] + 32;
 
 #ifdef DCLOAD
-	printf("Icon %d\n", icon);
+	dbglog(DBG_INFO, "Random Icon #%d\n", icon);
 #endif
 
 	pkg.icon_anim_speed = 0;
@@ -567,7 +567,7 @@ int WriteVMUSave(int eyecatch, char *error)
 		memcpy(new_pkg_out, pkg_out, pkg_size);
 		free(pkg_out);
 #ifdef DCLOAD
-		printf("Padded VMU save from %d bytes to %d bytes\n", pkg_size, expanded_pkg_size);
+		dbglog(DBG_INFO, "Padded VMU save from %d bytes to %d bytes\n", pkg_size, expanded_pkg_size);
 #endif
 		pkg_out = new_pkg_out;
 		pkg_size = expanded_pkg_size;
@@ -578,7 +578,7 @@ int WriteVMUSave(int eyecatch, char *error)
 	vmufs_init ();
 
 #ifdef DCLOAD
-	printf("VMU Free %d/Overwrite release %d/Blocks Needed %d\n", 
+	dbglog(DBG_INFO, "VMU Free %d/Overwrite release %d/Blocks Needed %d\n", 
 		vmufs_free_blocks(vmu), blocks_toRelease, blocks_needed);
 #endif
 

@@ -44,6 +44,7 @@ struct settings_st {
 extern struct settings_st settings;
 
 extern uint8 EndProgram;
+extern uint8 refreshVMU;
 void ChangeOptions(ImagePtr screen);
 void SelectVideoMode(ImagePtr screen);
 void DrawShowMenu();

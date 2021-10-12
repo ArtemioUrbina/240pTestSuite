@@ -35,19 +35,18 @@
 #include "vmu.h"
 #include "vmufs.h"
 
-//#define BENCHMARK 
-
 #define MENUSIZE_W 116
 #define MENUSIZE_H 123
 
-uint8 EndProgram = 0;
-uint DrawMenu = 0;
-extern char *HelpData;
-ImagePtr fbtexture = NULL;
-uint16	*fbtextureBuffer = NULL;
+uint8		EndProgram = 0;
+uint8		refreshVMU = 0;
+uint		DrawMenu = 0;
+extern char	*HelpData;
+ImagePtr	fbtexture = NULL;
+uint16		*fbtextureBuffer = NULL;
 
-#define FB_TEX_H	1024
-#define FB_TEX_V	512
+#define FB_TEX_H		1024
+#define FB_TEX_V		512
 #define FB_TEX_BYTES	sizeof(uint16)
 
 #define rotr(value, shift) \
@@ -101,7 +100,7 @@ void InitTextureFB()
 		if(fbtextureBuffer == NULL)
 		{
 			FreeTextureFB();
-			dbglog(DBG_ERROR, "FB copy can't allocate memory\n");
+			dbglog(DBG_CRITICAL, "FB copy can't allocate memory\n");
 			return;
 		}
 	}
@@ -184,7 +183,7 @@ void CopyFBToBG()
 
 	if(vid_mode->pm != PM_RGB565)
 	{
-		dbglog(DBG_ERROR, "FB copy: video mode not 565\n");
+		dbglog(DBG_CRITICAL, "FB copy: video mode not 565\n");
 		FreeTextureFB();
 		return;
 	}
@@ -192,7 +191,7 @@ void CopyFBToBG()
 	fbcopy = (uint16*)malloc(sizeof(uint16)*numpix);
 	if(!fbcopy)
 	{
-		dbglog(DBG_ERROR, "FB copy: not enough memory\n");
+		dbglog(DBG_CRITICAL, "FB copy: not enough memory\n");
 		FreeTextureFB();
 		return;
 	}
@@ -201,7 +200,7 @@ void CopyFBToBG()
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
 	sprintf(msg, "FB buffer init took %lu ms\n", (unsigned long)(end - start));
-	dbglog(DBG_KDEBUG, msg);
+	dbglog(DBG_INFO, msg);
 	timer_ms_gettime(NULL, &start);
 #endif
 	save = irq_disable();
@@ -232,7 +231,7 @@ void CopyFBToBG()
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
 	sprintf(msg, "FB conversion took %lu ms\n", (unsigned long)(end - start));
-	dbglog(DBG_KDEBUG, msg);
+	dbglog(DBG_INFO, msg);
 	timer_ms_gettime(NULL, &start);
 #endif
 	pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex, tw, th,
@@ -245,7 +244,7 @@ void CopyFBToBG()
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
 	sprintf(msg, "FB texture upload took %lu ms\n", (unsigned long)(end - start));
-	dbglog(DBG_KDEBUG, msg);
+	dbglog(DBG_INFO, msg);
 #endif
 
 	fbtexture->r = 0.75f;
@@ -270,8 +269,8 @@ void ShowHelpWindow(char *Data)
 void DrawShowMenu()
 {
 	ImagePtr	back;
-	int		done = 0;
-	int		sel = 1, oldsel = 0;
+	int			done = 0;
+	int			sel = 1, oldsel = 0;
 	char		*vmuopt[6] =
 				{
 					"Help",
@@ -398,6 +397,7 @@ void DrawShowMenu()
 	HelpData = GENERALHELP;
 
 	updateVMU("        ", "", 1);
+	refreshVMU = 1;
 
 	return;
 }
@@ -566,7 +566,7 @@ void ChangeOptions(ImagePtr screen)
 					break;
 				default:
 					msg = "#RUndefined error#R";
-					printf("ERROR: VMU save returned unexpected value %d\n", saved);
+					dbglog(DBG_ERROR, "ERROR: VMU save returned unexpected value %d\n", saved);
 					break;
 			}
 
@@ -881,6 +881,17 @@ void SelectVideoMode(ImagePtr screen)
 					"480p/FS",
 					"Close"
 				};
+	int			vmodepos[8] =  // take in Video Mode, outputs screen position
+				{
+					0, //VIDEO_240P
+					3, //VIDEO_288P
+					1, //VIDEO_480I_A240
+					4, //VIDEO_576I_A264
+					6, //VIDEO_480P_SL
+					2, //VIDEO_480I
+					5, //VIDEO_576I
+					7, //VIDEO_480P
+				};
 	
 	
 	back = LoadKMG("/rd/help.kmg.gz", 0);
@@ -909,8 +920,8 @@ void SelectVideoMode(ImagePtr screen)
 
 		DrawStringS(x - 20, y, 0.0f, 1.0f, 0.0f, "Please select the desired video mode"); y += 2*fh; 
 		
-		DrawStringS(x - 10, y + (vmode * fh)+((vmode >= VIDEO_288P) ? fh/2 : 0) +
-			((vmode >= VIDEO_480P_SL) ? fh/2 - 1: 0), 0.0f, 1.0f, 0.0f, ">"); 
+		DrawStringS(x - 10, y + (vmodepos[vmode] * fh)+((vmodepos[vmode] >= 3) ? fh/2 : 0) +
+			((vmodepos[vmode] >= 6) ? fh/2 - 1: 0), 0.0f, 1.0f, 0.0f, ">"); 
 		
 		if(vcable != CT_VGA)
 		{

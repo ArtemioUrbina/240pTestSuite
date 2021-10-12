@@ -22,20 +22,24 @@
 #ifndef V_MODES_H
 #define V_MODES_H
 
+// 240 1:1 modes
 #define VIDEO_240P              0   // 240p
-#define VIDEO_480I_A240         1   // 480i with assets in 240p
-#define VIDEO_480I              2   // 480i with 480p assets
-#define VIDEO_288P		3   // 288p
-#define VIDEO_576I_A264		4   // 576i with assets in 240p
-#define VIDEO_576I		5   // 576i with 480p assets
-#define VIDEO_480P_SL           6   // 480p with software scanlines
+#define VIDEO_288P				1   // 288p
+// 480 scaled modes
+#define VIDEO_480I_A240         2   // 480i with assets in 240p
+#define VIDEO_576I_A264			3   // 576i with assets in 240p
+#define VIDEO_480P_SL           4   // 480p with software scanlines
+// 480 1:1 modes
+#define VIDEO_480I              5   // 480i with 480p assets
+#define VIDEO_576I				6   // 576i with 480p assets
 #define VIDEO_480P              7   // 480p with 480p assets
+#define	HIGH_RES				VIDEO_480I			
 
-#define INVALID_VIDEO		8
+#define INVALID_VIDEO			8
 
-#define	PAL_LINE23		0
+#define	PAL_LINE23			0
 #define	PAL_CENTERED		1
-#define	PAL_BOTTOM		2
+#define	PAL_BOTTOM			2
 
 #include "image.h"
 

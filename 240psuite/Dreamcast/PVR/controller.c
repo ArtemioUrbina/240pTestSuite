@@ -43,7 +43,7 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 			fprintf(stderr, "Could not save screenshot to %s\n", name);
 		else
 		{
-			printf("Screenshot saved to %s\n", name);
+			dbglog(DBG_INFO, "Screenshot saved to %s\n", name);
 			timeout = 60;
 		}
 	}

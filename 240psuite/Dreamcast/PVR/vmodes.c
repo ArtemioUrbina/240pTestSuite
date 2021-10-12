@@ -298,7 +298,7 @@ void ChangeResolution(int nvmode)
 	{
 		// changed init values to match BIOS as documented by Moopthehedgehog
 		// https://github.com/ArtemioUrbina/240pTestSuite/issues/2
-		dbglog(DBG_KDEBUG, "Changing video registers to match specs\n");
+		dbglog(DBG_INFO, "Changing video registers to match specs\n");
 		if(IsPAL)
 		{
 			if(vmode == VIDEO_288P)
@@ -366,14 +366,14 @@ void ChangeResolution(int nvmode)
 	// deflicker filter 
 	if(/*!settings.Deflicker && */PVR_GET(PVR_SCALER_CFG) != 0x400)
 	{
-		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
+		dbglog(DBG_INFO, "Disabling pvr deflicker filter for 240p tests\n");
 		PVR_SET(PVR_SCALER_CFG, 0x400);
 	}
 
 	/*
 	if(settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x401)
 	{
-		dbglog(DBG_KDEBUG, "Enabling pvr deflicker filter by user request\n");
+		dbglog(DBG_INFO, "Enabling pvr deflicker filter by user request\n");
 		PVR_SET(PVR_SCALER_CFG, 0x401);
 	}
 	*/
@@ -381,7 +381,7 @@ void ChangeResolution(int nvmode)
 	// Turn off texture dithering
 	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
 	{
-		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
+		dbglog(DBG_INFO, "Disabling pvr dithering for 240p tests\n");
 		PVR_SET(PVR_FB_CFG_2, 0x00000001);
 	}
 
@@ -464,14 +464,14 @@ void Toggle240p480i(int mode)
 	// Disable deflicker filter, 
 	if(/*!settings.Deflicker &&*/ PVR_GET(PVR_SCALER_CFG) != 0x400)
 	{
-		dbglog(DBG_KDEBUG, "Disabling pvr deflicker filter for 240p tests\n");
+		dbglog(DBG_INFO, "Disabling pvr deflicker filter for 240p tests\n");
 		PVR_SET(PVR_SCALER_CFG, 0x400);
 	}
 
 	/*
 	if(settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x401)
 	{
-		dbglog(DBG_KDEBUG, "Enabling pvr deflicker filter by user request\n");
+		dbglog(DBG_INFO, "Enabling pvr deflicker filter by user request\n");
 		PVR_SET(PVR_SCALER_CFG, 0x401);
 	}
 	*/
@@ -479,7 +479,7 @@ void Toggle240p480i(int mode)
 	// Turn off texture dithering
 	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
 	{
-		dbglog(DBG_KDEBUG, "Disabling pvr dithering for 240p tests\n");
+		dbglog(DBG_INFO, "Disabling pvr dithering for 240p tests\n");
 		PVR_SET(PVR_FB_CFG_2, 0x00000001);
 	}
 }
@@ -632,10 +632,10 @@ void PVRStats(char *msg)
 
 	pvr_get_stats(&stats);
 	if(msg)
-		printf("%s: VBlank count %u  Frame last time: %u  Frame Rate: %f  Rendering Time: %u\n",
+		dbglog(DBG_INFO, "%s: VBlank count %u  Frame last time: %u  Frame Rate: %f  Rendering Time: %u\n",
 			msg, (unsigned int)stats.vbl_count, (unsigned int)stats.frame_last_time, (double)stats.frame_rate, (unsigned int)stats.rnd_last_time);
 	else
-		printf("VBlank count %u  Frame last time: %u  Frame Rate: %f  Rendering Time: %u\n",
+		dbglog(DBG_INFO, "VBlank count %u  Frame last time: %u  Frame Rate: %f  Rendering Time: %u\n",
 			(unsigned int)stats.vbl_count, (unsigned int)stats.frame_last_time, (double)stats.frame_rate, (unsigned int)stats.rnd_last_time);
 }
 
@@ -920,32 +920,32 @@ void TestVideoMode(int mode)
 /*
 			if(vmode == VIDEO_288P)
 			{
-				printf("PVR 0x38: %lX\n", regs[0x38]);
+				dbglog(DBG_INFO, "PVR 0x38: %lX\n", regs[0x38]);
 				data = 0x05 | 0x3f << 8 | 0x31F << 12 | 0x1f << 22;
-				printf("Data to write %lX\n", data);
+				dbglog(DBG_INFO, "Data to write %lX\n", data);
 				regs[0x38] = data;
-				printf("PVR written at 0x38: %lX\n", regs[0x38]);
+				dbglog(DBG_INFO, "PVR written at 0x38: %lX\n", regs[0x38]);
 
-				printf("PVR 0x34: %lX\n", regs[0x34]);
+				dbglog(DBG_INFO, "PVR 0x34: %lX\n", regs[0x34]);
 				data = 0x100 | 0x80 | 0x04;
-				printf("Data to write at 0x34  %lX\n", data);
+				dbglog(DBG_INFO, "Data to write at 0x34  %lX\n", data);
 				regs[0x34] = data;
-				printf("PVR written to 0x34: %lX\n", regs[0x34]);
+				dbglog(DBG_INFO, "PVR written to 0x34: %lX\n", regs[0x34]);
 			}
 
 			if(vmode == VIDEO_576I || vmode == VIDEO_576I_A264)
 			{
-				printf("PVR 0x38: %lX\n", regs[0x38]);
+				dbglog(DBG_INFO, "PVR 0x38: %lX\n", regs[0x38]);
 				data = 0x05 | 0x3f << 8 | 0x16A << 12 | 0x1f << 22;
-				printf("Data to write %lX\n", data);
+				dbglog(DBG_INFO, "Data to write %lX\n", data);
 				regs[0x38] = data;
-				printf("PVR written at 0x38: %lX\n", regs[0x38]);
+				dbglog(DBG_INFO, "PVR written at 0x38: %lX\n", regs[0x38]);
 
-				printf("PVR 0x34: %lX\n", regs[0x34]);
+				dbglog(DBG_INFO, "PVR 0x34: %lX\n", regs[0x34]);
 				data = 0x100 | 0x80 | 0x04;
-				printf("Data to write at 0x34  %lX\n", data);
+				dbglog(DBG_INFO, "Data to write at 0x34  %lX\n", data);
 				regs[0x34] = data;
-				printf("PVR written to 0x34: %lX\n", regs[0x34]);
+				dbglog(DBG_INFO, "PVR written to 0x34: %lX\n", regs[0x34]);
 			}
 */
 	
@@ -969,36 +969,36 @@ void TestVideoMode(int mode)
 
 	FreeImage(&back);
 
-	dbglog(DBG_KDEBUG, "----------EXIT-------\n\n");
+	dbglog(DBG_INFO, "----------EXIT-------\n\n");
 	ChangeResolution(oldvmode);
 	sprintf(str, " Width:     %d\n", test_mode.width);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 	sprintf(str, " Height:    %d\n", test_mode.height);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 
 	sprintf(str, " Scanlines: %d\n", test_mode.scanlines);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 	sprintf(str, " Clocks:    %d\n", test_mode.clocks);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 
 	sprintf(str, " Bitmap X:  %d\n", test_mode.bitmapx);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 	sprintf(str, " Bitmap Y:  %d\n", test_mode.bitmapy);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 
 	sprintf(str, " ScanInt1:  %d\n", test_mode.scanint1);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 	sprintf(str, " ScanInt2:  %d\n", test_mode.scanint2);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 
 	sprintf(str, " Border X1: %d\n", test_mode.borderx1);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 	sprintf(str, " Border X2: %d\n", test_mode.borderx2);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 	sprintf(str, " Border Y1: %d\n", test_mode.bordery1);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 	sprintf(str, " Border Y2: %d\n", test_mode.bordery2);
-	dbglog(DBG_KDEBUG, str);
+	dbglog(DBG_INFO, str);
 }
 
 #endif
