@@ -45,7 +45,7 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 	fp = fopen(filename, "r");
 	if(!fp)
 	{
-		fprintf(stderr, "Could not load %s help file\n", filename);
+		dbglog(DBG_ERROR, "Could not load %s help file\n", filename);
 		return NULL;
 	}
 	fseek(fp, 0L, SEEK_END);
@@ -54,7 +54,7 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 	if(!buffer)
 	{
 		fclose(fp);
-		fprintf(stderr, "Could not load %s help file to RAM\n", filename);
+		dbglog(DBG_ERROR, "Could not load %s help file to RAM\n", filename);
 		return NULL;
 	}
 	fseek(fp, 0L, SEEK_SET);
@@ -75,7 +75,7 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 	*pages = (char**)malloc(sizeof(char*)*(*npages));
 	if(!*pages)
 	{
-		fprintf(stderr, "Could not malloc array of pages %s\n", filename);
+		dbglog(DBG_ERROR, "Could not malloc array of pages %s\n", filename);
 		free(buffer);
 		buffer = NULL;
 		return NULL;
@@ -106,7 +106,7 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 
 void  HelpWindow(char *filename, ImagePtr screen)
 {
-	int 			done = 0, npages = 0, page = 0;
+	int 			done = 0, npages = 0, page = 0, joycnt = 0;
 	uint16			pressed = 0;		
 	ImagePtr		back;
 	char			*buffer = NULL, **pages = NULL;
@@ -144,6 +144,21 @@ void  HelpWindow(char *filename, ImagePtr screen)
 				page ++;
 			if (pressed & CONT_LTRIGGER)
 				page --;
+				
+			if(st->joyx != 0)
+			{
+				if(++joycnt > 10)
+				{
+					if(st->joyx > 0)
+						page ++;
+					if(st->joyx < 0)
+						page --;
+		
+					joycnt = 0;
+				}
+			}
+			else
+				joycnt = 0;
 		}
 
 		if(page > npages - 1)

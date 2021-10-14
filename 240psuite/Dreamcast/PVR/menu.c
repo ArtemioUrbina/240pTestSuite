@@ -34,23 +34,13 @@
 #include "help.h"
 #include "vmu.h"
 #include "vmufs.h"
-
-#define MENUSIZE_W 116
-#define MENUSIZE_H 123
-
+	
 uint8		EndProgram = 0;
 uint8		refreshVMU = 0;
 uint		DrawMenu = 0;
 extern char	*HelpData;
 ImagePtr	fbtexture = NULL;
 uint16		*fbtextureBuffer = NULL;
-
-#define FB_TEX_H		1024
-#define FB_TEX_V		512
-#define FB_TEX_BYTES	sizeof(uint16)
-
-#define rotr(value, shift) \
-	(value >> shift) | (value << (16 - shift))
 
 struct settings_st settings = DEFAULT_OPTIONS;
 struct settings_st default_settings = DEFAULT_OPTIONS;
@@ -77,7 +67,7 @@ void InitTextureFB()
 		fbtexture = (ImagePtr)malloc(sizeof(struct image_st));	
 		if(!fbtexture)
 		{
-			fprintf(stderr, "Could not malloc image struct for FB\n");
+			dbglog(DBG_ERROR, "Could not malloc image struct for FB\n");
 			return;
 		}
 		fbtexture->tex = NULL;
@@ -89,7 +79,7 @@ void InitTextureFB()
 		if(!fbtexture->tex)
 		{
 			FreeTextureFB();
-			fprintf(stderr, "Could not pvr mem malloc image struct for FB\n");
+			dbglog(DBG_ERROR, "Could not pvr mem malloc image struct for FB\n");
 			return;
 		}
 	}
@@ -139,7 +129,7 @@ uint8 ReloadFBTexture()
 			fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 			if(!fbtexture->tex)
 			{
-				fprintf(stderr, "Could not malloc FB to VRAM\n");
+				dbglog(DBG_CRITICAL, "Could not malloc FB to VRAM\n");
 				return 0;
 			}
 			memset(fbtexture->tex, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
@@ -270,7 +260,7 @@ void DrawShowMenu()
 {
 	ImagePtr	back;
 	int			done = 0;
-	int			sel = 1, oldsel = 0;
+	int			sel = 1, oldsel = 0, joycnt = 0;
 	char		*vmuopt[6] =
 				{
 					"Help",
@@ -298,13 +288,14 @@ void DrawShowMenu()
 	updateVMU("   MENU", "", 1);
 	while(!done && !EndProgram)
 	{
-		float	r = 1.0f;
-		float	g = 1.0f;
-		float	b = 1.0f;
-		int   	c = 1;
-		uint16	x = back->x + 20;
-		uint16	y = back->y + 10;
-		uint16	pressed = 0;
+		float			r = 1.0f;
+		float			g = 1.0f;
+		float			b = 1.0f;
+		int   			c = 1;
+		uint16			x = back->x + 20;
+		uint16			y = back->y + 10;
+		uint16			pressed = 0;
+		controller		*st;
 				
 		StartScene();
 		
@@ -329,7 +320,7 @@ void DrawShowMenu()
 		
 		EndScene();		
 		
-		ReadController(0, &pressed);
+		st = ReadController(0, &pressed);
 
 		if ( pressed & CONT_DPAD_UP )
 		{
@@ -344,6 +335,25 @@ void DrawShowMenu()
 			if(sel > c)
 				sel = 1;
 		}
+		
+		if(st && st->joyy != 0)
+		{
+			if(++joycnt > 5)
+			{
+				if(st && st->joyy > 0)
+					sel ++;
+				if(st && st->joyy < 0)
+					sel --;
+	
+				if(sel < 1)
+					sel = c;
+				if(sel > c)
+					sel = 1;
+				joycnt = 0;
+			}
+		}
+		else
+			joycnt = 0;
 			
 		if (pressed & CONT_B || pressed & CONT_START) 		
 			done = 1;	
@@ -405,7 +415,7 @@ void DrawShowMenu()
 
 void ChangeOptions(ImagePtr screen)
 {	
-	int 		sel = 1, close = 0, region, saved = -1;	
+	int 		sel = 1, close = 0, region, saved = -1, joycnt = 0;	
 	ImagePtr	back;
 	char		error[256];
 	
@@ -419,16 +429,16 @@ void ChangeOptions(ImagePtr screen)
 	updateVMU("  Options", "", 1);
 	while(!close && !EndProgram) 
 	{		
-		float	r = 1.0f;
-		float	g = 1.0f;
-		float	b = 1.0f;
-		uint8	c = 1;
-		uint16	x = 50;
-		uint16	y = 41;
-		uint16	OptPos = 160;
-		uint16	pressed = 0;
-		char	intensity[80];
-		int	changedPVR = 0;
+		float			r = 1.0f;
+		float			g = 1.0f;
+		float			b = 1.0f;
+		uint8			c = 1;
+		uint16			x = 50;
+		uint16			y = 30+fh;
+		uint16			OptPos = 160;
+		uint16			pressed = 0;
+		char			intensity[80];
+		int				changedPVR = 0;
 		controller		*st;
 		maple_device_t	*dev;
 				
@@ -440,18 +450,31 @@ void ChangeOptions(ImagePtr screen)
 
 		DrawStringS(x + 70, 42, 0.0f, 1.0f, 0.0f, "General Options"); y += 2*fh; 
 
-		y += 2*fh;
-
-		/*
-		// option X, Deflicker
- 		// Crashed KOS, disabled
+		// option 1, Deflicker
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 			settings.Deflicker == 1 ? "ON" : "OFF"); 
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 			"PVR Deflickering Filter:"); y += fh; c++;
-		*/
+		
+		// option 2, Dithering	
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+			settings.Dithering == 1 ? "ON" : "OFF"); 
+		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+			"PVR Texture Dithering:"); y += fh; c++;
+		
+		// option 3, UseKOSDefaults	
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+			settings.UseKOSDefaults == 1 ? "ON" : "OFF"); 
+		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+			"Use KOS video Defaults:"); y += fh; c++;
+			
+		// option 4, ChangeVideoRegisters	
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+			settings.ChangeVideoRegs == 0 ? "ON" : "OFF"); 
+		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+			"Use KOS Register Defaults:"); y += fh; c++;
 
-		// option 1,  Enable PAL
+		// option 5,  Enable PAL
 		if(region == FLASHROM_REGION_EUROPE)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
@@ -467,7 +490,7 @@ void ChangeOptions(ImagePtr screen)
 				"Enable PAL modes:"); y += fh; c++;
 		}
 
-		// option 2,  Enable PAL BG
+		// option 6,  Enable PAL BG
 		if(region == FLASHROM_REGION_EUROPE && settings.EnablePAL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
@@ -483,7 +506,7 @@ void ChangeOptions(ImagePtr screen)
 				"Enable PAL Background:"); y += fh; c++;			
 		}
 
-		// option 3,  PAL Background
+		// option 7,  PAL Background
 		if(region == FLASHROM_REGION_EUROPE && settings.EnablePAL)
 		{
 			char BorderColor[100];
@@ -507,7 +530,7 @@ void ChangeOptions(ImagePtr screen)
 				"Change PAL Background:"); y += fh; c++;			
 		}
 
-		// option 4,  PAL Start
+		// option 8,  PAL Start
 		if(region == FLASHROM_REGION_EUROPE && settings.EnablePAL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
@@ -523,14 +546,14 @@ void ChangeOptions(ImagePtr screen)
 				"PAL starting line:"); y += fh; c++;			
 		}
 
-		// option 5, Scanline intensity
+		// option 9, Scanline intensity
 		sprintf(intensity, "%0.0f%%", GetScanlineIntensity());
 		if(vmode == VIDEO_480P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanline intensity:"); y += fh; c++;			
 			
-			// option 6, Scanline even/odd
+			// option 8, Scanline even/odd
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD");
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Scanlines"); y += fh; c++;	
 		}				
@@ -541,13 +564,14 @@ void ChangeOptions(ImagePtr screen)
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
 				"Scanline intensity:"); y += fh; c++;			
 			
-			// option 6, Scanline even/odd
+			// option 10, Scanline even/odd
 			DrawStringS(x + OptPos, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
 				ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
 				"Scanlines"); y += fh; c++;	
 		}
 		
+		//Option 11, Save to VMU
 		dev = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 		if(dev)
 		{
@@ -566,7 +590,7 @@ void ChangeOptions(ImagePtr screen)
 					break;
 				default:
 					msg = "#RUndefined error#R";
-					dbglog(DBG_ERROR, "ERROR: VMU save returned unexpected value %d\n", saved);
+					dbglog(DBG_ERROR, "ERROR: VMU save returned unexpected value %d: %s\n", saved, error);
 					break;
 			}
 
@@ -578,30 +602,30 @@ void ChangeOptions(ImagePtr screen)
 					"Save Options to VMU"); y += fh; c++;
 			saved = -1;
 		}
-
-		DrawStringS(x, y + 2* fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
-				
+		
+		// Option 12, Exit
+		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		
+		// Comments on options
 		r = g = b = 0.8;
-		if(vmode == VIDEO_480P_SL && sel == 5)	
-			DrawStringS(x-15, y + 4*fh, r, g, b, "Adjust with L and R triggers"); 										
-		if(region != FLASHROM_REGION_EUROPE && (sel <= 4))
-			DrawStringS(x-15, y + 4*fh, r, g, b,
+		if(vmode == VIDEO_480P_SL && sel == 9)	
+			DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L and R triggers"); 										
+		if(region != FLASHROM_REGION_EUROPE && (sel > 4 && sel < 9))
+			DrawStringS(x-15, y + 2*fh, r, g, b,
 				"Only European FlashROMs can output PAL correctly"); 
-		if(vmode != VIDEO_480P_SL && (sel == 5 || sel == 6))
-			DrawStringS(x-15, y + 4*fh, r, g, b,
+		if(vmode != VIDEO_480P_SL && (sel == 9 || sel == 10))
+			DrawStringS(x-15, y + 2*fh, r, g, b,
 				"Scanlines are only available in 480p\nLine Doubled mode via D-SUB (VGA)"); 						
 		DrawStringS(x+60, 200, r, g, b, "Press START for help");
 		EndScene();		
 
 		st = ReadController(0, &pressed);
-
+		
 		if ( pressed & CONT_DPAD_UP )
 		{
 			sel --;
 			if(sel < 1)
 				sel = c;
-			if(saved != -1 && sel == 7)
-				sel = 6;
 		}
 		
 		if ( pressed & CONT_DPAD_DOWN )
@@ -609,17 +633,35 @@ void ChangeOptions(ImagePtr screen)
 			sel ++;
 			if(sel > c)
 				sel = 1;
-			if(saved != -1 && sel == 7)
-				sel = 8;
 		}
+		
+		if(st && st->joyy != 0)
+		{
+			if(++joycnt > 5)
+			{
+				if(st && st->joyy > 0)
+					sel ++;
+				if(st && st->joyy < 0)
+					sel --;
+	
+				if(sel < 1)
+					sel = c;
+				if(sel > c)
+					sel = 1;
+				joycnt = 0;
+			}
+		}
+		else
+			joycnt = 0;
+		
 
-		if ( pressed & CONT_RTRIGGER && sel == 5)
+		if ( pressed & CONT_RTRIGGER && sel == 9)
 		{
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
 		}
 		
-		if ( pressed & CONT_LTRIGGER && sel == 5)
+		if ( pressed & CONT_LTRIGGER && sel == 9)
 		{
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
@@ -643,11 +685,27 @@ void ChangeOptions(ImagePtr screen)
 			switch(sel)
 			{		
 					case 1:
+						settings.Deflicker = !settings.Deflicker;
+						ChangeResolution(vmode);
+						break;
+					case 2:
+						settings.Dithering = !settings.Dithering;
+						ChangeResolution(vmode);
+						break;
+					case 3:
+						settings.UseKOSDefaults = !settings.UseKOSDefaults;
+						ChangeResolution(vmode);
+						break;
+					case 4:
+						settings.ChangeVideoRegs = !settings.ChangeVideoRegs;
+						ChangeResolution(vmode);
+						break;
+					case 5:
 						// NTSC consoles output a corrupt PAL signal
 						if(region == FLASHROM_REGION_EUROPE)
 							settings.EnablePAL = !settings.EnablePAL;
 						break;
-					case 2:
+					case 6:
 						// NTSC consoles output a corrupt PAL signal
 						if(settings.EnablePAL)
 						{
@@ -655,14 +713,14 @@ void ChangeOptions(ImagePtr screen)
 							changedPVR = 1;
 						}
 						break;
-					case 3:
+					case 7:
 						if(settings.EnablePAL)
 						{
 							ChangePALBackgroundColor(screen);
 							changedPVR = 1;
 						}
 						break;
-					case 4:
+					case 8:
 						// NTSC consoles output a corrupt PAL signal
 						if(settings.EnablePAL)
 						{
@@ -671,21 +729,26 @@ void ChangeOptions(ImagePtr screen)
 								ChangeResolution(vmode);
 						}
 						break;
-					case 6:
+					case 9:
+						// Dealt with above
+						break;
+					case 10:
 						if(vmode == VIDEO_480P_SL)
 							ToggleScanlineEvenOdd();
 						break;
-					case 7:
+					case 11:
 						if(dev && saved != 1)
 						{
 							int eyecatcher = 0;
 
 							if ( st && st->buttons & CONT_RTRIGGER )
 								eyecatcher = 1;
+							if ( st && st->buttons & CONT_LTRIGGER )
+								eyecatcher = 2;
 							saved = WriteVMUSave(eyecatcher, error);
 						}
 						break;
-					case 8:
+					case 12:
 						if ( st && st->buttons & CONT_RTRIGGER )
 						{
 							settings.drawborder = !settings.drawborder;
@@ -867,7 +930,7 @@ void ChangePALBackgroundColor(ImagePtr title)
 
 void SelectVideoMode(ImagePtr screen)
 {
-	int 		sel = 1, close = 0, oldsel = 0;		
+	int 		sel = 1, close = 0, oldsel = 0, joycnt = 0;		
 	ImagePtr	back;
 	char		*vmuopt[9] =
 				{
@@ -881,7 +944,7 @@ void SelectVideoMode(ImagePtr screen)
 					"480p/FS",
 					"Close"
 				};
-	int			vmodepos[8] =  // take in Video Mode, outputs screen position
+	int			vmodepos[8] =  // take in Video Mode, outputs menu position
 				{
 					0, //VIDEO_240P
 					3, //VIDEO_288P
@@ -892,7 +955,7 @@ void SelectVideoMode(ImagePtr screen)
 					5, //VIDEO_576I
 					7, //VIDEO_480P
 				};
-	
+	controller	*st = NULL;
 	
 	back = LoadKMG("/rd/help.kmg.gz", 0);
 	if(!back)
@@ -992,7 +1055,7 @@ void SelectVideoMode(ImagePtr screen)
 		DrawStringS(x+40, 200, r, g, b, "Press START for help");
 		EndScene();
 
-		ReadController(0, &pressed);
+		st = ReadController(0, &pressed);
 
 		if ( pressed & CONT_DPAD_UP )
 		{
@@ -1007,6 +1070,25 @@ void SelectVideoMode(ImagePtr screen)
 			if(sel > c)
 				sel = 1;	
 		}
+		
+		if( st && st->joyy != 0)
+		{
+			if(++joycnt > 5)
+			{
+				if(st && st->joyy > 0)
+					sel ++;
+				if(st && st->joyy < 0)
+					sel --;
+	
+				if(sel < 1)
+					sel = c;
+				if(sel > c)
+					sel = 1;
+				joycnt = 0;
+			}
+		}
+		else
+			joycnt = 0;
 
 		if ( pressed & CONT_B ) 
 			close = 1;	

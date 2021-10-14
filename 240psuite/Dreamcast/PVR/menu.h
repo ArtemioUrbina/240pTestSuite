@@ -24,10 +24,27 @@
 
 #include "image.h"
 
-#define VERSION_NUMBER "Dreamcast Ver. 1.26b"
-#define VERSION_DATE "23/01/2020"
+#define VERSION_NUMBER "Dreamcast Ver. 1.27"
+#define VERSION_DATE "12/10/2021"
 
-#define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7};
+#define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0};
+
+#define MENUSIZE_W 116
+#define MENUSIZE_H 123
+
+#define FB_TEX_H		1024
+#define FB_TEX_V		512
+#define FB_TEX_BYTES	sizeof(uint16)
+
+#define rotr(value, shift) \
+	(value >> shift) | (value << (16 - shift))
+	
+#define VMURefresh(msg1, msg2) \
+	if(refreshVMU)\
+	{\
+		updateVMU(msg1, msg2, 1);\
+		refreshVMU = 0;\
+	}
 
 struct settings_st {
 	int drawborder;
@@ -39,6 +56,8 @@ struct settings_st {
 	float PalBackR;
 	float PalBackG;
 	float PalBackB;
+	int Dithering;
+	int UseKOSDefaults;
 };
 
 extern struct settings_st settings;

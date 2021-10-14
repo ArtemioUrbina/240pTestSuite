@@ -725,11 +725,7 @@ void ReflexNTimming()
 
 		EndScene();
 		
-		if(refreshVMU)
-		{
-			updateVMU("Reflex   ", vmuMsg, 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Reflex   ", vmuMsg);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -890,12 +886,8 @@ void ReflexNTimming()
 			}
 
 			EndScene();
-			if(refreshVMU)
-			{
-				updateVMU("Reflex   ", vmuMsg, 1);
-				refreshVMU = 0;
-			}
-
+			VMURefresh("Reflex   ", vmuMsg);
+			
 			st = ReadController(0, &pressed);	
 			if(st)
 			{
@@ -1004,11 +996,8 @@ void ScrollTest()
 		}
 
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU(vmuMsg, "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh(vmuMsg, "");
+		
 		frame ++;
 		if(frame > 10)
 		{
@@ -1088,11 +1077,7 @@ void GridScrollTest()
 		DrawImage(back);
 		EndScene();
 		
-		if(refreshVMU)
-		{
-			updateVMU("G. Scroll", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("G. Scroll", "");
 	
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1190,11 +1175,7 @@ void DrawStripes()
 				frame = 0;
 		}
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU(vmuMsg1, vmuMsg2, 1);
-			refreshVMU = 0;
-		}
+		VMURefresh(vmuMsg1, vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1287,11 +1268,7 @@ void DrawCheckBoard()
 				frame = 0;
 		}
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("CHKB PTTN", vmuMsg, 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("CHKB PTTN", vmuMsg);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1355,11 +1332,7 @@ void SoundTest()
 		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");
 		EndScene();
 		
-		if(refreshVMU)
-		{
-			updateVMU("Sound Test", vmuMsg, 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Sound Test", vmuMsg);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1463,11 +1436,7 @@ void LEDZoneTest()
 			DrawImage(sprite[selsprite]);
 		}
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("Backlit", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Backlit", "");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1646,11 +1615,7 @@ void DiagonalPatternTest()
 		
 		DrawImageRotate(sprite, angle);
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("Diagonal", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Diagonal", "");
 
 		ReadController(0, &pressed);
 		if (pressed & CONT_B)
@@ -1876,11 +1841,7 @@ void PassiveLagTest()
 		DrawDigit(272, 16, 0, 0, 0, lsd);
 
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("LAG TEST", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("LAG TEST", "");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -2059,11 +2020,7 @@ void Alternate240p480i()
 		}
 
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU(vmuMsg, "", 1);				
-			refreshVMU = 0;
-		}
+		VMURefresh(vmuMsg, "");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -2342,11 +2299,7 @@ void SIPLagTest()
 		}
 
 		DrawSIPScreen(back, wave, DStatus, accuracy, Results, ResCount, showframes);
-		if(refreshVMU)
-		{
-			updateVMU(vmuMsg1, vmuMsg2, 1);
-			refreshVMU = 0;
-		}
+		VMURefresh(vmuMsg1, vmuMsg2);
 
 		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 		if(!sip)

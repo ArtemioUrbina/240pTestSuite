@@ -31,7 +31,7 @@ vid_mode_t custom_vga =
 };
 
 /* 320x240 NTSC 60Hz */
-// oputputs PAL 60 when using composite in Euro Flash ROM
+// outputs PAL 60 when using composite in Euro Flash ROM
 vid_mode_t custom_240 = 
 	/* DM_320x240_NTSC */
 {
@@ -180,10 +180,121 @@ inline void ReleaseScanlines()
 	FreeImage(&scanlines);
 }
 
+void AdjustPVROptions()
+{
+	// Disable deflicker filter
+	if(!settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x400)
+	{
+		dbglog(DBG_INFO, "240p TS: Disabling PVR deflicker filter for 240p tests\n");
+		PVR_SET(PVR_SCALER_CFG, 0x400);
+	}
+	else
+		dbglog(DBG_INFO, "240p TS: PVR deflicker filter not disabled by user request\n");
+
+	// Enable deflicker filter
+	if(settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x401)
+	{
+		dbglog(DBG_INFO, "240p TS: Enabling PVR deflicker filter by user request\n");
+		PVR_SET(PVR_SCALER_CFG, 0x401);
+	}
+
+	// Turn off texture dithering
+	if(!settings.Dithering && PVR_GET(PVR_FB_CFG_2) != 0x00000001)
+	{
+		dbglog(DBG_INFO, "240p TS: Disabling PVR dithering for 240p tests\n");
+		PVR_SET(PVR_FB_CFG_2, 0x00000001);
+	}
+	else
+		dbglog(DBG_INFO, "240p TS: PVR dithering not disabled by user request\n");
+	
+	// Turn on texture dithering
+	if(settings.Dithering && PVR_GET(PVR_FB_CFG_2) == 0x00000001)
+	{
+		dbglog(DBG_INFO, "240p TS: Enabling PVR dithering for 240p tests\n");
+		PVR_SET(PVR_FB_CFG_2, 0x00000001);
+	}
+}
+
+void ChangeVideoRegisters()
+{
+	if(settings.ChangeVideoRegs)
+	{
+		uint32 	data = 0;
+		vuint32 *regs = (uint32*)0xA05F8000;
+		
+		dbglog(DBG_INFO, "240p TS: Changing video registers to match specs\n");
+		if(IsPAL)
+		{
+			if(vmode == VIDEO_288P)
+			{
+				// Video enable 0x100 ORed with PAL mode 0x80.	
+				// Sync should be  negative in vertical and
+				// horzontal for PAL, they are bits 1 and 2.
+				data = 0x100 | 0x80; 
+				regs[0x34] = data;
+
+				// Set sync width
+				data = 0x05 << 8 | 0x3f | 0x31F << 12 | 0x1f << 22;
+				regs[0x38] = data;
+			}
+			if(vmode == VIDEO_576I || vmode == VIDEO_576I_A264)
+			{	
+				// Video enable 0x100 ORed with PAL mode 0x80.	
+				// Sync should be  negative in vertical and
+				// horzontal for PAL, they are bits 1 and 2.
+				// 0x10 is for interlaced mode.
+				data = 0x100 | 0x80 | 0x10; 
+				regs[0x34] = data;
+
+				// Set sync width
+				data = 0x05 << 8 | 0x3f | 0x16A << 12 | 0x1f << 22;
+				regs[0x38] = data;
+			}
+		}
+		else
+		{
+			// Set sync width
+			if(vmode == VIDEO_240P)
+			{
+				// Video enable 0x100 ORed with PAL mode 0x80.	
+				// Sync should be  negative in vertical and
+				// horzontal for PAL, they are bits 1 and 2.
+				// 0x10 is for interlaced mode.
+				data = 0x100 | 0x40; 
+				regs[0x34] = data;
+
+				data = 0x05 << 8 | 0x3f | 0x31F << 12 | 0x1f << 22;
+				regs[0x38] = data;
+			}
+			if(vmode == VIDEO_480I || vmode == VIDEO_480I_A240)
+			{	
+				// Video enable 0x100 ORed with PAL mode 0x80.	
+				// Sync should be  negative in vertical and
+				// horzontal for PAL, they are bits 1 and 2.
+				// 0x10 is for interlaced mode.
+				data = 0x100 | 0x40 | 0x10; 
+				regs[0x34] = data;
+
+				data = 0x06 << 8 | 0x3f | 0x16C << 12 | 0x1f << 22;
+				regs[0x38] = data;
+			}
+		}
+
+		// changed init values to match BIOS as documented by Moopthehedgehog
+		// https://github.com/ArtemioUrbina/240pTestSuite/issues/2
+		if(vmode == VIDEO_480P || vmode == VIDEO_480P_SL)
+		{			
+			data = 0x03 << 8 | 0x3f | 0x319 << 12 | 0x0f << 22;
+			regs[0x38] = data;
+		}
+	}
+	else
+		dbglog(DBG_INFO, "240p TS: Using KOS Register defaults by user request\n");
+}
+
 void ChangeResolution(int nvmode)
 {
 	vuint32 *regs = (uint32*)0xA05F8000;
-	uint32 data = 0;
 
 	// Skip useless video modes when in VGA
 	vcable = vid_check_cable();
@@ -260,19 +371,32 @@ void ChangeResolution(int nvmode)
 	ReleaseTextures();
 
 	pvr_shutdown();
+	if(settings.UseKOSDefaults)
+		dbglog(DBG_INFO, "240p TS: Using KOS default video modes\n");
+	else
+		dbglog(DBG_INFO, "240p TS: Using 240p Test Suite Video Modes\n");
 	switch(vmode)
 	{
 		case VIDEO_240P:
 			//vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
-			vid_set_mode_ex(&custom_240); 
+			if(!settings.UseKOSDefaults)
+				vid_set_mode_ex(&custom_240); 
+			else
+				vid_set_mode(DM_320x240_NTSC, PM_RGB565);
 			break;
 		case VIDEO_288P:
 			//vid_set_mode(DM_320x240_PAL, PM_RGB565); 
-			vid_set_mode_ex(&custom_288); 
+			if(!settings.UseKOSDefaults)
+				vid_set_mode_ex(&custom_288); 
+			else
+				vid_set_mode(DM_320x240_PAL, PM_RGB565); 
 			break;
 		case VIDEO_576I:
 		case VIDEO_576I_A264:
-			vid_set_mode_ex(&custom_576); 
+			if(!settings.UseKOSDefaults)
+				vid_set_mode_ex(&custom_576); 
+			else
+				vid_set_mode(DM_640x480_PAL_IL, PM_RGB565); 
 			//vid_set_mode(DM_768x576_PAL_IL, PM_RGB565); crashes the DC
 			break;
 		case VIDEO_480I_A240:
@@ -292,99 +416,11 @@ void ChangeResolution(int nvmode)
 
 	pvr_init_defaults();
 
+	AdjustPVROptions();
+	ChangeVideoRegisters();
+	
 	RefreshLoadedImages();
-
-	if(settings.ChangeVideoRegs)
-	{
-		// changed init values to match BIOS as documented by Moopthehedgehog
-		// https://github.com/ArtemioUrbina/240pTestSuite/issues/2
-		dbglog(DBG_INFO, "Changing video registers to match specs\n");
-		if(IsPAL)
-		{
-			if(vmode == VIDEO_288P)
-			{
-				// Video enable 0x100 ORed with PAL mode 0x80.	
-				// Sync should be  negative in vertical and
-				// horzontal for PAL, they are bits 1 and 2.
-				data = 0x100 | 0x80; 
-				regs[0x34] = data;
-
-				// Set sync width
-				data = 0x05 << 8 | 0x3f | 0x31F << 12 | 0x1f << 22;
-				regs[0x38] = data;
-			}
-			if(vmode == VIDEO_576I || vmode == VIDEO_576I_A264)
-			{	
-				// Video enable 0x100 ORed with PAL mode 0x80.	
-				// Sync should be  negative in vertical and
-				// horzontal for PAL, they are bits 1 and 2.
-				// 0x10 is for interlaced mode.
-				data = 0x100 | 0x80 | 0x10; 
-				regs[0x34] = data;
-
-				// Set sync width
-				data = 0x05 << 8 | 0x3f | 0x16A << 12 | 0x1f << 22;
-				regs[0x38] = data;
-			}
-		}
-		else
-		{
-			// Set sync width
-			if(vmode == VIDEO_240P)
-			{
-				// Video enable 0x100 ORed with PAL mode 0x80.	
-				// Sync should be  negative in vertical and
-				// horzontal for PAL, they are bits 1 and 2.
-				// 0x10 is for interlaced mode.
-				data = 0x100 | 0x40; 
-				regs[0x34] = data;
-
-				data = 0x03 << 8 | 0x3f | 0x319 << 12 | 0x0f << 22;
-				regs[0x38] = data;
-			}
-			if(vmode == VIDEO_480I || vmode == VIDEO_480I_A240)
-			{	
-				// Video enable 0x100 ORed with PAL mode 0x80.	
-				// Sync should be  negative in vertical and
-				// horzontal for PAL, they are bits 1 and 2.
-				// 0x10 is for interlaced mode.
-				data = 0x100 | 0x40 | 0x10; 
-				regs[0x34] = data;
-
-				data = 0x06 << 8 | 0x3f | 0x16C << 12 | 0x1f << 22;
-				regs[0x38] = data;
-			}
-		}
-
-		if(vmode == VIDEO_480P || vmode == VIDEO_480P_SL)
-		{
-			data = 0x03 << 8 | 0x3f | 0x319 << 12 | 0x0f << 22;
-			regs[0x38] = data;
-		}
-	}
-
-	// deflicker filter 
-	if(/*!settings.Deflicker && */PVR_GET(PVR_SCALER_CFG) != 0x400)
-	{
-		dbglog(DBG_INFO, "Disabling pvr deflicker filter for 240p tests\n");
-		PVR_SET(PVR_SCALER_CFG, 0x400);
-	}
-
-	/*
-	if(settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x401)
-	{
-		dbglog(DBG_INFO, "Enabling pvr deflicker filter by user request\n");
-		PVR_SET(PVR_SCALER_CFG, 0x401);
-	}
-	*/
-
-	// Turn off texture dithering
-	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
-	{
-		dbglog(DBG_INFO, "Disabling pvr dithering for 240p tests\n");
-		PVR_SET(PVR_FB_CFG_2, 0x00000001);
-	}
-
+	
 	// Enable display
 	regs[0x3A] &= ~8;
 	regs[0x11] |= 1;
@@ -419,7 +455,10 @@ void Toggle240p480i(int mode)
 			dH = 240;
 			vmode = VIDEO_240P;
 
-			vid_set_mode_ex(&custom_240); 
+			if(!settings.UseKOSDefaults)
+				vid_set_mode_ex(&custom_240); 
+			else
+				vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
 		}
 		else
 		{
@@ -442,7 +481,10 @@ void Toggle240p480i(int mode)
 			dH = 264;
 			vmode = VIDEO_288P;
 
-			vid_set_mode_ex(&custom_288); 
+			if(!settings.UseKOSDefaults)
+				vid_set_mode_ex(&custom_288); 
+			else
+				vid_set_mode(DM_320x240_PAL, PM_RGB565); 
 		}
 		else
 		{
@@ -453,35 +495,18 @@ void Toggle240p480i(int mode)
 			offsetY = 0;
 			vmode = VIDEO_576I_A264;
 	
-			vid_set_mode_ex(&custom_576); 
+			if(!settings.UseKOSDefaults)
+				vid_set_mode_ex(&custom_576); 
+			else
+				vid_set_mode(DM_640x480_PAL_IL, PM_RGB565); 
 		}
 	}
 
 	pvr_init_defaults();
 
+	AdjustPVROptions();
+	ChangeVideoRegisters();
 	RefreshLoadedImages();
-
-	// Disable deflicker filter, 
-	if(/*!settings.Deflicker &&*/ PVR_GET(PVR_SCALER_CFG) != 0x400)
-	{
-		dbglog(DBG_INFO, "Disabling pvr deflicker filter for 240p tests\n");
-		PVR_SET(PVR_SCALER_CFG, 0x400);
-	}
-
-	/*
-	if(settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x401)
-	{
-		dbglog(DBG_INFO, "Enabling pvr deflicker filter by user request\n");
-		PVR_SET(PVR_SCALER_CFG, 0x401);
-	}
-	*/
-
-	// Turn off texture dithering
-	if(PVR_GET(PVR_FB_CFG_2) != 0x00000001)
-	{
-		dbglog(DBG_INFO, "Disabling pvr dithering for 240p tests\n");
-		PVR_SET(PVR_FB_CFG_2, 0x00000001);
-	}
 }
 
 void GetVideoModeStr(char *res, int shortdesc)

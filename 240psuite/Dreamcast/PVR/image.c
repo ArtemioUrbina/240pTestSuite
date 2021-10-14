@@ -292,7 +292,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	testFile = fs_open(filename, O_RDONLY);
 	if(testFile == -1)
 	{
-		fprintf(stderr, "Could not find image file %s in filesystem\n", filename);
+		dbglog(DBG_ERROR, "Could not find image file %s in filesystem\n", filename);
 		return(NULL);
 	}
 	fs_close(testFile);
@@ -300,7 +300,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	image = (ImagePtr)malloc(sizeof(struct image_st));
 	if(!image)
 	{
-		fprintf(stderr, "Could not malloc image struct %s\n", filename);
+		dbglog(DBG_ERROR, "Could not malloc image struct %s\n", filename);
 		return(NULL);
 	}
 	
@@ -317,7 +317,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	if(load != 0)
 	{
 		free(image);
-		fprintf(stderr, "Could not load %s\n", filename);
+		dbglog(DBG_ERROR, "Could not load %s\n", filename);
 		return(NULL);
 	}
 
@@ -326,7 +326,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	{
 		free(image);
 		kos_img_free(&img, 0);	
-		fprintf(stderr, "Could not load %s to VRAM\n", filename);
+		dbglog(DBG_ERROR, "Could not load %s to VRAM\n", filename);
 		return(NULL);
 	}
 
@@ -388,13 +388,13 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 #endif
 	if(!image)
 	{
-		fprintf(stderr, "Invalid image pointer for reload %s\n", filename);
+		dbglog(DBG_ERROR, "Invalid image pointer for reload %s\n", filename);
 		return 0;
 	}
 	
 	if(image->tex)
 	{
-		fprintf(stderr, "Found unreleased texture while reloading %s\n", filename);
+		dbglog(DBG_ERROR, "Found unreleased texture while reloading %s\n", filename);
 		return 0;
 	}
 
@@ -410,14 +410,14 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 
 	if(load != 0)
 	{
-		fprintf(stderr, "Could not load %s\n", filename);
+		dbglog(DBG_ERROR, "Could not load %s\n", filename);
 		return 0;
 	}
 
 	image->tex = pvr_mem_malloc(img.byte_count);
 	if(!image->tex)
 	{
-		fprintf(stderr, "Could not load %s to VRAM\n", filename);
+		dbglog(DBG_ERROR, "Could not load %s to VRAM\n", filename);
 		kos_img_free(&img, 0);	
 		return 0;
 	}

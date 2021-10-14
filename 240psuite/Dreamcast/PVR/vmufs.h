@@ -12,7 +12,7 @@
 #include <kos/string.h>
 
 #define VMU_NAME 		"240PTEST"
-#define SAVE_NUM		120
+#define SAVE_NUM		120			// We have DATA_SIZE/32 bytes free and zeroed until we need to change this
 #define	DATA_SIZE		32
 #define ICON_ARRAY_SIZE 5
 

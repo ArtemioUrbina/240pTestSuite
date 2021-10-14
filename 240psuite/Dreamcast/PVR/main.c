@@ -67,11 +67,6 @@ int main(void)
 
 	InitImages();
 
-	if(vcable != CT_VGA)
-		ChangeResolution(VIDEO_240P);
-	else
-		ChangeResolution(VIDEO_480P_SL);
-
 	if(!LoadVMUSave(error))
 	{
 		if(region == FLASHROM_REGION_EUROPE)
@@ -87,6 +82,11 @@ int main(void)
 		else
 			settings.EnablePAL = 0;
 	}
+	
+	if(vcable != CT_VGA)
+		ChangeResolution(VIDEO_240P);
+	else
+		ChangeResolution(VIDEO_480P_SL);
 
 	LoadFont();
 	LoadScanlines();
@@ -213,128 +213,121 @@ int main(void)
 		}
 		
 		EndScene();
-		
-		if(refreshVMU)
-		{
-			updateVMU("240p Test", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("240p Test", "");
 		
 		st = ReadController(0, &pressed);
-		if(st)
+	
+		if (pressed & CONT_START)
+			ShowMenu(GENERALHELP);
+
+		if (pressed & CONT_X)
+			ToggleScanlineEvenOdd();
+
+		if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
+			RaiseScanlineIntensity();
+
+		if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
+			LowerScanlineIntensity();
+
+		if (pressed & CONT_DPAD_UP)
 		{
-			if (pressed & CONT_START)
-				ShowMenu(GENERALHELP);
-
-			if (pressed & CONT_X)
-				ToggleScanlineEvenOdd();
-
-			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
-				RaiseScanlineIntensity();
-
-			if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
-				LowerScanlineIntensity();
-
-			if (pressed & CONT_DPAD_UP)
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if (pressed & CONT_DPAD_DOWN)
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}
+		
+		if( st && st->joyy != 0)
+		{
+			if(++joycnt > 5)
 			{
-				sel --;
+				if(st && st->joyy > 0)
+					sel ++;
+				if(st && st->joyy < 0)
+					sel --;
+	
 				if(sel < 1)
 					sel = c;
-			}
-			
-			if (pressed & CONT_DPAD_DOWN)
-			{
-				sel ++;
 				if(sel > c)
 					sel = 1;
-			}
-			
-			if(st->joyy != 0)
-			{
-				if(++joycnt > 5)
-				{
-					if(st->joyy > 0)
-						sel ++;
-					if(st->joyy < 0)
-						sel --;
-		
-					if(sel < 1)
-						sel = c;
-					if(sel > c)
-						sel = 1;
-					joycnt = 0;
-				}
-			}
-			else
 				joycnt = 0;
-			
-			if (pressed & CONT_A)
-			{
-				refreshVMU = 1;
-				switch(sel)
-				{
-					case 1:
-						TestPatternsMenu(title, sd);
-						break;
-					case 2:	
-						DropShadowTest();
-						break;
-					case 3:
-						StripedSpriteTest();
-						break;
-					case 4:
-						PassiveLagTest();
-						break;
-					case 5:
-#ifndef NO_FFTW
-						if(sip)
-							SIPLagTest();
-						else
-#endif
-							ReflexNTimming();
-						break;
-					case 6:
-						ScrollTest();
-						break;
-					case 7:
-						GridScrollTest();
-						break;
-					case 8:
-						DrawStripes();
-						break;
-					case 9:
-						DrawCheckBoard();
-						break;
-					case 10:
-						LEDZoneTest();
-						break;
-					case 11:
-						DiagonalPatternTest();
-						break;
-					case 12:
-						if(vcable != CT_VGA)
-							Alternate240p480i();
-						break;
-					case 13:
-						SoundTest();
-						break;
-					case 14:
-						SelectVideoMode(title);
-						break;
-					case 15:
-						ShowMenu(GENERALHELP);
-						break;
-					case 16:
-						HelpWindow(GENERALHELP, title);
-						break;
-#ifdef DCLOAD
-					case 17:
-						TestVideoMode(vmode);
-						break;
-#endif
-				}
-				refreshVMU = 1;
 			}
+		}
+		else
+			joycnt = 0;
+		
+		if (pressed & CONT_A)
+		{
+			refreshVMU = 1;
+			switch(sel)
+			{
+				case 1:
+					TestPatternsMenu(title, sd);
+					break;
+				case 2:	
+					DropShadowTest();
+					break;
+				case 3:
+					StripedSpriteTest();
+					break;
+				case 4:
+					PassiveLagTest();
+					break;
+				case 5:
+#ifndef NO_FFTW
+					if(sip)
+						SIPLagTest();
+					else
+#endif
+						ReflexNTimming();
+					break;
+				case 6:
+					ScrollTest();
+					break;
+				case 7:
+					GridScrollTest();
+					break;
+				case 8:
+					DrawStripes();
+					break;
+				case 9:
+					DrawCheckBoard();
+					break;
+				case 10:
+					LEDZoneTest();
+					break;
+				case 11:
+					DiagonalPatternTest();
+					break;
+				case 12:
+					if(vcable != CT_VGA)
+						Alternate240p480i();
+					break;
+				case 13:
+					SoundTest();
+					break;
+				case 14:
+					SelectVideoMode(title);
+					break;
+				case 15:
+					ShowMenu(GENERALHELP);
+					break;
+				case 16:
+					HelpWindow(GENERALHELP, title);
+					break;
+#ifdef DCLOAD
+				case 17:
+					TestVideoMode(vmode);
+					break;
+#endif
+			}
+			refreshVMU = 1;
 		}
 	}
 
@@ -427,114 +420,107 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		}
 		
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("Patterns", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Patterns", "");
 		st = ReadController(0, &pressed);
-		if(st)
+		if (pressed & CONT_START)
+			ShowMenu(GENERALHELP);
+
+		if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
+			RaiseScanlineIntensity();
+
+		if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
+			LowerScanlineIntensity();
+
+		if (pressed & CONT_DPAD_UP)
 		{
-			if (pressed & CONT_START)
-				ShowMenu(GENERALHELP);
-
-			if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
-				RaiseScanlineIntensity();
-
-			if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
-				LowerScanlineIntensity();
-
-			if (pressed & CONT_DPAD_UP)
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+	
+		if (pressed & CONT_DPAD_DOWN)
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}
+	
+		if(st && st->joyy != 0)
+		{
+			if(++joycnt > 5)
 			{
-				sel --;
+				if(st && st->joyy > 0)
+					sel ++;
+				if(st && st->joyy < 0)
+					sel --;
+	
 				if(sel < 1)
 					sel = c;
-			}
-		
-			if (pressed & CONT_DPAD_DOWN)
-			{
-				sel ++;
 				if(sel > c)
 					sel = 1;
-			}
-		
-			if(st->joyy != 0)
-			{
-				if(++joycnt > 5)
-				{
-					if(st->joyy > 0)
-						sel ++;
-					if(st->joyy < 0)
-						sel --;
-		
-					if(sel < 1)
-						sel = c;
-					if(sel > c)
-						sel = 1;
-					joycnt = 0;
-				}
-			}
-			else
 				joycnt = 0;
-		
-			if (pressed & CONT_B)
-				done = 1;
-		
-			if (pressed & CONT_A)
-			{
-				refreshVMU = 1;
-				switch(sel)
-				{
-					case 1:
-						DrawPluge();
-						break;
-					case 2:
-						DrawColorBars();
-						break;
-					case 3:
-						DrawSMPTEColorBars();
-						break;
-					case 4:
-						Draw601ColorBars();
-						break;
-					case 5:
-						DrawColorBleed();
-						break;
-					case 6:
-						DrawGrid(1);
-						break;
-					case 7:
-						DrawGrid(0);
-						break;
-					case 8:
-						DrawLinearity(1);
-						break;					
-					case 9:
-						//DrawLinearity(0);
-						DrawMonoscope();
-						break;					
-					case 10:
-						DrawGrayRamp();
-						break;
-					case 11:
-						DrawWhiteScreen();
-						break;
-					case 12:
-						Draw100IRE();
-						break;
-					case 13:
-						DrawSharpness();
-						break;
-					case 14:
-						DrawOverscan();
-						break;
-					case 15:
-						done = 1;
-						break;
-				} 			
-				refreshVMU = 1;
-			}			
+			}
 		}
+		else
+			joycnt = 0;
+	
+		if (pressed & CONT_B)
+			done = 1;
+	
+		if (pressed & CONT_A)
+		{
+			refreshVMU = 1;
+			switch(sel)
+			{
+				case 1:
+					DrawPluge();
+					break;
+				case 2:
+					DrawColorBars();
+					break;
+				case 3:
+					DrawSMPTEColorBars();
+					break;
+				case 4:
+					Draw601ColorBars();
+					break;
+				case 5:
+					DrawColorBleed();
+					break;
+				case 6:
+					DrawGrid(1);
+					break;
+				case 7:
+					DrawGrid(0);
+					break;
+				case 8:
+					DrawLinearity(1);
+					break;					
+				case 9:
+					//DrawLinearity(0);
+					DrawMonoscope();
+					break;					
+				case 10:
+					DrawGrayRamp();
+					break;
+				case 11:
+					DrawWhiteScreen();
+					break;
+				case 12:
+					Draw100IRE();
+					break;
+				case 13:
+					DrawSharpness();
+					break;
+				case 14:
+					DrawOverscan();
+					break;
+				case 15:
+					done = 1;
+					break;
+			} 			
+			refreshVMU = 1;
+		}			
 	}
 
 	return;

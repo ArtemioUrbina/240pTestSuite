@@ -84,7 +84,7 @@ $(TARGET).elf: $(OBJS) romdisk.o
 
 $(TARGET).bin: $(TARGET).elf
 	$(KOS_OBJCOPY) -R .stack -O binary $(TARGET).elf $(TARGET).bin
-#	strip $(TARGET).elf
+	$(KOS_STRIP) $(TARGET).elf
 
 run: clean dcload
 	$(KOS_LOADER) $(TARGET).bin 

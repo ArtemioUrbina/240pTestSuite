@@ -142,11 +142,7 @@ void DrawPluge()
 		}		
 
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU(" Pluge ", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh(" Pluge ", "");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -301,11 +297,8 @@ void DrawGrayRamp()
 		StartScene();
 		DrawImage(back);
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("Gray Ramp", "", 1);
-			refreshVMU = 0;
-		}
+		
+		VMURefresh("Gray Ramp", "");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -361,11 +354,7 @@ void DrawWhiteScreen()
 		}		
 		
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("Color scr", vmuMsg, 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Color scr", vmuMsg);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -564,11 +553,7 @@ void DrawColorBars()
 		else
 			DrawImage(backgrid);
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("Colorbars", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Colorbars", "");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -604,11 +589,7 @@ void Draw601ColorBars()
 		StartScene();
 		DrawImage(back);
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("Colorbars", "with gray", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Colorbars", "with gray");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -670,11 +651,7 @@ void DrawColorBleed()
 			DrawImage(backchk);
 		EndScene();
 	
-		if(refreshVMU)
-		{
-			updateVMU("Bleed CHK", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Bleed CHK", "");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -816,11 +793,8 @@ void DrawMonoscope()
 		DrawImage(back);
 		DrawImage(rlines);
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("Monoscope", "", 1);
-			refreshVMU = 0;
-		}
+		
+		VMURefresh("Monoscope", "");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1091,11 +1065,7 @@ void Draw100IRE()
 		}
 
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU(vmuMsg, "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh(vmuMsg, "");
 		
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1177,11 +1147,7 @@ void DrawSharpness()
 		StartScene();
 		DrawImage(back);
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU("Sharpness", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("Sharpness", "");
 		
 		st = ReadController(0, &pressed);
 		if(st)
