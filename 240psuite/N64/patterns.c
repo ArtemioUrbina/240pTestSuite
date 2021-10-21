@@ -639,6 +639,49 @@ void DrawCB601()
 	FreeImage(&back);
 }
 
+void DrawMonoscope()
+{
+	int end = 0, type = 1;
+	sprite_t *back = NULL, *backTest = NULL;
+	struct controller_data keys;
+	
+	back = LoadImage("/monoscope.bin");
+	if(!back)
+		return;
+		
+	backTest = LoadImage("/monoscopeFBX.bin");
+	if(!backTest)
+		return;
+		
+    while(!end)
+    {	
+		GetDisplay();
+		
+		if(type == 0)
+			drawImageDMA(0, 0, back);
+		else
+			drawImageDMA(0, 0, backTest);
+		
+		//CheckMenu(COLOR601);
+		WaitVsync();
+		
+		controller_scan();
+		keys = Controller_ButtonsDown();
+		
+		if(keys.c[0].B)
+			end = 1;
+			
+		if(keys.c[0].A)
+			type = !type;
+		
+		CheckStart(keys);
+	}
+	
+	FreeImage(&back);
+	FreeImage(&backTest);
+}
+
+
 void DrawSharpness()
 {
 	int end = 0;
@@ -703,7 +746,7 @@ void DrawGrayRamp()
 
 void DrawSMPTE()
 {
-	int 		end = 0, draw100 = 0, text = 0, load = 1;
+	int 		end = 0, draw100 = 1, text = 0, load = 1;
 	sprite_t 	*back = NULL, *back100 = NULL, *font = NULL;
 	char		msg[40];
 	struct controller_data keys;
@@ -732,7 +775,7 @@ void DrawSMPTE()
 			ChangedVideoFormat = 0;
 		}
 		
-		//drawImageDMA(0, 0, draw100 ? back100 : back); 
+		drawImageDMA(0, 0, draw100 ? back100 : back); 
 		rdp_texture_start();
 		rdp_DrawImage(60, 60, font);		
 		rdp_end();

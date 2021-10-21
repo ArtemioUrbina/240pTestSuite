@@ -56,7 +56,7 @@ clean:
 
 .PHONY: bitmaps all
 
-bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem/shadow.bin\
+bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/donna.bin filesystem/shadow.bin\
     filesystem/buzzbomber.bin filesystem/checkpos.bin filesystem/checkneg.bin filesystem/pluge.bin\
 	filesystem/color.bin filesystem/color_grid.bin filesystem/colorlow.bin filesystem/colorhigh.bin\
     filesystem/grid.bin filesystem/grid480.bin filesystem/menu.bin filesystem/help.bin\
@@ -66,7 +66,7 @@ bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/motoko.bin filesystem
 	filesystem/stripespos.bin filesystem/stripesneg.bin filesystem/vertstripespos.bin filesystem/vertstripesneg.bin\
 	filesystem/circles_grid.bin filesystem/circlesNTSC.bin filesystem/circlesPAL.bin\
 	filesystem/sonicback1.bin filesystem/sonicback2.bin filesystem/sonicback3.bin filesystem/sonicback4.bin\
-	filesystem/sonicfloor.bin filesystem/font.bin 
+	filesystem/sonicfloor.bin filesystem/font.bin filesystem/monoscope.bin filesystem/monoscopeFBX.bin 
 
 filesystem/font.bin: graphics/font.png
 	@echo convert PNG ... $(notdir $@)
@@ -100,6 +100,14 @@ filesystem/circlesPAL.bin: graphics/circlesPAL.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
 	
+filesystem/monoscope.bin: graphics/monoscope.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+
+filesystem/monoscopeFBX.bin: graphics/monoscopeFBX.png
+	@echo convert PNG ... $(notdir $@)
+	$(MKSPRITE) $(BITDEPTH) $< $@
+		
 filesystem/circles_grid.bin: graphics/circles_grid.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
@@ -172,7 +180,7 @@ filesystem/sd.bin: graphics/sd.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
 
-filesystem/motoko.bin: graphics/motoko.png
+filesystem/donna.bin: graphics/donna.png
 	@echo convert PNG ... $(notdir $@)
 	$(MKSPRITE) $(BITDEPTH) $< $@
 	

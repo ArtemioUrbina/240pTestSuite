@@ -32,3 +32,4 @@ void DrawSharpness();
 void DrawSMPTE();
 void DrawColorBleed();
 void DrawLinearity();
+void DrawMonoscope();

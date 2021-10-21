@@ -30,7 +30,7 @@ void DropShadowTest()
 	sprite_t *back = NULL, *shadow = NULL;
 	struct controller_data keys;
 	
-	back = LoadImage("/motoko.bin");
+	back = LoadImage("/donna.bin");
 	shadow = LoadImage("/shadow.bin");
     while(!end)
     {	
