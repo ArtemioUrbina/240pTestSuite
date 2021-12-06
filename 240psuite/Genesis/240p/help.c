@@ -179,11 +179,11 @@ void DrawHelp(int option)
 				break;
 			case HELP_GRID:
 				VDP_drawTextBG(APLAN, "GRID", TILE_ATTR(PAL1, 0, 0, 0), 18, 4);
-				if(pal_240)
+				if(enable_PAL240)
 					VDP_drawTextBG(APLAN, "This grid uses the full 320x240", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				else
 					VDP_drawTextBG(APLAN, "This grid uses the full 320x224", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				if(pal_240)
+				if(IsPALVDP)
 					VDP_drawTextBG(APLAN, "PAL resolution.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				else
 					VDP_drawTextBG(APLAN, "resolution.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);

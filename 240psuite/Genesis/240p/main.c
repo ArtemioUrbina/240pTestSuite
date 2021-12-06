@@ -44,13 +44,10 @@ int main()
 	if(Detect_VDP_PAL())
 	{
 		VDP_setScreenHeight240();
-		pal_240 = 1;
+		enable_PAL240 = 1;
 	}
 	else
-	{
 		VDP_setScreenHeight224();
-		pal_240 = 0;
-	}
 
 #ifdef SEGACD	
 	SendSCDCommand(Op_InitCD);
@@ -793,8 +790,8 @@ void CleanUp()
 	VDP_setVerticalScroll(PLAN_B, 0);
 	VDP_setVerticalScroll(PLAN_A, 0);
 	VDP_setHilightShadow(0);
-	VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
-	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
+	VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 240 / 8);
+	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 	VDP_End();
 }
 
@@ -808,20 +805,17 @@ void FadeAndCleanUp()
 
 void VBlankIntCallback()
 {
-	u8 PalCheck = 0;
+	u8 CurrentVDPFlag = 0;
 
 	joytype = JOY_getJoypadType(JOY_1);
 	joytype2 = JOY_getJoypadType(JOY_2);
 	
-	PalCheck = Detect_VDP_PAL();
-	if(PalCheck != IsPALVDP)
+	CurrentVDPFlag = Detect_VDP_PAL();
+	if(CurrentVDPFlag != IsPALVDP)
 	{
-		IsPALVDP = PalCheck;
-		if(!IsPALVDP && pal_240)
-		{
+		IsPALVDP = CurrentVDPFlag;
+		if(!IsPALVDP && enable_PAL240)
 			VDP_setScreenHeight224();
-			pal_240 = 0;
-		}
 		VDPChanged = 1;
 	}
 	else
@@ -839,9 +833,9 @@ void DrawResolution()
 	if(IsPALVDP)
 	{
 		if(VDP_Detect_Interlace())
-			VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x480i " : " PAL VDP 320x448i", TILE_ATTR(PAL0, 0, 0, 0), 19, 24);
+			VDP_drawTextBG(APLAN, enable_PAL240 ? "PAL VDP 320x480i " : " PAL VDP 320x448i", TILE_ATTR(PAL0, 0, 0, 0), 19, 24);
 		else
-			VDP_drawTextBG(APLAN, pal_240 ? "PAL VDP 320x240p " : " PAL VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 19, 24);
+			VDP_drawTextBG(APLAN, enable_PAL240 ? "PAL VDP 320x240p " : " PAL VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 19, 24);
 	}
 	else
 	{
@@ -880,7 +874,7 @@ void VideoOptions()
 		VDP_drawTextBG(APLAN, "Enable 480i mode:", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 5, 12);
 		VDP_drawTextBG(APLAN, VDP_Detect_Interlace()? "ON " : "OFF", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 28, 12);
 		VDP_drawTextBG(APLAN, "Enable 240 in PAL:", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 5, 13);
-		VDP_drawTextBG(APLAN, pal_240 ? "ON " : "OFF", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 28, 13);
+		VDP_drawTextBG(APLAN, enable_PAL240 ? "ON " : "OFF", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 28, 13);
 
 		VDP_drawTextBG(APLAN, "Back", TILE_ATTR(sel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, 18);
 
@@ -934,15 +928,15 @@ void VideoOptions()
 				if(IsPALVDP)
 				{
 					VDP_Start();
-					if(!pal_240)
+					if(!enable_PAL240)
 					{
 						VDP_setScreenHeight240();
-						pal_240 = 1;
+						enable_PAL240 = 1;
 					}
 					else
 					{
 						VDP_setScreenHeight224();
-						pal_240 = 0;
+						enable_PAL240 = 0;
 					}
 					VDP_End();
 				}
@@ -1067,14 +1061,18 @@ u16 DrawFloatMenuRes(u16 def)
 u16 DrawFloatMenuResExtra(u16 def, char *option)
 {
 	fmenudata resmenudata[] = { {FLOAT_CANCEL, "Display Mode"}, {RES_320, "320x224"}, {RES_256, "256x224"}, {FLOAT_OPTION, NULL} };
+	fmenudata resmenudataPAL240[] = { {FLOAT_CANCEL, "Display Mode"}, {RES_320, "320x240"}, {RES_256, "256x240"}, {FLOAT_OPTION, NULL} };
 	
 	if(!enable_256 && option)
 		return FLOAT_OPTION;
 		
 	if(option)
+	{
 		resmenudata[FLOAT_OPTION].name = option;
+		resmenudataPAL240[FLOAT_OPTION].name = option;
+	}
 	
-	return(DrawFloatMenu(def, resmenudata, option != NULL ? 4 : 3));
+	return(DrawFloatMenu(def, enable_PAL240 ? resmenudataPAL240 : resmenudata, option != NULL ? 4 : 3));
 }
 
 u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size)

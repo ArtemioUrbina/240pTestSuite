@@ -72,6 +72,9 @@ extern u16 monoscope_map[1792/2];
 extern u32 monoscope320_tiles[2752/4]; 
 extern u16 monoscope320_map[2240/2];
 
+extern u32 monoscopePAL_tiles[2304/4]; 
+extern u16 monoscopePAL_map[2400/2];
+
 // Sonic background
 extern u32 sonicfloor_tiles[2592/4]; 
 extern u16 sonicfloor_map[1024/2];

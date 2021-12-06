@@ -32,7 +32,7 @@ u8 VDP_Detect_Interlace();
 void VDP_Start();
 void VDP_End();
 
-extern u16 pal_240;
+extern u16 enable_PAL240;
 extern u16 enable_256;
 
 #endif

@@ -22,8 +22,8 @@
 #include "genesis.h"
 #include "myvdp.h"
 
-u16 pal_240;
-u16 enable_256;
+u16 enable_PAL240	= 0;
+u16 enable_256		= 0;
 
 inline void VDP_Start()
 {
