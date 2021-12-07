@@ -35,6 +35,18 @@ inline void VDP_End()
 	SYS_enableInts();
 }
 
+inline int isVertical240()
+{
+	return(IsPALVDP && enable_PAL240);
+}
+
+int getVerticalRes()
+{
+	if(isVertical240())
+		return 240;
+	return 224;
+}
+
 void VDP_setSpriteAttr(u16 index, u16 tile_attr)
 {
 	SpriteDef *sprite;
@@ -46,7 +58,7 @@ void VDP_setSpriteAttr(u16 index, u16 tile_attr)
 
 u16 Detect_VDP_PAL()
 {
-	return (GET_VDPSTATUS(IS_PALSYSTEM));
+	return (IS_PALSYSTEM);
 }
 
 void VDP_setMyTileMapRect(u16 plan, const u16 * data, u16 basetile, u16 x, u16 y, u16 w, u16 h)

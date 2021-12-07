@@ -29,10 +29,14 @@ void VDP_setMyTileMapRect(u16 plan, const u16 *data, u16 basetile, u16 x, u16 y,
 u16 Detect_VDP_PAL();
 u8 VDP_Detect_Interlace();
 
+int getVerticalRes();
+inline int isVertical240();
+
 void VDP_Start();
 void VDP_End();
 
-extern u16 enable_PAL240;
-extern u16 enable_256;
+extern u16	enable_PAL240;
+extern u16	enable_256;
+extern u8	IsPALVDP;
 
 #endif

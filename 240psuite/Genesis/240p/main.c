@@ -805,21 +805,21 @@ void FadeAndCleanUp()
 
 void VBlankIntCallback()
 {
-	u8 CurrentVDPFlag = 0;
+	u8 checkVDP_PAL = 0;
 
 	joytype = JOY_getJoypadType(JOY_1);
 	joytype2 = JOY_getJoypadType(JOY_2);
 	
-	CurrentVDPFlag = Detect_VDP_PAL();
-	if(CurrentVDPFlag != IsPALVDP)
+	checkVDP_PAL = Detect_VDP_PAL();
+	if(checkVDP_PAL != IsPALVDP)
 	{
-		IsPALVDP = CurrentVDPFlag;
-		if(!IsPALVDP && enable_PAL240)
-			VDP_setScreenHeight224();
 		VDPChanged = 1;
+		IsPALVDP = checkVDP_PAL;
+		if(!IsPALVDP || (IsPALVDP && !enable_PAL240))
+			VDP_setScreenHeight224();
+		if(IsPALVDP && enable_PAL240)
+			VDP_setScreenHeight240();
 	}
-	else
-		VDPChanged = 0;
 }
 	
 void VBlankIntCallbackCancel()
@@ -925,21 +925,13 @@ void VideoOptions()
 
 			if(sel == 2 && IsPALVDP)
 			{
-				if(IsPALVDP)
-				{
-					VDP_Start();
-					if(!enable_PAL240)
-					{
-						VDP_setScreenHeight240();
-						enable_PAL240 = 1;
-					}
-					else
-					{
-						VDP_setScreenHeight224();
-						enable_PAL240 = 0;
-					}
-					VDP_End();
-				}
+				enable_PAL240 = !enable_PAL240;
+				VDP_Start();
+				if(enable_PAL240)
+					VDP_setScreenHeight240();
+				else
+					VDP_setScreenHeight224();
+				VDP_End();
 			}
 		}
 			
@@ -1072,7 +1064,7 @@ u16 DrawFloatMenuResExtra(u16 def, char *option)
 		resmenudataPAL240[FLOAT_OPTION].name = option;
 	}
 	
-	return(DrawFloatMenu(def, enable_PAL240 ? resmenudataPAL240 : resmenudata, option != NULL ? 4 : 3));
+	return(DrawFloatMenu(def, isVertical240() ? resmenudataPAL240 : resmenudata, option != NULL ? 4 : 3));
 }
 
 u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size)

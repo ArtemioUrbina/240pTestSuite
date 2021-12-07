@@ -28,7 +28,6 @@
 #include "myvdp.h"
 
 extern u8		joytype;
-extern u8		IsPALVDP;
 extern u8		VDPChanged;
 extern u8		intCancel;
 extern u8		joytype2;
