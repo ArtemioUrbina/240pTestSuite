@@ -512,7 +512,7 @@ void ExecuteNoise(u16 framelen)
 
 void SendSCDCommand(enum SCD_Command command)
 {
-	unsigned char *segacd_comm = (void*)0xA1200E;
+	volatile unsigned char *segacd_comm = (void*)0xA1200E;
 	
 asm("SendSCDCOMM:");
 	asm("tst.b	0xA1200F");
@@ -717,7 +717,7 @@ void ExececuteMDF(u16 framelen)
 void StartNote()
 {
 	//Give a startup sound so
-	//that the MisTEr Core doesn't
+	//that the MiSTer Core doesn't
 	//destroy the pulses
 	
 	PSG_setFrequency(0, 100);

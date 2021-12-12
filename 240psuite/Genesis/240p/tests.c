@@ -1461,7 +1461,7 @@ void SoundTest()
 	u16 redraw = 0, selmax = 5;
 	int octave = 24;
 #ifdef SEGACD
-	int pcm = 0, loaded = 0;
+	int pcm = 0, sampleType = 0;
 #endif
 
 	yminit();
@@ -1687,12 +1687,6 @@ void SoundTest()
 				break;
 				case stPCM: // PCM
 				{
-					if(!loaded && random() % 40 == 7)
-					{
-						SendSCDCommand(Op_SetSamplesTest2);
-						loaded = 1;
-					}
-						
 					if(pcm)
 						SendSCDCommand(Op_StopPCM);
 
@@ -1721,7 +1715,19 @@ void SoundTest()
 			}
 		}
 
-#ifdef SEGACD		
+#ifdef SEGACD
+		if(pressedButtons & BUTTON_C && type == stPCM)
+		{
+			if(pcm)
+				SendSCDCommand(Op_StopPCM);
+			pcm = 0;
+			if(sampleType)
+				SendSCDCommand(Op_SetSamplesTest);
+			else
+				SendSCDCommand(Op_SetSamplesTest2);
+			sampleType = !sampleType;
+		}
+		
 		if(pcm)
 		{
 			pcm --;

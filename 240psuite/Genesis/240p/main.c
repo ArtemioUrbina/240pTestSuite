@@ -636,7 +636,7 @@ void DrawIntro()
 
 void Detect_MD(char *str)
 {
-	char *pointer = NULL;
+	volatile char *pointer = NULL;
 	u16 IsPAL = 0, data = 0;
 	u16 TMSS = 0, IsAsia = 0;
 
@@ -700,7 +700,7 @@ void DrawCredits()
 	{
 		if(loadvram)
 		{
-			pos = 8;
+			pos = 7;
 			counter = 1;
 			
 #ifdef SEGACD
@@ -714,27 +714,36 @@ void DrawCredits()
 
 			VDP_drawTextBG(APLAN, "Code and Patterns:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			pos++;
-			VDP_drawTextBG(APLAN, "Menu Pixel Art:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "SDK:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://github.com/Stephane-D/SGDK", TILE_ATTR(PAL0, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "SDK Consultor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
-			VDP_drawTextBG(APLAN, "Stef", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 #ifdef SEGACD
 			VDP_drawTextBG(APLAN, "SEGA CD Loader by:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "Luke Usher/SoullessSentinel", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "SEGA CD Consultors:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "Chilly Willy & TascoDLX", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 #endif
+			VDP_drawTextBG(APLAN, "Monoscope Pattern:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "Keith Raney", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Donna Art:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "Jose Salot (@pepe_salot)", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+#ifdef SEGACD
+			VDP_drawTextBG(APLAN, "Menu Art:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos);
+			VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 16, pos++);
+			VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos);
+			VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 17, pos++);
+#else
+			VDP_drawTextBG(APLAN, "Menu Art:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
+			VDP_drawTextBG(APLAN, "Asher", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "Advisor:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "Fudoh", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
+#endif
 			VDP_drawTextBG(APLAN, "Collaboration:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "Shmups regulars", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-			VDP_drawTextBG(APLAN, "Ver. 1.23d", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "12/08/2021", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.23e", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "07/12/2021", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 			VDP_End();
@@ -742,7 +751,7 @@ void DrawCredits()
 #ifdef SEGACD
 			pos = 7;
 #else
-			pos = 9;
+			pos = 8;
 #endif
 			loadvram = 0;
 		}
@@ -757,8 +766,6 @@ void DrawCredits()
 		if(counter == 60 * 4)
 			VDP_drawTextBG(APLAN, "@Artemio (twitter)  ", TILE_ATTR(PAL0, 0, 0, 0), 5, pos);
 		if(counter == 60 * 8)
-			VDP_drawTextBG(APLAN, "aurbina@junkerhq.net", TILE_ATTR(PAL0, 0, 0, 0), 5, pos);
-		if(counter == 60 * 16)
 			counter = 0;
 		VDP_End();
 
