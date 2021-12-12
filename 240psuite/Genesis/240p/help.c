@@ -527,6 +527,10 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "PSG has 200hz, 2khz and 4khz", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "tones on its channels and white", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "noise at 500hz.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#ifdef SEGACD
+				y++;
+				VDP_drawTextBG(APLAN, "With PCM, C changes sample used.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+#endif
 				y++;
 				VDP_drawTextBG(APLAN, "For balance and frequency checks", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "please use MDFourier.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);

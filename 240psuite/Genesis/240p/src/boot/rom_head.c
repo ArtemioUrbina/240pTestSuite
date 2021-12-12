@@ -1,6 +1,5 @@
 #include "types.h"
 
-
 const struct
 {
     char console[16];               /* Console Name (16) */
@@ -23,7 +22,7 @@ const struct
     char region[16];                /* Country Support (16) */
 } rom_header = {
     "SEGA MEGA DRIVE ",
-    "    AUG 2021 AUG",
+    "    AUG 2021 DEC",
     "240P TEST SUITE                                 ",
     "240P TEST SUITE                                 ",
     "GM 00002501-01",
