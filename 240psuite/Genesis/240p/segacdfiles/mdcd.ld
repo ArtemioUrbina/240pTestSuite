@@ -31,7 +31,7 @@ __DYNAMIC  =  0;
 MEMORY
 {
     wram (wx) : ORIGIN = 0x00200000, LENGTH = 0x00040000
-    ram (wx) : ORIGIN = 0x00FF0000, LENGTH = 0x0000FD00
+    ram (wx) : ORIGIN = 0x00FF0000, LENGTH = 0x00010000
 }
 
 /*
