@@ -38,3 +38,4 @@ void ExecutePulseTrain();
 void ExecuteSilence();
 void ExecuteFM(u16 framelen);
 void ExecuteMDF(u16 framelen);
+void ExecuteADPCMOnly();

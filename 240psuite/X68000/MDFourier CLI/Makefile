@@ -34,7 +34,6 @@ OBJFILES = build/main.o build/ym2151.o build/mdfourier.o build/MSM6258.o
 $(EXE):  $(OBJFILES)
 	$(CC) $(LDFLAGS) $(OBJFILES) $(LIBS) -o bin/$(TARGET)
 	$(OBJCOPY) $(OCFLAGS) bin/$(TARGET) bin/$(EXE)
-	$(STRIP) bin/$(EXE) 
 	cp -v bin/$(EXE) $(DEST) 
 	
 ################################

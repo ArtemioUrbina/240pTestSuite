@@ -86,6 +86,17 @@ void adpcm_dma_setup(unsigned char *adpcm_source, unsigned short adpcm_size)
 	dma->dar = (unsigned char *)adpcm_data;
 }
 
+void Prepare_ADPCM_DMA(unsigned char *adpcm_source, unsigned short adpcm_size)
+{
+	adpcm_stop();
+	adpcm_clksel(ADPCM_8MHZ); /* ADPCM Clock 8Mhz */
+	adpcm_outsel(ADPCM_STEREO); /* Panpot Control Stereo*/
+	adpcm_sample(ADPCM_7_8KHZ_15_6KHZ); /* Sampling rate 15.6k */
+	adpcm_dma_clear_flag();
+
+	adpcm_dma_setup(adpcm_source, adpcm_size);
+}
+
 void adpcm_dma_start()
 {
 	volatile struct DMAREG *dma;

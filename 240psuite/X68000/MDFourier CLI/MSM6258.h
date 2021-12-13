@@ -86,6 +86,7 @@ void adpcm_clksel(unsigned char sel);
 void adpcm_stop();
 void adpcm_start();
 void adpcm_dma_setup(unsigned char *adpcm_source, unsigned short adpcm_size);
+void Prepare_ADPCM_DMA(unsigned char *adpcm_source, unsigned short adpcm_size);
 void adpcm_dma_start();
 void adpcm_dma_wait_complete();
 void adpcm_dma_clear_flag();

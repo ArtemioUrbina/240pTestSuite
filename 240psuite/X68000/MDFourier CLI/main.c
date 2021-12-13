@@ -66,11 +66,11 @@ int main(void)
 {
 	int input = 0;
 
-	printf("MDFourier for X68000 v 0.1 -- http://junkerhq.net/MDFourier\n");
+	printf("MDFourier for X68000 v 0.2 -- http://junkerhq.net/MDFourier\n");
 	printf("  Artemio Urbina 2021\n\n");
 
 	printf("Press SPACE or a joystick button when ready to record\n");
-	printf("Press ESC to abort\n");
+	printf("Press ESC to measure ADPCM DMA playback duration\n");
 	
 	initX68000();
 	
@@ -86,7 +86,10 @@ int main(void)
 		ExecuteMDF(20);
 	}
 	else
-		printf("Aborted\n");
+	{
+		printf("Starting MDFourier ADPCM DMA Playback test\n");
+		ExecuteADPCMOnly();
+	}
 
 	return 0;
 }

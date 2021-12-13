@@ -27,6 +27,13 @@
 #include "adpcm_sweep.h"
 
 int video_count = 0;
+int adcpm_dma_frames = 0;
+#ifdef COMPENSATE_FASTER_ADPCM
+int adcpm_dma_frames_extra = 0;
+#endif
+
+#define ADPCM_FRAME_LEN	278
+#define MDF_FRAME_LEN	2924
 
 void SilenceMDF()
 {
@@ -134,6 +141,34 @@ void ymPlay(u8 channel, u8 note, u8 octave, u8 pan)
 
 }
 
+void adpcm_dma_wait_complete_vblank()
+{
+	u8						count = 0;
+	vu8						*adpcm_status;
+	volatile struct DMAREG 	*dma;
+
+	dma = (struct DMAREG *)0xe840c0;
+	adpcm_status = (u8*)0xe92001;
+
+	adcpm_dma_frames = 0;
+	while(!(dma->csr & 0x90) && ! (*adpcm_status & 0x80))
+	{
+		wait_vblank();
+		adcpm_dma_frames++;
+	}
+	
+#ifdef COMPENSATE_FASTER_ADPCM
+	if(adcpm_dma_frames < ADPCM_FRAME_LEN)
+	{
+		for(count = 0; count < ADPCM_FRAME_LEN - adcpm_dma_frames; count++)
+		{
+			wait_vblank();
+			adcpm_dma_frames_extra++;
+		}
+	}
+#endif
+}
+
 void ExecutePulseTrain()
 {
 	u16 f = 0;
@@ -189,24 +224,13 @@ void ExecuteFM(u16 framelen)
 	ym2151_keyoffAll();
 }
 
-void Prepare_ADPCM_DMA()
-{
-	adpcm_stop();
-	adpcm_clksel(ADPCM_8MHZ); /* ADPCM Clock 8Mhz */
-	adpcm_outsel(ADPCM_STEREO); /* Panpot Control Stereo*/
-	adpcm_sample(ADPCM_7_8KHZ_15_6KHZ); /* Sampling rate 15.6k */
-	adpcm_dma_clear_flag();
-
-	adpcm_dma_setup(adpcm_sweep, 39061);
-}
-
 void ExecuteADPCM()
 {
 	wait_vblank();
 
 	adpcm_dma_start();
 	adpcm_start();
-	adpcm_dma_wait_complete();
+	adpcm_dma_wait_complete_vblank();
 	adpcm_stop();
 	adpcm_dma_clear_flag();
 
@@ -216,9 +240,13 @@ void ExecuteADPCM()
 void MDFSequence(u16 framelen)
 {
 	yminit();
-	Prepare_ADPCM_DMA();
+	Prepare_ADPCM_DMA(adpcm_sweep, 39061);
 	wait_vblank();	
 	video_count = 0;
+	adcpm_dma_frames = 0;
+#ifdef COMPENSATE_FASTER_ADPCM
+	adcpm_dma_frames_extra = 0;
+#endif
 
 	ExecutePulseTrain();
 	ExecuteSilence();
@@ -236,12 +264,58 @@ void MDFSequence(u16 framelen)
 	ExecuteSilence();
 	ExecutePulseTrain();
 	
-	printf("FM Frames %d (non adpcm)\n", video_count);
+	printf("ADPCM DMA playback frames: %d\n", adcpm_dma_frames);
+	printf("Total test vsync count %d\n", video_count);
+	
+	if(adcpm_dma_frames < ADPCM_FRAME_LEN)
+	{
+		printf("WARNING: ADPCM DMA playback was faster than the expected %d frames\n", ADPCM_FRAME_LEN);
+#ifdef COMPENSATE_FASTER_ADPCM
+		printf("  Compensated with %d extra silent frames, they won't align properly\n", adcpm_dma_frames_extra);
+#endif
+	}
+	
+	if(adcpm_dma_frames > ADPCM_FRAME_LEN)
+		printf("WARNING: ADPCM DMA playback took longer than the expected %d frames\n", ADPCM_FRAME_LEN);
+		
+	if(video_count != MDF_FRAME_LEN)
+		printf("WARNING: Vsync count didn't match expected %d frames\n", MDF_FRAME_LEN);
 }
 
 void ExecuteMDF(u16 framelen)
 {
 	MDFSequence(framelen);
 	SilenceMDF();
+}
+
+void ExecuteADPCMOnly()
+{
+	yminit();
+	Prepare_ADPCM_DMA(adpcm_sweep, 39061);
+	wait_vblank();
+	
+	video_count = 0;
+	adcpm_dma_frames = 0;
+#ifdef COMPENSATE_FASTER_ADPCM
+	adcpm_dma_frames_extra = 0;
+#endif
+
+	ExecuteADPCM();
+
+	printf("ADPCM DMA playback frames: %d\n", adcpm_dma_frames);
+	
+	if(adcpm_dma_frames == ADPCM_FRAME_LEN)
+		printf("ADPCM DMA playback took the expected duration\n");
+		
+	if(adcpm_dma_frames < ADPCM_FRAME_LEN)
+	{
+		printf("WARNING: ADPCM DMA playback was faster than the expected %d frames\n", ADPCM_FRAME_LEN);
+#ifdef COMPENSATE_FASTER_ADPCM
+		printf("  Compensated with %d extra silent frames, they won't align properly\n", adcpm_dma_frames_extra);
+#endif
+	}
+	
+	if(adcpm_dma_frames > ADPCM_FRAME_LEN)
+		printf("WARNING: ADPCM DMA playback took longer than the expected %d frames\n", ADPCM_FRAME_LEN);
 }
 
