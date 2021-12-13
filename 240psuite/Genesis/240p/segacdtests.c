@@ -53,13 +53,43 @@ int memcmp(const void *s1, const void *s2, int n)
     unsigned char u1, u2;
 
     for ( ; n-- ; s1++, s2++) {
-	u1 = * (unsigned char *) s1;
-	u2 = * (unsigned char *) s2;
-	if ( u1 != u2) {
-	    return (u1-u2);
-	}
+		u1 = * (unsigned char *) s1;
+		u2 = * (unsigned char *) s2;
+		if ( u1 != u2) {
+			return (u1-u2);
+		}
     }
     return 0;
+}
+
+#ifndef SEGACD
+// As suggested by Leo Oliveira
+int DetectSCDviaExpansion()
+{
+	volatile char *pointer = NULL;
+	u16	ExpansionNotConnected = 0, data = 0;
+	
+	pointer = (char *)0xA10001;
+	data = *pointer;
+	ExpansionNotConnected = (data & 0x20);
+
+	return(!ExpansionNotConnected);
+}
+#endif
+
+int DetectEmulationIssue()
+{
+#ifdef SEGACD
+	uint8_t *bios = (uint8_t *)0;
+#else
+	uint8_t *bios = (uint8_t *)0x400000;
+#endif
+	
+	// RetroArch GenPlus GX has 0x00
+	if(bios[0x70] != 0xFF)
+		return 1;
+	
+	return(0);
 }
 
 // from ChillyWilly Example of Mode1 playback
@@ -69,7 +99,6 @@ int memcmp(const void *s1, const void *s2, int n)
  * 0x400000 instead of 0x000000. So the BIOS ROM is at 0x400000, the
  * Program RAM bank is at 0x420000, and the Word RAM is at 0x600000.
  */
- 
 int DetectSCDBIOS(uint32_t address)
 {
     uint8_t *bios;
@@ -108,11 +137,12 @@ int DetectBSSCDBIOS(uint32_t address)
 uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 {
 	uint8_t *bios = NULL;
-	uint32_t address = 0, checksum = 0;
+	uint32_t address = 0, checksum = 0, emuPatch = 0;
 
 	CRC32_reset();
 
 	bios = (void*)startAddress;
+	emuPatch = DetectEmulationIssue();
 	for (address = 0; address < size; address ++)
 	{
 		uint8_t data;
@@ -138,6 +168,12 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 				data = 0xFD;
 		}
 #endif
+		// There is an issue under some emulators, patch it
+		if(emuPatch && address == 0x70)
+		{
+			data = 0xFF;
+			emuPatch = 0;
+		}
 		CRC32_update(data);
 	}
 
@@ -635,7 +671,7 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 	PrintBIOSInfo(address);
 	
 	VDP_Start();
-	VDP_drawTextBG(APLAN, "Calculating, please wait", TILE_ATTR(PAL3, 0, 0, 0), 6, 19);
+	VDP_drawTextBG(APLAN, "Calculating, please wait", TILE_ATTR(PAL1, 0, 0, 0), 7, 19);
 	VDP_End();
 
 #ifndef SEGACD
@@ -645,6 +681,9 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 	checksum = CalculateCRC(address, 0x20000, 0);
 #endif
 
+	if(DetectEmulationIssue())
+		ShowMessageAndData("Emu issue (0xFF)@:", address+0x70, 8, PAL1, 5, 18);
+		
 	ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
 		
 	VDP_waitVSync();	
@@ -1146,16 +1185,27 @@ void SegaCDMenu()
 #endif
 
 #ifndef SEGACD
-	if(!DetectSCDBIOS(0x400000))
+	if(!DetectSCDviaExpansion())
 	{
 		fmenudata resmenudata[] = { {0, "SCD not detected"}, {1, "continue"}, {2, "return"} };
 	
 		if(DrawFloatMenu(2, resmenudata, 3) == 2)
 			return;
 	}
+	else
+	{
+		if(!DetectSCDBIOS(0x400000))
+		{
+			fmenudata resmenudata[] = { {0, "Unknown BIOS"}, {1, "continue"}, {2, "return"} };
+		
+			if(DrawFloatMenu(2, resmenudata, 3) == 2)
+				return;
+		}	
+	}
 #endif
 	while(!done)
 	{
+		checkHintShadow();
 		if(reload)
 		{
 #ifndef SEGACD

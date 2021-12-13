@@ -1,5 +1,8 @@
 #include "types.h"
 
+// This header includes teh C used in MSU enabled games for Mega Everdrive Pro and emulators
+// its only purpose is for testing Sega CD under those conditions.
+
 const struct
 {
     char console[16];               /* Console Name (16) */
@@ -27,7 +30,7 @@ const struct
     "240P TEST SUITE                                 ",
     "GM 00002501-01",
     0x0000,
-    "JD              ",
+    "JDC             ",
     0x00000000,
     0x0003FFFF,
     0x00000000,

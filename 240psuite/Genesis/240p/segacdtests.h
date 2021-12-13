@@ -11,6 +11,7 @@
 
 #define MEMORY_OK 0xFFFFFFFF
 
+int DetectSCDviaExpansion();
 void SegaCDMenu();
 int DetectSCDBIOS();
 void Z80RamTest();
