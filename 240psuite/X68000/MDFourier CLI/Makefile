@@ -7,7 +7,7 @@ OBJCOPY	= $(APP_BASE)-objcopy
 STRIP 	= $(APP_BASE)-strip
 
 # Where to copy the output exe files to
-DEST	= "/opt/human68k/_projects/MDFourier/release"
+DEST	= release
 
 # libraries and paths
 LIBS	 	= -ldos -lm
@@ -20,7 +20,7 @@ ASM_FLAGS 	= -m68000 -mtune=68000 --register-prefx-optional
 LDFLAGS 	=
 CFLAGS 		= -m68000 -mtune=68000 -std=c99 -fomit-frame-pointer -Wall -Wno-unused-function -Wno-unused-variable -O3
 LDSCRIPT 	=
-OCFLAGS	= -O xfile
+OCFLAGS     = -O xfile
 
 # What our application is named
 TARGET			= MDFourier
@@ -32,17 +32,9 @@ all: $(EXE)
 OBJFILES = build/main.o build/ym2151.o build/mdfourier.o build/MSM6258.o
 
 $(EXE):  $(OBJFILES)
-	@echo ""
-	@echo "========================================"
-	@echo " -= $(EXE) =-"
-	@echo ""
-	@echo Linking ....
 	$(CC) $(LDFLAGS) $(OBJFILES) $(LIBS) -o bin/$(TARGET)
-	@echo ""
-	@echo Dumping executable object ....
 	$(OBJCOPY) $(OCFLAGS) bin/$(TARGET) bin/$(EXE)
-	@echo ""
-	@echo Copying application binary to X68000 shared folder ....
+	$(STRIP) bin/$(EXE) 
 	cp -v bin/$(EXE) $(DEST) 
 	
 ################################
