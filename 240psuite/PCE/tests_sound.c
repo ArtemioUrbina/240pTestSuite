@@ -221,7 +221,10 @@ void MDFourier(int armed)
 	vsync();
 	StopAudio(0);
 	
-	if(armed)
+	if(armed == 2)
+		MDFourierExecute();
+	
+	if(armed == 1)
 		ExecutePulseTrain(0);
 	
     while(!end)

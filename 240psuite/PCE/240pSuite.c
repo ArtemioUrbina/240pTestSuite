@@ -78,6 +78,13 @@ void main()
 	if(Enabled240p)
 		Set240p();
 
+#ifdef MDF_AT_BOOT
+#ifdef CDROM
+	runmdf = 2;
+#endif
+	MDFourier(2);
+#endif
+
 #ifndef CDROM
 	DrawIntro();
 #endif
