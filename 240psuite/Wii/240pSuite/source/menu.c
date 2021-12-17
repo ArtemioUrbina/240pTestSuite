@@ -204,14 +204,13 @@ void ChangeOptions(ImagePtr title)
 		DrawStringS(x + 70, 42, 0x00, 0xff, 0x00, "General Options"); 
 		
 #ifdef WII_VERSION			
-		y += 2*fh; 
-#else
-		y += 4*fh; 
-#endif
+		y += fh; 	
+		
 		// option 1, TrapFilter
-#ifdef WII_VERSION				
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.TrapFilter ? "ON" : "OFF");
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VI Trap Filter (Composite):"); y += fh; c++;		
+#else
+		y += 2*fh; 
 #endif
 
 		// option 2, FlickerFilter
@@ -237,8 +236,8 @@ void ChangeOptions(ImagePtr title)
 		}
 
 		// Option 4
-		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.EnablePAL ? "ON" : "OFF"); 					
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable PAL Modes:"); y += fh; c++;						
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.EnablePAL ? "ON" : "OFF");
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable PAL Modes:"); y += fh; c++;
 		
 		// Option 5
 		if(Options.EnablePAL)
@@ -259,12 +258,12 @@ void ChangeOptions(ImagePtr title)
 			sprintf(BorderColor, "[%X,%X,%X]", Options.PalBackR, Options.PalBackG, Options.PalBackB);			
 			if(Options.EnablePAL)
 			{
-				DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, BorderColor); 
-				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Change PAL Background:"); y += fh; c++;												
+				DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, BorderColor);
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Change PAL Background:"); y += fh; c++;							
 			}
 			else
 			{
-				DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, BorderColor); 
+				DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, BorderColor);
 				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Change PAL Background:"); y += fh; c++;
 			}
 
@@ -278,35 +277,40 @@ void ChangeOptions(ImagePtr title)
 			if(Options.EnablePAL)
 			{			
 				DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, palstart);
-				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PAL starting line:"); y += fh; c++;								
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PAL starting line:"); y += fh; c++;
 			}
 			else
 			{			
 				DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, palstart);
-				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "PAL starting line:"); y += fh; c++;						
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "PAL starting line:"); y += fh; c++;
 			}
 		}		
 		
 		// Option 8
 		if(Options.EnablePAL)
 		{			
-			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.PALScale576 ? "ON" : "OFF");					
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Stretch to full 288/576:"); y += fh; c++;								
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.PALScale576 ? "ON" : "OFF");
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "V. Stretch to 288/576 in PAL:"); y += fh; c++;		
 		}
 		else
 		{			
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.PALScale576 ? "ON" : "OFF");
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Stretch to full 288/576:"); y += fh; c++;						
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "V. Stretch to 288/576 in PAL:"); y += fh; c++;
 		}
 		
-		// option 9 Scanline intensity
+		// option 9, Stretch Horizontal
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.Enable720Stretch ? "ON" : "OFF"); 					
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "H. Stretch to 720:"); y += fh; c++;	
+
+		
+		// option 10 Scanline intensity
 		sprintf(intensity, "%d%%", GetScanlineIntensity());
 		if(vmode == VIDEO_480P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p Scanline Intensity:"); y += fh; c++;			
 			
-			// option 10, Scanline even/odd
+		// option 11, Scanline even/odd
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p Scanlines:"); y += fh; c++;	
 		}				
@@ -315,18 +319,18 @@ void ChangeOptions(ImagePtr title)
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, intensity);
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p Scanline Intensity:"); y += fh; c++;			
 			
-			// option 10, Scanline even/odd
+		// option 11, Scanline even/odd
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p Scanlines:"); y += fh; c++;	
 		}
-		
+				
 #ifdef WII_VERSION					
-		// option 11, SFC CC
+		// option 12, SFC CC
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.SFCClassicController ? "ON" : "OFF"); 					
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SFC Classic Controller:"); y += fh; c++;			
 #endif		
 				
-		// Option 12
+		// Option 13
 		DrawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 			
 		r = g = b = r - 0x30;
@@ -336,13 +340,13 @@ void ChangeOptions(ImagePtr title)
 		if(sel == 3)
 			DrawStringS(x-15, y + 2*fh, r, g, b, GetBilinearText(0));
 		*/
-		
+	
 		if(Options.EnablePAL && Options.PALScale576)		
 		{
 #ifdef WII_VERSION			
 			if(sel == 7)
 #else
-			if(sel == 6)
+			if(sel+1 == 7)
 #endif
 				DrawStringS(x-15, y + 2*fh, r, g, b, "This setting has no effect in stretched modes");		
 		}
@@ -352,10 +356,17 @@ void ChangeOptions(ImagePtr title)
 #ifdef WII_VERSION	
 			if(sel == 8)
 #else
-			if(sel == 7)
+			if(sel+1 == 8)
 #endif
-				DrawStringS(x-15, y + 2*fh, r, g, b, "Stretching PAL modes disables 1:1 pixel mapping");
+				DrawStringS(x-15, y + 2*fh, r, g, b, "Vert. stretching disables 1:1 pixel mapping");
 		}
+		
+#ifdef WII_VERSION	
+			if(sel == 9)
+#else
+			if(sel+1 == 9)
+#endif
+				DrawStringS(x-15, y + 2*fh, r, g, b, "Horz. stretching disables 1:1 pixel mapping");
 					
 #ifdef WII_VERSION					
 		if(vmode == VIDEO_480P_SL && sel == 9)
@@ -366,20 +377,20 @@ void ChangeOptions(ImagePtr title)
 				DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 	
 		}
 #else
-		if(vmode == VIDEO_480P_SL && sel == 8)	
+		if(vmode == VIDEO_480P_SL && sel+1 == 9)
 			DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 										
 #endif
 
 
 #ifdef WII_VERSION								
-		if(vmode != VIDEO_480P_SL && (sel == 9 || sel == 10))
+		if(vmode != VIDEO_480P_SL && (sel == 10 || sel == 11))
 #else
-		if(vmode != VIDEO_480P_SL && (sel == 8 || sel == 9))
+		if(vmode != VIDEO_480P_SL && (sel+1 == 10 || sel+1 == 11))
 #endif
 			DrawStringS(x-15, y + 2*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
 			
 #ifdef WII_VERSION					
-		if(sel == 11)	
+		if(sel == 12)	
 			DrawStringS(x-15, y + 2*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]"); 										
 #endif
 				
@@ -411,56 +422,44 @@ void ChangeOptions(ImagePtr title)
 	    }			
 				
 #ifdef WII_VERSION			
-		if ( pressed & PAD_TRIGGER_R && sel == 9)
-	    {
-			if(vmode == VIDEO_480P_SL)
-				RaiseScanlineIntensity();
-	    }
-	    
-	    if ( pressed & PAD_TRIGGER_L && sel == 9)
-	    {
-			if(vmode == VIDEO_480P_SL)
-				LowerScanlineIntensity();
-	    }			
+		if ( pressed & PAD_TRIGGER_R && sel == 10)
 #else
-		if ( pressed & PAD_TRIGGER_R && sel == 8)
+		if ( pressed & PAD_TRIGGER_R && sel+1 == 10)
+#endif
 	    {
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
 	    }
-	    
-	    if ( pressed & PAD_TRIGGER_L && sel == 8)
-	    {
-			if(vmode == VIDEO_480P_SL)
-				LowerScanlineIntensity();
-	    }	
-#endif
 
 #ifdef WII_VERSION			
-		if ( held & PAD_BUTTON_RIGHT && sel == 9)
-	    {
-			if(vmode == VIDEO_480P_SL)
-				RaiseScanlineIntensity();
-	    }
-	    
-	    if ( held & PAD_BUTTON_LEFT && sel == 9)
+		if ( pressed & PAD_TRIGGER_L && sel == 10)
+#else
+		if ( pressed & PAD_TRIGGER_L && sel+1 == 10)
+#endif	    
 	    {
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
 	    }			
+
+#ifdef WII_VERSION			
+		if ( held & PAD_BUTTON_RIGHT && sel == 11)
 #else
-		if ( held & PAD_BUTTON_RIGHT && sel == 8)
+		if ( held & PAD_BUTTON_RIGHT && sel+1 == 11)
+#endif	    
 	    {
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
 	    }
-	    
-	    if ( held & PAD_BUTTON_LEFT && sel == 8)
+		
+#ifdef WII_VERSION			
+	    if ( held & PAD_BUTTON_LEFT && sel == 11)
+#else
+		if ( held & PAD_BUTTON_LEFT && sel+1 == 11)
+#endif	    
 	    {
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
-	    }	
-#endif	
+	    }			
 			
 		if(pressed & PAD_BUTTON_START)
 		{
@@ -473,7 +472,7 @@ void ChangeOptions(ImagePtr title)
 			HelpData = GENERALHELP;
 		}
 		
-		if(pressed & PAD_BUTTON_B ) 		
+		if(pressed & PAD_BUTTON_B) 		
 			close = 1;	
 			
 		if(held & PAD_TRIGGER_L && held & PAD_TRIGGER_R)
@@ -547,22 +546,28 @@ void ChangeOptions(ImagePtr title)
 							EnableStretchedPALModes(!Options.PALScale576);
 							if(IsPAL)	
 							{
-								SetVideoMode(vmode);										
+								SetVideoMode(vmode);
 								SetupGX();							
 							}
 						}
-						break;				
-					case 9:
 						break;
+					case 9:
+						Options.Enable720Stretch = !Options.Enable720Stretch;
+						if(Options.Enable720Stretch)
+							ShowStretchWarning();
+						SetVideoMode(vmode);
+						break;			
 					case 10:
+						break;
+					case 11:
 						if(vmode == VIDEO_480P_SL)
 							ToggleScanlineEvenOdd();
 						break;
-					case 11:
+					case 12:
 #ifdef WII_VERSION		
 						Options.SFCClassicController = !Options.SFCClassicController;
 						break;										
-					case 12:
+					case 13:
 #endif											
 						close = 1;
 						break;
@@ -1035,6 +1040,96 @@ void ShowVideoWarning(ImagePtr screen)
 		{
 			DrawStringS(x, y, r, g, b, "- 16:9 Aspect Ratio"); y += fh;
 		}
+				
+		DrawStringS(x, Back->y + fh*12, 0, g, b, "Press B to continue"); 
+		
+		EndScene();		
+			
+		ControllerScan();
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_B ) 		
+			done = 1;	
+	}
+}
+
+void ShowStretchWarning()
+{	
+	u32     	pressed = 0, done = 0;	
+	ImagePtr	Back = NULL;
+	
+	Back = LoadImage(FLOATMENUIMG, 0);
+	if(!Back)
+		return;	
+		
+	Back->x = (dW - Back->w) / 2;
+	Back->y = (dH - Back->h) / 2;
+	
+	Back->alpha = 0xaa;
+	
+	while(!done)
+	{			
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;					    					  
+		u16     x = Back->x + 20;
+		u16     y = Back->y + 10;        
+				
+		StartScene();
+		
+		DrawImage(Back);       
+
+		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
+		
+		x -= 10;			
+		DrawStringS(x, y, r, 0, 0, "Horizontal stretch"); y += fh;
+		DrawStringS(x, y, r, 0, 0, "renders geometry"); y += fh;
+		DrawStringS(x, y, r, 0, 0, "patterns useless"); y += fh;
+				
+		DrawStringS(x, Back->y + fh*12, 0, g, b, "Press B to continue"); 
+		
+		EndScene();		
+			
+		ControllerScan();
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_B ) 		
+			done = 1;	
+	}
+}
+
+void ShowPALBGWarning()
+{	
+	u32     	pressed = 0, done = 0;	
+	ImagePtr	Back = NULL;
+	
+	Back = LoadImage(FLOATMENUIMG, 0);
+	if(!Back)
+		return;	
+		
+	Back->x = (dW - Back->w) / 2;
+	Back->y = (dH - Back->h) / 2;
+	
+	Back->alpha = 0xaa;
+	
+	while(!done)
+	{			
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;					    					  
+		u16     x = Back->x + 20;
+		u16     y = Back->y + 10;        
+				
+		StartScene();
+		
+		DrawImage(Back);       
+
+		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
+		
+		x -= 10;			
+		DrawStringS(x, y, r, 0, 0, "PAL Background"); y += fh;
+		DrawStringS(x, y, r, 0, 0, "was disabled"); y += fh;
+		DrawStringS(x, y, r, 0, 0, "for monoscope"); y += fh;
 				
 		DrawStringS(x, Back->y + fh*12, 0, g, b, "Press B to continue"); 
 		

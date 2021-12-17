@@ -30,16 +30,17 @@ GXRModeObj Mode_480i;
 GXRModeObj Mode_264p;
 GXRModeObj Mode_528i;
 
+// Modified TVPal264Ds  
 GXRModeObj TVPal264DsFull =
 {
     VI_TVMODE_PAL_DS,       // viDisplayMode
     640,             // fbWidth
     264,             // efbHeight
-    284,             // xfbHeight
-    (VI_MAX_WIDTH_PAL - 640)/2,         // viXOrigin
+    284,             // xfbHeight, was 264
+    (VI_MAX_WIDTH_PAL - 640)/2,         // viXOrigin, was (VI_MAX_HEIGHT_PAL/2 - 528/2)
     PAL_OFFSET,        // viYOrigin
     640,             // viWidth
-    572,             // viHeight
+    572,             // viHeight, was 528
     VI_XFBMODE_SF,   // xFBmode
     GX_FALSE,        // field_rendering
     GX_FALSE,        // aa
@@ -64,19 +65,19 @@ GXRModeObj TVPal264DsFull =
 	}
 };
 
+// Modified TVPal528Int  
 // Starts in line 23 1/2 and end in line 308. Lines 309 and 310 don't show.
 // GC starts at 23
-
 GXRModeObj TVPal576IntDfFull =
 {
     VI_TVMODE_PAL_INT,      // viDisplayMode
     640,             // fbWidth
     528,             // efbHeight
-    572,             // xfbHeight when using 576 2 lines are not drawn
+    572,             // xfbHeight when using 576 2 lines are not drawn, was 528
     (VI_MAX_WIDTH_PAL - 640)/2,         // viXOrigin
-    PAL_OFFSET-2, // (VI_MAX_HEIGHT_PAL - 576)/2,        // viYOrigin
+    PAL_OFFSET-2,    // viYOrigin, was (VI_MAX_HEIGHT_PAL - 528)/2, 
     640,             // viWidth
-    574,             // viHeight, when using 576 2 lines are not drawn
+    574,             // viHeight, when using 576 2 lines are not drawn, was 528
     VI_XFBMODE_DF,   // xFBmode
     GX_FALSE,        // field_rendering
     GX_FALSE,        // aa
@@ -103,7 +104,7 @@ GXRModeObj TVPal576IntDfFull =
 GXRModeObj *vmodes[TOTAL_VMODES] = {
 	&Mode_240p,
 	&Mode_480i, 		
-	&Mode_480i, 
+	&Mode_480i,
 	&Mode_264p,
 	&Mode_528i,	
 	&Mode_528i,	
@@ -119,7 +120,9 @@ u8	offsetY		= 0;
 
 
 GXRModeObj *mvmode	= NULL;
-GXRModeObj *rmode   = NULL;
+GXRModeObj *rmode = NULL;
+GXRModeObj rmode_data;
+
 int W			    = 0;
 int H			    = 0;
 int dW			    = 0;
@@ -208,7 +211,8 @@ void SetVideoMode(u32 newmode)
 		newmode = VIDEO_240P;		
 	
 	vmode = newmode;			
-	rmode = vmodes[vmode];
+	rmode_data = *(vmodes[vmode]);
+	rmode = &rmode_data;
 	
 	switch(vmode)
 	{
@@ -240,8 +244,14 @@ void SetVideoMode(u32 newmode)
 			offsetY = 12;
 			IsPAL = MODE_PAL;
 			break;		
-	}	
-		
+	}
+
+	if(Options.Enable720Stretch)
+	{
+		rmode->viWidth = 720;  								// 678 is the recommended vaue
+		rmode->viXOrigin = (VI_MAX_WIDTH_PAL - 720)/2;		// 678 is the recommended vaue
+	}
+
 	ActiveFB ^= 1;  
 #ifdef WII_VERSION
 	VIDEO_SetTrapFilter(Options.TrapFilter);
@@ -394,38 +404,45 @@ void GetVideoModeStr(char *res, int shortdesc)
 		switch(vmode)
 		{
 			case VIDEO_240P:
-				sprintf(res, "320x240p");				
+				sprintf(res, "NTSC 320x240p");				
 				break;			
 			case VIDEO_480I_A240:
-				sprintf(res, "640x480i (scaled 240p)");
+				sprintf(res, "NTSC 640x480i (scaled 240p)");
 				break;
 			case VIDEO_480I:
-				sprintf(res, "640x480i (Scaling disabled)");
+				sprintf(res, "NTSC 640x480i (Scaling disabled)");
 				break;
 			case VIDEO_288P:
 				if(Options.PALScale576)
-					sprintf(res, "320x288p (stretched)");				
+					sprintf(res, "PAL 320x288p (stretched)");				
 				else
-					sprintf(res, "320x288p");				
+					sprintf(res, "PAL 320x288p");				
 				break;			
 			case VIDEO_576I_A264:
 				if(Options.PALScale576)
-					sprintf(res, "640x576i (scaled 264p stretched)");
+					sprintf(res, "PAL 640x576i (scaled 264p stretched)");
 				else
-					sprintf(res, "640x576i (scaled 264p)");
+					sprintf(res, "PAL 640x576i (scaled 264p)");
 				break;			
 			case VIDEO_576I:
 				if(Options.PALScale576)
-					sprintf(res, "640x576i (no scaling stretched)");
+					sprintf(res, "PAL 640x576i (no scaling stretched)");
 				else
-					sprintf(res, "640x576i (Scaling disabled)");
+					sprintf(res, "PAL 640x576i (Scaling disabled)");
 				break;
 			case VIDEO_480P:
-				sprintf(res, "640x480p (Scaling disabled)");
+				sprintf(res, "EDTV 640x480p (Scaling disabled)");
 				break;
 			case VIDEO_480P_SL:
-				sprintf(res, "640x480p (scaled 240p)");
+				sprintf(res, "EDTV 640x480p (scaled 240p)");
 				break;				
+		}
+		if(Options.Enable720Stretch)
+		{
+			char tmp[200];
+			
+			sprintf(tmp, "H.Stretched %s", res);
+			strcpy(res, tmp);
 		}
 		padString(res);
 	}

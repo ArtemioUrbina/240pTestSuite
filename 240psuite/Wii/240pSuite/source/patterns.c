@@ -928,29 +928,66 @@ void DrawGrid224()
 
 void DrawMonoscope()
 {
-	int 		done = 0, irecount = 10;
+	int 		done = 0, irecount = 10, oldvmode = vmode, disabledPG = 0;
 	u32			pressed;
-	ImagePtr	mono = NULL, linear = NULL;
+	ImagePtr	back = NULL, overlay = NULL;
 	int			irevalues[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
-	
 
-	mono = LoadImage(MONOSCOPEIMG, 1);
-	if(!mono)
-		return;
-		
-	linear = LoadImage(MONOSCOPELINIMG, 1);
-	if(!linear)
-	{
-		FreeImage(&mono);
-		return;
-	}
-				
+	if(Options.Enable720Stretch)
+		ShowStretchWarning();
+
 	while(!done && !EndProgram) 
-	{    
+	{   
+		if(!back || oldvmode != vmode)
+		{
+			if(back)
+				FreeImage(&back);	
+			if(overlay)
+				FreeImage(&overlay);
+
+			oldvmode = vmode;
+				
+			if(IsPAL)
+			{
+				back = LoadImage(MONOSCOPEPALIMG, 1);
+				if(!back)
+					return;
+				
+				overlay = LoadImage(MONOSCOPEPALLINIMG, 1);
+				if(!overlay)
+				{
+					FreeImage(&back);
+					return;
+				}
+			}
+			else
+			{
+				back = LoadImage(MONOSCOPEIMG, 1);
+				if(!back)
+					return;
+					
+				overlay = LoadImage(MONOSCOPELINIMG, 1);
+				if(!overlay)
+				{
+					FreeImage(&back);
+					return;
+				}
+			}
+			IgnoreOffset(back);
+		}
+		
+		if(Options.EnablePALBG && IsPAL)
+		{
+			Options.EnablePALBG = 0;
+			ShowPALBGWarning();
+			disabledPG = 1;
+		}
+
 		StartScene();		
 		
-		DrawImage(mono);
-		DrawImage(linear);
+		DrawImage(back);
+		if(overlay)
+			DrawImage(overlay);
 		
         EndScene();
 		
@@ -968,7 +1005,7 @@ void DrawMonoscope()
 			if(irecount < 0)
 				irecount = 10;	    						
         	
-			mono->alpha = irevalues[irecount];
+			back->alpha = irevalues[irecount];
 		}
 		
 		if (pressed & PAD_TRIGGER_R)
@@ -978,18 +1015,23 @@ void DrawMonoscope()
 			if(irecount > 10)
 				irecount = 0;	
 				
-			mono->alpha = irevalues[irecount];				
+			back->alpha = irevalues[irecount];				
 		}
 			
 		if (pressed & PAD_BUTTON_START) 		
 		{
 			DrawMenu = 1;					
-			HelpData = MONOSCOPEHELP;			
+			HelpData = MONOSCOPEHELP;
+			oldvmode = vmode;		
 		}	
 	}
 
-	FreeImage(&mono);
-	FreeImage(&linear);
+	FreeImage(&back);
+	FreeImage(&overlay);
+	
+	if(disabledPG)
+		Options.EnablePALBG = 1;
+	
 	return;
 }
 

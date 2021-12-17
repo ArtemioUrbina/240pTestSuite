@@ -38,6 +38,7 @@
 								// verified with the scope. NTSC starts at 22 
 								// after VBI. We can start drawing at 22 in PAL,
 								// but wouldn't respect the standard.
+								// (VI_MAX_HEIGHT_PAL/2 - 528/2)/2 == 12 vs 3 in PAL_OFFSET
 #define PAL_LINE23HALF		0
 #define PAL_LINE24			1
 #define PAL_CENTERED		2

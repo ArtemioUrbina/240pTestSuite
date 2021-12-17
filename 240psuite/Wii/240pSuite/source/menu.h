@@ -25,7 +25,7 @@
 #define VERSION_NUMBER "GC GX Ver. 1.13b"
 #endif
 
-#define VERSION_DATE "02/15/2021"
+#define VERSION_DATE "09/20/2021"
 
 extern u8 DrawMenu;
 extern char **HelpData;
@@ -38,6 +38,8 @@ void ChangeOptions(ImagePtr Back);
 void ChangePALBackgroundColor(ImagePtr Back);
 void ShowVideoData();
 void ShowVideoWarning(ImagePtr screen);
+void ShowStretchWarning();
+void ShowPALBGWarning();
 
 void DrawCredits(ImagePtr Back);
 void DrawIntro();

@@ -493,8 +493,8 @@ void TimingReflexTest()
 		return;
 	}
 		
-	SND_Init(INIT_RATE_48000); 
-    SND_Pause(0); 	
+	ASND_Init(); 
+    ASND_Pause(0); 	
 
 	x = 144;
 	y = 60;
@@ -551,7 +551,7 @@ void TimingReflexTest()
 		if(y == 96)
 		{			
 			if(audio)
-				SND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_STEREO_16BIT, 44100, 0, (void*)beep_snd, beep_snd_size, speed == -1 ? 0 : 255, speed == -1 ? 255 : 0, NULL);				
+				ASND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_MONO_16BIT, 48000, 0, (void*)beep_snd, beep_snd_size, speed == -1 ? 0 : 255, speed == -1 ? 255 : 0, NULL);				
 				
 			if(rumble)
 				ControllerRumble(0, 1);
@@ -1278,8 +1278,8 @@ void SoundTest()
 	if(!back)
 		return;
 		
-    SND_Init(INIT_RATE_48000); 
-    SND_Pause(0);
+    ASND_Init(); 
+    ASND_Pause(0);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1336,11 +1336,11 @@ void SoundTest()
 
 		if(play)
 		{
-			SND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_STEREO_16BIT, 44100, 0, (void*)beep_snd, beep_snd_size, aleft, aright, NULL);				
+			ASND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_MONO_16BIT, 48000, 0, (void*)beep_snd, beep_snd_size, aleft, aright, NULL);
 			play = 0;
-		}        
+		}
 
-	}    
+	}
 	FreeImage(&back);
 	SND_End();
 	return;

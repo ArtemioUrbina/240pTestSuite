@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEFAULT_OPTIONS { 0, 0,	0, 0, 0xC2, 0xC2, 0xC2, PAL_CENTERED, 0, 0, GX_FALSE, GX_NEAR }
+#define DEFAULT_OPTIONS { 0, 0,	0, 0, 0xC2, 0xC2, 0xC2, PAL_CENTERED, 0, 0, GX_FALSE, GX_NEAR, 0, 0}
 
 struct options_st {
 	int Activate480p;
@@ -38,6 +38,7 @@ struct options_st {
 	int FlickerFilter;
 	int BilinearFiler;
 	int Force480p;
+	int Enable720Stretch;
 };
 
 extern struct options_st Options;

@@ -43,6 +43,7 @@ struct options_st DefaultOptions = DEFAULT_OPTIONS;
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void VideoPatternsMenu(ImagePtr title, ImagePtr sd);
+void DrawMenuFooter(u8 r, u8 g, u8 b);
 
 #ifdef WII_VERSION
 s8 HWButton = -1; 
@@ -107,8 +108,7 @@ int main(int argc, char **argv)
     sd->y = 80;		
 		
 	while(!close && !EndProgram) 
-	{        
-        char	res[100];
+	{
 		u8      r = 0xff;
 		u8      g = 0xff;
 		u8      b = 0xff;
@@ -116,6 +116,7 @@ int main(int argc, char **argv)
 		u16     x = 60;
 		u16     y = 80;
         u32     pressed = 0;
+		char 	res[100];
 		
 		StartScene();
 		        
@@ -142,15 +143,7 @@ int main(int argc, char **argv)
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); y += fh; c++;
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); 
 		
-        GetVideoModeStr(res, 0);
-		DrawStringS(120, 200, r-0x40, g, b, res);
-		
-		if(VIDEO_HaveComponentCable())		
-			DrawStringS(215, 225, r, g,	 b, "Component");
-
-#ifdef WII_VERSION		
-		DrawStringS(215, 215, r, g, b, wiiregion);
-#endif				
+		DrawMenuFooter(r, g, b);
 		
 		EndScene();
 		
@@ -239,7 +232,7 @@ int main(int argc, char **argv)
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 {
-	int 			sel = 1, close = 0;		
+	int			sel = 1, close = 0;		
 	
 	while(!close && !EndProgram) 
 	{		
@@ -250,7 +243,6 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		u16     x = 40;
 		u16     y = 55;
         u32     pressed = 0;
-		char	res[100];
 				
 		StartScene();
 		        
@@ -282,14 +274,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Convergence"); y += fh; c++;	
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
-		GetVideoModeStr(res, 0);
-		DrawStringS(120, 200, r-0x40, g, b, res);
-		if(VIDEO_HaveComponentCable())		
-			DrawStringS(215, 225, r, g,	 b, "Component");
-		
-#ifdef WII_VERSION		
-		DrawStringS(215, 215.0f, r, g, b, wiiregion);
-#endif				
+		DrawMenuFooter(r, g, b);
 				
 		EndScene();		
         
@@ -390,7 +375,6 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 		u16     x = 40;
 		u16     y = 70;
         u32     pressed = 0;
-		char	res[100];
 				
 		StartScene();
 		        
@@ -419,14 +403,7 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 		}
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
-		GetVideoModeStr(res, 0);
-		DrawStringS(120, 200, r-0x40, g, b, res);
-		if(VIDEO_HaveComponentCable())		
-			DrawStringS(215, 225, r, g,	 b, "Component");
-		
-#ifdef WII_VERSION		
-		DrawStringS(215, 215.0f, r, g, b, wiiregion);
-#endif				
+		DrawMenuFooter(r, g, b);		
 				
 		EndScene();		
         
@@ -502,6 +479,22 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 	return;
 }
 
+void DrawMenuFooter(u8 r, u8 g, u8 b)
+{
+	char res[100];
+	
+	GetVideoModeStr(res, 0);
+	DrawStringS(120, 200, r-0x40, g, b, res);
+	
+	if(VIDEO_HaveComponentCable())		
+		DrawStringS(250, 215, r, g,	 b, "YPbPr");
+
+#ifdef WII_VERSION		
+	DrawStringS(35, 200, r, g, b, wiiregion);
+#endif				
+}
+
+
 
 #ifdef WII_VERSION
 /**
@@ -517,7 +510,7 @@ void WiiResetPressed()
  */
 void WiiPowerPressed()
 {
-	HWButton = SYS_POWEROFF_STANDBY;
+	HWButton = SYS_POWEROFF;
 }
  
 /**
@@ -526,7 +519,7 @@ void WiiPowerPressed()
  */
 void WiimotePowerPressed(s32 chan)
 {
-	HWButton = SYS_POWEROFF_STANDBY;
+	HWButton = SYS_POWEROFF;
 }
 
 #endif
