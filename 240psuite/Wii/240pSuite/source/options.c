@@ -33,18 +33,17 @@
 #include "controller.h"
 #include "font.h"
 
+#ifdef WII_VERSION
+
 #define SD_OPTIONS_PATH "sd:/240pSuite"
 #define USB_OPTIONS_PATH "usb:/240pSuite"
 #define OPTIONS_FILE "options.xml"
-
 #define FS_SD 1
 #define FS_USB 2
 
-u8 FSActive = 0;
-
-#ifdef WII_VERSION
-
 #include <sdcard/wiisd_io.h>
+
+u8 FSActive = 0;
 
 bool InitSD()
 {
@@ -108,9 +107,77 @@ void DeInitUSB()
 	__io_usbstorage.shutdown(); 
 }
 
+u8 FileExists(char *filename)
+{
+	FILE *file = NULL;
+	
+	if(!InitFS())
+		return 0;
+	
+	file = fopen(filename, "r");
+	if(!file)
+	{
+		CloseFS();
+		return 0;
+	}
+	
+	fclose(file);
+	CloseFS();
+	return 1;
+}
+
+char *LoadFileToBuffer(char *filename, long int *size)
+{
+	FILE *file = NULL;
+	long file_size = 0;
+	char *file_buffer = NULL;
+	
+	if(!InitFS())
+		return NULL;
+
+	file = fopen(filename, "r");
+	if(!file)
+	{
+		CloseFS();
+		return NULL;
+	}
+	fseek(file , 0, SEEK_END);
+	file_size = ftell(file);	
+	rewind(file);
+	
+	if(!file_size)
+	{		
+		fclose(file);
+		CloseFS();
+		return NULL;
+	}
+	
+	file_buffer = (char*)malloc(sizeof(char)*file_size);
+	if(!file_buffer)
+	{		
+		fclose(file);
+		CloseFS();
+		return NULL;
+	}
+	
+	if(fread(file_buffer, sizeof(char), file_size, file) != file_size) 
+	{		
+		fclose(file);
+		CloseFS();
+		return NULL;
+	}
+	
+	fclose(file);
+	CloseFS();
+	
+	*size = file_size;
+	return file_buffer;
+}
+
+
 u8 LoadOptions()
 {
-	FILE *file;	
+	FILE *file = NULL;	
 	long file_size = 0;
     mxml_node_t *xml;
 	mxml_node_t *node;	

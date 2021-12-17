@@ -43,6 +43,7 @@ struct options_st DefaultOptions = DEFAULT_OPTIONS;
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void VideoPatternsMenu(ImagePtr title, ImagePtr sd);
+void SoundTestMenu(ImagePtr title, ImagePtr sd);
 void DrawMenuFooter(u8 r, u8 g, u8 b);
 
 #ifdef WII_VERSION
@@ -125,7 +126,7 @@ int main(int argc, char **argv)
 		
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video tests"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound tests"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Hardware tools"); y += 4*fh; c++;
 		
 		GetVideoModeStr(res, 1);
@@ -184,7 +185,7 @@ int main(int argc, char **argv)
 					VideoPatternsMenu(Back, sd);
 					break;
 				case 3:
-					SoundTest();
+					SoundTestMenu(Back, sd);
 					break;
 				case 4:
 					break;
@@ -470,6 +471,106 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 						Alternate240p480i();					
 					break;		
 				case 12:
+					close = 1;
+					break;			
+			} 			            										
+		}
+	}
+
+	return;
+}
+
+void SoundTestMenu(ImagePtr title, ImagePtr sd)
+{
+	int 	sel = 1, close = 0;
+#ifdef WII_VERSION
+	u8		mdf_exists = 0, aet_exists = 0;
+	
+	mdf_exists = FileExists("mdf.raw");
+	aet_exists = FileExists("aet.raw");
+#endif
+	
+	while(!close && !EndProgram) 
+	{		
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1;
+		u16     x = 60;
+		u16     y = 90;
+        u32     pressed = 0;
+				
+		StartScene();
+		        
+		DrawImage(title);
+        DrawImage(sd);
+
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sount Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;
+#ifdef WII_VERSION
+		if(mdf_exists)
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier");
+		else
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "MDFourier");
+		y += fh; c++;    
+		if(aet_exists)
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Equipment Test");
+		else
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Audio Equipment Test");
+		y += 2*fh; c++;
+#endif
+		y += fh;
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
+
+		DrawMenuFooter(r, g, b);		
+				
+		EndScene();		
+        
+        ControllerScan();
+
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_START ) 		
+			DrawMenu = 1;	
+
+		if ( pressed & PAD_BUTTON_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & PAD_BUTTON_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }			
+			
+		if ( pressed & PAD_BUTTON_B ) 		
+			close = 1;	
+	
+		if (pressed & PAD_BUTTON_A)
+		{            
+			switch(sel)
+			{				
+				case 1:	
+					SoundTest();
+					break;
+				case 2:
+					AudioSyncTest();
+					break;
+#ifdef WII_VERSION		
+				case 3:
+					if(mdf_exists)
+						MDFourier();
+					break;
+				case 4:
+					if(aet_exists)
+						AudioEquipmentTest();
+					break;	
+#endif
+				case 5:
 					close = 1;
 					break;			
 			} 			            										

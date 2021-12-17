@@ -30,11 +30,16 @@ void GridScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
 void SoundTest();
+void AudioSyncTest();
 void LEDZoneTest();
 void PassiveLagTest();
 void Alternate240p480i();
 void TestVideoMode();
 void DiagonalPatternTest();
+#ifdef WII_VERSION
+void MDFourier();
+void AudioEquipmentTest();
+#endif
 
 #endif
 

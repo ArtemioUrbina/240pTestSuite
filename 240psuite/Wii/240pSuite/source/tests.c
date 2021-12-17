@@ -1268,6 +1268,79 @@ void DrawCheckBoard()
 	return;
 }
 
+void AudioSyncTest()
+{
+}
+
+#ifdef WII_VERSION
+
+void MDFourier()
+{
+}
+
+void AudioEquipmentTest()
+{
+	int 			done = 0, loaded = 0;
+	u32			    pressed;
+	s32				voice = 0;
+	ImagePtr		back;
+	char			*aet_samples = NULL;
+	long int		aet_size = 0;
+
+	back = LoadImage(BACKIMG, 0);
+	if(!back)
+		return;
+	
+	ASND_Init();
+    ASND_Pause(0);
+	voice = ASND_GetFirstUnusedVoice();
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		DrawImage(back);
+
+		DrawStringS(120, 60, 0x00, 0xff, 0x00, "Audio Equipment Test"); 
+		DrawStringS(130, 120, 0xff, 0xff, 0xff, loaded ? "Press A to play" : "Loading test...");
+		EndScene();
+		
+		if(!loaded)
+		{
+			aet_samples = LoadFileToBuffer("aet.raw", &aet_size);
+			if(!aet_samples)
+			{
+				FreeImage(&back);
+				return;
+			}
+			loaded = 1;
+		}
+		
+		ControllerScan();
+        pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_B)
+			done =	1;
+
+		if (pressed & PAD_BUTTON_A)
+		{
+			if(loaded && ASND_StatusVoice(voice) != SND_WORKING)
+			{
+				ASND_SetVoice(voice, VOICE_STEREO_16BIT, 48000, 0, 
+						(void*)aet_samples, aet_size, 0xff, 0xff, NULL);
+			}
+		}
+
+	}
+	FreeImage(&back);
+	
+	if(ASND_StatusVoice(voice) == SND_WORKING)
+		ASND_StopVoice(voice);
+
+	ASND_End();
+	free(aet_samples);
+	return;
+}
+
+#endif
+
 void SoundTest()
 {
 	int 			done = 0, sel = 1, play = 0, aleft = 0, aright = 0;
@@ -1342,7 +1415,7 @@ void SoundTest()
 
 	}
 	FreeImage(&back);
-	SND_End();
+	ASND_End();
 	return;
 }
 
