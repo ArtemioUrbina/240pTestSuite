@@ -268,7 +268,10 @@ void DisplaySystemInfo()
 void ChangeCompFilter(int setFlagValue, int setValueX3)
 {
 	EnabledSoft = setFlagValue;
-	xres_flags = XRES_SHARP;
+	if(EnabledSoft)
+		xres_flags = XRES_SOFT;
+	else
+		xres_flags = XRES_SHARP;
 	
 	if(Enabled_C_BW)
 		xres_flags |= XRES_BW;
