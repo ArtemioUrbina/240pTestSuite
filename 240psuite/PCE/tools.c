@@ -265,6 +265,8 @@ void DisplaySystemInfo()
 #endif
 }
 
+// XRES_SHARP is 59.83 Hz and 16.7145 ms per frame, 263p
+// XRES_SOFT  is 60.06 Hz and 16.6506 ms per frame, 262p
 void ChangeCompFilter(int setFlagValue, int setValueX3)
 {
 	EnabledSoft = setFlagValue;

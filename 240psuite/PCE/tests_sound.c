@@ -119,6 +119,7 @@ void MDFourierExecute()
 	
 	StopAllAudio();
 
+	// Use XRES_SHARP @ 16.7145 ms per frame
 	if(!EnabledSoft)
 		ChangeFilterMDF(1);
 

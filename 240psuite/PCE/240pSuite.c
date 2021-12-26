@@ -334,7 +334,7 @@ void VideoTests()
 		if (controller & JOY_DOWN) 
 		{
 			sel++;
-			if(sel > 11)
+			if(sel > 12)
 				sel = 0;
 			refresh = 1;
 		}
@@ -343,7 +343,7 @@ void VideoTests()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 11;
+				sel = 12;
 			refresh = 1;
 		}
 		
@@ -519,7 +519,7 @@ void AudioTests()
 		if (controller & JOY_DOWN) 
 		{
 			sel++;
-			if(sel > 5)
+			if(sel > 6)
 				sel = 0;
 			refresh = 1;
 		}
@@ -528,7 +528,7 @@ void AudioTests()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 5;
+				sel = 6;
 			refresh = 1;
 		}
 		
@@ -590,7 +590,7 @@ void AudioTests()
 					end = 1;
 					break;
 			}
-			if(sel != 5)
+			if(sel != 6)
 				end = 0;
 				
 			redraw = 1;	
