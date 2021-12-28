@@ -211,7 +211,7 @@ void AdjustPVROptions()
 	if(settings.Dithering && PVR_GET(PVR_FB_CFG_2) == 0x00000001)
 	{
 		dbglog(DBG_INFO, "240p TS: Enabling PVR dithering for 240p tests\n");
-		PVR_SET(PVR_FB_CFG_2, 0x00000001);
+		PVR_SET(PVR_FB_CFG_2, 0x00000009);
 	}
 }
 
