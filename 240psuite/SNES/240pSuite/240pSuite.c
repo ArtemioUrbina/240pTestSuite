@@ -906,8 +906,6 @@ void DrawCredits(void)
 		if(counter == 60*4)
 			drawText(4, 8, 7, "@Artemio (twitter)  ");  
 		if(counter == 60*8)
-			drawText(4, 8, 7, "aurbina@junkerhq.net");
-		if(counter == 60*16)
 			counter = 0;
 	
 		WaitForVBlank();
