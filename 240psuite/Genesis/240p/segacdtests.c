@@ -4,10 +4,8 @@
 #include "main.h"
 #include "res.h"
 
-/*
-CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
-*/
-
+// Detect RetroArch emulation Issue when accessing BIOS for CRC
+#define BIOS_EMU_ISSUE
 
 uint32_t _state = ~0L;
 #ifndef SEGACD
@@ -16,6 +14,9 @@ u8 hIntPatchNeeded = 1;
 u8 hIntPatchNeeded = 0;  // Don't do it when booting from Sega CD
 #endif
 
+/*
+CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
+*/
 static const uint32_t crc32_table[] = {
     0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
     0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
@@ -77,6 +78,7 @@ int DetectSCDviaExpansion()
 }
 #endif
 
+#ifdef BIOS_EMU_ISSUE
 int DetectEmulationIssue()
 {
 #ifdef SEGACD
@@ -91,6 +93,7 @@ int DetectEmulationIssue()
 	
 	return(0);
 }
+#endif
 
 // from ChillyWilly Example of Mode1 playback
 /*
@@ -137,12 +140,15 @@ int DetectBSSCDBIOS(uint32_t address)
 uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 {
 	uint8_t *bios = NULL;
-	uint32_t address = 0, checksum = 0, emuPatch = 0;
+	uint32_t address = 0, checksum = 0;
+#ifdef BIOS_EMU_ISSUE
+	uint16_t emuPatch = 0;
 
+	emuPatch = DetectEmulationIssue();
+#endif
 	CRC32_reset();
 
 	bios = (void*)startAddress;
-	emuPatch = DetectEmulationIssue();
 	for (address = 0; address < size; address ++)
 	{
 		uint8_t data;
@@ -168,12 +174,15 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 				data = 0xFD;
 		}
 #endif
+
+#ifdef BIOS_EMU_ISSUE
 		// There is an issue under some emulators, patch it
 		if(emuPatch && address == 0x70)
 		{
 			data = 0xFF;
 			emuPatch = 0;
 		}
+#endif
 		CRC32_update(data);
 	}
 
@@ -681,8 +690,10 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 	checksum = CalculateCRC(address, 0x20000, 0);
 #endif
 
+#ifdef BIOS_EMU_ISSUE
 	if(DetectEmulationIssue())
 		ShowMessageAndData("Emu issue (0xFF)@:", address+0x70, 8, PAL1, 5, 18);
+#endif
 		
 	ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
 		
