@@ -776,9 +776,6 @@ void DrawSMPTE()
 		}
 		
 		drawImageDMA(0, 0, draw100 ? back100 : back); 
-		rdp_texture_start();
-		rdp_DrawImage(60, 60, font);		
-		rdp_end();
 		
 		if(text)
 		{

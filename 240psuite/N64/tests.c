@@ -26,7 +26,7 @@
 void DropShadowTest()
 {
 	int end = 0, show = 1;
-	int x = 0, y = 0;
+	int x = 100, y = 60;
 	sprite_t *back = NULL, *shadow = NULL;
 	struct controller_data keys;
 	
