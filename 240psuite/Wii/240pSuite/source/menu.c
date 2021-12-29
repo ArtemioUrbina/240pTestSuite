@@ -43,7 +43,7 @@ u8 ChangeVideoEnabled = 1;
 void ShowMenu()
 {
 	int 		sel = 1, close = 0;		
-	ImagePtr	Back, cFB;	
+	ImagePtr	Back = NULL, cFB = NULL;	
 	
 	cFB = CopyFrameBufferToImage();	
 	if(cFB)
@@ -53,13 +53,13 @@ void ShowMenu()
 		cFB->b = 0x77;
 	}
 	Back = LoadImage(FLOATMENUIMG, 0);
-	if(!Back)
-		return;	
-	
-	Back->x = (dW - Back->w) / 2;
-	Back->y = (dH - Back->h) / 2;
-	
-	Back->alpha = 0xaa;
+	if(Back)
+	{
+		Back->x = (dW - Back->w) / 2;
+		Back->y = (dH - Back->h) / 2;
+		
+		Back->alpha = 0xaa;
+	}
 	   
 	while(!close && !EndProgram) 
 	{		
@@ -67,8 +67,8 @@ void ShowMenu()
 		u8      g = 0xff;
 		u8      b = 0xff;
 		u8   	c = 1;				    					   
-		u16     x = Back->x + 20;
-		u16     y = Back->y + 10;
+		u16     x = Back ? Back->x + 20 : 100;
+		u16     y = Back ? Back->y + 10 : 60;
         u32     pressed = 0;
 		char	videomode[50];
 				
@@ -135,32 +135,35 @@ void ShowMenu()
 		{     
 			switch(sel)
 			{			
-					case 1:			
-						HelpWindow(cFB);
-						break;					
-					case 2:	
-						if(ChangeVideoEnabled)
+				case 1:			
+					HelpWindow(cFB);
+					break;					
+				case 2:	
+					if(ChangeVideoEnabled)
+					{
+						SelectVideoMode(cFB);
+						if(Back)
 						{
-							SelectVideoMode(cFB);
 							Back->x = (dW - Back->w) / 2;
 							Back->y = (dH - Back->h) / 2;
 						}
-						break;
-					case 3:		
-						ChangeOptions(cFB);						
-						break;
-                    case 4:		
-						DrawCredits(cFB);						
-						break;
-					case 5:
-						close = 1;
-						break;
-					case 6:
-						EndProgram = 1;
-						close = 1;
-						break;
-					default:
-						break;
+					}
+					break;
+				case 3:		
+					ChangeOptions(cFB);						
+					break;
+				case 4:		
+					DrawCredits(cFB);						
+					break;
+				case 5:
+					close = 1;
+					break;
+				case 6:
+					EndProgram = 1;
+					close = 1;
+					break;
+				default:
+					break;
 			} 			            										
 		}		
 	}
@@ -487,92 +490,92 @@ void ChangeOptions(ImagePtr title)
 #endif
 			{			
 #ifdef WII_VERSION		
-					case 1:
-						Options.TrapFilter = !Options.TrapFilter;					
-						SetVideoMode(vmode);										
-						SetupGX();						
-						break;
+				case 1:
+					Options.TrapFilter = !Options.TrapFilter;					
+					SetVideoMode(vmode);										
+					SetupGX();						
+					break;
 #endif	
-					case 2:
-						Options.FlickerFilter = !Options.FlickerFilter;											
-						SetVideoMode(vmode);										
-						SetupGX();						
-						break;
-						/*
-					case 3:
-						SetBilinearOption(Options.BilinearFiler+1);
-						SetVideoMode(vmode);										
-						SetupGX();	
+				case 2:
+					Options.FlickerFilter = !Options.FlickerFilter;											
+					SetVideoMode(vmode);										
+					SetupGX();						
+					break;
+					/*
+				case 3:
+					SetBilinearOption(Options.BilinearFiler+1);
+					SetVideoMode(vmode);										
+					SetupGX();	
+					
+					FreeImage(&back);												
+					back = LoadImage(HELPIMG, 0);
+					if(back)							
+						back->alpha = 0xaa;
 						
-						FreeImage(&back);												
-						back = LoadImage(HELPIMG, 0);
-						if(back)							
-							back->alpha = 0xaa;
-							
-						ReleaseFont();
-						LoadFont();
-						
-						break;
-						*/
-					case 3:
-						if(VIDEO_HaveComponentCable() && !(Options.Activate480p && vmode >= VIDEO_480P))
-							Options.Activate480p = !Options.Activate480p;
-						break;
-					case 4:	
-						Options.EnablePAL = !Options.EnablePAL;					
-						break;				
-					case 5:	
-						if(Options.EnablePAL)
-							Options.EnablePALBG = !Options.EnablePALBG;					
-						break;
-					case 6:	
-						if(Options.EnablePAL)
-							ChangePALBackgroundColor(title);
-						break;				
-					case 7:	
-						if(Options.EnablePAL)
+					ReleaseFont();
+					LoadFont();
+					
+					break;
+					*/
+				case 3:
+					if(VIDEO_HaveComponentCable() && !(Options.Activate480p && vmode >= VIDEO_480P))
+						Options.Activate480p = !Options.Activate480p;
+					break;
+				case 4:	
+					Options.EnablePAL = !Options.EnablePAL;					
+					break;				
+				case 5:	
+					if(Options.EnablePAL)
+						Options.EnablePALBG = !Options.EnablePALBG;					
+					break;
+				case 6:	
+					if(Options.EnablePAL)
+						ChangePALBackgroundColor(title);
+					break;				
+				case 7:	
+					if(Options.EnablePAL)
+					{
+						Set576iLine23Option(Options.PALline23+1);
+						if(IsPAL)	
 						{
-							Set576iLine23Option(Options.PALline23+1);
-							if(IsPAL)	
-							{
-								SetVideoMode(vmode);										
-								SetupGX();							
-							}
+							SetVideoMode(vmode);										
+							SetupGX();							
 						}
-						break;				
-					case 8:	
-						if(Options.EnablePAL)
+					}
+					break;				
+				case 8:	
+					if(Options.EnablePAL)
+					{
+						EnableStretchedPALModes(!Options.PALScale576);
+						if(IsPAL)	
 						{
-							EnableStretchedPALModes(!Options.PALScale576);
-							if(IsPAL)	
-							{
-								SetVideoMode(vmode);
-								SetupGX();							
-							}
+							SetVideoMode(vmode);
+							SetupGX();							
 						}
-						break;
-					case 9:
-						Options.Enable720Stretch = !Options.Enable720Stretch;
-						if(Options.Enable720Stretch)
-							ShowStretchWarning();
-						SetVideoMode(vmode);
-						break;			
-					case 10:
-						break;
-					case 11:
-						if(vmode == VIDEO_480P_SL)
-							ToggleScanlineEvenOdd();
-						break;
-					case 12:
+					}
+					break;
+				case 9:
+					Options.Enable720Stretch = !Options.Enable720Stretch;
+					if(Options.Enable720Stretch)
+						ShowStretchWarning();
+					SetVideoMode(vmode);
+					break;			
+				case 10:
+					break;
+				case 11:
+					if(vmode == VIDEO_480P_SL)
+						ToggleScanlineEvenOdd();
+					break;
+				case 12:
 #ifdef WII_VERSION		
-						Options.SFCClassicController = !Options.SFCClassicController;
-						break;										
-					case 13:
+					Options.SFCClassicController = !Options.SFCClassicController;
+					break;										
+				case 13:
 #endif											
-						close = 1;
-						break;
-					default:
-						break;
+					close = 1;
+					break;
+				default:
+					break;
 			} 			            										
 		}		
 	}
@@ -705,61 +708,61 @@ void SelectVideoMode(ImagePtr title)
 		{     
 			switch(sel)
 			{			
-					case 1:
-						SetVideoMode(VIDEO_240P);
+				case 1:
+					SetVideoMode(VIDEO_240P);
+					SetupGX();
+					break;
+				case 2:
+					SetVideoMode(VIDEO_480I_A240);
+					SetupGX();
+					break;
+				case 3:
+					SetVideoMode(VIDEO_480I);
+					SetupGX();
+					break;
+				case 4:
+					if(Options.EnablePAL)
+					{
+						SetVideoMode(VIDEO_288P);
 						SetupGX();
-						break;
-					case 2:
-						SetVideoMode(VIDEO_480I_A240);
+					}
+					break;
+				case 5:
+					if(Options.EnablePAL)
+					{
+						SetVideoMode(VIDEO_576I_A264);
 						SetupGX();
-						break;
-					case 3:
-						SetVideoMode(VIDEO_480I);
+					}
+					break;
+				case 6:
+					if(Options.EnablePAL)
+					{
+						SetVideoMode(VIDEO_576I);
 						SetupGX();
-						break;
-					case 4:
-						if(Options.EnablePAL)
-						{
-							SetVideoMode(VIDEO_288P);
-							SetupGX();
-						}
-						break;
-					case 5:
-						if(Options.EnablePAL)
-						{
-							SetVideoMode(VIDEO_576I_A264);
-							SetupGX();
-						}
-						break;
-					case 6:
-						if(Options.EnablePAL)
-						{
-							SetVideoMode(VIDEO_576I);
-							SetupGX();
-						}
-						break;
-					case 7:
-						if(Options.Activate480p && VIDEO_HaveComponentCable())
-						{
-							SetVideoMode(VIDEO_480P_SL);
-							SetupGX();
-						}
-						break;					
-					case 8:
-						if(Options.Activate480p && VIDEO_HaveComponentCable())
-						{
-							SetVideoMode(VIDEO_480P);
-							SetupGX();
-						}
-						break;		
-					case 9:
-						if(Controller_ButtonsHeld(0) & PAD_TRIGGER_L)
-							ShowVideoData();
-						else
-							close = 1;
-						break;
-					default:
-						break;
+					}
+					break;
+				case 7:
+					if(Options.Activate480p && VIDEO_HaveComponentCable())
+					{
+						SetVideoMode(VIDEO_480P_SL);
+						SetupGX();
+					}
+					break;					
+				case 8:
+					if(Options.Activate480p && VIDEO_HaveComponentCable())
+					{
+						SetVideoMode(VIDEO_480P);
+						SetupGX();
+					}
+					break;		
+				case 9:
+					if(Controller_ButtonsHeld(0) & PAD_TRIGGER_L)
+						ShowVideoData();
+					else
+						close = 1;
+					break;
+				default:
+					break;
 			} 			            										
 		}		
 	}
@@ -808,7 +811,7 @@ void ChangePALBackgroundColor(ImagePtr title)
 		u8   	c = 1;				    					   
 		u16     x = 80;
 		u16     y = 70;		
-        u32     pressed = 0;
+        u32     pressed = 0, held = 0;
 		char	color[80];
 		
 		block->r = Options.PalBackR;
@@ -854,6 +857,7 @@ void ChangePALBackgroundColor(ImagePtr title)
         ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
+		held = Controller_ButtonsHeld(0);
 		
 		if ( pressed & PAD_BUTTON_UP )
 	    {
@@ -876,44 +880,44 @@ void ChangePALBackgroundColor(ImagePtr title)
 		{     
 			switch(sel)
 			{						
-					case 4:
-						close = 1;
-						break;
+				case 4:
+					close = 1;
+					break;
 			}
 		}
 		
 		 
-	    if ((pressed & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 1)
+	    if ((pressed & PAD_TRIGGER_L || held & PAD_BUTTON_LEFT) && sel == 1)
 	    {
 			if(Options.PalBackR - 1 >= 0)
 				Options.PalBackR --;
 	    }
 		
-		if ((pressed & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 1)
+		if ((held & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 1)
 	    {
 			if(Options.PalBackR + 1 <= 255)
 				Options.PalBackR ++;
 	    }
 		
-		if ((pressed & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 2)		
+		if ((held & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 2)		
 	    {
 			if(Options.PalBackG - 1 >= 0)
 				Options.PalBackG --;
 	    }
 		
-		if ((pressed & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 2)
+		if ((held & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 2)
 	    {
 			if(Options.PalBackG + 1 <= 255)
 				Options.PalBackG ++;
 	    }
 		
-		if ((pressed & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 3)		
+		if ((held & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 3)		
 	    {
 			if(Options.PalBackB - 1 >= 0)
 				Options.PalBackB --;
 	    }
 		
-		if ((pressed & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 3)
+		if ((held & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 3)
 	    {
 			if(Options.PalBackB + 1 <= 255)
 				Options.PalBackB ++;
@@ -1004,13 +1008,13 @@ void ShowVideoWarning(ImagePtr screen)
 	ImagePtr	Back = NULL;
 	
 	Back = LoadImage(FLOATMENUIMG, 0);
-	if(!Back)
-		return;	
+	if(Back)
+	{	
+		Back->x = (dW - Back->w) / 2;
+		Back->y = (dH - Back->h) / 2;
 		
-	Back->x = (dW - Back->w) / 2;
-	Back->y = (dH - Back->h) / 2;
-	
-	Back->alpha = 0xaa;
+		Back->alpha = 0xaa;
+	}
 	
 	while(!done)
 	{			
@@ -1051,6 +1055,7 @@ void ShowVideoWarning(ImagePtr screen)
 		if ( pressed & PAD_BUTTON_B ) 		
 			done = 1;	
 	}
+	FreeImage(&Back);
 }
 
 void ShowStretchWarning()
@@ -1059,13 +1064,13 @@ void ShowStretchWarning()
 	ImagePtr	Back = NULL;
 	
 	Back = LoadImage(FLOATMENUIMG, 0);
-	if(!Back)
-		return;	
+	if(Back)
+	{
+		Back->x = (dW - Back->w) / 2;
+		Back->y = (dH - Back->h) / 2;
 		
-	Back->x = (dW - Back->w) / 2;
-	Back->y = (dH - Back->h) / 2;
-	
-	Back->alpha = 0xaa;
+		Back->alpha = 0xaa;	
+	}
 	
 	while(!done)
 	{			
@@ -1096,6 +1101,7 @@ void ShowStretchWarning()
 		if ( pressed & PAD_BUTTON_B ) 		
 			done = 1;	
 	}
+	FreeImage(&Back);
 }
 
 void ShowPALBGWarning()
@@ -1104,13 +1110,13 @@ void ShowPALBGWarning()
 	ImagePtr	Back = NULL;
 	
 	Back = LoadImage(FLOATMENUIMG, 0);
-	if(!Back)
-		return;	
+	if(Back)
+	{	
+		Back->x = (dW - Back->w) / 2;
+		Back->y = (dH - Back->h) / 2;
 		
-	Back->x = (dW - Back->w) / 2;
-	Back->y = (dH - Back->h) / 2;
-	
-	Back->alpha = 0xaa;
+		Back->alpha = 0xaa;
+	}
 	
 	while(!done)
 	{			
@@ -1141,6 +1147,8 @@ void ShowPALBGWarning()
 		if ( pressed & PAD_BUTTON_B ) 		
 			done = 1;	
 	}
+	
+	FreeImage(&Back);
 }
 
 void DrawCredits(ImagePtr Back)
@@ -1204,7 +1212,7 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Konsolkongen & shmups regulars"); y += fh; 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "PAL testing:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Yamato"); y += fh; 		
-#ifndef WII_VERSION
+#ifdef GC_VERSION
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "GameCube Tools:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Rolman"); y += fh; 	
 #endif

@@ -67,6 +67,7 @@ struct image_st{
 		u8		IgnoreOffsetY;
 
 		u8			*cFB;
+		u8			*memCpyTexture;
 };
 
 /***********************/
@@ -81,11 +82,19 @@ void EndScene();
 void EndSceneScreenShot();
 void EndGX();
 
+u8 LoadTextures();
+void ReleaseTextures();
+void CloseTextures();
+
+extern u8 *full_textures_tpl;
+extern uLong full_textures_tpl_size;
+
 /************************/
 /*    Image Functions   */
 /************************/
 
 ImagePtr LoadImage(int texture, int maptoscreen);
+ImagePtr LoadImageMemCpy(int Texture, int maptoscreen);
 ImagePtr CopyFrameBufferToImage();
 void FreeImage(ImagePtr *image);
 void CalculateUV(float posx, float posy, float width, float height, ImagePtr image);

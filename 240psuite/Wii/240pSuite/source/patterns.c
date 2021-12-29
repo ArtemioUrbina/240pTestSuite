@@ -531,7 +531,7 @@ void Draw601ColorBars()
 
 void DrawEBUColorBars()
 {
-	int 		done = 0, is75 = 1, text = 0;
+	int 		done = 0, is75 = 0, text = 0;
 	u32			pressed;		
 	ImagePtr	backEBU75, backEBU100;
 	char		msg[40];
@@ -597,7 +597,7 @@ void DrawEBUColorBars()
 
 void DrawSMPTEColorBars()
 {
-	int 		done = 0, is75 = 1, text = 0;
+	int 		done = 0, is75 = 0, text = 0;
 	u32			pressed;		
 	ImagePtr	backNTSC75, backNTSC100;
 	char		msg[40];

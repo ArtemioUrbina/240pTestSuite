@@ -43,13 +43,13 @@ void LoadFont()
 {
 	if(!font_t)
 	{
-		font_t = LoadImage(FONTIMG, 0);
+		font_t = LoadImageMemCpy(FONTIMG, 0);
 		font_t->layer = 2.0f;
 	}	
 
 	if(!black_t)
 	{				
-		black_t = LoadImage(BLACKIMG, 0);
+		black_t = LoadImageMemCpy(BLACKIMG, 0);
 		black_t->alpha = 0xaa;
 	}
 }

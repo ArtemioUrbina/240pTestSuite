@@ -81,13 +81,13 @@ int main(int argc, char **argv)
 	
 	DrawIntro();
 	
-	Back = LoadImage(BACKIMG, 0);
+	Back = LoadImageMemCpy(BACKIMG, 0);
 	if(!Back)
     {
         ReleaseFont();
 		EndProgram = 1;
     }	
-    sd = LoadImage(SDIMG, 0);
+    sd = LoadImageMemCpy(SDIMG, 0);
     if(!sd)
     {
         ReleaseFont();
@@ -217,6 +217,7 @@ int main(int argc, char **argv)
 	SaveOptions();
 	
 	FreeImage(&Back);
+	FreeImage(&sd);
 	ReleaseFont();	
 	ReleaseScanlines();
 	
@@ -228,7 +229,7 @@ int main(int argc, char **argv)
 		SYS_ResetSystem(HWButton, 0, 0);
 #endif
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd)
@@ -483,13 +484,9 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 void SoundTestMenu(ImagePtr title, ImagePtr sd)
 {
 	int 	sel = 1, close = 0;
-#ifdef WII_VERSION
-	u8		mdf_exists = 0, aet_exists = 0;
+	u8		aet_exists = 0;
 	
-	mdf_exists = FileExists("mdf.raw");
-	aet_exists = FileExists("aet.raw");
-#endif
-	
+	aet_exists = FileExists("Equip48KRev.pcm");
 	while(!close && !EndProgram) 
 	{		
 		u8      r = 0xff;
@@ -507,22 +504,18 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sount Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;
-#ifdef WII_VERSION
-		if(mdf_exists)
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier");
-		else
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "MDFourier");
-		y += fh; c++;    
 		if(aet_exists)
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Equipment Test");
 		else
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Audio Equipment Test");
 		y += 2*fh; c++;
-#endif
 		y += fh;
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		DrawMenuFooter(r, g, b);		
+		
+		if(!aet_exists && sel == 3)
+			DrawStringS(x-15, y + 4*fh, r, g, b, "Copy PCM file to the 240pSuite folder to enable");		
 				
 		EndScene();		
         
@@ -560,16 +553,10 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 				case 2:
 					AudioSyncTest();
 					break;
-#ifdef WII_VERSION		
 				case 3:
-					if(mdf_exists)
-						MDFourier();
-					break;
-				case 4:
 					if(aet_exists)
-						AudioEquipmentTest();
+						AudioEquipmentTest(title);
 					break;	
-#endif
 				case 5:
 					close = 1;
 					break;			

@@ -44,11 +44,12 @@ struct options_st {
 extern struct options_st Options;
 extern struct options_st DefaultOptions;
 
-#ifdef WII_VERSION
+//#ifdef WII_VERSION
 u8 InitFS();
 void CloseFS();
 u8 FileExists(char *filename);
-char *LoadFileToBuffer(char *filename, long int *size);
-#endif
+u8 *LoadFileToBuffer(char *filename, ulong *size);
+u8 LoadFileToMemoryAddress(char *filename, ulong *size, void *memory, ulong memsize);
+//#endif
 u8 LoadOptions();
 u8 SaveOptions();

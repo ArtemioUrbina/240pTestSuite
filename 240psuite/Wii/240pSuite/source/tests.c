@@ -1272,74 +1272,135 @@ void AudioSyncTest()
 {
 }
 
-#ifdef WII_VERSION
-
-void MDFourier()
+void DrawMessage(ImagePtr back, char *title, char *msg)
 {
+	StartScene();
+	DrawImage(back);
+
+	DrawStringS((dW-fw*strlen(title))/2, 60, 0x00, 0xff, 0x00, title); 
+	DrawStringS((dW-fw*strlen(msg))/2, 120, 0xff, 0xff, 0xff, msg);
+	EndScene();
 }
 
-void AudioEquipmentTest()
+// AESND Gives improper results in GC, perfect on Wii
+// ASND works perfectly on GC and Wii, needs reversed L & R PCM samples
+void AudioEquipmentTest(ImagePtr back)
 {
-	int 			done = 0, loaded = 0;
+	int 			done = 0, loaded = 0, counter = 0;
 	u32			    pressed;
-	s32				voice = 0;
-	ImagePtr		back;
-	char			*aet_samples = NULL;
-	long int		aet_size = 0;
-
-	back = LoadImage(BACKIMG, 0);
-	if(!back)
-		return;
+	char			*msg = "Loading test...", *title = "Audio Equipment Test";
+	u8				*aet_samples = NULL;
+	ulong			aet_size = 0;
+	s32 			voice = 0;
 	
-	ASND_Init();
+	ASND_Init(); 
     ASND_Pause(0);
 	voice = ASND_GetFirstUnusedVoice();
+	if(voice == SND_INVALID)
+		return;
+
 	while(!done && !EndProgram) 
 	{
-		StartScene();
-		DrawImage(back);
-
-		DrawStringS(120, 60, 0x00, 0xff, 0x00, "Audio Equipment Test"); 
-		DrawStringS(130, 120, 0xff, 0xff, 0xff, loaded ? "Press A to play" : "Loading test...");
-		EndScene();
+		DrawMessage(back, title, msg);
 		
 		if(!loaded)
 		{
-			aet_samples = LoadFileToBuffer("aet.raw", &aet_size);
+#ifdef WII_VERSION
+			aet_samples = LoadFileToBuffer("Equip48KRev.pcm", &aet_size);
 			if(!aet_samples)
+				return;
+#endif
+
+#ifdef GC_VERSION
+			// Load into our uncompressed Texture Buffer, since malloc would fail
+			DrawMessage(back, title, "Preparing memory");
+			CloseTextures();
+			memset(full_textures_tpl, 0, full_textures_tpl_size);
+			DrawMessage(back, title, "Loading file...");
+			if(!LoadFileToMemoryAddress("Equip48KRev.pcm", &aet_size, full_textures_tpl, full_textures_tpl_size))
 			{
-				FreeImage(&back);
+				LoadTextures();
 				return;
 			}
+			aet_samples = full_textures_tpl;
+#endif
 			loaded = 1;
+			msg = "Press A to start";
+		}
+		
+		if(counter)
+		{
+			counter --;
+			if(counter == 0)
+				msg = "Press A to start";
 		}
 		
 		ControllerScan();
         pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_BUTTON_B)
-			done =	1;
+			done = 1;
+			
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			//HelpData = HELP;
+		}
 
 		if (pressed & PAD_BUTTON_A)
 		{
-			if(loaded && ASND_StatusVoice(voice) != SND_WORKING)
-			{
-				ASND_SetVoice(voice, VOICE_STEREO_16BIT, 48000, 0, 
-						(void*)aet_samples, aet_size, 0xff, 0xff, NULL);
+			if(loaded)
+			{	
+				int cancel = 0;
+				
+				msg = "Playing Test Tones";
+				DrawMessage(back, title, msg);
+
+				ASND_SetVoice(voice, VOICE_STEREO_16BIT, 48000, 0, aet_samples, aet_size, 0xff, 0xff, NULL);
+				while(ASND_StatusVoice(voice) == SND_WORKING && cancel != 2)
+				{
+					if(counter)
+					{
+						counter --;
+						if(counter == 0)
+						{
+							msg = "Playing Test Tones";
+							cancel = 0;
+						}
+					}
+					DrawMessage(back, title, msg);
+					ControllerScan();
+					pressed = Controller_ButtonsDown(0);
+					if(pressed & PAD_BUTTON_B && cancel == 0)
+					{
+						msg = "Press A to abort";
+						cancel = 1;
+						counter = 120;
+					}
+					if(pressed & PAD_BUTTON_A && cancel == 1)
+					{
+						msg = "Playback cancelled";
+						cancel = 2;
+						ASND_StopVoice(voice);
+						counter = 120;
+					}
+				}
+				if(cancel != 2)
+					msg = "Playback Finished";
+				DrawMessage(back, title, msg);
 			}
 		}
-
 	}
-	FreeImage(&back);
-	
-	if(ASND_StatusVoice(voice) == SND_WORKING)
-		ASND_StopVoice(voice);
 
+	ASND_StopVoice(voice);
 	ASND_End();
-	free(aet_samples);
+
+#ifdef GC_VERSION
+	if(loaded)
+		LoadTextures();	
+#endif
 	return;
 }
 
-#endif
 
 void SoundTest()
 {

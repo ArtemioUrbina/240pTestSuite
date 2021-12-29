@@ -14,11 +14,12 @@ TARGET		:=	$(notdir $(CURDIR))
 ifeq ($(PLATFORM),wii)
 include $(DEVKITPPC)/wii_rules
 TARGET:="$(TARGET)_wii"
-WIILIBS=-lwiiuse -lbte
-WIIFLAGS=-DWII_VERSION
+EXTRA_LIBS=-lwiiuse -lbte
+EXTRA_FLAGS=-DWII_VERSION
 else
 include $(DEVKITPPC)/gamecube_rules
 TARGET:="$(TARGET)_cube"
+EXTRA_FLAGS=-DGC_VERSION
 endif
 
 #---------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ INCLUDES	:=
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	= -O2 -Wall $(MACHDEP) $(INCLUDE) $(WIIFLAGS)
+CFLAGS	= -O2 -Wall $(MACHDEP) $(INCLUDE) $(EXTRA_FLAGS)
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS	=	$(MACHDEP) -Wl,-Map,$(notdir $@).map
@@ -46,7 +47,7 @@ LDFLAGS	=	$(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	-lfat -lmxml -lasnd $(WIILIBS) -lz -logc -lm  
+LIBS	:=	-lfat -lmxml -lasnd -laesnd $(EXTRA_LIBS) -lz -logc -lm  
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

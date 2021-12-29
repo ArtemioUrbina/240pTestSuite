@@ -29,6 +29,7 @@
 #include "image.h"
 #include "menu.h"
 #include "options.h"
+#include "myTPL.h"
 
 #ifdef DEBUG_MEM
 #include "font.h"
@@ -65,10 +66,10 @@ void debugstr(char *data)
 		free(debug[0]);
 		debug[0] = NULL;
 		
-		for(i = 0; i < debugnum - 1; i ++)
+		for(i = 0; i < debugnum-1; i ++)
 			debug[i] = debug[i + 1];
 		
-		debug[debugnum] = ndata;
+		debug[debugnum-1] = ndata;
 	}
 }
 
@@ -77,43 +78,74 @@ void debugdata()
 	int i = 0;
 	
 	for(i = 0; i < debugnum; i++)
-		if(debug[i]) DrawStringB(20, 20+i*fh, 0x00, 0xff, 0x00, debug[i]);   	
+		if(debug[i]) DrawStringB(200, 20+i*fh, 0x00, 0xff, 0x00, debug[i]);   	
 }
 #endif
 
 static u8 gp_fifo[GX_FIFO_MINSIZE] ATTRIBUTE_ALIGN(32);
 
-TPLFile backsTPL;	
+TPLFile backsTPL;
+u8 TPL_Loaded = 0;
+u8 TextureMemoryMalloc = 0;
 u8 *full_textures_tpl = NULL;
 uLong full_textures_tpl_size = TEXTURE_FSIZE;
 // We use zlib to compress textures at compile time
 // this needs a program called cfile (source under the tools folder)
 // and it must be placed in the devkitPPC bin folder when compiled		
 
+u8 LoadTextures()
+{
+	// Load Textures	
+	if(!TextureMemoryMalloc && !full_textures_tpl)
+	{
+		full_textures_tpl = (u8 *)memalign(32, full_textures_tpl_size);
+		if(!full_textures_tpl)
+			return 0;
+		TextureMemoryMalloc = 1;
+	}
+	
+	if(uncompress(full_textures_tpl, &full_textures_tpl_size, textures_tpl, textures_tpl_size) != Z_OK)	
+	{
+		free(full_textures_tpl);
+		full_textures_tpl = NULL;
+		return 0;	
+	}
+	
+	if(TPL_OpenTPLFromMemory(&backsTPL, (void *)full_textures_tpl, full_textures_tpl_size) != 1)
+		return 0;
+	
+	TPL_Loaded = 1;
+	return(1);
+}
+
+void CloseTextures()
+{
+	if(TPL_Loaded)
+		TPL_CloseTPLFile(&backsTPL);
+	TPL_Loaded = 0;
+}
+
+void ReleaseTextures()
+{
+	if(full_textures_tpl)
+	{
+		CloseTextures();
+		free(full_textures_tpl);
+		full_textures_tpl = NULL;
+	}
+}
+
 u8 InitGX()
 {	
     memset(&gp_fifo, 0, sizeof(gp_fifo));    
     GX_Init(&gp_fifo, sizeof(gp_fifo));    
 	
-    // Load Textures	
-	full_textures_tpl = (u8 *)memalign(32, full_textures_tpl_size);
-	if(!full_textures_tpl)
-		return 0;
-	
-	if(uncompress(full_textures_tpl, &full_textures_tpl_size, textures_tpl, textures_tpl_size) != Z_OK)	
-		return 0 ;	
-	
-	TPL_OpenTPLFromMemory(&backsTPL, (void *)full_textures_tpl, full_textures_tpl_size);			
-	return 1;
+	return LoadTextures();
 }
 
 void EndGX()
 {
-	if(full_textures_tpl)
-	{
-		free(full_textures_tpl);
-		full_textures_tpl = NULL;
-	}
+	ReleaseTextures();
 }
 
 void SetupGX()
@@ -268,11 +300,67 @@ void IgnoreOffset(ImagePtr image)
 		image->IgnoreOffsetY = 1;
 }
 
+ImagePtr LoadImageMemCpy(int Texture, int maptoscreen)
+{		
+    u32 fmt = 0;
+	u16 t_width = 0, t_height = 0;
+	void *texture = NULL;
+	ImagePtr image;
+	
+	if(!TPL_Loaded)
+		return NULL;
+
+	image = (ImagePtr)malloc(sizeof(struct image_st));
+	if(!image)
+	{
+		fprintf(stderr, "Could not malloc image struct %d\n", Texture);
+		return(NULL);
+	}
+	memset(image, 0, sizeof(struct image_st));
+		
+	TPL_GetTextureMEMCopy(&backsTPL, Texture, &image->tex, &texture);	
+	
+	//GX_InitTexObjLOD(&image->tex, Options.BilinearFiler, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
+	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);	
+	TPL_GetTextureInfo(&backsTPL, Texture, &fmt, &t_width, &t_height);	
+
+	image->r = 0xff;
+	image->g = 0xff;
+	image->b = 0xff;
+
+	image->tw = t_width;
+	image->th = t_height;
+	image->x = 0;
+	image->y = 0;
+	image->u1 = 0.0f;
+	image->v1 = 0.0f;
+	image->u2 = 1.0f;
+	image->v2 = 1.0f;
+	image->layer = 1.0f;
+	image->scale = 1;
+	image->alpha = 0xff;
+	image->w = image->tw;
+	image->h = image->th;
+	image->FH = 0;
+	image->FV = 0;
+	image->cFB = NULL;
+	image->memCpyTexture = texture;
+	image->IgnoreOffsetY = 0;	
+	
+	if(maptoscreen)
+		MapToScreen(image);
+
+	return image;
+}
+
 ImagePtr LoadImage(int Texture, int maptoscreen)
 {		
     u32 fmt = 0;
 	u16 t_width = 0, t_height = 0;
 	ImagePtr image;
+	
+	if(!TPL_Loaded)
+		return NULL;
 	
 	image = (ImagePtr)malloc(sizeof(struct image_st));
 	if(!image)
@@ -280,6 +368,7 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 		fprintf(stderr, "Could not malloc image struct %d\n", Texture);
 		return(NULL);
 	}
+	memset(image, 0, sizeof(struct image_st));
 		
 	TPL_GetTexture(&backsTPL, Texture, &image->tex);	
 	
@@ -307,6 +396,7 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	image->FH = 0;
 	image->FV = 0;
 	image->cFB = NULL;
+	image->memCpyTexture = NULL;
 	image->IgnoreOffsetY = 0;	
 	
 	if(maptoscreen)
@@ -403,6 +493,9 @@ ImagePtr CopyFrameBufferToImage()
 
 void FreeImage(ImagePtr *image)
 {	
+	if(!(*image))
+		return;
+
 	if(*image)
 	{
 		if((*image)->cFB)
@@ -410,7 +503,12 @@ void FreeImage(ImagePtr *image)
 			free((*image)->cFB);
 			(*image)->cFB = NULL;
 		}
-		//pvr_mem_free((*image)->tex); We don't delete images from TPL
+		if((*image)->memCpyTexture)
+		{
+			free((*image)->memCpyTexture);
+			(*image)->memCpyTexture = NULL;
+		}
+
 		free(*image);
 		*image = NULL;
 	}
@@ -594,7 +692,7 @@ void LoadScanlines()
 {
 	if(!scanlines)
 	{
-		scanlines = LoadImage(SCANLINESIMG, 0);
+		scanlines = LoadImageMemCpy(SCANLINESIMG, 0);
 		if(!scanlines)
 			return;
 		scanlines->layer = 5.0;

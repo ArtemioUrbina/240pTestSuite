@@ -22,6 +22,7 @@
 #ifndef TESTS_H
 #define TESTS_H
 
+#include "image.h"
 void DropShadowTest();
 void StripedSpriteTest();
 void TimingReflexTest();
@@ -36,10 +37,7 @@ void PassiveLagTest();
 void Alternate240p480i();
 void TestVideoMode();
 void DiagonalPatternTest();
-#ifdef WII_VERSION
-void MDFourier();
-void AudioEquipmentTest();
-#endif
+void AudioEquipmentTest(ImagePtr back);
 
 #endif
 
