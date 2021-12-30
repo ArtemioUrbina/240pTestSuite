@@ -684,6 +684,12 @@ void DrawImageRotate(ImagePtr image, float angle, Mtx *m)
 	GX_DrawDone();							// Done Drawing The Quad 
 }
 
+void SetTextureColor(ImagePtr tex, u8 r, u8 g, u8 b)
+{
+	tex->r = r;
+	tex->g = g;
+	tex->b = b;
+}
 
 #define SCANSTEP 0x03
 ImagePtr   scanlines = NULL;

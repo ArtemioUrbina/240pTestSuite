@@ -105,6 +105,7 @@ void DrawImage(ImagePtr image);
 void DrawImageRotate(ImagePtr image, float angle, Mtx *m);
 void IgnoreOffset(ImagePtr image);
 void MapToScreen(ImagePtr image);
+void SetTextureColor(ImagePtr tex, u8 r, u8 g, u8 b);
 
 /************************/
 /*    Scanline Functions   */

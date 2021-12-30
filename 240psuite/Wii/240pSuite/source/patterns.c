@@ -65,9 +65,7 @@ void DrawPluge()
 		return;
 	}	
 	
-	black->r = 0x0;
-	black->g = 0x0;
-	black->b = 0x0;	
+	SetTextureColor(black, 0, 0, 0);	
 	
 	back = backPAL;
 	if(!IsPAL)
@@ -94,9 +92,7 @@ void DrawPluge()
 		
 		if(ShowHelp)
 		{
-			highlight->r = 0xff;
-			highlight->g = 0x0;
-			highlight->b = 0x0;
+			SetTextureColor(highlight, 0xff, 0x00, 0x00);
 			
 			highlight->y = 39;
 
@@ -222,7 +218,7 @@ void DrawGrayRamp()
 void DrawWhiteScreen()
 {
 	int 		done = 0, color = 0, BlackLevel = 0x00, text = 0;
-	int			cr, cb, cg, sel = 1, editmode = 0;
+	int			cr, cb, cg, sel = 1, editmode = 0, oldvmode = 0;
 	u32			pressed;		
 	ImagePtr	back;	
 	char		msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
@@ -242,6 +238,13 @@ void DrawWhiteScreen()
 	cr = cb = cg = 0xff; // white
 	while(!done && !EndProgram) 
 	{		
+		if(oldvmode != vmode)
+		{
+			back->w = dW;
+			back->h = dH;
+			oldvmode = vmode;
+		}
+		
 		if(IsPAL)
 			BlackLevel = 0x00;
 			
@@ -389,29 +392,19 @@ void DrawWhiteScreen()
 		switch(color)
 		{
 				case 0:
-					back->r = cr;
-					back->g = cg;
-					back->b = cb;
+					SetTextureColor(back, cr, cg, cb);
 					break;
 				case 1:
-					back->r = BlackLevel;
-					back->g = BlackLevel;
-					back->b = BlackLevel;
+					SetTextureColor(back, BlackLevel, BlackLevel, BlackLevel);
 					break;
 				case 2:
-					back->r = 0xff;
-					back->g = 0x00;
-					back->b = 0x00;
+					SetTextureColor(back, 0xff, 0x00, 0x00);
 					break;
 				case 3:
-					back->r = 0x00;
-					back->g = 0xff;
-					back->b = 0x00;
+					SetTextureColor(back, 0x00, 0xff, 0x00);
 					break;
 				case 4:
-					back->r = 0x00;
-					back->g = 0x00;
-					back->b = 0xff;
+					SetTextureColor(back, 0x00, 0x00, 0xff);
 					break;
 		}
 	}
@@ -712,9 +705,7 @@ void DrawGrid()
 	if(!blckbg)
 		return;
 	
-	blckbg->r = 0;
-	blckbg->g = 0;
-	blckbg->b = 0;
+	SetTextureColor(blckbg, 0, 0, 0);
 	
 	blckbg->w = dW;
 	blckbg->h = dH;
@@ -1221,13 +1212,8 @@ void DrawOverscan()
 	if(!border)
 		return;		
 	
-	border->r = 0xff;
-	border->g = 0xff;
-	border->b = 0xff;	
-	
-	square->r = 0x60;
-	square->g = 0x60;
-	square->b = 0x60;	
+	SetTextureColor(border, 0xff, 0xff, 0xff);
+	SetTextureColor(square, 0x60, 0x60, 0x60);
 			
 	while(!done && !EndProgram) 
 	{			

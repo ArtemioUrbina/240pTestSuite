@@ -1270,6 +1270,140 @@ void DrawCheckBoard()
 
 void AudioSyncTest()
 {
+	int 		done = 0, paused = 0, oldvmode = 0, playtone = 2;
+	int			y = 0, speed = -1;
+	float		hstep = 0;
+	u32			pressed;
+	s32 		voice = 0;
+	ImagePtr	squareL, squareR, lineB, sprite, back;	
+	
+	ASND_Init(); 
+    ASND_Pause(0);
+	voice = ASND_GetFirstUnusedVoice();
+	if(voice == SND_INVALID)
+		return;
+		
+	back = LoadImage(WHITEIMG, 1);
+	if(!back)
+		return;
+	squareL = LoadImage(WHITEIMG, 1);
+	if(!squareL)
+		return;
+	squareR = LoadImage(WHITEIMG, 1);
+	if(!squareR)
+		return;
+	lineB = LoadImage(WHITEIMG, 1);
+	if(!lineB)
+		return;
+	sprite = LoadImage(WHITEIMG, 1);
+	if(!sprite)
+		return;
+	
+	SetTextureColor(back, 0x00, 0x00, 0x00);
+	
+	back->w = dW;
+	back->h = dH;
+	
+	sprite->w = sprite->h = 8;
+	sprite->x = dW / 2 - 4;
+	y = 180;
+	hstep = -1 * dW/120; // 60 steps times half screen
+	
+	lineB->w = dW;
+	lineB->h = 8;
+	lineB->x = 0;
+	lineB->y = 180 + sprite->h;
+	
+	squareL->w = dW / 2;
+	squareL->h = 16;
+	squareL->x = 0;
+	squareL->y = 80;
+	
+	squareR->w = dW / 2;
+	squareR->h = 16;
+	squareR->x = dW / 2;
+	squareR->y = 80;
+	
+	while(!done && !EndProgram) 
+	{
+		if(oldvmode != vmode)
+		{
+			back->w = dW;
+			back->h = dH;
+			oldvmode = vmode;
+		}
+		
+		if(!paused)
+		{
+			y += speed;
+			sprite->y = y;
+			squareL->x += hstep;
+			squareR->x -= hstep;
+			if(y == 180 || y == 120)
+			{
+				speed *= -1;
+				hstep *= -1;
+			}
+			if(y == 180)
+				SetTextureColor(back, 0xff, 0xff, 0xff);
+			else
+				SetTextureColor(back, 0x00, 0x00, 0x00);
+			
+			// play the tone 1 frame before it hits so they are in sync
+			// it is off by 2ms to 2.5ms due to audio buffer
+			// but centered around the fully white frame
+			if(y == 179 && speed == 1)
+				playtone = 1;
+		}
+		
+		if(playtone == 2)
+		{
+			ASND_StopVoice(voice);
+			ASND_Pause(1);
+			ASND_SetVoice(voice, VOICE_MONO_16BIT, 48000, 0, (void*)beep_snd, beep_snd_size, 0xff, 0xff, NULL);
+			playtone = 0;
+		}
+		
+		if(playtone == 1)
+		{
+			ASND_Pause(0);
+			playtone = 2;
+		}
+			
+		StartScene();
+		DrawImage(back);
+		DrawImage(squareL);
+		DrawImage(squareR);
+		DrawImage(lineB);
+		DrawImage(sprite);
+		EndScene();
+			
+		ControllerScan();
+		
+		pressed = Controller_ButtonsDown(0);
+				
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;			
+			//HelpData = AUDIOSYNCHELP;			
+		}
+		
+		if (pressed & PAD_BUTTON_B)
+			done =	1;
+			
+		if (pressed & PAD_BUTTON_A)
+			paused = !paused;
+
+	}
+	
+	FreeImage(&back);
+	FreeImage(&squareL);
+	FreeImage(&squareR);
+	FreeImage(&lineB);
+	FreeImage(&sprite);
+	
+	ASND_StopVoice(voice);
+	ASND_End();
 }
 
 void DrawMessage(ImagePtr back, char *title, char *msg)
@@ -1490,9 +1624,7 @@ void LEDZoneTest()
 	if(!back)
 		return;
 
-	back->r = 0x00;
-	back->g = 0x00;
-	back->b = 0x00;
+	SetTextureColor(back, 0, 0, 0);
 			
 	sprite[0] = LoadImage(SPRITE0LEDIMG, 0);
 	if(!sprite[0])
@@ -1604,9 +1736,7 @@ void PassiveLagTest()
 	circle= LoadImage(CIRCLEIMG, 0);
 	if(!circle)
 		return;
-	circle->r = 0x00;
-	circle->g = 0x00;
-	circle->b = 0xff;
+	SetTextureColor(circle, 0x00, 0x00, 0xff);
 	
 	LoadNumbers();
 
