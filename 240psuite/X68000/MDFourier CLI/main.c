@@ -22,8 +22,14 @@
 #include <dos.h>
 #include <iocs.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "video.h"
+#include "key.h"
+#include "crc.h"
 #include "mdfourier.h"
+
+#define ADPCM_SIZE	39061
+#define ADPCM_CRC32	0x8E5FFD51
 
 // Enter supervisor mode, so we can access vblank regiter
 void initX68000()
@@ -31,64 +37,110 @@ void initX68000()
 	_dos_super(0);
 }
 
-// based on John Snowdon x68Launcher code
-#define input_group_select_enter			0x09
-#define input_group_select_space			0x06
-#define input_group_cancel					0x00
-
-#define JOY_BUTTON1	(1 << 6)
-#define JOY_BUTTON2	(1 << 5)
-#define JOY_RIGHT	(1 << 3)
-#define JOY_LEFT	(1 << 2)
-#define JOY_DOWN	(1 << 1)
-#define JOY_UP		(1 << 0)
-// returns 1 on enter, space or joystick 1 buttons
-int read_input()
+u8 *loadADPCM(char *filename, u16 *size)
 {
-	char	key = '\0';
-	int		joy = 0;
+	FILE *file = NULL;
+	u8 *file_buffer = NULL;
+	u16 file_size = 0;
 	
-	key = _iocs_bitsns(input_group_select_enter);
-	if (key & 0x40) return 1;
-	key = _iocs_bitsns(input_group_select_space);
-	if (key & 0x20) return 1;
-	key = _iocs_bitsns(input_group_cancel);
-	if (key & 0x02) return -1;
+	if(!size)
+		return NULL;
+	*size = 0;
 	
-	joy = _iocs_joyget(0);
-	if (!(joy & JOY_BUTTON1)) return 1;
-	if (!(joy & JOY_BUTTON2)) return 1;
+	file = fopen(filename, "r");
+	if(!file)
+		return NULL;
 	
-	return 0;
+	fseek(file , 0, SEEK_END);
+	file_size = ftell(file);	
+	rewind(file);
+	
+	if(!file_size)
+	{		
+		fclose(file);
+		return NULL;
+	}
+	
+	// truncate the file, useful if transferred via XMODEM
+	if(file_size > ADPCM_SIZE)
+		file_size = ADPCM_SIZE;
+
+	file_buffer = (u8*)malloc(sizeof(u8)*file_size);
+	if(!file_buffer)
+	{		
+		fclose(file);
+		return NULL;
+	}
+	
+	if(fread(file_buffer, sizeof(u8), file_size, file) != file_size) 
+	{		
+		fclose(file);
+		return NULL;
+	}
+	
+	fclose(file);
+	
+	*size = file_size;
+	return file_buffer;
 }
 
 int main(void)
 {
-	int input = 0;
-
-	printf("MDFourier for X68000 v 0.2 -- http://junkerhq.net/MDFourier\n");
-	printf("  Artemio Urbina 2021\n\n");
-
-	printf("Press SPACE or a joystick button when ready to record\n");
-	printf("Press ESC to measure ADPCM DMA playback duration\n");
+	int 			input = 0;
+	unsigned char	*adpcm_sweep = NULL;
+	unsigned short	adpcm_size = 0;
+	DWORD			crc32;
 	
 	initX68000();
+	
+	printf("MDFourier for X68000 v 0.3 -- http://junkerhq.net/MDFourier\n");
+	printf("  Artemio Urbina 2021-2022\n\n");
+	
+	printf("Loading ADPCM samples...\n");
+	adpcm_sweep = loadADPCM("sweep.pcm", &adpcm_size);
+	if(!adpcm_sweep)
+	{
+		printf("Could not load ADPCM samples from 'sweep.pcm' file, aborting\n");
+		return 0;
+	}
+	
+	printf("Verifying ADPCM samples...\n");
+	crc32 = crc32buf((char*)adpcm_sweep, adpcm_size);
+	if(crc32 != ADPCM_CRC32)
+	{
+		printf("ADPCM samples did not match the expected CRC32: 0x%X != 0x%X. Aborting\n", (unsigned int)crc32, ADPCM_CRC32);
+		free(adpcm_sweep);
+		adpcm_sweep = NULL;
+		adpcm_size = 0;
+		return 0;
+	}
+
+	printf("Press SPACE or a joystick button when ready to record MDFourier\n");
+	printf("Press ESC to just measure ADPCM DMA playback duration\n");
 	
 	do
 	{
 		input = read_input();
 		wait_vblank();
-	}while(!input);
+	}
+	while(!input);
 	
 	if(input == 1)
 	{
-		printf("Starting MDFourier test tones\n");
-		ExecuteMDF(20);
+		printf("Starting MDFourier test tones (ESC aborts)\n");
+		ExecuteMDF(20, adpcm_sweep, adpcm_size);
 	}
-	else
+	if(input == -1)
 	{
 		printf("Starting MDFourier ADPCM DMA Playback test\n");
-		ExecuteADPCMOnly();
+		ExecuteADPCMOnly(adpcm_sweep, adpcm_size);
+	}
+	
+	if(adpcm_sweep)
+	{
+		free(adpcm_sweep);
+		adpcm_sweep = NULL;
+		adpcm_size = 0;
 	}
 
 	return 0;
