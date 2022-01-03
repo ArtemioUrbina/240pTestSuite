@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,13 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
  */
 
-#ifdef CDROM1 
+#ifdef SYSCARD1 
 #include "huc.h"
 #include "patterns.h"
 #include "help.h"
@@ -42,7 +38,7 @@ extern unsigned char EnabledSoft;
 extern unsigned char Enabled_C_BW;
 #endif
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 void main()
 {
 	RestoreGlobals();
@@ -628,7 +624,7 @@ void Draw100IRE()
 			if(color < 0)
 				color = 0;
 				
-#ifndef CDROM1
+#ifndef SYSCARD1
 			set_map_data(ire100_map, 40, 30);
 			load_map(0, 0, 0, 0, 40, 30);
 #else
@@ -650,7 +646,7 @@ void Draw100IRE()
 			if(color > 7)
 				color = 7;
 			
-#ifndef CDROM1
+#ifndef SYSCARD1
 			set_map_data(ire100_map, 40, 30);
 			load_map(0, 0, 0, 0, 40, 30);
 #else
@@ -670,7 +666,7 @@ void Draw100IRE()
 			if(option)
 			{
 				color = 0;
-#ifndef CDROM1
+#ifndef SYSCARD1
 				set_color_rgb(1, 7, 7, 7);
 #else
 				set_color_rgb(2, 7, 7, 7);
@@ -698,7 +694,7 @@ void Draw100IRE()
 			text--;
 			if(!text)
 			{
-#ifndef CDROM1
+#ifndef SYSCARD1
 				set_map_data(ire100_map, 40, 30);
 				load_map(0, 0, 0, 0, 40, 30);
 #else
@@ -711,7 +707,7 @@ void Draw100IRE()
 
 void Refresh100IRE(unsigned char mode)
 {
-#ifndef CDROM1
+#ifndef SYSCARD1
 	set_color_rgb(!mode, color, color, color);	
 #else
 	if(!mode)
@@ -741,7 +737,7 @@ void Redraw100IRE(unsigned char mode, unsigned char color)
 		set_color(0, 0);
 	}
 	
-#ifndef CDROM1			
+#ifndef SYSCARD1			
 	set_map_data(ire100_map, 40, 30);
 	set_tile_data(ire100_bg);
 	load_tile(0x1000);
@@ -777,13 +773,13 @@ void RefreshConvergence()
 	}
 	else
 	{
-#ifndef CDROM1	
+#ifndef SYSCARD1	
 		load_palette(0, convcolor_pal, 1); 
 #else
 		set_bgpal(0, palCD); 
 #endif
 
-#ifndef CDROM1		
+#ifndef SYSCARD1		
 		if(x1 == 3)
 		{
 			set_color_rgb(0, 0, 0, 7);
@@ -831,7 +827,7 @@ void RedrawConvergence()
 	}
 	else
 	{
-#ifndef CDROM1			
+#ifndef SYSCARD1			
 		set_map_data(convcolor_map, 40, 30);
 		set_tile_data(convcolor_bg);
 		load_tile(0x1000);

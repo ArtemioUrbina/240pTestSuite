@@ -1,3 +1,7 @@
+/* This patch is just documented for historic purposes
+ * it is already included in https://github.com/jbrandwood/huc
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

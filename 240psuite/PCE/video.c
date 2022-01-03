@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,10 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
  */
  
 #include "huc.h"
@@ -75,7 +71,7 @@ int colswap;
 unsigned char *mem;
 int runmdf;
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 #include "graphics.h"
 #endif
 
@@ -140,10 +136,10 @@ void Set224p()
 	tax
 	lda   #$02				; 'VSW' Vertical synchronous pulse width.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	lda   #$17				; 'VDS' Vertical display start position -2.
 	sta   video_data_h
-	sta   _vdc+1,X
+;	sta   _vdc+1,X
 	
 	lda   #$0D				; VDW - 'Vertical display register'
 	sta   <vdc_reg
@@ -152,7 +148,7 @@ void Set224p()
 	tax
 	lda   #$DF				; Vertical display width in pixels -1.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	
 	lda   #$0E				; VCR - 'Vertical display END position register'
 	sta   <vdc_reg
@@ -161,7 +157,7 @@ void Set224p()
 	tax
 	lda   #$0A				; Vertical display end position.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	
 	lda	#$20
 	trb	<irq_m				; re-enable VSYNC processing
@@ -193,10 +189,10 @@ void Set240p()
 	tax
 	lda   #$02				; 'VSW' Vertical synchronous pulse width.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	lda   #$0E				; 'VDS' Vertical display start position -2.
 	sta   video_data_h
-	sta   _vdc+1,X
+;	sta   _vdc+1,X
 	
 	lda   #$0D				; VDW - 'Vertical display register'
 	sta   <vdc_reg
@@ -205,7 +201,7 @@ void Set240p()
 	tax
 	lda   #$EF				; Vertical display width in pixels -1.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	
 	lda   #$0E				; VCR - 'Vertical display END position register'
 	sta   <vdc_reg
@@ -214,7 +210,7 @@ void Set240p()
 	tax
 	lda   #$04				; Vertical display end position.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	
 	lda	#$20
 	trb	<irq_m				; re-enable VSYNC processing
@@ -246,10 +242,10 @@ void Set239p()
 	tax
 	lda   #$02				; 'VSW' Vertical synchronous pulse width.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	lda   #$0F				; 'VDS' Vertical display start position -2.
 	sta   video_data_h
-	sta   _vdc+1,X
+;	sta   _vdc+1,X
 	
 	lda   #$0D				; VDW - 'Vertical display register'
 	sta   <vdc_reg
@@ -258,7 +254,7 @@ void Set239p()
 	tax
 	lda   #$EF				; Vertical display width in pixels -1.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	
 	lda   #$0E				; VCR - 'Vertical display END position register'
 	sta   <vdc_reg
@@ -267,7 +263,7 @@ void Set239p()
 	tax
 	lda   #$04				; Vertical display end position.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	
 	lda	#$20
 	trb	<irq_m				; re-enable VSYNC processing
@@ -281,14 +277,14 @@ void Set256H()
 
 #asm
 	lda	_xres_flags
-	sta	<cl	
+	sta	<__cl	
 	
 	lda	#$20				; reset resource-usage flag
 	tsb	<irq_m				; to skip joystick read portion of vsync
 							; (temporarily disable VSYNC processing)
 	
 	lda	#$00				; dot-clock values, 256: 0, 320: 1, 512 2
-	ora	<cl
+	ora	<__cl
 	sta	color_ctrl			; dot-clock (x-resolution)
 
 	lda	#$0a				; HSR - 'Horizontal Sync Register' 
@@ -298,10 +294,10 @@ void Set256H()
 	sax
 	lda	#$02				; 'HSW' Horizontal synchronous pulse width
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$02				; 'HDS' Horizontal display start position -1
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 
 
 	lda	#$0b				; HDR - 'Horizontal Display Register' 
@@ -311,10 +307,10 @@ void Set256H()
 	sax
 	lda	#$1F				; 'HDW' Horizontal display width in tiles -1.				
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$04				; 'HDE' Horizontal display ending period -1.
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 
 
 	lda	#$20
@@ -337,14 +333,14 @@ void Set352H()
 
 #asm
 	lda	_xres_flags
-	sta	<cl	
+	sta	<__cl	
 	
 	lda	#$20				; reset resource-usage flag
 	tsb	<irq_m				; to skip joystick read portion of vsync
 							; (temporarily disable VSYNC processing)
 	
 	lda	#$01				; dot-clock values, 256: 0, 320: 1, 512 2
-	ora	<cl
+	ora	<__cl
 	sta	color_ctrl			; dot-clock (x-resolution)
 
 	lda	#$0a				; HSR - 'Horizontal Sync Register' 
@@ -354,10 +350,10 @@ void Set352H()
 	sax
 	lda	#$03				; 'HSW' Horizontal synchronous pulse width
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$03				; 'HDS' Horizontal display start position -1
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 
 
 	lda	#$0b				; HDR - 'Horizontal Display Register' 
@@ -367,10 +363,10 @@ void Set352H()
 	sax
 	lda	#$2B				; 'HDW' Horizontal display width in tiles -1.				
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$06				; 'HDE' Horizontal display ending period -1.
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 	
 	lda   #$0C				; VPR - 'Vertical synchronous register'
 	sta   <vdc_reg
@@ -379,10 +375,10 @@ void Set352H()
 	tax
 	lda   #$02				; 'VSW' Vertical synchronous pulse width.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	lda   #$0F				; 'VDS' Vertical display start position -2.
 	sta   video_data_h
-	sta   _vdc+1,X
+;	sta   _vdc+1,X
 	
 	lda   #$0D				; VDW - 'Vertical display register'
 	sta   <vdc_reg
@@ -391,7 +387,7 @@ void Set352H()
 	tax
 	lda   #$EF				; Vertical display width in pixels -1.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	
 	lda   #$0E				; VCR - 'Vertical display END position register'
 	sta   <vdc_reg
@@ -400,7 +396,7 @@ void Set352H()
 	tax
 	lda   #$03				; Vertical display end position.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 
 
 	lda	#$20
@@ -422,14 +418,14 @@ void Set368H()
 
 #asm
 	lda	_xres_flags
-	sta	<cl	
+	sta	<__cl	
 	
 	lda	#$20				; reset resource-usage flag
 	tsb	<irq_m				; to skip joystick read portion of vsync
 							; (temporarily disable VSYNC processing)
 	
 	lda	#$01				; dot-clock values, 256: 0, 320: 1, 512 2
-	ora	<cl
+	ora	<__cl
 	sta	color_ctrl			; dot-clock (x-resolution)
 
 	lda	#$0a				; HSR - 'Horizontal Sync Register' 
@@ -439,10 +435,10 @@ void Set368H()
 	sax
 	lda	#$03				; 'HSW' Horizontal synchronous pulse width
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$02				; 'HDS' Horizontal display start position -1
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 
 
 	lda	#$0b				; HDR - 'Horizontal Display Register' 
@@ -452,10 +448,10 @@ void Set368H()
 	sax
 	lda	#$2D				; 'HDW' Horizontal display width in tiles -1.				
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$06				; 'HDE' Horizontal display ending period -1.
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 	
 	lda   #$0C				; VPR - 'Vertical synchronous register'
 	sta   <vdc_reg
@@ -464,10 +460,10 @@ void Set368H()
 	tax
 	lda   #$02				; 'VSW' Vertical synchronous pulse width.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	lda   #$0F				; 'VDS' Vertical display start position -2.
 	sta   video_data_h
-	sta   _vdc+1,X
+;	sta   _vdc+1,X
 	
 	lda   #$0D				; VDW - 'Vertical display register'
 	sta   <vdc_reg
@@ -476,7 +472,7 @@ void Set368H()
 	tax
 	lda   #$EF				; Vertical display width in pixels -1.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 	
 	lda   #$0E				; VCR - 'Vertical display END position register'
 	sta   <vdc_reg
@@ -485,7 +481,7 @@ void Set368H()
 	tax
 	lda   #$03				; Vertical display end position.
 	sta   video_data_l
-	sta   _vdc,X
+;	sta   _vdc,X
 
 
 	lda	#$20
@@ -521,14 +517,14 @@ void Set320H()
 
 #asm
 	lda	_xres_flags
-	sta	<cl	
+	sta	<__cl	
 	
 	lda	#$20				; reset resource-usage flag
 	tsb	<irq_m				; to skip joystick read portion of vsync
 							; (temporarily disable VSYNC processing)
 	
 	lda	#$01				; dot-clock values, 256: 0, 320: 1, 512 2
-	ora	<cl
+	ora	<__cl
 	sta	color_ctrl			; dot-clock (x-resolution)
 
 	lda	#$0a				; HSR - 'Horizontal Sync Register' 
@@ -538,10 +534,10 @@ void Set320H()
 	sax
 	lda	#$03				; 'HSW' Horizontal synchronous pulse width
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$05				; 'HDS' Horizontal display start position -1
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 
 
 	lda	#$0b				; HDR - 'Horizontal Display Register' 
@@ -551,10 +547,10 @@ void Set320H()
 	sax
 	lda	#$27				; 'HDW' Horizontal display width in tiles -1.				
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$06				; 'HDE' Horizontal display ending period -1.
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 
 
 	lda	#$20
@@ -574,14 +570,14 @@ void Set512H()
 //HDR     083F
 #asm
 	lda	_xres_flags
-	sta	<cl	
+	sta	<__cl	
 	
 	lda	#$20				; reset resource-usage flag
 	tsb	<irq_m				; to skip joystick read portion of vsync
 							; (temporarily disable VSYNC processing)
 	
 	lda	#$02				; dot-clock values, 256: 0, 320: 1, 512 2
-	ora	<cl
+	ora	<__cl
 	sta	color_ctrl			; dot-clock (x-resolution)
 
 	lda	#$0a				; HSR - 'Horizontal Sync Register' 
@@ -591,10 +587,10 @@ void Set512H()
 	sax
 	lda	#$03				; 'HSW' Horizontal synchronous pulse width, R-Type uses 03
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$0B				; 'HDS' Horizontal display start position -1, R-Type uses 03
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 
 
 	lda	#$0b				; HDR - 'Horizontal Display Register' 
@@ -604,10 +600,10 @@ void Set512H()
 	sax
 	lda	#$3F				; 'HDW' Horizontal display width in tiles -1.
 	sta	video_data_l
-	sta	_vdc,X
+;	sta	_vdc,X
 	lda	#$08				; 'HDE' Horizontal display ending period -1.
 	sta	video_data_h
-	sta	_vdc+1,X
+;	sta	_vdc+1,X
 
 
 	lda	#$20

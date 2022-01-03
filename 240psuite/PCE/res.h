@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -36,13 +36,13 @@
 
 #incchr_ex(cgrid_bg, "graphics/circles_grid.pcx", 0, 0, 1, 1, 0);
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 #incbin(float_map, "graphics/float.fmp");
 #incchr_ex(float_bg, "graphics/float.pcx", 0, 0, 5, 3, 0);
 #incpal(float_pal, "graphics/float.pcx", 0, 1);
 #endif
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 #include "graphics.h"
 #elseif
 
@@ -99,13 +99,13 @@
 
 #incspr(numbers_sp, "graphics/numbers.pcx", 0, 0, 2, 22);
 
-#endif // CDROM1
+#endif // SYSCARD1
 
 /*
 		Palettes
 */
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 #include "res_patterns.h"
 #endif
 

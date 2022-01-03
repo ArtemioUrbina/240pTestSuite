@@ -1,6 +1,6 @@
  /*
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,13 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
  */
  
-#ifdef CDROM1
+#ifdef SYSCARD1
 #include "gdata.h"
 extern char palCD[];
 #endif
@@ -37,7 +33,7 @@ extern int vstripes_bg[];
 
 extern int check_bg[];
 
-#ifndef CDROM1
+#ifndef SYSCARD1
  
 extern char MB_map[];
 extern int MB_bg[];

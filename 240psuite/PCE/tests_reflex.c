@@ -1,6 +1,6 @@
  /*
  * 240p Test Suite
- * Copyright (C)2014-2019 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,10 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
  */
 
 #ifdef SCDROM
@@ -59,7 +55,7 @@ void RedrawReflexTest()
 	SetFontColors(14, 0, RGB(7, 7, 7), 0);
 	SetFontColors(15, 0, RGB(7, 0, 0), 0);
 
-#ifndef CDROM1			
+#ifndef SYSCARD1
 	set_map_data(fs_map, 64, 32);
 	set_tile_data(white_bg);
 	load_tile(0x1000);
@@ -79,7 +75,7 @@ void ReflexTestSprites()
 	set_color_rgb(273, 7, 0, 0); 
 	set_color_rgb(289, 0, 7, 0);
 
-#ifndef CDROM1		
+#ifndef SYSCARD1
 	load_vram(0x5000, lagspr_sp, 0x100);
 #else
 	cd_loadvram(GPHX_OVERLAY, OFS_lagspr_tile_bin, 0x5000, SIZE_lagspr_tile_bin);
@@ -203,7 +199,7 @@ void ReflexTest()
 	option = 0;
 	end = 0;
 
-#ifndef CDROM1			
+#ifndef SYSCARD1
 	showHelp(REFLEX_HELP);
 #endif
 	

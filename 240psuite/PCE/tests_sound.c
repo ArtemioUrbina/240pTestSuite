@@ -1,6 +1,6 @@
  /*
  * 240p Test Suite
- * Copyright (C)2014-2019 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,13 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
  */
 
-#ifdef CDROM1 
+#ifdef SYSCARD1 
 
 #include "huc.h"
 #include "res.h"
@@ -43,7 +39,7 @@ extern unsigned char EnabledSoft;
 extern unsigned char Enabled_C_BW;
 #endif
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 void main()
 {
 	RestoreGlobals();
@@ -705,7 +701,7 @@ void AudioSyncTest()
 				
 			set_color(2, RGB(7, 7, 7));
 				
-#ifndef CDROM1
+#ifndef SYSCARD1
 			set_map_data(audiosync_map, 40, 32);
 			set_tile_data(audiosync_bg);
 			load_tile(0x1000);
@@ -719,7 +715,7 @@ void AudioSyncTest()
 			init_satb();
 			set_color_rgb(256, 0, 0, 0); 
 			set_color_rgb(257, 7, 7, 7); 
-#ifndef CDROM1		
+#ifndef SYSCARD1
 			load_vram(0x5000, LED_sp, 0x100);
 #else
 			cd_loadvram(GPHX_OVERLAY, OFS_LEDsprites_tile_bin, 0x5000, SIZE_LEDsprites_tile_bin);
@@ -869,7 +865,7 @@ void HardwareTests()
 	{		
 		vsync();
 		
-#ifdef CDROM1
+#ifdef SYSCARD1
 		if(!HelpItem)
 		{
 #endif
@@ -895,7 +891,7 @@ void HardwareTests()
 		
 		if (controller & JOY_SEL)
 		{
-#ifdef CDROM1
+#ifdef SYSCARD1
 			x_g = OPTIONS_AUD_HELP;
 #endif
 			Options();
@@ -923,7 +919,7 @@ void HardwareTests()
 			showHelp(GENERAL_HW_HELP);
 			redraw = 1;
 		}
-#ifdef CDROM1
+#ifdef SYSCARD1
 		}
 		else
 		{
@@ -941,7 +937,7 @@ void HardwareTests()
 		{
 			disp_off();
 			ResetVideo();
-#ifdef CDROM1
+#ifdef SYSCARD1
 			prev_select = sel;
 #endif
 			switch(sel)
@@ -953,7 +949,7 @@ void HardwareTests()
 					MemViewer(0x2000);
 					break;
 				case 2:
-#ifdef CDROM1
+#ifdef SYSCARD1
 					x_g = OPTIONS_HW_HELP;
 #endif
 					Options();
@@ -973,7 +969,7 @@ void HardwareTests()
 		}
 	}
 	end = 0;
-#ifdef CDROM1
+#ifdef SYSCARD1
 	xres_flags_g = xres_flags;
 	Enabled240p_g = Enabled240p;
 	UseDefault_g = UseDefault;

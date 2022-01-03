@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 /*
             GRAPHICS
 */
@@ -50,7 +50,7 @@
 			PATTERNS
 */
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 
 #incbin(pluge_map, "graphics/pluge.fmp");
 #incchr_ex(pluge_bg, "graphics/pluge.pcx", 0, 0, 2, 4, 0);
@@ -120,7 +120,7 @@
 #incpal(bricks_pal, "graphics/bricks.pcx", 0, 1);
 
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 #incpal(MB_pal, "graphics/mainbg.pcx", 0, 1);
 #incpal(SD_pal, "graphics/SD.pcx", 0, 1);
 #endif

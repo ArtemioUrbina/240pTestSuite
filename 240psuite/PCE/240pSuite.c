@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014-2021 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,11 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
+ *
+ *
+ *  This version of the suite is compiled with HuC from:
+ *    https://github.com/jbrandwood/huc
+ *
  */
+
 #include "huc.h"
 #include "res.h"
 #include "font.h"
@@ -39,7 +41,7 @@ void DisplaySystemInfo();
 void DrawIntro();
 
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 char palCD[512];
 #endif
 
@@ -194,7 +196,7 @@ void main()
 				prev_select = sel;
 #endif
 				case 0:
-#ifndef CDROM1
+#ifndef SYSCARD1
 					TestPatterns();
 #else
 					xres_flags_g = xres_flags;
@@ -218,7 +220,7 @@ void main()
 					HardwareTests();
 					break;
 				case 4:
-#ifdef CDROM1
+#ifdef SYSCARD1
 					x_g = 0;
 #endif
 					Options();
@@ -230,7 +232,7 @@ void main()
 					DrawCredits();
 					break;
 			}
-#ifdef CDROM1	
+#ifdef SYSCARD1	
 			if(prev_select)
 			{
 				sel = prev_select;
@@ -324,7 +326,7 @@ void VideoTests()
 		
 		if (controller & JOY_SEL)
 		{
-#ifdef CDROM1
+#ifdef SYSCARD1
 			x_g = OPTIONS_VID_HELP;
 #endif
 			Options();
@@ -412,7 +414,7 @@ void VideoTests()
 					LEDZoneTest();
 					break;			
 				case 10:
-#ifdef CDROM1
+#ifdef SYSCARD1
 					x_g = OPTIONS_VID_HELP;
 #endif
 					Options();
@@ -430,14 +432,14 @@ void VideoTests()
 			redraw = 1;	
 			disp_off();
 			
-#ifdef CDROM1	
+#ifdef SYSCARD1	
 			sel = prev_select;
 			prev_select = 0;
 #endif
 		}
 	}
 	end = 0;
-#ifdef CDROM1
+#ifdef SYSCARD1
 	prev_select = 1;
 #else
 	sel = 1;
@@ -509,7 +511,7 @@ void AudioTests()
 		
 		if (controller & JOY_SEL)
 		{
-#ifdef CDROM1
+#ifdef SYSCARD1
 			x_g = OPTIONS_AUD_HELP;
 #endif
 			Options();
@@ -560,7 +562,7 @@ void AudioTests()
 		{
 			disp_off();
 			ResetVideo();
-#ifdef CDROM1
+#ifdef SYSCARD1
 			prev_select = sel;
 #endif
 			switch(sel)
@@ -578,7 +580,7 @@ void AudioTests()
 					ConstrInterf();
 					break;
 				case 4:
-#ifdef CDROM1
+#ifdef SYSCARD1
 					x_g = OPTIONS_AUD_HELP;
 #endif
 					Options();
@@ -596,14 +598,14 @@ void AudioTests()
 			redraw = 1;	
 			disp_off();
 			
-#ifdef CDROM1	
+#ifdef SYSCARD1	
 			sel = prev_select;
 			prev_select = 0;
 #endif
 		}
 	}
 	end = 0;
-#ifdef CDROM1
+#ifdef SYSCARD1
 	prev_select = 2;
 #else
 	sel = 2;
@@ -631,7 +633,7 @@ void DrawN()
 			ResetVideo();
 			Set256H();
 			scroll(0, -48, -72, 0, 240, 0xC0);		
-#ifndef CDROM1
+#ifndef SYSCARD1
 			load_background(n_bg, n_pal, n_map, 20, 12);
 #else
 			set_screen_size(SCR_SIZE_32x32); 
@@ -640,7 +642,7 @@ void DrawN()
 			load_palette(0, palCD, 16); 
 			cd_loadvram(GPHX_OVERLAY, OFS_N_DATA_bin, 0x1000, SIZE_N_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_N_BAT_bin, 0, SIZE_N_BAT_bin);
-			// Why these get zapped to 0 when in CDROM1...
+			// Why these get zapped to 0 when in SYSCARD1...
 			RestoreGlobals();
 #endif
             redraw = 0;
@@ -776,7 +778,7 @@ void RefreshCredits()
 	i = 1;
 }
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 #ifndef SCDROM
 
 void CheckStart(int sync)

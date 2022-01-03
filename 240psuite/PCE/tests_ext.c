@@ -1,6 +1,6 @@
  /*
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,13 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
  */
 
-#ifdef CDROM1 
+#ifdef SYSCARD1 
 
 #include "huc.h"
 #include "res.h"
@@ -43,7 +39,7 @@ extern unsigned char EnabledSoft;
 extern unsigned char Enabled_C_BW;
 #endif
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 void main()
 {
 	RestoreGlobals();
@@ -115,7 +111,7 @@ void LoadNumbers()
 	set_color_rgb(288, 7, 7, 7);
 	set_color_rgb(289, 7, 0, 0);
 	
-#ifndef CDROM1		
+#ifndef SYSCARD1		
 	load_vram(0x5000, numbers_sp, 0xB00);
 #else
 	cd_loadvram(GPHX_OVERLAY, OFS_numbers_tile_bin, 0x5000, SIZE_numbers_tile_bin);
@@ -180,7 +176,7 @@ void LagTest()
 			SetFontColors(14, RGB(7, 7, 7), 0, RGB(7, 7, 7));
 			
 			Set256H();
-#ifndef CDROM1
+#ifndef SYSCARD1
 			set_map_data(lagback_map, 32, 30);
 			set_tile_data(lagback_bg);
 			load_tile(0x1000);
@@ -199,7 +195,7 @@ void LagTest()
 			put_string("frames", 25, 3);
 			LoadNumbers();
 
-#ifndef CDROM1		
+#ifndef SYSCARD1		
 			set_color(2, RGB(7, 7, 7));
 #else
 			set_color(4, RGB(7, 7, 7));
@@ -268,7 +264,7 @@ void LagTest()
 			update = 0;
 			
 			option = !option;
-#ifndef CDROM1
+#ifndef SYSCARD1
 			if(option)
 				set_color(2, RGB(0, 0, 0));
 			else
@@ -439,7 +435,7 @@ void LEDZoneTest()
 			init_satb();
 			set_color_rgb(256, 0, 0, 0); 
 			set_color_rgb(257, 7, 7, 7); 
-#ifndef CDROM1		
+#ifndef SYSCARD1		
 			load_vram(0x5000, LED_sp, 0x100);
 #else
 			cd_loadvram(GPHX_OVERLAY, OFS_LEDsprites_tile_bin, 0x5000, SIZE_LEDsprites_tile_bin);

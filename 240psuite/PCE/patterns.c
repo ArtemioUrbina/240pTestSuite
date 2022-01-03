@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,23 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
  */
+ 
 #include "huc.h"
 #include "patterns.h"
 #include "help.h"
 #include "font.h"
 #include "float.h"
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 #include "graphics.h"
 #include "graphics_patterns.h"
 #endif
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 #include "res_patterns.h"
 #endif
 
@@ -41,11 +38,11 @@
 
 #define HPOS 5
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 char palCD[512];
 #endif
 			
-#ifndef CDROM1
+#ifndef SYSCARD1
 void TestPatterns()
 #else
 void main()
@@ -57,7 +54,7 @@ void main()
 	sel = 0;
 	end = 0;
 	
-#ifdef CDROM1
+#ifdef SYSCARD1
 	RestoreGlobals();
 
 	if(prev_select)
@@ -72,7 +69,7 @@ void main()
 	{		
 		vsync();
 		
-#ifdef CDROM1
+#ifdef SYSCARD1
 		if(!HelpItem)
 		{
 #endif
@@ -98,7 +95,7 @@ void main()
 		
 		if (controller & JOY_SEL)
 		{
-#ifdef CDROM1
+#ifdef SYSCARD1
 			x_g = OPTIONS_PAT_HELP;
 #endif
 			Options();
@@ -123,14 +120,14 @@ void main()
 		
 		if (controller & JOY_RUN)
 		{
-#ifdef CDROM1
+#ifdef SYSCARD1
 			showHelp(GENERAL_PAT_HELP);
 #else
 			showHelp(GENERAL_HELP);
 #endif
 			redraw = 1;
 		}
-#ifdef CDROM1
+#ifdef SYSCARD1
 		}
 		else
 		{
@@ -194,13 +191,13 @@ void main()
 					DrawConvergence();
 					break;
 				case 14:
-#ifdef CDROM1
+#ifdef SYSCARD1
 					x_g = OPTIONS_PAT_HELP;
 #endif
 					Options();
 					break;
 				case 15:
-#ifdef CDROM1
+#ifdef SYSCARD1
 					showHelp(GENERAL_PAT_HELP);
 #else
 					showHelp(GENERAL_HELP);
@@ -217,7 +214,7 @@ void main()
 			disp_off();
 		}
 	}
-#ifdef CDROM1
+#ifdef SYSCARD1
 	xres_flags_g = xres_flags;
 	Enabled240p_g = Enabled240p;
 	UseDefault_g = UseDefault;
@@ -272,7 +269,7 @@ void DrawPluge()
 		{
 			ResetVideo();
 	
-#ifndef CDROM1
+#ifndef SYSCARD1
 			set_map_data(pluge_map, 40, 30);
 			set_tile_data(pluge_bg);
 			load_tile(0x1000);
@@ -297,7 +294,7 @@ void DrawPluge()
 		{
 			switch(color)
 			{
-#ifndef CDROM1		
+#ifndef SYSCARD1
 				case 0:
 					set_color_rgb(1, 1, 1, 1);
 					break;
@@ -361,7 +358,7 @@ void DrawColor()
 		if(redraw)
 		{
 			ResetVideo();
-#ifndef CDROM1	
+#ifndef SYSCARD1
 			load_background(color_bg, color_pal, color_map, 40, 30);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
@@ -401,7 +398,7 @@ void DrawCB601()
 		{
 			ResetVideo();
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 			set_map_data(cb601_map, 40, 30);
 			set_tile_data(cb601_bg);
 			load_tile(0x1000);
@@ -459,7 +456,7 @@ void DrawColorBleed()
 			if(type == RES_512)
 				scroll(0, -96, 0, 0, 240, 0xC0);
 			
-#ifndef CDROM1			
+#ifndef SYSCARD1
 			set_map_data(colorbleed_map, 40, 30);
 			if(option)
 				set_tile_data(colorbleedchk_bg);
@@ -498,7 +495,7 @@ void DrawColorBleed()
 		{
 			if(option)
 			{
-#ifndef CDROM1
+#ifndef SYSCARD1
 				set_tile_data(colorbleed_bg);
 				load_tile(0x1000);
 #else
@@ -508,7 +505,7 @@ void DrawColorBleed()
 			}
 			else
 			{
-#ifndef CDROM1
+#ifndef SYSCARD1
 				set_tile_data(colorbleedchk_bg);
 				load_tile(0x1000);
 #else
@@ -543,7 +540,7 @@ void DrawSMPTE_EBU(unsigned char ebu)
 			ResetVideo();
 			
 			setupFont();
-#ifndef CDROM1
+#ifndef SYSCARD1
 			if(ebu)
 			{
 				set_map_data(EBU_map, 40, 30);	
@@ -590,7 +587,7 @@ void DrawSMPTE_EBU(unsigned char ebu)
 		{
 			if(option)
 			{
-#ifndef CDROM1
+#ifndef SYSCARD1
 				load_palette(0, SMPTE75_pal, 1);  
 #else
 				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB75_PAL_bin : OFS_SMPTE75_PAL_bin, palCD, SIZE_SMPTE75_PAL_bin); 
@@ -602,7 +599,7 @@ void DrawSMPTE_EBU(unsigned char ebu)
 			}
 			else
 			{
-#ifndef CDROM1
+#ifndef SYSCARD1
 				load_palette(0, SMPTE100_pal, 1);  
 #else
 				cd_loaddata(GPHX_OVERLAY, ebu ? OFS_EBUCB100_PAL_bin: OFS_SMPTE100_PAL_bin, palCD, SIZE_SMPTE100_PAL_bin); 
@@ -619,7 +616,7 @@ void DrawSMPTE_EBU(unsigned char ebu)
 			text--;
 			if(!text)
 			{
-#ifndef CDROM1
+#ifndef SYSCARD1
 				if(ebu)
 					set_map_data(EBU_map, 40, 3);
 				else
@@ -653,7 +650,7 @@ void DrawGrid()
 			
 			ChangeResType();
 			
-#ifndef CDROM1		
+#ifndef SYSCARD1		
 			set_tile_data(grid_bg);
 			load_tile(0x1000);
 			
@@ -781,7 +778,7 @@ void DrawMonoscope()
 		{
 			ResetVideo();
 			
-#ifndef CDROM1
+#ifndef SYSCARD1
 			set_map_data(monoscope_map, 46, 30);
 			set_tile_data(monoscope_bg);
 			load_tile(0x1000);
@@ -836,7 +833,7 @@ void DrawMonoscope()
 		
 		if(x2)
 		{
-#ifndef CDROM1
+#ifndef SYSCARD1
 			set_color_rgb(5, x1, x1, x1);
 #else
 			set_color_rgb(2, x1, x1, x1);
@@ -868,7 +865,7 @@ void DrawSharpness()
 			
 			if(!option)
 			{
-#ifndef CDROM1			
+#ifndef SYSCARD1			
 				set_map_data(sharpness_map, 40, 30);
 				set_tile_data(sharpness_bg);
 				load_tile(0x1000);
@@ -946,7 +943,7 @@ void DrawGray()
 			ResetVideo();
 			Set256H();
 
-#ifndef CDROM1			
+#ifndef SYSCARD1			
 			set_map_data(gray_map, 32, 30);
 			set_tile_data(gray_bg);
 			load_tile(0x1000);
@@ -978,7 +975,7 @@ void DrawGray()
 	}
 }
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 #include "patterns_ext.c"
 #else
 

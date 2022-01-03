@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,11 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
  */
+ 
 #include "huc.h"
 #include "font.h"
 #include "video.h"
@@ -29,7 +26,7 @@
 #include "help.h"
 #include "tools.h"
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 extern int xres_flags;
 extern unsigned char Enabled240p;
 extern unsigned char UseDefault;
@@ -80,7 +77,7 @@ void RedrawBG()
 	ResetVideo();
 	setupFont();
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 	set_tile_data(MB_bg);
 	load_tile(0x1000);
 	set_map_data(MB_map, 40, 30);
@@ -115,7 +112,7 @@ void DrawMenuBottom(int index, int credits)
 
 #endif
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 	#define LOAD_OVERLAY
 #endif
 #ifdef HELP_OVL
@@ -163,7 +160,7 @@ void DrawSP()
 	y2 = 84;	
 	
 	load_palette(16, SD_pal, 1);
-#ifndef CDROM1
+#ifndef SYSCARD1
 	load_vram(0x5000, SD_sp, 0x700);
 #else
 	cd_loadvram(GPHX_OVERLAY, OFS_SD_tile_bin, 0x5000, SIZE_SD_tile_bin);
@@ -319,7 +316,7 @@ void Options()
 
 		if (controller & JOY_RUN)
 		{
-#ifdef CDROM1
+#ifdef SYSCARD1
 			if(x_g)
 				showHelp(x_g);
 			else

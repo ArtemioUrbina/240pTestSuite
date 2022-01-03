@@ -1,6 +1,6 @@
  /*
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -17,10 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
- 
- This version of the suite is compiled with HuC from https://github.com/uli/huc
- 
  */
  
 #include "huc.h"
@@ -32,7 +28,7 @@
 #include "tests.h"
 #include "float.h"
 
-#ifdef CDROM1
+#ifdef SYSCARD1
 extern int xres_flags;
 extern unsigned char Enabled240p;
 extern unsigned char UseDefault;
@@ -84,14 +80,14 @@ void DropShadow(int strip)
 			switch(back)
 			{
 				case 0:
-#ifndef CDROM1
+#ifndef SYSCARD1
 					load_bat(0, donna_map, 40, 30);
 #else
 					cd_loadvram(GPHX_OVERLAY, OFS_donna_BAT_bin, 0, SIZE_donna_BAT_bin);
 #endif
 					break;
 				case 1:
-#ifndef CDROM1
+#ifndef SYSCARD1
 					load_bat(0, sonic_map, 40, 30);
 #else
 					cd_loadvram(GPHX_OVERLAY, OFS_sonic_BAT_bin, 0, SIZE_sonic_BAT_bin);
@@ -265,7 +261,7 @@ void RedrawDropShadow(int strip)
 	switch(back)
 	{
  		case 0:
-#ifndef CDROM1
+#ifndef SYSCARD1
 			load_background(donna_bg, donna_pal, donna_map, 40, 30);
 #else
 			set_screen_size(SCR_SIZE_64x32); 
@@ -283,7 +279,7 @@ void RedrawDropShadow(int strip)
 			scroll(1, 2*x, 76, 76, 160, 0xC0);
 			scroll(2, 3*x, 160, 160, 208, 0xC0);
 			scroll(3, 4*x, 208, 208, 240, 0xC0);
-#ifndef CDROM1
+#ifndef SYSCARD1
 			load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
 			x_g = x;
@@ -324,7 +320,7 @@ void RedrawDropShadow(int strip)
 	
 	if(strip)
 	{
-#ifndef CDROM1		 
+#ifndef SYSCARD1		 
 		load_vram(0x6000, striped_sp, 0x100);
 #else
 		cd_loadvram(GPHX_OVERLAY, OFS_striped_tile_bin, 0x6000, SIZE_striped_tile_bin);
@@ -333,7 +329,7 @@ void RedrawDropShadow(int strip)
 	}
 	else
 	{
-#ifndef CDROM1	
+#ifndef SYSCARD1	
 		if(option)
 			load_vram(0x6000, shadow_sp, 0x100);
 		else
@@ -379,7 +375,7 @@ void DrawPalm()
 	draw = 0;
 	
 	load_palette(16, palm_pal, 1);
-#ifndef CDROM1
+#ifndef SYSCARD1
 	load_vram(0x5000, palm_sp, 0x8C0);
 #else
 	cd_loadvram(GPHX_OVERLAY, OFS_sonicpalm_tile_bin, 0x5000, SIZE_sonicpalm_tile_bin);
@@ -460,7 +456,7 @@ void ScrollTest()
 			if(!option)
 			{
 				set_screen_size(SCR_SIZE_32x32);
-#ifndef CDROM1
+#ifndef SYSCARD1
 				load_background(sonic_bg, sonic_pal, sonic_map, 40, 30);
 #else
 				cd_loaddata(GPHX_OVERLAY, OFS_sonic_PAL_bin, palCD, SIZE_sonic_PAL_bin); 
@@ -480,7 +476,7 @@ void ScrollTest()
 			else
 			{
 				set_screen_size(SCR_SIZE_32x64);
-#ifndef CDROM1
+#ifndef SYSCARD1
 				load_background(kiki_bg, kiki_pal, kiki_map, 32, 64);
 #else
 				cd_loaddata(GPHX_OVERLAY, OFS_kiki_PAL_bin, palCD, SIZE_kiki_PAL_bin); 
@@ -555,7 +551,7 @@ void ScrollTest()
 }
 
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 #include "tests_ext.c"
 #else
 
@@ -595,7 +591,7 @@ void DrawStripes(int type)
 #endif
 
 
-#ifndef CDROM1
+#ifndef SYSCARD1
 #include "tests_sound.c"
 #else
 
