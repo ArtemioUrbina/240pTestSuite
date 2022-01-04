@@ -41,32 +41,7 @@ extern int x_g;
 #ifndef HELP_OVL
 void RedrawMain()
 {
-#ifndef SGFX
 	RedrawBG();
-#else
-	if(sgx_detect())
-	{
-//	vpc_win_size(VPC_WIN_A, 0x01ff);
-//	vpc_win_size(VPC_WIN_B, 0x01ff);
-//	vpc_win_reg(VPC_WIN_A, VDC_ON+VPC_NORM);
-//	vpc_win_reg(VPC_WIN_B, VDC_ON+VPC_NORM);
-//	vpc_win_reg(VPC_WIN_AB, VDC_ON+VPC_NORM);
-//	vpc_win_reg(VPC_WIN_NONE, VDC_ON+VPC_NORM);
-//
-//	sgx_set_screen_size(SCR_SIZE_32x32);
-//	sgx_disp_off();
-//
-//	sgx_set_tile_data(SMPTE75_bg);
-//	sgx_load_tile(0x1000);
-//	sgx_set_map_data(SMPTE75_map, 40, 30);
-//	sgx_load_map(0, 0, 0, 0, 40, 30);
-//	//load_palette(0, SMPTE75_pal, 16);
-//	sgx_disp_on();
-//	sgx_scroll(40, 40);
-    	RedrawBG();
-	}
-#endif
-
 	init_satb();
 	DrawSP();
 	satb_update();
