@@ -253,7 +253,7 @@ void RefreshMain()
 	drawmenutext(2, "Audio tests");
 	drawmenutext(3, "Hardware tools");
 	
-	row = 19;
+	row = 22;
 	DrawMenuBottom(4, 1);
 }
 
@@ -281,7 +281,7 @@ void RefreshVideoTests()
 	drawmenutext(7, "Horizontal Stripes");
 	drawmenutext(8, "Checkerboard");
 	drawmenutext(9, "Backlit Zone Test");
-	row++;
+	row = 22;
 	DrawMenuBottom(10, 0);
 }
 
@@ -466,7 +466,7 @@ void RefreshAudioTests()
 	drawmenutext(2, "MDFourier");
 	drawmenutext(3, "Audio Clipping");
 	
-	row++;
+	row = 22;
 	DrawMenuBottom(4, 0);
 }
 
