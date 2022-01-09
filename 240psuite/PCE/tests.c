@@ -541,9 +541,9 @@ void ScrollTest()
 			y -= speed*x;
 				
 			if(y > 512)
-				y = 0;
+				y -= 512;
 			if(y < 0)
-				y = 512;
+				y += 512;
 			
 			scroll(0, vary, y, 0, 240, 0xC0);
 		}

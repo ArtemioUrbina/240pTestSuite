@@ -527,7 +527,7 @@ void DrawColorBleed()
 
 void DrawSMPTE_EBU(unsigned char ebu)
 {
-	option = 0;  // 100%
+	option = 1;  // 100% is 1, 75% is 0
 	text = 0;
 	redraw = 1;
 	end = 0;
