@@ -293,9 +293,14 @@ void display_init_ex( tvtype_t tv, resolution_t res, bitdepth_t bit, uint32_t nu
             __registers[2] = 512; /* width */
             __registers[12] = 0x00000334; /* x-scale */
             break;
-        case RESOLUTION_512x240:
-            //TODO: FIXME
-            break;
+        // case RESOLUTION_512x240:
+        //     //TODO: FIXME
+        //     break;
+        // case RESOLUTION_640x240:
+        //     //TODO: FIXME
+        //     break;
+        default:
+			break;
     }
     if ( bit == DEPTH_16_BPP )
     {
