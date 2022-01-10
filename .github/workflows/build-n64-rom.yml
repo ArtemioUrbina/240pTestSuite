@@ -15,11 +15,11 @@ jobs:
 
     - name: Build using libDragon Container
       run: |
-        #cd ${{ github.workspace }}/240psuite/N64/
         npm i -g libdragon@latest
         libdragon init
         # copy the adjusted source into the .libdragon folder?
-        # cp -f ./libdragonchanges ./libdragon 
-        libdragon make ${{ github.workspace }}/240psuite/N64
+        # cp -f ./libdragonchanges ./libdragon
+        cd ${{ github.workspace }}/240psuite/N64/
+        libdragon make
         # libdragon make install
         # libdragon make tools-install
