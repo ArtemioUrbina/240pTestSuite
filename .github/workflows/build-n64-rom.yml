@@ -20,6 +20,6 @@ jobs:
         libdragon init
         # copy the adjusted source into the .libdragon folder?
         # cp -f ./libdragonchanges ./libdragon 
-        libdragon ${{ github.workspace }}/240psuite/N64/make
+        libdragon make ${{ github.workspace }}/240psuite/N64
         # libdragon make install
         # libdragon make tools-install
