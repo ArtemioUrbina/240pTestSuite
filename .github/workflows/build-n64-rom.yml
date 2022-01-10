@@ -15,7 +15,7 @@ jobs:
 
     - name: Build using libDragon Container
       run: |
-        cd $GITHUB_WORKSPACE/240psuite/N64
+        cd ${{ github.workspace }}/240psuite/N64/
         sudo npm install -g libdragon
         libdragon init
         # copy the adjusted source into the .libdragon folder?
