@@ -13,10 +13,16 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Build using libDragon Container
+    - name: Install libDragon Container
       run: |
         npm i -g libdragon@latest
+
+    - name: Install libDragon source to root directory
+      run: |
         libdragon init
+
+    - name: Adjust and re-build libdragon source
+      run: |
         # Copy the adjusted source into the ./libdragon folder
         cp -f ${{ github.workspace }}/240psuite/N64/libdragonchanges/display.c ${{ github.workspace }}/libdragon/src
         cp -f ${{ github.workspace }}/240psuite/N64/libdragonchanges/graphics.c ${{ github.workspace }}/libdragon/src
@@ -27,5 +33,8 @@ jobs:
         libdragon make
         libdragon make install
         # libdragon make tools-install # the tools are default so commmented out.
+
+    - name: Build ROM
+      run: |
         cd ${{ github.workspace }}/240psuite/N64/
         libdragon make
