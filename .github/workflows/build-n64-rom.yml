@@ -1,0 +1,25 @@
+name: BUILD-N64-ROM
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Build using libDragon Container
+      run: |
+        cd $GITHUB_WORKSPACE/240psuite/N64
+        sudo npm install -g libdragon
+        libdragon init
+        # copy the adjusted source into the .libdragon folder?
+        # cp -f ./libdragonchanges ./libdragon 
+        libdragon make
+        # libdragon make install
+        # libdragon make tools-install
