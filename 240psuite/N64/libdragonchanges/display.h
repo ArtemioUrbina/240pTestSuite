@@ -38,7 +38,11 @@ typedef enum
     /** @brief 256x240 mode */
     RESOLUTION_256x240,
     /** @brief 512x480 mode */
-    RESOLUTION_512x480
+    RESOLUTION_512x480,
+    /** @brief 512x240 mode, high-res progressive */
+    RESOLUTION_512x240,
+    /** @brief 640x240 mode, high-res progressive */
+    RESOLUTION_640x240,
 } resolution_t;
 
 /** @brief Valid bit depths */
@@ -48,7 +52,7 @@ typedef enum
     DEPTH_16_BPP,
     /** @brief 32 bits per pixel (8-8-8-8) */
     DEPTH_32_BPP,
-    /** @brief 16 bits per pixel (5-5-5-1) with HW Dither */
+        /** @brief 16 bits per pixel (5-5-5-1) with HW Dither */
     DEPTH_16_BPP_DITHER
 } bitdepth_t;
 
@@ -90,7 +94,6 @@ extern "C" {
 #endif
 
 void display_init( resolution_t res, bitdepth_t bit, uint32_t num_buffers, gamma_t gamma, antialias_t aa );
-void display_init_ex( tvtype_t tv, resolution_t res, bitdepth_t bit, uint32_t num_buffers, gamma_t gamma, antialias_t aa );
 display_context_t display_lock();
 void display_show(display_context_t disp);
 void display_close();
