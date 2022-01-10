@@ -229,7 +229,7 @@ void display_init_ex( tvtype_t tv, resolution_t res, bitdepth_t bit, uint32_t nu
 
     /* Figure out control register based on input given */
     __registers[0] = 0x3000;
-	/* Enable Dither Filter */
+	/* Enable Ditherï¿½Filter */
 	if(bit == DEPTH_16_BPP_DITHER)
 	{
 		__registers[0] |= 0x10000;
@@ -292,6 +292,9 @@ void display_init_ex( tvtype_t tv, resolution_t res, bitdepth_t bit, uint32_t nu
             __registers[1 + REGISTER_COUNT] = 1024; /* base offset for field 2 */
             __registers[2] = 512; /* width */
             __registers[12] = 0x00000334; /* x-scale */
+            break;
+        case RESOLUTION_512x240:
+            //TODO: FIXME
             break;
     }
     if ( bit == DEPTH_16_BPP )

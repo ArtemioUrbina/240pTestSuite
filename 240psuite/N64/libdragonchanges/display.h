@@ -94,6 +94,7 @@ extern "C" {
 #endif
 
 void display_init( resolution_t res, bitdepth_t bit, uint32_t num_buffers, gamma_t gamma, antialias_t aa );
+void display_init_ex( tvtype_t tv, resolution_t res, bitdepth_t bit, uint32_t num_buffers, gamma_t gamma, antialias_t aa );
 display_context_t display_lock();
 void display_show(display_context_t disp);
 void display_close();
