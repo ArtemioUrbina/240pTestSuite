@@ -124,7 +124,7 @@ void SoftDrawImageSolid(int x, int y, sprite_t *image)
 void red_createflags()
 {
 
-	uint32_t flag1 __attribute__((unused));
+	uint32_t flag1;
 	//int32_t flag2;
 	
 	// 0xEFA000FF 
