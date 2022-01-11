@@ -56,10 +56,10 @@ clean:
 
 .PHONY: bitmaps all
 
-bitmaps : $(CURDIR)/filesystem/back.bin $(CURDIR)/filesystem/sd.bin filesystem/donna.bin filesystem/shadow.bin\
+bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/donna.bin filesystem/shadow.bin\
     filesystem/buzzbomber.bin filesystem/checkpos.bin filesystem/checkneg.bin filesystem/pluge.bin\
 	filesystem/color.bin filesystem/color_grid.bin filesystem/colorlow.bin filesystem/colorhigh.bin\
-    filesystem/grid.bin filesystem/grid480.bin $(CURDIR)/filesystem/menu.bin $(CURDIR)/filesystem/help.bin\
+    filesystem/grid.bin filesystem/grid480.bin filesystem/menu.bin filesystem/help.bin\
 	filesystem/601701cb.bin filesystem/sharpness.bin filesystem/grayramp.bin filesystem/SMPTECB75.bin\
 	filesystem/SMPTECB100.bin filesystem/nish.bin filesystem/EBUColorBars75.bin filesystem/EBUColorBars100.bin\
 	filesystem/PLUGEBorder.bin filesystem/plugePAL.bin filesystem/colorbleedchk.bin filesystem/colorbleed.bin\
