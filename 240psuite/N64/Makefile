@@ -12,7 +12,7 @@ UCON64 = $(TOOLDIR)/ucon64
 LOADER = $(TOOLDIR)/loader64
 
 LDSCRIPTSDIR = $(ROOTDIR)/ldscripts
-LINK_FLAGS = -Tn64.ld -Map map.txt #--gc-sections
+LINK_FLAGS = -Tn64.ld -Map map.txt --gc-sections
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
