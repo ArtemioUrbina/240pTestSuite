@@ -44,4 +44,4 @@ jobs:
       with:
         name: N64-ROM
         path: |
-          ${{ github.workspace }}/**/*.z64
+          ${{ github.workspace }}/**/240psuite/N64/*.z64
