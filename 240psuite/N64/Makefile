@@ -12,7 +12,7 @@ UCON64 = $(TOOLDIR)/ucon64
 LOADER = $(TOOLDIR)/loader64
 
 LDSCRIPTSDIR = $(ROOTDIR)/ldscripts
-LINK_FLAGS = -Tn64.ld -Map map.txt -nostdlib #TODO: -L$(ROOTDIR)/mips64-elf/lib -L$(ROOTDIR)/lib -ldragon -lc -lm -ldragonsys -Tn64.ld  --gc-sections
+LINK_FLAGS = -Tn64.ld -Map map.txt -nostdlib #TODO: -L$(ROOTDIR)/mips64-elf/lib -L$(ROOTDIR)/lib  -Tn64.ld  --gc-sections
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/lib/gcc/mips64-elf/4.4.0 -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
@@ -26,7 +26,7 @@ LD = $(N64PREFIX)ld
 OBJCOPY = $(N64PREFIX)objcopy
 
 PROG_NAME = 240pSuite
-LIBS = -ldragon -lc -lm -ldragonsys -ln64memory 
+LIBS = -ldragon -lc -lm -ldragonsys #-ln64memory 
 BITDEPTH = 16
 
 OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o menu.o help.o
