@@ -747,11 +747,11 @@ void DrawGrayRamp()
 void DrawSMPTE()
 {
 	int 		end = 0, draw100 = 1, text = 0, load = 1;
-	sprite_t 	*back = NULL, *back100 = NULL, *font = NULL;
+	sprite_t 	*back = NULL, *back100 = NULL; //, *font = NULL;
 	char		msg[40];
 	struct controller_data keys;
 	
-	font = LoadImage("/font.bin");
+	//font = LoadImage("/font.bin"); //TODO: font is unused warning!
     while(!end)
     {	
 		GetDisplay();
