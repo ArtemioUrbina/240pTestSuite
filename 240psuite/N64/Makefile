@@ -12,11 +12,10 @@ UCON64 = $(TOOLDIR)/ucon64
 LOADER = $(TOOLDIR)/loader64
 
 LDSCRIPTSDIR = $(ROOTDIR)/ldscripts
-LINK_FLAGS = -T$(LDSCRIPTSDIR)/n64.ld -Map map.txt -nostdlib
+LINK_FLAGS = -Tn64.ld -Map map.txt -nostdlib #TODO: -L$(ROOTDIR)/mips64-elf/lib -L$(ROOTDIR)/lib -ldragon -lc -lm -ldragonsys -Tn64.ld  --gc-sections
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/lib/gcc/mips64-elf/4.4.0 -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
-# TODO: Wno-unused-variable is a workaround!
 CCFLAGS = -DUSE_N64MEM -std=gnu99 -march=vr4300 -mtune=vr4300 -G 0 -O2 -Wall -Werror -Wno-unused-variable -c $(INCPATH)
 ASFLAGS = -mtune=vr4300 -march=vr4300
 

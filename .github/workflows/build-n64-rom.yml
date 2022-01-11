@@ -38,3 +38,10 @@ jobs:
       run: |
         cd ${{ github.workspace }}/240psuite/N64/
         libdragon make
+
+      - name: "Upload built ROMs to artifacts"
+        uses: actions/upload-artifact@v2
+        with:
+          name: N64-ROM
+          path: |
+            ${{ github.workspace }}/**/*.z64
