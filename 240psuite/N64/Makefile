@@ -16,7 +16,7 @@ LINK_FLAGS = -Tn64.ld -Map map.txt -nostdlib #TODO: -L$(ROOTDIR)/mips64-elf/lib 
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/lib/gcc/mips64-elf/4.4.0 -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
-CCFLAGS = -DUSE_N64MEM -std=gnu99 -march=vr4300 -mtune=vr4300 -G 0 -O2 -Wall -Werror -Wno-unused-variable -c $(INCPATH)
+CCFLAGS = -std=gnu99 -march=vr4300 -mtune=vr4300 -G 0 -O2 -Wall -Werror -Wno-unused-variable -c $(INCPATH) #-DUSE_N64MEM
 ASFLAGS = -mtune=vr4300 -march=vr4300
 
 N64PREFIX = $(ROOTDIR)/bin/mips64-elf-
