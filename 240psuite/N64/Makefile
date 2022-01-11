@@ -1,6 +1,6 @@
 ROOTDIR = $(N64_INST)
 
-HEADERDIR = $(ROOTDIR)/headers
+HEADERDIR = -h $(ROOTDIR)/mips64-elf/lib
 HEADER = $(HEADERDIR)/header
 
 TOOLDIR = $(ROOTDIR)/bin
