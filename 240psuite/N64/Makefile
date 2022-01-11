@@ -12,7 +12,7 @@ UCON64 = $(TOOLDIR)/ucon64
 LOADER = $(TOOLDIR)/loader64
 
 LDSCRIPTSDIR = $(ROOTDIR)/ldscripts
-LINK_FLAGS = -Tn64.ld -Map map.txt --gc-sections
+LINK_FLAGS = -Tn64.ld -Map map.txt #--gc-sections
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
@@ -34,7 +34,7 @@ OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o me
 $(PROG_NAME).z64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(OBJCOPY) $(PROG_NAME).elf $(PROG_NAME).bin -O binary
 	rm -f $(PROG_NAME).z64
-	$(N64TOOL) -l 16M -t "240p Test Suite" -h $(HEADER) -o $(PROG_NAME).z64 $(PROG_NAME).bin -s 8M drive.dfs
+	$(N64TOOL) -l 6M -t "240p Test Suite" -h $(HEADER) -o $(PROG_NAME).z64 $(PROG_NAME).bin -s 1M drive.dfs
 	$(CHKSUM64) $(PROG_NAME).z64
 
 $(PROG_NAME).elf : $(OBJS)
@@ -56,10 +56,10 @@ clean:
 
 .PHONY: bitmaps all
 
-bitmaps : filesystem/back.bin filesystem/sd.bin filesystem/donna.bin filesystem/shadow.bin\
+bitmaps : $(CURDIR)/filesystem/back.bin $(CURDIR)/filesystem/sd.bin filesystem/donna.bin filesystem/shadow.bin\
     filesystem/buzzbomber.bin filesystem/checkpos.bin filesystem/checkneg.bin filesystem/pluge.bin\
 	filesystem/color.bin filesystem/color_grid.bin filesystem/colorlow.bin filesystem/colorhigh.bin\
-    filesystem/grid.bin filesystem/grid480.bin filesystem/menu.bin filesystem/help.bin\
+    filesystem/grid.bin filesystem/grid480.bin $(CURDIR)/filesystem/menu.bin $(CURDIR)/filesystem/help.bin\
 	filesystem/601701cb.bin filesystem/sharpness.bin filesystem/grayramp.bin filesystem/SMPTECB75.bin\
 	filesystem/SMPTECB100.bin filesystem/nish.bin filesystem/EBUColorBars75.bin filesystem/EBUColorBars100.bin\
 	filesystem/PLUGEBorder.bin filesystem/plugePAL.bin filesystem/colorbleedchk.bin filesystem/colorbleed.bin\
