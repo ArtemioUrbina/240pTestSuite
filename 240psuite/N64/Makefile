@@ -34,7 +34,7 @@ OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o me
 $(PROG_NAME).z64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(OBJCOPY) $(PROG_NAME).elf $(PROG_NAME).bin -O binary
 	rm -f $(PROG_NAME).z64
-	$(N64TOOL) -l 8M -t "240p Test Suite" -h $(HEADER) -o $(PROG_NAME).z64 $(PROG_NAME).bin -s 6M drive.dfs
+	$(N64TOOL) -l 16M -t "240p Test Suite" -h $(HEADER) -o $(PROG_NAME).z64 $(PROG_NAME).bin -s 8M drive.dfs
 	$(CHKSUM64) $(PROG_NAME).z64
 
 $(PROG_NAME).elf : $(OBJS)
