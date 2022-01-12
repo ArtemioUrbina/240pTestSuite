@@ -7,6 +7,8 @@
 #include <malloc.h>
 #include <string.h>
 #include "libdragon.h"
+#include "regsinternal.h"
+#include "n64sys.h"
 
 /**
  * @defgroup display Display Subsystem
@@ -99,7 +101,7 @@ static int now_drawing = -1;
  */
 static void __write_registers( uint32_t const * const registers )
 {
-    uint32_t *reg_base = (uint32_t *)REGISTER_BASE;
+    volatile uint32_t *reg_base = (uint32_t *)REGISTER_BASE;
 
     /* This should never happen */
     if( !registers ) { return; }
@@ -127,7 +129,7 @@ static void __write_registers( uint32_t const * const registers )
  */
 static void __write_dram_register( void const * const dram_val )
 {
-    uint32_t *reg_base = (uint32_t *)REGISTER_BASE;
+    volatile uint32_t *reg_base = (uint32_t *)REGISTER_BASE;
 
     if ( reg_base[4] & 1 )
     {
@@ -151,7 +153,7 @@ static void __write_dram_register( void const * const dram_val )
  */
 static void __display_callback()
 {
-    uint32_t *reg_base = (uint32_t *)REGISTER_BASE;
+    volatile uint32_t *reg_base = (uint32_t *)REGISTER_BASE;
 
     /* Only swap frames if we have a new frame to swap */
     if(show_next >= 0 && show_next != now_drawing)
