@@ -3,13 +3,15 @@ ROOTDIR = $(N64_INST)
 HEADERDIR = $(ROOTDIR)/mips64-elf/lib
 HEADER = $(HEADERDIR)/header
 
-TOOLDIR = $(ROOTDIR)/bin
-CHKSUM64 = $(TOOLDIR)/chksum64
-MKDFS = $(TOOLDIR)/mkdfs
-N64TOOL = $(TOOLDIR)/n64tool
-MKSPRITE =  $(TOOLDIR)/mksprite
+N64_BINDIR = $(N64_ROOTDIR)/bin
+CHKSUM64 = $(N64_BINDIR)/chksum64
+MKDFS = $(N64_BINDIR)/mkdfs
+N64TOOL = $(N64_BINDIR)/n64tool
+MKSPRITE =  $(N64_BINDIR)/mksprite
+
+TOOLDIR = $(CURDIR)/tools
 UCON64 = $(TOOLDIR)/ucon64
-LOADER = $(TOOLDIR)/loader64
+LOADER = $(TOOLDIR)/unfloader
 
 LDSCRIPTSDIR = $(ROOTDIR)/ldscripts
 LINK_FLAGS = -Tn64.ld -Map map.txt --gc-sections
@@ -241,4 +243,4 @@ filesystem/help.bin: graphics/help.png
 	$(MKSPRITE) $(BITDEPTH) $< $@
 	
 run: $(PROG_NAME).z64
-	$(LOADER)  $(PROG_NAME).z64 
+	$(LOADER) -r ../$(PROG_NAME).z64 
