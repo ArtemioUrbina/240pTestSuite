@@ -52,7 +52,7 @@ typedef enum
     DEPTH_16_BPP,
     /** @brief 32 bits per pixel (8-8-8-8) */
     DEPTH_32_BPP,
-        /** @brief 16 bits per pixel (5-5-5-1) with HW Dither */
+    /** @brief 16 bits per pixel (5-5-5-1) with HW Dither */
     DEPTH_16_BPP_DITHER
 } bitdepth_t;
 
