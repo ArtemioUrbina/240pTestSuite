@@ -158,16 +158,16 @@ int isNTSC()
 	return tv;
 }
 
-void WaitVsync() //TODO: is this causing issues with controller sync??
+void WaitVsync()
 {
-// 	int nextframe;
+	int nextframe;
 	
-// #ifdef DEBUG_BENCHMARK
-// 	Draw_counter(10, 10, end_counter());
-// #endif
-// 	nextframe = __frames + 1;
-// 	display_show(__dc);
-// 	while (nextframe > __frames) ;
+#ifdef DEBUG_BENCHMARK
+	Draw_counter(10, 10, end_counter());
+#endif
+	nextframe = __frames + 1;
+	display_show(__dc);
+	while (nextframe > __frames) ;
 }
 
 void GetVideoModeStr(char *res, int shortdesc)
