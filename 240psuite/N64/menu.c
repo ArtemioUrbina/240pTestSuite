@@ -21,7 +21,6 @@
 
 #include "menu.h"
 #include "help.h"
-#include "language.h"
 
 int ChangeVideoEnabled = 1;
 int ShowMenu = 0;
