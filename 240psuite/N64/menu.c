@@ -483,17 +483,17 @@ void ShowOptions(int usebuffer)
 				sprintf(str, "OFF");
 				break;
 			case ANTIALIAS_RESAMPLE:
-			case ANTIALIAS_RESAMPLE_NODIVOT:
+			//case ANTIALIAS_RESAMPLE_NODIVOT:
 				sprintf(str, "Resample");
 				break;
-			case ANTIALIAS_RESAMPLE_FETCH_NEEDED:
-			case ANTIALIAS_RESAMPLE_FETCH_NEEDED_NODIVOT:
-				sprintf(str, "Fetch Needed");
-				break;
-			case ANTIALIAS_RESAMPLE_FETCH_ALWAYS:
-			case ANTIALIAS_RESAMPLE_FETCH_ALWAYS_NODIVOT:
-				sprintf(str, "Fetch Always");
-				break;
+			// case ANTIALIAS_RESAMPLE_FETCH_NEEDED:
+			// case ANTIALIAS_RESAMPLE_FETCH_NEEDED_NODIVOT:
+			// 	sprintf(str, "Fetch Needed");
+			// 	break;
+			// case ANTIALIAS_RESAMPLE_FETCH_ALWAYS:
+			// case ANTIALIAS_RESAMPLE_FETCH_ALWAYS_NODIVOT:
+			// 	sprintf(str, "Fetch Always");
+			// 	break;
 			default:
 				sprintf(str, "Error");
 				break;
