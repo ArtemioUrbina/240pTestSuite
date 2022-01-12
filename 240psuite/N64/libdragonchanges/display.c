@@ -316,12 +316,14 @@ void display_init( resolution_t res, bitdepth_t bit, uint32_t num_buffers, gamma
     switch( bit )
     {
         case DEPTH_16_BPP_DITHER: //TODO: probably no longer required! Just added for compatibility!
-            _control |= 0x10000;
+            control |= 0x10000;
         case DEPTH_16_BPP:
             control |= 0x2;
             break;
         case DEPTH_32_BPP:
             control |= 0x3;
+            break;
+        default:
             break;
     }
 
@@ -333,9 +335,9 @@ void display_init( resolution_t res, bitdepth_t bit, uint32_t num_buffers, gamma
         case GAMMA_CORRECT:
             control |= 0x8;
             break;
-        // case GAMMA_CORRECT_DITHER:
-        //     control |= 0xC;
-        //     break;
+        case GAMMA_CORRECT_DITHER:
+            control |= 0xC;
+            break;
         default:
             break;
     }
@@ -387,10 +389,10 @@ void display_init( resolution_t res, bitdepth_t bit, uint32_t num_buffers, gamma
                a slightly smoother look */
             if ( bit == DEPTH_16_BPP ) { control |= 0x10000; }
             break;
-        // case ANTIALIAS_RESAMPLE_NODIVOT:
+        // case ANTIALIAS_RESAMPLE_NODIVOT: //TODO: probably no longer required! Just added for compatibility!
         //     control |= 0x0200; /* resample only*/
         //     break;
-        // case ANTIALIAS_RESAMPLE_FETCH_NEEDED_NODIVOT:
+        // case ANTIALIAS_RESAMPLE_FETCH_NEEDED_NODIVOT: //TODO: probably no longer required! Just added for compatibility!
         //     control |= 0x0100; /* aa & resample (fetch lines as needed)*/
         //     break;
         default:
