@@ -100,10 +100,6 @@ extern void *__safe_buffer[];
  * This is white on 16 and 32 BPP modes 
  */
 static uint32_t f_color = 0xFFFFFFFF;
-
-static uint32_t old_f_color = 0xFFFFFFFF;
-
-static int highlight = 0;
 /** 
  * @brief Generic background color
  *
@@ -611,24 +607,12 @@ void graphics_fill_screen( display_context_t disp, uint32_t c )
 {
     if( disp == 0 ) { return; }
 
-    if( __bitdepth == 2 )
-    {
-        uint16_t *buffer = (uint16_t *)__get_buffer( disp );
+    int len = (__bitdepth == 2) ? __width * __height / 4 : __width * __height / 2;
 
-        for( int i = 0; i < __width * __height; i++ )
-        {
-            buffer[i] = c;
-        }
-    }
-    else
-    {
-        uint32_t *buffer = (uint32_t *)__get_buffer( disp );
-
-        for( int i = 0; i < __width * __height; i++ )
-        {
-            buffer[i] = c;
-        }
-    }
+    uint64_t c64 = ((uint64_t)c << 32) | c;
+    uint64_t *buffer = (uint64_t *)__get_buffer(disp);
+    for( int i = 0; i < len; i++ )
+        buffer[i] = c64;
 }
 
 /**
@@ -801,10 +785,10 @@ void graphics_draw_text( display_context_t disp, int x, int y, const char * cons
 					f_color = old_f_color;
 					text++;
 				}
-				break;
+                break;
             default:
                 graphics_draw_character( disp, tx, ty, *text );
-                tx += 5; ; // My font
+                tx += 5; // My font
                 break;
         }
 
@@ -857,7 +841,7 @@ void graphics_draw_sprite( display_context_t disp, int x, int y, sprite_t *sprit
  * </pre>
  *
  * @note This function does not support alpha blending for speed purposes.  For
- * alpha blending support, please see #graphics_draw_sprite_stride_trans
+ * alpha blending support, please see #graphics_draw_sprite_trans_stride
  *
  * @param[in] disp
  *            The currently active display context.
