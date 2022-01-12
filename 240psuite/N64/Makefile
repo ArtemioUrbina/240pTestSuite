@@ -13,7 +13,6 @@ TOOLDIR = $(CURDIR)/tools
 UCON64 = $(TOOLDIR)/ucon64
 LOADER = $(TOOLDIR)/unfloader
 
-LDSCRIPTSDIR = $(ROOTDIR)/ldscripts
 LDFLAGS = -Tn64.ld -Map map.txt --gc-sections
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/mips64-elf/lib

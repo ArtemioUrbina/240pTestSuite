@@ -100,17 +100,17 @@ extern void *__safe_buffer[];
  * This is white on 16 and 32 BPP modes 
  */
 static uint32_t f_color = 0xFFFFFFFF;
+
+static uint32_t old_f_color = 0xFFFFFFFF;
+
+static int highlight = 0;
+
 /** 
  * @brief Generic background color
  *
  * This is transparent on 16 and 32 BPP modes 
  */
 static uint32_t b_color = 0x00000000;
-
-
-static uint32_t old_f_color = 0xFFFFFFFF;
-
-static int highlight = 0;
 
 /**
  * @brief Return a 32-bit representation of an RGBA color

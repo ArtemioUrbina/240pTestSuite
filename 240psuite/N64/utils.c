@@ -25,6 +25,7 @@ int fh = 8; // font height
 
 void init_n64()
 {	
+	init_interupts();
 	init_video();
 	set_video();
 	dfs_init(DFS_DEFAULT_LOCATION);
