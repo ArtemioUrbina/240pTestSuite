@@ -17,7 +17,7 @@ LDFLAGS = -Tn64.ld -Map map.txt --gc-sections
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
-CCFLAGS = -std=gnu99 -march=vr4300 -mtune=vr4300 -G0 -O2 -Wall -Werror -c $(INCPATH)  -Wno-deprecated-declarations #ignore issues with controller for the moment
+CCFLAGS = -std=gnu99 -march=vr4300 -mtune=vr4300 -G0 -O2 -Wall -Werror -c $(INCPATH)
 ASFLAGS = -mtune=vr4300 -march=vr4300
 
 N64PREFIX = $(ROOTDIR)/bin/mips64-elf-

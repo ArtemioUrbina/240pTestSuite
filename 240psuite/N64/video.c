@@ -99,7 +99,8 @@ void set_video()
 	
 	video_set = 0;
 	
-	display_init_ex(useNTSC, current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
+	//display_init_ex(useNTSC, current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias); Can this be deprecated?!
+	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
 	register_VI_handler(vblCallback);
 	rdp_init();
 	

@@ -24,9 +24,9 @@ jobs:
     - name: Adjust and re-build libdragon source
       run: |
         # Copy the adjusted source into the ./libdragon folder
-        cp -f ${{ github.workspace }}/240psuite/N64/libdragonchanges/display.c ${{ github.workspace }}/libdragon/src
+        # cp -f ${{ github.workspace }}/240psuite/N64/libdragonchanges/display.c ${{ github.workspace }}/libdragon/src
         cp -f ${{ github.workspace }}/240psuite/N64/libdragonchanges/graphics.c ${{ github.workspace }}/libdragon/src
-        cp -f ${{ github.workspace }}/240psuite/N64/libdragonchanges/display.h ${{ github.workspace }}/libdragon/include
+        # cp -f ${{ github.workspace }}/240psuite/N64/libdragonchanges/display.h ${{ github.workspace }}/libdragon/include
         cp -f ${{ github.workspace }}/240psuite/N64/libdragonchanges/font.h ${{ github.workspace }}/libdragon/include
         # Rebuild libdragon for changed source
         cd ${{ github.workspace }}/libdragon/
