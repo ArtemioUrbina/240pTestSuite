@@ -107,6 +107,11 @@ static uint32_t f_color = 0xFFFFFFFF;
  */
 static uint32_t b_color = 0x00000000;
 
+
+static uint32_t old_f_color = 0xFFFFFFFF;
+
+static int highlight = 0;
+
 /**
  * @brief Return a 32-bit representation of an RGBA color
  *
