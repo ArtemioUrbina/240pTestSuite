@@ -14,11 +14,11 @@ UCON64 = $(TOOLDIR)/ucon64
 LOADER = $(TOOLDIR)/unfloader
 
 LDSCRIPTSDIR = $(ROOTDIR)/ldscripts
-LINK_FLAGS = -Tn64.ld -Map map.txt --gc-sections
+LDFLAGS = -Tn64.ld -Map map.txt --gc-sections
 
 LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
-CCFLAGS = -std=gnu99 -march=vr4300 -mtune=vr4300 -G 0 -O2 -Wall -Werror -Wno-unused-variable -c $(INCPATH) #-DUSE_N64MEM
+CCFLAGS = -std=gnu99 -march=vr4300 -mtune=vr4300 -G0 -O2 -Wall -Werror -c $(INCPATH)
 ASFLAGS = -mtune=vr4300 -march=vr4300
 
 N64PREFIX = $(ROOTDIR)/bin/mips64-elf-
@@ -28,7 +28,7 @@ LD = $(N64PREFIX)ld
 OBJCOPY = $(N64PREFIX)objcopy
 
 PROG_NAME = 240pSuite
-LIBS = -ldragon -lc -lm -ldragonsys #-ln64memory 
+LIBS = -ldragon -lc -lm -ldragonsys
 BITDEPTH = 16
 
 OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o menu.o help.o
@@ -40,7 +40,7 @@ $(PROG_NAME).z64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(CHKSUM64) $(PROG_NAME).z64
 
 $(PROG_NAME).elf : $(OBJS)
-	$(LD) -o $(PROG_NAME).elf $(OBJS) $(LINK_FLAGS) $(LIBPATH) $(LIBS)
+	$(LD) -o $(PROG_NAME).elf $(OBJS) $(LDFLAGS) $(LIBPATH) $(LIBS)
 
 drive.dfs: bitmaps
 	$(MKDFS) drive.dfs ./filesystem/
@@ -53,6 +53,7 @@ drive.dfs: bitmaps
 
 all: $(PROG_NAME).v64
 
+.PHONY: clean
 clean:
 	rm -f *.z64 *.elf *.o *.bin *.dfs filesystem/*.bin map.txt
 
