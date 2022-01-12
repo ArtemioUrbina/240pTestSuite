@@ -21,6 +21,7 @@
 
 #include "menu.h"
 #include "help.h"
+#include "language.h"
 
 int ChangeVideoEnabled = 1;
 int ShowMenu = 0;
@@ -341,7 +342,7 @@ void DrawCredits(int usebuffer)
 		rdp_end();  
 		
         DrawStringS(x, y, 0x00, 0xff, 0x00, "Code and Patterns:"); y += fh; 
-        DrawStringS(x, y, 0xff, 0xff, 0xff, "Artemio Urbina"); y += fh; 
+        DrawStringS(x, y, 0xff, 0xff, 0xff, "Artemio Urbina & Robin Jones"); y += fh; 
 
 		if(counter == 1)
 			sprintf(data, "aurbina@junkerhq.net");			
@@ -559,59 +560,59 @@ void ShowOptions(int usebuffer)
 		{     
 			switch(sel)
 			{			
-					case 1:						
-						EnablePAL = !EnablePAL;
-						break;
-					case 2:
-						o_current_gamma++;
-						if(o_current_gamma > GAMMA_CORRECT_DITHER)
-							o_current_gamma = GAMMA_NONE;
-						break;
-					case 3:
-						o_EnableDivot = !o_EnableDivot;
-						if(o_EnableDivot)
-						{
-							if(o_current_antialias >= ANTIALIAS_RESAMPLE_NODIVOT)
-								o_current_antialias -= 3;
-						}
+				case 1:						
+					EnablePAL = !EnablePAL;
+					break;
+				case 2:
+					o_current_gamma++;
+					if(o_current_gamma > GAMMA_CORRECT_DITHER)
+						o_current_gamma = GAMMA_NONE;
+					break;
+				case 3:
+					o_EnableDivot = !o_EnableDivot;
+					if(o_EnableDivot)
+					{
+						if(o_current_antialias >= ANTIALIAS_RESAMPLE_NODIVOT)
+							o_current_antialias -= 3;
+					}
+					else
+					{
+						if(o_current_antialias < ANTIALIAS_RESAMPLE_NODIVOT)
+							o_current_antialias += 3;
+					}
+					break;
+				case 4:
+					if(o_EnableDivot)
+					{
+						o_current_antialias++;
+						if(o_current_antialias > ANTIALIAS_RESAMPLE_FETCH_ALWAYS)
+							o_current_antialias = ANTIALIAS_RESAMPLE;
+					}
+					else
+					{
+						o_current_antialias++;
+						if(o_current_antialias > ANTIALIAS_RESAMPLE_FETCH_ALWAYS_NODIVOT)
+							o_current_antialias = ANTIALIAS_RESAMPLE_NODIVOT;
+					}
+					break;
+				case 5:						
+					o_EnableDither = !o_EnableDither;
+					if(o_current_bitdepth != DEPTH_32_BPP)
+					{
+						if(o_EnableDither)
+							o_current_bitdepth = DEPTH_16_BPP_DITHER;
 						else
-						{
-							if(o_current_antialias < ANTIALIAS_RESAMPLE_NODIVOT)
-								o_current_antialias += 3;
-						}
-						break;
-					case 4:
-						if(o_EnableDivot)
-						{
-							o_current_antialias++;
-							if(o_current_antialias > ANTIALIAS_RESAMPLE_FETCH_ALWAYS)
-								o_current_antialias = ANTIALIAS_RESAMPLE;
-						}
-						else
-						{
-							o_current_antialias++;
-							if(o_current_antialias > ANTIALIAS_RESAMPLE_FETCH_ALWAYS_NODIVOT)
-								o_current_antialias = ANTIALIAS_RESAMPLE_NODIVOT;
-						}
-						break;
-					case 5:						
-						o_EnableDither = !o_EnableDither;
-						if(o_current_bitdepth != DEPTH_32_BPP)
-						{
-							if(o_EnableDither)
-								o_current_bitdepth = DEPTH_16_BPP_DITHER;
-							else
-								o_current_bitdepth = DEPTH_16_BPP;
-						}
-						break;
-					case 7:
-						if(current_antialias != o_current_antialias || EnableDither != o_EnableDither || 
-							current_bitdepth != o_current_bitdepth || EnableDivot != o_EnableDivot || 
-							current_gamma != o_current_gamma)
-							warning = 100;
-						else
-							close = 1;
-						break;
+							o_current_bitdepth = DEPTH_16_BPP;
+					}
+					break;
+				case 7:
+					if(current_antialias != o_current_antialias || EnableDither != o_EnableDither || 
+						current_bitdepth != o_current_bitdepth || EnableDivot != o_EnableDivot || 
+						current_gamma != o_current_gamma)
+						warning = 100;
+					else
+						close = 1;
+					break;
 			} 		
 		}
 		

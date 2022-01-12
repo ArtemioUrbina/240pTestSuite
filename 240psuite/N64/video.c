@@ -62,10 +62,10 @@ void reset_video_vars()
 	current_buffers = 2;
 	current_gamma = GAMMA_NONE;
 	current_antialias = ANTIALIAS_RESAMPLE; // ANTIALIAS_OFF doesn't work in 16BPP
-	EnablePAL = 0;
+	EnablePAL = !isNTSC();
 	EnableDivot = 1;
 	EnableDither = 0;
-	useNTSC = 1;
+	useNTSC = isNTSC();
 }
 
 void reset_video()
@@ -122,6 +122,14 @@ void set_video()
 			dW = 512;
 			dH = 480;
 			break;
+		case RESOLUTION_512x240: /* high-res progressive */
+			dW = 512;
+			dH = 240;
+			break;
+		case RESOLUTION_640x240: /* high-res progressive */
+			dW = 640;
+			dH = 240;
+			break;
 	}
 	
 	if(current_bitdepth == DEPTH_16_BPP)
@@ -150,11 +158,11 @@ void GetDisplay()
 	ClearScreen();
 }
 
-int isNTSC()
-{
+int isNTSC() //TODO: this still seems to be insufficent for MPAL consoles
+{ //TODO: libdragon should now support this!
 	int tv; 
 	
-	tv = *(int *) 0x80000300;
+	tv = *(unsigned long *) 0x80000300;
 	return tv;
 }
 
@@ -188,6 +196,12 @@ void GetVideoModeStr(char *res, int shortdesc)
 			case RESOLUTION_512x480:
 				sprintf(res, "Video: 512x480");
 				break;
+			case RESOLUTION_512x240:
+				sprintf(res, "Video: 512x240");
+				break;
+			case RESOLUTION_640x240:
+				sprintf(res, "Video: 640x240");
+				break;
 		}
 	}
 	else
@@ -205,6 +219,12 @@ void GetVideoModeStr(char *res, int shortdesc)
 				break;
 			case RESOLUTION_512x480:
 				sprintf(res, "[512]");
+				break;
+			case RESOLUTION_512x240:
+				sprintf(res, "[512p]");
+				break;
+			case RESOLUTION_640x240:
+				sprintf(res, "[640p]");
 				break;
 		}
 
@@ -339,6 +359,14 @@ void DarkenScreenBuffer(int amount)
 			}
 		}
 	}
+}
+
+unsigned short vScreenResolutionW(){
+    return dW;
+}
+
+unsigned short vScreenResolutionH(){
+    return dH;
 }
 
 

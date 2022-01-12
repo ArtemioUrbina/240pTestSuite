@@ -121,16 +121,16 @@ void SoftDrawImageSolid(int x, int y, sprite_t *image)
 	graphics_draw_sprite(__dc, x, y, image);
 }
 
-// void red_createflags()
+// void red_createflags() //TODO: commment out as not sure whether this is actually needed!
 // {
 
-// 	uint32_t flag1;
+// 	uint32_t flag1; 
 // 	//int32_t flag2;
 	
 // 	// 0xEFA000FF 
 // 	// 11 101111 1 0 10 000 0000 000 00 10 11 1111
 // 	// 11 (filler) 10 1111 (opcode) 0 (Atomic�Primitive�Enable) 10 (Cycle�Type)
-// 	// 0 (Perspective�Correction Enable) 0 (Detail Texture�Enable) 0 (Sharpen Texture�Enable)
+// 	// 0 (PerspectiveCorrection Enable) 0 (Detail Texture�Enable) 0 (Sharpen Texture�Enable)
 // 	// 0 (Texture�LOD�Enable) 0 (TLUT Enable) 0 (TLUT Type) 0 (Sample�Type) 
 // 	// 0 (Mid�Texel Enable�) 0 (Bi�Linear�Interpolation 0) 0 (Bi�Linear�Interpolation 1) 
 // 	// 0 (Color Convert) 0 (Chroma�Key enable ) 11 (RGB Dither�Type�) 11 (Alpha�Dither�Type)

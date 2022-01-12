@@ -202,5 +202,3 @@ void  HelpWindow(char *filename, int usebuffer)
 #endif
 	FreeImage(&back);
 }
-
-
