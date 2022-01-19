@@ -1,0 +1,10 @@
+# Add local files and folders here to ignore when uploading to a git repository from your local machine.
+
+# N64 specific
+./libdragon/*
+*.z64
+
+
+# Build artifacts
+**/build/*
+**/out/*
