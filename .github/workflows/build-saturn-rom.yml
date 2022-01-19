@@ -1,0 +1,26 @@
+name: BUILD-SEGA_SATURN-ROM
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Build ROM
+      run: |
+        cd ${{ github.workspace }}/240psuite/Saturn/
+        make
+
+    - name: "Upload built ROMs to artifacts"
+      uses: actions/upload-artifact@v2
+      with:
+        name: SEGA_SATURN-ROM
+        path: |
+          ${{ github.workspace }}/**/240psuite/Saturn/*.COF
