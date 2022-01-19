@@ -65,7 +65,7 @@ SP_Init:
 		rts							; Return to BIOS (which will then call SP_Main)
 
 DriveInit_Params:
-		dc.b	1, $FF				; first track, last track (all)
+		dc.w	$01FF				; first track, last track (all)
 		even				    	; just in case
 Buffer:
 		dc.l	2
@@ -124,6 +124,11 @@ OpTable:
 Op_Null:
 		rts
 		
+wait_BIOS:
+		BIOS_CDBCHK						; Check BIOS status
+		bcs		wait_BIOS				; If not ready, branch
+		rts
+		
 Op_LoadBootFile:
 		lea		@bootfile(pc),a0	; Name pointer
 		bsr		FindFile		    ; Find File returns params in the right format for ReadCD
@@ -140,11 +145,15 @@ Op_GetWordRAM:
 		rts
 
 Op_InitCD:
-		moveq	#0,d0
+		BIOS_MSCSTOP
+		bsr		wait_BIOS
 		lea		DriveInit_Params(pc),a0
 		BIOS_DRVINIT
+		bsr		wait_BIOS
 		BIOS_CDCSTOP
+		bsr		wait_BIOS
 		BIOS_CDCSTAT
+		bsr		wait_BIOS
 		bsr		InitPCM
         rts
 	
@@ -156,31 +165,41 @@ Op_PlayCD240:
 		move.w	#3,d1
 		jmp PlayCDDA
 		
-PlayCDDA:
-		lea		(Buffer).l,a0
+PlayCDDA:						;expects track number in d1 from previous functions
+		BIOS_CDCSTOP
+		bsr		wait_BIOS
+		BIOS_MSCSTOP
+		bsr		wait_BIOS
+		
 		move.w	d1,(a0)
 		BIOS_MSCPLAY1
+		bsr		wait_BIOS
 		rts
 		
 Op_UnPauseCD:
 		BIOS_MSCPAUSEOFF
+		bsr		wait_BIOS
 		rts
 		
 Op_SeekCDMDF:
-        move.w	#$ffff,d1    			;Removes CD Pause timeout, reset at stop
-        BIOS_CDBPAUSE
+		move.w	#$ffff,d1				;Removes CD Pause timeout, reset at stop
+		BIOS_CDBPAUSE
+		bsr		wait_BIOS
 
 		move.w	#2,d1
 		lea		(Buffer).l,a0
 		move.w	d1,(a0)
 		BIOS_MSCSEEK1
+		bsr		wait_BIOS
 		rts
 
 Op_StopCD:
 		BIOS_MSCSTOP
-
-        move.w	#$1194,d1    			;Sets the CD Pause timeout to the minimum value after stop
+		bsr		wait_BIOS
+		
+        move.w	#$4000,d1				;Sets the CD Pause timeout to $4000 value after stop
         BIOS_CDBPAUSE
+		bsr		wait_BIOS
 		rts
 
 Op_PlayPCM:
@@ -509,7 +528,7 @@ FindFile:
 		move.b	17(a2),d1
 						
 		lsr.l	#8,d1			; Bitshift filesize (to get sector count)
-		lsr.l	#3,d1
+		lsr.l	#3,d1			; if file is not aligned to 2048 bytes, will discard
 	
 		pop	a1/a2/a6			; Restore used registers	
 		rts

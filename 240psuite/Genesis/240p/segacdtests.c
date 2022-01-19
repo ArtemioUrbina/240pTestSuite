@@ -5,7 +5,7 @@
 #include "res.h"
 
 // Detect RetroArch emulation Issue when accessing BIOS for CRC
-#define BIOS_EMU_ISSUE
+//#define BIOS_EMU_ISSUE
 
 uint32_t _state = ~0L;
 #ifndef SEGACD
@@ -158,7 +158,7 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 #ifndef SEGACD		
 		// The BIOS is overlapped with a shadow of the HINT register by 
 		// the ASIC in cart mode, and that alters the CRC
-		if(hIntPatchNeeded && patch == 1)
+		if(patch == 1)
 		{
 			if(address == 0x72)
 				data = 0xFD;
@@ -245,7 +245,7 @@ void PrintBIOSInfo(uint32_t address)
 {
 	uint8_t *bios = NULL;	
 	char	buffer[50];
-	int		i = 0, j = 0, data[] = { 16, 16, 17, 15, 16, 48, 14, -2, 16, -4, -4, -4, -4, -2, -2, -4, -4, -12, -40, 16, 0};
+	int		i = 0, j = 0, data[] = { 16, 16, 17, 15, 16, 48, 15, -1, 16, -4, -4, -4, -4, -2, -2, -4, -4, -12, -40, 16, 0};
 	
 
 	bios = (uint8_t*)(address+0x0100);
