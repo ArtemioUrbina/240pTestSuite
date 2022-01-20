@@ -3,9 +3,11 @@ name: BUILD-NINTENDO_SNES-ROM
 on:
   push:
     paths:
+    - '.github/workflows/build-snes-rom.yml'
     - '240psuite/SNES/**'
   pull_request:
     paths:
+    - '.github/workflows/build-snes-rom.yml'
     - '240psuite/SNES/**'
 
 jobs:

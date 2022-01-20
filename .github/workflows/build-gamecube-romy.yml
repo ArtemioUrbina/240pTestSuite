@@ -3,14 +3,17 @@ name: BUILD-NINTENDO_GAMECUBE-ROM
 on:
   push:
     paths:
+    - '.github/workflows/build-gamecube-rom.yml'
     - '240psuite/Wii/**'
   pull_request:
     paths:
+    - '.github/workflows/build-gamecube-rom.yml'
     - '240psuite/Wii/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: devkitpro/devkitppc:latest
 
     steps:
     - uses: actions/checkout@v2
@@ -20,11 +23,11 @@ jobs:
     - name: Build ROM
       run: |
         cd ${{ github.workspace }}/240psuite/Wii/
-        make gc
+        make -f Makefile.gc
 
     - name: "Upload built ROMs to artifacts"
       uses: actions/upload-artifact@v2
       with:
         name: NINTENDO_GAMECUBE-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/Wii/*.WIA
+          ${{ github.workspace }}/**/240psuite/Wii/*.dol

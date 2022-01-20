@@ -3,9 +3,11 @@ name: BUILD-SEGA_GENESIS-ROM
 on:
   push:
     paths:
+    - '.github/workflows/build-genesis-rom.yml'
     - '240psuite/Genesis/**'
   pull_request:
     paths:
+    - '.github/workflows/build-genesis-rom.yml'
     - '240psuite/Genesis/**'
 
 jobs:
