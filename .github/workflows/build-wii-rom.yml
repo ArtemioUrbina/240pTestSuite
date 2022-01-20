@@ -12,7 +12,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitppc:latest
 
     steps:
     - uses: actions/checkout@v2
@@ -21,19 +22,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        # sudo apt update
-        # sudo apt upgrade
-        sudo apt-get install -y build-essential git libpng-dev gdebi-core
-
-    - name: Download and install extra dependencies
-      run: |
-        curl -L https://github.com/devkitPro/pacman/releases/download/v1.0.2/devkitpro-pacman.amd64.deb > devkitpro-pacman.amd64.deb
-        sudo gdebi --n devkitpro-pacman.amd64.deb
-
-    - name: Install SDK
-      run: |
-        sudo pacman -Sy
-        sudo pacman -S wii-dev
+        sudo apt-get install -y --no-install-recommends gcc build-essential
 
     - name: Build ROM
       run: |
