@@ -10,7 +10,7 @@ SRC= src
 RES= res
 INCLUDE= inc
 
-TRIMFSIMG = $(SCD_LOADER)/trimfsimage
+TRIMFSIMG = $(SCD_LOADER)/trimiso
 MKISOFS = $(SCD_LOADER)/mkisofs
 ASM68K = $(SCD_LOADER)/ASM68K
 
