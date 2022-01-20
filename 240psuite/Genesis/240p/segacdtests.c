@@ -4,8 +4,13 @@
 #include "main.h"
 #include "res.h"
 
+#define BIOS_SIZE	0x20000
+
 // Detect RetroArch emulation Issue when accessing BIOS for CRC
-//#define BIOS_EMU_ISSUE
+#define BIOS_EMU_ISSUE
+
+// Allow use of Mirror BIOS for CRC, not used
+//#define BIOS_MIRROR_ALLOW
 
 uint32_t _state = ~0L;
 #ifndef SEGACD
@@ -320,12 +325,12 @@ int CheckSCDRAMWithValue(char * message, u32 start, u32 end, u8 value, int pos)
 	return 1;
 }
 
-void WaitKey()
+u16 WaitKey(char *message)
 {
 	u16 buttons, oldButtons = 0xffff, pressedButtons, close = 0;
 	
 	VDP_Start();
-	VDP_drawTextBG(APLAN, "PRESS A", TILE_ATTR(PAL1, 0, 0, 0), 16, 22);
+	VDP_drawTextBG(APLAN, message ? message : "     PRESS ANY BUTTON     ", TILE_ATTR(PAL1, 0, 0, 0), 8, 22);
 	VDP_End();
 
 	while(!close)
@@ -335,9 +340,16 @@ void WaitKey()
 		oldButtons = buttons;
 
 		if(pressedButtons & BUTTON_A)
-			close = 1;
+			return BUTTON_A;
+		if(pressedButtons & BUTTON_B)
+			return BUTTON_B;
+		if(pressedButtons & BUTTON_C)
+			return BUTTON_C;
+		if(pressedButtons & BUTTON_START)
+			return BUTTON_START;
 		VDP_waitVSync();
 	}
+	return 0;
 }
 
 
@@ -358,7 +370,7 @@ void Z80RamTest()
 	if(doZ80Lock)
 		Z80_releaseBus();
 
-	WaitKey();
+	WaitKey(NULL);
 }
 
 /*************** end Z80 **********/
@@ -391,6 +403,7 @@ const static BIOSID bioslist[] = {
 { 0x50CD3D23, "LA 1.04" },		// laseractive_bios_1_04_u.bin
 { 0x3B10CF41, "LA 1.02" },		// laseractive_bios_1_02_u.bin
 { 0x474AAA44, "LA JP 1.05" },	// mega-ld 1.05 bios.bin
+{ 0x1493522C, "LA JP 1.05" },	// PD6126E dump by zaxour 93.833923% identical to above
 { 0x00EEDB3A, "LA JP 1.02" },	// laseractive_bios_1_02_j.bin
 { 0x290F8E33, "X'EYE US 2.00"},	// g304.bin
 { 0xD21FE71D, "WM JP 1.00" },	// g301.bin
@@ -455,6 +468,7 @@ const static BIOS_SW biosSwapped[] = {
 { 0x3B10CF41, 0x3885B28C }, // laseractive_bios_1_02_u.bin
 { 0x50CD3D23, 0x2365BFBB }, // laseractive_bios_1_04_u.bin
 { 0x474AAA44, 0x046B1332 }, // mega-ld 1.05 bios.bin
+{ 0x1493522C, 0xFA64FC8E }, // mega-ld 1.05 bios PD6126E
 { 0x529AC15A, 0x2BF760AF }, // megacd_model1_bios_1_00_e.bin
 { 0xF18DDE5B, 0x03134289 }, // mpr-14088c.bin
 { 0x79F85384, 0x3773D5AA }, // mpr-14088h.bin
@@ -636,7 +650,7 @@ void doBIOSID(uint32_t checksum, uint32_t address)
 		VDP_End();
 		
 		// Calculate CRC with byteswapped HINT register
-		bschecksum = CalculateCRC(address, 0x20000, 2);
+		bschecksum = CalculateCRC(address, BIOS_SIZE, 2);
 		
 		ShowMessageAndData("CD BIOS CRC32:", bschecksum, 8, PAL1, 6, 19);
 		
@@ -672,12 +686,41 @@ void doBIOSID(uint32_t checksum, uint32_t address)
 	return;
 }
 
-void CheckSegaCDBIOSCRC(uint32_t address)
+void CheckSegaCDBIOSCRC()
 {
+	uint8_t		cmd = 0;
 	uint32_t	checksum = 0;
+	uint32_t 	address = 0;
 	
-	ShowMessageAndData("Sega CD BIOS Data at", address, PAL1, 8, 6, 4);
-	PrintBIOSInfo(address);
+#ifndef SEGACD
+	address = 0x400000;
+#endif
+
+	do
+	{
+		ShowMessageAndData("Sega CD BIOS Data at", address, PAL1, 8, 6, 4);
+		PrintBIOSInfo(address);
+
+#ifndef BIOS_MIRROR_ALLOW		
+		cmd = WaitKey("'A' for CRC 'B' to exit");
+#else
+		cmd = WaitKey("'A' for CRC 'C' for Mirror");
+		if(cmd == BUTTON_C)
+		{
+			if(address & 0x40000)
+#ifndef SEGACD
+				address = 0x400000;
+#else
+				address = 0;
+#endif
+			else
+				address += 0x40000;
+		}
+#endif
+		if(cmd == BUTTON_B)
+			return;
+	}
+	while(cmd != BUTTON_A);
 	
 	VDP_Start();
 	VDP_drawTextBG(APLAN, "Calculating, please wait", TILE_ATTR(PAL1, 0, 0, 0), 7, 19);
@@ -685,14 +728,14 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 
 #ifndef SEGACD
 	// If in cart mode, patch the BIOS due to HINT
-	checksum = CalculateCRC(address, 0x20000, 1);
+	checksum = CalculateCRC(address, BIOS_SIZE, 1);
 #else
-	checksum = CalculateCRC(address, 0x20000, 0);
+	checksum = CalculateCRC(address, BIOS_SIZE, 0);
 #endif
 
 #ifdef BIOS_EMU_ISSUE
 	if(DetectEmulationIssue())
-		ShowMessageAndData("Emu issue (0xFF)@:", address+0x70, 8, PAL1, 5, 18);
+		ShowMessageAndData("Emu issue (0x00)@:", address+0x70, 8, PAL1, 5, 18);
 #endif
 		
 	ShowMessageAndData("CD BIOS CRC32:", checksum, 8, PAL1, 6, 19);
@@ -700,7 +743,7 @@ void CheckSegaCDBIOSCRC(uint32_t address)
 	VDP_waitVSync();	
 	doBIOSID(checksum, address);
 
-	WaitKey();
+	WaitKey(NULL);
 }
 
 #define MMOD_REGISTER	0xA12002
@@ -756,7 +799,7 @@ void checkRegisterBYTEValues(char *title, u32 reg)
 	good += checkRegisterBYTE(reg, 0xAA, "Setting to 0xAA", 12);
 	good += checkRegisterBYTE(reg, 0xFF, "Setting to 0xFF", 14);
 	if(good) checkRegisterBYTE(reg, 0, "Setting to 0x00", 16);
-	WaitKey();
+	WaitKey(NULL);
 }
 
 #endif
@@ -811,7 +854,7 @@ void checkRegisterWORDValues(char *title, u32 reg)
 	good += checkRegisterWORD(reg, 0xAAAA, "Setting to 0xAAAA", 12);
 	good += checkRegisterWORD(reg, 0xFFFF, "Setting to 0xFFFF", 14);
 	if(good) checkRegisterWORD(reg, 0, "Setting to 0x0000", 16);
-	WaitKey();
+	WaitKey(NULL);
 }
 
 
@@ -860,7 +903,7 @@ void CheckHintRegister()
 		ShowMessageAndData("HINT Shadow OK", 0x72, 8, PAL1, 6, 13);
 	else
 		ShowMessageAndData("HINT Shadow FAILED", 0x72, 8, PAL3, 4, 13);
-	WaitKey();
+	WaitKey(NULL);
 }
 
 #ifndef SEGACD
@@ -940,14 +983,14 @@ void CheckSCDProgramRAM()
 		VDP_End();
 		
 		banks = 1;
-		WaitKey();
+		WaitKey(NULL);
 	}
 	else
 	{
 		VDP_Start();
 		ShowMessageAndData("Bank Register OK", MMOD_REGISTER, 7, PAL2, 7, 14);
 		VDP_End();
-		WaitKey();
+		WaitKey(NULL);
 	}
 	
 	VDP_Start();
@@ -963,7 +1006,7 @@ void CheckSCDProgramRAM()
 		VDP_drawTextBG(APLAN, "Try Memory Viewer at address", TILE_ATTR(PAL2, 0, 0, 0), 5, 14);
 		VDP_drawTextBG(APLAN, "above and use C.", TILE_ATTR(PAL2, 0, 0, 0), 5, 15);
 		VDP_End();
-		WaitKey();
+		WaitKey(NULL);
 		return;
 	}
 	
@@ -984,7 +1027,7 @@ void CheckSCDProgramRAM()
 		good += CheckSCDRAMWithValue("Setting to 0xFF", 0x420000, 0x440000, 0xFF, 14);
 		if(good == 3) CheckSCDRAMWithValue("Setting to 0x00", 0x420000, 0x440000, 0x00, 16);
 
-		WaitKey();
+		WaitKey(NULL);
 		VDP_Start();
 		VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
 		VDP_End();
@@ -1003,7 +1046,7 @@ void CheckSCDWordRAM()
 	good += CheckSCDRAMWithValue("Setting to 0xFF", 0x600000, 0x640000, 0xFF, 14);
 	if(good == 3) CheckSCDRAMWithValue("Setting to 0x00", 0x600000, 0x640000, 0x00, 16);
 
-	WaitKey();
+	WaitKey(NULL);
 }
 #endif
 
@@ -1011,7 +1054,7 @@ void CheckSCDWordRAM()
 
 void MemViewer(uint32_t address)
 {
-	u8 			redraw = 1, docrc = 0, locpos = 1, bank = 0, i = 0;
+	u8 			redraw = 1, docrc = 0, locpos = 1, bank = 0, i = 0, ascii = 0;
 	uint32_t	crc = 0, locations[MAX_LOCATIONS] = { 0, 0x020000, 0x200000, 0x400000, 0x420000, 0x600000, 0xFF0000 };
 	u16 		buttons, oldButtons = 0xffff, pressedButtons, close = 0;
 
@@ -1056,9 +1099,9 @@ void MemViewer(uint32_t address)
 				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL2, 0, 0, 0), 32, 14);
 			}
 #ifdef SEGACD
-			if(address >= 0x020000 && address <= 0x040000)
+			if(address >= 0x020000 && address < 0x040000)
 #else
-			if(address >= 0x420000 && address <= 0x440000)
+			if(address >= 0x420000 && address < 0x440000)
 #endif
 			{
 				ShowMessageAndData("PB", bank, 2, PAL1, 33, 3);
@@ -1070,7 +1113,18 @@ void MemViewer(uint32_t address)
 			{
 				for(j = 0; j < 16; j++)
 				{
-					intToHex(mem[i*16+j], buffer, 2);
+					if(!ascii)
+						intToHex(mem[i*16+j], buffer, 2);
+					else
+					{
+						uint16_t c;
+						
+						buffer[0] = 20;
+						buffer[1] = 0;
+						c = mem[i*16+j];
+						if(c >= 32 && c <= 127)
+							buffer[0] = c;
+					}
 					VDP_Start();
 					VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), j*2, i);
 					VDP_End();
@@ -1083,7 +1137,7 @@ void MemViewer(uint32_t address)
 		buttons = JOY_readJoypad(JOY_1);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
-
+		
 		if(pressedButtons & BUTTON_A)
 		{
 			docrc = !docrc;
@@ -1101,17 +1155,19 @@ void MemViewer(uint32_t address)
 		
 		if(pressedButtons & BUTTON_C)
 		{
-		#ifdef SEGACD
-			if(address >= 0x020000 && address <= 0x040000)
+#ifdef SEGACD
+			if(address >= 0x020000 && address < 0x040000)
 #else
-			if(address >= 0x420000 && address <= 0x440000)
+			if(address >= 0x420000 && address < 0x440000)
 #endif
 			{
 				if(++bank > 3)
 					bank = 0;
 				SetSCDRegisterWORD(MMOD_REGISTER, bank << 6);
-				redraw = 1;
 			}
+			else
+				ascii = !ascii;
+			redraw = 1;
 		}
 		
 		if(pressedButtons & BUTTON_START)
@@ -1296,11 +1352,7 @@ void SegaCDMenu()
 			switch (cursel)
 			{
 			case 1:
-#ifdef SEGACD
-				CheckSegaCDBIOSCRC(0);
-#else
-				CheckSegaCDBIOSCRC(0x400000);
-#endif
+				CheckSegaCDBIOSCRC();
 				break;
 			case 2:
 				CheckHintRegister();

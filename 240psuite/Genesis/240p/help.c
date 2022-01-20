@@ -707,7 +707,8 @@ void DrawHelp(int option)
 				case 2:
 					
 					VDP_drawTextBG(APLAN, "- Button C switches banks in", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "SCD Program RAM.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "SCD Program RAM, or switches", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "to ASCII mode.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 #ifndef SEGACD	
 					y++;
 					VDP_drawTextBG(APLAN, "With a working SCD system", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);

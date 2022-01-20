@@ -38,6 +38,10 @@ WAVEdat		equ	$FF2001
 
 ; clock cycle delay for PCM ops
 PCMREGDELAY	equ	5
+
+; CD Tracks
+MDFCDTrack	equ	2
+MscCDTrack	equ	3
 		
 ; =======================================================================================
 ;  Sub Module Header
@@ -67,8 +71,7 @@ SP_Init:
 DriveInit_Params:
 		dc.w	$01FF				; first track, last track (all)
 		even				    	; just in case
-Buffer:
-		dc.l	2
+
 ; =======================================================================================
 ;  SP_Main
 ;  Main routine, this is the core of the SP Operating System
@@ -100,11 +103,13 @@ OpTable:
 		bra.w	Op_Null			    ; Null Operation
 		bra.w	Op_LoadBootFile		; Load File (from ISO9660 filesystem)
 		bra.w	Op_GetWordRAM		; Give WordRAM to Main CPU
-        bra.w	Op_InitCD		    ; Init
+		bra.w	Op_InitCD		    ; Init
 		bra.w	Op_SeekCDMDF	    ; Seek CD-DA Track 2 for MDFourier
 		bra.w	Op_UnPauseCD	    ; Play (unpause) CD-DA Track
-        bra.w	Op_StopCD		    ; Stop CD-DA Track
-		bra.w	Op_PlayCDMDF	    ; Play CD-DA Track 2 for the MDFourier Debug
+		bra.w	Op_StopCD		    ; Stop CD-DA Track
+		bra.w	Op_RemovePauseLimit	; Removes the pause limit for MDF wait 
+		bra.w	Op_ResetPauseLimit	; Resets the pause limit after MDF 
+		bra.w	Op_PlayCDMDF	    ; Play CD-DA Track 2 for the MDFourier
 		bra.w	Op_PlayCD240	    ; Play CD-DA Track 3 for the Suite
 		bra.w	Op_PlayPCM			; Play Full PCM Memory
 		bra.w	Op_StopPCM			; Stop PCM Playback
@@ -113,7 +118,7 @@ OpTable:
 		bra.w	Op_SetPCMCenter		; Set PCM for Both Channels
 		bra.w	Op_IncremetPCMFreq	; Increment the internal value by 1
 		bra.w	Op_DecrementPCMFreq	; Decrement the internal value by 1
-		bra.w	Op_TestPCM			; Test PCM Frequencies
+		bra.w	Op_TestPCM			; play PCM with custom Frequencies
 		bra.w	Op_SetSamplesSweep	; Normal samples for sweep 32552hz
 		bra.w	Op_SetSamplesTest	; Sound Test PCM 
 		bra.w	Op_SetSamplesTest2	; Sound Test PCM 2
@@ -122,11 +127,6 @@ OpTable:
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
 
 Op_Null:
-		rts
-		
-wait_BIOS:
-		BIOS_CDBCHK						; Check BIOS status
-		bcs		wait_BIOS				; If not ready, branch
 		rts
 		
 Op_LoadBootFile:
@@ -158,36 +158,32 @@ Op_InitCD:
         rts
 	
 Op_PlayCDMDF:
-		move.w	#2,d1
+		move.w	#MDFCDTrack,d1
 		jmp PlayCDDA
 		
 Op_PlayCD240:
-		move.w	#3,d1
+		move.w	#MscCDTrack,d1
 		jmp PlayCDDA
-		
-PlayCDDA:						;expects track number in d1 from previous functions
-		BIOS_CDCSTOP
-		bsr		wait_BIOS
-		BIOS_MSCSTOP
-		bsr		wait_BIOS
-		
-		move.w	d1,(a0)
-		BIOS_MSCPLAY1
-		bsr		wait_BIOS
-		rts
 		
 Op_UnPauseCD:
 		BIOS_MSCPAUSEOFF
 		bsr		wait_BIOS
 		rts
-		
-Op_SeekCDMDF:
-		move.w	#$ffff,d1				;Removes CD Pause timeout, reset at stop
+
+Op_RemovePauseLimit:
+		move.w	#$ffff,d1				;Removes CD Pause timeout
 		BIOS_CDBPAUSE
 		bsr		wait_BIOS
-
-		move.w	#2,d1
-		lea		(Buffer).l,a0
+		rts
+		
+Op_ResetPauseLimit:
+		move.w	#$4000,d1				;Sets the CD Pause timeout to $4000 value after stop
+		BIOS_CDBPAUSE
+		bsr		wait_BIOS
+		rts
+	
+Op_SeekCDMDF:
+		move.w	#MDFCDTrack,d1
 		move.w	d1,(a0)
 		BIOS_MSCSEEK1
 		bsr		wait_BIOS
@@ -196,13 +192,15 @@ Op_SeekCDMDF:
 Op_StopCD:
 		BIOS_MSCSTOP
 		bsr		wait_BIOS
-		
-        move.w	#$4000,d1				;Sets the CD Pause timeout to $4000 value after stop
-        BIOS_CDBPAUSE
-		bsr		wait_BIOS
 		rts
 
 Op_PlayPCM:
+		move.b  #$08, FDHdat			; ReSet H byte of sample rate (real approx 32552KHz)
+		bsr		PCMWait
+
+		move.b  #$00, FDLdat			; ReSet L byte of sample rate (real approx 32552KHz)
+		bsr		PCMWait
+		
 		move.b	#$FF, ENVdat			; Set ENV to FF - full volume
 		bsr		PCMWait
 			
@@ -210,26 +208,17 @@ Op_PlayPCM:
 		bsr		PCMWait
 
 		move.b	#$FE, ONOFFdat			; Set channel 1 to on
-	    bsr		PCMWait
+		bsr		PCMWait
 		rts
 		
 Op_StopPCM:			
 		move.b	#$FF, ONOFFdat			; Set all audio channels to off
-	    bsr		PCMWait
+		bsr		PCMWait
 		
 		move.b	#$00, ENVdat			; Set ENV to 00 - Muted
 		bsr		PCMWait
-		
-		move.b  #$08, FDHdat			; Set H byte of sample rate 16khz at 0x07DD
-	    bsr		PCMWait
-    
-	    move.b  #$00, FDLdat			; Set L byte of sample rate
-	    bsr		PCMWait
 		rts
 
-PCMTestFreq:
-		dc.w	$0800
-		
 Op_IncremetPCMFreq:		
 		add.w	#$1,PCMTestFreq	
 		rts
@@ -250,133 +239,130 @@ Op_TestPCM:
 	
 		bsr		Op_PlayPCM
 		rts
-
-InitPCM:
-	    move.b	#$FF, ONOFFdat			; Set all audio channels to off
-	    bsr		PCMWait
-	
-	    move.b	#$C0, CTRLdat			; Select channel 0
-	    bsr		PCMWait
-    
-	    move.b	#$FF, PANdat			; Set full L/R channels
-	    bsr		PCMWait
-    
-	    move.b	#$00, ENVdat			; Set ENV to 00 - silent
-	    bsr		PCMWait
-    
-	    move.b	#$00, STdat				; Set start address to $0000
-	    bsr		PCMWait
-    
-	    move.b  #$ff, LSHdat			; Set loop high address to $FF
-	    bsr		PCMWait
-    
-	    move.b  #$f0, LSLdat			; Set loop low address to $F0 where FF is at for loop
-	    bsr		PCMWait
-    
-	    move.b  #$08, FDHdat			; Set H byte of sample rate 16khz at 0x08DD (Docs are wrong, check MDFourier site)
-	    bsr		PCMWait
-    
-	    move.b  #$00, FDLdat			; Set L byte of sample rate
-	    bsr		PCMWait
-	    rts
 		
 Op_SetPCMLeft:
 		move.b	#$0F, PANdat			; Set full Left
-	    bsr		PCMWait
+		bsr		PCMWait
 		rts
 		
 Op_SetPCMRight:
 		move.b	#$F0, PANdat			; Set full Right
-	    bsr		PCMWait
+		bsr		PCMWait
 		rts
 		
 Op_SetPCMCenter:
 		move.b	#$FF, PANdat			; Set full L/R channels
-	    bsr		PCMWait
+		bsr		PCMWait
 		rts
-
-PCMWait:
-	    move.l	d0, -(a7)
-	    move.w  #PCMREGDELAY, d0
-
-PCMWaitLoop:
-	    dbra	d0, PCMWaitLoop
-	    move.l	(a7)+, d0
-	    rts
-
-pcmsweepfile:
-		dc.b	'SWEEP.PCM',0
-		align 2
 		
 Op_SetSamplesSweep:
 		lea		pcmsweepfile(pc),a0	; Sweep 1-16khz
 		bsr		LoadPCMFile
 		rts
 
-pcmssin32000:
-		dc.b	'SIN32000.PCM',0
-		align 2
-		
 Op_SetSampSin32000:
 		lea		pcmssin32000(pc),a0	; 1khz sine wave at 32000hz
 		bsr		LoadPCMFile
 		rts
 		
-pcmsincomm:
-		dc.b	'SIN32552.PCM',0
-		align 2
-		
 Op_SetSampSin32552:
 		lea		pcmsincomm(pc),a0	; 1khz sine wave at 32552hz
 		bsr		LoadPCMFile
 		rts
-		
-pcmsinsega:
-		dc.b	'SIN32604.PCM',0
-		align 2
 
 Op_SetSampSin32604:
 		lea		pcmsinsega(pc),a0	; 1khz sine wave at 32604hz
 		bsr		LoadPCMFile
 		rts
 		
-pcmtest:
-		dc.b	'PCMTEST.PCM',0
-		align 2
-		
 Op_SetSamplesTest:
 		lea		pcmtest(pc),a0	; Never Give Up!
 		bsr		LoadPCMFile
 		rts
-		
-pcmtest2:
-		dc.b	'PCMTESZ.PCM',0
-		align 2
 		
 Op_SetSamplesTest2:
 		lea		pcmtest2(pc),a0	; Fourier Art
 		bsr		LoadPCMFile
 		rts
 
+; D1 - track number 
+PlayCDDA:
+		BIOS_CDCSTOP
+		bsr		wait_BIOS
+		BIOS_MSCSTOP
+		bsr		wait_BIOS
+		
+		move.w	d1,(a0)
+		BIOS_MSCPLAY1
+		bsr		wait_BIOS
+		rts
+		
+wait_BIOS:
+		BIOS_CDBCHK						; Check BIOS status
+		bcs		wait_BIOS				; If not ready, branch
+		rts
+		
+InitPCM:
+		move.b	#$FF, ONOFFdat			; Set all audio channels to off
+		bsr		PCMWait
+	
+		move.b	#$C0, CTRLdat			; Select channel 1
+		bsr		PCMWait
+
+		move.b	#$FF, PANdat			; Set full L/R channels
+		bsr		PCMWait
+
+		move.b	#$00, ENVdat			; Set ENV to 00 - silent
+		bsr		PCMWait
+
+		move.b	#$00, STdat				; Set start address to $0000
+		bsr		PCMWait
+
+		move.b  #$ff, LSHdat			; Set loop high address to $FF
+		bsr		PCMWait
+
+		move.b  #$f0, LSLdat			; Set loop low address to $F0 where FF is at for loop
+		bsr		PCMWait
+
+		move.b  #$08, FDHdat			; Set H byte of sample rate (real approx 32552KHz, even if docs say 32604)
+		bsr		PCMWait
+
+		move.b  #$00, FDLdat			; Set L byte of sample rate (real approx 32552KHz, even if docs say 32604)
+		bsr		PCMWait
+		rts
+
+PCMWait:
+		move.l	d0, -(a7)
+		move.w  #PCMREGDELAY, d0
+
+@PCMWaitLoop:
+		dbra	d0, @PCMWaitLoop
+		move.l	(a7)+, d0
+		rts
+
+; A0 - PCM filename
 LoadPCMFile:
+		push	d1/d2/d3/a2		; Store used registers
 		bsr		FindFile		; Find File returns params in the right format for ReadCD
 		move.l	#$20000, a0		; Set destination to Program RAM
 		bsr		ReadCD
-				
-; d1.l has the size from above in sectors (2048)
-; but this code is (still) hardcoded for 64kb
 
+		move.l	d1, d3			; d1.l has the size from above in sectors (2048 bytes)
+		asr.l	#1,d3			; convert sectors to banks (4096 bytes)
 		move.l	#$20000, a2		; A2 - PCM Address
 		move.b	#0,d2			; D2 - start at first bank
-LoadPCMLoop:		
-		move.l	#$1000,d0		; we copy in bank size increments
+
+@LoadPCMLoop:		
+		move.l	#$1000,d0		; we copy in bank increments
 		move.l	a2,a0			; A0 - PCM Address
 		move.b	d2,d1			; D1 - current bank
 		bsr		WritePCM
-		add.b	#1,d2			; D1 - Bank
-		add.l	#$1000,a2		; Increment address by 1000h
-		cmp.w   #$10,d2
-		BNE     LoadPCMLoop
+		add.b	#1,d2			; D2 - Bank
+		add.l	#$1000,a2		; Increment address by 1000h, a bank size
+		cmp.w	d3,d2			; have we finished copy in the number of sectors?
+		BNE		@LoadPCMLoop
+		
+		pop		d1/d2/d3/a2		; Restore used registers
 		; our samples already have the FF terminators for loop
 		rts
 
@@ -385,6 +371,7 @@ LoadPCMLoop:
 ; D1 - Bank
 ; A0 - PCM Address
 WritePCM:
+		push	a1				; Store used registers
 		or.b	#$80, d1		; 1000b - bit 4 = 1 = play on bit 3 = 0 = select bank
 		move.b	d1, CTRLdat		; Select bank to write into
 		bsr		PCMWait
@@ -398,6 +385,7 @@ WritePCM:
 		add.l	#2, a1
 
 		dbra	d0, @WritePCMLoop
+		pop		a1				; Restore used registers
 		rts
 
 ; =======================================================================================
@@ -441,16 +429,6 @@ ReadCD:
 		pop		d0-d7/a0-a6			; Restore all registers
 		rts							; Return
 
-		
-; =======================================================================================
-;  BiosPacket
-;  Stores paramaters for BIOS calls
-; =======================================================================================
-
-BiosPacket:
-	dc.l	0, 0, 0, 0, 0
-Header:
-	ds.l	32
 	
 ; =======================================================================================
 ;  ISO9660 Driver
@@ -532,6 +510,47 @@ FindFile:
 	
 		pop	a1/a2/a6			; Restore used registers	
 		rts
+		
+; =======================================================================================
+;  Data
+; =======================================================================================
+
+PCMTestFreq:
+		dc.w	$0800
+		
+pcmsweepfile:
+		dc.b	'SWEEP.PCM',0
+		align 2
+		
+pcmssin32000:
+		dc.b	'SIN32000.PCM',0
+		align 2
+		
+pcmsincomm:
+		dc.b	'SIN32552.PCM',0
+		align 2
+		
+pcmsinsega:
+		dc.b	'SIN32604.PCM',0
+		align 2
+		
+pcmtest:
+		dc.b	'PCMTEST.PCM',0
+		align 2
+
+pcmtest2:
+		dc.b	'PCMTESZ.PCM',0
+		align 2
+		
+; =======================================================================================
+;  BiosPacket
+;  Stores paramaters for BIOS calls
+; =======================================================================================
+
+BiosPacket:
+	dc.l	0, 0, 0, 0, 0
+Header:
+	ds.l	32
 
 ; =======================================================================================
 ; ANY CODE PAST THIS POINT WILL BE OVERWRITTEN AT RUNTIME AND IS USED AS A READ BUFFER
