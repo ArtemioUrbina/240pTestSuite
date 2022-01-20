@@ -269,6 +269,7 @@ const static BIOSID biosnames[] = {
 { 0x50CD3D23, "LA 1.04", "laseractive_bios_1_04_u.bin" }, // 
 { 0x3B10CF41, "LA 1.02", "laseractive_bios_1_02_u.bin" }, // 
 { 0x474AAA44, "LA JP 1.05", "mega-ld 1.05 bios.bin" },  // 
+{ 0x1493522C, "LA JP 1.05", "mega-ld 1.05 bios alt.bin" },  // PD6126E dump by zaxour 93.833923% identical to above
 { 0x00EEDB3A, "LA JP 1.02", "laseractive_bios_1_02_j.bin" },  // 
 { 0x290F8E33, "X'EYE US 2.00", "g304.bin" },    // 
 { 0xD21FE71D, "WM JP 1.00", "g301.bin" },   // 
@@ -365,7 +366,7 @@ int main(int argc, char *argv[])
 	bioscrc bioslist[500];
 	int count = 0;
 	
-	printf("CRC32 Sega CD BIOS checker by Artemio Urbina 2019-2020\n\n");
+	printf("CRC32 Sega CD BIOS checker by Artemio Urbina 2019-2022\n\n");
 	if(argc == 1)
 	{
 		printf("Use: CRC32 file1 file2 ... filen\n");
