@@ -24,8 +24,8 @@ jobs:
 
     - name: Install SDK
       run: |
-        sudo dkp-pacman -Sy
-        sudo dkp-pacman -S wii-dev
+        sudo pacman -Sy
+        sudo pacman -S wii-dev
 
     - name: Build ROM
       run: |
