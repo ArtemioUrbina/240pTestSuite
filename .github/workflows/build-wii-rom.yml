@@ -20,14 +20,14 @@ jobs:
       with:
         fetch-depth: 0
 
-    # - name: Install Dependencies
-    #   run: |
-    #     sudo apt-get install -y --no-install-recommends gcc build-essential
+    - name: Build tools
+      run: |
+        cd ./240psuite/Wii/240pSuite/tools
+        # build cfile binary and ensure it is at this path.
 
     - name: Build ROM
       run: |
         cd ./240psuite/Wii/240pSuite
-        ls
         make -f Makefile.wii
 
     - name: "Upload built ROMs to artifacts"
