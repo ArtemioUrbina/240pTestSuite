@@ -2,7 +2,11 @@ name: BUILD-SEGA_DREAMCAST-ROM
 
 on:
   push:
+    paths:
+    - '240psuite/Dreamcast/**'
   pull_request:
+    paths:
+    - '240psuite/Dreamcast/**'
 
 jobs:
   build:

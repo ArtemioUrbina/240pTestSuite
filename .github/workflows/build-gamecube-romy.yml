@@ -2,7 +2,11 @@ name: BUILD-NINTENDO_GAMECUBE-ROM
 
 on:
   push:
+    paths:
+    - '240psuite/Wii/**'
   pull_request:
+    paths:
+    - '240psuite/Wii/**'
 
 jobs:
   build:

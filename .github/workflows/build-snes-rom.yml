@@ -2,7 +2,11 @@ name: BUILD-NINTENDO_SNES-ROM
 
 on:
   push:
+    paths:
+    - '240psuite/SNES/**'
   pull_request:
+    paths:
+    - '240psuite/SNES/**'
 
 jobs:
   build:

@@ -2,7 +2,11 @@ name: BUILD-NINTENDO_64-ROM
 
 on:
   push:
+    paths:
+    - '240psuite/N64/**'
   pull_request:
+    paths:
+    - '240psuite/N64/**'
 
 jobs:
   build:

@@ -2,11 +2,15 @@ name: BUILD-NINTENDO_WII-ROM
 
 on:
   push:
+#    paths:
+#    - '240psuite/Wii/**'
   pull_request:
+#    paths:
+#    - '240psuite/Wii/**'
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v2
@@ -15,11 +19,12 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo apt-get install gdebi-core
+        sudo apt-get install -qq -y gdebi-core
         sudo gdebi devkitpro-pacman.amd64.deb
 
     - name: Install SDK
       run: |
+        sudo dkp-pacman -Sy
         sudo dkp-pacman -S wii-dev
 
     - name: Build ROM

@@ -2,7 +2,11 @@ name: BUILD-PCE-ROM
 
 on:
   push:
+    paths:
+    - '240psuite/PCE/**'
   pull_request:
+    paths:
+    - '240psuite/PCE/**'
 
 jobs:
   build:
