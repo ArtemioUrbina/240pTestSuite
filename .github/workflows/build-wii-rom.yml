@@ -2,11 +2,13 @@ name: BUILD-NINTENDO_WII-ROM
 
 on:
   push:
-#    paths:
-#    - '240psuite/Wii/**'
+   paths:
+   - '.github/workflows/build-wii-rom.yml'
+   - '240psuite/Wii/**'
   pull_request:
-#    paths:
-#    - '240psuite/Wii/**'
+   paths:
+   - '.github/workflows/build-wii-rom.yml'
+   - '240psuite/Wii/**'
 
 jobs:
   build:
@@ -26,7 +28,7 @@ jobs:
     - name: Download and install extra dependencies
       run: |
         curl -L https://github.com/devkitPro/pacman/releases/download/v1.0.2/devkitpro-pacman.amd64.deb > devkitpro-pacman.amd64.deb
-        sudo gdebi devkitpro-pacman.amd64.deb
+        sudo gdebi -q devkitpro-pacman.amd64.deb
 
     - name: Install SDK
       run: |
