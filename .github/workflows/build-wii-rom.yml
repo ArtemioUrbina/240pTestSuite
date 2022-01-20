@@ -19,8 +19,9 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo apt-get install -qq -y gdebi-core
-        sudo gdebi devkitpro-pacman.amd64.deb
+        # sudo apt-get install -qq -y gdebi-core
+        # sudo gdebi devkitpro-pacman.amd64.deb
+        echo. nothing to install
 
     - name: Install SDK
       run: |
