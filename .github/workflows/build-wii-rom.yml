@@ -26,8 +26,7 @@ jobs:
 
     - name: Build ROM
       run: |
-        cd ${{ github.workspace }}/240psuite/Wii/
-        # gcc tools/cfile.c -o cfile 
+        cd ${{ github.workspace }}/240psuite/Wii/240pSuite
         make -f Makefile.wii
 
     - name: "Upload built ROMs to artifacts"
