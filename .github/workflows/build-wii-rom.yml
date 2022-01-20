@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     steps:
     - uses: actions/checkout@v2
@@ -15,17 +15,11 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo apt-get install zlib1g-dev
         sudo apt-get install gdebi-core
-        # sudo gdebi devkitpro-pacman.deb
-        # This is controlled by MS, so lets presume WSL!
-        sudo ln -s /proc/self/mounts /etc/mtab
         sudo gdebi devkitpro-pacman.amd64.deb
 
     - name: Install SDK
       run: |
-        sudo dkp-pacman -S ppc-zlib
-        sudo dkp-pacman -S ppc-mxml
         sudo dkp-pacman -S wii-dev
 
     - name: Build ROM
