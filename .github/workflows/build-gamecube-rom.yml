@@ -23,7 +23,8 @@ jobs:
     - name: Build tools
       run: |
         cd ./240psuite/Wii/240pSuite/tools
-        # build cfile binary and ensure it is at this path.
+        # build cfile binary (linux specific) and ensure it is at this path.
+        gcc cfile.c -o cfile
 
     - name: Build ROM
       run: |
