@@ -15,13 +15,15 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        # sudo apt-get install libz
+        apt-get install zlib1g-dev
         sudo apt-get install gdebi-core
         sudo gdebi devkitpro-pacman.deb
 
     - name: Install SDK
       run: |
-        sudo pacman -S wii-dev
+        sudo dkp-pacman -S ppc-zlib
+        sudo dkp-pacman -S ppc-mxml
+        sudo dkp-pacman -S wii-dev
 
     - name: Build ROM
       run: |
@@ -34,4 +36,4 @@ jobs:
       with:
         name: NINTENDO_WII-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/Wii/*.WIA
+          ${{ github.workspace }}/**/240psuite/Wii/*.dol
