@@ -2,7 +2,13 @@ name: BUILD-SEGA_DREAMCAST-ROM
 
 on:
   push:
+    paths:
+    - '.github/workflows/build-dreamcast-rom.yml'
+    - '240psuite/Dreamcast/**'
   pull_request:
+    paths:
+    - '.github/workflows/build-dreamcast-rom.yml'
+    - '240psuite/Dreamcast/**'
 
 jobs:
   build:

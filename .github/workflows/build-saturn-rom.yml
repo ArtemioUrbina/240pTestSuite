@@ -2,7 +2,13 @@ name: BUILD-SEGA_SATURN-ROM
 
 on:
   push:
+    paths:
+    - '.github/workflows/build-saturn-rom.yml'
+    - '240psuite/Sarurn/**'
   pull_request:
+    paths:
+    - '.github/workflows/build-saturn-rom.yml'
+    - '240psuite/Saturn/**'
 
 jobs:
   build:
@@ -15,7 +21,7 @@ jobs:
 
     - name: Build ROM
       run: |
-        cd ${{ github.workspace }}/240psuite/Saturn/
+        cd ${{ github.workspace }}/240psuite/Saturn/240psuite/
         make
 
     - name: "Upload built ROMs to artifacts"

@@ -2,7 +2,13 @@ name: BUILD-PCE-ROM
 
 on:
   push:
+    paths:
+    - '.github/workflows/build-pce-rom.yml'
+    - '240psuite/PCE/**'
   pull_request:
+    paths:
+    - '.github/workflows/build-pce-rom.yml'
+    - '240psuite/PCE/**'
 
 jobs:
   build:

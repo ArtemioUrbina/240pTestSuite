@@ -2,7 +2,13 @@ name: BUILD-NINTENDO_64-ROM
 
 on:
   push:
+    paths:
+    - '.github/workflows/build-n64-rom.yml'
+    - '240psuite/N64/**'
   pull_request:
+    paths:
+    - '.github/workflows/build-n64-rom.yml'
+    - '240psuite/N64/**'
 
 jobs:
   build:

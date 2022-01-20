@@ -2,7 +2,13 @@ name: BUILD-SEGA_GENESIS-ROM
 
 on:
   push:
+    paths:
+    - '.github/workflows/build-genesis-rom.yml'
+    - '240psuite/Genesis/**'
   pull_request:
+    paths:
+    - '.github/workflows/build-genesis-rom.yml'
+    - '240psuite/Genesis/**'
 
 jobs:
   build:
@@ -15,7 +21,7 @@ jobs:
 
     - name: Build ROM
       run: |
-        cd ${{ github.workspace }}/240psuite/Genesis/
+        cd ${{ github.workspace }}/240psuite/Genesis/240p/
         # TODO: Download SDK:
         # https://github.com/ArtemioUrbina/SGDK_1_11_Suite
         # TODO: Run Build file:
