@@ -26,8 +26,7 @@ jobs:
 
     - name: Build ROM
       run: |
-        ls
-        cd ${{ github.workspace }}/240psuite/Wii/240pSuite
+        cd ./240psuite/Wii/240pSuite
         ls
         make -f Makefile.wii
 
