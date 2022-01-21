@@ -24,15 +24,14 @@ jobs:
         sudo apt-get install zlib1g-dev
         whereis gcc
         cd ./240psuite/Wii/240pSuite/tools
-        ls
         # build cfile binary (linux specific) and ensure it is at this path.
-        gcc cfile.c -o cfile -lz
+        gcc cfile.c -lz -o cfile
 
     - uses: docker://devkitpro/devkitppc:latest
     - name: Build ROM
       run: |
         whereis gcc
-        sudo dkp-pacman -Syu gc-dev --noconfirm --needed
+        sudo dkp-pacman -Syu gamecube-dev --noconfirm --needed
         cd ./240psuite/Wii/240pSuite
         make -f Makefile.gc
 
