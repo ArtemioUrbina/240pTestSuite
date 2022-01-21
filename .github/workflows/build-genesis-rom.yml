@@ -28,14 +28,19 @@ jobs:
 
     - name: Build ROM
       shell: cmd
+      working-directory: ${{ github.workspace }}/240psuite/Genesis/240p/
+      env:
+        GDK: ${{ github.workspace }}/240psuite/genesisSDK
+        GDK_WIN: ${{ github.workspace }}\240psuite\genesisSDK
+        SCD_LOADER: ${{ github.workspace }}/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
       run: |
         :: Alter paths to use SDK:
-        SET GDK=%GITHUB_WORKSPACE%/240psuite/genesisSDK
-        SET GDK_WIN=%GITHUB_WORKSPACE%\240psuite\genesisSDK
-        SET SCD_LOADER=%GITHUB_WORKSPACE%/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
+        :: SET GDK=%GITHUB_WORKSPACE%/240psuite/genesisSDK
+        :: SET GDK_WIN=%GITHUB_WORKSPACE%\240psuite\genesisSDK
+        :: SET SCD_LOADER=%GITHUB_WORKSPACE%/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
         PATH %GDK_WIN%\bin;%PATH%
 
-        cd %GITHUB_WORKSPACE%\240psuite\Genesis\240p\
+        :: cd %GITHUB_WORKSPACE%\240psuite\Genesis\240p\
 
         :: Run Build Genesis build:
         %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen
