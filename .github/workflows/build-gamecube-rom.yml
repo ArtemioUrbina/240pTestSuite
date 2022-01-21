@@ -30,8 +30,6 @@ jobs:
     - uses: docker://devkitpro/devkitppc:latest
     - name: Build ROM
       run: |
-        whereis gcc
-        sudo dkp-pacman -Syu gamecube-dev --noconfirm --needed
         cd ./240psuite/Wii/240pSuite
         make -f Makefile.gc
 

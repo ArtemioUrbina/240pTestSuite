@@ -22,8 +22,8 @@ jobs:
 
     - name: Build tools
       run: |
-        sudo dkp-pacman -Syu zlib-devel --noconfirm --needed
-        sudo dkp-pacman -Syu gcc --noconfirm --needed
+        sudo apt-get install zlib-dev
+        sudo apt-get install gcc
         whereis gcc
         cd ./240psuite/Wii/240pSuite/tools
         # build cfile binary (linux specific) and ensure it is at this path.
@@ -32,9 +32,6 @@ jobs:
     - name: Build ROM
       run: |
         whereis gcc
-        sudo dkp-pacman -Syu wii-dev --noconfirm --needed
-        sudo dkp-pacman -S ppc-zlib --noconfirm --needed
-        sudo dkp-pacman -S ppc-mxml --noconfirm --needed
         cd ./240psuite/Wii/240pSuite
         make -f Makefile.wii
 
