@@ -30,8 +30,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ctool
-        path: |
-          ${{ github.workspace }}/**/240psuite/Wii/tools/ctool
+        path: ${{ github.workspace }}/240psuite/Wii/tools/ctool
 
   build-rom:
     needs: build-tools
