@@ -12,24 +12,38 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
       with:
+        fetch-depth: 0
+    - name: Checkout sdk repo
+      uses: actions/checkout@v2
+      with:
+        repository: ArtemioUrbina/SGDK_1_11_Suite
+        path: 240psuite/genesisSDK/
         fetch-depth: 0
 
     - name: Build ROM
+      shell: cmd
       run: |
-        cd ${{ github.workspace }}/240psuite/Genesis/240p/
-        # TODO: Download SDK:
-        # https://github.com/ArtemioUrbina/SGDK_1_11_Suite
-        # TODO: Run Build file:
-        # ???
+        :: Alter paths to use SDK:
+        SET GDK=%GITHUB_WORKSPACE%/240psuite/genesisSDK/
+        SET GDK_WIN=%GITHUB_WORKSPACE%\240psuite\genesisSDK\
+        SET SCD_LOADER=%GITHUB_WORKSPACE%/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
+        PATH %GDK_WIN%\bin;%PATH%
+        cd %GITHUB_WORKSPACE%/240psuite/Genesis/240p/
+        :: Run Build Genesis build:
+        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen %GITHUB_WORKSPACE%/240psuite/Genesis/240p/
+        :: Run Sega CD build:
+        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.scd %GITHUB_WORKSPACE%/240psuite/Genesis/240p/
 
     - name: "Upload built ROMs to artifacts"
       uses: actions/upload-artifact@v2
       with:
         name: SEGA_GENESIS-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/Genesis/*.GEN
+          ${{ github.workspace }}/**/240psuite/Genesis/**/*.gen
+          ${{ github.workspace }}/**/240psuite/Genesis/**/*.bin

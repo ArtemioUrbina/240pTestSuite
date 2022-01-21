@@ -21,6 +21,8 @@ jobs:
 
     - name: Build ROM
       run: |
+        #TODO: install SDK
+        # presuming https://www.dreamsdk.org/
         cd ${{ github.workspace }}/240psuite/Dreamcast/PVR/
         make
 
