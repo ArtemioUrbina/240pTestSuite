@@ -13,6 +13,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         romtype: ["scd", "gen"]
     runs-on: windows-latest
@@ -39,7 +40,8 @@ jobs:
         SCD_LOADER: D:/a/240pTestSuite/240pTestSuite/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
       run: |
         PATH %GDK_WIN%\bin;%PATH%
-
+        :: Run lib build
+        :: %GDK_WIN%\bin\make -f %GDK_WIN%\makelib.gen
         :: Run Build:
         %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.%ROM_TYPE%
 
