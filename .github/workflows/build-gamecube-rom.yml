@@ -27,8 +27,8 @@ jobs:
         # build cfile binary (linux specific) and ensure it is at this path.
         gcc cfile.c -lz -o cfile
 
+    - uses: docker://devkitpro/devkitppc:latest
     - name: Build ROM
-      uses: docker://devkitpro/devkitppc:latest
       run: |
         whereis gcc
         sudo dkp-pacman -Syu gamecube-dev --noconfirm --needed

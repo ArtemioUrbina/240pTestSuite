@@ -22,8 +22,8 @@ jobs:
 
     - name: Build tools
       run: |
-        sudo pacman -S zlib-devel --noconfirm --needed
-        sudo pacman -S gcc --noconfirm --needed
+        sudo dkp-pacman -Syu zlib-devel --noconfirm --needed
+        sudo dkp-pacman -Syu gcc --noconfirm --needed
         whereis gcc
         cd ./240psuite/Wii/240pSuite/tools
         # build cfile binary (linux specific) and ensure it is at this path.
