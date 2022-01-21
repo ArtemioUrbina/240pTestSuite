@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitppc:latest
+    # container: devkitpro/devkitppc:latest
 
     steps:
     - uses: actions/checkout@v2
@@ -23,10 +23,12 @@ jobs:
     - name: Build tools
       run: |
         cd ./240psuite/Wii/240pSuite/tools
+        ls
         # build cfile binary (linux specific) and ensure it is at this path.
         gcc cfile.c -o cfile -lz
 
     - name: Build ROM
+      uses: docker://devkitpro/devkitppc:latest
       run: |
         cd ./240psuite/Wii/240pSuite
         make -f Makefile.gc
