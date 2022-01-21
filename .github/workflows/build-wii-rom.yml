@@ -21,7 +21,6 @@ jobs:
 
     - name: Build linux tools
       run: |
-        sudo apt-get install -y zlib1g-dev
         cd ./240psuite/Wii/240pSuite/tools
         # build cfile binary (linux specific) and ensure it is at this path.
         gcc cfile.c -lz -o cfile
