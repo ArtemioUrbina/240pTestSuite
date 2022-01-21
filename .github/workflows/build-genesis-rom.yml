@@ -30,15 +30,15 @@ jobs:
       shell: cmd
       run: |
         :: Alter paths to use SDK:
-        SET GDK=%GITHUB_WORKSPACE%/240psuite/genesisSDK/
+        SET GDK=%GITHUB_WORKSPACE%\240psuite\genesisSDK\
         SET GDK_WIN=%GITHUB_WORKSPACE%\240psuite\genesisSDK\
-        SET SCD_LOADER=%GITHUB_WORKSPACE%/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
+        SET SCD_LOADER=%GITHUB_WORKSPACE%\240psuite\Genesis\240p\segacdfiles\LukeProjectCD
         PATH %GDK_WIN%\bin;%PATH%
         cd %GITHUB_WORKSPACE%/240psuite/Genesis/240p/
         :: Run Build Genesis build:
-        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen %GITHUB_WORKSPACE%/240psuite/Genesis/240p/
+        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen %1%
         :: Run Sega CD build:
-        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.scd %GITHUB_WORKSPACE%/240psuite/Genesis/240p/
+        :: %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.scd %1%
 
     - name: "Upload built ROMs to artifacts"
       uses: actions/upload-artifact@v2
@@ -46,4 +46,4 @@ jobs:
         name: SEGA_GENESIS-ROM
         path: |
           ${{ github.workspace }}/**/240psuite/Genesis/**/*.gen
-          ${{ github.workspace }}/**/240psuite/Genesis/**/*.bin
+          # ${{ github.workspace }}/**/240psuite/Genesis/**/*.bin
