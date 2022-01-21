@@ -14,7 +14,7 @@ jobs:
   build:
     strategy:
       matrix:
-        BUILD_TYPE: [scd, gen]
+        buildtype: [scd, gen]
     runs-on: windows-latest
 
     steps:
@@ -40,7 +40,7 @@ jobs:
         PATH %GDK_WIN%\bin;%PATH%
 
         :: Run Build:
-        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.%BUILD_TYPE%
+        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.%BUILDTYPE%
 
     - name: "Upload built ROMs to artifacts"
       uses: actions/upload-artifact@v2
