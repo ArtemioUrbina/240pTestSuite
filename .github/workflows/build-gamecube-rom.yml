@@ -13,7 +13,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # container: devkitpro/devkitppc:latest
 
     steps:
     - uses: actions/checkout@v2
@@ -22,14 +21,17 @@ jobs:
 
     - name: Build tools
       run: |
+        whereis gcc
         cd ./240psuite/Wii/240pSuite/tools
         ls
         # build cfile binary (linux specific) and ensure it is at this path.
         gcc cfile.c -o cfile -lz
 
+    - uses: docker://devkitpro/devkitppc:latest
     - name: Build ROM
-      uses: docker://devkitpro/devkitppc:latest
       run: |
+        whereis gcc
+        sudo dkp-pacman -Syu gc-dev --noconfirm --needed
         cd ./240psuite/Wii/240pSuite
         make -f Makefile.gc
 
