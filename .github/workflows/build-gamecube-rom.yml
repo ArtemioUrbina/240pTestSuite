@@ -29,8 +29,8 @@ jobs:
     - name: "Upload built tools to artifacts" # should possibly use cache instead!
       uses: actions/upload-artifact@v2
       with:
-        name: ctool
-        path: ${{ github.workspace }}/240psuite/Wii/tools/cfile
+        name: cfile-tool
+        path: ${{ github.workspace }}/240psuite/Wii/240pSuite/tools/cfile
 
   build-rom:
     needs: build-tools
@@ -44,7 +44,7 @@ jobs:
 
     - uses: actions/download-artifact@v2
       with:
-        name: ctool # I wonder if this will be installed to the correct path!
+        name: cfile-tool # I wonder if this will be installed to the correct path!
 
     - name: Build ROM
       run: |
@@ -58,4 +58,4 @@ jobs:
       with:
         name: NINTENDO_GAMECUBE-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/Wii/*.dol
+          ${{ github.workspace }}/**/240psuite/Wii/**/*.dol
