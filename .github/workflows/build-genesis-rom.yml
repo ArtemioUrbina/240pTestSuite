@@ -30,9 +30,9 @@ jobs:
       shell: cmd
       working-directory: ${{ github.workspace }}/240psuite/Genesis/240p/
       env:
-        GDK: ${{ github.workspace }}/240psuite/genesisSDK
-        GDK_WIN: ${{ github.workspace }}\240psuite\genesisSDK
-        SCD_LOADER: ${{ github.workspace }}/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
+        GDK: D:\a\240pTestSuite\240pTestSuite\240psuite\genesisSDK
+        GDK_WIN: D:\a\240pTestSuite\240pTestSuite\240psuite\genesisSDK
+        SCD_LOADER: D:\a\240pTestSuite\240pTestSuite\240psuite\Genesis\240p\segacdfiles\LukeProjectCD
       run: |
         :: Alter paths to use SDK:
         :: SET GDK=%GITHUB_WORKSPACE%/240psuite/genesisSDK
@@ -53,5 +53,5 @@ jobs:
       with:
         name: SEGA_GENESIS-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/Genesis/**/*.gen
-          # ${{ github.workspace }}/**/240psuite/Genesis/**/*.bin
+          ${{ github.workspace }}/**/240psuite/Genesis/**/*.bin
+          # ${{ github.workspace }}/**/240psuite/Genesis/**/*.iso
