@@ -30,6 +30,8 @@ jobs:
     - uses: docker://devkitpro/devkitppc:latest
     - name: Build ROM
       run: |
+        pwd
+        export PATH="$PATH:$DEVKITPPC/bin"
         cd ./240psuite/Wii/240pSuite
         make -f Makefile.gc
 
