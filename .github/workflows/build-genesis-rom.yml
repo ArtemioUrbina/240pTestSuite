@@ -43,6 +43,7 @@ jobs:
         :: Run lib build
         :: %GDK_WIN%\bin\make -f %GDK_WIN%\makelib.gen
         :: Run Build:
+        :: Note, this randomly fails for some unknown reason!
         %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.%ROM_TYPE%
 
     - name: "Upload built ROMs to artifacts"
@@ -50,5 +51,5 @@ jobs:
       with:
         name: SEGA_GENESIS-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/Genesis/**/*.bin
-          ${{ github.workspace }}/**/240psuite/Genesis/**/*.iso
+          ${{ github.workspace }}/**/240psuite/Genesis/240p/out/*.bin
+          ${{ github.workspace }}/**/240psuite/Genesis/240p/outcd/*.iso
