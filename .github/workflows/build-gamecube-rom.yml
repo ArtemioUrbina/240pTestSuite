@@ -21,6 +21,7 @@ jobs:
 
     - name: Build tools
       run: |
+        sudo apt-get install zlib1g-dev
         whereis gcc
         cd ./240psuite/Wii/240pSuite/tools
         ls
