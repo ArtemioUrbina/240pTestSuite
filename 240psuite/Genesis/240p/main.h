@@ -52,11 +52,12 @@ void VBlankIntCallbackCancel();
 void DrawMainBG();
 void DrawMainBGwithGillian(u8 DrawGillian, u8 GillianX, u8 GillianY);
 void DrawResolution();
-void VideoOptions();
+void OptionsMenu();
 void VideoTestsMenu();
 void AudioTestsMenu();
 void HardwareMenu();
 void ControllerTest();
+void TeamPlayerCheck();
 
 
 #ifndef MENUDATA

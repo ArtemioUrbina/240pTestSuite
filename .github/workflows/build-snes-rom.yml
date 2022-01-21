@@ -12,15 +12,23 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
       with:
+        fetch-depth: 0
+    - name: Checkout sdk repo
+      uses: actions/checkout@v2
+      with:
+        repository: alekmaul/pvsneslib
+        path: sdk
         fetch-depth: 0
 
     - name: Build ROM
       run: |
+        # TODO: Alter paths to use SDK:
         cd ${{ github.workspace }}/240psuite/SNES/240pSuite
         make
 
@@ -29,4 +37,4 @@ jobs:
       with:
         name: NINTENDO_SNES-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/SNES/*.SFC
+          ${{ github.workspace }}/**/240psuite/SNES/**/*.SFC

@@ -10,7 +10,7 @@ SRC= src
 RES= res
 INCLUDE= inc
 
-TRIMFSIMG = $(SCD_LOADER)/trimfsimage
+TRIMFSIMG = $(SCD_LOADER)/trimiso
 MKISOFS = $(SCD_LOADER)/mkisofs
 ASM68K = $(SCD_LOADER)/ASM68K
 
@@ -84,16 +84,15 @@ cleanobj:
 	$(RM) -f $(OBJS) outscd/segacd.o outscd/rom_head.bin outscd/rom_head.o outscd/rom.out
 
 outscd/rom.bin: outscd/rom.out
-	$(NM) outscd/$(ROM).out > outscd/symbol.txt
-	$(OBJCPY) -O binary outscd/$(ROM).out outscd/$(ROM).bin
-	#$(SIZEBND) outscd/$(ROM).bin -sizealign 131072
+	#$(NM) --size-sort -S outscd/$(ROM).out > outscd/symbol.txt
+	$(NM) -n -S outscd/$(ROM).out > outscd/symbol.txt
 	$(OBJCPY) -O binary outscd/$(ROM).out $(SCD_LOADER)/_filesystem/M_INIT.PRG
 	$(SIZEBND) $(SCD_LOADER)/_filesystem/M_INIT.PRG -sizealign 2048 -nullfill 0xA5
 	$(MKISOFS) -iso-level 1 -o $(SCD_LOADER)/filesystem.img -pad $(SCD_LOADER)/_filesystem
 	$(TRIMFSIMG) $(SCD_LOADER)/filesystem.img $(SCD_LOADER)/filesystem.bin
 	$(RM) -f $(SCD_LOADER)/filesystem.img
-	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-us.asm, $(SCD_LOADER)/_boot/ip-us.bin
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/sp.asm, $(SCD_LOADER)/_boot/sp.bin
+	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-us.asm, $(SCD_LOADER)/_boot/ip-us.bin
 	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-us.asm, outscd/240p_SegaCD_USA.iso
 	$(ASM68K) /p /j $(SCD_LOADER)/_boot $(SCD_LOADER)/_boot/ip-eu.asm, $(SCD_LOADER)/_boot/ip-eu.bin
 	$(ASM68K) /p /j $(SCD_LOADER)/ $(SCD_LOADER)/main-eu.asm, outscd/240p_MegaCD_EU.iso

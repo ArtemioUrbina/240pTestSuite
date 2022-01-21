@@ -110,7 +110,7 @@ void DrawCheckBoard()
 			VDP_End();
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -237,7 +237,7 @@ void DrawStripes()
 			VDP_End();
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -465,7 +465,7 @@ void DropShadowTest()
 			field = !field;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 		
@@ -689,7 +689,7 @@ void StripedSpriteTest()
 		VDP_setSpritePosition(0, x, y);
 		VDP_End();
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -884,7 +884,7 @@ void ReflexNTiming()
 			usersound = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -1104,6 +1104,7 @@ void ReflexNTiming()
 		{
 			u16 h = 10;
 			u16 v = 18;
+			fix32 framerate = IsPALVDP ? FIX32(20.1196) : FIX32(16.6884);
 
 			VDP_Start();
 			
@@ -1124,21 +1125,22 @@ void ReflexNTiming()
 
 			totald = fix32Div(tot, cnt);
 			fix32ToStr(totald, str, 4);
-			VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL3, 0, 0, 0), h, v);
+			VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL0, 0, 0, 0), h, v);
 			h += strlen(str);
 			h -= 2;
 			VDP_drawTextBG(APLAN, " frames", TILE_ATTR(PAL0, 0, 0, 0), h, v++);
-			VDP_drawTextBG(APLAN, "Keep in mind that a frame is", TILE_ATTR(PAL0, 0, 0, 0), 6, ++v);
-			VDP_drawTextBG(APLAN, "around 16.68 milliseconds.", TILE_ATTR(PAL0, 0, 0, 0), 6, ++v);
+			VDP_drawTextBG(APLAN, "These are your reflexes, not a", TILE_ATTR(PAL0, 0, 0, 0), 5, ++v);
+			VDP_drawTextBG(APLAN, "lag test. A frame is", TILE_ATTR(PAL0, 0, 0, 0), 5, ++v); // 25
+			fix32ToStr(framerate, str, 6);
+			VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL0, 0, 0, 0), 26, v);
+			VDP_drawTextBG(APLAN, "ms.", TILE_ATTR(PAL0, 0, 0, 0), 32, v);
 
 			h = 14;
 			v = 12;
-			tot = FIX32(16.6834);
-			cnt = fix32Mul(totald, tot);
+			cnt = fix32Mul(totald, framerate);
 			fix32ToStr(cnt, str, 2);
 			VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL3, 0, 0, 0), h, v);
 			h += strlen(str);
-			//h -= 2;
 			VDP_drawTextBG(APLAN, " milliseconds", TILE_ATTR(PAL0, 0, 0, 0), h, v);
 
 			if(total < 5)
@@ -1150,11 +1152,11 @@ void ReflexNTiming()
 
 		while(!exit)
 		{
-			buttons = JOY_readJoypad(JOY_1);
+			buttons = JOY_readJoypad(JOY_ALL);
 			pressedButtons = buttons & ~oldButtons;
 			oldButtons = buttons;
 
-			if(pressedButtons & BUTTON_START)
+			if(pressedButtons & BUTTON_START || pressedButtons & BUTTON_B)
 				exit = 1;
 			VDP_waitVSync();
 		}
@@ -1264,7 +1266,7 @@ void HScrollTest()
 		if(frame > 90)
 			frame = 1;
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -1384,7 +1386,7 @@ void VScrollTest()
 			loadvram = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -1531,7 +1533,7 @@ void SoundTest()
 			redraw = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -1809,7 +1811,7 @@ void LEDZoneTest()
 		VDP_setSpritePosition(0, x, y);
 		VDP_End();
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 		
@@ -2121,7 +2123,7 @@ void PassiveLagTest()
 		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + circle, cposx, cposy, 7, 7);
 		VDP_End();
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -2331,7 +2333,7 @@ void Alternate240p480i()
 			changed = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -2480,7 +2482,7 @@ void AudioSyncTest()
 			loadvram = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 		

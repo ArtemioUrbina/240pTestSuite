@@ -15,12 +15,20 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
       with:
+        fetch-depth: 0
+    - name: Checkout sdk repo
+      uses: actions/checkout@v2
+      with:
+        repository: jbrandwood/huc
+        path: sdk
         fetch-depth: 0
 
     - name: Build ROM
       run: |
+        # TODO: Use SDK
         cd ${{ github.workspace }}/240psuite/PCE/
         make.bat
 
@@ -29,4 +37,4 @@ jobs:
       with:
         name: PCE-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/PCE/*.PCE
+          ${{ github.workspace }}/**/240psuite/PCE/**/*.PCE

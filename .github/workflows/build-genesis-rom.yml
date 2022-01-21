@@ -1,4 +1,4 @@
-name: BUILD-SEGA_GENESIS-ROM
+name: BUILD-SEGA_GENESIS-ROMS
 
 on:
   push:
@@ -12,24 +12,44 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        romtype: ["scd", "gen"]
+    runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
       with:
+        fetch-depth: 0
+    - name: Checkout sdk repo
+      uses: actions/checkout@v2
+      with:
+        repository: ArtemioUrbina/SGDK_1_11_Suite
+        path: 240psuite/genesisSDK/
         fetch-depth: 0
 
     - name: Build ROM
+      shell: cmd
+      working-directory: ${{ github.workspace }}/240psuite/Genesis/240p/
+      env:
+        ROM_TYPE: ${{ matrix.romtype }}
+        GDK: D:/a/240pTestSuite/240pTestSuite/240psuite/genesisSDK
+        GDK_WIN: D:\a\240pTestSuite\240pTestSuite\240psuite\genesisSDK
+        SCD_LOADER: D:/a/240pTestSuite/240pTestSuite/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
       run: |
-        cd ${{ github.workspace }}/240psuite/Genesis/240p/
-        # TODO: Download SDK:
-        # https://github.com/ArtemioUrbina/SGDK_1_11_Suite
-        # TODO: Run Build file:
-        # ???
+        PATH %GDK_WIN%\bin;%PATH%
+        :: Run lib build
+        :: %GDK_WIN%\bin\make -f %GDK_WIN%\makelib.gen
+        :: Run Build:
+        :: Note, this randomly fails for some unknown reason!
+        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.%ROM_TYPE%
 
     - name: "Upload built ROMs to artifacts"
       uses: actions/upload-artifact@v2
       with:
         name: SEGA_GENESIS-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/Genesis/*.GEN
+          ${{ github.workspace }}/**/240psuite/Genesis/240p/out/*.bin
+          ${{ github.workspace }}/**/240psuite/Genesis/240p/outcd/*.iso
