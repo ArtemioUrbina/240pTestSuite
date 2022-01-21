@@ -23,8 +23,8 @@ jobs:
     - name: Build tools
       shell: bash
       run: |
-        sudo apt-get install zlib1g-dev
-        sudo apt-get install gcc
+        # sudo apt-get install -y zlib1g-dev
+        # sudo apt-get install -y gcc
         whereis gcc
         cd ./240psuite/Wii/240pSuite/tools
         # build cfile binary (linux specific) and ensure it is at this path.
@@ -32,8 +32,8 @@ jobs:
 
     - name: Build ROM
       run: |
-        pwd
-        export PATH="$PATH:$DEVKITPPC/bin"
+        # pwd
+        # export PATH="$PATH:$DEVKITPPC/bin"
         cd ./240psuite/Wii/240pSuite
         make -f Makefile.wii
 
