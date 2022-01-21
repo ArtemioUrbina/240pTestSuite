@@ -45,6 +45,11 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: cfile-tool # I wonder if this will be installed to the correct path!
+        path: ${{ github.workspace }}/240psuite/Wii/240pSuite/tools/
+        
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: ${{ github.workspace }}/240psuite/Wii/240pSuite/tools/
 
     - name: Build ROM
       run: |
