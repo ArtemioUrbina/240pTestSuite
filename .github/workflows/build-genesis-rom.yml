@@ -34,11 +34,14 @@ jobs:
         SET GDK_WIN=%GITHUB_WORKSPACE%\240psuite\genesisSDK\
         SET SCD_LOADER=%GITHUB_WORKSPACE%\240psuite\Genesis\240p\segacdfiles\LukeProjectCD
         PATH %GDK_WIN%\bin;%PATH%
-        cd %GITHUB_WORKSPACE%/240psuite/Genesis/240p/
+        
+        cd %GITHUB_WORKSPACE%\240psuite\Genesis\240p\
+
         :: Run Build Genesis build:
-        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen %1%
+        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.gen
+
         :: Run Sega CD build:
-        :: %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.scd %1%
+        :: %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.scd
 
     - name: "Upload built ROMs to artifacts"
       uses: actions/upload-artifact@v2
