@@ -742,7 +742,7 @@ void DrawHelp(int option)
 			redraw = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 

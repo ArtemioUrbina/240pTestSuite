@@ -70,7 +70,7 @@ void VBlankIntCallbackZero()
 	//hint_line = 0;
 	if(intCancel != 2)
 	{
-		if(JOY_readJoypad(JOY_1) & BUTTON_START)
+		if(JOY_readJoypad(JOY_ALL) & BUTTON_START)
 			intCancel = 1;
 	}
 }
@@ -815,7 +815,7 @@ void MDFourier(u8 armedAlert)
 			redraw = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -851,7 +851,7 @@ void MDFourier(u8 armedAlert)
 				VDP_End();
 				do
 				{
-					buttons = JOY_readJoypad(JOY_1);
+					buttons = JOY_readJoypad(JOY_ALL);
 					pressedButtons = buttons & ~oldButtons;
 					oldButtons = buttons;
 				}

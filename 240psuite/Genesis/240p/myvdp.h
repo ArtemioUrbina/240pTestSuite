@@ -39,4 +39,7 @@ extern u16	enable_PAL240;
 extern u16	enable_256;
 extern u8	IsPALVDP;
 
+extern u8	enable_cntrlsrt;
+extern u8	debug_controls;
+
 #endif

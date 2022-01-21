@@ -335,7 +335,7 @@ u16 WaitKey(char *message)
 
 	while(!close)
 	{
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -402,8 +402,8 @@ const static BIOSID bioslist[] = {
 { 0x8052C7A0, "AIWA JP 2.11" },	// mpr-15768-t.bin
 { 0x50CD3D23, "LA 1.04" },		// laseractive_bios_1_04_u.bin
 { 0x3B10CF41, "LA 1.02" },		// laseractive_bios_1_02_u.bin
-{ 0x474AAA44, "LA JP 1.05" },	// mega-ld 1.05 bios.bin
-{ 0x1493522C, "LA JP 1.05" },	// PD6126E dump by zaxour 93.833923% identical to above
+{ 0x474AAA44, "LA JP 1.05A" },	// mega-ld 1.05 bios.bin
+{ 0x1493522C, "LA JP 1.05B" },	// PD6126E dump by zaxour 93.833923% identical to above from PAC-S1 (JP) 
 { 0x00EEDB3A, "LA JP 1.02" },	// laseractive_bios_1_02_j.bin
 { 0x290F8E33, "X'EYE US 2.00"},	// g304.bin
 { 0xD21FE71D, "WM JP 1.00" },	// g301.bin
@@ -1134,7 +1134,7 @@ void MemViewer(uint32_t address)
 			redraw = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 		
@@ -1244,7 +1244,7 @@ void SegaCDMenu()
 {
 	u16 cursel = 1, pos, reload = 1, redraw = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 done = 0;
+	u16 done = 0, detectedhw = 1;
 #ifdef SEGACD
 	int maxsel = 6;
 #else
@@ -1258,6 +1258,7 @@ void SegaCDMenu()
 	
 		if(DrawFloatMenu(2, resmenudata, 3) == 2)
 			return;
+		detectedhw = 0;
 	}
 	else
 	{
@@ -1267,6 +1268,7 @@ void SegaCDMenu()
 		
 			if(DrawFloatMenu(2, resmenudata, 3) == 2)
 				return;
+			detectedhw = 0;
 		}	
 	}
 #endif
@@ -1288,7 +1290,7 @@ void SegaCDMenu()
 		if(redraw)
 		{
 			VDP_Start();
-			VDP_drawTextBG(APLAN, "Sega CD Tests", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
+			VDP_drawTextBG(APLAN, detectedhw ? "Sega CD Tests" : "Sega CD not detected", TILE_ATTR(PAL1, 0, 0, 0), detectedhw ? 14 : 11, 4);
 			VDP_drawTextBG(APLAN, "BIOS CRC and info", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
 			VDP_drawTextBG(APLAN, "Check HINT Register", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -1312,7 +1314,7 @@ void SegaCDMenu()
 			redraw = 0;
 		}
 		
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -1397,7 +1399,7 @@ void SegaCDMenu()
 			}
 
 			FadeAndCleanUp();
-			buttons = JOY_readJoypad(JOY_1);
+			buttons = JOY_readJoypad(JOY_ALL);
 			pressedButtons = buttons & ~oldButtons;
 			oldButtons = buttons;
 

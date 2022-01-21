@@ -24,6 +24,8 @@
 
 u16 enable_PAL240	= 0;
 u16 enable_256		= 0;
+u8 enable_cntrlsrt 	= 1;
+u8 debug_controls 	= 0;
 
 inline void VDP_Start()
 {
