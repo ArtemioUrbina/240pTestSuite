@@ -14,7 +14,7 @@ jobs:
   build:
     strategy:
       matrix:
-        romtype: [scd, gen]
+        romtype: ["scd", "gen"]
     runs-on: windows-latest
 
     steps:
