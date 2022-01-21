@@ -70,7 +70,7 @@ void VBlankIntCallbackZero()
 	//hint_line = 0;
 	if(intCancel != 2)
 	{
-		if(JOY_readJoypad(JOY_1) & BUTTON_START)
+		if(JOY_readJoypad(JOY_ALL) & BUTTON_START)
 			intCancel = 1;
 	}
 }
@@ -592,7 +592,7 @@ void PlayPCM(int barrier)
 	
 	SendSCDCommand(Op_PlayPCM);
 	
-	// wait 2048 ms/16.688 = 122.7229 frames.
+	// wait 2048 ms/16.688 ~= 122.7229 frames.
 	// we wait 140
 	
 	if(barrier)
@@ -623,12 +623,12 @@ void TestPCM(int barrier)
 	
 	SendSCDCommand(Op_TestPCM);
 	
-	// wait 2048 ms/16.688 = 122.7229 frames.
-	// we wait 140
+	// wait 2048 ms/16.688 ~= 122.7229 frames.
+	// we wait 122
 	
 	if(barrier)
 	{
-		for(i = 0; i < 140; i++)
+		for(i = 0; i < 122; i++)
 			VDP_waitVSyncMDF();
 		SendSCDCommand(Op_StopPCM);
 	
@@ -651,9 +651,6 @@ void ChangePCM(int *type)
 		*type = 0;
 	
 	SendSCDCommand(command[*type]);
-	
-	// Test it
-	//PlayPCM(1);
 }
 
 #endif
@@ -663,6 +660,7 @@ void MDFSequence(u16 framelen)
 #ifdef SEGACD
 	int i = 0;
 
+	SendSCDCommand(Op_RemovePauseLimit);
 	SendSCDCommand(Op_SeekCDMDF);
 #endif
 	
@@ -689,6 +687,8 @@ void MDFSequence(u16 framelen)
 	PlayPCM(1);
 	PlayCDTrack();
 	PlayCDTrackTimed();
+	
+	SendSCDCommand(Op_ResetPauseLimit);
 #endif
 }
 
@@ -815,7 +815,7 @@ void MDFourier(u8 armedAlert)
 			redraw = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -833,6 +833,8 @@ void MDFourier(u8 armedAlert)
 			
 			SendSCDCommand(Op_StopCD);
 			SendSCDCommand(Op_StopPCM);
+			if(frequency != 0x0800)
+				frequency = 0x0800; // reset to sync with internal use
 #endif
 			VDP_Start();
 			VDP_drawTextBG(APLAN, "Please wait while recording", TILE_ATTR(PAL3, 0, 0, 0), 6, 10);
@@ -849,7 +851,7 @@ void MDFourier(u8 armedAlert)
 				VDP_End();
 				do
 				{
-					buttons = JOY_readJoypad(JOY_1);
+					buttons = JOY_readJoypad(JOY_ALL);
 					pressedButtons = buttons & ~oldButtons;
 					oldButtons = buttons;
 				}
@@ -869,7 +871,7 @@ void MDFourier(u8 armedAlert)
 		{
 			if(pressedButtons & BUTTON_B)
 			{
-				doZ80Lock = 1;
+				doZ80Lock = !doZ80Lock;
 				redraw = 1;
 			}
 		}
@@ -896,15 +898,21 @@ void MDFourier(u8 armedAlert)
 			
 			if(pressedButtons & BUTTON_RIGHT)
 			{
-				SendSCDCommand(Op_IncremetPCMFreq); 	//Increment the internal value by 1
-				frequency ++;
+				if(frequency < 0x1000)
+				{
+					SendSCDCommand(Op_IncremetPCMFreq); 	//Increment the internal value by 1
+					frequency ++;
+				}
 				redraw = 1;
 			}
 			
 			if(pressedButtons & BUTTON_LEFT)
 			{
-				SendSCDCommand(Op_DecrementPCMFreq); 	//Decrement the internal value by 1
-				frequency --;
+				if(frequency > 0x400)
+				{
+					SendSCDCommand(Op_DecrementPCMFreq); 	//Decrement the internal value by 1
+					frequency --;
+				}
 				redraw = 1;
 			}
 			

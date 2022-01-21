@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011-2019 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -37,6 +37,8 @@ int main()
 	char md_ver[30];
 
 	VDP_init();
+	JOY_init();
+	TeamPlayerCheck();
 
 	enable_256 = 1;
 	VDP_Start();
@@ -85,7 +87,7 @@ int main()
 		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
 		VDP_End();
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -128,7 +130,7 @@ int main()
 				DrawHelp(HELP_GENERAL);
 				break;
 			case 6:
-				VideoOptions();
+				OptionsMenu();
 				break;
 			case 7:
 				DrawCredits();
@@ -186,7 +188,7 @@ void TestPatternMenu()
 		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
 		VDP_End();
 		
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -268,7 +270,7 @@ void TestPatternMenu()
 			}
 
 			FadeAndCleanUp();
-			buttons = JOY_readJoypad(JOY_1);
+			buttons = JOY_readJoypad(JOY_ALL);
 			pressedButtons = buttons & ~oldButtons;
 			oldButtons = buttons;
 
@@ -321,7 +323,7 @@ void VideoTestsMenu()
 		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
 		VDP_End();
 		
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -389,7 +391,7 @@ void VideoTestsMenu()
 				DrawHelp(HELP_GENERAL);
 				break;
 			case 12:
-				VideoOptions();
+				OptionsMenu();
 				break;
 			case 13:
 				done = 1;
@@ -397,7 +399,7 @@ void VideoTestsMenu()
 			}
 
 			FadeAndCleanUp();
-			buttons = JOY_readJoypad(JOY_1);
+			buttons = JOY_readJoypad(JOY_ALL);
 			pressedButtons = buttons & ~oldButtons;
 			oldButtons = buttons;
 
@@ -443,7 +445,7 @@ void AudioTestsMenu()
 		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
 		VDP_End();
 		
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -490,7 +492,7 @@ void AudioTestsMenu()
 				DrawHelp(HELP_GENERAL);
 				break;
 			case 5:
-				VideoOptions();
+				OptionsMenu();
 				break;
 			case 6:
 				done = 1;
@@ -498,7 +500,7 @@ void AudioTestsMenu()
 			}
 
 			FadeAndCleanUp();
-			buttons = JOY_readJoypad(JOY_1);
+			buttons = JOY_readJoypad(JOY_ALL);
 			pressedButtons = buttons & ~oldButtons;
 			oldButtons = buttons;
 
@@ -545,7 +547,7 @@ void HardwareMenu()
 		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
 		VDP_End();
 		
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -596,7 +598,7 @@ void HardwareMenu()
 				DrawHelp(HELP_GENERAL);
 				break;
 			case 6:
-				VideoOptions();
+				OptionsMenu();
 				break;
 			case 7:
 				done = 1;
@@ -604,7 +606,7 @@ void HardwareMenu()
 			}
 
 			FadeAndCleanUp();
-			buttons = JOY_readJoypad(JOY_1);
+			buttons = JOY_readJoypad(JOY_ALL);
 			pressedButtons = buttons & ~oldButtons;
 			oldButtons = buttons;
 
@@ -680,7 +682,7 @@ void DrawN()
 	
 	while(!exit)
 	{
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 
 		if(!(buttons & BUTTON_C))
 			exit = 1;
@@ -742,8 +744,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-			VDP_drawTextBG(APLAN, "Ver. 1.23e", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "07/12/2021", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.23", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "21/01/2022", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 			VDP_End();
@@ -756,7 +758,7 @@ void DrawCredits()
 			loadvram = 0;
 		}
 
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
@@ -810,10 +812,29 @@ void FadeAndCleanUp()
 	VDP_resetScreen();
 }
 
+void TeamPlayerCheck()
+{
+	u8 type = 0;
+	
+	type = JOY_getPortType(PORT_1);
+	if(type == PORT_TYPE_TEAMPLAYER)
+		JOY_setSupport(PORT_1, JOY_SUPPORT_TEAMPLAYER);
+	else if(JOY_getPortSupport(PORT_1) == JOY_SUPPORT_TEAMPLAYER)
+		JOY_setSupport(PORT_1, JOY_SUPPORT_6BTN);
+		
+	type = JOY_getPortType(PORT_2);
+	if(type == PORT_TYPE_TEAMPLAYER)
+		JOY_setSupport(PORT_2, JOY_SUPPORT_TEAMPLAYER);
+	else if(JOY_getPortSupport(PORT_2) == JOY_SUPPORT_TEAMPLAYER)
+		JOY_setSupport(PORT_2, JOY_SUPPORT_6BTN);
+}
+
 void VBlankIntCallback()
 {
 	u8 checkVDP_PAL = 0;
 
+	TeamPlayerCheck();
+	
 	joytype = JOY_getJoypadType(JOY_1);
 	joytype2 = JOY_getJoypadType(JOY_2);
 	
@@ -831,7 +852,7 @@ void VBlankIntCallback()
 	
 void VBlankIntCallbackCancel()
 {
-	if(JOY_readJoypad(JOY_1) & BUTTON_START)
+	if(JOY_readJoypad(JOY_ALL) & BUTTON_START)
 		intCancel = 1;
 }
 
@@ -853,14 +874,17 @@ void DrawResolution()
 	}
 }
 
-void VideoOptions()
+void OptionsMenu()
 {
-	int sel = 0, loadvram = 1;
+	int sel = 0, loadvram = 1, hidden = 0;
 	u16 exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	FadeAndCleanUp();
 	
+	if(debug_controls)
+		hidden = 1;
+
 	while(!exit)
 	{
 		if(loadvram)
@@ -882,32 +906,36 @@ void VideoOptions()
 		VDP_drawTextBG(APLAN, VDP_Detect_Interlace()? "ON " : "OFF", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 28, 12);
 		VDP_drawTextBG(APLAN, "Enable 240 in PAL:", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 5, 13);
 		VDP_drawTextBG(APLAN, enable_PAL240 ? "ON " : "OFF", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 28, 13);
+		VDP_drawTextBG(APLAN, "Auto-sort controllers:", TILE_ATTR(sel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, 15);
+		VDP_drawTextBG(APLAN, enable_cntrlsrt ? "ON " : "OFF", TILE_ATTR(sel == 3 ? PAL3 : PAL0, 0, 0, 0), 28, 15);
+		if(hidden)
+		{
+			VDP_drawTextBG(APLAN, "Debug controllers:", TILE_ATTR(sel == 4 ? PAL3 : PAL0, 0, 0, 0), 5, 16);
+			VDP_drawTextBG(APLAN, debug_controls ? "ON " : "OFF", TILE_ATTR(sel == 4 ? PAL3 : PAL0, 0, 0, 0), 28, 16);
+		}
 
-		VDP_drawTextBG(APLAN, "Back", TILE_ATTR(sel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, 18);
+		VDP_drawTextBG(APLAN, "Back", TILE_ATTR(sel == (hidden ? 5 : 4) ? PAL3 : PAL0, 0, 0, 0), 5, 19);
 
 		VDP_End();
 		
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 
 		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_VIDEO))
 			loadvram = 1;
 
-		if(pressedButtons & BUTTON_START)
-			exit = 1;
-
 		if(pressedButtons & BUTTON_UP)
 		{
 			sel--;
 			if(sel < 0)
-				sel = 3;
+				sel = hidden ? 5 : 4;
 		}
 
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			sel++;
-			if(sel > 3)
+			if(sel > (hidden ? 5 : 4))
 				sel = 0;
 		}
 		
@@ -916,9 +944,7 @@ void VideoOptions()
 			pressedButtons & BUTTON_A)
 		{
 			if(sel == 0)
-			{
 				enable_256 = !enable_256;
-			}
 			
 			if(sel == 1)
 			{
@@ -940,10 +966,20 @@ void VideoOptions()
 					VDP_setScreenHeight224();
 				VDP_End();
 			}
-		}
 			
-		if((pressedButtons & BUTTON_A && sel == 3) ||
-			pressedButtons & BUTTON_Y || pressedButtons & BUTTON_START)
+			if(sel == 3)
+				enable_cntrlsrt = !enable_cntrlsrt;
+				
+			if(hidden && sel == 4)
+				debug_controls = !debug_controls;
+		}
+		
+		if(pressedButtons & BUTTON_C && sel == 3)
+			hidden = 1;
+			
+		if((pressedButtons & BUTTON_A && sel == (hidden ? 5 : 4)) ||
+			pressedButtons & BUTTON_Y || pressedButtons & BUTTON_START
+			|| pressedButtons & BUTTON_B)
 		{
 			exit = 1;
 		}
@@ -962,7 +998,7 @@ u8 CheckHelpAndVO(u16 *buttons, u16 *pressedButtons, int option)
 		{
 			*buttons = 0;
 			*pressedButtons = 0;
-			VideoOptions();
+			OptionsMenu();
 			return 1;
 		}
 
@@ -980,7 +1016,7 @@ u8 CheckHelpAndVO(u16 *buttons, u16 *pressedButtons, int option)
 		{
 			*buttons = 0;
 			*pressedButtons = 0;
-			VideoOptions();
+			OptionsMenu();
 			return 1;
 		}
 		if(*pressedButtons & BUTTON_Z)
@@ -1129,7 +1165,7 @@ u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size)
 			redraw = 0;
 		}
 		
-		buttons = JOY_readJoypad(JOY_1);
+		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 		
@@ -1174,34 +1210,37 @@ void resetController(u16 *oldButtons)
 	*oldButtons |= BUTTON_START;
 }
 
-u16 CheckController(u16 joypad, u16 oldButtons, u16 y)
+#define NUM_CONTRL	8
+
+u16 CheckController(u16 joypad, u16 oldButtons, u16 type, u16 x, u16 y, u8 ctrlID)
 {
-	u16	buttons, pos = 0, x = 6, type = JOY_TYPE_UNKNOWN;
-	
-	if(joypad == JOY_1)
-		type = joytype;
-	else
-		type = joytype2;
-		
+	u16	buttons, pos = 0;
+	char id[4];
+
 	if(type != JOY_TYPE_PAD3 && type != JOY_TYPE_PAD6)
 		return 0;
 		
 	buttons = JOY_readJoypad(joypad);
 	
 	VDP_Start();
-	VDP_drawTextBG(APLAN, "Up", TILE_ATTR(buttons & BUTTON_UP ? PAL3 : PAL0, 0, 0, 0), x+4, y);
-	VDP_drawTextBG(APLAN, "Left", TILE_ATTR(buttons & BUTTON_LEFT ? PAL3 : PAL0, 0, 0, 0), x, y+1);
-	VDP_drawTextBG(APLAN, "Right", TILE_ATTR(buttons & BUTTON_RIGHT ? PAL3 : PAL0, 0, 0, 0), x+6, y+1);
-	VDP_drawTextBG(APLAN, "Down", TILE_ATTR(buttons & BUTTON_DOWN ? PAL3 : PAL0, 0, 0, 0), x+3, y+2);
 	
-	VDP_drawTextBG(APLAN, "Start", TILE_ATTR(buttons & BUTTON_START ? PAL3 : PAL0, 0, 0, 0), x+13, y+1);
+	intToHex(ctrlID+1, id, 1);
+	VDP_drawTextBG(APLAN, "-C -", TILE_ATTR(PAL1, 0, 0, 0), x+3, y-1);
+	VDP_drawTextBG(APLAN, id, TILE_ATTR(PAL1, 0, 0, 0), x+5, y-1);
+	
+	VDP_drawTextBG(APLAN, "U", TILE_ATTR(buttons & BUTTON_UP ? PAL3 : PAL0, 0, 0, 0), x+1, y);
+	VDP_drawTextBG(APLAN, "L", TILE_ATTR(buttons & BUTTON_LEFT ? PAL3 : PAL0, 0, 0, 0), x, y+1);
+	VDP_drawTextBG(APLAN, "R", TILE_ATTR(buttons & BUTTON_RIGHT ? PAL3 : PAL0, 0, 0, 0), x+2, y+1);
+	VDP_drawTextBG(APLAN, "D", TILE_ATTR(buttons & BUTTON_DOWN ? PAL3 : PAL0, 0, 0, 0), x+1, y+2);
+	
+	VDP_drawTextBG(APLAN, "S", TILE_ATTR(buttons & BUTTON_START ? PAL3 : PAL0, 0, 0, 0), x+4, y+1);
 		
 	if(type == JOY_TYPE_PAD6)
 	{
-		VDP_drawTextBG(APLAN, "X", TILE_ATTR(buttons & BUTTON_X ? PAL3 : PAL0, 0, 0, 0), x+21, y);
-		VDP_drawTextBG(APLAN, "Y", TILE_ATTR(buttons & BUTTON_Y ? PAL3 : PAL0, 0, 0, 0), x+23, y);
-		VDP_drawTextBG(APLAN, "Z", TILE_ATTR(buttons & BUTTON_Z ? PAL3 : PAL0, 0, 0, 0), x+25, y);
-		VDP_drawTextBG(APLAN, "M", TILE_ATTR(buttons & BUTTON_MODE ? PAL3 : PAL0, 0, 0, 0), x+27, y-1);
+		VDP_drawTextBG(APLAN, "X", TILE_ATTR(buttons & BUTTON_X ? PAL3 : PAL0, 0, 0, 0), x+6, y);
+		VDP_drawTextBG(APLAN, "Y", TILE_ATTR(buttons & BUTTON_Y ? PAL3 : PAL0, 0, 0, 0), x+7, y);
+		VDP_drawTextBG(APLAN, "Z", TILE_ATTR(buttons & BUTTON_Z ? PAL3 : PAL0, 0, 0, 0), x+8, y);
+		VDP_drawTextBG(APLAN, "M", TILE_ATTR(buttons & BUTTON_MODE ? PAL3 : PAL0, 0, 0, 0), x+9, y-1);
 		
 		pos = y+2;
 	}
@@ -1209,11 +1248,10 @@ u16 CheckController(u16 joypad, u16 oldButtons, u16 y)
 		pos = y+1;
 	
 
-	VDP_drawTextBG(APLAN, "A", TILE_ATTR(buttons & BUTTON_A ? PAL3 : PAL0, 0, 0, 0), x+21, pos);
-	VDP_drawTextBG(APLAN, "B", TILE_ATTR(buttons & BUTTON_B ? PAL3 : PAL0, 0, 0, 0), x+23, pos);
-	VDP_drawTextBG(APLAN, "C", TILE_ATTR(buttons & BUTTON_C ? PAL3 : PAL0, 0, 0, 0), x+25, pos);
+	VDP_drawTextBG(APLAN, "A", TILE_ATTR(buttons & BUTTON_A ? PAL3 : PAL0, 0, 0, 0), x+6, pos);
+	VDP_drawTextBG(APLAN, "B", TILE_ATTR(buttons & BUTTON_B ? PAL3 : PAL0, 0, 0, 0), x+7, pos);
+	VDP_drawTextBG(APLAN, "C", TILE_ATTR(buttons & BUTTON_C ? PAL3 : PAL0, 0, 0, 0), x+8, pos);
 	
-	VDP_updateSprites();
 	VDP_End();
 	
 	return buttons;
@@ -1221,55 +1259,80 @@ u16 CheckController(u16 joypad, u16 oldButtons, u16 y)
 
 void ControllerTest()
 {
-	u8 loadvram = 1, redraw = 1, refresh = 0;
-	u8 oldJoyType1 = JOY_TYPE_UNKNOWN, oldJoyType2 = JOY_TYPE_UNKNOWN;
+	u8 loadvram = 1, redraw = 1, refresh = 0, i = 0;
+	u8 portType[2] = { PORT_TYPE_UKNOWN, PORT_TYPE_UKNOWN };
+	u8 oldPortType[2] = { PORT_TYPE_UKNOWN, PORT_TYPE_UKNOWN };
+	u8 joytype[NUM_CONTRL] = { JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN,
+						JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN };
+	u8 oldJoyType[NUM_CONTRL] = { JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN,
+						JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN, JOY_TYPE_UNKNOWN };
+	u16 buttons[NUM_CONTRL] = { 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff };
+	u16 drawposx[NUM_CONTRL] = { 4, 15, 26, 4, 15, 26, 8, 22 };
+	u16 drawposy[NUM_CONTRL] = { 7, 7, 7, 12, 12, 12, 17, 17 };
+	u16 joyname[NUM_CONTRL] = { JOY_1, JOY_2, JOY_3, JOY_4, JOY_5, JOY_6, JOY_7, JOY_8 };
 	u16 exit = 0;
-	u16 buttons1 = 0xffff, buttons2 = 0xffff;
 	
 	JOY_init();
 	
 	while(!exit)
-	{	
-		oldJoyType1 = joytype;
-		oldJoyType2 = joytype2;
+	{
+		u8 foundCtrl = 0;
+		
+		JOY_reset();
+		
+		portType[PORT_1] = JOY_getPortType(PORT_1);
+		portType[PORT_2] = JOY_getPortType(PORT_2);
+		
+		if(portType[PORT_1] != oldPortType[PORT_1])
+			refresh = 1;
+		
+		if(portType[PORT_2] != oldPortType[PORT_2])
+			refresh = 1;
+		
+		for(i = 0; i < NUM_CONTRL; i++)
+		{
+			joytype[i] = JOY_getJoypadType(joyname[i]);
+
+			if(enable_cntrlsrt)
+			{
+				if(joytype[i] != JOY_TYPE_UNKNOWN)
+					foundCtrl++;
+			}
+			else
+				foundCtrl = i+1;
+
+			buttons[i] = CheckController(joyname[i], buttons[i], joytype[i], drawposx[foundCtrl-1], drawposy[foundCtrl-1], i);
+		
+			if(buttons[i] & BUTTON_LEFT && buttons[i] & BUTTON_START)
+				exit = 1;
+				
+			if(buttons[i] & BUTTON_RIGHT && buttons[i] & BUTTON_START)
+			{
+				u8 j = 0;
+				
+				for(j = 0; j < NUM_CONTRL; j++)
+					joytype[j] = JOY_TYPE_UNKNOWN;
+				JOY_reset();
+				refresh = 1;
+			}
+		}
+		
+		for(i = 0; i < NUM_CONTRL; i++)
+		{
+			if(joytype[i] != oldJoyType[i])
+				refresh = 1;
+		}
 		
 		if(loadvram)
 		{
-			DrawMainBG();
-
+			if(!debug_controls)
+				DrawMainBG();
+				
+			refresh = 0;
 			loadvram = 0;
 			redraw = 1;
-			
-		}
-		if(redraw)
-		{
-			VDP_Start();
-			VDP_drawTextBG(APLAN, "Controller Test", TILE_ATTR(PAL1, 0, 0, 0), 12, 7);
-			VDP_drawTextBG(APLAN, "Use START+RIGHT to reset ports", TILE_ATTR(PAL0, 0, 0, 0), 5, 22);
-			VDP_drawTextBG(APLAN, "Use START+LEFT to exit", TILE_ATTR(PAL1, 0, 0, 0), 9, 24);
-			VDP_End();
-		}
-		buttons1 = CheckController(JOY_1, buttons1, 10);
-		buttons2 = CheckController(JOY_2, buttons2, 16);
-
-		// self explanatory, no help?
-		//if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_CONTROLLER))
-			//loadvram = 1;
-
-		if((buttons1 & BUTTON_LEFT && buttons1 & BUTTON_START) ||
-			(buttons2 & BUTTON_LEFT && buttons2 & BUTTON_START))
-			exit = 1;
-			
-		if((buttons1 & BUTTON_RIGHT && buttons1 & BUTTON_START) || 
-			(buttons2 & BUTTON_RIGHT && buttons2 & BUTTON_START))
-		{
-			joytype = joytype2 = JOY_TYPE_UNKNOWN;
-			JOY_init();
 		}
 		
-		if(oldJoyType1 != joytype || oldJoyType2 != joytype2)
-			refresh = 1;
-			
 		if(refresh)
 		{
 			VDP_Start();
@@ -1278,8 +1341,55 @@ void ControllerTest()
 			redraw = 1;
 			refresh = 0;
 		}
+		
+		if(redraw)
+		{
+			char	str[5];
+			
+			VDP_Start();
+			
+			if(debug_controls)
+			{
+				intToHex(portType[PORT_1], str, 4);
+				VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL1, 0, 0, 0), 4, 2);
+				intToHex(JOY_getPortSupport(PORT_1), str, 4);
+				VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL1, 0, 0, 0), 4, 3);
+				
+				intToHex(portType[PORT_2], str, 4);
+				VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL1, 0, 0, 0), 18, 2);
+				intToHex(JOY_getPortSupport(PORT_2), str, 4);
+				VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL1, 0, 0, 0), 18, 3);
+				
+				for(i = 0; i < NUM_CONTRL; i++)
+				{
+					char	str[10];
+					
+					intToHex(joytype[i], str, 4);
+					VDP_drawTextBG(APLAN, str, TILE_ATTR(PAL1, 0, 0, 0), i*5, 4);
+				}
+			}
+			else
+				VDP_drawTextBG(APLAN, "CONTROLLER TEST", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
+			VDP_drawTextBG(APLAN, "Use START+RIGHT to reset ports", TILE_ATTR(PAL0, 0, 0, 0), 5, 22);
+			VDP_drawTextBG(APLAN, "Use START+LEFT to exit", TILE_ATTR(PAL1, 0, 0, 0), 9, 24);
+			
+			VDP_End();
+		}
+
+		// self explanatory, no help?
+		//if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_CONTROLLER))
+			//loadvram = 1;
+		
+		oldPortType[PORT_1] = portType[PORT_1];
+		oldPortType[PORT_2] = portType[PORT_2];
+		
+		for(i = 0; i < NUM_CONTRL; i++)
+			oldJoyType[i] = joytype[i];
 
 		VDP_waitVSync();
+		
+		if(debug_controls)
+			redraw = 1;
 	}
 }
 

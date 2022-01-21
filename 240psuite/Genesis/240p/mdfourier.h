@@ -60,6 +60,8 @@ enum SCD_Command{
         Op_SeekCDMDF,		    //Seek CD-DA Track 2 for MDFourier
 		Op_UnPauseCD,		    //Play (unpause) CD-DA Track
 		Op_StopCD,		    	//Stop CD-DA Track
+		Op_RemovePauseLimit, 	//Removes the pause limit for MDF wait 
+		Op_ResetPauseLimit,		//Resets the pause limit after MDF 
 		Op_PlayCDMDF,		    //Play CD-DA Track 2 for the MDFourier Debug
 		Op_PlayCD240,		    //Play CD-DA Track 3 for the Suite
 		Op_PlayPCM,				//Play Full PCM Memory
