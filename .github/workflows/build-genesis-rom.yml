@@ -33,6 +33,7 @@ jobs:
       shell: cmd
       working-directory: ${{ github.workspace }}/240psuite/Genesis/240p/
       env:
+        ROM_TYPE: ${{ matrix.romtype }}
         GDK: D:/a/240pTestSuite/240pTestSuite/240psuite/genesisSDK
         GDK_WIN: D:\a\240pTestSuite\240pTestSuite\240psuite\genesisSDK
         SCD_LOADER: D:/a/240pTestSuite/240pTestSuite/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
@@ -40,7 +41,7 @@ jobs:
         PATH %GDK_WIN%\bin;%PATH%
 
         :: Run Build:
-        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.%ROMTYPE%
+        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.%ROM_TYPE%
 
     - name: "Upload built ROMs to artifacts"
       uses: actions/upload-artifact@v2
