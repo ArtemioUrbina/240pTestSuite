@@ -19,7 +19,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Build tools
+    - name: Build linux tools
       run: |
         sudo apt-get install -y zlib1g-dev
         cd ./240psuite/Wii/240pSuite/tools
@@ -44,7 +44,7 @@ jobs:
 
     - uses: actions/download-artifact@v2
       with:
-        name: cfile-tool # I wonder if this will be installed to the correct path!
+        name: cfile-tool
         path: ${{ github.workspace }}/240psuite/Wii/240pSuite/tools/
         
     - name: Add cfile executable permissions
@@ -53,8 +53,6 @@ jobs:
 
     - name: Build ROM
       run: |
-        # pwd
-        # export PATH="$PATH:$DEVKITPPC/bin"
         cd ./240psuite/Wii/240pSuite
         make -f Makefile.gc
 
