@@ -11,7 +11,7 @@ on:
     - '240psuite/Wii/**'
 
 jobs:
-  build:
+  build-tools:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,23 +22,37 @@ jobs:
     - name: Build tools
       run: |
         sudo apt-get install -y zlib1g-dev
-        whereis gcc
         cd ./240psuite/Wii/240pSuite/tools
         # build cfile binary (linux specific) and ensure it is at this path.
         gcc cfile.c -lz -o cfile
 
-    - name: Build ROM Docker 
-      uses: docker://devkitpro/devkitppc:latest
+    - name: "Upload built tools to artifacts" # should possibly use cache instead!
+      uses: actions/upload-artifact@v2
       with:
-        #entrypoint:
-        args: cd ./240psuite/Wii/240pSuite && make -f Makefile.gc
+        name: ctool
+        path: |
+          ${{ github.workspace }}/**/240psuite/Wii/tools/ctool
 
-    # - name: Build ROM
-    #   run: |
-    #     pwd
-    #     export PATH="$PATH:$DEVKITPPC/bin"
-    #     cd ./240psuite/Wii/240pSuite
-    #     make -f Makefile.gc
+  build-rom:
+    needs: build-tools
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitppc:latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: ctool # I wonder if this will be installed to the correct path!
+
+    - name: Build ROM
+      run: |
+        # pwd
+        # export PATH="$PATH:$DEVKITPPC/bin"
+        cd ./240psuite/Wii/240pSuite
+        make -f Makefile.gc
 
     - name: "Upload built ROMs to artifacts"
       uses: actions/upload-artifact@v2
