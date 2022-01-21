@@ -30,9 +30,9 @@ jobs:
       shell: cmd
       run: |
         :: Alter paths to use SDK:
-        SET GDK=%GITHUB_WORKSPACE%\240psuite\genesisSDK
+        SET GDK=%GITHUB_WORKSPACE%/240psuite/genesisSDK
         SET GDK_WIN=%GITHUB_WORKSPACE%\240psuite\genesisSDK
-        SET SCD_LOADER=%GITHUB_WORKSPACE%\240psuite\Genesis\240p\segacdfiles\LukeProjectCD
+        SET SCD_LOADER=%GITHUB_WORKSPACE%/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
         PATH %GDK_WIN%\bin;%PATH%
 
         cd %GITHUB_WORKSPACE%\240psuite\Genesis\240p\
