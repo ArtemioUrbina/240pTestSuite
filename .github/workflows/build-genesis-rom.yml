@@ -35,21 +35,32 @@ jobs:
       working-directory: ${{ github.workspace }}/240psuite/Genesis/240p/
       env:
         ROM_TYPE: ${{ matrix.romtype }}
+        RETRY_COUNT: 10
         GDK: D:/a/240pTestSuite/240pTestSuite/240psuite/genesisSDK
         GDK_WIN: D:\a\240pTestSuite\240pTestSuite\240psuite\genesisSDK
         SCD_LOADER: D:/a/240pTestSuite/240pTestSuite/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
       run: |
         PATH %GDK_WIN%\bin;%PATH%
+        
         :: Run lib build
         :: %GDK_WIN%\bin\make -f %GDK_WIN%\makelib.gen
+        
         :: Run Build:
         :: Note, this randomly fails for some unknown reason!
-        %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.%ROM_TYPE%
+        :: We currently handle it using a retry loop.
+        set count=%RETRY_COUNT%
+        :DoWhile
+          if %count%==0 goto EndDoWhile
+          set /a count = %count% -1
+          call %GDK_WIN%\bin\make -f %GDK_WIN%\makefile.%ROM_TYPE%
+          if %errorlevel%==0 goto EndDoWhile
+          if %count% gtr 0 goto DoWhile
+        :EndDoWhile
 
     - name: "Upload built ROMs to artifacts"
       uses: actions/upload-artifact@v2
       with:
         name: SEGA_GENESIS-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/Genesis/240p/out/*.bin
-          ${{ github.workspace }}/**/240psuite/Genesis/240p/outcd/*.iso
+          ${{ github.workspace }}/**/240psuite/Genesis/**/240*.bin
+          ${{ github.workspace }}/**/240psuite/Genesis/**/240*.iso
