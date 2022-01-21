@@ -30,9 +30,9 @@ jobs:
       shell: cmd
       working-directory: ${{ github.workspace }}/240psuite/Genesis/240p/
       env:
-        GDK: D:\a\240pTestSuite\240pTestSuite\240psuite\genesisSDK
+        GDK: D:/a/240pTestSuite/240pTestSuite/240psuite/genesisSDK
         GDK_WIN: D:\a\240pTestSuite\240pTestSuite\240psuite\genesisSDK
-        SCD_LOADER: D:\a\240pTestSuite\240pTestSuite\240psuite\Genesis\240p\segacdfiles\LukeProjectCD
+        SCD_LOADER: D:/a/240pTestSuite/240pTestSuite/240psuite/Genesis/240p/segacdfiles/LukeProjectCD
       run: |
         :: Alter paths to use SDK:
         :: SET GDK=%GITHUB_WORKSPACE%/240psuite/genesisSDK
