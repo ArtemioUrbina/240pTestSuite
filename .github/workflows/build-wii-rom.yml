@@ -11,7 +11,28 @@ on:
    - '240psuite/Wii/**'
 
 jobs:
-  build:
+  build-tools:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Build linux tools
+      run: |
+        cd ./240psuite/Wii/240pSuite/tools
+        # build cfile binary (linux specific) and ensure it is at this path.
+        gcc cfile.c -lz -o cfile
+
+    - name: "Upload built tools to artifacts" # should possibly use cache instead!
+      uses: actions/upload-artifact@v2
+      with:
+        name: cfile-tool
+        path: ${{ github.workspace }}/240psuite/Wii/240pSuite/tools/cfile
+
+  build-rom:
+    needs: build-tools
     runs-on: ubuntu-latest
     container: devkitpro/devkitppc:latest
 
@@ -20,11 +41,14 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Build tools
-      run: |
-        cd ./240psuite/Wii/240pSuite/tools
-        # build cfile binary (linux specific) and ensure it is at this path.
-        gcc cfile.c -o cfile -lz
+    - uses: actions/download-artifact@v2
+      with:
+        name: cfile-tool
+        path: ${{ github.workspace }}/240psuite/Wii/240pSuite/tools/
+        
+    - name: Add cfile executable permissions
+      run: sudo chmod +rwx cfile
+      working-directory: ${{ github.workspace }}/240psuite/Wii/240pSuite/tools/
 
     - name: Build ROM
       run: |
@@ -36,4 +60,4 @@ jobs:
       with:
         name: NINTENDO_WII-ROM
         path: |
-          ${{ github.workspace }}/**/240psuite/Wii/*.dol
+          ${{ github.workspace }}/**/240psuite/Wii/**/*.dol
