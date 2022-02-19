@@ -1110,6 +1110,15 @@ u16 DrawFloatMenuResExtra(u16 def, char *option)
 	return(DrawFloatMenu(def, isVertical240() ? resmenudataPAL240 : resmenudata, option != NULL ? 4 : 3));
 }
 
+#ifdef SEGACD
+void WarningFileNotFount()
+{
+	fmenudata resmenudata[] = { {FLOAT_CANCEL, "PCM file missing"} };
+	
+	DrawFloatMenu(0, resmenudata, 0);
+}
+#endif
+
 u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size)
 {
 	int	i = 0, sel = 1;

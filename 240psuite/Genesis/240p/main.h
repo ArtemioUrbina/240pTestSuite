@@ -59,6 +59,9 @@ void HardwareMenu();
 void ControllerTest();
 void TeamPlayerCheck();
 
+#ifdef SEGACD
+void WarningFileNotFount();
+#endif
 
 #ifndef MENUDATA
 #define MENUDATA

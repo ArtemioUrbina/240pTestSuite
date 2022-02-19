@@ -26,6 +26,7 @@
 #include "help.h"
 #include "main.h"
 #include "mdfourier.h"
+#include "segacdtests.h"
 
 typedef struct timecode
 {
@@ -1469,7 +1470,8 @@ void SoundTest()
 	yminit();
 	PSG_init();
 #ifdef SEGACD
-	SendSCDCommand(Op_SetSamplesTest);
+	if(!SendSCDCommandRetVal(Op_SetSamplesTest, 0, NULL))
+		WarningFileNotFount();
 #endif
 	while(!exit)
 	{

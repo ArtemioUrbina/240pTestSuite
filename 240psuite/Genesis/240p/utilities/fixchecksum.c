@@ -26,7 +26,7 @@
 int main(int argc, char *argv[])
 {
 	FILE *fp = NULL;
-	unsigned long int srcSize, checksum = 0;
+	unsigned int srcSize, checksum = 0;
 	int fail = 0, i = 0, fixsize = 0;
 	unsigned int value = 0, romsize = 0;
 	unsigned char *src = NULL;
@@ -55,23 +55,30 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	src = (char*)malloc (sizeof(char)*srcSize);
+	src = (unsigned char*)malloc (sizeof(char)*srcSize);
 	if (!src) 
 	{
 		fclose(fp);
 		printf("Out of memory\n");
-		return -1;
+		return 1;
 	}
 	
 	if(fread (src, sizeof(char), srcSize, fp) != srcSize)
 	{
 		fclose(fp);
 		printf("Error loading file\n");
-		return -1;
+		return 1;
 	}
 
 	fclose(fp);
 	fp = NULL;
+
+	if(strncmp("SEGA", (char*)src + 0x100, 4) != 0)
+	{
+		free(src);
+		printf("Not a Sega MegaDrive ROM: %s\n", argv[1]);
+		return 1;
+	}
 
 	romsize = src[0x1A4] << 24 | src[0x1A5] << 16 | src[0x1A6] << 8 | src[0x1A7];
 	
@@ -101,7 +108,7 @@ int main(int argc, char *argv[])
 	{
 		printf("Checksum in %s was already 0x%04X\n", argv[1], checksum);
 		if(!fixsize)
-			return -1;
+			return 1;
 	}
 
 	src[0x18E] = checksum >> 8 & 0xFF;
@@ -111,7 +118,7 @@ int main(int argc, char *argv[])
 	if(!fp)
 	{
 		printf("Could not write to file %s\n", argv[1]);
-		return -1;
+		return 1;
 	}
 	
 	if(fwrite(src, sizeof(char), srcSize, fp) != srcSize)
@@ -120,7 +127,7 @@ int main(int argc, char *argv[])
 		fail = 1;;
 	}
 	else
-		printf("Fixed Header for ROM %s\n", argv[1], checksum);
+		printf("Fixed Header for ROM %s\n", argv[1]);
 	fclose(fp);
 
 	free(src);

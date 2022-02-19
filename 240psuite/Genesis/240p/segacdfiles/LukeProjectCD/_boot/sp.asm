@@ -1,7 +1,13 @@
 ; =======================================================================================
 ;  Sega CD Boot loader by Luke Usher/SoullessSentinel (c) 2010
+;  Luke current version at: https://github.com/LukeUsher/ProjectCD
+;  BSD 2-Clause License by Luke (assigned after this fork)
 ;  Used with permission. This code is not released under the GPL.
+;
 ;  Modified by Artemio Urbina for MDFourier and the 240p test Suite
+;  All PCM and RAM routine made for the 240p Test Suite
+;  Now checks if files exist and fails, and has return values in
+;  some scenarios.
 ; =======================================================================================
 align macro
 	cnop 0,\1
@@ -87,10 +93,15 @@ SP_Main:
 
 		moveq	#0, d0			; Clear d0
 		move.b	$FF800E, d0		; Store command to d0
+		move.w	$FF8010, d1		; Store param to d1
+		moveq	#0, d6			; Clear d6 for return value 1
+		moveq	#0, d7			; Clear d7 for return value 2
 		add.w	d0, d0			; Calculate Offset (Double)
 		add.w	d0, d0			; Calculate Offset (Double again)
 		jsr		OpTable(pc,d0)	; Execute function from jumptable
 		move.b	#0, $FF800F		; Mark as done
+		move.w	d6, $FF8020		; copy return value 1 if any
+		move.w	d7, $FF8022		; copy return value 2 if any
 		bra		SP_Main			; Loop
 
 ; =======================================================================================
@@ -125,15 +136,20 @@ OpTable:
 		bra.w	Op_SetSampSin32000	; Use 32000hz 1khz sample
 		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
+		bra.w	Op_CheckPCMRAM		; Write and Check to the full PCM RAM with value in FF8010
 
 Op_Null:
 		rts
 		
 Op_LoadBootFile:
+		cmp.b	#1, bootloaded		; check if already loaded
+		beq		@bootloaded			; load only once if already loaded due to race condition
 		lea		@bootfile(pc),a0	; Name pointer
 		bsr		FindFile		    ; Find File returns params in the right format for ReadCD
 		move.l	#$80000, a0			; Set destination to WordRAM
-		bsr		ReadCD
+		bsr		ReadCD				; load file
+		move.b	#1, bootloaded		; set flag that we loaded the main
+@bootloaded:
 		rts
 		
 @bootfile:
@@ -285,7 +301,25 @@ Op_SetSamplesTest2:
 		bsr		LoadPCMFile
 		rts
 
-; D1 - track number 
+Op_CheckPCMRAM:
+		move.b	#$FF, ONOFFdat			; Set all audio channels to off
+		bsr		PCMWait
+		move.b	#$40, CTRLdat			; Turn off PCM RAM Access
+		bsr		PCMWait
+		
+		move.b	d1, d0					; Set RAM check value
+		bsr		PCMValueStore			; Write all banks with value from d0
+		bsr		PCMValueCompare			; Compare all banks with value from d0
+		
+		move.b	#$C0, CTRLdat			; Turn on PCM RAM Access
+		bsr		PCMWait
+		rts
+
+; =======================================================================================
+;  PlayCDDA: Plys a CD-DA track
+;  Input: d1.b - Track number
+; =======================================================================================
+
 PlayCDDA:
 		BIOS_CDCSTOP
 		bsr		wait_BIOS
@@ -296,11 +330,19 @@ PlayCDDA:
 		BIOS_MSCPLAY1
 		bsr		wait_BIOS
 		rts
+
+; =======================================================================================
+;  wait_BIOS: Waits for the BIOS to get ready for commands
+; =======================================================================================
 		
 wait_BIOS:
 		BIOS_CDBCHK						; Check BIOS status
 		bcs		wait_BIOS				; If not ready, branch
 		rts
+
+; =======================================================================================
+;  InitPCM: Gets the Ricoh RF5C164 PCM chip ready for playback
+; =======================================================================================
 		
 InitPCM:
 		move.b	#$FF, ONOFFdat			; Set all audio channels to off
@@ -331,6 +373,10 @@ InitPCM:
 		bsr		PCMWait
 		rts
 
+; =======================================================================================
+;  PCMWait, waits PCMREGDELAY cycles for PCM to be ready for commands 
+; =======================================================================================
+
 PCMWait:
 		move.l	d0, -(a7)
 		move.w  #PCMREGDELAY, d0
@@ -340,37 +386,56 @@ PCMWait:
 		move.l	(a7)+, d0
 		rts
 
-; A0 - PCM filename
+; =======================================================================================
+;  LoadPCMFile subroutine, loads a PCM file from CD to the PCM RAM
+;  Input: a0.l - PCM Filename in CD-ROM
+;  Out:   d6.b - 1 success, 0 fail (file not found or bigger than 64KB)
+; =======================================================================================
+
 LoadPCMFile:
-		push	d1/d2/d3/a2		; Store used registers
+		push	d0/d1/d2/d3/a2	; Store used registers
 		bsr		FindFile		; Find File returns params in the right format for ReadCD
 		move.l	#$20000, a0		; Set destination to Program RAM
 		bsr		ReadCD
 
+		cmp		#0,d6			; Check if Read CD found the file
+		beq		@failLoadPCM	; abort if not loaded
 		move.l	d1, d3			; d1.l has the size from above in sectors (2048 bytes)
-		asr.l	#1,d3			; convert sectors to banks (4096 bytes)
+		asr.l	#1, d3			; convert sectors to banks (4096 bytes)
+		
+		cmp		#$10, d3		; Check is smaller than 64kb
+		bgt		@failLoadPCM	; Abort if bigger
 		move.l	#$20000, a2		; A2 - PCM Address
-		move.b	#0,d2			; D2 - start at first bank
+		move.b	#0, d2			; D2 - start at first bank
 
 @LoadPCMLoop:		
 		move.l	#$1000,d0		; we copy in bank increments
-		move.l	a2,a0			; A0 - PCM Address
+		move.l	a2,a0			; A0 - PCM source Address
 		move.b	d2,d1			; D1 - current bank
-		bsr		WritePCM
+		bsr		WritePCMBank
 		add.b	#1,d2			; D2 - Bank
 		add.l	#$1000,a2		; Increment address by 1000h, a bank size
 		cmp.w	d3,d2			; have we finished copy in the number of sectors?
 		BNE		@LoadPCMLoop
 		
-		pop		d1/d2/d3/a2		; Restore used registers
+		pop		d0/d1/d2/d3/a2	; Restore used registers
 		; our samples already have the FF terminators for loop
+		move.w	#1, d6			; return 1 for loaded
+		rts
+		
+@failLoadPCM
+		pop		d0/d1/d2/d3/a2	; Restore used registers
+		move.w	#0, d6			; return 0 for failed
 		rts
 
+; =======================================================================================
+;  WritePCMBank subroutine, copies PCM data form RAM to PCM RAM 
+;  Input: d0.w - bytes to copy
+;         d1.b - Target Bank
+;         a0.l - source for PCM data
+; =======================================================================================
 
-; D0 - Size
-; D1 - Bank
-; A0 - PCM Address
-WritePCM:
+WritePCMBank:
 		push	a1				; Store used registers
 		or.b	#$80, d1		; 1000b - bit 4 = 1 = play on bit 3 = 0 = select bank
 		move.b	d1, CTRLdat		; Select bank to write into
@@ -386,6 +451,122 @@ WritePCM:
 
 		dbra	d0, @WritePCMLoop
 		pop		a1				; Restore used registers
+		rts
+		
+; =======================================================================================
+;  PCMValueStore subroutine, writes whole PCM RAM to be a specific value
+;  Input: d0.b - PCM Value to write
+; =======================================================================================		
+
+PCMValueStore:
+		push	d1/d2/d3		; Store used registers
+		move.b	#0,d2			; D2 - start at first bank
+
+@PCMValueStoreLoop:		
+		move.l	#$1000,d3		; we copy in bank increments
+		move.b	d2,d1			; D1 - current bank
+		bsr		WritePCMValueBank
+		add.b	#1,d2			; D2 - Bank count
+		cmp.w	#$10,d2			; have we finished copy in the number of banks (64kb)
+		BNE		@PCMValueStoreLoop
+		
+		pop		d1/d2/d3		; Restore used registers
+		rts
+
+; =======================================================================================
+;  WritePCMValueBank subroutine, writes value to PCM RAM
+;  Input: d0.b - PCM Value to write
+;         d3.w - Bank Size
+;  Out:   d6.b - return value, 0 fail 1 ok
+;         d7.w - If fail, address with difference ($0-$FFFF)
+; =======================================================================================	
+
+WritePCMValueBank:
+		push	a1				; Store used registers
+		move.b	d1, CTRLdat		; Select bank to write into
+		bsr		PCMWait
+
+		move.l	#WAVEdat, a1	; Get pointer to start of PCM bank
+		sub.l	#1, d3			; Adjust for dbra
+
+@WritePCMValueBankLoop:
+		move.b	d0, (a1)
+		add.l	#2, a1
+
+		dbra	d3, @WritePCMValueBankLoop
+		pop		a1				; Restore used registers
+		rts
+
+; =======================================================================================
+;  PCMValueCompare subroutine, checks whole PCM RAM to be a specific value
+;  Input: d0.b - PCM Value to check
+;  Out:   d6.b - return value, 0 fail 1 ok
+;         d7.w - If fail, address with difference ($0-$FFFF)
+; =======================================================================================			
+
+PCMValueCompare:
+		push	d1/d2/d3		; Store used registers
+		move.b	#0,d2			; D2 - start at first bank
+
+@PCMValueCompareLoop:		
+		move.l	#$1000,d3		; we copy in bank increments
+		move.b	d2,d1			; D1 - current bank
+		bsr		ComparePCMValueBank
+		
+		cmp.b	#1,d4
+		BNE		@PCMValueCompareFail
+		add.b	#1,d2			; D2 - Bank count
+		cmp.w	#$10,d2			; have we finished copy in the number of banks (64kb)
+		BNE		@PCMValueCompareLoop
+		
+		pop		d1/d2/d3		; Restore used registers
+		move.w	#$1,d6			; return OK
+		move.w	#$0,d7			; return address of error
+		rts
+		
+@PCMValueCompareFail:
+		move.w	#0,d6			; return fail
+		move.w	d5,d7			; return Fail address
+		pop		d1/d2/d3		; Restore used registers
+		rts
+
+
+; =======================================================================================
+;  ComparePCMValueBank subroutine
+;  Input: d0.b - PCM Value to check
+;         d1.b - Bank to check
+;         d3.w - Bank Size
+;  Out:   d4.b - return value, 0 fail 1 ok
+;         d5.w - If fail, address with difference ($0-$FFFF)
+; =======================================================================================	
+
+ComparePCMValueBank:
+		push	d2/a1			; Store used registers
+		move.b	d1, CTRLdat		; Select bank to write into
+		bsr		PCMWait
+
+		move.l	#WAVEdat, a1	; Get pointer to start of PCM bank
+		sub.l	#1, d3			; Adjust for dbra
+		
+@ComparePCMValueBankLoop:
+		move.b	(a1),d2
+		cmp.b	d0, d2
+		BNE.s	@ComparePCMValueError
+		add.l	#2, a1
+
+		dbra	d3, @ComparePCMValueBankLoop
+		
+		move.w	#1, d4			; return 1, all ok
+		pop		d2/a1			; Restore used registers
+		rts
+
+@ComparePCMValueError
+		add.l	#1, d3			; get original size
+		mulu.w	d3, d1			; calculate bank*size
+		move.l	a1, d5			; address error in d5
+		add.l	d1, d5			; store complete address in d5 (bank*size+addr)
+		move.w	#0, d4			; return 0, failed
+		pop		d2/a1			; Restore used registers
 		rts
 
 ; =======================================================================================
@@ -403,6 +584,9 @@ SP_IRQ:
 ; =======================================================================================
 ReadCD:
 		push	d0-d7/a0-a6			; Store all registers
+		
+		cmp.l	#0,d0				; check if we have a valid size
+		beq		@readcdfail			; abort if no size
 		lea		BiosPacket(pc), a5	; Load bios packet
 		move.l	d0, (a5)			; Write start sector to packet
 		move.l	d1, 4(a5)			; Write size to packet
@@ -427,8 +611,13 @@ ReadCD:
 		subq.l	#1, 4(a5)			; Decrement sectors left
 		bne		@waitSTAT			; If not finished, branch
 		pop		d0-d7/a0-a6			; Restore all registers
+		move.l	#1,d6				; return 1 when loaded
 		rts							; Return
 
+@readcdfail
+		move.l	#0,d6				; return 0 when failed
+		pop		d0-d7/a0-a6			; Restore all registers
+		rts
 	
 ; =======================================================================================
 ;  ISO9660 Driver
@@ -467,24 +656,33 @@ Init9660:
 ;  Find File (ISO9660)
 ;  Input:  a0.l - Pointer to filename
 ;  Output: d0.l - Start sector
-;	   d1.l - Filesize
+;	       d1.l - Filesize
 ; =======================================================================================
 FindFile:
-		push	a1/a2/a6		; Store used registers
+		push	a1/a2/a5/a6		; Store used registers
 		lea.l	SectorBuffer,a1	; Get sector buffer
+		move.l	#$10000,a5		; set a limit for search
 @ReadFilenameStart:
 		movea.l	a0,a6			; Store filename pointer
 		move.b	(a6)+,d0		; Read character from filename
 @findFirstChar:
 		movea.l	a1,a2			; Store Sector buffer pointer
 		cmp.b	(a1)+,d0		; Compare with first letter of filename and increment
-		bne.b	@findFirstChar		; If not matched, branch
+		bne.b	@findFirstChar	; If not matched, branch
+		cmp.l	a5,a1			; compare offset with search limit
+		bge.b	@filenotfound	; abort of limit reached
 @checkChars:
 		move.b	(a6)+,d0		; Read next charactor of filename and increment
 		beq		@getInfo		; If all characters were matched, branch			
 		cmp.b	(a1)+,d0		; Else, check next character
 		bne.b	@ReadFilenameStart	; If not matched, find next file
 		bra.b	@checkChars		; else, check next character
+
+@filenotfound:
+		move.l	#0,d0			; return 0 when failed
+		move.l	#0,d1			; return 0 when failed
+		pop	a1/a2/a5/a6			; Restore used registers	
+		rts
 	
 @getInfo:
 		sub.l	#33,a2			; Move to beginning of directory entry
@@ -508,7 +706,7 @@ FindFile:
 		lsr.l	#8,d1			; Bitshift filesize (to get sector count)
 		lsr.l	#3,d1			; if file is not aligned to 2048 bytes, will discard
 	
-		pop	a1/a2/a6			; Restore used registers	
+		pop	a1/a2/a5/a6			; Restore used registers	
 		rts
 		
 ; =======================================================================================
@@ -540,6 +738,10 @@ pcmtest:
 
 pcmtest2:
 		dc.b	'PCMTESZ.PCM',0
+		align 2
+		
+bootloaded:
+		dc.b	0
 		align 2
 		
 ; =======================================================================================

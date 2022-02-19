@@ -1,4 +1,23 @@
-
+/* 
+ * 240p Test Suite
+ * Copyright (C)2011-2014 Artemio Urbina
+ *
+ * This file is part of the 240p Test Suite
+ *
+ * The 240p Test Suite is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The 240p Test Suite is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with 240p Test Suite; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "segacdtests.h"
 #include "main.h"
@@ -1006,8 +1025,8 @@ void CheckSCDProgramRAM()
 		VDP_drawTextBG(APLAN, "Try Memory Viewer at address", TILE_ATTR(PAL2, 0, 0, 0), 5, 14);
 		VDP_drawTextBG(APLAN, "above and use C.", TILE_ATTR(PAL2, 0, 0, 0), 5, 15);
 		VDP_End();
-		WaitKey(NULL);
-		return;
+		if(WaitKey("'A' for check 'B' to exit") != BUTTON_A)
+			return;
 	}
 	
 	
@@ -1246,7 +1265,7 @@ void SegaCDMenu()
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 done = 0, detectedhw = 1;
 #ifdef SEGACD
-	int maxsel = 6;
+	int maxsel = 7;
 #else
 	int	maxsel = 9;
 #endif
@@ -1305,6 +1324,8 @@ void SegaCDMenu()
 			VDP_drawTextBG(APLAN, "Program RAM Check", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "Word RAM Check", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
+#else
+			VDP_drawTextBG(APLAN, "PCM RAM Check", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 #endif
 			VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == maxsel - 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
@@ -1386,13 +1407,38 @@ void SegaCDMenu()
 				break;
 #else
 			case 4:
+				{
+					u16 result = 0, address = 0;
+					
+					result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address);
+					ShowMessageAndData("0x55 result:", result, 4, PAL1, 9, 10);
+					ShowMessageAndData("0x55 address:", address, 4, PAL1, 9, 12);
+					WaitKey(NULL);
+					
+					result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xAA, &address);
+					ShowMessageAndData("0xAA result:", result, 4, PAL1, 9, 10);
+					ShowMessageAndData("0xAA address:", address, 4, PAL1, 9, 12);
+					WaitKey(NULL);
+					
+					result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xFF, &address);
+					ShowMessageAndData("0xFF result:", result, 4, PAL1, 9, 10);
+					ShowMessageAndData("0xFF address:", address, 4, PAL1, 9, 12);
+					WaitKey(NULL);
+					
+					result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x00, &address);
+					ShowMessageAndData("0x00 result:", result, 4, PAL1, 9, 10);
+					ShowMessageAndData("0x00 address:", address, 4, PAL1, 9, 12);
+					WaitKey(NULL);
+				}
+				break;
+			case 5:
 				CleanUp();
 				MemViewer(0);
 				break;
-			case 5:
+			case 6:
 				DrawHelp(HELP_SEGACD);
 				break;
-			case 6:
+			case 7:
 				done = 1;
 				break;
 #endif

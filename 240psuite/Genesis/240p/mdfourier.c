@@ -20,6 +20,7 @@
  */
 
 #include "mdfourier.h"
+#include "segacdtests.h"
 
 u8 doZ80Lock = 0;
 
@@ -529,6 +530,36 @@ asm("SendSCDWait2:");
 	asm("bne	SendSCDWait2");
 }
 
+u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData)
+{
+	volatile unsigned char *segacd_comm = (void*)0xA1200E;
+	volatile u16 *segacd_param = (void*)0xA12010;
+	volatile u16 *return_val = (void*)0xA12020;
+	volatile u16 *extraDataInt = (void*)0xA12022;
+	u16	retval = 0;
+	
+asm("SendSCDCOMMwRet:");
+	asm("tst.b	0xA1200F");
+	asm("bne	SendSCDCOMMwRet");
+
+	*segacd_comm = 0;
+	*segacd_param = 0;
+asm("SendSCDWaitwRet:");
+	asm("tst.b	0xA1200F");
+	asm("beq	SendSCDWaitwRet");
+	
+	*segacd_comm = command;
+	*segacd_param = param;
+asm("SendSCDWaitwRet2:");
+	asm("tst.b	0xA1200F");
+	asm("bne	SendSCDWaitwRet2");
+	
+	retval = *return_val;
+	if(extraData)
+		*extraData = *extraDataInt;
+	return retval;
+}
+
 
 void PlayCDTrack()
 {
@@ -650,7 +681,8 @@ void ChangePCM(int *type)
 	if(*type > 5)
 		*type = 0;
 	
-	SendSCDCommand(command[*type]);
+	if(!SendSCDCommandRetVal(command[*type], 0, NULL))
+		WarningFileNotFount();
 }
 
 #endif
