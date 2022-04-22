@@ -126,7 +126,7 @@ int DetectEmulationIssue()
  * 0x400000 instead of 0x000000. So the BIOS ROM is at 0x400000, the
  * Program RAM bank is at 0x420000, and the Word RAM is at 0x600000.
  */
-int DetectSCDBIOS(uint32_t address)
+static volatile uint8_t *DetectSCDBIOS(uint32_t address)
 {
     uint8_t *bios;
 	
@@ -146,7 +146,7 @@ int DetectSCDBIOS(uint32_t address)
             }
         }
     }
-    return 1;
+    return bios;
 }
 
 #ifndef SEGACD
@@ -214,18 +214,21 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch)
 	return checksum;
 }
 
-void ShowMessageAndData(char *message, uint32_t address, int len, int palmsg, int xpos, int ypos)
+void ShowMessageAndData(char *message, uint32_t value, int len, int palmsg, int xpos, int ypos)
 {
 	int			msglen = 0;
-	char		buffer[40];
-	
-	intToHex(address, buffer, len);
 	
 	msglen = strlen(message);
 	VDP_Start();
 	VDP_drawTextBG(APLAN, message, TILE_ATTR(palmsg, 0, 0, 0), xpos, ypos);
-	VDP_drawTextBG(APLAN, " 0x", TILE_ATTR(PAL0, 0, 0, 0), xpos+msglen, ypos);
-	VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), xpos+msglen+3, ypos);
+	if(len)
+	{
+		char	buffer[40];
+		
+		intToHex(value, buffer, len);
+		VDP_drawTextBG(APLAN, " 0x", TILE_ATTR(PAL0, 0, 0, 0), xpos+msglen, ypos);
+		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), xpos+msglen+3, ypos);
+	}
 	VDP_End();
 }
 
@@ -290,47 +293,49 @@ void PrintBIOSInfo(uint32_t address)
 	}
 }
 
-void SetSCDRegion(u8 value, u32 startaddress, u32 size)
+int Test8bitRegionRegion(u8 value, u32 startaddress, u32 size)
 {
 	u8		*ram = NULL;
-	u32		address = 0;
+	u32		byte = 0;
 	
 	ram = (u8*)startaddress;
-	for(address = 0; address < size; address++)
-		ram[address] = value;
-}
-
-int ReadSCDRegion(u8 value, u32 startaddress, u32 size)
-{
-	u8		*ram = NULL;
-	u32		address = 0;
-	
-	ram = (u8*)startaddress;
-	for(address = 0; address < size; address++)
+	for(byte = 0; byte < size; byte++)
 	{
-		if(ram[address] != value)
-			return address;
+		ram[byte] = value;
+		if(ram[byte] != value)
+			return byte;
 	}
 	
 	return MEMORY_OK;
 }
 
-int CheckSCDRegion(u8 value, u32 startaddress, u32 size)
+int Test16bitRegion(u16 value, u32 startaddress, u32 size)
 {
-	SetSCDRegion(value, startaddress, size);
+	u16		*ram = NULL;
+	u32		word = 0;
 	
-	return(ReadSCDRegion(value, startaddress, size));
+	ram = (u16*)startaddress;
+	size = size/2;
+	for(word = 0; word < size; word++)
+	{
+		ram[word] = value;
+		if(ram[word] != value)
+			return word*2;
+	}
+	
+	return MEMORY_OK;
 }
 
-int CheckSCDRAMWithValue(char * message, u32 start, u32 end, u8 value, int pos)
+int CheckRAMWithValue(u32 start, u32 end, u16 value, int pos, u16 numbits)
 {
 	int memoryFail = 0;
 	
-	VDP_Start();
-	VDP_drawTextBG(APLAN, message, TILE_ATTR(PAL1, 0, 0, 0), 12, pos);
-	VDP_End();
+	ShowMessageAndData("Setting to", value, numbits == IS_8BIT ? 2 : 4, PAL1, 12, pos);
 	
-	memoryFail = CheckSCDRegion(value, start, end - start);
+	if(numbits == IS_16BIT)
+		memoryFail = Test16bitRegion(value, start, end - start);
+	else
+		memoryFail = Test8bitRegionRegion((u8)(value & 0x00FF), start, end - start);
 	
 	if(memoryFail != MEMORY_OK)
 	{
@@ -339,7 +344,7 @@ int CheckSCDRAMWithValue(char * message, u32 start, u32 end, u8 value, int pos)
 	}
 	
 	VDP_Start();
-	VDP_drawTextBG(APLAN, "ALL OK", TILE_ATTR(PAL2, 0, 0, 0), 16, pos+1);
+	VDP_drawTextBG(APLAN, "W/R OK", TILE_ATTR(PAL2, 0, 0, 0), 16, pos+1);
 	VDP_End();
 	return 1;
 }
@@ -379,13 +384,13 @@ void Z80RamTest()
 {
 	DrawMainBG();
 	
-	ShowMessageAndData("Z80 RAM", 0xA00000, 15, PAL1, 7, 7);
+	ShowMessageAndData("Z80 RAM", 0xA00000, 6, PAL1, 11	, 7);
 	if(doZ80Lock)
 		Z80_requestBus(1);			
-	CheckSCDRAMWithValue("Setting to 0x00", 0xA00000, 0xA01FFF, 0x00, 10);
-	CheckSCDRAMWithValue("Setting to 0xFF", 0xA00000, 0xA01FFF, 0xFF, 12);
-	CheckSCDRAMWithValue("Setting to 0x55", 0xA00000, 0xA01FFF, 0x55, 14);
-	CheckSCDRAMWithValue("Setting to 0xAA", 0xA00000, 0xA01FFF, 0xAA, 16);
+	CheckRAMWithValue(0xA00000, 0xA02000, 0xFF, 10, IS_8BIT);
+	CheckRAMWithValue(0xA00000, 0xA02000, 0x55, 12, IS_8BIT);
+	CheckRAMWithValue(0xA00000, 0xA02000, 0xAA, 14, IS_8BIT);
+	CheckRAMWithValue(0xA00000, 0xA02000, 0x00, 16, IS_8BIT);
 	if(doZ80Lock)
 		Z80_releaseBus();
 
@@ -786,13 +791,11 @@ u8 GetSCDRegisterBYTE(u32 reg)
 	return(*scdctrl);
 }
 
-int checkRegisterBYTE(u32 reg, u8 value, char * message, int pos)
+int checkRegisterBYTE(u32 reg, u8 value, int pos)
 {
 	u8 ret = 0;
 	
-	VDP_Start();
-	VDP_drawTextBG(APLAN, message, TILE_ATTR(PAL1, 0, 0, 0), 11, pos);
-	VDP_End();
+	ShowMessageAndData("Setting to", value, 2, PAL1, 11, pos);
 	
 	SetSCDRegisterBYTE(reg, value);
 	ret = GetSCDRegisterBYTE(reg);
@@ -803,7 +806,7 @@ int checkRegisterBYTE(u32 reg, u8 value, char * message, int pos)
 	}
 	
 	VDP_Start();
-	VDP_drawTextBG(APLAN, "All OK", TILE_ATTR(PAL2, 0, 0, 0), 16, pos+1);
+	VDP_drawTextBG(APLAN, "W/R OK", TILE_ATTR(PAL2, 0, 0, 0), 16, pos+1);
 	VDP_End();
 	return 1;
 }
@@ -814,10 +817,10 @@ void checkRegisterBYTEValues(char *title, u32 reg)
 	
 	ShowMessageAndData(title, reg, 8, PAL1, 7, 8);
 	
-	good += checkRegisterBYTE(reg, 0x55, "Setting to 0x55", 10);
-	good += checkRegisterBYTE(reg, 0xAA, "Setting to 0xAA", 12);
-	good += checkRegisterBYTE(reg, 0xFF, "Setting to 0xFF", 14);
-	if(good) checkRegisterBYTE(reg, 0, "Setting to 0x00", 16);
+	good += checkRegisterBYTE(reg, 0x55, 10);
+	good += checkRegisterBYTE(reg, 0xAA, 12);
+	good += checkRegisterBYTE(reg, 0xFF, 14);
+	if(good) checkRegisterBYTE(reg, 0x00, 16);
 	WaitKey(NULL);
 }
 
@@ -837,13 +840,11 @@ u16 GetSCDRegisterWORD(u32 reg)
 	return(*scdctrl);
 }
 
-int checkRegisterWORD(u32 reg, u16 value, char * message, int pos)
+int checkRegisterWORD(u32 reg, u16 value, int pos)
 {
 	u16 ret = 0;
 	
-	VDP_Start();
-	VDP_drawTextBG(APLAN, message, TILE_ATTR(PAL1, 0, 0, 0), 11, pos);
-	VDP_End();
+	ShowMessageAndData("Setting to", value, 4, PAL1, 11, pos);
 	
 	SetSCDRegisterWORD(reg, value);
 	ret = GetSCDRegisterWORD(reg);
@@ -854,7 +855,7 @@ int checkRegisterWORD(u32 reg, u16 value, char * message, int pos)
 	}
 	
 	VDP_Start();
-	VDP_drawTextBG(APLAN, "All OK", TILE_ATTR(PAL2, 0, 0, 0), 16, pos+1);
+	VDP_drawTextBG(APLAN, "W/R OK", TILE_ATTR(PAL2, 0, 0, 0), 16, pos+1);
 	VDP_End();
 	return 1;
 }
@@ -869,10 +870,10 @@ void checkRegisterWORDValues(char *title, u32 reg)
 	VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
 	VDP_End();
 	
-	good += checkRegisterWORD(reg, 0x5555, "Setting to 0x5555", 10);
-	good += checkRegisterWORD(reg, 0xAAAA, "Setting to 0xAAAA", 12);
-	good += checkRegisterWORD(reg, 0xFFFF, "Setting to 0xFFFF", 14);
-	if(good) checkRegisterWORD(reg, 0, "Setting to 0x0000", 16);
+	good += checkRegisterWORD(reg, 0x5555, 10);
+	good += checkRegisterWORD(reg, 0xAAAA, 12);
+	good += checkRegisterWORD(reg, 0xFFFF, 14);
+	if(good) checkRegisterWORD(reg, 0x0000, 16);
 	WaitKey(NULL);
 }
 
@@ -1020,7 +1021,7 @@ void CheckSCDProgramRAM()
 	{
 		VDP_Start();
 		VDP_drawTextBG(APLAN, "Fast Check Failed. The register", TILE_ATTR(PAL2, 0, 0, 0), 5, 10);
-		VDP_drawTextBG(APLAN, "did R/W OK, but bank switch was", TILE_ATTR(PAL2, 0, 0, 0), 5, 11);
+		VDP_drawTextBG(APLAN, "did W/R OK, but bank switch was", TILE_ATTR(PAL2, 0, 0, 0), 5, 11);
 		VDP_drawTextBG(APLAN, "either not done or RAM is bad.", TILE_ATTR(PAL2, 0, 0, 0), 5, 12);
 		VDP_drawTextBG(APLAN, "Try Memory Viewer at address", TILE_ATTR(PAL2, 0, 0, 0), 5, 14);
 		VDP_drawTextBG(APLAN, "above and use C.", TILE_ATTR(PAL2, 0, 0, 0), 5, 15);
@@ -1041,10 +1042,10 @@ void CheckSCDProgramRAM()
 		
 		good = 0;
 		
-		good += CheckSCDRAMWithValue("Setting to 0xAA", 0x420000, 0x440000, 0xAA, 10);
-		good += CheckSCDRAMWithValue("Setting to 0x55", 0x420000, 0x440000, 0x55, 12);
-		good += CheckSCDRAMWithValue("Setting to 0xFF", 0x420000, 0x440000, 0xFF, 14);
-		if(good == 3) CheckSCDRAMWithValue("Setting to 0x00", 0x420000, 0x440000, 0x00, 16);
+		good += CheckRAMWithValue(0x420000, 0x440000, 0xAAAA, 10, IS_16BIT);
+		good += CheckRAMWithValue(0x420000, 0x440000, 0x5555, 12, IS_16BIT);
+		good += CheckRAMWithValue(0x420000, 0x440000, 0xFFFF, 14, IS_16BIT);
+		if(good == 3) CheckRAMWithValue(0x420000, 0x440000, 0x0000, 16, IS_16BIT);
 
 		WaitKey(NULL);
 		VDP_Start();
@@ -1060,27 +1061,23 @@ void CheckSCDWordRAM()
 	ShowMessageAndData("WORD RAM", 0x600000, 8, PAL1, 10, 8);
 	
 	good = 0;
-	good += CheckSCDRAMWithValue("Setting to 0xAA", 0x600000, 0x640000, 0xAA, 10);	
-	good += CheckSCDRAMWithValue("Setting to 0x55", 0x600000, 0x640000, 0x55, 12);
-	good += CheckSCDRAMWithValue("Setting to 0xFF", 0x600000, 0x640000, 0xFF, 14);
-	if(good == 3) CheckSCDRAMWithValue("Setting to 0x00", 0x600000, 0x640000, 0x00, 16);
+	good += CheckRAMWithValue(0x600000, 0x640000, 0xAAAA, 10, IS_16BIT);
+	good += CheckRAMWithValue(0x600000, 0x640000, 0x5555, 12, IS_16BIT);
+	good += CheckRAMWithValue(0x600000, 0x640000, 0xFFFF, 14, IS_16BIT);
+	if(good == 3) CheckRAMWithValue(0x600000, 0x640000, 0x0000, 16, IS_16BIT);
 
 	WaitKey(NULL);
 }
 #endif
 
-#define	MAX_LOCATIONS	7
+#define	MAX_LOCATIONS	8
 
 void MemViewer(uint32_t address)
 {
 	u8 			redraw = 1, docrc = 0, locpos = 1, bank = 0, i = 0, ascii = 0;
-	uint32_t	crc = 0, locations[MAX_LOCATIONS] = { 0, 0x020000, 0x200000, 0x400000, 0x420000, 0x600000, 0xFF0000 };
+	uint32_t	crc = 0, locations[MAX_LOCATIONS] = { 0, 0x020000, 0x200000, 0x400000, 0x420000, 0x600000, 0xA00000, 0xFF0000 };
 	u16 		buttons, oldButtons = 0xffff, pressedButtons, close = 0;
-
-#ifndef SEGACD	
-	TestBankingProgramRAMFast();
-#endif
-
+	
 	// Select Bank 0
 	SetSCDRegisterWORD(MMOD_REGISTER, 0);
 	
@@ -1192,17 +1189,39 @@ void MemViewer(uint32_t address)
 		if(pressedButtons & BUTTON_START)
 		{
 			u16 type = 0;
-			fmenudata resmenudata[] = { {0, "Mem View"}, {1, "Help"}, {2, "exit"} };
+#ifndef SEGACD	
+			fmenudata resmenudata[] = { {0, "Mem View"}, {1, "Help"}, {2, "Fast Check"}, {3, "ASCII"}, {4, "exit"} };
+#else
+			fmenudata resmenudata[] = { {0, "Mem View"}, {1, "Help"}, {2, "CRC"}, {3, "ASCII"}, {4, "exit"} };
+#endif
 
-			type = DrawFloatMenu(1, resmenudata, 3);
-			if(type == 1)
-				DrawHelp(HELP_MEMVIEW);
-			if(type == 2)
-				close = 1;
+			type = DrawFloatMenu(1, resmenudata, 5);
+			switch(type)
+			{
+				case 1:
+					DrawHelp(HELP_MEMVIEW);	
+					break;
+				case 2:
+#ifndef SEGACD	
+					TestBankingProgramRAMFast();
+#else
+					docrc = !docrc;
+#endif
+					break;
+				case 3:
+					ascii = !ascii;
+					break;
+				case 4:
+					close = 1;
+					break;
+				default:
+					break;
+			}
 				
 			oldButtons |= BUTTON_A;
 			redraw = 1;
 		}
+
 		
 		if(pressedButtons & BUTTON_LEFT)
 		{
@@ -1211,7 +1230,10 @@ void MemViewer(uint32_t address)
 			else
 				address = 0;
 			
-			if(address >= 0x800000 && address < 0xFF0000) // skip
+			if(address >= 0x800000 && address < 0xA00000) // skip
+				address = 0xA0FFFF;
+				
+			if(address >= 0xA0FFFF && address < 0xFF0000) // skip
 				address = 0x7F0000;
 				
 			redraw = 1;
@@ -1221,7 +1243,10 @@ void MemViewer(uint32_t address)
 		{
 			address += 0x1C0;
 			
-			if(address >= 0x800000 && address < 0xFF0000) // skip
+			if(address >= 0x800000 && address < 0xA00000) // skip
+				address = 0xA00000;
+				
+			if(address >= 0xA0FFFF && address < 0xFF0000) // skip
 				address = 0xFF0000;
 				
 			if(address >= 0xFFFFFF)
@@ -1237,7 +1262,10 @@ void MemViewer(uint32_t address)
 			else
 				address = 0;
 			
-			if(address >= 0x800000 && address < 0xFF0000) // skip
+			if(address >= 0x800000 && address < 0xA00000) // skip
+				address = 0xA0FFFF;
+				
+			if(address >= 0xA0FFFF && address < 0xFF0000) // skip
 				address = 0x7F0000;
 		
 			redraw = 1;
@@ -1247,7 +1275,10 @@ void MemViewer(uint32_t address)
 		{
 			address += 0x10000;
 			
-			if(address >= 0x800000 && address < 0xFF0000) // skip
+			if(address >= 0x800000 && address < 0xA00000) // skip
+				address = 0xA00000;
+				
+			if(address >= 0xA0FFFF && address < 0xFF0000) // skip
 				address = 0xFF0000;
 				
 			if(address >= 0xFFFFFF)
@@ -1261,14 +1292,10 @@ void MemViewer(uint32_t address)
 
 void SegaCDMenu()
 {
+	u8 sel = 1;
 	u16 cursel = 1, pos, reload = 1, redraw = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 done = 0, detectedhw = 1;
-#ifdef SEGACD
-	int maxsel = 7;
-#else
-	int	maxsel = 9;
-#endif
 
 #ifndef SEGACD
 	if(!DetectSCDviaExpansion())
@@ -1307,30 +1334,28 @@ void SegaCDMenu()
 
 		pos = 7;
 		if(redraw)
-		{
+		{	
+			sel = 1;
 			VDP_Start();
 			VDP_drawTextBG(APLAN, detectedhw ? "Sega CD Tests" : "Sega CD not detected", TILE_ATTR(PAL1, 0, 0, 0), detectedhw ? 14 : 11, 4);
-			VDP_drawTextBG(APLAN, "BIOS CRC and info", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "BIOS CRC and info", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
-			VDP_drawTextBG(APLAN, "Check HINT Register", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Check HINT Register", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 #ifndef SEGACD
-			VDP_drawTextBG(APLAN, "Check Flag Register", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-			VDP_drawTextBG(APLAN, "Check Comm Registers", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-#else
-			VDP_drawTextBG(APLAN, "Check Communication Registers", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Check Flag Register", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 #endif
+			VDP_drawTextBG(APLAN, "Check Comm Registers", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
 #ifndef SEGACD
-			VDP_drawTextBG(APLAN, "Program RAM Check", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-			VDP_drawTextBG(APLAN, "Word RAM Check", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Program RAM Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Word RAM Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
-#else
-			VDP_drawTextBG(APLAN, "PCM RAM Check", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 #endif
-			VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == maxsel - 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "PCM RAM Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
-			VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == maxsel -1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-			VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == maxsel ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == sel ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			VDP_End();
 			redraw = 0;
 		}
@@ -1345,7 +1370,7 @@ void SegaCDMenu()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > maxsel)
+			if(cursel > sel)
 				cursel = 1;
 			redraw = 1;
 		}
@@ -1354,7 +1379,7 @@ void SegaCDMenu()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = maxsel;
+				cursel = sel;
 			redraw = 1;
 		}
 
@@ -1366,7 +1391,7 @@ void SegaCDMenu()
 			
 		if(pressedButtons & BUTTON_A)
 		{
-			if(cursel < maxsel - 2)
+			if(cursel < sel - 2)
 			{
 				FadeAndCleanUp();
 				DrawMainBG();
@@ -1396,40 +1421,21 @@ void SegaCDMenu()
 				CheckSCDWordRAM();
 				break;
 			case 7:
+				PCMRAMCheck();
+				break;
+			case 8:
 				CleanUp();
 				MemViewer(0x400000);
 				break;
-			case 8:
+			case 9:
 				DrawHelp(HELP_SEGACD);
 				break;
-			case 9:
+			case 10:
 				done = 1;
 				break;
 #else
 			case 4:
-				{
-					u16 result = 0, address = 0;
-					
-					result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address);
-					ShowMessageAndData("0x55 result:", result, 4, PAL1, 9, 10);
-					ShowMessageAndData("0x55 address:", address, 4, PAL1, 9, 12);
-					WaitKey(NULL);
-					
-					result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xAA, &address);
-					ShowMessageAndData("0xAA result:", result, 4, PAL1, 9, 10);
-					ShowMessageAndData("0xAA address:", address, 4, PAL1, 9, 12);
-					WaitKey(NULL);
-					
-					result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xFF, &address);
-					ShowMessageAndData("0xFF result:", result, 4, PAL1, 9, 10);
-					ShowMessageAndData("0xFF address:", address, 4, PAL1, 9, 12);
-					WaitKey(NULL);
-					
-					result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x00, &address);
-					ShowMessageAndData("0x00 result:", result, 4, PAL1, 9, 10);
-					ShowMessageAndData("0x00 address:", address, 4, PAL1, 9, 12);
-					WaitKey(NULL);
-				}
+				PCMRAMCheck();
 				break;
 			case 5:
 				CleanUp();
@@ -1458,4 +1464,321 @@ void SegaCDMenu()
 	return;
 }
 
+void PrintPCMResults(u8 value, u16 result, u16 address)
+{
+	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+	ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 4, 7);
+	if(result == 0)
+	{
+		ShowMessageAndData("Memory Failed w/:", value, 2, PAL1, 9, 12);
+		ShowMessageAndData("address/8bit:", address, 4, PAL1, 9, 13);
+	}
+	else
+	{
+		ShowMessageAndData("Memory OK w/:", value, 2, PAL1, 9, 12);
+	}
+	WaitKey(NULL);
+}
+
+u8 PCMRAMCheck()
+{
+	u16 result = 0, address = 0;
+
+#ifndef SEGACD
+	if(!segacd_init())
+	{
+		resetSegaCD();
+		return 0;
+	}
+#endif
+
+	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address);
+	PrintPCMResults(0x55, result, address);
+	
+	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xAA, &address);
+	PrintPCMResults(0xAA, result, address);
+	
+	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xFF, &address);
+	PrintPCMResults(0xFF, result, address);
+	
+	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x00, &address);
+	PrintPCMResults(0x00, result, address);
+	
+#ifndef SEGACD
+	resetSegaCD();
+#endif
+	
+	return 1;
+}
+
+void resetSegaCD()
+{
+	/*
+	 * Reset the Gate Array - this specific sequence of writes is recognized by
+	 * the gate array as a reset sequence, clearing the entire internal state -
+	 * this is needed for the LaserActive
+	 */
+	write_word(0xA12002, 0xFF00);
+	write_byte(0xA12001, 0x03);
+	write_byte(0xA12001, 0x02);
+	write_byte(0xA12001, 0x00);
+
+    /*
+     * Reset the Sub-CPU, request the bus
+     */
+    write_byte(0xA12001, 0x02);
+    while (!(read_byte(0xA12001) & 2)) write_byte(0xA12001, 0x02); // wait on bus acknowledge
+	
+	// Disable vertical blank handler to generate Sub-CPU level 2 ints.
+	segacd_int_enabled = 0;
+}
+
+uint8_t segacd_init()
+{
+	uint8_t		value = 0;
+	int 		timeout = 0;
+	uint8_t  	ypos = 6;
+	volatile uint8_t *segacd_bios_addr;
+
+	// Clear the screen
+	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+	
+	// Detect the address of the SCD BIOS
+	segacd_bios_addr = DetectSCDBIOS(0x400000);
+	if (!segacd_bios_addr)
+	{
+		ShowMessageAndData("SCD BIOS not found", 0, 0, PAL1, 10, 10);
+		WaitKey(NULL);
+		return 0;
+	}
+	ShowMessageAndData("SCD BIOS Detected at", (uint32_t)segacd_bios_addr, 8, PAL1, 5, ypos++);
+	
+	// Prepare for loading the data
+	resetSegaCD();
+	
+    /*
+     * Decompress Sub-CPU BIOS to Program RAM at 0x00000
+     */
+	ShowMessageAndData("Decompressing Sub-CPU BIOS", 0, 0, PAL1, 5, ypos++);
+    write_word(0xA12002, 0x0002); // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
+    memset((void *)0x420000, 0, (uint8_t)0x20000); // clear program ram first bank - needed for the LaserActive
+	Kos_Decomp(segacd_bios_addr, (uint8_t *)0x420000);
+
+    /*
+     * Copy Sub-CPU program to Program RAM at 0x06000
+     */
+	ShowMessageAndData("Copying Sub-CPU Program", sizeof(pcmcheck_scd), 4, PAL1, 5, ypos++);
+	memcpy((void *)0x426000, pcmcheck_scd, sizeof(pcmcheck_scd));
+	if (memcmp((void *)0x426000, pcmcheck_scd, sizeof(pcmcheck_scd)))
+    {
+		ShowMessageAndData("Failed writing Program RAM!", (uint32_t)0x420000, 8, PAL1, 5, ypos++);
+		WaitKey(NULL);
+		resetSegaCD();
+        return 0;
+    }
+	
+    write_byte(0xA12001, 0x01); // clear bus request, deassert reset - allow CD Sub-CPU to run
+	write_byte(0xA1200E, 0x00); // clear main comm port
+    while (!(read_byte(0xA12001) & 1)) 
+	{
+		write_byte(0xA12001, 0x01); // wait on Sub-CPU running
+		write_byte(0xA1200E, 0x00); // clear main comm port
+	}
+	ShowMessageAndData("Sub CPU Started", 0, 0, PAL1, 5, ypos++);
+	
+	write_byte(0xA12010, 0x01); // clear command send (for the state machine in the SCD)
+	/*
+     * Set the vertical blank handler to generate Sub-CPU level 2 ints.
+     * The Sub-CPU BIOS needs these in order to run.
+     */
+	segacd_int_enabled = 1;
+    set_sr(0x2000); // enable interrupts
+
+    /*
+     * Wait for Sub-CPU program to set sub comm port indicating it is running -
+     * note that unless there's something wrong with the hardware, a timeout isn't
+     * needed... just loop until the Sub-CPU program responds, but 2000000 is about
+     * ten times what the LaserActive needs, and the LA is the slowest unit to
+     * initialize
+     */
+	
+	timeout = 500;
+    do
+    {
+		value = (u8)read_word(0xA12020);
+		if(value != 'I')
+		{
+			if (timeout-- <= 0)
+			{
+				ShowMessageAndData("SCD failed to start!", 0, 0, PAL1, 5, ypos+3);
+				WaitKey(NULL);
+				return 0;
+			}
+			ShowMessageAndData("Waiting for SP_Init", timeout, 3, PAL1, 5, ypos);
+		}
+		VDP_waitVSync();
+    }while(value != 'I');
+	ypos ++;
+	/*
+     * Wait for Sub-CPU to indicate it is ready to receive commands, for 'R'
+     */
+	timeout = 500;
+    do
+	{
+		value = (u8)read_word(0xA12020);
+		if(value != 0)
+		{
+			if (timeout-- <= 0)
+			{
+				ShowMessageAndData("SCD failed to start!", 0, 0, PAL1, 5, ypos+3);
+				WaitKey(NULL);
+				return 0;
+			}
+			ShowMessageAndData("Waiting for SP_Main", timeout, 3, PAL1, 5, ypos);
+		}
+		VDP_waitVSync();
+	}while (value != 0);
+	ShowMessageAndData("SCD initialized and ready to go!", 0, 0, PAL1, 5, ypos+3);
+	
+	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+	return 1;
+}
+
+#ifdef SEGACD
+// These are the functions called in Sega CD Mode
+void SendSCDCommand(enum SCD_Command command)
+{
+	volatile unsigned char *segacd_comm = (void*)0xA1200E;
+	
+asm("SendSCDCOMM:");
+	asm("tst.b	0xA1200F");
+	asm("bne	SendSCDCOMM");
+
+	*segacd_comm = 0;
+asm("SendSCDWait:");
+	asm("tst.b	0xA1200F");
+	asm("beq	SendSCDWait");
+	
+	*segacd_comm = command;
+asm("SendSCDWait2:");
+	asm("tst.b	0xA1200F");
+	asm("bne	SendSCDWait2");
+}
+
+u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData)
+{
+	volatile unsigned char *segacd_comm = (void*)0xA1200E;
+	volatile u16 *segacd_param = (void*)0xA12010;
+	volatile u16 *return_val = (void*)0xA12020;
+	volatile u16 *extraDataInt = (void*)0xA12022;
+	u16	retval = 0;
+	
+asm("SendSCDCOMMwRet:");
+	asm("tst.b	0xA1200F");
+	asm("bne	SendSCDCOMMwRet");
+
+	*segacd_comm = 0;
+	*segacd_param = 0;
+asm("SendSCDWaitwRet:");
+	asm("tst.b	0xA1200F");
+	asm("beq	SendSCDWaitwRet");
+	
+	*segacd_comm = command;
+	*segacd_param = param;
+asm("SendSCDWaitwRet2:");
+	asm("tst.b	0xA1200F");
+	asm("bne	SendSCDWaitwRet2");
+	
+	retval = *return_val;
+	if(extraData)
+		*extraData = *extraDataInt;
+	return retval;
+}
+
+#else
+// These are the functions called in Mode 1 (from the cartridge mode, different Addresses)
+void SendSCDCommand(enum SCD_Command command)
+{
+	volatile u16 *segacd_comm = (void*)0xA12010;
+	
+asm("SendSCDCOMM:");
+	asm("tst.w	0xA12020");
+	asm("bne	SendSCDCOMM");
+
+	*segacd_comm = 0;
+asm("SendSCDWait:");
+	asm("tst.w	0xA12020");
+	asm("beq	SendSCDWait");
+	
+	*segacd_comm = command;
+asm("SendSCDWait2:");
+	asm("tst.w	0xA12020");
+	asm("bne	SendSCDWait2");
+}
+
+u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData)
+{
+	volatile u16 *segacd_comm = (void*)0xA12010;
+	volatile u16 *segacd_param = (void*)0xA12012;
+	volatile u16 *return_val = (void*)0xA12022;
+	volatile u16 *extraDataInt = (void*)0xA12024;
+	u16	retval = 0;
+
+asm("SendSCDCOMMwRet:");
+	asm("tst.w	0xA12020");
+	asm("bne	SendSCDCOMMwRet");
+	*segacd_comm = 0;
+	*segacd_param = 0;
+asm("SendSCDWaitwRet:");
+	asm("tst.w	0xA12020");
+	asm("beq	SendSCDWaitwRet");
+	
+	*segacd_comm = command;
+	*segacd_param = param;
+asm("SendSCDWaitwRet2:");
+	asm("tst.w	0xA12020");
+	asm("bne	SendSCDWaitwRet2");
+	
+	retval = *return_val;
+	if(extraData)
+		*extraData = *extraDataInt;
+	return retval;
+}
+#endif
+
+void write_byte(unsigned int dst, unsigned char val)
+{
+	unsigned char *_dst = (unsigned char *)dst;
+	*_dst = val;
+}
+
+void write_word(unsigned int dst, unsigned short val)
+{
+	unsigned short *_dst = (unsigned short *)dst;
+	*_dst = val;
+}
+
+void write_long(unsigned int dst, unsigned int val)
+{
+	unsigned int *_dst = (unsigned int *)dst;
+	*_dst = val;
+}
+
+unsigned char read_byte(unsigned int src)
+{
+	volatile unsigned char *_src = (unsigned char *)src;
+	return(*_src);
+}
+ 
+unsigned short read_word(unsigned int src)
+{
+	volatile unsigned short *_src = (unsigned short *)src;
+	return(*_src);
+}
+ 
+unsigned int read_long(unsigned int src)
+{
+	volatile unsigned int *_src = (unsigned int *)src;
+	return(*_src);
+}
 

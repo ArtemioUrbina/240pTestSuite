@@ -41,5 +41,6 @@ extern u8	IsPALVDP;
 
 extern u8	enable_cntrlsrt;
 extern u8	debug_controls;
+extern u8	segacd_int_enabled;
 
 #endif

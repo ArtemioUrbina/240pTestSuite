@@ -51,15 +51,17 @@ int main()
 	else
 		VDP_setScreenHeight224();
 
-#ifdef SEGACD	
-	SendSCDCommand(Op_InitCD);
-#endif
-
 	VDP_loadFontData(font_tiles, FONT_LEN, USE_DMA);
 	VDP_End();
 	
+#ifdef SEGACD	
+	SendSCDCommand(Op_InitCD);
+#endif
+	
 	DrawIntro();
 	
+	// Disable SCD Int 2
+	segacd_int_enabled = 0;
 	SYS_setVIntCallback(VBlankIntCallback);
 	
 	while(1)
@@ -218,7 +220,7 @@ void TestPatternMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			if(cursel < 14)
+			if(cursel < 15)
 				FadeAndCleanUp();
 			switch (cursel)
 			{
@@ -848,6 +850,10 @@ void VBlankIntCallback()
 		if(IsPALVDP && enable_PAL240)
 			VDP_setScreenHeight240();
 	}
+	
+	// Check if we call Sega CD interrupt with vsync
+	if(segacd_int_enabled)
+		vblank_scd();
 }
 	
 void VBlankIntCallbackCancel()

@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011-2014 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -510,56 +510,6 @@ void ExecuteNoise(u16 framelen)
 }
 
 #ifdef SEGACD
-
-void SendSCDCommand(enum SCD_Command command)
-{
-	volatile unsigned char *segacd_comm = (void*)0xA1200E;
-	
-asm("SendSCDCOMM:");
-	asm("tst.b	0xA1200F");
-	asm("bne	SendSCDCOMM");
-
-	*segacd_comm = 0;
-asm("SendSCDWait:");
-	asm("tst.b	0xA1200F");
-	asm("beq	SendSCDWait");
-	
-	*segacd_comm = command;
-asm("SendSCDWait2:");
-	asm("tst.b	0xA1200F");
-	asm("bne	SendSCDWait2");
-}
-
-u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData)
-{
-	volatile unsigned char *segacd_comm = (void*)0xA1200E;
-	volatile u16 *segacd_param = (void*)0xA12010;
-	volatile u16 *return_val = (void*)0xA12020;
-	volatile u16 *extraDataInt = (void*)0xA12022;
-	u16	retval = 0;
-	
-asm("SendSCDCOMMwRet:");
-	asm("tst.b	0xA1200F");
-	asm("bne	SendSCDCOMMwRet");
-
-	*segacd_comm = 0;
-	*segacd_param = 0;
-asm("SendSCDWaitwRet:");
-	asm("tst.b	0xA1200F");
-	asm("beq	SendSCDWaitwRet");
-	
-	*segacd_comm = command;
-	*segacd_param = param;
-asm("SendSCDWaitwRet2:");
-	asm("tst.b	0xA1200F");
-	asm("bne	SendSCDWaitwRet2");
-	
-	retval = *return_val;
-	if(extraData)
-		*extraData = *extraDataInt;
-	return retval;
-}
-
 
 void PlayCDTrack()
 {

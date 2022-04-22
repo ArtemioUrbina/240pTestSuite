@@ -1380,25 +1380,20 @@ u8 DrawContrast()
 
 void DrawConvergence()
 {
-	int convType = 0;
+	int convType = 4, horRes = RES_320;
+	int exit = 0, nhorRes = horRes, redraw = 1;
 	u16 ind = 0, size = 0, loadvram = 1; 
-	u16 exit = 0, type = 0, ntype = 0, redraw = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
-	type = DrawFloatMenuRes(RES_320);
-	if(type == FLOAT_CANCEL)
+	horRes = DrawFloatMenuRes(RES_320);
+	if(horRes == FLOAT_CANCEL)
 		return;
-		
+	
 	while(!exit)
 	{
 		if(loadvram)
 		{
 			VDP_Start();	
-			if(type == RES_256)
-				VDP_setScreenWidth256();
-			else
-				VDP_setScreenWidth320();
-
 			if(convType < 3)
 			{
 				VDP_setPalette(PAL0, bw_pal);
@@ -1428,8 +1423,14 @@ void DrawConvergence()
 		if(redraw)
 		{
 			VDP_Start();
+			if(horRes == RES_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+			
 			if(convType < 3)
-				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+size*convType, 0, 0, 320 / 8, getVerticalRes() / 8);
+				VDP_fillTileMapRect(APLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX+size*convType, 
+							0, 0, (horRes == RES_320 ? 320 : 256)/ 8, getVerticalRes() / 8);
 			else
 			{
 				if(convType == 4)
@@ -1458,7 +1459,6 @@ void DrawConvergence()
 			if(convType < 0)
 				convType = 4;
 			loadvram = 1;
-			redraw = 1;
 		}
 
 		if(pressedButtons & BUTTON_B)
@@ -1467,7 +1467,6 @@ void DrawConvergence()
 			if(convType > 4)
 				convType = 0;
 			loadvram = 1;
-			redraw = 1;
 		}
 
 		if(pressedButtons & BUTTON_START)
@@ -1475,10 +1474,12 @@ void DrawConvergence()
 			
 		if(pressedButtons & BUTTON_C)
 		{
-			ntype = DrawFloatMenuRes(type);
-			if(ntype != FLOAT_CANCEL)
-				type = ntype;
+			nhorRes = DrawFloatMenuRes(horRes);
 			resetController(&oldButtons);
+			
+			if(nhorRes != FLOAT_CANCEL)
+				horRes = nhorRes;
+			
 			loadvram = 1;
 		}
 

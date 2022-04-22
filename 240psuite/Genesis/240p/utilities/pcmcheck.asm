@@ -15,7 +15,7 @@ align macro
 	
 ; =======================================================================================
 ;  Sega CD Sub Program
-;  This is the OS that runs on the Segs CD CPU, and handles all disc activity, and all
+;  This is the OS that runs on the Sega CD CPU, and handles all disc activity, and all
 ;  access to the Sega CD specific hardware
 ; =======================================================================================
 		include "_inc/cdbios.asm"
@@ -52,13 +52,14 @@ MscCDTrack	equ	3
 ; =======================================================================================
 ;  Sub Module Header
 ; =======================================================================================
+SPHeader:
 ModuleName:			dc.b 'MAIN-SUBCPU',0
 ModuleVersion:		dc.w 0, 0
 NextModule:			dc.l 0
 ModuleSize:			dc.l 0
-ModuleStartAddr:	dc.l $20
+ModuleStartAddr:	dc.l JumpTable-SPHeader
 ModuleWorkRAM:		dc.l 0
-JumpTable:	
+JumpTable:			
 					dc.w SP_Init-JumpTable
 					dc.w SP_Main-JumpTable
 					dc.w SP_IRQ-JumpTable
@@ -67,17 +68,12 @@ JumpTable:
 
 ; =======================================================================================
 ;  SP_Init
-;  Called once on intial boot, as soon as it is loaded by the Sega CD. 
+;  Called once on intial boot (VBlank not enabled yet)
 ; =======================================================================================
 SP_Init:
 		andi.b	#$FA, $FF8003		; Set WordRAM to 2M Mode
-		bsr		Init9660			; Init ISO filesystem
-		clr.b	$FF800F				; Clear status flag
-		rts							; Return to BIOS (which will then call SP_Main)
-
-DriveInit_Params:
-		dc.w	$01FF				; first track, last track (all)
-		even				    	; just in case
+		move.w	#'I', $FF8020		; Set Status to Init
+		rts							; Return to BIOS (which will then call SP_Main)					; Return to BIOS (which will then call SP_Main)
 
 ; =======================================================================================
 ;  SP_Main
@@ -85,25 +81,29 @@ DriveInit_Params:
 ;  WARNING: Does NOT check validitiy of input, invalid function calls WILL crash the cpu
 ; =======================================================================================
 SP_Main:
-		tst.b	$FF800E			; Check command
-		bne		SP_Main			; If NOT clear, loop 
-		move.b	#1, $FF800F		; Else, set status to ready
+		bsr		InitPCM			; Initialize Ricoh RF5C164 (PCM) Chip
+		move.w	#0, $FF8020		; Send value to main CPU
+
+@main_loop:
+		tst.w	$FF8010			; Check command
+		bne		@main_loop		; If NOT clear, loop 
+		move.w	#1, $FF8020		; Else, set status to ready
 @loop:				
-		tst.b	$FF800E			; Check command
+		tst.w	$FF8010			; Check command
 		beq		@loop			; If none issued, loop
 
 		moveq	#0, d0			; Clear d0
-		move.b	$FF800E, d0		; Store command to d0
-		move.w	$FF8010, d1		; Store param to d1
+		move.w	$FF8010, d0		; Store command to d0
+		move.w	$FF8012, d1		; Store param to d1
 		moveq	#0, d6			; Clear d6 for return value 1
 		moveq	#0, d7			; Clear d7 for return value 2
 		add.w	d0, d0			; Calculate Offset (Double)
 		add.w	d0, d0			; Calculate Offset (Double again)
 		jsr		OpTable(pc,d0)	; Execute function from jumptable
-		move.b	#0, $FF800F		; Mark as done
-		move.w	d6, $FF8020		; copy return value 1 if any
-		move.w	d7, $FF8022		; copy return value 2 if any
-		bra		SP_Main			; Loop
+		move.w	#0, $FF8020		; Mark as done
+		move.w	d6, $FF8022		; copy return value 1 if any
+		move.w	d7, $FF8024		; copy return value 2 if any
+		bra		@main_loop		; Loop
 
 ; =======================================================================================
 ;  OpTable
@@ -113,7 +113,7 @@ SP_Main:
 ; =======================================================================================		
 OpTable:
 		bra.w	Op_Null			    ; Null Operation
-		bra.w	Op_LoadBootFile		; Load File (from ISO9660 filesystem)
+		bra.w	Op_InitISOFS		; Init ISO9660 filesystem
 		bra.w	Op_GetWordRAM		; Give WordRAM to Main CPU
 		bra.w	Op_InitCD		    ; Init
 		bra.w	Op_SeekCDMDF	    ; Seek CD-DA Track 2 for MDFourier
@@ -137,26 +137,15 @@ OpTable:
 		bra.w	Op_SetSampSin32000	; Use 32000hz 1khz sample
 		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
-		bra.w	Op_CheckPCMRAM		; Write and Check to the full PCM RAM with value in FF8010
+		bra.w	Op_CheckPCMRAM		; Write and Check to the full PCM RAM with value in FF8012
 
 Op_Null:
 		rts
 		
-Op_LoadBootFile:
-		cmp.b	#1, bootloaded		; check if already loaded
-		beq		@bootloaded			; load only once if already loaded due to race condition
-		lea		@bootfile(pc),a0	; Name pointer
-		bsr		FindFile		    ; Find File returns params in the right format for ReadCD
-		move.l	#$80000, a0			; Set destination to WordRAM
-		bsr		ReadCD				; load file
-		move.b	#1, bootloaded		; set flag that we loaded the main
-@bootloaded:
+Op_InitISOFS:
+		bsr		Init9660			; Init ISO filesystem
 		rts
 		
-@bootfile:
-		dc.b	'M_INIT.PRG',0
-		align 2
-
 Op_GetWordRAM:	
 		bset	#0, $FF8003		; Give WordRAM to Main CPU
 		rts
@@ -171,7 +160,7 @@ Op_InitCD:
 		bsr		wait_BIOS
 		BIOS_CDCSTAT
 		bsr		wait_BIOS
-		bsr		InitPCM
+		;bsr		InitPCM
         rts
 	
 Op_PlayCDMDF:
@@ -317,7 +306,7 @@ Op_CheckPCMRAM:
 		rts
 
 ; =======================================================================================
-;  PlayCDDA: Plays a CD-DA track
+;  PlayCDDA: Plys a CD-DA track
 ;  Input: d1.b - Track number
 ; =======================================================================================
 
@@ -510,7 +499,7 @@ PCMValueCompare:
 		move.b	#0,d2			; D2 - start at first bank
 
 @PCMValueCompareLoop:		
-		move.l	#$1000,d3		; we copy in bank increments
+		move.l	#$1000,d3		; we copy in bank increments (4096 bytes)
 		move.b	d2,d1			; D1 - current bank
 		bsr		ComparePCMValueBank
 		
@@ -571,7 +560,8 @@ ComparePCMValueBank:
 		move.w	#0, d4			; return 0, failed
 		pop		d2/d6/d7/a1		; Restore used registers
 		rts
-		
+
+
 ; =======================================================================================
 ;  SP_IRQ
 ;  Interrupt Request, Level 2 Interrupt routine
@@ -716,6 +706,10 @@ FindFile:
 ;  Data
 ; =======================================================================================
 
+DriveInit_Params:
+		dc.w	$01FF				; first track, last track (all)
+		even				    	; just in case
+
 PCMTestFreq:
 		dc.w	$0800
 		
@@ -741,10 +735,6 @@ pcmtest:
 
 pcmtest2:
 		dc.b	'PCMTESZ.PCM',0
-		align 2
-		
-bootloaded:
-		dc.b	0
 		align 2
 		
 ; =======================================================================================
