@@ -1925,6 +1925,31 @@ void LEDZoneTest()
 	}
 }
 
+void loadNumbersToVRAM(u16 *numbers, u16 size)
+{
+	VDP_loadTileData(tiles_0, numbers[0], size, USE_DMA);
+	numbers[1] = numbers[0] + size;
+	VDP_loadTileData(tiles_1, numbers[1], size, USE_DMA);
+	numbers[2] = numbers[1] + size;
+	VDP_loadTileData(tiles_2, numbers[2], size, USE_DMA);
+	numbers[3] = numbers[2] + size;
+	VDP_loadTileData(tiles_3, numbers[3], size, USE_DMA);
+	numbers[4] = numbers[3] + size;
+	VDP_loadTileData(tiles_4, numbers[4], size, USE_DMA);
+	numbers[5] = numbers[4] + size;
+	VDP_loadTileData(tiles_5, numbers[5], size, USE_DMA);
+	numbers[6] = numbers[5] + size;
+	VDP_loadTileData(tiles_6, numbers[6], size, USE_DMA);
+	numbers[7] = numbers[6] + size;
+	VDP_loadTileData(tiles_7, numbers[7], size, USE_DMA);
+	numbers[8] = numbers[7] + size;
+	VDP_loadTileData(tiles_8, numbers[8], size, USE_DMA);
+	numbers[9] = numbers[8] + size;
+	VDP_loadTileData(tiles_9, numbers[9], size, USE_DMA);
+	numbers[10] = numbers[9] + size;
+	VDP_loadTileData(tiles_c, numbers[10], size, USE_DMA);
+}
+
 void PassiveLagTest()
 {
 	u16 frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, bgcol = PAL2;
@@ -1947,27 +1972,7 @@ void PassiveLagTest()
 			numbers[0] = TILE_USERINDEX;
 			size = sizeof(tiles_0) / 32;
 
-			VDP_loadTileData(tiles_0, numbers[0], size, USE_DMA);
-			numbers[1] = numbers[0] + size;
-			VDP_loadTileData(tiles_1, numbers[1], size, USE_DMA);
-			numbers[2] = numbers[1] + size;
-			VDP_loadTileData(tiles_2, numbers[2], size, USE_DMA);
-			numbers[3] = numbers[2] + size;
-			VDP_loadTileData(tiles_3, numbers[3], size, USE_DMA);
-			numbers[4] = numbers[3] + size;
-			VDP_loadTileData(tiles_4, numbers[4], size, USE_DMA);
-			numbers[5] = numbers[4] + size;
-			VDP_loadTileData(tiles_5, numbers[5], size, USE_DMA);
-			numbers[6] = numbers[5] + size;
-			VDP_loadTileData(tiles_6, numbers[6], size, USE_DMA);
-			numbers[7] = numbers[6] + size;
-			VDP_loadTileData(tiles_7, numbers[7], size, USE_DMA);
-			numbers[8] = numbers[7] + size;
-			VDP_loadTileData(tiles_8, numbers[8], size, USE_DMA);
-			numbers[9] = numbers[8] + size;
-			VDP_loadTileData(tiles_9, numbers[9], size, USE_DMA);
-			numbers[10] = numbers[9] + size;
-			VDP_loadTileData(tiles_c, numbers[10], size, USE_DMA);
+			loadNumbersToVRAM(numbers, size);
 
 			circle = numbers[10] + size;
 			size = sizeof(circle56_tiles) / 32;
@@ -2584,9 +2589,9 @@ void AudioSyncTest()
 
 void DisappearingLogo()
 {
-	char cntstr[6];
-	u16 x = 132, y = 60, exit = 0, draw = 1, count = 0, reload = 1;
+	u16 x = 132, y = 60, exit = 0, draw = 1, reload = 1, lsd, msd;
 	u16 buttons, pressedButtons, oldButtons = 0xffff, redraw = 1;
+	u16 numbers[11], frames = 0, seconds = 0, minutes = 0, hours = 0;
 		
 	while(!exit)
 	{
@@ -2595,8 +2600,25 @@ void DisappearingLogo()
 			u16 size = 0;
 			
 			VDP_Start();
+			VDP_setScreenWidth320();
+			VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, getVerticalRes() / 8);
+			
+			VDP_setPalette(PAL2, palette_grey);
+			VDP_setPalette(PAL3, gillian_pal);
+			
 			size = sizeof(gillian_tiles) / 32;
 			VDP_loadTileData(gillian_tiles, TILE_USERINDEX, size, USE_DMA);
+			
+			numbers[0] = TILE_USERINDEX + size;
+			size = sizeof(tiles_0) / 32;
+
+			loadNumbersToVRAM(numbers, size);
+
+			// Draw counter separators
+			VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[10], 10, 2, 3, 5);
+			VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[10], 19, 2, 3, 5);
+			VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[10], 28, 2, 3, 5);
+			
 			VDP_End();
 			redraw = 1;
 			reload = 0;
@@ -2605,38 +2627,77 @@ void DisappearingLogo()
 		if(redraw)
 		{	
 			VDP_Start();
-			
-			VDP_setScreenWidth320();
-			
-			VDP_setPalette(PAL0, palette_grey);
-			VDP_setPalette(PAL3, gillian_pal);
-			
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, getVerticalRes() / 8);
-			VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, getVerticalRes() / 8);
 
 			if(draw)
-			{
 				VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, x / 8, y / 8, 56 / 8, 104 / 8);
-				count = 0;
-			}
-			
 			VDP_End();
 			redraw = 0;
 		}
-
-		if(!draw)
+		
+		if(Detect_VDP_PAL())
 		{
-			//frame counter resets after 18 minutes and change
-			count++;
-
-			intToStr(count, cntstr, 5);
-			VDP_Start();
-			VDP_drawText("Frames:", 13, 25);
-			VDP_drawText(cntstr, 21, 25);
-			VDP_End();
+			if(frames > 49)
+			{
+				frames = 0;
+				seconds++;
+			}
 		}
+		else
+		{
+			if(frames > 59)
+			{
+				frames = 0;
+				seconds++;
+			}
+		}
+
+		if(seconds > 59)
+		{
+			seconds = 0;
+			minutes++;
+		}
+
+		if(minutes > 59)
+		{
+			minutes = 0;
+			hours++;
+		}
+
+		if(hours > 99)
+			hours = 0;
+
+		VDP_Start();
+		// Draw Hours
+		lsd = hours % 10;
+		msd = hours / 10;
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[msd], 4, 2, 3, 5);
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[lsd], 7, 2, 3, 5);
+
+		// Draw Minutes
+		lsd = minutes % 10;
+		msd = minutes / 10;
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[msd], 13, 2, 3, 5);
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[lsd], 16, 2, 3, 5);
+
+		// Draw Seconds
+		lsd = seconds % 10;
+		msd = seconds / 10;
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[msd], 22, 2, 3, 5);
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[lsd], 25, 2, 3, 5);
+
+		// Draw frames
+		lsd = frames % 10;
+		msd = frames / 10;
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[msd], 31, 2, 3, 5);
+		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[lsd], 34, 2, 3, 5);
+
+		VDP_End();
+		
+		
 		// read immediately so response is accurate
 		VDP_waitVSync();
+		frames++;
 		
 		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
