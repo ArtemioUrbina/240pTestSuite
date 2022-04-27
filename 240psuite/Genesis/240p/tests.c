@@ -2585,15 +2585,25 @@ void AudioSyncTest()
 void DisappearingLogo()
 {
 	char cntstr[6];
-	u16 x = 132, y = 60, exit = 0, draw = 1, count = 0;
+	u16 x = 132, y = 60, exit = 0, draw = 1, count = 0, reload = 1;
 	u16 buttons, pressedButtons, oldButtons = 0xffff, redraw = 1;
 		
 	while(!exit)
 	{
-		if(redraw)
+		if(reload)
 		{
 			u16 size = 0;
 			
+			VDP_Start();
+			size = sizeof(gillian_tiles) / 32;
+			VDP_loadTileData(gillian_tiles, TILE_USERINDEX, size, USE_DMA);
+			VDP_End();
+			redraw = 1;
+			reload = 0;
+		}
+		
+		if(redraw)
+		{	
 			VDP_Start();
 			
 			VDP_setScreenWidth320();
@@ -2606,8 +2616,6 @@ void DisappearingLogo()
 
 			if(draw)
 			{
-				size = sizeof(gillian_tiles) / 32;
-				VDP_loadTileData(gillian_tiles, TILE_USERINDEX, size, USE_DMA);
 				VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, x / 8, y / 8, 56 / 8, 104 / 8);
 				count = 0;
 			}
@@ -2635,7 +2643,7 @@ void DisappearingLogo()
 		oldButtons = buttons;
 		
 		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_DISSAPPEAR))
-			redraw = 1;
+			reload = 1;
 		
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
