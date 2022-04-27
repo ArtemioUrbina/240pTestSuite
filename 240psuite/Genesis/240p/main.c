@@ -314,10 +314,11 @@ void VideoTestsMenu()
 		VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Alternate 240p/480i", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Disappearing Logo", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		pos++;
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
 		Detect_MD(md_ver);
@@ -335,7 +336,7 @@ void VideoTestsMenu()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > 13)
+			if(cursel > 14)
 				cursel = 1;
 		}
 
@@ -343,7 +344,7 @@ void VideoTestsMenu()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = 13;
+				cursel = 14;
 		}
 
 		if(pressedButtons & BUTTON_B || 
@@ -390,12 +391,15 @@ void VideoTestsMenu()
 				Alternate240p480i();
 				break;
 			case 11:
-				DrawHelp(HELP_GENERAL);
+				DisappearingLogo();
 				break;
 			case 12:
-				OptionsMenu();
+				DrawHelp(HELP_GENERAL);
 				break;
 			case 13:
+				OptionsMenu();
+				break;
+			case 14:
 				done = 1;
 				break;
 			}

@@ -2582,3 +2582,68 @@ void AudioSyncTest()
 	PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
 }
 
+void DisappearingLogo()
+{
+	char cntstr[6];
+	u16 x = 132, y = 60, exit = 0, draw = 1, count = 0;
+	u16 buttons, pressedButtons, oldButtons = 0xffff, redraw = 1;
+		
+	while(!exit)
+	{
+		if(redraw)
+		{
+			u16 size = 0;
+			
+			VDP_Start();
+			
+			VDP_setScreenWidth320();
+			
+			VDP_setPalette(PAL0, palette_grey);
+			VDP_setPalette(PAL3, gillian_pal);
+			
+			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, getVerticalRes() / 8);
+			VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, getVerticalRes() / 8);
+
+			if(draw)
+			{
+				size = sizeof(gillian_tiles) / 32;
+				VDP_loadTileData(gillian_tiles, TILE_USERINDEX, size, USE_DMA);
+				VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + TILE_USERINDEX, x / 8, y / 8, 56 / 8, 104 / 8);
+				count = 0;
+			}
+			
+			VDP_End();
+			redraw = 0;
+		}
+
+		if(!draw)
+		{
+			//frame counter resets after 18 minutes and change
+			count++;
+
+			intToStr(count, cntstr, 5);
+			VDP_Start();
+			VDP_drawText("Frames:", 13, 25);
+			VDP_drawText(cntstr, 21, 25);
+			VDP_End();
+		}
+		// read immediately so response is accurate
+		VDP_waitVSync();
+		
+		buttons = JOY_readJoypad(JOY_ALL);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+		
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_DISSAPPEAR))
+			redraw = 1;
+		
+		if(pressedButtons & BUTTON_START)
+			exit = 1;
+
+		if(pressedButtons & BUTTON_A)
+		{
+			draw = !draw;
+			redraw = 1;
+		}		
+	}
+}

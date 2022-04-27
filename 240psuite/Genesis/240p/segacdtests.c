@@ -1125,9 +1125,9 @@ void MemViewer(uint32_t address)
 			}
 			VDP_End();
 			
-			for(i = 0; i < 28; i++)
+			for(i = 0; i < 28; i++)				//28 visible lines
 			{
-				for(j = 0; j < 16; j++)
+				for(j = 0; j < 16; j++)			//32 characters per line
 				{
 					if(!ascii)
 						intToHex(mem[i*16+j], buffer, 2);
@@ -1135,10 +1135,10 @@ void MemViewer(uint32_t address)
 					{
 						uint16_t c;
 						
-						buffer[0] = 20;
+						buffer[0] = 20;				// Space
 						buffer[1] = 0;
 						c = mem[i*16+j];
-						if(c >= 32 && c <= 127)
+						if(c >= 32 && c <= 127)		// ASCII range
 							buffer[0] = c;
 					}
 					VDP_Start();
