@@ -37,4 +37,14 @@ void AudioSyncTest();
 void DrawConvergence();
 void DisappearingLogo();
 
+typedef struct timecode
+{
+	u16 hours;
+	u16 minutes;
+	u16 seconds;
+	u16 frames;
+	u16 type;
+	u16 res;
+} timecode;
+
 #endif

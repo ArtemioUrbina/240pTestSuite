@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011-2014 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -27,16 +27,6 @@
 #include "main.h"
 #include "mdfourier.h"
 #include "segacdtests.h"
-
-typedef struct timecode
-{
-	u16 hours;
-	u16 minutes;
-	u16 seconds;
-	u16 frames;
-	u16 type;
-	u16 res;
-} timecode;
 
 void DrawCheckBoard()
 {
@@ -1950,13 +1940,79 @@ void loadNumbersToVRAM(u16 *numbers, u16 size)
 	VDP_loadTileData(tiles_c, numbers[10], size, USE_DMA);
 }
 
+void DrawStopWatch(u16 *numbers, timecode *tc, u16 pal1, u16 bgcol, u16 plan)
+{
+	u16 lsd, msd;
+	
+	if(Detect_VDP_PAL())
+	{
+		if(tc->frames > 49)
+		{
+			tc->frames = 0;
+			tc->seconds++;
+		}
+	}
+	else
+	{
+		if(tc->frames > 59)
+		{
+			tc->frames = 0;
+			tc->seconds++;
+		}
+	}
+
+	if(tc->seconds > 59)
+	{
+		tc->seconds = 0;
+		tc->minutes++;
+	}
+
+	if(tc->minutes > 59)
+	{
+		tc->minutes = 0;
+		tc->hours++;
+	}
+
+	if(tc->hours > 99)
+		tc->hours = 0;
+
+	VDP_Start();
+	// Draw Hours
+	lsd = tc->hours % 10;
+	msd = tc->hours / 10;
+	VDP_fillTileMapRectInc(plan, TILE_ATTR(pal1, 0, 0, 0) + numbers[msd], 4, 2, 3, 5);
+	VDP_fillTileMapRectInc(plan, TILE_ATTR(pal1, 0, 0, 0) + numbers[lsd], 7, 2, 3, 5);
+
+	// Draw Minutes
+	lsd = tc->minutes % 10;
+	msd = tc->minutes / 10;
+	VDP_fillTileMapRectInc(plan, TILE_ATTR(pal1, 0, 0, 0) + numbers[msd], 13, 2, 3, 5);
+	VDP_fillTileMapRectInc(plan, TILE_ATTR(pal1, 0, 0, 0) + numbers[lsd], 16, 2, 3, 5);
+
+	// Draw Seconds
+	lsd = tc->seconds % 10;
+	msd = tc->seconds / 10;
+	VDP_fillTileMapRectInc(plan, TILE_ATTR(pal1, 0, 0, 0) + numbers[msd], 22, 2, 3, 5);
+	VDP_fillTileMapRectInc(plan, TILE_ATTR(pal1, 0, 0, 0) + numbers[lsd], 25, 2, 3, 5);
+
+	// Draw frames
+	lsd = tc->frames % 10;
+	msd = tc->frames / 10;
+	VDP_fillTileMapRectInc(plan, TILE_ATTR(bgcol, 0, 0, 0) + numbers[msd], 31, 2, 3, 5);
+	VDP_fillTileMapRectInc(plan, TILE_ATTR(bgcol, 0, 0, 0) + numbers[lsd], 34, 2, 3, 5);
+
+	VDP_End();
+}
+
 void PassiveLagTest()
 {
-	u16 frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, bgcol = PAL2;
+	timecode tc;
+	u16 framecnt = 1, bgcol = PAL2;
 	u16 exit = 0, color = 1, loadvram = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 numbers[11], size, lsd, msd, pause = 0, circle = 0, cposx = 32, cposy = 17, solid, bars;
+	u16 numbers[11], size, pause = 0, circle = 0, cposx = 32, cposy = 17, solid, bars;
 
+	memset(&tc, 0, sizeof(timecode));
 	while(!exit)
 	{
 		if(loadvram)
@@ -2052,65 +2108,10 @@ void PassiveLagTest()
 			VDP_End();
 		}
 
-		if(Detect_VDP_PAL())
-		{
-			if(frames > 49)
-			{
-				frames = 0;
-				seconds++;
-			}
-		}
-		else
-		{
-			if(frames > 59)
-			{
-				frames = 0;
-				seconds++;
-			}
-		}
-
-		if(seconds > 59)
-		{
-			seconds = 0;
-			minutes++;
-		}
-
-		if(minutes > 59)
-		{
-			minutes = 0;
-			hours++;
-		}
-
-		if(hours > 99)
-			hours = 0;
-
-		VDP_Start();
-		// Draw Hours
-		lsd = hours % 10;
-		msd = hours / 10;
-		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[msd], 4, 2, 3, 5);
-		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[lsd], 7, 2, 3, 5);
-
-		// Draw Minutes
-		lsd = minutes % 10;
-		msd = minutes / 10;
-		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[msd], 13, 2, 3, 5);
-		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[lsd], 16, 2, 3, 5);
-
-		// Draw Seconds
-		lsd = seconds % 10;
-		msd = seconds / 10;
-		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[msd], 22, 2, 3, 5);
-		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL1, 0, 0, 0) + numbers[lsd], 25, 2, 3, 5);
-
-		// Draw frames
-		lsd = frames % 10;
-		msd = frames / 10;
-		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(bgcol, 0, 0, 0) + numbers[msd], 31, 2, 3, 5);
-		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(bgcol, 0, 0, 0) + numbers[lsd], 34, 2, 3, 5);
-
+		DrawStopWatch(numbers, &tc, PAL1, bgcol, APLAN);
+		
 		// Draw Frame divisor circles
-
+		VDP_Start();
 		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL3, 0, 0, 0) + circle, cposx, cposy, 7, 7);
 		VDP_End();
 		
@@ -2142,7 +2143,7 @@ void PassiveLagTest()
 
 		if(pressedButtons & BUTTON_B && pause)
 		{
-			frames = hours = minutes = seconds = 0;
+			memset(&tc, 0, sizeof(timecode));
 			framecnt = 1;
 		}
 
@@ -2175,7 +2176,7 @@ void PassiveLagTest()
 
 		if(!pause)
 		{
-			frames++;
+			tc.frames++;
 			framecnt++;
 		}
 		VDP_waitVSync();
@@ -2589,10 +2590,12 @@ void AudioSyncTest()
 
 void DisappearingLogo()
 {
-	u16 x = 132, y = 60, exit = 0, draw = 1, reload = 1, lsd, msd;
+	u16 x = 132, y = 60, exit = 0, draw = 1, reload = 1;
 	u16 buttons, pressedButtons, oldButtons = 0xffff, redraw = 1;
-	u16 numbers[11], frames = 0, seconds = 0, minutes = 0, hours = 0;
-		
+	u16 numbers[11];
+	timecode tc;
+
+	memset(&tc, 0, sizeof(timecode));		
 	while(!exit)
 	{
 		if(reload)
@@ -2635,69 +2638,11 @@ void DisappearingLogo()
 			redraw = 0;
 		}
 		
-		if(Detect_VDP_PAL())
-		{
-			if(frames > 49)
-			{
-				frames = 0;
-				seconds++;
-			}
-		}
-		else
-		{
-			if(frames > 59)
-			{
-				frames = 0;
-				seconds++;
-			}
-		}
-
-		if(seconds > 59)
-		{
-			seconds = 0;
-			minutes++;
-		}
-
-		if(minutes > 59)
-		{
-			minutes = 0;
-			hours++;
-		}
-
-		if(hours > 99)
-			hours = 0;
-
-		VDP_Start();
-		// Draw Hours
-		lsd = hours % 10;
-		msd = hours / 10;
-		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[msd], 4, 2, 3, 5);
-		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[lsd], 7, 2, 3, 5);
-
-		// Draw Minutes
-		lsd = minutes % 10;
-		msd = minutes / 10;
-		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[msd], 13, 2, 3, 5);
-		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[lsd], 16, 2, 3, 5);
-
-		// Draw Seconds
-		lsd = seconds % 10;
-		msd = seconds / 10;
-		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[msd], 22, 2, 3, 5);
-		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[lsd], 25, 2, 3, 5);
-
-		// Draw frames
-		lsd = frames % 10;
-		msd = frames / 10;
-		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[msd], 31, 2, 3, 5);
-		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + numbers[lsd], 34, 2, 3, 5);
-
-		VDP_End();
-		
+		DrawStopWatch(numbers, &tc, PAL2, PAL2, BPLAN);
 		
 		// read immediately so response is accurate
 		VDP_waitVSync();
-		frames++;
+		tc.frames++;
 		
 		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
