@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (Wii GX)
+ * Copyright (C)2014-2022 Artemio Urbina (Wii GX)
  *
  * This file is part of the 240p Test Suite
  *
@@ -1350,7 +1350,7 @@ void AudioSyncTest()
 				SetTextureColor(back, 0x00, 0x00, 0x00);
 			
 			// play the tone 1 frame before it hits so they are in sync
-			// it is off by 2ms to 2.5ms due to audio buffer
+			// it is off by 1.7ms to 2.5ms due to audio buffer
 			// but centered around the fully white frame
 			if(y == 179 && speed == 1)
 				playtone = 1;
@@ -1358,7 +1358,8 @@ void AudioSyncTest()
 		
 		if(playtone == 2)
 		{
-			ASND_StopVoice(voice);
+			if(ASND_StatusVoice(voice) == SND_WORKING)
+				ASND_StopVoice(voice);
 			ASND_Pause(1);
 			ASND_SetVoice(voice, VOICE_MONO_16BIT, 48000, 0, (void*)beep_snd, beep_snd_size, 0xff, 0xff, NULL);
 			playtone = 0;
@@ -1402,7 +1403,8 @@ void AudioSyncTest()
 	FreeImage(&lineB);
 	FreeImage(&sprite);
 	
-	ASND_StopVoice(voice);
+	if(ASND_StatusVoice(voice) == SND_WORKING)
+		ASND_StopVoice(voice);
 	ASND_End();
 }
 
@@ -1525,7 +1527,8 @@ void AudioEquipmentTest(ImagePtr back)
 		}
 	}
 
-	ASND_StopVoice(voice);
+	if(ASND_StatusVoice(voice) == SND_WORKING)
+		ASND_StopVoice(voice);
 	ASND_End();
 
 #ifdef GC_VERSION

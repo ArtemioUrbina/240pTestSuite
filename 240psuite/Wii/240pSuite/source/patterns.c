@@ -1,7 +1,7 @@
 /* 
  * r
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -693,6 +693,36 @@ void DrawColorBleed()
 	return;
 }
 
+void GridSelect()
+{
+	int sel = 0;
+	fmenudata resmenudata[] = { {1, "Full Grid"}, {2, "Genesis 224"}, {3, "SNES 224"} };
+
+	if(vmode != VIDEO_240P)
+	{
+		DrawGrid();
+		return;
+	}
+	
+	sel = SelectMenu("Select Grid", resmenudata, 3, 1);
+	switch(sel)
+	{
+		case 1:
+			DrawGrid();
+			break;
+		case 2:
+			DrawGrid224(1);
+			break;
+		case 3:
+			DrawGrid224(0);
+			break;
+		case MENU_CANCEL:
+		default:
+			break;
+		
+	}
+}
+
 void DrawGrid()
 {
 	int 		done = 0, oldvmode = vmode, text = 0, bggreen = 0;
@@ -831,51 +861,32 @@ void DrawGrid()
 	return;
 }
 
-void DrawGrid224()
+void DrawGrid224(int GenesisVersion)
 {
-	int 		done = 0, genny = 0, text = 0;
+	int 		done = 0;
 	u32			pressed;		
 	ImagePtr	back = NULL;
-	char		msg[50];
 	
 	if(vmode != VIDEO_240P) 
 		return;
 		
 	ChangeVideoEnabled = 0;
 	
+	back = LoadImage(GRID224IMG, 0);
+	if(!back)
+		return;
+
+	if(GenesisVersion)
+		back->y = (240-224)/2 + 2; // Genesis
+	else
+		back->y = (240-224)/2 + 1; // SNES
+	IgnoreOffset(back);
+	
 	while(!done && !EndProgram) 
-	{		
-		if(!back)
-		{
-			/*
-			if(vmode == VIDEO_288P || vmode == VIDEO_576I_A264)
-			{
-				back = LoadImage(GRIDPALIMG, 0);
-				if(!back)
-					return;    				
-			}
-			*/
-			
-			if(!back)
-			{
-				back = LoadImage(GRID224IMG, 0);
-				if(!back)
-					return;	
-				back->y = (240-224)/2 + 1; //SNES
-			}
-			
-			IgnoreOffset(back);
-		}
-		
+	{
 		StartScene();
 		        
 		DrawImage(back);
-		
-		if(text)
-		{			
-			DrawStringB(260, 20, 0, 0xff, 0, msg);
-			text --;
-		}	
 		
         EndScene();		
 		
@@ -883,7 +894,7 @@ void DrawGrid224()
 		
 		pressed = Controller_ButtonsDown(0);
 		
-		if (pressed & PAD_BUTTON_B)
+		if ( pressed & PAD_BUTTON_B)
 			done =	1;								
 	
 		if ( pressed & PAD_BUTTON_START ) 		
@@ -891,24 +902,6 @@ void DrawGrid224()
 			DrawMenu = 1;		
 			HelpData = GRID224HELP;
 		}				
-		
-		if ( pressed & PAD_BUTTON_A ) 		
-		{
-			genny = !genny;
-			
-			if(genny)
-			{
-				back->y = (240-224)/2 + 2;
-				sprintf(msg, "Genesis");
-			}
-			else
-			{
-				back->y = (240-224)/2 + 1; // SNES
-				sprintf(msg, "SNES");
-			}
-			
-			text = 30;
-		}
 	}
 
 	ChangeVideoEnabled = 1;

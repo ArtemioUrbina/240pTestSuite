@@ -259,15 +259,6 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
-		if(vmode != VIDEO_240P)
-		{
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, 
-					sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Grid 224p"); y += fh; c++;
-		}
-		else
-		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid 224p"); y += fh; c++;   
-		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White & RGB Screens"); y += fh; c++;				
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;				
@@ -330,31 +321,27 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					DrawMonoscope();
 					break;	
 				case 8:
-					DrawGrid();
+					GridSelect();
 					break;	
 				case 9:
-					if(vmode == VIDEO_240P)
-						DrawGrid224();
-					break;
-				case 10:
 					DrawGrayRamp();
 					break;
-				case 11:
+				case 10:
 					DrawWhiteScreen();
 					break;					
-				case 12:
+				case 11:
 					Draw100IRE();
 					break;				
-				case 13:
+				case 12:
 					DrawSharpness();
 					break;				
-				case 14:
+				case 13:
 					DrawOverscan();
 					break;				
-				case 15:
+				case 14:
 					DrawConvergence();
 					break;				
-				case 16:
+				case 15:
 					close = 1;
 					break;
 			} 			            										

@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (Wii GX)
+ * Copyright (C)2014-2022 Artemio Urbina (Wii GX)
  *
  * This file is part of the 240p Test Suite
  *
@@ -1319,6 +1319,90 @@ void DrawIntro()
 	}
 	FreeImage(&black);
 }
+
+int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option)
+{
+	int 		sel = selected_option, close = 0, value = MENU_CANCEL;		
+	ImagePtr	Back = NULL;
+	
+	Back = LoadImage(FLOATMENUIMG, 0);
+	if(Back)
+	{
+		Back->x = (dW - Back->w) / 2;
+		Back->y = (dH - Back->h) / 2;
+		
+		Back->alpha = 0xaa;
+	}
+	   
+	while(!close) 
+	{		
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1, i = 0;				    					   
+		u16     x = Back ? Back->x + 20 : 100;
+		u16     y = Back ? Back->y + 10 : 60;
+        u32     pressed = 0;
+				
+		StartScene();
+		
+		if(Back)        
+			DrawImage(Back);       
+
+		DrawStringS(x, y, 0x00, 0xff, 0x00, title); y += 3*fh; 		
+		
+		for(i = 0; i < num_options; i++)
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, menu_data[i].option_text);
+			y += fh; c++;		
+		}
+        
+		y += 2* fh;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");		
+								
+		EndScene();		
+		
+		ControllerScan();
+
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & PAD_BUTTON_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }			
+			
+		if (pressed & PAD_BUTTON_B || pressed & PAD_BUTTON_START) 		
+		{
+			close = 1;	
+			value = MENU_CANCEL;
+		}
+	
+		if (pressed & PAD_BUTTON_A)
+		{     
+			close = 1;
+
+			if(sel == c)
+				value = MENU_CANCEL;
+			else
+				value = menu_data[sel - 1].option_value;
+		}		
+	}
+	
+	if(Back)
+		FreeImage(&Back);
+
+	return value;
+}
+
 
 #ifdef WII_VERSION
 

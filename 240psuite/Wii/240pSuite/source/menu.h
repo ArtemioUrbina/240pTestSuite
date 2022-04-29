@@ -48,3 +48,15 @@ void DrawIntro();
 void GetWiiRegion();
 extern char wiiregion[100];
 #endif
+
+#ifndef MENUDATA
+#define MENUDATA
+typedef struct menu_data {
+    int		option_value;
+	char	*option_text;
+} fmenudata;
+#endif
+
+#define MENU_CANCEL -1
+
+int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option);
