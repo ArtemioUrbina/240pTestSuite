@@ -1181,7 +1181,7 @@ void DrawCredits(ImagePtr Back)
 	
 	while(!done && !EndProgram)  
 	{
-		int x = 20, y = 10;			
+		int x = 20, x2 = 180, y = 10, y2 = 0;			
 
 		StartScene();
 		        
@@ -1194,22 +1194,32 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Support and suggestions:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, data); y += fh; 
 		
+		y += fh; 
+		y2 = y;
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "devkitPPC"); y += fh; 	
-		DrawStringS(x, y, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Asher"); y += fh; 		
+		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope Pattern:"); y2 += fh; 
+		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney (@khmr33)"); y2 += fh;
+		
+		DrawStringS(x, y, 0x00, 0xff, 0x00, "Donna Art:"); y += fh; 
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Jose Salot (@pepe_salot)"); y += fh; 	
+		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y2 += fh; 
+		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
+		
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Advisor:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Fudoh"); y += fh; 
-		DrawStringS(x, y, 0x00, 0xff, 0x00, "Collaboration:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Konsolkongen & shmups regulars"); y += fh; 
+		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "Collaboration:"); y2 += fh; 
+		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "shmups regulars"); y2 += fh;
+ 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "PAL testing:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Yamato"); y += fh; 		
-		DrawStringS(x, y, 0x00, 0xff, 0x00, "MDFourier help:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Extrems"); y += fh; 		
+		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "MDFourier help:"); y2 += fh; 
+		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Extrems"); y2 += fh; 		
 #ifdef GC_VERSION
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "GameCube Tools:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Rolman"); y += fh; 	
 #endif
+		y += fh; 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/240p/"); y += 2*fh; 
 
@@ -1220,7 +1230,7 @@ void DrawCredits(ImagePtr Back)
 #endif
 		DrawStringS(200, y, 0x00, 0xba, 0xba, "Dedicated to Elisa.");
 		
-		y = 58;
+		y = 10;
 		
 		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_NUMBER); y += fh;
 		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_DATE); y += 2*fh;

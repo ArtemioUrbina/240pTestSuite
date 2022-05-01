@@ -22,10 +22,10 @@ frames are being discarded completely.
 A frame counter can be displayed on screen by 
 pressing button $Y.
 
-You can also display vertical bars by pressing $R,
-that pattern will help you evaluate if the signal
-is not distorted horizontaly, since all lines 
-should be one pixel wide.
+Button $R toggles vertical and horizontal bars,
+which will help you evaluate if the signal is not
+distorted horizontaly, since all lines should be
+one pixel wide.
 
 #YThis pattern is completely distorted when using
 the 576i stretched mode.#Y

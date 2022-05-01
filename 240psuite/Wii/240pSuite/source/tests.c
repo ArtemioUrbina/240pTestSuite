@@ -1075,10 +1075,11 @@ void GridScrollTest()
 void DrawStripes()
 {
 	int 				done = 0, field = 1, alternate = 0,
-						frame = 0, dframe = 0, vertical = 0;
+						frame = 0, dframe = 0, is_vertical = 0;
 	u16			        pressed;		
 	ImagePtr		    stripespos, stripesneg;
 	ImagePtr		    vstripespos, vstripesneg;	
+	fmenudata 			resmenudata[] = { {0, "Horizontal"}, {1, "Vertical"} };
 	
 	stripespos = LoadImage(STRIPESPOSIMG, 1);
 	if(!stripespos)
@@ -1094,12 +1095,19 @@ void DrawStripes()
 	if(!vstripesneg)
 		return;
 
+	is_vertical = SelectMenu("Select Type", resmenudata, 2, is_vertical+1);
+	if(is_vertical == MENU_CANCEL)
+	{
+		is_vertical = 0;
+		done = 1;
+	}
+	
 	ChangeVideoEnabled = 0;
 	while(!done && !EndProgram) 
 	{   
 		StartScene();
 
-		if(!vertical)
+		if(!is_vertical)
 		{
 			if(field == 1)
 				DrawImage(stripespos);
@@ -1152,7 +1160,13 @@ void DrawStripes()
 		}
 					
 		if (pressed & PAD_TRIGGER_R)
-			vertical = !vertical;
+		{
+			int sel;
+			
+			sel = SelectMenu("Select Type", resmenudata, 2, is_vertical+1);
+			if(sel != MENU_CANCEL)
+				is_vertical = sel;
+		}
 					
 		if (pressed & PAD_BUTTON_Y)
 		{
