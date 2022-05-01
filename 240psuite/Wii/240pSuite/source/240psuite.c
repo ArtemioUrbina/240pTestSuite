@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014 Artemio Urbina (Wii GX)
+ * Copyright (C)2014-2022 Artemio Urbina (Wii GX)
  *
  * This file is part of the 240p Test Suite
  *
@@ -31,6 +31,7 @@
 
 #include "patterns.h"
 #include "tests.h"
+#include "hardware.h"
 
 
 #ifdef WII_VERSION
@@ -44,6 +45,7 @@ struct options_st DefaultOptions = DEFAULT_OPTIONS;
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void VideoPatternsMenu(ImagePtr title, ImagePtr sd);
 void SoundTestMenu(ImagePtr title, ImagePtr sd);
+void HardwareTestMenu(ImagePtr title, ImagePtr sd);
 void DrawMenuFooter(u8 r, u8 g, u8 b);
 
 #ifdef WII_VERSION
@@ -188,6 +190,7 @@ int main(int argc, char **argv)
 					SoundTestMenu(Back, sd);
 					break;
 				case 4:
+					HardwareTestMenu(Back, sd);
 					break;
 				case 5:	
 					if(ChangeVideoEnabled)
@@ -265,6 +268,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;	
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;	
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Convergence"); y += fh; c++;	
+		y += fh; 
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		DrawMenuFooter(r, g, b);
@@ -390,6 +394,7 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, 
 				IsPAL ? "Alternating 288p/576i Test" : "Alternating 240p/480i Test"); y += fh; c++;
 		}
+		y += fh; 
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
 		DrawMenuFooter(r, g, b);		
@@ -545,6 +550,79 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 						AudioEquipmentTest(title);
 					break;	
 				case 5:
+					close = 1;
+					break;			
+			} 			            										
+		}
+	}
+
+	return;
+}
+
+void HardwareTestMenu(ImagePtr title, ImagePtr sd)
+{
+	int 	sel = 1, close = 0;
+	
+	while(!close && !EndProgram) 
+	{		
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1;
+		u16     x = 60;
+		u16     y = 100;
+        u32     pressed = 0;
+				
+		StartScene();
+		        
+		DrawImage(title);
+        DrawImage(sd);
+
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++;
+		
+		y += fh;
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
+
+		DrawMenuFooter(r, g, b);		
+				
+		EndScene();		
+        
+        ControllerScan();
+
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_START ) 		
+			DrawMenu = 1;	
+
+		if ( pressed & PAD_BUTTON_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & PAD_BUTTON_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }			
+			
+		if ( pressed & PAD_BUTTON_B ) 		
+			close = 1;	
+	
+		if (pressed & PAD_BUTTON_A)
+		{            
+			switch(sel)
+			{				
+				case 1:
+					ControllerTest();
+					break;
+				case 2:
+					MemoryViewer();
+					break;
+				case 3:
 					close = 1;
 					break;			
 			} 			            										
