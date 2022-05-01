@@ -695,7 +695,7 @@ void DrawColorBleed()
 
 void GridSelect()
 {
-	int sel = 0;
+	int sel = 1, res = MENU_CANCEL;
 	fmenudata resmenudata[] = { {1, "Full Grid"}, {2, "Genesis 224"}, {3, "SNES 224"} };
 
 	if(vmode != VIDEO_240P)
@@ -704,36 +704,41 @@ void GridSelect()
 		return;
 	}
 	
-	sel = SelectMenu("Select Grid", resmenudata, 3, 1);
-	switch(sel)
+	do
 	{
-		case 1:
-			DrawGrid();
-			break;
-		case 2:
-			DrawGrid224(1);
-			break;
-		case 3:
-			DrawGrid224(0);
-			break;
-		case MENU_CANCEL:
-		default:
-			break;
-		
-	}
+		sel = SelectMenu("Select Grid", resmenudata, 3, sel);
+		switch(sel)
+		{
+			case 1:
+				res = DrawGrid();
+				break;
+			case 2:
+				res = DrawGrid224(1);
+				break;
+			case 3:
+				res = DrawGrid224(0);
+				break;
+			case MENU_CANCEL:
+			default:
+				res = MENU_CANCEL;
+				break;
+			
+		}
+	}while(res != MENU_CANCEL);
 }
 
-void DrawGrid()
+int DrawGrid()
 {
 	int 		done = 0, oldvmode = vmode, text = 0, bggreen = 0;
 	u32			pressed;		
 	ImagePtr	back = NULL, blckbg = NULL;
 	char		msg[60];
+	int			retval = MENU_CANCEL;
 	
 	
 	blckbg = LoadImage(WHITEIMG, 1);
 	if(!blckbg)
-		return;
+		return retval;
 	
 	SetTextureColor(blckbg, 0, 0, 0);
 	
@@ -758,7 +763,7 @@ void DrawGrid()
 			{
 				back = LoadImage(GRID480IMG, 0);
 				if(!back)
-					return;
+					return retval;
 				back->scale = 0;		
 			}
 			
@@ -766,21 +771,21 @@ void DrawGrid()
 			{
 				back = LoadImage(GRIDPALIMG, 0);
 				if(!back)
-					return;    				
+					return retval;    				
 			}
 			
 			if(vmode == VIDEO_576I)
 			{
 				back = LoadImage(GRIDPAL480IMG, 0);
 				if(!back)
-					return;
+					return retval;
 			}
 			
 			if(!back)
 			{
 				back = LoadImage(GRIDIMG, 0);
 				if(!back)
-					return;		
+					return retval;		
 			}
 			
 			IgnoreOffset(back);
@@ -850,6 +855,12 @@ void DrawGrid()
 				blckbg->g = 0x00;
 		}
 		
+		if (pressed & PAD_BUTTON_Y)
+		{
+			retval = 1;
+			done = 1;
+		}
+		
 		if(text)
 			sprintf(msg, "Grid origin in video signal: [%d,%d]", (int)back->x, (int)back->y);
 	}
@@ -858,23 +869,23 @@ void DrawGrid()
 		FreeImage(&back);
 	if(blckbg)
 		FreeImage(&blckbg);
-	return;
+	return retval;
 }
 
-void DrawGrid224(int GenesisVersion)
+int DrawGrid224(int GenesisVersion)
 {
-	int 		done = 0;
+	int 		done = 0, retval = MENU_CANCEL;
 	u32			pressed;		
 	ImagePtr	back = NULL;
 	
 	if(vmode != VIDEO_240P) 
-		return;
+		return retval;
 		
 	ChangeVideoEnabled = 0;
 	
 	back = LoadImage(GRID224IMG, 0);
 	if(!back)
-		return;
+		return retval;
 
 	if(GenesisVersion)
 		back->y = (240-224)/2 + 2; // Genesis
@@ -901,13 +912,19 @@ void DrawGrid224(int GenesisVersion)
 		{
 			DrawMenu = 1;		
 			HelpData = GRID224HELP;
+		}
+
+		if (pressed & PAD_BUTTON_Y)
+		{
+			retval = 1;
+			done = 1;
 		}				
 	}
 
 	ChangeVideoEnabled = 1;
 	FreeImage(&back);
 	
-	return;
+	return retval;
 }
 
 void DrawMonoscope()

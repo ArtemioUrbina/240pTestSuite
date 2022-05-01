@@ -414,19 +414,19 @@ void GetVideoModeStr(char *res, int shortdesc)
 				break;
 			case VIDEO_288P:
 				if(Options.PALScale576)
-					sprintf(res, "PAL 320x288p (stretched)");				
+					sprintf(res, "PAL 320x288p (str.)");				
 				else
 					sprintf(res, "PAL 320x288p");				
 				break;			
 			case VIDEO_576I_A264:
 				if(Options.PALScale576)
-					sprintf(res, "PAL 640x576i (scaled 264p stretched)");
+					sprintf(res, "PAL 640x576i (scaled 264p str.)");
 				else
 					sprintf(res, "PAL 640x576i (scaled 264p)");
 				break;			
 			case VIDEO_576I:
 				if(Options.PALScale576)
-					sprintf(res, "PAL 640x576i (no scaling stretched)");
+					sprintf(res, "PAL 640x576i (no scaling str.)");
 				else
 					sprintf(res, "PAL 640x576i (Scaling disabled)");
 				break;
@@ -441,7 +441,7 @@ void GetVideoModeStr(char *res, int shortdesc)
 		{
 			char tmp[200];
 			
-			sprintf(tmp, "H.Stretched %s", res);
+			sprintf(tmp, "H.str. %s", res);
 			strcpy(res, tmp);
 		}
 		padString(res);

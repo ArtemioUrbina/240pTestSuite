@@ -372,7 +372,7 @@ void ChangeOptions(ImagePtr title)
 				DrawStringS(x-15, y + 2*fh, r, g, b, "Horz. stretching disables 1:1 pixel mapping");
 					
 #ifdef WII_VERSION					
-		if(vmode == VIDEO_480P_SL && sel == 9)
+		if(vmode == VIDEO_480P_SL && sel == 10)
 		{
 			if(ControllerType != ControllerGC && !Options.SFCClassicController)
 				DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with + & - buttons or Left & Right"); 										
@@ -380,7 +380,7 @@ void ChangeOptions(ImagePtr title)
 				DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 	
 		}
 #else
-		if(vmode == VIDEO_480P_SL && sel+1 == 9)
+		if(vmode == VIDEO_480P_SL && sel+1 == 10)
 			DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 										
 #endif
 
@@ -445,9 +445,9 @@ void ChangeOptions(ImagePtr title)
 	    }			
 
 #ifdef WII_VERSION			
-		if ( held & PAD_BUTTON_RIGHT && sel == 11)
+		if ( held & PAD_BUTTON_RIGHT && sel == 10)
 #else
-		if ( held & PAD_BUTTON_RIGHT && sel+1 == 11)
+		if ( held & PAD_BUTTON_RIGHT && sel+1 == 10)
 #endif	    
 	    {
 			if(vmode == VIDEO_480P_SL)
@@ -455,9 +455,9 @@ void ChangeOptions(ImagePtr title)
 	    }
 		
 #ifdef WII_VERSION			
-	    if ( held & PAD_BUTTON_LEFT && sel == 11)
+	    if ( held & PAD_BUTTON_LEFT && sel == 10)
 #else
-		if ( held & PAD_BUTTON_LEFT && sel+1 == 11)
+		if ( held & PAD_BUTTON_LEFT && sel+1 == 10)
 #endif	    
 	    {
 			if(vmode == VIDEO_480P_SL)
@@ -1154,7 +1154,7 @@ void ShowPALBGWarning()
 void DrawCredits(ImagePtr Back)
 {
 	int 	done = 0, r, g, b;	
-    u32     pressed = 0, counter = 1;
+    u32     pressed = 0;
 	char	data[50];
 #ifdef WII_VERSION
 	u8 		shopcode = 0;
@@ -1189,21 +1189,13 @@ void DrawCredits(ImagePtr Back)
 		
         DrawStringS(x, y, 0x00, 0xff, 0x00, "Code and Patterns:"); y += fh; 
         DrawStringS(x, y, 0xff, 0xff, 0xff, "Artemio Urbina"); y += fh; 
-
-		if(counter == 1)
-			sprintf(data, "aurbina@junkerhq.net");			
-		if(counter == 60*4)
-			sprintf(data, "@Artemio (twitter)");					
-		if(counter == 60*8)
-			counter = 0;
+		sprintf(data, "@Artemio (twitter)");					
 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Support and suggestions:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, data); y += fh; 
-
-	    y += fh;
+		
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "devkitPPC"); y += fh; 	
-        y += fh;	
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Asher"); y += fh; 		
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Advisor:"); y += fh; 
@@ -1212,11 +1204,12 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Konsolkongen & shmups regulars"); y += fh; 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "PAL testing:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Yamato"); y += fh; 		
+		DrawStringS(x, y, 0x00, 0xff, 0x00, "MDFourier help:"); y += fh; 
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Extrems"); y += fh; 		
 #ifdef GC_VERSION
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "GameCube Tools:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Rolman"); y += fh; 	
 #endif
-        y += fh;
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/240p/"); y += 2*fh; 
 
@@ -1273,8 +1266,6 @@ void DrawCredits(ImagePtr Back)
 		
 		if (pressed & PAD_BUTTON_B)
 			done =	1;		
-			
-		counter ++;			
 	}
 	
 	if(Back)

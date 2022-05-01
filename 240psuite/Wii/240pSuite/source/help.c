@@ -31,7 +31,7 @@
 #include "options.h"
 
 
-/****** paste the resultis from converthelpfiles starts here **************************/
+/****** paste the results from converthelpfiles starts here **************************/
 char *alt240p_txt[] = { 
 "              ALTERNATING 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress $A to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
 NULL
@@ -88,11 +88,11 @@ NULL
 char *grid_txt[] = { 
 "                    GRID (1/3)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. Consumer TVs may not show the red squares.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    #C(cont...)#C",
 "                    GRID (2/3)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. You can also use the 576i stretched option \nto fill the whole screen at the cost of 1:1 pixel \nmapping.\n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 23\nfor PAL. You can adjust this value for PAL in 1:1\nmapping modes.\n                                    #C(cont...)#C",
-"                    GRID (3/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. $A button resets it to its position.\n\nThe $X button toggles a green background.\n",
+"                    GRID (3/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. $A button resets it to its position.\n\nThe $X button toggles a green background.\n\nThe $Y button changes the grid type.\n",
 NULL
 };
 char *grid224_txt[] = { 
-"                    GRID 224p\n\nThis grid uses a 320x224 pattern in a 240p signal,\nit is intended to mock-up the typical display area \nfor other consoles, such as the SNES, Sega Genesis \nand Playstation.\n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. Consumer TVs may not show the red squares.\n\nYou can press $A to toggle the starting scanline.\nThe current modes simulate the Genesis and SNES.",
+"                    GRID 224p\n\nThis grid uses a 320x224 pattern in a 240p signal,\nit is intended to mock-up the typical display area \nfor other consoles, such as the SNES, Sega Genesis \nand Playstation.\n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. Consumer TVs may not show the red squares.\n\nYou can press $Y to toggle the Grid type\nThe current modes simulate the Genesis and SNES.",
 NULL
 };
 char *gridscroll_txt[] = { 

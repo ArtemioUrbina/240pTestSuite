@@ -160,6 +160,7 @@ $(OFILES_SOURCES) : $(HFILES)
 #---------------------------------------------------------------------------------
 %.tpl.o	%_tpl.h:	%.tpl
 #---------------------------------------------------------------------------------
+# if this fails, compile cfile under the tools folder for your OS
 	@echo $(notdir $<)
 	@mv $< $<.full
 	@$(TOOLS)/cfile $<.full $< comp_textures.h

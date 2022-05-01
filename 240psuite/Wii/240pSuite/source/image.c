@@ -692,6 +692,7 @@ void SetTextureColor(ImagePtr tex, u8 r, u8 g, u8 b)
 }
 
 #define SCANSTEP 0x03
+#define SCANLINE_START_INTENSITY 0x00	// was 0xaa
 ImagePtr   scanlines = NULL;
 
 void LoadScanlines()
@@ -702,7 +703,7 @@ void LoadScanlines()
 		if(!scanlines)
 			return;
 		scanlines->layer = 5.0;
-		scanlines->alpha = 0xaa;
+		scanlines->alpha = SCANLINE_START_INTENSITY;
 		scanlines->scale = 0;
 		CalculateUV(0, 0, 640, 480, scanlines);
 	}
