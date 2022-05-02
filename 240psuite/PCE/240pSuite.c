@@ -253,7 +253,7 @@ void RefreshMain()
 	drawmenutext(2, "Audio tests");
 	drawmenutext(3, "Hardware tools");
 	
-	row = 18;
+	row = 22;
 	DrawMenuBottom(4, 1);
 }
 
@@ -281,7 +281,7 @@ void RefreshVideoTests()
 	drawmenutext(7, "Horizontal Stripes");
 	drawmenutext(8, "Checkerboard");
 	drawmenutext(9, "Backlit Zone Test");
-	row = 21;
+	row = 22;
 	DrawMenuBottom(10, 0);
 }
 
@@ -466,7 +466,7 @@ void RefreshAudioTests()
 	drawmenutext(2, "MDFourier");
 	drawmenutext(3, "Audio Clipping");
 	
-	row = 18;
+	row = 22;
 	DrawMenuBottom(4, 0);
 }
 
@@ -691,8 +691,6 @@ void DrawCredits()
 		if(i == 60*4)
 			put_string("@Artemio (twitter)  ", HPOS+2, CREDIT_START+1);
 		if(i == 60*8)
-			put_string("aurbina@junkerhq.net", HPOS+2, CREDIT_START+1);
-		if(i == 60*16)
 			i = 0;
 			
 		i++;

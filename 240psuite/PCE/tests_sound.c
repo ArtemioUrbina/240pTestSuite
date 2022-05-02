@@ -848,7 +848,7 @@ void RefreshHardwareTests()
 	drawmenutext(0, "Controller Test");
 	drawmenutext(1, "Memory Viewer");
 	
-	row = 18;
+	row = 22;
 	DrawMenuBottom(2, 0);
 }
 
