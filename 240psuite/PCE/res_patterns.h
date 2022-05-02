@@ -88,7 +88,7 @@
 #incchr_ex(EBU_bg, "graphics/EBUCB.pcx", 0, 0, 4, 2, 0);
 
 #incbin(monoscope_map, "graphics/monoscope.fmp");
-#incchr_ex(monoscope_bg, "graphics/monoscope.pcx", 0, 0, 2, 61, 0);
+#incchr_ex(monoscope_bg, "graphics/monoscope.pcx", 0, 0, 4, 22, 0);
 
 #incbin(sharpness_map, "graphics/sharpness.fmp");
 #incchr_ex(sharpness_bg, "graphics/sharpness.pcx", 0, 0, 4, 28, 0);
