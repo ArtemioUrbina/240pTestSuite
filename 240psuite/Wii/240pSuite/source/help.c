@@ -104,6 +104,10 @@ char *ire100_txt[] = {
 "                   100 IRE(2/2)\n\nThe reason IRE is a relative measurement (percent)\nis because a video signal may be any amplitude.\n\nThis unit is used in the #YITU-R BT.470#Y which\ndefines PAL, NTSC and SECAM\n\nYou can press $R and $L buttons to advance in 10 IRE\nsteps in the selected range.\n\nWith button $A you can toggle the range between\n#C[0-100]#C and #C[100-140]#C IRE.",
 NULL
 };
+char *memory_txt[] = { 
+"                 Memory Viewer\n\nThis shows selected regions of the main CPU memory\nmap.\n\nThe current address range is shown in green at the\nright from top to bottom.\n\nThe left part of the screen shows #Y0x1A0#Y bytes in\nhex.\n\n- Button A jumps to relevant memory locations.\n\n- Button X enabled CRC of current screen.\n\n- Button Y toggles #YASCII#Y mode.",
+NULL
+};
 char *monoscope_txt[] = { 
 "                 MONOSCOPE (1/4)\n\nThe Monoscope Pattern is the traditional tool\nfor calibrating CRTs. This version aims to\nprovide several key elements to ensure you make\ninformed decisions about Convergence and \nDeflection. Refer to your monitor service manual\nfor procedures and safety equipment. \n\n1. #CBrightness Adjustable Pattern#C. Electron Gun\nAlignment, or Convergence, is usually adjusted\nwith a lowered brightness. Full brightness can\nmask issues with excessive bloom, especially \nif your peak white is too high. You can double\ncheck your adjustments against the 30IRE pattern.\n                                         #C(cont...)#C",
 "                 MONOSCOPE (2/4)\n\n2. #CStatic/Center Convergence#C. The center crosshair\nis used to evaluate static or center screen\nconvergence. \n\n3. #CDynamic/Edge#C can be evaluated with the patterns\non the side of the screen.\n\n4. #CCorner Convergence#C, corner purity and corner\ngeometry are tightly linked. Static and Dynamic\nconvergence must be set first before magnets can\nsuccessfully correct corner issues.\n\n\n                                         #C(cont...)#C",
@@ -193,7 +197,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	32
+#define	HELPCOUNT	33
 char **HelpArray[HELPCOUNT] = {
 	alt240p_txt,
 	backlit_txt,
@@ -211,6 +215,7 @@ char **HelpArray[HELPCOUNT] = {
 	grid224_txt,
 	gridscroll_txt,
 	ire100_txt,
+	memory_txt,
 	monoscope_txt,
 	options_txt,
 	optionsgc_txt,

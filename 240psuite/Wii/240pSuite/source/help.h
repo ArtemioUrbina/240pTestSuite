@@ -55,6 +55,7 @@
 #define OPTIONSGCHELP	optionsgc_txt
 #define DIAGONALHELP	diagonal_txt
 #define CONVHELP		convergence_txt
+#define MEMORYHELP		memory_txt
 
 /* paste from here */
 extern char *alt240p_txt[];
@@ -73,6 +74,7 @@ extern char *grid_txt[];
 extern char *grid224_txt[];
 extern char *gridscroll_txt[];
 extern char *ire100_txt[];
+extern char *memory_txt[];
 extern char *monoscope_txt[];
 extern char *options_txt[];
 extern char *optionsgc_txt[];

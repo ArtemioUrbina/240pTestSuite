@@ -57,21 +57,11 @@ void ControllerTest()
 				
 		if (pressed & PAD_BUTTON_B)
 			done =	1;								
-	
-		if ( pressed & PAD_BUTTON_START ) 		
-		{
-			DrawMenu = 1;					
-			HelpData = 0;
-		}		
+		
 	}
 	FreeImage(&back);
 	return;
 }
-
-#define VISIBLE_HORZ	16
-#define VISIBLE_VERT	26
-
-#define	MAX_LOCATIONS	6
 
 /*
 CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
@@ -131,12 +121,25 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size)
 	return checksum;
 }
 
+#define VISIBLE_HORZ	16
+#define VISIBLE_VERT	26
+
+#ifdef WII_VERSION
+#define	MAX_LOCATIONS	8
+#else
+#define	MAX_LOCATIONS	6
+#endif
+
 void MemoryViewer()
 {
 	int 		done = 0, ascii = 0, locpos = 0, docrc = 0;
 	u32			pressed;		
 	uint32_t	address = 0, crc = 0;
+#ifdef WII_VERSION
+	uint32_t	locations[MAX_LOCATIONS] = { 0x80000000, 0xC0000000, 0x90000000, 0xD0000000, 0xc8000000, 0xCC000000, 0xe0000000, 0xfff00000 };
+#else
 	uint32_t	locations[MAX_LOCATIONS] = { 0x80000000, 0xC0000000, 0xc8000000, 0xCC000000, 0xe0000000, 0xfff00000 };
+#endif
 	
 	address = locations[0];
 	while(!done && !EndProgram) 
@@ -145,7 +148,6 @@ void MemoryViewer()
 		uint8_t *mem = NULL;
 		char 	buffer[10];
 		
-		memset(buffer, 0, sizeof(char)*10);
 		StartScene();
 
 		mem = (uint8_t*)address;
@@ -175,8 +177,9 @@ void MemoryViewer()
 				{
 					uint16_t c;
 					
+					memset(buffer, 0, sizeof(char)*10);
+					
 					buffer[0] = 20;				// Space
-					buffer[1] = 0;
 					c = mem[i*VISIBLE_HORZ+j];
 					if(c >= 32 && c <= 127)		// ASCII range
 						buffer[0] = c;
@@ -242,7 +245,7 @@ void MemoryViewer()
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = 0;
+			HelpData = MEMORYHELP;
 		}		
 	}
 	return;
