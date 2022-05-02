@@ -516,6 +516,41 @@ mdfourier_00_06:	.db	"Visit http://junkerhq.net/MDFourier for details."
 }
 
 
+void display_memory_00()
+{
+#asm
+	p_string	memory_00_00,22,4
+	__ldwi		14
+	call		_set_font_pal
+	p_string	memory_00_01,6,6
+	p_string	memory_00_02,6,7
+	p_string	memory_00_03,6,9
+	p_string	memory_00_04,6,10
+	p_string	memory_00_05,6,12
+	p_string	memory_00_06,6,13
+	p_string	memory_00_07,6,15
+	rts
+
+memory_00_00:	.db	"Memory Viewer"
+			.db	0
+memory_00_01:	.db	"This shows selected regions of the main CPU memory"
+			.db	0
+memory_00_02:	.db	"map."
+			.db	0
+memory_00_03:	.db	"The current address range is shown in red at the"
+			.db	0
+memory_00_04:	.db	"right from top to bottom."
+			.db	0
+memory_00_05:	.db	"The left part of the screen shows 0x1C0 bytes in"
+			.db	0
+memory_00_06:	.db	"hex."
+			.db	0
+memory_00_07:	.db	"- Button I toggles ASCII mode."
+			.db	0
+#endasm
+}
+
+
 void display_monoscope_00()
 {
 #asm

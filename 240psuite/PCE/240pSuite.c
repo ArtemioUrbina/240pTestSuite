@@ -253,7 +253,7 @@ void RefreshMain()
 	drawmenutext(2, "Audio tests");
 	drawmenutext(3, "Hardware tools");
 	
-	row = 22;
+	row = 18;
 	DrawMenuBottom(4, 1);
 }
 
@@ -269,7 +269,7 @@ void RefreshVideoTests()
 	//set_font_pal(12);
 	//put_string("Video Tests", 14, 6);
 	
-	row = 9;
+	row = 10;
 
 	drawmenutext(0, "Drop Shadow Test");
 	drawmenutext(1, "Striped Sprite Test");
@@ -281,7 +281,7 @@ void RefreshVideoTests()
 	drawmenutext(7, "Horizontal Stripes");
 	drawmenutext(8, "Checkerboard");
 	drawmenutext(9, "Backlit Zone Test");
-	row = 22;
+	row = 21;
 	DrawMenuBottom(10, 0);
 }
 
@@ -459,14 +459,14 @@ void RefreshAudioTests()
 	//set_font_pal(12);
 	//put_string("Audio Tests", 14, 6);
 	
-	row = 12;
+	row = 11;
 
 	drawmenutext(0, "Sound Test");
 	drawmenutext(1, "Audio Sync Test");
 	drawmenutext(2, "MDFourier");
 	drawmenutext(3, "Audio Clipping");
 	
-	row = 22;
+	row = 18;
 	DrawMenuBottom(4, 0);
 }
 
@@ -722,7 +722,7 @@ void RefreshCredits()
 	set_font_pal(15);
 	put_string("SDK:", HPOS+2, row++);
 	set_font_pal(14);
-	put_string("Enhanced HuC https://github.com/uli/huc", HPOS+2, row++);
+	put_string("HuC https://github.com/jbrandwood/huc", HPOS+2, row++);
 	row++;
 	
 	set_font_pal(15);
@@ -764,7 +764,7 @@ void RefreshCredits()
 	set_font_pal(13);
 	put_string("Ver. 1.12", 50, 6);
 	set_font_pal(14);
-	put_string("12/09/2021", 49, 7);
+	put_string("02/05/2022", 49, 7);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;

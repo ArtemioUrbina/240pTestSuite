@@ -208,6 +208,9 @@ void main()
 				case CONVERGENCE_HELP:
 					display_convergence_00();
 					break;
+				case MEMVIEW_HELP:
+					display_memory_00();
+					break;
 			}
 			
 			set_font_pal(13);

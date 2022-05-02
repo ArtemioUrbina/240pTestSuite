@@ -165,8 +165,8 @@ void MDFourierExecute()
 	// CD-DA	
 	x2 = clock_tt();
 	SetupToneCommand(cd_playtrk(4, 5, CDPLAY_NORMAL));
-	x3 = clock_tt();
-	y = x3-x2;
+	x4 = clock_tt();
+	y = x4-x2;
 	
 	set_font_pal(14);
 	put_string("Play command delay", 4, 14);
@@ -177,8 +177,8 @@ void MDFourierExecute()
 
 	x2 = clock_tt();
 	SetupToneCommand(cd_pause());
-	x3 = clock_tt();
-	y = x3-x2;
+	x4 = clock_tt();
+	y = x4-x2;
 	
 	put_string("Pause frames", 4, 16);
 	put_number(y, 4, 4, 17);
@@ -196,6 +196,7 @@ void MDFourier(int armed)
 	refresh = 1;
 	
 #ifdef SCDROM
+	put_string("MDFourier", 16, 4);
 	armed = runmdf;
 #endif
 
@@ -210,7 +211,7 @@ void MDFourier(int armed)
 	/* 	Some emulators and FPGA implementations
 		have issues with the first frame of the
 		first sound that is played back
-		Make a decoy tone when eterion teh menu, before the tests.
+		Make a decoy tone when entering the menu, before the tests.
 	*/
 	
 	SetWaveFreq(0, PULSE_SKIP_EMU);
@@ -842,12 +843,12 @@ void RefreshHardwareTests()
 	//set_font_pal(12);
 	//put_string("Hardware Tests", 14, 6);
 	
-	row = 12;
+	row = 14;
 
 	drawmenutext(0, "Controller Test");
 	drawmenutext(1, "Memory Viewer");
 	
-	row = 22;
+	row = 18;
 	DrawMenuBottom(2, 0);
 }
 
@@ -986,9 +987,13 @@ void HardwareTests()
 
 void MemViewer(unsigned int address)
 {			
+	char *buffer[2];
+	
 	end = 0;
 	redraw = 1;
 	refresh = 0;
+	
+	option = 0;		// ascii
 	
 	mem = NULL;
 	while(!end)
@@ -1018,8 +1023,24 @@ void MemViewer(unsigned int address)
 			set_font_pal(14);
 			for(y = 0; y < 28; y++)
 			{
-				for(x = 0; x < 16; x++)
-					put_hex(mem[y*16+x], 2, x*2, y);
+				if(!option)
+				{
+					for(x = 0; x < 16; x++)
+						put_hex(mem[y*16+x], 2, x*2, y);
+				}
+				else
+				{
+					for(x = 0; x < 16; x++)
+					{
+						buffer[0] = 20;				// Space
+						buffer[1] = 0;
+						
+						x1 = mem[y*16+x];
+						if(x1 >= 32 && x1 <= 127)	// ASCII range
+							buffer[0] = x1;
+						put_string(buffer, x*2, y);
+					}
+				}
 			}
 			
 			redraw = 0;
@@ -1030,6 +1051,12 @@ void MemViewer(unsigned int address)
 		if (controller & JOY_RUN)
 		{
 			showHelp(MEMVIEW_HELP);
+			redraw = 1;
+		}
+		
+		if (controller & JOY_I)
+		{
+			option = !option;
 			redraw = 1;
 		}
 		
