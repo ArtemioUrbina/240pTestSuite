@@ -112,12 +112,23 @@ void adpcmcycle()
 void MDFourierExecute()
 {
 	x3 = 0; // check composite filter flag
+#ifdef ALLOW_MDF_NOFILTER
+	y2 = 0; // allow video filter
+#endif
 	
 	StopAllAudio();
 
 	// Use XRES_SHARP @ 16.7145 ms per frame
+#ifndef ALLOW_MDF_NOFILTER
 	if(!EnabledSoft)
 		ChangeFilterMDF(1);
+#else
+	if(!EnabledSoft)
+	{
+		if(type == FLOAT_YES)
+			ChangeFilterMDF(1);
+	}
+#endif
 
 #ifdef CDROM
 	if(cd_status(0) != 0)
@@ -189,6 +200,16 @@ void MDFourierExecute()
 		ChangeFilterMDF(0);
 }
 
+void RedrawMDF()
+{
+	RedrawBG();
+
+	put_string("MDFourier", 16, 4);
+	refresh = 1;
+	redraw = 0;
+	disp_sync_on();
+}
+
 void MDFourier(int armed)
 {
  	end = 0;
@@ -225,24 +246,17 @@ void MDFourier(int armed)
 	if(armed == 1)
 		ExecutePulseTrain(0);
 	
-    while(!end)
-    {   
+	while(!end)
+	{
 		vsync();
 		
-        if(redraw)
-        {
-			RedrawBG();
-         
-            put_string("MDFourier", 16, 4);
-			refresh = 1;
-            redraw = 0;
-			disp_sync_on();
-        }
+		if(redraw)
+			RedrawMDF();
 		
 		if(refresh)
 		{
 			set_font_pal(14);
-            put_string("Start recording and press I", 6, 12);
+			put_string("Start recording and press I", 6, 12);
 			set_font_pal(13);
 			put_string("Press START for HELP", 10, 26);
 		}
@@ -260,10 +274,28 @@ void MDFourier(int armed)
 		
 		if (controller & JOY_I)
 		{
+#ifdef ALLOW_MDF_NOFILTER
+			if(!EnabledSoft)
+			{
+				type = SetFMYesNo("Enable Filter?", "No composite filter affects framerate");
+				RedrawMDF();
+			}	
+			else
+				type = FLOAT_NO;
+#endif
 			set_font_pal(15);
-            put_string("Please wait while recording", 6, 12);
+			 put_string("Please wait while recording", 6, 12);
+#ifndef ALLOW_MDF_NOFILTER
 			if(!EnabledSoft)
 				put_string("C. Filter enabled during test", 6, 15);
+#else
+			if(!EnabledSoft && type != FLOAT_YES)
+			{
+				set_font_pal(13);
+				put_string("Composite Filter disabled", 6, 15);
+				put_string("Will be around 16.6518ms", 6, 16);
+			}
+#endif
 			MDFourierExecute();
 			set_font_pal(13);
 			put_string("Stop recording and press I ", 6, 12);

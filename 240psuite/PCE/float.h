@@ -43,6 +43,10 @@ extern int fmx, fmy, tfmx, tfmy, lfm;
 #define RES_256 		2
 #define RES_512 		3
 #define RES_352 		4
+#ifdef ALLOW_MDF_NOFILTER
+#define	FLOAT_YES		10
+#define	FLOAT_NO		20
+#endif
 
 extern char float_map[];
 extern int float_bg[];
@@ -55,3 +59,6 @@ int FloatMenuRes320n256(int def);
 int FloatMenuRes320n256_224(int def);
 int FloatMenuResMinus352(int def);
 int FloatMenu(int def, int size, char *bottomMsg);
+#ifdef ALLOW_MDF_NOFILTER
+int SetFMYesNo(char *title, char *bottom);
+#endif

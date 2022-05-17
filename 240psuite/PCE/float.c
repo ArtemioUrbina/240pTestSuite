@@ -40,6 +40,20 @@ fmenudata resmenudata[6];
 
 #define CHANGE_VERT "Change vertical res under options"
 
+#ifdef ALLOW_MDF_NOFILTER
+int SetFMYesNo(char *title, char *bottom)
+{
+	resmenudata[0].id = FLOAT_NO;
+	resmenudata[0].name = title;
+	resmenudata[1].id = FLOAT_YES;
+	resmenudata[1].name = "Yes";
+	resmenudata[2].id = FLOAT_NO;
+	resmenudata[2].name = "No";
+	
+	return(FloatMenu(1, 3, bottom));
+}
+#endif
+
 void ChangeResType()
 {
 	if(type == RES_256)
