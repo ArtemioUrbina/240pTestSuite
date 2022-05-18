@@ -112,22 +112,19 @@ void adpcmcycle()
 void MDFourierExecute()
 {
 	x3 = 0; // check composite filter flag
-#ifdef ALLOW_MDF_NOFILTER
-	y2 = 0; // allow video filter
-#endif
 	
 	StopAllAudio();
 
 	// Use XRES_SHARP @ 16.7145 ms per frame
-#ifndef ALLOW_MDF_NOFILTER
-	if(!EnabledSoft)
-		ChangeFilterMDF(1);
-#else
+#ifdef ALLOW_MDF_NOFILTER
 	if(!EnabledSoft)
 	{
 		if(type == FLOAT_YES)
 			ChangeFilterMDF(1);
 	}
+#else
+	if(!EnabledSoft)
+		ChangeFilterMDF(1);
 #endif
 
 #ifdef CDROM
@@ -215,6 +212,9 @@ void MDFourier(int armed)
  	end = 0;
 	redraw = 1;
 	refresh = 1;
+#ifdef ALLOW_MDF_NOFILTER
+	type = FLOAT_NO;
+#endif
 	
 #ifdef SCDROM
 	put_string("MDFourier", 16, 4);
@@ -284,18 +284,23 @@ void MDFourier(int armed)
 				type = FLOAT_NO;
 #endif
 			set_font_pal(15);
-			 put_string("Please wait while recording", 6, 12);
-#ifndef ALLOW_MDF_NOFILTER
-			if(!EnabledSoft)
-				put_string("C. Filter enabled during test", 6, 15);
-#else
+			put_string("Please wait while recording", 6, 12);
+#ifdef ALLOW_MDF_NOFILTER
 			if(!EnabledSoft && type != FLOAT_YES)
 			{
 				set_font_pal(13);
 				put_string("Composite Filter disabled", 6, 15);
 				put_string("Will be around 16.6518ms", 6, 16);
 			}
+#else
+			if(!EnabledSoft)
+			{
+				set_font_pal(13);
+				put_string("Composite Filter enabled", 6, 15);
+				put_string("Will turn off after test", 6, 16);
+			}
 #endif
+
 			MDFourierExecute();
 			set_font_pal(13);
 			put_string("Stop recording and press I ", 6, 12);
