@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -415,7 +415,8 @@ void DrawShowMenu()
 
 void ChangeOptions(ImagePtr screen)
 {	
-	int 		sel = 1, close = 0, region, saved = -1, joycnt = 0;	
+	int 		sel = 1, close = 0, region, joycnt = 0;	
+	int			saved = -1, loaded = -1, timer = 0, hint = 0;
 	ImagePtr	back;
 	char		error[256];
 	
@@ -427,6 +428,7 @@ void ChangeOptions(ImagePtr screen)
 
 	region = flashrom_get_region();
 	updateVMU("  Options", "", 1);
+	srand((int)(time(0) ^ getpid()));
 	while(!close && !EndProgram) 
 	{		
 		float			r = 1.0f;
@@ -603,21 +605,71 @@ void ChangeOptions(ImagePtr screen)
 			saved = -1;
 		}
 		
-		// Option 12, Exit
+		// Option 12, Load Options from VMU
+		if(dev)
+		{
+			char *msg = NULL;
+			
+			switch(loaded)
+			{
+				case 1:
+					msg = "#GOptions loaded from VMU#G";
+					break;
+				case -1:
+					msg = "Load Options from VMU";
+					break;
+				case 0:
+					msg = error;
+					break;
+				default:
+					msg = "#RUndefined error#R";
+					dbglog(DBG_ERROR, "ERROR: VMU load returned unexpected value %d: %s\n", loaded, error);
+					break;
+			}
+
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, msg); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f,
+					"Load Options from VMU"); y += fh; c++;
+			loaded = -1;
+		}
+		
+		// Option 13, Reset to default options
+		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Reset all options to defaults"); y += fh; c++;
+		
+		// Option 14, Exit
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 		
 		// Comments on options
 		r = g = b = 0.8;
 		if(vmode == VIDEO_480P_SL && sel == 9)	
-			DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L and R triggers"); 										
+			DrawStringS(x-15, y + fh, r, g, b, "Adjust with L and R triggers"); 										
 		if(region != FLASHROM_REGION_EUROPE && (sel > 4 && sel < 9))
-			DrawStringS(x-15, y + 2*fh, r, g, b,
+			DrawStringS(x-15, y + fh, r, g, b,
 				"Only European FlashROMs can output PAL correctly"); 
 		if(vmode != VIDEO_480P_SL && (sel == 9 || sel == 10))
-			DrawStringS(x-15, y + 2*fh, r, g, b,
-				"Scanlines are only available in 480p\nLine Doubled mode via D-SUB (VGA)"); 						
+			DrawStringS(x-15, y + fh, r, g, b,
+				"Scanlines only in 480p mode via D-SUB (VGA)");
+		if(sel == 11 && hint == 1)
+			DrawStringS(x-15, y + fh, r, g, b,
+				"Hold L or R while saving for hidden eye-catchers!");
 		DrawStringS(x+60, 200, r, g, b, "Press START for help");
-		EndScene();		
+		if(rand() % 1000 == 47)
+			hint = !hint;
+		EndScene();
+		
+		// Clean load/save messages
+		if(timer)
+		{
+			timer--;
+			if(!timer)
+			{
+				loaded = -1;
+				saved = -1;
+			}
+		}
 
 		st = ReadController(0, &pressed);
 		
@@ -665,13 +717,6 @@ void ChangeOptions(ImagePtr screen)
 		{
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
-		}
-
-		if ( st && st->buttons & CONT_LTRIGGER	&& st->buttons & CONT_RTRIGGER)
-		{
-			settings = default_settings;
-			if(region == FLASHROM_REGION_EUROPE)
-				settings.EnablePAL = 1;
 		}
 
 		if ( pressed & CONT_B ) 		
@@ -746,9 +791,29 @@ void ChangeOptions(ImagePtr screen)
 							if ( st && st->buttons & CONT_LTRIGGER )
 								eyecatcher = 2;
 							saved = WriteVMUSave(eyecatcher, error);
+							loaded = -1;
+							timer = 200;
 						}
 						break;
-					case 12:
+					case 12:		
+						if(dev)
+						{
+							loaded = LoadVMUSave(error);
+							ChangeResolution(vmode);
+							saved = -1;
+							timer = 200;
+						}
+						break;
+					case 13:
+						{
+							settings = default_settings;
+							if(region == FLASHROM_REGION_EUROPE)
+								settings.EnablePAL = 1;
+							loaded = saved = -1;
+							ChangeResolution(vmode);
+						}
+						break;
+					case 14:
 						if ( st && st->buttons & CONT_RTRIGGER )
 						{
 							settings.drawborder = !settings.drawborder;
@@ -1166,7 +1231,6 @@ void DrawNish()
 		done = 1;
 
 		StartScene();
-		//DrawStringS(120, 115, 1.0, 1.0, 1.0, "KORDAMP PRESENTS");
 		DrawImage(nish);
 		EndScene();
 
@@ -1199,7 +1263,6 @@ void DrawCredits(ImagePtr back)
 		back->b = 0.4;
 	}
 
-	srand((int)(time(0) ^ getpid()));
 	while(!done && !EndProgram) 
 	{
 		int x = 20, y = 10;
@@ -1209,30 +1272,34 @@ void DrawCredits(ImagePtr back)
 			DrawImage(back);
 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Code and Patterns:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Artemio Urbina"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, data); y += fh; 
 
 		if(counter == 1)
-			sprintf(data, "aurbina@junkerhq.net");
+			sprintf(data, "Artemio Urbina");
 		if(counter == 60*4)
 			sprintf(data, "@Artemio (twitter)");
 		if(counter == 60*8)
 			counter = 0;
 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Support and suggestions:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, data); y += fh; 
-
 		y += fh;
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "KallistiOS"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
+		DrawStringS(x+20, y, 0.0, 1.0, 0.0, "SDK:"); 
+		DrawStringS(x+170, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
+		DrawStringS(x+25, y, 1.0, 1.0, 1.0, "KallistiOS");
+		DrawStringS(x+175, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
+		
+		y += fh;
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Monoscope Pattern:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Keith Raney"); y += fh; 		
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Donna Art:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Jose Salot (@pepe_salot)"); y += fh; 
+		
 		y += fh;
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 		
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Konsolkongen & shmups regulars"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "shmups regulars"); y += fh; 
 		y += fh;
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/"); y += fh; 

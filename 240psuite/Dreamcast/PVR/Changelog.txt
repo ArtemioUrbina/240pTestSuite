@@ -1,3 +1,49 @@
+Unrelased
+============
+- Added basic Fishing Rod support as a gag
+- Fixed remaining debug messages
+- Added missing analog joystick support to menus and help
+- VMU refresh is now cleaner in code
+- Exposed several options to user:
+  - Deflicker filter
+  - PVR Texture Dithering
+  - KOS Video Mode defaults
+  - Video Register defaults (KOS/Suite)
+- Now stops optical drive upon boot
+- Added a Donna VMU easter egg in a couple of modes
+- VMU messages are now always up to date and refreshed
+- Fixed dbglog level messages
+- Renamed Reflex & Timming test and added message upon completing it
+- Changed video definitions for easier resolution comparisons
+- This complicated the Video selection Menu, but it is now fixed
+- Improved VMU Load and save, now padding saves to get clean buffers in VMU
+- Changed Makefile target names for dcloadip
+- Updated 0GDTEX icon
+- Updated IP.BIN to reflect release and peripherals
+- Added unlicensed text to IP.BIN
+- Added several VMU save icons, selected at random
+- Added optional VMU eyecatcher graphic
+- Added several options to Makefile, to ensure proper debug and release versions
+- Fixed timing debug messages
+- Added warnings and error messages when saving to VMU if there is not enough space
+- Changed name to "Timing & Reflex Test"
+- Fixed color balance in color bars + gray reference
+- Removed gradient from Donna's background
+- Made monoscope ire changes to loop back
+- Fixed makefile so that cdi and zip build with proper flags from zero
+ - Match BIOS in 240p centering
+- Added Warning screen to Manual Lag Test
+- Added Draw Video Border option to Grid
+- Added full 480p color bleed test for 4:4:4/4:2:2
+- Added Donna
+- Updated FFTW to latest version
+- Updated for new menu background
+- Changed 75% RGB levels from 192 to 191 to match spec
+- Aesthetic details for GDEMU_SD
+- Updated IP.bin with date and version
+- Updated IP.bin with date and version
+- Added 0GDTEX.pvr for icon display
+
 Version 1.25
 ============
 - Added Warning screen to Manual Lag Test

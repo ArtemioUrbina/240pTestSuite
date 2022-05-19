@@ -539,12 +539,24 @@ int LoadVMUSave(char *error)
 
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 	if(!vmu)
+	{
+		sprintf(error, "#RNo VMU found#R");
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "No VMU found for load\n");
+#endif
 		return 0;
+	}
 
 	vmufs_init ();
 
 	if(vmufs_read(vmu, VMU_NAME, (void*)&pkg_in, &pkg_size) < 0)
+	{
+		sprintf(error, "#RVMU could not be read#R");
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "VMU could not be read\n");
+#endif
 		return 0;
+	}
 
 	vmufs_shutdown ();
 

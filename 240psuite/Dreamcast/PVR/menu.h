@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -25,7 +25,7 @@
 #include "image.h"
 
 #define VERSION_NUMBER "Dreamcast Ver. 1.27"
-#define VERSION_DATE "12/10/2021"
+#define VERSION_DATE "18/05/2022"
 
 #define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0};
 
