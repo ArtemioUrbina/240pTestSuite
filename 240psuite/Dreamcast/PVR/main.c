@@ -48,6 +48,7 @@ int	region = FLASHROM_REGION_UNKNOWN;
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawCredits(ImagePtr back);
 void DrawIntro();
+void DrawFooter();
 
 int main(void)
 {
@@ -114,9 +115,6 @@ int main(void)
 		maple_device_t *sip = NULL;
 #endif
 
-		// Check cable again in case it was changed on the fly
-		vcable = vid_check_cable();
-
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
@@ -180,37 +178,7 @@ int main(void)
 		}
 #endif
 
-		r = 0.8f;
-		g = 0.8f;
-		b = 0.8f;
-		switch(vcable)
-		{
-			case CT_RGB:
-				DrawStringS(225.0f, 225.0f, r, g, b, "RGB");
-				break;
-			case CT_VGA:
-				DrawStringS(225.0f, 225.0f, r, g, b, "VGA");
-				break;
-			case CT_COMPOSITE:
-				DrawStringS(225.0f, 225.0f, r, g, b, "Composite");
-				break;
-		}
-		
-		switch(region)
-		{
-			case FLASHROM_REGION_UNKNOWN:
-				DrawStringS(225.0f, 215.0f, r, g, b, "??????");
-				break;
-			case FLASHROM_REGION_JAPAN:
-				DrawStringS(225.0f, 215.0f, r, g, b, "Japan");
-				break;
-			case FLASHROM_REGION_US:
-				DrawStringS(225.0f, 215.0f, r, g, b, "USA");
-				break;
-			case FLASHROM_REGION_EUROPE:
-				DrawStringS(225.0f, 215.0f, r, g, b, "Europe");
-				break;
-		}
+		DrawFooter();
 		
 		EndScene();
 		VMURefresh("240p Test", "");
@@ -243,24 +211,7 @@ int main(void)
 				sel = 1;
 		}
 		
-		if( st && st->joyy != 0)
-		{
-			if(++joycnt > 5)
-			{
-				if(st && st->joyy > 0)
-					sel ++;
-				if(st && st->joyy < 0)
-					sel --;
-	
-				if(sel < 1)
-					sel = c;
-				if(sel > c)
-					sel = 1;
-				joycnt = 0;
-			}
-		}
-		else
-			joycnt = 0;
+		JoystickMenuMove(st, &sel, c, &joycnt);
 		
 		if (pressed & CONT_A)
 		{
@@ -345,6 +296,48 @@ int main(void)
 	return 0;
 }
 
+void DrawFooter()
+{
+	float 	r = 1.0f;
+	float 	g = 1.0f;
+	float 	b = 1.0f;
+		
+	// Check cable in case it was changed on the fly
+	vcable = vid_check_cable();
+	
+	r = 0.8f;
+	g = 0.8f;
+	b = 0.8f;
+	switch(vcable)
+	{
+		case CT_RGB:
+			DrawStringS(225.0f, 225.0f, r, g, b, "RGB");
+			break;
+		case CT_VGA:
+			DrawStringS(225.0f, 225.0f, r, g, b, "VGA");
+			break;
+		case CT_COMPOSITE:
+			DrawStringS(225.0f, 225.0f, r, g, b, "Composite");
+			break;
+	}
+	
+	switch(region)
+	{
+		case FLASHROM_REGION_UNKNOWN:
+			DrawStringS(225.0f, 215.0f, r, g, b, "??????");
+			break;
+		case FLASHROM_REGION_JAPAN:
+			DrawStringS(225.0f, 215.0f, r, g, b, "Japan");
+			break;
+		case FLASHROM_REGION_US:
+			DrawStringS(225.0f, 215.0f, r, g, b, "USA");
+			break;
+		case FLASHROM_REGION_EUROPE:
+			DrawStringS(225.0f, 215.0f, r, g, b, "Europe");
+			break;
+	}
+}
+
 void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 {
 	int 			done = 0, sel = 1, joycnt = 0;
@@ -387,37 +380,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
-		r = 0.8f;
-		g = 0.8f;
-		b = 0.8f;
-		switch(vcable)
-		{
-			case CT_RGB:
-				DrawStringS(265.0f, 225.0f, r, g, b, "RGB");
-				break;
-			case CT_VGA:
-				DrawStringS(265.0f, 225.0f, r, g, b, "VGA");
-				break;
-			case CT_COMPOSITE:
-				DrawStringS(265.0f, 225.0f, r, g, b, "Composite");
-				break;
-		}
-		
-		switch(region)
-		{
-			case FLASHROM_REGION_UNKNOWN:
-				DrawStringS(265.0f, 215.0f, r, g, b, "??????");
-				break;
-			case FLASHROM_REGION_JAPAN:
-				DrawStringS(265.0f, 215.0f, r, g, b, "Japan");
-				break;
-			case FLASHROM_REGION_US:
-				DrawStringS(265.0f, 215.0f, r, g, b, "USA");
-				break;
-			case FLASHROM_REGION_EUROPE:
-				DrawStringS(265.0f, 215.0f, r, g, b, "Europe");
-				break;
-		}
+		DrawFooter();
 		
 		EndScene();
 		VMURefresh("Patterns", "");
@@ -445,24 +408,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 				sel = 1;
 		}
 	
-		if(st && st->joyy != 0)
-		{
-			if(++joycnt > 5)
-			{
-				if(st && st->joyy > 0)
-					sel ++;
-				if(st && st->joyy < 0)
-					sel --;
-	
-				if(sel < 1)
-					sel = c;
-				if(sel > c)
-					sel = 1;
-				joycnt = 0;
-			}
-		}
-		else
-			joycnt = 0;
+		JoystickMenuMove(st, &sel, c, &joycnt);
 	
 		if (pressed & CONT_B)
 			done = 1;

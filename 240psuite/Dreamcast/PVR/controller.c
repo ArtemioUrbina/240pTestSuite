@@ -120,6 +120,28 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	return st;
 }
 
+void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)
+{
+	if( st && st->joyy != 0)
+	{
+		if(++(*joycnt) > 5)
+		{
+			if(st && st->joyy > 0)
+				(*sel) ++;
+			if(st && st->joyy < 0)
+				(*sel) --;
+
+			if(*sel < 1)
+				*sel = maxsel;
+			if(*sel > maxsel)
+				*sel = 1;
+			*joycnt = 0;
+		}
+	}
+	else
+		*joycnt = 0;
+}
+
 #ifdef DCLOAD
 void PrintDebugController(cont_state_t *st)
 {
