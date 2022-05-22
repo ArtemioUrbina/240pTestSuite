@@ -336,24 +336,7 @@ void DrawShowMenu()
 				sel = 1;
 		}
 		
-		if(st && st->joyy != 0)
-		{
-			if(++joycnt > 5)
-			{
-				if(st && st->joyy > 0)
-					sel ++;
-				if(st && st->joyy < 0)
-					sel --;
-	
-				if(sel < 1)
-					sel = c;
-				if(sel > c)
-					sel = 1;
-				joycnt = 0;
-			}
-		}
-		else
-			joycnt = 0;
+		JoystickMenuMove(st, &sel, c, &joycnt);
 			
 		if (pressed & CONT_B || pressed & CONT_START) 		
 			done = 1;	
@@ -362,13 +345,7 @@ void DrawShowMenu()
 		{
 			switch(sel)
 			{			
-					case 1:	
-						// Cludge for special cases
-						if(strcmp(HelpData, LINEARITYHELP) == 0 && vmode == VIDEO_480P)
-							HelpData = LINEARVGAHELP;
-						if(strcmp(HelpData, LINEARVGAHELP) == 0 && vmode != VIDEO_480P)
-							HelpData = LINEARITYHELP;
-
+					case 1:
 						HelpWindow(HelpData, fbtexture);
 						break;					
 					case 2:		
@@ -651,7 +628,7 @@ void ChangeOptions(ImagePtr screen)
 				"Only European FlashROMs can output PAL correctly"); 
 		if(vmode != VIDEO_480P_SL && (sel == 9 || sel == 10))
 			DrawStringS(x-15, y + fh, r, g, b,
-				"Scanlines only in 480p mode via D-SUB (VGA)");
+				"Scanlines only in scaled 480p mode via D-SUB (VGA)");
 		if(sel == 11 && hint == 1)
 			DrawStringS(x-15, y + fh, r, g, b,
 				"Hold L or R while saving for hidden eye-catchers!");
@@ -1028,7 +1005,7 @@ void SelectVideoMode(ImagePtr screen)
 		
 	back->alpha = 0.75f;
 
-	sel = vmode + 1;
+	sel = vmodepos[vmode] + 1;
 	updateVMU("Video Mode", "", 1);
 	while(!close && !EndProgram) 
 	{		
@@ -1136,24 +1113,7 @@ void SelectVideoMode(ImagePtr screen)
 				sel = 1;	
 		}
 		
-		if( st && st->joyy != 0)
-		{
-			if(++joycnt > 5)
-			{
-				if(st && st->joyy > 0)
-					sel ++;
-				if(st && st->joyy < 0)
-					sel --;
-	
-				if(sel < 1)
-					sel = c;
-				if(sel > c)
-					sel = 1;
-				joycnt = 0;
-			}
-		}
-		else
-			joycnt = 0;
+		JoystickMenuMove(st, &sel, c, &joycnt);
 
 		if ( pressed & CONT_B ) 
 			close = 1;	
@@ -1242,6 +1202,13 @@ void DrawNish()
 	FreeImage(&nish);
 }
 
+void DrawCreditsOnFB()
+{
+	InitTextureFB();
+	CopyFBToBG();
+	DrawCredits(fbtexture);
+	FreeTextureFB();
+}
 
 void DrawCredits(ImagePtr back)
 {
@@ -1346,7 +1313,7 @@ void DrawCredits(ImagePtr back)
 
 void DrawIntro()
 {
-	uint32			counter, frames = 60;
+	uint32			counter, frames = 30;
 	float			delta;
 	ImagePtr		black;
 
@@ -1378,4 +1345,86 @@ void DrawIntro()
 	FreeImage(&black);
 }
 
+int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option)
+{
+	int 		sel = selected_option, close = 0, value = MENU_CANCEL, joycnt = 0;		
+	ImagePtr	Back = NULL;
+	
+	Back = LoadKMG("/rd/FloatMenu.kmg.gz", 0);
+	if(Back)
+	{
+		Back->x = (dW - MENUSIZE_W) / 2;
+		Back->y = (dH - MENUSIZE_H) / 2;
+		Back->alpha = 0.75f;
+	}
 
+	while(!close) 
+	{		
+		float		r = 1.0f;
+		float		g = 1.0f;
+		float		b = 1.0f;
+		int			c = 1, i = 0;				    					   
+		float		x = Back ? Back->x + 20.0f : 100.0f;
+		float		y = Back ? Back->y + 10.0f : 60.0f;
+        uint16		pressed = 0;
+		controller	*st;
+				
+		StartScene();
+		
+		if(Back)        
+			DrawImage(Back);       
+
+		DrawStringS(x, y, 0.0f, 1.0f, 0.0f, title); y += 3*fh; 		
+		
+		for(i = 0; i < num_options; i++)
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, menu_data[i].option_text);
+			y += fh; c++;		
+		}
+        
+		y += 2* fh;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");		
+								
+		EndScene();		
+		
+		st = ReadController(0, &pressed);
+		
+		if ( pressed & CONT_DPAD_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & CONT_DPAD_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }		
+
+		JoystickMenuMove(st, &sel, c, &joycnt);	
+			
+		if (pressed & CONT_B || pressed & CONT_START) 		
+		{
+			close = 1;	
+			value = MENU_CANCEL;
+		}
+	
+		if (pressed & CONT_A)
+		{     
+			close = 1;
+
+			if(sel == c)
+				value = MENU_CANCEL;
+			else
+				value = menu_data[sel - 1].option_value;
+		}		
+	}
+	
+	if(Back)
+		FreeImage(&Back);
+
+	refreshVMU = 1;
+	return value;
+}

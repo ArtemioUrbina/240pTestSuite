@@ -1,0 +1,30 @@
+               EBU COLOR BARS (1/2)
+
+This pattern can be used to calibrate levels 
+regarding contrast and brightness at 0mv setup
+and also for appropiate colors.
+
+You can toggle between 75% and 100% EBU color 
+bars by pressing #GA#G.
+
+Console games usually start at 0 IRE. This
+pattern can be used to calibrate colors and 
+then black levels can be adjusted with the
+PLUGE pattern using the #GFull RGB Mode#G.
+
+
+                                         #C(cont...)#C
+               EBU COLOR BARS (2/2)
+
+The EBU color bar pattern has seven vertical bars
+of 100% or 75% intensity. In order from left to
+right, the colors are gray, yellow, cyan, green,
+magenta, red, and blue.
+
+This sequence runs through all seven possible
+combinations that use at least one of the three
+basic color components of green, red, and blue,
+with blue cycling on and off between every bar,
+red cycling on and off every two bars, and green
+on for the leftmost four bars and off for the
+rightmost three.

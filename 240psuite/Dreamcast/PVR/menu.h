@@ -69,9 +69,22 @@ void SelectVideoMode(ImagePtr screen);
 void DrawShowMenu();
 void ShowMenu(char *HelpData);
 uint8 ReloadFBTexture();
+void DrawCreditsOnFB();
 void DrawCredits(ImagePtr back);
 void DrawIntro();
 void ShowHelpWindow(char *Data);
 void ChangePALBackgroundColor(ImagePtr title);
+
+#ifndef MENUDATA
+#define MENUDATA
+typedef struct menu_data {
+    int		option_value;
+	char	*option_text;
+} fmenudata;
+#endif
+
+#define MENU_CANCEL -1
+
+int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option);
 
 #endif

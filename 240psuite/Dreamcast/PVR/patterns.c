@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -39,7 +39,7 @@ void DrawPluge()
 {
 	int 		done = 0, text = 0, oldvmode = vmode, ShowHelp = 0;
 	uint16		pressed;		
-	ImagePtr	back = NULL, backPAL, backNTSC, black, highlight;
+	ImagePtr	back = NULL, backFull, backNTSC, black, highlight;
 	controller	*st;
 	char		msg[50];
 
@@ -47,8 +47,8 @@ void DrawPluge()
 	if(!backNTSC)
 		return;
 
-	backPAL = LoadKMG("/rd/plugepal.kmg.gz", 0);
-	if(!backPAL)
+	backFull = LoadKMG("/rd/plugepal.kmg.gz", 0);
+	if(!backFull)
 	{
 		FreeImage(&backNTSC);	
 		return;
@@ -56,7 +56,7 @@ void DrawPluge()
 	black = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!black)
 	{
-		FreeImage(&backPAL);
+		FreeImage(&backFull);
 		FreeImage(&backNTSC);
 		return;
 	}	
@@ -64,7 +64,7 @@ void DrawPluge()
 	highlight = LoadKMG("/rd/PLUGEBorder.kmg.gz", 0);
 	if(!highlight)
 	{
-		FreeImage(&backPAL);
+		FreeImage(&backFull);
 		FreeImage(&black);
 		FreeImage(&backNTSC);
 		return;
@@ -74,7 +74,7 @@ void DrawPluge()
 	black->g = 0x0;
 	black->b = 0x0;	
 
-	back = backPAL;
+	back = backFull;
 	black->h = 264;	
 
 	while(!done && !EndProgram) 
@@ -160,7 +160,7 @@ void DrawPluge()
 					if(back == backNTSC)
 					{
 						sprintf(msg, "RGB Full Range");
-						back = backPAL;
+						back = backFull;
 					}
 					else
 					{
@@ -178,16 +178,82 @@ void DrawPluge()
 	}
 	FreeImage(&highlight);
 	FreeImage(&backNTSC);
-	FreeImage(&backPAL);
+	FreeImage(&backFull);
 	FreeImage(&black);
+	return;
+}
+
+void DrawEBUColorBars()
+{
+	int 		done = 0, is75 = 0, text = 0;
+	uint16		pressed;
+	ImagePtr	backEBU75, backEBU100;
+	controller	*st;
+	char		msg[40];
+
+	backEBU75 = LoadKMG("/rd/EBUColorBars75.kmg.gz", 0);
+	if(!backEBU75)
+		return;
+
+	backEBU100 = LoadKMG("/rd/EBUColorBars100.kmg.gz", 0);
+	if(!backEBU100)
+	{
+		FreeImage(&backEBU75);
+		return;
+	}
+
+	IgnoreOffset(backEBU75);
+	IgnoreOffset(backEBU100);
+		
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+
+		if(is75)
+			DrawImage(backEBU75);
+		else
+			DrawImage(backEBU100);
+
+		if(text)
+		{
+			DrawStringB(260, 20, 0, 1.0f, 0, msg);
+			text --;
+		}
+
+		EndScene();
+		if(refreshVMU)
+		{
+			updateVMU(" EBU ", "", 1);
+			refreshVMU = 0;
+		}
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;
+
+			if (pressed & CONT_A)
+			{
+				is75 = !is75;
+				text = 30;
+				sprintf(msg, "%s%%", is75 ? "75" : "100");
+			}
+
+			if (pressed & CONT_START)
+				ShowMenu(EBUCOLOR);
+		}
+	}
+	FreeImage(&backEBU75);
+	FreeImage(&backEBU100);
 	return;
 }
 
 void DrawSMPTEColorBars()
 {
-	int 		done = 0, is75 = 1, text = 0;
+	int 		done = 0, is75 = 0, text = 0;
 	uint16		pressed;
-	ImagePtr	backNTSC75, backNTSC100, backPAL75, backPAL100;
+	ImagePtr	backNTSC75, backNTSC100;
 	controller	*st;
 	char		msg[40];
 
@@ -201,45 +267,15 @@ void DrawSMPTEColorBars()
 		FreeImage(&backNTSC75);
 		return;
 	}
-
-	backPAL75 = LoadKMG("/rd/EBUColorBars75.kmg.gz", 0);
-	if(!backNTSC75)
-	{
-		FreeImage(&backNTSC75);
-		FreeImage(&backNTSC100);
-		return;
-	}
-
-	backPAL100 = LoadKMG("/rd/EBUColorBars100.kmg.gz", 0);
-	if(!backNTSC75)
-	{
-		FreeImage(&backNTSC75);
-		FreeImage(&backNTSC100);
-		FreeImage(&backPAL75);
-		return;
-	}
-
-	IgnoreOffset(backPAL75);
-	IgnoreOffset(backPAL100);
-		
+	
 	while(!done && !EndProgram) 
 	{
 		StartScene();
 
-		if(!IsPAL)
-		{
-			if(is75)
-				DrawImage(backNTSC75);
-			else
-				DrawImage(backNTSC100);
-		}
+		if(is75)
+			DrawImage(backNTSC75);
 		else
-		{
-			if(is75)
-				DrawImage(backPAL75);
-			else
-				DrawImage(backPAL100);
-		}
+			DrawImage(backNTSC100);
 
 		if(text)
 		{
@@ -250,10 +286,7 @@ void DrawSMPTEColorBars()
 		EndScene();
 		if(refreshVMU)
 		{
-			if(IsPAL)
-				updateVMU(" EBU ", "", 1);
-			else
-				updateVMU(" SMPTE ", "", 1);
+			updateVMU(" SMPTE ", "", 1);
 			refreshVMU = 0;
 		}
 
@@ -261,7 +294,7 @@ void DrawSMPTEColorBars()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;								
+				done =	1;
 
 			if (pressed & CONT_A)
 			{
@@ -276,8 +309,6 @@ void DrawSMPTEColorBars()
 	}
 	FreeImage(&backNTSC75);
 	FreeImage(&backNTSC100);
-	FreeImage(&backPAL75);
-	FreeImage(&backPAL100);
 	return;
 }
 
@@ -671,13 +702,21 @@ void DrawColorBleed()
 	return;
 }
 
-void DrawGrid(int full)
+void DrawGrid()
 {
-	int 		done = 0, oldvmode = vmode, border = 0;
+	int 		done = 0, oldvmode = vmode, border = 0, sel = 1;
 	uint16		pressed;		
 	ImagePtr	back = NULL;
-	controller	*st;
-
+	controller	*st;	
+	fmenudata 	resmenudata[] = { {1, "Full 240p"}, {2, "224 sized"} };
+	
+	if(vmode < HIGH_RES)
+	{
+		VMURefresh("Grid", "");
+		sel = SelectMenu("Select Grid", resmenudata, 2, sel);
+		if(sel == MENU_CANCEL)
+			return;
+	}
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -688,7 +727,7 @@ void DrawGrid(int full)
 		
 		if(!back)
 		{
-			if(full)
+			if(sel == 1)
 			{
 				if(vmode >= HIGH_RES)
 				{
@@ -709,7 +748,7 @@ void DrawGrid(int full)
 			// Use 240p Grid
 			if(!back)
 			{
-				if(full)
+				if(sel == 1)
 					back = LoadKMG("/rd/grid.kmg.gz", 0);
 				else
 				{
@@ -731,8 +770,13 @@ void DrawGrid(int full)
 		
 		if(refreshVMU)
 		{
-			if(full)
-				updateVMU("  Grid  ", "", 1);
+			if(sel == 1)
+			{
+				if(vmode >= HIGH_RES)
+					updateVMU("Grid 480", "", 1);
+				else
+					updateVMU("  Grid  ", "", 1);
+			}
 			else
 				updateVMU("Grid 224", "", 1);
 			refreshVMU = 0;
@@ -751,6 +795,17 @@ void DrawGrid(int full)
 			}
 			if (pressed & CONT_B)
 				done =	1;
+			if (pressed & CONT_X)
+			{
+				if(vmode < HIGH_RES)
+				{
+					int type = 0;
+					
+					type = SelectMenu("Select Grid", resmenudata, 2, sel);
+					if(type != MENU_CANCEL)
+						sel = type;
+				}
+			}
 			if (pressed & CONT_START)
 			{
 				if(border)
@@ -758,7 +813,7 @@ void DrawGrid(int full)
 					vid_border_color(0, 0, 0);
 					border = 0;
 				}
-				if(full)
+				if(sel == 1)
 					ShowMenu(GRIDHELP);
 				else
 					ShowMenu(GRID224HELP);
@@ -822,196 +877,6 @@ void DrawMonoscope()
 	}
 	FreeImage(&back);
 	FreeImage(&rlines);
-	return;
-}
-
-void DrawLinearity(int full)
-{
-	int 		done = 0, oldvmode = vmode, gridmode = 0;
-	uint16		pressed;
-	ImagePtr	circles = NULL, grid, gridd, back;
-	controller	*st;
-
-	back = LoadKMG("/rd/white.kmg.gz", 1);
-	if(!back)
-		return;		
-	
-	back->r = 0.0;
-	back->g = 0.0;
-	back->b = 0.0;	
-	
-	grid = LoadKMG("/rd/circles_grid.kmg.gz", 1);
-	if(!grid)
-	{
-		FreeImage(&back);
-		return;
-	}
-	gridd = LoadKMG("/rd/circles_griddot.kmg.gz", 1);
-	if(!gridd)
-	{
-		FreeImage(&back);
-		FreeImage(&grid);
-		return;
-	}
-	
-	if(full)
-	{
-		if(vmode == VIDEO_480P)
-		{
-			grid->w = 640;
-			grid->h = 480;
-			gridd->w = 640;
-			gridd->h = 480;
-		}
-		else
-		{
-			grid->w = 320;
-			grid->h = IsPAL ? 264 : 240;
-			gridd->w = 320;
-			gridd->h = IsPAL ? 264 : 240;
-		}
-	}
-	else
-	{
-		grid->w = 320;
-		grid->h = 224;
-		gridd->w = 320;
-		gridd->h = 224;
-		grid->y = 8;
-		gridd->y = 8;
-	}
-		
-	while(!done && !EndProgram) 
-	{
-		if(oldvmode != vmode)
-		{
-			FreeImage(&circles);		
-			oldvmode = vmode;
-
-			if(full)
-			{
-				if(vmode == VIDEO_480P)
-				{
-					grid->w = 640;
-					grid->h = 480;
-					gridd->w = 640;
-					gridd->h = 480;
-				}
-				else
-				{
-					grid->w = 320;
-					grid->h = IsPAL ? 264 : 240;
-					gridd->w = 320;
-					gridd->h = IsPAL ? 264 : 240;
-				}
-			}
-			else
-			{
-				grid->w = 320;
-				grid->h = 224;
-				gridd->w = 320;
-				gridd->h = 224;
-				grid->y = 8;
-				gridd->y = 8;
-			}
-			CalculateUV(0, 0, dW, dH, grid);
-			CalculateUV(0, 0, dW, dH, gridd);
-		}
-		
-		if(!circles)
-		{
-			if(full)
-			{
-				if(vmode == VIDEO_480P)
-				{
-					circles = LoadKMG("/rd/circlesVGA.kmg.gz", 0);
-					if(!circles)
-						return;
-				}
-				else
-				{
-					if(!IsPAL)
-					{
-						circles = LoadKMG("/rd/circles.kmg.gz", 0);
-						if(!circles)
-							return;
-					}
-					else
-					{
-						if(vmode == VIDEO_288P)
-							circles = LoadKMG("/rd/circlesPAL.kmg.gz", 0);
-						else
-							circles = LoadKMG("/rd/circlesPAL240.kmg.gz", 0);
-						if(!circles)
-							return;
-						IgnoreOffset(circles);
-					}
-				}
-			}
-			else
-			{
-				circles = LoadKMG("/rd/circles_224.kmg.gz", 0);
-				circles->y = 8;
-				if(!circles)
-					return;
-			}
-		}
-	
-		StartScene();
-
-		DrawImage(back);
-		switch(gridmode)
-		{
-			case 1:
-				DrawImage(grid);
-				break;
-			case 2:
-				DrawImage(gridd);
-				break;
-		}
-		DrawImage(circles);
-		EndScene();
-		if(refreshVMU)
-		{
-			if(full)
-				updateVMU("Linearity", "", 1);
-			else
-				updateVMU("Linearity", "224", 1);
-			refreshVMU = 0;
-		}
-
-		st = ReadController(0, &pressed);
-		if(st)
-		{
-			if (pressed & CONT_X)
-				gridmode --;
-		
-			if (pressed & CONT_Y)
-				gridmode ++;
-		
-			if (pressed & CONT_B)
-				done =	1;				
-
-			if (pressed & CONT_START)
-			{
-				if(full)
-					ShowMenu(LINEARITYHELP);
-				else
-					ShowMenu(LIN224HELP);
-			}
-
-			if(gridmode < 0)
-				gridmode = 2;
-
-			if(gridmode > 2)
-				gridmode = 0;
-		}
-	}
-
-	FreeImage(&gridd);
-	FreeImage(&grid);
-	FreeImage(&circles);
-	FreeImage(&back);
 	return;
 }
 

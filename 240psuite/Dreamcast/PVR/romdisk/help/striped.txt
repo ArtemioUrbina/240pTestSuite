@@ -9,3 +9,5 @@ deinterlace (plus interpolate) or not.
 The user can change background with the #GA#G button.
 Holding the #GY#G button allows to move 1 pixel at
 a time.
+
+#CDonna art by Jose Salot#C

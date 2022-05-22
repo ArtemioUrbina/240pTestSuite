@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -1052,7 +1052,7 @@ void GridScrollTest()
 	ImagePtr		back;
 	controller		*st;
 
-	back = LoadKMG("/rd/circles_grid.kmg.gz", 1);
+	back = LoadKMG("/rd/small_grid.kmg.gz", 1);
 	if(!back)
 		return;  
 	

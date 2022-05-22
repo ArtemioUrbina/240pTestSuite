@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -19,22 +19,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef PATTERNS_H
-#define PATTERNS_H
+#ifndef HARDWARE_H
+#define HARDWARE_H
 
-void DrawPluge();
-void DrawWhiteScreen();
-void DrawGrayRamp();
-void DrawColorBars();
-void DrawColorBleed();
-void Draw601ColorBars();
-void DrawGrid();
-void DrawMonoscope();
-void Draw100IRE();
-void DrawEBUColorBars();
-void DrawSMPTEColorBars();
-void DrawSharpness();
-void DrawOverscan();
+void ControllerTest();
+void MemoryViewer();
 
 #endif
 

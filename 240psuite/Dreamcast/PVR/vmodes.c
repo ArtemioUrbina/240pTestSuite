@@ -8,7 +8,7 @@ int W		= 0;
 int H		= 0;
 int dW		= 0;
 int dH		= 0;
-int offsetY 	= 0;
+int offsetY = 0;
 int IsPAL 	= 0;
 int IsPALDC	= 0;
 
@@ -111,7 +111,7 @@ void LoadScanlines()
 	{
 		scanlines = LoadKMG("/rd/scanlines.kmg.gz", 0);
 		scanlines->layer = 5.0;
-		scanlines->alpha = 0.5f;
+		scanlines->alpha = 0.3f;
 		scanlines->scale = 0;
 		CalculateUV(0, 0, 640, 480, scanlines);
 	}
@@ -171,7 +171,7 @@ void SetScanlineIntensity(double value)
 
 inline void DrawScanlines()
 {
-	if(vmode == VIDEO_480P_SL && scanlines)
+	if(scanlines && vmode == VIDEO_480P_SL)
 		DrawImage(scanlines);
 }
 
@@ -545,11 +545,11 @@ void GetVideoModeStr(char *res, int shortdesc)
 			case VIDEO_288P:
 				sprintf(res, "Video: 288p");
 				break;
-			case VIDEO_576I_A264:
-				sprintf(res, "Video: 576i (scaled 264p)");
-				break;
 			case VIDEO_576I:
 				sprintf(res, "Video: 576i (Scaling disabled)");
+				break;
+			case VIDEO_576I_A264:
+				sprintf(res, "Video: 576i (scaled 264p)");
 				break;
 			case VIDEO_480P:
 				if(vcable == CT_VGA)
@@ -566,33 +566,31 @@ void GetVideoModeStr(char *res, int shortdesc)
 		switch(vmode)
 		{
 			case VIDEO_240P:
-				if(vcable != CT_VGA)
+				if(IsPALDC)
+					sprintf(res, "[240p P60]");
+				else
 					sprintf(res, "[240p]");
 				break;
-			case VIDEO_480I_A240:
-				if(vcable != CT_VGA)
-					sprintf(res, "[480i LD]");
-				break;
 			case VIDEO_480I:
-				if(vcable != CT_VGA)
-					sprintf(res, "[480i 1:1]");
+				sprintf(res, "[480i 1:1]");
+				break;
+			case VIDEO_480I_A240:
+				sprintf(res, "[480i 1:2]");
 				break;
 			case VIDEO_288P:
 				sprintf(res, "[288p]");
 				break;
-			case VIDEO_576I_A264:
-				sprintf(res, "[576i LD]");
-				break;
 			case VIDEO_576I:
 				sprintf(res, "[576i 1:1]");
 				break;
+			case VIDEO_576I_A264:
+				sprintf(res, "[576i 1:2]");
+				break;
 			case VIDEO_480P:
-				if(vcable == CT_VGA)
-					sprintf(res, "[480p 1:1]");
+				sprintf(res, "[480p 1:1]");
 				break;
 			case VIDEO_480P_SL:
-				if(vcable == CT_VGA)
-					sprintf(res, "[480p LD]");
+				sprintf(res, "[480p 1:2]");
 				break;
 		}
 	}
@@ -683,6 +681,10 @@ void TestVideoMode(int mode)
 
 	if(mode == VIDEO_240P)
 		source_mode = &custom_240;
+	if(mode == VIDEO_480I)
+		source_mode = &custom_240;
+	if(mode == VIDEO_480I_A240)
+		source_mode = &custom_240;
 	if(mode == VIDEO_576I_A264)
 		source_mode = &custom_288;
 	if(mode == VIDEO_576I)
@@ -703,10 +705,18 @@ void TestVideoMode(int mode)
 	if(IsPAL)
 		back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
 	else
-		back = LoadKMG("/rd/grid.kmg.gz", 0);
+	{
+		if(vmode >= HIGH_RES)
+		{
+			back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
+			if(back)
+				back->scale = 0;
+		}
+		else
+			back = LoadKMG("/rd/grid.kmg.gz", 0);
+	}
 	if(!back)
 		return;
-	//back->scale = 0;
 
 	updateVMU("VIDEO", "", 1);
 
