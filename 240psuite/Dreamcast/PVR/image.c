@@ -146,6 +146,12 @@ void ReleaseImage(ImagePtr image)
 {
 	uint8   i = 0, deleted = 0;
 
+	if(!image)
+	{
+		dbglog(DBG_CRITICAL, "Called ReleaseImage with a NULL pointer\n");
+		return;
+	}
+
 	for(i = 0; i < MAX_IMAGES && !deleted; i++)
 	{
 		if(Images[i].image == image)
@@ -442,6 +448,8 @@ void FreeImage(ImagePtr *image)
 		free(*image);
 		*image = NULL;
 	}
+	else
+		dbglog(DBG_CRITICAL, "Called FreeImage with a NULL pointer");
 }
 
 uint8 FreeImageData(ImagePtr *image)
