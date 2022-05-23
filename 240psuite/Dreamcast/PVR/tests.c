@@ -587,7 +587,10 @@ void ReflexNTimming()
 	if(!spriteB)
 		return;	
 
-	beep = snd_sfx_load("/rd/beep.wav");
+	// the wav file has delay as in audio sync
+	beep = snd_sfx_load("/rd/beep_delayed.wav");
+	if(beep == SFXHND_INVALID)
+		return;
 	x = 144;
 	y = 60;
 	x2 = 108;
@@ -603,60 +606,15 @@ void ReflexNTimming()
 	
 	while(!done && !EndProgram) 
 	{
-		StartScene();
-
-		DrawImage(back);
-		DrawImage(fixed);
-
 		spriteA->x = x;
 		spriteA->y = y;
 		spriteB->x = x2;
 		spriteB->y = y2;
+		
+		StartScene();
 
-		if(y == 96)
-		{			
-			if(audio && beep != SFXHND_INVALID)
-				snd_sfx_play(beep, 255, speed*255);	// toggle pan to 0 and 255, l & r
-
-			purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
-			if(vibrate)
-			{
-				if(purupuru)
-					purupuru_rumble(purupuru, &effect);
-			}
-
-			spriteA->r = 1.0;
-			spriteA->g = 0.0;
-			spriteA->b = 0.0;
-
-			spriteB->r = 1.0;
-			spriteB->g = 0.0;
-			spriteB->b = 0.0;
-		}
-		else
-		{
-			if(y == 97 || y == 95) // one pixel off
-			{
-				spriteA->r = 0.0;
-				spriteA->g = 1.0;
-				spriteA->b = 0.0;
-
-				spriteB->r = 0.0;
-				spriteB->g = 1.0;
-				spriteB->b = 0.0;
-			}
-
-			if(y == 98 || y == 94) // two pixels off
-			{
-				spriteA->r = 1.0;
-				spriteA->g = 1.0;
-				spriteA->b = 1.0;
-
-				spriteB->r = 1.0;
-				spriteB->g = 1.0;
-				spriteB->b = 1.0;
-			}
-		}			
+		DrawImage(back);
+		DrawImage(fixed);
 
 		if(view == 0 || view == 2)
 			DrawImage(spriteA);
@@ -716,6 +674,67 @@ void ReflexNTimming()
 			DrawStringS(20, 170+5*fh, 0.0f, 1.0f, 0.0f, "\"L\" trigger toggles vibration feedback.");
 
 		EndScene();
+		
+		// we have to sync audio to the frame buffer
+		// so we activate audio one frame later, up and down
+		if((y == 97 && speed == 1) || 
+			(y == 95 && speed == -1))
+		{
+			if(audio)
+				snd_sfx_play(beep, 255, 128);
+
+			purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
+			if(vibrate)
+			{
+				if(purupuru)
+					purupuru_rumble(purupuru, &effect);
+			}
+		}
+		
+		if(y == 96)
+		{
+			spriteA->r = 1.0;
+			spriteA->g = 0.0;
+			spriteA->b = 0.0;
+
+			spriteB->r = 1.0;
+			spriteB->g = 0.0;
+			spriteB->b = 0.0;
+#ifdef BENCHMARK		
+			back->r = 1.0;
+			back->g = 1.0;
+			back->b = 1.0;
+#endif
+		}
+		else
+		{
+			if(y == 97 || y == 95) // one pixel off
+			{
+				spriteA->r = 0.0;
+				spriteA->g = 1.0;
+				spriteA->b = 0.0;
+
+				spriteB->r = 0.0;
+				spriteB->g = 1.0;
+				spriteB->b = 0.0;
+#ifdef BENCHMARK				
+				back->r = 0.0;
+				back->g = 0.0;
+				back->b = 0.0;
+#endif
+			}
+
+			if(y == 98 || y == 94) // two pixels off
+			{
+				spriteA->r = 1.0;
+				spriteA->g = 1.0;
+				spriteA->b = 1.0;
+
+				spriteB->r = 1.0;
+				spriteB->g = 1.0;
+				spriteB->b = 1.0;
+			}
+		}			
 		
 		VMURefresh("Reflex   ", vmuMsg);
 

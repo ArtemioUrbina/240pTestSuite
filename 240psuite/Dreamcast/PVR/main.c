@@ -698,40 +698,46 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 		
 	// Check cable is done at EndScene globally
 	
+	x = 220.0f;
+	y = 212.0f;
+	
 	r = 0.8f;
 	g = 0.8f;
 	b = 0.8f;
+	
+	switch(region)
+	{
+		case FLASHROM_REGION_UNKNOWN:
+			DrawStringS(x, y, r, g, b, "??????");
+			break;
+		case FLASHROM_REGION_JAPAN:
+			DrawStringS(x, y, r, g, b, "Japan");
+			break;
+		case FLASHROM_REGION_US:
+			DrawStringS(x, y, r, g, b, "USA");
+			break;
+		case FLASHROM_REGION_EUROPE:
+			DrawStringS(x, y, r, g, b, "Europe");
+			break;
+	}
+	
+	y += fh - 2;
 	GetVideoModeStr(vdata, 1);
 	switch(vcable)
 	{
 		case CT_RGB:
 			sprintf(msg, "RGB %s", vdata);
-			DrawStringS(225.0f, 225.0f, r, g, b, msg);
+			DrawStringS(x, y, r, g, b, msg);
 			break;
 		case CT_VGA:
 			sprintf(msg, "VGA %s", vdata);
-			DrawStringS(225.0f, 225.0f, r, g, b, msg);
+			DrawStringS(x, y, r, g, b, msg);
 			break;
 		case CT_COMPOSITE:
-			sprintf(msg, "Composite %s", vdata);
-			DrawStringS(225.0f, 225.0f, r, g, b, msg);
+			sprintf(msg, "CVBS %s", vdata);
+			DrawStringS(x, y, r, g, b, msg);
 			break;
 	}
 	
-	switch(region)
-	{
-		case FLASHROM_REGION_UNKNOWN:
-			DrawStringS(225.0f, 215.0f, r, g, b, "??????");
-			break;
-		case FLASHROM_REGION_JAPAN:
-			DrawStringS(225.0f, 215.0f, r, g, b, "Japan");
-			break;
-		case FLASHROM_REGION_US:
-			DrawStringS(225.0f, 215.0f, r, g, b, "USA");
-			break;
-		case FLASHROM_REGION_EUROPE:
-			DrawStringS(225.0f, 215.0f, r, g, b, "Europe");
-			break;
-	}
 	return c;
 }
