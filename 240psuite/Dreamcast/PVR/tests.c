@@ -1405,13 +1405,8 @@ void AudioSyncTest()
 	float		hstep = 0;
 	uint16		pressed;
 	sfxhnd_t	beep;
-	ImagePtr	squareL, squareR, lineB, sprite, back;	
+	ImagePtr	squareL, squareR, lineB, sprite, back, cover;	
 	
-	snd_init();	
-	beep = snd_sfx_load("/rd/beep.wav");
-	if(!beep)
-		return;
-		
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
@@ -1426,6 +1421,9 @@ void AudioSyncTest()
 		return;
 	sprite = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!sprite)
+		return;
+	cover = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!cover)
 		return;
 	
 	back->r = 0.0f;
@@ -1455,6 +1453,20 @@ void AudioSyncTest()
 	squareR->x = dW / 2;
 	squareR->y = 80;
 	
+	cover->r = 0.0f;
+	cover->g = 0.0f;
+	cover->b = 0.0f;
+	
+	cover->w = dW;
+	cover->h = dH;
+	cover->x = dW;
+	cover->y = 0;
+	
+	snd_init();	
+	beep = snd_sfx_load("/rd/beep.wav");
+	if(!beep)
+		return;
+	
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -1480,32 +1492,28 @@ void AudioSyncTest()
 				back->r = 1.0f;
 				back->g = 1.0f;
 				back->b = 1.0f;
+				
+				cover->r = 1.0f;
+				cover->g = 1.0f;
+				cover->b = 1.0f;
 			}
 			else
 			{
 				back->r = 0.0f;
 				back->g = 0.0f;
 				back->b = 0.0f;
+				
+				cover->r = 0.0f;
+				cover->g = 0.0f;
+				cover->b = 0.0f;
 			}
 			
-			// play the tone 1 frame before it hits so they are in sync
-			// it is off by 1.7ms to 2.5ms due to audio buffer
-			// but centered around the fully white frame
-			if(y == 179 && speed == 1)
+			// play the tone 1 frame after frame buffer is 
+			// filled so they are in sync, it is off by 4.7 ms
+			// (180 minus 1)
+			
+			if(y == 179 && speed == -1)
 				playtone = 1;
-		}
-		
-		if(playtone == 2 && beep != SFXHND_INVALID)
-		{
-			snd_sfx_stop_all();
-			snd_sfx_play(beep, 255, 128); // Centered
-			playtone = 0;
-		}
-		
-		if(playtone == 1)
-		{
-			snd_sfx_stop_all();
-			playtone = 2;
 		}
 			
 		StartScene();
@@ -1514,7 +1522,20 @@ void AudioSyncTest()
 		DrawImage(squareR);
 		DrawImage(lineB);
 		DrawImage(sprite);
+		DrawImage(cover);
 		EndScene();
+		
+		if(playtone == 2)
+		{
+			snd_sfx_stop_all();
+			playtone = 0;
+		}
+		
+		if(playtone == 1)
+		{
+			snd_sfx_play(beep, 255, 128); // Centered
+			playtone = 2;
+		}
 			
 		VMURefresh("A. Sync", "");
 		
@@ -1526,8 +1547,8 @@ void AudioSyncTest()
 		if (pressed & CONT_A)
 			paused = !paused;
 			
-		//if (pressed & CONT_START)
-			//ShowMenu(COLORBARSHELP);
+		if (pressed & CONT_START)
+			ShowMenu(AUDIOSYNCHELP);
 
 	}
 	
@@ -1536,6 +1557,7 @@ void AudioSyncTest()
 	FreeImage(&squareR);
 	FreeImage(&lineB);
 	FreeImage(&sprite);
+	FreeImage(&cover);
 	
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);

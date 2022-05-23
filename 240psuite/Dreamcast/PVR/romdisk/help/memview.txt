@@ -1,0 +1,16 @@
+                 Memory Viewer
+
+This shows selected regions of the main CPU memory
+map.
+
+The current address range is shown in green at the
+right from top to bottom.
+
+The left part of the screen shows a screen of bytes
+in hexadecimal.
+
+- Button A jumps to relevant memory locations.
+
+- Button X enabled CRC of current screen.
+
+- Button Y toggles #YASCII#Y mode.

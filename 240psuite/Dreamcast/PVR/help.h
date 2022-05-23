@@ -55,6 +55,8 @@ extern char *HelpData;
 #define OPTIONSHELP	"/rd/help/options.txt"
 #define VIDEOHELP	"/rd/help/vmode.txt"
 #define DIAGONALHELP	"/rd/help/diagonal.txt"
+#define AUDIOSYNCHELP	"/rd/help/audiosync.txt"
+#define MEMVIEWHELP		"/rd/help/memview.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);

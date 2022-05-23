@@ -194,7 +194,7 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size)
 
 #define VISIBLE_HORZ	16
 #define VISIBLE_VERT	26
-#define MAX_LOCATIONS	6
+#define MAX_LOCATIONS	17
 
 void MemoryViewer()
 {
@@ -202,14 +202,29 @@ void MemoryViewer()
 	int			joycntx = 0, joycnty = 0;
 	uint16		pressed;		
 	uint32		address = 0, crc = 0;
-	uint32		locations[MAX_LOCATIONS] = { 0x00000000, 0x04000000, 0x0C000000, 0x10000000, 0x14000000, 0x18000000 };
+	uint32		locations[MAX_LOCATIONS] = { 	0x00000000, 0x00200000,
+												0x00240000, 0x04000000,
+												0x0C000000, 0x0C000100, // KallistiOS 
+												0x0C004000, 0x0C008000, // KallistiOS 
+												0x0C008300, 0x0C00b800, // KallistiOS 
+												0x0C00e400, 0x0C010000, // KallistiOS 
+												0x10000000, 0x10800000,
+												0x14000000, 0x1C000000, 0x1FFFFFFF};
+	char		*names[MAX_LOCATIONS] = { 	"Boot ROM (2 Mb)", "Flash ROM (256 Kb)", 
+											"System devices", "Texture (8 Mb)",
+											"KOS Sys State", "KOS Syscalls",
+											"KOS Reserved", "IP.BIN",
+											"KOS Bootstrap 1", "KOS Bootstrap 2",
+											"KOS Unused", "KOS Application",
+											"System memory (16 Mb)", "Tile Accelerator",
+											"Texture memory", "G2 devices", "NULL"};
 	controller	*st;
 		
 	address = locations[0];
 	updateVMU("MemView", "", 1);
 	while(!done && !EndProgram) 
 	{
-		int 	i = 0, j = 0;
+		int 	i = 0, j = 0, pos = -1;
 		uint8_t *mem = NULL;
 		char 	buffer[10];
 		
@@ -236,6 +251,17 @@ void MemoryViewer()
 			sprintf(buffer, "%08" PRIx32, crc);
 			DrawStringS(VISIBLE_HORZ*factor*3*fw, (VISIBLE_VERT*factor/2)*fh, 1.0f, 1.0f, 0.0f, buffer);		
 		}
+		
+		for(i = 0; i < MAX_LOCATIONS; i++)
+		{
+			if(address < locations[i])
+			{
+				pos = i - 1;
+				break;
+			}
+		}
+		if(pos != -1)
+			DrawStringS(VISIBLE_HORZ*factor*3*fw, (VISIBLE_VERT*factor/2)*(fh-1), 1.0f, 1.0f, 0.0f, names[pos]);
 		
 		for(i = 0; i < VISIBLE_VERT*factor; i++)
 		{
@@ -269,14 +295,20 @@ void MemoryViewer()
 				address -= VISIBLE_HORZ*factor*VISIBLE_VERT*factor;
 			else
 				address = locations[0];
+				
+			if(address >= 0x670000 && address < 0x04000000)
+				address = 0x670000;
 		}
 		
 		if (pressed & CONT_DPAD_RIGHT)
 		{
 			address += VISIBLE_HORZ*factor*VISIBLE_VERT*factor;
 
-			if(address >= 0xFFFFFFFF) // 0x817fffff
+			if(address >= 0xFFFFFFFF) 
 				address = 0xFFFFFFFF-VISIBLE_HORZ*factor*VISIBLE_VERT*factor;
+				
+			if(address >= 0x670000 && address < 0x04000000)
+				address = 0x04000000;
 		}
 		
 		if (pressed & CONT_DPAD_UP)	
@@ -285,6 +317,9 @@ void MemoryViewer()
 				address -= 0x10000;
 			else
 				address = locations[0];
+				
+			if(address >= 0x670000 && address < 0x04000000)
+				address = 0x670000;
 		}
 		
 		if (pressed & CONT_DPAD_DOWN)
@@ -293,6 +328,9 @@ void MemoryViewer()
 			
 			if(address >= 0xFFFFFFFF) // 0x817fffff
 				address = 0xFFFFFFFF-VISIBLE_HORZ*factor*VISIBLE_VERT*factor;
+
+			if(address >= 0x670000 && address < 0x04000000)
+				address = 0x04000000;
 		}
 		
 		if (pressed & CONT_B)
@@ -301,7 +339,7 @@ void MemoryViewer()
 		if (pressed & CONT_A)
 		{
 			locpos ++;
-			if(locpos == MAX_LOCATIONS)
+			if(locpos == MAX_LOCATIONS - 1)
 				locpos = 0;
 			address = locations[locpos];
 		}
@@ -313,7 +351,7 @@ void MemoryViewer()
 			docrc =	!docrc;
 
 		if (pressed & CONT_START)
-			ShowMenu(GENERALHELP)	;
+			ShowMenu(MEMVIEWHELP);
 	}
 	return;
 }

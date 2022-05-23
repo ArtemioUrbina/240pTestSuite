@@ -1,5 +1,9 @@
 Unrelased
 ============
+- New menu structure
+- Audio Sync Test
+- Memory Viewer
+- Support on the fly cable changes
 - Added basic Fishing Rod support as a gag
 - Fixed remaining debug messages
 - Added missing analog joystick support to menus and help
@@ -41,8 +45,12 @@ Unrelased
 - Changed 75% RGB levels from 192 to 191 to match spec
 - Aesthetic details for GDEMU_SD
 - Updated IP.bin with date and version
-- Updated IP.bin with date and version
 - Added 0GDTEX.pvr for icon display
+- Draw Overscan can now use analog joystick
+- Added EBU to NTSC and SMPTE to PAL
+- Made 100% the defaults for EBU and SMPTE
+- Better video mode description on main screens
+- Added reset all options to defaults
 
 Version 1.25
 ============

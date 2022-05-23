@@ -144,7 +144,7 @@ void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)
 
 void JoystickDirectios(controller *st, uint16 *pressed, int *joycntx, int *joycnty)
 {
-	if( st && st->joyx != 0)
+	if( st && abs(st->joyx) > 50)
 	{
 		if(++(*joycntx) > 2)
 		{
@@ -159,13 +159,13 @@ void JoystickDirectios(controller *st, uint16 *pressed, int *joycntx, int *joycn
 	else
 		*joycntx = 0;
 		
-	if( st && st->joyy != 0)
+	if( st && abs(st->joyy) > 50)
 	{
 		if(++(*joycnty) > 2)
 		{
-			if(st && st->joyy > 0)
-				(*pressed) |= CONT_DPAD_UP;
 			if(st && st->joyy < 0)
+				(*pressed) |= CONT_DPAD_UP;
+			if(st && st->joyy > 0)
 				(*pressed) |= CONT_DPAD_DOWN;
 
 			*joycnty = 0;
