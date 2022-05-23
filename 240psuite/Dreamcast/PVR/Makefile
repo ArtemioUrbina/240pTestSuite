@@ -34,6 +34,7 @@ include $(KOS_BASE)/Makefile.rules
             vmu_print.c \
             controller.c \
             hardware.c \
+			sound.c \
             vmufs.c \
             vmu.c \
             menu.c \
@@ -48,6 +49,7 @@ HEADERS	=\
             vmu_print.h \
             controller.h \
             hardware.h \
+			sound.h \
             vmufs.h \
             vmu.h \
             menu.h \

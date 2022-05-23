@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -19,20 +19,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef TESTS_H
-#define TESTS_H
+#ifndef SOUND_H
+#define SOUND_H
 
-void DropShadowTest();
-void StripedSpriteTest();
-void ReflexNTimming();
-void ScrollTest();
-void GridScrollTest();
-void DrawStripes();
-void DrawCheckBoard();
-void LEDZoneTest();
-void PassiveLagTest();
-void DiagonalPatternTest();
-void Alternate240p480i();
+void SoundTest();
+void AudioSyncTest();
+#ifndef NO_FFTW
+void SIPLagTest();
+double ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq);
+#endif
 
 #endif
 
