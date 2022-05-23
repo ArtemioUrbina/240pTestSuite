@@ -1119,12 +1119,13 @@ void GridScrollTest()
 void DrawStripes()
 {
 	int 			done = 0, field = 1, alternate = 0,
-					frame = 0, dframe = 0, vertical = 0;
+					frame = 0, dframe = 0, vertical = 1;
 	uint16			pressed;		
 	ImagePtr		stripespos, stripesneg;
 	ImagePtr		vstripespos, vstripesneg;
 	controller		*st;
 	char			*vmuMsg1 = "H.Stripes", *vmuMsg2 = "still";
+	fmenudata 		resmenudata[] = { {1, "Horiz. Stripes"}, {2, "Vert. Stripes"} };
 
 	stripespos = LoadKMG("/rd/stripespos.kmg.gz", 1);
 	if(!stripespos)
@@ -1140,6 +1141,10 @@ void DrawStripes()
 	if(!vstripesneg)
 		return;
 
+	VMURefresh("Stripes", "");
+	vertical = SelectMenu("Select Mode", resmenudata, 2, vertical) - 1;
+	if(vertical == MENU_CANCEL)
+		return;
 	while(!done && !EndProgram) 
 	{
 		StartScene();

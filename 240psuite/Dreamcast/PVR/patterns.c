@@ -704,7 +704,7 @@ void DrawColorBleed()
 
 void DrawGrid()
 {
-	int 		done = 0, oldvmode = vmode, border = 0, sel = 1;
+	int 		done = 0, oldvmode = vmode, border = 0, full = 1;
 	uint16		pressed;		
 	ImagePtr	back = NULL;
 	controller	*st;	
@@ -713,8 +713,8 @@ void DrawGrid()
 	if(vmode < HIGH_RES)
 	{
 		VMURefresh("Grid", "");
-		sel = SelectMenu("Select Grid", resmenudata, 2, sel);
-		if(sel == MENU_CANCEL)
+		full = SelectMenu("Select Grid", resmenudata, 2, full);
+		if(full == MENU_CANCEL)
 			return;
 	}
 	while(!done && !EndProgram) 
@@ -727,7 +727,7 @@ void DrawGrid()
 		
 		if(!back)
 		{
-			if(sel == 1)
+			if(full == 1)
 			{
 				if(vmode >= HIGH_RES)
 				{
@@ -748,7 +748,7 @@ void DrawGrid()
 			// Use 240p Grid
 			if(!back)
 			{
-				if(sel == 1)
+				if(full == 1)
 					back = LoadKMG("/rd/grid.kmg.gz", 0);
 				else
 				{
@@ -770,7 +770,7 @@ void DrawGrid()
 		
 		if(refreshVMU)
 		{
-			if(sel == 1)
+			if(full == 1)
 			{
 				if(vmode >= HIGH_RES)
 					updateVMU("Grid 480", "", 1);
@@ -801,9 +801,9 @@ void DrawGrid()
 				{
 					int type = 0;
 					
-					type = SelectMenu("Select Grid", resmenudata, 2, sel);
+					type = SelectMenu("Select Grid", resmenudata, 2, full);
 					if(type != MENU_CANCEL)
-						sel = type;
+						full = type;
 				}
 			}
 			if (pressed & CONT_START)
@@ -813,7 +813,7 @@ void DrawGrid()
 					vid_border_color(0, 0, 0);
 					border = 0;
 				}
-				if(sel == 1)
+				if(full == 1)
 					ShowMenu(GRIDHELP);
 				else
 					ShowMenu(GRID224HELP);
@@ -1033,7 +1033,8 @@ void DrawOverscan()
 {
 	int 		done = 0, oLeft = 0, oTop = 0, 
 				oRight = 0, oBottom = 0, 
-				sel = 0, oldvmode = vmode, reset = 0;
+				sel = 0, oldvmode = vmode, reset = 0,
+				joycntx = 0, joycnty = 0;
 	uint16		pressed;
 	ImagePtr	square, border;	
 	char		msg[50];
@@ -1050,13 +1051,13 @@ void DrawOverscan()
 		return;		
 	}
 	
-	border->r = 1.0;
-	border->g = 1.0;
-	border->b = 1.0;
+	border->r = 0.7;
+	border->g = 0.7;
+	border->b = 0.7;
 	
-	square->r = 0.4;
-	square->g = 0.4;
-	square->b = 0.4;
+	square->r = 0.3;
+	square->g = 0.3;
+	square->b = 0.3;
 			
 	while(!done && !EndProgram) 
 	{			
@@ -1118,6 +1119,8 @@ void DrawOverscan()
 			if(pressed & CONT_START ) 		
 				ShowMenu(OVERSCANHELP);
 			
+			JoystickDirectios(st, &pressed, &joycntx, &joycnty);
+			
 			if ( pressed & CONT_DPAD_UP ) 
 				sel--;
 		
@@ -1131,7 +1134,7 @@ void DrawOverscan()
 			
 			// Top
 			if((pressed & CONT_RTRIGGER && sel == 0) ||
-				(st->buttons & CONT_X && sel == 0))
+				(pressed & CONT_DPAD_RIGHT && sel == 0))
 			{
 				if(square->y + 1 <= dH/2 && oTop + 1 <= dH/2)
 				{				
@@ -1142,7 +1145,7 @@ void DrawOverscan()
 			}
 		
 			if((pressed & CONT_LTRIGGER && sel == 0) ||
-				(st->buttons & CONT_Y && sel == 0))
+				(pressed & CONT_DPAD_LEFT && sel == 0))
 			{
 				if(square->y - 1 >= 0 && oTop - 1 >= 0)
 				{				
@@ -1154,7 +1157,7 @@ void DrawOverscan()
 		
 			// Bottom
 			if((pressed & CONT_RTRIGGER && sel == 1) ||
-				(st->buttons & CONT_X && sel == 1))
+				(pressed & CONT_DPAD_RIGHT && sel == 1))
 			{
 				if(square->h - 1 >= 0 && oBottom + 1 <= dH/2)
 				{								
@@ -1164,7 +1167,7 @@ void DrawOverscan()
 			}
 			
 			if((pressed & CONT_LTRIGGER && sel == 1) ||
-				(st->buttons & CONT_Y && sel == 1))
+				(pressed & CONT_DPAD_LEFT && sel == 1))
 			{
 				if(square->h + 1 <= dW && oBottom - 1 >=0 )
 				{								
@@ -1175,7 +1178,7 @@ void DrawOverscan()
 			
 			// Left
 			if((pressed & CONT_RTRIGGER && sel == 2) ||
-				(st->buttons & CONT_X && sel == 2))
+				(pressed & CONT_DPAD_RIGHT && sel == 2))
 			{
 				if(square->x + 1 <= dW/2 && oLeft + 1 <= dW/2)
 				{				
@@ -1186,7 +1189,7 @@ void DrawOverscan()
 			}
 		
 			if((pressed & CONT_LTRIGGER && sel == 2) ||
-				(st->buttons & CONT_Y && sel == 2))
+				(pressed & CONT_DPAD_LEFT && sel == 2))
 			{
 				if(square->x - 1 >= 0 && oLeft - 1 >= 0)
 				{				
@@ -1198,7 +1201,7 @@ void DrawOverscan()
 		
 			// Right
 			if((pressed & CONT_RTRIGGER && sel == 3) ||
-				(st->buttons & CONT_X && sel == 3))
+				(pressed & CONT_DPAD_RIGHT && sel == 3))
 			{
 				if(square->w - 1 >= 0 && oRight + 1 <= dW/2)
 				{								
@@ -1208,7 +1211,7 @@ void DrawOverscan()
 			}
 		
 			if((pressed & CONT_LTRIGGER && sel == 3) ||
-				(st->buttons & CONT_Y && sel == 3))
+				(pressed & CONT_DPAD_LEFT && sel == 3))
 			{
 				if(square->w + 1 <= dW && oRight - 1 >= 0)
 				{								

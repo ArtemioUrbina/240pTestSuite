@@ -142,6 +142,39 @@ void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)
 		*joycnt = 0;
 }
 
+void JoystickDirectios(controller *st, uint16 *pressed, int *joycntx, int *joycnty)
+{
+	if( st && st->joyx != 0)
+	{
+		if(++(*joycntx) > 2)
+		{
+			if(st && st->joyx > 0)
+				(*pressed) |= CONT_DPAD_RIGHT;
+			if(st && st->joyx < 0)
+				(*pressed) |= CONT_DPAD_LEFT;
+
+			*joycntx = 0;
+		}
+	}
+	else
+		*joycntx = 0;
+		
+	if( st && st->joyy != 0)
+	{
+		if(++(*joycnty) > 2)
+		{
+			if(st && st->joyy > 0)
+				(*pressed) |= CONT_DPAD_UP;
+			if(st && st->joyy < 0)
+				(*pressed) |= CONT_DPAD_DOWN;
+
+			*joycnty = 0;
+		}
+	}
+	else
+		*joycnty = 0;
+}
+
 #ifdef DCLOAD
 void PrintDebugController(cont_state_t *st)
 {

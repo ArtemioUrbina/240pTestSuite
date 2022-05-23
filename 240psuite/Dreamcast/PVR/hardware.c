@@ -198,7 +198,8 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size)
 
 void MemoryViewer()
 {
-	int 		done = 0, ascii = 0, locpos = 0, docrc = 0;
+	int 		done = 0, ascii = 0, locpos = 0, docrc = 0, factor = 1;
+	int			joycntx = 0, joycnty = 0;
 	uint16		pressed;		
 	uint32		address = 0, crc = 0;
 	uint32		locations[MAX_LOCATIONS] = { 0x00000000, 0x04000000, 0x0C000000, 0x10000000, 0x14000000, 0x18000000 };
@@ -212,41 +213,47 @@ void MemoryViewer()
 		uint8_t *mem = NULL;
 		char 	buffer[10];
 		
+		if(vmode >= HIGH_RES)
+			factor = 2;
+		else
+			factor = 1;
+			
 		StartScene();
 
 		mem = (uint8_t*)address;
 		
 		if(docrc)
-			crc = CalculateCRC(address, VISIBLE_HORZ*VISIBLE_VERT);
+			crc = CalculateCRC(address, VISIBLE_HORZ*factor*VISIBLE_VERT*factor);
 	
 		sprintf(buffer, "%08" PRIx32, address);
-		DrawStringS(VISIBLE_HORZ*3*fw, 0, 0.0f, 1.0f, 0.0f, buffer);
+		DrawStringS(VISIBLE_HORZ*factor*3*fw, 0, 0.0f, 1.0f, 0.0f, buffer);
 		
-		sprintf(buffer, "%08" PRIx32, address+VISIBLE_HORZ*VISIBLE_VERT);
-		DrawStringS(VISIBLE_HORZ*3*fw, (VISIBLE_VERT-1)*fh, 0.0f, 1.0f, 0.0f, buffer);
+		sprintf(buffer, "%08" PRIx32, address+VISIBLE_HORZ*factor*VISIBLE_VERT*factor);
+		DrawStringS(VISIBLE_HORZ*factor*3*fw, (VISIBLE_VERT*factor-1)*fh, 0.0f, 1.0f, 0.0f, buffer);
 
 		if(docrc)
 		{
 			sprintf(buffer, "%08" PRIx32, crc);
-			DrawStringS(VISIBLE_HORZ*3*fw, (VISIBLE_VERT/2)*fh, 1.0f, 1.0f, 0.0f, buffer);		
+			DrawStringS(VISIBLE_HORZ*factor*3*fw, (VISIBLE_VERT*factor/2)*fh, 1.0f, 1.0f, 0.0f, buffer);		
 		}
 		
-		for(i = 0; i < VISIBLE_VERT; i++)
+		for(i = 0; i < VISIBLE_VERT*factor; i++)
 		{
-			for(j = 0; j < VISIBLE_HORZ; j++)
-			{
+			for(j = 0; j < VISIBLE_HORZ*factor; j++)
+			{	
 				if(!ascii)
-					sprintf(buffer, "%02X", mem[i*VISIBLE_HORZ+j]);
+					sprintf(buffer, "%02X", mem[i*VISIBLE_HORZ*factor+j]);
 				else
 				{
-					uint16_t c;
+					uint8_t c;
 					
 					memset(buffer, 0, sizeof(char)*10);
-					
-					buffer[0] = 20;				// Space
-					c = mem[i*VISIBLE_HORZ+j];
-					if(c >= 32 && c <= 127)		// ASCII range
-						buffer[0] = c;
+
+					c = mem[i*VISIBLE_HORZ*factor+j];
+					if(c >= 32 && c <= 126)	
+						buffer[0] = (char)c;			// ASCII range
+					else
+						buffer[0] = (char)32;			// Space
 				}
 				DrawStringS(3*j*fw, i*fh, 1.0f, 1.0f, 1.0f, buffer);
 			}
@@ -255,20 +262,21 @@ void MemoryViewer()
 		
 		st = ReadController(0, &pressed);
 		
+		JoystickDirectios(st, &pressed, &joycntx, &joycnty);
 		if (pressed & CONT_DPAD_LEFT)	
 		{
 			if(address > locations[0])
-				address -= VISIBLE_HORZ*VISIBLE_VERT;
+				address -= VISIBLE_HORZ*factor*VISIBLE_VERT*factor;
 			else
 				address = locations[0];
 		}
 		
 		if (pressed & CONT_DPAD_RIGHT)
 		{
-			address += VISIBLE_HORZ*VISIBLE_VERT;
+			address += VISIBLE_HORZ*factor*VISIBLE_VERT*factor;
 
 			if(address >= 0xFFFFFFFF) // 0x817fffff
-				address = 0xFFFFFFFF-VISIBLE_HORZ*VISIBLE_VERT;
+				address = 0xFFFFFFFF-VISIBLE_HORZ*factor*VISIBLE_VERT*factor;
 		}
 		
 		if (pressed & CONT_DPAD_UP)	
@@ -284,7 +292,7 @@ void MemoryViewer()
 			address += 0x10000;
 			
 			if(address >= 0xFFFFFFFF) // 0x817fffff
-				address = 0xFFFFFFFF-VISIBLE_HORZ*VISIBLE_VERT;
+				address = 0xFFFFFFFF-VISIBLE_HORZ*factor*VISIBLE_VERT*factor;
 		}
 		
 		if (pressed & CONT_B)
