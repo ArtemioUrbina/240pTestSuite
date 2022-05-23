@@ -691,9 +691,11 @@ inline void EndScene()
 	pvr_scene_finish();
 	pvr_wait_ready();
 
-	//PVRStats("EndFrame");
 	if(DrawMenu)
 	{
+#ifdef BENCHMARK
+		PVRStats("EndFrame");
+#endif
 		DrawMenu = 0;
 		DrawShowMenu();
 	}

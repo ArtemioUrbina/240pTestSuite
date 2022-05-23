@@ -92,6 +92,7 @@ int main(void)
 	else
 		ChangeResolution(VIDEO_480P_SL);
 
+	snd_init();	
 	LoadFont();
 	LoadScanlines();
 	
@@ -193,6 +194,7 @@ int main(void)
 	ReleaseScanlines();
 	ReleaseFont();
 	CleanImages();
+	snd_shutdown();
 	cdrom_shutdown();
 #ifndef DCLOAD
 	arch_menu();

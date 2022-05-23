@@ -574,8 +574,6 @@ void ReflexNTimming()
 	effect.effect1 = PURUPURU_EFFECT1_INTENSITY(1);
 	effect.special = PURUPURU_SPECIAL_MOTOR1;
 
-	snd_init();
-
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
@@ -813,7 +811,6 @@ void ReflexNTimming()
 	FreeImage(&fixed);
 	FreeImage(&spriteA);
 	FreeImage(&spriteB);	
-	snd_shutdown();
 
 	sprintf(vmuMsg, "-Results-");
 	refreshVMU = 1;
@@ -1321,7 +1318,7 @@ void SoundTest()
 	back = LoadKMG("/rd/back.kmg.gz", 0);
 	if(!back)
 		return;
-	snd_init();	
+
 	beep = snd_sfx_load("/rd/beep.wav");
 	if(!beep)
 		return;
@@ -1394,7 +1391,6 @@ void SoundTest()
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
 	FreeImage(&back);
-	snd_shutdown();
 	return;
 }
 
@@ -1462,9 +1458,8 @@ void AudioSyncTest()
 	cover->x = dW;
 	cover->y = 0;
 	
-	snd_init();	
-	beep = snd_sfx_load("/rd/beep.wav");
-	if(!beep)
+	beep = snd_sfx_load("/rd/beep_delayed.wav");
+	if(beep == SFXHND_INVALID)
 		return;
 	
 	while(!done && !EndProgram) 
@@ -1508,11 +1503,12 @@ void AudioSyncTest()
 				cover->b = 0.0f;
 			}
 			
-			// play the tone 1 frame after frame buffer is 
-			// filled so they are in sync, it is off by 4.7 ms
-			// (180 minus 1)
+				
+			// A frame is 16.80 ms, Since we have 1.8ms out of sync
+			// we make a file with 15ms silence an play it back
+			// 1 frame before in order to have sync
 			
-			if(y == 179 && speed == -1)
+			if(y == 180 && speed == -1)
 				playtone = 1;
 		}
 			
@@ -1525,16 +1521,10 @@ void AudioSyncTest()
 		DrawImage(cover);
 		EndScene();
 		
-		if(playtone == 2)
-		{
-			snd_sfx_stop_all();
-			playtone = 0;
-		}
-		
 		if(playtone == 1)
 		{
 			snd_sfx_play(beep, 255, 128); // Centered
-			playtone = 2;
+			playtone = 0;
 		}
 			
 		VMURefresh("A. Sync", "");
@@ -1561,7 +1551,6 @@ void AudioSyncTest()
 	
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
-	snd_shutdown();
 }
 
 void LEDZoneTest()
@@ -2399,7 +2388,7 @@ void SIPLagTest()
 	wave->alpha = 0.05f;
 
 	srand((int)(time(0) ^ getpid()));
-	snd_init();		
+
 	beep = snd_sfx_load("/rd/Sample.wav");
 	if(!beep)
 	{
@@ -2639,7 +2628,6 @@ void SIPLagTest()
 	FreeImage(&back);
 
 	fftw_cleanup();  
-	snd_shutdown();
 	return;
 }
 

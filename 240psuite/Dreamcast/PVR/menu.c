@@ -70,6 +70,7 @@ void InitTextureFB()
 			dbglog(DBG_ERROR, "Could not malloc image struct for FB\n");
 			return;
 		}
+		memset(fbtexture, 0, sizeof(struct image_st));
 		fbtexture->tex = NULL;
 	}
 
@@ -78,21 +79,22 @@ void InitTextureFB()
 		fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); //Min	size for 640x480
 		if(!fbtexture->tex)
 		{
-			FreeTextureFB();
 			dbglog(DBG_ERROR, "Could not pvr mem malloc image struct for FB\n");
+			FreeTextureFB();
 			return;
 		}
 	}
 
 	if(!fbtextureBuffer)
 	{
-		fbtextureBuffer = (uint16 *)malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); 
+		fbtextureBuffer = (uint16 *)malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 		if(fbtextureBuffer == NULL)
 		{
 			FreeTextureFB();
 			dbglog(DBG_CRITICAL, "FB copy can't allocate memory\n");
 			return;
 		}
+		memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 	}
 
 	fbtexture->r = 1.0f;
@@ -142,7 +144,7 @@ uint8 ReloadFBTexture()
 	return 0;
 }
 
-void CopyFBToBG()
+int CopyFBToBG()
 {
 	int 	i, numpix, w, tw, th;
 	uint16	npixel;
@@ -151,14 +153,14 @@ void CopyFBToBG()
 	uint16	*fbcopy = NULL;
 	uint16	r, g, b;
 #ifdef BENCHMARK
-	uint32 start, end;
+	uint32	start, end;
 	char	msg[100];
 		
 	timer_ms_gettime(NULL, &start);
 #endif
 
 	if(!fbtexture)
-		return;
+		return 0;
 
 	numpix = vid_mode->width * vid_mode->height;
 	w = vid_mode->width;
@@ -174,22 +176,20 @@ void CopyFBToBG()
 	if(vid_mode->pm != PM_RGB565)
 	{
 		dbglog(DBG_CRITICAL, "FB copy: video mode not 565\n");
-		FreeTextureFB();
-		return;
+		return 0;
 	}
 
 	fbcopy = (uint16*)malloc(sizeof(uint16)*numpix);
 	if(!fbcopy)
 	{
 		dbglog(DBG_CRITICAL, "FB copy: not enough memory\n");
-		FreeTextureFB();
-		return;
+		return 0;
 	}
 	
 	memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "FB buffer init took %lu ms\n", (unsigned long)(end - start));
+	sprintf(msg, "FB buffer init took %"PRIu32" ms\n", end - start);
 	dbglog(DBG_INFO, msg);
 	timer_ms_gettime(NULL, &start);
 #endif
@@ -220,10 +220,11 @@ void CopyFBToBG()
 
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "FB conversion took %lu ms\n", (unsigned long)(end - start));
+	sprintf(msg, "FB conversion took %"PRIu32" ms\n", end - start);
 	dbglog(DBG_INFO, msg);
 	timer_ms_gettime(NULL, &start);
 #endif
+
 	pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex, tw, th,
 		PVR_TXRLOAD_16BPP|PVR_TXRLOAD_SQ);
 	fbtexture->tw = tw;
@@ -233,13 +234,15 @@ void CopyFBToBG()
 
 #ifdef BENCHMARK
 	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "FB texture upload took %lu ms\n", (unsigned long)(end - start));
+	sprintf(msg, "FB texture upload took %"PRIu32" ms\n", end - start);
 	dbglog(DBG_INFO, msg);
 #endif
 
 	fbtexture->r = 0.75f;
 	fbtexture->g = 0.75f;
 	fbtexture->b = 0.75f;
+	
+	return 1;
 }
 
 void ShowMenu(char *filename)
