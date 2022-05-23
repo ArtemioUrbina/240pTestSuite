@@ -1398,6 +1398,150 @@ void SoundTest()
 	return;
 }
 
+void AudioSyncTest()
+{
+	int 		done = 0, paused = 0, oldvmode = 0, playtone = 0;
+	int			y = 0, speed = -1;
+	float		hstep = 0;
+	uint16		pressed;
+	sfxhnd_t	beep;
+	ImagePtr	squareL, squareR, lineB, sprite, back;	
+	
+	snd_init();	
+	beep = snd_sfx_load("/rd/beep.wav");
+	if(!beep)
+		return;
+		
+	back = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!back)
+		return;
+	squareL = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!squareL)
+		return;
+	squareR = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!squareR)
+		return;
+	lineB = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!lineB)
+		return;
+	sprite = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!sprite)
+		return;
+	
+	back->r = 0.0f;
+	back->g = 0.0f;
+	back->b = 0.0f;
+	
+	back->w = dW;
+	back->h = dH;
+	
+	sprite->w = sprite->h = 8;
+	sprite->x = dW / 2 - 4;
+	y = 180;
+	hstep = -1 * dW/120; // 60 steps times half screen
+	
+	lineB->w = dW;
+	lineB->h = 8;
+	lineB->x = 0;
+	lineB->y = 180 + sprite->h;
+	
+	squareL->w = dW / 2;
+	squareL->h = 16;
+	squareL->x = 0;
+	squareL->y = 80;
+	
+	squareR->w = dW / 2;
+	squareR->h = 16;
+	squareR->x = dW / 2;
+	squareR->y = 80;
+	
+	while(!done && !EndProgram) 
+	{
+		if(oldvmode != vmode)
+		{
+			back->w = dW;
+			back->h = dH;
+			oldvmode = vmode;
+		}
+		
+		if(!paused)
+		{
+			y += speed;
+			sprite->y = y;
+			squareL->x += hstep;
+			squareR->x -= hstep;
+			if(y == 180 || y == 120)
+			{
+				speed *= -1;
+				hstep *= -1;
+			}
+			if(y == 180)
+			{
+				back->r = 1.0f;
+				back->g = 1.0f;
+				back->b = 1.0f;
+			}
+			else
+			{
+				back->r = 0.0f;
+				back->g = 0.0f;
+				back->b = 0.0f;
+			}
+			
+			// play the tone 1 frame before it hits so they are in sync
+			// it is off by 1.7ms to 2.5ms due to audio buffer
+			// but centered around the fully white frame
+			if(y == 179 && speed == 1)
+				playtone = 1;
+		}
+		
+		if(playtone == 2 && beep != SFXHND_INVALID)
+		{
+			snd_sfx_stop_all();
+			snd_sfx_play(beep, 255, 128); // Centered
+			playtone = 0;
+		}
+		
+		if(playtone == 1)
+		{
+			snd_sfx_stop_all();
+			playtone = 2;
+		}
+			
+		StartScene();
+		DrawImage(back);
+		DrawImage(squareL);
+		DrawImage(squareR);
+		DrawImage(lineB);
+		DrawImage(sprite);
+		EndScene();
+			
+		VMURefresh("A. Sync", "");
+		
+		ReadController(0, &pressed);
+		
+		if (pressed & CONT_B)
+			done =	1;
+			
+		if (pressed & CONT_A)
+			paused = !paused;
+			
+		//if (pressed & CONT_START)
+			//ShowMenu(COLORBARSHELP);
+
+	}
+	
+	FreeImage(&back);
+	FreeImage(&squareL);
+	FreeImage(&squareR);
+	FreeImage(&lineB);
+	FreeImage(&sprite);
+	
+	if(beep != SFXHND_INVALID)
+		snd_sfx_unload(beep);
+	snd_shutdown();
+}
+
 void LEDZoneTest()
 {	
 	int		done = 0, x = 160, y = 120, selsprite = 1, show = 1;
@@ -2089,6 +2233,7 @@ void Alternate240p480i()
 	if(originalvmode != vmode)
 		ChangeResolution(originalvmode);
 }
+
 
 #ifndef NO_FFTW
 

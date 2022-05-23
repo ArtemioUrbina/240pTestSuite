@@ -561,6 +561,9 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 				case 1:
 					SoundTest();
 					break;
+				case 2:
+					AudioSyncTest();
+					break;
 				case 4:
 					done = 1;
 					break;
