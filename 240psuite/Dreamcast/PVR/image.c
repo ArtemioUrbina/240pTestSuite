@@ -697,4 +697,22 @@ inline void EndScene()
 		DrawMenu = 0;
 		DrawShowMenu();
 	}
+	
+	// Check if cable was hotswapped
+	vcable = vid_check_cable();
+	if(ovcable != vcable)
+	{
+		switch(vcable)
+		{
+			case CT_VGA:
+				ChangeResolution(VIDEO_480P_SL);
+				break;
+			case CT_RGB:
+			case CT_COMPOSITE:
+			default:
+				ChangeResolution(VIDEO_240P);
+				break;
+		}
+	}
+	ovcable = vcable;
 }

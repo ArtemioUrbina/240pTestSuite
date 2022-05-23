@@ -1933,7 +1933,7 @@ void Alternate240p480i()
 {
 	char		*vmuMsg = NULL;
 	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, done = 0;
-	int			current = 0, res = 0, status = 0, oldvmode = -1;
+	int			current = 0, res = 0, status = 0, oldvmode = -1, originalvmode = -1;
 	timecode	times[20];
 	uint16		pressed;		
 	char 		buffer[20];
@@ -1947,6 +1947,8 @@ void Alternate240p480i()
 	back->r = 0.0f;
 	back->g = 0.0f;
 	back->b = 0.0f;
+	
+	originalvmode = vmode;
 			
 	while(!done && !EndProgram) 
 	{
@@ -1956,25 +1958,13 @@ void Alternate240p480i()
 			{
 				vmuMsg = "240p/480i";
 				if(vmode != VIDEO_240P)
-				{
-					ReleaseScanlines();
-					ReleaseFont();
 					Toggle240p480i(res);
-					LoadFont();
-					LoadScanlines();
-				}
 			}
 			else
 			{
 				vmuMsg = "288p/576i";
 				if(vmode != VIDEO_288P)
-				{
-					ReleaseScanlines();
-					ReleaseFont();
 					Toggle240p480i(res);
-					LoadFont();
-					LoadScanlines();
-				}
 			}
 			oldvmode = vmode;
 		}
@@ -2058,11 +2048,7 @@ void Alternate240p480i()
 					res = !res;
 					times[current - 1].res = res;
 					
-					ReleaseScanlines();
-					ReleaseFont();
 					Toggle240p480i(res);
-					LoadFont();
-					LoadScanlines();
 					
 					refreshVMU = 1;
 				}
@@ -2099,6 +2085,9 @@ void Alternate240p480i()
 			hours = 0;
 	}
 	FreeImage(&back);
+	
+	if(originalvmode != vmode)
+		ChangeResolution(originalvmode);
 }
 
 #ifndef NO_FFTW

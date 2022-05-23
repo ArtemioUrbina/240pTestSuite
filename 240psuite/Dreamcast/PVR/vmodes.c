@@ -4,6 +4,8 @@
 
 int vmode 	= -1;
 int vcable	= CT_RGB;
+int ovmode	= -1;
+int ovcable = CT_RGB;
 int W		= 0;
 int H		= 0;
 int dW		= 0;
@@ -107,7 +109,7 @@ ImagePtr   scanlines = NULL;
 
 void LoadScanlines()
 {
-	if(!scanlines && vmode == VIDEO_480P_SL)
+	if(!scanlines)
 	{
 		scanlines = LoadKMG("/rd/scanlines.kmg.gz", 0);
 		scanlines->layer = 5.0;

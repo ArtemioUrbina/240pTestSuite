@@ -690,8 +690,7 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 	}
 #endif
 		
-	// Check cable in case it was changed on the fly
-	vcable = vid_check_cable();
+	// Check cable is done at EndScene globally
 	
 	r = 0.8f;
 	g = 0.8f;

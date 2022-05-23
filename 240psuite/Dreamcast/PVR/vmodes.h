@@ -45,6 +45,8 @@
 
 extern int vmode;
 extern int vcable;
+extern int ovmode;
+extern int ovcable;
 
 extern int W;
 extern int H;
