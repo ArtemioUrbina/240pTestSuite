@@ -647,6 +647,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 			switch(sel)
 			{
 				case 1:
+					ControllerTest();
 					break;
 				case 2:
 					MemoryViewer();

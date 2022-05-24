@@ -62,7 +62,7 @@ void SoundTest()
 		StartScene();
 		DrawImage(back);
 
-		DrawStringS(130, 60, 1.0f, 1.0f, 1.0f, "Sound Test"); 
+		DrawStringS(125, 60, 0.0f, 1.0f, 0.0f, "Sound Test"); 
 		DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
 		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,	sel == 1 ? 0 : 1.0f, "Center Channel");
 		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");

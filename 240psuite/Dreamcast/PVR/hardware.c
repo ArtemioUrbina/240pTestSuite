@@ -36,103 +36,162 @@
 
 #include "hardware.h"
 
-/*
-u16 CheckController(u16 joypad, u16 oldButtons, u16 type, u16 x, u16 y, u8 ctrlID)
+void DiplayController(int num, float x, float y)
 {
-	u16	pos = 0;
-	u32	pressed;
-	char id[4];
-
-	if(type != JOY_TYPE_PAD3 && type != JOY_TYPE_PAD6)
-		return 0;
+	int				isPressed = 0;
+	cont_state_t	*st;
+	maple_device_t	*dev = NULL;
+	char			msg[256];
+	float			orig_x = x;
+	
+	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER);
+	if(!dev)
+		return;
 		
-	buttons = JOY_readJoypad(joypad);
+	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, dev->info.product_name);
+	y += fh;
 	
-	VDP_Start();
+	/*
+	sprintf(msg, "0x%08lx: %s",
+			dev->info.functions, maple_pcaps(dev->info.functions))
+	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+	y += fh;
+	*/
 	
-	intToHex(ctrlID+1, id, 1);
-	VDP_drawTextBG(APLAN, "-C -", TILE_ATTR(PAL1, 0, 0, 0), x+3, y-1);
-	VDP_drawTextBG(APLAN, id, TILE_ATTR(PAL1, 0, 0, 0), x+5, y-1);
+	sprintf(msg, "Power[%d-%d]mW", 
+			dev->info.standby_power, dev->info.max_power);
+	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+	y += fh;
 	
-	VDP_drawTextBG(APLAN, "U", TILE_ATTR(buttons & BUTTON_UP ? PAL3 : PAL0, 0, 0, 0), x+1, y);
-	VDP_drawTextBG(APLAN, "L", TILE_ATTR(buttons & BUTTON_LEFT ? PAL3 : PAL0, 0, 0, 0), x, y+1);
-	VDP_drawTextBG(APLAN, "R", TILE_ATTR(buttons & BUTTON_RIGHT ? PAL3 : PAL0, 0, 0, 0), x+2, y+1);
-	VDP_drawTextBG(APLAN, "D", TILE_ATTR(buttons & BUTTON_DOWN ? PAL3 : PAL0, 0, 0, 0), x+1, y+2);
+	/*
+	sprintf(msg, "\"%s\" AC: 0x%0x", 
+			dev->info.product_license, dev->info.area_code);
+	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+	y += fh;
+	*/
 	
-	VDP_drawTextBG(APLAN, "S", TILE_ATTR(buttons & BUTTON_START ? PAL3 : PAL0, 0, 0, 0), x+4, y+1);
-		
-	if(type == JOY_TYPE_PAD6)
+	// tels us the device type in 
+	// isFishingRod isMaracas isStockController
+	DetectContollerType(dev);
+	
+	st = (cont_state_t*)maple_dev_status(dev);
+	if(!st)
+		return;
+	
+	x += 2*fw;
+	
+	// Draw Triggers
+	if(isMaracas == 0)
 	{
-		VDP_drawTextBG(APLAN, "X", TILE_ATTR(buttons & BUTTON_X ? PAL3 : PAL0, 0, 0, 0), x+6, y);
-		VDP_drawTextBG(APLAN, "Y", TILE_ATTR(buttons & BUTTON_Y ? PAL3 : PAL0, 0, 0, 0), x+7, y);
-		VDP_drawTextBG(APLAN, "Z", TILE_ATTR(buttons & BUTTON_Z ? PAL3 : PAL0, 0, 0, 0), x+8, y);
-		VDP_drawTextBG(APLAN, "M", TILE_ATTR(buttons & BUTTON_MODE ? PAL3 : PAL0, 0, 0, 0), x+9, y-1);
+		sprintf(msg, " %03d   %03d", st->ltrig, st->rtrig);
+		DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+		y += fh;
+
+		// Draw Up and Y
+		isPressed = st->buttons & CONT_DPAD_UP;
+		DrawStringS(x+2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "U");
+		isPressed = st->buttons & CONT_Y;
+		DrawStringS(x+8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Y");
+		y += fh;
+	
+		// Draw Left, Right, Start, X and B
+		isPressed = st->buttons & CONT_DPAD_LEFT;
+		DrawStringS(x+1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "L");
+		isPressed = st->buttons & CONT_DPAD_RIGHT;
+		DrawStringS(x+3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "R");
+		isPressed = st->buttons & CONT_START;
+		DrawStringS(x+5*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
+		isPressed = st->buttons & CONT_X;
+		DrawStringS(x+7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "X");
+		isPressed = st->buttons & CONT_B;
+		DrawStringS(x+9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
+		y += fh;
+	
+		// Draw Down and A
+		isPressed = st->buttons & CONT_DPAD_DOWN;
+		DrawStringS(x+2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "D");
 		
-		pos = y+2;
+		isPressed = st->buttons & CONT_A;
+		DrawStringS(x+8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
 	}
 	else
-		pos = y+1;
+	{
+		isPressed = st->buttons & CONT_START;
+		DrawStringS(x+2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
+		isPressed = st->buttons & CONT_A;
+		DrawStringS(x+4*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
+		isPressed = st->buttons & CONT_Z;
+		DrawStringS(x+6*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Z");
+		isPressed = st->buttons & CONT_C;
+		DrawStringS(x+8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "C");
+	}
+	y += fh;
 	
-
-	VDP_drawTextBG(APLAN, "A", TILE_ATTR(buttons & BUTTON_A ? PAL3 : PAL0, 0, 0, 0), x+6, pos);
-	VDP_drawTextBG(APLAN, "B", TILE_ATTR(buttons & BUTTON_B ? PAL3 : PAL0, 0, 0, 0), x+7, pos);
-	VDP_drawTextBG(APLAN, "C", TILE_ATTR(buttons & BUTTON_C ? PAL3 : PAL0, 0, 0, 0), x+8, pos);
+	x = orig_x;
 	
-	VDP_End();
+	// Draw Analog Joystick
+	// Analog Up
+	sprintf(msg, "%03d", st->joyy < 0 ? -1*st->joyy : 0);
+	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	y += fh;
+	// Analog Right & Left
+	sprintf(msg, "%03d %03d", st->joyx < 0 ? -1*st->joyx : 0, st->joyx > 0 ? st->joyx : 0);
+	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+	y += fh;
+	// Analog Down
+	sprintf(msg, "%03d", st->joyy > 0 ? st->joyy : 0);
+	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
 	
-	return buttons;
+	// Rewind 2 lines
+	y -= 2*fh;
+	x += 8*fw;
+	
+	// Second Analog controller
+	// Analog Up
+	sprintf(msg, "%03d", st->joy2y < 0 ? -1*st->joy2y : 0);
+	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	y += fh;
+	// Analog Right & Left
+	sprintf(msg, "%03d %03d", st->joy2x < 0 ? -1*st->joy2x : 0, st->joy2x > 0 ? st->joy2x : 0);
+	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+	y += fh;
+	// Analog Down
+	sprintf(msg, "%03d", st->joy2y > 0 ? st->joy2y : 0);
+	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
 }
-*/
 
-/*
 void ControllerTest()
 {
 	int 		done = 0;
-	u32			pressed;
-	s8			value;
-	ImagePtr	back;
-	char 		buffer[10];
-	
-	back = LoadImage(BACKIMG, 0);
-	if(!back)
-		return;
-			
+	uint16		pressed;
+	controller	*st;
+
 	while(!done && !EndProgram) 
 	{				
+		float x = 40, y = 30, w = 30*fw, h = 10*fh;
 		StartScene();
-		        
-		DrawImage(back);
 		
-		//Analog:
-		value = PAD_StickX(0);
-		sprintf(buffer, "%d", value);
-		DrawStringS(100, 100, 0x00, 0xff, 0x00, buffer);
-		value  = PAD_StickY(0);
-		sprintf(buffer, "%d", value);
-		DrawStringS(140, 100, 0x00, 0xff, 0x00, buffer);
-
-		//C-stick:
-		value = PAD_SubStickX(0);
-		sprintf(buffer, "%d", value);
-		DrawStringS(200, 100, 0x00, 0xff, 0x00, buffer);
-		value = PAD_SubStickY(0);
-		sprintf(buffer, "%d", value);
-		DrawStringS(240, 100, 0x00, 0xff, 0x00, buffer);
+		DrawStringS(120, 20, 0.0f, 1.0f, 0.0f, "Controller Test"); 		
+		
+		DiplayController(0, x, y);
+		DiplayController(1, x+w, y);
+		DiplayController(2, x, y+h);
+		DiplayController(3, x+w, y+h);
+		
+		DrawStringS(60, y+2*h, 0.0f, 1.0f, 0.0f, "Press Left & Start on Controller 1 to Exit"); 
 		
         EndScene();
 		
-		ControllerScan();
+		VMURefresh("Controller", "");
 		
-		pressed = Controller_ButtonsDown(0);
+		st = ReadController(0, &pressed);
 				
-		if (pressed & PAD_BUTTON_B)
+		if (st->buttons & CONT_START  &&
+			st->buttons & CONT_DPAD_LEFT)
 			done =	1;								
-		
 	}
-	FreeImage(&back);
 	return;
 }
-*/
 
 /*
 CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
@@ -210,18 +269,17 @@ void MemoryViewer()
 												0x0C00e400, 0x0C010000, // KallistiOS 
 												0x10000000, 0x10800000,
 												0x14000000, 0x1C000000, 0x1FFFFFFF};
-	char		*names[MAX_LOCATIONS] = { 	"Boot ROM (2 Mb)", "Flash ROM (256 Kb)", 
+	char		*names[MAX_LOCATIONS] = { 	"Boot ROM (2 Mb)", "Flash ROM", 
 											"System devices", "Texture (8 Mb)",
 											"KOS Sys State", "KOS Syscalls",
 											"KOS Reserved", "IP.BIN",
 											"KOS Bootstrap 1", "KOS Bootstrap 2",
 											"KOS Unused", "KOS Application",
-											"System memory (16 Mb)", "Tile Accelerator",
+											"System memory", "Tile Accelerator",
 											"Texture memory", "G2 devices", "NULL"};
 	controller	*st;
 		
 	address = locations[0];
-	updateVMU("MemView", "", 1);
 	while(!done && !EndProgram) 
 	{
 		int 	i = 0, j = 0, pos = -1;
@@ -286,6 +344,7 @@ void MemoryViewer()
 		}
         EndScene();
 		
+		VMURefresh("MemView", "");
 		st = ReadController(0, &pressed);
 		
 		JoystickDirectios(st, &pressed, &joycntx, &joycnty);

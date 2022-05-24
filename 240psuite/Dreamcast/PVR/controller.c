@@ -55,20 +55,7 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 				dev->info.product_license, dev->info.area_code);
 		detected = 1;
 #endif		
-		if(strcmp(STANDRD, dev->info.product_name) == 0)
-			isStockController = 1;
-		else
-			isStockController = 0;
-		
-		if(strcmp(FISHING, dev->info.product_name) == 0)
-			isFishingRod = 1;
-		else
-			isFishingRod = 0;
-			
-		if(strcmp(MARACAS, dev->info.product_name) == 0)
-			isMaracas = 1;
-		else
-			isMaracas = 0;
+		DetectContollerType(dev);
 
 		OldButtonsInternal = 0;
 		strcpy(oldControllerName, dev->info.product_name);
@@ -118,6 +105,27 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	}
 #endif
 	return st;
+}
+
+void DetectContollerType(maple_device_t *dev)
+{
+	if(!dev)
+		return;
+		
+	if(strcmp(STANDRD, dev->info.product_name) == 0)
+		isStockController = 1;
+	else
+		isStockController = 0;
+	
+	if(strcmp(FISHING, dev->info.product_name) == 0)
+		isFishingRod = 1;
+	else
+		isFishingRod = 0;
+		
+	if(strcmp(MARACAS, dev->info.product_name) == 0)
+		isMaracas = 1;
+	else
+		isMaracas = 0;
 }
 
 void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)
