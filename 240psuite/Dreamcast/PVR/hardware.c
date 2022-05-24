@@ -70,7 +70,7 @@ void DiplayController(int num, float x, float y)
 	y += fh;
 	*/
 	
-	// tels us the device type in 
+	// tells us the device type in 
 	// isFishingRod isMaracas isStockController
 	DetectContollerType(dev);
 	

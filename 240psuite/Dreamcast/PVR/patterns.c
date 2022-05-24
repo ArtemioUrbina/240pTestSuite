@@ -39,8 +39,8 @@ void DrawPluge()
 {
 	int 		done = 0, text = 0, oldvmode = vmode, ShowHelp = 0;
 	uint16		pressed;		
-	ImagePtr	back = NULL, backFull, backNTSC, black, highlight;
-	controller	*st;
+	ImagePtr	back = NULL, backFull = NULL, backNTSC = NULL, black = NULL, highlight = NULL;
+	controller	*st = NULL;
 	char		msg[50];
 
 	backNTSC = LoadKMG("/rd/pluge.kmg.gz", 0);
@@ -187,8 +187,8 @@ void DrawEBUColorBars()
 {
 	int 		done = 0, is75 = 0, text = 0;
 	uint16		pressed;
-	ImagePtr	backEBU75, backEBU100;
-	controller	*st;
+	ImagePtr	backEBU75 = NULL, backEBU100 = NULL;
+	controller	*st = NULL;
 	char		msg[40];
 
 	backEBU75 = LoadKMG("/rd/EBUColorBars75.kmg.gz", 0);
@@ -253,8 +253,8 @@ void DrawSMPTEColorBars()
 {
 	int 		done = 0, is75 = 0, text = 0;
 	uint16		pressed;
-	ImagePtr	backNTSC75, backNTSC100;
-	controller	*st;
+	ImagePtr	backNTSC75 = NULL, backNTSC100 = NULL;
+	controller	*st = NULL;
 	char		msg[40];
 
 	backNTSC75 = LoadKMG("/rd/SMPTEColorBars.kmg.gz", 0);
@@ -316,8 +316,8 @@ void DrawGrayRamp()
 {
 	int 		done = 0;
 	uint16		pressed;		
-	ImagePtr	back;
-	controller	*st;
+	ImagePtr	back = NULL;
+	controller	*st = NULL;
 
 	back = LoadKMG("/rd/grayramp.kmg.gz", 0);
 	if(!back)
@@ -351,8 +351,8 @@ void DrawWhiteScreen()
 	int			sel = 1, editmode = 0;
 	float		BlackLevel = 0.0f, cr, cb, cg;
 	uint16		pressed;		
-	ImagePtr	back;
-	controller	*st;
+	ImagePtr	back = NULL;
+	controller	*st = NULL;
 	char		*mode[5] = { "White", "Black", "Red", "Green", "Blue" };
 	char		msg[100], *vmuMsg = mode[0];
 
@@ -566,8 +566,8 @@ void DrawColorBars()
 {
 	int 		done = 0, type = 0;
 	uint16		pressed;		
-	ImagePtr	back, backgrid;
-	controller	*st;
+	ImagePtr	back = NULL, backgrid = NULL;
+	controller	*st = NULL;
 
 	back = LoadKMG("/rd/color.kmg.gz", 0);
 	if(!back)
@@ -608,8 +608,8 @@ void Draw601ColorBars()
 {
 	int 		done = 0;
 	uint16		pressed;		
-	ImagePtr	back;
-	controller	*st;
+	ImagePtr	back = NULL;
+	controller	*st = NULL;
 
 	back = LoadKMG("/rd/601701cb.kmg.gz", 0);
 	if(!back)
@@ -641,7 +641,7 @@ void DrawColorBleed()
 	int 		done = 0, type = 0;
 	uint16		pressed, oldvmode = vmode;
 	ImagePtr	back = NULL, backchk = NULL;
-	controller	*st;
+	controller	*st = NULL;
 
 	while(!done && !EndProgram) 
 	{
@@ -707,7 +707,7 @@ void DrawGrid()
 	int 		done = 0, oldvmode = vmode, border = 0, full = 1;
 	uint16		pressed;		
 	ImagePtr	back = NULL;
-	controller	*st;	
+	controller	*st = NULL;
 	fmenudata 	resmenudata[] = { {1, "Full 240p"}, {2, "224 sized"} };
 	
 	if(vmode < HIGH_RES)
@@ -829,21 +829,53 @@ void DrawGrid()
 
 void DrawMonoscope()
 {
-	int 		done = 0;
+	int 		done = 0, oldvmode = vmode;
 	uint16		pressed;		
-	ImagePtr	back, rlines;
-	controller	*st;
-
-	back = LoadKMG("/rd/monoscope.kmg.gz", 0);
-	if(!back)
-		return;
-
-	rlines = LoadKMG("/rd/monoscope_lin.kmg.gz", 0);
-	if(!rlines)
-		return;
+	ImagePtr	back = NULL, rlines = NULL;
+	controller	*st = NULL;
 
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			if(back)
+				FreeImage(&back);
+			if(rlines)
+				FreeImage(&rlines);
+			oldvmode = vmode;
+		}
+		
+		if(!back)
+		{
+			if(vmode >= HIGH_RES)
+			{
+				back = LoadKMG("/rd/480/monoscope-480.kmg.gz", 0);
+				if(!back)
+					return;
+				rlines = LoadKMG("/rd/480/monoscope-480-lin.kmg.gz", 0);
+				if(!rlines)
+					return;
+				back->scale = 0;
+				rlines->scale = 0;
+			}
+			
+			// Use 240p Monoscope
+			if(!back)
+			{
+				back = LoadKMG("/rd/monoscope.kmg.gz", 0);
+				if(!back)
+					return;
+				rlines = LoadKMG("/rd/monoscope_lin.kmg.gz", 0);
+				if(!rlines)
+					return;
+			}
+
+			if(back)
+				IgnoreOffset(back);
+			if(rlines)
+				IgnoreOffset(rlines);
+		}
+		
 		StartScene();
 		DrawImage(back);
 		DrawImage(rlines);
@@ -884,8 +916,8 @@ void Draw100IRE()
 {
 	int 			done = 0;
 	uint16			pressed, text = 0, invert = 0;	
-	ImagePtr		back, white;
-	controller		*st;
+	ImagePtr		back = NULL, white = NULL;
+	controller		*st = NULL;
 	char			msg[50], *vmuMsg = " 100 IRE ";
 
 	back = LoadKMG("/rd/100IRE.kmg.gz", 0);
@@ -1000,8 +1032,8 @@ void DrawSharpness()
 {
 	int 		done = 0;
 	uint16		pressed;
-	ImagePtr	back;	
-	controller	*st;
+	ImagePtr	back = NULL;
+	controller	*st = NULL;
 	
 	back = LoadKMG("/rd/sharpness.kmg.gz", 0);
 	if(!back)
@@ -1036,9 +1068,9 @@ void DrawOverscan()
 				sel = 0, oldvmode = vmode, reset = 0,
 				joycntx = 0, joycnty = 0;
 	uint16		pressed;
-	ImagePtr	square, border;	
+	ImagePtr	square = NULL, border = NULL;	
 	char		msg[50];
-	controller	*st;
+	controller	*st = NULL;
 	
 	square = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!square)
