@@ -270,20 +270,20 @@ void DiplayController(int num, float x, float y)
 		// Maracas 0x0f093c00
 
 		// Left Maraca
+		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C)
+		{
+			isPressed = st->buttons & CONT_C;
+			DrawStringS(x- 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "C");
+		}
 		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_B)
 		{
 			isPressed = st->buttons & CONT_B;
-			DrawStringS(x- 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
+			DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
 		}
 		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Z)
 		{
 			isPressed = st->buttons & CONT_Z;
-			DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Z");
-		}
-		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C)
-		{
-			isPressed = st->buttons & CONT_C;
-			DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "C");
+			DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Z");
 		}
 		// Right Maraca
 		
@@ -401,13 +401,19 @@ void ControllerTest()
 {
 	int 		done = 0;
 	uint16		pressed;
+	ImagePtr	back;
 	controller	*st;
 
+	back = LoadKMG("/rd/ControlBack.kmg.gz", 0);
+	if(!back)
+		return;
+	//back->alpha = 0.5f;
 	while(!done && !EndProgram) 
 	{				
 		float x = 40, y = 30, w = 30*fw, h = 10*fh;
-		StartScene();
 		
+		StartScene();
+		DrawImage(back);
 		DrawStringS(120, 20, 0.0f, 1.0f, 0.0f, "Controller Test"); 		
 		
 		DiplayController(0, x, y);
@@ -427,6 +433,7 @@ void ControllerTest()
 			st->buttons & CONT_DPAD_LEFT)
 			done =	1;								
 	}
+	FreeImage(&back);
 	return;
 }
 
