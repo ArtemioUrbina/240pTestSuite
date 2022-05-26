@@ -36,9 +36,43 @@
 
 #include "hardware.h"
 
+// 0-7 empty?
+
+#define 	CONT_FIXED_CAPABILITY_RTRIG   		(1<<8)
+#define 	CONT_FIXED_CAPABILITY_LTRIG   		(1<<9)
+#define 	CONT_FIXED_CAPABILITY_ANALOG_X   	(1<<10)
+#define 	CONT_FIXED_CAPABILITY_ANALOG_Y   	(1<<11)
+
+#define 	CONT_FIXED_CAPABILITY_ANALOG2_X   	(1<<12)
+#define 	CONT_FIXED_CAPABILITY_ANALOG2_Y   	(1<<13)
+
+// 14 & 15?
+
+#define 	CONT_FIXED_CAPABILITY_Z   			(1<<16)
+#define 	CONT_FIXED_CAPABILITY_Y   			(1<<17)
+#define 	CONT_FIXED_CAPABILITY_X   			(1<<18)
+#define 	CONT_FIXED_CAPABILITY_D   			(1<<19)
+
+#define 	CONT_FIXED_CAPABILITY_DPAD2_UP   	(1<<20)
+#define 	CONT_FIXED_CAPABILITY_DPAD2_DOWN   	(1<<21)
+#define 	CONT_FIXED_CAPABILITY_DPAD2_LEFT   	(1<<22)
+#define 	CONT_FIXED_CAPABILITY_DPAD2_RIGHT   (1<<23)
+
+
+#define 	CONT_FIXED_CAPABILITY_C   			(1<<24)
+#define 	CONT_FIXED_CAPABILITY_B   			(1<<25)
+#define 	CONT_FIXED_CAPABILITY_A   			(1<<26)
+#define 	CONT_FIXED_CAPABILITY_START   		(1<<27)
+
+#define 	CONT_FIXED_CAPABILITY_DPAD_UP   	(1<<28)
+#define 	CONT_FIXED_CAPABILITY_DPAD_DOWN   	(1<<29)
+#define 	CONT_FIXED_CAPABILITY_DPAD_LEFT   	(1<<30)
+#define 	CONT_FIXED_CAPABILITY_DPAD_RIGHT   	(1<<31)
+
 void DiplayController(int num, float x, float y)
 {
 	int				isPressed = 0;
+	int				hasAnalogX = 0, hasAnalogY = 0, hasAnalog2X = 0, hasAnalog2Y = 0;
 	cont_state_t	*st;
 	maple_device_t	*dev = NULL;
 	char			msg[256];
@@ -48,7 +82,7 @@ void DiplayController(int num, float x, float y)
 	if(!dev)
 		return;
 		
-	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, dev->info.product_name);
+	DrawStringS(x, y, 0.0f, 1.0f, 0.0f, dev->info.product_name);
 	y += fh;
 	
 	/*
@@ -60,7 +94,7 @@ void DiplayController(int num, float x, float y)
 	
 	sprintf(msg, "Power[%d-%d]mW", 
 			dev->info.standby_power, dev->info.max_power);
-	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+	DrawStringS(x, y, 0.0f, 0.7f, 0.6f, msg);
 	y += fh;
 	
 	/*
@@ -70,94 +104,297 @@ void DiplayController(int num, float x, float y)
 	y += fh;
 	*/
 	
-	// tells us the device type in 
-	// isFishingRod isMaracas isStockController
+	// Tells us the device type in 
+	// isFishingRod/isMaracas/isStockController
 	DetectContollerType(dev);
 	
 	st = (cont_state_t*)maple_dev_status(dev);
 	if(!st)
 		return;
+		
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_ANALOG_X)
+		hasAnalogX = 1;
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_ANALOG_Y)
+		hasAnalogY = 1;
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_ANALOG2_X)
+		hasAnalog2X = 1;
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_ANALOG2_Y)
+		hasAnalog2Y = 1;
 	
 	x += 2*fw;
-	
-	// Draw Triggers
+
 	if(isMaracas == 0)
 	{
-		sprintf(msg, " %03d   %03d", st->ltrig, st->rtrig);
-		DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
-		y += fh;
+		int hadtriggers = 0;
+		// Draw Triggers
+		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_LTRIG)
+		{
+			sprintf(msg, "%03d", st->ltrig);
+			DrawStringS(x+1*fw, y, 1.0f, 1.0f, 1.0f, msg);
+			hadtriggers = 1;
+		}
+		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_RTRIG)
+		{
+			sprintf(msg, "%03d", st->rtrig);
+			DrawStringS(x+7*fw, y, 1.0f, 1.0f, 1.0f, msg);
+			hadtriggers = 1;
+		}
+		if(hadtriggers)
+			y += fh;
 
-		// Draw Up and Y
-		isPressed = st->buttons & CONT_DPAD_UP;
-		DrawStringS(x+2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "U");
-		isPressed = st->buttons & CONT_Y;
-		DrawStringS(x+8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Y");
-		y += fh;
-	
-		// Draw Left, Right, Start, X and B
-		isPressed = st->buttons & CONT_DPAD_LEFT;
-		DrawStringS(x+1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "L");
-		isPressed = st->buttons & CONT_DPAD_RIGHT;
-		DrawStringS(x+3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "R");
-		isPressed = st->buttons & CONT_START;
-		DrawStringS(x+5*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
-		isPressed = st->buttons & CONT_X;
-		DrawStringS(x+7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "X");
-		isPressed = st->buttons & CONT_B;
-		DrawStringS(x+9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
-		y += fh;
-	
-		// Draw Down and A
-		isPressed = st->buttons & CONT_DPAD_DOWN;
-		DrawStringS(x+2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "D");
+		// Regular DC controller 	0xfe060f00
+		// Fishing Rod 				0xfe063f00
+		if(!(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C))
+		{
+			// Draw Up and Y
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_UP)
+			{
+				isPressed = st->buttons & CONT_DPAD_UP;
+				DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "U");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Y)
+			{
+				isPressed = st->buttons & CONT_Y;
+				DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Y");
+			}
+			y += fh;
 		
-		isPressed = st->buttons & CONT_A;
-		DrawStringS(x+8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
+			// Draw Left, Right, Start, X and B
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_LEFT)
+			{
+				isPressed = st->buttons & CONT_DPAD_LEFT;
+				DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "L");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_RIGHT)
+			{
+				isPressed = st->buttons & CONT_DPAD_RIGHT;
+				DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "R");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_START)
+			{
+				isPressed = st->buttons & CONT_START;
+				DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_X)
+			{
+				isPressed = st->buttons & CONT_X;
+				DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "X");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_B)
+			{
+				isPressed = st->buttons & CONT_B;
+				DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
+			}
+			y += fh;
+		
+			// Draw Down and A
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_DOWN)
+			{
+				isPressed = st->buttons & CONT_DPAD_DOWN;
+				DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "D");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_A)
+			{
+				isPressed = st->buttons & CONT_A;
+				DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
+			}
+		}
+		else // Arcade Stick?
+		{
+			// Draw Up and X, Y, Z
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_UP)
+			{
+				isPressed = st->buttons & CONT_DPAD_UP;
+				DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "U");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_X)
+			{
+				isPressed = st->buttons & CONT_X;
+				DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "X");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Y)
+			{
+				isPressed = st->buttons & CONT_Y;
+				DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Y");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Z)
+			{
+				isPressed = st->buttons & CONT_Z;
+				DrawStringS(x+11*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Z");
+			}
+			y += fh;
+		
+			// Draw Left, Right, Start
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_LEFT)
+			{
+				isPressed = st->buttons & CONT_DPAD_LEFT;
+				DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "L");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_RIGHT)
+			{
+				isPressed = st->buttons & CONT_DPAD_RIGHT;
+				DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "R");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_START)
+			{
+				isPressed = st->buttons & CONT_START;
+				DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
+			}
+			y += fh;
+		
+			// Draw Down and A. B, C
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_DOWN)
+			{
+				isPressed = st->buttons & CONT_DPAD_DOWN;
+				DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "D");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_A)
+			{
+				isPressed = st->buttons & CONT_A;
+				DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_B)
+			{
+				isPressed = st->buttons & CONT_B;
+				DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
+			}
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C)
+			{
+				isPressed = st->buttons & CONT_C;
+				DrawStringS(x+11*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "C");
+			}
+		}
 	}
 	else
 	{
-		isPressed = st->buttons & CONT_START;
-		DrawStringS(x+2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
-		isPressed = st->buttons & CONT_A;
-		DrawStringS(x+4*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
-		isPressed = st->buttons & CONT_Z;
-		DrawStringS(x+6*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Z");
-		isPressed = st->buttons & CONT_C;
-		DrawStringS(x+8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "C");
+		// Maracas 0x0f093c00
+
+		// Left Maraca
+		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_B)
+		{
+			isPressed = st->buttons & CONT_B;
+			DrawStringS(x- 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
+		}
+		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Z)
+		{
+			isPressed = st->buttons & CONT_Z;
+			DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Z");
+		}
+		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C)
+		{
+			isPressed = st->buttons & CONT_C;
+			DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "C");
+		}
+		// Right Maraca
+		
+		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_START)
+		{
+			isPressed = st->buttons & CONT_START;
+			DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
+		}
+		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_A)
+		{
+			isPressed = st->buttons & CONT_A;
+			DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
+		}
+		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_D)
+		{
+			isPressed = st->buttons & CONT_D;
+			DrawStringS(x+11*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "D");
+		}
 	}
 	y += fh;
 	
 	x = orig_x;
+	// Center the Analog if only one is present
+	if(!hasAnalog2X && !hasAnalog2Y)
+		x += 4*fw;
 	
 	// Draw Analog Joystick
-	// Analog Up
-	sprintf(msg, "%03d", st->joyy < 0 ? -1*st->joyy : 0);
-	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
-	y += fh;
-	// Analog Right & Left
-	sprintf(msg, "%03d %03d", st->joyx < 0 ? -1*st->joyx : 0, st->joyx > 0 ? st->joyx : 0);
-	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
-	y += fh;
-	// Analog Down
-	sprintf(msg, "%03d", st->joyy > 0 ? st->joyy : 0);
-	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	if(hasAnalogY)
+	{
+		// Analog Up
+		sprintf(msg, "%03d", st->joyy < 0 ? -1*st->joyy : 0);
+		DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+		y += fh;
+	}
 	
-	// Rewind 2 lines
-	y -= 2*fh;
-	x += 8*fw;
+	if(hasAnalogX)
+	{
+		// Analog Right & Left
+		sprintf(msg, "%03d %03d", st->joyx < 0 ? -1*st->joyx : 0, st->joyx > 0 ? st->joyx : 0);
+		DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+		y += fh;
+	}
+	
+	// Analog Down
+	if(hasAnalogY)
+	{
+		sprintf(msg, "%03d", st->joyy > 0 ? st->joyy : 0);
+		DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	}
+	
+	// Rewind 2 lines towards the top
+	if(hasAnalog2X || hasAnalog2Y)
+	{
+		y -= 2*fh;
+		x += 8*fw;
+	}
 	
 	// Second Analog controller
-	// Analog Up
-	sprintf(msg, "%03d", st->joy2y < 0 ? -1*st->joy2y : 0);
-	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
-	y += fh;
+	if(hasAnalog2Y)
+	{
+		// Analog Up
+		sprintf(msg, "%03d", st->joy2y < 0 ? -1*st->joy2y : 0);
+		DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+		y += fh;
+	}
+	
 	// Analog Right & Left
-	sprintf(msg, "%03d %03d", st->joy2x < 0 ? -1*st->joy2x : 0, st->joy2x > 0 ? st->joy2x : 0);
-	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
-	y += fh;
+	if(hasAnalog2X)
+	{
+		sprintf(msg, "%03d %03d", st->joy2x < 0 ? -1*st->joy2x : 0, st->joy2x > 0 ? st->joy2x : 0);
+		DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+		y += fh;
+	}
+	
 	// Analog Down
-	sprintf(msg, "%03d", st->joy2y > 0 ? st->joy2y : 0);
-	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	if(hasAnalog2Y)
+	{
+		sprintf(msg, "%03d", st->joy2y > 0 ? st->joy2y : 0);
+		DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	}
+	//Do we have the next few ones?
+	x = orig_x;
+	y += fh;
+	
+	// Adds existing but without known implementations...
+	// Second d-pad and D button
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_UP)
+	{
+		isPressed = st->buttons & CONT_DPAD2_UP;
+		DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "U");
+	}
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_DOWN)
+	{
+		isPressed = st->buttons & CONT_DPAD2_DOWN;
+		DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "D");
+	}
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_LEFT)
+	{
+		isPressed = st->buttons & CONT_DPAD2_LEFT;
+		DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "L");
+	}
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_RIGHT)
+	{
+		isPressed = st->buttons & CONT_DPAD2_RIGHT;
+		DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "R");
+	}
+	if(!isMaracas && dev->info.function_data[0] & CONT_FIXED_CAPABILITY_D)
+	{
+		isPressed = st->buttons & CONT_D;
+		DrawStringS(x+11*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "D");
+	}
 }
 
 void ControllerTest()
