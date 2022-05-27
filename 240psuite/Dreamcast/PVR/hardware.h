@@ -23,7 +23,7 @@
 #define HARDWARE_H
 
 void ControllerTest();
-void MemoryViewer();
+void MemoryViewer(uint32 address);
 
 #endif
 

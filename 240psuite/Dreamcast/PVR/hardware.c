@@ -499,12 +499,12 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size)
 #define VISIBLE_VERT	26
 #define MAX_LOCATIONS	17
 
-void MemoryViewer()
+void MemoryViewer(uint32 address)
 {
 	int 		done = 0, ascii = 0, locpos = 0, docrc = 0, factor = 1;
 	int			joycntx = 0, joycnty = 0;
 	uint16		pressed;		
-	uint32		address = 0, crc = 0;
+	uint32		crc = 0;
 	uint32		locations[MAX_LOCATIONS] = { 	0x00000000, 0x00200000,
 												0x00240000, 0x04000000,
 												0x0C000000, 0x0C000100, // KallistiOS 
@@ -522,8 +522,9 @@ void MemoryViewer()
 											"System memory", "Tile Accelerator",
 											"Texture memory", "G2 devices", "NULL"};
 	controller	*st;
-		
-	address = locations[0];
+
+	if(address == 0)
+		address = locations[0];
 	while(!done && !EndProgram) 
 	{
 		int 	i = 0, j = 0, pos = -1;

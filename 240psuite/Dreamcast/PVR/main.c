@@ -567,6 +567,9 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 				case 2:
 					AudioSyncTest();
 					break;
+				case 3:
+					MDFourier();
+					break;
 				case 4:
 					done = 1;
 					break;
@@ -650,7 +653,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 					ControllerTest();
 					break;
 				case 2:
-					MemoryViewer();
+					MemoryViewer(0);
 					break;
 				case 3:
 					done = 1;

@@ -153,10 +153,10 @@ int CopyFBToBG()
 	uint16	*fbcopy = NULL;
 	uint16	r, g, b;
 #ifdef BENCHMARK
-	uint32	start, end;
+	uint64	start, end;
 	char	msg[100];
 		
-	timer_ms_gettime(NULL, &start);
+	start = timer_ms_gettime64();
 #endif
 
 	if(!fbtexture)
@@ -188,10 +188,10 @@ int CopyFBToBG()
 	
 	memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 #ifdef BENCHMARK
-	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "FB buffer init took %"PRIu32" ms\n", end - start);
+	end = timer_ms_gettime64();
+	sprintf(msg, "FB buffer init took %"PRIu64" ms\n", end - start);
 	dbglog(DBG_INFO, msg);
-	timer_ms_gettime(NULL, &start);
+	start = timer_ms_gettime64();
 #endif
 	save = irq_disable();
 	memcpy(fbcopy, vram_s, sizeof(uint16)*numpix);
@@ -219,10 +219,10 @@ int CopyFBToBG()
 	fbcopy = NULL;
 
 #ifdef BENCHMARK
-	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "FB conversion took %"PRIu32" ms\n", end - start);
+	end = timer_ms_gettime64();
+	sprintf(msg, "FB conversion took %"PRIu64" ms\n", end - start);
 	dbglog(DBG_INFO, msg);
-	timer_ms_gettime(NULL, &start);
+	start = timer_ms_gettime64();
 #endif
 
 	pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex, tw, th,
@@ -233,8 +233,8 @@ int CopyFBToBG()
 	fbtexture->h = fbtexture->th;
 
 #ifdef BENCHMARK
-	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "FB texture upload took %"PRIu32" ms\n", end - start);
+	end = timer_ms_gettime64();
+	sprintf(msg, "FB texture upload took %"PRIu64" ms\n", end - start);
 	dbglog(DBG_INFO, msg);
 #endif
 
@@ -1430,4 +1430,21 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 
 	refreshVMU = 1;
 	return value;
+}
+
+void DrawMessage(char *msg)
+{
+	int 		done = 0;
+	uint16		pressed;
+	
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		DrawStringS(20, 60, 0.0f, 1.0f, 0.0f, msg); 
+		EndScene();
+	
+		ReadController(0, &pressed);
+		if(pressed & CONT_B)
+			done =	1;
+	}
 }

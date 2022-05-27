@@ -86,5 +86,6 @@ typedef struct menu_data {
 #define MENU_CANCEL -1
 
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option);
+void DrawMessage(char *msg);
 
 #endif

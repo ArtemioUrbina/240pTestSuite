@@ -128,6 +128,182 @@ void SoundTest()
 	return;
 }
 
+// These need to be global for the callback to work
+// int is enough for our purposes, since it defaults to 32 bits
+// (zlib_getlength made me check)
+char	*stream_samples = NULL;
+char	stream_buffer[SND_STREAM_BUFFER_MAX];
+int		stream_samples_size = 0;
+int		stream_pos = 0;
+
+void *mdf_callback(snd_stream_hnd_t hnd, int smp_req, int *smp_recv)
+{
+	int	bytes_to_copy = smp_req;
+	
+	memset(stream_buffer, 0, sizeof(char)*SND_STREAM_BUFFER_MAX);
+
+	*smp_recv = smp_req;	
+	if(!stream_samples || stream_pos >= stream_samples_size)
+		return stream_buffer;
+
+	if(stream_samples_size < stream_pos + smp_req)
+		bytes_to_copy = stream_samples_size - stream_pos;
+	
+	memcpy(stream_buffer, stream_samples+stream_pos, sizeof(char)*bytes_to_copy);
+	stream_pos += bytes_to_copy;
+
+	return stream_buffer;
+}
+
+void CleanStreamSamples()
+{
+	if(stream_samples)
+	{
+		free(stream_samples);
+		stream_samples = NULL;
+		stream_pos = stream_samples_size = 0;
+	}
+}
+
+#include <zlib/zlib.h>
+
+int zlib_getlength(char *filename);
+
+// Takes around 10 seconds, around Ten seconds faster than uncompressed from CD-R
+void LoadGZMDFSamples()
+{
+	gzFile		file;
+	
+	CleanStreamSamples();
+	stream_samples_size = zlib_getlength("/cd/mdfourier-dac-44100.pcm");
+	if(!stream_samples_size)
+	{
+		DrawMessage("Invalid PCM samples file");
+		return;
+	}
+	
+	file = gzopen("/cd/mdfourier-dac-44100.pcm.gz", "r");
+	if(!file)
+	{
+		DrawMessage("No PCM samples file");
+		return;
+	}
+	stream_samples = (char*)malloc(sizeof(char)*stream_samples_size);
+	if(!stream_samples) 
+	{
+		gzclose(file);        
+		DrawMessage("Out of memory");
+		return;
+	}
+	
+	if(gzread(file, stream_samples, sizeof(char)*stream_samples_size) != stream_samples_size)
+	{
+		gzclose(file);
+		DrawMessage("Error loading and decompressing file");
+		return;
+	}
+	
+	gzclose(file);
+}
+
+void MDFourier()
+{
+	int 				done = 0, stream_res = 0, play = 0;
+	uint16				pressed;		
+	ImagePtr			back;
+	controller			*st = NULL;
+	snd_stream_hnd_t 	hnd;
+#ifdef BENCHMARK
+	uint64 	start, end, t1, t2;
+	char	msg[100];
+#endif
+
+	back = LoadKMG("/rd/back.kmg.gz", 0);
+	if(!back)
+		return;
+	
+	CleanStreamSamples();
+
+#ifdef BENCHMARK
+	start = timer_ms_gettime64();
+#endif
+	LoadGZMDFSamples();
+#ifdef BENCHMARK
+	end = timer_ms_gettime64();
+#endif
+	
+	if(cdrom_spin_down() != ERR_OK)
+		dbglog(DBG_ERROR,"Could not stop GD-ROM from spinning\n");
+
+#ifdef BENCHMARK	
+	t2 = end - start;
+	sprintf(msg, "Load took %"PRIu64" ms vs Compressed %"PRIu64" ms", t1, t2);
+	DrawMessage(msg);
+#endif
+	
+	hnd = snd_stream_alloc(mdf_callback, SND_STREAM_BUFFER_MAX);
+	if(hnd == SND_STREAM_INVALID)
+	{
+		CleanStreamSamples();
+		FreeImage(&back);
+		DrawMessage("Could not get SPU stream");
+		return;
+	}
+	
+	snd_stream_volume(hnd, 255);
+	snd_stream_queue_enable(hnd);
+	snd_stream_start(hnd, 44100, 1);
+	
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		DrawImage(back);
+
+		DrawStringS(130, 60, 0.0f, 1.0f, 0.0f, "MDFourier"); 
+		if(stream_samples)
+		{
+			char msg[100];
+			
+			sprintf(msg, "stream_pos: %X (%d)", stream_pos, stream_res);
+			DrawStringS(130, 70+fh, 0.0f, 1.0f, 0.0f, msg); 
+			sprintf(msg, "stream_samples_size: %X", stream_samples_size);
+			DrawStringS(130, 70+2*fh, 0.0f, 1.0f, 0.0f, msg); 
+		}
+		EndScene();
+		
+		stream_res = snd_stream_poll(hnd);
+		VMURefresh("MDFourier", "");
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;
+
+			if (pressed & CONT_A)
+			{
+				if(!play)
+				{
+					play = 1;
+					snd_stream_queue_go(hnd);
+				}
+				else
+					stream_pos = 0;
+			}
+
+			if (pressed & CONT_START)
+				ShowMenu(SOUNDHELP);
+		}
+	}
+	
+	snd_stream_queue_disable(hnd);
+	snd_stream_stop(hnd);
+	snd_stream_destroy(hnd);
+	
+	CleanStreamSamples();
+	FreeImage(&back);
+}
+
 void AudioSyncTest()
 {
 	int 		done = 0, paused = 0, oldvmode = 0, playtone = 0;
@@ -679,20 +855,19 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	double		  	*in, root = 0, framesize = 0;  
 	double		  	*MaxFreqArray = NULL;
 	fftw_complex  	*out;
-	fftw_plan	p = NULL;
+	fftw_plan		p = NULL;
+	double	  		mins, maxs;
+	double			boxsize = 0;
+	int 			casefrq = 0;  
+	int 			found = 0;
+	long 			pos = 0, count = 0;    
+	long 			tpos = 0, tcount = 0;	 
+	double			value = FFT_NOT_FOUND;
 #ifdef DEBUG_FFT
-	long		time = 0;
-	uint64		start, end;
+	uint64			start, end, time;
 #endif
-	double	  	mins, maxs;
-	double		 	boxsize = 0;
-	int 		 	casefrq = 0;  
-	int 		found = 0;
-	long 		pos = 0, count = 0;    
-	long 		tpos = 0, tcount = 0;	 
-	double		value = FFT_NOT_FOUND;
 	
-	samplesize = (long) size;  
+	samplesize = (long)size;  
 
 	framesize = samplerate/secondunits;
 	framesizernd = (long)framesize;  
@@ -770,7 +945,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 #ifdef DEBUG_FFT
 	end = timer_ms_gettime64();
 	time = end - start;
-	dbglog(DBG_INFO, "FFT for %g frames took %ld\n", samplesize/framesize - 1, time);
+	dbglog(DBG_INFO, "FFT for %g frames took %"PRIu64"\n", samplesize/framesize - 1, time);
 	start = end;
 #endif
 
@@ -838,7 +1013,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 #ifdef DEBUG_FFT
 	end = timer_ms_gettime64();
 	time = end - start;
-	dbglog(DBG_INFO, "Processing frequencies took %ld\n", time);
+	dbglog(DBG_INFO, "Processing frequencies took %"PRIu64" ms\n", time);
 #endif
 
 	free(MaxFreqArray);

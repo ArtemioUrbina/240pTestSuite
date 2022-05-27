@@ -95,12 +95,12 @@ run: clean dcload
 
 cdi-int: all ip
 	scramble $(TARGET).bin 1ST_READ.BIN
-	mkisofs -C 0,11702 -V 240pSuiteDC -G ../IP/IP.BIN -J -r -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN
+	mkisofs -C 0,11702 -V 240pSuiteDC -G ../IP/IP.BIN -J -r -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN mdfourier-dac-44100.pcm.gz
 	cdi4dc 240p.iso 240pSuite.cdi
 
 mdf-int: all ip
 	scramble $(TARGET).bin 1ST_READ.BIN
-	mkisofs -C 0,11702 -V 240pSuiteDC -G ../IP/IP.BIN -J -r -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN
+	mkisofs -C 0,11702 -V 240pSuiteDC -G ../IP/IP.BIN -J -r -l -o 240p.iso 0GDTEX.pvr 1ST_READ.BIN mdfourier-dac-44100.pcm.gz
 	mds4dc -a 240pSuite.mdf 240p.iso
 
 cdi: clean cdi-int

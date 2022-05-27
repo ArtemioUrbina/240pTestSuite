@@ -289,10 +289,10 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	kos_img_t img;
 	file_t testFile;
 #ifdef BENCHMARK
-	uint32 start, end;
+	uint64	start, end;
 	char	msg[100];
 
-	timer_ms_gettime(NULL, &start);
+	start = timer_ms_gettime64();
 #endif
 
 	testFile = fs_open(filename, O_RDONLY);
@@ -340,8 +340,8 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	kos_img_free(&img, 0);	
 
 #ifdef BENCHMARK
-	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned long)end - start);
+	end = timer_ms_gettime64();
+	sprintf(msg, "KMG %s took %"PRIu64" ms\n", filename, end - start);
 	dbglog(DBG_ERROR, msg);
 #endif
 
@@ -387,10 +387,10 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 	int load = -1, len;
 	kos_img_t img;
 #ifdef BENCHMARK
-	uint32 start, end;
+	uint64	start, end;
 	char	msg[100];
 		
-	timer_ms_gettime(NULL, &start);
+	start = timer_ms_gettime64();
 #endif
 	if(!image)
 	{
@@ -432,8 +432,8 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 	kos_img_free(&img, 0);	
 
 #ifdef BENCHMARK
-	timer_ms_gettime(NULL, &end);
-	sprintf(msg, "KMG %s took %lu ms\n", filename, (unsigned long)end - start);
+	end = timer_ms_gettime64();
+	sprintf(msg, "KMG %s took %"PRIu64" ms\n", filename, end - start);
 	dbglog(DBG_ERROR, msg);
 #endif
 	return 1;
