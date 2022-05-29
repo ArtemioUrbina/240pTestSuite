@@ -529,13 +529,11 @@ void DrawEBUColorBars()
 	ImagePtr	backEBU75, backEBU100;
 	char		msg[40];
 		
-	backEBU75 = LoadImage(EBUCB75IMG, 0);
+	backEBU75 = LoadImage(EBUCB75IMG, 1);
 	if(!backEBU75)
-	{
 		return;
-	}
 		
-	backEBU100 = LoadImage(EBUCB100IMG, 0);
+	backEBU100 = LoadImage(EBUCB100IMG, 1);
 	if(!backEBU100)
 	{
 		FreeImage(&backEBU75);
@@ -950,11 +948,11 @@ void DrawMonoscope()
 				
 			if(IsPAL)
 			{
-				back = LoadImage(MONOSCOPEPALIMG, 1);
+				back = LoadImage(MONOSCOPEPALIMG, 0);
 				if(!back)
 					return;
 				
-				overlay = LoadImage(MONOSCOPEPALLINIMG, 1);
+				overlay = LoadImage(MONOSCOPEPALLINIMG, 0);
 				if(!overlay)
 				{
 					FreeImage(&back);
@@ -963,18 +961,37 @@ void DrawMonoscope()
 			}
 			else
 			{
-				back = LoadImage(MONOSCOPEIMG, 1);
-				if(!back)
-					return;
-					
-				overlay = LoadImage(MONOSCOPELINIMG, 1);
-				if(!overlay)
+				if(vmode == VIDEO_480I || vmode == VIDEO_480P)
 				{
-					FreeImage(&back);
-					return;
+					back = LoadImage(MONOSCOPE480IMG, 0);
+					if(!back)
+						return;
+					back->scale = 0;	
+					overlay = LoadImage(MONOSCOPE480LINIMG, 0);
+					if(!overlay)
+					{
+						FreeImage(&back);
+						return;
+					}
+					overlay->scale = 0;
+					overlay->x = 144;
+					overlay->y = 80;
+				}
+				else
+				{
+					back = LoadImage(MONOSCOPEIMG, 0);
+					if(!back)
+						return;
+					overlay = LoadImage(MONOSCOPELINIMG, 0);
+					if(!overlay)
+					{
+						FreeImage(&back);
+						return;
+					}
 				}
 			}
 			IgnoreOffset(back);
+			IgnoreOffset(overlay);
 		}
 		
 		if(Options.EnablePALBG && IsPAL)
@@ -1408,7 +1425,7 @@ void DrawConvergence()
 	
 	for(current = 0; current < NUM_CONV; current++)
 	{
-		back[current] = LoadImage(patterns[current], 0);
+		back[current] = LoadImage(patterns[current], 1);
 		if(!back[current])
 			return;
 	}

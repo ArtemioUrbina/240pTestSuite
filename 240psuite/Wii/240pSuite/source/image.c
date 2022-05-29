@@ -91,7 +91,7 @@ u8 *full_textures_tpl = NULL;
 uLong full_textures_tpl_size = TEXTURE_FSIZE;
 // We use zlib to compress textures at compile time
 // this needs a program called cfile (source under the tools folder)
-// and it must be placed in the devkitPPC bin folder when compiled		
+// and the compiled version for your OS must be placed in the tools folder
 
 u8 LoadTextures()
 {

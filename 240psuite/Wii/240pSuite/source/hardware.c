@@ -36,8 +36,10 @@
 void ControllerTest()
 {
 	int 		done = 0;
-	u32			pressed;		
-	ImagePtr	back;	
+	u32			pressed;
+	s8			value;
+	ImagePtr	back;
+	char 		buffer[10];
 	
 	back = LoadImage(BACKIMG, 0);
 	if(!back)
@@ -48,6 +50,22 @@ void ControllerTest()
 		StartScene();
 		        
 		DrawImage(back);
+		
+		//Analog:
+		value = PAD_StickX(0);
+		sprintf(buffer, "%d", value);
+		DrawStringS(100, 100, 0x00, 0xff, 0x00, buffer);
+		value  = PAD_StickY(0);
+		sprintf(buffer, "%d", value);
+		DrawStringS(140, 100, 0x00, 0xff, 0x00, buffer);
+
+		//C-stick:
+		value = PAD_SubStickX(0);
+		sprintf(buffer, "%d", value);
+		DrawStringS(200, 100, 0x00, 0xff, 0x00, buffer);
+		value = PAD_SubStickY(0);
+		sprintf(buffer, "%d", value);
+		DrawStringS(240, 100, 0x00, 0xff, 0x00, buffer);
 		
         EndScene();
 		
@@ -125,9 +143,9 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size)
 #define VISIBLE_VERT	26
 
 #ifdef WII_VERSION
-#define	MAX_LOCATIONS	8
+#define	MAX_LOCATIONS	4
 #else
-#define	MAX_LOCATIONS	6
+#define	MAX_LOCATIONS	1
 #endif
 
 void MemoryViewer()
@@ -136,9 +154,9 @@ void MemoryViewer()
 	u32			pressed;		
 	uint32_t	address = 0, crc = 0;
 #ifdef WII_VERSION
-	uint32_t	locations[MAX_LOCATIONS] = { 0x80000000, 0xC0000000, 0x90000000, 0xD0000000, 0xc8000000, 0xCC000000, 0xe0000000, 0xfff00000 };
+	uint32_t	locations[MAX_LOCATIONS] = { 0x80000000, 0x90000000, 0xD0000000, 0xfff00000 };
 #else
-	uint32_t	locations[MAX_LOCATIONS] = { 0x80000000, 0xC0000000, 0xc8000000, 0xCC000000, 0xe0000000, 0xfff00000 };
+	uint32_t	locations[MAX_LOCATIONS] = { 0x80000000 };
 #endif
 	
 	address = locations[0];
@@ -179,9 +197,9 @@ void MemoryViewer()
 					
 					memset(buffer, 0, sizeof(char)*10);
 					
-					buffer[0] = 20;				// Space
+					buffer[0] = 32;				// Space
 					c = mem[i*VISIBLE_HORZ+j];
-					if(c >= 32 && c <= 127)		// ASCII range
+					if(c >= 32 && c <= 126)		// ASCII range
 						buffer[0] = c;
 				}
 				DrawStringS(3*j*fw, i*fh, 0xff, 0xff, 0xff, buffer);
@@ -204,9 +222,14 @@ void MemoryViewer()
 		if (pressed & PAD_BUTTON_RIGHT)
 		{
 			address += VISIBLE_HORZ*VISIBLE_VERT;
-			
-			if(address >= 0xFFFFFFFF)
+
+#ifdef WII_VERSION		
+			if(address >= 0xFFFFFFFF) // 0x817fffff
 				address = 0xFFFFFFFF-VISIBLE_HORZ*VISIBLE_VERT;
+#else
+			if(address >= 0x817fffff) 
+				address = 0x817fffff-VISIBLE_HORZ*VISIBLE_VERT;
+#endif
 		}
 		
 		if (pressed & PAD_BUTTON_UP)	
@@ -221,8 +244,13 @@ void MemoryViewer()
 		{
 			address += 0x10000;
 			
-			if(address >= 0xFFFFFFFF)
+#ifdef WII_VERSION		
+			if(address >= 0xFFFFFFFF) // 0x817fffff
 				address = 0xFFFFFFFF-VISIBLE_HORZ*VISIBLE_VERT;
+#else
+			if(address >= 0x817fffff) 
+				address = 0x817fffff-VISIBLE_HORZ*VISIBLE_VERT;
+#endif
 		}
 		
 		if (pressed & PAD_BUTTON_B)
