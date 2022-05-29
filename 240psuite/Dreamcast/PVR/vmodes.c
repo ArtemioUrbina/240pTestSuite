@@ -191,7 +191,10 @@ void AdjustPVROptions()
 		PVR_SET(PVR_SCALER_CFG, 0x400);
 	}
 	else
-		dbglog(DBG_INFO, "240p TS: PVR deflicker filter not disabled by user request\n");
+	{
+		if(settings.Deflicker)
+			dbglog(DBG_INFO, "240p TS: PVR deflicker filter not disabled by user request\n");
+	}
 
 	// Enable deflicker filter
 	if(settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x401)
@@ -207,7 +210,10 @@ void AdjustPVROptions()
 		PVR_SET(PVR_FB_CFG_2, 0x00000001);
 	}
 	else
-		dbglog(DBG_INFO, "240p TS: PVR dithering not disabled by user request\n");
+	{
+		if(settings.Dithering)
+			dbglog(DBG_INFO, "240p TS: PVR dithering not disabled by user request\n");
+	}
 	
 	// Turn on texture dithering
 	if(settings.Dithering && PVR_GET(PVR_FB_CFG_2) == 0x00000001)

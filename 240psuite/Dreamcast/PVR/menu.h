@@ -27,7 +27,7 @@
 #define VERSION_NUMBER "Dreamcast Ver. 1.27"
 #define VERSION_DATE "24/05/2022"
 
-#define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0};
+#define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0, 0 };
 
 #define MENUSIZE_W 116
 #define MENUSIZE_H 123
@@ -58,6 +58,7 @@ struct settings_st {
 	float PalBackB;
 	int Dithering;
 	int UseKOSDefaults;
+	int IgnoreFrameBuffer;
 };
 
 extern struct settings_st settings;

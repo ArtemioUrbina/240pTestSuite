@@ -606,6 +606,7 @@ int LoadVMUSave(char *error)
 		ToggleScanlineEvenOdd();
 	settings.Dithering = pkg.data[12];
 	settings.UseKOSDefaults = pkg.data[13];
+	settings.IgnoreFrameBuffer = pkg.data[14];
 		
 #ifdef DCLOAD
 	dbglog(DBG_INFO, "Loaded VMU save version #%d\n", pkg.data[0]);
@@ -650,6 +651,7 @@ int WriteVMUSave(int eyecatch, char *error)
 	data[11] = ScanlinesEven();
 	data[12] = settings.Dithering;
 	data[13] = settings.UseKOSDefaults;
+	data[14] = settings.IgnoreFrameBuffer;
 	
 	strcpy(pkg.desc_short, "240p Suite");
 	strcpy(pkg.desc_long, "240p Test Suite Options");

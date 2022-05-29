@@ -253,8 +253,11 @@ void ShowMenu(char *filename)
 
 void ShowHelpWindow(char *Data)
 {
-	InitTextureFB();
-	CopyFBToBG();
+	if(!settings.IgnoreFrameBuffer)
+	{
+		InitTextureFB();
+		CopyFBToBG();
+	}
 	HelpWindow(Data, fbtexture);
 	FreeTextureFB();
 }
@@ -274,8 +277,11 @@ void DrawShowMenu()
 					"Exit"
 				};
 
-	InitTextureFB();
-	CopyFBToBG();
+	if(!settings.IgnoreFrameBuffer)
+	{
+		InitTextureFB();
+		CopyFBToBG();
+	}
 
 	back = LoadKMG("/rd/FloatMenu.kmg.gz", 0);
 	if(!back)
@@ -416,7 +422,7 @@ void ChangeOptions(ImagePtr screen)
 		float			b = 1.0f;
 		uint8			c = 1;
 		uint16			x = 50;
-		uint16			y = 30+fh;
+		uint16			y = 25+fh;
 		uint16			OptPos = 160;
 		uint16			pressed = 0;
 		char			intensity[80];
@@ -616,10 +622,15 @@ void ChangeOptions(ImagePtr screen)
 			loaded = -1;
 		}
 		
-		// Option 13, Reset to default options
+		// Option 13, Disable FrameBuffer copies
+		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Use FrameBuffer copy:");
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+			settings.IgnoreFrameBuffer == 0 ? "ON" : "OFF");  y += fh; c++;		
+		
+		// Option 14, Reset to default options
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Reset all options to defaults"); y += fh; c++;
 		
-		// Option 14, Exit
+		// Option 15, Exit
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 		
 		// Comments on options
@@ -785,6 +796,9 @@ void ChangeOptions(ImagePtr screen)
 						}
 						break;
 					case 13:
+						settings.IgnoreFrameBuffer = !settings.IgnoreFrameBuffer;
+						break;
+					case 14:
 						{
 							settings = default_settings;
 							if(region == FLASHROM_REGION_EUROPE)
@@ -793,7 +807,7 @@ void ChangeOptions(ImagePtr screen)
 							ChangeResolution(vmode);
 						}
 						break;
-					case 14:
+					case 15:
 						if ( st && st->buttons & CONT_RTRIGGER )
 						{
 							settings.drawborder = !settings.drawborder;
@@ -1207,8 +1221,11 @@ void DrawNish()
 
 void DrawCreditsOnFB()
 {
-	InitTextureFB();
-	CopyFBToBG();
+	if(!settings.IgnoreFrameBuffer)
+	{
+		InitTextureFB();
+		CopyFBToBG();
+	}
 	DrawCredits(fbtexture);
 	FreeTextureFB();
 }
@@ -1444,7 +1461,7 @@ void DrawMessage(char *msg)
 		EndScene();
 	
 		ReadController(0, &pressed);
-		if(pressed & CONT_B)
+		if(pressed & CONT_A || pressed & CONT_B)
 			done =	1;
 	}
 }
