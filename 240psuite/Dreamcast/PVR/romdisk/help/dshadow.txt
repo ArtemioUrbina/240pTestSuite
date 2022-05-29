@@ -13,4 +13,4 @@ The user can toggle the frame used to draw the
 shadow with the #GX#G button. Backgrounds can be
 switched with the #GA#G button, and the #GY#G button
 toggles sprites.
-#CDonna art by Jose Salot#C
+                    #CDonna art by Jose Salot#C

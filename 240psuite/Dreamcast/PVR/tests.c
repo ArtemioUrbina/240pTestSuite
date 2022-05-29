@@ -322,7 +322,7 @@ void DropShadowTest()
 
 void StripedSpriteTest()
 {	
-	int			done = 0, x = dW/2, y = dH/2, selback = 0, d_shown = 0;
+	int			done = 0, x = dW/2-50, y = dH/2, selback = 0, d_shown = 0;
 	int			oldvmode = vmode, reload = 0;
 	uint16		pressed, currentsonic = 0, i = 0, currentframe = 0;
 	ImagePtr	back[4], striped, overlay, sonicback[4];

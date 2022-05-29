@@ -39,6 +39,9 @@
 
 #include "help.h"
 #include "menu.h"
+#include <zlib/zlib.h>
+
+int zlib_getlength(char *filename);
 
 void SoundTest()
 {
@@ -135,6 +138,7 @@ char	*stream_samples = NULL;
 char	stream_buffer[SND_STREAM_BUFFER_MAX];
 int		stream_samples_size = 0;
 int		stream_pos = 0;
+int		stream_samplerate = 48000;
 
 void *mdf_callback(snd_stream_hnd_t hnd, int smp_req, int *smp_recv)
 {
@@ -161,118 +165,164 @@ void CleanStreamSamples()
 	{
 		free(stream_samples);
 		stream_samples = NULL;
-		stream_pos = stream_samples_size = 0;
 	}
+	stream_pos = stream_samples_size = 0;
 }
 
-#include <zlib/zlib.h>
-
-int zlib_getlength(char *filename);
-
-// Takes around 10 seconds, around Ten seconds faster than uncompressed from CD-R
-void LoadGZMDFSamples()
+// Takes around 10 seconds, around ten seconds faster than uncompressed from CD-R
+int LoadGZMDFSamples()
 {
 	gzFile		file;
+	int			deflate_size = 0, khz = 1;
+	char		*filename = NULL;
+	fmenudata 	resmenudata[] = { {1, "48000hz"}, {2, "44100hz"} };
+#ifdef BENCHMARK
+	uint64 		start, end;
+	char		msg[100];
+#endif
 	
+	VMURefresh("Select", "Frequency");
+	khz = SelectMenu("Select Frequency", resmenudata, 2, khz);
+	if(khz == MENU_CANCEL)
+		return 0;
+	
+	if(khz == 1)
+	{
+		filename = "/cd/mdfourier-dac-48000.pcm.gz";
+		stream_samplerate = 48000;
+	}
+	if(khz == 2)
+	{
+		filename = "/cd/mdfourier-dac-44100.pcm.gz";
+		stream_samplerate = 44100;
+	}
+		
 	CleanStreamSamples();
-	stream_samples_size = zlib_getlength("/cd/mdfourier-dac-44100.pcm");
-	if(!stream_samples_size)
+	deflate_size = zlib_getlength(filename);
+	if(!deflate_size)
 	{
 		DrawMessage("Invalid PCM samples file");
-		return;
+		return 0;
 	}
 	
-	file = gzopen("/cd/mdfourier-dac-44100.pcm.gz", "r");
+#ifdef BENCHMARK
+	start = timer_ms_gettime64();
+#endif
+
+	StartScene();
+	DrawStringS(30, 60, 0.0f, 1.0f, 0.0f, "Please wait while samples are loaded... (10 seconds)"); 
+	EndScene();
+	
+	file = gzopen(filename, "r");
 	if(!file)
 	{
 		DrawMessage("No PCM samples file");
-		return;
+		return 0;
 	}
-	stream_samples = (char*)malloc(sizeof(char)*stream_samples_size);
+	stream_samples = (char*)malloc(sizeof(char)*deflate_size);
 	if(!stream_samples) 
 	{
 		gzclose(file);        
 		DrawMessage("Out of memory");
-		return;
+		return 0;
 	}
-	
-	if(gzread(file, stream_samples, sizeof(char)*stream_samples_size) != stream_samples_size)
+	if(gzread(file, stream_samples, sizeof(char)*deflate_size) != deflate_size)
 	{
 		gzclose(file);
+		
+		free(stream_samples);
+		stream_samples = NULL;
+		
 		DrawMessage("Error loading and decompressing file");
-		return;
+		return 0;
 	}
 	
 	gzclose(file);
+	
+	stream_samples_size = deflate_size;
+	
+	if(cdrom_spin_down() != ERR_OK)
+		dbglog(DBG_ERROR,"Could not stop GD-ROM from spinning\n");
+	
+#ifdef BENCHMARK
+	end = timer_ms_gettime64();
+
+	sprintf(msg, "Load took %"PRIu64" ms", end - start);
+	DrawMessage(msg);
+#endif
+	return 1;
 }
 
 void MDFourier()
 {
-	int 				done = 0, stream_res = 0, play = 0;
+	float				delta = 0.01f;
+	int 				done = 0, play = 0;
+	char				vmsg[20];
 	uint16				pressed;		
-	ImagePtr			back;
+	ImagePtr			back, layer;
 	controller			*st = NULL;
 	snd_stream_hnd_t 	hnd;
-#ifdef BENCHMARK
-	uint64 	start, end, t1, t2;
-	char	msg[100];
-#endif
 
 	back = LoadKMG("/rd/back.kmg.gz", 0);
 	if(!back)
 		return;
+	layer = LoadKMG("/rd/mdfourier.kmg.gz", 0);
+	if(!layer)
+	{
+		FreeImage(&back);
+		return;
+	}
+	layer->alpha = 0.01f;
 	
-	CleanStreamSamples();
-
-#ifdef BENCHMARK
-	start = timer_ms_gettime64();
-#endif
-	LoadGZMDFSamples();
-#ifdef BENCHMARK
-	end = timer_ms_gettime64();
-#endif
-	
-	if(cdrom_spin_down() != ERR_OK)
-		dbglog(DBG_ERROR,"Could not stop GD-ROM from spinning\n");
-
-#ifdef BENCHMARK	
-	t2 = end - start;
-	sprintf(msg, "Load took %"PRIu64" ms vs Compressed %"PRIu64" ms", t1, t2);
-	DrawMessage(msg);
-#endif
+	if(!LoadGZMDFSamples())
+	{
+		FreeImage(&back);
+		FreeImage(&layer);
+		return;
+	}
+	sprintf(vmsg, " %d hz", stream_samplerate);
 	
 	hnd = snd_stream_alloc(mdf_callback, SND_STREAM_BUFFER_MAX);
 	if(hnd == SND_STREAM_INVALID)
 	{
 		CleanStreamSamples();
 		FreeImage(&back);
+		FreeImage(&layer);
 		DrawMessage("Could not get SPU stream");
 		return;
 	}
 	
 	snd_stream_volume(hnd, 255);
 	snd_stream_queue_enable(hnd);
-	snd_stream_start(hnd, 44100, 1);
+	snd_stream_start(hnd, stream_samplerate, 1);
 	
 	while(!done && !EndProgram) 
 	{
+		char msg[250];
+		
 		StartScene();
 		DrawImage(back);
+		DrawImage(layer);
 
 		DrawStringS(130, 60, 0.0f, 1.0f, 0.0f, "MDFourier"); 
-		if(stream_samples)
+		sprintf(msg, "Using %d hz Audio Equipment Test", stream_samplerate);
+		DrawStringS(70, 70+1*fh, 1.0f, 1.0f, 1.0f, msg); 
+		if(play)
 		{
-			char msg[100];
-			
-			sprintf(msg, "stream_pos: %X (%d)", stream_pos, stream_res);
-			DrawStringS(130, 70+fh, 0.0f, 1.0f, 0.0f, msg); 
-			sprintf(msg, "stream_samples_size: %X", stream_samples_size);
-			DrawStringS(130, 70+2*fh, 0.0f, 1.0f, 0.0f, msg); 
+			if(stream_pos != stream_samples_size)
+				sprintf(msg, "Please record signal");
+			else
+				sprintf(msg, "Press #YA#Y to play again");
 		}
+		else
+			sprintf(msg, "Press #YA#Y to play signal");
+		DrawStringS(100, 70+2*fh, 0.0f, 1.0f, 0.0f, msg); 
+		DrawStringS(50, 70+13*fh, 1.0f, 1.0f, 1.0f, "Visit #Chttp://junkerhq.net/MDFourier#C for info"); 
 		EndScene();
 		
-		stream_res = snd_stream_poll(hnd);
-		VMURefresh("MDFourier", "");
+		if(snd_stream_poll(hnd) != 0)
+			DrawMessage("snd_stream_poll returned != 0");
+		VMURefresh("MDFourier", vmsg);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -290,9 +340,46 @@ void MDFourier()
 				else
 					stream_pos = 0;
 			}
+			
+			if (pressed & CONT_X)
+			{
+				if(LoadGZMDFSamples())
+					sprintf(vmsg, " %d hz", stream_samplerate);
+			}
 
 			if (pressed & CONT_START)
-				ShowMenu(SOUNDHELP);
+			{
+				if(play)
+				{
+					snd_stream_stop(hnd);
+					stream_pos = stream_samples_size;
+				}
+				
+				ShowMenu(MDFOURIERHELP);
+				
+				if(play)
+					snd_stream_start(hnd, stream_samplerate, 1);
+			}
+		}
+		
+		if(play)
+		{
+			if(stream_pos != stream_samples_size)
+			{
+				layer->alpha += delta;
+				if(layer->alpha > 0.6f)
+				{
+					layer->alpha = 0.6f;
+					delta *= -1;
+				}
+				if(layer->alpha < 0.2f)
+				{
+					layer->alpha = 0.2f;
+					delta *= -1;
+				}
+			}
+			else
+				layer->alpha = 0.01f;
 		}
 	}
 	
@@ -301,6 +388,7 @@ void MDFourier()
 	snd_stream_destroy(hnd);
 	
 	CleanStreamSamples();
+	FreeImage(&layer);
 	FreeImage(&back);
 }
 
