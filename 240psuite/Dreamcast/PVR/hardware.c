@@ -36,38 +36,9 @@
 
 #include "hardware.h"
 
-// 0-7 empty?
 
-#define 	CONT_FIXED_CAPABILITY_RTRIG   		(1<<8)
-#define 	CONT_FIXED_CAPABILITY_LTRIG   		(1<<9)
-#define 	CONT_FIXED_CAPABILITY_ANALOG_X   	(1<<10)
-#define 	CONT_FIXED_CAPABILITY_ANALOG_Y   	(1<<11)
-
-#define 	CONT_FIXED_CAPABILITY_ANALOG2_X   	(1<<12)
-#define 	CONT_FIXED_CAPABILITY_ANALOG2_Y   	(1<<13)
-
-// 14 & 15?
-
-#define 	CONT_FIXED_CAPABILITY_Z   			(1<<16)
-#define 	CONT_FIXED_CAPABILITY_Y   			(1<<17)
-#define 	CONT_FIXED_CAPABILITY_X   			(1<<18)
-#define 	CONT_FIXED_CAPABILITY_D   			(1<<19)
-
-#define 	CONT_FIXED_CAPABILITY_DPAD2_UP   	(1<<20)
-#define 	CONT_FIXED_CAPABILITY_DPAD2_DOWN   	(1<<21)
-#define 	CONT_FIXED_CAPABILITY_DPAD2_LEFT   	(1<<22)
-#define 	CONT_FIXED_CAPABILITY_DPAD2_RIGHT   (1<<23)
-
-
-#define 	CONT_FIXED_CAPABILITY_C   			(1<<24)
-#define 	CONT_FIXED_CAPABILITY_B   			(1<<25)
-#define 	CONT_FIXED_CAPABILITY_A   			(1<<26)
-#define 	CONT_FIXED_CAPABILITY_START   		(1<<27)
-
-#define 	CONT_FIXED_CAPABILITY_DPAD_UP   	(1<<28)
-#define 	CONT_FIXED_CAPABILITY_DPAD_DOWN   	(1<<29)
-#define 	CONT_FIXED_CAPABILITY_DPAD_LEFT   	(1<<30)
-#define 	CONT_FIXED_CAPABILITY_DPAD_RIGHT   	(1<<31)
+char	flashrom_region_cache[FLASHROM_CACHE_SIZE] = { 0 };
+int		flashrom_is_cached = 0;
 
 void DiplayController(int num, float x, float y)
 {
@@ -658,4 +629,105 @@ void MemoryViewer(uint32 address)
 			ShowMenu(MEMVIEWHELP);
 	}
 	return;
+}
+
+/* Modified from KOS */
+int flashrom_get_region_data()
+{
+    int start, size;
+
+	if(flashrom_is_cached)
+		return FLASHROM_ERR_NONE;
+		
+	memset(flashrom_region_cache, 0, sizeof(char)*FLASHROM_CACHE_SIZE);
+	
+    /* Find the partition */
+    if(flashrom_info(FLASHROM_PT_SYSTEM, &start, &size)) {
+        dbglog(DBG_ERROR, "flashrom_get_region: can't find partition 0\n");
+        return FLASHROM_ERR_NO_PARTITION;
+    }
+
+    /* Read the first 5 characters of that partition */
+    if(flashrom_read(start, flashrom_region_cache, 5) < 0) {
+        dbglog(DBG_ERROR, "flashrom_get_region: can't read partition 0\n");
+        return FLASHROM_ERR_READ_PART;
+    }
+	
+	flashrom_is_cached = 1;
+	dbglog(DBG_INFO, "Read Flashrom Data %s\n", flashrom_region_cache);
+	return FLASHROM_ERR_NONE;
+}
+	
+int flashrom_get_region_country()
+{
+	if(!flashrom_is_cached)
+	{
+		if(flashrom_get_region_data() != FLASHROM_ERR_NONE)
+			return FLASHROM_REGION_UNKNOWN;
+	}
+	
+    /* Now compare cache against known codes */
+    if(flashrom_region_cache[2] == '0')
+        return FLASHROM_REGION_JAPAN;
+    else if(flashrom_region_cache[2] == '1')
+        return FLASHROM_REGION_US;
+    else if(flashrom_region_cache[2] == '2')
+        return FLASHROM_REGION_EUROPE;
+    else {
+        dbglog(DBG_WARNING, "flashrom_get_region_country: unknown code '%s' (pos %d %c)\n",
+			flashrom_region_cache, 2, flashrom_region_cache[2]);
+        return FLASHROM_REGION_UNKNOWN;
+    }
+}
+
+int flashrom_get_region_language()
+{
+    if(!flashrom_is_cached)
+	{
+		if(flashrom_get_region_data() != FLASHROM_ERR_NONE)
+			return FLASHROM_LANGUAGE_UNKNOWN;
+	}
+	
+    /* Now compare against known codes */
+    if(flashrom_region_cache[3] == '0')
+        return FLASHROM_LANGUAGE_JAPAN;
+    else if(flashrom_region_cache[3] == '1')
+        return FLASHROM_LANGUAGE_ENGLISH;
+    else if(flashrom_region_cache[3] == '2')
+        return FLASHROM_LANGUAGE_GERMAN;
+	else if(flashrom_region_cache[3] == '3')
+        return FLASHROM_LANGUAGE_FRENCH;
+	else if(flashrom_region_cache[3] == '4')
+        return FLASHROM_LANGUAGE_SPANISH;
+	else if(flashrom_region_cache[3] == '5')
+        return FLASHROM_LANGUAGE_ITALIAN;
+    else {
+        dbglog(DBG_WARNING, "flashrom_get_region_language: unknown code '%s' (pos %d %c)\n",
+			flashrom_region_cache, 3, flashrom_region_cache[3]);
+        return FLASHROM_LANGUAGE_UNKNOWN;
+    }
+}
+
+int flashrom_get_region_broadcast()
+{
+    if(!flashrom_is_cached)
+	{
+		if(flashrom_get_region_data() != FLASHROM_ERR_NONE)
+			return FLASHROM_BROADCAST_UNKNOWN;
+	}
+	
+    /* Now compare against known codes */
+    if(flashrom_region_cache[4] == '0')
+        return FLASHROM_BROADCAST_NTSC;
+    else if(flashrom_region_cache[4] == '1')
+        return FLASHROM_BROADCAST_PAL;
+    else if(flashrom_region_cache[4] == '2')
+        return FLASHROM_BROADCAST_PALM;
+	else if(flashrom_region_cache[4] == '3')
+        return FLASHROM_BROADCAST_PALN;
+    else {
+        dbglog(DBG_WARNING, "flashrom_get_region_broadcast: unknown code '%s' (pos %d %c)\n",
+			flashrom_region_cache, 4, flashrom_region_cache[4]);
+        return FLASHROM_BROADCAST_UNKNOWN;
+    }
 }

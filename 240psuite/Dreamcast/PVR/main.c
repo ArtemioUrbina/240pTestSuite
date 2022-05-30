@@ -45,8 +45,6 @@ extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 KOS_INIT_FLAGS(INIT_DEFAULT);
 
-int	region = FLASHROM_REGION_UNKNOWN;
-
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void VideoTestsMenu(ImagePtr title, ImagePtr sd);
 void AudioTestsMenu(ImagePtr title, ImagePtr sd);
@@ -56,7 +54,7 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits);
 
 int main(void)
 {
-	int 		done = 0, sel = 1, joycnt = 0;
+	int 		done = 0, sel = 1, joycnt = 0, broadcast = FLASHROM_BROADCAST_UNKNOWN;
 	uint16		pressed;
 	ImagePtr	title, sd;
 	controller	*st;
@@ -68,28 +66,32 @@ int main(void)
 		dbglog(DBG_ERROR,"Could not stop GD-ROM from spinning\n");
 
 	vcable = vid_check_cable();
-	region = flashrom_get_region();
 
 	InitImages();
 
-	if(!LoadVMUSave(error))
+	LoadVMUSave(error);
+	
+	// Define if PAL modes are enabled
+	broadcast = flashrom_get_region_broadcast();
+	if(broadcast != FLASHROM_BROADCAST_NTSC && 
+		broadcast != FLASHROM_BROADCAST_UNKNOWN)
+		
 	{
-		if(region == FLASHROM_REGION_EUROPE)
-		{
-			settings.EnablePAL = 1;
-			IsPALDC = 1;
-		}
+		IsPALDC = 1;
+		settings.EnablePAL = 1;
 	}
 	else
-	{
-		if(region == FLASHROM_REGION_EUROPE)
-			IsPALDC = 1;
-		else
-			settings.EnablePAL = 0;
-	}
+		settings.EnablePAL = 0;
 	
+	// Boot in 640x480 is VGA, or 288 in PAL for safety,
+	// Some monitors take PAL60 as NTSC 4.43 and decode colors incorrectly
 	if(vcable != CT_VGA)
-		ChangeResolution(VIDEO_240P);
+	{
+		if(IsPALDC)
+			ChangeResolution(VIDEO_288P);
+		else
+			ChangeResolution(VIDEO_240P);
+	}
 	else
 		ChangeResolution(VIDEO_480P_SL);
 
@@ -683,6 +685,7 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 	float 	g = 1.0f;
 	float 	b = 1.0f;
 	char	vdata[40], msg[80];
+	char	*region, *broadcast;
 	
 	DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Configuration"); y += fh; c++;
 	if(showcredits)
@@ -709,21 +712,45 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 	g = 0.8f;
 	b = 0.8f;
 	
-	switch(region)
+	switch(flashrom_get_region_country())
 	{
-		case FLASHROM_REGION_UNKNOWN:
-			DrawStringS(x, y, r, g, b, "??????");
-			break;
 		case FLASHROM_REGION_JAPAN:
-			DrawStringS(x, y, r, g, b, "Japan");
+			region = "Japan";
 			break;
 		case FLASHROM_REGION_US:
-			DrawStringS(x, y, r, g, b, "USA");
+			region = "USA";
 			break;
 		case FLASHROM_REGION_EUROPE:
-			DrawStringS(x, y, r, g, b, "Europe");
+			region = "Europe";
+			break;
+		case FLASHROM_REGION_UNKNOWN:
+		default:
+			region = "????";
 			break;
 	}
+	
+	switch(flashrom_get_region_broadcast())
+	{
+		case FLASHROM_BROADCAST_NTSC:
+			broadcast = "NTSC";
+			break;
+		case FLASHROM_BROADCAST_PAL:
+			broadcast = "PAL";
+			break;
+		case FLASHROM_BROADCAST_PALM:
+			broadcast = "PAL-M";
+			break;
+		case FLASHROM_BROADCAST_PALN:
+			broadcast = "PAL-N";
+			break;
+		case FLASHROM_BROADCAST_UNKNOWN:
+		default:
+			broadcast = "????";
+			break;
+	}
+	
+	sprintf(msg, "%s %s", region, broadcast);
+	DrawStringS(x, y, r, g, b, msg);
 	
 	y += fh - 2;
 	GetVideoModeStr(vdata, 1);
