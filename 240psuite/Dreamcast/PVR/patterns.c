@@ -847,22 +847,8 @@ void DrawMonoscope()
 		
 		if(!back)
 		{
-			if(vmode == VIDEO_480I || vmode == VIDEO_480P)
-			{
-				back = LoadKMG("/rd/480/monoscope-480.kmg.gz", 0);
-				if(!back)
-					return;
-				rlines = LoadKMG("/rd/480/monoscope-480-lin.kmg.gz", 0);
-				if(!rlines)
-				{
-					FreeImage(&back);
-					return;
-				}
-				back->scale = 0;
-				rlines->scale = 0;
-			}
-			
-			if(vmode == VIDEO_240P || vmode == VIDEO_480I_A240)
+			if(vmode == VIDEO_240P || vmode == VIDEO_480I_A240 ||
+				vmode == VIDEO_480P_SL)
 			{
 				// Use 240p Monoscope
 				if(!back)
@@ -877,6 +863,21 @@ void DrawMonoscope()
 						return;
 					}
 				}
+			}
+			
+			if(vmode == VIDEO_480I || vmode == VIDEO_480P)
+			{
+				back = LoadKMG("/rd/480/monoscope-480.kmg.gz", 0);
+				if(!back)
+					return;
+				rlines = LoadKMG("/rd/480/monoscope-480_lin.kmg.gz", 0);
+				if(!rlines)
+				{
+					FreeImage(&back);
+					return;
+				}
+				back->scale = 0;
+				rlines->scale = 0;
 			}
 			
 			if(vmode == VIDEO_288P || vmode == VIDEO_576I_A264)
@@ -894,6 +895,21 @@ void DrawMonoscope()
 						return;
 					}
 				}
+			}
+			
+			if(vmode == VIDEO_576I)
+			{
+				back = LoadKMG("/rd/480/monoscopePAL576.kmg.gz", 0);
+				if(!back)
+					return;
+				rlines = LoadKMG("/rd/480/monoscopePAL576_lin.kmg.gz", 0);
+				if(!rlines)
+				{
+					FreeImage(&back);
+					return;
+				}
+				back->scale = 0;
+				rlines->scale = 0;
 			}
 
 			if(back)

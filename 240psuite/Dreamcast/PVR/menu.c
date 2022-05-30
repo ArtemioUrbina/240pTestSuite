@@ -1066,7 +1066,7 @@ void SelectVideoMode(ImagePtr screen)
 		}
 
 		y += fh/2;
-		if(vcable != CT_VGA && settings.EnablePAL)
+		if(vcable != CT_VGA && settings.EnablePAL && broadcast != FLASHROM_BROADCAST_NTSC)
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
 				"288p mixed 240p/264p assets"); y += fh; c++;
@@ -1160,15 +1160,18 @@ void SelectVideoMode(ImagePtr screen)
 							ChangeResolution(VIDEO_480I);
 						break;
 					case 4:
-						if(vcable != CT_VGA && settings.EnablePAL)
+						if(vcable != CT_VGA && settings.EnablePAL &&
+							broadcast != FLASHROM_BROADCAST_NTSC)
 							ChangeResolution(VIDEO_288P);
 						break;
 					case 5:
-						if(vcable != CT_VGA && settings.EnablePAL)
+						if(vcable != CT_VGA && settings.EnablePAL &&
+							broadcast != FLASHROM_BROADCAST_NTSC)
 							ChangeResolution(VIDEO_576I_A264);
 						break;
 					case 6:
-						if(vcable != CT_VGA && settings.EnablePAL)
+						if(vcable != CT_VGA && settings.EnablePAL &&
+							broadcast != FLASHROM_BROADCAST_NTSC)
 							ChangeResolution(VIDEO_576I);
 						break;
 					case 7:
