@@ -221,11 +221,7 @@ void DrawEBUColorBars()
 		}
 
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU(" EBU ", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh(" EBU ", is75 ? "  75%" : " 100%");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -238,6 +234,7 @@ void DrawEBUColorBars()
 				is75 = !is75;
 				text = 30;
 				sprintf(msg, "%s%%", is75 ? "75" : "100");
+				refreshVMU = 1;
 			}
 
 			if (pressed & CONT_START)
@@ -284,11 +281,7 @@ void DrawSMPTEColorBars()
 		}
 
 		EndScene();
-		if(refreshVMU)
-		{
-			updateVMU(" SMPTE ", "", 1);
-			refreshVMU = 0;
-		}
+		VMURefresh("SMPTE", is75 ? "  75%" : " 100%");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -301,6 +294,7 @@ void DrawSMPTEColorBars()
 				is75 = !is75;
 				text = 30;
 				sprintf(msg, "%s%%", is75 ? "75" : "100");
+				refreshVMU = 1;
 			}
 
 			if (pressed & CONT_START)
@@ -354,7 +348,7 @@ void DrawWhiteScreen()
 	ImagePtr	back = NULL;
 	controller	*st = NULL;
 	char		*mode[5] = { "White", "Black", "Red", "Green", "Blue" };
-	char		msg[100], *vmuMsg = mode[0];
+	char		msg[100], *vmuMsg = mode[0], *edited = "Edited";
 
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
@@ -403,7 +397,7 @@ void DrawWhiteScreen()
 				if(color == 0 && cr + cb + cg != 3*1.0f)
 				{
 					sprintf(msg, "%s [EDITED]", mode[color]);
-					vmuMsg = "Edited";
+					vmuMsg = edited;
 				}
 				else
 				{
@@ -425,7 +419,7 @@ void DrawWhiteScreen()
 				if(color == 0 && cr + cb + cg != 3*1.0f)
 				{
 					sprintf(msg, "%s [edited]", mode[color]);
-					vmuMsg = "Edited";
+					vmuMsg = edited;
 				}
 				else
 				{
@@ -524,7 +518,19 @@ void DrawWhiteScreen()
 				{			
 					if(current)				
 						*current = 1.0f;
-				}	
+				}
+				
+				if(cr + cb + cg != 3*1.0f && vmuMsg != edited)
+				{
+					vmuMsg = edited;
+					refreshVMU = 1;
+				}
+				
+				if(cr + cb + cg == 3*1.0f && vmuMsg == edited)
+				{
+					vmuMsg = mode[color];
+					refreshVMU = 1;
+				}
 			}
 
 			switch(color)
@@ -833,6 +839,7 @@ void DrawMonoscope()
 	uint16		pressed;		
 	ImagePtr	back = NULL, rlines = NULL;
 	controller	*st = NULL;
+	char		vmumsg[5];
 
 	while(!done && !EndProgram) 
 	{
@@ -913,7 +920,11 @@ void DrawMonoscope()
 			}
 
 			if(back)
+			{
 				IgnoreOffset(back);
+				sprintf(vmumsg, "  %3d%%", FLOAT_TO_INT(back->alpha*100.0f));
+				refreshVMU = 1;
+			}
 			if(rlines)
 				IgnoreOffset(rlines);
 		}
@@ -923,7 +934,7 @@ void DrawMonoscope()
 		DrawImage(rlines);
 		EndScene();
 		
-		VMURefresh("Monoscope", "");
+		VMURefresh("Monoscope", vmumsg);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -939,6 +950,8 @@ void DrawMonoscope()
 				back->alpha -= 0.1f;
 				if(back->alpha < 0.0f)
 					back->alpha = 1.0f;
+				sprintf(vmumsg, "  %3d%%", FLOAT_TO_INT(back->alpha*100.0f));
+				refreshVMU = 1;
 			}
 		
 			if (pressed & CONT_RTRIGGER)
@@ -946,6 +959,8 @@ void DrawMonoscope()
 				back->alpha += 0.1f;
 				if(back->alpha > 1.0f)
 					back->alpha = 0.0f;
+				sprintf(vmumsg, "  %3d%%", FLOAT_TO_INT(back->alpha*100.0f));
+				refreshVMU = 1;
 			}
 		}
 	}
@@ -1111,7 +1126,7 @@ void DrawOverscan()
 				joycntx = 0, joycnty = 0;
 	uint16		pressed;
 	ImagePtr	square = NULL, border = NULL;	
-	char		msg[50];
+	char		msg[50], vmumsg[10];;
 	controller	*st = NULL;
 	
 	square = LoadKMG("/rd/white.kmg.gz", 1);
@@ -1132,7 +1147,8 @@ void DrawOverscan()
 	square->r = 0.3;
 	square->g = 0.3;
 	square->b = 0.3;
-			
+	
+	refreshVMU = 1;
 	while(!done && !EndProgram) 
 	{			
 		int x = 0, y = 0;
@@ -1145,7 +1161,8 @@ void DrawOverscan()
 			square->x = square->y = 0;			
 			oldvmode = vmode;
 			reset = 0;
-		}		
+			refreshVMU = 1;
+		}	
 		
 		StartScene();
 				
@@ -1187,6 +1204,11 @@ void DrawOverscan()
 
 		EndScene();
 		
+		if(refreshVMU)
+			sprintf(vmumsg, "%dx%d", dW-oRight-oLeft, dH-oTop-oBottom);
+
+		VMURefresh("Overscan", vmumsg);
+		
 		st = ReadController(0, &pressed);
 		if(st)
 		{
@@ -1215,6 +1237,7 @@ void DrawOverscan()
 					square->y++;
 					square->h--;
 					oTop++;
+					refreshVMU = 1;
 				}
 			}
 		
@@ -1226,6 +1249,7 @@ void DrawOverscan()
 					square->y--;
 					square->h++;	
 					oTop--;
+					refreshVMU = 1;
 				}
 			}
 		
@@ -1237,6 +1261,7 @@ void DrawOverscan()
 				{								
 					square->h--;
 					oBottom++;
+					refreshVMU = 1;
 				}
 			}
 			
@@ -1247,6 +1272,7 @@ void DrawOverscan()
 				{								
 					square->h++;	
 					oBottom--;
+					refreshVMU = 1;
 				}
 			}
 			
@@ -1259,6 +1285,7 @@ void DrawOverscan()
 					square->x++;
 					square->w--;
 					oLeft++;
+					refreshVMU = 1;
 				}
 			}
 		
@@ -1270,6 +1297,7 @@ void DrawOverscan()
 					square->x--;
 					square->w++;
 					oLeft--;
+					refreshVMU = 1;
 				}
 			}
 		
@@ -1281,6 +1309,7 @@ void DrawOverscan()
 				{								
 					square->w--;
 					oRight++;
+					refreshVMU = 1;
 				}
 			}
 		
@@ -1291,6 +1320,7 @@ void DrawOverscan()
 				{								
 					square->w++;	
 					oRight--;
+					refreshVMU = 1;
 				}
 			}
 					

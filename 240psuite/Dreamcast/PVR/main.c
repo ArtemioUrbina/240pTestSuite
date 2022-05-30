@@ -87,7 +87,7 @@ int main(void)
 	// Some monitors take PAL60 as NTSC 4.43 and decode colors incorrectly
 	if(vcable != CT_VGA)
 	{
-		if(IsPALDC)
+		if(IsPALDC && vcable == CT_COMPOSITE)
 			ChangeResolution(VIDEO_288P);
 		else
 			ChangeResolution(VIDEO_240P);
@@ -766,6 +766,18 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 			break;
 		case CT_COMPOSITE:
 			sprintf(msg, "CVBS %s", vdata);
+			DrawStringS(x, y, r, g, b, msg);
+			break;
+		case CT_NONE:
+			sprintf(msg, "NONE %s", vdata);
+			DrawStringS(x, y, r, g, b, msg);
+			break;
+		case CT_ANY:
+			sprintf(msg, "ANY %s", vdata);
+			DrawStringS(x, y, r, g, b, msg);
+			break;
+		default:
+			sprintf(msg, "???? %s", vdata);
 			DrawStringS(x, y, r, g, b, msg);
 			break;
 	}

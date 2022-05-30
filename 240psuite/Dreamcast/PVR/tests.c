@@ -1589,14 +1589,31 @@ void DiagonalPatternTest()
 
 void PassiveLagTest()
 {
-	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
+	int 		frames = 0, seconds = 0, minutes = 0, hours = 0;
+	int			toggle = 0, framecnt = 1, done =  0;
 	uint16		pressed, lsd, msd, pause = 0;		
-	ImagePtr	back, circle;
+	ImagePtr	back, circle, barl, barr;
 	controller	*st;
 	
-	back = LoadKMG("/rd/white.kmg.gz", 1);
+	back = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!back)
 		return;
+	back->w = 320;
+	back->h = 240;
+		
+	barl = LoadKMG("/rd/white.kmg.gz", 0);
+	if(!barl)
+		return;
+	barr = LoadKMG("/rd/white.kmg.gz", 0);
+	if(!barr)
+		return;
+	barr->x = 0;
+	barl->w = 2;
+	barl->h = 240;
+	
+	barr->x = 318;
+	barr->w = 2;
+	barr->h = 240;
 
 	circle= LoadKMG("/rd/circle.kmg.gz", 0);
 	if(!circle)
@@ -1610,6 +1627,8 @@ void PassiveLagTest()
 	{
 		StartScene();
 		DrawImage(back);
+		DrawImage(barl);
+		DrawImage(barr);
 		DrawString(32, 8, 0, 0,	0, "hours");
 		DrawString(104, 8, 0, 0, 0, "minutes");
 		DrawString(176, 8, 0, 0, 0, "seconds");
@@ -1767,7 +1786,7 @@ void PassiveLagTest()
 		DrawDigit(272, 16, 0, 0, 0, lsd);
 
 		EndScene();
-		VMURefresh("LAG TEST", "");
+		VMURefresh("LAG TEST", !pause ? "running" : "paused");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1782,7 +1801,10 @@ void PassiveLagTest()
 			}
 
 			if (pressed & CONT_A)
+			{
 				pause = !pause;
+				refreshVMU = 1;
+			}
 
 			if (pressed & CONT_START)
 				ShowMenu(PASSIVELAG);
@@ -1795,6 +1817,7 @@ void PassiveLagTest()
 			framecnt ++;
 			if(framecnt > 8)
 				framecnt = 1;
+			toggle = !toggle;
 		}
 
 		if(frames > (IsPAL ? 49 : 59))
@@ -1818,8 +1841,30 @@ void PassiveLagTest()
 		if(hours > 99)
 			hours = 0;
 
+		if(!toggle)
+		{
+			barl->r = 0;
+			barl->g = 0;
+			barl->b = 0;
+			
+			barr->r = 0;
+			barr->g = 0;
+			barr->b = 0;
+		}
+		else
+		{
+			barl->r = 1.0f;
+			barl->g = 1.0f;
+			barl->b = 1.0f;
+			
+			barr->r = 1.0f;
+			barr->g = 1.0f;
+			barr->b = 1.0f;
+		}
 	}
 	FreeImage(&back);
+	FreeImage(&barl);
+	FreeImage(&barr);
 	FreeImage(&circle);
 	ReleaseNumbers();
 }

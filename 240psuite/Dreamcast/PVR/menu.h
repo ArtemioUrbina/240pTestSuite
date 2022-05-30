@@ -45,6 +45,8 @@
 		updateVMU(msg1, msg2, 1);\
 		refreshVMU = 0;\
 	}
+	
+#define FLOAT_TO_INT(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 
 struct settings_st {
 	int drawborder;

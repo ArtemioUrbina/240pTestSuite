@@ -710,9 +710,14 @@ inline void EndScene()
 				ChangeResolution(VIDEO_480P_SL);
 				break;
 			case CT_RGB:
+				ChangeResolution(VIDEO_240P);
+				break;
 			case CT_COMPOSITE:
 			default:
-				ChangeResolution(VIDEO_240P);
+				if(IsPALDC)
+					ChangeResolution(VIDEO_288P);
+				else
+					ChangeResolution(VIDEO_240P);
 				break;
 		}
 	}
