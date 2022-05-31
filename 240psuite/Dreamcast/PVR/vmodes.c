@@ -193,13 +193,13 @@ void AdjustPVROptions()
 	else
 	{
 		if(settings.Deflicker)
-			dbglog(DBG_INFO, "240p TS: PVR deflicker filter not disabled by user request\n");
+			dbglog(DBG_INFO, "240p TS: PVR deflicker filter not disabled (settings)\n");
 	}
 
 	// Enable deflicker filter
 	if(settings.Deflicker && PVR_GET(PVR_SCALER_CFG) != 0x401)
 	{
-		dbglog(DBG_INFO, "240p TS: Enabling PVR deflicker filter by user request\n");
+		dbglog(DBG_INFO, "240p TS: Enabling PVR deflicker filter (settings)\n");
 		PVR_SET(PVR_SCALER_CFG, 0x401);
 	}
 
@@ -212,7 +212,7 @@ void AdjustPVROptions()
 	else
 	{
 		if(settings.Dithering)
-			dbglog(DBG_INFO, "240p TS: PVR dithering not disabled by user request\n");
+			dbglog(DBG_INFO, "240p TS: PVR dithering not disabled (settings)\n");
 	}
 	
 	// Turn on texture dithering
@@ -297,7 +297,7 @@ void ChangeVideoRegisters()
 		}
 	}
 	else
-		dbglog(DBG_INFO, "240p TS: Using KOS Register defaults by user request\n");
+		dbglog(DBG_INFO, "240p TS: Using KOS Register defaults (settings)\n");
 }
 
 void ChangeResolution(int nvmode)
@@ -710,21 +710,25 @@ void TestVideoMode(int mode)
 	test_mode = *source_mode;
 	backup_mode = test_mode;
 
-	if(IsPAL)
-		back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
+	if(vmode >= HIGH_RES)
+	{
+		back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
+		if(back)
+			back->scale = 0;
+	}
 	else
 	{
-		if(vmode >= HIGH_RES)
-		{
-			back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
-			if(back)
-				back->scale = 0;
-		}
+		if(IsPAL)
+			back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
 		else
 			back = LoadKMG("/rd/grid.kmg.gz", 0);
 	}
+
 	if(!back)
+	{
+		dbglog(DBG_ERROR, "Could not load background\n");
 		return;
+	}
 
 	updateVMU("VIDEO", "", 1);
 

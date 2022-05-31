@@ -960,6 +960,7 @@ void DrawMonoscope()
 				if(back->alpha > 1.0f)
 					back->alpha = 0.0f;
 				sprintf(vmumsg, "  %3d%%", FLOAT_TO_INT(back->alpha*100.0f));
+				
 				refreshVMU = 1;
 			}
 		}

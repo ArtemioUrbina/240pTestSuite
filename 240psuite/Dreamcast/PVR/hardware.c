@@ -385,7 +385,7 @@ void ControllerTest()
 		
 		StartScene();
 		DrawImage(back);
-		DrawStringS(120, 20, 0.0f, 1.0f, 0.0f, "Controller Test"); 		
+		DrawStringS(120, 20, 1.0f, 1.0f, 0.0f, "Controller Test"); 		
 		
 		DiplayController(0, x, y);
 		DiplayController(1, x+w, y);
@@ -403,6 +403,89 @@ void ControllerTest()
 		if (st->buttons & CONT_START  &&
 			st->buttons & CONT_DPAD_LEFT)
 			done =	1;								
+	}
+	FreeImage(&back);
+	return;
+}
+
+void maple_device_scan(float x, float y)
+{
+	int     		port = 0, unit = 0;
+	maple_device_t  *dev = NULL;
+	char			msg[512];
+
+    /* Enumerate everything */
+    for(port = 0; port < MAPLE_PORT_COUNT; port++) 
+	{
+        for(unit = 0; unit < MAPLE_UNIT_COUNT; unit++)
+		{
+            dev = &maple_state.ports[port].units[unit];
+
+            if(dev->valid)
+			{
+				if(unit == 0)
+				{
+					sprintf(msg, "#C[%c%c]#C #G%s#G: %s",
+                       'A' + port, '0' + unit,
+                       dev->info.product_name,
+                       maple_pcaps(dev->info.functions));
+					DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg); 
+				}
+				else
+				{
+					sprintf(msg, " #C[%c%c]:#C %s",
+                       'A' + port, '0' + unit,
+                       maple_pcaps(dev->info.functions));
+					DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg); 
+				}
+				y += fh;
+            }
+        }
+    }
+}
+
+void ListMappleDevices()
+{
+	int 			done = 0, sel = 1;
+	uint16			pressed;		
+	ImagePtr		back;
+	controller		*st = NULL;
+
+	back = LoadKMG("/rd/back.kmg.gz", 0);
+	if(!back)
+		return;
+
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		DrawImage(back);
+
+		DrawStringS(125, 40, 0.0f, 1.0f, 0.0f, "Mapple Devices");
+		maple_device_scan(30, 55);
+		EndScene();
+
+		
+		VMURefresh("Mapple", "Devices");
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;
+
+			if (pressed & CONT_A)
+			{
+			}
+
+			if (pressed & CONT_START)
+				ShowMenu(MAPPLEHELP);
+		}
+		
+		if(sel < 0)
+			sel = 2;
+
+		if(sel > 2)
+			sel = 0;
 	}
 	FreeImage(&back);
 	return;

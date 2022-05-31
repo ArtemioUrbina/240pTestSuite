@@ -30,6 +30,10 @@
 #include "menu.h"
 #include "help.h"
 
+#ifdef DCLOAD
+int keep_link_alive = 0;
+#endif
+
 /**************DrawCylce*******************
 Load Graphics
 while()
@@ -342,7 +346,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
 	sprintf(msg, "KMG %s took %"PRIu64" ms\n", filename, end - start);
-	dbglog(DBG_ERROR, msg);
+	dbglog(DBG_INFO, msg);
 #endif
 
 	image->r = 1.0f;
@@ -434,7 +438,7 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
 	sprintf(msg, "KMG %s took %"PRIu64" ms\n", filename, end - start);
-	dbglog(DBG_ERROR, msg);
+	dbglog(DBG_INFO, msg);
 #endif
 	return 1;
 }
@@ -693,9 +697,6 @@ inline void EndScene()
 
 	if(DrawMenu)
 	{
-#ifdef BENCHMARK
-		PVRStats("EndFrame");
-#endif
 		DrawMenu = 0;
 		DrawShowMenu();
 	}
@@ -722,4 +723,13 @@ inline void EndScene()
 		}
 	}
 	ovcable = vcable;
+	
+#ifdef DCLOAD
+	// Ping dc-tool link every 1800 frames
+	if(keep_link_alive++ > 1800)
+	{
+		PVRStats("ping");
+		keep_link_alive = 0;
+	}
+#endif
 }

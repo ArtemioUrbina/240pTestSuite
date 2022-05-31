@@ -169,39 +169,46 @@ void CleanStreamSamples()
 	stream_pos = stream_samples_size = 0;
 }
 
+inline void DisplayError(char *msg)
+{
+	DrawMessage(msg);
+#ifdef DCLOAD
+	dbglog(DBG_ERROR, msg);
+#endif
+}
+
 // Takes around 10 seconds, around ten seconds faster than uncompressed from CD-R
 int LoadGZMDFSamples()
 {
 	gzFile		file;
 	int			deflate_size = 0, khz = 1;
 	char		*filename = NULL;
-	fmenudata 	resmenudata[] = { {1, "48000hz"}, {2, "44100hz"} };
+	fmenudata 	resmenudata[] = { {1, "44100hz (best)"}, {2, "48000hz"} };
 #ifdef BENCHMARK
 	uint64 		start, end;
-	char		msg[100];
 #endif
 	
 	VMURefresh("Select", "Frequency");
 	khz = SelectMenu("Select Frequency", resmenudata, 2, khz);
 	if(khz == MENU_CANCEL)
-		return 0;
+		return -1;
 	
 	if(khz == 1)
 	{
-		filename = "/cd/mdfourier-dac-48000.pcm.gz";
-		stream_samplerate = 48000;
+		filename = "/cd/mdfourier-dac-44100.pcm.gz";
+		stream_samplerate = 44100;
 	}
 	if(khz == 2)
 	{
-		filename = "/cd/mdfourier-dac-44100.pcm.gz";
-		stream_samplerate = 44100;
+		filename = "/cd/mdfourier-dac-48000.pcm.gz";
+		stream_samplerate = 48000;
 	}
 		
 	CleanStreamSamples();
 	deflate_size = zlib_getlength(filename);
 	if(!deflate_size)
 	{
-		DrawMessage("Invalid PCM samples file");
+		DisplayError("Could not find PCM samples file in drive");
 		return 0;
 	}
 	
@@ -216,14 +223,14 @@ int LoadGZMDFSamples()
 	file = gzopen(filename, "r");
 	if(!file)
 	{
-		DrawMessage("No PCM samples file");
+		DisplayError("No PCM samples file in drive");
 		return 0;
 	}
 	stream_samples = (char*)malloc(sizeof(char)*deflate_size);
 	if(!stream_samples) 
 	{
 		gzclose(file);        
-		DrawMessage("Out of memory");
+		DisplayError("Out of memory");
 		return 0;
 	}
 	if(gzread(file, stream_samples, sizeof(char)*deflate_size) != deflate_size)
@@ -233,7 +240,7 @@ int LoadGZMDFSamples()
 		free(stream_samples);
 		stream_samples = NULL;
 		
-		DrawMessage("Error loading and decompressing file");
+		DisplayError("Error loading and decompressing samples file");
 		return 0;
 	}
 	
@@ -242,13 +249,12 @@ int LoadGZMDFSamples()
 	stream_samples_size = deflate_size;
 	
 	if(cdrom_spin_down() != ERR_OK)
-		dbglog(DBG_ERROR,"Could not stop GD-ROM from spinning\n");
+		dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
 	
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
 
-	sprintf(msg, "Load took %"PRIu64" ms", end - start);
-	DrawMessage(msg);
+	dbglog(DBG_INFO, "Load took %"PRIu64" ms", end - start);
 #endif
 	return 1;
 }
@@ -274,7 +280,7 @@ void MDFourier()
 	}
 	layer->alpha = 0.01f;
 	
-	if(!LoadGZMDFSamples())
+	if(LoadGZMDFSamples() == 0)
 	{
 		FreeImage(&back);
 		FreeImage(&layer);
@@ -288,7 +294,7 @@ void MDFourier()
 		CleanStreamSamples();
 		FreeImage(&back);
 		FreeImage(&layer);
-		DrawMessage("Could not get SPU stream");
+		DisplayError("Could not get SPU stream");
 		return;
 	}
 	
@@ -316,12 +322,13 @@ void MDFourier()
 		}
 		else
 			sprintf(msg, "Press #YA#Y to play signal");
-		DrawStringS(100, 70+2*fh, 0.0f, 1.0f, 0.0f, msg); 
+		DrawStringS(100, 70+2*fh, 0.0f, 1.0f, 0.0f, msg);
+		if(stream_samplerate == 48000)
+			DrawStringS(50, 70+10*fh, 0.0f, 1.0f, 0.0f, "Yamaha AICA has aliasing at 48khz"); 
 		DrawStringS(50, 70+13*fh, 1.0f, 1.0f, 1.0f, "Visit #Chttp://junkerhq.net/MDFourier#C for info"); 
 		EndScene();
 		
-		if(snd_stream_poll(hnd) != 0)
-			DrawMessage("snd_stream_poll returned != 0");
+		snd_stream_poll(hnd);
 		VMURefresh("MDFourier", vmsg);
 
 		st = ReadController(0, &pressed);
@@ -343,8 +350,21 @@ void MDFourier()
 			
 			if (pressed & CONT_X)
 			{
-				if(LoadGZMDFSamples())
+				snd_stream_stop(hnd);
+				
+				if(LoadGZMDFSamples() == 0)
+					done = 1;
+				else
+				{
+					stream_pos = play ? stream_samples_size : 0;
+
+					snd_stream_volume(hnd, 255);
+					snd_stream_queue_enable(hnd);
+					snd_stream_start(hnd, stream_samplerate, 1);
+					
 					sprintf(vmsg, " %d hz", stream_samplerate);
+					refreshVMU = 1;
+				}
 			}
 
 			if (pressed & CONT_START)

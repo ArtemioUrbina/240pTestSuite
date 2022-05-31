@@ -154,10 +154,11 @@ int CopyFBToBG()
 	uint16	*fbcopy = NULL;
 	uint16	r, g, b;
 #ifdef BENCHMARK
-	uint64	start, end;
+	uint64	start, end, mstart;
 	char	msg[100];
 		
 	start = timer_ms_gettime64();
+	mstart = start;
 #endif
 
 	if(!fbtexture)
@@ -194,9 +195,17 @@ int CopyFBToBG()
 	dbglog(DBG_INFO, msg);
 	start = timer_ms_gettime64();
 #endif
+
 	save = irq_disable();
 	memcpy(fbcopy, vram_s, sizeof(uint16)*numpix);
 	irq_restore(save);
+
+#ifdef BENCHMARK
+	end = timer_ms_gettime64();
+	sprintf(msg, "FB buffer memcpy took %"PRIu64" ms\n", end - start);
+	dbglog(DBG_INFO, msg);
+	start = timer_ms_gettime64();
+#endif
 
 	for(i = 0; i < numpix; i++)
 	{
@@ -236,6 +245,9 @@ int CopyFBToBG()
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
 	sprintf(msg, "FB texture upload took %"PRIu64" ms\n", end - start);
+	dbglog(DBG_INFO, msg);
+	
+	sprintf(msg, "FB texture entire process took %"PRIu64" ms\n", end - mstart);
 	dbglog(DBG_INFO, msg);
 #endif
 
@@ -1206,11 +1218,11 @@ void DrawNish()
 	controller		*st;
 	ImagePtr		nish;
 
-	nish = LoadKMG("/rd/nish.kmg.gz", 1);
+	nish = LoadKMG("/rd/nish.kmg.gz", 0);
 	if(!nish)
 		return;
 
-	updateVMU(" Nishka", "", 1);
+	updateVMU("Nishka", "MEOW", 1);
 	while(!done)
 	{
 		done = 1;

@@ -44,12 +44,16 @@ void LoadFont()
 	if(!font_t)
 	{
 		font_t = LoadKMG("/rd/font.kmg.gz", 0);
+		if(!font_t)
+			return;
 		font_t->layer = 2.0f;
 	}	
 
 	if(!black_t)
 	{				
 		black_t = LoadKMG("/rd/black.kmg.gz", 0);
+		if(!black_t)
+			return;
 		black_t->layer = 2.0f;
 		black_t->alpha = 0.75f;
 	}

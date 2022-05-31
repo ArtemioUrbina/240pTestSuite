@@ -1,0 +1,7 @@
+               MAPPLE DEVICE LIST
+
+This lists the #CMapple Devices#G attached to the
+Dreamcast System.
+
+Here you'll see Memory cards, controllers, the
+DreamEye and other peripherals.
