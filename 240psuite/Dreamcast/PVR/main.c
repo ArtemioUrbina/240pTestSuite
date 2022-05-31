@@ -614,7 +614,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		DrawImage(sd);
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Mapple Device List"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Maple Device List"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++;    
 
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; c++;
@@ -656,7 +656,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 					ControllerTest();
 					break;
 				case 2:
-					ListMappleDevices();
+					ListMapleDevices();
 					break;
 				case 3:
 					MemoryViewer(0);

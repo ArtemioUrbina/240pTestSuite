@@ -444,7 +444,7 @@ void maple_device_scan(float x, float y)
     }
 }
 
-void ListMappleDevices()
+void ListMapleDevices()
 {
 	int 			done = 0, sel = 1;
 	uint16			pressed;		
@@ -460,12 +460,12 @@ void ListMappleDevices()
 		StartScene();
 		DrawImage(back);
 
-		DrawStringS(125, 40, 0.0f, 1.0f, 0.0f, "Mapple Devices");
+		DrawStringS(125, 40, 0.0f, 1.0f, 0.0f, "Maple Devices");
 		maple_device_scan(30, 55);
 		EndScene();
 
 		
-		VMURefresh("Mapple", "Devices");
+		VMURefresh("Maple", "Devices");
 
 		st = ReadController(0, &pressed);
 		if(st)

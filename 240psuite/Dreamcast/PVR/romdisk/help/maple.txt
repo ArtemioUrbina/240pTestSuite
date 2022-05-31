@@ -1,6 +1,6 @@
-               MAPPLE DEVICE LIST
+                MAPLE DEVICE LIST
 
-This lists the #CMapple Devices#G attached to the
+This lists the #CMaple Devices#G attached to the
 Dreamcast System.
 
 Here you'll see Memory cards, controllers, the

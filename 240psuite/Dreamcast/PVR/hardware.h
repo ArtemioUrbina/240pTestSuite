@@ -23,7 +23,7 @@
 #define HARDWARE_H
 
 void ControllerTest();
-void ListMappleDevices();
+void ListMapleDevices();
 void MemoryViewer(uint32 address);
 
 int flashrom_get_region_country();
