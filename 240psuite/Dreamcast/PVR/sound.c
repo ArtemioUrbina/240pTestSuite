@@ -40,17 +40,20 @@
 #include "help.h"
 #include "menu.h"
 #include <zlib/zlib.h>
+#include <dc/flashrom.h>
 
 int zlib_getlength(char *filename);
 
 void SoundTest()
 {
-	int 		done = 0, sel = 1, play = 0, pan = 128, prevSel = -1;
-	uint16		pressed;		
-	ImagePtr	back;
-	sfxhnd_t	beep;
-	controller	*st;
-	char		*vmuMsg = "";
+	int 				done = 0, sel = 1, play = 0, pan = 128;
+	int					is_mono = 0, prevSel = -1, read = 0;
+	uint16				pressed;		
+	ImagePtr			back;
+	sfxhnd_t			beep;
+	controller			*st;
+	char				*vmuMsg = "";
+	flashrom_syscfg_t 	sysconf;
 
 	back = LoadKMG("/rd/back.kmg.gz", 0);
 	if(!back)
@@ -60,15 +63,39 @@ void SoundTest()
 	if(!beep)
 		return;
 	
+	read = flashrom_get_syscfg(&sysconf);
+	if(read == 0)
+	{
+#ifdef DCLOAD
+		dbglog(DBG_INFO,
+			"Loaded Frashrom Sys Config:\n Audio: %d\n Language: %d\n Auto-Start: %d\n",
+			sysconf.audio,
+			sysconf.language, 
+			sysconf.autostart
+			);
+#endif
+		if(sysconf.audio == 0)
+			is_mono = 1;
+	}
+#ifdef DCLOAD
+	else
+		dbglog(DBG_ERROR, "ERROR: flashrom_get_syscfg() returned %d\n", read); 
+#endif
+	
 	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
 
 		DrawStringS(125, 60, 0.0f, 1.0f, 0.0f, "Sound Test"); 
-		DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
-		DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f,	sel == 1 ? 0 : 1.0f, "Center Channel");
-		DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f,	sel == 2 ? 0 : 1.0f, "Right Channel");
+		if(!is_mono)
+		{
+			DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
+			DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Center Channel");
+			DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f, sel == 2 ? 0 : 1.0f, "Right Channel");
+		}
+		else
+			DrawStringS(120, 120, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Mono Channel");
 		EndScene();
 		
 		VMURefresh("Sound Test", vmuMsg);
@@ -89,31 +116,44 @@ void SoundTest()
 				sel ++;
 
 			if (pressed & CONT_START)
+			{
 				ShowMenu(SOUNDHELP);
+				prevSel = -1;
+			}
 		}
 		
-		if(sel < 0)
-			sel = 2;
+		if(is_mono)
+			sel = 1;
+		else
+		{
+			if(sel < 0)
+				sel = 2;
 
-		if(sel > 2)
-			sel = 0;
+			if(sel > 2)
+				sel = 0;
+		}
 
 		if(sel != prevSel)
 		{
-			switch(sel)
+			if(is_mono)
+				vmuMsg = "  Mono  ";
+			else
 			{
-				case 0:
-					pan = 0;
-					vmuMsg = "Left      ";
-					break;
-				case 1:
-					pan = 128;
-					vmuMsg = "  Center  ";
-					break;
-				case 2:
-					pan = 255;
-					vmuMsg = "     Right";
-					break;
+				switch(sel)
+				{
+					case 0:
+						pan = 0;
+						vmuMsg = "Left      ";
+						break;
+					case 1:
+						pan = 128;
+						vmuMsg = "  Center  ";
+						break;
+					case 2:
+						pan = 255;
+						vmuMsg = "     Right";
+						break;
+				}
 			}
 			prevSel = sel;
 			refreshVMU = 1;

@@ -77,7 +77,7 @@ void CleanImages()
 			if(UsedImages)
 				UsedImages --;
 			else
-				dbglog(DBG_CRITICAL, "Invalid used image index\n");
+				dbglog(DBG_CRITICAL, "CleanImages: Invalid used image index\n");
 		}	
 	}
 }
@@ -166,7 +166,7 @@ void ReleaseImage(ImagePtr image)
 			if(UsedImages)
 				UsedImages --;
 			else
-				dbglog(DBG_CRITICAL, "Invalid used image index\n");
+				dbglog(DBG_CRITICAL, "ReleaseImage: Invalid used image index\n");
 			deleted = 1;
 		}
 	}

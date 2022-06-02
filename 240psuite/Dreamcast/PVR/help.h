@@ -58,7 +58,7 @@ extern char *HelpData;
 #define AUDIOSYNCHELP	"/rd/help/audiosync.txt"
 #define MEMVIEWHELP		"/rd/help/memview.txt"
 #define MDFOURIERHELP	"/rd/help/mdfourier.txt"
-#define MAPPLEHELP		"/rd/help/mapple.txt"
+#define MAPPLEHELP		"/rd/help/maple.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);

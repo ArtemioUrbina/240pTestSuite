@@ -916,11 +916,21 @@ void ScrollTest()
 {
 	char		*vmuMsg = " H.Scroll";
 	int 		done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0;
-	int 		oldvmode = vmode, i, currentback = 0, frame = 0;
-	uint16		pressed, vertical = 0;
-	ImagePtr	back[4], overlay, kiki;
+	int 		oldvmode = -1, i, currentback = 0, frame = 0;
+	int			vertical = 0;
+	uint16		pressed;
+	ImagePtr	back[4], overlay = NULL, kiki = NULL;
+	fmenudata 	resmenudata[] = { {1, "Horizontal"}, {2, "Vertical"} };
 	controller	*st;
 
+	vertical = SelectMenu("Select Scroll", resmenudata, 2, vertical + 1);
+	if(vertical == MENU_CANCEL)
+		return;
+	vertical -= 1;
+	
+	for(i = 0; i < 4; i++)
+		back[i] = NULL;
+		
 	back[0] = LoadKMG("/rd/sonicback1.kmg.gz", 0);
 	if(!back[0])
 		return;
@@ -941,15 +951,6 @@ void ScrollTest()
 	kiki = LoadKMG("/rd/kiki.kmg.gz", 0);
 	if(!kiki)
 		return;
-	
-	for(i = 0; i < 4; i++)
-		back[i]->y = (dH - 240)/2;
-	overlay->y = (dH - 240)/2;
-	kiki->x = (dW - 320)/2;
-
-	for(i = 0; i < 4; i++)
-		IgnoreOffset(back[i]);
-	IgnoreOffset(overlay);
 
 	while(!done && !EndProgram) 
 	{
@@ -958,6 +959,7 @@ void ScrollTest()
 			for(i = 0; i < 4; i++)
 				back[i]->y = (dH - 240)/2;
 			overlay->y = (dH - 240)/2;
+			
 			if(offsetY)  // center in PAL modes
 			{
 				for(i = 0; i < 4; i++)
@@ -965,6 +967,11 @@ void ScrollTest()
 				overlay->y -= offsetY;
 			}
 			kiki->x = (dW - 320)/2;
+			
+			for(i = 0; i < 4; i++)
+				IgnoreOffset(back[i]);
+			IgnoreOffset(overlay);
+			
 			oldvmode = vmode;
 		}
 
@@ -1037,7 +1044,11 @@ void ScrollTest()
 
 			if (pressed & CONT_Y)
 			{
-				vertical = !vertical;
+				int nvertical = 0;
+				
+				nvertical = SelectMenu("Select Scroll", resmenudata, 2, vertical + 1);
+				if(nvertical != MENU_CANCEL)
+					vertical = nvertical - 1;
 				if(!vertical)
 					vmuMsg = " H.Scroll";
 				else
@@ -1052,6 +1063,7 @@ void ScrollTest()
 	for(i = 0; i < 4; i++)
 		FreeImage(&back[i]);
 	FreeImage(&overlay);
+	FreeImage(&kiki);
 	return;
 }
 
@@ -1594,6 +1606,7 @@ void PassiveLagTest()
 	uint16		pressed, lsd, msd, pause = 0;		
 	ImagePtr	back, circle, barl, barr;
 	controller	*st;
+	float		x = -8, y = 10;
 	
 	back = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!back)
@@ -1608,11 +1621,11 @@ void PassiveLagTest()
 	if(!barr)
 		return;
 	barr->x = 0;
-	barl->w = 2;
+	barl->w = 6;
 	barl->h = 240;
 	
-	barr->x = 318;
-	barr->w = 2;
+	barr->x = 314;
+	barr->w = 6;
 	barr->h = 240;
 
 	circle= LoadKMG("/rd/circle.kmg.gz", 0);
@@ -1629,19 +1642,19 @@ void PassiveLagTest()
 		DrawImage(back);
 		DrawImage(barl);
 		DrawImage(barr);
-		DrawString(32, 8, 0, 0,	0, "hours");
-		DrawString(104, 8, 0, 0, 0, "minutes");
-		DrawString(176, 8, 0, 0, 0, "seconds");
-		DrawString(248, 8, 0, 0, 0, "frames");
+		DrawString(x+32,  y+8, 0, 0,	0, "hours");
+		DrawString(x+104, y+8, 0, 0, 0, "minutes");
+		DrawString(x+176, y+8, 0, 0, 0, "seconds");
+		DrawString(x+248, y+8, 0, 0, 0, "frames");
 
 		// Counter Separators
-		DrawDigit(80, 16, 0, 0, 0, 10);
-		DrawDigit(152, 16, 0, 0, 0, 10);
-		DrawDigit(224, 16, 0, 0, 0, 10);
+		DrawDigit(x+80,  y+16, 0, 0, 0, 10);
+		DrawDigit(x+152, y+16, 0, 0, 0, 10);
+		DrawDigit(x+224, y+16, 0, 0, 0, 10);
 
 		// Circles 1st row
-		circle->x = 16;
-		circle->y = 56;
+		circle->x = x+16;
+		circle->y = y+56;
 		if(framecnt == 1)
 		{
 			circle->b = 0;
@@ -1653,10 +1666,10 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(36, 68, 1.0f, 1.0f, 1.0f, 1);
+		DrawDigit(x+36, y+68, 1.0f, 1.0f, 1.0f, 1);
 
-		circle->x = 96;
-		circle->y = 56;
+		circle->x = x+96;
+		circle->y = y+56;
 		if(framecnt == 2)
 		{
 			circle->b = 0;
@@ -1668,10 +1681,10 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(116, 68, 1.0f, 1.0f, 1.0f, 2);
+		DrawDigit(x+116, y+68, 1.0f, 1.0f, 1.0f, 2);
 
-		circle->x = 176;
-		circle->y = 56;
+		circle->x = x+176;
+		circle->y = y+56;
 		if(framecnt == 3)
 		{
 			circle->b = 0;
@@ -1683,10 +1696,10 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(196, 68, 1.0f, 1.0f, 1.0f, 3);
+		DrawDigit(x+196, y+68, 1.0f, 1.0f, 1.0f, 3);
 
-		circle->x = 256;
-		circle->y = 56;
+		circle->x = x+256;
+		circle->y = y+56;
 		if(framecnt == 4)
 		{
 			circle->b = 0;
@@ -1698,11 +1711,11 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(276, 68, 1.0f, 1.0f, 1.0f, 4);
+		DrawDigit(x+276, y+68, 1.0f, 1.0f, 1.0f, 4);
 
 		// Circles 2nd row
-		circle->x = 16;
-		circle->y = 136;
+		circle->x = x+16;
+		circle->y = y+136;
 		if(framecnt == 5)
 		{
 			circle->b = 0;
@@ -1714,10 +1727,10 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(36, 148, 1.0f, 1.0f, 1.0f, 5);
+		DrawDigit(x+36, y+148, 1.0f, 1.0f, 1.0f, 5);
 
-		circle->x = 96;
-		circle->y = 136;
+		circle->x = x+96;
+		circle->y = y+136;
 		if(framecnt == 6)
 		{
 			circle->b = 0;
@@ -1729,10 +1742,10 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(116, 148, 1.0f, 1.0f, 1.0f, 6);
+		DrawDigit(x+116, y+148, 1.0f, 1.0f, 1.0f, 6);
 
-		circle->x = 176;
-		circle->y = 136;
+		circle->x = x+176;
+		circle->y = y+136;
 		if(framecnt == 7)
 		{
 			circle->b = 0;
@@ -1744,10 +1757,10 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(196, 148, 1.0f, 1.0f, 1.0f, 7);
+		DrawDigit(x+196, y+148, 1.0f, 1.0f, 1.0f, 7);
 
-		circle->x = 256;
-		circle->y = 136;
+		circle->x = x+256;
+		circle->y = y+136;
 		if(framecnt == 8)
 		{
 			circle->b = 0;
@@ -1759,31 +1772,31 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(276, 148, 1.0f, 1.0f, 1.0f, 8);
+		DrawDigit(x+276, y+148, 1.0f, 1.0f, 1.0f, 8);
 
 		// Draw Hours
 		lsd = hours % 10;
 		msd = hours / 10;
-		DrawDigit(32, 16, 0, 0, 0, msd);
-		DrawDigit(56, 16, 0, 0, 0, lsd);
+		DrawDigit(x+32, y+16, 0, 0, 0, msd);
+		DrawDigit(x+56, y+16, 0, 0, 0, lsd);
 
 		// Draw Minutes
 		lsd = minutes % 10;
 		msd = minutes / 10;
-		DrawDigit(104, 16, 0, 0, 0, msd);
-		DrawDigit(128, 16, 0, 0, 0, lsd);
+		DrawDigit(x+104, y+16, 0, 0, 0, msd);
+		DrawDigit(x+128, y+16, 0, 0, 0, lsd);
 
 		// Draw Seconds
 		lsd = seconds % 10;
 		msd = seconds / 10;
-		DrawDigit(176, 16, 0, 0, 0, msd);
-		DrawDigit(200, 16, 0, 0, 0, lsd);
+		DrawDigit(x+176, y+16, 0, 0, 0, msd);
+		DrawDigit(x+200, y+16, 0, 0, 0, lsd);
 
 		// Draw Frames
 		lsd = frames % 10;
 		msd = frames / 10;
-		DrawDigit(248, 16, 0, 0, 0, msd);
-		DrawDigit(272, 16, 0, 0, 0, lsd);
+		DrawDigit(x+248, y+16, 0, 0, 0, msd);
+		DrawDigit(x+272, y+16, 0, 0, 0, lsd);
 
 		EndScene();
 		VMURefresh("LAG TEST", !pause ? "running" : "paused");

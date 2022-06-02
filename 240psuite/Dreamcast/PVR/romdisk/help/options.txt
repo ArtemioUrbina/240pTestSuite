@@ -1,8 +1,24 @@
-                  OPTIONS (1/3)
+                  OPTIONS (1/5)
+
+#GPVR Deflicker Filter:#G Most #CDreamcast#C games used
+    this for a stable image on an #Yinterlaced CRT#Y.
+    This works by slightly blurring the screen.
+
+#GPVR Texture Dithering:#G Another filter for use
+    in composite video signals.
+
+#GUse KOS video defaults:#G Uses #GKallistiOS#G default
+    video modes instead of the custom modes.
+
+#GUse KOS register defaults:#G Uses #GKallistiOS#G default
+    register values instead of the custom ones.
+
+                                        #C(cont...)#C
+                  OPTIONS (2/5)
 
 #GEnable PAL Modes:#G These can only be enabled in
-    #GDreamcasts#G with #YEuropean Flash ROM#Y, since
-    NTSC #GDC#G output a corrupt PAL signal.
+    #CDreamcasts#C with #YEuropean Flash ROM#Y, since
+    NTSC #CDC#C output a corrupt PAL signal.
 
 #GEnable PAL Background:#G Since most of the menus
     and screens are designed for 240p, this fills
@@ -14,7 +30,7 @@
     the PAL background.
 
                                         #C(cont...)#C
-                  OPTIONS (2/3)
+                  OPTIONS (3/5)
 
 #GPAL starting line:#G PAL specifies the start of
     active video at line 23 (Top), this setting
@@ -30,7 +46,7 @@
     value for them, 0% eliminates them.
 
                                         #C(cont...)#C
-                  OPTIONS (3/3)
+                  OPTIONS (4/5)
 
 #G480p Scanlines:#G This setting allows the display
     or EVEN or ODD scanline display in 480p line
@@ -38,7 +54,18 @@
 
 #GSave Options to VMU:#G Saves current options to
     VMU. They are auto loaded at start if a save
-    is found. Save requires 2 free blocks.
+    is found. Save requires 2 free blocks. (Press
+    L or R trigger to use the hidden eye-catchers,
+    11 blocks needed). Icons are random.
 
-Holding #GL#G and #GR#G buttons while in the options menu
-will reset all options to their defaults.
+#GLoad Options from VMU:#G Loads options from the VMU.
+
+
+                                        #C(cont...)#C
+                  OPTIONS (5/5)
+
+#GUse FrameBuffer copy:#G Disables Framebuffer
+    effects when opening menus, it is faster.
+
+#GReset all options to defaults:#G Resets all.
+

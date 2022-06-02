@@ -36,9 +36,25 @@
 
 #include "hardware.h"
 
-
 char	flashrom_region_cache[FLASHROM_CACHE_SIZE] = { 0 };
 int		flashrom_is_cached = 0;
+
+void ReduceName(char *target, char *source)
+{
+	int len;
+	
+	target[0] = '\0';
+	len = strlen(source);
+	if(!len || len == 1)
+		return;
+
+	len--;		
+	while(len > 1 && source[len] == ' ')
+		len--;
+	
+	strncpy(target, source, sizeof(char)*(len+1));
+	target[len+1] = '\0';
+}
 
 void DiplayController(int num, float x, float y)
 {
@@ -46,14 +62,15 @@ void DiplayController(int num, float x, float y)
 	int				hasAnalogX = 0, hasAnalogY = 0, hasAnalog2X = 0, hasAnalog2Y = 0;
 	cont_state_t	*st;
 	maple_device_t	*dev = NULL;
-	char			msg[256];
-	float			orig_x = x;
+	char			msg[256], name[256];
+	float			orig_x = x, orig_y = y;
 	
 	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER);
 	if(!dev)
 		return;
-		
-	DrawStringS(x, y, 0.0f, 1.0f, 0.0f, dev->info.product_name);
+	
+	ReduceName(name, dev->info.product_name);
+	DrawStringS(x, y, 1.0f, 1.0f, 0.0f, name);
 	y += fh;
 	
 	/*
@@ -117,46 +134,60 @@ void DiplayController(int num, float x, float y)
 		// Fishing Rod 				0xfe063f00
 		if(!(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C))
 		{
+			int advance = 0;
+			
 			// Draw Up and Y
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_UP)
 			{
 				isPressed = st->buttons & CONT_DPAD_UP;
 				DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "U");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Y)
 			{
 				isPressed = st->buttons & CONT_Y;
 				DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Y");
+				advance++;
 			}
-			y += fh;
+			if(advance)
+			{
+				y += fh;
+				advance = 0;
+			}
 		
 			// Draw Left, Right, Start, X and B
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_LEFT)
 			{
 				isPressed = st->buttons & CONT_DPAD_LEFT;
 				DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "L");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_RIGHT)
 			{
 				isPressed = st->buttons & CONT_DPAD_RIGHT;
 				DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "R");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_START)
 			{
 				isPressed = st->buttons & CONT_START;
 				DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_X)
 			{
 				isPressed = st->buttons & CONT_X;
 				DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "X");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_B)
 			{
 				isPressed = st->buttons & CONT_B;
 				DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
+				advance++;
 			}
-			y += fh;
+			if(advance)
+				y += fh;
 		
 			// Draw Down and A
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_DOWN)
@@ -172,46 +203,64 @@ void DiplayController(int num, float x, float y)
 		}
 		else // Arcade Stick?
 		{
+			
+			int advance = 0;
+			
 			// Draw Up and X, Y, Z
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_UP)
 			{
 				isPressed = st->buttons & CONT_DPAD_UP;
 				DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "U");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_X)
 			{
 				isPressed = st->buttons & CONT_X;
 				DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "X");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Y)
 			{
 				isPressed = st->buttons & CONT_Y;
 				DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Y");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Z)
 			{
 				isPressed = st->buttons & CONT_Z;
 				DrawStringS(x+11*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Z");
+				advance++;
 			}
-			y += fh;
+			if(advance)
+			{
+				y += fh;
+				advance = 0;
+			}
 		
 			// Draw Left, Right, Start
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_LEFT)
 			{
 				isPressed = st->buttons & CONT_DPAD_LEFT;
 				DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "L");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_RIGHT)
 			{
 				isPressed = st->buttons & CONT_DPAD_RIGHT;
 				DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "R");
+				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_START)
 			{
 				isPressed = st->buttons & CONT_START;
 				DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
+				advance++;
 			}
-			y += fh;
+			if(advance)
+			{
+				y += fh;
+				advance = 0;
+			}
 		
 			// Draw Down and A. B, C
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_DOWN)
@@ -339,6 +388,10 @@ void DiplayController(int num, float x, float y)
 	x = orig_x;
 	y += fh;
 	
+	// Rewind if we have only added empty lines
+	if(y == orig_y + 4*fh)
+		y = orig_y + 2*fh;
+	
 	// Adds existing but without known implementations...
 	// Second d-pad and D button
 	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_UP)
@@ -378,14 +431,14 @@ void ControllerTest()
 	back = LoadKMG("/rd/ControlBack.kmg.gz", 0);
 	if(!back)
 		return;
-	//back->alpha = 0.5f;
+	back->alpha = 0.5f;
 	while(!done && !EndProgram) 
 	{				
-		float x = 40, y = 30, w = 30*fw, h = 10*fh;
+		float x = 20, y = 30, w = 30*fw, h = 10*fh;
 		
 		StartScene();
 		DrawImage(back);
-		DrawStringS(120, 20, 1.0f, 1.0f, 0.0f, "Controller Test"); 		
+		DrawStringS(120, 20, 0.0f, 1.0f, 0.0f, "Controller Test"); 		
 		
 		DiplayController(0, x, y);
 		DiplayController(1, x+w, y);
@@ -396,7 +449,7 @@ void ControllerTest()
 		
         EndScene();
 		
-		VMURefresh("Controller", "");
+		VMURefresh("Controller", "Test");
 		
 		st = ReadController(0, &pressed);
 				
@@ -412,11 +465,13 @@ void maple_device_scan(float x, float y)
 {
 	int     		port = 0, unit = 0;
 	maple_device_t  *dev = NULL;
-	char			msg[512];
+	char			msg[512], name[256];
 
     /* Enumerate everything */
     for(port = 0; port < MAPLE_PORT_COUNT; port++) 
-	{
+	{	
+		float	orig_y = y, max_y = y;
+		
         for(unit = 0; unit < MAPLE_UNIT_COUNT; unit++)
 		{
             dev = &maple_state.ports[port].units[unit];
@@ -425,22 +480,35 @@ void maple_device_scan(float x, float y)
 			{
 				if(unit == 0)
 				{
-					sprintf(msg, "#C[%c%c]#C #G%s#G: %s",
+					y += 2.0f*fh;
+					ReduceName(name, dev->info.product_name);
+					sprintf(msg, "#C[%c%c]#C #Y%s#Y (%s)",
                        'A' + port, '0' + unit,
-                       dev->info.product_name,
+                       name,
                        maple_pcaps(dev->info.functions));
-					DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg); 
+					DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+					orig_y = y;
 				}
 				else
 				{
-					sprintf(msg, " #C[%c%c]:#C %s",
+					float xpos = x+2.0f*fw;
+					
+					if(unit == 4)
+						y = orig_y;
+					if(unit > 3)
+						xpos += 28.0f*fw;
+					y += fh;
+					sprintf(msg, "#C[%c%c]#C %s",
                        'A' + port, '0' + unit,
                        maple_pcaps(dev->info.functions));
-					DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg); 
+						
+					DrawStringS(xpos, y, 1.0f, 1.0f, 1.0f, msg);
 				}
-				y += fh;
+				if(y > max_y)
+					max_y = y;
             }
         }
+		y = max_y;
     }
 }
 
@@ -451,17 +519,18 @@ void ListMapleDevices()
 	ImagePtr		back;
 	controller		*st = NULL;
 
-	back = LoadKMG("/rd/back.kmg.gz", 0);
+	back = LoadKMG("/rd/maple.kmg.gz", 0);
 	if(!back)
 		return;
 
+	back->alpha = 0.5f;
 	while(!done && !EndProgram) 
 	{
 		StartScene();
 		DrawImage(back);
 
-		DrawStringS(125, 40, 0.0f, 1.0f, 0.0f, "Maple Devices");
-		maple_device_scan(30, 55);
+		DrawStringS(125, 20, 0.0f, 1.0f, 0.0f, "Maple Devices");
+		maple_device_scan(15, 20);
 		EndScene();
 
 		
