@@ -302,7 +302,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	testFile = fs_open(filename, O_RDONLY);
 	if(testFile == -1)
 	{
-		dbglog(DBG_ERROR, "Could not find image file %s in filesystem\n", filename);
+		dbglog(DBG_ERROR, "Could not find image file \"%s\" in filesystem\n", filename);
 		return(NULL);
 	}
 	fs_close(testFile);

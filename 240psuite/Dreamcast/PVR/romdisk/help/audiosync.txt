@@ -1,4 +1,4 @@
-                 AUDIO SYNC TEST 
+            AUDIO SYNC TEST(1/3)
 
 This test flashes the whole screen white for a
 frame, along with a 1khz test tone.
@@ -6,4 +6,31 @@ frame, along with a 1khz test tone.
 You can verify the sync between audio and video
 with recording equipment or specialized hardware.
 
+Manually aligned and tested on hardware usingç
+several systems for confirmation. It is #C2.0ms#C
+out of sync in average, around 1/8th of a frame.
+PAL sync is also custom aligned and confirmed.
+
 It can be paused with the #GA#G button.
+
+   #YNext page has scope results ->#Y     #C(cont...)#C
+   AUDIO SYNC TEST(2/3)   #YScope Results#Y #CNTSC#C
+
+#I/rd/help/AudioSyncNTSC.kmg.gz#I
+
+
+
+
+
+
+
+       #YNext page has PAL results#Y      #C(cont...)#C
+
+
+
+
+
+   AUDIO SYNC TEST(3/3)   #YScope Results#Y #CPAL#C
+
+#I/rd/help/AudioSyncPAL.kmg.gz#I
+

@@ -108,7 +108,7 @@ Contributors
     * Extra patterns and collaboration: Konsolkongen & shmups regulars
 
 ===============================================================================
-Copyright 2011-2019 Artemio Urbina
+Copyright 2011-2022 Artemio Urbina
 
 NES Version Copyright 2015 Damian Yerrick
 

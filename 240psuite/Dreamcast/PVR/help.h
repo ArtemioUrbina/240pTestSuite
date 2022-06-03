@@ -24,6 +24,9 @@
 
 #include "image.h"
 
+// Max images in a Help file, one per page only
+#define MAX_HELP_IMAGES	10
+
 extern char *HelpData;
 #define COLORBLEEDHELP	"/rd/help/bleed.txt"
 #define CHECKHELP		"/rd/help/check.txt"

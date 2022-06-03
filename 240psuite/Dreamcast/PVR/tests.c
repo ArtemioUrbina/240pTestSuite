@@ -1642,7 +1642,7 @@ void PassiveLagTest()
 		DrawImage(back);
 		DrawImage(barl);
 		DrawImage(barr);
-		DrawString(x+32,  y+8, 0, 0,	0, "hours");
+		DrawString(x+32,  y+8, 0, 0, 0, "hours");
 		DrawString(x+104, y+8, 0, 0, 0, "minutes");
 		DrawString(x+176, y+8, 0, 0, 0, "seconds");
 		DrawString(x+248, y+8, 0, 0, 0, "frames");

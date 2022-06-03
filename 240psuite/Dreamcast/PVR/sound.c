@@ -454,11 +454,11 @@ void MDFourier()
 
 void AudioSyncTest()
 {
-	int 		done = 0, paused = 0, oldvmode = 0, playtone = 0;
-	int			y = 0, speed = -1;
+	int 		done = 0, paused = 0, oldvmode = -1, playtone = 0;
+	int			y = 0, speed = -1, is50hz = 0;
 	float		hstep = 0;
 	uint16		pressed;
-	sfxhnd_t	beep;
+	sfxhnd_t	beep = SFXHND_INVALID;
 	ImagePtr	squareL, squareR, lineB, sprite, back, cover;	
 	
 	back = LoadKMG("/rd/white.kmg.gz", 1);
@@ -516,10 +516,6 @@ void AudioSyncTest()
 	cover->x = dW;
 	cover->y = 0;
 	
-	beep = snd_sfx_load("/rd/beep_delayed.wav");
-	if(beep == SFXHND_INVALID)
-		return;
-	
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -527,6 +523,22 @@ void AudioSyncTest()
 			back->w = dW;
 			back->h = dH;
 			oldvmode = vmode;
+			
+			if(vmode == VIDEO_288P || 
+				vmode == VIDEO_576I_A264 ||
+				vmode == VIDEO_576I)
+				is50hz = 1;
+			
+			if(beep != SFXHND_INVALID)
+				snd_sfx_unload(beep);
+			beep = SFXHND_INVALID;
+			
+			if(is50hz)	
+				beep = snd_sfx_load("/rd/beep_PAL_delayed.wav");
+			else
+				beep = snd_sfx_load("/rd/beep_delayed.wav");
+			if(beep == SFXHND_INVALID)
+				return;
 		}
 		
 		if(!paused)

@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -104,20 +104,90 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 	return buffer;
 }
 
-void  HelpWindow(char *filename, ImagePtr screen)
+/*
+ * Detect pattern #I/rd/FILENAME#I
+ * if found, clear it from help and
+ * load image to array
+ */ 
+ImagePtr FindImageInPage(char *str)
 {
-	int 			done = 0, npages = 0, page = 0, joycnt = 0;
+	int			catching_filename = 0, pos = 0;
+	char 		filename[512];
+	ImagePtr	image = NULL;
+	
+	memset(filename, 0, sizeof(char)*512);
+	while(*str) 
+	{	
+		if(*str == '#')
+		{
+			str++;
+			
+			if(*str == 'I')
+			{
+				catching_filename = !catching_filename;
+				
+				*str = ' ';				// Clear 'I'
+				*(str-1) = ' ';			// Clear '#'
+				str++;
+			}
+		}
+		else
+		{
+			if(catching_filename)
+			{
+				filename[pos] = *str;
+				*str = ' ';				// Clear filename from help
+				pos++;
+			}
+			str++;
+		}
+	}
+	if(!pos)
+		return (ImagePtr)NULL;
+	image = LoadKMG(filename, 0);
+	if(!image)
+		return (ImagePtr)NULL;
+	return image;
+}
+
+void ParseHelpImages(char **pages, int npages, ImagePtr *images)
+{
+	int page = 0;
+	
+	for(page = 0; page < npages; page++)
+		images[page] = FindImageInPage(pages[page]);
+}
+
+void HelpWindow(char *filename, ImagePtr screen)
+{
+	int 			done = 0, page = 0, joycnt = 0;
+	int				npages = 0, image = 0;
 	uint16			pressed = 0;		
-	ImagePtr		back;
+	ImagePtr		back = NULL, *images = NULL;
 	char			*buffer = NULL, **pages = NULL;
-	controller	*st;
+	controller		*st;
 
 	buffer = LoadHelpFile(filename, &pages, &npages);
 	if(!buffer)
 		return;
 
 	back = LoadKMG("/rd/help.kmg.gz", 0);
-	back->alpha = 0.75f;
+	if(back)
+		back->alpha = 0.75f;
+	
+	// Load images if needed
+	if(npages)
+	{
+		images = (ImagePtr*)malloc(sizeof(ImagePtr)*npages);
+		if(!images)
+		{
+			dbglog(DBG_ERROR, "Could not malloc image array for Help\n");
+			return;
+		}
+		for(image = 0; image < npages; image++)
+			images[image] = (ImagePtr)NULL;
+		ParseHelpImages(pages, npages, images);
+	}
 		
 	updateVMU(" 	Help	", "", 1);
 	while(!done && !EndProgram) 
@@ -126,7 +196,9 @@ void  HelpWindow(char *filename, ImagePtr screen)
 		if(screen)
 			DrawImage(screen);
 		DrawImage(back);
-		DrawStringS(34, 42, 1.0f, 1.0f, 1.0f, pages[page]); 
+		DrawStringS(34, 42, 1.0f, 1.0f, 1.0f, pages[page]);
+		if(images[page])
+			DrawImage(images[page]);
 
 		DrawStringS(110, 200, 0.9f, 0.9f, 0.9f, "Press B to return"); 
 		EndScene();
@@ -171,6 +243,13 @@ void  HelpWindow(char *filename, ImagePtr screen)
 		free(buffer);
 	if(pages)
 		free(pages);
+	for(image = 0; image < npages; image++)
+	{
+		if(images[image])
+			FreeImage(&images[image]);
+	}
+	if(images)
+		free(images);
 	FreeImage(&back);
 }
 
