@@ -27,6 +27,16 @@
 
 static uint8 bitmap[192];
 
+int VMUPresent()
+{
+	maple_device_t	*vmu;
+
+	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
+	if(!vmu)
+		return 0;
+	return 1;
+}
+
 void updateVMU(char *line1, char *line2, int force)
 {
 	maple_device_t *mvmu = NULL;

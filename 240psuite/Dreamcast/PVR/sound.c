@@ -322,6 +322,8 @@ void MDFourier()
 	
 	if(LoadGZMDFSamples() == 0)
 	{
+		if(cdrom_spin_down() != ERR_OK)
+			dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
 		FreeImage(&back);
 		FreeImage(&layer);
 		return;
@@ -393,7 +395,11 @@ void MDFourier()
 				snd_stream_stop(hnd);
 				
 				if(LoadGZMDFSamples() == 0)
+				{
+					if(cdrom_spin_down() != ERR_OK)
+						dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
 					done = 1;
+				}
 				else
 				{
 					stream_pos = play ? stream_samples_size : 0;
@@ -455,7 +461,7 @@ void MDFourier()
 void AudioSyncTest()
 {
 	int 		done = 0, paused = 0, oldvmode = -1, playtone = 0;
-	int			y = 0, speed = -1, is50hz = 0;
+	int			y = 0, speed = -1, W = 320, H = 240;
 	float		hstep = 0;
 	uint16		pressed;
 	sfxhnd_t	beep = SFXHND_INVALID;
@@ -484,49 +490,57 @@ void AudioSyncTest()
 	back->g = 0.0f;
 	back->b = 0.0f;
 	
-	back->w = dW;
-	back->h = dH;
+	back->w = W;
+	back->h = H;
 	
 	sprite->w = sprite->h = 8;
-	sprite->x = dW / 2 - 4;
+	sprite->x = W / 2 - 4;
 	y = 180;
-	hstep = -1 * dW/120; // 60 steps times half screen
+	hstep = -1 * W/120; // 60 steps times half screen
 	
-	lineB->w = dW;
+	lineB->w = W;
 	lineB->h = 8;
 	lineB->x = 0;
 	lineB->y = 180 + sprite->h;
 	
-	squareL->w = dW / 2;
+	squareL->w = W / 2;
 	squareL->h = 16;
 	squareL->x = 0;
 	squareL->y = 80;
 	
-	squareR->w = dW / 2;
+	squareR->w = W / 2;
 	squareR->h = 16;
-	squareR->x = dW / 2;
+	squareR->x = W / 2;
 	squareR->y = 80;
 	
-	cover->r = 0.0f;
-	cover->g = 0.0f;
-	cover->b = 0.0f;
+	cover->r = settings.PalBackR;
+	cover->g = settings.PalBackG;
+	cover->b = settings.PalBackB;
 	
-	cover->w = dW;
-	cover->h = dH;
-	cover->x = dW;
+	cover->w = W;
+	cover->h = H;
+	cover->x = W;
 	cover->y = 0;
 	
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
 		{
-			back->w = dW;
-			back->h = dH;
+			int is50hz = 0;
+			
+			back->r = 0.0f;
+			back->g = 0.0f;
+			back->b = 0.0f;
+			
+			cover->r = settings.PalBackR;
+			cover->g = settings.PalBackG;
+			cover->b = settings.PalBackB;
+				
+			back->w = W;
+			back->h = H;
 			oldvmode = vmode;
 			
-			if(vmode == VIDEO_288P || 
-				vmode == VIDEO_576I_A264 ||
-				vmode == VIDEO_576I)
+			if(vmode == VIDEO_288P || vmode == VIDEO_576I_A264 || vmode == VIDEO_576I)
 				is50hz = 1;
 			
 			if(beep != SFXHND_INVALID)
@@ -557,10 +571,6 @@ void AudioSyncTest()
 				back->r = 1.0f;
 				back->g = 1.0f;
 				back->b = 1.0f;
-				
-				cover->r = 1.0f;
-				cover->g = 1.0f;
-				cover->b = 1.0f;
 			}
 			else
 			{
@@ -568,15 +578,16 @@ void AudioSyncTest()
 				back->g = 0.0f;
 				back->b = 0.0f;
 				
-				cover->r = 0.0f;
-				cover->g = 0.0f;
-				cover->b = 0.0f;
+				cover->r = settings.PalBackR;
+				cover->g = settings.PalBackG;
+				cover->b = settings.PalBackB;
 			}
 			
 				
 			// A frame is 16.80 ms, Since we have 1.8ms out of sync
 			// we make a file with 15ms silence an play it back
 			// 1 frame before in order to have sync
+			// also adapted for PAL timing
 			
 			if(y == 180 && speed == -1)
 				playtone = 1;
@@ -625,11 +636,11 @@ void AudioSyncTest()
 
 #ifndef NO_FFTW
 
-#define CUE_FRAMES		5
+#define CUE_FRAMES			5
 #define SECONDS_TO_RECORD	2
-#define RESULTS_MAX		10
-#define BUFFER_SIZE 		50000	// we need around 45k only
-#define	FFT_OM			-5000
+#define RESULTS_MAX			10
+#define BUFFER_SIZE			50000	// we need around 45k only
+#define	FFT_OM				-5000
 #define	FFT_NOT_FOUND		-500
 
 
@@ -645,7 +656,7 @@ recording rec_buffer;
 
 void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, double *Results, int ResCount, int showframes)
 {
-	int	i = 0;
+	int		i = 0;
 	char	DPres[40];
 	char	Header[40];
 	char	Res[40];

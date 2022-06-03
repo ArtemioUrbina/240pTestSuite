@@ -112,10 +112,10 @@ char *LoadHelpFile(char *filename, char ***pages, int *npages)
 ImagePtr FindImageInPage(char *str)
 {
 	int			catching_filename = 0, pos = 0;
-	char 		filename[512];
+	char 		filename[PATH_LEN];
 	ImagePtr	image = NULL;
 	
-	memset(filename, 0, sizeof(char)*512);
+	memset(filename, 0, sizeof(char)*PATH_LEN);
 	while(*str) 
 	{	
 		if(*str == '#')

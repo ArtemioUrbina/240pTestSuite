@@ -37,7 +37,7 @@
 
 void DrawPluge()
 {
-	int 		done = 0, text = 0, oldvmode = vmode, ShowHelp = 0;
+	int 		done = 0, text = 0, ShowHelp = 0;
 	uint16		pressed;		
 	ImagePtr	back = NULL, backFull = NULL, backNTSC = NULL, black = NULL, highlight = NULL;
 	controller	*st = NULL;
@@ -79,9 +79,6 @@ void DrawPluge()
 
 	while(!done && !EndProgram) 
 	{
-		if(oldvmode != vmode)
-			oldvmode = vmode;
-
 		StartScene();
 
 		DrawImage(black);
@@ -342,7 +339,7 @@ void DrawGrayRamp()
 void DrawWhiteScreen()
 {
 	int 		done = 0, color = 0, text = 0;
-	int			sel = 1, editmode = 0;
+	int			sel = 1, editmode = 0, oldvmode = -1;
 	float		BlackLevel = 0.0f, cr, cb, cg;
 	uint16		pressed;		
 	ImagePtr	back = NULL;
@@ -353,21 +350,16 @@ void DrawWhiteScreen()
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
-
-	back->w = dW;
-	back->h = dH;
-
-	if(!IsPAL)
-		BlackLevel = 0.075f; // 7.5 IRE
-	else
-		BlackLevel = 0.0f; // 0 IRE
 		
 	cr = cb = cg = 1.0f; // white
 	while(!done && !EndProgram) 
-	{		
-		if(IsPAL)
-			BlackLevel = 0.0f;
-
+	{	
+		if(vmode != oldvmode)
+		{
+			back->w = dW;
+			back->h = dH;
+		}
+		
 		StartScene();
 
 		DrawImage(back);
@@ -433,7 +425,7 @@ void DrawWhiteScreen()
 			if (pressed & CONT_START)
 				ShowMenu(WHITEHELP);
 
-			if (pressed & CONT_A && color == 1 && !IsPAL)
+			if (pressed & CONT_A && color == 1)
 			{
 				if(!BlackLevel)
 				{
@@ -644,8 +636,8 @@ void Draw601ColorBars()
 
 void DrawColorBleed()
 {
-	int 		done = 0, type = 0;
-	uint16		pressed, oldvmode = vmode;
+	int 		done = 0, type = 0, oldvmode = -1;
+	uint16		pressed;
 	ImagePtr	back = NULL, backchk = NULL;
 	controller	*st = NULL;
 
@@ -653,8 +645,10 @@ void DrawColorBleed()
 	{
 		if(oldvmode != vmode)
 		{
-			FreeImage(&back);		
-			FreeImage(&backchk);		
+			if(back)
+				FreeImage(&back);		
+			if(backchk)
+				FreeImage(&backchk);
 			oldvmode = vmode;
 		}
 
@@ -710,13 +704,13 @@ void DrawColorBleed()
 
 void DrawGrid()
 {
-	int 		done = 0, oldvmode = vmode, border = 0, full = 1;
+	int 		done = 0, oldvmode = -1, border = 0, full = 1;
 	uint16		pressed;		
 	ImagePtr	back = NULL;
 	controller	*st = NULL;
 	fmenudata 	resmenudata[] = { {1, "Full 240p"}, {2, "224 sized"} };
 	
-	if(vmode < HIGH_RES)
+	if(vmode < HIGH_RES && vmode == VIDEO_240P)
 	{
 		VMURefresh("Grid", "");
 		full = SelectMenu("Select Grid", resmenudata, 2, full);
@@ -727,28 +721,26 @@ void DrawGrid()
 	{
 		if(oldvmode != vmode)
 		{
-			FreeImage(&back);		
+			if(back)
+				FreeImage(&back);		
 			oldvmode = vmode;
 		}
 		
 		if(!back)
 		{
-			if(full == 1)
+			if(vmode >= HIGH_RES)
 			{
-				if(vmode >= HIGH_RES)
-				{
-					back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
-					if(!back)
-						return;
-					back->scale = 0;
-				}
-			
-				if(vmode == VIDEO_288P)
-				{
-					back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
-					if(!back)
-						return;
-				}
+				back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
+				if(!back)
+					return;
+				back->scale = 0;
+			}
+		
+			if(vmode == VIDEO_288P)
+			{
+				back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
+				if(!back)
+					return;
 			}
 			
 			// Use 240p Grid
@@ -767,7 +759,6 @@ void DrawGrid()
 
 			if(back)
 				IgnoreOffset(back);
-
 		}
 		
 		StartScene();
@@ -776,15 +767,15 @@ void DrawGrid()
 		
 		if(refreshVMU)
 		{
-			if(full == 1)
-			{
-				if(vmode >= HIGH_RES)
-					updateVMU("Grid 480", "", 1);
-				else
-					updateVMU("  Grid  ", "", 1);
-			}
+			if(vmode >= HIGH_RES)
+				updateVMU("Grid 480", "", 1);
 			else
-				updateVMU("Grid 224", "", 1);
+			{
+				if(full == 1)
+					updateVMU("  Grid  ", "", 1);
+				else
+					updateVMU("Grid 224", "", 1);
+			}
 			refreshVMU = 0;
 		}
 
@@ -803,7 +794,7 @@ void DrawGrid()
 				done =	1;
 			if (pressed & CONT_X)
 			{
-				if(vmode < HIGH_RES)
+				if(vmode < HIGH_RES && vmode == VIDEO_240P)
 				{
 					int type = 0;
 					
@@ -819,10 +810,10 @@ void DrawGrid()
 					vid_border_color(0, 0, 0);
 					border = 0;
 				}
-				if(full == 1)
-					ShowMenu(GRIDHELP);
-				else
+				if(full == 0 && vmode == VIDEO_240P)
 					ShowMenu(GRID224HELP);
+				else
+					ShowMenu(GRIDHELP);
 			}
 		}
 	}
@@ -835,12 +826,15 @@ void DrawGrid()
 
 void DrawMonoscope()
 {
-	int 		done = 0, oldvmode = vmode;
+	int 		done = 0, oldvmode = -1;
 	uint16		pressed;		
-	ImagePtr	back = NULL, rlines = NULL;
+	ImagePtr	back = NULL, rlines = NULL, black = NULL;
 	controller	*st = NULL;
 	char		vmumsg[5];
 
+	black = LoadKMG("/rd/black.kmg.gz", 1);
+	if(!black)
+		return;
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -849,6 +843,8 @@ void DrawMonoscope()
 				FreeImage(&back);
 			if(rlines)
 				FreeImage(&rlines);
+			black->w = dW;
+			black->h = dH;
 			oldvmode = vmode;
 		}
 		
@@ -930,6 +926,7 @@ void DrawMonoscope()
 		}
 		
 		StartScene();
+		DrawImage(black);
 		DrawImage(back);
 		DrawImage(rlines);
 		EndScene();
@@ -965,6 +962,7 @@ void DrawMonoscope()
 			}
 		}
 	}
+	FreeImage(&black);
 	FreeImage(&back);
 	FreeImage(&rlines);
 	return;
@@ -1123,7 +1121,7 @@ void DrawOverscan()
 {
 	int 		done = 0, oLeft = 0, oTop = 0, 
 				oRight = 0, oBottom = 0, 
-				sel = 0, oldvmode = vmode, reset = 0,
+				sel = 0, oldvmode = -1, reset = 0,
 				joycntx = 0, joycnty = 0;
 	uint16		pressed;
 	ImagePtr	square = NULL, border = NULL;	

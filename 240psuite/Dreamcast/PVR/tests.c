@@ -553,7 +553,7 @@ void ReflexNTimming()
 {
 	char			msg[60], vmuMsg[60];
 	int				clicks[10], done = 0, view = 0;
-	int				speed = 1, change = 1;
+	int				speed = 1, change = 1, oldvmode = -1;
 	int				x, y, x2, y2, audio = 0, pos = 0;
 	int				i = 0, vibrate = 1, vary = 0, variation = 1;
 	uint16			pressed;		
@@ -568,13 +568,9 @@ void ReflexNTimming()
 	effect.effect1 = PURUPURU_EFFECT1_INTENSITY(1);
 	effect.special = PURUPURU_SPECIAL_MOTOR1;
 
-	back = LoadKMG("/rd/white.kmg.gz", 1);
+	back = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
-
-	back->r = 0.0f;
-	back->g = 0.0f;
-	back->b = 0.0f;
 			
 	srand((int)(time(0) ^ getpid()));
 	fixed = LoadKMG("/rd/lag-per.kmg.gz", 0);
@@ -606,6 +602,14 @@ void ReflexNTimming()
 	
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			back->w = 320;
+			back->h = 240;
+			
+			oldvmode = vmode;
+		}
+		
 		spriteA->x = x;
 		spriteA->y = y;
 		spriteB->x = x2;
@@ -666,7 +670,7 @@ void ReflexNTimming()
 			DrawStringS(200, 20+2*fh, 1.0f, 1.0f, 1.0f, "Vibration: n/a");
 
 		DrawStringS(20, 170, 0.0f, 1.0f, 0.0f, "Press \"A\" when the sprite is aligned with the background.");
-		DrawStringS(20, 170+fh, 0.0f, 1.0f, 0.0f, "Negative values mean you pressed \"A\" before they intersected");
+		DrawStringS(20, 170+fh, 0.0f, 1.0f, 0.0f, "Negative values mean you pressed \"A\" prematurely");
 		DrawStringS(20, 170+2*fh, 0.0f, 1.0f, 0.0f, "\"X\" button toggles horizontal and vertical movement.");
 		DrawStringS(20, 170+3*fh, 0.0f, 1.0f, 0.0f, "\"Y\" button toggles rhythmic timing.");
 		DrawStringS(20, 170+4*fh, 0.0f, 1.0f, 0.0f, "\"R\" trigger toggles audio feedback.");
@@ -1141,7 +1145,7 @@ void GridScrollTest()
 void DrawStripes()
 {
 	int 			done = 0, field = 1, alternate = 0,
-					frame = 0, dframe = 0, vertical = 1;
+					frame = 0, dframe = 0, vertical = 0;
 	uint16			pressed;		
 	ImagePtr		stripespos, stripesneg;
 	ImagePtr		vstripespos, vstripesneg;
@@ -1164,7 +1168,7 @@ void DrawStripes()
 		return;
 
 	VMURefresh("Stripes", "");
-	vertical = SelectMenu("Select Mode", resmenudata, 2, vertical) - 1;
+	vertical = SelectMenu("Select Mode", resmenudata, 2, vertical + 1) - 1;
 	if(vertical == MENU_CANCEL)
 		return;
 	while(!done && !EndProgram) 
@@ -1222,7 +1226,11 @@ void DrawStripes()
 						
 			if (pressed & CONT_Y)
 			{
-				vertical = !vertical;
+				int nvertical = 0;
+				
+				nvertical = SelectMenu("Select Mode", resmenudata, 2, vertical + 1);
+				if(nvertical != MENU_CANCEL)
+					vertical = nvertical - 1;
 				if(vertical)
 					vmuMsg1 = "V.Stripes";
 				else
@@ -1333,18 +1341,15 @@ void DrawCheckBoard()
 
 void LEDZoneTest()
 {	
-	int		done = 0, x = 160, y = 120, selsprite = 1, show = 1;
+	int			done = 0, x = 160, y = 120;
+	int			selsprite = 1, show = 1, oldvmode = -1;
 	uint16		pressed;
 	ImagePtr	back, sprite[5];
 	controller 	*st;
 
-	back = LoadKMG("/rd/white.kmg.gz", 1);
+	back = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
-
-	back->r = 0.0f;
-	back->g = 0.0f;
-	back->b = 0.0f;
 			
 	sprite[0] = LoadKMG("/rd/sprite0led.kmg.gz", 0);
 	if(!sprite[0])
@@ -1364,6 +1369,13 @@ void LEDZoneTest()
 
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			back->w = dW;
+			back->h = dH;
+			oldvmode = vmode;
+		}
+		
 		StartScene();
 		DrawImage(back);		
 
@@ -1496,19 +1508,15 @@ void FixSpriteSize(ImagePtr sprite, int full)
 void DiagonalPatternTest()
 {	
 	int			done = 0, autorotate = 0, full = 0;
-	int			oldvmode = vmode;
+	int			oldvmode = -1;
 	float		angle = 45.0, step = 1;
 	uint16		pressed;
 	ImagePtr	back, spritesmall, spritebig, sprite;
 	char		buffer[32];
 
-	back = LoadKMG("/rd/white.kmg.gz", 0);
+	back = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
-
-	back->r = 0.0f;
-	back->g = 0.0f;
-	back->b = 0.0f;
 			
 	spritesmall = LoadKMG("/rd/longrectangle.kmg.gz", 1);
 	if(!spritesmall)
@@ -1523,18 +1531,16 @@ void DiagonalPatternTest()
 		FreeImage(&spritesmall);
 		return;
 	}
-
-	if(vmode < HIGH_RES)
-		sprite = spritesmall;
-	else
-		sprite = spritebig;
-
-	FixSpriteSize(sprite, full);
+	
+	sprite = spritesmall;
 	
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
 		{
+			back->w = dW;
+			back->h = dH;
+			
 			if(vmode < HIGH_RES)
 				sprite = spritesmall;
 			else
@@ -1919,13 +1925,9 @@ void Alternate240p480i()
 	controller	*st;
 	ImagePtr	back;
 
-	back = LoadKMG("/rd/white.kmg.gz", 1);
+	back = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
-
-	back->r = 0.0f;
-	back->g = 0.0f;
-	back->b = 0.0f;
 	
 	originalvmode = vmode;
 			

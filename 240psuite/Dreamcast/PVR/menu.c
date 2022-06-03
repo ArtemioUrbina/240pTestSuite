@@ -441,7 +441,6 @@ void ChangeOptions(ImagePtr screen)
 		char			intensity[80];
 		int				changedPVR = 0;
 		controller		*st;
-		maple_device_t	*dev;
 				
 		StartScene();
 
@@ -573,8 +572,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 		
 		//Option 11, Save to VMU
-		dev = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
-		if(dev)
+		if(VMUPresent())
 		{
 			char *msg = NULL;
 
@@ -605,7 +603,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 		
 		// Option 12, Load Options from VMU
-		if(dev)
+		if(VMUPresent())
 		{
 			char *msg = NULL;
 			
@@ -786,7 +784,7 @@ void ChangeOptions(ImagePtr screen)
 							ToggleScanlineEvenOdd();
 						break;
 					case 11:
-						if(dev && saved != 1)
+						if(VMUPresent() && saved != 1)
 						{
 							int eyecatcher = 0;
 
@@ -800,7 +798,7 @@ void ChangeOptions(ImagePtr screen)
 						}
 						break;
 					case 12:		
-						if(dev)
+						if(VMUPresent())
 						{
 							loaded = LoadVMUSave(error);
 							ChangeResolution(vmode);
@@ -1354,9 +1352,13 @@ void DrawCredits(ImagePtr back)
 void DrawIntro()
 {
 	uint32			counter, frames = 30;
-	float			delta;
-	ImagePtr		black;
+	float			delta = 0.0f;
+	ImagePtr		black = NULL, back = NULL;
 
+	back = LoadKMG("/rd/black.kmg.gz", 1);
+	if(!back)
+		return;
+		
 	black = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!black)
 		return;
@@ -1377,19 +1379,25 @@ void DrawIntro()
 			delta *= -1;
 
 		StartScene();
+		DrawImage(back);
 		DrawStringS(120, 115, 1.0, 1.0, 1.0, "KORDAMP PRESENTS");
 		DrawImage(black);
 
 		EndScene();
 	}
 	FreeImage(&black);
+	FreeImage(&back);
 }
 
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option)
 {
 	int 		sel = selected_option, close = 0, value = MENU_CANCEL, joycnt = 0;		
-	ImagePtr	Back = NULL;
+	ImagePtr	Back = NULL, black = NULL;
 	
+	black = LoadKMG("/rd/black.kmg.gz", 1);
+	if(!black)
+		return MENU_CANCEL;
+		
 	Back = LoadKMG("/rd/FloatMenu.kmg.gz", 0);
 	if(Back)
 	{
@@ -1411,6 +1419,8 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 				
 		StartScene();
 		
+		if(black)
+			DrawImage(black); 
 		if(Back)        
 			DrawImage(Back);       
 
@@ -1464,6 +1474,8 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 	
 	if(Back)
 		FreeImage(&Back);
+	if(black)
+		FreeImage(&black);
 
 	refreshVMU = 1;
 	return value;
@@ -1473,10 +1485,14 @@ void DrawMessage(char *msg)
 {
 	int 		done = 0;
 	uint16		pressed;
+	ImagePtr	back = NULL;
 	
+	back = LoadKMG("/rd/black.kmg.gz", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
+		if(back)
+			DrawImage(back);
 		DrawStringS(20, 60, 0.0f, 1.0f, 0.0f, msg); 
 		EndScene();
 	
@@ -1484,4 +1500,6 @@ void DrawMessage(char *msg)
 		if(pressed & CONT_A || pressed & CONT_B)
 			done =	1;
 	}
+	if(back)
+		FreeImage(&back);
 }

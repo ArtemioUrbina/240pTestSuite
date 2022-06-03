@@ -54,10 +54,11 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits);
 
 int main(void)
 {
-	int 		done = 0, sel = 1, joycnt = 0, broadcast = FLASHROM_BROADCAST_UNKNOWN;
+	int 		done = 0, sel = 1, joycnt = 0;
+	int			broadcast = FLASHROM_BROADCAST_UNKNOWN, loadedvmu = 1;
 	uint16		pressed;
-	ImagePtr	title, sd;
-	controller	*st;
+	ImagePtr	title = NULL, sd = NULL;
+	controller	*st = NULL;
 	char		error[256];
 
 	if(cdrom_init() != 0)
@@ -68,8 +69,6 @@ int main(void)
 	vcable = vid_check_cable();
 
 	InitImages();
-
-	LoadVMUSave(error);
 	
 	// Define if PAL modes are enabled
 	broadcast = flashrom_get_region_broadcast();
@@ -83,11 +82,15 @@ int main(void)
 	else
 		settings.EnablePAL = 0;
 	
+	if(VMUPresent())
+		loadedvmu = LoadVMUSave(error);
+	
 	// Boot in 640x480 is VGA, or 288 in PAL for safety,
 	// Some monitors take PAL60 as NTSC 4.43 and decode colors incorrectly
+	// if options specifically disables PAL modes, we honor that
 	if(vcable != CT_VGA)
 	{
-		if(IsPALDC && vcable == CT_COMPOSITE)
+		if(settings.EnablePAL && IsPALDC && vcable == CT_COMPOSITE)
 			ChangeResolution(VIDEO_288P);
 		else
 			ChangeResolution(VIDEO_240P);
@@ -98,6 +101,9 @@ int main(void)
 	snd_stream_init();	
 	LoadFont();
 	LoadScanlines();
+	
+	if(!loadedvmu)
+		DrawMessage(error);
 	
 	title = LoadKMG("/rd/back.kmg.gz", 0);
 	sd = LoadKMG("/rd/SD.kmg.gz", 0);

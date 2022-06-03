@@ -54,8 +54,8 @@ struct image_st{
 #define PATH_LEN	150
 
 //states
-#define MEM_RELEASED 	0
-#define MEM_LOADED	1
+#define MEM_RELEASED	0
+#define MEM_LOADED		1
 #define MEM_TEXRELEASED	2
 
 typedef struct image_mem_st ImageMem;

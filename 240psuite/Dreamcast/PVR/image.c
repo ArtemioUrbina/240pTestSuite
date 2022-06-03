@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -66,18 +66,19 @@ void InitImages()
 void CleanImages()
 {
 	uint8	i = 0;
+	
 	for(i = 0; i < MAX_IMAGES; i++)
 	{
 		if(Images[i].state != MEM_RELEASED)
 		{
-			dbglog(DBG_ERROR, "Found unreleased image %s\n", Images[i].name);
+			dbglog(DBG_ERROR, "Found unreleased image %s (releasing it)\n", Images[i].name);
 			FreeImage(&Images[i].image);
 			Images[i].state = MEM_RELEASED;
 			Images[i].name[0] = '\0';
 			if(UsedImages)
 				UsedImages --;
 			else
-				dbglog(DBG_CRITICAL, "CleanImages: Invalid used image index\n");
+				dbglog(DBG_CRITICAL, "CleanImages: Invalid used image index [%d]\n", i);
 		}	
 	}
 }

@@ -532,10 +532,10 @@ int saveexists()
 
 int LoadVMUSave(char *error)
 {
-	vmu_pkg_t	pkg;
-	uint8		*pkg_in = NULL;
-	int			pkg_size = 0;
-	maple_device_t *vmu;
+	vmu_pkg_t		pkg;
+	uint8			*pkg_in = NULL;
+	int				pkg_size = 0;
+	maple_device_t	*vmu;
 
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 	if(!vmu)
