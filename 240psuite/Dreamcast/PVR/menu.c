@@ -414,8 +414,9 @@ void DrawShowMenu()
 
 void ChangeOptions(ImagePtr screen)
 {	
-	int 		sel = 1, close = 0, broadcast, joycnt = 0;	
-	int			saved = -1, loaded = -1, timer = 0, hint = 0;
+	int 		sel = 1, close = 0, joycnt = 0;	
+	int			saved = -1, loaded = -1, timer = 0;
+	int			hint = 0, VMUsaveexists = 0, VMU_detect_save_counter = 0;
 	ImagePtr	back;
 	char		error[256];
 	
@@ -425,9 +426,9 @@ void ChangeOptions(ImagePtr screen)
 
 	back->alpha = 0.75f;
 
-	broadcast = flashrom_get_region_broadcast();
 	updateVMU("  Options", "", 1);
 	srand((int)(time(0) ^ getpid()));
+	
 	while(!close && !EndProgram) 
 	{		
 		float			r = 1.0f;
@@ -475,7 +476,7 @@ void ChangeOptions(ImagePtr screen)
 			"Use KOS Register Defaults:"); y += fh; c++;
 
 		// option 5,  Enable PAL
-		if(broadcast != FLASHROM_BROADCAST_NTSC)
+		if(IsPALDC)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 				settings.EnablePAL == 1 ? "ON" : "OFF"); 
@@ -491,7 +492,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 
 		// option 6,  Enable PAL BG
-		if(broadcast != FLASHROM_BROADCAST_NTSC && settings.EnablePAL)
+		if(IsPALDC && settings.EnablePAL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 				settings.EnablePALBG == 1 ? "ON" : "OFF"); 
@@ -507,7 +508,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 
 		// option 7,  PAL Background
-		if(broadcast != FLASHROM_BROADCAST_NTSC && settings.EnablePAL)
+		if(IsPALDC && settings.EnablePAL)
 		{
 			char BorderColor[100];
 
@@ -531,7 +532,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 
 		// option 8,  PAL Start
-		if(broadcast != FLASHROM_BROADCAST_NTSC && settings.EnablePAL)
+		if(IsPALDC && settings.EnablePAL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 				GetPalStartText());
@@ -603,7 +604,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 		
 		// Option 12, Load Options from VMU
-		if(VMUPresent())
+		if(VMUPresent() && VMUsaveexists)
 		{
 			char *msg = NULL;
 			
@@ -648,7 +649,7 @@ void ChangeOptions(ImagePtr screen)
 		r = g = b = 0.8;
 		if(vmode == VIDEO_480P_SL && sel == 9)	
 			DrawStringS(x-15, y + fh, r, g, b, "Adjust with L and R triggers"); 										
-		if(broadcast == FLASHROM_BROADCAST_NTSC && (sel > 4 && sel < 9))
+		if(!IsPALDC && (sel > 4 && sel < 9))
 			DrawStringS(x-15, y + fh, r, g, b,
 				"Only PAL FlashROMs can output PAL correctly"); 
 		if(vmode != VIDEO_480P_SL && (sel == 9 || sel == 10))
@@ -661,6 +662,15 @@ void ChangeOptions(ImagePtr screen)
 		if(rand() % 1000 == 47)
 			hint = !hint;
 		EndScene();
+		
+		// Detect if a VMU was inserted with a Suite Save
+		VMU_detect_save_counter--;
+		if(VMU_detect_save_counter <= 0)
+		{
+			if(VMUPresent())
+				VMUsaveexists = VMUSuiteSaveExists(NULL) == VMU_SAVEEXISTS ? 1 : 0;
+			VMU_detect_save_counter = 600;	// 10 seconds in NTSC
+		}
 		
 		// Clean load/save messages
 		if(timer)
@@ -749,7 +759,7 @@ void ChangeOptions(ImagePtr screen)
 						break;
 					case 5:
 						// NTSC consoles output a corrupt PAL signal
-						if(broadcast != FLASHROM_BROADCAST_NTSC)
+						if(IsPALDC)
 							settings.EnablePAL = !settings.EnablePAL;
 						break;
 					case 6:
@@ -786,22 +796,50 @@ void ChangeOptions(ImagePtr screen)
 					case 11:
 						if(VMUPresent() && saved != 1)
 						{
+							int vmures, overwrite = 1;
 							int eyecatcher = 0;
 
 							if ( st && st->buttons & CONT_RTRIGGER )
 								eyecatcher = 1;
 							if ( st && st->buttons & CONT_LTRIGGER )
 								eyecatcher = 2;
-							saved = WriteVMUSave(eyecatcher, error);
-							loaded = -1;
-							timer = 200;
+								
+							if(VMUsaveexists)
+							{
+								fmenudata 	resmenudata[] = { {1, "Yes"}, {2, "No"} };
+								
+								overwrite = SelectMenu("Overwrite Save?", resmenudata, 2, 2);
+								if(overwrite == MENU_CANCEL || overwrite == 2)
+									overwrite = 0;
+							}
+							
+							if(overwrite)
+							{
+								vmures = WriteVMUSave(eyecatcher, error);
+								if(vmures == VMU_OK)
+									saved = 1;
+								else
+									saved = 0;
+
+								VMU_detect_save_counter = 0;
+								loaded = -1;
+								timer = 200;
+							}
 						}
 						break;
 					case 12:		
 						if(VMUPresent())
 						{
-							loaded = LoadVMUSave(error);
-							ChangeResolution(vmode);
+							int vmures;
+							
+							vmures = LoadVMUSave(error);
+							if(vmures == VMU_OK)
+							{
+								ChangeResolution(vmode);
+								loaded = 1;
+							}
+							else
+								loaded = 0;
 							saved = -1;
 							timer = 200;
 						}
@@ -812,7 +850,7 @@ void ChangeOptions(ImagePtr screen)
 					case 14:
 						{
 							settings = default_settings;
-							if(broadcast != FLASHROM_BROADCAST_NTSC)
+							if(IsPALDC)
 								settings.EnablePAL = 1;
 							loaded = saved = -1;
 							ChangeResolution(vmode);
@@ -1000,7 +1038,7 @@ void ChangePALBackgroundColor(ImagePtr title)
 
 void SelectVideoMode(ImagePtr screen)
 {
-	int 		sel = 1, close = 0, oldsel = 0, joycnt = 0, broadcast;		
+	int 		sel = 1, close = 0, oldsel = 0, joycnt = 0;		
 	ImagePtr	back;
 	char		*vmuopt[9] =
 				{
@@ -1033,7 +1071,6 @@ void SelectVideoMode(ImagePtr screen)
 		
 	back->alpha = 0.75f;
 
-	broadcast = flashrom_get_region_broadcast();
 	sel = vmodepos[vmode] + 1;
 	updateVMU("Video Mode", "", 1);
 	while(!close && !EndProgram) 
@@ -1076,7 +1113,7 @@ void SelectVideoMode(ImagePtr screen)
 		}
 
 		y += fh/2;
-		if(vcable != CT_VGA && settings.EnablePAL && broadcast != FLASHROM_BROADCAST_NTSC)
+		if(vcable != CT_VGA && settings.EnablePAL && IsPALDC)
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b,
 				"288p mixed 240p/264p assets"); y += fh; c++;
@@ -1115,10 +1152,10 @@ void SelectVideoMode(ImagePtr screen)
 				
 		r = g = b = 0.8;
 
-		if(vcable == CT_COMPOSITE && broadcast != FLASHROM_BROADCAST_NTSC && (sel >= 0 && sel <= 3))
+		if(vcable == CT_COMPOSITE && IsPALDC && (sel >= 0 && sel <= 3))
 			DrawStringS(x-40, y + 3* fh, r, g, b,
 				"PAL60 colors might decode incorrectly"); 
-		if(broadcast == FLASHROM_BROADCAST_NTSC && (sel >= 4 && sel <= 6))
+		if(!IsPALDC && (sel >= 4 && sel <= 6))
 			DrawStringS(x-40, y + 3*fh, r, g, b,
 				"Only PAL FlashROMs can output PAL correctly"); 
 
@@ -1171,17 +1208,17 @@ void SelectVideoMode(ImagePtr screen)
 						break;
 					case 4:
 						if(vcable != CT_VGA && settings.EnablePAL &&
-							broadcast != FLASHROM_BROADCAST_NTSC)
+							IsPALDC)
 							ChangeResolution(VIDEO_288P);
 						break;
 					case 5:
 						if(vcable != CT_VGA && settings.EnablePAL &&
-							broadcast != FLASHROM_BROADCAST_NTSC)
+							IsPALDC)
 							ChangeResolution(VIDEO_576I_A264);
 						break;
 					case 6:
 						if(vcable != CT_VGA && settings.EnablePAL &&
-							broadcast != FLASHROM_BROADCAST_NTSC)
+							IsPALDC)
 							ChangeResolution(VIDEO_576I);
 						break;
 					case 7:

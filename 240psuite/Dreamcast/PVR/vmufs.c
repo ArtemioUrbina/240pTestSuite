@@ -510,24 +510,139 @@ unsigned char ksaur[4544] = {
 	0x8B,0x8B,0x7F,0x5C,0x52,0x40,0x47,0x8C,0x8C,0x8B,0x8B,0x8B,0x8B,0x8C,0x8C,0x8C,0x7C,0x5C,0x7B,0xF5,0xEF,0xE6,0xE6,0xE6
 };
 
-int saveexists()
+int VMUSuiteSaveExists(int *blocks)
 {
-	uint8		*pkg_in = NULL;
-	int			pkg_size = 0;
-	maple_device_t *vmu;
+	maple_device_t	*vmu;
+	vmu_dir_t		*vmufiles = NULL;
+	int				numfiles = 0, file = 0;
+	
+	if(blocks)
+		*blocks = 0;
 
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 	if(!vmu)
-		return 0;
+	{
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "No VMU found for load\n");
+#endif
+		return VMU_NOUNIT;
+	}
 
-	vmufs_init ();
-
-	if(vmufs_read(vmu, VMU_NAME, (void*)&pkg_in, &pkg_size) < 0)
-		return 0;
-
+	vmufs_init();
+	if(vmufs_readdir(vmu, &vmufiles, &numfiles) < 0)
+	{
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "Could not read VMU directory\n");
+#endif
+		return VMU_ERROR;
+	}
 	vmufs_shutdown ();
-	free(pkg_in);
-	return (pkg_size >> 9);  // return result in blocks
+	
+	if(!numfiles)
+	{
+		if(vmufiles)
+			free(vmufiles);	// KOS returns a non NULL pointer when zero files are present
+		return VMU_NOSAVE;
+	}
+	
+	for(file = 0; file < numfiles; file++)
+	{
+		if(strncmp(VMU_NAME, vmufiles[file].filename, VMU_NAME_LEN) == 0)
+		{
+			if(blocks)
+				*blocks = vmufiles[file].filesize;
+			free(vmufiles);
+			return VMU_SAVEEXISTS;
+		}
+	}
+	
+	free(vmufiles);
+	return VMU_NOSAVE;
+}
+
+int ListVMUFiles(char *buffer, int buffsize)
+{
+	maple_device_t	*vmu;
+	vmu_dir_t		*vmufiles = NULL;
+	int				numfiles = 0, file = 0;
+	int				len = 0, buffer_pos = 0;
+	char			int_buff[256];
+		
+	if(!buffer || buffsize < 0)
+	{
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "Invalid buffer/buffsize for ListVMUFiles\n");
+#endif
+		return VMU_ERPARAM;
+	}
+
+	memset(buffer, '\0', sizeof(char)*buffsize);
+	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
+	if(!vmu)
+	{
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "No VMU found for load\n");
+#endif
+		return VMU_NOUNIT;
+	}
+
+	vmufs_init();
+
+	if(vmufs_readdir(vmu, &vmufiles, &numfiles) < 0)
+	{
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "Could not read VMU directory\n");
+#endif
+		return VMU_ERROR;
+	}
+	vmufs_shutdown ();
+	
+	if(!numfiles)
+	{
+		if(vmufiles)
+			free(vmufiles);	// KOS returns a non NULL pointer with zero files
+		return VMU_OK;
+	}
+	
+	for(file = 0; file < numfiles; file++)
+	{
+		char	name[13], *filetype = NULL;
+		
+		switch(vmufiles[file].filetype)
+		{
+			case 0x33: 
+				filetype = "data    ";
+				break;
+			case 0xcc: 
+				filetype = "game    ";
+				break;
+			case 0x00: 
+				filetype = "no file ";
+				break;
+			default:
+				filetype = "unknown";
+				break;
+		}
+		memset(name, '\0', sizeof(char)*13);
+		memcpy(name, vmufiles[file].filename, sizeof(char)*12);
+
+		sprintf(int_buff, "%s [%.12s] %.2d blocks\n", filetype,
+			vmufiles[file].filename, vmufiles[file].filesize);
+		len = strlen(int_buff);
+		if(buffer_pos + len >= buffsize)
+		{
+			free(vmufiles);
+			return VMU_SMALLBUFF;
+		}
+		memcpy(buffer+buffer_pos, int_buff, sizeof(char)*len);
+		buffer_pos += len;
+#ifdef DCLOAD
+		dbglog(DBG_INFO, int_buff);
+#endif
+	}
+	
+	free(vmufiles);
+	return VMU_OK;
 }
 
 int LoadVMUSave(char *error)
@@ -537,25 +652,42 @@ int LoadVMUSave(char *error)
 	int				pkg_size = 0;
 	maple_device_t	*vmu;
 
+	if(!error)
+	{
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "No error parameter for LoadVMUSave\n");
+#endif
+		return VMU_ERPARAM;
+	}
+		
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 	if(!vmu)
 	{
-		sprintf(error, "#RNo VMU found#R");
+		sprintf(error, "#YNo VMU found#Y");
 #ifdef DCLOAD
-		dbglog(DBG_ERROR, "No VMU found for load\n");
+		dbglog(DBG_ERROR, "No VMU found\n");
 #endif
-		return 0;
+		return VMU_NOUNIT;
 	}
 
-	vmufs_init ();
+	if(!VMUSuiteSaveExists(NULL))
+	{
+		sprintf(error, "#Y%s not found in VMU#Y", VMU_NAME);
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "%s not found in VMU\n", VMU_NAME);
+#endif
+		return VMU_NOSAVE;
+	}
+	
+	vmufs_init();
 
 	if(vmufs_read(vmu, VMU_NAME, (void*)&pkg_in, &pkg_size) < 0)
 	{
-		sprintf(error, "#RVMU could not be read#R");
+		sprintf(error, "#Y%s could not be loaded from VMU#Y", VMU_NAME);
 #ifdef DCLOAD
-		dbglog(DBG_ERROR, "VMU could not be read\n");
+		dbglog(DBG_ERROR, "%s could not be loaded from VMU\n", VMU_NAME);
 #endif
-		return 0;
+		return VMU_ERROR;
 	}
 
 	vmufs_shutdown ();
@@ -564,11 +696,11 @@ int LoadVMUSave(char *error)
 	{
 		free(pkg_in);
 		vmufs_delete (vmu, VMU_NAME);
-		sprintf(error, "#RCorrupt package, deleted save#R");
+		sprintf(error, "#YCorrupt package, deleted save#Y");
 #ifdef DCLOAD
 		dbglog(DBG_ERROR, "Corrupt package %s, deleted save from VMU\n", VMU_NAME);
 #endif
-		return 0;
+		return VMU_ERROR;
 	}
 
 	free(pkg_in);
@@ -576,20 +708,20 @@ int LoadVMUSave(char *error)
 
 	if(pkg.data_len != DATA_SIZE)
 	{
-		sprintf(error, "#RSave length of unexpected size %d#R", pkg.data_len);
+		sprintf(error, "#YSave length of unexpected size %d#Y", pkg.data_len);
 #ifdef DCLOAD
 		dbglog(DBG_ERROR, "Save length of unexpected size %d\n", pkg.data_len);
 #endif
-		return 0;
+		return VMU_ERROR;
 	}
 
 	if(pkg.data[0] != SAVE_NUM)
 	{
-		sprintf(error, "#RVersion # differs, discarding %d != %d#R", SAVE_NUM, pkg.data[0]);
+		sprintf(error, "#YVersion # differs, ignored [%d] != %d#Y", SAVE_NUM, pkg.data[0]);
 #ifdef DCLOAD
-		dbglog(DBG_ERROR, "VMU save version # differs, discarding %d != %d\n", SAVE_NUM, pkg.data[0]);
+		dbglog(DBG_ERROR, "VMU save version # differs, ignored [%d] != %d\n", SAVE_NUM, pkg.data[0]);
 #endif
-		return 0;
+		return VMU_ERROR;
 	}
 
 	settings.drawborder = pkg.data[1];
@@ -611,7 +743,7 @@ int LoadVMUSave(char *error)
 #ifdef DCLOAD
 	dbglog(DBG_INFO, "Loaded VMU save version #%d\n", pkg.data[0]);
 #endif
-	return 1;
+	return VMU_OK;
 }
 
 int WriteVMUSave(int eyecatch, char *error)
@@ -619,20 +751,29 @@ int WriteVMUSave(int eyecatch, char *error)
 	vmu_pkg_t		pkg;
 	uint8			data[DATA_SIZE], *pkg_out = NULL;
 	int				pkg_size = 0, expanded_pkg_size = 0,
-					icon = 0, blocks_needed = 0, blocks_toRelease = 0;
+					icon = 0, blocks_needed = 0, blocks_toRelease = 0,
+					vmu_blocks_free = 0, write_result = 0;
 	maple_device_t	*vmu;
 	unsigned char	*icon_array[ICON_ARRAY_SIZE] = {
 						sd_data, smpte_data, sdback_data,
 						sdbars_data, sdmono_data };
 
 	if(!error)
-		return 0;
+	{
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "No error parameter for LoadVMUSave\n");
+#endif
+		return VMU_ERPARAM;
+	}
 
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 	if(!vmu)
 	{
-		sprintf(error, "#RFAIL: VMU not found#R");
-		return 0;
+		sprintf(error, "#YFAIL: VMU not found#Y");
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "FAIL: VMU not found\n");
+#endif
+		return VMU_NOUNIT;
 	}
 
 	memset(&data, 0, sizeof(uint8)*DATA_SIZE);
@@ -693,8 +834,11 @@ int WriteVMUSave(int eyecatch, char *error)
 
 	if(vmu_pkg_build(&pkg, &pkg_out, &pkg_size) != 0)
 	{
-		sprintf(error, "#RVMU package creation failed#R");
-		return 0;
+		sprintf(error, "#YVMU package creation failed#Y");
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "VMU package creation failed\n");
+#endif
+		return VMU_ERROR;
 	}
 	
 	// Do the padding so that no dirty memory is saved to the VMU
@@ -707,45 +851,57 @@ int WriteVMUSave(int eyecatch, char *error)
 		if(!new_pkg_out)
 		{
 			free(pkg_out);
-			sprintf(error, "#RVMU package padding failed#R");
-			return 0;
+			sprintf(error, "#YVMU package padding failed#Y");
+#ifdef DCLOAD
+			dbglog(DBG_ERROR, "VMU package padding failed\n");
+#endif
+			return VMU_ERROR;
 		}
 		memset(new_pkg_out, 0, expanded_pkg_size);
 		memcpy(new_pkg_out, pkg_out, pkg_size);
 		free(pkg_out);
 #ifdef DCLOAD
-		dbglog(DBG_INFO, "Padded VMU save from %d bytes to %d bytes\n", pkg_size, expanded_pkg_size);
+		dbglog(DBG_INFO, "Padded VMU save from %d to %d bytes\n", pkg_size, expanded_pkg_size);
 #endif
 		pkg_out = new_pkg_out;
 		pkg_size = expanded_pkg_size;
 	}
 	
 	blocks_needed = pkg_size >> 9;
-	blocks_toRelease = saveexists();
+	VMUSuiteSaveExists(&blocks_toRelease);
+	
 	vmufs_init ();
+	vmu_blocks_free = vmufs_free_blocks(vmu);
+	vmufs_shutdown ();
 
 #ifdef DCLOAD
 	dbglog(DBG_INFO, "VMU Free %d/Overwrite release %d/Blocks Needed %d\n", 
-		vmufs_free_blocks(vmu), blocks_toRelease, blocks_needed);
+		vmu_blocks_free, blocks_toRelease, blocks_needed);
 #endif
 
-	if(vmufs_free_blocks(vmu) + blocks_toRelease < blocks_needed)
+	if(vmu_blocks_free + blocks_toRelease < blocks_needed)
 	{
 		free(pkg_out);
-		sprintf(error, "#RFAIL: %d blocks needed in VMU#R", blocks_needed);
-		return 0;
+		sprintf(error, "#YFAIL: %d blocks needed in VMU#Y", blocks_needed);
+#ifdef DCLOAD
+		dbglog(DBG_INFO, "FAIL: %d blocks needed in VMU\n", blocks_needed);
+#endif
+		return VMU_NOSPACE;
 	}
 
-	if(vmufs_write(vmu, VMU_NAME, pkg_out, pkg_size, VMUFS_OVERWRITE) < 0)
+	vmufs_init ();
+	write_result = vmufs_write(vmu, VMU_NAME, pkg_out, pkg_size, VMUFS_OVERWRITE);
+	vmufs_shutdown ();
+	
+	free(pkg_out);
+	
+	if(write_result < 0)
 	{
-		free(pkg_out);
-		sprintf(error, "#RFAIL: Could not save to VMU#R");
-		return 0;
+		sprintf(error, "#YFAIL: Could not save to VMU#Y");
+		return VMU_ERROR;
 	}
 	
-	vmufs_shutdown ();
-	free(pkg_out);
-	return 1;
+	return VMU_OK;
 }
 
 

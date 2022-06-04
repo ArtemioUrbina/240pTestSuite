@@ -81,7 +81,8 @@ int main(void)
 	else
 		settings.EnablePAL = 0;
 	
-	if(VMUPresent())
+	if(VMUPresent() && 
+		VMUSuiteSaveExists(NULL) == VMU_SAVEEXISTS)
 		loadedvmu = LoadVMUSave(error);
 	
 	// Boot in 640x480 is VGA, or 288 in PAL for safety,
@@ -101,7 +102,7 @@ int main(void)
 	LoadFont();
 	LoadScanlines();
 	
-	if(!loadedvmu)
+	if(loadedvmu == VMU_ERROR)
 		DrawMessage(error);
 	
 	title = LoadKMG("/rd/back.kmg.gz", 0);

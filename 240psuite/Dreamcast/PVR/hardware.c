@@ -801,7 +801,7 @@ void ListMapleDevices()
 	maple_display = (char*)malloc(sizeof(char)*MAPLE_BUFFER_CHAR);
 	if(!maple_display)
 	{
-		dbglog(DBG_ERROR, "Out of memory for maple display text buffer"); 
+		dbglog(DBG_ERROR, "Out of memory for maple display text buffer\n"); 
 		return;
 	}
 

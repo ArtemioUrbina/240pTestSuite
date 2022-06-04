@@ -248,7 +248,7 @@ int LoadGZMDFSamples()
 	deflate_size = zlib_getlength(filename);
 	if(!deflate_size)
 	{
-		DisplayError("Could not find PCM samples file in drive");
+		DisplayError("Could not find PCM samples file in drive\n");
 		return 0;
 	}
 	
@@ -263,14 +263,14 @@ int LoadGZMDFSamples()
 	file = gzopen(filename, "r");
 	if(!file)
 	{
-		DisplayError("No PCM samples file in drive");
+		DisplayError("No PCM samples file in drive\n");
 		return 0;
 	}
 	stream_samples = (char*)malloc(sizeof(char)*deflate_size);
 	if(!stream_samples) 
 	{
 		gzclose(file);        
-		DisplayError("Out of memory");
+		DisplayError("Out of memory for PCM samples\n");
 		return 0;
 	}
 	if(gzread(file, stream_samples, sizeof(char)*deflate_size) != deflate_size)
@@ -280,7 +280,7 @@ int LoadGZMDFSamples()
 		free(stream_samples);
 		stream_samples = NULL;
 		
-		DisplayError("Error loading and decompressing samples file");
+		DisplayError("Error loading and decompressing samples file\n");
 		return 0;
 	}
 	

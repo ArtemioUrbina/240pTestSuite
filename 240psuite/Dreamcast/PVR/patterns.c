@@ -973,12 +973,15 @@ void DrawMonoscope()
 
 void Draw100IRE()
 {
-	int 			done = 0;
+	int 			done = 0, oldvmode = -1;
 	uint16			pressed, text = 0, invert = 0;	
-	ImagePtr		back = NULL, white = NULL;
+	ImagePtr		back = NULL, white = NULL, black = NULL;
 	controller		*st = NULL;
 	char			msg[50], *vmuMsg = " 100 IRE ";
 
+	black = LoadKMG("/rd/black.kmg.gz", 1);
+	if(!black)
+		return;
 	back = LoadKMG("/rd/100IRE.kmg.gz", 0);
 	if(!back)
 		return;
@@ -988,12 +991,22 @@ void Draw100IRE()
   		FreeImage(&back);
 		return;
   	}
-	white->w = 320;
-	white->h = 240;
 
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			black->w = 320;
+			black->h = 240;
+			
+			white->w = 320;
+			white->h = 240;
+			
+			oldvmode = vmode;
+		}
+		
 		StartScene();
+		DrawImage(black);
 		if(invert)
 			DrawImage(white);
 		DrawImage(back);
@@ -1084,6 +1097,7 @@ void Draw100IRE()
 
 	FreeImage(&back);
 	FreeImage(&white);
+	FreeImage(&black);
 	return;
 }
 
