@@ -74,7 +74,6 @@ int main(void)
 	broadcast = flashrom_get_region_broadcast();
 	if(broadcast != FLASHROM_BROADCAST_NTSC && 
 		broadcast != FLASHROM_BROADCAST_UNKNOWN)
-		
 	{
 		IsPALDC = 1;
 		settings.EnablePAL = 1;
@@ -137,7 +136,11 @@ int main(void)
 		c = DrawFooter(x, y, sel, c, 1);
 		
 		EndScene();
-		VMURefresh("240p Test", "");
+		if(refreshVMU)
+		{
+			updateVMU_SD();
+			refreshVMU = 0;
+		}
 		
 		st = ReadController(0, &pressed);
 	
@@ -351,6 +354,7 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 	uint16			pressed;		
 	controller		*st;
 
+	refreshVMU = 1;
 	while(!done && !EndProgram) 
 	{		
 		float 	r = 1.0f;
@@ -517,6 +521,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 	uint16			pressed;		
 	controller		*st;
 
+	refreshVMU = 1;
 	while(!done && !EndProgram) 
 	{		
 		float 	r = 1.0f;
@@ -606,6 +611,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 	uint16			pressed;		
 	controller		*st;
 
+	refreshVMU = 1;
 	while(!done && !EndProgram) 
 	{		
 		float 	r = 1.0f;

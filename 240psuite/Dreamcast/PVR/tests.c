@@ -291,7 +291,7 @@ void DropShadowTest()
 			{
 				if(!d_shown)
 				{
-					updateVMUDonna();
+					updateVMU_Donna();
 					d_shown = 1;
 				}
 			}
@@ -523,7 +523,7 @@ void StripedSpriteTest()
 			{
 				if(!d_shown)
 				{
-					updateVMUDonna();
+					updateVMU_Donna();
 					d_shown = 1;
 				}
 			}

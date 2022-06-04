@@ -26,6 +26,7 @@ int VMUPresent();
 void updateVMU(char *line1, char*line2, int force);
 void updateVMUFlash(char *line1, char*line2, int force);
 void updateVMUGraphic(char **xpm);
-void updateVMUDonna();
+void updateVMU_Donna();
+void updateVMU_SD();
 
 #endif

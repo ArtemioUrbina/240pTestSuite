@@ -624,10 +624,13 @@ static void vbl_allinfo_callback(maple_frame_t * frm) {
 				mapleprintf("\n Device didn't respond to query command.\n Got #YMAPLE_RESPONSE_NONE#Y\n"); 
 				break;
 			case MAPLE_COMMAND_ALLINFO:
-				mapleprintf("\n Device doesn't support command.\n Maybe and emulator? got #YMAPLE_COMMAND_ALLINFO#Y\n"); 
+				mapleprintf("\n Device doesn't support command.\n Maybe an emulator? got #YMAPLE_COMMAND_ALLINFO#Y\n"); 
+				break;
+			case MAPLE_RESPONSE_DEVINFO:
+				mapleprintf("\n Device doesn't support command.\n Got #YMAPLE_RESPONSE_DEVINFO#Y\n"); 
 				break;
 			default:
-				mapleprintf("\n Unexpected response #Y%d#Y from device.\n", resp->response); 
+				mapleprintf("\n Unexpected response [#Y%d#Y] from device.\n", resp->response); 
 				break;
 		}
 	}
@@ -674,7 +677,7 @@ static void vbl_send_allinfo(int p, int u) {
 	maple_queue_frame(&dev->frame);
 }
 
-/* Formatted output for the devinfo struct */
+/* Formatted output for the devinfo struct from command */
 void print_devinfo(maple_devinfo_t *info)
 {
 	/* Print each piece of info in an itemized fashion */	
@@ -682,12 +685,28 @@ void print_devinfo(maple_devinfo_t *info)
 	mapleprintf("#CFunction int 1:#C 0x%.8lx\n", info->function_data[0]);
 	mapleprintf("#CFunction int 2:#C 0x%.8lx  ", info->function_data[1]);
 	mapleprintf("#CFunction int 3:#C 0x%.8lx\n", info->function_data[2]);
-	mapleprintf("#CRegion Code:#C 0x%.2x  ", info->area_code);
-	mapleprintf("#CConnection :#C 0x%.2x\n", info->connector_direction);
-	mapleprintf("#CProduct Name:#C %.30s\n", info->product_name);
-	mapleprintf("#CProduct License:#C\n %.60s\n", info->product_license);
-	mapleprintf("#CStandby current:#C 0x%.4x (%d mW)\n", info->standby_power, info->standby_power);
-	mapleprintf("#CMaximum current:#C 0x%.4x (%d mW)\n", info->max_power, info->max_power);
+	mapleprintf("#CRegion:#C         0x%.2x        ", info->area_code);
+	mapleprintf("#CConnection:#C     0x%.2x\n", info->connector_direction);
+	mapleprintf("#CProduct Name & License:#C %.30s\n", info->product_name);
+	mapleprintf("  %.60s\n", info->product_license);
+	mapleprintf("#CStandby power:#C 0x%.4x (%d mW) ", info->standby_power, info->standby_power);
+	mapleprintf("#CMax:#C 0x%.4x (%d mW)\n", info->max_power, info->max_power);
+}
+
+/* Formatted output for the devinfo struct in KOS */
+void FillKOSDevInfo(maple_device_t *dev)
+{
+	mapleprintf("\n#YValues from KOS MAPLE_RESPONSE_DEVINFO#Y cache:\n\n");
+	mapleprintf("#CFunction int 0:#C 0x%.8lx  ", dev->info.functions);
+	mapleprintf("#CFunction int 1:#C 0x%.8lx\n", dev->info.function_data[0]);
+	mapleprintf("#CFunction int 2:#C 0x%.8lx  ", dev->info.function_data[1]);
+	mapleprintf("#CFunction int 3:#C 0x%.8lx\n", dev->info.function_data[2]);
+	mapleprintf("#CRegion:#C         0x%.2x        ", dev->info.area_code);
+	mapleprintf("#CConnection:#C     0x%.2x\n", dev->info.connector_direction);
+	mapleprintf("#CProduct Name & License:#C %.30s\n", dev->info.product_name);
+	mapleprintf("  %.60s\n", dev->info.product_license);
+	mapleprintf("#CStandby power:#C 0x%.4x (%d mW) ", dev->info.standby_power, dev->info.standby_power);
+	mapleprintf("#CMax:#C 0x%.4x (%d mW)\n", dev->info.max_power, dev->info.max_power);
 }
 
 #define BPL 16	/* Bytes to print per line */
@@ -718,8 +737,14 @@ void print_device_allinfo(maple_device_t *dev, int extra, ImagePtr back)
 	timer_spin_sleep(800);
 	size += (recv_buff[3]*4);
 	
-	if(size-4 <= 0 || !maple_locked_device)
+	if(!maple_locked_device)
 		return;
+		
+	if(size-4 <= 0)
+	{
+		FillKOSDevInfo(dev);
+		return;
+	}
 	
 	mapleprintf("[%d bytes of data]:\n", size-4);
 	print_devinfo((maple_devinfo_t *)&recv_buff[4]);
