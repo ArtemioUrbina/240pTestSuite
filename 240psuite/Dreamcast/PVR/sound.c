@@ -231,7 +231,7 @@ int LoadGZMDFSamples()
 	VMURefresh("Select", "Frequency");
 	khz = SelectMenu("Select Frequency", resmenudata, 2, khz);
 	if(khz == MENU_CANCEL)
-		return -1;
+		return 0;
 	
 	if(khz == 1)
 	{
@@ -320,7 +320,7 @@ void MDFourier()
 	}
 	layer->alpha = 0.01f;
 	
-	if(LoadGZMDFSamples() == 0)
+	if(!LoadGZMDFSamples())
 	{
 		if(cdrom_spin_down() != ERR_OK)
 			dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
@@ -394,7 +394,7 @@ void MDFourier()
 			{
 				snd_stream_stop(hnd);
 				
-				if(LoadGZMDFSamples() == 0)
+				if(!LoadGZMDFSamples())
 				{
 					if(cdrom_spin_down() != ERR_OK)
 						dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");

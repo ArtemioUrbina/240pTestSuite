@@ -423,20 +423,34 @@ void DiplayController(int num, float x, float y)
 
 void ControllerTest()
 {
-	int 		done = 0;
+	int 		done = 0, oldvmode = -1;
 	uint16		pressed;
-	ImagePtr	back;
-	controller	*st;
+	ImagePtr	back = NULL, black = NULL;
+	controller	*st = NULL;
 
+	black = LoadKMG("/rd/black.kmg.gz", 1);
+	if(!black)
+		return;
+		
 	back = LoadKMG("/rd/ControlBack.kmg.gz", 0);
 	if(!back)
 		return;
-	back->alpha = 0.5f;
+	
 	while(!done && !EndProgram) 
 	{				
 		float x = 20, y = 30, w = 30*fw, h = 10*fh;
 		
+		if(oldvmode != vmode)
+		{
+			back->alpha = 0.5f;
+			
+			black->w = 320;
+			black->h = 240;
+			
+			oldvmode = vmode;
+		}
 		StartScene();
+		DrawImage(black);
 		DrawImage(back);
 		DrawStringS(120, 20, 0.0f, 1.0f, 0.0f, "Controller Test"); 		
 		
@@ -458,12 +472,13 @@ void ControllerTest()
 			done =	1;								
 	}
 	FreeImage(&back);
+	FreeImage(&black);
 	return;
 }
 
-void maple_device_scan(float x, float y)
+int maple_device_scan(float x, float y, int selected)
 {
-	int     		port = 0, unit = 0;
+	int     		port = 0, unit = 0, count = 0;
 	maple_device_t  *dev = NULL;
 	char			msg[512], name[256];
 
@@ -478,14 +493,16 @@ void maple_device_scan(float x, float y)
 
             if(dev->valid)
 			{
+				count ++;
 				if(unit == 0)
 				{
 					y += 2.0f*fh;
 					ReduceName(name, dev->info.product_name);
-					sprintf(msg, "#C[%c%c]#C #Y%s#Y (%s)",
-                       'A' + port, '0' + unit,
-                       name,
-                       maple_pcaps(dev->info.functions));
+					sprintf(msg, "%s#C[%c%c]#C #Y%s#Y (%s)",
+						selected == count ? "#Y>#Y" : " ",
+						'A' + port, '0' + unit,
+						name,
+						maple_pcaps(dev->info.functions));
 					DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
 					orig_y = y;
 				}
@@ -498,9 +515,10 @@ void maple_device_scan(float x, float y)
 					if(unit > 3)
 						xpos += 28.0f*fw;
 					y += fh;
-					sprintf(msg, "#C[%c%c]#C %s",
-                       'A' + port, '0' + unit,
-                       maple_pcaps(dev->info.functions));
+					sprintf(msg, "%s#C[%c%c]#C %s",
+						selected == count ? "#Y>#Y" : " ",
+						'A' + port, '0' + unit,
+						maple_pcaps(dev->info.functions));
 						
 					DrawStringS(xpos, y, 1.0f, 1.0f, 1.0f, msg);
 				}
@@ -510,53 +528,345 @@ void maple_device_scan(float x, float y)
         }
 		y = max_y;
     }
+	return count;
 }
+
+#define	MAPLE_BUFFER_CHAR	8192
+char			*maple_display = NULL;
+int				maple_display_pos = 0;
+int				maple_locked_device = 0;
+
+#ifdef DCLOAD
+void PrintCleanString(char *str) 
+{	
+	while (*str) 
+	{		
+		if(*str == '$')
+		{
+			dbglog(DBG_INFO, " "); 
+			str++;
+			continue;
+		}
+		
+		if(*str == '#')
+		{						
+			str++;
+			str++;
+			continue;
+		}
+		dbglog(DBG_INFO, "%c", *str++);
+	}
+}
+#endif
+
+void mapleprintf(char *fmt, ... )
+{
+	int		len = 0;
+	char	buffer[512];
+	va_list arguments;
+
+	va_start(arguments, fmt);
+	vsprintf(buffer, fmt, arguments);
+	va_end(arguments);
+	
+	len = strlen(buffer);
+	if(maple_display_pos + len < MAPLE_BUFFER_CHAR)
+	{
+		if(!maple_display)
+		{
+			dbglog(DBG_ERROR, "Maple display text buffer is NULL"); 
+			return;
+		}
+		memcpy(maple_display+maple_display_pos, buffer, sizeof(char)*len);
+		maple_display_pos += len;
+	}
+	else
+		dbglog(DBG_ERROR, "Maple display text buffer was too small"); 
+		
+#ifdef DCLOAD	
+	PrintCleanString(buffer);
+#endif
+}
+
+/*
+ * Code below is from upgraded dcutils by Donald Haase.
+ * taken from https://dcemulation.org/phpBB/viewtopic.php?t=97047
+ * slightly adapted formating for PVR display
+ */
+ 
+#define GRABALL 2
+/* Local copy of the returned buffer for maple stuff */
+unsigned char 	recv_buff[1024 + 32];
+
+static void vbl_allinfo_callback(maple_frame_t * frm) {
+	maple_response_t	*resp;
+
+	/* So.. did we get a response? */
+	resp = (maple_response_t *)frm->recv_buf;
+
+	if (resp->response == MAPLE_RESPONSE_ALLINFO) {
+		//mapleprintf("Received proper maple response\n");
+		/* Copy in the new buff */
+		memcpy(recv_buff, resp, 1024 + 32);
+	} else {
+		switch(resp->response)
+		{
+			case MAPLE_RESPONSE_AGAIN:
+				mapleprintf("\n Device asked for retry.\n Got #YMAPLE_RESPONSE_AGAIN#Y\n"); 
+				break;
+			case MAPLE_RESPONSE_BADCMD:
+				mapleprintf("\n Device doesn't support command.\n Got #YMAPLE_RESPONSE_BADCMD#Y\n"); 
+				break;
+			case MAPLE_RESPONSE_BADFUNC:
+				mapleprintf("\n Device doesn't support command.\n Got #YMAPLE_RESPONSE_BADFUNC#Y\n"); 
+				break;
+			case MAPLE_RESPONSE_NONE:
+				mapleprintf("\n Device didn't respond to query command.\n Got #YMAPLE_RESPONSE_NONE#Y\n"); 
+				break;
+			case MAPLE_COMMAND_ALLINFO:
+				mapleprintf("\n Device doesn't support command.\n Maybe and emulator? got #YMAPLE_COMMAND_ALLINFO#Y\n"); 
+				break;
+			default:
+				mapleprintf("\n Unexpected response #Y%d#Y from device.\n", resp->response); 
+				break;
+		}
+	}
+
+	maple_frame_unlock(frm);
+}
+
+/* Send a ALLINFO command for the given port/unit */
+static void vbl_send_allinfo(int p, int u) {
+	maple_device_t 		*dev = NULL;
+	int					frames_wait_for_lock = 60;
+
+	maple_locked_device = 0;
+	
+	/* Reserve access; if we don't get it, forget about it */
+	do
+	{	
+		dev = &maple_state.ports[p].units[u];
+		if(maple_frame_lock(&dev->frame) == 0)
+		{
+			maple_locked_device = 1;
+			break;
+		}
+		
+		pvr_wait_ready();
+		frames_wait_for_lock --;
+	}while(!maple_locked_device && frames_wait_for_lock != 0);
+	
+	if(!maple_locked_device)
+	{
+		mapleprintf("\nmaple_frame_lock() failed");
+		if(dev)
+			mapleprintf(" for #Y%c%c#Y", 'A'+(dev->port), '0'+(dev->unit));
+		mapleprintf("\n");
+		return;
+	}
+
+	/* Setup our autodetect frame to probe at a new device */
+	maple_frame_init(&dev->frame);
+	dev->frame.cmd = MAPLE_COMMAND_ALLINFO;
+	dev->frame.dst_port = p;
+	dev->frame.dst_unit = u;
+	dev->frame.callback = vbl_allinfo_callback;
+	maple_queue_frame(&dev->frame);
+}
+
+/* Formatted output for the devinfo struct */
+void print_devinfo(maple_devinfo_t *info)
+{
+	/* Print each piece of info in an itemized fashion */	
+	mapleprintf("#CFunction int 0:#C 0x%.8lx  ", info->functions);
+	mapleprintf("#CFunction int 1:#C 0x%.8lx\n", info->function_data[0]);
+	mapleprintf("#CFunction int 2:#C 0x%.8lx  ", info->function_data[1]);
+	mapleprintf("#CFunction int 3:#C 0x%.8lx\n", info->function_data[2]);
+	mapleprintf("#CRegion Code:#C 0x%.2x  ", info->area_code);
+	mapleprintf("#CConnection :#C 0x%.2x\n", info->connector_direction);
+	mapleprintf("#CProduct Name:#C %.30s\n", info->product_name);
+	mapleprintf("#CProduct License:#C\n %.60s\n", info->product_license);
+	mapleprintf("#CStandby current:#C 0x%.4x (%d mW)\n", info->standby_power, info->standby_power);
+	mapleprintf("#CMaximum current:#C 0x%.4x (%d mW)\n", info->max_power, info->max_power);
+}
+
+#define BPL 16	/* Bytes to print per line */
+/* 
+	Get and print the data returned by the ALLINFO command, 
+	if extra=0, do not print the Free Data
+*/
+void print_device_allinfo(maple_device_t *dev, int extra, ImagePtr back)
+{
+	unsigned int size = 4;
+	unsigned int i = 0;
+	unsigned int j = 0;		
+
+	if(dev == NULL)	
+	{
+		dbglog(DBG_ERROR, "print_device_allinfo: received NULL devide");
+		return;
+	}
+
+	maple_display_pos = 0;
+	memset(maple_display, 0, sizeof(char)*MAPLE_BUFFER_CHAR);
+	
+	/* Clear the old buffer */
+	memset(recv_buff, 0, 1024+32);
+	
+	mapleprintf("Requested info for device #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
+	vbl_send_allinfo((dev->port), (dev->unit));
+	timer_spin_sleep(800);
+	size += (recv_buff[3]*4);
+	
+	if(size-4 <= 0 || !maple_locked_device)
+		return;
+	
+	mapleprintf("[%d bytes of data]:\n", size-4);
+	print_devinfo((maple_devinfo_t *)&recv_buff[4]);
+
+	if(extra)
+	{
+#if (GRABALL == 1)
+		size = 1024+32;
+#elif (GRABALL == 2)
+		/* Grab a bit extra, cause some devices are stupid, and give more than they tell */
+		size = ((size+64)<(1024+32))?(size+64):(1024+32);
+#endif
+
+		mapleprintf("#CExtra data:#C\n");
+		/* Print the hex for the data followed by ascii */
+		for(i=4+112; i< size; i+=BPL) 
+		{	
+			mapleprintf("#G%.3x#G$#G|#G$", i-(4+112));
+			for(j=0;j<BPL;j++)	mapleprintf("%.2x$", recv_buff[i+j]);		
+			mapleprintf("#G|#G$");
+			
+			for(j=0;j<BPL;j++)	mapleprintf("%c"   , isprint(recv_buff[i+j])?recv_buff[i+j]:' ');
+			mapleprintf("\n");
+		}	
+		mapleprintf("#CEnd of Extra data#C\n");
+	}
+}
+
+/*
+ * End code copy from Donald Haase.
+ */
 
 void ListMapleDevices()
 {
-	int 			done = 0, sel = 1;
+	int 			done = 0, sel = 1, oldvmode = -1, c = -1;
 	uint16			pressed;		
-	ImagePtr		back;
+	ImagePtr		back = NULL, black = NULL;
 	controller		*st = NULL;
 
+	if(maple_display)
+	{
+		dbglog(DBG_ERROR, "Maple display text buffer was not NULL"); 
+		return;
+	}
+	
+	black = LoadKMG("/rd/black.kmg.gz", 1);
+	if(!black)
+		return;
+		
 	back = LoadKMG("/rd/maple.kmg.gz", 0);
 	if(!back)
 		return;
+	
+	maple_display = (char*)malloc(sizeof(char)*MAPLE_BUFFER_CHAR);
+	if(!maple_display)
+	{
+		dbglog(DBG_ERROR, "Out of memory for maple display text buffer"); 
+		return;
+	}
 
-	back->alpha = 0.5f;
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			back->alpha = 0.5f;
+			black->w = 320;
+			black->h = 240;
+			
+			oldvmode = vmode;
+		}
 		StartScene();
+		DrawImage(black);
 		DrawImage(back);
 
 		DrawStringS(125, 20, 0.0f, 1.0f, 0.0f, "Maple Devices");
-		maple_device_scan(15, 20);
+		c = maple_device_scan(15, 20, sel);
 		EndScene();
 
-		
 		VMURefresh("Maple", "Devices");
 
 		st = ReadController(0, &pressed);
 		if(st)
 		{
+			if ( pressed & CONT_DPAD_UP )
+				sel --;
+			
+			if ( pressed & CONT_DPAD_DOWN )
+				sel ++;
+		
 			if (pressed & CONT_B)
 				done =	1;
 
 			if (pressed & CONT_A)
 			{
+				if(sel > 0)
+				{
+					int close_display = 0;
+					
+					maple_device_t *dev = NULL;
+					
+					dev = maple_enum_type(sel - 1, 0xffffffff);
+					if(dev)
+					{
+						char vmudata[20];
+						
+						sprintf(vmudata, "query: %c%c", 'A'+(dev->port), '0'+(dev->unit));	
+						updateVMU("Maple", vmudata, 1);		
+						print_device_allinfo(dev, 1, back);
+						while(!close_display && !EndProgram) 
+						{
+							StartScene();
+							DrawImage(black);
+							DrawImage(back);
+							DrawStringS(5, 20, 1.0f, 1.0f, 1.0f, maple_display);
+							EndScene();
+							
+							st = ReadController(0, &pressed);
+							if(st)
+							{
+								if (pressed & CONT_B)
+									close_display = 1;								
+
+								if (pressed & CONT_START)
+									ShowMenu(MAPLEHELP);
+							}
+						}
+					}
+					refreshVMU = 1;
+				}
 			}
 
 			if (pressed & CONT_START)
-				ShowMenu(MAPPLEHELP);
+				ShowMenu(MAPLEHELP);
 		}
 		
-		if(sel < 0)
-			sel = 2;
-
-		if(sel > 2)
-			sel = 0;
+		if(sel < 1)
+			sel = c;
+		if(sel > c)
+			sel = 1;
 	}
 	FreeImage(&back);
+	FreeImage(&black);
+	if(maple_display)
+	{
+		free(maple_display);
+		maple_display = NULL;
+	}
 	return;
 }
 
@@ -625,9 +935,10 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size)
 void MemoryViewer(uint32 address)
 {
 	int 		done = 0, ascii = 0, locpos = 0, docrc = 0, factor = 1;
-	int			joycntx = 0, joycnty = 0;
+	int			joycntx = 0, joycnty = 0, oldvmode = -1;
 	uint16		pressed;		
 	uint32		crc = 0;
+	ImagePtr	back = NULL;
 	uint32		locations[MAX_LOCATIONS] = { 	0x00000000, 0x00200000,
 												0x00240000, 0x04000000,
 												0x0C000000, 0x0C000100, // KallistiOS 
@@ -646,6 +957,10 @@ void MemoryViewer(uint32 address)
 											"Texture memory", "G2 devices", "NULL"};
 	controller	*st;
 
+	back = LoadKMG("/rd/black.kmg.gz", 1);
+	if(!back)
+		return;
+		
 	if(address == 0)
 		address = locations[0];
 	while(!done && !EndProgram) 
@@ -654,12 +969,21 @@ void MemoryViewer(uint32 address)
 		uint8_t *mem = NULL;
 		char 	buffer[10];
 		
-		if(vmode >= HIGH_RES)
-			factor = 2;
-		else
-			factor = 1;
+		if(oldvmode != vmode)
+		{
+			if(vmode >= HIGH_RES)
+				factor = 2;
+			else
+				factor = 1;
+				
+			back->w = dW;
+			back->h = dH;
 			
+			oldvmode = vmode;
+		}
+
 		StartScene();
+		DrawImage(back);
 
 		mem = (uint8_t*)address;
 		
@@ -688,7 +1012,7 @@ void MemoryViewer(uint32 address)
 		}
 		if(pos != -1)
 			DrawStringS(VISIBLE_HORZ*factor*3*fw, (VISIBLE_VERT*factor/2)*(fh-1), 1.0f, 1.0f, 0.0f, names[pos]);
-		
+			
 		for(i = 0; i < VISIBLE_VERT*factor; i++)
 		{
 			for(j = 0; j < VISIBLE_HORZ*factor; j++)
@@ -707,7 +1031,7 @@ void MemoryViewer(uint32 address)
 					else
 						buffer[0] = (char)32;			// Space
 				}
-				DrawStringS(3*j*fw, i*fh, 1.0f, 1.0f, 1.0f, buffer);
+				DrawString(3*j*fw, i*fh, 1.0f, 1.0f, 1.0f, buffer);
 			}
 		}
         EndScene();
@@ -780,6 +1104,7 @@ void MemoryViewer(uint32 address)
 		if (pressed & CONT_START)
 			ShowMenu(MEMVIEWHELP);
 	}
+	FreeImage(&back);
 	return;
 }
 

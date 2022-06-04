@@ -1,7 +1,16 @@
                 MAPLE DEVICE LIST
 
 This lists the #CMaple Devices#G attached to the
-Dreamcast System.
+#GDreamcast#G System, such as memory cards,
+controllers and other peripherals. 
 
-Here you'll see Memory cards, controllers, the
-DreamEye and other peripherals.
+Each port, #YA0#Y to #YD0#Y, can have up to 6 units
+attached. This will be displayed as a hierarchy.
+
+You can select any of them with the #GA#A button and
+if will be queried for the device information. This
+can be useful to identify hardware revisions.
+#GPlease document and report any rare devices!#G
+
+Data is gathered using #YDonald Haase#Y's work, please
+check the source code for the url.

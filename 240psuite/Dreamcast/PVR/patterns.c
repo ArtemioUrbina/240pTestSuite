@@ -37,9 +37,10 @@
 
 void DrawPluge()
 {
-	int 		done = 0, text = 0, ShowHelp = 0;
+	int 		done = 0, text = 0, ShowHelp = 0, oldvmode = -1;
 	uint16		pressed;		
-	ImagePtr	back = NULL, backFull = NULL, backNTSC = NULL, black = NULL, highlight = NULL;
+	ImagePtr	back = NULL, backFull = NULL;
+	ImagePtr	backNTSC = NULL, black = NULL, highlight = NULL;
 	controller	*st = NULL;
 	char		msg[50];
 
@@ -53,7 +54,7 @@ void DrawPluge()
 		FreeImage(&backNTSC);	
 		return;
 	}
-	black = LoadKMG("/rd/white.kmg.gz", 0);
+	black = LoadKMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
 		FreeImage(&backFull);
@@ -69,16 +70,18 @@ void DrawPluge()
 		FreeImage(&backNTSC);
 		return;
 	}	
-	
-	black->r = 0x0;
-	black->g = 0x0;
-	black->b = 0x0;	
 
 	back = backFull;
-	black->h = 264;	
 
 	while(!done && !EndProgram) 
 	{
+		if(oldvmode != vmode)
+		{
+			black->w = 320;
+			black->h = IsPAL ? 264 : 240;
+			oldvmode = vmode;
+		}
+
 		StartScene();
 
 		DrawImage(black);

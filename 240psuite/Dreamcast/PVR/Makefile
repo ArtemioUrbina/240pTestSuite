@@ -11,6 +11,11 @@ dcload: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DDCLOAD -DBENCHMARK -D
 dcload: LDFLAGS = -lfftw3
 dcload: $(TARGET).bin
 
+#DCLOAD debug compile (release flags)
+dcloadrel: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST
+dcloadrel: LDFLAGS = -lfftw3
+dcloadrel: $(TARGET).bin
+
 #Release without FFTW
 nofft: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW
 nofft: $(TARGET).bin
@@ -92,6 +97,9 @@ $(TARGET).bin: $(TARGET).elf
 
 run: clean dcload
 	$(KOS_LOADER) $(TARGET).bin 
+	
+runrel: clean dcloadrel
+	$(KOS_LOADER) $(TARGET).bin -n
 
 cdi-int: all ip
 	scramble $(TARGET).bin 1ST_READ.BIN

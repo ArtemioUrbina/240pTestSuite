@@ -71,14 +71,14 @@ void CleanImages()
 	{
 		if(Images[i].state != MEM_RELEASED)
 		{
-			dbglog(DBG_ERROR, "Found unreleased image %s (releasing it)\n", Images[i].name);
+			dbglog(DBG_CRITICAL, "=== Found unreleased image %s (releasing it) ===\n", Images[i].name);
 			FreeImage(&Images[i].image);
 			Images[i].state = MEM_RELEASED;
 			Images[i].name[0] = '\0';
 			if(UsedImages)
 				UsedImages --;
 			else
-				dbglog(DBG_CRITICAL, "CleanImages: Invalid used image index [%d]\n", i);
+				dbglog(DBG_CRITICAL, "=== CleanImages: Invalid used image index [%d] ===\n", i);
 		}	
 	}
 }
@@ -94,7 +94,7 @@ void RefreshLoadedImages()
 			if(Images[i].name[0] == 'F' && Images[i].name[1] == 'B')
 			{
 				if(!ReloadFBTexture())
-					dbglog(DBG_CRITICAL, "Could not reload FrameBuffer\n");
+					dbglog(DBG_CRITICAL, "=== Could not reload FrameBuffer ===\n");
 				else
 					Images[i].state = MEM_LOADED;
 			}
@@ -116,7 +116,7 @@ void ReleaseTextures()
 		if(Images[i].state == MEM_LOADED)
 		{
 			if(!FreeImageData(&Images[i].image))
-				dbglog(DBG_CRITICAL, "Could not free image: %s\n", Images[i].name);
+				dbglog(DBG_CRITICAL, "=== Could not free image: %s ===\n", Images[i].name);
 			else
 				Images[i].state = MEM_TEXRELEASED;
 		}	
@@ -141,10 +141,10 @@ void InsertImage(ImagePtr image, char *name)
 			}
 		}
 		if(!placed)
-			dbglog(DBG_CRITICAL, "Image array full (NO FREE)\n");
+			dbglog(DBG_CRITICAL, "=== Image array full (NO FREE) ===\n");
 	}
 	else
-		dbglog(DBG_CRITICAL, "Image array full\n");
+		dbglog(DBG_CRITICAL, "=== Image array full ===\n");
 }
 
 void ReleaseImage(ImagePtr image)
@@ -153,7 +153,7 @@ void ReleaseImage(ImagePtr image)
 
 	if(!image)
 	{
-		dbglog(DBG_CRITICAL, "Called ReleaseImage with a NULL pointer\n");
+		dbglog(DBG_CRITICAL, "=== Called ReleaseImage with a NULL pointer\n ===");
 		return;
 	}
 
@@ -167,13 +167,13 @@ void ReleaseImage(ImagePtr image)
 			if(UsedImages)
 				UsedImages --;
 			else
-				dbglog(DBG_CRITICAL, "ReleaseImage: Invalid used image index\n");
+				dbglog(DBG_CRITICAL, "=== ReleaseImage: Invalid used image index ===\n");
 			deleted = 1;
 		}
 	}
 
 	if(!deleted)
-		dbglog(DBG_CRITICAL, "Image not found for deletion\n");
+		dbglog(DBG_CRITICAL, "=== Image not found for deletion ===\n");
 }
 
 int gkmg_to_img(const char * fn, kos_img_t * rv) {	
@@ -454,7 +454,7 @@ void FreeImage(ImagePtr *image)
 		*image = NULL;
 	}
 	else
-		dbglog(DBG_CRITICAL, "Called FreeImage with a NULL pointer");
+		dbglog(DBG_CRITICAL, "=== Called FreeImage with a NULL pointer ===\n");
 }
 
 uint8 FreeImageData(ImagePtr *image)

@@ -29,6 +29,8 @@ float f_size = 8.0f;
 float fw = 5.0f;
 float fh = 9.0f;
 
+float half_fw = 2.2f;
+
 ImagePtr 	black_t = NULL;
 ImagePtr 	font_t = NULL;
 
@@ -105,6 +107,13 @@ void DrawString(float x, float y, float r, float g, float b, char *str)
 			continue;
 		}
 
+		if(*str == '$')
+		{
+			x += half_fw;
+			str++;
+			continue;
+		}
+		
 		if(*str == '#')
 		{						
 			highlight = !highlight;
@@ -137,6 +146,11 @@ void DrawString(float x, float y, float r, float g, float b, char *str)
 					case 'M':
 						font_t->r = 1.0f;
 						font_t->b = 1.0f;
+						break;
+					case 'O':
+						font_t->r = 0.812f;
+						font_t->g = 0.200f;
+						font_t->b = 0.067f;
 						break;
 					case 'W':
 					default:											
