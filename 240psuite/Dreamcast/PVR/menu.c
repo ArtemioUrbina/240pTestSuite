@@ -1544,7 +1544,7 @@ void DrawMessageOnce(char *msg, int waitinput)
 	len = (float)MeasureString(msg)*fw;
 	if(!len)
 		return;
-	xpos = (248.0f-len)/2.0f+34.0f;
+	xpos = (int)((248.0f-len)/2.0f+34.0f);
 	black = LoadKMG("/rd/black.kmg.gz", 1);
 	back = LoadKMG("/rd/message.kmg.gz", 0);
 	
@@ -1555,9 +1555,9 @@ void DrawMessageOnce(char *msg, int waitinput)
 			DrawImage(black);
 		if(back)
 			DrawImage(back);
-		DrawStringS(xpos, 120, 0.0f, 1.0f, 0.0f, msg); 
+		DrawStringS(xpos, 120, 1.0f, 1.0f, 1.0f, msg); 
 		if(waitinput)
-			DrawStringS(120, 163, 0.9f, 0.9f, 0.9f, "Press B to close");
+			DrawStringS(120, 163, 0.4f, 0.9f, 0.4f, "Press B to close");
 		EndScene();
 	
 		if(waitinput)
