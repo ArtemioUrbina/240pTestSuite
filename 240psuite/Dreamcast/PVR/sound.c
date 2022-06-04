@@ -255,10 +255,7 @@ int LoadGZMDFSamples()
 #ifdef BENCHMARK
 	start = timer_ms_gettime64();
 #endif
-
-	StartScene();
-	DrawStringS(30, 60, 0.0f, 1.0f, 0.0f, "Please wait while samples are loaded... (10 seconds)"); 
-	EndScene();
+	DrawMessageOnce("Please wait while samples are loaded (10 seconds)", 0);
 	
 	file = gzopen(filename, "r");
 	if(!file)

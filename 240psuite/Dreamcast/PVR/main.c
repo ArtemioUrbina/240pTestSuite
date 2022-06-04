@@ -102,9 +102,6 @@ int main(void)
 	LoadFont();
 	LoadScanlines();
 	
-	if(loadedvmu == VMU_ERROR)
-		DrawMessage(error);
-	
 	title = LoadKMG("/rd/back.kmg.gz", 0);
 	sd = LoadKMG("/rd/SD.kmg.gz", 0);
 	if(sd)
@@ -114,6 +111,10 @@ int main(void)
 	}
 	
 	DrawIntro();
+	
+	if(loadedvmu == VMU_ERROR)
+		DrawMessage(error);
+
 	refreshVMU = 1;
 	while(!done && !EndProgram) 
 	{

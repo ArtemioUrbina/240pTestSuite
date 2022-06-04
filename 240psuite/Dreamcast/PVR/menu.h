@@ -27,8 +27,6 @@
 #define VERSION_NUMBER "Dreamcast Ver. 1.29"
 #define VERSION_DATE "03/06/2022"
 
-#define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0, 0 };
-
 #define MENUSIZE_W 116
 #define MENUSIZE_H 123
 
@@ -48,6 +46,7 @@
 	
 #define FLOAT_TO_INT(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 
+#define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0, 0 };
 struct settings_st {
 	int drawborder;
 	int EnablePAL;
@@ -90,5 +89,6 @@ typedef struct menu_data {
 
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option);
 void DrawMessage(char *msg);
+void DrawMessageOnce(char *msg, int waitinput);
 
 #endif

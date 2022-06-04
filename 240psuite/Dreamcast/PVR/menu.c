@@ -46,6 +46,8 @@ uint16		*fbtextureBuffer = NULL;
 struct settings_st settings = DEFAULT_OPTIONS;
 struct settings_st default_settings = DEFAULT_OPTIONS;
 
+int CheckIfVideoModeNeedsRefresh(struct settings_st *old_settings);
+
 void FreeTextureFB()
 {
 	if(fbtexture)
@@ -830,13 +832,17 @@ void ChangeOptions(ImagePtr screen)
 					case 12:		
 						if(VMUPresent())
 						{
-							int vmures;
+							int		vmures = 0;
+							struct	settings_st old_settings;
 							
+							old_settings = settings;
 							vmures = LoadVMUSave(error);
 							if(vmures == VMU_OK)
 							{
-								ChangeResolution(vmode);
+								if(CheckIfVideoModeNeedsRefresh(&old_settings))
+									ChangeResolution(vmode);
 								loaded = 1;
+								changedPVR = 1;
 							}
 							else
 								loaded = 0;
@@ -849,11 +855,16 @@ void ChangeOptions(ImagePtr screen)
 						break;
 					case 14:
 						{
+							struct	settings_st old_settings;
+							
+							old_settings = settings;
 							settings = default_settings;
 							if(IsPALDC)
 								settings.EnablePAL = 1;
 							loaded = saved = -1;
-							ChangeResolution(vmode);
+							if(CheckIfVideoModeNeedsRefresh(&old_settings))
+								ChangeResolution(vmode);
+							changedPVR = 1;
 						}
 						break;
 					case 15:
@@ -1520,23 +1531,66 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 
 void DrawMessage(char *msg)
 {
+	DrawMessageOnce(msg, 1);
+}
+
+void DrawMessageOnce(char *msg, int waitinput)
+{
 	int 		done = 0;
+	float		xpos = 34.0f, len = 0;
 	uint16		pressed;
-	ImagePtr	back = NULL;
+	ImagePtr	back = NULL, black = NULL;
 	
-	back = LoadKMG("/rd/black.kmg.gz", 1);
-	while(!done && !EndProgram) 
+	len = (float)MeasureString(msg)*fw;
+	if(!len)
+		return;
+	xpos = (248.0f-len)/2.0f+34.0f;
+	black = LoadKMG("/rd/black.kmg.gz", 1);
+	back = LoadKMG("/rd/message.kmg.gz", 0);
+	
+	while(!done) 
 	{
 		StartScene();
+		if(black)
+			DrawImage(black);
 		if(back)
 			DrawImage(back);
-		DrawStringS(20, 60, 0.0f, 1.0f, 0.0f, msg); 
+		DrawStringS(xpos, 120, 0.0f, 1.0f, 0.0f, msg); 
+		if(waitinput)
+			DrawStringS(120, 163, 0.9f, 0.9f, 0.9f, "Press B to close");
 		EndScene();
 	
-		ReadController(0, &pressed);
-		if(pressed & CONT_A || pressed & CONT_B)
-			done =	1;
+		if(waitinput)
+		{
+			ReadController(0, &pressed);
+			if(pressed & CONT_A || pressed & CONT_B)
+				done =	1;
+		}
+		else
+			done = 1;
 	}
 	if(back)
 		FreeImage(&back);
+	if(black)
+		FreeImage(&black);
+}
+
+int CheckIfVideoModeNeedsRefresh(struct settings_st *old_settings)
+{
+	if(!old_settings)
+		return 1;
+
+	if(old_settings->Deflicker != settings.Deflicker)
+		return 1;
+	if(old_settings->Dithering != settings.Dithering)
+		return 1;
+	if(old_settings->UseKOSDefaults != settings.UseKOSDefaults)
+		return 1;
+	if(old_settings->ChangeVideoRegs != settings.ChangeVideoRegs)
+		return 1;
+	if(old_settings->PALStart != settings.PALStart)
+		return 1;
+	if(old_settings->drawborder != settings.drawborder)
+		return 1;
+	return 0;
 }
