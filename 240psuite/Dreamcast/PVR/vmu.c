@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -21,13 +21,14 @@
 
 #include <kos.h>
 #include <string.h>
+#include <stdlib.h>
 #include "vmu_print.h"
 #include "vmodes.h"
 #include "vmu.h"
 
 static uint8 bitmap[192];
 
-int VMUPresent()
+int isVMUPresent()
 {
 	maple_device_t	*vmu;
 
@@ -133,9 +134,111 @@ char *sd_xpm[32] = {
 "   ..  .  . .....              ...... . .  ..   ",
 "   . . . . . .......        ......... . ..  .   "};
 
+char *sd_b1_xpm[32] = {
+"    ........................................    ",
+"   ..........................................   ",
+"   ........     ...................  ........   ",
+"   ........                    ..... ........   ",
+"   ........                     .... ........   ",
+"   ........                     .... ........   ",
+"   ........                    ....  ........   ",
+"   .......                      ..    .......   ",
+"   .......                            .......   ",
+"   ......                             .......   ",
+"    .....                              ......   ",
+"    .....                              .....    ",
+"      ...                              .....    ",
+"      ...                              ...      ",
+"      ...    ....              ....    ...      ",
+"      ...   .. ....          .... ..   ...      ",
+"     . ...    ........    ........     ...      ",
+"     . ...   .. ......    ...... ..   ... .     ",
+"     . ...   . ... .        . ... .   ... .     ",
+"     . ...   . .....        ..... .   ... .     ",
+"      .  .    .                  .    ... .     ",
+"      ....       ..   .  .   ..       .  .      ",
+"          .          .    .          .....      ",
+"          .           ....           .          ",
+"          .            ..            .          ",
+"        ...                          ...        ",
+"        .  .                        .  .        ",
+"       ... .         ......         .. ..       ",
+"       .  ...                      ..  ..       ",
+"    .....  ....        ..        .....  ....    ",
+"   ..  .  . .....              ...... . .  ..   ",
+"   . . . . . .......        ......... . ..  .   "};
+
+char *sd_b2_xpm[32] = {
+"    ........................................    ",
+"   ..........................................   ",
+"   ........     ...................  ........   ",
+"   ........                    ..... ........   ",
+"   ........                     .... ........   ",
+"   ........                     .... ........   ",
+"   ........                    ....  ........   ",
+"   .......                      ..    .......   ",
+"   .......                            .......   ",
+"   ......                             .......   ",
+"    .....                              ......   ",
+"    .....                              .....    ",
+"      ...                              .....    ",
+"      ...                              ...      ",
+"      ...                              ...      ",
+"      ...    ....              ....    ...      ",
+"     . ...  .. ....          .... ..   ...      ",
+"     . ...     .......    .......     ... .     ",
+"     . ...      ......    ......      ... .     ",
+"     . ...                            ... .     ",
+"      .  .                            ... .     ",
+"      ....            .  .            .  .      ",
+"          .          .    .          .....      ",
+"          .           ....           .          ",
+"          .            ..            .          ",
+"        ...                          ...        ",
+"        .  .                        .  .        ",
+"       ... .         ......         .. ..       ",
+"       .  ...                      ..  ..       ",
+"    .....  ....        ..        .....  ....    ",
+"   ..  .  . .....              ...... . .  ..   ",
+"   . . . . . .......        ......... . ..  .   "};
+
 void updateVMU_SD()
 {
 	updateVMUGraphic(sd_xpm);
+}
+
+#define MAX_FRAMES 12
+char **frames[MAX_FRAMES] = { sd_b1_xpm, NULL, NULL, NULL, sd_b2_xpm, NULL, NULL, sd_b1_xpm, NULL, NULL, NULL, sd_xpm };
+int blink_counter = 0;
+int is_blinking = 0;
+int blink_frame = 0;
+
+// 15 to 20 blinks a minute
+// a possible blink every 240 frames
+// displaced by MAX_FRAMES of animation
+void SD_blink_cycle()
+{
+	blink_counter++;
+	if(!is_blinking)
+	{
+		if(blink_counter < 240)
+			return;
+		if(rand() % 100 < 98)	// 2% chance every frame after 240
+			return;
+		
+		is_blinking = 1;
+		blink_counter = 0;	
+	}
+	
+	if(frames[blink_frame])
+		updateVMUGraphic(frames[blink_frame]);	// takes between 10-25ms
+
+	blink_frame++;
+	if(blink_frame >= MAX_FRAMES)
+	{
+		blink_frame = 0;
+		is_blinking = 0;
+	}
 }
 
 char *donna_xpm[32] = {

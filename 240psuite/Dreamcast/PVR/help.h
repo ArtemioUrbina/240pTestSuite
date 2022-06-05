@@ -62,6 +62,7 @@ extern char *HelpData;
 #define MEMVIEWHELP		"/rd/help/memview.txt"
 #define MDFOURIERHELP	"/rd/help/mdfourier.txt"
 #define MAPLEHELP		"/rd/help/maple.txt"
+#define CONTROLHELP		"/rd/help/controller.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);

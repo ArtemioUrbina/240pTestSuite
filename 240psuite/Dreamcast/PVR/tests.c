@@ -71,7 +71,6 @@ void DropShadowTest()
 	if(!buzzshadow)
 		return;
 	
-	srand((int)(time(0) ^ getpid()));
 	sprite = rand() % 2;
 	if(sprite == 0)
 		shadow = ssprite;
@@ -572,7 +571,6 @@ void ReflexNTimming()
 	if(!back)
 		return;
 			
-	srand((int)(time(0) ^ getpid()));
 	fixed = LoadKMG("/rd/lag-per.kmg.gz", 0);
 	if(!fixed)
 		return;

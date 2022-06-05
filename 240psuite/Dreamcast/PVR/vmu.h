@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -22,11 +22,12 @@
 #ifndef VMU_H
 #define VMU_H
 
-int VMUPresent();
+int  isVMUPresent();
 void updateVMU(char *line1, char*line2, int force);
 void updateVMUFlash(char *line1, char*line2, int force);
 void updateVMUGraphic(char **xpm);
 void updateVMU_Donna();
 void updateVMU_SD();
+void SD_blink_cycle();
 
 #endif

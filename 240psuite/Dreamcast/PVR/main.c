@@ -81,7 +81,7 @@ int main(void)
 	else
 		settings.EnablePAL = 0;
 	
-	if(VMUPresent() && 
+	if(isVMUPresent() && 
 		VMUSuiteSaveExists(NULL) == VMU_SAVEEXISTS)
 		loadedvmu = LoadVMUSave(error);
 	
@@ -115,6 +115,7 @@ int main(void)
 	if(loadedvmu == VMU_ERROR)
 		DrawMessage(error);
 
+	srand((int)(time(0) ^ getpid()));
 	refreshVMU = 1;
 	while(!done && !EndProgram) 
 	{
@@ -138,11 +139,14 @@ int main(void)
 		c = DrawFooter(x, y, sel, c, 1);
 		
 		EndScene();
+
 		if(refreshVMU)
 		{
 			updateVMU_SD();
 			refreshVMU = 0;
 		}
+		else
+			SD_blink_cycle();
 		
 		st = ReadController(0, &pressed);
 	

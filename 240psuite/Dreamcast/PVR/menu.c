@@ -429,7 +429,6 @@ void ChangeOptions(ImagePtr screen)
 	back->alpha = 0.75f;
 
 	updateVMU("  Options", "", 1);
-	srand((int)(time(0) ^ getpid()));
 	
 	while(!close && !EndProgram) 
 	{		
@@ -575,7 +574,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 		
 		//Option 11, Save to VMU
-		if(VMUPresent())
+		if(isVMUPresent())
 		{
 			char *msg = NULL;
 
@@ -606,7 +605,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 		
 		// Option 12, Load Options from VMU
-		if(VMUPresent() && VMUsaveexists)
+		if(isVMUPresent() && VMUsaveexists)
 		{
 			char *msg = NULL;
 			
@@ -669,7 +668,7 @@ void ChangeOptions(ImagePtr screen)
 		VMU_detect_save_counter--;
 		if(VMU_detect_save_counter <= 0)
 		{
-			if(VMUPresent())
+			if(isVMUPresent())
 				VMUsaveexists = VMUSuiteSaveExists(NULL) == VMU_SAVEEXISTS ? 1 : 0;
 			VMU_detect_save_counter = 600;	// 10 seconds in NTSC
 		}
@@ -796,7 +795,7 @@ void ChangeOptions(ImagePtr screen)
 							ToggleScanlineEvenOdd();
 						break;
 					case 11:
-						if(VMUPresent() && saved != 1)
+						if(isVMUPresent() && saved != 1)
 						{
 							int vmures, overwrite = 1;
 							int eyecatcher = 0;
@@ -830,7 +829,7 @@ void ChangeOptions(ImagePtr screen)
 						}
 						break;
 					case 12:		
-						if(VMUPresent())
+						if(isVMUPresent())
 						{
 							int		vmures = 0;
 							struct	settings_st old_settings;
@@ -1335,29 +1334,34 @@ void DrawCredits(ImagePtr back)
 			counter = 0;
 
 		y += fh;
-		DrawStringS(x+20, y, 0.0, 1.0, 0.0, "SDK:"); 
-		DrawStringS(x+170, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
-		DrawStringS(x+25, y, 1.0, 1.0, 1.0, "KallistiOS");
-		DrawStringS(x+175, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK:"); 
+		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "KallistiOS");
+		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
 		
 		y += fh;
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Monoscope Pattern:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Keith Raney"); y += fh; 		
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Donna Art:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Jose Salot (@pepe_salot)"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Monoscope Patterns:");
+		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Donna Art:"); y += fh;
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Keith Raney (@khmr33)");
+		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Jose Salot (@pepe_salot)"); y += fh; 
 		
 		y += fh;
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher"); y += fh; 		
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "shmups regulars"); y += fh; 
-		y += fh;
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:");
+		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher");
+		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "VMU animation:");
+		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Hardware&Special Thanks:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Karensauria");
+		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Rolman"); y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:");  y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "shmups regulars");
+		
+		y += 2*fh;
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/"); y += fh; 
 
-		y += fh;
+		y = 21*fh;
 		DrawStringS(x+20, y, 0.0, .75, .75, "This program is free software and open source.");  y += fh;
 		DrawStringS(x+20, y, 0.0, .75, .75, "Source code is available under GPL.");  y += fh;
 #ifndef NO_FFTW

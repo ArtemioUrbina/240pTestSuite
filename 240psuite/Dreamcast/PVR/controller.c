@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include "controller.h"
 
-uint16 OldButtonsInternal = 0;
-char oldControllerName[256] = { '\0' };
-uint8 isFishingRod = 0, isMaracas = 0, isStockController = 0;
+uint16	OldButtonsInternal = 0;
+char	oldControllerName[256] = { '\0' };
+uint8 	isFishingRod = 0,
+		isMaracas = 0,
+		isStockController = 0,
+		isArcade = 0;
 
 #ifdef DCLOAD
 #define  SCREENSHOTMODE
@@ -14,6 +17,7 @@ void PrintDebugController(cont_state_t *st);
 #define FISHING	"Dreamcast Fishing Controller "
 #define MARACAS	"Maracas Controller           "
 #define STANDRD	"Dreamcast Controller         "
+#define ARCADE	"Arcade Stick                 "
 
 cont_state_t *ReadController(uint16 num, uint16 *pressed)
 {
@@ -78,11 +82,11 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	
 	if(isFishingRod)
 	{
-		if(st->ltrig && abs(st->joy2x) > 3)
-			st->joyx = -1*st->joy2x*20;
+		if(abs(st->joy2x) > 15)
+			st->joyx = st->joy2x;
 		
-		if(st->ltrig && abs(st->joy2y) > 3)
-			st->joyy = -1*st->joy2y*20;
+		if(abs(st->joy2y) > 15)
+			st->joyy = st->joy2y;
 	}
 #endif
 
@@ -126,6 +130,11 @@ void DetectContollerType(maple_device_t *dev)
 		isMaracas = 1;
 	else
 		isMaracas = 0;
+		
+	if(strcmp(ARCADE, dev->info.product_name) == 0)
+		isArcade = 1;
+	else
+		isArcade = 0;
 }
 
 void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)
@@ -134,9 +143,11 @@ void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)
 	{
 		if(++(*joycnt) > 5)
 		{
-			if(st && st->joyy > 0)
+			if(st && st->joyy > 0 && 
+				!(st->buttons & CONT_DPAD_DOWN))	// don't duplicate on those controllers that do both at once
 				(*sel) ++;
-			if(st && st->joyy < 0)
+			if(st && st->joyy < 0 && 
+				!(st->buttons & CONT_DPAD_UP))		// don't duplicate on those controllers that do both at once
 				(*sel) --;
 
 			if(*sel < 1)

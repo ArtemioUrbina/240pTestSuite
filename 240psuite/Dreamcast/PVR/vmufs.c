@@ -799,7 +799,6 @@ int WriteVMUSave(int eyecatch, char *error)
 	strcpy(pkg.app_id, "240p Suite");
 	pkg.icon_cnt = 1;
 
-	srand((int)(time(0) ^ getpid()));
 	icon = rand() % ICON_ARRAY_SIZE;
 
 	memcpy(&pkg.icon_pal[0], icon_array[icon], 32);

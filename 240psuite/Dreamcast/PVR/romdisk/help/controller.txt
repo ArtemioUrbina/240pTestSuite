@@ -1,0 +1,12 @@
+                 Controller Test
+
+This test shows the controller inputs from all
+four controllers at once.
+
+The test only shows the reported controller
+functions by default, but by pressing #YRight+Start#Y
+you can display all possible inputs in order to
+test some non-compliant implementations or
+duplicated outputs.
+
+You can exit by pressing #YLeft+Start#Y.

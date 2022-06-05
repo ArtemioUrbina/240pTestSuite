@@ -22,6 +22,7 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include <stdlib.h>
 #include "image.h"
 
 #define VERSION_NUMBER "Dreamcast Ver. 1.29"

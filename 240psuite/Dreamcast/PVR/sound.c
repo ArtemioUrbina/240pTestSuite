@@ -772,8 +772,6 @@ void SIPLagTest()
 	}
 	wave->alpha = 0.05f;
 
-	srand((int)(time(0) ^ getpid()));
-
 	beep = snd_sfx_load("/rd/Sample.wav");
 	if(!beep)
 	{

@@ -73,27 +73,13 @@ void DiplayController(int num, float x, float y)
 	DrawStringS(x, y, 1.0f, 1.0f, 0.0f, name);
 	y += fh;
 	
-	/*
-	sprintf(msg, "0x%08lx: %s",
-			dev->info.functions, maple_pcaps(dev->info.functions))
-	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
-	y += fh;
-	*/
-	
-	sprintf(msg, "Power[%d-%d]mW", 
+	sprintf(msg, "Power[%u-%u]mW", 
 			dev->info.standby_power, dev->info.max_power);
 	DrawStringS(x, y, 0.0f, 0.7f, 0.6f, msg);
 	y += fh;
 	
-	/*
-	sprintf(msg, "\"%s\" AC: 0x%0x", 
-			dev->info.product_license, dev->info.area_code);
-	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
-	y += fh;
-	*/
-	
 	// Tells us the device type in 
-	// isFishingRod/isMaracas/isStockController
+	// isFishingRod/isMaracas/isStockController/isArcade
 	DetectContollerType(dev);
 	
 	st = (cont_state_t*)maple_dev_status(dev);
@@ -109,7 +95,7 @@ void DiplayController(int num, float x, float y)
 	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_ANALOG2_Y)
 		hasAnalog2Y = 1;
 	
-	x += 2*fw;
+	x += 3*fw;
 
 	if(isMaracas == 0)
 	{
@@ -132,7 +118,7 @@ void DiplayController(int num, float x, float y)
 
 		// Regular DC controller 	0xfe060f00
 		// Fishing Rod 				0xfe063f00
-		if(!(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C))
+		if(!isArcade || !(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C))
 		{
 			int advance = 0;
 			
@@ -201,10 +187,18 @@ void DiplayController(int num, float x, float y)
 				DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
 			}
 		}
-		else // Arcade Stick?
+		else // Arcade Stick 	0xff070000
 		{
-			
 			int advance = 0;
+			
+			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_START)
+			{
+				isPressed = st->buttons & CONT_START;
+				DrawStringS(x+ 7*fw+3, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
+				advance++;
+			}
+			
+			y+=fh;
 			
 			// Draw Up and X, Y, Z
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_UP)
@@ -216,19 +210,19 @@ void DiplayController(int num, float x, float y)
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_X)
 			{
 				isPressed = st->buttons & CONT_X;
-				DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "X");
+				DrawStringS(x+ 6*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "X");
 				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Y)
 			{
 				isPressed = st->buttons & CONT_Y;
-				DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Y");
+				DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Y");
 				advance++;
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Z)
 			{
 				isPressed = st->buttons & CONT_Z;
-				DrawStringS(x+11*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Z");
+				DrawStringS(x+10*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "Z");
 				advance++;
 			}
 			if(advance)
@@ -237,7 +231,7 @@ void DiplayController(int num, float x, float y)
 				advance = 0;
 			}
 		
-			// Draw Left, Right, Start
+			// Draw Left, Right
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_LEFT)
 			{
 				isPressed = st->buttons & CONT_DPAD_LEFT;
@@ -248,12 +242,6 @@ void DiplayController(int num, float x, float y)
 			{
 				isPressed = st->buttons & CONT_DPAD_RIGHT;
 				DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "R");
-				advance++;
-			}
-			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_START)
-			{
-				isPressed = st->buttons & CONT_START;
-				DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "S");
 				advance++;
 			}
 			if(advance)
@@ -271,17 +259,17 @@ void DiplayController(int num, float x, float y)
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_A)
 			{
 				isPressed = st->buttons & CONT_A;
-				DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
+				DrawStringS(x+ 6*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_B)
 			{
 				isPressed = st->buttons & CONT_B;
-				DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
+				DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "B");
 			}
 			if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C)
 			{
 				isPressed = st->buttons & CONT_C;
-				DrawStringS(x+11*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "C");
+				DrawStringS(x+10*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "C");
 			}
 		}
 	}
@@ -325,7 +313,7 @@ void DiplayController(int num, float x, float y)
 	}
 	y += fh;
 	
-	x = orig_x;
+	x = orig_x+fw;
 	// Center the Analog if only one is present
 	if(!hasAnalog2X && !hasAnalog2Y)
 		x += 4*fw;
@@ -421,12 +409,182 @@ void DiplayController(int num, float x, float y)
 	}
 }
 
+void DiplayControllerIgnore(int num, float x, float y)
+{
+	int				hasAnalogX = 0, hasAnalogY = 0;
+	int				hasAnalog2X = 0, hasAnalog2Y = 0;
+	int				isPressed = 0, hasFunc = 0;
+	float			orig_x = x;
+	cont_state_t	*st;
+	maple_device_t	*dev = NULL;
+	char			msg[256], name[256];
+	
+	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER);
+	if(!dev)
+		return;
+	
+	ReduceName(name, dev->info.product_name);
+	DrawStringS(x, y, 1.0f, 1.0f, 0.0f, name);
+	y += fh;
+	
+	sprintf(msg, "Power[%u-%u]mW", 
+			dev->info.standby_power, dev->info.max_power);
+	DrawStringS(x, y, 0.0f, 0.7f, 0.6f, msg);
+	y += fh;
+	
+	st = (cont_state_t*)maple_dev_status(dev);
+	if(!st)
+		return;
+		
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_ANALOG_X)
+		hasAnalogX = 1;
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_ANALOG_Y)
+		hasAnalogY = 1;
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_ANALOG2_X)
+		hasAnalog2X = 1;
+	if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_ANALOG2_Y)
+		hasAnalog2Y = 1;
+	
+	x += 3*fw;
+
+	// Draw Triggers
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_LTRIG ? 1 : 0;
+	sprintf(msg, "%03d", st->ltrig);
+	DrawStringS(x+1*fw, y, hasFunc ? 1.0f : 0.7f, hasFunc ? 1.0f : 0.7f, hasFunc ? 1.0f : 0.7f, msg);
+
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_RTRIG ? 1 : 0;
+	sprintf(msg, "%03d", st->rtrig);
+	DrawStringS(x+7*fw, y, hasFunc ? 1.0f : 0.7f, hasFunc ? 1.0f : 0.7f, hasFunc ? 1.0f : 0.7f, msg);
+	
+	y += fh;
+
+	// Draw Up and X, Y, Z
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_UP ? 1 : 0;
+	isPressed = st->buttons & CONT_DPAD_UP;
+	DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "U");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_X ? 1 : 0;
+	isPressed = st->buttons & CONT_X;
+	DrawStringS(x+ 6*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "X");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Y ? 1 : 0;
+	isPressed = st->buttons & CONT_Y;
+	DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "Y");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Z ? 1 : 0;
+	isPressed = st->buttons & CONT_Z;
+	DrawStringS(x+10*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "Z");
+		
+	y += fh;
+
+	// Draw Left, Right, Start
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_LEFT ? 1 : 0;
+	isPressed = st->buttons & CONT_DPAD_LEFT;
+	DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "L");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_RIGHT ? 1 : 0;
+	isPressed = st->buttons & CONT_DPAD_RIGHT;
+	DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "R");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_START ? 1 : 0;
+	isPressed = st->buttons & CONT_START;
+	DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "S");
+	
+	y += fh;
+	
+	// Draw Down and A. B, C
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_DOWN ? 1 : 0;
+	isPressed = st->buttons & CONT_DPAD_DOWN;
+	DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "D");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_A ? 1 : 0;
+	isPressed = st->buttons & CONT_A;
+	DrawStringS(x+ 6*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "A");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_B ? 1 : 0;
+	isPressed = st->buttons & CONT_B;
+	DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "B");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C ? 1 : 0;
+	isPressed = st->buttons & CONT_C;
+	DrawStringS(x+10*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "C");
+	
+	y += fh;
+	
+	x = orig_x+fw;
+	
+	// Draw Analog Joystick
+	
+	// Analog Up
+	sprintf(msg, "%03d", st->joyy < 0 ? -1*st->joyy : 0);
+	DrawStringS(x+2*fw, y, hasAnalogY ? 1.0f : 0.7f, hasAnalogY ? 1.0f : 0.7f, hasAnalogY ? 1.0f : 0.7f, msg);
+	y += fh;
+	
+	// Analog Right & Left
+	sprintf(msg, "%03d %03d", st->joyx < 0 ? -1*st->joyx : 0, st->joyx > 0 ? st->joyx : 0);
+	DrawStringS(x, y, hasAnalogX ? 1.0f : 0.7f, hasAnalogX ? 1.0f : 0.7f, hasAnalogX ? 1.0f : 0.7f, msg);
+	y += fh;
+		
+	// Analog Down
+	sprintf(msg, "%03d", st->joyy > 0 ? st->joyy : 0);
+	DrawStringS(x+2*fw, y, hasAnalogY ? 1.0f : 0.7f, hasAnalogY ? 1.0f : 0.7f, hasAnalogY ? 1.0f : 0.7f, msg);
+	
+	// Rewind 2 lines towards the top
+	y -= 2*fh;
+	x += 8*fw;
+	
+	// Second Analog controller
+	
+	// Analog Up
+	sprintf(msg, "%03d", st->joy2y < 0 ? -1*st->joy2y : 0);
+	DrawStringS(x+2*fw, y, hasAnalog2Y ? 1.0f : 0.7f, hasAnalog2Y ? 1.0f : 0.7f, hasAnalog2Y ? 1.0f : 0.7f, msg);
+	y += fh;
+	
+	// Analog Right & Left
+	sprintf(msg, "%03d %03d", st->joy2x < 0 ? -1*st->joy2x : 0, st->joy2x > 0 ? st->joy2x : 0);
+	DrawStringS(x, y, hasAnalog2X ? 1.0f : 0.7f, hasAnalog2X ? 1.0f : 0.7f, hasAnalog2X ? 1.0f : 0.7f, msg);
+	y += fh;
+	
+	// Analog Down
+	sprintf(msg, "%03d", st->joy2y > 0 ? st->joy2y : 0);
+	DrawStringS(x+2*fw, y, hasAnalog2Y ? 1.0f : 0.7f, hasAnalog2Y ? 1.0f : 0.7f, hasAnalog2Y ? 1.0f : 0.7f, msg);
+	
+	//Do we have the next few ones?
+	x = orig_x+fw;
+	y += fh;
+	
+	
+	// Adds existing but without known implementations...
+	// Second d-pad and D button
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_UP ? 1 : 0;
+	isPressed = st->buttons & CONT_DPAD2_UP;
+	DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "U");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_DOWN ? 1 : 0;
+	isPressed = st->buttons & CONT_DPAD2_DOWN;
+	DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "D");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_LEFT ? 1 : 0;
+	isPressed = st->buttons & CONT_DPAD2_LEFT;
+	DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "L");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_RIGHT ? 1 : 0;
+	isPressed = st->buttons & CONT_DPAD2_RIGHT;
+	DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "R");
+	
+	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_D ? 1 : 0;
+	isPressed = st->buttons & CONT_D;
+	DrawStringS(x+11*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "D");
+}
+
 void ControllerTest()
 {
-	int 		done = 0, oldvmode = -1;
-	uint16		pressed;
-	ImagePtr	back = NULL, black = NULL;
-	controller	*st = NULL;
+	uint16			pressed = 0;
+	int 			done = 0, oldvmode = -1;
+	int				ignoreFunctions = 0, timeout = 0;
+	ImagePtr		back = NULL, black = NULL;
+	maple_device_t	*dev = NULL;
+	cont_state_t 	*st = NULL;
 
 	black = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!black)
@@ -438,11 +596,11 @@ void ControllerTest()
 	
 	while(!done && !EndProgram) 
 	{				
-		float x = 20, y = 30, w = 30*fw, h = 10*fh;
+		float x = 35, y = 26, w = 160, h = 10*fh;
 		
 		if(oldvmode != vmode)
 		{
-			back->alpha = 0.5f;
+			back->alpha = 0.6f;
 			
 			black->w = 320;
 			black->h = 240;
@@ -452,25 +610,68 @@ void ControllerTest()
 		StartScene();
 		DrawImage(black);
 		DrawImage(back);
-		DrawStringS(120, 20, 0.0f, 1.0f, 0.0f, "Controller Test"); 		
 		
-		DiplayController(0, x, y);
-		DiplayController(1, x+w, y);
-		DiplayController(2, x, y+h);
-		DiplayController(3, x+w, y+h);
+		// IgnoreFunctions lists all inputs regardless
+		// of functions reported
+		if(!ignoreFunctions)
+		{
+			DrawStringS(120, 16, 0.0f, 1.0f, 0.0f, "Controller Test"); 		
+			DiplayController(0, x, y);
+			DiplayController(1, x+w, y);
+			DiplayController(2, x,y+h);
+			DiplayController(3, x+w, y+h);
+			DrawStringS(15, y+2*h+fh, 0.0f, 1.0f, 0.0f, "Right & Start on Controller 1 to ignore reported functions"); 
+		}
+		else
+		{
+			DrawStringS(40, 16, 0.0f, 1.0f, 0.0f, "Controller Test #Y(non-reported functions in gray)#Y");
+			DiplayControllerIgnore(0, x, y);
+			DiplayControllerIgnore(1, x+w, y);
+			DiplayControllerIgnore(2, x, y+h);
+			DiplayControllerIgnore(3, x+w, y+h);
+			DrawStringS(12, y+2*h+fh, 0.0f, 1.0f, 0.0f, "Right & Start on Controller 1 for reported functions only"); 
+		}
 		
-		DrawStringS(60, y+2*h, 0.0f, 1.0f, 0.0f, "Press Left & Start on Controller 1 to Exit"); 
+		DrawStringS(110, y+2*h-fh, 0.0f, 1.0f, 0.0f, "Up & Start for Help"); 
+		DrawStringS(70, y+2*h, 0.0f, 1.0f, 0.0f, "Left & Start on Controller 1 to Exit"); 
 		
         EndScene();
+		if(timeout)
+			timeout--;
+			
+		VMURefresh("Controller", ignoreFunctions ? "Ignore" : "Normal");
 		
-		VMURefresh("Controller", "Test");
+		// we do it without helper functions here
+		dev = maple_enum_type(0, MAPLE_FUNC_CONTROLLER);
+		if(dev)
+		{			
+			st = (cont_state_t*)maple_dev_status(dev); 
+			if (st->buttons & CONT_START  &&
+				st->buttons & CONT_DPAD_LEFT)
+				done =	1;
+			if (st->buttons & CONT_START  &&
+				st->buttons & CONT_DPAD_RIGHT)
+			{
+				if(!timeout)
+				{
+					vid_screen_shot("/pc/screen-controller.ppm");
+					ignoreFunctions = !ignoreFunctions;
+					timeout = 20;
+					refreshVMU = 1;
+				}
+			}
+			if (st->buttons & CONT_START  &&
+				st->buttons & CONT_DPAD_UP)
+				{
+					// we clear controller buffer for menu
+					ReadController(0, &pressed);
+					ShowMenu(CONTROLHELP);
+				}
+		}
 		
-		st = ReadController(0, &pressed);
-				
-		if (st->buttons & CONT_START  &&
-			st->buttons & CONT_DPAD_LEFT)
-			done =	1;								
 	}
+	// we clear controller buffer for exit
+	ReadController(0, &pressed);
 	FreeImage(&back);
 	FreeImage(&black);
 	return;
@@ -605,7 +806,6 @@ static void vbl_allinfo_callback(maple_frame_t * frm) {
 	resp = (maple_response_t *)frm->recv_buf;
 
 	if (resp->response == MAPLE_RESPONSE_ALLINFO) {
-		//mapleprintf("Received proper maple response\n");
 		/* Copy in the new buff */
 		memcpy(recv_buff, resp, 1024 + 32);
 	} else {
@@ -681,32 +881,32 @@ static void vbl_send_allinfo(int p, int u) {
 void print_devinfo(maple_devinfo_t *info)
 {
 	/* Print each piece of info in an itemized fashion */	
-	mapleprintf("#CFunction int 0:#C 0x%.8lx  ", info->functions);
-	mapleprintf("#CFunction int 1:#C 0x%.8lx\n", info->function_data[0]);
-	mapleprintf("#CFunction int 2:#C 0x%.8lx  ", info->function_data[1]);
-	mapleprintf("#CFunction int 3:#C 0x%.8lx\n", info->function_data[2]);
+	mapleprintf("#CFunctions     :#C 0x%.8lx  ", info->functions);
+	mapleprintf("#CFunction int 0:#C 0x%.8lx\n", info->function_data[0]);
+	mapleprintf("#CFunction int 1:#C 0x%.8lx  ", info->function_data[1]);
+	mapleprintf("#CFunction int 2:#C 0x%.8lx\n", info->function_data[2]);
 	mapleprintf("#CRegion:#C         0x%.2x        ", info->area_code);
 	mapleprintf("#CConnection:#C     0x%.2x\n", info->connector_direction);
 	mapleprintf("#CProduct Name & License:#C %.30s\n", info->product_name);
 	mapleprintf("  %.60s\n", info->product_license);
-	mapleprintf("#CStandby power:#C 0x%.4x (%d mW) ", info->standby_power, info->standby_power);
-	mapleprintf("#CMax:#C 0x%.4x (%d mW)\n", info->max_power, info->max_power);
+	mapleprintf("#CStandby power:#C 0x%.4x (%umW) ", info->standby_power, info->standby_power);
+	mapleprintf("#CMax:#C 0x%.4x (%umW)\n", info->max_power, info->max_power);
 }
 
 /* Formatted output for the devinfo struct in KOS */
 void FillKOSDevInfo(maple_device_t *dev)
 {
 	mapleprintf("\n#YValues from KOS MAPLE_RESPONSE_DEVINFO#Y cache:\n\n");
-	mapleprintf("#CFunction int 0:#C 0x%.8lx  ", dev->info.functions);
-	mapleprintf("#CFunction int 1:#C 0x%.8lx\n", dev->info.function_data[0]);
-	mapleprintf("#CFunction int 2:#C 0x%.8lx  ", dev->info.function_data[1]);
-	mapleprintf("#CFunction int 3:#C 0x%.8lx\n", dev->info.function_data[2]);
+	mapleprintf("#CFunctions    :#C 0x%.8lx  ", dev->info.functions);
+	mapleprintf("#CFunction int 0:#C 0x%.8lx\n", dev->info.function_data[0]);
+	mapleprintf("#CFunction int 1:#C 0x%.8lx  ", dev->info.function_data[1]);
+	mapleprintf("#CFunction int 2:#C 0x%.8lx\n", dev->info.function_data[2]);
 	mapleprintf("#CRegion:#C         0x%.2x        ", dev->info.area_code);
 	mapleprintf("#CConnection:#C     0x%.2x\n", dev->info.connector_direction);
 	mapleprintf("#CProduct Name & License:#C %.30s\n", dev->info.product_name);
 	mapleprintf("  %.60s\n", dev->info.product_license);
-	mapleprintf("#CStandby power:#C 0x%.4x (%d mW) ", dev->info.standby_power, dev->info.standby_power);
-	mapleprintf("#CMax:#C 0x%.4x (%d mW)\n", dev->info.max_power, dev->info.max_power);
+	mapleprintf("#CStandby power:#C 0x%.4x (%umW) ", dev->info.standby_power, dev->info.standby_power);
+	mapleprintf("#CMax:#C 0x%.4x (%umW)\n", dev->info.max_power, dev->info.max_power);
 }
 
 #define BPL 16	/* Bytes to print per line */
@@ -809,7 +1009,7 @@ void ListMapleDevices()
 	{
 		if(oldvmode != vmode)
 		{
-			back->alpha = 0.5f;
+			back->alpha = 0.4f;
 			black->w = 320;
 			black->h = 240;
 			
