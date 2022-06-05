@@ -736,6 +736,7 @@ int maple_device_scan(float x, float y, int selected)
 char			*maple_display = NULL;
 int				maple_display_pos = 0;
 int				maple_locked_device = 0;
+int				maple_use_reply_bytes = 0;
 
 #ifdef DCLOAD
 void PrintCleanString(char *str) 
@@ -809,30 +810,50 @@ static void vbl_allinfo_callback(maple_frame_t * frm) {
 		/* Copy in the new buff */
 		memcpy(recv_buff, resp, 1024 + 32);
 	} else {
+		uint16 resp_size = 0;
+		
 		switch(resp->response)
 		{
 			case MAPLE_RESPONSE_AGAIN:
-				mapleprintf("\n Device asked for retry.\n Got #YMAPLE_RESPONSE_AGAIN#Y\n"); 
+				mapleprintf(" Device asked for retry.\n Please try again. Got #YMAPLE_RESPONSE_AGAIN#Y"); 
 				break;
 			case MAPLE_RESPONSE_BADCMD:
-				mapleprintf("\n Device doesn't support command.\n Got #YMAPLE_RESPONSE_BADCMD#Y\n"); 
+				mapleprintf(" #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_RESPONSE_BADCMD#Y"); 
 				break;
 			case MAPLE_RESPONSE_BADFUNC:
-				mapleprintf("\n Device doesn't support command.\n Got #YMAPLE_RESPONSE_BADFUNC#Y\n"); 
+				mapleprintf(" #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_BADFUNC#Y"); 
 				break;
 			case MAPLE_RESPONSE_NONE:
-				mapleprintf("\n Device didn't respond to query command.\n Got #YMAPLE_RESPONSE_NONE#Y\n"); 
+				mapleprintf(" #CDevice didn't respond to query command.@C\n Got #YMAPLE_RESPONSE_NONE#Y"); 
 				break;
 			case MAPLE_COMMAND_ALLINFO:
-				mapleprintf("\n Device doesn't support command.\n Maybe an emulator? got #YMAPLE_COMMAND_ALLINFO#Y\n"); 
+				mapleprintf(" #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_COMMAND_ALLINFO#Y"); 
 				break;
 			case MAPLE_RESPONSE_DEVINFO:
-				mapleprintf("\n Device doesn't support command.\n Got #YMAPLE_RESPONSE_DEVINFO#Y\n"); 
+				mapleprintf(" #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_DEVINFO#Y"); 
+				break;
+			case MAPLE_COMMAND_RESET:
+				mapleprintf(" Device asked for reset.\n Please reconnect. Got #YMAPLE_COMMAND_RESET#Y"); 
+				break;
+			case MAPLE_RESPONSE_OK:
+				mapleprintf(" Unexpected #YMAPLE_RESPONSE_OK#Y from device", resp->response); 
 				break;
 			default:
-				mapleprintf("\n Unexpected response [#Y%d#Y] from device.\n", resp->response); 
+				mapleprintf(" Unexpected response [#Y%d#Y] from device", resp->response); 
 				break;
 		}
+		if(resp->response != MAPLE_RESPONSE_NONE)
+			mapleprintf(" [%u bytes response]\n", resp->data_len*4);
+		else
+			mapleprintf("\n");
+		
+		if(maple_use_reply_bytes)
+			resp_size = resp->data_len*4;
+		else
+			resp_size = 1024 + 32;
+		
+		if(resp->response != MAPLE_RESPONSE_NONE && resp_size)
+			memcpy(recv_buff, resp, resp_size);
 	}
 
 	maple_frame_unlock(frm);
@@ -864,7 +885,7 @@ static void vbl_send_allinfo(int p, int u) {
 		mapleprintf("\nmaple_frame_lock() failed");
 		if(dev)
 			mapleprintf(" for #Y%c%c#Y", 'A'+(dev->port), '0'+(dev->unit));
-		mapleprintf("\n");
+		mapleprintf("\n\n Please try reconnecting the device\n");
 		return;
 	}
 
@@ -1021,6 +1042,8 @@ void ListMapleDevices()
 
 		DrawStringS(125, 20, 0.0f, 1.0f, 0.0f, "Maple Devices");
 		c = maple_device_scan(15, 20, sel);
+		if(maple_use_reply_bytes)
+			DrawStringS(90, 210, 0.0f, 1.0f, 0.0f, "Use Maple response bytes"); 
 		EndScene();
 
 		VMURefresh("Maple", "Devices");
@@ -1041,9 +1064,8 @@ void ListMapleDevices()
 			{
 				if(sel > 0)
 				{
-					int close_display = 0;
-					
-					maple_device_t *dev = NULL;
+					int 			close_display = 0;
+					maple_device_t	*dev = NULL;
 					
 					dev = maple_enum_type(sel - 1, 0xffffffff);
 					if(dev)
@@ -1058,7 +1080,7 @@ void ListMapleDevices()
 							StartScene();
 							DrawImage(black);
 							DrawImage(back);
-							DrawStringS(5, 20, 1.0f, 1.0f, 1.0f, maple_display);
+							DrawString(5, 20, 1.0f, 1.0f, 1.0f, maple_display);
 							EndScene();
 							
 							st = ReadController(0, &pressed);
@@ -1076,6 +1098,8 @@ void ListMapleDevices()
 				}
 			}
 
+			if (pressed & CONT_X)
+				maple_use_reply_bytes = !maple_use_reply_bytes;
 			if (pressed & CONT_START)
 				ShowMenu(MAPLEHELP);
 		}
