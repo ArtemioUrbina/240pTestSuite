@@ -31,7 +31,6 @@
 // Allow use of Mirror BIOS for CRC, not used
 //#define BIOS_MIRROR_ALLOW
 
-uint32_t _state = ~0L;
 #ifndef SEGACD
 u8 hIntPatchNeeded = 1;
 #else
@@ -41,6 +40,9 @@ u8 hIntPatchNeeded = 0;  // Don't do it when booting from Sega CD
 /*
 CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
 */
+
+uint32_t _state = ~0L;
+
 static const uint32_t crc32_table[] = {
     0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
     0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
@@ -1070,22 +1072,24 @@ void CheckSCDWordRAM()
 }
 #endif
 
+#define VISIBLE_HORZ	16
+#define VISIBLE_VERT	28
 #define	MAX_LOCATIONS	8
 
 void MemViewer(uint32_t address)
 {
-	u8 			redraw = 1, docrc = 0, locpos = 1, bank = 0, i = 0, ascii = 0;
+	u8 			redraw = 1, docrc = 0, locpos = 1, bank = 0, pos = 0, ascii = 0;
 	uint32_t	crc = 0, locations[MAX_LOCATIONS] = { 0, 0x020000, 0x200000, 0x400000, 0x420000, 0x600000, 0xA00000, 0xFF0000 };
 	u16 		buttons, oldButtons = 0xffff, pressedButtons, close = 0;
 	
 	// Select Bank 0
 	SetSCDRegisterWORD(MMOD_REGISTER, 0);
 	
-	for(i = 0; i < MAX_LOCATIONS; i++)
+	for(pos = 0; pos < MAX_LOCATIONS; pos++)
 	{
-		if(locations[i] == address)
+		if(locations[pos] == address)
 		{
-			locpos = i;
+			locpos = pos;
 			break;
 		}
 	}
@@ -1098,10 +1102,11 @@ void MemViewer(uint32_t address)
 			uint8_t *mem = NULL;
 			char 	buffer[10];
 
+			memset(buffer, 0, sizeof(char)*10);
 			mem = (uint8_t*)address;
 			
 			if(docrc)
-				crc = CalculateCRC(address, 0x1C0, 0);
+				crc = CalculateCRC(address, VISIBLE_HORZ*VISIBLE_VERT, 0);
 			
 			VDP_Start();
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
@@ -1125,20 +1130,20 @@ void MemViewer(uint32_t address)
 			}
 			VDP_End();
 			
-			for(i = 0; i < 28; i++)				//28 visible lines
+			for(i = 0; i < VISIBLE_VERT; i++)
 			{
-				for(j = 0; j < 16; j++)			//32 characters per line
+				for(j = 0; j < VISIBLE_HORZ; j++)
 				{
 					if(!ascii)
-						intToHex(mem[i*16+j], buffer, 2);
+						intToHex(mem[i*VISIBLE_HORZ+j], buffer, 2);
 					else
 					{
 						uint16_t c;
 						
-						buffer[0] = 20;				// Space
+						buffer[0] = 32;				// Space
 						buffer[1] = 0;
-						c = mem[i*16+j];
-						if(c >= 32 && c <= 127)		// ASCII range
+						c = mem[i*VISIBLE_HORZ+j];
+						if(c >= 32 && c <= 126)		// ASCII range
 							buffer[0] = c;
 					}
 					VDP_Start();
@@ -1225,8 +1230,8 @@ void MemViewer(uint32_t address)
 		
 		if(pressedButtons & BUTTON_LEFT)
 		{
-			if(address >= 0x1C0)
-				address -= 0x1C0;
+			if(address > VISIBLE_HORZ*VISIBLE_VERT)
+				address -= VISIBLE_HORZ*VISIBLE_VERT;
 			else
 				address = 0;
 			
@@ -1241,7 +1246,7 @@ void MemViewer(uint32_t address)
 		
 		if(pressedButtons & BUTTON_RIGHT)
 		{
-			address += 0x1C0;
+			address += VISIBLE_HORZ*VISIBLE_VERT;
 			
 			if(address >= 0x800000 && address < 0xA00000) // skip
 				address = 0xA00000;
@@ -1602,11 +1607,11 @@ uint8_t segacd_init()
      * initialize
      */
 	
-	timeout = 500;
+	timeout = 2000000;
     do
     {
 		value = (u8)read_word(0xA12020);
-		if(value != 'I')
+		if(value != 0)
 		{
 			if (timeout-- <= 0)
 			{
@@ -1617,10 +1622,10 @@ uint8_t segacd_init()
 			ShowMessageAndData("Waiting for SP_Init", timeout, 3, PAL1, 5, ypos);
 		}
 		VDP_waitVSync();
-    }while(value != 'I');
+    }while(value != 0);
 	ypos ++;
 	/*
-     * Wait for Sub-CPU to indicate it is ready to receive commands, for 'R'
+     * Wait for Sub-CPU to indicate it is ready to receive commands
      */
 	timeout = 500;
     do
@@ -1638,8 +1643,9 @@ uint8_t segacd_init()
 		}
 		VDP_waitVSync();
 	}while (value != 0);
-	ShowMessageAndData("SCD initialized and ready to go!", 0, 0, PAL1, 5, ypos+3);
+	ShowMessageAndData("SCD initialized. Press a button", 0, 0, PAL1, 5, ypos+3);
 	
+	WaitKey(NULL);
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 	return 1;
 }

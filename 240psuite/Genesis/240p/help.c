@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011-2014 Artemio Urbina
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -686,7 +686,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 				case 1:
-					VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
+					VDP_drawTextBG(APLAN, "MEMORY VIEWER", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
 					VDP_drawTextBG(APLAN, "This shows selected regions of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "the main CPU memory map.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
@@ -697,7 +697,7 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "The left part of the screen", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "shows 0x1C0 bytes in hex.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
-					VDP_drawTextBG(APLAN, "- Button A enabled CRC of of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "- Button A enabled CRC of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "current screen.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "- Button B jumps to relevant", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
