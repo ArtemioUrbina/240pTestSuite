@@ -2,9 +2,9 @@ Hardware ID   : SEGA SEGAKATANA
 Maker ID      : SEGA ENTERPRISES
 Device Info   : 0000 CD-ROM1/1
 Area Symbols  : JUE
-Peripherals   : 0799E10
+Peripherals   : FFFFF10
 Product No    : T0001
-Version       : V1.025
+Version       : V1.290
 Boot Filename : 1ST_READ.BIN
 SW Maker Name : ARTEMIO URBINA
 Game Title    : 240P TEST SUITE
