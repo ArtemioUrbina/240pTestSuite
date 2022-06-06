@@ -740,6 +740,7 @@ int				maple_display_pos = 0;
 int				maple_locked_device = 0;
 int				maple_use_reply_bytes = 0;
 int				maple_useCache = 0;
+int				maple_command_finish_wait = 0;
 
 #ifdef DCLOAD
 void PrintCleanString(char *str) 
@@ -860,6 +861,7 @@ static void vbl_allinfo_callback(maple_frame_t * frm) {
 	}
 
 	maple_frame_unlock(frm);
+	maple_command_finish_wait = 1;
 }
 
 /* Send a ALLINFO command for the given port/unit */
@@ -867,8 +869,9 @@ static void vbl_send_allinfo(int p, int u) {
 	maple_device_t 		*dev = NULL;
 	int					frames_wait_for_lock = 60;
 
+	maple_command_finish_wait = 0;
 	maple_locked_device = 0;
-	
+
 	/* Reserve access; if we don't get it, forget about it */
 	do
 	{	
@@ -940,25 +943,46 @@ void FillKOSDevInfo(maple_device_t *dev, int skipline)
 */
 void print_device_allinfo(maple_device_t *dev, int extra)
 {
-	unsigned int size = 4;
-	unsigned int i = 0;
-	unsigned int j = 0;		
+	int				timeout = 0;
+	unsigned int	size = 4;
+	unsigned int	i = 0;
+	unsigned int	j = 0;
+#ifdef BENCHMARK
+	uint64			start, end;
+	char			msg[100];
+#endif	
 
 	if(dev == NULL)	
 	{
-		dbglog(DBG_ERROR, "print_device_allinfo: received NULL devide");
+		dbglog(DBG_ERROR, "print_device_allinfo: received NULL device");
 		return;
 	}
 	
 	/* Clear the old buffer */
 	memset(recv_buff, 0, 1024+32);
-	
 	if(!maple_useCache)
 		mapleprintf("Requested info for device #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
 	else
 		mapleprintf("#YValues from MAPLE_RESPONSE_ALLINFO#Y for #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
+		
+#ifdef BENCHMARK
+	start = timer_ms_gettime64();
+#endif
 	vbl_send_allinfo((dev->port), (dev->unit));
-	timer_spin_sleep(800);
+	do
+	{
+		// the value is updated inside an interrupt
+		// can't use semaphores or mutex, but it is safe exactly because of that
+		timer_spin_sleep(10);
+		timeout ++;
+	}while(maple_command_finish_wait == 0 && timeout < 80);
+	
+#ifdef BENCHMARK
+	end = timer_ms_gettime64();
+	sprintf(msg, "\n>> vbl_send_allinfo took %"PRIu64" ms <<\n", end - start);
+	dbglog(DBG_INFO, msg);
+#endif
+	
 	size += (recv_buff[3]*4);
 	
 	if(!maple_locked_device)
