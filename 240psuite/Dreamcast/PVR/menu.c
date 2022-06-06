@@ -1541,14 +1541,9 @@ void DrawMessage(char *msg)
 void DrawMessageOnce(char *msg, int waitinput)
 {
 	int 		done = 0;
-	float		xpos = 34.0f, len = 0;
 	uint16		pressed;
 	ImagePtr	back = NULL, black = NULL;
 	
-	len = (float)MeasureString(msg)*fw;
-	if(!len)
-		return;
-	xpos = (int)((248.0f-len)/2.0f+34.0f);
 	black = LoadKMG("/rd/black.kmg.gz", 1);
 	back = LoadKMG("/rd/message.kmg.gz", 0);
 	
@@ -1559,9 +1554,9 @@ void DrawMessageOnce(char *msg, int waitinput)
 			DrawImage(black);
 		if(back)
 			DrawImage(back);
-		DrawStringS(xpos, 120, 1.0f, 1.0f, 1.0f, msg); 
+		DrawStringSCentered(117, 1.0f, 1.0f, 1.0f, msg); 
 		if(waitinput)
-			DrawStringS(120, 163, 0.4f, 0.9f, 0.4f, "Press B to close");
+			DrawStringSCentered(163, 0.4f, 0.9f, 0.4f, "Press B to close");
 		EndScene();
 	
 		if(waitinput)

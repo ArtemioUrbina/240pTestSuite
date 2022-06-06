@@ -200,7 +200,7 @@ void HelpWindow(char *filename, ImagePtr screen)
 		if(images[page])
 			DrawImage(images[page]);
 
-		DrawStringS(120, 200, 0.4f, 0.9f, 0.4f, "Press B to close");
+		DrawStringSCentered(200, 0.4f, 0.9f, 0.4f, "Press B to close");
 		EndScene();
 
 		st = ReadController(0, &pressed);

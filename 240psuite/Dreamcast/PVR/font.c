@@ -184,6 +184,22 @@ void DrawStringS(float x, float y, float r, float g, float b, char *str)
 	DrawString(x, y, r, g, b, str);
 }
 
+void DrawStringSCentered(float y, float r, float g, float b, char *str) 
+{
+	float		xpos = 34.0f, len = 0;
+
+	len = (float)MeasureString(str)*fw;
+	if(!len)
+		return;
+	xpos = (int)((320-len)/2.0f);
+	font_t->layer = 2.0f;
+	font_t->alpha = 0.75f;
+	DrawString(xpos+1, y+1, 0.0f, 0.0f, 0.0f, str);	
+	font_t->layer = 3.0f;
+	font_t->alpha = 1.0f;
+	DrawString(xpos, y, r, g, b, str);
+}
+
 int MeasureString(char *str)
 {
 	int len = 0, count = 0;

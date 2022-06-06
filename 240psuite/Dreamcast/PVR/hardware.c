@@ -97,9 +97,10 @@ void DiplayController(int num, float x, float y)
 	
 	x += 3*fw;
 
-	if(isMaracas == 0)
+	if(!isMaracas)
 	{
 		int hadtriggers = 0;
+		
 		// Draw Triggers
 		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_LTRIG)
 		{
@@ -187,7 +188,9 @@ void DiplayController(int num, float x, float y)
 				DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
 			}
 		}
-		else // Arcade Stick 	0xff070000
+		
+		// Arcade Stick 	0xff070000
+		if(isArcade || dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C)
 		{
 			int advance = 0;
 			
@@ -273,10 +276,10 @@ void DiplayController(int num, float x, float y)
 			}
 		}
 	}
-	else
+	
+	// Maracas 0x0f093c00
+	if(isMaracas)
 	{
-		// Maracas 0x0f093c00
-
 		// Left Maraca
 		if(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C)
 		{
@@ -815,31 +818,31 @@ static void vbl_allinfo_callback(maple_frame_t * frm) {
 		switch(resp->response)
 		{
 			case MAPLE_RESPONSE_AGAIN:
-				mapleprintf(" Device asked for retry.\n Please try again. Got #YMAPLE_RESPONSE_AGAIN#Y"); 
+				mapleprintf("\n Device asked for retry.\n Please try again. Got #YMAPLE_RESPONSE_AGAIN#Y"); 
 				break;
 			case MAPLE_RESPONSE_BADCMD:
-				mapleprintf(" #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_RESPONSE_BADCMD#Y"); 
+				mapleprintf("\n #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_RESPONSE_BADCMD#Y"); 
 				break;
 			case MAPLE_RESPONSE_BADFUNC:
-				mapleprintf(" #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_BADFUNC#Y"); 
+				mapleprintf("\n #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_BADFUNC#Y"); 
 				break;
 			case MAPLE_RESPONSE_NONE:
-				mapleprintf(" #CDevice didn't respond to query command.@C\n Got #YMAPLE_RESPONSE_NONE#Y"); 
+				mapleprintf("\n #CDevice didn't respond to query command.#C\n Got #YMAPLE_RESPONSE_NONE#Y"); 
 				break;
 			case MAPLE_COMMAND_ALLINFO:
-				mapleprintf(" #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_COMMAND_ALLINFO#Y"); 
+				mapleprintf("\n #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_COMMAND_ALLINFO#Y"); 
 				break;
 			case MAPLE_RESPONSE_DEVINFO:
-				mapleprintf(" #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_DEVINFO#Y"); 
+				mapleprintf("\n #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_DEVINFO#Y"); 
 				break;
 			case MAPLE_COMMAND_RESET:
-				mapleprintf(" Device asked for reset.\n Please reconnect. Got #YMAPLE_COMMAND_RESET#Y"); 
+				mapleprintf("\n Device asked for reset.\n Please reconnect. Got #YMAPLE_COMMAND_RESET#Y"); 
 				break;
 			case MAPLE_RESPONSE_OK:
-				mapleprintf(" Unexpected #YMAPLE_RESPONSE_OK#Y from device", resp->response); 
+				mapleprintf("\n Unexpected #YMAPLE_RESPONSE_OK#Y from device", resp->response); 
 				break;
 			default:
-				mapleprintf(" Unexpected response [#Y%d#Y] from device", resp->response); 
+				mapleprintf("\n Unexpected response [#Y%d#Y] from device", resp->response); 
 				break;
 		}
 		if(resp->response != MAPLE_RESPONSE_NONE)

@@ -87,12 +87,12 @@ void SoundTest()
 		StartScene();
 		DrawImage(back);
 
-		DrawStringS(125, 60, 0.0f, 1.0f, 0.0f, "Sound Test"); 
+		DrawStringSCentered(60, 0.0f, 1.0f, 0.0f, "Sound Test"); 
 		if(!is_mono)
 		{
 			DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
-			DrawStringS(120, 130, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Center Channel");
-			DrawStringS(160, 120, 1.0f, sel == 2 ? 0 : 1.0f, sel == 2 ? 0 : 1.0f, "Right Channel");
+			DrawStringSCentered(130, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Center Channel");
+			DrawStringS(180, 120, 1.0f, sel == 2 ? 0 : 1.0f, sel == 2 ? 0 : 1.0f, "Right Channel");
 		}
 		else
 			DrawStringS(120, 120, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Mono Channel");
@@ -349,9 +349,9 @@ void MDFourier()
 		DrawImage(back);
 		DrawImage(layer);
 
-		DrawStringS(130, 60, 0.0f, 1.0f, 0.0f, "MDFourier"); 
+		DrawStringSCentered(60, 0.0f, 1.0f, 0.0f, "MDFourier"); 
 		sprintf(msg, "Using %d hz Audio Equipment Test", stream_samplerate);
-		DrawStringS(70, 70+1*fh, 1.0f, 1.0f, 1.0f, msg); 
+		DrawStringSCentered(70+1*fh, 1.0f, 1.0f, 1.0f, msg); 
 		if(play)
 		{
 			if(stream_pos != stream_samples_size)
@@ -361,10 +361,10 @@ void MDFourier()
 		}
 		else
 			sprintf(msg, "Press #YA#Y to play signal");
-		DrawStringS(100, 70+2*fh, 0.0f, 1.0f, 0.0f, msg);
+		DrawStringSCentered(70+2*fh, 0.0f, 1.0f, 0.0f, msg);
 		if(stream_samplerate == 48000)
-			DrawStringS(50, 70+10*fh, 0.0f, 1.0f, 0.0f, "Yamaha AICA has aliasing at 48khz"); 
-		DrawStringS(50, 70+13*fh, 1.0f, 1.0f, 1.0f, "Visit #Chttp://junkerhq.net/MDFourier#C for info"); 
+			DrawStringSCentered(70+10*fh, 0.0f, 1.0f, 0.0f, "Yamaha AICA has aliasing at 48khz"); 
+		DrawStringSCentered(70+13*fh, 1.0f, 1.0f, 1.0f, "Visit #Chttp://junkerhq.net/MDFourier#C for info"); 
 		EndScene();
 		
 		snd_stream_poll(hnd);
@@ -677,9 +677,12 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 			sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 16.6667/accuracy);
 	}
 
-	DrawStringS(40, 60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone & Fast Fourier Transform"); 
+	DrawStringSCentered(60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone & Fast Fourier Transform"); 
 	DrawStringS(40, 120, 1.0f, 1.0f, 1.0f, Status);
-	DrawStringS(38, 180, 1.0f, 1.0f, 1.0f, "Press X to toggle between milliseconds and frames");
+	if(showframes)
+		DrawStringS(38, 180, 1.0f, 1.0f, 1.0f, "Press X to toggle to frames");
+	else
+		DrawStringS(38, 180, 1.0f, 1.0f, 1.0f, "Press X to toggle to milliseconds");
 	DrawStringS(38, 190, 1.0f, 1.0f, 1.0f, "Press Y to toggle loop mode");
 	DrawStringS(120, 200, 0.0f, 1.0f, 0.0f, DPres);
 

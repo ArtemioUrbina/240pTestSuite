@@ -80,12 +80,12 @@ void DropShadowTest()
 	{
 		if(reload || oldvmode != vmode)
 		{
-			FreeImage(&back[0]);
+			if(back[0]) FreeImage(&back[0]);
 			for(i = 0; i < 4; i++)
-				FreeImage(&sonicback[i]);
-			FreeImage(&back[2]);
-			FreeImage(&back[3]);
-			FreeImage(&overlay);
+				if(sonicback[i]) FreeImage(&sonicback[i]);
+			if(back[2]) FreeImage(&back[2]);
+			if(back[3]) FreeImage(&back[3]);
+			if(overlay) FreeImage(&overlay);
 
 			sonicback[0] = LoadKMG("/rd/sonicback1.kmg.gz", 0);
 			if(!sonicback[0])
@@ -343,12 +343,12 @@ void StripedSpriteTest()
 	{
 		if(reload || oldvmode != vmode)
 		{
-			FreeImage(&back[0]);
+			if(back[0]) FreeImage(&back[0]);
 			for(i = 0; i < 4; i++)
-				FreeImage(&sonicback[i]);
-			FreeImage(&back[2]);
-			FreeImage(&back[3]);
-			FreeImage(&overlay);
+				if(sonicback[i]) FreeImage(&sonicback[i]);
+			if(back[2]) FreeImage(&back[2]);
+			if(back[3]) FreeImage(&back[3]);
+			if(overlay) FreeImage(&overlay);
 
 			sonicback[0] = LoadKMG("/rd/sonicback1.kmg.gz", 0);
 			if(!sonicback[0])
