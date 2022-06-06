@@ -248,6 +248,19 @@ void DrawStringB(float x, float y, float r, float g, float b, char *str)
 	DrawString(x, y, r, g, b, str);
 }
 
+int countLineFeeds(char *str) 
+{	
+	int lfeed = 0;
+	
+	while (*str) 
+	{		
+		if(*str == '\n')
+			lfeed ++;
+		str++;
+	}
+	return lfeed;
+}
+
 /* Big Numbers */
 
 void LoadNumbers()

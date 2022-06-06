@@ -40,6 +40,10 @@
 #include "help.h"
 #include "menu.h"
 
+#ifdef DCLOAD
+#define TEST_VIDEO
+#endif
+
 /* romdisk */
 extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
@@ -195,7 +199,7 @@ int main(void)
 				case 7:
 					HelpWindow(GENERALHELP, title);
 					break;
-#ifdef DCLOAD
+#ifdef TEST_VIDEO
 				case 8:
 					TestVideoMode(vmode);
 					break;
@@ -340,7 +344,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 				case 16:
 					HelpWindow(GENERALHELP, title);
 					break;
-#ifdef DCLOAD
+#ifdef TEST_VIDEO
 				case 17:
 					TestVideoMode(vmode);
 					break;
@@ -508,7 +512,7 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 				case 14:
 					HelpWindow(GENERALHELP, title);
 					break;
-#ifdef DCLOAD
+#ifdef TEST_VIDEO
 				case 15:
 					TestVideoMode(vmode);
 					break;
@@ -598,7 +602,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 				case 6:
 					HelpWindow(GENERALHELP, title);
 					break;
-#ifdef DCLOAD
+#ifdef TEST_VIDEO
 				case 8:
 					TestVideoMode(vmode);
 					break;
@@ -688,7 +692,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 				case 6:
 					HelpWindow(GENERALHELP, title);
 					break;
-#ifdef DCLOAD
+#ifdef TEST_VIDEO
 				case 7:
 					TestVideoMode(vmode);
 					break;
@@ -716,7 +720,7 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 	}
 	DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); 
 
-#ifdef DCLOAD
+#ifdef TEST_VIDEO
 	//if((vmode == VIDEO_480P || vmode == VIDEO_480P_SL) && vcable == CT_VGA)
 	if(showcredits)
 	{

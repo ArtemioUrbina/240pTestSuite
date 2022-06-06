@@ -1,4 +1,4 @@
-                MAPLE DEVICE LIST
+            MAPLE DEVICE LIST (1/2)
 
 This lists the #CMaple Devices#G attached to the
 #GDreamcast#G System, such as memory cards,
@@ -9,8 +9,24 @@ attached. This will be displayed as a hierarchy.
 
 You can query them with the #GA#A button, some have
 interesting messages. This can help identify
-hardware revisions. #GPlease document and report any
-rare devices!#G (X limits reply to reported length)
+hardware revisions. 
+
+#GPlease document and report any rare devices!#G
+
+                                         #C(cont...)#C
+            MAPLE DEVICE LIST (2/2)
+		   
+When in the main menu, you can move up and down 
+with the #YD-pad#Y. If the list is too long, you 
+can scroll up and down with the #YL#Y and #YR#Y
+triggers. 
+
+Button #YY#Y displays short response alongside the
+full query. Button X limits reply from the full query
+to the reported length by the device.
+
+When in the sub menu, you can scroll in all four
+directions with the #YD-pad#Y.
 
 Data is gathered using #YDonald Haase#Y's work, please
 check source code for the url.

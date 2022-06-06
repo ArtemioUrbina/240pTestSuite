@@ -657,7 +657,6 @@ void ControllerTest()
 			{
 				if(!timeout)
 				{
-					vid_screen_shot("/pc/screen-controller.ppm");
 					ignoreFunctions = !ignoreFunctions;
 					timeout = 20;
 					refreshVMU = 1;
@@ -740,6 +739,7 @@ char			*maple_display = NULL;
 int				maple_display_pos = 0;
 int				maple_locked_device = 0;
 int				maple_use_reply_bytes = 0;
+int				maple_useCache = 0;
 
 #ifdef DCLOAD
 void PrintCleanString(char *str) 
@@ -918,10 +918,10 @@ void print_devinfo(maple_devinfo_t *info)
 }
 
 /* Formatted output for the devinfo struct in KOS */
-void FillKOSDevInfo(maple_device_t *dev)
+void FillKOSDevInfo(maple_device_t *dev, int skipline)
 {
-	mapleprintf("\n#YValues from KOS MAPLE_RESPONSE_DEVINFO#Y cache:\n\n");
-	mapleprintf("#CFunctions    :#C 0x%.8lx  ", dev->info.functions);
+	mapleprintf("%s#YValues from MAPLE_RESPONSE_DEVINFO#Y:\n", skipline ? "\n" : "");
+	mapleprintf("#CFunctions     :#C 0x%.8lx  ", dev->info.functions);
 	mapleprintf("#CFunction int 0:#C 0x%.8lx\n", dev->info.function_data[0]);
 	mapleprintf("#CFunction int 1:#C 0x%.8lx  ", dev->info.function_data[1]);
 	mapleprintf("#CFunction int 2:#C 0x%.8lx\n", dev->info.function_data[2]);
@@ -938,7 +938,7 @@ void FillKOSDevInfo(maple_device_t *dev)
 	Get and print the data returned by the ALLINFO command, 
 	if extra=0, do not print the Free Data
 */
-void print_device_allinfo(maple_device_t *dev, int extra, ImagePtr back)
+void print_device_allinfo(maple_device_t *dev, int extra)
 {
 	unsigned int size = 4;
 	unsigned int i = 0;
@@ -949,14 +949,14 @@ void print_device_allinfo(maple_device_t *dev, int extra, ImagePtr back)
 		dbglog(DBG_ERROR, "print_device_allinfo: received NULL devide");
 		return;
 	}
-
-	maple_display_pos = 0;
-	memset(maple_display, 0, sizeof(char)*MAPLE_BUFFER_CHAR);
 	
 	/* Clear the old buffer */
 	memset(recv_buff, 0, 1024+32);
 	
-	mapleprintf("Requested info for device #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
+	if(!maple_useCache)
+		mapleprintf("Requested info for device #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
+	else
+		mapleprintf("#YValues from MAPLE_RESPONSE_ALLINFO#Y for #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
 	vbl_send_allinfo((dev->port), (dev->unit));
 	timer_spin_sleep(800);
 	size += (recv_buff[3]*4);
@@ -966,7 +966,8 @@ void print_device_allinfo(maple_device_t *dev, int extra, ImagePtr back)
 		
 	if(size-4 <= 0)
 	{
-		FillKOSDevInfo(dev);
+		if(!maple_useCache)
+			FillKOSDevInfo(dev, 1);
 		return;
 	}
 	
@@ -1000,10 +1001,25 @@ void print_device_allinfo(maple_device_t *dev, int extra, ImagePtr back)
 /*
  * End code copy from Donald Haase.
  */
+void print_device_kos_cache(maple_device_t *dev)
+{
+	if(!dev)
+		return;
+		
+	FillKOSDevInfo(dev, 0);
+	mapleprintf("#G--------------------------------------------------------------#G\n");
+}
+
+void cleanMapleBuffer()
+{
+	maple_display_pos = 0;
+	memset(maple_display, 0, sizeof(char)*MAPLE_BUFFER_CHAR);
+}
 
 void ListMapleDevices()
 {
 	int 			done = 0, sel = 1, oldvmode = -1, c = -1;
+	int				v_scroll = 0;
 	uint16			pressed;		
 	ImagePtr		back = NULL, black = NULL;
 	controller		*st = NULL;
@@ -1043,10 +1059,12 @@ void ListMapleDevices()
 		DrawImage(black);
 		DrawImage(back);
 
-		DrawStringS(125, 20, 0.0f, 1.0f, 0.0f, "Maple Devices");
-		c = maple_device_scan(15, 20, sel);
+		DrawStringSCentered(20+v_scroll, 0.0f, 1.0f, 0.0f, "Maple Devices");
+		c = maple_device_scan(15, 20+v_scroll, sel);
 		if(maple_use_reply_bytes)
-			DrawStringS(90, 210, 0.0f, 1.0f, 0.0f, "Use Maple response bytes"); 
+			DrawStringSCentered(210+v_scroll, 0.0f, 1.0f, 0.0f, "Use Maple response bytes"); 
+		if(maple_useCache)
+			DrawStringSCentered(210+v_scroll+fh, 0.0f, 1.0f, 0.0f, "Use short response"); 
 		EndScene();
 
 		VMURefresh("Maple", "Devices");
@@ -1054,6 +1072,15 @@ void ListMapleDevices()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
+			if ( pressed & CONT_LTRIGGER )
+				v_scroll -= fw;
+			if ( pressed & CONT_RTRIGGER )
+				v_scroll += fw;
+			if(v_scroll > 0)
+				v_scroll = 0;
+			if(v_scroll < -1*c*fh)
+				v_scroll = -1*c*fh;
+
 			if ( pressed & CONT_DPAD_UP )
 				sel --;
 			
@@ -1073,24 +1100,50 @@ void ListMapleDevices()
 					dev = maple_enum_type(sel - 1, 0xffffffff);
 					if(dev)
 					{
-						char vmudata[20];
+						int		sub_v_scroll = 0, hscroll = 0, lines = 0;
+						char 	vmudata[20];
 						
 						sprintf(vmudata, "query: %c%c", 'A'+(dev->port), '0'+(dev->unit));	
-						updateVMU("Maple", vmudata, 1);		
-						print_device_allinfo(dev, 1, back);
+						updateVMU("Maple", vmudata, 1);	
+						cleanMapleBuffer();
+						if(maple_useCache)
+							print_device_kos_cache(dev);
+						print_device_allinfo(dev, 1);
+						lines = countLineFeeds(maple_display);
 						while(!close_display && !EndProgram) 
 						{
 							StartScene();
 							DrawImage(black);
 							DrawImage(back);
-							DrawString(5, 20, 1.0f, 1.0f, 1.0f, maple_display);
+							DrawString(5+hscroll, 20+sub_v_scroll, 1.0f, 1.0f, 1.0f, maple_display);
 							EndScene();
 							
 							st = ReadController(0, &pressed);
 							if(st)
 							{
+								if ( pressed & CONT_LTRIGGER || pressed & CONT_DPAD_UP )
+									sub_v_scroll -= fw;
+								if ( pressed & CONT_RTRIGGER || pressed & CONT_DPAD_DOWN )
+									sub_v_scroll += fw;
+								if(sub_v_scroll > 0)
+									sub_v_scroll = 0;
+								if(sub_v_scroll < -1*lines*fh)
+									sub_v_scroll = -1*lines*fh;
+								
+								if ( pressed & CONT_DPAD_LEFT )
+									hscroll -= fw;
+								if ( pressed & CONT_DPAD_RIGHT )
+									hscroll += fw;
+								if(hscroll > 8*fw)
+									hscroll = 8*fw;
+								if(hscroll < -20*fw)
+									hscroll = -20*fw;
+									
+								if (pressed & CONT_Y)
+									hscroll = sub_v_scroll = 0;
+								
 								if (pressed & CONT_B)
-									close_display = 1;								
+									close_display = 1;
 
 								if (pressed & CONT_START)
 									ShowMenu(MAPLEHELP);
@@ -1101,6 +1154,8 @@ void ListMapleDevices()
 				}
 			}
 
+			if (pressed & CONT_Y)
+				maple_useCache = !maple_useCache;
 			if (pressed & CONT_X)
 				maple_use_reply_bytes = !maple_use_reply_bytes;
 			if (pressed & CONT_START)
@@ -1118,6 +1173,7 @@ void ListMapleDevices()
 	{
 		free(maple_display);
 		maple_display = NULL;
+		maple_display_pos = 0;
 	}
 	return;
 }

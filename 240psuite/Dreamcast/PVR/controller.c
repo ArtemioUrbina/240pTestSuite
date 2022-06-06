@@ -313,7 +313,7 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 		char name[200];
 		static int screen = 0;
 
-		sprintf(name, "/pc/screen%d.ppm", screen++); ;
+		sprintf(name, "/pc/screen%.2d.ppm", screen++); ;
 		if(vid_screen_shot(name) < 0)
 			dbglog(DBG_ERROR, "Could not save screenshot to %s\n", name);
 		else

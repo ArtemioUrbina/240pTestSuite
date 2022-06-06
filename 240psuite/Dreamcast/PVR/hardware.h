@@ -30,6 +30,8 @@ int flashrom_get_region_country();
 int flashrom_get_region_language();
 int flashrom_get_region_broadcast();
 
+int DetectBadVMULCD();
+
 #define FLASHROM_CACHE_SIZE			6
 
 #define FLASHROM_BROADCAST_NTSC		1
