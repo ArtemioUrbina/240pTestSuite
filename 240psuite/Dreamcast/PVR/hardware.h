@@ -30,7 +30,7 @@ int flashrom_get_region_country();
 int flashrom_get_region_language();
 int flashrom_get_region_broadcast();
 
-int DetectBadVMULCD();
+int check_for_bad_lcd();
 
 #define FLASHROM_CACHE_SIZE			6
 

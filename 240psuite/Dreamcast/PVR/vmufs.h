@@ -26,6 +26,7 @@
 #define VMU_OK	 		1
 #define VMU_SAVEEXISTS	2
 
+int isVMUPresent();
 int ListVMUFiles(char *buffer, int buffsize);
 int VMUSuiteSaveExists(int *blocks);
 int LoadVMUSave(char *error);

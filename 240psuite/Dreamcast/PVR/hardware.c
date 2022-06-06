@@ -771,6 +771,9 @@ void mapleprintf(char *fmt, ... )
 	char	buffer[512];
 	va_list arguments;
 
+	if(!maple_display)
+		return;
+
 	va_start(arguments, fmt);
 	vsprintf(buffer, fmt, arguments);
 	va_end(arguments);
@@ -778,11 +781,6 @@ void mapleprintf(char *fmt, ... )
 	len = strlen(buffer);
 	if(maple_display_pos + len < MAPLE_BUFFER_CHAR)
 	{
-		if(!maple_display)
-		{
-			dbglog(DBG_ERROR, "Maple display text buffer is NULL"); 
-			return;
-		}
 		memcpy(maple_display+maple_display_pos, buffer, sizeof(char)*len);
 		maple_display_pos += len;
 	}
@@ -1200,6 +1198,62 @@ void ListMapleDevices()
 		maple_display_pos = 0;
 	}
 	return;
+}
+
+int check_for_bad_lcd()
+{
+	int				timeout = 0;
+	unsigned int	size = 4;
+	maple_device_t	*dev;
+	maple_devinfo_t *info;
+	
+#ifdef BENCHMARK
+	uint64			start, end;
+	char			msg[100];
+
+	start = timer_ms_gettime64();
+#endif	
+
+	dev = maple_enum_type(0, MAPLE_FUNC_LCD);
+	if(!dev)
+		return 0;
+	
+	/* Clear the old buffer */
+	memset(recv_buff, 0, 1024+32);
+	vbl_send_allinfo((dev->port), (dev->unit));
+	do
+	{
+		// the value is updated inside an interrupt
+		// can't use semaphores or mutex, but it is safe exactly because of that
+		timer_spin_sleep(10);
+		timeout ++;
+	}while(maple_command_finish_wait == 0 && timeout < 80);
+	
+#ifdef BENCHMARK
+	end = timer_ms_gettime64();
+	sprintf(msg, "check_for_bad_lcd() took %"PRIu64" ms\n", end - start);
+	dbglog(DBG_INFO, msg);
+#endif
+	
+	size += (recv_buff[3]*4);
+	
+	if(!maple_locked_device)
+		return 1;
+		
+	if(size-4 <= 0)
+		return 1;
+	
+	info = (maple_devinfo_t *)&recv_buff[4];
+	if(dev->info.functions != info->functions)
+		return 1;
+	if(dev->info.function_data[0] != info->function_data[0])
+		return 1;
+	if(dev->info.function_data[1] != info->function_data[1])
+		return 1;
+	if(dev->info.function_data[2] != info->function_data[2])
+		return 1;
+	
+	return 0;
 }
 
 /*

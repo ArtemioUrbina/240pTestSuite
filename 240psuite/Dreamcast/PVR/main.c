@@ -119,6 +119,12 @@ int main(void)
 	if(loadedvmu == VMU_ERROR)
 		DrawMessage(error);
 
+	if(check_for_bad_lcd())
+	{
+		disableVMU_LCD();
+		DrawMessage("This VMU reports LCD, but lacks one. Disabled LCD.");
+	}
+	
 	srand((int)(time(0) ^ getpid()));
 	refreshVMU = 1;
 	while(!done && !EndProgram) 

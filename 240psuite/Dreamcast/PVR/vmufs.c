@@ -6,6 +6,16 @@
 #include "vmufs.h"
 #include <stdlib.h>
 
+int isVMUPresent()
+{
+	maple_device_t	*vmu;
+
+	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
+	if(!vmu)
+		return 0;
+	return 1;
+}
+
 unsigned char sd_data[544]=
 {
 	0x00,0xF0,0x22,0xF2,0x22,0xF4,0x42,0xF6,0x62,0xF9,0x94,

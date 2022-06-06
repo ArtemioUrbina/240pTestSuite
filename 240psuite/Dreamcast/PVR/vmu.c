@@ -27,13 +27,14 @@
 #include "vmu.h"
 
 static uint8 bitmap[192];
+int disableVMU_LCD_val = 0;
 
-int isVMUPresent()
+int isLCDPresent()
 {
-	maple_device_t	*vmu;
+	maple_device_t	*lcd;
 
-	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
-	if(!vmu)
+	lcd = maple_enum_type(0, MAPLE_FUNC_LCD);
+	if(!lcd)
 		return 0;
 	return 1;
 }
@@ -41,6 +42,9 @@ int isVMUPresent()
 void updateVMU(char *line1, char *line2, int force)
 {
 	maple_device_t *mvmu = NULL;
+
+	if(disableVMU_LCD_val)
+		return;
 
 	if(!force && ovmode == vmode && ovcable == vcable)
 		return;
@@ -88,6 +92,9 @@ void updateVMU(char *line1, char *line2, int force)
 void updateVMUFlash(char *line1, char *line2, int force)
 {
 	maple_device_t *mvmu = NULL;
+
+	if(disableVMU_LCD_val)
+		return;
 
 	updateVMU(line1, line2, force);
 	mvmu = maple_enum_type(0, MAPLE_FUNC_LCD);
@@ -284,9 +291,12 @@ void updateVMUGraphic(char **xpm)
 {
 	int x = 0, y = 0;
 	maple_device_t *mvmu = NULL;
+	
+	if(disableVMU_LCD_val)
+		return;
 
 	if(!xpm)
-		return; 
+		return;
 
 	vmu_clear_bitmap(bitmap);
 	for(y = 0; y < 32; y++)
@@ -307,3 +317,12 @@ void updateVMUGraphic(char **xpm)
 	vmu_draw_lcd(mvmu, bitmap);
 }
 
+void disableVMU_LCD()
+{
+	disableVMU_LCD_val = 1;
+}
+
+void enableVMU_LCD()
+{
+	disableVMU_LCD_val = 0;
+}

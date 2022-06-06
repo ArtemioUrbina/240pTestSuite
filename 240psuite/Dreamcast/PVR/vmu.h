@@ -22,12 +22,14 @@
 #ifndef VMU_H
 #define VMU_H
 
-int  isVMUPresent();
+int  isLCDPresent();
 void updateVMU(char *line1, char*line2, int force);
 void updateVMUFlash(char *line1, char*line2, int force);
 void updateVMUGraphic(char **xpm);
 void updateVMU_Donna();
 void updateVMU_SD();
 void SD_blink_cycle();
+void disableVMU_LCD();
+void enableVMU_LCD();
 
 #endif
