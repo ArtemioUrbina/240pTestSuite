@@ -157,7 +157,6 @@ int CopyFBToBG()
 	uint16	r, g, b;
 #ifdef BENCHMARK
 	uint64	start, end, mstart;
-	char	msg[100];
 		
 	start = timer_ms_gettime64();
 	mstart = start;
@@ -193,8 +192,7 @@ int CopyFBToBG()
 	memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
-	sprintf(msg, "FB buffer init took %"PRIu64" ms\n", end - start);
-	dbglog(DBG_INFO, msg);
+	dbglog(DBG_INFO, "FB buffer init took %"PRIu64" ms\n", end - start);
 	start = timer_ms_gettime64();
 #endif
 
@@ -204,8 +202,7 @@ int CopyFBToBG()
 
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
-	sprintf(msg, "FB buffer memcpy took %"PRIu64" ms\n", end - start);
-	dbglog(DBG_INFO, msg);
+	dbglog(DBG_INFO, "FB buffer memcpy took %"PRIu64" ms\n", end - start);
 	start = timer_ms_gettime64();
 #endif
 
@@ -232,8 +229,7 @@ int CopyFBToBG()
 
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
-	sprintf(msg, "FB conversion took %"PRIu64" ms\n", end - start);
-	dbglog(DBG_INFO, msg);
+	dbglog(DBG_INFO, "FB conversion took %"PRIu64" ms\n", end - start);
 	start = timer_ms_gettime64();
 #endif
 
@@ -246,11 +242,9 @@ int CopyFBToBG()
 
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
-	sprintf(msg, "FB texture upload took %"PRIu64" ms\n", end - start);
-	dbglog(DBG_INFO, msg);
+	dbglog(DBG_INFO, "FB texture upload took %"PRIu64" ms\n", end - start);
 	
-	sprintf(msg, "FB texture entire process took %"PRIu64" ms\n", end - mstart);
-	dbglog(DBG_INFO, msg);
+	dbglog(DBG_INFO, "FB texture entire process took %"PRIu64" ms\n", end - mstart);
 #endif
 
 	fbtexture->r = 0.75f;
@@ -1572,6 +1566,12 @@ void DrawMessageOnce(char *msg, int waitinput)
 		FreeImage(&back);
 	if(black)
 		FreeImage(&black);
+}
+
+void ShowLCDVMUWarning()
+{
+	disableVMU_LCD();
+	DrawMessage("This VMU reports LCD, but lacks one. Disabled LCD.");
 }
 
 int CheckIfVideoModeNeedsRefresh(struct settings_st *old_settings)

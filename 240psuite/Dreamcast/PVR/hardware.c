@@ -947,7 +947,6 @@ void print_device_allinfo(maple_device_t *dev, int extra)
 	unsigned int	j = 0;
 #ifdef BENCHMARK
 	uint64			start, end;
-	char			msg[100];
 #endif	
 
 	if(dev == NULL)	
@@ -977,8 +976,7 @@ void print_device_allinfo(maple_device_t *dev, int extra)
 	
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
-	sprintf(msg, "\n>> vbl_send_allinfo took %"PRIu64" ms <<\n", end - start);
-	dbglog(DBG_INFO, msg);
+	dbglog(DBG_INFO, "\n>> vbl_send_allinfo took %"PRIu64" ms <<\n", end - start);
 #endif
 	
 	size += (recv_buff[3]*4);
@@ -1200,16 +1198,32 @@ void ListMapleDevices()
 	return;
 }
 
+/*
+ *
+ * We have two methods to detect a VMU that reports as having an LCD 
+ * but doesn't. That wouldn't be an issue, but when graphics are sent 
+ * to reported the "LCD", it resets the controller, slowing everything
+ * down and in some cases, mangling controller input.
+ *
+ * This method checks the INFO and ALL_INFO commands and compares them
+ * for reported inconsistencies. I've found that the Visual Memory
+ * packet was lifted verbatim from an official VMU, hence the flags report 
+ * clock and LCD. 
+ *
+ * If this happens, all LCD commands are blocked for the current session.
+ *
+ * The other method is checked every controller swap, in vmu.c
+ *
+ */
+
 int check_for_bad_lcd()
 {
 	int				timeout = 0;
 	unsigned int	size = 4;
 	maple_device_t	*dev;
 	maple_devinfo_t *info;
-	
 #ifdef BENCHMARK
 	uint64			start, end;
-	char			msg[100];
 
 	start = timer_ms_gettime64();
 #endif	
@@ -1231,8 +1245,7 @@ int check_for_bad_lcd()
 	
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
-	sprintf(msg, "check_for_bad_lcd() took %"PRIu64" ms\n", end - start);
-	dbglog(DBG_INFO, msg);
+	dbglog(DBG_INFO, "check_for_bad_lcd() took %"PRIu64" ms\n", end - start);
 #endif
 	
 	size += (recv_buff[3]*4);

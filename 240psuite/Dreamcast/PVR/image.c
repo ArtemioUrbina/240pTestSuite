@@ -29,6 +29,7 @@
 #include "vmodes.h"
 #include "menu.h"
 #include "help.h"
+#include "vmu.h"
 
 #ifdef DCLOAD
 int keep_link_alive = 0;
@@ -295,7 +296,6 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	file_t testFile;
 #ifdef BENCHMARK
 	uint64	start, end;
-	char	msg[100];
 
 	start = timer_ms_gettime64();
 #endif
@@ -346,8 +346,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
-	sprintf(msg, "KMG %s took %"PRIu64" ms\n", filename, end - start);
-	dbglog(DBG_INFO, msg);
+	dbglog(DBG_INFO, "KMG %s took %"PRIu64" ms\n", filename, end - start);
 #endif
 
 	image->r = 1.0f;
@@ -393,7 +392,6 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 	kos_img_t img;
 #ifdef BENCHMARK
 	uint64	start, end;
-	char	msg[100];
 		
 	start = timer_ms_gettime64();
 #endif
@@ -438,8 +436,7 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 
 #ifdef BENCHMARK
 	end = timer_ms_gettime64();
-	sprintf(msg, "KMG %s took %"PRIu64" ms\n", filename, end - start);
-	dbglog(DBG_INFO, msg);
+	dbglog(DBG_INFO, "KMG %s took %"PRIu64" ms\n", filename, end - start);
 #endif
 	return 1;
 }
@@ -701,6 +698,9 @@ inline void EndScene()
 		DrawMenu = 0;
 		DrawShowMenu();
 	}
+	
+	if(vmu_found_bad_lcd_vmu())
+		ShowLCDVMUWarning();
 	
 	// Check if cable was hotswapped
 	vcable = vid_check_cable();

@@ -92,4 +92,6 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 void DrawMessage(char *msg);
 void DrawMessageOnce(char *msg, int waitinput);
 
+void ShowLCDVMUWarning();
+
 #endif

@@ -39,6 +39,91 @@ int isLCDPresent()
 	return 1;
 }
 
+void internal_vmu_draw_lcd(maple_device_t *dev,	void *bitmap)
+{
+	int retval = 0;
+	
+	// takes around 20-30ms
+	retval = vmu_draw_lcd(dev, bitmap);
+	if(retval == MAPLE_EOK)
+		return;
+
+	switch(retval)
+	{
+		case MAPLE_EAGAIN:
+			dbglog(DBG_ERROR, "VMU LCD could not be updated, got MAPLE_EAGAIN\n");
+		case MAPLE_ETIMEOUT:
+			dbglog(DBG_ERROR, "VMU LCD could not be updated, got MAPLE_ETIMEOUT\n");
+		default:
+			disableVMU_LCD_val = 1;
+			break;
+	}
+}
+
+/*
+ *
+ * We have two methods to detect a VMU that reports as having an LCD 
+ * but doesn't. That wouldn't be an issue, but when graphics are sent 
+ * to reported the "LCD", it resets the controller, slowing everything
+ * down and in some cases, mangling controller input.
+ *
+ * This method checks for the time it takes between controller swaps.
+ * The user is free to swap controllers at any time, however if the "swap"
+ * takes between 0 and 150 ms, this wasn't a human swapping controllers,
+ * it was the misbehaved VMU resetting the controller when receving the
+ * vmu_draw_lcd() commands. 
+ *
+ * It takes arund 50 ms in a regular DC controller and 130 in Arcade Stick.
+ *
+ * If this happens, all LCD commands are blocked for the current session.
+ *
+ * The other method is checked at boot time, in hardware.c
+ *
+ */
+
+void vmu_report_controller_swap()
+{
+	static uint64 	start = 0, end = 0, lapse = 0;
+	
+	if(disableVMU_LCD_val)
+		return;
+
+	if(start == 0)
+	{
+		start = timer_ms_gettime64();
+		return;
+	}
+	
+	end = timer_ms_gettime64();
+	lapse = end - start;
+	
+	dbglog(DBG_INFO, "Controller swap took %"PRIu64" ms\n", lapse);
+	
+	if(lapse < 150)	// we got a bad LCD VMU...
+	{
+		dbglog(DBG_ERROR, "We got a bad LCD VMU, it is resetting the controller. DISABLED.\n");
+		disableVMU_LCD_val = 1;
+	}
+	
+	// prepare for next cycle...
+	start = timer_ms_gettime64();
+}
+
+int vmu_found_bad_lcd_vmu()
+{
+	static int reported = 0;
+	
+	if(reported)
+		return 0;
+	
+	if(disableVMU_LCD_val)
+	{
+		reported = 1;
+		return 1;
+	}
+	return 0;
+}
+
 void updateVMU(char *line1, char *line2, int force)
 {
 	maple_device_t *mvmu = NULL;
@@ -85,7 +170,7 @@ void updateVMU(char *line1, char *line2, int force)
 				vmu_draw_str(bitmap, (unsigned char*)"  480p/SL", 0, 20);
 				break;
 		}
-		vmu_draw_lcd(mvmu, bitmap);
+		internal_vmu_draw_lcd(mvmu, bitmap);
 	}
 }
 
@@ -101,9 +186,9 @@ void updateVMUFlash(char *line1, char *line2, int force)
 	if(mvmu != 0)
 	{
 		vmu_invert_bitmap(bitmap);
-		vmu_draw_lcd(mvmu, bitmap);
+		internal_vmu_draw_lcd(mvmu, bitmap);
 		vmu_invert_bitmap(bitmap);
-		vmu_draw_lcd(mvmu, bitmap);
+		internal_vmu_draw_lcd(mvmu, bitmap);
 	}
 }
 
@@ -314,7 +399,7 @@ void updateVMUGraphic(char **xpm)
 	if(!mvmu)
 		return;
 		
-	vmu_draw_lcd(mvmu, bitmap);
+	internal_vmu_draw_lcd(mvmu, bitmap);
 }
 
 void disableVMU_LCD()

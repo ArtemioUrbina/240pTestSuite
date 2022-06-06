@@ -120,10 +120,7 @@ int main(void)
 		DrawMessage(error);
 
 	if(check_for_bad_lcd())
-	{
-		disableVMU_LCD();
-		DrawMessage("This VMU reports LCD, but lacks one. Disabled LCD.");
-	}
+		ShowLCDVMUWarning();
 	
 	srand((int)(time(0) ^ getpid()));
 	refreshVMU = 1;

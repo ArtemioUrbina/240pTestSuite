@@ -1,6 +1,7 @@
 #include <kos.h>
 #include <stdlib.h>
 #include "controller.h"
+#include "vmu.h"
 
 uint16	OldButtonsInternal = 0;
 char	oldControllerName[256] = { '\0' };
@@ -71,6 +72,9 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 
 		OldButtonsInternal = 0;
 		strcpy(oldControllerName, dev->info.product_name);
+		
+		// check if bad VMU caused the issue
+		vmu_report_controller_swap();
 	}
 	st = (cont_state_t*)maple_dev_status(dev); 
 	if(!st)
