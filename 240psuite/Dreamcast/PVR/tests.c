@@ -1071,14 +1071,22 @@ void ScrollTest()
 
 void GridScrollTest()
 {
-	int 			done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, direction = 0;
+	int 			done = 0, speed = 1, acc = 1, x = 0, y = 0;
+	int				angle = 0, pause = 0, direction = 0;
 	uint16			pressed;		
-	ImagePtr		back;
-	controller		*st;
+	ImagePtr		back = NULL, square = NULL, diag = NULL;
+	controller		*st = NULL;
 
-	back = LoadKMG("/rd/small_grid.kmg.gz", 1);
-	if(!back)
-		return;  
+	square = LoadKMG("/rd/small_grid.kmg.gz", 1);
+	if(!square)
+		return;
+	diag = LoadKMG("/rd/diagonal.kmg.gz", 1);
+	if(!diag)
+		return; 
+	
+	square->x = -0.5*dW;
+	square->y = -0.5*dH;
+	back = square;
 	
 	while(!done && !EndProgram) 
 	{
@@ -1097,8 +1105,8 @@ void GridScrollTest()
 				y += speed * acc;
 		}	
 				
-		CalculateUV(x, y, dW, dH, back);
-		DrawImage(back);
+		CalculateUV(x, y, 2*dW, 2*dH, back);
+		DrawImageRotate(back, angle);
 		EndScene();
 		
 		VMURefresh("G. Scroll", "");
@@ -1123,6 +1131,29 @@ void GridScrollTest()
 
 			if (pressed & CONT_X)
 				direction = !direction;
+				
+			if(pressed & CONT_RTRIGGER)
+			{
+				if(angle)
+					angle = 0;
+				else
+				{
+					angle = 45;
+					back = square;
+				}
+			}
+			
+			if (pressed & CONT_LTRIGGER)
+			{
+				if(back == square)
+				{
+					back = diag;
+					if(angle)
+						angle = 0;
+				}
+				else
+					back = square;
+			}
 
 			// Joystick
 			if(st->joyx != 0)
@@ -1137,6 +1168,7 @@ void GridScrollTest()
 
 	}
 	FreeImage(&back);  
+	FreeImage(&diag); 
 	return;
 }
 

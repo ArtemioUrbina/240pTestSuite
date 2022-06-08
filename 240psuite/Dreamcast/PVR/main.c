@@ -50,6 +50,8 @@ KOS_INIT_ROMDISK(romdisk);
 KOS_INIT_FLAGS(INIT_DEFAULT);
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
+void TestPatternsColorMenu(ImagePtr title, ImagePtr sd);
+void TestPatternsGeometryMenu(ImagePtr title, ImagePtr sd);
 void VideoTestsMenu(ImagePtr title, ImagePtr sd);
 void AudioTestsMenu(ImagePtr title, ImagePtr sd);
 void HardwareTestsMenu(ImagePtr title, ImagePtr sd);
@@ -73,6 +75,7 @@ int main(void)
 	vcable = vid_check_cable();
 
 	InitImages();
+	InitController();
 	
 	// Define if PAL modes are enabled
 	broadcast = flashrom_get_region_broadcast();
@@ -147,6 +150,7 @@ int main(void)
 		
 		EndScene();
 
+		st = ReadController(0, &pressed);
 		if(refreshVMU)
 		{
 			updateVMU_SD();
@@ -155,7 +159,6 @@ int main(void)
 		else
 			SD_blink_cycle();
 		
-		st = ReadController(0, &pressed);
 	
 		if (pressed & CONT_START)
 			ShowMenu(GENERALHELP);
@@ -239,8 +242,105 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		float 	g = 1.0f;
 		float 	b = 1.0f;
 		int		c = 1;
+		float 	x = 70.0f;
+		float 	y = 90.0f;
+
+		StartScene();
+		DrawImage(title);
+		DrawImage(sd);
+
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Geometry"); y += fh; c++;
+		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; c++;
+
+		y += fh;
+		c = DrawFooter(x, y, sel, c, 0);
+		
+		EndScene();
+		st = ReadController(0, &pressed);
+		if(refreshVMU)
+		{
+			updateVMU_SD();
+			refreshVMU = 0;
+		}
+		else
+			SD_blink_cycle();
+	
+		if (pressed & CONT_START)
+			ShowMenu(GENERALHELP);
+
+		if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
+			RaiseScanlineIntensity();
+
+		if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
+			LowerScanlineIntensity();
+
+		if (pressed & CONT_DPAD_UP)
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+	
+		if (pressed & CONT_DPAD_DOWN)
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}
+	
+		JoystickMenuMove(st, &sel, c, &joycnt);
+	
+		if (pressed & CONT_B)
+			done = 1;
+	
+		if (pressed & CONT_A)
+		{
+			refreshVMU = 1;
+			switch(sel)
+			{
+				case 1:
+					TestPatternsColorMenu(title, sd);
+					break;
+				case 2:
+					TestPatternsGeometryMenu(title, sd);
+					break;
+				case 3:
+					done = 1;
+					break;
+				case 4:
+					ShowMenu(GENERALHELP);
+					break;
+				case 5:
+					HelpWindow(GENERALHELP, title);
+					break;
+#ifdef TEST_VIDEO
+				case 6:
+					TestVideoMode(vmode);
+					break;
+#endif
+			} 			
+			refreshVMU = 1;
+		}			
+	}
+
+	return;
+}
+
+void TestPatternsColorMenu(ImagePtr title, ImagePtr sd)
+{
+	int 			done = 0, sel = 1, joycnt = 0;
+	uint16			pressed;		
+	controller		*st;
+
+	while(!done && !EndProgram) 
+	{		
+		float 	r = 1.0f;
+		float 	g = 1.0f;
+		float 	b = 1.0f;
+		int		c = 1;
 		float 	x = 40.0f;
-		float 	y = 55.0f;
+		float 	y = 60.0f;
 
 		StartScene();
 		DrawImage(title);
@@ -252,19 +352,18 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SMPTE Color Bars"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White & RGB screens"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;
-		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Convergence"); y += fh; c++;
+		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh; c++;
 
+		y += fh;
 		c = DrawFooter(x, y, sel, c, 0);
 		
 		EndScene();
-		VMURefresh("Patterns", "");
+		VMURefresh("Patterns", "Color&B/W");
 		st = ReadController(0, &pressed);
 		if (pressed & CONT_START)
 			ShowMenu(GENERALHELP);
@@ -318,37 +417,125 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					DrawColorBleed();
 					break;
 				case 7:
-					DrawGrid();
-					break;
-				case 8:
-					DrawMonoscope();
-					break;					
-				case 9:
 					DrawGrayRamp();
 					break;
-				case 10:
+				case 8:
 					DrawWhiteScreen();
 					break;
-				case 11:
+				case 9:
 					Draw100IRE();
 					break;
-				case 12:
+				case 10:
 					DrawSharpness();
 					break;
-				case 13:
-					DrawOverscan();
+				case 11:
+					DrawConvergence();
 					break;
-				case 14:
+				case 12:
 					done = 1;
 					break;
-				case 15:
+				case 13:
 					ShowMenu(GENERALHELP);
 					break;
-				case 16:
+				case 14:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 17:
+				case 15:
+					TestVideoMode(vmode);
+					break;
+#endif
+			} 			
+			refreshVMU = 1;
+		}			
+	}
+
+	return;
+}
+
+void TestPatternsGeometryMenu(ImagePtr title, ImagePtr sd)
+{
+	int 			done = 0, sel = 1, joycnt = 0;
+	uint16			pressed;		
+	controller		*st;
+
+	while(!done && !EndProgram) 
+	{		
+		float 	r = 1.0f;
+		float 	g = 1.0f;
+		float 	b = 1.0f;
+		int		c = 1;
+		float 	x = 70.0f;
+		float 	y = 90.0f;
+
+		StartScene();
+		DrawImage(title);
+		DrawImage(sd);
+
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;
+		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh; c++;
+
+		y += fh;
+		c = DrawFooter(x, y, sel, c, 0);
+		
+		EndScene();
+		VMURefresh("Patterns", "Geometry");
+		st = ReadController(0, &pressed);
+		if (pressed & CONT_START)
+			ShowMenu(GENERALHELP);
+
+		if (pressed & CONT_DPAD_RIGHT && st->buttons & CONT_Y)
+			RaiseScanlineIntensity();
+
+		if (pressed & CONT_DPAD_LEFT && st->buttons & CONT_Y)
+			LowerScanlineIntensity();
+
+		if (pressed & CONT_DPAD_UP)
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+	
+		if (pressed & CONT_DPAD_DOWN)
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}
+	
+		JoystickMenuMove(st, &sel, c, &joycnt);
+	
+		if (pressed & CONT_B)
+			done = 1;
+	
+		if (pressed & CONT_A)
+		{
+			refreshVMU = 1;
+			switch(sel)
+			{
+				case 1:
+					DrawMonoscope();
+					break;		
+				case 2:
+					DrawGrid();
+					break;
+				case 3:
+					DrawOverscan();
+					break;
+				case 4:
+					done = 1;
+					break;
+				case 5:
+					ShowMenu(GENERALHELP);
+					break;
+				case 6:
+					HelpWindow(GENERALHELP, title);
+					break;
+#ifdef TEST_VIDEO
+				case 7:
 					TestVideoMode(vmode);
 					break;
 #endif

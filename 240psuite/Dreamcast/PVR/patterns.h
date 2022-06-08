@@ -35,6 +35,7 @@ void DrawEBUColorBars();
 void DrawSMPTEColorBars();
 void DrawSharpness();
 void DrawOverscan();
+void DrawConvergence();
 
 #endif
 

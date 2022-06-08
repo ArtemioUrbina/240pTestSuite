@@ -173,7 +173,7 @@ void DrawPluge()
 			}
 			
 			if (pressed & CONT_X)
-				ShowHelp = 100;
+				ShowHelp = 120;
 		}
 	}
 	FreeImage(&highlight);
@@ -565,9 +565,9 @@ void DrawWhiteScreen()
 
 void DrawColorBars()
 {
-	int 		done = 0, type = 0;
+	int 		done = 0, type = 0, showborder = 0;
 	uint16		pressed;		
-	ImagePtr	back = NULL, backgrid = NULL;
+	ImagePtr	back = NULL, backgrid = NULL, border = NULL;
 	controller	*st = NULL;
 
 	back = LoadKMG("/rd/color.kmg.gz", 0);
@@ -575,6 +575,9 @@ void DrawColorBars()
 		return;
 	backgrid = LoadKMG("/rd/color_grid.kmg.gz", 0);
 	if(!back)
+		return;
+	border = LoadKMG("/rd/color_border.kmg.gz", 0);
+	if(!border)
 		return;
 		
 	while(!done && !EndProgram) 
@@ -584,8 +587,26 @@ void DrawColorBars()
 			DrawImage(back);
 		else
 			DrawImage(backgrid);
+		if(showborder)
+		{
+			border->r = 1.0f;
+			border->g = 0.0f;
+			border->b = 1.0f;
+			if(type)
+			{
+				border->x = -21.0f;
+				border->y =   3.0f;
+			}
+			else
+			{
+				border->x = 0.0f;
+				border->y = 0.0f;
+			}
+			DrawImage(border);
+			showborder--;
+		}
 		EndScene();
-		VMURefresh("Colorbars", "");
+		VMURefresh("Colorbars", !type ? "Normal" : "Grid");
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -594,12 +615,19 @@ void DrawColorBars()
 				done =	1;
 
 			if (pressed & CONT_A)
+			{
 				type = !type;
+				refreshVMU = 1;
+			}
+			
+			if (pressed & CONT_X)
+				showborder = 120;
 
 			if (pressed & CONT_START)
 				ShowMenu(COLORBARSHELP);
 		}
 	}
+	FreeImage(&border);
 	FreeImage(&backgrid);
 	FreeImage(&back);
 	return;
@@ -1103,21 +1131,34 @@ void Draw100IRE()
 
 void DrawSharpness()
 {
-	int 		done = 0;
+	int 		done = 0, oldvmode = -1, type = 0;
 	uint16		pressed;
-	ImagePtr	back = NULL;
+	ImagePtr	back = NULL, backbricks = NULL;
 	controller	*st = NULL;
 	
 	back = LoadKMG("/rd/sharpness.kmg.gz", 0);
 	if(!back)
 		return;
+	backbricks = LoadKMG("/rd/bricks.kmg.gz", 1);
+	if(!backbricks)
+		return;
 
 	while(!done && !EndProgram) 
-	{		
+	{
+		if(oldvmode != vmode)
+		{
+			CalculateUV(0, 0, dW, dH, backbricks);
+			oldvmode = vmode;
+		}
+		
 		StartScene();
-		DrawImage(back);
+		if(!type)
+			DrawImage(back);
+		else
+			DrawImage(backbricks);
 		EndScene();
-		VMURefresh("Sharpness", "");
+		
+		VMURefresh("Sharpness", !type ? "Normal": "Bricks");
 		
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1125,12 +1166,18 @@ void DrawSharpness()
 			if (pressed & CONT_START )
 				ShowMenu(SHARPNESSHELP);
 
+			if (pressed & CONT_A)
+			{
+				type = !type;
+				refreshVMU = 1;
+			}
 			if (pressed & CONT_B)
 				done =	1;
 		}
 
 	}
 	FreeImage(&back);
+	FreeImage(&backbricks);
 	return;
 }
 
@@ -1352,3 +1399,66 @@ void DrawOverscan()
 	return;
 }
 
+#define	NUM_CONV	5
+void DrawConvergence()
+{
+    int 		done = 0, i = 0, current = 0, oldvmode = -1;
+	uint16		pressed;	
+	ImagePtr	back[NUM_CONV] = { NULL };	
+	
+	back[0] = LoadKMG("/rd/Convergence-01-grid.kmg.gz", 1);
+	if(!back[0])
+		return;
+	back[1] = LoadKMG("/rd/Convergence-02-cross.kmg.gz", 1);
+	if(!back[1])
+		return;
+	back[2] = LoadKMG("/rd/Convergence-03-dots.kmg.gz", 1);
+	if(!back[2])
+		return;
+	back[3] = LoadKMG("/rd/Convergence-04-colors.kmg.gz", 1);
+	if(!back[3])
+		return;
+	back[4] = LoadKMG("/rd/Convergence-05-colorsbl.kmg.gz", 1);
+	if(!back[4])
+		return;
+		
+	current = 0;
+	while(!done && !EndProgram) 
+	{				
+		if(oldvmode != vmode)
+		{
+			for(i = 0; i < NUM_CONV; i++)
+				CalculateUV(0, 0, dW, dH, back[i]);
+			oldvmode = vmode;
+		}
+
+		StartScene();
+		DrawImage(back[current]);
+        EndScene();
+		
+		ReadController(0, &pressed);
+				
+		if (pressed & CONT_B)
+			done =	1;								
+	
+		if (pressed & CONT_START)
+			ShowMenu(DROPSHADOW);
+		
+		if (pressed & CONT_A || pressed & CONT_RTRIGGER)
+		{
+			current ++;
+			if(current >= NUM_CONV)
+				current = 0;
+		}
+		
+		if (pressed & CONT_LTRIGGER)
+		{
+			current --;
+			if(current < 0)
+				current = NUM_CONV - 1;
+		}
+	}
+	for(i = 0; i < NUM_CONV; i++)
+		if(back[i]) FreeImage(&back[i]);
+	return;
+}

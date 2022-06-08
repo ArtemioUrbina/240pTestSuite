@@ -33,6 +33,6 @@ void disableVMU_LCD();
 void enableVMU_LCD();
 
 int vmu_found_bad_lcd_vmu();
-void vmu_report_controller_swap();
+void vmu_report_controller_swap(int no_controller);
 
 #endif

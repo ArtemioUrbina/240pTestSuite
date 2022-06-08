@@ -28,11 +28,21 @@ void PrintDebugController(cont_state_t *st);
 #define FISHING_DEATH_ZONE	60
 #define	FISHING_MAX_RATE	128
 
+void InitController()
+{
+	maple_device_t *dev = NULL;
+	
+	dev = maple_enum_type(0, MAPLE_FUNC_CONTROLLER);
+	if(!dev)
+		return;
+	
+	DetectControllerType(dev);
+	OldButtonsInternal = 0;
+	strcpy(oldControllerName, dev->info.product_name);
+}
+
 cont_state_t *ReadController(uint16 num, uint16 *pressed)
 {
-#ifdef DCLOAD
-	static int detected = 0;
-#endif
 #ifdef SCREENSHOTMODE
 	static int timeout = 0;
 #endif
@@ -43,38 +53,33 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER);
 	if(!dev)
 	{
-#ifdef DCLOAD
-		detected = 0;
-#endif
 		OldButtonsInternal = 0;
 		oldControllerName[0] = '\0';
+		
+		// check if bad VMU caused a reset issue
+		vmu_report_controller_swap(1);
 		return NULL;
 	}
 	
 	if(strcmp(oldControllerName, dev->info.product_name) != 0)
 	{
 #ifdef DCLOAD
-		if(!detected)
-			dbglog(DBG_INFO, "Input Device is \"%s\"",
+		dbglog(DBG_INFO, "Input Device is \"%s\"",
 				dev->info.product_name);
-		else
-			dbglog(DBG_INFO, "Device changed from \"%s\" to \"%s\"", 
-				oldControllerName,
-				dev->info.product_name);
+
 		dbglog(DBG_INFO, "\n  Functions 0x%08lx: %s\n  Power[%d-%d]mW",
 			dev->info.functions, maple_pcaps(dev->info.functions),
 			dev->info.standby_power, dev->info.max_power);
 		dbglog(DBG_INFO, "\n  License: \"%s\"\n  Area Code: 0x%0x\n",
 				dev->info.product_license, dev->info.area_code);
-		detected = 1;
 #endif		
-		DetectContollerType(dev);
+		DetectControllerType(dev);
 
 		OldButtonsInternal = 0;
 		strcpy(oldControllerName, dev->info.product_name);
 		
-		// check if bad VMU caused the issue
-		vmu_report_controller_swap();
+		// check if bad VMU caused a reset issue
+		vmu_report_controller_swap(0);
 	}
 	st = (cont_state_t*)maple_dev_status(dev); 
 	if(!st)
@@ -330,7 +335,7 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	return st;
 }
 
-void DetectContollerType(maple_device_t *dev)
+void DetectControllerType(maple_device_t *dev)
 {
 	if(!dev)
 		return;

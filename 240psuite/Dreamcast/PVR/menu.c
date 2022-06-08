@@ -1345,8 +1345,8 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher");
 		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "VMU animation:");
-		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Hardware&Special Thanks:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Karensauria");
+		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Hardware & Special Thanks:"); y += fh; 
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Karensauria & ferigne");
 		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Rolman"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:");  y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "shmups regulars");
@@ -1400,6 +1400,7 @@ void DrawIntro()
 	uint32			counter, frames = 30;
 	float			delta = 0.0f;
 	ImagePtr		black = NULL, back = NULL;
+	uint16			pressed = 0;
 
 	back = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!back)
@@ -1414,6 +1415,7 @@ void DrawIntro()
 	black->w = dW;
 	black->h = dH;
 	black->layer = 5.0f;
+	
 	updateVMU(" KORDAMP", "", 1);
 	for(counter = 0; counter < frames*2; counter ++)
 	{
@@ -1428,8 +1430,12 @@ void DrawIntro()
 		DrawImage(back);
 		DrawStringS(120, 115, 1.0, 1.0, 1.0, "KORDAMP PRESENTS");
 		DrawImage(black);
-
 		EndScene();
+		
+		ReadController(0, &pressed);
+		
+		if (pressed & CONT_A || pressed & CONT_B || pressed & CONT_START)
+			break;
 	}
 	FreeImage(&black);
 	FreeImage(&back);

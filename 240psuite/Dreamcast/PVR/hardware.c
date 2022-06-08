@@ -80,7 +80,7 @@ void DiplayController(int num, float x, float y)
 	
 	// Tells us the device type in 
 	// isFishingRod/isMaracas/isStockController/isArcade
-	DetectContollerType(dev);
+	DetectControllerType(dev);
 	
 	st = (cont_state_t*)maple_dev_status(dev);
 	if(!st)
@@ -1039,7 +1039,7 @@ void cleanMapleBuffer()
 void ListMapleDevices()
 {
 	int 			done = 0, sel = 1, oldvmode = -1, c = -1;
-	int				v_scroll = 0;
+	int				v_scroll = 0, joycnt = 0;
 	uint16			pressed;		
 	ImagePtr		back = NULL, black = NULL;
 	controller		*st = NULL;
@@ -1090,6 +1090,7 @@ void ListMapleDevices()
 		VMURefresh("Maple", "Devices");
 
 		st = ReadController(0, &pressed);
+		JoystickMenuMove(st, &sel, c, &joycnt);
 		if(st)
 		{
 			if ( pressed & CONT_LTRIGGER )
@@ -1121,6 +1122,7 @@ void ListMapleDevices()
 					if(dev)
 					{
 						int		sub_v_scroll = 0, hscroll = 0, lines = 0;
+						int		joycntx = 0, joycnty = 0;
 						char 	vmudata[20];
 						
 						sprintf(vmudata, "query: %c%c", 'A'+(dev->port), '0'+(dev->unit));	
@@ -1139,6 +1141,7 @@ void ListMapleDevices()
 							EndScene();
 							
 							st = ReadController(0, &pressed);
+							JoystickDirectios(st, &pressed, &joycntx, &joycnty);
 							if(st)
 							{
 								if ( pressed & CONT_LTRIGGER || pressed & CONT_DPAD_UP )
@@ -1253,8 +1256,10 @@ int check_for_bad_lcd()
 	if(!maple_locked_device)
 		return 1;
 		
+	// we allow if the device doesn't support the command
+	// to pass, for emulators
 	if(size-4 <= 0)
-		return 1;
+		return 0;
 	
 	info = (maple_devinfo_t *)&recv_buff[4];
 	if(dev->info.functions != info->functions)

@@ -16,6 +16,8 @@ can clearly tell them apart.
                                       #C(cont...)#C
                  COLORBARS (2/2)
 
+You can highlight the blocks for 2 seconds with #GX#G.
+
 The same procedure should be used with each
 color, raise the control that adjusts the
 individual color level (not the #Ycolor#Y/#Ytint#Y one)
@@ -25,5 +27,5 @@ you can distinguish them clearly.
 
 Repeat for each color and you are set.
 
-The same bars with a grid pattern are also available
+The same bars with a grid pattern are available
 with the #GA#G button.
