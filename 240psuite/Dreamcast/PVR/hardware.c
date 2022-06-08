@@ -71,7 +71,7 @@ void DiplayController(int num, float x, float y)
 	char			msg[256], name[256];
 	float			orig_x = x, orig_y = y;
 	
-	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER);
+	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER|MAPLE_FUNC_LIGHTGUN);
 	if(!dev)
 		return;
 	
@@ -427,7 +427,7 @@ void DiplayControllerIgnore(int num, float x, float y)
 	maple_device_t	*dev = NULL;
 	char			msg[256], name[256];
 	
-	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER);
+	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER|MAPLE_FUNC_LIGHTGUN);
 	if(!dev)
 		return;
 	
@@ -594,7 +594,7 @@ void GetControllerPorts(int *ports)
 	memset(ports, 0, sizeof(int)*4);
 	for(ctrl = 0; ctrl < 4; ctrl++)
 	{
-		dev = maple_enum_type(ctrl, MAPLE_FUNC_CONTROLLER);
+		dev = maple_enum_type(ctrl, MAPLE_FUNC_CONTROLLER|MAPLE_FUNC_LIGHTGUN);
 		if(dev)
 			ports[dev->port] = 1;
 	}
@@ -661,7 +661,7 @@ void ControllerTest()
 			else
 				DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
 				
-			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "Right & Start on Controller 1 to ignore reported functions"); 
+			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "[Right&Start on Controller 1 to ignore reported functions]"); 
 		}
 		else
 		{
@@ -682,11 +682,11 @@ void ControllerTest()
 				DiplayControllerIgnore(num_controller  , x+w, y+h);
 			else
 				DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
-			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "Right & Start on Controller 1 for reported functions only"); 
+			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "[Right&Start on Controller 1 for reported functions only]"); 
 		}
 		
-		DrawStringS(110, y+2*h-fh, 0.0f, 1.0f, 0.0f, "Up & Start for Help"); 
-		DrawStringS(70, y+2*h, 0.0f, 1.0f, 0.0f, "Left & Start on Controller 1 to Exit"); 
+		DrawStringS(110, y+2*h-fh, 0.0f, 1.0f, 0.0f, "[Up&Start for Help]"); 
+		DrawStringS(70, y+2*h, 0.0f, 1.0f, 0.0f, "[Left&Start on Controller 1 to Exit}"); 
 		
         EndScene();
 		if(timeout)
@@ -890,22 +890,26 @@ static void vbl_allinfo_callback(maple_frame_t * frm) {
 			case MAPLE_RESPONSE_OK:
 				mapleprintf("\n Unexpected #YMAPLE_RESPONSE_OK#Y from device", resp->response); 
 				break;
+			case MAPLE_RESPONSE_DATATRF:
+				mapleprintf("\n Unexpected #YMAPLE_RESPONSE_DATATRF#Y from device", resp->response); 
+				break;
 			default:
 				mapleprintf("\n Unexpected response [#Y%d#Y] from device", resp->response); 
 				break;
 		}
 		if(resp->response != MAPLE_RESPONSE_NONE)
-			mapleprintf(" [%u bytes response]\n", resp->data_len*4);
-		else
-			mapleprintf("\n");
+		{
+			mapleprintf(" [%u bytes response]", resp->data_len*4);
+			if(maple_use_reply_bytes)
+				resp_size = resp->data_len*4;
+			else
+				resp_size = 1024 + 32;
+				
+			if(resp_size)
+				memcpy(recv_buff, resp, resp_size);
+		}
 		
-		if(maple_use_reply_bytes)
-			resp_size = resp->data_len*4;
-		else
-			resp_size = 1024 + 32;
-		
-		if(resp->response != MAPLE_RESPONSE_NONE && resp_size)
-			memcpy(recv_buff, resp, resp_size);
+		mapleprintf("\n");
 	}
 
 	maple_frame_unlock(frm);
