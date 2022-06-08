@@ -39,7 +39,9 @@
 char	flashrom_region_cache[FLASHROM_CACHE_SIZE] = { 0 };
 int		flashrom_is_cached = 0;
 
-void ReduceName(char *target, char *source)
+#define TRUNCATE_LEN	22
+
+void ReduceName(char *target, char *source, int truncate)
 {
 	int len;
 	
@@ -52,7 +54,11 @@ void ReduceName(char *target, char *source)
 	while(len > 1 && source[len] == ' ')
 		len--;
 	
+	if(truncate && len > TRUNCATE_LEN)
+		len = TRUNCATE_LEN+1;
 	strncpy(target, source, sizeof(char)*(len+1));
+	if(truncate)
+		target[TRUNCATE_LEN+1] = 127;
 	target[len+1] = '\0';
 }
 
@@ -69,8 +75,9 @@ void DiplayController(int num, float x, float y)
 	if(!dev)
 		return;
 	
-	ReduceName(name, dev->info.product_name);
-	DrawStringS(x, y, 1.0f, 1.0f, 0.0f, name);
+	ReduceName(msg, dev->info.product_name, 1);
+	sprintf(name, "#G%c%c:#G %s", 'A'+(dev->port), '0'+(dev->unit), msg);
+	DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, name);
 	y += fh;
 	
 	sprintf(msg, "Power[%u-%u]mW", 
@@ -119,7 +126,7 @@ void DiplayController(int num, float x, float y)
 
 		// Regular DC controller 	0xfe060f00
 		// Fishing Rod 				0xfe063f00
-		if(!isArcade || !(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C))
+		if(!(dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C))
 		{
 			int advance = 0;
 			
@@ -188,9 +195,7 @@ void DiplayController(int num, float x, float y)
 				DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "A");
 			}
 		}
-		
-		// Arcade Stick 	0xff070000
-		if(isArcade || dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C)
+		else	// Arcade Stick 	0xff070000
 		{
 			int advance = 0;
 			
@@ -426,8 +431,9 @@ void DiplayControllerIgnore(int num, float x, float y)
 	if(!dev)
 		return;
 	
-	ReduceName(name, dev->info.product_name);
-	DrawStringS(x, y, 1.0f, 1.0f, 0.0f, name);
+	ReduceName(msg, dev->info.product_name, 1);
+	sprintf(name, "#G%c%c:#G %s", 'A'+(dev->port), '0'+(dev->unit), msg);
+	DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, name);
 	y += fh;
 	
 	sprintf(msg, "Power[%u-%u]mW", 
@@ -580,11 +586,26 @@ void DiplayControllerIgnore(int num, float x, float y)
 	DrawStringS(x+11*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "D");
 }
 
+void GetControllerPorts(int *ports)
+{
+	int				ctrl = 0;
+	maple_device_t	*dev = NULL;
+	
+	memset(ports, 0, sizeof(int)*4);
+	for(ctrl = 0; ctrl < 4; ctrl++)
+	{
+		dev = maple_enum_type(ctrl, MAPLE_FUNC_CONTROLLER);
+		if(dev)
+			ports[dev->port] = 1;
+	}
+}
+
 void ControllerTest()
 {
 	uint16			pressed = 0;
 	int 			done = 0, oldvmode = -1;
 	int				ignoreFunctions = 0, timeout = 0;
+	int				ports[4];
 	ImagePtr		back = NULL, black = NULL;
 	maple_device_t	*dev = NULL;
 	cont_state_t 	*st = NULL;
@@ -599,7 +620,8 @@ void ControllerTest()
 	
 	while(!done && !EndProgram) 
 	{				
-		float x = 35, y = 26, w = 160, h = 10*fh;
+		int		num_controller = 0;
+		float 	x = 35, y = 26, w = 160, h = 10*fh;
 		
 		if(oldvmode != vmode)
 		{
@@ -614,25 +636,53 @@ void ControllerTest()
 		DrawImage(black);
 		DrawImage(back);
 		
+		GetControllerPorts(ports);
+		
 		// IgnoreFunctions lists all inputs regardless
 		// of functions reported
 		if(!ignoreFunctions)
 		{
-			DrawStringS(120, 16, 0.0f, 1.0f, 0.0f, "Controller Test"); 		
-			DiplayController(0, x, y);
-			DiplayController(1, x+w, y);
-			DiplayController(2, x,y+h);
-			DiplayController(3, x+w, y+h);
-			DrawStringS(15, y+2*h+fh, 0.0f, 1.0f, 0.0f, "Right & Start on Controller 1 to ignore reported functions"); 
+			DrawStringSCentered(16, 0.0f, 1.0f, 0.0f, "Controller Test"); 
+			
+			if(ports[0])
+				DiplayController(num_controller++, x, y);
+			else
+				DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, "#GA0:#G #C(Empty)#C");
+			if(ports[1])
+				DiplayController(num_controller++, x+w, y);
+			else
+				DrawStringS(x+w-4*fw, y, 1.0f, 1.0f, 0.0f, "#GB0:#G #C(Empty)#C");
+			if(ports[2])
+				DiplayController(num_controller++, x,y+h);
+			else
+				DrawStringS(x-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GC0:#G #C(Empty)#C");
+			if(ports[3])
+				DiplayController(num_controller  , x+w, y+h);
+			else
+				DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
+				
+			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "Right & Start on Controller 1 to ignore reported functions"); 
 		}
 		else
 		{
-			DrawStringS(40, 16, 0.0f, 1.0f, 0.0f, "Controller Test #Y(non-reported functions in gray)#Y");
-			DiplayControllerIgnore(0, x, y);
-			DiplayControllerIgnore(1, x+w, y);
-			DiplayControllerIgnore(2, x, y+h);
-			DiplayControllerIgnore(3, x+w, y+h);
-			DrawStringS(12, y+2*h+fh, 0.0f, 1.0f, 0.0f, "Right & Start on Controller 1 for reported functions only"); 
+			DrawStringSCentered(16, 0.0f, 1.0f, 0.0f, "Controller Test #Y(non-reported functions in gray)#Y");
+			if(ports[0])
+				DiplayControllerIgnore(num_controller++, x, y);
+			else
+				DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, "#GA0:#G #C(Empty)#C");
+			if(ports[1])
+				DiplayControllerIgnore(num_controller++, x+w, y);
+			else
+				DrawStringS(x+w-4*fw, y, 1.0f, 1.0f, 0.0f, "#GB0:#G #C(Empty)#C");
+			if(ports[2])
+				DiplayControllerIgnore(num_controller++, x, y+h);
+			else
+				DrawStringS(x-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GC0:#G #C(Empty)#C");
+			if(ports[3])
+				DiplayControllerIgnore(num_controller  , x+w, y+h);
+			else
+				DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
+			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "Right & Start on Controller 1 for reported functions only"); 
 		}
 		
 		DrawStringS(110, y+2*h-fh, 0.0f, 1.0f, 0.0f, "Up & Start for Help"); 
@@ -700,7 +750,7 @@ int maple_device_scan(float x, float y, int selected)
 				if(unit == 0)
 				{
 					y += 2.0f*fh;
-					ReduceName(name, dev->info.product_name);
+					ReduceName(name, dev->info.product_name, 0);
 					sprintf(msg, "%s#C[%c%c]#C #Y%s#Y (%s)",
 						selected == count ? "#Y>#Y" : " ",
 						'A' + port, '0' + unit,

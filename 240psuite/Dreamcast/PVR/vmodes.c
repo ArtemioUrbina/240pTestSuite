@@ -113,20 +113,31 @@ void LoadScanlines()
 	{
 		scanlines = LoadKMG("/rd/scanlines.kmg.gz", 0);
 		scanlines->layer = 5.0;
-		scanlines->alpha = 0.3f;
+		scanlines->alpha = settings.scanlines;
 		scanlines->scale = 0;
 		CalculateUV(0, 0, 640, 480, scanlines);
+		if(settings.scanlines_even)
+			SetScanlineEven();
+		else
+			SetScanlineOdd();
 	}
 }
 
-void ToggleScanlineEvenOdd()
+void SetScanlineEven()
 {
 	if(scanlines)
 	{
-		if(scanlines->y == 0)
-			scanlines->y = -1;
-		else
-			scanlines->y = 0;
+		settings.scanlines_even = 1;
+		scanlines->y = 0;
+	}
+}
+
+void SetScanlineOdd()
+{
+	if(scanlines)
+	{
+		settings.scanlines_even = 0;
+		scanlines->y = -1;
 	}
 }
 
@@ -137,6 +148,7 @@ void RaiseScanlineIntensity()
 		scanlines->alpha += 0.05f;
 		if(scanlines->alpha > 1.0f)
 			scanlines->alpha = 1.0f;
+		settings.scanlines = scanlines->alpha;
 	}
 }
 
@@ -147,6 +159,7 @@ void LowerScanlineIntensity()
 		scanlines->alpha -= 0.05f;
 		if(scanlines->alpha < 0.0f)
 			scanlines->alpha = 0.0f;
+		settings.scanlines = scanlines->alpha;
 	}
 }
 
@@ -157,18 +170,19 @@ int ScanlinesEven()
 	return 0;
 }
 
-double GetScanlineIntensity()
+float GetScanlineIntensity()
 {
 	if(scanlines)
-		return((double)scanlines->alpha*100);
+		return((float)scanlines->alpha*100);
 	else
 		return 0;
 }
 
-void SetScanlineIntensity(double value)
+void SetScanlineIntensity(float value)
 {
+	settings.scanlines = value;
 	if(scanlines)
-		scanlines->alpha = value/100;
+		scanlines->alpha = value;
 }
 
 inline void DrawScanlines()

@@ -400,6 +400,10 @@ void updateVMUGraphic(char **xpm)
 	if(!xpm)
 		return;
 
+	mvmu = maple_enum_type(0, MAPLE_FUNC_LCD);
+	if(!mvmu)
+		return;
+
 	vmu_clear_bitmap(bitmap);
 	for(y = 0; y < 32; y++)
 	{
@@ -411,10 +415,6 @@ void updateVMUGraphic(char **xpm)
 				vmu_set_bit(bitmap, x, y);
 		}
 	}
-	
-	mvmu = maple_enum_type(0, MAPLE_FUNC_LCD);
-	if(!mvmu)
-		return;
 		
 	internal_vmu_draw_lcd(mvmu, bitmap);
 }

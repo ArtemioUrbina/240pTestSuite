@@ -740,12 +740,16 @@ int LoadVMUSave(char *error)
 	settings.ChangeVideoRegs = pkg.data[4];
 	settings.Deflicker = pkg.data[5];
 	settings.EnablePALBG = pkg.data[6];
-	settings.PalBackR = pkg.data[7] / 100.0;
-	settings.PalBackG = pkg.data[8] / 100.0;
-	settings.PalBackB = pkg.data[9] / 100.0;
-	SetScanlineIntensity((double)pkg.data[10]);
-	if(!pkg.data[11])
-		ToggleScanlineEvenOdd();
+	settings.PalBackR = pkg.data[7] / 100.0f;
+	settings.PalBackG = pkg.data[8] / 100.0f;
+	settings.PalBackB = pkg.data[9] / 100.0f;
+	settings.scanlines = (float)(pkg.data[10]/100.0f);
+	SetScanlineIntensity(settings.scanlines);
+	settings.scanlines_even = pkg.data[11];
+	if(settings.scanlines_even)
+		SetScanlineEven();
+	else
+		SetScanlineOdd();
 	settings.Dithering = pkg.data[12];
 	settings.UseKOSDefaults = pkg.data[13];
 	settings.IgnoreFrameBuffer = pkg.data[14];

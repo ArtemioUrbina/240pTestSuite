@@ -563,32 +563,15 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 		int		c = 1;
 		float 	x = 40.0f;
 		float 	y = 55.0f;
-#ifndef NO_FFTW
-		maple_device_t *sip = NULL;
-#endif
 
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
 
-#ifndef NO_FFTW
-		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
-#endif
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
-#ifndef NO_FFTW
-		if(sip)
-		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Microphone Lag Test"); y += fh; c++;
-		}
-		else
-		{
-#endif
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Timing & Reflex Test"); y += fh; c++;
-#ifndef NO_FFTW
-		}
-#endif
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Timing & Reflex Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizonta/Vertical Stripes"); y += fh; c++;    
@@ -664,12 +647,7 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 					PassiveLagTest();
 					break;
 				case 4:
-#ifndef NO_FFTW
-					if(sip)
-						SIPLagTest();
-					else
-#endif
-						ReflexNTimming();
+					ReflexNTimming();
 					break;
 				case 5:
 					ScrollTest();
@@ -730,7 +708,13 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 		int		c = 1;
 		float 	x = 70.0f;
 		float 	y = 90.0f;
+#ifndef NO_FFTW
+		maple_device_t *sip = NULL;
+#endif
 
+#ifndef NO_FFTW
+		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+#endif
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
@@ -738,9 +722,25 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier"); y += fh; c++;
-
+#ifndef NO_FFTW
+		if(sip)
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Microphone Lag Test"); y += fh; c++;
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Microphone Lag Test"); y += fh; c++;
+		}
+#endif
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; c++;
 
+#ifndef NO_FFTW
+		if(sel == 4 && !sip)
+		{
+			DrawStringS(x-15, y + 6*fh, 0.8f, 0.8f, 0.8f,
+				"You need a SIP microphone to use this feature");
+		}
+#endif
 		y += fh;
 		c = DrawFooter(x, y, sel, c, 0);
 		
@@ -783,6 +783,26 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 				case 3:
 					MDFourier();
 					break;
+#ifndef NO_FFTW
+				case 4:
+					if(sip)
+						SIPLagTest();
+					break;
+				case 5:
+					done = 1;
+					break;
+				case 6:
+					ShowMenu(GENERALHELP);
+					break;
+				case 7:
+					HelpWindow(GENERALHELP, title);
+					break;
+#ifdef TEST_VIDEO
+				case 8:
+					TestVideoMode(vmode);
+					break;
+#endif
+#else
 				case 4:
 					done = 1;
 					break;
@@ -793,9 +813,10 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 8:
+				case 7:
 					TestVideoMode(vmode);
 					break;
+#endif
 #endif
 			} 			
 			refreshVMU = 1;

@@ -543,7 +543,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 
 		// option 9, Scanline intensity
-		sprintf(intensity, "%0.0f%%", GetScanlineIntensity());
+		sprintf(intensity, "%0.0f%%", (double)GetScanlineIntensity());
 		if(vmode == VIDEO_480P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
@@ -785,8 +785,15 @@ void ChangeOptions(ImagePtr screen)
 						// Dealt with above
 						break;
 					case 10:
+						// option 10, Scanline even/odd
 						if(vmode == VIDEO_480P_SL)
-							ToggleScanlineEvenOdd();
+						{
+							settings.scanlines_even = !settings.scanlines_even;
+							if(settings.scanlines_even)
+								SetScanlineEven();
+							else
+								SetScanlineOdd();
+						}
 						break;
 					case 11:
 						if(isVMUPresent() && saved != 1)
@@ -846,7 +853,7 @@ void ChangeOptions(ImagePtr screen)
 					case 13:
 						settings.IgnoreFrameBuffer = !settings.IgnoreFrameBuffer;
 						break;
-					case 14:
+					case 14: // Option 14, Reset to default options
 						{
 							struct	settings_st old_settings;
 							
@@ -855,6 +862,11 @@ void ChangeOptions(ImagePtr screen)
 							if(IsPALDC)
 								settings.EnablePAL = 1;
 							loaded = saved = -1;
+							SetScanlineIntensity(settings.scanlines);
+							if(settings.scanlines_even)
+								SetScanlineEven();
+							else
+								SetScanlineOdd();
 							if(CheckIfVideoModeNeedsRefresh(&old_settings))
 								ChangeResolution(vmode);
 							changedPVR = 1;
