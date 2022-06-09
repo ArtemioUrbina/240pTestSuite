@@ -1,5 +1,5 @@
 TARGET = main
-OPT = -O3
+OPT = -O3 -Wfatal-errors -Wall -Wextra
 
 #Full release compile
 all: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST

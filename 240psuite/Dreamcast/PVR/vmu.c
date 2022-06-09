@@ -32,11 +32,45 @@ int		disableVMU_LCD_val = 0;
 
 int isLCDPresent()
 {
-	maple_device_t	*lcd;
+	maple_device_t	*lcd = NULL;
 
 	lcd = maple_enum_type(0, MAPLE_FUNC_LCD);
 	if(!lcd)
 		return 0;
+	return 1;
+}
+
+/* Return the Nth device of the requested type (where N is zero-indexed) */
+maple_device_t * maple_enum_mixed_type(int n, uint32 func, uint32 extrafunc) {
+    int p, u;
+    maple_device_t *dev;
+
+    for(p = 0; p < MAPLE_PORT_COUNT; p++) {
+        for(u = 0; u < MAPLE_UNIT_COUNT; u++) {
+            dev = maple_enum_dev(p, u);
+
+            if(dev != NULL && dev->info.functions & func && dev->info.functions & extrafunc)
+			{
+                if(!n) 
+					return dev;
+
+                n--;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+/* Returns the first VMU that can save and has LCD */
+int isVMUPresent()
+{
+	maple_device_t	*vmu = NULL;
+
+	vmu = maple_enum_mixed_type(0, MAPLE_FUNC_LCD, MAPLE_FUNC_MEMCARD);
+	if(!vmu)
+		return 0;
+
 	return 1;
 }
 

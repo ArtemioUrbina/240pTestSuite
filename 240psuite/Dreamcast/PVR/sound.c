@@ -180,7 +180,7 @@ int		stream_samples_size = 0;
 int		stream_pos = 0;
 int		stream_samplerate = 48000;
 
-void *mdf_callback(snd_stream_hnd_t hnd, int smp_req, int *smp_recv)
+void *mdf_callback(__attribute__((unused))snd_stream_hnd_t hnd, int smp_req, int *smp_recv)
 {
 	int	bytes_to_copy = smp_req;
 	

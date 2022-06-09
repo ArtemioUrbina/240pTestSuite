@@ -568,7 +568,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 		
 		//Option 11, Save to VMU
-		if(isVMUPresent())
+		if(isMemCardPresent())
 		{
 			char *msg = NULL;
 
@@ -599,7 +599,7 @@ void ChangeOptions(ImagePtr screen)
 		}
 		
 		// Option 12, Load Options from VMU
-		if(isVMUPresent() && VMUsaveexists)
+		if(isMemCardPresent() && VMUsaveexists)
 		{
 			char *msg = NULL;
 			
@@ -662,8 +662,8 @@ void ChangeOptions(ImagePtr screen)
 		VMU_detect_save_counter--;
 		if(VMU_detect_save_counter <= 0)
 		{
-			if(isVMUPresent())
-				VMUsaveexists = VMUSuiteSaveExists(NULL) == VMU_SAVEEXISTS ? 1 : 0;
+			if(isMemCardPresent())
+				VMUsaveexists = MemcardSaveExists(VMU_NAME, NULL) == VMU_SAVEEXISTS ? 1 : 0;
 			VMU_detect_save_counter = 600;	// 10 seconds in NTSC
 		}
 		
@@ -796,7 +796,7 @@ void ChangeOptions(ImagePtr screen)
 						}
 						break;
 					case 11:
-						if(isVMUPresent() && saved != 1)
+						if(isMemCardPresent() && saved != 1)
 						{
 							int vmures, overwrite = 1;
 							int eyecatcher = 0;
@@ -817,7 +817,7 @@ void ChangeOptions(ImagePtr screen)
 							
 							if(overwrite)
 							{
-								vmures = WriteVMUSave(eyecatcher, error);
+								vmures = WriteMemCardSave(eyecatcher, error);
 								if(vmures == VMU_OK)
 									saved = 1;
 								else
@@ -830,13 +830,13 @@ void ChangeOptions(ImagePtr screen)
 						}
 						break;
 					case 12:		
-						if(isVMUPresent())
+						if(isMemCardPresent())
 						{
 							int		vmures = 0;
 							struct	settings_st old_settings;
 							
 							old_settings = settings;
-							vmures = LoadVMUSave(error);
+							vmures = LoadMemCardSave(error);
 							if(vmures == VMU_OK)
 							{
 								if(CheckIfVideoModeNeedsRefresh(&old_settings))

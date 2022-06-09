@@ -23,6 +23,7 @@
 #define VMU_H
 
 int  isLCDPresent();
+int  isVMUPresent();
 void updateVMU(char *line1, char*line2, int force);
 void updateVMUFlash(char *line1, char*line2, int force);
 void updateVMUGraphic(char **xpm);

@@ -88,9 +88,9 @@ int main(void)
 	else
 		settings.EnablePAL = 0;
 	
-	if(isVMUPresent() && 
-		VMUSuiteSaveExists(NULL) == VMU_SAVEEXISTS)
-		loadedvmu = LoadVMUSave(error);
+	if(isMemCardPresent() && 
+		MemcardSaveExists(VMU_NAME, NULL) == VMU_SAVEEXISTS)
+		loadedvmu = LoadMemCardSave(error);
 	
 	// Boot in 640x480 is VGA, or 288 in PAL for safety,
 	// Some monitors take PAL60 as NTSC 4.43 and decode colors incorrectly
@@ -831,6 +831,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 	int 			done = 0, sel = 1, joycnt = 0;
 	uint16			pressed;		
 	controller		*st;
+	char 			error[256];
 
 	refreshVMU = 1;
 	while(!done && !EndProgram) 
@@ -848,12 +849,26 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Maple Device List"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++;    
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++; 
+		if(isVMUPresent())
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VMU Controller Test"); y += fh; c++;    
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "VMU Controller Test"); y += fh; c++;    
+		}
 
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; c++;
 
 		y += fh;
 		c = DrawFooter(x, y, sel, c, 0);
+		
+		if(sel == 4 && !isVMUPresent())
+		{
+			DrawStringS(x-15, y + 4*fh, 0.8f, 0.8f, 0.8f,
+				"You need a VMU to use this test");
+		}
 		
 		EndScene();
 		VMURefresh("Hardware", "");
@@ -895,16 +910,39 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 					MemoryViewer(0);
 					break;
 				case 4:
-					done = 1;
+					if(isVMUPresent())
+					{
+						int overwrite = 1;
+						
+						if(MemcardSaveExists(VMU_CTRL_NAME, NULL) == VMU_SAVEEXISTS)
+						{
+							fmenudata 	resmenudata[] = { {1, "Yes"}, {2, "No"} };
+								
+							overwrite = SelectMenu("Replace VMU Test?", resmenudata, 2, 2);
+							if(overwrite == MENU_CANCEL || overwrite == 2)
+								overwrite = 0;
+						}
+						
+						if(overwrite)
+						{
+							if(SaveMemCardControlTest(error) != VMU_OK)
+								DrawMessage(error);
+							else
+								DrawMessage("Controller Test saved to #GVMU#G");
+						}
+					}
 					break;
 				case 5:
-					ShowMenu(GENERALHELP);
+					done = 1;
 					break;
 				case 6:
+					ShowMenu(GENERALHELP);
+					break;
+				case 7:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 7:
+				case 8:
 					TestVideoMode(vmode);
 					break;
 #endif

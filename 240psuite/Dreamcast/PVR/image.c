@@ -264,7 +264,7 @@ int gkmg_to_img(const char * fn, kos_img_t * rv) {
 		gzclose(f);
 		return -4;
 	}
-	if (gzread(f, rv->data, rv->byte_count) != rv->byte_count) {
+	if (gzread(f, rv->data, rv->byte_count) != (int)rv->byte_count) {
 		dbglog(DBG_ERROR, "gkmg_to_img: can't read %d bytes while loading '%s'\n",
 			(int)hdr.byte_count, fn);
 		gzclose(f);
