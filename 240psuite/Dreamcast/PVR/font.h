@@ -32,9 +32,11 @@ void DrawChar(float x, float y, char c);
 void DrawString(float x, float y, float r, float g, float b, char *str);
 void DrawStringS(float x, float y, float r, float g, float b, char *str);
 void DrawStringSCentered(float y, float r, float g, float b, char *str);
+void DrawStringSCenteredXY(float r, float g, float b, char *str);
 void DrawStringB(float x, float y, float r, float g, float b, char *str);
 int MeasureString(char *str);
 int countLineFeeds(char *str);
+int getLongestLineLen(char *str);
 
 void LoadFont();
 void ReleaseFont();

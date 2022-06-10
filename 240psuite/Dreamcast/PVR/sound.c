@@ -255,7 +255,7 @@ int LoadGZMDFSamples()
 #ifdef BENCHMARK
 	start = timer_ms_gettime64();
 #endif
-	DrawMessageOnce("Please wait while samples are loaded (10 seconds)", 0);
+	DrawMessageOnce("Please wait while samples are loaded\n#G(about 10 seconds)#G");
 	
 	file = gzopen(filename, "r");
 	if(!file)
@@ -798,7 +798,10 @@ void SIPLagTest()
 
 	sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 	if(!sip)
+	{
+		DrawMessage("No #YSIP Microphone#Y found");
 		return;
+	}
 
 	sip_set_gain(sip, SIP_MAX_GAIN); // SIP_DEFAULT_GAIN  
 	sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED); 
@@ -839,7 +842,10 @@ void SIPLagTest()
 
 		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 		if(!sip)
+		{
+			DrawMessage("#YSIP Microphone#Y disconnected");
 			done = 1;
+		}
 	
 		st = ReadController(0, &pressed);
 		if(st) 

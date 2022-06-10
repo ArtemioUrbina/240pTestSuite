@@ -533,7 +533,7 @@ int MemcardSaveExists(char *filename, int *blocks)
 	if(!vmu)
 	{
 #ifdef DCLOAD
-		dbglog(DBG_ERROR, "No VMU found for load\n");
+		dbglog(DBG_ERROR, "No VMU found\n");
 #endif
 		return VMU_NOUNIT;
 	}
@@ -653,6 +653,54 @@ int ListMemCardFiles(char *buffer, int buffsize)
 	
 	free(vmufiles);
 	return VMU_OK;
+}
+
+int MemcardOtherGameExists(char *filename)
+{
+	maple_device_t	*vmu;
+	vmu_dir_t		*vmufiles = NULL;
+	int				numfiles = 0, file = 0;
+
+	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
+	if(!vmu)
+	{
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "No VMU found for load\n");
+#endif
+		return VMU_NOUNIT;
+	}
+
+	vmufs_init();
+	if(vmufs_readdir(vmu, &vmufiles, &numfiles) < 0)
+	{
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "Could not read VMU directory\n");
+#endif
+		return VMU_ERROR;
+	}
+	vmufs_shutdown ();
+	
+	if(!numfiles)
+	{
+		if(vmufiles)
+			free(vmufiles);	// KOS returns a non NULL pointer when zero files are present
+		return VMU_NOSAVE;
+	}
+	
+	for(file = 0; file < numfiles; file++)
+	{
+		if(vmufiles[file].filetype == 0xcc) // a game
+		{
+			if(strncmp(filename, vmufiles[file].filename, VMU_NAME_LEN) != 0)
+			{
+				free(vmufiles);
+				return VMU_OTHER_GAME;
+			}
+		}
+	}
+	
+	free(vmufiles);
+	return VMU_NOSAVE;
 }
 
 int LoadMemCardSave(char *error)
@@ -780,6 +828,9 @@ int WriteMemCardSave(int eyecatch, char *error)
 		return VMU_ERPARAM;
 	}
 
+	// Get existing save data size if it exists
+	MemcardSaveExists(VMU_NAME, &blocks_toRelease);
+	
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 	if(!vmu)
 	{
@@ -881,7 +932,6 @@ int WriteMemCardSave(int eyecatch, char *error)
 	}
 	
 	blocks_needed = pkg_size >> 9;
-	MemcardSaveExists(VMU_NAME, &blocks_toRelease);
 	
 	vmufs_init ();
 	vmu_blocks_free = vmufs_free_blocks(vmu);
@@ -917,7 +967,7 @@ int WriteMemCardSave(int eyecatch, char *error)
 	return VMU_OK;
 }
 
-int SaveMemCardControlTest(char *error)
+int WriteMemCardControlTest(char *error)
 {
 	int blocks_needed = 0, blocks_toRelease = 0,
 		vmu_blocks_free = 0, expanded_data_size;
@@ -934,33 +984,39 @@ int SaveMemCardControlTest(char *error)
 		return VMU_ERPARAM;
 	}
 	
+	// Get existing data size, if it exists
+	MemcardSaveExists(VMU_CTRL_NAME, &blocks_toRelease);
+	
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD); 
     if(!vmu)
+	{
+		sprintf(error, "#YNo VMU found#Y\n");
 		return VMU_NOUNIT;
+	}
 	
     f = fs_open("/rd/vmu/240pVMU.vms", O_RDONLY);
     if(!f)
 	{
-        sprintf(error, "Error reading VMU file from romdisk\n");
+        sprintf(error, "#YError reading VMU file from romdisk#Y");
         return VMU_LOADERR;
     }
 
     data_size = fs_total(f);
 	if(!data_size)
 	{
-	    sprintf(error, "Error reading VMU file from romdisk\n");
+	    sprintf(error, "#YError reading VMU file from romdisk#Y");
         return VMU_LOADERR;
 	}
 	
     data = (uint8*) malloc(data_size + 1);
 	if(!data)
 	{
-		sprintf(error, "Not enough RAM for loading the VMU game\n");
+		sprintf(error, "#YNot enough RAM for loading the VMU game#Y");
         return VMU_LOADERR;
 	}
     if(fs_read(f, data, data_size) != data_size)
 	{
-		sprintf(error, "Could not load the file for the VMU game\n");
+		sprintf(error, "#YCould not load the file for the VMU game#Y");
         return VMU_LOADERR;
 	}
     fs_close(f);
@@ -992,7 +1048,6 @@ int SaveMemCardControlTest(char *error)
 	}
 	
 	blocks_needed = data_size >> 9;
-	MemcardSaveExists(VMU_CTRL_NAME, &blocks_toRelease);
 	
 	vmufs_init ();
 	vmu_blocks_free = vmufs_free_blocks(vmu);

@@ -186,18 +186,81 @@ void DrawStringS(float x, float y, float r, float g, float b, char *str)
 
 void DrawStringSCentered(float y, float r, float g, float b, char *str) 
 {
+	int			currlen = 0;
+	char 		*startstr = NULL;
 	float		xpos = 34.0f, len = 0;
+	
+	startstr = str;
+	while (*str) 
+	{		
+		if(*str == '\n')
+		{
+			*str = '\0';
+			len = MeasureString(startstr)*fw;
+			if(len)
+			{
+				xpos = (int)((320-len)/2.0f);
+				DrawStringS(xpos, y, r, g, b, startstr);
+			}
+			*str = '\n';
+			startstr = str + 1;
+			currlen = 0;
+			y += fh;
+		}
+		str++;
+		currlen++;
+	}
+	
+	if(currlen)
+	{
+		len = MeasureString(startstr)*fw;
+		if(len)
+		{
+			xpos = (int)((320-len)/2.0f);
+			DrawStringS(xpos, y, r, g, b, startstr);
+		}
+	}
+}
 
-	len = (float)MeasureString(str)*fw;
-	if(!len)
-		return;
-	xpos = (int)((320-len)/2.0f);
-	font_t->layer = 2.0f;
-	font_t->alpha = 0.75f;
-	DrawString(xpos+1, y+1, 0.0f, 0.0f, 0.0f, str);	
-	font_t->layer = 3.0f;
-	font_t->alpha = 1.0f;
-	DrawString(xpos, y, r, g, b, str);
+void DrawStringSCenteredXY(float r, float g, float b, char *str) 
+{
+	int			currlen = 0;
+	char 		*startstr = NULL;
+	float		xpos = 34.0f, ypos = 0, len = 0, height = 0;
+	
+	height = countLineFeeds(str)*fh;
+	ypos = 120 - (int)(height/2.0f) -fh;
+	startstr = str;
+	
+	while (*str) 
+	{		
+		if(*str == '\n')
+		{
+			*str = '\0';
+			len = MeasureString(startstr)*fw;
+			if(len)
+			{
+				xpos = (int)((320-len)/2.0f);
+				DrawStringS(xpos, ypos, r, g, b, startstr);
+			}
+			*str = '\n';
+			startstr = str + 1;
+			currlen = 0;
+			ypos += fh;
+		}
+		str++;
+		currlen++;
+	}
+	
+	if(currlen)
+	{
+		len = MeasureString(startstr)*fw;
+		if(len)
+		{
+			xpos = (int)((320-len)/2.0f);
+			DrawStringS(xpos, ypos, r, g, b, startstr);
+		}
+	}
 }
 
 int MeasureString(char *str)

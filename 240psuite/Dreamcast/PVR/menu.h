@@ -91,8 +91,10 @@ typedef struct menu_data {
 #define MENU_CANCEL -1
 
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option);
+int AskQuestion(char *msg);
 void DrawMessage(char *msg);
-void DrawMessageOnce(char *msg, int waitinput);
+void DrawMessageOnce(char *msg);
+int DrawMessageInternal(char *msg, int waitinput, int isquestion);
 
 void ShowLCDVMUWarning();
 

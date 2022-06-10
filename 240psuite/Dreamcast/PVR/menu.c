@@ -808,7 +808,7 @@ void ChangeOptions(ImagePtr screen)
 								
 							if(VMUsaveexists)
 							{
-								fmenudata 	resmenudata[] = { {1, "Yes"}, {2, "No"} };
+								fmenudata 	resmenudata[] = { {1, "Overwrite"}, {2, "Cancel"} };
 								
 								overwrite = SelectMenu("Overwrite Save?", resmenudata, 2, 2);
 								if(overwrite == MENU_CANCEL || overwrite == 2)
@@ -817,6 +817,7 @@ void ChangeOptions(ImagePtr screen)
 							
 							if(overwrite)
 							{
+								DrawMessageOnce("Please don't remove VMU while saving...");
 								vmures = WriteMemCardSave(eyecatcher, error);
 								if(vmures == VMU_OK)
 									saved = 1;
@@ -1360,25 +1361,26 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Hardware & Special Thanks:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Karensauria & ferigne");
 		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Rolman"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:");  y += fh; 
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:");
+		DrawStringS(x+150, y, 1.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "shmups regulars");
-		
-		y += 2*fh;
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
-		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/"); y += fh; 
+		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/"); 
 
-		y = 21*fh;
+		y += 2*fh; 
 		DrawStringS(x+20, y, 0.0, .75, .75, "This program is free software and open source.");  y += fh;
-		DrawStringS(x+20, y, 0.0, .75, .75, "Source code is available under GPL.");  y += fh;
+		DrawStringS(x+20, y, 0.0, .75, .75, "Source code is available under GPL.");
+
+		y += 2*fh;
 #ifndef NO_FFTW
 		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "Includes the #GFastest Fourier Transform in the West#G"); y += fh;
 		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "http://www.fftw.org/"); y += fh;
 #endif
+		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "#Glibperspective#G & #Gwaterbear#G used for VMU Test"); y += 2*fh;
 
 		y = 10;
 		DrawStringS(200, y, 1.0, 1.0, 1.0, VERSION_NUMBER); y += fh; 
 		DrawStringS(200, y, 1.0, 1.0, 1.0, VERSION_DATE); y += fh; 
-		y += fh*16;
+		y += fh*21;
 		DrawStringS(200, y, 0.0, 0.75, 0.75, "Dedicated to Elisa"); 
 
 		EndScene();
@@ -1476,7 +1478,6 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		float		g = 1.0f;
 		float		b = 1.0f;
 		int			c = 1, i = 0;				    					   
-		float		x = Back ? Back->x + 20.0f : 100.0f;
 		float		y = Back ? Back->y + 10.0f : 60.0f;
         uint16		pressed = 0;
 		controller	*st;
@@ -1488,16 +1489,16 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		if(Back)        
 			DrawImage(Back);       
 
-		DrawStringS(x, y, 0.0f, 1.0f, 0.0f, title); y += 3*fh; 		
+		DrawStringSCentered(y, 0.0f, 1.0f, 0.0f, title); y += 3*fh; 		
 		
 		for(i = 0; i < num_options; i++)
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, menu_data[i].option_text);
+			DrawStringSCentered(y, r, sel == c ? 0 : g,	sel == c ? 0 : b, menu_data[i].option_text);
 			y += fh; c++;		
 		}
         
 		y += 2* fh;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");		
+		DrawStringSCentered(y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");		
 								
 		EndScene();		
 		
@@ -1547,18 +1548,30 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 
 void DrawMessage(char *msg)
 {
-	DrawMessageOnce(msg, 1);
+	DrawMessageInternal(msg, 1, 0);
 }
 
-void DrawMessageOnce(char *msg, int waitinput)
+void DrawMessageOnce(char *msg)
 {
-	int 		done = 0;
+	DrawMessageInternal(msg, 0, 0);
+}
+
+int AskQuestion(char *msg)
+{
+	return(DrawMessageInternal(msg, 0, 1));
+}
+
+int DrawMessageInternal(char *msg, int waitinput, int isquestion)
+{
+	int 		done = 0, retval = 0;
 	uint16		pressed;
 	ImagePtr	back = NULL, black = NULL;
 	
 	black = LoadKMG("/rd/black.kmg.gz", 1);
 	back = LoadKMG("/rd/message.kmg.gz", 0);
 	
+	if(isquestion)
+		waitinput = 1;
 	while(!done) 
 	{
 		StartScene();
@@ -1566,16 +1579,26 @@ void DrawMessageOnce(char *msg, int waitinput)
 			DrawImage(black);
 		if(back)
 			DrawImage(back);
-		DrawStringSCentered(117, 1.0f, 1.0f, 1.0f, msg); 
-		if(waitinput)
+		DrawStringSCenteredXY(1.0f, 1.0f, 1.0f, msg);
+		if(waitinput && !isquestion)
 			DrawStringSCentered(163, 0.4f, 0.9f, 0.4f, "Press B to close");
+		if(isquestion)
+			DrawStringSCentered(163, 1.0f, 1.0f, 1.0f, "Press #GA#G to accept or #GB#G to close");
 		EndScene();
 	
 		if(waitinput)
 		{
 			ReadController(0, &pressed);
-			if(pressed & CONT_A || pressed & CONT_B)
+			if(pressed & CONT_A)
+			{
+				retval = 1;
 				done =	1;
+			}
+			if(pressed & CONT_B)
+			{
+				retval = 0;
+				done =	1;
+			}
 		}
 		else
 			done = 1;
@@ -1584,12 +1607,13 @@ void DrawMessageOnce(char *msg, int waitinput)
 		FreeImage(&back);
 	if(black)
 		FreeImage(&black);
+	return retval;
 }
 
 void ShowLCDVMUWarning()
 {
 	disableVMU_LCD();
-	DrawMessage("This VMU reports LCD, but lacks one. Disabled LCD.");
+	DrawMessage("The #CVMU#C reports an #YLCD#Y screen, but lacks one.\nThis has caused issues with animations and\ncontroller input. The Suite will disable\nall #YLCD#Y functions for the current session.");
 }
 
 int CheckIfVideoModeNeedsRefresh(struct settings_st *old_settings)

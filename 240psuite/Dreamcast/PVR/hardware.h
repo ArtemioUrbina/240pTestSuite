@@ -25,6 +25,7 @@
 void ControllerTest();
 void ListMapleDevices();
 void MemoryViewer(uint32 address);
+void VMUControllerTest();
 
 int flashrom_get_region_country();
 int flashrom_get_region_language();

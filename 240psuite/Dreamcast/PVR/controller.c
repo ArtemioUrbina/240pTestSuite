@@ -46,10 +46,12 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 #ifdef SCREENSHOTMODE
 	static int timeout = 0;
 #endif
-
 	cont_state_t *st = NULL;
 	maple_device_t *dev = NULL;
 	
+	if(pressed)
+		*pressed = 0;
+
 	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER);
 	if(!dev)
 	{

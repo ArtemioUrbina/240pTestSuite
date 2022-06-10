@@ -1311,9 +1311,9 @@ int check_for_bad_lcd()
 		return 1;
 		
 	// we allow if the device doesn't support the command
-	// to pass, for emulators
+	// emulators fail this
 	if(size-4 <= 0)
-		return 0;
+		return 1;
 	
 	info = (maple_devinfo_t *)&recv_buff[4];
 	if(dev->info.functions != info->functions)
@@ -1564,6 +1564,52 @@ void MemoryViewer(uint32 address)
 	}
 	FreeImage(&back);
 	return;
+}
+
+void VMUControllerTest()
+{
+	int		saveexists = 0;
+	char 	error[256],
+			*msg = "VMU data could not be saved\n";
+	
+	if(!isVMUPresent())
+		return;
+		
+	if(MemcardOtherGameExists(VMU_CTRL_NAME))
+	{
+		DrawMessage("There is already another game in this #CVMU#C\nPlease insert a #CVMU#C without a game,\nor delete this one first.");
+		return;
+	}
+	
+	saveexists = MemcardSaveExists(VMU_CTRL_NAME, NULL);
+	if(saveexists == VMU_SAVEEXISTS)
+	{
+		int			dowrite = 1;
+		fmenudata 	resmenudata[] = { {1, "Overwrite"}, {2, "Cancel"} };
+			
+		dowrite = SelectMenu("Replace VMU Test?", resmenudata, 2, 2);
+		if(dowrite == MENU_CANCEL || dowrite == 2)
+			return;
+	}
+	
+	if(!saveexists)
+	{
+		if(!AskQuestion("#YVMU Controller Test#Y\n\nThis will save the application to your #CVMU#C\nProceed with save?"))
+			return;
+	}
+	
+	if(check_for_bad_lcd())
+	{
+		if(!AskQuestion("This #CVMU#C reports an LCD but seems to not have one\nWrite test anyway?"))
+			return;
+	}
+	
+	sprintf(error, "%s", msg);
+	DrawMessageOnce("Please don't remove VMU while saving...");
+	if(WriteMemCardControlTest(error+strlen(msg)) != VMU_OK)
+		DrawMessage(error);
+	else
+		DrawMessage("Controller Test saved to #CVMU#C\nPlease dettach the unit and run it from the #YLCD#Y.");
 }
 
 /* Modified from KOS */

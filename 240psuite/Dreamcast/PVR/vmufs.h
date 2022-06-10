@@ -12,12 +12,13 @@
 #include <kos/string.h>
 
 #define VMU_NAME 		"240PTEST"
-#define	VMU_CTRL_NAME	"240p Control"
+#define	VMU_CTRL_NAME	"240PCTRL"
 #define VMU_NAME_LEN	8
 #define SAVE_NUM		120			// We have DATA_SIZE/32 bytes free and zeroed until we need to change this
 #define	DATA_SIZE		32
 #define ICON_ARRAY_SIZE 5
 
+#define VMU_OTHER_GAME	-7
 #define VMU_LOADERR		-6
 #define VMU_SMALLBUFF	-5
 #define VMU_ERPARAM		-4
@@ -33,5 +34,6 @@ int ListMemCardFiles(char *buffer, int buffsize);
 int MemcardSaveExists(char *filename, int *blocks);
 int LoadMemCardSave(char *error);
 int WriteMemCardSave(int icon, char *error);
-int SaveMemCardControlTest(char *error);
+int WriteMemCardControlTest(char *error);
+int MemcardOtherGameExists(char *filename);
 

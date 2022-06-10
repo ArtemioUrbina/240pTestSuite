@@ -121,9 +121,6 @@ int main(void)
 	
 	if(loadedvmu == VMU_ERROR)
 		DrawMessage(error);
-
-	if(check_for_bad_lcd())
-		ShowLCDVMUWarning();
 	
 	srand((int)(time(0) ^ getpid()));
 	refreshVMU = 1;
@@ -831,7 +828,6 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 	int 			done = 0, sel = 1, joycnt = 0;
 	uint16			pressed;		
 	controller		*st;
-	char 			error[256];
 
 	refreshVMU = 1;
 	while(!done && !EndProgram) 
@@ -866,7 +862,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		
 		if(sel == 4 && !isVMUPresent())
 		{
-			DrawStringS(x-15, y + 4*fh, 0.8f, 0.8f, 0.8f,
+			DrawStringS(x-15, y + 5*fh, 0.8f, 0.8f, 0.8f,
 				"You need a VMU to use this test");
 		}
 		
@@ -910,27 +906,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 					MemoryViewer(0);
 					break;
 				case 4:
-					if(isVMUPresent())
-					{
-						int overwrite = 1;
-						
-						if(MemcardSaveExists(VMU_CTRL_NAME, NULL) == VMU_SAVEEXISTS)
-						{
-							fmenudata 	resmenudata[] = { {1, "Yes"}, {2, "No"} };
-								
-							overwrite = SelectMenu("Replace VMU Test?", resmenudata, 2, 2);
-							if(overwrite == MENU_CANCEL || overwrite == 2)
-								overwrite = 0;
-						}
-						
-						if(overwrite)
-						{
-							if(SaveMemCardControlTest(error) != VMU_OK)
-								DrawMessage(error);
-							else
-								DrawMessage("Controller Test saved to #GVMU#G");
-						}
-					}
+					VMUControllerTest();
 					break;
 				case 5:
 					done = 1;
