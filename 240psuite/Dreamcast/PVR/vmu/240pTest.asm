@@ -16,17 +16,26 @@
 ; Global Constants & External Libraries
 ;******************************************************************************
 ; Values to use during the program for areas of the screen to toggle
-Button_Up_pos       equ 25
-Button_Down_pos     equ 121
-Button_Left_pos     equ 72
-Button_Right_pos    equ 74
-Button_A_pos        equ 99
-Button_B_pos        equ 101
-Button_Sleep_pos    equ 51
-Button_Mode_pos     equ 53
+button_up_pos       equ 25
+button_down_pos     equ 121
+button_left_pos     equ 72
+button_right_pos    equ 74
+button_a_pos        equ 99
+button_b_pos        equ 101
+button_mode_pos     equ 53
+button_sleep_pos    equ 51
 
-;Timeout in cycles for exit in Control Test since we disabled sleep
-Hold_B_Timeout      equ $60
+bit_up_pos          equ 0
+bit_down_pos        equ 1
+bit_left_pos        equ 2
+bit_right_pos       equ 3
+bit_a_pos           equ 4
+bit_b_pos           equ 5
+bit_mode_pos        equ 6
+bit_sleep_pos       equ 7
+
+;Timeout in cycles for exit in Control Test since we disabled sleep, 30 ~1sec
+Hold_B_Timeout      equ $30
 
 ;******************************************************************************
 ; Variables
@@ -34,10 +43,16 @@ Hold_B_Timeout      equ $60
 ; Global variables
 p3_pressed              =       $4                    ; 1 byte
 p3_last_input           =       $5                    ; 1 byte
-toggle_location         =       $00                   ; 1 byte
-b_held                  =       Hold_B_Timeout        ; 1 byte
+toggle_location         =       $6                    ; 1 byte
+b_held                  =       $7                    ; 1 byte
+highlights              =       $8                    ; 1 byte
 
+; Title screen  variables
+title_anim_counter      =       $9                    ; 1 byte
+title_address           =       $10                   ; 2 bytes
+title_frame_counter     =       $12                   ; 1 byte
 
+;------------------------------------------------------------------------------
 ;******************************************************************************
 ; Interrupt Vectors
 ;******************************************************************************
@@ -111,120 +126,223 @@ goodbye:
 ;******************************************************************************
         .org    $680
 Start:
-        clr1 ie,7
-        mov #$a1,ocr
-        mov #$09,mcr
-        mov #$80,vccr
-        clr1 p3int,0
-        clr1 p1,7
-        mov #$ff,p3
+        clr1    ie,7
 
-        set1 ie,7
+        mov     #$a1,ocr
+        mov     #$09,mcr
+        mov     #$80,vccr
+        clr1    p3int,0
+        clr1    p1,7
+        mov     #$ff,p3
+
+        set1    ie,7
+
+        ;----------------------------------------------------------------------
+        ; Our Main Loop
+        ;----------------------------------------------------------------------        
+Main_Loop:
 
         ; Initialise the p3_last_input
         mov     #%11111111, p3_last_input
 
-Main_Loop:
+        ; Initialise some variables
+        mov     #26, title_address
+        mov     #0, title_anim_counter
+        mov     #0, title_frame_counter
+
+.title_Loop
+        clr1    ocr, 5
+        mov     #<title_LUT, trl
+        mov     #>title_LUT, trh
+        ld      title_anim_counter
+        rol
+        ldc
+        st      title_address
+        ld      title_anim_counter
+        rol
+        inc     acc
+        ldc
+        st      title_address+1
+
+        ; Draw the frame
+        P_Draw_Background title_address
+        P_Blit_Screen
+
+        inc     title_frame_counter
+        ld      title_frame_counter
+        sub     #10
+        bnz      .poll_loop
+        mov     #0, title_frame_counter
+
+        ; Check to see if we need to reset the frame
+        inc     title_anim_counter
+        ld      title_anim_counter
+        sub     #26
+        bnz     .poll_loop
+        mov     #0, title_anim_counter
+.poll_loop:
+        set1    ocr, 5
+
+        ; Poll input
+        call    Get_Input
+
+        mov     #Button_A, acc
+        call    Check_Button_Pressed
+        bz      .title_Loop
         call    Controller_Test
-        jmpf    Main_Loop
+        jmp     Main_Loop
 
 Controller_Test:
         ;----------------------------------------------------------------------
         ; Our Main Controller Test
         ;----------------------------------------------------------------------
-        
+
+        mov     #%00000000, highlights
+        mov     #Hold_B_Timeout, b_held
+
         ; Draw the background
         P_Draw_Background_Constant controller_back
 
 .control_loop:
         P_Blit_Screen
 
-        set1    ocr, 5
-
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
-        ; Poll input
-        call    Get_Input_Test
 
-        mov     #Button_A, acc
-        call    Check_Button_Pressed
-        bz      .check_b
-        mov     #Button_A_pos, acc
-        jmp     .do_toggle
-
-.check_b:
-        mov     #Button_B, acc
-        call    Check_Button_Pressed
-        bz      .check_up
-        mov     #Button_B_pos, acc
-        jmp     .do_toggle
-
-.check_up:
-        mov     #Button_Up, acc
-        call    Check_Button_Pressed
-        bz      .check_down
-        mov     #Button_Up_pos, acc
-        jmp     .do_toggle
-
-.check_down:
-        mov     #Button_Down, acc
-        call    Check_Button_Pressed
-        bz      .check_left
-        mov     #Button_Down_pos, acc
-        jmp     .do_toggle
-
-.check_left:
-        mov     #Button_Left, acc
-        call    Check_Button_Pressed
-        bz      .check_right
-        mov     #Button_Left_pos, acc
-        jmp     .do_toggle
-
-.check_right:
-        mov     #Button_Right, acc
-        call    Check_Button_Pressed
-        bz      .check_sleep
-        mov     #Button_Right_pos, acc
-        jmp     .do_toggle
-
-.check_sleep:
-        mov     #Button_Sleep, acc
-        call    Check_Button_Pressed
-        bz      .check_mode
-        mov     #Button_Sleep_pos, acc
-        jmp     .do_toggle
-
-.check_mode:
-        mov     #Button_Mode, acc
-        call    Check_Button_Pressed
-        bz      .jump_back
-        mov     #Button_Mode_pos, acc
-        jmp     .do_toggle
-
-.do_toggle:
-        st      toggle_location     
+        ; Check Button A
+.check_a:
+        ld      p3
+        bp      acc, bit_a_pos, .not_a
+        bp      highlights, bit_a_pos, .check_b
+        set1    highlights, bit_a_pos
+        jmp     .toggle_a
+.not_a:
+        bn      highlights, bit_a_pos, .check_b
+        clr1    highlights, bit_a_pos
+.toggle_a:
+        mov     #button_a_pos, acc
         call    P_Invert_block
 
-.jump_back
+        ; Check Button B
+.check_b:
         ld      p3
-        and     #Button_B
-        bnz     .reset_b
-        dbnz    b_held, .control_loop
-        jmpf    goodbye
+        bp      acc, bit_b_pos, .not_b
+        bp      highlights, bit_b_pos, .check_up
+        set1    highlights, bit_b_pos
+        jmp     .toggle_b
+.not_b:
+        bn      highlights, bit_b_pos, .check_up
+        clr1    highlights, bit_b_pos
+.toggle_b:
+        mov     #button_b_pos, acc
+        call    P_Invert_block
 
+        ; Check Button Up
+.check_up:
+        ld      p3
+        bp      acc, bit_up_pos, .not_up
+        bp      highlights, bit_up_pos, .check_down
+        set1    highlights, bit_up_pos
+        jmp     .toggle_up
+.not_up:
+        bn      highlights, bit_up_pos, .check_down
+        clr1    highlights, bit_up_pos
+.toggle_up:
+        mov     #button_up_pos, acc
+        call    P_Invert_block
+
+        ; Check Button Down
+.check_down:
+        ld      p3
+        bp      acc, bit_down_pos, .not_down
+        bp      highlights, bit_down_pos, .check_left
+        set1    highlights, bit_down_pos
+        jmp     .toggle_down
+.not_down:
+        bn      highlights, bit_down_pos, .check_left
+        clr1    highlights, bit_down_pos
+.toggle_down:
+        mov     #button_down_pos, acc
+        call    P_Invert_block
+
+        ; Check Button Left
+.check_left:
+        ld      p3
+        bp      acc, bit_left_pos, .not_left
+        bp      highlights, bit_left_pos, .check_right
+        set1    highlights, bit_left_pos
+        jmp     .toggle_left
+.not_left:
+        bn      highlights, bit_left_pos, .check_right
+        clr1    highlights, bit_left_pos
+.toggle_left:
+        mov     #button_left_pos, acc
+        call    P_Invert_block
+
+        ; Check Button Right
+.check_right:
+        ld      p3
+        bp      acc, bit_right_pos, .not_right
+        bp      highlights, bit_right_pos, .check_mode
+        set1    highlights, bit_right_pos
+        jmp     .toggle_right
+.not_right:
+        bn      highlights, bit_right_pos, .check_mode
+        clr1    highlights, bit_right_pos
+.toggle_right:
+        mov     #button_right_pos, acc
+        call    P_Invert_block
+
+        ; Check Button Mode
+.check_mode:
+        ld      p3
+        bp      acc, bit_mode_pos, .not_mode
+        bp      highlights, bit_mode_pos, .check_sleep
+        set1    highlights, bit_mode_pos
+        jmp     .toggle_mode
+.not_mode:
+        bn      highlights, bit_mode_pos, .check_sleep
+        clr1    highlights, bit_mode_pos
+.toggle_mode:
+        mov     #button_mode_pos, acc
+        call    P_Invert_block
+
+        ; Check Button Mode
+.check_sleep:
+        ld      p3
+        bp      acc, bit_sleep_pos, .not_sleep
+        bp      highlights, bit_sleep_pos, .check_b_hold
+        set1    highlights, bit_sleep_pos
+        jmp     .toggle_sleep
+.not_sleep:
+        bn      highlights, bit_sleep_pos, .check_b_hold
+        clr1    highlights, bit_sleep_pos
+.toggle_sleep:
+        mov     #button_sleep_pos, acc
+        call    P_Invert_block
+
+        ; Check if we exit due to held B
+.check_b_hold;
+        ld      p3
+        bp      acc, bit_b_pos, .reset_b
+        dbnz    b_held, .loop_back
+        ret
 .reset_b
         mov     #Hold_B_Timeout, b_held
+.loop_back:
         jmp     .control_loop
 
 P_Invert_block:
         ;----------------------------------------------------------------------
         ; Invert a block
         ;----------------------------------------------------------------------
-        ; Accepts:      toggle_location (postion  (y * 6) + x)
+        ; Accepts:      ACC (postion  (y * 6) + x)
         ; Destroys:     ACC, C, VRMAD1, VRMAD2, VSEL
         ;
         ; Inverts the screen colours
         ;----------------------------------------------------------------------
+
+        st      toggle_location
         clr1    ocr, 5
         ; Prepare the frame buffer address
         mov     #P_WRAM_BANK, vrmad2
@@ -266,21 +384,6 @@ P_Invert_block:
         set1    ocr, 5
         ret
 
-Get_Input_Test:
-        ;----------------------------------------------------------------------
-        ; Get input from P3, compare input to previous P3 input to get buttons
-        ; pressed this cycle, doesn't check for sleep or mode
-        ;----------------------------------------------------------------------
-        ld      p3_last_input
-        st      c
-        ld      p3
-        st      p3_last_input
-        xor     #%11111111
-        and     c
-        xor     #%11111111
-        st      p3_pressed
-        ret
-
 Check_DC_plugged:
         ;----------------------------------------------------------------------
         ; Checks if connected to the Dreamcast mid test
@@ -296,6 +399,7 @@ Check_DC_plugged:
         .include        "./lib/libperspective.asm"
         .include        "./lib/libkcommon.asm"       
         .include        "./img/controller_back.asm"
+        .include        "./img/title.asm"
 
 ;******************************************************************************
 ; End of File
