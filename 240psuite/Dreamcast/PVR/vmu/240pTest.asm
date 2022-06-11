@@ -52,6 +52,10 @@ title_anim_counter      =       $9                    ; 1 byte
 title_address           =       $10                   ; 2 bytes
 title_frame_counter     =       $12                   ; 1 byte
 
+; Timeout for auto-sleep
+auto_sleep_timeout      =       $13                   ; 1 byte
+auto_sleep_timeout_sub  =       $14                   ; 1 byte
+
 ;------------------------------------------------------------------------------
 ;******************************************************************************
 ; Interrupt Vectors
@@ -149,6 +153,7 @@ Main_Loop:
         mov     #26, title_address
         mov     #0, title_anim_counter
         mov     #0, title_frame_counter
+        call    Reset_auto_sleep
 
 .title_Loop
         clr1    ocr, 5
@@ -171,7 +176,7 @@ Main_Loop:
         inc     title_frame_counter
         ld      title_frame_counter
         sub     #10
-        bnz      .poll_loop
+        bnz     .poll_loop
         mov     #0, title_frame_counter
 
         ; Check to see if we need to reset the frame
@@ -183,9 +188,12 @@ Main_Loop:
 .poll_loop:
         set1    ocr, 5
 
+        call    Check_auto_sleep
+        ; If we are plugged into a Dreamcast, abort
+        call    Check_DC_plugged
         ; Poll input
         call    Get_Input
-
+        
         mov     #Button_A, acc
         call    Check_Button_Pressed
         bz      .title_Loop
@@ -199,6 +207,7 @@ Controller_Test:
 
         mov     #%00000000, highlights
         mov     #Hold_B_Timeout, b_held
+        call    Reset_auto_sleep
 
         ; Draw the background
         P_Draw_Background_Constant controller_back
@@ -307,7 +316,7 @@ Controller_Test:
         mov     #button_mode_pos, acc
         call    P_Invert_block
 
-        ; Check Button Mode
+        ; Check Button Sleep
 .check_sleep:
         ld      p3
         bp      acc, bit_sleep_pos, .not_sleep
@@ -323,6 +332,8 @@ Controller_Test:
 
         ; Check if we exit due to held B
 .check_b_hold;
+        call    Check_auto_sleep
+
         ld      p3
         bp      acc, bit_b_pos, .reset_b
         dbnz    b_held, .loop_back
@@ -382,7 +393,49 @@ P_Invert_block:
         st      vrmad1
         dbnz    c, .loop
         set1    ocr, 5
+        call    Reset_auto_sleep
         ret
+
+
+Reset_auto_sleep:
+        mov     #0, auto_sleep_timeout
+        mov     #0, auto_sleep_timeout_sub
+        ret
+
+        ; Auto sleeps in about X seconds of innactivity
+            ; title screen:     about 35 seconds
+            ; controller test:  about 26 seconds
+Check_auto_sleep:
+        inc     auto_sleep_timeout
+        ld      auto_sleep_timeout
+        sub     #$60
+        bnz     .return_autosleep
+
+        mov     #0, auto_sleep_timeout
+        inc     auto_sleep_timeout_sub
+        ld      auto_sleep_timeout_sub
+        sub     #$10
+        bnz     .return_autosleep
+
+        ; Code from libkcommon
+.sleep:
+        mov     #0, t1cnt               ; Disable audio
+        set1    pcon, 0                 ; Activate HALT mode (saves power)
+        bn      p3, 7, .sleep           ; wait until Sleep Key is released
+        mov     #0,vccr                 ; turn off LCD
+.sleepmore:
+        set1    pcon,0                  ; activate HALT mode (saves power)
+        bp      p7, 0, .quit            ; Docked?
+        bp      p3, 7, .sleepmore       ; no Sleep Key pressed yet
+        mov     #$80, vccr              ; turn on LCD again
+.waitsleepup:
+        set1    pcon,0                  ; activate HALT modus (saves power)
+        bn      p3,7,.waitsleepup
+        call    Reset_auto_sleep        ; Resets auto sleep timers after waking up
+.return_autosleep:
+        ret
+.quit
+        jmpf    goodbye
 
 Check_DC_plugged:
         ;----------------------------------------------------------------------
