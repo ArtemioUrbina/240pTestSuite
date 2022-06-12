@@ -310,6 +310,9 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	//PrintDebugController(st);
 #endif	
 	
+	if(OldButtonsInternal != st->buttons)
+		resetSleep();
+		
 	if(pressed)
 		*pressed = st->buttons & ~OldButtonsInternal & st->buttons;
 	OldButtonsInternal = st->buttons;
@@ -381,6 +384,8 @@ void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)
 			if(*sel > maxsel)
 				*sel = 1;
 			*joycnt = 0;
+			
+			resetSleep();
 		}
 	}
 	else
@@ -399,6 +404,7 @@ void JoystickDirectios(controller *st, uint16 *pressed, int *joycntx, int *joycn
 				(*pressed) |= CONT_DPAD_LEFT;
 
 			*joycntx = 0;
+			resetSleep();
 		}
 	}
 	else
@@ -414,6 +420,7 @@ void JoystickDirectios(controller *st, uint16 *pressed, int *joycntx, int *joycn
 				(*pressed) |= CONT_DPAD_DOWN;
 
 			*joycnty = 0;
+			resetSleep();
 		}
 	}
 	else

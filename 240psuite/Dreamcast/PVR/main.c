@@ -632,6 +632,7 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 		if (pressed & CONT_A)
 		{
 			refreshVMU = 1;
+			disableSleep();
 			switch(sel)
 			{
 				case 1:
@@ -682,7 +683,8 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 					TestVideoMode(vmode);
 					break;
 #endif
-			} 			
+			}
+			enableSleep();
 			refreshVMU = 1;
 		}			
 	}
@@ -769,6 +771,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 		if (pressed & CONT_A)
 		{
 			refreshVMU = 1;
+			disableSleep();
 			switch(sel)
 			{
 				case 1:
@@ -816,6 +819,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 #endif
 #endif
 			} 			
+			enableSleep();
 			refreshVMU = 1;
 		}			
 	}

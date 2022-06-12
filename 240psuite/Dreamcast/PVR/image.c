@@ -701,6 +701,8 @@ inline void EndScene()
 	
 	if(vmu_found_bad_lcd_vmu())
 		ShowLCDVMUWarning();
+		
+	sleep_VMU_cycle();
 	
 	// Check if cable was hotswapped
 	vcable = vid_check_cable();

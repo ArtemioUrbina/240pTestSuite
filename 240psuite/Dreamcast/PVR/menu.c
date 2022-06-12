@@ -1357,7 +1357,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher");
 		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Fudoh"); y += fh; 
-		DrawStringS(x, y, 0.0, 1.0, 0.0, "VMU animation:");
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "VMU animations:");
 		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Hardware & Special Thanks:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Karensauria & ferigne");
 		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Rolman"); y += fh; 
