@@ -1594,7 +1594,7 @@ void VMUControllerTest()
 	
 	if(!saveexists)
 	{
-		if(!AskQuestion("#YVMU Controller Test#Y\n\nThis will save the application to your #CVMU#C\nProceed with save?"))
+		if(!AskQuestion("#YVMU Test#Y\n\nThis will save the application to your #CVMU#C\nProceed with save?"))
 			return;
 	}
 	
@@ -1609,7 +1609,7 @@ void VMUControllerTest()
 	if(WriteMemCardControlTest(error+strlen(msg)) != VMU_OK)
 		DrawMessage(error);
 	else
-		DrawMessage("Controller Test saved to #CVMU#C\nPlease dettach the unit and run it from the #YLCD#Y.");
+		DrawMessage("VMU Test has been saved to the #CVMU#C\nPlease dettach the unit and run it from the #YLCD#Y.");
 }
 
 /* Modified from KOS */

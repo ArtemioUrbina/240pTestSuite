@@ -852,11 +852,11 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++; 
 		if(isVMUPresent())
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VMU Controller Test"); y += fh; c++;    
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VMU Test"); y += fh; c++;    
 		}
 		else
 		{
-			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "VMU Controller Test"); y += fh; c++;    
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "VMU Test"); y += fh; c++;    
 		}
 
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; c++;
@@ -866,8 +866,12 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		
 		if(sel == 4 && !isVMUPresent())
 		{
-			DrawStringS(x-15, y + 5*fh, 0.8f, 0.8f, 0.8f,
-				"You need a VMU to use this test");
+			if(isMemCardPresent())
+				DrawStringS(x-15, y + 5*fh, 0.8f, 0.8f, 0.8f,
+					"You need a VMU with LCD to use this test");
+			else
+				DrawStringS(x-15, y + 5*fh, 0.8f, 0.8f, 0.8f,
+					"You need a VMU to use this test");
 		}
 		
 		EndScene();

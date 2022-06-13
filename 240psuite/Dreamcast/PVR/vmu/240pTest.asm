@@ -156,6 +156,9 @@ Main_Loop:
         call    Reset_auto_sleep
 
 .title_Loop
+        ld      title_frame_counter          ; check if we really need refresh
+        bnz     .skip_refresh
+
         clr1    ocr, 5
         mov     #<title_LUT, trl
         mov     #>title_LUT, trh
@@ -173,6 +176,9 @@ Main_Loop:
         P_Draw_Background title_address
         P_Blit_Screen
 
+        set1    ocr, 5
+
+.skip_refresh:
         inc     title_frame_counter
         ld      title_frame_counter
         sub     #10
@@ -185,9 +191,8 @@ Main_Loop:
         sub     #26
         bnz     .poll_loop
         mov     #0, title_anim_counter
-.poll_loop:
-        set1    ocr, 5
 
+.poll_loop:
         call    Check_auto_sleep
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
@@ -233,14 +238,19 @@ Controller_Test:
 
         mov     #%00000000, highlights
         mov     #Hold_B_Timeout, b_held
+        mov     #$ff, toggle_location
         call    Reset_auto_sleep
 
         ; Draw the background
         P_Draw_Background_Constant controller_back
 
 .control_loop:
+        ld      toggle_location
+        bz      .skip_refresh
         P_Blit_Screen
 
+.skip_refresh:
+        mov     #0, toggle_location
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
         ; If battery is low, abort
@@ -253,10 +263,10 @@ Controller_Test:
 
 .check_b:
         Check_Input bit_b_pos, button_b_pos, .check_up
-
+        
 .check_up:
         Check_Input bit_up_pos, button_up_pos, .check_down
-
+        
 .check_down:
         Check_Input bit_down_pos, button_down_pos, .check_left
 
