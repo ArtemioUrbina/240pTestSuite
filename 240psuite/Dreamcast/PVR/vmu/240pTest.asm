@@ -191,6 +191,9 @@ Main_Loop:
         call    Check_auto_sleep
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
+        ; If battery is low, abort
+        call    Check_low_Battery
+
         ; Poll input
         call    Get_Input
         
@@ -199,6 +202,29 @@ Main_Loop:
         bz      .title_Loop
         call    Controller_Test
         jmp     Main_Loop
+
+
+%macro  Check_Input %bit_pos, %toggle_pos, %next
+        ;----------------------------------------------------------------------
+        ; Checks the bit mask for a button and toggles if it is held
+        ;----------------------------------------------------------------------
+        ; Accepts:      bit mask, y*6+x toggle pos, next label to jump to
+        ; Destroys:     ACC
+        ;
+        ;----------------------------------------------------------------------
+
+        ld      p3                                ; loads controls
+        bp      acc, %bit_pos, .not_%             ; checks if button pressed
+        bp      highlights, %bit_pos, %next       ; if pressed check if drawn
+        set1    highlights, %bit_pos              ; if not, set the flag  
+        jmp     .toggle_%                         ; jump to toggle it
+.not_%:
+        bn      highlights, %bit_pos, %next       ; button was not pressed
+        clr1    highlights, %bit_pos              ; check if drawn pressed
+.toggle_%:
+        mov     #%toggle_pos, acc                 ; prepare the position
+        call    P_Invert_block                    ; toggle it
+%end
 
 Controller_Test:
         ;----------------------------------------------------------------------
@@ -217,123 +243,37 @@ Controller_Test:
 
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
-
-        ; Check Button A
-.check_a:
-        ld      p3
-        bp      acc, bit_a_pos, .not_a
-        bp      highlights, bit_a_pos, .check_b
-        set1    highlights, bit_a_pos
-        jmp     .toggle_a
-.not_a:
-        bn      highlights, bit_a_pos, .check_b
-        clr1    highlights, bit_a_pos
-.toggle_a:
-        mov     #button_a_pos, acc
-        call    P_Invert_block
-
-        ; Check Button B
-.check_b:
-        ld      p3
-        bp      acc, bit_b_pos, .not_b
-        bp      highlights, bit_b_pos, .check_up
-        set1    highlights, bit_b_pos
-        jmp     .toggle_b
-.not_b:
-        bn      highlights, bit_b_pos, .check_up
-        clr1    highlights, bit_b_pos
-.toggle_b:
-        mov     #button_b_pos, acc
-        call    P_Invert_block
-
-        ; Check Button Up
-.check_up:
-        ld      p3
-        bp      acc, bit_up_pos, .not_up
-        bp      highlights, bit_up_pos, .check_down
-        set1    highlights, bit_up_pos
-        jmp     .toggle_up
-.not_up:
-        bn      highlights, bit_up_pos, .check_down
-        clr1    highlights, bit_up_pos
-.toggle_up:
-        mov     #button_up_pos, acc
-        call    P_Invert_block
-
-        ; Check Button Down
-.check_down:
-        ld      p3
-        bp      acc, bit_down_pos, .not_down
-        bp      highlights, bit_down_pos, .check_left
-        set1    highlights, bit_down_pos
-        jmp     .toggle_down
-.not_down:
-        bn      highlights, bit_down_pos, .check_left
-        clr1    highlights, bit_down_pos
-.toggle_down:
-        mov     #button_down_pos, acc
-        call    P_Invert_block
-
-        ; Check Button Left
-.check_left:
-        ld      p3
-        bp      acc, bit_left_pos, .not_left
-        bp      highlights, bit_left_pos, .check_right
-        set1    highlights, bit_left_pos
-        jmp     .toggle_left
-.not_left:
-        bn      highlights, bit_left_pos, .check_right
-        clr1    highlights, bit_left_pos
-.toggle_left:
-        mov     #button_left_pos, acc
-        call    P_Invert_block
-
-        ; Check Button Right
-.check_right:
-        ld      p3
-        bp      acc, bit_right_pos, .not_right
-        bp      highlights, bit_right_pos, .check_mode
-        set1    highlights, bit_right_pos
-        jmp     .toggle_right
-.not_right:
-        bn      highlights, bit_right_pos, .check_mode
-        clr1    highlights, bit_right_pos
-.toggle_right:
-        mov     #button_right_pos, acc
-        call    P_Invert_block
-
-        ; Check Button Mode
-.check_mode:
-        ld      p3
-        bp      acc, bit_mode_pos, .not_mode
-        bp      highlights, bit_mode_pos, .check_sleep
-        set1    highlights, bit_mode_pos
-        jmp     .toggle_mode
-.not_mode:
-        bn      highlights, bit_mode_pos, .check_sleep
-        clr1    highlights, bit_mode_pos
-.toggle_mode:
-        mov     #button_mode_pos, acc
-        call    P_Invert_block
-
-        ; Check Button Sleep
-.check_sleep:
-        ld      p3
-        bp      acc, bit_sleep_pos, .not_sleep
-        bp      highlights, bit_sleep_pos, .check_b_hold
-        set1    highlights, bit_sleep_pos
-        jmp     .toggle_sleep
-.not_sleep:
-        bn      highlights, bit_sleep_pos, .check_b_hold
-        clr1    highlights, bit_sleep_pos
-.toggle_sleep:
-        mov     #button_sleep_pos, acc
-        call    P_Invert_block
-
-        ; Check if we exit due to held B
-.check_b_hold;
+        ; If battery is low, abort
+        call    Check_low_Battery
+        ; Check if no input has been received for a while and sleep
         call    Check_auto_sleep
 
+.check_a:
+        Check_Input bit_a_pos, button_a_pos, .check_b
+
+.check_b:
+        Check_Input bit_b_pos, button_b_pos, .check_up
+
+.check_up:
+        Check_Input bit_up_pos, button_up_pos, .check_down
+
+.check_down:
+        Check_Input bit_down_pos, button_down_pos, .check_left
+
+.check_left:
+        Check_Input bit_left_pos, button_left_pos, .check_right
+
+.check_right:
+        Check_Input bit_right_pos, button_right_pos, .check_mode
+
+.check_mode:
+        Check_Input bit_mode_pos, button_mode_pos, .check_sleep
+
+.check_sleep:
+        Check_Input bit_sleep_pos, button_sleep_pos, .check_b_held
+
+.check_b_held;
+        ; Check if B has been held to exit
         ld      p3
         bp      acc, bit_b_pos, .reset_b
         dbnz    b_held, .loop_back
@@ -401,10 +341,13 @@ Reset_auto_sleep:
         mov     #0, auto_sleep_timeout
         mov     #0, auto_sleep_timeout_sub
         ret
-
+        
+        ;----------------------------------------------------------------------
         ; Auto sleeps in about X seconds of innactivity
-            ; title screen:     about 35 seconds
-            ; controller test:  about 26 seconds
+        ;   title screen:     about 35 seconds
+        ;   controller test:  about 26 seconds
+        ;----------------------------------------------------------------------
+
 Check_auto_sleep:
         inc     auto_sleep_timeout
         ld      auto_sleep_timeout
@@ -425,7 +368,7 @@ Check_auto_sleep:
         mov     #0,vccr                 ; turn off LCD
 .sleepmore:
         set1    pcon,0                  ; activate HALT mode (saves power)
-        bp      p7, 0, .quit            ; Docked?
+        bp      p7, 0, quit             ; Docked?
         bp      p3, 7, .sleepmore       ; no Sleep Key pressed yet
         mov     #$80, vccr              ; turn on LCD again
 .waitsleepup:
@@ -434,20 +377,22 @@ Check_auto_sleep:
         call    Reset_auto_sleep        ; Resets auto sleep timers after waking up
 .return_autosleep:
         ret
-.quit
+quit:
         jmpf    goodbye
 
-Check_DC_plugged:
         ;----------------------------------------------------------------------
         ; Checks if connected to the Dreamcast mid test
         ;----------------------------------------------------------------------
-        ld      P7
-        and     #%00000001
-        bnz     .plugged_dreamcast
+Check_DC_plugged:
+        bp      p7, 0, quit              ; Quit, if Dreamcast Connection  
         ret
-.plugged_dreamcast
-        jmpf    goodbye     
 
+        ;----------------------------------------------------------------------
+        ; Checks if battery is low
+        ;----------------------------------------------------------------------
+Check_low_Battery:
+        bn      p7, 1, quit              ; Quit if battery is low
+        ret
 
         .include        "./lib/libperspective.asm"
         .include        "./lib/libkcommon.asm"       
