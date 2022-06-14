@@ -47,7 +47,7 @@ toggle_location         =       $6                    ; 1 byte
 b_held                  =       $7                    ; 1 byte
 highlights              =       $8                    ; 1 byte
 
-; Title screen  variables
+; Title screen variables
 title_anim_counter      =       $9                    ; 1 byte
 title_address           =       $10                   ; 2 bytes
 title_frame_counter     =       $12                   ; 1 byte
@@ -55,6 +55,12 @@ title_frame_counter     =       $12                   ; 1 byte
 ; Timeout for auto-sleep
 auto_sleep_timeout      =       $13                   ; 1 byte
 auto_sleep_timeout_sub  =       $14                   ; 1 byte
+
+; Sleep screen variables
+sleep_anim_counter      =       $15                   ; 1 byte
+sleep_address           =       $16                   ; 2 bytes
+sleep_frame_counter     =       $18                   ; 1 byte
+refresh_screen          =       $19                   ; 1 byte
 
 ;------------------------------------------------------------------------------
 ;******************************************************************************
@@ -132,12 +138,12 @@ goodbye:
 Start:
         clr1    ie,7
 
-        mov     #$a1,ocr
-        mov     #$09,mcr
-        mov     #$80,vccr
+        mov     #%10100001,ocr
+        mov     #%00001001,mcr
+        mov     #%10000000,vccr
         clr1    p3int,0
         clr1    p1,7
-        mov     #$ff,p3
+        mov     #%11111111,p3
 
         set1    ie,7
 
@@ -153,6 +159,7 @@ Main_Loop:
         mov     #26, title_address
         mov     #0, title_anim_counter
         mov     #0, title_frame_counter
+        mov     #0, refresh_screen
         call    Reset_auto_sleep
 
 .title_Loop
@@ -239,6 +246,7 @@ Controller_Test:
         mov     #%00000000, highlights
         mov     #Hold_B_Timeout, b_held
         mov     #$ff, toggle_location
+        mov     #0, refresh_screen
         call    Reset_auto_sleep
 
         ; Draw the background
@@ -250,35 +258,33 @@ Controller_Test:
         P_Blit_Screen
 
 .skip_refresh:
-        mov     #0, toggle_location
+        mov     #0, toggle_location         ; Check if toggle happened
+
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
+
         ; If battery is low, abort
         call    Check_low_Battery
+
         ; Check if no input has been received for a while and sleep
         call    Check_auto_sleep
+        ld      refresh_screen
+        bnz     Controller_Test
 
 .check_a:
         Check_Input bit_a_pos, button_a_pos, .check_b
-
 .check_b:
         Check_Input bit_b_pos, button_b_pos, .check_up
-        
 .check_up:
         Check_Input bit_up_pos, button_up_pos, .check_down
-        
 .check_down:
         Check_Input bit_down_pos, button_down_pos, .check_left
-
 .check_left:
         Check_Input bit_left_pos, button_left_pos, .check_right
-
 .check_right:
         Check_Input bit_right_pos, button_right_pos, .check_mode
-
 .check_mode:
         Check_Input bit_mode_pos, button_mode_pos, .check_sleep
-
 .check_sleep:
         Check_Input bit_sleep_pos, button_sleep_pos, .check_b_held
 
@@ -353,9 +359,7 @@ Reset_auto_sleep:
         ret
         
         ;----------------------------------------------------------------------
-        ; Auto sleeps in about X seconds of innactivity
-        ;   title screen:     about 35 seconds
-        ;   controller test:  about 26 seconds
+        ; Auto sleeps in about 20 seconds of innactivity
         ;----------------------------------------------------------------------
 
 Check_auto_sleep:
@@ -369,12 +373,104 @@ Check_auto_sleep:
         ld      auto_sleep_timeout_sub
         sub     #$10
         bnz     .return_autosleep
+        call    sleep_animate
+.return_autosleep:
+        ret
+
+Check_auto_sleep_int:
+        inc     auto_sleep_timeout
+        ld      auto_sleep_timeout
+        sub     #$30
+        bnz     .return_autosleep_int
+
+        mov     #0, auto_sleep_timeout
+        inc     auto_sleep_timeout_sub
+        ld      auto_sleep_timeout_sub
+        sub     #$10
+        bnz     .return_autosleep_int
+        call    execute_sleep
+        mov     #1, refresh_screen
+.return_autosleep_int:
+        ret
+
+        ;----------------------------------------------------------------------
+        ; Pre-sleep animation
+        ;----------------------------------------------------------------------        
+sleep_animate:
+        ; Initialise some variables
+        call    Reset_auto_sleep
+        mov     #0, sleep_address
+        mov     #0, sleep_anim_counter
+        mov     #0, sleep_frame_counter
+        mov     #0, refresh_screen
+
+.sleep_loop
+        ld      sleep_frame_counter          ; check if we really need refresh
+        bnz     .skip_refresh
+
+        clr1    ocr, 5
+        mov     #<sleep_LUT, trl
+        mov     #>sleep_LUT, trh
+        ld      sleep_anim_counter
+        rol
+        ldc
+        st      sleep_address
+        ld      sleep_anim_counter
+        rol
+        inc     acc
+        ldc
+        st      sleep_address+1
+
+        ; Draw the frame
+        P_Draw_Background sleep_address
+        P_Blit_Screen
+
+        set1    ocr, 5
+
+.skip_refresh:
+        inc     sleep_frame_counter
+        ld      sleep_frame_counter
+        sub     #25
+        bnz     .poll_loop
+        mov     #0, sleep_frame_counter
+
+        ; Check to see if we need to reset the frame
+        inc     sleep_anim_counter
+        ld      sleep_anim_counter
+        sub     #12
+        bnz     .poll_loop
+        mov     #0, sleep_anim_counter
+
+.poll_loop:
+        call    Check_auto_sleep_int
+        ld      refresh_screen
+        bz      .not_from_wakeup
+        call    Reset_auto_sleep
+        ret
+
+.not_from_wakeup:
+        ; If we are plugged into a Dreamcast, abort
+        call    Check_DC_plugged
+        ; If battery is low, abort
+        call    Check_low_Battery
+
+        ; Poll input
+        ld      p3
+        xor     #%11111111     
+        bz      .sleep_loop
+        call    Reset_auto_sleep
+        mov     #1, refresh_screen
+        ret
+
+execute_sleep:
+        P_Fill_Screen P_WHITE
+        P_Blit_Screen
 
         ; Code from libkcommon
-.sleep:
+.sleep_wait:
         mov     #0, t1cnt               ; Disable audio
         set1    pcon, 0                 ; Activate HALT mode (saves power)
-        bn      p3, 7, .sleep           ; wait until Sleep Key is released
+        bn      p3, 7, .sleep_wait      ; wait until Sleep Key is released
         mov     #0,vccr                 ; turn off LCD
 .sleepmore:
         set1    pcon,0                  ; activate HALT mode (saves power)
@@ -385,7 +481,6 @@ Check_auto_sleep:
         set1    pcon,0                  ; activate HALT modus (saves power)
         bn      p3,7,.waitsleepup
         call    Reset_auto_sleep        ; Resets auto sleep timers after waking up
-.return_autosleep:
         ret
 quit:
         jmpf    goodbye
@@ -408,6 +503,7 @@ Check_low_Battery:
         .include        "./lib/libkcommon.asm"       
         .include        "./img/controller_back.asm"
         .include        "./img/title.asm"
+        .include        "./img/sleep.asm"
 
 ;******************************************************************************
 ; End of File
