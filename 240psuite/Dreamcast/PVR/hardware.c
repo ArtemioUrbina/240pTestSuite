@@ -695,7 +695,7 @@ void ControllerTest()
 		VMURefresh("Controller", ignoreFunctions ? "Ignore" : "Normal");
 		
 		// we do it without helper functions here
-		dev = maple_enum_type(0, MAPLE_FUNC_CONTROLLER);
+		dev = maple_enum_type(0, MAPLE_FUNC_CONTROLLER|MAPLE_FUNC_LIGHTGUN);
 		if(dev)
 		{			
 			st = (cont_state_t*)maple_dev_status(dev); 
@@ -785,8 +785,8 @@ int maple_device_scan(float x, float y, int selected)
 }
 
 #define	MAPLE_BUFFER_CHAR	8192
-char			*maple_display = NULL;
-int				maple_display_pos = 0;
+char			*display_buffer = NULL;
+int				display_buffer_pos = 0;
 int				maple_locked_device = 0;
 int				maple_use_reply_bytes = 0;
 int				maple_useCache = 0;
@@ -815,13 +815,13 @@ void PrintCleanString(char *str)
 }
 #endif
 
-void mapleprintf(char *fmt, ... )
+void buffer_printf(char *fmt, ... )
 {
 	int		len = 0;
 	char	buffer[512];
 	va_list arguments;
 
-	if(!maple_display)
+	if(!display_buffer)
 		return;
 
 	va_start(arguments, fmt);
@@ -829,13 +829,14 @@ void mapleprintf(char *fmt, ... )
 	va_end(arguments);
 	
 	len = strlen(buffer);
-	if(maple_display_pos + len < MAPLE_BUFFER_CHAR)
+	if(display_buffer_pos + len < MAPLE_BUFFER_CHAR)
 	{
-		memcpy(maple_display+maple_display_pos, buffer, sizeof(char)*len);
-		maple_display_pos += len;
+		memcpy(display_buffer+display_buffer_pos, buffer, sizeof(char)*len);
+		display_buffer_pos += len;
 	}
 	else
-		dbglog(DBG_ERROR, "Maple display text buffer was too small"); 
+		dbglog(DBG_ERROR, "Display text buffer was too short, needed extra %d",
+			display_buffer_pos + len - MAPLE_BUFFER_CHAR); 
 		
 #ifdef DCLOAD	
 	PrintCleanString(buffer);
@@ -867,39 +868,39 @@ static void vbl_allinfo_callback(maple_frame_t * frm) {
 		switch(resp->response)
 		{
 			case MAPLE_RESPONSE_AGAIN:
-				mapleprintf("\n Device asked for retry.\n Please try again. Got #YMAPLE_RESPONSE_AGAIN#Y"); 
+				buffer_printf("\n Device asked for retry.\n Please try again. Got #YMAPLE_RESPONSE_AGAIN#Y"); 
 				break;
 			case MAPLE_RESPONSE_BADCMD:
-				mapleprintf("\n #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_RESPONSE_BADCMD#Y"); 
+				buffer_printf("\n #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_RESPONSE_BADCMD#Y"); 
 				break;
 			case MAPLE_RESPONSE_BADFUNC:
-				mapleprintf("\n #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_BADFUNC#Y"); 
+				buffer_printf("\n #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_BADFUNC#Y"); 
 				break;
 			case MAPLE_RESPONSE_NONE:
-				mapleprintf("\n #CDevice didn't respond to query command.#C\n Got #YMAPLE_RESPONSE_NONE#Y"); 
+				buffer_printf("\n #CDevice didn't respond to query command.#C\n Got #YMAPLE_RESPONSE_NONE#Y"); 
 				break;
 			case MAPLE_COMMAND_ALLINFO:
-				mapleprintf("\n #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_COMMAND_ALLINFO#Y"); 
+				buffer_printf("\n #CDevice doesn't support command.#C\n Maybe an emulator?\n Got #YMAPLE_COMMAND_ALLINFO#Y"); 
 				break;
 			case MAPLE_RESPONSE_DEVINFO:
-				mapleprintf("\n #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_DEVINFO#Y"); 
+				buffer_printf("\n #CDevice doesn't support command.#C\n Got #YMAPLE_RESPONSE_DEVINFO#Y"); 
 				break;
 			case MAPLE_COMMAND_RESET:
-				mapleprintf("\n Device asked for reset.\n Please reconnect. Got #YMAPLE_COMMAND_RESET#Y"); 
+				buffer_printf("\n Device asked for reset.\n Please reconnect. Got #YMAPLE_COMMAND_RESET#Y"); 
 				break;
 			case MAPLE_RESPONSE_OK:
-				mapleprintf("\n Unexpected #YMAPLE_RESPONSE_OK#Y from device", resp->response); 
+				buffer_printf("\n Unexpected #YMAPLE_RESPONSE_OK#Y from device", resp->response); 
 				break;
 			case MAPLE_RESPONSE_DATATRF:
-				mapleprintf("\n Unexpected #YMAPLE_RESPONSE_DATATRF#Y from device", resp->response); 
+				buffer_printf("\n Unexpected #YMAPLE_RESPONSE_DATATRF#Y from device", resp->response); 
 				break;
 			default:
-				mapleprintf("\n Unexpected response [#Y%d#Y] from device", resp->response); 
+				buffer_printf("\n Unexpected response [#Y%d#Y] from device", resp->response); 
 				break;
 		}
 		if(resp->response != MAPLE_RESPONSE_NONE)
 		{
-			mapleprintf(" [%u bytes response]", resp->data_len*4);
+			buffer_printf(" [%u bytes response]", resp->data_len*4);
 			if(maple_use_reply_bytes)
 				resp_size = resp->data_len*4;
 			else
@@ -909,7 +910,7 @@ static void vbl_allinfo_callback(maple_frame_t * frm) {
 				memcpy(recv_buff, resp, resp_size);
 		}
 		
-		mapleprintf("\n");
+		buffer_printf("\n");
 	}
 
 	maple_frame_unlock(frm);
@@ -940,10 +941,10 @@ static void vbl_send_allinfo(int p, int u) {
 	
 	if(!maple_locked_device)
 	{
-		mapleprintf("\nmaple_frame_lock() failed");
+		buffer_printf("\nmaple_frame_lock() failed");
 		if(dev)
-			mapleprintf(" for #Y%c%c#Y", 'A'+(dev->port), '0'+(dev->unit));
-		mapleprintf("\n\n Please try reconnecting the device\n");
+			buffer_printf(" for #Y%c%c#Y", 'A'+(dev->port), '0'+(dev->unit));
+		buffer_printf("\n\n Please try reconnecting the device\n");
 		return;
 	}
 
@@ -960,32 +961,32 @@ static void vbl_send_allinfo(int p, int u) {
 void print_devinfo(maple_devinfo_t *info)
 {
 	/* Print each piece of info in an itemized fashion */	
-	mapleprintf("#CFunctions     :#C 0x%.8lx  ", info->functions);
-	mapleprintf("#CFunction int 0:#C 0x%.8lx\n", info->function_data[0]);
-	mapleprintf("#CFunction int 1:#C 0x%.8lx  ", info->function_data[1]);
-	mapleprintf("#CFunction int 2:#C 0x%.8lx\n", info->function_data[2]);
-	mapleprintf("#CRegion:#C         0x%.2x        ", info->area_code);
-	mapleprintf("#CConnection:#C     0x%.2x\n", info->connector_direction);
-	mapleprintf("#CProduct Name & License:#C %.30s\n", info->product_name);
-	mapleprintf("  %.60s\n", info->product_license);
-	mapleprintf("#CStandby power:#C 0x%.4x (%umW) ", info->standby_power, info->standby_power);
-	mapleprintf("#CMax:#C 0x%.4x (%umW)\n", info->max_power, info->max_power);
+	buffer_printf("#CFunctions     :#C 0x%.8lx  ", info->functions);
+	buffer_printf("#CFunction int 0:#C 0x%.8lx\n", info->function_data[0]);
+	buffer_printf("#CFunction int 1:#C 0x%.8lx  ", info->function_data[1]);
+	buffer_printf("#CFunction int 2:#C 0x%.8lx\n", info->function_data[2]);
+	buffer_printf("#CRegion:#C         0x%.2x        ", info->area_code);
+	buffer_printf("#CConnection:#C     0x%.2x\n", info->connector_direction);
+	buffer_printf("#CProduct Name & License:#C %.30s\n", info->product_name);
+	buffer_printf("  %.60s\n", info->product_license);
+	buffer_printf("#CStandby power:#C 0x%.4x (%umW) ", info->standby_power, info->standby_power);
+	buffer_printf("#CMax:#C 0x%.4x (%umW)\n", info->max_power, info->max_power);
 }
 
 /* Formatted output for the devinfo struct in KOS */
 void FillKOSDevInfo(maple_device_t *dev, int skipline)
 {
-	mapleprintf("%s#YValues from MAPLE_RESPONSE_DEVINFO#Y:\n", skipline ? "\n" : "");
-	mapleprintf("#CFunctions     :#C 0x%.8lx  ", dev->info.functions);
-	mapleprintf("#CFunction int 0:#C 0x%.8lx\n", dev->info.function_data[0]);
-	mapleprintf("#CFunction int 1:#C 0x%.8lx  ", dev->info.function_data[1]);
-	mapleprintf("#CFunction int 2:#C 0x%.8lx\n", dev->info.function_data[2]);
-	mapleprintf("#CRegion:#C         0x%.2x        ", dev->info.area_code);
-	mapleprintf("#CConnection:#C     0x%.2x\n", dev->info.connector_direction);
-	mapleprintf("#CProduct Name & License:#C %.30s\n", dev->info.product_name);
-	mapleprintf("  %.60s\n", dev->info.product_license);
-	mapleprintf("#CStandby power:#C 0x%.4x (%umW) ", dev->info.standby_power, dev->info.standby_power);
-	mapleprintf("#CMax:#C 0x%.4x (%umW)\n", dev->info.max_power, dev->info.max_power);
+	buffer_printf("%s#YValues from MAPLE_RESPONSE_DEVINFO#Y:\n", skipline ? "\n" : "");
+	buffer_printf("#CFunctions     :#C 0x%.8lx  ", dev->info.functions);
+	buffer_printf("#CFunction int 0:#C 0x%.8lx\n", dev->info.function_data[0]);
+	buffer_printf("#CFunction int 1:#C 0x%.8lx  ", dev->info.function_data[1]);
+	buffer_printf("#CFunction int 2:#C 0x%.8lx\n", dev->info.function_data[2]);
+	buffer_printf("#CRegion:#C         0x%.2x        ", dev->info.area_code);
+	buffer_printf("#CConnection:#C     0x%.2x\n", dev->info.connector_direction);
+	buffer_printf("#CProduct Name & License:#C %.30s\n", dev->info.product_name);
+	buffer_printf("  %.60s\n", dev->info.product_license);
+	buffer_printf("#CStandby power:#C 0x%.4x (%umW) ", dev->info.standby_power, dev->info.standby_power);
+	buffer_printf("#CMax:#C 0x%.4x (%umW)\n", dev->info.max_power, dev->info.max_power);
 }
 
 #define BPL 16	/* Bytes to print per line */
@@ -1012,9 +1013,9 @@ void print_device_allinfo(maple_device_t *dev, int extra)
 	/* Clear the old buffer */
 	memset(recv_buff, 0, 1024+32);
 	if(!maple_useCache)
-		mapleprintf("Requested info for device #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
+		buffer_printf("Requested info for device #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
 	else
-		mapleprintf("#YValues from MAPLE_RESPONSE_ALLINFO#Y for #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
+		buffer_printf("#YValues from MAPLE_RESPONSE_ALLINFO#Y for #Y%c%c#Y ", 'A'+(dev->port), '0'+(dev->unit));	
 		
 #ifdef BENCHMARK
 	start = timer_ms_gettime64();
@@ -1045,7 +1046,7 @@ void print_device_allinfo(maple_device_t *dev, int extra)
 		return;
 	}
 	
-	mapleprintf("[%d bytes of data]:\n", size-4);
+	buffer_printf("[%d bytes of data]:\n", size-4);
 	print_devinfo((maple_devinfo_t *)&recv_buff[4]);
 
 	if(extra)
@@ -1057,18 +1058,18 @@ void print_device_allinfo(maple_device_t *dev, int extra)
 		size = ((size+64)<(1024+32))?(size+64):(1024+32);
 #endif
 
-		mapleprintf("#CExtra data:#C\n");
+		buffer_printf("#CExtra data:#C\n");
 		/* Print the hex for the data followed by ascii */
 		for(i=4+112; i< size; i+=BPL) 
 		{	
-			mapleprintf("#G%.3x#G$#G|#G$", i-(4+112));
-			for(j=0;j<BPL;j++)	mapleprintf("%.2x$", recv_buff[i+j]);		
-			mapleprintf("#G|#G$");
+			buffer_printf("#G%.3x#G$#G|#G$", i-(4+112));
+			for(j=0;j<BPL;j++)	buffer_printf("%.2x$", recv_buff[i+j]);		
+			buffer_printf("#G|#G$");
 			
-			for(j=0;j<BPL;j++)	mapleprintf("%c"   , isprint(recv_buff[i+j])?recv_buff[i+j]:' ');
-			mapleprintf("\n");
+			for(j=0;j<BPL;j++)	buffer_printf("%c"   , isprint(recv_buff[i+j])?recv_buff[i+j]:' ');
+			buffer_printf("\n");
 		}	
-		mapleprintf("#CEnd of Extra data#C\n");
+		buffer_printf("#CEnd of Extra data#C\n");
 	}
 }
 
@@ -1081,13 +1082,13 @@ void print_device_kos_cache(maple_device_t *dev)
 		return;
 		
 	FillKOSDevInfo(dev, 0);
-	mapleprintf("#G--------------------------------------------------------------#G\n");
+	buffer_printf("#G--------------------------------------------------------------#G\n");
 }
 
-void cleanMapleBuffer()
+void cleanDisplayBuffer()
 {
-	maple_display_pos = 0;
-	memset(maple_display, 0, sizeof(char)*MAPLE_BUFFER_CHAR);
+	display_buffer_pos = 0;
+	memset(display_buffer, 0, sizeof(char)*MAPLE_BUFFER_CHAR);
 }
 
 void ListMapleDevices()
@@ -1098,7 +1099,7 @@ void ListMapleDevices()
 	ImagePtr		back = NULL, black = NULL;
 	controller		*st = NULL;
 
-	if(maple_display)
+	if(display_buffer)
 	{
 		dbglog(DBG_ERROR, "Maple display text buffer was not NULL"); 
 		return;
@@ -1112,8 +1113,8 @@ void ListMapleDevices()
 	if(!back)
 		return;
 	
-	maple_display = (char*)malloc(sizeof(char)*MAPLE_BUFFER_CHAR);
-	if(!maple_display)
+	display_buffer = (char*)malloc(sizeof(char)*MAPLE_BUFFER_CHAR);
+	if(!display_buffer)
 	{
 		dbglog(DBG_ERROR, "Out of memory for maple display text buffer\n"); 
 		return;
@@ -1181,17 +1182,17 @@ void ListMapleDevices()
 						
 						sprintf(vmudata, "query: %c%c", 'A'+(dev->port), '0'+(dev->unit));	
 						updateVMU("Maple", vmudata, 1);	
-						cleanMapleBuffer();
+						cleanDisplayBuffer();
 						if(maple_useCache)
 							print_device_kos_cache(dev);
 						print_device_allinfo(dev, 1);
-						lines = countLineFeeds(maple_display);
+						lines = countLineFeeds(display_buffer);
 						while(!close_display && !EndProgram) 
 						{
 							StartScene();
 							DrawImage(black);
 							DrawImage(back);
-							DrawString(5+hscroll, 20+sub_v_scroll, 1.0f, 1.0f, 1.0f, maple_display);
+							DrawString(5+hscroll, 20+sub_v_scroll, 1.0f, 1.0f, 1.0f, display_buffer);
 							EndScene();
 							
 							st = ReadController(0, &pressed);
@@ -1199,9 +1200,9 @@ void ListMapleDevices()
 							if(st)
 							{
 								if ( pressed & CONT_LTRIGGER || pressed & CONT_DPAD_UP )
-									sub_v_scroll -= fw;
-								if ( pressed & CONT_RTRIGGER || pressed & CONT_DPAD_DOWN )
 									sub_v_scroll += fw;
+								if ( pressed & CONT_RTRIGGER || pressed & CONT_DPAD_DOWN )
+									sub_v_scroll -= fw;
 								if(sub_v_scroll > 0)
 									sub_v_scroll = 0;
 								if(sub_v_scroll < -1*lines*fh)
@@ -1246,11 +1247,11 @@ void ListMapleDevices()
 	}
 	FreeImage(&back);
 	FreeImage(&black);
-	if(maple_display)
+	if(display_buffer)
 	{
-		free(maple_display);
-		maple_display = NULL;
-		maple_display_pos = 0;
+		free(display_buffer);
+		display_buffer = NULL;
+		display_buffer_pos = 0;
 	}
 	return;
 }
@@ -1612,6 +1613,366 @@ void VMUControllerTest()
 		DrawMessage("VMU Test has been saved to the #CVMU#C\nPlease dettach the unit and run it from the #YLCD#Y.");
 }
 
+int isLightGunPresent()
+{
+	maple_device_t	*lightgun = NULL;
+
+	lightgun = maple_enum_type(0, MAPLE_FUNC_LIGHTGUN);
+	if(!lightgun)
+		return 0;
+	return 1;
+}
+
+void LightGunTest()
+{
+	int 		done = 0, gun = 0, x = 0, y = 0;
+	uint16		pressed;		
+	ImagePtr	white = NULL, black = NULL;
+	controller	*st = NULL;
+	maple_device_t *dev;
+    cont_state_t *state;
+	uint64 last = 0, now = 0;
+
+	if(!isLightGunPresent())
+		return;
+
+	white = LoadKMG("/rd/white.kmg.gz", 1);
+	if(!white)
+		return;
+	black = LoadKMG("/rd/black.kmg.gz", 0);
+	if(!black)
+		return;
+
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		if(gun)
+			DrawImage(white);
+		else
+			DrawImage(black);
+		
+		EndScene();
+
+		now = timer_ms_gettime64();
+		
+		VMURefresh("Light Gun", "");
+
+		if(gun) 
+		{
+			maple_gun_read_pos(&x, &y);
+			black->x = x;
+			black->y = y;
+			printf("%d %d n:%"PRIu64" t:%"PRIu64" s:%"PRIu64"\n", x, y, now, last, now-last);
+			gun --;
+        }
+		
+		if((dev = maple_enum_type(0, MAPLE_FUNC_LIGHTGUN)))
+		{
+            /* The light gun "status" is just that of its buttons. The data for
+               positioning actually is read from a video register... */
+            if((state = (cont_state_t *)maple_dev_status(dev)))
+			{
+				if(state->buttons & CONT_B)
+					done = 1;
+
+                /* The light gun's trigger is mapped to the A button. See if the
+                   user is pulling the trigger and enable the gun if needed. */
+                if((state->buttons & CONT_A) && last + 35 < now)
+				{
+                    //if(maple_gun_enable(dev->port) == MAPLE_EOK)
+					{
+						printf("Trigger last:%"PRIu64" now:%"PRIu64" s:%"PRIu64"\n", last, now, now-last);
+						last = now;
+						gun = 2;
+					}
+                }
+            }
+			if(gun == 1)
+				maple_gun_enable(dev->port);
+        }
+		else
+			done = 1;
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;								
+
+			if (pressed & CONT_START)
+				ShowMenu(GRAYHELP);
+		}
+	}
+	FreeImage(&white);
+	FreeImage(&black);
+	return;
+}
+
+/* Formatted output for the devinfo struct from command */
+void print_ispcfg(flashrom_ispcfg_t *flashrom_isp, int ignoreflags)
+{
+	int i = 0;
+	
+	buffer_printf("#GISP Type:#G             ");
+	switch(flashrom_isp->method)
+	{
+		case FLASHROM_ISP_DHCP:
+				buffer_printf("DHCP-based ethernet\n");
+				break;
+		case FLASHROM_ISP_STATIC:
+				buffer_printf("Static IP-based ethernet\n");
+				break;
+		case FLASHROM_ISP_DIALUP:
+				buffer_printf("Dialup ISP\n");
+				break;
+		case FLASHROM_ISP_PPPOE:
+				buffer_printf("PPPoE-based ethernet\n");
+				break;
+		default:
+				buffer_printf("#YUnknown#Y (%d)\n", flashrom_isp->method);
+				break;
+	}
+	
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_IP)
+	{
+		buffer_printf("#GStatic IP address:#G    ");
+		for(i = 0; i < 4; i++)
+			buffer_printf("%03u%c", flashrom_isp->ip[i], i != 3 ? '.': '\n');
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_NETMASK )
+	{
+		buffer_printf("#GNetmask:#G              ");
+		for(i = 0; i < 4; i++)
+			buffer_printf("%03u%c", flashrom_isp->nm[i], i != 3 ? '.': '\n');
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_BROADCAST)
+	{
+		buffer_printf("#GBroadcast address:#G    ");
+		for(i = 0; i < 4; i++)
+			buffer_printf("%03u%c", flashrom_isp->bc[i], i != 3 ? '.': '\n');
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_GATEWAY)
+	{
+		buffer_printf("#GGateway address:#G      ");
+		for(i = 0; i < 4; i++)
+			buffer_printf("%03u%c", flashrom_isp->gw[i], i != 3 ? '.': '\n');
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_DNS)
+	{
+		buffer_printf("#GDNS server 1:#G         ");
+		for(i = 0; i < 4; i++)
+			buffer_printf("%03u%c", flashrom_isp->dns[0][i], i != 3 ? '.': '\n');
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_DNS)
+	{
+		buffer_printf("#GDNS server 2:#G         ");
+		for(i = 0; i < 4; i++)
+			buffer_printf("%03u%c", flashrom_isp->dns[1][i], i != 3 ? '.': '\n');
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_HOSTNAME)
+		buffer_printf("#GHostname:#G             %s\n", flashrom_isp->hostname);
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_EMAIL)
+		buffer_printf("#GEmail address:#G        %s\n", flashrom_isp->email);
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_SMTP)
+		buffer_printf("#GSMTP server:#G          %s\n", flashrom_isp->smtp);
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_POP3)
+		buffer_printf("#GPOP3 server:#G          %s\n", flashrom_isp->pop3);
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_POP3_USER)
+		buffer_printf("#GPOP3 username:#G        %s\n", flashrom_isp->pop3_login);
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_POP3_PASS)
+		buffer_printf("#GPOP3 password:#G        %s\n", flashrom_isp->pop3_passwd);
+	if(ignoreflags || (flashrom_isp->valid_fields & FLASHROM_ISP_PROXY_HOST &&
+		flashrom_isp->flags & FLASHROM_ISP_USE_PROXY))
+		buffer_printf("#GProxy hostname:#G       %s\n", flashrom_isp->proxy_host);
+	if(ignoreflags || (flashrom_isp->valid_fields & FLASHROM_ISP_PROXY_PORT &&
+		flashrom_isp->flags & FLASHROM_ISP_USE_PROXY))
+		buffer_printf("#GProxy port:#G           %d\n", flashrom_isp->proxy_port);
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_PPP_USER) 
+		buffer_printf("#GPPP username:#G         %s\n", flashrom_isp->ppp_login);
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_PPP_PASS)
+		buffer_printf("#GPPP password:#G         %s\n", flashrom_isp->ppp_passwd);
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_OUT_PREFIX)
+	{
+		if(ignoreflags || strlen(flashrom_isp->out_prefix))
+			buffer_printf("#GOutside dial prefix:#G  %s\n", flashrom_isp->out_prefix);
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_CW_PREFIX)
+	{
+		if(ignoreflags || strlen(flashrom_isp->cw_prefix))
+			buffer_printf("#GCall waiting prefix:#G  %s\n", flashrom_isp->cw_prefix);
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_REAL_NAME)
+		buffer_printf("#GReal name:#G            %s\n", flashrom_isp->real_name);
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_MODEM_INIT)
+		buffer_printf("#GModem init string:#G    %s\n", flashrom_isp->modem_init);
+	if(ignoreflags || (flashrom_isp->valid_fields & FLASHROM_ISP_AREA_CODE &&
+		flashrom_isp->flags & FLASHROM_ISP_DIAL_AREACODE))
+	{
+		if(ignoreflags || strlen(flashrom_isp->area_code))
+			buffer_printf("#GArea code:#G            %s\n", flashrom_isp->area_code);
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_LD_PREFIX)
+	{
+		if(ignoreflags || strlen(flashrom_isp->ld_prefix))
+			buffer_printf("#GLong distance prefix:#G %s\n", flashrom_isp->ld_prefix);
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_PHONE1)
+	{
+		if(strlen(flashrom_isp->p1_areacode))
+			buffer_printf("#GPhone number 1:#G       (%s) %s\n", 
+				flashrom_isp->p1_areacode, flashrom_isp->phone1);
+		else
+			if(ignoreflags || strlen(flashrom_isp->phone1))
+				buffer_printf("#GPhone number 1:#G       %s\n",
+					flashrom_isp->phone1);
+	}
+	if(ignoreflags || flashrom_isp->valid_fields & FLASHROM_ISP_PHONE2)
+	{
+		if(strlen(flashrom_isp->p2_areacode))
+			buffer_printf("#GPhone number 2:#G       (%s) %s\n", 
+				flashrom_isp->p2_areacode, flashrom_isp->phone2);
+		else
+			if(ignoreflags || strlen(flashrom_isp->phone2))
+				buffer_printf("#GPhone number 2:#G       %s\n",
+					flashrom_isp->phone2);
+	}
+
+	if(flashrom_isp->flags)
+	{
+		buffer_printf("#GFlags:#G\n");
+		if(flashrom_isp->flags & FLASHROM_ISP_DIAL_AREACODE)
+			buffer_printf("                         *Dial area code before number\n");
+		if(flashrom_isp->flags & FLASHROM_ISP_USE_PROXY)
+			buffer_printf("                         *Proxy enabled\n");
+		if(flashrom_isp->flags & FLASHROM_ISP_PULSE_DIAL)
+			buffer_printf("                         *Pulse dialing (instead of tone)\n");
+		if(flashrom_isp->flags & FLASHROM_ISP_BLIND_DIAL)
+			buffer_printf("                         *Blind dial (don't wait for tone)\n");
+	}
+	if(ignoreflags)
+	{
+		buffer_printf("#GValid Fields:#G         0x%X\n", (unsigned int)flashrom_isp->valid_fields);
+		buffer_printf("#GFlags:#G                0x%X\n", (unsigned int)flashrom_isp->flags);
+	}
+}
+
+void Show_ISP_Data()
+{
+	int 			done = 0, oldvmode = -1, joycnty = 0, joycntx = 0, fillbuffer = 1;
+	int				v_scroll = 0, h_scroll = 0, lines = 0, ignoreflags = 0;
+	uint16			pressed;		
+	ImagePtr		black = NULL;
+	controller		*st = NULL;
+
+	if(display_buffer)
+	{
+		dbglog(DBG_ERROR, "Display text buffer was not NULL"); 
+		return;
+	}
+	
+	black = LoadKMG("/rd/wallisp.kmg.gz", 0);
+	if(!black)
+		return;
+	
+	display_buffer = (char*)malloc(sizeof(char)*MAPLE_BUFFER_CHAR);
+	if(!display_buffer)
+	{
+		dbglog(DBG_ERROR, "Out of memory for display text buffer\n"); 
+		return;
+	}
+
+	while(!done && !EndProgram) 
+	{
+		if(oldvmode != vmode)
+			oldvmode = vmode;
+		
+		if(fillbuffer)
+		{
+			flashrom_ispcfg_t flashrom_isp;
+			
+			cleanDisplayBuffer();
+
+			memset(&flashrom_isp, 0, sizeof(flashrom_ispcfg_t));
+			flashrom_get_pw_ispcfg(&flashrom_isp);
+			if(flashrom_get_pw_ispcfg(&flashrom_isp) == 0)
+			{
+				buffer_printf("#CPlanetWeb's ISP configuration#C\n");
+				print_ispcfg(&flashrom_isp, ignoreflags);
+			}
+			
+			memset(&flashrom_isp, 0, sizeof(flashrom_ispcfg_t));
+			flashrom_get_ispcfg(&flashrom_isp);
+			if(flashrom_get_ispcfg(&flashrom_isp) == 0)
+			{
+				buffer_printf("#CDreamPassport's ISP configuration:#C\n");
+				print_ispcfg(&flashrom_isp, ignoreflags);
+			}
+			
+			lines = countLineFeeds(display_buffer);
+			if(lines == 0)
+				buffer_printf("ISP data in #Yflashrom#Y is empty.");
+			fillbuffer = 0;
+		}
+
+		StartScene();
+		DrawImage(black);
+		if(!ignoreflags)
+			DrawStringSCentered(20+v_scroll, 0.0f, 1.0f, 0.0f, "ISP Info");
+		else
+			DrawStringSCentered(20+v_scroll, 0.0f, 1.0f, 0.0f, "ISP Info (#Yflags ignored#y)");
+		DrawString(20+h_scroll, 20+2*fh+v_scroll, 1.0f, 1.0f, 1.0f, display_buffer);
+		EndScene();
+
+		VMURefresh("ISP info", "Flashrom");
+
+		st = ReadController(0, &pressed);
+		JoystickDirectios(st, &pressed, &joycntx, &joycnty);
+		if(st)
+		{
+			if ( pressed & CONT_LTRIGGER || pressed & CONT_DPAD_UP )
+				v_scroll += fw;
+			if ( pressed & CONT_RTRIGGER || pressed & CONT_DPAD_DOWN )
+				v_scroll -= fw;
+			if(v_scroll > 0)
+				v_scroll = 0;
+			if(v_scroll < -1*lines*fh)
+				v_scroll = -1*lines*fh;
+			
+			if ( pressed & CONT_DPAD_LEFT )
+				h_scroll -= fw;
+			if ( pressed & CONT_DPAD_RIGHT )
+				h_scroll += fw;
+			if(h_scroll > 8*fw)
+				h_scroll = 8*fw;
+			if(h_scroll < -20*fw)
+				h_scroll = -20*fw;
+				
+			if (pressed & CONT_Y)
+				h_scroll = v_scroll = 0;
+				
+			if (pressed & CONT_X)
+			{
+				ignoreflags = !ignoreflags;
+				fillbuffer = 1;
+			}
+			
+			if (pressed & CONT_B)
+				done = 1;
+
+			if (pressed & CONT_START)
+				ShowMenu(ISPHELP);
+		}
+	}
+	FreeImage(&black);
+	if(display_buffer)
+	{
+		free(display_buffer);
+		display_buffer = NULL;
+		display_buffer_pos = 0;
+	}
+	return;
+}
+
 /* Modified from KOS */
 int flashrom_get_region_data()
 {
@@ -1712,3 +2073,4 @@ int flashrom_get_region_broadcast()
         return FLASHROM_BROADCAST_UNKNOWN;
     }
 }
+

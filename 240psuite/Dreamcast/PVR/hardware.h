@@ -26,10 +26,14 @@ void ControllerTest();
 void ListMapleDevices();
 void MemoryViewer(uint32 address);
 void VMUControllerTest();
+int isLightGunPresent();
+void LightGunTest();
 
 int flashrom_get_region_country();
 int flashrom_get_region_language();
 int flashrom_get_region_broadcast();
+
+void Show_ISP_Data();
 
 int check_for_bad_lcd();
 

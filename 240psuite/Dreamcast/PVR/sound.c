@@ -734,6 +734,9 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 		return;
 	}
 	
+	if(rec_buffer.overflow)
+		return;
+
 	if(len > (rec_buffer.size - (size_t)rec_buffer.pos))
 	{
 		rec_buffer.overflow = 1;
@@ -747,17 +750,30 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 	rec_buffer.pos += len;
 }
 
+#define cleanSIPlag() \
+	if(rec_buffer.size)\
+	{\
+		free(rec_buffer.buffer);\
+		rec_buffer.size = 0;\
+		rec_buffer.pos = 0;\
+	}\
+	if(beep != SFXHND_INVALID)\
+		snd_sfx_unload(beep);\
+	if(back) FreeImage(&back);\
+	if(wave) FreeImage(&wave);\
+	fftw_cleanup();
+
 void SIPLagTest()
 {
 	int				done = 0, status = 0, counter = 0;
 	int				showframes = 0, accuracy = 1, cycle = 0;
 	uint16			pressed;		
-	ImagePtr		back, wave;
-	sfxhnd_t		beep;  
+	ImagePtr		back = NULL, wave = NULL;
+	sfxhnd_t		beep = SFXHND_INVALID;  
 	controller		*st;
 	maple_device_t	*sip = NULL;  
 	double			Results[RESULTS_MAX];
-	int				ResCount = 0;
+	int				ResCount = 0, sampling = 0, tries = 0;
 	char			DStatus[100];
 	float			delta = 0.01f;
 	char			*vmuMsg1 = "Lag v/Micr", *vmuMsg2 = "";
@@ -765,12 +781,15 @@ void SIPLagTest()
 	DStatus[0] = 0x0;
 	back = LoadKMG("/rd/back.kmg.gz", 0);
 	if(!back)
+	{
+		cleanSIPlag();
 		return;
+	}
 
 	wave = LoadKMG("/rd/1khz.kmg.gz", 0);
 	if(!wave)
 	{
-		FreeImage(&back);
+		cleanSIPlag();
 		return;
 	}
 	wave->alpha = 0.05f;
@@ -778,17 +797,15 @@ void SIPLagTest()
 	beep = snd_sfx_load("/rd/Sample.wav");
 	if(!beep)
 	{
-		FreeImage(&back);
-		FreeImage(&wave);
+		cleanSIPlag();
 		return;
 	}
 
+	memset(&rec_buffer, 0, sizeof(struct recording));
 	rec_buffer.buffer = malloc(sizeof(uint8)*BUFFER_SIZE);
 	if(!rec_buffer.buffer)
 	{
-		if(beep != SFXHND_INVALID)
-			snd_sfx_unload(beep);
-		FreeImage(&back);
+		cleanSIPlag();
 		return;
 	}
 	rec_buffer.size = sizeof(uint8)*BUFFER_SIZE;
@@ -800,23 +817,67 @@ void SIPLagTest()
 	if(!sip)
 	{
 		DrawMessage("No #YSIP Microphone#Y found");
+		cleanSIPlag();
 		return;
 	}
 
-	sip_set_gain(sip, SIP_MAX_GAIN); // SIP_DEFAULT_GAIN  
-	sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED); 
-	sip_set_frequency(sip, SIP_SAMPLE_11KHZ); // 11.025kHz
-		
-	if(sip_start_sampling(sip, sip_copy, 1) == MAPLE_EOK)
+	if(sip_set_gain(sip, SIP_MAX_GAIN) != MAPLE_EOK) // SIP_DEFAULT_GAIN  
 	{
-#ifdef DEBUG_FFT
-		dbglog(DBG_INFO, "Mic ok\n");
-#endif
+		DrawMessage("Could not set SIP gain");
+		cleanSIPlag();
+		return;
 	}
-	else
+	if(sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED) != MAPLE_EOK)
 	{
-		dbglog(DBG_CRITICAL, "Mic Recording: Failed\n");
-		done = 1;
+		DrawMessage("Could not set SIP sample type");
+		cleanSIPlag();
+		return;
+	}
+	if(sip_set_frequency(sip, SIP_SAMPLE_11KHZ) != MAPLE_EOK) // 11.025kHz
+	{
+		DrawMessage("Could not set SIP sample frequency");
+		cleanSIPlag();
+		return;
+	}
+
+	do
+	{
+		int sipretval = 0;
+		
+		sipretval = sip_start_sampling(sip, sip_copy, 1);
+		if(sipretval == MAPLE_EOK)
+		{
+#ifdef DEBUG_FFT
+			dbglog(DBG_INFO, "Mic ok\n");
+#endif
+			sampling = 1;
+		}
+		if(sipretval == MAPLE_ETIMEOUT)
+		{
+#ifdef DEBUG_FFT
+			dbglog(DBG_INFO, "Mic timed out\n");
+#endif
+		}
+		if(sipretval == MAPLE_EAGAIN)
+		{
+#ifdef DEBUG_FFT
+			dbglog(DBG_INFO, "Mic asked for retry\n");
+#endif
+		}
+		if(sipretval == MAPLE_EFAIL)
+		{
+			DrawMessage("Mic Recording Failed, already sampling");
+			cleanSIPlag();
+			return;
+		}
+		tries ++;
+	}while(!sampling && tries < 10);
+	
+	if(!sampling)
+	{
+		DrawMessage("Mic Recording Failed");
+		cleanSIPlag();
+		return;
 	}
 
 	sprintf(DStatus, "Press A");
@@ -1004,8 +1065,24 @@ void SIPLagTest()
 		}
 	}
 
-	if(sip)
-		sip_stop_sampling(sip, 0);
+	sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+	if(sip && sampling)
+	{
+		int sipretval = 0;
+		
+		tries = 0;
+		do
+		{	
+			sipretval = sip_stop_sampling(sip, 1);
+#ifdef DEBUG_FFT
+			if(sipretval == MAPLE_EAGAIN)
+				dbglog(DBG_ERROR, "Got MAPLE_EAGAIN from sip_stop_sampling, retrying\n");
+			else if(sipretval != MAPLE_EOK)
+				dbglog(DBG_ERROR, "Got %d from sip_stop_sampling\n", sipretval);
+#endif
+			tries++;
+		}while(sipretval == MAPLE_EAGAIN && tries < 100);
+	}
 
 	if(rec_buffer.size)
 	{
@@ -1027,9 +1104,9 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 {
 	long		  	samplesize = 0, arraysize = 0;	
 	long		  	i = 0, f = 0, framesizernd = 0; 
-	double		  	*in, root = 0, framesize = 0;  
+	double		  	*in = NULL, root = 0, framesize = 0;  
 	double		  	*MaxFreqArray = NULL;
-	fftw_complex  	*out;
+	fftw_complex  	*out = NULL;
 	fftw_plan		p = NULL;
 	double	  		mins, maxs;
 	double			boxsize = 0;
@@ -1191,11 +1268,14 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	dbglog(DBG_INFO, "Processing frequencies took %"PRIu64" ms\n", time);
 #endif
 
-	free(MaxFreqArray);
+	if(MaxFreqArray)
+		free(MaxFreqArray);
 	MaxFreqArray = NULL;  
 	
-	fftw_free(in); 
-	fftw_free(out);
+	if(in)
+		fftw_free(in); 
+	if(out)
+		fftw_free(out);
 	return(value);
 }
 

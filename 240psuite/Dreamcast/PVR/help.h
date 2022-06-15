@@ -63,6 +63,7 @@ extern char *HelpData;
 #define MDFOURIERHELP	"/rd/help/mdfourier.txt"
 #define MAPLEHELP		"/rd/help/maple.txt"
 #define CONTROLHELP		"/rd/help/controller.txt"
+#define ISPHELP		"/rd/help/ISP.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);

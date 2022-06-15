@@ -847,9 +847,8 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		DrawImage(title);
 		DrawImage(sd);
 
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Maple Device List"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++; 
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
 		if(isVMUPresent())
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VMU Test"); y += fh; c++;    
@@ -858,20 +857,36 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		{
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "VMU Test"); y += fh; c++;    
 		}
-
+		if(isLightGunPresent())
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Light Gun Test"); y += fh; c++;    
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Light Gun Test"); y += fh; c++;    
+		}
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Show ISP Data"); y += fh; c++; 
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++; 
+		
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; c++;
 
 		y += fh;
 		c = DrawFooter(x, y, sel, c, 0);
 		
-		if(sel == 4 && !isVMUPresent())
+		if(sel == 3 && !isVMUPresent())
 		{
 			if(isMemCardPresent())
-				DrawStringS(x-15, y + 5*fh, 0.8f, 0.8f, 0.8f,
+				DrawStringS(x-15, y + 3*fh, 0.8f, 0.8f, 0.8f,
 					"You need a VMU with LCD to use this test");
 			else
-				DrawStringS(x-15, y + 5*fh, 0.8f, 0.8f, 0.8f,
+				DrawStringS(x-15, y + 3*fh, 0.8f, 0.8f, 0.8f,
 					"You need a VMU to use this test");
+		}
+		
+		if(sel == 4 && !isLightGunPresent())
+		{
+			DrawStringS(x-15, y + 3*fh, 0.8f, 0.8f, 0.8f,
+				"You need a Light Gun to use this test");
 		}
 		
 		EndScene();
@@ -905,28 +920,34 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 			switch(sel)
 			{
 				case 1:
-					ControllerTest();
-					break;
-				case 2:
 					ListMapleDevices();
 					break;
-				case 3:
-					MemoryViewer(0);
+				case 2:
+					ControllerTest();
 					break;
-				case 4:
+				case 3:
 					VMUControllerTest();
 					break;
+				case 4:
+					LightGunTest();
+					break;
 				case 5:
-					done = 1;
+					Show_ISP_Data();
 					break;
 				case 6:
-					ShowMenu(GENERALHELP);
+					MemoryViewer(0);
 					break;
 				case 7:
+					done = 1;
+					break;
+				case 8:
+					ShowMenu(GENERALHELP);
+					break;
+				case 9:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 8:
+				case 10:
 					TestVideoMode(vmode);
 					break;
 #endif
