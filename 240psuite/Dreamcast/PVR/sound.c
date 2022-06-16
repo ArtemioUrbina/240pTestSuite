@@ -178,7 +178,7 @@ char	*stream_samples = NULL;
 char	stream_buffer[SND_STREAM_BUFFER_MAX];
 int		stream_samples_size = 0;
 int		stream_pos = 0;
-int		stream_samplerate = 48000;
+int		stream_samplerate = 44100;
 
 void *mdf_callback(__attribute__((unused))snd_stream_hnd_t hnd, int smp_req, int *smp_recv)
 {
@@ -633,10 +633,11 @@ void AudioSyncTest()
 
 #ifndef NO_FFTW
 
+#define	SEARCH_1KHZ			1000
 #define CUE_FRAMES			5
 #define SECONDS_TO_RECORD	2
 #define RESULTS_MAX			10
-#define BUFFER_SIZE			50000	// we need around 45k only
+#define BUFFER_SIZE			50000	// we need around 44100 only for 2 seconds, or 45016 in PAL
 #define	FFT_OM				-5000
 #define	FFT_NOT_FOUND		-500
 
@@ -644,19 +645,20 @@ void AudioSyncTest()
 typedef struct recording {
 	uint8	*buffer;
 	size_t	size;
-	int		pos;
+	size_t	pos;
 	uint8	overflow;
 	uint8	recording;
 } recording;
 
 recording rec_buffer;
 
-void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, double *Results, int ResCount, int showframes)
+void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, double *Results, int ResCount, int showframes, double samplerate)
 {
 	int		i = 0;
 	char	DPres[40];
 	char	Header[40];
 	char	Res[40];
+	char	sr[40];
 
 	StartScene();
 	DrawImage(back);
@@ -672,9 +674,9 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 	else
 	{
 		if(accuracy == 1)
-			sprintf(DPres, "Frame accuracy: 1 frame 16.67ms");
+			sprintf(DPres, "Frame accuracy: 1 frame %gms", IsPAL ? 20.0 : 16.6835);
 		else
-			sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 16.6667/accuracy);
+			sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, (IsPAL ? 20.0:16.6835)/accuracy);
 	}
 
 	DrawStringSCentered(60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone & Fast Fourier Transform"); 
@@ -685,6 +687,8 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 		DrawStringS(38, 180, 1.0f, 1.0f, 1.0f, "Press X to toggle to milliseconds");
 	DrawStringS(38, 190, 1.0f, 1.0f, 1.0f, "Press Y to toggle loop mode");
 	DrawStringS(120, 200, 0.0f, 1.0f, 0.0f, DPres);
+	sprintf(sr, "#CSR:#C%ghz", samplerate);
+	DrawStringS(40, 200, 1.0f, 1.0f, 1.0f, sr);
 
 	if(ResCount)
 	{
@@ -706,7 +710,7 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 				if(showframes)
 					sprintf(Res, "#G%.2d#G Lag was #C%g#C frames", i, Results[i-1]);
 				else
-					sprintf(Res, "#G%.2d#G Lag was #C%0.2f#C ms", i, Results[i-1]*16.666);
+					sprintf(Res, "#G%.2d#G Lag was #C%0.2f#C ms", i, Results[i-1]*(IsPAL ? 20.0 : 16.6835));
 			}
 			DrawStringS(164, 80+i*fh, 1.0f, 1.0f, 1.0f, Res);
 		}
@@ -737,7 +741,7 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 	if(rec_buffer.overflow)
 		return;
 
-	if(len > (rec_buffer.size - (size_t)rec_buffer.pos))
+	if(len > (rec_buffer.size - rec_buffer.pos))
 	{
 		rec_buffer.overflow = 1;
 #ifdef DEBUG_FFT
@@ -772,7 +776,7 @@ void SIPLagTest()
 	sfxhnd_t		beep = SFXHND_INVALID;  
 	controller		*st;
 	maple_device_t	*sip = NULL;  
-	double			Results[RESULTS_MAX];
+	double			Results[RESULTS_MAX], samplerate = 0;
 	int				ResCount = 0, sampling = 0, tries = 0;
 	char			DStatus[100];
 	float			delta = 0.01f;
@@ -795,7 +799,7 @@ void SIPLagTest()
 	wave->alpha = 0.05f;
 
 	beep = snd_sfx_load("/rd/Sample.wav");
-	if(!beep)
+	if(beep == SFXHND_INVALID)
 	{
 		cleanSIPlag();
 		return;
@@ -808,6 +812,7 @@ void SIPLagTest()
 		cleanSIPlag();
 		return;
 	}
+	memset(rec_buffer.buffer, 0, sizeof(uint8)*BUFFER_SIZE);
 	rec_buffer.size = sizeof(uint8)*BUFFER_SIZE;
 	rec_buffer.pos = 0;
 	rec_buffer.overflow = 0;
@@ -820,22 +825,100 @@ void SIPLagTest()
 		cleanSIPlag();
 		return;
 	}
+	/*
+		There are two types of SIP I've come across, the regular NTSC only and 
+		the NTSC/PAL one included in the DreamEye.
+		
+		According to their extra info, sample rates differ, and they did.
+		Select thd proper one based on function_data[0]
+		
+		==========
+		Regular:
+		==========
+			Functions     : 0x10000000  Function int 0: 0x0f000000
+			Function int 1: 0x00000000  Function int 2: 0x00000000
+			Region:         0x03        Connection:     0x01
+			Product Name & License: SoundInputPeripheral (S.I.P.)
+			  Produced By or Under License From SEGA ENTERPRISES,LTD.
+			Standby power: 0x012c (300mW) Max: 0x012c (300mW)
+			Extra data:
+			000 | 56 65 72 73 69 6f 6e 20 31 2e 30 30 30 2c 31 39 | Version 1.000,19
+			010 | 39 38 2f 30 35 2f 32 32 2c 33 31 35 2d 36 31 38 | 98/05/22,315-618
+			020 | 32 20 20 20 20 20 20 20 53 34 28 53 65 67 61 53 | 2       S4(SegaS
+			030 | 6f 75 6e 64 53 61 6d 70 6c 69 6e 67 53 79 73 74 | oundSamplingSyst
+			040 | 65 6d 29 2f 53 61 6d 70 6c 69 6e 67 52 61 74 65 | em)/SamplingRate
+			050 | 31 31 2e 30 32 35 37 6f 72 38 2e 30 38 35 6b 48 | 11.0257or8.085kH
+			060 | 7a 2f 42 69 74 31 34 6f 72 38 62 69 74 2f 4e 54 | z/Bit14or8bit/NT
+			070 | 53 43 20 6f 6e 6c 79 2f 43 6f 6e 73 75 6d 65 72 | SC only/Consumer
+			080 | 20 44 65 76 65 72 6f 70 6d 65 6e 74 20 26 20 4d |  Deveropment & M
+			090 | 61 6d 75 66 61 63 74 75 72 69 6e 67 20 44 49 56 | amufacturing DIV
+			0a0 | 2e 43 53 50 44 32 2d 33 20 20 20 20 00 00 00 00 | .CSPD2-3
+			0b0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			0c0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			0d0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			0e0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			End of Extra data
+		==========
+		DreamEye:
+		==========
+			Functions     : 0x10000000  Function int 0: 0x3f000000
+			Function int 1: 0x00000000  Function int 2: 0x00000000
+			Region:         0x0f        Connection:     0x01
+			Product Name & License: MicDevice for Dreameye
+			  Produced By or Under License From SEGA ENTERPRISES,LTD.
+			Standby power: 0x012c (300mW) Max: 0x012c (300mW)
+			Extra data:
+			000 | 56 65 72 73 69 6f 6e 20 31 2e 30 30 30 2c 32 30 | Version 1.000,20
+			010 | 30 30 2f 30 32 2f 32 34 2c 33 31 35 2d 36 31 38 | 00/02/24,315-618
+			020 | 32 41 20 20 20 20 20 20 53 34 31 28 53 65 67 61 | 2A      S41(Sega
+			030 | 53 6f 75 6e 64 53 61 6d 70 6c 69 6e 67 53 79 73 | SoundSamplingSys
+			040 | 74 65 6d 29 2f 53 61 6d 70 6c 69 6e 67 52 61 74 | tem)/SamplingRat
+			050 | 65 31 30 2e 39 30 39 30 6f 72 38 2e 30 30 30 6b | e10.9090or8.000k
+			060 | 48 7a 2f 42 69 74 31 34 6f 72 38 62 69 74 2f 4e | Hz/Bit14or8bit/N
+			070 | 54 53 43 2f 50 41 4c 2f 43 6f 6e 73 75 6d 65 72 | TSC/PAL/Consumer
+			080 | 20 44 65 76 65 72 6f 70 6d 65 6e 74 20 26 20 4d |  Deveropment & M
+			090 | 61 6d 75 66 61 63 74 75 72 69 6e 67 20 44 49 56 | amufacturing DIV
+			0a0 | 2e 43 53 52 44 20 20 20 20 20 20 20 00 00 00 00 | .CSRD
+			0b0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			0c0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			0d0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			0e0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			End of Extra data
+	*/
+
+	if(sip->info.function_data[0] & 0x30000000)		// Version 1.000, 2000/02/24,315-618
+		samplerate = 10909;
+	else
+	{
+		samplerate = 11025;
+		/*
+		// I tried it and it works....
+		if(IsPAL)
+		{
+			if(!AskQuestion("Your #YSIP#Y is for #CNTSC#C regions only,\nbehaviour is unknown. Proceed with test?"))
+			{
+				cleanSIPlag();
+				return;
+			}
+		}
+		*/
+	}
 
 	if(sip_set_gain(sip, SIP_MAX_GAIN) != MAPLE_EOK) // SIP_DEFAULT_GAIN  
 	{
-		DrawMessage("Could not set SIP gain");
+		DrawMessage("Could not set Microphone gain");
 		cleanSIPlag();
 		return;
 	}
 	if(sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED) != MAPLE_EOK)
 	{
-		DrawMessage("Could not set SIP sample type");
+		DrawMessage("Could not set Microphone sample type");
 		cleanSIPlag();
 		return;
 	}
-	if(sip_set_frequency(sip, SIP_SAMPLE_11KHZ) != MAPLE_EOK) // 11.025kHz
+	if(sip_set_frequency(sip, SIP_SAMPLE_11KHZ) != MAPLE_EOK) // 10909 or 11.025kHz
 	{
-		DrawMessage("Could not set SIP sample frequency");
+		DrawMessage("Could not set Microphone sample frequency");
 		cleanSIPlag();
 		return;
 	}
@@ -848,25 +931,25 @@ void SIPLagTest()
 		if(sipretval == MAPLE_EOK)
 		{
 #ifdef DEBUG_FFT
-			dbglog(DBG_INFO, "Mic ok\n");
+			dbglog(DBG_INFO, "Microphone ok\n");
 #endif
 			sampling = 1;
 		}
 		if(sipretval == MAPLE_ETIMEOUT)
 		{
 #ifdef DEBUG_FFT
-			dbglog(DBG_INFO, "Mic timed out\n");
+			dbglog(DBG_INFO, "Microphone timed out\n");
 #endif
 		}
 		if(sipretval == MAPLE_EAGAIN)
 		{
 #ifdef DEBUG_FFT
-			dbglog(DBG_INFO, "Mic asked for retry\n");
+			dbglog(DBG_INFO, "Microphone asked for retry\n");
 #endif
 		}
 		if(sipretval == MAPLE_EFAIL)
 		{
-			DrawMessage("Mic Recording Failed, already sampling");
+			DrawMessage("Microphone Recording Failed, already sampling\nTry reconnecting it");
 			cleanSIPlag();
 			return;
 		}
@@ -875,14 +958,14 @@ void SIPLagTest()
 	
 	if(!sampling)
 	{
-		DrawMessage("Mic Recording Failed");
+		DrawMessage("Microphone Recording Failed");
 		cleanSIPlag();
 		return;
 	}
 
 	sprintf(DStatus, "Press A");
 	while(!done && !EndProgram) 
-	{		
+	{	
 		if(status)
 		{
 			wave->alpha += delta;
@@ -898,7 +981,7 @@ void SIPLagTest()
 			}
 		}
 
-		DrawSIPScreen(back, wave, DStatus, accuracy, Results, ResCount, showframes);
+		DrawSIPScreen(back, wave, DStatus, accuracy, Results, ResCount, showframes, samplerate);
 		VMURefresh(vmuMsg1, vmuMsg2);
 
 		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
@@ -994,18 +1077,21 @@ void SIPLagTest()
 			sprintf(DStatus, "Stopped sampling");
 
 #ifdef DEBUG_FFT
-			dbglog(DBG_INFO, "Got %d bytes\n", (int)rec_buffer.pos);
+			dbglog(DBG_INFO, "Got %d bytes (%d 16 bit samples)\n", 
+					(int)rec_buffer.pos, (int)(rec_buffer.pos/2));
 #endif
 			if(rec_buffer.buffer && rec_buffer.pos > 0)
 			{
 				double value;
 
-				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount, showframes);
+				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount, showframes, samplerate);
 				vmuMsg1 = "Analyzing";
 				vmuMsg2 = "";
 				updateVMU(vmuMsg1, vmuMsg2, 1);
-				value = ProcessSamples((short*)rec_buffer.buffer, rec_buffer.pos/2,
-					11025, (IsPAL ? 50.0 : 60.0)*accuracy, 1000);
+				
+				// Mic sample rate can vary between models, see above comment
+				value = ProcessSamples((short*)rec_buffer.buffer, (int)(rec_buffer.pos/2),
+					samplerate, (IsPAL ? 50 : 60)*accuracy, SEARCH_1KHZ);
 				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
 				{
 					sprintf(DStatus, "#YNoise at 1khz#Y");
@@ -1032,11 +1118,11 @@ void SIPLagTest()
 					char vmtext[10];
 
 					sprintf(DStatus, "Lag is #C%g#C frames\n       #C%0.2f#C ms",
-						value, value*16.66);
+						value, value*(IsPAL ? 20.0 : 16.6835));
 					if(showframes)
 						sprintf(vmtext, "%g f", value);
 					else
-						sprintf(vmtext, "%g ms", value*16.66);
+						sprintf(vmtext, "%g ms", value*(IsPAL ? 20.0 : 16.6835));
 					vmuMsg1 = "Lag is:";
 					vmuMsg2 = vmtext;
 					updateVMU(vmuMsg1, vmuMsg2, 1);
@@ -1082,6 +1168,9 @@ void SIPLagTest()
 #endif
 			tries++;
 		}while(sipretval == MAPLE_EAGAIN && tries < 100);
+		
+		if(sipretval != MAPLE_EOK)
+			DrawMessage("Microphone recording could not be stopped");
 	}
 
 	if(rec_buffer.size)
@@ -1100,7 +1189,7 @@ void SIPLagTest()
 	return;
 }
 
-double ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq)
+double ProcessSamples(short *samples, size_t size, double samplerate, double secondunits, double searchfreq)
 {
 	long		  	samplesize = 0, arraysize = 0;	
 	long		  	i = 0, f = 0, framesizernd = 0; 
@@ -1125,8 +1214,8 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 	framesizernd = (long)framesize;  
 
 #ifdef DEBUG_FFT
-	dbglog(DBG_INFO, "Samples are at %lu Khz and %g seconds long. A Frame is %g samples.\n",
-					samplerate, (double)samplesize/samplerate, framesize);
+	dbglog(DBG_INFO, "Samples are at %g Khz and %g seconds long. A Frame is %g (%ld) samples.\n",
+					samplerate, (double)samplesize/samplerate, framesize, framesizernd);
 
 	start = timer_ms_gettime64();
 #endif
@@ -1148,8 +1237,9 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 		 fftw_free(out);
 		 return FFT_OM;
 	}
+	memset(MaxFreqArray, 0, sizeof(double)*(samplesize/framesize - 1));
 
-	boxsize = (double)arraysize/(double)samplerate;  
+	boxsize = (double)arraysize/samplerate;  
 	for(f = 0; f < samplesize/framesize - 1; f++)
 	{
 		double mainfreq = 0, max = 0;
@@ -1161,17 +1251,22 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 			in[i] = (double)samples[i+framestart];
 
 #ifdef DEBUG_FFT
-		dbglog(DBG_INFO, "Estimating plan\n");
+		//dbglog(DBG_INFO, "Estimating plan\n");
 #endif
 		p = fftw_plan_dft_r2c_1d(arraysize, in, out, FFTW_ESTIMATE);
-
+		if(!p)
+		{
+			fftw_free(in); 
+			fftw_free(out);
+			return FFT_OM;
+		}
 #ifdef DEBUG_FFT
-		dbglog(DBG_INFO, "Executing FFTW\n");
+		//dbglog(DBG_INFO, "Executing FFTW [%ld-%ld]\n", framestart, framestart+framesizernd);
 #endif
 		fftw_execute(p); 
 	
 #ifdef DEBUG_FFT
-		dbglog(DBG_INFO, "Analyzing results\n");
+		//dbglog(DBG_INFO, " Analyzing results from frame %ld\n", f);
 #endif
 		root = sqrt(arraysize);
 		for(i = 0; i < arraysize/2+1; i++)
@@ -1197,7 +1292,7 @@ double ProcessSamples(short *samples, size_t size, long samplerate, double secon
 #ifdef DEBUG_FFT
 	end = timer_ms_gettime64();
 	time = end - start;
-	dbglog(DBG_INFO, "FFT for %g frames took %"PRIu64"\n", samplesize/framesize - 1, time);
+	dbglog(DBG_INFO, "FFT for %d frames took %"PRIu64" ms\n", (int)(samplesize/framesize - 1), time);
 	start = end;
 #endif
 

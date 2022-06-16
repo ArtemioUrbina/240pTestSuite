@@ -737,7 +737,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 		if(sel == 4 && !sip)
 		{
 			DrawStringS(x-15, y + 6*fh, 0.8f, 0.8f, 0.8f,
-				"You need a SIP microphone to use this feature");
+				"You need a microphone to use this feature");
 		}
 #endif
 		y += fh;

@@ -27,7 +27,7 @@ void AudioSyncTest();
 void MDFourier();
 #ifndef NO_FFTW
 void SIPLagTest();
-double ProcessSamples(short *samples, size_t size, long samplerate, double secondunits, double searchfreq);
+double ProcessSamples(short *samples, size_t size, double samplerate, double secondunits, double searchfreq);
 #endif
 
 #endif
