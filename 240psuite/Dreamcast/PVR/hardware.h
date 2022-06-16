@@ -28,6 +28,7 @@ void MemoryViewer(uint32 address);
 void VMUControllerTest();
 int isLightGunPresent();
 void LightGunTest();
+void MicrophoneTest();
 
 int flashrom_get_region_country();
 int flashrom_get_region_language();

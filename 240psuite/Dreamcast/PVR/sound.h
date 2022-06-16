@@ -25,10 +25,43 @@
 void SoundTest();
 void AudioSyncTest();
 void MDFourier();
+
+int isSIPPresent();
+
 #ifndef NO_FFTW
+
+#define	SEARCH_1KHZ			1000
+#define CUE_FRAMES			5
+#define SECONDS_TO_RECORD	2
+#define RESULTS_MAX			10
+#define SIP_BUFFER_SIZE		50000	// we need around 44100 only for 2 seconds, or 45016 in PAL
+#define	FFT_OM				-5000
+#define	FFT_NOT_FOUND		-500
 void SIPLagTest();
 double ProcessSamples(short *samples, size_t size, double samplerate, double secondunits, double searchfreq);
 #endif
+
+typedef struct sip_recording_st {
+	uint8	*buffer;
+	size_t	size;
+	size_t	pos;
+	uint8	overflow;
+	uint8	recording;
+} sip_samples;
+
+extern sip_samples rec_buffer;
+void CleanRecordBuffer();
+
+// These need to be global for the callback to work
+extern char		*stream_samples;
+extern char		stream_buffer[SND_STREAM_BUFFER_MAX];
+extern int		stream_samples_size;
+extern int		stream_pos;
+extern int		stream_samplerate;
+
+void *sound_callback(snd_stream_hnd_t hnd, int smp_req, int *smp_recv);
+void CleanStreamSamples();
+void sip_copy(maple_device_t *dev, uint8 *samples, size_t len);
 
 #endif
 

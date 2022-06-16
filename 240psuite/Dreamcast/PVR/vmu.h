@@ -29,6 +29,7 @@ void updateVMUFlash(char *line1, char*line2, int force);
 void updateVMUGraphic(char **xpm);
 void updateVMU_Donna();
 void updateVMU_SD();
+void updateVMU_wait();
 void SD_blink_cycle();
 void disableVMU_LCD();
 void enableVMU_LCD();

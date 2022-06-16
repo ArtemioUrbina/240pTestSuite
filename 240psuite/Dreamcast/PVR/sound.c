@@ -44,6 +44,16 @@
 
 int zlib_getlength(char *filename);
 
+int isSIPPresent()
+{
+	maple_device_t	*sip = NULL;  
+	
+	sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+	if(!sip)
+		return 0;
+	return 1;
+}
+
 void SoundTest()
 {
 	int 				done = 0, sel = 1, play = 0, pan = 128;
@@ -180,7 +190,7 @@ int		stream_samples_size = 0;
 int		stream_pos = 0;
 int		stream_samplerate = 44100;
 
-void *mdf_callback(__attribute__((unused))snd_stream_hnd_t hnd, int smp_req, int *smp_recv)
+void *sound_callback(__attribute__((unused))snd_stream_hnd_t hnd, int smp_req, int *smp_recv)
 {
 	int	bytes_to_copy = smp_req;
 	
@@ -255,6 +265,7 @@ int LoadGZMDFSamples()
 #ifdef BENCHMARK
 	start = timer_ms_gettime64();
 #endif
+	updateVMU_wait();
 	DrawMessageOnce("Please wait while samples are loaded\n#G(about 10 seconds)#G");
 	
 	file = gzopen(filename, "r");
@@ -304,7 +315,7 @@ void MDFourier()
 	uint16				pressed;		
 	ImagePtr			back, layer;
 	controller			*st = NULL;
-	snd_stream_hnd_t 	hnd;
+	snd_stream_hnd_t 	hnd = SND_STREAM_INVALID;
 
 	back = LoadKMG("/rd/back.kmg.gz", 0);
 	if(!back)
@@ -327,7 +338,7 @@ void MDFourier()
 	}
 	sprintf(vmsg, " %d hz", stream_samplerate);
 	
-	hnd = snd_stream_alloc(mdf_callback, SND_STREAM_BUFFER_MAX);
+	hnd = snd_stream_alloc(sound_callback, SND_STREAM_BUFFER_MAX);
 	if(hnd == SND_STREAM_INVALID)
 	{
 		CleanStreamSamples();
@@ -633,24 +644,20 @@ void AudioSyncTest()
 
 #ifndef NO_FFTW
 
-#define	SEARCH_1KHZ			1000
-#define CUE_FRAMES			5
-#define SECONDS_TO_RECORD	2
-#define RESULTS_MAX			10
-#define BUFFER_SIZE			50000	// we need around 44100 only for 2 seconds, or 45016 in PAL
-#define	FFT_OM				-5000
-#define	FFT_NOT_FOUND		-500
+sip_samples rec_buffer = { NULL, 0, 0, 0, 0 };
 
-
-typedef struct recording {
-	uint8	*buffer;
-	size_t	size;
-	size_t	pos;
-	uint8	overflow;
-	uint8	recording;
-} recording;
-
-recording rec_buffer;
+void CleanRecordBuffer()
+{
+	if(rec_buffer.size)
+	{
+		free(rec_buffer.buffer);
+		rec_buffer.buffer = NULL;
+	}
+	rec_buffer.size = 0;
+	rec_buffer.pos = 0;
+	rec_buffer.overflow = 0;
+	rec_buffer.recording = 0;
+}
 
 void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, double *Results, int ResCount, int showframes, double samplerate)
 {
@@ -739,7 +746,13 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 	}
 	
 	if(rec_buffer.overflow)
+	{
+		rec_buffer.overflow++;
+#ifdef DEBUG_FFT
+		dbglog(DBG_CRITICAL, "Prevented buffer overflow #%d\n", rec_buffer.overflow);
+#endif
 		return;
+	}
 
 	if(len > (rec_buffer.size - rec_buffer.pos))
 	{
@@ -755,21 +768,16 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 }
 
 #define cleanSIPlag() \
-	if(rec_buffer.size)\
-	{\
-		free(rec_buffer.buffer);\
-		rec_buffer.size = 0;\
-		rec_buffer.pos = 0;\
-	}\
-	if(beep != SFXHND_INVALID)\
-		snd_sfx_unload(beep);\
+	CleanRecordBuffer();\
 	if(back) FreeImage(&back);\
 	if(wave) FreeImage(&wave);\
+	if(beep != SFXHND_INVALID)\
+		snd_sfx_unload(beep);\
 	fftw_cleanup();
 
 void SIPLagTest()
 {
-	int				done = 0, status = 0, counter = 0;
+	int				done = 0, state_machine = 0, frame_counter = 0;
 	int				showframes = 0, accuracy = 1, cycle = 0;
 	uint16			pressed;		
 	ImagePtr		back = NULL, wave = NULL;
@@ -805,15 +813,15 @@ void SIPLagTest()
 		return;
 	}
 
-	memset(&rec_buffer, 0, sizeof(struct recording));
-	rec_buffer.buffer = malloc(sizeof(uint8)*BUFFER_SIZE);
+	memset(&rec_buffer, 0, sizeof(struct sip_recording_st));
+	rec_buffer.buffer = malloc(sizeof(uint8)*SIP_BUFFER_SIZE);
 	if(!rec_buffer.buffer)
 	{
 		cleanSIPlag();
 		return;
 	}
-	memset(rec_buffer.buffer, 0, sizeof(uint8)*BUFFER_SIZE);
-	rec_buffer.size = sizeof(uint8)*BUFFER_SIZE;
+	memset(rec_buffer.buffer, 0, sizeof(uint8)*SIP_BUFFER_SIZE);
+	rec_buffer.size = sizeof(uint8)*SIP_BUFFER_SIZE;
 	rec_buffer.pos = 0;
 	rec_buffer.overflow = 0;
 	rec_buffer.recording = 0;
@@ -966,7 +974,7 @@ void SIPLagTest()
 	sprintf(DStatus, "Press A");
 	while(!done && !EndProgram) 
 	{	
-		if(status)
+		if(state_machine)
 		{
 			wave->alpha += delta;
 			if(wave->alpha > 0.6f)
@@ -994,7 +1002,7 @@ void SIPLagTest()
 		st = ReadController(0, &pressed);
 		if(st) 
 		{
-			if(status == 0) // these are not allowed while sampling
+			if(state_machine == 0) // these are not allowed while sampling
 			{
 				if (pressed & CONT_START)
 					ShowMenu(FFTHELP);
@@ -1003,7 +1011,7 @@ void SIPLagTest()
 					done = 1;
 
 				if (pressed & CONT_A)
-					status = 1;
+					state_machine = 1;
 
 				if (pressed & CONT_RTRIGGER)
 					accuracy *= 2;
@@ -1024,24 +1032,24 @@ void SIPLagTest()
 			if (pressed & CONT_X)
 				showframes = !showframes;
 
-			if(cycle && !status)
-				status = 1;
+			if(cycle && !state_machine)
+				state_machine = 1;
 		}
 
-		if(status == 2 || status == 4)
+		if(state_machine == 2 || state_machine == 4)
 		{
 			// frame accurate sampling
-			if(status == 2 && counter == CUE_FRAMES && !rec_buffer.recording)
+			if(state_machine == 2 && frame_counter == CUE_FRAMES && !rec_buffer.recording)
 				rec_buffer.recording = 1;
 
-			counter --;
-			if(!counter)
-				status++;
+			frame_counter --;
+			if(!frame_counter)
+				state_machine++;
 			
-			if(status == 4)
+			if(state_machine == 4)
 			{
-				sprintf(DStatus, "Recording Frame: %d", SECONDS_TO_RECORD*(IsPAL ? 50 : 60) - counter);
-				if(counter == 1)
+				sprintf(DStatus, "Recording Frame: %d", SECONDS_TO_RECORD*(IsPAL ? 50 : 60) - frame_counter);
+				if(frame_counter == 1)
 					rec_buffer.recording = 0;
 
 				if(rec_buffer.pos == 0)
@@ -1049,7 +1057,7 @@ void SIPLagTest()
 					sprintf(DStatus, "#YPlease remove and reinsert Microphone#Y");
 					cycle = 0;
 					rec_buffer.recording = 0;
-					status = 0;
+					state_machine = 0;
 					
 					vmuMsg1 = "Reinsert";
 					vmuMsg2 = "micro";
@@ -1058,21 +1066,21 @@ void SIPLagTest()
 			}
 		}
 
-		if(status == 1 && sip)
+		if(state_machine == 1 && sip)
 		{
 			sprintf(DStatus, "Starting");
-			status = 2;
-			counter = CUE_FRAMES;
+			state_machine = 2;
+			frame_counter = CUE_FRAMES;
 		}
 
-		if(status == 3 && beep != SFXHND_INVALID)
+		if(state_machine == 3 && beep != SFXHND_INVALID)
 		{
 			snd_sfx_play(beep, 255, 128);
-			status = 4;
-			counter = SECONDS_TO_RECORD*(IsPAL ? 50 : 60); // record N seconds + CUE frames
+			state_machine = 4;
+			frame_counter = SECONDS_TO_RECORD*(IsPAL ? 50 : 60); // record N seconds + CUE frames
 		}
 		
-		if(status == 5)
+		if(state_machine == 5)
 		{
 			sprintf(DStatus, "Stopped sampling");
 
@@ -1147,14 +1155,14 @@ void SIPLagTest()
 			}
 
 			rec_buffer.pos = 0;
-			status = 0;
+			state_machine = 0;
 		}
 	}
 
 	sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
 	if(sip && sampling)
 	{
-		int sipretval = 0;
+		int sipretval = 0, retries = 0;
 		
 		tries = 0;
 		do
@@ -1162,30 +1170,23 @@ void SIPLagTest()
 			sipretval = sip_stop_sampling(sip, 1);
 #ifdef DEBUG_FFT
 			if(sipretval == MAPLE_EAGAIN)
-				dbglog(DBG_ERROR, "Got MAPLE_EAGAIN from sip_stop_sampling, retrying\n");
+			{
+				retries	++;
+				timer_spin_sleep(10);
+			}
 			else if(sipretval != MAPLE_EOK)
 				dbglog(DBG_ERROR, "Got %d from sip_stop_sampling\n", sipretval);
 #endif
 			tries++;
 		}while(sipretval == MAPLE_EAGAIN && tries < 100);
 		
+		if(retries)
+			dbglog(DBG_ERROR, "Got MAPLE_EAGAIN %d times from sip_stop_sampling\n", retries);
 		if(sipretval != MAPLE_EOK)
-			DrawMessage("Microphone recording could not be stopped");
+			dbglog(DBG_ERROR, "Microphone recording could not be stopped\n");
 	}
 
-	if(rec_buffer.size)
-	{
-		free(rec_buffer.buffer);
-		rec_buffer.size = 0;
-		rec_buffer.pos = 0;
-	}
-
-	if(beep != SFXHND_INVALID)
-		snd_sfx_unload(beep);
-	FreeImage(&wave);
-	FreeImage(&back);
-
-	fftw_cleanup();  
+	cleanSIPlag();
 	return;
 }
 

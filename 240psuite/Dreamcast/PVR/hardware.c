@@ -35,6 +35,7 @@
 #include "menu.h"
 
 #include "hardware.h"
+#include "sound.h"
 
 char	flashrom_region_cache[FLASHROM_CACHE_SIZE] = { 0 };
 int		flashrom_is_cached = 0;
@@ -1623,6 +1624,306 @@ int isLightGunPresent()
 	return 1;
 }
 
+#define cleanSIPtest() \
+	if(back) FreeImage(&back);\
+	CleanRecordBuffer();\
+	CleanStreamSamples();
+
+#define MAX_SECONDS_RECORD	10
+void MicrophoneTest()
+{
+	int					done = 0, samplerate = 0, play = 0;
+	int					sampling = 0, tries = 0, state_machine = 0;
+	int					frame_counter = 0, seconds_record = 5, seconds_in_buffer = 0;
+	size_t				recoding_size = 0;
+	uint16				pressed;
+	controller			*st;
+	maple_device_t		*sip = NULL; 
+	ImagePtr			back = NULL;
+	snd_stream_hnd_t 	hnd = SND_STREAM_INVALID;
+	char				*vmuMsg1 = "Mic Test", *vmuMsg2 = "", msg[128];
+	
+	sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+	if(!sip)
+		return;
+		
+	back = LoadKMG("/rd/back.kmg.gz", 0);
+	if(!back)
+	{
+		cleanSIPtest();
+		return;
+	}
+		
+	if(sip->info.function_data[0] & 0x30000000)		// Version 1.000, 2000/02/24,315-618
+		samplerate = 10909;
+	else
+		samplerate = 11025;
+	
+	memset(&rec_buffer, 0, sizeof(struct sip_recording_st));
+	
+	recoding_size = samplerate*2*(MAX_SECONDS_RECORD+1);
+	rec_buffer.buffer = (uint8*)malloc(sizeof(uint8)*recoding_size);
+	if(!rec_buffer.buffer)
+	{
+		cleanSIPtest();
+		return;
+	}
+	rec_buffer.size = sizeof(uint8)*recoding_size;
+	rec_buffer.pos = 0;
+	rec_buffer.overflow = 0;
+	rec_buffer.recording = 0;
+		
+	if(sip_set_gain(sip, SIP_MAX_GAIN) != MAPLE_EOK) // SIP_DEFAULT_GAIN  
+	{
+		DrawMessage("Could not set Microphone gain");
+		cleanSIPtest();
+		return;
+	}
+	if(sip_set_sample_type(sip, SIP_SAMPLE_16BIT_SIGNED) != MAPLE_EOK)
+	{
+		DrawMessage("Could not set Microphone sample type");
+		cleanSIPtest();
+		return;
+	}
+	if(sip_set_frequency(sip, SIP_SAMPLE_11KHZ) != MAPLE_EOK) // 10909 or 11.025kHz
+	{
+		DrawMessage("Could not set Microphone sample frequency");
+		cleanSIPtest();
+		return;
+	}
+	
+	do
+	{
+		int sipretval = 0;
+		
+		sipretval = sip_start_sampling(sip, sip_copy, 1);
+		if(sipretval == MAPLE_EOK)
+		{
+#ifdef DEBUG_FFT
+			dbglog(DBG_INFO, "Microphone ok\n");
+#endif
+			sampling = 1;
+		}
+		if(sipretval == MAPLE_ETIMEOUT)
+		{
+#ifdef DEBUG_FFT
+			dbglog(DBG_INFO, "Microphone timed out\n");
+#endif
+		}
+		if(sipretval == MAPLE_EAGAIN)
+		{
+#ifdef DEBUG_FFT
+			dbglog(DBG_INFO, "Microphone asked for retry\n");
+#endif
+		}
+		if(sipretval == MAPLE_EFAIL)
+		{
+			DrawMessage("Microphone Recording Failed, already sampling\nTry reconnecting it");
+			cleanSIPtest();
+			return;
+		}
+		tries ++;
+	}while(!sampling && tries < 10);
+	
+	if(!sampling)
+	{
+		DrawMessage("Microphone Recording Failed");
+		cleanSIPtest();
+		return;
+	}
+	
+	CleanStreamSamples();
+	hnd = snd_stream_alloc(sound_callback, SND_STREAM_BUFFER_MAX);
+	if(hnd == SND_STREAM_INVALID)
+	{
+		cleanSIPtest();
+		DrawMessage("Could not get SPU stream");
+		return;
+	}
+	stream_samples_size = samplerate*2*MAX_SECONDS_RECORD; // 16 bit samples
+	stream_samples = (char*)malloc(sizeof(char)*stream_samples_size);
+	if(!stream_samples) 
+	{
+		DrawMessage("Out of Memory");
+		cleanSIPtest();
+		return;
+	}
+	
+	stream_samplerate = samplerate;
+	snd_stream_volume(hnd, 255);
+	
+	while(!done && !EndProgram) 
+	{
+		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+		if(!sip)
+		{
+			DrawMessage("#YSIP Microphone#Y disconnected");
+			done = 1;
+		}
+		
+		StartScene();
+		DrawImage(back);
+		DrawStringSCentered(80, 0.0f, 1.0f, 0.0f, "Microphone Test");
+		
+		if(state_machine != 1)
+		{
+			if(!play)
+				DrawStringSCentered(90, 1.0f, 1.0f, 1.0f, "Press #CX#C to record");
+			else
+				DrawStringSCentered(90, 1.0f, 1.0f, 0.0f, "Please wait...");
+		}
+		
+		if(state_machine == 1)
+		{
+			sprintf(msg, "Recording please wait... (%d)", frame_counter);
+			DrawStringSCentered(90, 1.0f, 1.0f, 0.0f, msg);
+		}
+
+		if(rec_buffer.pos != 0 && state_machine != 1)
+		{
+			if(!play)
+				DrawStringSCentered(90+fh, 1.0f, 1.0f, 1.0f, "Press #CA#C to play");
+			else
+			{
+				sprintf(msg, "Playing... (%d)", frame_counter);
+				DrawStringSCentered(90+fh, 1.0f, 1.0f, 0.0f, msg);
+			}
+		}
+		
+		sprintf(msg, "Seconds to record: %.2d", seconds_record);
+		DrawStringSCentered(90+5*fh, 1.0f, 1.0f, 1.0f, msg);
+		EndScene();
+		
+		VMURefresh(vmuMsg1, vmuMsg2);
+		
+		if(frame_counter)
+		{
+			frame_counter--;
+			if(state_machine == 1 && rec_buffer.pos == 0)
+			{
+				rec_buffer.recording = 0;
+				state_machine = 0;
+				frame_counter = 0;
+				
+				vmuMsg1 = "Reinsert";
+				vmuMsg2 = "micro";
+				refreshVMU = 1;
+				done = 2;
+			}
+			
+			if(play && frame_counter == 0)
+				snd_stream_stop(hnd);
+			
+			if(play)
+				snd_stream_poll(hnd);
+			
+			if(play && frame_counter == 0)
+				play = 0;
+		}
+		
+		st = ReadController(0, &pressed);
+		if(st) 
+		{
+			if(state_machine != 1 && !play) // these are not allowed while sampling
+			{
+				if (pressed & CONT_START)
+				{
+					snd_stream_stop(hnd);
+					stream_pos = stream_samples_size;
+					ShowMenu(MICTESTHELP);
+				}
+
+				if (pressed & CONT_X)
+				{
+					memset(rec_buffer.buffer, 0, sizeof(uint8)*recoding_size);
+					
+					state_machine = 1;
+					frame_counter = seconds_record*(IsPAL ? 50 : 60);
+					rec_buffer.overflow = 0;
+					rec_buffer.pos = 0;
+					rec_buffer.recording = 1;
+				}
+				
+				if (pressed & CONT_DPAD_DOWN)
+					seconds_record -= 1;
+					
+				if (pressed & CONT_DPAD_UP)
+					seconds_record += 1;
+				
+				if(seconds_record < 1)
+					seconds_record = 1;
+				if(seconds_record > MAX_SECONDS_RECORD)
+					seconds_record = MAX_SECONDS_RECORD;
+			}
+			
+			if(state_machine == 2)
+			{
+				if(pressed & CONT_A && !play)
+				{
+					memset(stream_samples, 0, sizeof(char)*stream_samples_size);
+					memcpy(stream_samples, rec_buffer.buffer, sizeof(uint8)*rec_buffer.pos);
+
+					frame_counter = seconds_in_buffer*(IsPAL ? 50 : 60);
+					stream_pos = 0;
+					play = 1;
+					
+					snd_stream_start(hnd, stream_samplerate, 0);
+				}
+			}
+			
+			if(pressed & CONT_B)
+				done = 1;
+		}
+		
+		if(state_machine == 1 && frame_counter == 0)
+		{
+			state_machine = 2;
+			rec_buffer.recording = 0;
+			seconds_in_buffer = seconds_record;
+#ifdef DCLOAD
+			dbglog(DBG_INFO, "Recording stopped, got %d bytes (%d 16 bit samples)\n", 
+					(int)rec_buffer.pos, (int)(rec_buffer.pos/2));
+#endif
+		}
+			
+	}
+	
+	snd_stream_stop(hnd);
+	snd_stream_destroy(hnd);
+	
+	sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
+	if(sip && sampling)
+	{
+		int sipretval = 0, retries = 0;
+		
+		tries = 0;
+		do
+		{	
+			sipretval = sip_stop_sampling(sip, 1);
+#ifdef DEBUG_FFT
+			if(sipretval == MAPLE_EAGAIN)
+			{
+				retries	++;
+				timer_spin_sleep(10);
+			}
+			else if(sipretval != MAPLE_EOK)
+				dbglog(DBG_ERROR, "Got %d from sip_stop_sampling\n", sipretval);
+#endif
+			tries++;
+		}while(sipretval == MAPLE_EAGAIN && tries < 100);
+		
+		if(retries)
+			dbglog(DBG_ERROR, "Got MAPLE_EAGAIN %d times from sip_stop_sampling\n", retries);
+		if(sipretval != MAPLE_EOK && done != 2)
+			dbglog(DBG_ERROR, "Microphone recording could not be stopped\n");
+	}
+	if(done == 2)
+		DrawMessage("#YPlease remove and reinsert Microphone#Y");
+	cleanSIPtest();
+	
+	return;
+}
+
 void LightGunTest()
 {
 	int 		done = 0, gun = 0, x = 0, y = 0;
@@ -1861,7 +2162,7 @@ void Show_ISP_Data()
 	int 			done = 0, oldvmode = -1, joycnty = 0, joycntx = 0, fillbuffer = 1;
 	int				v_scroll = 0, h_scroll = 0, lines = 0, ignoreflags = 0;
 	uint16			pressed;		
-	ImagePtr		black = NULL;
+	ImagePtr		back = NULL;
 	controller		*st = NULL;
 
 	if(display_buffer)
@@ -1870,8 +2171,8 @@ void Show_ISP_Data()
 		return;
 	}
 	
-	black = LoadKMG("/rd/wallisp.kmg.gz", 0);
-	if(!black)
+	back = LoadKMG("/rd/wallisp.kmg.gz", 0);
+	if(!back)
 		return;
 	
 	display_buffer = (char*)malloc(sizeof(char)*MAPLE_BUFFER_CHAR);
@@ -1915,7 +2216,7 @@ void Show_ISP_Data()
 		}
 
 		StartScene();
-		DrawImage(black);
+		DrawImage(back);
 		if(!ignoreflags)
 			DrawStringSCentered(20+v_scroll, 0.0f, 1.0f, 0.0f, "ISP Info");
 		else
@@ -1963,7 +2264,7 @@ void Show_ISP_Data()
 				ShowMenu(ISPHELP);
 		}
 	}
-	FreeImage(&black);
+	FreeImage(&back);
 	if(display_buffer)
 	{
 		free(display_buffer);

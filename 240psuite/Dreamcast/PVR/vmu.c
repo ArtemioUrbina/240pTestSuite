@@ -491,6 +491,11 @@ char *sleep2_xpm[] = {
 ". . . . . . . . . . . . . ................... . ",
 " . . . . . . . . . . . . . ............... . . .",
 ". . . . . . . . . . . . . . . . . . . . . . . . "};
+
+void updateVMU_wait()
+{
+	updateVMUGraphic(sleep0_xpm);
+}
 	
 #define MAX_FRAMES_SLEEP 6
 char **frames_sleep[MAX_FRAMES_SLEEP] = { sleep0_xpm, NULL, sleep1_xpm, sleep2_xpm, NULL, sleep1_xpm };

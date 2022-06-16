@@ -707,13 +707,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 		int		c = 1;
 		float 	x = 70.0f;
 		float 	y = 90.0f;
-#ifndef NO_FFTW
-		maple_device_t *sip = NULL;
-#endif
 
-#ifndef NO_FFTW
-		sip = maple_enum_type(0, MAPLE_FUNC_MICROPHONE);
-#endif
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
@@ -722,7 +716,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier"); y += fh; c++;
 #ifndef NO_FFTW
-		if(sip)
+		if(isSIPPresent())
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Microphone Lag Test"); y += fh; c++;
 		}
@@ -734,7 +728,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; c++;
 
 #ifndef NO_FFTW
-		if(sel == 4 && !sip)
+		if(sel == 4 && !isSIPPresent())
 		{
 			DrawStringS(x-15, y + 6*fh, 0.8f, 0.8f, 0.8f,
 				"You need a microphone to use this feature");
@@ -785,7 +779,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 					break;
 #ifndef NO_FFTW
 				case 4:
-					if(sip)
+					if(isSIPPresent())
 						SIPLagTest();
 					break;
 				case 5:
@@ -841,7 +835,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		float 	b = 1.0f;
 		int		c = 1;
 		float 	x = 70.0f;
-		float 	y = 90.0f;
+		float 	y = 80.0f;
 
 		StartScene();
 		DrawImage(title);
@@ -865,6 +859,14 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		{
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Light Gun Test"); y += fh; c++;    
 		}
+		if(isSIPPresent())
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Microphone Test"); y += fh; c++;    
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Microphone Test"); y += fh; c++;    
+		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Show ISP Data"); y += fh; c++; 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++; 
 		
@@ -887,6 +889,12 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		{
 			DrawStringS(x-15, y + 3*fh, 0.8f, 0.8f, 0.8f,
 				"You need a Light Gun to use this test");
+		}
+		
+		if(sel == 5 && !isSIPPresent())
+		{
+			DrawStringS(x-15, y + 3*fh, 0.8f, 0.8f, 0.8f,
+				"You need a Microphone to use this test");
 		}
 		
 		EndScene();
@@ -932,22 +940,25 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 					LightGunTest();
 					break;
 				case 5:
-					Show_ISP_Data();
+					MicrophoneTest();
 					break;
 				case 6:
-					MemoryViewer(0);
+					Show_ISP_Data();
 					break;
 				case 7:
-					done = 1;
+					MemoryViewer(0);
 					break;
 				case 8:
-					ShowMenu(GENERALHELP);
+					done = 1;
 					break;
 				case 9:
+					ShowMenu(GENERALHELP);
+					break;
+				case 10:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 10:
+				case 11:
 					TestVideoMode(vmode);
 					break;
 #endif

@@ -1,4 +1,4 @@
-       SIP MICROPHONE AND FFT (1/2)
+           SIP MICROPHONE AND FFT (1/2)
 
 This test can be used to measure display lag if
 both video and audio follow the same chain.
@@ -14,7 +14,7 @@ calculating the frame delay.
 
 
                                          #C(cont...)#C
-       SIP MICROPHONE AND FFT (2/2)
+           SIP MICROPHONE AND FFT (2/2)
 
 The #GL#G and #GR#G triggers allow you to change
 the frameaccuracy of the FFT used to estimate the
@@ -22,6 +22,6 @@ audio delay. This ranges from 1 frame to 1/4th of
 a frame (16.67 to 4.16ms). The smaller the frame
 accuracy, the higher the probability of small
 errors; since the #YDreamcast#Y's microphone sample
-rate is 11Khz.
+rate is 11025hz/10909hz.
 
 All settings are within the hardware capabilities.
