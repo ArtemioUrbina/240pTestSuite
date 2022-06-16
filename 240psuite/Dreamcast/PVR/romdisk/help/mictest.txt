@@ -3,10 +3,13 @@
 This test allows you to record and play back
 sound using the SIP microphone.
 
-Press #CX#C to record a sound and #CA#C to play
+Press #YX#Y to record a sound and #CA#C to play
 it back.
 
 You can change the number of seconds to record
 with the D-pad.
+
+The #YY#Y button toggles amplification during
+playback.
 
 The test auto-detects the microphone sample rate.

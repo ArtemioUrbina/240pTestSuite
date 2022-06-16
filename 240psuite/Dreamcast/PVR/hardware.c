@@ -1632,7 +1632,7 @@ int isLightGunPresent()
 #define MAX_SECONDS_RECORD	10
 void MicrophoneTest()
 {
-	int					done = 0, samplerate = 0, play = 0;
+	int					done = 0, samplerate = 0, play = 0, amplify = 1;
 	int					sampling = 0, tries = 0, state_machine = 0;
 	int					frame_counter = 0, seconds_record = 5, seconds_in_buffer = 0;
 	size_t				recoding_size = 0;
@@ -1790,8 +1790,11 @@ void MicrophoneTest()
 			}
 		}
 		
-		sprintf(msg, "Seconds to record: %.2d", seconds_record);
-		DrawStringSCentered(90+5*fh, 1.0f, 1.0f, 1.0f, msg);
+		sprintf(msg, "#CSeconds to record:#C %.2d", seconds_record);
+		DrawStringSCentered(90+5*fh, 1.0f, 1.0f, 1.0f, msg);	
+		sprintf(msg, "#CAmplify playback:#C %s", amplify ? " ON" : "OFF");
+		DrawStringSCentered(90+6*fh, 1.0f, 1.0f, 1.0f, msg);
+		
 		EndScene();
 		
 		VMURefresh(vmuMsg1, vmuMsg2);
@@ -1824,6 +1827,15 @@ void MicrophoneTest()
 		st = ReadController(0, &pressed);
 		if(st) 
 		{
+			/* 
+			// Allow cancel with X?
+			if(state_machine == 1)
+			{
+				if (pressed & CONT_X)
+					frame_counter = 1;
+			}
+			*/
+			
 			if(state_machine != 1 && !play) // these are not allowed while sampling
 			{
 				if (pressed & CONT_START)
@@ -1862,6 +1874,27 @@ void MicrophoneTest()
 				{
 					memset(stream_samples, 0, sizeof(char)*stream_samples_size);
 					memcpy(stream_samples, rec_buffer.buffer, sizeof(uint8)*rec_buffer.pos);
+					
+					if(amplify)
+					{
+						double			ratio = 0;
+						unsigned int 	i = 0, max = 0;
+						int16			*samples = NULL;
+					
+						samples = (int16*)stream_samples;
+						for(i = 0; i < rec_buffer.pos/2; i ++)
+						{
+							if((unsigned int)abs(samples[i]) > max)
+								max = abs(samples[i]);
+						}
+						
+						if(max)
+						{
+							ratio = 30000.0/(double)max;
+							for(i = 0; i < rec_buffer.pos/2; i ++)
+								samples[i] *= ratio;
+						}
+					}
 
 					frame_counter = seconds_in_buffer*(IsPAL ? 50 : 60);
 					stream_pos = 0;
@@ -1871,12 +1904,15 @@ void MicrophoneTest()
 				}
 			}
 			
+			if(pressed & CONT_Y)
+				amplify = !amplify;
+				
 			if(pressed & CONT_B)
 				done = 1;
 		}
 		
 		if(state_machine == 1 && frame_counter == 0)
-		{
+		{	
 			state_machine = 2;
 			rec_buffer.recording = 0;
 			seconds_in_buffer = seconds_record;
