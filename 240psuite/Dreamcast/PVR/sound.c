@@ -1194,7 +1194,7 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 	long		  	samplesize = 0, arraysize = 0;	
 	long		  	i = 0, f = 0, framesizernd = 0; 
 	double		  	*in = NULL, root = 0, framesize = 0;  
-	double		  	*MaxFreqArray = NULL;
+	double		  	*LoudFreqArray = NULL;
 	fftw_complex  	*out = NULL;
 	fftw_plan		p = NULL;
 	double	  		mins, maxs;
@@ -1230,20 +1230,20 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 	}
 		
 	arraysize = framesizernd;
-	MaxFreqArray = malloc(sizeof(double)*(samplesize/framesize - 1));
-	if(!MaxFreqArray)
+	LoudFreqArray = malloc(sizeof(double)*(samplesize/framesize - 1));
+	if(!LoudFreqArray)
 	{
 		 fftw_free(in); 
 		 fftw_free(out);
 		 return FFT_OM;
 	}
-	memset(MaxFreqArray, 0, sizeof(double)*(samplesize/framesize - 1));
+	memset(LoudFreqArray, 0, sizeof(double)*(samplesize/framesize - 1));
 
 	boxsize = (double)arraysize/samplerate;  
 	for(f = 0; f < samplesize/framesize - 1; f++)
 	{
-		double mainfreq = 0, max = 0;
-		long   maxind = -1;
+		double loudest_freq = 0, loudest = 0;
+		long   loudest_ind = -1;
 		long   framestart = 0;
 
 		framestart = framesize*f;
@@ -1273,18 +1273,19 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 		{
 			double r1 = creal(out[i]);
 			double i1 = cimag(out[i]);
-			double val = 0;
+			double amplitude = 0;
 	
-			val = sqrt(sqrt(r1 * r1 + i1 * i1) / root);
-			if(val > max)
+			amplitude = sqrt(sqrt(r1 * r1 + i1 * i1) / root);
+			if(amplitude > loudest)
 			{
-				max = val;
-				maxind = i;
+				loudest = amplitude;
+				loudest_ind = i;
 			}
 		}
 		
-		mainfreq = (double)((double)maxind/boxsize);
-		MaxFreqArray[f] = mainfreq;
+		if(loudest_ind != -1)
+			loudest_freq = (double)((double)loudest_ind/boxsize);
+		LoudFreqArray[f] = loudest_freq;
 		
 		fftw_destroy_plan(p);
 	}
@@ -1309,11 +1310,11 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 		if(!found)
 		{
 #ifdef DEBUG_FFT
-			dbglog(DBG_INFO, "Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, MaxFreqArray[f]);
+			dbglog(DBG_INFO, "Frame %ld: Main frequency %g Hz\n", f-CUE_FRAMES, LoudFreqArray[f]);
 #endif
 			if(count)
 			{
-				if(MaxFreqArray[f] < mins || MaxFreqArray[f] > maxs)
+				if(LoudFreqArray[f] < mins || LoudFreqArray[f] > maxs)
 				{
 					// tentative result if all fails
 					if(!tpos) // only the first result
@@ -1340,7 +1341,7 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 				}
 			}
 				
-			if(!count && MaxFreqArray[f] >= mins && MaxFreqArray[f] <= maxs)
+			if(!count && LoudFreqArray[f] >= mins && LoudFreqArray[f] <= maxs)
 			{
 				pos = f;
 				count = 1;
@@ -1353,7 +1354,7 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 		pos = tpos - CUE_FRAMES*(secondunits/(IsPAL ? 50.0 : 60.0));
 		value = pos/(secondunits/(IsPAL ? 50.0 : 60.0));
 #ifdef DEBUG_FFT
-		dbglog(DBG_INFO, "Found (heur %ld) at %g frames -> %g sec\n", tcount, value, pos/secondunits);
+		dbglog(DBG_INFO, "Found (heuristic %ld) at %g frames -> %g sec\n", tcount, value, pos/secondunits);
 #endif
 	}
 
@@ -1363,9 +1364,9 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 	dbglog(DBG_INFO, "Processing frequencies took %"PRIu64" ms\n", time);
 #endif
 
-	if(MaxFreqArray)
-		free(MaxFreqArray);
-	MaxFreqArray = NULL;  
+	if(LoudFreqArray)
+		free(LoudFreqArray);
+	LoudFreqArray = NULL;  
 	
 	if(in)
 		fftw_free(in); 
