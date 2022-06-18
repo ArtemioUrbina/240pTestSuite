@@ -786,9 +786,11 @@ int maple_device_scan(float x, float y, int selected)
 	return count;
 }
 
-#define	DISPLAY_BUFFER_CHAR	1024
+#define	DISPLAY_BUFFER_CHAR	8192
+#define BUFFER_PRINT_SIZE	4096
 
 char			*display_buffer = NULL;
+char			buffer_printf_buffer[BUFFER_PRINT_SIZE];
 int				display_buffer_pos = 0;
 int				maple_locked_device = 0;
 int				maple_use_reply_bytes = 0;
@@ -818,35 +820,33 @@ void PrintCleanString(char *str)
 }
 #endif
 
-#define BUFFER_PRINT_SIZE	1024
 void buffer_printf(char *fmt, ... )
 {
 	int		len = 0;
-	char	buffer[BUFFER_PRINT_SIZE];
 	va_list arguments;
 
 	if(!display_buffer)
 		return;
 
-	memset(buffer, 0, BUFFER_PRINT_SIZE*sizeof(char));
+	//memset(buffer_printf_buffer, 0, BUFFER_PRINT_SIZE*sizeof(char));
 	
 	va_start(arguments, fmt);
-	vsprintf(buffer, fmt, arguments);
+	vsprintf(buffer_printf_buffer, fmt, arguments);
 	va_end(arguments);
 	
-	len = strlen(buffer);
+	len = strlen(buffer_printf_buffer);
 	if(display_buffer_pos + len + 1 < DISPLAY_BUFFER_CHAR)
 	{
-		memcpy(display_buffer+display_buffer_pos, buffer, sizeof(char)*len);
+		memcpy(display_buffer+display_buffer_pos, buffer_printf_buffer, sizeof(char)*len);
 		display_buffer_pos += len;
 		
 #ifdef DCLOAD	
-		PrintCleanString(buffer);
+		PrintCleanString(buffer_printf_buffer);
 #endif
 	}
 	else
 		dbglog(DBG_ERROR, "Display text buffer was too short, needed extra %d for:\n%s\n",
-			display_buffer_pos + len - DISPLAY_BUFFER_CHAR, buffer); 
+			display_buffer_pos + len - DISPLAY_BUFFER_CHAR, buffer_printf_buffer); 
 }
 
 /*
