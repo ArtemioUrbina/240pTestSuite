@@ -1278,7 +1278,7 @@ void DrawOverscan()
 			if(pressed & CONT_START ) 		
 				ShowMenu(OVERSCANHELP);
 			
-			JoystickDirectios(st, &pressed, &joycntx, &joycnty);
+			JoystickDirections(st, &pressed, &joycntx, &joycnty);
 			
 			if ( pressed & CONT_DPAD_UP ) 
 				sel--;

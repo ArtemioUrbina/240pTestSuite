@@ -79,7 +79,14 @@ void DrawChar(float x, float y, char c)
 {
 	int charx, chary;
 
-	c -= 32;
+	// Don't draw outside of visible screen
+	if(x < -1*fw ||x > dW+fw || y < -1*fh || y > dH+fh)
+		return;
+		
+	c -= 0x20;
+	if(c <= 0 || c > 0x5F)		// save some polygons, space (0x20) and out of range
+		return;
+
 	charx = (c % 16) * fw;
 	chary = (c / 16) * f_size;
 	CalculateUV(charx, chary, fw, f_size, font_t);
@@ -184,11 +191,11 @@ void DrawStringS(float x, float y, float r, float g, float b, char *str)
 	DrawString(x, y, r, g, b, str);
 }
 
-void DrawStringSCentered(float y, float r, float g, float b, char *str) 
+void DrawStringSCenteredInternal(float y, float r, float g, float b, char *str, int full_screen) 
 {
 	int			currlen = 0;
 	char 		*startstr = NULL;
-	float		xpos = 34.0f, len = 0;
+	float		xpos = 34.0f, len = 0, screen_width = 0;
 	
 	startstr = str;
 	while (*str) 
@@ -199,7 +206,8 @@ void DrawStringSCentered(float y, float r, float g, float b, char *str)
 			len = MeasureString(startstr)*fw;
 			if(len)
 			{
-				xpos = (int)((320-len)/2.0f);
+				screen_width = full_screen ? dW : 320;
+				xpos = (int)((screen_width-len)/2.0f);
 				DrawStringS(xpos, y, r, g, b, startstr);
 			}
 			*str = '\n';
@@ -216,10 +224,21 @@ void DrawStringSCentered(float y, float r, float g, float b, char *str)
 		len = MeasureString(startstr)*fw;
 		if(len)
 		{
-			xpos = (int)((320-len)/2.0f);
+			screen_width = full_screen ? dW : 320;
+			xpos = (int)((screen_width-len)/2.0f);
 			DrawStringS(xpos, y, r, g, b, startstr);
 		}
 	}
+}
+
+void DrawStringSCentered(float y, float r, float g, float b, char *str)
+{
+	DrawStringSCenteredInternal(y, r, g, b, str, 0);
+}
+
+void DrawStringSCenteredFull(float y, float r, float g, float b, char *str)
+{
+	DrawStringSCenteredInternal(y, r, g, b, str, vmode < HIGH_RES ? 0 : 1);
 }
 
 void DrawStringSCenteredXY(float r, float g, float b, char *str) 

@@ -78,7 +78,7 @@ int main(void)
 	InitController();
 	
 	// Define if PAL modes are enabled
-	broadcast = flashrom_get_region_broadcast();
+	broadcast = flashrom_get_broadcast(0);
 	if(broadcast != FLASHROM_BROADCAST_NTSC && 
 		broadcast != FLASHROM_BROADCAST_UNKNOWN)
 	{
@@ -835,7 +835,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		float 	b = 1.0f;
 		int		c = 1;
 		float 	x = 70.0f;
-		float 	y = 80.0f;
+		float 	y = 70.0f;
 
 		StartScene();
 		DrawImage(title);
@@ -867,6 +867,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		{
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Microphone Test"); y += fh; c++;    
 		}
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "BIOS and Flashrom data"); y += fh; c++; 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Show ISP Data"); y += fh; c++; 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++; 
 		
@@ -943,22 +944,25 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 					MicrophoneTest();
 					break;
 				case 6:
-					Show_ISP_Data();
+					ShowBIOSandFlash();
 					break;
 				case 7:
-					MemoryViewer(0);
+					Show_ISP_Data();
 					break;
 				case 8:
-					done = 1;
+					MemoryViewer(0);
 					break;
 				case 9:
-					ShowMenu(GENERALHELP);
+					done = 1;
 					break;
 				case 10:
+					ShowMenu(GENERALHELP);
+					break;
+				case 11:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 11:
+				case 12:
 					TestVideoMode(vmode);
 					break;
 #endif
@@ -1003,42 +1007,8 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 	g = 0.8f;
 	b = 0.8f;
 	
-	switch(flashrom_get_region_country())
-	{
-		case FLASHROM_REGION_JAPAN:
-			region = "Japan";
-			break;
-		case FLASHROM_REGION_US:
-			region = "USA";
-			break;
-		case FLASHROM_REGION_EUROPE:
-			region = "Europe";
-			break;
-		case FLASHROM_REGION_UNKNOWN:
-		default:
-			region = "????";
-			break;
-	}
-	
-	switch(flashrom_get_region_broadcast())
-	{
-		case FLASHROM_BROADCAST_NTSC:
-			broadcast = "NTSC";
-			break;
-		case FLASHROM_BROADCAST_PAL:
-			broadcast = "PAL";
-			break;
-		case FLASHROM_BROADCAST_PALM:
-			broadcast = "PAL-M";
-			break;
-		case FLASHROM_BROADCAST_PALN:
-			broadcast = "PAL-N";
-			break;
-		case FLASHROM_BROADCAST_UNKNOWN:
-		default:
-			broadcast = "????";
-			break;
-	}
+	region = get_flash_region_str(0);
+	broadcast = get_flash_broadcast_str(0);
 	
 	sprintf(msg, "%s %s", region, broadcast);
 	DrawStringS(x, y, r, g, b, msg);

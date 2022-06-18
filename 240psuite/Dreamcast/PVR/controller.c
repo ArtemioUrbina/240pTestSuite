@@ -392,7 +392,7 @@ void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)
 		*joycnt = 0;
 }
 
-void JoystickDirectios(controller *st, uint16 *pressed, int *joycntx, int *joycnty)
+void JoystickDirections(controller *st, uint16 *pressed, int *joycntx, int *joycnty)
 {
 	if( st && abs(st->joyx) > 50)
 	{

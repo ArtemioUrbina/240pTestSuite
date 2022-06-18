@@ -14,5 +14,5 @@ void InitController();
 cont_state_t *ReadController(uint16 num, uint16 *pressed);
 void DetectControllerType(maple_device_t *dev);
 void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt);
-void JoystickDirectios(controller *st, uint16 *pressed, int *joycntx, int *joycnty);
+void JoystickDirections(controller *st, uint16 *pressed, int *joycntx, int *joycnty);
 #endif

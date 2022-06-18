@@ -37,8 +37,9 @@
 #include "hardware.h"
 #include "sound.h"
 
-char	flashrom_region_cache[FLASHROM_CACHE_SIZE] = { 0 };
-int		flashrom_is_cached = 0;
+int				flashrom_is_cached = 0;
+flash_data		flash_cache;
+flash_data_p	p_flash_cache;
 
 #define TRUNCATE_LEN	22
 
@@ -785,7 +786,8 @@ int maple_device_scan(float x, float y, int selected)
 	return count;
 }
 
-#define	MAPLE_BUFFER_CHAR	8192
+#define	DISPLAY_BUFFER_CHAR	1024
+
 char			*display_buffer = NULL;
 int				display_buffer_pos = 0;
 int				maple_locked_device = 0;
@@ -816,32 +818,35 @@ void PrintCleanString(char *str)
 }
 #endif
 
+#define BUFFER_PRINT_SIZE	1024
 void buffer_printf(char *fmt, ... )
 {
 	int		len = 0;
-	char	buffer[512];
+	char	buffer[BUFFER_PRINT_SIZE];
 	va_list arguments;
 
 	if(!display_buffer)
 		return;
 
+	memset(buffer, 0, BUFFER_PRINT_SIZE*sizeof(char));
+	
 	va_start(arguments, fmt);
 	vsprintf(buffer, fmt, arguments);
 	va_end(arguments);
 	
 	len = strlen(buffer);
-	if(display_buffer_pos + len < MAPLE_BUFFER_CHAR)
+	if(display_buffer_pos + len + 1 < DISPLAY_BUFFER_CHAR)
 	{
 		memcpy(display_buffer+display_buffer_pos, buffer, sizeof(char)*len);
 		display_buffer_pos += len;
-	}
-	else
-		dbglog(DBG_ERROR, "Display text buffer was too short, needed extra %d",
-			display_buffer_pos + len - MAPLE_BUFFER_CHAR); 
 		
 #ifdef DCLOAD	
-	PrintCleanString(buffer);
+		PrintCleanString(buffer);
 #endif
+	}
+	else
+		dbglog(DBG_ERROR, "Display text buffer was too short, needed extra %d for:\n%s\n",
+			display_buffer_pos + len - DISPLAY_BUFFER_CHAR, buffer); 
 }
 
 /*
@@ -1089,7 +1094,7 @@ void print_device_kos_cache(maple_device_t *dev)
 void cleanDisplayBuffer()
 {
 	display_buffer_pos = 0;
-	memset(display_buffer, 0, sizeof(char)*MAPLE_BUFFER_CHAR);
+	memset(display_buffer, 0, sizeof(char)*DISPLAY_BUFFER_CHAR);
 }
 
 void ListMapleDevices()
@@ -1114,7 +1119,7 @@ void ListMapleDevices()
 	if(!back)
 		return;
 	
-	display_buffer = (char*)malloc(sizeof(char)*MAPLE_BUFFER_CHAR);
+	display_buffer = (char*)malloc(sizeof(char)*DISPLAY_BUFFER_CHAR);
 	if(!display_buffer)
 	{
 		dbglog(DBG_ERROR, "Out of memory for maple display text buffer\n"); 
@@ -1197,7 +1202,7 @@ void ListMapleDevices()
 							EndScene();
 							
 							st = ReadController(0, &pressed);
-							JoystickDirectios(st, &pressed, &joycntx, &joycnty);
+							JoystickDirections(st, &pressed, &joycntx, &joycnty);
 							if(st)
 							{
 								if ( pressed & CONT_LTRIGGER || pressed & CONT_DPAD_UP )
@@ -1388,9 +1393,236 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size)
 	return checksum;
 }
 
+typedef struct bios_data {
+    uint32_t crc;
+    char *name;
+	char *text;
+} BIOSID;
+
+
+BIOSID bioslist[] = {
+{ 0x5454841f, "mpr-21068.ic501", "v1.004 (Japan)" },	// oldest known mass production version, supports Japan region only
+{ 0x2f551bc5, "mpr-21871.ic501", "v1.01c (World)" },
+{ 0x89f2b1a1, "mpr-21931.ic501", "v1.01d (World)" },
+{ 0x786168f9, "mpr-23588.ic501", "v1.022 (World)" },
+{ 0xdcb2e86f, "set5v0.976.ic507", "Katana Set5 v0.976 (Japan)" },
+{ 0x5702d38f, "set5v1.001.ic507", "Katana Set5 v1.001 (Japan)" },
+{ 0x2186e0e5, "set5v1.011.ic507", "Katana Set5 v1.011 (World)" },
+{ 0x52d01969, "set5v0.71.bin", "Katana Set5 Checker v0.71" },
+{ 0x485877bd, "set5v0.41.bin", "Katana Set5 Checker v0.41" },
+// hacks
+{ 0xA2564FAD, "mpr-21931-hack.ic501", "v1.01d (World/hack)" },
+{ 0xA2564FAD, "dc101d_ch.bin", "v1.01d (Chinese hack)" },
+{ 0xDC9D84E0, "jc-bootROM-devkit-v1.031.bin", "Custom bootROM v1.031 devkit" },
+{ 0x1249EE59, "jc-bootROM-retail-v1.031.bin", "Custom bootROM v1.031 retail" },
+{ 0xA06F68D0, "jc-bootROM-devkit-v1.032.bin", "Custom bootROM v1.032 devkit" },
+{ 0xF3DB5F40, "jc-bootROM-retail-v1.032.bin", "Custom bootROM v1.032 retail" },
+{ 0, NULL, NULL} } ; 
+
+// search known Original BIOS
+BIOSID *GetBIOSNamebyCRC(uint32_t checksum)
+{
+	int i = 0;
+	
+	while(bioslist[i].crc != 0)
+	{		
+		if(checksum == bioslist[i].crc)
+			return &bioslist[i];
+		i++;
+	}
+	return NULL;
+}
+
+void printflashromdata(int ver)
+{	
+	buffer_printf("#YMachine Code:#Y     (%c%c) %s\n", 
+		flash_cache.factory_records[ver].machine_code1,
+		flash_cache.factory_records[ver].machine_code2,
+		flash_cache.factory_records[ver].machine_code1 == flash_cache.factory_records[ver].machine_code2 &&
+		flash_cache.factory_records[ver].machine_code1 == '0' ? "Retail" : "Development Box");
+	buffer_printf("#YCountry Code:#Y     (%c)  %s\n", 
+		flash_cache.factory_records[ver].country_code, get_flash_region_str(ver));
+	buffer_printf("#YLanguage:#Y         (%c)  %s\n", 
+		flash_cache.factory_records[ver].language, get_flash_language_str(ver));
+	buffer_printf("#YBroadcast Format:#Y (%c)  %s\n", 
+		flash_cache.factory_records[ver].broadcast_format, get_flash_broadcast_str(ver));
+	buffer_printf("#YMachine Name:#Y     %s\n", 
+		p_flash_cache.factory_records[ver].machine_name);
+	buffer_printf("#YTool Number:#Y      %s\n", 
+		p_flash_cache.factory_records[ver].tool_number);
+	buffer_printf("#YTool Version:#Y     %s\n", 
+		p_flash_cache.factory_records[ver].tool_version);
+	buffer_printf("#YTool Type:#Y        %s\n", 
+		p_flash_cache.factory_records[ver].tool_type);
+	buffer_printf("#YDate:#Y             %s/%s/%s %s:%s\n", 
+		p_flash_cache.factory_records[ver].year,
+		p_flash_cache.factory_records[ver].month,
+		p_flash_cache.factory_records[ver].day,
+		p_flash_cache.factory_records[ver].hour,
+		p_flash_cache.factory_records[ver].min);
+	buffer_printf("#YSerial Number:#Y    %s\n", 
+		p_flash_cache.factory_records[ver].serial_number);
+	buffer_printf("#YFactory Code:#Y     %s\n", 
+		p_flash_cache.factory_records[ver].factory_code);
+	buffer_printf("#YTotal Number:#Y     %s\n", 
+		p_flash_cache.factory_records[ver].total_number);
+	buffer_printf("#YID:#Y               %02X:%02X:%02X:%02X:%02X:%02X\n", 
+		flash_cache.factory_records[ver].machine_id.id[0],
+		flash_cache.factory_records[ver].machine_id.id[1],
+		flash_cache.factory_records[ver].machine_id.id[2],
+		flash_cache.factory_records[ver].machine_id.id[3],
+		flash_cache.factory_records[ver].machine_id.id[4],
+		flash_cache.factory_records[ver].machine_id.id[5]	);
+	buffer_printf("#YMachine Type:#Y     0x%02X\n", 
+		flash_cache.factory_records[ver].machine_type);
+	buffer_printf("#YMachine Version:#Y  0x%02X\n", 
+		flash_cache.factory_records[ver].machine_version);
+	buffer_printf("#YVersion:#Y          0x%02X\n", 
+		flash_cache.unk_version);
+}
+
+void ShowBIOSandFlash()
+{
+	int 			done = 0, oldvmode = -1, version = 0;
+	int				joycnty = 0, joycntx = 0;
+	int				v_scroll = 0, h_scroll = 0;
+	int				lines = 0, fillbuffer = 1, bios_lines = 0;
+	int				sr_lines = 0, tot_lines = 0;
+	uint16			pressed;		
+	ImagePtr		back = NULL;
+	controller		*st = NULL;
+	uint32			crc = 0;
+	char			bios_buffer[256];
+	BIOSID 			*bios = NULL;
+
+	updateVMU_wait();
+	DrawMessageOnce("Please wait, calculating #YBIOS#Y CRC\n#G(about 1 second)#G");
+	
+	crc = CalculateCRC(0x0, 0x200000);
+	bios = GetBIOSNamebyCRC(crc);
+	if(bios)
+		sprintf(bios_buffer, "#YBIOS:#Y             %s\n#YIC:#Y               %s\n#YCRC:#Y              0x%08" PRIx32, 
+			bios->text,	bios->name,	crc);
+	else
+		sprintf(bios_buffer, "Unknown #YBIOS#Y\n#YPlease Report or dump it#Y\n#YCRC:#Y              0x%08" PRIx32, crc);
+		
+	bios_lines = countLineFeeds(bios_buffer);
+	
+	if(display_buffer)
+	{
+		dbglog(DBG_ERROR, "Display text buffer was not NULL"); 
+		return;
+	}
+	
+	back = LoadKMG("/rd/wallisp.kmg.gz", 0);
+	if(!back)
+		return;
+	
+	display_buffer = (char*)malloc(sizeof(char)*DISPLAY_BUFFER_CHAR);
+	if(!display_buffer)
+	{
+		dbglog(DBG_ERROR, "Out of memory for display text buffer\n"); 
+		return;
+	}
+
+	while(!done && !EndProgram) 
+	{
+		float y = 20+v_scroll;
+		
+		if(oldvmode != vmode)
+			oldvmode = vmode;
+		
+		if(fillbuffer)
+		{	
+			cleanDisplayBuffer();
+
+			printflashromdata(version);
+			lines = countLineFeeds(display_buffer);
+			sr_lines = countLineFeeds(p_flash_cache.staff_roll);
+			tot_lines = lines + sr_lines;
+			if(lines + sr_lines == 0)
+				buffer_printf("#Yflashrom#Y data is empty.");
+			if(sr_lines)
+				tot_lines ++;	// staff roll description
+			fillbuffer = 0;
+		}
+
+		StartScene();
+		DrawImage(back);
+		DrawStringSCentered(y, 0.0f, 1.0f, 0.0f, "BIOS data");
+		y += 2*fh;
+		DrawString(20+h_scroll, y, 1.0f, 1.0f, 1.0f, bios_buffer);
+		y += (bios_lines+2)*fh;
+		if(!version)
+			DrawStringSCentered(y, 0.0f, 1.0f, 0.0f, "Flashrom data (main)");
+		else
+			DrawStringSCentered(y, 0.0f, 1.0f, 0.0f, "Flashrom data (backup)");
+		y += 2*fh;
+		DrawString(20+h_scroll, y, 1.0f, 1.0f, 1.0f, display_buffer);
+		y += lines*fh;
+		if(sr_lines)
+		{
+			DrawString(20+h_scroll, y, 1.0f, 1.0f, 1.0f, "#YStaff Roll:#Y");
+			y += fh;
+			DrawString(20+4*fw+h_scroll, y, 1.0f, 1.0f, 1.0f, p_flash_cache.staff_roll);
+		}
+		EndScene();
+
+		VMURefresh("Flashrom", "Data");
+
+		st = ReadController(0, &pressed);
+		JoystickDirections(st, &pressed, &joycntx, &joycnty);
+		if(st)
+		{
+			if ( pressed & CONT_LTRIGGER || pressed & CONT_DPAD_UP )
+				v_scroll += fw;
+			if ( pressed & CONT_RTRIGGER || pressed & CONT_DPAD_DOWN )
+				v_scroll -= fw;
+			if(v_scroll > 0)
+				v_scroll = 0;
+			if(v_scroll < -1*tot_lines*fh)
+				v_scroll = -1*tot_lines*fh;
+			
+			if ( pressed & CONT_DPAD_LEFT )
+				h_scroll -= fw;
+			if ( pressed & CONT_DPAD_RIGHT )
+				h_scroll += fw;
+			if(h_scroll > 8*fw)
+				h_scroll = 8*fw;
+			if(h_scroll < -20*fw)
+				h_scroll = -20*fw;
+				
+			if (pressed & CONT_Y)
+				h_scroll = v_scroll = 0;
+				
+			if (pressed & CONT_X)
+			{
+				version = !version;
+				fillbuffer = 1;
+			}
+
+			
+			if (pressed & CONT_B)
+				done = 1;
+
+			if (pressed & CONT_START)
+				ShowMenu(ISPHELP);
+		}
+	}
+	FreeImage(&back);
+	if(display_buffer)
+	{
+		free(display_buffer);
+		display_buffer = NULL;
+		display_buffer_pos = 0;
+	}
+	return;
+}
+
 #define VISIBLE_HORZ	16
 #define VISIBLE_VERT	26
 #define MAX_LOCATIONS	17
+#define MEM_VIEWER_BUFF	20
 
 void MemoryViewer(uint32 address)
 {
@@ -1427,7 +1659,7 @@ void MemoryViewer(uint32 address)
 	{
 		int 	i = 0, j = 0, pos = -1;
 		uint8_t *mem = NULL;
-		char 	buffer[10];
+		char 	buffer[MEM_VIEWER_BUFF];
 		
 		if(oldvmode != vmode)
 		{
@@ -1483,7 +1715,7 @@ void MemoryViewer(uint32 address)
 				{
 					uint8_t c;
 					
-					memset(buffer, 0, sizeof(char)*10);
+					memset(buffer, 0, sizeof(char)*MEM_VIEWER_BUFF);
 
 					c = mem[i*VISIBLE_HORZ*factor+j];
 					if(c >= 32 && c <= 126)	
@@ -1499,7 +1731,7 @@ void MemoryViewer(uint32 address)
 		VMURefresh("MemView", "");
 		st = ReadController(0, &pressed);
 		
-		JoystickDirectios(st, &pressed, &joycntx, &joycnty);
+		JoystickDirections(st, &pressed, &joycntx, &joycnty);
 		if (pressed & CONT_DPAD_LEFT)	
 		{
 			if(address > locations[0])
@@ -2211,7 +2443,7 @@ void Show_ISP_Data()
 	if(!back)
 		return;
 	
-	display_buffer = (char*)malloc(sizeof(char)*MAPLE_BUFFER_CHAR);
+	display_buffer = (char*)malloc(sizeof(char)*DISPLAY_BUFFER_CHAR);
 	if(!display_buffer)
 	{
 		dbglog(DBG_ERROR, "Out of memory for display text buffer\n"); 
@@ -2263,7 +2495,7 @@ void Show_ISP_Data()
 		VMURefresh("ISP info", "Flashrom");
 
 		st = ReadController(0, &pressed);
-		JoystickDirectios(st, &pressed, &joycntx, &joycnty);
+		JoystickDirections(st, &pressed, &joycntx, &joycnty);
 		if(st)
 		{
 			if ( pressed & CONT_LTRIGGER || pressed & CONT_DPAD_UP )
@@ -2310,103 +2542,231 @@ void Show_ISP_Data()
 	return;
 }
 
+// Give us Null terminated strings for output
+void clone_factory_data()
+{
+	int i = 0;
+	
+	memset(&p_flash_cache, 0, sizeof(flash_data_p));
+	for(i = 0; i < 2; i++)
+	{
+		memcpy(p_flash_cache.factory_records[i].machine_name, 
+			flash_cache.factory_records[i].machine_name, sizeof(char)*32);
+		memcpy(p_flash_cache.factory_records[i].tool_number, 
+			flash_cache.factory_records[i].tool_number, sizeof(char)*4);
+		memcpy(p_flash_cache.factory_records[i].tool_version, 
+			flash_cache.factory_records[i].tool_version, sizeof(char)*2);
+		memcpy(p_flash_cache.factory_records[i].tool_type, 
+			flash_cache.factory_records[i].tool_type, sizeof(char)*2);
+		memcpy(p_flash_cache.factory_records[i].year, 
+			flash_cache.factory_records[i].year, sizeof(char)*4);
+		memcpy(p_flash_cache.factory_records[i].month, 
+			flash_cache.factory_records[i].month, sizeof(char)*2);
+		memcpy(p_flash_cache.factory_records[i].day, 
+			flash_cache.factory_records[i].day, sizeof(char)*2);
+		memcpy(p_flash_cache.factory_records[i].hour, 
+			flash_cache.factory_records[i].hour, sizeof(char)*2);
+		memcpy(p_flash_cache.factory_records[i].min, 
+			flash_cache.factory_records[i].min, sizeof(char)*2);
+		memcpy(p_flash_cache.factory_records[i].serial_number, 
+			flash_cache.factory_records[i].serial_number, sizeof(char)*8);
+		memcpy(p_flash_cache.factory_records[i].factory_code, 
+			flash_cache.factory_records[i].factory_code, sizeof(char)*4);
+		memcpy(p_flash_cache.factory_records[i].total_number, 
+			flash_cache.factory_records[i].total_number, sizeof(char)*16);
+	}
+	
+	memcpy(p_flash_cache.staff_roll, 
+			flash_cache.staff_roll+0x20, sizeof(char)*(0xc81));
+	for(i = 0x40; i < 0xc81; i+=0x40)
+		p_flash_cache.staff_roll[i-1] = '\n';
+}
+
 /* Modified from KOS */
-int flashrom_get_region_data()
+int flashrom_get_factory_data()
 {
     int start, size;
 
 	if(flashrom_is_cached)
 		return FLASHROM_ERR_NONE;
-		
-	memset(flashrom_region_cache, 0, sizeof(char)*FLASHROM_CACHE_SIZE);
-	
+
     /* Find the partition */
     if(flashrom_info(FLASHROM_PT_SYSTEM, &start, &size)) {
-        dbglog(DBG_ERROR, "flashrom_get_region: can't find partition 0\n");
+        dbglog(DBG_ERROR, "flashrom_get_factory_data: can't find partition 0\n");
         return FLASHROM_ERR_NO_PARTITION;
     }
+	
+	memset(&flash_cache, 0, sizeof(flash_data));
 
-    /* Read the first 5 characters of that partition */
-    if(flashrom_read(start, flashrom_region_cache, 5) < 0) {
-        dbglog(DBG_ERROR, "flashrom_get_region: can't read partition 0\n");
+    /* Read the data structires from that partition */
+    if(flashrom_read(start, &flash_cache, sizeof(flash_data)) < 0) {
+        dbglog(DBG_ERROR, "flashrom_get_factory_data: can't read partition 0\n");
         return FLASHROM_ERR_READ_PART;
     }
 	
+	dbglog(DBG_INFO, "Read Flashrom Factory Data %c%c%c%c%c\n", 
+		flash_cache.factory_records[0].machine_code1, 
+		flash_cache.factory_records[0].machine_code2, 
+		flash_cache.factory_records[0].country_code, 
+		flash_cache.factory_records[0].language,
+		flash_cache.factory_records[0].broadcast_format);
+	clone_factory_data();
 	flashrom_is_cached = 1;
-	dbglog(DBG_INFO, "Read Flashrom Data %s\n", flashrom_region_cache);
 	return FLASHROM_ERR_NONE;
 }
+
+char *get_flash_region_str(int ver)
+{
+	switch(flashrom_get_region_data(ver))
+	{
+		case FLASHROM_REGION_JAPAN:
+			return("Japan");
+			break;
+		case FLASHROM_REGION_US:
+			return("USA");
+			break;
+		case FLASHROM_REGION_EUROPE:
+			return("Europe");
+			break;
+		case FLASHROM_REGION_UNKNOWN:
+			return("????");
+			break;
+	}
+	return("????");
+}
 	
-int flashrom_get_region_country()
+int flashrom_get_region_data(int ver)
 {
 	if(!flashrom_is_cached)
 	{
-		if(flashrom_get_region_data() != FLASHROM_ERR_NONE)
+		if(flashrom_get_factory_data() != FLASHROM_ERR_NONE)
 			return FLASHROM_REGION_UNKNOWN;
 	}
 	
+	if(ver != 0 && ver != 1)
+		return FLASHROM_REGION_UNKNOWN;
+	
     /* Now compare cache against known codes */
-    if(flashrom_region_cache[2] == '0')
+    if(flash_cache.factory_records[ver].country_code == '0')
         return FLASHROM_REGION_JAPAN;
-    else if(flashrom_region_cache[2] == '1')
+    else if(flash_cache.factory_records[ver].country_code == '1')
         return FLASHROM_REGION_US;
-    else if(flashrom_region_cache[2] == '2')
+    else if(flash_cache.factory_records[ver].country_code == '2')
         return FLASHROM_REGION_EUROPE;
     else {
-        dbglog(DBG_WARNING, "flashrom_get_region_country: unknown code '%s' (pos %d %c)\n",
-			flashrom_region_cache, 2, flashrom_region_cache[2]);
+        dbglog(DBG_WARNING, "flashrom_get_region_data: unknown code '%c')\n",
+			flash_cache.factory_records[ver].country_code);
         return FLASHROM_REGION_UNKNOWN;
     }
 }
 
-int flashrom_get_region_language()
+char *get_flash_language_str(int ver)
+{
+	switch(flashrom_get_language(ver))
+	{
+		case FLASHROM_LANGUAGE_JAPAN:
+			return("Japanese");
+			break;
+		case FLASHROM_LANGUAGE_ENGLISH:
+			return("English");
+			break;
+		case FLASHROM_LANGUAGE_GERMAN:
+			return("German");
+			break;
+		case FLASHROM_LANGUAGE_FRENCH:
+			return("French");
+			break;
+		case FLASHROM_LANGUAGE_SPANISH:
+			return("Spanish");
+			break;
+		case FLASHROM_LANGUAGE_ITALIAN:
+			return("Italian");
+			break;
+		case FLASHROM_LANGUAGE_UNKNOWN:
+			return("????");
+			break;
+		
+	}
+	return("????");
+}
+
+int flashrom_get_language(int ver)
 {
     if(!flashrom_is_cached)
 	{
-		if(flashrom_get_region_data() != FLASHROM_ERR_NONE)
+		if(flashrom_get_factory_data() != FLASHROM_ERR_NONE)
 			return FLASHROM_LANGUAGE_UNKNOWN;
 	}
 	
+	if(ver != 0 && ver != 1)
+		return FLASHROM_LANGUAGE_UNKNOWN;
+	
     /* Now compare against known codes */
-    if(flashrom_region_cache[3] == '0')
+    if(flash_cache.factory_records[ver].language == '0')
         return FLASHROM_LANGUAGE_JAPAN;
-    else if(flashrom_region_cache[3] == '1')
+    else if(flash_cache.factory_records[ver].language == '1')
         return FLASHROM_LANGUAGE_ENGLISH;
-    else if(flashrom_region_cache[3] == '2')
+    else if(flash_cache.factory_records[ver].language == '2')
         return FLASHROM_LANGUAGE_GERMAN;
-	else if(flashrom_region_cache[3] == '3')
+	else if(flash_cache.factory_records[ver].language == '3')
         return FLASHROM_LANGUAGE_FRENCH;
-	else if(flashrom_region_cache[3] == '4')
+	else if(flash_cache.factory_records[ver].language == '4')
         return FLASHROM_LANGUAGE_SPANISH;
-	else if(flashrom_region_cache[3] == '5')
+	else if(flash_cache.factory_records[ver].language == '5')
         return FLASHROM_LANGUAGE_ITALIAN;
     else {
-        dbglog(DBG_WARNING, "flashrom_get_region_language: unknown code '%s' (pos %d %c)\n",
-			flashrom_region_cache, 3, flashrom_region_cache[3]);
+        dbglog(DBG_WARNING, "flashrom_get_language: unknown code '%c'\n",
+			flash_cache.factory_records[ver].language);
         return FLASHROM_LANGUAGE_UNKNOWN;
     }
 }
 
-int flashrom_get_region_broadcast()
+char *get_flash_broadcast_str(int ver)
+{
+	switch(flashrom_get_broadcast(ver))
+	{
+		case FLASHROM_BROADCAST_NTSC:
+			return("NTSC");
+			break;
+		case FLASHROM_BROADCAST_PAL:
+			return("PAL");
+			break;
+		case FLASHROM_BROADCAST_PALM:
+			return("PAL-M");
+			break;
+		case FLASHROM_BROADCAST_PALN:
+			return("PAL-N");
+			break;
+		case FLASHROM_BROADCAST_UNKNOWN:
+			return("????");
+			break;
+	}
+	return("????");
+}
+
+int flashrom_get_broadcast(int ver)
 {
     if(!flashrom_is_cached)
 	{
-		if(flashrom_get_region_data() != FLASHROM_ERR_NONE)
+		if(flashrom_get_factory_data() != FLASHROM_ERR_NONE)
 			return FLASHROM_BROADCAST_UNKNOWN;
 	}
 	
+	if(ver != 0 && ver != 1)
+		return FLASHROM_BROADCAST_UNKNOWN;
+	
     /* Now compare against known codes */
-    if(flashrom_region_cache[4] == '0')
+    if(flash_cache.factory_records[ver].broadcast_format == '0')
         return FLASHROM_BROADCAST_NTSC;
-    else if(flashrom_region_cache[4] == '1')
+    else if(flash_cache.factory_records[ver].broadcast_format == '1')
         return FLASHROM_BROADCAST_PAL;
-    else if(flashrom_region_cache[4] == '2')
+    else if(flash_cache.factory_records[ver].broadcast_format == '2')
         return FLASHROM_BROADCAST_PALM;
-	else if(flashrom_region_cache[4] == '3')
+	else if(flash_cache.factory_records[ver].broadcast_format == '3')
         return FLASHROM_BROADCAST_PALN;
     else {
-        dbglog(DBG_WARNING, "flashrom_get_region_broadcast: unknown code '%s' (pos %d %c)\n",
-			flashrom_region_cache, 4, flashrom_region_cache[4]);
+        dbglog(DBG_WARNING, "flashrom_get_broadcast: unknown code '%c'\n",
+			flash_cache.factory_records[ver].broadcast_format);
         return FLASHROM_BROADCAST_UNKNOWN;
     }
 }
