@@ -520,7 +520,7 @@ unsigned char ksaur[4544] = {
 	0x8B,0x8B,0x7F,0x5C,0x52,0x40,0x47,0x8C,0x8C,0x8B,0x8B,0x8B,0x8B,0x8C,0x8C,0x8C,0x7C,0x5C,0x7B,0xF5,0xEF,0xE6,0xE6,0xE6
 };
 
-int MemcardSaveExists(char *filename, int *blocks)
+int MemcardSaveExists(char *filename, int *blocks, int *port, int *unit)
 {
 	maple_device_t	*vmu;
 	vmu_dir_t		*vmufiles = NULL;
@@ -562,6 +562,12 @@ int MemcardSaveExists(char *filename, int *blocks)
 			if(blocks)
 				*blocks = vmufiles[file].filesize;
 			free(vmufiles);
+
+			if(port && unit)
+			{
+				*port = vmu->port;
+				*unit = vmu->unit;
+			}
 			return VMU_SAVEEXISTS;
 		}
 	}
@@ -655,7 +661,7 @@ int ListMemCardFiles(char *buffer, int buffsize)
 	return VMU_OK;
 }
 
-int MemcardOtherGameExists(char *filename)
+int MemcardOtherGameExists(char *filename, int *port, int *unit)
 {
 	maple_device_t	*vmu;
 	vmu_dir_t		*vmufiles = NULL;
@@ -694,6 +700,11 @@ int MemcardOtherGameExists(char *filename)
 			if(strncmp(filename, vmufiles[file].filename, VMU_NAME_LEN) != 0)
 			{
 				free(vmufiles);
+				if(port && unit)
+				{
+					*port = vmu->port;
+					*unit = vmu->unit;
+				}
 				return VMU_OTHER_GAME;
 			}
 		}
@@ -728,7 +739,7 @@ int LoadMemCardSave(char *error)
 		return VMU_NOUNIT;
 	}
 
-	if(!MemcardSaveExists(VMU_NAME, NULL))
+	if(!MemcardSaveExists(VMU_NAME, NULL, NULL, NULL))
 	{
 		sprintf(error, "#Y%s not found in VMU#Y", VMU_NAME);
 #ifdef DCLOAD
@@ -829,7 +840,7 @@ int WriteMemCardSave(int eyecatch, char *error)
 	}
 
 	// Get existing save data size if it exists
-	MemcardSaveExists(VMU_NAME, &blocks_toRelease);
+	MemcardSaveExists(VMU_NAME, &blocks_toRelease, NULL, NULL);
 	
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD);
 	if(!vmu)
@@ -985,7 +996,7 @@ int WriteMemCardControlTest(char *error)
 	}
 	
 	// Get existing data size, if it exists
-	MemcardSaveExists(VMU_CTRL_NAME, &blocks_toRelease);
+	MemcardSaveExists(VMU_CTRL_NAME, &blocks_toRelease, NULL, NULL);
 	
 	vmu = maple_enum_type(0, MAPLE_FUNC_MEMCARD); 
     if(!vmu)

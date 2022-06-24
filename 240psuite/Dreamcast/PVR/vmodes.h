@@ -41,6 +41,12 @@
 #define	PAL_CENTERED		1
 #define	PAL_BOTTOM			2
 
+#define	NTSC_FRAME_LEN	16.6833
+#define NTSC_FRAME_RATE	59.94
+
+#define	PAL_FRAME_LEN	20.0
+#define PAL_FRAME_RATE	50.0
+
 #include "image.h"
 
 extern int vmode;

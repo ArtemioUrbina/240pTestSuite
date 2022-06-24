@@ -872,7 +872,7 @@ void ReflexNTimming()
 			}
 
 			res = (double)total / 10.0;
-			ms = (double)(res*(1000.0/(IsPAL ? 50.0 : 60.0)));
+			ms = (double)(res*(1000.0/(IsPAL ? PAL_FRAME_LEN : NTSC_FRAME_LEN)));
 			sprintf(msg, "%d/10 = %0.2f average frames ~= %0.2f ms", total, res, ms);
 			DrawStringS(60, 110, 1.0f, 0, 0, "+");
 			DrawStringS(55, 70 + fh*10, 1.0f, 0, 0, "_____");
@@ -1167,7 +1167,7 @@ void GridScrollTest()
 		}
 
 	}
-	FreeImage(&back);  
+	FreeImage(&square);  
 	FreeImage(&diag); 
 	return;
 }
@@ -1638,11 +1638,16 @@ void DiagonalPatternTest()
 void PassiveLagTest()
 {
 	int 		frames = 0, seconds = 0, minutes = 0, hours = 0;
-	int			toggle = 0, framecnt = 1, done =  0;
+	int			toggle = 0, framecnt = 1, done = 0;
 	uint16		pressed, lsd, msd, pause = 0;		
 	ImagePtr	back, circle, barl, barr;
 	controller	*st;
 	float		x = -8, y = 10;
+#ifdef BENCHMARK
+	uint64 		last, now;
+	
+	last = timer_us_gettime64();
+#endif
 	
 	back = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!back)
@@ -1831,10 +1836,16 @@ void PassiveLagTest()
 		// Draw Frames
 		lsd = frames % 10;
 		msd = frames / 10;
-		DrawDigit(x+248, y+16, 0, 0, 0, msd);
-		DrawDigit(x+272, y+16, 0, 0, 0, lsd);
+		DrawDigit(x+248, y+16, toggle? 1.0 : 0, 0, toggle ? 0 : 1.0, msd);
+		DrawDigit(x+272, y+16, toggle? 1.0 : 0, 0, toggle ? 0 : 1.0, lsd);
 
 		EndScene();
+		
+#ifdef BENCHMARK
+		now = timer_us_gettime64();
+		dbglog(DBG_INFO, "Frame took %g ms\n", (double)(now - last)/1000.0);
+		last = now;
+#endif
 		VMURefresh("LAG TEST", !pause ? "running" : "paused");
 
 		st = ReadController(0, &pressed);
@@ -1926,7 +1937,7 @@ uint16 ConvertToFrames(timecode *time)
 		return frames;
 
 	frames = time->frames;
-	frames += time->seconds*(IsPAL ? 50 : 60);
+	frames += time->seconds*(IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE);
 	frames += time->minutes*3600;
 	frames += time->hours*216000;
 	return frames;
@@ -1940,7 +1951,7 @@ void ConvertFromFrames(timecode *value, uint16 Frames)
 	Frames = Frames % 216000;
 	value->minutes = Frames / 3600;
 	Frames = Frames % 3600;
-	value->seconds = Frames / (IsPAL ? 50 : 60);
+	value->seconds = Frames / (IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE);
 	value->frames = Frames % (IsPAL ? 50 : 60);
 }
 

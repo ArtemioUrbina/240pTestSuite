@@ -263,7 +263,7 @@ int LoadGZMDFSamples()
 	}
 	
 #ifdef BENCHMARK
-	start = timer_ms_gettime64();
+	start = timer_us_gettime64();
 #endif
 	updateVMU_wait();
 	DrawMessageOnce("Please wait while samples are loaded\n#G(about 10 seconds)#G");
@@ -300,9 +300,9 @@ int LoadGZMDFSamples()
 		dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
 	
 #ifdef BENCHMARK
-	end = timer_ms_gettime64();
+	end = timer_us_gettime64();
 
-	dbglog(DBG_INFO, "Load took %"PRIu64" ms", end - start);
+	dbglog(DBG_INFO, "PCM file loading took %g ms\n", (double)(end - start)/1000.0);
 #endif
 	return 1;
 }
@@ -374,7 +374,7 @@ void MDFourier()
 			sprintf(msg, "Press #YA#Y to play signal");
 		DrawStringSCentered(70+2*fh, 0.0f, 1.0f, 0.0f, msg);
 		if(stream_samplerate == 48000)
-			DrawStringSCentered(70+10*fh, 0.0f, 1.0f, 0.0f, "Yamaha AICA has aliasing at 48khz"); 
+			DrawStringSCentered(70+10*fh, 1.0f, 1.0f, 0.0f, "Yamaha AICA has aliasing at 48khz"); 
 		DrawStringSCentered(70+13*fh, 1.0f, 1.0f, 1.0f, "Visit #Chttp://junkerhq.net/MDFourier#C for info"); 
 		EndScene();
 		
@@ -671,20 +671,11 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 	DrawImage(back);
 	DrawImage(wave);
 
-	if(IsPAL)
-	{
-		if(accuracy == 1)
-			sprintf(DPres, "Frame accuracy: 1 frame 20ms");
-		else
-			sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, 20.0/accuracy);
-	}
+
+	if(accuracy == 1)
+		sprintf(DPres, "Frame accuracy: 1 frame %gms", IsPAL ? PAL_FRAME_LEN : NTSC_FRAME_LEN);
 	else
-	{
-		if(accuracy == 1)
-			sprintf(DPres, "Frame accuracy: 1 frame %gms", IsPAL ? 20.0 : 16.6835);
-		else
-			sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, (IsPAL ? 20.0:16.6835)/accuracy);
-	}
+		sprintf(DPres, "Frame accuracy: 1/%d frame %0.3gms", accuracy, (IsPAL ? PAL_FRAME_LEN : NTSC_FRAME_LEN)/accuracy);
 
 	DrawStringSCentered(60, 0.0f, 1.0f, 1.0f, "Lag Test via Microphone & Fast Fourier Transform"); 
 	DrawStringS(40, 120, 1.0f, 1.0f, 1.0f, Status);
@@ -717,7 +708,7 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 				if(showframes)
 					sprintf(Res, "#G%.2d#G Lag was #C%g#C frames", i, Results[i-1]);
 				else
-					sprintf(Res, "#G%.2d#G Lag was #C%0.2f#C ms", i, Results[i-1]*(IsPAL ? 20.0 : 16.6835));
+					sprintf(Res, "#G%.2d#G Lag was #C%0.2f#C ms", i, Results[i-1]*(IsPAL ? PAL_FRAME_LEN : NTSC_FRAME_LEN));
 			}
 			DrawStringS(164, 80+i*fh, 1.0f, 1.0f, 1.0f, Res);
 		}
@@ -749,7 +740,7 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 	{
 		rec_buffer.overflow++;
 #ifdef DEBUG_FFT
-		dbglog(DBG_CRITICAL, "Prevented buffer overflow #%d\n", rec_buffer.overflow);
+		dbglog(DBG_CRITICAL, "Prevented buffer overflow #%d by %d bytes\n", rec_buffer.overflow, len);
 #endif
 		return;
 	}
@@ -758,7 +749,7 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 	{
 		rec_buffer.overflow = 1;
 #ifdef DEBUG_FFT
-		dbglog(DBG_CRITICAL, "Buffer overflow\n");
+		dbglog(DBG_CRITICAL, "Prevented Buffer overflow by %d bytes\n", len - (rec_buffer.size - rec_buffer.pos));
 #endif
 		return;
 	}
@@ -894,7 +885,7 @@ void SIPLagTest()
 			End of Extra data
 	*/
 
-	if(sip->info.function_data[0] & 0x30000000)		// Version 1.000, 2000/02/24,315-618
+	if(sip->info.function_data[0] & (3<<28))		// Version 1.000, 2000/02/24,315-618
 		samplerate = 10909;
 	else
 	{
@@ -937,24 +928,13 @@ void SIPLagTest()
 		
 		sipretval = sip_start_sampling(sip, sip_copy, 1);
 		if(sipretval == MAPLE_EOK)
-		{
-#ifdef DEBUG_FFT
-			dbglog(DBG_INFO, "Microphone ok\n");
-#endif
 			sampling = 1;
-		}
+#ifdef DC_LOAD
 		if(sipretval == MAPLE_ETIMEOUT)
-		{
-#ifdef DEBUG_FFT
 			dbglog(DBG_INFO, "Microphone timed out\n");
-#endif
-		}
 		if(sipretval == MAPLE_EAGAIN)
-		{
-#ifdef DEBUG_FFT
 			dbglog(DBG_INFO, "Microphone asked for retry\n");
 #endif
-		}
 		if(sipretval == MAPLE_EFAIL)
 		{
 			DrawMessage("Microphone Recording Failed, already sampling\nTry reconnecting it");
@@ -1048,7 +1028,7 @@ void SIPLagTest()
 			
 			if(state_machine == 4)
 			{
-				sprintf(DStatus, "Recording Frame: %d", SECONDS_TO_RECORD*(IsPAL ? 50 : 60) - frame_counter);
+				sprintf(DStatus, "Recording Frame: %d", (int)(SECONDS_TO_RECORD*(IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE) - frame_counter));
 				if(frame_counter == 1)
 					rec_buffer.recording = 0;
 
@@ -1077,14 +1057,14 @@ void SIPLagTest()
 		{
 			snd_sfx_play(beep, 255, 128);
 			state_machine = 4;
-			frame_counter = SECONDS_TO_RECORD*(IsPAL ? 50 : 60); // record N seconds + CUE frames
+			frame_counter = SECONDS_TO_RECORD*(IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE); // record N seconds + CUE frames
 		}
 		
 		if(state_machine == 5)
 		{
 			sprintf(DStatus, "Stopped sampling");
 
-#ifdef DEBUG_FFT
+#ifdef DC_LOAD
 			dbglog(DBG_INFO, "Got %d bytes (%d 16 bit samples)\n", 
 					(int)rec_buffer.pos, (int)(rec_buffer.pos/2));
 #endif
@@ -1099,7 +1079,7 @@ void SIPLagTest()
 				
 				// Mic sample rate can vary between models, see above comment
 				value = ProcessSamples((short*)rec_buffer.buffer, (int)(rec_buffer.pos/2),
-					samplerate, (IsPAL ? 50 : 60)*accuracy, SEARCH_1KHZ);
+					samplerate, (IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE)*accuracy, SEARCH_1KHZ);
 				if(value < 0 && value != FFT_NOT_FOUND && value != FFT_OM)
 				{
 					sprintf(DStatus, "#YNoise at 1khz#Y");
@@ -1126,11 +1106,11 @@ void SIPLagTest()
 					char vmtext[10];
 
 					sprintf(DStatus, "Lag is #C%g#C frames\n       #C%0.2f#C ms",
-						value, value*(IsPAL ? 20.0 : 16.6835));
+						value, value*(IsPAL ? PAL_FRAME_LEN : NTSC_FRAME_LEN));
 					if(showframes)
 						sprintf(vmtext, "%g f", value);
 					else
-						sprintf(vmtext, "%g ms", value*(IsPAL ? 20.0 : 16.6835));
+						sprintf(vmtext, "%g ms", value*(IsPAL ? PAL_FRAME_LEN : NTSC_FRAME_LEN));
 					vmuMsg1 = "Lag is:";
 					vmuMsg2 = vmtext;
 					updateVMU(vmuMsg1, vmuMsg2, 1);
@@ -1168,7 +1148,6 @@ void SIPLagTest()
 		do
 		{	
 			sipretval = sip_stop_sampling(sip, 1);
-#ifdef DEBUG_FFT
 			if(sipretval == MAPLE_EAGAIN)
 			{
 				retries	++;
@@ -1176,15 +1155,21 @@ void SIPLagTest()
 			}
 			else if(sipretval != MAPLE_EOK)
 				dbglog(DBG_ERROR, "Got %d from sip_stop_sampling\n", sipretval);
-#endif
+
 			tries++;
 		}while(sipretval == MAPLE_EAGAIN && tries < 100);
 		
 		if(retries)
 			dbglog(DBG_ERROR, "Got MAPLE_EAGAIN %d times from sip_stop_sampling\n", retries);
-		if(sipretval != MAPLE_EOK)
+		if(sipretval != MAPLE_EOK && done != 2)
+		{
 			dbglog(DBG_ERROR, "Microphone recording could not be stopped\n");
+			done = 2;
+		}
 	}
+	
+	if(done == 2)
+		DrawMessage("#YPlease remove and reinsert Microphone#Y");
 
 	cleanSIPlag();
 	return;
@@ -1218,7 +1203,7 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 	dbglog(DBG_INFO, "Samples are at %g Khz and %g seconds long. A Frame is %g (%ld) samples.\n",
 					samplerate, (double)samplesize/samplerate, framesize, framesizernd);
 
-	start = timer_ms_gettime64();
+	start = timer_us_gettime64();
 #endif
 	in = (double*) fftw_malloc(sizeof(double) * framesizernd);
 	if(!in)
@@ -1292,9 +1277,9 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 	}
 
 #ifdef DEBUG_FFT
-	end = timer_ms_gettime64();
+	end = timer_us_gettime64();
 	time = end - start;
-	dbglog(DBG_INFO, "FFT for %d frames took %"PRIu64" ms\n", (int)(samplesize/framesize - 1), time);
+	dbglog(DBG_INFO, "FFT for %d frames took %g ms\n", (int)(samplesize/framesize - 1), (double)time/1000.0);
 	start = end;
 #endif
 
@@ -1303,7 +1288,7 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 	maxs = (casefrq + 1) / boxsize;
 #ifdef DEBUG_FFT
 	dbglog(DBG_INFO, "Searching for %g, due to samplerate, arraysize and accurancy %d it is %g, between %g and %g\n",
-		searchfreq, (int)secondunits/(IsPAL ? 50 : 60), casefrq/boxsize, mins, maxs);
+		searchfreq, (int)(secondunits/(IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE)), casefrq/boxsize, mins, maxs);
 #endif
  
 	for(f = 0; f < samplesize/framesize - 1; f++)
@@ -1360,9 +1345,9 @@ double ProcessSamples(short *samples, size_t size, double samplerate, double sec
 	}
 
 #ifdef DEBUG_FFT
-	end = timer_ms_gettime64();
+	end = timer_us_gettime64();
 	time = end - start;
-	dbglog(DBG_INFO, "Processing frequencies took %"PRIu64" ms\n", time);
+	dbglog(DBG_INFO, "Processing frequencies took %g ms\n", (double)time/1000.0);
 #endif
 
 	if(LoudFreqArray)

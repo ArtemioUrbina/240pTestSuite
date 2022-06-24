@@ -158,7 +158,7 @@ int CopyFBToBG()
 #ifdef BENCHMARK
 	uint64	start, end, mstart;
 		
-	start = timer_ms_gettime64();
+	start = timer_us_gettime64();
 	mstart = start;
 #endif
 
@@ -191,9 +191,9 @@ int CopyFBToBG()
 	
 	memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 #ifdef BENCHMARK
-	end = timer_ms_gettime64();
-	dbglog(DBG_INFO, "FB buffer init took %"PRIu64" ms\n", end - start);
-	start = timer_ms_gettime64();
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "FB buffer init took %g ms\n", (double)(end - start)/1000.0);
+	start = timer_us_gettime64();
 #endif
 
 	save = irq_disable();
@@ -201,9 +201,9 @@ int CopyFBToBG()
 	irq_restore(save);
 
 #ifdef BENCHMARK
-	end = timer_ms_gettime64();
-	dbglog(DBG_INFO, "FB buffer memcpy took %"PRIu64" ms\n", end - start);
-	start = timer_ms_gettime64();
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "FB buffer memcpy took %g ms\n", (double)(end - start)/1000.0);
+	start = timer_us_gettime64();
 #endif
 
 	for(i = 0; i < numpix; i++)
@@ -228,9 +228,9 @@ int CopyFBToBG()
 	fbcopy = NULL;
 
 #ifdef BENCHMARK
-	end = timer_ms_gettime64();
-	dbglog(DBG_INFO, "FB conversion took %"PRIu64" ms\n", end - start);
-	start = timer_ms_gettime64();
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "FB conversion took %g ms\n", (double)(end - start)/1000.0);
+	start = timer_us_gettime64();
 #endif
 
 	pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex, tw, th,
@@ -241,10 +241,10 @@ int CopyFBToBG()
 	fbtexture->h = fbtexture->th;
 
 #ifdef BENCHMARK
-	end = timer_ms_gettime64();
-	dbglog(DBG_INFO, "FB texture upload took %"PRIu64" ms\n", end - start);
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "FB texture upload took %g ms\n", (double)(end - start)/1000.0);
 	
-	dbglog(DBG_INFO, "FB texture entire process took %"PRIu64" ms\n", end - mstart);
+	dbglog(DBG_INFO, "FB texture entire process took %g ms\n", (double)(end - mstart)/1000.0);
 #endif
 
 	fbtexture->r = 0.75f;
@@ -410,7 +410,7 @@ void DrawShowMenu()
 
 void ChangeOptions(ImagePtr screen)
 {	
-	int 		sel = 1, close = 0, joycnt = 0;	
+	int 		sel = 1, close = 0, joycnt = 0, port = 0, unit = 0;	
 	int			saved = -1, loaded = -1, timer = 0;
 	int			hint = 0, VMUsaveexists = 0, VMU_detect_save_counter = 0;
 	ImagePtr	back;
@@ -663,7 +663,7 @@ void ChangeOptions(ImagePtr screen)
 		if(VMU_detect_save_counter <= 0)
 		{
 			if(isMemCardPresent())
-				VMUsaveexists = MemcardSaveExists(VMU_NAME, NULL) == VMU_SAVEEXISTS ? 1 : 0;
+				VMUsaveexists = MemcardSaveExists(VMU_NAME, NULL, &port, &unit) == VMU_SAVEEXISTS ? 1 : 0;
 			VMU_detect_save_counter = 600;	// 10 seconds in NTSC
 		}
 		
@@ -798,8 +798,9 @@ void ChangeOptions(ImagePtr screen)
 					case 11:
 						if(isMemCardPresent() && saved != 1)
 						{
-							int vmures, overwrite = 1;
-							int eyecatcher = 0;
+							int		vmures, overwrite = 1;
+							int		eyecatcher = 0;
+							char	msg[100];
 
 							if ( st && st->buttons & CONT_RTRIGGER )
 								eyecatcher = 1;
@@ -808,16 +809,14 @@ void ChangeOptions(ImagePtr screen)
 								
 							if(VMUsaveexists)
 							{
-								fmenudata 	resmenudata[] = { {1, "Overwrite"}, {2, "Cancel"} };
-								
-								overwrite = SelectMenu("Overwrite Save?", resmenudata, 2, 2);
-								if(overwrite == MENU_CANCEL || overwrite == 2)
-									overwrite = 0;
+								sprintf(msg, "Replace #Ysettings#Y stored in #YVMU#Y at port #Y%c-%c#Y?", 'A'+port, '0'+unit);
+								overwrite = AskQuestion(msg);
 							}
 							
 							if(overwrite)
 							{
-								DrawMessageOnce("Please don't remove VMU while saving...");
+								sprintf(msg, "Please don't remove #YVMU %c-%c#Y while saving...", 'A'+port, '0'+unit);
+								DrawMessageOnce(msg);
 								vmures = WriteMemCardSave(eyecatcher, error);
 								if(vmures == VMU_OK)
 									saved = 1;

@@ -80,11 +80,11 @@ void DrawChar(float x, float y, char c)
 	int charx, chary;
 
 	// Don't draw outside of visible screen
-	if(x < -1*fw ||x > dW+fw || y < -1*fh || y > dH+fh)
+	if(x < -2*fw ||x > dW+fw || y < -2*fh || y > dH+fh)
 		return;
 		
 	c -= 0x20;
-	if(c <= 0 || c > 0x5F)		// save some polygons, space (0x20) and out of range
+	if(c <= 0 || c > 0x5F)		// save some polygons, skip space char (0x20) and all out of range characters
 		return;
 
 	charx = (c % 16) * fw;

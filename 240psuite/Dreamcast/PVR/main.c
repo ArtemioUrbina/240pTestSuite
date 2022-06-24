@@ -89,7 +89,7 @@ int main(void)
 		settings.EnablePAL = 0;
 	
 	if(isMemCardPresent() && 
-		MemcardSaveExists(VMU_NAME, NULL) == VMU_SAVEEXISTS)
+		MemcardSaveExists(VMU_NAME, NULL, NULL, NULL) == VMU_SAVEEXISTS)
 		loadedvmu = LoadMemCardSave(error);
 	
 	// Boot in 640x480 is VGA, or 288 in PAL for safety,
@@ -979,8 +979,8 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 	float 	r = 1.0f;
 	float 	g = 1.0f;
 	float 	b = 1.0f;
-	char	vdata[40], msg[80];
-	char	*region, *broadcast;
+	char	vdata[40], msg[100];
+	char	region[40], broadcast[40];
 	
 	DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Configuration"); y += fh; c++;
 	if(showcredits)
@@ -997,8 +997,6 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 		DrawStringS(x, y +fh, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video Settings"); 
 	}
 #endif
-		
-	// Check cable is done at EndScene globally
 	
 	x = 220.0f;
 	y = 212.0f;
@@ -1007,13 +1005,31 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 	g = 0.8f;
 	b = 0.8f;
 	
-	region = get_flash_region_str(0);
-	broadcast = get_flash_broadcast_str(0);
-	
+	if(!is_flashrom_region_data_changed())
+		sprintf(region, "%s", get_flash_region_str(0));
+	else
+	{
+		sprintf(region, "%s(%s)", 
+			get_flash_region_str(0), 
+			get_flash_region_str(1));
+		x -= 4*fw;
+	}
+		
+	if(!is_flashrom_broadcast_changed())
+		sprintf(broadcast, "%s", get_flash_broadcast_str(0));
+	else
+	{
+		sprintf(broadcast, "%s(%s)", 
+			get_flash_broadcast_str(0), 
+			get_flash_broadcast_str(1));
+		x -= 4*fw;
+	}
+
 	sprintf(msg, "%s %s", region, broadcast);
 	DrawStringS(x, y, r, g, b, msg);
 	
 	y += fh - 2;
+	// Check cable is done at EndScene globally
 	GetVideoModeStr(vdata, 1);
 	switch(vcable)
 	{

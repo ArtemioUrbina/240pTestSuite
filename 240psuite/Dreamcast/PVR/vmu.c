@@ -83,7 +83,7 @@ void internal_vmu_draw_lcd(maple_device_t *dev,	void *bitmap)
 	
 	// takes around 20-30ms
 	retval = vmu_draw_lcd(dev, bitmap);
-	lcd_vmu_update_time = timer_ms_gettime64();
+	lcd_vmu_update_time = timer_us_gettime64();
 	if(retval == MAPLE_EOK)
 		return;
 
@@ -342,6 +342,12 @@ void updateVMU_SD()
 	updateVMUGraphic(sd_xpm);
 }
 
+inline void updateVMU_SD_Dev(maple_device_t *vmu)
+{
+	updateVMUGraphicDev(vmu, sd_xpm);
+}
+
+
 #define MAX_FRAMES 12
 char **frames_k[MAX_FRAMES] = { sd_b1_xpm  , NULL, NULL, NULL, sd_b2_xpm  , NULL, NULL, sd_b1_xpm  , NULL, NULL, NULL, sd_xpm };
 char **frames_f[MAX_FRAMES] = { sd_b1_f_xpm, NULL, NULL, NULL, sd_b2_f_xpm, NULL, NULL, sd_b1_f_xpm, NULL, NULL, NULL, sd_xpm };
@@ -595,10 +601,14 @@ void updateVMU_Donna()
 	updateVMUGraphic(donna_xpm);
 }
 
-void updateVMUGraphic(char **xpm)
+inline void updateVMUGraphic(char **xpm)
+{
+	updateVMUGraphicDev(NULL, xpm);
+}
+
+void updateVMUGraphicDev(maple_device_t *vmu, char **xpm)
 {
 	int x = 0, y = 0;
-	maple_device_t *mvmu = NULL;
 	
 	if(disableVMU_LCD_val)
 		return;
@@ -606,9 +616,12 @@ void updateVMUGraphic(char **xpm)
 	if(!xpm)
 		return;
 
-	mvmu = maple_enum_type(0, MAPLE_FUNC_LCD);
-	if(!mvmu)
-		return;
+	if(!vmu)
+	{
+		vmu = maple_enum_type(0, MAPLE_FUNC_LCD);
+		if(!vmu)
+			return;
+	}
 
 	vmu_clear_bitmap(bitmap);
 	for(y = 0; y < 32; y++)
@@ -622,7 +635,23 @@ void updateVMUGraphic(char **xpm)
 		}
 	}
 		
-	internal_vmu_draw_lcd(mvmu, bitmap);
+	internal_vmu_draw_lcd(vmu, bitmap);
+}
+
+void clearVMUGraphicDev(maple_device_t *vmu)
+{
+	if(disableVMU_LCD_val)
+		return;
+	
+	if(!vmu)
+	{
+		vmu = maple_enum_type(0, MAPLE_FUNC_LCD);
+		if(!vmu)
+			return;
+	}
+
+	vmu_clear_bitmap(bitmap);
+	internal_vmu_draw_lcd(vmu, bitmap);
 }
 
 void disableVMU_LCD()
@@ -658,7 +687,8 @@ void enableVMU_LCD()
 
 void vmu_report_controller_swap(int no_controller)
 {
-	uint64		now = 0, lapse = 0;
+	uint64		now = 0;
+	double		lapse = 0;
 	static int	times = 0;
 		
 	if(disableVMU_LCD_val)
@@ -667,17 +697,17 @@ void vmu_report_controller_swap(int no_controller)
 	if(lcd_vmu_update_time == 0)
 		return;
 	
-	now = timer_ms_gettime64();
-	lapse = now - lcd_vmu_update_time;
+	now = timer_us_gettime64();
+	lapse = (double)(now - lcd_vmu_update_time)/1000.0;
 	
-	dbglog(DBG_INFO, "Time from Controller swap after VMU update %"PRIu64" ms\n", lapse);
+	dbglog(DBG_INFO, "Time from Controller swap after VMU update %g ms\n", lapse);
 	
-	if(lapse < 150)	// we got a bad LCD VMU...
+	if(lapse < 150.0)	// we got a bad LCD VMU...
 	{
 		dbglog(DBG_ERROR, "We got a bad LCD VMU, it is resetting the controller. DISABLED.\n");
 		disableVMU_LCD_val = 1;
 	}
-	else if(lapse < 600)  // check if it is slower, but periodic
+	else if(lapse < 600.0)  // check if it is slower, but periodic
 	{
 		times++;
 		if(times >= 3)

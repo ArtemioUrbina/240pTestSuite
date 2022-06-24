@@ -85,6 +85,24 @@ typedef struct factory_sector_zeroed
     char staff_roll[0xc81];     // list of creators
 } flash_data_p;
 
+/* Besides factory sector, each new Dreamcast have "Flash Partition 2"
+ header in SA6 (@1C000) followed by "CID" record: */
+ 
+typedef struct cid_record_st
+{
+    uint16_t record_type;           // 0, can be 0-4
+    struct cid_data
+    {
+        uint8_t date[4];            // BCD YYYY/MM/DD
+        char t_inferior_code[4];    // '0'-filled in all dumps we have
+        char repair_voucher_no[8];  // '0'-filled in all dumps we have
+        uint8_t serial_no[8];
+        uint8_t factory_code;
+        uint8_t order_no[5];
+    } cid[2];
+    uint16_t crc16;
+} cid_record_st;
+
 void ControllerTest();
 void ListMapleDevices();
 void MemoryViewer(uint32 address);
@@ -101,6 +119,9 @@ char *get_flash_broadcast_str(int ver);
 int flashrom_get_region_data(int ver);
 int flashrom_get_language(int ver);
 int flashrom_get_broadcast(int ver);
+int flashrom_get_factory_data();
+int is_flashrom_region_data_changed();
+int is_flashrom_broadcast_changed();
 
 void Show_ISP_Data();
 

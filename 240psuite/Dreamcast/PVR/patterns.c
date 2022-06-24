@@ -1001,11 +1001,11 @@ void DrawMonoscope()
 
 void Draw100IRE()
 {
-	int 			done = 0, oldvmode = -1;
+	int 			done = 0, oldvmode = -1, vmuMsgSend = 0;
 	uint16			pressed, text = 0, invert = 0;	
 	ImagePtr		back = NULL, white = NULL, black = NULL;
 	controller		*st = NULL;
-	char			msg[50], *vmuMsg = " 100 IRE ";
+	char			msg[50], vmuMsg[50];
 
 	black = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!black)
@@ -1020,6 +1020,7 @@ void Draw100IRE()
 		return;
   	}
 
+	sprintf(vmuMsg, " 100 IRE ");
 	while(!done && !EndProgram) 
 	{
 		if(oldvmode != vmode)
@@ -1081,8 +1082,8 @@ void Draw100IRE()
 					if(back->alpha > 1.0f)
 						back->alpha = 1.0f;
 				}
-
 				text = 30;
+				vmuMsgSend = 1;
 			}
 		
 			if (pressed & CONT_RTRIGGER)
@@ -1099,8 +1100,8 @@ void Draw100IRE()
 					if(back->alpha < 0.0f)
 						back->alpha = 0.0f;
 				}
-
 				text = 30;
+				vmuMsgSend = 1;
 			}
 
 			if (pressed & CONT_A)
@@ -1108,11 +1109,17 @@ void Draw100IRE()
 				invert = !invert;
 				back->alpha = 1.0f;
 				text = 60;
+				vmuMsgSend = 1;
+			}
+			
+			if(vmuMsgSend)
+			{
 				if(!invert)
-					vmuMsg = " 100 IRE ";
+					sprintf(vmuMsg, " %3.0f IRE", (double)(back->alpha * 100));
 				else
-					vmuMsg = " 140 IRE ";
-				refreshVMU = 0;
+					sprintf(vmuMsg, " %3.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
+				refreshVMU = 1;
+				vmuMsgSend = 0;
 			}
 		
 			if (pressed & CONT_B)

@@ -31,9 +31,9 @@
 
 int isMemCardPresent();
 int ListMemCardFiles(char *buffer, int buffsize);
-int MemcardSaveExists(char *filename, int *blocks);
+int MemcardSaveExists(char *filename, int *blocks, int *port, int *unit);
 int LoadMemCardSave(char *error);
 int WriteMemCardSave(int icon, char *error);
 int WriteMemCardControlTest(char *error);
-int MemcardOtherGameExists(char *filename);
+int MemcardOtherGameExists(char *filename, int *port, int *unit);
 

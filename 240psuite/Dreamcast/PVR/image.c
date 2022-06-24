@@ -297,7 +297,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 #ifdef BENCHMARK
 	uint64	start, end;
 
-	start = timer_ms_gettime64();
+	start = timer_us_gettime64();
 #endif
 
 	testFile = fs_open(filename, O_RDONLY);
@@ -345,8 +345,8 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	kos_img_free(&img, 0);	
 
 #ifdef BENCHMARK
-	end = timer_ms_gettime64();
-	dbglog(DBG_INFO, "KMG %s took %"PRIu64" ms\n", filename, end - start);
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "KMG %s took %g ms\n", filename, (double)(end - start)/1000.0);
 #endif
 
 	image->r = 1.0f;
@@ -393,7 +393,7 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 #ifdef BENCHMARK
 	uint64	start, end;
 		
-	start = timer_ms_gettime64();
+	start = timer_us_gettime64();
 #endif
 	if(!image)
 	{
@@ -435,8 +435,8 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 	kos_img_free(&img, 0);	
 
 #ifdef BENCHMARK
-	end = timer_ms_gettime64();
-	dbglog(DBG_INFO, "KMG %s took %"PRIu64" ms\n", filename, end - start);
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "KMG %s took %g ms\n", filename, (double)(end - start)/1000.0);
 #endif
 	return 1;
 }
