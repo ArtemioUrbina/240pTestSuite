@@ -19,11 +19,12 @@ to peak, an all white signal should be equal to
 The reason IRE is a relative measurement (percent)
 is because a video signal may be any amplitude.
 
-This unit is used in the #YITU-R BT.470#Y which
-defines PAL, NTSC and SECAM
-
 You can use the R and L triggers to change between
 100 IRE to 0 IRE in steps of 10 IRE.
+
+The Dreamcast is slightlu above the #Y713.4 mV#Y white
+but you can toggle between the Dreamcast #Y0-800 mV#Y
+values and simulated #Y0-714.3 mV#Y ranges with #GX#G.
 
 With #GA#G you can change the range to 100 and 140 IRE
 in 5 IRE steps.
