@@ -103,6 +103,10 @@ typedef struct cid_record_st
     uint16_t crc16;
 } cid_record_st;
 
+
+// protect sprintf
+#define protectascii(c) isprint((unsigned char)c) ? c : ' '
+
 void ControllerTest();
 void ListMapleDevices();
 void MemoryViewer(uint32 address);

@@ -1565,16 +1565,16 @@ void printflashromdata(int ver)
 	}
 	
 	buffer_printf("#YMachine Code:#Y     (%c%c) %s\n", 
-		flash_cache.factory_records[ver].machine_code1,
-		flash_cache.factory_records[ver].machine_code2,
+		protectascii(flash_cache.factory_records[ver].machine_code1),
+		protectascii(flash_cache.factory_records[ver].machine_code2),
 		flash_cache.factory_records[ver].machine_code1 == flash_cache.factory_records[ver].machine_code2 &&
 		flash_cache.factory_records[ver].machine_code1 == '0' ? "Retail" : "Development Box");
 	buffer_printf("#YCountry Code:#Y     (%c)  %s\n", 
-		flash_cache.factory_records[ver].country_code, get_flash_region_str(ver));
+		protectascii(flash_cache.factory_records[ver].country_code), get_flash_region_str(ver));
 	buffer_printf("#YLanguage:#Y         (%c)  %s\n", 
-		flash_cache.factory_records[ver].language, get_flash_language_str(ver));
+		protectascii(flash_cache.factory_records[ver].language), get_flash_language_str(ver));
 	buffer_printf("#YBroadcast Format:#Y (%c)  %s\n", 
-		flash_cache.factory_records[ver].broadcast_format, get_flash_broadcast_str(ver));
+		protectascii(flash_cache.factory_records[ver].broadcast_format), get_flash_broadcast_str(ver));
 	buffer_printf("#YMachine Name:#Y     %s\n", 
 		p_flash_cache.factory_records[ver].machine_name);
 	buffer_printf("#YTool Number:#Y      %s\n", 
@@ -1627,7 +1627,7 @@ void printflashromp2data(int ver)
 		return;
 	}
 	buffer_printf("#GCID record %d:#G\n", ver);
-	if(compare >= sizeof(struct factory_record)/2)
+	if(compare >= sizeof(struct cid_data)/2)
 	{
 		buffer_printf("#GCID record %d has too many 0xFF values.#G\n", ver);
 		buffer_printf("#GDisplaying as best as possible:#G\n");
@@ -1641,19 +1641,19 @@ void printflashromp2data(int ver)
 		cid_record.cid[ver].date[2],
 		cid_record.cid[ver].date[3]);
 	buffer_printf("#YT Inferior Code:#Y  %c%c%c%c\n", 
-		cid_record.cid[ver].t_inferior_code[0],
-		cid_record.cid[ver].t_inferior_code[1],
-		cid_record.cid[ver].t_inferior_code[2],
-		cid_record.cid[ver].t_inferior_code[3]);
-	buffer_printf("#YRepair voucher:#Y   %c%c%c%c\n", 
-		cid_record.cid[ver].repair_voucher_no[0],
-		cid_record.cid[ver].repair_voucher_no[1],
-		cid_record.cid[ver].repair_voucher_no[2],
-		cid_record.cid[ver].repair_voucher_no[3],
-		cid_record.cid[ver].repair_voucher_no[4],
-		cid_record.cid[ver].repair_voucher_no[5],
-		cid_record.cid[ver].repair_voucher_no[6],
-		cid_record.cid[ver].repair_voucher_no[7]);
+		protectascii(cid_record.cid[ver].t_inferior_code[0]),
+		protectascii(cid_record.cid[ver].t_inferior_code[1]),
+		protectascii(cid_record.cid[ver].t_inferior_code[2]),
+		protectascii(cid_record.cid[ver].t_inferior_code[3]));
+	buffer_printf("#YRepair voucher:#Y   %c%c%c%c%c%c%c%c\n", 
+		protectascii(cid_record.cid[ver].repair_voucher_no[0]),
+		protectascii(cid_record.cid[ver].repair_voucher_no[1]),
+		protectascii(cid_record.cid[ver].repair_voucher_no[2]),
+		protectascii(cid_record.cid[ver].repair_voucher_no[3]),
+		protectascii(cid_record.cid[ver].repair_voucher_no[4]),
+		protectascii(cid_record.cid[ver].repair_voucher_no[5]),
+		protectascii(cid_record.cid[ver].repair_voucher_no[6]),
+		protectascii(cid_record.cid[ver].repair_voucher_no[7]));
 	buffer_printf("#YSerial Number:#Y    %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X\n", 
 		cid_record.cid[ver].serial_no[0],
 		cid_record.cid[ver].serial_no[1],
@@ -1813,7 +1813,7 @@ void ShowBIOSandFlash()
 				done = 1;
 
 			if (pressed & CONT_START)
-				ShowMenu(ISPHELP);
+				ShowMenu(BIOSHELP);
 		}
 	}
 	FreeImage(&back);
@@ -1930,7 +1930,7 @@ void MemoryViewer(uint32 address)
 					else
 						buffer[0] = (char)32;			// Space
 				}
-				DrawString(3*j*fw, i*fh, 1.0f, 1.0f, 1.0f, buffer);
+				DrawStringNH(3*j*fw, i*fh, 1.0f, 1.0f, 1.0f, buffer);
 			}
 		}
         EndScene();
@@ -2077,6 +2077,9 @@ void MicrophoneTest()
 	snd_stream_hnd_t 	hnd = SND_STREAM_INVALID;
 	char				*vmuMsg1 = "Mic Test", *vmuMsg2 = "", msg[128], sr[40];
 	fmenudata 			resmenudata[] = { {1, "11khz"}, {2, "8khz"} };
+	
+	if(!isSIPPresent())
+		return;
 	
 	sr8 = SelectMenu("Select samplerate", resmenudata, 2, sr8 + 1);
 	if(sr8 == MENU_CANCEL)
@@ -2463,17 +2466,24 @@ void set_cross_coord(ImagePtr cross, int state)
 	}
 }
 
+typedef struct coord_st{
+	int x;
+	int y;
+} coord;
+
 #define	LG_COOLDOWN	200
+#define LG_FRAMES	50
 void LightGunTest()
 {
-	int 		done = 0, lgun = 0;
-	int			x, y, oldx, oldy, cstate = -1;
-	uint16		pressed, lgpressed, OldButtonsLG = 0;		
-	ImagePtr	white = NULL, cross = NULL;
-	controller	*st = NULL;
-	maple_device_t *dev;
-    cont_state_t *state;
-	uint64 last = 0, now = 0;
+	int 			done = 0, lgun = 0;
+	int				x, y, oldx, oldy, cstate = -1;
+	uint16			pressed, lgpressed, OldButtonsLG = 0;		
+	ImagePtr		white = NULL, cross = NULL;
+	controller		*st = NULL;
+	maple_device_t	*dev;
+    cont_state_t	*state;
+	uint64 			last = 0, now = 0;
+	coord			read[3], expected[3];
 
 	if(!isLightGunPresent())
 		return;
@@ -2493,6 +2503,17 @@ void LightGunTest()
 	oldx = x;
 	oldy = y;
 	
+	/*
+		Trigger start: 0 previous:15358 now:17982 elapsed:2624
+		lgun [frame: 48] (312,60) -> (18, 18) n:18417 t:17982 s:435
+		Trigger start: 1 previous:17982 now:20356 elapsed:2374
+		lgun [frame: 48] (574,147) -> (160, 120) n:20707 t:20356 s:351
+		Trigger start: 2 previous:20356 now:22111 elapsed:1755
+		lgun [frame: 48] (836,256) -> (302, 222) n:22245 t:22111 s:134
+		
+		x = read/2-expected (averaged), y = read-expected (averaged)
+	*/
+	
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -2507,19 +2528,51 @@ void LightGunTest()
 		if(lgun) 
 		{
 			maple_gun_read_pos(&x, &y);
-			printf("lgun [frame: %d] (%d,%d) -> (%d, %d) n:%"PRIu64" t:%"PRIu64" s:%"PRIu64" ", 
-					lgun, x, y, (int)cross->x+16, (int)cross->y+16, now, last, now-last);
+			lgun --;
 			if(x != oldx && y != oldy)
 			{
-				printf(" ****");
+				printf("lgun [frame: %d] Read(%d[%d],%d[%d]) -> Showed(%d, %d) n:%"PRIu64" t:%"PRIu64" s:%"PRIu64"\n", 
+					lgun, x, oldx, y, oldy, (int)cross->x+16, (int)cross->y+16, now, last, now-last);
 				oldx = x;
 				oldy = y;
+				
+				if(cstate != -1)
+				{
+					printf("================\n");
+					
+					read[cstate].x = x;
+					read[cstate].y = y;
+					
+					expected[cstate].x = (int)cross->x+16;
+					expected[cstate].y = (int)cross->y+16;
+				}
+				else
+					printf("++++++++++++++++\n");
+
+				cstate ++;
+				if(cstate > 2)
+				{
+					int i = 0;
+					double x = 0, y = 0;
+					
+					for(i = 0; i < 3; i++)
+					{
+						 x += read[i].x/2 - expected[i].x;
+						 y += read[i].y - expected[i].y;
+					}
+					x /= 3;
+					y /= 3;
+					printf("X: %g Y: %g\n", x, y);
+					for(i = 0; i < 3; i++)
+						printf("[%d]: %03d,%03d->%03d,%03d [%03d,%03d]\n", i, read[i].x, read[i].y, 
+								(int)(read[i].x/2 - x), (int)(read[i].y - y),
+								expected[i].x, expected[i].y);
+					//done = 1;
+					cstate = 0;
+				}
+				set_cross_coord(cross, cstate);
 				lgun = 0;
-				printf("%d,%d", x/2, y);
 			}
-			else
-				lgun --;
-			printf("\n");
         }
 		
 		dev = maple_enum_type(0, MAPLE_FUNC_LIGHTGUN);
@@ -2532,31 +2585,22 @@ void LightGunTest()
 				lgpressed = state->buttons & ~OldButtonsLG & state->buttons;
 				if(lgpressed & CONT_B)
 				{
-					cstate ++;
-					if(cstate > 2)
-						cstate = 0;
-					
-					set_cross_coord(cross, cstate);
 				}
 
                 /* The light gun's trigger is mapped to the A button. See if the
                    user is pulling the trigger and enable the gun if needed. */
                 if(lgpressed & CONT_A)
 				{
-					if(!lgun && now + LG_COOLDOWN > last)
+					if(!lgun && now > last + LG_COOLDOWN)
 					{
-						lgun = 50;
-						printf("Trigger last:%"PRIu64" now:%"PRIu64" elapsed:%"PRIu64"\n", last, now, now-last);
+						lgun = LG_FRAMES;
+						printf("Trigger start: %d previous:%"PRIu64" now:%"PRIu64" elapsed:%"PRIu64"\n",
+							cstate, last, now, now-last);
 						last = now;
-						
-						cstate ++;
-						if(cstate > 2)
-							cstate = 0;
-						
-						set_cross_coord(cross, cstate);
 					}
 					else
-						printf("colission\n");
+						printf("==== colission ==== (lgun %d last:%"PRIu64" now:%"PRIu64" elapsed:%"PRIu64" cooldown: %"PRIu64")\n", 
+							lgun, last, now, now-last, last + LG_COOLDOWN);
 				}
 				
 				OldButtonsLG = state->buttons;
@@ -2567,7 +2611,7 @@ void LightGunTest()
 			{
 				if(maple_gun_enable(dev->port) != MAPLE_EOK)
 				{
-					printf("==== disabled at %d ===\n", lgun);
+					printf("==== disabled at %d ====\n", lgun);
 					lgun = 0;
 				}
 			}
@@ -2945,11 +2989,11 @@ int flashrom_get_factory_data()
     }
 	
 	dbglog(DBG_INFO, "Read Flashrom Factory Data %c%c%c%c%c\n", 
-		flash_cache.factory_records[0].machine_code1, 
-		flash_cache.factory_records[0].machine_code2, 
-		flash_cache.factory_records[0].country_code, 
-		flash_cache.factory_records[0].language,
-		flash_cache.factory_records[0].broadcast_format);
+		protectascii(flash_cache.factory_records[0].machine_code1), 
+		protectascii(flash_cache.factory_records[0].machine_code2), 
+		protectascii(flash_cache.factory_records[0].country_code), 
+		protectascii(flash_cache.factory_records[0].language),
+		protectascii(flash_cache.factory_records[0].broadcast_format));
 	clone_factory_data();
 	flashrom_get_partition2_data();
 	flashrom_is_cached = 1;

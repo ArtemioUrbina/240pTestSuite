@@ -1002,10 +1002,11 @@ void DrawMonoscope()
 void Draw100IRE()
 {
 	int 			done = 0, oldvmode = -1, vmuMsgSend = 0;
+	int				text_mV = 0, matchIRE = 0;
 	uint16			pressed, text = 0, invert = 0;	
 	ImagePtr		back = NULL, white = NULL, black = NULL;
 	controller		*st = NULL;
-	char			msg[50], vmuMsg[50];
+	char			msg[50], vmuMsg[50], vmuMsg2[50];
 
 	black = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!black)
@@ -1021,8 +1022,12 @@ void Draw100IRE()
   	}
 
 	sprintf(vmuMsg, " 100 IRE ");
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
+		double alpha = 0;
+		
+		alpha = back->alpha;
 		if(oldvmode != vmode)
 		{
 			black->w = 320;
@@ -1038,7 +1043,11 @@ void Draw100IRE()
 		DrawImage(black);
 		if(invert)
 			DrawImage(white);
+		if(matchIRE)
+			back->alpha *= 0.8898;  // Average voltage difference to match The DC 808 mV white to IRE standard 714.3 mV white
 		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
 
 		if(text)
 		{
@@ -1061,9 +1070,15 @@ void Draw100IRE()
 				text --;
 			}
 		}
+		
+		if(text_mV)
+		{
+			DrawStringS(225, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
 
 		EndScene();
-		VMURefresh(vmuMsg, "");
+		VMURefresh(vmuMsg, vmuMsg2);
 		
 		st = ReadController(0, &pressed);
 		if(st)
@@ -1124,6 +1139,14 @@ void Draw100IRE()
 		
 			if (pressed & CONT_B)
 				done =	1;
+				
+			if (pressed & CONT_X)
+			{
+				matchIRE = !matchIRE;
+				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+				text_mV = 60;
+				refreshVMU = 1;
+			}
 
 			if (pressed & CONT_START)
 				ShowMenu(IREHELP);

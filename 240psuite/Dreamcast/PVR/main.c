@@ -941,7 +941,8 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 					LightGunTest();
 					break;
 				case 5:
-					MicrophoneTest();
+					if(isSIPPresent())
+						MicrophoneTest();
 					break;
 				case 6:
 					ShowBIOSandFlash();

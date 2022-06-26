@@ -82,9 +82,11 @@ void DrawChar(float x, float y, char c)
 	// Don't draw outside of visible screen
 	if(x < -2*fw ||x > dW+fw || y < -2*fh || y > dH+fh)
 		return;
-		
+	
+	if(c < 0x20)
+		return;
 	c -= 0x20;
-	if(c <= 0 || c > 0x5F)		// save some polygons, skip space char (0x20) and all out of range characters
+	if(c > 0x5F)		// save some polygons, skip space char (0x20) and all out of range characters
 		return;
 
 	charx = (c % 16) * fw;
@@ -176,6 +178,29 @@ void DrawString(float x, float y, float r, float g, float b, char *str)
 			str++;
 			continue;
 		}
+		DrawChar(x, y, *str++);
+		x += fw;
+	}
+}
+
+void DrawStringNH(float x, float y, float r, float g, float b, char *str) 
+{	
+	float orig_x = x;
+
+	font_t->r = r;
+	font_t->g = g;
+	font_t->b = b;
+
+	while (*str) 
+	{		
+		if(*str == '\n')
+		{
+			x = orig_x;
+			y += fh;
+			str++;
+			continue;
+		}
+		
 		DrawChar(x, y, *str++);
 		x += fw;
 	}
