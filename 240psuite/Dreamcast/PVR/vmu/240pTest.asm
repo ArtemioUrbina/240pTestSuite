@@ -62,13 +62,11 @@ sleep_address           =       $10                   ; 2 bytes
 sleep_frame_counter     =       $12                   ; 1 byte
 refresh_screen          =       $13                   ; 1 byte
 
-; Sound screen variables
-sound_anim_counter      =       $14                   ; 1 byte
-sound_address           =       $15                   ; 2 bytes
-sound_frame_counter     =       $17                   ; 1 byte
-sound_start_lr          =       $18                   ; 1 byte
-sound_start_lc          =       $19                   ; 1 byte
-sound_toggle_lc         =       $1A                   ; 1 byte
+; Sound variables
+sound_start_lr          =       $14                   ; 1 byte
+sound_start_lc          =       $15                   ; 1 byte
+sound_toggle_lc         =       $16                   ; 1 byte
+sound_beep_frame        =       $17                   ; 1 byte
 
 ;------------------------------------------------------------------------------
 ;******************************************************************************
@@ -519,51 +517,17 @@ Frequency_sweep:
         ;----------------------------------------------------------------------
 
         ; Initialise some variables
-        mov     #2, sound_address
-        mov     #0, sound_anim_counter
-        mov     #0, sound_frame_counter
+        mov     #120, sound_beep_frame
         mov     #Hold_B_Timeout, b_held
+
+        ; Draw the background
+        P_Draw_Background_Constant sound_back
+
+        P_Blit_Screen
         call    sndinit
-        call    snd1start
+        call    sndstart
 
 .sweep_loop:
-        ld      sound_frame_counter          ; check if we really need refresh
-        bnz     .skip_refresh
-
-        clr1    ocr, 5
-        mov     #<sound_LUT, trl
-        mov     #>sound_LUT, trh
-        ld      sound_anim_counter
-        rol
-        ldc
-        st      sound_address
-        ld      sound_anim_counter
-        rol
-        inc     acc
-        ldc
-        st      sound_address+1
-
-        ; Draw the frame
-        P_Draw_Background sound_address
-        P_Blit_Screen
-
-        set1    ocr, 5
-
-.skip_refresh:
-        inc     sound_frame_counter
-        ld      sound_frame_counter
-        sub     #60
-        bnz     .poll_loop
-        mov     #0, sound_frame_counter
-
-        ; Check to see if we need to reset the frame
-        inc     sound_anim_counter
-        ld      sound_anim_counter
-        sub     #2
-        bnz     .poll_loop
-        mov     #0, sound_anim_counter
-
-.poll_loop:
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
 
@@ -574,13 +538,25 @@ Frequency_sweep:
         ; Check if B has been held to exit
         ld      p3
         bp      acc, bit_b_pos, .reset_b
-        dbnz    b_held, .loop_back
+        dbnz    b_held, .check_frq_advance
         call    sndstop
         ret
 .reset_b:
         mov     #Hold_B_Timeout, b_held
-.loop_back:
+
+.check_frq_advance:
+        ld      sound_beep_frame
+        bnz     .skip_frq_advance
+
         call    sndadvfreq
+
+.skip_frq_advance:
+        inc     sound_beep_frame
+        ld      sound_beep_frame
+        sub     #120
+        bnz     .loop_back
+        mov     #0, sound_beep_frame
+.loop_back:
         jmp     .sweep_loop
         
         ;----------------------------------------------------------------------
@@ -599,7 +575,7 @@ sndinit:
         st      T1LC
         ret
 
-snd1start:
+sndstart:
         mov     #$D0, T1CNT    ; Set ELDT1C, T1LRUN and T1HRUN to “1”.
         ret
 
