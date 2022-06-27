@@ -49,18 +49,26 @@ highlights              =       $8                    ; 1 byte
 
 ; Title screen variables
 title_anim_counter      =       $9                    ; 1 byte
-title_address           =       $10                   ; 2 bytes
-title_frame_counter     =       $12                   ; 1 byte
+title_address           =       $A                    ; 2 bytes
+title_frame_counter     =       $C                    ; 1 byte
 
 ; Timeout for auto-sleep
-auto_sleep_timeout      =       $13                   ; 1 byte
-auto_sleep_timeout_sub  =       $14                   ; 1 byte
+auto_sleep_timeout      =       $D                    ; 1 byte
+auto_sleep_timeout_sub  =       $E                    ; 1 byte
 
 ; Sleep screen variables
-sleep_anim_counter      =       $15                   ; 1 byte
-sleep_address           =       $16                   ; 2 bytes
-sleep_frame_counter     =       $18                   ; 1 byte
-refresh_screen          =       $19                   ; 1 byte
+sleep_anim_counter      =       $F                    ; 1 byte
+sleep_address           =       $10                   ; 2 bytes
+sleep_frame_counter     =       $12                   ; 1 byte
+refresh_screen          =       $13                   ; 1 byte
+
+; Sound screen variables
+sound_anim_counter      =       $14                   ; 1 byte
+sound_address           =       $15                   ; 2 bytes
+sound_frame_counter     =       $17                   ; 1 byte
+sound_start_lr          =       $18                   ; 1 byte
+sound_start_lc          =       $19                   ; 1 byte
+sound_toggle_lc         =       $1A                   ; 1 byte
 
 ;------------------------------------------------------------------------------
 ;******************************************************************************
@@ -211,7 +219,13 @@ Main_Loop:
         
         mov     #Button_A, acc
         call    Check_Button_Pressed
-        bz      .title_Loop
+        bnz     .call_control_test
+        mov     #Button_Left, acc
+        call    Check_Button_Pressed
+        bz      .title_loop
+        call    Frequency_Sweep
+        jmp     Main_Loop
+.call_control_test:
         call    Controller_Test
         jmp     Main_Loop
 
@@ -288,13 +302,13 @@ Controller_Test:
 .check_sleep:
         Check_Input bit_sleep_pos, button_sleep_pos, .check_b_held
 
-.check_b_held;
+.check_b_held:
         ; Check if B has been held to exit
         ld      p3
         bp      acc, bit_b_pos, .reset_b
         dbnz    b_held, .loop_back
         ret
-.reset_b
+.reset_b:
         mov     #Hold_B_Timeout, b_held
 .loop_back:
         jmp     .control_loop
@@ -499,9 +513,149 @@ Check_low_Battery:
         bn      p7, 1, quit              ; Quit if battery is low
         ret
 
+Frequency_sweep:
+        ;----------------------------------------------------------------------
+        ; Our Frequency Sweep Test
+        ;----------------------------------------------------------------------
+
+        ; Initialise some variables
+        mov     #2, sound_address
+        mov     #0, sound_anim_counter
+        mov     #0, sound_frame_counter
+        mov     #Hold_B_Timeout, b_held
+        call    sndinit
+        call    snd1start
+
+.sweep_loop:
+        ld      sound_frame_counter          ; check if we really need refresh
+        bnz     .skip_refresh
+
+        clr1    ocr, 5
+        mov     #<sound_LUT, trl
+        mov     #>sound_LUT, trh
+        ld      sound_anim_counter
+        rol
+        ldc
+        st      sound_address
+        ld      sound_anim_counter
+        rol
+        inc     acc
+        ldc
+        st      sound_address+1
+
+        ; Draw the frame
+        P_Draw_Background sound_address
+        P_Blit_Screen
+
+        set1    ocr, 5
+
+.skip_refresh:
+        inc     sound_frame_counter
+        ld      sound_frame_counter
+        sub     #60
+        bnz     .poll_loop
+        mov     #0, sound_frame_counter
+
+        ; Check to see if we need to reset the frame
+        inc     sound_anim_counter
+        ld      sound_anim_counter
+        sub     #2
+        bnz     .poll_loop
+        mov     #0, sound_anim_counter
+
+.poll_loop:
+        ; If we are plugged into a Dreamcast, abort
+        call    Check_DC_plugged
+
+        ; If battery is low, abort
+        call    Check_low_Battery
+
+.check_b_held:
+        ; Check if B has been held to exit
+        ld      p3
+        bp      acc, bit_b_pos, .reset_b
+        dbnz    b_held, .loop_back
+        call    sndstop
+        ret
+.reset_b:
+        mov     #Hold_B_Timeout, b_held
+.loop_back:
+        call    sndadvfreq
+        jmp     .sweep_loop
+        
+        ;----------------------------------------------------------------------
+        ; Sound utils
+        ;----------------------------------------------------------------------
+
+sndinit:
+        clr1    P1, 7
+
+        mov     #$e0, sound_start_lr
+        mov     #$f0, sound_start_lc
+        mov     #1, sound_toggle_lc
+        ld      sound_start_lr
+        st      T1LR
+        ld      sound_start_lc
+        st      T1LC
+        ret
+
+snd1start:
+        mov     #$D0, T1CNT    ; Set ELDT1C, T1LRUN and T1HRUN to “1”.
+        ret
+
+sndadvfreq:
+        ; do the sweep for lr
+
+        ld      sound_start_lr
+        inc     acc
+        st      sound_start_lr
+        sub     #$ff                        ; e0 to fe
+        bnz     .continue_t1lc
+
+        ; reset everything for loop
+        mov     #$e0,sound_start_lr
+        mov     #$f0,sound_start_lc
+        mov     #1, sound_toggle_lc
+        jmp     .load_regs
+        
+.continue_t1lc:
+        ; check if we run the same process for lc
+        ld      sound_toggle_lc
+        sub     #2
+        bz      .reset_and_increment_lc
+        ld      sound_toggle_lc
+        inc     acc
+        st      sound_toggle_lc
+        jmp     .load_regs
+
+.reset_and_increment_lc:
+        mov     #1, sound_toggle_lc  
+    
+        ; run the same process for lc
+        ld      sound_start_lc
+        inc     acc
+        st      sound_start_lc
+
+.load_regs
+        ; now load both to the timer registers
+        ld      sound_start_lr
+        st      T1LR
+        ld      sound_start_lc
+        st      T1LC
+        ret
+
+sndstop:
+        mov #0, T1CNT
+        ret
+
+;******************************************************************************
+; Includes: Graphics and libraries
+;******************************************************************************
+
         .include        "./lib/libperspective.asm"
         .include        "./lib/libkcommon.asm"       
         .include        "./img/controller_back.asm"
+        .include        "./img/sound_back.asm"
         .include        "./img/title.asm"
         .include        "./img/sleep.asm"
 
