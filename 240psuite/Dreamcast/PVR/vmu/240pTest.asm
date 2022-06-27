@@ -37,6 +37,9 @@ bit_sleep_pos       equ 7
 ;Timeout in cycles for exit in Control Test since we disabled sleep, 30 ~1sec
 Hold_B_Timeout      equ $30
 
+;Timeout in cycles for frequency advance 
+Freq_Adv_Time       equ $20
+
 ;******************************************************************************
 ; Variables
 ;******************************************************************************
@@ -67,6 +70,7 @@ sound_start_lr          =       $14                   ; 1 byte
 sound_start_lc          =       $15                   ; 1 byte
 sound_toggle_lc         =       $16                   ; 1 byte
 sound_beep_frame        =       $17                   ; 1 byte
+sound_running           =       $18                   ; 1 byte
 
 ;------------------------------------------------------------------------------
 ;******************************************************************************
@@ -153,9 +157,9 @@ Start:
 
         set1    ie,7
 
-        ;----------------------------------------------------------------------
-        ; Our Main Loop
-        ;----------------------------------------------------------------------        
+;******************************************************************************
+; Our Main Loop
+;******************************************************************************
 Main_Loop:
 
         ; Initialise the p3_last_input
@@ -250,11 +254,10 @@ Main_Loop:
         call    P_Invert_block                    ; toggle it
 %end
 
+;******************************************************************************
+; Our Main Controller Test
+;******************************************************************************
 Controller_Test:
-        ;----------------------------------------------------------------------
-        ; Our Main Controller Test
-        ;----------------------------------------------------------------------
-
         mov     #%00000000, highlights
         mov     #Hold_B_Timeout, b_held
         mov     #$ff, toggle_location
@@ -364,7 +367,9 @@ P_Invert_block:
         call    Reset_auto_sleep
         ret
 
-
+        ;----------------------------------------------------------------------
+        ; restarts auto-sleep counters
+        ;----------------------------------------------------------------------
 Reset_auto_sleep:
         mov     #0, auto_sleep_timeout
         mov     #0, auto_sleep_timeout_sub
@@ -373,7 +378,6 @@ Reset_auto_sleep:
         ;----------------------------------------------------------------------
         ; Auto sleeps in about 20 seconds of innactivity
         ;----------------------------------------------------------------------
-
 Check_auto_sleep:
         inc     auto_sleep_timeout
         ld      auto_sleep_timeout
@@ -389,6 +393,9 @@ Check_auto_sleep:
 .return_autosleep:
         ret
 
+        ;----------------------------------------------------------------------
+        ; Internal Check for auto-sleep
+        ;----------------------------------------------------------------------
 Check_auto_sleep_int:
         inc     auto_sleep_timeout
         ld      auto_sleep_timeout
@@ -407,7 +414,7 @@ Check_auto_sleep_int:
 
         ;----------------------------------------------------------------------
         ; Pre-sleep animation
-        ;----------------------------------------------------------------------        
+        ;----------------------------------------------------------------------
 sleep_animate:
         ; Initialise some variables
         call    Reset_auto_sleep
@@ -511,13 +518,12 @@ Check_low_Battery:
         bn      p7, 1, quit              ; Quit if battery is low
         ret
 
+;******************************************************************************
+; Our Frequency Sweep Test
+;******************************************************************************
 Frequency_sweep:
-        ;----------------------------------------------------------------------
-        ; Our Frequency Sweep Test
-        ;----------------------------------------------------------------------
-
         ; Initialise some variables
-        mov     #120, sound_beep_frame
+        clr1    sound_running, 0
         mov     #Hold_B_Timeout, b_held
 
         ; Draw the background
@@ -525,7 +531,6 @@ Frequency_sweep:
 
         P_Blit_Screen
         call    sndinit
-        call    sndstart
 
 .sweep_loop:
         ; If we are plugged into a Dreamcast, abort
@@ -533,6 +538,21 @@ Frequency_sweep:
 
         ; If battery is low, abort
         call    Check_low_Battery
+
+        ; Poll input
+        call    Get_Input
+        
+        ; Check if we start the sequence
+        mov     #Button_A, acc
+        call    Check_Button_Pressed
+        bz      .check_b_held
+
+        ld      sound_running
+        bp      acc, 0, .check_b_held      ; already running, ignore
+
+        ; start playback
+        mov     #0, sound_beep_frame
+        call    sndstart
 
 .check_b_held:
         ; Check if B has been held to exit
@@ -545,6 +565,9 @@ Frequency_sweep:
         mov     #Hold_B_Timeout, b_held
 
 .check_frq_advance:
+        ld      sound_running
+        bn      acc, 0, .loop_back      ; already running, ignore
+
         ld      sound_beep_frame
         bnz     .skip_frq_advance
 
@@ -553,7 +576,7 @@ Frequency_sweep:
 .skip_frq_advance:
         inc     sound_beep_frame
         ld      sound_beep_frame
-        sub     #120
+        sub     #Freq_Adv_Time
         bnz     .loop_back
         mov     #0, sound_beep_frame
 .loop_back:
@@ -562,7 +585,6 @@ Frequency_sweep:
         ;----------------------------------------------------------------------
         ; Sound utils
         ;----------------------------------------------------------------------
-
 sndinit:
         clr1    P1, 7
 
@@ -576,12 +598,15 @@ sndinit:
         ret
 
 sndstart:
+        set1    sound_running, 0
         mov     #$D0, T1CNT    ; Set ELDT1C, T1LRUN and T1HRUN to “1”.
         ret
 
+        ;----------------------------------------------------------------------
+        ; Advances to next frequency, and resets counters of finished
+        ;----------------------------------------------------------------------
 sndadvfreq:
         ; do the sweep for lr
-
         ld      sound_start_lr
         inc     acc
         st      sound_start_lr
@@ -592,7 +617,8 @@ sndadvfreq:
         mov     #$e0,sound_start_lr
         mov     #$f0,sound_start_lc
         mov     #1, sound_toggle_lc
-        jmp     .load_regs
+        call    sndstop
+        ret
         
 .continue_t1lc:
         ; check if we run the same process for lc
@@ -621,7 +647,8 @@ sndadvfreq:
         ret
 
 sndstop:
-        mov #0, T1CNT
+        mov     #0, T1CNT
+        clr1    sound_running, 0
         ret
 
 ;******************************************************************************
