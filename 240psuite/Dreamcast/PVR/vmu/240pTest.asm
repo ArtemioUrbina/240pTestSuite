@@ -37,8 +37,9 @@ bit_sleep_pos       equ 7
 ;Timeout in cycles for exit in Control Test since we disabled sleep, 30 ~1sec
 Hold_B_Timeout      equ $30
 
-;Timeout in cycles for frequency advance 
-Freq_Adv_Time       equ $20
+;Timeout in cycles for exit in Control Test since we disabled sleep, 30 ~1sec
+Hold_B_TimeSND_on   equ $2
+Hold_B_TimeSND_off  equ $ff
 
 ;******************************************************************************
 ; Variables
@@ -69,8 +70,8 @@ refresh_screen          =       $13                   ; 1 byte
 sound_start_lr          =       $14                   ; 1 byte
 sound_start_lc          =       $15                   ; 1 byte
 sound_toggle_lc         =       $16                   ; 1 byte
-sound_beep_frame        =       $17                   ; 1 byte
-sound_running           =       $18                   ; 1 byte
+sound_running           =       $17                   ; 1 byte
+sound_sync_frames       =       $18                   ; 1 byte
 
 ;------------------------------------------------------------------------------
 ;******************************************************************************
@@ -372,15 +373,14 @@ P_Invert_block:
 ;******************************************************************************
 Frequency_sweep:
         ; Initialise some variables
-        clr1    sound_running, 0
-        mov     #Hold_B_Timeout, b_held
+        mov     #Hold_B_TimeSND_off, b_held
         mov     #0, refresh_screen
         call    Reset_auto_sleep
+        call    sndinit
 
         ; Draw the background
         P_Draw_Background_Constant sound_back
         P_Blit_Screen
-        call    sndinit
 
 .sweep_loop:
         ; If we are plugged into a Dreamcast, abort
@@ -391,10 +391,10 @@ Frequency_sweep:
 
         ; Check if no input has been received for a while and sleep
         ld      sound_running
-        bp      acc, 0, .check_b_held  ; we are playing back, no auto-sleep
+        bp      acc, 0, .check_frq_advance  ; playing back, no auto-sleep/input
         call    Check_auto_sleep
         ld      refresh_screen
-        bnz     Frequency_sweep        ; reset test if auto-sleep happened
+        bnz     Frequency_sweep             ; reset test if auto-sleep happened
 
         ; Poll input
         call    Get_Input
@@ -405,8 +405,18 @@ Frequency_sweep:
         bz      .check_b_held
 
         ; start playback
-        mov     #0, sound_beep_frame
+        mov     #Hold_B_TimeSND_on, b_held     ; load Interrupt time out
+        set1    PCON,0                  ; wait for the base interrupt 0.5 secs
         call    sndstart
+        jmp     .wait_interrupt
+
+.check_frq_advance:
+        ld      sound_running
+        bn      acc, 0, .check_b_held   ; not running, ignore and continue
+
+        call    sndadvfreq              ; change frequency
+.wait_interrupt:
+        set1    PCON,0                  ; wait for the base interrupt 0.5 secs
 
 .check_b_held:
         ; Check if B has been held to exit
@@ -417,42 +427,42 @@ Frequency_sweep:
         ret
 
 .reset_b:
-        mov     #Hold_B_Timeout, b_held
-
-.check_frq_advance:
         ld      sound_running
-        bn      acc, 0, .loop_back      ; not running, ignore and continue
+        bp      acc, 0, .reset_while_playing
+        mov     #Hold_B_TimeSND_off, b_held
+        jmp     .sweep_loop
 
-        ld      sound_beep_frame        ; check if we need to change frequency
-        bnz     .skip_frq_advance
-
-        call    sndadvfreq              ; change frequency
-
-.skip_frq_advance:
-        inc     sound_beep_frame
-        ld      sound_beep_frame
-        sub     #Freq_Adv_Time
-        bnz     .loop_back
-        mov     #0, sound_beep_frame
-.loop_back:
+.reset_while_playing
+        mov     #Hold_B_TimeSND_on, b_held
         jmp     .sweep_loop
         
         ;----------------------------------------------------------------------
-        ; Sound utils, Initialization and Playback Start
+        ; Sound Initialization for Playback
         ;----------------------------------------------------------------------
 sndinit:
         clr1    P1, 7
-        mov     #$e0, sound_start_lr
-        mov     #$f0, sound_start_lc
+        clr1    sound_running, 0
+        ret
+
+        ;----------------------------------------------------------------------
+        ; Starts the sequence and sets the flags
+        ;----------------------------------------------------------------------
+sndstart:
+        set1    sound_running, 0
+
+        ; start the cycle and open with sync tones and silence
+        call    sync_tones
+        call    wait_silence
+                
+        mov     #$e0,sound_start_lr     ; $e0  (lowest is $00)
+        mov     #$f0,sound_start_lc     ; $f0  (lowest is $80)
         mov     #1, sound_toggle_lc
+
         ld      sound_start_lr
         st      T1LR
         ld      sound_start_lc
         st      T1LC
-        ret
 
-sndstart:
-        set1    sound_running, 0
         mov     #$D0, T1CNT    ; Set ELDT1C, T1LRUN and T1HRUN to “1”.
         ret
 
@@ -467,10 +477,10 @@ sndadvfreq:
         sub     #$ff                        ; e0 to fe
         bnz     .continue_t1lc
 
-        ; reset everything for loop
-        mov     #$e0,sound_start_lr
-        mov     #$f0,sound_start_lc
-        mov     #1, sound_toggle_lc
+        ; stop the cycle and close with silence and sync tones
+        call    wait_silence
+        call    sync_tones
+
         call    sndstop
         ret
         
@@ -498,6 +508,31 @@ sndadvfreq:
         st      T1LR
         ld      sound_start_lc
         st      T1LC
+        ret
+
+sync_tones:
+        mov     #10, sound_sync_frames
+        mov     #$fe,T1LR               ; Highest note that runs on a real VMU
+        mov     #$ff,T1LC               ; about 2730hz
+
+.loop_sync:
+        ; stop playback
+        mov     #$D0, T1CNT             ; Set ELDT1C, T1LRUN and T1HRUN to “1”.
+        set1    PCON,0                  ; wait for the base interrupt 0.5 secs
+
+        mov     #0, T1CNT
+        set1    PCON,0                  ; wait for the base interrupt 0.5 secs
+
+        dbnz    sound_sync_frames, .loop_sync
+        ret
+
+wait_silence:
+        mov     #4, sound_sync_frames
+        ; stop playback
+        mov     #0, T1CNT               ; Set ELDT1C, T1LRUN and T1HRUN to “1”.
+.loop_silence:
+        set1    PCON,0                  ; wait for the base interrupt 0.5 secs
+        dbnz    sound_sync_frames, .loop_silence
         ret
 
 sndstop:
