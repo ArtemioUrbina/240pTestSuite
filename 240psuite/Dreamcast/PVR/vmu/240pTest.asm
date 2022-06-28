@@ -219,7 +219,7 @@ Main_Loop:
         ; Poll input
         call    Get_Input
         
-        mov     #Button_A, acc
+        mov     #Button_Right, acc
         call    Check_Button_Pressed
         bnz     .call_control_test
         mov     #Button_Left, acc
