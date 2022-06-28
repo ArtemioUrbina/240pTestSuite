@@ -131,8 +131,8 @@ goodbye:
 ; Game Header
 ;******************************************************************************
         .org   $200
-        .text 16 "VMU Control Test"
-        .text 32 "240p Test Suite by Artemio      "
+        .text   16 "VMU Ctr/Snd Test"
+        .text   32 "240p Test Suite by Artemio      "
         .string 16 "240p Test Suite"
 
 ;******************************************************************************
@@ -316,7 +316,7 @@ Controller_Test:
 
 P_Invert_block:
         ;----------------------------------------------------------------------
-        ; Invert a block
+        ; Invert a block of pixels for Controller Test
         ;----------------------------------------------------------------------
         ; Accepts:      ACC (postion  (y * 6) + x)
         ; Destroys:     ACC, C, VRMAD1, VRMAD2, VSEL
@@ -367,6 +367,147 @@ P_Invert_block:
         call    Reset_auto_sleep
         ret
 
+;******************************************************************************
+; Our Frequency Sweep Test
+;******************************************************************************
+Frequency_sweep:
+        ; Initialise some variables
+        clr1    sound_running, 0
+        mov     #Hold_B_Timeout, b_held
+        mov     #0, refresh_screen
+        call    Reset_auto_sleep
+
+        ; Draw the background
+        P_Draw_Background_Constant sound_back
+        P_Blit_Screen
+        call    sndinit
+
+.sweep_loop:
+        ; If we are plugged into a Dreamcast, abort
+        call    Check_DC_plugged
+
+        ; If battery is low, abort
+        call    Check_low_Battery
+
+        ; Check if no input has been received for a while and sleep
+        ld      sound_running
+        bp      acc, 0, .check_b_held  ; we are playing back, no auto-sleep
+        call    Check_auto_sleep
+        ld      refresh_screen
+        bnz     Frequency_sweep        ; reset test if auto-sleep happened
+
+        ; Poll input
+        call    Get_Input
+        
+        ; Check if we start the sequence
+        mov     #Button_A, acc
+        call    Check_Button_Pressed
+        bz      .check_b_held
+
+        ; start playback
+        mov     #0, sound_beep_frame
+        call    sndstart
+
+.check_b_held:
+        ; Check if B has been held to exit
+        ld      p3
+        bp      acc, bit_b_pos, .reset_b
+        dbnz    b_held, .check_frq_advance
+        call    sndstop
+        ret
+
+.reset_b:
+        mov     #Hold_B_Timeout, b_held
+
+.check_frq_advance:
+        ld      sound_running
+        bn      acc, 0, .loop_back      ; not running, ignore and continue
+
+        ld      sound_beep_frame        ; check if we need to change frequency
+        bnz     .skip_frq_advance
+
+        call    sndadvfreq              ; change frequency
+
+.skip_frq_advance:
+        inc     sound_beep_frame
+        ld      sound_beep_frame
+        sub     #Freq_Adv_Time
+        bnz     .loop_back
+        mov     #0, sound_beep_frame
+.loop_back:
+        jmp     .sweep_loop
+        
+        ;----------------------------------------------------------------------
+        ; Sound utils, Initialization and Playback Start
+        ;----------------------------------------------------------------------
+sndinit:
+        clr1    P1, 7
+        mov     #$e0, sound_start_lr
+        mov     #$f0, sound_start_lc
+        mov     #1, sound_toggle_lc
+        ld      sound_start_lr
+        st      T1LR
+        ld      sound_start_lc
+        st      T1LC
+        ret
+
+sndstart:
+        set1    sound_running, 0
+        mov     #$D0, T1CNT    ; Set ELDT1C, T1LRUN and T1HRUN to “1”.
+        ret
+
+        ;----------------------------------------------------------------------
+        ; Advances to next frequency, and resets counters if finished
+        ;----------------------------------------------------------------------
+sndadvfreq:
+        ; do the sweep for lr
+        ld      sound_start_lr
+        inc     acc
+        st      sound_start_lr
+        sub     #$ff                        ; e0 to fe
+        bnz     .continue_t1lc
+
+        ; reset everything for loop
+        mov     #$e0,sound_start_lr
+        mov     #$f0,sound_start_lc
+        mov     #1, sound_toggle_lc
+        call    sndstop
+        ret
+        
+.continue_t1lc:
+        ; check if we run the same process for lc
+        ld      sound_toggle_lc
+        sub     #2
+        bz      .reset_and_increment_lc
+        ld      sound_toggle_lc
+        inc     acc
+        st      sound_toggle_lc
+        jmp     .load_regs
+
+.reset_and_increment_lc:
+        mov     #1, sound_toggle_lc  
+    
+        ; run the same process for lc
+        ld      sound_start_lc
+        inc     acc
+        st      sound_start_lc
+
+.load_regs
+        ; now load both to the timer registers
+        ld      sound_start_lr
+        st      T1LR
+        ld      sound_start_lc
+        st      T1LC
+        ret
+
+sndstop:
+        mov     #0, T1CNT
+        clr1    sound_running, 0
+        ret
+
+;******************************************************************************
+; Auto-sleep with timout to save battery and add cat animation by ferigne
+;******************************************************************************
         ;----------------------------------------------------------------------
         ; restarts auto-sleep counters
         ;----------------------------------------------------------------------
@@ -487,7 +628,7 @@ execute_sleep:
 
         ; Code from libkcommon
 .sleep_wait:
-        mov     #0, t1cnt               ; Disable audio
+        call    sndstop                 ; Disable audio
         set1    pcon, 0                 ; Activate HALT mode (saves power)
         bn      p3, 7, .sleep_wait      ; wait until Sleep Key is released
         mov     #0,vccr                 ; turn off LCD
@@ -516,139 +657,6 @@ Check_DC_plugged:
         ;----------------------------------------------------------------------
 Check_low_Battery:
         bn      p7, 1, quit              ; Quit if battery is low
-        ret
-
-;******************************************************************************
-; Our Frequency Sweep Test
-;******************************************************************************
-Frequency_sweep:
-        ; Initialise some variables
-        clr1    sound_running, 0
-        mov     #Hold_B_Timeout, b_held
-
-        ; Draw the background
-        P_Draw_Background_Constant sound_back
-
-        P_Blit_Screen
-        call    sndinit
-
-.sweep_loop:
-        ; If we are plugged into a Dreamcast, abort
-        call    Check_DC_plugged
-
-        ; If battery is low, abort
-        call    Check_low_Battery
-
-        ; Poll input
-        call    Get_Input
-        
-        ; Check if we start the sequence
-        mov     #Button_A, acc
-        call    Check_Button_Pressed
-        bz      .check_b_held
-
-        ld      sound_running
-        bp      acc, 0, .check_b_held      ; already running, ignore
-
-        ; start playback
-        mov     #0, sound_beep_frame
-        call    sndstart
-
-.check_b_held:
-        ; Check if B has been held to exit
-        ld      p3
-        bp      acc, bit_b_pos, .reset_b
-        dbnz    b_held, .check_frq_advance
-        call    sndstop
-        ret
-.reset_b:
-        mov     #Hold_B_Timeout, b_held
-
-.check_frq_advance:
-        ld      sound_running
-        bn      acc, 0, .loop_back      ; already running, ignore
-
-        ld      sound_beep_frame
-        bnz     .skip_frq_advance
-
-        call    sndadvfreq
-
-.skip_frq_advance:
-        inc     sound_beep_frame
-        ld      sound_beep_frame
-        sub     #Freq_Adv_Time
-        bnz     .loop_back
-        mov     #0, sound_beep_frame
-.loop_back:
-        jmp     .sweep_loop
-        
-        ;----------------------------------------------------------------------
-        ; Sound utils
-        ;----------------------------------------------------------------------
-sndinit:
-        clr1    P1, 7
-
-        mov     #$e0, sound_start_lr
-        mov     #$f0, sound_start_lc
-        mov     #1, sound_toggle_lc
-        ld      sound_start_lr
-        st      T1LR
-        ld      sound_start_lc
-        st      T1LC
-        ret
-
-sndstart:
-        set1    sound_running, 0
-        mov     #$D0, T1CNT    ; Set ELDT1C, T1LRUN and T1HRUN to “1”.
-        ret
-
-        ;----------------------------------------------------------------------
-        ; Advances to next frequency, and resets counters of finished
-        ;----------------------------------------------------------------------
-sndadvfreq:
-        ; do the sweep for lr
-        ld      sound_start_lr
-        inc     acc
-        st      sound_start_lr
-        sub     #$ff                        ; e0 to fe
-        bnz     .continue_t1lc
-
-        ; reset everything for loop
-        mov     #$e0,sound_start_lr
-        mov     #$f0,sound_start_lc
-        mov     #1, sound_toggle_lc
-        call    sndstop
-        ret
-        
-.continue_t1lc:
-        ; check if we run the same process for lc
-        ld      sound_toggle_lc
-        sub     #2
-        bz      .reset_and_increment_lc
-        ld      sound_toggle_lc
-        inc     acc
-        st      sound_toggle_lc
-        jmp     .load_regs
-
-.reset_and_increment_lc:
-        mov     #1, sound_toggle_lc  
-    
-        ; run the same process for lc
-        ld      sound_start_lc
-        inc     acc
-        st      sound_start_lc
-
-.load_regs
-        ; now load both to the timer registers
-        ld      sound_start_lr
-        st      T1LR
-        ld      sound_start_lc
-        st      T1LC
-        ret
-
-sndstop:
-        mov     #0, T1CNT
-        clr1    sound_running, 0
         ret
 
 ;******************************************************************************

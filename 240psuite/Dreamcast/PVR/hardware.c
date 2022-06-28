@@ -2429,6 +2429,29 @@ void MicrophoneTest()
 	return;
 }
 
+/*
+	Official Gun:
+	==============
+	Functions     : 0x81000000  Function int 0: 0x00000000
+	Function int 1: 0xfe000000  Function int 2: 0x00000000
+	Region:         0xff        Connection:     0x01
+	Product Name & License: Dreamcast Gun
+	  Produced By or Under License From SEGA ENTERPRISES,LTD.
+	Standby power: 0x00dc (220mW) Max: 0x012c (300mW)
+	Extra data:
+	000 | 56 65 72 73 69 6f 6e 20 31 2e 30 30 30 2c 31 39 | Version 1.000,19
+	010 | 39 38 2f 30 39 2f 31 36 2c 33 31 35 2d 36 31 32 | 98/09/16,315-612
+	020 | 35 2d 41 47 20 20 20 2c 55 2c 44 2c 4c 2c 52 2c | 5-AG   ,U,D,L,R,
+	030 | 53 2c 41 2c 42 20 4b 65 79 20 26 20 53 63 61 6e | S,A,B Key & Scan
+	040 | 6e 69 6e 67 20 4c 69 6e 65 20 41 6d 70 2e 20 20 | ning Line Amp.
+	050 | 53 2c 41 2c 53 2c 41 2c 53 2c 41 2c 53 2c 41 2c | S,A,S,A,S,A,S,A,
+	060 | 53 2c 41 2c 53 2c 41 2c 53 2c 41 2c 00 00 00 00 | S,A,S,A,S,A,
+	070 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	080 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	End of Extra data
+
+*/
+
 int isLightGunPresent()
 {
 	maple_device_t	*lightgun = NULL;
