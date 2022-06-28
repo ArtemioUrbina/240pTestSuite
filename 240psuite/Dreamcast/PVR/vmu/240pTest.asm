@@ -474,7 +474,7 @@ sndadvfreq:
         ld      sound_start_lr
         inc     acc
         st      sound_start_lr
-        sub     #$ff                        ; e0 to fe
+        sub     #$ff                        ; e0 to fe, so we finish at ff
         bnz     .continue_t1lc
 
         ; stop the cycle and close with silence and sync tones
