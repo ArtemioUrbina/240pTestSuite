@@ -47,6 +47,9 @@
 #define	PAL_FRAME_LEN	20.0
 #define PAL_FRAME_RATE	50.0
 
+// Average voltage difference to match The DC 808 mV white to IRE standard 714.3 mV white
+#define	MATCH_NTSC_IRE	0.8898
+
 #include "image.h"
 
 extern int vmode;

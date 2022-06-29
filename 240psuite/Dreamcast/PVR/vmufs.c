@@ -812,6 +812,7 @@ int LoadMemCardSave(char *error)
 	settings.Dithering = pkg.data[12];
 	settings.UseKOSDefaults = pkg.data[13];
 	settings.IgnoreFrameBuffer = pkg.data[14];
+	settings.matchIRE = pkg.data[15];
 		
 #ifdef DCLOAD
 	dbglog(DBG_INFO, "Loaded VMU save version #%d\n", pkg.data[0]);
@@ -869,6 +870,7 @@ int WriteMemCardSave(int eyecatch, char *error)
 	data[12] = settings.Dithering;
 	data[13] = settings.UseKOSDefaults;
 	data[14] = settings.IgnoreFrameBuffer;
+	data[15] = settings.matchIRE;
 	
 	strcpy(pkg.desc_short, "240p Suite");
 	strcpy(pkg.desc_long, "240p Test Suite Options");

@@ -47,7 +47,7 @@
 	
 #define FLOAT_TO_INT(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 
-#define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0, 0, 0.3f, 1 };
+#define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0, 0, 0.3f, 1, 0 };
 struct settings_st {
 	int drawborder;
 	int EnablePAL;
@@ -63,6 +63,7 @@ struct settings_st {
 	int IgnoreFrameBuffer;
 	float scanlines;
 	int	scanlines_even;
+	int	matchIRE;
 };
 
 extern struct settings_st settings;

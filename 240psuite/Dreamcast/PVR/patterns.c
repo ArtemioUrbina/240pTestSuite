@@ -38,11 +38,12 @@
 void DrawPluge()
 {
 	int 		done = 0, text = 0, ShowHelp = 0, oldvmode = -1;
+	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;		
 	ImagePtr	back = NULL, backFull = NULL;
 	ImagePtr	backNTSC = NULL, black = NULL, highlight = NULL;
 	controller	*st = NULL;
-	char		msg[50];
+	char		msg[50], vmuMsg2[50];
 
 	backNTSC = LoadKMG("/rd/pluge.kmg.gz", 0);
 	if(!backNTSC)
@@ -73,8 +74,11 @@ void DrawPluge()
 
 	back = backFull;
 
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
+		double alpha = 0;
+		
 		if(oldvmode != vmode)
 		{
 			black->w = 320;
@@ -85,7 +89,14 @@ void DrawPluge()
 		StartScene();
 
 		DrawImage(black);
+		if(matchIRE)
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
 		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
 		
 		if(ShowHelp)
 		{
@@ -139,10 +150,16 @@ void DrawPluge()
 		{			
 			DrawStringB(228, 20, 0, 1.0f, 0, msg);
 			text --;
-		}		
+		}
+		
+		if(text_mV)
+		{
+			DrawStringS(225, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
 
 		EndScene();
-		VMURefresh(" Pluge ", "");
+		VMURefresh(" Pluge ", vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -174,6 +191,14 @@ void DrawPluge()
 			
 			if (pressed & CONT_X)
 				ShowHelp = 120;
+				
+			if (pressed & CONT_Y)
+			{
+				matchIRE = !matchIRE;
+				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+				text_mV = 60;
+				refreshVMU = 1;
+			}
 		}
 	}
 	FreeImage(&highlight);
@@ -185,11 +210,12 @@ void DrawPluge()
 
 void DrawEBUColorBars()
 {
-	int 		done = 0, is75 = 0, text = 0;
+	int 		done = 0, is75 = 0, text = 0, oldvmode = -1;
+	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;
-	ImagePtr	backEBU75 = NULL, backEBU100 = NULL;
+	ImagePtr	backEBU75 = NULL, backEBU100 = NULL, back = NULL, black = NULL;
 	controller	*st = NULL;
-	char		msg[40];
+	char		msg[40], vmuMsg2[50];
 
 	backEBU75 = LoadKMG("/rd/EBUColorBars75.kmg.gz", 0);
 	if(!backEBU75)
@@ -201,27 +227,57 @@ void DrawEBUColorBars()
 		FreeImage(&backEBU75);
 		return;
 	}
+	
+	black = LoadKMG("/rd/black.kmg.gz", 0);
+	if(!black)
+	{
+		FreeImage(&backEBU75);
+		FreeImage(&backEBU100);
+		return;
+	}	
 
 	IgnoreOffset(backEBU75);
 	IgnoreOffset(backEBU100);
-		
+	
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
+		double alpha = 0;
+		
+		if(oldvmode != vmode)
+		{
+			black->w = 320;
+			black->h = IsPAL ? 264 : 240;
+			oldvmode = vmode;
+		}
+		
 		StartScene();
 
-		if(is75)
-			DrawImage(backEBU75);
-		else
-			DrawImage(backEBU100);
+		back = is75 ? backEBU75 : backEBU100;
+		if(matchIRE)
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
+		DrawImage(black);
+		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
 
 		if(text)
 		{
 			DrawStringB(260, 20, 0, 1.0f, 0, msg);
 			text --;
 		}
+		
+		if(text_mV)
+		{
+			DrawStringS(225, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
 
 		EndScene();
-		VMURefresh(" EBU ", is75 ? "  75%" : " 100%");
+		VMURefresh(is75 ? " EBU  75%" : " EBU 100%", vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -236,6 +292,14 @@ void DrawEBUColorBars()
 				sprintf(msg, "%s%%", is75 ? "75" : "100");
 				refreshVMU = 1;
 			}
+			
+			if (pressed & CONT_Y)
+			{
+				matchIRE = !matchIRE;
+				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+				text_mV = 60;
+				refreshVMU = 1;
+			}
 
 			if (pressed & CONT_START)
 				ShowMenu(EBUCOLOR);
@@ -243,16 +307,18 @@ void DrawEBUColorBars()
 	}
 	FreeImage(&backEBU75);
 	FreeImage(&backEBU100);
+	FreeImage(&black);
 	return;
 }
 
 void DrawSMPTEColorBars()
 {
-	int 		done = 0, is75 = 0, text = 0;
+	int 		done = 0, is75 = 0, text = 0, oldvmode = -1;
+	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;
-	ImagePtr	backNTSC75 = NULL, backNTSC100 = NULL;
+	ImagePtr	backNTSC75 = NULL, backNTSC100 = NULL, back = NULL, black = NULL;
 	controller	*st = NULL;
-	char		msg[40];
+	char		msg[40], vmuMsg2[50];
 
 	backNTSC75 = LoadKMG("/rd/SMPTEColorBars.kmg.gz", 0);
 	if(!backNTSC75)
@@ -265,23 +331,53 @@ void DrawSMPTEColorBars()
 		return;
 	}
 	
+	black = LoadKMG("/rd/black.kmg.gz", 0);
+	if(!black)
+	{
+		FreeImage(&backNTSC75);
+		FreeImage(&backNTSC100);
+		return;
+	}	
+	
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
+		double alpha = 0;
+		
+		if(oldvmode != vmode)
+		{
+			black->w = 320;
+			black->h = IsPAL ? 264 : 240;
+			oldvmode = vmode;
+		}
+		
 		StartScene();
 
-		if(is75)
-			DrawImage(backNTSC75);
-		else
-			DrawImage(backNTSC100);
+		DrawImage(black);
+		back = is75 ? backNTSC75 : backNTSC100;
+		if(matchIRE)
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
+		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
 
 		if(text)
 		{
 			DrawStringB(260, 20, 0, 1.0f, 0, msg);
 			text --;
 		}
+		
+		if(text_mV)
+		{
+			DrawStringS(225, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
 
 		EndScene();
-		VMURefresh("SMPTE", is75 ? "  75%" : " 100%");
+		VMURefresh(is75 ? "SMPTE  75%" : "SMPTE 100%", vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -296,6 +392,14 @@ void DrawSMPTEColorBars()
 				sprintf(msg, "%s%%", is75 ? "75" : "100");
 				refreshVMU = 1;
 			}
+			
+			if (pressed & CONT_Y)
+			{
+				matchIRE = !matchIRE;
+				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+				text_mV = 60;
+				refreshVMU = 1;
+			}
 
 			if (pressed & CONT_START)
 				ShowMenu(SMPTECOLOR);
@@ -303,39 +407,83 @@ void DrawSMPTEColorBars()
 	}
 	FreeImage(&backNTSC75);
 	FreeImage(&backNTSC100);
+	FreeImage(&black);
 	return;
 }
 
 void DrawGrayRamp()
 {
-	int 		done = 0;
+	int 		done = 0, oldvmode = -1;
+	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;		
-	ImagePtr	back = NULL;
+	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
+	char		vmuMsg2[50];
 
 	back = LoadKMG("/rd/grayramp.kmg.gz", 0);
 	if(!back)
 		return;
+		
+	black = LoadKMG("/rd/black.kmg.gz", 0);
+	if(!black)
+	{
+		FreeImage(&back);
+		return;
+	}	
 
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
+		double alpha = 0;
+		
+		if(oldvmode != vmode)
+		{
+			black->w = 320;
+			black->h = IsPAL ? 264 : 240;
+			oldvmode = vmode;
+		}
+		
 		StartScene();
+		if(matchIRE)
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
+		DrawImage(black);
 		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
+
+		if(text_mV)
+		{
+			DrawStringS(225, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
+
 		EndScene();
 		
-		VMURefresh("Gray Ramp", "");
+		VMURefresh("Gray Ramp", vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
 		{
 			if (pressed & CONT_B)
 				done =	1;								
+				
+			if (pressed & CONT_Y)
+			{
+				matchIRE = !matchIRE;
+				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+				text_mV = 60;
+				refreshVMU = 1;
+			}
 
 			if (pressed & CONT_START)
 				ShowMenu(GRAYHELP);
 		}
 	}
 	FreeImage(&back);
+	FreeImage(&black);
 	return;
 }
 
@@ -343,38 +491,66 @@ void DrawWhiteScreen()
 {
 	int 		done = 0, color = 0, text = 0;
 	int			sel = 1, editmode = 0, oldvmode = -1;
+	int			matchIRE = settings.matchIRE, text_mV = 0;
 	float		BlackLevel = 0.0f, cr, cb, cg;
 	uint16		pressed;		
-	ImagePtr	back = NULL;
+	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
 	char		*mode[5] = { "White", "Black", "Red", "Green", "Blue" };
-	char		msg[100], *vmuMsg = mode[0], *edited = "Edited";
+	char		msg[100], *vmuMsg = mode[0], vmuMsg2[50], *edited = "  Edited";
 
 	back = LoadKMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
+	black = LoadKMG("/rd/black.kmg.gz", 0);
+	if(!black)
+	{
+		FreeImage(&back);
+		return;
+	}	
 		
 	cr = cb = cg = 1.0f; // white
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{	
+		double alpha = 0;
+		
 		if(vmode != oldvmode)
 		{
 			back->w = dW;
 			back->h = dH;
+			
+			black->w = dW;
+			black->h = dH;
+			oldvmode = vmode;
 		}
 		
 		StartScene();
 
+		if(matchIRE)
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
+		DrawImage(black);
 		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
 
 		if(text)
 		{						
-			DrawStringB(200, 20, 1.0f, 1.0f, 1.0f, msg);			
+			DrawStringB(dW - 25*fw, 20, 1.0f, 1.0f, 1.0f, msg);			
 			text --;
-		}		
+		}
+		
+		if(text_mV)
+		{
+			DrawStringB(dW - 25*fw, 20+fh, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
 		
 		EndScene();
-		VMURefresh("Color scr", vmuMsg);
+		VMURefresh(vmuMsg, vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -527,6 +703,16 @@ void DrawWhiteScreen()
 					refreshVMU = 1;
 				}
 			}
+			else
+			{
+				if (pressed & CONT_Y)
+				{
+					matchIRE = !matchIRE;
+					sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+					text_mV = 60;
+					refreshVMU = 1;
+				}
+			}
 
 			switch(color)
 			{
@@ -560,33 +746,69 @@ void DrawWhiteScreen()
 
 	}
 	FreeImage(&back);
+	FreeImage(&black);
 	return;
 }
 
 void DrawColorBars()
 {
-	int 		done = 0, type = 0, showborder = 0;
+	int 		done = 0, type = 0, showborder = 0, oldvmode = -1;
+	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;		
-	ImagePtr	back = NULL, backgrid = NULL, border = NULL;
+	ImagePtr	back = NULL, backgrid = NULL, backcolor = NULL;
+	ImagePtr	border = NULL, black = NULL;
 	controller	*st = NULL;
+	char		vmuMsg2[50];
 
-	back = LoadKMG("/rd/color.kmg.gz", 0);
-	if(!back)
+	backcolor = LoadKMG("/rd/color.kmg.gz", 0);
+	if(!backcolor)
 		return;
 	backgrid = LoadKMG("/rd/color_grid.kmg.gz", 0);
-	if(!back)
+	if(!backgrid)
 		return;
 	border = LoadKMG("/rd/color_border.kmg.gz", 0);
 	if(!border)
 		return;
 		
+	black = LoadKMG("/rd/black.kmg.gz", 0);
+	if(!black)
+		return;
+	
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
+		double alpha = 0;
+		
+		if(oldvmode != vmode)
+		{
+			black->w = 320;
+			black->h = IsPAL ? 264 : 240;
+			oldvmode = vmode;
+		}
+		
 		StartScene();
+		
 		if(!type)
-			DrawImage(back);
+			back = backcolor;
 		else
-			DrawImage(backgrid);
+			back = backgrid;
+			
+		if(matchIRE)
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
+		DrawImage(black);
+		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
+
+		if(text_mV)
+		{
+			DrawStringS(225, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
+
 		if(showborder)
 		{
 			border->r = 1.0f;
@@ -606,7 +828,7 @@ void DrawColorBars()
 			showborder--;
 		}
 		EndScene();
-		VMURefresh("Colorbars", !type ? "Normal" : "Grid");
+		VMURefresh("Colorbars", vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -622,6 +844,14 @@ void DrawColorBars()
 			
 			if (pressed & CONT_X)
 				showborder = 120;
+				
+			if (pressed & CONT_Y)
+			{
+				matchIRE = !matchIRE;
+				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+				text_mV = 60;
+				refreshVMU = 1;
+			}
 
 			if (pressed & CONT_START)
 				ShowMenu(COLORBARSHELP);
@@ -629,55 +859,109 @@ void DrawColorBars()
 	}
 	FreeImage(&border);
 	FreeImage(&backgrid);
-	FreeImage(&back);
+	FreeImage(&backcolor);
+	FreeImage(&black);
 	return;
 }
 
 void Draw601ColorBars()
 {
-	int 		done = 0;
+	int 		done = 0, oldvmode = -1;
+	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;		
-	ImagePtr	back = NULL;
+	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
+	char		vmuMsg2[50];
 
 	back = LoadKMG("/rd/601701cb.kmg.gz", 0);
 	if(!back)
 		return;
+		
+	black = LoadKMG("/rd/black.kmg.gz", 0);
+	if(!black)
+	{
+		FreeImage(&back);
+		return;
+	}	
 
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
+		double alpha = 0;
+		
+		if(oldvmode != vmode)
+		{
+			black->w = 320;
+			black->h = IsPAL ? 264 : 240;
+			oldvmode = vmode;
+		}
+		
 		StartScene();
+		if(matchIRE)
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
+		DrawImage(black);
 		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
+		if(text_mV)
+		{
+			DrawStringS(225, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
 		EndScene();
-		VMURefresh("Colorbars", "with gray");
+		VMURefresh("Gray CB", vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
 		{
 			if (pressed & CONT_B)
 				done =	1;
+			
+			if (pressed & CONT_Y)
+			{
+				matchIRE = !matchIRE;
+				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+				text_mV = 60;
+				refreshVMU = 1;
+			}
 
 			if (pressed & CONT_START)
 				ShowMenu(COLOR601);
 		}
 	}
 	FreeImage(&back);
+	FreeImage(&black);
 	return;
 }
 
 void DrawColorBleed()
 {
 	int 		done = 0, type = 0, oldvmode = -1;
+	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;
-	ImagePtr	back = NULL, backchk = NULL;
+	ImagePtr	back = NULL, backchk = NULL, backnrm = NULL, black = NULL;
 	controller	*st = NULL;
+	char		vmuMsg2[50];
 
+	black = LoadKMG("/rd/black.kmg.gz", 0);
+	if(!black)
+		return;
+
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
+		double alpha = 0;
+		
 		if(oldvmode != vmode)
 		{
-			if(back)
-				FreeImage(&back);		
+			black->w = dW;
+			black->h = dH;
+			
+			if(backnrm)
+				FreeImage(&backnrm);		
 			if(backchk)
 				FreeImage(&backchk);
 			oldvmode = vmode;
@@ -687,10 +971,10 @@ void DrawColorBleed()
 		{
 			if(vmode >= HIGH_RES)
 			{
-				back = LoadKMG("/rd/480/colorbleed-480.kmg.gz", 0);
-				if(!back)
+				backnrm = LoadKMG("/rd/480/colorbleed-480.kmg.gz", 0);
+				if(!backnrm)
 					return;
-				back->scale = 0;
+				backnrm->scale = 0;
 				backchk = LoadKMG("/rd/480/colorbleed-480-chk.kmg.gz", 0);
 				if(!backchk)
 					return;
@@ -698,8 +982,8 @@ void DrawColorBleed()
 			}
 			else
 			{
-				back = LoadKMG("/rd/colorbleed.kmg.gz", 0);
-				if(!back)
+				backnrm = LoadKMG("/rd/colorbleed.kmg.gz", 0);
+				if(!backnrm)
 					return;
 				backchk = LoadKMG("/rd/colorbleedchk.kmg.gz", 0);
 				if(!backchk)
@@ -708,12 +992,26 @@ void DrawColorBleed()
 		}
 		StartScene();
 		if(!type)
-			DrawImage(back);
+			back = backnrm;
 		else
-			DrawImage(backchk);
+			back = backchk;
+		if(matchIRE)
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
+		DrawImage(black);
+		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
+		if(text_mV)
+		{
+			DrawStringS(dW-20*fw, dH-5*fh, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
 		EndScene();
 	
-		VMURefresh("Bleed CHK", "");
+		VMURefresh("Bleed CHK", vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -723,13 +1021,22 @@ void DrawColorBleed()
 
 			if (pressed & CONT_A)
 				type = !type;
+				
+			if (pressed & CONT_Y)
+			{
+				matchIRE = !matchIRE;
+				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+				text_mV = 60;
+				refreshVMU = 1;
+			}
 
 			if (pressed & CONT_START)
 				ShowMenu(COLORBLEEDHELP);
 		}
 	}
-	FreeImage(&back);
+	FreeImage(&backnrm);
 	FreeImage(&backchk);
+	FreeImage(&black);
 	return;
 }
 
@@ -1002,7 +1309,7 @@ void DrawMonoscope()
 void Draw100IRE()
 {
 	int 			done = 0, oldvmode = -1, vmuMsgSend = 0;
-	int				text_mV = 0, matchIRE = 0;
+	int				matchIRE = settings.matchIRE, text_mV = 0;
 	uint16			pressed, text = 0, invert = 0;	
 	ImagePtr		back = NULL, white = NULL, black = NULL;
 	controller		*st = NULL;
@@ -1027,7 +1334,6 @@ void Draw100IRE()
 	{
 		double alpha = 0;
 		
-		alpha = back->alpha;
 		if(oldvmode != vmode)
 		{
 			black->w = 320;
@@ -1044,7 +1350,10 @@ void Draw100IRE()
 		if(invert)
 			DrawImage(white);
 		if(matchIRE)
-			back->alpha *= 0.8898;  // Average voltage difference to match The DC 808 mV white to IRE standard 714.3 mV white
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
 		DrawImage(back);
 		if(matchIRE)
 			back->alpha = alpha;
@@ -1140,7 +1449,7 @@ void Draw100IRE()
 			if (pressed & CONT_B)
 				done =	1;
 				
-			if (pressed & CONT_X)
+			if (pressed & CONT_Y)
 			{
 				matchIRE = !matchIRE;
 				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");

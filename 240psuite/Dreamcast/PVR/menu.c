@@ -632,27 +632,35 @@ void ChangeOptions(ImagePtr screen)
 		// Option 13, Disable FrameBuffer copies
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Use FrameBuffer copy:");
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
-			settings.IgnoreFrameBuffer == 0 ? "ON" : "OFF");  y += fh; c++;		
+			settings.IgnoreFrameBuffer == 0 ? "ON" : "OFF");  y += fh; c++;
+			
+		// Option 14, Match IRE to 714.3mV with alpha in relevant patterns
+		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Approximate 714.3mV IRE:");
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+			settings.matchIRE ? "ON" : "OFF");  y += fh; c++;
 		
-		// Option 14, Reset to default options
+		// Option 15, Reset to default options
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Reset all options to defaults"); y += fh; c++;
 		
-		// Option 15, Exit
-		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		// Option 16, Exit
+		DrawStringS(x, y, 0.4f, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 		
 		// Comments on options
-		r = g = b = 0.8;
+		r = g = b = 1.0;
 		if(vmode == VIDEO_480P_SL && sel == 9)	
-			DrawStringS(x-15, y + fh, r, g, b, "Adjust with L and R triggers"); 										
+			DrawStringB(x-15, 200+fh, r, g, b, "Adjust with L and R triggers");
 		if(!IsPALDC && (sel > 4 && sel < 9))
-			DrawStringS(x-15, y + fh, r, g, b,
+			DrawStringB(x-15, 200+fh, r, g, b,
 				"Only PAL FlashROMs can output PAL correctly"); 
 		if(vmode != VIDEO_480P_SL && (sel == 9 || sel == 10))
-			DrawStringS(x-15, y + fh, r, g, b,
+			DrawStringB(x-15, 200+fh, r, g, b,
 				"Scanlines only in scaled 480p mode via D-SUB (VGA)");
 		if(sel == 11 && hint == 1)
-			DrawStringS(x-15, y + fh, r, g, b,
+			DrawStringB(x-15, 200+fh, r, g, b,
 				"Hold L or R while saving for hidden eye-catchers!");
+		if(sel == 14)
+			DrawStringB(x-15, 200+fh, r, g, b, "Only available in relevant patterns");
+		r = g = b = 0.8;
 		DrawStringS(x+60, 200, r, g, b, "Press START for help");
 		if(rand() % 1000 == 47)
 			hint = !hint;
@@ -853,7 +861,10 @@ void ChangeOptions(ImagePtr screen)
 					case 13:
 						settings.IgnoreFrameBuffer = !settings.IgnoreFrameBuffer;
 						break;
-					case 14: // Option 14, Reset to default options
+					case 14:
+						settings.matchIRE = !settings.matchIRE;
+						break;
+					case 15: // Option 14, Reset to default options
 						{
 							struct	settings_st old_settings;
 							
@@ -872,7 +883,7 @@ void ChangeOptions(ImagePtr screen)
 							changedPVR = 1;
 						}
 						break;
-					case 15:
+					case 16:
 						if ( st && st->buttons & CONT_RTRIGGER )
 						{
 							settings.drawborder = !settings.drawborder;
