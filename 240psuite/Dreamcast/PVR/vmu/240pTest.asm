@@ -37,41 +37,38 @@ bit_sleep_pos       equ 7
 ;Timeout in cycles for exit in Control Test since we disabled sleep, 30 ~1sec
 Hold_B_Timeout      equ $30
 
-;Timeout in cycles for exit in Control Test since we disabled sleep, 30 ~1sec
-Hold_B_TimeSND_on   equ $2
-Hold_B_TimeSND_off  equ $ff
+; Timeouts in Sound Test (MDFourier)
+Hold_B_TimeSND_on   equ $2      ; while in playback with 0.5 sec interrupts
+Hold_B_TimeSND_off  equ $ff     ; while idle in screen
 
 ;******************************************************************************
 ; Variables
 ;******************************************************************************
 ; Global variables
-p3_pressed              =       $4                    ; 1 byte
-p3_last_input           =       $5                    ; 1 byte
-toggle_location         =       $6                    ; 1 byte
-b_held                  =       $7                    ; 1 byte
-highlights              =       $8                    ; 1 byte
+p3_pressed              =       $04                   ; 1 byte
+p3_last_input           =       $05                   ; 1 byte
+toggle_location         =       $06                   ; 1 byte
+b_held                  =       $07                   ; 1 byte
+highlights              =       $08                   ; 1 byte
 
 ; Title screen variables
-title_anim_counter      =       $9                    ; 1 byte
-title_address           =       $A                    ; 2 bytes
-title_frame_counter     =       $C                    ; 1 byte
+anim_counter            =       $09                   ; 1 byte
+frame_counter           =       $0A                   ; 1 byte
+pointer_address         =       $0B                   ; 2 bytes
 
 ; Timeout for auto-sleep
-auto_sleep_timeout      =       $D                    ; 1 byte
-auto_sleep_timeout_sub  =       $E                    ; 1 byte
-
-; Sleep screen variables
-sleep_anim_counter      =       $F                    ; 1 byte
-sleep_address           =       $10                   ; 2 bytes
-sleep_frame_counter     =       $12                   ; 1 byte
-refresh_screen          =       $13                   ; 1 byte
+auto_sleep_timeout      =       $0D                   ; 1 byte
+auto_sleep_timeout_sub  =       $0E                   ; 1 byte
+refresh_screen          =       $0F                   ; 1 byte
 
 ; Sound variables
-sound_start_lr          =       $14                   ; 1 byte
-sound_start_lc          =       $15                   ; 1 byte
-sound_toggle_lc         =       $16                   ; 1 byte
-sound_running           =       $17                   ; 1 byte
-sound_sync_frames       =       $18                   ; 1 byte
+sound_start_lr          =       $10                   ; 1 byte
+sound_start_lc          =       $11                   ; 1 byte
+sound_toggle_lc         =       $12                   ; 1 byte
+sound_running           =       $13                   ; 1 byte
+sound_sync_frames       =       $14                   ; 1 byte
+sprite_pos_x            =       $15                   ; 1 byte
+sprite_pos_y            =       $16                   ; 1 byte
 
 ;------------------------------------------------------------------------------
 ;******************************************************************************
@@ -133,8 +130,8 @@ goodbye:
 ;******************************************************************************
         .org   $200
         .text   16 "VMU Ctr/Snd Test"
-        .text   32 "240p Test Suite by Artemio      "
-        .string 16 "240p Test Suite"
+        .text   32 "240p Test Suite VMU by Artemio  "
+        .string 16 "240p VMU Tests  "
 
 ;******************************************************************************
 ; Icon Header
@@ -158,6 +155,24 @@ Start:
 
         set1    ie,7
 
+%macro  load_sprite_LUT %sprite_LUT, %anim_counter
+        ;----------------------------------------------------------------------
+        ; Loads a sprite from LUT overlaying animation over the title screen
+        ;----------------------------------------------------------------------
+
+        mov     #<%sprite_LUT, trl
+        mov     #>%sprite_LUT, trh
+        ld      %anim_counter
+        rol
+        ldc
+        st      pointer_address
+        ld      %anim_counter
+        rol
+        inc     acc
+        ldc
+        st      pointer_address+1
+%end
+
 ;******************************************************************************
 ; Our Main Loop
 ;******************************************************************************
@@ -167,51 +182,44 @@ Main_Loop:
         mov     #%11111111, p3_last_input
 
         ; Initialise some variables
-        mov     #26, title_address
-        mov     #0, title_anim_counter
-        mov     #0, title_frame_counter
-        mov     #0, refresh_screen
+        mov     #00, anim_counter
+        mov     #00, frame_counter
+        mov     #24, sprite_pos_x
+        mov     #01, sprite_pos_y
+        mov     #00, refresh_screen
         call    Reset_auto_sleep
 
-.title_Loop
-        ld      title_frame_counter          ; check if we really need refresh
+        P_Draw_Background_Constant title_bg
+
+.title_loop:
+        ld      frame_counter          ; check if we really need refresh
         bnz     .skip_refresh
 
-        clr1    ocr, 5
-        mov     #<title_LUT, trl
-        mov     #>title_LUT, trh
-        ld      title_anim_counter
-        rol
-        ldc
-        st      title_address
-        ld      title_anim_counter
-        rol
-        inc     acc
-        ldc
-        st      title_address+1
+        load_sprite_LUT title_LUT, anim_counter
 
-        ; Draw the frame
-        P_Draw_Background title_address
+        ; Draw the animation sprite on top of the bg
+        P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
         P_Blit_Screen
 
-        set1    ocr, 5
-
 .skip_refresh:
-        inc     title_frame_counter
-        ld      title_frame_counter
+        inc     frame_counter
+        ld      frame_counter
         sub     #10
         bnz     .poll_loop
-        mov     #0, title_frame_counter
+        mov     #0, frame_counter
 
         ; Check to see if we need to reset the frame
-        inc     title_anim_counter
-        ld      title_anim_counter
+        inc     anim_counter
+        ld      anim_counter
         sub     #26
         bnz     .poll_loop
-        mov     #0, title_anim_counter
+        mov     #0, anim_counter
 
 .poll_loop:
         call    Check_auto_sleep
+        ld      refresh_screen
+        bnz     Main_Loop
+
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
         ; If battery is low, abort
@@ -368,6 +376,21 @@ P_Invert_block:
         call    Reset_auto_sleep
         ret
 
+%macro  load_sprite %posX, %posY, %sprite_label
+        ;----------------------------------------------------------------------
+        ; Loads a sprite for direct use, just for clarity
+        ;----------------------------------------------------------------------
+
+        mov     #%posX, sprite_pos_x
+        mov     #%posY, sprite_pos_y
+        mov     #<%sprite_label, acc
+        st      trl
+        st      pointer_address
+        mov     #>%sprite_label, acc
+        st      trh
+        st      pointer_address+1
+%end
+
 ;******************************************************************************
 ; Our Frequency Sweep Test
 ;******************************************************************************
@@ -375,14 +398,24 @@ Frequency_sweep:
         ; Initialise some variables
         mov     #Hold_B_TimeSND_off, b_held
         mov     #0, refresh_screen
+        set1    sound_running, 1            ; set bit 1(draw flag)
         call    Reset_auto_sleep
         call    sndinit
 
-        ; Draw the background
-        P_Draw_Background_Constant sound_back
-        P_Blit_Screen
+        ; load "A Starts" message for overlay
+        load_sprite 16, 18, press_a_sprite
 
 .sweep_loop:
+        ld      sound_running
+        bn      acc, 1, .check_inputs       ; bit 1(draw flag) needs refresh
+
+        ; Draw the background
+        clr1    sound_running, 1            ; clear bit 1(draw flag)
+        P_Draw_Background_Constant sound_back
+        P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
+        P_Blit_Screen
+
+.check_inputs:
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
 
@@ -406,6 +439,11 @@ Frequency_sweep:
 
         ; start playback
         mov     #Hold_B_TimeSND_on, b_held     ; load Interrupt time out
+
+        ; redraw background without message
+        P_Draw_Background_Constant sound_back
+        P_Blit_Screen
+
         set1    PCON,0                  ; wait for the base interrupt 0.5 secs
         call    sndstart
         jmp     .wait_interrupt
@@ -482,6 +520,7 @@ sndadvfreq:
         call    sync_tones
 
         call    sndstop
+        set1    sound_running, 1            ; Set bit 1 for screen refresh
         ret
         
 .continue_t1lc:
@@ -511,7 +550,7 @@ sndadvfreq:
         ret
 
 sync_tones:
-        mov     #10, sound_sync_frames
+        mov     #4, sound_sync_frames    ; 4 pulses
         mov     #$fe,T1LR               ; Highest note that runs on a real VMU
         mov     #$ff,T1LC               ; about 2730hz
 
@@ -594,47 +633,33 @@ Check_auto_sleep_int:
 sleep_animate:
         ; Initialise some variables
         call    Reset_auto_sleep
-        mov     #0, sleep_address
-        mov     #0, sleep_anim_counter
-        mov     #0, sleep_frame_counter
+        mov     #0, anim_counter
+        mov     #0, frame_counter
         mov     #0, refresh_screen
 
 .sleep_loop
-        ld      sleep_frame_counter          ; check if we really need refresh
+        ld      frame_counter          ; check if we really need refresh
         bnz     .skip_refresh
 
-        clr1    ocr, 5
-        mov     #<sleep_LUT, trl
-        mov     #>sleep_LUT, trh
-        ld      sleep_anim_counter
-        rol
-        ldc
-        st      sleep_address
-        ld      sleep_anim_counter
-        rol
-        inc     acc
-        ldc
-        st      sleep_address+1
+        load_sprite_LUT sleep_LUT, anim_counter
 
         ; Draw the frame
-        P_Draw_Background sleep_address
+        P_Draw_Background pointer_address
         P_Blit_Screen
 
-        set1    ocr, 5
-
 .skip_refresh:
-        inc     sleep_frame_counter
-        ld      sleep_frame_counter
+        inc     frame_counter
+        ld      frame_counter
         sub     #25
         bnz     .poll_loop
-        mov     #0, sleep_frame_counter
+        mov     #0, frame_counter
 
         ; Check to see if we need to reset the frame
-        inc     sleep_anim_counter
-        ld      sleep_anim_counter
+        inc     anim_counter
+        ld      anim_counter
         sub     #12
         bnz     .poll_loop
-        mov     #0, sleep_anim_counter
+        mov     #0, anim_counter
 
 .poll_loop:
         call    Check_auto_sleep_int

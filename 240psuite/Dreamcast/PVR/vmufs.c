@@ -661,7 +661,7 @@ int ListMemCardFiles(char *buffer, int buffsize)
 	return VMU_OK;
 }
 
-int MemcardOtherGameExists(char *filename, int *port, int *unit)
+int MemcardOtherGameExists(char *filename, char *vmugame, int *port, int *unit)
 {
 	maple_device_t	*vmu;
 	vmu_dir_t		*vmufiles = NULL;
@@ -699,6 +699,8 @@ int MemcardOtherGameExists(char *filename, int *port, int *unit)
 		{
 			if(strncmp(filename, vmufiles[file].filename, VMU_NAME_LEN) != 0)
 			{
+				if(vmugame)
+					memcpy(vmugame, vmufiles[file].filename, sizeof(char)*13);
 				free(vmufiles);
 				if(port && unit)
 				{

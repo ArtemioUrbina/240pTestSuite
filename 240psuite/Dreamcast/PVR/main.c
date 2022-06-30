@@ -845,7 +845,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
 		if(isVMUPresent())
 		{
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VMU Test"); y += fh; c++;    
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VMU Control & MDFourier"); y += fh; c++;    
 		}
 		else
 		{

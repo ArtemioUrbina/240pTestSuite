@@ -643,23 +643,23 @@ void ChangeOptions(ImagePtr screen)
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Reset all options to defaults"); y += fh; c++;
 		
 		// Option 16, Exit
-		DrawStringS(x, y, 0.4f, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+		DrawStringS(x, y, 1.0f, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 		
 		// Comments on options
 		r = g = b = 1.0;
 		if(vmode == VIDEO_480P_SL && sel == 9)	
-			DrawStringB(x-15, 200+fh, r, g, b, "Adjust with L and R triggers");
+			DrawStringB(x-15, 204+fh, r, g, b, "Adjust with L and R triggers.");
 		if(!IsPALDC && (sel > 4 && sel < 9))
-			DrawStringB(x-15, 200+fh, r, g, b,
-				"Only PAL FlashROMs can output PAL correctly"); 
+			DrawStringB(x-15, 204+fh, r, g, b,
+				"Only PAL FlashROMs can output PAL correctly."); 
 		if(vmode != VIDEO_480P_SL && (sel == 9 || sel == 10))
-			DrawStringB(x-15, 200+fh, r, g, b,
-				"Scanlines only in scaled 480p mode via D-SUB (VGA)");
+			DrawStringB(x-15, 204+fh, r, g, b,
+				"Scanlines only in scaled 480p mode via D-SUB (VGA).");
 		if(sel == 11 && hint == 1)
-			DrawStringB(x-15, 200+fh, r, g, b,
+			DrawStringB(x-15, 204+fh, r, g, b,
 				"Hold L or R while saving for hidden eye-catchers!");
 		if(sel == 14)
-			DrawStringB(x-15, 200+fh, r, g, b, "Only available in relevant patterns");
+			DrawStringB(x-15, 204+fh, r, g, b, "In relevant patterns only. Stock output is ~800mV.");
 		r = g = b = 0.8;
 		DrawStringS(x+60, 200, r, g, b, "Press START for help");
 		if(rand() % 1000 == 47)
@@ -1370,7 +1370,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "VMU animations:");
 		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Hardware & Special Thanks:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Karensauria & ferigne");
-		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Rolman"); y += fh; 
+		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Rolman & Leex"); y += fh; 
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:");
 		DrawStringS(x+150, y, 1.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "shmups regulars");

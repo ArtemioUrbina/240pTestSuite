@@ -2010,16 +2010,16 @@ void MemoryViewer(uint32 address)
 void VMUControllerTest()
 {
 	int		saveexists = 0, port = 0, unit = 0;
-	char 	error[256], question[256],
+	char 	error[256], question[256], vmugame[20],
 			*msg = "VMU data could not be saved\n";
 	
 	if(!isVMUPresent())
 		return;
 		
-	if(MemcardOtherGameExists(VMU_CTRL_NAME, &port, &unit))
+	if(MemcardOtherGameExists(VMU_CTRL_NAME, vmugame, &port, &unit))
 	{
-		sprintf(question, "There is already another game in #YVMU %c-%c#Y\nPlease insert a #YVMU#Y without a game,\nor delete this one first.", 
-				'A'+port, '0'+unit);
+		sprintf(question, "#GVMU Control Test & MDFourier#G\n\nThere is already a game (#Y%s#Y) in #YVMU %c-%c#Y\nPlease insert a #YVMU#Y without a game,\nor delete this one first.", 
+				vmugame, 'A'+port, '0'+unit);
 		DrawMessage(question);
 		return;
 	}
@@ -2027,14 +2027,14 @@ void VMUControllerTest()
 	saveexists = MemcardSaveExists(VMU_CTRL_NAME, NULL, &port, &unit);
 	if(saveexists == VMU_SAVEEXISTS)
 	{
-		sprintf(question, "Replace the #YVMU Test#Y stored in #YVMU#Y at port #Y%c-%c#Y?", 'A'+port, '0'+unit);
+		sprintf(question, "#GVMU Control Test & MDFourier#G\n\nReplace the #YVMU Test#Y stored in #YVMU#Y at port #Y%c-%c#Y?", 'A'+port, '0'+unit);
 		if(!AskQuestion(question))
 			return;
 	}
 	
 	if(!saveexists)
 	{
-		sprintf(question, "#YVMU Test#Y\n\nThis will save the application to #YVMU %c-%c#Y\nProceed with save?", 'A'+port, '0'+unit);
+		sprintf(question, "#GVMU Control Test & MDFourier#G\n\nThis will save the application to #YVMU %c-%c#Y\nProceed with save?", 'A'+port, '0'+unit);
 		if(!AskQuestion(question))
 			return;
 	}
@@ -2053,7 +2053,7 @@ void VMUControllerTest()
 		DrawMessage(error);
 	else
 	{
-		sprintf(question, "VMU Test has been saved to the #YVMU %c-%c#Y\nPlease dettach the unit and run it from the #YLCD#Y.", 'A'+port, '0'+unit);
+		sprintf(question, "The software has been saved to #YVMU %c-%c#Y\nPlease dettach the unit and run it from the #YLCD#Y.", 'A'+port, '0'+unit);
 		DrawMessage(question);
 	}
 }

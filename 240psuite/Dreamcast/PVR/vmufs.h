@@ -12,7 +12,7 @@
 #include <kos/string.h>
 
 #define VMU_NAME 		"240PTEST"
-#define	VMU_CTRL_NAME	"240PCTRL"
+#define	VMU_CTRL_NAME	"240PTEST VMU"
 #define VMU_NAME_LEN	8
 #define SAVE_NUM		120			// We have DATA_SIZE/32 bytes free and zeroed until we need to change this
 #define	DATA_SIZE		32
@@ -35,5 +35,5 @@ int MemcardSaveExists(char *filename, int *blocks, int *port, int *unit);
 int LoadMemCardSave(char *error);
 int WriteMemCardSave(int icon, char *error);
 int WriteMemCardControlTest(char *error);
-int MemcardOtherGameExists(char *filename, int *port, int *unit);
+int MemcardOtherGameExists(char *filename, char *vmugame, int *port, int *unit);
 
