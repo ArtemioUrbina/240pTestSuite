@@ -2069,6 +2069,7 @@ void MicrophoneTest()
 	int					done = 0, samplerate = 0, play = 0, amplify = 1, sip_change = 0;
 	int					sampling = 0, tries = 0, state_machine = 0, sr8 = 0;
 	int					frame_counter = 0, seconds_record = 5, seconds_in_buffer = 0;
+	int					total_frames = 0;
 	size_t				recoding_size = 0;
 	uint16				pressed;
 	controller			*st;
@@ -2245,11 +2246,13 @@ void MicrophoneTest()
 			if(frame_counter)
 			{
 				frame_counter--;
-				if(state_machine == 1 && rec_buffer.pos == 0)
+				if(state_machine == 1 && rec_buffer.pos == 0 &&
+					frame_counter < total_frames/10)
 				{
 					rec_buffer.recording = 0;
 					state_machine = 0;
 					frame_counter = 0;
+					total_frames = 0;
 					
 					vmuMsg1 = "Reinsert";
 					vmuMsg2 = "micro";
@@ -2292,6 +2295,7 @@ void MicrophoneTest()
 						
 						state_machine = 1;
 						frame_counter = seconds_record*(IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE);
+						total_frames = frame_counter;
 						rec_buffer.overflow = 0;
 						rec_buffer.pos = 0;
 						rec_buffer.recording = 1;
@@ -2360,6 +2364,7 @@ void MicrophoneTest()
 						}
 
 						frame_counter = seconds_in_buffer*(IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE);
+						total_frames = frame_counter;
 						stream_pos = 0;
 						play = 1;
 						
