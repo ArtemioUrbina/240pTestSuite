@@ -769,7 +769,7 @@ void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
 void SIPLagTest()
 {
 	int				done = 0, state_machine = 0, frame_counter = 0;
-	int				showframes = 0, accuracy = 1, cycle = 0;
+	int				showframes = 0, accuracy = 1, cycle = 0, start_msg = 0;
 	uint16			pressed;		
 	ImagePtr		back = NULL, wave = NULL;
 	sfxhnd_t		beep = SFXHND_INVALID;  
@@ -1042,6 +1042,7 @@ void SIPLagTest()
 					vmuMsg1 = "Reinsert";
 					vmuMsg2 = "micro";
 					refreshVMU = 1;
+					start_msg = 1;
 				}
 			}
 		}
@@ -1073,9 +1074,13 @@ void SIPLagTest()
 				double value;
 
 				DrawSIPScreen(back, wave, "Analyzing...", accuracy, Results, ResCount, showframes, samplerate);
-				vmuMsg1 = "Analyzing";
-				vmuMsg2 = "";
-				updateVMU(vmuMsg1, vmuMsg2, 1);
+				if(start_msg)
+				{
+					vmuMsg1 = "Analyzing";
+					vmuMsg2 = "";
+					start_msg = 0;
+					refreshVMU = 1;
+				}
 				
 				// Mic sample rate can vary between models, see above comment
 				value = ProcessSamples((short*)rec_buffer.buffer, (int)(rec_buffer.pos/2),
@@ -1085,21 +1090,21 @@ void SIPLagTest()
 					sprintf(DStatus, "#YNoise at 1khz#Y");
 					vmuMsg1 = "Noise at";
 					vmuMsg2 = "1Khz";
-					updateVMU(vmuMsg1, vmuMsg2, 1);
+					refreshVMU = 1;
 				}
 				if(value == FFT_OM)
 				{
 					sprintf(DStatus, "#ROut of Memory#R");
 					vmuMsg1 = "Out of";
 					vmuMsg2 = "memory";
-					updateVMU(vmuMsg1, vmuMsg2, 1);
+					refreshVMU = 1;
 				}
 				if(value == FFT_NOT_FOUND)
 				{
 					sprintf(DStatus, "#YCheck audio system#Y");
 					vmuMsg1 = "Check";
 					vmuMsg2 = "audio";
-					updateVMU(vmuMsg1, vmuMsg2, 1);
+					refreshVMU = 1;
 				}
 				if(value >= 0)
 				{
@@ -1113,7 +1118,7 @@ void SIPLagTest()
 						sprintf(vmtext, "%g ms", value*(IsPAL ? PAL_FRAME_LEN : NTSC_FRAME_LEN));
 					vmuMsg1 = "Lag is:";
 					vmuMsg2 = vmtext;
-					updateVMU(vmuMsg1, vmuMsg2, 1);
+					refreshVMU = 1;
 				}
 
 				if(ResCount == RESULTS_MAX)
@@ -1131,7 +1136,7 @@ void SIPLagTest()
 				sprintf(DStatus, "#YRecording failed#Y");
 				vmuMsg1 = "Record";
 				vmuMsg2 = "failed";
-				updateVMU(vmuMsg1, vmuMsg2, 1);
+				refreshVMU = 1;
 			}
 
 			rec_buffer.pos = 0;

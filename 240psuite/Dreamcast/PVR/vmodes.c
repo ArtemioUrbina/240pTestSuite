@@ -744,8 +744,6 @@ void TestVideoMode(int mode)
 		return;
 	}
 
-	updateVMU("VIDEO", "", 1);
-
 	/*
 	ReleaseTextures();
 	pvr_shutdown();
@@ -825,6 +823,8 @@ void TestVideoMode(int mode)
 
 		DrawStringB(100, 5, 0, 1.0f, 0.0f, "X to reset, Y to set"); y += fh; 
 		EndScene();
+
+		VMURefresh("VIDEO", "TEST");
 
 		st = ReadController(0, &pressed);
 		if(st)

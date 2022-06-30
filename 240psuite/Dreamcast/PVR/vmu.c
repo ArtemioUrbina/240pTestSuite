@@ -30,6 +30,8 @@ static 	uint8 bitmap[192];
 uint64 	lcd_vmu_update_time = 0;
 uint8	disableVMU_LCD_val = 0;
 uint8	is_sleeping = 0;
+uint8	is_waking_up = 0;
+uint8	cancel_wake_up = 0;
 uint8	sleepEnabled = 1;
 extern	uint8 refreshVMU;
 
@@ -105,6 +107,12 @@ void updateVMU(char *line1, char *line2, int force)
 
 	if(disableVMU_LCD_val)
 		return;
+		
+	if(is_sleeping || is_waking_up)
+	{
+		cancel_wake_up = 1;
+		return;
+	}
 
 	if(!force && ovmode == vmode && ovcable == vcable)
 		return;
@@ -339,11 +347,17 @@ char *sd_b2_f_xpm[32] = {
 
 void updateVMU_SD()
 {
-	updateVMUGraphic(sd_xpm);
+	if(is_sleeping || is_waking_up)
+		return;
+
+	updateVMUGraphic_low_priority(sd_xpm);
 }
 
 inline void updateVMU_SD_Dev(maple_device_t *vmu)
 {
+	if(is_sleeping || is_waking_up)
+		cancel_wake_up = 1;
+
 	updateVMUGraphicDev(vmu, sd_xpm);
 }
 
@@ -362,10 +376,10 @@ void SD_blink_cycle()
 	static int is_blinking = 0;
 	static int blink_frame = 0;
 
-	if(is_sleeping)
-		return;
-		
 	if(disableVMU_LCD_val)
+		return;
+
+	if(is_sleeping || is_waking_up)
 		return;
 
 	blink_counter++;
@@ -386,7 +400,7 @@ void SD_blink_cycle()
 	}
 	
 	if(frames[blink_frame])
-		updateVMUGraphic(frames[blink_frame]);	// takes between 10-25ms
+		updateVMUGraphic_low_priority(frames[blink_frame]);	// takes between 10-25ms
 
 	blink_frame++;
 	if(blink_frame >= MAX_FRAMES)
@@ -498,6 +512,74 @@ char *sleep2_xpm[] = {
 " . . . . . . . . . . . . . ............... . . .",
 ". . . . . . . . . . . . . . . . . . . . . . . . "};
 
+char *wake0_xpm[] = {
+"........................... ....................",
+"................................... .....   ....",
+"....  ..      ... ......................     ...",
+".... .         .   ....................       ..",
+".....         .  . .......... .........       ..",
+"....            .. ...... ....... .....       ..",
+"....               .....................     ...",
+"... .    .         ................. ....   ....",
+"... .    .         .                ............",
+"...                ..                  ...... ..",
+"...  ...           . .                  ........",
+"....  .           .                       ......",
+"....              .                        .....",
+".....                                       ....",
+".......                                      ...",
+"...........                       ..         ...",
+" . . . ..                       ...           . ",
+". . . . .                .     ..             . ",
+" . . . ..                .     .              ..",
+". . .....                .     .               .",
+" . ..    .        ..    ..     .          .    .",
+". ..      .     ..      .       .        ..    .",
+" ...............       . ..........      .     .",
+". .....                ..               ..    ..",
+" . ...                 ..          ......     ..",
+". . .....................   ........         .. ",
+" . ..........................                ...",
+". . ........... . . . ......               .... ",
+" . . . . . . . . . . . . ...             ..... .",
+". . . . . . . . . . . . . ................... . ",
+" . . . . . . . . . . . . . ............... . . .",
+". . . . . . . . . . . . . . . . . . . . . . . . "};
+
+char *wake1_xpm[] = {
+"........................... ....................",
+"................................... .....   ....",
+"...... ....     ..  ....................     ...",
+".....   .         . ...................       ..",
+"..... .  .         .......... .........       ..",
+"..... ..            ..... ....... .....       ..",
+".....                ...................     ...",
+".....        .     . ............... ....   ....",
+".....        .     . .              ............",
+".....                .                 ...... ..",
+".....           ...  .                  ........",
+".....            .   .                    ......",
+"......              .                      .....",
+"......             .                        ....",
+".......          ..                          ...",
+".......      ....                 ..         ...",
+" . . ..                         ...           . ",
+". . . ..                 .     ..             . ",
+" . . . .                 .     .              ..",
+". . .....                .     .               .",
+" . ..    .        ..    ..     .          .    .",
+". ..      .     ..      .       .        ..    .",
+" ...............       . ..........      .     .",
+". .....                ..               ..    ..",
+" . ...                 ..          ......     ..",
+". . .....................   ........         .. ",
+" . ..........................                ...",
+". . . . . . ......... ......               .... ",
+" . . . . . . . . . . . . ...             ..... .",
+". . . . . . . . . . . . . ................... . ",
+" . . . . . . . . . . . . . ............... . . .",
+". . . . . . . . . . . . . . . . . . . . . . . . "};
+
 void updateVMU_wait()
 {
 	updateVMUGraphic(sleep0_xpm);
@@ -505,40 +587,86 @@ void updateVMU_wait()
 	
 #define MAX_FRAMES_SLEEP 6
 char **frames_sleep[MAX_FRAMES_SLEEP] = { sleep0_xpm, NULL, sleep1_xpm, sleep2_xpm, NULL, sleep1_xpm };
+#define MAX_FRAMES_WAKE 6
+char **frames_wakeup_l[MAX_FRAMES_WAKE] = { wake0_xpm, NULL, wake1_xpm, wake0_xpm, NULL, NULL};
+char **frames_wakeup_r[MAX_FRAMES_WAKE] = { wake1_xpm, NULL, wake0_xpm, wake1_xpm, NULL, NULL};
 
 // ferigne animated this as a 900ms/450ms/900ms/450ms cycle
 // this roughly translates to 52 frames/ 26 frames
 // our base will be change frame every 26
 void sleep_VMU_cycle()
 {
-	static int sleep_counter = 0;
-	static int sleep_frame = 0;
-	static int frame_interval = 27;
+	static unsigned int sleep_counter = 0;
+	static unsigned int sleep_frame = 0;
+	static unsigned int frame_interval = 0;
+	static unsigned int wake_frame = 0;
+	static unsigned int frame_interval_wake = 0;
+	static unsigned int wake_up_frame_speed = 20;
+	static char ***wake_up_anim = NULL;
 
 	if(disableVMU_LCD_val || !sleepEnabled)
 		return;
+	
+	if(is_waking_up)
+	{
+		if(cancel_wake_up)
+			wake_up_frame_speed = 5;
+		else
+			wake_up_frame_speed = 20;
 
-	sleep_counter++;
+		if(is_waking_up == 2)
+		{
+			is_waking_up = 1;
+			sleep_counter = 0;
+			wake_frame = 0;
+			frame_interval_wake = 0;
+		}
+
+		frame_interval_wake++;
+		if(frame_interval_wake > wake_up_frame_speed)
+		{
+			frame_interval_wake = 0;
+			
+			if(wake_up_anim[wake_frame])
+				updateVMUGraphic_low_priority(wake_up_anim[wake_frame]);	// takes between 10-25ms
+			
+			wake_frame++;
+			if(wake_frame >= MAX_FRAMES_WAKE)
+			{
+				is_waking_up = 0;
+				is_sleeping = 0;
+				cancel_wake_up = 0;
+				refreshVMU = 1;
+			}
+		}
+		return;
+	}
+	
 	if(!is_sleeping)
 	{
+		sleep_counter++;
 		if(sleep_counter < 2700)  /// ~2700 (59.97 fps*50secs)
 			return;
 		if(rand() % 100 < 70)	// 30% chance every frame 
 			return;
+		if(rand() % 100 < 50)	// 50% chance every frame 
+			wake_up_anim = frames_wakeup_l;
+		else
+			wake_up_anim = frames_wakeup_r;
 		
 		is_sleeping = 1;
-		sleep_counter = 0;	
+		sleep_counter = 0;
 		sleep_frame = 0;
 		frame_interval = 0;
 	}
-
+	
 	frame_interval++;
 	if(frame_interval > 26)
 	{
 		frame_interval = 0;
 		
 		if(frames_sleep[sleep_frame])
-			updateVMUGraphic(frames_sleep[sleep_frame]);	// takes between 10-25ms
+			updateVMUGraphic_low_priority(frames_sleep[sleep_frame]);	// takes between 10-25ms
 		
 		sleep_frame++;
 		if(sleep_frame >= MAX_FRAMES_SLEEP)
@@ -548,13 +676,17 @@ void sleep_VMU_cycle()
 
 void resetSleep()
 {
-	is_sleeping = 0;
-	refreshVMU = 1;
+	if(is_sleeping)
+	{
+		is_waking_up = 2;
+		is_sleeping = 0;
+	}
 }
 
 void disableSleep()
 {
 	sleepEnabled = 0;
+	is_waking_up = 0;
 }
 
 void enableSleep()
@@ -598,10 +730,21 @@ char *donna_xpm[32] = {
 
 void updateVMU_Donna()
 {
+	if(is_sleeping || is_waking_up)
+		cancel_wake_up = 1;
+
 	updateVMUGraphic(donna_xpm);
 }
 
 inline void updateVMUGraphic(char **xpm)
+{
+	if(is_sleeping || is_waking_up)
+		cancel_wake_up = 1;
+	
+	updateVMUGraphicDev(NULL, xpm);
+}
+
+inline void updateVMUGraphic_low_priority(char **xpm)
 {
 	updateVMUGraphicDev(NULL, xpm);
 }

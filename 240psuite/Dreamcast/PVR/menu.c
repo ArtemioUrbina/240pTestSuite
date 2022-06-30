@@ -275,7 +275,7 @@ void DrawShowMenu()
 {
 	ImagePtr	back;
 	int			done = 0;
-	int			sel = 1, oldsel = 0, joycnt = 0;
+	int			sel = 1, oldsel = -1, joycnt = 0;
 	char		*vmuopt[6] =
 				{
 					"Help",
@@ -303,7 +303,7 @@ void DrawShowMenu()
 	back->y = (dH - MENUSIZE_H) / 2;
 	back->alpha = 0.75f;
 
-	updateVMU("   MENU", "", 1);
+	refreshVMU = 1;
 	while(!done && !EndProgram)
 	{
 		float			r = 1.0f;
@@ -336,7 +336,9 @@ void DrawShowMenu()
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g,	sel == c ? 0 : b,
 				"Exit 240p Suite"); y += 3* fh; 		
 		
-		EndScene();		
+		EndScene();	
+
+		VMURefresh("   MENU", vmuopt[sel-1]);	
 		
 		st = ReadController(0, &pressed);
 
@@ -361,6 +363,7 @@ void DrawShowMenu()
 	
 		if (pressed & CONT_A)
 		{
+			refreshVMU = 1;
 			switch(sel)
 			{			
 					case 1:
@@ -387,13 +390,13 @@ void DrawShowMenu()
 					default:
 						break;
 			}
-			updateVMU("   MENU", "", 1);
+			oldsel = -1;	
 		}		
 
 		if(oldsel != sel)
 		{
-			updateVMU("   MENU", vmuopt[sel-1],1);
 			oldsel = sel;
+			refreshVMU = 1;
 		}
 	}
 	
@@ -401,7 +404,6 @@ void DrawShowMenu()
 	FreeImage(&back);
 	HelpData = GENERALHELP;
 
-	updateVMU("        ", "", 1);
 	refreshVMU = 1;
 
 	return;
@@ -422,7 +424,6 @@ void ChangeOptions(ImagePtr screen)
 
 	back->alpha = 0.75f;
 
-	updateVMU("  Options", "", 1);
 	
 	while(!close && !EndProgram) 
 	{		
@@ -665,6 +666,8 @@ void ChangeOptions(ImagePtr screen)
 		if(rand() % 1000 == 47)
 			hint = !hint;
 		EndScene();
+
+		VMURefresh("  Options", "");
 		
 		// Detect if a VMU was inserted with a Suite Save
 		VMU_detect_save_counter--;
@@ -910,7 +913,7 @@ void ChangeOptions(ImagePtr screen)
 	}
 	
 	FreeImage(&back);
-
+	refreshVMU = 1;
 	return;
 }
 
@@ -988,6 +991,7 @@ void ChangePALBackgroundColor(ImagePtr title)
 			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers or Left & Right");
 
 		EndScene();
+		VMURefresh("PAL BG", "");
 
 		st = ReadController(0, &pressed);
 
@@ -1061,6 +1065,7 @@ void ChangePALBackgroundColor(ImagePtr title)
 	FreeImage(&back);
 	FreeImage(&block);
 	FreeImage(&blackblock);
+	refreshVMU = 1;
 }
 
 void SelectVideoMode(ImagePtr screen)
@@ -1099,7 +1104,6 @@ void SelectVideoMode(ImagePtr screen)
 	back->alpha = 0.75f;
 
 	sel = vmodepos[vmode] + 1;
-	updateVMU("Video Mode", "", 1);
 	while(!close && !EndProgram) 
 	{		
 		float	r = 1.0f;
@@ -1193,6 +1197,8 @@ void SelectVideoMode(ImagePtr screen)
 		DrawStringS(x+40, 200, r, g, b, "Press START for help");
 		EndScene();
 
+		VMURefresh("Video Out", vmuopt[sel-1]);
+
 		st = ReadController(0, &pressed);
 
 		if ( pressed & CONT_DPAD_UP )
@@ -1262,15 +1268,16 @@ void SelectVideoMode(ImagePtr screen)
 					default:
 						break;
 			}
-		}		
+		}
+
 		if(oldsel != sel)
 		{
-			updateVMU("Video Mode", vmuopt[sel-1], 1);
+			refreshVMU = 1;
 			oldsel = sel;
 		}
 	}
 	FreeImage(&back);
-
+	refreshVMU = 1;
 	return;
 }
 
@@ -1284,7 +1291,6 @@ void DrawNish()
 	if(!nish)
 		return;
 
-	updateVMU("Nishka", "MEOW", 1);
 	while(!done)
 	{
 		done = 1;
@@ -1293,12 +1299,14 @@ void DrawNish()
 		DrawImage(nish);
 		EndScene();
 
+		VMURefresh("Nishka", "MEOW");
 		st = ReadController(0, &held);
 
 		if(st && st->buttons & CONT_RTRIGGER)
 			done = 0;
 	}
 	FreeImage(&nish);
+	refreshVMU = 1;
 }
 
 void DrawCreditsOnFB()
@@ -1320,7 +1328,6 @@ void DrawCredits(ImagePtr back)
 	controller	*st;
 	float		r, b, g;
 
-	updateVMU("	Credits", "", 1);
 	if(back)
 	{
 		r = back->r;
@@ -1394,6 +1401,8 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(200, y, 0.0, 0.75, 0.75, "Dedicated to Elisa"); 
 
 		EndScene();
+
+		VMURefresh("   Credits", "");
 		counter ++;
 
 		st = ReadController(0, &pressed);
@@ -1404,8 +1413,8 @@ void DrawCredits(ImagePtr back)
 
 			if (pressed & CONT_RTRIGGER)
 			{
+				refreshVMU = 1;
 				DrawNish();
-				updateVMU("	Credits", "", 1);
 			}
 
 		}
@@ -1440,7 +1449,7 @@ void DrawIntro()
 	black->h = dH;
 	black->layer = 5.0f;
 	
-	updateVMU(" KORDAMP", "", 1);
+	refreshVMU = 1;
 	for(counter = 0; counter < frames*2; counter ++)
 	{
 		black->alpha -= delta;
@@ -1455,6 +1464,8 @@ void DrawIntro()
 		DrawStringS(120, 115, 1.0, 1.0, 1.0, "KORDAMP PRESENTS");
 		DrawImage(black);
 		EndScene();
+
+		VMURefresh(" KORDAMP", "");
 		
 		ReadController(0, &pressed);
 		
@@ -1482,6 +1493,7 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		Back->alpha = 0.75f;
 	}
 
+	refreshVMU = 1;
 	while(!close) 
 	{		
 		float		r = 1.0f;
@@ -1511,6 +1523,8 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		DrawStringSCenteredFull(y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");	
 								
 		EndScene();		
+
+		VMURefresh("Select", "Option");
 		
 		st = ReadController(0, &pressed);
 		
@@ -1581,7 +1595,11 @@ int DrawMessageInternal(char *msg, int waitinput, int isquestion)
 	back = LoadKMG("/rd/message.kmg.gz", 0);
 	
 	if(isquestion)
+	{
 		waitinput = 1;
+		refreshVMU = 1;
+	}
+
 	while(!done) 
 	{
 		StartScene();
@@ -1598,6 +1616,7 @@ int DrawMessageInternal(char *msg, int waitinput, int isquestion)
 	
 		if(waitinput)
 		{
+			VMURefresh(isquestion ? "Select" : "Read", isquestion ? "A or B" : "Message");
 			ReadController(0, &pressed);
 			if(pressed & CONT_A)
 			{
@@ -1617,6 +1636,7 @@ int DrawMessageInternal(char *msg, int waitinput, int isquestion)
 		FreeImage(&back);
 	if(black)
 		FreeImage(&black);
+	refreshVMU = 1;
 	return retval;
 }
 

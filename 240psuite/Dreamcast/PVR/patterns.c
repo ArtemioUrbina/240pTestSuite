@@ -1105,14 +1105,17 @@ void DrawGrid()
 		
 		if(refreshVMU)
 		{
-			if(vmode >= HIGH_RES)
-				updateVMU("Grid 480", "", 1);
+			if(vmode >= HIGH_RES) {
+				VMURefresh("Grid 480", "");
+			}
 			else
 			{
-				if(full == 1)
-					updateVMU("  Grid  ", "", 1);
-				else
-					updateVMU("Grid 224", "", 1);
+				if(full == 1) {
+					VMURefresh("  Grid  ", "");
+				}
+				else {
+					VMURefresh("Grid 224", "");
+				}
 			}
 			refreshVMU = 0;
 		}
@@ -1774,6 +1777,8 @@ void DrawConvergence()
 		StartScene();
 		DrawImage(back[current]);
         EndScene();
+		
+		VMURefresh("Conver-", "    gence");
 		
 		ReadController(0, &pressed);
 				

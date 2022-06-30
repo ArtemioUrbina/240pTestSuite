@@ -42,7 +42,7 @@ while()
 	DrawImage
 	DrawString
 	EndScene();
-	updateVMU
+	VMURefresh
 	ReadController
 		Start -> ShowMenu
 			Calls DrawMenu in EndScene

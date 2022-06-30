@@ -1160,11 +1160,8 @@ void ListMapleDevices()
 			DrawStringSCentered(210+v_scroll+fh, 0.0f, 1.0f, 0.0f, "Use short response"); 
 		EndScene();
 
-		if(!vmu_timeout)
-		{
-			VMURefresh("Maple", "Devices");
-		}
-		else
+		VMURefresh("Maple", "Devices");
+		if(vmu_timeout)
 		{
 			vmu_timeout --;
 			if(vmu_timeout == 0 && active_vmu)
@@ -1175,6 +1172,7 @@ void ListMapleDevices()
 				if(dev && dev->info.functions & MAPLE_FUNC_LCD)
 					clearVMUGraphicDev(dev);
 				active_vmu = 0;
+				refreshVMU = 1;
 			}
 			
 		}
@@ -1230,7 +1228,7 @@ void ListMapleDevices()
 						char 	vmudata[20];
 						
 						sprintf(vmudata, "query: %c%c", 'A'+(dev->port), '0'+(dev->unit));	
-						updateVMU("Maple", vmudata, 1);	
+						refreshVMU = 1;
 						cleanDisplayBuffer();
 						if(maple_useCache)
 							print_device_kos_cache(dev);
@@ -1243,6 +1241,8 @@ void ListMapleDevices()
 							DrawImage(back);
 							DrawString(5+hscroll, 20+sub_v_scroll, 1.0f, 1.0f, 1.0f, display_buffer);
 							EndScene();
+							
+							VMURefresh("Maple", vmudata);
 							
 							st = ReadController(0, &pressed);
 							JoystickDirections(st, &pressed, &joycntx, &joycnty);

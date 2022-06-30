@@ -27,6 +27,7 @@ int  isVMUPresent();
 void updateVMU(char *line1, char*line2, int force);
 void updateVMUFlash(char *line1, char*line2, int force);
 void updateVMUGraphic(char **xpm);
+void updateVMUGraphic_low_priority(char **xpm);
 void updateVMUGraphicDev(maple_device_t *vmu, char **xpm);
 void updateVMU_Donna();
 void updateVMU_SD();

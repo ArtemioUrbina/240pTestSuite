@@ -161,11 +161,12 @@ void ParseHelpImages(char **pages, int npages, ImagePtr *images)
 void HelpWindow(char *filename, ImagePtr screen)
 {
 	int 			done = 0, page = 0, joycnt = 0;
-	int				npages = 0, image = 0;
+	int				npages = 0, image = 0, oldpage = -1;
 	uint16			pressed = 0;		
 	ImagePtr		back = NULL, *images = NULL;
 	char			*buffer = NULL, **pages = NULL;
 	controller		*st;
+	char			vmuMsg[20];
 
 	buffer = LoadHelpFile(filename, &pages, &npages);
 	if(!buffer)
@@ -189,7 +190,6 @@ void HelpWindow(char *filename, ImagePtr screen)
 		ParseHelpImages(pages, npages, images);
 	}
 		
-	updateVMU(" 	Help	", "", 1);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -202,6 +202,8 @@ void HelpWindow(char *filename, ImagePtr screen)
 
 		DrawStringSCentered(200, 0.4f, 0.9f, 0.4f, "Press B to close");
 		EndScene();
+		
+		VMURefresh("   Help", vmuMsg);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -237,6 +239,12 @@ void HelpWindow(char *filename, ImagePtr screen)
 			page = npages - 1;
 		if(page < 0)
 			page = 0;
+		if(page != oldpage)
+		{
+			sprintf(vmuMsg, "Page: %d/%d", page + 1, npages);
+			oldpage = page;
+			refreshVMU = 1;
+		}
 	}
 
 	if(buffer)
