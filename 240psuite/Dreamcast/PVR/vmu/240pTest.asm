@@ -80,7 +80,7 @@ sound_running           =       $13                   ; 1 byte
 sound_sync_frames       =       $14                   ; 1 byte
 sprite_pos_x            =       $15                   ; 1 byte
 sprite_pos_y            =       $16                   ; 1 byte
-wakeup_lut_index        =       $17                   ; 1 byte
+sleep_lut_index         =       $17                   ; 1 byte
 
 ;------------------------------------------------------------------------------
 ;******************************************************************************
@@ -407,10 +407,12 @@ P_Invert_block:
 ;******************************************************************************
 Frequency_sweep:
         ; Initialise some variables
+        clr1    sound_running, 2            ; recommended sweep
+
+.frequency_main_loop:
         mov     #Hold_B_TimeSND_off, b_held
         mov     #0, refresh_screen
         set1    sound_running, 1            ; set bit 1(draw flag)
-        clr1    sound_running, 2            ; recommended sweep
         call    Reset_auto_sleep
         call    sndinit
 
@@ -439,7 +441,7 @@ Frequency_sweep:
         call    Get_Input
 
         ld      refresh_screen
-        bnz     Frequency_sweep             ; reset test if auto-sleep happened
+        bnz     .frequency_main_loop             ; reset test if auto-sleep happened
 
 .check_ctrl_inputs:
         ; Check if change between regular and full sweeps
@@ -722,18 +724,18 @@ sleep_animate:
         ; point to the right place in the LUT, since 4 frames are skipped
         ld      anim_counter
         sub     #4
-        st      wakeup_lut_index
+        st      sleep_lut_index
 
         ; Draw the face and stars
         mov     #08, sprite_pos_x
         mov     #18, sprite_pos_y
-        load_sprite_LUT sleep_face_LUT, wakeup_lut_index
+        load_sprite_LUT sleep_face_LUT, sleep_lut_index
         P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
 
         ; Draw the body and stars
         mov     #0, sprite_pos_x
         mov     #4, sprite_pos_y
-        load_sprite_LUT sleep_body_LUT, wakeup_lut_index
+        load_sprite_LUT sleep_body_LUT, sleep_lut_index
         P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
 
 .blit_sleep:
@@ -742,7 +744,7 @@ sleep_animate:
 .skip_refresh:
         inc     frame_counter
         ld      frame_counter
-        sub     #25
+        sub     #20
         bnz     .poll_loop
         mov     #0, frame_counter
 
@@ -799,7 +801,7 @@ wake_up_animation:
 .skip_refresh:
         inc     frame_counter
         ld      frame_counter
-        sub     #8
+        sub     #5
         bnz     .poll_loop
         mov     #0, frame_counter
 
