@@ -119,10 +119,9 @@ t1int:
         reti
 
         .org    $1f0
-goodbye:
+real_goodbye:
         not1    ext,0
-        jmpf    goodbye         ; leave game mode
-
+        jmpf    real_goodbye         ; leave game mode
 
 
 ;******************************************************************************
@@ -596,7 +595,7 @@ Reset_auto_sleep:
 Check_auto_sleep:
         inc     auto_sleep_timeout
         ld      auto_sleep_timeout
-        sub     #$60
+        sub     #$10                ; 60 is the original timeout
         bnz     .return_autosleep
 
         mov     #0, auto_sleep_timeout
@@ -637,14 +636,23 @@ sleep_animate:
         mov     #0, frame_counter
         mov     #0, refresh_screen
 
-.sleep_loop
+        P_Draw_Background_constant sleep_back
+
+.sleep_loop:
         ld      frame_counter          ; check if we really need refresh
         bnz     .skip_refresh
 
-        load_sprite_LUT sleep_LUT, anim_counter
+        ; Draw the face
+        mov     #08, sprite_pos_x
+        mov     #18, sprite_pos_y
+        load_sprite_LUT sleep_face_LUT, anim_counter
+        P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
 
-        ; Draw the frame
-        P_Draw_Background pointer_address
+        ; Draw the body and stars
+        mov     #0, sprite_pos_x
+        mov     #4, sprite_pos_y
+        load_sprite_LUT sleep_body_LUT, anim_counter
+        P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
         P_Blit_Screen
 
 .skip_refresh:
@@ -677,7 +685,10 @@ sleep_animate:
         ; Poll input
         ld      p3
         xor     #%11111111     
-        bz      .sleep_loop
+        bnz     .reset_auto_sleep
+        jmp     .sleep_loop
+
+.reset_auto_sleep:
         call    Reset_auto_sleep
         mov     #1, refresh_screen
         ret
@@ -719,6 +730,18 @@ Check_low_Battery:
         bn      p7, 1, quit              ; Quit if battery is low
         ret
 
+        ;----------------------------------------------------------------------
+        ; Shows by message when mode is pressed
+        ;----------------------------------------------------------------------
+goodbye:
+        P_Draw_Background_Constant title_bg
+        P_Blit_Screen
+        mov     #3, anim_counter
+.goodbye_wait:
+        set1    PCON,0                  ; wait 1 second
+        dbnz    anim_counter, .goodbye_wait
+        jmpf    real_goodbye
+
 ;******************************************************************************
 ; Includes: Graphics and libraries
 ;******************************************************************************
@@ -728,7 +751,7 @@ Check_low_Battery:
         .include        "./img/controller_back.asm"
         .include        "./img/sound_back.asm"
         .include        "./img/title.asm"
-        .include        "./img/sleep.asm"
+        .include        "./img/sleep_anim.asm"
 
 ;******************************************************************************
 ; End of File
