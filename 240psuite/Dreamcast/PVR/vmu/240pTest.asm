@@ -193,12 +193,10 @@ Main_Loop:
         mov     #%11111111, p3_last_input
 
         ; Initialise some variables
-        mov     #00, anim_counter
-        mov     #00, frame_counter
+        call    Reset_anim
+        call    Reset_auto_sleep
         mov     #24, sprite_pos_x
         mov     #01, sprite_pos_y
-        mov     #00, refresh_screen
-        call    Reset_auto_sleep
 
         P_Draw_Background_Constant title_bg
 
@@ -405,18 +403,16 @@ P_Invert_block:
 %end
 
 ;******************************************************************************
-; Our Frequency Sweep Test
+; MDFourier, our Frequency Sweep Test
 ;******************************************************************************
 Frequency_sweep:
         ; Initialise some variables
         mov     #Hold_B_TimeSND_off, b_held
         mov     #0, refresh_screen
         set1    sound_running, 1            ; set bit 1(draw flag)
+        clr1    sound_running, 2            ; recommended sweep
         call    Reset_auto_sleep
         call    sndinit
-
-        ; load "A Starts" message for overlay
-        load_sprite 16, 18, press_a_sprite
 
 .sweep_loop:
         ld      sound_running
@@ -424,9 +420,7 @@ Frequency_sweep:
 
         ; Draw the background
         clr1    sound_running, 1            ; clear bit 1(draw flag)
-        P_Draw_Background_Constant sound_back
-        P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
-        P_Blit_Screen
+        call    draw_sound_back
 
 .check_inputs:
         ; If we are plugged into a Dreamcast, abort
@@ -447,18 +441,26 @@ Frequency_sweep:
         ld      refresh_screen
         bnz     Frequency_sweep             ; reset test if auto-sleep happened
 
-        
+.check_ctrl_inputs:
+        ; Check if change between regular and full sweeps
+        mov     #Button_Up, acc
+        call    Check_Button_Pressed
+        bz      .check_button_a
+        not1    sound_running, 2
+        set1    sound_running, 1            ; flag we neeed screen refresh
+
+.check_button_a:
         ; Check if we start the sequence
         mov     #Button_A, acc
         call    Check_Button_Pressed
         bz      .check_b_held
 
         ; start playback
+        set1    sound_running, 0
         mov     #Hold_B_TimeSND_on, b_held     ; load Interrupt time out
 
         ; redraw background without message
-        P_Draw_Background_Constant sound_back
-        P_Blit_Screen
+        call    draw_sound_back
 
         set1    PCON,0                  ; wait for the base interrupt 0.5 secs
         call    sndstart
@@ -489,7 +491,31 @@ Frequency_sweep:
 .reset_while_playing
         mov     #Hold_B_TimeSND_on, b_held
         jmp     .sweep_loop
-        
+
+        ;----------------------------------------------------------------------
+        ; Draws the background and overlays in MDFourier
+        ;----------------------------------------------------------------------
+draw_sound_back:
+        P_Draw_Background_Constant sound_back
+
+        ld      sound_running
+        bn      acc, 2, .draw_press_a       ; bit 2(draw full) not set
+
+        ; load "FULL" message for overlay
+        load_sprite 32, 10, full_freq_sprite
+        P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
+
+.draw_press_a
+        ld      sound_running
+        bp      acc, 0, .blit_snd_image     ; bit 0(playback) not set
+        ; load "A Starts" message for overlay
+        load_sprite 16, 18, press_a_sprite
+        P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
+.blit_snd_image:
+        P_Blit_Screen
+        call    Reset_auto_sleep
+        ret
+    
         ;----------------------------------------------------------------------
         ; Sound Initialization for Playback
         ;----------------------------------------------------------------------
@@ -502,14 +528,20 @@ sndinit:
         ; Starts the sequence and sets the flags
         ;----------------------------------------------------------------------
 sndstart:
-        set1    sound_running, 0
-
         ; start the cycle and open with sync tones and silence
         call    sync_tones
         call    wait_silence
-                
-        mov     #$e0,sound_start_lr     ; $e0  (lowest is $00)
-        mov     #$f0,sound_start_lc     ; $f0  (lowest is $80)
+        
+        ld      sound_running           ; check "full" or "recommended" sweep 
+        bn      acc, 2, .regular_sweep  ; bit 2 set for "full" sweep
+        mov     #$00,sound_start_lr     ; lowest
+        mov     #$80,sound_start_lc     ; lowest
+        jmp     .sweep_continue
+
+.regular_sweep:
+        mov     #$e0,sound_start_lr     ; recommended
+        mov     #$f0,sound_start_lc     ; recommended
+.sweep_continue:
         mov     #1, sound_toggle_lc
 
         ld      sound_start_lr
@@ -565,6 +597,9 @@ sndadvfreq:
         st      T1LC
         ret
 
+        ;----------------------------------------------------------------------
+        ; Plays back the sync tones
+        ;----------------------------------------------------------------------
 sync_tones:
         mov     #4, sound_sync_frames    ; 4 pulses
         mov     #$fe,T1LR               ; Highest note that runs on a real VMU
@@ -581,6 +616,9 @@ sync_tones:
         dbnz    sound_sync_frames, .loop_sync
         ret
 
+        ;----------------------------------------------------------------------
+        ; waits in silence after sync tones
+        ;----------------------------------------------------------------------
 wait_silence:
         mov     #4, sound_sync_frames
         ; stop playback
@@ -590,9 +628,21 @@ wait_silence:
         dbnz    sound_sync_frames, .loop_silence
         ret
 
+        ;----------------------------------------------------------------------
+        ; Stops sound output and resets flag
+        ;----------------------------------------------------------------------
 sndstop:
         mov     #0, T1CNT
         clr1    sound_running, 0
+        ret
+
+        ;----------------------------------------------------------------------
+        ; restarts animation counters
+        ;----------------------------------------------------------------------
+Reset_anim:
+        mov     #0, anim_counter
+        mov     #0, frame_counter
+        mov     #0, refresh_screen
         ret
 
 ;******************************************************************************
@@ -607,7 +657,7 @@ Reset_auto_sleep:
         ret
         
         ;----------------------------------------------------------------------
-        ; Auto sleeps in about 20 seconds of innactivity
+        ; Auto sleeps in about 13 seconds of innactivity
         ;----------------------------------------------------------------------
 Check_auto_sleep:
         inc     auto_sleep_timeout
@@ -638,6 +688,7 @@ Check_auto_sleep_int:
         ld      auto_sleep_timeout_sub
         sub     #$10
         bnz     .return_autosleep_int
+        mov     #1, refresh_screen
         call    execute_sleep
 .return_autosleep_int:
         ret
@@ -648,9 +699,7 @@ Check_auto_sleep_int:
 sleep_animate:
         ; Initialise some variables
         call    Reset_auto_sleep
-        mov     #0, anim_counter
-        mov     #0, frame_counter
-        mov     #0, refresh_screen
+        call    Reset_anim
 
 .sleep_loop:
         ld      frame_counter          ; check if we really need refresh
@@ -662,7 +711,7 @@ sleep_animate:
         bnz     .skip_full_body
 
         ; Frame 0, draw the full cat and blit
-        P_Draw_Background_constant sleep_back
+        P_Draw_Background_Constant sleep_back
         jmp     .blit_sleep
 
 .skip_full_body:
@@ -725,18 +774,18 @@ sleep_animate:
 
 .reset_auto_sleep:
         call    Reset_auto_sleep
+        mov     #1, refresh_screen
         ret
 
         ;----------------------------------------------------------------------
         ; wake up animation
         ;----------------------------------------------------------------------
 wake_up_animation:
-        mov     #0, anim_counter
-        mov     #0, frame_counter
+        call    Reset_anim
         mov     #0, sprite_pos_x
         mov     #2, sprite_pos_y
 
-        P_Draw_Background_constant sleep_back
+        ;P_Draw_Background_Constant sleep_back
 
 .wakeup_loop:
         ld      frame_counter          ; check if we really need refresh
@@ -759,7 +808,6 @@ wake_up_animation:
         ld      anim_counter
         sub     #12
         bnz     .poll_loop
-        mov     #1, refresh_screen
         ret
 
 .poll_loop:
@@ -770,7 +818,9 @@ wake_up_animation:
 
         jmp     .wakeup_loop
 
+        ;----------------------------------------------------------------------
         ; Code from libkcommon
+        ;----------------------------------------------------------------------
 Get_Input:
         ;----------------------------------------------------------------------
         ; Get input from P3, compare input to previous P3 input to get buttons
@@ -792,11 +842,15 @@ Get_Input:
         ; Real auto sleep is called here
         ;----------------------------------------------------------------------
 execute_sleep:
-        P_Fill_Screen P_WHITE
+        ld      refresh_screen
+        bnz     .sleep_continue         ; if it is already drawn, skip
+        P_Draw_Background_Constant sleep_back
         P_Blit_Screen
-
+.sleep_continue:
         call    sndstop                 ; Disable audio
+.sleep:
         set1    pcon, 0                 ; Activate HALT mode (saves power)
+        bn      p3, 7, .sleep           ; wait until Sleep Key is released
         mov     #0,vccr                 ; turn off LCD
 .sleepmore:
         set1    pcon,0                  ; activate HALT mode (saves power)
@@ -809,10 +863,11 @@ execute_sleep:
 
         call    wake_up_animation       ; call wake up animation
         call    Reset_auto_sleep        ; Reset auto sleep timers after wakeup
+        mov     #1, refresh_screen
         ret
 
         ;----------------------------------------------------------------------
-        ; Shows by message when mode is pressed
+        ; Shows "Bye" message when mode is pressed
         ;----------------------------------------------------------------------
 quit:
         P_Draw_Background_Constant title_bg
