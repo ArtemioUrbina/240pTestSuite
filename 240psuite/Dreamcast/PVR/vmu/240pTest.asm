@@ -3,6 +3,7 @@
 ;******************************************************************************
 ; Controller test for 240p test Suite using the Perspective drawing library.
 ; Artemio Urbina for the 240p Test Suite 2022
+; Cat pixel art by ferigne https://twitter.com/engrief
 ;
 ; Uses libperspective by Kresna Susila for drawing: 
 ;           https://slum.online/dreamcast/
@@ -13,33 +14,43 @@
         .include        "./lib/sfr.i"   ; VMU Special Function Register Mapping
 
 ;******************************************************************************
-; Global Constants & External Libraries
+; Global Constants & 
 ;******************************************************************************
-; Values to use during the program for areas of the screen to toggle
-button_up_pos       equ 25
-button_down_pos     equ 121
-button_left_pos     equ 72
-button_right_pos    equ 74
-button_a_pos        equ 99
-button_b_pos        equ 101
-button_mode_pos     equ 53
-button_sleep_pos    equ 51
+; Nicer names for button masks
+Button_Up           equ     %00000001
+Button_Down         equ     %00000010
+Button_Left         equ     %00000100
+Button_Right        equ     %00001000
+Button_A            equ     %00010000
+Button_B            equ     %00100000
+Button_Mode         equ     %01000000
+Button_Sleep        equ     %10000000
 
-bit_up_pos          equ 0
-bit_down_pos        equ 1
-bit_left_pos        equ 2
-bit_right_pos       equ 3
-bit_a_pos           equ 4
-bit_b_pos           equ 5
-bit_mode_pos        equ 6
-bit_sleep_pos       equ 7
+; Values to use during the program for areas of the screen to toggle
+button_up_pos       equ     25
+button_down_pos     equ     121
+button_left_pos     equ     72
+button_right_pos    equ     74
+button_a_pos        equ     99
+button_b_pos        equ     101
+button_mode_pos     equ     53
+button_sleep_pos    equ     51
+
+bit_up_pos          equ     0
+bit_down_pos        equ     1
+bit_left_pos        equ     2
+bit_right_pos       equ     3
+bit_a_pos           equ     4
+bit_b_pos           equ     5
+bit_mode_pos        equ     6
+bit_sleep_pos       equ     7
 
 ;Timeout in cycles for exit in Control Test since we disabled sleep, 30 ~1sec
-Hold_B_Timeout      equ $30
+Hold_B_Timeout      equ     $30
 
 ; Timeouts in Sound Test (MDFourier)
-Hold_B_TimeSND_on   equ $2      ; while in playback with 0.5 sec interrupts
-Hold_B_TimeSND_off  equ $ff     ; while idle in screen
+Hold_B_TimeSND_on   equ     $2      ; while in playback 0.5 sec interrupts
+Hold_B_TimeSND_off  equ     $ff     ; while idle in screen
 
 ;******************************************************************************
 ; Variables
@@ -69,6 +80,7 @@ sound_running           =       $13                   ; 1 byte
 sound_sync_frames       =       $14                   ; 1 byte
 sprite_pos_x            =       $15                   ; 1 byte
 sprite_pos_y            =       $16                   ; 1 byte
+wakeup_lut_index        =       $17                   ; 1 byte
 
 ;------------------------------------------------------------------------------
 ;******************************************************************************
@@ -119,9 +131,9 @@ t1int:
         reti
 
         .org    $1f0
-real_goodbye:
+goodbye:
         not1    ext,0
-        jmpf    real_goodbye         ; leave game mode
+        jmpf    goodbye         ; leave game mode
 
 
 ;******************************************************************************
@@ -215,9 +227,7 @@ Main_Loop:
         mov     #0, anim_counter
 
 .poll_loop:
-        call    Check_auto_sleep
-        ld      refresh_screen
-        bnz     Main_Loop
+        call    Check_auto_sleep      ; check the value later, for refresh
 
         ; If we are plugged into a Dreamcast, abort
         call    Check_DC_plugged
@@ -226,6 +236,10 @@ Main_Loop:
 
         ; Poll input
         call    Get_Input
+
+        ; Check if waking up from either sleep or auto
+        ld      refresh_screen
+        bnz     Main_Loop
         
         mov     #Button_Right, acc
         call    Check_Button_Pressed
@@ -424,12 +438,15 @@ Frequency_sweep:
         ; Check if no input has been received for a while and sleep
         ld      sound_running
         bp      acc, 0, .check_frq_advance  ; playing back, no auto-sleep/input
+
         call    Check_auto_sleep
+        
+        ; Poll input
+        call    Get_Input
+
         ld      refresh_screen
         bnz     Frequency_sweep             ; reset test if auto-sleep happened
 
-        ; Poll input
-        call    Get_Input
         
         ; Check if we start the sequence
         mov     #Button_A, acc
@@ -595,7 +612,7 @@ Reset_auto_sleep:
 Check_auto_sleep:
         inc     auto_sleep_timeout
         ld      auto_sleep_timeout
-        sub     #$10                ; 60 is the original timeout
+        sub     #$30
         bnz     .return_autosleep
 
         mov     #0, auto_sleep_timeout
@@ -622,7 +639,6 @@ Check_auto_sleep_int:
         sub     #$10
         bnz     .return_autosleep_int
         call    execute_sleep
-        mov     #1, refresh_screen
 .return_autosleep_int:
         ret
 
@@ -654,16 +670,21 @@ sleep_animate:
         and     #%11111100             ; check if we are not in frames 1-3
         bz      .skip_refresh
 
+        ; point to the right place in the LUT, since 4 frames are skipped
+        ld      anim_counter
+        sub     #4
+        st      wakeup_lut_index
+
         ; Draw the face and stars
         mov     #08, sprite_pos_x
         mov     #18, sprite_pos_y
-        load_sprite_LUT sleep_face_LUT, anim_counter
+        load_sprite_LUT sleep_face_LUT, wakeup_lut_index
         P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
 
         ; Draw the body and stars
         mov     #0, sprite_pos_x
         mov     #4, sprite_pos_y
-        load_sprite_LUT sleep_body_LUT, anim_counter
+        load_sprite_LUT sleep_body_LUT, wakeup_lut_index
         P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
 
 .blit_sleep:
@@ -704,7 +725,6 @@ sleep_animate:
 
 .reset_auto_sleep:
         call    Reset_auto_sleep
-        mov     #1, refresh_screen
         ret
 
         ;----------------------------------------------------------------------
@@ -730,7 +750,7 @@ wake_up_animation:
 .skip_refresh:
         inc     frame_counter
         ld      frame_counter
-        sub     #25
+        sub     #8
         bnz     .poll_loop
         mov     #0, frame_counter
 
@@ -750,6 +770,24 @@ wake_up_animation:
 
         jmp     .wakeup_loop
 
+        ; Code from libkcommon
+Get_Input:
+        ;----------------------------------------------------------------------
+        ; Get input from P3, compare input to previous P3 input to get buttons
+        ; pressed this cycle.
+        ;----------------------------------------------------------------------
+        ld      p3_last_input
+        st      c
+        ld      p3
+        bn      acc, 6, quit
+        bn      acc, 7, execute_sleep
+        st      p3_last_input
+        xor     #%11111111
+        and     c
+        xor     #%11111111
+        st      p3_pressed
+        ret
+
         ;----------------------------------------------------------------------
         ; Real auto sleep is called here
         ;----------------------------------------------------------------------
@@ -757,13 +795,12 @@ execute_sleep:
         P_Fill_Screen P_WHITE
         P_Blit_Screen
 
-        ; Code from libkcommon
         call    sndstop                 ; Disable audio
         set1    pcon, 0                 ; Activate HALT mode (saves power)
         mov     #0,vccr                 ; turn off LCD
 .sleepmore:
         set1    pcon,0                  ; activate HALT mode (saves power)
-        bp      p7, 0, quit             ; Docked?
+        bp      p7, 0, goodbye_jmp      ; Docked?
         bp      p3, 7, .sleepmore       ; no Sleep Key pressed yet
         mov     #$80, vccr              ; turn on LCD again
 .waitsleepup:
@@ -771,10 +808,33 @@ execute_sleep:
         bn      p3,7,.waitsleepup
 
         call    wake_up_animation       ; call wake up animation
-        call    Reset_auto_sleep        ; Resets auto sleep timers after waking up
+        call    Reset_auto_sleep        ; Reset auto sleep timers after wakeup
         ret
+
+        ;----------------------------------------------------------------------
+        ; Shows by message when mode is pressed
+        ;----------------------------------------------------------------------
 quit:
+        P_Draw_Background_Constant title_bg
+        P_Blit_Screen
+        mov     #2, anim_counter
+.bye_wait:
+        set1    PCON,0                  ; wait 1 second
+        dbnz    anim_counter, .bye_wait
+goodbye_jmp:
         jmpf    goodbye
+
+Check_Button_Pressed:
+        ;----------------------------------------------------------------------
+        ; Check if a button is pressed, not held, this cycle
+        ;----------------------------------------------------------------------
+        ; acc = button to check
+        ;----------------------------------------------------------------------
+        st      c
+        ld      p3_pressed
+        xor     #%11111111
+        and     c
+        ret
 
         ;----------------------------------------------------------------------
         ; Checks if connected to the Dreamcast mid test
@@ -790,24 +850,12 @@ Check_low_Battery:
         bn      p7, 1, quit              ; Quit if battery is low
         ret
 
-        ;----------------------------------------------------------------------
-        ; Shows by message when mode is pressed
-        ;----------------------------------------------------------------------
-goodbye:
-        P_Draw_Background_Constant title_bg
-        P_Blit_Screen
-        mov     #3, anim_counter
-.goodbye_wait:
-        set1    PCON,0                  ; wait 1 second
-        dbnz    anim_counter, .goodbye_wait
-        jmpf    real_goodbye
 
 ;******************************************************************************
 ; Includes: Graphics and libraries
 ;******************************************************************************
 
-        .include        "./lib/libperspective.asm"
-        .include        "./lib/libkcommon.asm"       
+        .include        "./lib/libperspective.asm"  
         .include        "./img/controller_back.asm"
         .include        "./img/sound_back.asm"
         .include        "./img/title.asm"

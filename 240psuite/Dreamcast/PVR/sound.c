@@ -27,7 +27,7 @@
 #ifndef NO_FFTW
 	#include <math.h>
 	#include <complex.h>
-	#include <fftw/fftw3.h>
+	#include <fftw3.h>
 #endif
 
 #include "controller.h"

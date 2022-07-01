@@ -2,10 +2,6 @@
 ; https://twitter.com/engrief
 
 sleep_face_LUT:
-    .word   sleep_back
-    .word   sleep_back
-    .word   sleep_back
-    .word   sleep_back
     .word   sleep_1_face
     .word   sleep_1_face
     .word   sleep_2_face
@@ -16,10 +12,6 @@ sleep_face_LUT:
     .word   sleep_1_face
 
 sleep_body_LUT:
-    .word   sleep_back
-    .word   sleep_back
-    .word   sleep_back
-    .word   sleep_back
     .word   sleep_1_body
     .word   sleep_1_body
     .word   sleep_2_body

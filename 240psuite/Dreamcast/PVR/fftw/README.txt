@@ -11,7 +11,7 @@ typedef uint64 ticks;
 
 static inline ticks getticks(void)
 {
-		 return(timer_us_gettime64());
+	return(timer_us_gettime64());
 }
 
 INLINE_ELAPSED(inline)
@@ -21,10 +21,11 @@ INLINE_ELAPSED(inline)
 
 ############### Compile fftw-3.3.10 with: ############### 
 
-./configure --disable-fortran --host=sh-elf CC="$KOS_CC" CFLAGS="$KOS_CFLAGS" LDFLAGS="$KOS_LDFLAGS" LIBS="$KOS_LIBS"
+./configure --disable-fortran --host=sh-elf CC="$KOS_CC" CFLAGS="$KOS_CFLAGS" LDFLAGS="$KOS_LDFLAGS" LIBS="$KOS_LIBS" --prefix=/opt/toolchains/dc/kos-ports/
 make
+make install
 
-############### Copy include dir to kos-ports ############### 
+############### headers should end in kos-ports/include after make install ############### 
 
 
 ############### Copy lib: ############### 
@@ -32,6 +33,9 @@ make
 #linux
 cp .libs/libfftw3.a /opt/toolchains/KallistiOS/addons/lib/dreamcast/
 
-#windows DreamSDK
-cp .libs/libfftw3.a [PATH_TO_DREAMSDK]\msys\1.0\opt\toolchains\dc\kos-ports\lib
+#DreamSDK
+cp .libs/libfftw3.a /opt/toolchains/dc/kos-ports/lib
 
+
+makeip source:
+https://github.com/Dreamcast-Projects/makeip

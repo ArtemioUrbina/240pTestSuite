@@ -22,7 +22,9 @@
 #ifndef IMAGES_H
 #define IMAGES_H
 
+#ifdef USE_PNG
 #include <png/png.h>
+#endif
 
 typedef struct image_st * ImagePtr;
 
