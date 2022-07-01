@@ -636,13 +636,25 @@ sleep_animate:
         mov     #0, frame_counter
         mov     #0, refresh_screen
 
-        P_Draw_Background_constant sleep_back
-
 .sleep_loop:
         ld      frame_counter          ; check if we really need refresh
-        bnz     .skip_refresh
+        bz      .draw_wakeup
+        jmp     .skip_refresh
 
-        ; Draw the face
+.draw_wakeup:
+        ld      anim_counter
+        bnz     .skip_full_body
+
+        ; Frame 0, draw the full cat and blit
+        P_Draw_Background_constant sleep_back
+        jmp     .blit_sleep
+
+.skip_full_body:
+        ld      anim_counter
+        and     #%11111100             ; check if we are not in frames 1-3
+        bz      .skip_refresh
+
+        ; Draw the face and stars
         mov     #08, sprite_pos_x
         mov     #18, sprite_pos_y
         load_sprite_LUT sleep_face_LUT, anim_counter
@@ -653,6 +665,8 @@ sleep_animate:
         mov     #4, sprite_pos_y
         load_sprite_LUT sleep_body_LUT, anim_counter
         P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
+
+.blit_sleep:
         P_Blit_Screen
 
 .skip_refresh:
@@ -693,15 +707,59 @@ sleep_animate:
         mov     #1, refresh_screen
         ret
 
+        ;----------------------------------------------------------------------
+        ; wake up animation
+        ;----------------------------------------------------------------------
+wake_up_animation:
+        mov     #0, anim_counter
+        mov     #0, frame_counter
+        mov     #0, sprite_pos_x
+        mov     #2, sprite_pos_y
+
+        P_Draw_Background_constant sleep_back
+
+.wakeup_loop:
+        ld      frame_counter          ; check if we really need refresh
+        bnz     .skip_refresh
+
+        ; Draw the wake up face
+        load_sprite_LUT wakeup_LUT, anim_counter
+        P_Draw_Sprite pointer_address, sprite_pos_x, sprite_pos_y
+        P_Blit_Screen
+
+.skip_refresh:
+        inc     frame_counter
+        ld      frame_counter
+        sub     #25
+        bnz     .poll_loop
+        mov     #0, frame_counter
+
+        ; Check to see if we need to reset the frame
+        inc     anim_counter
+        ld      anim_counter
+        sub     #12
+        bnz     .poll_loop
+        mov     #1, refresh_screen
+        ret
+
+.poll_loop:
+        ; If we are plugged into a Dreamcast, abort
+        call    Check_DC_plugged
+        ; If battery is low, abort
+        call    Check_low_Battery
+
+        jmp     .wakeup_loop
+
+        ;----------------------------------------------------------------------
+        ; Real auto sleep is called here
+        ;----------------------------------------------------------------------
 execute_sleep:
         P_Fill_Screen P_WHITE
         P_Blit_Screen
 
         ; Code from libkcommon
-.sleep_wait:
         call    sndstop                 ; Disable audio
         set1    pcon, 0                 ; Activate HALT mode (saves power)
-        bn      p3, 7, .sleep_wait      ; wait until Sleep Key is released
         mov     #0,vccr                 ; turn off LCD
 .sleepmore:
         set1    pcon,0                  ; activate HALT mode (saves power)
@@ -711,6 +769,8 @@ execute_sleep:
 .waitsleepup:
         set1    pcon,0                  ; activate HALT modus (saves power)
         bn      p3,7,.waitsleepup
+
+        call    wake_up_animation       ; call wake up animation
         call    Reset_auto_sleep        ; Resets auto sleep timers after waking up
         ret
 quit:
@@ -751,7 +811,7 @@ goodbye:
         .include        "./img/controller_back.asm"
         .include        "./img/sound_back.asm"
         .include        "./img/title.asm"
-        .include        "./img/sleep_anim.asm"
+        .include        "./img/sleep.asm"
 
 ;******************************************************************************
 ; End of File
