@@ -409,6 +409,18 @@ void DrawShowMenu()
 	return;
 }
 
+void shortenError(char *error)
+{
+	int done = 0, i = 0;
+	
+	while(error[i] != '\0' && !done){
+		if(error[i] == '\n'){
+			error[i] = '\0';
+			done = 1;
+		}
+		i++;
+	}
+}
 
 void ChangeOptions(ImagePtr screen)
 {	
@@ -463,7 +475,7 @@ void ChangeOptions(ImagePtr screen)
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 			settings.UseKOSDefaults == 1 ? "ON" : "OFF"); 
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
-			"Use KOS video Defaults:"); y += fh; c++;
+			"Use KOS Video Defaults:"); y += fh; c++;
 			
 		// option 4, ChangeVideoRegisters	
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
@@ -674,7 +686,7 @@ void ChangeOptions(ImagePtr screen)
 		if(VMU_detect_save_counter <= 0)
 		{
 			if(isMemCardPresent())
-				VMUsaveexists = MemcardSaveExists(VMU_NAME, NULL, &port, &unit) == VMU_SAVEEXISTS ? 1 : 0;
+				VMUsaveexists = MemcardSaveExists(VMU_NAME, NULL, &port, &unit) == VMU_SAVE_EXISTS ? 1 : 0;
 			VMU_detect_save_counter = 600;	// 10 seconds in NTSC
 		}
 		
@@ -843,11 +855,14 @@ void ChangeOptions(ImagePtr screen)
 					case 12:		
 						if(isMemCardPresent())
 						{
-							int		vmures = 0;
+							int		vmures = 0, forceLoadNewer = 0;
 							struct	settings_st old_settings;
 							
+							if ( st && st->buttons & CONT_LTRIGGER )
+								forceLoadNewer = 1;
 							old_settings = settings;
-							vmures = LoadMemCardSave(error);
+							vmures = LoadMemCardSave(error, forceLoadNewer);
+							shortenError(error);
 							if(vmures == VMU_OK)
 							{
 								if(CheckIfVideoModeNeedsRefresh(&old_settings))

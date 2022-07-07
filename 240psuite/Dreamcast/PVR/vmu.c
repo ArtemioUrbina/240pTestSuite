@@ -610,9 +610,9 @@ void sleep_VMU_cycle()
 	if(is_waking_up)
 	{
 		if(cancel_wake_up)
-			wake_up_frame_speed = 5;
+			wake_up_frame_speed = 6;
 		else
-			wake_up_frame_speed = 20;
+			wake_up_frame_speed = 16;
 
 		if(is_waking_up == 2)
 		{

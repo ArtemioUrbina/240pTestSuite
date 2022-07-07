@@ -61,7 +61,7 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits);
 int main(void)
 {
 	int 		done = 0, sel = 1, joycnt = 0;
-	int			broadcast = FLASHROM_BROADCAST_UNKNOWN, loadedvmu = 1;
+	int			broadcast = FLASHROM_BROADCAST_UNKNOWN, loadedvmu = VMU_NOSAVE;
 	uint16		pressed;
 	ImagePtr	title = NULL, sd = NULL;
 	controller	*st = NULL;
@@ -89,8 +89,8 @@ int main(void)
 		settings.EnablePAL = 0;
 	
 	if(isMemCardPresent() && 
-		MemcardSaveExists(VMU_NAME, NULL, NULL, NULL) == VMU_SAVEEXISTS)
-		loadedvmu = LoadMemCardSave(error);
+		MemcardSaveExists(VMU_NAME, NULL, NULL, NULL) == VMU_SAVE_EXISTS)
+			loadedvmu = LoadMemCardSave(error, 0);
 	
 	// Boot in 640x480 is VGA, or 288 in PAL for safety,
 	// Some monitors take PAL60 as NTSC 4.43 and decode colors incorrectly
@@ -121,6 +121,9 @@ int main(void)
 	
 	if(loadedvmu == VMU_ERROR)
 		DrawMessage(error);
+	
+	if(loadedvmu == VMU_SAVE_UPDATE)
+		DrawMessage("Your #YVMU save#Y has been updated\nThank you for using the #C240p Test Suite#C!");
 	
 	srand((int)(time(0) ^ getpid()));
 	refreshVMU = 1;

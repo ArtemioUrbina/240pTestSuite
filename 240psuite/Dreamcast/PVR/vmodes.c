@@ -673,15 +673,20 @@ void AdjustVideoModes()
 
 void PVRStats(char *msg)
 {
+#ifdef DCLOAD
 	pvr_stats_t stats;
 
 	pvr_get_stats(&stats);
-	if(msg)
-		dbglog(DBG_INFO, "%s: VBlank count %u  Frame last time: %u  Frame Rate: %f  Rendering Time: %u\n",
-			msg, (unsigned int)stats.vbl_count, (unsigned int)stats.frame_last_time, (double)stats.frame_rate, (unsigned int)stats.rnd_last_time);
-	else
-		dbglog(DBG_INFO, "VBlank count %u  Frame last time: %u  Frame Rate: %f  Rendering Time: %u\n",
-			(unsigned int)stats.vbl_count, (unsigned int)stats.frame_last_time, (double)stats.frame_rate, (unsigned int)stats.rnd_last_time);
+	
+	dbglog(DBG_INFO, "%s VBlanks %u  Frame last time: %u  Frame Rate: %f  Rendering Time: %u\n",
+			msg ? msg : "",
+			(unsigned int)stats.vbl_count,
+			(unsigned int)stats.frame_last_time,
+			(double)stats.frame_rate,
+			(unsigned int)stats.rnd_last_time);
+#else
+	(void)msg;
+#endif
 }
 
 #ifdef DCLOAD

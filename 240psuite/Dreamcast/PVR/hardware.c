@@ -1500,30 +1500,148 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size)
 }
 
 typedef struct bios_data {
-    uint32_t crc;
-    char *name;
-	char *text;
+	int			type;
+    uint32_t	crc;
+    char		*name;
+	char		*text;
 } BIOSID;
 
+#define	BIOS_SEGA	1
+#define	BIOS_HACK	2
 
 BIOSID bioslist[] = {
-{ 0x5454841f, "mpr-21068.ic501", "v1.004 (Japan)" },	// oldest known mass production version, supports Japan region only
-{ 0x2f551bc5, "mpr-21871.ic501", "v1.01c (World)" },
-{ 0x89f2b1a1, "mpr-21931.ic501", "v1.01d (World)" },
-{ 0x786168f9, "mpr-23588.ic501", "v1.022 (World)" },
-{ 0xdcb2e86f, "set5v0.976.ic507", "Katana Set5 v0.976 (Japan)" },
-{ 0x5702d38f, "set5v1.001.ic507", "Katana Set5 v1.001 (Japan)" },
-{ 0x2186e0e5, "set5v1.011.ic507", "Katana Set5 v1.011 (World)" },
-{ 0x52d01969, "set5v0.71.bin", "Katana Set5 Checker v0.71" },
-{ 0x485877bd, "set5v0.41.bin", "Katana Set5 Checker v0.41" },
-// hacks
-{ 0x4B35A953, "mpr-21931-hack.ic501", "v1.01d (World/hack)" },
-{ 0xA2564FAD, "dc101d_ch.bin", "v1.01d (Chinese hack)" },
-{ 0xDC9D84E0, "jc-bootROM-devkit-v1.031.bin", "Custom bootROM v1.031 devkit" },
-{ 0x1249EE59, "jc-bootROM-retail-v1.031.bin", "Custom bootROM v1.031 retail" },
-{ 0xA06F68D0, "jc-bootROM-devkit-v1.032.bin", "Custom bootROM v1.032 devkit" },
-{ 0xF3DB5F40, "jc-bootROM-retail-v1.032.bin", "Custom bootROM v1.032 retail" },
-{ 0, NULL, NULL} } ; 
+{ 	BIOS_SEGA, 
+	0x5454841f, 
+	"mpr-21068.ic501",
+	"v1.004 (Japan)" },	// oldest known mass production version, supports Japan region only
+{ 	BIOS_SEGA,
+	0x2f551bc5, 
+	"mpr-21871.ic501", 
+	"v1.01c (World)" },
+{ 	BIOS_SEGA, 
+	0x89f2b1a1,
+	"mpr-21931.ic501",
+	"v1.01d (World)" },
+{ 	BIOS_SEGA, 
+	0x786168f9,
+	"mpr-23588.ic501",
+	"v1.022 (World)" },
+{ 	BIOS_SEGA, 
+	0xdcb2e86f, 
+	"set5v0.976.ic507",
+	"Katana Set5 v0.976 (Japan)" },
+{ 	BIOS_SEGA,
+	0x5702d38f,
+	"set5v1.001.ic507",
+	"Katana Set5 v1.001 (Japan)" },
+{ 	BIOS_SEGA,
+	0x2186e0e5,
+	"set5v1.011.ic507",
+	"Katana Set5 v1.011 (World)" },
+{ 	BIOS_SEGA,
+	0x52d01969,
+	"set5v0.71.bin",
+	"Katana Set5 Checker v0.71" },
+{ 	BIOS_SEGA,
+	0x485877bd,
+	"set5v0.41.bin",
+	"Katana Set5 Checker v0.41" },
+// Dreamshell
+{ 	BIOS_HACK,
+	0xD1523DC3,
+	"boot_loader_devkit.bios",
+	"Dreamshell Devkit" },
+{ 	BIOS_HACK,
+	0xB3EA8EDF,
+	"boot_loader_devkit_nogdrom.bios",
+	"Dreamshell No GDROM" },
+{ 	BIOS_HACK,
+	0xDD1CF514,
+	"boot_loader_retail.bios",
+	"Dreamshell Retail" },
+{ 	BIOS_HACK,
+	0xBFA44608,
+	"boot_loader_retail_nogdrom.bios",
+	"Dreamshell Retail No GDROM" },
+{ 	BIOS_HACK,
+	0xA18BD6EA,
+	"sd_loader_with.bios",
+	"Dreamshell SD Loader" },
+// Region Free
+{ 	BIOS_HACK,
+	0x65DE7BCB,
+	"Link83_bios_1.0.bios",
+	"v1.00 Link83 Region Free" },
+{ 	BIOS_HACK,
+	0x558F456E,
+	"dc_bios_regionfree.bin",
+	"v1.01d Region Free" }, 
+{ 	BIOS_HACK,
+	0xA65736C2,
+	"dreamboot.bios",
+	"DreamBoot v1.1.0" },
+{ 	BIOS_HACK,
+	0xEC7B10A1,
+	"dreamboot-nogdrom.bios",
+	"DreamBoot No GDROM v1.1.0" }, 
+{ 	BIOS_HACK,
+	0x8A0388E1,
+	"dreamboot_1.0.2.bios",
+	"DreamBoot v1.0.2" },
+{ 	BIOS_HACK,
+	0x6B8D1C5F,
+	"dreamboot-nogdrom_1.0.2.bios",
+	"DreamBoot No GDROM v1.0.2" }, 
+{ 	BIOS_HACK,
+	0x4DC1A805,
+	"dreamboot_1.0.1.bios",
+	"DreamBoot v1.0.1" },
+{ 	BIOS_HACK,
+	0x7FD6AB51,
+	"dreamboot-nogdrom_1.0.1.bios",
+	"DreamBoot No GDROM v1.0.1" }, 
+{ 	BIOS_HACK,
+	0x2991537A,
+	"dreamboot_1.0.0.bios",
+	"DreamBoot v1.0.0" },
+{ 	BIOS_HACK,
+	0x2E3FD8A9,
+	"dreamboot-nogdrom_1.0.0.bios",
+	"DreamBoot No GDROM v1.0.0" }, 
+{ 	BIOS_HACK,
+	0xDC9D84E0,
+	"jc-bootROM-devkit-v1.031.bin",
+	"JP Cake bootROM v1.031 devkit" },
+{ 	BIOS_HACK,
+	0x1249EE59,
+	"jc-bootROM-retail-v1.031.bin",
+	"JP Cake bootROM v1.031 retail" },
+{ 	BIOS_HACK,
+	0xA06F68D0,
+	"jc-bootROM-devkit-v1.032.bin",
+	"JP Cake bootROM v1.032 devkit" },
+{ 	BIOS_HACK,
+	0xF3DB5F40,
+	"jc-bootROM-retail-v1.032.bin",
+	"JP Cake bootROM v1.032 retail" },
+// Other Hacks
+{ 	BIOS_HACK,
+	0x4B35A953,
+	"mpr-21931-hack.ic501",
+	"v1.01d (World/hack)" },
+{ 	BIOS_HACK,
+	0xA2564FAD,
+	"dc101d_ch.bin",
+	"v1.01d (Chinese hack)" },
+{ 	BIOS_HACK,
+	0x544C8685,
+	"1_011_01_hacked.bios",
+	"v1.011 Hack" },
+{ 	BIOS_HACK,				// flycast HLE BIOS
+	0x419b986d,
+	"",
+	"HLE BIOS" },
+{ 	0, 0, NULL, NULL } }; 
 
 // search known Original BIOS
 BIOSID *GetBIOSNamebyCRC(uint32_t checksum)
@@ -1537,6 +1655,12 @@ BIOSID *GetBIOSNamebyCRC(uint32_t checksum)
 		i++;
 	}
 	return NULL;
+}
+
+void CopyBIOSVersion(char *bios_version)
+{
+	memcpy(bios_version, (void*)0x07CC, sizeof(char)*5);
+	bios_version[6] = '\0';
 }
 
 void printflashromdata(int ver)
@@ -1686,7 +1810,7 @@ void ShowBIOSandFlash()
 	ImagePtr		back = NULL;
 	controller		*st = NULL;
 	uint32			crc = 0;
-	char			bios_buffer[512];
+	char			bios_buffer[512], bios_version[8];
 	BIOSID 			*bios = NULL;
 
 	if(flashrom_get_factory_data() != FLASHROM_ERR_NONE)
@@ -1696,15 +1820,17 @@ void ShowBIOSandFlash()
 	}
 	
 	updateVMU_wait();
+	CopyBIOSVersion(bios_version);
 	DrawMessageOnce("Please wait, calculating #YBIOS#Y CRC\n#G(about 1 second)#G");
 	
 	crc = CalculateCRC(0x0, 0x200000);
 	bios = GetBIOSNamebyCRC(crc);
 	if(bios)
-		sprintf(bios_buffer, "#YBIOS:#Y             %s\n#YIC:#Y               %s\n#YCRC:#Y              0x%08" PRIx32, 
-			bios->text,	bios->name,	crc);
+		sprintf(bios_buffer, "#Y%s      %s\n#YBIOS version:#Y     %s\n#YIC:#Y               %s\n#YCRC:#Y              0x%08" PRIx32, 
+			bios->type == BIOS_SEGA ? "BIOS:#Y       " : "Custom BIOS:#Y",
+			bios->text,	bios_version, bios->name, crc);
 	else
-		sprintf(bios_buffer, "#YUnknown BIOS:#Y     Please Report or dump it.\n#YCRC:#Y              0x%08" PRIx32, crc);
+		sprintf(bios_buffer, "#YUnknown BIOS:#Y     #CPlease Report or dump it.#C\n#YBIOS version:#Y     %s\n#YCRC:#Y              0x%08" PRIx32, bios_version, crc);
 		
 	bios_lines = countLineFeeds(bios_buffer);
 	
@@ -2025,7 +2151,7 @@ void VMUControllerTest()
 	}
 	
 	saveexists = MemcardSaveExists(VMU_CTRL_NAME, NULL, &port, &unit);
-	if(saveexists == VMU_SAVEEXISTS)
+	if(saveexists == VMU_SAVE_EXISTS)
 	{
 		sprintf(question, "#GVMU Control Test & MDFourier#G\n\nReplace the #YVMU Test#Y stored in #YVMU#Y at port #Y%c-%c#Y?", 'A'+port, '0'+unit);
 		if(!AskQuestion(question))
@@ -2056,6 +2182,37 @@ void VMUControllerTest()
 		sprintf(question, "The software has been saved to #YVMU %c-%c#Y\nPlease dettach the unit and run it from the #YLCD#Y.", 'A'+port, '0'+unit);
 		DrawMessage(question);
 	}
+}
+
+void amplify_samples()
+{
+	double			ratio = 0;
+	unsigned int 	i = 0, size = 0, max = 0;
+	int16			*samples = NULL, current = 0;
+#ifdef BENCHMARK
+	uint64	start, end;
+
+	start = timer_us_gettime64();
+#endif					
+	samples = (int16*)stream_samples;
+	size = rec_buffer.pos/2;
+	for(i = 0; i < size; i++)
+	{
+		current = abs(samples[i]);
+		if((unsigned int)current > max)
+			max = current;
+	}
+	
+	if(max)
+	{
+		ratio = 32767.0/(double)max;
+		for(i = 0; i < size; i++)
+			samples[i] *= ratio;
+	}
+#ifdef BENCHMARK
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "PCM amplify took %g ms\n", (double)(end - start)/1000.0);
+#endif
 }
 
 #define cleanSIPtest() \
@@ -2329,46 +2486,23 @@ void MicrophoneTest()
 				{
 					if(pressed & CONT_A && !play)
 					{
-						memset(stream_samples, 0, sizeof(char)*stream_samples_size);
-						memcpy(stream_samples, rec_buffer.buffer, sizeof(uint8)*rec_buffer.pos);
-						
-						if(amplify)
+						if(!rec_buffer.pos)
+							DrawMessage("Microphone recording is empty.");
+						else
 						{
-							double			ratio = 0;
-							unsigned int 	i = 0, size = 0, max = 0;
-							int16			*samples = NULL, current = 0;
-#ifdef BENCHMARK
-							uint64	start, end;
-
-							start = timer_us_gettime64();
-#endif					
-							samples = (int16*)stream_samples;
-							size = rec_buffer.pos/2;
-							for(i = 0; i < size; i++)
-							{
-								current = abs(samples[i]);
-								if((unsigned int)current > max)
-									max = current;
-							}
+							memset(stream_samples, 0, sizeof(char)*stream_samples_size);
+							memcpy(stream_samples, rec_buffer.buffer, sizeof(uint8)*rec_buffer.pos);
 							
-							if(max)
-							{
-								ratio = 32767.0/(double)max;
-								for(i = 0; i < size; i++)
-									samples[i] *= ratio;
-							}
-#ifdef BENCHMARK
-							end = timer_us_gettime64();
-							dbglog(DBG_INFO, "PCM amplify took %g ms\n", (double)(end - start)/1000.0);
-#endif
-						}
+							if(amplify)
+								amplify_samples();
 
-						frame_counter = seconds_in_buffer*(IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE);
-						total_frames = frame_counter;
-						stream_pos = 0;
-						play = 1;
-						
-						snd_stream_start(hnd, stream_samplerate, 0);
+							frame_counter = seconds_in_buffer*(IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE);
+							total_frames = frame_counter;
+							stream_pos = 0;
+							play = 1;
+							
+							snd_stream_start(hnd, stream_samplerate, 0);
+						}
 					}
 				}
 				

@@ -14,7 +14,8 @@
 #define VMU_NAME 		"240PTEST"
 #define	VMU_CTRL_NAME	"240PTEST VMU"
 #define VMU_NAME_LEN	8
-#define SAVE_NUM		120			// We have DATA_SIZE/32 bytes free and zeroed until we need to change this
+#define SAVE_NUM_UPDATE	120			// Safe update route, these are the only two current save numbers as of version 1.31
+#define SAVE_NUM		131			// We have DATA_SIZE (32 bytes) free and zeroed until we need to change this
 #define	DATA_SIZE		32
 #define ICON_ARRAY_SIZE 5
 
@@ -27,12 +28,13 @@
 #define VMU_ERROR		-1
 #define VMU_NOSAVE	 	0
 #define VMU_OK	 		1
-#define VMU_SAVEEXISTS	2
+#define VMU_SAVE_EXISTS	2
+#define VMU_SAVE_UPDATE	3
 
 int isMemCardPresent();
 int ListMemCardFiles(char *buffer, int buffsize);
 int MemcardSaveExists(char *filename, int *blocks, int *port, int *unit);
-int LoadMemCardSave(char *error);
+int LoadMemCardSave(char *error, int forceLoad);
 int WriteMemCardSave(int icon, char *error);
 int WriteMemCardControlTest(char *error);
 int MemcardOtherGameExists(char *filename, char *vmugame, int *port, int *unit);

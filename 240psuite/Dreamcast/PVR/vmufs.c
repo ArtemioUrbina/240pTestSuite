@@ -568,7 +568,7 @@ int MemcardSaveExists(char *filename, int *blocks, int *port, int *unit)
 				*port = vmu->port;
 				*unit = vmu->unit;
 			}
-			return VMU_SAVEEXISTS;
+			return VMU_SAVE_EXISTS;
 		}
 	}
 	
@@ -716,11 +716,12 @@ int MemcardOtherGameExists(char *filename, char *vmugame, int *port, int *unit)
 	return VMU_NOSAVE;
 }
 
-int LoadMemCardSave(char *error)
+int LoadMemCardSave(char *error, int forceLoad)
 {
 	vmu_pkg_t		pkg;
 	uint8			*pkg_in = NULL;
 	int				pkg_size = 0;
+	int				made_vmu_save_update = 0;
 	maple_device_t	*vmu;
 
 	if(!error)
@@ -760,6 +761,15 @@ int LoadMemCardSave(char *error)
 #endif
 		return VMU_ERROR;
 	}
+	
+	if(!pkg_size)
+	{
+		sprintf(error, "#Y%s was empty in VMU#Y", VMU_NAME);
+#ifdef DCLOAD
+		dbglog(DBG_ERROR, "%s was empty in VMU\n", VMU_NAME);
+#endif
+		return VMU_ERROR;
+	}
 
 	vmufs_shutdown ();
 
@@ -774,25 +784,63 @@ int LoadMemCardSave(char *error)
 		return VMU_ERROR;
 	}
 
-	free(pkg_in);
-	pkg_in = NULL;
-
 	if(pkg.data_len != DATA_SIZE)
 	{
 		sprintf(error, "#YSave length of unexpected size %d#Y", pkg.data_len);
 #ifdef DCLOAD
 		dbglog(DBG_ERROR, "Save length of unexpected size %d\n", pkg.data_len);
 #endif
+		free(pkg_in);
+		pkg_in = NULL;
 		return VMU_ERROR;
 	}
 
 	if(pkg.data[0] != SAVE_NUM)
 	{
-		sprintf(error, "#YVersion # differs, ignored [%d] != %d#Y", SAVE_NUM, pkg.data[0]);
+		// Can we upgrade? (we can with any version up to this date)
+		// If we ever have a save that is more than 512 bytes, then this will
+		// not be possible. Yeah, right...
+		if(pkg.data[0] == SAVE_NUM_UPDATE)
+		{
+			int		upgrade_save = 0, eyecatch = 0;
+			char	upgrade_error[256];
+			
+			if(pkg.eyecatch_type == VMUPKG_EC_256COL)
+				eyecatch = pkg.eyecatch_data[01] == 0xF0 ? 2 : 1;
+			upgrade_save = WriteMemCardSave(eyecatch, upgrade_error);
+			if(upgrade_save != VMU_OK)
+			{
+				sprintf(error, "Upgrade save error:\n%s", upgrade_error);
+				free(pkg_in);
+				return VMU_ERROR;
+			}
 #ifdef DCLOAD
-		dbglog(DBG_ERROR, "VMU save version # differs, ignored [%d] != %d\n", SAVE_NUM, pkg.data[0]);
+			else
+				dbglog(DBG_INFO, "VMU save version # was %d, upgraded to %d\n", pkg.data[0], SAVE_NUM);
 #endif
-		return VMU_ERROR;
+			made_vmu_save_update = 1;
+		}
+		else if(pkg.data[0] > SAVE_NUM && !forceLoad)
+		{
+			sprintf(error, "Save in #YVMU#Y is a from a #Ynewer version#Y.\n\nYou can try loading it from options\nby pressing #CL trigger#C while loading.\n\nExpected version #Y%d#Y and got #Y%d#Y", SAVE_NUM, pkg.data[0]);
+#ifdef DCLOAD
+			dbglog(DBG_ERROR, "VMU save version # differs, ignored. Expected: %d Got: %d\n", SAVE_NUM, pkg.data[0]);
+#endif
+			free(pkg_in);
+			return VMU_ERROR;
+		}
+		else
+		{
+			if(!forceLoad)
+			{
+				sprintf(error, "Unknown VMU save found [version %d], ignoring", pkg.data[0]);
+#ifdef DCLOAD
+				dbglog(DBG_ERROR, "VMU save version # differs, ignored. Expected: %d Got: %d\n", SAVE_NUM, pkg.data[0]);
+#endif
+				free(pkg_in);
+				return VMU_ERROR;
+			}
+		}
 	}
 
 	settings.drawborder = pkg.data[1];
@@ -811,14 +859,24 @@ int LoadMemCardSave(char *error)
 		SetScanlineEven();
 	else
 		SetScanlineOdd();
-	settings.Dithering = pkg.data[12];
-	settings.UseKOSDefaults = pkg.data[13];
-	settings.IgnoreFrameBuffer = pkg.data[14];
-	settings.matchIRE = pkg.data[15];
+	// Ignore lines that were added after the SAVE_NUM_UPDATE version
+	// they were updated to defaults at boot
+	if(!made_vmu_save_update)
+	{
+		settings.Dithering = pkg.data[12];
+		settings.UseKOSDefaults = pkg.data[13];
+		settings.IgnoreFrameBuffer = pkg.data[14];
+		settings.matchIRE = pkg.data[15];
+	}
+	
+	free(pkg_in);
+	pkg_in = NULL;
 		
 #ifdef DCLOAD
 	dbglog(DBG_INFO, "Loaded VMU save version #%d\n", pkg.data[0]);
 #endif
+	if(made_vmu_save_update)
+		return VMU_SAVE_UPDATE;
 	return VMU_OK;
 }
 
@@ -882,7 +940,7 @@ int WriteMemCardSave(int eyecatch, char *error)
 	icon = rand() % ICON_ARRAY_SIZE;
 
 	memcpy(&pkg.icon_pal[0], icon_array[icon], 32);
-		pkg.icon_data = icon_array[icon] + 32;
+	pkg.icon_data = icon_array[icon] + 32;
 
 #ifdef DCLOAD
 	dbglog(DBG_INFO, "Random Icon #%d\n", icon);
