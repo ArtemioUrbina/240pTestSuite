@@ -1297,23 +1297,25 @@ void ListMapleDevices()
 						{
 							purupuru_effect_t	effect;
 							
-							effect.duration = 5;
-							effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1);
-							effect.effect1 = PURUPURU_EFFECT1_INTENSITY(1);
+							effect.duration = 20;
+							effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1)|PURUPURU_EFFECT2_LINTENSITY(1);
+							effect.effect1 = PURUPURU_EFFECT1_INTENSITY(7);
 							if(pressed & CONT_DPAD_RIGHT)
 								effect.special = PURUPURU_SPECIAL_MOTOR1;
 							else
 								effect.special = PURUPURU_SPECIAL_MOTOR2;
-							if(purupuru_rumble(dev, &effect) != MAPLE_EOK)
+							if(purupuru_rumble(dev, &effect) == MAPLE_EOK)
+								DrawMessageOnce("Activating #YJump Pack#Y...");
+							else
 								DrawMessage("Rumble effect failed");
-								
-							active_puru = sel;
-							puru_timeout = 120;
+							
+							timer_spin_sleep(500);
+							//active_puru = sel;
+							//puru_timeout = 120;
 						}
 						
 						if(dev->info.function_data[0] & 0x00000002)			// Functions from the Fishing Rod
 						{
-							printf("Fishing\n");
 							if(pressed & CONT_DPAD_RIGHT)
 								purupuru_rumble_raw(dev, 0x030FF21E);		// these values were found at random and
 							else											// tuned for length
@@ -1328,6 +1330,7 @@ void ListMapleDevices()
 						if(pressed & CONT_DPAD_RIGHT)
 						{
 							vmu_beep_raw(dev, 0x65f0);
+							DrawMessageOnce("Beeping #YVMU#Y...");
 							timer_spin_sleep(800);
 							vmu_beep_raw(dev, 0);
 						}
