@@ -66,6 +66,7 @@ extern char *HelpData;
 #define ISPHELP			"/rd/help/ISP.txt"
 #define MICTESTHELP     "/rd/help/mictest.txt"
 #define BIOSHELP     	"/rd/help/bios.txt"
+#define HCFRHELP     	"/rd/help/hcfr.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);

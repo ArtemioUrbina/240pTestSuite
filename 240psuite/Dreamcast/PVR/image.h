@@ -55,6 +55,8 @@ struct image_st{
 #define MAX_IMAGES	50
 #define PATH_LEN	150
 
+#define PACK_ARGB8888(a,r,g,b) ( ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF) )
+
 //states
 #define MEM_RELEASED	0
 #define MEM_LOADED		1

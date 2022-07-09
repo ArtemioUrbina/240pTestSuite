@@ -282,6 +282,83 @@ int gkmg_to_img(const char * fn, kos_img_t * rv) {
 	return 0;
 }
 
+typedef struct dtex_header_st {
+	uint8_t  magic[4]; // 'DTEX'
+	uint16_t width;
+	uint16_t height;
+	uint32_t type;
+	uint32_t size;
+} dtex_header;
+
+// GZipped DTEXT 
+int dtex_to_img(const char * fn, kos_img_t * rv) {	
+	dtex_header	hdr;
+	int		dep = 0;	
+	//int length = 0;
+	gzFile f;		
+
+	assert( rv != NULL );
+
+	/* Open the file */
+	//length = zlib_getlength((char *)fn);	
+	f = gzopen(fn, "r");
+	if (!f) {		
+		dbglog(DBG_ERROR, "dtex_to_img: can't open file '%s'\n", fn);
+		return -1;
+	}  
+		
+	/* Read the header */
+	if (gzread(f, &hdr, sizeof(hdr)) != sizeof(hdr)) {
+		gzclose(f);
+		dbglog(DBG_ERROR, "dtex_to_img: can't read header from file '%s'\n", fn);
+		return -2;
+	}
+
+	/* Verify it is an 8 bit palette dtex file */
+	if(memcmp(hdr.magic, "DTEX", 4) || hdr.type != 0x30000000)
+	{
+		gzclose(f);
+		dbglog(DBG_ERROR, "dtex_to_img: file '%s' is incompatible:\n"
+			"   magic %s\n",
+			fn, hdr.magic);
+		return -3;
+	}
+	
+	/* Setup the kimg struct */
+	rv->w = hdr.width;
+	rv->h = hdr.height;
+
+	dep |= PVR_TXRLOAD_FMT_TWIDDLED;
+	rv->fmt = KOS_IMG_FMT(KOS_IMG_FMT_PAL8BPP, dep);
+	rv->byte_count = hdr.size;
+
+	/* And load the rest  */
+	
+	rv->data = malloc(hdr.size);
+	if (!rv->data) {
+		dbglog(DBG_ERROR, "dtex_to_img: can't malloc(%d) while loading '%s'\n",
+			(int)hdr.size, fn);
+		gzclose(f);
+		return -4;
+	}
+	if (gzread(f, rv->data, rv->byte_count) != (int)rv->byte_count) {
+		dbglog(DBG_ERROR, "dtex_to_img: can't read %d bytes while loading '%s'\n",
+			(int)hdr.size, fn);
+		gzclose(f);
+		free(rv->data);
+		return -6;
+	}
+
+	/* Ok, all done */
+	gzclose(f);
+
+	/* If the byte count is not a multiple of 32, bump it up as well.
+		 This is for DMA/SQ usage. */
+	rv->byte_count = (rv->byte_count + 31) & ~31;
+	
+	return 0;
+}
+
 void IgnoreOffset(ImagePtr image)
 {
 	if(image)
@@ -290,8 +367,8 @@ void IgnoreOffset(ImagePtr image)
 
 ImagePtr LoadKMG(const char *filename, int maptoscreen)
 {	
-	int load = -1, len;
-	ImagePtr image;
+	int load = -1, len = 0, dtext888 = 0;
+	ImagePtr image = NULL;
 	kos_img_t img;
 	file_t testFile;
 #ifdef BENCHMARK
@@ -316,14 +393,22 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	}
 	
 	len = strlen(filename);
-	if(filename[len - 2] == 'g' && filename[len - 1] == 'z')
-		load = gkmg_to_img(filename, &img);
-	if(filename[len - 3] == 'k' && filename[len - 2] == 'm' && filename[len - 2] == 'g')
-		load = kmg_to_img(filename, &img);
+	if(len > 3)
+	{
+		if(filename[len - 3] == '.' && filename[len - 2] == 'g' && filename[len - 1] == 'z')
+			load = gkmg_to_img(filename, &img);
+		if(filename[len - 3] == 'k' && filename[len - 2] == 'm' && filename[len - 1] == 'g')
+			load = kmg_to_img(filename, &img);
+		if(filename[len - 3] == 'd' && filename[len - 2] == 'g' && filename[len - 1] == 'z')
+		{
+			load = dtex_to_img(filename, &img);
+			dtext888 = 1;
+		}
 #ifdef USE_PNG
-	if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
-		load = png_to_img(filename, PNG_MASK_ALPHA, &img);
+		if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
+			load = png_to_img(filename, PNG_MASK_ALPHA, &img);
 #endif
+	}
 
 	if(load != 0)
 	{
@@ -368,7 +453,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	image->h = image->th;
 	image->FH = 0;
 	image->FV = 0;
-	image->texFormat = PVR_TXRFMT_ARGB1555;
+	image->texFormat = dtext888 ? PVR_TXRFMT_PAL8BPP : PVR_TXRFMT_ARGB1555;
 	image->IgnoreOffsetY = 0;
 
 	if(maptoscreen)
@@ -388,7 +473,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 
 uint8 ReLoadKMG(ImagePtr image, const char *filename)
 {	
-	int load = -1, len;
+	int load = -1, len = 0;
 	kos_img_t img;
 #ifdef BENCHMARK
 	uint64	start, end;
@@ -408,14 +493,19 @@ uint8 ReLoadKMG(ImagePtr image, const char *filename)
 	}
 
 	len = strlen(filename);
-	if(filename[len - 2] == 'g' && filename[len - 1] == 'z')
-		load = gkmg_to_img(filename, &img);
-	if(filename[len - 3] == 'k' && filename[len - 2] == 'm' && filename[len - 2] == 'g')
-		load = kmg_to_img(filename, &img);
+	if(len > 3)
+	{
+		if(filename[len - 3] == '.' && filename[len - 2] == 'g' && filename[len - 1] == 'z')
+			load = gkmg_to_img(filename, &img);
+		if(filename[len - 3] == 'k' && filename[len - 2] == 'm' && filename[len - 1] == 'g')
+			load = kmg_to_img(filename, &img);
+		if(filename[len - 3] == 'd' && filename[len - 2] == 'g' && filename[len - 1] == 'z')
+			load = dtex_to_img(filename, &img);
 #ifdef USE_PNG
-	if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
-		load = png_to_img(filename, PNG_MASK_ALPHA, &img);
+		if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
+			load = png_to_img(filename, PNG_MASK_ALPHA, &img);	
 #endif
+	}
 
 	if(load != 0)
 	{

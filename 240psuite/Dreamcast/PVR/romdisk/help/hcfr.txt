@@ -1,0 +1,15 @@
+                HCFR PATTERNS
+
+The #YHCFR Colormeter#Y allows to calibrate a 
+screen (or projector), this consisting in measuring
+displayed color patterns. Then you, users, will have
+to change settings and parameters on your devices to
+try to refine the results to be as close as possible
+to the standard of video color reproduction.
+
+The #YHCFR Colormeter#Y software is the heart of the
+system, it receive the color information from probes,
+to treat them. It then allow you to display various
+curves and the histograms to acheive calibrating your setup.
+
+#Ghttps://sourceforge.net/p/hcfr/wiki/Home/#G

@@ -36,6 +36,17 @@ void DrawSMPTEColorBars();
 void DrawSharpness();
 void DrawOverscan();
 void DrawConvergence();
+void DrawHCFR();
+
+
+#define HCFR_COLOR_NAME_MAX	64
+
+typedef struct hcfr_color_st {
+	char	name[HCFR_COLOR_NAME_MAX];
+	int		r;
+	int		g;
+	int		b;
+} hcfr_color;
 
 #endif
 

@@ -1806,3 +1806,273 @@ void DrawConvergence()
 		if(back[i]) FreeImage(&back[i]);
 	return;
 }
+
+hcfr_color *LoadHCFR(char *filename, int *hcfr_num)
+{
+	uint 		size = 0;
+	FILE 		*fp = NULL;
+	int			hcfr_count = 0;
+	uint		i = 0, lines = 0, current_line = 0;
+	uint		max_line_len = 0,line_len = 0;
+	char		*buffer = NULL, *lineBuffer = NULL, *last_csv = NULL;
+	hcfr_color 	*hcfr_colors = NULL;
+	
+	if(!hcfr_num)
+		return NULL;
+
+	*hcfr_num = 0;
+	fp = fopen(filename, "r");
+	if(!fp)
+	{
+		dbglog(DBG_ERROR, "Could not load %s HCFR file\n", filename);
+		return NULL;
+	}
+	fseek(fp, 0L, SEEK_END);
+	size = ftell(fp)+1;
+	buffer = (char*)malloc(sizeof(char)*size);
+	if(!buffer)
+	{
+		fclose(fp);
+		dbglog(DBG_ERROR, "Could not load %s CSV HCFR file to RAM\n", filename);
+		return NULL;
+	}
+	fseek(fp, 0L, SEEK_SET);
+	memset(buffer, 0x0, sizeof(char)*size);
+	fread(buffer, sizeof(char), size-1, fp);
+	fclose(fp);
+	
+	for(i = 0; i < size; i++)
+	{
+		line_len++;
+		
+		if(buffer[i] == '\n')
+		{
+			lines ++;
+			if(line_len > max_line_len)
+				max_line_len = line_len;
+			line_len = 0;
+		}
+	}
+	
+	hcfr_count = lines - 1; // we remove the header
+	if(hcfr_count <= 0)
+	{
+		dbglog(DBG_ERROR, "File %s has no HCFR color data\n", filename);
+		free(buffer);
+		buffer = NULL;
+		return NULL;
+	}
+	hcfr_colors = (hcfr_color*)malloc(sizeof(hcfr_color)*hcfr_count);
+	if(!hcfr_colors)
+	{
+		dbglog(DBG_ERROR, "Could not malloc array of hcfr_colors %s\n", filename);
+		free(buffer);
+		buffer = NULL;
+		return NULL;
+	}
+	memset(hcfr_colors, 0, sizeof(hcfr_color)*hcfr_count);
+	
+	lineBuffer = (char*)malloc(sizeof(char)*max_line_len);
+	if(!lineBuffer)
+	{
+		free(buffer);
+		free(hcfr_colors);
+		dbglog(DBG_ERROR, "Could not load %s CSV HCFR file to RAM\n", filename);
+		return NULL;
+	}
+	
+	// parse the CSV from RAM
+	last_csv = buffer;
+	for(i = 0; i < size; i++)
+	{
+		line_len++;
+		if(buffer[i] == '\n')
+		{
+			if(current_line)	// we start at 1, due to header
+			{
+				uint	last_comma = 0, pos = 0,
+						comma_count = 0, str_len = 0;
+				
+				for(pos = 0; pos < line_len; pos++)
+				{
+					if(comma_count == 0)
+						str_len ++;
+					if(last_csv[pos] == ',')
+						comma_count ++;
+					if(comma_count == 4)
+					{
+						last_comma = pos;
+						break;
+					}
+				}
+				memcpy(lineBuffer, last_csv, sizeof(char)*last_comma);
+				lineBuffer[last_comma] = '\0';
+				
+				if(str_len > HCFR_COLOR_NAME_MAX)
+					str_len = HCFR_COLOR_NAME_MAX;
+				memcpy(hcfr_colors[current_line-1].name, last_csv, sizeof(char)*(str_len-1));
+				if(sscanf(lineBuffer+str_len, "%d,%d,%d",
+								&hcfr_colors[current_line-1].r,
+								&hcfr_colors[current_line-1].g,
+								&hcfr_colors[current_line-1].b) != 3)
+					{
+						dbglog(DBG_ERROR, "File: %s Invalid structure in line %d: \"%s\"\n", 
+								filename, current_line, lineBuffer);
+						free(buffer);
+						free(hcfr_colors);
+						free(lineBuffer);
+						return NULL;
+					}
+			}
+			
+			current_line ++;
+			line_len = 0;
+			last_csv = buffer + i + 1;
+		}
+	}
+	
+	free(buffer);
+	free(lineBuffer);
+	*hcfr_num = hcfr_count;
+	return hcfr_colors;
+}
+
+void DrawHCFR()
+{
+	int 		done = 0, oldvmode = -1, current_hcfr = 0;
+	int			matchIRE = settings.matchIRE, text_mV = 0;
+	uint16		pressed;		
+	ImagePtr	back = NULL, black = NULL;
+	controller	*st = NULL;
+	char		screenmsg[100], vmuMsg2[50];
+	int			hcfr_num = 0, changed_palette = 1;
+	hcfr_color 	*hcfr_colors = NULL;
+
+	hcfr_colors = LoadHCFR("/rd/hcfr/hcfr_rec601_d65.csv", &hcfr_num);
+	if(!hcfr_colors)
+	{
+		DrawMessage("Could not load HCFR CSV file (hcfr/hcfr_rec601_d65.csv)");
+		return;
+	}
+
+	/*
+	for(current_hcfr = 0; current_hcfr < hcfr_num; current_hcfr++)
+	{
+		dbglog(DBG_INFO, "HCFR [%02d]: %s %d %d %d\n", 
+				current_hcfr,
+				hcfr_colors[current_hcfr].name,
+				hcfr_colors[current_hcfr].r,
+				hcfr_colors[current_hcfr].g,
+				hcfr_colors[current_hcfr].b);
+	}
+	*/
+	
+	back = LoadKMG("/rd/hcfr/00_hcfr_pal_base.dgz", 0);
+	if(!back)
+		return;
+	
+	black = LoadKMG("/rd/black.kmg.gz", 0);
+	if(!black)
+	{
+		FreeImage(&back);
+		return;
+	}	
+
+	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
+	while(!done && !EndProgram) 
+	{
+		double alpha = 0;
+		
+		if(oldvmode != vmode)
+		{
+			black->w = 320;
+			black->h = IsPAL ? 264 : 240;
+			oldvmode = vmode;
+		}
+							
+		if(changed_palette)
+		{
+			// set up an ARGB8888 palette:
+			pvr_set_pal_format(PVR_PAL_ARGB8888);
+			pvr_set_pal_entry(0, PACK_ARGB8888(255, 0, 0, 0));	// solid black
+			pvr_set_pal_entry(1, PACK_ARGB8888(0, 0, 0, 0));	// transparent
+			pvr_set_pal_entry(2, PACK_ARGB8888(255,				// solid selected color
+					hcfr_colors[current_hcfr].r, 
+					hcfr_colors[current_hcfr].g, 
+					hcfr_colors[current_hcfr].b));
+			sprintf(screenmsg, "%s %03d,%03d,%03d", 
+					hcfr_colors[current_hcfr].name,
+					hcfr_colors[current_hcfr].r, 
+					hcfr_colors[current_hcfr].g, 
+					hcfr_colors[current_hcfr].b);
+			changed_palette = 0;
+		}
+		
+		StartScene();
+				
+		if(matchIRE)
+		{
+			alpha = back->alpha;
+			back->alpha *= MATCH_NTSC_IRE;  
+		}
+		DrawImage(black);
+		DrawImage(back);
+		if(matchIRE)
+			back->alpha = alpha;
+			
+		DrawStringSCentered(180, 0.5f, 0.5f, 0.5f, screenmsg);
+
+		if(text_mV)
+		{
+			DrawStringS(225, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			text_mV--;
+		}
+
+		EndScene();
+		
+		VMURefresh(hcfr_colors[current_hcfr].name, vmuMsg2);
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;								
+				
+			if (pressed & CONT_Y)
+			{
+				matchIRE = !matchIRE;
+				sprintf(vmuMsg2, matchIRE ? " 714.3 mV IRE" : " 800.0 mV IRE");
+				text_mV = 60;
+				refreshVMU = 1;
+			}
+			
+			if (pressed & CONT_LTRIGGER)
+			{
+				current_hcfr --;
+				if(current_hcfr < 0)
+					current_hcfr = hcfr_num - 1;
+				changed_palette = 1;
+				refreshVMU = 1;
+			}
+			
+			if (pressed & CONT_RTRIGGER)
+			{
+				current_hcfr++;
+				if(current_hcfr > hcfr_num - 1)
+					current_hcfr = 0;
+				changed_palette = 1;
+				refreshVMU = 1;
+			}
+
+			if (pressed & CONT_START)
+			{
+				ShowMenu(HCFRHELP);
+				changed_palette = 1;
+			}
+		}
+	}
+	FreeImage(&back);
+	FreeImage(&black);
+	free(hcfr_colors);
+	return;
+}

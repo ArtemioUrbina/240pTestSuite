@@ -251,6 +251,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Geometry"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "HCFR Patterns"); y += fh; c++;
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; c++;
 
 		y += fh;
@@ -306,16 +307,19 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					TestPatternsGeometryMenu(title, sd);
 					break;
 				case 3:
-					done = 1;
+					DrawHCFR();
 					break;
 				case 4:
-					ShowMenu(GENERALHELP);
+					done = 1;
 					break;
 				case 5:
+					ShowMenu(GENERALHELP);
+					break;
+				case 6:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 6:
+				case 7:
 					TestVideoMode(vmode);
 					break;
 #endif
