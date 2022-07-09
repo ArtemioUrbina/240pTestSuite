@@ -1323,10 +1323,14 @@ void Draw100IRE()
 		return;
 	back = LoadKMG("/rd/100IRE.kmg.gz", 0);
 	if(!back)
+	{
+		FreeImage(&black);
 		return;
+  	}
   	white = LoadKMG("/rd/white.kmg.gz", 0);
 	if(!white)
   	{
+		FreeImage(&black);
   		FreeImage(&back);
 		return;
   	}
@@ -1807,6 +1811,109 @@ void DrawConvergence()
 	return;
 }
 
+char **listCSVFiles(char *path, int *num_files)
+{
+	int			filecount = 0, maxlen = 0, i = 0;
+	file_t		d;
+	dirent_t 	*dir;
+	char		**filenames = NULL;
+	
+	if(!num_files)
+		return NULL;
+	
+	*num_files = 0;
+	d = fs_open(path, O_RDONLY  | O_DIR);
+	if(d)
+	{
+		dir = fs_readdir(d);
+		while(dir)
+		{
+			int len = 0;
+			
+			len = strlen(dir->name);
+			if(len > 4)
+			{
+				if( dir->name[len - 3] == 'c' && 
+					dir->name[len - 2] == 's' &&
+					dir->name[len - 1] == 'v')
+				{
+					filecount++;
+					if(len > maxlen)
+						maxlen = len;
+				}
+			}
+			dir = fs_readdir(d);
+		}
+	}
+	fs_close(d);
+	
+	if(!filecount)
+		return NULL;
+
+	filenames = (char**)malloc(sizeof(char*)*filecount);
+	if(!filenames)
+		return NULL;
+
+	memset(filenames, 0, sizeof(char*)*filecount);
+	maxlen -= 3;	// remove extension
+	for(i = 0; i < filecount; i++)
+	{
+		filenames[i] = (char*)malloc(sizeof(char)*maxlen);
+		if(!filenames[i])
+		{
+			int pos = 0;
+			
+			for(pos = 0; pos < i; pos ++)
+				free(filenames[pos]);
+			free(filenames);
+			return NULL;
+		}
+		memset(filenames[i], 0, sizeof(char)*maxlen);
+	}
+	
+	i = 0;
+	// store the values
+	d = fs_open(path, O_RDONLY  | O_DIR);
+	if(d)
+	{
+		dir = fs_readdir(d);
+		while(dir)
+		{
+			int len = 0;
+			
+			len = strlen(dir->name);
+			if(len > 4)
+			{
+				if( dir->name[len - 3] == 'c' && 
+					dir->name[len - 2] == 's' &&
+					dir->name[len - 1] == 'v')
+				{
+					memcpy(filenames[i], dir->name, sizeof(char)*(len - 4));
+					i++;
+				}
+			}
+			dir = fs_readdir(d);
+		}
+	}
+	fs_close(d);
+	
+	*num_files = filecount;
+	return(filenames);
+}
+
+void releaseCSVList(char ***listCSVFiles, int num_files)
+{
+	int pos = 0;
+			
+	for(pos = 0; pos < num_files; pos ++)
+	{
+		free((*listCSVFiles)[pos]);
+		(*listCSVFiles)[pos] = NULL;
+	}
+	free(*listCSVFiles);
+	*listCSVFiles = NULL;
+}
+
 hcfr_color *LoadHCFR(char *filename, int *hcfr_num)
 {
 	uint 		size = 0;
@@ -1945,27 +2052,62 @@ void DrawHCFR()
 	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
 	char		screenmsg[100], vmuMsg2[50];
-	int			hcfr_num = 0, changed_palette = 1;
+	int			hcfr_num = 0, changed_palette = 1, num_files = 0;
+	int			i = 0, selected_hcfr = 8;
 	hcfr_color 	*hcfr_colors = NULL;
-
-	hcfr_colors = LoadHCFR("/rd/hcfr/hcfr_rec601_d65.csv", &hcfr_num);
+	char 		**filenames = NULL;
+	fmenudata 	*resmenudata = NULL;
+	char		csv_file[256];
+	
+	filenames = listCSVFiles("/rd/hcfr/", &num_files);
+	if(!filenames)
+	{
+		DrawMessage("Could not find any HCFR CSV files in the hcfr folder");
+		return;	
+	}
+	
+	resmenudata = (fmenudata*)malloc(sizeof(fmenudata)*num_files);
+	if(!resmenudata)
+	{
+		releaseCSVList(&filenames, num_files);
+		return;
+	}
+	
+	for(i = 0; i < num_files; i++)
+	{
+		resmenudata[i].option_value = i + 1;
+		resmenudata[i].option_text = filenames[i];
+	}
+	
+	selected_hcfr = SelectMenu("Select Scroll", resmenudata, num_files, selected_hcfr + 1);
+	if(selected_hcfr == MENU_CANCEL)
+	{
+		releaseCSVList(&filenames, num_files);
+		free(resmenudata);
+		return;
+	}
+	selected_hcfr -= 1;
+	
+	sprintf(csv_file, "/rd/hcfr/%s.csv", filenames[selected_hcfr]);
+	hcfr_colors = LoadHCFR(csv_file, &hcfr_num);
 	if(!hcfr_colors)
 	{
 		DrawMessage("Could not load HCFR CSV file (hcfr/hcfr_rec601_d65.csv)");
 		return;
 	}
 
-	/*
-	for(current_hcfr = 0; current_hcfr < hcfr_num; current_hcfr++)
+#ifdef DCLOAD
+	dbglog(DBG_INFO, "File: %s\n", filenames[selected_hcfr]);
+	for(i = 0; i < hcfr_num; i++)
 	{
 		dbglog(DBG_INFO, "HCFR [%02d]: %s %d %d %d\n", 
-				current_hcfr,
-				hcfr_colors[current_hcfr].name,
-				hcfr_colors[current_hcfr].r,
-				hcfr_colors[current_hcfr].g,
-				hcfr_colors[current_hcfr].b);
+				i,
+				hcfr_colors[i].name,
+				hcfr_colors[i].r,
+				hcfr_colors[i].g,
+				hcfr_colors[i].b);
 	}
-	*/
+#endif
 	
 	back = LoadKMG("/rd/hcfr/00_hcfr_pal_base.dgz", 0);
 	if(!back)
@@ -2074,5 +2216,7 @@ void DrawHCFR()
 	FreeImage(&back);
 	FreeImage(&black);
 	free(hcfr_colors);
+	releaseCSVList(&filenames, num_files);
+	free(resmenudata);
 	return;
 }
