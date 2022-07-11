@@ -1491,6 +1491,8 @@ void DrawIntro()
 	FreeImage(&back);
 }
 
+#define MSG_MAX_WIDTH 18*fw
+
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option)
 {
 	int 		sel = selected_option, close = 0, i = 0;
@@ -1511,7 +1513,7 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 	}
 
 	maxlen *= fw;
-	if(maxlen < 110)
+	if(maxlen < MSG_MAX_WIDTH)
 	{
 		Back = LoadKMG("/rd/FloatMenu.kmg.gz", 0);
 		if(Back)
@@ -1537,7 +1539,7 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
         uint16		pressed = 0;
 		controller	*st;
 
-		if(maxlen < 110)
+		if(maxlen < MSG_MAX_WIDTH)
 			y = Back ? Back->y + 10.0f : 60.0f;
 		else
 			y = 70.0f;
@@ -1561,10 +1563,10 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 			y += fh; c++;		
 		}
         
-		if(maxlen < 110)
+		if(maxlen < MSG_MAX_WIDTH)
 			y = (Back ? Back->y + 10.0f : 60.0f) + 11*fh;
 		else
-			y += fh+4;
+			y = 74.0f + 10*fh;
 		DrawStringSCenteredFull(y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");	
 								
 		EndScene();		
