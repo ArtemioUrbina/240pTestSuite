@@ -1548,7 +1548,12 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		if(Back)        
 			DrawImage(Back);       
 
-		DrawStringSCenteredFull(y, 0.0f, 1.0f, 0.0f, title); y += 3*fh; 		
+		DrawStringSCenteredFull(y, 0.0f, 1.0f, 0.0f, title);
+
+		if(num_options < 4)
+			y += 4*fh;
+		else
+			y += 2*fh;
 		
 		for(i = 0; i < num_options; i++)
 		{
@@ -1557,7 +1562,7 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		}
         
 		if(maxlen < 110)
-			y += 2* fh;
+			y = (Back ? Back->y + 10.0f : 60.0f) + 11*fh;
 		else
 			y += fh+4;
 		DrawStringSCenteredFull(y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");	

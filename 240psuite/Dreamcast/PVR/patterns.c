@@ -2224,7 +2224,7 @@ void DrawHCFR()
 				int selected_hcfr_tmp = 0;
 				
 				selected_hcfr_tmp = SelectMenu("Select Standard", resmenudata, num_files, selected_hcfr + 1);
-				if(selected_hcfr != MENU_CANCEL && selected_hcfr_tmp != selected_hcfr + 1)
+				if(selected_hcfr_tmp != MENU_CANCEL && selected_hcfr_tmp != selected_hcfr + 1)
 				{
 					selected_hcfr = selected_hcfr_tmp - 1;
 					refreshVMU = 1;
