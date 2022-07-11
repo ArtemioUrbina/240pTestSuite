@@ -39,7 +39,7 @@ void DrawConvergence();
 void DrawHCFR();
 
 
-#define HCFR_COLOR_NAME_MAX	64
+#define HCFR_COLOR_NAME_MAX		64
 
 typedef struct hcfr_color_st {
 	char	name[HCFR_COLOR_NAME_MAX];
@@ -47,6 +47,11 @@ typedef struct hcfr_color_st {
 	int		g;
 	int		b;
 } hcfr_color;
+
+typedef struct hcfr_files_st {
+	char	*dispname;
+	char	*filename;
+} hcfr_file;
 
 #endif
 

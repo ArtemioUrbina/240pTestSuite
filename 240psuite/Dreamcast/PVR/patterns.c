@@ -1811,16 +1811,16 @@ void DrawConvergence()
 	return;
 }
 
-char **listCSVFiles(char *path, int *num_files)
+hcfr_file *listCSVFiles(char *path, int *num_files)
 {
 	int			filecount = 0, maxlen = 0, i = 0;
 	file_t		d;
 	dirent_t 	*dir;
-	char		**filenames = NULL;
+	hcfr_file	*filenames = NULL;
 	
 	if(!num_files)
 		return NULL;
-	
+
 	*num_files = 0;
 	d = fs_open(path, O_RDONLY  | O_DIR);
 	if(d)
@@ -1850,30 +1850,49 @@ char **listCSVFiles(char *path, int *num_files)
 	if(!filecount)
 		return NULL;
 
-	filenames = (char**)malloc(sizeof(char*)*filecount);
+	filenames = (hcfr_file*)malloc(sizeof(hcfr_file)*filecount);
 	if(!filenames)
 		return NULL;
 
-	memset(filenames, 0, sizeof(char*)*filecount);
-	maxlen -= 3;	// remove extension
+	memset(filenames, 0, sizeof(hcfr_file)*filecount);
+	maxlen += strlen(path) + 1;	// add path
 	for(i = 0; i < filecount; i++)
 	{
-		filenames[i] = (char*)malloc(sizeof(char)*maxlen);
-		if(!filenames[i])
+		filenames[i].dispname = (char*)malloc(sizeof(char)*maxlen);
+		if(!filenames[i].dispname)
 		{
 			int pos = 0;
 			
 			for(pos = 0; pos < i; pos ++)
-				free(filenames[pos]);
+			{
+				free(filenames[pos].dispname);
+				free(filenames[pos].filename);
+			}
 			free(filenames);
 			return NULL;
 		}
-		memset(filenames[i], 0, sizeof(char)*maxlen);
+		memset(filenames[i].dispname, 0, sizeof(char)*maxlen);
+		
+		filenames[i].filename = (char*)malloc(sizeof(char)*maxlen);
+		if(!filenames[i].filename)
+		{
+			int pos = 0;
+			
+			free(filenames[i].dispname);
+			for(pos = 0; pos < i; pos ++)
+			{
+				free(filenames[pos].dispname);
+				free(filenames[pos].filename);
+			}
+			free(filenames);
+			return NULL;
+		}
+		memset(filenames[i].filename, 0, sizeof(char)*maxlen);
 	}
 	
 	i = 0;
 	// store the values
-	d = fs_open(path, O_RDONLY  | O_DIR);
+	d = fs_open(path, O_RDONLY | O_DIR);
 	if(d)
 	{
 		dir = fs_readdir(d);
@@ -1882,13 +1901,23 @@ char **listCSVFiles(char *path, int *num_files)
 			int len = 0;
 			
 			len = strlen(dir->name);
-			if(len > 4)
+			if(len > 7)
 			{
 				if( dir->name[len - 3] == 'c' && 
 					dir->name[len - 2] == 's' &&
 					dir->name[len - 1] == 'v')
 				{
-					memcpy(filenames[i], dir->name, sizeof(char)*(len - 4));
+					int l_len = 0, pos = 0;
+					
+					// remove leading sort number and extension
+					memcpy(filenames[i].dispname, dir->name+3, sizeof(char)*(len - 7)); 
+					l_len = strlen(filenames[i].dispname);
+					for(pos = 0; pos < l_len; pos++)
+					{
+						if(filenames[i].dispname[pos] == '_')
+							filenames[i].dispname[pos] = ' ';
+					}
+					sprintf(filenames[i].filename, "%s%s", path, dir->name);
 					i++;
 				}
 			}
@@ -1901,14 +1930,16 @@ char **listCSVFiles(char *path, int *num_files)
 	return(filenames);
 }
 
-void releaseCSVList(char ***listCSVFiles, int num_files)
+void releaseCSVList(hcfr_file **listCSVFiles, int num_files)
 {
 	int pos = 0;
 			
 	for(pos = 0; pos < num_files; pos ++)
 	{
-		free((*listCSVFiles)[pos]);
-		(*listCSVFiles)[pos] = NULL;
+		free((*listCSVFiles)[pos].dispname);
+		free((*listCSVFiles)[pos].filename);
+		(*listCSVFiles)[pos].dispname = NULL;
+		(*listCSVFiles)[pos].filename = NULL;
 	}
 	free(*listCSVFiles);
 	*listCSVFiles = NULL;
@@ -2053,11 +2084,10 @@ void DrawHCFR()
 	controller	*st = NULL;
 	char		screenmsg[100], vmuMsg2[50];
 	int			hcfr_num = 0, changed_palette = 1, num_files = 0;
-	int			i = 0, selected_hcfr = 8;
+	int			i = 0, selected_hcfr = 0;
 	hcfr_color 	*hcfr_colors = NULL;
-	char 		**filenames = NULL;
+	hcfr_file	*filenames = NULL;
 	fmenudata 	*resmenudata = NULL;
-	char		csv_file[256];
 	
 	filenames = listCSVFiles("/rd/hcfr/", &num_files);
 	if(!filenames)
@@ -2076,10 +2106,10 @@ void DrawHCFR()
 	for(i = 0; i < num_files; i++)
 	{
 		resmenudata[i].option_value = i + 1;
-		resmenudata[i].option_text = filenames[i];
+		resmenudata[i].option_text = filenames[i].dispname;
 	}
 	
-	selected_hcfr = SelectMenu("Select Scroll", resmenudata, num_files, selected_hcfr + 1);
+	selected_hcfr = SelectMenu("Select Standard", resmenudata, num_files, selected_hcfr + 1);
 	if(selected_hcfr == MENU_CANCEL)
 	{
 		releaseCSVList(&filenames, num_files);
@@ -2088,16 +2118,17 @@ void DrawHCFR()
 	}
 	selected_hcfr -= 1;
 	
-	sprintf(csv_file, "/rd/hcfr/%s.csv", filenames[selected_hcfr]);
-	hcfr_colors = LoadHCFR(csv_file, &hcfr_num);
+	hcfr_colors = LoadHCFR(filenames[selected_hcfr].filename, &hcfr_num);
 	if(!hcfr_colors)
 	{
-		DrawMessage("Could not load HCFR CSV file (hcfr/hcfr_rec601_d65.csv)");
+		DrawMessage("Could not load HCFR CSV file");
 		return;
 	}
 
 #ifdef DCLOAD
-	dbglog(DBG_INFO, "File: %s\n", filenames[selected_hcfr]);
+	dbglog(DBG_INFO, "File: \"%s\" %s\n", 
+		filenames[selected_hcfr].dispname,
+		filenames[selected_hcfr].filename);
 	for(i = 0; i < hcfr_num; i++)
 	{
 		dbglog(DBG_INFO, "HCFR [%02d]: %s %d %d %d\n", 
@@ -2188,7 +2219,22 @@ void DrawHCFR()
 				refreshVMU = 1;
 			}
 			
-			if (pressed & CONT_LTRIGGER)
+			if (pressed & CONT_X)
+			{
+				int selected_hcfr_tmp = 0;
+				
+				selected_hcfr_tmp = SelectMenu("Select Standard", resmenudata, num_files, selected_hcfr + 1);
+				if(selected_hcfr != MENU_CANCEL && selected_hcfr_tmp != selected_hcfr + 1)
+				{
+					selected_hcfr = selected_hcfr_tmp - 1;
+					refreshVMU = 1;
+					changed_palette = 1;
+					current_hcfr = 0;
+				}
+			}
+			
+			if (pressed & CONT_LTRIGGER || 
+				pressed & CONT_DPAD_LEFT)
 			{
 				current_hcfr --;
 				if(current_hcfr < 0)
@@ -2197,7 +2243,8 @@ void DrawHCFR()
 				refreshVMU = 1;
 			}
 			
-			if (pressed & CONT_RTRIGGER)
+			if (pressed & CONT_RTRIGGER || 
+				pressed & CONT_DPAD_RIGHT)
 			{
 				current_hcfr++;
 				if(current_hcfr > hcfr_num - 1)

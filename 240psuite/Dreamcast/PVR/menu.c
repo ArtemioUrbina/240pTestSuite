@@ -1493,20 +1493,38 @@ void DrawIntro()
 
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option)
 {
-	int 		sel = selected_option, close = 0, value = MENU_CANCEL, joycnt = 0;		
+	int 		sel = selected_option, close = 0, i = 0;
+	int			maxlen = 0, value = MENU_CANCEL, joycnt = 0;		
 	ImagePtr	Back = NULL, black = NULL;
 	
 	black = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!black)
 		return MENU_CANCEL;
 		
-	Back = LoadKMG("/rd/FloatMenu.kmg.gz", 0);
-	if(Back)
+	for(i = 0; i < num_options; i++)
 	{
-		Back->x = (dW - MENUSIZE_W) / 2;
-		Back->y = (dH - MENUSIZE_H) / 2;
-		Back->alpha = 0.75f;
+		int len = 0;
+		
+		len = MeasureString(menu_data[i].option_text);
+		if(len > maxlen)
+			maxlen = len;
 	}
+
+	maxlen *= fw;
+	if(maxlen < 110)
+	{
+		Back = LoadKMG("/rd/FloatMenu.kmg.gz", 0);
+		if(Back)
+		{
+			Back->x = (dW - MENUSIZE_W) / 2;
+			Back->y = (dH - MENUSIZE_H) / 2;
+		}
+	}
+	else
+		Back = LoadKMG("/rd/message.kmg.gz", 0);
+	
+	if(Back)
+		Back->alpha = 0.75f;
 
 	refreshVMU = 1;
 	while(!close) 
@@ -1514,11 +1532,15 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		float		r = 1.0f;
 		float		g = 1.0f;
 		float		b = 1.0f;
-		int			c = 1, i = 0;				    					   
-		float		y = Back ? Back->y + 10.0f : 60.0f;
+		int			c = 1;
+		float		y = 0;
         uint16		pressed = 0;
 		controller	*st;
-				
+
+		if(maxlen < 110)
+			y = Back ? Back->y + 10.0f : 60.0f;
+		else
+			y = 70.0f;
 		StartScene();
 		
 		if(black)
@@ -1534,7 +1556,10 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 			y += fh; c++;		
 		}
         
-		y += 2* fh;
+		if(maxlen < 110)
+			y += 2* fh;
+		else
+			y += fh+4;
 		DrawStringSCenteredFull(y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");	
 								
 		EndScene();		
