@@ -1376,15 +1376,19 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "SDK:"); 
 		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "SDK Assistance:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "KallistiOS");
-		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "BlueCrab"); y += fh; 
+		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "BlueCrab");
 		
 		y += fh;
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Monoscope Patterns:");
 		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Donna Art:"); y += fh;
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Keith Raney (@khmr33)");
-		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Jose Salot (@pepe_salot)"); y += fh; 
+		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "Jose Salot (@pepe_salot)");
 		
 		y += fh;
+		DrawStringS(x, y, 0.0, 1.0, 0.0, "HCFR Data & Tests:"); y += fh;
+		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Dan Mons (@_daemons) & Keith Raney (@khmr33)");
+		
+		y += 2*fh;
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Menu Pixel Art:");
 		DrawStringS(x+150, y, 0.0, 1.0, 0.0, "Advisor:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "Asher");
@@ -1398,11 +1402,11 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "shmups regulars");
 		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/"); 
 
-		y += 2*fh; 
+		y += fh; 
 		DrawStringS(x+20, y, 0.0, .75, .75, "This program is free software and open source.");  y += fh;
 		DrawStringS(x+20, y, 0.0, .75, .75, "Source code is available under GPL.");
 
-		y += 2*fh;
+		y += fh;
 #ifndef NO_FFTW
 		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "Includes the #GFastest Fourier Transform in the West#G"); y += fh;
 		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "http://www.fftw.org/"); y += fh;

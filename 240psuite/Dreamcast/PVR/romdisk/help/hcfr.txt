@@ -91,6 +91,6 @@ white point, gamma, etc.
 
 
 
-Pattern data and testing by #Gdanmons#G and
+Pattern data and testing by #GDan Mons#G and
 #GKeith Raney#G.
 

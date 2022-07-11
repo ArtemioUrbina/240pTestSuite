@@ -290,6 +290,100 @@ typedef struct dtex_header_st {
 	uint32_t size;
 } dtex_header;
 
+typedef struct dpal_header_st {
+	char		id[4];	// 'DPAL'
+	uint32_t	numcolors;
+} dpal_header;
+// It is then followed by 'numcolors' 32-bit packed ARGB values.
+
+int load_palette(const char *fn, pallette *pal)
+{
+	FILE 		*fp = NULL;
+	dpal_header	hdr;
+	
+	if(!pal)
+		return 0;
+		
+	pal->numcolors = 0;
+	pal->colors = NULL;
+	fp = fopen(fn, "r");
+	if(!fp)
+	{
+		dbglog(DBG_ERROR, "Could not load %s file\n", fn);
+		return 0;
+	}
+	
+	if(fread(&hdr, sizeof(dpal_header), 1, fp) != 1)
+	{
+		dbglog(DBG_ERROR, "Could not load header from %s file\n", fn);
+		return 0;
+	}
+	
+	if(memcmp(hdr.id, "DPAL", 4) || hdr.numcolors == 0)
+	{
+		fclose(fp);
+		dbglog(DBG_ERROR, "load_palette: file '%s' is incompatible:\n"
+			"   magic %s num_colors %ld\n",
+			fn, hdr.id, hdr.numcolors);
+		return 0;
+	}
+	
+	pal->colors = (uint32_t*)malloc(sizeof(uint32_t)*hdr.numcolors);
+	if(!pal->colors)
+	{
+		fclose(fp);
+		dbglog(DBG_ERROR, "load_palette: file '%s' could not be stored in RAM\n", fn);
+		return 0;
+	}
+	
+	if(fread(pal->colors, sizeof(uint32_t), hdr.numcolors, fp) != hdr.numcolors)
+	{
+		fclose(fp);
+		dbglog(DBG_ERROR, "load_palette: file '%s' could not be loaded to RAM\n", fn);
+		return 0;
+	}
+	fclose(fp);
+	
+	pal->numcolors = hdr.numcolors;
+	return 1;
+}
+
+void set_palette(pallette *pal)
+{
+	uint32_t p = 0;
+	
+	if(!pal || !pal->numcolors || !pal->colors)
+		return;
+	
+	//pvr_set_pal_format(PVR_PAL_ARGB8888);
+	//pvr_set_pal_entry(0, PACK_ARGB8888(255, 0, 0, 0));	// solid black
+	//pvr_set_pal_entry(1, PACK_ARGB8888(0, 0, 0, 0));	// transparent
+	for(p = 0; p < pal->numcolors; p++)
+		pvr_set_pal_entry(p, pal->colors[p]);
+}
+
+void clear_palette()
+{
+	uint32_t p = 0, black = 0;
+	
+	black = PACK_ARGB8888(255, 0, 0, 0);
+	for(p = 0; p < 256; p++)
+		pvr_set_pal_entry(p, black);
+}
+
+void release_palette(pallette *pal)
+{
+	if(!pal)
+		return;
+	
+	if(pal->colors)
+	{
+		free(pal->colors);
+		pal->colors = NULL;
+	}
+	pal->numcolors = 0;
+}
+
 // GZipped DTEXT 
 int dtex_to_img(const char * fn, kos_img_t * rv) {	
 	dtex_header	hdr;

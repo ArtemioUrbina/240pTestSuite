@@ -92,4 +92,14 @@ void DrawImageRotate(ImagePtr image, float angle);
 inline void StartScene();
 inline void EndScene();
 
+typedef struct dpallette_st {
+	uint32_t	numcolors;
+	uint32_t	*colors;
+} pallette;
+
+int load_palette(const char *fn, pallette *pal);
+void release_palette(pallette *pal);
+void set_palette(pallette *pal);
+void clear_palette();
+
 #endif

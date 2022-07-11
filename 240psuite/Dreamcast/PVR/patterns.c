@@ -316,26 +316,34 @@ void DrawSMPTEColorBars()
 	int 		done = 0, is75 = 0, text = 0, oldvmode = -1;
 	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;
-	ImagePtr	backNTSC75 = NULL, backNTSC100 = NULL, back = NULL, black = NULL;
+	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
 	char		msg[40], vmuMsg2[50];
+	pallette	p75, p100, *pal = NULL;;
 
-	backNTSC75 = LoadKMG("/rd/SMPTEColorBars.kmg.gz", 0);
-	if(!backNTSC75)
+	back = LoadKMG("/rd/plt888/SMPTECB.dgz", 0);
+	if(!back)
 		return;
 
-	backNTSC100 = LoadKMG("/rd/SMPTEColorBars100.kmg.gz", 0);
-	if(!backNTSC100)
+	if(!load_palette("/rd/plt888/SMPTECB075.pal", &p75))
 	{
-		FreeImage(&backNTSC75);
+		FreeImage(&back);
+		return;
+	}
+	
+	if(!load_palette("/rd/plt888/SMPTECB100.pal", &p100))
+	{
+		release_palette(&p75);
+		FreeImage(&back);
 		return;
 	}
 	
 	black = LoadKMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
-		FreeImage(&backNTSC75);
-		FreeImage(&backNTSC100);
+		release_palette(&p75);
+		release_palette(&p100);
+		FreeImage(&back);
 		return;
 	}	
 	
@@ -351,10 +359,15 @@ void DrawSMPTEColorBars()
 			oldvmode = vmode;
 		}
 		
+		if(!pal)
+		{
+			pal = is75 ? &p75 : &p100;
+			set_palette(pal);
+		}
+		
 		StartScene();
 
 		DrawImage(black);
-		back = is75 ? backNTSC75 : backNTSC100;
 		if(matchIRE)
 		{
 			alpha = back->alpha;
@@ -387,6 +400,7 @@ void DrawSMPTEColorBars()
 
 			if (pressed & CONT_A)
 			{
+				pal = NULL;
 				is75 = !is75;
 				text = 30;
 				sprintf(msg, "%s%%", is75 ? "75" : "100");
@@ -405,8 +419,9 @@ void DrawSMPTEColorBars()
 				ShowMenu(SMPTECOLOR);
 		}
 	}
-	FreeImage(&backNTSC75);
-	FreeImage(&backNTSC100);
+	release_palette(&p75);
+	release_palette(&p100);
+	FreeImage(&back);
 	FreeImage(&black);
 	return;
 }
@@ -1971,12 +1986,18 @@ hcfr_color *LoadHCFR(char *filename, int *hcfr_num)
 	if(!buffer)
 	{
 		fclose(fp);
-		dbglog(DBG_ERROR, "Could not load %s CSV HCFR file to RAM\n", filename);
+		dbglog(DBG_ERROR, "Could not reserve space for %s CSV HCFR in RAM\n", filename);
 		return NULL;
 	}
 	fseek(fp, 0L, SEEK_SET);
 	memset(buffer, 0x0, sizeof(char)*size);
-	fread(buffer, sizeof(char), size-1, fp);
+	if(fread(buffer, sizeof(char), size-1, fp) != size-1)
+	{
+		free(buffer);
+		fclose(fp);
+		dbglog(DBG_ERROR, "Could not load %s CSV HCFR file to RAM\n", filename);
+		return NULL;
+	}
 	fclose(fp);
 	
 	for(i = 0; i < size; i++)
