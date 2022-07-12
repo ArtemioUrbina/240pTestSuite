@@ -44,20 +44,39 @@ void DrawPluge()
 	ImagePtr	backNTSC = NULL, black = NULL, highlight = NULL;
 	controller	*st = NULL;
 	char		msg[50], vmuMsg2[50];
+	pallette	pNTSC, pFull;
 
-	backNTSC = LoadKMG("/rd/pluge.kmg.gz", 0);
+	backNTSC = LoadKMG("/rd/plt888/pluge.dgz", 0);
 	if(!backNTSC)
 		return;
+		
+	if(!load_palette("/rd/plt888/pluge.pal", &pNTSC))
+	{
+		FreeImage(&backNTSC);
+		return;
+	}
 
-	backFull = LoadKMG("/rd/plugepal.kmg.gz", 0);
+	backFull = LoadKMG("/rd/plt888/plugepal.dgz", 0);
 	if(!backFull)
 	{
+		release_palette(&pNTSC);
 		FreeImage(&backNTSC);	
 		return;
 	}
+	
+	if(!load_palette("/rd/plt888/plugepal.pal", &pFull))
+	{
+		release_palette(&pNTSC);
+		FreeImage(&backNTSC);	
+		FreeImage(&backFull);	
+		return;
+	}
+	
 	black = LoadKMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
+		release_palette(&pNTSC);
+		release_palette(&pFull);
 		FreeImage(&backFull);
 		FreeImage(&backNTSC);
 		return;
@@ -73,7 +92,7 @@ void DrawPluge()
 	}	
 
 	back = backFull;
-
+	set_palette(&pFull);
 	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
@@ -178,11 +197,13 @@ void DrawPluge()
 					{
 						sprintf(msg, "RGB Full Range");
 						back = backFull;
+						set_palette(&pFull);
 					}
 					else
 					{
 						sprintf(msg, "NTSC 7.5 IRE");
 						back = backNTSC;
+						set_palette(&pNTSC);
 					}
 						
 					text = 60;
@@ -202,9 +223,11 @@ void DrawPluge()
 		}
 	}
 	FreeImage(&highlight);
+	FreeImage(&black);
 	FreeImage(&backNTSC);
 	FreeImage(&backFull);
-	FreeImage(&black);
+	release_palette(&pNTSC);
+	release_palette(&pFull);
 	return;
 }
 
@@ -448,10 +471,17 @@ void DrawGrayRamp()
 	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
 	char		vmuMsg2[50];
+	pallette	pgray;
 
-	back = LoadKMG("/rd/grayramp.kmg.gz", 0);
+	back = LoadKMG("/rd/plt888/grayramp.dgz", 0);
 	if(!back)
 		return;
+		
+	if(!load_palette("/rd/plt888/grayramp.pal", &pgray))
+	{
+		FreeImage(&back);
+		return;
+	}
 		
 	black = LoadKMG("/rd/black.kmg.gz", 0);
 	if(!black)
@@ -460,6 +490,7 @@ void DrawGrayRamp()
 		return;
 	}	
 
+	set_palette(&pgray);
 	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
@@ -513,6 +544,7 @@ void DrawGrayRamp()
 	}
 	FreeImage(&back);
 	FreeImage(&black);
+	release_palette(&pgray);
 	return;
 }
 
@@ -771,24 +803,44 @@ void DrawWhiteScreen()
 
 void DrawColorBars()
 {
-	int 		done = 0, type = 0, showborder = 0, oldvmode = -1;
+	int 		done = 0, type = 2, showborder = 0, oldvmode = -1;
 	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;		
 	ImagePtr	back = NULL, backgrid = NULL, backcolor = NULL;
 	ImagePtr	border = NULL, black = NULL;
+	ImagePtr	color_low = NULL, color_high = NULL;
 	controller	*st = NULL;
 	char		vmuMsg2[50];
+	pallette	pcolor, pcgrid, phigh, plow, *pal = NULL;
 
-	backcolor = LoadKMG("/rd/color.kmg.gz", 0);
+	backcolor = LoadKMG("/rd/plt888/color.dgz", 0);
 	if(!backcolor)
 		return;
-	backgrid = LoadKMG("/rd/color_grid.kmg.gz", 0);
+	if(!load_palette("/rd/plt888/color.pal", &pcolor))
+		return;
+		
+	backgrid = LoadKMG("/rd/plt888/color_grid.dgz", 0);
 	if(!backgrid)
 		return;
+	if(!load_palette("/rd/plt888/color_grid.pal", &pcgrid))
+		return;
+		
+	color_high = LoadKMG("/rd/plt888/colorhigh.dgz", 0);
+	if(!backgrid)
+		return;
+	if(!load_palette("/rd/plt888/colorhigh.pal", &phigh))
+		return;
+		
+	color_low = LoadKMG("/rd/plt888/colorlow.dgz", 0);
+	if(!backgrid)
+		return;
+	if(!load_palette("/rd/plt888/colorlow.pal", &plow))
+		return;
+
 	border = LoadKMG("/rd/color_border.kmg.gz", 0);
 	if(!border)
 		return;
-		
+			
 	black = LoadKMG("/rd/black.kmg.gz", 0);
 	if(!black)
 		return;
@@ -805,13 +857,57 @@ void DrawColorBars()
 			oldvmode = vmode;
 		}
 		
+		if(!pal)
+		{
+			switch(type)
+			{
+				case 0:
+					pal = &pcgrid;
+					break;
+				case 1:
+					pal = &plow;
+					break;
+				case 2:
+					pal = &pcolor;
+					break;
+				case 3:
+					pal = &phigh;
+					break;
+				default:
+					pal = &pcolor;
+					type = 2;
+					dbglog(DBG_ERROR, "Invalid input received for type and palette\n");
+					break;
+			}
+			set_palette(pal);
+		}
+		
 		StartScene();
 		
-		if(!type)
-			back = backcolor;
-		else
-			back = backgrid;
-			
+		if(!back)
+		{
+			switch(type)
+			{
+				case 0:
+					back = backgrid;
+					break;
+				case 1:
+					back = color_low;
+					break;
+				case 2:
+					back = backcolor;
+					break;
+				case 3:
+					back = color_high;
+					break;
+				default:
+					back = backcolor;
+					type = 2;
+					dbglog(DBG_ERROR, "Invalid input received for type and palette\n");
+					break;
+			}
+		}
+		
 		if(matchIRE)
 		{
 			alpha = back->alpha;
@@ -833,7 +929,7 @@ void DrawColorBars()
 			border->r = 1.0f;
 			border->g = 0.0f;
 			border->b = 1.0f;
-			if(type)
+			if(!type)
 			{
 				border->x = -21.0f;
 				border->y =   3.0f;
@@ -857,8 +953,37 @@ void DrawColorBars()
 
 			if (pressed & CONT_A)
 			{
-				type = !type;
+				if(!type)
+					type = 2;
+				else
+					type = 0;
+				
+				back = NULL;
+				pal = NULL;
 				refreshVMU = 1;
+			}
+			
+			if(type)
+			{
+				if (pressed & CONT_LTRIGGER)
+				{
+					type --;
+					if(type < 1)
+						type = 1;
+					back = NULL;
+					pal = NULL;
+					refreshVMU = 1;
+				}
+				
+				if (pressed & CONT_RTRIGGER)
+				{
+					type ++;
+					if(type > 3)
+						type = 3;
+					back = NULL;
+					pal = NULL;
+					refreshVMU = 1;
+				}
 			}
 			
 			if (pressed & CONT_X)
@@ -877,9 +1002,21 @@ void DrawColorBars()
 		}
 	}
 	FreeImage(&border);
+	
+	release_palette(&plow);
+	FreeImage(&color_low);
+	
+	release_palette(&phigh);
+	FreeImage(&color_high);
+	
+	release_palette(&pcgrid);
 	FreeImage(&backgrid);
+	
+	release_palette(&pcolor);
 	FreeImage(&backcolor);
+	
 	FreeImage(&black);
+	
 	return;
 }
 
@@ -891,10 +1028,17 @@ void Draw601ColorBars()
 	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
 	char		vmuMsg2[50];
+	pallette	p601;
 
-	back = LoadKMG("/rd/601701cb.kmg.gz", 0);
+	back = LoadKMG("/rd/plt888/601701cb.dgz", 0);
 	if(!back)
 		return;
+		
+	if(!load_palette("/rd/plt888/601701cb.pal", &p601))
+	{
+		FreeImage(&back);
+		return;
+	}
 		
 	black = LoadKMG("/rd/black.kmg.gz", 0);
 	if(!black)
@@ -903,6 +1047,7 @@ void Draw601ColorBars()
 		return;
 	}	
 
+	set_palette(&p601);
 	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
@@ -953,6 +1098,7 @@ void Draw601ColorBars()
 	}
 	FreeImage(&back);
 	FreeImage(&black);
+	release_palette(&p601);
 	return;
 }
 

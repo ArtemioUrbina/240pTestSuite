@@ -7,10 +7,10 @@
 #GPVR Texture Dithering:#G Another filter for use
     in composite video signals.
 
-#GUse KOS video defaults:#G Uses #GKallistiOS#G default
+#GUse KOS video defaults:#G Uses #CKallistiOS#C default
     video modes instead of the custom modes.
 
-#GUse KOS register defaults:#G Uses #GKallistiOS#G default
+#GUse KOS register defaults:#G Uses #CKallistiOS#C default
     register values instead of the custom ones.
 
                                         #C(cont...)#C
@@ -37,7 +37,7 @@
     allows centering the active video lines in the
     signal or moving it to the bottom. This allows
     using the suite to calibrate and check overscan
-    even if the #GDC#G cannot output the full PAL
+    even if the #CDC#C cannot output the full PAL
     resolution.
                 
 #G480p Scanline Intensity:#G When in line doubled
@@ -53,19 +53,28 @@
     doubled mode.
 
 #GSave Options to VMU:#G Saves current options to
-    VMU. They are auto loaded at start if a save
+    #CVMU#C. They are auto loaded at start if a save
     is found. Save requires 2 free blocks. (Press
     L or R trigger to use the hidden eye-catchers,
     11 blocks needed). Icons are random.
 
-#GLoad Options from VMU:#G Loads options from the VMU.
+#GLoad Options from VMU:#G Loads options from the #CVMU#C.
 
 
                                         #C(cont...)#C
                   OPTIONS (5/5)
 
-#GUse FrameBuffer copy:#G Disables Framebuffer
-    effects when opening menus, it is faster.
+#GApproximate 714.3mV IRE:#G Since the #CDreamcast#C
+video output is slightly high at #C800mV#C, we 
+created an option to limit selected color and B&W
+patterns to a level that approximates #C714.3mV#C.
+
+This option defines the default value when using
+such patterns. It is displayed in the #CVMU#C or it
+can be toggled by pressing #GY#Y on those patterns.
+Please keep in mind that in some professional and
+consumer video equipment, the amplitude is
+adjusted by the #Ycolor burst#Y, and in such scenarios
+it is best to leave this at #C800mV#C.
 
 #GReset all options to defaults:#G Resets all.
-

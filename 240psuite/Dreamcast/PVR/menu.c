@@ -359,7 +359,7 @@ void ChangeOptions(ImagePtr screen)
 		float			b = 1.0f;
 		uint8			c = 1;
 		uint16			x = 50;
-		uint16			y = 25+fh;
+		uint16			y = 25+2*fh;
 		uint16			OptPos = 160;
 		uint16			pressed = 0;
 		char			intensity[80];
@@ -584,7 +584,7 @@ void ChangeOptions(ImagePtr screen)
 		if(sel == 13)
 			DrawStringB(x-15, 204+fh, r, g, b, "In relevant patterns only. Stock output is ~800mV.");
 		r = g = b = 0.8;
-		DrawStringS(x+60, 200, r, g, b, "Press START for help");
+		DrawStringS(x+60, 200, r, g, b, "Press #YSTART#Y for help");
 		if(rand() % 1000 == 47)
 			hint = !hint;
 		EndScene();
