@@ -1324,9 +1324,14 @@ void DrawMonoscope()
 	return;
 }
 
+#define	IRE_MAX 255.0f
+
 void Draw100IRE()
 {
 	int 			done = 0, oldvmode = -1, vmuMsgSend = 0;
+	int				changed_palette = 1, step_fraction = 0;
+	float			ire_level = IRE_MAX, ire_step = 255.0f/10.0f;
+	float			black_level = 0.0f, *change_level = NULL;
 	int				matchIRE = settings.matchIRE, text_mV = 0;
 	uint16			pressed, text = 0, invert = 0;	
 	ImagePtr		back = NULL, white = NULL, black = NULL;
@@ -1336,7 +1341,7 @@ void Draw100IRE()
 	black = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!black)
 		return;
-	back = LoadKMG("/rd/100IRE.kmg.gz", 0);
+	back = LoadKMG("/rd/plt888/100IRE.dgz", 0);
 	if(!back)
 	{
 		FreeImage(&black);
@@ -1352,9 +1357,26 @@ void Draw100IRE()
 
 	sprintf(vmuMsg, " 100 IRE ");
 	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
+	change_level = &ire_level;
 	while(!done && !EndProgram) 
 	{
 		double alpha = 0;
+		
+		if(changed_palette)
+		{
+			// set up an ARGB8888 palette:
+			pvr_set_pal_format(PVR_PAL_ARGB8888);
+			pvr_set_pal_entry(0, PACK_ARGB8888(255, 
+					(int)black_level, 
+					(int)black_level, 
+					(int)black_level));
+			pvr_set_pal_entry(1, PACK_ARGB8888(0, 0, 0, 0));	// transparent
+			pvr_set_pal_entry(2, PACK_ARGB8888(255,				// solid selected color
+					(int)ire_level, 
+					(int)ire_level, 
+					(int)ire_level));
+			changed_palette = 0;
+		}
 		
 		if(oldvmode != vmode)
 		{
@@ -1387,7 +1409,7 @@ void Draw100IRE()
 				if(text > 30)
 					sprintf(msg, "RANGE 0-100 IRE");
 				else
-					sprintf(msg, "%0.0f IRE", (double)(back->alpha * 100));
+					sprintf(msg, "%0.0f IRE", (double)((ire_level * 100.0f)/IRE_MAX));
 				DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
 				text --;
 			}
@@ -1396,7 +1418,7 @@ void Draw100IRE()
 				if(text > 30)
 					sprintf(msg, "RANGE 100-140 IRE");
 				else
-					sprintf(msg, "%0.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
+					sprintf(msg, "%0.0f IRE", (double)(100.0f + (black_level * 40.0f)/IRE_MAX));
 				DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
 				text --;
 			}
@@ -1416,36 +1438,20 @@ void Draw100IRE()
 		{
 			if (pressed & CONT_LTRIGGER)
 			{
-				if(!invert)
-				{
-					back->alpha -= 0.1f;
-					if(back->alpha < 0.0f)
-						back->alpha = 0.0f;
-				}
-				else
-				{
-					back->alpha += 0.125;
-					if(back->alpha > 1.0f)
-						back->alpha = 1.0f;
-				}
+				*change_level -= ire_step;
+				if(*change_level <= 0.0f)
+					*change_level = 0.0f;
+				changed_palette = 1;
 				text = 30;
 				vmuMsgSend = 1;
 			}
 		
 			if (pressed & CONT_RTRIGGER)
 			{
-				if(!invert)
-				{
-					back->alpha += 0.1f;
-					if(back->alpha > 1.0f)
-						back->alpha = 1.0f;
-				}
-				else
-				{
-					back->alpha -= 0.125f;
-					if(back->alpha < 0.0f)
-						back->alpha = 0.0f;
-				}
+				*change_level += ire_step;
+				if(*change_level > IRE_MAX)
+					*change_level = IRE_MAX;
+				changed_palette = 1;
 				text = 30;
 				vmuMsgSend = 1;
 			}
@@ -1453,24 +1459,52 @@ void Draw100IRE()
 			if (pressed & CONT_A)
 			{
 				invert = !invert;
-				back->alpha = 1.0f;
+				if(!invert)
+					change_level = &ire_level;
+				else
+					change_level = &black_level;
+				ire_level = IRE_MAX;
+				black_level = 0.0f;
 				text = 60;
 				vmuMsgSend = 1;
+				changed_palette = 1;
 			}
 			
 			if(vmuMsgSend)
 			{
 				if(!invert)
-					sprintf(vmuMsg, " %3.0f IRE", (double)(back->alpha * 100));
+					sprintf(vmuMsg, " %3.0f IRE", (double)((ire_level * 100.0f)/IRE_MAX));
 				else
-					sprintf(vmuMsg, " %3.0f IRE", 100.0f + (double)abs(40 - (double)(back->alpha * 40)));
+					sprintf(vmuMsg, " %3.0f IRE", (double)(100.0f + (black_level * 40.0f)/IRE_MAX));
 				refreshVMU = 1;
 				vmuMsgSend = 0;
 			}
 		
 			if (pressed & CONT_B)
 				done =	1;
-				
+			
+			if (pressed & CONT_X)	
+			{
+				step_fraction++;
+				if(step_fraction > 3)
+					step_fraction = 0;
+				switch(step_fraction)
+				{
+					case 0:	// 10 IRE
+						ire_step = 255.0f/10.0f;
+						break;
+					case 1: // 05 IRE
+						ire_step = 255.0f/20.0f;
+						break;
+					case 2: // 02 IRE
+						ire_step = 255.0f/50.0f;
+						break;
+					case 3:	// 01 IRE
+						ire_step = 255.0f/100.0f;
+						break;
+				}
+			}
+			
 			if (pressed & CONT_Y)
 			{
 				matchIRE = !matchIRE;
