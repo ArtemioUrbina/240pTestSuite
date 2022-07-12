@@ -10,7 +10,7 @@ This menu shows the #CHCFR software#C profiles.
 - #YsRGB#Y is recommended for #CPC VGA#C and up #CCRT
 monitors#C. 
 
-For #Cwestern regions#C of all color space suse #YD65#Y,
-use #YD93#Y for #CJapanese SDTVs#C.
+For #Cwestern regions#C of any color space use #YD65#Y,
+and #YD93#Y is for #CJapanese SDTVs#C that support it.
 
 Access detailed #Yhelp#Y within the test with #GSTART#G.

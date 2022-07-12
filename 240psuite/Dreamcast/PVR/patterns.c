@@ -553,7 +553,7 @@ void DrawWhiteScreen()
 	int 		done = 0, color = 0, text = 0;
 	int			sel = 1, editmode = 0, oldvmode = -1;
 	int			matchIRE = settings.matchIRE, text_mV = 0;
-	int			cr, cb, cg, BlackLevel = 0;
+	int			cr, cb, cg, BlackLevel = 0, joycnt = 0;
 	uint16		pressed;		
 	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
@@ -662,9 +662,6 @@ void DrawWhiteScreen()
 				text = 30;
 			}
 
-			if (pressed & CONT_START)
-				ShowMenu(WHITEHELP);
-
 			if (pressed & CONT_A && color == 1)
 			{
 				if(!BlackLevel)
@@ -740,6 +737,8 @@ void DrawWhiteScreen()
 					}
 				}	
 	
+				JoystickMenuMove(st, current, 0xff, &joycnt);
+				
 				if ( pressed & CONT_X )
 				{				
 					if(current)			
@@ -793,6 +792,9 @@ void DrawWhiteScreen()
 					UseDirectColor(back, 0xff, 0x00, 0x00, 0xff);
 					break;
 			}
+			
+			if (pressed & CONT_START)
+				ShowMenu(WHITEHELP);
 		}
 
 	}
