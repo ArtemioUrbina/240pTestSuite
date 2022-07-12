@@ -571,10 +571,11 @@ void DrawWhiteScreen()
 	}	
 		
 	cr = cb = cg = 0xFF; // white
+	UseDirectColor(back, 0xff, cr, cg, cb);
 	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{	
-		double alpha = 0;
+		uint8	alpha;
 		
 		if(vmode != oldvmode)
 		{
@@ -590,13 +591,13 @@ void DrawWhiteScreen()
 
 		if(matchIRE)
 		{
-			alpha = back->alpha;
-			back->alpha *= MATCH_NTSC_IRE;  
+			alpha = back->a_direct;
+			back->a_direct *= MATCH_NTSC_IRE;  
 		}
 		DrawImage(black);
 		DrawImage(back);
 		if(matchIRE)
-			back->alpha = alpha;
+			back->a_direct = alpha;
 
 		if(text)
 		{						

@@ -64,7 +64,7 @@ void InitTextureFB()
 {	
 	if(fbtexture)
 	{
-		dbglog(DBG_ERROR, " === Called InitTextureFB when valid Fb is loaded ===\n");
+		dbglog(DBG_ERROR, " === Called InitTextureFB when valid FB is loaded ===\n");
 		return;
 	}	
 
@@ -106,6 +106,12 @@ void InitTextureFB()
 	fbtexture->FV = 0;
 	fbtexture->texFormat = PVR_TXRFMT_RGB565 | PVR_TXRFMT_NONTWIDDLED;
 	IgnoreOffset(fbtexture);
+	
+	fbtexture->use_direct_color = 0;
+	fbtexture->a_direct = 0xff;
+	fbtexture->r_direct = 0xff;
+	fbtexture->g_direct = 0xff;
+	fbtexture->b_direct = 0xff;
 	
 	InsertImage(fbtexture, "FB");
 }

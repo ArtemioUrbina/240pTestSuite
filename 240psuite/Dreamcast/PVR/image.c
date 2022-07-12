@@ -577,10 +577,10 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	image->IgnoreOffsetY = 0;
 	
 	image->use_direct_color = 0;
-	
-	image->r_direct = 0;
-	image->g_direct = 0;
-	image->b_direct = 0;
+	image->a_direct = 0xff;
+	image->r_direct = 0xff;
+	image->g_direct = 0xff;
+	image->b_direct = 0xff;
 
 	if(maptoscreen)
 	{
@@ -782,10 +782,15 @@ void DrawImage(ImagePtr image)
 	pvr_poly_compile(&hdr, &cxt);
 	pvr_prim(&hdr, sizeof(hdr));
 
+#ifdef DCLOAD
+	if(image->use_direct_color && image->alpha != 1.0f)
+		dbglog(DBG_WARNING, "=== Image uses direct color and has an alpha float value  ===\n");
+#endif
+
 	if(image->use_direct_color)
 		vert.argb = PVR_PACK_COLOR_BYTES(image->a_direct, image->r_direct, image->g_direct, image->b_direct);		
 	else
-		vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);		
+		vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);
 	
 	vert.oargb = 0;
 	vert.flags = PVR_CMD_VERTEX;
@@ -862,7 +867,16 @@ void DrawImageRotate(ImagePtr image, float angle)
 	pvr_poly_compile(&hdr, &cxt);
 	pvr_prim(&hdr, sizeof(hdr));
 
-	vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);		
+#ifdef DCLOAD
+	if(image->use_direct_color && image->alpha != 1.0f)
+		dbglog(DBG_WARNING, "=== Image uses direct color and has an alpha float value  ===\n");
+#endif
+
+	if(image->use_direct_color)
+		vert.argb = PVR_PACK_COLOR_BYTES(image->a_direct, image->r_direct, image->g_direct, image->b_direct);		
+	else
+		vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);
+
 	vert.oargb = 0;
 	vert.flags = PVR_CMD_VERTEX;
 	
@@ -930,7 +944,7 @@ inline void EndScene()
 		DrawMenu = 0;
 		
 		if(fbtexture) // Draw background if already rendered
-		{
+		{			
 			pvr_scene_begin();
 			pvr_list_begin(PVR_LIST_TR_POLY);
 			
@@ -947,8 +961,8 @@ inline void EndScene()
 			HelpWindow(HelpData, fbtexture);
 		if(type == FB_MENU_CREDITS)
 			DrawCredits(fbtexture);
-			
-		FreeTextureFB();
+		if(fbtexture)
+			FreeTextureFB();
 	}
 	
 	if(vmu_found_bad_lcd_vmu())
