@@ -25,8 +25,6 @@
 #ifdef USE_PNG
 #include <png/png.h>
 #endif
-
-#define PVR_PACK_COLOR_BYTES(a_b, r_b, g_b, b_b) ((a_b << 24) | (r_b << 16) | (g_b << 8) | (b_b << 0))
 	
 typedef struct image_st * ImagePtr;
 

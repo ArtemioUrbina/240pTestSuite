@@ -575,7 +575,7 @@ void DrawWhiteScreen()
 	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{	
-		uint8	alpha;
+		uint16	alpha;
 		
 		if(vmode != oldvmode)
 		{

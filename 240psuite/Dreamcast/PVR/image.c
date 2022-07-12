@@ -788,7 +788,7 @@ void DrawImage(ImagePtr image)
 #endif
 
 	if(image->use_direct_color)
-		vert.argb = PVR_PACK_COLOR_BYTES(image->a_direct, image->r_direct, image->g_direct, image->b_direct);		
+		vert.argb = PACK_ARGB8888(image->a_direct, image->r_direct, image->g_direct, image->b_direct);		
 	else
 		vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);
 	
@@ -873,7 +873,7 @@ void DrawImageRotate(ImagePtr image, float angle)
 #endif
 
 	if(image->use_direct_color)
-		vert.argb = PVR_PACK_COLOR_BYTES(image->a_direct, image->r_direct, image->g_direct, image->b_direct);		
+		vert.argb = PACK_ARGB8888(image->a_direct, image->r_direct, image->g_direct, image->b_direct);		
 	else
 		vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);
 
