@@ -1419,6 +1419,11 @@ void DrawIntro()
 
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option)
 {
+	return(SelectMenuEx(title, menu_data, num_options, selected_option, NULL));
+}
+
+int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selected_option, char *helpfile)
+{
 	int 		sel = selected_option, close = 0, i = 0;
 	int			maxlen = 0, value = MENU_CANCEL, joycnt = 0;		
 	ImagePtr	Back = NULL, black = NULL;
@@ -1491,7 +1496,10 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 			y = (Back ? Back->y + 10.0f : 60.0f) + 11*fh;
 		else
 			y = 74.0f + 10*fh;
-		DrawStringSCenteredFull(y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");	
+		DrawStringSCenteredFull(y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Close Menu");
+		
+		if(helpfile)
+			DrawStringSCenteredFull(y+2*fh, 1.0f, 1.0f, 1.0f, "Press #YSTART#Y for help");
 								
 		EndScene();		
 
@@ -1515,11 +1523,15 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 
 		JoystickMenuMove(st, &sel, c, &joycnt);	
 			
-		if (pressed & CONT_B || pressed & CONT_START) 		
+		if (pressed & CONT_B || 
+			(!helpfile && pressed & CONT_START))
 		{
 			close = 1;	
 			value = MENU_CANCEL;
 		}
+		
+		if(helpfile && pressed & CONT_START)
+			ShowHelpWindow(helpfile);
 	
 		if (pressed & CONT_A)
 		{     

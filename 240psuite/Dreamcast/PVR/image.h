@@ -26,6 +26,8 @@
 #include <png/png.h>
 #endif
 
+#define PVR_PACK_COLOR_BYTES(a_b, r_b, g_b, b_b) ((a_b << 24) | (r_b << 16) | (g_b << 8) | (b_b << 0))
+	
 typedef struct image_st * ImagePtr;
 
 struct image_st{
@@ -50,6 +52,12 @@ struct image_st{
 		uint16  FV;
 		uint8	IgnoreOffsetY;
 		uint32	texFormat;
+		
+		uint8	use_direct_color;
+		uint16	a_direct;
+		uint16	r_direct;
+		uint16	g_direct;
+		uint16	b_direct;
 };
 
 #define MAX_IMAGES	50
@@ -79,6 +87,7 @@ void RefreshLoadedImages();
 void InsertImage(ImagePtr image, char *name);
 void ReleaseTextures();
 void IgnoreOffset(ImagePtr image);
+void UseDirectColor(ImagePtr image, uint16 a, uint16 r, uint16 g, uint16 b);
 
 ImagePtr LoadKMG(const char *filename, int maptoscreen);
 uint8 ReLoadKMG(ImagePtr image, const char *filename);

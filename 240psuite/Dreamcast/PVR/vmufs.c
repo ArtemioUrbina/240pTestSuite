@@ -865,7 +865,7 @@ int LoadMemCardSave(char *error, int forceLoad)
 	{
 		settings.Dithering = pkg.data[12];
 		settings.UseKOSDefaults = pkg.data[13];
-		settings.IgnoreFrameBuffer = pkg.data[14];
+		// Value 14 got deprecated
 		settings.matchIRE = pkg.data[15];
 	}
 	
@@ -929,7 +929,7 @@ int WriteMemCardSave(int eyecatch, char *error)
 	data[11] = ScanlinesEven();
 	data[12] = settings.Dithering;
 	data[13] = settings.UseKOSDefaults;
-	data[14] = settings.IgnoreFrameBuffer;
+	data[14] = 0;						// option got deprecated
 	data[15] = settings.matchIRE;
 	
 	strcpy(pkg.desc_short, "240p Suite");

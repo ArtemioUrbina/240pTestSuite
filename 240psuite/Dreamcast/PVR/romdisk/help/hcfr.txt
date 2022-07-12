@@ -23,7 +23,7 @@ profiling and calibrating your display.
 
 To set up #YHCFR Colormeter#Y, attach your colorimeter
 to your computer, open the program, click
-#CFile -> New#C, and select "DVD Manual" as your
+#CFile -> New#C, and select DVD Manual as your
 selected generator. Select your colorimeter
 from the list, and click OK.
 
@@ -32,16 +32,16 @@ Once in #YHCFR Colormeter#Y, click
                                          #C(cont...)#C
                 HCFR PATTERNS (3/6)
 
-Under the #C"General"#C tab, ensure that the section
-#C"Colors to add when measuring primaries and
-secondaries"#C is set to "White". 
+Under the #CGeneral#C tab, ensure that the section
+#CColors to add when measuring primaries and
+secondaries#C is set to White. 
 
-Under the #C"References"#C tab, choose your color
-space. #C"PAL/SECAM"#C is recommended for #YPAL CRT#Y
-users. #C"SDTV - REC601 (NTSC)"#C is recommended for
-#YNTSC CRT#Y users. #C"HD TV REC 709"#C is recommended
+Under the #CReferences#C tab, choose your color
+space. #CPAL/SECAM#C is recommended for #YPAL CRT#Y
+users. #CSDTV - REC601 (NTSC)#C is recommended for
+#YNTSC CRT#Y users. #CHD TV REC 709#C is recommended
 for #YHD#Y and #YUHD#Y in #YSDR#Y flat panel TV users.
-#C"sRGB"#C is recommended for #YPC VGA#Y and up #YCRT
+#CsRGB#C is recommended for #YPC VGA#Y and up #YCRT
 monitors#Y. 
 
 
@@ -68,7 +68,7 @@ Ensure your options chosen here match the test
 pattern list you choose in the #Y240p Test Suite#Y. 
 
 When you are ready to start measuring, click the
-#C"Measure"#C menu, and select your measurement. If
+#CMeasure#C menu, and select your measurement. If
 any large scale changes are made to your display,
 it is recommended to re-run a #CGray-scale sweep#C
 often, so that baseline calculations can be
@@ -81,10 +81,10 @@ buttons to scroll through the color list and
                 HCFR PATTERNS (6/6)
 
 select the color desired. Once ready to measure,
-click #C"OK"#C in #YHCFR Colormeter#Y to measure
+click #COK#C in #YHCFR Colormeter#Y to measure
 the test pattern.
 
-Use the #C"Continuous measure"#C mode to be able to
+Use the #CContinuous measure#C mode to be able to
 adjust your display's settings to match the
 values required for your chosen color space,
 white point, gamma, etc. 

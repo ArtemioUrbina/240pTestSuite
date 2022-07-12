@@ -473,6 +473,18 @@ void IgnoreOffset(ImagePtr image)
 		image->IgnoreOffsetY = 1;
 }
 
+void UseDirectColor(ImagePtr image, uint16 a, uint16 r, uint16 g, uint16 b)
+{
+	if(!image)
+		return;
+	image->use_direct_color = 1;
+	
+	image->a_direct = a;
+	image->r_direct = r;
+	image->g_direct = g;
+	image->b_direct = b;
+}
+
 ImagePtr LoadKMG(const char *filename, int maptoscreen)
 {	
 	int load = -1, len = 0, dtext888 = 0;
@@ -563,6 +575,12 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	image->FV = 0;
 	image->texFormat = dtext888 ? PVR_TXRFMT_PAL8BPP : PVR_TXRFMT_ARGB1555;
 	image->IgnoreOffsetY = 0;
+	
+	image->use_direct_color = 0;
+	
+	image->r_direct = 0;
+	image->g_direct = 0;
+	image->b_direct = 0;
 
 	if(maptoscreen)
 	{
@@ -764,7 +782,11 @@ void DrawImage(ImagePtr image)
 	pvr_poly_compile(&hdr, &cxt);
 	pvr_prim(&hdr, sizeof(hdr));
 
-	vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);		
+	if(image->use_direct_color)
+		vert.argb = PVR_PACK_COLOR_BYTES(image->a_direct, image->r_direct, image->g_direct, image->b_direct);		
+	else
+		vert.argb = PVR_PACK_COLOR(image->alpha, image->r, image->g, image->b);		
+	
 	vert.oargb = 0;
 	vert.flags = PVR_CMD_VERTEX;
 	

@@ -48,9 +48,9 @@
 #define FLOAT_TO_INT(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 
 #ifndef DCLOAD
- #define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0, 0, 0.3f, 1, 0 };
+ #define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 0, 0.7, 0.7, 0.7, 0, 0, 0.3f, 0, 0 };
 #else
- #define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 1, 0.7, 0.0, 0.7, 0, 0, 0, 0.3f, 1, 0 };
+ #define DEFAULT_OPTIONS { 0, 0, PAL_CENTERED, 0, 0, 1, 0.7, 0.0, 0.7, 0, 0, 0.3f, 0, 0 };
 #endif
 
 struct settings_st {
@@ -65,7 +65,6 @@ struct settings_st {
 	float PalBackB;
 	int Dithering;
 	int UseKOSDefaults;
-	int IgnoreFrameBuffer;
 	float scanlines;
 	int	scanlines_even;
 	int	matchIRE;
@@ -97,6 +96,7 @@ typedef struct menu_data {
 #define MENU_CANCEL -1
 
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option);
+int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selected_option, char *helpfile);
 int AskQuestion(char *msg);
 void DrawMessage(char *msg);
 void DrawMessageOnce(char *msg);

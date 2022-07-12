@@ -213,31 +213,38 @@ void DrawEBUColorBars()
 	int 		done = 0, is75 = 0, text = 0, oldvmode = -1;
 	int			matchIRE = settings.matchIRE, text_mV = 0;
 	uint16		pressed;
-	ImagePtr	backEBU75 = NULL, backEBU100 = NULL, back = NULL, black = NULL;
+	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
 	char		msg[40], vmuMsg2[50];
+	pallette	p75, p100, *pal = NULL;
 
-	backEBU75 = LoadKMG("/rd/EBUColorBars75.kmg.gz", 0);
-	if(!backEBU75)
+	back = LoadKMG("/rd/plt888/EBUCB.dgz", 0);
+	if(!back)
 		return;
 
-	backEBU100 = LoadKMG("/rd/EBUColorBars100.kmg.gz", 0);
-	if(!backEBU100)
+	if(!load_palette("/rd/plt888/EBUCB075.pal", &p75))
 	{
-		FreeImage(&backEBU75);
+		FreeImage(&back);
+		return;
+	}
+	
+	if(!load_palette("/rd/plt888/EBUCB100.pal", &p100))
+	{
+		release_palette(&p75);
+		FreeImage(&back);
 		return;
 	}
 	
 	black = LoadKMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
-		FreeImage(&backEBU75);
-		FreeImage(&backEBU100);
+		release_palette(&p75);
+		release_palette(&p100);
+		FreeImage(&back);
 		return;
 	}	
 
-	IgnoreOffset(backEBU75);
-	IgnoreOffset(backEBU100);
+	IgnoreOffset(back);
 	
 	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
@@ -251,9 +258,14 @@ void DrawEBUColorBars()
 			oldvmode = vmode;
 		}
 		
+		if(!pal)
+		{
+			pal = is75 ? &p75 : &p100;
+			set_palette(pal);
+		}
+		
 		StartScene();
 
-		back = is75 ? backEBU75 : backEBU100;
 		if(matchIRE)
 		{
 			alpha = back->alpha;
@@ -287,6 +299,7 @@ void DrawEBUColorBars()
 
 			if (pressed & CONT_A)
 			{
+				pal = NULL;
 				is75 = !is75;
 				text = 30;
 				sprintf(msg, "%s%%", is75 ? "75" : "100");
@@ -305,8 +318,9 @@ void DrawEBUColorBars()
 				ShowMenu(EBUCOLOR);
 		}
 	}
-	FreeImage(&backEBU75);
-	FreeImage(&backEBU100);
+	FreeImage(&back);
+	release_palette(&p75);
+	release_palette(&p100);
 	FreeImage(&black);
 	return;
 }
@@ -319,7 +333,7 @@ void DrawSMPTEColorBars()
 	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
 	char		msg[40], vmuMsg2[50];
-	pallette	p75, p100, *pal = NULL;;
+	pallette	p75, p100, *pal = NULL;
 
 	back = LoadKMG("/rd/plt888/SMPTECB.dgz", 0);
 	if(!back)
@@ -507,7 +521,7 @@ void DrawWhiteScreen()
 	int 		done = 0, color = 0, text = 0;
 	int			sel = 1, editmode = 0, oldvmode = -1;
 	int			matchIRE = settings.matchIRE, text_mV = 0;
-	float		BlackLevel = 0.0f, cr, cb, cg;
+	int			cr, cb, cg, BlackLevel = 0;
 	uint16		pressed;		
 	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
@@ -524,7 +538,7 @@ void DrawWhiteScreen()
 		return;
 	}	
 		
-	cr = cb = cg = 1.0f; // white
+	cr = cb = cg = 0xFF; // white
 	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{	
@@ -580,7 +594,7 @@ void DrawWhiteScreen()
 					color = 0;		
 
 				editmode = 0;
-				if(color == 0 && cr + cb + cg != 3*1.0f)
+				if(color == 0 && cr + cb + cg != 3*0xff)
 				{
 					sprintf(msg, "%s [EDITED]", mode[color]);
 					vmuMsg = edited;
@@ -602,7 +616,7 @@ void DrawWhiteScreen()
 					color = 4;
 
 				editmode = 0;
-				if(color == 0 && cr + cb + cg != 3*1.0f)
+				if(color == 0 && cr + cb + cg != 3*0xff)
 				{
 					sprintf(msg, "%s [edited]", mode[color]);
 					vmuMsg = edited;
@@ -623,12 +637,12 @@ void DrawWhiteScreen()
 			{
 				if(!BlackLevel)
 				{
-					BlackLevel = 0.075f;
+					BlackLevel = 0x13;  // 0.075 of 0xFF
 					sprintf(msg, "#GBlack Level: 7.5 IRE#G");
 				}
 				else
 				{
-					BlackLevel = 0.0f;
+					BlackLevel = 0;
 					sprintf(msg, "#GBlack Level: 0 IRE#G");
 				}
 				text = 140;
@@ -639,12 +653,12 @@ void DrawWhiteScreen()
 
 			if(editmode)
 			{
-				float *current = NULL;
+				int *current = NULL;
 
-				sprintf(msg, "#%cR:%0.2f#W #%cG:%0.2f#W #%cB:%0.2f#W", 
-					sel == 1 ? 'G' : 'W', (double)cr,
-					sel == 2 ? 'G' : 'W', (double)cg, 
-					sel == 3 ? 'G' : 'W', (double)cb);
+				sprintf(msg, "#%cR:0x%02x#W #%cG:0x%02x#W #%cB:0x%02x#W", 
+					sel == 1 ? 'G' : 'W', cr,
+					sel == 2 ? 'G' : 'W', cg, 
+					sel == 3 ? 'G' : 'W', cb);
 				text = 1;
 	
 				if ( pressed & CONT_DPAD_LEFT )
@@ -678,9 +692,9 @@ void DrawWhiteScreen()
 				{				
 					if(current)
 					{
-						(*current) += .01;
-						if(*current > 1.0f)
-							*current = 1.0f;
+						(*current) += 1;
+						if(*current > 0xff)
+							*current = 0xff;
 					}
 				}
 				
@@ -688,7 +702,7 @@ void DrawWhiteScreen()
 				{			
 					if(current)
 					{
-						(*current) -= .01;
+						(*current) -= 1;
 						if(*current < 0)
 							*current = 0;
 					}
@@ -697,22 +711,22 @@ void DrawWhiteScreen()
 				if ( pressed & CONT_X )
 				{				
 					if(current)			
-						*current  = 0.0f;					
+						*current  = 0;					
 				}
 				
 				if ( pressed & CONT_Y )
 				{			
 					if(current)				
-						*current = 1.0f;
+						*current = 0xff;
 				}
 				
-				if(cr + cb + cg != 3*1.0f && vmuMsg != edited)
+				if(cr + cb + cg != 3*0xff && vmuMsg != edited)
 				{
 					vmuMsg = edited;
 					refreshVMU = 1;
 				}
 				
-				if(cr + cb + cg == 3*1.0f && vmuMsg == edited)
+				if(cr + cb + cg == 3*0xff && vmuMsg == edited)
 				{
 					vmuMsg = mode[color];
 					refreshVMU = 1;
@@ -732,29 +746,19 @@ void DrawWhiteScreen()
 			switch(color)
 			{
 				case 0:
-					back->r = cr;
-					back->g = cg;
-					back->b = cb;
+					UseDirectColor(back, 0xff, cr, cg, cb);
 					break;
 				case 1:
-					back->r = BlackLevel;
-					back->g = BlackLevel;
-					back->b = BlackLevel;
+					UseDirectColor(back, 0xff, BlackLevel, BlackLevel, BlackLevel);
 					break;
 				case 2:
-					back->r = 1.0f;
-					back->g = 0.0f;
-					back->b = 0.0f;
+					UseDirectColor(back, 0xff, 0xff, 0x00, 0x00);
 					break;
 				case 3:
-					back->r = 0.0f;
-					back->g = 1.0f;
-					back->b = 0.0f;
+					UseDirectColor(back, 0xff, 0x00, 0xff, 0x00);
 					break;
 				case 4:
-					back->r = 0.0f;
-					back->g = 0.0f;
-					back->b = 1.0f;
+					UseDirectColor(back, 0xff, 0x00, 0x00, 0xff);
 					break;
 			}
 		}
@@ -2164,7 +2168,7 @@ void DrawHCFR()
 		resmenudata[i].option_text = filenames[i].dispname;
 	}
 	
-	selected_hcfr = SelectMenu("Select Standard", resmenudata, num_files, selected_hcfr + 1);
+	selected_hcfr = SelectMenuEx("Select Standard", resmenudata, num_files, selected_hcfr + 1, HCFR_MENU_HELP);
 	if(selected_hcfr == MENU_CANCEL)
 	{
 		releaseCSVList(&filenames, num_files);
