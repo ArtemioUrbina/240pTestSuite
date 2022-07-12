@@ -40,7 +40,7 @@ Under the #CReferences#C tab, choose your color
 space. #CPAL/SECAM#C is recommended for #YPAL CRT#Y
 users. #CSDTV - REC601 (NTSC)#C is recommended for
 #YNTSC CRT#Y users. #CHD TV REC 709#C is recommended
-for #YHD#Y and #YUHD#Y in #YSDR#Y flat panel TV users.
+for #YHD#Y and #YUHD/4K#Y in #YSDR#Y flat panel TV users.
 #CsRGB#C is recommended for #YPC VGA#Y and up #YCRT
 monitors#Y. 
 
