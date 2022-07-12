@@ -102,6 +102,13 @@ void DrawMessage(char *msg);
 void DrawMessageOnce(char *msg);
 int DrawMessageInternal(char *msg, int waitinput, int isquestion);
 
+#define FB_MENU_NORMAL		1
+#define FB_MENU_HELP		2
+#define FB_MENU_CREDITS		3
+extern ImagePtr	fbtexture;
+
+uint8 BackupFBTexture();
+void FreeTextureFB();
 void ShowLCDVMUWarning();
 
 #endif

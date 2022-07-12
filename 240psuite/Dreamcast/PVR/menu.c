@@ -52,53 +52,38 @@ void FreeTextureFB()
 {
 	if(fbtexture)
 		FreeImage(&fbtexture);
-
-	if(EndProgram)
+	if(fbtextureBuffer)
 	{
-		if(fbtextureBuffer)
-		{
-			free(fbtextureBuffer);
-			fbtextureBuffer = NULL;
-		}
+		dbglog(DBG_ERROR, "FB Texture Buffer was not NULL\n");
+		free(fbtextureBuffer);
+		fbtextureBuffer = NULL;
 	}
 }
 
 void InitTextureFB()
 {	
+	if(fbtexture)
+	{
+		dbglog(DBG_ERROR, " === Called InitTextureFB when valid Fb is loaded ===\n");
+		return;
+	}	
+
+	fbtexture = (ImagePtr)malloc(sizeof(struct image_st));	
 	if(!fbtexture)
 	{
-		fbtexture = (ImagePtr)malloc(sizeof(struct image_st));	
-		if(!fbtexture)
-		{
-			dbglog(DBG_ERROR, "Could not malloc image struct for FB\n");
-			return;
-		}
-		memset(fbtexture, 0, sizeof(struct image_st));
-		fbtexture->tex = NULL;
+		dbglog(DBG_ERROR, "Could not malloc image struct for FB\n");
+		return;
 	}
-
+	memset(fbtexture, 0, sizeof(struct image_st));
+	
+	fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); //Min	size for 640x480
 	if(!fbtexture->tex)
 	{
-		fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); //Min	size for 640x480
-		if(!fbtexture->tex)
-		{
-			dbglog(DBG_ERROR, "Could not pvr mem malloc image struct for FB\n");
-			FreeTextureFB();
-			return;
-		}
+		dbglog(DBG_ERROR, "Could not pvr mem malloc image struct for FB\n");
+		FreeTextureFB();
+		return;
 	}
-
-	if(!fbtextureBuffer)
-	{
-		fbtextureBuffer = (uint16 *)malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
-		if(fbtextureBuffer == NULL)
-		{
-			FreeTextureFB();
-			dbglog(DBG_CRITICAL, "FB copy can't allocate memory\n");
-			return;
-		}
-		memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
-	}
+	memset(fbtexture->tex, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 
 	fbtexture->r = 1.0f;
 	fbtexture->g = 1.0f;
@@ -119,18 +104,37 @@ void InitTextureFB()
 	fbtexture->h = fbtexture->th;
 	fbtexture->FH = 0;
 	fbtexture->FV = 0;
-	fbtexture->texFormat = PVR_TXRFMT_ARGB1555;
+	fbtexture->texFormat = PVR_TXRFMT_RGB565 | PVR_TXRFMT_NONTWIDDLED;
 	IgnoreOffset(fbtexture);
 	
 	InsertImage(fbtexture, "FB");
 }
 
+uint8 BackupFBTexture()
+{
+	if(!fbtexture || !fbtexture->tex)
+		return 0;
+		
+	if(!fbtextureBuffer)
+	{
+		fbtextureBuffer = (uint16 *)malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
+		if(fbtextureBuffer == NULL)
+		{
+			dbglog(DBG_CRITICAL, "FB copy can't allocate memory\n");
+			return 0;
+		}
+	}
+	memcpy(fbtextureBuffer, fbtexture->tex, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
+	return 1;
+}
+
 uint8 ReloadFBTexture()
 {
-	if(fbtextureBuffer && fbtexture)
+	if(fbtexture)
 	{
 		if(!fbtexture->tex)
 		{
+			dbglog(DBG_INFO, "Reallocating FB texture in PVR\n");
 			fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 			if(!fbtexture->tex)
 			{
@@ -139,136 +143,37 @@ uint8 ReloadFBTexture()
 			}
 			memset(fbtexture->tex, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 		}
+		
+		if(fbtextureBuffer)
+		{
+			memcpy(fbtexture->tex, fbtextureBuffer, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
+			free(fbtextureBuffer);
+			fbtextureBuffer = NULL;
+		}
 
-		pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex,
-			fbtexture->tw, fbtexture->th, PVR_TXRLOAD_16BPP|PVR_TXRLOAD_SQ);
 		return 1;
 	}
 	return 0;
 }
 
-int CopyFBToBG()
-{
-	int 	i, numpix, w, tw, th;
-	uint16	npixel;
-	uint32	save;
-	uint32	pixel;	
-	uint16	*fbcopy = NULL;
-	uint16	r, g, b;
-#ifdef BENCHMARK
-	uint64	start, end, mstart;
-		
-	start = timer_us_gettime64();
-	mstart = start;
-#endif
-
-	if(!fbtexture)
-		return 0;
-
-	numpix = vid_mode->width * vid_mode->height;
-	w = vid_mode->width;
-	tw = FB_TEX_H;
-	th = FB_TEX_V;
-	if(w == 320)
-	{
-		tw /= 2;
-		if(dH < 256)
-			th /= 2;
-	}
-
-	if(vid_mode->pm != PM_RGB565)
-	{
-		dbglog(DBG_CRITICAL, "FB copy: video mode not 565\n");
-		return 0;
-	}
-
-	fbcopy = (uint16*)malloc(sizeof(uint16)*numpix);
-	if(!fbcopy)
-	{
-		dbglog(DBG_CRITICAL, "FB copy: not enough memory\n");
-		return 0;
-	}
-	
-	memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
-#ifdef BENCHMARK
-	end = timer_us_gettime64();
-	dbglog(DBG_INFO, "FB buffer init took %g ms\n", (double)(end - start)/1000.0);
-	start = timer_us_gettime64();
-#endif
-
-	save = irq_disable();
-	memcpy(fbcopy, vram_s, sizeof(uint16)*numpix);
-	irq_restore(save);
-
-#ifdef BENCHMARK
-	end = timer_us_gettime64();
-	dbglog(DBG_INFO, "FB buffer memcpy took %g ms\n", (double)(end - start)/1000.0);
-	start = timer_us_gettime64();
-#endif
-
-	for(i = 0; i < numpix; i++)
-	{
-		uint x = 0, y = 0;
-
-		pixel = fbcopy[i];
-
-		r = (((pixel >> 11) & 0x1f) << 0);
-		g = (((pixel >>  5) & 0x3f) >> 1);
-		b = (((pixel >>  0) & 0x1f) << 0);
-
-		npixel = r << 2 | rotr(g, 3) | b << 8 | 0x80;
-
-		x = i % w;
-		y = i / w;
-		y *= tw;
-		fbtextureBuffer[y+x] = ((npixel << 8) & 0xff00) | ((npixel >> 8) & 0x00ff);
-	}
-		
-	free(fbcopy);
-	fbcopy = NULL;
-
-#ifdef BENCHMARK
-	end = timer_us_gettime64();
-	dbglog(DBG_INFO, "FB conversion took %g ms\n", (double)(end - start)/1000.0);
-	start = timer_us_gettime64();
-#endif
-
-	pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex, tw, th,
-		PVR_TXRLOAD_16BPP|PVR_TXRLOAD_SQ);
-	fbtexture->tw = tw;
-	fbtexture->th = th;
-	fbtexture->w = fbtexture->tw;
-	fbtexture->h = fbtexture->th;
-
-#ifdef BENCHMARK
-	end = timer_us_gettime64();
-	dbglog(DBG_INFO, "FB texture upload took %g ms\n", (double)(end - start)/1000.0);
-	
-	dbglog(DBG_INFO, "FB texture entire process took %g ms\n", (double)(end - mstart)/1000.0);
-#endif
-
-	fbtexture->r = 0.75f;
-	fbtexture->g = 0.75f;
-	fbtexture->b = 0.75f;
-	
-	return 1;
-}
-
 void ShowMenu(char *filename)
 {
-	DrawMenu = 1;
+	DrawMenu = FB_MENU_NORMAL;
 	HelpData = filename;
+	InitTextureFB();
 }
 
 void ShowHelpWindow(char *Data)
 {
-	if(!settings.IgnoreFrameBuffer)
-	{
-		InitTextureFB();
-		CopyFBToBG();
-	}
-	HelpWindow(Data, fbtexture);
-	FreeTextureFB();
+	DrawMenu = FB_MENU_HELP;
+	HelpData = Data;
+	InitTextureFB();
+}
+
+void DrawCreditsOnFB()
+{
+	DrawMenu = FB_MENU_CREDITS;
+	InitTextureFB();
 }
 
 void DrawShowMenu()
@@ -285,13 +190,8 @@ void DrawShowMenu()
 					"Close",
 					"Exit"
 				};
-
-	if(!settings.IgnoreFrameBuffer)
-	{
-		InitTextureFB();
-		CopyFBToBG();
-	}
-
+	float		r = 0, b = 0, g = 0;
+	
 	back = LoadKMG("/rd/FloatMenu.kmg.gz", 0);
 	if(!back)
 	{
@@ -303,6 +203,17 @@ void DrawShowMenu()
 	back->y = (dH - MENUSIZE_H) / 2;
 	back->alpha = 0.75f;
 
+	if(fbtexture)
+	{
+		r = fbtexture->r;
+		g = fbtexture->b;
+		b = fbtexture->g;
+
+		fbtexture->r = 0.6;
+		fbtexture->g = 0.6;
+		fbtexture->b = 0.6;
+	}
+	
 	refreshVMU = 1;
 	while(!done && !EndProgram)
 	{
@@ -400,12 +311,17 @@ void DrawShowMenu()
 		}
 	}
 	
-	FreeTextureFB();
 	FreeImage(&back);
 	HelpData = GENERALHELP;
 
 	refreshVMU = 1;
-
+	
+	if(fbtexture)
+	{
+		fbtexture->r = r;
+		fbtexture->g = g;
+		fbtexture->b = b;
+	}
 	return;
 }
 
@@ -435,7 +351,6 @@ void ChangeOptions(ImagePtr screen)
 		return;
 
 	back->alpha = 0.75f;
-
 	
 	while(!close && !EndProgram) 
 	{		
@@ -641,21 +556,16 @@ void ChangeOptions(ImagePtr screen)
 					"Load Options from VMU"); y += fh; c++;
 			loaded = -1;
 		}
-		
-		// Option 13, Disable FrameBuffer copies
-		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Use FrameBuffer copy:");
-		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
-			settings.IgnoreFrameBuffer == 0 ? "ON" : "OFF");  y += fh; c++;
 			
-		// Option 14, Match IRE to 714.3mV with alpha in relevant patterns
+		// Option 13, Match IRE to 714.3mV with alpha in relevant patterns
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Approximate 714.3mV IRE:");
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 			settings.matchIRE ? "ON" : "OFF");  y += fh; c++;
 		
-		// Option 15, Reset to default options
+		// Option 14, Reset to default options
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Reset all options to defaults"); y += fh; c++;
 		
-		// Option 16, Exit
+		// Option 15, Exit
 		DrawStringS(x, y, 1.0f, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 		
 		// Comments on options
@@ -671,7 +581,7 @@ void ChangeOptions(ImagePtr screen)
 		if(sel == 11 && hint == 1)
 			DrawStringB(x-15, 204+fh, r, g, b,
 				"Hold L or R while saving for hidden eye-catchers!");
-		if(sel == 14)
+		if(sel == 13)
 			DrawStringB(x-15, 204+fh, r, g, b, "In relevant patterns only. Stock output is ~800mV.");
 		r = g = b = 0.8;
 		DrawStringS(x+60, 200, r, g, b, "Press START for help");
@@ -877,12 +787,9 @@ void ChangeOptions(ImagePtr screen)
 						}
 						break;
 					case 13:
-						settings.IgnoreFrameBuffer = !settings.IgnoreFrameBuffer;
-						break;
-					case 14:
 						settings.matchIRE = !settings.matchIRE;
 						break;
-					case 15: // Option 14, Reset to default options
+					case 14: // Option 14, Reset to default options
 						{
 							struct	settings_st old_settings;
 							
@@ -901,7 +808,7 @@ void ChangeOptions(ImagePtr screen)
 							changedPVR = 1;
 						}
 						break;
-					case 16:
+					case 15:
 						if ( st && st->buttons & CONT_RTRIGGER )
 						{
 							settings.drawborder = !settings.drawborder;
@@ -1243,39 +1150,63 @@ void SelectVideoMode(ImagePtr screen)
 			switch(sel)
 			{
 					case 1:
-						if(vcable != CT_VGA)
+						if(vcable != CT_VGA && vmode != VIDEO_240P)
+						{
 							ChangeResolution(VIDEO_240P);
+							refreshVMU = 1;
+						}
 						break;
 					case 2:
-						if(vcable != CT_VGA)
+						if(vcable != CT_VGA && vmode != VIDEO_480I_A240)
+						{
 							ChangeResolution(VIDEO_480I_A240);
+							refreshVMU = 1;
+						}
 						break;
 					case 3:
-						if(vcable != CT_VGA)
+						if(vcable != CT_VGA && vmode != VIDEO_480I)
+						{
 							ChangeResolution(VIDEO_480I);
+							refreshVMU = 1;
+						}
 						break;
 					case 4:
 						if(vcable != CT_VGA && settings.EnablePAL &&
-							IsPALDC)
+							IsPALDC && vmode != VIDEO_288P)
+						{
 							ChangeResolution(VIDEO_288P);
+							refreshVMU = 1;
+						}
 						break;
 					case 5:
 						if(vcable != CT_VGA && settings.EnablePAL &&
-							IsPALDC)
+							IsPALDC && vmode != VIDEO_576I_A264)
+						{
 							ChangeResolution(VIDEO_576I_A264);
+							refreshVMU = 1;
+						}
 						break;
 					case 6:
 						if(vcable != CT_VGA && settings.EnablePAL &&
-							IsPALDC)
+							IsPALDC && vmode != VIDEO_576I)
+						{
 							ChangeResolution(VIDEO_576I);
+							refreshVMU = 1;
+						}
 						break;
 					case 7:
-						if(vcable == CT_VGA)
+						if(vcable == CT_VGA && vmode != VIDEO_480P_SL)
+						{
 							ChangeResolution(VIDEO_480P_SL);
+							refreshVMU = 1;
+						}
 						break;					
 					case 8:
-						if(vcable == CT_VGA)
+						if(vcable == CT_VGA && vmode != VIDEO_480P)
+						{
 							ChangeResolution(VIDEO_480P);
+							refreshVMU = 1;
+						}
 						break;		
 					case 9:
 						close = 1;
@@ -1322,17 +1253,6 @@ void DrawNish()
 	}
 	FreeImage(&nish);
 	refreshVMU = 1;
-}
-
-void DrawCreditsOnFB()
-{
-	if(!settings.IgnoreFrameBuffer)
-	{
-		InitTextureFB();
-		CopyFBToBG();
-	}
-	DrawCredits(fbtexture);
-	FreeTextureFB();
 }
 
 void DrawCredits(ImagePtr back)
@@ -1402,7 +1322,7 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "shmups regulars");
 		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/"); 
 
-		y += fh; 
+		y += 2*fh; 
 		DrawStringS(x+20, y, 0.0, .75, .75, "This program is free software and open source.");  y += fh;
 		DrawStringS(x+20, y, 0.0, .75, .75, "Source code is available under GPL.");
 

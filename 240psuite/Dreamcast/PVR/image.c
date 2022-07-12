@@ -72,7 +72,11 @@ void CleanImages()
 	{
 		if(Images[i].state != MEM_RELEASED)
 		{
-			dbglog(DBG_CRITICAL, "=== Found unreleased image %s (releasing it) ===\n", Images[i].name);
+			if(Images[i].state == MEM_ERROR)
+				dbglog(DBG_CRITICAL, "=== Found image with MEM_ERROR %s (releasing it) ===\n", Images[i].name);
+			else
+				dbglog(DBG_CRITICAL, "=== Found unreleased image %s (releasing it) ===\n", Images[i].name);
+
 			FreeImage(&Images[i].image);
 			Images[i].state = MEM_RELEASED;
 			Images[i].name[0] = '\0';
@@ -92,10 +96,14 @@ void RefreshLoadedImages()
 	{
 		if(Images[i].state == MEM_TEXRELEASED)
 		{
-			if(Images[i].name[0] == 'F' && Images[i].name[1] == 'B')
+			if(Images[i].name[0] == 'F' && Images[i].name[1] == 'B' 
+				&& Images[i].name[2] == '\0')
 			{
 				if(!ReloadFBTexture())
+				{
 					dbglog(DBG_CRITICAL, "=== Could not reload FrameBuffer ===\n");
+					Images[i].state = MEM_ERROR;
+				}
 				else
 					Images[i].state = MEM_LOADED;
 			}
@@ -116,8 +124,14 @@ void ReleaseTextures()
 	{
 		if(Images[i].state == MEM_LOADED)
 		{
+			if(Images[i].name[0] == 'F' && Images[i].name[1] == 'B' 
+				&& Images[i].name[2] == '\0')
+				BackupFBTexture();
 			if(!FreeImageData(&Images[i].image))
+			{
 				dbglog(DBG_CRITICAL, "=== Could not free image: %s ===\n", Images[i].name);
+				Images[i].state = MEM_ERROR;
+			}
 			else
 				Images[i].state = MEM_TEXRELEASED;
 		}	
@@ -158,7 +172,7 @@ void ReleaseImage(ImagePtr image)
 		return;
 	}
 
-	for(i = 0; i < MAX_IMAGES && !deleted; i++)
+	for(i = 0; i < MAX_IMAGES; i++)
 	{
 		if(Images[i].image == image)
 		{
@@ -170,6 +184,8 @@ void ReleaseImage(ImagePtr image)
 			else
 				dbglog(DBG_CRITICAL, "=== ReleaseImage: Invalid used image index ===\n");
 			deleted = 1;
+			
+			break;
 		}
 	}
 
@@ -355,9 +371,7 @@ void set_palette(pallette *pal)
 	if(!pal || !pal->numcolors || !pal->colors)
 		return;
 	
-	//pvr_set_pal_format(PVR_PAL_ARGB8888);
-	//pvr_set_pal_entry(0, PACK_ARGB8888(255, 0, 0, 0));	// solid black
-	//pvr_set_pal_entry(1, PACK_ARGB8888(0, 0, 0, 0));	// transparent
+	pvr_set_pal_format(PVR_PAL_ARGB8888);
 	for(p = 0; p < pal->numcolors; p++)
 		pvr_set_pal_entry(p, pal->colors[p]);
 }
@@ -866,7 +880,16 @@ void DrawImageRotate(ImagePtr image, float angle)
 
 inline void StartScene()
 {
-	pvr_scene_begin();
+	if(DrawMenu && fbtexture)
+	{
+		uint32	w, h;
+		
+		w = (uint32) fbtexture->tw;
+		h = (uint32) fbtexture->th;
+		pvr_scene_begin_txr(fbtexture->tex, &w, &h);
+	}
+	else
+		pvr_scene_begin();
 	pvr_list_begin(PVR_LIST_TR_POLY);
 }
 
@@ -879,8 +902,31 @@ inline void EndScene()
 
 	if(DrawMenu)
 	{
+		int	type = 0;
+		
+		type = DrawMenu;
 		DrawMenu = 0;
-		DrawShowMenu();
+		
+		if(fbtexture) // Draw background if already rendered
+		{
+			pvr_scene_begin();
+			pvr_list_begin(PVR_LIST_TR_POLY);
+			
+			DrawImage(fbtexture);	
+			
+			pvr_list_finish();
+			pvr_scene_finish();
+			pvr_wait_ready();
+		}
+		
+		if(type == FB_MENU_NORMAL)
+			DrawShowMenu();
+		if(type == FB_MENU_HELP)
+			HelpWindow(HelpData, fbtexture);
+		if(type == FB_MENU_CREDITS)
+			DrawCredits(fbtexture);
+			
+		FreeTextureFB();
 	}
 	
 	if(vmu_found_bad_lcd_vmu())

@@ -61,6 +61,7 @@ struct image_st{
 #define MEM_RELEASED	0
 #define MEM_LOADED		1
 #define MEM_TEXRELEASED	2
+#define MEM_ERROR		3
 
 typedef struct image_mem_st ImageMem;
 
