@@ -39,12 +39,14 @@ void DrawPluge()
 {
 	int 		done = 0, text = 0, ShowHelp = 0, oldvmode = -1;
 	int			matchIRE = settings.matchIRE, text_mV = 0;
+	int			delay_palette = 0;
 	uint16		pressed;		
 	ImagePtr	back = NULL, backFull = NULL;
 	ImagePtr	backNTSC = NULL, black = NULL, highlight = NULL;
 	controller	*st = NULL;
-	char		msg[50], vmuMsg2[50];
-	pallette	pNTSC, pFull;
+	char		msg[50], *vmufull = "Pluge Full", *vmuNTSC = "Pluge NTSC";
+	char		*vmuMsg1 = vmufull, vmuMsg2[50];
+	pallette	pNTSC, pFull, *pal = NULL;
 
 	backNTSC = LoadKMG("/rd/plt888/pluge.dgz", 0);
 	if(!backNTSC)
@@ -105,6 +107,18 @@ void DrawPluge()
 			oldvmode = vmode;
 		}
 
+		// Sync palette change with frame buffer
+		// VMU update delays this, hence...
+		if(delay_palette)
+		{
+			delay_palette --;
+			if(!delay_palette && pal)
+			{
+				set_palette(pal);
+				refreshVMU = 1;
+			}
+		}
+		
 		StartScene();
 
 		DrawImage(black);
@@ -178,7 +192,7 @@ void DrawPluge()
 		}
 
 		EndScene();
-		VMURefresh(" Pluge ", vmuMsg2);
+		VMURefresh(vmuMsg1, vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -191,23 +205,24 @@ void DrawPluge()
 
 			if (pressed & CONT_A)
 			{
-				if(!IsPAL)
+				if(back == backNTSC)
 				{
-					if(back == backNTSC)
-					{
-						sprintf(msg, "RGB Full Range");
-						back = backFull;
-						set_palette(&pFull);
-					}
-					else
-					{
-						sprintf(msg, "NTSC 7.5 IRE");
-						back = backNTSC;
-						set_palette(&pNTSC);
-					}
-						
-					text = 60;
+					sprintf(msg, "RGB Full Range");
+					back = backFull;
+					delay_palette = 2;	// delay palette change by two frames, to match frame buffer
+					vmuMsg1 = vmufull;
+					pal = &pFull;
 				}
+				else
+				{
+					sprintf(msg, "NTSC 7.5 IRE");
+					back = backNTSC;
+					delay_palette = 2;	// delay palette change by two frames, to match frame buffer
+					vmuMsg1 = vmuNTSC;
+					pal = &pNTSC;
+				}
+					
+				text = 60;
 			}
 			
 			if (pressed & CONT_X)
@@ -808,13 +823,14 @@ void DrawColorBars()
 {
 	int 		done = 0, type = 2, showborder = 0, oldvmode = -1;
 	int			matchIRE = settings.matchIRE, text_mV = 0;
+	int			delay_palette = 1;
 	uint16		pressed;		
 	ImagePtr	back = NULL, backgrid = NULL, backcolor = NULL;
 	ImagePtr	border = NULL, black = NULL;
 	ImagePtr	color_low = NULL, color_high = NULL;
 	controller	*st = NULL;
-	char		vmuMsg2[50];
-	pallette	pcolor, pcgrid, phigh, plow, *pal = NULL;
+	char		vmuMsg1[50], vmuMsg2[50], *cbnormal = "CB: Normal";
+	pallette	pcolor, pcgrid, phigh, plow, *pal = &pcolor;
 
 	backcolor = LoadKMG("/rd/plt888/color.dgz", 0);
 	if(!backcolor)
@@ -848,6 +864,7 @@ void DrawColorBars()
 	if(!black)
 		return;
 	
+	sprintf(vmuMsg1, "%s", cbnormal);
 	sprintf(vmuMsg2, matchIRE ? " 714.3 mV" : " 800.0 mV");
 	while(!done && !EndProgram) 
 	{
@@ -860,29 +877,14 @@ void DrawColorBars()
 			oldvmode = vmode;
 		}
 		
-		if(!pal)
+		if(delay_palette)
 		{
-			switch(type)
+			delay_palette --;
+			if(!delay_palette && pal)
 			{
-				case 0:
-					pal = &pcgrid;
-					break;
-				case 1:
-					pal = &plow;
-					break;
-				case 2:
-					pal = &pcolor;
-					break;
-				case 3:
-					pal = &phigh;
-					break;
-				default:
-					pal = &pcolor;
-					type = 2;
-					dbglog(DBG_ERROR, "Invalid input received for type and palette\n");
-					break;
+				set_palette(pal);
+				refreshVMU = 1;
 			}
-			set_palette(pal);
 		}
 		
 		StartScene();
@@ -893,18 +895,23 @@ void DrawColorBars()
 			{
 				case 0:
 					back = backgrid;
+					sprintf(vmuMsg1, "CB: Grid");
 					break;
 				case 1:
 					back = color_low;
+					sprintf(vmuMsg1, "CB: Low");
 					break;
 				case 2:
 					back = backcolor;
+					sprintf(vmuMsg1, "%s", cbnormal);
 					break;
 				case 3:
 					back = color_high;
+					sprintf(vmuMsg1, "CB: High");
 					break;
 				default:
 					back = backcolor;
+					sprintf(vmuMsg1, "%s", cbnormal);
 					type = 2;
 					dbglog(DBG_ERROR, "Invalid input received for type and palette\n");
 					break;
@@ -946,7 +953,7 @@ void DrawColorBars()
 			showborder--;
 		}
 		EndScene();
-		VMURefresh("Colorbars", vmuMsg2);
+		VMURefresh(vmuMsg1, vmuMsg2);
 
 		st = ReadController(0, &pressed);
 		if(st)
@@ -963,7 +970,6 @@ void DrawColorBars()
 				
 				back = NULL;
 				pal = NULL;
-				refreshVMU = 1;
 			}
 			
 			if(type)
@@ -975,7 +981,6 @@ void DrawColorBars()
 						type = 1;
 					back = NULL;
 					pal = NULL;
-					refreshVMU = 1;
 				}
 				
 				if (pressed & CONT_RTRIGGER)
@@ -985,7 +990,6 @@ void DrawColorBars()
 						type = 3;
 					back = NULL;
 					pal = NULL;
-					refreshVMU = 1;
 				}
 			}
 			
@@ -1002,6 +1006,31 @@ void DrawColorBars()
 
 			if (pressed & CONT_START)
 				ShowMenu(COLORBARSHELP);
+		}
+		
+		if(!pal)
+		{
+			switch(type)
+			{
+				case 0:
+					pal = &pcgrid;
+					break;
+				case 1:
+					pal = &plow;
+					break;
+				case 2:
+					pal = &pcolor;
+					break;
+				case 3:
+					pal = &phigh;
+					break;
+				default:
+					pal = &pcolor;
+					type = 2;
+					dbglog(DBG_ERROR, "Invalid input received for type and palette\n");
+					break;
+			}
+			delay_palette = 2;
 		}
 	}
 	FreeImage(&border);

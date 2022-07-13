@@ -427,6 +427,45 @@ void JoystickDirections(controller *st, uint16 *pressed, int *joycntx, int *joyc
 		*joycnty = 0;
 }
 
+int rumble_puru(maple_device_t *dev, int type)
+{
+	if(!(dev->info.functions & MAPLE_FUNC_PURUPURU))
+		return 0;
+	
+	// Functions from the "performance" and official rumble
+	if(dev->info.function_data[0] & 0x00000001)	
+	{
+		purupuru_effect_t	effect;
+		
+		effect.duration = 6;
+		effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(4)|PURUPURU_EFFECT2_LINTENSITY(4);
+		effect.effect1 = PURUPURU_EFFECT1_INTENSITY(7);
+		if(type)
+			effect.special = PURUPURU_SPECIAL_MOTOR1;
+		else
+			effect.special = PURUPURU_SPECIAL_MOTOR2;
+		return(purupuru_rumble(dev, &effect) == MAPLE_EOK);
+	}
+	
+	// Functions from the Fishing Rod
+	if(dev->info.function_data[0] & 0x00000002)
+	{
+		// these values were found at random and
+		// tuned for length
+		return(purupuru_rumble_raw(dev, 
+				type ? 0x030FF21E : 0x0355612D) == MAPLE_EOK);
+	}
+	
+	return 0;
+}
+
+int stop_puru(maple_device_t *dev)
+{
+	if(!(dev->info.functions & MAPLE_FUNC_PURUPURU))
+		return 0;
+	return(purupuru_rumble_raw(dev, 0x00000000) == MAPLE_EOK);
+}
+
 #ifdef DCLOAD
 void PrintDebugController(cont_state_t *st)
 {

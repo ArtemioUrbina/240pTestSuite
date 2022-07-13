@@ -1109,8 +1109,6 @@ void ListMapleDevices()
 {
 	int 			done = 0, sel = 1, oldvmode = -1, c = -1;
 	int				v_scroll = 0, joycnt = 0;
-	int				puru_timeout = 0, active_puru = 0;
-	int				vmu_timeout = 0, active_vmu = 0;
 	uint16			pressed;		
 	ImagePtr		back = NULL, black = NULL;
 	controller		*st = NULL;
@@ -1161,36 +1159,7 @@ void ListMapleDevices()
 		EndScene();
 
 		VMURefresh("Maple", "Devices");
-		if(vmu_timeout)
-		{
-			vmu_timeout --;
-			if(vmu_timeout == 0 && active_vmu)
-			{
-				maple_device_t	*dev = NULL;
-				
-				dev = maple_enum_type(active_vmu - 1, 0xffffffff);
-				if(dev && dev->info.functions & MAPLE_FUNC_LCD)
-					clearVMUGraphicDev(dev);
-				active_vmu = 0;
-				refreshVMU = 1;
-			}
-			
-		}
 
-		if(puru_timeout)
-		{
-			puru_timeout --;
-			if(puru_timeout == 0 && active_puru)
-			{
-				maple_device_t	*dev = NULL;
-				
-				dev = maple_enum_type(active_puru - 1, 0xffffffff);
-				if(dev && dev->info.functions & MAPLE_FUNC_PURUPURU)
-					purupuru_rumble_raw(dev, 0x00000000);
-				active_puru = 0;
-			}
-		}
-		
 		st = ReadController(0, &pressed);
 		JoystickMenuMove(st, &sel, c, &joycnt);
 		if(st)
@@ -1282,7 +1251,7 @@ void ListMapleDevices()
 			}
 			
 			// Bonus device functions
-			if (!active_puru && sel > 0 &&
+			if (sel > 0 &&
 					(pressed & CONT_DPAD_RIGHT ||
 					pressed & CONT_DPAD_LEFT))
 			{
@@ -1291,54 +1260,44 @@ void ListMapleDevices()
 				dev = maple_enum_type(sel - 1, 0xffffffff);
 				if(dev)
 				{
+					char	dev_msg[256];
+					
 					if(dev->info.functions & MAPLE_FUNC_PURUPURU)
-					{						
-						if(dev->info.function_data[0] & 0x00000001)			// Functions from the "performance" rumble
-						{
-							purupuru_effect_t	effect;
-							
-							effect.duration = 20;
-							effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1)|PURUPURU_EFFECT2_LINTENSITY(1);
-							effect.effect1 = PURUPURU_EFFECT1_INTENSITY(7);
-							if(pressed & CONT_DPAD_RIGHT)
-								effect.special = PURUPURU_SPECIAL_MOTOR1;
-							else
-								effect.special = PURUPURU_SPECIAL_MOTOR2;
-							if(purupuru_rumble(dev, &effect) == MAPLE_EOK)
-								DrawMessageOnce("Activating #YJump Pack#Y...");
-							else
-								DrawMessage("Rumble effect failed");
-							
-							timer_spin_sleep(500);
-							//active_puru = sel;
-							//puru_timeout = 120;
-						}
+					{
+						int		useMotor1 = 0;
 						
-						if(dev->info.function_data[0] & 0x00000002)			// Functions from the Fishing Rod
-						{
-							if(pressed & CONT_DPAD_RIGHT)
-								purupuru_rumble_raw(dev, 0x030FF21E);		// these values were found at random and
-							else											// tuned for length
-								purupuru_rumble_raw(dev, 0x0355612D);
-							active_puru = sel;
-							puru_timeout = 120;
-						}
+						useMotor1 = pressed & CONT_DPAD_RIGHT;
+						sprintf(dev_msg, "Activating #YJump Pack#Y at %c%c (Motor %d)...",
+								'A'+(dev->port), '0'+(dev->unit),
+								useMotor1 ? 1 : 2);
+						DrawMessageOnce(dev_msg);
+						if(rumble_puru(dev, useMotor1))
+							timer_spin_sleep(500);
+						else
+							DrawMessage("Rumble effect failed");
+						stop_puru(dev);
 					}
 					
 					if(dev->info.functions & MAPLE_FUNC_CLOCK)
 					{
 						if(pressed & CONT_DPAD_RIGHT)
 						{
+							sprintf(dev_msg, "Beeping #YVMU#Y at %c%c...", 
+								'A'+(dev->port), '0'+(dev->unit));
+							DrawMessageOnce(dev_msg);
 							vmu_beep_raw(dev, 0x65f0);
-							DrawMessageOnce("Beeping #YVMU#Y...");
 							timer_spin_sleep(800);
 							vmu_beep_raw(dev, 0);
 						}
 						else
 						{
+							sprintf(dev_msg, "Drawing to #YVMU#Y at %c%c...", 
+								'A'+(dev->port), '0'+(dev->unit));
+							DrawMessageOnce(dev_msg);
 							updateVMU_SD_Dev(dev);
-							vmu_timeout = 120;
-							active_vmu = sel;
+							timer_spin_sleep(1000);
+							clearVMUGraphicDev(dev);  // it may not be the only one
+							refreshVMU = 1;
 						}
 					}
 				}

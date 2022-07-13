@@ -124,9 +124,6 @@ void ReleaseTextures()
 	{
 		if(Images[i].state == MEM_LOADED)
 		{
-			if(Images[i].name[0] == 'F' && Images[i].name[1] == 'B' 
-				&& Images[i].name[2] == '\0')
-				BackupFBTexture();
 			if(!FreeImageData(&Images[i].image))
 			{
 				dbglog(DBG_CRITICAL, "=== Could not free image: %s ===\n", Images[i].name);
@@ -916,16 +913,7 @@ void DrawImageRotate(ImagePtr image, float angle)
 
 inline void StartScene()
 {
-	if(DrawMenu && fbtexture)
-	{
-		uint32	w, h;
-		
-		w = (uint32) fbtexture->tw;
-		h = (uint32) fbtexture->th;
-		pvr_scene_begin_txr(fbtexture->tex, &w, &h);
-	}
-	else
-		pvr_scene_begin();
+	pvr_scene_begin();
 	pvr_list_begin(PVR_LIST_TR_POLY);
 }
 
@@ -943,24 +931,13 @@ inline void EndScene()
 		type = DrawMenu;
 		DrawMenu = 0;
 		
-		if(fbtexture) // Draw background if already rendered
-		{			
-			pvr_scene_begin();
-			pvr_list_begin(PVR_LIST_TR_POLY);
-			
-			DrawImage(fbtexture);	
-			
-			pvr_list_finish();
-			pvr_scene_finish();
-			pvr_wait_ready();
-		}
-		
 		if(type == FB_MENU_NORMAL)
 			DrawShowMenu();
 		if(type == FB_MENU_HELP)
 			HelpWindow(HelpData, fbtexture);
 		if(type == FB_MENU_CREDITS)
 			DrawCredits(fbtexture);
+
 		if(fbtexture)
 			FreeTextureFB();
 	}

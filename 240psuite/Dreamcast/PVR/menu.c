@@ -54,7 +54,6 @@ void FreeTextureFB()
 		FreeImage(&fbtexture);
 	if(fbtextureBuffer)
 	{
-		dbglog(DBG_ERROR, "FB Texture Buffer was not NULL\n");
 		free(fbtextureBuffer);
 		fbtextureBuffer = NULL;
 	}
@@ -62,28 +61,40 @@ void FreeTextureFB()
 
 void InitTextureFB()
 {	
-	if(fbtexture)
-	{
-		dbglog(DBG_ERROR, " === Called InitTextureFB when valid FB is loaded ===\n");
-		return;
-	}	
-
-	fbtexture = (ImagePtr)malloc(sizeof(struct image_st));	
 	if(!fbtexture)
 	{
-		dbglog(DBG_ERROR, "Could not malloc image struct for FB\n");
-		return;
+		fbtexture = (ImagePtr)malloc(sizeof(struct image_st));	
+		if(!fbtexture)
+		{
+			dbglog(DBG_ERROR, "Could not malloc image struct for FB\n");
+			return;
+		}
+		memset(fbtexture, 0, sizeof(struct image_st));
+		fbtexture->tex = NULL;
 	}
-	memset(fbtexture, 0, sizeof(struct image_st));
-	
-	fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); //Min	size for 640x480
+
 	if(!fbtexture->tex)
 	{
-		dbglog(DBG_ERROR, "Could not pvr mem malloc image struct for FB\n");
-		FreeTextureFB();
-		return;
+		fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES); //Min	size for 640x480
+		if(!fbtexture->tex)
+		{
+			dbglog(DBG_ERROR, "Could not pvr mem malloc image struct for FB\n");
+			FreeTextureFB();
+			return;
+		}
 	}
-	memset(fbtexture->tex, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
+
+	if(!fbtextureBuffer)
+	{
+		fbtextureBuffer = (uint16 *)malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
+		if(fbtextureBuffer == NULL)
+		{
+			FreeTextureFB();
+			dbglog(DBG_CRITICAL, "FB copy can't allocate memory\n");
+			return;
+		}
+		memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
+	}
 
 	fbtexture->r = 1.0f;
 	fbtexture->g = 1.0f;
@@ -104,43 +115,18 @@ void InitTextureFB()
 	fbtexture->h = fbtexture->th;
 	fbtexture->FH = 0;
 	fbtexture->FV = 0;
-	fbtexture->texFormat = PVR_TXRFMT_RGB565 | PVR_TXRFMT_NONTWIDDLED;
+	fbtexture->texFormat = PVR_TXRFMT_ARGB1555;
 	IgnoreOffset(fbtexture);
-	
-	fbtexture->use_direct_color = 0;
-	fbtexture->a_direct = 0xff;
-	fbtexture->r_direct = 0xff;
-	fbtexture->g_direct = 0xff;
-	fbtexture->b_direct = 0xff;
 	
 	InsertImage(fbtexture, "FB");
 }
 
-uint8 BackupFBTexture()
-{
-	if(!fbtexture || !fbtexture->tex)
-		return 0;
-		
-	if(!fbtextureBuffer)
-	{
-		fbtextureBuffer = (uint16 *)malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
-		if(fbtextureBuffer == NULL)
-		{
-			dbglog(DBG_CRITICAL, "FB copy can't allocate memory\n");
-			return 0;
-		}
-	}
-	memcpy(fbtextureBuffer, fbtexture->tex, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
-	return 1;
-}
-
 uint8 ReloadFBTexture()
 {
-	if(fbtexture)
+	if(fbtextureBuffer && fbtexture)
 	{
 		if(!fbtexture->tex)
 		{
-			dbglog(DBG_INFO, "Reallocating FB texture in PVR\n");
 			fbtexture->tex = pvr_mem_malloc(FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 			if(!fbtexture->tex)
 			{
@@ -149,17 +135,119 @@ uint8 ReloadFBTexture()
 			}
 			memset(fbtexture->tex, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
 		}
-		
-		if(fbtextureBuffer)
-		{
-			memcpy(fbtexture->tex, fbtextureBuffer, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
-			free(fbtextureBuffer);
-			fbtextureBuffer = NULL;
-		}
 
+		pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex,
+			fbtexture->tw, fbtexture->th, PVR_TXRLOAD_16BPP|PVR_TXRLOAD_SQ);
 		return 1;
 	}
 	return 0;
+}
+
+int CopyFBToBG()
+{
+	int 	i, numpix, w, tw, th;
+	uint16	npixel;
+	uint32	save;
+	uint32	pixel;	
+	uint16	*fbcopy = NULL;
+	uint16	r, g, b;
+#ifdef BENCHMARK
+	uint64	start, end, mstart;
+		
+	start = timer_us_gettime64();
+	mstart = start;
+#endif
+
+	if(!fbtexture)
+		return 0;
+
+	numpix = vid_mode->width * vid_mode->height;
+	w = vid_mode->width;
+	tw = FB_TEX_H;
+	th = FB_TEX_V;
+	if(w == 320)
+	{
+		tw /= 2;
+		if(dH < 256)
+			th /= 2;
+	}
+
+	if(vid_mode->pm != PM_RGB565)
+	{
+		dbglog(DBG_CRITICAL, "FB copy: video mode not 565\n");
+		return 0;
+	}
+
+	fbcopy = (uint16*)malloc(sizeof(uint16)*numpix);
+	if(!fbcopy)
+	{
+		dbglog(DBG_CRITICAL, "FB copy: not enough memory\n");
+		return 0;
+	}
+	
+	memset(fbtextureBuffer, 0, FB_TEX_H*FB_TEX_V*FB_TEX_BYTES);
+#ifdef BENCHMARK
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "FB buffer init took %g ms\n", (double)(end - start)/1000.0);
+	start = timer_us_gettime64();
+#endif
+
+	save = irq_disable();
+	memcpy(fbcopy, vram_s, sizeof(uint16)*numpix);
+	irq_restore(save);
+
+#ifdef BENCHMARK
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "FB buffer memcpy took %g ms\n", (double)(end - start)/1000.0);
+	start = timer_us_gettime64();
+#endif
+
+	for(i = 0; i < numpix; i++)
+	{
+		uint x = 0, y = 0;
+
+		pixel = fbcopy[i];
+
+		r = (((pixel >> 11) & 0x1f) << 0);
+		g = (((pixel >>  5) & 0x3f) >> 1);
+		b = (((pixel >>  0) & 0x1f) << 0);
+
+		npixel = r << 2 | rotr(g, 3) | b << 8 | 0x80;
+
+		x = i % w;
+		y = i / w;
+		y *= tw;
+		fbtextureBuffer[y+x] = ((npixel << 8) & 0xff00) | ((npixel >> 8) & 0x00ff);
+	}
+		
+	free(fbcopy);
+	fbcopy = NULL;
+
+#ifdef BENCHMARK
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "FB conversion took %g ms\n", (double)(end - start)/1000.0);
+	start = timer_us_gettime64();
+#endif
+
+	pvr_txr_load_ex (fbtextureBuffer, fbtexture->tex, tw, th,
+		PVR_TXRLOAD_16BPP|PVR_TXRLOAD_SQ);
+	fbtexture->tw = tw;
+	fbtexture->th = th;
+	fbtexture->w = fbtexture->tw;
+	fbtexture->h = fbtexture->th;
+
+#ifdef BENCHMARK
+	end = timer_us_gettime64();
+	dbglog(DBG_INFO, "FB texture upload took %g ms\n", (double)(end - start)/1000.0);
+	
+	dbglog(DBG_INFO, "FB texture entire process took %g ms\n", (double)(end - mstart)/1000.0);
+#endif
+
+	fbtexture->r = 0.75f;
+	fbtexture->g = 0.75f;
+	fbtexture->b = 0.75f;
+	
+	return 1;
 }
 
 void ShowMenu(char *filename)
@@ -167,6 +255,7 @@ void ShowMenu(char *filename)
 	DrawMenu = FB_MENU_NORMAL;
 	HelpData = filename;
 	InitTextureFB();
+	CopyFBToBG();
 }
 
 void ShowHelpWindow(char *Data)
@@ -174,12 +263,14 @@ void ShowHelpWindow(char *Data)
 	DrawMenu = FB_MENU_HELP;
 	HelpData = Data;
 	InitTextureFB();
+	CopyFBToBG();
 }
 
 void DrawCreditsOnFB()
 {
 	DrawMenu = FB_MENU_CREDITS;
 	InitTextureFB();
+	CopyFBToBG();
 }
 
 void DrawShowMenu()
