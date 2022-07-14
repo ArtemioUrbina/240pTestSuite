@@ -1515,7 +1515,7 @@ void Draw100IRE()
 	float			ire_level = IRE_MAX, ire_step = 255.0f/10.0f;
 	float			black_level = 0.0f, *change_level = NULL;
 	int				matchIRE = settings.matchIRE, text_mV = 0;
-	uint16			pressed, text = 0, invert = 0;	
+	uint16			pressed, text = 0, text_step = 0, invert = 0;	
 	ImagePtr		back = NULL, white = NULL, black = NULL;
 	controller		*st = NULL;
 	char			msg[50], vmuMsg[50], vmuMsg2[50];
@@ -1584,32 +1584,22 @@ void Draw100IRE()
 		if(matchIRE)
 			back->alpha = alpha;
 
-		if(text)
-		{
-			if(!invert)
-			{
-				if(text > 30)
-					sprintf(msg, "RANGE 0-100 IRE");
-				else
-					sprintf(msg, "%0.0f IRE", (double)((ire_level * 100.0f)/IRE_MAX));
-				DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
-				text --;
-			}
-			else
-			{
-				if(text > 30)
-					sprintf(msg, "RANGE 100-140 IRE");
-				else
-					sprintf(msg, "%0.0f IRE", (double)(100.0f + (black_level * 40.0f)/IRE_MAX));
-				DrawStringS(225, 225, 1.0f, 1.0f, 1.0f, msg);
-				text --;
-			}
-		}
-		
 		if(text_mV)
 		{
-			DrawStringS(225, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
+			DrawStringS(220, 210, 1.0f, 1.0f, 1.0f, vmuMsg2);
 			text_mV--;
+		}
+		
+		if(text)
+		{
+			DrawStringS(220+fw, 210+fh, 1.0f, 1.0f, 1.0f, msg);
+			text --;
+		}
+		
+		if(text_step)
+		{
+			DrawStringS(220, 210+2*fh, 1.0f, 1.0f, 1.0f, vmuMsg);
+			text_step--;
 		}
 
 		EndScene();
@@ -1618,38 +1608,22 @@ void Draw100IRE()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_LTRIGGER)
+			if (pressed & CONT_LTRIGGER 
+				|| pressed & CONT_DPAD_LEFT)
 			{
 				*change_level -= ire_step;
 				if(*change_level <= 0.0f)
 					*change_level = 0.0f;
-				changed_palette = 1;
-				text = 30;
 				vmuMsgSend = 1;
 			}
 		
-			if (pressed & CONT_RTRIGGER)
+			if (pressed & CONT_RTRIGGER
+				|| pressed & CONT_DPAD_RIGHT)
 			{
 				*change_level += ire_step;
 				if(*change_level > IRE_MAX)
 					*change_level = IRE_MAX;
-				changed_palette = 1;
-				text = 30;
 				vmuMsgSend = 1;
-			}
-
-			if (pressed & CONT_A)
-			{
-				invert = !invert;
-				if(!invert)
-					change_level = &ire_level;
-				else
-					change_level = &black_level;
-				ire_level = IRE_MAX;
-				black_level = 0.0f;
-				text = 60;
-				vmuMsgSend = 1;
-				changed_palette = 1;
 			}
 			
 			if(vmuMsgSend)
@@ -1658,12 +1632,11 @@ void Draw100IRE()
 					sprintf(vmuMsg, " %3.0f IRE", (double)((ire_level * 100.0f)/IRE_MAX));
 				else
 					sprintf(vmuMsg, " %3.0f IRE", (double)(100.0f + (black_level * 40.0f)/IRE_MAX));
+				changed_palette = 1;
+				text_step = 30;
 				refreshVMU = 1;
 				vmuMsgSend = 0;
 			}
-		
-			if (pressed & CONT_B)
-				done =	1;
 			
 			if (pressed & CONT_X)	
 			{
@@ -1685,6 +1658,29 @@ void Draw100IRE()
 						ire_step = 255.0f/100.0f;
 						break;
 				}
+				sprintf(vmuMsg, " IRE Step: %02d", 
+						(int)((ire_step * 100.0f)/IRE_MAX));
+				text_step = 30;
+			}
+
+			if (pressed & CONT_A)
+			{
+				invert = !invert;
+				if(!invert)
+				{
+					change_level = &ire_level;
+					sprintf(msg, "RANGE 0-100 IRE");
+				}
+				else
+				{
+					change_level = &black_level;
+					sprintf(msg, "RANGE 100-140 IRE");
+				}
+				ire_level = IRE_MAX;
+				black_level = 0.0f;
+				text = 60;
+				refreshVMU = 1;
+				changed_palette = 1;
 			}
 			
 			if (pressed & CONT_Y)
@@ -1694,6 +1690,9 @@ void Draw100IRE()
 				text_mV = 60;
 				refreshVMU = 1;
 			}
+			
+			if (pressed & CONT_B)
+				done =	1;
 
 			if (pressed & CONT_START)
 				ShowMenu(IREHELP);

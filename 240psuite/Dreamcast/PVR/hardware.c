@@ -612,7 +612,7 @@ void GetControllerPorts(int *ports)
 char kbd_buffer[4][MAX_KBD_BUFF];
 int	 kbd_buffer_pos[4];
 
-void DiplayKeyboard(int num, float x, float y)
+void DiplayKeyboard(int num, float x, float y, int *hit_escape)
 {
 	int				rcv = 0, region = 0;
 	maple_device_t	*dev = NULL;
@@ -643,19 +643,23 @@ void DiplayKeyboard(int num, float x, float y)
 			kbd_buffer_pos[num] = 0;
 		switch(rcv)
 		{
-			case 0x08:		// BACK SPÂCE in ASCII
+			case 0x08:		// Backspace in ASCII
 				if(kbd_buffer_pos[num] > 0)
 					kbd_buffer_pos[num]--;
 				else
 					kbd_buffer_pos[num] = MAX_KBD_BUFF - 2;
 				kbd_buffer[num][kbd_buffer_pos[num]] = ' ';
 				break;
-			case 0x0A:
+			case 0x0A:		// Enter in ASCII
 				if(countLineFeeds(kbd_buffer[num]) < 6)
 				{
 					kbd_buffer[num][kbd_buffer_pos[num]] = (char)rcv;
 					kbd_buffer_pos[num]++;
 				}
+				break;
+			case 0x1B:		// ESCAPE
+				if(hit_escape)
+					*hit_escape = 1;
 				break;
 			default:
 				// ASCII
@@ -664,8 +668,6 @@ void DiplayKeyboard(int num, float x, float y)
 					kbd_buffer[num][kbd_buffer_pos[num]] = (char)rcv;
 					kbd_buffer_pos[num]++;
 				}
-				//else
-					//printf("Key: 0x%X\n", rcv);
 				break;
 		}
 	}
@@ -712,7 +714,7 @@ void ControllerTest()
 
 	while(!done && !EndProgram) 
 	{				
-		int		num_controller = 0, num_keyb = 0;;
+		int		num_controller = 0, num_keyb = 0, hit_escape = 0;
 		float 	x = 35, y = 26, w = 160, h = 10*fh;
 		
 		if(oldvmode != vmode)
@@ -764,20 +766,20 @@ void ControllerTest()
 		
 		// Keyboards if available
 		if(kb_ports[0])
-			DiplayKeyboard(num_keyb++, x, y);
-		else
+			DiplayKeyboard(num_keyb++, x, y, &hit_escape);
+		else if(!ports[0])
 			DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, "#GA0:#G #C(Empty)#C");
 		if(kb_ports[1])
-			DiplayKeyboard(num_keyb++, x+w, y);
-		else
+			DiplayKeyboard(num_keyb++, x+w, y, NULL);
+		else if(!ports[1])
 			DrawStringS(x+w-4*fw, y, 1.0f, 1.0f, 0.0f, "#GB0:#G #C(Empty)#C");
 		if(kb_ports[2])
-			DiplayKeyboard(num_keyb++, x,y+h);
-		else
+			DiplayKeyboard(num_keyb++, x,y+h, NULL);
+		else if(!ports[2])
 			DrawStringS(x-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GC0:#G #C(Empty)#C");
 		if(kb_ports[3])
-			DiplayKeyboard(num_keyb  , x+w, y+h);
-		else
+			DiplayKeyboard(num_keyb  , x+w, y+h, NULL);
+		else if(!ports[3])
 			DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
 						
 		DrawStringS(110, y+2*h-fh, 0.0f, 1.0f, 0.0f, "[Up&Start for Help]"); 
@@ -816,6 +818,9 @@ void ControllerTest()
 				}
 		}
 		
+		// Got Escape on Keyboard and it is controller 1
+		if(hit_escape)
+			done = 1;
 	}
 	// we clear controller buffer for exit
 	ReadController(0, &pressed);

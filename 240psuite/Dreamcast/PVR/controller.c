@@ -8,7 +8,8 @@ char	oldControllerName[256] = { '\0' };
 uint8 	isFishingRod = 0,
 		isMaracas = 0,
 		isStockController = 0,
-		isArcade = 0;
+		isArcade = 0,
+		isKeyboard = 0;
 
 #ifdef DCLOAD
 #define  SCREENSHOTMODE
@@ -19,6 +20,7 @@ void PrintDebugController(cont_state_t *st);
 #define ARCADE	"Arcade Stick                 "
 #define FISHING	"Dreamcast Fishing Controller "
 #define MARACAS	"Maracas Controller           "
+#define KEYBRD	"Keyboard                     "
 
 #define	MARACAS_DEATH_ZONE	20
 #define	MARACAS_RATE		120
@@ -55,12 +57,16 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER);
 	if(!dev)
 	{
-		OldButtonsInternal = 0;
-		oldControllerName[0] = '\0';
-		
-		// check if bad VMU caused a reset issue
-		vmu_report_controller_swap(1);
-		return NULL;
+		dev = maple_enum_type(num, MAPLE_FUNC_KEYBOARD);
+		if(!dev)
+		{
+			OldButtonsInternal = 0;
+			oldControllerName[0] = '\0';
+			
+			// check if bad VMU caused a reset issue
+			vmu_report_controller_swap(1);
+			return NULL;
+		}
 	}
 	
 	if(strcmp(oldControllerName, dev->info.product_name) != 0)
@@ -87,10 +93,10 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	if(!st)
 		return NULL;
 		
-	// Unmapped
 #ifdef DCLOAD
+	// Unmapped
 	//PrintDebugController(st);
-#endif	
+#endif
 
 	if(st && isStockController)
 	{
@@ -305,8 +311,75 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 			st->joyx = 0;
 	}
 	
-	// Mapped
+	if(st && isKeyboard)
+	{
+		int region = 0, rcv = 0;	
+		/*
+			[192 bytes of data]:
+			Functions     : 0x40000000  Function int 0: 0x80000502
+			Function int 1: 0x00000000  Function int 2: 0x00000000
+			Region:         0x01        Connection:     0x00
+			Product Name & License: Keyboard
+			  Produced By or Under License From SEGA ENTERPRISES,LTD.
+			Standby power: 0x012c (300mW) Max: 0x0190 (400mW)
+			Extra data:
+			000 | 56 65 72 73 69 6f 6e 20 31 2e 30 31 30 2c 31 39 | Version 1.010,19
+			010 | 39 39 2f 30 34 2f 32 37 2c 33 31 35 2d 36 32 31 | 99/04/27,315-621
+			020 | 31 2d 41 4d 20 20 20 2c 4b 65 79 20 53 63 61 6e | 1-AM   ,Key Scan
+			030 | 20 4d 6f 64 75 6c 65 20 3a 20 54 68 65 20 32 6e |  Module : The 2n
+			040 | 64 20 45 64 69 74 69 6f 6e 2e 20 30 34 2f 32 35 | d Edition. 04/25
+			050 | 20 4d 6f 64 20 4d 6f 64 20 4d 6f 64 20 4d 6f 64 |  Mod Mod Mod Mod
+			060 | 20 4d 6f 64 20 4d 6f 64 20 4d 6f 64 00 00 00 00 |  Mod Mod Mod
+			070 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			080 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+			End of Extra data
+		*/
+	
+		/*
+		 * We map all controller inputs to some keys
+		 * doens't affect controller test
+		 */
+		 
+		if(dev->info.area_code	== 0x01)
+			region = KBD_REGION_US;
+		else
+			region = KBD_REGION_JP;
+		
+		rcv = kbd_queue_pop(dev, region);
+		if(rcv != -1)
+		{
+			if (rcv == 0x5200)
+				st->buttons |= CONT_DPAD_UP;
+			if (rcv == 0x5100)
+				st->buttons |= CONT_DPAD_DOWN;
+			if (rcv == 0x5000)
+				st->buttons |= CONT_DPAD_LEFT;
+			if (rcv == 0x4F00)
+				st->buttons |= CONT_DPAD_RIGHT;
+			
+			if (rcv == 'z')
+				st->buttons |= CONT_A;
+			if (rcv == 'x')
+				st->buttons |= CONT_B;
+			if (rcv == 'a')
+				st->buttons |= CONT_X;
+			if (rcv == 's')
+				st->buttons |= CONT_Y;
+			if (rcv == 'q')
+				st->buttons |= CONT_LTRIGGER;
+			if (rcv == 'w')
+				st->buttons |= CONT_RTRIGGER;
+			
+			if (rcv == 0x1B)	// ESC
+				st->buttons |= CONT_B;
+			if (rcv == 0x0A)	// ENTER
+				st->buttons |= CONT_START;
+			
+		}
+	}
+	
 #ifdef DCLOAD
+	// Mapped above
 	//PrintDebugController(st);
 #endif	
 	
@@ -364,6 +437,11 @@ void DetectControllerType(maple_device_t *dev)
 		isArcade = 1;
 	else
 		isArcade = 0;
+		
+	if(strcmp(KEYBRD, dev->info.product_name) == 0)
+		isKeyboard = 1;
+	else
+		isKeyboard = 0;
 }
 
 void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)
