@@ -560,13 +560,7 @@ void ReflexNTimming()
 	ImagePtr		back, spriteA, spriteB, fixed;
 	sfxhnd_t		beep;
 	maple_device_t	*purupuru = NULL;
-	static purupuru_effect_t	effect;
 	controller 		*st;
-
-	effect.duration = 1;
-	effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1);
-	effect.effect1 = PURUPURU_EFFECT1_INTENSITY(1);
-	effect.special = PURUPURU_SPECIAL_MOTOR1;
 
 	back = LoadKMG("/rd/black.kmg.gz", 1);
 	if(!back)
@@ -691,7 +685,7 @@ void ReflexNTimming()
 			{
 				if(purupuru)
 				{
-					purupuru_rumble(purupuru, &effect);
+					rumble_puru(purupuru, 1);
 					time_out_puru = 2;
 				}
 			}
@@ -709,7 +703,7 @@ void ReflexNTimming()
 			{
 				if(purupuru)
 				{
-					purupuru_rumble(purupuru, &effect);
+					rumble_puru(purupuru, 1);
 					time_out_puru = 4;
 				}
 			}

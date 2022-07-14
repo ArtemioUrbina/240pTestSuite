@@ -463,7 +463,24 @@ int stop_puru(maple_device_t *dev)
 {
 	if(!(dev->info.functions & MAPLE_FUNC_PURUPURU))
 		return 0;
-	return(purupuru_rumble_raw(dev, 0x00000000) == MAPLE_EOK);
+		
+	if(dev->info.function_data[0] & 0x00000001)	
+	{
+		if(purupuru_rumble_raw(dev, 0x00000000) != MAPLE_EOK)
+			return 0;
+		return 1;
+	}
+	
+	if(dev->info.function_data[0] & 0x00000002)
+	{
+		// disable pulse directly
+		if(purupuru_rumble_raw(dev, 0x030F001E) != MAPLE_EOK)
+			return 0;
+		if(purupuru_rumble_raw(dev, 0x0355002D) != MAPLE_EOK)
+			return 0;
+		return 1;
+	}
+	return 0;
 }
 
 #ifdef DCLOAD

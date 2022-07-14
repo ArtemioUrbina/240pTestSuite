@@ -67,6 +67,8 @@ void ReduceName(char *target, char *source, int truncate)
 	target[len+1] = '\0';
 }
 
+#define CONTROLLER_FUNCTIONS MAPLE_FUNC_CONTROLLER|MAPLE_FUNC_LIGHTGUN
+
 void DiplayController(int num, float x, float y)
 {
 	int				isPressed = 0;
@@ -76,7 +78,7 @@ void DiplayController(int num, float x, float y)
 	char			msg[256], name[256];
 	float			orig_x = x, orig_y = y;
 	
-	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER|MAPLE_FUNC_LIGHTGUN);
+	dev = maple_enum_type(num, CONTROLLER_FUNCTIONS);
 	if(!dev)
 		return;
 	
@@ -432,7 +434,7 @@ void DiplayControllerIgnore(int num, float x, float y)
 	maple_device_t	*dev = NULL;
 	char			msg[256], name[256];
 	
-	dev = maple_enum_type(num, MAPLE_FUNC_CONTROLLER|MAPLE_FUNC_LIGHTGUN);
+	dev = maple_enum_type(num, CONTROLLER_FUNCTIONS);
 	if(!dev)
 		return;
 	
@@ -599,7 +601,87 @@ void GetControllerPorts(int *ports)
 	memset(ports, 0, sizeof(int)*4);
 	for(ctrl = 0; ctrl < 4; ctrl++)
 	{
-		dev = maple_enum_type(ctrl, MAPLE_FUNC_CONTROLLER|MAPLE_FUNC_LIGHTGUN);
+		dev = maple_enum_type(ctrl, CONTROLLER_FUNCTIONS);
+		if(dev)
+			ports[dev->port] = 1;
+	}
+}
+
+#define MAX_KBD_BUFF 20
+
+char kbd_buffer[4][MAX_KBD_BUFF];
+int	 kbd_buffer_pos[4];
+
+void DiplayKeyboard(int num, float x, float y)
+{
+	int				rcv = 0, region = 0;
+	maple_device_t	*dev = NULL;
+	char			msg[256], name[256];
+
+	dev = maple_enum_type(num, MAPLE_FUNC_KEYBOARD);
+	if(!dev)
+		return;
+	
+	if(dev->info.area_code	== 0x01)
+		region = KBD_REGION_US;
+	else
+		region = KBD_REGION_JP;
+	ReduceName(msg, dev->info.product_name, 1);
+	sprintf(name, "#G%c%c:#G %s", 'A'+(dev->port), '0'+(dev->unit), msg);
+	DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, name);
+	y += fh;
+	
+	sprintf(msg, "Power[%u-%u]mW", 
+			dev->info.standby_power, dev->info.max_power);
+	DrawStringS(x, y, 0.0f, 0.7f, 0.6f, msg);
+	y += fh;
+	
+	rcv = kbd_queue_pop(dev, region);
+	if(rcv != -1)
+	{
+		if(rcv != 0x08 && kbd_buffer_pos[num] + 1 == MAX_KBD_BUFF)
+			kbd_buffer_pos[num] = 0;
+		switch(rcv)
+		{
+			case 0x08:		// BACK SPÂCE in ASCII
+				if(kbd_buffer_pos[num] > 0)
+					kbd_buffer_pos[num]--;
+				else
+					kbd_buffer_pos[num] = MAX_KBD_BUFF - 2;
+				kbd_buffer[num][kbd_buffer_pos[num]] = ' ';
+				break;
+			case 0x0A:
+				if(countLineFeeds(kbd_buffer[num]) < 6)
+				{
+					kbd_buffer[num][kbd_buffer_pos[num]] = (char)rcv;
+					kbd_buffer_pos[num]++;
+				}
+				break;
+			default:
+				// ASCII
+				if(rcv >= 0x20 && rcv <= 0x7E)
+				{
+					kbd_buffer[num][kbd_buffer_pos[num]] = (char)rcv;
+					kbd_buffer_pos[num]++;
+				}
+				//else
+					//printf("Key: 0x%X\n", rcv);
+				break;
+		}
+	}
+	
+	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, kbd_buffer[num]);
+}
+
+void GetKeyboardPorts(int *ports)
+{
+	int				kb = 0;
+	maple_device_t	*dev = NULL;
+	
+	memset(ports, 0, sizeof(int)*4);
+	for(kb = 0; kb < 4; kb++)
+	{
+		dev = maple_enum_type(kb, MAPLE_FUNC_KEYBOARD);
 		if(dev)
 			ports[dev->port] = 1;
 	}
@@ -610,7 +692,7 @@ void ControllerTest()
 	uint16			pressed = 0;
 	int 			done = 0, oldvmode = -1;
 	int				ignoreFunctions = 0, timeout = 0;
-	int				ports[4];
+	int				ports[4], kb_ports[4];
 	ImagePtr		back = NULL, black = NULL;
 	maple_device_t	*dev = NULL;
 	cont_state_t 	*st = NULL;
@@ -625,9 +707,12 @@ void ControllerTest()
 	
 	disableSleep();
 	
+	memset(kbd_buffer, 0, sizeof(char)*4*MAX_KBD_BUFF);
+	memset(kbd_buffer_pos, 0, 4*sizeof(int));
+
 	while(!done && !EndProgram) 
 	{				
-		int		num_controller = 0;
+		int		num_controller = 0, num_keyb = 0;;
 		float 	x = 35, y = 26, w = 160, h = 10*fh;
 		
 		if(oldvmode != vmode)
@@ -644,6 +729,7 @@ void ControllerTest()
 		DrawImage(back);
 		
 		GetControllerPorts(ports);
+		GetKeyboardPorts(kb_ports);
 		
 		// IgnoreFunctions lists all inputs regardless
 		// of functions reported
@@ -653,20 +739,12 @@ void ControllerTest()
 			
 			if(ports[0])
 				DiplayController(num_controller++, x, y);
-			else
-				DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, "#GA0:#G #C(Empty)#C");
 			if(ports[1])
 				DiplayController(num_controller++, x+w, y);
-			else
-				DrawStringS(x+w-4*fw, y, 1.0f, 1.0f, 0.0f, "#GB0:#G #C(Empty)#C");
 			if(ports[2])
 				DiplayController(num_controller++, x,y+h);
-			else
-				DrawStringS(x-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GC0:#G #C(Empty)#C");
 			if(ports[3])
 				DiplayController(num_controller  , x+w, y+h);
-			else
-				DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
 				
 			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "[Right&Start on Controller 1 to ignore reported functions]"); 
 		}
@@ -675,23 +753,33 @@ void ControllerTest()
 			DrawStringSCentered(16, 0.0f, 1.0f, 0.0f, "Controller Test #Y(non-reported functions in gray)#Y");
 			if(ports[0])
 				DiplayControllerIgnore(num_controller++, x, y);
-			else
-				DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, "#GA0:#G #C(Empty)#C");
 			if(ports[1])
 				DiplayControllerIgnore(num_controller++, x+w, y);
-			else
-				DrawStringS(x+w-4*fw, y, 1.0f, 1.0f, 0.0f, "#GB0:#G #C(Empty)#C");
 			if(ports[2])
 				DiplayControllerIgnore(num_controller++, x, y+h);
-			else
-				DrawStringS(x-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GC0:#G #C(Empty)#C");
 			if(ports[3])
 				DiplayControllerIgnore(num_controller  , x+w, y+h);
-			else
-				DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
 			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "[Right&Start on Controller 1 for reported functions only]"); 
 		}
 		
+		// Keyboards if available
+		if(kb_ports[0])
+			DiplayKeyboard(num_keyb++, x, y);
+		else
+			DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, "#GA0:#G #C(Empty)#C");
+		if(kb_ports[1])
+			DiplayKeyboard(num_keyb++, x+w, y);
+		else
+			DrawStringS(x+w-4*fw, y, 1.0f, 1.0f, 0.0f, "#GB0:#G #C(Empty)#C");
+		if(kb_ports[2])
+			DiplayKeyboard(num_keyb++, x,y+h);
+		else
+			DrawStringS(x-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GC0:#G #C(Empty)#C");
+		if(kb_ports[3])
+			DiplayKeyboard(num_keyb  , x+w, y+h);
+		else
+			DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
+						
 		DrawStringS(110, y+2*h-fh, 0.0f, 1.0f, 0.0f, "[Up&Start for Help]"); 
 		DrawStringS(70, y+2*h, 0.0f, 1.0f, 0.0f, "[Left&Start on Controller 1 to Exit}"); 
 		
@@ -702,7 +790,7 @@ void ControllerTest()
 		VMURefresh("Controller", ignoreFunctions ? "Ignore" : "Normal");
 		
 		// we do it without helper functions here
-		dev = maple_enum_type(0, MAPLE_FUNC_CONTROLLER|MAPLE_FUNC_LIGHTGUN);
+		dev = maple_enum_type(0, CONTROLLER_FUNCTIONS);
 		if(dev)
 		{			
 			st = (cont_state_t*)maple_dev_status(dev); 
