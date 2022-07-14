@@ -551,7 +551,7 @@ void StripedSpriteTest()
 void ReflexNTimming()
 {
 	char			msg[60], vmuMsg[60];
-	int				clicks[10], done = 0, view = 0;
+	int				clicks[10], done = 0, view = 0, time_out_puru = 0;
 	int				speed = 1, change = 1, oldvmode = -1;
 	int				x, y, x2, y2, audio = 0, pos = 0;
 	int				i = 0, vibrate = 1, vary = 0, variation = 1;
@@ -689,7 +689,40 @@ void ReflexNTimming()
 			if(vibrate)
 			{
 				if(purupuru)
+				{
 					purupuru_rumble(purupuru, &effect);
+					time_out_puru = 2;
+				}
+			}
+		}
+		
+		// we are two frames ahead for puru
+		if((y == 98 && speed == 1) || 
+			(y == 94 && speed == -1))
+		{
+			if(audio)
+				snd_sfx_play(beep, 255, 128);
+
+			purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
+			if(vibrate)
+			{
+				if(purupuru)
+				{
+					purupuru_rumble(purupuru, &effect);
+					time_out_puru = 4;
+				}
+			}
+		}
+		
+		// One frame after stop the rumble
+		if(time_out_puru)
+		{
+			time_out_puru --;
+			if(!time_out_puru)
+			{
+				purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
+				if(purupuru)
+					stop_puru(purupuru);
 			}
 		}
 		
@@ -774,7 +807,16 @@ void ReflexNTimming()
 				audio =	!audio;				
 		
 			if (pressed & CONT_LTRIGGER)
+			{
 				vibrate = !vibrate;				
+				if(!vibrate)
+				{
+					purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
+					if(purupuru)
+						stop_puru(purupuru);
+				}
+				
+			}
 		
 			if (pressed & CONT_Y)
 			{
@@ -819,6 +861,10 @@ void ReflexNTimming()
 		y += speed;
 		x2 += speed;
 	}
+	
+	purupuru = maple_enum_type(0, MAPLE_FUNC_PURUPURU);
+	if(purupuru)
+		stop_puru(purupuru);
 
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
