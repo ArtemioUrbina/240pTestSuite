@@ -30,8 +30,8 @@
 #define VIDEO_576I_A264			3   // 576i with assets in 240p
 #define VIDEO_480P_SL           4   // 480p with software scanlines
 // 480 1:1 modes
-#define VIDEO_480I              5   // 480i with 480p assets
 #define VIDEO_576I				6   // 576i with 480p assets
+#define VIDEO_480I              5   // 480i with 480p assets
 #define VIDEO_480P              7   // 480p with 480p assets
 #define	HIGH_RES				VIDEO_480I			
 
@@ -86,7 +86,7 @@ void ChangeResolution(int nvmode);
 char *GetPalStartText();
 void Set576iLine23Option(uint8 set);
 void PVRStats(char *msg);
-void Toggle240p480i(int mode);
+double Toggle240p480i(int mode);
 #ifdef DCLOAD
 void TestVideoMode(int mode);
 #endif

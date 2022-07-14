@@ -1,4 +1,4 @@
-                  OPTIONS (1/5)
+                  OPTIONS (1/6)
 
 #GPVR Deflicker Filter:#G Most #CDreamcast#C games used
     this for a stable image on an #Yinterlaced CRT#Y.
@@ -14,7 +14,7 @@
     register values instead of the custom ones.
 
                                         #C(cont...)#C
-                  OPTIONS (2/5)
+                  OPTIONS (2/6)
 
 #GEnable PAL Modes:#G These can only be enabled in
     #CDreamcasts#C with #YEuropean Flash ROM#Y, since
@@ -30,7 +30,7 @@
     the PAL background.
 
                                         #C(cont...)#C
-                  OPTIONS (3/5)
+                  OPTIONS (3/6)
 
 #GPAL starting line:#G PAL specifies the start of
     active video at line 23 (Top), this setting
@@ -46,7 +46,7 @@
     value for them, 0% eliminates them.
 
                                         #C(cont...)#C
-                  OPTIONS (4/5)
+                  OPTIONS (4/6)
 
 #G480p Scanlines:#G This setting allows the display
     or EVEN or ODD scanline display in 480p line
@@ -62,19 +62,26 @@
 
 
                                         #C(cont...)#C
-                  OPTIONS (5/5)
+                  OPTIONS (5/6)
 
 #GApproximate 714.3mV IRE:#G Since the #CDreamcast#C
-video output is slightly high at #C800mV#C, we 
-created an option to limit selected color and B&W
-patterns to a level that approximates #C714.3mV#C.
+    video output is slightly high at #C800mV#C, we
+    created an option to limit color and B&W
+    patterns to approximate #C714.3mV#C.
 
-This option defines the default value when using
-such patterns. It is displayed in the #CVMU#C or it
-can be toggled by pressing #GY#Y on those patterns.
-Please keep in mind that in some equipment, the
-amplitude is adjusted by the #Ycolor burst#Y, and
-in such scenarios or via #Ydigital mods#Y it is best
-to leave this at #C800mV#C.
+    This option defines the default value when
+    using such patterns. It is displayed in the
+    #CVMU#C or it can be toggled with #GY#Y on those
+    patterns. Please keep in mind that in some
+    equipment, the amplitude is adjusted by the
+    #Ycolor burst#Y, and in such scenarios, or via
+    #Ydigital mods#Y, it is best to leave this at
+    #C800mV#C.
+                                        #C(cont...)#C
+                  OPTIONS (6/6)
 
-#GReset all options to defaults:#G Resets all.
+#GUse FrameBuffer copy:#G Disables Framebuffer
+    effects when opening menus, it is faster.
+
+#GReset all options to defaults:#G Resets all
+    options to the default values.

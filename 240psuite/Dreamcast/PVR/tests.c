@@ -41,6 +41,7 @@ typedef struct timecode{
 	int frames;
 	int type;
 	int res;
+	double internal_latency;
 } timecode;
 
 void DropShadowTest()
@@ -2001,11 +2002,20 @@ void ConvertFromFrames(timecode *value, uint16 Frames)
 	value->frames = Frames % (IsPAL ? 50 : 60);
 }
 
+double ConvertMStoFrames(double milliseconds)
+{
+	double frames;
+	
+	frames = milliseconds / (IsPAL ? PAL_FRAME_RATE : NTSC_FRAME_RATE);
+	return frames;
+}
+
 void Alternate240p480i()
 {
 	char		*vmuMsg = NULL;
 	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, done = 0;
-	int			current = 0, res = 0, status = 0, oldvmode = -1, originalvmode = -1;
+	int			current = 0, res = 0, status = 0, oldvmode = -1;
+	int			originalvmode = -1, delayVMU = 0;
 	timecode	times[20];
 	uint16		pressed;		
 	char 		buffer[20];
@@ -2060,6 +2070,8 @@ void Alternate240p480i()
 					DrawString(32+12*5, 40+i*8, 1.0, 1.0, 0.0, times[i].res == 0 ?
 						(IsPAL ? "288" : "240p") : (IsPAL ? "576i" : "480i"));
 					DrawString(32+16*5, 40+i*8, 1.0, 1.0, 0.0, " at:");
+					sprintf(buffer, "took %0.2f frames", ConvertMStoFrames(times[i].internal_latency));
+					DrawString(200, 40+i*8, 1.0, 0.0, 0.0, buffer);
 				}
 				else
 					DrawString(32, 40+i*8, 0.0, 1.0, 0.0, "Viewed at:");
@@ -2083,6 +2095,14 @@ void Alternate240p480i()
 		}
 
 		EndScene();
+		
+		if(delayVMU)
+		{
+			delayVMU--;
+			if(!delayVMU)
+				refreshVMU = 1;
+		}
+		
 		VMURefresh(vmuMsg, "");
 
 		st = ReadController(0, &pressed);
@@ -2116,9 +2136,9 @@ void Alternate240p480i()
 					res = !res;
 					times[current - 1].res = res;
 					
-					Toggle240p480i(res);
+					times[current - 1].internal_latency = Toggle240p480i(res);
 					
-					refreshVMU = 1;
+					delayVMU = 4;
 				}
 				if(status == 2)
 				{

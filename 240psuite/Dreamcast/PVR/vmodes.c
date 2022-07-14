@@ -458,11 +458,15 @@ void ChangeResolution(int nvmode)
 		pvr_set_bg_color(settings.PalBackR, settings.PalBackG, settings.PalBackB);
 }
 
-void Toggle240p480i(int mode)
+double Toggle240p480i(int mode)
 {
+	uint64	start, end;
+
+	start = timer_us_gettime64();
+	
 	// Skip useless video modes when in VGA
 	if(vcable == CT_VGA)
-		return;
+		return 0.0f;
 
 	ReleaseTextures();
 	pvr_shutdown();
@@ -529,6 +533,9 @@ void Toggle240p480i(int mode)
 	AdjustPVROptions();
 	ChangeVideoRegisters();
 	RefreshLoadedImages();
+	
+	end = timer_us_gettime64();
+	return((double)((end - start)/1000.0));
 }
 
 void GetVideoModeStr(char *res, int shortdesc)
@@ -749,14 +756,6 @@ void TestVideoMode(int mode)
 		return;
 	}
 
-	/*
-	ReleaseTextures();
-	pvr_shutdown();
-	vid_set_mode_ex(&test_mode);
-	pvr_init_defaults();
-	RefreshLoadedImages();
-	*/
-
 	while(!done && !EndProgram) 
 	{
 		float	r = 1.0f;
@@ -968,14 +967,6 @@ void TestVideoMode(int mode)
 			ChangeResolution(mode);
 			//vuint32 *regs = (uint32*)0xA05F8000;
 			//uint32 data = 0;
-
-			/*
-			ReleaseTextures();
-			pvr_shutdown();
-			vid_set_mode_ex(&test_mode);
-			pvr_init_defaults();
-			RefreshLoadedImages();
-			*/
 
 			//regs[0x3A] |= 8;	  /* Blank */
 			//regs[0x11] &= ~1;   /* Display disable */

@@ -254,23 +254,32 @@ void ShowMenu(char *filename)
 {
 	DrawMenu = FB_MENU_NORMAL;
 	HelpData = filename;
-	InitTextureFB();
-	CopyFBToBG();
+	if(!settings.IgnoreFrameBuffer)
+	{
+		InitTextureFB();
+		CopyFBToBG();
+	}
 }
 
 void ShowHelpWindow(char *Data)
 {
 	DrawMenu = FB_MENU_HELP;
 	HelpData = Data;
-	InitTextureFB();
-	CopyFBToBG();
+	if(!settings.IgnoreFrameBuffer)
+	{
+		InitTextureFB();
+		CopyFBToBG();
+	}
 }
 
 void DrawCreditsOnFB()
 {
 	DrawMenu = FB_MENU_CREDITS;
-	InitTextureFB();
-	CopyFBToBG();
+	if(!settings.IgnoreFrameBuffer)
+	{
+		InitTextureFB();
+		CopyFBToBG();
+	}
 }
 
 void DrawShowMenu()
@@ -448,7 +457,7 @@ void ChangeOptions(ImagePtr screen)
 		return;
 
 	back->alpha = 0.75f;
-	
+	hint = rand() % 10 == 7;
 	while(!close && !EndProgram) 
 	{		
 		float			r = 1.0f;
@@ -456,13 +465,22 @@ void ChangeOptions(ImagePtr screen)
 		float			b = 1.0f;
 		uint8			c = 1;
 		uint16			x = 50;
-		uint16			y = 25+2*fh;
+		uint16			y = 25+fh;
 		uint16			OptPos = 160;
 		uint16			pressed = 0;
 		char			intensity[80];
 		int				changedPVR = 0;
 		controller		*st;
 				
+		// Detect if a VMU was inserted with a Suite Save
+		VMU_detect_save_counter--;
+		if(VMU_detect_save_counter <= 0)
+		{
+			if(isMemCardPresent())
+				VMUsaveexists = MemcardSaveExists(VMU_NAME, NULL, &port, &unit) == VMU_SAVE_EXISTS ? 1 : 0;
+			VMU_detect_save_counter = 600;	// 10 seconds in NTSC
+		}
+		
 		StartScene();
 
 		if(screen)
@@ -653,16 +671,21 @@ void ChangeOptions(ImagePtr screen)
 					"Load Options from VMU"); y += fh; c++;
 			loaded = -1;
 		}
+		
+		// Option 13, Disable FrameBuffer copies
+		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Use FrameBuffer copy:");
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
+			settings.IgnoreFrameBuffer == 0 ? "ON" : "OFF");  y += fh; c++;
 			
-		// Option 13, Match IRE to 714.3mV with alpha in relevant patterns
+		// Option 14, Match IRE to 714.3mV with alpha in relevant patterns
 		DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Approximate 714.3mV IRE:");
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b,
 			settings.matchIRE ? "ON" : "OFF");  y += fh; c++;
 		
-		// Option 14, Reset to default options
+		// Option 15, Reset to default options
 		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Reset all options to defaults"); y += fh; c++;
 		
-		// Option 15, Exit
+		// Option 16, Exit
 		DrawStringS(x, y, 1.0f, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 		
 		// Comments on options
@@ -675,27 +698,16 @@ void ChangeOptions(ImagePtr screen)
 		if(vmode != VIDEO_480P_SL && (sel == 9 || sel == 10))
 			DrawStringB(x-15, 204+fh, r, g, b,
 				"Scanlines only in scaled 480p mode via D-SUB (VGA).");
-		if(sel == 11 && hint == 1)
+		if(sel == 11 && hint)
 			DrawStringB(x-15, 204+fh, r, g, b,
 				"Hold L or R while saving for hidden eye-catchers!");
-		if(sel == 13)
+		if(sel == 14)
 			DrawStringB(x-15, 204+fh, r, g, b, "In relevant patterns only. Stock output is ~800mV.");
 		r = g = b = 0.8;
 		DrawStringS(x+60, 200, r, g, b, "Press #YSTART#Y for help");
-		if(rand() % 1000 == 47)
-			hint = !hint;
 		EndScene();
 
 		VMURefresh("  Options", "");
-		
-		// Detect if a VMU was inserted with a Suite Save
-		VMU_detect_save_counter--;
-		if(VMU_detect_save_counter <= 0)
-		{
-			if(isMemCardPresent())
-				VMUsaveexists = MemcardSaveExists(VMU_NAME, NULL, &port, &unit) == VMU_SAVE_EXISTS ? 1 : 0;
-			VMU_detect_save_counter = 600;	// 10 seconds in NTSC
-		}
 		
 		// Clean load/save messages
 		if(timer)
@@ -839,13 +851,17 @@ void ChangeOptions(ImagePtr screen)
 								
 							if(VMUsaveexists)
 							{
-								sprintf(msg, "Replace #Ysettings#Y stored in #YVMU#Y at port #Y%c-%c#Y?", 'A'+port, '0'+unit);
+								sprintf(msg, "Replace #Ysettings#Y stored in #YVMU#Y at port #Y%c-%c#Y?%s", 
+									'A'+port, '0'+unit,
+									eyecatcher ? "\n(#CUsing eye catcher#C)" : "");
 								overwrite = AskQuestion(msg);
 							}
 							
 							if(overwrite)
 							{
-								sprintf(msg, "Please don't remove #YVMU %c-%c#Y while saving...", 'A'+port, '0'+unit);
+								sprintf(msg, "Please don't remove #YVMU %c-%c#Y while saving...%s",
+									'A'+port, '0'+unit,
+									eyecatcher ? "\n(#CUsing eye catcher#C)" : "");
 								DrawMessageOnce(msg);
 								vmures = WriteMemCardSave(eyecatcher, error);
 								if(vmures == VMU_OK)
@@ -884,9 +900,12 @@ void ChangeOptions(ImagePtr screen)
 						}
 						break;
 					case 13:
+						settings.IgnoreFrameBuffer = !settings.IgnoreFrameBuffer;
+						break;
+					case 14:
 						settings.matchIRE = !settings.matchIRE;
 						break;
-					case 14: // Option 14, Reset to default options
+					case 15: // Option 14, Reset to default options
 						{
 							struct	settings_st old_settings;
 							
@@ -905,7 +924,7 @@ void ChangeOptions(ImagePtr screen)
 							changedPVR = 1;
 						}
 						break;
-					case 15:
+					case 16:
 						if ( st && st->buttons & CONT_RTRIGGER )
 						{
 							settings.drawborder = !settings.drawborder;

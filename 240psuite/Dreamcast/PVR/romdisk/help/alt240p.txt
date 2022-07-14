@@ -7,3 +7,9 @@ This test allows to time that delay manually.
 Press #GA#G to switch the resolution; press it again
 when you are able to see the screen back in your
 display.
+
+Keep in mind that due to the frame buffers this
+test takes around 200ms to toggle. you can use
+the #CSega Genesis#C, #CSNES#C, #CNED#C, #CPCE#C,
+or other non-frame buffer consoles for this if you
+need to measure a faster response.
