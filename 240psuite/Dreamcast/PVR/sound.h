@@ -62,6 +62,7 @@ extern int		stream_samplerate;
 void *sound_callback(snd_stream_hnd_t hnd, int smp_req, int *smp_recv);
 void CleanStreamSamples();
 void sip_copy(maple_device_t *dev, uint8 *samples, size_t len);
+void LoadSysSettings();
 
 #endif
 

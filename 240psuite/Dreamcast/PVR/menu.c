@@ -42,6 +42,7 @@ uint		DrawMenu = 0;
 extern char	*HelpData;
 ImagePtr	fbtexture = NULL;
 uint16		*fbtextureBuffer = NULL;
+int 		is_system_mono = 0;
 
 struct settings_st settings = DEFAULT_OPTIONS;
 struct settings_st default_settings = DEFAULT_OPTIONS;

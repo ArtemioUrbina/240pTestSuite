@@ -54,24 +54,12 @@ int isSIPPresent()
 	return 1;
 }
 
-void SoundTest()
+void LoadSysSettings()
 {
-	int 				done = 0, sel = 1, play = 0, pan = 128;
-	int					is_mono = 0, prevSel = -1, read = 0;
-	uint16				pressed;		
-	ImagePtr			back;
-	sfxhnd_t			beep;
-	controller			*st;
-	char				*vmuMsg = "";
+	int 				read = 0;
 	flashrom_syscfg_t 	sysconf;
-
-	back = LoadKMG("/rd/back.kmg.gz", 0);
-	if(!back)
-		return;
-
-	beep = snd_sfx_load("/rd/beep.wav");
-	if(beep == SFXHND_INVALID)
-		return;
+	
+	is_system_mono = 0;
 	
 	read = flashrom_get_syscfg(&sysconf);
 	if(read == 0)
@@ -85,12 +73,31 @@ void SoundTest()
 			);
 #endif
 		if(sysconf.audio == 0)
-			is_mono = 1;
+			is_system_mono = 1;
 	}
 #ifdef DCLOAD
 	else
 		dbglog(DBG_ERROR, "ERROR: flashrom_get_syscfg() returned %d\n", read); 
 #endif
+}
+
+void SoundTest()
+{
+	int 				done = 0, sel = 1, play = 0, pan = 128;
+	int					prevSel = -1;
+	uint16				pressed;		
+	ImagePtr			back;
+	sfxhnd_t			tones;
+	controller			*st;
+	char				*vmuMsg = "";
+
+	back = LoadKMG("/rd/back.kmg.gz", 0);
+	if(!back)
+		return;
+
+	tones = snd_sfx_load("/rd/tones.wav");
+	if(tones == SFXHND_INVALID)
+		return;
 	
 	while(!done && !EndProgram) 
 	{
@@ -98,14 +105,14 @@ void SoundTest()
 		DrawImage(back);
 
 		DrawStringSCentered(60, 0.0f, 1.0f, 0.0f, "Sound Test"); 
-		if(!is_mono)
+		if(!is_system_mono)
 		{
 			DrawStringS(80, 120, 1.0f, sel == 0 ? 0 : 1.0f,	sel == 0 ? 0 : 1.0f, "Left Channel"); 
 			DrawStringSCentered(130, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Center Channel");
 			DrawStringS(180, 120, 1.0f, sel == 2 ? 0 : 1.0f, sel == 2 ? 0 : 1.0f, "Right Channel");
 		}
 		else
-			DrawStringS(120, 120, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Mono Channel");
+			DrawStringS(135, 120, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Mono Channel");
 		EndScene();
 		
 		VMURefresh("Sound Test", vmuMsg);
@@ -132,7 +139,7 @@ void SoundTest()
 			}
 		}
 		
-		if(is_mono)
+		if(is_system_mono)
 			sel = 1;
 		else
 		{
@@ -145,8 +152,11 @@ void SoundTest()
 
 		if(sel != prevSel)
 		{
-			if(is_mono)
-				vmuMsg = "  Mono  ";
+			if(is_system_mono)
+			{
+				vmuMsg = "   Mono   ";
+				pan = 128;
+			}
 			else
 			{
 				switch(sel)
@@ -169,14 +179,14 @@ void SoundTest()
 			refreshVMU = 1;
 		}
 
-		if(play && beep != SFXHND_INVALID)
+		if(play && tones != SFXHND_INVALID)
 		{
-			snd_sfx_play(beep, 255, pan);
+			snd_sfx_play(tones, 255, pan);
 			play = 0;
 		}
 	}
-	if(beep != SFXHND_INVALID)
-		snd_sfx_unload(beep);
+	if(tones != SFXHND_INVALID)
+		snd_sfx_unload(tones);
 	FreeImage(&back);
 	return;
 }
@@ -228,15 +238,13 @@ inline void DisplayError(char *msg)
 }
 
 // Takes around 10 seconds, around ten seconds faster than uncompressed from CD-R
-int LoadGZMDFSamples()
+int LoadGZMDFSamples(double *load_time)
 {
 	gzFile		file;
 	int			deflate_size = 0, khz = 1;
 	char		*filename = NULL;
 	fmenudata 	resmenudata[] = { {1, "44100hz (best)"}, {2, "48000hz"} };
-#ifdef BENCHMARK
 	uint64 		start, end;
-#endif
 	
 	VMURefresh("Select", "Frequency");
 	khz = SelectMenu("Select Frequency", resmenudata, 2, khz);
@@ -262,9 +270,7 @@ int LoadGZMDFSamples()
 		return 0;
 	}
 	
-#ifdef BENCHMARK
 	start = timer_us_gettime64();
-#endif
 	updateVMU_wait();
 	DrawMessageOnce("Please wait while samples are loaded\n#G(about 10 seconds)#G");
 	
@@ -299,18 +305,20 @@ int LoadGZMDFSamples()
 	if(cdrom_spin_down() != ERR_OK)
 		dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
 	
-#ifdef BENCHMARK
 	end = timer_us_gettime64();
-
+#ifdef BENCHMARK
 	dbglog(DBG_INFO, "PCM file loading took %g ms\n", (double)(end - start)/1000.0);
 #endif
+	if(load_time)
+		*load_time = (double)(end - start)/1000.0;
 	return 1;
 }
 
 void MDFourier()
 {
 	float				delta = 0.01f;
-	int 				done = 0, play = 0;
+	double				load_time = 0;
+	int 				done = 0, play = 0, dload = 0;
 	char				vmsg[20];
 	uint16				pressed;		
 	ImagePtr			back, layer;
@@ -328,7 +336,8 @@ void MDFourier()
 	}
 	layer->alpha = 0.01f;
 	
-	if(!LoadGZMDFSamples())
+	st = ReadController(0, &pressed);
+	if(!LoadGZMDFSamples(&load_time))
 	{
 		if(cdrom_spin_down() != ERR_OK)
 			dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
@@ -376,6 +385,11 @@ void MDFourier()
 		if(stream_samplerate == 48000)
 			DrawStringSCentered(70+10*fh, 1.0f, 1.0f, 0.0f, "Yamaha AICA has aliasing at 48khz"); 
 		DrawStringSCentered(70+13*fh, 1.0f, 1.0f, 1.0f, "Visit #Chttp://junkerhq.net/MDFourier#C for info"); 
+		if(dload)
+		{
+			sprintf(msg, "#YPCM samples#Y load time was %0.2f ms", load_time);
+			DrawStringSCentered(70+12*fh, 1.0f, 1.0f, 1.0f, msg); 
+		}
 		EndScene();
 		
 		snd_stream_poll(hnd);
@@ -402,7 +416,7 @@ void MDFourier()
 			{
 				snd_stream_stop(hnd);
 				
-				if(!LoadGZMDFSamples())
+				if(!LoadGZMDFSamples(&load_time))
 				{
 					if(cdrom_spin_down() != ERR_OK)
 						dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
@@ -420,6 +434,9 @@ void MDFourier()
 					refreshVMU = 1;
 				}
 			}
+			
+			if(pressed & CONT_LTRIGGER)
+				dload = !dload;
 
 			if (pressed & CONT_START)
 			{

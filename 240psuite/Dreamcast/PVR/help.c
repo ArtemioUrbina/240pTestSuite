@@ -243,7 +243,8 @@ void HelpWindow(char *filename, ImagePtr screen)
 			
             if((state = (cont_state_t *)maple_dev_status(dev)))
 			{
-				if(state->buttons & CONT_B)
+				if(state->buttons & CONT_B ||
+					state->buttons & CONT_START)
 					done = 1;
 			}
 		}

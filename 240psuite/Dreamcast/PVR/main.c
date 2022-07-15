@@ -108,6 +108,7 @@ int main(void)
 	snd_stream_init();	
 	LoadFont();
 	LoadScanlines();
+	LoadSysSettings();
 	
 	title = LoadKMG("/rd/back.kmg.gz", 0);
 	sd = LoadKMG("/rd/SD.kmg.gz", 0);

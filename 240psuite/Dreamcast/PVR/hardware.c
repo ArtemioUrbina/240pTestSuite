@@ -2797,7 +2797,7 @@ void LightGunTest()
 				values_ok = 0;
 
 			if(values_ok)	
-				DrawStringB(40, 220, 1.0f, 1.0f, 1.0f, "Press Lightgun #YB#Y to finish calibration (#YA#Y Ctrl 1)");
+				DrawStringB(40, 220, 1.0f, 1.0f, 1.0f, "Calibration finished. Press Lightgun #YB#Y or #YA#Y Ctrl 1");
 			else
 				DrawStringB(40, 220, 1.0f, 1.0f, 0.0f, "Point Lightgun tracing circles around the top corners");
 		}
@@ -2879,7 +2879,7 @@ void LightGunTest()
 										curr_hole = 0;
 									remain --;
 									if(glass != SFXHND_INVALID)
-										snd_sfx_play(glass, 255, 256*c_x/320);
+										snd_sfx_play(glass, 255, is_system_mono ? 128 : 256*c_x/320);
 								}
 								trigger = 0;
 							}
@@ -2927,6 +2927,8 @@ void LightGunTest()
 				uint16 	lgpressed;
 				
 				lgpressed = state->buttons & ~OldButtonsLG & state->buttons;
+				OldButtonsLG = state->buttons;
+				
 				if(lgpressed & CONT_B)
 				{
 					if(!trigger_cool)
@@ -2953,9 +2955,10 @@ void LightGunTest()
 				}
 				
 				if(lgpressed & CONT_START)
+				{
 					ShowHelpWindow(LG_HELP);
-				
-				OldButtonsLG = state->buttons;
+					OldButtonsLG |= CONT_B;
+				}
 			}
         }
 		

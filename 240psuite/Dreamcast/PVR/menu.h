@@ -72,6 +72,7 @@ struct settings_st {
 };
 
 extern struct settings_st settings;
+extern int is_system_mono;
 
 extern uint8 EndProgram;
 extern uint8 refreshVMU;
