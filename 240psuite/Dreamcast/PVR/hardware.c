@@ -2682,7 +2682,7 @@ void MicrophoneTest()
 	y:  20-320
 	
 	MadCatz measured range was:
-	x: 240-860
+	x: 256-860
 	y:  20-305
 */
 
@@ -2696,48 +2696,32 @@ int isLightGunPresent()
 	return 1;
 }
 
-
-void set_cross_coord(ImagePtr cross, int state)
-{
-	switch(state)
-	{
-		case 0:
-			cross->x = 2;
-			cross->y = 2;
-			break;
-		case 1:
-			cross->x = 144;
-			cross->y = 104;
-			break;
-		case 2:
-			cross->x = 286;
-			cross->y = 206;
-			break;
-		case -1:
-			cross->x = 1024;
-			cross->y = 768;
-			break;
-	}
-}
-
 typedef struct coord_st{
 	int x;
 	int y;
+	int a;
 } coord;
 
-#define	LG_COOLDOWN	200
-#define LG_FRAMES	2
+#define	LG_TG_COOL		6
+#define LG_FRAME_READ	2
+#define NUM_HOLES		100
+#define MAX_REMAIN		20
+
 void LightGunTest()
 {
-	int 			done = 0, lg_state = 0, trigger_active = 0, fix_coord = 0, trigger_cool = 0;
-	int				x, y, oldx, oldy, cstate = -1, min_x = 1024, min_y = 1024, max_x = 0, max_y = 0;
-	uint16			pressed, OldButtonsLG = 0, frame = 0;		
-	ImagePtr		white = NULL, cross = NULL;
+	int 			done = 0, lg_state = 0, polling_active = 0;
+	int				trigger_cool = 0, calibrating = 1, h = 0, remain = MAX_REMAIN;
+	int				x, y, oldx, oldy, values_ok = 1, trigger = 0;
+	int				min_x = 1024, min_y = 1024, max_x = 0, max_y = 0;
+	uint16			pressed, OldButtonsLG = 0, frame = 0, curr_hole = 0;		
+	ImagePtr		white = NULL, cross = NULL, hole = NULL;
 	controller		*st = NULL;
 	maple_device_t	*dev = NULL;
-    cont_state_t	*state;
-	coord			read[3], expected[3];
+	coord			holes[NUM_HOLES];
 	char 			msg[100];
+	sfxhnd_t		glass;
+	//int			max_x_of = 0;
+	//double 		ratio = 0;
 
 	if(!isLightGunPresent())
 		return;
@@ -2748,19 +2732,29 @@ void LightGunTest()
 	cross = LoadKMG("/rd/cross.kmg.gz", 0);
 	if(!cross)
 		return;
+	hole = LoadKMG("/rd/hole.kmg.gz", 0);
+	if(!hole)
+		return;
+	glass = snd_sfx_load("/rd/glass.wav");
+	if(glass == SFXHND_INVALID)
+		return;
 
 	disableSleep();
 	
-	set_cross_coord(cross, cstate);
 	maple_gun_read_pos(&x, &y);
 	oldx = x;
 	oldy = y;
 	
+	for(h = 0; h < NUM_HOLES; h++)
+	{
+		holes[h].x = 800;
+		holes[h].y = 600;
+	}
 	
 	msg[0] = '\0';
 	while(!done && !EndProgram) 
 	{	
-		if(trigger_active)
+		if(polling_active)
 		{
 			if(dev)
 			{
@@ -2771,44 +2765,122 @@ void LightGunTest()
 		
 		StartScene();
 		DrawImage(white);
-		DrawImage(cross);
-		DrawStringB(127, 111, 1.0f, 1.00f, 1.0f, msg);
+		if(!calibrating)
+		{
+			DrawImage(cross);
+			for(h = 0; h < NUM_HOLES; h++)
+			{
+				if(holes[h].x != 800)
+				{
+					hole->x = holes[h].x;
+					hole->y = holes[h].y;
+					DrawImageRotate(hole, holes[h].a);
+				}
+			}
+			if(!remain)
+				DrawStringB(140, 111, 1.0f, 1.0f, 1.0f, "RELOAD!");
+		}
+		else
+			DrawStringB(127, 111, 1.0f, 1.00f, 1.0f, msg);
+		if(calibrating)
+		{	
+			// min_x must be between 195 and 280
+			// max_x must be between 830 and 870
+			// min_y must be between 15 and 30
+			// we don't use max_y
+			// max_x_of must be between 1 and 80
+			values_ok = 1;
+			if(min_x < 195 || min_x > 280)
+				values_ok = 0;
+			if(max_x < 830 || max_x > 870)
+				values_ok = 0;
+			if(min_y < 15 || min_y > 30)
+				values_ok = 0;
+			//if(!max_x_of)
+				//values_ok = 0;
+			if(values_ok)	
+				DrawStringB(80, 220, 1.0f, 1.0f, 1.0f, "Press Lightgun #YB#Y to finish calibration");
+			else
+				DrawStringB(20, 220, 1.0f, 1.0f, 1.0f, "Point Lightgun tracing circles around the top corners");
+		}
 		EndScene();
 		
 		if(trigger_cool)
 			trigger_cool --;
 		
-		if(trigger_active)
+		if(polling_active)
 		{
+			if(!calibrating)
+			{
+				cross->x = 800;
+				cross->y = 600;
+			}
+			
 			if(dev)
 			{
 				timer_spin_sleep(10);
 				maple_gun_read_pos(&x, &y);
 				if(oldx != x || oldy != y)
 				{
-					trigger_active = 0;
+					polling_active = 0;
 					if(!frame)	// immediate response only
 					{
 						/*
 							A value lower than 200 means it was read 
 							delayed in the next line
-						*/				
-						if(x > max_x) max_x = x;
-						if(x > 180 && x < min_x) min_x = x;
-						if(y > max_y) max_y = x;
-						if(y < min_y) min_y = y;
-							
-						//Fix to screen coordinates
-						if(fix_coord)
+						*/
+						
+						if(calibrating)
 						{
-							if(x < 240)
-								x += 860;
-							x = (x - 240)/2;
-							y-= 20;
+							if(x > max_x) max_x = x;
+							if(x > 195 && x < min_x) min_x = x;
+							if(y > max_y) max_y = x;
+							if(y < min_y) min_y = y;
+							//if(x < 80 && x > max_x_of) max_x_of = x;
+						}
+						else
+						{
+							int c_x, c_y;
+							
+							c_x = x;
+							c_y = y;
+							if(c_x < min_x)
+								c_x += max_x;
+							c_x = (c_x - min_x)/2;
+							c_y -= min_y;					
+							//x *= ratio;
+							
+							cross->x = c_x - cross->tw/2;
+							cross->y = c_y - cross->th/2;
+							
+							if(trigger)
+							{
+								if(remain)
+								{
+									holes[curr_hole].x = c_x - hole->tw/2;
+									holes[curr_hole].y = c_y - hole->th/2;
+									holes[curr_hole].a = rand() % 360;
+									curr_hole++;
+									if(curr_hole >= NUM_HOLES)
+										curr_hole = 0;
+									remain --;
+									if(glass != SFXHND_INVALID)
+										snd_sfx_play(glass, 255, 128);
+								}
+								trigger = 0;
+							}
 						}
 
-						sprintf(msg, "%cX:%03d Y:%03d%c", 
-							fix_coord ? '[' : ' ', x, y, fix_coord ? ']' : ' ');
+						sprintf(msg, "X: %03d Y: %03d", x, y);
+					}
+					else
+					{
+						// Shots outside don't draw, but reload
+						if(trigger)
+						{
+							trigger = 0;
+							remain = MAX_REMAIN;
+						}
 					}
 					oldx = x; 
 					oldy = y;
@@ -2818,9 +2890,9 @@ void LightGunTest()
 		}
 		
 		frame++;
-		if(frame >= 5 && !trigger_active)
+		if(frame >= LG_FRAME_READ && !polling_active)
 		{
-			trigger_active = 1;
+			polling_active = 1;
 			frame = 0;
 			lg_state = 0;
 			timer_spin_sleep(10);
@@ -2831,8 +2903,8 @@ void LightGunTest()
 		dev = maple_enum_type(0, MAPLE_FUNC_LIGHTGUN);
 		if(dev)
 		{
-            /* The light gun "status" is just that of its buttons. The data for
-               positioning actually is read from a video register... */
+			cont_state_t	*state;
+			
             if((state = (cont_state_t *)maple_dev_status(dev)))
 			{
 				uint16 	lgpressed;
@@ -2842,16 +2914,27 @@ void LightGunTest()
 				{
 					if(!trigger_cool)
 					{
-						fix_coord = !fix_coord;
-						trigger_cool = 10;
+						if(values_ok)
+							calibrating = !calibrating;
+
+						//dbglog(DBG_INFO, "min_x: %d max_x: %d max_x_of: %d\nmin_y: %d max_y: %d\n", 
+						//			min_x, max_x, max_x_of, min_y, max_y);
+						dbglog(DBG_INFO, "min_x: %d max_x: %d\nmin_y: %d max_y: %d\n", 
+									min_x, max_x, min_y, max_y);
+						trigger_cool = LG_TG_COOL;
 					}
 				}
 
-                /* The light gun's trigger is mapped to the A button. See if the
-                   user is pulling the trigger and enable the gun if needed. */
-                if(lgpressed & CONT_A)
+				if(!calibrating)
 				{
-					
+					if(lgpressed & CONT_A)
+					{
+						if(!trigger_cool)
+						{
+							trigger_cool = LG_TG_COOL;
+							trigger = 1;
+						}
+					}
 				}
 				
 				OldButtonsLG = state->buttons;
@@ -2869,10 +2952,12 @@ void LightGunTest()
 		}
 	}
 	
-	printf("min_x: %d max_x: %d\nmin_y: %d max_y: %d\n", min_x, max_x, min_y, max_y);
 	enableSleep();
+	FreeImage(&hole);
 	FreeImage(&white);
 	FreeImage(&cross);
+	if(glass != SFXHND_INVALID)
+		snd_sfx_unload(glass);
 	return;
 }
 

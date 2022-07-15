@@ -515,6 +515,57 @@ void JoystickDirections(controller *st, uint16 *pressed, int *joycntx, int *joyc
 		*joycnty = 0;
 }
 
+/*
+	========================================================================
+	Official Rumble Pack                                HKT-8600 315-6211-AH
+	========================================================================
+	Functions     : 0x00010000  Function int 0: 0x00000101
+	Function int 1: 0x00000000  Function int 2: 0x00000000
+	Region:         0xff        Connection:     0x00
+	Product Name & License: Puru Puru Pack
+	  Produced By or Under License From SEGA ENTERPRISES,LTD.
+	Standby power: 0x00c8 (200mW) Max: 0x0640 (1600mW)
+	Extra data:
+	000 | 56 65 72 73 69 6f 6e 20 31 2e 30 30 30 2c 31 39 | Version 1.000,19
+	010 | 39 38 2f 31 31 2f 31 30 2c 33 31 35 2d 36 32 31 | 98/11/10,315-621
+	020 | 31 2d 41 48 20 20 20 2c 56 69 62 72 61 74 69 6f | 1-AH   ,Vibratio
+	030 | 6e 20 4d 6f 74 6f 72 3a 31 20 2c 20 46 6d 3a 34 | n Motor:1 , Fm:4
+	040 | 20 2d 20 33 30 48 7a 20 2c 50 6f 77 3a 37 20 20 |  - 30Hz ,Pow:7
+	050 | 6e 20 4d 6f 6e 20 4d 6f 6e 20 4d 6f 6e 20 4d 6f | n Mon Mon Mon Mo
+	060 | 6e 20 4d 6f 6e 20 4d 6f 6e 20 4d 6f 00 00 00 00 | n Mon Mon Mo
+	070 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	080 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	End of Extra data
+
+	========================================================================
+	Performance Jump Pack with Memory Card (Black)
+	========================================================================
+	Functions     : 0x02010000  Function int 0: 0x00000101
+	Function int 1: 0x00410f00  Function int 2: 0x00000000
+	Region:         0xff        Connection:     0x00
+	Product Name & License: Memory Card wIth rumble
+	  Produced By or Under License From SEGA ENTERPRISES,LTD.
+	Standby power: 0x00c8 (200mW) Max: 0x0708 (1800mW)
+	Extra data:
+	000 | 56 33 31 32 20 76 65 72 20 31 2e 30 20 20 31 2f | V312 ver 1.0  1/
+	010 | 4a 75 6e 65 2f 39 39 20 20 20 20 20 20 20 20 20 | June/99
+	020 | 20 20 20 20 20 20 20 20 20 20 20 20 00 00 00 00 |
+	030 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	040 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	050 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	End of Extra data
+
+	========================================================================
+	DC HYPER PAK NYKO (Switch set to Jump Pack)
+	========================================================================
+	Functions     : 0x00010000  Function int 0: 0x00000101
+	Function int 1: 0x00000000  Function int 2: 0x00000000
+	Region:         0xff        Connection:     0x00
+	Product Name & License: Puru Puru Pack
+	  Produced By or Under License From SEGA ENTERPRISES,LTD.
+	Standby power: 0x00c8 (200mW) Max: 0x0640 (1600mW)
+*/
+
 int rumble_puru(maple_device_t *dev, int type)
 {
 	if(!(dev->info.functions & MAPLE_FUNC_PURUPURU))

@@ -70,7 +70,7 @@ void SoundTest()
 		return;
 
 	beep = snd_sfx_load("/rd/beep.wav");
-	if(!beep)
+	if(beep == SFXHND_INVALID)
 		return;
 	
 	read = flashrom_get_syscfg(&sysconf);
