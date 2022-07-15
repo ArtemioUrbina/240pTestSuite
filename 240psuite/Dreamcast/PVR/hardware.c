@@ -2705,11 +2705,12 @@ typedef struct coord_st{
 #define	LG_TG_COOL		6
 #define LG_FRAME_READ	2
 #define NUM_HOLES		100
-#define MAX_REMAIN		20
+#define MAX_REMAIN		25
+#define OB_TIME			4
 
 void LightGunTest()
 {
-	int 			done = 0, lg_state = 0, polling_active = 0;
+	int 			done = 0, lg_state = 0, polling_active = 0, ob_timeout = 0;
 	int				trigger_cool = 0, calibrating = 1, h = 0, remain = MAX_REMAIN;
 	int				x, y, oldx, oldy, values_ok = 1, trigger = 0;
 	int				min_x = 1024, min_y = 1024, max_x = 0, max_y = 0;
@@ -2720,8 +2721,6 @@ void LightGunTest()
 	coord			holes[NUM_HOLES];
 	char 			msg[100];
 	sfxhnd_t		glass;
-	//int			max_x_of = 0;
-	//double 		ratio = 0;
 
 	if(!isLightGunPresent())
 		return;
@@ -2751,7 +2750,7 @@ void LightGunTest()
 		holes[h].y = 600;
 	}
 	
-	msg[0] = '\0';
+	sprintf(msg, "Out of bouds");
 	while(!done && !EndProgram) 
 	{	
 		if(polling_active)
@@ -2784,24 +2783,23 @@ void LightGunTest()
 			DrawStringB(127, 111, 1.0f, 1.00f, 1.0f, msg);
 		if(calibrating)
 		{	
-			// min_x must be between 195 and 280
+			// min_x must be between 195 and 290
 			// max_x must be between 830 and 870
 			// min_y must be between 15 and 30
 			// we don't use max_y
 			// max_x_of must be between 1 and 80
 			values_ok = 1;
-			if(min_x < 195 || min_x > 280)
+			if(min_x < 195 || min_x > 290)
 				values_ok = 0;
 			if(max_x < 830 || max_x > 870)
 				values_ok = 0;
 			if(min_y < 15 || min_y > 30)
 				values_ok = 0;
-			//if(!max_x_of)
-				//values_ok = 0;
+
 			if(values_ok)	
-				DrawStringB(80, 220, 1.0f, 1.0f, 1.0f, "Press Lightgun #YB#Y to finish calibration");
+				DrawStringB(40, 220, 1.0f, 1.0f, 1.0f, "Press Lightgun #YB#Y to finish calibration (#YA#Y Ctrl 1)");
 			else
-				DrawStringB(20, 220, 1.0f, 1.0f, 1.0f, "Point Lightgun tracing circles around the top corners");
+				DrawStringB(40, 220, 1.0f, 1.0f, 0.0f, "Point Lightgun tracing circles around the top corners");
 		}
 		EndScene();
 		
@@ -2824,19 +2822,34 @@ void LightGunTest()
 				{
 					polling_active = 0;
 					if(!frame)	// immediate response only
-					{
-						/*
-							A value lower than 200 means it was read 
-							delayed in the next line
-						*/
-						
+					{						
 						if(calibrating)
 						{
+							int c_x, c_y;
+							
+							/*
+							A value lower than 200 means it was read 
+							delayed in the next line
+							*/
+							c_x = x;
+							c_y = y;
+							
 							if(x > max_x) max_x = x;
 							if(x > 195 && x < min_x) min_x = x;
 							if(y > max_y) max_y = x;
 							if(y < min_y) min_y = y;
-							//if(x < 80 && x > max_x_of) max_x_of = x;
+							
+							if(values_ok)
+							{
+								if(c_x < min_x)
+									c_x += max_x;
+								c_x = (c_x - min_x)/2;
+								c_y -= min_y;
+								
+								sprintf(msg, "[X: %03d Y: %03d]", c_x, c_y);
+							}
+							else
+								sprintf(msg, " X: %03d Y: %03d ", x, y);
 						}
 						else
 						{
@@ -2847,14 +2860,15 @@ void LightGunTest()
 							if(c_x < min_x)
 								c_x += max_x;
 							c_x = (c_x - min_x)/2;
-							c_y -= min_y;					
-							//x *= ratio;
+							c_y -= min_y;
 							
 							cross->x = c_x - cross->tw/2;
 							cross->y = c_y - cross->th/2;
 							
 							if(trigger)
 							{
+								if(frame == 1)
+									printf("frame == 1\n");
 								if(remain)
 								{
 									holes[curr_hole].x = c_x - hole->tw/2;
@@ -2865,32 +2879,35 @@ void LightGunTest()
 										curr_hole = 0;
 									remain --;
 									if(glass != SFXHND_INVALID)
-										snd_sfx_play(glass, 255, 128);
+										snd_sfx_play(glass, 255, 256*c_x/320);
 								}
 								trigger = 0;
 							}
 						}
-
-						sprintf(msg, "X: %03d Y: %03d", x, y);
-					}
-					else
-					{
-						// Shots outside don't draw, but reload
-						if(trigger)
-						{
-							trigger = 0;
-							remain = MAX_REMAIN;
-						}
 					}
 					oldx = x; 
 					oldy = y;
+				}
+				else
+				{
+					// Shots outside don't draw, but reload
+					if(trigger)
+					{
+						ob_timeout++;
+						if(ob_timeout > OB_TIME)
+						{
+							ob_timeout = 0;
+							remain = MAX_REMAIN;
+							trigger = 0;
+						}
+					}
 				}
 			}
 			lg_state++;
 		}
 		
 		frame++;
-		if(frame >= LG_FRAME_READ && !polling_active)
+		if(!polling_active)
 		{
 			polling_active = 1;
 			frame = 0;
@@ -2917,8 +2934,6 @@ void LightGunTest()
 						if(values_ok)
 							calibrating = !calibrating;
 
-						//dbglog(DBG_INFO, "min_x: %d max_x: %d max_x_of: %d\nmin_y: %d max_y: %d\n", 
-						//			min_x, max_x, max_x_of, min_y, max_y);
 						dbglog(DBG_INFO, "min_x: %d max_x: %d\nmin_y: %d max_y: %d\n", 
 									min_x, max_x, min_y, max_y);
 						trigger_cool = LG_TG_COOL;
@@ -2937,6 +2952,9 @@ void LightGunTest()
 					}
 				}
 				
+				if(lgpressed & CONT_START)
+					ShowHelpWindow(LG_HELP);
+				
 				OldButtonsLG = state->buttons;
 			}
         }
@@ -2945,10 +2963,16 @@ void LightGunTest()
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;								
+				done =	1;						
+			
+			if (pressed & CONT_A)
+			{
+				if(values_ok)
+					calibrating = !calibrating;
+			}
 
 			if (pressed & CONT_START)
-				ShowMenu(GRAYHELP);
+				ShowMenu(LG_HELP);
 		}
 	}
 	
@@ -2961,7 +2985,6 @@ void LightGunTest()
 	return;
 }
 
-/* Formatted output for the devinfo struct from command */
 void print_ispcfg(flashrom_ispcfg_t *flashrom_isp, int ignoreflags)
 {
 	int i = 0;

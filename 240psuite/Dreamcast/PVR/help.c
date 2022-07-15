@@ -192,6 +192,8 @@ void HelpWindow(char *filename, ImagePtr screen)
 		
 	while(!done && !EndProgram) 
 	{
+		maple_device_t	*dev = NULL;
+		
 		StartScene();
 		if(screen)
 			DrawImage(screen);
@@ -209,7 +211,7 @@ void HelpWindow(char *filename, ImagePtr screen)
 		if(st)
 		{
 			if (pressed & CONT_B)
-				done =	1;								
+				done = 1;
 			if (pressed & CONT_DPAD_LEFT)
 				page --;
 			if (pressed & CONT_DPAD_RIGHT)
@@ -233,6 +235,17 @@ void HelpWindow(char *filename, ImagePtr screen)
 			}
 			else
 				joycnt = 0;
+		}
+		dev = maple_enum_type(0, MAPLE_FUNC_LIGHTGUN);
+		if(dev)
+		{
+			cont_state_t	*state;
+			
+            if((state = (cont_state_t *)maple_dev_status(dev)))
+			{
+				if(state->buttons & CONT_B)
+					done = 1;
+			}
 		}
 
 		if(page > npages - 1)

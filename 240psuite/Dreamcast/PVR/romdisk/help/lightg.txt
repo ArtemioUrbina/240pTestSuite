@@ -1,0 +1,18 @@
+                 LIGHT GUN TEST
+
+Here you can check how a lightgun is performing.
+
+In the first screen, you need to point around the
+top corners and left edge of the screen in order
+to calibrate the limits of the sensors.
+
+After the limits are detected, a message will be
+shown at the bottom of the screen and the
+coordinates will be screen mapped. Then you must
+press #YB#Y to continue.
+
+In the next screen, the cursor will follow your
+aim. If wish to return to the calibration screen,
+you can improve it by pressing #YB#Y again.
+
+Have fun!
