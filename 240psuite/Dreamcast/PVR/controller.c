@@ -515,8 +515,8 @@ int rumble_puru(maple_device_t *dev, int type)
 	{
 		purupuru_effect_t	effect;
 		
-		effect.duration = 6;
-		effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(4)|PURUPURU_EFFECT2_LINTENSITY(4);
+		effect.duration = 20;
+		effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1)|PURUPURU_EFFECT2_LINTENSITY(1);
 		effect.effect1 = PURUPURU_EFFECT1_INTENSITY(7);
 		if(type)
 			effect.special = PURUPURU_SPECIAL_MOTOR1;

@@ -424,6 +424,7 @@ void DiplayController(int num, float x, float y)
 	}
 }
 
+#define NON_FUNC	 0.4f
 void DiplayControllerIgnore(int num, float x, float y)
 {
 	int				hasAnalogX = 0, hasAnalogY = 0;
@@ -466,64 +467,64 @@ void DiplayControllerIgnore(int num, float x, float y)
 	// Draw Triggers
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_LTRIG ? 1 : 0;
 	sprintf(msg, "%03d", st->ltrig);
-	DrawStringS(x+1*fw, y, hasFunc ? 1.0f : 0.7f, hasFunc ? 1.0f : 0.7f, hasFunc ? 1.0f : 0.7f, msg);
+	DrawStringS(x+1*fw, y, hasFunc ? 1.0f : NON_FUNC, hasFunc ? 1.0f : NON_FUNC, hasFunc ? 1.0f : NON_FUNC, msg);
 
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_RTRIG ? 1 : 0;
 	sprintf(msg, "%03d", st->rtrig);
-	DrawStringS(x+7*fw, y, hasFunc ? 1.0f : 0.7f, hasFunc ? 1.0f : 0.7f, hasFunc ? 1.0f : 0.7f, msg);
+	DrawStringS(x+7*fw, y, hasFunc ? 1.0f : NON_FUNC, hasFunc ? 1.0f : NON_FUNC, hasFunc ? 1.0f : NON_FUNC, msg);
 	
 	y += fh;
 
 	// Draw Up and X, Y, Z
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_UP ? 1 : 0;
 	isPressed = st->buttons & CONT_DPAD_UP;
-	DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "U");
+	DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "U");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_X ? 1 : 0;
 	isPressed = st->buttons & CONT_X;
-	DrawStringS(x+ 6*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "X");
+	DrawStringS(x+ 6*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "X");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Y ? 1 : 0;
 	isPressed = st->buttons & CONT_Y;
-	DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "Y");
+	DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "Y");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_Z ? 1 : 0;
 	isPressed = st->buttons & CONT_Z;
-	DrawStringS(x+10*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "Z");
+	DrawStringS(x+10*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "Z");
 		
 	y += fh;
 
 	// Draw Left, Right, Start
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_LEFT ? 1 : 0;
 	isPressed = st->buttons & CONT_DPAD_LEFT;
-	DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "L");
+	DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "L");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_RIGHT ? 1 : 0;
 	isPressed = st->buttons & CONT_DPAD_RIGHT;
-	DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "R");
+	DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "R");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_START ? 1 : 0;
 	isPressed = st->buttons & CONT_START;
-	DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "S");
+	DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "S");
 	
 	y += fh;
 	
 	// Draw Down and A. B, C
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD_DOWN ? 1 : 0;
 	isPressed = st->buttons & CONT_DPAD_DOWN;
-	DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "D");
+	DrawStringS(x+ 2*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "D");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_A ? 1 : 0;
 	isPressed = st->buttons & CONT_A;
-	DrawStringS(x+ 6*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "A");
+	DrawStringS(x+ 6*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "A");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_B ? 1 : 0;
 	isPressed = st->buttons & CONT_B;
-	DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "B");
+	DrawStringS(x+ 8*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "B");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_C ? 1 : 0;
 	isPressed = st->buttons & CONT_C;
-	DrawStringS(x+10*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "C");
+	DrawStringS(x+10*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "C");
 	
 	y += fh;
 	
@@ -533,17 +534,17 @@ void DiplayControllerIgnore(int num, float x, float y)
 	
 	// Analog Up
 	sprintf(msg, "%03d", st->joyy < 0 ? -1*st->joyy : 0);
-	DrawStringS(x+2*fw, y, hasAnalogY ? 1.0f : 0.7f, hasAnalogY ? 1.0f : 0.7f, hasAnalogY ? 1.0f : 0.7f, msg);
+	DrawStringS(x+2*fw, y, hasAnalogY ? 1.0f : NON_FUNC, hasAnalogY ? 1.0f : NON_FUNC, hasAnalogY ? 1.0f : NON_FUNC, msg);
 	y += fh;
 	
 	// Analog Right & Left
 	sprintf(msg, "%03d %03d", st->joyx < 0 ? -1*st->joyx : 0, st->joyx > 0 ? st->joyx : 0);
-	DrawStringS(x, y, hasAnalogX ? 1.0f : 0.7f, hasAnalogX ? 1.0f : 0.7f, hasAnalogX ? 1.0f : 0.7f, msg);
+	DrawStringS(x, y, hasAnalogX ? 1.0f : NON_FUNC, hasAnalogX ? 1.0f : NON_FUNC, hasAnalogX ? 1.0f : NON_FUNC, msg);
 	y += fh;
 		
 	// Analog Down
 	sprintf(msg, "%03d", st->joyy > 0 ? st->joyy : 0);
-	DrawStringS(x+2*fw, y, hasAnalogY ? 1.0f : 0.7f, hasAnalogY ? 1.0f : 0.7f, hasAnalogY ? 1.0f : 0.7f, msg);
+	DrawStringS(x+2*fw, y, hasAnalogY ? 1.0f : NON_FUNC, hasAnalogY ? 1.0f : NON_FUNC, hasAnalogY ? 1.0f : NON_FUNC, msg);
 	
 	// Rewind 2 lines towards the top
 	y -= 2*fh;
@@ -553,17 +554,17 @@ void DiplayControllerIgnore(int num, float x, float y)
 	
 	// Analog Up
 	sprintf(msg, "%03d", st->joy2y < 0 ? -1*st->joy2y : 0);
-	DrawStringS(x+2*fw, y, hasAnalog2Y ? 1.0f : 0.7f, hasAnalog2Y ? 1.0f : 0.7f, hasAnalog2Y ? 1.0f : 0.7f, msg);
+	DrawStringS(x+2*fw, y, hasAnalog2Y ? 1.0f : NON_FUNC, hasAnalog2Y ? 1.0f : NON_FUNC, hasAnalog2Y ? 1.0f : NON_FUNC, msg);
 	y += fh;
 	
 	// Analog Right & Left
 	sprintf(msg, "%03d %03d", st->joy2x < 0 ? -1*st->joy2x : 0, st->joy2x > 0 ? st->joy2x : 0);
-	DrawStringS(x, y, hasAnalog2X ? 1.0f : 0.7f, hasAnalog2X ? 1.0f : 0.7f, hasAnalog2X ? 1.0f : 0.7f, msg);
+	DrawStringS(x, y, hasAnalog2X ? 1.0f : NON_FUNC, hasAnalog2X ? 1.0f : NON_FUNC, hasAnalog2X ? 1.0f : NON_FUNC, msg);
 	y += fh;
 	
 	// Analog Down
 	sprintf(msg, "%03d", st->joy2y > 0 ? st->joy2y : 0);
-	DrawStringS(x+2*fw, y, hasAnalog2Y ? 1.0f : 0.7f, hasAnalog2Y ? 1.0f : 0.7f, hasAnalog2Y ? 1.0f : 0.7f, msg);
+	DrawStringS(x+2*fw, y, hasAnalog2Y ? 1.0f : NON_FUNC, hasAnalog2Y ? 1.0f : NON_FUNC, hasAnalog2Y ? 1.0f : NON_FUNC, msg);
 	
 	//Do we have the next few ones?
 	x = orig_x+fw;
@@ -574,23 +575,23 @@ void DiplayControllerIgnore(int num, float x, float y)
 	// Second d-pad and D button
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_UP ? 1 : 0;
 	isPressed = st->buttons & CONT_DPAD2_UP;
-	DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "U");
+	DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "U");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_DOWN ? 1 : 0;
 	isPressed = st->buttons & CONT_DPAD2_DOWN;
-	DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "D");
+	DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "D");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_LEFT ? 1 : 0;
 	isPressed = st->buttons & CONT_DPAD2_LEFT;
-	DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "L");
+	DrawStringS(x+ 7*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "L");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_DPAD2_RIGHT ? 1 : 0;
 	isPressed = st->buttons & CONT_DPAD2_RIGHT;
-	DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "R");
+	DrawStringS(x+ 9*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "R");
 	
 	hasFunc = dev->info.function_data[0] & CONT_FIXED_CAPABILITY_D ? 1 : 0;
 	isPressed = st->buttons & CONT_D;
-	DrawStringS(x+11*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 1.0f : hasFunc ? 1.0f : 0.7f, isPressed ? 0.0f : hasFunc ? 1.0f : 0.7f, "D");
+	DrawStringS(x+11*fw, y, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 1.0f : hasFunc ? 1.0f : NON_FUNC, isPressed ? 0.0f : hasFunc ? 1.0f : NON_FUNC, "D");
 }
 
 void GetControllerPorts(int *ports)
@@ -748,7 +749,7 @@ void ControllerTest()
 			if(ports[3])
 				DiplayController(num_controller  , x+w, y+h);
 				
-			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "[Right&Start on Controller 1 to ignore reported functions]"); 
+			DrawStringSCentered(y+2*h+fh, 1.0f, 1.0f, 0.0f, "[Right&Start on Controller 1 to ignore reported functions]"); 
 		}
 		else
 		{
@@ -761,7 +762,7 @@ void ControllerTest()
 				DiplayControllerIgnore(num_controller++, x, y+h);
 			if(ports[3])
 				DiplayControllerIgnore(num_controller  , x+w, y+h);
-			DrawStringSCentered(y+2*h+fh, 0.0f, 1.0f, 0.0f, "[Right&Start on Controller 1 for reported functions only]"); 
+			DrawStringSCentered(y+2*h+fh, 1.0f, 1.0f, 0.0f, "[Right&Start on Controller 1 for reported functions only]"); 
 		}
 		
 		// Keyboards if available
@@ -782,8 +783,8 @@ void ControllerTest()
 		else if(!ports[3])
 			DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
 						
-		DrawStringS(110, y+2*h-fh, 0.0f, 1.0f, 0.0f, "[Up&Start for Help]"); 
-		DrawStringS(70, y+2*h, 0.0f, 1.0f, 0.0f, "[Left&Start on Controller 1 to Exit}"); 
+		DrawStringS(110, y+2*h-fh, 1.0f, 1.0f, 0.0f, "[Up&Start for Help]"); 
+		DrawStringS(70, y+2*h, 1.0f, 1.0f, 0.0f, "[Left&Start on Controller 1 to Exit}"); 
 		
         EndScene();
 		if(timeout)
@@ -2689,18 +2690,19 @@ typedef struct coord_st{
 } coord;
 
 #define	LG_COOLDOWN	200
-#define LG_FRAMES	50
+#define LG_FRAMES	2
 void LightGunTest()
 {
-	int 			done = 0, lgun = 0;
+	int 			done = 0, lg_state = 0, trigger_active = 0;
 	int				x, y, oldx, oldy, cstate = -1;
-	uint16			pressed, lgpressed, OldButtonsLG = 0;		
+	uint16			pressed, OldButtonsLG = 0, frame = 0;		
 	ImagePtr		white = NULL, cross = NULL;
 	controller		*st = NULL;
-	maple_device_t	*dev;
+	maple_device_t	*dev = NULL;
     cont_state_t	*state;
 	uint64 			last = 0, now = 0;
 	coord			read[3], expected[3];
+	char 			msg[100];
 
 	if(!isLightGunPresent())
 		return;
@@ -2720,78 +2722,56 @@ void LightGunTest()
 	oldx = x;
 	oldy = y;
 	
-	/*
-		Trigger start: 0 previous:15358 now:17982 elapsed:2624
-		lgun [frame: 48] (312,60) -> (18, 18) n:18417 t:17982 s:435
-		Trigger start: 1 previous:17982 now:20356 elapsed:2374
-		lgun [frame: 48] (574,147) -> (160, 120) n:20707 t:20356 s:351
-		Trigger start: 2 previous:20356 now:22111 elapsed:1755
-		lgun [frame: 48] (836,256) -> (302, 222) n:22245 t:22111 s:134
-		
-		x = read/2-expected (averaged), y = read-expected (averaged)
-	*/
 	
+	msg[0] = '\0';
 	while(!done && !EndProgram) 
-	{
+	{	
+		if(trigger_active /* && lg_state == 0 */)
+		{
+			if(dev)
+			{
+				timer_spin_sleep(10);
+				maple_gun_enable(dev->port);
+			}
+		}
+		
 		StartScene();
 		DrawImage(white);
 		DrawImage(cross);
+		DrawStringB(127, 111, 1.0f, 1.00f, 1.0f, msg);
 		EndScene();
+		
+		if(trigger_active)
+		{
+			if(dev)
+			{
+				timer_spin_sleep(10);
+				maple_gun_read_pos(&x, &y);
+				if(oldx != x || oldy != y)
+				{
+					trigger_active = 0;
+					if(!frame)
+						sprintf(msg, "X: %03d Y: %03d", x, y);
+					oldx = x; 
+					oldy = y;
+				}
+			}
+			lg_state++;
+		}
+		
+		frame++;
+		if(frame >= 10 && !trigger_active)
+		{
+			trigger_active = 1;
+			frame = 0;
+			lg_state = 0;
+			timer_spin_sleep(10);
+		}
 
-		now = timer_ms_gettime64();
+		//now = timer_ms_gettime64();
 		
 		VMURefresh("Light Gun", "");
 
-		if(lgun) 
-		{
-			maple_gun_read_pos(&x, &y);
-			lgun --;
-			if(x != oldx && y != oldy)
-			{
-				printf("lgun [frame: %d] Read(%d[%d],%d[%d]) -> Showed(%d, %d) n:%"PRIu64" t:%"PRIu64" s:%"PRIu64"\n", 
-					lgun, x, oldx, y, oldy, (int)cross->x+16, (int)cross->y+16, now, last, now-last);
-				oldx = x;
-				oldy = y;
-				
-				if(cstate != -1)
-				{
-					printf("================\n");
-					
-					read[cstate].x = x;
-					read[cstate].y = y;
-					
-					expected[cstate].x = (int)cross->x+16;
-					expected[cstate].y = (int)cross->y+16;
-				}
-				else
-					printf("++++++++++++++++\n");
-
-				cstate ++;
-				if(cstate > 2)
-				{
-					int i = 0;
-					double x = 0, y = 0;
-					
-					for(i = 0; i < 3; i++)
-					{
-						 x += read[i].x/2 - expected[i].x;
-						 y += read[i].y - expected[i].y;
-					}
-					x /= 3;
-					y /= 3;
-					printf("X: %g Y: %g\n", x, y);
-					for(i = 0; i < 3; i++)
-						printf("[%d]: %03d,%03d->%03d,%03d [%03d,%03d]\n", i, read[i].x, read[i].y, 
-								(int)(read[i].x/2 - x), (int)(read[i].y - y),
-								expected[i].x, expected[i].y);
-					//done = 1;
-					cstate = 0;
-				}
-				set_cross_coord(cross, cstate);
-				lgun = 0;
-			}
-        }
-		
 		dev = maple_enum_type(0, MAPLE_FUNC_LIGHTGUN);
 		if(dev)
 		{
@@ -2799,6 +2779,8 @@ void LightGunTest()
                positioning actually is read from a video register... */
             if((state = (cont_state_t *)maple_dev_status(dev)))
 			{
+				uint16 	lgpressed;
+				
 				lgpressed = state->buttons & ~OldButtonsLG & state->buttons;
 				if(lgpressed & CONT_B)
 				{
@@ -2808,33 +2790,25 @@ void LightGunTest()
                    user is pulling the trigger and enable the gun if needed. */
                 if(lgpressed & CONT_A)
 				{
-					if(!lgun && now > last + LG_COOLDOWN)
+					/*
+					if(!trigger_active)
 					{
-						lgun = LG_FRAMES;
-						printf("Trigger start: %d previous:%"PRIu64" now:%"PRIu64" elapsed:%"PRIu64"\n",
-							cstate, last, now, now-last);
-						last = now;
+						trigger_active = 1;
+						//printf("Trigger start: %d previous:%"PRIu64" now:%"PRIu64" elapsed:%"PRIu64"\n",
+							//cstate, last, now, now-last);
+						printf("\n\n\n\nTrigger Read Frame: %d\n", frame);
 					}
 					else
 						printf("==== colission ==== (lgun %d last:%"PRIu64" now:%"PRIu64" elapsed:%"PRIu64" cooldown: %"PRIu64")\n", 
-							lgun, last, now, now-last, last + LG_COOLDOWN);
+							lg_state, last, now, now-last, last + LG_COOLDOWN);
+					*/
 				}
 				
 				OldButtonsLG = state->buttons;
 			}
-			
-			
-			if(lgun)
-			{
-				if(maple_gun_enable(dev->port) != MAPLE_EOK)
-				{
-					printf("==== disabled at %d ====\n", lgun);
-					lgun = 0;
-				}
-			}
         }
-		else
-			done = 1;
+		//else
+			//done = 1;
 		
 		st = ReadController(0, &pressed);
 		if(st)
