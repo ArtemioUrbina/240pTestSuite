@@ -8,7 +8,7 @@ This menu shows the #CHCFR software#C profiles.
 - #YREC 709#Y is recommended for #CHD#C and #CUHD/4K#C
     in #CSDR#C flat panel TV users.
 - #YsRGB#Y is recommended for #CPC VGA#C and up #CCRT
-monitors#C. 
+     monitors#C. 
 
 For #Cwestern regions#C of any color space use #YD65#Y,
 and #YD93#Y is for #CJapanese SDTVs#C that support it.

@@ -237,6 +237,22 @@ inline void DisplayError(char *msg)
 #endif
 }
 
+// Just in case somebody is running MDFourier in mono... we won't turn them down
+void ConvertSamplesToMono()
+{
+	int		t_pos = 0, pos = 0;
+	int16	*src = NULL, *tgt = NULL;
+	
+	src = (int16*)stream_samples;
+	tgt = (int16*)stream_samples;
+	
+	for(pos = 0; pos < stream_samples_size; pos += 2)
+		tgt[t_pos++] = src[pos]/2 + src[pos+1]/2;
+	
+	stream_samples_size = stream_samples_size/2;
+	memset(stream_samples+stream_samples_size, 0, sizeof(char)*stream_samples_size);
+}
+
 // Takes around 10 seconds, around ten seconds faster than uncompressed from CD-R
 int LoadGZMDFSamples(double *load_time)
 {
@@ -305,6 +321,9 @@ int LoadGZMDFSamples(double *load_time)
 	if(cdrom_spin_down() != ERR_OK)
 		dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
 	
+	if(is_system_mono)
+		ConvertSamplesToMono();
+
 	end = timer_us_gettime64();
 #ifdef BENCHMARK
 	dbglog(DBG_INFO, "PCM file loading took %g ms\n", (double)(end - start)/1000.0);
@@ -359,7 +378,7 @@ void MDFourier()
 	
 	snd_stream_volume(hnd, 255);
 	snd_stream_queue_enable(hnd);
-	snd_stream_start(hnd, stream_samplerate, 1);
+	snd_stream_start(hnd, stream_samplerate, is_system_mono ? 0: 1);
 	
 	while(!done && !EndProgram) 
 	{
@@ -384,12 +403,14 @@ void MDFourier()
 		DrawStringSCentered(70+2*fh, 0.0f, 1.0f, 0.0f, msg);
 		if(stream_samplerate == 48000)
 			DrawStringSCentered(70+10*fh, 1.0f, 1.0f, 0.0f, "Yamaha AICA has aliasing at 48khz"); 
-		DrawStringSCentered(70+13*fh, 1.0f, 1.0f, 1.0f, "Visit #Chttp://junkerhq.net/MDFourier#C for info"); 
+		if(is_system_mono)
+			DrawStringSCentered(70+11*fh, 1.0f, 1.0f, 0.0f, "System configured as MONO"); 
 		if(dload)
 		{
 			sprintf(msg, "#YPCM samples#Y load time was %0.2f ms", load_time);
 			DrawStringSCentered(70+12*fh, 1.0f, 1.0f, 1.0f, msg); 
 		}
+		DrawStringSCentered(70+13*fh, 1.0f, 1.0f, 1.0f, "Visit #Chttp://junkerhq.net/MDFourier#C for info"); 
 		EndScene();
 		
 		snd_stream_poll(hnd);
@@ -428,7 +449,7 @@ void MDFourier()
 
 					snd_stream_volume(hnd, 255);
 					snd_stream_queue_enable(hnd);
-					snd_stream_start(hnd, stream_samplerate, 1);
+					snd_stream_start(hnd, stream_samplerate, is_system_mono ? 0: 1);
 					
 					sprintf(vmsg, " %d hz", stream_samplerate);
 					refreshVMU = 1;
@@ -449,7 +470,7 @@ void MDFourier()
 				ShowMenu(MDFOURIERHELP);
 				
 				if(play)
-					snd_stream_start(hnd, stream_samplerate, 1);
+					snd_stream_start(hnd, stream_samplerate, is_system_mono ? 0: 1);
 			}
 		}
 		

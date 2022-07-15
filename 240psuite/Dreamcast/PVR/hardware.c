@@ -2704,7 +2704,7 @@ typedef struct coord_st{
 
 #define	LG_TG_COOL		6
 #define LG_FRAME_READ	2
-#define NUM_HOLES		100
+#define NUM_HOLES		400
 #define MAX_REMAIN		25
 #define OB_TIME			4
 
@@ -2748,6 +2748,7 @@ void LightGunTest()
 	{
 		holes[h].x = 800;
 		holes[h].y = 600;
+		holes[h].a = 0;
 	}
 	
 	sprintf(msg, "Out of bouds");
@@ -2787,7 +2788,7 @@ void LightGunTest()
 			// max_x must be between 830 and 870
 			// min_y must be between 15 and 30
 			// we don't use max_y
-			// max_x_of must be between 1 and 80
+
 			values_ok = 1;
 			if(min_x < 195 || min_x > 290)
 				values_ok = 0;
