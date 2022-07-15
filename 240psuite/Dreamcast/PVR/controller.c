@@ -9,7 +9,8 @@ uint8 	isFishingRod = 0,
 		isMaracas = 0,
 		isStockController = 0,
 		isArcade = 0,
-		isKeyboard = 0;
+		isKeyboard = 0,
+		isLightGun = 0;
 
 #ifdef DCLOAD
 #define  SCREENSHOTMODE
@@ -21,6 +22,7 @@ void PrintDebugController(cont_state_t *st);
 #define FISHING	"Dreamcast Fishing Controller "
 #define MARACAS	"Maracas Controller           "
 #define KEYBRD	"Keyboard                     "
+#define LIGHTGN	"Dreamcast Gun                "
 
 #define	MARACAS_DEATH_ZONE	20
 #define	MARACAS_RATE		120
@@ -452,6 +454,11 @@ void DetectControllerType(maple_device_t *dev)
 		isKeyboard = 1;
 	else
 		isKeyboard = 0;
+	
+	if(strcmp(LIGHTGN, dev->info.product_name) == 0)
+		isLightGun = 1;
+	else
+		isLightGun = 0;
 }
 
 void JoystickMenuMove(controller *st, int *sel, int maxsel, int *joycnt)

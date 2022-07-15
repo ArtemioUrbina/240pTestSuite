@@ -692,18 +692,18 @@ void ChangeOptions(ImagePtr screen)
 		// Comments on options
 		r = g = b = 1.0;
 		if(vmode == VIDEO_480P_SL && sel == 9)	
-			DrawStringB(x-15, 204+fh, r, g, b, "Adjust with L and R triggers.");
+			DrawStringBCentered(204+fh, r, g, b, "Adjust with L and R triggers.");
 		if(!IsPALDC && (sel > 4 && sel < 9))
-			DrawStringB(x-15, 204+fh, r, g, b,
+			DrawStringBCentered(204+fh, r, g, b,
 				"Only PAL FlashROMs can output PAL correctly."); 
 		if(vmode != VIDEO_480P_SL && (sel == 9 || sel == 10))
-			DrawStringB(x-15, 204+fh, r, g, b,
+			DrawStringBCentered(204+fh, r, g, b,
 				"Scanlines only in scaled 480p mode via D-SUB (VGA).");
 		if(sel == 11 && hint)
-			DrawStringB(x-15, 204+fh, r, g, b,
+			DrawStringBCentered(204+fh, r, g, b,
 				"Hold L or R while saving for hidden eye-catchers!");
 		if(sel == 14)
-			DrawStringB(x-15, 204+fh, r, g, b, "In relevant patterns only. Stock output is ~800mV.");
+			DrawStringBCentered(204+fh, r, g, b, "In relevant patterns only. Stock output is ~800mV.");
 		r = g = b = 0.8;
 		DrawStringS(x+60, 200, r, g, b, "Press #YSTART#Y for help");
 		EndScene();

@@ -216,7 +216,7 @@ void DrawStringS(float x, float y, float r, float g, float b, char *str)
 	DrawString(x, y, r, g, b, str);
 }
 
-void DrawStringSCenteredInternal(float y, float r, float g, float b, char *str, int full_screen) 
+void DrawStringSCenteredInternal(float y, float r, float g, float b, char *str, int full_screen, int useback) 
 {
 	int			currlen = 0;
 	char 		*startstr = NULL;
@@ -233,7 +233,10 @@ void DrawStringSCenteredInternal(float y, float r, float g, float b, char *str, 
 			{
 				screen_width = full_screen ? dW : 320;
 				xpos = (int)((screen_width-len)/2.0f);
-				DrawStringS(xpos, y, r, g, b, startstr);
+				if(!useback)
+					DrawStringS(xpos, y, r, g, b, startstr);
+				else
+					DrawStringB(xpos, y, r, g, b, startstr);
 			}
 			*str = '\n';
 			startstr = str + 1;
@@ -251,19 +254,22 @@ void DrawStringSCenteredInternal(float y, float r, float g, float b, char *str, 
 		{
 			screen_width = full_screen ? dW : 320;
 			xpos = (int)((screen_width-len)/2.0f);
-			DrawStringS(xpos, y, r, g, b, startstr);
+			if(!useback)
+				DrawStringS(xpos, y, r, g, b, startstr);
+			else
+				DrawStringB(xpos, y, r, g, b, startstr);
 		}
 	}
 }
 
 void DrawStringSCentered(float y, float r, float g, float b, char *str)
 {
-	DrawStringSCenteredInternal(y, r, g, b, str, 0);
+	DrawStringSCenteredInternal(y, r, g, b, str, 0, 0);
 }
 
 void DrawStringSCenteredFull(float y, float r, float g, float b, char *str)
 {
-	DrawStringSCenteredInternal(y, r, g, b, str, vmode < HIGH_RES ? 0 : 1);
+	DrawStringSCenteredInternal(y, r, g, b, str, vmode < HIGH_RES ? 0 : 1, 0);
 }
 
 void DrawStringSCenteredXY(float r, float g, float b, char *str) 
@@ -353,6 +359,11 @@ void DrawStringB(float x, float y, float r, float g, float b, char *str)
 	}
 	
 	DrawString(x, y, r, g, b, str);
+}
+
+void DrawStringBCentered(float y, float r, float g, float b, char *str)
+{
+	DrawStringSCenteredInternal(y, r, g, b, str, 0, 1);
 }
 
 int countLineFeeds(char *str) 

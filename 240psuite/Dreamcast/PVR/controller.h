@@ -6,7 +6,7 @@
 #define CONT_LTRIGGER	CONT_Z
 #define CONT_RTRIGGER	CONT_D
 
-extern uint8 isFishingRod, isMaracas, isStockController, isArcade, isKeyboard;
+extern uint8 isFishingRod, isMaracas, isStockController, isArcade, isKeyboard, isLightGun;
 
 typedef cont_state_t controller;
 

@@ -938,8 +938,7 @@ inline void EndScene()
 		if(type == FB_MENU_CREDITS)
 			DrawCredits(fbtexture);
 
-		if(fbtexture)
-			FreeTextureFB();
+		FreeTextureFB();
 	}
 	
 	if(vmu_found_bad_lcd_vmu())

@@ -2714,13 +2714,13 @@ void LightGunTest()
 	int				trigger_cool = 0, calibrating = 1, h = 0, remain = MAX_REMAIN;
 	int				x, y, oldx, oldy, values_ok = 1, trigger = 0;
 	int				min_x = 1024, min_y = 1024, max_x = 0, max_y = 0;
-	uint16			pressed, OldButtonsLG = 0, frame = 0, curr_hole = 0;		
+	uint16			pressed, OldButtonsLG = 0, frame = 0, curr_hole = 0;
 	ImagePtr		white = NULL, cross = NULL, hole = NULL;
 	controller		*st = NULL;
 	maple_device_t	*dev = NULL;
 	coord			holes[NUM_HOLES];
 	char 			msg[100];
-	sfxhnd_t		glass;
+	sfxhnd_t		glass, rld;
 
 	if(!isLightGunPresent())
 		return;
@@ -2734,8 +2734,12 @@ void LightGunTest()
 	hole = LoadKMG("/rd/hole.kmg.gz", 0);
 	if(!hole)
 		return;
+		
 	glass = snd_sfx_load("/rd/glass.wav");
 	if(glass == SFXHND_INVALID)
+		return;
+	rld = snd_sfx_load("/rd/rld.wav");
+	if(rld == SFXHND_INVALID)
 		return;
 
 	disableSleep();
@@ -2778,10 +2782,10 @@ void LightGunTest()
 				}
 			}
 			if(!remain)
-				DrawStringB(140, 111, 1.0f, 1.0f, 1.0f, "RELOAD!");
+				DrawStringBCentered(111, 1.0f, 1.0f, 1.0f, "RELOAD!");
 		}
 		else
-			DrawStringB(127, 111, 1.0f, 1.00f, 1.0f, msg);
+			DrawStringBCentered(111, 1.0f, 1.00f, 1.0f, msg);
 		if(calibrating)
 		{	
 			// min_x must be between 195 and 290
@@ -2798,9 +2802,14 @@ void LightGunTest()
 				values_ok = 0;
 
 			if(values_ok)	
-				DrawStringB(40, 220, 1.0f, 1.0f, 1.0f, "Calibration finished. Press Lightgun #YB#Y or #YA#Y Ctrl 1");
+			{
+				if(isLightGun)
+					DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "#YCalibration finished:#Y press #Ytrigger#Y to continue");
+				else
+					DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "#YCalibration finished:#Y press #Ytrigger#Y or #YA#Y in Ctrl 1");
+			}
 			else
-				DrawStringB(40, 220, 1.0f, 1.0f, 0.0f, "Point Lightgun tracing circles around the top corners");
+				DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "Point lightgun #Ytracing circles#Y around the #Ytop corners#Y");
 		}
 		EndScene();
 		
@@ -2900,6 +2909,9 @@ void LightGunTest()
 							ob_timeout = 0;
 							remain = MAX_REMAIN;
 							trigger = 0;
+							
+							if(rld != SFXHND_INVALID)
+								snd_sfx_play(rld, 255, 128);
 						}
 					}
 				}
@@ -2932,39 +2944,43 @@ void LightGunTest()
 				
 				if(lgpressed & CONT_B)
 				{
-					if(!trigger_cool)
+					if(isLightGun && calibrating)
+					{
+						done = 1;
+						ReadController(0, &pressed);
+					}
+					
+					if(!calibrating)
+						calibrating = !calibrating;
+				}
+
+				if(lgpressed & CONT_A && !trigger_cool)
+				{
+					if(!calibrating)
+						trigger = 1;
+					else
 					{
 						if(values_ok)
 							calibrating = !calibrating;
-
-						dbglog(DBG_INFO, "min_x: %d max_x: %d\nmin_y: %d max_y: %d\n", 
-									min_x, max_x, min_y, max_y);
-						trigger_cool = LG_TG_COOL;
 					}
+					
+					trigger_cool = LG_TG_COOL;
 				}
-
-				if(!calibrating)
-				{
-					if(lgpressed & CONT_A)
-					{
-						if(!trigger_cool)
-						{
-							trigger_cool = LG_TG_COOL;
-							trigger = 1;
-						}
-					}
-				}
+				
 				
 				if(lgpressed & CONT_START)
 				{
-					ShowHelpWindow(LG_HELP);
+					if(!isLightGun)
+						ShowHelpWindow(LG_HELP);
+					else
+						ShowMenu(LG_HELP);
 					OldButtonsLG |= CONT_B;
 				}
 			}
         }
 		
 		st = ReadController(0, &pressed);
-		if(st)
+		if(st && !isLightGun)
 		{
 			if (pressed & CONT_B)
 				done =	1;						
@@ -2986,6 +3002,8 @@ void LightGunTest()
 	FreeImage(&cross);
 	if(glass != SFXHND_INVALID)
 		snd_sfx_unload(glass);
+	if(rld != SFXHND_INVALID)
+		snd_sfx_unload(rld);
 	return;
 }
 
