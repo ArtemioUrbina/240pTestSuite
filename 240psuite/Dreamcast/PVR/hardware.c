@@ -2720,7 +2720,7 @@ void LightGunTest()
 	maple_device_t	*dev = NULL;
 	coord			holes[NUM_HOLES];
 	char 			msg[100];
-	sfxhnd_t		glass, rld;
+	sfxhnd_t		glass, rld, nohit;
 
 	if(!isLightGunPresent())
 		return;
@@ -2740,6 +2740,9 @@ void LightGunTest()
 		return;
 	rld = snd_sfx_load("/rd/rld.wav");
 	if(rld == SFXHND_INVALID)
+		return;
+	nohit = snd_sfx_load("/rd/nohit.wav");
+	if(nohit == SFXHND_INVALID)
 		return;
 
 	disableSleep();
@@ -2804,9 +2807,9 @@ void LightGunTest()
 			if(values_ok)	
 			{
 				if(isLightGun)
-					DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "#YCalibration finished:#Y press #Ytrigger#Y to continue");
+					DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "#GCalibration finished:#G press #Ytrigger#Y to continue");
 				else
-					DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "#YCalibration finished:#Y press #Ytrigger#Y or #YA#Y in Ctrl 1");
+					DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "#GCalibration finished:#G press #Ytrigger#Y or #YA#Y in Ctrl 1");
 			}
 			else
 				DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "Point lightgun #Ytracing circles#Y around the #Ytop corners#Y");
@@ -2907,11 +2910,19 @@ void LightGunTest()
 						if(ob_timeout > OB_TIME)
 						{
 							ob_timeout = 0;
-							remain = MAX_REMAIN;
 							trigger = 0;
 							
-							if(rld != SFXHND_INVALID)
-								snd_sfx_play(rld, 255, 128);
+							if(remain == 0)
+							{
+								remain = MAX_REMAIN;
+								if(rld != SFXHND_INVALID)
+									snd_sfx_play(rld, 255, 128);
+							}
+							else
+							{
+								if(nohit != SFXHND_INVALID)
+									snd_sfx_play(nohit, 255, 128);
+							}
 						}
 					}
 				}
@@ -3004,6 +3015,8 @@ void LightGunTest()
 		snd_sfx_unload(glass);
 	if(rld != SFXHND_INVALID)
 		snd_sfx_unload(rld);
+	if(nohit != SFXHND_INVALID)
+		snd_sfx_unload(nohit);
 	return;
 }
 
