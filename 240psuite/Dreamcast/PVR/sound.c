@@ -831,58 +831,59 @@ void SIPLagTest()
 		According to their extra info, sample rates differ, and they did.
 		Select thd proper one based on function_data[0]
 		
-		==========
-		Regular:
-		==========
-			Functions     : 0x10000000  Function int 0: 0x0f000000
-			Function int 1: 0x00000000  Function int 2: 0x00000000
-			Region:         0x03        Connection:     0x01
-			Product Name & License: SoundInputPeripheral (S.I.P.)
-			  Produced By or Under License From SEGA ENTERPRISES,LTD.
-			Standby power: 0x012c (300mW) Max: 0x012c (300mW)
-			Extra data:
-			000 | 56 65 72 73 69 6f 6e 20 31 2e 30 30 30 2c 31 39 | Version 1.000,19
-			010 | 39 38 2f 30 35 2f 32 32 2c 33 31 35 2d 36 31 38 | 98/05/22,315-618
-			020 | 32 20 20 20 20 20 20 20 53 34 28 53 65 67 61 53 | 2       S4(SegaS
-			030 | 6f 75 6e 64 53 61 6d 70 6c 69 6e 67 53 79 73 74 | oundSamplingSyst
-			040 | 65 6d 29 2f 53 61 6d 70 6c 69 6e 67 52 61 74 65 | em)/SamplingRate
-			050 | 31 31 2e 30 32 35 37 6f 72 38 2e 30 38 35 6b 48 | 11.0257or8.085kH
-			060 | 7a 2f 42 69 74 31 34 6f 72 38 62 69 74 2f 4e 54 | z/Bit14or8bit/NT
-			070 | 53 43 20 6f 6e 6c 79 2f 43 6f 6e 73 75 6d 65 72 | SC only/Consumer
-			080 | 20 44 65 76 65 72 6f 70 6d 65 6e 74 20 26 20 4d |  Deveropment & M
-			090 | 61 6d 75 66 61 63 74 75 72 69 6e 67 20 44 49 56 | amufacturing DIV
-			0a0 | 2e 43 53 50 44 32 2d 33 20 20 20 20 00 00 00 00 | .CSPD2-3
-			0b0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-			0c0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-			0d0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-			0e0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-			End of Extra data
-		==========
-		DreamEye:
-		==========
-			Functions     : 0x10000000  Function int 0: 0x3f000000
-			Function int 1: 0x00000000  Function int 2: 0x00000000
-			Region:         0x0f        Connection:     0x01
-			Product Name & License: MicDevice for Dreameye
-			  Produced By or Under License From SEGA ENTERPRISES,LTD.
-			Standby power: 0x012c (300mW) Max: 0x012c (300mW)
-			Extra data:
-			000 | 56 65 72 73 69 6f 6e 20 31 2e 30 30 30 2c 32 30 | Version 1.000,20
-			010 | 30 30 2f 30 32 2f 32 34 2c 33 31 35 2d 36 31 38 | 00/02/24,315-618
-			020 | 32 41 20 20 20 20 20 20 53 34 31 28 53 65 67 61 | 2A      S41(Sega
-			030 | 53 6f 75 6e 64 53 61 6d 70 6c 69 6e 67 53 79 73 | SoundSamplingSys
-			040 | 74 65 6d 29 2f 53 61 6d 70 6c 69 6e 67 52 61 74 | tem)/SamplingRat
-			050 | 65 31 30 2e 39 30 39 30 6f 72 38 2e 30 30 30 6b | e10.9090or8.000k
-			060 | 48 7a 2f 42 69 74 31 34 6f 72 38 62 69 74 2f 4e | Hz/Bit14or8bit/N
-			070 | 54 53 43 2f 50 41 4c 2f 43 6f 6e 73 75 6d 65 72 | TSC/PAL/Consumer
-			080 | 20 44 65 76 65 72 6f 70 6d 65 6e 74 20 26 20 4d |  Deveropment & M
-			090 | 61 6d 75 66 61 63 74 75 72 69 6e 67 20 44 49 56 | amufacturing DIV
-			0a0 | 2e 43 53 52 44 20 20 20 20 20 20 20 00 00 00 00 | .CSRD
-			0b0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-			0c0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-			0d0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-			0e0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-			End of Extra data
+		========================================================================
+		Official US Microphone                              HKT-7200 315-6182 S4
+		========================================================================
+		Functions     : 0x10000000  Function int 0: 0x0f000000
+		Function int 1: 0x00000000  Function int 2: 0x00000000
+		Region:         0x03        Connection:     0x01
+		Product Name & License: SoundInputPeripheral (S.I.P.)
+		  Produced By or Under License From SEGA ENTERPRISES,LTD.
+		Standby power: 0x012c (300mW) Max: 0x012c (300mW)
+		Extra data:
+		000 | 56 65 72 73 69 6f 6e 20 31 2e 30 30 30 2c 31 39 | Version 1.000,19
+		010 | 39 38 2f 30 35 2f 32 32 2c 33 31 35 2d 36 31 38 | 98/05/22,315-618
+		020 | 32 20 20 20 20 20 20 20 53 34 28 53 65 67 61 53 | 2       S4(SegaS
+		030 | 6f 75 6e 64 53 61 6d 70 6c 69 6e 67 53 79 73 74 | oundSamplingSyst
+		040 | 65 6d 29 2f 53 61 6d 70 6c 69 6e 67 52 61 74 65 | em)/SamplingRate
+		050 | 31 31 2e 30 32 35 37 6f 72 38 2e 30 38 35 6b 48 | 11.0257or8.085kH
+		060 | 7a 2f 42 69 74 31 34 6f 72 38 62 69 74 2f 4e 54 | z/Bit14or8bit/NT
+		070 | 53 43 20 6f 6e 6c 79 2f 43 6f 6e 73 75 6d 65 72 | SC only/Consumer
+		080 | 20 44 65 76 65 72 6f 70 6d 65 6e 74 20 26 20 4d |  Deveropment & M
+		090 | 61 6d 75 66 61 63 74 75 72 69 6e 67 20 44 49 56 | amufacturing DIV
+		0a0 | 2e 43 53 50 44 32 2d 33 20 20 20 20 00 00 00 00 | .CSPD2-3
+		0b0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+		0c0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+		0d0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+		0e0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+		End of Extra data
+		
+		========================================================================
+		Official DreamEye Microphone                      HKT-9800 315-6182A S41
+		========================================================================
+		Functions     : 0x10000000  Function int 0: 0x3f000000
+		Function int 1: 0x00000000  Function int 2: 0x00000000
+		Region:         0x0f        Connection:     0x01
+		Product Name & License: MicDevice for Dreameye
+		  Produced By or Under License From SEGA ENTERPRISES,LTD.
+		Standby power: 0x012c (300mW) Max: 0x012c (300mW)
+		Extra data:
+		000 | 56 65 72 73 69 6f 6e 20 31 2e 30 30 30 2c 32 30 | Version 1.000,20
+		010 | 30 30 2f 30 32 2f 32 34 2c 33 31 35 2d 36 31 38 | 00/02/24,315-618
+		020 | 32 41 20 20 20 20 20 20 53 34 31 28 53 65 67 61 | 2A      S41(Sega
+		030 | 53 6f 75 6e 64 53 61 6d 70 6c 69 6e 67 53 79 73 | SoundSamplingSys
+		040 | 74 65 6d 29 2f 53 61 6d 70 6c 69 6e 67 52 61 74 | tem)/SamplingRat
+		050 | 65 31 30 2e 39 30 39 30 6f 72 38 2e 30 30 30 6b | e10.9090or8.000k
+		060 | 48 7a 2f 42 69 74 31 34 6f 72 38 62 69 74 2f 4e | Hz/Bit14or8bit/N
+		070 | 54 53 43 2f 50 41 4c 2f 43 6f 6e 73 75 6d 65 72 | TSC/PAL/Consumer
+		080 | 20 44 65 76 65 72 6f 70 6d 65 6e 74 20 26 20 4d |  Deveropment & M
+		090 | 61 6d 75 66 61 63 74 75 72 69 6e 67 20 44 49 56 | amufacturing DIV
+		0a0 | 2e 43 53 52 44 20 20 20 20 20 20 20 00 00 00 00 | .CSRD
+		0b0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+		0c0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+		0d0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+		0e0 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+		End of Extra data
 	*/
 
 	if(sip->info.function_data[0] & (3<<28))		// Version 1.000, 2000/02/24,315-618

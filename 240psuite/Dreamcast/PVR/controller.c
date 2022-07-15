@@ -101,7 +101,9 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	if(st && isStockController)
 	{
 		/*
-			[192 bytes of data]:
+			========================================================================
+			Official Controller                                 HKT-7700 315-6211-AB
+			========================================================================
 			Functions     : 0x01000000  Function int 0: 0xfe060f00
 			Function int 1: 0x00000000  Function int 2: 0x00000000
 			Region:         0xff        Connection:     0x00
@@ -135,7 +137,9 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	if(st && isArcade)
 	{
 		/*
-			[192 bytes of data]:
+			========================================================================
+			Official Arcade Controller                          HKT-7300 315-6125-AC
+			========================================================================
 			Functions     : 0x01000000  Function int 0: 0xff070000
 			Function int 1: 0x00000000  Function int 2: 0x00000000
 			Region:         0xff        Connection:     0x00
@@ -171,7 +175,9 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 		static int fishing_frames_left = 0;
 		static int fishing_frames_right = 0;
 		/*
-			[192 bytes of data]
+			========================================================================
+			Official ASCII Fishing Controller                   HKT-8700 315-6125-AJ
+			========================================================================
 			Functions     : 0x01000000  Function int 0: 0x00000000
 			Function int 1: 0x00000000  Function int 2: 0x00000000
 			Region:         0xff        Connection:     0x00
@@ -237,7 +243,9 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 		static int maracas_frames_lost = 0;
 		
 		/*
-			[192 bytes of data]
+			========================================================================
+			Official Maracas Controller                        HKT- 9700 315-6211-AS
+			========================================================================
 			Functions     : 0x01000000  Function int 0: 0x0f093c00
 			Function int 1: 0x00000000  Function int 2: 0x00000000
 			Region:         0xff        Connection:     0x00
@@ -315,7 +323,9 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	{
 		int region = 0, rcv = 0;	
 		/*
-			[192 bytes of data]:
+			========================================================================
+			Official Keyboard US                                HKT-7620 315-6211-AM
+			========================================================================
 			Functions     : 0x40000000  Function int 0: 0x80000502
 			Function int 1: 0x00000000  Function int 2: 0x00000000
 			Region:         0x01        Connection:     0x00

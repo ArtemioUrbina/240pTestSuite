@@ -2625,8 +2625,10 @@ void MicrophoneTest()
 }
 
 /*
-	Official Gun:
-	==============
+	
+	========================================================================
+	Official LightGun                                   HKT-7800 315-6125-AG
+	========================================================================
 	Functions     : 0x81000000  Function int 0: 0x00000000
 	Function int 1: 0xfe000000  Function int 2: 0x00000000
 	Region:         0xff        Connection:     0x01
@@ -2644,7 +2646,44 @@ void MicrophoneTest()
 	070 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
 	080 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
 	End of Extra data
+	
+	========================================================================
+	InterAct Starfire LightGun
+	========================================================================
+	Functions     : 0x81000000  Function int 0: 0x00000000
+	Function int 1: 0xfe000000  Function int 2: 0x00000000
+	Region:         0x01        Connection:     0x01
+	Product Name & License: Dreamcast Gun
+	  Produced By or Under License FroÅ SEGA ENTERPRISES,LTD.
+	Standby power: 0x00dc (220mW) Max: 0x012c (300mW)
 
+	========================================================================
+	Dream Blaster MadCatz LightGun
+	========================================================================
+	Functions     : 0x81000000  Function int 0: 0x00000000
+	Function int 1: 0xfe000000  Function int 2: 0x00000000
+	Region:         0x01        Connection:     0x01
+	Product Name & License: Dreamcast Gun
+	  Produced By or Under License From SEGA ENTERPRISES,LTD.+
+	Standby power: 0x00a0 (160mW) Max: 0x00fa (250mW)
+	Extra data:
+	000 | 6d 20 53 45 6d 20 53 45 6d 20 53 45 00 00 00 00 | m SEm SEm SE
+	010 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	020 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	030 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	End of Extra data
+	
+	Official Gun measured range was:
+	x: 200-860
+	y:  20-320
+	
+	InterAct measured range was:
+	x: 225-855
+	y:  20-320
+	
+	MadCatz measured range was:
+	x: 240-860
+	y:  20-305
 */
 
 int isLightGunPresent()
@@ -2657,9 +2696,6 @@ int isLightGunPresent()
 	return 1;
 }
 
-//  018,018/036,036 -> 2,2
-//	160,120/320,240
-//	302,222/604,444
 
 void set_cross_coord(ImagePtr cross, int state)
 {
@@ -2693,14 +2729,13 @@ typedef struct coord_st{
 #define LG_FRAMES	2
 void LightGunTest()
 {
-	int 			done = 0, lg_state = 0, trigger_active = 0;
-	int				x, y, oldx, oldy, cstate = -1;
+	int 			done = 0, lg_state = 0, trigger_active = 0, fix_coord = 0, trigger_cool = 0;
+	int				x, y, oldx, oldy, cstate = -1, min_x = 1024, min_y = 1024, max_x = 0, max_y = 0;
 	uint16			pressed, OldButtonsLG = 0, frame = 0;		
 	ImagePtr		white = NULL, cross = NULL;
 	controller		*st = NULL;
 	maple_device_t	*dev = NULL;
     cont_state_t	*state;
-	uint64 			last = 0, now = 0;
 	coord			read[3], expected[3];
 	char 			msg[100];
 
@@ -2717,7 +2752,6 @@ void LightGunTest()
 	disableSleep();
 	
 	set_cross_coord(cross, cstate);
-	last = timer_ms_gettime64();
 	maple_gun_read_pos(&x, &y);
 	oldx = x;
 	oldy = y;
@@ -2726,7 +2760,7 @@ void LightGunTest()
 	msg[0] = '\0';
 	while(!done && !EndProgram) 
 	{	
-		if(trigger_active /* && lg_state == 0 */)
+		if(trigger_active)
 		{
 			if(dev)
 			{
@@ -2741,6 +2775,9 @@ void LightGunTest()
 		DrawStringB(127, 111, 1.0f, 1.00f, 1.0f, msg);
 		EndScene();
 		
+		if(trigger_cool)
+			trigger_cool --;
+		
 		if(trigger_active)
 		{
 			if(dev)
@@ -2750,8 +2787,29 @@ void LightGunTest()
 				if(oldx != x || oldy != y)
 				{
 					trigger_active = 0;
-					if(!frame)
-						sprintf(msg, "X: %03d Y: %03d", x, y);
+					if(!frame)	// immediate response only
+					{
+						/*
+							A value lower than 200 means it was read 
+							delayed in the next line
+						*/				
+						if(x > max_x) max_x = x;
+						if(x > 180 && x < min_x) min_x = x;
+						if(y > max_y) max_y = x;
+						if(y < min_y) min_y = y;
+							
+						//Fix to screen coordinates
+						if(fix_coord)
+						{
+							if(x < 240)
+								x += 860;
+							x = (x - 240)/2;
+							y-= 20;
+						}
+
+						sprintf(msg, "%cX:%03d Y:%03d%c", 
+							fix_coord ? '[' : ' ', x, y, fix_coord ? ']' : ' ');
+					}
 					oldx = x; 
 					oldy = y;
 				}
@@ -2760,15 +2818,13 @@ void LightGunTest()
 		}
 		
 		frame++;
-		if(frame >= 10 && !trigger_active)
+		if(frame >= 5 && !trigger_active)
 		{
 			trigger_active = 1;
 			frame = 0;
 			lg_state = 0;
 			timer_spin_sleep(10);
 		}
-
-		//now = timer_ms_gettime64();
 		
 		VMURefresh("Light Gun", "");
 
@@ -2784,31 +2840,23 @@ void LightGunTest()
 				lgpressed = state->buttons & ~OldButtonsLG & state->buttons;
 				if(lgpressed & CONT_B)
 				{
+					if(!trigger_cool)
+					{
+						fix_coord = !fix_coord;
+						trigger_cool = 10;
+					}
 				}
 
                 /* The light gun's trigger is mapped to the A button. See if the
                    user is pulling the trigger and enable the gun if needed. */
                 if(lgpressed & CONT_A)
 				{
-					/*
-					if(!trigger_active)
-					{
-						trigger_active = 1;
-						//printf("Trigger start: %d previous:%"PRIu64" now:%"PRIu64" elapsed:%"PRIu64"\n",
-							//cstate, last, now, now-last);
-						printf("\n\n\n\nTrigger Read Frame: %d\n", frame);
-					}
-					else
-						printf("==== colission ==== (lgun %d last:%"PRIu64" now:%"PRIu64" elapsed:%"PRIu64" cooldown: %"PRIu64")\n", 
-							lg_state, last, now, now-last, last + LG_COOLDOWN);
-					*/
+					
 				}
 				
 				OldButtonsLG = state->buttons;
 			}
         }
-		//else
-			//done = 1;
 		
 		st = ReadController(0, &pressed);
 		if(st)
@@ -2821,6 +2869,7 @@ void LightGunTest()
 		}
 	}
 	
+	printf("min_x: %d max_x: %d\nmin_y: %d max_y: %d\n", min_x, max_x, min_y, max_y);
 	enableSleep();
 	FreeImage(&white);
 	FreeImage(&cross);
