@@ -635,47 +635,55 @@ void DrawWhiteScreen()
 			if (pressed & CONT_B)
 				done =	1;
 
-			if (pressed & CONT_RTRIGGER)
+			if (pressed & CONT_A && color == 0)
+				editmode = !editmode;
+			
+			if(!editmode)
 			{
-				color ++;
-				if(color > 4)
-					color = 0;		
-
-				editmode = 0;
-				if(color == 0 && cr + cb + cg != 3*0xff)
+				if (pressed & CONT_RTRIGGER ||
+					pressed & CONT_DPAD_RIGHT)
 				{
-					sprintf(msg, "%s [EDITED]", mode[color]);
-					vmuMsg = edited;
-				}
-				else
-				{
-					sprintf(msg, "%s", mode[color]);
-					vmuMsg = mode[color];
+					color ++;
+					if(color > 4)
+						color = 0;		
+
+					editmode = 0;
+					if(color == 0 && cr + cb + cg != 3*0xff)
+					{
+						sprintf(msg, "%s [EDITED]", mode[color]);
+						vmuMsg = edited;
+					}
+					else
+					{
+						sprintf(msg, "%s", mode[color]);
+						vmuMsg = mode[color];
+					}
+
+					refreshVMU = 1;
+					text = 30;
 				}
 
-				refreshVMU = 1;
-				text = 30;
-			}
+				if (pressed & CONT_LTRIGGER ||
+					pressed & CONT_DPAD_LEFT)
+				{			
+					color --;
+					if(color < 0)
+						color = 4;
 
-			if (pressed & CONT_LTRIGGER)
-			{			
-				color --;
-				if(color < 0)
-					color = 4;
-
-				editmode = 0;
-				if(color == 0 && cr + cb + cg != 3*0xff)
-				{
-					sprintf(msg, "%s [edited]", mode[color]);
-					vmuMsg = edited;
+					editmode = 0;
+					if(color == 0 && cr + cb + cg != 3*0xff)
+					{
+						sprintf(msg, "%s [edited]", mode[color]);
+						vmuMsg = edited;
+					}
+					else
+					{
+						sprintf(msg, "%s", mode[color]);
+						vmuMsg = mode[color];
+					}
+					refreshVMU = 1;
+					text = 30;
 				}
-				else
-				{
-					sprintf(msg, "%s", mode[color]);
-					vmuMsg = mode[color];
-				}
-				refreshVMU = 1;
-				text = 30;
 			}
 
 			if (pressed & CONT_A && color == 1)
@@ -692,9 +700,6 @@ void DrawWhiteScreen()
 				}
 				text = 140;
 			}
-
-			if (pressed & CONT_A && color == 0)
-				editmode = !editmode;
 
 			if(editmode)
 			{
@@ -974,7 +979,8 @@ void DrawColorBars()
 			
 			if(type)
 			{
-				if (pressed & CONT_LTRIGGER)
+				if (pressed & CONT_LTRIGGER  ||
+					pressed & CONT_DPAD_LEFT)
 				{
 					type --;
 					if(type < 1)
@@ -983,7 +989,8 @@ void DrawColorBars()
 					pal = NULL;
 				}
 				
-				if (pressed & CONT_RTRIGGER)
+				if (pressed & CONT_RTRIGGER ||
+					pressed & CONT_DPAD_RIGHT)
 				{
 					type ++;
 					if(type > 3)
@@ -1480,7 +1487,8 @@ void DrawMonoscope()
 			if (pressed & CONT_START)
 				ShowMenu(MONOSCOPEHELP);
 
-			if (pressed & CONT_LTRIGGER)
+			if (pressed & CONT_LTRIGGER ||
+				pressed & CONT_DPAD_LEFT)
 			{
 				back->alpha -= 0.1f;
 				if(back->alpha < 0.0f)
@@ -1489,7 +1497,8 @@ void DrawMonoscope()
 				refreshVMU = 1;
 			}
 		
-			if (pressed & CONT_RTRIGGER)
+			if (pressed & CONT_RTRIGGER ||
+				pressed & CONT_DPAD_RIGHT)
 			{
 				back->alpha += 0.1f;
 				if(back->alpha > 1.0f)
@@ -2020,16 +2029,18 @@ void DrawConvergence()
 			done =	1;								
 	
 		if (pressed & CONT_START)
-			ShowMenu(DROPSHADOW);
+			ShowMenu(CONVERHELP);
 		
-		if (pressed & CONT_A || pressed & CONT_RTRIGGER)
+		if (pressed & CONT_A || pressed & CONT_RTRIGGER ||
+			pressed & CONT_DPAD_RIGHT)
 		{
 			current ++;
 			if(current >= NUM_CONV)
 				current = 0;
 		}
 		
-		if (pressed & CONT_LTRIGGER)
+		if (pressed & CONT_LTRIGGER ||
+			pressed & CONT_DPAD_LEFT)
 		{
 			current --;
 			if(current < 0)

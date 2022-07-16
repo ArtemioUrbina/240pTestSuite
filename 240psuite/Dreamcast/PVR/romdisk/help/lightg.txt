@@ -1,18 +1,24 @@
-                 LIGHT GUN TEST
+              LIGHT GUN TEST (1/2)
 
-Here you can check how a lightgun is performing.
+In the first screen, you need yo slowly point
+from teh center towards the #Yleft#Y, #Yright#Y and #Ytop
+edges#Y of the screen in order to calibrate the
+limits of the sensors.
 
-In the first screen, you need to point around the
-top corners and left edge of the screen in order
-to calibrate the limits of the sensors.
-
-After the limits are detected, a message will be
-shown at the bottom of the screen and the
-coordinates will be screen mapped. Then you must
-press #YB#Y to continue.
+#GGreen arrows#G will tell you which directons are
+still needed.
 
 In the next screen, the cursor will follow your
 aim. If wish to return to the calibration screen,
-you can improve it by pressing #YB#Y again.
+you can improve it by pressing #YB#Y. You can
+re-load by aiming off-screen.
+
+                                         #C(cont...)#C
+              LIGHT GUN TEST (2/2)
+
+#CSounds:#G
+
+Original #YLaser shot silenced#Y by #Gbubaproducer#G.
+#YReloading of a plastic toy nerf gun#Y by #GLaCezio#G.
 
 Have fun!

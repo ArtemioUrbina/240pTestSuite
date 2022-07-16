@@ -37,6 +37,7 @@ void DrawStringSCenteredFull(float y, float r, float g, float b, char *str);
 void DrawStringSCenteredXY(float r, float g, float b, char *str);
 void DrawStringB(float x, float y, float r, float g, float b, char *str);
 void DrawStringBCentered(float y, float r, float g, float b, char *str);
+void DrawStringBCenteredFull(float y, float r, float g, float b, char *str);
 int MeasureString(char *str);
 int countLineFeeds(char *str);
 int getLongestLineLen(char *str);

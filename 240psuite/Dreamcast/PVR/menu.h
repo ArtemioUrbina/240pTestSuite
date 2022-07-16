@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include "image.h"
 
-#define VERSION_NUMBER "Dreamcast Ver. 1.32"
+#define VERSION_NUMBER "Dreamcast Ver. 2.00"
 #define VERSION_DATE "15/07/2022"
 
 #define MENUSIZE_W 116

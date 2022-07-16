@@ -366,6 +366,11 @@ void DrawStringBCentered(float y, float r, float g, float b, char *str)
 	DrawStringSCenteredInternal(y, r, g, b, str, 0, 1);
 }
 
+void DrawStringBCenteredFull(float y, float r, float g, float b, char *str)
+{
+	DrawStringSCenteredInternal(y, r, g, b, str, vmode < HIGH_RES ? 0 : 1, 1);
+}
+
 int countLineFeeds(char *str) 
 {	
 	int lfeed = 0;

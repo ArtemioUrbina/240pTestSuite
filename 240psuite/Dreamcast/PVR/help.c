@@ -236,16 +236,24 @@ void HelpWindow(char *filename, ImagePtr screen)
 			else
 				joycnt = 0;
 		}
-		dev = maple_enum_type(0, MAPLE_FUNC_LIGHTGUN);
-		if(dev)
+		
+		if(!isLightGun)
 		{
-			cont_state_t	*state;
-			
-            if((state = (cont_state_t *)maple_dev_status(dev)))
+			dev = maple_enum_type(0, MAPLE_FUNC_LIGHTGUN);
+			if(dev)
 			{
-				if(state->buttons & CONT_B ||
-					state->buttons & CONT_START)
-					done = 1;
+				cont_state_t	*state;
+				
+				if((state = (cont_state_t *)maple_dev_status(dev)))
+				{
+					if(state->buttons & CONT_B ||
+						state->buttons & CONT_START)
+						done = 1;
+					if (state->buttons & CONT_DPAD_LEFT)
+						page --;
+					if (state->buttons & CONT_DPAD_RIGHT)
+						page ++;
+				}
 			}
 		}
 

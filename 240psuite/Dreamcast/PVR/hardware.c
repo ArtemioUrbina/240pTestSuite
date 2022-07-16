@@ -2708,19 +2708,29 @@ typedef struct coord_st{
 #define MAX_REMAIN		25
 #define OB_TIME			4
 
+// min_x must be between 195 and 300
+// max_x must be between 830 and 870
+// min_y must be between  15 and  30
+// we don't use max_y
+
+#define IS_MIN_X_BAD	(min_x < 195 || min_x > 300)
+#define IS_MAX_X_BAD	(max_x < 830 || max_x > 870)
+#define IS_MIN_Y_BAD	(min_y <  15 || min_y >  30)
+
 void LightGunTest()
 {
-	int 			done = 0, lg_state = 0, polling_active = 0, ob_timeout = 0;
+	int 			done = 0, lg_state = 0, polling_active = 0;
 	int				trigger_cool = 0, calibrating = 1, h = 0, remain = MAX_REMAIN;
-	int				x, y, oldx, oldy, values_ok = 1, trigger = 0;
-	int				min_x = 1024, min_y = 1024, max_x = 0, max_y = 0;
+	int				x, y, oldx, oldy, values_ok = 1, trigger = 0, oldvmode = -1;
+	int				min_x = 1024, min_y = 1024, max_x = 0, max_y = 0, factor = 1;
+	int				arrow_fr_cnt = 0, ob_timeout = 0, show_cal = 0;
 	uint16			pressed, OldButtonsLG = 0, frame = 0, curr_hole = 0;
-	ImagePtr		white = NULL, cross = NULL, hole = NULL;
+	ImagePtr		white = NULL, cross = NULL, hole = NULL, arrow = NULL;
 	controller		*st = NULL;
 	maple_device_t	*dev = NULL;
-	coord			holes[NUM_HOLES];
+	coord			holes[NUM_HOLES], arrows[3];
 	char 			msg[100];
-	sfxhnd_t		glass, rld, nohit;
+	sfxhnd_t		hit, rld, miss;
 
 	if(!isLightGunPresent())
 		return;
@@ -2734,15 +2744,18 @@ void LightGunTest()
 	hole = LoadKMG("/rd/hole.kmg.gz", 0);
 	if(!hole)
 		return;
+	arrow = LoadKMG("/rd/arrow.kmg.gz", 0);
+	if(!arrow)
+		return;
 		
-	glass = snd_sfx_load("/rd/glass.wav");
-	if(glass == SFXHND_INVALID)
+	hit = snd_sfx_load("/rd/hit.wav");
+	if(hit == SFXHND_INVALID)
 		return;
 	rld = snd_sfx_load("/rd/rld.wav");
 	if(rld == SFXHND_INVALID)
 		return;
-	nohit = snd_sfx_load("/rd/nohit.wav");
-	if(nohit == SFXHND_INVALID)
+	miss = snd_sfx_load("/rd/miss.wav");
+	if(miss == SFXHND_INVALID)
 		return;
 
 	disableSleep();
@@ -2758,9 +2771,38 @@ void LightGunTest()
 		holes[h].a = 0;
 	}
 	
+	arrows[0].x = 112;
+	arrows[0].y = 120;
+	
+	arrows[1].x = 208;
+	arrows[1].y = 120;
+	
+	arrows[2].x = 160;
+	arrows[2].y = 100;
+	
+	
+	arrows[0].a = 90;		// left
+	arrows[1].a = -90;		// right
+	arrows[2].a = 0;		// up
+	
+	arrow->r = 0.0f;
+	arrow->g = 1.0f;
+	arrow->b = 0.0f;
+	
 	sprintf(msg, "Out of bouds");
 	while(!done && !EndProgram) 
 	{	
+		if(oldvmode != vmode)
+		{
+			if(vmode < HIGH_RES)
+				factor = 1;
+			else
+				factor = 2;
+			white->w = dW;
+			white->h = dH;
+			oldvmode = vmode;
+		}
+		
 		if(polling_active)
 		{
 			if(dev)
@@ -2785,34 +2827,99 @@ void LightGunTest()
 				}
 			}
 			if(!remain)
-				DrawStringBCentered(111, 1.0f, 1.0f, 1.0f, "RELOAD!");
+				DrawStringBCenteredFull(111*factor, 1.0f, 1.0f, 1.0f, "RELOAD!");
 		}
 		else
-			DrawStringBCentered(111, 1.0f, 1.00f, 1.0f, msg);
+		{	
+			if(values_ok)
+				DrawStringBCenteredFull(100*factor, 1.0f, 1.00f, 0.0f, "Calibration Done");
+			else
+			{
+				arrow_fr_cnt++;
+				if(IS_MIN_X_BAD)
+				{
+					if(arrow_fr_cnt == 10)
+					{
+						arrows[0].x -= 24;
+						if(arrows[0].x < -8)
+							arrows[0].x = 112;
+					}
+					arrow->x = factor*arrows[0].x - arrow->tw/2;
+					arrow->y = factor*arrows[0].y - arrow->th/2;
+					DrawImageRotate(arrow, arrows[0].a);
+				}
+				
+				if(IS_MAX_X_BAD)
+				{
+					if(arrow_fr_cnt == 10)
+					{
+						arrows[1].x += 24;
+						if(arrows[1].x > 328)
+							arrows[1].x = 208;
+					}
+					arrow->x = factor*arrows[1].x - arrow->tw/2;
+					arrow->y = factor*arrows[1].y - arrow->th/2;
+					DrawImageRotate(arrow, arrows[1].a);
+				}
+				
+				if(IS_MIN_Y_BAD)
+				{
+					if(arrow_fr_cnt == 10)
+					{
+						arrows[2].y -= 22;
+						if(arrows[2].y < -10)
+							arrows[2].y = 100;
+					}
+					arrow->x = factor*arrows[2].x - arrow->tw/2;
+					arrow->y = factor*arrows[2].y - arrow->th/2;
+					DrawImageRotate(arrow, arrows[2].a);
+				}
+				
+				if(arrow_fr_cnt == 10)
+					arrow_fr_cnt = 0;
+			}
+			DrawStringBCenteredFull(111*factor, 1.0f, 1.00f, 1.0f, msg);
+			
+			if(show_cal)
+			{
+				char 	data[100], col;
+				int 	py = 140;
+				
+				col = IS_MIN_X_BAD ? 'O' : 'G';
+				sprintf(data, "#%cmin X:#%c %03d", col, col, min_x);
+				DrawStringBCenteredFull(py*factor, 1.0f, 1.00f, 1.0f, data);
+				py+= fh;
+				
+				col = IS_MAX_X_BAD ? 'O' : 'G';
+				sprintf(data, "#%cmax X:#%c %03d", col, col, max_x);
+				DrawStringBCenteredFull(py*factor, 1.0f, 1.00f, 1.0f, data);
+				py+= fh;
+				
+				col = IS_MIN_Y_BAD ? 'O' : 'G';
+				sprintf(data, "#%cmin Y:#%c %03d", col, col, min_y);
+				DrawStringBCenteredFull(py*factor, 1.0f, 1.00f, 1.0f, data);
+			}
+		}
+		
 		if(calibrating)
 		{	
-			// min_x must be between 195 and 290
-			// max_x must be between 830 and 870
-			// min_y must be between 15 and 30
-			// we don't use max_y
-
 			values_ok = 1;
-			if(min_x < 195 || min_x > 290)
+			if(IS_MIN_X_BAD)
 				values_ok = 0;
-			if(max_x < 830 || max_x > 870)
+			if(IS_MAX_X_BAD)
 				values_ok = 0;
-			if(min_y < 15 || min_y > 30)
+			if(IS_MIN_Y_BAD)
 				values_ok = 0;
 
 			if(values_ok)	
 			{
 				if(isLightGun)
-					DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "#GCalibration finished:#G press #Ytrigger#Y to continue");
+					DrawStringBCenteredFull(210*factor, 1.0f, 1.0f, 1.0f, "Press #Ytrigger#Y to continue");
 				else
-					DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "#GCalibration finished:#G press #Ytrigger#Y or #YA#Y in Ctrl 1");
+					DrawStringBCenteredFull(210*factor, 1.0f, 1.0f, 1.0f, "Press #Ytrigger#Y or #YA#Y in Ctrl 1 to continu");
 			}
 			else
-				DrawStringBCentered(210, 1.0f, 1.0f, 1.0f, "Point lightgun #Ytracing circles#Y around the #Ytop corners#Y");
+				DrawStringBCenteredFull(210*factor, 1.0f, 1.0f, 1.0f, "Point slowly towards the #Yscreen borders#Y");
 		}
 		EndScene();
 		
@@ -2848,7 +2955,7 @@ void LightGunTest()
 							c_y = y;
 							
 							if(x > max_x) max_x = x;
-							if(x > 195 && x < min_x) min_x = x;
+							if(x > 190 && x < min_x) min_x = x;
 							if(y > max_y) max_y = x;
 							if(y < min_y) min_y = y;
 							
@@ -2856,10 +2963,11 @@ void LightGunTest()
 							{
 								if(c_x < min_x)
 									c_x += max_x;
-								c_x = (c_x - min_x)/2;
+								c_x = (c_x - min_x)/(factor == 2 ? 1 : 2);
 								c_y -= min_y;
+								c_y *= factor;
 								
-								sprintf(msg, "[X: %03d Y: %03d]", c_x, c_y);
+								sprintf(msg, "#Y[#YX: %03d Y: %03d#Y]#Y", c_x, c_y);
 							}
 							else
 								sprintf(msg, " X: %03d Y: %03d ", x, y);
@@ -2872,16 +2980,15 @@ void LightGunTest()
 							c_y = y;
 							if(c_x < min_x)
 								c_x += max_x;
-							c_x = (c_x - min_x)/2;
+							c_x = (c_x - min_x)/(factor == 2 ? 1 : 2);
 							c_y -= min_y;
+							c_y *= factor;
 							
 							cross->x = c_x - cross->tw/2;
 							cross->y = c_y - cross->th/2;
 							
 							if(trigger)
 							{
-								if(frame == 1)
-									printf("frame == 1\n");
 								if(remain)
 								{
 									holes[curr_hole].x = c_x - hole->tw/2;
@@ -2891,8 +2998,8 @@ void LightGunTest()
 									if(curr_hole >= NUM_HOLES)
 										curr_hole = 0;
 									remain --;
-									if(glass != SFXHND_INVALID)
-										snd_sfx_play(glass, 255, is_system_mono ? 128 : 256*c_x/320);
+									if(hit != SFXHND_INVALID)
+										snd_sfx_play(hit, 255, is_system_mono ? 128 : 256*c_x/320);
 								}
 								trigger = 0;
 							}
@@ -2920,8 +3027,9 @@ void LightGunTest()
 							}
 							else
 							{
-								if(nohit != SFXHND_INVALID)
-									snd_sfx_play(nohit, 255, 128);
+								remain --;
+								if(miss != SFXHND_INVALID)
+									snd_sfx_play(miss, 255, 128);
 							}
 						}
 					}
@@ -2987,12 +3095,19 @@ void LightGunTest()
 						ShowMenu(LG_HELP);
 					OldButtonsLG |= CONT_B;
 				}
+				
+				if(lgpressed & CONT_DPAD_UP ||
+					lgpressed & CONT_DPAD_LEFT)
+					show_cal = !show_cal;
 			}
         }
 		
 		st = ReadController(0, &pressed);
 		if(st && !isLightGun)
 		{
+			if (pressed & CONT_DPAD_UP)
+				show_cal = !show_cal;		
+				
 			if (pressed & CONT_B)
 				done =	1;						
 			
@@ -3011,12 +3126,13 @@ void LightGunTest()
 	FreeImage(&hole);
 	FreeImage(&white);
 	FreeImage(&cross);
-	if(glass != SFXHND_INVALID)
-		snd_sfx_unload(glass);
+	FreeImage(&arrow);
+	if(hit != SFXHND_INVALID)
+		snd_sfx_unload(hit);
 	if(rld != SFXHND_INVALID)
 		snd_sfx_unload(rld);
-	if(nohit != SFXHND_INVALID)
-		snd_sfx_unload(nohit);
+	if(miss != SFXHND_INVALID)
+		snd_sfx_unload(miss);
 	return;
 }
 

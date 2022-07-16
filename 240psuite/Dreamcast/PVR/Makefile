@@ -121,6 +121,6 @@ cds: clean cdi-int mdf-int
 	rm 240p.iso 1ST_READ.BIN 
 
 zip: cdi
-	zip -9 240p-DC-PVR-1.x.zip README.TXT Changelog.txt 240pSuite.cdi
+	zip -9 240p-DC-PVR-2.x.zip README.TXT Changelog.txt 240pSuite.cdi
 	rm 240pSuite.cdi
 
