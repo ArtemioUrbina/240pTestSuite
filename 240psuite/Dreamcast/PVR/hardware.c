@@ -896,7 +896,7 @@ char			buffer_printf_buffer[BUFFER_PRINT_SIZE];
 int				display_buffer_pos = 0;
 int				maple_locked_device = 0;
 int				maple_use_reply_bytes = 0;
-int				maple_useCache = 0;
+int				maple_useCache = 1;
 int				maple_command_finish_wait = 0;
 
 #ifdef DCLOAD
@@ -1148,11 +1148,7 @@ void print_device_allinfo(maple_device_t *dev, int extra)
 		return;
 		
 	if(size-4 <= 0)
-	{
-		if(!maple_useCache)
-			FillKOSDevInfo(dev, 1);
 		return;
-	}
 	
 	buffer_printf("[%d bytes of data]:\n", size-4);
 	print_devinfo((maple_devinfo_t *)&recv_buff[4]);
@@ -1188,9 +1184,9 @@ void print_device_kos_cache(maple_device_t *dev)
 {
 	if(!dev)
 		return;
-		
+	//buffer_printf("#G--------------------------------------------------------------#G\n");
+	buffer_printf("\n");
 	FillKOSDevInfo(dev, 0);
-	buffer_printf("#G--------------------------------------------------------------#G\n");
 }
 
 void cleanDisplayBuffer()
@@ -1248,8 +1244,8 @@ void ListMapleDevices()
 		c = maple_device_scan(15, 20+v_scroll, sel);
 		if(maple_use_reply_bytes)
 			DrawStringSCentered(210+v_scroll, 0.0f, 1.0f, 0.0f, "Use Maple response bytes"); 
-		if(maple_useCache)
-			DrawStringSCentered(210+v_scroll+fh, 0.0f, 1.0f, 0.0f, "Use short response"); 
+		if(!maple_useCache)
+			DrawStringSCentered(210+v_scroll+fh, 0.0f, 1.0f, 0.0f, "Omit short response"); 
 		EndScene();
 
 		VMURefresh("Maple", "Devices");
@@ -1293,9 +1289,9 @@ void ListMapleDevices()
 						sprintf(vmudata, "query: %c%c", 'A'+(dev->port), '0'+(dev->unit));	
 						refreshVMU = 1;
 						cleanDisplayBuffer();
+						print_device_allinfo(dev, 1);
 						if(maple_useCache)
 							print_device_kos_cache(dev);
-						print_device_allinfo(dev, 1);
 						lines = countLineFeeds(display_buffer);
 						while(!close_display && !EndProgram) 
 						{
@@ -2705,24 +2701,39 @@ typedef struct coord_st{
 #define	LG_TG_COOL		6
 #define LG_FRAME_READ	2
 #define NUM_HOLES		400
-#define MAX_REMAIN		25
+#define MAX_REMAIN		15
 #define OB_TIME			4
+#define LG_TIMEOUT		15
+
+#define START_MIN_X		1024
+#define START_MIN_Y		1024
+#define START_MAX_X		0
 
 // min_x must be between 195 and 300
 // max_x must be between 830 and 870
 // min_y must be between  15 and  30
-// we don't use max_y
 
-#define IS_MIN_X_BAD	(min_x < 195 || min_x > 300)
-#define IS_MAX_X_BAD	(max_x < 830 || max_x > 870)
-#define IS_MIN_Y_BAD	(min_y <  15 || min_y >  30)
+#define IS_MIN_X_BAD	(min_x > 300)
+#define IS_MAX_X_BAD	(max_x < 830)
+#define IS_MIN_Y_BAD	(min_y >  30)
+
+#define MIN_X_ACCEPT	(min_x < 350)
+#define MAX_X_ACCEPT	(max_x > 780)
+#define MIN_Y_ACCEPT	(min_y <  60)
+
+inline void set_color(ImagePtr t, float r, float g, float b)
+{
+	t->r = r;
+	t->g = g;
+	t->b = b;
+}
 
 void LightGunTest()
 {
-	int 			done = 0, lg_state = 0, polling_active = 0;
+	int 			done = 0, lg_state = 0, polling_active = 0, cal_timeout = 0, blink = 0;
 	int				trigger_cool = 0, calibrating = 1, h = 0, remain = MAX_REMAIN;
 	int				x, y, oldx, oldy, values_ok = 1, trigger = 0, oldvmode = -1;
-	int				min_x = 1024, min_y = 1024, max_x = 0, max_y = 0, factor = 1;
+	int				min_x = START_MIN_X, min_y = START_MIN_Y, max_x = START_MAX_X, factor = 1;
 	int				arrow_fr_cnt = 0, ob_timeout = 0, show_cal = 0;
 	uint16			pressed, OldButtonsLG = 0, frame = 0, curr_hole = 0;
 	ImagePtr		white = NULL, cross = NULL, hole = NULL, arrow = NULL;
@@ -2730,7 +2741,8 @@ void LightGunTest()
 	maple_device_t	*dev = NULL;
 	coord			holes[NUM_HOLES], arrows[3];
 	char 			msg[100];
-	sfxhnd_t		hit, rld, miss;
+	sfxhnd_t		hit, rld, miss, click;
+	uint64			start_cal, curr_cal;
 
 	if(!isLightGunPresent())
 		return;
@@ -2756,6 +2768,9 @@ void LightGunTest()
 		return;
 	miss = snd_sfx_load("/rd/miss.wav");
 	if(miss == SFXHND_INVALID)
+		return;
+	click = snd_sfx_load("/rd/click.wav");
+	if(click == SFXHND_INVALID)
 		return;
 
 	disableSleep();
@@ -2790,6 +2805,7 @@ void LightGunTest()
 	arrow->b = 0.0f;
 	
 	sprintf(msg, "Out of bouds");
+	start_cal = timer_us_gettime64();
 	while(!done && !EndProgram) 
 	{	
 		if(oldvmode != vmode)
@@ -2826,8 +2842,14 @@ void LightGunTest()
 					DrawImageRotate(hole, holes[h].a);
 				}
 			}
-			if(!remain)
-				DrawStringBCenteredFull(111*factor, 1.0f, 1.0f, 1.0f, "RELOAD!");
+			if(!remain )
+			{
+				if(blink % 30)
+					DrawStringBCenteredFull(111*factor, 1.0f, 1.0f, 1.0f, "RELOAD!");
+				blink++;
+			}
+			if(cal_timeout)
+				DrawStringBCenteredFull(30*factor, 1.0f, 1.0f, 0.0f, "Sub-optimal calibration values");
 		}
 		else
 		{	
@@ -2846,6 +2868,10 @@ void LightGunTest()
 					}
 					arrow->x = factor*arrows[0].x - arrow->tw/2;
 					arrow->y = factor*arrows[0].y - arrow->th/2;
+					if(MIN_X_ACCEPT)
+						set_color(arrow, 1, 1, 0);
+					else
+						set_color(arrow, 0, 1, 0);
 					DrawImageRotate(arrow, arrows[0].a);
 				}
 				
@@ -2859,6 +2885,10 @@ void LightGunTest()
 					}
 					arrow->x = factor*arrows[1].x - arrow->tw/2;
 					arrow->y = factor*arrows[1].y - arrow->th/2;
+					if(MAX_X_ACCEPT)
+						set_color(arrow, 1, 1, 0);
+					else
+						set_color(arrow, 0, 1, 0);
 					DrawImageRotate(arrow, arrows[1].a);
 				}
 				
@@ -2870,6 +2900,10 @@ void LightGunTest()
 						if(arrows[2].y < -10)
 							arrows[2].y = 100;
 					}
+					if(MIN_Y_ACCEPT)
+						set_color(arrow, 1, 1, 0);
+					else
+						set_color(arrow, 0, 1, 0);
 					arrow->x = factor*arrows[2].x - arrow->tw/2;
 					arrow->y = factor*arrows[2].y - arrow->th/2;
 					DrawImageRotate(arrow, arrows[2].a);
@@ -2919,9 +2953,22 @@ void LightGunTest()
 					DrawStringBCenteredFull(210*factor, 1.0f, 1.0f, 1.0f, "Press #Ytrigger#Y or #YA#Y in Ctrl 1 to continu");
 			}
 			else
+			{
+				if(cal_timeout)
+					DrawStringBCenteredFull(200*factor, 1.0f, 1.0f, 1.0f, "You can test these partial values with #Ytrigger#Y");
 				DrawStringBCenteredFull(210*factor, 1.0f, 1.0f, 1.0f, "Point slowly towards the #Yscreen borders#Y");
+			}
 		}
 		EndScene();
+		
+		/* Allow a time out if values are not perfect, but at least tried */
+		curr_cal = timer_us_gettime64();
+		if(calibrating && 
+			(double)(curr_cal - start_cal)/1000000.0 > LG_TIMEOUT &&
+			MIN_X_ACCEPT && MIN_Y_ACCEPT && MAX_X_ACCEPT)
+		{
+			cal_timeout = !values_ok;
+		}
 		
 		if(trigger_cool)
 			trigger_cool --;
@@ -2956,7 +3003,6 @@ void LightGunTest()
 							
 							if(x > max_x) max_x = x;
 							if(x > 190 && x < min_x) min_x = x;
-							if(y > max_y) max_y = x;
 							if(y < min_y) min_y = y;
 							
 							if(values_ok)
@@ -3001,6 +3047,11 @@ void LightGunTest()
 									if(hit != SFXHND_INVALID)
 										snd_sfx_play(hit, 255, is_system_mono ? 128 : 256*c_x/320);
 								}
+								else
+								{
+									if(miss != SFXHND_INVALID)
+										snd_sfx_play(click, 255, 128);
+								}
 								trigger = 0;
 							}
 						}
@@ -3024,6 +3075,7 @@ void LightGunTest()
 								remain = MAX_REMAIN;
 								if(rld != SFXHND_INVALID)
 									snd_sfx_play(rld, 255, 128);
+								trigger_cool = 3*LG_TG_COOL;
 							}
 							else
 							{
@@ -3070,7 +3122,11 @@ void LightGunTest()
 					}
 					
 					if(!calibrating)
-						calibrating = !calibrating;
+					{
+						calibrating = 1;
+						cal_timeout = 0;
+						start_cal = timer_us_gettime64();
+					}
 				}
 
 				if(lgpressed & CONT_A && !trigger_cool)
@@ -3079,7 +3135,7 @@ void LightGunTest()
 						trigger = 1;
 					else
 					{
-						if(values_ok)
+						if(values_ok || cal_timeout)
 							calibrating = !calibrating;
 					}
 					
@@ -3133,6 +3189,8 @@ void LightGunTest()
 		snd_sfx_unload(rld);
 	if(miss != SFXHND_INVALID)
 		snd_sfx_unload(miss);
+	if(click != SFXHND_INVALID)
+		snd_sfx_unload(click);
 	return;
 }
 

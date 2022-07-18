@@ -857,7 +857,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		}
 		else
 		{
-			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "VMU Test"); y += fh; c++;    
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "VMU Control & MDFourier"); y += fh; c++;    
 		}
 		if(isLightGunPresent())
 		{
