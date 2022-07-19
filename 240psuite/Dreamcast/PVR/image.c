@@ -31,6 +31,10 @@
 #include "help.h"
 #include "vmu.h"
 
+#ifdef DREAMEYE_DISP
+#include <jpeg/jpeg.h>
+#endif
+
 #ifdef DCLOAD
 int keep_link_alive = 0;
 #endif
@@ -109,7 +113,7 @@ void RefreshLoadedImages()
 			}
 			else
 			{
-				if(ReLoadKMG(Images[i].image, Images[i].name))
+				if(ReLoadIMG(Images[i].image, Images[i].name))
 					Images[i].state = MEM_LOADED;
 			}
 		}	
@@ -482,7 +486,7 @@ void UseDirectColor(ImagePtr image, uint16 a, uint16 r, uint16 g, uint16 b)
 	image->b_direct = b;
 }
 
-ImagePtr LoadKMG(const char *filename, int maptoscreen)
+ImagePtr LoadIMG(const char *filename, int maptoscreen)
 {	
 	int load = -1, len = 0, dtext888 = 0;
 	ImagePtr image = NULL;
@@ -524,6 +528,10 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 #ifdef USE_PNG
 		if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
 			load = png_to_img(filename, PNG_MASK_ALPHA, &img);
+#endif
+#ifdef DREAMEYE_DISP
+		if(filename[len - 3] == 'j' && filename[len - 2] == 'p' && filename[len - 1] == 'g')
+			load = jpeg_to_img(filename, 1, &img);
 #endif
 	}
 
@@ -594,7 +602,7 @@ ImagePtr LoadKMG(const char *filename, int maptoscreen)
 	return image;
 }
 
-uint8 ReLoadKMG(ImagePtr image, const char *filename)
+uint8 ReLoadIMG(ImagePtr image, const char *filename)
 {	
 	int load = -1, len = 0;
 	kos_img_t img;

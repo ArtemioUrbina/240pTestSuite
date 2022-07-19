@@ -110,8 +110,8 @@ int main(void)
 	LoadScanlines();
 	LoadSysSettings();
 	
-	title = LoadKMG("/rd/back.kmg.gz", 0);
-	sd = LoadKMG("/rd/SD.kmg.gz", 0);
+	title = LoadIMG("/rd/back.kmg.gz", 0);
+	sd = LoadIMG("/rd/SD.kmg.gz", 0);
 	if(sd)
 	{
 		sd->x = 195;
@@ -351,7 +351,7 @@ void TestPatternsColorMenu(ImagePtr title, ImagePtr sd)
 		DrawImage(title);
 		DrawImage(sd);
 
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Pluge"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PLUGE"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "EBU Color Bars"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SMPTE Color Bars"); y += fh; c++;

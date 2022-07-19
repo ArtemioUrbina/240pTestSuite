@@ -182,5 +182,7 @@ int check_for_bad_lcd();
 #define 	CONT_FIXED_CAPABILITY_DPAD_LEFT   	(1<<30)
 #define 	CONT_FIXED_CAPABILITY_DPAD_RIGHT   	(1<<31)
 
+#include <dc/maple/dreameye.h>
+
 #endif
 

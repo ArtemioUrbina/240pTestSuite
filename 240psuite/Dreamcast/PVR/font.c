@@ -45,7 +45,7 @@ void LoadFont()
 {
 	if(!font_t)
 	{
-		font_t = LoadKMG("/rd/font.kmg.gz", 0);
+		font_t = LoadIMG("/rd/font.kmg.gz", 0);
 		if(!font_t)
 			return;
 		font_t->layer = 2.0f;
@@ -53,7 +53,7 @@ void LoadFont()
 
 	if(!black_t)
 	{				
-		black_t = LoadKMG("/rd/black.kmg.gz", 0);
+		black_t = LoadIMG("/rd/black.kmg.gz", 0);
 		if(!black_t)
 			return;
 		black_t->layer = 2.0f;
@@ -390,7 +390,7 @@ void LoadNumbers()
 {
 	if(!num_t)
 	{
-		num_t = LoadKMG("/rd/numbers.kmg.gz", 0);
+		num_t = LoadIMG("/rd/numbers.kmg.gz", 0);
 		num_t->layer = 2.0f;
 	}		
 }

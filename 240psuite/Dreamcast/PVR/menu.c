@@ -299,7 +299,7 @@ void DrawShowMenu()
 				};
 	float		r = 0, b = 0, g = 0;
 	
-	back = LoadKMG("/rd/FloatMenu.kmg.gz", 0);
+	back = LoadIMG("/rd/FloatMenu.kmg.gz", 0);
 	if(!back)
 	{
 		FreeTextureFB();
@@ -453,7 +453,7 @@ void ChangeOptions(ImagePtr screen)
 	ImagePtr	back;
 	char		error[256];
 	
-	back = LoadKMG("/rd/help.kmg.gz", 0);
+	back = LoadIMG("/rd/help.kmg.gz", 0);
 	if(!back)
 		return;
 
@@ -961,15 +961,15 @@ void ChangePALBackgroundColor(ImagePtr title)
 	int 			sel = 1, close = 0;
 	ImagePtr		back, block, blackblock;
 		
-	back = LoadKMG("/rd/help.kmg.gz", 0);
+	back = LoadIMG("/rd/help.kmg.gz", 0);
 	if(!back)
 		return;
 
-	block = LoadKMG("/rd/white.kmg.gz", 0);
+	block = LoadIMG("/rd/white.kmg.gz", 0);
 	if(!block)
 		return;
 
-	blackblock = LoadKMG("/rd/black.kmg.gz", 0);
+	blackblock = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!blackblock)
 		return;
 
@@ -1136,7 +1136,7 @@ void SelectVideoMode(ImagePtr screen)
 				};
 	controller	*st = NULL;
 	
-	back = LoadKMG("/rd/help.kmg.gz", 0);
+	back = LoadIMG("/rd/help.kmg.gz", 0);
 	if(!back)
 		return;
 		
@@ -1350,7 +1350,7 @@ void DrawNish()
 	controller		*st;
 	ImagePtr		nish;
 
-	nish = LoadKMG("/rd/nish.kmg.gz", 0);
+	nish = LoadIMG("/rd/nish.kmg.gz", 0);
 	if(!nish)
 		return;
 
@@ -1491,11 +1491,11 @@ void DrawIntro()
 	ImagePtr		black = NULL, back = NULL;
 	uint16			pressed = 0;
 
-	back = LoadKMG("/rd/black.kmg.gz", 1);
+	back = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
 		
-	black = LoadKMG("/rd/black.kmg.gz", 1);
+	black = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!black)
 		return;
 
@@ -1545,7 +1545,7 @@ int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selecte
 	int			maxlen = 0, value = MENU_CANCEL, joycnt = 0;		
 	ImagePtr	Back = NULL, black = NULL;
 	
-	black = LoadKMG("/rd/black.kmg.gz", 1);
+	black = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!black)
 		return MENU_CANCEL;
 		
@@ -1561,7 +1561,7 @@ int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selecte
 	maxlen *= fw;
 	if(maxlen < MSG_MAX_WIDTH)
 	{
-		Back = LoadKMG("/rd/FloatMenu.kmg.gz", 0);
+		Back = LoadIMG("/rd/FloatMenu.kmg.gz", 0);
 		if(Back)
 		{
 			Back->x = (dW - MENUSIZE_W) / 2;
@@ -1569,7 +1569,7 @@ int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selecte
 		}
 	}
 	else
-		Back = LoadKMG("/rd/message.kmg.gz", 0);
+		Back = LoadIMG("/rd/message.kmg.gz", 0);
 	
 	if(Back)
 		Back->alpha = 0.75f;
@@ -1691,8 +1691,8 @@ int DrawMessageInternal(char *msg, int waitinput, int isquestion)
 	uint16		pressed;
 	ImagePtr	back = NULL, black = NULL;
 	
-	black = LoadKMG("/rd/black.kmg.gz", 1);
-	back = LoadKMG("/rd/message.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 1);
+	back = LoadIMG("/rd/message.kmg.gz", 0);
 	
 	if(isquestion)
 	{

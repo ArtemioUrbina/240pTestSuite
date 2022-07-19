@@ -144,7 +144,7 @@ ImagePtr FindImageInPage(char *str)
 	}
 	if(!pos)
 		return (ImagePtr)NULL;
-	image = LoadKMG(filename, 0);
+	image = LoadIMG(filename, 0);
 	if(!image)
 		return (ImagePtr)NULL;
 	return image;
@@ -172,7 +172,7 @@ void HelpWindow(char *filename, ImagePtr screen)
 	if(!buffer)
 		return;
 
-	back = LoadKMG("/rd/help.kmg.gz", 0);
+	back = LoadIMG("/rd/help.kmg.gz", 0);
 	if(back)
 		back->alpha = 0.75f;
 	
@@ -192,6 +192,7 @@ void HelpWindow(char *filename, ImagePtr screen)
 		
 	while(!done && !EndProgram) 
 	{
+		int				read = 0;
 		maple_device_t	*dev = NULL;
 		
 		StartScene();
@@ -213,22 +214,22 @@ void HelpWindow(char *filename, ImagePtr screen)
 			if (pressed & CONT_B)
 				done = 1;
 			if (pressed & CONT_DPAD_LEFT)
-				page --;
+				if(!read) { page --; read = 1; }
 			if (pressed & CONT_DPAD_RIGHT)
-				page ++;
+				if(!read) { page ++; read = 1; }
 			if (pressed & CONT_RTRIGGER)
-				page ++;
+				if(!read) { page ++; read = 1; }
 			if (pressed & CONT_LTRIGGER)
-				page --;
+				if(!read) { page --; read = 1; }
 				
 			if(st->joyx != 0)
 			{
 				if(++joycnt > 10)
 				{
 					if(st->joyx > 0)
-						page ++;
+						if(!read) { page ++; read = 1; }
 					if(st->joyx < 0)
-						page --;
+						if(!read) { page --; read = 1; }
 		
 					joycnt = 0;
 				}
@@ -250,9 +251,9 @@ void HelpWindow(char *filename, ImagePtr screen)
 						state->buttons & CONT_START)
 						done = 1;
 					if (state->buttons & CONT_DPAD_LEFT)
-						page --;
+						if(!read) { page --; read = 1; }
 					if (state->buttons & CONT_DPAD_RIGHT)
-						page ++;
+						if(!read) { page ++; read = 1; }
 				}
 			}
 		}

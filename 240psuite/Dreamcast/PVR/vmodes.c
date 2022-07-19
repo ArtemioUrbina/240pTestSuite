@@ -111,7 +111,7 @@ void LoadScanlines()
 {
 	if(!scanlines)
 	{
-		scanlines = LoadKMG("/rd/scanlines.kmg.gz", 0);
+		scanlines = LoadIMG("/rd/scanlines.kmg.gz", 0);
 		scanlines->layer = 5.0;
 		scanlines->alpha = settings.scanlines;
 		scanlines->scale = 0;
@@ -738,16 +738,16 @@ void TestVideoMode(int mode)
 
 	if(vmode >= HIGH_RES)
 	{
-		back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
+		back = LoadIMG("/rd/480/grid-480.kmg.gz", 0);
 		if(back)
 			back->scale = 0;
 	}
 	else
 	{
 		if(IsPAL)
-			back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
+			back = LoadIMG("/rd/gridPAL.kmg.gz", 0);
 		else
-			back = LoadKMG("/rd/grid.kmg.gz", 0);
+			back = LoadIMG("/rd/grid.kmg.gz", 0);
 	}
 
 	if(!back)

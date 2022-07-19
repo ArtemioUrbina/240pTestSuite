@@ -87,8 +87,8 @@ void ReleaseTextures();
 void IgnoreOffset(ImagePtr image);
 void UseDirectColor(ImagePtr image, uint16 a, uint16 r, uint16 g, uint16 b);
 
-ImagePtr LoadKMG(const char *filename, int maptoscreen);
-uint8 ReLoadKMG(ImagePtr image, const char *filename);
+ImagePtr LoadIMG(const char *filename, int maptoscreen);
+uint8 ReLoadIMG(ImagePtr image, const char *filename);
 void FreeImage(ImagePtr *image);
 uint8 FreeImageData(ImagePtr *image);
 void CalculateUV(float posx, float posy, float width, float height, ImagePtr image);

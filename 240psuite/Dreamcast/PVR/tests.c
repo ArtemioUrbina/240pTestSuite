@@ -62,13 +62,13 @@ void DropShadowTest()
 		sonicback[i] = NULL;
 	overlay = NULL;
 		
-	ssprite = LoadKMG("/rd/shadow.kmg.gz", 0);	
+	ssprite = LoadIMG("/rd/shadow.kmg.gz", 0);	
 	if(!ssprite)
 		return;
-	buzz = LoadKMG("/rd/buzzbomber.kmg.gz", 0);
+	buzz = LoadIMG("/rd/buzzbomber.kmg.gz", 0);
 	if(!buzz)
 		return;
-	buzzshadow = LoadKMG("/rd/buzzbomberShadow.kmg.gz", 0);
+	buzzshadow = LoadIMG("/rd/buzzbomberShadow.kmg.gz", 0);
 	if(!buzzshadow)
 		return;
 	
@@ -88,41 +88,41 @@ void DropShadowTest()
 			if(back[3]) FreeImage(&back[3]);
 			if(overlay) FreeImage(&overlay);
 
-			sonicback[0] = LoadKMG("/rd/sonicback1.kmg.gz", 0);
+			sonicback[0] = LoadIMG("/rd/sonicback1.kmg.gz", 0);
 			if(!sonicback[0])
 				return;
-			sonicback[1] = LoadKMG("/rd/sonicback2.kmg.gz", 0);
+			sonicback[1] = LoadIMG("/rd/sonicback2.kmg.gz", 0);
 			if(!sonicback[1])
 				return;
-			sonicback[2] = LoadKMG("/rd/sonicback3.kmg.gz", 0);
+			sonicback[2] = LoadIMG("/rd/sonicback3.kmg.gz", 0);
 			if(!sonicback[2])
 				return;
-			sonicback[3] = LoadKMG("/rd/sonicback4.kmg.gz", 0);
+			sonicback[3] = LoadIMG("/rd/sonicback4.kmg.gz", 0);
 			if(!sonicback[3])
 				return;
 		
 			back[1] = sonicback[0];
 			if(!back[1])
 				return;
-			back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
+			back[2] = LoadIMG("/rd/checkpos.kmg.gz", 1);
 			if(!back[2])
 				return;
-			back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
+			back[3] = LoadIMG("/rd/stripespos.kmg.gz", 1);
 			if(!back[3])
 				return;
-			overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
+			overlay = LoadIMG("/rd/sonicfloor.kmg.gz", 0);
 			if(!overlay)
 				return;
 		
 			if(vmode < HIGH_RES)
 			{		
-				back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
+				back[0] = LoadIMG("/rd/donna.kmg.gz", 0);
 				if(!back[0])
 					return;
 			}
 			else
 			{
-				back[0] = LoadKMG("/rd/480/donna-480.kmg.gz", 0);
+				back[0] = LoadIMG("/rd/480/donna-480.kmg.gz", 0);
 				if(!back[0])
 					return;
 		
@@ -336,7 +336,7 @@ void StripedSpriteTest()
 		sonicback[i] = NULL;
 	overlay = NULL;
 
-	striped = LoadKMG("/rd/striped.kmg.gz", 0);
+	striped = LoadIMG("/rd/striped.kmg.gz", 0);
 	if(!striped)
 		return;
 
@@ -351,40 +351,40 @@ void StripedSpriteTest()
 			if(back[3]) FreeImage(&back[3]);
 			if(overlay) FreeImage(&overlay);
 
-			sonicback[0] = LoadKMG("/rd/sonicback1.kmg.gz", 0);
+			sonicback[0] = LoadIMG("/rd/sonicback1.kmg.gz", 0);
 			if(!sonicback[0])
 				return;
-			sonicback[1] = LoadKMG("/rd/sonicback2.kmg.gz", 0);
+			sonicback[1] = LoadIMG("/rd/sonicback2.kmg.gz", 0);
 			if(!sonicback[1])
 				return;
-			sonicback[2] = LoadKMG("/rd/sonicback3.kmg.gz", 0);
+			sonicback[2] = LoadIMG("/rd/sonicback3.kmg.gz", 0);
 			if(!sonicback[2])
 				return;
-			sonicback[3] = LoadKMG("/rd/sonicback4.kmg.gz", 0);
+			sonicback[3] = LoadIMG("/rd/sonicback4.kmg.gz", 0);
 			if(!sonicback[3])
 				return;
 		
 			if(vmode < HIGH_RES)
 			{		
-				back[0] = LoadKMG("/rd/donna.kmg.gz", 0);
+				back[0] = LoadIMG("/rd/donna.kmg.gz", 0);
 				if(!back[0])
 					return;
 				back[1] = sonicback[0];
 				if(!back[1])
 					return;
-				back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
+				back[2] = LoadIMG("/rd/checkpos.kmg.gz", 1);
 				if(!back[2])
 					return;
-				back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
+				back[3] = LoadIMG("/rd/stripespos.kmg.gz", 1);
 				if(!back[3])
 					return;
-				overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
+				overlay = LoadIMG("/rd/sonicfloor.kmg.gz", 0);
 				if(!overlay)
 					return;
 			}
 			else
 			{
-				back[0] = LoadKMG("/rd/480/donna-480.kmg.gz", 0);
+				back[0] = LoadIMG("/rd/480/donna-480.kmg.gz", 0);
 				if(!back[0])
 					return;
 				back[0]->scale = 0;
@@ -393,15 +393,15 @@ void StripedSpriteTest()
 					return;
 				for(i = 0; i < 4; i++)
 					sonicback[i]->scale = 0;
-				back[2] = LoadKMG("/rd/checkpos.kmg.gz", 1);
+				back[2] = LoadIMG("/rd/checkpos.kmg.gz", 1);
 				if(!back[2])
 					return;
 				back[2]->scale = 0;
-				back[3] = LoadKMG("/rd/stripespos.kmg.gz", 1);
+				back[3] = LoadIMG("/rd/stripespos.kmg.gz", 1);
 				if(!back[3])
 					return;
 				back[3]->scale = 0;
-				overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
+				overlay = LoadIMG("/rd/sonicfloor.kmg.gz", 0);
 				if(!overlay)
 					return;
 		
@@ -562,17 +562,17 @@ void ReflexNTimming()
 	maple_device_t	*purupuru = NULL;
 	controller 		*st;
 
-	back = LoadKMG("/rd/black.kmg.gz", 1);
+	back = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
 			
-	fixed = LoadKMG("/rd/lag-per.kmg.gz", 0);
+	fixed = LoadIMG("/rd/lag-per.kmg.gz", 0);
 	if(!fixed)
 		return;
-	spriteA = LoadKMG("/rd/lag-per.kmg.gz", 0);
+	spriteA = LoadIMG("/rd/lag-per.kmg.gz", 0);
 	if(!spriteA)
 		return;
-	spriteB = LoadKMG("/rd/lag-per.kmg.gz", 0);
+	spriteB = LoadIMG("/rd/lag-per.kmg.gz", 0);
 	if(!spriteB)
 		return;	
 
@@ -824,7 +824,7 @@ void ReflexNTimming()
 				done =	1;
 
 			if (pressed & CONT_START)
-				ShowMenu(MANUALLAG);
+				ShowMenu(TIMEREFLEX);
 		}
 		
 		if(y > 132 + vary)
@@ -878,7 +878,7 @@ void ReflexNTimming()
 		ImagePtr wall;
 		
 		done = 0;
-		wall = LoadKMG("/rd/back.kmg.gz", 0);
+		wall = LoadIMG("/rd/back.kmg.gz", 0);
 		if(!wall)
 			return;
 
@@ -947,7 +947,7 @@ void ReflexNTimming()
 				if (pressed & CONT_B)
 					done =	1;
 				if (pressed & CONT_START)
-					ShowMenu(MANUALLAG);
+					ShowMenu(TIMEREFLEX);
 			}
 		}
 		FreeImage(&wall);
@@ -974,24 +974,24 @@ void ScrollTest()
 	for(i = 0; i < 4; i++)
 		back[i] = NULL;
 		
-	back[0] = LoadKMG("/rd/sonicback1.kmg.gz", 0);
+	back[0] = LoadIMG("/rd/sonicback1.kmg.gz", 0);
 	if(!back[0])
 		return;
-	back[1] = LoadKMG("/rd/sonicback2.kmg.gz", 0);
+	back[1] = LoadIMG("/rd/sonicback2.kmg.gz", 0);
 	if(!back[1])
 		return;
-	back[2] = LoadKMG("/rd/sonicback3.kmg.gz", 0);
+	back[2] = LoadIMG("/rd/sonicback3.kmg.gz", 0);
 	if(!back[2])
 		return;
-	back[3] = LoadKMG("/rd/sonicback4.kmg.gz", 0);
+	back[3] = LoadIMG("/rd/sonicback4.kmg.gz", 0);
 	if(!back[3])
 		return;
 
-	overlay = LoadKMG("/rd/sonicfloor.kmg.gz", 0);
+	overlay = LoadIMG("/rd/sonicfloor.kmg.gz", 0);
 	if(!overlay)
 		return;
 	
-	kiki = LoadKMG("/rd/kiki.kmg.gz", 0);
+	kiki = LoadIMG("/rd/kiki.kmg.gz", 0);
 	if(!kiki)
 		return;
 
@@ -1118,10 +1118,10 @@ void GridScrollTest()
 	ImagePtr		back = NULL, square = NULL, diag = NULL;
 	controller		*st = NULL;
 
-	square = LoadKMG("/rd/small_grid.kmg.gz", 1);
+	square = LoadIMG("/rd/small_grid.kmg.gz", 1);
 	if(!square)
 		return;
-	diag = LoadKMG("/rd/diagonal.kmg.gz", 1);
+	diag = LoadIMG("/rd/diagonal.kmg.gz", 1);
 	if(!diag)
 		return; 
 	
@@ -1224,17 +1224,17 @@ void DrawStripes()
 	char			*vmuMsg1 = "H.Stripes", *vmuMsg2 = "still";
 	fmenudata 		resmenudata[] = { {1, "Horiz. Stripes"}, {2, "Vert. Stripes"} };
 
-	stripespos = LoadKMG("/rd/stripespos.kmg.gz", 1);
+	stripespos = LoadIMG("/rd/stripespos.kmg.gz", 1);
 	if(!stripespos)
 		return;
-	stripesneg = LoadKMG("/rd/stripesneg.kmg.gz", 1);
+	stripesneg = LoadIMG("/rd/stripesneg.kmg.gz", 1);
 	if(!stripesneg)
 		return;
 
-	vstripespos = LoadKMG("/rd/vertstripespos.kmg.gz", 1);
+	vstripespos = LoadIMG("/rd/vertstripespos.kmg.gz", 1);
 	if(!vstripespos)
 		return;
-	vstripesneg = LoadKMG("/rd/vertstripesneg.kmg.gz", 1);
+	vstripesneg = LoadIMG("/rd/vertstripesneg.kmg.gz", 1);
 	if(!vstripesneg)
 		return;
 
@@ -1339,10 +1339,10 @@ void DrawCheckBoard()
 	ImagePtr		checkpos, checkneg;
 	controller		*st;
 
-	checkpos = LoadKMG("/rd/checkpos.kmg.gz", 1);
+	checkpos = LoadIMG("/rd/checkpos.kmg.gz", 1);
 	if(!checkpos)
 		return;
-	checkneg = LoadKMG("/rd/checkneg.kmg.gz", 1);
+	checkneg = LoadIMG("/rd/checkneg.kmg.gz", 1);
 	if(!checkneg)
 	{
 		FreeImage(&checkpos);
@@ -1418,23 +1418,23 @@ void LEDZoneTest()
 	ImagePtr	back, sprite[5];
 	controller 	*st;
 
-	back = LoadKMG("/rd/black.kmg.gz", 1);
+	back = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
 			
-	sprite[0] = LoadKMG("/rd/sprite0led.kmg.gz", 0);
+	sprite[0] = LoadIMG("/rd/sprite0led.kmg.gz", 0);
 	if(!sprite[0])
 		return;
-	sprite[1] = LoadKMG("/rd/sprite1led.kmg.gz", 0);
+	sprite[1] = LoadIMG("/rd/sprite1led.kmg.gz", 0);
 	if(!sprite[1])
 		return;
-	sprite[2] = LoadKMG("/rd/sprite2led.kmg.gz", 0);
+	sprite[2] = LoadIMG("/rd/sprite2led.kmg.gz", 0);
 	if(!sprite[2])
 		return;
-	sprite[3] = LoadKMG("/rd/sprite3led.kmg.gz", 0);
+	sprite[3] = LoadIMG("/rd/sprite3led.kmg.gz", 0);
 	if(!sprite[3])
 		return;
-	sprite[4] = LoadKMG("/rd/sprite4led.kmg.gz", 0);
+	sprite[4] = LoadIMG("/rd/sprite4led.kmg.gz", 0);
 	if(!sprite[4])
 		return;
 
@@ -1585,17 +1585,17 @@ void DiagonalPatternTest()
 	ImagePtr	back, spritesmall, spritebig, sprite;
 	char		buffer[32];
 
-	back = LoadKMG("/rd/black.kmg.gz", 1);
+	back = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
 			
-	spritesmall = LoadKMG("/rd/longrectangle.kmg.gz", 1);
+	spritesmall = LoadIMG("/rd/longrectangle.kmg.gz", 1);
 	if(!spritesmall)
 	{
 		FreeImage(&back);
 		return;
 	}
-	spritebig = LoadKMG("/rd/longrectanglefull.kmg.gz", 1);
+	spritebig = LoadIMG("/rd/longrectanglefull.kmg.gz", 1);
 	if(!spritebig)
 	{
 		FreeImage(&back);
@@ -1690,16 +1690,16 @@ void PassiveLagTest()
 	last = timer_us_gettime64();
 #endif
 	
-	back = LoadKMG("/rd/white.kmg.gz", 0);
+	back = LoadIMG("/rd/white.kmg.gz", 0);
 	if(!back)
 		return;
 	back->w = 320;
 	back->h = 240;
 		
-	barl = LoadKMG("/rd/white.kmg.gz", 0);
+	barl = LoadIMG("/rd/white.kmg.gz", 0);
 	if(!barl)
 		return;
-	barr = LoadKMG("/rd/white.kmg.gz", 0);
+	barr = LoadIMG("/rd/white.kmg.gz", 0);
 	if(!barr)
 		return;
 	barr->x = 0;
@@ -1710,7 +1710,7 @@ void PassiveLagTest()
 	barr->w = 6;
 	barr->h = 240;
 
-	circle= LoadKMG("/rd/circle.kmg.gz", 0);
+	circle= LoadIMG("/rd/circle.kmg.gz", 0);
 	if(!circle)
 		return;
 	circle->r = 0.0f;
@@ -2016,7 +2016,7 @@ void Alternate240p480i()
 	controller	*st;
 	ImagePtr	back;
 
-	back = LoadKMG("/rd/black.kmg.gz", 1);
+	back = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
 	

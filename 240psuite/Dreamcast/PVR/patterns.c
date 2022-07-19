@@ -48,7 +48,7 @@ void DrawPluge()
 	char		*vmuMsg1 = vmufull, vmuMsg2[50];
 	pallette	pNTSC, pFull, *pal = NULL;
 
-	backNTSC = LoadKMG("/rd/plt888/pluge.dgz", 0);
+	backNTSC = LoadIMG("/rd/plt888/pluge.dgz", 0);
 	if(!backNTSC)
 		return;
 		
@@ -58,7 +58,7 @@ void DrawPluge()
 		return;
 	}
 
-	backFull = LoadKMG("/rd/plt888/plugepal.dgz", 0);
+	backFull = LoadIMG("/rd/plt888/plugepal.dgz", 0);
 	if(!backFull)
 	{
 		release_palette(&pNTSC);
@@ -74,7 +74,7 @@ void DrawPluge()
 		return;
 	}
 	
-	black = LoadKMG("/rd/black.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
 		release_palette(&pNTSC);
@@ -84,7 +84,7 @@ void DrawPluge()
 		return;
 	}	
 
-	highlight = LoadKMG("/rd/PLUGEBorder.kmg.gz", 0);
+	highlight = LoadIMG("/rd/PLUGEBorder.kmg.gz", 0);
 	if(!highlight)
 	{
 		FreeImage(&backFull);
@@ -256,7 +256,7 @@ void DrawEBUColorBars()
 	char		msg[40], vmuMsg2[50];
 	pallette	p75, p100, *pal = NULL;
 
-	back = LoadKMG("/rd/plt888/EBUCB.dgz", 0);
+	back = LoadIMG("/rd/plt888/EBUCB.dgz", 0);
 	if(!back)
 		return;
 
@@ -273,7 +273,7 @@ void DrawEBUColorBars()
 		return;
 	}
 	
-	black = LoadKMG("/rd/black.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
 		release_palette(&p75);
@@ -373,7 +373,7 @@ void DrawSMPTEColorBars()
 	char		msg[40], vmuMsg2[50];
 	pallette	p75, p100, *pal = NULL;
 
-	back = LoadKMG("/rd/plt888/SMPTECB.dgz", 0);
+	back = LoadIMG("/rd/plt888/SMPTECB.dgz", 0);
 	if(!back)
 		return;
 
@@ -390,7 +390,7 @@ void DrawSMPTEColorBars()
 		return;
 	}
 	
-	black = LoadKMG("/rd/black.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
 		release_palette(&p75);
@@ -488,7 +488,7 @@ void DrawGrayRamp()
 	char		vmuMsg2[50];
 	pallette	pgray;
 
-	back = LoadKMG("/rd/plt888/grayramp.dgz", 0);
+	back = LoadIMG("/rd/plt888/grayramp.dgz", 0);
 	if(!back)
 		return;
 		
@@ -498,7 +498,7 @@ void DrawGrayRamp()
 		return;
 	}
 		
-	black = LoadKMG("/rd/black.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
 		FreeImage(&back);
@@ -575,10 +575,10 @@ void DrawWhiteScreen()
 	char		*mode[5] = { "White", "Black", "Red", "Green", "Blue" };
 	char		msg[100], *vmuMsg = mode[0], vmuMsg2[50], *edited = "  Edited";
 
-	back = LoadKMG("/rd/white.kmg.gz", 1);
+	back = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
-	black = LoadKMG("/rd/black.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
 		FreeImage(&back);
@@ -837,35 +837,35 @@ void DrawColorBars()
 	char		vmuMsg1[50], vmuMsg2[50], *cbnormal = "CB: Normal";
 	pallette	pcolor, pcgrid, phigh, plow, *pal = &pcolor;
 
-	backcolor = LoadKMG("/rd/plt888/color.dgz", 0);
+	backcolor = LoadIMG("/rd/plt888/color.dgz", 0);
 	if(!backcolor)
 		return;
 	if(!load_palette("/rd/plt888/color.pal", &pcolor))
 		return;
 		
-	backgrid = LoadKMG("/rd/plt888/color_grid.dgz", 0);
+	backgrid = LoadIMG("/rd/plt888/color_grid.dgz", 0);
 	if(!backgrid)
 		return;
 	if(!load_palette("/rd/plt888/color_grid.pal", &pcgrid))
 		return;
 		
-	color_high = LoadKMG("/rd/plt888/colorhigh.dgz", 0);
+	color_high = LoadIMG("/rd/plt888/colorhigh.dgz", 0);
 	if(!backgrid)
 		return;
 	if(!load_palette("/rd/plt888/colorhigh.pal", &phigh))
 		return;
 		
-	color_low = LoadKMG("/rd/plt888/colorlow.dgz", 0);
+	color_low = LoadIMG("/rd/plt888/colorlow.dgz", 0);
 	if(!backgrid)
 		return;
 	if(!load_palette("/rd/plt888/colorlow.pal", &plow))
 		return;
 
-	border = LoadKMG("/rd/color_border.kmg.gz", 0);
+	border = LoadIMG("/rd/color_border.kmg.gz", 0);
 	if(!border)
 		return;
 			
-	black = LoadKMG("/rd/black.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!black)
 		return;
 	
@@ -1069,7 +1069,7 @@ void Draw601ColorBars()
 	char		vmuMsg2[50];
 	pallette	p601;
 
-	back = LoadKMG("/rd/plt888/601701cb.dgz", 0);
+	back = LoadIMG("/rd/plt888/601701cb.dgz", 0);
 	if(!back)
 		return;
 		
@@ -1079,7 +1079,7 @@ void Draw601ColorBars()
 		return;
 	}
 		
-	black = LoadKMG("/rd/black.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
 		FreeImage(&back);
@@ -1150,7 +1150,7 @@ void DrawColorBleed()
 	controller	*st = NULL;
 	char		vmuMsg2[50];
 
-	black = LoadKMG("/rd/black.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!black)
 		return;
 
@@ -1175,21 +1175,21 @@ void DrawColorBleed()
 		{
 			if(vmode >= HIGH_RES)
 			{
-				backnrm = LoadKMG("/rd/480/colorbleed-480.kmg.gz", 0);
+				backnrm = LoadIMG("/rd/480/colorbleed-480.kmg.gz", 0);
 				if(!backnrm)
 					return;
 				backnrm->scale = 0;
-				backchk = LoadKMG("/rd/480/colorbleed-480-chk.kmg.gz", 0);
+				backchk = LoadIMG("/rd/480/colorbleed-480-chk.kmg.gz", 0);
 				if(!backchk)
 					return;
 				backchk->scale = 0;
 			}
 			else
 			{
-				backnrm = LoadKMG("/rd/colorbleed.kmg.gz", 0);
+				backnrm = LoadIMG("/rd/colorbleed.kmg.gz", 0);
 				if(!backnrm)
 					return;
-				backchk = LoadKMG("/rd/colorbleedchk.kmg.gz", 0);
+				backchk = LoadIMG("/rd/colorbleedchk.kmg.gz", 0);
 				if(!backchk)
 					return;
 			}
@@ -1272,7 +1272,7 @@ void DrawGrid()
 		{
 			if(vmode >= HIGH_RES)
 			{
-				back = LoadKMG("/rd/480/grid-480.kmg.gz", 0);
+				back = LoadIMG("/rd/480/grid-480.kmg.gz", 0);
 				if(!back)
 					return;
 				back->scale = 0;
@@ -1280,7 +1280,7 @@ void DrawGrid()
 		
 			if(vmode == VIDEO_288P)
 			{
-				back = LoadKMG("/rd/gridPAL.kmg.gz", 0);
+				back = LoadIMG("/rd/gridPAL.kmg.gz", 0);
 				if(!back)
 					return;
 			}
@@ -1289,10 +1289,10 @@ void DrawGrid()
 			if(!back)
 			{
 				if(full == 1)
-					back = LoadKMG("/rd/grid.kmg.gz", 0);
+					back = LoadIMG("/rd/grid.kmg.gz", 0);
 				else
 				{
-					back = LoadKMG("/rd/grid224.kmg.gz", 0);
+					back = LoadIMG("/rd/grid224.kmg.gz", 0);
 					back->y = 8;
 				}
 				if(!back)
@@ -1377,7 +1377,7 @@ void DrawMonoscope()
 	controller	*st = NULL;
 	char		vmumsg[5];
 
-	black = LoadKMG("/rd/black.kmg.gz", 1);
+	black = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!black)
 		return;
 	while(!done && !EndProgram) 
@@ -1401,10 +1401,10 @@ void DrawMonoscope()
 				// Use 240p Monoscope
 				if(!back)
 				{
-					back = LoadKMG("/rd/monoscope.kmg.gz", 0);
+					back = LoadIMG("/rd/monoscope.kmg.gz", 0);
 					if(!back)
 						return;
-					rlines = LoadKMG("/rd/monoscope_lin.kmg.gz", 0);
+					rlines = LoadIMG("/rd/monoscope_lin.kmg.gz", 0);
 					if(!rlines)
 					{
 						FreeImage(&back);
@@ -1415,10 +1415,10 @@ void DrawMonoscope()
 			
 			if(vmode == VIDEO_480I || vmode == VIDEO_480P)
 			{
-				back = LoadKMG("/rd/480/monoscope-480.kmg.gz", 0);
+				back = LoadIMG("/rd/480/monoscope-480.kmg.gz", 0);
 				if(!back)
 					return;
-				rlines = LoadKMG("/rd/480/monoscope-480_lin.kmg.gz", 0);
+				rlines = LoadIMG("/rd/480/monoscope-480_lin.kmg.gz", 0);
 				if(!rlines)
 				{
 					FreeImage(&back);
@@ -1433,10 +1433,10 @@ void DrawMonoscope()
 				// Use PAL Monoscope
 				if(!back)
 				{
-					back = LoadKMG("/rd/monoscopePAL.kmg.gz", 0);
+					back = LoadIMG("/rd/monoscopePAL.kmg.gz", 0);
 					if(!back)
 						return;
-					rlines = LoadKMG("/rd/monoscopePAL_lin.kmg.gz", 0);
+					rlines = LoadIMG("/rd/monoscopePAL_lin.kmg.gz", 0);
 					if(!rlines)
 					{
 						FreeImage(&back);
@@ -1447,10 +1447,10 @@ void DrawMonoscope()
 			
 			if(vmode == VIDEO_576I)
 			{
-				back = LoadKMG("/rd/480/monoscopePAL576.kmg.gz", 0);
+				back = LoadIMG("/rd/480/monoscopePAL576.kmg.gz", 0);
 				if(!back)
 					return;
-				rlines = LoadKMG("/rd/480/monoscopePAL576_lin.kmg.gz", 0);
+				rlines = LoadIMG("/rd/480/monoscopePAL576_lin.kmg.gz", 0);
 				if(!rlines)
 				{
 					FreeImage(&back);
@@ -1529,16 +1529,16 @@ void Draw100IRE()
 	controller		*st = NULL;
 	char			msg[50], vmuMsg[50], vmuMsg2[50];
 
-	black = LoadKMG("/rd/black.kmg.gz", 1);
+	black = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!black)
 		return;
-	back = LoadKMG("/rd/plt888/100IRE.dgz", 0);
+	back = LoadIMG("/rd/plt888/100IRE.dgz", 0);
 	if(!back)
 	{
 		FreeImage(&black);
 		return;
   	}
-  	white = LoadKMG("/rd/white.kmg.gz", 0);
+  	white = LoadIMG("/rd/white.kmg.gz", 0);
 	if(!white)
   	{
 		FreeImage(&black);
@@ -1721,10 +1721,10 @@ void DrawSharpness()
 	ImagePtr	back = NULL, backbricks = NULL;
 	controller	*st = NULL;
 	
-	back = LoadKMG("/rd/sharpness.kmg.gz", 0);
+	back = LoadIMG("/rd/sharpness.kmg.gz", 0);
 	if(!back)
 		return;
-	backbricks = LoadKMG("/rd/bricks.kmg.gz", 1);
+	backbricks = LoadIMG("/rd/bricks.kmg.gz", 1);
 	if(!backbricks)
 		return;
 
@@ -1777,11 +1777,11 @@ void DrawOverscan()
 	char		msg[50], vmumsg[10];;
 	controller	*st = NULL;
 	
-	square = LoadKMG("/rd/white.kmg.gz", 1);
+	square = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!square)
 		return;
 		
-	border = LoadKMG("/rd/white.kmg.gz", 1);
+	border = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!border)
 	{
 		FreeImage(&square);
@@ -1991,19 +1991,19 @@ void DrawConvergence()
 	uint16		pressed;	
 	ImagePtr	back[NUM_CONV] = { NULL };	
 	
-	back[0] = LoadKMG("/rd/Convergence-01-grid.kmg.gz", 1);
+	back[0] = LoadIMG("/rd/Convergence-01-grid.kmg.gz", 1);
 	if(!back[0])
 		return;
-	back[1] = LoadKMG("/rd/Convergence-02-cross.kmg.gz", 1);
+	back[1] = LoadIMG("/rd/Convergence-02-cross.kmg.gz", 1);
 	if(!back[1])
 		return;
-	back[2] = LoadKMG("/rd/Convergence-03-dots.kmg.gz", 1);
+	back[2] = LoadIMG("/rd/Convergence-03-dots.kmg.gz", 1);
 	if(!back[2])
 		return;
-	back[3] = LoadKMG("/rd/Convergence-04-colors.kmg.gz", 1);
+	back[3] = LoadIMG("/rd/Convergence-04-colors.kmg.gz", 1);
 	if(!back[3])
 		return;
-	back[4] = LoadKMG("/rd/Convergence-05-colorsbl.kmg.gz", 1);
+	back[4] = LoadIMG("/rd/Convergence-05-colorsbl.kmg.gz", 1);
 	if(!back[4])
 		return;
 		
@@ -2387,11 +2387,11 @@ void DrawHCFR()
 	}
 #endif
 	
-	back = LoadKMG("/rd/hcfr/00_hcfr_pal_base.dgz", 0);
+	back = LoadIMG("/rd/hcfr/00_hcfr_pal_base.dgz", 0);
 	if(!back)
 		return;
 	
-	black = LoadKMG("/rd/black.kmg.gz", 0);
+	black = LoadIMG("/rd/black.kmg.gz", 0);
 	if(!black)
 	{
 		FreeImage(&back);

@@ -91,7 +91,7 @@ void SoundTest()
 	controller			*st;
 	char				*vmuMsg = "";
 
-	back = LoadKMG("/rd/back.kmg.gz", 0);
+	back = LoadIMG("/rd/back.kmg.gz", 0);
 	if(!back)
 		return;
 
@@ -112,7 +112,7 @@ void SoundTest()
 			DrawStringS(180, 120, 1.0f, sel == 2 ? 0 : 1.0f, sel == 2 ? 0 : 1.0f, "Right Channel");
 		}
 		else
-			DrawStringS(135, 120, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Mono Channel");
+			DrawStringSCentered(120, 1.0f, sel == 1 ? 0 : 1.0f, sel == 1 ? 0 : 1.0f, "Mono Channel");
 		EndScene();
 		
 		VMURefresh("Sound Test", vmuMsg);
@@ -198,7 +198,7 @@ char	*stream_samples = NULL;
 char	stream_buffer[SND_STREAM_BUFFER_MAX];
 int		stream_samples_size = 0;
 int		stream_pos = 0;
-int		stream_samplerate = 44100;
+int		stream_samplerate = 0;
 
 void *sound_callback(__attribute__((unused))snd_stream_hnd_t hnd, int smp_req, int *smp_recv)
 {
@@ -227,6 +227,7 @@ void CleanStreamSamples()
 		stream_samples = NULL;
 	}
 	stream_pos = stream_samples_size = 0;
+	memset(stream_buffer, 0, sizeof(char)*SND_STREAM_BUFFER_MAX);
 }
 
 inline void DisplayError(char *msg)
@@ -240,44 +241,51 @@ inline void DisplayError(char *msg)
 // Just in case somebody is running MDFourier in mono... we won't turn them down
 void ConvertSamplesToMono()
 {
-	int		t_pos = 0, pos = 0;
-	int16	*src = NULL, *tgt = NULL;
+	int		pos = 0, avg_sample = 0;;
+	int16	*samples = NULL;
 	
-	src = (int16*)stream_samples;
-	tgt = (int16*)stream_samples;
+	samples = (int16*)stream_samples;
+	for(pos = 0; pos < stream_samples_size/2; pos += 2)
+	{	
+		avg_sample     = samples[pos]/2 + samples[pos+1]/2;
+		samples[pos  ] = avg_sample;
+		samples[pos+1] = avg_sample;
+	}
+}
+
+#define MDF_44	1
+#define MDF_48	2
+
+int MDFSampleSelect(int sel)
+{
+	fmenudata 	resmenudata[] = { {MDF_44, "44100hz (best)"}, {MDF_48, "48000hz"} };
 	
-	for(pos = 0; pos < stream_samples_size; pos += 2)
-		tgt[t_pos++] = src[pos]/2 + src[pos+1]/2;
-	
-	stream_samples_size = stream_samples_size/2;
-	memset(stream_samples+stream_samples_size, 0, sizeof(char)*stream_samples_size);
+	VMURefresh("Select", "Frequency");
+	return(SelectMenu("Select Frequency", resmenudata, 2, sel));
 }
 
 // Takes around 10 seconds, around ten seconds faster than uncompressed from CD-R
-int LoadGZMDFSamples(double *load_time)
+int LoadGZMDFSamples(int khz, double *load_time)
 {
 	gzFile		file;
-	int			deflate_size = 0, khz = 1;
+	int			deflate_size = 0;
 	char		*filename = NULL;
-	fmenudata 	resmenudata[] = { {1, "44100hz (best)"}, {2, "48000hz"} };
 	uint64 		start, end;
 	
-	VMURefresh("Select", "Frequency");
-	khz = SelectMenu("Select Frequency", resmenudata, 2, khz);
-	if(khz == MENU_CANCEL)
-		return 0;
+	switch(khz)
+	{
+		case MDF_44:
+			filename = "/cd/mdfourier-dac-44100.pcm.gz";
+			stream_samplerate = 44100;
+			break;
+		case MDF_48:
+			filename = "/cd/mdfourier-dac-48000.pcm.gz";
+			stream_samplerate = 48000;
+			break;
+		default:
+			return -1;
+	}
 	
-	if(khz == 1)
-	{
-		filename = "/cd/mdfourier-dac-44100.pcm.gz";
-		stream_samplerate = 44100;
-	}
-	if(khz == 2)
-	{
-		filename = "/cd/mdfourier-dac-48000.pcm.gz";
-		stream_samplerate = 48000;
-	}
-		
 	CleanStreamSamples();
 	deflate_size = zlib_getlength(filename);
 	if(!deflate_size)
@@ -322,7 +330,10 @@ int LoadGZMDFSamples(double *load_time)
 		dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
 	
 	if(is_system_mono)
+	{
+		DrawMessageOnce("Converting samples to #GMONO#G...");
 		ConvertSamplesToMono();
+	}
 
 	end = timer_us_gettime64();
 #ifdef BENCHMARK
@@ -333,21 +344,42 @@ int LoadGZMDFSamples(double *load_time)
 	return 1;
 }
 
+inline void halt_stream(snd_stream_hnd_t hnd)
+{
+	snd_stream_stop(hnd);
+	stream_pos = stream_samples_size;
+}
+
+inline void resume_stream(snd_stream_hnd_t hnd, int *play)
+{
+	if(!(*play))
+		stream_pos = 0;
+	snd_stream_start(hnd, stream_samplerate, 1);
+	if(*play)
+		snd_stream_queue_go(hnd);
+}
+
 void MDFourier()
 {
 	float				delta = 0.01f;
 	double				load_time = 0;
-	int 				done = 0, play = 0, dload = 0;
+	int 				done = 0, play = 0, khz = MDF_44;
+	int					disp_load = 0, load = 0;
 	char				vmsg[20];
 	uint16				pressed;		
 	ImagePtr			back, layer;
 	controller			*st = NULL;
 	snd_stream_hnd_t 	hnd = SND_STREAM_INVALID;
-
-	back = LoadKMG("/rd/back.kmg.gz", 0);
+	
+	st = ReadController(0, &pressed);
+	khz = MDFSampleSelect(khz);
+	if(khz == MENU_CANCEL)
+		return;
+		
+	back = LoadIMG("/rd/back.kmg.gz", 0);
 	if(!back)
 		return;
-	layer = LoadKMG("/rd/mdfourier.kmg.gz", 0);
+	layer = LoadIMG("/rd/mdfourier.kmg.gz", 0);
 	if(!layer)
 	{
 		FreeImage(&back);
@@ -355,8 +387,8 @@ void MDFourier()
 	}
 	layer->alpha = 0.01f;
 	
-	st = ReadController(0, &pressed);
-	if(!LoadGZMDFSamples(&load_time))
+	load = LoadGZMDFSamples(khz, &load_time);
+	if(load <= 0)
 	{
 		if(cdrom_spin_down() != ERR_OK)
 			dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
@@ -378,7 +410,7 @@ void MDFourier()
 	
 	snd_stream_volume(hnd, 255);
 	snd_stream_queue_enable(hnd);
-	snd_stream_start(hnd, stream_samplerate, is_system_mono ? 0: 1);
+	snd_stream_start(hnd, stream_samplerate, 1);
 	
 	while(!done && !EndProgram) 
 	{
@@ -401,11 +433,11 @@ void MDFourier()
 		else
 			sprintf(msg, "Press #YA#Y to play signal");
 		DrawStringSCentered(70+2*fh, 0.0f, 1.0f, 0.0f, msg);
-		if(stream_samplerate == 48000)
+		if(khz == MDF_48)
 			DrawStringSCentered(70+10*fh, 1.0f, 1.0f, 0.0f, "Yamaha AICA has aliasing at 48khz"); 
 		if(is_system_mono)
 			DrawStringSCentered(70+11*fh, 1.0f, 1.0f, 0.0f, "System configured as MONO"); 
-		if(dload)
+		if(disp_load)
 		{
 			sprintf(msg, "#YPCM samples#Y load time was %0.2f ms", load_time);
 			DrawStringSCentered(70+12*fh, 1.0f, 1.0f, 1.0f, msg); 
@@ -419,9 +451,6 @@ void MDFourier()
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if (pressed & CONT_B)
-				done =	1;
-
 			if (pressed & CONT_A)
 			{
 				if(!play)
@@ -435,43 +464,61 @@ void MDFourier()
 			
 			if (pressed & CONT_X)
 			{
-				snd_stream_stop(hnd);
+				int cont = 1, t_khz = 0;
+			
+				halt_stream(hnd);
+				t_khz = MDFSampleSelect(khz);
+				if(t_khz != MENU_CANCEL && t_khz != khz)
+				{	
+					khz = t_khz;
+					load = LoadGZMDFSamples(t_khz, &load_time);
+					if(load)
+					{
+						stream_pos = stream_samples_size;
+						sprintf(vmsg, " %d hz", stream_samplerate);
+						refreshVMU = 1;
+					}
+					else
+					{
+						if(cdrom_spin_down() != ERR_OK)
+							dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
+						done = 1;
+						cont = 0;
+					}
+				}
 				
-				if(!LoadGZMDFSamples(&load_time))
-				{
-					if(cdrom_spin_down() != ERR_OK)
-						dbglog(DBG_ERROR,"Could not stop CD-ROM from spinning\n");
-					done = 1;
-				}
-				else
-				{
-					stream_pos = play ? stream_samples_size : 0;
-
-					snd_stream_volume(hnd, 255);
-					snd_stream_queue_enable(hnd);
-					snd_stream_start(hnd, stream_samplerate, is_system_mono ? 0: 1);
-					
-					sprintf(vmsg, " %d hz", stream_samplerate);
-					refreshVMU = 1;
-				}
+				if(cont)
+					resume_stream(hnd, &play);
 			}
 			
-			if(pressed & CONT_LTRIGGER)
-				dload = !dload;
+			if (pressed & CONT_B)
+			{
+				halt_stream(hnd);
+				
+				if(AskQuestion("Exit #YMDFourier#Y test?\n#CPCM Samples#C will be unloaded from #CRAM#C"))
+					done =	1;
+				else
+					resume_stream(hnd, &play);
+			}
 
 			if (pressed & CONT_START)
 			{
-				if(play)
-				{
-					snd_stream_stop(hnd);
-					stream_pos = stream_samples_size;
-				}
-				
+				halt_stream(hnd);
+			
 				ShowMenu(MDFOURIERHELP);
 				
-				if(play)
-					snd_stream_start(hnd, stream_samplerate, is_system_mono ? 0: 1);
+				if(!EndProgram)
+					resume_stream(hnd, &play);
 			}
+			
+			if (pressed & CONT_Y)
+			{
+				if(play)
+					stream_pos = stream_samples_size;
+			}
+			
+			if(pressed & CONT_LTRIGGER)
+				disp_load = !disp_load;
 		}
 		
 		if(play)
@@ -513,22 +560,22 @@ void AudioSyncTest()
 	sfxhnd_t	beep = SFXHND_INVALID;
 	ImagePtr	squareL, squareR, lineB, sprite, back, cover;	
 	
-	back = LoadKMG("/rd/white.kmg.gz", 1);
+	back = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!back)
 		return;
-	squareL = LoadKMG("/rd/white.kmg.gz", 1);
+	squareL = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!squareL)
 		return;
-	squareR = LoadKMG("/rd/white.kmg.gz", 1);
+	squareR = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!squareR)
 		return;
-	lineB = LoadKMG("/rd/white.kmg.gz", 1);
+	lineB = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!lineB)
 		return;
-	sprite = LoadKMG("/rd/white.kmg.gz", 1);
+	sprite = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!sprite)
 		return;
-	cover = LoadKMG("/rd/white.kmg.gz", 1);
+	cover = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!cover)
 		return;
 	
@@ -820,14 +867,14 @@ void SIPLagTest()
 	char			*vmuMsg1 = "Lag v/Micr", *vmuMsg2 = "";
 
 	DStatus[0] = 0x0;
-	back = LoadKMG("/rd/back.kmg.gz", 0);
+	back = LoadIMG("/rd/back.kmg.gz", 0);
 	if(!back)
 	{
 		cleanSIPlag();
 		return;
 	}
 
-	wave = LoadKMG("/rd/1khz.kmg.gz", 0);
+	wave = LoadIMG("/rd/1khz.kmg.gz", 0);
 	if(!wave)
 	{
 		cleanSIPlag();
@@ -924,22 +971,21 @@ void SIPLagTest()
 		End of Extra data
 	*/
 
-	if(sip->info.function_data[0] & (3<<28))		// Version 1.000, 2000/02/24,315-618
-		samplerate = 10909;
-	else
-	{
+	if(sip->info.function_data[0] == 0x0f000000)		// Version 1.000, 2000/02/24,315-618
 		samplerate = 11025;
-		/*
-		// I tried it and it works....
-		if(IsPAL)
+	if(sip->info.function_data[0] == 0x3f000000)
+		samplerate = 10909;
+	if(!samplerate)
+	{
+		if(!AskQuestion("Your #CMicrophone#C is an unidentified model.\nPlease #Yreport#Y the #CMaple device list#C results\nin order to support and document it.\n#YProceed with test?#Y"))
 		{
-			if(!AskQuestion("Your #YSIP#Y is for #CNTSC#C regions only,\nbehaviour is unknown. Proceed with test?"))
-			{
-				cleanSIPlag();
-				return;
-			}
+			cleanSIPlag();
+			return;
 		}
-		*/
+		if(!AskQuestion("Use NTSC Microphone values?"))
+			samplerate = 11025;
+		else
+			samplerate = 10909;
 	}
 
 	if(sip_set_gain(sip, SIP_MAX_GAIN) != MAPLE_EOK) // SIP_DEFAULT_GAIN  

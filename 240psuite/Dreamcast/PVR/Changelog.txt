@@ -1,54 +1,34 @@
 Version 2.0
 ============
 - Light gun test
-- Stand alone VMU software:
+- VMU test software:
   - VMU controller test
   - VMU Audio Test
-- HCFR integration for calibration
+- HCFR integration for calibration, set by Dans Mons and verified by Keith
 - Improved Color precision when needed, to ARGB888
-- New patterns for color
-- Keyboard test
+	- New 888 patterns for Color Bars Test
+	- IRE levels
+	- Full color screens
+	- Gray Scale
+	- PLUGE
+	- SMPTE/EBU
+- Added Microphone recording and playback test
+	- Allows 8/11khz recording
+- Added Color border to Color bars for assistance at the press of a button
+- Improved Controller Test in several scenarios
+- Keyboard test inside Controller Test
 - Microphone test
 - Added BIOS and flashrom data viewer and Identification
 - Added ISP flashrom Data display
 - VMU easter egg animations
 - Improves general rendering speed
 - Added Convergence test
-- Improved Controller Test 
-
-Version 1.30
-============  
-- Support on the fly cable changes
-- Added missing analog joystick support to menus and help
-- Exposed several options to user: Deflicker filter, PVR Texture Dithering, KOS Video Mode defaults and Video Register defaults (KOS/Suite)
-- Now stops optical drive upon boot
-- VMU messages are now always up to date and refreshed
-- Updated 0GDTEX icon
-- Updated IP.BIN to reflect release and peripherals
-- Added unlicensed text to IP.BIN
-- Added several VMU save icons, selected at random
-- Added optional VMU eyecatcher graphics to save   
-- Added warnings and error messages when saving to VMU if there is not enough space
-- VMU load only changes video mode if needed
-- Fixed color balance in color bars + gray reference
-- Added Draw Video Border option to Grid
-- Changed 75% RGB levels from 192 to 191 to match spec
-- Removed double input from controllers that send duplicate d-pad/analog directions
-- Added SD icon to VMU LCD in main menu, he blinks (thanks to Karensauria)
-- Sound test follows Dreamcast Mono configuration if set
-- Scroll test has selection menu
-- Boots into PAL60 if in RGB mode, and not in composite when in PAL
-- Added warning for PAL60 color decoding via composite video (old PVMs decode it as NTSC 4.43)
-- Improved flashrom data for Region/Broadcast detection, instead of just official combinations
-- Improved video mode selection when cable is swapped on the fly
-- Added EBU to NTSC and SMPTE to PAL
-- Added alternating black bars for LCD lag tests in passive lag test
-- Added option to Ignore Frame Buffer creation for overlay graphics
-- Reduced Texture Memory usage in RAM
-- Uses controller capabilities to properly draw controller test
-- Added load from VMU Option
-- Added reset all options to defaults     
-- Renamed Reflex & Timming test and added message upon completing it
+- Added brick pattern to Sharpness test
+- Added diagonal pattern to Grid Scroll Test
+- Made SIP lag test always visible, and moved it to Audio tests
+- Added support for DreamEye microphone (has different samplerate)
+- Clock/VMU beep and LCD/VMU draw to selected device
+- Improved purupuru support
 
 Version 1.29
 ============

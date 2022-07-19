@@ -700,11 +700,11 @@ void ControllerTest()
 	maple_device_t	*dev = NULL;
 	cont_state_t 	*st = NULL;
 
-	black = LoadKMG("/rd/black.kmg.gz", 1);
+	black = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!black)
 		return;
 		
-	back = LoadKMG("/rd/ControlBack.kmg.gz", 0);
+	back = LoadIMG("/rd/ControlBack.kmg.gz", 0);
 	if(!back)
 		return;
 	
@@ -1195,6 +1195,113 @@ void cleanDisplayBuffer()
 	memset(display_buffer, 0, sizeof(char)*DISPLAY_BUFFER_CHAR);
 }
 
+void DisplayDreameyeImage(maple_device_t *dev)
+{
+	char	msg[100];
+	
+	if(!dev)
+		return;
+		
+	if(!(dev->info.functions & MAPLE_FUNC_CAMERA))
+		return;
+	
+	if(dreameye_get_image_count(dev, 1) == MAPLE_EOK)
+	{
+		dreameye_state_t 	*state = NULL;
+		int 				num = 0;
+#ifdef DREAMEYE_DISP
+		uint8 				*buf = NULL;
+		int 				size = 0;
+#endif
+	
+		state = (dreameye_state_t *)maple_dev_status(dev);
+		if(!state->image_count_valid)
+		{
+			sprintf(msg, "Dreameye at %c-%c has an invalid image count", 
+					'A'+(dev->port), '0'+(dev->unit));
+			DrawMessage(msg);
+			return;
+		}
+
+		num = state->image_count;
+#ifndef DREAMEYE_DISP
+		if(num)
+			sprintf(msg, "Dreameye at %c-%c has %d image%c", 
+				'A'+(dev->port), '0'+(dev->unit), num, num > 1 ? 's' : ' ');
+		else
+			sprintf(msg, "Dreameye at %c-%c has no images", 
+				'A'+(dev->port), '0'+(dev->unit));
+		DrawMessage(msg);
+#else
+		/* Disabled since libjpeg crashes with the Dreameye images:  */
+		/* "Corrupt JPEG data: premature end of data segment"        */
+		if(num == 0)
+		{
+			sprintf(msg, "Dreameye at %c-%c has no images", 
+				'A'+(dev->port), '0'+(dev->unit));
+			DrawMessage(msg);
+			return;
+		}
+
+		sprintf(msg, "Accessing Dreameye at %c-%c", 
+			'A'+(dev->port), '0'+(dev->unit));
+		DrawMessageOnce(msg);
+		if(dreameye_get_image(dev, 2, &buf, &size)	== MAPLE_EOK)
+		{
+			char fn[100];
+			
+			sprintf(fn, "de-img%03d.jpg", 0);
+			if(fs_ramdisk_attach(fn, buf, size) == 0)
+			{
+				int 		done = 0;
+				ImagePtr 	img = NULL;
+				controller	*st = NULL;
+				uint16		pressed;
+				
+				sprintf(fn, "/ram/de-img%03d.jpg", 0);
+				img = LoadIMG(fn, 0);						
+				if(img)
+				{
+					do
+					{
+						StartScene();
+						DrawImage(img);
+						EndScene();
+						
+						st = ReadController(0, &pressed);
+						if(st)
+						{
+							if (pressed & CONT_B)
+								done =	1;
+						}
+					}while(!done);
+					
+					FreeImage(&img);
+				}
+				if(fs_ramdisk_detach(fn, (void**)&buf, (size_t*)&size) != 0)
+					dbglog(DBG_ERROR, "Could not dettach %s from /ram", fn);
+			}
+			else
+			{
+				sprintf(msg, "Could not attach image from Dreameye at %c-%c", 
+					'A'+(dev->port), '0'+(dev->unit));
+				DrawMessage(msg);
+			}
+
+			free(buf);
+			buf = NULL;
+			size = 0;
+		}
+		else
+		{
+			sprintf(msg, "Could not load the image from Dreameye at %c-%c", 
+				'A'+(dev->port), '0'+(dev->unit));
+			DrawMessage(msg);
+		}
+#endif
+	}
+}
+
 void ListMapleDevices()
 {
 	int 			done = 0, sel = 1, oldvmode = -1, c = -1;
@@ -1209,11 +1316,11 @@ void ListMapleDevices()
 		return;
 	}
 	
-	black = LoadKMG("/rd/black.kmg.gz", 1);
+	black = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!black)
 		return;
 		
-	back = LoadKMG("/rd/maple.kmg.gz", 0);
+	back = LoadIMG("/rd/maple.kmg.gz", 0);
 	if(!back)
 		return;
 	
@@ -1390,6 +1497,9 @@ void ListMapleDevices()
 							refreshVMU = 1;
 						}
 					}
+					
+					if(dev->info.functions & MAPLE_FUNC_CAMERA)
+						DisplayDreameyeImage(dev);
 				}
 			}
 
@@ -1892,7 +2002,7 @@ void ShowBIOSandFlash()
 		return;
 	}
 	
-	back = LoadKMG("/rd/biosback.kmg.gz", 0);
+	back = LoadIMG("/rd/biosback.kmg.gz", 0);
 	if(!back)
 		return;
 	
@@ -2034,7 +2144,7 @@ void MemoryViewer(uint32 address)
 											"Texture memory", "G2 devices", "NULL"};
 	controller	*st;
 
-	back = LoadKMG("/rd/black.kmg.gz", 1);
+	back = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!back)
 		return;
 		
@@ -2196,7 +2306,7 @@ void VMUControllerTest()
 		
 	if(MemcardOtherGameExists(VMU_CTRL_NAME, vmugame, &port, &unit))
 	{
-		sprintf(question, "#GVMU Control Test & MDFourier#G\n\nThere is already a game (#Y%s#Y) in #YVMU %c-%c#Y\nPlease insert a #YVMU#Y without a game,\nor delete this one first.", 
+		sprintf(question, "#GVMU Control Test & MDFourier#G\n\nThere is a game (#Y%s#Y) in #YVMU %c-%c#Y\nPlease insert a #YVMU#Y without a game,\nor delete this one first.", 
 				vmugame, 'A'+port, '0'+unit);
 		DrawMessage(question);
 		return;
@@ -2304,17 +2414,29 @@ void MicrophoneTest()
 		if(!sip)
 			return;
 			
-		back = LoadKMG("/rd/back.kmg.gz", 0);
+		back = LoadIMG("/rd/back.kmg.gz", 0);
 		if(!back)
 		{
 			cleanSIPtest();
 			return;
 		}
-			
-		if(sip->info.function_data[0] & (3<<28))		// Version 1.000, 2000/02/24,315-618
-			samplerate = sr8 ? 8000 : 10909;
-		else
+		
+		if(sip->info.function_data[0] == 0x0f000000)		// Version 1.000, 2000/02/24,315-618
 			samplerate = sr8 ? 8085 : 11025;
+		if(sip->info.function_data[0] == 0x3f000000)
+			samplerate = sr8 ? 8000 : 10909;
+		if(!samplerate)
+		{
+			if(!AskQuestion("Your #CMicrophone#C is an unidentified model.\nPlease #Yreport#Y the #CMaple device list#C results\nin order to support and document it.\n#YProceed with test?#Y"))
+			{
+				cleanSIPtest();
+				return;
+			}
+			if(!AskQuestion("Use NTSC Microphone values?"))
+				samplerate = sr8 ? 8085 : 11025;
+			else
+				samplerate = sr8 ? 8000 : 10909;
+		}
 		
 		memset(&rec_buffer, 0, sizeof(struct sip_recording_st));
 		
@@ -2747,16 +2869,16 @@ void LightGunTest()
 	if(!isLightGunPresent())
 		return;
 
-	white = LoadKMG("/rd/white.kmg.gz", 1);
+	white = LoadIMG("/rd/white.kmg.gz", 1);
 	if(!white)
 		return;
-	cross = LoadKMG("/rd/cross.kmg.gz", 0);
+	cross = LoadIMG("/rd/cross.kmg.gz", 0);
 	if(!cross)
 		return;
-	hole = LoadKMG("/rd/hole.kmg.gz", 0);
+	hole = LoadIMG("/rd/hole.kmg.gz", 0);
 	if(!hole)
 		return;
-	arrow = LoadKMG("/rd/arrow.kmg.gz", 0);
+	arrow = LoadIMG("/rd/arrow.kmg.gz", 0);
 	if(!arrow)
 		return;
 		
@@ -3355,7 +3477,7 @@ void Show_ISP_Data()
 		return;
 	}
 	
-	back = LoadKMG("/rd/wallisp.kmg.gz", 0);
+	back = LoadIMG("/rd/wallisp.kmg.gz", 0);
 	if(!back)
 		return;
 	

@@ -45,7 +45,7 @@ extern char *HelpData;
 #define STRIPED			"/rd/help/striped.txt"
 #define GRIDSCROLL		"/rd/help/gridscroll.txt"
 #define SCROLL			"/rd/help/scroll.txt"
-#define MANUALLAG		"/rd/help/manuallag.txt"
+#define TIMEREFLEX		"/rd/help/timereflex.txt"
 #define PASSIVELAG		"/rd/help/passivelag.txt"
 #define SMPTECOLOR		"/rd/help/SMPTEColor.txt"
 #define EBUCOLOR		"/rd/help/EBUColor.txt"
