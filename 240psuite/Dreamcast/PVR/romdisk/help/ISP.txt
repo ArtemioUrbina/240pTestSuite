@@ -5,7 +5,7 @@ data as saved to flashrom from #CPlanetWeb#C or
 #CDreamPassport#C.
 
 It's main purpose now is to check values for
-nostalic purposes.
+nostalgic purposes.
 
 You can scroll the list if it is too long.
 

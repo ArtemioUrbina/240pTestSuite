@@ -11,6 +11,6 @@ in NTSC displays.
 In order to adjust white level, you need to use
 the #Ycontrast#Y control of your TV set. Raise the
 contrast to the point where the white bars on the
-sides are undistinguishable from each other, and 
+sides are indistinguishable from each other, and 
 then lower it to the point where you can clearly
 identify both.

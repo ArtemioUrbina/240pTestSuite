@@ -22,11 +22,11 @@ can scroll up and down with the #YL#Y and #YR#Y triggers.
 
 Pressing Left or Right on the #YD-pad#Y in the main
 menu enables rumble in some devices or beeping and
-drawing to VMUs.
+drawing to #CVMU#Cs.
 
 Button #YY#Y displays short response alongside the
 full query. Button #YX#Y limits reply from the
 query to the reported length by the device.
 
 Data is gathered using #YDonald Haase#Y's work, please
-check source code for the url.
+check source code for the #CURL#C.

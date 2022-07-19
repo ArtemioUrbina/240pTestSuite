@@ -2,7 +2,7 @@
 
 This pattern can be used to calibrate for NTSC
 levels regarding contrast and brightness, and 
-appropiate colors as well. 
+appropriate colors as well. 
 
 You can toggle between 100% and 75% SMPTE color 
 with #GA#G. Last screen has a #Yvectorscope#Y image.

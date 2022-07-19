@@ -1,6 +1,6 @@
                      OVERSCAN
 
-With this pattern you can interactively find out
+With this pattern, you can interactively find out
 the overscan in pixels and percentage of each
 edge in a display. 
 

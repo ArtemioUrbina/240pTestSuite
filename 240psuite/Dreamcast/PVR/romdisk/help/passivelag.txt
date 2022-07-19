@@ -1,8 +1,8 @@
                   LAG TEST (1/2)
 
 This test is designed to be used with two displays
-conected at the same time. One being a CRT, or a
-display with a known lag as reference, and the
+connected  at the same time. One being a CRT, or
+a display with a known lag as reference, and the
 other the display to test.
 
 Using a camera, a picture should be taken of both

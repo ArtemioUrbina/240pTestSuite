@@ -8,5 +8,8 @@ On most modern displays, the #Ysharpness#Y control is
 an edge-enhancement control, and most probably
 should be set to zero, or in the middle.
 
+The #YA#Y button toggles a brick wall for detail
+check.
+
 In some #YPVM#Y/#YBVM#Y displays this is also referred 
 to as #Yaperture#Y.

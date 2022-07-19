@@ -5,8 +5,8 @@ the Hedgehog#Y or a single one from #YKiki Kaikai#Y.
 The speed can be varied with the d-pad, and
 direction changed with the button #GX#G.
 
-Vertical and horizntal patterns can be swapped with
-the #GY#G button, and #GA#G stops the scroll.
+Vertical and horizontal  patterns can be swapped
+with the #GY#G button, and #GA#G stops the scroll.
 
 This can be used to notice any drops in framerate
 when using a video processor.

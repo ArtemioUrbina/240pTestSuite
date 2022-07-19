@@ -1,20 +1,20 @@
-             MANUAL LAG TEST (1/3)
+             TIMING & REFLEX (1/3)
 
-#RWARNING: This evaluation is dependent on reflexes
-and/or rhythm more than anything.#R The visual and
+#YWARNING: This evaluation is dependent on reflexes
+and/or rhythm more than anything.#Y The visual and
 audio cues are the more revealing aspects which 
-the user should considers.
+the user should consider.
 
-Of course the interactive factor can give an
+Of course, the interactive factor can give an
 experienced player the hang of the system when
 testing via different connections.
 
 This test show a changing pattern on the screen,
 and given a visual and repetitive cue, play a beep
 alternating speakers. This should show to some
-degree the any lag while processing the signal.
+degree any lag while processing the signal.
                                        #C(cont...)#C
-             MANUAL LAG TEST (2/3)
+             TIMING & REFLEX (2/3)
 
 As an added feature, the user can click the #GA#G
 button when the sprite is aligned with the one on
@@ -30,14 +30,14 @@ of the sprite from vertical to horizontal, or
 display both at the same time.
 
                                        #C(cont...)#C
-             MANUAL LAG TEST (3/3)
+             TIMING & REFLEX (3/3)
 
 The #GR#G trigger can be used to turn off the audio
 cue. If a #YPurupuru#Y (Jump pack) is found, it will
 be used as well, it can be activated with the
 #GL#G trigger.
 
-The interval of movement can be rythmic or random,
+The interval of movement can be rhythmic or random,
 and this can be toggled with the #GY#G button.
 
 Since a frame is around 16 ms (1000/60) in NTSC

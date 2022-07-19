@@ -6,7 +6,7 @@ following video modes:
 #YNTSC compatible modes (60hz):#Y The first 21
 lines of NTSC are reserved and cannot contain 
 video material in broadcast standards, since 
-line 21 usually has close caption (CC) data.
+line 21 usually has close captioned (CC) data.
 Console games typically respect this, since 
 their target display were consumer TVs. It has
 525 lines in interlaced mode, of which only 480
@@ -28,7 +28,7 @@ PAL consoles use #YPAL 60#Y, and start at line 23.
  #G480i scaled 240p assets (NTSC):#G This displays
     the 240p patterns in 480i mode. It uses the 
     480 visible lines, 240 in each field. The 
-    whole content of the suite is linedoubled in 
+    whole content of the suite is line doubled in
     this mode.                     #C(cont...)#C
                 VIDEO MODES (3/10)
 
@@ -108,7 +108,7 @@ field, as the PAL standard determines.
  #G576i scaled 240p assets (PAL):#G This displays
     the 240p patterns in 576i mode. It uses the 
     480 visible lines, 240 in each field. The 
-    whole content of the suite is linedoubled in 
+    whole content of the suite is line doubled in
     this mode.                     #C(cont...)#C
                 VIDEO MODES (8/10)
 
@@ -133,7 +133,7 @@ only available when a #YVGA Box#Y is present.
 
  #G480p scaled 240p assets & scanlines:#G  This 
     displays the 240p patterns in 480p. The whole
-    content of the suite is linedoubled, and 
+    content of the suite is line doubled, and
     scanline parameters can be modified from the 
     #GOptions#G menu, they can also be completely
     disabled if needed.    

@@ -33,7 +33,7 @@ PAL modes must be enabled from the options menu.
                     HELP (3/4)
 
 The #YDreamcast#Y microphone is supported, and when
-connected it enables a new lag test. This test can
+connected,it enables a new lag test. This test can
 be used to measure display lag if both video and
 audio follow the same chain.
 
@@ -41,10 +41,10 @@ It uses #YFast Fourier Transform#Y (FFT) to detect the
 audio delay by playing a 1Khz tone and accurately
 calculating the frame delay.
 
-The #YPurupuru#Y and #YVMU#Y are also supported for some
-tests and information display.
-
-All devices can be hotswapped.         
+The #YPurupuru#Y, #YVMU#Y, #YLightguns#Y and other
+peripherals are also supported for some tests
+and information display. All devices can be
+hots wapped.
                                          #C(cont...)#C
                     HELP (4/4)
 

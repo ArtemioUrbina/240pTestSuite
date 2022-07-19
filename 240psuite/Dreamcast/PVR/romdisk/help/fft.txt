@@ -17,8 +17,8 @@ calculating the frame delay.
            SIP MICROPHONE AND FFT (2/2)
 
 The #GL#G and #GR#G triggers allow you to change
-the frameaccuracy of the FFT used to estimate the
-audio delay. This ranges from 1 frame to 1/4th of
+the frame accuracy of the FFT used to estimate
+the audio delay. This ranges a frame to 1/4th of
 a frame (16.67 to 4.16ms). The smaller the frame
 accuracy, the higher the probability of small
 errors; since the #YDreamcast#Y's microphone sample

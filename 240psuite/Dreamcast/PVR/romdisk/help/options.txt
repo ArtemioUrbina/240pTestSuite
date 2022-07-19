@@ -83,5 +83,5 @@
 #GUse FrameBuffer copy:#G Disables Framebuffer
     effects when opening menus, it is faster.
 
-#GReset all options to defaults:#G Resets all
+#GReset all options to default:#G Resets all
     options to the default values.

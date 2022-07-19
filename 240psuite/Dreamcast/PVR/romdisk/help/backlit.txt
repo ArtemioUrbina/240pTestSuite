@@ -8,7 +8,7 @@ displays, or to evaluate global and local
 dimming.
 
 The user can move around the white pixel arrays
-with the d-pad or joystiq, and change the size
+with the d-pad or joystick, and change the size
 of the pixel array with #GR#G and #GL#G triggers.
 Button #GA#G allows the user to hide the pixel
 array in order to alternate a fully black screen.
@@ -18,7 +18,7 @@ array in order to alternate a fully black screen.
 
 It might be necessary to have a fully-off panel
 (if possible) when displaying the black 
-background,  in order to evaluate full-backlit
+background, in order to evaluate full-backlit
 displays by adjusting brightness accordingly for
 this test.
 

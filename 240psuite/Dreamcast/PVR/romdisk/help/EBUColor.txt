@@ -2,7 +2,7 @@
 
 This pattern can be used to calibrate levels 
 regarding contrast and brightness at 0mv setup
-and also for appropiate colors.
+and also for appropriate colors.
 
 You can toggle between 75% and 100% EBU color 
 bars by pressing #GA#G.
@@ -10,7 +10,7 @@ bars by pressing #GA#G.
 Console games usually start at 0 IRE. This
 pattern can be used to calibrate colors and 
 then black levels can be adjusted with the
-PLUGE pattern using the #GFull RGB Mode#G.
+#CPLUGE#C pattern using the #GFull RGB Mode#G.
 
 
                                          #C(cont...)#C

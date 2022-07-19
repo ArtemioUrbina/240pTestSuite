@@ -1,12 +1,12 @@
-            AUDIO SYNC TEST(1/3)
+              AUDIO SYNC TEST(1/3)
 
 This test flashes the whole screen white for a
-frame, along with a 1khz test tone.
+frame, along with a #C1 khz#C test tone.
 
 You can verify the sync between audio and video
 with recording equipment or specialized hardware.
 
-Manually aligned and tested on hardware usingç
+Manually aligned and tested on hardware using
 several systems for confirmation. It is #C2.0ms#C
 out of sync in average, around 1/8th of a frame.
 PAL sync is also custom aligned and confirmed.

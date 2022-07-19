@@ -1,13 +1,13 @@
                  CONVERGENCE TESTS
 
-These are used to adjust color convergence in CRT 
-displays.
+These are used to adjust color convergence in #CCRT 
+displays#C.
 
-- Button 'A' changes the pattern between cross
+- Button #YA#Y changes the pattern between cross
 hatch lines, crosses, dots and a color pattern 
 with or without a black grid, for transition 
 boundary check.
 
-- Left and Right on the D-Pad allow cycling 
+- Left and Right on the #YD-Pad#Y allow cycling 
 between patterns.
 

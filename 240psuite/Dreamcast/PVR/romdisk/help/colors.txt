@@ -16,7 +16,7 @@ can clearly tell them apart.
                                       #C(cont...)#C
                  COLORBARS (2/2)
 
-You can highlight the blocks for 2 seconds with #GX#G.
+You can highlight the blocks for 2 seconds with #YX#Y.
 
 The same procedure should be used with each
 color, raise the control that adjusts the
@@ -26,7 +26,7 @@ from the one to its left, and then lower it until
 you can distinguish them clearly. 
 
 The same bars with a grid pattern are available
-with the #GA#G button.
+with the #YA#Y button.
 
 Use zoomed-in lower and higher color patterns with
-#GL#G and #GR#G when using the default view.
+#YL#Y and #YR#Y when using the default view.

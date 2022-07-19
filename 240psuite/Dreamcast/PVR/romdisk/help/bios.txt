@@ -1,6 +1,6 @@
               BIOS & FLASHROM DATA
 
-This screen shows the #YBIOS#Y, #YCRC#Y, #YIC name#Y and a
+This screen shows the #CBIOS#C, #CCRC#C, #CIC name#C and a
 description if recognized. If it is not reported
 and you believe it should be added, please contact
 me to add the new CRC to the list.
@@ -8,10 +8,10 @@ me to add the new CRC to the list.
 Factory data from the #Yflashrom#Y is also displayed,
 like serials, manufacturing date, etc.
 
-The backup flashrom can be displayed with #YX#Y.
+The #Cbackup flashrom#C can be displayed with #YX#Y.
 
 You can scroll the list with the #YD-pad#Y or analog
-controller if it is too long.
+controller in case it is too long.
 
-Data from the service area (CID) of the flashrom
-can be dsiplayed by pressing the #YY#Y button.
+Data from the service area #C(CID)#C of the flashrom
+can be displayed by pressing the #YY#Y button.

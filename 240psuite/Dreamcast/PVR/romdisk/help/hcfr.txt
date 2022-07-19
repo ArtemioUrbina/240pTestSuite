@@ -1,9 +1,9 @@
-                HCFR PATTERNS (1/6)
+                HCFR PATTERNS (1/7)
 
 The #YHCFR Colormeter#Y software allows for profiling
 and calibration of displays using the combination
 of a pattern generator to create test patterns,
-and a tristimulous colorimeter to read and
+and a #Ctristimulous colorimeter#C to read and
 measure the outputs. Then you, as the user, will
 have to change settings on your display in order
 to refine the results and attempt to match the
@@ -14,7 +14,7 @@ of the system. It interprets the results from the
 colorimeter and provides #CCIE color#C differences
 (Delta E values), chromaticity diagrams, gamma
                                          #C(cont...)#C
-                HCFR PATTERNS (2/6)
+                HCFR PATTERNS (2/7)
 
 curves and other values to assist you in
 profiling and calibrating your display. 
@@ -30,7 +30,7 @@ from the list, and click OK.
 Once in #YHCFR Colormeter#Y, click
 #CAdvance -> Preferences#C. 
                                          #C(cont...)#C
-                HCFR PATTERNS (3/6)
+                HCFR PATTERNS (3/7)
 
 Under the #CGeneral#C tab, ensure that the section
 #CColors to add when measuring primaries and
@@ -46,7 +46,7 @@ monitors#C.
 
 
                                          #C(cont...)#C
-                HCFR PATTERNS (4/6)
+                HCFR PATTERNS (4/7)
 
 White point is normally #YD65#Y (default) for
 western regions of all color space types.
@@ -62,7 +62,7 @@ gamma that cannot be customized.
 
 
                                          #C(cont...)#C
-                HCFR PATTERNS (5/6)
+                HCFR PATTERNS (5/7)
 
 Ensure your options chosen here match the test
 pattern list you choose in the #C240p Test Suite#C. 
@@ -78,7 +78,7 @@ A menu will pop up asking you to select a given
 #CDVD chapter#C and #Ccolor name#C. Use the #YL#Y and #YR#Y
 buttons to scroll through the color list and
                                          #C(cont...)#C
-                HCFR PATTERNS (6/6)
+                HCFR PATTERNS (6/7)
 
 select the color desired. Once ready to measure,
 click #COK#C in #YHCFR Colormeter#Y to measure
@@ -89,6 +89,17 @@ adjust your display's settings to match the
 values required for your chosen color space,
 white point, gamma, etc. 
 
+
+
+
+
+                                         #C(cont...)#C
+                HCFR PATTERNS (7/7)
+
+The #C714mV#C mode will help to find a more accurate
+peak white. Do the grayscale and gamma with that,
+then turn on #C800mV#C. You might jump up #C30nits#C, but
+the color coordinates should be more accurate.
 
 
 Pattern data and testing by #GDan Mons#G and

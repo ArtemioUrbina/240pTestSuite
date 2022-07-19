@@ -1,12 +1,12 @@
               LIGHT GUN TEST (1/2)
 
 In the first screen, you need yo slowly point
-from teh center towards the #Yleft#Y, #Yright#Y and #Ytop
+from the center towards the #Yleft#Y, #Yright#Y and #Ytop
 edges#Y of the screen in order to calibrate the
 limits of the sensors.
 
-#GGreen arrows#G will tell you which directons are
-still needed.
+#GGreen arrows#G will tell you which directions
+are still needed, yellow have acceptable values.
 
 In the next screen, the cursor will follow your
 aim. If wish to return to the calibration screen,
@@ -18,7 +18,7 @@ re-load by aiming off-screen.
 
 #CSounds:#G
 
-Original #YLaser shot silenced#Y by #Gbubaproducer#G.
-#YReloading of a plastic toy nerf gun#Y by #GLaCezio#G.
+- #YLaser shot silenced#Y by #Gbubaproducer#G.
+- #YReloading of a plastic toy nerf gun#Y by #GLaCezio#G.
 
 Have fun!
