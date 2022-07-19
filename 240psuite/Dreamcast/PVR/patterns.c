@@ -2329,9 +2329,9 @@ void DrawHCFR()
 	uint16		pressed;		
 	ImagePtr	back = NULL, black = NULL;
 	controller	*st = NULL;
-	char		screenmsg[100], vmuMsg2[50];
+	char		screenmsg[100], vmuMsg2[50], index_msg[20];
 	int			hcfr_num = 0, changed_palette = 1, num_files = 0;
-	int			i = 0, selected_hcfr = 0;
+	int			i = 0, selected_hcfr = 0, show_index = 0;
 	hcfr_color 	*hcfr_colors = NULL;
 	hcfr_file	*filenames = NULL;
 	fmenudata 	*resmenudata = NULL;
@@ -2441,6 +2441,11 @@ void DrawHCFR()
 			back->alpha = alpha;
 			
 		DrawStringSCentered(180, 0.5f, 0.5f, 0.5f, screenmsg);
+		if(show_index)
+		{
+			sprintf(index_msg, "index: %02d", current_hcfr);
+			DrawStringSCentered(180+fh, 0.5f, 0.5f, 0.5f, index_msg);
+		}
 
 		if(text_mV)
 		{
@@ -2505,6 +2510,10 @@ void DrawHCFR()
 				ShowMenu(HCFRHELP);
 				changed_palette = 1;
 			}
+			
+			if (pressed & CONT_DPAD_UP ||
+				pressed & CONT_DPAD_DOWN)
+				show_index = !show_index;
 		}
 	}
 	FreeImage(&back);
