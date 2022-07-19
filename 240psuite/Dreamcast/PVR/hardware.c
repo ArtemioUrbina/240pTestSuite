@@ -662,6 +662,12 @@ void DiplayKeyboard(int num, float x, float y, int *hit_escape)
 				if(hit_escape)
 					*hit_escape = 1;
 				break;
+			case 0x4A00:	// HOME
+				kbd_buffer_pos[num] = 0;
+				break;
+			case 0x4D00:	// END
+				kbd_buffer_pos[num] = MAX_KBD_BUFF - 2;
+				break;
 			default:
 				// ASCII
 				if(rcv >= 0x20 && rcv <= 0x7E)
@@ -693,7 +699,7 @@ void GetKeyboardPorts(int *ports)
 void ControllerTest()
 {
 	uint16			pressed = 0;
-	int 			done = 0, oldvmode = -1;
+	int 			done = 0, oldvmode = -1, i = 0;
 	int				ignoreFunctions = 0, timeout = 0;
 	int				ports[4], kb_ports[4];
 	ImagePtr		back = NULL, black = NULL;
@@ -710,7 +716,9 @@ void ControllerTest()
 	
 	disableSleep();
 	
-	memset(kbd_buffer, 0, sizeof(char)*4*MAX_KBD_BUFF);
+	memset(kbd_buffer, ' ', sizeof(char)*4*MAX_KBD_BUFF);
+	for(i = 0; i < 4; i++)
+		kbd_buffer[i][MAX_KBD_BUFF-1] = '\0';
 	memset(kbd_buffer_pos, 0, 4*sizeof(int));
 
 	while(!done && !EndProgram) 
