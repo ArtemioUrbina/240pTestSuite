@@ -608,18 +608,81 @@ void GetControllerPorts(int *ports)
 	}
 }
 
-#define MAX_KBD_BUFF 20
+#define MAX_KBD_BUFF 81
+#define MAX_KBD_SIZE 80
+#define MAX_KBD_LAST 79
+#define MAX_KBD_LINE 20
 
 char kbd_buffer[4][MAX_KBD_BUFF];
 int	 kbd_buffer_pos[4];
 
-void DiplayKeyboard(int num, float x, float y, int *hit_escape)
+int MoveUp(char *str, int pos) 
+{	
+	int lfeed = 0;
+	int curlen = 0, gpos = 0;
+	
+	while (*str) 
+	{		
+		if(*str == '\n')
+		{
+			lfeed ++;
+			curlen = 0;
+		}
+		if(curlen == MAX_KBD_LINE)
+			curlen = 0;
+		if(gpos == pos)
+		{
+			if(!lfeed)
+				return 0;
+			return(gpos - curlen - 1);
+				
+		}
+		str++;
+		curlen++;
+		gpos ++;
+	}
+	return 0;
+}
+
+int MoveDown(char *str, int pos)
+{
+	int lfeed = 0;
+	int curlen = 0;
+	
+	str += pos;
+	while (*str) 
+	{
+		if(*str == '\n')
+		{
+			lfeed ++;
+			if(lfeed == 2)
+				return(pos + curlen);
+			curlen = 0;
+		}
+		if(curlen == MAX_KBD_LINE)
+		{
+			if(!lfeed)
+				return 0;
+			else
+				return(pos + curlen);
+		}
+		str++;
+		curlen++;
+	}
+	if(!lfeed)
+		return 0;
+	else
+		return(pos + curlen);
+}
+
+void DiplayKeyboard(int kb_num, float x, float y, int *hit_escape)
 {
 	int				rcv = 0, region = 0;
 	maple_device_t	*dev = NULL;
 	char			msg[256], name[256];
+	static int		frame = 0, showcursor = 1;
 
-	dev = maple_enum_type(num, MAPLE_FUNC_KEYBOARD);
+	dev = maple_enum_type(kb_num, MAPLE_FUNC_KEYBOARD);
 	if(!dev)
 		return;
 	
@@ -640,22 +703,32 @@ void DiplayKeyboard(int num, float x, float y, int *hit_escape)
 	rcv = kbd_queue_pop(dev, region);
 	if(rcv != -1)
 	{
-		if(rcv != 0x08 && kbd_buffer_pos[num] + 1 == MAX_KBD_BUFF)
-			kbd_buffer_pos[num] = 0;
 		switch(rcv)
 		{
 			case 0x08:		// Backspace in ASCII
-				if(kbd_buffer_pos[num] > 0)
-					kbd_buffer_pos[num]--;
-				else
-					kbd_buffer_pos[num] = MAX_KBD_BUFF - 2;
-				kbd_buffer[num][kbd_buffer_pos[num]] = ' ';
+				{
+					int del_pos = 0;
+					
+					if(kbd_buffer_pos[kb_num] > 0)
+					{
+						kbd_buffer_pos[kb_num]--;
+						del_pos = kbd_buffer_pos[kb_num];
+					}
+					else
+					{
+						kbd_buffer_pos[kb_num] = MAX_KBD_LAST;
+						del_pos = MAX_KBD_LAST;
+					}
+					kbd_buffer[kb_num][del_pos] = ' ';
+				}
 				break;
 			case 0x0A:		// Enter in ASCII
-				if(countLineFeeds(kbd_buffer[num]) < 6)
+				if(countLineFeeds(kbd_buffer[kb_num]) < 3)
 				{
-					kbd_buffer[num][kbd_buffer_pos[num]] = (char)rcv;
-					kbd_buffer_pos[num]++;
+					kbd_buffer[kb_num][kbd_buffer_pos[kb_num]] = (char)rcv;
+					kbd_buffer_pos[kb_num]++;
+					if(kbd_buffer_pos[kb_num] == MAX_KBD_SIZE)
+						kbd_buffer_pos[kb_num] = 0;
 				}
 				break;
 			case 0x1B:		// ESCAPE
@@ -663,23 +736,83 @@ void DiplayKeyboard(int num, float x, float y, int *hit_escape)
 					*hit_escape = 1;
 				break;
 			case 0x4A00:	// HOME
-				kbd_buffer_pos[num] = 0;
+				kbd_buffer_pos[kb_num] = 0;
+				break;
+			case 0x4C00:	// DEL
+				memcpy(kbd_buffer[kb_num]+kbd_buffer_pos[kb_num], 
+					kbd_buffer[kb_num]+kbd_buffer_pos[kb_num]+1,
+					MAX_KBD_LAST - kbd_buffer_pos[kb_num]);
+				kbd_buffer[kb_num][MAX_KBD_LAST] = ' ';
 				break;
 			case 0x4D00:	// END
-				kbd_buffer_pos[num] = MAX_KBD_BUFF - 2;
+				kbd_buffer_pos[kb_num] = MAX_KBD_LAST;
+				break;
+			case 0x4f00:	// RIGHT
+				if(kbd_buffer_pos[kb_num] < MAX_KBD_LAST)
+					kbd_buffer_pos[kb_num] ++;
+				else
+					kbd_buffer_pos[kb_num] = 0;
+				break;
+			case 0x5000:	// LEFT
+				if(kbd_buffer_pos[kb_num] > 0)
+					kbd_buffer_pos[kb_num] --;
+				else
+					kbd_buffer_pos[kb_num] = MAX_KBD_LAST;
+				break;
+			case 0x5100:	// DOWN
+				{
+					int move_down = 0;
+					
+					move_down = MoveDown(kbd_buffer[kb_num], kbd_buffer_pos[kb_num]);
+					if(move_down)
+						kbd_buffer_pos[kb_num] = move_down;
+					else
+					{
+						kbd_buffer_pos[kb_num] += MAX_KBD_LINE;
+						kbd_buffer_pos[kb_num] = kbd_buffer_pos[kb_num] % MAX_KBD_SIZE;
+					}
+				}
+				break;
+			case 0x5200:	// UP
+				{
+					int move_up = 0;
+					
+					move_up = MoveUp(kbd_buffer[kb_num], kbd_buffer_pos[kb_num]);
+					if(move_up)
+						kbd_buffer_pos[kb_num] = move_up;
+					else
+					{
+						kbd_buffer_pos[kb_num] -= MAX_KBD_LINE;
+						if(kbd_buffer_pos[kb_num] < 0)
+							kbd_buffer_pos[kb_num] += MAX_KBD_SIZE;
+					}
+				}
 				break;
 			default:
 				// ASCII
 				if(rcv >= 0x20 && rcv <= 0x7E)
 				{
-					kbd_buffer[num][kbd_buffer_pos[num]] = (char)rcv;
-					kbd_buffer_pos[num]++;
+					kbd_buffer[kb_num][kbd_buffer_pos[kb_num]] = (char)rcv;
+					kbd_buffer_pos[kb_num]++;
+					if(kbd_buffer_pos[kb_num] == MAX_KBD_SIZE)
+						kbd_buffer_pos[kb_num] = 0;
 				}
 				break;
 		}
+		
+		showcursor = 1;
 	}
-	
-	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, kbd_buffer[num]);
+	else
+	{
+		frame++;
+		if(frame == 20)
+		{
+			showcursor = !showcursor;
+			frame = 0;
+		}
+	}
+	DrawStringSKB(x, y, 1.0f, 1.0f, 1.0f, kbd_buffer[kb_num], 
+				MAX_KBD_LINE, showcursor ? kbd_buffer_pos[kb_num] : -1);
 }
 
 void GetKeyboardPorts(int *ports)
@@ -718,7 +851,7 @@ void ControllerTest()
 	
 	memset(kbd_buffer, ' ', sizeof(char)*4*MAX_KBD_BUFF);
 	for(i = 0; i < 4; i++)
-		kbd_buffer[i][MAX_KBD_BUFF-1] = '\0';
+		kbd_buffer[i][MAX_KBD_SIZE] = '\0';
 	memset(kbd_buffer_pos, 0, 4*sizeof(int));
 
 	while(!done && !EndProgram) 

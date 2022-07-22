@@ -216,6 +216,55 @@ void DrawStringS(float x, float y, float r, float g, float b, char *str)
 	DrawString(x, y, r, g, b, str);
 }
 
+void DrawStringKB(float x, float y, float r, float g, float b, char *str, int max_x, int key_pos) 
+{	
+	int		len = 0, gen_pos = 0;
+	float	orig_x = x;
+
+	font_t->r = r;
+	font_t->g = g;
+	font_t->b = b;
+	
+	while (*str) 
+	{
+		if(*str == '\n')
+		{
+			if(key_pos == gen_pos)
+				DrawChar(x, y+2, '_');
+			x = orig_x;
+			y += fh;
+			str++;
+			len = 0;
+			gen_pos++;
+			continue;
+		}
+		
+		if(len == max_x)
+		{
+			x = orig_x;
+			y += fh;
+			len = 0;
+		}
+
+		DrawChar(x, y, *str++);
+		if(key_pos == gen_pos)
+			DrawChar(x, y+2, '_');
+		x += fw;
+		len ++;
+		gen_pos++;
+	}
+}
+
+void DrawStringSKB(float x, float y, float r, float g, float b, char *str, int max_len, int key_pos) 
+{
+	font_t->layer = 2.0f;
+	font_t->alpha = 0.75f;
+	DrawStringKB(x+1, y+1, 0.0f, 0.0f, 0.0f, str, max_len, key_pos);	
+	font_t->layer = 3.0f;
+	font_t->alpha = 1.0f;
+	DrawStringKB(x, y, r, g, b, str, max_len, key_pos);
+}
+
 void DrawStringSCenteredInternal(float y, float r, float g, float b, char *str, int full_screen, int useback) 
 {
 	int			currlen = 0;
