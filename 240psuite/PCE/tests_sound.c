@@ -1024,7 +1024,7 @@ void HardwareTests()
 
 void MemViewer(unsigned int address)
 {			
-	char *buffer[2];
+	char buffer[3];
 	
 	end = 0;
 	redraw = 1;
@@ -1069,11 +1069,12 @@ void MemViewer(unsigned int address)
 				{
 					for(x = 0; x < 16; x++)
 					{
-						buffer[0] = 20;				// Space
+						buffer[0] = 32;				// Space
 						buffer[1] = 0;
+						buffer[2] = 0;
 						
 						x1 = mem[y*16+x];
-						if(x1 >= 32 && x1 <= 127)	// ASCII range
+						if(x1 >= 32 && x1 <= 126)	// ASCII range
 							buffer[0] = x1;
 						put_string(buffer, x*2, y);
 					}
@@ -1225,3 +1226,131 @@ void ControllerTest()
 	}
 }
 
+#ifdef CDPLAYER
+void CDDAPlayer()
+{
+	int	tracks[20];
+	
+	redraw = 1;
+	refresh = 1;
+	
+	x3 = 0;			//selected track
+	end = 0;
+	option = 1;  // read cd
+	x = 0;		 // Number of tracks
+	
+	controller = 0;
+	
+	disp_off();
+	while(!end)
+	{		
+		vsync();
+		if(redraw)
+		{
+			RedrawBG();
+
+			refresh = 1;
+			redraw = 0;
+			disp_sync_on();
+		}
+		if(refresh)
+		{
+			x2 = 4;
+			y = 8;
+			
+			SetFontColors(15, RGB(3, 3, 3), RGB(0, 7, 0), 0);
+			
+			set_font_pal(13);
+			put_string("CD Audio Player", 12, 4);
+			put_string("No Context CD-DA", 12, 26);
+			
+			for(x1 = 1; x1 <= x; x1++)
+			{
+				if(tracks[x1-1] == CDTRK_AUDIO)
+				{
+					set_font_pal(x3 + 1 == x1 ? 15 : 14);
+					put_number(x1, 2, x2, y);
+				}
+				
+				x2 += 3;
+				if(x2 >= 33)
+				{
+					x2 = 4;
+					y++;
+				}				
+			}
+			set_font_pal(x3 + 1 == x1 ? 15 : 14);
+			y += 2;
+			put_string("Play 3 to", 24, y);
+			put_number(x, 2, 33, y);
+			refresh = 0;
+		}
+		controller = joytrg(0);
+		
+		if (controller & JOY_II)
+			end = 1;
+		if(option) // read cd
+		{
+			x3 = 0;
+			refresh = 1;
+			option = 0;
+			x = cd_numtrk();
+			for(x1 = 1; x1 <= x; x1++)
+				tracks[x1-1] = cd_trktype(x1);
+		}
+		if (controller & JOY_LEFT)
+		{
+			x3 --;
+			
+			if(tracks[x3] != CDTRK_AUDIO)
+				x3 --;
+
+			if(x3 < 0)
+				x3 = 0;
+			
+			refresh = 1;
+		}
+		if (controller & JOY_RIGHT)
+		{
+			x3 ++;
+			if(tracks[x3] != CDTRK_AUDIO)
+				x3 ++;
+			if(x3 > x)
+				x3 = x;
+				
+			refresh = 1;
+		}
+		if (controller & JOY_UP)
+		{
+			x3 = x3 - 10;
+			if(tracks[x3] != CDTRK_AUDIO)
+				x3 --;
+			if(x3 < 0)
+				x3 = 0;
+				
+			refresh = 1;
+		}
+		if (controller & JOY_DOWN)
+		{
+			x3 = x3 + 10;
+			if(tracks[x3] != CDTRK_AUDIO)
+				x3 ++;
+			if(x3 > x)
+				x3 = x;
+				
+			refresh = 1;
+		}
+		
+		if (controller & JOY_I)
+		{
+			if(x3 != x)
+				cd_playtrk(x3+1, x3+2, CDPLAY_NORMAL);
+			else
+				cd_playtrk(3, CDPLAY_ENDOFDISC, CDPLAY_NORMAL);
+		}
+			
+		if (controller & JOY_SEL)
+			cd_reset();
+	}
+}
+#endif

@@ -59,4 +59,7 @@ void StopAudio(unsigned char chan);
 void StopAllAudio();
 void MDFourier(int boot);
 void ConstrInterf();
+#ifdef CDPLAYER
+void CDDAPlayer();
+#endif
 			

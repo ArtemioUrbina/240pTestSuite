@@ -91,6 +91,9 @@ void main()
 	DrawIntro();
 #endif
 
+#ifdef CDPLAYER
+	cd_reset();
+#endif
     while(1)
     {   	
 		vsync();
@@ -465,9 +468,12 @@ void RefreshAudioTests()
 	drawmenutext(1, "Audio Sync Test");
 	drawmenutext(2, "MDFourier");
 	drawmenutext(3, "Audio Clipping");
+#ifdef CDPLAYER
+	drawmenutext(4, "CD-DA Player");
+#endif
 	
 	row = 22;
-	DrawMenuBottom(4, 0);
+	DrawMenuBottom(5, 0);
 }
 
 
@@ -475,6 +481,14 @@ void AudioTests()
 {
 	redraw = 1;
 	refresh = 1;
+	
+	
+	// Number of options
+#ifdef CDPLAYER	
+	option = 7;
+#else
+	option = 6;
+#endif
 	
 	sel = 0;
 	end = 0;
@@ -521,7 +535,7 @@ void AudioTests()
 		if (controller & JOY_DOWN) 
 		{
 			sel++;
-			if(sel > 6)
+			if(sel > option)
 				sel = 0;
 			refresh = 1;
 		}
@@ -530,7 +544,7 @@ void AudioTests()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 6;
+				sel = option;
 			refresh = 1;
 		}
 		
@@ -579,6 +593,23 @@ void AudioTests()
 				case 3:
 					ConstrInterf();
 					break;
+#ifdef CDPLAYER
+				case 4:
+					CDDAPlayer();
+					break;
+				case 5:
+#ifdef SYSCARD1
+					x_g = OPTIONS_AUD_HELP;
+#endif
+					Options();
+					break;
+				case 6:
+					showHelp(GENERAL_AUD_HELP);
+					break;
+				case 7:
+					end = 1;
+					break;
+#else		// Regular case
 				case 4:
 #ifdef SYSCARD1
 					x_g = OPTIONS_AUD_HELP;
@@ -591,8 +622,14 @@ void AudioTests()
 				case 6:
 					end = 1;
 					break;
+#endif
 			}
-			if(sel != 6)
+#ifdef CDPLAYER	
+			option = 7;
+#else
+			option = 6;
+#endif
+			if(sel != option)
 				end = 0;
 				
 			redraw = 1;	
