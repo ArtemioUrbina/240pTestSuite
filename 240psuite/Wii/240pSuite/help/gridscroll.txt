@@ -2,7 +2,7 @@
 
 A grid is scrolled vertically, horizontally and
 diagonally which can be used to test linearity of
-the displayor video processor; and how it copes
+the display or video processor; and how it copes
 with scrolling and framerate.
 
 Button $Y can be used to switch between horizontal

@@ -830,7 +830,7 @@ void TimingReflexTest()
 void ScrollTest()
 {
 	int 	done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, vertical = 0;
-	int		oldvmode = vmode, i = 0, currentsonic = 0, currentframe = 0;
+	int		oldvmode = -1, i = 0, currentsonic = 0, currentframe = 0;
 	u32		pressed;		
 	ImagePtr	sonicback[4], overlay, kiki;	
 	
@@ -856,13 +856,8 @@ void ScrollTest()
 		return;
 
 	for(i = 0; i < 4; i++)
-		sonicback[i]->y = (dH - 240)/2;
-	overlay->y = (dH - 240)/2;
-	
-	for(i = 0; i < 4; i++)
 		IgnoreOffset(sonicback[i]);
 	IgnoreOffset(overlay);
-	kiki->x = (dW-256)/2;
 	IgnoreOffset(kiki);
 
 	while(!done && !EndProgram) 
@@ -974,20 +969,20 @@ void ScrollTest()
 void GridScrollTest()
 {
 	int 			done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, direction = 0;
-	int				angle = 0;
+	int				angle = 0, oldvmode = -1;
 	u32			    pressed;		
 	ImagePtr		back, backsquares, backdiag;
 		
 	backdiag = LoadImage(DIAGONALIMG, 1);
 	if(!backdiag)
-		return;  
+		return; 
 	backsquares = LoadImage(SMALLGRIDIMG, 1);
 	if(!backsquares)
 	{
 		FreeImage(&backdiag);  
 		return;  
 	}
-		
+
 	backsquares->x = -0.5*dW;
 	backsquares->y = -0.5*dH;
 	back = backsquares;
@@ -995,6 +990,16 @@ void GridScrollTest()
 	while(!done && !EndProgram) 
 	{	
 		Mtx m;
+		
+		if(oldvmode != vmode)
+		{
+			backsquares->w = dW;
+			backsquares->h = dH;
+			backdiag->w = dW;
+			backdiag->h = dH;
+	
+			oldvmode = vmode;
+		}
 		
 		StartSceneMtx(&m);
 

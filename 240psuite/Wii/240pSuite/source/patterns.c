@@ -1418,21 +1418,27 @@ void DrawOverscan()
 #define	NUM_CONV	5
 void DrawConvergence()
 {
-    int 		done = 0, current = 0;
+    int 		done = 0, i = 0, current = 0, oldvmode = -1;
 	int			patterns[NUM_CONV] = {CONVERGE01, CONVERGE02, CONVERGE03, CONVERGE04, CONVERGE05};
 	u32			pressed;		
 	ImagePtr	back[NUM_CONV];	
 	
-	for(current = 0; current < NUM_CONV; current++)
+	for(i = 0; i < NUM_CONV; i++)
 	{
-		back[current] = LoadImage(patterns[current], 1);
-		if(!back[current])
+		back[i] = LoadImage(patterns[i], 1);
+		if(!back[i])
 			return;
 	}
 	
-	current = 0;
 	while(!done && !EndProgram) 
-	{				
+	{	
+		if(oldvmode != vmode)
+		{	
+			for(i = 0; i < NUM_CONV; i++)
+				CalculateUV(0, 0, dW, dH, back[i]);
+			oldvmode = vmode;
+		}
+		
 		StartScene();
 		        
 		DrawImage(back[current]);
@@ -1466,7 +1472,7 @@ void DrawConvergence()
 				current = NUM_CONV - 1;
 		}
 	}
-	for(current = 0; current < NUM_CONV; current++)
-		FreeImage(&back[current]);
+	for(i = 0; i < NUM_CONV; i++)
+		FreeImage(&back[i]);
 	return;
 }
