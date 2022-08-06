@@ -143,6 +143,10 @@ extern char monoscope_tiles, monoscope_tiles_end;
 extern char monoscope_pal, monoscope_pal_end;
 extern char monoscope_map, monoscope_map_end;
 
+extern char monoscope239_tiles, monoscope239_tiles_end;
+extern char monoscope239_pal, monoscope239_pal_end;
+extern char monoscope239_map, monoscope239_map_end;
+
 extern char monoscopePAL_tiles, monoscopePAL_tiles_end;
 extern char monoscopePAL_pal, monoscopePAL_pal_end;
 extern char monoscopePAL_map, monoscopePAL_map_end;

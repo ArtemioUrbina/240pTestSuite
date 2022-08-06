@@ -30,7 +30,7 @@
 void DrawGrid() 
 {	
 	u16 pressed, end = 0;	 
-	u16 redraw = 1, type = 0;
+	u16 redraw = 1, type = 0, swcolor = 0;
 		
 	type = DrawFloatMenu();
 	if(type == FLOAT_CANCEL)
@@ -84,10 +84,25 @@ void DrawGrid()
 			int ntype = 0;
 			
 			ntype = DrawFloatMenu();
-			if(type != ntype)
-				redraw = 1;
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			redraw = 1;
 		}
 		
+		if(pressed & KEY_A)
+		{
+			if(swcolor)
+			{
+				swcolor = 0;
+				setPaletteColor(0x01, RGB5(255, 0, 0));
+			}
+			else
+			{
+				swcolor = 1;
+				setPaletteColor(0x01, RGB5(255, 255, 255));
+			}
+		}
+
 		if(pressed & KEY_B)
 			end = 1;		
 	}
@@ -443,10 +458,13 @@ void DrawGrayRamp(void)
 
 void DrawMonoscope(void) 
 {	
-	u16 pressed, end = 0;	 
+	u16 pressed, end = 0, type = 0;	 
 	u16 redraw = 1, size = 0;	
 	s16 color = 255;
 	
+	type = DrawFloatMenu();
+	if(type == FLOAT_CANCEL)
+		return;
 	while(!end) 
 	{		
 		if(redraw)
@@ -455,8 +473,18 @@ void DrawMonoscope(void)
 			
 			if(!snes_50hz)
 			{
-				bgInitTileSetMine(1, &monoscope_tiles, &monoscope_pal, 0, (&monoscope_tiles_end - &monoscope_tiles), 16*2, BG_16COLORS, 0x4000);	
-				bgInitMapSetMine(1, &monoscope_map, (&monoscope_map_end - &monoscope_map), SC_32x32, 0x1000);
+				if(type == RES_239)
+				{
+					bgInitTileSetMine(1, &monoscope239_tiles, &monoscope239_pal, 0, (&monoscope239_tiles_end - &monoscope239_tiles), 16*2, BG_16COLORS, 0x4000);	
+					bgInitMapSetMine(1, &monoscope239_map, (&monoscope239_map_end - &monoscope239_map), SC_32x32, 0x1000);
+					Set240pMode();	
+				}
+				else
+				{
+					bgInitTileSetMine(1, &monoscope_tiles, &monoscope_pal, 0, (&monoscope_tiles_end - &monoscope_tiles), 16*2, BG_16COLORS, 0x4000);	
+					bgInitMapSetMine(1, &monoscope_map, (&monoscope_map_end - &monoscope_map), SC_32x32, 0x1000);
+					Set224pMode();
+				}
 			}
 			else
 			{
@@ -479,10 +507,10 @@ void DrawMonoscope(void)
 		
 		if(pressed & KEY_START)
 		{
-			if(snes_50hz)
+			if(snes_50hz || type == RES_239)
 				Set224pMode();	
 			DrawHelp(HELP_MONOSCOPE);
-			if(snes_50hz)
+			if(snes_50hz || type == RES_239)
 				Set240pMode();	
 			redraw = 1;
 		}
@@ -505,9 +533,19 @@ void DrawMonoscope(void)
 				color = 15;
 			setPaletteColor(0x02, RGB8(color, color, color));		
 		}
+		
+		if(pressed & KEY_SELECT)
+		{
+			int ntype = 0;
+			
+			ntype = DrawFloatMenu();
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			redraw = 1;
+		}
 	}	
 	Transition();
-	if(snes_50hz)
+	if(snes_50hz || type == RES_239)
 		Set224pMode();
 	return;
 }
@@ -1411,8 +1449,9 @@ void DrawOverscan()
 			int nmode = 0;
 			
 			nmode = DrawFloatMenu();
-			if(mode != nmode)
-				redraw = 1;
+			if(nmode != FLOAT_CANCEL)
+				mode = nmode;
+			redraw = 1;
 		}
 			
 		WaitForVBlank();

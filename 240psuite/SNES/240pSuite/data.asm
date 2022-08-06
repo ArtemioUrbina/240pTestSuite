@@ -27,10 +27,6 @@ back_tiles:
 .incbin "back.pic"
 back_tiles_end:
 
-gillian_tiles:
-.incbin "gillian.pic"
-gillian_tiles_end:
-
 donna_tiles1:
 .incbin "donna.pic" read $6000
 donna_tiles1_end:
@@ -531,5 +527,30 @@ sonicfloor_map_end:
 nishka_map:
 .incbin "n_m.s"
 nishka_map_end:
+
+.ends
+
+.section ".rodata11" superfree
+
+monoscope239_tiles:
+.incbin "monoscope239.pic"
+monoscope239_tiles_end:
+
+.ends
+
+.section ".rodata12" superfree
+
+monoscope239_pal:
+.incbin "monoscope239.pal"
+monoscope239_pal_end:
+
+monoscope239_map:
+.incbin "monoscope239.map"
+monoscope239_map_end:
+
+gillian_tiles:
+.incbin "gillian.pic"
+gillian_tiles_end:
+
 
 .ends

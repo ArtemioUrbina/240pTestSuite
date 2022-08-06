@@ -554,11 +554,11 @@ void AudioTests(void)
 			
 			drawText(4, pos, sel == 0 ? 6 : 7, "Sound Test"); pos ++;
 			drawText(4, pos, sel == 1 ? 6 : 7, "Audio Sync Test"); pos ++;
-			drawText(4, pos, sel == 100 ? 6 : 3, "MDFourier"); pos ++;
+			drawText(4, pos, sel == 2 ? 6 : 7, "MDFourier"); pos ++;
 			pos = 18;
-			drawText(4, pos, sel == 2 ? 6 : 7, "Help"); pos ++;	
-			drawText(4, pos, sel == 3 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
-			drawText(4, pos, sel == 4 ? 6 : 5, "Back to Main Menu"); pos++;
+			drawText(4, pos, sel == 3 ? 6 : 7, "Help"); pos ++;	
+			drawText(4, pos, sel == 4 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(4, pos, sel == 5 ? 6 : 5, "Back to Main Menu"); pos++;
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
 			
@@ -612,15 +612,18 @@ void AudioTests(void)
 					AudioSyncTest();
 					break;
 				case 2:
-					DrawHelp(HELP_GENERAL);
+					MDFourier(0);
 					break;
 				case 3:
+					DrawHelp(HELP_GENERAL);
+					break;
+				case 4:
 					if(interlaced)
 						ClearInterlaced();
 					else
 						SetInterlaced();
 					break;
-				case 4:
+				case 5:
 					exit = 1;
 					Transition();
 					oamClear(0, 0);
