@@ -30,7 +30,7 @@
 #include "image.h"
 #include "font.h"
 
-
+/*
 int nbg_data[4] = { SCRN_NBG0,
 					SCRN_NBG1,
 					SCRN_NBG2,
@@ -39,11 +39,12 @@ int nbg_data[4] = { SCRN_NBG0,
 int nbg_char_data[4] = { VRAM_CTL_CYCP_CHPNDR_NBG0,
 						 VRAM_CTL_CYCP_CHPNDR_NBG1,
 						 VRAM_CTL_CYCP_CHPNDR_NBG2,
-						 VRAM_CTL_CYCP_CHPNDR_NBG3 };
+						 VRAM_CTL_CYCP_CHPNDR_NBG3 };*/
 
 bool DisplayImage(const char *path, int nbg, int width, int height, int piority, bool transparent)
-{
-	struct scrn_bitmap_format nbg_format;
+{	
+	
+	/*struct scrn_bitmap_format nbg_format;
 	struct vram_ctl *vram_ctl;
 	void *fh;
 	int ret;
@@ -51,11 +52,14 @@ bool DisplayImage(const char *path, int nbg, int width, int height, int piority,
 	tga_t tga;
 	uint32_t amount;
 	
-	if(nbg < S_NBG0 || nbg > S_NBG1)
+	//using only NBG0 for now
+	if(nbg < S_NBG0 || nbg > S_NBG0)
 		return false;
 
 	if(!path)
 		return false;
+
+	_svin_background_set_no_filelist()
 
 	nbg_format.sbf_scroll_screen = nbg_data[nbg];
 	nbg_format.sbf_cc_count = SCRN_CCC_RGB_32768;
@@ -118,7 +122,7 @@ bool DisplayImage(const char *path, int nbg, int width, int height, int piority,
 	
 	vdp2_scrn_display_set(nbg_data[nbg], transparent);
 	vdp2_tvmd_display_set();
-
+*/
 	//TODO size and count vram
 	return true;
 }

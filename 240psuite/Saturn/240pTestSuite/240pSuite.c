@@ -36,6 +36,8 @@
 #include "video.h"
 #include "control.h"
 
+#include "svin.h"
+
 #define VERSION_NUMBER "Ver. 0.0.1"
 #define VERSION_DATE "15/3/2018"
 
@@ -46,13 +48,29 @@ int main(void)
 	int sel = 0;
 	bool redrawMenu = true, redrawBG = true;
 
-	InitVideo();
-	InitControllers();
+	extern int _svin_videomode_x_res;
+	extern int _svin_videomode_y_res;
+	_svin_x_resolution_t X_Res = _SVIN_X_RESOLUTION_704;
+    _svin_y_resolution_t Y_Res = _SVIN_Y_RESOLUTION_448;
+    bool scanlines = false;
 
-	LoadFont();
+	_svin_init(X_Res,Y_Res,scanlines);
+    _svin_textbox_disable(); //filling textbox tiles with invisible data
+    _svin_background_set_no_filelist("BOOTLOGO.BG");
+	_svin_delay(1000);
+	_svin_background_fade_to_black();
 
-	if(!fs_init())
-		DrawString("FS INIT FAILED!\n", 120, 20, 1);
+
+	DrawCredits();
+	while(1);
+
+	//InitVideo();
+	//InitControllers();
+
+	//LoadFont();
+
+	//if(!fs_init())
+	//	DrawString("FS INIT FAILED!\n", 120, 20, 1);
 
 	while(true)
 	{
@@ -69,7 +87,7 @@ int main(void)
 		{
 			int x = 36, y = 56, pos = 0;
 
-			vdp1_cmdt_list_begin(0);
+			//vdp1_cmdt_list_begin(0);
 			DrawString("Test Patterns", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
 			DrawString("Drop Shadow Test", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 			DrawString("Striped Sprite Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
@@ -85,7 +103,7 @@ int main(void)
 			DrawString("Video Options",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 			DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 			DrawString("Credits",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			vdp1_cmdt_list_end(0);
+			//vdp1_cmdt_list_end(0);
 			redrawMenu = false;
 		}
 
@@ -118,7 +136,7 @@ int main(void)
 			if(controller.pressed.button.b)
 			{
 				vdp2_tvmd_vblank_in_wait();
-				vdp1_cmdt_list_commit();
+				//vdp1_cmdt_list_commit();
 
 				//vdp2_scrn_display_clear();
 
@@ -130,7 +148,7 @@ int main(void)
 			}
 		}
 		vdp2_tvmd_vblank_in_wait();
-		vdp1_cmdt_list_commit();
+		//vdp1_cmdt_list_commit();
 	}
 }
 
@@ -142,6 +160,14 @@ void DrawCredits()
 
 	//DisplayImage("/BACK.TGA", S_NBG0, 512, 256, 1, false);
 
+	_svin_x_resolution_t X_Res = _SVIN_X_RESOLUTION_320;
+    _svin_y_resolution_t Y_Res = _SVIN_Y_RESOLUTION_240;
+    bool scanlines = true;
+
+	_svin_init(X_Res,Y_Res,scanlines);
+
+	_svin_background_set_no_filelist("BACK320.BG");
+/*
 	while(!doexit)
 	{
 		int x = 32, y = 56, pos = 0;
@@ -149,7 +175,7 @@ void DrawCredits()
 		vdp2_tvmd_vblank_out_wait();
 		smpc_peripheral_digital_port(1, &controller);
 
-		vdp1_cmdt_list_begin(0);
+		//vdp1_cmdt_list_begin(0);
 		DrawString("Code and Patterns:", x, y+_fh*pos, FONT_GREEN); pos++;	
 		DrawString("Artemio Urbina", x+5, y+_fh*pos, FONT_WHITE); pos++;	
 		
@@ -183,7 +209,7 @@ void DrawCredits()
 	
 		y += _fh*18;
 		DrawString("Dedicated to Elisa", 154, y, FONT_GREEN); 
-		vdp1_cmdt_list_end(0);
+		//vdp1_cmdt_list_end(0);
 	
 		if (controller.connected == 1)
 		{
@@ -192,9 +218,9 @@ void DrawCredits()
 		}
 	
 		vdp2_tvmd_vblank_in_wait();
-		vdp1_cmdt_list_commit();
+		//vdp1_cmdt_list_commit();
 		counter ++;
-	}
+	}*/
 
 	return;
 }

@@ -30,48 +30,52 @@ int _fw = 8;
 
 void LoadFont()
 {
-	int i;
+/*	int i;
 	uint8_t *pFont;
-	color_rgb555_t * pPal;	
+	color_rgb1555_t * pPal;	
 	
-	pPal = (color_rgb555_t *)CLUT(FONT_WHITE, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(31, 31, 31); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
+	pPal = (color_rgb1555_t *)CLUT(FONT_WHITE, 0);
+	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
+	*(pPal++) = COLOR_RGB1555(1, 31, 31, 31); //Font
+	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb555_t *)CLUT(FONT_RED, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(31, 0, 0); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
+	pPal = (color_rgb1555_t *)CLUT(FONT_RED, 0);
+	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
+	*(pPal++) = COLOR_RGB1555(1, 31, 0, 0); //Font
+	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb555_t *)CLUT(FONT_GREEN, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(0, 31, 0); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
+	pPal = (color_rgb1555_t *)CLUT(FONT_GREEN, 0);
+	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
+	*(pPal++) = COLOR_RGB1555(1, 0, 31, 0); //Font
+	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb555_t *)CLUT(FONT_CYAN, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(0, 31, 31); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
+	pPal = (color_rgb1555_t *)CLUT(FONT_CYAN, 0);
+	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
+	*(pPal++) = COLOR_RGB1555(1, 0, 31, 31); //Font
+	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb555_t *)CLUT(FONT_YELLOW, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(31, 31, 0); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
+	pPal = (color_rgb1555_t *)CLUT(FONT_YELLOW, 0);
+	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
+	*(pPal++) = COLOR_RGB1555(1, 31, 31, 0); //Font
+	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
 	
 	pFont = (uint8_t *)CHAR(0);
 	for(i=0; i<(SuiteFont_len); i++)
-		*(pFont++) = SuiteFont[i];
+		*(pFont++) = SuiteFont[i];*/
 }
 
+/* Draw a char as VDP1 sprite at desired location*/
 void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool transparent) 
 {
-	struct vdp1_cmdt_sprite normal_sprite_pointer;
+	/*struct vdp1_cmdt_sprite normal_sprite_pointer;
 
 	c -= 32;
 	memset(&normal_sprite_pointer, 0x00, sizeof(struct vdp1_cmdt_sprite));
 
-	normal_sprite_pointer.cs_type = CMDT_TYPE_NORMAL_SPRITE;
+    vdp1_cmdt_normal_sprite_set(normal_sprite_pointer);
+    vdp1_cmdt_param_draw_mode_set(cmdt, draw_mode);
+    vdp1_cmdt_param_size_set(cmdt, flare_texture_dim.x, flare_texture_dim.y);
+    vdp1_cmdt_param_char_base_set(cmdt, (uint32_t)_vdp1_vram_partitions.texture_base);
 	normal_sprite_pointer.cs_mode.color_mode = 1; 	// mode 1 COLMODE_16_LUT
 	normal_sprite_pointer.cs_mode.transparent_pixel = transparent;
 	normal_sprite_pointer.cs_mode.user_clipping = 1;
@@ -84,7 +88,7 @@ void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool
 	normal_sprite_pointer.cs_char =  CHAR(0) + (c<<5);
 	normal_sprite_pointer.cs_grad = 0;
 	
-	vdp1_cmdt_sprite_draw(&normal_sprite_pointer);
+	vdp1_cmdt_sprite_draw(&normal_sprite_pointer);*/
 }
 
 /* Print a string at x, y using sprites by VDP1*/
