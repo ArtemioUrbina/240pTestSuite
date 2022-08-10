@@ -50,8 +50,8 @@ int main(void)
 
 	extern int _svin_videomode_x_res;
 	extern int _svin_videomode_y_res;
-	_svin_x_resolution_t X_Res = _SVIN_X_RESOLUTION_704;
-    _svin_y_resolution_t Y_Res = _SVIN_Y_RESOLUTION_448;
+	_svin_x_resolution_t X_Res = _SVIN_X_RESOLUTION_320;
+    _svin_y_resolution_t Y_Res = _SVIN_Y_RESOLUTION_240;
     bool scanlines = false;
 
 	_svin_init(X_Res,Y_Res,scanlines);
@@ -61,9 +61,6 @@ int main(void)
 	_svin_background_fade_to_black();
 
 
-	DrawCredits();
-	while(1);
-
 	//InitVideo();
 	//InitControllers();
 
@@ -71,6 +68,8 @@ int main(void)
 
 	//if(!fs_init())
 	//	DrawString("FS INIT FAILED!\n", 120, 20, 1);
+	redrawMenu = true;
+	redrawBG = true;
 
 	while(true)
 	{
@@ -79,7 +78,7 @@ int main(void)
 
 		if(redrawBG)
 		{
-			DisplayImage("/BACK.TGA", S_NBG0, 512, 256, 1, false);
+			DisplayImage("BACK320.BG", S_NBG0, 512, 256, 1, false);
 			redrawBG = false;
 		}
 
