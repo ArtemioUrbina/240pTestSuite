@@ -128,7 +128,7 @@ void _svin_set_cycle_patterns_nbg()
     vdp2_sync();
 
     //enable transparency for NBG1 over NBG0 (might not work with sprites between
-    MEMORY_WRITE(16, VDP2(CCCTL), 0x0000); //disable cc both layers
+    //MEMORY_WRITE(16, VDP2(CCCTL), 0x0000); //disable cc both layers
     //MEMORY_WRITE(16, VDP2(CCRNA), 0x0C00); //enable cc for NBG1
 }
 
@@ -306,7 +306,9 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     vdp2_sync();
 
     //-------------- setup VDP1 -------------------
-    _svin_cmdt_list = vdp1_cmdt_list_alloc(_SVIN_VDP1_ORDER_COUNT);
+    //setting up a small VDP1 list with 3 commands: sys clip, local coords, end
+    //everything else will be appended to this list later
+    _svin_cmdt_list = vdp1_cmdt_list_alloc(_SVIN_VDP1_ORDER_LIMIT);
 
     static const int16_vec2_t local_coord_ul =
         INT16_VEC2_INITIALIZER(0,
@@ -318,34 +320,24 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
 
     assert(_svin_cmdt_list != NULL);
 
-    vdp1_cmdt_t *cmdts;
-    cmdts = &_svin_cmdt_list->cmdts[0];
+    (void)memset(_svin_cmdt_list->cmdts, 0x00, sizeof(vdp1_cmdt_t) * _SVIN_VDP1_ORDER_LIMIT);
 
-    (void)memset(&cmdts[0], 0x00, sizeof(vdp1_cmdt_t) * _SVIN_VDP1_ORDER_COUNT);
+    _svin_cmdt_list->count = _SVIN_VDP1_ORDER_SPRITES_START_INDEX+1;
+    
+    vdp1_cmdt_system_clip_coord_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX]);
+    vdp1_cmdt_t *cmdt_system_clip_coords;
+    cmdt_system_clip_coords = &_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX];
+    cmdt_system_clip_coords->cmd_xc = _svin_videomode_x_res - 1;
+    cmdt_system_clip_coords->cmd_yc = _svin_videomode_y_res - 1;
 
-    _svin_cmdt_list->count = _SVIN_VDP1_ORDER_COUNT;
-
-    vdp1_cmdt_normal_sprite_set(&cmdts[_SVIN_VDP1_ORDER_SPRITE_A0_INDEX]);
-    vdp1_cmdt_param_draw_mode_set(&cmdts[_SVIN_VDP1_ORDER_SPRITE_A0_INDEX], sprite_draw_mode);
-    vdp1_cmdt_normal_sprite_set(&cmdts[_SVIN_VDP1_ORDER_SPRITE_A1_INDEX]);
-    vdp1_cmdt_param_draw_mode_set(&cmdts[_SVIN_VDP1_ORDER_SPRITE_A1_INDEX], sprite_draw_mode);
-    vdp1_cmdt_normal_sprite_set(&cmdts[_SVIN_VDP1_ORDER_SPRITE_B0_INDEX]);
-    vdp1_cmdt_param_draw_mode_set(&cmdts[_SVIN_VDP1_ORDER_SPRITE_B0_INDEX], sprite_draw_mode);
-    vdp1_cmdt_normal_sprite_set(&cmdts[_SVIN_VDP1_ORDER_SPRITE_B1_INDEX]);
-    vdp1_cmdt_param_draw_mode_set(&cmdts[_SVIN_VDP1_ORDER_SPRITE_B1_INDEX], sprite_draw_mode);
-
-    vdp1_cmdt_system_clip_coord_set(&cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX]);
-    vdp1_cmdt_jump_assign(&cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX], _SVIN_VDP1_ORDER_LOCAL_COORDS_A_INDEX);
-
-    vdp1_cmdt_local_coord_set(&cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_A_INDEX]);
-    vdp1_cmdt_local_coord_set(&cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_B_INDEX]);
-    vdp1_cmdt_param_vertex_set(&cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_A_INDEX],
-                               CMDT_VTX_LOCAL_COORD, &local_coord_ul);
-    vdp1_cmdt_param_vertex_set(&cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_B_INDEX],
+    vdp1_cmdt_local_coord_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX]);
+    vdp1_cmdt_param_vertex_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX],
                                CMDT_VTX_LOCAL_COORD, &local_coord_ul);
 
-    vdp1_cmdt_end_set(&cmdts[_SVIN_VDP1_ORDER_DRAW_END_A_INDEX]);
-    vdp1_cmdt_end_set(&cmdts[_SVIN_VDP1_ORDER_DRAW_END_B_INDEX]);
+    vdp1_cmdt_end_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SPRITES_START_INDEX]);
+
+    vdp1_sync_cmdt_list_put(_svin_cmdt_list, 0);
+
 #define VDP1_FBCR_DIE (0x0008)
     if (_svin_videomode_progressive) 
         MEMORY_WRITE(16, VDP1(FBCR), 0);
@@ -391,88 +383,8 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
 
     vdp1_env_set(&vdp1_env);
 
-    vdp1_vram_partitions_t vdp1_vram_partitions;
-    vdp1_vram_partitions_get(&vdp1_vram_partitions);
-
-    vdp1_cmdt_color_bank_t dummy_bank;
-    dummy_bank.raw = 0;
-    int _svin_videomode_y_res_vdp1_fix = _svin_videomode_y_res;
-    if (_svin_videomode_y_res_vdp1_fix <= 256) _svin_videomode_y_res_vdp1_fix *= 2;
-    if (_svin_videomode_y_res_vdp1_fix > 510) _svin_videomode_y_res_vdp1_fix=510;
-    int _svin_videomode_x_res_vdp1_fix2 = _svin_videomode_x_res;
-    if (_svin_videomode_x_res_vdp1_fix2 < 512) _svin_videomode_x_res_vdp1_fix2 *= 2;
-    int _svin_videomode_y_res_vdp1_fix2 = _svin_videomode_y_res;
-    if (_svin_videomode_y_res_vdp1_fix2 <= 256) _svin_videomode_y_res_vdp1_fix2 *= 2;
-
-
-    vdp1_cmdt_t *cmdt_sprite;
-    cmdt_sprite = &cmdts[_SVIN_VDP1_ORDER_SPRITE_A0_INDEX];
-    cmdt_sprite->cmd_xa = 0;
-    cmdt_sprite->cmd_ya = 0;
-    cmdt_sprite->cmd_size = _svin_videomode_x_res*16 + _svin_videomode_y_res_vdp1_fix/2;//0x2CE0;
-    cmdt_sprite->cmd_srca = ((int)vdp1_vram_partitions.texture_base-VDP1_VRAM(0) ) / 8;
-    if (_svin_videomode_x_res < 512)
-        vdp1_cmdt_param_color_mode5_set(cmdt_sprite);
-    else
-        vdp1_cmdt_param_color_mode4_set(cmdt_sprite, dummy_bank);
-    vdp1_cmdt_param_color_bank_set(cmdt_sprite, dummy_bank);
-    cmdt_sprite->cmd_pmod |= 0x08C0; //enabling ECD and SPD manually for now
-    cmdt_sprite = &cmdts[_SVIN_VDP1_ORDER_SPRITE_A1_INDEX];
-    cmdt_sprite->cmd_xa = _svin_videomode_x_res/2;//352;
-    cmdt_sprite->cmd_ya = 0;
-    cmdt_sprite->cmd_size = _svin_videomode_x_res*16 + _svin_videomode_y_res_vdp1_fix/2;//0x2CE0;
-    cmdt_sprite->cmd_srca = ((int)vdp1_vram_partitions.texture_base - VDP1_VRAM(0) + _svin_videomode_x_res_vdp1_fix2*_svin_videomode_y_res_vdp1_fix2/4 ) / 8;
-    //if (_svin_videomode_x_res < 512)
-      //  cmdt_sprite->cmd_srca += _svin_videomode_x_res*_svin_videomode_y_res_vdp1_fix2/32;
-    if (_svin_videomode_x_res < 512)
-        vdp1_cmdt_param_color_mode5_set(cmdt_sprite);
-    else
-        vdp1_cmdt_param_color_mode4_set(cmdt_sprite, dummy_bank);
-    vdp1_cmdt_param_color_bank_set(cmdt_sprite, dummy_bank);
-    vdp1_cmdt_jump_assign(cmdt_sprite, _SVIN_VDP1_ORDER_DRAW_END_A_INDEX);//skipping A2 and A3
-    cmdt_sprite->cmd_pmod |= 0x08C0; //enabling ECD and SPD manually for now
-    cmdt_sprite = &cmdts[_SVIN_VDP1_ORDER_SPRITE_B0_INDEX];
-    cmdt_sprite->cmd_xa = 0;
-    cmdt_sprite->cmd_ya = 0;
-    cmdt_sprite->cmd_size = _svin_videomode_x_res*16 + _svin_videomode_y_res_vdp1_fix/2;//0x2CE0;
-    if (_svin_videomode_y_res > 256)
-        cmdt_sprite->cmd_srca = ((int)vdp1_vram_partitions.texture_base - VDP1_VRAM(0) + 2*_svin_videomode_x_res_vdp1_fix2*_svin_videomode_y_res_vdp1_fix2/4 ) / 8;
-    else  //in Y lowres, use the same image just in case
-        cmdt_sprite->cmd_srca = ((int)vdp1_vram_partitions.texture_base - VDP1_VRAM(0) ) / 8;
-
-    if (_svin_videomode_x_res < 512)
-        vdp1_cmdt_param_color_mode5_set(cmdt_sprite);
-    else
-        vdp1_cmdt_param_color_mode4_set(cmdt_sprite, dummy_bank);
-    vdp1_cmdt_param_color_bank_set(cmdt_sprite, dummy_bank);
-    cmdt_sprite->cmd_pmod |= 0x08C0; //enabling ECD and SPD manually for now
-    cmdt_sprite = &cmdts[_SVIN_VDP1_ORDER_SPRITE_B1_INDEX];
-    cmdt_sprite->cmd_xa = _svin_videomode_x_res/2;//352;
-    cmdt_sprite->cmd_ya = 0;
-    cmdt_sprite->cmd_size = _svin_videomode_x_res*16 + _svin_videomode_y_res_vdp1_fix/2;//0x2CE0;
-    if (_svin_videomode_y_res > 256)
-        cmdt_sprite->cmd_srca = ((int)vdp1_vram_partitions.texture_base - VDP1_VRAM(0) + 3*_svin_videomode_x_res_vdp1_fix2*_svin_videomode_y_res_vdp1_fix2/4 ) / 8;
-    else  //in Y lowres, use the same image just in case
-        cmdt_sprite->cmd_srca = ((int)vdp1_vram_partitions.texture_base - VDP1_VRAM(0) + 1*_svin_videomode_x_res_vdp1_fix2*_svin_videomode_y_res_vdp1_fix2/4 ) / 8;
-    
-    //if (_svin_videomode_x_res < 512)
-      //  cmdt_sprite->cmd_srca += _svin_videomode_x_res*_svin_videomode_y_res_vdp1_fix2/32;
-    if (_svin_videomode_x_res < 512)
-        vdp1_cmdt_param_color_mode5_set(cmdt_sprite);
-    else
-        vdp1_cmdt_param_color_mode4_set(cmdt_sprite, dummy_bank);
-    vdp1_cmdt_param_color_bank_set(cmdt_sprite, dummy_bank);
-    vdp1_cmdt_jump_assign(cmdt_sprite, _SVIN_VDP1_ORDER_DRAW_END_B_INDEX);//skipping B2 and B3
-    cmdt_sprite->cmd_pmod |= 0x08C0; //enabling ECD and SPD manually for now
-
-    vdp1_cmdt_t *cmdt_system_clip_coords;
-    cmdt_system_clip_coords = &cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX];
-
-    cmdt_system_clip_coords->cmd_xc = _svin_videomode_x_res - 1;
-    cmdt_system_clip_coords->cmd_yc = _svin_videomode_y_res - 1;
-
-    vdp1_sync_cmdt_list_put(_svin_cmdt_list, 0);
     vdp1_sync();
+    vdp1_sync_wait();
 
     //-------------- setup pattern names -------------------
 
@@ -722,7 +634,7 @@ void _svin_vblank_out_handler(void *work __unused)
         return;
 
     //smpc_peripheral_intback_issue();
-    uint8_t * p = (uint8_t *)VDP1_VRAM(0); 
+    /*uint8_t * p = (uint8_t *)VDP1_VRAM(0); 
 
     if (_svin_vdp1_cmdlist_toggle_at_vblank)
     {
@@ -736,7 +648,7 @@ void _svin_vblank_out_handler(void *work __unused)
     else
     {
         p[3]=0x04;
-    }
+    }*/
 
     //vdp1_sync_cmdt_list_put(_svin_cmdt_list, 0, NULL, NULL);
     
