@@ -81,17 +81,17 @@ void _svin_set_cycle_patterns_nbg()
 {
     //swithcing everything to NBG accesses, CPU can't write data anymore
 
-    // D0 D0 D2 D2
-    // D0 D0 D1 D1
-    // i0 i1 D1 D1
-    // -- i2 D2 D2
+    // D0 D0 -- --
+    // D0 D0 -- --
+    // D0 D0 -- --
+    // i0 D0 D0 --
 
     struct vdp2_vram_cycp vram_cycp;
 
     vram_cycp.pt[0].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
     vram_cycp.pt[0].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[0].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG2;
-    vram_cycp.pt[0].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG2;
+    vram_cycp.pt[0].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
+    vram_cycp.pt[0].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[0].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[0].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[0].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
@@ -99,26 +99,26 @@ void _svin_set_cycle_patterns_nbg()
 
     vram_cycp.pt[1].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
     vram_cycp.pt[1].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[1].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[1].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+    vram_cycp.pt[1].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
+    vram_cycp.pt[1].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[1].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[1].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[1].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[1].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
 
-    vram_cycp.pt[2].t0 = VDP2_VRAM_CYCP_PNDR_NBG0;
-    vram_cycp.pt[2].t1 = VDP2_VRAM_CYCP_PNDR_NBG1;
-    vram_cycp.pt[2].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[2].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+    vram_cycp.pt[2].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+    vram_cycp.pt[2].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+    vram_cycp.pt[2].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
+    vram_cycp.pt[2].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[2].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[2].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[2].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[2].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
 
-    vram_cycp.pt[3].t0 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[3].t1 = VDP2_VRAM_CYCP_PNDR_NBG2;
-    vram_cycp.pt[3].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG2;
-    vram_cycp.pt[3].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG2;
+    vram_cycp.pt[3].t0 = VDP2_VRAM_CYCP_PNDR_NBG0;
+    vram_cycp.pt[3].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+    vram_cycp.pt[3].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+    vram_cycp.pt[3].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[3].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[3].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[3].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
@@ -214,7 +214,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     vdp2_cram_mode_set(1);
 
     //setup nbg1
-    format.scroll_screen = VDP2_SCRN_NBG1;
+    /*format.scroll_screen = VDP2_SCRN_NBG1;
     format.cc_count = VDP2_SCRN_CCC_PALETTE_256;
     format.character_size = (1 * 1);
     format.pnd_size = 2;
@@ -229,11 +229,11 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
 
     vdp2_scrn_cell_format_set(&format);
     vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
-    vdp2_scrn_display_set(VDP2_SCRN_NBG1);
+    vdp2_scrn_display_set(VDP2_SCRN_NBG1);*/
     //vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG1,0x80);
 
     //setup nbg2
-    format.scroll_screen = VDP2_SCRN_NBG2;
+    /*format.scroll_screen = VDP2_SCRN_NBG2;
     format.cc_count = VDP2_SCRN_CCC_PALETTE_256;
     format.character_size = (1 * 1);
     format.pnd_size = 2;
@@ -248,7 +248,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
 
     vdp2_scrn_cell_format_set(&format);
     vdp2_scrn_priority_set(VDP2_SCRN_NBG2, 6);
-    vdp2_scrn_display_set(VDP2_SCRN_NBG2);
+    vdp2_scrn_display_set(VDP2_SCRN_NBG2);*/
 
     vdp2_tvmd_interlace_t interlace = VDP2_TVMD_INTERLACE_SINGLE;
     if (_svin_videomode_y_res > 256) 
@@ -396,7 +396,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
         _pointer32[i] = 0x00000000 + _SVIN_NBG0_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
     }
 
-    //writing pattern names for nbg1
+    /*//writing pattern names for nbg1
     //nbg1  is mostly transparent, so fill with that one
     _pointer32 = (int *)_SVIN_NBG1_PNDR_START;
     for (unsigned int i = 0; i < _SVIN_NBG1_PNDR_SIZE / sizeof(int); i++)
@@ -410,7 +410,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     for (unsigned int i = 0; i < _SVIN_NBG2_PNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0x00000000 + _SVIN_NBG2_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
-    }
+    }*/
 
     //-------------- setup character pattern names -------------------
 
@@ -421,7 +421,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
         _pointer32[i] = 0;
     }
 
-    //clearing character pattern names data for nbg1
+    /*//clearing character pattern names data for nbg1
     _pointer32 = (int *)_SVIN_NBG1_CHPNDR_START;
     for (unsigned int i = 0; i < _SVIN_NBG1_CHPNDR_SIZE / sizeof(int); i++)
     {
@@ -433,7 +433,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     for (unsigned int i = 0; i < _SVIN_NBG2_CHPNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0;
-    }
+    }*/
 
     //setting up "transparent" character for nbg0
     _pointer32 = (int *)_SVIN_NBG0_CHPNDR_SPECIALS_ADDR;
@@ -449,7 +449,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
         _pointer32[i] = 0x7F7F7F7F;
     }
 
-    //setting up "transparent" character for nbg1
+    /*//setting up "transparent" character for nbg1
     _pointer32 = (int *)_SVIN_NBG1_CHPNDR_SPECIALS_ADDR;
     for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
     {
@@ -475,7 +475,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
     {
         _pointer32[i] = 0x7F7F7F7F;
-    }
+    }*/
 
     //-------------- setup palettes -------------------
 

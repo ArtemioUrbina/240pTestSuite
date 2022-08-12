@@ -50,15 +50,23 @@ int main(void)
 
 	extern int _svin_videomode_x_res;
 	extern int _svin_videomode_y_res;
-	_svin_x_resolution_t X_Res = _SVIN_X_RESOLUTION_320;
-    _svin_y_resolution_t Y_Res = _SVIN_Y_RESOLUTION_240;
+	_svin_x_resolution_t X_Res = _SVIN_X_RESOLUTION_704;
+    _svin_y_resolution_t Y_Res = _SVIN_Y_RESOLUTION_448;
     bool scanlines = false;
 
+	//show yaul logo in 480i
 	_svin_init(X_Res,Y_Res,scanlines);
     _svin_textbox_disable(); //filling textbox tiles with invisible data
     _svin_background_set_no_filelist("BOOTLOGO.BG");
 	_svin_delay(1000);
 	_svin_background_fade_to_black();
+
+	//reset to 240p
+	_svin_deinit();
+	X_Res = _SVIN_X_RESOLUTION_320;
+    Y_Res = _SVIN_Y_RESOLUTION_224;
+    scanlines = true;
+	_svin_init(X_Res,Y_Res,scanlines);
 
 
 	//InitVideo();

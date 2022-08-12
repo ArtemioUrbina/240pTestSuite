@@ -12,7 +12,7 @@ extern bool _svin_cram_24bpp;
 
 void _svin_background_fade_to_black_step()
 {
-    uint16_t *my_vdp2_cram = (uint16_t *)VDP2_VRAM_ADDR(8, 0x00000);
+    uint16_t *my_vdp2_cram = (uint16_t *)VDP2_VRAM_ADDR(8, 0x00200);
     uint8_t r, g, b;
     for (int i = 0; i < 256; i++)
     {
@@ -117,21 +117,27 @@ _svin_background_set_by_fad(fad_t fad, int size)
     bool bVDP2 = false;
     //allocate memory for 77 sectors
     uint8_t *buffer = malloc(77 * 2048);
+    uint16_t *buffer16 = (uint16_t*)buffer;
     assert((int)(buffer) > 0);
     //allocate memory for cram
     uint8_t *palette = malloc(2048);
     assert((int)(palette) > 0);
 
-    //set zero palette to hide loading
-    _svin_clear_palette(0);
-
     vdp1_vram_partitions_t vdp1_vram_partitions;
     vdp1_vram_partitions_get(&vdp1_vram_partitions);
 
+
+    //set zero palette to hide loading
+    _svin_clear_palette(0);
+
     //reading 1st block to check VDP2 flag (optimize it later)
     _svin_cd_block_sector_read(fad, buffer);
+    uint16_t size_x = buffer16[2]/8;
+    uint16_t size_y = buffer16[3]/8;
     if ( (buffer[2044] == 'V') && (buffer[2045] == 'D') && (buffer[2046] == 'P') && (buffer[2047] == '2') )
         bVDP2 = true; //VDP2 mode
+    else 
+        return; //not supporting old VDP1 backgrounds
 
     //reading 2nd block to check if compressed
     _svin_cd_block_sector_read(fad + 1, buffer);
@@ -139,7 +145,6 @@ _svin_background_set_by_fad(fad_t fad, int size)
     {
         //compressed, decompressing
         //getting size
-
         int * p32 = (int *)buffer;
         int compressed_size = p32[1];
         assert(compressed_size > 0);
@@ -151,124 +156,46 @@ _svin_background_set_by_fad(fad_t fad, int size)
 
         //read compressed data
         _svin_cd_block_sectors_read(fad + 1, buffer, compressed_size+8);
-      
+    
+        _svin_set_cycle_patterns_cpu();
+        //writing pattern names for nbg0
+        int *_pointer32 = (int *)_SVIN_NBG0_PNDR_START;
+        //starting with plane 0
+        for (unsigned int x = 0; ((x < 64)&&(x<size_x)) ; x++)
+        {
+            for (unsigned int y = 0; y  < size_y; y++)
+            {   
+                _pointer32[y*64+x] = 0x00100000  + y*size_x*2+x*2; //palette 0, transparency on
+            }
+        }
+        //now plane 1
+        for (unsigned int x = 64; x < size_x ; x++)
+        {
+            for (unsigned int y = 0; y  < size_y; y++)
+            {   
+                _pointer32[64*64+y*64+x-64] = 0x00100000  + y*size_x*2+x*2; //palette 0, transparency on
+            }
+        }
+        
         //decompress
-        if (bVDP2)
-        {
-            _svin_set_cycle_patterns_cpu();
-            //writing pattern names for nbg0
-            int *_pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-            //starting with plane 0
-            for (unsigned int x = 0; x < 64 ; x++)
-            {
-                for (unsigned int y = 0; y  < 28; y++)
-                {   
-                    //_pointer32[y*64+x] = 0x00100000 + 0x8000/32 + y*88*2+x*2; //palette 0, transparency on
-                    _pointer32[y*64+x] = 0x00100000 + 0x8000/32 + y*40*2+x*2; //palette 0, transparency on
-                }
-            }
-            //now plane 1
-            for (unsigned int x = 64; x < 88 ; x++)
-            {
-                for (unsigned int y = 0; y  < 28; y++)
-                {   
-                    _pointer32[64*64+y*64+x-64] = 0x00100000 + 0x8000/32 + y*88*2+x*2; //palette 0, transparency on
-                    _pointer32[64*64+y*64+x-64] = 0x00100000 + 0x8000/32 + y*40*2+x*2; //palette 0, transparency on
-                }
-            }
-            bcl_lz_decompress(&(buffer[8]),(char*)_SVIN_NBG0_CHPNDR_START,compressed_size);
-            _svin_set_cycle_patterns_nbg();
-            //set palette, using palette 1 for VDP2 backgrounds
-            _svin_cd_block_sector_read(fad + compressed_size_sectors + 1, palette);
-            _svin_set_palette(1, palette);
-        }
-        else
-        {
-            bcl_lz_decompress(&(buffer[8]),vdp1_vram_partitions.texture_base,compressed_size);
+        bcl_lz_decompress(&(buffer[8]),(char*)_SVIN_NBG0_CHPNDR_START,compressed_size);
+        _svin_set_cycle_patterns_nbg();
+        //set palette, using palette 1 for VDP2 backgrounds
+        _svin_cd_block_sector_read(fad + compressed_size_sectors + 1, palette);
+        _svin_set_palette(1, palette);
 
-            //set palette
-            _svin_cd_block_sector_read(fad + compressed_size_sectors + 1, palette);
-            _svin_set_palette(0, palette);
-        }
     }
     else
     {
-        //uncompressed, loading as usual, no support for VDP2 yet
-
-        //checking if found file is the exact size we expect
-        assert(size == (_svin_videomode_x_res*_svin_videomode_y_res + 2048*2));
-
-        //reading first half of the background
-        _svin_cd_block_sectors_read(fad + 1, buffer, 2048 * 77);
-        scu_dma_transfer(0, (void *)(vdp1_vram_partitions.texture_base + 0 * 2048), buffer, 2048 * 77);
-
-        //reading second half of the background
-        _svin_cd_block_sectors_read(fad + 1 + 77, buffer, 2048 * 77);
-        scu_dma_transfer(0, (void *)(vdp1_vram_partitions.texture_base + 77 * 2048), buffer, 2048 * 77);
-
-        //read palette
-        _svin_cd_block_sector_read(fad + 1 + 154, palette);
-        _svin_set_palette(0, palette);
+        //uncompressed, not supported aanymore
     }
 
     free(palette);
     free(buffer);
-}
-
-void _svin_background_update(char *filename)
-{
-    //searching for fad
-    fad_t _bg_fad;
-    int iSize;
-    //assert(true == _svin_filelist_search(filename,&_bg_fad,&iSize));
-    if (false == _svin_filelist_search(filename,&_bg_fad,&iSize))
-    {
-        char * pDebug = (char *)_svin_alloc_lwram(0x800,0x202FF800);
-        strcpy(pDebug,filename);
-        assert(0);
-    }
-
-    
-    //checking if found file is the exact size we expect
-    assert(iSize == (_svin_videomode_x_res*_svin_videomode_y_res + 2048*2));
-
-    //allocate memory for 154 sectors
-    uint8_t *buffer = malloc(154 * 2048);
-    assert((int)(buffer) > 0);
-    //allocate memory for cram
-    uint8_t *palette = malloc(2048);
-    assert((int)(palette) > 0);
-
-    vdp1_vram_partitions_t vdp1_vram_partitions;
-    vdp1_vram_partitions_get(&vdp1_vram_partitions);
-
-    //read next image while fading-to-black current one
-    for (int i = 0; i < 14; i++)
-    {
-        _svin_cd_block_sectors_read(_bg_fad + 1 + i * 11, &(buffer[11 * 2048 * i]), 11 * 2048);
-        _svin_background_fade_to_black_step();
-    }
-
-    //continue fading-to-black
-    for (int i = 0; i < 18; i++)
-    {
-        _svin_delay(50);
-        _svin_background_fade_to_black_step();
-    }
-
-    //copy preloaded pattern names
-    scu_dma_transfer(0, (void *)(vdp1_vram_partitions.texture_base), buffer, 2048 * 154);
-
-    //read palette
-    _svin_cd_block_sector_read(_bg_fad + 1 + 154, palette);
-    _svin_set_palette(0, palette);
-
-    free(buffer);
-    free(palette);
 }
 
 void _svin_background_clear()
 {
     //set zero palette
-    _svin_clear_palette(0);
+    _svin_clear_palette(1);
 }
