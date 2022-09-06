@@ -24,13 +24,14 @@
 #include <stdlib.h>
 
 #include "font.h"
+#include "svin.h"
 
 int _fh = 9;
 int _fw = 8;
 
 void LoadFont()
 {
-/*	int i;
+	int i;
 	uint8_t *pFont;
 	color_rgb1555_t * pPal;	
 	
@@ -61,12 +62,34 @@ void LoadFont()
 	
 	pFont = (uint8_t *)CHAR(0);
 	for(i=0; i<(SuiteFont_len); i++)
-		*(pFont++) = SuiteFont[i];*/
+		*(pFont++) = SuiteFont[i];
 }
 
 /* Draw a char as VDP1 sprite at desired location*/
 void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool transparent) 
 {
+	vdp1_vram_partitions_t vdp1_vram_partitions;
+    vdp1_vram_partitions_get(&vdp1_vram_partitions);
+
+	//drawing in low res for now
+	uint8_t *p8_vram;
+	uint8_t *p8_char =  &(SuiteFont[c*32]);
+	for (int _y = 0; _y < 8; _y++)
+	{
+		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + (_y+y)*_svin_videomode_x_res);
+		for (int _x = 0; _x < 4; _x++)
+		{
+			p8_vram[x+_x*2] = p8_char[x]&0xF;
+			p8_vram[x+_x*2+1] = p8_char[x]>>4;
+		}
+	}
+
+	//set dummy palette
+	color_rgb1555_t * pal = (color_rgb1555_t*)VDP2_CRAM(0);
+	pal[0] = COLOR_RGB1555(1, 31, 0, 31); //Back
+	pal[1] = COLOR_RGB1555(1, 31, 31, 31); //Font
+	pal[2] = COLOR_RGB1555(1, 0, 0, 0); //Shadow
+
 	/*struct vdp1_cmdt_sprite normal_sprite_pointer;
 
 	c -= 32;

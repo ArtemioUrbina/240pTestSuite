@@ -138,8 +138,11 @@ extern int _svin_frame_count;
 //VDP1 command list order
 #define _SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX  0
 #define _SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX        1
-#define _SVIN_VDP1_ORDER_SPRITES_START_INDEX       2
-#define _SVIN_VDP1_ORDER_LIMIT                    63
+#define _SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX       2
+#define _SVIN_VDP1_ORDER_TEXT_SPRITE_1_INDEX       3
+#define _SVIN_VDP1_ORDER_TEXT_SPRITE_2_INDEX       4
+#define _SVIN_VDP1_ORDER_TEXT_SPRITE_3_INDEX       5
+#define _SVIN_VDP1_ORDER_LIMIT                    6
 
 void _svin_init(_svin_x_resolution_t x_res, _svin_y_resolution_t y_res, bool scanlines);
 void _svin_deinit();

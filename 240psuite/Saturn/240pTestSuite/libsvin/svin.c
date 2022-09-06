@@ -287,14 +287,14 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     bs_color = COLOR_RGB1555(1, 0, 0, 0);
     vdp2_scrn_back_color_set(VDP2_VRAM_ADDR(3, 0x01FFFE), bs_color);
 
-    vdp2_sprite_priority_set(0, 1);
-    vdp2_sprite_priority_set(1, 1);
-    vdp2_sprite_priority_set(2, 1);
-    vdp2_sprite_priority_set(3, 1);
-    vdp2_sprite_priority_set(4, 1);
-    vdp2_sprite_priority_set(5, 1);
-    vdp2_sprite_priority_set(6, 1);
-    vdp2_sprite_priority_set(7, 1);
+    vdp2_sprite_priority_set(0, 6);
+    vdp2_sprite_priority_set(1, 6);
+    vdp2_sprite_priority_set(2, 6);
+    vdp2_sprite_priority_set(3, 6);
+    vdp2_sprite_priority_set(4, 6);
+    vdp2_sprite_priority_set(5, 6);
+    vdp2_sprite_priority_set(6, 6);
+    vdp2_sprite_priority_set(7, 6);
 
     //setting cycle patterns for cpu access
     _svin_set_cycle_patterns_cpu();
@@ -318,11 +318,22 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
         .raw = 0x0000,
         .bits.pre_clipping_disable = true};
 
+    vdp1_cmdt_color_bank_t font_color_bank;
+    font_color_bank.raw = 0;
+
     assert(_svin_cmdt_list != NULL);
 
     (void)memset(_svin_cmdt_list->cmdts, 0x00, sizeof(vdp1_cmdt_t) * _SVIN_VDP1_ORDER_LIMIT);
 
-    _svin_cmdt_list->count = _SVIN_VDP1_ORDER_SPRITES_START_INDEX+1;
+    vdp1_vram_partitions_set(64,//VDP1_VRAM_DEFAULT_CMDT_COUNT,
+                              0x7F000, //  VDP1_VRAM_DEFAULT_TEXTURE_SIZE,
+                               0,//  VDP1_VRAM_DEFAULT_GOURAUD_COUNT,
+                               0);//  VDP1_VRAM_DEFAULT_CLUT_COUNT);
+
+    vdp1_vram_partitions_t vdp1_vram_partitions;
+    vdp1_vram_partitions_get(&vdp1_vram_partitions);
+
+    _svin_cmdt_list->count = _SVIN_VDP1_ORDER_LIMIT+1;
     
     vdp1_cmdt_system_clip_coord_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX]);
     vdp1_cmdt_t *cmdt_system_clip_coords;
@@ -333,8 +344,88 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     vdp1_cmdt_local_coord_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX]);
     vdp1_cmdt_param_vertex_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX],
                                CMDT_VTX_LOCAL_COORD, &local_coord_ul);
+    
+    //setting up VDP1 text layer quads
+    //there are from 1 to 4 quads required depending on X and Y resolution configuration
+    //VDP1 quads can't be bigger than 508, thus for high-res X (640 or 704) we use 2 quads along X axis
+    //for 480p VDP1 outputs 1 half-resolution progressive frame at 50/60 fps, using 2 quads along Y axis
+    //for 480i VDP1 outputs 2 different fields at 25/30 fps each, using 2 quads along Y axis
+    //for 240p VDP1 outputs 1 progressive frame at 50/60 fps, using 1 quad along Y axis
 
-    vdp1_cmdt_end_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SPRITES_START_INDEX]);
+    //quad 0 is always used, and is always at 0,0
+    int index = _SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX; 
+    vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
+    vdp1_cmdt_param_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    vdp1_cmdt_param_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
+    _svin_cmdt_list->cmdts[index].cmd_xa=0;
+    _svin_cmdt_list->cmdts[index].cmd_ya=0;
+    _svin_cmdt_list->cmdts[index].cmd_srca = vdp1_vram_partitions.texture_base;
+    if (_svin_videomode_x_res > 512) {
+        if (_svin_videomode_y_res > 256) 
+            _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res/2);
+        else
+            _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res);
+    }
+    else {
+        if (_svin_videomode_y_res > 256)
+            _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/8)<<8)|(_svin_videomode_y_res/2);
+        else
+            _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/8)<<8)|(_svin_videomode_y_res);     
+    }
+    
+    //quad 1 is used for high X resolution
+    index = _SVIN_VDP1_ORDER_TEXT_SPRITE_1_INDEX; 
+    vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
+    vdp1_cmdt_param_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    vdp1_cmdt_param_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
+    _svin_cmdt_list->cmdts[index].cmd_ya=0;
+    if (_svin_videomode_x_res > 512) {
+        _svin_cmdt_list->cmdts[index].cmd_xa=(_svin_videomode_x_res/2);
+        if (_svin_videomode_y_res > 256) 
+            _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res/2);
+        else
+            _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res);
+    }
+    else {
+        _svin_cmdt_list->cmdts[index].cmd_xa=0;
+        _svin_cmdt_list->cmdts[index].cmd_size=0;
+    }
+
+    //quad 2 is used for high Y resolution, i.e. 480i/480p modes
+    index = _SVIN_VDP1_ORDER_TEXT_SPRITE_2_INDEX; 
+    vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
+    vdp1_cmdt_param_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    vdp1_cmdt_param_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
+    _svin_cmdt_list->cmdts[index].cmd_xa=0;
+    if (_svin_videomode_y_res > 256) {
+        _svin_cmdt_list->cmdts[index].cmd_ya=(_svin_videomode_y_res/2);
+        if (_svin_videomode_x_res > 512) 
+            _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res/2);
+        else
+            _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/8)<<8)|(_svin_videomode_y_res/2);
+    }
+    else {
+        _svin_cmdt_list->cmdts[index].cmd_ya=0;
+        _svin_cmdt_list->cmdts[index].cmd_size=0;
+    }
+
+    //quad 3 is used for high X and high Y resolution
+    index = _SVIN_VDP1_ORDER_TEXT_SPRITE_3_INDEX; 
+    vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
+    vdp1_cmdt_param_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    vdp1_cmdt_param_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
+    if ( (_svin_videomode_x_res > 512) && (_svin_videomode_y_res > 256) ) {
+            _svin_cmdt_list->cmdts[index].cmd_xa=(_svin_videomode_x_res/2);
+            _svin_cmdt_list->cmdts[index].cmd_ya=(_svin_videomode_y_res/2);
+            _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res/2);
+    }
+    else {
+        _svin_cmdt_list->cmdts[index].cmd_xa=0;
+        _svin_cmdt_list->cmdts[index].cmd_ya=0;
+        _svin_cmdt_list->cmdts[index].cmd_size=0;
+    }
+
+    vdp1_cmdt_end_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LIMIT]);
 
     vdp1_sync_cmdt_list_put(_svin_cmdt_list, 0);
 
@@ -343,11 +434,6 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
         MEMORY_WRITE(16, VDP1(FBCR), 0);
     else
         MEMORY_WRITE(16, VDP1(FBCR), VDP1_FBCR_DIE);
-    
-    vdp1_vram_partitions_set(64,//VDP1_VRAM_DEFAULT_CMDT_COUNT,
-                              0x7F000, //  VDP1_VRAM_DEFAULT_TEXTURE_SIZE,
-                               0,//  VDP1_VRAM_DEFAULT_GOURAUD_COUNT,
-                               0);//  VDP1_VRAM_DEFAULT_CLUT_COUNT);
 
     static vdp1_env_t vdp1_env = {
                 .erase_color = COLOR_RGB1555(0, 0, 0, 0),
