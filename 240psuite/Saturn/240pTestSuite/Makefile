@@ -22,10 +22,7 @@ SH_SRCS:= \
 	libsvin/svin_cd_access.c \
 	libsvin/svin_background.c \
 	libsvin/svin_filelist.c \
-	libsvin/svin_menu.c \
 	libsvin/svin_text.c \
-	libsvin/svin_textbox.c \
-	libsvin/svin_sprite.c \
 	libsvin/svin_script.c \
 	libsvin/svin_debug.c \
 	libsvin/svin_alloc.c \

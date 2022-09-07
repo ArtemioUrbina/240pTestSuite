@@ -622,10 +622,8 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     _svin_set_palette(6, temp_pal);  
 
     _svin_text_init();
-    _svin_textbox_init();
-    _svin_textbox_disable();
 
-    _svin_sprite_init();
+    //_svin_sprite_init();
 
     //setting cycle patterns for nbg access
     _svin_set_cycle_patterns_nbg();
@@ -645,7 +643,7 @@ void _svin_deinit()
 {
 
     free(_svin_cmdt_list);
-    _svin_sprite_deinit();
+    //_svin_sprite_deinit();
     _svin_init_done = 0;
 }
 

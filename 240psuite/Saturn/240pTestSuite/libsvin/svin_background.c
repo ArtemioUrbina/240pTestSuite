@@ -77,8 +77,8 @@ void _svin_background_set_no_filelist(char * filename)
     int root_start = isonum_733(dirent_root->extent);
     if (root_start <= 0)
 	{
-		_svin_textbox_init();
-		_svin_textbox_print("","This sortware does not work in Yabause except romulo builds. Get one from https://github.com/razor85/yabause/releases/latest","Lato_Black15",7,7);
+		//_svin_textbox_init();
+		//_svin_textbox_print("","This sortware does not work in Yabause except romulo builds. Get one from https://github.com/razor85/yabause/releases/latest","Lato_Black15",7,7);
 		while (1);
 	}
 	//--------------------------------- bad yabause check

@@ -56,7 +56,7 @@ int main(void)
 
 	//show yaul logo in 480i
 	_svin_init(X_Res,Y_Res,scanlines);
-    _svin_textbox_disable(); //filling textbox tiles with invisible data
+    //_svin_textbox_disable(); //filling textbox tiles with invisible data
     _svin_background_set_no_filelist("BOOTLOGO.BG");
 	_svin_delay(1000);
 	_svin_background_fade_to_black();

@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 #include "svin.h"
-#include "svin_textbox.h"
 
 #include <mcufont.h>
 #define UNUSED(x) (void)(x)
