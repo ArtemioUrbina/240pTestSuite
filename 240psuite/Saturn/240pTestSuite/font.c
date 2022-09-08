@@ -27,42 +27,47 @@
 #include "svin.h"
 
 int _fh = 9;
-int _fw = 8;
+int _fw = 6;
 
 void LoadFont()
 {
 	int i;
 	uint8_t *pFont;
 	color_rgb1555_t * pPal;	
-	
-	pPal = (color_rgb1555_t *)CLUT(FONT_WHITE, 0);
-	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
+
+	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_WHITE*8);
+	*(pPal++) = COLOR_RGB1555(0, 31, 0, 31); //Back
 	*(pPal++) = COLOR_RGB1555(1, 31, 31, 31); //Font
 	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb1555_t *)CLUT(FONT_RED, 0);
+	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_RED*8);
 	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
 	*(pPal++) = COLOR_RGB1555(1, 31, 0, 0); //Font
 	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb1555_t *)CLUT(FONT_GREEN, 0);
+	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_GREEN*8);
 	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
 	*(pPal++) = COLOR_RGB1555(1, 0, 31, 0); //Font
 	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb1555_t *)CLUT(FONT_CYAN, 0);
+	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_CYAN*8);
 	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
 	*(pPal++) = COLOR_RGB1555(1, 0, 31, 31); //Font
 	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb1555_t *)CLUT(FONT_YELLOW, 0);
+	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_YELLOW*8);
 	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
 	*(pPal++) = COLOR_RGB1555(1, 31, 31, 0); //Font
 	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
-	
-	pFont = (uint8_t *)CHAR(0);
+
+	/*color_rgb1555_t dd;
+	dd.raw = 0xFFAA;
+
+	pPal[0] = dd;*/
+
+	/*pFont = (uint8_t *)CHAR(0);
 	for(i=0; i<(SuiteFont_len); i++)
-		*(pFont++) = SuiteFont[i];
+		*(pFont++) = SuiteFont[i];*/
 }
 
 /* Draw a char as VDP1 sprite at desired location*/
@@ -73,45 +78,21 @@ void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool
 
 	//drawing in low res for now
 	uint8_t *p8_vram;
-	uint8_t *p8_char =  &(SuiteFont[c*32]);
+	uint8_t *p8_char;
+	uint8_t tmp;
 	for (int _y = 0; _y < 8; _y++)
 	{
-		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + (_y+y)*_svin_videomode_x_res);
+		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _svin_videomode_x_res/2 + (_y+y)*_svin_videomode_x_res);
+		p8_char =  &(SuiteFont[(c-32)*32+_y*4]);
 		for (int _x = 0; _x < 4; _x++)
 		{
-			p8_vram[x+_x*2] = p8_char[x]&0xF;
-			p8_vram[x+_x*2+1] = p8_char[x]>>4;
+			tmp = p8_char[_x]&0x3;
+			if (tmp) p8_vram[x+_x*2+1] = tmp | palette*4;
+			tmp = (p8_char[_x]>>4)&0x3;
+			if (tmp) p8_vram[x+_x*2] = tmp | palette*4;
 		}
 	}
 
-	//set dummy palette
-	color_rgb1555_t * pal = (color_rgb1555_t*)VDP2_CRAM(0);
-	pal[0] = COLOR_RGB1555(1, 31, 0, 31); //Back
-	pal[1] = COLOR_RGB1555(1, 31, 31, 31); //Font
-	pal[2] = COLOR_RGB1555(1, 0, 0, 0); //Shadow
-
-	/*struct vdp1_cmdt_sprite normal_sprite_pointer;
-
-	c -= 32;
-	memset(&normal_sprite_pointer, 0x00, sizeof(struct vdp1_cmdt_sprite));
-
-    vdp1_cmdt_normal_sprite_set(normal_sprite_pointer);
-    vdp1_cmdt_param_draw_mode_set(cmdt, draw_mode);
-    vdp1_cmdt_param_size_set(cmdt, flare_texture_dim.x, flare_texture_dim.y);
-    vdp1_cmdt_param_char_base_set(cmdt, (uint32_t)_vdp1_vram_partitions.texture_base);
-	normal_sprite_pointer.cs_mode.color_mode = 1; 	// mode 1 COLMODE_16_LUT
-	normal_sprite_pointer.cs_mode.transparent_pixel = transparent;
-	normal_sprite_pointer.cs_mode.user_clipping = 1;
-	normal_sprite_pointer.cs_mode.end_code = 1;
-	normal_sprite_pointer.cs_clut = CLUT(palette, 0);
-	normal_sprite_pointer.cs_width = 8;
-	normal_sprite_pointer.cs_height = 8;
-	normal_sprite_pointer.cs_position.x = x;
-	normal_sprite_pointer.cs_position.y = y;
-	normal_sprite_pointer.cs_char =  CHAR(0) + (c<<5);
-	normal_sprite_pointer.cs_grad = 0;
-	
-	vdp1_cmdt_sprite_draw(&normal_sprite_pointer);*/
 }
 
 /* Print a string at x, y using sprites by VDP1*/

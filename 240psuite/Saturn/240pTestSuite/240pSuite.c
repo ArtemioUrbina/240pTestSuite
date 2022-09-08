@@ -72,7 +72,8 @@ int main(void)
 	//InitVideo();
 	//InitControllers();
 
-	//LoadFont();
+	_svin_clear_palette(0);
+	LoadFont();
 
 	//if(!fs_init())
 	//	DrawString("FS INIT FAILED!\n", 120, 20, 1);
@@ -92,7 +93,7 @@ int main(void)
 
 		if(redrawMenu)
 		{
-			int x = 36, y = 56, pos = 0;
+			int x = 36, y = 104, pos = 0;
 
 			//vdp1_cmdt_list_begin(0);
 			DrawString("Test Patterns", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	

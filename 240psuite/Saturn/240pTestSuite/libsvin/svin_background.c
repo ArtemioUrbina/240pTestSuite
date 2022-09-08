@@ -126,10 +126,6 @@ _svin_background_set_by_fad(fad_t fad, int size)
     vdp1_vram_partitions_t vdp1_vram_partitions;
     vdp1_vram_partitions_get(&vdp1_vram_partitions);
 
-
-    //set zero palette to hide loading
-    _svin_clear_palette(0);
-
     //reading 1st block to check VDP2 flag (optimize it later)
     _svin_cd_block_sector_read(fad, buffer);
     uint16_t size_x = buffer16[2]/8;
@@ -138,6 +134,9 @@ _svin_background_set_by_fad(fad_t fad, int size)
         bVDP2 = true; //VDP2 mode
     else 
         return; //not supporting old VDP1 backgrounds
+
+    //clear background palette to hide loading
+    _svin_clear_palette(1);
 
     //reading 2nd block to check if compressed
     _svin_cd_block_sector_read(fad + 1, buffer);
