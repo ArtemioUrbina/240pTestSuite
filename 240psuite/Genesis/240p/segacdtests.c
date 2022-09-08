@@ -1576,7 +1576,7 @@ uint8_t segacd_init()
 	memcpy((void *)0x426000, pcmcheck_scd, sizeof(pcmcheck_scd));
 	if (memcmp((void *)0x426000, pcmcheck_scd, sizeof(pcmcheck_scd)))
     {
-		ShowMessageAndData("Failed writing Program RAM!", (uint32_t)0x420000, 8, PAL1, 5, ypos++);
+		ShowMessageAndData("Failed Program RAM", (uint32_t)0x420000, 8, PAL1, 5, ypos++);
 		WaitKey(NULL);
 		resetSegaCD();
         return 0;
