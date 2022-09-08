@@ -1492,7 +1492,7 @@ u8 PCMRAMCheck()
 #ifndef SEGACD
 	if(!segacd_init())
 	{
-		resetSegaCD();
+		//resetSegaCD();
 		return 0;
 	}
 #endif
