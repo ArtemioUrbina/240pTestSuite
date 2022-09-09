@@ -39,7 +39,7 @@
 #include "svin.h"
 
 #define VERSION_NUMBER "Ver. 0.0.1"
-#define VERSION_DATE "15/3/2018"
+#define VERSION_DATE __DATE__
 
 void DrawCredits();
 
@@ -97,7 +97,7 @@ int main(void)
 		if(redrawMenu)
 		{
 			int x = 36, y = 104, pos = 0;
-			ClearText();
+			ClearTextLayer();
 			switch (menu_id)
 			{
 				case 0:
@@ -119,14 +119,17 @@ int main(void)
 					menu_size = 15;
 					break;
 				case 1:
-					DrawString("Pixel clock ..... 26.8 MHz", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
-					DrawString("X high resolution  ... off", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Y high resolution  ... off",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Scan mode .... progressive",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					menu_size = 4;
+					DrawString("Pixel clock ........ 26.8 MHz", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
+					DrawString("Scan mode ....... progressive",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Active vertical lines ... 256",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("X high resolution ....... off", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Y high resolution ....... off",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Current mode : 320x240 progressive",x, y+_fh*(pos+2), FONT_WHITE); 
+					menu_size = 5;
 					break;
 				default:
 					DrawString("Exit", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					break;
 			}
 			redrawMenu = false;
 		}
@@ -169,6 +172,15 @@ int main(void)
 							sel = 0;
 							redrawMenu = true;
 						}
+					else if (1 == menu_id)
+					{
+						switch(sel)
+						{
+							case 0:
+								//change pixel clock
+							break;
+						}
+					}
 					redrawBG = true;
 					key_pressed = true;
 				}
@@ -216,17 +228,18 @@ void DrawCredits()
     bool scanlines = true;
 
 	_svin_init(X_Res,Y_Res,scanlines);
+	LoadFont();
+	ClearTextLayer();
 
 	_svin_background_set_no_filelist("BACK320.BG");
 
 	while(!doexit)
 	{
-		int x = 32, y = 56, pos = 0;
+		int x = 32, y = 104, pos = 0;
 
-		vdp2_tvmd_vblank_out_wait();
+		smpc_peripheral_process();
 		smpc_peripheral_digital_port(1, &controller);
 
-		//vdp1_cmdt_list_begin(0);
 		DrawString("Code and Patterns:", x, y+_fh*pos, FONT_GREEN); pos++;	
 		DrawString("Artemio Urbina", x+5, y+_fh*pos, FONT_WHITE); pos++;	
 		
@@ -237,6 +250,7 @@ void DrawCredits()
 		if(counter == 60*8)
 			counter = 0;
 	
+		ClearText(x+5, y+_fh*pos, 25*_fw, _fh);
 		DrawString(data, x+5, y+_fh*pos, FONT_WHITE); pos++;	
 		DrawString("SDK & Consultant:", x, y+_fh*pos, FONT_GREEN); pos++;	
 		DrawString("libyaul by Israel Jacquez", x+5, y+_fh*pos, FONT_WHITE); pos++;	
@@ -264,7 +278,7 @@ void DrawCredits()
 	
 		if (controller.connected == 1)
 		{
-			if(controller.pressed.button.c)
+			if(controller.pressed.raw)
 				doexit = true;
 		}
 	

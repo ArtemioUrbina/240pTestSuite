@@ -37,6 +37,8 @@ extern int SuiteFont_len;
 
 void LoadFont();
 void DrawString(char *str, unsigned int x, unsigned int y, unsigned int palette);
+void ClearText(int left, int top, int width, int height);
+void ClearTextLayer();
 
 void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool transparent);
 
