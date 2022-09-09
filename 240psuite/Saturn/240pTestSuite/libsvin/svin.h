@@ -7,7 +7,6 @@
 #include "svin_background.h"
 #include "svin_cd_access.h"
 #include "svin_debug.h"
-#include "svin_alloc.h"
 
 typedef enum {
         _SVIN_X_RESOLUTION_320 = 0,

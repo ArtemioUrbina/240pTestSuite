@@ -11,18 +11,9 @@ SH_SRCS:= \
     image.c \
     video.c \
     control.c \
-	libsvin/mcufont/mf_encoding.c \
-    libsvin/mcufont/mf_font.c \
-    libsvin/mcufont/mf_justify.c \
-    libsvin/mcufont/mf_kerning.c \
-    libsvin/mcufont/mf_rlefont.c \
-    libsvin/mcufont/mf_bwfont.c \
-    libsvin/mcufont/mf_scaledfont.c \
-    libsvin/mcufont/mf_wordwrap.c \
 	libsvin/svin_cd_access.c \
 	libsvin/svin_background.c \
 	libsvin/svin_debug.c \
-	libsvin/svin_alloc.c \
 	libsvin/svin.c \
 	240pSuite.c
 	
