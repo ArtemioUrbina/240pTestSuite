@@ -4,9 +4,6 @@
 //#define ROM_MODE
 
 #include <yaul.h>
-#include "svin_text.h"
-#include "svin_script.h"
-#include "svin_filelist.h"
 #include "svin_background.h"
 #include "svin_cd_access.h"
 #include "svin_debug.h"

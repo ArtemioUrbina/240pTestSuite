@@ -21,9 +21,6 @@ SH_SRCS:= \
     libsvin/mcufont/mf_wordwrap.c \
 	libsvin/svin_cd_access.c \
 	libsvin/svin_background.c \
-	libsvin/svin_filelist.c \
-	libsvin/svin_text.c \
-	libsvin/svin_script.c \
 	libsvin/svin_debug.c \
 	libsvin/svin_alloc.c \
 	libsvin/svin.c \

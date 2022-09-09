@@ -621,10 +621,6 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     }
     _svin_set_palette(6, temp_pal);  
 
-    _svin_text_init();
-
-    //_svin_sprite_init();
-
     //setting cycle patterns for nbg access
     _svin_set_cycle_patterns_nbg();
 
@@ -632,7 +628,6 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
 
     _svin_debug_init();
 
-    //_svin_menu_init();  //not now, because it requires filelist
 
     //-------------- init end -------------------  
     //vdp1_cmdt_jump_assign(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX], _SVIN_VDP1_ORDER_LOCAL_COORDS_B_INDEX * 4);

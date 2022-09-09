@@ -1,3 +1,5 @@
 build/*
 240pSuite.iso
+240pSuite.cue
+compile_commands.json
 !.gitignore

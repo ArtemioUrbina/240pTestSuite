@@ -5,7 +5,6 @@
 //#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "svin_filelist.h"
 
 extern uint8_t _svin_init_done;
 extern bool _svin_cram_24bpp;
@@ -41,16 +40,6 @@ void _svin_background_fade_to_black()
         _svin_background_fade_to_black_step();
         _svin_delay(30);
     }
-}
-
-void _svin_background_set(char * filename)
-{
-    //searching for fad
-    fad_t _bg_fad;
-    int iSize;
-    bool b = _svin_filelist_search(filename,&_bg_fad,&iSize);
-    assert(true==b);
-    _svin_background_set_by_fad(_bg_fad,iSize);
 }
 
 void _svin_background_set_no_filelist(char * filename)
