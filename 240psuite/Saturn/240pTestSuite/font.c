@@ -70,6 +70,23 @@ void LoadFont()
 		*(pFont++) = SuiteFont[i];*/
 }
 
+void ClearText()
+{
+	uint8_t *p8_vram;
+	vdp1_vram_partitions_t vdp1_vram_partitions;
+    vdp1_vram_partitions_get(&vdp1_vram_partitions);
+	
+	//drawing in low res for now
+	for (int _y = 0; _y < _svin_videomode_y_res; _y++)
+	{
+		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _svin_videomode_x_res/2 + _y*_svin_videomode_x_res);
+		for (int _x = 0; _x < _svin_videomode_x_res; _x++)
+		{
+			p8_vram[_x] = 0;
+		}
+	}
+}
+
 /* Draw a char as VDP1 sprite at desired location*/
 void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool transparent) 
 {

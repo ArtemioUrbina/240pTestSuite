@@ -47,6 +47,8 @@ int main(void)
 {
 	int sel = 0;
 	bool redrawMenu = true, redrawBG = true, key_pressed = false;
+	int menu_id=0;
+	int menu_size=0;
 
 	extern int _svin_videomode_x_res;
 	extern int _svin_videomode_y_res;
@@ -95,24 +97,37 @@ int main(void)
 		if(redrawMenu)
 		{
 			int x = 36, y = 104, pos = 0;
-
-			//vdp1_cmdt_list_begin(0);
-			DrawString("Test Patterns", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
-			DrawString("Drop Shadow Test", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Striped Sprite Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Lag Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Manual Lag Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Scroll Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Grid Scroll Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Horizontal Stripes",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Checkerboard",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Video Options",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			DrawString("Credits",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-			//vdp1_cmdt_list_end(0);
+			ClearText();
+			switch (menu_id)
+			{
+				case 0:
+					DrawString("Test Patterns", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
+					DrawString("Drop Shadow Test", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Striped Sprite Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Lag Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Manual Lag Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Scroll Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Grid Scroll Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Horizontal Stripes",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Checkerboard",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Video Options",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Credits",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 14;
+					break;
+				case 1:
+					DrawString("Pixel clock ..... 26.8 MHz", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
+					DrawString("X high resolution  ... off", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Y high resolution  ... off",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Scan mode .... progressive",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 4;
+					break;
+				default:
+					DrawString("Exit", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+			}
 			redrawMenu = false;
 		}
 
@@ -131,7 +146,7 @@ int main(void)
 				{
 					sel --;
 					if(sel < 0)
-						sel = 15;
+						sel = menu_size;
 					redrawMenu = true;
 					key_pressed = true;
 				}
@@ -139,7 +154,7 @@ int main(void)
 				if(controller.pressed.button.down)
 				{
 					sel ++;
-					if(sel > 15)
+					if(sel > menu_size)
 						sel = 0;
 					redrawMenu = true;
 					key_pressed = true;
@@ -147,6 +162,13 @@ int main(void)
 
 				if(controller.pressed.button.a)
 				{
+					if (0 == menu_id)
+						if (12 == sel)
+						{
+							menu_id = 1;
+							sel = 0;
+							redrawMenu = true;
+						}
 					redrawBG = true;
 					key_pressed = true;
 				}
@@ -162,7 +184,10 @@ int main(void)
 
 					//vdp2_scrn_display_clear();
 
-					DrawCredits();
+					if (0 == menu_id)
+						DrawCredits();
+					else
+						menu_id = 0;
 
 					//vdp2_scrn_display_clear();
 					//redrawBG = true;
@@ -193,7 +218,7 @@ void DrawCredits()
 	_svin_init(X_Res,Y_Res,scanlines);
 
 	_svin_background_set_no_filelist("BACK320.BG");
-/*
+
 	while(!doexit)
 	{
 		int x = 32, y = 56, pos = 0;
@@ -243,10 +268,12 @@ void DrawCredits()
 				doexit = true;
 		}
 	
-		vdp2_tvmd_vblank_in_wait();
+		//vdp2_tvmd_vblank_in_wait();
 		//vdp1_cmdt_list_commit();
+		vdp2_sync();
+		vdp2_sync_wait();
 		counter ++;
-	}*/
+	}
 
 	return;
 }
