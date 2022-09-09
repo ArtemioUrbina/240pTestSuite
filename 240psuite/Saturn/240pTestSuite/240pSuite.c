@@ -116,7 +116,7 @@ int main(void)
 					DrawString("Video Options",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Credits",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					menu_size = 14;
+					menu_size = 15;
 					break;
 				case 1:
 					DrawString("Pixel clock ..... 26.8 MHz", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
@@ -146,7 +146,7 @@ int main(void)
 				{
 					sel --;
 					if(sel < 0)
-						sel = menu_size;
+						sel = menu_size - 1;
 					redrawMenu = true;
 					key_pressed = true;
 				}
@@ -154,7 +154,7 @@ int main(void)
 				if(controller.pressed.button.down)
 				{
 					sel ++;
-					if(sel > menu_size)
+					if(sel >= menu_size)
 						sel = 0;
 					redrawMenu = true;
 					key_pressed = true;
