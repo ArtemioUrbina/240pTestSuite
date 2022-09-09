@@ -46,7 +46,7 @@ void DrawCredits();
 int main(void)
 {
 	int sel = 0;
-	bool redrawMenu = true, redrawBG = true;
+	bool redrawMenu = true, redrawBG = true, key_pressed = false;
 
 	extern int _svin_videomode_x_res;
 	extern int _svin_videomode_y_res;
@@ -83,6 +83,7 @@ int main(void)
 	while(true)
 	{
 		vdp2_tvmd_vblank_out_wait();
+		smpc_peripheral_process();
 		smpc_peripheral_digital_port(1, &controller);
 
 		if(redrawBG)
@@ -117,46 +118,63 @@ int main(void)
 
 		if (controller.connected == 1)
 		{
-			if(controller.pressed.button.up)
+			if (key_pressed == true)
 			{
-				sel --;
-				if(sel < 0)
-					sel = 15;
-				redrawMenu = true;
+				//waiting for key unpress and not moving further until it's unpressed
+				if (controller.pressed.raw == 0)
+					key_pressed = false;
 			}
-
-			if(controller.pressed.button.down)
+			else
 			{
-				sel ++;
-				if(sel > 15)
-					sel = 0;
-				redrawMenu = true;
-			}
 
-			if(controller.pressed.button.a)
-			{
-				redrawBG = true;
-			}
+				if(controller.pressed.button.up)
+				{
+					sel --;
+					if(sel < 0)
+						sel = 15;
+					redrawMenu = true;
+					key_pressed = true;
+				}
 
-			if(controller.pressed.button.start)
-				abort();
+				if(controller.pressed.button.down)
+				{
+					sel ++;
+					if(sel > 15)
+						sel = 0;
+					redrawMenu = true;
+					key_pressed = true;
+				}
 
-			if(controller.pressed.button.b)
-			{
-				vdp2_tvmd_vblank_in_wait();
-				//vdp1_cmdt_list_commit();
+				if(controller.pressed.button.a)
+				{
+					redrawBG = true;
+					key_pressed = true;
+				}
 
-				//vdp2_scrn_display_clear();
+				if(controller.pressed.button.start)
+					abort();
 
-				DrawCredits();
+				if(controller.pressed.button.b)
+				{
+					//vdp2_tvmd_vblank_in_wait();
+					vdp2_sync_wait();
+					//vdp1_cmdt_list_commit();
 
-				//vdp2_scrn_display_clear();
-				//redrawBG = true;
-				redrawMenu = true;
+					//vdp2_scrn_display_clear();
+
+					DrawCredits();
+
+					//vdp2_scrn_display_clear();
+					//redrawBG = true;
+					redrawMenu = true;
+					key_pressed = true;
+				}
 			}
 		}
-		vdp2_tvmd_vblank_in_wait();
+		//vdp2_tvmd_vblank_in_wait();
 		//vdp1_cmdt_list_commit();
+		vdp2_sync();
+		vdp2_sync_wait();
 	}
 }
 
