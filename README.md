@@ -11,17 +11,13 @@ If you're not using VSCode, use the following below.
 1. Build the CROM and SROM. Needs to be done every time contents in the gfx folder are changed.
 `make char`
 `make fix`
-<br>
 2. Build the PROM.
 `make`
-<br>
 3. Copy ROMs to MAME included in the toolchain.
 `make copyroms`
-<br>
 4. Run in MAME.
 `cd C:\NeoDev\mame`
 `mame neogeo 240ptestng -nofilter`
-<br>
 
 ## TODO
 
