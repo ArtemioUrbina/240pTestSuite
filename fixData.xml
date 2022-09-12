@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<chardata>
+	<setup fileType="fix">
+		<charfile>out\fix.bin</charfile>
+		<palfile>src\fixPals.s</palfile>
+		<incfile>include\fixData.h</incfile>
+	</setup>
+	
+	<import bank="0">
+		<file>gfx\fix\systemFont.bin</file>
+	</import>
+
+	<fix bank="3" id="fix_font0">
+		<file>gfx\fix\font0.png</file>
+	</fix>
+	
+</chardata>

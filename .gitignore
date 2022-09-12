@@ -1,0 +1,8 @@
+*.o
+src/*.o
+out/dev_p1.rom
+out/char.bin
+out/fix.bin
+output.map
+.vscode/dryrun.log
+.vscode/targets.log

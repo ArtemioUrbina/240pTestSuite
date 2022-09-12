@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<chardata>
+  <setup>
+    <starting_tile>256</starting_tile>
+    <charfile>out\char.bin</charfile>
+    <mapfile>src\charMaps.s</mapfile>
+    <palfile>src\charPals.s</palfile>
+    <incfile>include\charInclude.h</incfile>
+  </setup>
+  <pict id="logo">
+    <file>gfx\logo.png</file>
+  </pict>
+  <pict id="back">
+    <file>gfx\back.png</file>
+  </pict>
+  <pict id="gillian">
+    <file>gfx\SD.png</file>
+  </pict>
+  <pict id="plugentsc">
+    <file>gfx\plugentsc.png</file>
+  </pict>
+  <pict id="plugergb">
+    <file>gfx\plugergb.png</file>
+  </pict>
+  <pict id="colorchart">
+    <file>gfx\colorchart.png</file>
+  </pict>
+  <pict id="colorebu">
+    <file>gfx\colorbarsebu.png</file>
+  </pict>
+  <pict id="colorebu75">
+    <file>gfx\colorbarsebu75.png</file>
+  </pict>
+  <pict id="colorbarssmpte">
+    <file>gfx\colorbarssmpte.png</file>
+  </pict>
+  <pict id="colorbarssmpte75">
+    <file>gfx\colorbarssmpte75.png</file>
+  </pict>
+  <pict id="refcolor">
+    <file>gfx\refcolor.png</file>
+  </pict>
+  <pict id="colorbleedbars">
+    <file>gfx\colorbleedbars.png</file>
+  </pict>
+  <pict id="colorbleedcheck">
+    <file>gfx\colorbleedcheck.png</file>
+  </pict>
+  <pict id="monoscope">
+    <file>gfx\monoscope.png</file>
+  </pict>
+  <pict id="grid">
+    <file>gfx\grid.png</file>
+  </pict>
+  <pict id="grayramp">
+    <file>gfx\grayramp.png</file>
+  </pict>
+  <pict id="ire">
+    <file>gfx\ire.png</file>
+  </pict>
+  <pict id="sharp">
+    <file>gfx\sharp.png</file>
+  </pict>
+  <pict id="sharpbrick">
+    <file>gfx\sharpbrick.png</file>
+  </pict>
+  <pict id="conver_grid">
+    <file>gfx\conver_grid.png</file>
+  </pict>
+  <pict id="conver_dot">
+    <file>gfx\conver_dot.png</file>
+  </pict>
+  <pict id="conver_star">
+    <file>gfx\conver_star.png</file>
+  </pict>
+  <pict id="conver_rgb">
+    <file>gfx\conver_rgb.png</file>
+  </pict>
+  <pict id="conver_rgb_b">
+    <file>gfx\conver_rgb_b.png</file>
+  </pict>
+  <pict id="donna">
+    <file>gfx\donna.png</file>
+  </pict>
+  <pict id="buzz">
+    <file>gfx\buzz.png</file>
+  </pict>
+  <pict id="buzz_shadow">
+    <file>gfx\buzz_shadow.png</file>
+  </pict>
+  <pict id="shape_shadow">
+    <file>gfx\shape_shadow.png</file>
+  </pict>
+  <pict id="marker_striped">
+    <file>gfx\marker_striped.png</file>
+  </pict>
+  <pict id="marker">
+    <file>gfx\marker.png</file>
+  </pict>
+  <pict id="sonic_back">
+    <file>gfx\sonic_back.png</file>
+  </pict>
+  <pict id="sonic_water">
+    <file>gfx\sonic_water.png</file>
+  </pict>
+  <pict id="sonic_floor">
+    <file>gfx\sonic_floor.png</file>
+  </pict>
+  <pict id="kiki">
+    <file>gfx\kiki.png</file>
+  </pict>
+  <pict id="check">
+    <file>gfx\check.png</file>
+  </pict>
+  <pict id="vertstripe">
+    <file>gfx\vertstripe.png</file>
+  </pict>
+  <pict id="horzstripe">
+    <file>gfx\horzstripe.png</file>
+  </pict>
+</chardata>
