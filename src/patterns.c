@@ -36,6 +36,11 @@ void tp_pluge()
 	picture image1;
 	picture image2;
 
+	static const ushort plugergb_pal[]= {
+		0x8000, 0x8000, 0x7000, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
+	static const ushort plugentsc_pal[]= {
+		0x8000, 0x8000, 0x8222, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf111, 0x7000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
+
 	clearFixLayer();
 	clearSprites(1, 22);
 
@@ -48,12 +53,12 @@ void tp_pluge()
 		{
 			if (!IsNTSC)
 			{	pictureInit(&image1, &plugergb, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,plugergb.palInfo->count,plugergb.palInfo->data);
+				palJobPut(16,1,plugergb_pal);
 				SCClose();
 			}
 			else {
 				pictureInit(&image2, &plugentsc, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,plugentsc.palInfo->count,plugentsc.palInfo->data);
+				palJobPut(16,1,plugentsc_pal);
 				SCClose();
 			}
 			draw = 0;
@@ -79,13 +84,13 @@ void tp_pluge()
 			if (!IsNTSC)
 			{
 				pictureInit(&image1, &plugergb, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,plugergb.palInfo->count,plugergb.palInfo->data);
+				palJobPut(16,1,plugergb_pal);
 				SCClose();
 				fixPrint(24, 3, 1, 3, "RGB FULL RANGE");
 			}
 			else {
 				pictureInit(&image2, &plugentsc, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,plugentsc.palInfo->count,plugentsc.palInfo->data);
+				palJobPut(16,1,plugentsc_pal);
 				SCClose();
 				fixPrint(24, 3, 1, 3, "NTSC 7.5 IRE  ");
 			}
@@ -251,29 +256,28 @@ void tp_smpte_color_bars()
 	picture image1;
 	picture image2;
 
+	backgroundColor(0xfc1f);
 	clearFixLayer();
 	clearSprites(1, 22);
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
 		if (draw)
 		{
 			if (!Is75)
 			{
 				pictureInit(&image1, &colorbarssmpte, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
-				SCClose();
 			}
 			else {
 				pictureInit(&image2, &colorbarssmpte75, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
-				SCClose();
 			}
 			draw = 0;
 		}
+
+		SCClose();
+		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
@@ -296,13 +300,11 @@ void tp_smpte_color_bars()
 			{
 				pictureInit(&image1, &colorbarssmpte, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
-				SCClose();
 				fixPrint(32, 3, 0, 3, "100%");
 			}
 			else {
 				pictureInit(&image2, &colorbarssmpte75, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
-				SCClose();
 				fixPrint(32, 3, 0, 3, " 75%");
 			}
 			text = 60;
