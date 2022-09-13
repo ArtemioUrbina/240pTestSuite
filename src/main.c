@@ -72,12 +72,20 @@ void draw_background()
 
 void menu_tp()
 {
-	int done = 0, curse = 1, cursemax = 16;
+	int done = 0, curse = 1, cursemax = 16, redraw = 1;
 
 	clearFixLayer();
 
 	while (!done)
 	{
+
+		if(redraw)
+		{
+			clearSprites(1, 1);
+			clearFixLayer();
+			draw_background_w_gil();
+			redraw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
@@ -117,138 +125,78 @@ void menu_tp()
 		{
 			clearSprites(1, 22);
 			DrawHelp(HELP_GENERAL);
-			draw_background_w_gil();
 		}
 
 		if (p1e & JOY_A)
 		{
+			clearSprites(1, 22);
 			switch (curse)
 			{
 				case 1:
 					tp_pluge();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 					
 				case 2:
 					tp_colorchart();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 3:
 					tp_colorbars();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 4:
 					tp_smpte_color_bars();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 5:
 					tp_ref_color_bars();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 6:
 					tp_color_bleed_check();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 7:
 					tp_monoscope();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 8:
 					tp_grid();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 9:
 					tp_gray_ramp();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 10:
 					tp_white_rgb();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 11:
 					tp_100_ire();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 12:
 					tp_sharpness();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 13:
 					tp_overscan();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 14:
 					tp_convergence();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 15:
-					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 16:
 					done = 1;
 				break;
 			}
+			redraw = 1;
 		}
 	}
 	return;
@@ -256,12 +204,19 @@ void menu_tp()
 
 void menu_vt()
 {
-	int done = 0, curse = 1, cursemax = 12;
+	int done = 0, curse = 1, cursemax = 12, redraw = 1;
 
 	clearFixLayer();
 
 	while (!done)
 	{
+		if(redraw)
+		{
+			clearSprites(1, 1);
+			clearFixLayer();
+			draw_background_w_gil();
+			redraw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
@@ -302,98 +257,58 @@ void menu_vt()
 
 		if (p1e & JOY_A)
 		{
+			clearSprites(1, 22);
 			switch (curse) 
 			{
 				case 1:
 					vt_drop_shadow_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 					
 				case 2:
 					vt_striped_sprite_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 3:
 					vt_lag_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 4:
 					vt_reflex_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 5:
 					vt_scroll_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 6:
 					vt_gridscroll_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 7:
 					vt_horizontal_stripes();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 8:
 					vt_vertical_stripes();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 9:
 					vt_checkerboard();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 10:
 					vt_backlitzone_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 11:
-					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
-					draw_background_w_gil();
 				break;
 
 				case 12:
 					done = 1;
 				break;
 			}
+			redraw = 1;
 		}
 	}
 	return;
@@ -401,12 +316,19 @@ void menu_vt()
 
 void menu_at()
 {
-	int done = 0, curse = 1, cursemax = 4;
+	int done = 0, curse = 1, cursemax = 4, redraw = 1;
 
 	clearFixLayer();
 
 	while (!done)
 	{
+		if(redraw)
+		{
+			clearSprites(1, 1);
+			clearFixLayer();
+			draw_background_w_gil();
+			redraw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
@@ -439,34 +361,26 @@ void menu_at()
 
 		if (p1e & JOY_A)
 		{
+			clearSprites(1, 22);
 			switch (curse) 
 			{
 				case 1:
 					at_sound_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 					
 				case 2:
 					at_audiosync_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 
 				case 3:
-					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
-					draw_background_w_gil();
 				break;
 
 				case 4:
 					done = 1;
 				break;
 			}
+			redraw = 1;
 		}
 	}
 	return;
@@ -474,12 +388,19 @@ void menu_at()
 
 void menu_ht()
 {
-	int done = 0, curse = 1, cursemax = 6;
+	int done = 0, curse = 1, cursemax = 6, redraw = 1;
 
 	clearFixLayer();
 
 	while (!done)
 	{
+		if(redraw)
+		{
+			clearSprites(1, 1);
+			clearFixLayer();
+			draw_background_w_gil();
+			redraw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
@@ -514,14 +435,11 @@ void menu_ht()
 
 		if (p1e & JOY_A)
 		{
+			clearSprites(1, 22);
 			switch (curse) 
 			{
 				case 1:
 					ht_controller_test();
-					clearSprites(1, 1);
-					draw_background_w_gil();
-					SCClose();
-					waitVBlank();
 				break;
 					
 				case 2:
@@ -537,15 +455,14 @@ void menu_ht()
 				break;
 
 				case 5:
-					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
-					draw_background_w_gil();
 				break;
 
 				case 6:
 					done = 1;
 				break;
 			}
+			redraw = 1;
 		}
 	}
 	return 0;
@@ -600,7 +517,7 @@ void credits()
 
 int	main(void)
 {
-	int curse = 1, cursemax = 6;
+	int curse = 1, cursemax = 6, redraw = 1;
 
 	clearFixLayer();
 	backgroundColor(0x7bbb);
@@ -612,6 +529,12 @@ int	main(void)
 
 	while(1)
 	{
+		if(redraw)
+		{
+			clearFixLayer();
+			draw_background_w_gil();
+			redraw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
@@ -634,44 +557,35 @@ int	main(void)
 
 		if (p1e & JOY_A)
 		{
+			clearSprites(1, 22);
 			switch (curse)
 			{
 				case 1:
 					menu_tp();
-					clearFixLayer();
 				break;
 				
 				case 2:
 					menu_vt();
-					clearFixLayer();
 				break;
 
 				case 3:
 					menu_at();
-					clearFixLayer();
 				break;
 
 				case 4:
 					menu_ht();
-					clearFixLayer();
 				break;
 
 				case 5:
-					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
-					draw_background_w_gil();
-
 				break;
 
 				case 6:
-					clearSprites(1, 22);
 					credits();
-					clearFixLayer();
-					draw_background_w_gil();
 				break;
 			}
+			redraw = 1;
 		}
-		SCClose();
 	}
 	return 0;
 }
