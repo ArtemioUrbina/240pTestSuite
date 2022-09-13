@@ -113,14 +113,11 @@ void menu_tp()
 			done = 1;
 		}
 
-		//if (p1e & CNT_START1)
-		//{
-		//	done = 1;
-		//}
-
 		if (p1e & JOY_D)
 		{
+			clearSprites(1, 22);
 			DrawHelp(HELP_GENERAL);
+			draw_background_w_gil();
 		}
 
 		if (p1e & JOY_A)
@@ -240,6 +237,7 @@ void menu_tp()
 				break;
 
 				case 15:
+					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
 					clearSprites(1, 1);
 					draw_background_w_gil();
@@ -295,14 +293,11 @@ void menu_vt()
 			done = 1;
 		}
 
-		//if (pressedButton & CNT_START1)
-		//{
-		//	done = 1;
-		//}
-
 		if (p1e & JOY_D)
 		{
+			clearSprites(1, 22);
 			DrawHelp(HELP_GENERAL);
+			draw_background_w_gil();
 		}
 
 		if (p1e & JOY_A)
@@ -390,7 +385,9 @@ void menu_vt()
 				break;
 
 				case 11:
+					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
+					draw_background_w_gil();
 				break;
 
 				case 12:
@@ -433,14 +430,11 @@ void menu_at()
 			done = 1;
 		}
 
-		//if (pressedButton & CNT_START1)
-		//{
-		//	done = 1;
-		//}
-
 		if (p1e & JOY_D)
 		{
+			clearSprites(1, 22);
 			DrawHelp(HELP_GENERAL);
+			draw_background_w_gil();
 		}
 
 		if (p1e & JOY_A)
@@ -464,7 +458,9 @@ void menu_at()
 				break;
 
 				case 3:
+					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
+					draw_background_w_gil();
 				break;
 
 				case 4:
@@ -509,14 +505,11 @@ void menu_ht()
 			done = 1;
 		}
 
-		//if (pressedButton & CNT_START1)
-		//{
-		//	done = 1;
-		//}
-
 		if (p1e & JOY_D)
 		{
+			clearSprites(1, 22);
 			DrawHelp(HELP_GENERAL);
+			draw_background_w_gil();
 		}
 
 		if (p1e & JOY_A)
@@ -544,7 +537,9 @@ void menu_ht()
 				break;
 
 				case 5:
+					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
+					draw_background_w_gil();
 				break;
 
 				case 6:
@@ -662,10 +657,14 @@ int	main(void)
 				break;
 
 				case 5:
+					clearSprites(1, 22);
 					DrawHelp(HELP_GENERAL);
+					draw_background_w_gil();
+
 				break;
 
 				case 6:
+					clearSprites(1, 22);
 					credits();
 					clearFixLayer();
 					draw_background_w_gil();

@@ -61,6 +61,7 @@ void tp_pluge()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (text)
 		{
@@ -98,14 +99,14 @@ void tp_pluge()
 			return;
 		}
 
-		if (p1e & P1_SELECT)
+		if (ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_PLUGE);
 			draw = 1;
@@ -130,6 +131,7 @@ void tp_colorchart()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (draw)
 		{
@@ -144,7 +146,13 @@ void tp_colorchart()
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_START)
+		{
+			done = 1;
+			return;
+		}
+
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_COLORS);
 			draw = 1;
@@ -184,6 +192,7 @@ void tp_colorbars()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (text)
 		{
@@ -221,14 +230,14 @@ void tp_colorbars()
 			return;
 		}
 
-		if (p1e & P1_SELECT)
+		if (ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_601CB);
 			draw = 1;
@@ -268,6 +277,7 @@ void tp_smpte_color_bars()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (text)
 		{
@@ -305,14 +315,14 @@ void tp_smpte_color_bars()
 			return;
 		}
 
-		if (p1e & P1_SELECT)
+		if (ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_SMPTE);
 			draw = 1;
@@ -335,6 +345,7 @@ void tp_ref_color_bars()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (draw)
 		{
@@ -349,7 +360,13 @@ void tp_ref_color_bars()
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_START)
+		{
+			done = 1;
+			return;
+		}
+
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_601CB);
 			draw = 1;
@@ -389,6 +406,7 @@ void tp_color_bleed_check()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_A)
 		{
@@ -414,14 +432,14 @@ void tp_color_bleed_check()
 			return;
 		}
 
-		if (p1e & P1_SELECT)
+		if (ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_BLEED);
 			draw = 1;
@@ -461,6 +479,7 @@ void tp_grid()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_A)
 		{
@@ -486,14 +505,14 @@ void tp_grid()
 			return;
 		}
 
-		if (p1e & P1_SELECT)
+		if (ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_GRID);
 			draw = 1;
@@ -516,6 +535,7 @@ void tp_monoscope()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (draw)
 		{
@@ -530,7 +550,13 @@ void tp_monoscope()
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_START)
+		{
+			done = 1;
+			return;
+		}
+
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_MONOSCOPE);
 			draw = 1;
@@ -553,6 +579,7 @@ void tp_gray_ramp()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (draw)
 		{
@@ -567,7 +594,13 @@ void tp_gray_ramp()
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_START)
+		{
+			done = 1;
+			return;
+		}
+
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_GRAY);
 			draw = 1;
@@ -615,12 +648,6 @@ void tp_white_rgb()
 			break;
 		}
 
-		if (ps & P1_START)
-		{
-			done = 1;
-			return;
-		}
-
 		if (p1e & JOY_A)
 		{
 			color++;
@@ -631,7 +658,13 @@ void tp_white_rgb()
 			color--;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_START)
+		{
+			done = 1;
+			return;
+		}
+
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_WHITE);
 		}
@@ -686,6 +719,7 @@ void tp_100_ire()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		switch (irenum)
 		{
@@ -734,7 +768,13 @@ void tp_100_ire()
 			text = 60;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_START)
+		{
+			done = 1;
+			return;
+		}
+
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_IRE);
 		}
@@ -817,7 +857,7 @@ void tp_sharpness()
 			return;
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_SHARPNESS);
 			draw = 1;
@@ -843,6 +883,7 @@ void tp_overscan()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -900,7 +941,7 @@ void tp_convergence()
 			}
 		}
 
-		if (p1e & JOY_D)
+		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_CONVERGENCE);
 			//draw = 1;

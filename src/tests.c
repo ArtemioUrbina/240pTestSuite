@@ -52,6 +52,7 @@ void vt_drop_shadow_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
 
@@ -85,10 +86,16 @@ void vt_drop_shadow_test()
 				x = 288;
 		}
 
-		if (p1e & JOY_B)
+		if (ps & P1_START)
 		{
 			done = 1;
+			clearFixLayer();
 			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_SHADOW);
 		}
 	}
 }
@@ -115,6 +122,7 @@ void vt_striped_sprite_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
 
@@ -148,12 +156,17 @@ void vt_striped_sprite_test()
 				x = 288;
 		}
 
-		if (p1e & JOY_B)
+		if (ps & P1_START)
 		{
 			done = 1;
+			clearFixLayer();
 			return;
 		}
 
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_STRIPED);
+		}
 	}
 
 }
@@ -176,8 +189,7 @@ void vt_lag_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
-
-
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -185,6 +197,17 @@ void vt_lag_test()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_LAG);
+		}
 	}
 
 }
@@ -207,6 +230,7 @@ void vt_reflex_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -214,6 +238,17 @@ void vt_reflex_test()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_MANUALLAG);
+		}
 	}
 
 }
@@ -236,6 +271,7 @@ void vt_scroll_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -243,6 +279,17 @@ void vt_scroll_test()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_HSCROLL);
+		}
 	}
 
 }
@@ -265,6 +312,7 @@ void vt_vert_scroll_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -272,6 +320,17 @@ void vt_vert_scroll_test()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_HSCROLL);
+		}
 	}
 
 }
@@ -294,6 +353,7 @@ void vt_gridscroll_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -301,6 +361,17 @@ void vt_gridscroll_test()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_VSCROLL);
+		}
 	}
 
 }
@@ -323,6 +394,7 @@ void vt_horizontal_stripes()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -330,6 +402,17 @@ void vt_horizontal_stripes()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_STRIPES);
+		}
 	}
 
 }
@@ -352,6 +435,7 @@ void vt_vertical_stripes()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -359,6 +443,17 @@ void vt_vertical_stripes()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_STRIPES);
+		}
 	}
 
 }
@@ -381,6 +476,7 @@ void vt_checkerboard()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -388,6 +484,17 @@ void vt_checkerboard()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_CHECK);
+		}
 	}
 
 }
@@ -410,6 +517,7 @@ void vt_backlitzone_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -417,6 +525,17 @@ void vt_backlitzone_test()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_LED);
+		}
 	}
 
 }
@@ -439,6 +558,7 @@ void at_sound_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -446,6 +566,17 @@ void at_sound_test()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_SOUND);
+		}
 	}
 
 }
@@ -468,6 +599,7 @@ void at_audiosync_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
@@ -475,6 +607,17 @@ void at_audiosync_test()
 			return;
 		}
 
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(HELP_AUDIOSYNC);
+		}
 	}
 
 }
@@ -497,10 +640,12 @@ void ht_controller_test()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
-		if (p1e & JOY_B)
+		if (ps & P1_START && p1e & JOY_LEFT)
 		{
 			done = 1;
+			clearFixLayer();
 			return;
 		}
 
@@ -526,6 +671,7 @@ void ht_test_ng_ram()
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
 		{
