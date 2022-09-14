@@ -28,7 +28,12 @@
 #include "tests.h"
 #include "help.h"
 
-BYTE p1,p2,ps,p1e,p2e;
+BYTE p1,p2,ps,p1e,p2e, p1b,p2b; 
+
+#define fontColorWhite 0
+#define fontColorRed   1
+#define fontColorGreen 2
+#define fontColorBlue  3
 
 void vt_drop_shadow_test()
 {
@@ -638,9 +643,14 @@ void ht_controller_test()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
+		p1 = volMEMBYTE(P1_CURRENT);    // Controller 1
+		p2 = volMEMBYTE(P2_CURRENT);    // Controller 2
+		p1b = volMEMBYTE(P1B_CURRENT);  // Controller 3
+		p2b = volMEMBYTE(P2B_CURRENT);  // Controller 4
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
+
+		p2e = volMEMBYTE(P2_EDGE);
 
 		if (ps & P1_START && p1e & JOY_LEFT)
 		{
@@ -649,8 +659,64 @@ void ht_controller_test()
 			return;
 		}
 
-	}
+		// Controller 1
+		fixPrint(9, 9, p1 & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
+		fixPrint(5, 10, p1 & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(11,10, p1 & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
+		fixPrint(8, 11, p1 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
 
+		fixPrint(18, 9, ps & P1_START ? fontColorRed : fontColorWhite, 3, "Start");
+		fixPrint(18, 11, ps & P1_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+
+		fixPrint(27, 10, p1 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
+		fixPrint(28, 10, p1 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
+		fixPrint(29, 10, p1 & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
+		fixPrint(30, 10, p1 & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+
+		// Controller 2
+		fixPrint(9, 13, p2 & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
+		fixPrint(5, 14, p2 & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(11, 14, p2 & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
+		fixPrint(8, 15, p2 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
+
+		fixPrint(18, 13, ps & P2_START ? fontColorRed : fontColorWhite, 3, "Start");
+		fixPrint(18, 15, ps & P2_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+
+		fixPrint(27, 14, p2 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
+		fixPrint(28, 14, p2 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
+		fixPrint(29, 14, p2 & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
+		fixPrint(30, 14, p2 & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+
+		// Controller 3
+		fixPrint(9, 17, p1b & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
+		fixPrint(5, 18, p1b & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(11, 18, p1b & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
+		fixPrint(8, 19, p1b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
+
+		fixPrint(18, 17, ps & P1B_START ? fontColorRed : fontColorWhite, 3, "Start");
+		fixPrint(18, 19, ps & P1B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+
+		fixPrint(27, 18, p1b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
+		fixPrint(28, 18, p1b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
+		fixPrint(29, 18, p1b & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
+		fixPrint(30, 18, p1b & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+
+		// Controller 4
+		fixPrint(9, 21, p2b & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
+		fixPrint(5, 22, p2b & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(11, 22, p2b & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
+		fixPrint(8, 23, p2b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
+
+		fixPrint(18, 21, ps & P2B_START ? fontColorRed : fontColorWhite, 3, "Start");
+		fixPrint(18, 23, ps & P2B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+
+		fixPrint(27, 22, p2b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
+		fixPrint(28, 22, p2b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
+		fixPrint(29, 22, p2b & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
+		fixPrint(30, 22, p2b & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+
+		fixPrint(9, 26, fontColorGreen, 3, "Use START+LEFT to exit");
+	}
 }
 
 void ht_test_ng_ram()
