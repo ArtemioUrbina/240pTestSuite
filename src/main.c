@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <DATlib.h>
 #include <input.h>
+#include "ng.h"
 #include "externs.h"
 #include "patterns.h"
 #include "tests.h"
@@ -114,7 +115,21 @@ void menu_tp()
 		fixPrint(5, 24, curse == 16 ? 1 : 0, 3, "Back to Main Menu");
 
 		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		fixPrint(26, 28, 0, 3, "Neo Geo MVS");
+		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
+		{
+			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(32, 28, 0, 3, "Japan");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
+		{
+			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(34, 28, 0, 3, "USA");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
+		{
+			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(31, 28, 0, 3, "Europe");
+		}
 
 		if (p1e & JOY_B)
 		{
@@ -241,7 +256,21 @@ void menu_vt()
 		fixPrint(5, 22, curse == 12 ? 1 : 0, 3, "Back to Main Menu");
 
 		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		fixPrint(26, 28, 0, 3, "Neo Geo MVS");
+		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
+		{
+			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(32, 28, 0, 3, "Japan");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
+		{
+			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(34, 28, 0, 3, "USA");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
+		{
+			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(31, 28, 0, 3, "Europe");
+		}
 
 		if (p1e & JOY_B)
 		{
@@ -345,7 +374,21 @@ void menu_at()
 		fixPrint(5, 18, curse == 4 ? 1 : 0, 3, "Back to Main Menu");
 
 		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		fixPrint(26, 28, 0, 3, "Neo Geo MVS");
+		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
+		{
+			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(32, 28, 0, 3, "Japan");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
+		{
+			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(34, 28, 0, 3, "USA");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
+		{
+			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(31, 28, 0, 3, "Europe");
+		}
 
 		if (p1e & JOY_B)
 		{
@@ -419,7 +462,21 @@ void menu_ht()
 		fixPrint(5, 19, curse == 6 ? 1 : 0, 3, "Back to Main Menu");
 
 		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		fixPrint(26, 28, 0, 3, "Neo Geo MVS");
+		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
+		{
+			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(32, 28, 0, 3, "Japan");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
+		{
+			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(34, 28, 0, 3, "USA");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
+		{
+			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(31, 28, 0, 3, "Europe");
+		}
 
 		if (p1e & JOY_B)
 		{
@@ -553,7 +610,22 @@ int	main(void)
 		fixPrint(6, 21, curse == 6 ? 1 : 0, 3, "Credits");
 
 		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		fixPrint(26, 28, 0, 3, "Neo Geo MVS");
+		
+		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
+		{
+			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(32, 28, 0, 3, "Japan");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
+		{
+			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(34, 28, 0, 3, "USA");
+		}
+		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
+		{
+			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
+			fixPrint(31, 28, 0, 3, "Europe");
+		}
 
 		if (p1e & JOY_A)
 		{
