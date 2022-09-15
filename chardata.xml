@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <chardata>
   <setup>
     <starting_tile>256</starting_tile>
@@ -117,5 +117,8 @@
   </pict>
   <pict id="horzstripe">
     <file>gfx\horzstripe.png</file>
+  </pict>
+  <pict id="barcode">
+    <file>gfx\barcode.png</file>
   </pict>
 </chardata>

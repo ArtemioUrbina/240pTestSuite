@@ -74,3 +74,5 @@ extern const pictureInfo vertstripe;
 extern const paletteInfo vertstripe_Palettes;
 extern const pictureInfo horzstripe;
 extern const paletteInfo horzstripe_Palettes;
+extern const pictureInfo barcode;
+extern const paletteInfo barcode_Palettes;

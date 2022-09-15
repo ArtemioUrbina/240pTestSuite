@@ -627,6 +627,7 @@ void ht_controller_test()
 {
 	int done = 0;
 	picture image;
+	BYTE mvssel = 0, mvscredit = 0;
 
 	clearFixLayer();
 	clearSprites(1, 22);
@@ -650,11 +651,24 @@ void ht_controller_test()
 
 		p2e = volMEMBYTE(P2_EDGE);
 
+		if(isMVS)
+		{
+			mvscredit = volMEMBYTE(REG_STATUS_A); 
+			mvssel = volMEMBYTE(REG_STATUS_B); 
+		}
+
 		if (ps & P1_START && p1e & JOY_LEFT)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
+		}
+
+		if(isMVS)
+		{
+			fixPrint(29, 8, !(mvscredit & MVS_SERV_B) ? fontColorRed : fontColorWhite, 3, "Service");
+			fixPrint(31, 23, !(mvssel & MVS_SEL1) ? fontColorRed : fontColorWhite, 3, "Sel 1");
+			fixPrint(31, 24, !(mvssel & MVS_SEL2) ? fontColorRed : fontColorWhite, 3, "Sel 2");
 		}
 
 		// Controller 1
@@ -664,7 +678,10 @@ void ht_controller_test()
 		fixPrint(8, 11, p1 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
 
 		fixPrint(18, 9, ps & P1_START ? fontColorRed : fontColorWhite, 3, "Start");
-		fixPrint(18, 11, ps & P1_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+		if(isMVS)
+			fixPrint(18, 11, !(mvscredit & P1_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
+		else
+			fixPrint(18, 11, ps & P1_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
 
 		fixPrint(27, 10, p1 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
 		fixPrint(28, 10, p1 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
@@ -678,7 +695,10 @@ void ht_controller_test()
 		fixPrint(8, 15, p2 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
 
 		fixPrint(18, 13, ps & P2_START ? fontColorRed : fontColorWhite, 3, "Start");
-		fixPrint(18, 15, ps & P2_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+		if(isMVS)
+			fixPrint(18, 15, !(mvscredit & P2_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
+		else
+			fixPrint(18, 15, ps & P2_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
 
 		fixPrint(27, 14, p2 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
 		fixPrint(28, 14, p2 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
@@ -692,7 +712,10 @@ void ht_controller_test()
 		fixPrint(8, 19, p1b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
 
 		fixPrint(18, 17, ps & P1B_START ? fontColorRed : fontColorWhite, 3, "Start");
-		fixPrint(18, 19, ps & P1B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+		if(isMVS)
+			fixPrint(18, 19, !(mvscredit & P3_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
+		else
+			fixPrint(18, 19, ps & P1B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
 
 		fixPrint(27, 18, p1b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
 		fixPrint(28, 18, p1b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
@@ -706,7 +729,10 @@ void ht_controller_test()
 		fixPrint(8, 23, p2b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
 
 		fixPrint(18, 21, ps & P2B_START ? fontColorRed : fontColorWhite, 3, "Start");
-		fixPrint(18, 23, ps & P2B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+		if(isMVS)
+			fixPrint(18, 23, !(mvscredit & P4_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
+		else
+			fixPrint(18, 23, ps & P2B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
 
 		fixPrint(27, 22, p2b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
 		fixPrint(28, 22, p2b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");

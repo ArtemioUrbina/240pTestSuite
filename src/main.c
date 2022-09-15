@@ -39,6 +39,15 @@ typedef struct bkp_ram_info {
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,p1e,p2e;
+BYTE isMVS;
+
+void check_systype()
+{
+	if(MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)
+		isMVS = 1;
+	else
+		isMVS = 0;
+}
 
 static const ushort fixPalettes[]= {
 	0x8000, 0x7fff, 0x0333, 0x5fa7, 0xde85, 0x2c74, 0x2a52, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
@@ -71,15 +80,32 @@ void draw_background()
 	palJobPut(16,back.palInfo->count,back.palInfo->data);
 }
 
+void menu_footer()
+{
+	fixPrint(23, 26, 0, 3, "NTSC 320x224p");
+	if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
+	{
+		fixPrint(20, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
+		fixPrint(32, 28, 0, 3, "Japan");
+	}
+	else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
+	{
+		fixPrint(22, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
+		fixPrint(34, 28, 0, 3, "USA");
+	}
+	else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
+	{
+		fixPrint(19, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
+		fixPrint(31, 28, 0, 3, "Europe");
+	}
+}
+
 void menu_tp()
 {
 	int done = 0, curse = 1, cursemax = 16, redraw = 1;
 
-	clearFixLayer();
-
 	while (!done)
 	{
-
 		if(redraw)
 		{
 			clearSprites(1, 1);
@@ -114,22 +140,7 @@ void menu_tp()
 		fixPrint(5, 23, curse == 15 ? 1 : 0, 3, "Help");
 		fixPrint(5, 24, curse == 16 ? 1 : 0, 3, "Back to Main Menu");
 
-		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
-		{
-			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(32, 28, 0, 3, "Japan");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
-		{
-			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(34, 28, 0, 3, "USA");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
-		{
-			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(31, 28, 0, 3, "Europe");
-		}
+		menu_footer();
 
 		if (p1e & JOY_B)
 		{
@@ -221,8 +232,6 @@ void menu_vt()
 {
 	int done = 0, curse = 1, cursemax = 12, redraw = 1;
 
-	clearFixLayer();
-
 	while (!done)
 	{
 		if(redraw)
@@ -255,22 +264,7 @@ void menu_vt()
 		fixPrint(5, 21, curse == 11 ? 1 : 0, 3, "Help");
 		fixPrint(5, 22, curse == 12 ? 1 : 0, 3, "Back to Main Menu");
 
-		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
-		{
-			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(32, 28, 0, 3, "Japan");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
-		{
-			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(34, 28, 0, 3, "USA");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
-		{
-			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(31, 28, 0, 3, "Europe");
-		}
+		menu_footer();
 
 		if (p1e & JOY_B)
 		{
@@ -347,8 +341,6 @@ void menu_at()
 {
 	int done = 0, curse = 1, cursemax = 4, redraw = 1;
 
-	clearFixLayer();
-
 	while (!done)
 	{
 		if(redraw)
@@ -373,22 +365,7 @@ void menu_at()
 		fixPrint(5, 17, curse == 3 ? 1 : 0, 3, "Help");
 		fixPrint(5, 18, curse == 4 ? 1 : 0, 3, "Back to Main Menu");
 
-		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
-		{
-			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(32, 28, 0, 3, "Japan");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
-		{
-			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(34, 28, 0, 3, "USA");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
-		{
-			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(31, 28, 0, 3, "Europe");
-		}
+		menu_footer();
 
 		if (p1e & JOY_B)
 		{
@@ -433,8 +410,6 @@ void menu_ht()
 {
 	int done = 0, curse = 1, cursemax = 6, redraw = 1;
 
-	clearFixLayer();
-
 	while (!done)
 	{
 		if(redraw)
@@ -461,22 +436,7 @@ void menu_ht()
 		fixPrint(5, 18, curse == 5 ? 1 : 0, 3, "Help");
 		fixPrint(5, 19, curse == 6 ? 1 : 0, 3, "Back to Main Menu");
 
-		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
-		{
-			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(32, 28, 0, 3, "Japan");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
-		{
-			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(34, 28, 0, 3, "USA");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
-		{
-			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(31, 28, 0, 3, "Europe");
-		}
+		menu_footer();
 
 		if (p1e & JOY_B)
 		{
@@ -522,16 +482,20 @@ void menu_ht()
 			redraw = 1;
 		}
 	}
-	return 0;
+	return;
 }
 
 void credits()
 {
 	int done = 0;
+	picture qr;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 	draw_background();
+
+	pictureInit(&qr, &barcode, 26, 17, 260, 110, FLIP_NONE);
+	palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 
 	while (!done)
 	{
@@ -545,8 +509,8 @@ void credits()
 		fixPrint(28, 8, 2, 3, "Ver. 0.1");
 		fixPrint(28, 9, 0, 3, "9/4/2022");
 		fixPrint(5, 10, 2, 3, "Code by:");
-		fixPrint(6, 11, 0, 3, "Artemio Urbina");
 		fixPrint(6, 12, 0, 3, "Dustin Dembrosky");
+		fixPrint(6, 11, 0, 3, "Artemio Urbina");
 		fixPrint(5, 13, 2, 3, "Patterns:");
 		fixPrint(6, 14, 0, 3, "Artemio Urbina");
 		fixPrint(5, 15, 2, 3, "Menu Pixel Art:");
@@ -576,6 +540,8 @@ int	main(void)
 {
 	int curse = 1, cursemax = 6, redraw = 1;
 
+	check_systype();
+
 	clearFixLayer();
 	backgroundColor(0x7bbb);
 	initGfx();
@@ -588,6 +554,7 @@ int	main(void)
 	{
 		if(redraw)
 		{
+			clearSprites(1, 26);
 			clearFixLayer();
 			draw_background_w_gil();
 			redraw = 0;
@@ -609,23 +576,7 @@ int	main(void)
 		fixPrint(6, 20, curse == 5 ? 1 : 0, 3, "Help");
 		fixPrint(6, 21, curse == 6 ? 1 : 0, 3, "Credits");
 
-		fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-		
-		if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
-		{
-			fixPrint(20, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(32, 28, 0, 3, "Japan");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
-		{
-			fixPrint(22, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(34, 28, 0, 3, "USA");
-		}
-		else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
-		{
-			fixPrint(19, 28, 0, 3, (MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)?"Neo Geo MVS":"Neo Geo AES");
-			fixPrint(31, 28, 0, 3, "Europe");
-		}
+		menu_footer();
 
 		if (p1e & JOY_A)
 		{

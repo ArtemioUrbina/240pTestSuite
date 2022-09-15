@@ -23,6 +23,8 @@
 #ifndef _NG_H_
 #define _NG_H_
 
+extern BYTE isMVS;
+
 #define SYSTEM_AES 0x00
 #define SYSTEM_MVS 0x80
 #define BIOS_MVS_FLAG 0x10FD82
@@ -37,4 +39,27 @@
 #define fontColorGreen 2
 #define fontColorBlue  3
 
+#define REG_SYSTYPE 0x300081
+#define MVS_MULTI	0x40
+#define MVS_TEST_B	0x80
+
+#define REG_STATUS_A 0x320001
+#define P1_CREDIT	0x01
+#define P2_CREDIT	0x02
+#define MVS_SERV_B	0x04
+#define P3_CREDIT	0x08
+#define P4_CREDIT	0x10
+#define MVS_4_OR_6	0x20
+#define RTC_TIME	0x40
+#define RTC_DATA	0x80
+
+#define REG_STATUS_B 0x380000
+#define MVS_P1_STRT	0x01
+#define MVS_SEL1	0x02
+#define MVS_P2_STRT	0x04
+#define MVS_SEL2	0x08
+#define HAS_MC_1	0x10
+#define HAS_MC_2	0x20
+#define MC_PTRCT	0x40
+#define MVS_OR_AES	0x80
 #endif /* _NG_H_ */

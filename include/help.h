@@ -56,5 +56,6 @@
 #define HELP_MEMVIEW		31
 
 void DrawHelp(int option);
+void draw_background();
 
 #endif /* _HELP_H_ */
