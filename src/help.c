@@ -24,15 +24,11 @@
 #include <stdio.h>
 #include <DATlib.h>
 #include <input.h>
+#include "ng.h"
 #include "externs.h"
 #include "help.h"
 
 BYTE p1,p2,ps,p1e,p2e;
-
-#define fontColorWhite 0
-#define fontColorRed   1
-#define fontColorGreen 2
-#define fontColorBlue  3
 
 void DrawHelp(int option)
 {

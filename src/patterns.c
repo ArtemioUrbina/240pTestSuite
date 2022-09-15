@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <DATlib.h>
 #include <input.h>
+#include "ng.h"
 #include "externs.h"
 #include "patterns.h"
 #include "help.h"

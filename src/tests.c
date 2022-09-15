@@ -24,16 +24,12 @@
 #include <stdio.h>
 #include <DATlib.h>
 #include <input.h>
+#include "ng.h"
 #include "externs.h"
 #include "tests.h"
 #include "help.h"
 
 BYTE p1,p2,ps,p1e,p2e, p1b,p2b; 
-
-#define fontColorWhite 0
-#define fontColorRed   1
-#define fontColorGreen 2
-#define fontColorBlue  3
 
 void vt_drop_shadow_test()
 {
@@ -637,6 +633,8 @@ void ht_controller_test()
 
 	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,back.palInfo->count,back.palInfo->data);
+
+	setup4P();
 
 	while (!done)
 	{
