@@ -23,7 +23,7 @@
 #ifndef _NG_H_
 #define _NG_H_
 
-extern BYTE isMVS;
+extern BYTE isMVS, is4S, is6S;
 
 #define SYSTEM_AES 0x00
 #define SYSTEM_MVS 0x80

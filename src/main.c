@@ -39,14 +39,28 @@ typedef struct bkp_ram_info {
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,p1e,p2e;
-BYTE isMVS;
+BYTE isMVS, is4S, is6S;
 
+// We can't detect between 1 and 2 slot yet
 void check_systype()
 {
+	isMVS = is4S = is6S = 0;
+
 	if(MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)
+	{
+		BYTE reg = 0;
+
 		isMVS = 1;
-	else
-		isMVS = 0;
+		reg = volMEMBYTE(REG_SYSTYPE);
+		if(reg & MVS_MULTI)
+		{
+			reg = volMEMBYTE(REG_STATUS_A);
+			if(reg & MVS_4_OR_6)
+				is6S = 1;
+			else
+				is4S = 1;
+		}
+	}
 }
 
 static const ushort fixPalettes[]= {
@@ -83,19 +97,21 @@ void draw_background()
 void menu_footer()
 {
 	fixPrint(23, 26, 0, 3, "NTSC 320x224p");
+	fixPrint(17, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
+	if(isMVS && (is4S||is6S))
+	{
+		fixPrint(28, 28, 0, 3, is4S ? "4S" : "6S");
+	}
 	if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
 	{
-		fixPrint(20, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
 		fixPrint(32, 28, 0, 3, "Japan");
 	}
 	else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
 	{
-		fixPrint(22, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
 		fixPrint(34, 28, 0, 3, "USA");
 	}
 	else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
-	{
-		fixPrint(19, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
+	{	
 		fixPrint(31, 28, 0, 3, "Europe");
 	}
 }
