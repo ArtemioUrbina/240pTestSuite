@@ -47,25 +47,20 @@ void tp_pluge()
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
 		if (draw)
 		{
-			if (!IsNTSC)
-			{	pictureInit(&image1, &plugergb, 1, 16, 0, 0,FLIP_NONE);
+			if (!IsNTSC){
+				pictureInit(&image1, &plugergb, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,1,plugergb_pal);
-				SCClose();
-			}
-			else {
+			} else {
 				pictureInit(&image2, &plugentsc, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,1,plugentsc_pal);
-				SCClose();
 			}
 			draw = 0;
 		}
+		SCClose();
+		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
@@ -81,45 +76,42 @@ void tp_pluge()
 		if (p1e & JOY_A)
 		{
 			IsNTSC = !IsNTSC;
-
-			if (!IsNTSC)
-			{
+			if (!IsNTSC){
 				pictureInit(&image1, &plugergb, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,1,plugergb_pal);
-				SCClose();
 				fixPrint(24, 3, 1, 3, "RGB FULL RANGE");
-			}
-			else {
+			} else {
 				pictureInit(&image2, &plugentsc, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,1,plugentsc_pal);
-				SCClose();
 				fixPrint(24, 3, 1, 3, "NTSC 7.5 IRE  ");
 			}
 			text = 60;
+			SCClose();
 		}
 
-		if (p1e & JOY_B)
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			clearFixLayer();
-			return;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_PLUGE);
+				draw = 1;
+			}
+		} else 
+		{ 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_PLUGE);
+				draw = 1;
+			}
 		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_PLUGE);
-			draw = 1;
-		}
-
 	}
-
 }
 
 void tp_colorchart()
@@ -132,36 +124,37 @@ void tp_colorchart()
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
-
 		if (draw)
 		{
 			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
 			draw = 0;
 		}
+		SCClose();
+		waitVBlank();
 
-		if (p1e & JOY_B)
+		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			return;
-		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_COLORS);
-			draw = 1;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_COLORS);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_COLORS);
+				draw = 1;
+			}
 		}
 	}
 }
@@ -172,31 +165,28 @@ void tp_colorbars()
 	picture image1;
 	picture image2;
 
+	backgroundColor(0xfc1f);
 	clearFixLayer();
 	clearSprites(1, 22);
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
 		if (draw)
 		{
 			if (!Is75)
 			{
 				pictureInit(&image1, &colorebu, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorebu.palInfo->count,colorebu.palInfo->data);
-				SCClose();
 			}
 			else {
 				pictureInit(&image2, &colorebu75, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorebu75.palInfo->count,colorebu75.palInfo->data);
-				SCClose();
 			}
 			draw = 0;
 		}
+		SCClose();
+		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
@@ -212,41 +202,41 @@ void tp_colorbars()
 		if (p1e & JOY_A)
 		{
 			Is75 = !Is75;
-
 			if (!Is75)
 			{
 				pictureInit(&image1, &colorebu, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorebu.palInfo->count,colorebu.palInfo->data);
-				SCClose();
 				fixPrint(32, 3, 0, 3, "100%");
 			}
 			else {
 				pictureInit(&image2, &colorebu75, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorebu75.palInfo->count,colorebu75.palInfo->data);
-				SCClose();
 				fixPrint(32, 3, 0, 3, " 75%");
 			}
 			text = 60;
+			SCClose();
 		}
 
-		if (p1e & JOY_B)
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			clearFixLayer();
-			return;
-		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_601CB);
-			draw = 1;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_601CB);
+				draw = 1;
+			}
+		} else {
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_601CB);
+				draw = 1;
+			}
 		}
 	}
 }
@@ -276,11 +266,9 @@ void tp_smpte_color_bars()
 			}
 			draw = 0;
 		}
-
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
@@ -309,26 +297,29 @@ void tp_smpte_color_bars()
 				fixPrint(32, 3, 0, 3, " 75%");
 			}
 			text = 60;
+			SCClose();
 		}
 
-		if (p1e & JOY_B)
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			clearFixLayer();
-			return;
-		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_SMPTE);
-			draw = 1;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_SMPTE);
+				draw = 1;
+			}
+		} else {
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_SMPTE);
+				draw = 1;
+			}
 		}
 	}
 }
@@ -343,36 +334,37 @@ void tp_ref_color_bars()
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
-
 		if (draw)
 		{
 			pictureInit(&image, &refcolor, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,refcolor.palInfo->count,refcolor.palInfo->data);
 			draw = 0;
 		}
+		SCClose();
+		waitVBlank();
 
-		if (p1e & JOY_B)
+		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			return;
-		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_601CB);
-			draw = 1;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_601CB);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_601CB);
+				draw = 1;
+			}
 		}
 	}
 }
@@ -388,64 +380,60 @@ void tp_color_bleed_check()
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
 		if (draw)
 		{
 			if (!Ischeck)
 			{
 				pictureInit(&image1, &colorbleedbars, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbleedbars.palInfo->count,colorbleedbars.palInfo->data);
-				SCClose();
 			}
 			else {
 				pictureInit(&image2, &colorbleedcheck, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbleedcheck.palInfo->count,colorbleedcheck.palInfo->data);
-				SCClose();
 			}
 			draw = 0;
 		}
+		SCClose();
+		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_A)
 		{
 			Ischeck = !Ischeck;
-
 			if (!Ischeck)
 			{
 				pictureInit(&image1, &colorbleedbars, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbleedbars.palInfo->count,colorbleedbars.palInfo->data);
-				SCClose();
 			}
 			else {
 				pictureInit(&image2, &colorbleedcheck, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbleedcheck.palInfo->count,colorbleedcheck.palInfo->data);
-				SCClose();
 			}
+			SCClose();
 		}
 
-		if (p1e & JOY_B)
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			clearFixLayer();
-			return;
-		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_BLEED);
-			draw = 1;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_BLEED);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_BLEED);
+				draw = 1;
+			}
 		}
 	}
 }
@@ -461,64 +449,60 @@ void tp_grid()
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
 		if (draw)
 		{
 			if (!Isgray)
 			{
 				pictureInit(&image1, &grid, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-				SCClose();
 			}
 			else {
 				pictureInit(&image2, &grid, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-				SCClose();
 			}
 			draw = 0;
 		}
+		SCClose();
+		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_A)
 		{
 			Isgray = !Isgray;
-
 			if (!Isgray)
 			{
 				pictureInit(&image1, &grid, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-				SCClose();
 			}
 			else {
 				pictureInit(&image2, &grid, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-				SCClose();
 			}
+			SCClose();
 		}
 
-		if (p1e & JOY_B)
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			clearFixLayer();
-			return;
-		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_GRID);
-			draw = 1;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_GRID);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_GRID);
+				draw = 1;
+			}
 		}
 	}
 }
@@ -533,36 +517,37 @@ void tp_monoscope()
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
-
 		if (draw)
 		{
 			pictureInit(&image, &monoscope, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
 			draw = 0;
 		}
+		SCClose();
+		waitVBlank();
 
-		if (p1e & JOY_B)
+		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			return;
-		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_MONOSCOPE);
-			draw = 1;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_MONOSCOPE);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_MONOSCOPE);
+				draw = 1;
+			}
 		}
 	}
 }
@@ -577,43 +562,44 @@ void tp_gray_ramp()
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
-
 		if (draw)
 		{
 			pictureInit(&image, &grayramp, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,grayramp.palInfo->count,grayramp.palInfo->data);
 			draw = 0;
 		}
+		SCClose();
+		waitVBlank();
 
-		if (p1e & JOY_B)
+		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			return;
-		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_GRAY);
-			draw = 1;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_GRAY);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_GRAY);
+				draw = 1;
+			}
 		}
 	}
 }
 
 void tp_white_rgb()
 {
-	int done = 0, color = 1;
+	int done = 0, color = 1, draw = 1;
 
 	clearFixLayer();
 	clearSprites(1, 1);
@@ -621,44 +607,48 @@ void tp_white_rgb()
 
 	while (!done)
 	{
+		if (draw)
+		{
+			switch (color)
+			{
+				case 1:
+					backgroundColor(0x7FFF);
+				break;
+
+				case 2:
+					backgroundColor(0x0000);
+				break;
+
+				case 3:
+					backgroundColor(0x0F00);
+				break;
+
+				case 4:
+					backgroundColor(0x00F0);
+				break;
+
+				case 5:
+					backgroundColor(0x000F);
+				break;
+			}
+			draw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
-		p1  = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		switch (color)
-		{
-			case 1:
-				backgroundColor(0x7FFF);
-			break;
-
-			case 2:
-				backgroundColor(0x0000);
-			break;
-
-			case 3:
-				backgroundColor(0x0F00);
-			break;
-
-			case 4:
-				backgroundColor(0x00F0);
-			break;
-
-			case 5:
-				backgroundColor(0x000F);
-			break;
-		}
 
 		if (p1e & JOY_A)
 		{
 			color++;
+			draw = 1;
 		}
 
 		if (p1e & JOY_B)
 		{
 			color--;
+			draw = 1;
 		}
 
 		if (ps & P1_START)
@@ -667,9 +657,21 @@ void tp_white_rgb()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if(isMVS)
 		{
-			DrawHelp(HELP_WHITE);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_WHITE);
+				clearSprites(1, 1);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_WHITE);
+				clearSprites(1, 1);
+				draw = 1;
+			}
 		}
 
 		if (color > 5)
@@ -677,9 +679,7 @@ void tp_white_rgb()
 
 		if (color < 1)
 			color = 5;
-
 	}
-
 }
 
 void tp_100_ire()
@@ -710,9 +710,6 @@ void tp_100_ire()
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
 		if (draw)
 		{
 			pictureInit(&image, &ire, 1, 16, 0, 0,FLIP_NONE);
@@ -720,18 +717,14 @@ void tp_100_ire()
 			draw = 0;
 		}
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
-
 		switch (irenum)
 		{
 			case 0:
-				palJobPut(16,1,ire_13);     // 13
+				palJobPut(16,1,ire_13);  // 13
 			break;
 
 			case 1:
-				palJobPut(16,1,ire_25);     // 25
+				palJobPut(16,1,ire_25);  // 25
 			break;
 
 			case 2:
@@ -754,12 +747,17 @@ void tp_100_ire()
 				palJobPut(16,1,ire_94);  // 94
 			break;
 		}
+		SCClose();
+		waitVBlank();
+
+		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_A)
 		{
 			if (irenum != 0)
 				irenum--;
-			fixPrintf1(32, 25, 0, 3, "IRE:%2d", irevals[irenum]);
+			fixPrintf1(32, 25, 0, 3, "IRE:%u", irevals[irenum]);
 			text = 60;
 		}
 
@@ -767,7 +765,7 @@ void tp_100_ire()
 		{
 			if (irenum != 6)
 				irenum++;
-			fixPrintf1(32, 25, 0, 3, "IRE:%2d", irevals[irenum]);
+			fixPrintf1(32, 25, 0, 3, "IRE:%u", irevals[irenum]);
 			text = 60;
 		}
 
@@ -777,9 +775,19 @@ void tp_100_ire()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if(isMVS)
 		{
-			DrawHelp(HELP_IRE);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_IRE);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_IRE);
+				draw = 1;
+			}
 		}
 
 		if (text)
@@ -790,9 +798,7 @@ void tp_100_ire()
 				clearFixLayer();
 			}
 		}
-
 	}
-
 }
 
 void tp_sharpness()
@@ -806,26 +812,22 @@ void tp_sharpness()
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
-
 		if (draw)
 		{
 			if (!Isbrick)
 			{
 				pictureInit(&image1, &sharp, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,sharp.palInfo->count,sharp.palInfo->data);
-				SCClose();
 			}
 			else {
 				pictureInit(&image2, &sharpbrick, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,sharpbrick.palInfo->count,sharpbrick.palInfo->data);
-				SCClose();
 			}
 			draw = 0;
 		}
+		SCClose();
+		waitVBlank();
 
-		p1  = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
@@ -837,33 +839,34 @@ void tp_sharpness()
 			{
 				pictureInit(&image1, &sharp, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,sharp.palInfo->count,sharp.palInfo->data);
-				SCClose();
 			}
 			else {
 				pictureInit(&image2, &sharpbrick, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,sharpbrick.palInfo->count,sharpbrick.palInfo->data);
-				SCClose();
 			}
+			SCClose();
 		}
 
-		if (p1e & JOY_B)
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 			clearFixLayer();
 			return;
 		}
 
-		if (ps & P1_START)
+		if(isMVS)
 		{
-			done = 1;
-			clearFixLayer();
-			return;
-		}
-
-		if (ps & P1_SELECT)
-		{
-			DrawHelp(HELP_SHARPNESS);
-			draw = 1;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_SHARPNESS);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_SHARPNESS);
+				draw = 1;
+			}
 		}
 	}
 }
@@ -884,7 +887,6 @@ void tp_overscan()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
@@ -893,14 +895,12 @@ void tp_overscan()
 			done = 1;
 			return;
 		}
-
 	}
-
 }
 
 void tp_convergence()
 {
-	int done = 0, pattern = 1;
+	int done = 0, pattern = 1, draw = 1;
 	picture image;
 
 	clearFixLayer();
@@ -908,18 +908,42 @@ void tp_convergence()
 
 	while (!done)
 	{
+		if (draw)
+		{
+			switch (pattern)
+			{
+				case 1:
+					pictureInit(&image, &conver_grid, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,conver_grid.palInfo->count,conver_grid.palInfo->data);
+				break;
+
+				case 2:
+					pictureInit(&image, &conver_dot, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,conver_dot.palInfo->count,conver_dot.palInfo->data);
+				break;
+
+				case 3:
+					pictureInit(&image, &conver_star, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,conver_star.palInfo->count,conver_star.palInfo->data);
+				break;
+
+				case 4:
+					pictureInit(&image, &conver_rgb, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,conver_rgb.palInfo->count,conver_rgb.palInfo->data);
+				break;
+
+				case 5:
+					pictureInit(&image, &conver_rgb_b, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,conver_rgb_b.palInfo->count,conver_rgb_b.palInfo->data);
+				break;
+			}
+			draw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
-		p1  = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (ps & P1_START)
-		{
-			done = 1;
-			return;
-		}
 
 		if (p1e & JOY_A)
 		{
@@ -928,6 +952,7 @@ void tp_convergence()
 			{
 				pattern = 1;
 			}
+			draw = 1;
 		}
 
 		if (p1e & JOY_B)
@@ -936,48 +961,33 @@ void tp_convergence()
 			{
 				pattern = 4;
 			}
-
 			pattern++;
 			if (pattern > 5)
 			{
 				pattern = 4;
 			}
+			draw = 1;
 		}
 
-		if (ps & P1_SELECT)
+		if (ps & P1_START)
 		{
-			DrawHelp(HELP_CONVERGENCE);
-			//draw = 1;
+			done = 1;
+			return;
 		}
 
-		switch (pattern)
+		if(isMVS)
 		{
-			case 1:
-				pictureInit(&image, &conver_grid, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,conver_grid.palInfo->count,conver_grid.palInfo->data);
-			break;
-
-			case 2:
-				pictureInit(&image, &conver_dot, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,conver_dot.palInfo->count,conver_dot.palInfo->data);
-			break;
-
-			case 3:
-				pictureInit(&image, &conver_star, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,conver_star.palInfo->count,conver_star.palInfo->data);
-			break;
-
-			case 4:
-				pictureInit(&image, &conver_rgb, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,conver_rgb.palInfo->count,conver_rgb.palInfo->data);
-			break;
-
-			case 5:
-				pictureInit(&image, &conver_rgb_b, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,conver_rgb_b.palInfo->count,conver_rgb_b.palInfo->data);
-			break;
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_CONVERGENCE);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_CONVERGENCE);
+				draw = 1;
+			}
 		}
-
 	}
-
 }

@@ -501,37 +501,33 @@ void credits()
 	{
 		SCClose();
 		waitVBlank();
-
-		p1 = volMEMBYTE(P1_CURRENT);
+		
 		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
 
 		fixPrint(16, 6, 2, 3, "Credits");
 		fixPrint(28, 8, 2, 3, "Ver. 0.1");
 		fixPrint(28, 9, 0, 3, "9/4/2022");
-		fixPrint(5, 10, 2, 3, "Code by:");
-		fixPrint(6, 12, 0, 3, "Dustin Dembrosky");
+		fixPrint(5, 9, 2, 3, "Code by:");
+		fixPrint(6, 10, 0, 3, "Dustin Dembrosky");
 		fixPrint(6, 11, 0, 3, "Artemio Urbina");
-		fixPrint(5, 13, 2, 3, "Patterns:");
-		fixPrint(6, 14, 0, 3, "Artemio Urbina");
-		fixPrint(5, 15, 2, 3, "Menu Pixel Art:");
-		fixPrint(6, 16, 0, 3, "Asher");
-		fixPrint(5, 17, 2, 3, "Donna:");
-		fixPrint(6, 18, 0, 3, "Jose Salot");
-		fixPrint(5, 19, 2, 3, "Neo Geo SDK");
-		fixPrint(6, 20, 0, 3, "ngdevkit (Damien Ciabrini)");
-		fixPrint(5, 21, 2, 3, "Info on using this test suite:");
-		fixPrint(6, 22, 0, 3, "http://junkerhq.net/240p");
+		fixPrint(5, 12, 2, 3, "Patterns:");
+		fixPrint(6, 13, 0, 3, "Artemio Urbina");
+		fixPrint(5, 14, 2, 3, "Menu Pixel Art:");
+		fixPrint(6, 15, 0, 3, "Asher");
+		fixPrint(5, 16, 2, 3, "Donna:");
+		fixPrint(6, 17, 0, 3, "Jose Salot");
+		fixPrint(5, 18, 2, 3, "Neo Geo SDK");
+		fixPrint(6, 19, 0, 3, "NeoDev (Jeff Kurtz)");
+		fixPrint(5, 20, 2, 3, "Graphics Library");
+		fixPrint(6, 21, 0, 3, "DATlib (HPMAN)");
+		fixPrint(5, 22, 2, 3, "Info on using this test suite:");
+		fixPrint(6, 23, 0, 3, "http://junkerhq.net/240p");
 
-		if (p1e & JOY_B)
+		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
 		}
-
-		//if (pressedButton & CNT_START1)
-		//{
-		//	done = 1;
-		//}
-
 	}
 	return;
 }
