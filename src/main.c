@@ -620,6 +620,25 @@ int menu_main()
 	}
 }
 
+void mvs_state()
+{
+	if(volMEMBYTE(BIOS_USER_REQS) == 0) // user_request=0 is called by BIOS
+	{
+		waitVBlank();
+		memset(&bkp_data, 0x00, sizeof(bkp_ram_info));
+		__asm__ ("jmp 0xc00444 \n"); // BIOSF_SYSTEM_RETURN - return to bios control
+	}
+	
+	// If DEMO MODE or TITLE MODE grab the control
+	if(volMEMBYTE(BIOS_USER_REQS) == 2 || volMEMBYTE(BIOS_USER_REQS) == 3)
+	{
+		// Enter game mode ATM in MVS, will add demo cyles later
+		if(volMEMBYTE(SOFT_DIP_1))
+			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+		menu_main();
+	}
+}
+
 int	main(void)
 {
 	check_systype();
@@ -630,13 +649,11 @@ int	main(void)
 	palJobPut(0,8,fixPalettes);
 	//jobMeterSetup(true);
 	SCClose();
-	waitVBlank();
 	
-	// Enter game mode ATM in MVS, will add demo cyles later
 	if(isMVS)
-		volMEMBYTE(BIOS_USER_MODE) = 0x02;
-		
-	menu_main();
+		mvs_state();
+	else
+		menu_main();
 	
 	return 0;
 }

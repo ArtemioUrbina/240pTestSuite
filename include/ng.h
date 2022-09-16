@@ -39,11 +39,11 @@ extern BYTE isMVS, is4S, is6S;
 #define fontColorGreen 2
 #define fontColorBlue  3
 
-#define REG_SYSTYPE (volatile BYTE*)0x300081
+#define REG_SYSTYPE 0x300081
 #define MVS_MULTI	0x40
 #define MVS_TEST_B	0x80
 
-#define REG_STATUS_A (volatile BYTE*)0x320001
+#define REG_STATUS_A 0x320001
 #define P1_CREDIT	0x01
 #define P2_CREDIT	0x02
 #define MVS_SERV_B	0x04
@@ -53,7 +53,7 @@ extern BYTE isMVS, is4S, is6S;
 #define RTC_TIME	0x40
 #define RTC_DATA	0x80
 
-#define REG_STATUS_B (volatile BYTE*)0x380000
+#define REG_STATUS_B 0x380000
 #define MVS_P1_STRT	0x01
 #define MVS_SEL1	0x02
 #define MVS_P2_STRT	0x04
@@ -63,5 +63,9 @@ extern BYTE isMVS, is4S, is6S;
 #define MC_PTRCT	0x40
 #define MVS_OR_AES	0x80
 
-#define BIOS_USER_MODE (volatile BYTE*)0x10FDAF
+#define BIOS_USER_REQS 0x10FDAE
+#define BIOS_USER_MODE 0x10FDAF
+
+#define SOFT_DIP_1	0x10FD8A
+
 #endif /* _NG_H_ */
