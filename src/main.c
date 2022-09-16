@@ -515,6 +515,8 @@ void credits()
 
 	while (!done)
 	{
+		int y = 8;
+		
 		SCClose();
 		waitVBlank();
 		
@@ -524,21 +526,23 @@ void credits()
 		fixPrint(16, 6, 2, 3, "Credits");
 		fixPrint(28, 8, 2, 3, "Ver. 0.1");
 		fixPrint(28, 9, 0, 3, "9/4/2022");
-		fixPrint(5, 9, 2, 3, "Code by:");
-		fixPrint(6, 10, 0, 3, "Dustin Dembrosky");
-		fixPrint(6, 11, 0, 3, "Artemio Urbina");
-		fixPrint(5, 12, 2, 3, "Patterns:");
-		fixPrint(6, 13, 0, 3, "Artemio Urbina");
-		fixPrint(5, 14, 2, 3, "Menu Pixel Art:");
-		fixPrint(6, 15, 0, 3, "Asher");
-		fixPrint(5, 16, 2, 3, "Donna:");
-		fixPrint(6, 17, 0, 3, "Jose Salot");
-		fixPrint(5, 18, 2, 3, "Neo Geo SDK");
-		fixPrint(6, 19, 0, 3, "NeoDev (Jeff Kurtz)");
-		fixPrint(5, 20, 2, 3, "Graphics Library");
-		fixPrint(6, 21, 0, 3, "DATlib (HPMAN)");
-		fixPrint(5, 22, 2, 3, "Info on using this test suite:");
-		fixPrint(6, 23, 0, 3, "http://junkerhq.net/240p");
+		fixPrint(5, y++, 2, 3, "Code by:");
+		fixPrint(6, y++, 0, 3, "Dustin Dembrosky");
+		fixPrint(6, y++, 0, 3, "Artemio Urbina");
+		fixPrint(5, y++, 2, 3, "Monoscope:");
+		fixPrint(6, y++, 0, 3, "Keith Raney");
+		fixPrint(5, y++, 2, 3, "Donna:");
+		fixPrint(6, y++, 0, 3, "Jose Salot");
+		fixPrint(5, y++, 2, 3, "Menu Pixel Art:");
+		fixPrint(6, y++, 0, 3, "Asher");
+		fixPrint(5, y++, 2, 3, "Neo Geo SDK");
+		fixPrint(6, y++, 0, 3, "NeoDev (Jeff Kurtz)");
+		fixPrint(5, y++, 2, 3, "Graphics Library");
+		fixPrint(6, y++, 0, 3, "DATlib (HPMAN)");
+		fixPrint(5, y++, 2, 3, "Flashcart provided by:");
+		fixPrint(6, y++, 0, 3, "MobiusStripTech & Jose Cruz");
+		fixPrint(5, y++, 2, 3, "Info on using this test suite:");
+		fixPrint(6, y, 0, 3, "http://junkerhq.net/240p");
 
 		if (p1e & JOY_B || ps & P1_START)
 		{
@@ -548,17 +552,9 @@ void credits()
 	return;
 }
 
-int	main(void)
+int menu_main()
 {
 	int curse = 1, cursemax = 6, redraw = 1;
-
-	check_systype();
-
-	clearFixLayer();
-	backgroundColor(0x7bbb);
-	initGfx();
-	palJobPut(0,8,fixPalettes);
-	//jobMeterSetup(true);
 
 	draw_background_w_gil();
 
@@ -622,5 +618,25 @@ int	main(void)
 			redraw = 1;
 		}
 	}
+}
+
+int	main(void)
+{
+	check_systype();
+
+	clearFixLayer();
+	backgroundColor(0x7bbb);
+	initGfx();
+	palJobPut(0,8,fixPalettes);
+	//jobMeterSetup(true);
+	SCClose();
+	waitVBlank();
+	
+	// Enter game mode ATM in MVS, will add demo cyles later
+	if(isMVS)
+		volMEMBYTE(BIOS_USER_MODE) = 0x02;
+		
+	menu_main();
+	
 	return 0;
 }
