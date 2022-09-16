@@ -1469,20 +1469,15 @@ void SegaCDMenu()
 	return;
 }
 
-void PrintPCMResults(u8 value, u16 result, u16 address)
+void PrintPCMResults(u8 value, u16 result, u16 address, u8 y)
 {
-	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
-	ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 4, 7);
 	if(result == 0)
 	{
-		ShowMessageAndData("Memory Failed w/:", value, 2, PAL1, 9, 12);
-		ShowMessageAndData("address/8bit:", address, 4, PAL1, 9, 13);
+		ShowMessageAndData("Memory Failed w/:", value, 2, PAL1, 11, y++);
+		ShowMessageAndData("address/8bit:", address, 4, PAL1, 13, y);
 	}
 	else
-	{
-		ShowMessageAndData("Memory OK w/:", value, 2, PAL1, 9, 12);
-	}
-	WaitKey(NULL);
+		ShowMessageAndData("Memory OK w/:", value, 2, PAL1, 11, y);
 }
 
 u8 PCMRAMCheck()
@@ -1497,17 +1492,22 @@ u8 PCMRAMCheck()
 	}
 #endif
 
+	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+	ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 5, 4);
+	
 	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address);
-	PrintPCMResults(0x55, result, address);
+	PrintPCMResults(0x55, result, address, 10);
 	
 	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xAA, &address);
-	PrintPCMResults(0xAA, result, address);
+	PrintPCMResults(0xAA, result, address, 12);
 	
 	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xFF, &address);
-	PrintPCMResults(0xFF, result, address);
+	PrintPCMResults(0xFF, result, address, 14);
 	
 	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x00, &address);
-	PrintPCMResults(0x00, result, address);
+	PrintPCMResults(0x00, result, address, 16);
+	
+	WaitKey(NULL);
 	
 #ifndef SEGACD
 	resetSegaCD();
@@ -1548,39 +1548,44 @@ uint8_t segacd_init()
 	// Clear the screen
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 	
+	VDP_drawTextBG(APLAN, "Sega CD PCM RAM Test", TILE_ATTR(PAL1, 0, 0, 0), 10, 4);
 	// Detect the address of the SCD BIOS
 	segacd_bios_addr = DetectSCDBIOS(0x400000);
 	if (!segacd_bios_addr)
 	{
-		ShowMessageAndData("SCD BIOS not found", 0, 0, PAL1, 10, 10);
+		ShowMessageAndData("SCD BIOS not found", 0, 0, PAL0, 10, 10);
 		WaitKey(NULL);
 		return 0;
 	}
-	ShowMessageAndData("SCD BIOS Detected at", (uint32_t)segacd_bios_addr, 8, PAL1, 5, ypos++);
+	ShowMessageAndData("SCD BIOS Detected at", (uint32_t)segacd_bios_addr, 8, PAL1, 4, ypos++);
 	
 	// Prepare for loading the data
+	VDP_drawTextBG(APLAN, "Sending Reset to SCD", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
 	resetSegaCD();
+	VDP_waitVSync();
 	
     /*
      * Decompress Sub-CPU BIOS to Program RAM at 0x00000
      */
-	ShowMessageAndData("Decompressing Sub-CPU BIOS", 0, 0, PAL1, 5, ypos++);
+	VDP_drawTextBG(APLAN, "Decompressing SCD BIOS", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
     write_word(0xA12002, 0x0002); // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
     memset((void *)0x420000, 0, (uint8_t)0x20000); // clear program ram first bank - needed for the LaserActive
 	Kos_Decomp(segacd_bios_addr, (uint8_t *)0x420000);
+	VDP_waitVSync();
 
     /*
      * Copy Sub-CPU program to Program RAM at 0x06000
      */
-	ShowMessageAndData("Copying Sub-CPU Program", sizeof(pcmcheck_scd), 4, PAL1, 5, ypos++);
+	ShowMessageAndData("Copying SCD Program", sizeof(pcmcheck_scd), 4, PAL1, 4, ypos++);
 	memcpy((void *)0x426000, pcmcheck_scd, sizeof(pcmcheck_scd));
 	if (memcmp((void *)0x426000, pcmcheck_scd, sizeof(pcmcheck_scd)))
     {
-		ShowMessageAndData("Failed Program RAM", (uint32_t)0x420000, 8, PAL1, 5, ypos++);
+		ShowMessageAndData("Failed Program RAM", (uint32_t)0x420000, 8, PAL0, 4, ypos++);
 		WaitKey(NULL);
 		resetSegaCD();
         return 0;
     }
+	VDP_waitVSync();
 	
     write_byte(0xA12001, 0x01); // clear bus request, deassert reset - allow CD Sub-CPU to run
 	write_byte(0xA1200E, 0x00); // clear main comm port
@@ -1589,13 +1594,15 @@ uint8_t segacd_init()
 		write_byte(0xA12001, 0x01); // wait on Sub-CPU running
 		write_byte(0xA1200E, 0x00); // clear main comm port
 	}
-	ShowMessageAndData("Sub CPU Started", 0, 0, PAL1, 5, ypos++);
-	
+	VDP_drawTextBG(APLAN, "SCD CPU Started", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
+	VDP_waitVSync();
 	write_byte(0xA12010, 0x01); // clear command send (for the state machine in the SCD)
 	/*
      * Set the vertical blank handler to generate Sub-CPU level 2 ints.
      * The Sub-CPU BIOS needs these in order to run.
      */
+	VDP_drawTextBG(APLAN, "Enabling Interrupts", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
+	VDP_waitVSync();
 	segacd_int_enabled = 1;
     set_sr(0x2000); // enable interrupts
 
@@ -1607,6 +1614,7 @@ uint8_t segacd_init()
      * initialize
      */
 	
+	VDP_waitVSync();
 	timeout = 2000000;
     do
     {
@@ -1615,18 +1623,21 @@ uint8_t segacd_init()
 		{
 			if (timeout-- <= 0)
 			{
-				ShowMessageAndData("SCD failed to start!", 0, 0, PAL1, 5, ypos+3);
+				VDP_drawTextBG(APLAN, "SCD SP_Init failed", TILE_ATTR(PAL0, 0, 0, 0), 4, ypos+3);
 				WaitKey(NULL);
 				return 0;
 			}
-			ShowMessageAndData("Waiting for SP_Init", timeout, 3, PAL1, 5, ypos);
+			ShowMessageAndData("Waiting SCD SP_Init", timeout, 3, PAL0, 4, ypos);
 		}
+		else
+			ShowMessageAndData("Got SCD SP_Init in", 2000000 - timeout, 3, PAL1, 4, ypos);
 		VDP_waitVSync();
     }while(value != 0);
 	ypos ++;
 	/*
      * Wait for Sub-CPU to indicate it is ready to receive commands
      */
+	VDP_waitVSync();
 	timeout = 500;
     do
 	{
@@ -1635,15 +1646,17 @@ uint8_t segacd_init()
 		{
 			if (timeout-- <= 0)
 			{
-				ShowMessageAndData("SCD failed to start!", 0, 0, PAL1, 5, ypos+3);
+				VDP_drawTextBG(APLAN, "SCD SP_Main failed", TILE_ATTR(PAL0, 0, 0, 0), 4, ypos+3);
 				WaitKey(NULL);
 				return 0;
 			}
-			ShowMessageAndData("Waiting for SP_Main", timeout, 3, PAL1, 5, ypos);
+			ShowMessageAndData("Waiting SCD SP_Main", timeout, 3, PAL0, 4, ypos);
 		}
+		else
+			ShowMessageAndData("Got SCD SP_Main in", 500 - timeout, 3, PAL1, 4, ypos);
 		VDP_waitVSync();
 	}while (value != 0);
-	ShowMessageAndData("SCD initialized. Press a button", 0, 0, PAL1, 5, ypos+3);
+	VDP_drawTextBG(APLAN, "SCD initialized. Ready for test", TILE_ATTR(PAL0, 0, 0, 0), 5, ypos+3);
 	
 	WaitKey(NULL);
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
