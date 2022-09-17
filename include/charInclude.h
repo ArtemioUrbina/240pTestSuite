@@ -1,3 +1,12 @@
+//scrollers
+extern const scrollerInfo sonic_back;
+extern const paletteInfo sonic_back_Palettes;
+extern const scrollerInfo sonic_water;
+extern const paletteInfo sonic_water_Palettes;
+extern const scrollerInfo sonic_floor;
+extern const paletteInfo sonic_floor_Palettes;
+extern const scrollerInfo kiki;
+extern const paletteInfo kiki_Palettes;
 
 //pictures
 extern const pictureInfo logo;
@@ -60,14 +69,6 @@ extern const pictureInfo marker_striped;
 extern const paletteInfo marker_striped_Palettes;
 extern const pictureInfo marker;
 extern const paletteInfo marker_Palettes;
-extern const pictureInfo sonic_back;
-extern const paletteInfo sonic_back_Palettes;
-extern const pictureInfo sonic_water;
-extern const paletteInfo sonic_water_Palettes;
-extern const pictureInfo sonic_floor;
-extern const paletteInfo sonic_floor_Palettes;
-extern const pictureInfo kiki;
-extern const paletteInfo kiki_Palettes;
 extern const pictureInfo check;
 extern const paletteInfo check_Palettes;
 extern const pictureInfo vertstripe;
@@ -76,3 +77,13 @@ extern const pictureInfo horzstripe;
 extern const paletteInfo horzstripe_Palettes;
 extern const pictureInfo barcode;
 extern const paletteInfo barcode_Palettes;
+extern const pictureInfo led_1x;
+extern const paletteInfo led_1x_Palettes;
+extern const pictureInfo led_2x;
+extern const paletteInfo led_2x_Palettes;
+extern const pictureInfo led_4x;
+extern const paletteInfo led_4x_Palettes;
+extern const pictureInfo led_6x;
+extern const paletteInfo led_6x_Palettes;
+extern const pictureInfo led_8x;
+extern const paletteInfo led_8x_Palettes;

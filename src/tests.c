@@ -24,12 +24,14 @@
 #include <stdio.h>
 #include <DATlib.h>
 #include <input.h>
+#include "types.h"
 #include "ng.h"
+#include "string.h"
 #include "externs.h"
 #include "tests.h"
 #include "help.h"
 
-BYTE p1,p2,ps,p1e,p2e, p1b,p2b; 
+BYTE p1,p2,ps,p1e,p2e, p1b,p2b;
 
 void vt_drop_shadow_test()
 {
@@ -215,59 +217,318 @@ void vt_lag_test()
 
 void vt_reflex_test()
 {
-	int done = 0;
-	picture image;
+	picture marker1;
+	picture marker3;
+	char str[10];
+	short speed = 1, vary = 0, clicks[10];
+	unsigned short pal = 0x0000, change = 1, loadvram = 1, psgoff = 0, usersound = 0;
+	unsigned short x = 0, y = 0, x2 = 0, y2 = 0, done = 0, variation = 1, draw = 1;
+	unsigned short pos = 0, view = 0, audio = 1, drawoffset = 0;
 
+	x = 144, y = 60, x2 = 108, y2 = 96;
+
+	backgroundColor(0x0000);
 	clearFixLayer();
+	clearSprites(1, 1);
 	clearSprites(1, 22);
-
-	pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
 
 	while (!done)
 	{
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
+		if (loadvram)
+		{
+			fixPrint(2, 23, fontColorGreen, 3, "Press the \"A\" button when the sprite");
+			fixPrint(2, 24, fontColorGreen, 3, "is aligned. A negative value means");
+			fixPrint(2, 25, fontColorGreen, 3, "you pressed \"A\" before they intersect.");
+			fixPrint(2, 26, fontColorGreen, 3, "\"B\" button toggles horz/vert");
+			fixPrint(2, 27, fontColorGreen, 3, "\"C\" button toggles audio");
+			fixPrint(2, 28, fontColorGreen, 3, "DOWN toggles random/rhythmic");
+
+			loadvram = 0;
+			draw = 1;
+
+			if (pos)
+			{
+				int i = 0;
+				unsigned short ppos = 0;
+
+				for(i = 0; i < pos; i++)
+				{
+					pal = fontColorWhite;
+
+					intToStr(clicks[i], str, 1);
+
+					if (clicks[i] == 0)
+						pal = fontColorGreen;
+					if (clicks[i] < 0)
+						pal = fontColorRed;
+
+					ppos = i + 1;
+					intToStr(ppos, str, 1);
+					fixPrint(2, i, fontColorWhite, 3, "Offset");
+					fixPrint(9, i, fontColorWhite, 3, str);
+					fixPrint(i == 9 ? 11 : 10, i, fontColorWhite, 3, ":");
+					intToStr(clicks[i], str, 1);
+					fixPrint(i == 9 ? 13 : 12, i, pal, 3, str);
+					ppos = strlen(str);
+					if (clicks[i] == 1)
+						fixPrint(pos == 9 ? 13 : 12 + ppos, i, pal, 3, " frame    ");
+					else
+						fixPrint(pos == 9 ? 13 : 12 + ppos, i, pal, 3, " frames   ");
+				}
+			}
+		}
+		
+		if (y == 96)	//  Screen Flash    
+		{
+			//if (audio && !usersound)
+				//HwMdPSGSetEnvelope(0, PSG_ENVELOPE_MIN);
+				
+			//Hw32xSetBGColor(0, 5, 5, 5);
+		}
+		
+		if (usersound)
+		{
+			//HwMdPSGSetEnvelope(0, PSG_ENVELOPE_MIN);
+			usersound = 0;
+		}
+
+		if(isMVS)
+		{
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_MANUALLAG);
+				clearSprites(1, 1);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_MANUALLAG);
+				clearSprites(1, 1);
+				draw = 1;
+			}
+		}
+
+		if (p1e & JOY_A)
+		{
+			if (change)
+			{
+				clicks[pos] = (y - 96) * speed;
+				drawoffset = 1;
+				if (clicks[pos] >= 0)
+					change = 0;
+					
+				if (audio)
+				{
+					if (clicks[pos] == 0)
+					{
+						//HwMdPSGSetChandVol(0, 0);
+						//HwMdPSGSetFrequency(0, 1000);
+						//if (psgoff == 0)
+						//	psgoff = 2;
+					}
+					else {
+						//HwMdPSGSetChandVol(0, 0);
+						//HwMdPSGSetFrequency(0, 500);
+						//if (psgoff == 0)
+						//	psgoff = 2;
+					}
+					usersound = 1;
+				}
+			}
+		}
+
 		if (p1e & JOY_B)
 		{
-			done = 1;
-			return;
+			view++;
+			if (view > 2)
+				view = 0;
+		}
+
+		if (p1e & JOY_C)
+		{
+			audio = !audio;
+			draw = 1;
+		}
+
+		if (p1e & JOY_DOWN)
+		{
+			variation = !variation;
+			if (!variation)
+				vary = 0;
+			draw = 1;
 		}
 
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (drawoffset)
 		{
-			DrawHelp(HELP_MANUALLAG);
-		}
-	}
+			unsigned short ppos = 0;
 
+			pal = fontColorWhite;
+			intToStr(clicks[pos], str, 1);
+
+			if (clicks[pos] == 0)
+				pal = fontColorGreen;
+			if (clicks[pos] < 0)
+				pal = fontColorRed;
+
+			ppos = pos + 1;
+			intToStr(ppos, str, 1);
+			fixPrint(2, pos, fontColorWhite, 3, "Offset");
+			fixPrint(9, pos, fontColorWhite, 3, str);
+			fixPrint( pos == 9 ? 11 : 10, pos, fontColorWhite, 3, ":");
+			intToStr(clicks[pos], str, 1);
+			fixPrint(pos == 9 ? 13 : 12, pos, pal, 3, str);
+			ppos = strlen(str);
+
+			if (clicks[pos] == 1)
+				fixPrint(pos == 9 ? 13 : 12 + ppos, pos, pal, 3, " frame    ");
+			else
+				fixPrint(pos == 9 ? 13 : 12 + ppos, pos, pal, 3, " frames   ");
+
+			if (clicks[pos] >= 0)
+				pos++;
+
+			if (pos > 9)
+				done = 1;
+
+			drawoffset = 0;
+		}
+
+		if (draw)
+		{
+			fixPrint(24, 0, fontColorWhite, 3, "Audio:");
+
+			if (audio)
+				fixPrint(31, 0, fontColorWhite, 3, "on ");
+			else
+				fixPrint(31, 0, fontColorWhite, 3, "off");
+
+			fixPrint(24, 1, fontColorWhite, 3, "Timing:");
+
+			if (variation)
+				fixPrint(32, 1, fontColorWhite, 3, "random  ");
+			else
+				fixPrint(32, 1, fontColorWhite, 3, "rhythmic");
+
+			draw = 0;
+		}
+
+		if (y > 132 + vary)
+		{
+			speed = -1;
+			change = 1;
+			if (variation)
+			{
+				if (random() % 2)
+					vary = random() % 7;
+				else
+					vary = -1 * random() % 7;
+			}
+		}
+
+		if (y < 60 + vary)
+		{
+			speed = 1;
+			change = 1;
+
+			if (variation)
+			{
+				if (random() % 2)
+					vary = random() % 7;
+				else
+					vary = -1 * random() % 7;
+			}
+		}
+
+		y += speed;
+		x2 += speed;
+
+		pictureInit(&marker1, &marker, 1, 16, x, 10, FLIP_NONE);
+		palJobPut(16,marker.palInfo->count,marker.palInfo->data);
+		//drawSprite(MARKER_TILE3, x, 96, 32, 32, 0, 0);
+		//drawSprite(MARKER_TILE1, x, y, 32, 32, 0, 0);
+		pictureInit(&marker3, &marker, 1, 16, x, y, FLIP_NONE);
+		palJobPut(16,marker.palInfo->count,marker.palInfo->data);
+		SCClose();
+
+		if (y == 96)								// Red on the spot
+			//cram16[2] = COLOR(31, 0, 0);
+
+		if (y == 95 || y == 97)						// Green one pixel before or after
+			//cram16[2] = COLOR(0, 31, 0);
+
+		if (y == 98 || y == 94)						// Back to white two pixels before or after
+			//cram16[2] = COLOR(31, 31, 31);
+
+		if (view == 0 || view == 2)
+			//drawSprite(MARKER_TILE1, x, y, 32, 32, 0, 0);
+		//else
+			//drawSprite(MARKER_TILE1, 320, 224, 32, 32, 0, 0);
+
+		if (view == 1 || view == 2)
+			//drawSprite(MARKER_TILE2, x2, y2, 32, 32, 0, 0);
+		///else
+			//drawSprite(MARKER_TILE2, 320, 224, 32, 32, 0, 0);
+
+		if (y == 96)								// Half the screen?
+		{
+			if (audio)
+			{
+				//HwMdPSGSetChandVol(0, 0);
+				//HwMdPSGSetFrequency(0, 1000);
+				//if (psgoff == 0)
+				//	psgoff = 2;
+			}
+
+			//Hw32xSetBGColor(0, 5, 5, 5);
+		}
+
+		//if (psgoff)
+		//{
+			//psgoff--;
+			//if (psgoff == 0)
+				//MDPSG_stop();
+		//}
+	}
 }
 
 void vt_scroll_test()
 {
 	int done = 0;
-	picture image;
+
+	int x1 = 0, y1 = -96;
+	int x2 = 0, y2 = -152;
+	int x3 = 0, y3 = 0;
+
+	scroller backScroll, waterScroll, frontScroll;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+	scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
+	palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
+
+	scrollerInit(&waterScroll, &sonic_water, 22, 17, x2, y2);
+	palJobPut(17, sonic_water.palInfo->count, sonic_water.palInfo->data);
+
+	scrollerInit(&frontScroll, &sonic_floor, 43, 18, x1, y1);
+	palJobPut(18, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
+
+	SCClose();
 
 	while (!done)
 	{
-		SCClose();
 		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
@@ -287,28 +548,56 @@ void vt_scroll_test()
 			return;
 		}
 
+		x1++;
+		x2++;
+		x3++;
+
+
+		if(x1 > 256)
+		{
+			x1 = 0;
+		}
+
+		if(x2 > 256)
+		{
+			x2 = 0;
+		}
+
+		if(x3 > 256)
+		{
+			x3 = 0;
+		}
+
 		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_HSCROLL);
 		}
-	}
 
+		scrollerSetPos(&frontScroll, x1, y1);
+		scrollerSetPos(&waterScroll, x2, y2);
+		scrollerSetPos(&backScroll, x3, y3);
+		SCClose();
+	}
 }
 
 void vt_vert_scroll_test()
 {
 	int done = 0;
-	picture image;
+
+	int x = 0, y = 0;
+
+	scroller vertScroll;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+	scrollerInit(&vertScroll, &kiki, 1, 16, x, y);
+	palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
+
+	SCClose();
 
 	while (!done)
 	{
-		SCClose();
 		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
@@ -328,12 +617,21 @@ void vt_vert_scroll_test()
 			return;
 		}
 
+		y++;
+
+		if(y > 256)
+		{
+			y = 0;
+		}
+
 		if (ps & P1_SELECT)
 		{
 			DrawHelp(HELP_HSCROLL);
 		}
-	}
 
+		scrollerSetPos(&vertScroll, x, y);
+		SCClose();
+	}
 }
 
 void vt_gridscroll_test()
@@ -502,17 +800,47 @@ void vt_checkerboard()
 
 void vt_backlitzone_test()
 {
-	int done = 0;
+	int done = 0, block = 2, x = 160, y = 112, draw = 1;
 	picture image;
 
 	clearFixLayer();
 	clearSprites(1, 22);
-
-	pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+	backgroundColor(0x0000);
 
 	while (!done)
 	{
+		if (draw)
+		{
+			switch (block)
+			{
+				case 1:
+					pictureInit(&image, &led_1x, 1, 16, x, y,FLIP_NONE);
+					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
+				break;
+
+				case 2:
+					pictureInit(&image, &led_2x, 1, 16, x, y,FLIP_NONE);
+					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
+				break;
+
+				case 3:
+					pictureInit(&image, &led_4x, 1, 16, x, y,FLIP_NONE);
+					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
+				break;
+
+				case 4:
+					pictureInit(&image, &led_6x, 1, 16, x, y,FLIP_NONE);
+					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
+				break;
+
+				case 5:
+					pictureInit(&image, &led_8x, 1, 16, x, y,FLIP_NONE);
+					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
+				break;
+			}
+			draw = 0;
+		}
+
 		SCClose();
 		waitVBlank();
 
@@ -520,25 +848,59 @@ void vt_backlitzone_test()
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if (p1e & JOY_B)
+		if (p1e & JOY_A)
 		{
-			done = 1;
-			return;
+			block++;
+			if(block > 5)
+			block = 1;
+			draw = 1;
+		}
+
+		if (p1 & JOY_UP)
+		{
+			y--;
+			draw = 1;
+		}
+
+		if (p1 & JOY_DOWN)
+		{
+			y++;
+			draw = 1;
+		}
+
+		if (p1 & JOY_RIGHT)
+		{
+			x++;
+			draw = 1;
+		}
+
+		if (p1 & JOY_LEFT)
+		{
+			x--;
+			draw = 1;
 		}
 
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if(isMVS)
 		{
-			DrawHelp(HELP_LED);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_LED);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_LED);
+				draw = 1;
+			}
 		}
 	}
-
 }
 
 void at_sound_test()
@@ -743,6 +1105,143 @@ void ht_controller_test()
 	}
 }
 
+#define MAX_LOCATIONS 9
+
+void ht_memory_viewer(u32 address)
+{
+	int done = 0, frameDelay = 0, redraw = 1, docrc = 0, locpos = 1, i = 0;
+	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 0x400000, 0x402000, 0xC00000 };
+
+	backgroundColor(0x0000);
+	clearFixLayer();
+	clearSprites(1, 1);
+	clearSprites(1, 22);
+
+	for (i = 0; i < MAX_LOCATIONS; i++)
+	{
+		if (locations[i] == address)
+		{
+			locpos = i;
+			break;
+		}
+	}
+
+	while (!done)
+	{
+		if (redraw)
+		{
+			int i = 0, j = 0;
+			u8 *mem = NULL;
+			char buffer[10];
+
+			mem = (u8*)address;
+
+			//if (docrc)
+			//	crc = CalculateCRC(address, 0x1C0);
+
+			intToHex(address, buffer, 8);
+			fixPrint(32, 2, fontColorRed, 3, buffer);
+			intToHex(address+448, buffer, 8);
+			fixPrint(32, 29, fontColorRed, 3, buffer);
+
+			//if (docrc)
+			//{
+			//	intToHex(crc, buffer, 8);
+			//	fixPrint(32, 14, fontColorGreen, 3, buffer);
+			//}
+
+			for (i = 0; i < 30; i++)
+			{
+				for (j = 0; j < 16; j++)
+				{
+					intToHex(mem[i*16+j], buffer, 2);
+					fixPrint(j*2, i, fontColorWhite, 3, buffer);
+				}
+			}
+			redraw = 0;
+		}
+
+		SCClose();
+		waitVBlank();
+
+		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (ps & P1_START)
+		{
+			done = 1;
+			clearFixLayer();
+			return;
+		}
+
+		if (p1e & JOY_A)
+		{
+			docrc = !docrc;
+			redraw = 1;
+		}
+
+		if (p1e & JOY_B)
+		{
+			locpos ++;
+			if (locpos == MAX_LOCATIONS)
+				locpos = 0;
+			address = locations[locpos];
+			redraw = 1;
+		}
+
+		if(isMVS)
+		{
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_MEMVIEW);
+				clearSprites(1, 1);
+				redraw = 1;
+			}
+		} else
+		{
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_MEMVIEW);
+				clearSprites(1, 1);
+				redraw = 1;
+			}
+		}
+
+		if (p1e & JOY_LEFT)
+		{
+			if (address >= 0x1C0)
+				address -= 0x1C0;
+			else
+				address = 0;
+
+			redraw = 1;
+		}
+
+		if (p1e & JOY_RIGHT)
+		{
+			address += 0x1C0;	
+			redraw = 1;
+		}
+
+		if (p1e & JOY_UP)
+		{
+			if (address >= 0x10000)
+				address -= 0x10000;
+			else
+				address = 0;
+
+			redraw = 1;
+		}
+
+		if (p1e & JOY_DOWN)
+		{
+			address += 0x10000;
+			redraw = 1;
+		}
+	}
+	return;
+}
+
 void ht_test_ng_ram()
 {
 	int done = 0;
@@ -768,7 +1267,5 @@ void ht_test_ng_ram()
 			done = 1;
 			return;
 		}
-
 	}
-
 }

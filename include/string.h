@@ -20,27 +20,25 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _TESTS_H_
-#define _TESTS_H_
+#ifndef _STRING_H_
+#define _STRING_H_
 
 #include "types.h"
 
-void vt_drop_shadow_test(void);
-void vt_striped_sprite_test(void);
-void vt_lag_test(void);
-void vt_reflex_test(void);
-void vt_scroll_test(void);
-void vt_vert_scroll_test(void);
-void vt_gridscroll_test(void);
-void vt_horizontal_stripes(void);
-void vt_vertical_stripes(void);
-void vt_checkerboard(void);
-void vt_backlitzone_test(void);
-void at_sound_test(void);
-void at_audiosync_test(void);
-void ht_controller_test(void);
-void ht_memory_viewer(u32 address);
-//void ht_check_ng_bios_crc(u32 address);
-void ht_test_ng_ram();
+#define isdigit(c)	((c) >= '0' && (c) <= '9')
 
-#endif /* _TESTS_H_ */
+size_t strlen(const char *str);
+
+void setRandomSeed(u16 seed);
+u16 random();
+
+//char* strcpy(char *dest, const char *src);
+//char* strcat(char *dest, const char *src);
+//void* memcpy (volatile void *dest, const void *src, size_t len);
+//void myMemSet(void* str, char ch, size_t n);
+
+u32 intToHex(u32 value, char *str, u16 minsize);
+u16 intToStr(s32 value, char *str, u16 minsize);
+u16 uintToStr(u32 value, char *str, u16 minsize);
+
+#endif /* _STRING_H_ */

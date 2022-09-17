@@ -14,4 +14,8 @@
 		<file>gfx\fix\font0.png</file>
 	</fix>
 	
+	<fix bank="3" id="fix_bars">
+		<file>gfx\fix\bars.png</file>
+	</fix>
+
 </chardata>

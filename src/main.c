@@ -58,6 +58,7 @@ static const ushort fixPalettes[]= {
 	0x8000, 0xbad3, 0x0111, 0x09c0, 0xe7b0, 0xc580, 0xe250, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
 	0x8000, 0xefb8, 0x0111, 0xde96, 0x3c75, 0x2950, 0x4720, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
 	0x8000, 0x8444, 0x0111, 0xf555, 0xf666, 0x7777, 0x8888, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	0x8000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 };
 
 void draw_background_w_gil()
@@ -300,7 +301,7 @@ void menu_vt()
 				break;
 
 				case 5:
-					vt_scroll_test();
+					vt_vert_scroll_test();
 				break;
 
 				case 6:
@@ -464,7 +465,7 @@ void menu_ht()
 				break;
 
 				case 3:
-					//ht_memory_viewer(1);
+					ht_memory_viewer(1);
 				break;
 
 				case 4:
@@ -501,7 +502,7 @@ void credits()
 	{
 		SCClose();
 		waitVBlank();
-		
+
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
@@ -535,7 +536,6 @@ void credits()
 int	main(void)
 {
 	int curse = 1, cursemax = 6, redraw = 1;
-
 	check_systype();
 
 	clearFixLayer();
@@ -543,9 +543,8 @@ int	main(void)
 	initGfx();
 	palJobPut(0,8,fixPalettes);
 	//jobMeterSetup(true);
-
 	draw_background_w_gil();
-
+	
 	while(1)
 	{
 		if(redraw)

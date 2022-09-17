@@ -97,18 +97,18 @@
   <pict id="marker">
     <file>gfx\marker.png</file>
   </pict>
-  <pict id="sonic_back">
+  <scrl id="sonic_back">
     <file>gfx\sonic_back.png</file>
-  </pict>
-  <pict id="sonic_water">
+  </scrl>
+  <scrl id="sonic_water">
     <file>gfx\sonic_water.png</file>
-  </pict>
-  <pict id="sonic_floor">
+  </scrl>
+  <scrl id="sonic_floor">
     <file>gfx\sonic_floor.png</file>
-  </pict>
-  <pict id="kiki">
+  </scrl>
+  <scrl id="kiki">
     <file>gfx\kiki.png</file>
-  </pict>
+  </scrl>
   <pict id="check">
     <file>gfx\check.png</file>
   </pict>
@@ -120,5 +120,20 @@
   </pict>
   <pict id="barcode">
     <file>gfx\barcode.png</file>
+  </pict>
+  <pict id="led_1x">
+    <file>gfx\led_1x.png</file>
+  </pict>
+  <pict id="led_2x">
+    <file>gfx\led_2x.png</file>
+  </pict>
+  <pict id="led_4x">
+    <file>gfx\led_4x.png</file>
+  </pict>
+  <pict id="led_6x">
+    <file>gfx\led_6x.png</file>
+  </pict>
+  <pict id="led_8x">
+    <file>gfx\led_8x.png</file>
   </pict>
 </chardata>

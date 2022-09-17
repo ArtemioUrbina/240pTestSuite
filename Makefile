@@ -57,7 +57,8 @@ OBJS = \
 	src/help.o \
 	src/charMaps.o \
 	src/charPals.o \
-	src/fixPals.o
+	src/fixPals.o \
+	src/string.o
 LIBS = -lDATlib -lprocess -lc -lgcc
 
 #####################

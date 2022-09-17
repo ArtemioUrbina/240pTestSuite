@@ -539,7 +539,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 				case 1:
-					fixPrint(12, 6, fontColorGreen, 3, "BACKLIT TEST");
+					fixPrint(14, 6, fontColorGreen, 3, "BACKLIT TEST");
 
 					fixPrint(4, 9, fontColorWhite, 3, "This test allows you to check");
 					fixPrint(4, 10, fontColorWhite, 3, "how the display's backlit works");
@@ -628,7 +628,7 @@ void DrawHelp(int option)
 				fixPrint("224p.", 4, 114, fontColorWhite); */
 				break;
 			case HELP_AUDIOSYNC:
-				fixPrint(14, 6, fontColorGreen, 3, "AUDIO SYNC TEST");
+				fixPrint(11, 6, fontColorGreen, 3, "AUDIO SYNC TEST");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This test flashes the whole");
 				fixPrint(4, 10, fontColorWhite, 3, "screen white for 2 frames,");
@@ -642,7 +642,7 @@ void DrawHelp(int option)
 				fixPrint(4, 18, fontColorWhite, 3, "Press A to start/stop the test.");
 				break;
 			case HELP_CONTRAST:
-				fixPrint(11, 6, fontColorGreen, 3, "PLUGE CONTRAST");
+				fixPrint(12, 6, fontColorGreen, 3, "PLUGE CONTRAST");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This sub test fills the screen");
 				fixPrint(4, 10, fontColorWhite, 3, "with a pattern. By default it");
@@ -656,7 +656,7 @@ void DrawHelp(int option)
 				fixPrint(4, 17, fontColorWhite, 3, "The C button returns to PLUGE.");
 				break;
 			case HELP_MEMVIEW:
-				fixPrint(11, 6, fontColorGreen, 3, "MEMORY VIEWER");
+				fixPrint(13, 6, fontColorGreen, 3, "MEMORY VIEWER");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This shows selected regions of");
 				fixPrint(4, 10, fontColorWhite, 3, "the main CPU memory map.");

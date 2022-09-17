@@ -20,27 +20,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _TESTS_H_
-#define _TESTS_H_
+#ifndef _TYPES_H_
+#define _TYPES_H_
 
-#include "types.h"
+#include <stdlib.h>
+//#include <limits.h>
 
-void vt_drop_shadow_test(void);
-void vt_striped_sprite_test(void);
-void vt_lag_test(void);
-void vt_reflex_test(void);
-void vt_scroll_test(void);
-void vt_vert_scroll_test(void);
-void vt_gridscroll_test(void);
-void vt_horizontal_stripes(void);
-void vt_vertical_stripes(void);
-void vt_checkerboard(void);
-void vt_backlitzone_test(void);
-void at_sound_test(void);
-void at_audiosync_test(void);
-void ht_controller_test(void);
-void ht_memory_viewer(u32 address);
-//void ht_check_ng_bios_crc(u32 address);
-void ht_test_ng_ram();
+typedef unsigned char u8;
+typedef unsigned short int u16;
+typedef unsigned long int u32;
 
-#endif /* _TESTS_H_ */
+typedef signed char s8;
+typedef signed short int s16;
+typedef signed long int s32;
+
+typedef volatile unsigned char vu8;
+typedef volatile unsigned short int vu16;
+typedef volatile unsigned long int vu32;
+
+typedef volatile signed char v8;
+typedef volatile signed short int v16;
+typedef volatile signed long int v32;
+
+typedef s32 fix32;
+
+#endif /* _TYPES_H_ */
