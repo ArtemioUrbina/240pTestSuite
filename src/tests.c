@@ -218,12 +218,14 @@ void vt_lag_test()
 void vt_reflex_test()
 {
 	picture marker1;
+	picture marker2;
 	picture marker3;
+	picture background;
 	char str[10];
 	short speed = 1, vary = 0, clicks[10];
-	unsigned short pal = 0x0000, change = 1, loadvram = 1, psgoff = 0, usersound = 0;
-	unsigned short x = 0, y = 0, x2 = 0, y2 = 0, done = 0, variation = 1, draw = 1;
-	unsigned short pos = 0, view = 0, audio = 1, drawoffset = 0;
+	u16 pal = 0x0000, change = 1, loadvram = 1, psgoff = 0, usersound = 0;
+	u16 x = 0, y = 0, x2 = 0, y2 = 0, done = 0, variation = 1, draw = 1;
+	u16 pos = 0, view = 0, audio = 1, drawoffset = 0;
 
 	x = 144, y = 60, x2 = 108, y2 = 96;
 
@@ -270,31 +272,30 @@ void vt_reflex_test()
 
 					ppos = i + 1;
 					intToStr(ppos, str, 1);
-					fixPrint(2, i, fontColorWhite, 3, "Offset");
-					fixPrint(9, i, fontColorWhite, 3, str);
-					fixPrint(i == 9 ? 11 : 10, i, fontColorWhite, 3, ":");
+					fixPrint(2, i+2, fontColorWhite, 3, "Offset");
+					fixPrint(9, i+2, fontColorWhite, 3, str);
+					fixPrint(i == 9 ? 11 : 10, i+2, fontColorWhite, 3, ":");
 					intToStr(clicks[i], str, 1);
-					fixPrint(i == 9 ? 13 : 12, i, pal, 3, str);
+					fixPrint(i == 9 ? 13 : 12, i+2, pal, 3, str);
 					ppos = strlen(str);
 					if (clicks[i] == 1)
-						fixPrint(pos == 9 ? 13 : 12 + ppos, i, pal, 3, " frame    ");
+						fixPrint(pos == 9 ? 13 : 12 + ppos, i+2, pal, 3, " frame    ");
 					else
-						fixPrint(pos == 9 ? 13 : 12 + ppos, i, pal, 3, " frames   ");
+						fixPrint(pos == 9 ? 13 : 12 + ppos, i+2, pal, 3, " frames   ");
 				}
 			}
 		}
 		
 		if (y == 96)	//  Screen Flash    
 		{
-			//if (audio && !usersound)
-				//HwMdPSGSetEnvelope(0, PSG_ENVELOPE_MIN);
+			// Todo: Add beep sound here
 				
-			//Hw32xSetBGColor(0, 5, 5, 5);
+			// Todo: Flash screen here
 		}
 		
 		if (usersound)
 		{
-			//HwMdPSGSetEnvelope(0, PSG_ENVELOPE_MIN);
+			// Todo: turn sound off here
 			usersound = 0;
 		}
 
@@ -304,6 +305,7 @@ void vt_reflex_test()
 			{
 				DrawHelp(HELP_MANUALLAG);
 				clearSprites(1, 1);
+				loadvram = 1;
 				draw = 1;
 			}
 		} else { 
@@ -311,6 +313,7 @@ void vt_reflex_test()
 			{
 				DrawHelp(HELP_MANUALLAG);
 				clearSprites(1, 1);
+				loadvram = 1;
 				draw = 1;
 			}
 		}
@@ -328,16 +331,10 @@ void vt_reflex_test()
 				{
 					if (clicks[pos] == 0)
 					{
-						//HwMdPSGSetChandVol(0, 0);
-						//HwMdPSGSetFrequency(0, 1000);
-						//if (psgoff == 0)
-						//	psgoff = 2;
+						// Todo: Add beep sound here
 					}
 					else {
-						//HwMdPSGSetChandVol(0, 0);
-						//HwMdPSGSetFrequency(0, 500);
-						//if (psgoff == 0)
-						//	psgoff = 2;
+						// Todo: Add beep sound here
 					}
 					usersound = 1;
 				}
@@ -384,17 +381,17 @@ void vt_reflex_test()
 
 			ppos = pos + 1;
 			intToStr(ppos, str, 1);
-			fixPrint(2, pos, fontColorWhite, 3, "Offset");
-			fixPrint(9, pos, fontColorWhite, 3, str);
-			fixPrint( pos == 9 ? 11 : 10, pos, fontColorWhite, 3, ":");
+			fixPrint(2, pos+2, fontColorWhite, 3, "Offset");
+			fixPrint(9, pos+2, fontColorWhite, 3, str);
+			fixPrint( pos == 9 ? 11 : 10, pos+2, fontColorWhite, 3, ":");
 			intToStr(clicks[pos], str, 1);
-			fixPrint(pos == 9 ? 13 : 12, pos, pal, 3, str);
+			fixPrint(pos == 9 ? 13 : 12, pos+2, pal, 3, str);
 			ppos = strlen(str);
 
 			if (clicks[pos] == 1)
-				fixPrint(pos == 9 ? 13 : 12 + ppos, pos, pal, 3, " frame    ");
+				fixPrint(pos == 9 ? 13 : 12 + ppos, pos+2, pal, 3, " frame    ");
 			else
-				fixPrint(pos == 9 ? 13 : 12 + ppos, pos, pal, 3, " frames   ");
+				fixPrint(pos == 9 ? 13 : 12 + ppos, pos+2, pal, 3, " frames   ");
 
 			if (clicks[pos] >= 0)
 				pos++;
@@ -407,20 +404,17 @@ void vt_reflex_test()
 
 		if (draw)
 		{
-			fixPrint(24, 0, fontColorWhite, 3, "Audio:");
-
+			fixPrint(24, 2, fontColorWhite, 3, "Audio:");
 			if (audio)
-				fixPrint(31, 0, fontColorWhite, 3, "on ");
+				fixPrint(31, 2, fontColorWhite, 3, "on ");
 			else
-				fixPrint(31, 0, fontColorWhite, 3, "off");
+				fixPrint(31, 2, fontColorWhite, 3, "off");
 
-			fixPrint(24, 1, fontColorWhite, 3, "Timing:");
-
+			fixPrint(24, 3, fontColorWhite, 3, "Timing:");
 			if (variation)
-				fixPrint(32, 1, fontColorWhite, 3, "random  ");
+				fixPrint(32, 3, fontColorWhite, 3, "random  ");
 			else
-				fixPrint(32, 1, fontColorWhite, 3, "rhythmic");
-
+				fixPrint(32, 3, fontColorWhite, 3, "rhythmic");
 			draw = 0;
 		}
 
@@ -454,52 +448,151 @@ void vt_reflex_test()
 		y += speed;
 		x2 += speed;
 
-		pictureInit(&marker1, &marker, 1, 16, x, 10, FLIP_NONE);
+		pictureInit(&marker1, &marker, 1, 16, x, 96, FLIP_NONE);
 		palJobPut(16,marker.palInfo->count,marker.palInfo->data);
-		//drawSprite(MARKER_TILE3, x, 96, 32, 32, 0, 0);
-		//drawSprite(MARKER_TILE1, x, y, 32, 32, 0, 0);
-		pictureInit(&marker3, &marker, 1, 16, x, y, FLIP_NONE);
+
+		pictureInit(&marker3, &marker, 5, 16, x, y, FLIP_NONE);
 		palJobPut(16,marker.palInfo->count,marker.palInfo->data);
-		SCClose();
 
 		if (y == 96)								// Red on the spot
-			//cram16[2] = COLOR(31, 0, 0);
+			// Todo: Palette Red Here
 
 		if (y == 95 || y == 97)						// Green one pixel before or after
-			//cram16[2] = COLOR(0, 31, 0);
+			// Todo: Palette Green Here
 
 		if (y == 98 || y == 94)						// Back to white two pixels before or after
-			//cram16[2] = COLOR(31, 31, 31);
+			// Todo: Palette White Here
 
 		if (view == 0 || view == 2)
-			//drawSprite(MARKER_TILE1, x, y, 32, 32, 0, 0);
-		//else
-			//drawSprite(MARKER_TILE1, 320, 224, 32, 32, 0, 0);
-
+		{
+			pictureInit(&marker3, &marker, 5, 16, x, y, FLIP_NONE);
+			palJobPut(16,marker.palInfo->count,marker.palInfo->data);
+		} else {
+			pictureInit(&marker3, &marker, 5, 16, 320, 224, FLIP_NONE);
+			palJobPut(16,marker.palInfo->count,marker.palInfo->data);
+		}
 		if (view == 1 || view == 2)
-			//drawSprite(MARKER_TILE2, x2, y2, 32, 32, 0, 0);
-		///else
-			//drawSprite(MARKER_TILE2, 320, 224, 32, 32, 0, 0);
-
-		if (y == 96)								// Half the screen?
+		{
+			pictureInit(&marker2, &marker, 9, 16, x2, y2, FLIP_NONE);
+			palJobPut(16,marker.palInfo->count,marker.palInfo->data);
+		} else {
+			pictureInit(&marker2, &marker, 9, 16, 320, 224, FLIP_NONE);
+			palJobPut(16,marker.palInfo->count,marker.palInfo->data);
+		}
+		if (y == 96)		// Half the screen?
 		{
 			if (audio)
 			{
-				//HwMdPSGSetChandVol(0, 0);
-				//HwMdPSGSetFrequency(0, 1000);
-				//if (psgoff == 0)
-				//	psgoff = 2;
+				// Todo: Beep here
+				if (psgoff == 0)
+					psgoff = 2;
 			}
 
-			//Hw32xSetBGColor(0, 5, 5, 5);
+			// Todo: Screen flash here
 		}
 
 		//if (psgoff)
 		//{
-			//psgoff--;
-			//if (psgoff == 0)
-				//MDPSG_stop();
+		//	psgoff--;
+		//	if (psgoff == 0)
+				// Todo: Stop sound
 		//}
+	}
+
+	if (pos > 9)
+	{
+		int totald = 0, cnt, tot;
+		u16 total = 0, count = 0, c = 0;
+
+		pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
+		palJobPut(16,back.palInfo->count,back.palInfo->data);
+		clearFixLayer();
+		SCClose();
+
+		for(c = 0; c < 10; c++)
+		{
+			if (clicks[c] != 0xFF)
+			{
+				intToStr(clicks[c], str, 1);
+
+				pal = fontColorWhite;
+				if (clicks[c] == 0)
+					pal = fontColorRed;
+
+				if (clicks[c] < 0)
+					pal = fontColorGreen;
+
+				if (clicks[c] >= 0)
+				{
+					total += clicks[c];
+					count++;
+				}
+			}
+			fixPrint(10, c + 9, pal, 3, str);
+		}
+
+		fixPrint(8, 13, fontColorGreen, 3, "+");
+
+		if (count > 0)
+		{
+			u16 h = 10, v = 20;
+			//fix32 framerate = MARS_VDP_DISPMODE & MARS_NTSC_FORMAT ? FIX32(16.6884) : FIX32(20.1196);
+			fix32 framerate = FIX32(16.6884);
+			fixPrint(h - 2, v++, fontColorWhite, 3, "----");
+
+			cnt = intToFix32(count);
+			tot = intToFix32(total);
+
+			intToStr(total, str, 1);
+			fixPrint(h, v, fontColorWhite, 3, str);
+			h += strlen(str);
+			fixPrint(h++, v, fontColorGreen, 3, "/");
+
+			intToStr(count, str, 1);
+			fixPrint(h, v, fontColorWhite, 3, str);
+			h += strlen(str);
+			fixPrint(h++, v, fontColorGreen, 3, "=");
+
+			totald = fix32Div(tot, cnt);
+			fix32ToStr(totald, str, 4);
+			fixPrint(h, v, fontColorWhite, 3, str);
+			h += strlen(str);
+			h -= 2;
+			fixPrint(h, v, fontColorWhite, 3, "frames");
+			fixPrint(5, (++v)+1, fontColorWhite, 3, "These are your reflexes, not a");
+			fixPrint(5, (++v)+1, fontColorWhite, 3, "lag test. A frame is");
+			fix32ToStr(framerate, str, 6);
+			fixPrint(26, v+1, fontColorWhite, 3, str);
+			fixPrint(32, v+1, fontColorWhite, 3, "ms.");
+
+			h = 14, v = 14;
+			cnt = fix32Mul(totald, framerate);
+			fix32ToStr(cnt, str, 2);
+			fixPrint(h, v, fontColorRed, 3, str);
+			h += strlen(str);
+			fixPrint(h, v, fontColorWhite, 3, " milliseconds");
+
+			if (total < 5)
+				fixPrint(14, 17, fontColorGreen, 3, "EXCELLENT REFLEXES!");
+
+			if (total == 0)
+				fixPrint(14, 17, fontColorGreen, 3, "INCREDIBLE REFLEXES!!");
+		}
+
+		done = 0;
+
+		while (!done)
+		{
+			waitVBlank();
+
+			p1e = volMEMBYTE(P1_EDGE);
+			ps  = volMEMBYTE(PS_CURRENT);
+
+			if (p1e & JOY_B || ps & P1_START)
+			{
+				done = 1;
+			}
+		}
 	}
 }
 

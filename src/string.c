@@ -23,6 +23,7 @@
 //#include <stddef.h>
 #include <stdarg.h>
 #include "types.h"
+#include "ng.h"
 #include "string.h"
 
 #define P01 10
@@ -233,6 +234,37 @@ static u16 digits10(const u16 v)
 		if (v < P04) return 4;
 		return 5;
 	}
+}
+
+void fix32ToStr(fix32 value, char *str, u16 numdec)
+{
+	char *dst = str;
+	fix32 v = value;
+	u16 frac;
+	u16 len;
+
+	if (v < 0)
+	{
+		v = -v;
+		*dst++ = '-';
+	}
+
+	dst += uintToStr(fix32ToInt(v), dst, 1);
+	*dst++ = '.';
+
+	// get fractional part
+	frac = (((u16) fix32Frac(v)) * (u16) 1000) / ((u16) 1 << FIX32_FRAC_BITS);
+	len = uint16ToStr(frac, dst, 3);
+
+	if (len < numdec)
+	{
+		// need to add ending '0'
+		dst += len;
+		while(len++ < numdec) *dst++ = '0';
+		// mark end here
+		*dst = 0;
+	}
+	else dst[numdec] = 0;
 }
 
 void setRandomSeed(u16 seed)

@@ -445,7 +445,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 				case 1:
-					fixPrint(6, 6, fontColorGreen, 3, "TIMING & REFLEX (1/2)");
+					fixPrint(10, 6, fontColorGreen, 3, "TIMING & REFLEX (1/2)");
 
 					fixPrint(4, 8, fontColorWhite, 3, "The main intention is to show a");
 					fixPrint(4, 9, fontColorWhite, 3, "changing pattern on the screen,");
@@ -462,10 +462,10 @@ void DrawHelp(int option)
 					fixPrint(4, 20, fontColorWhite, 3, "intersection will be shown on");
 					fixPrint(4, 21, fontColorWhite, 3, "screen. A 1khz tone will be");
 					fixPrint(4, 22, fontColorWhite, 3, "played for 1 frame when pressed.");
-					fixPrint(26, 23, fontColorWhite, 3, "(cont...)");
+					fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
 				case 2:
-					fixPrint(6, 6, fontColorGreen, 3, "TIMING & REFLEX (2/2)");
+					fixPrint(10, 6, fontColorGreen, 3, "TIMING & REFLEX (2/2)");
 
 					fixPrint(4, 8, fontColorWhite, 3, "Button 'B' can be used to");
 					fixPrint(4, 9, fontColorWhite, 3, "change the direction of the");
