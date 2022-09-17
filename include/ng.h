@@ -23,7 +23,7 @@
 #ifndef _NG_H_
 #define _NG_H_
 
-extern BYTE isMVS;
+extern BYTE isMVS, is4S, is6S;
 
 #define SYSTEM_AES 0x00
 #define SYSTEM_MVS 0x80
@@ -62,4 +62,10 @@ extern BYTE isMVS;
 #define HAS_MC_2	0x20
 #define MC_PTRCT	0x40
 #define MVS_OR_AES	0x80
+
+#define BIOS_USER_REQS 0x10FDAE
+#define BIOS_USER_MODE 0x10FDAF
+
+#define SOFT_DIP_1	0x10FD8A
+
 #endif /* _NG_H_ */

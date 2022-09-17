@@ -39,14 +39,28 @@ typedef struct bkp_ram_info {
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,p1e,p2e;
-BYTE isMVS;
+BYTE isMVS, is4S, is6S;
 
+// We can't detect between 1 and 2 slot yet
 void check_systype()
 {
+	isMVS = is4S = is6S = 0;
+
 	if(MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)
+	{
+		BYTE reg = 0;
+
 		isMVS = 1;
-	else
-		isMVS = 0;
+		reg = volMEMBYTE(REG_SYSTYPE);
+		if(reg & MVS_MULTI)
+		{
+			reg = volMEMBYTE(REG_STATUS_A);
+			if(reg & MVS_4_OR_6)
+				is6S = 1;
+			else
+				is4S = 1;
+		}
+	}
 }
 
 static const ushort fixPalettes[]= {
@@ -84,19 +98,21 @@ void draw_background()
 void menu_footer()
 {
 	fixPrint(23, 26, 0, 3, "NTSC 320x224p");
+	fixPrint(17, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
+	if(isMVS && (is4S||is6S))
+	{
+		fixPrint(28, 28, 0, 3, is4S ? "4S" : "6S");
+	}
 	if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
 	{
-		fixPrint(20, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
 		fixPrint(32, 28, 0, 3, "Japan");
 	}
 	else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
 	{
-		fixPrint(22, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
 		fixPrint(34, 28, 0, 3, "USA");
 	}
 	else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
-	{
-		fixPrint(19, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
+	{	
 		fixPrint(31, 28, 0, 3, "Europe");
 	}
 }
@@ -500,6 +516,8 @@ void credits()
 
 	while (!done)
 	{
+		int y = 8;
+		
 		SCClose();
 		waitVBlank();
 
@@ -509,21 +527,23 @@ void credits()
 		fixPrint(16, 6, 2, 3, "Credits");
 		fixPrint(28, 8, 2, 3, "Ver. 0.1");
 		fixPrint(28, 9, 0, 3, "9/4/2022");
-		fixPrint(5, 9, 2, 3, "Code by:");
-		fixPrint(6, 10, 0, 3, "Dustin Dembrosky");
-		fixPrint(6, 11, 0, 3, "Artemio Urbina");
-		fixPrint(5, 12, 2, 3, "Patterns:");
-		fixPrint(6, 13, 0, 3, "Artemio Urbina");
-		fixPrint(5, 14, 2, 3, "Menu Pixel Art:");
-		fixPrint(6, 15, 0, 3, "Asher");
-		fixPrint(5, 16, 2, 3, "Donna:");
-		fixPrint(6, 17, 0, 3, "Jose Salot");
-		fixPrint(5, 18, 2, 3, "Neo Geo SDK");
-		fixPrint(6, 19, 0, 3, "NeoDev (Jeff Kurtz)");
-		fixPrint(5, 20, 2, 3, "Graphics Library");
-		fixPrint(6, 21, 0, 3, "DATlib (HPMAN)");
-		fixPrint(5, 22, 2, 3, "Info on using this test suite:");
-		fixPrint(6, 23, 0, 3, "http://junkerhq.net/240p");
+		fixPrint(5, y++, 2, 3, "Code by:");
+		fixPrint(6, y++, 0, 3, "Dustin Dembrosky");
+		fixPrint(6, y++, 0, 3, "Artemio Urbina");
+		fixPrint(5, y++, 2, 3, "Monoscope:");
+		fixPrint(6, y++, 0, 3, "Keith Raney");
+		fixPrint(5, y++, 2, 3, "Donna:");
+		fixPrint(6, y++, 0, 3, "Jose Salot");
+		fixPrint(5, y++, 2, 3, "Menu Pixel Art:");
+		fixPrint(6, y++, 0, 3, "Asher");
+		fixPrint(5, y++, 2, 3, "Neo Geo SDK");
+		fixPrint(6, y++, 0, 3, "NeoDev (Jeff Kurtz)");
+		fixPrint(5, y++, 2, 3, "Graphics Library");
+		fixPrint(6, y++, 0, 3, "DATlib (HPMAN)");
+		fixPrint(5, y++, 2, 3, "Flashcart provided by:");
+		fixPrint(6, y++, 0, 3, "MobiusStripTech & Jose Cruz");
+		fixPrint(5, y++, 2, 3, "Info on using this test suite:");
+		fixPrint(6, y, 0, 3, "http://junkerhq.net/240p");
 
 		if (p1e & JOY_B || ps & P1_START)
 		{
@@ -533,7 +553,7 @@ void credits()
 	return;
 }
 
-int	main(void)
+int menu_main()
 {
 	int curse = 1, cursemax = 6, redraw = 1;
 	check_systype();
@@ -605,5 +625,42 @@ int	main(void)
 			redraw = 1;
 		}
 	}
+}
+
+void mvs_state()
+{
+	if(volMEMBYTE(BIOS_USER_REQS) == 0) // user_request=0 is called by BIOS
+	{
+		waitVBlank();
+		memset(&bkp_data, 0x00, sizeof(bkp_ram_info));
+		__asm__ ("jmp 0xc00444 \n"); // BIOSF_SYSTEM_RETURN - return to bios control
+	}
+	
+	// If DEMO MODE or TITLE MODE grab the control
+	if(volMEMBYTE(BIOS_USER_REQS) == 2 || volMEMBYTE(BIOS_USER_REQS) == 3)
+	{
+		// Enter game mode ATM in MVS, will add demo cyles later
+		if(volMEMBYTE(SOFT_DIP_1))
+			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+		menu_main();
+	}
+}
+
+int	main(void)
+{
+	check_systype();
+
+	clearFixLayer();
+	backgroundColor(0x7bbb);
+	initGfx();
+	palJobPut(0,8,fixPalettes);
+	//jobMeterSetup(true);
+	SCClose();
+	
+	if(isMVS)
+		mvs_state();
+	else
+		menu_main();
+	
 	return 0;
 }
