@@ -23,22 +23,22 @@ JPconfig:
 	.ascii	"240P TEST SUITE "
 	.word	0xffff, 0xffff
 	.byte	0xff, 0xff, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-	.ascii	"IGNORE DEMO "
-	.ascii	"OFF         "
-	.ascii	"ON          "
+	.ascii	"MVS DEMO    "
+	.ascii	"FOLLOW      "
+	.ascii	"IGNORE      "
 	
 NAconfig:
 	.ascii	"240P TEST SUITE "
 	.word	0xffff, 0xffff
 	.byte	0xff, 0xff, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-	.ascii	"IGNORE DEMO "
-	.ascii	"OFF         "
-	.ascii	"ON          "
+	.ascii	"MVS DEMO    "
+	.ascii	"FOLLOW      "
+	.ascii	"IGNORE      "
 	
 EUconfig:
 	.ascii	"240P TEST SUITE "
 	.word	0xffff, 0xffff
 	.byte	0xff, 0xff, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-	.ascii	"IGNORE DEMO "
-	.ascii	"OFF         "
-	.ascii	"ON          "
+	.ascii	"MVS DEMO    "
+	.ascii	"FOLLOW      "
+	.ascii	"IGNORE      "

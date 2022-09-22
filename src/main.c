@@ -553,19 +553,14 @@ void credits()
 	return;
 }
 
-int menu_main()
+void menu_main()
 {
-	int curse = 1, cursemax = 6, redraw = 1;
-	check_systype();
+	int curse = 1, cursemax = 6, redraw = 1, done = 0;
 
-	clearFixLayer();
-	backgroundColor(0x7bbb);
-	initGfx();
 	palJobPut(0,8,fixPalettes);
 	//jobMeterSetup(true);
-	draw_background_w_gil();
 	
-	while(1)
+	while(!done)
 	{
 		if(redraw)
 		{
@@ -627,19 +622,64 @@ int menu_main()
 	}
 }
 
+void draw_insert_coin()
+{
+	int toggle = 0;
+	picture foreground;
+
+	backgroundColor(0x0000);
+	clearSprites(1, 26);
+	pictureInit(&foreground, &gillian, 22, 17, 128, 50, FLIP_NONE);
+	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
+
+	while(1)
+	{
+		SCClose();
+		waitVBlank();
+
+		if(toggle == 60)
+			clearFixLayer();
+		if(toggle == 0)
+			fixPrint(14, 24, 0, 3, "INSERT COIN");
+		toggle ++;
+		if(toggle > 120)
+			toggle = 0;
+	}
+}
+
 void mvs_state()
 {
-	if(volMEMBYTE(BIOS_USER_REQS) == 0) // user_request=0 is called by BIOS
+	// user_request=0 is called by BIOS
+	// in order to initialize memory
+	if(volMEMBYTE(BIOS_USER_REQS) == 0) 
 	{
 		waitVBlank();
 		memset(&bkp_data, 0x00, sizeof(bkp_ram_info));
-		__asm__ ("jmp 0xc00444 \n"); // BIOSF_SYSTEM_RETURN - return to bios control
+		// BIOSF_SYSTEM_RETURN - return to bios control
+		// in order for memory to be saved
+		__asm__ ("jmp 0xc00444 \n");
 	}
 	
-	// If DEMO MODE or TITLE MODE grab the control
-	if(volMEMBYTE(BIOS_USER_REQS) == 2 || volMEMBYTE(BIOS_USER_REQS) == 3)
+	// If DEMO MODE draw the insert coin screen
+	if(volMEMBYTE(BIOS_USER_REQS) == 2)
 	{
-		// Enter game mode ATM in MVS, will add demo cyles later
+		// Enter game mode in MVS following Soft Dip Switches
+		if(volMEMBYTE(SOFT_DIP_1))
+		{
+			// Enter game mode in MVS following Soft Dip Switches
+			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+			menu_main();
+		}
+		else
+		{
+			draw_insert_coin();
+		}
+	}
+
+	// If TITLE MODE grab the control
+	if(volMEMBYTE(BIOS_USER_REQS) == 3)
+	{
+		// Enter game mode in MVS following Soft Dip Switches
 		if(volMEMBYTE(SOFT_DIP_1))
 			volMEMBYTE(BIOS_USER_MODE) = 0x02;
 		menu_main();
