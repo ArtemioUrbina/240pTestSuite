@@ -29,6 +29,7 @@
 #include "patterns.h"
 #include "tests.h"
 #include "help.h"
+#include "string_ng.h"
 
 typedef struct bkp_ram_info {
 	WORD debug_dips;
@@ -622,29 +623,57 @@ void menu_main()
 	}
 }
 
-void draw_insert_coin()
+int HexToDec(int hex)
 {
-	int toggle = 0;
+	return hex-(hex/16)*6;
+}
+
+void draw_mvs_title(int tmode)
+{
+	int toggle = 0, demo_frames = 1800, bios_timer = 0;
 	picture foreground;
 
 	backgroundColor(0x0000);
 	clearSprites(1, 26);
 	pictureInit(&foreground, &gillian, 22, 17, 128, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
+	fixPrint(12, 6, 0, 3, "240p Test Suite");
+	fixPrint(9, 25, 0, 3, "2022 Dasutin/Artemio");
 
-	while(1)
+	while(demo_frames)
 	{
 		SCClose();
 		waitVBlank();
+		p1 = volMEMBYTE(P1_CURRENT);
 
-		if(toggle == 60)
-			clearFixLayer();
+		if(toggle == 30)
+			fixPrint(14, 23, 1, 3, "           ");
 		if(toggle == 0)
-			fixPrint(14, 24, 0, 3, "INSERT COIN");
+			fixPrint(14, 23, 1, 3, tmode == MODE_TITLE ? "PRESS START" : "INSERT COIN");
+
+		if(tmode == MODE_TITLE)
+		{
+			bios_timer = HexToDec(volMEMBYTE(BIOS_COMP_TIME));
+			fixPrintf(16, 27, 0, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
+		}
+		fixPrintf(28, 28, 0, 3, "CREDITS %02d", HexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
+
 		toggle ++;
-		if(toggle > 120)
+		if(toggle > 60)
 			toggle = 0;
+		if(tmode == MODE_DEMO)
+			demo_frames--;
+		if(tmode == MODE_TITLE)
+		{
+			if (p1 & P1_START || bios_timer <= 0)
+			{
+				volMEMBYTE(BIOS_USER_MODE) = 0x02;
+				menu_main();
+			}
+		}
 	}
+	// BIOSF_SYSTEM_RETURN - return to bios control
+	__asm__ ("jmp 0xc00444 \n");
 }
 
 void mvs_state()
@@ -672,7 +701,7 @@ void mvs_state()
 		}
 		else
 		{
-			draw_insert_coin();
+			draw_mvs_title(0);
 		}
 	}
 
@@ -681,8 +710,14 @@ void mvs_state()
 	{
 		// Enter game mode in MVS following Soft Dip Switches
 		if(volMEMBYTE(SOFT_DIP_1))
+		{
 			volMEMBYTE(BIOS_USER_MODE) = 0x02;
-		menu_main();
+			menu_main();
+		}
+		else
+		{
+			draw_mvs_title(1);
+		}
 	}
 }
 

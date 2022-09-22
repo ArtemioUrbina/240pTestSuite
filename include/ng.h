@@ -63,10 +63,19 @@ extern BYTE isMVS, is4S, is6S;
 #define MC_PTRCT	0x40
 #define MVS_OR_AES	0x80
 
-#define BIOS_USER_REQS 0x10FDAE
-#define BIOS_USER_MODE 0x10FDAF
+#define MODE_DEMO	0
+#define MODE_TITLE	1
 
-#define SOFT_DIP_1	0x10FD8A
+#define BIOS_USER_REQS	0x10FDAE
+#define BIOS_USER_MODE	0x10FDAF
+
+#define BIOS_NM_CREDIT	0xD00034
+#define BIOS_COMP_TIME	0x10FDDA
+
+#define SOFT_DIP_1		0x10FD8A
+#define SOFT_DIP_2		0x10FD8B
+#define SOFT_DIP_3		0x10FD8C
+#define SOFT_DIP_4		0x10FD8D
 
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22
