@@ -40,5 +40,6 @@ u16 random();
 u32 intToHex(u32 value, char *str, u16 minsize);
 u16 intToStr(s32 value, char *str, u16 minsize);
 u16 uintToStr(u32 value, char *str, u16 minsize);
+void fix32ToStr(fix32 value, char *str, u16 numdec);
 
 #endif /* _STRING_H_ */

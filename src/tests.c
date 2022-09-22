@@ -26,7 +26,7 @@
 #include <input.h>
 #include "types.h"
 #include "ng.h"
-#include "string.h"
+#include "string_ng.h"
 #include "externs.h"
 #include "tests.h"
 #include "help.h"
@@ -455,13 +455,19 @@ void vt_reflex_test()
 		palJobPut(16,marker.palInfo->count,marker.palInfo->data);
 
 		if (y == 96)								// Red on the spot
+		{
 			// Todo: Palette Red Here
+		}
 
 		if (y == 95 || y == 97)						// Green one pixel before or after
+		{
 			// Todo: Palette Green Here
+		}
 
 		if (y == 98 || y == 94)						// Back to white two pixels before or after
+		{
 			// Todo: Palette White Here
+		}
 
 		if (view == 0 || view == 2)
 		{

@@ -24,7 +24,7 @@
 #include <stdarg.h>
 #include "types.h"
 #include "ng.h"
-#include "string.h"
+#include "string_ng.h"
 
 #define P01 10
 #define P02 100
