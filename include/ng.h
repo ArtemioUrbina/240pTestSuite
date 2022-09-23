@@ -23,7 +23,7 @@
 #ifndef _NG_H_
 #define _NG_H_
 
-extern BYTE isMVS, is4S, is6S;
+extern BYTE isMVS, is4S, is6S, isMulti;
 
 #define SYSTEM_AES 0x00
 #define SYSTEM_MVS 0x80
@@ -38,6 +38,16 @@ extern BYTE isMVS, is4S, is6S;
 #define fontColorRed   1
 #define fontColorGreen 2
 #define fontColorBlue  3
+
+#define REG_DIPSW	0x300001
+#define DP_SETTINGS	0x01
+#define DP_CHUTES	0x02
+#define DP_CONTROL	0x04
+#define DP_COMM_1	0x08
+#define DP_COMM_2	0x10
+#define DP_MULTI	0x20
+#define DP_FREE		0x40
+#define DP_FREEZE	0x80
 
 #define REG_SYSTYPE 0x300081
 #define MVS_MULTI	0x40
@@ -62,9 +72,6 @@ extern BYTE isMVS, is4S, is6S;
 #define HAS_MC_2	0x20
 #define MC_PTRCT	0x40
 #define MVS_OR_AES	0x80
-
-#define MODE_DEMO	0
-#define MODE_TITLE	1
 
 #define BIOS_USER_REQS	0x10FDAE
 #define BIOS_USER_MODE	0x10FDAF

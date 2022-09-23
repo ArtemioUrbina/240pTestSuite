@@ -33,19 +33,19 @@
 
 typedef struct bkp_ram_info {
 	WORD debug_dips;
-	BYTE stuff[254];
-	//256 bytes
+	BYTE stuff[14];
+	//16 bytes
 } bkp_ram_info;
 
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,p1e,p2e;
-BYTE isMVS, is4S, is6S;
+BYTE isMVS, is4S, is6S, isMulti;
 
 // We can't detect between 1 and 2 slot yet
 void check_systype()
 {
-	isMVS = is4S = is6S = 0;
+	isMVS = is4S = is6S = isMulti = 0;
 
 	if(MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)
 	{
@@ -55,6 +55,7 @@ void check_systype()
 		reg = volMEMBYTE(REG_SYSTYPE);
 		if(reg & MVS_MULTI)
 		{
+			isMulti = 1;
 			reg = volMEMBYTE(REG_STATUS_A);
 			if(reg & MVS_4_OR_6)
 				is6S = 1;
@@ -116,6 +117,9 @@ void menu_footer()
 	{	
 		fixPrint(31, 28, 0, 3, "Europe");
 	}
+
+	if(isMVS && volMEMBYTE(SOFT_DIP_2))
+		fixPrintf(3, 26, 0, 3, "CREDITS %02d", HexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
 }
 
 void menu_tp()
@@ -556,11 +560,16 @@ void credits()
 
 void menu_main()
 {
-	int curse = 1, cursemax = 6, redraw = 1, done = 0;
+	int curse = 1, cursemax = 6, redraw = 1, done = 0, showexit = 0;
 
 	palJobPut(0,8,fixPalettes);
 	//jobMeterSetup(true);
-	
+	if(isMVS && !volMEMBYTE(SOFT_DIP_1))
+	{
+		showexit = 1;
+		cursemax++;
+	}
+
 	while(!done)
 	{
 		if(redraw)
@@ -586,6 +595,8 @@ void menu_main()
 
 		fixPrint(6, 20, curse == 5 ? 1 : 0, 3, "Help");
 		fixPrint(6, 21, curse == 6 ? 1 : 0, 3, "Credits");
+		if(showexit)
+			fixPrint(6, 22, curse == 7 ? 1 : 0, 3, "Exit");
 
 		menu_footer();
 
@@ -617,6 +628,10 @@ void menu_main()
 				case 6:
 					credits();
 				break;
+
+				case 7:
+					return;
+				break;
 			}
 			redraw = 1;
 		}
@@ -628,69 +643,145 @@ int HexToDec(int hex)
 	return hex-(hex/16)*6;
 }
 
-void draw_mvs_title(int tmode)
+#define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
+
+void draw_mvs_demo()
 {
-	int toggle = 0, demo_frames = 1800, bios_timer = 0;
+	int toggle = 0, demo_frames = 1800, freeplay = 0, redraw = 0;
 	picture foreground;
+	picture background;
 
 	backgroundColor(0x0000);
 	clearSprites(1, 26);
-	pictureInit(&foreground, &gillian, 22, 17, 128, 50, FLIP_NONE);
+	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
-	fixPrint(12, 6, 0, 3, "240p Test Suite");
-	fixPrint(9, 25, 0, 3, "2022 Dasutin/Artemio");
+	fixPrint(12, 6, 2, 3, "240p Test Suite");
+	fixPrint(9, 25, 2, 3, "2022 Dasutin/Artemio");
 
 	while(demo_frames)
 	{
 		SCClose();
 		waitVBlank();
-		p1 = volMEMBYTE(P1_CURRENT);
+		
+		if(redraw)
+		{
+			switch(redraw)
+			{
+				case 1:
+					backgroundColor(0x0000);
+					pictureInit(&background, &monoscope, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
+				break;
+				case 2:
+					backgroundColor(0xfc1f);
+					pictureInit(&background, &colorbarssmpte, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
+				break;
+				case 3:
+					backgroundColor(0x0000);
+					pictureInit(&background, &grid, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,grid.palInfo->count,grid.palInfo->data);
+				break;
+				default:
+					backgroundColor(0x0000);
+				break;
+			}
+			redraw = 0;
+		}
+
+		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
+		p1 = volMEMBYTE(PS_CURRENT);
 
 		if(toggle == 30)
 			fixPrint(14, 23, 1, 3, "           ");
 		if(toggle == 0)
-			fixPrint(14, 23, 1, 3, tmode == MODE_TITLE ? "PRESS START" : "INSERT COIN");
+			fixPrint(14, 23, 1, 3, freeplay ? "PRESS START" : "INSERT COIN");
 
-		if(tmode == MODE_TITLE)
+		fixPrintf(28, 28, 0, 3, "CREDITS %02d", HexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
+		
+		toggle ++;
+		if(toggle > 60)
+			toggle = 0;
+		demo_frames--;
+
+		if(demo_frames == 1600)
+			redraw = 1;
+
+		if(demo_frames == 1000)
+			redraw = 2;
+
+		if(demo_frames == 400)
+			redraw = 3;
+
+		if(freeplay && (p1 & P1_START))
+		{
+			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+			menu_main();
+			volMEMBYTE(BIOS_USER_MODE) = 0x01;
+			return;
+		}
+	}
+}
+
+void draw_mvs_title()
+{
+	int toggle = 0, bios_timer = 0, freeplay = 0;
+	picture foreground;
+
+	backgroundColor(0x7666);
+	clearSprites(1, 26);
+	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
+	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
+	fixPrint(12, 6, 0, 3, "240p Test Suite");
+	fixPrint(9, 25, 0, 3, "2022 Dasutin/Artemio");
+
+	while(1)
+	{
+		SCClose();
+		waitVBlank();
+		p1 = volMEMBYTE(PS_CURRENT);
+		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
+
+		if(toggle == 30)
+			fixPrint(14, 23, 1, 3, "           ");
+		if(toggle == 0)
+			fixPrint(14, 23, 1, 3, "PRESS START");
+
+		if(!freeplay)
 		{
 			bios_timer = HexToDec(volMEMBYTE(BIOS_COMP_TIME));
 			fixPrintf(16, 27, 0, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
 		}
 		fixPrintf(28, 28, 0, 3, "CREDITS %02d", HexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
-
+		
 		toggle ++;
 		if(toggle > 60)
 			toggle = 0;
-		if(tmode == MODE_DEMO)
-			demo_frames--;
-		if(tmode == MODE_TITLE)
+
+		if (p1 & P1_START || (!freeplay && bios_timer <= 0))
 		{
-			if (p1 & P1_START || bios_timer <= 0)
-			{
-				volMEMBYTE(BIOS_USER_MODE) = 0x02;
-				menu_main();
-			}
+			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+			menu_main();
+			volMEMBYTE(BIOS_USER_MODE) = 0x01;
+			return;
 		}
 	}
-	// BIOSF_SYSTEM_RETURN - return to bios control
-	__asm__ ("jmp 0xc00444 \n");
 }
 
 void mvs_state()
 {
-	// user_request=0 is called by BIOS
+	// BIOS_USER_REQS == 0 is called by BIOS
 	// in order to initialize memory
 	if(volMEMBYTE(BIOS_USER_REQS) == 0) 
 	{
 		waitVBlank();
 		memset(&bkp_data, 0x00, sizeof(bkp_ram_info));
-		// BIOSF_SYSTEM_RETURN - return to bios control
-		// in order for memory to be saved
-		__asm__ ("jmp 0xc00444 \n");
+		// return to bios in order for memory to be saved
+		RETURN_TO_BIOS;
 	}
-	
+
 	// If DEMO MODE draw the insert coin screen
-	if(volMEMBYTE(BIOS_USER_REQS) == 2)
+	if(volMEMBYTE(BIOS_USER_REQS) == 2 && volMEMBYTE(BIOS_USER_MODE) == 1)
 	{
 		// Enter game mode in MVS following Soft Dip Switches
 		if(volMEMBYTE(SOFT_DIP_1))
@@ -701,12 +792,13 @@ void mvs_state()
 		}
 		else
 		{
-			draw_mvs_title(0);
+			draw_mvs_demo();
 		}
+		RETURN_TO_BIOS;
 	}
 
 	// If TITLE MODE grab the control
-	if(volMEMBYTE(BIOS_USER_REQS) == 3)
+	if(volMEMBYTE(BIOS_USER_REQS) == 3 && volMEMBYTE(BIOS_USER_MODE) == 1)
 	{
 		// Enter game mode in MVS following Soft Dip Switches
 		if(volMEMBYTE(SOFT_DIP_1))
@@ -716,8 +808,9 @@ void mvs_state()
 		}
 		else
 		{
-			draw_mvs_title(1);
+			draw_mvs_title();
 		}
+		RETURN_TO_BIOS;
 	}
 }
 
