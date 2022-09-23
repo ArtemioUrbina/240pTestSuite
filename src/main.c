@@ -656,7 +656,7 @@ void draw_mvs_demo()
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
 	fixPrint(12, 6, 2, 3, "240p Test Suite");
-	fixPrint(9, 25, 2, 3, "2022 Dasutin/Artemio");
+	fixPrint(10, 25, 2, 3, "2022 Dasutin/Artemio");
 
 	while(demo_frames)
 	{
