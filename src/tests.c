@@ -39,27 +39,29 @@ void vt_drop_shadow_test()
 	picture image;
 	picture buzz_sprite;
 
+	initGfx();
+
 	clearFixLayer();
-	clearSprites(1, 22);
+	clearSprites(1, 1);
+	clearSprites(1, 100);
 
-	pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
-	palJobPut(16,donna.palInfo->count,donna.palInfo->data);
-
-	pictureInit(&buzz_sprite, &buzz, 20, 17, 32, 32, FLIP_NONE);
-	palJobPut(17,buzz.palInfo->count,&buzz.palInfo->data);
+	//pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
+	//pictureInit(&buzz_sprite, &buzz, 22, 17, 32, 32, FLIP_NONE);
 
 	while (!done)
 	{
+	
+		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
+		pictureInit(&buzz_sprite, &buzz, 22, 17, x, y, FLIP_NONE);
+		palJobPut(16,donna.palInfo->count,donna.palInfo->data);
+		palJobPut(17,buzz.palInfo->count,&buzz.palInfo->data);
+		
 		SCClose();
 		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
-
-		pictureInit(&buzz_sprite, &buzz, 22, 17, x, y, FLIP_NONE);
 
 		if (p1 & JOY_UP)
 		{
@@ -111,11 +113,12 @@ void vt_striped_sprite_test()
 
 	clearFixLayer();
 	clearSprites(1, 22);
+	clearSprites(1, 100);
 
 	pictureInit(&image, &donna, 1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,donna.palInfo->count,donna.palInfo->data);
 
-	pictureInit(&image2, &marker_striped, 20, 17, 32, 32, FLIP_NONE);
+	pictureInit(&image2, &marker_striped, 22, 17, 32, 32, FLIP_NONE);
 	palJobPut(17,marker_striped.palInfo->count,&marker_striped.palInfo->data);
 
 	while (!done)
@@ -645,7 +648,6 @@ void vt_scroll_test()
 		x2++;
 		x3++;
 
-
 		if(x1 > 256)
 		{
 			x1 = 0;
@@ -676,21 +678,19 @@ void vt_scroll_test()
 void vt_vert_scroll_test()
 {
 	int done = 0;
-
 	int x = 0, y = 0;
-
 	scroller vertScroll;
 
 	clearFixLayer();
-	clearSprites(1, 22);
+	backgroundColor(0x0000);
+	clearSprites(1, 100);
 
-	scrollerInit(&vertScroll, &kiki, 1, 16, x, y);
 	palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
-
-	SCClose();
 
 	while (!done)
 	{
+		scrollerInit(&vertScroll, &kiki, 1, 16, 1, y);
+		SCClose();
 		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
@@ -712,7 +712,7 @@ void vt_vert_scroll_test()
 
 		y++;
 
-		if(y > 256)
+		if(y > 512)
 		{
 			y = 0;
 		}
@@ -722,8 +722,8 @@ void vt_vert_scroll_test()
 			DrawHelp(HELP_HSCROLL);
 		}
 
-		scrollerSetPos(&vertScroll, x, y);
-		SCClose();
+		//scrollerSetPos(&vertScroll, 1, y);
+		//SCClose();
 	}
 }
 

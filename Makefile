@@ -93,20 +93,20 @@ prog.o : $(OBJS)
 	$(AS) $(ASFLAGS) $< -o $@
 
 makeroms:
-	$(ROMWAK) -f dev_p1.rom 202-p1.p1
-	$(ROMWAK) -p 202-p1.p1 202-p1.p1 1024 255
-#	$(ROMWAK) -w 240psprite.spr 202-c1.c1 202-c2.c2
+#	$(ROMWAK) -f dev_p1.rom 202-p1.p1
+#	$(ROMWAK) -p 202-p1.p1 202-p1.p1 1024 255
+	$(ROMWAK) -w out/${CROM} 202-c1.c1 202-c2.c2
 #	$(ROMWAK) -f 202-c1.c1
 #	$(ROMWAK) -f 202-c2.c2
 #	$(ROMWAK) -p 202-c1.c1 202-c1.c1 1024 255
 #	$(ROMWAK) -p 202-c2.c2 202-c2.c2 1024 255
-	cp 240pfix.fix 202-s1.s1
-	$(ROMWAK) -p 202-s1.s1 202-s1.s1 128 255
+#	cp 240pfix.fix 202-s1.s1
+#	$(ROMWAK) -p 202-s1.s1 202-s1.s1 128 255
 #	copy sounds\roms\202-v1.v1
 #	$(ROMWAK) -p 202-v1.v1 202-v1.v1 512 255
 #	copy sounds\roms\202-m1.bin
-	cp c1_c1.rom 202-c1.c1
-	cp c1_c2.rom 202-c2.c2
+#	cp c1_c1.rom 202-c1.c1
+#	cp c1_c2.rom 202-c2.c2
 
 copyroms:
 	$(CP) out/$(PROM) $(MAMEDIR)
