@@ -322,7 +322,7 @@ void menu_vt()
 				break;
 
 				case 5:
-					vt_vert_scroll_test();
+					vt_scroll_test();
 				break;
 
 				case 6:

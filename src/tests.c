@@ -35,27 +35,31 @@ BYTE p1,p2,ps,p1e,p2e, p1b,p2b;
 
 void vt_drop_shadow_test()
 {
-	int done = 0, x = 30, y = 30;
+	int done = 0, x = 30, y = 30, draw = 1;
 	picture image;
 	picture buzz_sprite;
 
 	initGfx();
 
 	clearFixLayer();
+	backgroundColor(0xFAAF);
 	clearSprites(1, 1);
 	clearSprites(1, 100);
 
-	//pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
-	//pictureInit(&buzz_sprite, &buzz, 22, 17, 32, 32, FLIP_NONE);
-
 	while (!done)
 	{
-	
+		if (draw)
+		{
+			//pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
+			palJobPut(16,donna.palInfo->count,donna.palInfo->data);
+			//pictureInit(&buzz_sprite, &buzz, 22, 17, x, y, FLIP_NONE);
+			palJobPut(17,buzz.palInfo->count,buzz.palInfo->data);
+			draw = 0;
+		}
+
 		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
 		pictureInit(&buzz_sprite, &buzz, 22, 17, x, y, FLIP_NONE);
-		palJobPut(16,donna.palInfo->count,donna.palInfo->data);
-		palJobPut(17,buzz.palInfo->count,&buzz.palInfo->data);
-		
+
 		SCClose();
 		waitVBlank();
 
@@ -98,16 +102,28 @@ void vt_drop_shadow_test()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_SHADOW);
+			if (p1e & JOY_D)
+			{
+				clearSprites(1, 22);
+				DrawHelp(HELP_SHADOW);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				clearSprites(1, 22);
+				DrawHelp(HELP_SHADOW);
+				draw = 1;
+			}
 		}
 	}
 }
 
 void vt_striped_sprite_test()
 {
-	int done = 0, x = 30, y = 30;
+	int done = 0, x = 30, y = 30, draw = 1;
 	picture image;
 	picture image2;
 
@@ -115,14 +131,18 @@ void vt_striped_sprite_test()
 	clearSprites(1, 22);
 	clearSprites(1, 100);
 
-	pictureInit(&image, &donna, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,donna.palInfo->count,donna.palInfo->data);
-
-	pictureInit(&image2, &marker_striped, 22, 17, 32, 32, FLIP_NONE);
-	palJobPut(17,marker_striped.palInfo->count,&marker_striped.palInfo->data);
-
 	while (!done)
 	{
+		if (draw)
+		{
+			pictureInit(&image, &donna, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,donna.palInfo->count,donna.palInfo->data);
+
+			pictureInit(&image2, &marker_striped, 22, 17, 32, 32, FLIP_NONE);
+			palJobPut(17,marker_striped.palInfo->count,marker_striped.palInfo->data);
+			draw = 0;
+		}
+
 		SCClose();
 		waitVBlank();
 
@@ -131,7 +151,6 @@ void vt_striped_sprite_test()
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
-
 		pictureInit(&image2, &marker_striped, 22, 17, x, y, FLIP_NONE);
 
 		if (p1 & JOY_UP)
@@ -169,9 +188,21 @@ void vt_striped_sprite_test()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_STRIPED);
+			if (p1e & JOY_D)
+			{
+				clearSprites(1, 22);
+				DrawHelp(HELP_STRIPED);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				clearSprites(1, 22);
+				DrawHelp(HELP_STRIPED);
+				draw = 1;
+			}
 		}
 	}
 
@@ -179,29 +210,26 @@ void vt_striped_sprite_test()
 
 void vt_lag_test()
 {
-	int done = 0;
+	int done = 0, draw = 1;
 	picture image;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
-
 	while (!done)
 	{
+		if (draw)
+		{
+			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+			draw = 0;
+		}
+
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_B)
-		{
-			done = 1;
-			return;
-		}
 
 		if (ps & P1_START)
 		{
@@ -210,12 +238,21 @@ void vt_lag_test()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_LAG);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_LAG);
+				draw = 1;
+			}
+		} else {
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_LAG);
+				draw = 1;
+			}
 		}
 	}
-
 }
 
 void vt_reflex_test()
@@ -607,41 +644,39 @@ void vt_reflex_test()
 
 void vt_scroll_test()
 {
-	int done = 0;
-
+	int done = 0, draw = 1;
 	int x1 = 0, y1 = -96;
 	int x2 = 0, y2 = -152;
 	int x3 = 0, y3 = 0;
+	unsigned int fc;
 
 	scroller backScroll, waterScroll, frontScroll;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
-	palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
-
-	scrollerInit(&waterScroll, &sonic_water, 22, 17, x2, y2);
-	palJobPut(17, sonic_water.palInfo->count, sonic_water.palInfo->data);
-
-	scrollerInit(&frontScroll, &sonic_floor, 43, 18, x1, y1);
-	palJobPut(18, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
-
-	SCClose();
-
 	while (!done)
-	{
+	{	
+		fc = DAT_frameCounter;
+
+		if (draw)
+		{
+			scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
+			palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
+
+			scrollerInit(&waterScroll, &sonic_water, 22, 17, x2, y2);
+			palJobPut(17, sonic_water.palInfo->count, sonic_water.palInfo->data);
+
+			scrollerInit(&frontScroll, &sonic_floor, 43, 18, x1, y1);
+			palJobPut(18, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
+			draw = 0;
+		}
+		
+		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_B)
-		{
-			done = 1;
-			return;
-		}
 
 		if (ps & P1_START)
 		{
@@ -659,55 +694,63 @@ void vt_scroll_test()
 			x1 = 0;
 		}
 
-		if(x2 > 256)
+		if(x2 > 512)
 		{
 			x2 = 0;
 		}
 
-		if(x3 > 256)
+		if(x3 > 512)
 		{
 			x3 = 0;
 		}
 
-		if (ps & P1_SELECT)
+		if(isMVS)
 		{
-			DrawHelp(HELP_HSCROLL);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_HSCROLL);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_HSCROLL);
+				draw = 1;
+			}
 		}
 
 		scrollerSetPos(&frontScroll, x1, y1);
-		scrollerSetPos(&waterScroll, x2, y2);
-		scrollerSetPos(&backScroll, x3, y3);
-		SCClose();
+		scrollerSetPos(&waterScroll, x2/2, y2);
+		scrollerSetPos(&backScroll, x3/2, y3);
 	}
 }
 
 void vt_vert_scroll_test()
 {
-	int done = 0;
+	int done = 0, draw = 1;
 	int x = 0, y = 0;
 	scroller vertScroll;
 
 	clearFixLayer();
-	backgroundColor(0x0000);
-	clearSprites(1, 100);
-
-	palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
+	clearSprites(1, back.tileWidth);
+	clearSprites(22, gillian.tileWidth);
+	//backgroundColor(0x8000);
 
 	while (!done)
 	{
-		scrollerInit(&vertScroll, &kiki, 1, 16, 1, y);
+		if (draw)
+		{
+			backgroundColor(0x8000);
+			scrollerInit(&vertScroll, &kiki, 1, 16, 0, 0);
+			palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
+			draw = 0;
+		}
+		
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_B)
-		{
-			done = 1;
-			return;
-		}
 
 		if (ps & P1_START)
 		{
@@ -723,41 +766,45 @@ void vt_vert_scroll_test()
 			y = 0;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_HSCROLL);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_HSCROLL);
+				draw = 1;
+			}
+		} else {
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_HSCROLL);
+				draw = 1;
+			}
 		}
-
-		//scrollerSetPos(&vertScroll, 1, y);
-		//SCClose();
+		scrollerSetPos(&vertScroll, 0, y);
 	}
 }
 
 void vt_gridscroll_test()
 {
-	int done = 0;
+	int done = 0, draw = 1;
 	picture image;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
-
 	while (!done)
 	{
+		if (draw)
+		{
+			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+			draw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_B)
-		{
-			done = 1;
-			return;
-		}
 
 		if (ps & P1_START)
 		{
@@ -766,9 +813,19 @@ void vt_gridscroll_test()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_VSCROLL);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_STRIPES);
+				draw = 1;
+			}
+		} else {
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_STRIPES);
+				draw = 1;
+			}
 		}
 	}
 
@@ -776,29 +833,26 @@ void vt_gridscroll_test()
 
 void vt_horizontal_stripes()
 {
-	int done = 0;
+	int done = 0, draw = 1;
 	picture image;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	pictureInit(&image, &horzstripe, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
-
 	while (!done)
 	{
+		if (draw)
+		{
+			pictureInit(&image, &horzstripe, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
+			draw = 0;
+		}
+
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_B)
-		{
-			done = 1;
-			return;
-		}
 
 		if (ps & P1_START)
 		{
@@ -807,39 +861,45 @@ void vt_horizontal_stripes()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_STRIPES);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_STRIPES);
+				draw = 1;
+			}
+		} else {
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_STRIPES);
+				draw = 1;
+			}
 		}
 	}
-
 }
 
 void vt_vertical_stripes()
 {
-	int done = 0;
+	int done = 0, draw = 1;
 	picture image;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	pictureInit(&image, &vertstripe, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,vertstripe.palInfo->count,vertstripe.palInfo->data);
-
 	while (!done)
 	{
+		if (draw)
+		{
+			pictureInit(&image, &vertstripe, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,vertstripe.palInfo->count,vertstripe.palInfo->data);
+			draw = 0;
+		}
+
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_B)
-		{
-			done = 1;
-			return;
-		}
 
 		if (ps & P1_START)
 		{
@@ -848,39 +908,45 @@ void vt_vertical_stripes()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_STRIPES);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_STRIPES);
+				draw = 1;
+			}
+		} else {
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_STRIPES);
+				draw = 1;
+			}
 		}
 	}
-
 }
 
 void vt_checkerboard()
 {
-	int done = 0;
+	int done = 0, draw = 1;
 	picture image;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	pictureInit(&image, &check, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,check.palInfo->count,check.palInfo->data);
-
 	while (!done)
 	{
+		if (draw)
+		{
+			pictureInit(&image, &check, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,check.palInfo->count,check.palInfo->data);
+			draw = 0;
+		}
+
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_B)
-		{
-			done = 1;
-			return;
-		}
 
 		if (ps & P1_START)
 		{
@@ -889,12 +955,21 @@ void vt_checkerboard()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_CHECK);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_CHECK);
+				draw = 1;
+			}
+		} else {
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_CHECK);
+				draw = 1;
+			}
 		}
 	}
-
 }
 
 void vt_backlitzone_test()
@@ -1004,29 +1079,27 @@ void vt_backlitzone_test()
 
 void at_sound_test()
 {
-	int done = 0;
+	int done = 0, draw = 1;
 	picture image;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,back.palInfo->count,back.palInfo->data);
+	
 
 	while (!done)
 	{
+		if (draw)
+		{
+			pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,back.palInfo->count,back.palInfo->data);
+			draw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_B)
-		{
-			done = 1;
-			return;
-		}
 
 		if (ps & P1_START)
 		{
@@ -1035,9 +1108,19 @@ void at_sound_test()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_SOUND);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_SOUND);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_SOUND);
+				draw = 1;
+			}
 		}
 	}
 
@@ -1045,29 +1128,26 @@ void at_sound_test()
 
 void at_audiosync_test()
 {
-	int done = 0;
+	int done = 0, draw = 1;
 	picture image;
 
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
-
 	while (!done)
 	{
+		if (draw)
+		{
+			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+			draw = 0;
+		}
+
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_B)
-		{
-			done = 1;
-			return;
-		}
 
 		if (ps & P1_START)
 		{
@@ -1076,9 +1156,19 @@ void at_audiosync_test()
 			return;
 		}
 
-		if (ps & P1_SELECT)
+		if (isMVS)
 		{
-			DrawHelp(HELP_AUDIOSYNC);
+			if (p1e & JOY_D)
+			{
+				DrawHelp(HELP_AUDIOSYNC);
+				draw = 1;
+			}
+		} else { 
+			if (ps & P1_SELECT)
+			{
+				DrawHelp(HELP_AUDIOSYNC);
+				draw = 1;
+			}
 		}
 	}
 
@@ -1211,7 +1301,7 @@ void ht_controller_test()
 
 void ht_memory_viewer(u32 address)
 {
-	int done = 0, frameDelay = 0, redraw = 1, docrc = 0, locpos = 1, i = 0;
+	int done = 0, redraw = 1, docrc = 0, locpos = 1, i = 0;
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 0x400000, 0x402000, 0xC00000 };
 
 	backgroundColor(0x0000);
