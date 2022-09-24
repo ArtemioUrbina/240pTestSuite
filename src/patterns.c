@@ -440,9 +440,8 @@ void tp_color_bleed_check()
 
 void tp_grid()
 {
-	int done = 0, draw = 1, Isgray = 0;
-	picture image1;
-	picture image2;
+	int done = 0, draw = 1, gray = 0;
+	picture image;
 
 	clearFixLayer();
 	clearSprites(1, 22);
@@ -451,17 +450,18 @@ void tp_grid()
 	{
 		if (draw)
 		{
-			if (!Isgray)
-			{
-				pictureInit(&image1, &grid, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-			}
-			else {
-				pictureInit(&image2, &grid, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-			}
+			pictureInit(&image, &grid, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,grid.palInfo->count,grid.palInfo->data);
 			draw = 0;
 		}
+
+		if (!gray)
+		{
+			volMEMWORD(0x402204) = 0x8000;
+		} else {
+			volMEMWORD(0x402204) = 0x7777;
+		}
+
 		SCClose();
 		waitVBlank();
 
@@ -470,23 +470,12 @@ void tp_grid()
 
 		if (p1e & JOY_A)
 		{
-			Isgray = !Isgray;
-			if (!Isgray)
-			{
-				pictureInit(&image1, &grid, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-			}
-			else {
-				pictureInit(&image2, &grid, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-			}
-			SCClose();
+			gray = !gray;
 		}
 
 		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
 			return;
 		}
 
@@ -497,7 +486,7 @@ void tp_grid()
 				DrawHelp(HELP_GRID);
 				draw = 1;
 			}
-		} else { 
+		} else {
 			if (ps & P1_SELECT)
 			{
 				DrawHelp(HELP_GRID);
@@ -509,7 +498,7 @@ void tp_grid()
 
 void tp_monoscope()
 {
-	int done = 0, draw = 1;
+	int done = 0, draw = 1, pattern = 1, gray = 0;
 	picture image;
 
 	clearFixLayer();
@@ -523,13 +512,64 @@ void tp_monoscope()
 			palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
 			draw = 0;
 		}
+
+		if (!gray)
+		{
+			volMEMWORD(0x402206) = 0x8000;
+		}else{
+			volMEMWORD(0x402206) = 0x7777;
+		}
+
+		switch (pattern)
+		{
+			case 1:
+				volMEMWORD(0x402202) = 0x2fef;
+			break;
+
+			case 2:
+				volMEMWORD(0x402202) = 0x2ddd;
+			break;
+
+			case 3:
+				volMEMWORD(0x402202) = 0x2bbb;
+			break;
+
+			case 4:
+				volMEMWORD(0x402202) = 0x2999;
+			break;
+
+			case 5:
+				volMEMWORD(0x402202) = 0x2777;
+			break;
+
+			case 6:
+				volMEMWORD(0x402202) = 0x2555;
+			break;
+
+			case 7:
+				volMEMWORD(0x402202) = 0x2222;
+			break;
+		}
+
 		SCClose();
 		waitVBlank();
 
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (p1e & JOY_A)
+		{
+			pattern++;
+			if (pattern > 7)
+				pattern = 1;
+		}
+
+		if (p1e & JOY_B)
+		{
+			gray = !gray;
+		}
+
+		if (ps & P1_START)
 		{
 			done = 1;
 			return;
@@ -542,7 +582,7 @@ void tp_monoscope()
 				DrawHelp(HELP_MONOSCOPE);
 				draw = 1;
 			}
-		} else { 
+		} else {
 			if (ps & P1_SELECT)
 			{
 				DrawHelp(HELP_MONOSCOPE);
