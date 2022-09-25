@@ -50,15 +50,13 @@ void vt_drop_shadow_test()
 	{
 		if (draw)
 		{
-			//pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
 			palJobPut(16,donna.palInfo->count,donna.palInfo->data);
-			//pictureInit(&buzz_sprite, &buzz, 22, 17, x, y, FLIP_NONE);
-			palJobPut(17,buzz.palInfo->count,buzz.palInfo->data);
+			palJobPut(29,buzz.palInfo->count,buzz.palInfo->data);
 			draw = 0;
 		}
 
 		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
-		pictureInit(&buzz_sprite, &buzz, 22, 17, x, y, FLIP_NONE);
+		pictureInit(&buzz_sprite, &buzz, 22, 29, x, y, FLIP_NONE);
 
 		SCClose();
 		waitVBlank();
@@ -135,13 +133,13 @@ void vt_striped_sprite_test()
 	{
 		if (draw)
 		{
-			pictureInit(&image, &donna, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,donna.palInfo->count,donna.palInfo->data);
-
-			pictureInit(&image2, &marker_striped, 22, 17, 32, 32, FLIP_NONE);
-			palJobPut(17,marker_striped.palInfo->count,marker_striped.palInfo->data);
+			palJobPut(29,marker_striped.palInfo->count,marker_striped.palInfo->data);
 			draw = 0;
 		}
+
+		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
+		pictureInit(&image2, &marker_striped, 22, 29, x, y, FLIP_NONE);
 
 		SCClose();
 		waitVBlank();
@@ -149,9 +147,6 @@ void vt_striped_sprite_test()
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
-
-		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
-		pictureInit(&image2, &marker_striped, 22, 17, x, y, FLIP_NONE);
 
 		if (p1 & JOY_UP)
 		{
@@ -196,7 +191,7 @@ void vt_striped_sprite_test()
 				DrawHelp(HELP_STRIPED);
 				draw = 1;
 			}
-		} else { 
+		} else {
 			if (ps & P1_SELECT)
 			{
 				clearSprites(1, 22);
@@ -205,7 +200,6 @@ void vt_striped_sprite_test()
 			}
 		}
 	}
-
 }
 
 void vt_lag_test()
@@ -656,7 +650,7 @@ void vt_scroll_test()
 	clearSprites(1, 22);
 
 	while (!done)
-	{	
+	{
 		fc = DAT_frameCounter;
 
 		if (draw)
@@ -664,11 +658,11 @@ void vt_scroll_test()
 			scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
 			palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
 
-			scrollerInit(&waterScroll, &sonic_water, 22, 17, x2, y2);
-			palJobPut(17, sonic_water.palInfo->count, sonic_water.palInfo->data);
+			scrollerInit(&waterScroll, &sonic_water, 22, 18, x2, y2);
+			palJobPut(18, sonic_water.palInfo->count, sonic_water.palInfo->data);
 
-			scrollerInit(&frontScroll, &sonic_floor, 43, 18, x1, y1);
-			palJobPut(18, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
+			scrollerInit(&frontScroll, &sonic_floor, 43, 19, x1, y1);
+			palJobPut(19, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
 			draw = 0;
 		}
 		
@@ -682,6 +676,7 @@ void vt_scroll_test()
 		{
 			done = 1;
 			clearFixLayer();
+			clearSprites(1, 100);
 			return;
 		}
 
@@ -711,7 +706,7 @@ void vt_scroll_test()
 				DrawHelp(HELP_HSCROLL);
 				draw = 1;
 			}
-		} else { 
+		} else {
 			if (ps & P1_SELECT)
 			{
 				DrawHelp(HELP_HSCROLL);
