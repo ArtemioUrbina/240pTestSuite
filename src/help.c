@@ -364,7 +364,7 @@ void DrawHelp(int option)
 				fixPrint(4, 18, fontColorWhite, 3, "boundary check.");
 				break;
 			case HELP_CHECK:
-				fixPrint(11, 6, fontColorGreen, 3, "CHECKERBOARD");
+				fixPrint(14, 6, fontColorGreen, 3, "CHECKERBOARD");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This pattern shows all the");
 				fixPrint(4, 10, fontColorWhite, 3, "visible pixels in an");
@@ -381,7 +381,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 				case 1:
-					fixPrint(6, 6, fontColorGreen, 3, "HOR/VER STRIPES (1/2)");
+					fixPrint(10, 6, fontColorGreen, 3, "HOR/VER STRIPES (1/2)");
 
 					fixPrint(4, 9, fontColorWhite, 3, "You should see a pattern of");
 					fixPrint(4, 10, fontColorWhite, 3, "lines, each one pixel in height");
@@ -399,7 +399,7 @@ void DrawHelp(int option)
 					fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
 					break;
 				case 2:
-					fixPrint(6, 6, fontColorGreen, 3, "HOR/VER STRIPES (2/2)");
+					fixPrint(10, 6, fontColorGreen, 3, "HOR/VER STRIPES (2/2)");
 
 					fixPrint(4, 9, fontColorWhite, 3, "You can also display vertical");
 					fixPrint(4, 10, fontColorWhite, 3, "bars by pressing 'LEFT'. That");
@@ -412,7 +412,7 @@ void DrawHelp(int option)
 				}
 				break;
 			case HELP_SHADOW:
-				fixPrint(7, 6, fontColorGreen, 3, "DROP SHADOW TEST");
+				fixPrint(12, 6, fontColorGreen, 3, "DROP SHADOW TEST");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This is a crucial test for 240p");
 				fixPrint(4, 10, fontColorWhite, 3, "It displays a simple sprite");
@@ -428,7 +428,7 @@ void DrawHelp(int option)
 				fixPrint(4, 20, fontColorWhite, 3, "and button 'C' toggles sprites.");
 				break;
 			case HELP_STRIPED:
-				fixPrint(7, 6, fontColorGreen, 3, "STRIPED SPRITE TEST");
+				fixPrint(11, 6, fontColorGreen, 3, "STRIPED SPRITE TEST");
 
 				fixPrint(4, 9, fontColorWhite, 3, "There are deinterlacers out");
 				fixPrint(4, 10, fontColorWhite, 3, "there that can display the drop");
@@ -486,7 +486,7 @@ void DrawHelp(int option)
 				}
 				break;
 			case HELP_HSCROLL:
-				fixPrint(11, 6, fontColorGreen, 3, "SCROLL TEST");
+				fixPrint(14, 6, fontColorGreen, 3, "SCROLL TEST");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This test shows either an");
 				fixPrint(4, 10, fontColorWhite, 3, "horizontal 40x224 back from");
@@ -561,7 +561,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 				case 1:
-					fixPrint(11, 6, fontColorGreen, 3, "LAG TEST (1/2)");
+					fixPrint(13, 6, fontColorGreen, 3, "LAG TEST (1/2)");
 
 					fixPrint(4, 9, fontColorWhite, 3, "This test is designed to be used");
 					fixPrint(4, 10, fontColorWhite, 3, "with two displays conected at");
@@ -581,7 +581,7 @@ void DrawHelp(int option)
 					fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
 					break;
 				case 2:
-					fixPrint(11, 6, fontColorGreen, 3, "LAG TEST (2/2)");
+					fixPrint(13, 6, fontColorGreen, 3, "LAG TEST (2/2)");
 
 					fixPrint(4, 9, fontColorWhite, 3, "the numbers are blurry.");
 

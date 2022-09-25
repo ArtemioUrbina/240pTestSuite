@@ -35,28 +35,56 @@ BYTE p1,p2,ps,p1e,p2e, p1b,p2b;
 
 void vt_drop_shadow_test()
 {
-	int done = 0, x = 30, y = 30, draw = 1;
+	int done = 0, x = 30, y = 30, draw = 1, changeSprite = 0, evenFrames = 0;
+	char flip;
+	unsigned int fc;
 	picture image;
-	picture buzz_sprite;
-
-	initGfx();
+	picture slug_sprite;
+	picture slug_shadow_sprite;
+	picture shape_sprite;
 
 	clearFixLayer();
 	backgroundColor(0xFAAF);
 	clearSprites(1, 1);
 	clearSprites(1, 100);
 
+	flip = FLIP_NONE;
+
 	while (!done)
 	{
+		fc = DAT_frameCounter;
+
 		if (draw)
 		{
 			palJobPut(16,donna.palInfo->count,donna.palInfo->data);
-			palJobPut(29,buzz.palInfo->count,buzz.palInfo->data);
+			palJobPut(29,slug.palInfo->count,slug.palInfo->data);
+			palJobPut(30,slug_shadow.palInfo->count,slug_shadow.palInfo->data);
+			palJobPut(31,shape_shadow.palInfo->count,shape_shadow.palInfo->data);
 			draw = 0;
 		}
 
 		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
-		pictureInit(&buzz_sprite, &buzz, 22, 29, x, y, FLIP_NONE);
+		
+		if (changeSprite == 0)
+		{
+			pictureHide(&shape_sprite);
+			if (fc % 2 == evenFrames)
+			{
+				pictureInit(&slug_shadow_sprite, &slug_shadow, 22, 30, x, y, flip);
+			} else {
+				pictureHide(&slug_shadow_sprite);
+			}
+			pictureInit(&slug_sprite, &slug, 44, 29, x-20, y-20, flip);
+		} else {
+			pictureHide(&slug_shadow_sprite);
+			pictureHide(&slug_sprite);
+			if (fc % 2 == evenFrames)
+			{
+				pictureInit(&shape_sprite, &shape_shadow, 22, 31, x, y, FLIP_NONE);
+			} else {
+				pictureHide(&shape_sprite);
+			}
+		}
 
 		SCClose();
 		waitVBlank();
@@ -64,6 +92,11 @@ void vt_drop_shadow_test()
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_C)
+		{
+			changeSprite = ~changeSprite;
+		}
 
 		if (p1 & JOY_UP)
 		{
@@ -82,6 +115,7 @@ void vt_drop_shadow_test()
 		if (p1 & JOY_LEFT)
 		{
 			x--;
+			flip = FLIP_X;
 			if (x < 0)
 				x = 0;
 		}
@@ -89,6 +123,7 @@ void vt_drop_shadow_test()
 		if (p1 & JOY_RIGHT)
 		{
 			x++;
+			flip = FLIP_NONE;
 			if (x > 288)
 				x = 288;
 		}
@@ -97,6 +132,7 @@ void vt_drop_shadow_test()
 		{
 			done = 1;
 			clearFixLayer();
+			clearSprites(1, 100);
 			return;
 		}
 
@@ -104,14 +140,14 @@ void vt_drop_shadow_test()
 		{
 			if (p1e & JOY_D)
 			{
-				clearSprites(1, 22);
+				clearSprites(1, 100);
 				DrawHelp(HELP_SHADOW);
 				draw = 1;
 			}
-		} else { 
+		} else {
 			if (ps & P1_SELECT)
 			{
-				clearSprites(1, 22);
+				clearSprites(1, 100);
 				DrawHelp(HELP_SHADOW);
 				draw = 1;
 			}
@@ -126,6 +162,7 @@ void vt_striped_sprite_test()
 	picture image2;
 
 	clearFixLayer();
+	backgroundColor(0xFAAF);
 	clearSprites(1, 22);
 	clearSprites(1, 100);
 
@@ -251,15 +288,16 @@ void vt_lag_test()
 
 void vt_reflex_test()
 {
-	picture marker1;
-	picture marker2;
-	picture marker3;
-	picture background;
 	char str[10];
 	short speed = 1, vary = 0, clicks[10];
 	u16 pal = 0x0000, change = 1, loadvram = 1, psgoff = 0, usersound = 0;
 	u16 x = 0, y = 0, x2 = 0, y2 = 0, done = 0, variation = 1, draw = 1;
 	u16 pos = 0, view = 0, audio = 1, drawoffset = 0;
+
+	picture marker1;
+	picture marker2;
+	picture marker3;
+	picture background;
 
 	x = 144, y = 60, x2 = 108, y2 = 96;
 
@@ -270,6 +308,7 @@ void vt_reflex_test()
 
 	while (!done)
 	{
+		palJobPut(16,marker.palInfo->count,marker.palInfo->data);
 		SCClose();
 		waitVBlank();
 
@@ -320,12 +359,8 @@ void vt_reflex_test()
 			}
 		}
 		
-		if (y == 96)	//  Screen Flash    
-		{
-			// Todo: Add beep sound here
-				
-			// Todo: Flash screen here
-		}
+		if (y == 96)	//  Screen Flash
+			backgroundColor(0x0555);
 		
 		if (usersound)
 		{
@@ -333,7 +368,7 @@ void vt_reflex_test()
 			usersound = 0;
 		}
 
-		if(isMVS)
+		if (isMVS)
 		{
 			if (p1e & JOY_D)
 			{
@@ -342,7 +377,7 @@ void vt_reflex_test()
 				loadvram = 1;
 				draw = 1;
 			}
-		} else { 
+		} else {
 			if (ps & P1_SELECT)
 			{
 				DrawHelp(HELP_MANUALLAG);
@@ -483,41 +518,28 @@ void vt_reflex_test()
 		x2 += speed;
 
 		pictureInit(&marker1, &marker, 1, 16, x, 96, FLIP_NONE);
-		palJobPut(16,marker.palInfo->count,marker.palInfo->data);
-
 		pictureInit(&marker3, &marker, 5, 16, x, y, FLIP_NONE);
-		palJobPut(16,marker.palInfo->count,marker.palInfo->data);
 
 		if (y == 96)								// Red on the spot
-		{
-			// Todo: Palette Red Here
-		}
+			volMEMWORD(0x402202) = 0x0f00;
 
 		if (y == 95 || y == 97)						// Green one pixel before or after
-		{
-			// Todo: Palette Green Here
-		}
+			volMEMWORD(0x402202) = 0x00f0;
 
 		if (y == 98 || y == 94)						// Back to white two pixels before or after
-		{
-			// Todo: Palette White Here
-		}
+			volMEMWORD(0x402202) = 0x8000;
 
 		if (view == 0 || view == 2)
 		{
 			pictureInit(&marker3, &marker, 5, 16, x, y, FLIP_NONE);
-			palJobPut(16,marker.palInfo->count,marker.palInfo->data);
 		} else {
 			pictureInit(&marker3, &marker, 5, 16, 320, 224, FLIP_NONE);
-			palJobPut(16,marker.palInfo->count,marker.palInfo->data);
 		}
 		if (view == 1 || view == 2)
 		{
 			pictureInit(&marker2, &marker, 9, 16, x2, y2, FLIP_NONE);
-			palJobPut(16,marker.palInfo->count,marker.palInfo->data);
 		} else {
 			pictureInit(&marker2, &marker, 9, 16, 320, 224, FLIP_NONE);
-			palJobPut(16,marker.palInfo->count,marker.palInfo->data);
 		}
 		if (y == 96)		// Half the screen?
 		{
@@ -527,7 +549,7 @@ void vt_reflex_test()
 				if (psgoff == 0)
 					psgoff = 2;
 			}
-
+			backgroundColor(0x0555);
 			// Todo: Screen flash here
 		}
 
@@ -703,12 +725,14 @@ void vt_scroll_test()
 		{
 			if (p1e & JOY_D)
 			{
+				clearSprites(1, 100);
 				DrawHelp(HELP_HSCROLL);
 				draw = 1;
 			}
 		} else {
 			if (ps & P1_SELECT)
 			{
+				clearSprites(1, 100);
 				DrawHelp(HELP_HSCROLL);
 				draw = 1;
 			}
@@ -729,7 +753,6 @@ void vt_vert_scroll_test()
 	clearFixLayer();
 	clearSprites(1, back.tileWidth);
 	clearSprites(22, gillian.tileWidth);
-	//backgroundColor(0x8000);
 
 	while (!done)
 	{
@@ -823,12 +846,12 @@ void vt_gridscroll_test()
 			}
 		}
 	}
-
 }
 
 void vt_horizontal_stripes()
 {
-	int done = 0, draw = 1;
+	char cntstr[4];
+	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
 	picture image;
 
 	clearFixLayer();
@@ -843,11 +866,55 @@ void vt_horizontal_stripes()
 			draw = 0;
 		}
 
+		if (alternate)
+		{
+			if (field == 0)
+			{
+				volMEMWORD(0x402202) = 0x5fff;
+				field = 1;
+			}
+			else
+			{
+				volMEMWORD(0x402204) = 0x8000;
+				field = 0;
+			}
+		}
+
+		if(docounter)
+		{
+			count++;
+
+			if(count > 59)
+				count = 0;
+
+			intToStr(count, cntstr, 2);
+			fixPrint(2, 25, fontColorWhite, 3, "Frame:");
+			fixPrint(8, 25, fontColorWhite, 3, cntstr);
+		}
+
+		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
+		{
+			if (field == 0)
+			{
+				volMEMWORD(0x402202) = 0x5fff;
+				field = 1;
+			} else {
+				volMEMWORD(0x402204) = 0x8000;
+				field = 0;
+			}
+		}
+
 		SCClose();
 		waitVBlank();
 
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_A)
+			alternate = ~alternate;
+
+		if (p1e & JOY_B)
+			docounter = ~docounter;
 
 		if (ps & P1_START)
 		{
@@ -875,7 +942,8 @@ void vt_horizontal_stripes()
 
 void vt_vertical_stripes()
 {
-	int done = 0, draw = 1;
+	char cntstr[4];
+	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
 	picture image;
 
 	clearFixLayer();
@@ -890,11 +958,55 @@ void vt_vertical_stripes()
 			draw = 0;
 		}
 
+		if (alternate)
+		{
+			if (field == 0)
+			{
+				volMEMWORD(0x402202) = 0x5fff;
+				field = 1;
+			}
+			else
+			{
+				volMEMWORD(0x402204) = 0x8000;
+				field = 0;
+			}
+		}
+
+		if(docounter)
+		{
+			count++;
+
+			if(count > 59)
+				count = 0;
+
+			intToStr(count, cntstr, 2);
+			fixPrint(2, 25, fontColorWhite, 3, "Frame:");
+			fixPrint(8, 25, fontColorWhite, 3, cntstr);
+		}
+
+		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
+		{
+			if (field == 0)
+			{
+				volMEMWORD(0x402202) = 0x5fff;
+				field = 1;
+			} else {
+				volMEMWORD(0x402204) = 0x8000;
+				field = 0;
+			}
+		}
+
 		SCClose();
 		waitVBlank();
 
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_A)
+			alternate = ~alternate;
+
+		if (p1e & JOY_B)
+			docounter = ~docounter;
 
 		if (ps & P1_START)
 		{
@@ -922,7 +1034,8 @@ void vt_vertical_stripes()
 
 void vt_checkerboard()
 {
-	int done = 0, draw = 1;
+	char cntstr[4];
+	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
 	picture image;
 
 	clearFixLayer();
@@ -937,11 +1050,55 @@ void vt_checkerboard()
 			draw = 0;
 		}
 
+		if (alternate)
+		{
+			if (field == 0)
+			{
+				volMEMWORD(0x402202) = 0x8000;
+				field = 1;
+			}
+			else
+			{
+				volMEMWORD(0x402204) = 0x5fff;
+				field = 0;
+			}
+		}
+
+		if(docounter)
+		{
+			count++;
+
+			if(count > 59)
+				count = 0;
+
+			intToStr(count, cntstr, 2);
+			fixPrint(2, 25, fontColorWhite, 3, "Frame:");
+			fixPrint(8, 25, fontColorWhite, 3, cntstr);
+		}
+
+		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
+		{
+			if (field == 0)
+			{
+				volMEMWORD(0x402202) = 0x8000;
+				field = 1;
+			} else {
+				volMEMWORD(0x402204) = 0x5fff;
+				field = 0;
+			}
+		}
+
 		SCClose();
 		waitVBlank();
 
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_A)
+			alternate = ~alternate;
+
+		if (p1e & JOY_B)
+			docounter = ~docounter;
 
 		if (ps & P1_START)
 		{
@@ -1080,8 +1237,6 @@ void at_sound_test()
 	clearFixLayer();
 	clearSprites(1, 22);
 
-	
-
 	while (!done)
 	{
 		if (draw)
@@ -1090,6 +1245,7 @@ void at_sound_test()
 			palJobPut(16,back.palInfo->count,back.palInfo->data);
 			draw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
@@ -1110,7 +1266,7 @@ void at_sound_test()
 				DrawHelp(HELP_SOUND);
 				draw = 1;
 			}
-		} else { 
+		} else {
 			if (ps & P1_SELECT)
 			{
 				DrawHelp(HELP_SOUND);
@@ -1158,7 +1314,7 @@ void at_audiosync_test()
 				DrawHelp(HELP_AUDIOSYNC);
 				draw = 1;
 			}
-		} else { 
+		} else {
 			if (ps & P1_SELECT)
 			{
 				DrawHelp(HELP_AUDIOSYNC);
@@ -1166,7 +1322,6 @@ void at_audiosync_test()
 			}
 		}
 	}
-
 }
 
 void ht_controller_test()

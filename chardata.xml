@@ -82,11 +82,13 @@
   <pict id="donna">
     <file>gfx\donna.png</file>
   </pict>
-  <pict id="buzz">
-    <file>gfx\buzz.png</file>
+  <pict id="slug">
+    <file>gfx\slug.png</file>
+    <flips>X</flips>
   </pict>
-  <pict id="buzz_shadow">
-    <file>gfx\buzz_shadow.png</file>
+  <pict id="slug_shadow">
+    <file>gfx\slug_shadow.png</file>
+    <flips>X</flips>
   </pict>
   <pict id="shape_shadow">
     <file>gfx\shape_shadow.png</file>

@@ -404,7 +404,7 @@ void menu_at()
 		if (p1e & JOY_A)
 		{
 			clearSprites(1, 22);
-			switch (curse) 
+			switch (curse)
 			{
 				case 1:
 					at_sound_test();
@@ -563,7 +563,6 @@ void menu_main()
 	int curse = 1, cursemax = 6, redraw = 1, done = 0, showexit = 0;
 
 	palJobPut(0,8,fixPalettes);
-	//jobMeterSetup(true);
 	if(isMVS && !volMEMBYTE(SOFT_DIP_1))
 	{
 		showexit = 1;
@@ -656,7 +655,7 @@ void draw_mvs_demo()
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
 	fixPrint(12, 6, 2, 3, "240p Test Suite");
-	fixPrint(10, 25, 2, 3, "2022 Dasutin/Artemio");
+	fixPrint(10, 26, 2, 3, "2022 Dasutin/Artemio");
 
 	while(demo_frames)
 	{
@@ -693,9 +692,9 @@ void draw_mvs_demo()
 		p1 = volMEMBYTE(PS_CURRENT);
 
 		if(toggle == 30)
-			fixPrint(14, 23, 1, 3, "           ");
+			fixPrint(14, 23, 1, 3, "            ");
 		if(toggle == 0)
-			fixPrint(14, 23, 1, 3, freeplay ? "PRESS START" : "INSERT COIN");
+			fixPrint(14, 23, 1, 3, freeplay ? "PRESS  START" : "INSERT COIN");
 
 		fixPrintf(28, 28, 0, 3, "CREDITS %02d", HexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
 		
@@ -727,13 +726,14 @@ void draw_mvs_title()
 {
 	int toggle = 0, bios_timer = 0, freeplay = 0;
 	picture foreground;
+	picture background;
 
 	backgroundColor(0x7666);
 	clearSprites(1, 26);
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
-	fixPrint(12, 6, 0, 3, "240p Test Suite");
-	fixPrint(10, 25, 0, 3, "2022 Dasutin/Artemio");
+	//fixPrint(12, 6, 0, 3, "240p Test Suite");
+	fixPrint(10, 26, 0, 3, "2022 Dasutin/Artemio");
 
 	while(1)
 	{
@@ -743,14 +743,16 @@ void draw_mvs_title()
 		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
 
 		if(toggle == 30)
-			fixPrint(14, 23, 1, 3, "           ");
+			fixPrint(14, 23, 1, 3, "            ");
 		if(toggle == 0)
-			fixPrint(14, 23, 1, 3, "PRESS START");
+			fixPrint(14, 23, 1, 3, "PRESS  START");
 
 		if(!freeplay)
 		{
+			pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,back.palInfo->count,back.palInfo->data);
 			bios_timer = HexToDec(volMEMBYTE(BIOS_COMP_TIME));
-			fixPrintf(16, 27, 0, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
+			fixPrintf(16, 28, 0, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
 		}
 		fixPrintf(28, 28, 0, 3, "CREDITS %02d", HexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
 		
