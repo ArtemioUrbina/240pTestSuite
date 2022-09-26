@@ -175,7 +175,7 @@ void menu_tp()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_GENERAL))
+		if(checkHelp(HELP_GENERAL))
 			redraw = 1;
 
 		if (p1e & JOY_A)
@@ -295,7 +295,7 @@ void menu_vt()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_GENERAL))
+		if(checkHelp(HELP_GENERAL))
 			redraw = 1;
 
 		if (p1e & JOY_A)
@@ -391,7 +391,7 @@ void menu_at()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_GENERAL))
+		if(checkHelp(HELP_GENERAL))
 			redraw = 1;
 
 		if (p1e & JOY_A)
@@ -457,7 +457,7 @@ void menu_ht()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_GENERAL))
+		if(checkHelp(HELP_GENERAL))
 			redraw = 1;
 
 		if (p1e & JOY_A)
@@ -585,7 +585,7 @@ void menu_main()
 
 		menu_footer();
 
-		if(chechHelp(HELP_GENERAL))
+		if(checkHelp(HELP_GENERAL))
 			redraw = 1;
 
 		if (p1e & JOY_A)

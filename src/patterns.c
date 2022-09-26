@@ -96,7 +96,7 @@ void tp_pluge()
 			return;
 		}
 
-		if(chechHelp(HELP_PLUGE))
+		if(checkHelp(HELP_PLUGE))
 			draw = 1;
 	}
 }
@@ -128,7 +128,7 @@ void tp_colorchart()
 			return;
 		}
 
-		if(chechHelp(HELP_COLORS))
+		if(checkHelp(HELP_COLORS))
 			draw = 1;
 	}
 }
@@ -196,7 +196,7 @@ void tp_colorbars()
 			return;
 		}
 
-		if(chechHelp(HELP_601CB))
+		if(checkHelp(HELP_601CB))
 			draw = 1;
 	}
 }
@@ -264,7 +264,7 @@ void tp_smpte_color_bars()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_SMPTE))
+		if(checkHelp(HELP_SMPTE))
 			draw = 1;
 	}
 }
@@ -295,7 +295,7 @@ void tp_ref_color_bars()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_601CB))
+		if(checkHelp(HELP_601CB))
 			draw = 1;
 	}
 }
@@ -351,7 +351,7 @@ void tp_color_bleed_check()
 			return;
 		}
 
-		if(chechHelp(HELP_BLEED))
+		if(checkHelp(HELP_BLEED))
 			draw = 1;
 	}
 }
@@ -396,7 +396,7 @@ void tp_grid()
 			return;
 		}
 
-		if(chechHelp(HELP_GRID))
+		if(checkHelp(HELP_GRID))
 			draw = 1;
 	}
 }
@@ -478,7 +478,7 @@ void tp_monoscope()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_MONOSCOPE))
+		if(checkHelp(HELP_MONOSCOPE))
 			draw = 1;
 	}
 }
@@ -509,7 +509,7 @@ void tp_gray_ramp()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_GRAY))
+		if(checkHelp(HELP_GRAY))
 			draw = 1;
 	}
 }
@@ -571,7 +571,7 @@ void tp_white_rgb()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_WHITE))
+		if(checkHelp(HELP_WHITE))
 			draw = 1;
 
 		if (color > 5)
@@ -673,7 +673,7 @@ void tp_100_ire()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_IRE))
+		if(checkHelp(HELP_IRE))
 			draw = 1;
 
 		if (text)
@@ -737,7 +737,7 @@ void tp_sharpness()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_SHARPNESS))
+		if(checkHelp(HELP_SHARPNESS))
 			draw = 1;
 	}
 }
@@ -843,7 +843,7 @@ void tp_convergence()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_CONVERGENCE))
+		if(checkHelp(HELP_CONVERGENCE))
 			draw = 1;
 	}
 }

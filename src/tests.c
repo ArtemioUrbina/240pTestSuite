@@ -131,7 +131,7 @@ void vt_drop_shadow_test()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_SHADOW))
+		if(checkHelp(HELP_SHADOW))
 			draw = 1;
 	}
 }
@@ -197,7 +197,7 @@ void vt_striped_sprite_test()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_STRIPED))
+		if(checkHelp(HELP_STRIPED))
 			draw = 1;
 	}
 }
@@ -311,7 +311,7 @@ void vt_lag_test()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_LAG))
+		if(checkHelp(HELP_LAG))
 			draw = 1;
 	}
 }
@@ -405,7 +405,7 @@ void vt_reflex_test()
 			usersound = 0;
 		}
 
-		if(chechHelp(HELP_MANUALLAG))
+		if(checkHelp(HELP_MANUALLAG))
 			draw = 1;
 
 		if (p1e & JOY_A)
@@ -738,7 +738,7 @@ void vt_scroll_test()
 			x3 = 0;
 		}
 
-		if(chechHelp(HELP_HSCROLL))
+		if(checkHelp(HELP_HSCROLL))
 			draw = 1;
 		
 		scrollerSetPos(&frontScroll, x1, y1);
@@ -783,7 +783,7 @@ void vt_vert_scroll_test()
 			y = 0;
 		}
 
-		if(chechHelp(HELP_HSCROLL))
+		if(checkHelp(HELP_HSCROLL))
 			draw = 1;
 
 		scrollerSetPos(&vertScroll, 0, y);
@@ -816,7 +816,7 @@ void vt_gridscroll_test()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_STRIPES))
+		if(checkHelp(HELP_STRIPES))
 			draw = 1;
 	}
 }
@@ -893,7 +893,7 @@ void vt_horizontal_stripes()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_STRIPES))
+		if(checkHelp(HELP_STRIPES))
 			draw = 1;
 	}
 }
@@ -969,7 +969,7 @@ void vt_vertical_stripes()
 			done = 1;
 		}
 
-		if(chechHelp(HELP_STRIPES))
+		if(checkHelp(HELP_STRIPES))
 			draw = 1;
 	}
 }
@@ -1048,7 +1048,7 @@ void vt_checkerboard()
 			return;
 		}
 
-		if(chechHelp(HELP_CHECK))
+		if(checkHelp(HELP_CHECK))
 			draw = 1;
 	}
 }
@@ -1140,7 +1140,7 @@ void vt_backlitzone_test()
 			return;
 		}
 
-		if(chechHelp(HELP_LED))
+		if(checkHelp(HELP_LED))
 			draw = 1;
 	}
 }
@@ -1172,7 +1172,7 @@ void at_sound_test()
 			return;
 		}
 
-		if(chechHelp(HELP_SOUND))
+		if(checkHelp(HELP_SOUND))
 			draw = 1;
 	}
 
@@ -1206,7 +1206,7 @@ void at_audiosync_test()
 			return;
 		}
 
-		if(chechHelp(HELP_AUDIOSYNC))
+		if(checkHelp(HELP_AUDIOSYNC))
 			draw = 1;
 	}
 }
@@ -1474,7 +1474,7 @@ void ht_memory_viewer(u32 address)
 			redraw = 1;
 		}
 
-		if(chechHelp(HELP_MEMVIEW))
+		if(checkHelp(HELP_MEMVIEW))
 			redraw = 1;
 
 		if (p1e & JOY_LEFT)

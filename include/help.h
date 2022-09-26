@@ -57,6 +57,6 @@
 
 void DrawHelp(int option);
 void draw_background();
-int chechHelp(int helpID);
+int checkHelp(int helpID);
 
 #endif /* _HELP_H_ */

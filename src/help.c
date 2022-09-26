@@ -31,17 +31,17 @@
 
 BYTE p1,p2,ps,p1e,p2e;
 
-int chechHelp(int helpID)
+int checkHelp(int helpID)
 {
 	if(isMVS)
 	{
-		if (p1e & JOY_D)
+		if (volMEMBYTE(P1_EDGE) & JOY_D)
 		{
 			DrawHelp(helpID);
 			return 1;
 		}
 	} else { 
-		if (ps & P1_SELECT)
+		if (volMEMBYTE(PS_CURRENT) & P1_SELECT)
 		{
 			DrawHelp(helpID);
 			return 1;
