@@ -138,4 +138,73 @@
   <pict id="led_8x">
     <file>gfx\led_8x.png</file>
   </pict>
+  <pict id="num_0">
+    <file>gfx\0.png</file>
+  </pict>
+  <pict id="num_1">
+    <file>gfx\1.png</file>
+  </pict>
+  <pict id="num_2">
+    <file>gfx\2.png</file>
+  </pict>
+  <pict id="num_3">
+    <file>gfx\3.png</file>
+  </pict>
+  <pict id="num_4">
+    <file>gfx\4.png</file>
+  </pict>
+  <pict id="num_5">
+    <file>gfx\5.png</file>
+  </pict>
+  <pict id="num_6">
+    <file>gfx\6.png</file>
+  </pict>
+  <pict id="num_7">
+    <file>gfx\7.png</file>
+  </pict>
+  <pict id="num_8">
+    <file>gfx\8.png</file>
+  </pict>
+  <pict id="num_9">
+    <file>gfx\9.png</file>
+  </pict>
+  <pict id="num_0_w">
+    <file>gfx\0w.png</file>
+  </pict>
+  <pict id="num_1_w">
+    <file>gfx\1w.png</file>
+  </pict>
+  <pict id="num_2_w">
+    <file>gfx\2w.png</file>
+  </pict>
+  <pict id="num_3_w">
+    <file>gfx\3w.png</file>
+  </pict>
+  <pict id="num_4_w">
+    <file>gfx\4w.png</file>
+  </pict>
+  <pict id="num_5_w">
+    <file>gfx\5w.png</file>
+  </pict>
+  <pict id="num_6_w">
+    <file>gfx\6w.png</file>
+  </pict>
+  <pict id="num_7_w">
+    <file>gfx\7w.png</file>
+  </pict>
+  <pict id="num_8_w">
+    <file>gfx\8w.png</file>
+  </pict>
+  <pict id="num_9_w">
+    <file>gfx\9w.png</file>
+  </pict>
+  <pict id="circle_blue">
+    <file>gfx\circle_blue.png</file>
+  </pict>
+  <pict id="circle_red">
+    <file>gfx\circle_red.png</file>
+  </pict>
+  <pict id="separator">
+    <file>gfx\separator.png</file>
+  </pict>
 </chardata>

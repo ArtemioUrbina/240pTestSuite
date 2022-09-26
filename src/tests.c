@@ -241,26 +241,108 @@ void vt_striped_sprite_test()
 
 void vt_lag_test()
 {
-	int done = 0, draw = 1;
+	u16 lsd, msd;
+	int frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1;
+	u16 done = 0, draw = 1;
+	unsigned char *numbers[10] = {&num_0, &num_0, &num_2, &num_3, &num_4, &num_5, &num_6, &num_7, &num_8, &num_9};
+	u16 pause = 0, cposx = 32, cposy = 17;
+	
 	picture image;
+	picture h1;
+	picture h2;
+	picture m1;
+	picture m2;
+	picture s1;
+	picture s2;
+	picture f1;
+	picture f2;
 
+	backgroundColor(0x5fff);
 	clearFixLayer();
 	clearSprites(1, 22);
 
+	palJobPut(16, num_0.palInfo->count, num_0.palInfo->data);
+
 	while (!done)
 	{
-		if (draw)
+		fixPrint(4, 3, fontColorBlack, 3, "hours");
+		fixPrint(13, 3, fontColorBlack, 3, "minutes");
+		fixPrint(22, 3, fontColorBlack, 3, "seconds");
+		fixPrint(31, 3, fontColorBlack, 3, "frames");
+
+		if (!pause)
 		{
-			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
-			draw = 0;
+			frames ++;
+			framecnt ++;
+			if(framecnt > 8)
+				framecnt = 1;
 		}
+
+		if (frames > 59)
+		{
+			frames = 0;
+			seconds ++;
+		}
+		
+		if (seconds > 59)
+		{
+			seconds = 0;
+			minutes ++;
+		}
+
+		if (minutes > 59)
+		{
+			minutes = 0;
+			hours ++;
+		}
+
+		if (hours > 99)
+			hours = 0;
+
+		pictureInit(&image, &separator, 1, 16, 80, 19, FLIP_NONE);
+		pictureInit(&image, &separator, 5, 16, 152, 19, FLIP_NONE);
+		pictureInit(&image, &separator, 9, 16, 224, 19, FLIP_NONE);
+
+		// Draw Hours
+		lsd = hours % 10;
+		msd = hours / 10;
+		pictureInit(&h1, numbers[msd], 14, 16, 32, 19, FLIP_NONE);
+		pictureInit(&h2, numbers[lsd], 19, 16, 56, 19, FLIP_NONE);
+
+		// Draw Minutes
+		lsd = minutes % 10;
+		msd = minutes / 10;
+		pictureInit(&m1, numbers[msd], 24, 16, 104, 19, FLIP_NONE);
+		pictureInit(&m2, numbers[lsd], 29, 16, 128, 19, FLIP_NONE);
+
+		// Draw Seconds
+		lsd = seconds % 10;
+		msd = seconds / 10;
+		pictureInit(&s1, numbers[msd], 34, 16, 176, 19, FLIP_NONE);
+		pictureInit(&s2, numbers[lsd], 39, 16, 200, 19, FLIP_NONE);
+
+		// Draw frames
+		lsd = frames % 10;
+		msd = frames / 10;
+		pictureInit(&f1, numbers[msd], 44, 16, 248, 19, FLIP_NONE);
+		pictureInit(&f2, numbers[lsd], 49, 16, 272, 19, FLIP_NONE);
 
 		SCClose();
 		waitVBlank();
 
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_A)
+		{
+			pause = !pause;
+		}
+
+		if (p1e & JOY_B && pause)
+		{
+			frames = hours = minutes = seconds = 0;
+			framecnt = 1;
+		}
 
 		if (ps & P1_START)
 		{

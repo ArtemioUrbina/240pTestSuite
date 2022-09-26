@@ -25,19 +25,20 @@
 
 extern BYTE isMVS, is4S, is6S, isMulti;
 
-#define SYSTEM_AES 0x00
-#define SYSTEM_MVS 0x80
-#define BIOS_MVS_FLAG 0x10FD82
-#define BIOS_COUNTRY_CODE 0x10FD83
+#define SYSTEM_AES			0x00
+#define SYSTEM_MVS			0x80
+#define BIOS_MVS_FLAG		0x10FD82
+#define BIOS_COUNTRY_CODE	0x10FD83
 
-#define SYSTEM_EUROPE 0x02
-#define SYSTEM_JAPAN 0x00
-#define SYSTEM_USA 0x01
+#define SYSTEM_EUROPE		0x02
+#define SYSTEM_JAPAN		0x00
+#define SYSTEM_USA			0x01
 
-#define fontColorWhite 0
-#define fontColorRed   1
-#define fontColorGreen 2
-#define fontColorBlue  3
+#define fontColorWhite		0
+#define fontColorRed		1
+#define fontColorGreen		2
+#define fontColorBlue		3
+#define fontColorBlack		4
 
 #define REG_DIPSW	0x300001
 #define DP_SETTINGS	0x01

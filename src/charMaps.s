@@ -1258,3 +1258,237 @@ led_8x:
 led_8x_Map:
 	.word	0x0579,0x0000
 
+.globl num_0
+num_0:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_0_Palettes
+	.long	num_0_Map, num_0_Map, num_0_Map, num_0_Map
+num_0_Map:
+	.word	0x057a,0x0000, 0x057a,0x0002
+	.word	0x057b,0x0000, 0x057b,0x0002
+
+.globl num_1
+num_1:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_1_Palettes
+	.long	num_1_Map, num_1_Map, num_1_Map, num_1_Map
+num_1_Map:
+	.word	0x057c,0x0000, 0x057e,0x0000
+	.word	0x057d,0x0000, 0x057d,0x0000
+
+.globl num_2
+num_2:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_2_Palettes
+	.long	num_2_Map, num_2_Map, num_2_Map, num_2_Map
+num_2_Map:
+	.word	0x057f,0x0000, 0x0581,0x0000
+	.word	0x0580,0x0000, 0x0582,0x0000
+
+.globl num_3
+num_3:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_3_Palettes
+	.long	num_3_Map, num_3_Map, num_3_Map, num_3_Map
+num_3_Map:
+	.word	0x0583,0x0000, 0x0585,0x0000
+	.word	0x0584,0x0000, 0x0586,0x0000
+
+.globl num_4
+num_4:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_4_Palettes
+	.long	num_4_Map, num_4_Map, num_4_Map, num_4_Map
+num_4_Map:
+	.word	0x0587,0x0000, 0x0589,0x0000
+	.word	0x0588,0x0000, 0x058a,0x0000
+
+.globl num_5
+num_5:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_5_Palettes
+	.long	num_5_Map, num_5_Map, num_5_Map, num_5_Map
+num_5_Map:
+	.word	0x058b,0x0000, 0x058d,0x0000
+	.word	0x058c,0x0000, 0x058e,0x0000
+
+.globl num_6
+num_6:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_6_Palettes
+	.long	num_6_Map, num_6_Map, num_6_Map, num_6_Map
+num_6_Map:
+	.word	0x058f,0x0000, 0x0591,0x0000
+	.word	0x0590,0x0000, 0x0592,0x0000
+
+.globl num_7
+num_7:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_7_Palettes
+	.long	num_7_Map, num_7_Map, num_7_Map, num_7_Map
+num_7_Map:
+	.word	0x0593,0x0000, 0x0595,0x0000
+	.word	0x0594,0x0000, 0x0596,0x0000
+
+.globl num_8
+num_8:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_8_Palettes
+	.long	num_8_Map, num_8_Map, num_8_Map, num_8_Map
+num_8_Map:
+	.word	0x0597,0x0000, 0x0599,0x0000
+	.word	0x0598,0x0000, 0x059a,0x0000
+
+.globl num_9
+num_9:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_9_Palettes
+	.long	num_9_Map, num_9_Map, num_9_Map, num_9_Map
+num_9_Map:
+	.word	0x059b,0x0000, 0x059d,0x0000
+	.word	0x059c,0x0000, 0x059e,0x0000
+
+.globl num_0_w
+num_0_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_0_w_Palettes
+	.long	num_0_w_Map, num_0_w_Map, num_0_w_Map, num_0_w_Map
+num_0_w_Map:
+	.word	0x059f,0x0000, 0x059f,0x0002
+	.word	0x05a0,0x0000, 0x05a0,0x0002
+
+.globl num_1_w
+num_1_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_1_w_Palettes
+	.long	num_1_w_Map, num_1_w_Map, num_1_w_Map, num_1_w_Map
+num_1_w_Map:
+	.word	0x05a1,0x0000, 0x05a3,0x0000
+	.word	0x05a2,0x0000, 0x05a2,0x0000
+
+.globl num_2_w
+num_2_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_2_w_Palettes
+	.long	num_2_w_Map, num_2_w_Map, num_2_w_Map, num_2_w_Map
+num_2_w_Map:
+	.word	0x05a4,0x0000, 0x05a6,0x0000
+	.word	0x05a5,0x0000, 0x05a7,0x0000
+
+.globl num_3_w
+num_3_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_3_w_Palettes
+	.long	num_3_w_Map, num_3_w_Map, num_3_w_Map, num_3_w_Map
+num_3_w_Map:
+	.word	0x05a8,0x0000, 0x05aa,0x0000
+	.word	0x05a9,0x0000, 0x05ab,0x0000
+
+.globl num_4_w
+num_4_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_4_w_Palettes
+	.long	num_4_w_Map, num_4_w_Map, num_4_w_Map, num_4_w_Map
+num_4_w_Map:
+	.word	0x05ac,0x0000, 0x05ae,0x0000
+	.word	0x05ad,0x0000, 0x05af,0x0000
+
+.globl num_5_w
+num_5_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_5_w_Palettes
+	.long	num_5_w_Map, num_5_w_Map, num_5_w_Map, num_5_w_Map
+num_5_w_Map:
+	.word	0x05b0,0x0000, 0x05b2,0x0000
+	.word	0x05b1,0x0000, 0x05b3,0x0000
+
+.globl num_6_w
+num_6_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_6_w_Palettes
+	.long	num_6_w_Map, num_6_w_Map, num_6_w_Map, num_6_w_Map
+num_6_w_Map:
+	.word	0x05b4,0x0000, 0x05b6,0x0000
+	.word	0x05b5,0x0000, 0x05b7,0x0000
+
+.globl num_7_w
+num_7_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_7_w_Palettes
+	.long	num_7_w_Map, num_7_w_Map, num_7_w_Map, num_7_w_Map
+num_7_w_Map:
+	.word	0x05b8,0x0000, 0x05ba,0x0000
+	.word	0x05b9,0x0000, 0x05bb,0x0000
+
+.globl num_8_w
+num_8_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_8_w_Palettes
+	.long	num_8_w_Map, num_8_w_Map, num_8_w_Map, num_8_w_Map
+num_8_w_Map:
+	.word	0x05bc,0x0000, 0x05be,0x0000
+	.word	0x05bd,0x0000, 0x05bf,0x0000
+
+.globl num_9_w
+num_9_w:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	num_9_w_Palettes
+	.long	num_9_w_Map, num_9_w_Map, num_9_w_Map, num_9_w_Map
+num_9_w_Map:
+	.word	0x05c0,0x0000, 0x05c2,0x0000
+	.word	0x05c1,0x0000, 0x05c3,0x0000
+
+.globl circle_blue
+circle_blue:
+	.word	0x0010	;*16 bytes per strip
+	.word	0x0004, 0x0004	;*4 strips of 4 tiles
+	.long	circle_blue_Palettes
+	.long	circle_blue_Map, circle_blue_Map, circle_blue_Map, circle_blue_Map
+circle_blue_Map:
+	.word	0x05c4,0x0000, 0x05c6,0x0000, 0x05c6,0x0002, 0x05c4,0x0002
+	.word	0x05c5,0x0000, 0x05c7,0x0000, 0x05c7,0x0000, 0x05c5,0x0002
+	.word	0x05c5,0x0001, 0x05c7,0x0000, 0x05c7,0x0000, 0x05c5,0x0003
+	.word	0x05c4,0x0001, 0x05c6,0x0001, 0x05c6,0x0003, 0x05c4,0x0003
+
+.globl circle_red
+circle_red:
+	.word	0x0010	;*16 bytes per strip
+	.word	0x0004, 0x0004	;*4 strips of 4 tiles
+	.long	circle_red_Palettes
+	.long	circle_red_Map, circle_red_Map, circle_red_Map, circle_red_Map
+circle_red_Map:
+	.word	0x05c8,0x0000, 0x05ca,0x0000, 0x05ca,0x0002, 0x05c8,0x0002
+	.word	0x05c9,0x0000, 0x05cb,0x0000, 0x05cb,0x0000, 0x05c9,0x0002
+	.word	0x05c9,0x0001, 0x05cb,0x0000, 0x05cb,0x0000, 0x05c9,0x0003
+	.word	0x05c8,0x0001, 0x05ca,0x0001, 0x05ca,0x0003, 0x05c8,0x0003
+
+.globl separator
+separator:
+	.word	0x0008	;*8 bytes per strip
+	.word	0x0002, 0x0002	;*2 strips of 2 tiles
+	.long	separator_Palettes
+	.long	separator_Map, separator_Map, separator_Map, separator_Map
+separator_Map:
+	.word	0x05cc,0x0000, 0x05ce,0x0000
+	.word	0x05cd,0x0000, 0x05cd,0x0000
+
