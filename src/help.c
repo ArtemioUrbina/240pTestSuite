@@ -27,14 +27,34 @@
 #include "ng.h"
 #include "externs.h"
 #include "help.h"
+#include "string_ng.h"
 
 BYTE p1,p2,ps,p1e,p2e;
+
+int chechHelp(int helpID)
+{
+	if(isMVS)
+	{
+		if (p1e & JOY_D)
+		{
+			DrawHelp(helpID);
+			return 1;
+		}
+	} else { 
+		if (ps & P1_SELECT)
+		{
+			DrawHelp(helpID);
+			return 1;
+		}
+	}
+	return 0;
+}
 
 void DrawHelp(int option)
 {
 	int exit = 0, page = 1, totalpages = 1;
 
-	clearFixLayer();
+	gfxClear();
 	draw_background();
 
 	switch (option)

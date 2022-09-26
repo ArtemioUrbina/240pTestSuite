@@ -43,11 +43,6 @@ void vt_drop_shadow_test()
 	picture slug_shadow_sprite;
 	picture shape_sprite;
 
-	clearFixLayer();
-	backgroundColor(0xFAAF);
-	clearSprites(1, 1);
-	clearSprites(1, 100);
-
 	flip = FLIP_NONE;
 
 	while (!done)
@@ -56,6 +51,9 @@ void vt_drop_shadow_test()
 
 		if (draw)
 		{
+			backgroundColor(0xFAAF);
+			gfxClear();
+
 			palJobPut(16,donna.palInfo->count,donna.palInfo->data);
 			palJobPut(29,slug.palInfo->count,slug.palInfo->data);
 			palJobPut(30,slug_shadow.palInfo->count,slug_shadow.palInfo->data);
@@ -131,27 +129,10 @@ void vt_drop_shadow_test()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			clearSprites(1, 100);
-			return;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				clearSprites(1, 100);
-				DrawHelp(HELP_SHADOW);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				clearSprites(1, 100);
-				DrawHelp(HELP_SHADOW);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_SHADOW))
+			draw = 1;
 	}
 }
 
@@ -161,15 +142,13 @@ void vt_striped_sprite_test()
 	picture image;
 	picture image2;
 
-	clearFixLayer();
-	backgroundColor(0xFAAF);
-	clearSprites(1, 22);
-	clearSprites(1, 100);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			backgroundColor(0xFAAF);
+			gfxClear();
+
 			palJobPut(16,donna.palInfo->count,donna.palInfo->data);
 			palJobPut(29,marker_striped.palInfo->count,marker_striped.palInfo->data);
 			draw = 0;
@@ -216,26 +195,10 @@ void vt_striped_sprite_test()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				clearSprites(1, 22);
-				DrawHelp(HELP_STRIPED);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				clearSprites(1, 22);
-				DrawHelp(HELP_STRIPED);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_STRIPED))
+			draw = 1;
 	}
 }
 
@@ -244,7 +207,7 @@ void vt_lag_test()
 	u16 lsd, msd;
 	int frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1;
 	u16 done = 0, draw = 1;
-	unsigned char *numbers[10] = {&num_0, &num_0, &num_2, &num_3, &num_4, &num_5, &num_6, &num_7, &num_8, &num_9};
+	const pictureInfo *numbers[10] = {&num_0, &num_0, &num_2, &num_3, &num_4, &num_5, &num_6, &num_7, &num_8, &num_9};
 	u16 pause = 0, cposx = 32, cposy = 17;
 	
 	picture image;
@@ -258,8 +221,7 @@ void vt_lag_test()
 	picture f2;
 
 	backgroundColor(0x5fff);
-	clearFixLayer();
-	clearSprites(1, 22);
+	gfxClear();
 
 	palJobPut(16, num_0.palInfo->count, num_0.palInfo->data);
 
@@ -347,31 +309,17 @@ void vt_lag_test()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_LAG);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_LAG);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_LAG))
+			draw = 1;
 	}
 }
 
 void vt_reflex_test()
 {
 	char str[10];
-	short speed = 1, vary = 0, clicks[10];
+	short speed = 1, vary = 0, clicks[10], resetbg = 0;
 	u16 pal = 0x0000, change = 1, loadvram = 1, psgoff = 0, usersound = 0;
 	u16 x = 0, y = 0, x2 = 0, y2 = 0, done = 0, variation = 1, draw = 1;
 	u16 pos = 0, view = 0, audio = 1, drawoffset = 0;
@@ -382,11 +330,6 @@ void vt_reflex_test()
 	picture background;
 
 	x = 144, y = 60, x2 = 108, y2 = 96;
-
-	backgroundColor(0x0000);
-	clearFixLayer();
-	clearSprites(1, 1);
-	clearSprites(1, 22);
 
 	while (!done)
 	{
@@ -399,6 +342,9 @@ void vt_reflex_test()
 
 		if (loadvram)
 		{
+			backgroundColor(0x0000);
+			gfxClear();
+
 			fixPrint(2, 23, fontColorGreen, 3, "Press the \"A\" button when the sprite");
 			fixPrint(2, 24, fontColorGreen, 3, "is aligned. A negative value means");
 			fixPrint(2, 25, fontColorGreen, 3, "you pressed \"A\" before they intersect.");
@@ -441,8 +387,17 @@ void vt_reflex_test()
 			}
 		}
 		
+		if(resetbg)
+		{
+			backgroundColor(0x0000);
+			resetbg = 0;
+		}
+
 		if (y == 96)	//  Screen Flash
+		{
 			backgroundColor(0x0555);
+			resetbg = 1;
+		}
 		
 		if (usersound)
 		{
@@ -450,24 +405,8 @@ void vt_reflex_test()
 			usersound = 0;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_MANUALLAG);
-				clearSprites(1, 1);
-				loadvram = 1;
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_MANUALLAG);
-				clearSprites(1, 1);
-				loadvram = 1;
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_MANUALLAG))
+			draw = 1;
 
 		if (p1e & JOY_A)
 		{
@@ -750,15 +689,14 @@ void vt_scroll_test()
 
 	scroller backScroll, waterScroll, frontScroll;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		fc = DAT_frameCounter;
 
 		if (draw)
 		{
+			gfxClear();
+
 			scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
 			palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
 
@@ -779,9 +717,6 @@ void vt_scroll_test()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			clearSprites(1, 100);
-			return;
 		}
 
 		x1++;
@@ -803,23 +738,9 @@ void vt_scroll_test()
 			x3 = 0;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				clearSprites(1, 100);
-				DrawHelp(HELP_HSCROLL);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				clearSprites(1, 100);
-				DrawHelp(HELP_HSCROLL);
-				draw = 1;
-			}
-		}
-
+		if(chechHelp(HELP_HSCROLL))
+			draw = 1;
+		
 		scrollerSetPos(&frontScroll, x1, y1);
 		scrollerSetPos(&waterScroll, x2/2, y2);
 		scrollerSetPos(&backScroll, x3/2, y3);
@@ -832,15 +753,13 @@ void vt_vert_scroll_test()
 	int x = 0, y = 0;
 	scroller vertScroll;
 
-	clearFixLayer();
-	clearSprites(1, back.tileWidth);
-	clearSprites(22, gillian.tileWidth);
-
 	while (!done)
 	{
 		if (draw)
 		{
 			backgroundColor(0x8000);
+			gfxClear();
+
 			scrollerInit(&vertScroll, &kiki, 1, 16, 0, 0);
 			palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
 			draw = 0;
@@ -855,8 +774,6 @@ void vt_vert_scroll_test()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
 		y++;
@@ -866,20 +783,9 @@ void vt_vert_scroll_test()
 			y = 0;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_HSCROLL);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_HSCROLL);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_HSCROLL))
+			draw = 1;
+
 		scrollerSetPos(&vertScroll, 0, y);
 	}
 }
@@ -889,13 +795,12 @@ void vt_gridscroll_test()
 	int done = 0, draw = 1;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
 			draw = 0;
@@ -909,24 +814,10 @@ void vt_gridscroll_test()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_STRIPES);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_STRIPES);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_STRIPES))
+			draw = 1;
 	}
 }
 
@@ -936,13 +827,12 @@ void vt_horizontal_stripes()
 	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			pictureInit(&image, &horzstripe, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
 			draw = 0;
@@ -1001,24 +891,10 @@ void vt_horizontal_stripes()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_STRIPES);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_STRIPES);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_STRIPES))
+			draw = 1;
 	}
 }
 
@@ -1028,13 +904,11 @@ void vt_vertical_stripes()
 	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
 			pictureInit(&image, &vertstripe, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,vertstripe.palInfo->count,vertstripe.palInfo->data);
 			draw = 0;
@@ -1093,24 +967,10 @@ void vt_vertical_stripes()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_STRIPES);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_STRIPES);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_STRIPES))
+			draw = 1;
 	}
 }
 
@@ -1120,13 +980,12 @@ void vt_checkerboard()
 	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			pictureInit(&image, &check, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,check.palInfo->count,check.palInfo->data);
 			draw = 0;
@@ -1189,20 +1048,8 @@ void vt_checkerboard()
 			return;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_CHECK);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_CHECK);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_CHECK))
+			draw = 1;
 	}
 }
 
@@ -1211,14 +1058,13 @@ void vt_backlitzone_test()
 	int done = 0, block = 2, x = 160, y = 112, draw = 1;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-	backgroundColor(0x0000);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			backgroundColor(0x0000);
+			gfxClear();
+
 			switch (block)
 			{
 				case 1:
@@ -1294,20 +1140,8 @@ void vt_backlitzone_test()
 			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_LED);
-				draw = 1;
-			}
-		} else { 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_LED);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_LED))
+			draw = 1;
 	}
 }
 
@@ -1316,13 +1150,11 @@ void at_sound_test()
 	int done = 0, draw = 1;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
 			pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,back.palInfo->count,back.palInfo->data);
 			draw = 0;
@@ -1337,24 +1169,11 @@ void at_sound_test()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
 			return;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_SOUND);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_SOUND);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_SOUND))
+			draw = 1;
 	}
 
 }
@@ -1364,13 +1183,11 @@ void at_audiosync_test()
 	int done = 0, draw = 1;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
 			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
 			draw = 0;
@@ -1389,20 +1206,8 @@ void at_audiosync_test()
 			return;
 		}
 
-		if (isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_AUDIOSYNC);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_AUDIOSYNC);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_AUDIOSYNC))
+			draw = 1;
 	}
 }
 
@@ -1412,8 +1217,7 @@ void ht_controller_test()
 	picture image;
 	BYTE mvssel = 0, mvscredit = 0;
 
-	clearFixLayer();
-	clearSprites(1, 22);
+	gfxClear();
 
 	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,back.palInfo->count,back.palInfo->data);
@@ -1537,9 +1341,7 @@ void ht_memory_viewer(u32 address)
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 0x400000, 0x402000, 0xC00000 };
 
 	backgroundColor(0x0000);
-	clearFixLayer();
-	clearSprites(1, 1);
-	clearSprites(1, 22);
+	gfxClear();
 
 	for (i = 0; i < MAX_LOCATIONS; i++)
 	{
@@ -1613,23 +1415,8 @@ void ht_memory_viewer(u32 address)
 			redraw = 1;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_MEMVIEW);
-				clearSprites(1, 1);
-				redraw = 1;
-			}
-		} else
-		{
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_MEMVIEW);
-				clearSprites(1, 1);
-				redraw = 1;
-			}
-		}
+		if(chechHelp(HELP_MEMVIEW))
+			redraw = 1;
 
 		if (p1e & JOY_LEFT)
 		{
@@ -1671,8 +1458,7 @@ void ht_test_ng_ram()
 	int done = 0;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
+	gfxClear();
 
 	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,back.palInfo->count,back.palInfo->data);

@@ -28,6 +28,7 @@
 #include "externs.h"
 #include "patterns.h"
 #include "help.h"
+#include "string_ng.h"
 
 BYTE p1,p2,ps,p1e,p2e;
 
@@ -42,13 +43,12 @@ void tp_pluge()
 	static const ushort plugentsc_pal[]= {
 		0x8000, 0x8000, 0x8222, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf111, 0x7000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			if (!IsNTSC){
 				pictureInit(&image1, &plugergb, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,1,plugergb_pal);
@@ -96,21 +96,8 @@ void tp_pluge()
 			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_PLUGE);
-				draw = 1;
-			}
-		} else 
-		{ 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_PLUGE);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_PLUGE))
+			draw = 1;
 	}
 }
 
@@ -119,13 +106,12 @@ void tp_colorchart()
 	int done = 0, draw = 1;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
 			draw = 0;
@@ -142,20 +128,8 @@ void tp_colorchart()
 			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_COLORS);
-				draw = 1;
-			}
-		} else { 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_COLORS);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_COLORS))
+			draw = 1;
 	}
 }
 
@@ -164,15 +138,13 @@ void tp_colorbars()
 	int done = 0, draw = 1, Is75 = 0, text = 0;
 	picture image1;
 	picture image2;
-
-	backgroundColor(0xfc1f);
-	clearFixLayer();
-	clearSprites(1, 22);
-
+	
 	while (!done)
 	{
 		if (draw)
 		{
+			backgroundColor(0xfc1f);
+			gfxClear();
 			if (!Is75)
 			{
 				pictureInit(&image1, &colorebu, 1, 16, 0, 0,FLIP_NONE);
@@ -224,20 +196,8 @@ void tp_colorbars()
 			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_601CB);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_601CB);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_601CB))
+			draw = 1;
 	}
 }
 
@@ -247,14 +207,13 @@ void tp_smpte_color_bars()
 	picture image1;
 	picture image2;
 
-	backgroundColor(0xfc1f);
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			backgroundColor(0xfc1f);
+			gfxClear();
+
 			if (!Is75)
 			{
 				pictureInit(&image1, &colorbarssmpte, 1, 16, 0, 0,FLIP_NONE);
@@ -303,24 +262,10 @@ void tp_smpte_color_bars()
 		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_SMPTE);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_SMPTE);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_SMPTE))
+			draw = 1;
 	}
 }
 
@@ -329,13 +274,12 @@ void tp_ref_color_bars()
 	int done = 0, draw = 1;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			pictureInit(&image, &refcolor, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,refcolor.palInfo->count,refcolor.palInfo->data);
 			draw = 0;
@@ -349,23 +293,10 @@ void tp_ref_color_bars()
 		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
-			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_601CB);
-				draw = 1;
-			}
-		} else { 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_601CB);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_601CB))
+			draw = 1;
 	}
 }
 
@@ -375,13 +306,12 @@ void tp_color_bleed_check()
 	picture image1;
 	picture image2;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			if (!Ischeck)
 			{
 				pictureInit(&image1, &colorbleedbars, 1, 16, 0, 0,FLIP_NONE);
@@ -421,20 +351,8 @@ void tp_color_bleed_check()
 			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_BLEED);
-				draw = 1;
-			}
-		} else { 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_BLEED);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_BLEED))
+			draw = 1;
 	}
 }
 
@@ -443,13 +361,12 @@ void tp_grid()
 	int done = 0, draw = 1, gray = 0;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			pictureInit(&image, &grid, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,grid.palInfo->count,grid.palInfo->data);
 			draw = 0;
@@ -479,20 +396,8 @@ void tp_grid()
 			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_GRID);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_GRID);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_GRID))
+			draw = 1;
 	}
 }
 
@@ -501,13 +406,12 @@ void tp_monoscope()
 	int done = 0, draw = 1, pattern = 1, gray = 0;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			pictureInit(&image, &monoscope, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
 			draw = 0;
@@ -572,23 +476,10 @@ void tp_monoscope()
 		if (ps & P1_START)
 		{
 			done = 1;
-			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_MONOSCOPE);
-				draw = 1;
-			}
-		} else {
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_MONOSCOPE);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_MONOSCOPE))
+			draw = 1;
 	}
 }
 
@@ -597,13 +488,12 @@ void tp_gray_ramp()
 	int done = 0, draw = 1;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			pictureInit(&image, &grayramp, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,grayramp.palInfo->count,grayramp.palInfo->data);
 			draw = 0;
@@ -617,23 +507,10 @@ void tp_gray_ramp()
 		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
-			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_GRAY);
-				draw = 1;
-			}
-		} else { 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_GRAY);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_GRAY))
+			draw = 1;
 	}
 }
 
@@ -641,14 +518,12 @@ void tp_white_rgb()
 {
 	int done = 0, color = 1, draw = 1;
 
-	clearFixLayer();
-	clearSprites(1, 1);
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			switch (color)
 			{
 				case 1:
@@ -694,25 +569,10 @@ void tp_white_rgb()
 		if (ps & P1_START)
 		{
 			done = 1;
-			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_WHITE);
-				clearSprites(1, 1);
-				draw = 1;
-			}
-		} else { 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_WHITE);
-				clearSprites(1, 1);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_WHITE))
+			draw = 1;
 
 		if (color > 5)
 			color = 1;
@@ -745,13 +605,12 @@ void tp_100_ire()
 		0x8000, 0x8000, 0x2222, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
 
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			pictureInit(&image, &ire, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,ire.palInfo->count,ire.palInfo->data);
 			draw = 0;
@@ -812,23 +671,10 @@ void tp_100_ire()
 		if (ps & P1_START)
 		{
 			done = 1;
-			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_IRE);
-				draw = 1;
-			}
-		} else { 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_IRE);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_IRE))
+			draw = 1;
 
 		if (text)
 		{
@@ -847,13 +693,12 @@ void tp_sharpness()
 	picture image1;
 	picture image2;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			if (!Isbrick)
 			{
 				pictureInit(&image1, &sharp, 1, 16, 0, 0,FLIP_NONE);
@@ -890,24 +735,10 @@ void tp_sharpness()
 		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_SHARPNESS);
-				draw = 1;
-			}
-		} else { 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_SHARPNESS);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_SHARPNESS))
+			draw = 1;
 	}
 }
 
@@ -916,8 +747,7 @@ void tp_overscan()
 	int done = 0;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
+	gfxClear();
 
 	pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
@@ -943,13 +773,12 @@ void tp_convergence()
 	int done = 0, pattern = 1, draw = 1;
 	picture image;
 
-	clearFixLayer();
-	clearSprites(1, 22);
-
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
+
 			switch (pattern)
 			{
 				case 1:
@@ -1012,22 +841,9 @@ void tp_convergence()
 		if (ps & P1_START)
 		{
 			done = 1;
-			return;
 		}
 
-		if(isMVS)
-		{
-			if (p1e & JOY_D)
-			{
-				DrawHelp(HELP_CONVERGENCE);
-				draw = 1;
-			}
-		} else { 
-			if (ps & P1_SELECT)
-			{
-				DrawHelp(HELP_CONVERGENCE);
-				draw = 1;
-			}
-		}
+		if(chechHelp(HELP_CONVERGENCE))
+			draw = 1;
 	}
 }

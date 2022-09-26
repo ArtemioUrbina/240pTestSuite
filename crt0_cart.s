@@ -3,7 +3,7 @@ _IRQ1	=	DAT_TIfunc
 _IRQ2	=	DAT_vblankTI
 _IRQ3	=	_irq3_handler
 _ENTRY_USER	= _start
-_ENTRY_PLAYER_START	= _dummy_config_handler
+_ENTRY_PLAYER_START	= player_start
 _ENTRY_DEMO_END	= _dummy_config_handler |; MVS game switch
 _ENTRY_COIN_SOUND	= _dummy_config_handler |; coin sound
 
@@ -22,32 +22,32 @@ _EYE_CATCHER_TILES = 0x01 /*;eye catcher start tiles (upper bits, 0x01 => 0x0100
 JPconfig:
 	.ascii	"240P TEST SUITE "
 	.word	0xffff, 0xffff
-	.byte	0xff, 0xff, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	.byte	0xff, 0xff, 0x12, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	.ascii	"MVS DEMO    "
-	.ascii	"FOLLOW      "
-	.ascii	"IGNORE      "
-	.ascii	"SHOW CREDITS"
-	.ascii	"NO          "
-	.ascii	"YES         "
+	.ascii	"WITHOUT     "
+	.ascii	"WITH        "
+	.ascii	"CREDIT DISP."
+	.ascii	"WITHOUT     "
+	.ascii	"WITH        "
 	
 NAconfig:
 	.ascii	"240P TEST SUITE "
 	.word	0xffff, 0xffff
-	.byte	0xff, 0xff, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	.byte	0xff, 0xff, 0x12, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	.ascii	"MVS DEMO    "
-	.ascii	"FOLLOW      "
-	.ascii	"IGNORE      "
-	.ascii	"SHOW CREDITS"
-	.ascii	"NO          "
-	.ascii	"YES         "
+	.ascii	"WITHOUT     "
+	.ascii	"WITH        "
+	.ascii	"CREDIT DISP."
+	.ascii	"WITHOUT     "
+	.ascii	"WITH        "
 	
 EUconfig:
 	.ascii	"240P TEST SUITE "
 	.word	0xffff, 0xffff
-	.byte	0xff, 0xff, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	.byte	0xff, 0xff, 0x12, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	.ascii	"MVS DEMO    "
-	.ascii	"FOLLOW      "
-	.ascii	"IGNORE      "
-	.ascii	"SHOW CREDITS"
-	.ascii	"NO          "
-	.ascii	"YES         "
+	.ascii	"WITHOUT     "
+	.ascii	"WITH        "
+	.ascii	"CREDIT DISP."
+	.ascii	"WITHOUT     "
+	.ascii	"WITH        "

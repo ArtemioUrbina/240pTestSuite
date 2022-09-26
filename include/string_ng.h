@@ -41,5 +41,10 @@ u32 intToHex(u32 value, char *str, u16 minsize);
 u16 intToStr(s32 value, char *str, u16 minsize);
 u16 uintToStr(u32 value, char *str, u16 minsize);
 void fix32ToStr(fix32 value, char *str, u16 numdec);
+int hexToDec(int hex);
+
+// Clear screen
+#define MAX_SPRITES	100
+void gfxClear();
 
 #endif /* _STRING_H_ */

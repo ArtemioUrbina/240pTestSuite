@@ -280,3 +280,8 @@ u16 random()
 
 	return randbase;
 }
+
+int hexToDec(int hex)
+{
+	return hex-(hex/16)*6;
+}

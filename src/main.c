@@ -77,6 +77,13 @@ static const ushort fixPalettes[]= {
 	0x8000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 };
 
+// placed here temporarily
+inline void gfxClear()
+{
+	clearSprites(1, MAX_SPRITES);
+	clearFixLayer();
+}
+
 void draw_background_w_gil()
 {
 	picture background;
@@ -119,7 +126,7 @@ void menu_footer()
 	}
 
 	if(isMVS && volMEMBYTE(SOFT_DIP_2))
-		fixPrintf(3, 26, 0, 3, "CREDITS %02d", HexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
+		fixPrintf(3, 26, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
 }
 
 void menu_tp()
@@ -130,8 +137,7 @@ void menu_tp()
 	{
 		if(redraw)
 		{
-			clearSprites(1, 1);
-			clearFixLayer();
+			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
@@ -169,15 +175,12 @@ void menu_tp()
 			done = 1;
 		}
 
-		if (p1e & JOY_D)
-		{
-			clearSprites(1, 22);
-			DrawHelp(HELP_GENERAL);
-		}
+		if(chechHelp(HELP_GENERAL))
+			redraw = 1;
 
 		if (p1e & JOY_A)
 		{
-			clearSprites(1, 22);
+			gfxClear();
 			switch (curse)
 			{
 				case 1:
@@ -258,8 +261,7 @@ void menu_vt()
 	{
 		if(redraw)
 		{
-			clearSprites(1, 1);
-			clearFixLayer();
+			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
@@ -293,16 +295,12 @@ void menu_vt()
 			done = 1;
 		}
 
-		if (p1e & JOY_D)
-		{
-			clearSprites(1, 22);
-			DrawHelp(HELP_GENERAL);
-			draw_background_w_gil();
-		}
+		if(chechHelp(HELP_GENERAL))
+			redraw = 1;
 
 		if (p1e & JOY_A)
 		{
-			clearSprites(1, 22);
+			gfxClear();
 			switch (curse) 
 			{
 				case 1:
@@ -367,8 +365,7 @@ void menu_at()
 	{
 		if(redraw)
 		{
-			clearSprites(1, 1);
-			clearFixLayer();
+			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
@@ -394,16 +391,12 @@ void menu_at()
 			done = 1;
 		}
 
-		if (p1e & JOY_D)
-		{
-			clearSprites(1, 22);
-			DrawHelp(HELP_GENERAL);
-			draw_background_w_gil();
-		}
+		if(chechHelp(HELP_GENERAL))
+			redraw = 1;
 
 		if (p1e & JOY_A)
 		{
-			clearSprites(1, 22);
+			gfxClear();
 			switch (curse)
 			{
 				case 1:
@@ -436,8 +429,7 @@ void menu_ht()
 	{
 		if(redraw)
 		{
-			clearSprites(1, 1);
-			clearFixLayer();
+			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
@@ -465,16 +457,12 @@ void menu_ht()
 			done = 1;
 		}
 
-		if (p1e & JOY_D)
-		{
-			clearSprites(1, 22);
-			DrawHelp(HELP_GENERAL);
-			draw_background_w_gil();
-		}
+		if(chechHelp(HELP_GENERAL))
+			redraw = 1;
 
 		if (p1e & JOY_A)
 		{
-			clearSprites(1, 22);
+			gfxClear();
 			switch (curse) 
 			{
 				case 1:
@@ -512,8 +500,7 @@ void credits()
 	int done = 0;
 	picture qr;
 
-	clearFixLayer();
-	clearSprites(1, 22);
+	gfxClear();
 	draw_background();
 
 	pictureInit(&qr, &barcode, 26, 17, 260, 110, FLIP_NONE);
@@ -563,7 +550,7 @@ void menu_main()
 	int curse = 1, cursemax = 6, redraw = 1, done = 0, showexit = 0;
 
 	palJobPut(0,8,fixPalettes);
-	if(isMVS && !volMEMBYTE(SOFT_DIP_1))
+	if(isMVS && volMEMBYTE(SOFT_DIP_1))
 	{
 		showexit = 1;
 		cursemax++;
@@ -573,8 +560,7 @@ void menu_main()
 	{
 		if(redraw)
 		{
-			clearSprites(1, 26);
-			clearFixLayer();
+			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
@@ -599,9 +585,12 @@ void menu_main()
 
 		menu_footer();
 
+		if(chechHelp(HELP_GENERAL))
+			redraw = 1;
+
 		if (p1e & JOY_A)
 		{
-			clearSprites(1, 22);
+			gfxClear();
 			switch (curse)
 			{
 				case 1:
@@ -637,9 +626,14 @@ void menu_main()
 	}
 }
 
-int HexToDec(int hex)
+// This function is called by the BIOS when the start button is
+// pressed (AES) and when enough credits are available (MVS)
+void player_start(void)
 {
-	return hex-(hex/16)*6;
+    // Tell the BIOS the game has started
+    volMEMBYTE(BIOS_USER_MODE) = 0x02;
+    // Set player 1's status to running
+    volMEMBYTE(BIOS_PLAYER_MOD1) = 0x01;
 }
 
 #define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
@@ -651,7 +645,7 @@ void draw_mvs_demo()
 	picture background;
 
 	backgroundColor(0x0000);
-	clearSprites(1, 26);
+	gfxClear();
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
 	fixPrint(12, 6, 2, 3, "240p Test Suite");
@@ -696,7 +690,8 @@ void draw_mvs_demo()
 		if(toggle == 0)
 			fixPrint(14, 23, 1, 3, freeplay ? "PRESS  START" : "INSERT COIN");
 
-		fixPrintf(28, 28, 0, 3, "CREDITS %02d", HexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
+		if(volMEMBYTE(SOFT_DIP_2))
+			fixPrintf(28, 28, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
 		
 		toggle ++;
 		if(toggle > 60)
@@ -714,7 +709,7 @@ void draw_mvs_demo()
 
 		if(freeplay && (p1 & P1_START))
 		{
-			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+			//volMEMBYTE(BIOS_USER_MODE) = 0x02;
 			menu_main();
 			volMEMBYTE(BIOS_USER_MODE) = 0x01;
 			return;
@@ -729,10 +724,13 @@ void draw_mvs_title()
 	picture background;
 
 	backgroundColor(0x7666);
-	clearSprites(1, 26);
+	gfxClear();
+
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
-	//fixPrint(12, 6, 0, 3, "240p Test Suite");
+	pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
+	palJobPut(16,back.palInfo->count,back.palInfo->data);
+
 	fixPrint(10, 26, 0, 3, "2022 Dasutin/Artemio");
 
 	while(1)
@@ -749,12 +747,12 @@ void draw_mvs_title()
 
 		if(!freeplay)
 		{
-			pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,back.palInfo->count,back.palInfo->data);
-			bios_timer = HexToDec(volMEMBYTE(BIOS_COMP_TIME));
+			bios_timer = hexToDec(volMEMBYTE(BIOS_COMP_TIME));
 			fixPrintf(16, 28, 0, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
 		}
-		fixPrintf(28, 28, 0, 3, "CREDITS %02d", HexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
+
+		if(isMVS && volMEMBYTE(SOFT_DIP_2))
+			fixPrintf(28, 28, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
 		
 		toggle ++;
 		if(toggle > 60)
@@ -762,7 +760,7 @@ void draw_mvs_title()
 
 		if (p1 & P1_START || (!freeplay && bios_timer <= 0))
 		{
-			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+			//volMEMBYTE(BIOS_USER_MODE) = 0x02;
 			menu_main();
 			volMEMBYTE(BIOS_USER_MODE) = 0x01;
 			return;
@@ -788,13 +786,13 @@ void mvs_state()
 		// Enter game mode in MVS following Soft Dip Switches
 		if(volMEMBYTE(SOFT_DIP_1))
 		{
-			// Enter game mode in MVS following Soft Dip Switches
-			volMEMBYTE(BIOS_USER_MODE) = 0x02;
-			menu_main();
+			draw_mvs_demo();
 		}
 		else
 		{
-			draw_mvs_demo();
+			// Enter game mode in MVS following Soft Dip Switches
+			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+			menu_main();
 		}
 		RETURN_TO_BIOS;
 	}
@@ -805,12 +803,13 @@ void mvs_state()
 		// Enter game mode in MVS following Soft Dip Switches
 		if(volMEMBYTE(SOFT_DIP_1))
 		{
-			volMEMBYTE(BIOS_USER_MODE) = 0x02;
-			menu_main();
+			draw_mvs_title();
 		}
 		else
 		{
-			draw_mvs_title();
+			// Enter game mode in MVS following Soft Dip Switches
+			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+			menu_main();
 		}
 		RETURN_TO_BIOS;
 	}
