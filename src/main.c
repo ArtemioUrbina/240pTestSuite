@@ -478,7 +478,7 @@ void menu_ht()
 				break;
 
 				case 4:
-					
+					ht_check_ng_bios_crc(BIOS_ADDRESS);
 				break;
 
 				case 5:

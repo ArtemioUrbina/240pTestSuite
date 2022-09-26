@@ -1333,6 +1333,65 @@ void ht_controller_test()
 	}
 }
 
+/*
+CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
+*/
+
+u32 _state = ~0L;
+
+static const u32 crc32_table[] = {
+    0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
+    0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
+    0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
+};
+
+
+void CRC32_reset()
+{
+    _state = ~0L;
+}
+
+
+void CRC32_update(u8 data)
+{
+    u8 tbl_idx = 0;
+
+    tbl_idx = _state ^ (data >> (0 * 4));
+    _state = (*(u32*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+    tbl_idx = _state ^ (data >> (1 * 4));
+    _state = (*(u32*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+}
+
+
+u32 CRC32_finalize()
+{
+    return ~_state;
+}
+
+/**********************************/
+
+u32 CalculateCRC(u32 startAddress, u32 size)
+{
+	u8 *start = NULL;
+	u32 address = 0, checksum = 0;
+	CRC32_reset();
+
+	start = (void*)startAddress;
+	for (address = 0; address < size; address ++)
+	{
+		u8 data;
+		
+		data = start[address];
+
+		CRC32_update(data);
+	}
+
+	checksum = CRC32_finalize();
+	return checksum;
+}
+
+
 #define MAX_LOCATIONS 9
 
 void ht_memory_viewer(u32 address)
@@ -1362,19 +1421,19 @@ void ht_memory_viewer(u32 address)
 
 			mem = (u8*)address;
 
-			//if (docrc)
-			//	crc = CalculateCRC(address, 0x1C0);
+			if (docrc)
+				crc = CalculateCRC(address, 0x1C0);
 
 			intToHex(address, buffer, 8);
 			fixPrint(32, 2, fontColorRed, 3, buffer);
 			intToHex(address+448, buffer, 8);
 			fixPrint(32, 29, fontColorRed, 3, buffer);
 
-			//if (docrc)
-			//{
-			//	intToHex(crc, buffer, 8);
-			//	fixPrint(32, 14, fontColorGreen, 3, buffer);
-			//}
+			if (docrc)
+			{
+				intToHex(crc, buffer, 8);
+				fixPrint(32, 14, fontColorGreen, 3, buffer);
+			}
 
 			for (i = 0; i < 30; i++)
 			{
@@ -1475,7 +1534,104 @@ void ht_test_ng_ram()
 		if (p1e & JOY_B)
 		{
 			done = 1;
-			return;
+		}
+	}
+}
+
+typedef struct bios_data {
+	u8		type;
+    u32		crc;
+    char	*name;
+	char	*text;
+} BIOSID;
+
+#define	BIOS_SNK_MVS	1
+#define	BIOS_SNK_AES	2
+#define	BIOS_HACK		3
+
+const BIOSID bioslist[] = {
+{ 	BIOS_HACK, 
+	0x465F5764, 
+	"uni-bios_4_0.rom",
+	"Universe Bios (Hack, Ver. 4.0)" },	
+{ 	BIOS_HACK, 
+	0x2BB7B46A, 
+	"uni-bios_3_3.rom",
+	"Universe Bios (Hack, Ver. 3.3)" },	
+{ 	BIOS_SNK_MVS, 
+	0xEE4E56EF, 
+	"vs-bios.rom",
+	"Japan MVS (Ver. 3)" },
+{ 	BIOS_SNK_MVS, 
+	0x6893A277, 
+	"japan-j3.bin",
+	"Japan MVS (J3)" },
+{ 	BIOS_SNK_AES, 
+	0x2C50CBCA, 
+	"neo-epo.bin",
+	"Asia AES" },
+{ 	0, 0, NULL, NULL } }; 
+
+// search known BIOS
+const BIOSID *GetBIOSbyCRC(u32 checksum)
+{
+	u8 i = 0;
+	
+	while(bioslist[i].crc != 0)
+	{		
+		if(checksum == bioslist[i].crc)
+			return &bioslist[i];
+		i++;
+	}
+	return NULL;
+}
+
+void ht_check_ng_bios_crc(u32 address)
+{
+	int				done = 0;
+	u32				crc = 0;
+	picture			image;
+	char			buffer[10];
+	const BIOSID 	*bios = NULL;
+
+	gfxClear();
+
+	fixPrintf(10, 15, 2, 3, "Please Wait...");
+	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
+	palJobPut(16,back.palInfo->count,back.palInfo->data);
+
+	SCClose();
+	waitVBlank();
+
+	crc = CalculateCRC(address, 0x20000);
+	intToHex(crc, buffer, 8);
+	fixPrintf(8, 15, 2, 3, "CRC:  ");
+	fixPrintf(13, 15, 0, 3, "0x%s ", buffer);
+
+	bios = GetBIOSbyCRC(crc);
+	if(bios)
+	{
+		fixPrintf(6, 17, 0, 3, bios->name);
+		fixPrintf(6, 18, 0, 3, bios->text);
+	}
+	else
+	{
+		fixPrintf(14, 17, 0, 3, "Unknown BIOS");
+		fixPrintf(14, 18, 0, 3, "Please report it");
+	}
+
+	while (!done)
+	{
+		SCClose();
+		waitVBlank();
+
+		p1 = volMEMBYTE(P1_CURRENT);
+		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (p1e & JOY_B)
+		{
+			done = 1;
 		}
 	}
 }
