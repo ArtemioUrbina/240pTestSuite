@@ -207,10 +207,14 @@ void vt_lag_test()
 	u16 lsd, msd;
 	int frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1;
 	u16 done = 0, draw = 1;
-	const pictureInfo *numbers[10] = {&num_0, &num_0, &num_2, &num_3, &num_4, &num_5, &num_6, &num_7, &num_8, &num_9};
+	u16 cc_1 = 17, cc_2 = 17, cc_3 = 17, cc_4 = 17, cc_5 = 17, cc_6 = 17, cc_7 = 17, cc_8 = 17, barC = 20;
+	const pictureInfo *numbers[10] = {&num_0, &num_1, &num_2, &num_3, &num_4, &num_5, &num_6, &num_7, &num_8, &num_9};
 	u16 pause = 0, cposx = 32, cposy = 17;
 	
 	picture image;
+	picture circle;
+	picture c_numbers;
+	picture bar;
 	picture h1;
 	picture h2;
 	picture m1;
@@ -224,46 +228,39 @@ void vt_lag_test()
 	gfxClear();
 
 	palJobPut(16, num_0.palInfo->count, num_0.palInfo->data);
+	palJobPut(17, circle_blue.palInfo->count, circle_blue.palInfo->data);
+	palJobPut(18, num_0_w.palInfo->count, num_0_w.palInfo->data);
+	palJobPut(19, circle_red.palInfo->count, circle_red.palInfo->data);
+	palJobPut(20, bar_l.palInfo->count, bar_l.palInfo->data);	
 
 	while (!done)
 	{
-		fixPrint(4, 3, fontColorBlack, 3, "hours");
-		fixPrint(13, 3, fontColorBlack, 3, "minutes");
-		fixPrint(22, 3, fontColorBlack, 3, "seconds");
-		fixPrint(31, 3, fontColorBlack, 3, "frames");
+		pictureInit(&circle, &circle_blue, 65, cc_1, 12, 68, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 81, cc_2, 92, 68, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 97, cc_3, 172, 68, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 113, cc_4, 248, 68, FLIP_NONE);
 
-		if (!pause)
-		{
-			frames ++;
-			framecnt ++;
-			if(framecnt > 8)
-				framecnt = 1;
-		}
+		pictureInit(&circle, &circle_blue, 129, cc_5, 12, 132, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 145, cc_6, 92, 132, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 161, cc_7, 172, 132, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 177, cc_8, 248, 132, FLIP_NONE);
 
-		if (frames > 59)
-		{
-			frames = 0;
-			seconds ++;
-		}
-		
-		if (seconds > 59)
-		{
-			seconds = 0;
-			minutes ++;
-		}
+		pictureInit(&c_numbers, &num_1_w, 181, 18, 32, 84, FLIP_NONE);
+		pictureInit(&c_numbers, &num_2_w, 185, 18, 112, 84, FLIP_NONE);
+		pictureInit(&c_numbers, &num_3_w, 189, 18, 192, 84, FLIP_NONE);
+		pictureInit(&c_numbers, &num_4_w, 193, 18, 268, 84, FLIP_NONE);
 
-		if (minutes > 59)
-		{
-			minutes = 0;
-			hours ++;
-		}
-
-		if (hours > 99)
-			hours = 0;
+		pictureInit(&c_numbers, &num_5_w, 197, 18, 32, 148, FLIP_NONE);
+		pictureInit(&c_numbers, &num_6_w, 201, 18, 112, 148, FLIP_NONE);
+		pictureInit(&c_numbers, &num_7_w, 205, 18, 192, 148, FLIP_NONE);
+		pictureInit(&c_numbers, &num_8_w, 209, 18, 268, 148, FLIP_NONE);
 
 		pictureInit(&image, &separator, 1, 16, 80, 19, FLIP_NONE);
 		pictureInit(&image, &separator, 5, 16, 152, 19, FLIP_NONE);
 		pictureInit(&image, &separator, 9, 16, 224, 19, FLIP_NONE);
+
+		pictureInit(&bar, &bar_l, 223, barC, 0, 0, FLIP_NONE);
+		pictureInit(&bar, &bar_r, 237, barC, 304, 0, FLIP_NONE);
 
 		// Draw Hours
 		lsd = hours % 10;
@@ -295,6 +292,126 @@ void vt_lag_test()
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
+		fixPrint(4, 3, fontColorBlack, 3, "hours");
+		fixPrint(13, 3, fontColorBlack, 3, "minutes");
+		fixPrint(22, 3, fontColorBlack, 3, "seconds");
+		fixPrint(31, 3, fontColorBlack, 3, "frames");
+
+		if(framecnt > 8)
+			framecnt = 1;
+
+		if (framecnt == 1)
+		{
+			cc_1 = 19;
+		}
+		else {
+			cc_1 = 17;
+		}
+
+		if (framecnt == 2)
+		{
+			cc_2 = 19;
+		}
+		else {
+			cc_2 = 17;
+		}
+
+		if (framecnt == 3)
+		{
+			cc_3 = 19;
+		}
+		else {
+			cc_3 = 17;
+		}
+
+		if (framecnt == 4)
+		{
+			cc_4 = 19;
+		}
+		else {
+			cc_4 = 17;
+		}
+
+		if (framecnt == 5)
+		{
+			cc_5 = 19;
+		}
+		else {
+			cc_5 = 17;
+		}
+
+		if (framecnt == 6)
+		{
+			cc_6 = 19;
+		}
+		else {
+			cc_6 = 17;
+		}
+
+		if (framecnt == 7)
+		{
+			cc_7 = 19;
+		}
+		else {
+			cc_7 = 17;
+		}
+
+		if (framecnt == 8)
+		{
+			cc_8 = 19;
+		}
+		else {
+			cc_8 = 17;
+		}
+
+		if (framecnt % 2 == 0)
+		{
+			barC = 18;
+		}
+		else {
+			barC = 20;
+		}
+
+		if (framecnt > 4)
+		{
+			cposx = framecnt - 4;
+			cposy = 17;
+		}
+		else {
+			cposx = framecnt;
+			cposy = 9;
+		}
+		cposx = (cposx - 1) * 10 + 2;
+
+		if (!pause)
+		{
+			frames ++;
+			framecnt ++;
+			if(framecnt > 8)
+				framecnt = 1;
+		}
+
+		if (frames > 59)
+		{
+			frames = 0;
+			seconds ++;
+		}
+		
+		if (seconds > 59)
+		{
+			seconds = 0;
+			minutes ++;
+		}
+
+		if (minutes > 59)
+		{
+			minutes = 0;
+			hours ++;
+		}
+
+		if (hours > 99)
+			hours = 0;
+
 		if (p1e & JOY_A)
 		{
 			pause = !pause;
@@ -308,10 +425,12 @@ void vt_lag_test()
 
 		if (ps & P1_START)
 		{
+			clearSprites(1,260);
 			done = 1;
 		}
 
 		if(checkHelp(HELP_LAG))
+			clearSprites(1,260);
 			draw = 1;
 	}
 }
