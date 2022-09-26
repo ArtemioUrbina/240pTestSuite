@@ -1340,33 +1340,33 @@ CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
 u32 _state = ~0L;
 
 static const u32 crc32_table[] = {
-    0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
-    0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
-    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
-    0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
+	0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
+	0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+	0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
+	0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
 };
 
 
 void CRC32_reset()
 {
-    _state = ~0L;
+	_state = ~0L;
 }
 
 
 void CRC32_update(u8 data)
 {
-    u8 tbl_idx = 0;
+	u8 tbl_idx = 0;
 
-    tbl_idx = _state ^ (data >> (0 * 4));
-    _state = (*(u32*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
-    tbl_idx = _state ^ (data >> (1 * 4));
-    _state = (*(u32*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+	tbl_idx = _state ^ (data >> (0 * 4));
+	_state = (*(u32*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+	tbl_idx = _state ^ (data >> (1 * 4));
+	_state = (*(u32*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
 }
 
 
 u32 CRC32_finalize()
 {
-    return ~_state;
+	return ~_state;
 }
 
 /**********************************/
@@ -1540,37 +1540,141 @@ void ht_test_ng_ram()
 
 typedef struct bios_data {
 	u8		type;
-    u32		crc;
-    char	*name;
+	u32		crc;
+	char	*name;
 	char	*text;
 } BIOSID;
 
-#define	BIOS_SNK_MVS	1
-#define	BIOS_SNK_AES	2
-#define	BIOS_HACK		3
+#define BIOS_SNK_MVS	1
+#define BIOS_SNK_AES	2
+#define BIOS_HACK		3
 
 const BIOSID bioslist[] = {
-{ 	BIOS_HACK, 
-	0x465F5764, 
+{	BIOS_HACK,
+	0x465F5764,
 	"uni-bios_4_0.rom",
-	"Universe Bios (Hack, Ver. 4.0)" },	
-{ 	BIOS_HACK, 
-	0x2BB7B46A, 
+	"Universe Bios (Hack, Ver. 4.0)" },
+{	BIOS_HACK,
+	0x2BB7B46A,
 	"uni-bios_3_3.rom",
-	"Universe Bios (Hack, Ver. 3.3)" },	
-{ 	BIOS_SNK_MVS, 
-	0xEE4E56EF, 
+	"Universe Bios (Hack, Ver. 3.3)" },
+{	BIOS_HACK,
+	0xEAD2EFFE,
+	"uni-bios_3_2.rom",
+	"Universe Bios (Hack, Ver. 3.2)" },
+{	BIOS_HACK,
+	0xBA8F4B1E,
+	"uni-bios_3_1.rom",
+	"Universe Bios (Hack, Ver. 3.1)" },
+{	BIOS_HACK,
+	0xCB54AAD7,
+	"uni-bios_3_0.rom",
+	"Universe Bios (Hack, Ver. 3.0)" },
+{	BIOS_HACK,
+	0xE5224EBD,
+	"uni-bios_2_3.rom",
+	"Universe Bios (Hack, Ver. 2.3)" },
+{	BIOS_HACK,
+	0x3775739E,
+	"uni-bios_2_3o.rom",
+	"Universe Bios (Hack, Ver. 2.3 - Alt)" },
+{	BIOS_HACK,
+	0xC6F8AC92,
+	"uni-bios_2_2.rom",
+	"Universe Bios (Hack, Ver. 2.2)" },
+{	BIOS_HACK,
+	0xF341E486,
+	"uni-bios_2_1.rom",
+	"Universe Bios (Hack, Ver. 2.1)" },
+{	BIOS_HACK,
+	0x406F79B2,
+	"uni-bios_2_0.rom",
+	"Universe Bios (Hack, Ver. 2.0)" },
+{	BIOS_HACK,
+	0xD8A97133,
+	"uni-bios_1_3.rom",
+	"Universe Bios (Hack, Ver. 1.3)" },
+{	BIOS_HACK,
+	0x6C4BACD6,
+	"uni-bios_1_2.rom",
+	"Universe Bios (Hack, Ver. 1.2)" },
+{	BIOS_HACK,
+	0xED81E4EB,
+	"uni-bios_1_2o.rom",
+	"Universe Bios (Hack, Ver. 1.2 - Alt)" },
+{	BIOS_HACK,
+	0xAFBC316A,
+	"uni-bios_1_1.rom",
+	"Universe Bios (Hack, Ver. 1.1)" },
+{	BIOS_HACK,
+	0x9DE9D5F1,
+	"uni-bios_1_0.rom",
+	"Universe Bios (Hack, Ver. 1.0)" },
+{	BIOS_SNK_MVS,
+	0xEE4E56EF,
 	"vs-bios.rom",
 	"Japan MVS (Ver. 3)" },
-{ 	BIOS_SNK_MVS, 
-	0x6893A277, 
+{	BIOS_SNK_MVS,
+	0x66BC1D26,
+	"sp-j2.sp1",
+	"Japan MVS (Ver. 2)" },
+{	BIOS_SNK_MVS,
+	0xC00A0476,
+	"sp1.jipan.1024",
+	"Japan MVS (Ver. 1)" },
+{	BIOS_SNK_MVS,
+	0x6893A277,
 	"japan-j3.bin",
-	"Japan MVS (J3)" },
-{ 	BIOS_SNK_AES, 
-	0x2C50CBCA, 
+	"Japan MV1B" },
+{	BIOS_SNK_MVS,
+	0xF1E44B08,
+	"sp1-j3.bin",
+	"Japan MVS (J3, alt)" },
+{	BIOS_SNK_MVS,
+	0x4C747A4D,
+	"sp-j3.sp1",
+	"Japan NEO-MVH MV1C" },
+{	BIOS_SNK_MVS,
+	0x15192F9F,
+	"sp-s2.sp1",
+	"Eurpoe MVS (Ver. 2)" },
+{	BIOS_SNK_MVS,
+	0x7E65EA24,
+	"sp-s.sp1",
+	"Eurpoe MVS (Ver. 1)" },
+{	BIOS_SNK_MVS,
+	0xEFD21CD4,
+	"sp-45.sp1",
+	"Asia NEO-MVH MV1C" },
+{	BIOS_SNK_MVS,
+	0xCD0F00E7,
+	"sp-s3.sp1",
+	"Asia MV1B" },
+{	BIOS_SNK_MVS,
+	0xCAB95DE9,
+	"sp-u2.sp1",
+	"US MVS (Ver. 2?)" },
+{	BIOS_SNK_MVS,
+	0xB907061C,
+	"sp-e.sp1",
+	"US MVS (Ver. 1)" },
+{	BIOS_SNK_MVS,
+	0xE86773D2,
+	"sp1-u2",
+	"US MVS (4 slot, Ver 2)" },
+{	BIOS_SNK_MVS,
+	0xCB2E44A4,
+	"sp1-u4.bin",
+	"US MVS (U4)" },
+{	BIOS_SNK_MVS,
+	0x8F5EBA5E,
+	"sp1-u3.bin",
+	"US MVS (U3)" },
+{	BIOS_SNK_AES,
+	0x2C50CBCA,
 	"neo-epo.bin",
 	"Asia AES" },
-{ 	0, 0, NULL, NULL } }; 
+{	0, 0, NULL, NULL } };
 
 // search known BIOS
 const BIOSID *GetBIOSbyCRC(u32 checksum)
@@ -1625,7 +1729,6 @@ void ht_check_ng_bios_crc(u32 address)
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
