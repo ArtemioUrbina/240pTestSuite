@@ -40,17 +40,17 @@ typedef struct bkp_ram_info {
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,p1e,p2e;
-BYTE isMVS, is4S, is6S, isMulti;
+BYTE isMVS, is4S, is6S, isMulti, hwChange;
 
 // We can't detect between 1 and 2 slot yet
 void check_systype()
 {
-	isMVS = is4S = is6S = isMulti = 0;
+	BYTE reg = 0;
 
-	if(MEMBYTE(BIOS_MVS_FLAG)==SYSTEM_MVS)
+	isMVS = is4S = is6S = isMulti = hwChange = 0;
+
+	if(MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
 	{
-		BYTE reg = 0;
-
 		isMVS = 1;
 		reg = volMEMBYTE(REG_SYSTYPE);
 		if(reg & MVS_MULTI)
@@ -63,6 +63,10 @@ void check_systype()
 				is4S = 1;
 		}
 	}
+
+	reg = volMEMBYTE(REG_STATUS_B);
+	if(reg & MVS_OR_AES && !isMVS)
+		hwChange = 1;
 }
 
 static const ushort fixPalettes[]= {
@@ -107,11 +111,23 @@ void draw_background()
 void menu_footer()
 {
 	fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-	fixPrint(23, 28, 0, 3, isMVS ? "MVS" : "AES");
-	if(isMVS && (is4S||is6S))
+	if(isMVS)
+	{ 
+		fixPrint(23, 28, 0, 3, isMVS ? "MVS" : "AES");
+		if(is4S || is6S)
+			fixPrint(26, 28, 0, 3, is4S ? "2/4S" : "6S");
+		else
+			fixPrint(26, 28, 0, 3, "1S");
+		if(hwChange)
+			fixPrint(19, 28, 0, 3, "AES>");
+	}	
+	else
 	{
-		fixPrint(26, 28, 0, 3, is4S ? "2/4S" : "6S");
+		fixPrint(27, 28, 0, 3, "AES");
+		if(hwChange)
+			fixPrint(23, 28, 0, 3, "MVS>");
 	}
+
 	if((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
 	{
 		fixPrint(32, 28, 0, 3, "Japan");

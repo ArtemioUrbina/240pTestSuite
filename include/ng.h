@@ -23,7 +23,7 @@
 #ifndef _NG_H_
 #define _NG_H_
 
-extern BYTE isMVS, is4S, is6S, isMulti;
+extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 
 #define SYSTEM_AES			0x00
 #define SYSTEM_MVS			0x80
@@ -88,6 +88,11 @@ extern BYTE isMVS, is4S, is6S, isMulti;
 
 #define BIOS_ADDRESS	0xC00000
 #define BIOS_SIZE		0x20000
+
+// 4 player related
+#define BIOS_4P_REQUESTED	0x10FEF8
+#define BIOS_4P_MODE		0x10FEFA
+#define BIOS_4P_PLUGGED		0x10FEFB
 
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22

@@ -1407,7 +1407,7 @@ void at_audiosync_test()
 
 void ht_controller_test()
 {
-	int done = 0;
+	int done = 0, hardDip2 = 0, lastDip2 = 0;
 	picture image;
 	BYTE mvssel = 0, mvscredit = 0;
 
@@ -1436,6 +1436,12 @@ void ht_controller_test()
 		{
 			mvscredit = volMEMBYTE(REG_STATUS_A); 
 			mvssel = volMEMBYTE(REG_STATUS_B); 
+			hardDip2 = !(volMEMBYTE(REG_DIPSW) & DP_CHUTES); // hard dip 2 status
+			if(hardDip2 != lastDip2)
+			{
+				clearFixLayer();
+				lastDip2 = hardDip2;
+			}
 		}
 
 		if (ps & P1_START && p1e & JOY_LEFT)
@@ -1489,39 +1495,45 @@ void ht_controller_test()
 		fixPrint(29, 14, p2 & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
 		fixPrint(30, 14, p2 & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
 
-		// Controller 3
-		fixPrint(9, 17, p1b & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
-		fixPrint(5, 18, p1b & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(11, 18, p1b & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
-		fixPrint(8, 19, p1b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
+		if(isMVS &&	(hardDip2                    || // hard dip 2 status
+			volMEMBYTE(BIOS_4P_MODE)    == 0xFF  || // Main 4P flag, is set when hard dip 2 is on and 4P board is found. 
+			volMEMBYTE(BIOS_4P_PLUGGED) == 0xFF  || // 4P compatible bios will check for 4P board regardless of dip2 switch status. 
+			volMEMBYTE(SOFT_DIP_3)))
+		{
+			// Controller 3
+			fixPrint(9, 17, p1b & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
+			fixPrint(5, 18, p1b & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
+			fixPrint(11, 18, p1b & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
+			fixPrint(8, 19, p1b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
 
-		fixPrint(18, 17, ps & P1B_START ? fontColorRed : fontColorWhite, 3, "Start");
-		if(isMVS)
-			fixPrint(18, 19, !(mvscredit & P3_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
-		else
-			fixPrint(18, 19, ps & P1B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+			fixPrint(18, 17, ps & P1B_START ? fontColorRed : fontColorWhite, 3, "Start");
+			if(isMVS)
+				fixPrint(18, 19, !(mvscredit & P3_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
+			else
+				fixPrint(18, 19, ps & P1B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
 
-		fixPrint(27, 18, p1b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
-		fixPrint(28, 18, p1b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
-		fixPrint(29, 18, p1b & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
-		fixPrint(30, 18, p1b & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+			fixPrint(27, 18, p1b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
+			fixPrint(28, 18, p1b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
+			fixPrint(29, 18, p1b & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
+			fixPrint(30, 18, p1b & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
 
-		// Controller 4
-		fixPrint(9, 21, p2b & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
-		fixPrint(5, 22, p2b & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(11, 22, p2b & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
-		fixPrint(8, 23, p2b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
+			// Controller 4
+			fixPrint(9, 21, p2b & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
+			fixPrint(5, 22, p2b & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
+			fixPrint(11, 22, p2b & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
+			fixPrint(8, 23, p2b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
 
-		fixPrint(18, 21, ps & P2B_START ? fontColorRed : fontColorWhite, 3, "Start");
-		if(isMVS)
-			fixPrint(18, 23, !(mvscredit & P4_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
-		else
-			fixPrint(18, 23, ps & P2B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+			fixPrint(18, 21, ps & P2B_START ? fontColorRed : fontColorWhite, 3, "Start");
+			if(isMVS)
+				fixPrint(18, 23, !(mvscredit & P4_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
+			else
+				fixPrint(18, 23, ps & P2B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
 
-		fixPrint(27, 22, p2b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
-		fixPrint(28, 22, p2b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
-		fixPrint(29, 22, p2b & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
-		fixPrint(30, 22, p2b & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+			fixPrint(27, 22, p2b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
+			fixPrint(28, 22, p2b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
+			fixPrint(29, 22, p2b & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
+			fixPrint(30, 22, p2b & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+		}
 
 		fixPrint(9, 26, fontColorGreen, 3, "Use START+LEFT to exit");
 	}
