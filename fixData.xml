@@ -13,7 +13,9 @@
 	<fix bank="3" id="fix_font0">
 		<file>gfx\fix\font0.png</file>
 	</fix>
-	
+	<fix bank="4" id="fix_font1">
+		<file>gfx\fix\font1.png</file>
+	</fix>
 	<fix bank="3" id="fix_bars">
 		<file>gfx\fix\bars.png</file>
 	</fix>

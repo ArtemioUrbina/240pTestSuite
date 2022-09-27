@@ -951,7 +951,6 @@ void vt_horizontal_stripes()
 		if (draw)
 		{
 			gfxClear();
-
 			pictureInit(&image, &horzstripe, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
 			draw = 0;
@@ -961,12 +960,12 @@ void vt_horizontal_stripes()
 		{
 			if (field == 0)
 			{
-				volMEMWORD(0x402202) = 0x5fff;
+				palJobPut(16,horzstripe_alt.palInfo->count,horzstripe_alt.palInfo->data);
 				field = 1;
 			}
 			else
 			{
-				volMEMWORD(0x402204) = 0x8000;
+				palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
 				field = 0;
 			}
 		}
@@ -979,18 +978,18 @@ void vt_horizontal_stripes()
 				count = 0;
 
 			intToStr(count, cntstr, 2);
-			fixPrint(2, 25, fontColorWhite, 3, "Frame:");
-			fixPrint(8, 25, fontColorWhite, 3, cntstr);
+			fixPrint(2, 25, 5, 4, "Frame:"); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrint(8, 25, 5, 4, cntstr);   // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
 		{
 			if (field == 0)
 			{
-				volMEMWORD(0x402202) = 0x5fff;
+				palJobPut(16,horzstripe_alt.palInfo->count,horzstripe_alt.palInfo->data);
 				field = 1;
 			} else {
-				volMEMWORD(0x402204) = 0x8000;
+				palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
 				field = 0;
 			}
 		}
@@ -1008,9 +1007,7 @@ void vt_horizontal_stripes()
 			docounter = ~docounter;
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
 		if(checkHelp(HELP_STRIPES))
 			draw = 1;
@@ -1037,12 +1034,12 @@ void vt_vertical_stripes()
 		{
 			if (field == 0)
 			{
-				volMEMWORD(0x402202) = 0x5fff;
+				palJobPut(16,vertstripe_alt.palInfo->count,vertstripe_alt.palInfo->data);
 				field = 1;
 			}
 			else
 			{
-				volMEMWORD(0x402204) = 0x8000;
+				palJobPut(16,vertstripe.palInfo->count,vertstripe.palInfo->data);
 				field = 0;
 			}
 		}
@@ -1055,18 +1052,18 @@ void vt_vertical_stripes()
 				count = 0;
 
 			intToStr(count, cntstr, 2);
-			fixPrint(2, 25, fontColorWhite, 3, "Frame:");
-			fixPrint(8, 25, fontColorWhite, 3, cntstr);
+			fixPrint(2, 25, 5, 4, "Frame:"); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrint(8, 25, 5, 4, cntstr); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
 		{
 			if (field == 0)
 			{
-				volMEMWORD(0x402202) = 0x5fff;
+				palJobPut(16,vertstripe_alt.palInfo->count,vertstripe_alt.palInfo->data);
 				field = 1;
 			} else {
-				volMEMWORD(0x402204) = 0x8000;
+				palJobPut(16,vertstripe.palInfo->count,vertstripe.palInfo->data);
 				field = 0;
 			}
 		}
@@ -1101,10 +1098,11 @@ void vt_checkerboard()
 
 	while (!done)
 	{
+		SCClose();
+		waitVBlank();
 		if (draw)
 		{
 			gfxClear();
-
 			pictureInit(&image, &check, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,check.palInfo->count,check.palInfo->data);
 			draw = 0;
@@ -1114,12 +1112,12 @@ void vt_checkerboard()
 		{
 			if (field == 0)
 			{
-				volMEMWORD(0x402202) = 0x8000;
+				palJobPut(16,check_alt.palInfo->count,check_alt.palInfo->data);
 				field = 1;
 			}
 			else
 			{
-				volMEMWORD(0x402204) = 0x5fff;
+				palJobPut(16,check.palInfo->count,check.palInfo->data);
 				field = 0;
 			}
 		}
@@ -1132,24 +1130,21 @@ void vt_checkerboard()
 				count = 0;
 
 			intToStr(count, cntstr, 2);
-			fixPrint(2, 25, fontColorWhite, 3, "Frame:");
-			fixPrint(8, 25, fontColorWhite, 3, cntstr);
+			fixPrint(2, 25, 5, 4, "Frame:"); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrint(8, 25, 5, 4, cntstr); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
 		{
 			if (field == 0)
 			{
-				volMEMWORD(0x402202) = 0x8000;
+				palJobPut(16,check_alt.palInfo->count,check_alt.palInfo->data);
 				field = 1;
 			} else {
-				volMEMWORD(0x402204) = 0x5fff;
+				palJobPut(16,check.palInfo->count,check.palInfo->data);
 				field = 0;
 			}
 		}
-
-		SCClose();
-		waitVBlank();
 
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
@@ -1465,12 +1460,10 @@ static const u32 crc32_table[] = {
 	0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
 };
 
-
 void CRC32_reset()
 {
 	_state = ~0L;
 }
-
 
 void CRC32_update(u8 data)
 {
@@ -1481,7 +1474,6 @@ void CRC32_update(u8 data)
 	tbl_idx = _state ^ (data >> (1 * 4));
 	_state = (*(u32*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
 }
-
 
 u32 CRC32_finalize()
 {
@@ -1509,7 +1501,6 @@ u32 CalculateCRC(u32 startAddress, u32 size)
 	checksum = CRC32_finalize();
 	return checksum;
 }
-
 
 #define MAX_LOCATIONS 9
 

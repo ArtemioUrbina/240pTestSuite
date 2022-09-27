@@ -114,11 +114,20 @@
   <pict id="check">
     <file>gfx\check.png</file>
   </pict>
+  <pict id="check_alt">
+    <file>gfx\check_alt.png</file>
+  </pict>
   <pict id="vertstripe">
     <file>gfx\vertstripe.png</file>
   </pict>
+  <pict id="vertstripe_alt">
+    <file>gfx\vertstripe_alt.png</file>
+  </pict>
   <pict id="horzstripe">
     <file>gfx\horzstripe.png</file>
+  </pict>
+  <pict id="horzstripe_alt">
+    <file>gfx\horzstripe_alt.png</file>
   </pict>
   <pict id="barcode">
     <file>gfx\barcode.png</file>
