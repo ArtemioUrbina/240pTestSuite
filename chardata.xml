@@ -111,6 +111,9 @@
   <scrl id="kiki">
     <file>gfx\kiki.png</file>
   </scrl>
+  <scrl id="scroll_grid">
+    <file>gfx\scroll_grid.png</file>
+  </scrl>
   <pict id="check">
     <file>gfx\check.png</file>
   </pict>

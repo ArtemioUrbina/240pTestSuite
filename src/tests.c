@@ -928,24 +928,80 @@ void vt_scroll_test()
 
 void vt_gridscroll_test()
 {
-	int done = 0, draw = 1;
-	picture image;
+	int done = 0, draw = 1, x = 0, y = 0;
+	int acc = 1, pause = 0, direction = 0, horizontal = 0;
+	scroller grid;
 
 	while (!done)
 	{
 		if (draw)
 		{
+			backgroundColor(0x8000);
 			gfxClear();
-
-			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+			scrollerInit(&grid, &scroll_grid, 1, 16, 0, 0);
+			palJobPut(16, scroll_grid.palInfo->count, scroll_grid.palInfo->data);
 			draw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (!horizontal)
+		{
+			if (!pause){
+				if (!direction){	
+					y += (y * acc);
+					scrollerSetPos(&grid, x, y);
+				} else {
+					y -= (y * acc);
+					scrollerSetPos(&grid, x, y);
+				}
+			}
+		}
+		else {
+			if (!pause){
+				if (!direction){
+					x += (x * acc);
+					scrollerSetPos(&grid, x, y);
+				}
+				else {
+					x -= (x * acc);
+					scrollerSetPos(&grid, x, y);
+				}
+			}
+		}
+
+		if (p1e & JOY_A)
+		{
+			pause = !pause;
+		}
+
+		if (p1e & JOY_B)
+		{
+			horizontal = !horizontal;
+		}
+
+		if (p1e & JOY_LEFT)
+		{
+			direction = !direction;
+		}
+
+		if (p1e & JOY_UP)
+		{
+			acc++;
+			if (acc == 10)
+				acc = 10;
+		}
+
+		if (p1e & JOY_DOWN)
+		{
+			acc--;
+			if (acc == 1)
+				acc = 1;
+		}
 
 		if (ps & P1_START)
 		{
@@ -954,6 +1010,13 @@ void vt_gridscroll_test()
 
 		if(checkHelp(HELP_STRIPES))
 			draw = 1;
+
+		if(x > 31) x = 0;
+		//if(y > 31) y = 0;
+		x++;
+							//x += (x * acc);
+					scrollerSetPos(&grid, x, y);
+		
 	}
 }
 
