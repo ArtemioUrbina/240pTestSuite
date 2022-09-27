@@ -48,6 +48,17 @@
         "problemMatcher": []
     },
     {
+        "label": "Debug in MAME",
+        "type": "shell",
+        "windows": {
+            "command": "mame_debug.bat"
+        },  
+        "presentation": {
+            "reveal": "never"
+        },
+        "problemMatcher": []
+    },
+    {
         "label": "Build CHAR ROMS",
         "type": "shell",
         "windows": {

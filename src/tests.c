@@ -1506,17 +1506,17 @@ u32 CalculateCRC(u32 startAddress, u32 size)
 
 void ht_memory_viewer(u32 address)
 {
-	int done = 0, redraw = 1, docrc = 0, locpos = 1, i = 0, ascii = 0;
+	int done = 0, redraw = 1, docrc = 0, locpos = 1, pos = 0, ascii = 0;
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 0x400000, 0x402000, 0xC00000 };
 
 	backgroundColor(0x0000);
 	gfxClear();
 
-	for (i = 0; i < MAX_LOCATIONS; i++)
+	for (pos = 0; pos < MAX_LOCATIONS; pos++)
 	{
-		if (locations[i] == address)
+		if (locations[pos] == address)
 		{
-			locpos = i;
+			locpos = pos;
 			break;
 		}
 	}
@@ -1525,10 +1525,11 @@ void ht_memory_viewer(u32 address)
 	{
 		if (redraw)
 		{
-			int i = 0, j = 0;
-			u8 *mem = NULL;
-			char buffer[10];
+			int		i = 0, j = 0;
+			u8		*mem = NULL;
+			char	buffer[10];
 
+			memset(buffer, 0, sizeof(char)*10);
 			mem = (u8*)address;
 
 			clearFixLayer();
@@ -1544,7 +1545,7 @@ void ht_memory_viewer(u32 address)
 			if (docrc)
 			{
 				intToHex(crc, buffer, 8);
-				fixPrint(32, 14, fontColorGreen, 3, buffer);
+				fixPrint(32, 16, fontColorGreen, 3, buffer);
 			}
 
 			for (i = 0; i < 30; i++)
@@ -1554,7 +1555,7 @@ void ht_memory_viewer(u32 address)
 					if(!ascii)
 					{
 						intToHex(mem[i*16+j], buffer, 2);
-						fixPrint(j*2, i, fontColorWhite, 3, buffer);
+						fixPrint(j*2, i+2, fontColorWhite, 3, buffer);
 					}
 					else
 					{
@@ -1565,7 +1566,7 @@ void ht_memory_viewer(u32 address)
 						if(c >= 32 && c <= 126)	
 						{
 							buffer[0] = (char)c;			// ASCII range
-							fixPrint(j*2, i, fontColorWhite, 3, buffer);
+							fixPrint(j*2, i+2, fontColorWhite, 3, buffer);
 						}
 					}
 				}
