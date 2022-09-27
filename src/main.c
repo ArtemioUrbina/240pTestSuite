@@ -107,20 +107,20 @@ void draw_background()
 void menu_footer()
 {
 	fixPrint(23, 26, 0, 3, "NTSC 320x224p");
-	fixPrint(17, 28, 0, 3, isMVS?"Neo Geo MVS":"Neo Geo AES");
+	fixPrint(23, 28, 0, 3, isMVS ? "MVS" : "AES");
 	if(isMVS && (is4S||is6S))
 	{
-		fixPrint(28, 28, 0, 3, is4S ? "4S" : "6S");
+		fixPrint(26, 28, 0, 3, is4S ? "2/4S" : "6S");
 	}
-	if((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_JAPAN))
+	if((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
 	{
 		fixPrint(32, 28, 0, 3, "Japan");
 	}
-	else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_USA))
+	else if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_USA))
 	{
 		fixPrint(34, 28, 0, 3, "USA");
 	}
-	else if ((MEMBYTE(BIOS_COUNTRY_CODE)==SYSTEM_EUROPE))
+	else if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_EUROPE))
 	{	
 		fixPrint(31, 28, 0, 3, "Europe");
 	}
@@ -474,7 +474,7 @@ void menu_ht()
 				break;
 
 				case 3:
-					ht_memory_viewer(1);
+					ht_memory_viewer(0);
 				break;
 
 				case 4:
