@@ -30,7 +30,6 @@ void vt_striped_sprite_test(void);
 void vt_lag_test(void);
 void vt_reflex_test(void);
 void vt_scroll_test(void);
-void vt_vert_scroll_test(void);
 void vt_gridscroll_test(void);
 void vt_horizontal_stripes(void);
 void vt_vertical_stripes(void);

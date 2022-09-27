@@ -800,112 +800,129 @@ void vt_reflex_test()
 
 void vt_scroll_test()
 {
-	int done = 0, draw = 1;
+	int done = 0, draw = 1, frame = 1, vertical = 0, pause = 0, direction = 0, acc = 1;
 	int x1 = 0, y1 = -96;
 	int x2 = 0, y2 = -152;
 	int x3 = 0, y3 = 0;
-	unsigned int fc;
+	int y = 0;
 
-	scroller backScroll, waterScroll, frontScroll;
+	static const ushort wFallPal_1[] = {
+		0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x179f, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+		};
 
-	while (!done)
-	{
-		fc = DAT_frameCounter;
+	static const ushort wFallPal_2[] = {
+		0x8000, 0x0200, 0x6840, 0x8720, 0x179f, 0x879b, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+		};
 
-		if (draw)
-		{
-			gfxClear();
+	static const ushort wFallPal_3[] = {
+		0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x3bdf, 0x58bf, 0x179f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+		};
 
-			scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
-			palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
+	static const ushort wFallPal_4[] = {
+		0x8000, 0x0200, 0x6840, 0x8720, 0x3bdf, 0x58bf, 0x179f, 0x879b, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+		};
 
-			scrollerInit(&waterScroll, &sonic_water, 22, 18, x2, y2);
-			palJobPut(18, sonic_water.palInfo->count, sonic_water.palInfo->data);
 
-			scrollerInit(&frontScroll, &sonic_floor, 43, 19, x1, y1);
-			palJobPut(19, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
-			draw = 0;
-		}
-		
-		SCClose();
-		waitVBlank();
+	static const ushort waterPal_1[] = {
+		0x8000, 0x879b, 0x3bdf, 0x58bf, 0x929d, 0x179f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+		};
+	static const ushort waterPal_2[] = {
+		0x8000, 0x179f, 0x879b, 0x3bdf, 0x929d, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+		};
+	static const ushort waterPal_3[] = {
+		0x8000, 0x58bf, 0x179f, 0x879b, 0x929d, 0x3bdf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+		};
+	static const ushort waterPal_4[] = {
+		0x8000, 0x3bdf, 0x58bf, 0x179f, 0x929d, 0x879b, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+		};
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (ps & P1_START)
-		{
-			done = 1;
-		}
-
-		x1++;
-		x2++;
-		x3++;
-
-		if(x1 > 256)
-		{
-			x1 = 0;
-		}
-
-		if(x2 > 512)
-		{
-			x2 = 0;
-		}
-
-		if(x3 > 512)
-		{
-			x3 = 0;
-		}
-
-		if(checkHelp(HELP_HSCROLL))
-			draw = 1;
-		
-		scrollerSetPos(&frontScroll, x1, y1);
-		scrollerSetPos(&waterScroll, x2/2, y2);
-		scrollerSetPos(&backScroll, x3/2, y3);
-	}
-}
-
-void vt_vert_scroll_test()
-{
-	int done = 0, draw = 1;
-	int x = 0, y = 0;
-	scroller vertScroll;
+	scroller backScroll, waterScroll, frontScroll, vertScroll;
 
 	while (!done)
 	{
 		if (draw)
 		{
-			backgroundColor(0x8000);
-			gfxClear();
+			if (!vertical)
+			{
+				gfxClear();
 
-			scrollerInit(&vertScroll, &kiki, 1, 16, 0, 0);
-			palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
-			draw = 0;
+				scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
+				palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
+
+				scrollerInit(&waterScroll, &sonic_water, 22, 18, x2, y2);
+				palJobPut(18, sonic_water.palInfo->count, sonic_water.palInfo->data);
+
+				scrollerInit(&frontScroll, &sonic_floor, 43, 19, x1, y1);
+				palJobPut(19, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
+				draw = 0;
+			} else {
+				backgroundColor(0x8000);
+				gfxClear();
+				scrollerInit(&vertScroll, &kiki, 1, 16, 0, 0);
+				palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
+				draw = 0;
+			}
 		}
 		
 		SCClose();
 		waitVBlank();
 
+		if (!vertical)
+		{
+			switch (frame)
+			{
+			case 30:
+				palJobPut(18, 1, waterPal_2);
+				palJobPut(17, 1, wFallPal_1);
+			break;
+			case 60:
+				palJobPut(18, 1, waterPal_3);
+				palJobPut(17, 1, wFallPal_2);
+			break;
+			case 90:
+				palJobPut(18, 1, waterPal_4);
+				palJobPut(17, 1, wFallPal_4);
+			break;
+			}
+		}
+
+		frame++;
+		if (frame > 90)
+			frame = 1;
+
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if (ps & P1_START)
+		if (p1e & JOY_A)
+			pause = !pause;
+
+		if (p1e & JOY_B)
 		{
-			done = 1;
+			vertical = !vertical;
+			draw = 1;
 		}
 
-		y++;
-
-		if(y > 512)
-		{
-			y = 0;
-		}
+		if (ps & P1_START) done = 1;
 
 		if(checkHelp(HELP_HSCROLL))
 			draw = 1;
-
-		scrollerSetPos(&vertScroll, 0, y);
+		
+		if (!vertical)
+		{
+			scrollerSetPos(&frontScroll, x1, y1);
+			scrollerSetPos(&waterScroll, x2/2, y2);
+			scrollerSetPos(&backScroll, x3/2, y3);
+			x1++;
+			x2++;
+			x3++;
+			if(x1 > 256) x1 = 0;
+			if(x2 > 512) x2 = 0;
+			if(x3 > 512) x3 = 0;
+		} else {
+			scrollerSetPos(&vertScroll, 0, y);
+			y++;
+			if(y > 512) y = 0;
+		}
 	}
 }
 
