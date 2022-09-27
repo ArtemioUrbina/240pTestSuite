@@ -87,6 +87,7 @@ extern BYTE isMVS, is4S, is6S, isMulti;
 #define SOFT_DIP_4		0x10FD8D
 
 #define BIOS_ADDRESS	0xC00000
+#define BIOS_SIZE		0x20000
 
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22

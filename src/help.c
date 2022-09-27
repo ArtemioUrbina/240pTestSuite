@@ -692,6 +692,7 @@ void DrawHelp(int option)
 				fixPrint(4, 20, fontColorWhite, 3, "current screen.");
 				fixPrint(4, 21, fontColorWhite, 3, "- Button B jumps to relevant");
 				fixPrint(4, 22, fontColorWhite, 3, "memory locations");
+				fixPrint(4, 23, fontColorWhite, 3, "- Button C toggles ASCII");
 				break;
 		default:
 			exit = 1;
@@ -723,7 +724,7 @@ void DrawHelp(int option)
 		if (p1e & JOY_B || ps & P1_START)
 		{
 			exit = 1;
-			clearFixLayer();
+			gfxClear();
 		}
 	}
 }

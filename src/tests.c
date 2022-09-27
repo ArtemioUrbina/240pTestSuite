@@ -1506,7 +1506,7 @@ u32 CalculateCRC(u32 startAddress, u32 size)
 
 void ht_memory_viewer(u32 address)
 {
-	int done = 0, redraw = 1, docrc = 0, locpos = 1, i = 0;
+	int done = 0, redraw = 1, docrc = 0, locpos = 1, i = 0, ascii = 0;
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 0x400000, 0x402000, 0xC00000 };
 
 	backgroundColor(0x0000);
@@ -1531,6 +1531,8 @@ void ht_memory_viewer(u32 address)
 
 			mem = (u8*)address;
 
+			clearFixLayer();
+
 			if (docrc)
 				crc = CalculateCRC(address, 0x1C0);
 
@@ -1549,8 +1551,23 @@ void ht_memory_viewer(u32 address)
 			{
 				for (j = 0; j < 16; j++)
 				{
-					intToHex(mem[i*16+j], buffer, 2);
-					fixPrint(j*2, i, fontColorWhite, 3, buffer);
+					if(!ascii)
+					{
+						intToHex(mem[i*16+j], buffer, 2);
+						fixPrint(j*2, i, fontColorWhite, 3, buffer);
+					}
+					else
+					{
+						u8 c;
+					
+						memset(buffer, 0, sizeof(char)*10);
+						c = mem[i*16+j];
+						if(c >= 32 && c <= 126)	
+						{
+							buffer[0] = (char)c;			// ASCII range
+							fixPrint(j*2, i, fontColorWhite, 3, buffer);
+						}
+					}
 				}
 			}
 			redraw = 0;
@@ -1581,6 +1598,12 @@ void ht_memory_viewer(u32 address)
 			if (locpos == MAX_LOCATIONS)
 				locpos = 0;
 			address = locations[locpos];
+			redraw = 1;
+		}
+
+		if (p1e & JOY_C)
+		{
+			ascii = !ascii;
 			redraw = 1;
 		}
 
@@ -1720,6 +1743,10 @@ const BIOSID bioslist[] = {
 	0x9DE9D5F1,
 	"uni-bios_1_0.rom",
 	"Universe Bios (Hack, Ver. 1.0)" },
+{	BIOS_HACK,
+	0xEA57D3AD,
+	"neopen.sp1",
+	"NeopenBios v0.1" },
 {	BIOS_SNK_MVS,
 	0xEE4E56EF,
 	"vs-bios.rom",
@@ -1780,10 +1807,22 @@ const BIOSID bioslist[] = {
 	0x8F5EBA5E,
 	"sp1-u3.bin",
 	"US MVS (U3)" },
+{	BIOS_SNK_MVS,
+	0xF7C94873,
+	"sp-1v1_3db8c.bin",
+	"Custom Japanese Hotel" },
+{	BIOS_SNK_AES,
+	0xF481E11,
+	"neo-po.bin",
+	"Japan AES" },
 {	BIOS_SNK_AES,
 	0x2C50CBCA,
 	"neo-epo.bin",
-	"Asia AES" },
+	"Export AES" },
+{	BIOS_SNK_AES,
+	0x7A0D4410,
+	"neodebug.rom",
+	"Development System ROM" },
 {	0, 0, NULL, NULL } };
 
 // search known BIOS
@@ -1800,38 +1839,88 @@ const BIOSID *GetBIOSbyCRC(u32 checksum)
 	return NULL;
 }
 
+void cleanBIOSStr(char *str, u8 size)
+{
+	u8 i = 0;
+
+	for(i = 0; i < size; i++) {
+		u8 c;
+
+		c = str[i];
+		if(c >= 32 && c <= 126)	{ // ASCII range
+			str[i] = (char)c;
+		} else {
+			str[i] = ' ';
+		}
+	}
+}
+
+void byteSwap(u8 *data, u8 size)
+{
+	int pos = 0;
+
+	while(pos < size)	
+	{
+		u8 t;
+
+		t = data[pos];
+		data[pos] = data[pos+1];
+		data[pos+1] = t;
+		pos += 2;
+	}
+}
+
+void displayBIOS(u32 address, u8 swap)
+{
+	int  line = 0;
+	char buffer[34];
+
+	for(line = 0; line < 4; line++)
+	{
+		memcpy(buffer, (void*)(address+0x82+line*32), 32);
+		if(swap)
+			byteSwap(buffer, 32);
+		buffer[32] = '\0';
+		cleanBIOSStr(buffer, 32);
+		fixPrintf(4, 10+line, 2, 3, buffer);
+	}
+}
+
 void ht_check_ng_bios_crc(u32 address)
 {
-	int				done = 0;
+	int				done = 0, swap = 0;
 	u32				crc = 0;
 	picture			image;
-	char			buffer[10];
+	char			buffer[34];
 	const BIOSID 	*bios = NULL;
 
 	gfxClear();
 
-	fixPrintf(10, 15, 2, 3, "Please Wait...");
+	// Print BIOS lines
+	displayBIOS(address, swap);
+
+	fixPrintf(12, 16, 2, 3, "Please Wait...");
 	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,back.palInfo->count,back.palInfo->data);
 
 	SCClose();
 	waitVBlank();
 
-	crc = CalculateCRC(address, 0x20000);
+	crc = CalculateCRC(address, BIOS_SIZE);
 	intToHex(crc, buffer, 8);
-	fixPrintf(8, 15, 2, 3, "CRC:  ");
-	fixPrintf(13, 15, 0, 3, "0x%s ", buffer);
+	fixPrintf(12, 16, 2, 3, "CRC:  ");
+	fixPrintf(17, 16, 0, 3, "0x%s ", buffer);
 
 	bios = GetBIOSbyCRC(crc);
 	if(bios)
 	{
-		fixPrintf(6, 17, 0, 3, bios->name);
-		fixPrintf(6, 18, 0, 3, bios->text);
+		fixPrintf(6, 18, 0, 3, bios->name);
+		fixPrintf(6, 19, 0, 3, bios->text);
 	}
 	else
 	{
-		fixPrintf(14, 17, 0, 3, "Unknown BIOS");
-		fixPrintf(14, 18, 0, 3, "Please report it");
+		fixPrintf(14, 18, 0, 3, "Unknown BIOS");
+		fixPrintf(14, 19, 0, 3, "Please report it");
 	}
 
 	while (!done)
@@ -1845,6 +1934,12 @@ void ht_check_ng_bios_crc(u32 address)
 		if (p1e & JOY_B)
 		{
 			done = 1;
+		}
+
+		if (p1e & JOY_C)
+		{
+			swap = !swap;
+			displayBIOS(address, swap);
 		}
 	}
 }
