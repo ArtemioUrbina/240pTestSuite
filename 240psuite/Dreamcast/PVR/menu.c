@@ -1379,6 +1379,7 @@ void DrawCredits(ImagePtr back)
 	char 		data[50];
 	controller	*st;
 	float		r, b, g;
+	ImagePtr	qr = NULL;
 
 	if(back)
 	{
@@ -1391,6 +1392,12 @@ void DrawCredits(ImagePtr back)
 		back->b = 0.4;
 	}
 
+	qr = LoadIMG("/rd/qr.kmg.gz", 0);
+	if(qr)
+	{
+		qr->x = 270;
+		qr->y = 154;
+	}
 	while(!done && !EndProgram) 
 	{
 		int x = 20, y = 10;
@@ -1437,18 +1444,20 @@ void DrawCredits(ImagePtr back)
 		DrawStringS(x, y, 0.0, 1.0, 0.0, "Collaboration:");
 		DrawStringS(x+150, y, 1.0, 1.0, 0.0, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 1.0, 1.0, 1.0, "shmups regulars");
-		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/"); 
+		DrawStringS(x+155, y, 1.0, 1.0, 1.0, "http://junkerhq.net/240p/");
+		
+		DrawImage(qr);
 
 		y += 2*fh; 
-		DrawStringS(x+20, y, 0.0, .75, .75, "This program is free software and open source.");  y += fh;
-		DrawStringS(x+20, y, 0.0, .75, .75, "Source code is available under GPL.");
+		DrawStringS(x+5, y, 0.0, .75, .75, "This program is free software and open source.");  y += fh;
+		DrawStringS(x+5, y, 0.0, .75, .75, "Source code is available under GPL.");
 
 		y += fh;
 #ifndef NO_FFTW
-		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "Includes the #GFastest Fourier Transform in the West#G"); y += fh;
-		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "http://www.fftw.org/"); y += fh;
+		DrawStringS(x+5, y, 0.0, 0.75, 0.75, "Includes the #GFastest Fourier Transform in the West#G"); y += fh;
+		DrawStringS(x+5, y, 0.0, 0.75, 0.75, "http://www.fftw.org/"); y += fh;
 #endif
-		DrawStringS(x+20, y, 0.0, 0.75, 0.75, "#Glibperspective#G & #Gwaterbear#G used for VMU Test"); y += 2*fh;
+		DrawStringS(x+5, y, 0.0, 0.75, 0.75, "#Glibperspective#G & #Gwaterbear#G used for VMU Test"); y += 2*fh;
 
 		y = 10;
 		DrawStringS(200, y, 1.0, 1.0, 1.0, VERSION_NUMBER); y += fh; 
@@ -1482,6 +1491,8 @@ void DrawCredits(ImagePtr back)
 		back->g = g;
 		back->b = b;
 	}
+	
+	FreeImage(&qr);
 }
 
 void DrawIntro()

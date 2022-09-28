@@ -52,5 +52,8 @@ The 240p suite is also available in other systems,
 including: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/
 #YMega CD#Y, #YPC Engine#Y/#YTurbo Grafx-16#Y, #YPC Engine Duo#Y,
 #YSuper Nintendo#Y, #YNES#Y/#YFamicom#Y, #YNintendo GameCube#Y,
-#YNintendo Wii#Y and #YSega Dreamcast#Y.
+#YNintendo Wii#Y, #YNeo Geo#Y, #Y32x#Y and #YSega Dreamcast#Y.
 
+Info on using this suite:
+  http://junkerhq.net/240p/
+#I/rd/help/qr.kmg.gz#I

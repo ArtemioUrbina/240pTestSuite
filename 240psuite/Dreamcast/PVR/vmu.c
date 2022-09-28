@@ -369,7 +369,7 @@ char **frames_f[MAX_FRAMES] = { sd_b1_f_xpm, NULL, NULL, NULL, sd_b2_f_xpm, NULL
 // 15 to 20 blinks a minute
 // a possible blink every 240 frames
 // displaced by MAX_FRAMES of animation
-void SD_blink_cycle()
+void SD_VMU_blink_cycle()
 {
 	static char ***frames = NULL;
 	static int blink_counter = 0;

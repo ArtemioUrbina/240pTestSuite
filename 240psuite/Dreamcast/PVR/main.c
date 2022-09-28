@@ -58,6 +58,9 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd);
 void DrawIntro();
 int DrawFooter(float x, float y, int sel, int c, int showcredits);
 
+void SD_blink_cycle();
+ImagePtr SD_b1 = NULL, SD_b2 = NULL;
+
 int main(void)
 {
 	int 		done = 0, sel = 1, joycnt = 0;
@@ -116,6 +119,20 @@ int main(void)
 	{
 		sd->x = 195;
 		sd->y = 85;
+		
+		SD_b1 = LoadIMG("/rd/SD_b1.kmg.gz", 0);
+		if(SD_b1)
+		{
+			SD_b1->x = sd->x+16;
+			SD_b1->y = sd->y+32;
+		}
+		
+		SD_b2 = LoadIMG("/rd/SD_b2.kmg.gz", 0);
+		if(SD_b2)
+		{
+			SD_b2->x = sd->x+16;
+			SD_b2->y = sd->y+32;
+		}
 	}
 	
 	DrawIntro();
@@ -140,6 +157,7 @@ int main(void)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video Tests"); y += fh; c++;
@@ -158,8 +176,7 @@ int main(void)
 			refreshVMU = 0;
 		}
 		else
-			SD_blink_cycle();
-		
+			SD_VMU_blink_cycle();
 	
 		if (pressed & CONT_START)
 			ShowMenu(GENERALHELP);
@@ -220,6 +237,8 @@ int main(void)
 
 	FreeImage(&title);		
 	FreeImage(&sd);		
+	FreeImage(&SD_b1);
+	FreeImage(&SD_b2);
 	ReleaseScanlines();
 	ReleaseFont();
 	CleanImages();
@@ -249,6 +268,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Geometry"); y += fh; c++;
@@ -266,7 +286,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 			refreshVMU = 0;
 		}
 		else
-			SD_blink_cycle();
+			SD_VMU_blink_cycle();
 	
 		if (pressed & CONT_START)
 			ShowMenu(GENERALHELP);
@@ -350,6 +370,7 @@ void TestPatternsColorMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PLUGE"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
@@ -476,6 +497,7 @@ void TestPatternsGeometryMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
@@ -572,6 +594,7 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
@@ -719,6 +742,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;    
@@ -848,6 +872,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Maple Device List"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
@@ -1069,4 +1094,38 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 	}
 	
 	return c;
+}
+
+void SD_blink_cycle()
+{
+	static int blink_counter = 0;
+	static int is_blinking = 0;
+	
+	blink_counter++;	
+	if(SD_b1 && SD_b2 && blink_counter > 230)
+	{
+		if(!is_blinking)
+		{
+			if(rand() % 100 < 98)	// 2% chance every frame after 240
+			{
+				is_blinking = 1;
+				blink_counter = 230;
+				DrawImage(SD_b1);
+			}
+		}
+		else
+		{
+			if(blink_counter >= 234 && blink_counter < 238)
+				DrawImage(SD_b2);
+				
+			if(blink_counter >= 238 && blink_counter < 242)
+				DrawImage(SD_b1);
+	
+			if(blink_counter >= 242)
+			{	
+				blink_counter = 0;
+				is_blinking = 0;
+			}
+		}
+	}
 }

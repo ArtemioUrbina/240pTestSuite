@@ -34,7 +34,7 @@ void updateVMU_SD();
 void updateVMU_SD_Dev(maple_device_t *vmu);
 void updateVMU_wait();
 void clearVMUGraphicDev(maple_device_t *vmu);
-void SD_blink_cycle();
+void SD_VMU_blink_cycle();
 void disableVMU_LCD();
 void enableVMU_LCD();
 
