@@ -1407,7 +1407,7 @@ void at_audiosync_test()
 
 void ht_controller_test()
 {
-	int done = 0, hardDip2 = 0, lastDip2 = 0;
+	int done = 0, hardDip2 = 0, lastDip2 = 0, y = 0, enable4p = 0;
 	picture image;
 	BYTE mvssel = 0, mvscredit = 0;
 
@@ -1461,44 +1461,56 @@ void ht_controller_test()
 			}
 		}
 
-		// Controller 1
-		fixPrint(9, 9, p1 & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
-		fixPrint(5, 10, p1 & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(11,10, p1 & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
-		fixPrint(8, 11, p1 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
-
-		fixPrint(18, 9, ps & P1_START ? fontColorRed : fontColorWhite, 3, "Start");
-		if(isMVS)
-			fixPrint(18, 11, !(mvscredit & P1_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
-		else
-			fixPrint(18, 11, ps & P1_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
-
-		fixPrint(27, 10, p1 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
-		fixPrint(28, 10, p1 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
-		fixPrint(29, 10, p1 & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
-		fixPrint(30, 10, p1 & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
-
-		// Controller 2
-		fixPrint(9, 13, p2 & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
-		fixPrint(5, 14, p2 & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(11, 14, p2 & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
-		fixPrint(8, 15, p2 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
-
-		fixPrint(18, 13, ps & P2_START ? fontColorRed : fontColorWhite, 3, "Start");
-		if(isMVS)
-			fixPrint(18, 15, !(mvscredit & P2_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
-		else
-			fixPrint(18, 15, ps & P2_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
-
-		fixPrint(27, 14, p2 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
-		fixPrint(28, 14, p2 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
-		fixPrint(29, 14, p2 & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
-		fixPrint(30, 14, p2 & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
-
 		if(isMVS &&	(hardDip2                    || // hard dip 2 status
 			volMEMBYTE(BIOS_4P_MODE)    == 0xFF  || // Main 4P flag, is set when hard dip 2 is on and 4P board is found. 
 			volMEMBYTE(BIOS_4P_PLUGGED) == 0xFF  || // 4P compatible bios will check for 4P board regardless of dip2 switch status. 
-			volMEMBYTE(SOFT_DIP_3)))
+			volMEMBYTE(SOFT_DIP_3)))				// Soft dip failback, so the user can force it in MVS mode
+		{
+			y = 9;
+			enable4p = 1;
+		}
+		else
+		{
+			y = 13;
+			enable4p = 0;
+		}
+
+		// Controller 1
+		fixPrint(9, y, p1 & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
+		fixPrint(5, y+1, p1 & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(11,y+1, p1 & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
+		fixPrint(8, y+2, p1 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
+
+		fixPrint(18, y, ps & P1_START ? fontColorRed : fontColorWhite, 3, "Start");
+		if(isMVS)
+			fixPrint(18, y+2, !(mvscredit & P1_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
+		else
+			fixPrint(18, y+2, ps & P1_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+
+		fixPrint(27, y+1, p1 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
+		fixPrint(28, y+1, p1 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
+		fixPrint(29, y+1, p1 & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
+		fixPrint(30, y+1, p1 & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+
+		y += 4;
+		// Controller 2
+		fixPrint(9, y, p2 & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
+		fixPrint(5, y+1, p2 & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(11, y+1, p2 & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
+		fixPrint(8, y+2, p2 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
+
+		fixPrint(18, y+1, ps & P2_START ? fontColorRed : fontColorWhite, 3, "Start");
+		if(isMVS)
+			fixPrint(18, y+2, !(mvscredit & P2_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
+		else
+			fixPrint(18, y+2, ps & P2_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
+
+		fixPrint(27, y+1, p2 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
+		fixPrint(28, y+1, p2 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
+		fixPrint(29, y+1, p2 & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
+		fixPrint(30, y+1, p2 & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+
+		if(enable4p)
 		{
 			// Controller 3
 			fixPrint(9, 17, p1b & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
