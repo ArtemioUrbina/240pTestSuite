@@ -1606,12 +1606,13 @@ u32 CalculateCRC(u32 startAddress, u32 size)
 	return checksum;
 }
 
-#define MAX_LOCATIONS 9
+#define MAX_LOCATIONS 11
 
 void ht_memory_viewer(u32 address)
 {
 	int done = 0, redraw = 1, docrc = 0, locpos = 1, pos = 0, ascii = 0;
-	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 0x400000, 0x402000, 0xC00000 };
+	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 
+											0x400000, 0x402000, 0x800000, 0xC00000, 0xD00000 };
 
 	backgroundColor(0x0000);
 	gfxClear();

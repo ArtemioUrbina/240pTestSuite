@@ -52,10 +52,7 @@ int checkHelp(int helpID)
 
 void DrawHelp(int option)
 {
-	int exit = 0, page = 1, totalpages = 1;
-
-	gfxClear();
-	draw_background();
+	int exit = 0, page = 1, totalpages = 1, dirty = 0, redraw = 1;
 
 	switch (option)
 	{
@@ -77,6 +74,12 @@ void DrawHelp(int option)
 
 	while (!exit) 
 	{
+		if(redraw)
+		{
+			gfxClear();
+			draw_background();
+			redraw = 0;
+		}
 		SCClose();
 		waitVBlank();
 
@@ -112,26 +115,33 @@ void DrawHelp(int option)
 
 					break;
 				case 2:
-					fixPrint(15, 6, fontColorGreen, 3, "HELP (2/2)");
+					{
+						picture qr;
 
-					fixPrint(4, 8, fontColorWhite, 3, "The Neo Geo can output 224");
-					fixPrint(4, 9, fontColorWhite, 3, "active video lines. In PAL");
-					fixPrint(4, 10, fontColorWhite, 3, "consoles, it can display either");
-					fixPrint(4, 11,  fontColorWhite, 3, "224 or 240 lines.");
+						pictureInit(&qr, &barcode, 26, 17, 240, 144, FLIP_NONE);
+						palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
+						dirty = 1;
 
-					fixPrint(4, 13, fontColorWhite, 3, "The 240p suite is also available");
-					fixPrint(4, 14, fontColorWhite, 3, "on NES/FC, SNES/SFC, GameCube,");
-					fixPrint(4, 15, fontColorWhite, 3, "Wii, GBA, Dreamcast,");
-					fixPrint(4, 16, fontColorWhite, 3, "Genesis/Mega Drive, Sega 32X");
-					fixPrint(4, 17, fontColorWhite, 3, "Sega/Mega CD, SMS, and");
-					fixPrint(4, 18, fontColorWhite, 3, "PCE/TG-16/PCE-Duo/SCD/SCD2");
+						fixPrint(15, 6, fontColorGreen, 3, "HELP (2/2)");
 
-					fixPrint(4, 20, fontColorWhite, 3, "Visit:");
-					fixPrint(4, 21, fontColorGreen, 3, "http://junkerhq.net/240p");
-					fixPrint(4, 22, fontColorWhite, 3, "for more information");
+						fixPrint(4, 8, fontColorWhite, 3, "The Neo Geo can output 224");
+						fixPrint(4, 9, fontColorWhite, 3, "active video lines. In PAL");
+						fixPrint(4, 10, fontColorWhite, 3, "consoles, it can display either");
+						fixPrint(4, 11,  fontColorWhite, 3, "224 or 240 lines.");
 
-					fixPrint(5, 26, fontColorWhite, 3, "Press START or B to exit help");
+						fixPrint(4, 13, fontColorWhite, 3, "The 240p suite is also available");
+						fixPrint(4, 14, fontColorWhite, 3, "on NES/FC, SNES/SFC, GameCube,");
+						fixPrint(4, 15, fontColorWhite, 3, "Wii, GBA, Dreamcast,");
+						fixPrint(4, 16, fontColorWhite, 3, "Genesis/Mega Drive, Sega 32X");
+						fixPrint(4, 17, fontColorWhite, 3, "Sega/Mega CD, SMS, and");
+						fixPrint(4, 18, fontColorWhite, 3, "PCE/TG-16/PCE-Duo/SCD/SCD2");
 
+						fixPrint(4, 20, fontColorWhite, 3, "Visit:");
+						fixPrint(4, 21, fontColorGreen, 3, "http://junkerhq.net/240p");
+						fixPrint(4, 22, fontColorWhite, 3, "for more information");
+
+						fixPrint(5, 26, fontColorWhite, 3, "Press START or B to exit help");
+					}
 					break;
 				}
 				break;
@@ -710,6 +720,11 @@ void DrawHelp(int option)
 				clearFixLayer();
 				page++;
 			}
+			if(dirty)
+			{
+				redraw = 1;
+				dirty = 0;
+			}
 		}
 
 		if (p1e & JOY_LEFT)
@@ -718,6 +733,11 @@ void DrawHelp(int option)
 			{
 				clearFixLayer();
 				page--;
+			}
+			if(dirty)
+			{
+				redraw = 1;
+				dirty = 0;
 			}
 		}
 
