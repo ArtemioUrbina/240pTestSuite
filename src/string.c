@@ -22,6 +22,7 @@
 
 //#include <stddef.h>
 #include <stdarg.h>
+#include <DATlib.h>
 #include "types.h"
 #include "ng.h"
 #include "string_ng.h"
@@ -275,7 +276,8 @@ void setRandomSeed(u16 seed)
 
 u16 random()
 {
-	randbase ^= (randbase >> 1) ^ 5; //fix this
+	unsigned int fc = DAT_frameCounter;
+	randbase ^= (randbase >> 1) ^ fc;
 	randbase ^= (randbase << 1);
 
 	return randbase;

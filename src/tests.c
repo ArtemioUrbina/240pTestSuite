@@ -36,19 +36,16 @@ BYTE p1,p2,ps,p1e,p2e, p1b,p2b;
 void vt_drop_shadow_test()
 {
 	int done = 0, x = 30, y = 30, draw = 1, changeSprite = 0, evenFrames = 0;
-	char flip;
+	char flip = FLIP_NONE;
 	unsigned int fc;
 	picture image;
 	picture slug_sprite;
 	picture slug_shadow_sprite;
 	picture shape_sprite;
 
-	flip = FLIP_NONE;
-
 	while (!done)
 	{
 		fc = DAT_frameCounter;
-
 		if (draw)
 		{
 			backgroundColor(0xFAAF);
@@ -61,8 +58,6 @@ void vt_drop_shadow_test()
 			draw = 0;
 		}
 
-		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
-		
 		if (changeSprite == 0)
 		{
 			pictureHide(&shape_sprite);
@@ -84,6 +79,8 @@ void vt_drop_shadow_test()
 			}
 		}
 
+		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
+
 		SCClose();
 		waitVBlank();
 
@@ -92,9 +89,7 @@ void vt_drop_shadow_test()
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_C)
-		{
 			changeSprite = ~changeSprite;
-		}
 
 		if (p1 & JOY_UP)
 		{
@@ -127,9 +122,7 @@ void vt_drop_shadow_test()
 		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
 		if(checkHelp(HELP_SHADOW))
 			draw = 1;
@@ -204,46 +197,34 @@ void vt_striped_sprite_test()
 
 void vt_lag_test()
 {
-	u16 lsd, msd;
+	u16 done = 0, draw = 1, pause = 0, cposx = 32, cposy = 17, lsd, msd;
 	int frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1;
-	u16 done = 0, draw = 1;
-	u16 cc_1 = 17, cc_2 = 17, cc_3 = 17, cc_4 = 17, cc_5 = 17, cc_6 = 17, cc_7 = 17, cc_8 = 17, barC = 20;
 	const pictureInfo *numbers[10] = {&num_0, &num_1, &num_2, &num_3, &num_4, &num_5, &num_6, &num_7, &num_8, &num_9};
-	u16 pause = 0, cposx = 32, cposy = 17;
-	
-	picture image;
-	picture circle;
-	picture c_numbers;
-	picture bar;
-	picture h1;
-	picture h2;
-	picture m1;
-	picture m2;
-	picture s1;
-	picture s2;
-	picture f1;
-	picture f2;
-
-	backgroundColor(0x5fff);
-	gfxClear();
-
-	palJobPut(16, num_0.palInfo->count, num_0.palInfo->data);
-	palJobPut(17, circle_blue.palInfo->count, circle_blue.palInfo->data);
-	palJobPut(18, num_0_w.palInfo->count, num_0_w.palInfo->data);
-	palJobPut(19, circle_red.palInfo->count, circle_red.palInfo->data);
-	palJobPut(20, bar_l.palInfo->count, bar_l.palInfo->data);	
+	picture image, circle, c_numbers, bar, h1, h2, m1, m2, s1, s2, f1, f2;
 
 	while (!done)
 	{
-		pictureInit(&circle, &circle_blue, 65, cc_1, 12, 68, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 81, cc_2, 92, 68, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 97, cc_3, 172, 68, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 113, cc_4, 248, 68, FLIP_NONE);
+		if (draw)
+		{
+			backgroundColor(0x5fff);
+			gfxClear();
+			palJobPut(16, num_0.palInfo->count, num_0.palInfo->data);
+			palJobPut(17, circle_blue.palInfo->count, circle_blue.palInfo->data);
+			palJobPut(18, num_0_w.palInfo->count, num_0_w.palInfo->data);
+			palJobPut(19, circle_red.palInfo->count, circle_red.palInfo->data);
+			palJobPut(20, bar_l.palInfo->count, bar_l.palInfo->data);
+			draw = 0;
+		}
 
-		pictureInit(&circle, &circle_blue, 129, cc_5, 12, 132, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 145, cc_6, 92, 132, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 161, cc_7, 172, 132, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 177, cc_8, 248, 132, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 65, framecnt == 1 ? 19 : 17, 12, 68, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 81, framecnt == 2 ? 19 : 17, 92, 68, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 97, framecnt == 3 ? 19 : 17, 172, 68, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 113, framecnt == 4 ? 19 : 17, 248, 68, FLIP_NONE);
+
+		pictureInit(&circle, &circle_blue, 129, framecnt == 5 ? 19 : 17, 12, 132, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 145, framecnt == 6 ? 19 : 17, 92, 132, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 161, framecnt == 7 ? 19 : 17, 172, 132, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, 177, framecnt == 8 ? 19 : 17, 248, 132, FLIP_NONE);
 
 		pictureInit(&c_numbers, &num_1_w, 181, 18, 32, 84, FLIP_NONE);
 		pictureInit(&c_numbers, &num_2_w, 185, 18, 112, 84, FLIP_NONE);
@@ -259,8 +240,8 @@ void vt_lag_test()
 		pictureInit(&image, &separator, 5, 16, 152, 19, FLIP_NONE);
 		pictureInit(&image, &separator, 9, 16, 224, 19, FLIP_NONE);
 
-		pictureInit(&bar, &bar_l, 223, barC, 0, 0, FLIP_NONE);
-		pictureInit(&bar, &bar_r, 237, barC, 304, 0, FLIP_NONE);
+		pictureInit(&bar, &bar_l, 223, framecnt % 2 == 0 ? 18 : 20, 0, 0, FLIP_NONE);
+		pictureInit(&bar, &bar_l, 237, framecnt % 2 == 0 ? 18 : 20, 304, 0, FLIP_X);
 
 		// Draw Hours
 		lsd = hours % 10;
@@ -289,88 +270,16 @@ void vt_lag_test()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
-
 		fixPrint(4, 3, fontColorBlack, 3, "hours");
 		fixPrint(13, 3, fontColorBlack, 3, "minutes");
 		fixPrint(22, 3, fontColorBlack, 3, "seconds");
 		fixPrint(31, 3, fontColorBlack, 3, "frames");
 
-		if(framecnt > 8)
+		p1e = volMEMBYTE(P1_EDGE);
+		ps  = volMEMBYTE(PS_CURRENT);
+
+		if (framecnt > 8)
 			framecnt = 1;
-
-		if (framecnt == 1)
-		{
-			cc_1 = 19;
-		}
-		else {
-			cc_1 = 17;
-		}
-
-		if (framecnt == 2)
-		{
-			cc_2 = 19;
-		}
-		else {
-			cc_2 = 17;
-		}
-
-		if (framecnt == 3)
-		{
-			cc_3 = 19;
-		}
-		else {
-			cc_3 = 17;
-		}
-
-		if (framecnt == 4)
-		{
-			cc_4 = 19;
-		}
-		else {
-			cc_4 = 17;
-		}
-
-		if (framecnt == 5)
-		{
-			cc_5 = 19;
-		}
-		else {
-			cc_5 = 17;
-		}
-
-		if (framecnt == 6)
-		{
-			cc_6 = 19;
-		}
-		else {
-			cc_6 = 17;
-		}
-
-		if (framecnt == 7)
-		{
-			cc_7 = 19;
-		}
-		else {
-			cc_7 = 17;
-		}
-
-		if (framecnt == 8)
-		{
-			cc_8 = 19;
-		}
-		else {
-			cc_8 = 17;
-		}
-
-		if (framecnt % 2 == 0)
-		{
-			barC = 18;
-		}
-		else {
-			barC = 20;
-		}
 
 		if (framecnt > 4)
 		{
@@ -387,7 +296,7 @@ void vt_lag_test()
 		{
 			frames ++;
 			framecnt ++;
-			if(framecnt > 8)
+			if (framecnt > 8)
 				framecnt = 1;
 		}
 
@@ -413,9 +322,7 @@ void vt_lag_test()
 			hours = 0;
 
 		if (p1e & JOY_A)
-		{
 			pause = !pause;
-		}
 
 		if (p1e & JOY_B && pause)
 		{
@@ -429,9 +336,11 @@ void vt_lag_test()
 			done = 1;
 		}
 
-		if(checkHelp(HELP_LAG))
-			clearSprites(1,260);
+		if (checkHelp(HELP_LAG))
+		{
+			clearSprites(1,MAX_SPRITES);
 			draw = 1;
+		}
 	}
 }
 
@@ -442,11 +351,7 @@ void vt_reflex_test()
 	u16 pal = 0x0000, change = 1, loadvram = 1, psgoff = 0, usersound = 0;
 	u16 x = 0, y = 0, x2 = 0, y2 = 0, done = 0, variation = 1, draw = 1;
 	u16 pos = 0, view = 0, audio = 1, drawoffset = 0;
-
-	picture marker1;
-	picture marker2;
-	picture marker3;
-	picture background;
+	picture marker1, marker2, marker3, background;
 
 	x = 144, y = 60, x2 = 108, y2 = 96;
 

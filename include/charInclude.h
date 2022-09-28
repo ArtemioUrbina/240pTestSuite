@@ -143,5 +143,3 @@ extern const pictureInfo separator;
 extern const paletteInfo separator_Palettes;
 extern const pictureInfo bar_l;
 extern const paletteInfo bar_l_Palettes;
-extern const pictureInfo bar_r;
-extern const paletteInfo bar_r_Palettes;

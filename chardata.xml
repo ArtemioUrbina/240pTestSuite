@@ -221,8 +221,6 @@
   </pict>
   <pict id="bar_l">
     <file>gfx\bar_l.png</file>
-  </pict>
-  <pict id="bar_r">
-    <file>gfx\bar_r.png</file>
+    <flips>X</flips>
   </pict>
 </chardata>

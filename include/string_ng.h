@@ -44,7 +44,7 @@ void fix32ToStr(fix32 value, char *str, u16 numdec);
 int hexToDec(int hex);
 
 // Clear screen
-#define MAX_SPRITES	100
+#define MAX_SPRITES	248
 void gfxClear();
 
 #endif /* _STRING_H_ */
