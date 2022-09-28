@@ -982,7 +982,7 @@ void SIPLagTest()
 			cleanSIPlag();
 			return;
 		}
-		if(!AskQuestion("Use NTSC Microphone values?"))
+		if(AskQuestion("Use NTSC Microphone values?"))
 			samplerate = 11025;
 		else
 			samplerate = 10909;

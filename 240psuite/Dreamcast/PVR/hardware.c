@@ -2573,7 +2573,7 @@ void MicrophoneTest()
 				cleanSIPtest();
 				return;
 			}
-			if(!AskQuestion("Use NTSC Microphone values?"))
+			if(AskQuestion("Use NTSC Microphone values?"))
 				samplerate = sr8 ? 8085 : 11025;
 			else
 				samplerate = sr8 ? 8000 : 10909;
