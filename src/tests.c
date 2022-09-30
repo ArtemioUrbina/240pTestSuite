@@ -1310,6 +1310,27 @@ void at_audiosync_test()
 	}
 }
 
+inline void DrawController(u16 x, u16 y, BYTE input, BYTE start, BYTE ps, BYTE select, BYTE mvscredit, BYTE credit)
+{	
+	fixPrint(x+4, y,   input & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
+	fixPrint(x,   y+1, input & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
+	fixPrint(x+6, y+1, input & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
+	fixPrint(x+3, y+2, input & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
+
+	fixPrint(x+13, y, ps & start ? fontColorRed : fontColorWhite, 3, "Start");
+	if(isMVS)
+		fixPrint(x+13, y+2, !(mvscredit & credit) ? fontColorRed : fontColorWhite, 3, "Credit");
+	else
+		fixPrint(x+13, y+2, ps & select ? fontColorRed : fontColorWhite, 3, "Select");
+
+	fixPrint(x+22, y+1, input & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
+	fixPrint(x+23, y+1, input & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
+	fixPrint(x+24, y+1, input & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
+	fixPrint(x+25, y+1, input & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+}
+
+#define DC_X	7
+
 void ht_controller_test()
 {
 	int done = 0, hardDip2 = 0, lastDip2 = 0, y = 0, enable4p = 0;
@@ -1328,41 +1349,15 @@ void ht_controller_test()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);    // Controller 1
-		p2 = volMEMBYTE(P2_CURRENT);    // Controller 2
-		p1b = volMEMBYTE(P1B_CURRENT);  // Controller 3
-		p2b = volMEMBYTE(P2B_CURRENT);  // Controller 4
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
-
-		p2e = volMEMBYTE(P2_EDGE);
-
 		if(isMVS)
 		{
 			mvscredit = volMEMBYTE(REG_STATUS_A); 
-			mvssel = volMEMBYTE(REG_STATUS_B); 
-			hardDip2 = !(volMEMBYTE(REG_DIPSW) & DP_CHUTES); // hard dip 2 status
+			mvssel    = volMEMBYTE(REG_STATUS_B); 
+			hardDip2  = !(volMEMBYTE(REG_DIPSW) & DP_CHUTES); // hard dip 2 status
 			if(hardDip2 != lastDip2)
 			{
 				clearFixLayer();
 				lastDip2 = hardDip2;
-			}
-		}
-
-		if (ps & P1_START && p1e & JOY_LEFT)
-		{
-			done = 1;
-			clearFixLayer();
-			return;
-		}
-
-		if(isMVS)
-		{
-			fixPrint(29, 8, !(mvscredit & MVS_SERV_B) ? fontColorRed : fontColorWhite, 3, "Service");
-			if(is4S || is6S)
-			{
-				fixPrint(31, 23, !(mvssel & MVS_SEL1) ? fontColorRed : fontColorWhite, 3, "Sel 1");
-				fixPrint(31, 24, !(mvssel & MVS_SEL2) ? fontColorRed : fontColorWhite, 3, "Sel 2");
 			}
 		}
 
@@ -1380,79 +1375,48 @@ void ht_controller_test()
 			enable4p = 0;
 		}
 
-		// Controller 1
-		fixPrint(9, y, p1 & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
-		fixPrint(5, y+1, p1 & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(11,y+1, p1 & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
-		fixPrint(8, y+2, p1 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
-
-		fixPrint(18, y, ps & P1_START ? fontColorRed : fontColorWhite, 3, "Start");
-		if(isMVS)
-			fixPrint(18, y+2, !(mvscredit & P1_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
-		else
-			fixPrint(18, y+2, ps & P1_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
-
-		fixPrint(27, y+1, p1 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
-		fixPrint(28, y+1, p1 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
-		fixPrint(29, y+1, p1 & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
-		fixPrint(30, y+1, p1 & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
-
-		y += 4;
-		// Controller 2
-		fixPrint(9, y, p2 & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
-		fixPrint(5, y+1, p2 & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(11, y+1, p2 & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
-		fixPrint(8, y+2, p2 & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
-
-		fixPrint(18, y+1, ps & P2_START ? fontColorRed : fontColorWhite, 3, "Start");
-		if(isMVS)
-			fixPrint(18, y+2, !(mvscredit & P2_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
-		else
-			fixPrint(18, y+2, ps & P2_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
-
-		fixPrint(27, y+1, p2 & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
-		fixPrint(28, y+1, p2 & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
-		fixPrint(29, y+1, p2 & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
-		fixPrint(30, y+1, p2 & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
-
+		p1 = volMEMBYTE(P1_CURRENT);    // Controller 1
+		p2 = volMEMBYTE(P2_CURRENT);    // Controller 2
 		if(enable4p)
 		{
+			p1b = volMEMBYTE(P1B_CURRENT);  // Controller 3
+			p2b = volMEMBYTE(P2B_CURRENT);  // Controller 4
+		}
+		ps  = volMEMBYTE(PS_CURRENT);
+		p1e = volMEMBYTE(P1_EDGE);
+		p2e = volMEMBYTE(P2_EDGE);
+
+		if(isMVS)
+		{
+			fixPrint(29, 8, !(mvscredit & MVS_SERV_B) ? fontColorRed : fontColorWhite, 3, "Service");
+			if(is4S || is6S)
+			{
+				fixPrint(4,  24, !(mvssel & MVS_SEL1) ? fontColorRed : fontColorWhite, 3, "Sel 1");
+				fixPrint(31, 24, !(mvssel & MVS_SEL2) ? fontColorRed : fontColorWhite, 3, "Sel 2");
+			}
+		}
+
+		// Controller 1
+		DrawController(DC_X, y, p1, P1_START, ps, P1_SELECT, mvscredit, P1_CREDIT);
+		y += 4;
+
+		// Controller 2
+		DrawController(DC_X, y, p2, P2_START, ps, P2_SELECT, mvscredit, P2_CREDIT);
+		if(enable4p)
+		{
+			y += 4;
 			// Controller 3
-			fixPrint(9, 17, p1b & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
-			fixPrint(5, 18, p1b & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
-			fixPrint(11, 18, p1b & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
-			fixPrint(8, 19, p1b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
-
-			fixPrint(18, 17, ps & P1B_START ? fontColorRed : fontColorWhite, 3, "Start");
-			if(isMVS)
-				fixPrint(18, 19, !(mvscredit & P3_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
-			else
-				fixPrint(18, 19, ps & P1B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
-
-			fixPrint(27, 18, p1b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
-			fixPrint(28, 18, p1b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
-			fixPrint(29, 18, p1b & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
-			fixPrint(30, 18, p1b & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+			DrawController(DC_X, y, p1b, P1B_START, ps, P1B_SELECT, mvscredit, P3_CREDIT);
+			y += 4;
 
 			// Controller 4
-			fixPrint(9, 21, p2b & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
-			fixPrint(5, 22, p2b & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
-			fixPrint(11, 22, p2b & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
-			fixPrint(8, 23, p2b & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
-
-			fixPrint(18, 21, ps & P2B_START ? fontColorRed : fontColorWhite, 3, "Start");
-			if(isMVS)
-				fixPrint(18, 23, !(mvscredit & P4_CREDIT) ? fontColorRed : fontColorWhite, 3, "Credit");
-			else
-				fixPrint(18, 23, ps & P2B_SELECT ? fontColorRed : fontColorWhite, 3, "Select");
-
-			fixPrint(27, 22, p2b & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
-			fixPrint(28, 22, p2b & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
-			fixPrint(29, 22, p2b & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
-			fixPrint(30, 22, p2b & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+			DrawController(DC_X, y, p2b, P2B_START, ps, P2B_SELECT, mvscredit, P4_CREDIT);
 		}
 
 		fixPrint(9, 26, fontColorGreen, 3, "Use START+LEFT to exit");
+
+		if (ps & P1_START && p1e & JOY_LEFT)
+			done = 1;
 	}
 }
 
@@ -1785,11 +1749,11 @@ const BIOSID bioslist[] = {
 {	BIOS_SNK_MVS,
 	0x15192F9F,
 	"sp-s2.sp1",
-	"Eurpoe MVS (Ver. 2)" },
+	"US/Europe MVS (Ver. 2)" },
 {	BIOS_SNK_MVS,
 	0x7E65EA24,
 	"sp-s.sp1",
-	"Eurpoe MVS (Ver. 1)" },
+	"US/Europe MVS (Ver. 1)" },
 {	BIOS_SNK_MVS,
 	0xEFD21CD4,
 	"sp-45.sp1",
@@ -1881,19 +1845,35 @@ void byteSwap(u8 *data, u8 size)
 	}
 }
 
+u8 detectUNIBIOSfast(u32 address)
+{
+	u16 *bios = (u16*)address;
+
+	if(bios[0x58] == 0x4E55)
+		return 1;
+	return 0;
+}
+
 void displayBIOS(u32 address, u8 swap)
 {
-	int  line = 0;
+	int  line = 0, len = 32, start = 0x82, x = 4;
 	char buffer[34];
+
+	if(detectUNIBIOSfast(address))
+	{
+		len = 16;
+		start = 0xA0;
+		x = 12;
+	}
 
 	for(line = 0; line < 4; line++)
 	{
-		memcpy(buffer, (void*)(address+0x82+line*32), 32);
+		memcpy(buffer, (void*)(address+start+line*len), len);
 		if(swap)
-			byteSwap(buffer, 32);
-		buffer[32] = '\0';
-		cleanBIOSStr(buffer, 32);
-		fixPrintf(4, 10+line, 2, 3, buffer);
+			byteSwap(buffer, len);
+		buffer[len] = '\0';
+		cleanBIOSStr(buffer, len);
+		fixPrintf(x, 10+line, 2, 3, buffer);
 	}
 }
 
@@ -1908,6 +1888,8 @@ void ht_check_ng_bios_crc(u32 address)
 	gfxClear();
 
 	// Print BIOS lines
+	if(detectUNIBIOSfast(address))
+		swap = 1;
 	displayBIOS(address, swap);
 
 	fixPrintf(12, 16, 2, 3, "Please Wait...");
