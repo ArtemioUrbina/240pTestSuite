@@ -85,6 +85,8 @@ extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 #define BIOS_UM_TITLEDEMO	1
 #define BIOS_UM_INGAME		2
 
+#define BIOS_START_FLAG		0x10FDB4
+
 #define BIOS_PLAYER_MOD1	0x10FDB6
 #define BIOS_PM_INIT		0
 #define BIOS_PM_PLAYING		1

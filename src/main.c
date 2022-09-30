@@ -143,7 +143,7 @@ void menu_footer()
 	}
 
 	if(isMVS && volMEMBYTE(SOFT_DIP_2))
-		fixPrintf(3, 26, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
+		fixPrintf(4, 26, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
 }
 
 void menu_tp()
@@ -648,11 +648,16 @@ void menu_main()
 // pressed (AES) and when enough credits are available (MVS)
 void _240p_mvs_player_start(void)
 {
-    // Tell the BIOS the game has started
-	if(volMEMBYTE(BIOS_USER_MODE) != BIOS_UM_INGAME)
+	if(isMVS && volMEMBYTE(BIOS_USER_MODE) != BIOS_UM_INGAME)
+	{
+		// Tell the BIOS the game has started
 		volMEMBYTE(BIOS_USER_MODE) = BIOS_UM_INGAME;
-    // Set player 1's status to running
-    volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_PLAYING;
+		// Set player 1's status to running
+		if(volMEMBYTE(BIOS_PLAYER_MOD1) != BIOS_PM_PLAYING)
+			volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_PLAYING;
+	}
+	else
+		volMEMBYTE(BIOS_START_FLAG) = 0x00; // don't decrease credits
 }
 
 void _240p_mvs_game_change(void)
@@ -794,7 +799,7 @@ void mvs_state()
 	if(volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_INIT) 
 	{
 		waitVBlank();
-		memset(bkp_data, 0x00, sizeof(BYTE)*(BKP_SIZE));
+		memset(&bkp_data, 0x00, sizeof(BYTE)*(BKP_SIZE));
 		RETURN_TO_BIOS;
 	}
 
