@@ -6,3 +6,11 @@ out/fix.bin
 output.map
 .vscode/dryrun.log
 .vscode/targets.log
+cart/202-c1.c1
+cart/202-c2.c2
+cart/202-m1.m1
+cart/202-p1.p1
+cart/202-s1.s1
+cart/202-v1.v1
+cart/240ptest.zip
+cart/neosd/240ptest.neo

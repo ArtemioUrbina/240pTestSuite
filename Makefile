@@ -16,7 +16,8 @@ BIN2O = bin2elf
 GFXCC = gfxcc
 FIXCNV = fixcnv
 ROMWAK = romwak
-BUILDCHAR = buildchar
+BUILDCHAR = BuildChar
+CHARSPLIT = CharSplit
 RM = rm -f
 CP = cp
 
@@ -42,7 +43,6 @@ OUTPUT = cart
 # Settings for cart output #
 ############################
 ROMSIZE = 0x20000
-#PADBYTE = 0x00
 PADBYTE = 0xFF
 
 ##############################
@@ -77,7 +77,8 @@ DEBUG = -g
 
 ifeq ($(OUTPUT),cart)
 out/$(PROM) : prog.o
-	$(OBJC) --gap-fill=$(PADBYTE) --pad-to=$(ROMSIZE) -R .data -O binary $< $@
+#	$(OBJC) --gap-fill=$(PADBYTE) --pad-to=$(ROMSIZE) -R .data -O binary $< $@
+	$(OBJC) --gap-fill=$(PADBYTE) -R .data -O binary $< $@
 else
 dev_p1.prg : prog.o
 	$(OBJC) -O binary $< $@
@@ -92,21 +93,25 @@ prog.o : $(OBJS)
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-makeroms:
-#	$(ROMWAK) -f dev_p1.rom 202-p1.p1
-#	$(ROMWAK) -p 202-p1.p1 202-p1.p1 1024 255
-	$(ROMWAK) -w out/${CROM} 202-c1.c1 202-c2.c2
+# Disabling makeroms use genroms.bat instead
+#makeroms:
+#	$(ROMWAK) -f out/${PROM} cart/202-p1.p1
+#	$(ROMWAK) -p out/${PROM} cart/202-p1.p1 1024 255
+#	$(ROMWAK) -w out/${CROM} 202-c1.c1 202-c2.c2
 #	$(ROMWAK) -f 202-c1.c1
 #	$(ROMWAK) -f 202-c2.c2
 #	$(ROMWAK) -p 202-c1.c1 202-c1.c1 1024 255
 #	$(ROMWAK) -p 202-c2.c2 202-c2.c2 1024 255
-#	cp 240pfix.fix 202-s1.s1
-#	$(ROMWAK) -p 202-s1.s1 202-s1.s1 128 255
+#	cp 202-c1.c1 cart/202-c1.c1
+#	cp 202-c2.c2 cart/202-c2.c2
+#	cp out/fix.bin cart/202-s1.s1
+#	$(ROMWAK) -p cart/202-s1.s1 cart/202-s1.s1 128 255
+#	cp out/m1.rom cart/202-m1.m1
+#	cp out/v1.rom cart/202-v1.v1
+#	$(ROMWAK) -p out/${SROM} 202-s1.s1 128 255
 #	copy sounds\roms\202-v1.v1
 #	$(ROMWAK) -p 202-v1.v1 202-v1.v1 512 255
 #	copy sounds\roms\202-m1.bin
-#	cp c1_c1.rom 202-c1.c1
-#	cp c1_c2.rom 202-c2.c2
 
 copyroms:
 	$(CP) out/$(PROM) $(MAMEDIR)
