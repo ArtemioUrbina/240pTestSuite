@@ -72,7 +72,7 @@ void ReduceName(char *target, char *source, int truncate)
 void DiplayController(int num, float x, float y)
 {
 	int				isPressed = 0;
-	int				hasAnalogX = 0, hasAnalogY = 0, hasAnalog2X = 0, hasAnalog2Y = 0;
+	int				hasAnalogX = 0, hasAnalogY = 0, hasAnalog2X = 0, hasAnalog2Y = 0, miny = 0;
 	cont_state_t	*st;
 	maple_device_t	*dev = NULL;
 	char			msg[256], name[256];
@@ -326,6 +326,7 @@ void DiplayController(int num, float x, float y)
 			DrawStringS(x+11*fw, y, isPressed ? 0.0f : 1.0f, 1.0f, isPressed ? 0.0f : 1.0f, "D");
 		}
 	}
+	miny = y;
 	y += fh;
 	
 	x = orig_x+fw;
@@ -345,6 +346,8 @@ void DiplayController(int num, float x, float y)
 	if(hasAnalogX)
 	{
 		// Analog Right & Left
+		if(!hasAnalogY)
+			y += fh;
 		sprintf(msg, "%03d %03d", st->joyx < 0 ? -1*st->joyx : 0, st->joyx > 0 ? st->joyx : 0);
 		DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
 		y += fh;
@@ -362,6 +365,8 @@ void DiplayController(int num, float x, float y)
 	{
 		y -= 2*fh;
 		x += 8*fw;
+		if(y <= miny)
+			y = miny + fh;
 	}
 	
 	// Second Analog controller
