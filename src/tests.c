@@ -1845,19 +1845,35 @@ void byteSwap(u8 *data, u8 size)
 	}
 }
 
+u8 detectUNIBIOSfast(u32 address)
+{
+	u16 *bios = (u16*)address;
+
+	if(bios[0x58] == 0x4E55)
+		return 1;
+	return 0;
+}
+
 void displayBIOS(u32 address, u8 swap)
 {
-	int  line = 0;
+	int  line = 0, len = 32, start = 0x82, x = 4;
 	char buffer[34];
+
+	if(detectUNIBIOSfast(address))
+	{
+		len = 16;
+		start = 0xA0;
+		x = 12;
+	}
 
 	for(line = 0; line < 4; line++)
 	{
-		memcpy(buffer, (void*)(address+0x82+line*32), 32);
+		memcpy(buffer, (void*)(address+start+line*len), len);
 		if(swap)
-			byteSwap(buffer, 32);
-		buffer[32] = '\0';
-		cleanBIOSStr(buffer, 32);
-		fixPrintf(4, 10+line, 2, 3, buffer);
+			byteSwap(buffer, len);
+		buffer[len] = '\0';
+		cleanBIOSStr(buffer, len);
+		fixPrintf(x, 10+line, 2, 3, buffer);
 	}
 }
 
@@ -1872,6 +1888,8 @@ void ht_check_ng_bios_crc(u32 address)
 	gfxClear();
 
 	// Print BIOS lines
+	if(detectUNIBIOSfast(address))
+		swap = 1;
 	displayBIOS(address, swap);
 
 	fixPrintf(12, 16, 2, 3, "Please Wait...");
