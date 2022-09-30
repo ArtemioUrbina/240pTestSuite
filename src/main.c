@@ -31,10 +31,11 @@
 #include "help.h"
 #include "string_ng.h"
 
+#define BKP_SIZE	0X0100
+
 typedef struct bkp_ram_info {
 	WORD debug_dips;
-	BYTE stuff[14];
-	//16 bytes
+	BYTE data[BKP_SIZE-2];
 } bkp_ram_info;
 
 bkp_ram_info bkp_data;
@@ -641,21 +642,26 @@ void menu_main()
 	}
 }
 
+#define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
+
 // This function is called by the BIOS when the start button is
 // pressed (AES) and when enough credits are available (MVS)
-void player_start(void)
+void _240p_mvs_player_start(void)
 {
     // Tell the BIOS the game has started
-    volMEMBYTE(BIOS_USER_MODE) = 0x02;
+	if(volMEMBYTE(BIOS_USER_MODE) != BIOS_UM_INGAME)
+		volMEMBYTE(BIOS_USER_MODE) = BIOS_UM_INGAME;
     // Set player 1's status to running
-    volMEMBYTE(BIOS_PLAYER_MOD1) = 0x01;
+    volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_PLAYING;
 }
 
-#define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
+void _240p_mvs_game_change(void)
+{
+}
 
 void draw_mvs_demo()
 {
-	int toggle = 0, demo_frames = 1800, freeplay = 0, redraw = 0;
+	int toggle = 0, demo_frames = 1800, freeplay = 0, redraw = 0, credits = 0;
 	picture foreground;
 	picture background;
 
@@ -698,15 +704,16 @@ void draw_mvs_demo()
 		}
 
 		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
+		credits = volMEMBYTE(BIOS_NM_CREDIT);
 		p1 = volMEMBYTE(PS_CURRENT);
 
 		if(toggle == 30)
 			fixPrint(14, 23, 1, 3, "            ");
 		if(toggle == 0)
-			fixPrint(14, 23, 1, 3, freeplay ? "PRESS  START" : "INSERT COIN");
+			fixPrint(14, 23, 1, 3, freeplay || credits ? "PRESS  START" : "INSERT COIN");
 
 		if(volMEMBYTE(SOFT_DIP_2))
-			fixPrintf(28, 28, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
+			fixPrintf(28, 28, 0, 3, "CREDITS %02d", hexToDec(credits));  // credit counter
 		
 		toggle ++;
 		if(toggle > 60)
@@ -722,11 +729,10 @@ void draw_mvs_demo()
 		if(demo_frames == 400)
 			redraw = 3;
 
-		if(freeplay && (p1 & P1_START))
+		if(volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{
-			//volMEMBYTE(BIOS_USER_MODE) = 0x02;
 			menu_main();
-			volMEMBYTE(BIOS_USER_MODE) = 0x01;
+			volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_GAMEOVER;
 			return;
 		}
 	}
@@ -765,19 +771,17 @@ void draw_mvs_title()
 			bios_timer = hexToDec(volMEMBYTE(BIOS_COMP_TIME));
 			fixPrintf(16, 28, 0, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
 		}
-
-		if(isMVS && volMEMBYTE(SOFT_DIP_2))
-			fixPrintf(28, 28, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
+		
+		fixPrintf(28, 28, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT))); 
 		
 		toggle ++;
 		if(toggle > 60)
 			toggle = 0;
 
-		if (p1 & P1_START || (!freeplay && bios_timer <= 0))
+		if(volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{
-			//volMEMBYTE(BIOS_USER_MODE) = 0x02;
 			menu_main();
-			volMEMBYTE(BIOS_USER_MODE) = 0x01;
+			volMEMBYTE(BIOS_USER_MODE) = BIOS_PM_GAMEOVER;
 			return;
 		}
 	}
@@ -787,47 +791,50 @@ void mvs_state()
 {
 	// BIOS_USER_REQS == 0 is called by BIOS
 	// in order to initialize memory
-	if(volMEMBYTE(BIOS_USER_REQS) == 0) 
+	if(volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_INIT) 
 	{
 		waitVBlank();
-		memset(&bkp_data, 0x00, sizeof(bkp_ram_info));
-		// return to bios in order for memory to be saved
+		memset(bkp_data, 0x00, sizeof(BYTE)*(BKP_SIZE));
 		RETURN_TO_BIOS;
 	}
 
 	// If DEMO MODE draw the insert coin screen
-	if(volMEMBYTE(BIOS_USER_REQS) == 2 && volMEMBYTE(BIOS_USER_MODE) == 1)
+	if(volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_DEMO)
 	{
-		// Enter game mode in MVS following Soft Dip Switches
+		// Enter demo mode in MVS following Soft Dip Switches
 		if(volMEMBYTE(SOFT_DIP_1))
 		{
 			draw_mvs_demo();
 		}
 		else
 		{
-			// Enter game mode in MVS following Soft Dip Switches
-			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+			// Force game mode in MVS following Soft Dip Switches
+			volMEMBYTE(BIOS_USER_MODE) = BIOS_UM_INGAME;
+			volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_PLAYING;
 			menu_main();
 		}
 		RETURN_TO_BIOS;
 	}
 
 	// If TITLE MODE grab the control
-	if(volMEMBYTE(BIOS_USER_REQS) == 3 && volMEMBYTE(BIOS_USER_MODE) == 1)
+	if(volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_TITLE)
 	{
-		// Enter game mode in MVS following Soft Dip Switches
+		// Enter title mode in MVS following Soft Dip Switches
 		if(volMEMBYTE(SOFT_DIP_1))
 		{
 			draw_mvs_title();
 		}
 		else
 		{
-			// Enter game mode in MVS following Soft Dip Switches
-			volMEMBYTE(BIOS_USER_MODE) = 0x02;
+			// Force game mode in MVS following Soft Dip Switches
+			volMEMBYTE(BIOS_USER_MODE) = BIOS_UM_INGAME;
+			volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_PLAYING;
 			menu_main();
 		}
 		RETURN_TO_BIOS;
 	}
+
+	RETURN_TO_BIOS;
 }
 
 int	main(void)
@@ -835,11 +842,12 @@ int	main(void)
 	check_systype();
 
 	clearFixLayer();
-	backgroundColor(0x7bbb);
+	backgroundColor(0x0000);
 	initGfx();
 	palJobPut(0,8,fixPalettes);
 	//jobMeterSetup(true);
 	SCClose();
+	waitVBlank();
 	
 	if(isMVS)
 		mvs_state();

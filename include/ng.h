@@ -75,8 +75,21 @@ extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 #define MVS_OR_AES	0x80
 
 #define BIOS_USER_REQS		0x10FDAE
+#define BIOS_UR_INIT		0
+#define BIOS_UR_EYE			1
+#define BIOS_UR_DEMO		2
+#define BIOS_UR_TITLE		3
+
 #define BIOS_USER_MODE		0x10FDAF
+#define BIOS_UM_INIT		0
+#define BIOS_UM_TITLEDEMO	1
+#define BIOS_UM_INGAME		2
+
 #define BIOS_PLAYER_MOD1	0x10FDB6
+#define BIOS_PM_INIT		0
+#define BIOS_PM_PLAYING		1
+#define BIOS_PM_CONTINUE	2
+#define BIOS_PM_GAMEOVER	3
 
 #define BIOS_NM_CREDIT	0xD00034
 #define BIOS_COMP_TIME	0x10FDDA
@@ -93,6 +106,9 @@ extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 #define BIOS_4P_REQUESTED	0x10FEF8
 #define BIOS_4P_MODE		0x10FEFA
 #define BIOS_4P_PLUGGED		0x10FEFB
+
+// Slots
+#define BIOS_SLOTS_DETECTED	0xD00047	
 
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22
