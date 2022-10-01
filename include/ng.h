@@ -93,6 +93,8 @@ extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 #define BIOS_PM_CONTINUE	2
 #define BIOS_PM_GAMEOVER	3
 
+#define BIOS_TITLE_MODE		0x10FEC5
+
 #define BIOS_NM_CREDIT	0xD00034
 #define BIOS_COMP_TIME	0x10FDDA
 
