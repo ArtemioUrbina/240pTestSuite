@@ -660,6 +660,12 @@ void _240p_mvs_player_start(void)
 		volMEMBYTE(BIOS_START_FLAG) = 0x00; // don't decrease credits
 }
 
+void game_over()
+{
+	// Set Game Over state
+	volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_GAMEOVER;
+}
+
 void _240p_mvs_game_change(void)
 {
 }
@@ -737,7 +743,7 @@ void draw_mvs_demo()
 		if(volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{
 			menu_main();
-			volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_GAMEOVER;
+			game_over();
 			return;
 		}
 	}
@@ -748,6 +754,9 @@ void draw_mvs_title()
 	int toggle = 0, bios_timer = 0, freeplay = 0;
 	picture foreground;
 	picture background;
+
+	//When set to 1, stops BIOS from calling command 3 twice after Game Over if credits are in the system.
+	volMEMBYTE(BIOS_TITLE_MODE) = 1;
 
 	backgroundColor(0x7666);
 	gfxClear();
@@ -786,7 +795,7 @@ void draw_mvs_title()
 		if(volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{
 			menu_main();
-			volMEMBYTE(BIOS_USER_MODE) = BIOS_PM_GAMEOVER;
+			game_over();
 			return;
 		}
 	}
