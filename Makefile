@@ -2,7 +2,7 @@
 # Base dir of your m68k gcc toolchain #
 #######################################
 
-NEODEV=C:\NeoDev
+NEODEV=/c/NeoDev
 export PATH=$(NEODEV)\m68k\bin
 
 MAMEDIR = $(NEODEV)\mame\roms\240ptestng
@@ -20,6 +20,9 @@ BUILDCHAR = BuildChar
 CHARSPLIT = CharSplit
 RM = rm -f
 CP = cp
+7Z = $(NEODEV)/tools/7zip/7za
+NBPATH = $(NEODEV)/tools/neobuilder/
+NB = ./NeoBuilder.exe
 
 PROM = dev_p1.rom
 CROM = char.bin
@@ -93,25 +96,27 @@ prog.o : $(OBJS)
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-# Disabling makeroms use genroms.bat instead
-#makeroms:
-#	$(ROMWAK) -f out/${PROM} cart/202-p1.p1
-#	$(ROMWAK) -p out/${PROM} cart/202-p1.p1 1024 255
-#	$(ROMWAK) -w out/${CROM} 202-c1.c1 202-c2.c2
-#	$(ROMWAK) -f 202-c1.c1
-#	$(ROMWAK) -f 202-c2.c2
-#	$(ROMWAK) -p 202-c1.c1 202-c1.c1 1024 255
-#	$(ROMWAK) -p 202-c2.c2 202-c2.c2 1024 255
-#	cp 202-c1.c1 cart/202-c1.c1
-#	cp 202-c2.c2 cart/202-c2.c2
-#	cp out/fix.bin cart/202-s1.s1
-#	$(ROMWAK) -p cart/202-s1.s1 cart/202-s1.s1 128 255
-#	cp out/m1.rom cart/202-m1.m1
-#	cp out/v1.rom cart/202-v1.v1
-#	$(ROMWAK) -p out/${SROM} 202-s1.s1 128 255
-#	copy sounds\roms\202-v1.v1
-#	$(ROMWAK) -p 202-v1.v1 202-v1.v1 512 255
-#	copy sounds\roms\202-m1.bin
+makeroms:
+	$(CP) out/char.bin cart/char.bin
+	$(CP) out/dev_p1.rom cart/202-p1.p1
+	$(CP) out/fix.bin cart/202-s1.s1
+	$(CP) out/m1.rom cart/202-m1.m1
+	$(CP) out/v1.rom cart/202-v1.v1
+	cd cart && $(ROMWAK) //f 202-p1.p1 202-p1.p1
+	cd cart && $(ROMWAK) //p 202-p1.p1 202-p1.p1 1024 255
+	cd cart && $(ROMWAK) //w char.bin 202-c1.c1 202-c2.c2
+	cd cart && $(ROMWAK) //f 202-c1.c1
+	cd cart && $(ROMWAK) //f 202-c2.c2
+	cd cart && $(ROMWAK) //p 202-c1.c1 202-c1.c1 1024 255
+	cd cart && $(ROMWAK) //p 202-c2.c2 202-c2.c2 1024 255
+	cd cart && $(ROMWAK) //p 202-s1.s1 202-s1.s1 128 255
+	$(RM) cart/char.bin
+	$(RM) cart/240ptest.neo
+	cd cart && $(7Z) a $(NBPATH)240ptest.zip 202-p1.p1 202-c1.c1 202-c2.c2 202-s1.s1 202-m1.m1 202-v1.v1
+	cd $(NBPATH) && $(NB) -n 240ptest -m dasutinartemio -y 2022 -g Other -s 480 240ptest.zip
+	$(RM) $(NBPATH)240ptest.zip
+	$(CP) $(NBPATH)240ptest.neo cart/neosd
+	$(RM) $(NBPATH)240ptest.neo
 
 copyroms:
 	$(CP) out/$(PROM) $(MAMEDIR)
