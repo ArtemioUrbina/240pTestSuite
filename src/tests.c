@@ -1912,8 +1912,13 @@ void ht_check_ng_bios_crc(u32 address)
 	}
 	else
 	{
-		fixPrintf(14, 18, 0, 3, "Unknown BIOS");
-		fixPrintf(14, 19, 0, 3, "Please report it");
+		fixPrintf(13, 18, 0, 3, "Unknown BIOS");
+		fixPrintf(13, 19, 0, 3, "Please report it");
+		if(detectUNIBIOSfast(address))
+		{
+			fixPrintf(7, 21, 2, 3, "Non-free versions of UNIBIOS");
+			fixPrintf(7, 22, 2, 3, "can't be recognized by CRC");
+		}
 	}
 
 	while (!done)
