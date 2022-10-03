@@ -1,4 +1,6 @@
 //scrollers
+extern const scrollerInfo logo;
+extern const paletteInfo logo_Palettes;
 extern const scrollerInfo sonic_back;
 extern const paletteInfo sonic_back_Palettes;
 extern const scrollerInfo sonic_water;
@@ -11,8 +13,6 @@ extern const scrollerInfo scroll_grid;
 extern const paletteInfo scroll_grid_Palettes;
 
 //pictures
-extern const pictureInfo logo;
-extern const paletteInfo logo_Palettes;
 extern const pictureInfo back;
 extern const paletteInfo back_Palettes;
 extern const pictureInfo gillian;
@@ -143,3 +143,7 @@ extern const pictureInfo separator;
 extern const paletteInfo separator_Palettes;
 extern const pictureInfo bar_l;
 extern const paletteInfo bar_l_Palettes;
+extern const pictureInfo audiosync_bar;
+extern const paletteInfo audiosync_bar_Palettes;
+extern const pictureInfo audiosync_floor;
+extern const paletteInfo audiosync_floor_Palettes;

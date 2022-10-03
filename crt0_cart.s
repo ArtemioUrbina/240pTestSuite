@@ -12,8 +12,8 @@ _NGH	=	0x2501
 _PROGRAM_SIZE	=	0x00100000
 _WRK_BCKP_AREA = bkp_data
 _WRK_BCKP_AREA_SIZE = 0x0100	|;16bytes
-_EYE_CATCHER = 0x02	/*;eye catcher (0-common 1-custom 2-off)*/
-_EYE_CATCHER_TILES = 0x01 /*;eye catcher start tiles (upper bits, 0x01 => 0x0100)*/
+_EYE_CATCHER = 0x01	/*;eye catcher (0-common 1-custom 2-off)*/
+_EYE_CATCHER_TILES = 0x00 /*;eye catcher start tiles (upper bits, 0x01 => 0x0100)*/
 
 	.include	"common_crt0_cart.s"
 

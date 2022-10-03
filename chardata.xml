@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chardata>
   <setup>
-    <starting_tile>256</starting_tile>
+    <starting_tile>0</starting_tile>
     <charfile>out\char.bin</charfile>
     <mapfile>src\charMaps.s</mapfile>
     <palfile>src\charPals.s</palfile>
     <incfile>include\charInclude.h</incfile>
   </setup>
-  <pict id="logo">
+  <scrl id="logo">
     <file>gfx\logo.png</file>
-  </pict>
+  </scrl>
+  <scrl id="sonic_back">
+    <file>gfx\sonic_back.png</file>
+  </scrl>
+  <scrl id="sonic_water">
+    <file>gfx\sonic_water.png</file>
+  </scrl>
+  <scrl id="sonic_floor">
+    <file>gfx\sonic_floor.png</file>
+  </scrl>
+  <scrl id="kiki">
+    <file>gfx\kiki.png</file>
+  </scrl>
+  <scrl id="scroll_grid">
+    <file>gfx\scroll_grid.png</file>
+  </scrl>
   <pict id="back">
     <file>gfx\back.png</file>
   </pict>
@@ -99,21 +114,6 @@
   <pict id="marker">
     <file>gfx\marker.png</file>
   </pict>
-  <scrl id="sonic_back">
-    <file>gfx\sonic_back.png</file>
-  </scrl>
-  <scrl id="sonic_water">
-    <file>gfx\sonic_water.png</file>
-  </scrl>
-  <scrl id="sonic_floor">
-    <file>gfx\sonic_floor.png</file>
-  </scrl>
-  <scrl id="kiki">
-    <file>gfx\kiki.png</file>
-  </scrl>
-  <scrl id="scroll_grid">
-    <file>gfx\scroll_grid.png</file>
-  </scrl>
   <pict id="check">
     <file>gfx\check.png</file>
   </pict>
@@ -222,5 +222,12 @@
   <pict id="bar_l">
     <file>gfx\bar_l.png</file>
     <flips>X</flips>
+  </pict>
+  <pict id="audiosync_bar">
+    <file>gfx\audiosync_bar.png</file>
+    <flips>X</flips>
+  </pict>
+  <pict id="audiosync_floor">
+    <file>gfx\audiosync_floor.png</file>
   </pict>
 </chardata>

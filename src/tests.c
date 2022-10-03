@@ -1279,21 +1279,57 @@ void at_sound_test()
 
 void at_audiosync_test()
 {
-	int done = 0, draw = 1;
-	picture image;
+	int done = 0, draw = 1, cycle = 0, x = 160, y = 160;
+	s16 acc = 1, status = -1;
+	picture syncbar, syncbar2, syncfloor, block;
+
+	backgroundColor(0x0000);
 
 	while (!done)
 	{
 		if (draw)
 		{
 			gfxClear();
-			pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+			pictureInit(&syncbar, &audiosync_bar,1, 16, 0, 48,FLIP_NONE);
+			palJobPut(16,audiosync_bar.palInfo->count,audiosync_bar.palInfo->data);
+
+			pictureInit(&syncbar2, &audiosync_bar,8, 16, 288, 48,FLIP_X);
+
+			pictureInit(&syncfloor, &audiosync_floor,16, 17, 0, 160,FLIP_NONE);
+			palJobPut(17,audiosync_floor.palInfo->count,audiosync_floor.palInfo->data);
+
+			pictureInit(&block, &led_2x,36, 18, x, y,FLIP_NONE);
+			palJobPut(18,led_2x.palInfo->count,led_2x.palInfo->data);
 			draw = 0;
 		}
 
 		SCClose();
 		waitVBlank();
+
+		if (p1e & JOY_A)
+		{
+			cycle = !cycle;
+			if (!cycle)
+				status = 121;
+			else
+				y = 160;
+		}
+
+		if (cycle == 1 && status == -1)
+		{
+			status = 0;
+			acc = -1;
+		}
+
+		if (status > -1)
+		{
+			status++;
+			if (status <= 120)
+			{
+				y += acc;
+				pictureMove(&block, x, y);
+			}
+		}
 
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
