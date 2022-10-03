@@ -705,11 +705,11 @@ void vt_reflex_test()
 
 void vt_scroll_test()
 {
-	int done = 0, draw = 1, frame = 1, vertical = 0, pause = 0, direction = 0, acc = 1;
-	int x1 = 0, y1 = -96;
-	int x2 = 0, y2 = -152;
-	int x3 = 0, y3 = 0;
-	int y = 0;
+	int done = 0, changed = 1, reload = 1, frame = 1, vertical = 0, pause = 0, acc = 1;
+	short x1 = 0, y1 = -96;
+	short x2 = 0, y2 = -152;
+	short x3 = 0, y3 = 0;
+	short y = 0;
 
 	static const ushort wFallPal_1[] = {
 		0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x179f, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
@@ -745,32 +745,31 @@ void vt_scroll_test()
 
 	while (!done)
 	{
-		if (draw)
+		if(reload)
 		{
-			if (!vertical)
-			{
-				gfxClear();
-
-				scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
-				palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
-
-				scrollerInit(&waterScroll, &sonic_water, 22, 18, x2, y2);
-				palJobPut(18, sonic_water.palInfo->count, sonic_water.palInfo->data);
-
-				scrollerInit(&frontScroll, &sonic_floor, 43, 19, x1, y1);
-				palJobPut(19, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
-				draw = 0;
-			} else {
-				backgroundColor(0x8000);
-				gfxClear();
-				scrollerInit(&vertScroll, &kiki, 1, 16, 0, 0);
-				palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
-				draw = 0;
-			}
+			scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
+			scrollerInit(&waterScroll, &sonic_water, 22, 18, x2, y2);
+			scrollerInit(&frontScroll, &sonic_floor, 43, 19, x1, y1);
+			scrollerInit(&vertScroll, &kiki, 66, 16, 0, 0);
+			changed = 1;
+			reload = 0;
 		}
 		
-		SCClose();
-		waitVBlank();
+		if (changed)
+		{
+			backgroundColor(0x8000);
+			gfxClear();
+
+			if (!vertical)
+			{
+				palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
+				palJobPut(18, sonic_water.palInfo->count, sonic_water.palInfo->data);
+				palJobPut(19, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
+			} else {	
+				palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
+			}
+			changed = 0;
+		}
 
 		if (!vertical)
 		{
@@ -789,7 +788,39 @@ void vt_scroll_test()
 				palJobPut(17, 1, wFallPal_4);
 			break;
 			}
+
+			if(x1 >=  0)
+				scrollerSetPos(&frontScroll, x1, y1);
+			else
+				scrollerSetPos(&frontScroll, 256+x1, y1);
+			if(x2 >= 0)
+				scrollerSetPos(&waterScroll, x2/2, y2);
+			else
+				scrollerSetPos(&waterScroll, 256+x2/2, y2);
+			if(x3 >= 0)
+				scrollerSetPos(&backScroll, x3/2, y3);
+			else
+				scrollerSetPos(&backScroll, 256+x3/2, y3);
+			if(!pause)
+			{
+				x1+=acc;
+				x2+=acc;
+				x3+=acc;
+			}
+			if(x1 >= 256) x1 -= 256;
+			if(x2 >= 512) x2 -= 512;
+			if(x3 >= 512) x3 -= 512;
+			if(x1 <= -256) x1 += 256;
+			if(x2 <= -512) x2 += 512;
+			if(x3 <= -512) x3 += 512;
+		} else {
+			scrollerSetPos(&vertScroll, 0, y);
+			if(!pause) 	y+=acc;
+			if(y > 512) y = 0;
 		}
+
+		SCClose();
+		waitVBlank();
 
 		frame++;
 		if (frame > 90)
@@ -804,30 +835,32 @@ void vt_scroll_test()
 		if (p1e & JOY_B)
 		{
 			vertical = !vertical;
-			draw = 1;
+			pause = 0;
+			changed = 1;
+		}
+
+		if (p1e & JOY_UP)
+		{
+			acc++;
+			if (acc >= 20)
+				acc = 20;
+			if(acc == 0)
+				acc = 1;
+		}
+
+		if (p1e & JOY_DOWN)
+		{
+			acc--;
+			if (acc <= -20)
+				acc = -20;
+			if(acc == 0)
+				acc = -1;
 		}
 
 		if (ps & P1_START) done = 1;
 
 		if(checkHelp(HELP_HSCROLL))
-			draw = 1;
-		
-		if (!vertical)
-		{
-			scrollerSetPos(&frontScroll, x1, y1);
-			scrollerSetPos(&waterScroll, x2/2, y2);
-			scrollerSetPos(&backScroll, x3/2, y3);
-			x1++;
-			x2++;
-			x3++;
-			if(x1 > 256) x1 = 0;
-			if(x2 > 512) x2 = 0;
-			if(x3 > 512) x3 = 0;
-		} else {
-			scrollerSetPos(&vertScroll, 0, y);
-			y++;
-			if(y > 512) y = 0;
-		}
+			reload = 1;
 	}
 }
 
