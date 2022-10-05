@@ -516,22 +516,39 @@ void DrawHelp(int option)
 				}
 				break;
 			case HELP_HSCROLL:
-				fixPrint(14, 6, fontColorGreen, 3, "SCROLL TEST");
+				switch (page)
+				{
+					case 1:
+						fixPrint(11, 6, fontColorGreen, 3, "SCROLL TEST (1/2)");
 
-				fixPrint(4, 9, fontColorWhite, 3, "This test shows either an");
-				fixPrint(4, 10, fontColorWhite, 3, "horizontal 40x224 back from");
-				fixPrint(4, 11, fontColorWhite, 3, "Sonic or a vertical 256x224");
-				fixPrint(4, 12, fontColorWhite, 3, "back from Kiki Kaikai.");
+						fixPrint(4, 9, fontColorWhite, 3, "This test shows either an");
+						fixPrint(4, 10, fontColorWhite, 3, "horizontal 320x224 back from");
+						fixPrint(4, 11, fontColorWhite, 3, "Sonic or a vertical 256x224");
+						fixPrint(4, 12, fontColorWhite, 3, "back from Kiki Kaikai.");
 
-				fixPrint(4, 14, fontColorWhite, 3, "Speed can be varied with Up &");
-				fixPrint(4, 15, fontColorWhite, 3, "Down and scroll direction with");
-				fixPrint(4, 16, fontColorWhite, 3, "Left. The 'A' button stops the");
-				fixPrint(4, 17, fontColorWhite, 3, "scroll and 'B' toggles between");
-				fixPrint(4, 18, fontColorWhite, 3, "vertical and horizontal.");
+						fixPrint(4, 14, fontColorWhite, 3, "Speed can be varied with Up &");
+						fixPrint(4, 15, fontColorWhite, 3, "Down and scroll direction with");
+						fixPrint(4, 16, fontColorWhite, 3, "'C'. The 'A' button stops the");
+						fixPrint(4, 17, fontColorWhite, 3, "scroll and 'B' toggles between");
+						fixPrint(4, 18, fontColorWhite, 3, "vertical and horizontal.");
 
-				fixPrint(4, 20, fontColorWhite, 3, "This can be used to notice any");
-				fixPrint(4, 21, fontColorWhite, 3, "drops in framerate, or pixel");
-				fixPrint(4, 22, fontColorWhite, 3, "width inconsistencies.");
+						fixPrint(4, 20, fontColorWhite, 3, "You can use Left & Right while");
+						fixPrint(4, 21, fontColorWhite, 3, "using the vertical test to move");
+						fixPrint(4, 22, fontColorWhite, 3, "the scroll to each edge.");
+						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
+						break;
+					case 2:
+						fixPrint(11, 6, fontColorGreen, 3, "SCROLL TEST (2/2)");
+
+						fixPrint(4, 9, fontColorWhite, 3, "This can be used to notice any");
+						fixPrint(4, 10, fontColorWhite, 3, "drops in framerate, or pixel");
+						fixPrint(4, 11, fontColorWhite, 3, "width inconsistencies.");
+
+						fixPrint(4, 13, fontColorWhite, 3, "Sonic is a trademark of Sega");
+						fixPrint(4, 14, fontColorWhite, 3, "Enterprises Ltd. Kiki Kaikai");
+						fixPrint(4, 15, fontColorWhite, 3, "is a trademark of Taito.");
+						break;
+				}
 				break;
 			case HELP_VSCROLL:
 				fixPrint(10, 6, fontColorGreen, 3, "GRID SCROLL TEST");

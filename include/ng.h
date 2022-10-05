@@ -23,6 +23,25 @@
 #ifndef _NG_H_
 #define _NG_H_
 
+#define BKP_SIZE	0X0100
+
+typedef struct bkp_ram_info {
+	BYTE debug_dip1;
+	BYTE debug_dip2;
+	BYTE data[BKP_SIZE-2];
+} bkp_ram_info;
+
+extern bkp_ram_info bkp_data;
+
+#define DP_DEBUG1	0x01
+#define DP_DEBUG2	0x02
+#define DP_DEBUG3	0x04
+#define DP_DEBUG4	0x08
+#define DP_DEBUG5	0x10
+#define DP_DEBUG6	0x20
+#define DP_DEBUG7	0x40
+#define DP_DEBUG8	0x80
+
 extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 
 #define SYSTEM_AES			0x00

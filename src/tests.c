@@ -430,7 +430,7 @@ void vt_reflex_test()
 		}
 
 		if(checkHelp(HELP_MANUALLAG))
-			draw = 1;
+			loadvram = 1;
 
 		if (p1e & JOY_A)
 		{
@@ -709,7 +709,7 @@ void vt_scroll_test()
 	short x1 = 0, y1 = -96;
 	short x2 = 0, y2 = -152;
 	short x3 = 0, y3 = 0;
-	short y = 0;
+	short xvert[3] = { 96, 64, 32 }, currxvert = 1, y = 0;
 
 	static const ushort wFallPal_1[] = {
 		0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x179f, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
@@ -750,7 +750,7 @@ void vt_scroll_test()
 			scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
 			scrollerInit(&waterScroll, &sonic_water, 22, 18, x2, y2);
 			scrollerInit(&frontScroll, &sonic_floor, 43, 19, x1, y1);
-			scrollerInit(&vertScroll, &kiki, 66, 16, 0, 0);
+			scrollerInit(&vertScroll, &kiki, 66, 16, xvert[currxvert], y3);
 			changed = 1;
 			reload = 0;
 		}
@@ -814,9 +814,21 @@ void vt_scroll_test()
 			if(x2 <= -512) x2 += 512;
 			if(x3 <= -512) x3 += 512;
 		} else {
-			scrollerSetPos(&vertScroll, 0, y);
+			scrollerSetPos(&vertScroll, xvert[currxvert], y);
 			if(!pause) 	y+=acc;
 			if(y > 512) y = 0;
+			if(y < -512) y += 512;
+		}
+
+		// Only display vestigial info if debug dip 1 is ON
+		if(bkp_data.debug_dip1 & DP_DEBUG1)
+		{
+			fixPrintf(10, 16, fontColorWhite, 3, "X1:   %04d", x1);
+			fixPrintf(10, 17, fontColorWhite, 3, "X2:   %04d", x2);
+			fixPrintf(10, 18, fontColorWhite, 3, "X3:   %04d", x3);
+			fixPrintf(10, 19, fontColorWhite, 3, "XV:   %04d", xvert[currxvert]);
+			fixPrintf(10, 20, fontColorWhite, 3, "Y:    %04d", y);
+			fixPrintf(10, 21, fontColorWhite, 3, "acc:  %04d", acc);
 		}
 
 		SCClose();
@@ -839,6 +851,11 @@ void vt_scroll_test()
 			changed = 1;
 		}
 
+		if(p1e & JOY_C)
+		{
+			acc *= -1;
+		}
+
 		if (p1e & JOY_UP)
 		{
 			acc++;
@@ -855,6 +872,20 @@ void vt_scroll_test()
 				acc = -20;
 			if(acc == 0)
 				acc = -1;
+		}
+
+		if(vertical)
+		{
+			if(p1e & JOY_LEFT)
+				currxvert --;
+
+			if(p1e & JOY_RIGHT)
+				currxvert ++;
+
+			if(currxvert > 2)
+				currxvert = 2;
+			if(currxvert < 0)
+				currxvert = 0;
 		}
 
 		if (ps & P1_START) done = 1;

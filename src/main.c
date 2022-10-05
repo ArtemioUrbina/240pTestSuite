@@ -31,13 +31,6 @@
 #include "help.h"
 #include "string_ng.h"
 
-#define BKP_SIZE	0X0100
-
-typedef struct bkp_ram_info {
-	WORD debug_dips;
-	BYTE data[BKP_SIZE-2];
-} bkp_ram_info;
-
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,p1e,p2e;
@@ -859,7 +852,8 @@ int	main(void)
 	backgroundColor(0x8000);
 	initGfx();
 	palJobPut(0,8,fixPalettes);
-	//jobMeterSetup(true);
+	if(bkp_data.debug_dip1 & DP_DEBUG1)
+		jobMeterSetup(true);
 	SCClose();
 	waitVBlank();
 	
