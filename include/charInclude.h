@@ -23,6 +23,8 @@ extern const pictureInfo plugergb;
 extern const paletteInfo plugergb_Palettes;
 extern const pictureInfo colorchart;
 extern const paletteInfo colorchart_Palettes;
+extern const pictureInfo colorchartsingle;
+extern const paletteInfo colorchartsingle_Palettes;
 extern const pictureInfo colorebu;
 extern const paletteInfo colorebu_Palettes;
 extern const pictureInfo colorebu75;

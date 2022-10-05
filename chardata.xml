@@ -40,6 +40,9 @@
   <pict id="colorchart">
     <file>gfx\colorchart.png</file>
   </pict>
+  <pict id="colorchartsingle">
+	<file>gfx\colorchartsingle.png</file>
+  </pict>
   <pict id="colorebu">
     <file>gfx\colorbarsebu.png</file>
   </pict>

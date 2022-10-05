@@ -1583,8 +1583,12 @@ void ht_memory_viewer(u32 address)
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 
 											0x400000, 0x402000, 0x800000, 0xC00000, 0xD00000 };
 
-	backgroundColor(0x8000);
-	gfxClear();
+	// Allow to check any pointer without altering graphics when debug dip is on
+	if(bkp_data.debug_dip1 & DP_DEBUG1)
+	{
+		backgroundColor(0x8000);
+		gfxClear();
+	}
 
 	for (pos = 0; pos < MAX_LOCATIONS; pos++)
 	{
