@@ -67,7 +67,7 @@ static const ushort waterPal_4[] = {
 void vt_drop_shadow_test()
 {
 	int done = 0, x = 30, y = 30, draw = 1, spr_type = 0, changeSprite = 1, changeBack = 1, back = 0;
-	int pal_water = 0, pal_wfall = 0;
+	int pal_water = 0, pal_wfall = 0, text = 0, evenframes = 0;
 	char flip = FLIP_NONE;
 	int drawshadow = 0, frame = 1;
 	short y1 = -96;
@@ -222,6 +222,13 @@ void vt_drop_shadow_test()
 			scrollerSetPos(&backScroll, x/2, y3);
 		}
 
+		if(text)
+		{
+			text --;
+			if(!text)
+				clearFixLayer();
+		}
+
 		// Only display vestigial info if debug dip 1 is ON
 		if(bkp_data.debug_dip1 & DP_DEBUG1)
 		{
@@ -250,7 +257,12 @@ void vt_drop_shadow_test()
 
 		// change between even and odd frames
 		if (p1e & JOY_B)
+		{
 			drawshadow = !drawshadow;
+			evenframes = !evenframes;
+			fixPrintf(18, 3, fontColorGreen, 3, "Shadow in %s frames ", evenframes ? "even" : "odd" );
+			text = 120;
+		}
 
 		if (p1e & JOY_C)
 		{
@@ -1667,7 +1679,11 @@ inline void DrawController(u16 x, u16 y, BYTE input, BYTE start, BYTE ps, BYTE s
 
 	fixPrint(x+13, y, ps & start ? fontColorRed : fontColorWhite, 3, "Start");
 	if(isMVS)
+	{
+		// Alow drawing select with MVS1F which have AES ports and UNIBIOS in AES mode
+		fixPrint(x+13, y+1, ps & select ? fontColorRed : fontColorWhite, 3, ps & select ? "Select" : "      ");
 		fixPrint(x+13, y+2, !(mvscredit & credit) ? fontColorRed : fontColorWhite, 3, "Credit");
+	}
 	else
 		fixPrint(x+13, y+2, ps & select ? fontColorRed : fontColorWhite, 3, "Select");
 
