@@ -45,7 +45,7 @@ OUTPUT = cart
 ############################
 # Settings for cart output #
 ############################
-ROMSIZE = 0x20000
+ROMSIZE = 0x100000
 PADBYTE = 0xFF
 
 ##############################
@@ -80,8 +80,8 @@ DEBUG = -g
 
 ifeq ($(OUTPUT),cart)
 out/$(PROM) : prog.o
-#	$(OBJC) --gap-fill=$(PADBYTE) --pad-to=$(ROMSIZE) -R .data -O binary $< $@
-	$(OBJC) --gap-fill=$(PADBYTE) -R .data -O binary $< $@
+	$(OBJC) --gap-fill=$(PADBYTE) --pad-to=$(ROMSIZE) -R .data -O binary $< $@
+#	$(OBJC) --gap-fill=$(PADBYTE) -R .data -O binary $< $@
 else
 dev_p1.prg : prog.o
 	$(OBJC) -O binary $< $@
@@ -98,22 +98,23 @@ prog.o : $(OBJS)
 
 makeroms:
 	$(CP) out/char.bin cart/char.bin
-	$(CP) out/dev_p1.rom cart/202-p1.p1
-	$(CP) out/fix.bin cart/202-s1.s1
-	$(CP) out/m1.rom cart/202-m1.m1
-	$(CP) out/v1.rom cart/202-v1.v1
-	cd cart && $(ROMWAK) //f 202-p1.p1 202-p1.p1
-	cd cart && $(ROMWAK) //p 202-p1.p1 202-p1.p1 1024 255
-	cd cart && $(ROMWAK) //w char.bin 202-c1.c1 202-c2.c2
-	cd cart && $(ROMWAK) //f 202-c1.c1
-	cd cart && $(ROMWAK) //f 202-c2.c2
-	cd cart && $(ROMWAK) //p 202-c1.c1 202-c1.c1 1024 255
-	cd cart && $(ROMWAK) //p 202-c2.c2 202-c2.c2 1024 255
-	cd cart && $(ROMWAK) //p 202-s1.s1 202-s1.s1 128 255
+	$(CP) out/dev_p1.rom cart/2501-p1.p1
+	$(CP) out/fix.bin cart/2501-s1.s1
+	$(CP) out/m1.rom cart/2501-m1.m1
+	$(CP) out/v1.rom cart/2501-v1.v1
+	cd cart && $(ROMWAK) //f 2501-p1.p1 2501-p1.p1
+	cd cart && $(ROMWAK) //p 2501-p1.p1 2501-p1.p1 1024 255
+	cd cart && $(ROMWAK) //p char.bin char.bin 2048 255
+	cd cart && $(CHARSPLIT) char.bin -rom 2501
+	$(CP) cart/2501.C1 cart/2501-c1.c1
+	$(CP) cart/2501.C2 cart/2501-c2.c2
+	cd cart && $(ROMWAK) //p 2501-s1.s1 2501-s1.s1 128 255
 	$(RM) cart/char.bin
+	$(RM) cart/2501.C1
+	$(RM) cart/2501.C2
 	$(RM) cart/240ptest.neo
-	cd cart && $(7Z) a $(NBPATH)240ptest.zip 202-p1.p1 202-c1.c1 202-c2.c2 202-s1.s1 202-m1.m1 202-v1.v1
-	cd $(NBPATH) && $(NB) -n 240ptest -m dasutinartemio -y 2022 -g Other -s 480 240ptest.zip
+	cd cart && $(7Z) a $(NBPATH)240ptest.zip 2501-p1.p1 2501-c1.c1 2501-c2.c2 2501-s1.s1 2501-m1.m1 2501-v1.v1
+	cd $(NBPATH) && $(NB) -n 240ptest -m dasutinartemio -y 2022 -g Other -s 2501 240ptest.zip
 	$(RM) $(NBPATH)240ptest.zip
 	$(CP) $(NBPATH)240ptest.neo cart/neosd
 	$(RM) $(NBPATH)240ptest.neo
