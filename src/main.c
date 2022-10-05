@@ -676,7 +676,7 @@ void draw_mvs_demo()
 	picture foreground;
 	picture background;
 
-	backgroundColor(0x0000);
+	backgroundColor(0x8000);
 	gfxClear();
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
@@ -693,7 +693,7 @@ void draw_mvs_demo()
 			switch(redraw)
 			{
 				case 1:
-					backgroundColor(0x0000);
+					backgroundColor(0x8000);
 					pictureInit(&background, &monoscope, 1, 16, 0, 0,FLIP_NONE);
 					palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
 				break;
@@ -703,12 +703,12 @@ void draw_mvs_demo()
 					palJobPut(16,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
 				break;
 				case 3:
-					backgroundColor(0x0000);
+					backgroundColor(0x8000);
 					pictureInit(&background, &grid, 1, 16, 0, 0,FLIP_NONE);
 					palJobPut(16,grid.palInfo->count,grid.palInfo->data);
 				break;
 				default:
-					backgroundColor(0x0000);
+					backgroundColor(0x8000);
 				break;
 			}
 			redraw = 0;
@@ -758,7 +758,7 @@ void draw_mvs_title()
 	//When set to 1, stops BIOS from calling command 3 twice after Game Over if credits are in the system.
 	volMEMBYTE(BIOS_TITLE_MODE) = 1;
 
-	backgroundColor(0x7666);
+	backgroundColor(0x8666);
 	gfxClear();
 
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
@@ -856,7 +856,7 @@ int	main(void)
 	check_systype();
 
 	clearFixLayer();
-	backgroundColor(0x0000);
+	backgroundColor(0x8000);
 	initGfx();
 	palJobPut(0,8,fixPalettes);
 	//jobMeterSetup(true);

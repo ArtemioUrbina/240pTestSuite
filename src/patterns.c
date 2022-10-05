@@ -527,23 +527,23 @@ void tp_white_rgb()
 			switch (color)
 			{
 				case 1:
-					backgroundColor(0x7FFF);
+					backgroundColor(0xFFFF);
 				break;
 
 				case 2:
-					backgroundColor(0x0000);
+					backgroundColor(0x8000);
 				break;
 
 				case 3:
-					backgroundColor(0x0F00);
+					backgroundColor(0x8F00);
 				break;
 
 				case 4:
-					backgroundColor(0x00F0);
+					backgroundColor(0x80F0);
 				break;
 
 				case 5:
-					backgroundColor(0x000F);
+					backgroundColor(0x800F);
 				break;
 			}
 			draw = 0;

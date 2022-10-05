@@ -206,7 +206,7 @@ void vt_lag_test()
 	{
 		if (draw)
 		{
-			backgroundColor(0x5fff);
+			backgroundColor(0xDfff);
 			gfxClear();
 			palJobPut(16, num_0.palInfo->count, num_0.palInfo->data);
 			palJobPut(17, circle_blue.palInfo->count, circle_blue.palInfo->data);
@@ -366,7 +366,7 @@ void vt_reflex_test()
 
 		if (loadvram)
 		{
-			backgroundColor(0x0000);
+			backgroundColor(0x8000);
 			gfxClear();
 
 			fixPrint(2, 23, fontColorGreen, 3, "Press the \"A\" button when the sprite");
@@ -413,13 +413,13 @@ void vt_reflex_test()
 		
 		if(resetbg)
 		{
-			backgroundColor(0x0000);
+			backgroundColor(0x8000);
 			resetbg = 0;
 		}
 
 		if (y == 96)	//  Screen Flash
 		{
-			backgroundColor(0x0555);
+			backgroundColor(0x8555);
 			resetbg = 1;
 		}
 		
@@ -594,7 +594,7 @@ void vt_reflex_test()
 				if (psgoff == 0)
 					psgoff = 2;
 			}
-			backgroundColor(0x0555);
+			backgroundColor(0x8555);
 			// Todo: Screen flash here
 		}
 
@@ -1194,7 +1194,7 @@ void vt_backlitzone_test()
 	{
 		if (draw)
 		{
-			backgroundColor(0x0000);
+			backgroundColor(0x8000);
 			gfxClear();
 
 			switch (block)
@@ -1316,7 +1316,7 @@ void at_audiosync_test()
 	s16 acc = 1, status = -1;
 	picture syncbar, syncbar2, syncfloor, block;
 
-	backgroundColor(0x0000);
+	backgroundColor(0x8000);
 
 	while (!done)
 	{
@@ -1552,7 +1552,7 @@ void ht_memory_viewer(u32 address)
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 
 											0x400000, 0x402000, 0x800000, 0xC00000, 0xD00000 };
 
-	backgroundColor(0x0000);
+	backgroundColor(0x8000);
 	gfxClear();
 
 	for (pos = 0; pos < MAX_LOCATIONS; pos++)
