@@ -17,14 +17,68 @@ If you're not using VSCode, use the following below.
 `make copyroms`
 4. Run in MAME.
 `cd C:\NeoDev\mame`
-`mame neogeo 240ptestng -nofilter`
+`mame neogeo 240ptestng -nofilter -keepaspect -skip_gameinfo`
+
+## MAME Drivers
+The following is for the unmodified ROMs. (Checksums not correct)
+```
+	<software name="240ptestng">
+	<description>240p Test Suite - Neo Geo</description>
+	<year>2022</year>
+	<publisher>Artemio / Dasutin</publisher>
+	<sharedfeat name="release" value="MVS,AES" />
+	<sharedfeat name="compatibility" value="MVS,AES" />
+	<part name="cart" interface="neo_cart">
+		<dataarea name="maincpu" width="16" endianness="big" size="0x400000">
+			<rom loadflag="load16_word" name="dev_p1.rom" offset="0x000000" size="0x100000" crc="bdda2c6e" sha1="6a94dee2d22feb07ea68a90ce67d5cac1b17b9c9" />
+		</dataarea>
+		<dataarea name="fixed" size="0x040000">
+			<rom offset="0x000000" size="0x020000" name="fix.bin" crc="0e6a7c73" sha1="31b1194524dcc80ec4d63bac088b6fb4909f496c" />
+		</dataarea>
+		<dataarea name="audiocpu" size="0x040000">
+			<rom  offset="0x000000" size="0x040000" name="m1.rom" crc="da4878cf" sha1="ce13d18a4c5d01974df8542c67c4df00dbc6e7c1" />
+		</dataarea>
+		<dataarea name="ymsnd" size="0x100000">
+			<rom  offset="0x000000" size="0x100000" name="v1.rom" crc="149a5c2f" sha1="d52eac230f7aaa1d70cbb8d50a2513f180c65e4d" />
+		</dataarea>
+		<dataarea name="sprites" size="0x2800000">
+			<rom loadflag="load16_word" name="char.bin" offset="0x000000" size="0x800000" crc="a9bdc000" sha1="93b0dfcd2121ddf6ea1fe99514a176d76e4b0c98" />
+		</dataarea>
+	</part>
+	</software>
+```
+The following is for the modified ROMs for use with cartridges (Checksums not correct)
+```
+	<software name="240ptestng">
+	<description>240p Test Suite - Neo Geo</description>
+	<year>2022</year>
+	<publisher>Dasutin / Artemio</publisher>
+	<sharedfeat name="release" value="MVS,AES" />
+	<sharedfeat name="compatibility" value="MVS,AES" />
+	<part name="cart" interface="neo_cart">
+		<dataarea name="maincpu" width="16" endianness="big" size="0x100000">
+			<rom loadflag="load16_word_swap" name="2501-p1.p1" offset="0x0000000" size="0x100000" crc="bdda2c6e" sha1="6a94dee2d22feb07ea68a90ce67d5cac1b17b9c9" />
+		</dataarea>
+		<dataarea name="fixed" size="0x040000">
+			<rom offset="0x000000" size="0x040000" name="2501-s1.s1" crc="0e6a7c73" sha1="31b1194524dcc80ec4d63bac088b6fb4909f496c" />
+		</dataarea>
+		<dataarea name="audiocpu" size="0x020000">
+			<rom  offset="0x000000" size="0x020000" name="2501-m1.m1" crc="da4878cf" sha1="ce13d18a4c5d01974df8542c67c4df00dbc6e7c1" />
+		</dataarea>
+		<dataarea name="ymsnd" size="0x100000">
+			<rom  offset="0x000000" size="0x100000" name="2501-v1.v1" crc="149a5c2f" sha1="d52eac230f7aaa1d70cbb8d50a2513f180c65e4d" />
+		</dataarea>
+		<dataarea name="sprites" size="0x200000">
+			<rom loadflag="load16_byte" name="2501-c1.c1" offset="0x000000" size="0x100000" crc="a9bdc000" sha1="93b0dfcd2121ddf6ea1fe99514a176d76e4b0c98" />
+			<rom loadflag="load16_byte" name="2501-c2.c2" offset="0x000001" size="0x100000" crc="a9bdc000" sha1="93b0dfcd2121ddf6ea1fe99514a176d76e4b0c98" />
+		</dataarea>
+	</part>
+	</software>
+```
 
 ## TODO
 
-1. Update toolchain to latest version of gcc.
-2. Create workflow for building proper ROMs. Currently ROMs are "dev" ROMs without padding and proper names.
-3. Incorporate tools for building the .neo ROM for use with flashcart.
-4. Incorporate tools for building the sound MROM and VROM.
+1. Incorporate tools for building the sound MROM and VROM.
 
 ## Resources
 [Neo Geo Development Wiki](https://wiki.neogeodev.org/index.php?title=Main_Page) - Neo Geo Bible<br>
