@@ -218,11 +218,13 @@ void vt_striped_sprite_test()
 			backgroundColor(0xFAAF);
 			gfxClear();
 
+			// Palettes
 			pali_donna = palindex;
 			palJobPut(palindex,donna.palInfo->count,donna.palInfo->data);
 			palindex += donna.palInfo->count;
 			palJobPut(palindex,marker_striped.palInfo->count,marker_striped.palInfo->data);
 
+			// Tiles
 			pictureInit(&back, &donna, sprindex, pali_donna, 0, 0, FLIP_NONE);
 			sprindex += back.info->stripSize*2;
 			pictureInit(&sprite, &marker_striped, sprindex, palindex, x, y, FLIP_NONE);
@@ -828,27 +830,35 @@ void vt_scroll_test()
 	{
 		if(reload)
 		{
-			scrollerInit(&backScroll, &sonic_back, 1, 16, x3, y3);
-			scrollerInit(&waterScroll, &sonic_water, 22, 18, x2, y2);
-			scrollerInit(&frontScroll, &sonic_floor, 43, 19, x1, y1);
-			scrollerInit(&vertScroll, &kiki, 66, 16, xvert[currxvert], y3);
+			int palindex = 16, sprindex = 1;
+
+			backgroundColor(0x8000);
+
+			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, x3, y3);
+			palJobPut(palindex, sonic_back.palInfo->count, sonic_back.palInfo->data);
+			sprindex += SCROLLER_SIZE;
+			palindex += backScroll.info->palInfo->count;
+
+			scrollerInit(&waterScroll, &sonic_water, sprindex, palindex, x2, y2);
+			palJobPut(palindex, sonic_water.palInfo->count, sonic_water.palInfo->data);
+			sprindex += SCROLLER_SIZE;
+			palindex += backScroll.info->palInfo->count;
+
+			scrollerInit(&frontScroll, &sonic_floor, sprindex, palindex, x1, y1);
+			palJobPut(palindex, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
+			sprindex += SCROLLER_SIZE;
+			palindex += backScroll.info->palInfo->count;
+			scrollerInit(&vertScroll, &kiki, sprindex, palindex, xvert[currxvert], y3);
+			palJobPut(palindex, kiki.palInfo->count, kiki.palInfo->data);
+
 			changed = 1;
 			reload = 0;
 		}
 		
 		if (changed)
 		{
-			backgroundColor(0x8000);
 			gfxClear();
 
-			if (!vertical)
-			{
-				palJobPut(16, sonic_back.palInfo->count, sonic_back.palInfo->data);
-				palJobPut(18, sonic_water.palInfo->count, sonic_water.palInfo->data);
-				palJobPut(19, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
-			} else {	
-				palJobPut(16, kiki.palInfo->count, kiki.palInfo->data);
-			}
 			changed = 0;
 		}
 

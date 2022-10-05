@@ -133,6 +133,9 @@ extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 // Slots
 #define BIOS_SLOTS_DETECTED	0xD00047	
 
+// Scroller Data
+#define SCROLLER_SIZE		21
+
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22
 #define FIX32_FRAC_BITS			(32 - FIX32_INT_BITS)
