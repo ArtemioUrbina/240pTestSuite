@@ -33,26 +33,80 @@
 
 BYTE p1,p2,ps,p1e,p2e, p1b,p2b;
 
+static const ushort wFallPal_1[] = {
+	0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x179f, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	};
+
+static const ushort wFallPal_2[] = {
+	0x8000, 0x0200, 0x6840, 0x8720, 0x179f, 0x879b, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	};
+
+// unused
+static const ushort wFallPal_3[] = {
+	0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x3bdf, 0x58bf, 0x179f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	};
+
+static const ushort wFallPal_4[] = {
+	0x8000, 0x0200, 0x6840, 0x8720, 0x3bdf, 0x58bf, 0x179f, 0x879b, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	};
+
+//unused
+static const ushort waterPal_1[] = {
+	0x8000, 0x879b, 0x3bdf, 0x58bf, 0x929d, 0x179f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	};
+static const ushort waterPal_2[] = {
+	0x8000, 0x179f, 0x879b, 0x3bdf, 0x929d, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	};
+static const ushort waterPal_3[] = {
+	0x8000, 0x58bf, 0x179f, 0x879b, 0x929d, 0x3bdf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	};
+static const ushort waterPal_4[] = {
+	0x8000, 0x3bdf, 0x58bf, 0x179f, 0x929d, 0x879b, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	};
+
 void vt_drop_shadow_test()
 {
-	int done = 0, x = 30, y = 30, draw = 1, spr_type = 0, changeSprite = 1;
-	int pali_donna, pali_slug, pali_slug_shadow, pali_shape;
-	int spri_donna, spri_slug, spri_slug_shadow, spri_shape;
+	int done = 0, x = 30, y = 30, draw = 1, spr_type = 0, changeSprite = 1, changeBack = 1, back = 0;
+	int pal_water = 0, pal_wfall = 0;
 	char flip = FLIP_NONE;
-	int drawshadow = 0;
-	picture image;
+	int drawshadow = 0, frame = 1;
+	short y1 = -96;
+	short y2 = -152;
+	short y3 = 0;
+	picture donna_back;
 	picture slug_sprite;
 	picture slug_shadow_sprite;
 	picture shape_sprite;
+	scroller backScroll, waterScroll, frontScroll;
 
 	while (!done)
 	{	
 		if(draw)
 		{
 			int palindex = 16, sprindex = 1;
+			int pali_donna, pali_slug, pali_slug_shadow, pali_shape;
+			int spri_donna, spri_slug, spri_slug_shadow, spri_shape;
 
-			backgroundColor(0xFAAF);
+			backgroundColor(0x8000);
 			gfxClear();
+
+			// load scrollers, all sprite priority based
+			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y1);
+			palJobPut(palindex, sonic_back.palInfo->count, sonic_back.palInfo->data);
+			pal_wfall = palindex + 1;
+			pal_water = pal_wfall + 1;
+			sprindex += SCROLLER_SIZE;
+			palindex += backScroll.info->palInfo->count;
+
+			scrollerInit(&waterScroll, &sonic_water, sprindex, palindex, 0, y2);
+			palJobPut(palindex, sonic_water.palInfo->count, sonic_water.palInfo->data);
+			sprindex += SCROLLER_SIZE;
+			palindex += backScroll.info->palInfo->count;
+
+			scrollerInit(&frontScroll, &sonic_floor, sprindex, palindex, 0, y3);
+			palJobPut(palindex, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
+			sprindex += SCROLLER_SIZE;
+			palindex += backScroll.info->palInfo->count;
 
 			// load palettes
 			pali_donna = palindex;
@@ -72,8 +126,8 @@ void vt_drop_shadow_test()
 
 			// load sprites
 			spri_donna = sprindex;
-			pictureInit(&image, &donna, spri_donna, pali_donna, 0, 0, FLIP_NONE);
-			sprindex += image.info->stripSize*2;
+			pictureInit(&donna_back, &donna, spri_donna, pali_donna, 0, 0, FLIP_NONE);
+			sprindex += donna_back.info->stripSize*2;
 
 			spri_slug_shadow = sprindex;
 			pictureInit(&slug_shadow_sprite, &slug_shadow, spri_slug_shadow, pali_slug_shadow, x, y, flip);
@@ -87,7 +141,22 @@ void vt_drop_shadow_test()
 			pictureInit(&shape_sprite, &shape_shadow, spri_shape, pali_shape, x, y, FLIP_NONE);
 
 			changeSprite = 1;
+			changeBack = 1;
 			draw = 0;
+		}
+
+		if(changeBack)
+		{
+			switch(back)
+			{
+				case 0:
+					pictureShow(&donna_back);
+					break;
+				case 1:
+					pictureHide(&donna_back);
+					break;
+			}
+			changeBack = 0;
 		}
 
 		if(changeSprite)
@@ -127,12 +196,39 @@ void vt_drop_shadow_test()
 			}
 		}
 
+		if(back == 1)
+		{
+			switch (frame)
+			{
+			case 30:
+				palJobPut(pal_water, 1, waterPal_2);
+				palJobPut(pal_wfall, 1, wFallPal_1);
+			break;
+			case 60:
+				palJobPut(pal_water, 1, waterPal_3);
+				palJobPut(pal_wfall, 1, wFallPal_2);
+			break;
+			case 90:
+				palJobPut(pal_water, 1, waterPal_4);
+				palJobPut(pal_wfall, 1, wFallPal_4);
+			break;
+			}
+			frame++;
+			if (frame > 90)
+				frame = 1;
+
+			scrollerSetPos(&frontScroll, x, y1);
+			scrollerSetPos(&waterScroll, x/2, y2);
+			scrollerSetPos(&backScroll, x/2, y3);
+		}
+
 		// Only display vestigial info if debug dip 1 is ON
 		if(bkp_data.debug_dip1 & DP_DEBUG1)
 		{
 			fixPrintf(10, 16, fontColorWhite, 3, "X:    %04d", x);
 			fixPrintf(10, 17, fontColorWhite, 3, "Y:    %04d", y);
-			fixPrintf(10, 18, fontColorWhite, 3, "Type: %04d", spr_type);
+			fixPrintf(10, 18, fontColorWhite, 3, "Spr:  %04d", spr_type);
+			fixPrintf(10, 19, fontColorWhite, 3, "Back: %04d", back);
 		}
 
 		SCClose();
@@ -144,8 +240,16 @@ void vt_drop_shadow_test()
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
+		if(p1e & JOY_A)
+		{
+			back ++;
+			if(back > 1)
+				back = 0;
+			changeBack = 1;
+		}
+
 		// change between even and odd frames
-		if (p1e & JOY_A)
+		if (p1e & JOY_B)
 			drawshadow = !drawshadow;
 
 		if (p1e & JOY_C)
@@ -204,9 +308,14 @@ void vt_drop_shadow_test()
 
 void vt_striped_sprite_test()
 {
-	int done = 0, x = 30, y = 30, draw = 1;
-	picture back;
+	int done = 0, x = 30, y = 30, draw = 1, changeBack = 1, back = 0, frame = 1;
+	int pal_water = 0, pal_wfall = 0;
+	short y1 = -96;
+	short y2 = -152;
+	short y3 = 0;
+	picture donna_back;
 	picture sprite;
+	scroller backScroll, waterScroll, frontScroll;
 
 	while (!done)
 	{
@@ -218,6 +327,24 @@ void vt_striped_sprite_test()
 			backgroundColor(0xFAAF);
 			gfxClear();
 
+			// load scrollers, all sprite priority based
+			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y1);
+			palJobPut(palindex, sonic_back.palInfo->count, sonic_back.palInfo->data);
+			pal_wfall = palindex + 1;
+			pal_water = pal_wfall + 1;
+			sprindex += SCROLLER_SIZE;
+			palindex += backScroll.info->palInfo->count;
+
+			scrollerInit(&waterScroll, &sonic_water, sprindex, palindex, 0, y2);
+			palJobPut(palindex, sonic_water.palInfo->count, sonic_water.palInfo->data);
+			sprindex += SCROLLER_SIZE;
+			palindex += backScroll.info->palInfo->count;
+
+			scrollerInit(&frontScroll, &sonic_floor, sprindex, palindex, 0, y3);
+			palJobPut(palindex, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
+			sprindex += SCROLLER_SIZE;
+			palindex += backScroll.info->palInfo->count;
+
 			// Palettes
 			pali_donna = palindex;
 			palJobPut(palindex,donna.palInfo->count,donna.palInfo->data);
@@ -225,10 +352,60 @@ void vt_striped_sprite_test()
 			palJobPut(palindex,marker_striped.palInfo->count,marker_striped.palInfo->data);
 
 			// Tiles
-			pictureInit(&back, &donna, sprindex, pali_donna, 0, 0, FLIP_NONE);
-			sprindex += back.info->stripSize*2;
+			pictureInit(&donna_back, &donna, sprindex, pali_donna, 0, 0, FLIP_NONE);
+			sprindex += donna_back.info->stripSize*2;
 			pictureInit(&sprite, &marker_striped, sprindex, palindex, x, y, FLIP_NONE);
+
+			changeBack = 1;
 			draw = 0;
+		}
+
+		if(changeBack)
+		{
+			switch(back)
+			{
+				case 0:
+					pictureShow(&donna_back);
+					break;
+				case 1:
+					pictureHide(&donna_back);
+					break;
+			}
+			changeBack = 0;
+		}
+
+		if(back == 1)
+		{
+			switch (frame)
+			{
+			case 30:
+				palJobPut(pal_water, 1, waterPal_2);
+				palJobPut(pal_wfall, 1, wFallPal_1);
+			break;
+			case 60:
+				palJobPut(pal_water, 1, waterPal_3);
+				palJobPut(pal_wfall, 1, wFallPal_2);
+			break;
+			case 90:
+				palJobPut(pal_water, 1, waterPal_4);
+				palJobPut(pal_wfall, 1, wFallPal_4);
+			break;
+			}
+			frame++;
+			if (frame > 90)
+				frame = 1;
+
+			scrollerSetPos(&frontScroll, x, y1);
+			scrollerSetPos(&waterScroll, x/2, y2);
+			scrollerSetPos(&backScroll, x/2, y3);
+		}
+
+		// Only display vestigial info if debug dip 1 is ON
+		if(bkp_data.debug_dip1 & DP_DEBUG1)
+		{
+			fixPrintf(10, 16, fontColorWhite, 3, "X:    %04d", x);
+			fixPrintf(10, 17, fontColorWhite, 3, "Y:    %04d", y);
+			fixPrintf(10, 18, fontColorWhite, 3, "Back: %04d", back);
 		}
 
 		pictureSetPos(&sprite, x, y);
@@ -239,6 +416,14 @@ void vt_striped_sprite_test()
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
+
+		if(p1e & JOY_A)
+		{
+			back ++;
+			if(back > 1)
+				back = 0;
+			changeBack = 1;
+		}
 
 		if (p1 & JOY_UP)
 		{
@@ -793,37 +978,7 @@ void vt_scroll_test()
 	short x2 = 0, y2 = -152;
 	short x3 = 0, y3 = 0;
 	short xvert[3] = { 96, 64, 32 }, currxvert = 1, y = 0;
-
-	static const ushort wFallPal_1[] = {
-		0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x179f, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		};
-
-	static const ushort wFallPal_2[] = {
-		0x8000, 0x0200, 0x6840, 0x8720, 0x179f, 0x879b, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		};
-
-	static const ushort wFallPal_3[] = {
-		0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x3bdf, 0x58bf, 0x179f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		};
-
-	static const ushort wFallPal_4[] = {
-		0x8000, 0x0200, 0x6840, 0x8720, 0x3bdf, 0x58bf, 0x179f, 0x879b, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		};
-
-
-	static const ushort waterPal_1[] = {
-		0x8000, 0x879b, 0x3bdf, 0x58bf, 0x929d, 0x179f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		};
-	static const ushort waterPal_2[] = {
-		0x8000, 0x179f, 0x879b, 0x3bdf, 0x929d, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		};
-	static const ushort waterPal_3[] = {
-		0x8000, 0x58bf, 0x179f, 0x879b, 0x929d, 0x3bdf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		};
-	static const ushort waterPal_4[] = {
-		0x8000, 0x3bdf, 0x58bf, 0x179f, 0x929d, 0x879b, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		};
-
+	int pal_water = 0, pal_wfall = 0;
 	scroller backScroll, waterScroll, frontScroll, vertScroll;
 
 	while (!done)
@@ -833,9 +988,12 @@ void vt_scroll_test()
 			int palindex = 16, sprindex = 1;
 
 			backgroundColor(0x8000);
+			gfxClear();
 
 			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, x3, y3);
 			palJobPut(palindex, sonic_back.palInfo->count, sonic_back.palInfo->data);
+			pal_wfall = palindex + 1;
+			pal_water = pal_wfall + 1;
 			sprindex += SCROLLER_SIZE;
 			palindex += backScroll.info->palInfo->count;
 
@@ -858,7 +1016,6 @@ void vt_scroll_test()
 		if (changed)
 		{
 			gfxClear();
-
 			changed = 0;
 		}
 
@@ -867,16 +1024,16 @@ void vt_scroll_test()
 			switch (frame)
 			{
 			case 30:
-				palJobPut(18, 1, waterPal_2);
-				palJobPut(17, 1, wFallPal_1);
+				palJobPut(pal_water, 1, waterPal_2);
+				palJobPut(pal_wfall, 1, wFallPal_1);
 			break;
 			case 60:
-				palJobPut(18, 1, waterPal_3);
-				palJobPut(17, 1, wFallPal_2);
+				palJobPut(pal_water, 1, waterPal_3);
+				palJobPut(pal_wfall, 1, wFallPal_2);
 			break;
 			case 90:
-				palJobPut(18, 1, waterPal_4);
-				palJobPut(17, 1, wFallPal_4);
+				palJobPut(pal_water, 1, waterPal_4);
+				palJobPut(pal_wfall, 1, wFallPal_4);
 			break;
 			}
 
