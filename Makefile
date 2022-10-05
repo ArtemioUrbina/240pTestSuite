@@ -96,7 +96,7 @@ prog.o : $(OBJS)
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-makeroms:
+neo:
 	$(CP) out/char.bin cart/char.bin
 	$(CP) out/dev_p1.rom cart/2501-p1.p1
 	$(CP) out/fix.bin cart/2501-s1.s1
@@ -119,12 +119,13 @@ makeroms:
 	$(CP) $(NBPATH)240ptest.neo cart/neosd
 	$(RM) $(NBPATH)240ptest.neo
 
-copyroms:
-	$(CP) out/$(PROM) $(MAMEDIR)
-	$(CP) out/$(CROM) $(MAMEDIR)
-	$(CP) out/$(SROM) $(MAMEDIR)
-	$(CP) out/$(MROM) $(MAMEDIR)
-	$(CP) out/$(VROM) $(MAMEDIR)
+copyroms: neo
+	$(CP) cart/2501-p1.p1 $(MAMEDIR)
+	$(CP) cart/2501-c1.c1 $(MAMEDIR)
+	$(CP) cart/2501-c2.c2 $(MAMEDIR)
+	$(CP) cart/2501-s1.s1 $(MAMEDIR)
+	$(CP) cart/2501-m1.m1 $(MAMEDIR)
+	$(CP) cart/2501-v1.v1 $(MAMEDIR)
 
 clean:
 	$(RM) *.o src/*.o out/$(PROM) output.map
