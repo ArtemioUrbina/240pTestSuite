@@ -35,61 +35,124 @@ BYTE p1,p2,ps,p1e,p2e, p1b,p2b;
 
 void vt_drop_shadow_test()
 {
-	int done = 0, x = 30, y = 30, draw = 1, changeSprite = 0, evenFrames = 0;
+	int done = 0, x = 30, y = 30, draw = 1, spr_type = 0, changeSprite = 1;
+	int pali_donna, pali_slug, pali_slug_shadow, pali_shape;
+	int spri_donna, spri_slug, spri_slug_shadow, spri_shape;
 	char flip = FLIP_NONE;
-	unsigned int fc;
+	int drawshadow = 0;
 	picture image;
 	picture slug_sprite;
 	picture slug_shadow_sprite;
 	picture shape_sprite;
 
 	while (!done)
-	{
-		fc = DAT_frameCounter;
-		if (draw)
+	{	
+		if(draw)
 		{
+			int palindex = 16, sprindex = 1;
+
 			backgroundColor(0xFAAF);
 			gfxClear();
 
-			palJobPut(16,donna.palInfo->count,donna.palInfo->data);
-			palJobPut(29,slug.palInfo->count,slug.palInfo->data);
-			palJobPut(30,slug_shadow.palInfo->count,slug_shadow.palInfo->data);
-			palJobPut(31,shape_shadow.palInfo->count,shape_shadow.palInfo->data);
+			// load palettes
+			pali_donna = palindex;
+			palJobPut(pali_donna,donna.palInfo->count,donna.palInfo->data);
+			palindex += donna.palInfo->count;
+
+			pali_slug = palindex;
+			palJobPut(pali_slug,slug.palInfo->count,slug.palInfo->data);
+			palindex += slug.palInfo->count;
+
+			pali_slug_shadow = palindex;
+			palJobPut(pali_slug_shadow,slug_shadow.palInfo->count,slug_shadow.palInfo->data);
+			palindex += slug_shadow.palInfo->count;
+
+			pali_shape = palindex;
+			palJobPut(pali_shape,shape_shadow.palInfo->count,shape_shadow.palInfo->data);
+
+			// load sprites
+			spri_donna = sprindex;
+			pictureInit(&image, &donna, spri_donna, pali_donna, 0, 0, FLIP_NONE);
+			sprindex += image.info->stripSize*2;
+
+			spri_slug_shadow = sprindex;
+			pictureInit(&slug_shadow_sprite, &slug_shadow, spri_slug_shadow, pali_slug_shadow, x, y, flip);
+			sprindex += slug_shadow_sprite.info->stripSize*2;
+
+			spri_slug = sprindex;
+			pictureInit(&slug_sprite, &slug, spri_slug, pali_slug, x-20, y-20, flip);
+			sprindex += slug_sprite.info->stripSize*2;
+
+			spri_shape = sprindex;
+			pictureInit(&shape_sprite, &shape_shadow, spri_shape, pali_shape, x, y, FLIP_NONE);
+
+			changeSprite = 1;
 			draw = 0;
 		}
 
-		if (changeSprite == 0)
+		if(changeSprite)
 		{
-			pictureHide(&shape_sprite);
-			if (fc % 2 == evenFrames)
+			if(!spr_type)
 			{
-				pictureInit(&slug_shadow_sprite, &slug_shadow, 22, 30, x, y, flip);
+				pictureShow(&slug_sprite);
+				pictureShow(&slug_shadow_sprite);
+				pictureHide(&shape_sprite);
+			}
+			else
+			{
+				pictureHide(&slug_shadow_sprite);
+				pictureHide(&slug_sprite);
+				pictureShow(&shape_sprite);
+			}
+			changeSprite = 0;
+		}
+
+		if (!spr_type)
+		{
+			if (drawshadow)
+			{
+				pictureSetPos(&slug_shadow_sprite, x, y);
+				pictureShow(&slug_shadow_sprite);
 			} else {
 				pictureHide(&slug_shadow_sprite);
 			}
-			pictureInit(&slug_sprite, &slug, 44, 29, x-20, y-20, flip);
-		} else {
-			pictureHide(&slug_shadow_sprite);
-			pictureHide(&slug_sprite);
-			if (fc % 2 == evenFrames)
+			pictureSetPos(&slug_sprite, x-20, y-20);
+		} else {	
+			if (drawshadow)
 			{
-				pictureInit(&shape_sprite, &shape_shadow, 22, 31, x, y, FLIP_NONE);
+				pictureSetPos(&shape_sprite, x-20, y-20);
+				pictureShow(&shape_sprite);
 			} else {
 				pictureHide(&shape_sprite);
 			}
 		}
 
-		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
+		// Only display vestigial info if debug dip 1 is ON
+		if(bkp_data.debug_dip1 & DP_DEBUG1)
+		{
+			fixPrintf(10, 16, fontColorWhite, 3, "X:    %04d", x);
+			fixPrintf(10, 17, fontColorWhite, 3, "Y:    %04d", y);
+			fixPrintf(10, 18, fontColorWhite, 3, "Type: %04d", spr_type);
+		}
 
 		SCClose();
 		waitVBlank();
+
+		drawshadow = !drawshadow;
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
+		// change between even and odd frames
+		if (p1e & JOY_A)
+			drawshadow = !drawshadow;
+
 		if (p1e & JOY_C)
-			changeSprite = ~changeSprite;
+		{
+			spr_type = !spr_type;
+			changeSprite = 1;
+		}
 
 		if (p1 & JOY_UP)
 		{
@@ -108,7 +171,12 @@ void vt_drop_shadow_test()
 		if (p1 & JOY_LEFT)
 		{
 			x--;
-			flip = FLIP_X;
+			if(flip != FLIP_X && !spr_type)
+			{
+				flip = FLIP_X;
+				pictureSetFlip(&slug_sprite, flip);
+				pictureSetFlip(&slug_shadow_sprite, flip);
+			}
 			if (x < 0)
 				x = 0;
 		}
@@ -116,16 +184,21 @@ void vt_drop_shadow_test()
 		if (p1 & JOY_RIGHT)
 		{
 			x++;
-			flip = FLIP_NONE;
+			if(flip != FLIP_NONE && !spr_type)
+			{
+				flip = FLIP_NONE;
+				pictureSetFlip(&slug_sprite, flip);
+				pictureSetFlip(&slug_shadow_sprite, flip);
+			}
 			if (x > 288)
 				x = 288;
 		}
 
-		if (ps & P1_START)
-			done = 1;
-
 		if(checkHelp(HELP_SHADOW))
 			draw = 1;
+
+		if (ps & P1_START)
+			done = 1;
 	}
 }
 
@@ -1583,7 +1656,6 @@ void ht_memory_viewer(u32 address)
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 
 											0x400000, 0x402000, 0x800000, 0xC00000, 0xD00000 };
 
-	// Allow to check any pointer without altering graphics when debug dip is on
 	if(bkp_data.debug_dip1 & DP_DEBUG1)
 	{
 		backgroundColor(0x8000);

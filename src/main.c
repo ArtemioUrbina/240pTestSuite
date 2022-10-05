@@ -84,14 +84,17 @@ inline void gfxClear()
 
 void draw_background_w_gil()
 {
+	int index = 1, palindex = 16;
 	picture background;
 	picture foreground;
 
-	pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,back.palInfo->count,back.palInfo->data);
+	pictureInit(&background, &back, index, palindex, 0, 0,FLIP_NONE);
+	palJobPut(palindex, back.palInfo->count,back.palInfo->data);
+	index += background.info->stripSize*2;
+	palindex += back.palInfo->count;
 
-	pictureInit(&foreground, &gillian,22, 17, 216, 70,FLIP_NONE);
-	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
+	pictureInit(&foreground, &gillian, index, palindex, 216, 70,FLIP_NONE);
+	palJobPut(palindex, gillian.palInfo->count, gillian.palInfo->data);
 }
 
 void draw_background()
