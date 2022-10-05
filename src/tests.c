@@ -205,23 +205,31 @@ void vt_drop_shadow_test()
 void vt_striped_sprite_test()
 {
 	int done = 0, x = 30, y = 30, draw = 1;
-	picture image;
-	picture image2;
+	picture back;
+	picture sprite;
 
 	while (!done)
 	{
 		if (draw)
 		{
+			int palindex = 16, sprindex = 1;
+			int pali_donna;
+
 			backgroundColor(0xFAAF);
 			gfxClear();
 
-			palJobPut(16,donna.palInfo->count,donna.palInfo->data);
-			palJobPut(29,marker_striped.palInfo->count,marker_striped.palInfo->data);
+			pali_donna = palindex;
+			palJobPut(palindex,donna.palInfo->count,donna.palInfo->data);
+			palindex += donna.palInfo->count;
+			palJobPut(palindex,marker_striped.palInfo->count,marker_striped.palInfo->data);
+
+			pictureInit(&back, &donna, sprindex, pali_donna, 0, 0, FLIP_NONE);
+			sprindex += back.info->stripSize*2;
+			pictureInit(&sprite, &marker_striped, sprindex, palindex, x, y, FLIP_NONE);
 			draw = 0;
 		}
 
-		pictureInit(&image, &donna, 1, 16, 0, 0, FLIP_NONE);
-		pictureInit(&image2, &marker_striped, 22, 29, x, y, FLIP_NONE);
+		pictureSetPos(&sprite, x, y);
 
 		SCClose();
 		waitVBlank();
