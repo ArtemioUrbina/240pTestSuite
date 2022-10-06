@@ -226,7 +226,7 @@ void vt_drop_shadow_test()
 		{
 			text --;
 			if(!text)
-				clearFixLayer();
+				suiteClearFixLayer();
 		}
 
 		// Only display vestigial info if debug dip 1 is ON
@@ -893,7 +893,7 @@ void vt_reflex_test()
 
 		pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
 		palJobPut(16,back.palInfo->count,back.palInfo->data);
-		clearFixLayer();
+		suiteClearFixLayer();
 		SCClose();
 
 		for(c = 0; c < 10; c++)
@@ -1313,7 +1313,7 @@ void vt_horizontal_stripes()
 		{
 			docounter = ~docounter;
 			if(!docounter)
-				clearFixLayer();
+				suiteClearFixLayer();
 		}
 
 		if (ps & P1_START)
@@ -1388,7 +1388,7 @@ void vt_vertical_stripes()
 		{
 			docounter = ~docounter;
 			if(!docounter)
-				clearFixLayer();
+				suiteClearFixLayer();
 		}
 
 		if (ps & P1_START)
@@ -1464,13 +1464,13 @@ void vt_checkerboard()
 		{
 			docounter = ~docounter;
 			if(!docounter)
-				clearFixLayer();
+				suiteClearFixLayer();
 		}
 
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
+			suiteClearFixLayer();
 			return;
 		}
 
@@ -1664,8 +1664,6 @@ void at_audiosync_test()
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
 		if(checkHelp(HELP_AUDIOSYNC))
@@ -1702,14 +1700,14 @@ void ht_controller_test()
 {
 	int done = 0, hardDip2 = 0, lastDip2 = 0, y = 0, enable4p = 0;
 	picture image;
-	BYTE mvssel = 0, mvscredit = 0;
+	BYTE mvssel = 0, mvscredit = 0, detected4p = 0;
 
 	gfxClear();
 
 	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,back.palInfo->count,back.palInfo->data);
 
-	setup4P();
+	detected4p = setup4P();
 
 	while (!done)
 	{
@@ -1723,12 +1721,12 @@ void ht_controller_test()
 			hardDip2  = !(volMEMBYTE(REG_DIPSW) & DP_CHUTES); // hard dip 2 status
 			if(hardDip2 != lastDip2)
 			{
-				clearFixLayer();
+				suiteClearFixLayer();
 				lastDip2 = hardDip2;
 			}
 		}
 
-		if(isMVS &&	(hardDip2                    || // hard dip 2 status
+		if(isMVS &&	(detected4p || hardDip2      || // hard dip 2 status
 			volMEMBYTE(BIOS_4P_MODE)    == 0xFF  || // Main 4P flag, is set when hard dip 2 is on and 4P board is found. 
 			volMEMBYTE(BIOS_4P_PLUGGED) == 0xFF  || // 4P compatible bios will check for 4P board regardless of dip2 switch status. 
 			volMEMBYTE(SOFT_DIP_3)))				// Soft dip failback, so the user can force it in MVS mode
@@ -1876,7 +1874,7 @@ void ht_memory_viewer(u32 address)
 			memset(buffer, 0, sizeof(char)*10);
 			mem = (u8*)address;
 
-			clearFixLayer();
+			suiteClearFixLayer();
 
 			if (docrc)
 				crc = CalculateCRC(address, 0x1C0);
@@ -1927,8 +1925,6 @@ void ht_memory_viewer(u32 address)
 		if (ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
 		if (p1e & JOY_A)

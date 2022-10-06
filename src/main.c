@@ -34,14 +34,14 @@
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,p1e,p2e;
-BYTE isMVS, is4S, is6S, isMulti, hwChange;
+BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk;
 
 // We can't detect between 1 and 2 slot yet
 void check_systype()
 {
 	BYTE reg = 0;
 
-	isMVS = is4S = is6S = isMulti = hwChange = 0;
+	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = 0;
 
 	if(MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
 	{
@@ -61,6 +61,14 @@ void check_systype()
 	reg = volMEMBYTE(REG_STATUS_B);
 	if(reg & MVS_OR_AES && !isMVS)
 		hwChange = 1;
+
+	// Check is 304 mode is enabled, and follow BIOS resolution and rules
+	if(isMVS)
+	{
+		reg = volMEMBYTE(SOFT_DIP_4);
+		if(reg)
+			vmode_snk = 1;
+	}
 }
 
 static const ushort fixPalettes[]= {
@@ -75,11 +83,19 @@ static const ushort fixPalettes[]= {
 	0x8000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 };
 
+inline void suiteClearFixLayer()
+{
+	if(vmode_snk)
+		BIOS_FIX_CLEAR;
+	else
+		clearFixLayer();
+}
+
 // placed here temporarily
 inline void gfxClear()
 {
 	clearSprites(1, MAX_SPRITES);
-	clearFixLayer();
+	suiteClearFixLayer();
 }
 
 void draw_background_w_gil()
@@ -107,7 +123,7 @@ void draw_background()
 
 void menu_footer()
 {
-	fixPrint(23, 26, 0, 3, "NTSC 320x224p");
+	fixPrintf(23, 26, 0, 3, "NTSC %03dx224p", vmode_snk ? 304 : 320);
 	if(isMVS)
 	{ 
 		fixPrint(23, 28, 0, 3, isMVS ? "MVS" : "AES");
@@ -638,8 +654,6 @@ void menu_main()
 	}
 }
 
-#define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
-
 // This function is called by the BIOS when the start button is
 // pressed (AES) and when enough credits are available (MVS)
 void _240p_mvs_player_start(void)
@@ -851,12 +865,11 @@ int	main(void)
 {
 	check_systype();
 
-	clearFixLayer();
+	suiteClearFixLayer();
 	backgroundColor(0x8000);
 	initGfx();
 	palJobPut(0,8,fixPalettes);
-	if(bkp_data.debug_dip1 & DP_DEBUG1)
-		jobMeterSetup(true);
+	//jobMeterSetup(true);
 	SCClose();
 	waitVBlank();
 	

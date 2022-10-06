@@ -46,5 +46,6 @@ int hexToDec(int hex);
 // Clear screen
 #define MAX_SPRITES	248
 void gfxClear();
+void suiteClearFixLayer();
 
 #endif /* _STRING_H_ */

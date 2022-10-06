@@ -734,7 +734,7 @@ void DrawHelp(int option)
 		{
 			if(page + 1 <= totalpages)
 			{
-				clearFixLayer();
+				suiteClearFixLayer();
 				page++;
 			}
 			if(dirty)
@@ -748,7 +748,7 @@ void DrawHelp(int option)
 		{
 			if(page - 1 > 0)
 			{
-				clearFixLayer();
+				suiteClearFixLayer();
 				page--;
 			}
 			if(dirty)

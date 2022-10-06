@@ -42,7 +42,7 @@ extern bkp_ram_info bkp_data;
 #define DP_DEBUG7	0x40
 #define DP_DEBUG8	0x80
 
-extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
+extern BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk;
 
 #define SYSTEM_AES			0x00
 #define SYSTEM_MVS			0x80
@@ -117,6 +117,10 @@ extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 
 #define BIOS_NM_CREDIT	0xD00034
 #define BIOS_COMP_TIME	0x10FDDA
+
+// BIOS Calls
+#define BIOS_FIX_CLEAR	__asm__ ("jsr 0xC004C2 \n")
+#define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
 
 #define SOFT_DIP_1		0x10FD8A
 #define SOFT_DIP_2		0x10FD8B

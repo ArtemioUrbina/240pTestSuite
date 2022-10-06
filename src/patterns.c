@@ -68,9 +68,7 @@ void tp_pluge()
 		{
 			text--;
 			if (!text)
-			{
-				clearFixLayer();
-			}
+				suiteClearFixLayer();
 		}
 
 		if (p1e & JOY_A)
@@ -92,8 +90,6 @@ void tp_pluge()
 		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
 		if(checkHelp(HELP_PLUGE))
@@ -205,9 +201,7 @@ void tp_colorbars()
 		{
 			text--;
 			if (!text)
-			{
-				clearFixLayer();
-			}
+				suiteClearFixLayer();
 		}
 
 		if (p1e & JOY_A)
@@ -231,8 +225,6 @@ void tp_colorbars()
 		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
 		if(checkHelp(HELP_601CB))
@@ -274,9 +266,7 @@ void tp_smpte_color_bars()
 		{
 			text--;
 			if (!text)
-			{
-				clearFixLayer();
-			}
+				suiteClearFixLayer();
 		}
 
 		if (p1e & JOY_A)
@@ -386,8 +376,6 @@ void tp_color_bleed_check()
 		if (p1e & JOY_B || ps & P1_START)
 		{
 			done = 1;
-			clearFixLayer();
-			return;
 		}
 
 		if(checkHelp(HELP_BLEED))
@@ -719,9 +707,7 @@ void tp_100_ire()
 		{
 			text--;
 			if (!text)
-			{
-				clearFixLayer();
-			}
+				suiteClearFixLayer();
 		}
 	}
 }
