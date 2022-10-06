@@ -32,32 +32,44 @@
 
 BYTE p1,p2,ps,p1e,p2e;
 
+static const ushort plugergb_pal[]= {
+		0x8000, 0x8000, 0x7000, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
+static const ushort plugentsc_pal[]= {
+		0x8000, 0x8000, 0x8222, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf111, 0x7000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
+
 void tp_pluge()
 {
 	int done = 0, draw = 1, IsNTSC = 0, text = 0;
-	picture image1;
-	picture image2;
-
-	static const ushort plugergb_pal[]= {
-		0x8000, 0x8000, 0x7000, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-	static const ushort plugentsc_pal[]= {
-		0x8000, 0x8000, 0x8222, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf111, 0x7000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
+	picture plugergb_back;
+	picture plugentsc_back;
 
 	while (!done)
 	{
+		int palindex = 16, palcount = 1, sprindex = 1;
+
 		if (draw)
 		{
 			gfxClear();
 
+			pictureInit(&plugergb_back, &plugergb, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,palcount,plugergb_pal);
+
+			pictureInit(&plugentsc_back, &plugentsc, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,palcount,plugentsc_pal);
+
 			if (!IsNTSC){
-				pictureInit(&image1, &plugergb, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,1,plugergb_pal);
+				pictureHide(&plugentsc_back);
+				pictureShow(&plugergb_back);
+				palJobPut(palindex,palcount,plugergb_pal);
 			} else {
-				pictureInit(&image2, &plugentsc, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,1,plugentsc_pal);
+				pictureHide(&plugergb_back);
+				pictureShow(&plugentsc_back);
+				palJobPut(palindex,palcount,plugentsc_pal);
 			}
+
 			draw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
@@ -75,12 +87,14 @@ void tp_pluge()
 		{
 			IsNTSC = !IsNTSC;
 			if (!IsNTSC){
-				pictureInit(&image1, &plugergb, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,1,plugergb_pal);
+				pictureHide(&plugentsc_back);
+				pictureShow(&plugergb_back);
+				palJobPut(palindex,palcount,plugergb_pal);
 				fixPrint(24, 3, 1, 3, "RGB FULL RANGE");
 			} else {
-				pictureInit(&image2, &plugentsc, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,1,plugentsc_pal);
+				pictureHide(&plugergb_back);
+				pictureShow(&plugentsc_back);
+				palJobPut(palindex,palcount,plugentsc_pal);
 				fixPrint(24, 3, 1, 3, "NTSC 7.5 IRE  ");
 			}
 			text = 60;
