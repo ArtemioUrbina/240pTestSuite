@@ -260,7 +260,7 @@ void vt_drop_shadow_test()
 		{
 			drawshadow = !drawshadow;
 			evenframes = !evenframes;
-			fixPrintf(18, 3, fontColorGreen, 3, "Shadow in %s frames ", evenframes ? "even" : "odd" );
+			fixPrintf(16, 3, fontColorGreen, 3, "Shadow in %s frames ", evenframes ? "even" : "odd" );
 			text = 120;
 		}
 
@@ -1848,11 +1848,8 @@ void ht_memory_viewer(u32 address)
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 
 											0x400000, 0x402000, 0x800000, 0xC00000, 0xD00000 };
 
-	if(bkp_data.debug_dip1 & DP_DEBUG1)
-	{
-		backgroundColor(0x8000);
-		gfxClear();
-	}
+	backgroundColor(0x8000);
+	gfxClear();
 
 	for (pos = 0; pos < MAX_LOCATIONS; pos++)
 	{
@@ -1903,13 +1900,10 @@ void ht_memory_viewer(u32 address)
 					{
 						u8 c;
 					
-						memset(buffer, 0, sizeof(char)*10);
 						c = mem[i*16+j];
+						// ASCII range
 						if(c >= 32 && c <= 126)	
-						{
-							buffer[0] = (char)c;			// ASCII range
-							fixPrint(j*2, i+2, fontColorWhite, 3, buffer);
-						}
+							fixPrintf(j*2, i+2, fontColorWhite, 3, "%c", (char)c);
 					}
 				}
 			}
@@ -2239,7 +2233,7 @@ void displayBIOS(u32 address, u8 swap)
 			byteSwap(buffer, len);
 		buffer[len] = '\0';
 		cleanBIOSStr(buffer, len);
-		fixPrintf(x, 10+line, 2, 3, buffer);
+		fixPrintf(x, 10+line, fontColorGreen, 3, buffer);
 	}
 }
 
@@ -2258,7 +2252,7 @@ void ht_check_ng_bios_crc(u32 address)
 		swap = 1;
 	displayBIOS(address, swap);
 
-	fixPrintf(12, 16, 2, 3, "Please Wait...");
+	fixPrintf(12, 16, fontColorGreen, 3, "Please Wait...");
 	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,back.palInfo->count,back.palInfo->data);
 
@@ -2267,23 +2261,23 @@ void ht_check_ng_bios_crc(u32 address)
 
 	crc = CalculateCRC(address, BIOS_SIZE);
 	intToHex(crc, buffer, 8);
-	fixPrintf(12, 16, 2, 3, "CRC:  ");
-	fixPrintf(17, 16, 0, 3, "0x%s ", buffer);
+	fixPrintf(12, 16, fontColorGreen, 3, "CRC:  ");
+	fixPrintf(17, 16, fontColorWhite, 3, "0x%s ", buffer);
 
 	bios = GetBIOSbyCRC(crc);
 	if(bios)
 	{
-		fixPrintf(6, 18, 0, 3, bios->name);
-		fixPrintf(6, 19, 0, 3, bios->text);
+		fixPrintf(6, 18, fontColorWhite, 3, bios->name);
+		fixPrintf(6, 19, fontColorWhite, 3, bios->text);
 	}
 	else
 	{
-		fixPrintf(13, 18, 0, 3, "Unknown BIOS");
-		fixPrintf(13, 19, 0, 3, "Please report it");
+		fixPrintf(13, 18, fontColorWhite, 3, "Unknown BIOS");
+		fixPrintf(13, 19, fontColorWhite, 3, "Please report it");
 		if(detectUNIBIOSfast(address))
 		{
-			fixPrintf(7, 21, 2, 3, "Non-free versions of UNIBIOS");
-			fixPrintf(7, 22, 2, 3, "can't be recognized by CRC");
+			fixPrintf(7, 21, fontColorGreen, 3, "Non-free versions of UNIBIOS");
+			fixPrintf(7, 22, fontColorGreen, 3, "can't be recognized by CRC");
 		}
 	}
 

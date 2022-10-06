@@ -90,12 +90,12 @@ void tp_pluge()
 				pictureHide(&plugentsc_back);
 				pictureShow(&plugergb_back);
 				palJobPut(palindex,palcount,plugergb_pal);
-				fixPrint(24, 3, 1, 3, "RGB FULL RANGE");
+				fixPrint(24, 3, fontColorRed, 3, "RGB FULL RANGE");
 			} else {
 				pictureHide(&plugergb_back);
 				pictureShow(&plugentsc_back);
 				palJobPut(palindex,palcount,plugentsc_pal);
-				fixPrint(24, 3, 1, 3, "NTSC 7.5 IRE  ");
+				fixPrint(24, 3, fontColorRed, 3, "NTSC 7.5 IRE  ");
 			}
 			text = 60;
 			SCClose();
@@ -225,12 +225,12 @@ void tp_colorbars()
 			{
 				pictureInit(&image1, &colorebu, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorebu.palInfo->count,colorebu.palInfo->data);
-				fixPrint(32, 3, 0, 3, "100%");
+				fixPrint(32, 3, fontColorWhite, 3, "100%");
 			}
 			else {
 				pictureInit(&image2, &colorebu75, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorebu75.palInfo->count,colorebu75.palInfo->data);
-				fixPrint(32, 3, 0, 3, " 75%");
+				fixPrint(32, 3, fontColorWhite, 3, " 75%");
 			}
 			text = 60;
 			SCClose();
@@ -291,12 +291,12 @@ void tp_smpte_color_bars()
 			{
 				pictureInit(&image1, &colorbarssmpte, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
-				fixPrint(32, 3, 0, 3, "100%");
+				fixPrint(32, 3, fontColorWhite, 3, "100%");
 			}
 			else {
 				pictureInit(&image2, &colorbarssmpte75, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
-				fixPrint(32, 3, 0, 3, " 75%");
+				fixPrint(32, 3, fontColorWhite, 3, " 75%");
 			}
 			text = 60;
 			SCClose();
@@ -697,7 +697,7 @@ void tp_100_ire()
 		{
 			if (irenum != 0)
 				irenum--;
-			fixPrintf1(32, 25, 0, 3, "IRE:%u", irevals[irenum]);
+			fixPrintf1(32, 25, fontColorWhite, 3, "IRE:%u", irevals[irenum]);
 			text = 60;
 		}
 
@@ -705,7 +705,7 @@ void tp_100_ire()
 		{
 			if (irenum != 6)
 				irenum++;
-			fixPrintf1(32, 25, 0, 3, "IRE:%u", irevals[irenum]);
+			fixPrintf1(32, 25, fontColorWhite, 3, "IRE:%u", irevals[irenum]);
 			text = 60;
 		}
 

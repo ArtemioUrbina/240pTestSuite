@@ -53,12 +53,13 @@ extern BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL;
 #define SYSTEM_JAPAN		0x00
 #define SYSTEM_USA			0x01
 
-#define fontColorWhite		0
-#define fontColorRed		1
-#define fontColorGreen		2
-#define fontColorBlue		3
-#define fontColorBlack		4
-#define fontColorSolid		5
+#define fontColorBIOS		0
+#define fontColorWhite		1
+#define fontColorRed		2
+#define fontColorGreen		3
+#define fontColorBlue		4
+#define fontColorBlack		5
+#define fontColorSolid		6
 
 #define REG_DIPSW	0x300001
 #define DP_SETTINGS	0x01

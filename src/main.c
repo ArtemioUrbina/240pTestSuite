@@ -36,7 +36,7 @@ bkp_ram_info bkp_data;
 BYTE p1,p2,ps,p1e,p2e;
 BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL;
 
-// We can't detect between 1 and 2 slot yet
+// We can't detect between 2 and 4 slot systems
 void check_systype()
 {
 	BYTE reg = 0;
@@ -58,12 +58,13 @@ void check_systype()
 		}
 	}
 
+	// Detect if MVS/AES IDs are in conflict
 	reg = volMEMBYTE(REG_STATUS_B);
 	if(reg & MVS_OR_AES && !isMVS)
 		hwChange = 1;
 
 	// Check is 304 mode is enabled, and follow BIOS resolution and rules
-	// Will need options for AES version (TODO)
+	// Also available under options
 	if(isMVS)
 	{
 		reg = volMEMBYTE(SOFT_DIP_4);
@@ -71,11 +72,11 @@ void check_systype()
 			vmode_snk = 1;
 	}
 	
-	// NTSC at zero, but only works with LPSC2
-	// we need to test what happens on an AES with LPSC-A0
+	// NTSC at zero, but PAL apparently only works with the newer LPSC2 in AES
+	// we need to test what happens on an AES with LPSC-A0 & LSPC2-A2 with a PAL or modded system
 	// LSPC-A0 by NEC is the VDC part of the first generation chipset, see LSPC2-A2 for more details. (AES & MVS)
 	// LSPC2-A2 by Fujitsu is the second generation Line SPrite Controller, it is only found in cartridge systems. (AES & MVS)
-	// We also need to know what we'll do with PAL systems... (TODO)
+	// We also need to know what we'll do with PAL systems... since they are 240p and have different PAR (TODO)
 	if(!isMVS)
 	{
 		reg = volMEMWORD(REG_LSPCMODE);
@@ -107,7 +108,8 @@ MVS
 */
 
 static const ushort fixPalettes[]= {
-	0x8000, 0x7fff, 0x0333, 0x5fa7, 0xde85, 0x2c74, 0x2a52, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+	0x8000, 0x7fff, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,	// Used for BIOS Mask
+	0x8000, 0x7fff, 0x0333, 0x5fa7, 0xde85, 0x2c74, 0x2a52, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, // Ffont colors
 	0x8000, 0x0f00, 0x0300, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
 	0x8000, 0x00f0, 0x0030, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
 	0x8000, 0x000f, 0x0003, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
@@ -118,15 +120,15 @@ static const ushort fixPalettes[]= {
 	0x8000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 };
 
+// placed here temporarily
 inline void suiteClearFixLayer()
 {
 	if(vmode_snk)
-		BIOS_FIX_CLEAR;
+		BIOS_FIX_CLEAR;		// Call the SNK BIOS clear that puts the black Mask and reduces it to 304 visible pixels
 	else
 		clearFixLayer();
 }
 
-// placed here temporarily
 inline void gfxClear()
 {
 	clearSprites(1, MAX_SPRITES);
@@ -158,39 +160,44 @@ void draw_background()
 
 void menu_footer()
 {
-	fixPrintf(23, 26, 0, 3, "%s %03dx224p", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320);
+	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx224p", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320);
 	if(isMVS)
 	{ 
-		fixPrint(23, 28, 0, 3, isMVS ? "MVS" : "AES");
+		fixPrint(23, 28, fontColorWhite, 3, isMVS ? "MVS" : "AES");
 		if(is4S || is6S)
-			fixPrint(26, 28, 0, 3, is4S ? "2/4S" : "6S");
+			fixPrint(26, 28, fontColorWhite, 3, is4S ? "2/4S" : "6S");
 		else
-			fixPrint(26, 28, 0, 3, "1S");
+			fixPrint(26, 28, fontColorWhite, 3, "1S");
 		if(hwChange)
-			fixPrint(19, 28, 0, 3, "AES>");
+			fixPrint(19, 28, fontColorWhite, 3, "AES>");
 	}	
 	else
 	{
-		fixPrint(27, 28, 0, 3, "AES");
+		fixPrint(27, 28, fontColorWhite, 3, "AES");
 		if(hwChange)
-			fixPrint(23, 28, 0, 3, "MVS>");
+			fixPrint(23, 28, fontColorWhite, 3, "MVS>");
 	}
 
 	if((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
 	{
-		fixPrint(32, 28, 0, 3, "Japan");
+		fixPrint(32, 28, fontColorWhite, 3, "Japan");
 	}
 	else if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_USA))
 	{
-		fixPrint(34, 28, 0, 3, "USA");
+		fixPrint(34, 28, fontColorWhite, 3, "USA");
 	}
 	else if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_EUROPE))
 	{	
-		fixPrint(31, 28, 0, 3, "Europe");
+		fixPrint(31, 28, fontColorWhite, 3, "Europe");
 	}
 
 	if(isMVS && volMEMBYTE(SOFT_DIP_2))
-		fixPrintf(4, 26, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));  // credit counter
+	{
+		int credits;
+		
+		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
+		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits == 1 ? ' ' : 'S', credits);  // credit counter
+	}
 }
 
 void menu_tp()
@@ -214,23 +221,23 @@ void menu_tp()
 		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
 		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, 8, curse == 1 ? 1 : 0, 3, "Pluge");
-		fixPrint(5, 9, curse == 2 ? 1 : 0, 3, "Color Bars");
-		fixPrint(5, 10, curse == 3 ? 1 : 0, 3, "EBU Color Bars");
-		fixPrint(5, 11, curse == 4 ? 1 : 0, 3, "SMPTE Color Bars");
-		fixPrint(5, 12, curse == 5 ? 1 : 0, 3, "Referenced Color Bars");
-		fixPrint(5, 13, curse == 6 ? 1 : 0, 3, "Color Bleed Check");
-		fixPrint(5, 14, curse == 7 ? 1 : 0, 3, "Monoscope");
-		fixPrint(5, 15, curse == 8 ? 1 : 0, 3, "Grid");
-		fixPrint(5, 16, curse == 9 ? 1 : 0, 3, "Gray Ramp");
-		fixPrint(5, 17, curse == 10 ? 1 : 0, 3, "White & RGB Screens");
-		fixPrint(5, 18, curse == 11 ? 1 : 0, 3, "100 IRE");
-		fixPrint(5, 19, curse == 12 ? 1 : 0, 3, "Sharpness");
-		fixPrint(5, 20, curse == 13 ? 1 : 0, 3, "Overscan");
-		fixPrint(5, 21, curse == 14 ? 1 : 0, 3, "Convergence");
+		fixPrint(5, 8, curse == 1 ? fontColorRed : fontColorWhite, 3, "Pluge");
+		fixPrint(5, 9, curse == 2 ? fontColorRed : fontColorWhite, 3, "Color Bars");
+		fixPrint(5, 10, curse == 3 ? fontColorRed : fontColorWhite, 3, "EBU Color Bars");
+		fixPrint(5, 11, curse == 4 ? fontColorRed : fontColorWhite, 3, "SMPTE Color Bars");
+		fixPrint(5, 12, curse == 5 ? fontColorRed : fontColorWhite, 3, "Referenced Color Bars");
+		fixPrint(5, 13, curse == 6 ? fontColorRed : fontColorWhite, 3, "Color Bleed Check");
+		fixPrint(5, 14, curse == 7 ? fontColorRed : fontColorWhite, 3, "Monoscope");
+		fixPrint(5, 15, curse == 8 ? fontColorRed : fontColorWhite, 3, "Grid");
+		fixPrint(5, 16, curse == 9 ? fontColorRed : fontColorWhite, 3, "Gray Ramp");
+		fixPrint(5, 17, curse == 10 ? fontColorRed : fontColorWhite, 3, "White & RGB Screens");
+		fixPrint(5, 18, curse == 11 ? fontColorRed : fontColorWhite, 3, "100 IRE");
+		fixPrint(5, 19, curse == 12 ? fontColorRed : fontColorWhite, 3, "Sharpness");
+		fixPrint(5, 20, curse == 13 ? fontColorRed : fontColorWhite, 3, "Overscan");
+		fixPrint(5, 21, curse == 14 ? fontColorRed : fontColorWhite, 3, "Convergence");
 
-		fixPrint(5, 23, curse == 15 ? 1 : 0, 3, "Help");
-		fixPrint(5, 24, curse == 16 ? 1 : 0, 3, "Back to Main Menu");
+		fixPrint(5, 23, curse == 15 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, 24, curse == 16 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -338,19 +345,19 @@ void menu_vt()
 		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
 		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, 10, curse == 1 ? 1 : 0, 3, "Drop Shadow Test");
-		fixPrint(5, 11, curse == 2 ? 1 : 0, 3, "Striped Sprite Test");
-		fixPrint(5, 12, curse == 3 ? 1 : 0, 3, "Lag Test");
-		fixPrint(5, 13, curse == 4 ? 1 : 0, 3, "Timing & Reflex Test");
-		fixPrint(5, 14, curse == 5 ? 1 : 0, 3, "Scroll Test");
-		fixPrint(5, 15, curse == 6 ? 1 : 0, 3, "Grid Scroll Test");
-		fixPrint(5, 16, curse == 7 ? 1 : 0, 3, "Horizontal Stripes");
-		fixPrint(5, 17, curse == 8 ? 1 : 0, 3, "Vertical Stripes");
-		fixPrint(5, 18, curse == 9 ? 1 : 0, 3, "Checkerboard");
-		fixPrint(5, 19, curse == 10 ? 1 : 0, 3, "Backlit Zone Test");
+		fixPrint(5, 10, curse == 1 ? fontColorRed : fontColorWhite, 3, "Drop Shadow Test");
+		fixPrint(5, 11, curse == 2 ? fontColorRed : fontColorWhite, 3, "Striped Sprite Test");
+		fixPrint(5, 12, curse == 3 ? fontColorRed : fontColorWhite, 3, "Lag Test");
+		fixPrint(5, 13, curse == 4 ? fontColorRed : fontColorWhite, 3, "Timing & Reflex Test");
+		fixPrint(5, 14, curse == 5 ? fontColorRed : fontColorWhite, 3, "Scroll Test");
+		fixPrint(5, 15, curse == 6 ? fontColorRed : fontColorWhite, 3, "Grid Scroll Test");
+		fixPrint(5, 16, curse == 7 ? fontColorRed : fontColorWhite, 3, "Horizontal Stripes");
+		fixPrint(5, 17, curse == 8 ? fontColorRed : fontColorWhite, 3, "Vertical Stripes");
+		fixPrint(5, 18, curse == 9 ? fontColorRed : fontColorWhite, 3, "Checkerboard");
+		fixPrint(5, 19, curse == 10 ? fontColorRed : fontColorWhite, 3, "Backlit Zone Test");
 
-		fixPrint(5, 21, curse == 11 ? 1 : 0, 3, "Help");
-		fixPrint(5, 22, curse == 12 ? 1 : 0, 3, "Back to Main Menu");
+		fixPrint(5, 21, curse == 11 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, 22, curse == 12 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -442,11 +449,11 @@ void menu_at()
 		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
 		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, 14, curse == 1 ? 1 : 0, 3, "Sound Test");
-		fixPrint(5, 15, curse == 2 ? 1 : 0, 3, "Audio Sync Test");
+		fixPrint(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Sound Test");
+		fixPrint(5, 15, curse == 2 ? fontColorRed : fontColorWhite, 3, "Audio Sync Test");
 
-		fixPrint(5, 17, curse == 3 ? 1 : 0, 3, "Help");
-		fixPrint(5, 18, curse == 4 ? 1 : 0, 3, "Back to Main Menu");
+		fixPrint(5, 17, curse == 3 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, 18, curse == 4 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -506,13 +513,13 @@ void menu_ht()
 		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
 		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, 13, curse == 1 ? 1 : 0, 3, "Controller Test");
-		fixPrint(5, 14, curse == 2 ? 1 : 0, 3, "SDRAM Check");
-		fixPrint(5, 15, curse == 3 ? 1 : 0, 3, "Memory Viewer");
-		fixPrint(5, 16, curse == 4 ? 1 : 0, 3, "BIOS Info");
+		fixPrint(5, 13, curse == 1 ? fontColorRed : fontColorWhite, 3, "Controller Test");
+		fixPrint(5, 14, curse == 2 ? fontColorRed : fontColorWhite, 3, "SDRAM Check");
+		fixPrint(5, 15, curse == 3 ? fontColorRed : fontColorWhite, 3, "Memory Viewer");
+		fixPrint(5, 16, curse == 4 ? fontColorRed : fontColorWhite, 3, "BIOS Info");
 
-		fixPrint(5, 18, curse == 5 ? 1 : 0, 3, "Help");
-		fixPrint(5, 19, curse == 6 ? 1 : 0, 3, "Back to Main Menu");
+		fixPrint(5, 18, curse == 5 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, 19, curse == 6 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -580,26 +587,26 @@ void credits()
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		fixPrint(16, 6, 2, 3, "Credits");
-		fixPrint(28, 8, 2, 3, "Ver. 0.1");
-		fixPrint(28, 9, 0, 3, "9/4/2022");
-		fixPrint(5, y++, 2, 3, "Code by:");
-		fixPrint(6, y++, 0, 3, "Dustin Dembrosky");
-		fixPrint(6, y++, 0, 3, "Artemio Urbina");
-		fixPrint(5, y++, 2, 3, "Monoscope:");
-		fixPrint(6, y++, 0, 3, "Keith Raney");
-		fixPrint(5, y++, 2, 3, "Donna:");
-		fixPrint(6, y++, 0, 3, "Jose Salot");
-		fixPrint(5, y++, 2, 3, "Menu Pixel Art:");
-		fixPrint(6, y++, 0, 3, "Asher");
-		fixPrint(5, y++, 2, 3, "Neo Geo SDK");
-		fixPrint(6, y++, 0, 3, "NeoDev (Jeff Kurtz)");
-		fixPrint(5, y++, 2, 3, "Graphics Library");
-		fixPrint(6, y++, 0, 3, "DATlib (HPMAN)");
-		fixPrint(5, y++, 2, 3, "Flashcart provided by:");
-		fixPrint(6, y++, 0, 3, "MobiusStripTech & Jose Cruz");
-		fixPrint(5, y++, 2, 3, "Info on using this test suite:");
-		fixPrint(6, y, 0, 3, "http://junkerhq.net/240p");
+		fixPrint(16, 6, fontColorGreen, 3, "Credits");
+		fixPrint(28, 8, fontColorGreen, 3, "Ver. 0.1");
+		fixPrint(28, 9, fontColorWhite, 3, "9/4/2022");
+		fixPrint(5, y++, fontColorGreen, 3, "Code by:");
+		fixPrint(6, y++, fontColorWhite, 3, "Dustin Dembrosky");
+		fixPrint(6, y++, fontColorWhite, 3, "Artemio Urbina");
+		fixPrint(5, y++, fontColorGreen, 3, "Monoscope:");
+		fixPrint(6, y++, fontColorWhite, 3, "Keith Raney");
+		fixPrint(5, y++, fontColorGreen, 3, "Donna:");
+		fixPrint(6, y++, fontColorWhite, 3, "Jose Salot");
+		fixPrint(5, y++, fontColorGreen, 3, "Menu Pixel Art:");
+		fixPrint(6, y++, fontColorWhite, 3, "Asher");
+		fixPrint(5, y++, fontColorGreen, 3, "Neo Geo SDK");
+		fixPrint(6, y++, fontColorWhite, 3, "NeoDev (Jeff Kurtz)");
+		fixPrint(5, y++, fontColorGreen, 3, "Graphics Library");
+		fixPrint(6, y++, fontColorWhite, 3, "DATlib (HPMAN)");
+		fixPrint(5, y++, fontColorGreen, 3, "Flashcart provided by:");
+		fixPrint(6, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
+		fixPrint(5, y++, fontColorGreen, 3, "Info on using this test suite:");
+		fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");
 
 		if (p1e & JOY_B || ps & P1_START)
 		{
@@ -609,9 +616,84 @@ void credits()
 	return;
 }
 
+void menu_options()
+{
+	int done = 0, curse = 1, cursemax = 2, redraw = 1;
+
+	while (!done)
+	{
+		int toggle = 0;
+
+		if(redraw)
+		{
+			gfxClear();
+			draw_background();
+			redraw = 0;
+		}
+		SCClose();
+		waitVBlank();
+
+		p1 = volMEMBYTE(P1_CURRENT);
+		p1e = volMEMBYTE(P1_EDGE);
+
+		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
+		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+
+		fixPrintf(14, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
+		fixPrintf(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
+		fixPrintf(5, 18, curse == 2 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+
+		menu_footer();
+
+		// Extra description
+		if(curse == 1)
+		{
+			fixPrintf(4, 20, fontColorGreen, 3, "The 304 mode uses the BIOS mask");
+			fixPrintf(4, 21, fontColorGreen, 3, "to hide 8 pixels on each side, ");
+			fixPrintf(4, 22, fontColorGreen, 3, "as required by SNK in games.");
+		}
+		else
+		{
+			int i = 0;
+
+			for(i = 20; i < 24; i++)
+				fixPrintf(4, i, fontColorGreen, 3, "                               ");
+		}
+
+		if(curse == 1 && (p1e & JOY_LEFT || p1e & JOY_RIGHT))
+			toggle = 1;
+
+		if (p1e & JOY_A || toggle)
+		{
+			gfxClear();
+			switch (curse) 
+			{
+				case 1:
+					vmode_snk = !vmode_snk;
+					suiteClearFixLayer();
+				break;
+					
+				case 2:
+					done = 1;
+				break;
+			}
+			redraw = 1;
+		}
+
+		if (p1e & JOY_B)
+		{
+			done = 1;
+		}
+
+		if(checkHelp(HELP_GENERAL))
+			redraw = 1;
+	}
+	return;
+}
+
 void menu_main()
 {
-	int curse = 1, cursemax = 6, redraw = 1, done = 0, showexit = 0;
+	int curse = 1, cursemax = 7, redraw = 1, done = 0, showexit = 0;
 
 	palJobPut(0,8,fixPalettes);
 	if(isMVS && volMEMBYTE(SOFT_DIP_1))
@@ -636,15 +718,16 @@ void menu_main()
 
 		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
 		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
-		fixPrint(6, 12, curse == 1 ? 1 : 0, 3, "Test Patterns");
-		fixPrint(6, 13, curse == 2 ? 1 : 0, 3, "Video Tests");
-		fixPrint(6, 14, curse == 3 ? 1 : 0, 3, "Audio Tests");
-		fixPrint(6, 15, curse == 4 ? 1 : 0, 3, "Hardware Tools");
+		fixPrint(6, 12, curse == 1 ? fontColorRed : fontColorWhite, 3, "Test Patterns");
+		fixPrint(6, 13, curse == 2 ? fontColorRed : fontColorWhite, 3, "Video Tests");
+		fixPrint(6, 14, curse == 3 ? fontColorRed : fontColorWhite, 3, "Audio Tests");
+		fixPrint(6, 15, curse == 4 ? fontColorRed : fontColorWhite, 3, "Hardware Tools");
 
-		fixPrint(6, 20, curse == 5 ? 1 : 0, 3, "Help");
-		fixPrint(6, 21, curse == 6 ? 1 : 0, 3, "Credits");
+		fixPrint(6, 20, curse == 5 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(6, 21, curse == 6 ? fontColorRed : fontColorWhite, 3, "Credits");
+		fixPrint(6, 22, curse == 7 ? fontColorRed : fontColorWhite, 3, "Options");
 		if(showexit)
-			fixPrint(6, 22, curse == 7 ? 1 : 0, 3, "Exit");
+			fixPrint(6, 23, curse == 8 ? fontColorRed : fontColorWhite, 3, "Exit");
 
 		menu_footer();
 
@@ -681,6 +764,10 @@ void menu_main()
 				break;
 
 				case 7:
+					menu_options();
+				break;
+
+				case 8:
 					return;
 				break;
 			}
@@ -725,8 +812,8 @@ void draw_mvs_demo()
 	gfxClear();
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
-	fixPrint(12, 6, 2, 3, "240p Test Suite");
-	fixPrint(10, 26, 2, 3, "2022 Dasutin/Artemio");
+	fixPrint(12, 6, fontColorGreen, 3, "240p Test Suite");
+	fixPrint(10, 26, fontColorGreen, 3, "2022 Dasutin/Artemio");
 
 	while(demo_frames)
 	{
@@ -764,12 +851,12 @@ void draw_mvs_demo()
 		p1 = volMEMBYTE(PS_CURRENT);
 
 		if(toggle == 30)
-			fixPrint(14, 23, 1, 3, "            ");
+			fixPrint(14, 23, fontColorWhite, 3, "            ");
 		if(toggle == 0)
-			fixPrint(14, 23, 1, 3, freeplay || credits ? "PRESS  START" : "INSERT COIN");
+			fixPrint(14, 23, fontColorRed, 3, freeplay || credits ? "PRESS  START" : "INSERT COIN");
 
 		if(volMEMBYTE(SOFT_DIP_2))
-			fixPrintf(28, 28, 0, 3, "CREDITS %02d", hexToDec(credits));  // credit counter
+			fixPrintf(28, 28, fontColorWhite, 3, "CREDITS %02d", hexToDec(credits));  // credit counter
 		
 		toggle ++;
 		if(toggle > 60)
@@ -811,7 +898,7 @@ void draw_mvs_title()
 	pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,back.palInfo->count,back.palInfo->data);
 
-	fixPrint(10, 26, 0, 3, "2022 Dasutin/Artemio");
+	fixPrint(10, 26, fontColorWhite, 3, "2022 Dasutin/Artemio");
 
 	while(1)
 	{
@@ -821,17 +908,17 @@ void draw_mvs_title()
 		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
 
 		if(toggle == 30)
-			fixPrint(14, 23, 1, 3, "            ");
+			fixPrint(14, 23, fontColorRed, 3, "            ");
 		if(toggle == 0)
-			fixPrint(14, 23, 1, 3, "PRESS  START");
+			fixPrint(14, 23, fontColorRed, 3, "PRESS  START");
 
 		if(!freeplay)
 		{
 			bios_timer = hexToDec(volMEMBYTE(BIOS_COMP_TIME));
-			fixPrintf(16, 28, 0, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
+			fixPrintf(16, 28, fontColorRed, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
 		}
 		
-		fixPrintf(28, 28, 0, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT))); 
+		fixPrintf(28, 28, fontColorWhite, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT))); 
 		
 		toggle ++;
 		if(toggle > 60)
