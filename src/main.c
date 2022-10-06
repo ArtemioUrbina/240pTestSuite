@@ -34,14 +34,14 @@
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,p1e,p2e;
-BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk;
+BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL;
 
 // We can't detect between 1 and 2 slot yet
 void check_systype()
 {
 	BYTE reg = 0;
 
-	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = 0;
+	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0;
 
 	if(MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
 	{
@@ -63,13 +63,48 @@ void check_systype()
 		hwChange = 1;
 
 	// Check is 304 mode is enabled, and follow BIOS resolution and rules
+	// Will need options for AES version (TODO)
 	if(isMVS)
 	{
 		reg = volMEMBYTE(SOFT_DIP_4);
 		if(reg)
 			vmode_snk = 1;
 	}
+	
+	// NTSC at zero, but only works with LPSC2
+	// we need to test what happens on an AES with LPSC-A0
+	// LSPC-A0 by NEC is the VDC part of the first generation chipset, see LSPC2-A2 for more details. (AES & MVS)
+	// LSPC2-A2 by Fujitsu is the second generation Line SPrite Controller, it is only found in cartridge systems. (AES & MVS)
+	// We also need to know what we'll do with PAL systems... (TODO)
+	if(!isMVS)
+	{
+		reg = volMEMWORD(REG_LSPCMODE);
+		if(reg & LPSC2_NTSC_PAL)
+			isPAL = 1;
+	}
 }
+
+/*
+NTSC AES
+
+    24.167829MHz main clock / 4 = 6.041957MHz pixel clock
+    6.041957MHz / 384 pixels per line = 15.734kHz horizontal rate
+    15.734kHz / 264 lines = 59.599 frames/second
+
+PAL AES
+
+    24.167829MHz main clock / 4 = 6.041957MHz pixel clock
+    6.041957MHz / 384 pixels per line = 15.734kHz horizontal rate
+    15.734kHz / 312 lines = 50.429 frames/second
+
+MVS
+
+    24.000000MHz main clock / 4 = 6.000000MHz pixel clock
+    6MHz / 384 pixels per line = 15.625kHz horizontal rate
+    15.625kHz / 264 lines = 59.1856 frames/second
+
+	Source: https://wiki.neogeodev.org/index.php?title=Framerate
+*/
 
 static const ushort fixPalettes[]= {
 	0x8000, 0x7fff, 0x0333, 0x5fa7, 0xde85, 0x2c74, 0x2a52, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
@@ -123,7 +158,7 @@ void draw_background()
 
 void menu_footer()
 {
-	fixPrintf(23, 26, 0, 3, "NTSC %03dx224p", vmode_snk ? 304 : 320);
+	fixPrintf(23, 26, 0, 3, "%s %03dx224p", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320);
 	if(isMVS)
 	{ 
 		fixPrint(23, 28, 0, 3, isMVS ? "MVS" : "AES");

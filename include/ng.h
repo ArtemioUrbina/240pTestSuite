@@ -42,7 +42,7 @@ extern bkp_ram_info bkp_data;
 #define DP_DEBUG7	0x40
 #define DP_DEBUG8	0x80
 
-extern BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk;
+extern BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL;
 
 #define SYSTEM_AES			0x00
 #define SYSTEM_MVS			0x80
@@ -129,6 +129,9 @@ extern BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk;
 
 #define BIOS_ADDRESS	0xC00000
 #define BIOS_SIZE		0x20000
+
+#define REG_LSPCMODE	0x3C0006
+#define LPSC2_NTSC_PAL	0x04
 
 // 4 player related
 #define BIOS_4P_REQUESTED	0x10FEF8
