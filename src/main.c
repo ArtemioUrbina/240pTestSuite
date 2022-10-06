@@ -64,12 +64,19 @@ void check_systype()
 		hwChange = 1;
 
 	// Check is 304 mode is enabled, and follow BIOS resolution and rules
-	// Also available under options
+	// Also available under options, default is 304 mode to comply
 	if(isMVS)
 	{
 		reg = volMEMBYTE(SOFT_DIP_4);
 		if(reg)
+			vmode_snk = 0;
+		else
 			vmode_snk = 1;
+	}
+	else
+	{
+		// read from memory card (TODO)
+		vmode_snk = 1;
 	}
 	
 	// NTSC at zero, but PAL apparently only works with the newer LPSC2 in AES
@@ -196,7 +203,7 @@ void menu_footer()
 		int credits;
 		
 		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
-		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits == 1 ? ' ' : 'S', credits);  // credit counter
+		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 	}
 }
 
@@ -618,7 +625,7 @@ void credits()
 
 void menu_options()
 {
-	int done = 0, curse = 1, cursemax = 2, redraw = 1;
+	int done = 0, curse = 1, cursemax = 2, redraw = 1, text = 0;
 
 	while (!done)
 	{
@@ -651,13 +658,20 @@ void menu_options()
 			fixPrintf(4, 20, fontColorGreen, 3, "The 304 mode uses the BIOS mask");
 			fixPrintf(4, 21, fontColorGreen, 3, "to hide 8 pixels on each side, ");
 			fixPrintf(4, 22, fontColorGreen, 3, "as required by SNK in games.");
+			if(!vmode_snk)
+				fixPrintf(4, 23, fontColorRed, 3, "Some systems trim pixel col. 320");
+			text = 1;
 		}
 		else
 		{
-			int i = 0;
+			if(text)
+			{
+				int i = 0;
 
-			for(i = 20; i < 24; i++)
-				fixPrintf(4, i, fontColorGreen, 3, "                               ");
+				for(i = 20; i < 25; i++)
+					fixPrintf(4, i, fontColorGreen, 3, "                               ");
+				text = 0;
+			}
 		}
 
 		if(curse == 1 && (p1e & JOY_LEFT || p1e & JOY_RIGHT))
@@ -817,6 +831,8 @@ void draw_mvs_demo()
 
 	while(demo_frames)
 	{
+		int credits = 0;
+
 		SCClose();
 		waitVBlank();
 		
@@ -855,8 +871,8 @@ void draw_mvs_demo()
 		if(toggle == 0)
 			fixPrint(14, 23, fontColorRed, 3, freeplay || credits ? "PRESS  START" : "INSERT COIN");
 
-		if(volMEMBYTE(SOFT_DIP_2))
-			fixPrintf(28, 28, fontColorWhite, 3, "CREDITS %02d", hexToDec(credits));  // credit counter
+		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
+		fixPrintf(28, 28, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 		
 		toggle ++;
 		if(toggle > 60)
@@ -902,6 +918,8 @@ void draw_mvs_title()
 
 	while(1)
 	{
+		int credits = 0;
+
 		SCClose();
 		waitVBlank();
 		p1 = volMEMBYTE(PS_CURRENT);
@@ -915,10 +933,11 @@ void draw_mvs_title()
 		if(!freeplay)
 		{
 			bios_timer = hexToDec(volMEMBYTE(BIOS_COMP_TIME));
-			fixPrintf(16, 28, fontColorRed, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
+			fixPrintf(16, 28, fontColorWhite, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
 		}
 		
-		fixPrintf(28, 28, fontColorWhite, 3, "CREDITS %02d", hexToDec(volMEMBYTE(BIOS_NM_CREDIT))); 
+		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
+		fixPrintf(28, 28, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 		
 		toggle ++;
 		if(toggle > 60)
