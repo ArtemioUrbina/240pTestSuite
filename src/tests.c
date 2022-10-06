@@ -336,7 +336,7 @@ void vt_striped_sprite_test()
 			int palindex = 16, sprindex = 1;
 			int pali_donna;
 
-			backgroundColor(0xFAAF);
+			backgroundColor(0x8000);
 			gfxClear();
 
 			// load scrollers, all sprite priority based
@@ -1243,15 +1243,14 @@ void vt_gridscroll_test()
 		if(x > 31) x = 0;
 		//if(y > 31) y = 0;
 		x++;
-							//x += (x * acc);
-					scrollerSetPos(&grid, x, y);
+		//x += (x * acc);
+		scrollerSetPos(&grid, x, y);
 		
 	}
 }
 
 void vt_horizontal_stripes()
 {
-	char cntstr[4];
 	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
 	picture image;
 
@@ -1286,9 +1285,7 @@ void vt_horizontal_stripes()
 			if(count > 59)
 				count = 0;
 
-			intToStr(count, cntstr, 2);
-			fixPrint(2, 25, 5, 4, "Frame:"); // Use font1 in fix bank 4 for solid background font - Fix palette 4
-			fixPrint(8, 25, 5, 4, cntstr);   // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
@@ -1313,7 +1310,11 @@ void vt_horizontal_stripes()
 			alternate = ~alternate;
 
 		if (p1e & JOY_B)
+		{
 			docounter = ~docounter;
+			if(!docounter)
+				clearFixLayer();
+		}
 
 		if (ps & P1_START)
 			done = 1;
@@ -1325,7 +1326,6 @@ void vt_horizontal_stripes()
 
 void vt_vertical_stripes()
 {
-	char cntstr[4];
 	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
 	picture image;
 
@@ -1360,9 +1360,7 @@ void vt_vertical_stripes()
 			if(count > 59)
 				count = 0;
 
-			intToStr(count, cntstr, 2);
-			fixPrint(2, 25, 5, 4, "Frame:"); // Use font1 in fix bank 4 for solid background font - Fix palette 4
-			fixPrint(8, 25, 5, 4, cntstr); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
@@ -1387,7 +1385,11 @@ void vt_vertical_stripes()
 			alternate = ~alternate;
 
 		if (p1e & JOY_B)
+		{
 			docounter = ~docounter;
+			if(!docounter)
+				clearFixLayer();
+		}
 
 		if (ps & P1_START)
 		{
@@ -1401,7 +1403,6 @@ void vt_vertical_stripes()
 
 void vt_checkerboard()
 {
-	char cntstr[4];
 	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
 	picture image;
 
@@ -1438,9 +1439,7 @@ void vt_checkerboard()
 			if(count > 59)
 				count = 0;
 
-			intToStr(count, cntstr, 2);
-			fixPrint(2, 25, 5, 4, "Frame:"); // Use font1 in fix bank 4 for solid background font - Fix palette 4
-			fixPrint(8, 25, 5, 4, cntstr); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
@@ -1462,7 +1461,11 @@ void vt_checkerboard()
 			alternate = ~alternate;
 
 		if (p1e & JOY_B)
+		{
 			docounter = ~docounter;
+			if(!docounter)
+				clearFixLayer();
+		}
 
 		if (ps & P1_START)
 		{

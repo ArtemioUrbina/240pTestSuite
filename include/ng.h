@@ -58,6 +58,7 @@ extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 #define fontColorGreen		2
 #define fontColorBlue		3
 #define fontColorBlack		4
+#define fontColorSolid		5
 
 #define REG_DIPSW	0x300001
 #define DP_SETTINGS	0x01
