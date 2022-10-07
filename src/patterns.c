@@ -95,7 +95,7 @@ void tp_pluge()
 			pictureInit(&plugentsc_back, &plugentsc, sprindex, palindex, 0, 0,FLIP_NONE);
 			palJobPut(palindex,1,plugentsc_pal);
 
-			if (!IsNTSC){
+			if (!IsNTSC) {
 				pictureHide(&plugentsc_back);
 				pictureShow(&plugergb_back);
 			} else {
@@ -136,11 +136,9 @@ void tp_pluge()
 		}
 
 		if (p1e & JOY_B || ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_PLUGE))
+		if (checkHelp(HELP_PLUGE))
 			draw = 1;
 	}
 }
@@ -199,6 +197,7 @@ void tp_colorchart()
 
 			draw = 0;
 		}
+		
 		SCClose();
 		waitVBlank();
 
@@ -219,23 +218,32 @@ void tp_colorchart()
 void tp_colorbars()
 {
 	int done = 0, draw = 1, Is75 = 0, text = 0;
-	picture image1;
-	picture image2;
+	picture colorebu_back;
+	picture colorebu75_back;
 	
 	while (!done)
 	{
+		int palindex = 16, sprindex = 1;
+
 		if (draw)
 		{
 			backgroundColor(0xfc1f);
 			gfxClear();
-			if (!Is75)
-			{
-				pictureInit(&image1, &colorebu, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorebu.palInfo->count,colorebu.palInfo->data);
-			}
-			else {
-				pictureInit(&image2, &colorebu75, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorebu75.palInfo->count,colorebu75.palInfo->data);
+
+			pictureInit(&colorebu_back, &colorebu, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,colorebu.palInfo->count,colorebu.palInfo->data);
+			sprindex += colorebu_back.info->stripSize*2;
+			palindex += colorebu.palInfo->count;
+
+			pictureInit(&colorebu75_back, &colorebu75, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,colorebu75.palInfo->count,colorebu75.palInfo->data);
+
+			if (!Is75) {
+				pictureHide(&colorebu75_back);
+				pictureShow(&colorebu_back);
+			} else {
+				pictureHide(&colorebu_back);
+				pictureShow(&colorebu75_back);
 			}
 			draw = 0;
 		}
@@ -255,15 +263,13 @@ void tp_colorbars()
 		if (p1e & JOY_A)
 		{
 			Is75 = !Is75;
-			if (!Is75)
-			{
-				pictureInit(&image1, &colorebu, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorebu.palInfo->count,colorebu.palInfo->data);
+			if (!Is75) {
+				pictureHide(&colorebu75_back);
+				pictureShow(&colorebu_back);
 				fixPrint(32, 3, fontColorWhite, 3, "100%");
-			}
-			else {
-				pictureInit(&image2, &colorebu75, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorebu75.palInfo->count,colorebu75.palInfo->data);
+			} else {
+				pictureHide(&colorebu_back);
+				pictureShow(&colorebu75_back);
 				fixPrint(32, 3, fontColorWhite, 3, " 75%");
 			}
 			text = 60;
@@ -271,11 +277,9 @@ void tp_colorbars()
 		}
 
 		if (p1e & JOY_B || ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_601CB))
+		if (checkHelp(HELP_601CB))
 			draw = 1;
 	}
 }
@@ -283,24 +287,32 @@ void tp_colorbars()
 void tp_smpte_color_bars()
 {
 	int done = 0, draw = 1, Is75 = 0, text = 0;
-	picture image1;
-	picture image2;
+	picture colorbarssmpte_back;
+	picture colorbarssmpte75_back;
 
 	while (!done)
 	{
+		int palindex = 16, sprindex = 1;
+
 		if (draw)
 		{
 			backgroundColor(0xfc1f);
 			gfxClear();
 
-			if (!Is75)
-			{
-				pictureInit(&image1, &colorbarssmpte, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
-			}
-			else {
-				pictureInit(&image2, &colorbarssmpte75, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
+			pictureInit(&colorbarssmpte_back, &colorbarssmpte, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
+			sprindex += colorbarssmpte_back.info->stripSize*2;
+			palindex += colorbarssmpte.palInfo->count;
+
+			pictureInit(&colorbarssmpte75_back, &colorbarssmpte75, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
+
+			if (!Is75) {
+				pictureHide(&colorbarssmpte75_back);
+				pictureShow(&colorbarssmpte_back);
+			} else {
+				pictureHide(&colorbarssmpte_back);
+				pictureShow(&colorbarssmpte75_back);
 			}
 			draw = 0;
 		}
@@ -321,15 +333,13 @@ void tp_smpte_color_bars()
 		{
 			Is75 = !Is75;
 
-			if (!Is75)
-			{
-				pictureInit(&image1, &colorbarssmpte, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
+			if (!Is75) {
+				pictureHide(&colorbarssmpte75_back);
+				pictureShow(&colorbarssmpte_back);
 				fixPrint(32, 3, fontColorWhite, 3, "100%");
-			}
-			else {
-				pictureInit(&image2, &colorbarssmpte75, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
+			} else {
+				pictureHide(&colorbarssmpte_back);
+				pictureShow(&colorbarssmpte75_back);
 				fixPrint(32, 3, fontColorWhite, 3, " 75%");
 			}
 			text = 60;
@@ -337,11 +347,9 @@ void tp_smpte_color_bars()
 		}
 
 		if (p1e & JOY_B || ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_SMPTE))
+		if (checkHelp(HELP_SMPTE))
 			draw = 1;
 	}
 }
@@ -349,7 +357,7 @@ void tp_smpte_color_bars()
 void tp_ref_color_bars()
 {
 	int done = 0, draw = 1;
-	picture image;
+	picture refcolor_back;
 
 	while (!done)
 	{
@@ -357,10 +365,11 @@ void tp_ref_color_bars()
 		{
 			gfxClear();
 
-			pictureInit(&image, &refcolor, 1, 16, 0, 0,FLIP_NONE);
+			pictureInit(&refcolor_back, &refcolor, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,refcolor.palInfo->count,refcolor.palInfo->data);
 			draw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
@@ -368,11 +377,9 @@ void tp_ref_color_bars()
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B || ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_601CB))
+		if (checkHelp(HELP_601CB))
 			draw = 1;
 	}
 }
@@ -380,23 +387,31 @@ void tp_ref_color_bars()
 void tp_color_bleed_check()
 {
 	int done = 0, draw = 1, Ischeck = 0;
-	picture image1;
-	picture image2;
+	picture colorbleedbars_back;
+	picture colorbleedcheck_back;
 
 	while (!done)
 	{
+		int palindex = 16, sprindex = 1;
+
 		if (draw)
 		{
 			gfxClear();
 
-			if (!Ischeck)
-			{
-				pictureInit(&image1, &colorbleedbars, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorbleedbars.palInfo->count,colorbleedbars.palInfo->data);
-			}
-			else {
-				pictureInit(&image2, &colorbleedcheck, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorbleedcheck.palInfo->count,colorbleedcheck.palInfo->data);
+			pictureInit(&colorbleedbars_back, &colorbleedbars, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,colorbleedbars.palInfo->count,colorbleedbars.palInfo->data);
+			sprindex += colorbleedbars_back.info->stripSize*2;
+			palindex += colorbleedbars.palInfo->count;
+
+			pictureInit(&colorbleedcheck_back, &colorbleedcheck, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,colorbleedcheck.palInfo->count,colorbleedcheck.palInfo->data);
+
+			if (!Ischeck) {
+				pictureHide(&colorbleedcheck_back);
+				pictureShow(&colorbleedbars_back);
+			} else {
+				pictureHide(&colorbleedbars_back);
+				pictureShow(&colorbleedcheck_back);
 			}
 			draw = 0;
 		}
@@ -409,24 +424,20 @@ void tp_color_bleed_check()
 		if (p1e & JOY_A)
 		{
 			Ischeck = !Ischeck;
-			if (!Ischeck)
-			{
-				pictureInit(&image1, &colorbleedbars, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorbleedbars.palInfo->count,colorbleedbars.palInfo->data);
-			}
-			else {
-				pictureInit(&image2, &colorbleedcheck, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,colorbleedcheck.palInfo->count,colorbleedcheck.palInfo->data);
+			if (!Ischeck) {
+				pictureHide(&colorbleedcheck_back);
+				pictureShow(&colorbleedbars_back);
+			} else {
+				pictureHide(&colorbleedbars_back);
+				pictureShow(&colorbleedcheck_back);
 			}
 			SCClose();
 		}
 
 		if (p1e & JOY_B || ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_BLEED))
+		if (checkHelp(HELP_BLEED))
 			draw = 1;
 	}
 }
@@ -443,13 +454,11 @@ void tp_grid()
 			backgroundColor(0x8000);
 			gfxClear();
 
-			if(vmode_snk)
+			if (vmode_snk)
 			{
 				pictureInit(&image, &grid_304, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,grid_304.palInfo->count,grid_304.palInfo->data);
-			}
-			else
-			{
+			} else {
 				pictureInit(&image, &grid, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
 			}
@@ -457,16 +466,16 @@ void tp_grid()
 			updatepalette = 1; 
 		}
 
-		if(updatepalette)
+		if (updatepalette)
 		{
 			if (!gray)
 			{
-				if(vmode_snk)
+				if (vmode_snk)
 					volMEMWORD(0x400206) = 0x8000;
 				else
 					volMEMWORD(0x400204) = 0x8000;
 			} else {
-				if(vmode_snk)
+				if (vmode_snk)
 					volMEMWORD(0x400206) = 0x7777;
 				else
 					volMEMWORD(0x400204) = 0x7777;
@@ -497,7 +506,7 @@ void tp_grid()
 void tp_monoscope()
 {
 	int done = 0, draw = 1, pattern = 1, gray = 0;
-	picture image;
+	picture monoscope_back;
 
 	while (!done)
 	{
@@ -505,17 +514,15 @@ void tp_monoscope()
 		{
 			gfxClear();
 
-			pictureInit(&image, &monoscope, 1, 16, 0, 0,FLIP_NONE);
+			pictureInit(&monoscope_back, &monoscope, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
 			draw = 0;
 		}
 
 		if (!gray)
-		{
 			volMEMWORD(0x402206) = 0x8000;
-		}else{
+		else
 			volMEMWORD(0x402206) = 0x7777;
-		}
 
 		switch (pattern)
 		{
@@ -562,16 +569,12 @@ void tp_monoscope()
 		}
 
 		if (p1e & JOY_B)
-		{
 			gray = !gray;
-		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_MONOSCOPE))
+		if (checkHelp(HELP_MONOSCOPE))
 			draw = 1;
 	}
 }
@@ -579,7 +582,7 @@ void tp_monoscope()
 void tp_gray_ramp()
 {
 	int done = 0, draw = 1;
-	picture image;
+	picture grayramp_back;
 
 	while (!done)
 	{
@@ -587,10 +590,11 @@ void tp_gray_ramp()
 		{
 			gfxClear();
 
-			pictureInit(&image, &grayramp, 1, 16, 0, 0,FLIP_NONE);
+			pictureInit(&grayramp_back, &grayramp, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,grayramp.palInfo->count,grayramp.palInfo->data);
 			draw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
@@ -598,11 +602,9 @@ void tp_gray_ramp()
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B || ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_GRAY))
+		if (checkHelp(HELP_GRAY))
 			draw = 1;
 	}
 }
@@ -643,14 +645,14 @@ void tp_white_rgb()
 			draw = 0;
 		}
 
-		if(text)
+		if (text)
 		{
 			text--;
-			if(!text)
+			if (!text)
 				suiteClearFixLayer();
 		}
 
-		if(editmode)
+		if (editmode)
 		{
 			fixPrintf(15, 5, fontColorSolid, 4, "%cR:%02d %cG:%02d %cB:%02d %cD: %d", 
 								sel == 0 ? '>' : ' ', r, 
@@ -665,7 +667,7 @@ void tp_white_rgb()
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if(!editmode)
+		if (!editmode)
 		{
 			if (p1e & JOY_A)
 			{
@@ -685,49 +687,51 @@ void tp_white_rgb()
 			if (color < 1)
 				color = 5;
 
-			if(draw)
+			if (draw)
 			{
 				char colorname[20];
 
-				switch(color)
+				switch (color)
 				{
-				case 1:
-					sprintf(colorname, "%s", edit_color != 0x7FFF ? "Edit " : "White");
+					case 1:
+						sprintf(colorname, "%s", edit_color != 0x7FFF ? "Edit " : "White");
 					break;
-				case 2:
-					sprintf(colorname, "Black");
+
+					case 2:
+						sprintf(colorname, "Black");
 					break;
-				case 3:
-					sprintf(colorname, "Red  ");
+
+					case 3:
+						sprintf(colorname, "Red  ");
 					break;
-				case 4:
-					sprintf(colorname, "Green");
+
+					case 4:
+						sprintf(colorname, "Green");
 					break;
-				case 5:
-					sprintf(colorname, "Blue ");
+
+					case 5:
+						sprintf(colorname, "Blue ");
 					break;
 				}
 				fixPrintf(28, 25, color == 1 ? fontColorGreen : fontColorWhite, 3, colorname);
 				text = 60;
 			}
 
-			if(checkHelp(HELP_WHITE))
+			if (checkHelp(HELP_WHITE))
 				draw = 1;
 		}
 
 		if (p1e & JOY_C && color == 1)
 		{
 			editmode = !editmode;
-			if(!editmode)
+			if (!editmode)
 				suiteClearFixLayer();
 		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(editmode)
+		if (editmode)
 		{
 			short *edit = NULL, hasedit = 0;
 
@@ -737,34 +741,37 @@ void tp_white_rgb()
 			if (p1e & JOY_RIGHT)
 				sel ++;
 
-			if(sel < 0)
+			if (sel < 0)
 				sel = 3;
-			if(sel > 3)
+			if (sel > 3)
 				sel = 0;
 
-			switch(sel)
+			switch (sel)
 			{
 				case 0:
 					edit = &r;
-					break;
+				break;
+
 				case 1:
 					edit = &g;
-					break;
+				break;
+
 				case 2:
 					edit = &b;
-					break;
+				break;
+
 				case 3:
 					edit = &dark;
-					break;
+				break;
 			}
 
-			if(p1e & JOY_UP)
+			if (p1e & JOY_UP)
 			{
 				(*edit)++;
 				hasedit = 1;
 			}
 
-			if(p1e & JOY_DOWN)
+			if (p1e & JOY_DOWN)
 			{
 				(*edit)--;
 				hasedit = 1;
@@ -788,17 +795,17 @@ void tp_white_rgb()
 				hasedit = 1;
 			}
 
-			if(hasedit)
+			if (hasedit)
 			{
-				if(sel != 3)
+				if (sel != 3)
 				{
 					if(*edit < 0)
 						*edit = 0;
 					if(*edit > 31)
 						*edit = 31;
 				}
-			
-				if(sel == 3)
+
+				if (sel == 3)
 				{
 					if(*edit < 0)
 						*edit = 0;
@@ -810,7 +817,7 @@ void tp_white_rgb()
 				backgroundColor(edit_color);
 			}
 
-			if(bkp_data.debug_dip1 & DP_DEBUG1)
+			if (bkp_data.debug_dip1 & DP_DEBUG1)
 			{
 				char buffer[7];
 
@@ -818,7 +825,7 @@ void tp_white_rgb()
 				intToHex(edit_color, buffer+2, 4);
 				fixPrint(23, 7, fontColorSolid, 4, buffer);
 			}
-		}		
+		}
 	}
 }
 
@@ -827,23 +834,7 @@ void tp_100_ire()
 	int done = 0, text = 0, draw = 1;
 	ushort irevals[] = {13,25,41,53,66,82,94};
 	int irenum = 6;
-	picture image;
-
-	static const ushort ire_94[]= {
-		0x8000, 0x8000, 0x2fef, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-	static const ushort ire_82[]= {
-		0x8000, 0x8000, 0x2ddd, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-	static const ushort ire_66[]= {
-		0x8000, 0x8000, 0x2bbb, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-	static const ushort ire_53[]= {
-		0x8000, 0x8000, 0x2999, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-	static const ushort ire_41[]= {
-		0x8000, 0x8000, 0x2777, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-	static const ushort ire_25[]= {
-		0x8000, 0x8000, 0x2555, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-	static const ushort ire_13[]= {
-		0x8000, 0x8000, 0x2222, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-
+	picture ire_back;
 
 	while (!done)
 	{
@@ -851,7 +842,7 @@ void tp_100_ire()
 		{
 			gfxClear();
 
-			pictureInit(&image, &ire, 1, 16, 0, 0,FLIP_NONE);
+			pictureInit(&ire_back, &ire, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,ire.palInfo->count,ire.palInfo->data);
 			draw = 0;
 		}
@@ -859,33 +850,34 @@ void tp_100_ire()
 		switch (irenum)
 		{
 			case 0:
-				palJobPut(16,1,ire_13);  // 13
+				volMEMWORD(0x402204) = 0x2222;
 			break;
 
 			case 1:
-				palJobPut(16,1,ire_25);  // 25
+				volMEMWORD(0x402204) = 0x2555;
 			break;
 
 			case 2:
-				palJobPut(16,1,ire_41);  // 41
+				volMEMWORD(0x402204) = 0x2777;
 			break;
 
 			case 3:
-				palJobPut(16,1,ire_53);  // 53
+				volMEMWORD(0x402204) = 0x2999;
 			break;
 
 			case 4:
-				palJobPut(16,1,ire_66);  // 66
+				volMEMWORD(0x402204) = 0x2bbb;
 			break;
 
 			case 5:
-				palJobPut(16,1,ire_82);  // 82
+				volMEMWORD(0x402204) = 0x2ddd;
 			break;
 
 			case 6:
-				palJobPut(16,1,ire_94);  // 94
+				volMEMWORD(0x402204) = 0x2fef;
 			break;
 		}
+
 		SCClose();
 		waitVBlank();
 
@@ -909,11 +901,9 @@ void tp_100_ire()
 		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_IRE))
+		if (checkHelp(HELP_IRE))
 			draw = 1;
 
 		if (text)
@@ -928,26 +918,35 @@ void tp_100_ire()
 void tp_sharpness()
 {
 	int done = 0, draw = 1, Isbrick = 0;
-	picture image1;
-	picture image2;
+	picture sharp_back;
+	picture sharpbrick_back;
 
 	while (!done)
 	{
+		int palindex = 16, sprindex = 1;
+
 		if (draw)
 		{
 			gfxClear();
 
-			if (!Isbrick)
-			{
-				pictureInit(&image1, &sharp, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,sharp.palInfo->count,sharp.palInfo->data);
-			}
-			else {
-				pictureInit(&image2, &sharpbrick, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,sharpbrick.palInfo->count,sharpbrick.palInfo->data);
+			pictureInit(&sharp_back, &sharp, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,sharp.palInfo->count,sharp.palInfo->data);
+			sprindex += sharp_back.info->stripSize*2;
+			palindex += sharp.palInfo->count;
+
+			pictureInit(&sharpbrick_back, &sharpbrick, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,sharpbrick.palInfo->count,sharpbrick.palInfo->data);
+
+			if (!Isbrick) {
+				pictureHide(&sharpbrick_back);
+				pictureShow(&sharp_back);
+			} else {
+				pictureHide(&sharp_back);
+				pictureShow(&sharpbrick_back);
 			}
 			draw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
@@ -958,22 +957,18 @@ void tp_sharpness()
 		{
 			Isbrick = !Isbrick;
 
-			if (!Isbrick)
-			{
-				pictureInit(&image1, &sharp, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,sharp.palInfo->count,sharp.palInfo->data);
-			}
-			else {
-				pictureInit(&image2, &sharpbrick, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,sharpbrick.palInfo->count,sharpbrick.palInfo->data);
+			if (!Isbrick) {
+				pictureHide(&sharpbrick_back);
+				pictureShow(&sharp_back);
+			} else {
+				pictureHide(&sharp_back);
+				pictureShow(&sharpbrick_back);
 			}
 			SCClose();
 		}
 
 		if (p1e & JOY_B || ps & P1_START)
-		{
 			done = 1;
-		}
 
 		if(checkHelp(HELP_SHARPNESS))
 			draw = 1;
@@ -998,11 +993,8 @@ void tp_overscan()
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if (p1e & JOY_B)
-		{
+		if (ps & P1_START)
 			done = 1;
-			return;
-		}
 	}
 }
 
@@ -1046,6 +1038,7 @@ void tp_convergence()
 			}
 			draw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
@@ -1077,11 +1070,9 @@ void tp_convergence()
 		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_CONVERGENCE))
+		if (checkHelp(HELP_CONVERGENCE))
 			draw = 1;
 	}
 }

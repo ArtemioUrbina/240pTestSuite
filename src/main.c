@@ -43,15 +43,15 @@ void check_systype()
 
 	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0;
 
-	if(MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
+	if (MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
 	{
 		isMVS = 1;
 		reg = volMEMBYTE(REG_SYSTYPE);
-		if(reg & MVS_MULTI)
+		if (reg & MVS_MULTI)
 		{
 			isMulti = 1;
 			reg = volMEMBYTE(REG_STATUS_A);
-			if(reg & MVS_4_OR_6)
+			if (reg & MVS_4_OR_6)
 				is6S = 1;
 			else
 				is4S = 1;
@@ -60,21 +60,19 @@ void check_systype()
 
 	// Detect if MVS/AES IDs are in conflict
 	reg = volMEMBYTE(REG_STATUS_B);
-	if(reg & MVS_OR_AES && !isMVS)
+	if (reg & MVS_OR_AES && !isMVS)
 		hwChange = 1;
 
 	// Check is 304 mode is enabled, and follow BIOS resolution and rules
 	// Also available under options, default is 304 mode to comply
-	if(isMVS)
+	if (isMVS)
 	{
 		reg = volMEMBYTE(SOFT_DIP_4);
-		if(reg)
+		if (reg)
 			vmode_snk = 0;
 		else
 			vmode_snk = 1;
-	}
-	else
-	{
+	} else {
 		// read from memory card (TODO)
 		vmode_snk = 1;
 	}
@@ -84,10 +82,10 @@ void check_systype()
 	// LSPC-A0 by NEC is the VDC part of the first generation chipset, see LSPC2-A2 for more details. (AES & MVS)
 	// LSPC2-A2 by Fujitsu is the second generation Line SPrite Controller, it is only found in cartridge systems. (AES & MVS)
 	// We also need to know what we'll do with PAL systems... since they are 240p and have different PAR (TODO)
-	if(!isMVS)
+	if (!isMVS)
 	{
 		reg = volMEMWORD(REG_LSPCMODE);
-		if(reg & LPSC2_NTSC_PAL)
+		if (reg & LPSC2_NTSC_PAL)
 			isPAL = 1;
 	}
 }
@@ -130,7 +128,7 @@ static const ushort fixPalettes[]= {
 // placed here temporarily
 inline void suiteClearFixLayer()
 {
-	if(vmode_snk)
+	if (vmode_snk)
 		BIOS_FIX_CLEAR;		// Call the SNK BIOS clear that puts the black Mask and reduces it to 304 visible pixels
 	else
 		clearFixLayer();
@@ -168,24 +166,22 @@ void draw_background()
 void menu_footer()
 {
 	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx224p", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320);
-	if(isMVS)
-	{ 
+	if (isMVS)
+	{
 		fixPrint(23, 28, fontColorWhite, 3, isMVS ? "MVS" : "AES");
-		if(is4S || is6S)
+		if (is4S || is6S)
 			fixPrint(26, 28, fontColorWhite, 3, is4S ? "2/4S" : "6S");
 		else
 			fixPrint(26, 28, fontColorWhite, 3, "1S");
-		if(hwChange)
+		if (hwChange)
 			fixPrint(19, 28, fontColorWhite, 3, "AES>");
-	}	
-	else
-	{
+	} else {
 		fixPrint(27, 28, fontColorWhite, 3, "AES");
-		if(hwChange)
+		if (hwChange)
 			fixPrint(23, 28, fontColorWhite, 3, "MVS>");
 	}
 
-	if((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
+	if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
 	{
 		fixPrint(32, 28, fontColorWhite, 3, "Japan");
 	}
@@ -194,11 +190,11 @@ void menu_footer()
 		fixPrint(34, 28, fontColorWhite, 3, "USA");
 	}
 	else if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_EUROPE))
-	{	
+	{
 		fixPrint(31, 28, fontColorWhite, 3, "Europe");
 	}
 
-	if(isMVS && volMEMBYTE(SOFT_DIP_2))
+	if (isMVS && volMEMBYTE(SOFT_DIP_2))
 	{
 		int credits;
 		
@@ -213,20 +209,21 @@ void menu_tp()
 
 	while (!done)
 	{
-		if(redraw)
+		if (redraw)
 		{
 			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 
-		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
+		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrint(5, 8, curse == 1 ? fontColorRed : fontColorWhite, 3, "Pluge");
 		fixPrint(5, 9, curse == 2 ? fontColorRed : fontColorWhite, 3, "Color Bars");
@@ -249,11 +246,9 @@ void menu_tp()
 		menu_footer();
 
 		if (p1e & JOY_B)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_GENERAL))
+		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
 		if (p1e & JOY_A)
@@ -337,20 +332,21 @@ void menu_vt()
 
 	while (!done)
 	{
-		if(redraw)
+		if (redraw)
 		{
 			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 
-		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
+		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrint(5, 10, curse == 1 ? fontColorRed : fontColorWhite, 3, "Drop Shadow Test");
 		fixPrint(5, 11, curse == 2 ? fontColorRed : fontColorWhite, 3, "Striped Sprite Test");
@@ -369,9 +365,7 @@ void menu_vt()
 		menu_footer();
 
 		if (p1e & JOY_B)
-		{
 			done = 1;
-		}
 
 		if(checkHelp(HELP_GENERAL))
 			redraw = 1;
@@ -379,7 +373,7 @@ void menu_vt()
 		if (p1e & JOY_A)
 		{
 			gfxClear();
-			switch (curse) 
+			switch (curse)
 			{
 				case 1:
 					vt_drop_shadow_test();
@@ -441,20 +435,21 @@ void menu_at()
 
 	while (!done)
 	{
-		if(redraw)
+		if (redraw)
 		{
 			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 
-		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
+		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrint(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Sound Test");
 		fixPrint(5, 15, curse == 2 ? fontColorRed : fontColorWhite, 3, "Audio Sync Test");
@@ -465,11 +460,9 @@ void menu_at()
 		menu_footer();
 
 		if (p1e & JOY_B)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_GENERAL))
+		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
 		if (p1e & JOY_A)
@@ -505,20 +498,21 @@ void menu_ht()
 
 	while (!done)
 	{
-		if(redraw)
+		if (redraw)
 		{
 			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 
-		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
+		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrint(5, 13, curse == 1 ? fontColorRed : fontColorWhite, 3, "Controller Test");
 		fixPrint(5, 14, curse == 2 ? fontColorRed : fontColorWhite, 3, "SDRAM Check");
@@ -531,9 +525,7 @@ void menu_ht()
 		menu_footer();
 
 		if (p1e & JOY_B)
-		{
 			done = 1;
-		}
 
 		if(checkHelp(HELP_GENERAL))
 			redraw = 1;
@@ -541,7 +533,7 @@ void menu_ht()
 		if (p1e & JOY_A)
 		{
 			gfxClear();
-			switch (curse) 
+			switch (curse)
 			{
 				case 1:
 					ht_controller_test();
@@ -616,9 +608,7 @@ void credits()
 		fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");
 
 		if (p1e & JOY_B || ps & P1_START)
-		{
 			done = 1;
-		}
 	}
 	return;
 }
@@ -631,20 +621,21 @@ void menu_options()
 	{
 		int toggle = 0;
 
-		if(redraw)
+		if (redraw)
 		{
 			gfxClear();
 			draw_background();
 			redraw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
 		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 
-		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
+		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrintf(14, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
 		fixPrintf(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
@@ -653,40 +644,38 @@ void menu_options()
 		menu_footer();
 
 		// Extra description
-		if(curse == 1)
+		if (curse == 1)
 		{
 			fixPrintf(4, 20, fontColorGreen, 3, "The 304 mode uses the BIOS mask");
 			fixPrintf(4, 21, fontColorGreen, 3, "to hide 8 pixels on each side, ");
 			fixPrintf(4, 22, fontColorGreen, 3, "as required by SNK in games.");
-			if(!vmode_snk)
+			if (!vmode_snk)
 				fixPrintf(4, 23, fontColorRed, 3, "Some systems trim pixel col. 320");
 			text = 1;
-		}
-		else
-		{
-			if(text)
+		} else {
+			if (text)
 			{
 				int i = 0;
 
-				for(i = 20; i < 25; i++)
+				for (i = 20; i < 25; i++)
 					fixPrintf(4, i, fontColorGreen, 3, "                               ");
 				text = 0;
 			}
 		}
 
-		if(curse == 1 && (p1e & JOY_LEFT || p1e & JOY_RIGHT))
+		if (curse == 1 && (p1e & JOY_LEFT || p1e & JOY_RIGHT))
 			toggle = 1;
 
 		if (p1e & JOY_A || toggle)
 		{
 			gfxClear();
-			switch (curse) 
+			switch (curse)
 			{
 				case 1:
 					vmode_snk = !vmode_snk;
 					suiteClearFixLayer();
 				break;
-					
+
 				case 2:
 					done = 1;
 				break;
@@ -695,11 +684,9 @@ void menu_options()
 		}
 
 		if (p1e & JOY_B)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_GENERAL))
+		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 	}
 	return;
@@ -710,28 +697,30 @@ void menu_main()
 	int curse = 1, cursemax = 7, redraw = 1, done = 0, showexit = 0;
 
 	palJobPut(0,8,fixPalettes);
-	if(isMVS && volMEMBYTE(SOFT_DIP_1))
+	if (isMVS && volMEMBYTE(SOFT_DIP_1))
 	{
 		showexit = 1;
 		cursemax++;
 	}
 
-	while(!done)
+	while (!done)
 	{
-		if(redraw)
+		if (redraw)
 		{
 			gfxClear();
 			draw_background_w_gil();
 			redraw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
 		p1  = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 
-		if(p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if(p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
+		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+
 		fixPrint(6, 12, curse == 1 ? fontColorRed : fontColorWhite, 3, "Test Patterns");
 		fixPrint(6, 13, curse == 2 ? fontColorRed : fontColorWhite, 3, "Video Tests");
 		fixPrint(6, 14, curse == 3 ? fontColorRed : fontColorWhite, 3, "Audio Tests");
@@ -740,12 +729,12 @@ void menu_main()
 		fixPrint(6, 20, curse == 5 ? fontColorRed : fontColorWhite, 3, "Help");
 		fixPrint(6, 21, curse == 6 ? fontColorRed : fontColorWhite, 3, "Credits");
 		fixPrint(6, 22, curse == 7 ? fontColorRed : fontColorWhite, 3, "Options");
-		if(showexit)
+		if (showexit)
 			fixPrint(6, 23, curse == 8 ? fontColorRed : fontColorWhite, 3, "Exit");
 
 		menu_footer();
 
-		if(checkHelp(HELP_GENERAL))
+		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
 		if (p1e & JOY_A)
@@ -794,7 +783,7 @@ void menu_main()
 // pressed (AES) and when enough credits are available (MVS)
 void _240p_mvs_player_start(void)
 {
-	if(isMVS && volMEMBYTE(BIOS_USER_MODE) != BIOS_UM_INGAME)
+	if (isMVS && volMEMBYTE(BIOS_USER_MODE) != BIOS_UM_INGAME)
 	{
 		// Tell the BIOS the game has started
 		volMEMBYTE(BIOS_USER_MODE) = BIOS_UM_INGAME;
@@ -832,14 +821,14 @@ void draw_mvs_demo()
 	fixPrint(10, 26, fontColorGreen, 3, "2022 Dasutin/Artemio");
 
 	demo_change = 1;
-	while(demo_frames)
+	while (demo_frames)
 	{
 		int credits = 0;
 
 		SCClose();
 		waitVBlank();
 		
-		if(redraw)
+		if (redraw)
 		{
 			currdemo ++;
 			switch(currdemo)
@@ -856,13 +845,11 @@ void draw_mvs_demo()
 				break;
 				case 3:
 					backgroundColor(0x8000);
-					if(vmode_snk)
+					if (vmode_snk)
 					{
 						pictureInit(&background, &grid_304, 1, 16, 0, 0,FLIP_NONE);
 						palJobPut(16,grid_304.palInfo->count,grid_304.palInfo->data);
-					}
-					else
-					{
+					} else {
 						pictureInit(&background, &grid, 1, 16, 0, 0,FLIP_NONE);
 						palJobPut(16,grid.palInfo->count,grid.palInfo->data);
 					}
@@ -880,27 +867,27 @@ void draw_mvs_demo()
 		credits = volMEMBYTE(BIOS_NM_CREDIT);
 		p1 = volMEMBYTE(PS_CURRENT);
 
-		if(toggle == 30)
+		if (toggle == 30)
 			fixPrint(14, 23, fontColorWhite, 3, "            ");
-		if(toggle == 0)
+		if (toggle == 0)
 			fixPrint(14, 23, fontColorRed, 3, freeplay || credits ? "PRESS  START" : "INSERT COIN");
 
 		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
 		fixPrintf(28, 28, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 		
 		toggle ++;
-		if(toggle > 60)
+		if (toggle > 60)
 			toggle = 0;
 		demo_frames--;
 		demo_change--;
 
-		if(demo_change == 0)
+		if (demo_change == 0)
 		{
 			demo_change = DEMO_LEN/DEMO_BG;
 			redraw = 1;
 		}
 
-		if(volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
+		if (volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{
 			menu_main();
 			game_over();
@@ -928,7 +915,7 @@ void draw_mvs_title()
 
 	fixPrint(10, 26, fontColorWhite, 3, "2022 Dasutin/Artemio");
 
-	while(1)
+	while (1)
 	{
 		int credits = 0;
 
@@ -937,12 +924,12 @@ void draw_mvs_title()
 		p1 = volMEMBYTE(PS_CURRENT);
 		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
 
-		if(toggle == 30)
+		if (toggle == 30)
 			fixPrint(14, 23, fontColorRed, 3, "            ");
-		if(toggle == 0)
+		if (toggle == 0)
 			fixPrint(14, 23, fontColorRed, 3, "PRESS  START");
 
-		if(!freeplay)
+		if (!freeplay)
 		{
 			bios_timer = hexToDec(volMEMBYTE(BIOS_COMP_TIME));
 			fixPrintf(16, 28, fontColorWhite, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
@@ -952,10 +939,10 @@ void draw_mvs_title()
 		fixPrintf(28, 28, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 		
 		toggle ++;
-		if(toggle > 60)
+		if (toggle > 60)
 			toggle = 0;
 
-		if(volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
+		if (volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{
 			menu_main();
 			game_over();
@@ -968,7 +955,7 @@ void mvs_state()
 {
 	// BIOS_USER_REQS == 0 is called by BIOS
 	// in order to initialize memory
-	if(volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_INIT) 
+	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_INIT) 
 	{
 		waitVBlank();
 		memset(&bkp_data, 0x00, sizeof(BYTE)*(BKP_SIZE));
@@ -976,10 +963,10 @@ void mvs_state()
 	}
 
 	// If DEMO MODE draw the insert coin screen
-	if(volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_DEMO)
+	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_DEMO)
 	{
 		// Enter demo mode in MVS following Soft Dip Switches
-		if(volMEMBYTE(SOFT_DIP_1))
+		if (volMEMBYTE(SOFT_DIP_1))
 		{
 			draw_mvs_demo();
 		}
@@ -994,10 +981,10 @@ void mvs_state()
 	}
 
 	// If TITLE MODE grab the control
-	if(volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_TITLE)
+	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_TITLE)
 	{
 		// Enter title mode in MVS following Soft Dip Switches
-		if(volMEMBYTE(SOFT_DIP_1))
+		if (volMEMBYTE(SOFT_DIP_1))
 		{
 			draw_mvs_title();
 		}
@@ -1014,7 +1001,7 @@ void mvs_state()
 	RETURN_TO_BIOS;
 }
 
-int	main(void)
+int main(void)
 {
 	check_systype();
 
@@ -1026,7 +1013,7 @@ int	main(void)
 	SCClose();
 	waitVBlank();
 	
-	if(isMVS)
+	if (isMVS)
 		mvs_state();
 	else
 		menu_main();

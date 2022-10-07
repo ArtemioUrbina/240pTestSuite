@@ -81,7 +81,7 @@ void vt_drop_shadow_test()
 
 	while (!done)
 	{	
-		if(draw)
+		if (draw)
 		{
 			int palindex = 16, sprindex = 1;
 			int pali_donna, pali_slug, pali_slug_shadow, pali_shape;
@@ -145,7 +145,7 @@ void vt_drop_shadow_test()
 			draw = 0;
 		}
 
-		if(changeBack)
+		if (changeBack)
 		{
 			switch(back)
 			{
@@ -159,16 +159,13 @@ void vt_drop_shadow_test()
 			changeBack = 0;
 		}
 
-		if(changeSprite)
+		if (changeSprite)
 		{
-			if(!spr_type)
-			{
+			if (!spr_type) {
 				pictureShow(&slug_sprite);
 				pictureShow(&slug_shadow_sprite);
 				pictureHide(&shape_sprite);
-			}
-			else
-			{
+			} else {
 				pictureHide(&slug_shadow_sprite);
 				pictureHide(&slug_sprite);
 				pictureShow(&shape_sprite);
@@ -178,17 +175,15 @@ void vt_drop_shadow_test()
 
 		if (!spr_type)
 		{
-			if (drawshadow)
-			{
+			if (drawshadow) {
 				pictureSetPos(&slug_shadow_sprite, x, y);
 				pictureShow(&slug_shadow_sprite);
 			} else {
 				pictureHide(&slug_shadow_sprite);
 			}
 			pictureSetPos(&slug_sprite, x-20, y-20);
-		} else {	
-			if (drawshadow)
-			{
+		} else {
+			if (drawshadow) {
 				pictureSetPos(&shape_sprite, x-20, y-20);
 				pictureShow(&shape_sprite);
 			} else {
@@ -196,7 +191,7 @@ void vt_drop_shadow_test()
 			}
 		}
 
-		if(back == 1)
+		if (back == 1)
 		{
 			switch (frame)
 			{
@@ -222,7 +217,7 @@ void vt_drop_shadow_test()
 			scrollerSetPos(&backScroll, x/2, y3);
 		}
 
-		if(text)
+		if (text)
 		{
 			text --;
 			if(!text)
@@ -230,7 +225,7 @@ void vt_drop_shadow_test()
 		}
 
 		// Only display vestigial info if debug dip 1 is ON
-		if(bkp_data.debug_dip1 & DP_DEBUG1)
+		if (bkp_data.debug_dip1 & DP_DEBUG1)
 		{
 			fixPrintf(10, 16, fontColorWhite, 3, "X:    %04d", x);
 			fixPrintf(10, 17, fontColorWhite, 3, "Y:    %04d", y);
@@ -247,7 +242,7 @@ void vt_drop_shadow_test()
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if(p1e & JOY_A)
+		if (p1e & JOY_A)
 		{
 			back ++;
 			if(back > 1)
@@ -287,7 +282,7 @@ void vt_drop_shadow_test()
 		if (p1 & JOY_LEFT)
 		{
 			x--;
-			if(flip != FLIP_X && !spr_type)
+			if (flip != FLIP_X && !spr_type)
 			{
 				flip = FLIP_X;
 				pictureSetFlip(&slug_sprite, flip);
@@ -300,7 +295,7 @@ void vt_drop_shadow_test()
 		if (p1 & JOY_RIGHT)
 		{
 			x++;
-			if(flip != FLIP_NONE && !spr_type)
+			if (flip != FLIP_NONE && !spr_type)
 			{
 				flip = FLIP_NONE;
 				pictureSetFlip(&slug_sprite, flip);
@@ -386,7 +381,7 @@ void vt_striped_sprite_test()
 			changeBack = 0;
 		}
 
-		if(back == 1)
+		if (back == 1)
 		{
 			switch (frame)
 			{
@@ -413,7 +408,7 @@ void vt_striped_sprite_test()
 		}
 
 		// Only display vestigial info if debug dip 1 is ON
-		if(bkp_data.debug_dip1 & DP_DEBUG1)
+		if (bkp_data.debug_dip1 & DP_DEBUG1)
 		{
 			fixPrintf(10, 16, fontColorWhite, 3, "X:    %04d", x);
 			fixPrintf(10, 17, fontColorWhite, 3, "Y:    %04d", y);
@@ -429,7 +424,7 @@ void vt_striped_sprite_test()
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if(p1e & JOY_A)
+		if (p1e & JOY_A)
 		{
 			back ++;
 			if(back > 1)
@@ -466,11 +461,9 @@ void vt_striped_sprite_test()
 		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_STRIPED))
+		if (checkHelp(HELP_STRIPED))
 			draw = 1;
 	}
 }
@@ -565,8 +558,7 @@ void vt_lag_test()
 		{
 			cposx = framecnt - 4;
 			cposy = 17;
-		}
-		else {
+		} else {
 			cposx = framecnt;
 			cposy = 9;
 		}
@@ -580,10 +572,19 @@ void vt_lag_test()
 				framecnt = 1;
 		}
 
-		if (frames > 59)
+		if (isPAL)
 		{
-			frames = 0;
-			seconds ++;
+			if (frames > 49)
+			{
+				frames = 0;
+				seconds ++;
+			}
+		} else {
+			if (frames > 59)
+			{
+				frames = 0;
+				seconds ++;
+			}
 		}
 		
 		if (seconds > 59)
@@ -691,7 +692,7 @@ void vt_reflex_test()
 			}
 		}
 		
-		if(resetbg)
+		if (resetbg)
 		{
 			backgroundColor(0x8000);
 			resetbg = 0;
@@ -709,7 +710,7 @@ void vt_reflex_test()
 			usersound = 0;
 		}
 
-		if(checkHelp(HELP_MANUALLAG))
+		if (checkHelp(HELP_MANUALLAG))
 			loadvram = 1;
 
 		if (p1e & JOY_A)
@@ -757,9 +758,7 @@ void vt_reflex_test()
 		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
 		if (drawoffset)
 		{
@@ -923,8 +922,7 @@ void vt_reflex_test()
 		if (count > 0)
 		{
 			u16 h = 10, v = 20;
-			//fix32 framerate = MARS_VDP_DISPMODE & MARS_NTSC_FORMAT ? FIX32(16.6884) : FIX32(20.1196);
-			fix32 framerate = FIX32(16.6884);
+			fix32 framerate = isPAL ? FIX32(20.1196) : FIX32(16.6884);
 			fixPrint(h - 2, v++, fontColorWhite, 3, "----");
 
 			cnt = intToFix32(count);
@@ -976,9 +974,7 @@ void vt_reflex_test()
 			ps  = volMEMBYTE(PS_CURRENT);
 
 			if (p1e & JOY_B || ps & P1_START)
-			{
 				done = 1;
-			}
 		}
 	}
 }
@@ -995,7 +991,7 @@ void vt_scroll_test()
 
 	while (!done)
 	{
-		if(reload)
+		if (reload)
 		{
 			int palindex = 16, sprindex = 1;
 
@@ -1049,39 +1045,39 @@ void vt_scroll_test()
 			break;
 			}
 
-			if(x1 >=  0)
+			if (x1 >=  0)
 				scrollerSetPos(&frontScroll, x1, y1);
 			else
 				scrollerSetPos(&frontScroll, 256+x1, y1);
-			if(x2 >= 0)
+			if (x2 >= 0)
 				scrollerSetPos(&waterScroll, x2/2, y2);
 			else
 				scrollerSetPos(&waterScroll, 256+x2/2, y2);
-			if(x3 >= 0)
+			if (x3 >= 0)
 				scrollerSetPos(&backScroll, x3/2, y3);
 			else
 				scrollerSetPos(&backScroll, 256+x3/2, y3);
-			if(!pause)
+			if (!pause)
 			{
 				x1+=acc;
 				x2+=acc;
 				x3+=acc;
 			}
-			if(x1 >= 256) x1 -= 256;
-			if(x2 >= 512) x2 -= 512;
-			if(x3 >= 512) x3 -= 512;
-			if(x1 <= -256) x1 += 256;
-			if(x2 <= -512) x2 += 512;
-			if(x3 <= -512) x3 += 512;
+			if (x1 >= 256) x1 -= 256;
+			if (x2 >= 512) x2 -= 512;
+			if (x3 >= 512) x3 -= 512;
+			if (x1 <= -256) x1 += 256;
+			if (x2 <= -512) x2 += 512;
+			if (x3 <= -512) x3 += 512;
 		} else {
 			scrollerSetPos(&vertScroll, xvert[currxvert], y);
-			if(!pause) 	y+=acc;
-			if(y > 512) y = 0;
-			if(y < -512) y += 512;
+			if (!pause) 	y+=acc;
+			if (y > 512) y = 0;
+			if (y < -512) y += 512;
 		}
 
 		// Only display vestigial info if debug dip 1 is ON
-		if(bkp_data.debug_dip1 & DP_DEBUG1)
+		if (bkp_data.debug_dip1 & DP_DEBUG1)
 		{
 			fixPrintf(10, 16, fontColorWhite, 3, "X1:   %04d", x1);
 			fixPrintf(10, 17, fontColorWhite, 3, "X2:   %04d", x2);
@@ -1111,10 +1107,8 @@ void vt_scroll_test()
 			changed = 1;
 		}
 
-		if(p1e & JOY_C)
-		{
+		if (p1e & JOY_C)
 			acc *= -1;
-		}
 
 		if (p1e & JOY_UP)
 		{
@@ -1134,23 +1128,24 @@ void vt_scroll_test()
 				acc = -1;
 		}
 
-		if(vertical)
+		if (vertical)
 		{
-			if(p1e & JOY_LEFT)
+			if (p1e & JOY_LEFT)
 				currxvert --;
 
-			if(p1e & JOY_RIGHT)
+			if (p1e & JOY_RIGHT)
 				currxvert ++;
 
-			if(currxvert > 2)
+			if (currxvert > 2)
 				currxvert = 2;
-			if(currxvert < 0)
+			if (currxvert < 0)
 				currxvert = 0;
 		}
 
-		if (ps & P1_START) done = 1;
+		if (ps & P1_START)
+			done = 1;
 
-		if(checkHelp(HELP_HSCROLL))
+		if (checkHelp(HELP_HSCROLL))
 			reload = 1;
 	}
 }
@@ -1180,8 +1175,8 @@ void vt_gridscroll_test()
 
 		if (!horizontal)
 		{
-			if (!pause){
-				if (!direction){	
+			if (!pause) {
+				if (!direction) {
 					y += (y * acc);
 					scrollerSetPos(&grid, x, y);
 				} else {
@@ -1189,14 +1184,12 @@ void vt_gridscroll_test()
 					scrollerSetPos(&grid, x, y);
 				}
 			}
-		}
-		else {
-			if (!pause){
-				if (!direction){
+		} else {
+			if (!pause) {
+				if (!direction) {
 					x += (x * acc);
 					scrollerSetPos(&grid, x, y);
-				}
-				else {
+				} else {
 					x -= (x * acc);
 					scrollerSetPos(&grid, x, y);
 				}
@@ -1204,19 +1197,13 @@ void vt_gridscroll_test()
 		}
 
 		if (p1e & JOY_A)
-		{
 			pause = !pause;
-		}
 
 		if (p1e & JOY_B)
-		{
 			horizontal = !horizontal;
-		}
 
 		if (p1e & JOY_LEFT)
-		{
 			direction = !direction;
-		}
 
 		if (p1e & JOY_UP)
 		{
@@ -1233,11 +1220,9 @@ void vt_gridscroll_test()
 		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_STRIPES))
+		if (checkHelp(HELP_STRIPES))
 			draw = 1;
 
 		if(x > 31) x = 0;
@@ -1245,7 +1230,6 @@ void vt_gridscroll_test()
 		x++;
 		//x += (x * acc);
 		scrollerSetPos(&grid, x, y);
-		
 	}
 }
 
@@ -1266,23 +1250,20 @@ void vt_horizontal_stripes()
 
 		if (alternate)
 		{
-			if (field == 0)
-			{
+			if (field == 0) {
 				palJobPut(16,horzstripe_alt.palInfo->count,horzstripe_alt.palInfo->data);
 				field = 1;
-			}
-			else
-			{
+			} else {
 				palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
 				field = 0;
 			}
 		}
 
-		if(docounter)
+		if (docounter)
 		{
 			count++;
 
-			if(count > 59)
+			if (count > 59)
 				count = 0;
 
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
@@ -1290,8 +1271,7 @@ void vt_horizontal_stripes()
 
 		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
 		{
-			if (field == 0)
-			{
+			if (field == 0) {
 				palJobPut(16,horzstripe_alt.palInfo->count,horzstripe_alt.palInfo->data);
 				field = 1;
 			} else {
@@ -1312,14 +1292,14 @@ void vt_horizontal_stripes()
 		if (p1e & JOY_B)
 		{
 			docounter = ~docounter;
-			if(!docounter)
+			if (!docounter)
 				suiteClearFixLayer();
 		}
 
 		if (ps & P1_START)
 			done = 1;
 
-		if(checkHelp(HELP_STRIPES))
+		if (checkHelp(HELP_STRIPES))
 			draw = 1;
 	}
 }
@@ -1341,23 +1321,20 @@ void vt_vertical_stripes()
 
 		if (alternate)
 		{
-			if (field == 0)
-			{
+			if (field == 0) {
 				palJobPut(16,vertstripe_alt.palInfo->count,vertstripe_alt.palInfo->data);
 				field = 1;
-			}
-			else
-			{
+			} else {
 				palJobPut(16,vertstripe.palInfo->count,vertstripe.palInfo->data);
 				field = 0;
 			}
 		}
 
-		if(docounter)
+		if (docounter)
 		{
 			count++;
 
-			if(count > 59)
+			if (count > 59)
 				count = 0;
 
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
@@ -1365,8 +1342,7 @@ void vt_vertical_stripes()
 
 		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
 		{
-			if (field == 0)
-			{
+			if (field == 0) {
 				palJobPut(16,vertstripe_alt.palInfo->count,vertstripe_alt.palInfo->data);
 				field = 1;
 			} else {
@@ -1387,16 +1363,14 @@ void vt_vertical_stripes()
 		if (p1e & JOY_B)
 		{
 			docounter = ~docounter;
-			if(!docounter)
+			if (!docounter)
 				suiteClearFixLayer();
 		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_STRIPES))
+		if (checkHelp(HELP_STRIPES))
 			draw = 1;
 	}
 }
@@ -1420,23 +1394,20 @@ void vt_checkerboard()
 
 		if (alternate)
 		{
-			if (field == 0)
-			{
+			if (field == 0) {
 				palJobPut(16,check_alt.palInfo->count,check_alt.palInfo->data);
 				field = 1;
-			}
-			else
-			{
+			} else {
 				palJobPut(16,check.palInfo->count,check.palInfo->data);
 				field = 0;
 			}
 		}
 
-		if(docounter)
+		if (docounter)
 		{
 			count++;
 
-			if(count > 59)
+			if (count > 59)
 				count = 0;
 
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
@@ -1444,8 +1415,7 @@ void vt_checkerboard()
 
 		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
 		{
-			if (field == 0)
-			{
+			if (field == 0) {
 				palJobPut(16,check_alt.palInfo->count,check_alt.palInfo->data);
 				field = 1;
 			} else {
@@ -1561,12 +1531,9 @@ void vt_backlitzone_test()
 		}
 
 		if (ps & P1_START)
-		{
 			done = 1;
-			return;
-		}
 
-		if(checkHelp(HELP_LED))
+		if (checkHelp(HELP_LED))
 			draw = 1;
 	}
 }
@@ -1593,15 +1560,11 @@ void at_sound_test()
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (ps & P1_START)
-		{
 			done = 1;
-			return;
-		}
 
-		if(checkHelp(HELP_SOUND))
+		if (checkHelp(HELP_SOUND))
 			draw = 1;
 	}
-
 }
 
 void at_audiosync_test()
@@ -1662,24 +1625,22 @@ void at_audiosync_test()
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
-		if(checkHelp(HELP_AUDIOSYNC))
+		if (checkHelp(HELP_AUDIOSYNC))
 			draw = 1;
 	}
 }
 
 inline void DrawController(u16 x, u16 y, BYTE input, BYTE start, BYTE ps, BYTE select, BYTE mvscredit, BYTE credit)
-{	
+{
 	fixPrint(x+4, y,   input & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
 	fixPrint(x,   y+1, input & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
 	fixPrint(x+6, y+1, input & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
 	fixPrint(x+3, y+2, input & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
 
 	fixPrint(x+13, y, ps & start ? fontColorRed : fontColorWhite, 3, "Start");
-	if(isMVS)
+	if (isMVS)
 	{
 		// Alow drawing select with MVS1F which have AES ports and UNIBIOS in AES mode
 		fixPrint(x+13, y+1, ps & select ? fontColorRed : fontColorWhite, 3, ps & select ? "Select" : "      ");
@@ -1714,35 +1675,33 @@ void ht_controller_test()
 		SCClose();
 		waitVBlank();
 
-		if(isMVS)
+		if (isMVS)
 		{
 			mvscredit = volMEMBYTE(REG_STATUS_A); 
 			mvssel    = volMEMBYTE(REG_STATUS_B); 
 			hardDip2  = !(volMEMBYTE(REG_DIPSW) & DP_CHUTES); // hard dip 2 status
-			if(hardDip2 != lastDip2)
+			if (hardDip2 != lastDip2)
 			{
 				suiteClearFixLayer();
 				lastDip2 = hardDip2;
 			}
 		}
 
-		if(isMVS &&	(detected4p || hardDip2      || // hard dip 2 status
-			volMEMBYTE(BIOS_4P_MODE)    == 0xFF  || // Main 4P flag, is set when hard dip 2 is on and 4P board is found. 
-			volMEMBYTE(BIOS_4P_PLUGGED) == 0xFF  || // 4P compatible bios will check for 4P board regardless of dip2 switch status. 
-			volMEMBYTE(SOFT_DIP_3)))				// Soft dip failback, so the user can force it in MVS mode
+		if (isMVS && (detected4p || hardDip2      || // hard dip 2 status
+			volMEMBYTE(BIOS_4P_MODE)    == 0xFF   || // Main 4P flag, is set when hard dip 2 is on and 4P board is found. 
+			volMEMBYTE(BIOS_4P_PLUGGED) == 0xFF   || // 4P compatible bios will check for 4P board regardless of dip2 switch status. 
+			volMEMBYTE(SOFT_DIP_3)))				 // Soft dip failback, so the user can force it in MVS mode
 		{
 			y = 9;
 			enable4p = 1;
-		}
-		else
-		{
+		} else {
 			y = 13;
 			enable4p = 0;
 		}
 
 		p1 = volMEMBYTE(P1_CURRENT);    // Controller 1
 		p2 = volMEMBYTE(P2_CURRENT);    // Controller 2
-		if(enable4p)
+		if (enable4p)
 		{
 			p1b = volMEMBYTE(P1B_CURRENT);  // Controller 3
 			p2b = volMEMBYTE(P2B_CURRENT);  // Controller 4
@@ -1751,10 +1710,10 @@ void ht_controller_test()
 		p1e = volMEMBYTE(P1_EDGE);
 		p2e = volMEMBYTE(P2_EDGE);
 
-		if(isMVS)
+		if (isMVS)
 		{
 			fixPrint(29, 8, !(mvscredit & MVS_SERV_B) ? fontColorRed : fontColorWhite, 3, "Service");
-			if(is4S || is6S)
+			if (is4S || is6S)
 			{
 				fixPrint(4,  24, !(mvssel & MVS_SEL1) ? fontColorRed : fontColorWhite, 3, "Sel 1");
 				fixPrint(31, 24, !(mvssel & MVS_SEL2) ? fontColorRed : fontColorWhite, 3, "Sel 2");
@@ -1891,18 +1850,16 @@ void ht_memory_viewer(u32 address)
 			{
 				for (j = 0; j < 16; j++)
 				{
-					if(!ascii)
+					if (!ascii)
 					{
 						intToHex(mem[i*16+j], buffer, 2);
 						fixPrint(j*2, i+2, fontColorWhite, 3, buffer);
-					}
-					else
-					{
+					} else {
 						u8 c;
 					
 						c = mem[i*16+j];
 						// ASCII range
-						if(c >= 32 && c <= 126)	
+						if (c >= 32 && c <= 126)	
 							fixPrintf(j*2, i+2, fontColorWhite, 3, "%c", (char)c);
 					}
 				}
@@ -1917,9 +1874,7 @@ void ht_memory_viewer(u32 address)
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (ps & P1_START)
-		{
 			done = 1;
-		}
 
 		if (p1e & JOY_A)
 		{
@@ -1995,14 +1950,11 @@ void ht_test_ng_ram()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if (p1e & JOY_B)
-		{
+		if (ps & P1_START)
 			done = 1;
-		}
 	}
 }
 
@@ -2166,7 +2118,7 @@ const BIOSID *GetBIOSbyCRC(u32 checksum)
 	u8 i = 0;
 	
 	while(bioslist[i].crc != 0)
-	{		
+	{
 		if(checksum == bioslist[i].crc)
 			return &bioslist[i];
 		i++;
@@ -2178,11 +2130,11 @@ void cleanBIOSStr(char *str, u8 size)
 {
 	u8 i = 0;
 
-	for(i = 0; i < size; i++) {
+	for (i = 0; i < size; i++) {
 		u8 c;
 
 		c = str[i];
-		if(c >= 32 && c <= 126)	{ // ASCII range
+		if (c >= 32 && c <= 126) { // ASCII range
 			str[i] = (char)c;
 		} else {
 			str[i] = ' ';
@@ -2194,7 +2146,7 @@ void byteSwap(u8 *data, u8 size)
 {
 	int pos = 0;
 
-	while(pos < size)	
+	while (pos < size)
 	{
 		u8 t;
 
@@ -2209,7 +2161,7 @@ u8 detectUNIBIOSfast(u32 address)
 {
 	u16 *bios = (u16*)address;
 
-	if(bios[0x58] == 0x4E55)
+	if (bios[0x58] == 0x4E55)
 		return 1;
 	return 0;
 }
@@ -2219,17 +2171,17 @@ void displayBIOS(u32 address, u8 swap)
 	int  line = 0, len = 32, start = 0x82, x = 4;
 	char buffer[34];
 
-	if(detectUNIBIOSfast(address))
+	if (detectUNIBIOSfast(address))
 	{
 		len = 16;
 		start = 0xA0;
 		x = 12;
 	}
 
-	for(line = 0; line < 4; line++)
+	for (line = 0; line < 4; line++)
 	{
 		memcpy(buffer, (void*)(address+start+line*len), len);
-		if(swap)
+		if (swap)
 			byteSwap(buffer, len);
 		buffer[len] = '\0';
 		cleanBIOSStr(buffer, len);
@@ -2248,7 +2200,7 @@ void ht_check_ng_bios_crc(u32 address)
 	gfxClear();
 
 	// Print BIOS lines
-	if(detectUNIBIOSfast(address))
+	if (detectUNIBIOSfast(address))
 		swap = 1;
 	displayBIOS(address, swap);
 
@@ -2265,16 +2217,14 @@ void ht_check_ng_bios_crc(u32 address)
 	fixPrintf(17, 16, fontColorWhite, 3, "0x%s ", buffer);
 
 	bios = GetBIOSbyCRC(crc);
-	if(bios)
+	if (bios)
 	{
 		fixPrintf(6, 18, fontColorWhite, 3, bios->name);
 		fixPrintf(6, 19, fontColorWhite, 3, bios->text);
-	}
-	else
-	{
+	} else {
 		fixPrintf(13, 18, fontColorWhite, 3, "Unknown BIOS");
 		fixPrintf(13, 19, fontColorWhite, 3, "Please report it");
-		if(detectUNIBIOSfast(address))
+		if (detectUNIBIOSfast(address))
 		{
 			fixPrintf(7, 21, fontColorGreen, 3, "Non-free versions of UNIBIOS");
 			fixPrintf(7, 22, fontColorGreen, 3, "can't be recognized by CRC");
@@ -2290,9 +2240,7 @@ void ht_check_ng_bios_crc(u32 address)
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_B)
-		{
 			done = 1;
-		}
 
 		if (p1e & JOY_C)
 		{

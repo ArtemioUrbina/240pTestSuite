@@ -33,14 +33,14 @@ BYTE p1,p2,ps,p1e,p2e;
 
 int checkHelp(int helpID)
 {
-	if(isMVS)
+	if (isMVS)
 	{
 		if (volMEMBYTE(P1_EDGE) & JOY_D)
 		{
 			DrawHelp(helpID);
 			return 1;
 		}
-	} else { 
+	} else {
 		if (volMEMBYTE(PS_CURRENT) & P1_SELECT)
 		{
 			DrawHelp(helpID);
@@ -56,66 +56,69 @@ void DrawHelp(int option)
 
 	switch (option)
 	{
-	case HELP_GENERAL:
-	case HELP_STRIPES:
-	case HELP_SHADOW:
-	case HELP_LED:
-	case HELP_LAG:
-	case HELP_MANUALLAG:
-	case HELP_HSCROLL:
-	case HELP_MEMVIEW:
-	case HELP_WHITE:
+		case HELP_GENERAL:
+		case HELP_STRIPES:
+		case HELP_SHADOW:
+		case HELP_LED:
+		case HELP_LAG:
+		case HELP_MANUALLAG:
+		case HELP_HSCROLL:
+		case HELP_MEMVIEW:
+		case HELP_WHITE:
 		totalpages = 2;
 		break;
-	case HELP_PLUGE:
-	case HELP_MONOSCOPE:
+
+		case HELP_PLUGE:
+		case HELP_MONOSCOPE:
 		totalpages = 3;
 		break;
 	}
 
-	while (!exit) 
+	while (!exit)
 	{
-		if(redraw)
+		if (redraw)
 		{
 			gfxClear();
 			draw_background();
 			redraw = 0;
 		}
+
 		SCClose();
 		waitVBlank();
 
 		switch (option)
-			{
+		{
 			case HELP_GENERAL:
 				switch (page)
 				{
-				case 1:
-					fixPrint(15, 6, fontColorGreen, 3, "HELP (1/2)");
+					case 1:
+						fixPrint(15, 6, fontColorGreen, 3, "HELP (1/2)");
 
-					fixPrint(4, 8, fontColorWhite, 3, "The 240p Test Suite was designed");
-					fixPrint(4, 9, fontColorWhite, 3, "with two goals in mind:");
+						fixPrint(4, 8, fontColorWhite, 3, "The 240p Test Suite was designed");
+						fixPrint(4, 9, fontColorWhite, 3, "with two goals in mind:");
 
-					fixPrint(4, 11, fontColorWhite, 3, "1) Evaluate 240p signals on TV");
-					fixPrint(4, 12, fontColorWhite, 3, "sets and video processors; and");
+						fixPrint(4, 11, fontColorWhite, 3, "1) Evaluate 240p signals on TV");
+						fixPrint(4, 12, fontColorWhite, 3, "sets and video processors; and");
 
-					fixPrint(4, 14, fontColorWhite, 3, "2) Provide calibration patterns");
-					fixPrint(4, 15, fontColorWhite, 3, "from a game console to help in");
-					fixPrint(4, 16, fontColorWhite, 3, "properly calibrating the display");
-					fixPrint(4, 17, fontColorWhite, 3, "black, white, and color levels.");
-					if (isMVS)
-					{
-						fixPrint(4, 19, fontColorGreen, 3, "Help can be shown with 'D'");
-					} else {
-						fixPrint(4, 19, fontColorGreen, 3, "Help can be shown with 'SELECT'");
-					}
-					fixPrint(4, 20, fontColorGreen, 3, "in any test.");
+						fixPrint(4, 14, fontColorWhite, 3, "2) Provide calibration patterns");
+						fixPrint(4, 15, fontColorWhite, 3, "from a game console to help in");
+						fixPrint(4, 16, fontColorWhite, 3, "properly calibrating the display");
+						fixPrint(4, 17, fontColorWhite, 3, "black, white, and color levels.");
+						if (isMVS)
+						{
+							fixPrint(4, 19, fontColorGreen, 3, "Help can be shown with 'D'");
+						} else {
+							fixPrint(4, 19, fontColorGreen, 3, "Help can be shown with 'SELECT'");
+						}
+						fixPrint(4, 20, fontColorGreen, 3, "in any test.");
 
-					fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
+						fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
 
-					fixPrint(5, 26, fontColorWhite, 3, "Press START or B to exit help");
+						fixPrint(5, 26, fontColorWhite, 3, "Press START or B to exit help");
 
 					break;
-				case 2:
+
+					case 2:
 					{
 						picture qr;
 
@@ -145,58 +148,62 @@ void DrawHelp(int option)
 					}
 					break;
 				}
-				break;
+			break;
+
 			case HELP_PLUGE:
 				switch (page)
 				{
-				case 1:
-					fixPrint(15, 6, fontColorGreen, 3, "PLUGE (1/3)");
+					case 1:
+						fixPrint(15, 6, fontColorGreen, 3, "PLUGE (1/3)");
 
-					fixPrint(4, 9, fontColorWhite, 3, "NTSC levels require black to be");
-					fixPrint(4, 10, fontColorWhite, 3, "at 7.5 IRE for video. This HW");
-					fixPrint(4, 11, fontColorWhite, 3, "lowest is 6 IRE (6%), so using");
-					fixPrint(4, 12, fontColorWhite, 3, "this value for general 240p use");
-					fixPrint(4, 13, fontColorWhite, 3, "is not recommended.");
+						fixPrint(4, 9, fontColorWhite, 3, "NTSC levels require black to be");
+						fixPrint(4, 10, fontColorWhite, 3, "at 7.5 IRE for video. This HW");
+						fixPrint(4, 11, fontColorWhite, 3, "lowest is 6 IRE (6%), so using");
+						fixPrint(4, 12, fontColorWhite, 3, "this value for general 240p use");
+						fixPrint(4, 13, fontColorWhite, 3, "is not recommended.");
 
-					fixPrint(4, 15, fontColorWhite, 3, "Of course using it as reference");
-					fixPrint(4, 16, fontColorWhite, 3, "will work perfectly for games");
-					fixPrint(4, 17, fontColorWhite, 3, "in this platform.");
+						fixPrint(4, 15, fontColorWhite, 3, "Of course using it as reference");
+						fixPrint(4, 16, fontColorWhite, 3, "will work perfectly for games");
+						fixPrint(4, 17, fontColorWhite, 3, "in this platform.");
 
-					fixPrint(4, 19, fontColorWhite, 3, "In PAL - and console gaming in");
-					fixPrint(4, 20, fontColorWhite, 3, "general - it is adviced to use");
-					fixPrint(4, 21, fontColorWhite, 3, "a value of 2 IRE as black.");
+						fixPrint(4, 19, fontColorWhite, 3, "In PAL - and console gaming in");
+						fixPrint(4, 20, fontColorWhite, 3, "general - it is adviced to use");
+						fixPrint(4, 21, fontColorWhite, 3, "a value of 2 IRE as black.");
 
-					fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
+						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
-				case 2:
-					fixPrint(15, 6, fontColorGreen, 3, "PLUGE (2/3)");
 
-					fixPrint(4, 9, fontColorWhite, 3, "The PLUGE pattern is used to");
-					fixPrint(4, 10, fontColorWhite, 3, "help adjust the black level to");
-					fixPrint(4, 11, fontColorWhite, 3, "a correct value.");
+					case 2:
+						fixPrint(15, 6, fontColorGreen, 3, "PLUGE (2/3)");
 
-					fixPrint(4, 13, fontColorWhite, 3, "The inner bars on the sides are");
-					fixPrint(4, 14, fontColorWhite, 3, "black at 6%, the outer at 12%.");
-					fixPrint(4, 15, fontColorWhite, 3, "If these bars are not visible,");
-					fixPrint(4, 16, fontColorWhite, 3, "adjust the \"brightness\" control");
-					fixPrint(4, 17, fontColorWhite, 3, "until they are.");
+						fixPrint(4, 9, fontColorWhite, 3, "The PLUGE pattern is used to");
+						fixPrint(4, 10, fontColorWhite, 3, "help adjust the black level to");
+						fixPrint(4, 11, fontColorWhite, 3, "a correct value.");
 
-					fixPrint(4, 19, fontColorWhite, 3, "You should lower it until they");
-					fixPrint(4, 20, fontColorWhite, 3, "are not visible, and raise it");
-					fixPrint(4, 21, fontColorWhite, 3, "until they show.");
+						fixPrint(4, 13, fontColorWhite, 3, "The inner bars on the sides are");
+						fixPrint(4, 14, fontColorWhite, 3, "black at 6%, the outer at 12%.");
+						fixPrint(4, 15, fontColorWhite, 3, "If these bars are not visible,");
+						fixPrint(4, 16, fontColorWhite, 3, "adjust the \"brightness\" control");
+						fixPrint(4, 17, fontColorWhite, 3, "until they are.");
 
-					fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
+						fixPrint(4, 19, fontColorWhite, 3, "You should lower it until they");
+						fixPrint(4, 20, fontColorWhite, 3, "are not visible, and raise it");
+						fixPrint(4, 21, fontColorWhite, 3, "until they show.");
+
+						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
-				case 3:
-					fixPrint(15, 6, fontColorGreen, 3, "PLUGE (3/3)");
 
-					fixPrint(4, 9, fontColorWhite, 3, "Within it A button changes");
-					fixPrint(4, 10, fontColorWhite, 3, "palettes between the original,");
-					fixPrint(4, 11, fontColorWhite, 3, "highest and lowest values the");
-					fixPrint(4, 12, fontColorWhite, 3, "hardware can display.");
+					case 3:
+						fixPrint(15, 6, fontColorGreen, 3, "PLUGE (3/3)");
+
+						fixPrint(4, 9, fontColorWhite, 3, "Within it A button changes");
+						fixPrint(4, 10, fontColorWhite, 3, "palettes between the original,");
+						fixPrint(4, 11, fontColorWhite, 3, "highest and lowest values the");
+						fixPrint(4, 12, fontColorWhite, 3, "hardware can display.");
 					break;
 				}
-				break;
+			break;
+
 			case HELP_COLORS:
 				fixPrint(15, 6, fontColorGreen, 3, "COLORBARS");
 
@@ -213,7 +220,8 @@ void DrawHelp(int option)
 				fixPrint(4, 19, fontColorWhite, 3, "can clearly tell them appart.");
 
 				fixPrint(4, 21, fontColorWhite, 3, "Do the same for each color.");
-				break;
+			break;
+
 			case HELP_GRID:
 				fixPrint(18, 6, fontColorGreen, 3, "GRID");
 
@@ -228,7 +236,8 @@ void DrawHelp(int option)
 				fixPrint(4, 17, fontColorWhite, 3, "The full active video signal can");
 				fixPrint(4, 18, fontColorWhite, 3, "be filled with gray by pressing");
 				fixPrint(4, 19, fontColorWhite, 3, "the 'A' button.");
-				break;
+			break;
+
 			case HELP_MONOSCOPE:
 				switch (page)
 				{
@@ -251,6 +260,7 @@ void DrawHelp(int option)
 
 						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
+
 					case 2:
 						fixPrint(13, 6, fontColorGreen, 3, "MONOSCOPE (2/3)");
 
@@ -268,6 +278,7 @@ void DrawHelp(int option)
 
 						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
+
 					case 3:
 						fixPrint(13, 6, fontColorGreen, 3, "MONOSCOPE (3/3)");
 
@@ -287,7 +298,8 @@ void DrawHelp(int option)
 						fixPrint(4, 21, fontColorWhite, 3, "Designed by Keith Raney.");
 					break;
 				}
-				break;
+			break;
+
 			case HELP_BLEED:
 				fixPrint(14, 6, fontColorGreen, 3, "COLOR BLEED");
 
@@ -298,21 +310,24 @@ void DrawHelp(int option)
 				fixPrint(4, 13, fontColorWhite, 3, "You can toggle between");
 				fixPrint(4, 14, fontColorWhite, 3, "vertical bars and");
 				fixPrint(4, 15, fontColorWhite, 3, "checkerboard with 'A'.");
-				break;
+			break;
+
 			case HELP_IRE:
 				fixPrint(16, 6, fontColorGreen, 3, "100 IRE");
 
 				fixPrint(4, 9, fontColorWhite, 3, "You can vary IRE intensity");
 				fixPrint(4, 10, fontColorWhite, 3, "with 'A' and 'B'. Values are:");
 				fixPrint(4, 11, fontColorWhite, 3, "13, 25, 41, 53, 66, 82, 94");
-				break;
+			break;
+
 			case HELP_601CB:
 				fixPrint(14, 6, fontColorGreen, 3, "EBU COLORBARS");
 
 				fixPrint(4, 9, fontColorWhite, 3, "You can use color filters or the");
 				fixPrint(4, 10, fontColorWhite, 3, "blue only option in your display");
 				fixPrint(4, 11, fontColorWhite, 3, "to confirm color balance.");
-				break;
+			break;
+
 			case HELP_SHARPNESS:
 				fixPrint(15, 6, fontColorGreen, 3, "SHARPNESS");
 
@@ -323,7 +338,8 @@ void DrawHelp(int option)
 
 				fixPrint(4, 13, fontColorWhite, 3, "Pressing 'A' toggles a diagonal");
 				fixPrint(4, 14, fontColorWhite, 3, "brick tileset.");
-				break;
+			break;
+
 			case HELP_OVERSCAN:
 				fixPrint(15, 6, fontColorGreen, 3, "OVERSCAN");
 
@@ -338,7 +354,8 @@ void DrawHelp(int option)
 				fixPrint(4, 17, fontColorWhite, 3, "pixel. The resulting number is");
 				fixPrint(4, 18, fontColorWhite, 3, "the amount of overscan in pixels");
 				fixPrint(4, 19, fontColorWhite, 3, "in each direction.");
-				break;
+			break;
+
 			case HELP_SMPTE:
 				fixPrint(12, 6, fontColorGreen, 3, "SMPTE COLOR BARS");
 
@@ -355,7 +372,8 @@ void DrawHelp(int option)
 				fixPrint(4, 19, fontColorWhite, 3, "You can use color filters or the");
 				fixPrint(4, 20, fontColorWhite, 3, "blue only option in your display");
 				fixPrint(4, 21, fontColorWhite, 3, "to confirm color balance");
-				break;
+			break;
+
 			case HELP_GRAY:
 				fixPrint(15, 6, fontColorGreen, 3, "GRAY RAMP");
 
@@ -364,7 +382,8 @@ void DrawHelp(int option)
 
 				fixPrint(4, 12, fontColorWhite, 3, "You should make sure the bars");
 				fixPrint(4, 13, fontColorWhite, 3, "are gray, with no color bias.");
-				break;
+			break;
+
 			case HELP_WHITE:
 				switch (page)
 				{
@@ -384,7 +403,8 @@ void DrawHelp(int option)
 						fixPrint(4, 19, fontColorWhite, 3, "available by pressing 'C'");
 						fixPrint(4, 20, fontColorWhite, 3, "while in the white screen.");
 						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
-						break;
+					break;
+
 					case 2:
 						fixPrint(11, 6, fontColorGreen, 3, "WHITE SCREEN (2/2)");
 
@@ -395,9 +415,10 @@ void DrawHelp(int option)
 						fixPrint(4, 14, fontColorWhite, 3, "'A' and 'B' buttons go to");
 						fixPrint(4, 15, fontColorWhite, 3, "zero and 31, while 'D' toggles");
 						fixPrint(4, 16, fontColorWhite, 3, "the dark bit.");
-						break;
+					break;
 				}
-				break;
+			break;
+
 			case HELP_CONVERGENCE:
 				fixPrint(12, 6, fontColorGreen, 3, "CONVERGENCE TESTS");
 
@@ -411,7 +432,8 @@ void DrawHelp(int option)
 				fixPrint(4, 16, fontColorWhite, 3, "The 'B' button changes to a");
 				fixPrint(4, 17, fontColorWhite, 3, "color pattern for transition");
 				fixPrint(4, 18, fontColorWhite, 3, "boundary check.");
-				break;
+			break;
+
 			case HELP_CHECK:
 				fixPrint(14, 6, fontColorGreen, 3, "CHECKERBOARD");
 
@@ -425,41 +447,44 @@ void DrawHelp(int option)
 				fixPrint(4, 16, fontColorWhite, 3, "auto-toggle each frame with the");
 				fixPrint(4, 17, fontColorWhite, 3, "'A' button. A frame counter is");
 				fixPrint(4, 18, fontColorWhite, 3, "also available with 'B'.");
-				break;
+			break;
+
 			case HELP_STRIPES:
 				switch (page)
 				{
-				case 1:
-					fixPrint(10, 6, fontColorGreen, 3, "HOR/VER STRIPES (1/2)");
+					case 1:
+						fixPrint(10, 6, fontColorGreen, 3, "HOR/VER STRIPES (1/2)");
 
-					fixPrint(4, 9, fontColorWhite, 3, "You should see a pattern of");
-					fixPrint(4, 10, fontColorWhite, 3, "lines, each one pixel in height");
-					fixPrint(4, 11, fontColorWhite, 3, "starting with a white one.");
+						fixPrint(4, 9, fontColorWhite, 3, "You should see a pattern of");
+						fixPrint(4, 10, fontColorWhite, 3, "lines, each one pixel in height");
+						fixPrint(4, 11, fontColorWhite, 3, "starting with a white one.");
 
-					fixPrint(4, 13, fontColorWhite, 3, "You can toggle the pattern with");
-					fixPrint(4, 14, fontColorWhite, 3, "button 'UP', or turn on");
-					fixPrint(4, 15, fontColorWhite, 3, "auto-toggle each frame with the");
-					fixPrint(4, 16, fontColorWhite, 3, "'A' button. A frame counter is");
-					fixPrint(4, 17, fontColorWhite, 3, "also available with 'B'.");
+						fixPrint(4, 13, fontColorWhite, 3, "You can toggle the pattern with");
+						fixPrint(4, 14, fontColorWhite, 3, "button 'UP', or turn on");
+						fixPrint(4, 15, fontColorWhite, 3, "auto-toggle each frame with the");
+						fixPrint(4, 16, fontColorWhite, 3, "'A' button. A frame counter is");
+						fixPrint(4, 17, fontColorWhite, 3, "also available with 'B'.");
 
-					fixPrint(4, 18, fontColorWhite, 3, "When auto-toggle is set, you");
-					fixPrint(4, 19, fontColorWhite, 3, "should see the lines");
-					fixPrint(4, 20, fontColorWhite, 3, "alternating rapidly.");
-					fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
+						fixPrint(4, 18, fontColorWhite, 3, "When auto-toggle is set, you");
+						fixPrint(4, 19, fontColorWhite, 3, "should see the lines");
+						fixPrint(4, 20, fontColorWhite, 3, "alternating rapidly.");
+						fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
 					break;
-				case 2:
-					fixPrint(10, 6, fontColorGreen, 3, "HOR/VER STRIPES (2/2)");
 
-					fixPrint(4, 9, fontColorWhite, 3, "You can also display vertical");
-					fixPrint(4, 10, fontColorWhite, 3, "bars by pressing 'LEFT'. That");
-					fixPrint(4, 11, fontColorWhite, 3, "pattern will help you");
-					fixPrint(4, 12, fontColorWhite, 3, "evaluate if the signal is not");
-					fixPrint(4, 13, fontColorWhite, 3, "distorted horizontaly, since");
-					fixPrint(4, 14, fontColorWhite, 3, "all lines should be one pixel");
-					fixPrint(4, 15, fontColorWhite, 3, "wide.");
+					case 2:
+						fixPrint(10, 6, fontColorGreen, 3, "HOR/VER STRIPES (2/2)");
+
+						fixPrint(4, 9, fontColorWhite, 3, "You can also display vertical");
+						fixPrint(4, 10, fontColorWhite, 3, "bars by pressing 'LEFT'. That");
+						fixPrint(4, 11, fontColorWhite, 3, "pattern will help you");
+						fixPrint(4, 12, fontColorWhite, 3, "evaluate if the signal is not");
+						fixPrint(4, 13, fontColorWhite, 3, "distorted horizontaly, since");
+						fixPrint(4, 14, fontColorWhite, 3, "all lines should be one pixel");
+						fixPrint(4, 15, fontColorWhite, 3, "wide.");
 					break;
 				}
-				break;
+			break;
+
 			case HELP_SHADOW:
 				fixPrint(12, 6, fontColorGreen, 3, "DROP SHADOW TEST");
 
@@ -475,7 +500,8 @@ void DrawHelp(int option)
 				fixPrint(4, 18, fontColorWhite, 3, "button 'A'. Backgrounds can be");
 				fixPrint(4, 19, fontColorWhite, 3, "switched with the 'B' button,");
 				fixPrint(4, 20, fontColorWhite, 3, "and button 'C' toggles sprites.");
-				break;
+			break;
+
 			case HELP_STRIPED:
 				fixPrint(11, 6, fontColorGreen, 3, "STRIPED SPRITE TEST");
 
@@ -489,51 +515,54 @@ void DrawHelp(int option)
 
 				fixPrint(4, 17, fontColorWhite, 3, "You can change backgrounds with");
 				fixPrint(4, 18, fontColorWhite, 3, "'A'.");
-				break;
+			break;
+
 			case HELP_MANUALLAG:
 				switch (page)
 				{
-				case 1:
-					fixPrint(10, 6, fontColorGreen, 3, "TIMING & REFLEX (1/2)");
+					case 1:
+						fixPrint(10, 6, fontColorGreen, 3, "TIMING & REFLEX (1/2)");
 
-					fixPrint(4, 8, fontColorWhite, 3, "The main intention is to show a");
-					fixPrint(4, 9, fontColorWhite, 3, "changing pattern on the screen,");
-					fixPrint(4, 10, fontColorWhite, 3, "which can be complemented with");
-					fixPrint(4, 11, fontColorWhite, 3, "audio. This should show to some");
-					fixPrint(4, 12, fontColorWhite, 3, "degree any lag when processing");
-					fixPrint(4, 13, fontColorWhite, 3, "the signal.");
+						fixPrint(4, 8, fontColorWhite, 3, "The main intention is to show a");
+						fixPrint(4, 9, fontColorWhite, 3, "changing pattern on the screen,");
+						fixPrint(4, 10, fontColorWhite, 3, "which can be complemented with");
+						fixPrint(4, 11, fontColorWhite, 3, "audio. This should show to some");
+						fixPrint(4, 12, fontColorWhite, 3, "degree any lag when processing");
+						fixPrint(4, 13, fontColorWhite, 3, "the signal.");
 
-					fixPrint(4, 15, fontColorWhite, 3, "As an added feature, the user");
-					fixPrint(4, 16, fontColorWhite, 3, "can click the 'A' button when");
-					fixPrint(4, 17, fontColorWhite, 3, "the sprite is aligned with the");
-					fixPrint(4, 18, fontColorWhite, 3, "one on the background, and the");
-					fixPrint(4, 19, fontColorWhite, 3, "offset in frames from the actual");
-					fixPrint(4, 20, fontColorWhite, 3, "intersection will be shown on");
-					fixPrint(4, 21, fontColorWhite, 3, "screen. A 1khz tone will be");
-					fixPrint(4, 22, fontColorWhite, 3, "played for 1 frame when pressed.");
-					fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
+						fixPrint(4, 15, fontColorWhite, 3, "As an added feature, the user");
+						fixPrint(4, 16, fontColorWhite, 3, "can click the 'A' button when");
+						fixPrint(4, 17, fontColorWhite, 3, "the sprite is aligned with the");
+						fixPrint(4, 18, fontColorWhite, 3, "one on the background, and the");
+						fixPrint(4, 19, fontColorWhite, 3, "offset in frames from the actual");
+						fixPrint(4, 20, fontColorWhite, 3, "intersection will be shown on");
+						fixPrint(4, 21, fontColorWhite, 3, "screen. A 1khz tone will be");
+						fixPrint(4, 22, fontColorWhite, 3, "played for 1 frame when pressed.");
+						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
-				case 2:
-					fixPrint(10, 6, fontColorGreen, 3, "TIMING & REFLEX (2/2)");
 
-					fixPrint(4, 8, fontColorWhite, 3, "Button 'B' can be used to");
-					fixPrint(4, 9, fontColorWhite, 3, "change the direction of the");
-					fixPrint(4, 10, fontColorWhite, 3, "sprite.");
+					case 2:
+						fixPrint(10, 6, fontColorGreen, 3, "TIMING & REFLEX (2/2)");
 
-					fixPrint(4, 12, fontColorWhite, 3, "Of course the evaluation is");
-					fixPrint(4, 13, fontColorWhite, 3, "dependent on reflexes and/or");
-					fixPrint(4, 14, fontColorWhite, 3, "rhythm more than anything. The");
-					fixPrint(4, 15, fontColorWhite, 3, "visual and audio cues are the");
-					fixPrint(4, 16, fontColorWhite, 3, "more revealing aspects which");
-					fixPrint(4, 17, fontColorWhite, 3, "the user should consider, of");
-					fixPrint(4, 18, fontColorWhite, 3, "course the interactive factor");
-					fixPrint(4, 19, fontColorWhite, 3, "can give an experienced player");
-					fixPrint(4, 20, fontColorWhite, 3, "the hang of the system when");
-					fixPrint(4, 21, fontColorWhite, 3, "testing via different");
-					fixPrint(4, 22, fontColorWhite, 3, "connections.");
+						fixPrint(4, 8, fontColorWhite, 3, "Button 'B' can be used to");
+						fixPrint(4, 9, fontColorWhite, 3, "change the direction of the");
+						fixPrint(4, 10, fontColorWhite, 3, "sprite.");
+
+						fixPrint(4, 12, fontColorWhite, 3, "Of course the evaluation is");
+						fixPrint(4, 13, fontColorWhite, 3, "dependent on reflexes and/or");
+						fixPrint(4, 14, fontColorWhite, 3, "rhythm more than anything. The");
+						fixPrint(4, 15, fontColorWhite, 3, "visual and audio cues are the");
+						fixPrint(4, 16, fontColorWhite, 3, "more revealing aspects which");
+						fixPrint(4, 17, fontColorWhite, 3, "the user should consider, of");
+						fixPrint(4, 18, fontColorWhite, 3, "course the interactive factor");
+						fixPrint(4, 19, fontColorWhite, 3, "can give an experienced player");
+						fixPrint(4, 20, fontColorWhite, 3, "the hang of the system when");
+						fixPrint(4, 21, fontColorWhite, 3, "testing via different");
+						fixPrint(4, 22, fontColorWhite, 3, "connections.");
 					break;
 				}
-				break;
+			break;
+
 			case HELP_HSCROLL:
 				switch (page)
 				{
@@ -555,7 +584,8 @@ void DrawHelp(int option)
 						fixPrint(4, 21, fontColorWhite, 3, "using the vertical test to move");
 						fixPrint(4, 22, fontColorWhite, 3, "the scroll to each edge.");
 						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
-						break;
+					break;
+
 					case 2:
 						fixPrint(11, 6, fontColorGreen, 3, "SCROLL TEST (2/2)");
 
@@ -566,107 +596,113 @@ void DrawHelp(int option)
 						fixPrint(4, 13, fontColorWhite, 3, "Sonic is a trademark of Sega");
 						fixPrint(4, 14, fontColorWhite, 3, "Enterprises Ltd. Kiki Kaikai");
 						fixPrint(4, 15, fontColorWhite, 3, "is a trademark of Taito.");
-						break;
-				}
-				break;
-			case HELP_VSCROLL:
-				fixPrint(10, 6, fontColorGreen, 3, "GRID SCROLL TEST");
-
-				fixPrint(4, 9, fontColorWhite, 3, "A grid is scrolled vertically or");
-				fixPrint(4, 10, fontColorWhite, 3, "horizontally, which can be used");
-				fixPrint(4, 11, fontColorWhite, 3, "to test linearity of the signal");
-				fixPrint(4, 12, fontColorWhite, 3, "and how well the display or");
-				fixPrint(4, 13, fontColorWhite, 3, "video processor copes with");
-				fixPrint(4, 14, fontColorWhite, 3, "scrolling and framerate.");
-
-				fixPrint(4, 16, fontColorWhite, 3, "Button 'B' can be used to toggle");
-				fixPrint(4, 17, fontColorWhite, 3, "between horizontal and vertical,");
-				fixPrint(4, 18, fontColorWhite, 3, "while Up/Down regulate speed.");
-
-				fixPrint(4, 20, fontColorWhite, 3, "Button 'A' stops the scroll and");
-				fixPrint(4, 21, fontColorWhite, 3, "'Left' changes direction.");
-				break;
-			case HELP_SOUND:
-				fixPrint(12, 6, fontColorGreen, 3, "SOUND TEST");
-
-				fixPrint(4, 9, fontColorWhite, 3, "You can test the sound from the");
-				fixPrint(4, 10, fontColorWhite, 3, "4X 2-channel PWM and");
-				fixPrint(4, 11, fontColorWhite, 3, "Genesis/Mega Drive PSG here.");
-
-				fixPrint(4, 13, fontColorWhite, 3, "Panning can be changed when");
-				fixPrint(4, 14, fontColorWhite, 3, "possible. This can help you");
-				fixPrint(4, 15, fontColorWhite, 3, "identify stereo cabling issues.");
-
-				fixPrint(4, 17, fontColorWhite, 3, "PSG has 200hz, 2khz and 4khz");
-				fixPrint(4, 18, fontColorWhite, 3, "tones on its channels and white");
-				fixPrint(4, 19, fontColorWhite, 3, "noise at 500hz.");
-				break;
-		case HELP_LED:
-				switch (page)
-				{
-				case 1:
-					fixPrint(14, 6, fontColorGreen, 3, "BACKLIT TEST");
-
-					fixPrint(4, 9, fontColorWhite, 3, "This test allows you to check");
-					fixPrint(4, 10, fontColorWhite, 3, "how the display's backlit works");
-					fixPrint(4, 11, fontColorWhite, 3, "when only a small array of");
-					fixPrint(4, 12, fontColorWhite, 3, "pixels is shown.");
-
-					fixPrint(4, 14, fontColorWhite, 3, "The user can move around the");
-					fixPrint(4, 15, fontColorWhite, 3, "white pixel arrays with the");
-					fixPrint(4, 16, fontColorWhite, 3, "d-pad, and change the size of");
-					fixPrint(4, 17, fontColorWhite, 3, "the pixel array with 'A'.");
-					fixPrint(4, 18, fontColorWhite, 3, "The 'B' button allows the user");
-					fixPrint(4, 19, fontColorWhite, 3, "to hide the pixel array in");
-					fixPrint(4, 20, fontColorWhite, 3, "order to alternate a fully black");
-					fixPrint(4, 21, fontColorWhite, 3, "screen.");
 					break;
 				}
+			break;
+
+				case HELP_VSCROLL:
+					fixPrint(10, 6, fontColorGreen, 3, "GRID SCROLL TEST");
+
+					fixPrint(4, 9, fontColorWhite, 3, "A grid is scrolled vertically or");
+					fixPrint(4, 10, fontColorWhite, 3, "horizontally, which can be used");
+					fixPrint(4, 11, fontColorWhite, 3, "to test linearity of the signal");
+					fixPrint(4, 12, fontColorWhite, 3, "and how well the display or");
+					fixPrint(4, 13, fontColorWhite, 3, "video processor copes with");
+					fixPrint(4, 14, fontColorWhite, 3, "scrolling and framerate.");
+
+					fixPrint(4, 16, fontColorWhite, 3, "Button 'B' can be used to toggle");
+					fixPrint(4, 17, fontColorWhite, 3, "between horizontal and vertical,");
+					fixPrint(4, 18, fontColorWhite, 3, "while Up/Down regulate speed.");
+
+					fixPrint(4, 20, fontColorWhite, 3, "Button 'A' stops the scroll and");
+					fixPrint(4, 21, fontColorWhite, 3, "'Left' changes direction.");
 				break;
+
+				case HELP_SOUND:
+					fixPrint(12, 6, fontColorGreen, 3, "SOUND TEST");
+
+					fixPrint(4, 9, fontColorWhite, 3, "You can test the sound from the");
+					fixPrint(4, 10, fontColorWhite, 3, "4X 2-channel PWM and");
+					fixPrint(4, 11, fontColorWhite, 3, "Genesis/Mega Drive PSG here.");
+
+					fixPrint(4, 13, fontColorWhite, 3, "Panning can be changed when");
+					fixPrint(4, 14, fontColorWhite, 3, "possible. This can help you");
+					fixPrint(4, 15, fontColorWhite, 3, "identify stereo cabling issues.");
+
+					fixPrint(4, 17, fontColorWhite, 3, "PSG has 200hz, 2khz and 4khz");
+					fixPrint(4, 18, fontColorWhite, 3, "tones on its channels and white");
+					fixPrint(4, 19, fontColorWhite, 3, "noise at 500hz.");
+				break;
+
+			case HELP_LED:
+				switch (page)
+				{
+					case 1:
+						fixPrint(14, 6, fontColorGreen, 3, "BACKLIT TEST");
+
+						fixPrint(4, 9, fontColorWhite, 3, "This test allows you to check");
+						fixPrint(4, 10, fontColorWhite, 3, "how the display's backlit works");
+						fixPrint(4, 11, fontColorWhite, 3, "when only a small array of");
+						fixPrint(4, 12, fontColorWhite, 3, "pixels is shown.");
+
+						fixPrint(4, 14, fontColorWhite, 3, "The user can move around the");
+						fixPrint(4, 15, fontColorWhite, 3, "white pixel arrays with the");
+						fixPrint(4, 16, fontColorWhite, 3, "d-pad, and change the size of");
+						fixPrint(4, 17, fontColorWhite, 3, "the pixel array with 'A'.");
+						fixPrint(4, 18, fontColorWhite, 3, "The 'B' button allows the user");
+						fixPrint(4, 19, fontColorWhite, 3, "to hide the pixel array in");
+						fixPrint(4, 20, fontColorWhite, 3, "order to alternate a fully black");
+						fixPrint(4, 21, fontColorWhite, 3, "screen.");
+					break;
+				}
+			break;
+
 			case HELP_LAG:
 				switch (page)
 				{
-				case 1:
-					fixPrint(13, 6, fontColorGreen, 3, "LAG TEST (1/2)");
+					case 1:
+						fixPrint(13, 6, fontColorGreen, 3, "LAG TEST (1/2)");
 
-					fixPrint(4, 9, fontColorWhite, 3, "This test is designed to be used");
-					fixPrint(4, 10, fontColorWhite, 3, "with two displays conected at");
-					fixPrint(4, 11, fontColorWhite, 3, "the same time. One being a CRT,");
-					fixPrint(4, 12, fontColorWhite, 3, "or a display with a known lag as");
-					fixPrint(4, 13, fontColorWhite, 3, "reference, and the other the");
-					fixPrint(4, 14, fontColorWhite, 3, "display to test.");
+						fixPrint(4, 9, fontColorWhite, 3, "This test is designed to be used");
+						fixPrint(4, 10, fontColorWhite, 3, "with two displays conected at");
+						fixPrint(4, 11, fontColorWhite, 3, "the same time. One being a CRT,");
+						fixPrint(4, 12, fontColorWhite, 3, "or a display with a known lag as");
+						fixPrint(4, 13, fontColorWhite, 3, "reference, and the other the");
+						fixPrint(4, 14, fontColorWhite, 3, "display to test.");
 
-					fixPrint(4, 16, fontColorWhite, 3, "Using a camera, a picture should");
-					fixPrint(4, 17, fontColorWhite, 3, "be taken of both screens at the");
-					fixPrint(4, 18, fontColorWhite, 3, "same time. The picture will show");
-					fixPrint(4, 19, fontColorWhite, 3, "the frame discrepancy between");
-					fixPrint(4, 20, fontColorWhite, 3, "them.");
+						fixPrint(4, 16, fontColorWhite, 3, "Using a camera, a picture should");
+						fixPrint(4, 17, fontColorWhite, 3, "be taken of both screens at the");
+						fixPrint(4, 18, fontColorWhite, 3, "same time. The picture will show");
+						fixPrint(4, 19, fontColorWhite, 3, "the frame discrepancy between");
+						fixPrint(4, 20, fontColorWhite, 3, "them.");
 
-					fixPrint(4, 22, fontColorWhite, 3, "The circles in the bottom help");
-					fixPrint(4, 23, fontColorWhite, 3, "determine the frame even when");
-					fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
+						fixPrint(4, 22, fontColorWhite, 3, "The circles in the bottom help");
+						fixPrint(4, 23, fontColorWhite, 3, "determine the frame even when");
+						fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
 					break;
-				case 2:
-					fixPrint(13, 6, fontColorGreen, 3, "LAG TEST (2/2)");
 
-					fixPrint(4, 9, fontColorWhite, 3, "the numbers are blurry.");
+					case 2:
+						fixPrint(13, 6, fontColorGreen, 3, "LAG TEST (2/2)");
 
-					fixPrint(4, 11, fontColorWhite, 3, "This version of the suite can be");
-					fixPrint(4, 12, fontColorWhite, 3, "used with a Sega Nomad as the");
-					fixPrint(4, 13, fontColorWhite, 3, "reference display.");
+						fixPrint(4, 9, fontColorWhite, 3, "the numbers are blurry.");
 
-					fixPrint(4, 15, fontColorWhite, 3, "You can also split the video");
-					fixPrint(4, 16, fontColorWhite, 3, "signal and feed both displays.");
+						fixPrint(4, 11, fontColorWhite, 3, "This version of the suite can be");
+						fixPrint(4, 12, fontColorWhite, 3, "used with a Sega Nomad as the");
+						fixPrint(4, 13, fontColorWhite, 3, "reference display.");
 
-					fixPrint(4, 18, fontColorWhite, 3, "The vertical bars on the sides");
-					fixPrint(4, 19, fontColorWhite, 3, "change color each frame to help");
-					fixPrint(4, 20, fontColorWhite, 3, "when using LCD photos.");
+						fixPrint(4, 15, fontColorWhite, 3, "You can also split the video");
+						fixPrint(4, 16, fontColorWhite, 3, "signal and feed both displays.");
 
-					fixPrint(4, 22, fontColorWhite, 3, "Press A to start/stop, B to");
-					fixPrint(4, 23, fontColorWhite, 3, "reset and C for B&W test.");
+						fixPrint(4, 18, fontColorWhite, 3, "The vertical bars on the sides");
+						fixPrint(4, 19, fontColorWhite, 3, "change color each frame to help");
+						fixPrint(4, 20, fontColorWhite, 3, "when using LCD photos.");
+
+						fixPrint(4, 22, fontColorWhite, 3, "Press A to start/stop, B to");
+						fixPrint(4, 23, fontColorWhite, 3, "reset and C for B&W test.");
 					break;
-				}
-				break;
+					}
+			break;
+
 			case HELP_ALTERNATE:
 				/* fixPrint("ALTERNATE 240p/480i", 7, 6, fontColorGreen);
 
@@ -680,7 +716,8 @@ void DrawHelp(int option)
 				fixPrint("resolution; press it again when", 4, 114, fontColorWhite);
 				fixPrint("you are able to see the screen", 4, 122, fontColorWhite);
 				fixPrint("back in your display.", 4, 130, fontColorWhite); */
-				break;
+			break;
+
 			case HELP_VIDEO:
 				/* fixPrint("VIDEO OPTIONS", 10, 6, fontColorGreen);
 
@@ -692,7 +729,8 @@ void DrawHelp(int option)
 				fixPrint("For PAL consoles, you can also", 4, 98, fontColorWhite);
 				fixPrint("enable full 240p, instead of", 4, 106, fontColorWhite);
 				fixPrint("224p.", 4, 114, fontColorWhite); */
-				break;
+			break;
+
 			case HELP_AUDIOSYNC:
 				fixPrint(11, 6, fontColorGreen, 3, "AUDIO SYNC TEST");
 
@@ -706,7 +744,8 @@ void DrawHelp(int option)
 				fixPrint(4, 16, fontColorWhite, 3, "hardware.");
 
 				fixPrint(4, 18, fontColorWhite, 3, "Press A to start/stop the test.");
-				break;
+			break;
+
 			case HELP_CONTRAST:
 				fixPrint(12, 6, fontColorGreen, 3, "PLUGE CONTRAST");
 
@@ -720,7 +759,8 @@ void DrawHelp(int option)
 				fixPrint(4, 15, fontColorWhite, 3, "contrast and brightness.");
 
 				fixPrint(4, 17, fontColorWhite, 3, "The C button returns to PLUGE.");
-				break;
+			break;
+
 			case HELP_MEMVIEW:
 				fixPrint(13, 6, fontColorGreen, 3, "MEMORY VIEWER");
 
@@ -739,24 +779,23 @@ void DrawHelp(int option)
 				fixPrint(4, 21, fontColorWhite, 3, "- Button B jumps to relevant");
 				fixPrint(4, 22, fontColorWhite, 3, "memory locations");
 				fixPrint(4, 23, fontColorWhite, 3, "- Button C toggles ASCII");
-				break;
+			break;
 		default:
 			exit = 1;
 			break;
 	}
 
-		p1 = volMEMBYTE(P1_CURRENT);
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
 		if (p1e & JOY_RIGHT)
 		{
-			if(page + 1 <= totalpages)
+			if (page + 1 <= totalpages)
 			{
 				suiteClearFixLayer();
 				page++;
 			}
-			if(dirty)
+			if (dirty)
 			{
 				redraw = 1;
 				dirty = 0;
@@ -765,12 +804,12 @@ void DrawHelp(int option)
 
 		if (p1e & JOY_LEFT)
 		{
-			if(page - 1 > 0)
+			if (page - 1 > 0)
 			{
 				suiteClearFixLayer();
 				page--;
 			}
-			if(dirty)
+			if (dirty)
 			{
 				redraw = 1;
 				dirty = 0;
