@@ -32,8 +32,43 @@
 
 BYTE p1,p2,ps,p1e,p2e;
 
+// MAME says 0x7000 and 0xF000 are the same
+// We confirmed with the scope that they are the lowest, and the same
+// 0x7111 is slightly higher than 0xF111
+// lowest colors are 0x8222, 0xF111, 0x7111, (0x7000 & 0xF000)
+
+
+/*
+A color word is composed in the following manner:
+Bit 	15 	14 	13 	12 	11 	10 	9 	8 	7 	6 	5 	4 	3 	2 	1 	0
+Def 	Dk  R0	G0	B0	R4	R3	R2	R1	G4	G3	G2	G1	B4	B3	B2	B1
+*/
+
+WORD PackColor(short r, short g, short b, BYTE dark)
+{
+	WORD color = 0;
+	BYTE r_lsb, r_msb, g_lsb, g_msb, b_lsb, b_msb;
+
+	r_lsb = r & (short)0x01;
+	r_msb = (r & (short)0x1E) >> 1;
+
+	g_lsb = g & (short)0x01;
+	g_msb = (g & (short)0x1E) >> 1;
+
+	b_lsb = b & (short)0x01;
+	b_msb = (b & (short)0x1E) >> 1;
+
+	color = (dark & 0x01) << 15 | (r_lsb << 14) | (g_lsb << 13) | (b_lsb << 12) | r_msb << 8 | g_msb << 4 | b_msb;
+	return color;
+}
+
+//		Experimenting with values, until w eget the AES flashcart we can't measure IRE. Measured with MVS and JAMMA
+//      0 transp, 1 fondo,  2 external, 3 top middle, 4 second middle, 5 third middle, 6 fourth middle, 7 external middle, 8 external center
+//		2 external, 7 middle, 8 center
 static const ushort plugergb_pal[]= {
-		0x8000, 0x8000, 0x7000, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
+	//                  XXXXXX                                  XXXXXX  XXXXXX
+	//	0x0000, 0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
+		0x8000, 0x8000, 0x8222, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xF111, 0x7000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
 static const ushort plugentsc_pal[]= {
 		0x8000, 0x8000, 0x8222, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf111, 0x7000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
 
@@ -45,26 +80,27 @@ void tp_pluge()
 
 	while (!done)
 	{
-		int palindex = 16, palcount = 1, sprindex = 1;
+		int palindex = 16, sprindex = 1;
 
 		if (draw)
 		{
+			backgroundColor(0x8000);
 			gfxClear();
 
 			pictureInit(&plugergb_back, &plugergb, sprindex, palindex, 0, 0,FLIP_NONE);
-			palJobPut(palindex,palcount,plugergb_pal);
+			palJobPut(palindex,1,plugergb_pal);
+			sprindex += plugergb_back.info->stripSize*2;
+			palindex += plugergb.palInfo->count;
 
 			pictureInit(&plugentsc_back, &plugentsc, sprindex, palindex, 0, 0,FLIP_NONE);
-			palJobPut(palindex,palcount,plugentsc_pal);
+			palJobPut(palindex,1,plugentsc_pal);
 
 			if (!IsNTSC){
 				pictureHide(&plugentsc_back);
 				pictureShow(&plugergb_back);
-				palJobPut(palindex,palcount,plugergb_pal);
 			} else {
 				pictureHide(&plugergb_back);
 				pictureShow(&plugentsc_back);
-				palJobPut(palindex,palcount,plugentsc_pal);
 			}
 
 			draw = 0;
@@ -89,12 +125,10 @@ void tp_pluge()
 			if (!IsNTSC){
 				pictureHide(&plugentsc_back);
 				pictureShow(&plugergb_back);
-				palJobPut(palindex,palcount,plugergb_pal);
 				fixPrint(24, 3, fontColorRed, 3, "RGB FULL RANGE");
 			} else {
 				pictureHide(&plugergb_back);
 				pictureShow(&plugentsc_back);
-				palJobPut(palindex,palcount,plugentsc_pal);
 				fixPrint(24, 3, fontColorRed, 3, "NTSC 7.5 IRE  ");
 			}
 			text = 60;
@@ -575,18 +609,19 @@ void tp_gray_ramp()
 
 void tp_white_rgb()
 {
-	int done = 0, color = 1, draw = 1;
+	int done = 0, color = 1, draw = 1, editmode = 0, sel = 0;
+	short r = 31, g = 31, b = 31, dark = 0, text = 0;
+	WORD edit_color = 0xFFFF;
 
+	gfxClear();
 	while (!done)
 	{
 		if (draw)
 		{
-			gfxClear();
-
 			switch (color)
 			{
 				case 1:
-					backgroundColor(0xFFFF);
+					backgroundColor(edit_color);
 				break;
 
 				case 2:
@@ -607,22 +642,84 @@ void tp_white_rgb()
 			}
 			draw = 0;
 		}
+
+		if(text)
+		{
+			text--;
+			if(!text)
+				suiteClearFixLayer();
+		}
+
+		if(editmode)
+		{
+			fixPrintf(16, 5, fontColorSolid, 4, "%cR:%02d %cG:%02d %cB:%02d %cD: %d", 
+								sel == 0 ? '>' : ' ', r, 
+								sel == 1 ? '>' : ' ', g,
+								sel == 2 ? '>' : ' ', b,
+								sel == 3 ? '>' : ' ', dark);
+		}
+		
 		SCClose();
 		waitVBlank();
 
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if (p1e & JOY_A)
+		if(!editmode)
 		{
-			color++;
-			draw = 1;
+			if (p1e & JOY_A)
+			{
+				color++;
+				draw = 1;
+			}
+
+			if (p1e & JOY_B)
+			{
+				color--;
+				draw = 1;
+			}
+
+			if (color > 5)
+				color = 1;
+
+			if (color < 1)
+				color = 5;
+
+			if(draw)
+			{
+				char colorname[20];
+
+				switch(color)
+				{
+				case 1:
+					sprintf(colorname, "%s", edit_color != 0xFFFF ? "Edit " : "White");
+					break;
+				case 2:
+					sprintf(colorname, "Black");
+					break;
+				case 3:
+					sprintf(colorname, "Red  ");
+					break;
+				case 4:
+					sprintf(colorname, "Green");
+					break;
+				case 5:
+					sprintf(colorname, "Blue ");
+					break;
+				}
+				fixPrintf(28, 25, color == 1 ? fontColorGreen : fontColorWhite, 3, colorname);
+				text = 60;
+			}
+
+			if(checkHelp(HELP_WHITE))
+				draw = 1;
 		}
 
-		if (p1e & JOY_B)
+		if (p1e & JOY_C && color == 1)
 		{
-			color--;
-			draw = 1;
+			editmode = !editmode;
+			if(!editmode)
+				suiteClearFixLayer();
 		}
 
 		if (ps & P1_START)
@@ -630,14 +727,97 @@ void tp_white_rgb()
 			done = 1;
 		}
 
-		if(checkHelp(HELP_WHITE))
-			draw = 1;
+		if(editmode)
+		{
+			short *edit = NULL, hasedit = 0;
 
-		if (color > 5)
-			color = 1;
+			if (p1e & JOY_LEFT)
+				sel --;
 
-		if (color < 1)
-			color = 5;
+			if (p1e & JOY_RIGHT)
+				sel ++;
+
+			if(sel < 0)
+				sel = 3;
+			if(sel > 3)
+				sel = 0;
+
+			switch(sel)
+			{
+				case 0:
+					edit = &r;
+					break;
+				case 1:
+					edit = &g;
+					break;
+				case 2:
+					edit = &b;
+					break;
+				case 3:
+					edit = &dark;
+					break;
+			}
+
+			if(p1e & JOY_UP)
+			{
+				(*edit)++;
+				hasedit = 1;
+			}
+
+			if(p1e & JOY_DOWN)
+			{
+				(*edit)--;
+				hasedit = 1;
+			}
+
+			if (p1e & JOY_A)
+			{
+				*edit = 0;
+				hasedit = 1;
+			}
+
+			if (p1e & JOY_B)
+			{
+				*edit = 31;
+				hasedit = 1;
+			}
+
+			if (p1e & JOY_D)
+			{
+				dark = !dark;
+				hasedit = 1;
+			}
+
+			if(hasedit)
+			{
+				if(sel != 3)
+				{
+					if(*edit < 0)
+						*edit = 0;
+					if(*edit > 31)
+						*edit = 31;
+				}
+			
+				if(sel == 3)
+				{
+					if(*edit < 0)
+						*edit = 0;
+					if(*edit > 1)
+						*edit = 1;
+				}
+
+				edit_color = PackColor(r, g, b, dark);
+				backgroundColor(edit_color);
+			}
+
+			if(bkp_data.debug_dip1 & DP_DEBUG1)
+			{
+				char buffer[5];
+
+				intToHex(edit_color, buffer, 4);
+				fixPrint(20, 7, fontColorGreen, 3, buffer);
+			}
+		}		
 	}
 }
 
