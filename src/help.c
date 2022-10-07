@@ -64,6 +64,7 @@ void DrawHelp(int option)
 	case HELP_MANUALLAG:
 	case HELP_HSCROLL:
 	case HELP_MEMVIEW:
+	case HELP_WHITE:
 		totalpages = 2;
 		break;
 	case HELP_PLUGE:
@@ -365,19 +366,37 @@ void DrawHelp(int option)
 				fixPrint(4, 13, fontColorWhite, 3, "are gray, with no color bias.");
 				break;
 			case HELP_WHITE:
-				fixPrint(14, 6, fontColorGreen, 3, "WHITE SCREEN");
+				switch (page)
+				{
+					case 1:
+						fixPrint(11, 6, fontColorGreen, 3, "WHITE SCREEN (1/2)");
 
-				fixPrint(4, 9, fontColorWhite, 3, "This pattern can be changed");
-				fixPrint(4, 10, fontColorWhite, 3, "between white, black, red,");
-				fixPrint(4, 11, fontColorWhite, 3, "green and blue screens with the");
-				fixPrint(4, 12, fontColorWhite, 3, "'A' and 'B' buttons.");
+						fixPrint(4, 9, fontColorWhite, 3, "This pattern can be changed");
+						fixPrint(4, 10, fontColorWhite, 3, "between white, black, red,");
+						fixPrint(4, 11, fontColorWhite, 3, "green and blue screens with the");
+						fixPrint(4, 12, fontColorWhite, 3, "'A' and 'B' buttons.");
 
-				fixPrint(4, 14, fontColorWhite, 3, "Some displays and scalers have");
-				fixPrint(4, 15, fontColorWhite, 3, "issues when changing between a");
-				fixPrint(4, 16, fontColorWhite, 3, "black 0 IRE and a white screen.");
+						fixPrint(4, 14, fontColorWhite, 3, "Some displays and scalers have");
+						fixPrint(4, 15, fontColorWhite, 3, "issues when changing between a");
+						fixPrint(4, 16, fontColorWhite, 3, "black 0 IRE and a white screen.");
 
-				fixPrint(4, 18, fontColorWhite, 3, "A custom color mode is");
-				fixPrint(4, 19, fontColorWhite, 3, "available by pressing 'C'.");
+						fixPrint(4, 18, fontColorWhite, 3, "A custom color mode is");
+						fixPrint(4, 19, fontColorWhite, 3, "available by pressing 'C'");
+						fixPrint(4, 20, fontColorWhite, 3, "while in the white screen.");
+						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
+						break;
+					case 2:
+						fixPrint(11, 6, fontColorGreen, 3, "WHITE SCREEN (2/2)");
+
+						fixPrint(4, 9, fontColorWhite, 3, "While in edit mode, left and");
+						fixPrint(4, 10, fontColorWhite, 3, "right change between colors,");
+						fixPrint(4, 11, fontColorWhite, 3, "and up & down change values.");
+
+						fixPrint(4, 14, fontColorWhite, 3, "'A' and 'B' buttons go to");
+						fixPrint(4, 15, fontColorWhite, 3, "zero and 31, while 'D' toggles");
+						fixPrint(4, 16, fontColorWhite, 3, "the dark bit.");
+						break;
+				}
 				break;
 			case HELP_CONVERGENCE:
 				fixPrint(12, 6, fontColorGreen, 3, "CONVERGENCE TESTS");

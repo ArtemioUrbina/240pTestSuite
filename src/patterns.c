@@ -611,7 +611,7 @@ void tp_white_rgb()
 {
 	int done = 0, color = 1, draw = 1, editmode = 0, sel = 0;
 	short r = 31, g = 31, b = 31, dark = 0, text = 0;
-	WORD edit_color = 0xFFFF;
+	WORD edit_color = 0x7FFF;
 
 	gfxClear();
 	while (!done)
@@ -620,24 +620,24 @@ void tp_white_rgb()
 		{
 			switch (color)
 			{
-				case 1:
+				case 1:		// White/Edit
 					backgroundColor(edit_color);
 				break;
 
-				case 2:
-					backgroundColor(0x8000);
+				case 2:		// Black
+					backgroundColor(0x0000);
 				break;
 
-				case 3:
-					backgroundColor(0x8F00);
+				case 3:		// Red
+					backgroundColor(0x4F00);
 				break;
 
-				case 4:
-					backgroundColor(0x80F0);
+				case 4:		// Green
+					backgroundColor(0x20F0);
 				break;
 
-				case 5:
-					backgroundColor(0x800F);
+				case 5:		// Blue
+					backgroundColor(0x100F);
 				break;
 			}
 			draw = 0;
@@ -652,7 +652,7 @@ void tp_white_rgb()
 
 		if(editmode)
 		{
-			fixPrintf(16, 5, fontColorSolid, 4, "%cR:%02d %cG:%02d %cB:%02d %cD: %d", 
+			fixPrintf(15, 5, fontColorSolid, 4, "%cR:%02d %cG:%02d %cB:%02d %cD: %d", 
 								sel == 0 ? '>' : ' ', r, 
 								sel == 1 ? '>' : ' ', g,
 								sel == 2 ? '>' : ' ', b,
@@ -692,7 +692,7 @@ void tp_white_rgb()
 				switch(color)
 				{
 				case 1:
-					sprintf(colorname, "%s", edit_color != 0xFFFF ? "Edit " : "White");
+					sprintf(colorname, "%s", edit_color != 0x7FFF ? "Edit " : "White");
 					break;
 				case 2:
 					sprintf(colorname, "Black");
@@ -812,10 +812,11 @@ void tp_white_rgb()
 
 			if(bkp_data.debug_dip1 & DP_DEBUG1)
 			{
-				char buffer[5];
+				char buffer[7];
 
-				intToHex(edit_color, buffer, 4);
-				fixPrint(20, 7, fontColorGreen, 3, buffer);
+				sprintf(buffer, "0x");
+				intToHex(edit_color, buffer+2, 4);
+				fixPrint(23, 7, fontColorSolid, 4, buffer);
 			}
 		}		
 	}
