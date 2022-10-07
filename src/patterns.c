@@ -399,25 +399,45 @@ void tp_color_bleed_check()
 
 void tp_grid()
 {
-	int done = 0, draw = 1, gray = 0;
+	int done = 0, draw = 1, updatepalette = 0, gray = 0;
 	picture image;
 
 	while (!done)
 	{
 		if (draw)
 		{
+			backgroundColor(0x8000);
 			gfxClear();
 
-			pictureInit(&image, &grid, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,grid.palInfo->count,grid.palInfo->data);
+			if(vmode_snk)
+			{
+				pictureInit(&image, &grid_304, 1, 16, 0, 0,FLIP_NONE);
+				palJobPut(16,grid_304.palInfo->count,grid_304.palInfo->data);
+			}
+			else
+			{
+				pictureInit(&image, &grid, 1, 16, 0, 0,FLIP_NONE);
+				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
+			}
 			draw = 0;
+			updatepalette = 1; 
 		}
 
-		if (!gray)
+		if(updatepalette)
 		{
-			volMEMWORD(0x402204) = 0x8000;
-		} else {
-			volMEMWORD(0x402204) = 0x7777;
+			if (!gray)
+			{
+				if(vmode_snk)
+					volMEMWORD(0x400206) = 0x8000;
+				else
+					volMEMWORD(0x400204) = 0x8000;
+			} else {
+				if(vmode_snk)
+					volMEMWORD(0x400206) = 0x7777;
+				else
+					volMEMWORD(0x400204) = 0x7777;
+			}
+			updatepalette = 0;
 		}
 
 		SCClose();
@@ -429,13 +449,11 @@ void tp_grid()
 		if (p1e & JOY_A)
 		{
 			gray = !gray;
+			updatepalette = 1;
 		}
 
 		if (p1e & JOY_B || ps & P1_START)
-		{
 			done = 1;
-			return;
-		}
 
 		if(checkHelp(HELP_GRID))
 			draw = 1;

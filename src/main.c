@@ -816,11 +816,13 @@ void _240p_mvs_game_change(void)
 {
 }
 
+#define DEMO_BG	4
+#define DEMO_LEN 1800
 void draw_mvs_demo()
 {
-	int toggle = 0, demo_frames = 1800, freeplay = 0, redraw = 0, credits = 0;
-	picture foreground;
-	picture background;
+	int toggle = 0, demo_frames = DEMO_LEN, demo_change = 0, freeplay = 0, redraw = 0;
+	int currdemo = 0;
+	picture background, foreground;
 
 	backgroundColor(0x8000);
 	gfxClear();
@@ -829,6 +831,7 @@ void draw_mvs_demo()
 	fixPrint(12, 6, fontColorGreen, 3, "240p Test Suite");
 	fixPrint(10, 26, fontColorGreen, 3, "2022 Dasutin/Artemio");
 
+	demo_change = 1;
 	while(demo_frames)
 	{
 		int credits = 0;
@@ -838,7 +841,8 @@ void draw_mvs_demo()
 		
 		if(redraw)
 		{
-			switch(redraw)
+			currdemo ++;
+			switch(currdemo)
 			{
 				case 1:
 					backgroundColor(0x8000);
@@ -852,11 +856,21 @@ void draw_mvs_demo()
 				break;
 				case 3:
 					backgroundColor(0x8000);
-					pictureInit(&background, &grid, 1, 16, 0, 0,FLIP_NONE);
-					palJobPut(16,grid.palInfo->count,grid.palInfo->data);
+					if(vmode_snk)
+					{
+						pictureInit(&background, &grid_304, 1, 16, 0, 0,FLIP_NONE);
+						palJobPut(16,grid_304.palInfo->count,grid_304.palInfo->data);
+					}
+					else
+					{
+						pictureInit(&background, &grid, 1, 16, 0, 0,FLIP_NONE);
+						palJobPut(16,grid.palInfo->count,grid.palInfo->data);
+					}
 				break;
-				default:
+				case 4:
 					backgroundColor(0x8000);
+					pictureInit(&background, &conver_rgb_b, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,conver_rgb_b.palInfo->count,conver_rgb_b.palInfo->data);
 				break;
 			}
 			redraw = 0;
@@ -878,15 +892,13 @@ void draw_mvs_demo()
 		if(toggle > 60)
 			toggle = 0;
 		demo_frames--;
+		demo_change--;
 
-		if(demo_frames == 1600)
+		if(demo_change == 0)
+		{
+			demo_change = DEMO_LEN/DEMO_BG;
 			redraw = 1;
-
-		if(demo_frames == 1000)
-			redraw = 2;
-
-		if(demo_frames == 400)
-			redraw = 3;
+		}
 
 		if(volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{

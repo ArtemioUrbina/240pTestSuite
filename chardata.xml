@@ -70,6 +70,9 @@
   <pict id="grid">
     <file>gfx\grid.png</file>
   </pict>
+  <pict id="grid_304">
+	<file>gfx\grid_304.png</file>
+  </pict>
   <pict id="grayramp">
     <file>gfx\grayramp.png</file>
   </pict>
