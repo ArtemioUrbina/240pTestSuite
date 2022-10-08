@@ -75,6 +75,22 @@ The following is for the modified ROMs for use with cartridges (Checksums not co
 	</part>
 	</software>
 ```
+For the Neo Geo CD (Copy the CHD image)
+```
+	<software name="240ptestngcd">
+		<description>240p Test Suite Neo Geo CD</description>
+		<year>2022</year>
+		<publisher>Dasutin/Artemio</publisher>
+		<info name="alt_title" value="240pTestSuite" />
+		<info name="serial" value="NGCD-2501 (USA)" />
+		<info name="release" value="20200904 (USA)" />
+		<part name="cdrom" interface="neocd_cdrom">
+			<diskarea name="cdrom">
+				<disk name="240pTestSuite" sha1="8cefd6a76b45bac8a1fdae0691ca33e737aa41d7"/>
+			</diskarea>
+		</part>
+	</software>
+```
 
 ## TODO
 
