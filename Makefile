@@ -44,6 +44,7 @@ LIBDIR = $(BASEDIR)/m68k/lib
 # Output: {cart, cd} *lower case* #
 ###################################
 OUTPUT = cart
+#OUTPUT = cd
 
 ############################
 # Settings for cart output #
@@ -124,12 +125,14 @@ neo:
 	$(RM) $(NBPATH)240ptest.neo
 else
 neo:
-	$(CP) out/char.bin cd/240P_CHR.SPR
+	$(CP) out/char.bin cd/char.bin
+	cd cd && $(CHARSPLIT) char.bin -cd 240P_CHR
+	$(RM) cd/char.bin
 	$(CP) out/fix.bin cd/240P_FIX.FIX
 	$(CP) out/m1.rom cd/240P.Z80
 	$(CP) out/v1.rom cd/240P.PCM
 	cd cd && $(ISO) -iso-level 1 -o 240pTestSuite.iso -pad -N -V "240PTESTSUITE" 240P_PRG.PRG 240P.Z80 240P_CHR.SPR 240P_FIX.FIX 240P.PCM ABS.TXT BIB.TXT CPY.TXT IPL.TXT
-	cd cd && $(CHDMAN) createcd -i 240pTestSuite.iso -o 240pTestSuite.chd
+	cd cd && $(CHDMAN) createcd -i 240pTestSuite.cue -o 240pTestSuite.chd
 	$(CP) cd/240pTestSuite.iso cd/iso/240pTestSuite.iso
 	$(CP) cd/240pTestSuite.chd cd/chd/240pTestSuite.chd
 	$(RM) cd/240pTestSuite.iso
