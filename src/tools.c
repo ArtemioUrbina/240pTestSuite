@@ -163,11 +163,10 @@ void menu_options()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
+		readController();
 
-		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
+		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrintf(14, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
 		fixPrintf(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
@@ -195,10 +194,10 @@ void menu_options()
 			}
 		}
 
-		if (curse == 1 && (p1e & JOY_LEFT || p1e & JOY_RIGHT))
+		if (curse == 1 && (PRESSED_LEFT || PRESSED_RIGHT))
 			toggle = 1;
 
-		if (p1e & JOY_A || toggle)
+		if (PRESSED_A || toggle)
 		{
 			gfxClear();
 			switch (curse)
@@ -215,7 +214,7 @@ void menu_options()
 			redraw = 1;
 		}
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 			done = 1;
 
 		if (checkHelp(HELP_GENERAL))
@@ -285,4 +284,18 @@ void menu_footer()
 		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
 		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 	}
+}
+
+inline void readController()
+{
+	p1  = volMEMBYTE(P1_CURRENT);
+	p1e = volMEMBYTE(P1_EDGE);
+	ps  = volMEMBYTE(PS_CURRENT);
+	pse = volMEMBYTE(PS_EDGE);
+}
+
+inline void clearController()
+{
+	p1 = p2 = ps = pse = p1e = p2e = p1b = p2b = 0;
+	waitVBlank();
 }

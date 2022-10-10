@@ -34,13 +34,13 @@ int checkHelp(int helpID)
 {
 	if (isMVS)
 	{
-		if (volMEMBYTE(P1_EDGE) & JOY_D)
+		if (PRESSED_D)
 		{
 			DrawHelp(helpID);
 			return 1;
 		}
 	} else {
-		if (volMEMBYTE(PS_CURRENT) & P1_SELECT)
+		if (PRESSED_SELECT)
 		{
 			DrawHelp(helpID);
 			return 1;
@@ -784,10 +784,9 @@ void DrawHelp(int option)
 			break;
 	}
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_RIGHT)
+		if (PRESSED_RIGHT)
 		{
 			if (page + 1 <= totalpages)
 			{
@@ -801,7 +800,7 @@ void DrawHelp(int option)
 			}
 		}
 
-		if (p1e & JOY_LEFT)
+		if (PRESSED_LEFT)
 		{
 			if (page - 1 > 0)
 			{
@@ -815,10 +814,11 @@ void DrawHelp(int option)
 			}
 		}
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 		{
 			exit = 1;
 			gfxClear();
 		}
 	}
+	clearController();
 }

@@ -108,8 +108,7 @@ void tp_pluge()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
 		if (text)
 		{
@@ -118,7 +117,7 @@ void tp_pluge()
 				suiteClearFixLayer();
 		}
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			IsNTSC = !IsNTSC;
 			if (!IsNTSC){
@@ -134,7 +133,7 @@ void tp_pluge()
 			SCClose();
 		}
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_PLUGE))
@@ -200,10 +199,9 @@ void tp_colorchart()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 		{
 			done = 1;
 			return;
@@ -249,8 +247,7 @@ void tp_colorbars()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
 		if (text)
 		{
@@ -259,7 +256,7 @@ void tp_colorbars()
 				suiteClearFixLayer();
 		}
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			Is75 = !Is75;
 			if (!Is75) {
@@ -275,7 +272,7 @@ void tp_colorbars()
 			SCClose();
 		}
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_601CB))
@@ -318,8 +315,7 @@ void tp_smpte_color_bars()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
 		if (text)
 		{
@@ -328,7 +324,7 @@ void tp_smpte_color_bars()
 				suiteClearFixLayer();
 		}
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			Is75 = !Is75;
 
@@ -345,7 +341,7 @@ void tp_smpte_color_bars()
 			SCClose();
 		}
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_SMPTE))
@@ -372,10 +368,9 @@ void tp_ref_color_bars()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_601CB))
@@ -417,10 +412,9 @@ void tp_color_bleed_check()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			Ischeck = !Ischeck;
 			if (!Ischeck) {
@@ -433,7 +427,7 @@ void tp_color_bleed_check()
 			SCClose();
 		}
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_BLEED))
@@ -485,16 +479,15 @@ void tp_grid()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			gray = !gray;
 			updatepalette = 1;
 		}
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 			done = 1;
 
 		if(checkHelp(HELP_GRID))
@@ -557,20 +550,19 @@ void tp_monoscope()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			pattern++;
 			if (pattern > 7)
 				pattern = 1;
 		}
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 			gray = !gray;
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_MONOSCOPE))
@@ -597,10 +589,9 @@ void tp_gray_ramp()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_GRAY))
@@ -663,18 +654,17 @@ void tp_white_rgb()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
 		if (!editmode)
 		{
-			if (p1e & JOY_A)
+			if (PRESSED_A)
 			{
 				color++;
 				draw = 1;
 			}
 
-			if (p1e & JOY_B)
+			if (PRESSED_B)
 			{
 				color--;
 				draw = 1;
@@ -720,24 +710,24 @@ void tp_white_rgb()
 				draw = 1;
 		}
 
-		if (p1e & JOY_C && color == 1)
+		if (PRESSED_C && color == 1)
 		{
 			editmode = !editmode;
 			if (!editmode)
 				suiteClearFixLayer();
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (editmode)
 		{
 			short *edit = NULL, hasedit = 0;
 
-			if (p1e & JOY_LEFT)
+			if (PRESSED_LEFT)
 				sel --;
 
-			if (p1e & JOY_RIGHT)
+			if (PRESSED_RIGHT)
 				sel ++;
 
 			if (sel < 0)
@@ -764,31 +754,31 @@ void tp_white_rgb()
 				break;
 			}
 
-			if (p1e & JOY_UP)
+			if (PRESSED_UP)
 			{
 				(*edit)++;
 				hasedit = 1;
 			}
 
-			if (p1e & JOY_DOWN)
+			if (PRESSED_DOWN)
 			{
 				(*edit)--;
 				hasedit = 1;
 			}
 
-			if (p1e & JOY_A)
+			if (PRESSED_A)
 			{
 				*edit = 0;
 				hasedit = 1;
 			}
 
-			if (p1e & JOY_B)
+			if (PRESSED_B)
 			{
 				*edit = 31;
 				hasedit = 1;
 			}
 
-			if (p1e & JOY_D)
+			if (PRESSED_D)
 			{
 				dark = !dark;
 				hasedit = 1;
@@ -880,10 +870,9 @@ void tp_100_ire()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			if (irenum != 0)
 				irenum--;
@@ -891,7 +880,7 @@ void tp_100_ire()
 			text = 60;
 		}
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 		{
 			if (irenum != 6)
 				irenum++;
@@ -899,7 +888,7 @@ void tp_100_ire()
 			text = 60;
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_IRE))
@@ -949,10 +938,9 @@ void tp_sharpness()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			Isbrick = !Isbrick;
 
@@ -966,10 +954,10 @@ void tp_sharpness()
 			SCClose();
 		}
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 			done = 1;
 
-		if(checkHelp(HELP_SHARPNESS))
+		if (checkHelp(HELP_SHARPNESS))
 			draw = 1;
 	}
 }
@@ -989,10 +977,9 @@ void tp_overscan()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 	}
 }
@@ -1041,10 +1028,9 @@ void tp_convergence()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			pattern++;
 			if (pattern > 3)
@@ -1054,7 +1040,7 @@ void tp_convergence()
 			draw = 1;
 		}
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 		{
 			if (pattern < 3)
 			{
@@ -1068,7 +1054,7 @@ void tp_convergence()
 			draw = 1;
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_CONVERGENCE))

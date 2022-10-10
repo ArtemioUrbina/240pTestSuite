@@ -34,7 +34,7 @@
 
 bkp_ram_info bkp_data;
 
-BYTE p1,p2,ps,p1e,p2e,p1b,p2b;
+BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL;
 
 static const ushort fixPalettes[]= {
@@ -66,11 +66,10 @@ void menu_tp()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
+		readController();
 
-		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
+		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrint(5, 8, curse == 1 ? fontColorRed : fontColorWhite, 3, "Pluge");
 		fixPrint(5, 9, curse == 2 ? fontColorRed : fontColorWhite, 3, "Color Bars");
@@ -92,13 +91,13 @@ void menu_tp()
 
 		menu_footer();
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 			done = 1;
 
 		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			gfxClear();
 			switch (curse)
@@ -189,11 +188,10 @@ void menu_vt()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
+		readController();
 
-		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
+		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrint(5, 10, curse == 1 ? fontColorRed : fontColorWhite, 3, "Drop Shadow Test");
 		fixPrint(5, 11, curse == 2 ? fontColorRed : fontColorWhite, 3, "Striped Sprite Test");
@@ -211,13 +209,13 @@ void menu_vt()
 
 		menu_footer();
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 			done = 1;
 
-		if(checkHelp(HELP_GENERAL))
+		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			gfxClear();
 			switch (curse)
@@ -292,11 +290,10 @@ void menu_at()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
+		readController();
 
-		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
+		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrint(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Sound Test");
 		fixPrint(5, 15, curse == 2 ? fontColorRed : fontColorWhite, 3, "Audio Sync Test");
@@ -306,13 +303,13 @@ void menu_at()
 
 		menu_footer();
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 			done = 1;
 
 		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			gfxClear();
 			switch (curse)
@@ -355,11 +352,10 @@ void menu_ht()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
+		readController();
 
-		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
+		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrint(5, 13, curse == 1 ? fontColorRed : fontColorWhite, 3, "Controller Test");
 		fixPrint(5, 14, curse == 2 ? fontColorRed : fontColorWhite, 3, "SDRAM Check");
@@ -372,13 +368,13 @@ void menu_ht()
 
 		menu_footer();
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 			done = 1;
 
-		if(checkHelp(HELP_GENERAL))
+		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			gfxClear();
 			switch (curse)
@@ -435,8 +431,7 @@ void credits()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
 		fixPrint(16, 6, fontColorGreen, 3, "Credits");
 		fixPrint(28, 8, fontColorGreen, 3, "Ver. 0.1");
@@ -467,7 +462,7 @@ void credits()
 		fixPrint(5, y++, fontColorGreen, 3, "Info on using this test suite:");
 		fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");
 
-		if (p1e & JOY_B || ps & P1_START)
+		if (PRESSED_B || PRESSED_START)
 			done = 1;
 	}
 	return;
@@ -496,11 +491,10 @@ void menu_main()
 		SCClose();
 		waitVBlank();
 
-		p1  = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
+		readController();
 
-		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
+		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
+		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrint(6, 12, curse == 1 ? fontColorRed : fontColorWhite, 3, "Test Patterns");
 		fixPrint(6, 13, curse == 2 ? fontColorRed : fontColorWhite, 3, "Video Tests");
@@ -518,7 +512,7 @@ void menu_main()
 		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			gfxClear();
 			switch (curse)
@@ -646,7 +640,7 @@ void draw_mvs_demo()
 
 		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
 		credits = volMEMBYTE(BIOS_NM_CREDIT);
-		p1 = volMEMBYTE(PS_CURRENT);
+		readController();
 
 		if (toggle == 30)
 			fixPrint(14, 23, fontColorWhite, 3, "            ");
@@ -702,7 +696,8 @@ void draw_mvs_title()
 
 		SCClose();
 		waitVBlank();
-		p1 = volMEMBYTE(PS_CURRENT);
+
+		readController();
 		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
 
 		if (toggle == 30)

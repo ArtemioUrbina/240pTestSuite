@@ -235,13 +235,11 @@ void vt_drop_shadow_test()
 		SCClose();
 		waitVBlank();
 
+		readController();
+
 		drawshadow = !drawshadow;
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
-
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			back ++;
 			if(back > 1)
@@ -250,7 +248,7 @@ void vt_drop_shadow_test()
 		}
 
 		// change between even and odd frames
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 		{
 			drawshadow = !drawshadow;
 			evenframes = !evenframes;
@@ -258,27 +256,27 @@ void vt_drop_shadow_test()
 			text = 120;
 		}
 
-		if (p1e & JOY_C)
+		if (PRESSED_C)
 		{
 			spr_type = !spr_type;
 			changeSprite = 1;
 		}
 
-		if (p1 & JOY_UP)
+		if (PRESSED_UP)
 		{
 			y--;
 			if(y < 0)
 				y = 0;
 		}
 
-		if (p1 & JOY_DOWN)
+		if (PRESSED_DOWN)
 		{
 			y++;
 			if(y > 192)
 				y = 192;
 		}
 
-		if (p1 & JOY_LEFT)
+		if (PRESSED_LEFT)
 		{
 			x--;
 			if (flip != FLIP_X && !spr_type)
@@ -291,7 +289,7 @@ void vt_drop_shadow_test()
 				x = 0;
 		}
 
-		if (p1 & JOY_RIGHT)
+		if (PRESSED_RIGHT)
 		{
 			x++;
 			if (flip != FLIP_NONE && !spr_type)
@@ -304,11 +302,11 @@ void vt_drop_shadow_test()
 				x = 288;
 		}
 
-		if(checkHelp(HELP_SHADOW))
-			draw = 1;
-
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
+
+		if (checkHelp(HELP_SHADOW))
+			draw = 1;
 	}
 }
 
@@ -419,11 +417,9 @@ void vt_striped_sprite_test()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			back ++;
 			if(back > 1)
@@ -431,35 +427,35 @@ void vt_striped_sprite_test()
 			changeBack = 1;
 		}
 
-		if (p1 & JOY_UP)
+		if (PRESSED_UP)
 		{
 			y--;
 			if(y < 0)
 				y = 0;
 		}
 
-		if (p1 & JOY_DOWN)
+		if (PRESSED_DOWN)
 		{
 			y++;
 			if(y > 192)
 				y = 192;
 		}
 
-		if (p1 & JOY_LEFT)
+		if (PRESSED_LEFT)
 		{
 			x--;
 			if (x < 0)
 				x = 0;
 		}
 
-		if (p1 & JOY_RIGHT)
+		if (PRESSED_RIGHT)
 		{
 			x++;
 			if (x > 288)
 				x = 288;
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_STRIPED))
@@ -547,8 +543,7 @@ void vt_lag_test()
 		fixPrint(22, 3, fontColorBlack, 3, "seconds");
 		fixPrint(31, 3, fontColorBlack, 3, "frames");
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
 		if (framecnt > 8)
 			framecnt = 1;
@@ -601,16 +596,16 @@ void vt_lag_test()
 		if (hours > 99)
 			hours = 0;
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 			pause = !pause;
 
-		if (p1e & JOY_B && pause)
+		if (PRESSED_B && pause)
 		{
 			frames = hours = minutes = seconds = 0;
 			framecnt = 1;
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 		{
 			clearSprites(1,260);
 			done = 1;
@@ -641,8 +636,7 @@ void vt_reflex_test()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
 		if (loadvram)
 		{
@@ -709,10 +703,13 @@ void vt_reflex_test()
 			usersound = 0;
 		}
 
+		if (PRESSED_START)
+			done = 1;
+
 		if (checkHelp(HELP_MANUALLAG))
 			loadvram = 1;
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			if (change)
 			{
@@ -735,29 +732,26 @@ void vt_reflex_test()
 			}
 		}
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 		{
 			view++;
 			if (view > 2)
 				view = 0;
 		}
 
-		if (p1e & JOY_C)
+		if (PRESSED_C)
 		{
 			audio = !audio;
 			draw = 1;
 		}
 
-		if (p1e & JOY_DOWN)
+		if (PRESSED_DOWN)
 		{
 			variation = !variation;
 			if (!variation)
 				vary = 0;
 			draw = 1;
 		}
-
-		if (ps & P1_START)
-			done = 1;
 
 		if (drawoffset)
 		{
@@ -969,10 +963,9 @@ void vt_reflex_test()
 		{
 			waitVBlank();
 
-			p1e = volMEMBYTE(P1_EDGE);
-			ps  = volMEMBYTE(PS_CURRENT);
+			readController();
 
-			if (p1e & JOY_B || ps & P1_START)
+			if (PRESSED_B || PRESSED_START)
 				done = 1;
 		}
 	}
@@ -1093,23 +1086,22 @@ void vt_scroll_test()
 		if (frame > 90)
 			frame = 1;
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 			pause = !pause;
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 		{
 			vertical = !vertical;
 			pause = 0;
 			changed = 1;
 		}
 
-		if (p1e & JOY_C)
+		if (PRESSED_C)
 			acc *= -1;
 
-		if (p1e & JOY_UP)
+		if (PRESSED_UP)
 		{
 			acc++;
 			if (acc >= 20)
@@ -1118,7 +1110,7 @@ void vt_scroll_test()
 				acc = 1;
 		}
 
-		if (p1e & JOY_DOWN)
+		if (PRESSED_DOWN)
 		{
 			acc--;
 			if (acc <= -20)
@@ -1129,10 +1121,10 @@ void vt_scroll_test()
 
 		if (vertical)
 		{
-			if (p1e & JOY_LEFT)
+			if (PRESSED_LEFT)
 				currxvert --;
 
-			if (p1e & JOY_RIGHT)
+			if (PRESSED_RIGHT)
 				currxvert ++;
 
 			if (currxvert > 2)
@@ -1141,7 +1133,7 @@ void vt_scroll_test()
 				currxvert = 0;
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_HSCROLL))
@@ -1169,8 +1161,7 @@ void vt_gridscroll_test()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
 		if (!horizontal)
 		{
@@ -1195,30 +1186,30 @@ void vt_gridscroll_test()
 			}
 		}
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 			pause = !pause;
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 			horizontal = !horizontal;
 
-		if (p1e & JOY_LEFT)
+		if (PRESSED_LEFT)
 			direction = !direction;
 
-		if (p1e & JOY_UP)
+		if (PRESSED_UP)
 		{
 			acc++;
 			if (acc == 10)
 				acc = 10;
 		}
 
-		if (p1e & JOY_DOWN)
+		if (PRESSED_DOWN)
 		{
 			acc--;
 			if (acc == 1)
 				acc = 1;
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_STRIPES))
@@ -1268,7 +1259,7 @@ void vt_horizontal_stripes()
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
-		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
+		if (!alternate && (PRESSED_UP || PRESSED_DOWN))
 		{
 			if (field == 0) {
 				palJobPut(16,horzstripe_alt.palInfo->count,horzstripe_alt.palInfo->data);
@@ -1282,20 +1273,19 @@ void vt_horizontal_stripes()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 			alternate = ~alternate;
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 		{
 			docounter = ~docounter;
 			if (!docounter)
 				suiteClearFixLayer();
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_STRIPES))
@@ -1339,7 +1329,7 @@ void vt_vertical_stripes()
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
-		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
+		if (!alternate && (PRESSED_UP || PRESSED_DOWN))
 		{
 			if (field == 0) {
 				palJobPut(16,vertstripe_alt.palInfo->count,vertstripe_alt.palInfo->data);
@@ -1353,20 +1343,19 @@ void vt_vertical_stripes()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 			alternate = ~alternate;
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 		{
 			docounter = ~docounter;
 			if (!docounter)
 				suiteClearFixLayer();
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_STRIPES))
@@ -1412,7 +1401,7 @@ void vt_checkerboard()
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
-		if (!alternate && (p1e & JOY_UP || p1e & JOY_DOWN))
+		if (!alternate && (PRESSED_UP || PRESSED_DOWN))
 		{
 			if (field == 0) {
 				palJobPut(16,check_alt.palInfo->count,check_alt.palInfo->data);
@@ -1423,20 +1412,19 @@ void vt_checkerboard()
 			}
 		}
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 			alternate = ~alternate;
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 		{
 			docounter = ~docounter;
 			if(!docounter)
 				suiteClearFixLayer();
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 		{
 			done = 1;
 			suiteClearFixLayer();
@@ -1493,11 +1481,9 @@ void vt_backlitzone_test()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			block++;
 			if(block > 5)
@@ -1529,7 +1515,7 @@ void vt_backlitzone_test()
 			draw = 1;
 		}
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_LED))
@@ -1555,10 +1541,9 @@ void at_sound_test()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_SOUND))
@@ -1595,7 +1580,7 @@ void at_audiosync_test()
 		SCClose();
 		waitVBlank();
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			cycle = !cycle;
 			if (!cycle)
@@ -1620,10 +1605,9 @@ void at_audiosync_test()
 			}
 		}
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
 		if (checkHelp(HELP_AUDIOSYNC))
@@ -1738,7 +1722,7 @@ void ht_controller_test()
 
 		fixPrint(9, 26, fontColorGreen, 3, "Use START+LEFT to exit");
 
-		if (ps & P1_START && p1e & JOY_LEFT)
+		if (HOLD_START && HOLD_LEFT)
 			done = 1;
 	}
 }
@@ -1869,19 +1853,18 @@ void ht_memory_viewer(u32 address)
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			docrc = !docrc;
 			redraw = 1;
 		}
 
-		if (p1e & JOY_B)
+		if (PRESSED_B)
 		{
 			locpos ++;
 			if (locpos == MAX_LOCATIONS)
@@ -1890,16 +1873,13 @@ void ht_memory_viewer(u32 address)
 			redraw = 1;
 		}
 
-		if (p1e & JOY_C)
+		if (PRESSED_C)
 		{
 			ascii = !ascii;
 			redraw = 1;
 		}
 
-		if(checkHelp(HELP_MEMVIEW))
-			redraw = 1;
-
-		if (p1e & JOY_LEFT)
+		if (PRESSED_LEFT)
 		{
 			if (address >= 0x1C0)
 				address -= 0x1C0;
@@ -1909,13 +1889,13 @@ void ht_memory_viewer(u32 address)
 			redraw = 1;
 		}
 
-		if (p1e & JOY_RIGHT)
+		if (PRESSED_RIGHT)
 		{
 			address += 0x1C0;	
 			redraw = 1;
 		}
 
-		if (p1e & JOY_UP)
+		if (PRESSED_UP)
 		{
 			if (address >= 0x10000)
 				address -= 0x10000;
@@ -1925,11 +1905,14 @@ void ht_memory_viewer(u32 address)
 			redraw = 1;
 		}
 
-		if (p1e & JOY_DOWN)
+		if (PRESSED_DOWN)
 		{
 			address += 0x10000;
 			redraw = 1;
 		}
+
+		if(checkHelp(HELP_MEMVIEW))
+			redraw = 1;
 	}
 	return;
 }
@@ -1949,10 +1932,9 @@ void ht_test_ng_ram()
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (ps & P1_START)
+		if (PRESSED_START)
 			done = 1;
 	}
 }
@@ -2235,13 +2217,12 @@ void ht_check_ng_bios_crc(u32 address)
 		SCClose();
 		waitVBlank();
 
-		p1e = volMEMBYTE(P1_EDGE);
-		ps  = volMEMBYTE(PS_CURRENT);
+		readController();
 
-		if (p1e & P1_START)
+		if (PRESSED_START)
 			done = 1;
 
-		if (p1e & JOY_A)
+		if (PRESSED_A)
 		{
 			swap = !swap;
 			displayBIOS(address, swap);
@@ -2295,8 +2276,7 @@ void ht_displayregs()
 		SCClose();
 		waitVBlank();
 
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
+		readController();
 
 		fixPrintf(14, 6, fontColorGreen, 3, "HW Registers");
 
@@ -2304,12 +2284,13 @@ void ht_displayregs()
 		y++;
 		displayRegByte(4, y++, "REG_STATUS_A", REG_STATUS_A);
 		displayRegByte(4, y++, "REG_STATUS_B", REG_STATUS_B);
-		displayRegByte(4, y++, "REG_SYSTYPE", REG_SYSTYPE);
 		displayRegByte(4, y++, "BIOS_MVS_FLAG", BIOS_MVS_FLAG);
+		displayRegByte(4, y++, "REG_SYSTYPE", REG_SYSTYPE);
 		displayRegByte(4, y++, "REG_DIPSW", REG_DIPSW);
 
 		menu_footer();
-		if (p1e & P1_START)
+
+		if (PRESSED_START)
 			done = 1;
 	}
 	return;

@@ -43,7 +43,7 @@ extern bkp_ram_info bkp_data;
 #define DP_DEBUG8	0x80
 
 extern BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL;
-extern BYTE p1,p2,ps,p1e,p2e,p1b,p2b;
+extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 
 #define SYSTEM_AES			0x00
 #define SYSTEM_MVS			0x80
