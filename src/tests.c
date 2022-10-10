@@ -262,21 +262,21 @@ void vt_drop_shadow_test()
 			changeSprite = 1;
 		}
 
-		if (HOLD_UP)
+		if (HELD_UP)
 		{
 			y--;
 			if(y < 0)
 				y = 0;
 		}
 
-		if (HOLD_DOWN)
+		if (HELD_DOWN)
 		{
 			y++;
 			if(y > 192)
 				y = 192;
 		}
 
-		if (HOLD_LEFT)
+		if (HELD_LEFT)
 		{
 			x--;
 			if (flip != FLIP_X && !spr_type)
@@ -289,7 +289,7 @@ void vt_drop_shadow_test()
 				x = 0;
 		}
 
-		if (HOLD_RIGHT)
+		if (HELD_RIGHT)
 		{
 			x++;
 			if (flip != FLIP_NONE && !spr_type)
@@ -427,28 +427,28 @@ void vt_striped_sprite_test()
 			changeBack = 1;
 		}
 
-		if (HOLD_UP)
+		if (HELD_UP)
 		{
 			y--;
 			if(y < 0)
 				y = 0;
 		}
 
-		if (HOLD_DOWN)
+		if (HELD_DOWN)
 		{
 			y++;
 			if(y > 192)
 				y = 192;
 		}
 
-		if (HOLD_LEFT)
+		if (HELD_LEFT)
 		{
 			x--;
 			if (x < 0)
 				x = 0;
 		}
 
-		if (HOLD_RIGHT)
+		if (HELD_RIGHT)
 		{
 			x++;
 			if (x > 288)
@@ -1722,7 +1722,7 @@ void ht_controller_test()
 
 		fixPrint(9, 26, fontColorGreen, 3, "Use START+LEFT to exit");
 
-		if (HOLD_START && HOLD_LEFT)
+		if (HELD_START && HELD_LEFT)
 			done = 1;
 	}
 }
