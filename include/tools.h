@@ -57,15 +57,15 @@ void clearController();
 #define PRESSED_SELECT	(pse & P1_SELECT)
 
 // Regular is Held
-#define HOLD_RIGHT	(p1 & JOY_RIGHT)
-#define HOLD_LEFT	(p1 & JOY_LEFT)
-#define HOLD_UP		(p1 & JOY_UP)
-#define HOLD_DOWN	(p1 & JOY_DOWN)
-#define HOLD_A		(p1 & JOY_A)
-#define HOLD_B		(p1 & JOY_B)
-#define HOLD_C		(p1 & JOY_C)
-#define HOLD_D		(p1 & JOY_D)
-#define HOLD_START	(ps & P1_START)
-#define HOLD_SELECT	(ps & P1_SELECT)
+#define HOLD_RIGHT		(p1 & JOY_RIGHT)
+#define HOLD_LEFT		(p1 & JOY_LEFT)
+#define HOLD_UP			(p1 & JOY_UP)
+#define HOLD_DOWN		(p1 & JOY_DOWN)
+#define HOLD_A			(p1 & JOY_A)
+#define HOLD_B			(p1 & JOY_B)
+#define HOLD_C			(p1 & JOY_C)
+#define HOLD_D			(p1 & JOY_D)
+#define HOLD_START		(ps & P1_START)
+#define HOLD_SELECT		(ps & P1_SELECT)
 
 #endif /* _TOOLS_H_ */

@@ -262,21 +262,21 @@ void vt_drop_shadow_test()
 			changeSprite = 1;
 		}
 
-		if (PRESSED_UP)
+		if (HOLD_UP)
 		{
 			y--;
 			if(y < 0)
 				y = 0;
 		}
 
-		if (PRESSED_DOWN)
+		if (HOLD_DOWN)
 		{
 			y++;
 			if(y > 192)
 				y = 192;
 		}
 
-		if (PRESSED_LEFT)
+		if (HOLD_LEFT)
 		{
 			x--;
 			if (flip != FLIP_X && !spr_type)
@@ -289,7 +289,7 @@ void vt_drop_shadow_test()
 				x = 0;
 		}
 
-		if (PRESSED_RIGHT)
+		if (HOLD_RIGHT)
 		{
 			x++;
 			if (flip != FLIP_NONE && !spr_type)
@@ -427,28 +427,28 @@ void vt_striped_sprite_test()
 			changeBack = 1;
 		}
 
-		if (PRESSED_UP)
+		if (HOLD_UP)
 		{
 			y--;
 			if(y < 0)
 				y = 0;
 		}
 
-		if (PRESSED_DOWN)
+		if (HOLD_DOWN)
 		{
 			y++;
 			if(y > 192)
 				y = 192;
 		}
 
-		if (PRESSED_LEFT)
+		if (HOLD_LEFT)
 		{
 			x--;
 			if (x < 0)
 				x = 0;
 		}
 
-		if (PRESSED_RIGHT)
+		if (HOLD_RIGHT)
 		{
 			x++;
 			if (x > 288)
