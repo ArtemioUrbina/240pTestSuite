@@ -248,7 +248,7 @@ void draw_background()
 
 void menu_footer()
 {
-	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx224p", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320);
+	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx%03dp", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320, isPAL ? 256 : 224);
 	if (isMVS)
 	{
 		fixPrint(23, 28, fontColorWhite, 3, isMVS ? "MVS" : "AES");

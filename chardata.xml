@@ -73,6 +73,9 @@
   <pict id="grid_304">
 	<file>gfx\grid_304.png</file>
   </pict>
+  <scrl id="grid_320_256">
+	<file>gfx\grid_320_256.png</file>
+  </scrl>
   <pict id="grayramp">
     <file>gfx\grayramp.png</file>
   </pict>

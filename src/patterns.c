@@ -439,6 +439,7 @@ void tp_grid()
 {
 	int done = 0, draw = 1, updatepalette = 0, gray = 0;
 	picture image;
+	scroller grid256;
 
 	while (!done)
 	{
@@ -452,8 +453,16 @@ void tp_grid()
 				pictureInit(&image, &grid_304, 1, 16, 0, 0,FLIP_NONE);
 				palJobPut(16,grid_304.palInfo->count,grid_304.palInfo->data);
 			} else {
-				pictureInit(&image, &grid, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,grid.palInfo->count,grid.palInfo->data);
+				if(isPAL)
+				{
+					scrollerInit(&grid256, &grid_320_256, 1, 16, 0, 16);
+					palJobPut(16,grid_320_256.palInfo->count,grid_320_256.palInfo->data);
+				}
+				else
+				{
+					pictureInit(&image, &grid, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,grid.palInfo->count,grid.palInfo->data);
+				}
 			}
 			draw = 0;
 			updatepalette = 1; 
