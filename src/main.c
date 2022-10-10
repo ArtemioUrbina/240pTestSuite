@@ -25,6 +25,7 @@
 #include <DATlib.h>
 #include <input.h>
 #include "ng.h"
+#include "tools.h"
 #include "externs.h"
 #include "patterns.h"
 #include "tests.h"
@@ -33,84 +34,8 @@
 
 bkp_ram_info bkp_data;
 
-BYTE p1,p2,ps,p1e,p2e;
+BYTE p1,p2,ps,p1e,p2e,p1b,p2b;
 BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL;
-
-// We can't detect between 2 and 4 slot systems
-void check_systype()
-{
-	BYTE reg = 0;
-
-	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0;
-
-	if (MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
-	{
-		isMVS = 1;
-		reg = volMEMBYTE(REG_SYSTYPE);
-		if (reg & MVS_MULTI)
-		{
-			isMulti = 1;
-			reg = volMEMBYTE(REG_STATUS_A);
-			if (reg & MVS_4_OR_6)
-				is6S = 1;
-			else
-				is4S = 1;
-		}
-	}
-
-	// Detect if MVS/AES IDs are in conflict
-	reg = volMEMBYTE(REG_STATUS_B);
-	if (reg & MVS_OR_AES && !isMVS)
-		hwChange = 1;
-
-	// Check is 304 mode is enabled, and follow BIOS resolution and rules
-	// Also available under options, default is 304 mode to comply
-	if (isMVS)
-	{
-		reg = volMEMBYTE(SOFT_DIP_4);
-		if (reg)
-			vmode_snk = 0;
-		else
-			vmode_snk = 1;
-	} else {
-		// read from memory card (TODO)
-		vmode_snk = 1;
-	}
-	
-	// NTSC at zero, but PAL apparently only works with the newer LPSC2 in AES
-	// we need to test what happens on an AES with LPSC-A0 & LSPC2-A2 with a PAL or modded system
-	// LSPC-A0 by NEC is the VDC part of the first generation chipset, see LSPC2-A2 for more details. (AES & MVS)
-	// LSPC2-A2 by Fujitsu is the second generation Line SPrite Controller, it is only found in cartridge systems. (AES & MVS)
-	// We also need to know what we'll do with PAL systems... since they are 240p and have different PAR (TODO)
-	if (!isMVS)
-	{
-		reg = volMEMWORD(REG_LSPCMODE);
-		if (reg & LPSC2_NTSC_PAL)
-			isPAL = 1;
-	}
-}
-
-/*
-NTSC AES
-
-    24.167829MHz main clock / 4 = 6.041957MHz pixel clock
-    6.041957MHz / 384 pixels per line = 15.734kHz horizontal rate
-    15.734kHz / 264 lines = 59.599 frames/second
-
-PAL AES
-
-    24.167829MHz main clock / 4 = 6.041957MHz pixel clock
-    6.041957MHz / 384 pixels per line = 15.734kHz horizontal rate
-    15.734kHz / 312 lines = 50.429 frames/second
-
-MVS
-
-    24.000000MHz main clock / 4 = 6.000000MHz pixel clock
-    6MHz / 384 pixels per line = 15.625kHz horizontal rate
-    15.625kHz / 264 lines = 59.1856 frames/second
-
-	Source: https://wiki.neogeodev.org/index.php?title=Framerate
-*/
 
 static const ushort fixPalettes[]= {
 	0x8000, 0x7fff, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,	// Used for BIOS Mask
@@ -124,84 +49,6 @@ static const ushort fixPalettes[]= {
 	0x8000, 0x8444, 0x0111, 0xf555, 0xf666, 0x7777, 0x8888, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
 	0x8000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 };
-
-// placed here temporarily
-inline void suiteClearFixLayer()
-{
-	if (vmode_snk)
-		BIOS_FIX_CLEAR;		// Call the SNK BIOS clear that puts the black Mask and reduces it to 304 visible pixels
-	else
-		clearFixLayer();
-}
-
-inline void gfxClear()
-{
-	clearSprites(1, MAX_SPRITES);
-	suiteClearFixLayer();
-}
-
-void draw_background_w_gil()
-{
-	int index = 1, palindex = 16;
-	picture background;
-	picture foreground;
-
-	pictureInit(&background, &back, index, palindex, 0, 0,FLIP_NONE);
-	palJobPut(palindex, back.palInfo->count,back.palInfo->data);
-	index += background.info->stripSize*2;
-	palindex += back.palInfo->count;
-
-	pictureInit(&foreground, &gillian, index, palindex, 216, 70,FLIP_NONE);
-	palJobPut(palindex, gillian.palInfo->count, gillian.palInfo->data);
-}
-
-void draw_background()
-{
-	picture background;
-
-	pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,back.palInfo->count,back.palInfo->data);
-}
-
-void menu_footer()
-{
-	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx224p", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320);
-	if (isMVS)
-	{
-		fixPrint(23, 28, fontColorWhite, 3, isMVS ? "MVS" : "AES");
-		if (is4S || is6S)
-			fixPrint(26, 28, fontColorWhite, 3, is4S ? "2/4S" : "6S");
-		else
-			fixPrint(26, 28, fontColorWhite, 3, "1S");
-		if (hwChange)
-			fixPrint(19, 28, fontColorWhite, 3, "AES>");
-	} else {
-		fixPrint(27, 28, fontColorWhite, 3, "AES");
-		if (hwChange)
-			fixPrint(23, 28, fontColorWhite, 3, "MVS>");
-	}
-
-	if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
-	{
-		fixPrint(32, 28, fontColorWhite, 3, "Japan");
-	}
-	else if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_USA))
-	{
-		fixPrint(34, 28, fontColorWhite, 3, "USA");
-	}
-	else if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_EUROPE))
-	{
-		fixPrint(31, 28, fontColorWhite, 3, "Europe");
-	}
-
-	if (isMVS && volMEMBYTE(SOFT_DIP_2))
-	{
-		int credits;
-		
-		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
-		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
-	}
-}
 
 void menu_tp()
 {
@@ -494,7 +341,7 @@ void menu_at()
 
 void menu_ht()
 {
-	int done = 0, curse = 1, cursemax = 6, redraw = 1;
+	int done = 0, curse = 1, cursemax = 7, redraw = 1;
 
 	while (!done)
 	{
@@ -518,9 +365,10 @@ void menu_ht()
 		fixPrint(5, 14, curse == 2 ? fontColorRed : fontColorWhite, 3, "SDRAM Check");
 		fixPrint(5, 15, curse == 3 ? fontColorRed : fontColorWhite, 3, "Memory Viewer");
 		fixPrint(5, 16, curse == 4 ? fontColorRed : fontColorWhite, 3, "BIOS Info");
+		fixPrint(5, 17, curse == 5 ? fontColorRed : fontColorWhite, 3, "Register View");
 
-		fixPrint(5, 18, curse == 5 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, 19, curse == 6 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, 19, curse == 6 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, 20, curse == 7 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -552,10 +400,14 @@ void menu_ht()
 				break;
 
 				case 5:
-					DrawHelp(HELP_GENERAL);
+					ht_displayregs();
 				break;
 
 				case 6:
+					DrawHelp(HELP_GENERAL);
+				break;
+
+				case 7:
 					done = 1;
 				break;
 			}
@@ -602,92 +454,21 @@ void credits()
 		fixPrint(6, y++, fontColorWhite, 3, "NeoDev (Jeff Kurtz)");
 		fixPrint(5, y++, fontColorGreen, 3, "Graphics Library");
 		fixPrint(6, y++, fontColorWhite, 3, "DATlib (HPMAN)");
-		fixPrint(5, y++, fontColorGreen, 3, "Flashcart provided by:");
-		fixPrint(6, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
+		if(isMVS)
+		{
+			fixPrint(5, y++, fontColorGreen, 3, "MVS flashcart provided by:");
+			fixPrint(6, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
+		}
+		else
+		{
+			fixPrint(5, y++, fontColorGreen, 3, "AES flashcart borrowed from:");
+			fixPrint(6, y++, fontColorWhite, 3, "Jorge Velazquez");
+		}
 		fixPrint(5, y++, fontColorGreen, 3, "Info on using this test suite:");
 		fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");
 
 		if (p1e & JOY_B || ps & P1_START)
 			done = 1;
-	}
-	return;
-}
-
-void menu_options()
-{
-	int done = 0, curse = 1, cursemax = 2, redraw = 1, text = 0;
-
-	while (!done)
-	{
-		int toggle = 0;
-
-		if (redraw)
-		{
-			gfxClear();
-			draw_background();
-			redraw = 0;
-		}
-
-		SCClose();
-		waitVBlank();
-
-		p1 = volMEMBYTE(P1_CURRENT);
-		p1e = volMEMBYTE(P1_EDGE);
-
-		if (p1e & JOY_UP)	curse=curse>1?curse-1:cursemax;
-		if (p1e & JOY_DOWN)	curse=curse<cursemax?curse+1:1;
-
-		fixPrintf(14, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
-		fixPrintf(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
-		fixPrintf(5, 18, curse == 2 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
-
-		menu_footer();
-
-		// Extra description
-		if (curse == 1)
-		{
-			fixPrintf(4, 20, fontColorGreen, 3, "The 304 mode uses the BIOS mask");
-			fixPrintf(4, 21, fontColorGreen, 3, "to hide 8 pixels on each side, ");
-			fixPrintf(4, 22, fontColorGreen, 3, "as required by SNK in games.");
-			if (!vmode_snk)
-				fixPrintf(4, 23, fontColorRed, 3, "Some systems trim pixel col. 320");
-			text = 1;
-		} else {
-			if (text)
-			{
-				int i = 0;
-
-				for (i = 20; i < 25; i++)
-					fixPrintf(4, i, fontColorGreen, 3, "                               ");
-				text = 0;
-			}
-		}
-
-		if (curse == 1 && (p1e & JOY_LEFT || p1e & JOY_RIGHT))
-			toggle = 1;
-
-		if (p1e & JOY_A || toggle)
-		{
-			gfxClear();
-			switch (curse)
-			{
-				case 1:
-					vmode_snk = !vmode_snk;
-					suiteClearFixLayer();
-				break;
-
-				case 2:
-					done = 1;
-				break;
-			}
-			redraw = 1;
-		}
-
-		if (p1e & JOY_B)
-			done = 1;
-
-		if (checkHelp(HELP_GENERAL))
-			redraw = 1;
 	}
 	return;
 }
@@ -726,11 +507,11 @@ void menu_main()
 		fixPrint(6, 14, curse == 3 ? fontColorRed : fontColorWhite, 3, "Audio Tests");
 		fixPrint(6, 15, curse == 4 ? fontColorRed : fontColorWhite, 3, "Hardware Tools");
 
-		fixPrint(6, 20, curse == 5 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(6, 21, curse == 6 ? fontColorRed : fontColorWhite, 3, "Credits");
-		fixPrint(6, 22, curse == 7 ? fontColorRed : fontColorWhite, 3, "Options");
+		fixPrint(6, 19, curse == 5 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(6, 20, curse == 6 ? fontColorRed : fontColorWhite, 3, "Credits");
+		fixPrint(6, 21, curse == 7 ? fontColorRed : fontColorWhite, 3, "Options");
 		if (showexit)
-			fixPrint(6, 23, curse == 8 ? fontColorRed : fontColorWhite, 3, "Exit");
+			fixPrint(6, 22, curse == 8 ? fontColorRed : fontColorWhite, 3, "Exit");
 
 		menu_footer();
 

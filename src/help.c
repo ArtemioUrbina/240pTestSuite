@@ -28,8 +28,7 @@
 #include "externs.h"
 #include "help.h"
 #include "string_ng.h"
-
-BYTE p1,p2,ps,p1e,p2e;
+#include "tools.h"
 
 int checkHelp(int helpID)
 {

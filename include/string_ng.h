@@ -29,9 +29,6 @@
 
 size_t strlen(const char *str);
 
-void setRandomSeed(u16 seed);
-u16 random();
-
 //char* strcpy(char *dest, const char *src);
 //char* strcat(char *dest, const char *src);
 //void* memcpy (volatile void *dest, const void *src, size_t len);
@@ -41,11 +38,6 @@ u32 intToHex(u32 value, char *str, u16 minsize);
 u16 intToStr(s32 value, char *str, u16 minsize);
 u16 uintToStr(u32 value, char *str, u16 minsize);
 void fix32ToStr(fix32 value, char *str, u16 numdec);
-int hexToDec(int hex);
-
-// Clear screen
-#define MAX_SPRITES	248
-void gfxClear();
-void suiteClearFixLayer();
+u32 byteToBin(u8 value, char *str);  // needs 10 char buffer in str
 
 #endif /* _STRING_H_ */

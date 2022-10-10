@@ -30,8 +30,7 @@
 #include "externs.h"
 #include "tests.h"
 #include "help.h"
-
-BYTE p1,p2,ps,p1e,p2e, p1b,p2b;
+#include "tools.h"
 
 static const ushort wFallPal_1[] = {
 	0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x179f, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
@@ -2239,13 +2238,79 @@ void ht_check_ng_bios_crc(u32 address)
 		p1e = volMEMBYTE(P1_EDGE);
 		ps  = volMEMBYTE(PS_CURRENT);
 
-		if (p1e & JOY_B)
+		if (p1e & P1_START)
 			done = 1;
 
-		if (p1e & JOY_C)
+		if (p1e & JOY_A)
 		{
 			swap = !swap;
 			displayBIOS(address, swap);
 		}
 	}
+}
+
+void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr)
+{
+	BYTE regb = 0;
+	char buffer[10];
+
+	regb = volMEMBYTE(regAddr);
+	intToHex(regb, buffer, 2);
+	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
+	fixPrintf(x+15, y, fontColorWhite, 3, "0x%s", buffer);
+	byteToBin(regb, buffer);
+	fixPrintf(x+22, y, fontColorWhite, 3, "%s", buffer);
+}
+
+void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr)
+{
+	WORD regw = 0;
+	char buffer[10];
+
+	regw = volMEMWORD(regAddr);
+	intToHex(regw, buffer, 4);
+	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
+	fixPrintf(x+15, y, fontColorWhite, 3, "0x%s", buffer);
+	byteToBin((regw & 0xFF00) >> 8, buffer);
+	fixPrintf(x+22, y, fontColorWhite, 3, "%s", buffer);
+	byteToBin(regw & 0x00FF, buffer);
+	fixPrintf(x+22, y+1, fontColorWhite, 3, "%s", buffer);
+}
+
+void ht_displayregs()
+{
+	int done = 0, redraw = 1;
+
+	while (!done)
+	{
+		int y = 12;
+
+		if (redraw)
+		{
+			gfxClear();
+			draw_background();
+			redraw = 0;
+		}
+
+		SCClose();
+		waitVBlank();
+
+		p1 = volMEMBYTE(P1_CURRENT);
+		p1e = volMEMBYTE(P1_EDGE);
+
+		fixPrintf(14, 6, fontColorGreen, 3, "HW Registers");
+
+		displayRegWord(4, y++, "REG_LSPCMODE", REG_LSPCMODE);
+		y++;
+		displayRegByte(4, y++, "REG_STATUS_A", REG_STATUS_A);
+		displayRegByte(4, y++, "REG_STATUS_B", REG_STATUS_B);
+		displayRegByte(4, y++, "REG_SYSTYPE", REG_SYSTYPE);
+		displayRegByte(4, y++, "BIOS_MVS_FLAG", BIOS_MVS_FLAG);
+		displayRegByte(4, y++, "REG_DIPSW", REG_DIPSW);
+
+		menu_footer();
+		if (p1e & P1_START)
+			done = 1;
+	}
+	return;
 }

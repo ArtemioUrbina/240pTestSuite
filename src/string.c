@@ -38,9 +38,6 @@
 #define P09 1000000000
 #define P10 10000000000
 
-u16 randbase;
-
-
 static const char digits[] =
 	"0001020304050607080910111213141516171819"
 	"2021222324252627282930313233343536373839"
@@ -164,6 +161,40 @@ u32 intToHex(u32 value, char *str, u16 minsize)
 	return 0;
 }
 
+u32 byteToBin(u8 value, char *str)
+{
+	u8 res, cnt;
+	char data[10];
+	char *src;
+	char *dst;
+
+	src = &data[9];
+	res = value;
+	
+	for(cnt = 0; cnt < 8; cnt++)
+	{
+		u8 c;
+
+		c = res & 0x01;
+
+		if (c) c = '1';
+		else c = '0';
+
+		*--src = c;
+		res >>= 1;
+
+		if(cnt == 3)
+			*--src = ' ';
+	}
+	
+	cnt++;
+	dst = str;
+	while(cnt--) *dst++ = *src++;
+	*dst = 0;
+
+	return 0;
+}
+
 u16 uintToStr(u32 value, char *str, u16 minsize)
 {
 	u16 len;
@@ -266,24 +297,4 @@ void fix32ToStr(fix32 value, char *str, u16 numdec)
 		*dst = 0;
 	}
 	else dst[numdec] = 0;
-}
-
-void setRandomSeed(u16 seed)
-{
-	// xor it with a random value to avoid 0 value
-	randbase = seed ^ 0xD94B;
-}
-
-u16 random()
-{
-	unsigned int fc = DAT_frameCounter;
-	randbase ^= (randbase >> 1) ^ fc;
-	randbase ^= (randbase << 1);
-
-	return randbase;
-}
-
-int hexToDec(int hex)
-{
-	return hex-(hex/16)*6;
 }

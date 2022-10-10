@@ -41,5 +41,6 @@ void ht_controller_test(void);
 void ht_memory_viewer(u32 address);
 void ht_check_ng_bios_crc(u32 address);
 void ht_test_ng_ram();
+void ht_displayregs();
 
 #endif /* _TESTS_H_ */
