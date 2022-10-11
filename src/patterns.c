@@ -438,8 +438,8 @@ void tp_color_bleed_check()
 void tp_grid()
 {
 	int done = 0, draw = 1, updatepalette = 0, gray = 0;
-	picture image;
-	scroller grid256;
+	int x = 0, y = 16;
+	scroller grid;
 
 	while (!done)
 	{
@@ -448,22 +448,21 @@ void tp_grid()
 			backgroundColor(0x8000);
 			gfxClear();
 
-			if (vmode_snk)
-			{
-				pictureInit(&image, &grid_304, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,grid_304.palInfo->count,grid_304.palInfo->data);
-			} else {
-				if(isPAL)
-				{
-					scrollerInit(&grid256, &grid_320_256, 1, 16, 0, 16);
-					palJobPut(16,grid_320_256.palInfo->count,grid_320_256.palInfo->data);
-				}
+			if(!isPAL) {
+				if (vmode_snk)
+					x = 0;
 				else
-				{
-					pictureInit(&image, &grid, 1, 16, 0, 0,FLIP_NONE);
-					palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-				}
+					x = 320;
 			}
+			else {
+				if (vmode_snk)
+					x = 640;
+				else
+					x = 960;
+			}
+			
+			scrollerInit(&grid, &grids, 1, 16, x, y);
+			palJobPut(16,grids.palInfo->count,grid_304.palInfo->data);
 			draw = 0;
 			updatepalette = 1; 
 		}
@@ -471,17 +470,9 @@ void tp_grid()
 		if (updatepalette)
 		{
 			if (!gray)
-			{
-				if (vmode_snk)
-					volMEMWORD(0x400206) = 0x8000;
-				else
-					volMEMWORD(0x400204) = 0x8000;
-			} else {
-				if (vmode_snk)
-					volMEMWORD(0x400206) = 0x7777;
-				else
-					volMEMWORD(0x400204) = 0x7777;
-			}
+				volMEMWORD(0x400206) = 0x8000;
+			else
+				volMEMWORD(0x400206) = 0x7777;
 			updatepalette = 0;
 		}
 

@@ -457,7 +457,7 @@ void credits()
 		else
 		{
 			fixPrint(5, y++, fontColorGreen, 3, "AES flashcart borrowed from:");
-			fixPrint(6, y++, fontColorWhite, 3, "Jorge Velazquez");
+			fixPrint(6, y++, fontColorWhite, 3, "El Diablo (Jorge Velazquez)");
 		}
 		fixPrint(5, y++, fontColorGreen, 3, "Info on using this test suite:");
 		fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");

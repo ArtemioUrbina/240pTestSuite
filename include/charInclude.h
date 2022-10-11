@@ -11,8 +11,8 @@ extern const scrollerInfo kiki;
 extern const paletteInfo kiki_Palettes;
 extern const scrollerInfo scroll_grid;
 extern const paletteInfo scroll_grid_Palettes;
-extern const scrollerInfo grid_320_256;
-extern const paletteInfo grid_320_256_Palettes;
+extern const scrollerInfo grids;
+extern const paletteInfo grids_Palettes;
 
 //pictures
 extern const pictureInfo back;
