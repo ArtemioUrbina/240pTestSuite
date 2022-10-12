@@ -143,9 +143,6 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 // Slots
 #define BIOS_SLOTS_DETECTED	0xD00047	
 
-// Scroller Data
-#define SCROLLER_SIZE		21
-
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22
 #define FIX32_FRAC_BITS			(32 - FIX32_INT_BITS)

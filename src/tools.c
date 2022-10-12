@@ -53,6 +53,20 @@ int hexToDec(int hex)
 	return hex-(hex/16)*6;
 }
 
+inline void readController()
+{
+	p1  = volMEMBYTE(P1_CURRENT);
+	p1e = volMEMBYTE(P1_EDGE);
+	ps  = volMEMBYTE(PS_CURRENT);
+	pse = volMEMBYTE(PS_EDGE);
+}
+
+inline void clearController()
+{
+	p1 = p2 = ps = pse = p1e = p2e = p1b = p2b = 0;
+	waitVBlank();
+}
+
 /*
 NTSC AES
 
@@ -231,7 +245,7 @@ void draw_background_w_gil()
 
 	pictureInit(&background, &back, index, palindex, 0, 0,FLIP_NONE);
 	palJobPut(palindex, back.palInfo->count,back.palInfo->data);
-	index += background.info->stripSize*2;
+	index += getPicSprites(background.info);
 	palindex += back.palInfo->count;
 
 	pictureInit(&foreground, &gillian, index, palindex, 216, 70,FLIP_NONE);
@@ -286,20 +300,6 @@ void menu_footer()
 	}
 }
 
-inline void readController()
-{
-	p1  = volMEMBYTE(P1_CURRENT);
-	p1e = volMEMBYTE(P1_EDGE);
-	ps  = volMEMBYTE(PS_CURRENT);
-	pse = volMEMBYTE(PS_EDGE);
-}
-
-inline void clearController()
-{
-	p1 = p2 = ps = pse = p1e = p2e = p1b = p2b = 0;
-	waitVBlank();
-}
-
 inline int getHorScroll()
 {
 	int x = NTSC_304;
@@ -328,10 +328,14 @@ typedef struct pictureInfo {
 	ushort		*maps[4];		//ptrs to maps (std/flipX/flipY/flipXY)
 } pictureInfo;
 */
-
-inline int getVRAMPicSize(pictureInfo *picinfo)
+/*
+	Sprites are vertical strips of tiles, with a fixed width of 1 tile (16 pixels), and an adjustable height of up to 32 tiles (512 pixels).
+	Each sprite has its own tile and attributes map, defining which tile goes in which place, how is it flipped, and which palette to use.
+	Sprites can be stuck together horizontally to make huge moveable objects. 
+*/
+inline int getPicSprites(pictureInfo *picinfo)
 {
-	return(picinfo->stripSize*2);
+	return(picinfo->tileWidth);
 }
 
 /*

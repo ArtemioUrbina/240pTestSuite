@@ -44,7 +44,10 @@ void menu_options();
 void readController();
 void clearController();
 
-int getVRAMPicSize(pictureInfo *pic);
+// get Sprite Count from picture
+int getPicSprites(pictureInfo *picinfo);
+// Scroller Data
+#define SCROLLER_SIZE		21
 
 WORD PackColor(short r, short g, short b, BYTE dark);
 

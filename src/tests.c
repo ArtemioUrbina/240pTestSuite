@@ -126,15 +126,15 @@ void vt_drop_shadow_test()
 			// load sprites
 			spri_donna = sprindex;
 			pictureInit(&donna_back, &donna, spri_donna, pali_donna, 0, 0, FLIP_NONE);
-			sprindex += donna_back.info->stripSize*2;
+			sprindex += getPicSprites(donna_back.info);
 
 			spri_slug_shadow = sprindex;
 			pictureInit(&slug_shadow_sprite, &slug_shadow, spri_slug_shadow, pali_slug_shadow, x, y, flip);
-			sprindex += slug_shadow_sprite.info->stripSize*2;
+			sprindex += getPicSprites(slug_shadow_sprite.info);
 
 			spri_slug = sprindex;
 			pictureInit(&slug_sprite, &slug, spri_slug, pali_slug, x-20, y-20, flip);
-			sprindex += slug_sprite.info->stripSize*2;
+			sprindex += getPicSprites(slug_sprite.info);
 
 			spri_shape = sprindex;
 			pictureInit(&shape_sprite, &shape_shadow, spri_shape, pali_shape, x, y, FLIP_NONE);
@@ -357,7 +357,7 @@ void vt_striped_sprite_test()
 
 			// Tiles
 			pictureInit(&donna_back, &donna, sprindex, pali_donna, 0, 0, FLIP_NONE);
-			sprindex += donna_back.info->stripSize*2;
+			sprindex += getPicSprites(donna_back.info);
 			pictureInit(&sprite, &marker_striped, sprindex, palindex, x, y, FLIP_NONE);
 
 			changeBack = 1;
@@ -1704,19 +1704,23 @@ void ht_controller_test()
 		}
 
 		// Controller 1
-		DrawController(DC_X, y, p1, P1_START, ps, P1_SELECT, mvscredit, P1_CREDIT);
+		if(volMEMBYTE(P1_STATUS) == CTRL_STANDARD)
+			DrawController(DC_X, y, p1, P1_START, ps, P1_SELECT, mvscredit, P1_CREDIT);
 		y += 4;
 
 		// Controller 2
-		DrawController(DC_X, y, p2, P2_START, ps, P2_SELECT, mvscredit, P2_CREDIT);
+		if(volMEMBYTE(P2_STATUS) == CTRL_STANDARD)
+			DrawController(DC_X, y, p2, P2_START, ps, P2_SELECT, mvscredit, P2_CREDIT);
 		if(enable4p)
 		{
 			y += 4;
 			// Controller 3
+			//if(volMEMBYTE(P1B_STATUS) == CTRL_EXPANDED)
 			DrawController(DC_X, y, p1b, P1B_START, ps, P1B_SELECT, mvscredit, P3_CREDIT);
 			y += 4;
 
 			// Controller 4
+			//if(volMEMBYTE(P2B_STATUS) == CTRL_EXPANDED)
 			DrawController(DC_X, y, p2b, P2B_START, ps, P2B_SELECT, mvscredit, P4_CREDIT);
 		}
 

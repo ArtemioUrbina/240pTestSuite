@@ -64,7 +64,7 @@ void tp_pluge()
 
 			pictureInit(&plugergb_back, &plugergb, sprindex, palindex, 0, 0,FLIP_NONE);
 			palJobPut(palindex,1,plugergb_pal);
-			sprindex += plugergb_back.info->stripSize*2;
+			sprindex += getPicSprites(plugergb_back.info);
 			palindex += plugergb.palInfo->count;
 
 			pictureInit(&plugentsc_back, &plugentsc, sprindex, palindex, 0, 0,FLIP_NONE);
@@ -190,8 +190,8 @@ void tp_colorchart()
 			else
 				scrollerInit(&background, &colorchart, scrl_index, 16, 320+back_x, PATTERN_SCROLL);
 
-			palJobPut(16, colorchart.palInfo->count, colorchart.palInfo->data);
-			index += background.info->stripSize*2;
+			palJobPut(palindex, colorchart.palInfo->count, colorchart.palInfo->data);
+			index += SCROLLER_SIZE;
 			palindex += colorchart.palInfo->count;
 
 			// ===================================
@@ -200,26 +200,26 @@ void tp_colorchart()
 
 			pictureInit(&red, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,red_chart_pal);
-			index += getVRAMPicSize(red.info)*2;
+			index += getPicSprites(red.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
-			// TODO: Figure out getVRAMPicSize
+			// TODO: Figure out getPicSprites
 			pictureInit(&green, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,green_chart_pal);
-			index += getVRAMPicSize(green.info)*2;
+			index += getPicSprites(green.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			pictureInit(&blue, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,blue_chart_pal);
-			index += getVRAMPicSize(blue.info)*2;
+			index += getPicSprites(blue.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			pictureInit(&white, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,white_chart_pal);
-			index += getVRAMPicSize(blue.info)*2;
+			index += getPicSprites(blue.info);
 			palindex += colorchartsingle.palInfo->count;
 
 			// ===================================
@@ -232,31 +232,31 @@ void tp_colorchart()
 
 			pictureInit(&d_red, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,d_red_chart_pal);
-			index += getVRAMPicSize(red.info)*2;
+			index += getPicSprites(red.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
-			// TODO: Figure out getVRAMPicSize
+			// TODO: Figure out getPicSprites
 			pictureInit(&d_green, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,d_green_chart_pal);
-			index += getVRAMPicSize(green.info)*2;
+			index += getPicSprites(green.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			pictureInit(&d_blue, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,d_blue_chart_pal);
-			index += getVRAMPicSize(blue.info)*2;
+			index += getPicSprites(blue.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			pictureInit(&d_white, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,d_white_chart_pal);
-			index += getVRAMPicSize(blue.info)*2;
+			index += getPicSprites(blue.info);
 			palindex += colorchartsingle.palInfo->count;
 
 			draw = 0;
 		}
-		
+
 		SCClose();
 		waitVBlank();
 
@@ -296,7 +296,7 @@ void tp_colorbars()
 
 			pictureInit(&colorebu_back, &colorebu, sprindex, palindex, 0, 0,FLIP_NONE);
 			palJobPut(palindex,colorebu.palInfo->count,colorebu.palInfo->data);
-			sprindex += colorebu_back.info->stripSize*2;
+			sprindex += getPicSprites(colorebu_back.info);
 			palindex += colorebu.palInfo->count;
 
 			pictureInit(&colorebu75_back, &colorebu75, sprindex, palindex, 0, 0,FLIP_NONE);
@@ -364,7 +364,7 @@ void tp_smpte_color_bars()
 
 			pictureInit(&colorbarssmpte_back, &colorbarssmpte, sprindex, palindex, 0, 0,FLIP_NONE);
 			palJobPut(palindex,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
-			sprindex += colorbarssmpte_back.info->stripSize*2;
+			sprindex += getPicSprites(colorbarssmpte_back.info);
 			palindex += colorbarssmpte.palInfo->count;
 
 			pictureInit(&colorbarssmpte75_back, &colorbarssmpte75, sprindex, palindex, 0, 0,FLIP_NONE);
@@ -461,7 +461,7 @@ void tp_color_bleed_check()
 
 			pictureInit(&colorbleedbars_back, &colorbleedbars, sprindex, palindex, 0, 0,FLIP_NONE);
 			palJobPut(palindex,colorbleedbars.palInfo->count,colorbleedbars.palInfo->data);
-			sprindex += colorbleedbars_back.info->stripSize*2;
+			sprindex += getPicSprites(colorbleedbars_back.info);
 			palindex += colorbleedbars.palInfo->count;
 
 			pictureInit(&colorbleedcheck_back, &colorbleedcheck, sprindex, palindex, 0, 0,FLIP_NONE);
@@ -958,7 +958,7 @@ void tp_100_ire()
 
 void tp_sharpness()
 {
-	int done = 0, draw = 1, Isbrick = 0;
+	int done = 0, draw = 1, Isbrick = 0, changed = 0;
 	picture sharp_back;
 	picture sharpbrick_back;
 
@@ -970,14 +970,20 @@ void tp_sharpness()
 		{
 			gfxClear();
 
-			pictureInit(&sharp_back, &sharp, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,sharp.palInfo->count,sharp.palInfo->data);
-			sprindex += sharp_back.info->stripSize*2;
+			pictureInit(&sharp_back, &sharp, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,sharp.palInfo->count,sharp.palInfo->data);
+			sprindex += getPicSprites(sharp_back.info);
 			palindex += sharp.palInfo->count;
 
-			pictureInit(&sharpbrick_back, &sharpbrick, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,sharpbrick.palInfo->count,sharpbrick.palInfo->data);
+			pictureInit(&sharpbrick_back, &sharpbrick, sprindex, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,sharpbrick.palInfo->count,sharpbrick.palInfo->data);
 
+			draw = 0;
+			changed = 1;
+		}
+
+		if(changed)
+		{
 			if (!Isbrick) {
 				pictureHide(&sharpbrick_back);
 				pictureShow(&sharp_back);
@@ -985,7 +991,7 @@ void tp_sharpness()
 				pictureHide(&sharp_back);
 				pictureShow(&sharpbrick_back);
 			}
-			draw = 0;
+			changed = 0;
 		}
 
 		SCClose();
@@ -996,14 +1002,7 @@ void tp_sharpness()
 		if (PRESSED_A)
 		{
 			Isbrick = !Isbrick;
-
-			if (!Isbrick) {
-				pictureHide(&sharpbrick_back);
-				pictureShow(&sharp_back);
-			} else {
-				pictureHide(&sharp_back);
-				pictureShow(&sharpbrick_back);
-			}
+			changed = 1;
 			SCClose();
 		}
 
