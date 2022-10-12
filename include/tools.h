@@ -44,6 +44,8 @@ void menu_options();
 void readController();
 void clearController();
 
+int getVRAMPicSize(pictureInfo *pic);
+
 WORD PackColor(short r, short g, short b, BYTE dark);
 
 // This is unbuffered, so if a palJobPut is called in the same frame, this will be overwritten
@@ -73,10 +75,10 @@ WORD PackColor(short r, short g, short b, BYTE dark);
 #define HELD_START		(ps & P1_START)
 #define HELD_SELECT		(ps & P1_SELECT)
 
-#define NTSC_304	0
-#define NTSC_320	320
-#define PAL_304		640
-#define PAL_320		960
+#define NTSC_304		0
+#define NTSC_320		320
+#define PAL_304			640
+#define PAL_320			960
 
 #define	PATTERN_SCROLL	16
 

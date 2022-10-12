@@ -319,6 +319,20 @@ inline int getHorScroll()
 	return x;
 }
 
+/** pictures
+typedef struct pictureInfo {
+	ushort		stripSize;		//size of each strip (bytes)
+	ushort		tileWidth;
+	ushort		tileHeight;
+	paletteInfo	*palInfo;
+	ushort		*maps[4];		//ptrs to maps (std/flipX/flipY/flipXY)
+} pictureInfo;
+*/
+
+inline int getVRAMPicSize(pictureInfo *picinfo)
+{
+	return(picinfo->stripSize*2);
+}
 
 /*
 A color word is composed in the following manner:
