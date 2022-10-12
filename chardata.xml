@@ -233,4 +233,10 @@
   <pict id="audiosync_floor">
     <file>gfx\audiosync_floor.png</file>
   </pict>
+  <scrl id="overscan_horz">
+    <file>gfx\overscan_horz.png</file>
+  </scrl>
+  <scrl id="overscan_vert">
+    <file>gfx\overscan_vert.png</file>
+  </scrl>
 </chardata>

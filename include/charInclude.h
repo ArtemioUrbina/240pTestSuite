@@ -15,6 +15,10 @@ extern const scrollerInfo colorchart;
 extern const paletteInfo colorchart_Palettes;
 extern const scrollerInfo grids;
 extern const paletteInfo grids_Palettes;
+extern const scrollerInfo overscan_horz;
+extern const paletteInfo overscan_horz_Palettes;
+extern const scrollerInfo overscan_vert;
+extern const paletteInfo overscan_vert_Palettes;
 
 //pictures
 extern const pictureInfo back;

@@ -1016,20 +1016,98 @@ void tp_sharpness()
 
 void tp_overscan()
 {
-	int done = 0;
-	//picture image;
-
-	gfxClear();
-
-	//pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-	//palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+	int done = 0, sprindex = 1, palindex = 16, redraw = 1, sel = 1;
+	int top_y = 128, bottom_y = -224, left_x = 480, right_x = 0;
+	//int max_t, min_t, max_l, min_l, max_b, min_b, max_r, min_r;
+	scroller top, bottom, left, right;
 
 	while (!done)
 	{
+		if(redraw)
+		{
+			gfxClear();
+
+			backgroundColor(PackColor(10, 10, 10, 0));
+			palJobPut(palindex, overscan_vert.palInfo->count, overscan_vert.palInfo->data);
+
+			scrollerInit(&top, &overscan_vert, sprindex, palindex, 0, top_y);
+			sprindex += SCROLLER_SIZE;
+
+			scrollerInit(&bottom, &overscan_vert, sprindex, palindex, 0, bottom_y);
+			sprindex += SCROLLER_SIZE;
+
+			scrollerInit(&left, &overscan_horz, sprindex, palindex, left_x, 0);
+			sprindex += SCROLLER_SIZE;
+
+			scrollerInit(&right, &overscan_horz, sprindex, palindex, right_x, 0);
+			sprindex += SCROLLER_SIZE;
+
+			redraw = 0;
+		}
+
+		scrollerSetPos(&top, 0, top_y);
+		scrollerSetPos(&bottom, 0, bottom_y);
+		scrollerSetPos(&left, left_x, 0);
+		scrollerSetPos(&right, right_x, 0);
+
+		fixPrintf(10, 16, fontColorWhite, 3, "%cTop:    %04d", sel == 1 ? '>' : ' ', top_y);
+		fixPrintf(10, 17, fontColorWhite, 3, "%cBottom: %04d", sel == 2 ? '>' : ' ', bottom_y);
+		fixPrintf(10, 18, fontColorWhite, 3, "%cLeft:   %04d", sel == 3 ? '>' : ' ', left_x);
+		fixPrintf(10, 19, fontColorWhite, 3, "%cRight:  %04d", sel == 4 ? '>' : ' ', right_x);
+
 		SCClose();
 		waitVBlank();
 
 		readController();
+
+		if(PRESSED_UP)
+			sel -= 1;
+
+		if(PRESSED_DOWN)
+			sel += 1;
+
+		if(sel < 1)
+			sel = 4;
+		if(sel > 4)
+			sel = 1;
+
+		if(HELD_RIGHT)
+		{
+			switch(sel)
+			{
+			case 1:
+				top_y -= 1;
+				break;
+			case 2:
+				bottom_y += 1;
+				break;
+			case 3:
+				left_x -= 1;
+				break;
+			case 4:
+				right_x += 1;
+				break;
+			}
+		}
+
+		if(HELD_LEFT)
+		{
+			switch(sel)
+			{
+			case 1:
+				top_y += 1;
+				break;
+			case 2:
+				bottom_y -= 1;
+				break;
+			case 3:
+				left_x += 1;
+				break;
+			case 4:
+				right_x -= 1;
+				break;
+			}
+		}
 
 		if (PRESSED_START)
 			done = 1;
