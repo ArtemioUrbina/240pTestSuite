@@ -438,7 +438,6 @@ void tp_color_bleed_check()
 void tp_grid()
 {
 	int done = 0, draw = 1, updatepalette = 0, gray = 0;
-	int x = 0, y = 16;
 	scroller grid;
 
 	while (!done)
@@ -448,21 +447,8 @@ void tp_grid()
 			backgroundColor(0x8000);
 			gfxClear();
 
-			if(!isPAL) {
-				if (vmode_snk)
-					x = 0;
-				else
-					x = 320;
-			}
-			else {
-				if (vmode_snk)
-					x = 640;
-				else
-					x = 960;
-			}
-			
-			scrollerInit(&grid, &grids, 1, 16, x, y);
-			palJobPut(16,grids.palInfo->count,grid_304.palInfo->data);
+			scrollerInit(&grid, &grids, 1, 16, getHorScroll(), PATTERN_SCROLL);
+			palJobPut(16, grids.palInfo->count, grids.palInfo->data);
 			draw = 0;
 			updatepalette = 1; 
 		}

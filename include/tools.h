@@ -68,4 +68,13 @@ void clearController();
 #define HELD_START		(ps & P1_START)
 #define HELD_SELECT		(ps & P1_SELECT)
 
+#define NTSC_304	0
+#define NTSC_320	320
+#define PAL_304		640
+#define PAL_320		960
+
+#define	PATTERN_SCROLL	16
+
+int getHorScroll();
+
 #endif /* _TOOLS_H_ */

@@ -299,3 +299,22 @@ inline void clearController()
 	p1 = p2 = ps = pse = p1e = p2e = p1b = p2b = 0;
 	waitVBlank();
 }
+
+inline int getHorScroll()
+{
+	int x = NTSC_304;
+
+	if(!isPAL) {
+		if (vmode_snk)
+			x = NTSC_304;
+		else
+			x = NTSC_320;
+	}
+	else {
+		if (vmode_snk)
+			x = PAL_304;
+		else
+			x = PAL_320;
+	}
+	return x;
+}

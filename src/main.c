@@ -587,6 +587,7 @@ void draw_mvs_demo()
 	int toggle = 0, demo_frames = DEMO_LEN, demo_change = 0, freeplay = 0, redraw = 0;
 	int currdemo = 0;
 	picture background, foreground;
+	scroller grid;
 
 	backgroundColor(0x8000);
 	gfxClear();
@@ -620,14 +621,8 @@ void draw_mvs_demo()
 				break;
 				case 3:
 					backgroundColor(0x8000);
-					if (vmode_snk)
-					{
-						pictureInit(&background, &grid_304, 1, 16, 0, 0,FLIP_NONE);
-						palJobPut(16,grid_304.palInfo->count,grid_304.palInfo->data);
-					} else {
-						pictureInit(&background, &grid, 1, 16, 0, 0,FLIP_NONE);
-						palJobPut(16,grid.palInfo->count,grid.palInfo->data);
-					}
+					scrollerInit(&grid, &grids, 1, 16, getHorScroll(), PATTERN_SCROLL);
+					palJobPut(16, grids.palInfo->count, grids.palInfo->data);
 				break;
 				case 4:
 					backgroundColor(0x8000);
