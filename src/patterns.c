@@ -119,29 +119,13 @@ void tp_pluge()
 
 void tp_colorchart()
 {
-	int done = 0, draw = 1, i = 0, pal = 0, color = 0;
-	picture image, red, green, blue, white;
+	int done = 0, draw = 1, i = 0, pal = 0, color = 0, mode = 0, scrl_index = 1;
+	scroller background; 
+	picture red, green, blue, white;
 	picture d_red, d_green, d_blue, d_white;
-	// These are still experimental, red is still incomplete
-	/*
-	ushort white_chart_pal[] = {
-		0x8000, 0x0000, 0x8111, 0xf111, 0x8222, 0xf222, 0x8333, 0xf333, 0x8444, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		0x8000, 0xf444, 0x8555, 0xf555, 0x8666, 0xf666, 0x8777, 0xf777, 0x8888, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		0x8000, 0xf888, 0x8999, 0xf999, 0x8aaa, 0xfaaa, 0x8bbb, 0xfbbb, 0x8ccc, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		0x8000, 0xfccc, 0x8ddd, 0xfddd, 0x8eee, 0xfeee, 0x8fff, 0xffff, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
-	ushort red_chart_pal[] = {
-		0x8000, 0x0000, 0x4000, 0x0100, 0x4100, 0x8200, 0xc200, 0x8300, 0xc400, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		0x8000, 0x4400, 0xc500, 0x4500, 0x8600, 0xc600, 0xc700, 0x4700, 0xc800, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		0x8000, 0x4800, 0xc900, 0x4900, 0xca00, 0x4a00, 0xcb00, 0x4b00, 0xcc00, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		0x8000, 0x4c00, 0xcd00, 0x4d00, 0xce00, 0x4e00, 0xcf00, 0x4f00, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
-	ushort green_chart_pal[] = {
-		0x8000, 0x0000, 0x2000, 0x8010, 0x2010, 0x8020, 0x2020, 0x8030, 0x2030, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		0x8000, 0x8040, 0x2040, 0x8050, 0x2050, 0x8060, 0x2060, 0x8070, 0x2070, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		0x8000, 0x8080, 0x2080, 0x8090, 0x2090, 0x80a0, 0x20a0, 0x80b0, 0x20b0, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-		0x8000, 0x80c0, 0x20c0, 0x80d0, 0x20d0, 0x80e0, 0x20e0, 0x80f0, 0x20f0, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
-	*/
 	ushort white_chart_pal[64], red_chart_pal[64], green_chart_pal[64], blue_chart_pal[64];
 	ushort d_white_chart_pal[64], d_red_chart_pal[64], d_green_chart_pal[64], d_blue_chart_pal[64];
+
 
 	memset(white_chart_pal, 0, sizeof(ushort)*64);
 	memset(red_chart_pal, 0, sizeof(ushort)*64);
@@ -153,7 +137,7 @@ void tp_colorchart()
 	memset(d_green_chart_pal, 0, sizeof(ushort)*64);
 	memset(d_blue_chart_pal, 0, sizeof(ushort)*64);
 
-	color = 1;
+	color = 0;
 	for(pal = 0; pal < 4; pal++)
 	{
 		for(i = 1; i < 9; i++)
@@ -167,7 +151,7 @@ void tp_colorchart()
 		}
 	}
 
-	color = 1;
+	color = 0;
 	for(pal = 0; pal < 4; pal++)
 	{
 		for(i = 1; i < 9; i++)
@@ -181,40 +165,59 @@ void tp_colorchart()
 		}
 	}
 	
+
 	while (!done)
 	{
 		if (draw)
 		{
-			int index = 1, palindex = 16;
+			int index = 1, palindex = 16, x = 0, y = 0, back_x = 0;
 
 			gfxClear();
 
-			pictureInit(&image, &colorchart, 1, palindex, 0, 0,FLIP_NONE);
-			palJobPut(palindex,colorchart.palInfo->count,colorchart.palInfo->data);
-			index += getVRAMPicSize(image.info);
+			if(!mode) {
+				x = 56;
+				y = 32;
+			}
+			else {
+				x = 32;
+				y = 36;
+				if(vmode_snk)
+					back_x = 8;
+			}
+
+			if(!mode)
+				scrollerInit(&background, &colorchart, scrl_index, 16, 0, PATTERN_SCROLL);
+			else
+				scrollerInit(&background, &colorchart, scrl_index, 16, 320+back_x, PATTERN_SCROLL);
+
+			palJobPut(16, colorchart.palInfo->count, colorchart.palInfo->data);
+			index += background.info->stripSize*2;
 			palindex += colorchart.palInfo->count;
 
 			// ===================================
 			// Draw Colors No Dark Bit Set
 			// ===================================
 
-			pictureInit(&red, &colorchartsingle, index, palindex, 56, 32, FLIP_NONE);
+			pictureInit(&red, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,red_chart_pal);
 			index += getVRAMPicSize(red.info)*2;
 			palindex += colorchartsingle.palInfo->count;
+			y += 40;
 
 			// TODO: Figure out getVRAMPicSize
-			pictureInit(&green, &colorchartsingle, index, palindex, 56, 72, FLIP_NONE);
+			pictureInit(&green, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,green_chart_pal);
 			index += getVRAMPicSize(green.info)*2;
 			palindex += colorchartsingle.palInfo->count;
+			y += 40;
 
-			pictureInit(&blue, &colorchartsingle, index, palindex, 56, 112, FLIP_NONE);
+			pictureInit(&blue, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,blue_chart_pal);
 			index += getVRAMPicSize(blue.info)*2;
 			palindex += colorchartsingle.palInfo->count;
+			y += 40;
 
-			pictureInit(&white, &colorchartsingle, index, palindex, 56, 152, FLIP_NONE);
+			pictureInit(&white, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,white_chart_pal);
 			index += getVRAMPicSize(blue.info)*2;
 			palindex += colorchartsingle.palInfo->count;
@@ -222,23 +225,31 @@ void tp_colorchart()
 			// ===================================
 			// Draw Colors With Dark Bit Set
 			// ===================================
-			pictureInit(&d_red, &colorchartsingle, index, palindex, 56, 48, FLIP_NONE);
+			if(!mode)
+				y = 48;
+			else
+				y = 52;
+
+			pictureInit(&d_red, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,d_red_chart_pal);
 			index += getVRAMPicSize(red.info)*2;
 			palindex += colorchartsingle.palInfo->count;
+			y += 40;
 
 			// TODO: Figure out getVRAMPicSize
-			pictureInit(&d_green, &colorchartsingle, index, palindex, 56, 88, FLIP_NONE);
+			pictureInit(&d_green, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,d_green_chart_pal);
 			index += getVRAMPicSize(green.info)*2;
 			palindex += colorchartsingle.palInfo->count;
+			y += 40;
 
-			pictureInit(&d_blue, &colorchartsingle, index, palindex, 56, 128, FLIP_NONE);
+			pictureInit(&d_blue, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,d_blue_chart_pal);
 			index += getVRAMPicSize(blue.info)*2;
 			palindex += colorchartsingle.palInfo->count;
+			y += 40;
 
-			pictureInit(&d_white, &colorchartsingle, index, palindex, 56, 168, FLIP_NONE);
+			pictureInit(&d_white, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
 			palJobPut(palindex,colorchartsingle.palInfo->count,d_white_chart_pal);
 			index += getVRAMPicSize(blue.info)*2;
 			palindex += colorchartsingle.palInfo->count;
@@ -250,6 +261,12 @@ void tp_colorchart()
 		waitVBlank();
 
 		readController();
+
+		if (PRESSED_A)
+		{
+			mode = !mode;
+			draw = 1;
+		}
 
 		if (PRESSED_B || PRESSED_START)
 		{
@@ -1001,12 +1018,12 @@ void tp_sharpness()
 void tp_overscan()
 {
 	int done = 0;
-	picture image;
+	//picture image;
 
 	gfxClear();
 
-	pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
+	//pictureInit(&image, &colorchart, 1, 16, 0, 0,FLIP_NONE);
+	//palJobPut(16,colorchart.palInfo->count,colorchart.palInfo->data);
 
 	while (!done)
 	{

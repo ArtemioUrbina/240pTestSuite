@@ -37,9 +37,9 @@
   <pict id="plugergb">
     <file>gfx\plugergb.png</file>
   </pict>
-  <pict id="colorchart">
+	<scrl id="colorchart">
     <file>gfx\colorchart.png</file>
-  </pict>
+  </scrl>
   <pict id="colorchartsingle">
 	<file>gfx\colorchartsingle.png</file>
   </pict>

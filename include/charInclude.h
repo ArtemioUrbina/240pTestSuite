@@ -11,6 +11,8 @@ extern const scrollerInfo kiki;
 extern const paletteInfo kiki_Palettes;
 extern const scrollerInfo scroll_grid;
 extern const paletteInfo scroll_grid_Palettes;
+extern const scrollerInfo colorchart;
+extern const paletteInfo colorchart_Palettes;
 extern const scrollerInfo grids;
 extern const paletteInfo grids_Palettes;
 
@@ -23,8 +25,6 @@ extern const pictureInfo plugentsc;
 extern const paletteInfo plugentsc_Palettes;
 extern const pictureInfo plugergb;
 extern const paletteInfo plugergb_Palettes;
-extern const pictureInfo colorchart;
-extern const paletteInfo colorchart_Palettes;
 extern const pictureInfo colorchartsingle;
 extern const paletteInfo colorchartsingle_Palettes;
 extern const pictureInfo colorebu;
