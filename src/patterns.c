@@ -37,30 +37,6 @@
 // lowest colors are 0x8222, 0xF111, 0x7111, (0x7000 & 0xF000)
 
 
-/*
-A color word is composed in the following manner:
-Bit 	15 	14 	13 	12 	11 	10 	9 	8 	7 	6 	5 	4 	3 	2 	1 	0
-Def 	Dk  R0	G0	B0	R4	R3	R2	R1	G4	G3	G2	G1	B4	B3	B2	B1
-*/
-
-WORD PackColor(short r, short g, short b, BYTE dark)
-{
-	WORD color = 0;
-	BYTE r_lsb, r_msb, g_lsb, g_msb, b_lsb, b_msb;
-
-	r_lsb = r & (short)0x01;
-	r_msb = (r & (short)0x1E) >> 1;
-
-	g_lsb = g & (short)0x01;
-	g_msb = (g & (short)0x1E) >> 1;
-
-	b_lsb = b & (short)0x01;
-	b_msb = (b & (short)0x1E) >> 1;
-
-	color = (dark & 0x01) << 15 | (r_lsb << 14) | (g_lsb << 13) | (b_lsb << 12) | r_msb << 8 | g_msb << 4 | b_msb;
-	return color;
-}
-
 //		Experimenting with values, until w eget the AES flashcart we can't measure IRE. Measured with MVS and JAMMA
 //      0 transp, 1 fondo,  2 external, 3 top middle, 4 second middle, 5 third middle, 6 fourth middle, 7 external middle, 8 external center
 //		2 external, 7 middle, 8 center
@@ -438,13 +414,15 @@ void tp_color_bleed_check()
 void tp_grid()
 {
 	int done = 0, draw = 1, updatepalette = 0, gray = 0;
+	WORD color = 0;
 	scroller grid;
 
+	color = 0x8000;
 	while (!done)
 	{
 		if (draw)
 		{
-			backgroundColor(0x8000);
+			backgroundColor(color);
 			gfxClear();
 
 			scrollerInit(&grid, &grids, 1, 16, getHorScroll(), PATTERN_SCROLL);
@@ -453,17 +431,21 @@ void tp_grid()
 			updatepalette = 1; 
 		}
 
+		SCClose();
+		waitVBlank();
+
+		// these is non buffered, execute after in hardware
 		if (updatepalette)
 		{
 			if (!gray)
-				volMEMWORD(0x400206) = 0x8000;
+				color = 0x8000;
 			else
-				volMEMWORD(0x400206) = 0x7777;
+				color = PackColor(7, 7, 7, 0);
+			VRAM_PAL(16, 3) = color;
+			VRAM_PAL(0, 2)  = color;	// SNK BIOS Border
+			backgroundColor(color);
 			updatepalette = 0;
 		}
-
-		SCClose();
-		waitVBlank();
 
 		readController();
 
@@ -479,13 +461,16 @@ void tp_grid()
 		if(checkHelp(HELP_GRID))
 			draw = 1;
 	}
+	VRAM_PAL(0, 2) = 0x8000;	// SNK BIOS Border
 }
 
 void tp_monoscope()
 {
-	int done = 0, draw = 1, pattern = 1, gray = 0;
+	int done = 0, draw = 1, pattern = 0, gray = 0, updatepalette = 1, changepattern = 1;
+	int bright[7] = { 31, 25, 20, 15, 10, 6, 2 }, color = 0;
 	picture monoscope_back;
 
+	color = 0x8000;
 	while (!done)
 	{
 		if (draw)
@@ -494,59 +479,49 @@ void tp_monoscope()
 
 			pictureInit(&monoscope_back, &monoscope, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
+			
+			updatepalette = 1;
+			changepattern = 1;
 			draw = 0;
 		}
-
-		if (!gray)
-			volMEMWORD(0x402206) = 0x8000;
-		else
-			volMEMWORD(0x402206) = 0x7777;
-
-		switch (pattern)
-		{
-			case 1:
-				volMEMWORD(0x402202) = 0x2fef;
-			break;
-
-			case 2:
-				volMEMWORD(0x402202) = 0x2ddd;
-			break;
-
-			case 3:
-				volMEMWORD(0x402202) = 0x2bbb;
-			break;
-
-			case 4:
-				volMEMWORD(0x402202) = 0x2999;
-			break;
-
-			case 5:
-				volMEMWORD(0x402202) = 0x2777;
-			break;
-
-			case 6:
-				volMEMWORD(0x402202) = 0x2555;
-			break;
-
-			case 7:
-				volMEMWORD(0x402202) = 0x2222;
-			break;
-		}
-
+		
 		SCClose();
 		waitVBlank();
+
+		// these are non buffered, execute after in hardware
+		if (updatepalette)
+		{
+			if (!gray)
+				color = 0x8000;
+			else
+				color = PackColor(7, 7, 7, 0);
+			VRAM_PAL(16, 3) = color;
+			VRAM_PAL(0, 2)  = color;	// SNK BIOS Border
+			backgroundColor(color);
+			updatepalette = 0;
+		}
+
+		if(changepattern)
+		{
+			VRAM_PAL(16, 1) = PackColor(bright[pattern], bright[pattern], bright[pattern], 0);
+			changepattern = 0;
+		}
 
 		readController();
 
 		if (PRESSED_A)
 		{
 			pattern++;
-			if (pattern > 7)
-				pattern = 1;
+			if (pattern > 6)
+				pattern = 0;
+			changepattern = 1;
 		}
 
 		if (PRESSED_B)
+		{
 			gray = !gray;
+			updatepalette = 1;
+		}
 
 		if (PRESSED_START)
 			done = 1;
@@ -554,6 +529,7 @@ void tp_monoscope()
 		if (checkHelp(HELP_MONOSCOPE))
 			draw = 1;
 	}
+	VRAM_PAL(0, 2) = 0x8000;	// SNK BIOS Border
 }
 
 void tp_gray_ramp()
@@ -607,15 +583,15 @@ void tp_white_rgb()
 				break;
 
 				case 3:		// Red
-					backgroundColor(0x4F00);
+					backgroundColor(PackColor(31, 0, 0, 0));
 				break;
 
 				case 4:		// Green
-					backgroundColor(0x20F0);
+					backgroundColor(PackColor(0, 31, 0, 0));
 				break;
 
 				case 5:		// Blue
-					backgroundColor(0x100F);
+					backgroundColor(PackColor(0, 0, 31, 0));
 				break;
 			}
 			draw = 0;

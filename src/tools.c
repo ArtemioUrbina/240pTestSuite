@@ -318,3 +318,28 @@ inline int getHorScroll()
 	}
 	return x;
 }
+
+
+/*
+A color word is composed in the following manner:
+Bit 	15 	14 	13 	12 	11 	10 	9 	8 	7 	6 	5 	4 	3 	2 	1 	0
+Def 	Dk  R0	G0	B0	R4	R3	R2	R1	G4	G3	G2	G1	B4	B3	B2	B1
+*/
+
+WORD PackColor(short r, short g, short b, BYTE dark)
+{
+	WORD color = 0;
+	BYTE r_lsb, r_msb, g_lsb, g_msb, b_lsb, b_msb;
+
+	r_lsb = r & (short)0x01;
+	r_msb = (r & (short)0x1E) >> 1;
+
+	g_lsb = g & (short)0x01;
+	g_msb = (g & (short)0x1E) >> 1;
+
+	b_lsb = b & (short)0x01;
+	b_msb = (b & (short)0x1E) >> 1;
+
+	color = (dark & 0x01) << 15 | (r_lsb << 14) | (g_lsb << 13) | (b_lsb << 12) | r_msb << 8 | g_msb << 4 | b_msb;
+	return color;
+}

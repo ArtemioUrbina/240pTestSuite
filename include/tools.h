@@ -44,6 +44,11 @@ void menu_options();
 void readController();
 void clearController();
 
+WORD PackColor(short r, short g, short b, BYTE dark);
+
+// This is unbuffered, so if a palJobPut is called in the same frame, this will be overwritten
+#define VRAM_PAL(palette, color) volMEMWORD(0x400000+palette*32+color*2)
+
 // Edge is Single Press
 #define PRESSED_RIGHT	(p1e & JOY_RIGHT)
 #define PRESSED_LEFT	(p1e & JOY_LEFT)
