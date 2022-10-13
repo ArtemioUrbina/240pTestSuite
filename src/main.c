@@ -589,7 +589,6 @@ void draw_mvs_demo()
 	picture background, foreground;
 	scroller grid;
 
-	backgroundColor(0x8000);
 	gfxClear();
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
@@ -675,8 +674,8 @@ void draw_mvs_title()
 	//When set to 1, stops BIOS from calling command 3 twice after Game Over if credits are in the system.
 	volMEMBYTE(BIOS_TITLE_MODE) = 1;
 
-	backgroundColor(0x8666);
 	gfxClear();
+	backgroundColor(0x8666);
 
 	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);

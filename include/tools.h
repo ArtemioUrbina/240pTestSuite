@@ -36,8 +36,8 @@ void gfxClear();
 void suiteClearFixLayer();
 
 void check_systype();
-void draw_background_w_gil();
-void draw_background();
+int draw_background_w_gil();
+int draw_background();
 void menu_footer();
 void menu_options();
 

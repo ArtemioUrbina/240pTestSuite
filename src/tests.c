@@ -86,7 +86,6 @@ void vt_drop_shadow_test()
 			int pali_donna, pali_slug, pali_slug_shadow, pali_shape;
 			int spri_donna, spri_slug, spri_slug_shadow, spri_shape;
 
-			backgroundColor(0x8000);
 			gfxClear();
 
 			// load scrollers, all sprite priority based
@@ -328,7 +327,6 @@ void vt_striped_sprite_test()
 			int palindex = 16, sprindex = 1;
 			int pali_donna;
 
-			backgroundColor(0x8000);
 			gfxClear();
 
 			// load scrollers, all sprite priority based
@@ -474,8 +472,9 @@ void vt_lag_test()
 	{
 		if (draw)
 		{
-			backgroundColor(0xDfff);
 			gfxClear();
+			backgroundColor(0xDfff);
+
 			palJobPut(16, num_0.palInfo->count, num_0.palInfo->data);
 			palJobPut(17, circle_blue.palInfo->count, circle_blue.palInfo->data);
 			palJobPut(18, num_0_w.palInfo->count, num_0_w.palInfo->data);
@@ -640,7 +639,6 @@ void vt_reflex_test()
 
 		if (loadvram)
 		{
-			backgroundColor(0x8000);
 			gfxClear();
 
 			fixPrint(2, 23, fontColorGreen, 3, "Press the \"A\" button when the sprite");
@@ -987,7 +985,6 @@ void vt_scroll_test()
 		{
 			int palindex = 16, sprindex = 1;
 
-			backgroundColor(0x8000);
 			gfxClear();
 
 			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, x3, y3);
@@ -1151,7 +1148,6 @@ void vt_gridscroll_test()
 	{
 		if (draw)
 		{
-			backgroundColor(0x8000);
 			gfxClear();
 			scrollerInit(&grid, &scroll_grid, 1, 16, 0, 0);
 			palJobPut(16, scroll_grid.palInfo->count, scroll_grid.palInfo->data);
@@ -1445,7 +1441,6 @@ void vt_backlitzone_test()
 	{
 		if (draw)
 		{
-			backgroundColor(0x8000);
 			gfxClear();
 
 			switch (block)
@@ -1794,7 +1789,6 @@ void ht_memory_viewer(u32 address)
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 
 											0x400000, 0x402000, 0x800000, 0xC00000, 0xD00000 };
 
-	backgroundColor(0x8000);
 	gfxClear();
 
 	for (pos = 0; pos < MAX_LOCATIONS; pos++)
@@ -2184,14 +2178,15 @@ void ht_check_ng_bios_crc(u32 address)
 
 	gfxClear();
 
+	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
+	palJobPut(16,back.palInfo->count,back.palInfo->data);
+
 	// Print BIOS lines
 	if (detectUNIBIOSfast(address))
 		swap = 1;
 	displayBIOS(address, swap);
 
 	fixPrintf(12, 16, fontColorGreen, 3, "Please Wait...");
-	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,back.palInfo->count,back.palInfo->data);
 
 	SCClose();
 	waitVBlank();

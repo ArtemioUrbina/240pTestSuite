@@ -59,7 +59,6 @@ void tp_pluge()
 
 		if (draw)
 		{
-			backgroundColor(0x8000);
 			gfxClear();
 
 			pictureInit(&plugergb_back, &plugergb, sprindex, palindex, 0, 0,FLIP_NONE);
@@ -291,8 +290,8 @@ void tp_colorbars()
 
 		if (draw)
 		{
-			backgroundColor(0xfc1f);
 			gfxClear();
+			backgroundColor(0xfc1f);
 
 			pictureInit(&colorebu_back, &colorebu, sprindex, palindex, 0, 0,FLIP_NONE);
 			palJobPut(palindex,colorebu.palInfo->count,colorebu.palInfo->data);
@@ -359,8 +358,8 @@ void tp_smpte_color_bars()
 
 		if (draw)
 		{
-			backgroundColor(0xfc1f);
 			gfxClear();
+			backgroundColor(0xfc1f);
 
 			pictureInit(&colorbarssmpte_back, &colorbarssmpte, sprindex, palindex, 0, 0,FLIP_NONE);
 			palJobPut(palindex,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
@@ -513,8 +512,8 @@ void tp_grid()
 	{
 		if (draw)
 		{
-			backgroundColor(color);
 			gfxClear();
+			backgroundColor(color);
 
 			scrollerInit(&grid, &grids, 1, 16, getHorScroll(), PATTERN_SCROLL);
 			palJobPut(16, grids.palInfo->count, grids.palInfo->data);
@@ -658,11 +657,11 @@ void tp_white_rgb()
 	short r = 31, g = 31, b = 31, dark = 0, text = 0;
 	WORD edit_color = 0x7FFF;
 
-	gfxClear();
 	while (!done)
 	{
 		if (draw)
 		{
+			gfxClear();
 			switch (color)
 			{
 				case 1:		// White/Edit
@@ -1014,20 +1013,62 @@ void tp_sharpness()
 	}
 }
 
+#define BAR_WIDTH	64
+
 void tp_overscan()
 {
-	int done = 0, sprindex = 1, palindex = 16, redraw = 1, sel = 1;
-	int top_y = 128, bottom_y = -224, left_x = 480, right_x = 0;
-	//int max_t, min_t, max_l, min_l, max_b, min_b, max_r, min_r;
+	int done = 0, redraw = 1, sel = 1, scroll = 1, fast = 0;
+	int top_y, bottom_y, left_x, right_x, side_y;
+	int t_max, t_min, l_max, l_min, b_max, b_min, r_max, r_min;
 	scroller top, bottom, left, right;
+	
+	if(isPAL)
+		side_y = 16;
+	else
+		side_y = 0;
+
+	if(isPAL)
+		t_min = 16;
+	else
+		t_min = 0;
+	t_max = t_min + BAR_WIDTH;
+	top_y = t_max;
+
+	if(isPAL)
+		b_min = -240;
+	else
+		b_min = -224;
+	b_max = b_min + BAR_WIDTH;
+	bottom_y = b_min;
+	
+	l_max = 400;
+	l_min = l_max - BAR_WIDTH;
+	left_x = l_max;
+
+	r_min = 0;
+	r_max = r_min + BAR_WIDTH;
+	right_x = r_min;
+
+	if(vmode_snk)
+	{
+		r_min += 8;
+		r_max += 8;
+		right_x += 8;
+
+		l_max -= 8;
+		l_min -= 8;
+		left_x -= 8;
+	}
 
 	while (!done)
 	{
 		if(redraw)
 		{
-			gfxClear();
+			int sprindex = 1, palindex = 16;
 
+			gfxClear();
 			backgroundColor(PackColor(10, 10, 10, 0));
+
 			palJobPut(palindex, overscan_vert.palInfo->count, overscan_vert.palInfo->data);
 
 			scrollerInit(&top, &overscan_vert, sprindex, palindex, 0, top_y);
@@ -1036,24 +1077,46 @@ void tp_overscan()
 			scrollerInit(&bottom, &overscan_vert, sprindex, palindex, 0, bottom_y);
 			sprindex += SCROLLER_SIZE;
 
-			scrollerInit(&left, &overscan_horz, sprindex, palindex, left_x, 0);
+			scrollerInit(&left, &overscan_horz, sprindex, palindex, left_x, side_y);
 			sprindex += SCROLLER_SIZE;
 
-			scrollerInit(&right, &overscan_horz, sprindex, palindex, right_x, 0);
+			scrollerInit(&right, &overscan_horz, sprindex, palindex, right_x, side_y);
 			sprindex += SCROLLER_SIZE;
 
 			redraw = 0;
+			scroll = 1;
 		}
 
-		scrollerSetPos(&top, 0, top_y);
-		scrollerSetPos(&bottom, 0, bottom_y);
-		scrollerSetPos(&left, left_x, 0);
-		scrollerSetPos(&right, right_x, 0);
+		if(scroll)
+		{
+			scrollerSetPos(&top, 0, top_y);
+			scrollerSetPos(&bottom, 0, bottom_y);
+			scrollerSetPos(&left, left_x, side_y);
+			scrollerSetPos(&right, right_x, side_y);
 
-		fixPrintf(10, 16, fontColorWhite, 3, "%cTop:    %04d", sel == 1 ? '>' : ' ', top_y);
-		fixPrintf(10, 17, fontColorWhite, 3, "%cBottom: %04d", sel == 2 ? '>' : ' ', bottom_y);
-		fixPrintf(10, 18, fontColorWhite, 3, "%cLeft:   %04d", sel == 3 ? '>' : ' ', left_x);
-		fixPrintf(10, 19, fontColorWhite, 3, "%cRight:  %04d", sel == 4 ? '>' : ' ', right_x);
+			fixPrintf(9, 14, fontColorWhite, 3, " Top overscan :   %3d", t_max - top_y);
+			fixPrintf(9, 15, fontColorWhite, 3, " Bottom overscan: %3d", bottom_y - b_min);
+			fixPrintf(9, 16, fontColorWhite, 3, " Left overscan:   %3d", l_max - left_x);
+			fixPrintf(9, 17, fontColorWhite, 3, " Right overscan:  %3d", right_x - r_min);
+			fixPrintf(9, 13+sel, fast ? fontColorRed : fontColorGreen, 3, ">");
+
+			if (bkp_data.debug_dip1 & DP_DEBUG1)
+			{
+				fixPrintf(8, 18, fontColorGreen, 3, "Top Y:    %4d(%04d/%04d)", top_y, t_min, t_max);
+				fixPrintf(8, 19, fontColorGreen, 3, "Bottom Y: %4d(%04d/%04d)", bottom_y, b_min, b_max);
+				fixPrintf(8, 20, fontColorGreen, 3, "Left X:   %4d(%04d/%04d)", left_x, l_min, l_max);
+				fixPrintf(8, 21, fontColorGreen, 3, "Right X:  %4d(%04d/%04d)", right_x, r_min, r_max);
+			}
+
+			if(vmode_snk)
+			{
+				fixPrintf(4, 22, fontColorRed, 3, "You can draw 16 more pixels");
+				fixPrintf(4, 23, fontColorRed, 3, "horizontally by enabling 320 mode");
+				fixPrintf(4, 24, fontColorRed, 3, "under options.");
+			}
+
+			scroll = 0;
+		}
 
 		SCClose();
 		waitVBlank();
@@ -1061,56 +1124,102 @@ void tp_overscan()
 		readController();
 
 		if(PRESSED_UP)
+		{
 			sel -= 1;
+			scroll = 1;
+		}
 
 		if(PRESSED_DOWN)
+		{
 			sel += 1;
+			scroll = 1;
+		}
 
-		if(sel < 1)
-			sel = 4;
-		if(sel > 4)
-			sel = 1;
+		if(scroll)
+		{
+			if(sel < 1)
+				sel = 4;
+			if(sel > 4)
+				sel = 1;
+		}
 
-		if(HELD_RIGHT)
+		if(PRESSED_RIGHT || (fast && HELD_RIGHT))
 		{
 			switch(sel)
 			{
 			case 1:
 				top_y -= 1;
+				if(top_y < t_min)
+					top_y = t_min;
 				break;
 			case 2:
 				bottom_y += 1;
+				if(bottom_y > b_max)
+					bottom_y = b_max;
 				break;
 			case 3:
 				left_x -= 1;
+				if(left_x < l_min)
+					left_x = l_min;
 				break;
 			case 4:
 				right_x += 1;
+				if(right_x > r_max)
+					right_x = r_max;
 				break;
 			}
+			scroll = 1;
 		}
 
-		if(HELD_LEFT)
+		if(PRESSED_LEFT || (fast && HELD_LEFT))
 		{
 			switch(sel)
 			{
 			case 1:
 				top_y += 1;
+				if(top_y > t_max)
+					top_y = t_max;
 				break;
 			case 2:
 				bottom_y -= 1;
+				if(bottom_y < b_min)
+					bottom_y = b_min;
 				break;
 			case 3:
 				left_x += 1;
+				if(left_x > l_max)
+					left_x = l_max;
 				break;
 			case 4:
 				right_x -= 1;
+				if(right_x < r_min)
+					right_x = r_min;
 				break;
 			}
+			scroll = 1;
+		}
+
+		if (PRESSED_A)
+		{
+			top_y = t_max;
+			bottom_y = b_min;
+			left_x = l_max;
+			right_x = r_min;
+
+			scroll = 1;
+		}
+		
+		if (PRESSED_C)
+		{
+			fast = !fast;
+			scroll = 1;
 		}
 
 		if (PRESSED_START)
 			done = 1;
+
+		if (checkHelp(HELP_OVERSCAN))
+			redraw = 1;
 	}
 }
 

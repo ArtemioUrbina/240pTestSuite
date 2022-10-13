@@ -51,7 +51,7 @@ int checkHelp(int helpID)
 
 void DrawHelp(int option)
 {
-	int exit = 0, page = 1, totalpages = 1, dirty = 0, redraw = 1;
+	int exit = 0, page = 1, totalpages = 1, dirty = 0, redraw = 1, index = 0;
 
 	switch (option)
 	{
@@ -78,7 +78,7 @@ void DrawHelp(int option)
 		if (redraw)
 		{
 			gfxClear();
-			draw_background();
+			index = draw_background();
 			redraw = 0;
 		}
 
@@ -121,7 +121,7 @@ void DrawHelp(int option)
 					{
 						picture qr;
 
-						pictureInit(&qr, &barcode, 26, 17, 240, 144, FLIP_NONE);
+						pictureInit(&qr, &barcode, index, 17, 240, 144, FLIP_NONE);
 						palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 						dirty = 1;
 
@@ -347,12 +347,14 @@ void DrawHelp(int option)
 				fixPrint(4, 11, fontColorWhite, 3, "overscan in pixels of each edge");
 				fixPrint(4, 12, fontColorWhite, 3, "in a display.");
 
-				fixPrint(4, 14, fontColorWhite, 3, "Use left and right to increment");
+				fixPrint(4, 14, fontColorWhite, 3, "Use left and right to change");
 				fixPrint(4, 15, fontColorWhite, 3, "the overscan until you see the");
 				fixPrint(4, 16, fontColorWhite, 3, "white border, then go back one");
 				fixPrint(4, 17, fontColorWhite, 3, "pixel. The resulting number is");
-				fixPrint(4, 18, fontColorWhite, 3, "the amount of overscan in pixels");
-				fixPrint(4, 19, fontColorWhite, 3, "in each direction.");
+				fixPrint(4, 18, fontColorWhite, 3, "the overscan in each direction.");
+
+				fixPrint(4, 20, fontColorWhite, 3, "C toggles fast/per pixel change");
+				fixPrint(4, 21, fontColorWhite, 3, "and A resets to defaults.");
 			break;
 
 			case HELP_SMPTE:

@@ -173,6 +173,7 @@ inline void suiteClearFixLayer()
 
 inline void gfxClear()
 {
+	backgroundColor(0x8000);
 	clearSprites(1, MAX_SPRITES);
 	suiteClearFixLayer();
 }
@@ -256,7 +257,7 @@ void menu_options()
 	return;
 }
 
-void draw_background_w_gil()
+int draw_background_w_gil()
 {
 	int index = 1, palindex = 16;
 	picture background;
@@ -269,14 +270,21 @@ void draw_background_w_gil()
 
 	pictureInit(&foreground, &gillian, index, palindex, 216, 70,FLIP_NONE);
 	palJobPut(palindex, gillian.palInfo->count, gillian.palInfo->data);
+	index += getPicSprites(foreground.info);
+
+	return index;
 }
 
-void draw_background()
+int draw_background()
 {
+	int index = 1, palindex = 16;
 	picture background;
 
-	pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,back.palInfo->count,back.palInfo->data);
+	pictureInit(&background, &back, index, palindex, 0, 0,FLIP_NONE);
+	palJobPut(palindex,back.palInfo->count,back.palInfo->data);
+
+	index += getPicSprites(background.info);
+	return index;
 }
 
 void menu_footer()
