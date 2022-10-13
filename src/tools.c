@@ -113,7 +113,7 @@ void check_systype()
 {
 	BYTE reg = 0;
 
-	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0;
+	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0, usePAL256 = 1;
 
 	if (MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
 	{
@@ -149,7 +149,7 @@ void check_systype()
 		vmode_snk = 1;
 	}
 	
-	// NTSC at zero, but PAL apparently only works with the newer LPSC2 in AES
+	// NTSC at zero, but PAL apparently only works with the newer LPSC2 in AES (I assume all PAL systems have it)
 	// we need to test what happens on an AES with LPSC-A0 & LSPC2-A2 with a PAL or modded system
 	// LSPC-A0 by NEC is the VDC part of the first generation chipset, see LSPC2-A2 for more details. (AES & MVS)
 	// LSPC2-A2 by Fujitsu is the second generation Line SPrite Controller, it is only found in cartridge systems. (AES & MVS)
@@ -181,7 +181,7 @@ inline void gfxClear()
 
 void menu_options()
 {
-	int done = 0, curse = 1, cursemax = 2, redraw = 1, text = 0;
+	int done = 0, curse = 1, cursemax = 3, redraw = 1, text = 0;
 
 	while (!done)
 	{
@@ -204,7 +204,8 @@ void menu_options()
 
 		fixPrintf(14, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
 		fixPrintf(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
-		fixPrintf(5, 18, curse == 2 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrintf(5, 15, curse == 2 ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
+		fixPrintf(5, 18, curse == 3 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -223,7 +224,7 @@ void menu_options()
 				int i = 0;
 
 				for (i = 20; i < 25; i++)
-					fixPrintf(4, i, fontColorGreen, 3, "                               ");
+					fixPrintf(4, i, fontColorGreen, 3, "                                ");
 				text = 0;
 			}
 		}
@@ -233,19 +234,23 @@ void menu_options()
 
 		if (PRESSED_A || toggle)
 		{
-			gfxClear();
 			switch (curse)
 			{
 				case 1:
 					vmode_snk = !vmode_snk;
 					suiteClearFixLayer();
+					redraw = 1;
 				break;
 
 				case 2:
+					if(isPAL)
+						usePAL256 = !usePAL256;
+				break;
+
+				case 3:
 					done = 1;
 				break;
 			}
-			redraw = 1;
 		}
 
 		if (PRESSED_B)
@@ -289,7 +294,7 @@ int draw_background()
 
 void menu_footer()
 {
-	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx%03dp", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320, isPAL ? 256 : 224);
+	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx%03dp", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320, isPAL && usePAL256 ? 256 : 224);
 	if (isMVS)
 	{
 		fixPrint(23, 28, fontColorWhite, 3, isMVS ? "MVS" : "AES");
@@ -331,17 +336,17 @@ inline int getHorScroll()
 {
 	int x = NTSC_304;
 
-	if(!isPAL) {
-		if (vmode_snk)
-			x = NTSC_304;
-		else
-			x = NTSC_320;
-	}
-	else {
+	if(isPAL && usePAL256) {
 		if (vmode_snk)
 			x = PAL_304;
 		else
 			x = PAL_320;
+	}
+	else {
+		if (vmode_snk)
+			x = NTSC_304;
+		else
+			x = NTSC_320;
 	}
 	return x;
 }

@@ -42,7 +42,7 @@ extern bkp_ram_info bkp_data;
 #define DP_DEBUG7	0x40
 #define DP_DEBUG8	0x80
 
-extern BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL;
+extern BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL, usePAL256;
 extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 
 #define SYSTEM_AES			0x00
@@ -59,8 +59,10 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 #define fontColorRed		2
 #define fontColorGreen		3
 #define fontColorBlue		4
-#define fontColorBlack		5
-#define fontColorSolid		6
+#define fontColorGrayLight	5
+#define fontColorGrayDark	6
+#define fontColorBlack		7
+#define fontColorSolid		8
 
 #define REG_DIPSW	0x300001
 #define DP_SETTINGS	0x01

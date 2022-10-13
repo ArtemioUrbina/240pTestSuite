@@ -1020,21 +1020,22 @@ void tp_overscan()
 	int done = 0, redraw = 1, sel = 1, scroll = 1, fast = 0;
 	int top_y, bottom_y, left_x, right_x, side_y;
 	int t_max, t_min, l_max, l_min, b_max, b_min, r_max, r_min;
-	scroller top, bottom, left, right;
+	scroller top, bottom, left, right, top_cover, bottom_cover;
 	
-	if(isPAL)
+	// Setup ratios depending on NTSC/PAL and 304/320
+	if(isPAL && usePAL256)
 		side_y = 16;
 	else
 		side_y = 0;
 
-	if(isPAL)
+	if(isPAL && usePAL256)
 		t_min = 16;
 	else
 		t_min = 0;
 	t_max = t_min + BAR_WIDTH;
 	top_y = t_max;
 
-	if(isPAL)
+	if(isPAL && usePAL256)
 		b_min = -240;
 	else
 		b_min = -224;
@@ -1062,7 +1063,7 @@ void tp_overscan()
 
 	while (!done)
 	{
-		if(redraw)
+		if (redraw)
 		{
 			int sprindex = 1, palindex = 16;
 
@@ -1083,16 +1084,30 @@ void tp_overscan()
 			scrollerInit(&right, &overscan_horz, sprindex, palindex, right_x, side_y);
 			sprindex += SCROLLER_SIZE;
 
+			if(isPAL && !usePAL256)  // yeah... I got myself into this
+			{
+				scrollerInit(&top_cover, &overscan_vert, sprindex, fontColorBlack, 0, t_max);
+				sprindex += SCROLLER_SIZE;
+
+				scrollerInit(&bottom_cover, &overscan_vert, sprindex, fontColorBlack, 0, b_min);
+				sprindex += SCROLLER_SIZE;
+			}
+
 			redraw = 0;
 			scroll = 1;
 		}
 
-		if(scroll)
+		if (scroll)
 		{
 			scrollerSetPos(&top, 0, top_y);
 			scrollerSetPos(&bottom, 0, bottom_y);
 			scrollerSetPos(&left, left_x, side_y);
 			scrollerSetPos(&right, right_x, side_y);
+			if(isPAL&&!usePAL256)
+			{
+				scrollerSetPos(&top_cover, 0, t_max);
+				scrollerSetPos(&bottom_cover, 0, b_min);
+			}
 
 			fixPrintf(9, 14, fontColorWhite, 3, " Top overscan :   %3d", t_max - top_y);
 			fixPrintf(9, 15, fontColorWhite, 3, " Bottom overscan: %3d", bottom_y - b_min);
@@ -1123,19 +1138,19 @@ void tp_overscan()
 
 		readController();
 
-		if(PRESSED_UP)
+		if (PRESSED_UP)
 		{
 			sel -= 1;
 			scroll = 1;
 		}
 
-		if(PRESSED_DOWN)
+		if (PRESSED_DOWN)
 		{
 			sel += 1;
 			scroll = 1;
 		}
 
-		if(scroll)
+		if (scroll)
 		{
 			if(sel < 1)
 				sel = 4;
@@ -1143,7 +1158,7 @@ void tp_overscan()
 				sel = 1;
 		}
 
-		if(PRESSED_RIGHT || (fast && HELD_RIGHT))
+		if (PRESSED_RIGHT || (fast && HELD_RIGHT))
 		{
 			switch(sel)
 			{
@@ -1171,7 +1186,7 @@ void tp_overscan()
 			scroll = 1;
 		}
 
-		if(PRESSED_LEFT || (fast && HELD_LEFT))
+		if (PRESSED_LEFT || (fast && HELD_LEFT))
 		{
 			switch(sel)
 			{
