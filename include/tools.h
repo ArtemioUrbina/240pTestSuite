@@ -28,7 +28,7 @@
 void setRandomSeed(u16 seed);
 u16 random();
 
-int hexToDec(int hex);
+int bcdToDec(int bcd);
 
 // Clear screen
 #define MAX_SPRITES	248
@@ -90,4 +90,5 @@ int getHorScroll();
 void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr);
 void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr);
 int getCreditCount();
+BYTE getHWDipValue(BYTE dip);
 #endif /* _TOOLS_H_ */

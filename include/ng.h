@@ -110,6 +110,11 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 #define BIOS_UM_INGAME		2
 
 #define BIOS_START_FLAG		0x10FDB4
+#define BIOS_DEV_MODE		0x10FE80
+
+// Detect if MVS/AES IDs are in conflict
+#define MVS_AS_AES			((volMEMBYTE(REG_STATUS_B) & MVS_OR_AES) && !isMVS)
+#define AES_AS_MVS			(!(volMEMBYTE(REG_STATUS_B) & MVS_OR_AES) && isMVS)
 
 #define BIOS_PLAYER_MOD1	0x10FDB6
 #define BIOS_PM_INIT		0

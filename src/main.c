@@ -478,6 +478,7 @@ void draw_debug_data()
 		displayRegByte(4, 8, "BIOS_USER_REQS", BIOS_USER_REQS);
 		displayRegByte(4, 9, "BIOS_USER_MODE", BIOS_USER_MODE);
 		displayRegByte(4, 10, "BIOS_START_FLAG", BIOS_START_FLAG);
+		displayRegByte(4, 11, "BIOS_DEV_MODE", BIOS_DEV_MODE);
 	}
 }
 
@@ -650,7 +651,7 @@ void draw_mvs_demo()
 
 		if (isMVS)
 		{
-			freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
+			freeplay = getHWDipValue(DP_FREE);
 			credits = getCreditCount();
 		}
 		readController();
@@ -713,7 +714,8 @@ void draw_mvs_title()
 		waitVBlank();
 
 		readController();
-		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
+
+		freeplay = getHWDipValue(DP_FREE);
 
 		if (toggle == 30)
 			fixPrint(14, 23, fontColorRed, 3, "            ");
@@ -722,7 +724,7 @@ void draw_mvs_title()
 
 		if (!freeplay)
 		{
-			bios_timer = hexToDec(volMEMBYTE(BIOS_COMP_TIME));
+			bios_timer = bcdToDec(volMEMBYTE(BIOS_COMP_TIME));
 			fixPrintf(16, 28, fontColorWhite, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
 		}
 		

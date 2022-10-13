@@ -1657,7 +1657,7 @@ void ht_controller_test()
 		{
 			mvscredit = volMEMBYTE(REG_STATUS_A); 
 			mvssel    = volMEMBYTE(REG_STATUS_B); 
-			hardDip2  = !(volMEMBYTE(REG_DIPSW) & DP_CHUTES); // hard dip 2 status
+			hardDip2  = getHWDipValue(DP_CHUTES);
 			if (hardDip2 != lastDip2)
 			{
 				suiteClearFixLayer();
@@ -1690,7 +1690,8 @@ void ht_controller_test()
 
 		if (isMVS)
 		{
-			fixPrint(29, 8, !(mvscredit & MVS_SERV_B) ? fontColorRed : fontColorWhite, 3, "Service");
+			if(!AES_AS_MVS)
+				fixPrint(29, 8, !(mvscredit & MVS_SERV_B) ? fontColorRed : fontColorWhite, 3, "Service");
 			if (is4S || is6S)
 			{
 				fixPrint(4,  24, !(mvssel & MVS_SEL1) ? fontColorRed : fontColorWhite, 3, "Sel 1");
@@ -1699,11 +1700,11 @@ void ht_controller_test()
 		}
 
 		// Controller 1
-		DrawController(DC_X, y, p1, P1_START, ps, P1_SELECT, mvscredit, P1_CREDIT);
+		DrawController(DC_X, y, p1, P1_START, ps, P1_SELECT, AES_AS_MVS ? mvssel : mvscredit, AES_AS_MVS ? MVS_SEL1 : P1_CREDIT);
 		y += 4;
 
 		// Controller 2
-		DrawController(DC_X, y, p2, P2_START, ps, P2_SELECT, mvscredit, P2_CREDIT);
+		DrawController(DC_X, y, p2, P2_START, ps, P2_SELECT, AES_AS_MVS ? mvssel : mvscredit, AES_AS_MVS ? MVS_SEL2 : P2_CREDIT);
 		if(enable4p)
 		{
 			y += 4;

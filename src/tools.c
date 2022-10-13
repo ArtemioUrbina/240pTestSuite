@@ -48,9 +48,9 @@ u16 random()
 	return randbase;
 }
 
-int hexToDec(int hex)
+int bcdToDec(int bcd)
 {
-	return hex-(hex/16)*6;
+	return bcd-(bcd/16)*6;
 }
 
 inline void readController()
@@ -131,9 +131,7 @@ void check_systype()
 	}
 
 	// Detect if MVS/AES IDs are in conflict
-	reg = volMEMBYTE(REG_STATUS_B);
-	if ((reg & MVS_OR_AES && !isMVS) || 
-		(!(reg & MVS_OR_AES) && isMVS))
+	if (MVS_AS_AES || AES_AS_MVS)
 		hwChange = 1;
 
 	// Check is 304 mode is enabled, and follow BIOS resolution and rules
@@ -406,7 +404,14 @@ void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr)
 
 int getCreditCount()
 {
-	if(isMVS && hwChange)
-		return(hexToDec(volMEMBYTE(BIOS_CREDIT_DB)));
-	return(hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));
+	if(volMEMBYTE(BIOS_DEV_MODE))
+		return(bcdToDec(volMEMBYTE(BIOS_CREDIT_DB)));
+	return(bcdToDec(volMEMBYTE(BIOS_NM_CREDIT)));
+}
+
+BYTE getHWDipValue(BYTE dip)
+{
+	if(AES_AS_MVS)
+		return 0;
+	return(!(volMEMBYTE(REG_DIPSW) & dip));
 }
