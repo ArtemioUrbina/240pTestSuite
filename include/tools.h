@@ -87,4 +87,7 @@ WORD PackColor(short r, short g, short b, BYTE dark);
 
 int getHorScroll();
 
+void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr);
+void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr);
+int getCreditCount();
 #endif /* _TOOLS_H_ */

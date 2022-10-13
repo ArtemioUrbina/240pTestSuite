@@ -119,7 +119,8 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 
 #define BIOS_TITLE_MODE		0x10FEC5
 
-#define BIOS_NM_CREDIT	0xD00034
+#define BIOS_NM_CREDIT	0xD00034	// Backup data, only MVS
+#define BIOS_CREDIT_DB	0x10FE00	// Debug version, no backup, works in AES with UNIBIOS
 #define BIOS_COMP_TIME	0x10FDDA
 
 // BIOS Calls

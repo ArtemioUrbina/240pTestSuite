@@ -132,7 +132,8 @@ void check_systype()
 
 	// Detect if MVS/AES IDs are in conflict
 	reg = volMEMBYTE(REG_STATUS_B);
-	if (reg & MVS_OR_AES && !isMVS)
+	if ((reg & MVS_OR_AES && !isMVS) || 
+		(!(reg & MVS_OR_AES) && isMVS))
 		hwChange = 1;
 
 	// Check is 304 mode is enabled, and follow BIOS resolution and rules
@@ -297,7 +298,7 @@ void menu_footer()
 	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx%03dp", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320, isPAL && usePAL256 ? 256 : 224);
 	if (isMVS)
 	{
-		fixPrint(23, 28, fontColorWhite, 3, isMVS ? "MVS" : "AES");
+		fixPrint(23, 28, fontColorWhite, 3, "MVS");
 		if (is4S || is6S)
 			fixPrint(26, 28, fontColorWhite, 3, is4S ? "2/4S" : "6S");
 		else
@@ -327,7 +328,7 @@ void menu_footer()
 	{
 		int credits;
 		
-		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
+		credits = getCreditCount();
 		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 	}
 }
@@ -373,4 +374,39 @@ WORD PackColor(short r, short g, short b, BYTE dark)
 
 	color = (dark & 0x01) << 15 | (r_lsb << 14) | (g_lsb << 13) | (b_lsb << 12) | r_msb << 8 | g_msb << 4 | b_msb;
 	return color;
+}
+
+void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr)
+{
+	BYTE regb = 0;
+	char buffer[10];
+
+	regb = volMEMBYTE(regAddr);
+	intToHex(regb, buffer, 2);
+	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
+	fixPrintf(x+15, y, fontColorWhite, 3, "0x%s", buffer);
+	byteToBin(regb, buffer);
+	fixPrintf(x+22, y, fontColorWhite, 3, "%s", buffer);
+}
+
+void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr)
+{
+	WORD regw = 0;
+	char buffer[10];
+
+	regw = volMEMWORD(regAddr);
+	intToHex(regw, buffer, 4);
+	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
+	fixPrintf(x+15, y, fontColorWhite, 3, "0x%s", buffer);
+	byteToBin((regw & 0xFF00) >> 8, buffer);
+	fixPrintf(x+22, y, fontColorWhite, 3, "%s", buffer);
+	byteToBin(regw & 0x00FF, buffer);
+	fixPrintf(x+22, y+1, fontColorWhite, 3, "%s", buffer);
+}
+
+int getCreditCount()
+{
+	if(isMVS && hwChange)
+		return(hexToDec(volMEMBYTE(BIOS_CREDIT_DB)));
+	return(hexToDec(volMEMBYTE(BIOS_NM_CREDIT)));
 }

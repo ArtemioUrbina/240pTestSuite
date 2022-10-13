@@ -471,9 +471,21 @@ void credits()
 	return;
 }
 
+void draw_debug_data()
+{
+	if (bkp_data.debug_dip1 & DP_DEBUG1)
+	{
+		displayRegByte(4, 8, "BIOS_USER_REQS", BIOS_USER_REQS);
+		displayRegByte(4, 9, "BIOS_USER_MODE", BIOS_USER_MODE);
+		displayRegByte(4, 10, "BIOS_START_FLAG", BIOS_START_FLAG);
+	}
+}
+
 void menu_main()
 {
 	int curse = 1, cursemax = 7, redraw = 1, done = 0, showexit = 0;
+
+	check_systype();	// could have changed due to UNIBIOS, since MVS is not set in AES HW until after INIT
 
 	palJobPut(0,8,fixPalettes);
 	if (isMVS && volMEMBYTE(SOFT_DIP_1))
@@ -510,6 +522,7 @@ void menu_main()
 		if (showexit)
 			fixPrint(6, 22, curse == 8 ? fontColorRed : fontColorWhite, 3, "Exit");
 
+		draw_debug_data();
 		menu_footer();
 
 		if (checkHelp(HELP_GENERAL))
@@ -561,7 +574,7 @@ void menu_main()
 // pressed (AES) and when enough credits are available (MVS)
 void _240p_mvs_player_start(void)
 {
-	if (isMVS && volMEMBYTE(BIOS_USER_MODE) != BIOS_UM_INGAME)
+	if (volMEMBYTE(BIOS_USER_MODE) != BIOS_UM_INGAME)
 	{
 		// Tell the BIOS the game has started
 		volMEMBYTE(BIOS_USER_MODE) = BIOS_UM_INGAME;
@@ -635,8 +648,11 @@ void draw_mvs_demo()
 			redraw = 0;
 		}
 
-		freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
-		credits = volMEMBYTE(BIOS_NM_CREDIT);
+		if (isMVS)
+		{
+			freeplay = !(volMEMBYTE(REG_DIPSW) & DP_FREE);
+			credits = getCreditCount();
+		}
 		readController();
 
 		if (toggle == 30)
@@ -644,8 +660,10 @@ void draw_mvs_demo()
 		if (toggle == 0)
 			fixPrint(14, 23, fontColorRed, 3, freeplay || credits ? "PRESS  START" : "INSERT COIN");
 
-		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
-		fixPrintf(28, 28, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
+		if (isMVS)
+			fixPrintf(28, 28, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
+
+		draw_debug_data();
 		
 		toggle ++;
 		if (toggle > 60)
@@ -708,7 +726,7 @@ void draw_mvs_title()
 			fixPrintf(16, 28, fontColorWhite, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
 		}
 		
-		credits = hexToDec(volMEMBYTE(BIOS_NM_CREDIT));
+		credits = getCreditCount();
 		fixPrintf(28, 28, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 		
 		toggle ++;
@@ -721,10 +739,12 @@ void draw_mvs_title()
 			game_over();
 			return;
 		}
+
+		draw_debug_data();
 	}
 }
 
-void mvs_state()
+void check_bios_init()
 {
 	// BIOS_USER_REQS == 0 is called by BIOS
 	// in order to initialize memory
@@ -735,6 +755,13 @@ void mvs_state()
 		RETURN_TO_BIOS;
 	}
 
+	// Eye catcher, we have none...
+	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_EYE) 
+		RETURN_TO_BIOS;
+}
+
+void mvs_state()
+{
 	// If DEMO MODE draw the insert coin screen
 	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_DEMO)
 	{
@@ -786,6 +813,8 @@ int main(void)
 	SCClose();
 	waitVBlank();
 	
+	check_bios_init();
+
 	if (isMVS)
 		mvs_state();
 	else

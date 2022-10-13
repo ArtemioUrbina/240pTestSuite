@@ -2225,34 +2225,6 @@ void ht_check_ng_bios_crc(u32 address)
 	}
 }
 
-void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr)
-{
-	BYTE regb = 0;
-	char buffer[10];
-
-	regb = volMEMBYTE(regAddr);
-	intToHex(regb, buffer, 2);
-	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
-	fixPrintf(x+15, y, fontColorWhite, 3, "0x%s", buffer);
-	byteToBin(regb, buffer);
-	fixPrintf(x+22, y, fontColorWhite, 3, "%s", buffer);
-}
-
-void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr)
-{
-	WORD regw = 0;
-	char buffer[10];
-
-	regw = volMEMWORD(regAddr);
-	intToHex(regw, buffer, 4);
-	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
-	fixPrintf(x+15, y, fontColorWhite, 3, "0x%s", buffer);
-	byteToBin((regw & 0xFF00) >> 8, buffer);
-	fixPrintf(x+22, y, fontColorWhite, 3, "%s", buffer);
-	byteToBin(regw & 0x00FF, buffer);
-	fixPrintf(x+22, y+1, fontColorWhite, 3, "%s", buffer);
-}
-
 void ht_displayregs()
 {
 	int done = 0, redraw = 1;
