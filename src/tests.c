@@ -1699,23 +1699,19 @@ void ht_controller_test()
 		}
 
 		// Controller 1
-		if(volMEMBYTE(P1_STATUS) == CTRL_STANDARD)
-			DrawController(DC_X, y, p1, P1_START, ps, P1_SELECT, mvscredit, P1_CREDIT);
+		DrawController(DC_X, y, p1, P1_START, ps, P1_SELECT, mvscredit, P1_CREDIT);
 		y += 4;
 
 		// Controller 2
-		if(volMEMBYTE(P2_STATUS) == CTRL_STANDARD)
-			DrawController(DC_X, y, p2, P2_START, ps, P2_SELECT, mvscredit, P2_CREDIT);
+		DrawController(DC_X, y, p2, P2_START, ps, P2_SELECT, mvscredit, P2_CREDIT);
 		if(enable4p)
 		{
 			y += 4;
 			// Controller 3
-			//if(volMEMBYTE(P1B_STATUS) == CTRL_EXPANDED)
 			DrawController(DC_X, y, p1b, P1B_START, ps, P1B_SELECT, mvscredit, P3_CREDIT);
 			y += 4;
 
 			// Controller 4
-			//if(volMEMBYTE(P2B_STATUS) == CTRL_EXPANDED)
 			DrawController(DC_X, y, p2b, P2B_START, ps, P2B_SELECT, mvscredit, P4_CREDIT);
 		}
 
