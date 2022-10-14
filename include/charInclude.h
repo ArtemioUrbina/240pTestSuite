@@ -25,6 +25,8 @@ extern const pictureInfo back;
 extern const paletteInfo back_Palettes;
 extern const pictureInfo gillian;
 extern const paletteInfo gillian_Palettes;
+extern const pictureInfo title;
+extern const paletteInfo title_Palettes;
 extern const pictureInfo plugentsc;
 extern const paletteInfo plugentsc_Palettes;
 extern const pictureInfo plugergb;

@@ -482,11 +482,36 @@ void draw_debug_data()
 	}
 }
 
+// This function is called by the BIOS when the start button is
+// pressed (AES) and when enough credits are available (MVS)
+void _240p_mvs_player_start(void)
+{
+	if (volMEMBYTE(BIOS_USER_MODE) != BIOS_UM_INGAME)
+	{
+		// Tell the BIOS the game has started
+		volMEMBYTE(BIOS_USER_MODE) = BIOS_UM_INGAME;
+		// Set player 1's status to running
+		if(volMEMBYTE(BIOS_PLAYER_MOD1) != BIOS_PM_PLAYING)
+			volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_PLAYING;
+	}
+	else
+		volMEMBYTE(BIOS_START_FLAG) = 0x00; // don't decrease credits
+}
+
+void game_over()
+{
+	// Set Game Over state
+	volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_GAMEOVER;
+}
+
+void _240p_mvs_game_change(void)
+{
+}
+
+
 void menu_main()
 {
 	int curse = 1, cursemax = 7, redraw = 1, done = 0, showexit = 0;
-
-	check_systype();	// could have changed due to UNIBIOS, since MVS is not set in AES HW until after INIT
 
 	palJobPut(0,8,fixPalettes);
 	if (isMVS && volMEMBYTE(SOFT_DIP_1))
@@ -569,32 +594,7 @@ void menu_main()
 			redraw = 1;
 		}
 	}
-}
-
-// This function is called by the BIOS when the start button is
-// pressed (AES) and when enough credits are available (MVS)
-void _240p_mvs_player_start(void)
-{
-	if (volMEMBYTE(BIOS_USER_MODE) != BIOS_UM_INGAME)
-	{
-		// Tell the BIOS the game has started
-		volMEMBYTE(BIOS_USER_MODE) = BIOS_UM_INGAME;
-		// Set player 1's status to running
-		if(volMEMBYTE(BIOS_PLAYER_MOD1) != BIOS_PM_PLAYING)
-			volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_PLAYING;
-	}
-	else
-		volMEMBYTE(BIOS_START_FLAG) = 0x00; // don't decrease credits
-}
-
-void game_over()
-{
-	// Set Game Over state
-	volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_GAMEOVER;
-}
-
-void _240p_mvs_game_change(void)
-{
+	game_over();
 }
 
 #define DEMO_BG	4
@@ -602,15 +602,20 @@ void _240p_mvs_game_change(void)
 void draw_mvs_demo()
 {
 	int toggle = 0, demo_frames = DEMO_LEN, demo_change = 0, freeplay = 0, redraw = 0;
-	int currdemo = 0;
-	picture background, foreground;
+	int currdemo = 0, index = 22, palindex = 17;
+	picture background, foreground, titledsp;
 	scroller grid;
 
 	gfxClear();
-	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
-	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
-	fixPrint(12, 6, fontColorGreen, 3, "240p Test Suite");
-	fixPrint(10, 26, fontColorGreen, 3, "2022 Dasutin/Artemio");
+	pictureInit(&foreground, &gillian, index, palindex, 132, 50, FLIP_NONE);
+	palJobPut(palindex,gillian.palInfo->count,gillian.palInfo->data);
+	index += getPicSprites(foreground.info);
+	palindex += plugergb.palInfo->count;
+
+	pictureInit(&titledsp, &title, index, palindex, 56, 28, FLIP_NONE);
+	palJobPut(palindex,title.palInfo->count,title.palInfo->data);
+
+	fixPrint(10, 26, fontColorSolid, 4, "2022 Dasutin/Artemio");
 
 	demo_change = 1;
 	while (demo_frames)
@@ -662,7 +667,7 @@ void draw_mvs_demo()
 			fixPrint(14, 23, fontColorRed, 3, freeplay || credits ? "PRESS  START" : "INSERT COIN");
 
 		if (isMVS)
-			fixPrintf(28, 28, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
+			fixPrintf(28, 28, fontColorSolid, 4, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 
 		draw_debug_data();
 		
@@ -681,7 +686,6 @@ void draw_mvs_demo()
 		if (volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{
 			menu_main();
-			game_over();
 			return;
 		}
 	}
@@ -738,7 +742,6 @@ void draw_mvs_title()
 		if (volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{
 			menu_main();
-			game_over();
 			return;
 		}
 
@@ -753,7 +756,7 @@ void check_bios_init()
 	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_INIT) 
 	{
 		waitVBlank();
-		memset(&bkp_data, 0x00, sizeof(BYTE)*(BKP_SIZE));
+		memset(&bkp_data, 0x00, sizeof(struct bkp_ram_info));
 		RETURN_TO_BIOS;
 	}
 
@@ -805,6 +808,8 @@ void mvs_state()
 
 int main(void)
 {
+	check_bios_init();
+
 	check_systype();
 
 	suiteClearFixLayer();
@@ -814,8 +819,6 @@ int main(void)
 	//jobMeterSetup(true);
 	SCClose();
 	waitVBlank();
-	
-	check_bios_init();
 
 	if (isMVS)
 		mvs_state();

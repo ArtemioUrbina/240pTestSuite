@@ -131,6 +131,7 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 // BIOS Calls
 #define BIOS_FIX_CLEAR	__asm__ ("jsr 0xC004C2 \n")
 #define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
+#define BIOS_READ_CLDR	__asm__ ("jmp 0xC0045C \n")
 
 #define SOFT_DIP_1		0x10FD8A
 #define SOFT_DIP_2		0x10FD8B

@@ -31,6 +31,9 @@
   <pict id="gillian">
     <file>gfx\SD.png</file>
   </pict>
+  <pict id="title">
+	<file>gfx\title.png</file>
+  </pict>
   <pict id="plugentsc">
     <file>gfx\plugentsc.png</file>
   </pict>
