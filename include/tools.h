@@ -49,6 +49,7 @@ void SD_blink_cycle(blinker *blinkdata);
 int draw_background_w_gil(blinker *blinkdata);
 int draw_background();
 void draw_message(char *title, char *msg, int index, int palindex, int clearback);
+void draw_warning(char* msg, int index, int palindex, int clearback);
 
 void menu_footer();
 void menu_options();

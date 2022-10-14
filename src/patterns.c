@@ -503,7 +503,7 @@ void tp_color_bleed_check()
 
 void tp_grid()
 {
-	int done = 0, draw = 1, updatepalette = 0, gray = 0;
+	int done = 0, draw = 1, updatepalette = 0, gray = 0, first = 1;
 	WORD color = 0;
 	scroller grid;
 
@@ -512,13 +512,24 @@ void tp_grid()
 	{
 		if (draw)
 		{
+			int index = 1, palindex = 16;
 			gfxClear();
 			backgroundColor(color);
 
-			scrollerInit(&grid, &grids, 1, 16, getHorScroll(), PATTERN_SCROLL);
-			palJobPut(16, grids.palInfo->count, grids.palInfo->data);
+			scrollerInit(&grid, &grids, index, palindex, getHorScroll(), PATTERN_SCROLL);
+			palJobPut(palindex, grids.palInfo->count, grids.palInfo->data);
+			index += SCROLLER_SIZE;
+			palindex += grids.palInfo->count;
+
 			draw = 0;
 			updatepalette = 1; 
+			if(first)
+			{
+				if(isMVS && !vmode_snk)
+					draw_warning("Some later MVS systems can't\ndisplay the last few pixels\nwhen in full 320 mode.", index, palindex, 0);
+				first = 0;
+				draw = 1;
+			}
 		}
 
 		SCClose();

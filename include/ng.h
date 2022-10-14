@@ -138,6 +138,7 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 #define SOFT_DIP_2			0x10FD8B
 #define SOFT_DIP_3			0x10FD8C
 #define SOFT_DIP_4			0x10FD8D
+#define SOFT_DIP_5			0x10FD8E
 
 #define BIOS_ADDRESS		0xC00000
 #define BIOS_SIZE			0x20000

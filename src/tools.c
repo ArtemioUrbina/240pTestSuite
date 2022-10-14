@@ -205,8 +205,8 @@ void menu_options()
 
 		fixPrintf(14, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
 		fixPrintf(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
-		fixPrintf(5, 15, curse == 2 ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
-		fixPrintf(5, 16, curse == 3 ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
+		fixPrintf(5, 15, curse == 2 ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
+		fixPrintf(5, 16, curse == 3 ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
 
 		fixPrintf(5, 18, curse == 4 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
@@ -231,14 +231,14 @@ void menu_options()
 				text = 0;
 			}
 		}
-		if (curse == 3)
+		if (curse == 2)
 		{
 			fixPrintf(4, 20, fontColorGreen, 3, "Hardware option, all patterns");
 			fixPrintf(4, 21, fontColorGreen, 3, "will be darker.");
-			text = 3;
+			text = 2;
 		}
 		else {
-			if (text == 3)
+			if (text == 2)
 			{
 				int i = 0;
 
@@ -262,16 +262,16 @@ void menu_options()
 				break;
 
 				case 2:
-					if(isPAL)
-						usePAL256 = !usePAL256;
-				break;
-
-				case 3:
 					enable_shadow = !enable_shadow;
 					if(enable_shadow)
 						volMEMBYTE(REG_SHADOW) = 1;
 					else
 						volMEMBYTE(REG_NOSHADOW) = 1;
+				break;
+
+				case 3:
+					if(isPAL)
+						usePAL256 = !usePAL256;
 				break;
 
 				case 4:
@@ -288,7 +288,7 @@ void menu_options()
 	}
 
 	if(enable_shadow)
-		draw_message("WARNING", "Shadows are still enabled.\nColor and brightness patterns\nwill be affected.", index, 20, 1);
+		draw_warning("Shadows are still enabled.\nColor and brightness patterns\nwill be affected.", index, 20, 1);
 	return;
 }
 
@@ -424,6 +424,14 @@ void menu_footer()
 		credits = getCreditCount();
 		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 	}
+
+	fixPrintf(32, 5, fontColorRed, 3, enable_shadow ? "Dark" : "    ");
+}
+
+void draw_warning(char* msg, int index, int palindex, int clearback)
+{
+	if (isMVS && volMEMBYTE(SOFT_DIP_5))
+		draw_message("WARNING", msg, index, palindex, clearback);
 }
 
 void draw_message(char *title, char *msg, int index, int palindex, int clearback)
