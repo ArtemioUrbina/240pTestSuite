@@ -31,6 +31,12 @@
   <pict id="gillian">
     <file>gfx\SD.png</file>
   </pict>
+  <pict id="gblink1">
+	<file>gfx\gillian_b1.png</file>
+  </pict>
+  <pict id="gblink2">
+	<file>gfx\gillian_b2.png</file>
+  </pict>
   <pict id="title">
 	<file>gfx\title.png</file>
   </pict>

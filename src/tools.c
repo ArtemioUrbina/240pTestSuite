@@ -261,7 +261,19 @@ void menu_options()
 	return;
 }
 
-int draw_background_w_gil()
+int draw_background()
+{
+	int index = 1, palindex = 16;
+	picture background;
+
+	pictureInit(&background, &back, index, palindex, 0, 0,FLIP_NONE);
+	palJobPut(palindex,back.palInfo->count,back.palInfo->data);
+
+	index += getPicSprites(background.info);
+	return index;
+}
+
+int draw_background_w_gil(blinker *blinkdata)
 {
 	int index = 1, palindex = 16;
 	picture background;
@@ -275,20 +287,74 @@ int draw_background_w_gil()
 	pictureInit(&foreground, &gillian, index, palindex, 216, 70,FLIP_NONE);
 	palJobPut(palindex, gillian.palInfo->count, gillian.palInfo->data);
 	index += getPicSprites(foreground.info);
+	palindex += gillian.palInfo->count;
+
+	if(blinkdata)
+		load_blinkdata(blinkdata, &index, &palindex, 216, 70);
 
 	return index;
 }
 
-int draw_background()
+void load_blinkdata(blinker* blinkdata, int *index, int *palindex, int x, int y)
 {
-	int index = 1, palindex = 16;
-	picture background;
+	blinkdata->blink_counter = 0;
+	blinkdata->is_blinking = 0;
 
-	pictureInit(&background, &back, index, palindex, 0, 0,FLIP_NONE);
-	palJobPut(palindex,back.palInfo->count,back.palInfo->data);
+	pictureInit(&blinkdata->blink1, &gblink1, *index, *palindex, x+16, y+32, FLIP_NONE);
+	palJobPut(*palindex, gblink1.palInfo->count, gblink1.palInfo->data);
+	*index += getPicSprites(blinkdata->blink1.info);
+	*palindex += gblink1.palInfo->count;
 
-	index += getPicSprites(background.info);
+	pictureInit(&blinkdata->blink2, &gblink2, *index, *palindex, x+16, y+32, FLIP_NONE);
+	palJobPut(*palindex, gblink2.palInfo->count, gblink2.palInfo->data);
+	*index += getPicSprites(blinkdata->blink2.info);
+	*palindex += gblink2.palInfo->count;
+
+	pictureHide(&blinkdata->blink1);
+	pictureHide(&blinkdata->blink2);
+
 	return index;
+}
+
+void SD_blink_cycle(blinker *blinkdata)
+{	
+	if(!blinkdata)
+		return;
+
+	blinkdata->blink_counter++;	
+	if(blinkdata->blink_counter > 230)
+	{
+		if(!blinkdata->is_blinking)
+		{
+			if(rand() % 100 < 98)	// 2% chance every frame after 240
+			{
+				blinkdata->is_blinking = 1;
+				blinkdata->blink_counter = 230;
+				pictureShow(&blinkdata->blink1);
+			}
+		}
+		else
+		{
+			if(blinkdata->blink_counter == 232)
+			{
+				pictureHide(&blinkdata->blink1);
+				pictureShow(&blinkdata->blink2);
+			}
+				
+			if(blinkdata->blink_counter == 234)
+			{
+				pictureHide(&blinkdata->blink2);
+				pictureShow(&blinkdata->blink1);
+			}
+	
+			if(blinkdata->blink_counter == 238)
+			{
+				pictureHide(&blinkdata->blink1);
+				blinkdata->blink_counter = 0;
+				blinkdata->is_blinking = 0;
+			}
+		}
+	}
 }
 
 void menu_footer()

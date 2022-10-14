@@ -36,8 +36,19 @@ void gfxClear();
 void suiteClearFixLayer();
 
 void check_systype();
-int draw_background_w_gil();
+
+typedef struct blinker{
+	picture blink1;
+	picture blink2;
+	int blink_counter;
+	int is_blinking;
+} blinker;
+
+void load_blinkdata(blinker* blinkdata, int *index, int *palindex, int x, int y);
+void SD_blink_cycle(blinker *blinkdata);
+int draw_background_w_gil(blinker *blinkdata);
 int draw_background();
+
 void menu_footer();
 void menu_options();
 

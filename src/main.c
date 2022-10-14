@@ -56,18 +56,20 @@ static const ushort fixPalettes[]= {
 void menu_tp()
 {
 	int done = 0, curse = 1, cursemax = 16, redraw = 1;
+	blinker blinkdata;
 
 	while (!done)
 	{
 		if (redraw)
 		{
 			gfxClear();
-			draw_background_w_gil();
+			draw_background_w_gil(&blinkdata);
 			redraw = 0;
 		}
 
 		SCClose();
 		waitVBlank();
+		SD_blink_cycle(&blinkdata);
 
 		readController();
 
@@ -178,18 +180,20 @@ void menu_tp()
 void menu_vt()
 {
 	int done = 0, curse = 1, cursemax = 12, redraw = 1;
+	blinker blinkdata;
 
 	while (!done)
 	{
 		if (redraw)
 		{
 			gfxClear();
-			draw_background_w_gil();
+			draw_background_w_gil(&blinkdata);
 			redraw = 0;
 		}
 
 		SCClose();
 		waitVBlank();
+		SD_blink_cycle(&blinkdata);
 
 		readController();
 
@@ -280,18 +284,20 @@ void menu_vt()
 void menu_at()
 {
 	int done = 0, curse = 1, cursemax = 4, redraw = 1;
+	blinker blinkdata;
 
 	while (!done)
 	{
 		if (redraw)
 		{
 			gfxClear();
-			draw_background_w_gil();
+			draw_background_w_gil(&blinkdata);
 			redraw = 0;
 		}
 
 		SCClose();
 		waitVBlank();
+		SD_blink_cycle(&blinkdata);
 
 		readController();
 
@@ -342,18 +348,20 @@ void menu_at()
 void menu_ht()
 {
 	int done = 0, curse = 1, cursemax = 7, redraw = 1;
+	blinker blinkdata;
 
 	while (!done)
 	{
 		if (redraw)
 		{
 			gfxClear();
-			draw_background_w_gil();
+			draw_background_w_gil(&blinkdata);
 			redraw = 0;
 		}
 
 		SCClose();
 		waitVBlank();
+		SD_blink_cycle(&blinkdata);
 
 		readController();
 
@@ -512,6 +520,7 @@ void _240p_mvs_game_change(void)
 void menu_main()
 {
 	int curse = 1, cursemax = 7, redraw = 1, done = 0, showexit = 0;
+	blinker blinkdata;
 
 	palJobPut(0,8,fixPalettes);
 	if (isMVS && volMEMBYTE(SOFT_DIP_1))
@@ -525,12 +534,13 @@ void menu_main()
 		if (redraw)
 		{
 			gfxClear();
-			draw_background_w_gil();
+			draw_background_w_gil(&blinkdata);
 			redraw = 0;
 		}
 
 		SCClose();
 		waitVBlank();
+		SD_blink_cycle(&blinkdata);
 
 		readController();
 
@@ -602,9 +612,10 @@ void menu_main()
 void draw_mvs_demo()
 {
 	int toggle = 0, demo_frames = DEMO_LEN, demo_change = 0, freeplay = 0, redraw = 0;
-	int currdemo = 0, index = 22, palindex = 17;
+	int currdemo = 0, index = 40, palindex = 25;
 	picture background, foreground, titledsp;
 	scroller grid;
+	blinker blinkdata;
 
 	gfxClear();
 	pictureInit(&foreground, &gillian, index, palindex, 132, 50, FLIP_NONE);
@@ -614,6 +625,10 @@ void draw_mvs_demo()
 
 	pictureInit(&titledsp, &title, index, palindex, 56, 28, FLIP_NONE);
 	palJobPut(palindex,title.palInfo->count,title.palInfo->data);
+	index += getPicSprites(titledsp.info);
+	palindex += title.palInfo->count;
+
+	load_blinkdata(&blinkdata, &index, &palindex, 132, 50);
 
 	fixPrint(10, 26, fontColorSolid, 4, "2022 Dasutin/Artemio");
 
@@ -624,6 +639,8 @@ void draw_mvs_demo()
 
 		SCClose();
 		waitVBlank();
+
+		SD_blink_cycle(&blinkdata);
 		
 		if (redraw)
 		{
@@ -637,8 +654,8 @@ void draw_mvs_demo()
 				break;
 				case 2:
 					backgroundColor(0xfc1f);
-					pictureInit(&background, &colorbarssmpte, 1, 16, 0, 0,FLIP_NONE);
-					palJobPut(16,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
+					pictureInit(&background, &colorbarssmpte75, 1, 16, 0, 0,FLIP_NONE);
+					palJobPut(16,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
 				break;
 				case 3:
 					backgroundColor(0x8000);
@@ -693,20 +710,27 @@ void draw_mvs_demo()
 
 void draw_mvs_title()
 {
-	int toggle = 0, bios_timer = 0, freeplay = 0;
+	int toggle = 0, bios_timer = 0, freeplay = 0, index = 1, palindex = 16;
 	picture foreground;
 	picture background;
+	blinker blinkdata;
 
 	//When set to 1, stops BIOS from calling command 3 twice after Game Over if credits are in the system.
 	volMEMBYTE(BIOS_TITLE_MODE) = 1;
 
 	gfxClear();
-	backgroundColor(0x8666);
 
-	pictureInit(&foreground, &gillian, 22, 17, 132, 50, FLIP_NONE);
+	pictureInit(&background, &back, index, palindex, 0, 0,FLIP_NONE);
+	palJobPut(palindex,back.palInfo->count,back.palInfo->data);
+	index += getPicSprites(background.info);
+	palindex += back.palInfo->count;
+
+	pictureInit(&foreground, &gillian, index, palindex, 132, 50, FLIP_NONE);
 	palJobPut(17,gillian.palInfo->count,gillian.palInfo->data);
-	pictureInit(&background, &back,1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,back.palInfo->count,back.palInfo->data);
+	index += getPicSprites(foreground.info);
+	palindex += gillian.palInfo->count;
+
+	load_blinkdata(&blinkdata, &index, &palindex, 132, 50);
 
 	fixPrint(10, 26, fontColorWhite, 3, "2022 Dasutin/Artemio");
 
@@ -716,6 +740,8 @@ void draw_mvs_title()
 
 		SCClose();
 		waitVBlank();
+
+		SD_blink_cycle(&blinkdata);
 
 		readController();
 
@@ -820,6 +846,7 @@ int main(void)
 	SCClose();
 	waitVBlank();
 
+	srand(DAT_frameCounter);
 	if (isMVS)
 		mvs_state();
 	else
