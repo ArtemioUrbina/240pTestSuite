@@ -113,7 +113,9 @@ void check_systype()
 {
 	BYTE reg = 0;
 
-	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0, usePAL256 = 1;
+	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0;
+	enable_shadow = 0;
+	usePAL256 = 1;
 
 	if (MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
 	{
@@ -180,7 +182,7 @@ inline void gfxClear()
 
 void menu_options()
 {
-	int done = 0, curse = 1, cursemax = 3, redraw = 1, text = 0;
+	int done = 0, curse = 1, cursemax = 4, redraw = 1, text = 0, index = 0;
 
 	while (!done)
 	{
@@ -189,7 +191,7 @@ void menu_options()
 		if (redraw)
 		{
 			gfxClear();
-			draw_background();
+			index = draw_background();
 			redraw = 0;
 		}
 
@@ -204,7 +206,9 @@ void menu_options()
 		fixPrintf(14, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
 		fixPrintf(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
 		fixPrintf(5, 15, curse == 2 ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
-		fixPrintf(5, 18, curse == 3 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrintf(5, 16, curse == 3 ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
+
+		fixPrintf(5, 18, curse == 4 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -218,11 +222,27 @@ void menu_options()
 				fixPrintf(4, 23, fontColorRed, 3, "Some systems trim pixel col. 320");
 			text = 1;
 		} else {
-			if (text)
+			if (text == 1)
 			{
 				int i = 0;
 
-				for (i = 20; i < 25; i++)
+				for (i = 20; i < 24; i++)
+					fixPrintf(4, i, fontColorGreen, 3, "                                ");
+				text = 0;
+			}
+		}
+		if (curse == 3)
+		{
+			fixPrintf(4, 20, fontColorGreen, 3, "Hardware option, all patterns");
+			fixPrintf(4, 21, fontColorGreen, 3, "will be darker.");
+			text = 3;
+		}
+		else {
+			if (text == 3)
+			{
+				int i = 0;
+
+				for (i = 20; i < 22; i++)
 					fixPrintf(4, i, fontColorGreen, 3, "                                ");
 				text = 0;
 			}
@@ -247,6 +267,14 @@ void menu_options()
 				break;
 
 				case 3:
+					enable_shadow = !enable_shadow;
+					if(enable_shadow)
+						volMEMBYTE(REG_SHADOW) = 1;
+					else
+						volMEMBYTE(REG_NOSHADOW) = 1;
+				break;
+
+				case 4:
 					done = 1;
 				break;
 			}
@@ -258,6 +286,9 @@ void menu_options()
 		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 	}
+
+	if(enable_shadow)
+		draw_message("WARNING", "Shadows are still enabled.\nColor and brightness patterns\nwill be affected.", index, 20, 1);
 	return;
 }
 
@@ -312,8 +343,6 @@ void load_blinkdata(blinker* blinkdata, int *index, int *palindex, int x, int y)
 
 	pictureHide(&blinkdata->blink1);
 	pictureHide(&blinkdata->blink2);
-
-	return index;
 }
 
 void SD_blink_cycle(blinker *blinkdata)
@@ -394,6 +423,62 @@ void menu_footer()
 		
 		credits = getCreditCount();
 		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
+	}
+}
+
+void draw_message(char *title, char *msg, int index, int palindex, int clearback)
+{
+	int len = 0, x = 0, done = 0, sublen = 0, rows = 0, i = 0;
+	char buffer[40];
+	picture mbox;
+
+	if(clearback)
+		gfxClear();
+	else
+		suiteClearFixLayer();
+
+	pictureInit(&mbox, &messagebox, index, palindex, 0, 0, FLIP_NONE);
+	palJobPut(palindex,messagebox.palInfo->count,messagebox.palInfo->data);
+
+	len = strlen(title);
+	x = (40 - len)/2;
+	fixPrint(x, 11, fontColorGreen, 3, title);
+	fixPrint(8, 23, fontColorGreen, 3, "Press B or START to close");
+
+	len = strlen(msg);
+	for(i = 0; i < len+1; i++)
+	{
+		if(msg[i] == '\n' || msg[i] == '\0')
+		{
+			buffer[sublen] = '\0';
+			x = (40 - sublen)/2;
+			fixPrint(x, 14+rows, fontColorWhite, 3, buffer);
+
+			rows ++;
+			sublen = 0;
+		}
+		else
+		{
+			buffer[sublen] = msg[i];
+			sublen ++;
+		}
+	}
+
+	if(!rows)
+	{
+		x = (40 - len)/2;
+		fixPrint(x, 14, fontColorWhite, 3, msg);
+	}
+
+	while(!done)
+	{
+		SCClose();
+		waitVBlank();
+
+		readController();
+
+		if (PRESSED_B || PRESSED_START)
+			done = 1;
 	}
 }
 

@@ -33,16 +33,17 @@ typedef struct bkp_ram_info {
 
 extern bkp_ram_info bkp_data;
 
-#define DP_DEBUG1	0x01
-#define DP_DEBUG2	0x02
-#define DP_DEBUG3	0x04
-#define DP_DEBUG4	0x08
-#define DP_DEBUG5	0x10
-#define DP_DEBUG6	0x20
-#define DP_DEBUG7	0x40
-#define DP_DEBUG8	0x80
+#define DP_DEBUG1			0x01
+#define DP_DEBUG2			0x02
+#define DP_DEBUG3			0x04
+#define DP_DEBUG4			0x08
+#define DP_DEBUG5			0x10
+#define DP_DEBUG6			0x20
+#define DP_DEBUG7			0x40
+#define DP_DEBUG8			0x80
 
-extern BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL, usePAL256;
+extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
+extern BYTE vmode_snk, isPAL, usePAL256, enable_shadow;
 extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 
 #define SYSTEM_AES			0x00
@@ -64,39 +65,39 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 #define fontColorBlack		7
 #define fontColorSolid		8
 
-#define REG_DIPSW	0x300001
-#define DP_SETTINGS	0x01
-#define DP_CHUTES	0x02
-#define DP_CONTROL	0x04
-#define DP_COMM_1	0x08
-#define DP_COMM_2	0x10
-#define DP_MULTI	0x20
-#define DP_FREE		0x40
-#define DP_FREEZE	0x80
+#define REG_DIPSW			0x300001
+#define DP_SETTINGS			0x01
+#define DP_CHUTES			0x02
+#define DP_CONTROL			0x04
+#define DP_COMM_1			0x08
+#define DP_COMM_2			0x10
+#define DP_MULTI			0x20
+#define DP_FREE				0x40
+#define DP_FREEZE			0x80
 
-#define REG_SYSTYPE 0x300081
-#define MVS_MULTI	0x40
-#define MVS_TEST_B	0x80
+#define REG_SYSTYPE			0x300081
+#define MVS_MULTI			0x40
+#define MVS_TEST_B			0x80
 
-#define REG_STATUS_A 0x320001
-#define P1_CREDIT	0x01
-#define P2_CREDIT	0x02
-#define MVS_SERV_B	0x04
-#define P3_CREDIT	0x08
-#define P4_CREDIT	0x10
-#define MVS_4_OR_6	0x20
-#define RTC_TIME	0x40
-#define RTC_DATA	0x80
+#define REG_STATUS_A		0x320001
+#define P1_CREDIT			0x01
+#define P2_CREDIT			0x02
+#define MVS_SERV_B			0x04
+#define P3_CREDIT			0x08
+#define P4_CREDIT			0x10
+#define MVS_4_OR_6			0x20
+#define RTC_TIME			0x40
+#define RTC_DATA			0x80
 
-#define REG_STATUS_B 0x380000
-#define MVS_P1_STRT	0x01
-#define MVS_SEL1	0x02
-#define MVS_P2_STRT	0x04
-#define MVS_SEL2	0x08
-#define HAS_MC_1	0x10
-#define HAS_MC_2	0x20
-#define MC_PTRCT	0x40
-#define MVS_OR_AES	0x80
+#define REG_STATUS_B		0x380000
+#define MVS_P1_STRT			0x01
+#define MVS_SEL1			0x02
+#define MVS_P2_STRT			0x04
+#define MVS_SEL2			0x08
+#define HAS_MC_1			0x10
+#define HAS_MC_2			0x20
+#define MC_PTRCT			0x40
+#define MVS_OR_AES			0x80
 
 #define BIOS_USER_REQS		0x10FDAE
 #define BIOS_UR_INIT		0
@@ -124,25 +125,25 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 
 #define BIOS_TITLE_MODE		0x10FEC5
 
-#define BIOS_NM_CREDIT	0xD00034	// Backup data, only MVS
-#define BIOS_CREDIT_DB	0x10FE00	// Debug version, no backup, works in AES with UNIBIOS
-#define BIOS_COMP_TIME	0x10FDDA
+#define BIOS_NM_CREDIT		0xD00034	// Backup data, only MVS
+#define BIOS_CREDIT_DB		0x10FE00	// Debug version, no backup, works in AES with UNIBIOS
+#define BIOS_COMP_TIME		0x10FDDA
 
 // BIOS Calls
 #define BIOS_FIX_CLEAR	__asm__ ("jsr 0xC004C2 \n")
 #define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
 #define BIOS_READ_CLDR	__asm__ ("jmp 0xC0045C \n")
 
-#define SOFT_DIP_1		0x10FD8A
-#define SOFT_DIP_2		0x10FD8B
-#define SOFT_DIP_3		0x10FD8C
-#define SOFT_DIP_4		0x10FD8D
+#define SOFT_DIP_1			0x10FD8A
+#define SOFT_DIP_2			0x10FD8B
+#define SOFT_DIP_3			0x10FD8C
+#define SOFT_DIP_4			0x10FD8D
 
-#define BIOS_ADDRESS	0xC00000
-#define BIOS_SIZE		0x20000
+#define BIOS_ADDRESS		0xC00000
+#define BIOS_SIZE			0x20000
 
-#define REG_LSPCMODE	0x3C0006
-#define LPSC2_NTSC_PAL	0x08
+#define REG_LSPCMODE		0x3C0006
+#define LPSC2_NTSC_PAL		0x08
 
 // 4 player related
 #define BIOS_4P_REQUESTED	0x10FEF8
@@ -151,6 +152,9 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 
 // Slots
 #define BIOS_SLOTS_DETECTED	0xD00047	
+
+#define REG_NOSHADOW		0x3A0001
+#define REG_SHADOW			0x3A0011
 
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22

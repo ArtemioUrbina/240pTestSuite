@@ -31,6 +31,8 @@ extern const pictureInfo gblink2;
 extern const paletteInfo gblink2_Palettes;
 extern const pictureInfo title;
 extern const paletteInfo title_Palettes;
+extern const pictureInfo messagebox;
+extern const paletteInfo messagebox_Palettes;
 extern const pictureInfo plugentsc;
 extern const paletteInfo plugentsc_Palettes;
 extern const pictureInfo plugergb;

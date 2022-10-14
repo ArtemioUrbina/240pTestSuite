@@ -40,6 +40,9 @@
   <pict id="title">
 	<file>gfx\title.png</file>
   </pict>
+  <pict id="messagebox">
+	<file>gfx\message.png</file>
+  </pict>
   <pict id="plugentsc">
     <file>gfx\plugentsc.png</file>
   </pict>

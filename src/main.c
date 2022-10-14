@@ -35,7 +35,8 @@
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
-BYTE isMVS, is4S, is6S, isMulti, hwChange, vmode_snk, isPAL, usePAL256;
+BYTE isMVS, is4S, is6S, isMulti, hwChange;;
+BYTE vmode_snk, isPAL, usePAL256, enable_shadow;
 
 #define NUM_FONT_COLORS 9
 static const ushort fixPalettes[]= {
@@ -789,6 +790,9 @@ void check_bios_init()
 	// Eye catcher, we have none...
 	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_EYE) 
 		RETURN_TO_BIOS;
+
+	// If some other game in a multki system enabled dark mode, disable it
+	volMEMBYTE(REG_NOSHADOW) = 1;
 }
 
 void mvs_state()
@@ -846,7 +850,6 @@ int main(void)
 	SCClose();
 	waitVBlank();
 
-	srand(DAT_frameCounter);
 	if (isMVS)
 		mvs_state();
 	else
