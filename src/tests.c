@@ -1657,7 +1657,7 @@ void ht_controller_test()
 		{
 			mvscredit = volMEMBYTE(REG_STATUS_A); 
 			mvssel    = volMEMBYTE(REG_STATUS_B); 
-			hardDip2  = getHWDipValue(DP_CHUTES);
+			hardDip2  = getHardDipValue(DP_CHUTES);
 			if (hardDip2 != lastDip2)
 			{
 				suiteClearFixLayer();
@@ -2255,6 +2255,17 @@ void ht_displayregs()
 		displayRegByte(4, y++, "BIOS_MVS_FLAG", BIOS_MVS_FLAG);
 		displayRegByte(4, y++, "REG_SYSTYPE", REG_SYSTYPE);
 		displayRegByte(4, y++, "REG_DIPSW", REG_DIPSW);
+
+		if (bkp_data.debug_dip1 & DP_DEBUG1)
+		{
+			fixPrintf(4, ++y, fontColorGreen, 3, "Soft Dips:");
+			fixPrintf(26, y, fontColorWhite, 3, "%01d%01d%01d%01d%01d",
+				getSoftDipvalue(SOFT_DIP_1),
+				getSoftDipvalue(SOFT_DIP_2),
+				getSoftDipvalue(SOFT_DIP_3),
+				getSoftDipvalue(SOFT_DIP_4),
+				getSoftDipvalue(SOFT_DIP_5));
+		}
 
 		menu_footer();
 

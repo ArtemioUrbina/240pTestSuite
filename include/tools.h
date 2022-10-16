@@ -103,5 +103,6 @@ int getHorScroll();
 void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr);
 void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr);
 int getCreditCount();
-BYTE getHWDipValue(BYTE dip);
+BYTE getHardDipValue(BYTE harddip);
+int getSoftDipvalue(u32 softdip);
 #endif /* _TOOLS_H_ */

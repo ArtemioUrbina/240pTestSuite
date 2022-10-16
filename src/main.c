@@ -524,7 +524,7 @@ void menu_main()
 	blinker blinkdata;
 
 	palJobPut(0,8,fixPalettes);
-	if (isMVS && volMEMBYTE(SOFT_DIP_1))
+	if (getSoftDipvalue(SOFT_DIP_1))
 	{
 		showexit = 1;
 		cursemax++;
@@ -674,7 +674,7 @@ void draw_mvs_demo()
 
 		if (isMVS)
 		{
-			freeplay = getHWDipValue(DP_FREE);
+			freeplay = getHardDipValue(DP_FREE);
 			credits = getCreditCount();
 		}
 		readController();
@@ -746,7 +746,7 @@ void draw_mvs_title()
 
 		readController();
 
-		freeplay = getHWDipValue(DP_FREE);
+		freeplay = getHardDipValue(DP_FREE);
 
 		if (toggle == 30)
 			fixPrint(14, 23, fontColorRed, 3, "            ");
@@ -801,7 +801,7 @@ void mvs_state()
 	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_DEMO)
 	{
 		// Enter demo mode in MVS following Soft Dip Switches
-		if (volMEMBYTE(SOFT_DIP_1))
+		if (getSoftDipvalue(SOFT_DIP_1))
 		{
 			draw_mvs_demo();
 		}
@@ -819,7 +819,7 @@ void mvs_state()
 	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_TITLE)
 	{
 		// Enter title mode in MVS following Soft Dip Switches
-		if (volMEMBYTE(SOFT_DIP_1))
+		if (getSoftDipvalue(SOFT_DIP_1))
 		{
 			draw_mvs_title();
 		}

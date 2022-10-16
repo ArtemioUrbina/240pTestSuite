@@ -537,7 +537,7 @@ void tp_grid()
 			updatepalette = 1; 
 			if(first)
 			{
-				if(isMVS && !vmode_snk)
+				if(isMVS && !AES_AS_MVS && !vmode_snk)
 					draw_warning("Some later MVS systems can't\ndisplay the last few pixels\nwhen in full 320 mode.", index, palindex, 0);
 				first = 0;
 				draw = 1;
@@ -574,7 +574,7 @@ void tp_grid()
 		if(checkHelp(HELP_GRID))
 			draw = 1;
 	}
-	VRAM_PAL(0, 2) = 0x8000;	// SNK BIOS Border
+	VRAM_PAL(0, 2) = 0x8000;	// restore SNK BIOS Border Color
 }
 
 void tp_monoscope()

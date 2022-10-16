@@ -140,7 +140,7 @@ void check_systype()
 	// Also available under options, default is 304 mode to comply
 	if (isMVS)
 	{
-		reg = volMEMBYTE(SOFT_DIP_4);
+		reg = getSoftDipvalue(SOFT_DIP_4);
 		if (reg)
 			vmode_snk = 0;
 		else
@@ -417,7 +417,7 @@ void menu_footer()
 		fixPrint(31, 28, fontColorWhite, 3, "Europe");
 	}
 
-	if (isMVS && volMEMBYTE(SOFT_DIP_2))
+	if (getSoftDipvalue(SOFT_DIP_2))
 	{
 		int credits;
 		
@@ -430,7 +430,7 @@ void menu_footer()
 
 void draw_warning(char* msg, int index, int palindex, int clearback)
 {
-	if (isMVS && volMEMBYTE(SOFT_DIP_5))
+	if (getSoftDipvalue(SOFT_DIP_5))
 		draw_message("WARNING", msg, index, palindex, clearback);
 }
 
@@ -568,9 +568,16 @@ int getCreditCount()
 	return(bcdToDec(volMEMBYTE(BIOS_NM_CREDIT)));
 }
 
-BYTE getHWDipValue(BYTE dip)
+BYTE getHardDipValue(BYTE harddip)
 {
-	if(AES_AS_MVS)
+	if(!isMVS || AES_AS_MVS)
 		return 0;
-	return(!(volMEMBYTE(REG_DIPSW) & dip));
+	return(!(volMEMBYTE(REG_DIPSW) & harddip));
+}
+
+int getSoftDipvalue(u32 softdip)
+{
+	if(!isMVS)
+		return 0;
+	return(volMEMBYTE(softdip));	
 }
