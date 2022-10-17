@@ -430,7 +430,7 @@ void menu_footer()
 
 void draw_warning(char* msg, int index, int palindex, int clearback)
 {
-	if (getSoftDipvalue(SOFT_DIP_5))
+	if (!isMVS || getSoftDipvalue(SOFT_DIP_5))
 		draw_message("WARNING", msg, index, palindex, clearback);
 }
 

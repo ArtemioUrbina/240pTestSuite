@@ -31,6 +31,9 @@
 #include "string_ng.h"
 #include "tools.h"
 
+BYTE first_grid;
+BYTE first_overscan;
+
 // MAME says 0x7000 and 0xF000 are the same
 // We confirmed with the scope that they are the lowest, and the same
 // 0x7111 is slightly higher than 0xF111
@@ -528,7 +531,7 @@ void tp_color_bleed_check()
 
 void tp_grid()
 {
-	int done = 0, draw = 1, updatepalette = 0, gray = 0, first = 1;
+	int done = 0, draw = 1, updatepalette = 0, gray = 0;
 	WORD color = 0x8000;
 	scroller grid;
 
@@ -548,11 +551,11 @@ void tp_grid()
 
 			draw = 0;
 			updatepalette = 1; 
-			if(first)
+			if(first_grid)
 			{
-				if(isMVS && !AES_AS_MVS && !vmode_snk)
+				if(isMVS && !AES_AS_MVS && !vmode_snk && !isMulti)
 					draw_warning("Some later MVS systems can't\ndisplay the last few pixels\nwhen in full 320 mode.", index, palindex, 0);
-				first = 0;
+				first_grid = 0;
 				draw = 1;
 			}
 		}
@@ -1131,6 +1134,13 @@ void tp_overscan()
 
 			redraw = 0;
 			scroll = 1;
+
+			if(vmode_snk && first_overscan)
+			{
+				draw_warning("You can draw 16 more pixels\nhorizontally by enabling\n320 mode in options.", sprindex, palindex, 0);
+				redraw = 1;
+				first_overscan = 0;
+			}
 		}
 
 		if (scroll)
@@ -1157,13 +1167,6 @@ void tp_overscan()
 				fixPrintf(8, 19, fontColorGreen, 3, "Bottom Y: %4d(%04d/%04d)", bottom_y, b_min, b_max);
 				fixPrintf(8, 20, fontColorGreen, 3, "Left X:   %4d(%04d/%04d)", left_x, l_min, l_max);
 				fixPrintf(8, 21, fontColorGreen, 3, "Right X:  %4d(%04d/%04d)", right_x, r_min, r_max);
-			}
-
-			if(vmode_snk)
-			{
-				fixPrintf(4, 22, fontColorRed, 3, "You can draw 16 more pixels");
-				fixPrintf(4, 23, fontColorRed, 3, "horizontally by enabling 320 mode");
-				fixPrintf(4, 24, fontColorRed, 3, "under options.");
 			}
 
 			scroll = 0;

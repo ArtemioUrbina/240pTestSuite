@@ -124,7 +124,7 @@ void vt_drop_shadow_test()
 
 			// load sprites
 			spri_donna = sprindex;
-			pictureInit(&donna_back, &donna, spri_donna, pali_donna, 0, 0, FLIP_NONE);
+			pictureInit(&donna_back, &donna, spri_donna, pali_donna, 0, isPAL && usePAL256 ? -16 : -32, FLIP_NONE);
 			sprindex += getPicSprites(donna_back.info);
 
 			spri_slug_shadow = sprindex;
@@ -354,7 +354,7 @@ void vt_striped_sprite_test()
 			palJobPut(palindex,marker_striped.palInfo->count,marker_striped.palInfo->data);
 
 			// Tiles
-			pictureInit(&donna_back, &donna, sprindex, pali_donna, 0, 0, FLIP_NONE);
+			pictureInit(&donna_back, &donna, sprindex, pali_donna, 0, isPAL && usePAL256 ? -16 : -32, FLIP_NONE);
 			sprindex += getPicSprites(donna_back.info);
 			pictureInit(&sprite, &marker_striped, sprindex, palindex, x, y, FLIP_NONE);
 

@@ -446,8 +446,8 @@ void credits()
 		readController();
 
 		fixPrint(16, 6, fontColorGreen, 3, "Credits");
-		fixPrint(28, 8, fontColorGreen, 3, "Ver. 0.1");
-		fixPrint(28, 9, fontColorWhite, 3, "9/4/2022");
+		fixPrint(28, 8, fontColorGreen, 3, "Ver. 0.2");
+		fixPrint(28, 9, fontColorWhite, 3, "10/16/2022");
 		fixPrint(5, y++, fontColorGreen, 3, "Code by:");
 		fixPrint(6, y++, fontColorWhite, 3, "Dustin Dembrosky");
 		fixPrint(6, y++, fontColorWhite, 3, "Artemio Urbina");
@@ -649,22 +649,26 @@ void draw_mvs_demo()
 			switch(currdemo)
 			{
 				case 1:
-					backgroundColor(0x8000);
 					pictureInit(&background, &monoscope, 1, 16, 0, 0,FLIP_NONE);
 					palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
 				break;
 				case 2:
-					backgroundColor(0xfc1f);
-					pictureInit(&background, &colorbarssmpte75, 1, 16, 0, 0,FLIP_NONE);
-					palJobPut(16,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
+					if(vmode_snk)
+					{
+						pictureInit(&background, &colorbarssmpte75_304, 1, 16, 0, 0,FLIP_NONE);
+						palJobPut(16,colorbarssmpte75_304.palInfo->count,colorbarssmpte75_304.palInfo->data);
+					}
+					else
+					{
+						pictureInit(&background, &colorbarssmpte75, 1, 16, 0, 0,FLIP_NONE);
+						palJobPut(16,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
+					}
 				break;
 				case 3:
-					backgroundColor(0x8000);
 					scrollerInit(&grid, &grids, 1, 16, getHorScroll(), PATTERN_SCROLL);
 					palJobPut(16, grids.palInfo->count, grids.palInfo->data);
 				break;
 				case 4:
-					backgroundColor(0x8000);
 					pictureInit(&background, &conver_rgb_b, 1, 16, 0, 0,FLIP_NONE);
 					palJobPut(16,conver_rgb_b.palInfo->count,conver_rgb_b.palInfo->data);
 				break;
@@ -783,7 +787,7 @@ void check_bios_init()
 	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_INIT) 
 	{
 		waitVBlank();
-		memset(&bkp_data, 0x00, sizeof(struct bkp_ram_info));
+		memset(bkp_data.data, 0x00, sizeof(BYTE)*(BKP_SIZE-2));
 		RETURN_TO_BIOS;
 	}
 
@@ -793,6 +797,9 @@ void check_bios_init()
 
 	// If some other game in a multki system enabled dark mode, disable it
 	volMEMBYTE(REG_NOSHADOW) = 1;
+
+	first_grid = 1;
+	first_overscan = 1;
 }
 
 void mvs_state()

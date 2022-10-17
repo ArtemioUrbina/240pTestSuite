@@ -45,6 +45,8 @@ extern bkp_ram_info bkp_data;
 extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
 extern BYTE vmode_snk, isPAL, usePAL256, enable_shadow;
 extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
+extern BYTE first_grid;
+extern BYTE first_overscan;
 
 #define SYSTEM_AES			0x00
 #define SYSTEM_MVS			0x80
@@ -134,11 +136,11 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 #define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
 #define BIOS_READ_CLDR	__asm__ ("jmp 0xC0045C \n")
 
-#define SOFT_DIP_1			0x10FD8A
-#define SOFT_DIP_2			0x10FD8B
-#define SOFT_DIP_3			0x10FD8C
-#define SOFT_DIP_4			0x10FD8D
-#define SOFT_DIP_5			0x10FD8E
+#define SOFT_DIP_1			0x10FD8A	// ENABLE MVS DEMO
+#define SOFT_DIP_2			0x10FD8B	// DISPLAY AVAILABLE CREDITS
+#define SOFT_DIP_3			0x10FD8C	// FORCE 4P CONTROLLER TEST
+#define SOFT_DIP_4			0x10FD8D	// ENABLE 320 HORIZONTAL RESOLUTION AS DEFAULT
+#define SOFT_DIP_5			0x10FD8E	// ENABLE WARNINGS
 
 #define BIOS_ADDRESS		0xC00000
 #define BIOS_SIZE			0x20000
