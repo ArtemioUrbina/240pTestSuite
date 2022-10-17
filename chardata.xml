@@ -55,17 +55,17 @@
   <pict id="colorchartsingle">
 	<file>gfx\colorchartsingle.png</file>
   </pict>
-  <pict id="colorebu">
-    <file>gfx\colorbarsebu.png</file>
-  </pict>
-  <pict id="colorebu75">
+  <scrl id="colorebu75">
     <file>gfx\colorbarsebu75.png</file>
-  </pict>
-  <pict id="colorbarssmpte">
-    <file>gfx\colorbarssmpte.png</file>
-  </pict>
+  </scrl>
+  <scrl id="colorebu75_304">
+    <file>gfx\colorbarsebu75_304.png</file>
+  </scrl>
   <pict id="colorbarssmpte75">
     <file>gfx\colorbarssmpte75.png</file>
+  </pict>
+  <pict id="colorbarssmpte75_304">
+    <file>gfx\colorbarssmpte75_304.png</file>
   </pict>
   <pict id="refcolor">
     <file>gfx\refcolor.png</file>

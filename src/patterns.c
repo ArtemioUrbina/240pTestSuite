@@ -280,36 +280,51 @@ void tp_colorchart()
 
 void tp_colorbars()
 {
-	int done = 0, draw = 1, Is75 = 0, text = 0;
-	picture colorebu_back;
-	picture colorebu75_back;
+	int done = 0, draw = 1, Is75 = 1, text = 0, palindex = 16, swap_pal = 0;
+	scroller colorebu;
+	ushort ebu100_320_pal[] = { 0x8000, 0x7fff, 0x6ff0, 0x30ff, 0x20f0, 0x5f0f, 0x4f00, 0x100f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
+	ushort ebu100_304_pal[] = { 0x8000, 0x7fff, 0x6ff0, 0x30ff, 0x20f0, 0x4f00, 0x100f, 0x8000, 0x5f0f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
+	ushort *ebu_100_pal = NULL, *ebu_075_pal = NULL;
 	
 	while (!done)
 	{
-		int palindex = 16, sprindex = 1;
-
 		if (draw)
 		{
 			gfxClear();
-			backgroundColor(0xfc1f);
 
-			pictureInit(&colorebu_back, &colorebu, sprindex, palindex, 0, 0,FLIP_NONE);
-			palJobPut(palindex,colorebu.palInfo->count,colorebu.palInfo->data);
-			sprindex += getPicSprites(colorebu_back.info);
-			palindex += colorebu.palInfo->count;
+			if(vmode_snk)
+			{
+				ebu_100_pal = ebu100_304_pal;
+				ebu_075_pal = colorebu75_304.palInfo->data;
 
-			pictureInit(&colorebu75_back, &colorebu75, sprindex, palindex, 0, 0,FLIP_NONE);
-			palJobPut(palindex,colorebu75.palInfo->count,colorebu75.palInfo->data);
-
-			if (!Is75) {
-				pictureHide(&colorebu75_back);
-				pictureShow(&colorebu_back);
-			} else {
-				pictureHide(&colorebu_back);
-				pictureShow(&colorebu75_back);
+				scrollerInit(&colorebu, &colorebu75_304, 1, palindex, 0, PATTERN_SCROLL);
 			}
+			else
+			{
+				ebu_100_pal = ebu100_320_pal;
+				ebu_075_pal = colorebu75.palInfo->data;
+
+				scrollerInit(&colorebu, &colorebu75, 1, palindex, 0, PATTERN_SCROLL);
+			}
+
+			swap_pal = 1;
 			draw = 0;
 		}
+
+		if(swap_pal)
+		{
+			if (!Is75) {
+				palJobPut(palindex, 1, ebu_100_pal);
+				if(text)
+					fixPrint(32, 3, fontColorWhite, 3, "100%");
+			} else {
+				palJobPut(palindex, 1, ebu_075_pal);
+				if(text)
+					fixPrint(32, 3, fontColorWhite, 3, " 75%");
+			}
+			swap_pal = 0;
+		}
+
 		SCClose();
 		waitVBlank();
 
@@ -325,17 +340,9 @@ void tp_colorbars()
 		if (PRESSED_A)
 		{
 			Is75 = !Is75;
-			if (!Is75) {
-				pictureHide(&colorebu75_back);
-				pictureShow(&colorebu_back);
-				fixPrint(32, 3, fontColorWhite, 3, "100%");
-			} else {
-				pictureHide(&colorebu_back);
-				pictureShow(&colorebu75_back);
-				fixPrint(32, 3, fontColorWhite, 3, " 75%");
-			}
+
 			text = 60;
-			SCClose();
+			swap_pal = 1;
 		}
 
 		if (PRESSED_B || PRESSED_START)
@@ -348,36 +355,51 @@ void tp_colorbars()
 
 void tp_smpte_color_bars()
 {
-	int done = 0, draw = 1, Is75 = 0, text = 0;
+	int done = 0, draw = 1, Is75 = 1, text = 0, palindex = 16, swap_pal = 0;
 	picture colorbarssmpte_back;
-	picture colorbarssmpte75_back;
+	ushort smpte100_320_pal[] = { 0x8000, 0x7fff, 0x6ff0, 0x100f, 0xf111, 0x30ff, 0x20f0, 0x5f0f, 0x8025, 0x7fff, 0x4f00, 0xc307, 0x7000, 0x8222, 0x8000, 0x8000 };
+	ushort smpte100_304_pal[] = { 0x8000, 0x7fff, 0x6ff0, 0x100f, 0xf111, 0x30ff, 0x20f0, 0x5f0f, 0x4f00, 0x8025, 0x7fff, 0xc307, 0x7000, 0x8222, 0x8000, 0x8000 };
+	ushort *smpte_100_pal = NULL, *smpte_075_pal = NULL;
 
 	while (!done)
 	{
-		int palindex = 16, sprindex = 1;
-
 		if (draw)
 		{
 			gfxClear();
-			backgroundColor(0xfc1f);
 
-			pictureInit(&colorbarssmpte_back, &colorbarssmpte, sprindex, palindex, 0, 0,FLIP_NONE);
-			palJobPut(palindex,colorbarssmpte.palInfo->count,colorbarssmpte.palInfo->data);
-			sprindex += getPicSprites(colorbarssmpte_back.info);
-			palindex += colorbarssmpte.palInfo->count;
+			if(vmode_snk)
+			{
+				smpte_100_pal = smpte100_304_pal;
+				smpte_075_pal = colorbarssmpte75_304.palInfo->data;
 
-			pictureInit(&colorbarssmpte75_back, &colorbarssmpte75, sprindex, palindex, 0, 0,FLIP_NONE);
-			palJobPut(palindex,colorbarssmpte75.palInfo->count,colorbarssmpte75.palInfo->data);
-
-			if (!Is75) {
-				pictureHide(&colorbarssmpte75_back);
-				pictureShow(&colorbarssmpte_back);
-			} else {
-				pictureHide(&colorbarssmpte_back);
-				pictureShow(&colorbarssmpte75_back);
+				pictureInit(&colorbarssmpte_back, &colorbarssmpte75_304, 1, palindex, 0, 0,FLIP_NONE);
 			}
+			else
+			{
+				smpte_100_pal = smpte100_320_pal;
+				smpte_075_pal = colorbarssmpte75.palInfo->data;
+
+				pictureInit(&colorbarssmpte_back, &colorbarssmpte75, 1, palindex, 0, 0,FLIP_NONE);
+			}
+
+			swap_pal = 1;
 			draw = 0;
 		}
+
+		if(swap_pal)
+		{
+			if (!Is75) {
+				palJobPut(palindex, 1, smpte_100_pal);
+				if(text)
+					fixPrint(32, 3, fontColorWhite, 3, "100%");
+			} else {
+				palJobPut(palindex, 1, smpte_075_pal);
+				if(text)
+					fixPrint(32, 3, fontColorWhite, 3, " 75%");
+			}
+			swap_pal = 0;
+		}
+
 		SCClose();
 		waitVBlank();
 
@@ -394,17 +416,8 @@ void tp_smpte_color_bars()
 		{
 			Is75 = !Is75;
 
-			if (!Is75) {
-				pictureHide(&colorbarssmpte75_back);
-				pictureShow(&colorbarssmpte_back);
-				fixPrint(32, 3, fontColorWhite, 3, "100%");
-			} else {
-				pictureHide(&colorbarssmpte_back);
-				pictureShow(&colorbarssmpte75_back);
-				fixPrint(32, 3, fontColorWhite, 3, " 75%");
-			}
 			text = 60;
-			SCClose();
+			swap_pal = 1;
 		}
 
 		if (PRESSED_B || PRESSED_START)
@@ -516,7 +529,7 @@ void tp_color_bleed_check()
 void tp_grid()
 {
 	int done = 0, draw = 1, updatepalette = 0, gray = 0, first = 1;
-	WORD color = 0;
+	WORD color = 0x8000;
 	scroller grid;
 
 	color = 0x8000;
