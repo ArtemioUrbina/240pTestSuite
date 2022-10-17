@@ -128,7 +128,6 @@ void tp_colorchart()
 	ushort white_chart_pal[64], red_chart_pal[64], green_chart_pal[64], blue_chart_pal[64];
 	ushort d_white_chart_pal[64], d_red_chart_pal[64], d_green_chart_pal[64], d_blue_chart_pal[64];
 
-
 	memset(white_chart_pal, 0, sizeof(ushort)*64);
 	memset(red_chart_pal, 0, sizeof(ushort)*64);
 	memset(green_chart_pal, 0, sizeof(ushort)*64);
@@ -167,7 +166,6 @@ void tp_colorchart()
 		}
 	}
 	
-
 	while (!done)
 	{
 		if (draw)
@@ -663,17 +661,61 @@ void tp_monoscope()
 
 void tp_gray_ramp()
 {
-	int done = 0, draw = 1;
-	picture grayramp_back;
+	int done = 0, draw = 1, color = 0, pal = 0, i = 0;
+	picture ramp_top_light_back;
+	picture ramp_top_dark_back;
+	picture ramp_bottom_light_back;
+	picture ramp_bottom_dark_back;
+	ushort ramp_light_pal[64], ramp_dark_pal[64];
+	ushort ramp_light_rev_pal[64], ramp_dark_rev_pal[64];
+
+	// We only use the tiles and generate the palettes on the fly
+	memset(ramp_light_pal, 0, sizeof(ushort)*64);
+	memset(ramp_dark_pal, 0, sizeof(ushort)*64);
+	memset(ramp_light_rev_pal, 0, sizeof(ushort)*64);
+	memset(ramp_dark_rev_pal, 0, sizeof(ushort)*64);
+
+	for(pal = 0; pal < 4; pal++)
+	{
+		for(i = 1; i < 9; i++)
+		{
+			ramp_light_pal[i+pal*16] = PackColor(color, color, color, 0);
+			ramp_dark_pal[i+pal*16] = PackColor(color, color, color, 1);
+			ramp_light_rev_pal[i+pal*16] = PackColor(31-color, 31-color, 31-color, 0);
+			ramp_dark_rev_pal[i+pal*16] = PackColor(31-color, 31-color, 31-color, 1);
+
+			color++;
+		}
+	}
 
 	while (!done)
 	{
 		if (draw)
 		{
+			int palindex = 16, sprindex = 1;
+
 			gfxClear();
 
-			pictureInit(&grayramp_back, &grayramp, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,grayramp.palInfo->count,grayramp.palInfo->data);
+			pictureInit(&ramp_top_dark_back, &grayramp, sprindex, palindex, 32, 0, FLIP_NONE);
+			palJobPut(palindex, grayramp.palInfo->count, ramp_dark_pal);
+			sprindex += getPicSprites(ramp_top_dark_back.info);
+			palindex += grayramp.palInfo->count;
+
+			pictureInit(&ramp_top_light_back, &grayramp, sprindex, palindex, 36, 0, FLIP_NONE);
+			palJobPut(palindex, grayramp.palInfo->count, ramp_light_pal);
+			sprindex += getPicSprites(ramp_top_light_back.info);
+			palindex += grayramp.palInfo->count;
+
+			pictureInit(&ramp_bottom_dark_back, &grayramp, sprindex, palindex, 32, 112, FLIP_NONE);
+			palJobPut(palindex, grayramp.palInfo->count, ramp_dark_rev_pal);
+			sprindex += getPicSprites(ramp_top_dark_back.info);
+			palindex += grayramp.palInfo->count;
+
+			pictureInit(&ramp_bottom_light_back, &grayramp, sprindex, palindex, 36, 112, FLIP_NONE);
+			palJobPut(palindex, grayramp.palInfo->count, ramp_light_rev_pal);
+			sprindex += getPicSprites(ramp_top_light_back.info);
+			palindex += grayramp.palInfo->count;
+
 			draw = 0;
 		}
 
