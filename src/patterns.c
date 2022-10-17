@@ -662,6 +662,9 @@ void tp_monoscope()
 void tp_gray_ramp()
 {
 	int done = 0, draw = 1, color = 0, pal = 0, i = 0;
+	int version = 0, setpalettes = 0, text = 0, local_shadow = 0;
+	int pal_top_light = 0, pal_top_dark = 0;
+	int pal_bottom_light = 0, pal_bottom_dark = 0;
 	picture ramp_top_light_back;
 	picture ramp_top_dark_back;
 	picture ramp_bottom_light_back;
@@ -674,6 +677,8 @@ void tp_gray_ramp()
 	memset(ramp_dark_pal, 0, sizeof(ushort)*64);
 	memset(ramp_light_rev_pal, 0, sizeof(ushort)*64);
 	memset(ramp_dark_rev_pal, 0, sizeof(ushort)*64);
+
+	local_shadow = enable_shadow;
 
 	for(pal = 0; pal < 4; pal++)
 	{
@@ -692,31 +697,66 @@ void tp_gray_ramp()
 	{
 		if (draw)
 		{
-			int palindex = 16, sprindex = 1;
+			int sprindex = 1, palindex = 16;
 
 			gfxClear();
 
+			pal_top_dark = palindex;
 			pictureInit(&ramp_top_dark_back, &grayramp, sprindex, palindex, 32, 0, FLIP_NONE);
-			palJobPut(palindex, grayramp.palInfo->count, ramp_dark_pal);
 			sprindex += getPicSprites(ramp_top_dark_back.info);
 			palindex += grayramp.palInfo->count;
 
+			pal_top_light = palindex;
 			pictureInit(&ramp_top_light_back, &grayramp, sprindex, palindex, 36, 0, FLIP_NONE);
-			palJobPut(palindex, grayramp.palInfo->count, ramp_light_pal);
 			sprindex += getPicSprites(ramp_top_light_back.info);
 			palindex += grayramp.palInfo->count;
-
+			
+			pal_bottom_dark = palindex;
 			pictureInit(&ramp_bottom_dark_back, &grayramp, sprindex, palindex, 32, 112, FLIP_NONE);
-			palJobPut(palindex, grayramp.palInfo->count, ramp_dark_rev_pal);
 			sprindex += getPicSprites(ramp_top_dark_back.info);
 			palindex += grayramp.palInfo->count;
 
+			pal_bottom_light = palindex;
 			pictureInit(&ramp_bottom_light_back, &grayramp, sprindex, palindex, 36, 112, FLIP_NONE);
-			palJobPut(palindex, grayramp.palInfo->count, ramp_light_rev_pal);
-			sprindex += getPicSprites(ramp_top_light_back.info);
-			palindex += grayramp.palInfo->count;
-
+			
 			draw = 0;
+			setpalettes = 1;
+		}
+
+		if(setpalettes)
+		{
+			switch(version)
+			{
+				case 0:
+					palJobPut(pal_top_dark, grayramp.palInfo->count, ramp_dark_pal);
+					palJobPut(pal_top_light, grayramp.palInfo->count, ramp_light_pal);
+					palJobPut(pal_bottom_dark, grayramp.palInfo->count, ramp_dark_rev_pal);
+					palJobPut(pal_bottom_light, grayramp.palInfo->count, ramp_light_rev_pal);
+				break;
+
+				case 1:
+					palJobPut(pal_top_dark, grayramp.palInfo->count, ramp_dark_pal);
+					palJobPut(pal_top_light, grayramp.palInfo->count, ramp_dark_pal);
+					palJobPut(pal_bottom_dark, grayramp.palInfo->count, ramp_dark_rev_pal);
+					palJobPut(pal_bottom_light, grayramp.palInfo->count, ramp_dark_rev_pal);
+				break;
+
+				case 2:
+					palJobPut(pal_top_dark, grayramp.palInfo->count, ramp_light_pal);
+					palJobPut(pal_top_light, grayramp.palInfo->count, ramp_light_pal);
+					palJobPut(pal_bottom_dark, grayramp.palInfo->count, ramp_light_rev_pal);
+					palJobPut(pal_bottom_light, grayramp.palInfo->count, ramp_light_rev_pal);
+				break;
+			}
+			
+			setpalettes = 0;
+		}
+
+		if(text)
+		{
+			text--;
+			if(!text)
+				suiteClearFixLayer();
 		}
 
 		SCClose();
@@ -724,12 +764,58 @@ void tp_gray_ramp()
 
 		readController();
 
+		if (PRESSED_A)
+		{
+			version++;
+			if(version > 2)
+				version = 0;
+			setpalettes = 1;
+
+			switch(version)
+			{
+				case 0:
+					fixPrint(25, 3, fontColorRed, 3, "Full ");
+				break;
+
+				case 1:
+					fixPrint(25, 3, fontColorRed, 3, "Light");
+				break;
+
+				case 2:
+					fixPrint(25, 3, fontColorRed, 3, "Dark ");
+				break;
+			}
+			text = 60;
+		}
+
 		if (PRESSED_B || PRESSED_START)
 			done = 1;
+
+		if (PRESSED_C)
+		{
+			local_shadow = !local_shadow;
+			if(local_shadow)
+			{
+				volMEMBYTE(REG_SHADOW) = 1;
+				fixPrint(25, 4, fontColorRed, 3, "Darken");
+			}
+			else
+			{
+				volMEMBYTE(REG_NOSHADOW) = 1;
+				fixPrint(25, 4, fontColorRed, 3, "Normal");
+			}
+			text = 60;
+		}
 
 		if (checkHelp(HELP_GRAY))
 			draw = 1;
 	}
+
+	// Leave it as globally set
+	if(enable_shadow)
+		volMEMBYTE(REG_SHADOW) = 1;
+	else
+		volMEMBYTE(REG_NOSHADOW) = 1;
 }
 
 void tp_white_rgb()
