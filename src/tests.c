@@ -124,7 +124,7 @@ void vt_drop_shadow_test()
 
 			// load sprites
 			spri_donna = sprindex;
-			pictureInit(&donna_back, &donna, spri_donna, pali_donna, 0, isPAL && usePAL256 ? -16 : -32, FLIP_NONE);
+			pictureInit(&donna_back, &donna, spri_donna, pali_donna, 0, isPAL || isPALinMVS ? -16 : -32, FLIP_NONE);
 			sprindex += getPicSprites(donna_back.info);
 
 			spri_slug_shadow = sprindex;
@@ -354,7 +354,7 @@ void vt_striped_sprite_test()
 			palJobPut(palindex,marker_striped.palInfo->count,marker_striped.palInfo->data);
 
 			// Tiles
-			pictureInit(&donna_back, &donna, sprindex, pali_donna, 0, isPAL && usePAL256 ? -16 : -32, FLIP_NONE);
+			pictureInit(&donna_back, &donna, sprindex, pali_donna, 0, isPAL || isPALinMVS ? -16 : -32, FLIP_NONE);
 			sprindex += getPicSprites(donna_back.info);
 			pictureInit(&sprite, &marker_striped, sprindex, palindex, x, y, FLIP_NONE);
 
@@ -1221,7 +1221,7 @@ void vt_gridscroll_test()
 
 void vt_horizontal_stripes()
 {
-	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
+	int done = 0, draw = 1, alternate = 0, field = 1, frames = 0, docounter = 0;
 	picture image;
 
 	while (!done)
@@ -1247,12 +1247,17 @@ void vt_horizontal_stripes()
 
 		if (docounter)
 		{
-			count++;
+			frames++;
+			if (isPAL)
+			{
+				if (frames > 49)
+					frames = 0;
+			} else {
+				if (frames > 59)
+					frames = 0;
+			}
 
-			if (count > 59)
-				count = 0;
-
-			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		if (!alternate && (PRESSED_UP || PRESSED_DOWN))
@@ -1291,7 +1296,7 @@ void vt_horizontal_stripes()
 
 void vt_vertical_stripes()
 {
-	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
+	int done = 0, draw = 1, alternate = 0, field = 1, frames = 0, docounter = 0;
 	picture image;
 
 	while (!done)
@@ -1317,12 +1322,17 @@ void vt_vertical_stripes()
 
 		if (docounter)
 		{
-			count++;
+			frames++;
+			if (isPAL)
+			{
+				if (frames > 49)
+					frames = 0;
+			} else {
+				if (frames > 59)
+					frames = 0;
+			}
 
-			if (count > 59)
-				count = 0;
-
-			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		if (!alternate && (PRESSED_UP || PRESSED_DOWN))
@@ -1361,7 +1371,7 @@ void vt_vertical_stripes()
 
 void vt_checkerboard()
 {
-	int done = 0, draw = 1, alternate = 0, field = 1, count = 0, docounter = 0;
+	int done = 0, draw = 1, alternate = 0, field = 1, frames = 0, docounter = 0;
 	picture image;
 
 	while (!done)
@@ -1389,12 +1399,17 @@ void vt_checkerboard()
 
 		if (docounter)
 		{
-			count++;
+			frames++;
+			if (isPAL)
+			{
+				if (frames > 49)
+					frames = 0;
+			} else {
+				if (frames > 59)
+					frames = 0;
+			}
 
-			if (count > 59)
-				count = 0;
-
-			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", count); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		if (!alternate && (PRESSED_UP || PRESSED_DOWN))

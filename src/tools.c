@@ -113,7 +113,7 @@ void check_systype()
 {
 	BYTE reg = 0;
 
-	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0;
+	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0, isPALinMVS = 0;
 	enable_shadow = 0;
 	usePAL256 = 1;
 
@@ -155,10 +155,12 @@ void check_systype()
 	// LSPC-A0 by NEC is the VDC part of the first generation chipset, see LSPC2-A2 for more details. (AES & MVS)
 	// LSPC2-A2 by Fujitsu is the second generation Line SPrite Controller, it is only found in cartridge systems. (AES & MVS)
 	// We also need to know what we'll do with PAL systems... since they are 240p and have different PAR (TODO)
-	if (!isMVS)
+	reg = volMEMWORD(REG_LSPCMODE);
+	if (reg & LPSC2_NTSC_PAL)
 	{
-		reg = volMEMWORD(REG_LSPCMODE);
-		if (reg & LPSC2_NTSC_PAL)
+		if(isMVS)
+			isPALinMVS = 1;
+		else
 			isPAL = 1;
 	}
 }

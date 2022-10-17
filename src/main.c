@@ -36,7 +36,7 @@ bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 BYTE isMVS, is4S, is6S, isMulti, hwChange;;
-BYTE vmode_snk, isPAL, usePAL256, enable_shadow;
+BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
 
 #define NUM_FONT_COLORS 9
 static const ushort fixPalettes[]= {
@@ -529,6 +529,9 @@ void menu_main()
 		showexit = 1;
 		cursemax++;
 	}
+
+	if(isPALinMVS)
+		draw_warning("MVS HW is supposed to be NTSC.\nIt is supported by the Suite,\nbut PAL options will be disabled\nto honor SNK definition.", 1, 16, 1);
 
 	while (!done)
 	{

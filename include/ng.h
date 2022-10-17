@@ -43,7 +43,7 @@ extern bkp_ram_info bkp_data;
 #define DP_DEBUG8			0x80
 
 extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
-extern BYTE vmode_snk, isPAL, usePAL256, enable_shadow;
+extern BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
 extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 extern BYTE first_grid;
 extern BYTE first_overscan;
