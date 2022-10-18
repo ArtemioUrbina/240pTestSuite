@@ -41,46 +41,36 @@ BYTE first_overscan;
 // 0xF111 & 0x7111 are the next gray (both equal)   [333x]  7.5 IRE
 // 0x8222 & 0x0222 are the next gray (both equal)   [444x]  10  IRE
 
-//      0 transp, 1 fondo,  2 external, 3 top middle, 4 second middle, 5 third middle, 6 fourth middle, 7 external middle, 8 external center
-//		2 external, 7 middle, 8 center
-
 void tp_pluge()
 {
-	int done = 0, draw = 1, IsNTSC = 0, text = 0;
-	picture plugergb_back;
-	picture plugentsc_back;
+	int done = 0, draw = 1, IsNTSC = 0, text = 0, swappal = 0;
+	picture pluge_back;
 	ushort plugergb_pal[]= {
 		_BLACK, _BLACK, IRE7_5, WH_100, IRE_75, IRE_50, IRE_24, IRE4_5, IRE2_5, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,};
 	ushort plugentsc_pal[]= {
 		_BLACK, _BLACK, IRE_10, WH_100, IRE_75, IRE_50, IRE_24, IRE7_5, IRE4_5, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,};
-	//                  XXXXXX                                  XXXXXX  XXXXXX
-	//	0x0000, 0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,};
 
 	while (!done)
 	{
-		int palindex = 16, sprindex = 1;
-
 		if (draw)
 		{
 			gfxClear();
 
-			pictureInit(&plugergb_back, &plugergb, sprindex, palindex, 0, 0,FLIP_NONE);
-			palJobPut(palindex,1,plugergb_pal);
-			sprindex += getPicSprites(plugergb_back.info);
-			palindex += plugergb.palInfo->count;
-
-			pictureInit(&plugentsc_back, &plugentsc, sprindex, palindex, 0, 0,FLIP_NONE);
-			palJobPut(palindex,1,plugentsc_pal);
-
-			if (!IsNTSC) {
-				pictureHide(&plugentsc_back);
-				pictureShow(&plugergb_back);
-			} else {
-				pictureHide(&plugergb_back);
-				pictureShow(&plugentsc_back);
-			}
-
+			pictureInit(&pluge_back, &pluge, 1, 16, 0, 0,FLIP_NONE);
+			
+			swappal = 1;
 			draw = 0;
+		}
+
+		if(swappal)
+		{
+			if(IsNTSC)	{
+				palJobPut(16,1,plugergb_pal);
+			}
+			else {
+				palJobPut(16,1,plugentsc_pal);
+			}
+			swappal = 0;
 		}
 
 		SCClose();
@@ -99,14 +89,11 @@ void tp_pluge()
 		{
 			IsNTSC = !IsNTSC;
 			if (!IsNTSC){
-				pictureHide(&plugentsc_back);
-				pictureShow(&plugergb_back);
 				fixPrint(24, 3, fontColorRed, 3, "RGB FULL RANGE");
-			} else {
-				pictureHide(&plugergb_back);
-				pictureShow(&plugentsc_back);
+			} else {;
 				fixPrint(24, 3, fontColorRed, 3, "NTSC 7.5 IRE  ");
 			}
+			swappal = 1;
 			text = 60;
 			SCClose();
 		}

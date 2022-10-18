@@ -43,13 +43,10 @@
   <pict id="messagebox">
 	<file>gfx\message.png</file>
   </pict>
-  <pict id="plugentsc">
-    <file>gfx\plugentsc.png</file>
+  <pict id="pluge">
+    <file>gfx\pluge.png</file>
   </pict>
-  <pict id="plugergb">
-    <file>gfx\plugergb.png</file>
-  </pict>
-	<scrl id="colorchart">
+  <scrl id="colorchart">
     <file>gfx\colorchart.png</file>
   </scrl>
   <pict id="colorchartsingle">

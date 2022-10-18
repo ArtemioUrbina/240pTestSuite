@@ -42,9 +42,9 @@ BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
 static const ushort fixPalettes[]= {
 	_BLACK, WH_100, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,	// Used for BIOS Mask
 	_BLACK, WH_100, 0x0333, 0x5fa7, 0xde85, 0x2c74, 0x2a52, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorWhite
-	_BLACK, 0x4f00, 0x0300, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorRed
-	_BLACK, 0x20f0, 0x0030, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorGreen
-	_BLACK, 0x100f, 0x0003, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorBlue
+	_BLACK, ___RED, 0x0300, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorRed
+	_BLACK, _GREEN, 0x0030, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorGreen
+	_BLACK, __BLUE, 0x0003, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorBlue
 	_BLACK, 0xf999, 0xf444, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorGrayLight
 	_BLACK, 0xf555, 0xf222, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorGrayDark
 	_BLACK, _BLACK, WH_100, 0xee51, 0x4f81, 0x4fa1, 0x4fc1, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorBlack
@@ -625,7 +625,7 @@ void draw_mvs_demo()
 	pictureInit(&foreground, &gillian, index, palindex, 132, 50, FLIP_NONE);
 	palJobPut(palindex,gillian.palInfo->count,gillian.palInfo->data);
 	index += getPicSprites(foreground.info);
-	palindex += plugergb.palInfo->count;
+	palindex += gillian.palInfo->count;
 
 	pictureInit(&titledsp, &title, index, palindex, 56, 28, FLIP_NONE);
 	palJobPut(palindex,title.palInfo->count,title.palInfo->data);
