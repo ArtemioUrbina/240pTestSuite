@@ -42,7 +42,7 @@ extern bkp_ram_info bkp_data;
 #define DP_DEBUG7			0x40
 #define DP_DEBUG8			0x80
 
-extern BYTE isMVS, is4S, is6S, isMulti, hwChange;
+extern BYTE isMVS, is4S, is6S, isMulti, hwChange, allowIRE107;
 extern BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
 extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 extern BYTE first_grid;
@@ -158,6 +158,28 @@ extern BYTE first_overscan;
 
 #define REG_NOSHADOW		0x3A0001
 #define REG_SHADOW			0x3A0011
+
+// Colors
+#define WH_107	0x7fff
+#define WH_100	0xffff
+#define	_BLACK	0x8000
+#define	___RED	0x4f00
+#define _GREEN	0x20f0
+#define __BLUE	0x100f
+#define __CYAN	0x30ff
+#define MAGENT	0x5f0f
+#define YELLOW	0x6ff0
+
+#define IRE2_5	0xf000
+#define IRE4_5	0x8111
+#define IRE7_5	0xf111
+#define IRE_10	0x8222
+#define IRE_20	0x7333
+#define IRE_24	0x0444
+#define IRE_40	0x8777
+#define IRE_50	0x8888
+#define IRE_75	0x8ccc
+#define IRE_80	0x8ddd
 
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22

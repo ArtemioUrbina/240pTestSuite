@@ -36,25 +36,25 @@ BYTE first_overscan;
 
 // MAME says 0x7000 and 0xF000 are the same
 // We confirmed with the scope that they are the lowest, and the same
-// 0x7111 is slightly higher than 0xF111
-// lowest colors are 0x8222, 0xF111, 0x7111, (0x7000 & 0xF000)
+// 0xF000 & 0x7000 are the lowest gray (both equal) [111X]  2.5 IRE
+// 0x0111 & 0x8111 are the next gray (both equal)   [222x]  4.5 IRE
+// 0xF111 & 0x7111 are the next gray (both equal)   [333x]  7.5 IRE
+// 0x8222 & 0x0222 are the next gray (both equal)   [444x]  10  IRE
 
-
-//		Experimenting with values, until w eget the AES flashcart we can't measure IRE. Measured with MVS and JAMMA
 //      0 transp, 1 fondo,  2 external, 3 top middle, 4 second middle, 5 third middle, 6 fourth middle, 7 external middle, 8 external center
 //		2 external, 7 middle, 8 center
-static const ushort plugergb_pal[]= {
-	//                  XXXXXX                                  XXXXXX  XXXXXX
-	//	0x0000, 0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-		0x8000, 0x8000, 0x8222, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xF111, 0x7000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
-static const ushort plugentsc_pal[]= {
-		0x8000, 0x8000, 0x8222, 0x7fff, 0x7bbb, 0x8888, 0x8444, 0xf111, 0x7000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,};
 
 void tp_pluge()
 {
 	int done = 0, draw = 1, IsNTSC = 0, text = 0;
 	picture plugergb_back;
 	picture plugentsc_back;
+	ushort plugergb_pal[]= {
+		_BLACK, _BLACK, IRE7_5, WH_100, IRE_75, IRE_50, IRE_24, IRE4_5, IRE2_5, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,};
+	ushort plugentsc_pal[]= {
+		_BLACK, _BLACK, IRE_10, WH_100, IRE_75, IRE_50, IRE_24, IRE7_5, IRE4_5, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,};
+	//                  XXXXXX                                  XXXXXX  XXXXXX
+	//	0x0000, 0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,};
 
 	while (!done)
 	{
@@ -165,6 +165,9 @@ void tp_colorchart()
 			color++;
 		}
 	}
+
+	if(!allowIRE107)
+		white_chart_pal[8+3*16] = PackColor(0, 0, 0, 1);
 	
 	while (!done)
 	{
@@ -279,12 +282,17 @@ void tp_colorchart()
 	}
 }
 
+/*
+* 0x7fff is above 100 IRE (at 106.8 IRE) and way higher in steps than the rest
+* 0xFFFF is 100 IRE White
+*/
+
 void tp_colorbars()
 {
 	int done = 0, draw = 1, Is75 = 1, text = 0, palindex = 16, swap_pal = 0;
 	scroller colorebu;
-	ushort ebu100_320_pal[] = { 0x8000, 0x7fff, 0x6ff0, 0x30ff, 0x20f0, 0x5f0f, 0x4f00, 0x100f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
-	ushort ebu100_304_pal[] = { 0x8000, 0x7fff, 0x6ff0, 0x30ff, 0x20f0, 0x4f00, 0x100f, 0x8000, 0x5f0f, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
+	ushort ebu100_320_pal[] = { _BLACK, WH_100, 0x6ff0, 0x30ff, 0x20f0, 0x5f0f, 0x4f00, 0x100f, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
+	ushort ebu100_304_pal[] = { _BLACK, WH_100, 0x6ff0, 0x30ff, 0x20f0, 0x4f00, 0x100f, _BLACK, 0x5f0f, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
 	ushort *ebu_100_pal = NULL, *ebu_075_pal = NULL;
 	
 	while (!done)
@@ -354,12 +362,17 @@ void tp_colorbars()
 	}
 }
 
+/*
+* 0x7fff is above 100 IRE (at 106.8 IRE) and way higher in steps than the rest
+* 0xFFFF is 100 IRE White
+*/
+
 void tp_smpte_color_bars()
 {
 	int done = 0, draw = 1, Is75 = 1, text = 0, palindex = 16, swap_pal = 0;
 	picture colorbarssmpte_back;
-	ushort smpte100_320_pal[] = { 0x8000, 0x7fff, 0x6ff0, 0x100f, 0xf111, 0x30ff, 0x20f0, 0x5f0f, 0x8025, 0x7fff, 0x4f00, 0xc307, 0x7000, 0x8222, 0x8000, 0x8000 };
-	ushort smpte100_304_pal[] = { 0x8000, 0x7fff, 0x6ff0, 0x100f, 0xf111, 0x30ff, 0x20f0, 0x5f0f, 0x4f00, 0x8025, 0x7fff, 0xc307, 0x7000, 0x8222, 0x8000, 0x8000 };
+	ushort smpte100_320_pal[] = { _BLACK, WH_100, 0x6ff0, 0x100f, 0xf111, 0x30ff, 0x20f0, 0x5f0f, 0x8025, WH_100, 0x4f00, 0xc307, 0x7000, 0x8222, _BLACK, _BLACK };
+	ushort smpte100_304_pal[] = { _BLACK, WH_100, 0x6ff0, 0x100f, 0xf111, 0x30ff, 0x20f0, 0x5f0f, 0x4f00, 0x8025, WH_100, 0xc307, 0x7000, 0x8222, _BLACK, _BLACK };
 	ushort *smpte_100_pal = NULL, *smpte_075_pal = NULL;
 
 	while (!done)
@@ -438,7 +451,7 @@ Gray		0x7BBB
 Cyan		0x30BB
 Magenta		0x5B0B
 Yellow		0x6BB0
-ushort pal_75pct[] = { 0x8000, 0x7BBB, 0x6BB0, 0x30BB, 0x20B0, 0x5B0B, 0x4B00, 0x100B, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
+ushort pal_75pct[] = { _BLACK, 0x7BBB, 0x6BB0, 0x30BB, 0x20B0, 0x5B0B, 0x4B00, 0x100B, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
 */
 
 void tp_ref_color_bars()
@@ -530,10 +543,10 @@ void tp_color_bleed_check()
 void tp_grid()
 {
 	int done = 0, draw = 1, updatepalette = 0, gray = 0;
-	WORD color = 0x8000;
+	WORD color = _BLACK;
 	scroller grid;
 
-	color = 0x8000;
+	color = _BLACK;
 	while (!done)
 	{
 		if (draw)
@@ -565,7 +578,7 @@ void tp_grid()
 		if (updatepalette)
 		{
 			if (!gray)
-				color = 0x8000;
+				color = _BLACK;
 			else
 				color = PackColor(7, 7, 7, 0);
 			VRAM_PAL(16, 3) = color;
@@ -588,7 +601,7 @@ void tp_grid()
 		if(checkHelp(HELP_GRID))
 			draw = 1;
 	}
-	VRAM_PAL(0, 2) = 0x8000;	// restore SNK BIOS Border Color
+	VRAM_PAL(0, 2) = _BLACK;	// restore SNK BIOS Border Color
 }
 
 void tp_monoscope()
@@ -597,7 +610,7 @@ void tp_monoscope()
 	int bright[7] = { 31, 25, 20, 15, 10, 6, 2 }, color = 0;
 	picture monoscope_back;
 
-	color = 0x8000;
+	color = _BLACK;
 	while (!done)
 	{
 		if (draw)
@@ -619,7 +632,7 @@ void tp_monoscope()
 		if (updatepalette)
 		{
 			if (!gray)
-				color = 0x8000;
+				color = _BLACK;
 			else
 				color = PackColor(7, 7, 7, 0);
 			VRAM_PAL(16, 3) = color;
@@ -656,8 +669,33 @@ void tp_monoscope()
 		if (checkHelp(HELP_MONOSCOPE))
 			draw = 1;
 	}
-	VRAM_PAL(0, 2) = 0x8000;	// SNK BIOS Border
+	VRAM_PAL(0, 2) = _BLACK;	// SNK BIOS Border
 }
+
+void display_ramp_pal(ushort *palette, int x)
+{
+	int y = 2, pal = 0, i = 0;
+	char buffer[5];
+
+	for(pal = 0; pal < 4; pal++)
+	{
+		for(i = 1; i < 9; i++)
+		{
+			intToHex(palette[i+pal*16], buffer, 4);
+			fixPrint(x, y++, fontColorRed, 3, buffer);
+			if(y > 30)
+			{
+				x += 4;
+				y = 3;
+			}
+		}
+	}
+}
+
+/*
+* 0x7fff is above 100 IRE (at 106.8 IRE) and way higher in steps than the rest
+* 0xFFFF is 100 IRE White
+*/
 
 void tp_gray_ramp()
 {
@@ -693,6 +731,12 @@ void tp_gray_ramp()
 		}
 	}
 
+	if(!allowIRE107)
+	{
+		ramp_light_pal[8+3*16] = PackColor(0, 0, 0, 1);
+		ramp_light_rev_pal[1] = PackColor(0, 0, 0, 1);
+	}
+
 	while (!done)
 	{
 		if (draw)
@@ -711,13 +755,13 @@ void tp_gray_ramp()
 			sprindex += getPicSprites(ramp_top_light_back.info);
 			palindex += grayramp.palInfo->count;
 			
-			pal_bottom_dark = palindex;
-			pictureInit(&ramp_bottom_dark_back, &grayramp, sprindex, palindex, 32, 112, FLIP_NONE);
+			pal_bottom_light = palindex;
+			pictureInit(&ramp_bottom_light_back, &grayramp, sprindex, palindex, 32, 112, FLIP_NONE);
 			sprindex += getPicSprites(ramp_top_dark_back.info);
 			palindex += grayramp.palInfo->count;
 
-			pal_bottom_light = palindex;
-			pictureInit(&ramp_bottom_light_back, &grayramp, sprindex, palindex, 36, 112, FLIP_NONE);
+			pal_bottom_dark = palindex;
+			pictureInit(&ramp_bottom_dark_back, &grayramp, sprindex, palindex, 36, 112, FLIP_NONE);
 			
 			draw = 0;
 			setpalettes = 1;
@@ -747,6 +791,14 @@ void tp_gray_ramp()
 					palJobPut(pal_bottom_dark, grayramp.palInfo->count, ramp_light_rev_pal);
 					palJobPut(pal_bottom_light, grayramp.palInfo->count, ramp_light_rev_pal);
 				break;
+			}
+
+			if (bkp_data.debug_dip1 & DP_DEBUG1)
+			{
+				display_ramp_pal(ramp_light_pal, 4);
+				display_ramp_pal(ramp_dark_pal, 12);
+				display_ramp_pal(ramp_light_rev_pal, 20);
+				display_ramp_pal(ramp_dark_rev_pal, 28);
 			}
 			
 			setpalettes = 0;
@@ -778,11 +830,11 @@ void tp_gray_ramp()
 				break;
 
 				case 1:
-					fixPrint(25, 3, fontColorRed, 3, "Light");
+					fixPrint(25, 3, fontColorRed, 3, "Dark ");
 				break;
 
 				case 2:
-					fixPrint(25, 3, fontColorRed, 3, "Dark ");
+					fixPrint(25, 3, fontColorRed, 3, "Light");
 				break;
 			}
 			text = 60;
@@ -818,11 +870,24 @@ void tp_gray_ramp()
 		volMEMBYTE(REG_NOSHADOW) = 1;
 }
 
+/*
+* 0x7fff is above 100 IRE (at 106.8 IRE) and way higher in steps than the rest
+* 0xFFFF is 100 IRE White
+*/
+
 void tp_white_rgb()
 {
 	int done = 0, color = 1, draw = 1, editmode = 0, sel = 0;
 	short r = 31, g = 31, b = 31, dark = 0, text = 0;
-	WORD edit_color = 0x7FFF;
+	WORD edit_color = WH_107;
+
+	if(allowIRE107)
+		edit_color = WH_107;
+	else
+	{
+		edit_color = WH_100;
+		dark = 1;
+	}
 
 	while (!done)
 	{
@@ -902,7 +967,7 @@ void tp_white_rgb()
 				switch (color)
 				{
 					case 1:
-						sprintf(colorname, "%s", edit_color != 0x7FFF ? "Edit " : "White");
+						sprintf(colorname, "%s", edit_color != WH_100 ? "Edit " : "White");
 					break;
 
 					case 2:
@@ -1022,6 +1087,14 @@ void tp_white_rgb()
 				}
 
 				edit_color = PackColor(r, g, b, dark);
+				if(!allowIRE107 && edit_color == WH_107)
+				{
+					edit_color = WH_100;
+					dark = 1;
+					fixPrint(5, 8, fontColorSolid, 4, "IRE limited to 100 in options");
+					text = 60;
+				}
+
 				backgroundColor(edit_color);
 			}
 

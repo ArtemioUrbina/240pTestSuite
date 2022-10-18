@@ -116,6 +116,7 @@ void check_systype()
 	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0, isPALinMVS = 0;
 	enable_shadow = 0;
 	usePAL256 = 1;
+	allowIRE107 = 1;
 
 	if (MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
 	{
@@ -184,11 +185,11 @@ inline void gfxClear()
 
 void menu_options()
 {
-	int done = 0, curse = 1, cursemax = 4, redraw = 1, text = 0, index = 0;
+	int done = 0, curse = 1, cursemax = 5, redraw = 1, text = 0, index = 0;
 
 	while (!done)
 	{
-		int toggle = 0;
+		int toggle = 0, y = 11;
 
 		if (redraw)
 		{
@@ -196,7 +197,7 @@ void menu_options()
 			index = draw_background();
 			redraw = 0;
 		}
-
+		
 		SCClose();
 		waitVBlank();
 
@@ -206,23 +207,27 @@ void menu_options()
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
 		fixPrintf(14, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
-		fixPrintf(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
-		fixPrintf(5, 15, curse == 2 ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
-		fixPrintf(5, 16, curse == 3 ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
-
-		fixPrintf(5, 18, curse == 4 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrintf(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
+		fixPrintf(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
+		fixPrintf(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
+		fixPrintf(5, y++, curse == 4 ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
+		y++;
+		fixPrintf(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
 		// Extra description
 		if (curse == 1)
 		{
-			fixPrintf(4, 20, fontColorGreen, 3, "The 304 mode uses the BIOS mask");
-			fixPrintf(4, 21, fontColorGreen, 3, "to hide 8 pixels on each side, ");
-			fixPrintf(4, 22, fontColorGreen, 3, "as required by SNK in games.");
-			if (!vmode_snk)
-				fixPrintf(4, 23, fontColorRed, 3, "Some systems trim pixel col. 320");
-			text = 1;
+			if(text != 1)
+			{
+				fixPrintf(4, 20, fontColorGreen, 3, "The 304 mode uses the BIOS mask");
+				fixPrintf(4, 21, fontColorGreen, 3, "to hide 8 pixels on each side, ");
+				fixPrintf(4, 22, fontColorGreen, 3, "as required by SNK in games.");
+				if (!vmode_snk)
+					fixPrintf(4, 23, fontColorRed, 3, "Some systems trim pixel col. 320");
+				text = 1;
+			}
 		} else {
 			if (text == 1)
 			{
@@ -233,24 +238,49 @@ void menu_options()
 				text = 0;
 			}
 		}
+
 		if (curse == 2)
 		{
-			fixPrintf(4, 20, fontColorGreen, 3, "Hardware option, all patterns");
-			fixPrintf(4, 21, fontColorGreen, 3, "will be darker.");
-			text = 2;
+			if(text != 2)
+			{
+				fixPrintf(4, 20, fontColorGreen, 3, "Hardware option, all patterns");
+				fixPrintf(4, 21, fontColorGreen, 3, "will be darker.");
+				text = 2;
+			}
 		}
 		else {
 			if (text == 2)
 			{
 				int i = 0;
 
-				for (i = 20; i < 22; i++)
+				for (i = 20; i < 24; i++)
 					fixPrintf(4, i, fontColorGreen, 3, "                                ");
 				text = 0;
 			}
 		}
 
-		if (curse == 1 && (PRESSED_LEFT || PRESSED_RIGHT))
+		if (curse == 3)
+		{
+			if(text != 3)
+			{
+				fixPrintf(4, 20, fontColorGreen, 3, "Neo Geo white level goes up to");
+				fixPrintf(4, 21, fontColorGreen, 3, "~106.8 IRE. This option limits");
+				fixPrintf(4, 22, fontColorGreen, 3, "selected patterns to 100 IRE.");
+				text = 3;
+			}
+		}
+		else {
+			if (text == 3)
+			{
+				int i = 0;
+
+				for (i = 20; i < 24; i++)
+					fixPrintf(4, i, fontColorGreen, 3, "                                ");
+				text = 0;
+			}
+		}
+
+		if (curse != 5 && (PRESSED_LEFT || PRESSED_RIGHT))
 			toggle = 1;
 
 		if (PRESSED_A || toggle)
@@ -272,11 +302,15 @@ void menu_options()
 				break;
 
 				case 3:
+					allowIRE107 = !allowIRE107;
+				break;
+
+				case 4:
 					if(isPAL)
 						usePAL256 = !usePAL256;
 				break;
 
-				case 4:
+				case 5:
 					done = 1;
 				break;
 			}
@@ -427,7 +461,8 @@ void menu_footer()
 		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 	}
 
-	fixPrintf(32, 5, fontColorRed, 3, enable_shadow ? "Dark" : "    ");
+	fixPrintf(32, 4, fontColorRed, 3, enable_shadow ? "Dark" : "    ");
+	fixPrintf(30, 5, fontColorRed, 3, !allowIRE107 ? "100 IRE" : "       ");
 }
 
 void draw_warning(char* msg, int index, int palindex, int clearback)
