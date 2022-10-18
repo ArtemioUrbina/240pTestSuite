@@ -38,6 +38,13 @@ extern u16 back_map[2240/2];
 extern u32 gillian_tiles[2912/4]; 
 extern u16 gillian_pal[16/2]; 
 
+// blink
+extern u32 gillian_b1_tiles[96/4]; 
+extern u32 gillian_b2_tiles[96/4]; 
+
+// QR code
+extern u32 barcode_tiles[512/4]; 
+
 // Font
 extern u32 font_tiles[3072/4];
 

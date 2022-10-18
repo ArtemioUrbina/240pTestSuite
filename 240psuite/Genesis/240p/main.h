@@ -49,8 +49,8 @@ u8 CheckHelpAndVO(u16 *buttons, u16 *pressedButtons, int option);
 void StopPSG();
 void DrawHelpText();
 void VBlankIntCallbackCancel();
-void DrawMainBG();
-void DrawMainBGwithGillian(u8 DrawGillian, u8 GillianX, u8 GillianY);
+u16 DrawMainBG();
+u16 DrawMainBGwithGillian(u8 DrawGillian, u8 GillianX, u8 GillianY);
 void DrawResolution();
 void OptionsMenu();
 void VideoTestsMenu();
@@ -58,6 +58,10 @@ void AudioTestsMenu();
 void HardwareMenu();
 void ControllerTest();
 void TeamPlayerCheck();
+void checkblink();
+
+extern int gblink_count, is_gblinking;
+extern u16 g_pos;
 
 #ifdef SEGACD
 void WarningFileNotFount();

@@ -34,13 +34,14 @@ void ChangeResolution(u16 *y)
 
 void DrawHelp(int option)
 {
-	u16 exit = 0, redraw = 1, totalpages = 1, page = 1;
+	u16 exit = 0, redraw = 1, totalpages = 1, page = 1, ind = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	FadeAndCleanUp();
 	
-	DrawMainBG();
+	ind = DrawMainBG();
 	
+	VDP_setPalette(PAL3, gillian_pal);
 	switch (option)
 	{
 	case HELP_GENERAL:
@@ -100,15 +101,20 @@ void DrawHelp(int option)
 					VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
 					break;
 				case 2:
-					VDP_drawTextBG(APLAN, "HELP (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
-					VDP_drawTextBG(APLAN, "The Genesis/MegaDrive can output", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "224 active video lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "In PAL consoles, it can display", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "either 224 or 240 lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);					
-					y++;
-					VDP_drawTextBG(APLAN, "Visit:", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "for more information.", TILE_ATTR(PAL0, 0, 0, 0), 4, y);
+					{
+						VDP_drawTextBG(APLAN, "HELP (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
+						VDP_drawTextBG(APLAN, "The Genesis/MegaDrive can output", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "224 active video lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "In PAL consoles, it can display", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "either 224 or 240 lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);					
+						y++;
+						VDP_drawTextBG(APLAN, "Visit:", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "for more information.", TILE_ATTR(PAL0, 0, 0, 0), 4, y);
+						
+						VDP_loadTileData(barcode_tiles, ind, sizeof(barcode_tiles) / 32, USE_DMA);
+						VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 256/8, 130/8, 32/8, 32 / 8);
+					}
 					break;
 				}
 				break;
@@ -117,11 +123,11 @@ void DrawHelp(int option)
 				{
 				case 1:
 					VDP_drawTextBG(APLAN, "PLUGE (1/3)", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
-					VDP_drawTextBG(APLAN, "NTSC levels require black to be", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "at 7.5 IRE for video. This HW", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "lowest is 6 IRE (6%), so using", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "this value for general 240p use", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "is not recommended.", TILE_ATTR(PAL2, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "NTSC levels require black to be", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "at 7.5 IRE for video. This HW", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "lowest is 6 IRE (6%), so using", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "this value for general 240p use", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "is not recommended.", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "Of course using it as reference", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "will work perfectly for games", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -320,7 +326,7 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "blue only option in your display", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "to confirm color balance.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "This HW lowest black is 6%.", TILE_ATTR(PAL2, 0, 0, 0), 4, y);
+				VDP_drawTextBG(APLAN, "This HW lowest black is 6%.", TILE_ATTR(PAL3, 0, 0, 0), 4, y);
 				break;
 			case HELP_GRAY:
 				VDP_drawTextBG(APLAN, "GRAY RAMP", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
@@ -803,4 +809,6 @@ void DrawHelp(int option)
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 224 / 8);
 	VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, 224 / 8);
 	VDP_resetScreen();
+	VDP_resetSprites();
+	VDP_updateSprites();
 }

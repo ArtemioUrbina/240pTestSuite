@@ -142,6 +142,8 @@ int main()
 			FadeAndCleanUp();
 			reload = 1;
 		}
+		
+		checkblink();
 		VDP_waitVSync();
 	}
 
@@ -279,6 +281,7 @@ void TestPatternMenu()
 			reload = 1;
 		}
 
+		checkblink();
 		VDP_waitVSync();
 	}
 
@@ -412,6 +415,7 @@ void VideoTestsMenu()
 			reload = 1;
 		}
 
+		checkblink();
 		VDP_waitVSync();
 	}
 
@@ -513,6 +517,7 @@ void AudioTestsMenu()
 			reload = 1;
 		}
 
+		checkblink();
 		VDP_waitVSync();
 	}
 
@@ -619,6 +624,7 @@ void HardwareMenu()
 			reload = 1;
 		}
 
+		checkblink();
 		VDP_waitVSync();
 	}
 
@@ -699,7 +705,7 @@ void DrawN()
 
 void DrawCredits()
 {
-	u16 exit = 0, pos = 0, counter = 0;
+	u16 exit = 0, pos = 0, counter = 0, ind = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons, loadvram = 1;
 
 	FadeAndCleanUp();
@@ -714,9 +720,14 @@ void DrawCredits()
 #ifdef SEGACD
 			pos = 6;
 #endif
-			DrawMainBG();
+			ind = DrawMainBG();
 
 			VDP_Start();
+			
+			VDP_setPalette(PAL3, gillian_pal);
+			VDP_loadTileData(barcode_tiles, ind, sizeof(barcode_tiles) / 32, USE_DMA);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 256/8, 130/8, 32/8, 32 / 8);
+			
 			VDP_setVerticalScroll(PLAN_A, 4);
 			VDP_setHorizontalScroll(PLAN_A, -4);
 
@@ -750,8 +761,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-			VDP_drawTextBG(APLAN, "Ver. 1.23", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "21/01/2022", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.24", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "17/10/2022", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 			VDP_End();
@@ -1059,16 +1070,19 @@ void StopPSG()
 	PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
 }
 
-void DrawMainBG()
+u16 DrawMainBG()
 {
-	DrawMainBGwithGillian(0, 0, 0);
+	u16 ind = 0;
+	
+	ind = DrawMainBGwithGillian(0, 0, 0);
 	VDP_Start();
 	VDP_setPalette(PAL1, palette_green);
 	VDP_setPalette(PAL3, palette_red);
 	VDP_End();
+	return ind;
 }
 
-void DrawMainBGwithGillian(u8 DrawGillian, u8 GillianX, u8 GillianY)
+u16 DrawMainBGwithGillian(u8 DrawGillian, u8 GillianX, u8 GillianY)
 {
 	u16 ind = 0, size = 0;
 	
@@ -1087,12 +1101,14 @@ void DrawMainBGwithGillian(u8 DrawGillian, u8 GillianX, u8 GillianY)
 		ind += size;
 		size = sizeof(gillian_tiles) / 32;
 		VDP_loadTileData(gillian_tiles, ind, size, USE_DMA);
+		g_pos = ind;
 	}
 
 	VDP_setMyTileMapRect(BPLAN, back_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
 	if(DrawGillian)
 		VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, GillianX / 8, GillianY / 8, 56 / 8, 104 / 8);
 	VDP_End();
+	return ind+size;
 }
 
 u16 DrawFloatMenuRes(u16 def)
@@ -1412,3 +1428,51 @@ void ControllerTest()
 	}
 }
 
+int gblink_count = 0, is_gblinking = 0;
+u16 g_pos = 0;
+
+#define G_EYE_TILE 30
+
+void checkblink()
+{
+	u8 size = 0;
+	
+	gblink_count++;
+	if(gblink_count > 230)
+	{
+		if(!is_gblinking)
+		{
+			if(random() % 10 == 7)
+			{
+				size = sizeof(gillian_b1_tiles) / 32;
+				VDP_loadTileData(gillian_b1_tiles, g_pos+G_EYE_TILE, size, USE_DMA);
+				
+				is_gblinking = 1;
+				gblink_count = 230;
+			}
+		}
+		else
+		{
+			if(gblink_count == 232)
+			{
+				size = sizeof(gillian_b1_tiles) / 32;
+				VDP_loadTileData(gillian_b1_tiles, g_pos+G_EYE_TILE, size, USE_DMA);
+			}
+				
+			if(gblink_count == 234)
+			{
+				size = sizeof(gillian_b2_tiles) / 32;
+				VDP_loadTileData(gillian_b2_tiles, g_pos+G_EYE_TILE, size, USE_DMA);
+			}
+	
+			if(gblink_count >= 236)
+			{
+				size = sizeof(gillian_b1_tiles) / 32;
+				VDP_loadTileData(gillian_tiles+8*G_EYE_TILE, g_pos+G_EYE_TILE, size, USE_DMA);
+				
+				gblink_count = 0;
+				is_gblinking = 0;
+			}
+		}
+	}
+}
