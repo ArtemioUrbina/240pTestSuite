@@ -427,8 +427,8 @@ void Draw601ColorBars()
 
 void DrawSharpness()
 {
-	u16 size, showbricks = 0;
-	u16 exit = 0, loadvram = 1, type = 1, ntype = 0;
+	u16 size;
+	u16 exit = 0, loadvram = 1, type = FLOAT_OPTION, ntype = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	
 	while(!exit)
@@ -436,7 +436,7 @@ void DrawSharpness()
 		if(loadvram)
 		{
 			VDP_Start();
-			if(!showbricks)
+			if(type == FLOAT_OPTION)
 			{
 				VDP_setScreenWidth320();
 				
@@ -469,21 +469,11 @@ void DrawSharpness()
 
 		if(pressedButtons & BUTTON_C)
 		{
-			if(showbricks)
-			{
-				ntype = DrawFloatMenuResExtra(type, "Sharpness");
-				if(ntype != FLOAT_CANCEL)
-					type = ntype;
-				if(type == FLOAT_OPTION)
-					showbricks = 0;
-			}
-			else
-			{
-				ntype = DrawFloatMenuRes(type);
-				if(ntype != FLOAT_CANCEL)
-					type = ntype;
-				showbricks = 1;
-			}
+			
+			ntype = DrawFloatMenuResExtra(type, "Sharpness");
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			
 			resetController(&oldButtons);
 			loadvram = 1;
 		}

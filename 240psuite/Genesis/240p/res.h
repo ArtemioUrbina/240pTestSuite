@@ -28,7 +28,7 @@ extern u32 color_tiles[224/4]; ;
 
 extern u32 cb601_tiles[224/4]; 
 extern u16 cb601_pal[16/2];
-extern u16 cb601_map[2240/2]; 
+extern u16 cb601_map[2400/2]; 
 
 // Title screen
 extern u32 back_tiles[3200/4]; 

@@ -356,7 +356,7 @@ void VideoTestsMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			if(cursel < 11)
+			if(cursel < 12)
 				FadeAndCleanUp();
 			switch (cursel)
 			{
