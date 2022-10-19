@@ -115,6 +115,7 @@ Patterns:
 Video tests:
 - Add horizontal bars and checker board to Drop Shadow test
 - Add horizontal bars and checker board to Striped Sprite test
+- Fix water palette animations
 - Finish Grid Scroll test
 - Set proper sprite limits for backlit test in different resolutions and modes
     - Add new sugggested option of sprite movement by Pinobatch
