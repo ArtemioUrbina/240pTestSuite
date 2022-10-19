@@ -804,6 +804,7 @@ void check_bios_init()
 
 	first_grid = 1;
 	first_overscan = 1;
+	first_colorramp = 1;
 }
 
 void mvs_state()

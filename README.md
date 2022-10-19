@@ -94,7 +94,41 @@ For the Neo Geo CD (Copy the CHD image)
 
 ## TODO
 
-1. Incorporate tools for building the sound MROM and VROM.
+General:
+- Homogenize interface access. Either B is always exit or STARt is always exit.
+    - No need for MVS and AES swapping controlls,we can keep the same layout
+    - AES gives us select, but it shall rremain unused since UNIBIOS uses that as credit when in MVS mode in an AES
+- Update Help to reflect al lcurrent changes
+- Verify all patterns have 304/320 and 224/256 support when needed
+- Verify all patterns follow IRE 100
+    - Add text in help for cases where this is not followed (SMPTE, EBU and PLUGE)
+- Save settings to backup RAM/Memory Card
+- Maybe have a Memory Card Viewer (?)
+
+Patterns:
+- Color Bars to cycle between light/dark/combined palettes (like the gray scale does)
+    - (such updates must follow IRE setting)
+- Fix IRE pattern to display 10 IRE intervals
+- Check I/Q values in SMPTE bars
+- Create appropiate monoscope patterns for the Neo Geo PAR (Keith has been notified)
+- See how well HCFR patterns translate to Neo Geo
+    - In such case split menus as Genesis version does (maybe do this anyway to remove clutter)
+
+Video tests:
+- Add horizontal bars and checker board to Drop Shadow test
+- Add horizontal bars and checker board to Striped Sprite test
+- Finish Grid Scroll test
+- Set proper sprite limits for backlit test in different resolutions and modes
+    - Add new sugggested option of sprite movement by Pinobatch
+
+Audio tests_
+   - Incorporate tools for building the sound MROM and VROM.
+   - Audio test
+   - Audio Sync Test
+   - Add MDfourier
+
+Hardware Test:
+   - RAM check
 
 ## Resources
 [Neo Geo Development Wiki](https://wiki.neogeodev.org/index.php?title=Main_Page) - Neo Geo Bible<br>

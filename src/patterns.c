@@ -33,6 +33,7 @@
 
 BYTE first_grid;
 BYTE first_overscan;
+BYTE first_colorramp;
 
 // MAME says 0x7000 and 0xF000 are the same
 // We confirmed with the scope that they are the lowest, and the same
@@ -244,6 +245,12 @@ void tp_colorchart()
 			palindex += colorchartsingle.palInfo->count;
 
 			draw = 0;
+			if(!allowIRE107 && first_colorramp)
+			{
+				draw_warning("Limiting IRE to 100. As a\nresult the top bar on the\nwhite ramp will be blacked out.", index, palindex, 0);
+				first_colorramp = 0;
+				draw = 1;
+			}
 		}
 
 		SCClose();
@@ -547,10 +554,9 @@ void tp_grid()
 
 			draw = 0;
 			updatepalette = 1; 
-			if(first_grid)
+			if(isMVS && !AES_AS_MVS && !vmode_snk && !isMulti && first_grid)
 			{
-				if(isMVS && !AES_AS_MVS && !vmode_snk && !isMulti)
-					draw_warning("Some later MVS systems can't\ndisplay the last few pixels\nwhen in full 320 mode.", index, palindex, 0);
+				draw_warning("Some later MVS systems can't\ndisplay the last few pixels\nwhen in full 320 mode.", index, palindex, 0);
 				first_grid = 0;
 				draw = 1;
 			}

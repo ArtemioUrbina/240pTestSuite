@@ -47,6 +47,7 @@ extern BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
 extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 extern BYTE first_grid;
 extern BYTE first_overscan;
+extern BYTE first_colorramp;
 
 #define SYSTEM_AES			0x00
 #define SYSTEM_MVS			0x80
