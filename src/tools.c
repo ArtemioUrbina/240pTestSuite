@@ -33,59 +33,6 @@
 
 u16 randbase;
 
-void setRandomSeed(u16 seed)
-{
-	// xor it with a random value to avoid 0 value
-	randbase = seed ^ 0xD94B;
-}
-
-u16 random()
-{
-	unsigned int fc = DAT_frameCounter;
-	randbase ^= (randbase >> 1) ^ fc;
-	randbase ^= (randbase << 1);
-
-	return randbase;
-}
-
-int bcdToDec(int bcd)
-{
-	return bcd-(bcd/16)*6;
-}
-
-inline void readController()
-{
-	p1  = volMEMBYTE(P1_CURRENT);
-	p1e = volMEMBYTE(P1_EDGE);
-	ps  = volMEMBYTE(PS_CURRENT);
-	pse = volMEMBYTE(PS_EDGE);
-}
-
-inline void clearController()
-{
-	p1 = p2 = ps = pse = p1e = p2e = p1b = p2b = 0;
-	waitVBlank();
-}
-
-/** pictures
-typedef struct pictureInfo {
-	ushort		stripSize;		//size of each strip (bytes)
-	ushort		tileWidth;
-	ushort		tileHeight;
-	paletteInfo	*palInfo;
-	ushort		*maps[4];		//ptrs to maps (std/flipX/flipY/flipXY)
-} pictureInfo;
-*/
-/*
-	Sprites are vertical strips of tiles, with a fixed width of 1 tile (16 pixels), and an adjustable height of up to 32 tiles (512 pixels).
-	Each sprite has its own tile and attributes map, defining which tile goes in which place, how is it flipped, and which palette to use.
-	Sprites can be stuck together horizontally to make huge moveable objects. 
-*/
-inline int getPicSprites(pictureInfo *picinfo)
-{
-	return(picinfo->tileWidth);
-}
-
 /*
 NTSC AES
 
@@ -164,6 +111,59 @@ void check_systype()
 		else
 			isPAL = 1;
 	}
+}
+
+void setRandomSeed(u16 seed)
+{
+	// xor it with a random value to avoid 0 value
+	randbase = seed ^ 0xD94B;
+}
+
+u16 random()
+{
+	unsigned int fc = DAT_frameCounter;
+	randbase ^= (randbase >> 1) ^ fc;
+	randbase ^= (randbase << 1);
+
+	return randbase;
+}
+
+int bcdToDec(int bcd)
+{
+	return bcd-(bcd/16)*6;
+}
+
+inline void readController()
+{
+	p1  = volMEMBYTE(P1_CURRENT);
+	p1e = volMEMBYTE(P1_EDGE);
+	ps  = volMEMBYTE(PS_CURRENT);
+	pse = volMEMBYTE(PS_EDGE);
+}
+
+inline void clearController()
+{
+	p1 = p2 = ps = pse = p1e = p2e = p1b = p2b = 0;
+	waitVBlank();
+}
+
+/** pictures
+typedef struct pictureInfo {
+	ushort		stripSize;		//size of each strip (bytes)
+	ushort		tileWidth;
+	ushort		tileHeight;
+	paletteInfo	*palInfo;
+	ushort		*maps[4];		//ptrs to maps (std/flipX/flipY/flipXY)
+} pictureInfo;
+*/
+/*
+	Sprites are vertical strips of tiles, with a fixed width of 1 tile (16 pixels), and an adjustable height of up to 32 tiles (512 pixels).
+	Each sprite has its own tile and attributes map, defining which tile goes in which place, how is it flipped, and which palette to use.
+	Sprites can be stuck together horizontally to make huge moveable objects. 
+*/
+inline int getPicSprites(pictureInfo *picinfo)
+{
+	return(picinfo->tileWidth);
 }
 
 // placed here temporarily

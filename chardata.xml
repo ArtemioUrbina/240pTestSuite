@@ -52,6 +52,12 @@
   <pict id="colorchartsingle">
 	<file>gfx\colorchartsingle.png</file>
   </pict>
+  <pict id="colorchart_light">
+	<file>gfx\colorchart_light.png</file>
+  </pict>
+  <pict id="colorchart_dark">
+	<file>gfx\colorchart_dark.png</file>
+  </pict>
   <scrl id="colorebu75">
     <file>gfx\colorbarsebu75.png</file>
   </scrl>

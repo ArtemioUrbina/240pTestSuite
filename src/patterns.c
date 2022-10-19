@@ -108,10 +108,11 @@ void tp_pluge()
 
 void tp_colorchart()
 {
-	int done = 0, draw = 1, i = 0, pal = 0, color = 0, mode = 0, scrl_index = 1;
+	int done = 0, draw = 1, i = 0, pal = 0, color = 0, mode = 0, scrl_index = 1, dark_mode = 0;
 	scroller background; 
 	picture red, green, blue, white;
 	picture d_red, d_green, d_blue, d_white;
+	picture text_light, text_dark;
 	ushort white_chart_pal[64], red_chart_pal[64], green_chart_pal[64], blue_chart_pal[64];
 	ushort d_white_chart_pal[64], d_red_chart_pal[64], d_green_chart_pal[64], d_blue_chart_pal[64];
 
@@ -161,6 +162,7 @@ void tp_colorchart()
 		if (draw)
 		{
 			int index = 1, palindex = 16, x = 0, y = 0, back_x = 0;
+			int dark = 0, light = 0;
 
 			gfxClear();
 
@@ -188,27 +190,30 @@ void tp_colorchart()
 			// Draw Colors No Dark Bit Set
 			// ===================================
 
+			if(dark_mode == 0 || dark_mode == 1)
+				light = 1;
+
 			pictureInit(&red, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
-			palJobPut(palindex,colorchartsingle.palInfo->count,red_chart_pal);
+			palJobPut(palindex,colorchartsingle.palInfo->count, light ? red_chart_pal : d_red_chart_pal);
 			index += getPicSprites(red.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			// TODO: Figure out getPicSprites
 			pictureInit(&green, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
-			palJobPut(palindex,colorchartsingle.palInfo->count,green_chart_pal);
+			palJobPut(palindex,colorchartsingle.palInfo->count, light ? green_chart_pal : d_green_chart_pal);
 			index += getPicSprites(green.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			pictureInit(&blue, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
-			palJobPut(palindex,colorchartsingle.palInfo->count,blue_chart_pal);
+			palJobPut(palindex,colorchartsingle.palInfo->count, light ? blue_chart_pal : d_blue_chart_pal);
 			index += getPicSprites(blue.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			pictureInit(&white, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
-			palJobPut(palindex,colorchartsingle.palInfo->count,white_chart_pal);
+			palJobPut(palindex,colorchartsingle.palInfo->count, light ? white_chart_pal : d_white_chart_pal);
 			index += getPicSprites(blue.info);
 			palindex += colorchartsingle.palInfo->count;
 
@@ -220,29 +225,58 @@ void tp_colorchart()
 			else
 				y = 52;
 
+			if(dark_mode == 0 || dark_mode == 2)
+				dark = 1;
+
 			pictureInit(&d_red, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
-			palJobPut(palindex,colorchartsingle.palInfo->count,d_red_chart_pal);
+			palJobPut(palindex,colorchartsingle.palInfo->count, dark ? d_red_chart_pal : red_chart_pal);
 			index += getPicSprites(red.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			// TODO: Figure out getPicSprites
 			pictureInit(&d_green, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
-			palJobPut(palindex,colorchartsingle.palInfo->count,d_green_chart_pal);
+			palJobPut(palindex,colorchartsingle.palInfo->count, dark ? d_green_chart_pal : green_chart_pal);
 			index += getPicSprites(green.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			pictureInit(&d_blue, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
-			palJobPut(palindex,colorchartsingle.palInfo->count,d_blue_chart_pal);
+			palJobPut(palindex,colorchartsingle.palInfo->count, dark ? d_blue_chart_pal : blue_chart_pal);
 			index += getPicSprites(blue.info);
 			palindex += colorchartsingle.palInfo->count;
 			y += 40;
 
 			pictureInit(&d_white, &colorchartsingle, index, palindex, x, y, FLIP_NONE);
-			palJobPut(palindex,colorchartsingle.palInfo->count,d_white_chart_pal);
+			palJobPut(palindex,colorchartsingle.palInfo->count, dark ? d_white_chart_pal : white_chart_pal);
 			index += getPicSprites(blue.info);
 			palindex += colorchartsingle.palInfo->count;
+
+			// ===================================
+			// Draw Color Text
+			// ===================================
+			if(!mode)
+			{
+				int y = 32;
+
+				if(dark_mode == 0 || dark_mode == 1)
+				{
+					pictureInit(&text_light, &colorchart_light, index, palindex, 24, y, FLIP_NONE);
+					palJobPut(palindex,colorchart_light.palInfo->count,colorchart_light.palInfo->data);
+					index += getPicSprites(text_light.info);
+					palindex += colorchart_light.palInfo->count;
+					y += 16;
+				}
+
+				if(dark_mode == 0 || dark_mode == 2)
+				{
+					if(y == 32) y = 24;
+					pictureInit(&text_dark, &colorchart_dark, index, palindex, 8, y, FLIP_NONE);
+					palJobPut(palindex,colorchart_dark.palInfo->count,colorchart_dark.palInfo->data);
+					index += getPicSprites(text_dark.info);
+					palindex += colorchart_dark.palInfo->count;
+				}
+			}
 
 			draw = 0;
 			if(!allowIRE107 && first_colorramp)
@@ -260,7 +294,9 @@ void tp_colorchart()
 
 		if (PRESSED_A)
 		{
-			mode = !mode;
+			dark_mode++;
+			if(dark_mode > 2)
+				dark_mode = 0;
 			draw = 1;
 		}
 
@@ -268,6 +304,12 @@ void tp_colorchart()
 		{
 			done = 1;
 			return;
+		}
+
+		if (PRESSED_C)
+		{
+			mode = !mode;
+			draw = 1;
 		}
 
 		if(checkHelp(HELP_COLORS))
