@@ -65,10 +65,10 @@ void tp_pluge()
 		if(swappal)
 		{
 			if(IsNTSC)	{
-				palJobPut(16,1,plugergb_pal);
+				palJobPut(16, 1, plugentsc_pal);
 			}
 			else {
-				palJobPut(16,1,plugentsc_pal);
+				palJobPut(16, 1, plugergb_pal);
 			}
 			swappal = 0;
 		}
@@ -95,7 +95,6 @@ void tp_pluge()
 			}
 			swappal = 1;
 			text = 60;
-			SCClose();
 		}
 
 		if (PRESSED_B || PRESSED_START)
@@ -516,7 +515,6 @@ void tp_color_bleed_check()
 				pictureHide(&colorbleedbars_back);
 				pictureShow(&colorbleedcheck_back);
 			}
-			SCClose();
 		}
 
 		if (PRESSED_B || PRESSED_START)
@@ -1229,7 +1227,6 @@ void tp_sharpness()
 		{
 			Isbrick = !Isbrick;
 			changed = 1;
-			SCClose();
 		}
 
 		if (PRESSED_B || PRESSED_START)
