@@ -265,7 +265,7 @@ void menu_options()
 			{
 				fixPrintf(4, 20, fontColorGreen, 3, "Neo Geo white level goes up to");
 				fixPrintf(4, 21, fontColorGreen, 3, "~106.8 IRE. This option limits");
-				fixPrintf(4, 22, fontColorGreen, 3, "selected patterns to 100 IRE.");
+				fixPrintf(4, 22, fontColorGreen, 3, "patterns to 100 IRE for SMPTE.");
 				text = 3;
 			}
 		}
@@ -462,7 +462,7 @@ void menu_footer()
 	}
 
 	fixPrintf(32, 4, fontColorRed, 3, enable_shadow ? "Dark" : "    ");
-	fixPrintf(30, 5, fontColorRed, 3, !allowIRE107 ? "100 IRE" : "       ");
+	fixPrintf(30, 5, fontColorGreen, 3, !allowIRE107 ? "100 IRE" : "       ");
 }
 
 void draw_warning(char* msg, int index, int palindex, int clearback)

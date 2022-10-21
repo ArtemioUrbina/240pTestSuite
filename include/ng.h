@@ -160,16 +160,30 @@ extern BYTE first_colorramp;
 #define REG_NOSHADOW		0x3A0001
 #define REG_SHADOW			0x3A0011
 
-// Colors
+// Colors, 75% versions are adjusted considering 100 IRE, not 75% of the signal
+// This way the match the proper vectorscope and don't affect when measuring 
+// the hardware at its 107%
 #define WH_107	0x7fff
 #define WH_100	0xffff
 #define	_BLACK	0x8000
-#define	___RED	0x4f00
-#define _GREEN	0x20f0
-#define __BLUE	0x100f
-#define __CYAN	0x30ff
-#define MAGENT	0x5f0f
-#define YELLOW	0x6ff0
+#define	RED107	0x4f00
+#define	RED100	0xCF00
+#define	RED075	0xCB00
+#define GRN107	0x20f0
+#define GRN100	0xA0F0
+#define GRN075	0xA0B0
+#define BLU107	0x100f
+#define BLU100	0x900F
+#define BLU075	0x900B
+#define CYN107	0x30ff
+#define CYN100	0xB0FF
+#define CYN075	0xB0BB
+#define MAG107	0x5f0f
+#define MAG100	0xDF0F
+#define MAG075	0xDB0B
+#define YEL107	0x6ff0
+#define YEL100	0xEFF0
+#define YEL075	0xEBB0
 
 #define IRE2_5	0xf000
 #define IRE4_5	0x8111
@@ -181,6 +195,10 @@ extern BYTE first_colorramp;
 #define IRE_50	0x8888
 #define IRE_75	0x8ccc
 #define IRE_80	0x8ddd
+
+// these are wrong
+#define NEG__I	0xB012
+#define POS__Q	0xD203
 
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22

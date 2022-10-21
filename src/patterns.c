@@ -158,7 +158,12 @@ void tp_colorchart()
 	}
 
 	if(!allowIRE107)
-		white_chart_pal[8+3*16] = PackColor(0, 0, 0, 1);
+	{
+		red_chart_pal[8+3*16] = _BLACK;
+		green_chart_pal[8+3*16] = _BLACK;
+		blue_chart_pal[8+3*16] = _BLACK;
+		white_chart_pal[8+3*16] = _BLACK;
+	}
 	
 	while (!done)
 	{
@@ -392,8 +397,10 @@ void tp_colorbars()
 {
 	int done = 0, draw = 1, Is75 = 1, text = 0, palindex = 16, swap_pal = 0;
 	scroller colorebu;
-	ushort ebu100_320_pal[] = { _BLACK, WH_100, 0x6ff0, 0x30ff, 0x20f0, 0x5f0f, 0x4f00, 0x100f, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
-	ushort ebu100_304_pal[] = { _BLACK, WH_100, 0x6ff0, 0x30ff, 0x20f0, 0x4f00, 0x100f, _BLACK, 0x5f0f, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
+	ushort ebu107_320_pal[] = { _BLACK, WH_107, YEL107, CYN107, GRN107, MAG107, RED107, BLU107, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
+	ushort ebu107_304_pal[] = { _BLACK, WH_107, YEL107, CYN107, GRN107, RED107, BLU107, _BLACK, MAG107, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
+	ushort ebu100_320_pal[] = { _BLACK, WH_100, YEL100, CYN100, GRN100, MAG100, RED100, BLU100, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
+	ushort ebu100_304_pal[] = { _BLACK, WH_100, YEL100, CYN100, GRN100, RED100, BLU100, _BLACK, MAG100, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
 	ushort *ebu_100_pal = NULL, *ebu_075_pal = NULL;
 	
 	while (!done)
@@ -404,14 +411,14 @@ void tp_colorbars()
 
 			if(vmode_snk)
 			{
-				ebu_100_pal = ebu100_304_pal;
+				ebu_100_pal = allowIRE107 ? ebu107_304_pal : ebu100_304_pal;
 				ebu_075_pal = colorebu75_304.palInfo->data;
 
 				scrollerInit(&colorebu, &colorebu75_304, 1, palindex, 0, PATTERN_SCROLL);
 			}
 			else
 			{
-				ebu_100_pal = ebu100_320_pal;
+				ebu_100_pal = allowIRE107 ? ebu107_320_pal : ebu100_320_pal;
 				ebu_075_pal = colorebu75.palInfo->data;
 
 				scrollerInit(&colorebu, &colorebu75, 1, palindex, 0, PATTERN_SCROLL);
@@ -426,7 +433,7 @@ void tp_colorbars()
 			if (!Is75) {
 				palJobPut(palindex, 1, ebu_100_pal);
 				if(text)
-					fixPrint(32, 3, fontColorWhite, 3, "100%");
+					fixPrint(32, 3, fontColorWhite, 3, allowIRE107 ? "107%" : "100%");
 			} else {
 				palJobPut(palindex, 1, ebu_075_pal);
 				if(text)
@@ -472,8 +479,12 @@ void tp_smpte_color_bars()
 {
 	int done = 0, draw = 1, Is75 = 1, text = 0, palindex = 16, swap_pal = 0;
 	picture colorbarssmpte_back;
-	ushort smpte100_320_pal[] = { _BLACK, WH_100, 0x6ff0, 0x100f, 0xf111, 0x30ff, 0x20f0, 0x5f0f, 0x8025, WH_100, 0x4f00, 0xc307, 0x7000, 0x8222, _BLACK, _BLACK };
-	ushort smpte100_304_pal[] = { _BLACK, WH_100, 0x6ff0, 0x100f, 0xf111, 0x30ff, 0x20f0, 0x5f0f, 0x4f00, 0x8025, WH_100, 0xc307, 0x7000, 0x8222, _BLACK, _BLACK };
+	ushort smpte107_320_pal[] = { _BLACK, WH_107, YEL107, BLU107, IRE7_5, CYN107, GRN107, MAG107, NEG__I, WH_107, RED107, POS__Q, IRE2_5, IRE_10, _BLACK, _BLACK };
+	ushort smpte107_304_pal[] = { _BLACK, WH_107, YEL107, BLU107, IRE7_5, CYN107, GRN107, MAG107, RED107, NEG__I, WH_107, POS__Q, IRE2_5, IRE_10, _BLACK, _BLACK };
+	ushort smpte100_320_pal[] = { _BLACK, WH_100, YEL100, BLU100, IRE7_5, CYN100, GRN100, MAG100, NEG__I, WH_100, RED100, POS__Q, IRE2_5, IRE_10, _BLACK, _BLACK };
+	ushort smpte100_304_pal[] = { _BLACK, WH_100, YEL100, BLU100, IRE7_5, CYN100, GRN100, MAG100, RED100, NEG__I, WH_100, POS__Q, IRE2_5, IRE_10, _BLACK, _BLACK };
+	ushort smpte075_320_pal[] = { _BLACK, IRE_75, YEL075, BLU075, IRE7_5, CYN075, GRN075, MAG075, NEG__I, WH_100, RED075, POS__Q, IRE2_5, IRE_10, _BLACK, _BLACK };
+	ushort smpte075_304_pal[] = { _BLACK, IRE_75, YEL075, BLU075, IRE7_5, CYN075, GRN075, MAG075, RED075, NEG__I, WH_100, POS__Q, IRE2_5, IRE_10, _BLACK, _BLACK };
 	ushort *smpte_100_pal = NULL, *smpte_075_pal = NULL;
 
 	while (!done)
@@ -484,15 +495,15 @@ void tp_smpte_color_bars()
 
 			if(vmode_snk)
 			{
-				smpte_100_pal = smpte100_304_pal;
-				smpte_075_pal = colorbarssmpte75_304.palInfo->data;
+				smpte_100_pal = allowIRE107 ? smpte107_304_pal : smpte100_304_pal;
+				smpte_075_pal = smpte075_304_pal;
 
 				pictureInit(&colorbarssmpte_back, &colorbarssmpte75_304, 1, palindex, 0, 0,FLIP_NONE);
 			}
 			else
 			{
-				smpte_100_pal = smpte100_320_pal;
-				smpte_075_pal = colorbarssmpte75.palInfo->data;
+				smpte_100_pal = allowIRE107 ? smpte107_320_pal : smpte100_320_pal;
+				smpte_075_pal = smpte075_320_pal;
 
 				pictureInit(&colorbarssmpte_back, &colorbarssmpte75, 1, palindex, 0, 0,FLIP_NONE);
 			}
@@ -506,7 +517,7 @@ void tp_smpte_color_bars()
 			if (!Is75) {
 				palJobPut(palindex, 1, smpte_100_pal);
 				if(text)
-					fixPrint(32, 3, fontColorWhite, 3, "100%");
+					fixPrint(32, 3, fontColorWhite, 3, allowIRE107 ? "107%" : "100%");
 			} else {
 				palJobPut(palindex, 1, smpte_075_pal);
 				if(text)
@@ -1000,19 +1011,19 @@ void tp_white_rgb()
 				break;
 
 				case 2:		// Black
-					backgroundColor(0x0000);
+					backgroundColor(_BLACK);
 				break;
 
 				case 3:		// Red
-					backgroundColor(PackColor(31, 0, 0, 0));
+					backgroundColor(allowIRE107 ? RED107 : RED100);
 				break;
 
 				case 4:		// Green
-					backgroundColor(PackColor(0, 31, 0, 0));
+					backgroundColor(allowIRE107 ? GRN107 : GRN100);
 				break;
 
 				case 5:		// Blue
-					backgroundColor(PackColor(0, 0, 31, 0));
+					backgroundColor(allowIRE107 ? BLU107 : BLU100);
 				break;
 			}
 			draw = 0;
@@ -1169,6 +1180,8 @@ void tp_white_rgb()
 
 			if (hasedit)
 			{
+				int warn = 0;
+
 				if (sel != 3)
 				{
 					if(*edit < 0)
@@ -1189,6 +1202,26 @@ void tp_white_rgb()
 				if(!allowIRE107 && edit_color == WH_107)
 				{
 					edit_color = WH_100;
+					warn = 1;
+				}
+				if(!allowIRE107 && edit_color == RED107)
+				{
+					edit_color = RED100;
+					warn = 1;
+				}
+				if(!allowIRE107 && edit_color == GRN107)
+				{
+					edit_color = GRN100;
+					warn = 1;
+				}
+				if(!allowIRE107 && edit_color == BLU107)
+				{
+					edit_color = BLU100;
+					warn = 1;
+				}
+
+				if(warn)
+				{
 					dark = 1;
 					fixPrint(5, 8, fontColorSolid, 4, "IRE limited to 100 in options");
 					text = 60;
