@@ -429,12 +429,16 @@ void credits()
 {
 	int done = 0;
 	picture qr;
+	short half_pal[16];
 
 	gfxClear();
 	draw_background();
 
 	pictureInit(&qr, &barcode, 26, 17, 260, 110, FLIP_NONE);
 	palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
+	memcpy(half_pal, back.palInfo->data, sizeof(ushort)*16);
+	darken_palette(half_pal, 2);
+	palJobPut(16, 1, half_pal);
 
 	while (!done)
 	{
@@ -446,8 +450,8 @@ void credits()
 		readController();
 
 		fixPrint(16, 6, fontColorGreen, 3, "Credits");
-		fixPrint(28, 8, fontColorGreen, 3, "Ver. 0.2");
-		fixPrint(28, 9, fontColorWhite, 3, "10/16/2022");
+		fixPrint(26, 8, fontColorGreen, 3, "Ver. 0.2");
+		fixPrint(26, 9, fontColorWhite, 3, "10/16/2022");
 		fixPrint(5, y++, fontColorGreen, 3, "Code by:");
 		fixPrint(6, y++, fontColorWhite, 3, "Dustin Dembrosky");
 		fixPrint(6, y++, fontColorWhite, 3, "Artemio Urbina");

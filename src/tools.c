@@ -412,7 +412,7 @@ void SD_blink_cycle(blinker *blinkdata)
 				pictureShow(&blinkdata->blink1);
 			}
 	
-			if(blinkdata->blink_counter == 238)
+			if(blinkdata->blink_counter == 236)
 			{
 				pictureHide(&blinkdata->blink1);
 				blinkdata->blink_counter = 0;
@@ -568,6 +568,42 @@ WORD PackColor(short r, short g, short b, BYTE dark)
 
 	color = (dark & 0x01) << 15 | (r_lsb << 14) | (g_lsb << 13) | (b_lsb << 12) | r_msb << 8 | g_msb << 4 | b_msb;
 	return color;
+}
+
+void UnPackColor(WORD color, short *r, short *g, short *b, short *dark)
+{
+	BYTE r_lsb, r_msb, g_lsb, g_msb, b_lsb, b_msb;
+	
+	*dark = (color & 0x8000) >> 15;
+
+	r_lsb = (color & 0x4000) >> 14;
+	r_msb = (color & 0x0F00) >> 8;
+	*r = (r_msb << 1) | r_lsb;
+
+	g_lsb = (color & 0x2000) >> 13;
+	g_msb = (color & 0x00F0) >> 4;
+	*g = (g_msb << 1) | g_lsb;
+
+	b_lsb = (color & 0x1000) >> 12;
+	b_msb = (color & 0x000F);
+	*b = (b_msb << 1) | b_lsb;
+}
+
+void darken_palette(short *pal, short factor)
+{
+	int p = 0;
+
+	for(p = 0; p < 16; p++)
+	{
+		short r, g, b, d;
+
+		UnPackColor(pal[p], &r, &g, &b, &d);
+		r /= factor;
+		g /= factor;
+		b /= factor;
+		d = 1;
+		pal[p] = PackColor(r, g, b, d);
+	}
 }
 
 void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr)

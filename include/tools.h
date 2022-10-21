@@ -63,6 +63,8 @@ int getPicSprites(pictureInfo *picinfo);
 #define SCROLLER_SIZE		21
 
 WORD PackColor(short r, short g, short b, BYTE dark);
+void UnPackColor(WORD color, short *r, short *g, short *b, short *dark);
+void darken_palette(short *pal, short factor);
 
 // This is unbuffered, so if a palJobPut is called in the same frame, this will be overwritten
 #define VRAM_PAL(palette, color) volMEMWORD(0x400000+palette*32+color*2)

@@ -388,10 +388,6 @@ void tp_colorchart()
 	}
 }
 
-/*
-* 0x7fff is above 100 IRE (at 106.8 IRE) and way higher in steps than the rest
-* 0xFFFF is 100 IRE White
-*/
 
 void tp_colorbars()
 {
@@ -470,10 +466,6 @@ void tp_colorbars()
 	}
 }
 
-/*
-* 0x7fff is above 100 IRE (at 106.8 IRE) and way higher in steps than the rest
-* 0xFFFF is 100 IRE White
-*/
 
 void tp_smpte_color_bars()
 {
@@ -802,10 +794,6 @@ void display_ramp_pal(ushort *palette, int x)
 	}
 }
 
-/*
-* 0x7fff is above 100 IRE (at 106.8 IRE) and way higher in steps than the rest
-* 0xFFFF is 100 IRE White
-*/
 
 void tp_gray_ramp()
 {
@@ -979,11 +967,6 @@ void tp_gray_ramp()
 	else
 		volMEMBYTE(REG_NOSHADOW) = 1;
 }
-
-/*
-* 0x7fff is above 100 IRE (at 106.8 IRE) and way higher in steps than the rest
-* 0xFFFF is 100 IRE White
-*/
 
 void tp_white_rgb()
 {
