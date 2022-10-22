@@ -2157,6 +2157,20 @@ u8 detectUNIBIOSfast(u32 address)
 	return 0;
 }
 
+u8 getBIOS_region(u32 address)
+{
+	u8 *bios = (u8*)address;
+
+	return(bios[0x000401]);
+}
+
+u8 getBIOS_HW(u32 address)
+{
+	u8 *bios = (u8*)address;
+
+	return(bios[0x000400]);
+}
+
 void displayBIOS(u32 address, u8 swap)
 {
 	int  line = 0, len = 32, start = 0x82, x = 4;
@@ -2180,6 +2194,48 @@ void displayBIOS(u32 address, u8 swap)
 	}
 }
 
+void drawBIOSHeader(u32 address, short x, short y)
+{
+	u8				bios_HW, bios_region;
+
+	fixPrint(x, y, fontColorGreen, 3, "Header:");
+	bios_HW = getBIOS_HW(address);
+	switch(bios_HW)
+	{
+		case SYSTEM_AES:
+			fixPrint(x+8, y, fontColorWhite, 3, "AES");
+		break;
+
+		case SYSTEM_MVS:
+			fixPrint(x+6, y, fontColorWhite, 3, "MVS");
+		break;
+
+		default:
+			fixPrint(x+8, y, fontColorWhite, 3, "???");
+		break;
+	}
+
+	bios_region = getBIOS_region(address);
+	switch(bios_region)
+	{
+		case SYSTEM_EUROPE:
+			fixPrint(x+8, y+1, fontColorWhite, 3, "World");
+		break;
+
+		case SYSTEM_JAPAN:
+			fixPrint(x+8, y+1, fontColorWhite, 3, "Japan");
+		break;
+
+		case SYSTEM_USA:
+			fixPrint(x+8, y+1, fontColorWhite, 3, "USA");
+		break;
+
+		default:
+			fixPrint(x+8, y+1, fontColorWhite, 3, "???");
+		break;
+	}
+}
+
 void ht_check_ng_bios_crc(u32 address)
 {
 	int				done = 0, swap = 0;
@@ -2197,6 +2253,10 @@ void ht_check_ng_bios_crc(u32 address)
 	if (detectUNIBIOSfast(address))
 		swap = 1;
 	displayBIOS(address, swap);
+
+	drawBIOSHeader(address, 13, 23);
+
+	menu_footer();
 
 	fixPrintf(12, 16, fontColorGreen, 3, "Please Wait...");
 
