@@ -112,6 +112,7 @@ void tp_colorchart()
 	int dark_mode = 0, change_pallettes = 0;
 	int pal_red_top = 0, pal_green_top = 0, pal_blue_top = 0, pal_white_top = 0;
 	int pal_red_bottom = 0, pal_green_bottom = 0, pal_blue_bottom = 0, pal_white_bottom = 0;
+	int index = 1, palindex = 16;
 	ushort white_chart_pal[64], red_chart_pal[64], green_chart_pal[64], blue_chart_pal[64];
 	ushort d_white_chart_pal[64], d_red_chart_pal[64], d_green_chart_pal[64], d_blue_chart_pal[64];
 	picture red, green, blue, white;
@@ -169,7 +170,10 @@ void tp_colorchart()
 	{
 		if (draw)
 		{
-			int index = 1, palindex = 16, x = 0, y = 0, back_x = 0;
+			int x = 0, y = 0, back_x = 0;
+
+			index = 1;
+			palindex = 16;
 
 			gfxClear();
 
@@ -185,9 +189,9 @@ void tp_colorchart()
 			}
 
 			if(!mode)
-				scrollerInit(&background, &colorchart, scrl_index, 16, 0, PATTERN_SCROLL);
+				scrollerInit(&background, &colorchart, scrl_index, palindex, 0, PATTERN_SCROLL);
 			else
-				scrollerInit(&background, &colorchart, scrl_index, 16, 320+back_x, PATTERN_SCROLL);
+				scrollerInit(&background, &colorchart, scrl_index, palindex, 320+back_x, PATTERN_SCROLL);
 
 			palJobPut(palindex, colorchart.palInfo->count, colorchart.palInfo->data);
 			index += SCROLLER_SIZE;
@@ -269,14 +273,6 @@ void tp_colorchart()
 
 			draw = 0;
 			change_pallettes = 1;
-
-			if(!allowIRE107 && first_colorramp)
-			{
-				draw_warning("Limiting IRE to 100. As a\nresult the top bar on the\nwhite ramp will be blacked out.", index, palindex, 0);
-				first_colorramp = 0;
-				change_pallettes = 0;
-				draw = 1;
-			}
 		}
 
 		if(change_pallettes)
@@ -318,6 +314,13 @@ void tp_colorchart()
 			palJobPut(pal_white_bottom,colorchartsingle.palInfo->count, dark ? d_white_chart_pal : white_chart_pal);
 
 			change_pallettes = 0;
+		}
+
+		if(first_colorramp && !allowIRE107)
+		{
+			draw_warning("Limiting IRE to 100. As a\nresult the top bar on the\nwhite ramp will be blacked out.", index, palindex, 0);
+			first_colorramp = 0;
+			draw = 1;
 		}
 
 		SCClose();

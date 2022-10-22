@@ -2207,7 +2207,7 @@ void drawBIOSHeader(u32 address, short x, short y)
 		break;
 
 		case SYSTEM_MVS:
-			fixPrint(x+6, y, fontColorWhite, 3, "MVS");
+			fixPrint(x+8, y, fontColorWhite, 3, "MVS");
 		break;
 
 		default:
