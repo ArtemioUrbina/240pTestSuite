@@ -19,6 +19,12 @@ If you're not using VSCode, use the following below.
 `cd C:\NeoDev\mame`
 `mame neogeo 240ptestng -nofilter -keepaspect -skip_gameinfo`
 
+### Audio 
+Lua is needed to build the v1 rom ATM, using Freem examples and code. The Makefile has the necessary steps
+
+1. Build the M1 and V1 ROMs when samples are needed or z80 code is updated
+'make z80'
+
 ## MAME Drivers
 The following is for the unmodified ROMs. (Checksums not correct)
 ```
@@ -38,7 +44,7 @@ The following is for the unmodified ROMs. (Checksums not correct)
 		<dataarea name="audiocpu" size="0x040000">
 			<rom  offset="0x000000" size="0x040000" name="m1.rom" crc="da4878cf" sha1="ce13d18a4c5d01974df8542c67c4df00dbc6e7c1" />
 		</dataarea>
-		<dataarea name="ymsnd" size="0x100000">
+		<dataarea name="ymsnd:adpcma" size="0x100000">
 			<rom  offset="0x000000" size="0x100000" name="v1.rom" crc="149a5c2f" sha1="d52eac230f7aaa1d70cbb8d50a2513f180c65e4d" />
 		</dataarea>
 		<dataarea name="sprites" size="0x2800000">
@@ -49,30 +55,30 @@ The following is for the unmodified ROMs. (Checksums not correct)
 ```
 The following is for the modified ROMs for use with cartridges (Checksums not correct)
 ```
-	<software name="240ptestng">
-	<description>240p Test Suite - Neo Geo</description>
-	<year>2022</year>
-	<publisher>Dasutin / Artemio</publisher>
-	<sharedfeat name="release" value="MVS,AES" />
-	<sharedfeat name="compatibility" value="MVS,AES" />
-	<part name="cart" interface="neo_cart">
-		<dataarea name="maincpu" width="16" endianness="big" size="0x100000">
-			<rom loadflag="load16_word_swap" name="2501-p1.p1" offset="0x0000000" size="0x100000" crc="bdda2c6e" sha1="6a94dee2d22feb07ea68a90ce67d5cac1b17b9c9" />
-		</dataarea>
-		<dataarea name="fixed" size="0x040000">
-			<rom offset="0x000000" size="0x040000" name="2501-s1.s1" crc="0e6a7c73" sha1="31b1194524dcc80ec4d63bac088b6fb4909f496c" />
-		</dataarea>
-		<dataarea name="audiocpu" size="0x020000">
-			<rom  offset="0x000000" size="0x020000" name="2501-m1.m1" crc="da4878cf" sha1="ce13d18a4c5d01974df8542c67c4df00dbc6e7c1" />
-		</dataarea>
-		<dataarea name="ymsnd" size="0x100000">
-			<rom  offset="0x000000" size="0x100000" name="2501-v1.v1" crc="149a5c2f" sha1="d52eac230f7aaa1d70cbb8d50a2513f180c65e4d" />
-		</dataarea>
-		<dataarea name="sprites" size="0x200000">
-			<rom loadflag="load16_byte" name="2501-c1.c1" offset="0x000000" size="0x100000" crc="a9bdc000" sha1="93b0dfcd2121ddf6ea1fe99514a176d76e4b0c98" />
-			<rom loadflag="load16_byte" name="2501-c2.c2" offset="0x000001" size="0x100000" crc="a9bdc000" sha1="93b0dfcd2121ddf6ea1fe99514a176d76e4b0c98" />
-		</dataarea>
-	</part>
+<software name="240ptestng">
+		<description>240p Test Suite - Neo Geo</description>
+		<year>2022</year>
+		<publisher>Artemio / Dasutin</publisher>
+		<sharedfeat name="release" value="MVS,AES" />
+		<sharedfeat name="compatibility" value="MVS,AES" />
+		<part name="cart" interface="neo_cart">
+			<dataarea name="maincpu" width="16" endianness="big" size="0x100000">
+				<rom loadflag="load16_word_swap" name="2501-p1.p1" offset="0x0000000" size="0x100000" crc="bdda2c6e" sha1="6a94dee2d22feb07ea68a90ce67d5cac1b17b9c9" />
+			</dataarea>
+			<dataarea name="fixed" size="0x020000">
+				<rom offset="0x000000" size="0x020000" name="2501-s1.s1" crc="0e6a7c73" sha1="31b1194524dcc80ec4d63bac088b6fb4909f496c" />
+			</dataarea>
+			<dataarea name="audiocpu" size="0x010000">
+				<rom  offset="0x000000" size="0x010000" name="2501-m1.m1" crc="ba37ca7d" sha1="4bb0897b74eadd7eb2782fcf2ae0a9897b9e8c8f" />
+			</dataarea>
+			<dataarea name="ymsnd:adpcma" size="0x20000">
+				<rom offset="0x000000" size="0x20000" name="2501-v1.v1" crc="7ca913b0" sha1="36247a77f396879e0a778f9867ddb51311ffa823" />
+			</dataarea>
+			<dataarea name="sprites" size="0x200000">
+				<rom loadflag="load16_byte" name="2501-c1.c1" offset="0x000000" size="0x100000" crc="a9bdc000" sha1="93b0dfcd2121ddf6ea1fe99514a176d76e4b0c98" />
+				<rom loadflag="load16_byte" name="2501-c2.c2" offset="0x000001" size="0x100000" crc="a9bdc000" sha1="93b0dfcd2121ddf6ea1fe99514a176d76e4b0c98" />
+			</dataarea>
+		</part>
 	</software>
 ```
 For the Neo Geo CD (Copy the CHD image)
@@ -127,7 +133,8 @@ Audio tests_
    - Add MDfourier
 
 Hardware Test:
-   - RAM check
+   - RAM check (?) maybe in ASM
+   - Z80 RAM test
 
 ## Resources
 [Neo Geo Development Wiki](https://wiki.neogeodev.org/index.php?title=Main_Page) - Neo Geo Bible<br>
@@ -140,6 +147,6 @@ Hardware Test:
 [NeoBuilder Homebrew GUI](https://bidouillouzzz.blogspot.com/2022/02/neobuilder-homebrew-gui.html#more) - Used for converting ROMs to .neo for use with the Terraonion NeoSD<br>
 [Matt's Neo Stuff - Neo Geo Dev Tools](https://neogeo.mattgreer.dev/tools) - Great collection of Neo Geo Dev Tools<br>
 [NGFX Soundbuilder](https://blastar.citavia.de/index.php?controller=blog&action=view&category=ngfx-toolchain) - Potential tool for MDF<br>
-[Freem's Neo Geo Dev Page](http://www.ajworld.net/neogeodev/) - Useful information<br>
+[Freem's Neo Geo Dev Page](http://www.ajworld.net/neogeodev/) - Useful information (sound basis)<br>
 [Freem's - My Ideal Toolset](http://www.ajworld.net/neogeodev/ideal_tools.html) - Insight<br>
 [ngdevkit-examples](https://github.com/dciabrin/ngdevkit-examples) - Collection of Neo Geo programs that can be built with ngdevkit<br>
