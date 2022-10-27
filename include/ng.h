@@ -160,6 +160,8 @@ extern BYTE first_colorramp;
 #define REG_NOSHADOW		0x3A0001
 #define REG_SHADOW			0x3A0011
 
+#define REG_SOUND			0x320000
+
 // Colors, 75% versions are adjusted considering 100 IRE, not 75% of the signal
 // This way the match the proper vectorscope and don't affect when measuring 
 // the hardware at its 107%

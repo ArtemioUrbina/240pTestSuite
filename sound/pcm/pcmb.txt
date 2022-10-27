@@ -1,0 +1,1 @@
+sound/pcm/b00_synth.pcmb|11025

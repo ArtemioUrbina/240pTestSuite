@@ -31,6 +31,7 @@
 #include "tests.h"
 #include "help.h"
 #include "tools.h"
+#include "sound.h"
 
 static const ushort wFallPal_1[] = {
 	0x8000, 0x0200, 0x6840, 0x8720, 0x879b, 0x179f, 0x3bdf, 0x58bf, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
@@ -1552,6 +1553,58 @@ void at_sound_test()
 		waitVBlank();
 
 		readController();
+
+		if (PRESSED_A)
+		{
+			play_sound(SOUNDCMD_PlayLeft);
+		}
+
+		if (PRESSED_B)
+		{ 
+			play_sound(SOUNDCMD_PlayCenter);
+		}
+
+		if (PRESSED_C)
+		{ 
+			play_sound(SOUNDCMD_PlayRight);
+		}
+
+		if (PRESSED_D)
+		{
+			int frame = 0;
+
+			play_sound(SOUNDCMD_SSGRampinit);
+			waitVBlank();
+
+			for(frame = 0; frame<10; frame++)
+			{
+				play_sound(SOUNDCMD_SSGPulseStart);
+				waitVBlank();
+				play_sound(SOUNDCMD_SSGPulseStop);
+				waitVBlank();
+			}
+
+			for(frame = 0; frame<20; frame++)
+				waitVBlank();
+
+			for(frame = 0; frame<4096; frame++)
+			{
+				play_sound(SOUNDCMD_SSGRampcycle);
+				waitVBlank();
+			}
+			play_sound(SOUNDCMD_SSGRampinit);
+
+			for(frame = 0; frame<20; frame++)
+				waitVBlank();
+
+			for(frame = 0; frame<10; frame++)
+			{
+				play_sound(SOUNDCMD_SSGPulseStart);
+				waitVBlank();
+				play_sound(SOUNDCMD_SSGPulseStop);
+				waitVBlank();
+			}
+		}
 
 		if (PRESSED_START)
 			done = 1;

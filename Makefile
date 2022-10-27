@@ -3,7 +3,7 @@
 #######################################
 
 NEODEV=/c/NeoDev
-export PATH=$(NEODEV)\m68k\bin
+export PATH=$(NEODEV)/m68k/bin
 
 MAMEDIR = $(NEODEV)\mame\roms\240ptestng
 MAMECDDIR = $(NEODEV)\mame\roms\240ptestngcd
@@ -102,7 +102,7 @@ prog.o : $(OBJS)
 	$(AS) $(ASFLAGS) $< -o $@
 
 ifeq ($(OUTPUT),cart)
-neo:
+neo: z80 out/$(PROM)
 	$(CP) out/char.bin cart/char.bin
 	$(CP) out/dev_p1.rom cart/2501-p1.p1
 	$(CP) out/fix.bin cart/2501-s1.s1
@@ -155,9 +155,87 @@ endif
 
 clean:
 	$(RM) *.o src/*.o out/$(PROM) output.map
+	$(RM) $(OUTPUTDIR_CART)/*.m1 $(OUTPUTDIR_CART)/*.v*
+	$(RM) $(OUTPUTDIR_CD)/*.Z80 $(OUTPUTDIR_CD)/*.PCM
+	$(RM) $(SND)/samples_*.inc
 
 char:
 	$(BUILDCHAR) chardata.xml
 
 fix:
 	$(BUILDCHAR) fixdata.xml
+
+############################# AUDIO #######################################
+
+Z80_TOOLS  = /c/NeoDev/z80/bin
+
+SND        = sound
+
+# VASM_Z80 - name of vasm executable targeting z80 with oldstyle syntax
+VASM_Z80 = $(Z80_TOOLS)/vasmz80
+
+# TOOL_ADPCMA - name of ADPCM-A encoder executable
+TOOL_ADPCMA = $(Z80_TOOLS)/adpcma
+
+# TOOL_ADPCMB - name of ADPCM-B encoder executable
+TOOL_ADPCMB = $(Z80_TOOLS)/adpcmb
+
+# LUA - name of Lua interpreter executable (used for Sailor VROM)
+# This is a terrible hack, but since we did an overrride of PATH above...
+LUA = /mingw64/bin/lua
+
+# Z80_FILE - main Z80 asm file (still one file because I don't do any bankswitching)
+Z80_FILE = $(SND)/sound.asm
+
+# PCMA_LIST - path to list of ADPCM-A files (used by Sailor VROM)
+PCMA_LIST = $(SND)/pcm/pcma.txt
+
+# PCMB_LIST - path to list of ADPCM-B files (used by Sailor VROM)
+PCMB_LIST = $(SND)/pcm/pcmb.txt
+
+# CDPCM_LIST - path to list of ADPCM-A files for CD (used by Sailor VROM)
+CDPCM_LIST = $(SND)/pcm/pcma_cd.txt
+
+OUTPUTDIR_CART = out
+OUTPUTDIR_CD = cd
+Z80_OUTFILE = m1.rom
+CDZ80_OUTFILE = OUT.Z80
+
+PCMOUT_CART = $(OUTPUTDIR_CART)/v1.rom
+PCMOUT_CART_INC = $(SND)/samples_cart.inc
+
+PCMOUT_CD = $(OUTPUTDIR_CD)/SNDDEMO.PCM
+PCMOUT_CD_INC = $(SND)/samples_cd.inc
+
+# FLAGS_VASMZ80 - Flags for vasm Z80
+FLAGS_VASMZ80 = -Fbin -nosym
+FLAGS_ROMWAK_Z80 = //p
+
+FLAGS_CART = TARGET_CART
+FLAGS_CD = TARGET_CD
+
+# Z80OUT_CART_SIZE - output size of M1 rom in kilobytes
+Z80OUT_CART_SIZE = 64
+
+# FLAGS_ROMWAK_PCM - Pad output file
+FLAGS_ROMWAK_PCM = //p
+
+# PCMOUT_CART_SIZE - output size of V1 rom in kilobytes
+PCMOUT_CART_SIZE = 128
+
+##############################################################################
+
+z80: pcm
+	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CART) -o $(OUTPUTDIR_CART)/$(Z80_OUTFILE) $(Z80_FILE)
+	$(ROMWAK) $(FLAGS_ROMWAK_Z80) $(OUTPUTDIR_CART)/$(Z80_OUTFILE) $(OUTPUTDIR_CART)/$(Z80_OUTFILE) $(Z80OUT_CART_SIZE)
+
+cdz80: cdpcm
+	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CD) -o $(OUTPUTDIR_CD)/$(CDZ80_OUTFILE) $(Z80_FILE)
+
+pcm:
+	$(LUA) $(SND)/pcm/svrom.lua --pcma=$(PCMA_LIST) --pcmb=$(PCMB_LIST) --outname=$(PCMOUT_CART) --samplelist=$(PCMOUT_CART_INC)
+	$(ROMWAK) $(FLAGS_ROMWAK_PCM) $(PCMOUT_CART) $(PCMOUT_CART) $(PCMOUT_CART_SIZE)
+
+cdpcm:
+	$(LUA) $(SND)/pcm/svrom.lua --mode=cd --pcma=$(CDPCM_LIST) --outname=$(PCMOUT_CD) --samplelist=$(PCMOUT_CD_INC)
+

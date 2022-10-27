@@ -177,7 +177,7 @@ inline void suiteClearFixLayer()
 
 inline void gfxClear()
 {
-	backgroundColor(0x8000);
+	backgroundColor(_BLACK);
 	clearSprites(1, MAX_SPRITES);
 	suiteClearFixLayer();
 }

@@ -30,6 +30,7 @@
 #include "patterns.h"
 #include "tests.h"
 #include "help.h"
+#include "sound.h"
 #include "string_ng.h"
 
 bkp_ram_info bkp_data;
@@ -521,6 +522,10 @@ void _240p_mvs_game_change(void)
 {
 }
 
+void _240p_mvs_coin_sound(void)
+{
+	play_sound(SOUNDCMD_PlayCoinA);
+}
 
 void menu_main()
 {
@@ -800,10 +805,13 @@ void check_bios_init()
 	}
 
 	// Eye catcher, we have none...
-	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_EYE) 
+	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_EYE)
+	{
+		gfxClear();
 		RETURN_TO_BIOS;
+	}
 
-	// If some other game in a multki system enabled dark mode, disable it
+	// If some other game in a multi system enabled dark mode, disable it
 	volMEMBYTE(REG_NOSHADOW) = 1;
 
 	first_grid = 1;
@@ -855,14 +863,11 @@ void mvs_state()
 int main(void)
 {
 	check_bios_init();
-
 	check_systype();
 
-	suiteClearFixLayer();
-	backgroundColor(_BLACK);
 	initGfx();
+	gfxClear();
 	palJobPut(0,NUM_FONT_COLORS,fixPalettes);
-	//jobMeterSetup(true);
 	SCClose();
 	waitVBlank();
 

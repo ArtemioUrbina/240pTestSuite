@@ -5,7 +5,7 @@ _IRQ3	=	_irq3_handler
 _ENTRY_USER	= _start
 _ENTRY_PLAYER_START	= _240p_mvs_player_start
 _ENTRY_DEMO_END	= _240p_mvs_game_change |; MVS game switch
-_ENTRY_COIN_SOUND	= _dummy_config_handler |; coin sound
+_ENTRY_COIN_SOUND	= _240p_mvs_coin_sound |; coin sound
 
 ************************ Definitions *************************
 _NGH	=	0x2501
