@@ -308,9 +308,10 @@ void menu_at()
 
 		fixPrint(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Sound Test");
 		fixPrint(5, 15, curse == 2 ? fontColorRed : fontColorWhite, 3, "Audio Sync Test");
+		fixPrint(5, 16, curse == 3 ? fontColorRed : fontColorWhite, 3, "MDFourier");
 
-		fixPrint(5, 17, curse == 3 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, 18, curse == 4 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, 18, curse == 4 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, 19, curse == 5 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -328,16 +329,20 @@ void menu_at()
 				case 1:
 					at_sound_test();
 				break;
-					
+								
 				case 2:
 					at_audiosync_test();
 				break;
 
 				case 3:
-					DrawHelp(HELP_GENERAL);
+					at_sound_mdfourier();
 				break;
 
 				case 4:
+					DrawHelp(HELP_GENERAL);
+				break;
+
+				case 5:
 					done = 1;
 				break;
 			}

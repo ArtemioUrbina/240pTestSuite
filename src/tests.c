@@ -1569,14 +1569,42 @@ void at_sound_test()
 			play_sound(SOUNDCMD_PlayRight);
 		}
 
-		if (PRESSED_D)
+		if (PRESSED_START)
+			done = 1;
+
+		if (checkHelp(HELP_SOUND))
+			draw = 1;
+	}
+}
+
+void at_sound_mdfourier()
+{
+	int done = 0, draw = 1;
+	picture image;
+
+	while (!done)
+	{
+		if (draw)
+		{
+			gfxClear();
+			pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
+			palJobPut(16,back.palInfo->count,back.palInfo->data);
+			draw = 0;
+		}
+
+		SCClose();
+		waitVBlank();
+
+		readController();
+
+		if (PRESSED_A)
 		{
 			int frame = 0;
 
 			play_sound(SOUNDCMD_SSGRampinit);
 			waitVBlank();
 
-			for(frame = 0; frame<10; frame++)
+			for(frame = 0; frame < 10; frame++)
 			{
 				play_sound(SOUNDCMD_SSGPulseStart);
 				waitVBlank();
@@ -1584,20 +1612,20 @@ void at_sound_test()
 				waitVBlank();
 			}
 
-			for(frame = 0; frame<20; frame++)
+			for(frame = 0; frame < 20; frame++)
 				waitVBlank();
 
-			for(frame = 0; frame<4096; frame++)
+			for(frame = 0; frame < 4096; frame++)
 			{
 				play_sound(SOUNDCMD_SSGRampcycle);
 				waitVBlank();
 			}
 			play_sound(SOUNDCMD_SSGRampinit);
 
-			for(frame = 0; frame<20; frame++)
+			for(frame = 0; frame < 20; frame++)
 				waitVBlank();
 
-			for(frame = 0; frame<10; frame++)
+			for(frame = 0; frame < 10; frame++)
 			{
 				play_sound(SOUNDCMD_SSGPulseStart);
 				waitVBlank();
