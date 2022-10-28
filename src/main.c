@@ -433,57 +433,58 @@ void menu_ht()
 
 void credits()
 {
-	int done = 0;
+	int done = 0, draw = 1;
 	picture qr;
 	short half_pal[16];
 
 	gfxClear();
 	draw_background();
 
-	pictureInit(&qr, &barcode, 26, 17, 260, 110, FLIP_NONE);
+	pictureInit(&qr, &barcode, 26, 17, 260, 80, FLIP_NONE);
 	palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 	memcpy(half_pal, back.palInfo->data, sizeof(ushort)*16);
-	darken_palette(half_pal, 2);
+	darken_palette(half_pal, 4);
 	palJobPut(16, 1, half_pal);
 
 	while (!done)
 	{
-		int y = 8;
+		if(draw)
+		{
+			int x = 4, y = 6;
+
+			fixPrint(14, y-2, fontColorGreen, 3, "== Credits ==");
+			fixPrint(x+24, y, fontColorGreen, 3, "Ver. 0.5");
+			fixPrint(x+24, y+1, fontColorWhite, 3, "10/28/2022");
+			fixPrint(x, y++, fontColorGreen, 3, "Code by:");
+			fixPrint(x+1, y++, fontColorWhite, 3, "Dustin Dembrosky");
+			fixPrint(x+1, y++, fontColorWhite, 3, "Artemio Urbina");
+			fixPrint(x, y++, fontColorGreen, 3, "Monoscope:");
+			fixPrint(x+1, y++, fontColorWhite, 3, "Keith Raney");
+			fixPrint(x, y++, fontColorGreen, 3, "Donna:");
+			fixPrint(x+1, y++, fontColorWhite, 3, "Jose Salot");
+			fixPrint(x, y++, fontColorGreen, 3, "Menu Pixel Art:");
+			fixPrint(x+1, y++, fontColorWhite, 3, "Asher");
+			y++;
+			fixPrint(x, y++, fontColorGreen, 3, "Neo Geo SDK");
+			fixPrint(x+1, y++, fontColorWhite, 3, "NeoDev (Jeff Kurtz)");
+			fixPrint(x, y++, fontColorGreen, 3, "Sound Driver");
+			fixPrint(x+1, y++, fontColorWhite, 3, "Based on freem ADPCM examples");
+			y++;
+			fixPrint(x, y++, fontColorGreen, 3, "MVS flashcart provided by:");
+			fixPrint(x+1, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
+			fixPrint(x, y++, fontColorGreen, 3, "AES flashcart borrowed from:");
+			fixPrint(x+1, y++, fontColorWhite, 3, "El Diablo (Jorge Velazquez)");
+			y++;
+			fixPrint(5, y++, fontColorGreen, 3, "Info on using this test suite:");
+			fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");
+			draw = 0;
+		}
 		
 		SCClose();
 		waitVBlank();
 
 		readController();
-
-		fixPrint(16, 6, fontColorGreen, 3, "Credits");
-		fixPrint(26, 8, fontColorGreen, 3, "Ver. 0.2");
-		fixPrint(26, 9, fontColorWhite, 3, "10/16/2022");
-		fixPrint(5, y++, fontColorGreen, 3, "Code by:");
-		fixPrint(6, y++, fontColorWhite, 3, "Dustin Dembrosky");
-		fixPrint(6, y++, fontColorWhite, 3, "Artemio Urbina");
-		fixPrint(5, y++, fontColorGreen, 3, "Monoscope:");
-		fixPrint(6, y++, fontColorWhite, 3, "Keith Raney");
-		fixPrint(5, y++, fontColorGreen, 3, "Donna:");
-		fixPrint(6, y++, fontColorWhite, 3, "Jose Salot");
-		fixPrint(5, y++, fontColorGreen, 3, "Menu Pixel Art:");
-		fixPrint(6, y++, fontColorWhite, 3, "Asher");
-		fixPrint(5, y++, fontColorGreen, 3, "Neo Geo SDK");
-		fixPrint(6, y++, fontColorWhite, 3, "NeoDev (Jeff Kurtz)");
-		fixPrint(5, y++, fontColorGreen, 3, "Graphics Library");
-		fixPrint(6, y++, fontColorWhite, 3, "DATlib (HPMAN)");
-		if(isMVS)
-		{
-			fixPrint(5, y++, fontColorGreen, 3, "MVS flashcart provided by:");
-			fixPrint(6, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
-		}
-		else
-		{
-			fixPrint(5, y++, fontColorGreen, 3, "AES flashcart borrowed from:");
-			fixPrint(6, y++, fontColorWhite, 3, "El Diablo (Jorge Velazquez)");
-		}
-		fixPrint(5, y++, fontColorGreen, 3, "Info on using this test suite:");
-		fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");
-
+		
 		if (PRESSED_B || PRESSED_START)
 			done = 1;
 	}
