@@ -99,7 +99,7 @@ IRQ:
 	; for ADPCM-B, looping is handled automatically (via repeat flag).
 	; we don't need to check anything. ADPCM-A, on the other hand...
 
-	; Right now only ADPCM-A channel 1 (bit 0) is used.
+	; Check if any ADPCM-A channel has finished
 	; only stop/loop the sample if we've reached the end of it.
 	ld		a,(intStatus1)
 	bit		0,a
@@ -241,14 +241,14 @@ EntryPoint:
 	rst 	writeDEportA	; write to ports 4 and 5
 
 	; set default ADPCM-B sample rate
-	ld		a,0xDA
+	ld		a,0xB5
 	ld		(intPCMB_SampRateL),a	; Delta-N Sampling Rate (L)
-	ld		de,0x19DA		; Set ADPCM-B Sampling Rate LSB
+	ld		de,0x19B5		; Set ADPCM-B Sampling Rate LSB
 	rst 	writeDEportA	; write to ports 4 and 5
 
-	ld		a,0x32
+	ld		a,0x65
 	ld		(intPCMB_SampRateH),a	; Delta-N Sampling Rate (H)
-	ld		de,0x1A32		; Set ADPCM-B Sampling Rate LSB
+	ld		de,0x1A65		; Set ADPCM-B Sampling Rate LSB
 	rst 	writeDEportA	; write to ports 4 and 5
 
 	; Enable NMIs so we can start receiving commands
@@ -551,7 +551,7 @@ executeSoftReset:
 
 command_PlayJingleA:
     ld      a,0
-    ld      b,0xc0      ; center, both channels
+    ld      b,0xc0			; center, both channels
     call    PlayPCMA
     ret
 
@@ -561,7 +561,7 @@ command_PlayJingleA:
 
 command_PlayCoinA:
     ld      a,1
-    ld      b,0xc0      ; center, both channels
+    ld      b,0xc0			; center, both channels
     call    PlayPCMA
     ret
 
@@ -571,7 +571,7 @@ command_PlayCoinA:
 
 command_PlayLeftA:
     ld      a,2
-    ld      b,0x80      ; left channel
+    ld      b,0x80			; left channel
     call    PlayPCMA
     ret
 
@@ -581,7 +581,7 @@ command_PlayLeftA:
 
 command_PlayRightA:
     ld      a,3
-    ld      b,0x40      ; right channel
+    ld      b,0x40			; right channel
     call    PlayPCMA
     ret
 
@@ -602,7 +602,6 @@ command_PlayCenterA:
 
 PlayPCMA:
 	di
-
     ; load sample using 'a'
 	call	loadSample			; load sample addres from a to ix from table
 
@@ -618,7 +617,7 @@ PlayPCMA:
 	ld		(PCMnextChannel),a
 
 	; volume/output at 1F
-    ; set l/f with 'b'
+    ; set l/r panning with 'b'
 	ld		a,(PCMcurrChannel)
 	add		0x08				; Base register for Volume and Pan
     ld      d,a					; register for current channel
@@ -627,7 +626,7 @@ PlayPCMA:
     ld      e,a
 	rst 	writeDEportB
 
-	; start addr ($10,$18)
+	; start addr (register $10+Channel,$18+Channel)
 	; samples_PCMA word 1
 	ld		a,(PCMcurrChannel)
 	add		0x10				; Base register for start Addr byte 1
@@ -641,7 +640,7 @@ PlayPCMA:
 	ld		e,(ix+1)
 	rst 	writeDEportB
 
-	; end addr ($20,$28)
+	; end addr (register $20+Channel,$28+Channel)
 	; samples_PCMA word 2
 	ld		a,(PCMcurrChannel)
 	add		0x20				; Base register for end Addr byte 1
@@ -658,17 +657,18 @@ PlayPCMA:
 	; store in a the current bit mask for channel
 	ld		b,0x01				; set base bitmask
 	ld		a,(PCMcurrChannel)	
-	cp		0					; check if zero
-	jr		z,.noshifts			; if so, skip to execution
+	cp		0					; check if channel is zero
+	jr		z,.reset_enable		; if so, skip to execution
 
+	; create bitmask for channel
 .loopshifts
 	sla		b
 	dec		a
 	jr		nz,.loopshifts
 
-.noshifts:
+	; reset and enable using mask in b
+.reset_enable:
 	ld		a,b					; copy bitmask
-	; reset and enable using mask in a
 	ld		d,0x1C
 	ld		e,a
 	rst 	writeDEportA
@@ -684,7 +684,8 @@ PlayPCMA:
 
 ;------------------------------------------------------------------------------;
 ; helper to load sample entry from the table
-; sample entry is in a
+; sample entry is in 'a'
+
 loadSample:
 	; multiply 'a' (sample entry) by 4
 	ld		l,a	 
@@ -758,16 +759,7 @@ command_PlayPCMB:
 	rst 	writeDEportA
 
 	; --main control ($10)--
-	; %SxxLxxxR (S=start, L=loop, R=Reset)
-	; repeat/loop flag = loopB<<4
-	ld		a,(0)
-	sla		a
-	sla		a
-	sla		a
-	sla		a
-	or		0x80		; start flag
-	ld		d,0x10
-	ld		e,a
+	ld		de,0x1080
 	rst 	writeDEportA
 
 	endif

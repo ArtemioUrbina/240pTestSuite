@@ -1559,6 +1559,7 @@ void at_sound_test()
 
 		fixPrint(16, 14, fontColorGreen, 3, "ADPCM-B");
 		fixPrint(18, 15, sel == 1 ? fontColorRed : fontColorWhite, 3, "Play");
+		//11025,16538,22050,27563,33075,38588,44100,55125
 
 		SCClose();
 		waitVBlank();
