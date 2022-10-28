@@ -47,6 +47,4 @@
 #define SOUNDCMD_RateB_6		0x86
 #define SOUNDCMD_RateB_7		0x87
 
-#define play_sound(sound) volMEMBYTE(REG_SOUND) = sound; while(volMEMBYTE(REG_SOUND) != 0);
-
 #endif /* _SOUND_H_ */

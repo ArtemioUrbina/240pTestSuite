@@ -1536,7 +1536,8 @@ void vt_backlitzone_test()
 
 void at_sound_test()
 {
-	int done = 0, draw = 1;
+	int done = 0, draw = 1, sel = 0;
+	int option = 1, change = 0, changeoption = 0;
 	picture image;
 
 	while (!done)
@@ -1549,24 +1550,91 @@ void at_sound_test()
 			draw = 0;
 		}
 
+		fixPrint(15, 8, fontColorGreen, 3, "Sound Test");
+
+		fixPrint(16, 11, fontColorGreen, 3, "ADPCM-A");
+		fixPrint(12, 12, sel == 0 && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(17, 12, sel == 0 && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
+		fixPrint(24, 12, sel == 0 && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
+
+		fixPrint(16, 14, fontColorGreen, 3, "ADPCM-B");
+		fixPrint(18, 15, sel == 1 ? fontColorRed : fontColorWhite, 3, "Play");
+
 		SCClose();
 		waitVBlank();
 
 		readController();
 
+		if (PRESSED_LEFT)
+		{
+			option --;
+			changeoption = 1;
+		}
+
+		if (PRESSED_RIGHT)
+		{
+			option ++;
+			changeoption = 1;
+		}
+
+		if (PRESSED_UP)
+		{
+			sel --;
+			change = 1;
+		}
+
+		if (PRESSED_DOWN)
+		{
+			sel++;
+			change = 1;
+		}
+
+		if(change)
+		{
+			if(sel < 0)
+				sel = 1;
+			if (sel > 1)
+				sel = 0;
+			switch(sel)
+			{
+			case 0:
+				option = 1;
+				break;
+			}
+			change = 0;
+		}
+
+		if(changeoption)
+		{
+			if(option < 0)
+				option = 2;
+			if(option > 2)
+				option = 0;
+			changeoption = 0;
+		}
+
 		if (PRESSED_A)
 		{
-			play_sound(SOUNDCMD_PlayLeft);
-		}
+			if(sel == 0)
+			{
+				switch(option)
+				{
+				case 0:
+					playSound(SOUNDCMD_PlayLeft);
+					break;
+				case 1:
+					playSound(SOUNDCMD_PlayCenter);
+					break;
+				case 2:
+					playSound(SOUNDCMD_PlayRight);
+					break;
+				}
+			}
 
-		if (PRESSED_B)
-		{ 
-			play_sound(SOUNDCMD_PlayCenter);
-		}
-
-		if (PRESSED_C)
-		{ 
-			play_sound(SOUNDCMD_PlayRight);
+			if (sel == 1)
+			{
+				playSound(SOUNDCMD_PlayB);
+			}
 		}
 
 		if (PRESSED_START)
@@ -1575,6 +1643,27 @@ void at_sound_test()
 		if (checkHelp(HELP_SOUND))
 			draw = 1;
 	}
+}
+
+void executePulseTrain()
+{
+	int frame = 0;
+
+	for(frame = 0; frame < 10; frame++)
+	{
+		playSound(SOUNDCMD_SSGPulseStart);
+		waitVBlank();
+		playSound(SOUNDCMD_SSGPulseStop);
+		waitVBlank();
+	}
+}
+
+void executeSilence()
+{
+	int frame = 0;
+
+	for(frame = 0; frame < 20; frame++)
+		waitVBlank();
 }
 
 void at_sound_mdfourier()
@@ -1601,37 +1690,76 @@ void at_sound_mdfourier()
 		{
 			int frame = 0;
 
-			play_sound(SOUNDCMD_SSGRampinit);
+			playSound(SOUNDCMD_SSGRampinit);
 			waitVBlank();
 
-			for(frame = 0; frame < 10; frame++)
-			{
-				play_sound(SOUNDCMD_SSGPulseStart);
-				waitVBlank();
-				play_sound(SOUNDCMD_SSGPulseStop);
-				waitVBlank();
-			}
-
-			for(frame = 0; frame < 20; frame++)
-				waitVBlank();
+			executePulseTrain();
+			executeSilence();
 
 			for(frame = 0; frame < 4096; frame++)
 			{
-				play_sound(SOUNDCMD_SSGRampcycle);
+				playSoundatVideoStart(SOUNDCMD_SSGRampcycle);
 				waitVBlank();
 			}
-			play_sound(SOUNDCMD_SSGRampinit);
+			playSound(SOUNDCMD_SSGRampinit);
 
-			for(frame = 0; frame < 20; frame++)
-				waitVBlank();
+			executeSilence();
 
-			for(frame = 0; frame < 10; frame++)
+			executePulseTrain();
+		}
+
+		if (PRESSED_B)
+		{
+			int stop = 0;
+
+			gfxClear();
+			SCClose();
+			waitVBlank();
+			do
 			{
-				play_sound(SOUNDCMD_SSGPulseStart);
+				backgroundColor(WH_107);
+				playSoundatLine(0x010C, SOUNDCMD_SSGPulseStart);
+				readController();
+				if(PRESSED_A)
+					stop = 1;
+				playSoundatLine(0x1ED, SOUNDCMD_SSGPulseStop);
 				waitVBlank();
-				play_sound(SOUNDCMD_SSGPulseStop);
+				
+				backgroundColor(_BLACK);
+				readController();
+				if(PRESSED_A)
+					stop = 1;
 				waitVBlank();
-			}
+				
+			}while(!stop);
+			draw = 1;
+		}
+
+		if (PRESSED_C)
+		{
+			int stop = 0;
+
+			gfxClear();
+			SCClose();
+			waitVBlank();
+			do
+			{
+				backgroundColor(WH_107);
+				playSound(SOUNDCMD_SSGPulseStart);
+				readController();
+				if(PRESSED_A)
+					stop = 1;
+				waitVBlank();
+
+				backgroundColor(_BLACK);
+				playSound(SOUNDCMD_SSGPulseStop);
+				readController();
+				if(PRESSED_A)
+					stop = 1;
+				waitVBlank();
+				
+			}while(!stop);
+			draw = 1;
 		}
 
 		if (PRESSED_START)

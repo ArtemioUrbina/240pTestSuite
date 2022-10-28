@@ -654,3 +654,62 @@ int getSoftDipvalue(u32 softdip)
 		return 0;
 	return(volMEMBYTE(softdip));	
 }
+
+inline void waitVLine(WORD line)
+{
+	while((volMEMWORD(REG_LSPCMODE) >> 7) != line);	
+}
+/* 
+ * Play sound aligned with first line of the visible frame 
+ * tested on an AES, sound driver response time via NMI is 4-7 lines
+ * 4 lines for SSG stop
+ * 7 lines for SSG start
+ */
+void playSoundatVideoStart(u8 command)
+{
+	WORD line = 0;
+	/*
+		Get upper 9 bits, Raster line counter
+		$0F8~$0FF : Vertical sync (8px)
+		$100~$10F : Top border (16px) (active in PAL, blanked in NTSC)
+		$110~$1EF : Active display (224px)
+		$1F0~$1FF : Bottom border (16px)
+
+		Processing in Z80+Ym2610 takes 4.5 lines
+		So we align to line 0x010CC for NTSC
+	*/
+	if(isPAL) line = 0x100; else line = 0x010C;
+
+	waitVLine(line);
+	volMEMBYTE(REG_SOUND) = command;
+
+	// wait for the Z80 to finish processing
+	while(volMEMBYTE(REG_SOUND) != 0);
+}
+
+void playSoundatLine(WORD line, u8 command)
+{
+	waitVLine(line);
+	volMEMBYTE(REG_SOUND) = command;
+
+	// we don't wait for Z80 response here
+}
+
+/*
+ * Play sound on demand and wait for processing
+ */
+void playSound(u8 command)
+{
+	volMEMBYTE(REG_SOUND) = command;
+
+	// wait for the Z80 to finish processing
+	while(volMEMBYTE(REG_SOUND) != 0);
+}
+
+/*
+ * Play sound immediately with no delay or response check
+ */
+void playSoundnoWait(u8 command)
+{
+	volMEMBYTE(REG_SOUND) = command;
+}

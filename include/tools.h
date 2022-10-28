@@ -66,6 +66,14 @@ WORD PackColor(short r, short g, short b, BYTE dark);
 void UnPackColor(WORD color, short *r, short *g, short *b, short *dark);
 void darken_palette(short *pal, short factor);
 
+void waitVLine(WORD line);
+
+// Sound
+void playSound(u8 command);
+void playSoundatVideoStart(u8 command);
+void playSoundatLine(WORD line, u8 command);
+void playSoundnoWait(u8 command);
+
 // This is unbuffered, so if a palJobPut is called in the same frame, this will be overwritten
 #define VRAM_PAL(palette, color) volMEMWORD(0x400000+palette*32+color*2)
 

@@ -103,10 +103,55 @@ IRQ:
 	; only stop/loop the sample if we've reached the end of it.
 	ld		a,(intStatus1)
 	bit		0,a
-	jp		Z,.IRQ_afterPCMA
+	jp		Z,.IRQ_checkPCMA1
 
 	; stop sample on ADPCM-A channel 1
 	ld		de,0x0081
+	rst 	writeDEportB
+
+.IRQ_checkPCMA1:
+	ld		a,(intStatus1)
+	bit		1,a
+	jp		Z,.IRQ_checkPCMA2
+
+	; stop sample on ADPCM-A channel 2
+	ld		de,0x0082
+	rst 	writeDEportB
+
+.IRQ_checkPCMA2:
+	ld		a,(intStatus1)
+	bit		2,a
+	jp		Z,.IRQ_checkPCMA3
+
+	; stop sample on ADPCM-A channel 3
+	ld		de,0x0084
+	rst 	writeDEportB
+
+.IRQ_checkPCMA3:
+	ld		a,(intStatus1)
+	bit		3,a
+	jp		Z,.IRQ_checkPCMA4
+
+	; stop sample on ADPCM-A channel 4
+	ld		de,0x0088
+	rst 	writeDEportB
+
+.IRQ_checkPCMA4:
+	ld		a,(intStatus1)
+	bit		4,a
+	jp		Z,.IRQ_checkPCMA5
+
+	; stop sample on ADPCM-A channel 5
+	ld		de,0x0090
+	rst 	writeDEportB
+
+.IRQ_checkPCMA5:
+	ld		a,(intStatus1)
+	bit		5,a
+	jp		Z,.IRQ_afterPCMA
+
+	; stop sample on ADPCM-A channel 6
+	ld		de,0x00A0
 	rst 	writeDEportB
 
 .IRQ_afterPCMA:
@@ -149,6 +194,10 @@ EntryPoint:
 	; Initialize SSG frequencies
 	ld		(SSG_FreqFine),a
 	ld		(SSG_FreqCoarse),a
+
+	; Next APCM-A channel
+	ld		(PCMnextChannel),a
+	ld		(PCMcurrChannel),a
 
 	; Silence/Stop SSG, FM, and ADPCM
 	call	ssg_Stop
@@ -554,43 +603,81 @@ command_PlayCenterA:
 PlayPCMA:
 	di
 
-	; reset and enable
-	ld		de,0x1C01
-	rst 	writeDEportA
-	ld		de,0x1C00
-	rst 	writeDEportA
-
     ; load sample using 'a'
-	call	loadSample
+	call	loadSample			; load sample addres from a to ix from table
 
-	; volume/output ($08) at 1F
+	; check for next available channel
+	ld		a,(PCMnextChannel)
+	ld		(PCMcurrChannel),a
+	inc		a
+	cp		6
+	jr		nz,.storeNextChannel
+	xor		a					; zero 'a'
+
+.storeNextChannel:
+	ld		(PCMnextChannel),a
+
+	; volume/output at 1F
     ; set l/f with 'b'
-    ld      d,0x08
+	ld		a,(PCMcurrChannel)
+	add		0x08				; Base register for Volume and Pan
+    ld      d,a					; register for current channel
     ld      a,0x1F
-    or      b
+    or      b					; left right panning in b
     ld      e,a
 	rst 	writeDEportB
 
 	; start addr ($10,$18)
 	; samples_PCMA word 1
-	ld		d,0x10
+	ld		a,(PCMcurrChannel)
+	add		0x10				; Base register for start Addr byte 1
+	ld		d,a
 	ld		e,(ix)
 	rst 	writeDEportB
-	ld		d,0x18
+
+	ld		a,(PCMcurrChannel)
+	add		0x18				; Base register for start Addr byte 2
+	ld		d,a
 	ld		e,(ix+1)
 	rst 	writeDEportB
 
 	; end addr ($20,$28)
 	; samples_PCMA word 2
-	ld		d,0x20
+	ld		a,(PCMcurrChannel)
+	add		0x20				; Base register for end Addr byte 1
+	ld		d,a
 	ld		e,(ix+2)
 	rst 	writeDEportB
-	ld		d,0x28
+
+	ld		a,(PCMcurrChannel)
+	add		0x28				; Base register for end Addr byte 2
+	ld		d,a
 	ld		e,(ix+3)
 	rst 	writeDEportB
 
-	; play sound on channel 1
-	ld		de,0x0001
+	; store in a the current bit mask for channel
+	ld		b,0x01				; set base bitmask
+	ld		a,(PCMcurrChannel)	
+	cp		0					; check if zero
+	jr		z,.noshifts			; if so, skip to execution
+
+.loopshifts
+	sla		b
+	dec		a
+	jr		nz,.loopshifts
+
+.noshifts:
+	ld		a,b					; copy bitmask
+	; reset and enable using mask in a
+	ld		d,0x1C
+	ld		e,a
+	rst 	writeDEportA
+	ld		de,0x1C00
+	rst 	writeDEportA
+
+	; play sound on selected channel using mask in a
+	ld		d,0x00
+	ld		e,a
 	rst 	writeDEportB
 
 	ret

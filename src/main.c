@@ -529,7 +529,7 @@ void _240p_mvs_game_change(void)
 
 void _240p_mvs_coin_sound(void)
 {
-	play_sound(SOUNDCMD_PlayCoinA);
+	playSound(SOUNDCMD_PlayCoinA);
 }
 
 void menu_main()

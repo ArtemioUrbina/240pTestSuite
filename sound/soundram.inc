@@ -3,7 +3,7 @@
 ; Usable RAM exists from 0xF800 to 0xFFFF.
 	org $F800
 ;==============================================================================;
-; <Sound Driver Section. Currently 27 bytes used
+; <Sound Driver Section. Currently 28 bytes used
 ;==============================================================================;
 dummyByte			ds 1		; dummy byte used for RAM clearing, etc.
 ;------------------------------------------------------------------------------;
@@ -34,6 +34,8 @@ SSG_FreqCoarse		ds 1		; Previous command handled
 ; [ADPCM-A variables ](Ports 6/7)
 intPCMA_Dump		ds 1		; ($00) Dump (Key On/Off) and Channel toggle
 intPCMA_MasterVol	ds 1		; ($01) Master Volume
+PCMnextChannel		ds 1		; Next available channel 0-5
+PCMcurrChannel		ds 1		; Currently used channel 0-5
 
 ;------------------------------------------------------------------------------;
 ; * ADPCM-A channels (only ch.1 is used in this demo)
