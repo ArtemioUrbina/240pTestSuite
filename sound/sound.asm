@@ -457,16 +457,24 @@ HandleCommand:
 	cp		SOUNDCMD_PlayCenter
 	jp		Z,command_PlayCenterA
 
-	; command to play ADPCM-B
-	cp		SOUNDCMD_PlayB
-	jp		Z,command_PlayPCMB
+	; command to play ADPCM-B Center
+	cp		SOUNDCMD_ADPCMB_Center
+	jp		Z,command_PlayPCMBCenter
+
+	; command to play ADPCM-B Left
+	cp		SOUNDCMD_ADPCMB_Left
+	jp		Z,command_PlayPCMBLeft
+
+	; command to play ADPCM-B Right
+	cp		SOUNDCMD_ADPCMB_Right
+	jp		Z,command_PlayPCMBRight
 
 	; command to stop ADPCM-A
-	cp		SOUNDCMD_StopA
+	cp		SOUNDCMD_StopADPCMA
 	jp		Z,pcma_Stop
 
 	; command to stop ADPCM-B
-	cp		SOUNDCMD_StopB
+	cp		SOUNDCMD_StopADPCMB
 	jp		Z,pcmb_Stop
 
 	; if it's not one of the above, then do nothing.
@@ -597,7 +605,7 @@ command_PlayCenterA:
 
 ;------------------------------------------------------------------------------;
 ; PlayPCMA
-; Play sample number 'a' on the first ADPCM-A channel.
+; Play sample number 'a' on the next ADPCM-A channel.
 ; L/R balance in 'b'
 
 PlayPCMA:
@@ -654,7 +662,7 @@ PlayPCMA:
 	ld		e,(ix+3)
 	rst 	writeDEportB
 
-	; store in a the current bit mask for channel
+	; store in 'b' the current bit mask for channel
 	ld		b,0x01				; set base bitmask
 	ld		a,(PCMcurrChannel)	
 	cp		0					; check if channel is zero
@@ -666,7 +674,7 @@ PlayPCMA:
 	dec		a
 	jr		nz,.loopshifts
 
-	; reset and enable using mask in b
+	; reset and enable using bitmask from 'b'
 .reset_enable:
 	ld		a,b					; copy bitmask
 	ld		d,0x1C
@@ -694,14 +702,44 @@ loadSample:
 	add 	hl,hl
 	ld		de,samples_PCMA ; add the sample table base addr
 	add 	hl, de
-	push	hl
+	push	hl				; use the stack to make the copy
 	pop 	ix
 
 	ret
 
 ;------------------------------------------------------------------------------;
-; command_PlayPCMB (command $0B)
-; Play an ADPCM-B sample.
+; command_PlayPCMBCenter 
+; Set both channels
+; then ADPCM-B sample.
+
+command_PlayPCMBCenter:
+	ld		b,0xC0
+	call	command_PlayPCMB
+	ret
+
+;------------------------------------------------------------------------------;
+; command_PlayPCMBLeft
+; Set left channel
+; then ADPCM-B sample.
+
+command_PlayPCMBLeft:
+	ld		b,0x80
+	call	command_PlayPCMB
+	ret
+
+;------------------------------------------------------------------------------;
+; command_PlayPCMBRight
+; Set right channel
+; then ADPCM-B sample.
+
+command_PlayPCMBRight:
+	ld		b,0x40
+	call	command_PlayPCMB
+	ret
+
+;------------------------------------------------------------------------------;
+; command_PlayPCMBRight
+; Play an ADPCM-B sample, takes panning from 'b'
 
 command_PlayPCMB:
 	di
@@ -718,7 +756,8 @@ command_PlayPCMB:
 	rst 	writeDEportA
 
 	; --left/right ($11)--
-	ld		de,0x11C0
+	ld		d,0x11
+	ld		e,b				; panning from 'b'
 	rst 	writeDEportA
 
 	; --volume ($1B)--

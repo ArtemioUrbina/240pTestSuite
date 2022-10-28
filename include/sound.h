@@ -29,9 +29,11 @@
 #define SOUNDCMD_PlayLeft  		0x21
 #define SOUNDCMD_PlayRight		0x22
 #define SOUNDCMD_PlayCenter 	0x23
-#define SOUNDCMD_StopA			0x30
-#define SOUNDCMD_PlayB			0x31
-#define SOUNDCMD_StopB			0x32
+#define SOUNDCMD_StopADPCMA		0x30
+#define SOUNDCMD_ADPCMB_Left	0x31
+#define SOUNDCMD_ADPCMB_Center	0x32
+#define SOUNDCMD_ADPCMB_Right	0x33
+#define SOUNDCMD_StopADPCMB		0x34
 
 #define SOUNDCMD_SSGRampinit	0x40
 #define SOUNDCMD_SSGRampcycle	0x41

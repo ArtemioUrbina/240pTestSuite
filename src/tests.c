@@ -1536,8 +1536,9 @@ void vt_backlitzone_test()
 
 void at_sound_test()
 {
-	int done = 0, draw = 1, sel = 0;
+	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2;
 	int option = 1, change = 0, changeoption = 0;
+	char *adpcmb_rates[] = { "11025", "16538", "22050", "27563", "33075", "38588", "44100", "55125"  };
 	picture image;
 
 	while (!done)
@@ -1558,8 +1559,10 @@ void at_sound_test()
 		fixPrint(24, 12, sel == 0 && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
 
 		fixPrint(16, 14, fontColorGreen, 3, "ADPCM-B");
-		fixPrint(18, 15, sel == 1 ? fontColorRed : fontColorWhite, 3, "Play");
-		//11025,16538,22050,27563,33075,38588,44100,55125
+		fixPrintf(16, 15, fontColorWhite, 3, "C:%s", adpcmb_rates[adpcmb_sel]);
+		fixPrint(12, 16, sel == 1 && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(17, 16, sel == 1 && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
+		fixPrint(24, 16, sel == 1 && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
 
 		SCClose();
 		waitVBlank();
@@ -1601,16 +1604,29 @@ void at_sound_test()
 			case 0:
 				option = 1;
 				break;
+			case 1:
+				option = 1;
+				break;
 			}
 			change = 0;
 		}
 
 		if(changeoption)
 		{
-			if(option < 0)
-				option = 2;
-			if(option > 2)
-				option = 0;
+			if(sel == 0)
+			{
+				if(option < 0)
+					option = 2;
+				if(option > 2)
+					option = 0;
+			}
+			if(sel == 1)
+			{
+				if(option < 0)
+					option = 3;
+				if(option > 3)
+					option = 0;
+			}
 			changeoption = 0;
 		}
 
@@ -1634,7 +1650,29 @@ void at_sound_test()
 
 			if (sel == 1)
 			{
-				playSound(SOUNDCMD_PlayB);
+				switch(option)
+				{
+				case 0:
+					playSound(SOUNDCMD_ADPCMB_Left);
+					break;
+				case 1:
+					playSound(SOUNDCMD_ADPCMB_Center);
+					break;
+				case 2:
+					playSound(SOUNDCMD_ADPCMB_Right);
+					break;
+				}
+			}
+		}
+
+		if(PRESSED_C)
+		{
+			if(sel == 1)
+			{
+				adpcmb_sel ++;
+				if(adpcmb_sel > 7)
+					adpcmb_sel = 0;
+				playSound(SOUNDCMD_RateB_0+adpcmb_sel);
 			}
 		}
 
