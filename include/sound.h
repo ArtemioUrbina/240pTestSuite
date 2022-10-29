@@ -34,6 +34,8 @@
 #define SOUNDCMD_ADPCMB_Center	0x32
 #define SOUNDCMD_ADPCMB_Right	0x33
 #define SOUNDCMD_StopADPCMB		0x34
+#define SOUNDCMD_LoopB			0x35
+#define SOUNDCMD_NoLoopB		0x36
 
 #define SOUNDCMD_SSGRampinit	0x40
 #define SOUNDCMD_SSGRampcycle	0x41

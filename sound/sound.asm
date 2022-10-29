@@ -32,7 +32,7 @@ checkLoop:
 	ret
 ;==============================================================================;
 	org $0038
-	di
+	di						; re-enabled at end of IRQ routine
 	jp		IRQ
 ;==============================================================================;
 
@@ -190,6 +190,9 @@ EntryPoint:
 	ld		de,0xF801		; write sequence begins at $F801
 	ld		bc,0x7FF		; end at $FFFF
 	ldir					; clear out memory
+
+	; Initialize variables
+	ld		(loopB),a
 
 	; Initialize SSG frequencies
 	ld		(SSG_FreqFine),a
@@ -476,6 +479,14 @@ HandleCommand:
 	; command to stop ADPCM-B
 	cp		SOUNDCMD_StopADPCMB
 	jp		Z,pcmb_Stop
+
+	; command loop ADPCM-B
+	cp		SOUNDCMD_LoopB
+	jp		Z,command_LoopPCMB
+
+	; command no loop ADPCM-B
+	cp		SOUNDCMD_NoLoopB
+	jp		Z,command_NoLoopPCMB
 
 	; if it's not one of the above, then do nothing.
 	ret
@@ -797,13 +808,52 @@ command_PlayPCMB:
 	ld		e,a
 	rst 	writeDEportA
 
-	; --main control ($10)--
-	ld		de,0x1080
-	rst 	writeDEportA
-
+	ld		b,0x80				; set start bit
+	call	setADPCMBLoop
 	endif
 
-.PlayPCMB_end:
+	ret
+
+;------------------------------------------------------------------------------;
+; Sets looping register values for ADPCM-B sample.
+; takes start bit form 'b'
+
+setADPCMBLoop:
+	; --main control ($10)--
+	; %SxxLxxxR (S=start, L=loop, R=Reset)
+	; repeat/loop flag = loopB<<4
+	ld		a,(loopB)
+	sla		a
+	sla		a
+	sla		a
+	sla		a
+	or		b
+	ld		d,0x10
+	ld		e,a
+	rst 	writeDEportA
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_LoopPCMB 
+; Sets looping for ADPCM-B sample.
+
+command_LoopPCMB:
+	ld		a,1
+	ld		(loopB),a
+	ld		b,0
+	call	setADPCMBLoop
+	ret
+
+;------------------------------------------------------------------------------;
+; command_NoLoopPCMB 
+; Disables looping for ADPCM-B sample.
+
+command_NoLoopPCMB:
+	xor		a
+	ld		(loopB),a
+	ld		b,0
+	call	setADPCMBLoop
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -921,10 +971,10 @@ command_SSGrampCycle:
 	ret
 
 command_SSG_pulseStart:
-	ld		de,0x0011
+	ld		de,0x0011		; 8khz (8294hz)
 	rst 	writeDEportA
 
-	ld		de,0x0100
+	ld		de,0x0100		; Coarse to zero
 	rst 	writeDEportA
 
 	ld		de,0x073E		;SSG Mixing, Only channel A

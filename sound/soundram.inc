@@ -60,4 +60,5 @@ intPCMB_EndHi		ds 1		; ($15) Sample End Address/256 (MSB)
 intPCMB_SampRateL	ds 1		; ($19) Delta-N Sampling Rate (L)
 intPCMB_SampRateH	ds 1		; ($1A) Delta-N Sampling Rate (H)
 intPCMB_Volume		ds 1		; ($1B) Channel volume
+loopB				ds 1		; loop B
 

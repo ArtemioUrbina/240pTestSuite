@@ -467,8 +467,8 @@ void credits()
 			y++;
 			fixPrint(x, y++, fontColorGreen, 3, "Neo Geo SDK");
 			fixPrint(x+1, y++, fontColorWhite, 3, "NeoDev (Jeff Kurtz)");
-			fixPrint(x, y++, fontColorGreen, 3, "Sound Driver");
-			fixPrint(x+1, y++, fontColorWhite, 3, "Based on freem ADPCM examples");
+			fixPrint(x, y++, fontColorGreen, 3, "Z80 Sound Driver");
+			fixPrint(x+1, y++, fontColorWhite, 3, "Based on freem ADPCM example");
 			y++;
 			fixPrint(x, y++, fontColorGreen, 3, "MVS flashcart provided by:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");

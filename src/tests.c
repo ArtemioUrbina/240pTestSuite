@@ -1537,8 +1537,8 @@ void vt_backlitzone_test()
 void at_sound_test()
 {
 	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2;
-	int option = 1, change = 0, changeoption = 0;
-	char *adpcmb_rates[] = { "11025", "16538", "22050", "27563", "33075", "38588", "44100", "55125"  };
+	int option = 1, change = 0, changeoption = 0, loopB = 0;
+	int adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125  };
 	picture image;
 
 	while (!done)
@@ -1559,7 +1559,10 @@ void at_sound_test()
 		fixPrint(24, 12, sel == 0 && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
 
 		fixPrint(16, 14, fontColorGreen, 3, "ADPCM-B");
-		fixPrintf(16, 15, fontColorWhite, 3, "C:%s", adpcmb_rates[adpcmb_sel]);
+		fixPrint(10, 15, sel == 1 ? fontColorGreen : fontColorWhite, 3, "C:");
+		fixPrintf(13, 15, fontColorWhite, 3, "%dhz", adpcmb_rates[adpcmb_sel]);
+		fixPrint(21, 15, sel == 1 ? fontColorGreen : fontColorWhite, 3, "D:");
+		fixPrintf(24, 15, fontColorWhite, 3, "loop %s", loopB ? "on ": "off");
 		fixPrint(12, 16, sel == 1 && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
 		fixPrint(17, 16, sel == 1 && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
 		fixPrint(24, 16, sel == 1 && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
@@ -1665,7 +1668,7 @@ void at_sound_test()
 			}
 		}
 
-		if(PRESSED_C)
+		if (PRESSED_C)
 		{
 			if(sel == 1)
 			{
@@ -1676,11 +1679,26 @@ void at_sound_test()
 			}
 		}
 
+		if (PRESSED_D)
+		{
+			if(sel == 1)
+			{
+				loopB = !loopB;
+				if(loopB)
+					playSound(SOUNDCMD_LoopB);
+				else
+				{
+					playSound(SOUNDCMD_NoLoopB);
+				}
+			}
+		}
+
 		if (PRESSED_START)
 			done = 1;
 
-		if (checkHelp(HELP_SOUND))
-			draw = 1;
+		// Fix D/Select/start first
+		//if (checkHelp(HELP_SOUND))
+			//draw = 1;
 	}
 }
 
