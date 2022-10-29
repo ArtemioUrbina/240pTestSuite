@@ -65,8 +65,10 @@ NMI:
 
 	call	HandleCommand
 
+	ld		a,(curCommand)
+	set		7,a				; set bit 7 for reply, this is a catch all for response
+	out		(0xC),a			; Reply to 68K with but 7 set bit.
 	xor		a				; clear a for now.
-	out		(0xC),a			; Reply to 68K with something.
 	out		(0),a			; Write to port 0 (Clear sound code)
 
 endNMI:

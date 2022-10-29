@@ -1687,9 +1687,7 @@ void at_sound_test()
 				if(loopB)
 					playSound(SOUNDCMD_LoopB);
 				else
-				{
 					playSound(SOUNDCMD_NoLoopB);
-				}
 			}
 		}
 
@@ -1700,6 +1698,9 @@ void at_sound_test()
 		//if (checkHelp(HELP_SOUND))
 			//draw = 1;
 	}
+
+	if(loopB)
+		playSound(SOUNDCMD_StopADPCMB);
 }
 
 void executePulseTrain()

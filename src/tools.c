@@ -659,6 +659,15 @@ inline void waitVLine(WORD line)
 {
 	while((volMEMWORD(REG_LSPCMODE) >> 7) != line);	
 }
+
+inline void checkZ80Response(BYTE command)
+{
+	BYTE response = 0;
+
+	response = command | 0x80;
+	// wait for the Z80 to finish processing
+	while(volMEMBYTE(REG_SOUND) != response);
+}
 /* 
  * Play sound aligned with first line of the visible frame 
  * tested on an AES, sound driver response time via NMI is 4-7 lines
@@ -683,8 +692,7 @@ void playSoundatVideoStart(u8 command)
 	waitVLine(line);
 	volMEMBYTE(REG_SOUND) = command;
 
-	// wait for the Z80 to finish processing
-	while(volMEMBYTE(REG_SOUND) != 0);
+	checkZ80Response(command);
 }
 
 void playSoundatLine(WORD line, u8 command)
@@ -702,8 +710,7 @@ void playSound(u8 command)
 {
 	volMEMBYTE(REG_SOUND) = command;
 
-	// wait for the Z80 to finish processing
-	while(volMEMBYTE(REG_SOUND) != 0);
+	checkZ80Response(command);
 }
 
 /*
