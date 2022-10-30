@@ -146,10 +146,10 @@ neo: cdz80
 endif
 
 ifeq ($(OUTPUT),cart)
-copyroms: neo
+copyroms: cart
 	$(CP) cart/$(PROM) $(MAMEDIR)
 	$(CP) cart/$(C1ROM) $(MAMEDIR)
-	$(CP) cart/$(C1ROM) $(MAMEDIR)
+	$(CP) cart/$(C2ROM) $(MAMEDIR)
 	$(CP) cart/$(SROM) $(MAMEDIR)
 	$(CP) cart/$(MROM) $(MAMEDIR)
 	$(CP) cart/$(VROM) $(MAMEDIR)
