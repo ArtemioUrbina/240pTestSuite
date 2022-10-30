@@ -48,15 +48,17 @@ void ReflexTestText();
 void ReflexTestResults();
 void ReflexTestResultsBack();
 
-void LoadWave(unsigned char chan, unsigned char *wave);
-void SetWaveFreq(unsigned char chan, unsigned int freq);
-void SetNoiseFreq(unsigned int chan, unsigned int freq);
-void StopNoise(unsigned int chann);
-void PlayLeft(unsigned char chan);
-void PlayRight(unsigned char chan);
-void PlayCenter(unsigned char chan);
-void StopAudio(unsigned char chan);
-void StopAllAudio();
+void PSG_LoadWave(unsigned char chan, unsigned char *wave);
+void PSG_SetWaveFreq(unsigned char chan, unsigned int freq);
+void PSG_SetNoiseFreq(unsigned int chan, unsigned int freq);
+void PSG_StopNoise(unsigned int chann);
+void PSG_PlayLeft(unsigned char chan);
+void PSG_PlayRight(unsigned char chan);
+void PSG_PlayCenter(unsigned char chan);
+void PSG_StopAudio(unsigned char chan);
+void PSG_StopAllAudio();
+void PSG_SetBalance(unsigned char chan, unsigned char left, unsigned char right, unsigned char vol);
+void PSG_SetVolume(unsigned char chan, unsigned char vol);
 void MDFourier(int boot);
 void ConstrInterf();
 #ifdef CDPLAYER

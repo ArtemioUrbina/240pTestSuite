@@ -223,7 +223,7 @@ void ReflexTest()
 	x2 = 108;
 	y2 = 96;
 	
-	LoadWave(0, sine1x);
+	PSG_LoadWave(0, sine1x);
 	
     while(!end)
     {   
@@ -244,7 +244,7 @@ void ReflexTest()
 		}
 		
 		if(audio) // n more that one frame with audio
-			StopAudio(0);
+			PSG_StopAudio(0);
 				
 		if(y == 96) // remove full screen flash
 			set_color_rgb(1, 0, 0, 0);
@@ -259,8 +259,8 @@ void ReflexTest()
 				
 				if(audio && clicks[option] != 0)
 				{
-					SetWaveFreq(0, 224);
-					PlayCenter(0);
+					PSG_SetWaveFreq(0, 224);
+					PSG_PlayCenter(0);
 				}
 	
 				if(clicks[option] >= 0)
@@ -363,8 +363,8 @@ void ReflexTest()
 		{			
 			if(audio)
 			{
-				SetWaveFreq(0, 112);
-				PlayCenter(0);
+				PSG_SetWaveFreq(0, 112);
+				PSG_PlayCenter(0);
 			}
 			
 			spr_set(0);
@@ -378,7 +378,7 @@ void ReflexTest()
 		{
 			if(y == 97 || y == 95) // one pixel off
 			{
-				//StopAudio(0);
+				//PSG_StopAudio(0);
 				
 				spr_set(0);
 				spr_pal(2);
@@ -400,7 +400,7 @@ void ReflexTest()
 		satb_update();
     }
 	
-	StopAudio(0);
+	PSG_StopAudio(0);
 	
 	if(option > 9)
 		ReflexTestResults();

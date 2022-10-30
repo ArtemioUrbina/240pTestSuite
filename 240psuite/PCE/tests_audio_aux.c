@@ -19,17 +19,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#define PSG_CH_ON	0x80
+#define PSG_V_MAX	0x1f
 
-const unsigned char *psg_ch = 0x800;
-const unsigned char *psg_bal = 0x801;
-const unsigned char *psg_freqlo = 0x802;
-const unsigned char *psg_freqhi = 0x803;
-const unsigned char *psg_ctrl = 0x804;
-const unsigned char *psg_chbal = 0x805;
-const unsigned char *psg_data = 0x806;
-const unsigned char *psg_noise = 0x807;
-const unsigned char *psg_lfofreq = 0x808;
-const unsigned char *psg_lfoctrl = 0x809;
+const unsigned char *psg_ch 		= 0x800;
+const unsigned char *psg_bal 		= 0x801;
+const unsigned char *psg_freqlo 	= 0x802;
+const unsigned char *psg_freqhi 	= 0x803;
+const unsigned char *psg_ctrl 		= 0x804;
+const unsigned char *psg_chbal 		= 0x805;
+const unsigned char *psg_data 		= 0x806;
+const unsigned char *psg_noise 		= 0x807;
+const unsigned char *psg_lfofreq 	= 0x808;
+const unsigned char *psg_lfoctrl 	= 0x809;
 
 #define PULSE_TRAIN_FREQ 	13
 #define PULSE_INTERNAL_FREQ	9
@@ -83,12 +85,14 @@ const unsigned char sinesaw[32] = {	0x10, 0x13, 0x16, 0x18, 0x1B, 0x1D, 0x1E, 0x
 									0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x1E };
 */
 
-void LoadWave(unsigned char chan, unsigned char *wave)
-{	
+void PSG_LoadWave(unsigned char chan, unsigned char *wave)
+{
+	static unsigned char byte;
+	
 	__sei();
 	*psg_ch = chan;
 	*psg_ctrl = 0;
-	for(i = 0; i < 32; i++)
+	for(byte = 0; byte < 32; byte++)
 	{
 		*psg_data = *wave;
 		wave++;
@@ -98,48 +102,83 @@ void LoadWave(unsigned char chan, unsigned char *wave)
 	__cli();
 }
 
-void PlayLeft(unsigned char chan)
+void PSG_PlayLeft(unsigned char chan)
 {
 	__sei();
 	*psg_ch = chan;
 	*psg_chbal = 0xf0;
-	*psg_ctrl = 0x9f;
+	*psg_ctrl = 0x9f;	// *psg_ctrl = PSG_CH_ON|PSG_V_MAX;
 	__cli();
 }
 
-void PlayRight(unsigned char chan)
+void PSG_PlayRight(unsigned char chan)
 {
 	__sei();
 	*psg_ch = chan;
 	*psg_chbal = 0x0f;
-	*psg_ctrl = 0x9f;
+	*psg_ctrl = 0x9f;	//*psg_ctrl = PSG_CH_ON|PSG_V_MAX;
 	__cli();
 }
 
 
-void PlayCenter(unsigned char chan)
+void PSG_PlayCenter(unsigned char chan)
 {
 	__sei();
 	*psg_ch = chan;
 	*psg_chbal = 0xff;
-	*psg_ctrl = 0x9f;
+	*psg_ctrl = 0x9f; 	//*psg_ctrl = PSG_CH_ON|PSG_V_MAX;
 	__cli();
 }
 
-void StopAudio(unsigned char chan)
+
+void PSG_StopAudio(unsigned char chan)
 {
 	__sei();
 	*psg_ch = chan;
+	*psg_chbal = 0;
 	*psg_ctrl = 0;
 	__cli();
 }
 
-void StopAllAudio()
+void PSG_StopAllAudio()
 {
-	for(i = 0; i < 6; i++)
-		StopAudio(i);
+	static unsigned char chan;
+	
+	__sei();
+	for(chan = 0; chan < 6; chan++)
+	{
+		*psg_ch = chan;
+		*psg_chbal = 0;
+		*psg_ctrl = 0;
+	}
+	__cli();
 }
 
+void PSG_SetBalance(unsigned char chan, unsigned char left, unsigned char right, unsigned char vol)
+{
+	__sei();
+	*psg_ch = chan;
+	*psg_chbal = ((left&0x0f)<<4)|(right&0x0f);
+	*psg_ctrl = PSG_CH_ON|(PSG_V_MAX&vol);
+	__cli();
+}
+
+void PSG_SetGlobalBalance(unsigned char chan, unsigned char left, unsigned char right, unsigned char vol)
+{
+	__sei();
+	*psg_ch = chan;
+	*psg_bal = ((left&0x0f)<<4)|(right&0x0f);
+	*psg_ctrl = PSG_CH_ON|(PSG_V_MAX&vol);
+	__cli();
+}
+
+void PSG_SetVolume(unsigned char chan, unsigned char vol)
+{
+	__sei();
+	*psg_ch = chan;
+	*psg_ctrl = PSG_CH_ON|vol;
+	__cli();
+}
 
 /*
 
@@ -155,7 +194,7 @@ void StopAllAudio()
 */
 
 
-void SetWaveFreq(unsigned char chan, unsigned int freq)
+void PSG_SetWaveFreq(unsigned char chan, unsigned int freq)
 {
 	__sei();
 	*psg_ch = chan;
@@ -164,7 +203,7 @@ void SetWaveFreq(unsigned char chan, unsigned int freq)
 	__cli();
 }
 
-void SetNoiseFreq(unsigned int chan, unsigned int freq)
+void PSG_SetNoiseFreq(unsigned int chan, unsigned int freq)
 {
 	__sei();
 	*psg_ch = chan;
@@ -172,7 +211,7 @@ void SetNoiseFreq(unsigned int chan, unsigned int freq)
 	__cli();
 }
 
-void StopNoise(unsigned int chan)
+void PSG_StopNoise(unsigned int chan)
 {
 	__sei();
 	*psg_ch = chan;
@@ -185,12 +224,12 @@ void ExecutePulseTrain(unsigned int chann)
 {
 	//Sync
 	
-	SetWaveFreq(chann, PULSE_TRAIN_FREQ);
+	PSG_SetWaveFreq(chann, PULSE_TRAIN_FREQ);
 	for(i = 0; i < 10; i++)
 	{
-		PlayCenter(chann);
+		PSG_PlayCenter(chann);
 		vsync();
-		StopAudio(chann);
+		PSG_StopAudio(chann);
 		vsync();
 	}
 }
@@ -198,6 +237,7 @@ void ExecutePulseTrain(unsigned int chann)
 void ExecuteSilence()
 {
 	//Silence
+	//for(i = 0; i < 48; i++)   // we need this for decay....
 	for(i = 0; i < 20; i++)
 		vsync();
 }
@@ -205,28 +245,265 @@ void ExecuteSilence()
 void PlayRampChannel(int chann)
 {
 	//54Hz to 22375Hz
-	PlayCenter(chann);
+	PSG_PlayCenter(chann);
 	for(i = 2044; i > 4; i-=6)
 	{
-		SetWaveFreq(chann, i);
+		PSG_SetWaveFreq(chann, i);
 		vsync();
 	}
-	StopAudio(chann);
+	PSG_StopAudio(chann);
 }
+
+/* 
+ these were used for the detailed test
+void PlayRampChannel(int chann)
+{
+	//54Hz to 22375Hz
+	for(i = 2044; i > 4; i-=4)
+	{
+		PSG_PlayCenter(chann);
+		PSG_SetWaveFreq(chann, i);
+		vsync();
+	}
+	PSG_StopAudio(chann);
+	
+	// wait 2 frames to align sweep to 16 frames even
+	// 512 frames total (1020/2 + 4)
+	// to keep same energy in FFT at 16 frames for all blocks
+	for(i = 0; i < 2; i++)
+		vsync();
+}
+
+void PlayRampWithVolume()
+{
+	x1 = 0;  // will be used as channel
+	x2 = 0;  // our subsweep iterator
+	
+	//54Hz to 22375Hz
+	for(i = 2044; i > 4; i-=24)
+	{
+		PSG_PlayCenter(x1);
+		PSG_SetWaveFreq(x1, i);
+		vsync();
+		
+		// Do subsweep
+		x2 = PSG_V_MAX-1;
+		do
+		{
+			PSG_SetBalance(x1, 0xf, 0xf, x2);
+			vsync();
+			
+			x2--;
+		}while(x2 >= 0);
+		
+		PSG_StopAudio(x1);
+		
+		// alternate between all channels
+		x1++;
+		if(x1 > 5)
+			x1 = 0;
+	}
+}
+
+void PlayRampWithPan()
+{
+	x1 = 0;  // will be used as channel
+	x2 = 0;
+	y  = 0;
+	y2 = 1;
+	
+	//54Hz to 22375Hz
+	for(i = 2044; i > 4; i-=2)
+	{	
+		PSG_SetWaveFreq(x1, i);
+		if(y <= 0xf)
+			PSG_SetBalance(x1, 0xf  , y  , PSG_V_MAX);
+		else
+			PSG_SetBalance(x1, 0xf-y, 0xf, PSG_V_MAX);
+		vsync();
+		
+		y += y2;
+		if(y == 0x1f)
+		{
+			y2 = 0;
+			x2++;
+			if(x2 == 10)
+			{
+				y2 = -1;
+				x2 = 0;
+			}
+		}
+		if(y == 0)
+		{
+			y2 = 0;
+			x2++;
+			if(x2 == 10)
+			{
+				y2 = 1;
+				x2 = 0;
+			}
+		}
+	}
+	PSG_StopAudio(x1);
+	
+	for(i = 0; i < 4; i++)
+		vsync();
+}
+
+void PlayRampWithGlobalPan()
+{
+	x1 = 0;  // will be used as channel
+	x2 = 0;
+	y  = 0;
+	y2 = 1;
+	
+	// Init all channels
+	__sei();
+	for(i = 0; i < 5; i++)
+	{
+		*psg_ch = i;
+		*psg_chbal = 0xff;
+		*psg_ctrl = 0;
+	}
+	__cli();
+	
+	//54Hz to 22375Hz
+	for(i = 2044; i > 4; i-=2)
+	{	
+		PSG_SetWaveFreq(x1, i);
+		if(y <= 0xf)
+			PSG_SetGlobalBalance(x1, 0xf  , y  , PSG_V_MAX);
+		else
+			PSG_SetGlobalBalance(x1, 0xf-y, 0xf, PSG_V_MAX);
+		vsync();
+		
+		y += y2;
+		if(y == 0x1f)
+		{
+			y2 = 0;
+			x2++;
+			if(x2 == 10)
+			{
+				y2 = -1;
+				x2 = 0;
+			}
+		}
+		if(y == 0)
+		{
+			y2 = 0;
+			x2++;
+			if(x2 == 10)
+			{
+				y2 = 1;
+				x2 = 0;
+			}
+		}
+	}
+	PSG_StopAudio(x1);
+	
+	// Restore Global Balance.. as if...
+	PSG_SetGlobalBalance(0, 0xf, 0xf, PSG_V_MAX);
+	for(i = 0; i < 4; i++)
+		vsync();
+}
+
+void PlayRampCombined()
+{
+	x1 = 0;  // will be used as channel
+	x2 = 0;  // our subsweep iterator
+	
+	//54Hz to 22375Hz
+	for(i = 2044; i > 4; i-=24)
+	{
+		PSG_PlayCenter(x1);
+		PSG_SetWaveFreq(x1, i);
+		vsync();
+		
+		PSG_SetBalance(x1, 0xf, 0xf, PSG_V_MAX-1);
+		vsync();
+		
+		// Do subsweep
+		x4 = PSG_V_MAX-2;
+		x2 = 0xe;
+		do
+		{
+			PSG_SetBalance(x1, x2, x2, x4);
+			vsync();
+			
+			x4--;
+			PSG_SetBalance(x1, x2, x2, x4);
+			vsync();
+			
+			x2--;
+			x4--;
+		}while(x2 >= 0);
+		
+		PSG_StopAudio(x1);
+		
+		// alternate between all channels
+		x1++;
+		if(x1 > 5)
+			x1 = 0;
+	}
+}
+
+void PlayRampAllChannels()
+{
+	x1 = 0;  // will be used as channel
+	x2 = 0;  // our subsweep iterator
+	y2 = 0;  // our subsweep type
+
+	//54Hz to 22375Hz
+	for(i = 2044; i > 4; i-=6)
+	{
+		PSG_PlayCenter(x1);
+		PSG_SetWaveFreq(x1, i);
+		vsync();
+		
+		// Do subsweep
+		x2 = 0xe;
+		do
+		{
+			// alternate between PAN and volume sweeps
+			if(y2 == 0)
+				PSG_SetBalance(x1, 0xf, 0xf, x2);
+			if(y2 == 1)
+				PSG_SetBalance(x1, x2, 0xf, 0xf);
+			if(y2 == 2)
+				PSG_SetBalance(x1, 0xf, x2, 0xf);
+			
+			vsync();
+			
+			x2--;
+		}while(x2 >= 0);
+		
+		PSG_StopAudio(x1);
+		
+		// alternate between all channels
+		x1++;
+		if(x1 > 5)
+			x1 = 0;
+		// alternate between pan and volume
+		y2++;
+		if(y2 > 2)
+			y2 = 0;
+	}
+}
+*/
 
 /*
 void PlayBothRampChannel(int chann1, int chann2)
 {
 	//54Hz to 22375Hz
-	PlayLeft(chann1);
-	PlayRight(chann2);
+	PSG_PlayLeft(chann1);
+	PSG_PlayRight(chann2);
 	for(i = 2044; i > 4; i-=6)
 	{
-		SetWaveFreq(chann1, i);
-		SetWaveFreq(chann2, i);
+		PSG_SetWaveFreq(chann1, i);
+		PSG_SetWaveFreq(chann2, i);
 		vsync();
 	}
-	StopAudio(chann1);
-	StopAudio(chann2);
+	PSG_StopAudio(chann1);
+	PSG_StopAudio(chann2);
 }
 */

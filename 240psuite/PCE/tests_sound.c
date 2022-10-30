@@ -78,8 +78,8 @@ void main()
 
 // This enables the ADPCM 32, 16, 8, 4 and 2 khz tests
 //#define ADPCMDEBUG
-#define SetupToneCommand(command) SetWaveFreq(0, PULSE_INTERNAL_FREQ); PlayCenter(0); vsync(); StopAudio(0); command;
-#define WaitFrameCommand(command) vsync(); StopAudio(0); command;
+#define SetupToneCommand(command) PSG_SetWaveFreq(0, PULSE_INTERNAL_FREQ); PSG_PlayCenter(0); vsync(); PSG_StopAudio(0); command;
+#define WaitFrameCommand(command) vsync(); PSG_StopAudio(0); command;
 
 void ChangeFilterMDF(int setValue)
 {
@@ -113,7 +113,7 @@ void MDFourierExecute()
 {
 	x3 = 0; // check composite filter flag
 	
-	StopAllAudio();
+	PSG_StopAllAudio();
 
 	// Use XRES_SHARP @ 16.7145 ms per frame
 #ifdef ALLOW_MDF_NOFILTER
@@ -139,13 +139,23 @@ void MDFourierExecute()
 	ExecutePulseTrain(0);
 	ExecuteSilence();
 	
+	
 	PlayRampChannel(0);  // sine 1x
 	PlayRampChannel(1);  // sine 4x
+
+	/*
+		Extra detailed test
+
+	PlayRampWithVolume();
+	PlayRampWithPan();
+	PlayRampWithGlobalPan();
+	PlayRampCombined();
+	*/
 	
-	PlayCenter(4);
-	SetNoiseFreq(4, 0);
+	PSG_PlayCenter(4);
+	PSG_SetNoiseFreq(4, 0);
 	WaitNFrames(200);
-	StopNoise(4);
+	PSG_StopNoise(4);
 	
 	ExecuteSilence();
 	ExecutePulseTrain(0);
@@ -226,19 +236,28 @@ void MDFourier(int armed)
 	
 	ad_trans(ADPCM_SWEEP_OVL, 0, 32, 0);
 #endif
-	LoadWave(0, sine1x);
-	LoadWave(1, sine4x);
-	  
+	PSG_LoadWave(0, sine1x);
+	PSG_LoadWave(1, sine4x);
+	/*
+		Extra detailed test 
+
+	for(y = 0; y < 6; y+=2)
+	{
+		PSG_LoadWave(y  , sine1x);
+		PSG_LoadWave(y+1, sine4x);
+	}
+	*/
+
 	/* 	Some emulators and FPGA implementations
 		have issues with the first frame of the
 		first sound that is played back
 		Make a decoy tone when entering the menu, before the tests.
 	*/
 	
-	SetWaveFreq(0, PULSE_SKIP_EMU);
-	PlayCenter(0);
+	PSG_SetWaveFreq(0, PULSE_SKIP_EMU);
+	PSG_PlayCenter(0);
 	vsync();
-	StopAudio(0);
+	PSG_StopAudio(0);
 	
 	if(armed == 2)
 		MDFourierExecute();
@@ -327,11 +346,11 @@ void ConstrInterf()
 	
 	ad_trans(ADPCM_8khz_OVL, 0, 32, 0);
 #endif
-	LoadWave(0, sine1x);
-	LoadWave(1, sine1x);
-	LoadWave(2, sine1x);
-	LoadWave(3, sine4x);
-	LoadWave(4, sine4x);
+	PSG_LoadWave(0, sine1x);
+	PSG_LoadWave(1, sine1x);
+	PSG_LoadWave(2, sine1x);
+	PSG_LoadWave(3, sine4x);
+	PSG_LoadWave(4, sine4x);
 	  
 	/* 	Some emulators and FPGA implementations
 		have issues with the first frame of the
@@ -339,10 +358,10 @@ void ConstrInterf()
 		Do so before the tests.
 	*/
 	
-	SetWaveFreq(0, PULSE_SKIP_EMU);
-	PlayCenter(0);
+	PSG_SetWaveFreq(0, PULSE_SKIP_EMU);
+	PSG_PlayCenter(0);
 	vsync();
-	StopAudio(0);
+	PSG_StopAudio(0);
 	
     while(!end)
     {   
@@ -404,9 +423,9 @@ void WaitNFrames(int frames)
 void RandomOnChannel(int channel)
 {
 	if(random(2))
-		PlayCenter(channel);
+		PSG_PlayCenter(channel);
 	else
-		StopAudio(channel);
+		PSG_StopAudio(channel);
 }
 
 void RandomizeChannels()
@@ -427,26 +446,26 @@ void RandomizeADPCM()
 
 void PlayAndWait(int channel)
 {
-	PlayCenter(channel);
+	PSG_PlayCenter(channel);
 	WaitNFrames(30);
 }
 
 void SetContInterFreq()
 {
 	// PSG
-	SetWaveFreq(0, 224);  // at around 500khz
-	SetWaveFreq(1, 112);  // at around 1khz
-	SetWaveFreq(2, 56);  // at around 2khz
-	SetWaveFreq(3, 112);  // at around 4khz, was 28 at 1x
-	SetWaveFreq(4, 56);  // at around 8khz, was 14 at 1x
+	PSG_SetWaveFreq(0, 224);  // at around 500khz
+	PSG_SetWaveFreq(1, 112);  // at around 1khz
+	PSG_SetWaveFreq(2, 56);  // at around 2khz
+	PSG_SetWaveFreq(3, 112);  // at around 4khz, was 28 at 1x
+	PSG_SetWaveFreq(4, 56);  // at around 8khz, was 14 at 1x
 	
-	SetNoiseFreq(5, 0);
+	PSG_SetNoiseFreq(5, 0);
 }
 
 void ExecuteConstrInterf()
 {
 	srand(clock_tt());
-	StopAllAudio();
+	PSG_StopAllAudio();
 
 	// HuCard
 	vsync();
@@ -465,8 +484,8 @@ void ExecuteConstrInterf()
 		WaitNFrames(3);
 	}
 	
-	StopAllAudio();
-	StopNoise(5);
+	PSG_StopAllAudio();
+	PSG_StopNoise(5);
 	
 	ExecuteSilence();
 	ExecutePulseTrain(0);
@@ -503,8 +522,8 @@ void ExecuteConstrInterf()
 	}
 	
 	ad_stop();
-	StopAllAudio();
-	StopNoise(5);
+	PSG_StopAllAudio();
+	PSG_StopNoise(5);
 	
 	/*
 	set_font_pal(14);
@@ -536,8 +555,8 @@ void SoundTest()
 	ad_trans(ADPCM_VOICE_OVL, 0, 5, 0);
 #endif
 
-	LoadWave(0, sine1x);
-	SetWaveFreq(0, 112);
+	PSG_LoadWave(0, sine1x);
+	PSG_SetWaveFreq(0, 112);
 	
     while(!end)
     {   
@@ -603,7 +622,7 @@ void SoundTest()
 		
 		if (controller & JOY_RUN)
 		{
-			StopAudio(0);
+			PSG_StopAudio(0);
 			showHelp(SOUND_HELP);
 			redraw = 1;
 		}
@@ -620,13 +639,13 @@ void SoundTest()
 				switch(option)
 				{
 					case 0:
-						PlayLeft(0);
+						PSG_PlayLeft(0);
 						break;
 					case 1:
-						PlayCenter(0);
+						PSG_PlayCenter(0);
 						break;
 					case 2:
-						PlayRight(0);
+						PSG_PlayRight(0);
 						break;
 				}
 				i = 20;
@@ -698,9 +717,9 @@ void SoundTest()
 			i--;
 			
 		if(i == 1)
-			StopAudio(0);
+			PSG_StopAudio(0);
     }
-	StopAllAudio(0);
+	PSG_StopAllAudio(0);
 	
 #ifdef CDROM
 	if(cd_status(0) != 0)
@@ -721,8 +740,8 @@ void AudioSyncTest()
 	redraw = 1;
 	refresh = 0;
 	
-	LoadWave(0, sine1x);
-	SetWaveFreq(0, 112);
+	PSG_LoadWave(0, sine1x);
+	PSG_SetWaveFreq(0, 112);
     while(!end)
     {   
 		vsync();
@@ -827,7 +846,7 @@ void AudioSyncTest()
 		
 		if(option == 120)
 		{
-			PlayCenter(0);
+			PSG_PlayCenter(0);
 			set_color(0, RGB(7, 7, 7));
 		}
 
@@ -838,13 +857,13 @@ void AudioSyncTest()
 			for(x = 3; x < 8; x++)
 				set_color(x, 0);
 
-			StopAudio(0);
+			PSG_StopAudio(0);
 			option = -1;
 		}
 		
 		if (controller & JOY_RUN)
 		{
-			StopAudio(0);
+			PSG_StopAudio(0);
 			showHelp(AUDIOSYNC_HELP);
 			redraw = 1;
 			refresh = 0;
@@ -853,7 +872,7 @@ void AudioSyncTest()
 		}
 		
     }
-	StopAudio(0);
+	PSG_StopAudio(0);
 }
 
 #ifndef SCDROM
@@ -1211,7 +1230,7 @@ void ControllerTest()
 			set_font_pal(13);
 			put_string("Controller Test", 12, 4);
 			set_font_pal(15);
-			put_string("Use START+LEFT to exit", 9, 26);
+			put_string("Use RUN+LEFT to exit", 11, 26);
 		}
 		
 		CheckController(0, 6);
