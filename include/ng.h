@@ -144,7 +144,13 @@ extern BYTE first_colorramp;
 #define SOFT_DIP_5			0x10FD8E	// ENABLE WARNINGS
 
 #define BIOS_ADDRESS		0xC00000
+
+// BIOS size is different in NGCD
+#ifndef __cd__
 #define BIOS_SIZE			0x20000
+#else
+#define BIOS_SIZE			0x80000
+#endif
 
 #define REG_LSPCMODE		0x3C0006
 #define LPSC2_NTSC_PAL		0x08

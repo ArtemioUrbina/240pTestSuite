@@ -425,6 +425,7 @@ void SD_blink_cycle(blinker *blinkdata)
 void menu_footer()
 {
 	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx%03dp", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320, isPAL && usePAL256 ? 256 : 224);
+#ifndef __cd__
 	if (isMVS)
 	{
 		fixPrint(23, 28, fontColorWhite, 3, "MVS");
@@ -435,10 +436,14 @@ void menu_footer()
 		if (hwChange)
 			fixPrint(19, 28, fontColorWhite, 3, "AES>");
 	} else {
+
 		fixPrint(27, 28, fontColorWhite, 3, "AES");
 		if (hwChange)
 			fixPrint(23, 28, fontColorWhite, 3, "MVS>");
 	}
+#else
+	fixPrint(26, 28, fontColorWhite, 3, "NGCD");
+#endif
 
 	if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
 	{

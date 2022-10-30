@@ -1531,7 +1531,9 @@ void at_sound_test()
 {
 	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2;
 	int option = 1, change = 0, changeoption = 0, loopB = 0;
+#ifndef __cd__
 	int adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125  };
+#endif
 	picture image;
 
 	while (!done)
@@ -1551,6 +1553,8 @@ void at_sound_test()
 		fixPrint(17, 12, sel == 0 && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
 		fixPrint(24, 12, sel == 0 && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
 
+		// ADPCM-B not present in Neo Geo CD
+#ifndef __cd__
 		fixPrint(16, 14, fontColorGreen, 3, "ADPCM-B");
 		fixPrint(10, 15, sel == 1 ? fontColorGreen : fontColorWhite, 3, "C:");
 		fixPrintf(13, 15, fontColorWhite, 3, "%dhz", adpcmb_rates[adpcmb_sel]);
@@ -1559,6 +1563,7 @@ void at_sound_test()
 		fixPrint(12, 16, sel == 1 && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
 		fixPrint(17, 16, sel == 1 && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
 		fixPrint(24, 16, sel == 1 && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
+#endif
 
 		SCClose();
 		waitVBlank();
@@ -1577,6 +1582,7 @@ void at_sound_test()
 			changeoption = 1;
 		}
 
+#ifndef __cd__
 		if (PRESSED_UP)
 		{
 			sel --;
@@ -1588,6 +1594,7 @@ void at_sound_test()
 			sel++;
 			change = 1;
 		}
+#endif
 
 		if(change)
 		{
@@ -2142,7 +2149,7 @@ void ht_memory_viewer(u32 address)
 			redraw = 1;
 		}
 
-		if (BTTN_OPTION_1)
+		if (BTTN_OPTION_2)
 		{
 			ascii = !ascii;
 			redraw = 1;
@@ -2217,9 +2224,12 @@ typedef struct bios_data {
 
 #define BIOS_SNK_MVS	1
 #define BIOS_SNK_AES	2
-#define BIOS_HACK		3
+#define BIOS_SNK_NGCD	3
+#define BIOS_HACK		4
+#define BIOS_HACK_NGCD	5
 
 const BIOSID bioslist[] = {
+#ifndef __cd__
 {	BIOS_HACK,
 	0x465F5764,
 	"uni-bios_4_0.rom",
@@ -2360,6 +2370,7 @@ const BIOSID bioslist[] = {
 	0x7A0D4410,
 	"neodebug.rom",
 	"Development System ROM" },
+#endif
 {	0, 0, NULL, NULL } };
 
 // search known BIOS
@@ -2376,6 +2387,7 @@ const BIOSID *GetBIOSbyCRC(u32 checksum)
 	return NULL;
 }
 
+#ifndef __cd__
 void cleanBIOSStr(char *str, u8 size)
 {
 	u8 i = 0;
@@ -2494,10 +2506,14 @@ void drawBIOSHeader(u32 address, short x, short y)
 		break;
 	}
 }
+#endif
 
 void ht_check_ng_bios_crc(u32 address)
 {
-	int				done = 0, swap = 0;
+	int				done = 0;
+#ifndef __cd__
+	int				swap = 0;
+#endif
 	u32				crc = 0;
 	picture			image;
 	char			buffer[34];
@@ -2508,13 +2524,15 @@ void ht_check_ng_bios_crc(u32 address)
 	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 	palJobPut(16,back.palInfo->count,back.palInfo->data);
 
+#ifndef __cd__
 	// Print BIOS lines
 	if (detectUNIBIOSfast(address))
 		swap = 1;
+
 	displayBIOS(address, swap);
 
 	drawBIOSHeader(address, 13, 23);
-
+#endif
 	menu_footer();
 
 	fixPrintf(12, 16, fontColorGreen, 3, "Please Wait...");
@@ -2535,11 +2553,13 @@ void ht_check_ng_bios_crc(u32 address)
 	} else {
 		fixPrintf(13, 18, fontColorWhite, 3, "Unknown BIOS");
 		fixPrintf(13, 19, fontColorWhite, 3, "Please report it");
+#ifndef __cd__
 		if (detectUNIBIOSfast(address))
 		{
 			fixPrintf(7, 21, fontColorGreen, 3, "Non-free versions of UNIBIOS");
 			fixPrintf(7, 22, fontColorGreen, 3, "can't be recognized by CRC");
 		}
+#endif
 	}
 
 	while (!done)
@@ -2552,11 +2572,13 @@ void ht_check_ng_bios_crc(u32 address)
 		if (BTTN_EXIT)
 			done = 1;
 
+#ifndef __cd__
 		if (BTTN_MAIN)
 		{
 			swap = !swap;
 			displayBIOS(address, swap);
 		}
+#endif
 	}
 }
 
