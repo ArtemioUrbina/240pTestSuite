@@ -101,14 +101,13 @@ For the Neo Geo CD (Copy the CHD image)
 ## TODO
 
 General:
-- Homogenize interface access. Either "B" is always exit or START is always exit.
-    - No need for MVS and AES swapping controlls (for help), we can keep the same layout
-    - AES gives us select, but it shall remain unused since UNIBIOS uses that as credit when in MVS mode in an AES
 - Update Help to reflect all current changes
+	- Button references after remapping
+	- new optuons in patterns that have been modified
 - Verify all patterns have 304/320 and 224/256 support when needed
 - Verify all patterns follow IRE 100
     - Add text in help for cases where this is not followed (SMPTE, EBU and PLUGE)
-- Save settings to backup RAM/Memory Card
+- Save settings to backup RAM/Memory Card (?)
 - Maybe have a Memory Card Viewer (?)
 
 Patterns:
@@ -127,10 +126,10 @@ Video tests:
     - Add new sugggested option of sprite movement by Pinobatch
 
 Audio tests_
-   - Incorporate tools for building the sound MROM and VROM.
-   - Audio test
+   - remove LUA dependency (?)
+   - Finish FM Audio test
    - Audio Sync Test
-   - Add MDfourier
+   - Create full MDfourier pattern
 
 Hardware Test:
    - RAM check (?) maybe in ASM
