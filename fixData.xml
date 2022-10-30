@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <chardata>
 	<setup fileType="fix">
-		<charfile>out\fix.bin</charfile>
+		<charfile>out\2501-s1.s1</charfile>
 		<palfile>src\fixPals.s</palfile>
 		<incfile>include\fixData.h</incfile>
 	</setup>

@@ -2,7 +2,7 @@
 <chardata>
   <setup>
     <starting_tile>0</starting_tile>
-    <charfile>out\char.bin</charfile>
+    <charfile>out\2501-cx.cx</charfile>
     <mapfile>src\charMaps.s</mapfile>
     <palfile>src\charPals.s</palfile>
     <incfile>include\charInclude.h</incfile>

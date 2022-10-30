@@ -27,11 +27,18 @@ NB = ./NeoBuilder.exe
 ISO = $(NEODEV)/tools/cdtools/mkisofs
 CHDMAN = $(NEODEV)/tools/cdtools/chdman
 
-PROM = dev_p1.rom
-CROM = char.bin
-SROM = fix.bin
-MROM = m1.rom
-VROM = v1.rom
+PROM  = 2501-p1.p1
+CROM  = 2501-cx.cx
+C1ROM = 2501-c1.c1
+C2ROM = 2501-c2.c2
+SROM  = 2501-s1.s1
+MROM  = 2501-m1.m1
+VROM  = 2501-v1.v1
+
+CDCHR_OUTFILE = 240P_CHR
+CDFIX_OUTFILE = 240P_FIX.FIX
+CDZ80_OUTFILE = 240P.Z80
+CDPCM_OUTFILE = 240P.PCM
 
 #######################################
 # Path to libraries and include files #
@@ -101,37 +108,35 @@ prog.o : $(OBJS)
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
 
+cart: z80
+	$(CP) out/$(PROM) $(OUTPUT)/$(PROM)
+	$(CP) out/$(SROM) $(OUTPUT)/$(SROM)
+	$(CP) out/$(MROM) $(OUTPUT)/$(MROM)
+	$(CP) out/$(VROM) $(OUTPUT)/$(VROM)
+	cd out && $(ROMWAK) //p $(CROM) $(CROM) 2048 255
+	cd out && $(CHARSPLIT) $(CROM) -rom 2501
+	$(CP) out/2501.C1 $(OUTPUT)/$(C1ROM)
+	$(CP) out/2501.C2 $(OUTPUT)/$(C2ROM)
+	$(RM) out/2501.C1
+	$(RM) out/2501.C2
+	cd $(OUTPUT) && $(ROMWAK) //f $(PROM) $(PROM)
+	cd $(OUTPUT) && $(ROMWAK) //p $(PROM) $(PROM) 1024 255
+	cd $(OUTPUT) && $(ROMWAK) //p $(SROM) $(SROM) 128 255
+
 ifeq ($(OUTPUT),cart)
-neo: z80 out/$(PROM)
-	$(CP) out/char.bin cart/char.bin
-	$(CP) out/dev_p1.rom cart/2501-p1.p1
-	$(CP) out/fix.bin cart/2501-s1.s1
-	$(CP) out/m1.rom cart/2501-m1.m1
-	$(CP) out/v1.rom cart/2501-v1.v1
-	cd cart && $(ROMWAK) //f 2501-p1.p1 2501-p1.p1
-	cd cart && $(ROMWAK) //p 2501-p1.p1 2501-p1.p1 1024 255
-	cd cart && $(ROMWAK) //p char.bin char.bin 2048 255
-	cd cart && $(CHARSPLIT) char.bin -rom 2501
-	$(CP) cart/2501.C1 cart/2501-c1.c1
-	$(CP) cart/2501.C2 cart/2501-c2.c2
-	cd cart && $(ROMWAK) //p 2501-s1.s1 2501-s1.s1 128 255
-	$(RM) cart/char.bin
-	$(RM) cart/2501.C1
-	$(RM) cart/2501.C2
-	$(RM) cart/240ptest.neo
-	cd cart && $(7Z) a $(NBPATH)240ptest.zip 2501-p1.p1 2501-c1.c1 2501-c2.c2 2501-s1.s1 2501-m1.m1 2501-v1.v1
+neo: cart out/$(PROM)
+	$(RM) $(OUTPUT)/240ptest.neo
+	cd $(OUTPUT) && $(7Z) a $(NBPATH)240ptest.zip $(PROM) $(C1ROM) $(C2ROM) $(SROM) $(MROM) $(VROM)
 	cd $(NBPATH) && $(NB) -n 240ptest -m dasutinartemio -y 2022 -g Other -s 2501 240ptest.zip
 	$(RM) $(NBPATH)240ptest.zip
-	$(CP) $(NBPATH)240ptest.neo cart/neosd
+	$(CP) $(NBPATH)240ptest.neo $(OUTPUT)/neosd
 	$(RM) $(NBPATH)240ptest.neo
 else
-neo:
-	$(CP) out/char.bin cd/char.bin
-	cd cd && $(CHARSPLIT) char.bin -cd 240P_CHR
-	$(RM) cd/char.bin
-	$(CP) out/fix.bin cd/240P_FIX.FIX
-	$(CP) out/m1.rom cd/240P.Z80
-	$(CP) out/v1.rom cd/240P.PCM
+neo: cdz80
+	$(CP) out/$(CROM) cd/$(CROM)
+	cd cd && $(CHARSPLIT) $(CROM) -cd $(CDCHR_OUTFILE)
+	$(RM) cd/$(CROM)
+	$(CP) out/$(SROM) cd/$(CDFIX_OUTFILE)
 	cd cd && $(ISO) -iso-level 1 -o 240pTestSuite.iso -pad -N -V "240PTESTSUITE" 240P_PRG.PRG 240P.Z80 240P_CHR.SPR 240P_FIX.FIX 240P.PCM ABS.TXT BIB.TXT CPY.TXT IPL.TXT
 	cd cd && $(CHDMAN) createcd -i 240pTestSuite.cue -o 240pTestSuite.chd
 	$(CP) cd/240pTestSuite.iso cd/iso/240pTestSuite.iso
@@ -142,20 +147,22 @@ endif
 
 ifeq ($(OUTPUT),cart)
 copyroms: neo
-	$(CP) cart/2501-p1.p1 $(MAMEDIR)
-	$(CP) cart/2501-c1.c1 $(MAMEDIR)
-	$(CP) cart/2501-c2.c2 $(MAMEDIR)
-	$(CP) cart/2501-s1.s1 $(MAMEDIR)
-	$(CP) cart/2501-m1.m1 $(MAMEDIR)
-	$(CP) cart/2501-v1.v1 $(MAMEDIR)
+	$(CP) cart/$(PROM) $(MAMEDIR)
+	$(CP) cart/$(C1ROM) $(MAMEDIR)
+	$(CP) cart/$(C1ROM) $(MAMEDIR)
+	$(CP) cart/$(SROM) $(MAMEDIR)
+	$(CP) cart/$(MROM) $(MAMEDIR)
+	$(CP) cart/$(VROM) $(MAMEDIR)
 else
 copyroms: neo
 	$(CP) cd/chd/240pTestSuite.chd $(MAMECDDIR)
 endif
 
 clean:
-	$(RM) *.o src/*.o out/$(PROM) output.map
-	$(RM) $(OUTPUTDIR_CART)/*.m1 $(OUTPUTDIR_CART)/*.v*
+	$(RM) *.o src/*.o output.map
+	$(RM) $(OUTPUTDIR_CART)/*.p1 $(OUTPUTDIR_CART)/*.m1 $(OUTPUTDIR_CART)/*.v* 
+	$(RM) $(OUTPUT)/*.p1 $(OUTPUT)/*.m1 $(OUTPUT)/*.v* 
+	$(RM) $(OUTPUT)/*.SPR $(OUTPUT)/*.FIX $(OUTPUT)/*.PRG $(OUTPUT)/*.iso
 	$(RM) $(OUTPUTDIR_CD)/*.Z80 $(OUTPUTDIR_CD)/*.PCM
 	$(RM) $(SND)/samples_*.inc
 
@@ -198,13 +205,13 @@ CDPCM_LIST = $(SND)/pcm/pcma_cd.txt
 
 OUTPUTDIR_CART = out
 OUTPUTDIR_CD = cd
-Z80_OUTFILE = m1.rom
-CDZ80_OUTFILE = OUT.Z80
 
-PCMOUT_CART = $(OUTPUTDIR_CART)/v1.rom
+Z80_OUTFILE = $(MROM)
+
+PCMOUT_CART = $(OUTPUTDIR_CART)/$(VROM)
 PCMOUT_CART_INC = $(SND)/samples_cart.inc
 
-PCMOUT_CD = $(OUTPUTDIR_CD)/SNDDEMO.PCM
+PCMOUT_CD = $(OUTPUTDIR_CD)/$(CDPCM_OUTFILE)
 PCMOUT_CD_INC = $(SND)/samples_cd.inc
 
 # FLAGS_VASMZ80 - Flags for vasm Z80
