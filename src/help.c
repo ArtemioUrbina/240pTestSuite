@@ -32,20 +32,12 @@
 
 int checkHelp(int helpID)
 {
-	if (isMVS)
+	if (BTTN_HELP)
 	{
-		if (PRESSED_D)
-		{
-			DrawHelp(helpID);
-			return 1;
-		}
-	} else {
-		if (PRESSED_SELECT)
-		{
-			DrawHelp(helpID);
-			return 1;
-		}
+		DrawHelp(helpID);
+		return 1;
 	}
+
 	return 0;
 }
 
@@ -816,7 +808,7 @@ void DrawHelp(int option)
 			}
 		}
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT || PRESSED_START)
 		{
 			exit = 1;
 			gfxClear();

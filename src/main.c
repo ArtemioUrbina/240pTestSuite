@@ -98,13 +98,13 @@ void menu_tp()
 
 		menu_footer();
 
-		if (PRESSED_B)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			gfxClear();
 			switch (curse)
@@ -218,13 +218,13 @@ void menu_vt()
 
 		menu_footer();
 
-		if (PRESSED_B)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			gfxClear();
 			switch (curse)
@@ -315,13 +315,13 @@ void menu_at()
 
 		menu_footer();
 
-		if (PRESSED_B)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			gfxClear();
 			switch (curse)
@@ -386,13 +386,13 @@ void menu_ht()
 
 		menu_footer();
 
-		if (PRESSED_B)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			gfxClear();
 			switch (curse)
@@ -485,7 +485,7 @@ void credits()
 
 		readController();
 		
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 	}
 	return;
@@ -583,7 +583,7 @@ void menu_main()
 		if (checkHelp(HELP_GENERAL))
 			redraw = 1;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			gfxClear();
 			switch (curse)

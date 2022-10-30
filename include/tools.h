@@ -101,6 +101,12 @@ void playSoundnoWait(u8 command);
 #define HELD_START		(ps & P1_START)
 #define HELD_SELECT		(ps & P1_SELECT)
 
+#define BTTN_MAIN		PRESSED_A
+#define BTTN_EXIT		PRESSED_B
+#define BTTN_OPTION_1	PRESSED_C
+#define BTTN_OPTION_2	PRESSED_D
+#define BTTN_HELP		PRESSED_START
+
 #define NTSC_304		0
 #define NTSC_320		320
 #define PAL_304			640

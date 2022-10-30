@@ -283,7 +283,7 @@ void menu_options()
 		if (curse != 5 && (PRESSED_LEFT || PRESSED_RIGHT))
 			toggle = 1;
 
-		if (PRESSED_A || toggle)
+		if (BTTN_MAIN || toggle)
 		{
 			switch (curse)
 			{
@@ -316,7 +316,7 @@ void menu_options()
 			}
 		}
 
-		if (PRESSED_B)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_GENERAL))
@@ -522,7 +522,7 @@ void draw_message(char *title, char *msg, int index, int palindex, int clearback
 
 		readController();
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT || PRESSED_START)
 			done = 1;
 	}
 }

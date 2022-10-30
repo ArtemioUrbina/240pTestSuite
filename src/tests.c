@@ -239,7 +239,7 @@ void vt_drop_shadow_test()
 
 		drawshadow = !drawshadow;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			back ++;
 			if(back > 1)
@@ -248,7 +248,7 @@ void vt_drop_shadow_test()
 		}
 
 		// change between even and odd frames
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			drawshadow = !drawshadow;
 			evenframes = !evenframes;
@@ -256,7 +256,7 @@ void vt_drop_shadow_test()
 			text = 120;
 		}
 
-		if (PRESSED_C)
+		if (BTTN_OPTION_2)
 		{
 			spr_type = !spr_type;
 			changeSprite = 1;
@@ -302,7 +302,7 @@ void vt_drop_shadow_test()
 				x = 288;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_SHADOW))
@@ -418,7 +418,7 @@ void vt_striped_sprite_test()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			back ++;
 			if(back > 1)
@@ -454,7 +454,7 @@ void vt_striped_sprite_test()
 				x = 288;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_STRIPED))
@@ -596,20 +596,17 @@ void vt_lag_test()
 		if (hours > 99)
 			hours = 0;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 			pause = !pause;
 
-		if (PRESSED_B && pause)
+		if (BTTN_OPTION_1 && pause)
 		{
 			frames = hours = minutes = seconds = 0;
 			framecnt = 1;
 		}
 
-		if (PRESSED_START)
-		{
-			clearSprites(1,260);
+		if (BTTN_EXIT)
 			done = 1;
-		}
 
 		if (checkHelp(HELP_LAG))
 		{
@@ -645,8 +642,8 @@ void vt_reflex_test()
 			fixPrint(2, 23, fontColorGreen, 3, "Press the \"A\" button when the sprite");
 			fixPrint(2, 24, fontColorGreen, 3, "is aligned. A negative value means");
 			fixPrint(2, 25, fontColorGreen, 3, "you pressed \"A\" before they intersect.");
-			fixPrint(2, 26, fontColorGreen, 3, "\"B\" button toggles horz/vert");
-			fixPrint(2, 27, fontColorGreen, 3, "\"C\" button toggles audio");
+			fixPrint(2, 26, fontColorGreen, 3, "\"C\" button toggles horz/vert");
+			fixPrint(2, 27, fontColorGreen, 3, "\"D\" button toggles audio");
 			fixPrint(2, 28, fontColorGreen, 3, "DOWN toggles random/rhythmic");
 
 			loadvram = 0;
@@ -702,13 +699,13 @@ void vt_reflex_test()
 			usersound = 0;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_MANUALLAG))
 			loadvram = 1;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			if (change)
 			{
@@ -731,14 +728,14 @@ void vt_reflex_test()
 			}
 		}
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			view++;
 			if (view > 2)
 				view = 0;
 		}
 
-		if (PRESSED_C)
+		if (BTTN_OPTION_2)
 		{
 			audio = !audio;
 			draw = 1;
@@ -964,7 +961,7 @@ void vt_reflex_test()
 
 			readController();
 
-			if (PRESSED_B || PRESSED_START)
+			if (BTTN_EXIT)
 				done = 1;
 		}
 	}
@@ -1086,17 +1083,17 @@ void vt_scroll_test()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 			pause = !pause;
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			vertical = !vertical;
 			pause = 0;
 			changed = 1;
 		}
 
-		if (PRESSED_C)
+		if (BTTN_OPTION_2)
 			acc *= -1;
 
 		if (PRESSED_UP)
@@ -1131,7 +1128,7 @@ void vt_scroll_test()
 				currxvert = 0;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_HSCROLL))
@@ -1183,10 +1180,10 @@ void vt_gridscroll_test()
 			}
 		}
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 			pause = !pause;
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 			horizontal = !horizontal;
 
 		if (PRESSED_LEFT)
@@ -1206,7 +1203,7 @@ void vt_gridscroll_test()
 				acc = 1;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_STRIPES))
@@ -1277,17 +1274,17 @@ void vt_horizontal_stripes()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 			alternate = ~alternate;
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			docounter = ~docounter;
 			if (!docounter)
 				suiteClearFixLayer();
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_STRIPES))
@@ -1352,17 +1349,17 @@ void vt_vertical_stripes()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 			alternate = ~alternate;
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			docounter = ~docounter;
 			if (!docounter)
 				suiteClearFixLayer();
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_STRIPES))
@@ -1426,22 +1423,18 @@ void vt_checkerboard()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 			alternate = ~alternate;
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			docounter = ~docounter;
 			if(!docounter)
 				suiteClearFixLayer();
 		}
 
-		if (PRESSED_START)
-		{
+		if (BTTN_EXIT)
 			done = 1;
-			suiteClearFixLayer();
-			return;
-		}
 
 		if(checkHelp(HELP_CHECK))
 			draw = 1;
@@ -1494,7 +1487,7 @@ void vt_backlitzone_test()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			block++;
 			if(block > 5)
@@ -1526,7 +1519,7 @@ void vt_backlitzone_test()
 			draw = 1;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_LED))
@@ -1633,7 +1626,7 @@ void at_sound_test()
 			changeoption = 0;
 		}
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			if(sel == 0)
 			{
@@ -1668,7 +1661,7 @@ void at_sound_test()
 			}
 		}
 
-		if (PRESSED_C)
+		if (BTTN_OPTION_1)
 		{
 			if(sel == 1)
 			{
@@ -1679,7 +1672,7 @@ void at_sound_test()
 			}
 		}
 
-		if (PRESSED_D)
+		if (BTTN_OPTION_2)
 		{
 			if(sel == 1)
 			{
@@ -1691,12 +1684,11 @@ void at_sound_test()
 			}
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
-		// Fix D/Select/start first
-		//if (checkHelp(HELP_SOUND))
-			//draw = 1;
+		if (checkHelp(HELP_SOUND))
+			draw = 1;
 	}
 
 	if(loopB)
@@ -1744,7 +1736,7 @@ void at_sound_mdfourier()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			int frame = 0;
 
@@ -1766,7 +1758,7 @@ void at_sound_mdfourier()
 			executePulseTrain();
 		}
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			int stop = 0;
 
@@ -1778,14 +1770,14 @@ void at_sound_mdfourier()
 				backgroundColor(WH_107);
 				playSoundatLine(0x010C, SOUNDCMD_SSGPulseStart);
 				readController();
-				if(PRESSED_A)
+				if (BTTN_MAIN)
 					stop = 1;
 				playSoundatLine(0x1ED, SOUNDCMD_SSGPulseStop);
 				waitVBlank();
 				
 				backgroundColor(_BLACK);
 				readController();
-				if(PRESSED_A)
+				if (BTTN_MAIN)
 					stop = 1;
 				waitVBlank();
 				
@@ -1793,7 +1785,7 @@ void at_sound_mdfourier()
 			draw = 1;
 		}
 
-		if (PRESSED_C)
+		if (BTTN_OPTION_2)
 		{
 			int stop = 0;
 
@@ -1805,14 +1797,14 @@ void at_sound_mdfourier()
 				backgroundColor(WH_107);
 				playSound(SOUNDCMD_SSGPulseStart);
 				readController();
-				if(PRESSED_A)
+				if (BTTN_MAIN)
 					stop = 1;
 				waitVBlank();
 
 				backgroundColor(_BLACK);
 				playSound(SOUNDCMD_SSGPulseStop);
 				readController();
-				if(PRESSED_A)
+				if (BTTN_MAIN)
 					stop = 1;
 				waitVBlank();
 				
@@ -1820,7 +1812,7 @@ void at_sound_mdfourier()
 			draw = 1;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_SOUND))
@@ -1857,7 +1849,7 @@ void at_audiosync_test()
 		SCClose();
 		waitVBlank();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			cycle = !cycle;
 			if (!cycle)
@@ -1884,7 +1876,7 @@ void at_audiosync_test()
 
 		readController();
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_AUDIOSYNC))
@@ -2132,16 +2124,16 @@ void ht_memory_viewer(u32 address)
 
 		readController();
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			docrc = !docrc;
 			redraw = 1;
 		}
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			locpos ++;
 			if (locpos == MAX_LOCATIONS)
@@ -2150,7 +2142,7 @@ void ht_memory_viewer(u32 address)
 			redraw = 1;
 		}
 
-		if (PRESSED_C)
+		if (BTTN_OPTION_1)
 		{
 			ascii = !ascii;
 			redraw = 1;
@@ -2211,7 +2203,7 @@ void ht_test_ng_ram()
 
 		readController();
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 	}
 }
@@ -2557,10 +2549,10 @@ void ht_check_ng_bios_crc(u32 address)
 
 		readController();
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			swap = !swap;
 			displayBIOS(address, swap);
@@ -2611,7 +2603,7 @@ void ht_displayregs()
 
 		menu_footer();
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 	}
 	return;

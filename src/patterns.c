@@ -86,7 +86,7 @@ void tp_pluge()
 				suiteClearFixLayer();
 		}
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			IsNTSC = !IsNTSC;
 			if (!IsNTSC){
@@ -98,7 +98,7 @@ void tp_pluge()
 			text = 60;
 		}
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_PLUGE))
@@ -328,7 +328,7 @@ void tp_colorchart()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			dark_mode++;
 			if(dark_mode > 2)
@@ -336,13 +336,13 @@ void tp_colorchart()
 			change_pallettes = 1;
 		}
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 		{
 			done = 1;
 			return;
 		}
 
-		if (PRESSED_C)
+		if (BTTN_OPTION_1)
 		{
 			int x = 0, y = 0, back_x = 0;
 
@@ -453,7 +453,7 @@ void tp_colorbars()
 				suiteClearFixLayer();
 		}
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			Is75 = !Is75;
 
@@ -461,7 +461,7 @@ void tp_colorbars()
 			swap_pal = 1;
 		}
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_601CB))
@@ -533,7 +533,7 @@ void tp_smpte_color_bars()
 				suiteClearFixLayer();
 		}
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			Is75 = !Is75;
 
@@ -541,7 +541,7 @@ void tp_smpte_color_bars()
 			swap_pal = 1;
 		}
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_SMPTE))
@@ -582,7 +582,7 @@ void tp_ref_color_bars()
 
 		readController();
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_601CB))
@@ -626,7 +626,7 @@ void tp_color_bleed_check()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			Ischeck = !Ischeck;
 			if (!Ischeck) {
@@ -638,7 +638,7 @@ void tp_color_bleed_check()
 			}
 		}
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_BLEED))
@@ -694,13 +694,13 @@ void tp_grid()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			gray = !gray;
 			updatepalette = 1;
 		}
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if(checkHelp(HELP_GRID))
@@ -754,7 +754,7 @@ void tp_monoscope()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			pattern++;
 			if (pattern > 6)
@@ -762,13 +762,13 @@ void tp_monoscope()
 			changepattern = 1;
 		}
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			gray = !gray;
 			updatepalette = 1;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_MONOSCOPE))
@@ -917,7 +917,7 @@ void tp_gray_ramp()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			version++;
 			if(version > 2)
@@ -941,10 +941,10 @@ void tp_gray_ramp()
 			text = 60;
 		}
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
-		if (PRESSED_C)
+		if (BTTN_OPTION_1)
 		{
 			local_shadow = !local_shadow;
 			if(local_shadow)
@@ -1038,13 +1038,13 @@ void tp_white_rgb()
 
 		if (!editmode)
 		{
-			if (PRESSED_A)
+			if (BTTN_MAIN)
 			{
 				color++;
 				draw = 1;
 			}
 
-			if (PRESSED_B)
+			if (BTTN_OPTION_1)
 			{
 				color--;
 				draw = 1;
@@ -1090,14 +1090,14 @@ void tp_white_rgb()
 				draw = 1;
 		}
 
-		if (PRESSED_C && color == 1)
+		if (BTTN_OPTION_2 && color == 1)
 		{
 			editmode = !editmode;
 			if (!editmode)
 				suiteClearFixLayer();
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (editmode)
@@ -1146,19 +1146,19 @@ void tp_white_rgb()
 				hasedit = 1;
 			}
 
-			if (PRESSED_A)
+			if (BTTN_MAIN)
 			{
 				*edit = 0;
 				hasedit = 1;
 			}
 
-			if (PRESSED_B)
+			if (BTTN_OPTION_1)
 			{
 				*edit = 31;
 				hasedit = 1;
 			}
 
-			if (PRESSED_D)
+			if (BTTN_OPTION_2)
 			{
 				dark = !dark;
 				hasedit = 1;
@@ -1282,7 +1282,7 @@ void tp_100_ire()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			if (irenum != 0)
 				irenum--;
@@ -1290,7 +1290,7 @@ void tp_100_ire()
 			text = 60;
 		}
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			if (irenum != 6)
 				irenum++;
@@ -1298,7 +1298,7 @@ void tp_100_ire()
 			text = 60;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_IRE))
@@ -1356,13 +1356,13 @@ void tp_sharpness()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			Isbrick = !Isbrick;
 			changed = 1;
 		}
 
-		if (PRESSED_B || PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_SHARPNESS))
@@ -1571,7 +1571,7 @@ void tp_overscan()
 			scroll = 1;
 		}
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			top_y = t_max;
 			bottom_y = b_min;
@@ -1581,13 +1581,13 @@ void tp_overscan()
 			scroll = 1;
 		}
 		
-		if (PRESSED_C)
+		if (BTTN_OPTION_1)
 		{
 			fast = !fast;
 			scroll = 1;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_OVERSCAN))
@@ -1641,7 +1641,7 @@ void tp_convergence()
 
 		readController();
 
-		if (PRESSED_A)
+		if (BTTN_MAIN)
 		{
 			pattern++;
 			if (pattern > 3)
@@ -1651,7 +1651,7 @@ void tp_convergence()
 			draw = 1;
 		}
 
-		if (PRESSED_B)
+		if (BTTN_OPTION_1)
 		{
 			if (pattern < 3)
 			{
@@ -1665,7 +1665,7 @@ void tp_convergence()
 			draw = 1;
 		}
 
-		if (PRESSED_START)
+		if (BTTN_EXIT)
 			done = 1;
 
 		if (checkHelp(HELP_CONVERGENCE))
