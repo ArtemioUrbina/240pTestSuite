@@ -206,7 +206,11 @@ void menu_options()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrintf(14, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
+#ifndef __cd__
+		fixPrintf(15, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
+#else
+		fixPrintf(14, 6, fontColorGreen, 3, "NGCD Options");
+#endif
 		fixPrintf(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
 		fixPrintf(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
 		fixPrintf(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
@@ -381,10 +385,10 @@ void load_blinkdata(blinker* blinkdata, int *index, int *palindex, int x, int y)
 	pictureHide(&blinkdata->blink2);
 }
 
-void SD_blink_cycle(blinker *blinkdata)
+int SD_blink_cycle(blinker *blinkdata)
 {	
 	if(!blinkdata)
-		return;
+		return 0;
 
 	blinkdata->blink_counter++;	
 	if(blinkdata->blink_counter > 230)
@@ -396,6 +400,7 @@ void SD_blink_cycle(blinker *blinkdata)
 				blinkdata->is_blinking = 1;
 				blinkdata->blink_counter = 230;
 				pictureShow(&blinkdata->blink1);
+				return 1;
 			}
 		}
 		else
@@ -404,12 +409,14 @@ void SD_blink_cycle(blinker *blinkdata)
 			{
 				pictureHide(&blinkdata->blink1);
 				pictureShow(&blinkdata->blink2);
+				return 1;
 			}
 				
 			if(blinkdata->blink_counter == 234)
 			{
 				pictureHide(&blinkdata->blink2);
 				pictureShow(&blinkdata->blink1);
+				return 1;
 			}
 	
 			if(blinkdata->blink_counter == 236)
@@ -417,9 +424,11 @@ void SD_blink_cycle(blinker *blinkdata)
 				pictureHide(&blinkdata->blink1);
 				blinkdata->blink_counter = 0;
 				blinkdata->is_blinking = 0;
+				return 1;
 			}
 		}
 	}
+	return 0;
 }
 
 void menu_footer()
@@ -658,6 +667,11 @@ int getSoftDipvalue(u32 softdip)
 	if(!isMVS)
 		return 0;
 	return(volMEMBYTE(softdip));	
+}
+
+inline WORD getVideoline()
+{
+	return(volMEMWORD(REG_LSPCMODE) >> 7);
 }
 
 inline void waitVLine(WORD line)

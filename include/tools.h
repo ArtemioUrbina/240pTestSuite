@@ -45,7 +45,7 @@ typedef struct blinker{
 } blinker;
 
 void load_blinkdata(blinker* blinkdata, int *index, int *palindex, int x, int y);
-void SD_blink_cycle(blinker *blinkdata);
+int SD_blink_cycle(blinker *blinkdata);
 int draw_background_w_gil(blinker *blinkdata);
 int draw_background();
 void draw_message(char *title, char *msg, int index, int palindex, int clearback);
@@ -116,6 +116,7 @@ void playSoundnoWait(u8 command);
 
 int getHorScroll();
 
+WORD getVideoline();
 void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr);
 void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr);
 int getCreditCount();

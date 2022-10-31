@@ -2059,6 +2059,44 @@ u32 CalculateCRC(u32 startAddress, u32 size)
 	return checksum;
 }
 
+#ifdef __cd__
+u32 CalculateCRCBlink(u32 startAddress, u32 size, blinker *blinkdata)
+{
+	u8 *start = NULL;
+	u32 address = 0, checksum = 0;
+	int cycles = 0, cycle = 0;
+
+	CRC32_reset();
+
+	cycles = size/780;
+	start = (void*)startAddress;
+	for (address = 0; address < size; address ++)
+	{
+		u8 data;
+		
+		data = start[address];
+
+		CRC32_update(data);
+		if(blinkdata)
+		{
+			cycle ++;
+			if(cycle >= cycles && getVideoline() > 0x1EF)
+			{
+				if(SD_blink_cycle(blinkdata))
+				{
+					SCClose();
+					waitVBlank();
+				}
+				cycle = 0;
+			}
+		}
+	}
+
+	checksum = CRC32_finalize();
+	return checksum;
+}
+#endif
+
 #define MAX_LOCATIONS 11
 
 void ht_memory_viewer(u32 address)
@@ -2421,6 +2459,20 @@ const BIOSID *GetBIOSbyCRC(u32 checksum)
 	return NULL;
 }
 
+u8 detectUNIBIOSfast(u32 address)
+{
+	u16 *bios = (u16*)address;
+
+#ifndef __cd__
+	if (bios[0x58] == 0x4E55)
+		return 1;
+#else
+	if (bios[0x400B0] == 0x4E55)
+		return 1;
+#endif
+	return 0;
+}
+
 #ifndef __cd__
 void cleanBIOSStr(char *str, u8 size)
 {
@@ -2451,15 +2503,6 @@ void byteSwap(u8 *data, u8 size)
 		data[pos+1] = t;
 		pos += 2;
 	}
-}
-
-u8 detectUNIBIOSfast(u32 address)
-{
-	u16 *bios = (u16*)address;
-
-	if (bios[0x58] == 0x4E55)
-		return 1;
-	return 0;
 }
 
 u8 getBIOS_region(u32 address)
@@ -2544,28 +2587,27 @@ void drawBIOSHeader(u32 address, short x, short y)
 
 void ht_check_ng_bios_crc(u32 address)
 {
-	int				done = 0;
-#ifndef __cd__
-	int				swap = 0;
-#endif
+	int				done = 0, swap = 0;
 	u32				crc = 0;
-	picture			image;
 	char			buffer[34];
 	const BIOSID 	*bios = NULL;
+#ifdef __cd__
+	blinker			blinkdata;
+#endif
 
 	gfxClear();
 
-	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,back.palInfo->count,back.palInfo->data);
-
 #ifndef __cd__
+	draw_background();
+
 	// Print BIOS lines
 	if (detectUNIBIOSfast(address))
 		swap = 1;
 
 	displayBIOS(address, swap);
-
 	drawBIOSHeader(address, 13, 23);
+#else
+	draw_background_w_gil(&blinkdata);
 #endif
 	menu_footer();
 
@@ -2574,7 +2616,11 @@ void ht_check_ng_bios_crc(u32 address)
 	SCClose();
 	waitVBlank();
 
+#ifndef __cd__
 	crc = CalculateCRC(address, BIOS_SIZE);
+#else
+	crc = CalculateCRCBlink(address, BIOS_SIZE, &blinkdata);
+#endif
 	intToHex(crc, buffer, 8);
 	fixPrintf(12, 16, fontColorGreen, 3, "CRC:  ");
 	fixPrintf(17, 16, fontColorWhite, 3, "0x%s ", buffer);
@@ -2587,13 +2633,11 @@ void ht_check_ng_bios_crc(u32 address)
 	} else {
 		fixPrintf(13, 18, fontColorWhite, 3, "Unknown BIOS");
 		fixPrintf(13, 19, fontColorWhite, 3, "Please report it");
-#ifndef __cd__
 		if (detectUNIBIOSfast(address))
 		{
 			fixPrintf(7, 21, fontColorGreen, 3, "Non-free versions of UNIBIOS");
 			fixPrintf(7, 22, fontColorGreen, 3, "can't be recognized by CRC");
 		}
-#endif
 	}
 
 	while (!done)
@@ -2602,6 +2646,9 @@ void ht_check_ng_bios_crc(u32 address)
 		waitVBlank();
 
 		readController();
+#ifdef __cd__
+		SD_blink_cycle(&blinkdata);
+#endif
 
 		if (BTTN_EXIT)
 			done = 1;

@@ -139,12 +139,13 @@ cart: z80
 	$(CP) out/$(SROM) $(OUTPUT)/$(SROM)
 	$(CP) out/$(MROM) $(OUTPUT)/$(MROM)
 	$(CP) out/$(VROM) $(OUTPUT)/$(VROM)
-	cd out && $(ROMWAK) //p $(CROM) $(CROM) 2048 255
-	cd out && $(CHARSPLIT) $(CROM) -rom 2501
+	cd out && $(ROMWAK) //p $(CROM) $(CROM).spl 2048 255
+	cd out && $(CHARSPLIT) $(CROM).spl -rom 2501
 	$(CP) out/2501.C1 $(OUTPUT)/$(C1ROM)
 	$(CP) out/2501.C2 $(OUTPUT)/$(C2ROM)
 	$(RM) out/2501.C1
 	$(RM) out/2501.C2
+	$(RM) out/$(CROM).spl
 	cd $(OUTPUT) && $(ROMWAK) //f $(PROM) $(PROM)
 	cd $(OUTPUT) && $(ROMWAK) //p $(PROM) $(PROM) 1024 255
 	cd $(OUTPUT) && $(ROMWAK) //p $(SROM) $(SROM) 128 255
