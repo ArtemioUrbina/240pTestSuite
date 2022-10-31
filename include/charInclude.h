@@ -51,6 +51,8 @@ extern const pictureInfo colorbarssmpte75_304;
 extern const paletteInfo colorbarssmpte75_304_Palettes;
 extern const pictureInfo refcolor;
 extern const paletteInfo refcolor_Palettes;
+extern const pictureInfo refcolor_304;
+extern const paletteInfo refcolor_304_Palettes;
 extern const pictureInfo colorbleedbars;
 extern const paletteInfo colorbleedbars_Palettes;
 extern const pictureInfo colorbleedcheck;

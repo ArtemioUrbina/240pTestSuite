@@ -572,8 +572,16 @@ void tp_ref_color_bars()
 		{
 			gfxClear();
 
-			pictureInit(&refcolor_back, &refcolor, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,refcolor.palInfo->count,refcolor.palInfo->data);
+			if(vmode_snk)
+			{
+				pictureInit(&refcolor_back, &refcolor_304, 1, 16, 0, 0,FLIP_NONE);
+				palJobPut(16,refcolor_304.palInfo->count,refcolor_304.palInfo->data);
+			}
+			else
+			{
+				pictureInit(&refcolor_back, &refcolor, 1, 16, 0, 0,FLIP_NONE);
+				palJobPut(16,refcolor.palInfo->count,refcolor.palInfo->data);
+			}
 			draw = 0;
 		}
 

@@ -134,6 +134,7 @@ prog.o : $(OBJS)
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
 
+ifeq ($(OUTPUT),cart)
 cart: z80
 	$(CP) out/$(PROM) $(OUTPUT)/$(PROM)
 	$(CP) out/$(SROM) $(OUTPUT)/$(SROM)
@@ -149,6 +150,7 @@ cart: z80
 	cd $(OUTPUT) && $(ROMWAK) //f $(PROM) $(PROM)
 	cd $(OUTPUT) && $(ROMWAK) //p $(PROM) $(PROM) 1024 255
 	cd $(OUTPUT) && $(ROMWAK) //p $(SROM) $(SROM) 128 255
+endif
 
 ifeq ($(OUTPUT),cart)
 neo: cart out/$(PROM)
@@ -174,22 +176,22 @@ endif
 
 ifeq ($(OUTPUT),cart)
 copyroms: cart
-	$(CP) cart/$(PROM) $(MAMEDIR)
-	$(CP) cart/$(C1ROM) $(MAMEDIR)
-	$(CP) cart/$(C2ROM) $(MAMEDIR)
-	$(CP) cart/$(SROM) $(MAMEDIR)
-	$(CP) cart/$(MROM) $(MAMEDIR)
-	$(CP) cart/$(VROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(PROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(C1ROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(C2ROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(SROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(MROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(VROM) $(MAMEDIR)
 else
 copyroms: neo
-	$(CP) cd/chd/240pTestSuite.chd $(MAMECDDIR)
+	$(CP) $(OUTPUT)/chd/240pTestSuite.chd $(MAMECDDIR)
 endif
 
 clean:
 	$(RM) *.o src/*.o output.map
-	$(RM) $(OUTPUTDIR_CART)/*.p1 $(OUTPUTDIR_CART)/*.m1 $(OUTPUTDIR_CART)/*.v* 
-	$(RM) $(OUTPUT)/*.p1 $(OUTPUT)/*.m1 $(OUTPUT)/*.v* 
-	$(RM) $(OUTPUT)/*.SPR $(OUTPUT)/*.FIX $(OUTPUT)/*.PRG $(OUTPUT)/*.iso
+	$(RM) $(OUTPUTDIR_MIXED)/*.p1 $(OUTPUTDIR_MIXED)/*.m1 $(OUTPUTDIR_MIXED)/*.v*
+	$(RM) cart/*.p1 cart/*.m1 cart/*.v* cart/*.c* cart/*.s1
+	$(RM) $(OUTPUTDIR_CD)/*.SPR $(OUTPUTDIR_CD)/*.FIX $(OUTPUTDIR_CD)/*.PRG $(OUTPUTDIR_CD)/*.iso 
 	$(RM) $(OUTPUTDIR_CD)/*.Z80 $(OUTPUTDIR_CD)/*.PCM
 	$(RM) $(SND)/samples_*.inc
 
@@ -230,12 +232,12 @@ PCMB_LIST = $(SND)/pcm/pcmb.txt
 # CDPCM_LIST - path to list of ADPCM-A files for CD (used by Sailor VROM)
 CDPCM_LIST = $(SND)/pcm/pcma_cd.txt
 
-OUTPUTDIR_CART = out
+OUTPUTDIR_MIXED = out
 OUTPUTDIR_CD = cd
 
 Z80_OUTFILE = $(MROM)
 
-PCMOUT_CART = $(OUTPUTDIR_CART)/$(VROM)
+PCMOUT_CART = $(OUTPUTDIR_MIXED)/$(VROM)
 PCMOUT_CART_INC = $(SND)/samples_cart.inc
 
 PCMOUT_CD = $(OUTPUTDIR_CD)/$(CDPCM_OUTFILE)
@@ -260,8 +262,8 @@ PCMOUT_CART_SIZE = 128
 ##############################################################################
 
 z80: pcm
-	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CART) -o $(OUTPUTDIR_CART)/$(Z80_OUTFILE) $(Z80_FILE)
-	$(ROMWAK) $(FLAGS_ROMWAK_Z80) $(OUTPUTDIR_CART)/$(Z80_OUTFILE) $(OUTPUTDIR_CART)/$(Z80_OUTFILE) $(Z80OUT_CART_SIZE)
+	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CART) -o $(OUTPUTDIR_MIXED)/$(Z80_OUTFILE) $(Z80_FILE)
+	$(ROMWAK) $(FLAGS_ROMWAK_Z80) $(OUTPUTDIR_MIXED)/$(Z80_OUTFILE) $(OUTPUTDIR_MIXED)/$(Z80_OUTFILE) $(Z80OUT_CART_SIZE)
 
 cdz80: cdpcm
 	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CD) -o $(OUTPUTDIR_CD)/$(CDZ80_OUTFILE) $(Z80_FILE)

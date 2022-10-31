@@ -73,6 +73,9 @@
   <pict id="refcolor">
     <file>gfx\refcolor.png</file>
   </pict>
+  <pict id="refcolor_304">
+	<file>gfx\refcolor_304.png</file>
+  </pict>
   <pict id="colorbleedbars">
     <file>gfx\colorbleedbars.png</file>
   </pict>

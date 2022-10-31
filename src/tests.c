@@ -2587,7 +2587,10 @@ void drawBIOSHeader(u32 address, short x, short y)
 
 void ht_check_ng_bios_crc(u32 address)
 {
-	int				done = 0, swap = 0;
+	int				done = 0;
+#ifndef __cd__
+	int				swap = 0;
+#endif
 	u32				crc = 0;
 	char			buffer[34];
 	const BIOSID 	*bios = NULL;
