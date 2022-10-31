@@ -560,6 +560,18 @@ inline int getHorScroll()
 	return x;
 }
 
+void getScreenLimits(int* x, int* y)
+{
+	if(vmode_snk)
+		*x = 304;
+	else
+		*x = 320;
+	if(isPAL && usePAL256)
+		*y = 256;
+	else
+		*y = 224;
+}
+
 /*
 A color word is composed in the following manner:
 Bit 	15 	14 	13 	12 	11 	10 	9 	8 	7 	6 	5 	4 	3 	2 	1 	0

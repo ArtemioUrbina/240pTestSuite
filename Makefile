@@ -25,18 +25,26 @@ CP = cp
 NBPATH = $(NEODEV)/tools/neobuilder/
 NB = ./NeoBuilder.exe
 
-PROM  = 2501-p1.p1
-CROM  = 2501-cx.cx
-C1ROM = 2501-c1.c1
-C2ROM = 2501-c2.c2
-SROM  = 2501-s1.s1
-MROM  = 2501-m1.m1
-VROM  = 2501-v1.v1
+NGH = 2501
+
+PROM  = $(NGH)-p1.p1
+CROM  = $(NGH)-cx.cx
+C1ROM = $(NGH)-c1.c1
+C2ROM = $(NGH)-c2.c2
+SROM  = $(NGH)-s1.s1
+MROM  = $(NGH)-m1.m1
+VROM  = $(NGH)-v1.v1
 
 
 MKISOFS = $(NEODEV)/tools/cdtools/mkisofs
 FLAGS_MKISOFS = -iso-level 1 -pad -N
 CHDMAN = $(NEODEV)/tools/cdtools/chdman
+
+# FLAGS_ROMWAK Pad output file
+FLAGS_ROMWAK_PAD = //p
+
+# FLAGS_ROMWAK flip hi/lo output file
+FLAGS_ROMWAK_FLIP = //f
 
 # NGCD_IMAGENAME - output image/ISO name
 NGCD_IMAGENAME = 240pTestSuite
@@ -82,8 +90,18 @@ OUTPUT = cart
 ############################
 # Settings for cart output #
 ############################
-ROMSIZE = 0x100000
-PADBYTE = 0xFF
+ROMSIZE   = 0x100000
+PADBYTE   = 0xFF
+ROMSIZEKB = 1024
+CHARSSIZE = 2048
+PADBYTED  = 255
+FIXSIZE   = 128
+
+# Z80OUT_CART_SIZE - output size of M1 rom in kilobytes
+Z80OUT_CART_SIZE = 64
+
+# PCMOUT_CART_SIZE - output size of V1 rom in kilobytes
+PCMOUT_CART_SIZE = 128
 
 ##############################
 # Object Files and Libraries #
@@ -140,38 +158,38 @@ cart: z80
 	$(CP) out/$(SROM) $(OUTPUT)/$(SROM)
 	$(CP) out/$(MROM) $(OUTPUT)/$(MROM)
 	$(CP) out/$(VROM) $(OUTPUT)/$(VROM)
-	cd out && $(ROMWAK) //p $(CROM) $(CROM).spl 2048 255
-	cd out && $(CHARSPLIT) $(CROM).spl -rom 2501
-	$(CP) out/2501.C1 $(OUTPUT)/$(C1ROM)
-	$(CP) out/2501.C2 $(OUTPUT)/$(C2ROM)
-	$(RM) out/2501.C1
-	$(RM) out/2501.C2
+	cd out && $(ROMWAK) $(FLAGS_ROMWAK_PAD) $(CROM) $(CROM).spl $(CHARSSIZE) $(PADBYTED)
+	cd out && $(CHARSPLIT) $(CROM).spl -rom $(NGH)
+	$(CP) out/$(NGH).C1 $(OUTPUT)/$(C1ROM)
+	$(CP) out/$(NGH).C2 $(OUTPUT)/$(C2ROM)
+	$(RM) out/$(NGH).C1
+	$(RM) out/$(NGH).C2
 	$(RM) out/$(CROM).spl
-	cd $(OUTPUT) && $(ROMWAK) //f $(PROM) $(PROM)
-	cd $(OUTPUT) && $(ROMWAK) //p $(PROM) $(PROM) 1024 255
-	cd $(OUTPUT) && $(ROMWAK) //p $(SROM) $(SROM) 128 255
+	cd $(OUTPUT) && $(ROMWAK) $(FLAGS_ROMWAK_FLIP) $(PROM) $(PROM)
+	cd $(OUTPUT) && $(ROMWAK) $(FLAGS_ROMWAK_PAD) $(PROM) $(PROM) $(ROMSIZEKB) $(PADBYTED)
+	cd $(OUTPUT) && $(ROMWAK) $(FLAGS_ROMWAK_PAD) $(SROM) $(SROM) $(FIXSIZE) $(PADBYTED)
 endif
 
 ifeq ($(OUTPUT),cart)
 neo: cart out/$(PROM)
 	$(RM) $(OUTPUT)/240ptest.neo
 	cd $(OUTPUT) && $(7Z) a $(NBPATH)240ptest.zip $(PROM) $(C1ROM) $(C2ROM) $(SROM) $(MROM) $(VROM)
-	cd $(NBPATH) && $(NB) -n 240ptest -m dasutinartemio -y 2022 -g Other -s 2501 240ptest.zip
+	cd $(NBPATH) && $(NB) -n 240ptest -m dasutinartemio -y 2022 -g Other -s $(NGH) 240ptest.zip
 	$(RM) $(NBPATH)240ptest.zip
 	$(CP) $(NBPATH)240ptest.neo $(OUTPUT)/neosd
 	$(RM) $(NBPATH)240ptest.neo
 else
 neo: cdz80
-	$(CP) out/$(CROM) cd/$(CROM)
-	cd cd && $(CHARSPLIT) $(CROM) -cd $(CD_BASE_NAME)
-	$(RM) cd/$(CROM)
+	$(CP) out/$(CROM) $(OUTPUT)/$(CROM)
+	cd $(OUTPUT) && $(CHARSPLIT) $(CROM) -cd $(CD_BASE_NAME)
+	$(RM) $(OUTPUT)/$(CROM)
 	$(CP) out/$(SROM) cd/$(CDFIX_OUTFILE)
-	cd cd && $(MKISOFS) $(FLAGS_MKISOFS) -o $(NGCD_IMAGENAME).iso -V "$(NGCD_DISCLABEL)" $(NGCD_DISCFILES)
-	cd cd && $(CHDMAN) createcd -i 240pTestSuite.cue -o 240pTestSuite.chd
-	$(CP) cd/240pTestSuite.iso cd/iso/240pTestSuite.iso
-	$(CP) cd/240pTestSuite.chd cd/chd/240pTestSuite.chd
-	$(RM) cd/240pTestSuite.iso
-	$(RM) cd/240pTestSuite.chd
+	cd $(OUTPUT) && $(MKISOFS) $(FLAGS_MKISOFS) -o $(NGCD_IMAGENAME).iso -V "$(NGCD_DISCLABEL)" $(NGCD_DISCFILES)
+	cd $(OUTPUT) && $(CHDMAN) createcd -i 240pTestSuite.cue -o 240pTestSuite.chd
+	$(CP) $(OUTPUT)/240pTestSuite.iso $(OUTPUT)/iso/240pTestSuite.iso
+	$(CP) $(OUTPUT)/240pTestSuite.chd $(OUTPUT)/chd/240pTestSuite.chd
+	$(RM) $(OUTPUT)/240pTestSuite.iso
+	$(RM) $(OUTPUT)/240pTestSuite.chd
 endif
 
 ifeq ($(OUTPUT),cart)
@@ -235,8 +253,6 @@ CDPCM_LIST = $(SND)/pcm/pcma_cd.txt
 OUTPUTDIR_MIXED = out
 OUTPUTDIR_CD = cd
 
-Z80_OUTFILE = $(MROM)
-
 PCMOUT_CART = $(OUTPUTDIR_MIXED)/$(VROM)
 PCMOUT_CART_INC = $(SND)/samples_cart.inc
 
@@ -245,32 +261,23 @@ PCMOUT_CD_INC = $(SND)/samples_cd.inc
 
 # FLAGS_VASMZ80 - Flags for vasm Z80
 FLAGS_VASMZ80 = -Fbin -nosym
-FLAGS_ROMWAK_Z80 = //p
 
+# Flags needed for ASM code between Cart and CD
 FLAGS_CART = TARGET_CART
 FLAGS_CD = TARGET_CD
-
-# Z80OUT_CART_SIZE - output size of M1 rom in kilobytes
-Z80OUT_CART_SIZE = 64
-
-# FLAGS_ROMWAK_PCM - Pad output file
-FLAGS_ROMWAK_PCM = //p
-
-# PCMOUT_CART_SIZE - output size of V1 rom in kilobytes
-PCMOUT_CART_SIZE = 128
 
 ##############################################################################
 
 z80: pcm
-	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CART) -o $(OUTPUTDIR_MIXED)/$(Z80_OUTFILE) $(Z80_FILE)
-	$(ROMWAK) $(FLAGS_ROMWAK_Z80) $(OUTPUTDIR_MIXED)/$(Z80_OUTFILE) $(OUTPUTDIR_MIXED)/$(Z80_OUTFILE) $(Z80OUT_CART_SIZE)
+	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CART) -o $(OUTPUTDIR_MIXED)/$(MROM) $(Z80_FILE)
+	$(ROMWAK) $(FLAGS_ROMWAK_PAD) $(OUTPUTDIR_MIXED)/$(MROM) $(OUTPUTDIR_MIXED)/$(MROM) $(Z80OUT_CART_SIZE)
 
 cdz80: cdpcm
 	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CD) -o $(OUTPUTDIR_CD)/$(CDZ80_OUTFILE) $(Z80_FILE)
 
 pcm:
 	$(LUA) $(SND)/pcm/svrom.lua --pcma=$(PCMA_LIST) --pcmb=$(PCMB_LIST) --outname=$(PCMOUT_CART) --samplelist=$(PCMOUT_CART_INC)
-	$(ROMWAK) $(FLAGS_ROMWAK_PCM) $(PCMOUT_CART) $(PCMOUT_CART) $(PCMOUT_CART_SIZE)
+	$(ROMWAK) $(FLAGS_ROMWAK_PAD) $(PCMOUT_CART) $(PCMOUT_CART) $(PCMOUT_CART_SIZE)
 
 cdpcm:
 	$(LUA) $(SND)/pcm/svrom.lua --mode=cd --pcma=$(CDPCM_LIST) --outname=$(PCMOUT_CD) --samplelist=$(PCMOUT_CD_INC)

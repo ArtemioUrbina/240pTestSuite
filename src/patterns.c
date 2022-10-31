@@ -1046,13 +1046,13 @@ void tp_white_rgb()
 
 		if (!editmode)
 		{
-			if (BTTN_MAIN)
+			if (PRESSED_RIGHT || BTTN_OPTION_1)
 			{
 				color++;
 				draw = 1;
 			}
 
-			if (BTTN_OPTION_1)
+			if (PRESSED_LEFT || BTTN_OPTION_2)
 			{
 				color--;
 				draw = 1;
@@ -1098,15 +1098,24 @@ void tp_white_rgb()
 				draw = 1;
 		}
 
-		if (BTTN_OPTION_2 && color == 1)
-		{
-			editmode = !editmode;
-			if (!editmode)
-				suiteClearFixLayer();
-		}
+		if (BTTN_MAIN && color == 1 && !editmode)
+			editmode = 1;
 
 		if (BTTN_EXIT)
-			done = 1;
+		{
+			if(color == 1)
+			{
+				if (!editmode)
+					done = 1;
+				else
+				{
+					editmode = 0;
+					suiteClearFixLayer();
+				}
+			}
+			else
+				done = 1;
+		}
 
 		if (editmode)
 		{
@@ -1154,19 +1163,19 @@ void tp_white_rgb()
 				hasedit = 1;
 			}
 
-			if (BTTN_MAIN)
+			if (BTTN_OPTION_1)
 			{
 				*edit = 0;
 				hasedit = 1;
 			}
 
-			if (BTTN_OPTION_1)
+			if (BTTN_OPTION_2)
 			{
 				*edit = 31;
 				hasedit = 1;
 			}
 
-			if (BTTN_OPTION_2)
+			if (BTTN_MAIN)
 			{
 				dark = !dark;
 				hasedit = 1;
@@ -1581,17 +1590,17 @@ void tp_overscan()
 
 		if (BTTN_MAIN)
 		{
+			fast = !fast;
+			scroll = 1;
+		}
+
+		if (BTTN_OPTION_1)
+		{
 			top_y = t_max;
 			bottom_y = b_min;
 			left_x = l_max;
 			right_x = r_min;
 
-			scroll = 1;
-		}
-		
-		if (BTTN_OPTION_1)
-		{
-			fast = !fast;
 			scroll = 1;
 		}
 

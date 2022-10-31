@@ -117,6 +117,7 @@ void playSoundnoWait(u8 command);
 int getHorScroll();
 
 WORD getVideoline();
+void getScreenLimits(int* x, int* y);
 void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr);
 void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr);
 int getCreditCount();

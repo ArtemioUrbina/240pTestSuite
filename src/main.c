@@ -440,7 +440,7 @@ void credits()
 	gfxClear();
 	draw_background();
 
-	pictureInit(&qr, &barcode, 26, 17, 260, 80, FLIP_NONE);
+	pictureInit(&qr, &barcode, 26, 17, 260, 70, FLIP_NONE);
 	palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 	memcpy(half_pal, back.palInfo->data, sizeof(ushort)*16);
 	darken_palette(half_pal, 4);
@@ -450,9 +450,8 @@ void credits()
 	{
 		if(draw)
 		{
-			int x = 4, y = 6;
+			int x = 4, y = 4;
 
-			fixPrint(14, y-2, fontColorGreen, 3, "== Credits ==");
 			fixPrint(x+24, y, fontColorGreen, 3, "Ver. 0.5");
 			fixPrint(x+24, y+1, fontColorWhite, 3, "10/28/2022");
 			fixPrint(x, y++, fontColorGreen, 3, "Code by:");
@@ -464,12 +463,12 @@ void credits()
 			fixPrint(x+1, y++, fontColorWhite, 3, "Jose Salot");
 			fixPrint(x, y++, fontColorGreen, 3, "Menu Pixel Art:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Asher");
-			y++;
 			fixPrint(x, y++, fontColorGreen, 3, "Neo Geo SDK");
 			fixPrint(x+1, y++, fontColorWhite, 3, "NeoDev (Jeff Kurtz)");
+			fixPrint(x, y++, fontColorGreen, 3, "Graphics Library");
+			fixPrint(x+1, y++, fontColorWhite, 3, "DATlib (HPMAN)");
 			fixPrint(x, y++, fontColorGreen, 3, "Z80 Sound Driver");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Based on freem ADPCM example");
-			y++;
 			fixPrint(x, y++, fontColorGreen, 3, "MVS flashcart provided by:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
 			fixPrint(x, y++, fontColorGreen, 3, "AES flashcart borrowed from:");

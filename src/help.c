@@ -77,6 +77,7 @@ void DrawHelp(int option)
 		SCClose();
 		waitVBlank();
 
+		fixPrint(5, 26, fontColorWhite, 3, "Press START or B to exit help");
 		switch (option)
 		{
 			case HELP_GENERAL:
@@ -99,9 +100,6 @@ void DrawHelp(int option)
 						fixPrint(4, 20, fontColorGreen, 3, "in any test.");
 
 						fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
-
-						fixPrint(5, 26, fontColorWhite, 3, "Press START or B to exit help");
-
 					break;
 
 					case 2:
@@ -129,8 +127,6 @@ void DrawHelp(int option)
 						fixPrint(4, 20, fontColorWhite, 3, "Visit:");
 						fixPrint(4, 21, fontColorGreen, 3, "http://junkerhq.net/240p");
 						fixPrint(4, 22, fontColorWhite, 3, "for more information");
-
-						fixPrint(5, 26, fontColorWhite, 3, "Press START or B to exit help");
 					}
 					break;
 				}
@@ -160,6 +156,7 @@ void DrawHelp(int option)
 					break;
 
 					case 2:
+						// TODO set real PLUGE values form the HW here
 						fixPrint(15, 6, fontColorGreen, 3, "PLUGE (2/3)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "The PLUGE pattern is used to");
@@ -191,6 +188,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_COLORS:
+				// TODO Add extra dark/ligh and variations docs here
 				fixPrint(15, 6, fontColorGreen, 3, "COLORBARS");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This pattern allows you to");
@@ -209,6 +207,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_GRID:
+				// TODO Mention 302 and 320 info here
 				fixPrint(18, 6, fontColorGreen, 3, "GRID");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This grid uses the full 320x224");
@@ -299,6 +298,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_IRE:
+				// TODO Set final IRE values here
 				fixPrint(16, 6, fontColorGreen, 3, "100 IRE");
 
 				fixPrint(4, 9, fontColorWhite, 3, "You can vary IRE intensity");
@@ -307,7 +307,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_601CB:
-				fixPrint(14, 6, fontColorGreen, 3, "EBU COLORBARS");
+				fixPrint(10, 6, fontColorGreen, 3, "REFERENCED COLORBARS");
 
 				fixPrint(4, 9, fontColorWhite, 3, "You can use color filters or the");
 				fixPrint(4, 10, fontColorWhite, 3, "blue only option in your display");
@@ -340,8 +340,8 @@ void DrawHelp(int option)
 				fixPrint(4, 17, fontColorWhite, 3, "pixel. The resulting number is");
 				fixPrint(4, 18, fontColorWhite, 3, "the overscan in each direction.");
 
-				fixPrint(4, 20, fontColorWhite, 3, "C toggles fast/per pixel change");
-				fixPrint(4, 21, fontColorWhite, 3, "and A resets to defaults.");
+				fixPrint(4, 20, fontColorWhite, 3, "A toggles fast/per pixel change");
+				fixPrint(4, 21, fontColorWhite, 3, "and C resets to defaults.");
 			break;
 
 			case HELP_SMPTE:
@@ -363,6 +363,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_GRAY:
+				// TODO: add dark/light description here
 				fixPrint(15, 6, fontColorGreen, 3, "GRAY RAMP");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This gray ramp pattern can be");
@@ -381,14 +382,14 @@ void DrawHelp(int option)
 						fixPrint(4, 9, fontColorWhite, 3, "This pattern can be changed");
 						fixPrint(4, 10, fontColorWhite, 3, "between white, black, red,");
 						fixPrint(4, 11, fontColorWhite, 3, "green and blue screens with the");
-						fixPrint(4, 12, fontColorWhite, 3, "'A' and 'B' buttons.");
+						fixPrint(4, 12, fontColorWhite, 3, "'C' and 'D' buttons.");
 
 						fixPrint(4, 14, fontColorWhite, 3, "Some displays and scalers have");
 						fixPrint(4, 15, fontColorWhite, 3, "issues when changing between a");
 						fixPrint(4, 16, fontColorWhite, 3, "black 0 IRE and a white screen.");
 
 						fixPrint(4, 18, fontColorWhite, 3, "A custom color mode is");
-						fixPrint(4, 19, fontColorWhite, 3, "available by pressing 'C'");
+						fixPrint(4, 19, fontColorWhite, 3, "available by pressing 'A'");
 						fixPrint(4, 20, fontColorWhite, 3, "while in the white screen.");
 						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
@@ -400,8 +401,8 @@ void DrawHelp(int option)
 						fixPrint(4, 10, fontColorWhite, 3, "right change between colors,");
 						fixPrint(4, 11, fontColorWhite, 3, "and up & down change values.");
 
-						fixPrint(4, 14, fontColorWhite, 3, "'A' and 'B' buttons go to");
-						fixPrint(4, 15, fontColorWhite, 3, "zero and 31, while 'D' toggles");
+						fixPrint(4, 14, fontColorWhite, 3, "'C' and 'D' buttons go to");
+						fixPrint(4, 15, fontColorWhite, 3, "zero and 31, while 'A' toggles");
 						fixPrint(4, 16, fontColorWhite, 3, "the dark bit.");
 					break;
 				}
@@ -417,7 +418,7 @@ void DrawHelp(int option)
 				fixPrint(4, 13, fontColorWhite, 3, "hatch pattern between lines,");
 				fixPrint(4, 14, fontColorWhite, 3, "dots and crosses");
 
-				fixPrint(4, 16, fontColorWhite, 3, "The 'B' button changes to a");
+				fixPrint(4, 16, fontColorWhite, 3, "The 'C' button changes to a");
 				fixPrint(4, 17, fontColorWhite, 3, "color pattern for transition");
 				fixPrint(4, 18, fontColorWhite, 3, "boundary check.");
 			break;
@@ -434,7 +435,7 @@ void DrawHelp(int option)
 				fixPrint(4, 15, fontColorWhite, 3, "button 'Up', or turn on");
 				fixPrint(4, 16, fontColorWhite, 3, "auto-toggle each frame with the");
 				fixPrint(4, 17, fontColorWhite, 3, "'A' button. A frame counter is");
-				fixPrint(4, 18, fontColorWhite, 3, "also available with 'B'.");
+				fixPrint(4, 18, fontColorWhite, 3, "also available with 'C'.");
 			break;
 
 			case HELP_STRIPES:
@@ -485,9 +486,9 @@ void DrawHelp(int option)
 
 				fixPrint(4, 16, fontColorWhite, 3, "The user can toggle the frame");
 				fixPrint(4, 17, fontColorWhite, 3, "used to draw the shadow with");
-				fixPrint(4, 18, fontColorWhite, 3, "button 'A'. Backgrounds can be");
-				fixPrint(4, 19, fontColorWhite, 3, "switched with the 'B' button,");
-				fixPrint(4, 20, fontColorWhite, 3, "and button 'C' toggles sprites.");
+				fixPrint(4, 18, fontColorWhite, 3, "button 'C'. Backgrounds can be");
+				fixPrint(4, 19, fontColorWhite, 3, "switched with the 'A' button,");
+				fixPrint(4, 20, fontColorWhite, 3, "and button 'D' toggles sprites.");
 			break;
 
 			case HELP_STRIPED:
@@ -564,8 +565,8 @@ void DrawHelp(int option)
 
 						fixPrint(4, 14, fontColorWhite, 3, "Speed can be varied with Up &");
 						fixPrint(4, 15, fontColorWhite, 3, "Down and scroll direction with");
-						fixPrint(4, 16, fontColorWhite, 3, "'C'. The 'A' button stops the");
-						fixPrint(4, 17, fontColorWhite, 3, "scroll and 'B' toggles between");
+						fixPrint(4, 16, fontColorWhite, 3, "'D'. The 'A' button stops the");
+						fixPrint(4, 17, fontColorWhite, 3, "scroll and 'C' toggles between");
 						fixPrint(4, 18, fontColorWhite, 3, "vertical and horizontal.");
 
 						fixPrint(4, 20, fontColorWhite, 3, "You can use Left & Right while");
@@ -598,7 +599,7 @@ void DrawHelp(int option)
 					fixPrint(4, 13, fontColorWhite, 3, "video processor copes with");
 					fixPrint(4, 14, fontColorWhite, 3, "scrolling and framerate.");
 
-					fixPrint(4, 16, fontColorWhite, 3, "Button 'B' can be used to toggle");
+					fixPrint(4, 16, fontColorWhite, 3, "Button 'C' can be used to toggle");
 					fixPrint(4, 17, fontColorWhite, 3, "between horizontal and vertical,");
 					fixPrint(4, 18, fontColorWhite, 3, "while Up/Down regulate speed.");
 
@@ -637,7 +638,7 @@ void DrawHelp(int option)
 						fixPrint(4, 15, fontColorWhite, 3, "white pixel arrays with the");
 						fixPrint(4, 16, fontColorWhite, 3, "d-pad, and change the size of");
 						fixPrint(4, 17, fontColorWhite, 3, "the pixel array with 'A'.");
-						fixPrint(4, 18, fontColorWhite, 3, "The 'B' button allows the user");
+						fixPrint(4, 18, fontColorWhite, 3, "The 'C' button allows the user");
 						fixPrint(4, 19, fontColorWhite, 3, "to hide the pixel array in");
 						fixPrint(4, 20, fontColorWhite, 3, "order to alternate a fully black");
 						fixPrint(4, 21, fontColorWhite, 3, "screen.");
@@ -685,8 +686,8 @@ void DrawHelp(int option)
 						fixPrint(4, 19, fontColorWhite, 3, "change color each frame to help");
 						fixPrint(4, 20, fontColorWhite, 3, "when using LCD photos.");
 
-						fixPrint(4, 22, fontColorWhite, 3, "Press A to start/stop, B to");
-						fixPrint(4, 23, fontColorWhite, 3, "reset and C for B&W test.");
+						fixPrint(4, 22, fontColorWhite, 3, "Press A to start/stop, C to");
+						fixPrint(4, 23, fontColorWhite, 3, "reset when stopped.");
 					break;
 					}
 			break;
@@ -745,8 +746,6 @@ void DrawHelp(int option)
 				fixPrint(4, 13, fontColorWhite, 3, "A to display a dark or white");
 				fixPrint(4, 14, fontColorWhite, 3, "pattern in order to check");
 				fixPrint(4, 15, fontColorWhite, 3, "contrast and brightness.");
-
-				fixPrint(4, 17, fontColorWhite, 3, "The C button returns to PLUGE.");
 			break;
 
 			case HELP_MEMVIEW:
@@ -764,9 +763,9 @@ void DrawHelp(int option)
 
 				fixPrint(4, 19, fontColorWhite, 3, "- Button A enabled CRC of the");
 				fixPrint(4, 20, fontColorWhite, 3, "current screen.");
-				fixPrint(4, 21, fontColorWhite, 3, "- Button B jumps to relevant");
+				fixPrint(4, 21, fontColorWhite, 3, "- Button C jumps to relevant");
 				fixPrint(4, 22, fontColorWhite, 3, "memory locations");
-				fixPrint(4, 23, fontColorWhite, 3, "- Button C toggles ASCII");
+				fixPrint(4, 23, fontColorWhite, 3, "- Button D toggles ASCII");
 			break;
 		default:
 			exit = 1;

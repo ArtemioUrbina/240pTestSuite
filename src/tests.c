@@ -67,6 +67,7 @@ static const ushort waterPal_4[] = {
 void vt_drop_shadow_test()
 {
 	int done = 0, x = 30, y = 30, draw = 1, spr_type = 0, changeSprite = 1, changeBack = 1, back = 0;
+	int limitX = 0, limitY = 0;
 	int pal_water = 0, pal_wfall = 0, text = 0, evenframes = 0;
 	char flip = FLIP_NONE;
 	int drawshadow = 0, frame = 1;
@@ -79,6 +80,7 @@ void vt_drop_shadow_test()
 	picture shape_sprite;
 	scroller backScroll, waterScroll, frontScroll;
 
+	getScreenLimits(&limitX, &limitY);
 	while (!done)
 	{	
 		if (draw)
@@ -175,15 +177,15 @@ void vt_drop_shadow_test()
 		if (!spr_type)
 		{
 			if (drawshadow) {
-				pictureSetPos(&slug_shadow_sprite, x, y);
+				pictureSetPos(&slug_shadow_sprite, x-12, y-12);
 				pictureShow(&slug_shadow_sprite);
 			} else {
 				pictureHide(&slug_shadow_sprite);
 			}
-			pictureSetPos(&slug_sprite, x-20, y-20);
+			pictureSetPos(&slug_sprite, x-32, y-32);
 		} else {
 			if (drawshadow) {
-				pictureSetPos(&shape_sprite, x-20, y-20);
+				pictureSetPos(&shape_sprite, x-16, y-16);
 				pictureShow(&shape_sprite);
 			} else {
 				pictureHide(&shape_sprite);
@@ -263,18 +265,10 @@ void vt_drop_shadow_test()
 		}
 
 		if (HELD_UP)
-		{
 			y--;
-			if(y < 0)
-				y = 0;
-		}
 
 		if (HELD_DOWN)
-		{
 			y++;
-			if(y > 192)
-				y = 192;
-		}
 
 		if (HELD_LEFT)
 		{
@@ -285,8 +279,6 @@ void vt_drop_shadow_test()
 				pictureSetFlip(&slug_sprite, flip);
 				pictureSetFlip(&slug_shadow_sprite, flip);
 			}
-			if (x < 0)
-				x = 0;
 		}
 
 		if (HELD_RIGHT)
@@ -298,9 +290,16 @@ void vt_drop_shadow_test()
 				pictureSetFlip(&slug_sprite, flip);
 				pictureSetFlip(&slug_shadow_sprite, flip);
 			}
-			if (x > 288)
-				x = 288;
 		}
+
+		if(x < 1)
+			x = 1;
+		if(x > limitX)
+			x = limitX;
+		if(y < 1)
+			y = 1;
+		if(y > limitY)
+			y = limitY;
 
 		if (BTTN_EXIT)
 			done = 1;
@@ -313,7 +312,7 @@ void vt_drop_shadow_test()
 void vt_striped_sprite_test()
 {
 	int done = 0, x = 30, y = 30, draw = 1, changeBack = 1, back = 0, frame = 1;
-	int pal_water = 0, pal_wfall = 0;
+	int pal_water = 0, pal_wfall = 0, limitX = 0, limitY = 0;
 	short y1 = -96;
 	short y2 = -152;
 	short y3 = 0;
@@ -321,6 +320,7 @@ void vt_striped_sprite_test()
 	picture sprite;
 	scroller backScroll, waterScroll, frontScroll;
 
+	getScreenLimits(&limitX, &limitY);
 	while (!done)
 	{
 		if (draw)
@@ -411,7 +411,7 @@ void vt_striped_sprite_test()
 			fixPrintf(10, 18, fontColorWhite, 3, "Back: %04d", back);
 		}
 
-		pictureSetPos(&sprite, x, y);
+		pictureSetPos(&sprite, x-16, y-16);
 
 		SCClose();
 		waitVBlank();
@@ -427,32 +427,26 @@ void vt_striped_sprite_test()
 		}
 
 		if (HELD_UP)
-		{
+
 			y--;
-			if(y < 0)
-				y = 0;
-		}
 
 		if (HELD_DOWN)
-		{
 			y++;
-			if(y > 192)
-				y = 192;
-		}
 
 		if (HELD_LEFT)
-		{
 			x--;
-			if (x < 0)
-				x = 0;
-		}
 
 		if (HELD_RIGHT)
-		{
 			x++;
-			if (x > 288)
-				x = 288;
-		}
+
+		if(x < 1)
+			x = 1;
+		if(x > limitX)
+			x = limitX;
+		if(y < 1)
+			y = 1;
+		if(y > limitY)
+			y = limitY;
 
 		if (BTTN_EXIT)
 			done = 1;
@@ -1443,8 +1437,11 @@ void vt_checkerboard()
 
 void vt_backlitzone_test()
 {
-	int done = 0, block = 2, x = 160, y = 112, draw = 1;
+	int done = 0, block = 2, x = 160, y = 112, draw = 1, shown = 1;
+	int limitX = 0, limitY = 0, sprSize[] = { 1, 1, 2, 3, 4 };
 	picture image;
+
+	getScreenLimits(&limitX, &limitY);
 
 	while (!done)
 	{
@@ -1454,27 +1451,27 @@ void vt_backlitzone_test()
 
 			switch (block)
 			{
-				case 1:
+				case 0:
 					pictureInit(&image, &led_1x, 1, 16, x, y,FLIP_NONE);
 					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
 				break;
 
-				case 2:
+				case 1:
 					pictureInit(&image, &led_2x, 1, 16, x, y,FLIP_NONE);
 					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
 				break;
 
-				case 3:
+				case 2:
 					pictureInit(&image, &led_4x, 1, 16, x, y,FLIP_NONE);
 					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
 				break;
 
-				case 4:
+				case 3:
 					pictureInit(&image, &led_6x, 1, 16, x, y,FLIP_NONE);
 					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
 				break;
 
-				case 5:
+				case 4:
 					pictureInit(&image, &led_8x, 1, 16, x, y,FLIP_NONE);
 					palJobPut(16,led_1x.palInfo->count,led_1x.palInfo->data);
 				break;
@@ -1482,6 +1479,7 @@ void vt_backlitzone_test()
 			draw = 0;
 		}
 
+		pictureSetPos(&image, x - sprSize[block], y - sprSize[block]);
 		SCClose();
 		waitVBlank();
 
@@ -1490,34 +1488,40 @@ void vt_backlitzone_test()
 		if (BTTN_MAIN)
 		{
 			block++;
-			if(block > 5)
-			block = 1;
+			if(block > 4)
+				block = 0;
 			draw = 1;
+		}
+
+		if (BTTN_OPTION_1)
+		{
+			shown = !shown;
+			if(shown)
+				pictureShow(&image);
+			else
+				pictureHide(&image);
 		}
 
 		if (p1 & JOY_UP)
-		{
 			y--;
-			draw = 1;
-		}
 
 		if (p1 & JOY_DOWN)
-		{
 			y++;
-			draw = 1;
-		}
 
 		if (p1 & JOY_RIGHT)
-		{
 			x++;
-			draw = 1;
-		}
 
 		if (p1 & JOY_LEFT)
-		{
 			x--;
-			draw = 1;
-		}
+
+		if(x < 1)
+			x = 1;
+		if(x > limitX)
+			x = limitX;
+		if(y < 1)
+			y = 1;
+		if(y > limitY)
+			y = limitY;
 
 		if (BTTN_EXIT)
 			done = 1;
