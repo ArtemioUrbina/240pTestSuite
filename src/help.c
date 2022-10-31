@@ -95,12 +95,7 @@ void DrawHelp(int option)
 						fixPrint(4, 15, fontColorWhite, 3, "from a game console to help in");
 						fixPrint(4, 16, fontColorWhite, 3, "properly calibrating the display");
 						fixPrint(4, 17, fontColorWhite, 3, "black, white, and color levels.");
-						if (isMVS)
-						{
-							fixPrint(4, 19, fontColorGreen, 3, "Help can be shown with 'D'");
-						} else {
-							fixPrint(4, 19, fontColorGreen, 3, "Help can be shown with 'SELECT'");
-						}
+						fixPrint(4, 19, fontColorGreen, 3, "Help can be shown with 'START'");
 						fixPrint(4, 20, fontColorGreen, 3, "in any test.");
 
 						fixPrint(26, 22, fontColorWhite, 3, "(cont...)");

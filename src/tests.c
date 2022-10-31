@@ -2370,6 +2370,40 @@ const BIOSID bioslist[] = {
 	0x7A0D4410,
 	"neodebug.rom",
 	"Development System ROM" },
+#else
+{	BIOS_SNK_NGCD,
+	0x56C9ECBA,				// 0xC36A47C0
+	"top-sp1.bin",
+	"Top loading Neo-Geo CD" },
+{	BIOS_SNK_NGCD,
+	0x6FD2A520,				// 0xCAC62307
+	"front-sp1.bin",
+	"Front loading Neo-Geo CD" },
+{	BIOS_SNK_NGCD,
+	0x33697892,				// 0xDF9DE490
+	"neocd.bin",
+	"Neo Geo CDZ" },
+{	BIOS_HACK_NGCD,
+	0x75FB6DD4,				// 0xFFB3127
+	"uni-bioscd32.rom",
+	"Universe Bios (Hack, Ver. 3.2)" },
+{	BIOS_HACK_NGCD,
+	0x879163E9,				// 0xFF3ABC59
+	"uni-bioscd33.rom",
+	"Universe Bios (Hack, Ver. 3.3)" },
+// SMKDAN versions from 2010
+{	BIOS_HACK_NGCD,
+	0x72E41278,				// 0x1101F313
+	"neocd_sf.rom",
+	"Front Loader BIOS (SMKDAN)" },
+{	BIOS_HACK_NGCD,
+	0x566E3D63,				// 0x1C299CC
+	"neocd_st.rom",
+	"CDZ BIOS (SMKDAN)" },
+{	BIOS_HACK_NGCD,
+	0x81B9D0C3,				// 0x42F6B6C4
+	"neocd_sz.rom",
+	"CDZ BIOS (SMKDAN)" },
 #endif
 {	0, 0, NULL, NULL } };
 

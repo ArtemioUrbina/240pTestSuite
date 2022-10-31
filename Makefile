@@ -6,7 +6,7 @@ NEODEV=/c/NeoDev
 export PATH=$(NEODEV)/m68k/bin
 
 MAMEDIR = $(NEODEV)\mame\roms\240ptestng
-MAMECDDIR = $(NEODEV)\mame\roms\240ptestngcd
+MAMECDDIR = $(NEODEV)\mame\roms\neocd\240ptestngcd
 
 BASEDIR = $(NEODEV)
 AS = as
@@ -24,8 +24,6 @@ CP = cp
 7Z = $(NEODEV)/tools/7zip/7za
 NBPATH = $(NEODEV)/tools/neobuilder/
 NB = ./NeoBuilder.exe
-ISO = $(NEODEV)/tools/cdtools/mkisofs
-CHDMAN = $(NEODEV)/tools/cdtools/chdman
 
 PROM  = 2501-p1.p1
 CROM  = 2501-cx.cx
@@ -35,10 +33,35 @@ SROM  = 2501-s1.s1
 MROM  = 2501-m1.m1
 VROM  = 2501-v1.v1
 
-CDCHR_OUTFILE = 240P_CHR
-CDFIX_OUTFILE = 240P_FIX.FIX
-CDZ80_OUTFILE = 240P.Z80
-CDPCM_OUTFILE = 240P.PCM
+
+MKISOFS = $(NEODEV)/tools/cdtools/mkisofs
+FLAGS_MKISOFS = -iso-level 1 -pad -N
+CHDMAN = $(NEODEV)/tools/cdtools/chdman
+
+# NGCD_IMAGENAME - output image/ISO name
+NGCD_IMAGENAME = 240pTestSuite
+
+# NGCD_DISCLABEL - Disc label (8 characters maximum)
+NGCD_DISCLABEL = 240TEST
+
+CD_BASE_NAME  = 240P
+CDPRG_OUTFILE = $(CD_BASE_NAME).PRG
+CDCHR_OUTFILE = $(CD_BASE_NAME).SPR
+CDFIX_OUTFILE = $(CD_BASE_NAME).FIX
+CDZ80_OUTFILE = $(CD_BASE_NAME).Z80
+CDPCM_OUTFILE = $(CD_BASE_NAME).PCM
+
+# NGCD_DISCFILES - List of files to put on the CD, passed to mkisofs
+NGCD_DISCFILES = \
+	ABS.TXT \
+	BIB.TXT \
+	CPY.TXT \
+	IPL.TXT \
+	$(CDPRG_OUTFILE) \
+	$(CDZ80_OUTFILE) \
+	$(CDFIX_OUTFILE) \
+	$(CDPCM_OUTFILE) \
+	$(CDCHR_OUTFILE)
 
 #######################################
 # Path to libraries and include files #
@@ -50,8 +73,8 @@ LIBDIR = $(BASEDIR)/m68k/lib
 ###################################
 # Output: {cart, cd} *lower case* #
 ###################################
-OUTPUT = cart
-#OUTPUT = cd
+#OUTPUT = cart
+OUTPUT = cd
 
 ############################
 # Settings for cart output #
@@ -95,7 +118,7 @@ out/$(PROM) : prog.o
 	$(OBJC) --gap-fill=$(PADBYTE) --pad-to=$(ROMSIZE) -R .data -O binary $< $@
 #	$(OBJC) --gap-fill=$(PADBYTE) -R .data -O binary $< $@
 else
-cd/240P_PRG.PRG : prog.o
+cd/$(CDPRG_OUTFILE) : prog.o
 	$(OBJC) -O binary $< $@
 endif
 
@@ -134,10 +157,10 @@ neo: cart out/$(PROM)
 else
 neo: cdz80
 	$(CP) out/$(CROM) cd/$(CROM)
-	cd cd && $(CHARSPLIT) $(CROM) -cd $(CDCHR_OUTFILE)
+	cd cd && $(CHARSPLIT) $(CROM) -cd $(CD_BASE_NAME)
 	$(RM) cd/$(CROM)
 	$(CP) out/$(SROM) cd/$(CDFIX_OUTFILE)
-	cd cd && $(ISO) -iso-level 1 -o 240pTestSuite.iso -pad -N -V "240PTESTSUITE" 240P_PRG.PRG 240P.Z80 240P_CHR.SPR 240P_FIX.FIX 240P.PCM ABS.TXT BIB.TXT CPY.TXT IPL.TXT
+	cd cd && $(MKISOFS) $(FLAGS_MKISOFS) -o $(NGCD_IMAGENAME).iso -V "$(NGCD_DISCLABEL)" $(NGCD_DISCFILES)
 	cd cd && $(CHDMAN) createcd -i 240pTestSuite.cue -o 240pTestSuite.chd
 	$(CP) cd/240pTestSuite.iso cd/iso/240pTestSuite.iso
 	$(CP) cd/240pTestSuite.chd cd/chd/240pTestSuite.chd

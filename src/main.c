@@ -539,11 +539,17 @@ void menu_main()
 	blinker blinkdata;
 
 	palJobPut(0,8,fixPalettes);
+
+	// Show Exit in neo Geo CD and MVS with credits and demo mode
+#ifndef __cd__
 	if (getSoftDipvalue(SOFT_DIP_1))
 	{
+#endif
 		showexit = 1;
 		cursemax++;
+#ifndef __cd__
 	}
+#endif
 
 	if(isPALinMVS)
 		draw_warning("MVS HW is supposed to be NTSC.\nIt is supported by the Suite,\nbut PAL options will be disabled\nto honor SNK definition.", 1, 16, 1);
