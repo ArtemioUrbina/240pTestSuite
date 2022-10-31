@@ -76,8 +76,8 @@ LIBDIR = $(BASEDIR)/m68k/lib
 ###################################
 # Output: {cart, cd} *lower case* #
 ###################################
-#OUTPUT = cart
-OUTPUT = cd
+OUTPUT = cart
+#OUTPUT = cd
 
 ############################
 # Settings for cart output #
