@@ -49,6 +49,8 @@ NMI:
 	push	bc
 	push	de
 	push	hl
+	push	ix
+	push	iy
 
 	in		a,(0)			; Acknowledge NMI, get command from 68K via Port 0
 	ld		(curCommand),a	; update curCommand
@@ -73,6 +75,8 @@ NMI:
 
 endNMI:
 	; restore registers
+	pop		iy
+	pop		ix
 	pop		hl
 	pop		de
 	pop		bc
@@ -194,7 +198,7 @@ EntryPoint:
 	ldir					; clear out memory
 
 	; Initialize variables
-	ld		(loopB),a
+	ld		(intPCMB_Loop),a
 
 	; Initialize SSG frequencies
 	ld		(SSG_FreqFine),a
@@ -209,7 +213,7 @@ EntryPoint:
 	call	fm_Stop
 
 	; silence ADPCM-A, ADPCM-B
-	;call	pcma_Stop
+	;call	pcma_Stop		; Commented so that the coin sound is not reset after demo->title transition
 	call	pcmb_Stop
 
 	;-------------------------------------------;
@@ -218,7 +222,6 @@ EntryPoint:
 	out		(0xC0),a
 
 	; continue setting up the hardware, etc.
-
 	ld		de,0x2730		; Reset Timer flags, Disable Timer IRQs
 	rst 	writeDEportA	; write to ports 4 and 5
 	ld		de,0x1001		; Reset ADPCM-B
@@ -704,7 +707,7 @@ PlayPCMA:
 	ret
 
 ;------------------------------------------------------------------------------;
-; helper to load sample entry from the table
+; helper to load ADPCM-A sample entry from the table
 ; sample entry is in 'a'
 
 loadSample:
@@ -726,8 +729,9 @@ loadSample:
 ; then ADPCM-B sample.
 
 command_PlayPCMBCenter:
-	ld		b,0xC0
-	call	command_PlayPCMB
+	ld		a,0xC0
+	ld		(intPCMB_LeftRight),a
+	call	PlayPCMB
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -736,8 +740,9 @@ command_PlayPCMBCenter:
 ; then ADPCM-B sample.
 
 command_PlayPCMBLeft:
-	ld		b,0x80
-	call	command_PlayPCMB
+	ld		a,0x80
+	ld		(intPCMB_LeftRight),a
+	call	PlayPCMB
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -746,31 +751,27 @@ command_PlayPCMBLeft:
 ; then ADPCM-B sample.
 
 command_PlayPCMBRight:
-	ld		b,0x40
-	call	command_PlayPCMB
+	ld		a,0x40
+	ld		(intPCMB_LeftRight),a
+	call	PlayPCMB
 	ret
 
 ;------------------------------------------------------------------------------;
-; command_PlayPCMBRight
+; PlayPCMBRight
 ; Play an ADPCM-B sample, takes panning from 'b'
 
-command_PlayPCMB:
-	di
+PlayPCMB:
 
 	; don't bother trying to play back ADPCM-B on Neo-Geo CD; it won't work.
 	ifnd TARGET_CD
 
-	; reset and enable
-	ld		de,0x1C80
-	rst 	writeDEportA
-	ld		de,0x1C00
-	rst 	writeDEportA
-	ld		de,0x1000
-	rst 	writeDEportA
+	di
+	call	pcmb_Stop
 
 	; --left/right ($11)--
 	ld		d,0x11
-	ld		e,b				; panning from 'b'
+	ld		a,(intPCMB_LeftRight)
+	ld		e,a				
 	rst 	writeDEportA
 
 	; --volume ($1B)--
@@ -810,29 +811,20 @@ command_PlayPCMB:
 	ld		e,a
 	rst 	writeDEportA
 
-	ld		b,0x80				; set start bit
-	call	setADPCMBLoop
-	endif
-
-	ret
-
-;------------------------------------------------------------------------------;
-; Sets looping register values for ADPCM-B sample.
-; takes start bit form 'b'
-
-setADPCMBLoop:
 	; --main control ($10)--
 	; %SxxLxxxR (S=start, L=loop, R=Reset)
 	; repeat/loop flag = loopB<<4
-	ld		a,(loopB)
+	ld		a,(intPCMB_Loop)
 	sla		a
 	sla		a
 	sla		a
 	sla		a
-	or		b
+	or		0x80
 	ld		d,0x10
 	ld		e,a
 	rst 	writeDEportA
+
+	endif
 
 	ret
 
@@ -842,9 +834,7 @@ setADPCMBLoop:
 
 command_LoopPCMB:
 	ld		a,1
-	ld		(loopB),a
-	ld		b,0
-	call	setADPCMBLoop
+	ld		(intPCMB_Loop),a
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -853,9 +843,7 @@ command_LoopPCMB:
 
 command_NoLoopPCMB:
 	xor		a
-	ld		(loopB),a
-	ld		b,0
-	call	setADPCMBLoop
+	ld		(intPCMB_Loop),a
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -931,7 +919,7 @@ command_ChangeRate:
 command_SSGrampInit:
 	call	ssg_Stop
 
-	ld		a,0
+	xor		a
 	ld		(SSG_FreqFine),a
 	ld		(SSG_FreqCoarse),a
 	ret

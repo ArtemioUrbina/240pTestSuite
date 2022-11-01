@@ -1540,6 +1540,10 @@ void at_sound_test()
 #endif
 	picture image;
 
+	// Set initial State
+	playSound(SOUNDCMD_RateB_0+adpcmb_sel);
+	playSound(SOUNDCMD_NoLoopB);
+
 	while (!done)
 	{
 		if (draw)
@@ -1692,6 +1696,7 @@ void at_sound_test()
 					playSound(SOUNDCMD_LoopB);
 				else
 					playSound(SOUNDCMD_NoLoopB);
+				playSound(SOUNDCMD_StopADPCMB);
 			}
 		}
 
@@ -1702,8 +1707,8 @@ void at_sound_test()
 			draw = 1;
 	}
 
-	if(loopB)
-		playSound(SOUNDCMD_StopADPCMB);
+	playSound(SOUNDCMD_StopADPCMA);
+	playSound(SOUNDCMD_StopADPCMB);
 }
 
 void executePulseTrain()
