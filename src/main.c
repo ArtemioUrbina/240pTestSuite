@@ -638,7 +638,7 @@ void draw_mvs_demo()
 	int toggle = 0, demo_frames = DEMO_LEN, demo_change = 0, freeplay = 0, redraw = 0;
 	int currdemo = 0, index = 40, palindex = 25;
 	picture background, foreground, titledsp;
-	scroller grid;
+	scroller grid, monoscope;
 	blinker blinkdata;
 
 	gfxClear();
@@ -672,10 +672,11 @@ void draw_mvs_demo()
 			switch(currdemo)
 			{
 				case 1:
-					pictureInit(&background, &monoscope, 1, 16, 0, 0,FLIP_NONE);
-					palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
+					scrollerInit(&monoscope, &monoscopes, 1, 16, getHorScroll(), PATTERN_SCROLL);
+					palJobPut(16, monoscopes.palInfo->count, monoscopes.palInfo->data);
 				break;
 				case 2:
+					scrollerSetPos(&monoscope, -320, -224);
 					if(vmode_snk)
 					{
 						pictureInit(&background, &colorbarssmpte75_304, 1, 16, 0, 0,FLIP_NONE);

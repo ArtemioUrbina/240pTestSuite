@@ -115,6 +115,7 @@ void playSoundnoWait(u8 command);
 #define	PATTERN_SCROLL	16
 
 int getHorScroll();
+int getHorScrollAspect();
 
 WORD getVideoline();
 void getScreenLimits(int* x, int* y);

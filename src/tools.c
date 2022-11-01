@@ -560,6 +560,25 @@ inline int getHorScroll()
 	return x;
 }
 
+inline int getHorScrollAspect()
+{
+	int x = NTSC_304;
+
+	if(isPAL) {
+		if (vmode_snk)
+			x = PAL_304;
+		else
+			x = PAL_320;
+	}
+	else {
+		if (vmode_snk)
+			x = NTSC_304;
+		else
+			x = NTSC_320;
+	}
+	return x;
+}
+
 void getScreenLimits(int* x, int* y)
 {
 	if(vmode_snk)

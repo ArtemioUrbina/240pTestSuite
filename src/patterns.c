@@ -719,19 +719,18 @@ void tp_grid()
 
 void tp_monoscope()
 {
-	int done = 0, draw = 1, pattern = 0, gray = 0, updatepalette = 1, changepattern = 1;
-	int bright[7] = { 31, 25, 20, 15, 10, 6, 2 }, color = 0;
-	picture monoscope_back;
+	int done = 0, draw = 1, pattern = 0, gray = 0, updatepalette = 0, changepattern = 0;
+	int bright[7] = { 31, 25, 20, 15, 10, 6, 2 }, color = _BLACK;
+	scroller monoscope;
 
-	color = _BLACK;
 	while (!done)
 	{
 		if (draw)
 		{
 			gfxClear();
 
-			pictureInit(&monoscope_back, &monoscope, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,monoscope.palInfo->count,monoscope.palInfo->data);
+			scrollerInit(&monoscope, &monoscopes, 1, 16, getHorScrollAspect(), PATTERN_SCROLL);
+			palJobPut(16, monoscopes.palInfo->count, monoscopes.palInfo->data);
 			
 			updatepalette = 1;
 			changepattern = 1;
@@ -744,18 +743,20 @@ void tp_monoscope()
 		// these are non buffered, execute after in hardware
 		if (updatepalette)
 		{
+			// black 0x8000
 			if (!gray)
 				color = _BLACK;
 			else
 				color = PackColor(7, 7, 7, 0);
 			VRAM_PAL(16, 3) = color;
-			VRAM_PAL(0, 2)  = color;	// SNK BIOS Border
+			VRAM_PAL(0, 3)  = color;	// SNK BIOS Border
 			backgroundColor(color);
 			updatepalette = 0;
 		}
 
 		if(changepattern)
 		{
+			// white  0x7fff
 			VRAM_PAL(16, 1) = PackColor(bright[pattern], bright[pattern], bright[pattern], 0);
 			changepattern = 0;
 		}
@@ -782,7 +783,7 @@ void tp_monoscope()
 		if (checkHelp(HELP_MONOSCOPE))
 			draw = 1;
 	}
-	VRAM_PAL(0, 2) = _BLACK;	// SNK BIOS Border
+	VRAM_PAL(0, 3) = _BLACK;	// SNK BIOS Border
 }
 
 void display_ramp_pal(ushort *palette, int x)

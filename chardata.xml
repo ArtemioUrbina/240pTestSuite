@@ -82,9 +82,9 @@
   <pict id="colorbleedcheck">
     <file>gfx\colorbleedcheck.png</file>
   </pict>
-  <pict id="monoscope">
-    <file>gfx\monoscope.png</file>
-  </pict>
+  <scrl id="monoscopes">
+    <file>gfx\monoscopes.png</file>
+  </scrl>
   <scrl id="grids">
 	<file>gfx\grids.png</file>
   </scrl>
