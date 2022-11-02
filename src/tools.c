@@ -99,10 +99,10 @@ void check_systype()
 	}
 	
 	// NTSC at zero, but PAL apparently only works with the newer LPSC2 in AES (I assume all PAL systems have it)
-	// we need to test what happens on an AES with LPSC-A0 & LSPC2-A2 with a PAL or modded system
+	// we need to test what happens on an AES with LPSC-A0. I checked LSPC2-A2 on a PAL modded system and used
+	// that to develop all current tests.
 	// LSPC-A0 by NEC is the VDC part of the first generation chipset, see LSPC2-A2 for more details. (AES & MVS)
 	// LSPC2-A2 by Fujitsu is the second generation Line SPrite Controller, it is only found in cartridge systems. (AES & MVS)
-	// We also need to know what we'll do with PAL systems... since they are 240p and have different PAR (TODO)
 	reg = volMEMWORD(REG_LSPCMODE);
 	if (reg & LPSC2_NTSC_PAL)
 	{
@@ -111,6 +111,11 @@ void check_systype()
 		else
 			isPAL = 1;
 	}
+
+#ifdef __cd__
+	if (volMEMWORD(REG_CDCONFIG) & CD_FRONT)
+		isCDFront = 1;
+#endif
 }
 
 void setRandomSeed(u16 seed)
@@ -451,7 +456,7 @@ void menu_footer()
 			fixPrint(23, 28, fontColorWhite, 3, "MVS>");
 	}
 #else
-	fixPrint(26, 28, fontColorWhite, 3, "NGCD");
+	fixPrintf(22, 28, fontColorWhite, 3, "NGCD %s", isCDFront ? "Front" : "Top");
 #endif
 
 	if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))

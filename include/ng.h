@@ -48,6 +48,9 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 extern BYTE first_grid;
 extern BYTE first_overscan;
 extern BYTE first_colorramp;
+#ifdef __cd__
+extern BYTE isCDFront;
+#endif
 
 #define SYSTEM_AES			0x00
 #define SYSTEM_MVS			0x80
@@ -171,42 +174,41 @@ extern BYTE first_colorramp;
 // Colors, 75% versions are adjusted considering 100 IRE, not 75% of the signal
 // This way the match the proper vectorscope and don't affect when measuring 
 // the hardware at its 107%
-#define WH_107	0x7fff
-#define WH_100	0xffff
-#define	_BLACK	0x8000
-#define	RED107	0x4f00
-#define	RED100	0xCF00
-#define	RED075	0xCB00
-#define GRN107	0x20f0
-#define GRN100	0xA0F0
-#define GRN075	0xA0B0
-#define BLU107	0x100f
-#define BLU100	0x900F
-#define BLU075	0x900B
-#define CYN107	0x30ff
-#define CYN100	0xB0FF
-#define CYN075	0xB0BB
-#define MAG107	0x5f0f
-#define MAG100	0xDF0F
-#define MAG075	0xDB0B
-#define YEL107	0x6ff0
-#define YEL100	0xEFF0
-#define YEL075	0xEBB0
+#define WH_107				0x7fff
+#define WH_100				0xffff
+#define	_BLACK				0x8000
+#define	RED107				0x4f00
+#define	RED100				0xCF00
+#define	RED075				0xCB00
+#define GRN107				0x20f0
+#define GRN100				0xA0F0
+#define GRN075				0xA0B0
+#define BLU107				0x100f
+#define BLU100				0x900F
+#define BLU075				0x900B
+#define CYN107				0x30ff
+#define CYN100				0xB0FF
+#define CYN075				0xB0BB
+#define MAG107				0x5f0f
+#define MAG100				0xDF0F
+#define MAG075				0xDB0B
+#define YEL107				0x6ff0
+#define YEL100				0xEFF0
+#define YEL075				0xEBB0
 
-#define IRE2_5	0xf000
-#define IRE4_5	0x8111
-#define IRE7_5	0xf111
-#define IRE_10	0x8222
-#define IRE_20	0x7333
-#define IRE_24	0x0444
-#define IRE_40	0x8777
-#define IRE_50	0x8888
-#define IRE_75	0x8ccc
-#define IRE_80	0x8ddd
+#define IRE2_5				0xf000
+#define IRE4_5				0x8111
+#define IRE7_5				0xf111
+#define IRE_10				0x8222
+#define IRE_20				0x7333
+#define IRE_24				0x0444
+#define IRE_40				0x8777
+#define IRE_50				0x8888
+#define IRE_75				0x8ccc
+#define IRE_80				0x8ddd
 
-// these are wrong
-#define NEG__I	0xB012
-#define POS__Q	0xD203
+#define NEG__I				0x8047
+#define POS__Q				0xD408
 
 // TEMP... sticking these here for now 
 #define FIX32_INT_BITS			22
@@ -224,5 +226,16 @@ extern BYTE first_colorramp;
 #define fix32Frac(value)		((value) & FIX32_FRAC_MASK)
 #define fix32Mul(val1, val2)	(((val1) >> (FIX32_FRAC_BITS / 2)) * ((val2) >> (FIX32_FRAC_BITS / 2)))
 #define fix32Div(val1, val2)	(((val1) << (FIX32_FRAC_BITS / 2)) / ((val2) >> (FIX32_FRAC_BITS / 2)))
+
+// CD
+#ifdef __cd__
+#define REG_CDCONFIG		0xFF011C
+#define CD_CONFIG_1			0x0100
+#define CD_CONFIG_2			0x0200
+#define CD_CONFIG_3			0x0400
+#define CD_CONFIG_4			0x0800
+#define CD_LID_STATUS		0x1000
+#define CD_FRONT			0x2000
+#endif
 
 #endif /* _NG_H_ */

@@ -2681,7 +2681,11 @@ void ht_displayregs()
 
 	while (!done)
 	{
+#ifndef __cd__
 		int y = 12;
+#else
+		int y = 10;
+#endif
 
 		if (redraw)
 		{
@@ -2704,6 +2708,10 @@ void ht_displayregs()
 		displayRegByte(4, y++, "BIOS_MVS_FLAG", BIOS_MVS_FLAG);
 		displayRegByte(4, y++, "REG_SYSTYPE", REG_SYSTYPE);
 		displayRegByte(4, y++, "REG_DIPSW", REG_DIPSW);
+#ifdef __cd__
+		displayRegWord(4, y++, "REG_CDCONFIG", REG_CDCONFIG);
+		y++;
+#endif
 
 		if (bkp_data.debug_dip1 & DP_DEBUG1)
 		{
