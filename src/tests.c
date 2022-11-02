@@ -1531,12 +1531,26 @@ void vt_backlitzone_test()
 	}
 }
 
+#ifndef __cd__
+#define SND_SEL_ADPCMA	0
+#define SND_SEL_ADPCMB	1
+
+#define SND_SEL_MIN		SND_SEL_ADPCMA
+#define SND_SEL_MAX		SND_SEL_ADPCMB
+#else
+#define SND_SEL_ADPCMA	0
+#define SND_SEL_CDDA	1
+
+#define SND_SEL_MIN		SND_SEL_ADPCMA
+#define SND_SEL_MAX		SND_SEL_CDDA
+#endif
+
 void at_sound_test()
 {
 	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2;
-	int option = 1, change = 0, changeoption = 0, loopB = 0;
+	int option = 1, change = 0, changeoption = 0;
 #ifndef __cd__
-	int adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125  };
+	int loopB = 0, adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125  };
 #endif
 	picture image;
 
@@ -1557,20 +1571,23 @@ void at_sound_test()
 		fixPrint(15, 8, fontColorGreen, 3, "Sound Test");
 
 		fixPrint(16, 11, fontColorGreen, 3, "ADPCM-A");
-		fixPrint(12, 12, sel == 0 && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(17, 12, sel == 0 && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
-		fixPrint(24, 12, sel == 0 && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
+		fixPrint(12, 12, sel == SND_SEL_ADPCMA && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(17, 12, sel == SND_SEL_ADPCMA && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
+		fixPrint(24, 12, sel == SND_SEL_ADPCMA && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
 
 		// ADPCM-B not present in Neo Geo CD
 #ifndef __cd__
 		fixPrint(16, 14, fontColorGreen, 3, "ADPCM-B");
-		fixPrint(10, 15, sel == 1 ? fontColorGreen : fontColorWhite, 3, "C:");
+		fixPrint(10, 15, sel == SND_SEL_ADPCMB ? fontColorGreen : fontColorWhite, 3, "C:");
 		fixPrintf(13, 15, fontColorWhite, 3, "%dhz", adpcmb_rates[adpcmb_sel]);
-		fixPrint(21, 15, sel == 1 ? fontColorGreen : fontColorWhite, 3, "D:");
+		fixPrint(21, 15, sel == SND_SEL_ADPCMB ? fontColorGreen : fontColorWhite, 3, "D:");
 		fixPrintf(24, 15, fontColorWhite, 3, "loop %s", loopB ? "on ": "off");
-		fixPrint(12, 16, sel == 1 && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(17, 16, sel == 1 && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
-		fixPrint(24, 16, sel == 1 && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
+		fixPrint(12, 16, sel == SND_SEL_ADPCMB && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
+		fixPrint(17, 16, sel == SND_SEL_ADPCMB && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
+		fixPrint(24, 16, sel == SND_SEL_ADPCMB && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
+#else
+		fixPrint(18, 14, fontColorGreen, 3, "CDDA");
+		fixPrint(18, 16, sel == SND_SEL_CDDA && option == 1 ? fontColorRed : fontColorWhite, 3, "Play");
 #endif
 
 		SCClose();
@@ -1590,7 +1607,6 @@ void at_sound_test()
 			changeoption = 1;
 		}
 
-#ifndef __cd__
 		if (PRESSED_UP)
 		{
 			sel --;
@@ -1602,14 +1618,13 @@ void at_sound_test()
 			sel++;
 			change = 1;
 		}
-#endif
 
 		if(change)
 		{
-			if(sel < 0)
-				sel = 1;
-			if (sel > 1)
-				sel = 0;
+			if(sel < SND_SEL_MIN)
+				sel = SND_SEL_MAX;
+			if (sel > SND_SEL_MAX)
+				sel = SND_SEL_MIN;
 			switch(sel)
 			{
 			case 0:
@@ -1624,26 +1639,32 @@ void at_sound_test()
 
 		if(changeoption)
 		{
-			if(sel == 0)
+			if(sel == SND_SEL_ADPCMA)
 			{
 				if(option < 0)
 					option = 2;
 				if(option > 2)
 					option = 0;
 			}
-			if(sel == 1)
+
+#ifndef __cd__
+			if(sel == SND_SEL_ADPCMB)
 			{
 				if(option < 0)
 					option = 3;
 				if(option > 3)
 					option = 0;
 			}
+#else
+			if(sel == SND_SEL_CDDA)
+				option = 1;
+#endif
 			changeoption = 0;
 		}
 
 		if (BTTN_MAIN)
 		{
-			if(sel == 0)
+			if(sel == SND_SEL_ADPCMA)
 			{
 				switch(option)
 				{
@@ -1659,7 +1680,8 @@ void at_sound_test()
 				}
 			}
 
-			if (sel == 1)
+#ifndef __cd__
+			if (sel == SND_SEL_ADPCMB)
 			{
 				switch(option)
 				{
@@ -1672,24 +1694,30 @@ void at_sound_test()
 				case 2:
 					playSound(SOUNDCMD_ADPCMB_Right);
 					break;
-				}
 			}
+#else
+			if (sel == SND_SEL_CDDA)
+				playCDDA(CDDA_SNDTEST);
+#endif
 		}
 
 		if (BTTN_OPTION_1)
 		{
-			if(sel == 1)
+#ifndef __cd__
+			if(sel == SND_SEL_ADPCMB)
 			{
 				adpcmb_sel ++;
 				if(adpcmb_sel > 7)
 					adpcmb_sel = 0;
 				playSound(SOUNDCMD_RateB_0+adpcmb_sel);
 			}
+#endif
 		}
 
 		if (BTTN_OPTION_2)
 		{
-			if(sel == 1)
+#ifndef __cd__
+			if(sel == SND_SEL_ADPCMB)
 			{
 				loopB = !loopB;
 				if(loopB)
@@ -1698,6 +1726,7 @@ void at_sound_test()
 					playSound(SOUNDCMD_NoLoopB);
 				playSound(SOUNDCMD_StopADPCMB);
 			}
+#endif
 		}
 
 		if (BTTN_EXIT)
@@ -1709,6 +1738,9 @@ void at_sound_test()
 
 	playSound(SOUNDCMD_StopADPCMA);
 	playSound(SOUNDCMD_StopADPCMB);
+#ifdef __cd__
+	pauseCDDA();
+#endif
 }
 
 void executePulseTrain()

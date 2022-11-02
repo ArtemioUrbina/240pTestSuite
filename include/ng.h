@@ -236,6 +236,16 @@ extern BYTE isCDFront;
 #define CD_CONFIG_4			0x0800
 #define CD_LID_STATUS		0x1000
 #define CD_FRONT			0x2000
+
+#define RETURN_TO_CDPLAYER	__asm__ ("jmp 0xC0055E \n")
+
+#define BIOSF_CDDACMD		0xC0056A
+
+#define BIOS_CDDA_PLAY_LOOP	0x00
+#define BIOS_CDDA_PLAY_NLP	0x01
+#define BIOS_CDDA_PAUSE		0x02
+#define BIOS_CDDA_UNPAUSE	0x03
+
 #endif
 
 #endif /* _NG_H_ */

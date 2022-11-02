@@ -73,6 +73,11 @@ void playSound(u8 command);
 void playSoundatVideoStart(u8 command);
 void playSoundatLine(WORD line, u8 command);
 void playSoundnoWait(u8 command);
+#ifdef __cd__
+void playCDDA(BYTE track);
+void pauseCDDA();
+void unPauseCDDA();
+#endif
 
 // This is unbuffered, so if a palJobPut is called in the same frame, this will be overwritten
 #define VRAM_PAL(palette, color) volMEMWORD(0x400000+palette*32+color*2)

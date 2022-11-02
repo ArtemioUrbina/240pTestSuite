@@ -522,6 +522,10 @@ void _240p_mvs_player_start(void)
 
 void game_over()
 {
+#ifdef __cd__
+	RETURN_TO_CDPLAYER;
+#endif
+
 	// Set Game Over state
 	volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_GAMEOVER;
 }

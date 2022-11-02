@@ -51,4 +51,9 @@
 #define SOUNDCMD_RateB_6		0x86
 #define SOUNDCMD_RateB_7		0x87
 
+#ifdef __cd__
+#define CDDA_MDFOURIER			0x02
+#define CDDA_SNDTEST			0x03
+#endif
+
 #endif /* _SOUND_H_ */

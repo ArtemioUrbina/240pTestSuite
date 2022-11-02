@@ -138,6 +138,11 @@ int bcdToDec(int bcd)
 	return bcd-(bcd/16)*6;
 }
 
+int decToBCD(int dec)
+{
+	return((dec / 10) << 4) | (dec % 10);
+}
+
 inline void readController()
 {
 	p1  = volMEMBYTE(P1_CURRENT);
@@ -775,3 +780,40 @@ void playSoundnoWait(u8 command)
 {
 	volMEMBYTE(REG_SOUND) = command;
 }
+
+#ifdef __cd__
+
+void sendCDDAcommand(BYTE command, BYTE track)
+{
+	WORD word_out = 0;
+
+	// we don't halt (bit 10 for sync)
+	track = decToBCD(track);
+	word_out = (command << 8) | track;
+
+	// Send command via register d0 to BIOSF_CDDACMD
+	asm (
+		".loop_cdda_%=_chk:\n\t"
+			"move.b  %%d0, %0\n\t"
+			"tst.b	0x10F6D9\n\t"
+			"beq.s	.loop_cdda_%=_chk\n\t"
+			"jsr	0xC0056A\n\t"				// BIOSF_CDDACMD
+		: /* No outputs. */
+		: "r" (word_out));
+}
+
+void playCDDA(BYTE track)
+{
+	sendCDDAcommand(BIOS_CDDA_PLAY_NLP, track);
+}
+
+void pauseCDDA()
+{
+	sendCDDAcommand(BIOS_CDDA_PAUSE, 0);
+}
+
+void unPauseCDDA()
+{
+	sendCDDAcommand(BIOS_CDDA_UNPAUSE, 0);
+}
+#endif
