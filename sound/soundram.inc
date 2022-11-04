@@ -5,8 +5,7 @@
 ;==============================================================================;
 ; <Sound Driver Section
 ;==============================================================================;
-dummyByte			ds 1		; dummy byte used for RAM clearing, etc.
-;------------------------------------------------------------------------------;
+
 ; [Commands]
 curCommand			ds 1		; Current command to handle
 
@@ -60,4 +59,6 @@ intPCMB_SampRateL	ds 1		; Delta-N Sampling Rate (L)
 intPCMB_SampRateH	ds 1		; Delta-N Sampling Rate (H)
 intPCMB_Volume		ds 1		; Channel volume
 intPCMB_Loop		ds 1		; loop B
+
+usedRAM:
 

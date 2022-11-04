@@ -77,14 +77,14 @@ void DrawHelp(int option)
 		SCClose();
 		waitVBlank();
 
-		fixPrint(5, 26, fontColorWhite, 3, "Press START or B to exit help");
+		fixPrintC(26, fontColorWhite, 3, "Press START or B to exit help");
 		switch (option)
 		{
 			case HELP_GENERAL:
 				switch (page)
 				{
 					case 1:
-						fixPrint(15, 6, fontColorGreen, 3, "HELP (1/2)");
+						fixPrintC(6, fontColorGreen, 3, "HELP (1/2)");
 
 						fixPrint(4, 8, fontColorWhite, 3, "The 240p Test Suite was designed");
 						fixPrint(4, 9, fontColorWhite, 3, "with two goals in mind:");
@@ -110,7 +110,7 @@ void DrawHelp(int option)
 						palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 						dirty = 1;
 
-						fixPrint(15, 6, fontColorGreen, 3, "HELP (2/2)");
+						fixPrintC(6, fontColorGreen, 3, "HELP (2/2)");
 
 						fixPrint(4, 8, fontColorWhite, 3, "The Neo Geo can output 224");
 						fixPrint(4, 9, fontColorWhite, 3, "active video lines. In PAL");
@@ -136,7 +136,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 					case 1:
-						fixPrint(15, 6, fontColorGreen, 3, "PLUGE (1/3)");
+						fixPrintC(6, fontColorGreen, 3, "PLUGE (1/3)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "NTSC levels require black to be");
 						fixPrint(4, 10, fontColorWhite, 3, "at 7.5 IRE for video. This HW");
@@ -157,7 +157,7 @@ void DrawHelp(int option)
 
 					case 2:
 						// TODO set real PLUGE values form the HW here
-						fixPrint(15, 6, fontColorGreen, 3, "PLUGE (2/3)");
+						fixPrintC(6, fontColorGreen, 3, "PLUGE (2/3)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "The PLUGE pattern is used to");
 						fixPrint(4, 10, fontColorWhite, 3, "help adjust the black level to");
@@ -177,7 +177,7 @@ void DrawHelp(int option)
 					break;
 
 					case 3:
-						fixPrint(15, 6, fontColorGreen, 3, "PLUGE (3/3)");
+						fixPrintC(6, fontColorGreen, 3, "PLUGE (3/3)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "Within it A button changes");
 						fixPrint(4, 10, fontColorWhite, 3, "palettes between the original,");
@@ -189,7 +189,7 @@ void DrawHelp(int option)
 
 			case HELP_COLORS:
 				// TODO Add extra dark/ligh and variations docs here
-				fixPrint(15, 6, fontColorGreen, 3, "COLORBARS");
+				fixPrintC(6, fontColorGreen, 3, "COLORBARS");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This pattern allows you to");
 				fixPrint(4, 10, fontColorWhite, 3, "calibrate each color: Red, Green");
@@ -208,7 +208,7 @@ void DrawHelp(int option)
 
 			case HELP_GRID:
 				// TODO Mention 302 and 320 info here
-				fixPrint(18, 6, fontColorGreen, 3, "GRID");
+				fixPrintC(6, fontColorGreen, 3, "GRID");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This grid uses the full 320x224");
 				fixPrint(4, 10, fontColorWhite, 3, "resolution.");
@@ -227,7 +227,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 					case 1:
-						fixPrint(13, 6, fontColorGreen, 3, "MONOSCOPE (1/3)");
+						fixPrintC(6, fontColorGreen, 3, "MONOSCOPE (1/3)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "This pattern contains elements");
 						fixPrint(4, 10, fontColorWhite, 3, "to calibrate multiple aspects");
@@ -247,7 +247,7 @@ void DrawHelp(int option)
 					break;
 
 					case 2:
-						fixPrint(13, 6, fontColorGreen, 3, "MONOSCOPE (2/3)");
+						fixPrintC(6, fontColorGreen, 3, "MONOSCOPE (2/3)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "Convergence: Use the center");
 						fixPrint(4, 10, fontColorWhite, 3, "crosshair to check static");
@@ -265,7 +265,7 @@ void DrawHelp(int option)
 					break;
 
 					case 3:
-						fixPrint(13, 6, fontColorGreen, 3, "MONOSCOPE (3/3)");
+						fixPrintC(6, fontColorGreen, 3, "MONOSCOPE (3/3)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "Size and aspect ratio: If");
 						fixPrint(4, 10, fontColorWhite, 3, "vertical and horizontal size are");
@@ -286,7 +286,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_BLEED:
-				fixPrint(14, 6, fontColorGreen, 3, "COLOR BLEED");
+				fixPrintC(6, fontColorGreen, 3, "COLOR BLEED");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This pattern helps diagnose");
 				fixPrint(4, 10, fontColorWhite, 3, "color bleed caused by");
@@ -299,7 +299,7 @@ void DrawHelp(int option)
 
 			case HELP_IRE:
 				// TODO Set final IRE values here
-				fixPrint(16, 6, fontColorGreen, 3, "100 IRE");
+				fixPrintC(6, fontColorGreen, 3, "100 IRE");
 
 				fixPrint(4, 9, fontColorWhite, 3, "You can vary IRE intensity");
 				fixPrint(4, 10, fontColorWhite, 3, "with 'A' and 'B'. Values are:");
@@ -307,7 +307,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_601CB:
-				fixPrint(10, 6, fontColorGreen, 3, "REFERENCED COLORBARS");
+				fixPrintC(6, fontColorGreen, 3, "REFERENCED COLORBARS");
 
 				fixPrint(4, 9, fontColorWhite, 3, "You can use color filters or the");
 				fixPrint(4, 10, fontColorWhite, 3, "blue only option in your display");
@@ -315,7 +315,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_SHARPNESS:
-				fixPrint(15, 6, fontColorGreen, 3, "SHARPNESS");
+				fixPrintC(6, fontColorGreen, 3, "SHARPNESS");
 
 				fixPrint(4, 9, fontColorWhite, 3, "You should set the sharpness of");
 				fixPrint(4, 10, fontColorWhite, 3, "your CRT to a value that shows");
@@ -327,7 +327,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_OVERSCAN:
-				fixPrint(15, 6, fontColorGreen, 3, "OVERSCAN");
+				fixPrintC(6, fontColorGreen, 3, "OVERSCAN");
 
 				fixPrint(4, 9, fontColorWhite, 3, "With this pattern you can");
 				fixPrint(4, 10, fontColorWhite, 3, "interactively find out the");
@@ -345,7 +345,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_SMPTE:
-				fixPrint(12, 6, fontColorGreen, 3, "SMPTE COLOR BARS");
+				fixPrintC(6, fontColorGreen, 3, "SMPTE COLOR BARS");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This pattern can be used to");
 				fixPrint(4, 10, fontColorWhite, 3, "approximate for NTSC levels");
@@ -364,7 +364,7 @@ void DrawHelp(int option)
 
 			case HELP_GRAY:
 				// TODO: add dark/light description here
-				fixPrint(15, 6, fontColorGreen, 3, "GRAY RAMP");
+				fixPrintC(6, fontColorGreen, 3, "GRAY RAMP");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This gray ramp pattern can be");
 				fixPrint(4, 10, fontColorWhite, 3, "used to check color balance.");
@@ -377,7 +377,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 					case 1:
-						fixPrint(11, 6, fontColorGreen, 3, "WHITE SCREEN (1/2)");
+						fixPrintC(6, fontColorGreen, 3, "WHITE SCREEN (1/2)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "This pattern can be changed");
 						fixPrint(4, 10, fontColorWhite, 3, "between white, black, red,");
@@ -395,7 +395,7 @@ void DrawHelp(int option)
 					break;
 
 					case 2:
-						fixPrint(11, 6, fontColorGreen, 3, "WHITE SCREEN (2/2)");
+						fixPrintC(6, fontColorGreen, 3, "WHITE SCREEN (2/2)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "While in edit mode, left and");
 						fixPrint(4, 10, fontColorWhite, 3, "right change between colors,");
@@ -409,7 +409,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_CONVERGENCE:
-				fixPrint(12, 6, fontColorGreen, 3, "CONVERGENCE TESTS");
+				fixPrintC(6, fontColorGreen, 3, "CONVERGENCE TESTS");
 
 				fixPrint(4, 9, fontColorWhite, 3, "These are used to adjust color");
 				fixPrint(4, 10, fontColorWhite, 3, "convergence in CRT displays");
@@ -424,7 +424,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_CHECK:
-				fixPrint(14, 6, fontColorGreen, 3, "CHECKERBOARD");
+				fixPrintC(6, fontColorGreen, 3, "CHECKERBOARD");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This pattern shows all the");
 				fixPrint(4, 10, fontColorWhite, 3, "visible pixels in an");
@@ -442,7 +442,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 					case 1:
-						fixPrint(10, 6, fontColorGreen, 3, "HOR/VER STRIPES (1/2)");
+						fixPrintC(6, fontColorGreen, 3, "HOR/VER STRIPES (1/2)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "You should see a pattern of");
 						fixPrint(4, 10, fontColorWhite, 3, "lines, each one pixel in height");
@@ -461,7 +461,7 @@ void DrawHelp(int option)
 					break;
 
 					case 2:
-						fixPrint(10, 6, fontColorGreen, 3, "HOR/VER STRIPES (2/2)");
+						fixPrintC(6, fontColorGreen, 3, "HOR/VER STRIPES (2/2)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "You can also display vertical");
 						fixPrint(4, 10, fontColorWhite, 3, "bars by pressing 'LEFT'. That");
@@ -475,7 +475,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_SHADOW:
-				fixPrint(12, 6, fontColorGreen, 3, "DROP SHADOW TEST");
+				fixPrintC(6, fontColorGreen, 3, "DROP SHADOW TEST");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This is a crucial test for 240p");
 				fixPrint(4, 10, fontColorWhite, 3, "It displays a simple sprite");
@@ -492,7 +492,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_STRIPED:
-				fixPrint(11, 6, fontColorGreen, 3, "STRIPED SPRITE TEST");
+				fixPrintC(6, fontColorGreen, 3, "STRIPED SPRITE TEST");
 
 				fixPrint(4, 9, fontColorWhite, 3, "There are deinterlacers out");
 				fixPrint(4, 10, fontColorWhite, 3, "there that can display the drop");
@@ -510,7 +510,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 					case 1:
-						fixPrint(10, 6, fontColorGreen, 3, "TIMING & REFLEX (1/2)");
+						fixPrintC(6, fontColorGreen, 3, "TIMING & REFLEX (1/2)");
 
 						fixPrint(4, 8, fontColorWhite, 3, "The main intention is to show a");
 						fixPrint(4, 9, fontColorWhite, 3, "changing pattern on the screen,");
@@ -531,7 +531,7 @@ void DrawHelp(int option)
 					break;
 
 					case 2:
-						fixPrint(10, 6, fontColorGreen, 3, "TIMING & REFLEX (2/2)");
+						fixPrintC(6, fontColorGreen, 3, "TIMING & REFLEX (2/2)");
 
 						fixPrint(4, 8, fontColorWhite, 3, "Button 'B' can be used to");
 						fixPrint(4, 9, fontColorWhite, 3, "change the direction of the");
@@ -556,7 +556,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 					case 1:
-						fixPrint(11, 6, fontColorGreen, 3, "SCROLL TEST (1/2)");
+						fixPrintC(6, fontColorGreen, 3, "SCROLL TEST (1/2)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "This test shows either an");
 						fixPrint(4, 10, fontColorWhite, 3, "horizontal 320x224 back from");
@@ -576,7 +576,7 @@ void DrawHelp(int option)
 					break;
 
 					case 2:
-						fixPrint(11, 6, fontColorGreen, 3, "SCROLL TEST (2/2)");
+						fixPrintC(6, fontColorGreen, 3, "SCROLL TEST (2/2)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "This can be used to notice any");
 						fixPrint(4, 10, fontColorWhite, 3, "drops in framerate, or pixel");
@@ -590,7 +590,7 @@ void DrawHelp(int option)
 			break;
 
 				case HELP_VSCROLL:
-					fixPrint(10, 6, fontColorGreen, 3, "GRID SCROLL TEST");
+					fixPrintC(6, fontColorGreen, 3, "GRID SCROLL TEST");
 
 					fixPrint(4, 9, fontColorWhite, 3, "A grid is scrolled vertically or");
 					fixPrint(4, 10, fontColorWhite, 3, "horizontally, which can be used");
@@ -608,7 +608,7 @@ void DrawHelp(int option)
 				break;
 
 				case HELP_SOUND:
-					fixPrint(12, 6, fontColorGreen, 3, "SOUND TEST");
+					fixPrintC(6, fontColorGreen, 3, "SOUND TEST");
 
 					fixPrint(4, 9, fontColorWhite, 3, "You can test the sound from the");
 					fixPrint(4, 10, fontColorWhite, 3, "4X 2-channel PWM and");
@@ -627,7 +627,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 					case 1:
-						fixPrint(14, 6, fontColorGreen, 3, "BACKLIT TEST");
+						fixPrintC(6, fontColorGreen, 3, "BACKLIT TEST");
 
 						fixPrint(4, 9, fontColorWhite, 3, "This test allows you to check");
 						fixPrint(4, 10, fontColorWhite, 3, "how the display's backlit works");
@@ -650,7 +650,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 					case 1:
-						fixPrint(13, 6, fontColorGreen, 3, "LAG TEST (1/2)");
+						fixPrintC(6, fontColorGreen, 3, "LAG TEST (1/2)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "This test is designed to be used");
 						fixPrint(4, 10, fontColorWhite, 3, "with two displays conected at");
@@ -671,7 +671,7 @@ void DrawHelp(int option)
 					break;
 
 					case 2:
-						fixPrint(13, 6, fontColorGreen, 3, "LAG TEST (2/2)");
+						fixPrintC(6, fontColorGreen, 3, "LAG TEST (2/2)");
 
 						fixPrint(4, 9, fontColorWhite, 3, "the numbers are blurry.");
 
@@ -721,7 +721,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_AUDIOSYNC:
-				fixPrint(11, 6, fontColorGreen, 3, "AUDIO SYNC TEST");
+				fixPrintC(6, fontColorGreen, 3, "AUDIO SYNC TEST");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This test flashes the whole");
 				fixPrint(4, 10, fontColorWhite, 3, "screen white for 2 frames,");
@@ -736,7 +736,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_CONTRAST:
-				fixPrint(12, 6, fontColorGreen, 3, "PLUGE CONTRAST");
+				fixPrintC(6, fontColorGreen, 3, "PLUGE CONTRAST");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This sub test fills the screen");
 				fixPrint(4, 10, fontColorWhite, 3, "with a pattern. By default it");
@@ -749,7 +749,7 @@ void DrawHelp(int option)
 			break;
 
 			case HELP_MEMVIEW:
-				fixPrint(13, 6, fontColorGreen, 3, "MEMORY VIEWER");
+				fixPrintC(6, fontColorGreen, 3, "MEMORY VIEWER");
 
 				fixPrint(4, 9, fontColorWhite, 3, "This shows selected regions of");
 				fixPrint(4, 10, fontColorWhite, 3, "the main CPU memory map.");

@@ -245,6 +245,7 @@ extern BYTE isCDFront;
 #define BIOS_CDDA_PLAY_NLP	0x01
 #define BIOS_CDDA_PAUSE		0x02
 #define BIOS_CDDA_UNPAUSE	0x03
+#define BIOS_CDDA_STOP		0x06
 
 #endif
 

@@ -44,6 +44,7 @@ checkLoop:
 ; In this driver, the NMI gets the command from the 68K and interprets it.
 
 NMI:
+	di						; NMI di
 	; save registers
 	push	af
 	push	bc
@@ -53,8 +54,11 @@ NMI:
 	push	iy
 
 	in		a,(0)			; Acknowledge NMI, get command from 68K via Port 0
+	ld		b,a				; make a copy
+	ld		a,0xff			; set processing code
+	out		(0xC),a			; Write to port 0 (Processing sound code)
+	ld		a,b				; set a for comparisons
 	ld		(curCommand),a	; update curCommand
-	ld		b,a				; load value into b for comparisons
 
 	; "Commands $01 and $03 are always expected to be implemented as they
 	; are used by the BIOSes for initialization purposes." - NeoGeoDev Wiki
@@ -66,11 +70,11 @@ NMI:
 	jp		Z,endNMI		; exit if Command 0
 
 	call	HandleCommand
-
+	
 	ld		a,(curCommand)
 	set		7,a				; set bit 7 for reply, this is a catch all for response
 	out		(0xC),a			; Reply to 68K with but 7 set bit.
-	xor		a				; clear a for now.
+	xor		a				; clear a for response.
 	out		(0),a			; Write to port 0 (Clear sound code)
 
 endNMI:
@@ -81,6 +85,7 @@ endNMI:
 	pop		de
 	pop		bc
 	pop		af
+	ei						; end NMI di
 	retn
 
 ;==============================================================================;
@@ -176,10 +181,9 @@ IRQ:
 	pop		bc
 	pop		af
 
-	ei
-
+	ei			; was set in IRQ handler
 	; return
-	ret
+	reti		; could use ret
 
 ;==============================================================================;
 ; EntryPoint
@@ -262,7 +266,7 @@ EntryPoint:
 	; Enable NMIs so we can start receiving commands
 	ld		a,1
 	out		(8),a			; Write to Port 8 (Enable NMI)
-	ei
+	ei						; was set at Startup
 
 ;------------------------------------------------------------------------------;
 ; MainLoop
@@ -306,7 +310,6 @@ jmp_writeDEportB:
 ; Performs setup work for Command $01 (Slot Change).
 
 cmdSwitchSlot:
-	di
 	xor		a
 	out		(0xC),a			; write 0 to port 0xC (Respond to 68K)
 	out		(0),a			; write to port 0 (Clear sound code)
@@ -322,7 +325,6 @@ cmdSwitchSlot:
 ; Performs setup work for Command $03 (Soft Reset).
 
 cmdSoftReset:
-	di
 	xor		a
 	out		(0xC),a			; write 0 to port 0xC (Respond to 68K)
 	out		(0),a			; write to port 0 (Clear sound code)
@@ -353,7 +355,6 @@ SetDefaultBanks:
 ; - translated from YM2610 Application Manual, Section 9
 
 fm_Stop:
-	di
 	push	af
 	ld		a,0x28			; Slot and Key On/Off
 	out		(4),a			; write to port 4 (address 1)
@@ -375,6 +376,7 @@ fm_Stop:
 	out		(5),a			; write to port 5 (data 1)
 	rst		waitYamaha		; Write delay 2 (83 cycles)
 	pop		af
+
 	ret
 
 ;==============================================================================;
@@ -382,7 +384,6 @@ fm_Stop:
 ; Silences and stops all SSG channels.
 
 ssg_Stop:
-	di
 	ld		de,0x0800		; SSG Channel A Volume/Mode
 	rst 	writeDEportA	; write to ports 4 and 5
 	;-------------------------------------------------;
@@ -395,6 +396,7 @@ ssg_Stop:
 	; Disable all SSG channels
 	ld		de,0x073F		; Disable all SSG channels (Tone and Noise)
 	rst 	writeDEportA	; write to ports 4 and 5
+
 	ret
 
 ;==============================================================================;
@@ -402,10 +404,8 @@ ssg_Stop:
 ; Stops all ADPCM-A channels.
 
 pcma_Stop:
-	di
-	ld		de,0x009F			; $009F		Dump all ADPCM-A channels (stop sound)
+	ld		de,0x00BF			; $00BF		Dump all ADPCM-A channels (stop sound)
 	rst 	writeDEportB
-
 	ret
 
 ;==============================================================================;
@@ -413,7 +413,6 @@ pcma_Stop:
 ; Stops the ADPCM-B channel.
 
 pcmb_Stop:
-	di
 	ld		de,0x1001			; $1001		Force stop synthesis
 	rst 	writeDEportA
 
@@ -493,6 +492,22 @@ HandleCommand:
 	cp		SOUNDCMD_NoLoopB
 	jp		Z,command_NoLoopPCMB
 
+	; RAM Test this is special for return value purposes
+	cp		RAMTESTCMD
+	jp		nz,.returnfromHanlder
+
+	call	command_RAMTest
+	jr		nc,.returnfromHanlder	; if no error, return normally
+
+	; if a RAM error was found...
+	pop		hl						; remove return from stack, yeah I know...
+	ld		a,(curCommand)
+	out		(0xC),a					; Reply to 68K with command as it was sent, this indicates an error
+	xor		a						; clear a for now.
+	out		(0),a					; Write to port 0 (Clear sound code)
+	jp		endNMI					; finish NMI
+
+.returnfromHanlder:
 	; if it's not one of the above, then do nothing.
 	ret
 
@@ -504,7 +519,6 @@ HandleCommand:
 ; Handles a slot switch.
 
 executeSwitchSlot:
-	di
 	xor		a
 	out		(0xC),a			; Write 0 to port 0xC (Reply to 68K)
 	out		(0),a			; Reset sound code
@@ -562,7 +576,6 @@ executeSwitchSlot:
 ; Handles a soft reset.
 
 executeSoftReset:
-	di
 	ld		a,0
 	out		(0xC),a			; Write to port 0xC (Reply to 68K)
 	out		(0),a			; Reset sound code
@@ -625,7 +638,6 @@ command_PlayCenterA:
 ; L/R balance in 'b'
 
 PlayPCMA:
-	di
     ; load sample using 'a'
 	call	loadSample			; load sample addres from a to ix from table
 
@@ -765,7 +777,6 @@ PlayPCMB:
 	; don't bother trying to play back ADPCM-B on Neo-Geo CD; it won't work.
 	ifnd TARGET_CD
 
-	di
 	call	pcmb_Stop
 
 	; --left/right ($11)--
@@ -983,6 +994,102 @@ command_SSGpulseStop:
 	rst 	writeDEportA
 
 	ret
+
+
+;==============================================================================;
+;==============================================================================;
+;command_RAMTest
+;==============================================================================;
+;==============================================================================;
+
+; RAM is at $F800-$FFFF
+; but we need the stack with the current code
+; so we test from the end of our RAM variables to the SP
+; the rest of the RAm was tested by use, we wouldn't be
+; running this code without it working...
+; I know...
+
+command_RAMTest:
+    ; Fill with 0 and test
+    xor     a
+    call    .fillcmp
+    ret     c           ; exit if error
+
+    ; fill with ff and test
+    ld      a,0xff
+    call    .fillcmp
+	ret     c           ; exit if error
+
+    ; fill with aa and test
+    ld      a,0xaa
+    call    .fillcmp
+    ret     c           ; exit if error
+
+    ; fill with 55 and test
+    ld      a,0x55
+    call    .fillcmp
+    ret     c           ; exit if error
+
+	; walking bit test
+.walking:
+	ld		hl,usedRAM	; store base RAM in hl
+	ld		bc,0x07CA	; store compare size
+
+.wlklp1:
+    ld      a,0x80      ; 10000000
+
+.wlklp2:
+    ld      (hl),a      ; store in RAM
+    cp      (hl)        ; read it back
+    scf                 ; set carry in case of error
+    ret     nz          ; return if error
+    rrca                ; rotate one bit to the right
+    cp      0x80        
+    jr      nz,.wlklp2  ; compare to initial pattern for a loop
+    ld      (hl),0      ; clear
+    inc     hl
+    dec     bc          ; decrement and test 16 bit counter
+    ld      a,b
+    or      c
+    jr      nz,.wlklp1  ; continue until done
+    ret                 ; no errors ("or c" clears carry)
+
+    ; Fill memory and test
+    ; a  = test value
+    ; hl = base address
+    ; bc = size of area in bytes
+    ; if no errors carry is 0
+    ; else
+    ;   carry is 1
+    ;   hl = Address of error
+    ;   we will return just success or fail to the Neo Geo 68k
+.fillcmp:
+	ld		(usedRAM),a		; set 0xF81D = value
+	ld		hl,usedRAM		; 00 value is at 0xF81D
+	ld		de,usedRAM
+	inc		de
+
+	ld		bc,0x07c9		; stack pointer is at FFE8, use FFE6
+	ldir					; Fill out memory
+
+    ; compare a filled memory block with value
+.compare:
+	ld		hl,usedRAM	; store base RAM in hl
+	ld		bc,0x07C9	; store compare size
+
+.cmploop:
+    cpi
+    jr      nz,.cmper   ; jump if not equal
+    jp      pe,.cmploop ; continue
+
+    ; no errors, clear carry
+    or      a       ; clear carry, no errors
+    ret				; return from .fillcmp
+
+    ; error, set carry
+.cmper:
+    scf             ; set carry, error
+    ret				; report with error
 
 ;==============================================================================;
 ; samples

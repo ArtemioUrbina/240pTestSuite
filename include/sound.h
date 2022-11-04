@@ -51,9 +51,14 @@
 #define SOUNDCMD_RateB_6		0x86
 #define SOUNDCMD_RateB_7		0x87
 
+#define	RAMTESTCMD				0x10
+
 #ifdef __cd__
 #define CDDA_MDFOURIER			0x02
 #define CDDA_SNDTEST			0x03
 #endif
+
+#define Z80COMMAND_OK(cmd)		(cmd|0x80)
+#define Z80COMMAND_FAIL(cmd)		(cmd)
 
 #endif /* _SOUND_H_ */

@@ -27,3 +27,5 @@ SOUNDCMD_RateB_5		= $85
 SOUNDCMD_RateB_6		= $86
 SOUNDCMD_RateB_7		= $87
 
+RAMTESTCMD				= $10
+

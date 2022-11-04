@@ -112,8 +112,7 @@ General:
 
 Patterns:
 - Fix IRE pattern to display 10 IRE intervals
-- Check I/Q values in SMPTE bars
-- Create appropiate monoscope patterns for the Neo Geo PAR (Keith has been notified)
+- Confirm monoscope patterns for the Neo Geo PAR (Keith has been notified)
 - See how well HCFR patterns translate to Neo Geo
     - In such case split menus as Genesis version does (maybe do this anyway to remove clutter)
 
@@ -133,7 +132,6 @@ Audio tests_
 
 Hardware Test:
    - RAM check (?) maybe in ASM
-   - Z80 RAM test
 
 ## Resources
 [Neo Geo Development Wiki](https://wiki.neogeodev.org/index.php?title=Main_Page) - Neo Geo Bible<br>

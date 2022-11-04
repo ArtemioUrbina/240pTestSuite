@@ -65,7 +65,7 @@ void check_systype()
 	usePAL256 = 1;
 	allowIRE107 = 1;
 
-	if (MEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
+	if (volMEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
 	{
 		isMVS = 1;
 		reg = volMEMBYTE(REG_SYSTYPE);
@@ -191,7 +191,6 @@ inline void gfxClear()
 	clearSprites(1, MAX_SPRITES);
 	suiteClearFixLayer();
 }
-
 
 void menu_options()
 {
@@ -461,18 +460,18 @@ void menu_footer()
 			fixPrint(23, 28, fontColorWhite, 3, "MVS>");
 	}
 #else
-	fixPrintf(22, 28, fontColorWhite, 3, "NGCD %s", isCDFront ? "Front" : "Top");
+	fixPrintf(isCDFront ? 21 : 22, 28, fontColorWhite, 3, "NGCD %s", isCDFront ? "Front" : "Top");
 #endif
 
-	if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
+	if ((volMEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
 	{
 		fixPrint(32, 28, fontColorWhite, 3, "Japan");
 	}
-	else if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_USA))
+	else if ((volMEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_USA))
 	{
 		fixPrint(34, 28, fontColorWhite, 3, "USA");
 	}
-	else if ((MEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_EUROPE))
+	else if ((volMEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_EUROPE))
 	{
 		fixPrint(31, 28, fontColorWhite, 3, "Europe");
 	}
@@ -703,6 +702,15 @@ BYTE getHardDipValue(BYTE harddip)
 	return(!(volMEMBYTE(REG_DIPSW) & harddip));
 }
 
+void fixPrintC(int y, int color, int font, char *str)
+{
+	int len = 0, x  =0;
+
+	len = strlen(str);
+	x = (40 - len)/2;
+	fixPrintf(x, y, color, font, str);
+}
+
 int getSoftDipvalue(u32 softdip)
 {
 	if(!isMVS)
@@ -720,23 +728,45 @@ inline void waitVLine(WORD line)
 	while((volMEMWORD(REG_LSPCMODE) >> 7) != line);	
 }
 
-inline void checkZ80Response(BYTE command)
+inline int checkZ80Response(BYTE command)
 {
 	BYTE response = 0;
 
-	response = command | 0x80;
-	// wait for the Z80 to finish processing
-	while(volMEMBYTE(REG_SOUND) != response);
+	// wait for the Z80 to enter NMI
+	do
+	{
+		response = volMEMBYTE(REG_SOUND);
+	}while(response != 0xff);
+
+	// Z80 got command, and is inside the NMI
+	do
+	{
+		response = volMEMBYTE(REG_SOUND);
+	}while(response == 0xff);
+
+	// Z80 has finished NMI
+
+	return response;
 }
+
+/*
+ * send command and wait for reponse
+ */
+int sendZ80command(u8 command)
+{
+	volMEMBYTE(REG_SOUND) = command;
+
+	return(checkZ80Response(command));
+}
+
 /* 
  * Play sound aligned with first line of the visible frame 
  * tested on an AES, sound driver response time via NMI is 4-7 lines
  * 4 lines for SSG stop
  * 7 lines for SSG start
  */
-void playSoundatVideoStart(u8 command)
+void sendZ80commandAtVideoStart(u8 command)
 {
-	WORD line = 0;
 	/*
 		Get upper 9 bits, Raster line counter
 		$0F8~$0FF : Vertical sync (8px)
@@ -747,15 +777,11 @@ void playSoundatVideoStart(u8 command)
 		Processing in Z80+Ym2610 takes 4.5 lines
 		So we align to line 0x010CC for NTSC
 	*/
-	if(isPAL) line = 0x100; else line = 0x010C;
-
-	waitVLine(line);
+	waitVLine(isPAL ? 0x100 : 0x010C);
 	volMEMBYTE(REG_SOUND) = command;
-
-	checkZ80Response(command);
 }
 
-void playSoundatLine(WORD line, u8 command)
+void sendZ80commandAtLine(WORD line, u8 command)
 {
 	waitVLine(line);
 	volMEMBYTE(REG_SOUND) = command;
@@ -764,19 +790,9 @@ void playSoundatLine(WORD line, u8 command)
 }
 
 /*
- * Play sound on demand and wait for processing
- */
-void playSound(u8 command)
-{
-	volMEMBYTE(REG_SOUND) = command;
-
-	checkZ80Response(command);
-}
-
-/*
  * Play sound immediately with no delay or response check
  */
-void playSoundnoWait(u8 command)
+void sendZ80commandnoWait(u8 command)
 {
 	volMEMBYTE(REG_SOUND) = command;
 }
@@ -816,4 +832,10 @@ void unPauseCDDA()
 {
 	sendCDDAcommand(BIOS_CDDA_UNPAUSE, 0);
 }
+
+void stopCDDA()
+{
+	sendCDDAcommand(BIOS_CDDA_STOP, 0);
+}
+
 #endif

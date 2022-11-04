@@ -971,6 +971,12 @@ void vt_scroll_test()
 	int pal_water = 0, pal_wfall = 0;
 	scroller backScroll, waterScroll, frontScroll, vertScroll;
 
+	if(vmode_snk)
+	{
+		xvert[0] -= 8;
+		xvert[2] += 8;
+	}
+
 	while (!done)
 	{
 		if (reload)
@@ -1555,8 +1561,8 @@ void at_sound_test()
 	picture image;
 
 	// Set initial State
-	playSound(SOUNDCMD_RateB_0+adpcmb_sel);
-	playSound(SOUNDCMD_NoLoopB);
+	sendZ80command(SOUNDCMD_RateB_0+adpcmb_sel);
+	sendZ80command(SOUNDCMD_NoLoopB);
 
 	while (!done)
 	{
@@ -1669,13 +1675,13 @@ void at_sound_test()
 				switch(option)
 				{
 				case 0:
-					playSound(SOUNDCMD_PlayLeft);
+					sendZ80command(SOUNDCMD_PlayLeft);
 					break;
 				case 1:
-					playSound(SOUNDCMD_PlayCenter);
+					sendZ80command(SOUNDCMD_PlayCenter);
 					break;
 				case 2:
-					playSound(SOUNDCMD_PlayRight);
+					sendZ80command(SOUNDCMD_PlayRight);
 					break;
 				}
 			}
@@ -1686,14 +1692,15 @@ void at_sound_test()
 				switch(option)
 				{
 				case 0:
-					playSound(SOUNDCMD_ADPCMB_Left);
+					sendZ80command(SOUNDCMD_ADPCMB_Left);
 					break;
 				case 1:
-					playSound(SOUNDCMD_ADPCMB_Center);
+					sendZ80command(SOUNDCMD_ADPCMB_Center);
 					break;
 				case 2:
-					playSound(SOUNDCMD_ADPCMB_Right);
+					sendZ80command(SOUNDCMD_ADPCMB_Right);
 					break;
+				}
 			}
 #else
 			if (sel == SND_SEL_CDDA)
@@ -1703,28 +1710,32 @@ void at_sound_test()
 
 		if (BTTN_OPTION_1)
 		{
+			if(sel == SND_SEL_ADPCMA)
+				sendZ80command(SOUNDCMD_PlayLeft);
 #ifndef __cd__
 			if(sel == SND_SEL_ADPCMB)
 			{
 				adpcmb_sel ++;
 				if(adpcmb_sel > 7)
 					adpcmb_sel = 0;
-				playSound(SOUNDCMD_RateB_0+adpcmb_sel);
+				sendZ80command(SOUNDCMD_RateB_0+adpcmb_sel);
 			}
 #endif
 		}
 
 		if (BTTN_OPTION_2)
 		{
+			if(sel == SND_SEL_ADPCMA)
+				sendZ80command(SOUNDCMD_PlayRight);
 #ifndef __cd__
 			if(sel == SND_SEL_ADPCMB)
 			{
 				loopB = !loopB;
 				if(loopB)
-					playSound(SOUNDCMD_LoopB);
+					sendZ80command(SOUNDCMD_LoopB);
 				else
-					playSound(SOUNDCMD_NoLoopB);
-				playSound(SOUNDCMD_StopADPCMB);
+					sendZ80command(SOUNDCMD_NoLoopB);
+				sendZ80command(SOUNDCMD_StopADPCMB);
 			}
 #endif
 		}
@@ -1736,10 +1747,11 @@ void at_sound_test()
 			draw = 1;
 	}
 
-	playSound(SOUNDCMD_StopADPCMA);
-	playSound(SOUNDCMD_StopADPCMB);
+	sendZ80command(SOUNDCMD_StopADPCMA);
+	sendZ80command(SOUNDCMD_StopADPCMB);
+
 #ifdef __cd__
-	pauseCDDA();
+	stopCDDA();
 #endif
 }
 
@@ -1749,9 +1761,9 @@ void executePulseTrain()
 
 	for(frame = 0; frame < 10; frame++)
 	{
-		playSound(SOUNDCMD_SSGPulseStart);
+		sendZ80command(SOUNDCMD_SSGPulseStart);
 		waitVBlank();
-		playSound(SOUNDCMD_SSGPulseStop);
+		sendZ80command(SOUNDCMD_SSGPulseStop);
 		waitVBlank();
 	}
 }
@@ -1788,7 +1800,7 @@ void at_sound_mdfourier()
 		{
 			int frame = 0;
 
-			playSound(SOUNDCMD_SSGRampinit);
+			sendZ80command(SOUNDCMD_SSGRampinit);
 			waitVBlank();
 
 			executePulseTrain();
@@ -1796,10 +1808,10 @@ void at_sound_mdfourier()
 
 			for(frame = 0; frame < 4096; frame++)
 			{
-				playSoundatVideoStart(SOUNDCMD_SSGRampcycle);
+				sendZ80commandAtVideoStart(SOUNDCMD_SSGRampcycle);
 				waitVBlank();
 			}
-			playSound(SOUNDCMD_SSGRampinit);
+			sendZ80command(SOUNDCMD_SSGRampinit);
 
 			executeSilence();
 
@@ -1816,11 +1828,11 @@ void at_sound_mdfourier()
 			do
 			{
 				backgroundColor(WH_107);
-				playSoundatLine(0x010C, SOUNDCMD_SSGPulseStart);
+				sendZ80commandAtLine(0x010C, SOUNDCMD_SSGPulseStart);
 				readController();
 				if (BTTN_MAIN)
 					stop = 1;
-				playSoundatLine(0x1ED, SOUNDCMD_SSGPulseStop);
+				sendZ80commandAtLine(0x1ED, SOUNDCMD_SSGPulseStop);
 				waitVBlank();
 				
 				backgroundColor(_BLACK);
@@ -1843,14 +1855,14 @@ void at_sound_mdfourier()
 			do
 			{
 				backgroundColor(WH_107);
-				playSound(SOUNDCMD_SSGPulseStart);
+				sendZ80command(SOUNDCMD_SSGPulseStart);
 				readController();
 				if (BTTN_MAIN)
 					stop = 1;
 				waitVBlank();
 
 				backgroundColor(_BLACK);
-				playSound(SOUNDCMD_SSGPulseStop);
+				sendZ80command(SOUNDCMD_SSGPulseStop);
 				readController();
 				if (BTTN_MAIN)
 					stop = 1;
@@ -2142,7 +2154,7 @@ u32 CalculateCRCBlink(u32 startAddress, u32 size, blinker *blinkdata)
 
 void ht_memory_viewer(u32 address)
 {
-	int done = 0, redraw = 1, docrc = 0, locpos = 1, pos = 0, ascii = 0;
+	int done = 0, redraw = 1, docrc = 0, locpos = 1, pos = 0, ascii = 0, start = 0;
 	u32 crc = 0, locations[MAX_LOCATIONS] = { 0, 0x100000, 0x10F300, 0x110000, 0x200000, 0x300000, 
 											0x400000, 0x402000, 0x800000, 0xC00000, 0xD00000 };
 
@@ -2156,6 +2168,9 @@ void ht_memory_viewer(u32 address)
 			break;
 		}
 	}
+
+	if(vmode_snk)
+		start = 1;
 
 	while (!done)
 	{
@@ -2174,9 +2189,9 @@ void ht_memory_viewer(u32 address)
 				crc = CalculateCRC(address, 0x1C0);
 
 			intToHex(address, buffer, 8);
-			fixPrint(32, 2, fontColorRed, 3, buffer);
+			fixPrint(32-start, 2, fontColorRed, 3, buffer);
 			intToHex(address+448, buffer, 8);
-			fixPrint(32, 29, fontColorRed, 3, buffer);
+			fixPrint(32-start, 29, fontColorRed, 3, buffer);
 
 			if (docrc)
 			{
@@ -2191,14 +2206,14 @@ void ht_memory_viewer(u32 address)
 					if (!ascii)
 					{
 						intToHex(mem[i*16+j], buffer, 2);
-						fixPrint(j*2, i+2, fontColorWhite, 3, buffer);
+						fixPrint(start+j*2, i+2, fontColorWhite, 3, buffer);
 					} else {
 						u8 c;
 					
 						c = mem[i*16+j];
 						// ASCII range
 						if (c >= 32 && c <= 126)	
-							fixPrintf(j*2, i+2, fontColorWhite, 3, "%c", (char)c);
+							fixPrintf(start+j*2, i+2, fontColorWhite, 3, "%c", (char)c);
 					}
 				}
 			}
@@ -2470,6 +2485,12 @@ const BIOSID bioslist[] = {
 	0x879163E9,				// 0xFF3ABC59
 	"uni-bioscd33.rom",
 	"Universe Bios (Hack, Ver. 3.3)" },
+// these might change a lot, taken from real HW
+// since sdloader patches the BIOS on the fly
+{	BIOS_HACK_NGCD,
+	0x00A651C2,
+	"sdloader.rom",
+	"Top Loader patched by SDLoader" },
 // SMKDAN versions from 2010
 {	BIOS_HACK_NGCD,
 	0x72E41278,				// 0x1101F313
@@ -2747,7 +2768,8 @@ void ht_displayregs()
 
 		if (bkp_data.debug_dip1 & DP_DEBUG1)
 		{
-			fixPrintf(4, ++y, fontColorGreen, 3, "Soft Dips:");
+			displayRegByte(4, y++, "BIOS_COUNTRY", BIOS_COUNTRY_CODE);
+			fixPrintf(4, y, fontColorGreen, 3, "Soft Dips:");
 			fixPrintf(26, y, fontColorWhite, 3, "%01d%01d%01d%01d%01d",
 				getSoftDipvalue(SOFT_DIP_1),
 				getSoftDipvalue(SOFT_DIP_2),
@@ -2760,6 +2782,66 @@ void ht_displayregs()
 
 		if (BTTN_EXIT)
 			done = 1;
+	}
+	return;
+}
+
+// Fails in Neo Geo CD in MAME.
+// There are writes to Z80 RAM
+// ($FEF8 and $FEF9 are set to 00)
+// during the test, hence it fails
+
+// 47c
+void ht_z80RAMtest()
+{
+	int done = 0, redraw = 1, execute = 0;
+
+	while (!done)
+	{
+		if (redraw)
+		{
+			gfxClear();
+			draw_background();
+			
+			fixPrintC(6, fontColorGreen, 3, "Z80 RAM Test");
+			execute = 1;
+			redraw = 0;
+		}
+
+		SCClose();
+		waitVBlank();
+
+		readController();
+
+		if (BTTN_EXIT)
+			done = 1;
+
+		if (BTTN_MAIN || execute)
+		{
+			int status = 0, end = 0, unknown = 0;
+
+			fixPrintC(15, fontColorRed, 3, "               ");
+			status = sendZ80command(RAMTESTCMD);
+			if(status == Z80COMMAND_OK(RAMTESTCMD))
+				fixPrintC(15, fontColorGreen, 3, "Z80 RAM OK");
+			else if(status == Z80COMMAND_FAIL(RAMTESTCMD))
+				fixPrintC(15, fontColorRed, 3, "RAM FAILED");
+			else
+			{
+				fixPrintC(15, fontColorRed, 3, "Unknown status");
+				unknown = 1;
+			}
+			fixPrintC(26, fontColorWhite, 3, "Press B to exit");
+
+			if (unknown || bkp_data.debug_dip1 & DP_DEBUG1)
+			{
+				char buffer[40];
+
+				sprintf(buffer, "Z80 replied: 0x%X", status);
+				fixPrintC(17, fontColorWhite, 3, buffer);
+			}
+			execute = 0;
+		}
 	}
 	return;
 }

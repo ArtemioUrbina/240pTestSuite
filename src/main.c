@@ -288,7 +288,7 @@ void menu_vt()
 
 void menu_at()
 {
-	int done = 0, curse = 1, cursemax = 4, redraw = 1;
+	int done = 0, curse = 1, cursemax = 5, redraw = 1;
 	blinker blinkdata;
 
 	while (!done)
@@ -357,7 +357,7 @@ void menu_at()
 
 void menu_ht()
 {
-	int done = 0, curse = 1, cursemax = 7, redraw = 1;
+	int done = 0, curse = 1, cursemax = 8, redraw = 1;
 	blinker blinkdata;
 
 	while (!done)
@@ -383,9 +383,10 @@ void menu_ht()
 		fixPrint(5, 15, curse == 3 ? fontColorRed : fontColorWhite, 3, "Memory Viewer");
 		fixPrint(5, 16, curse == 4 ? fontColorRed : fontColorWhite, 3, "BIOS Info");
 		fixPrint(5, 17, curse == 5 ? fontColorRed : fontColorWhite, 3, "Register View");
+		fixPrint(5, 18, curse == 6 ? fontColorRed : fontColorWhite, 3, "Z80 RAM test");
 
-		fixPrint(5, 19, curse == 6 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, 20, curse == 7 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, 20, curse == 7 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, 21, curse == 8 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -421,10 +422,14 @@ void menu_ht()
 				break;
 
 				case 6:
-					DrawHelp(HELP_GENERAL);
+					ht_z80RAMtest();
 				break;
 
 				case 7:
+					DrawHelp(HELP_GENERAL);
+				break;
+
+				case 8:
 					done = 1;
 				break;
 			}
@@ -536,7 +541,8 @@ void _240p_mvs_game_change(void)
 
 void _240p_mvs_coin_sound(void)
 {
-	playSound(SOUNDCMD_PlayCoinA);
+	// in case z80 is not working, don't expect a response
+	sendZ80commandnoWait(SOUNDCMD_PlayCoinA);
 }
 
 void menu_main()

@@ -57,6 +57,8 @@ void menu_options();
 void readController();
 void clearController();
 
+void fixPrintC(int y, int color, int font, char *str);
+
 // get Sprite Count from picture
 int getPicSprites(pictureInfo *picinfo);
 // Scroller Data
@@ -69,14 +71,16 @@ void darken_palette(short *pal, short factor);
 void waitVLine(WORD line);
 
 // Sound
-void playSound(u8 command);
-void playSoundatVideoStart(u8 command);
-void playSoundatLine(WORD line, u8 command);
-void playSoundnoWait(u8 command);
+int sendZ80command(u8 command);
+void sendZ80commandAtVideoStart(u8 command);
+void sendZ80commandAtLine(WORD line, u8 command);
+void sendZ80commandnoWait(u8 command);
+
 #ifdef __cd__
 void playCDDA(BYTE track);
 void pauseCDDA();
 void unPauseCDDA();
+void stopCDDA();
 #endif
 
 // This is unbuffered, so if a palJobPut is called in the same frame, this will be overwritten
