@@ -1032,8 +1032,16 @@ command_RAMTest:
 
 	; walking bit test
 .walking:
-	ld		hl,usedRAM	; store base RAM in hl
-	ld		bc,0x07CA	; store compare size
+	; Figure out the unused RAM size, SP - usedRAM
+	ld		hl,0			; prepare to duplicate SP
+	add		hl,sp			; copy SP
+	ld		bc,usedRAM		; prepare for the substraction
+	and		a				; erase carry
+	sbc		hl,bc			; substract sp-usedRAM
+	ld		b,h				; copy size to bc
+	ld		c,l
+	inc		bc				; place it next to sp
+	ld		hl,usedRAM		; get started at usedRAM
 
 .wlklp1:
     ld      a,0x80      ; 10000000
@@ -1064,18 +1072,36 @@ command_RAMTest:
     ;   hl = Address of error
     ;   we will return just success or fail to the Neo Geo 68k
 .fillcmp:
-	ld		(usedRAM),a		; set 0xF81D = value
-	ld		hl,usedRAM		; 00 value is at 0xF81D
-	ld		de,usedRAM
+	ld		(usedRAM),a		; set usedRAM = value
+	
+	ld		de,usedRAM		; prepare for block copy
 	inc		de
 
-	ld		bc,0x07c9		; stack pointer is at FFE8, use FFE6
+	; Figure out the unused RAM size, SP - usedRAM
+	ld		hl,0			; prepare to duplicate SP
+	add		hl,sp			; copy SP
+	ld		bc,usedRAM		; prepare for the substraction
+	and		a				; erase carry
+	sbc		hl,bc			; substract sp-usedRAM
+	ld		b,h				; copy size to bc
+	ld		c,l
+	dec		bc				; decrement it by two, since we start at usedRAM + 1
+
+	ld		hl,usedRAM		; 00 value is at usedRAM, our source
 	ldir					; Fill out memory
 
     ; compare a filled memory block with value
 .compare:
-	ld		hl,usedRAM	; store base RAM in hl
-	ld		bc,0x07C9	; store compare size
+	; Figure out the unused RAM size, SP - usedRAM
+	ld		hl,0			; prepare to duplicate SP
+	add		hl,sp			; copy SP
+	ld		bc,usedRAM		; prepare for the substraction
+	and		a				; erase carry
+	sbc		hl,bc			; substract sp-usedRAM
+	ld		b,h				; copy size to bc
+	ld		c,l
+	dec		bc				; decrement it by one, since we start at usedRAM + 1
+	ld		hl,usedRAM		; 00 value is at usedRAM, our source
 
 .cmploop:
     cpi

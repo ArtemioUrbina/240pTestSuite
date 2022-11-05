@@ -2791,7 +2791,6 @@ void ht_displayregs()
 // ($FEF8 and $FEF9 are set to 00)
 // during the test, hence it fails
 
-// 47c
 void ht_z80RAMtest()
 {
 	int done = 0, redraw = 1, execute = 0;
