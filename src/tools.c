@@ -59,6 +59,7 @@ MVS
 void check_systype()
 {
 	BYTE reg = 0;
+	WORD regw = 0;
 
 	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0, isPALinMVS = 0;
 	enable_shadow = 0;
@@ -103,8 +104,8 @@ void check_systype()
 	// that to develop all current tests.
 	// LSPC-A0 by NEC is the VDC part of the first generation chipset, see LSPC2-A2 for more details. (AES & MVS)
 	// LSPC2-A2 by Fujitsu is the second generation Line SPrite Controller, it is only found in cartridge systems. (AES & MVS)
-	reg = volMEMWORD(REG_LSPCMODE);
-	if (reg & LPSC2_NTSC_PAL)
+	regw = volMEMWORD(REG_LSPCMODE);
+	if (regw & LPSC2_NTSC_PAL)
 	{
 		if(isMVS)
 			isPALinMVS = 1;
@@ -113,8 +114,16 @@ void check_systype()
 	}
 
 #ifdef __cd__
-	if (volMEMWORD(REG_CDCONFIG) & CD_FRONT)
+	isCDFront = 0;
+	isCDZ = 0;
+	regw = volMEMWORD(REG_CDCONFIG);
+	if (regw & CD_FRONT)
 		isCDFront = 1;
+	else
+	{
+		if (!(regw & CD_LID_STATUS))
+			isCDZ = 1;
+	}
 #endif
 }
 
@@ -460,7 +469,7 @@ void menu_footer()
 			fixPrint(23, 28, fontColorWhite, 3, "MVS>");
 	}
 #else
-	fixPrintf(isCDFront ? 21 : 22, 28, fontColorWhite, 3, "NGCD %s", isCDFront ? "Front" : "Top");
+	fixPrintf(isCDFront ? 21 : 22, 28, fontColorWhite, 3, "NGCD %s", isCDFront ? "Front" : isCDZ ? "CDZ" : "Top", isCDFront, isCDZ);
 #endif
 
 	if ((volMEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))

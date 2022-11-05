@@ -49,7 +49,7 @@ extern BYTE first_grid;
 extern BYTE first_overscan;
 extern BYTE first_colorramp;
 #ifdef __cd__
-extern BYTE isCDFront;
+extern BYTE isCDFront, isCDZ;
 #endif
 
 #define SYSTEM_AES			0x00

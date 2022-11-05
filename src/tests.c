@@ -2786,10 +2786,10 @@ void ht_displayregs()
 	return;
 }
 
-// Fails in Neo Geo CD in MAME.
-// There are writes to Z80 RAM
-// ($FEF8 and $FEF9 are set to 00)
-// during the test, hence it fails
+// _CDDA_FLAG needs to be set to 0x02
+// in cdt0cd.s for this to work
+// or there will be writes to Z80 RAM
+// ($FEF8 and $FEF9 would be set to 00)
 
 void ht_z80RAMtest()
 {

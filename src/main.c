@@ -39,7 +39,7 @@ BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 BYTE isMVS, is4S, is6S, isMulti, hwChange, allowIRE107;
 BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
 #ifdef __cd__
-BYTE isCDFront;
+BYTE isCDFront, isCDZ;
 #endif
 
 #define NUM_FONT_COLORS 9

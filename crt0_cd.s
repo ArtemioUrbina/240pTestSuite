@@ -26,7 +26,7 @@ TRAP14			= _dummy_exc_handler
 TRAP15			= _dummy_exc_handler
 
 ************************ Definitions *************************
-_CDDA_FLAG	= 0
+_CDDA_FLAG	= 0x02
 _NGH	=	0x2501
 _PROGRAM_SIZE	=	0x00100000
 _WRK_BCKP_AREA = bkp_data
