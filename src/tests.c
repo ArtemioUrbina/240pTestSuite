@@ -532,6 +532,25 @@ void vt_lag_test()
 			palJobPut(18, num_0_w.palInfo->count, num_0_w.palInfo->data);
 			palJobPut(19, circle_red.palInfo->count, circle_red.palInfo->data);
 			palJobPut(20, bar_l.palInfo->count, bar_l.palInfo->data);
+
+			pictureInit(&c_numbers, &num_1_w, 181, 18, 32, 84, FLIP_NONE);
+			pictureInit(&c_numbers, &num_2_w, 185, 18, 112, 84, FLIP_NONE);
+			pictureInit(&c_numbers, &num_3_w, 189, 18, 192, 84, FLIP_NONE);
+			pictureInit(&c_numbers, &num_4_w, 193, 18, 268, 84, FLIP_NONE);
+
+			pictureInit(&c_numbers, &num_5_w, 197, 18, 32, 148, FLIP_NONE);
+			pictureInit(&c_numbers, &num_6_w, 201, 18, 112, 148, FLIP_NONE);
+			pictureInit(&c_numbers, &num_7_w, 205, 18, 192, 148, FLIP_NONE);
+			pictureInit(&c_numbers, &num_8_w, 209, 18, 268, 148, FLIP_NONE);
+
+			pictureInit(&image, &separator, 1, 16, 80, 19, FLIP_NONE);
+			pictureInit(&image, &separator, 5, 16, 152, 19, FLIP_NONE);
+			pictureInit(&image, &separator, 9, 16, 224, 19, FLIP_NONE);
+
+			fixPrint(4, 3, fontColorBlack, 3, "hours");
+			fixPrint(13, 3, fontColorBlack, 3, "minutes");
+			fixPrint(22, 3, fontColorBlack, 3, "seconds");
+			fixPrint(31, 3, fontColorBlack, 3, "frames");
 			draw = 0;
 		}
 
@@ -544,20 +563,6 @@ void vt_lag_test()
 		pictureInit(&circle, &circle_blue, 145, framecnt == 6 ? 19 : 17, 92, 132, FLIP_NONE);
 		pictureInit(&circle, &circle_blue, 161, framecnt == 7 ? 19 : 17, 172, 132, FLIP_NONE);
 		pictureInit(&circle, &circle_blue, 177, framecnt == 8 ? 19 : 17, 248, 132, FLIP_NONE);
-
-		pictureInit(&c_numbers, &num_1_w, 181, 18, 32, 84, FLIP_NONE);
-		pictureInit(&c_numbers, &num_2_w, 185, 18, 112, 84, FLIP_NONE);
-		pictureInit(&c_numbers, &num_3_w, 189, 18, 192, 84, FLIP_NONE);
-		pictureInit(&c_numbers, &num_4_w, 193, 18, 268, 84, FLIP_NONE);
-
-		pictureInit(&c_numbers, &num_5_w, 197, 18, 32, 148, FLIP_NONE);
-		pictureInit(&c_numbers, &num_6_w, 201, 18, 112, 148, FLIP_NONE);
-		pictureInit(&c_numbers, &num_7_w, 205, 18, 192, 148, FLIP_NONE);
-		pictureInit(&c_numbers, &num_8_w, 209, 18, 268, 148, FLIP_NONE);
-
-		pictureInit(&image, &separator, 1, 16, 80, 19, FLIP_NONE);
-		pictureInit(&image, &separator, 5, 16, 152, 19, FLIP_NONE);
-		pictureInit(&image, &separator, 9, 16, 224, 19, FLIP_NONE);
 
 		pictureInit(&bar, &bar_l, 223, framecnt % 2 == 0 ? 18 : 20, 0, 0, FLIP_NONE);
 		pictureInit(&bar, &bar_l, 237, framecnt % 2 == 0 ? 18 : 20, 304, 0, FLIP_X);
@@ -588,11 +593,6 @@ void vt_lag_test()
 
 		SCClose();
 		waitVBlank();
-
-		fixPrint(4, 3, fontColorBlack, 3, "hours");
-		fixPrint(13, 3, fontColorBlack, 3, "minutes");
-		fixPrint(22, 3, fontColorBlack, 3, "seconds");
-		fixPrint(31, 3, fontColorBlack, 3, "frames");
 
 		readController();
 
@@ -660,10 +660,7 @@ void vt_lag_test()
 			done = 1;
 
 		if (checkHelp(HELP_LAG))
-		{
-			clearSprites(1,MAX_SPRITES);
 			draw = 1;
-		}
 	}
 }
 
@@ -1315,7 +1312,7 @@ void vt_horizontal_stripes()
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
-		if (!alternate && (PRESSED_UP || PRESSED_DOWN))
+		if (!alternate && (PRESSED_UP || PRESSED_DOWN || BTTN_OPTION_2))
 		{
 			if (field == 0) {
 				palJobPut(16,horzstripe_alt.palInfo->count,horzstripe_alt.palInfo->data);
@@ -1390,7 +1387,7 @@ void vt_vertical_stripes()
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
-		if (!alternate && (PRESSED_UP || PRESSED_DOWN))
+		if (!alternate && (PRESSED_UP || PRESSED_DOWN || BTTN_OPTION_2))
 		{
 			if (field == 0) {
 				palJobPut(16,vertstripe_alt.palInfo->count,vertstripe_alt.palInfo->data);
@@ -1467,7 +1464,7 @@ void vt_checkerboard()
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
-		if (!alternate && (PRESSED_UP || PRESSED_DOWN))
+		if (!alternate && (PRESSED_UP || PRESSED_DOWN || BTTN_OPTION_2))
 		{
 			if (field == 0) {
 				palJobPut(16,check_alt.palInfo->count,check_alt.palInfo->data);

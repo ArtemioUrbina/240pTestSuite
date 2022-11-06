@@ -99,7 +99,7 @@ void DrawHelp(int option)
 						fixPrint(4, 19, fontColorGreen, 3, "Help can be shown with 'START'");
 						fixPrint(4, 20, fontColorGreen, 3, "in any test.");
 
-						fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
+						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
 
 					case 2:
@@ -457,7 +457,7 @@ void DrawHelp(int option)
 						fixPrint(4, 18, fontColorWhite, 3, "When auto-toggle is set, you");
 						fixPrint(4, 19, fontColorWhite, 3, "should see the lines");
 						fixPrint(4, 20, fontColorWhite, 3, "alternating rapidly.");
-						fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
+						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
 
 					case 2:
@@ -669,7 +669,7 @@ void DrawHelp(int option)
 
 						fixPrint(4, 22, fontColorWhite, 3, "The circles in the bottom help");
 						fixPrint(4, 23, fontColorWhite, 3, "determine the frame even when");
-						fixPrint(26, 22, fontColorWhite, 3, "(cont...)");
+						fixPrint(26, 24, fontColorWhite, 3, "(cont...)");
 					break;
 
 					case 2:
@@ -694,22 +694,7 @@ void DrawHelp(int option)
 					}
 			break;
 
-			case HELP_ALTERNATE:
-				/* fixPrint("ALTERNATE 240p/480i", 7, 6, fontColorGreen);
-
-				fixPrint("Some devices have a delay when", 4, 57, fontColorWhite);
-				fixPrint("the source changes between", 4, 65, fontColorWhite);
-				fixPrint("resolutions, which happens in", 4, 73, fontColorWhite);
-				fixPrint("some games. This test allows to", 4, 81, fontColorWhite);
-				fixPrint("time that delay manually.", 4, 89, fontColorWhite);
-
-				fixPrint("Press A to switch the", 4, 106, fontColorWhite);
-				fixPrint("resolution; press it again when", 4, 114, fontColorWhite);
-				fixPrint("you are able to see the screen", 4, 122, fontColorWhite);
-				fixPrint("back in your display.", 4, 130, fontColorWhite); */
-			break;
-
-			case HELP_VIDEO:
+			case HELP_OPTIONS:
 				/* fixPrint("VIDEO OPTIONS", 10, 6, fontColorGreen);
 
 				fixPrint("Here you can enable interlaced", 4, 57, fontColorWhite);

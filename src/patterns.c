@@ -1248,9 +1248,9 @@ void tp_white_rgb()
 
 void tp_100_ire()
 {
-	int done = 0, text = 0, draw = 1;
-	ushort irevals[] = {13,25,41,53,66,82,94};
-	int irenum = 6;
+	int done = 0, text = 0, draw = 1, changed = 0, irenum = 9;
+	ushort irevals[] = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 107};
+	ushort irecolor[] = {IRE_10, IRE_20, IRE_30, IRE_40, IRE_50, IRE_60, IRE_70, IRE_80, IRE_90, WH_100, WH_107};
 	picture ire_back;
 
 	while (!done)
@@ -1262,39 +1262,24 @@ void tp_100_ire()
 			pictureInit(&ire_back, &ire, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,ire.palInfo->count,ire.palInfo->data);
 			draw = 0;
+			changed = 1;
 		}
 
-		switch (irenum)
+		if (text)
 		{
-			case 0:
-				volMEMWORD(0x402204) = 0x2222;
-			break;
-
-			case 1:
-				volMEMWORD(0x402204) = 0x2555;
-			break;
-
-			case 2:
-				volMEMWORD(0x402204) = 0x2777;
-			break;
-
-			case 3:
-				volMEMWORD(0x402204) = 0x2999;
-			break;
-
-			case 4:
-				volMEMWORD(0x402204) = 0x2bbb;
-			break;
-
-			case 5:
-				volMEMWORD(0x402204) = 0x2ddd;
-			break;
-
-			case 6:
-				volMEMWORD(0x402204) = 0x2fef;
-			break;
+			text--;
+			if (!text)
+				suiteClearFixLayer();
 		}
 
+		if(changed)
+		{
+			VRAM_PAL(16, 2) = irecolor[irenum];
+			fixPrintf1(30, 25, fontColorWhite, 3, "IRE %u ", irevals[irenum]);
+			text = 60;
+			changed = 0;
+		}
+		
 		SCClose();
 		waitVBlank();
 
@@ -1303,31 +1288,26 @@ void tp_100_ire()
 		if (BTTN_MAIN)
 		{
 			if (irenum != 0)
+			{
 				irenum--;
-			fixPrintf1(32, 25, fontColorWhite, 3, "IRE:%u", irevals[irenum]);
-			text = 60;
+				changed = 1;
+			}
 		}
 
 		if (BTTN_OPTION_1)
 		{
-			if (irenum != 6)
+			if (irenum != (allowIRE107 ? 10 : 9))
+			{
 				irenum++;
-			fixPrintf1(32, 25, fontColorWhite, 3, "IRE:%u", irevals[irenum]);
-			text = 60;
+				changed = 1;
+			}
 		}
-
-		if (BTTN_EXIT)
-			done = 1;
 
 		if (checkHelp(HELP_IRE))
 			draw = 1;
 
-		if (text)
-		{
-			text--;
-			if (!text)
-				suiteClearFixLayer();
-		}
+		if (BTTN_EXIT)
+			done = 1;
 	}
 }
 

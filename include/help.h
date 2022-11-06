@@ -48,12 +48,11 @@
 #define HELP_LED			23
 #define HELP_LAG			24
 #define HELP_ALTERNATE		25
-#define HELP_VIDEO			26
+#define HELP_OPTIONS		26
 #define HELP_AUDIOSYNC		27
 #define HELP_CONTRAST		28
 #define HELP_MDFOURIER		29
-#define HELP_SEGACD			30
-#define HELP_MEMVIEW		31
+#define HELP_MEMVIEW		30
 
 void DrawHelp(int option);
 int checkHelp(int helpID);

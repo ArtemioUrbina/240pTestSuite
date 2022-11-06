@@ -199,13 +199,19 @@ extern BYTE isCDFront, isCDZ;
 #define IRE2_5				0xf000
 #define IRE4_5				0x8111
 #define IRE7_5				0xf111
+#define IRE_24				0x0444
+#define IRE_75				0x8ccc
+
+// we need to measure the ones in red
 #define IRE_10				0x8222
 #define IRE_20				0x7333
-#define IRE_24				0x0444
+#define IRE_30				RED100
 #define IRE_40				0x8777
 #define IRE_50				0x8888
-#define IRE_75				0x8ccc
+#define IRE_60				RED100
+#define IRE_70				RED100
 #define IRE_80				0x8ddd
+#define IRE_90				RED100
 
 #define NEG__I				0x8047
 #define POS__Q				0xD408
