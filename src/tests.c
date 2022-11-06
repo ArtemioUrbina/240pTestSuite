@@ -671,7 +671,7 @@ void vt_reflex_test()
 {
 	char str[10];
 	short speed = 1, vary = 0, clicks[10], resetbg = 0;
-	u16 pal = 0x0000, change = 1, loadvram = 1, psgoff = 0, usersound = 0;
+	u16 pal = 0x0000, change = 1, loadvram = 1, usersound = 0;
 	u16 x = 0, y = 0, x2 = 0, y2 = 0, done = 0, variation = 1, draw = 1;
 	u16 pos = 0, view = 0, audio = 1, drawoffset = 0;
 	picture marker1, marker2, marker3, background;
@@ -680,7 +680,6 @@ void vt_reflex_test()
 
 	while (!done)
 	{
-		palJobPut(16,marker.palInfo->count,marker.palInfo->data);
 		SCClose();
 		waitVBlank();
 
@@ -689,6 +688,14 @@ void vt_reflex_test()
 		if (loadvram)
 		{
 			gfxClear();
+
+			pictureInit(&marker1, &marker, 1, 16, x, 96, FLIP_NONE);
+			pictureInit(&marker2, &marker, 9, 16, x2, y2, FLIP_NONE);
+			pictureInit(&marker3, &marker, 5, 16, x, y, FLIP_NONE);
+			palJobPut(16,marker.palInfo->count,marker.palInfo->data);
+			pictureShow(&marker1);
+			pictureHide(&marker2);
+			pictureShow(&marker3);
 
 			fixPrint(2, 23, fontColorGreen, 3, "Press the \"A\" button when the sprite");
 			fixPrint(2, 24, fontColorGreen, 3, "is aligned. A negative value means");
@@ -734,22 +741,27 @@ void vt_reflex_test()
 		
 		if (resetbg)
 		{
-			backgroundColor(0x8000);
+			backgroundColor(_BLACK);
 			resetbg = 0;
+			if (audio)
+				sendZ80command(SOUNDCMD_SSGPulseStop);
 		}
 
 		if (y == 96)	//  Screen Flash
 		{
-			backgroundColor(0x8555);
+			backgroundColor(IRE_50);
 			resetbg = 1;
-		}
-		
-		if (usersound)
-		{
-			// Todo: turn sound off here
-			usersound = 0;
+
+			if (audio)
+				sendZ80command(SOUNDCMD_SSG1KHZStart);
 		}
 
+		if(usersound)
+		{
+			sendZ80command(SOUNDCMD_SSGPulseStop);
+			usersound = 0;
+		}
+		
 		if (BTTN_EXIT)
 			done = 1;
 
@@ -768,13 +780,12 @@ void vt_reflex_test()
 				if (audio)
 				{
 					if (clicks[pos] == 0)
+						sendZ80command(SOUNDCMD_PlayCoinA);
+					else
 					{
-						// Todo: Add beep sound here
+						sendZ80command(SOUNDCMD_SSG1KHZStart);
+						usersound = 1;
 					}
-					else {
-						// Todo: Add beep sound here
-					}
-					usersound = 1;
 				}
 			}
 		}
@@ -789,6 +800,8 @@ void vt_reflex_test()
 		if (BTTN_OPTION_2)
 		{
 			audio = !audio;
+			if(!audio)
+				sendZ80command(SOUNDCMD_SSGPulseStop);
 			draw = 1;
 		}
 
@@ -881,49 +894,34 @@ void vt_reflex_test()
 		y += speed;
 		x2 += speed;
 
-		pictureInit(&marker1, &marker, 1, 16, x, 96, FLIP_NONE);
-		pictureInit(&marker3, &marker, 5, 16, x, y, FLIP_NONE);
-
 		if (y == 96)								// Red on the spot
-			volMEMWORD(0x402202) = 0x0f00;
+			VRAM_PAL(16, 1) = RED100;
 
 		if (y == 95 || y == 97)						// Green one pixel before or after
-			volMEMWORD(0x402202) = 0x00f0;
+			VRAM_PAL(16, 1) = GRN100;
 
 		if (y == 98 || y == 94)						// Back to white two pixels before or after
-			volMEMWORD(0x402202) = 0x8000;
+			VRAM_PAL(16, 1) = WH_100;
 
 		if (view == 0 || view == 2)
 		{
-			pictureInit(&marker3, &marker, 5, 16, x, y, FLIP_NONE);
+			pictureShow(&marker3);
+			pictureSetPos(&marker3, x, y);
 		} else {
-			pictureInit(&marker3, &marker, 5, 16, 320, 224, FLIP_NONE);
+			pictureHide(&marker3);
 		}
 		if (view == 1 || view == 2)
 		{
-			pictureInit(&marker2, &marker, 9, 16, x2, y2, FLIP_NONE);
+			pictureShow(&marker2);
+			pictureSetPos(&marker2, x2, y2);
 		} else {
-			pictureInit(&marker2, &marker, 9, 16, 320, 224, FLIP_NONE);
-		}
-		if (y == 96)		// Half the screen?
-		{
-			if (audio)
-			{
-				// Todo: Beep here
-				if (psgoff == 0)
-					psgoff = 2;
-			}
-			backgroundColor(0x8555);
-			// Todo: Screen flash here
+			pictureHide(&marker2);
 		}
 
-		//if (psgoff)
-		//{
-		//	psgoff--;
-		//	if (psgoff == 0)
-				// Todo: Stop sound
-		//}
 	}
+
+	// you can never be too careful
+	sendZ80command(SOUNDCMD_SSGPulseStop);
 
 	if (pos > 9)
 	{
@@ -1196,7 +1194,7 @@ void vt_scroll_test()
 void vt_gridscroll_test()
 {
 	int done = 0, draw = 1, x = 0, y = 0;
-	int acc = 1, pause = 0, direction = 0, horizontal = 0;
+	int acc = 1, pause = 0, direction = 0, horizontal = 1;
 	scroller grid;
 
 	while (!done)
@@ -1204,9 +1202,40 @@ void vt_gridscroll_test()
 		if (draw)
 		{
 			gfxClear();
-			scrollerInit(&grid, &scroll_grid, 1, 16, 0, 0);
+			scrollerInit(&grid, &scroll_grid, 1, 16, x, y);
 			palJobPut(16, scroll_grid.palInfo->count, scroll_grid.palInfo->data);
 			draw = 0;
+		}
+
+		if(!pause)
+		{
+			if (!horizontal) {
+				if (!direction)
+					y += acc;
+				else
+					y -= acc;
+			} else {
+				if (!direction)
+					x += acc;
+				else
+					x -= acc;
+			}
+			if(x >= 320) x -= 320;
+			if(y >= 224) y -= 224;
+			if(x <= -320) x += 320 ;
+			if(y <= -224) y += 224;
+
+			scrollerSetPos(&grid, x, y);
+		}
+
+		if (bkp_data.debug_dip1 & DP_DEBUG1)
+		{
+			fixPrintf(10, 12, fontColorSolid, 4, "X:      %04d", x);
+			fixPrintf(10, 13, fontColorSolid, 4, "Y:      %04d", y);
+			fixPrintf(10, 14, fontColorSolid, 4, "Hor:    %04d", horizontal);
+			fixPrintf(10, 15, fontColorSolid, 4, "Dir:    %04d", direction);
+			fixPrintf(10, 16, fontColorSolid, 4, "Acc:    %04d", acc);
+			fixPrintf(10, 17, fontColorSolid, 4, "Pause:  %04d", pause);
 		}
 
 		SCClose();
@@ -1214,63 +1243,34 @@ void vt_gridscroll_test()
 
 		readController();
 
-		if (!horizontal)
-		{
-			if (!pause) {
-				if (!direction) {
-					y += (y * acc);
-					scrollerSetPos(&grid, x, y);
-				} else {
-					y -= (y * acc);
-					scrollerSetPos(&grid, x, y);
-				}
-			}
-		} else {
-			if (!pause) {
-				if (!direction) {
-					x += (x * acc);
-					scrollerSetPos(&grid, x, y);
-				} else {
-					x -= (x * acc);
-					scrollerSetPos(&grid, x, y);
-				}
-			}
-		}
-
 		if (BTTN_MAIN)
 			pause = !pause;
 
 		if (BTTN_OPTION_1)
 			horizontal = !horizontal;
 
-		if (PRESSED_LEFT)
+		if (BTTN_OPTION_2)
 			direction = !direction;
 
 		if (PRESSED_UP)
 		{
 			acc++;
-			if (acc == 10)
-				acc = 10;
+			if (acc >= 7)
+				acc = 7;
 		}
 
 		if (PRESSED_DOWN)
 		{
 			acc--;
-			if (acc == 1)
-				acc = 1;
+			if (acc <= -7)
+				acc = -7;
 		}
 
 		if (BTTN_EXIT)
 			done = 1;
 
-		if (checkHelp(HELP_STRIPES))
+		if (checkHelp(HELP_GRIDSCROLL))
 			draw = 1;
-
-		if(x > 31) x = 0;
-		//if(y > 31) y = 0;
-		x++;
-		//x += (x * acc);
-		scrollerSetPos(&grid, x, y);
 	}
 }
 
@@ -1500,8 +1500,9 @@ void vt_checkerboard()
 
 void vt_backlitzone_test()
 {
-	int done = 0, block = 2, x = 160, y = 112, draw = 1, shown = 1;
+	int done = 0, block = 2, x = 160, y = 112, draw = 1, shown = 1, fast = 0;
 	int limitX = 0, limitY = 0, sprSize[] = { 1, 1, 2, 3, 4 };
+	int sprStep[] = { 1, 2, 4, 6, 8 };
 	picture image;
 
 	getScreenLimits(&limitX, &limitY);
@@ -1565,17 +1566,40 @@ void vt_backlitzone_test()
 				pictureHide(&image);
 		}
 
+		if (BTTN_OPTION_2)
+			fast = !fast;
+
 		if (p1 & JOY_UP)
-			y--;
+		{
+			if(!fast)
+				y--;
+			else
+				y -= sprStep[block];
+		}
 
 		if (p1 & JOY_DOWN)
-			y++;
+		{
+			if(!fast)
+				y++;
+			else
+				y += sprStep[block];
+		}
 
 		if (p1 & JOY_RIGHT)
-			x++;
+		{
+			if(!fast)
+				x++;
+			else
+				x += sprStep[block];
+		}
 
 		if (p1 & JOY_LEFT)
-			x--;
+		{
+			if(!fast)
+				x--;
+			else
+				x -= sprStep[block];
+		}
 
 		if(x < 1)
 			x = 1;

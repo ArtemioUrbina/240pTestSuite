@@ -441,6 +441,9 @@ HandleCommand:
 	cp		SOUNDCMD_SSGPulseStart
 	jp		Z,command_SSG_pulseStart
 
+	cp		SOUNDCMD_SSG1KHZStart
+	jp		Z,command_SSG_1khzStart
+
 	cp		SOUNDCMD_SSGPulseStop
 	jp		Z,command_SSGpulseStop
 
@@ -973,6 +976,21 @@ command_SSGrampCycle:
 
 command_SSG_pulseStart:
 	ld		de,0x0011		; 8khz (8294hz)
+	rst 	writeDEportA
+
+	ld		de,0x0100		; Coarse to zero
+	rst 	writeDEportA
+
+	ld		de,0x073E		;SSG Mixing, Only channel A
+	rst 	writeDEportA
+
+	ld		de,0x080F		;SSG Channel A Volume
+	rst 	writeDEportA
+
+	ret
+
+command_SSG_1khzStart:
+	ld		de,0x008C		; 1	khz (1007hz)
 	rst 	writeDEportA
 
 	ld		de,0x0100		; Coarse to zero

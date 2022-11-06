@@ -589,7 +589,7 @@ void DrawHelp(int option)
 				}
 			break;
 
-				case HELP_VSCROLL:
+				case HELP_GRIDSCROLL:
 					fixPrintC(6, fontColorGreen, 3, "GRID SCROLL TEST");
 
 					fixPrint(4, 9, fontColorWhite, 3, "A grid is scrolled vertically or");
@@ -641,7 +641,9 @@ void DrawHelp(int option)
 						fixPrint(4, 18, fontColorWhite, 3, "The 'C' button allows the user");
 						fixPrint(4, 19, fontColorWhite, 3, "to hide the pixel array in");
 						fixPrint(4, 20, fontColorWhite, 3, "order to alternate a fully black");
-						fixPrint(4, 21, fontColorWhite, 3, "screen.");
+						fixPrint(4, 21, fontColorWhite, 3, "screen. 'D' button toggles the");
+						fixPrint(4, 22, fontColorWhite, 3, "fast mode, where the sprite is");
+						fixPrint(4, 23, fontColorWhite, 3, "moved by its width per frame.");
 					break;
 				}
 			break;

@@ -118,8 +118,6 @@ Patterns:
 
 Video tests:
 - Fix water palette animations
-- Finish Grid Scroll test
-- Add new sugggested option of sprite movement by Pinobatch
 
 Audio tests_
    - remove LUA dependency (?)

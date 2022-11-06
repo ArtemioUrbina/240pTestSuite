@@ -43,7 +43,7 @@
 #define HELP_STRIPED		18
 #define HELP_MANUALLAG		19
 #define HELP_HSCROLL		20
-#define HELP_VSCROLL		21
+#define HELP_GRIDSCROLL		21
 #define HELP_SOUND			22
 #define HELP_LED			23
 #define HELP_LAG			24
