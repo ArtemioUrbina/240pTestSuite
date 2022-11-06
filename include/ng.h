@@ -137,7 +137,7 @@ extern BYTE isCDFront, isCDZ;
 
 // BIOS Calls
 #define BIOS_FIX_CLEAR	__asm__ ("jsr 0xC004C2 \n")
-#define RETURN_TO_BIOS	__asm__ ("jmp 0xc00444 \n")
+#define RETURN_TO_BIOS	__asm__ ("jmp 0xC00444 \n")
 #define BIOS_READ_CLDR	__asm__ ("jmp 0xC0045C \n")
 
 #define SOFT_DIP_1			0x10FD8A	// ENABLE MVS DEMO
@@ -202,7 +202,6 @@ extern BYTE isCDFront, isCDZ;
 #define IRE_24				0x0444
 #define IRE_75				0x8ccc
 
-// we need to measurethe ones in red
 #define IRE_10				0x8222
 #define IRE_20				0x7333
 #define IRE_30				0x8555

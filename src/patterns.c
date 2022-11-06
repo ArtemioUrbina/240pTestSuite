@@ -35,13 +35,6 @@ BYTE first_grid;
 BYTE first_overscan;
 BYTE first_colorramp;
 
-// MAME says 0x7000 and 0xF000 are the same
-// We confirmed with the scope that they are the lowest, and the same
-// 0xF000 & 0x7000 are the lowest gray (both equal) [111X]  2.5 IRE
-// 0x0111 & 0x8111 are the next gray (both equal)   [222x]  4.5 IRE
-// 0xF111 & 0x7111 are the next gray (both equal)   [333x]  7.5 IRE
-// 0x8222 & 0x0222 are the next gray (both equal)   [444x]  10  IRE
-
 void tp_pluge()
 {
 	int done = 0, draw = 1, IsNTSC = 0, text = 0, swappal = 0;
@@ -732,6 +725,7 @@ void tp_monoscope()
 		// these are non buffered, execute after in hardware
 		if (updatepalette)
 		{
+			// black _BLACK
 			if (!gray)
 				color = _BLACK;
 			else

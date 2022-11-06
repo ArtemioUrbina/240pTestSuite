@@ -736,6 +736,7 @@ void vt_reflex_test()
 			}
 		}
 		
+		// stop it on next frame
 		if (resetbg)
 		{
 			backgroundColor(_BLACK);
@@ -744,15 +745,7 @@ void vt_reflex_test()
 				sendZ80command(SOUNDCMD_SSGPulseStop);
 		}
 
-		if (y == 96)	//  Screen Flash
-		{
-			backgroundColor(IRE_50);
-			resetbg = 1;
-
-			if (audio)
-				sendZ80command(SOUNDCMD_SSG1KHZStart);
-		}
-
+		// stop it on next frame
 		if(usersound)
 		{
 			sendZ80command(SOUNDCMD_SSGPulseStop);
@@ -780,11 +773,23 @@ void vt_reflex_test()
 						sendZ80command(SOUNDCMD_PlayCoinA);
 					else
 					{
-						sendZ80command(SOUNDCMD_SSG1KHZStart);
-						usersound = 1;
+						if (clicks[pos] > 5 || clicks[pos] < 0)
+							sendZ80command(SOUNDCMD_SSG260HZStart);
+						else
+							sendZ80command(SOUNDCMD_SSG1KHZStart);
 					}
+					usersound = 1;
 				}
 			}
+		}
+
+		if (y == 96)	//  Screen Flash
+		{
+			backgroundColor(IRE_50);
+			resetbg = 1;
+
+			if (audio && !usersound)
+				sendZ80command(SOUNDCMD_SSG1KHZStart);
 		}
 
 		if (BTTN_OPTION_1)
@@ -957,7 +962,7 @@ void vt_reflex_test()
 		if (count > 0)
 		{
 			u16 h = 10, v = 20;
-			fix32 framerate = isPAL ? FIX32(20.1196) : FIX32(16.6884);
+			fix32 framerate = isPAL ? FIX32(19.8298) : isMVS ? FIX32(16.8960) : FIX32(16.7788);
 			fixPrint(h - 2, v++, fontColorWhite, 3, "----");
 
 			cnt = intToFix32(count);

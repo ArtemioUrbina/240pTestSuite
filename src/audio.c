@@ -49,9 +49,11 @@
 #define SND_SEL_MAX		SND_SEL_CDDA
 #endif
 
+#define SSG_TIMOUT_FRAMES 120
+
 void at_sound_test()
 {
-	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2;
+	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2, ssgval = 0;
 	int option = 0, change = 0, changeoption = 0, timer = 0;
 #ifndef __cd__
 	int loopB = 0, adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125  };
@@ -61,10 +63,12 @@ void at_sound_test()
 	// Set initial State
 	sendZ80command(SOUNDCMD_RateB_0+adpcmb_sel);
 	sendZ80command(SOUNDCMD_NoLoopB);
+	sendZ80command(SOUNDCMD_SSGPulseStop);
 
 	while (!done)
 	{
 		int y = 11;
+		char buffer[4];
 
 		if (draw)
 		{
@@ -76,8 +80,11 @@ void at_sound_test()
 
 		fixPrint(15, 8, fontColorGreen, 3, "Sound Test");
 
-		fixPrint(18, y++, fontColorGreen, 3, "SSG");
-		fixPrint(17, y++, sel == SND_SEL_SSG && option == 0 ? fontColorRed : fontColorWhite, 3, "1khz");
+		intToHex(ssgval, buffer, 4);
+		fixPrintf(18, y++, fontColorGreen, 3, "SSG 0x%s", buffer);
+		fixPrint(12, y, sel == SND_SEL_SSG && option == 0 ? fontColorRed : fontColorWhite, 3, "Init");
+		fixPrint(17, y, sel == SND_SEL_SSG && option == 1 ? fontColorRed : fontColorWhite, 3, "Cycle");
+		fixPrint(24, y++, sel == SND_SEL_SSG && option == 2 ? fontColorRed : fontColorWhite, 3, "Stop");
 		y++;
 
 		fixPrint(16, y++, fontColorGreen, 3, "ADPCM-A");
@@ -161,6 +168,14 @@ void at_sound_test()
 
 		if(changeoption)
 		{
+			if(sel == SND_SEL_SSG)
+			{
+				if(option < 0)
+					option = 2;
+				if(option > 2)
+					option = 0;
+			}
+
 			if(sel == SND_SEL_ADPCMA)
 			{
 				if(option < 0)
@@ -188,8 +203,22 @@ void at_sound_test()
 		{
 			if(sel == SND_SEL_SSG)
 			{
-				sendZ80command(SOUNDCMD_SSG1KHZStart);
-				timer = 120;
+				switch(option)
+				{
+				case 0:
+					sendZ80command(SOUNDCMD_SSGRampinit);
+					ssgval = 0;
+					break;
+				case 1:
+					sendZ80command(SOUNDCMD_SSGRampcycle);
+					ssgval ++;
+					break;
+				case 2:
+					sendZ80command(SOUNDCMD_SSGPulseStop);
+					break;
+				}
+				//sendZ80command(SOUNDCMD_SSG1KHZStart);
+				//timer = SSG_TIMOUT_FRAMES;
 			}
 
 			if(sel == SND_SEL_ADPCMA)

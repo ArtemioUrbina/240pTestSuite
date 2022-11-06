@@ -39,18 +39,21 @@ NTSC AES
     24.167829MHz main clock / 4 = 6.041957MHz pixel clock
     6.041957MHz / 384 pixels per line = 15.734kHz horizontal rate
     15.734kHz / 264 lines = 59.599 frames/second
+	16.7788 ms per frame
 
 PAL AES
 
     24.167829MHz main clock / 4 = 6.041957MHz pixel clock
     6.041957MHz / 384 pixels per line = 15.734kHz horizontal rate
     15.734kHz / 312 lines = 50.429 frames/second
+	19.829859 ms per frame
 
 MVS
 
     24.000000MHz main clock / 4 = 6.000000MHz pixel clock
     6MHz / 384 pixels per line = 15.625kHz horizontal rate
     15.625kHz / 264 lines = 59.1856 frames/second
+	16.8960 ms per frame
 
 	Source: https://wiki.neogeodev.org/index.php?title=Framerate
 */
