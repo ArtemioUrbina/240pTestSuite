@@ -75,6 +75,8 @@ void vt_drop_shadow_test()
 	short y2 = -152;
 	short y3 = 0;
 	picture donna_back;
+	picture hori_back;
+	picture check_back;
 	picture slug_sprite;
 	picture slug_shadow_sprite;
 	picture shape_sprite;
@@ -86,7 +88,7 @@ void vt_drop_shadow_test()
 		if (draw)
 		{
 			int palindex = 16, sprindex = 1;
-			int pali_donna, pali_slug, pali_slug_shadow, pali_shape;
+			int pali_donna, pali_slug, pali_slug_shadow, pali_shape, pali_hori, pali_check;
 			int spri_donna, spri_slug, spri_slug_shadow, spri_shape;
 
 			gfxClear();
@@ -114,6 +116,14 @@ void vt_drop_shadow_test()
 			palJobPut(pali_donna,donna.palInfo->count,donna.palInfo->data);
 			palindex += donna.palInfo->count;
 
+			pali_hori = palindex;
+			palJobPut(pali_hori,horzstripe.palInfo->count,horzstripe.palInfo->data);
+			palindex += horzstripe.palInfo->count;
+
+			pali_check = palindex;
+			palJobPut(pali_check,check.palInfo->count,check.palInfo->data);
+			palindex += check.palInfo->count;
+
 			pali_slug = palindex;
 			palJobPut(pali_slug,slug.palInfo->count,slug.palInfo->data);
 			palindex += slug.palInfo->count;
@@ -129,6 +139,12 @@ void vt_drop_shadow_test()
 			spri_donna = sprindex;
 			pictureInit(&donna_back, &donna, spri_donna, pali_donna, 0, isPAL || isPALinMVS ? -16 : -32, FLIP_NONE);
 			sprindex += getPicSprites(donna_back.info);
+
+			pictureInit(&hori_back, &horzstripe, sprindex, pali_hori, 0, 0, FLIP_NONE);
+			sprindex += getPicSprites(hori_back.info);
+
+			pictureInit(&check_back, &check, sprindex, pali_check, 0, 0, FLIP_NONE);
+			sprindex += getPicSprites(check_back.info);
 
 			spri_slug_shadow = sprindex;
 			pictureInit(&slug_shadow_sprite, &slug_shadow, spri_slug_shadow, pali_slug_shadow, x, y, flip);
@@ -152,9 +168,23 @@ void vt_drop_shadow_test()
 			{
 				case 0:
 					pictureShow(&donna_back);
+					pictureHide(&hori_back);
+					pictureHide(&check_back);
 					break;
 				case 1:
 					pictureHide(&donna_back);
+					pictureHide(&hori_back);
+					pictureHide(&check_back);
+					break;
+				case 2:
+					pictureHide(&donna_back);
+					pictureShow(&hori_back);
+					pictureHide(&check_back);
+					break;
+				case 3:
+					pictureHide(&donna_back);
+					pictureHide(&hori_back);
+					pictureShow(&check_back);
 					break;
 			}
 			changeBack = 0;
@@ -244,7 +274,7 @@ void vt_drop_shadow_test()
 		if (BTTN_MAIN)
 		{
 			back ++;
-			if(back > 1)
+			if(back > 3)
 				back = 0;
 			changeBack = 1;
 		}
@@ -317,6 +347,8 @@ void vt_striped_sprite_test()
 	short y2 = -152;
 	short y3 = 0;
 	picture donna_back;
+	picture hori_back;
+	picture check_back;
 	picture sprite;
 	scroller backScroll, waterScroll, frontScroll;
 
@@ -348,16 +380,27 @@ void vt_striped_sprite_test()
 			sprindex += SCROLLER_SIZE;
 			palindex += backScroll.info->palInfo->count;
 
-			// Palettes
+			// Tiles and Palettes
 			pali_donna = palindex;
-			palJobPut(palindex,donna.palInfo->count,donna.palInfo->data);
-			palindex += donna.palInfo->count;
-			palJobPut(palindex,marker_striped.palInfo->count,marker_striped.palInfo->data);
-
-			// Tiles
 			pictureInit(&donna_back, &donna, sprindex, pali_donna, 0, isPAL || isPALinMVS ? -16 : -32, FLIP_NONE);
 			sprindex += getPicSprites(donna_back.info);
+			palJobPut(palindex,donna.palInfo->count,donna.palInfo->data);
+			palindex += donna.palInfo->count;
+
+			pictureInit(&hori_back, &horzstripe, sprindex, palindex, 0, 0, FLIP_NONE);
+			sprindex += getPicSprites(hori_back.info);
+			palJobPut(palindex,horzstripe.palInfo->count,horzstripe.palInfo->data);
+			palindex += horzstripe.palInfo->count;
+
+			pictureInit(&check_back, &check, sprindex, palindex, 0, 0, FLIP_NONE);
+			sprindex += getPicSprites(check_back.info);
+			palJobPut(palindex,check.palInfo->count,check.palInfo->data);
+			palindex += check.palInfo->count;
+
 			pictureInit(&sprite, &marker_striped, sprindex, palindex, x, y, FLIP_NONE);
+			sprindex += getPicSprites(sprite.info);
+			palJobPut(palindex,marker_striped.palInfo->count,marker_striped.palInfo->data);
+			palindex += marker_striped.palInfo->count;
 
 			changeBack = 1;
 			draw = 0;
@@ -369,9 +412,23 @@ void vt_striped_sprite_test()
 			{
 				case 0:
 					pictureShow(&donna_back);
+					pictureHide(&hori_back);
+					pictureHide(&check_back);
 					break;
 				case 1:
 					pictureHide(&donna_back);
+					pictureHide(&hori_back);
+					pictureHide(&check_back);
+					break;
+				case 2:
+					pictureHide(&donna_back);
+					pictureShow(&hori_back);
+					pictureHide(&check_back);
+					break;
+				case 3:
+					pictureHide(&donna_back);
+					pictureHide(&hori_back);
+					pictureShow(&check_back);
 					break;
 			}
 			changeBack = 0;
@@ -421,7 +478,7 @@ void vt_striped_sprite_test()
 		if (BTTN_MAIN)
 		{
 			back ++;
-			if(back > 1)
+			if(back > 3)
 				back = 0;
 			changeBack = 1;
 		}

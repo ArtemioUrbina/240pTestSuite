@@ -117,12 +117,9 @@ Patterns:
     - In such case split menus as Genesis version does (maybe do this anyway to remove clutter)
 
 Video tests:
-- Add horizontal bars and checker board to Drop Shadow test
-- Add horizontal bars and checker board to Striped Sprite test
 - Fix water palette animations
 - Finish Grid Scroll test
-- Set proper sprite limits for backlit test in different resolutions and modes
-    - Add new sugggested option of sprite movement by Pinobatch
+- Add new sugggested option of sprite movement by Pinobatch
 
 Audio tests_
    - remove LUA dependency (?)
@@ -131,7 +128,7 @@ Audio tests_
    - Create full MDfourier pattern
 
 Hardware Test:
-   - RAM check (?) maybe in ASM
+   - 68K RAM check (?) maybe in ASM
 
 ## Resources
 [Neo Geo Development Wiki](https://wiki.neogeodev.org/index.php?title=Main_Page) - Neo Geo Bible<br>
