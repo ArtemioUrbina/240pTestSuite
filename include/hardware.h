@@ -20,20 +20,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _TESTS_H_
-#define _TESTS_H_
+#ifndef _HARDWARE_H_
+#define _HARDWARE_H_
 
 #include "types.h"
 
-void vt_drop_shadow_test(void);
-void vt_striped_sprite_test(void);
-void vt_lag_test(void);
-void vt_reflex_test(void);
-void vt_scroll_test(void);
-void vt_gridscroll_test(void);
-void vt_horizontal_stripes(void);
-void vt_vertical_stripes(void);
-void vt_checkerboard(void);
-void vt_backlitzone_test(void);
+void ht_controller_test(void);
+void ht_memory_viewer(u32 address);
+void ht_check_ng_bios_crc(u32 address);
+void ht_test_ng_ram();
+void ht_displayregs();
+void ht_z80RAMtest();
 
-#endif /* _TESTS_H_ */
+#endif /* _HARDWARE_H_ */

@@ -31,6 +31,8 @@
 #include "tests.h"
 #include "help.h"
 #include "sound.h"
+#include "hardware.h"
+#include "audio.h"
 #include "string_ng.h"
 
 bkp_ram_info bkp_data;

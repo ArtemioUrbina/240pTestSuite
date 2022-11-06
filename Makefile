@@ -112,6 +112,8 @@ OBJS = \
 	src/main.o \
 	src/patterns.o \
 	src/tests.o \
+	src/hardware.o \
+	src/audio.o \
 	src/help.o \
 	src/charMaps.o \
 	src/charPals.o \
