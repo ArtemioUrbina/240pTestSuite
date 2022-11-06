@@ -103,7 +103,7 @@ For the Neo Geo CD (Copy the CHD image)
 General:
 - Update Help to reflect all current changes
 	- Button references after remapping
-	- new optuons in patterns that have been modified
+	- new options in patterns that have been modified
 - Verify all patterns have 304/320 and 224/256 support when needed
 - Verify all patterns follow IRE 100
     - Add text in help for cases where this is not followed (SMPTE, EBU and PLUGE)
@@ -111,7 +111,7 @@ General:
 - Maybe have a Memory Card Viewer (?)
 
 Patterns:
-- Fix IRE pattern to display 10 IRE intervals
+- Finish IRE pattern and complete the 10 step IRE values
 - Confirm monoscope patterns for the Neo Geo PAR (Keith has been notified)
 - See how well HCFR patterns translate to Neo Geo
     - In such case split menus as Genesis version does (maybe do this anyway to remove clutter)

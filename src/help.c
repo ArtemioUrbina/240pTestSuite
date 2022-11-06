@@ -611,16 +611,19 @@ void DrawHelp(int option)
 					fixPrintC(6, fontColorGreen, 3, "SOUND TEST");
 
 					fixPrint(4, 9, fontColorWhite, 3, "You can test the sound from the");
-					fixPrint(4, 10, fontColorWhite, 3, "4X 2-channel PWM and");
-					fixPrint(4, 11, fontColorWhite, 3, "Genesis/Mega Drive PSG here.");
+#ifndef __cd__
+					fixPrint(4, 10, fontColorWhite, 3, "YM2610 FM, SSG, ADPCM-A and ADPCM-B.");
+#else
+					fixPrint(4, 10, fontColorWhite, 3, "YM2610 FM, SSG, ADPCM-A and CDDA.");
+#endif // __cd__
 
-					fixPrint(4, 13, fontColorWhite, 3, "Panning can be changed when");
-					fixPrint(4, 14, fontColorWhite, 3, "possible. This can help you");
-					fixPrint(4, 15, fontColorWhite, 3, "identify stereo cabling issues.");
+					fixPrint(4, 12, fontColorWhite, 3, "Panning can be changed when");
+					fixPrint(4, 13, fontColorWhite, 3, "possible. This can help you");
+					fixPrint(4, 14, fontColorWhite, 3, "identify stereo cabling issues.");
 
-					fixPrint(4, 17, fontColorWhite, 3, "PSG has 200hz, 2khz and 4khz");
-					fixPrint(4, 18, fontColorWhite, 3, "tones on its channels and white");
-					fixPrint(4, 19, fontColorWhite, 3, "noise at 500hz.");
+					fixPrint(4, 16, fontColorWhite, 3, "SSG has 200hz, 2khz and 4khz");
+					fixPrint(4, 17, fontColorWhite, 3, "tones on its channels and white");
+					fixPrint(4, 18, fontColorWhite, 3, "noise at 500hz.");
 				break;
 
 			case HELP_LED:

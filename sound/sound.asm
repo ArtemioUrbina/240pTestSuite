@@ -990,7 +990,7 @@ command_SSG_pulseStart:
 	ret
 
 command_SSG_1khzStart:
-	ld		de,0x008C		; 1	khz (1007hz)
+	ld		de,0x007F		; ~ 1khz
 	rst 	writeDEportA
 
 	ld		de,0x0100		; Coarse to zero
