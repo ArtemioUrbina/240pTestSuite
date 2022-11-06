@@ -318,7 +318,7 @@ void tp_colorchart()
 
 		if(first_colorramp && !allowIRE107)
 		{
-			draw_warning("Limiting IRE to 100. As a\nresult the top bar on the\nwhite ramp will be blacked out.", index, palindex, 0);
+			draw_warning("Limiting IRE to 100. As a\nresult the top bar on the\nramps will be blacked out.", index, palindex, 0);
 			first_colorramp = 0;
 			draw = 1;
 		}
@@ -549,22 +549,11 @@ void tp_smpte_color_bars()
 	}
 }
 
-/*
-23	74.19354839 closest to 75%
-Red			0x4B00
-Green		0x20B0
-Blue		0x100B
-Gray		0x7BBB
-Cyan		0x30BB
-Magenta		0x5B0B
-Yellow		0x6BB0
-ushort pal_75pct[] = { _BLACK, 0x7BBB, 0x6BB0, 0x30BB, 0x20B0, 0x5B0B, 0x4B00, 0x100B, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
-*/
-
 void tp_ref_color_bars()
 {
 	int done = 0, draw = 1;
 	picture refcolor_back;
+	ushort pal_75pct[] = { _BLACK, IRE_75, YEL075, CYN075, GRN075, MAG075, RED075, BLU075, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
 
 	while (!done)
 	{
@@ -575,12 +564,12 @@ void tp_ref_color_bars()
 			if(vmode_snk)
 			{
 				pictureInit(&refcolor_back, &refcolor_304, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,refcolor_304.palInfo->count,refcolor_304.palInfo->data);
+				palJobPut(16,1,pal_75pct);
 			}
 			else
 			{
 				pictureInit(&refcolor_back, &refcolor, 1, 16, 0, 0,FLIP_NONE);
-				palJobPut(16,refcolor.palInfo->count,refcolor.palInfo->data);
+				palJobPut(16,1,pal_75pct);
 			}
 			draw = 0;
 		}
@@ -743,7 +732,6 @@ void tp_monoscope()
 		// these are non buffered, execute after in hardware
 		if (updatepalette)
 		{
-			// black 0x8000
 			if (!gray)
 				color = _BLACK;
 			else
@@ -805,7 +793,6 @@ void display_ramp_pal(ushort *palette, int x)
 		}
 	}
 }
-
 
 void tp_gray_ramp()
 {
@@ -1251,6 +1238,7 @@ void tp_100_ire()
 	int done = 0, text = 0, draw = 1, changed = 0, irenum = 9;
 	ushort irevals[] = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 107};
 	ushort irecolor[] = {IRE_10, IRE_20, IRE_30, IRE_40, IRE_50, IRE_60, IRE_70, IRE_80, IRE_90, WH_100, WH_107};
+	ushort pal_ire[] = { _BLACK, _BLACK, WH_100, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
 	picture ire_back;
 
 	while (!done)
@@ -1260,7 +1248,7 @@ void tp_100_ire()
 			gfxClear();
 
 			pictureInit(&ire_back, &ire, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,ire.palInfo->count,ire.palInfo->data);
+			palJobPut(16,1,pal_ire);
 			draw = 0;
 			changed = 1;
 		}
