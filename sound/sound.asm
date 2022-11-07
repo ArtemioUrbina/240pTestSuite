@@ -229,16 +229,22 @@ EntryPoint:
 	ld		bc,0x7FF		; end at $FFFF
 	ldir					; clear out memory
 
+	;-------------------------------------------;
 	; Initialize variables
-	ld		(intPCMB_Loop),a
+	; although they are 00 from above...
 
 	; Initialize SSG frequencies
-	ld		(SSG_FreqFine),a
 	ld		(SSG_FreqCoarse),a
+	ld		(SSG_FreqFine),a
+	ld		(SSG_nextChannel),a
+	ld		(SSG_currChannel),a
 
-	; Next APCM-A channel
+	; APCM-A 
 	ld		(PCMnextChannel),a
 	ld		(PCMcurrChannel),a
+
+	; ADPCM-B
+	ld		(intPCMB_Loop),a
 
 	; Silence/Stop SSG, FM, and ADPCM
 	call	ssg_Stop
@@ -264,10 +270,12 @@ EntryPoint:
 	; Initialize more variables
 	call	SetDefaultBanks	; Set default program banks
 
+	;-------------------------------------------;
 	; Set ADPCM-A shared volume
 	ld		de,0x013F		; Set ADPCM-A volume to Maximum
 	rst 	writeDEportB	; write to ports 6 and 7
 
+	;-------------------------------------------;
 	; set ADPCM-B volume
 	ld		a,0xFF
 	ld		(intPCMB_Volume),a		; ADPCM-B volume max
@@ -291,6 +299,7 @@ EntryPoint:
 	ld		de,0x1A65		; Set ADPCM-B Sampling Rate LSB
 	rst 	writeDEportA	; write to ports 4 and 5
 
+	;-------------------------------------------;
 	; Enable NMIs so we can start receiving commands
 	ld		a,1
 	out		(8),a			; Write to Port 8 (Enable NMI)
@@ -396,10 +405,10 @@ HandleCommand:
 
 	; RAM Test this is special for return value purposes
 	cp		RAMTESTCMD
-	jp		nz,.returnfromHanlder
+	jp		nz,.returnfromHandler
 
 	call	command_RAMTest
-	jr		nc,.returnfromHanlder	; if no error, return normally
+	jr		nc,.returnfromHandler	; if no error, return normally
 
 	; if a RAM error was found...
 	pop		hl						; remove return from stack, yeah I know...
@@ -409,7 +418,7 @@ HandleCommand:
 	out		(0),a					; Write to port 0 (Clear sound code)
 	jp		endNMI					; finish NMI
 
-.returnfromHanlder:
+.returnfromHandler:
 	; if it's not one of the above, then do nothing.
 	ret
 
@@ -559,8 +568,6 @@ fm_Stop:
 ; SSG COMMANDS
 ;==============================================================================;
 
-; initialize variables for a ramp sweep
-; and stop any SSG sound
 ; a value of 0x0003 (coarse/fine) is ~63300khz
 ; 0x0006 is ~25780khz
 ; 0x0007 is ~21090khz
@@ -571,32 +578,75 @@ fm_Stop:
 ;------------------------------------------------------------------------------;
 ; command_SSGrampInit
 ;------------------------------------------------------------------------------;
+; initialize variables for a ramp sweep
+; and stop any SSG sound
+
 command_SSGrampInit:
 	call	ssg_Stop
 
 	xor		a
-	ld		(SSG_FreqFine),a
 	ld		(SSG_FreqCoarse),a
+	ld		(SSG_FreqFine),a
+	ld		(SSG_nextChannel),a
+	ld		(SSG_currChannel),a
 	ret
 
 ;------------------------------------------------------------------------------;
 ; command_SSGrampCycle
 ;------------------------------------------------------------------------------;
+; Does a cycle in the Ramp sweep for SSG, alternating all channels
+
 command_SSGrampCycle:
-	ld		d,0x00			;SSG Channel A Fine Tune
+	call	SSGassignChannel
+
+	;SSG Channel Fine Tune
+	; start addr (register: 2*Channel)
+	ld		a,(SSG_currChannel)
+	rlca
+	ld		d,a
 	ld		a,(SSG_FreqFine)
-	ld		e,a				; fine freq
+	ld		e,a					; fine freq
 	rst 	writeDEportA
 
-	ld		d,0x01			;SSG Channel A Coarse Tune
+	;SSG Channel Coarse Tune
+	; start addr (register: 2*Channel+1)
+	ld		a,(SSG_currChannel)
+	rlca
+	add		0x01
+	ld		d,a
 	ld		a,(SSG_FreqCoarse)
-	ld		e,a				; coarse freq
+	ld		e,a					; coarse freq
 	rst 	writeDEportA
 
-	ld		de,0x073E		;SSG Mixing, Only channel A
+	; Get bitmask for mixer
+	; store in 'b' the current bit mask for channel
+	ld		b,0x01				; set base bitmask
+	ld		a,(SSG_currChannel)	
+	cp		0					; check if channel is zero
+	jr		z,.set_mixer		; if so, skip to execution
+
+	; create bitmask for channel
+.loopSSGshifts
+	sla		b
+	dec		a
+	jr		nz,.loopSSGshifts
+
+.set_mixer:
+	ld		a,b					; copy bitmask
+	or		0xc0
+	xor		0xff
+
+	; SSG Mixing, Only current channel
+	ld		d,0x7
+	ld		e,a
 	rst 	writeDEportA
 
-	ld		de,0x080F		;SSG Channel A Volume
+	; Current SSG Channel Volume
+	; start addr (register: Channel + 0x08)
+	ld		a,(SSG_currChannel)
+	add		0x08
+	ld		d,a
+	ld		e,0x0f
 	rst 	writeDEportA
 
 	; Advance to next frequency
@@ -619,44 +669,51 @@ command_SSGrampCycle:
 	ret
 
 ;------------------------------------------------------------------------------;
-; command_SSG_pulseStart
+; command_SSG_pulseStart using Channel A
 ;------------------------------------------------------------------------------;
+; Starts an 8390hz tone in Channel A, intended for sync pulses linked to vsync
+; in MDFourier
+
 command_SSG_pulseStart:
-	ld		de,0x0010		; ~ 8khz (8390hz)
+	ld		de,0x0010		; ~8khz (8390hz)
 	rst 	writeDEportA
 
 	ld		de,0x0100		; Coarse to zero
 	rst 	writeDEportA
 
-	ld		de,0x073E		;SSG Mixing, Only channel A
+	ld		de,0x073E		; SSG Mixing, Only channel A
 	rst 	writeDEportA
 
-	ld		de,0x080F		;SSG Channel A Volume
+	ld		de,0x080F		; SSG Channel A Volume
 	rst 	writeDEportA
 
 	ret
 
 ;------------------------------------------------------------------------------;
-; command_SSG_1khzStart
+; command_SSG_1khzStart using Channel A
 ;------------------------------------------------------------------------------;
+; Starts an 999.2hz tone in Channel A, intended for confirmation beeps
+
 command_SSG_1khzStart:
-	ld		de,0x007F		; ~ 1khz (999.2khz)
+	ld		de,0x007F		; ~1khz (999.2hz)
 	rst 	writeDEportA
 
 	ld		de,0x0100		; Coarse to zero
 	rst 	writeDEportA
 
-	ld		de,0x073E		;SSG Mixing, Only channel A
+	ld		de,0x073E		; SSG Mixing, Only channel A
 	rst 	writeDEportA
 
-	ld		de,0x080F		;SSG Channel A Volume
+	ld		de,0x080F		; SSG Channel A Volume
 	rst 	writeDEportA
 
 	ret
 
 ;------------------------------------------------------------------------------;
-; command_SSG_260hzStart
+; command_SSG_260hzStart using Channel A
 ;------------------------------------------------------------------------------;
+; Starts an 260.1hz tone in Channel A, intended for missed key presses in a test
+
 command_SSG_260hzStart:
 	ld		de,0x00e5		; ~ 260hz (260.1hz)
 	rst 	writeDEportA
@@ -664,28 +721,30 @@ command_SSG_260hzStart:
 	ld		de,0x0101		; Coarse to 1
 	rst 	writeDEportA
 
-	ld		de,0x073E		;SSG Mixing, Only channel A
+	ld		de,0x073E		; SSG Mixing, Only channel A
 	rst 	writeDEportA
 
-	ld		de,0x080F		;SSG Channel A Volume
+	ld		de,0x080F		; SSG Channel A Volume
 	rst 	writeDEportA
 
 	ret
 
 ;------------------------------------------------------------------------------;
-; command_SSGpulseStop
+; command_SSGpulseStop using Channel A
 ;------------------------------------------------------------------------------;
+; Stops any of the above in Channel A
+
 command_SSGpulseStop:
-	ld		de,0x073F		;SSG Mixing, Silence A
+	ld		de,0x073F		; SSG Mixing, Silence A
 	rst 	writeDEportA
 
-	ld		de,0x0800		;SSG Channel A Volume
+	ld		de,0x0800		; SSG Channel A Volume
 	rst 	writeDEportA
 
 	ret
 
 ;------------------------------------------------------------------------------;
-; ssg_Stop
+; ssg_Stop (All channels)
 ;------------------------------------------------------------------------------;
 ; Silences and stops all SSG channels.
 
@@ -703,6 +762,24 @@ ssg_Stop:
 	ld		de,0x073F		; Disable all SSG channels (Tone and Noise)
 	rst 	writeDEportA	; write to ports 4 and 5
 
+	ret
+
+;------------------------------------------------------------------------------;
+; SSGassignChannel
+;------------------------------------------------------------------------------;
+; Calculates next channel and stores current in SSG_currChannel (and a)
+
+SSGassignChannel:
+	; check for next available channel
+	ld		a,(SSG_nextChannel)
+	ld		(SSG_currChannel),a
+	inc		a
+	cp		3
+	jr		nz,.storeSSGNextChannel
+	xor		a				; zero 'a'
+
+.storeSSGNextChannel:
+	ld		(SSG_nextChannel),a
 	ret
 
 ;==============================================================================;
@@ -760,7 +837,7 @@ command_PlayRightA:
 
 command_PlayCenterA:
     ld      a,4
-    ld      b,0xc0      ; center, both channels
+    ld      b,0xc0			; center, both channels
     call    PlayPCMA
     ret
 
@@ -1136,7 +1213,6 @@ command_RAMTest:
 	sbc		hl,bc			; substract sp-usedRAM
 	ld		b,h				; copy size to bc
 	ld		c,l
-	inc		bc				; place it next to sp
 	ld		hl,usedRAM		; get started at usedRAM
 
 .wlklp1:
@@ -1181,7 +1257,7 @@ command_RAMTest:
 	sbc		hl,bc			; substract sp-usedRAM
 	ld		b,h				; copy size to bc
 	ld		c,l
-	dec		bc				; decrement it by two, since we start at usedRAM + 1
+	dec		bc				; decrement it by one, since we start at usedRAM + 1
 
 	ld		hl,usedRAM		; 00 value is at usedRAM, our source
 	ldir					; Fill out memory
@@ -1201,17 +1277,17 @@ command_RAMTest:
 
 .cmploop:
     cpi
-    jr      nz,.cmper   ; jump if not equal
-    jp      pe,.cmploop ; continue
+    jr      nz,.cmp_err		; jump if not equal
+    jp      pe,.cmploop		; continue
 
     ; no errors, clear carry
-    or      a       ; clear carry, no errors
-    ret				; return from .fillcmp
+    or      a				; clear carry, no errors
+    ret						; return from .fillcmp
 
     ; error, set carry
-.cmper:
-    scf             ; set carry, error
-    ret				; report with error
+.cmp_err:
+    scf						; set carry, error
+    ret						; report with error
 
 ;==============================================================================;
 ; samples
