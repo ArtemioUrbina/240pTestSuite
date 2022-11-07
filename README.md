@@ -111,7 +111,6 @@ General:
 - Maybe have a Memory Card Viewer (?)
 
 Patterns:
-- Finish IRE pattern and complete the 10 step IRE values
 - Confirm monoscope patterns for the Neo Geo PAR (Keith has been notified)
 - See how well HCFR patterns translate to Neo Geo
     - In such case split menus as Genesis version does (maybe do this anyway to remove clutter)

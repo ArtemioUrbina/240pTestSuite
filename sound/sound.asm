@@ -576,7 +576,7 @@ fm_Stop:
 ; All these values were measured on an NTSC AES via headphone out
 
 ;------------------------------------------------------------------------------;
-; command_SSGrampInit
+; command_SSGrampInit using channel A
 ;------------------------------------------------------------------------------;
 ; initialize variables for a ramp sweep
 ; and stop any SSG sound
@@ -594,59 +594,23 @@ command_SSGrampInit:
 ;------------------------------------------------------------------------------;
 ; command_SSGrampCycle
 ;------------------------------------------------------------------------------;
-; Does a cycle in the Ramp sweep for SSG, alternating all channels
+; Does a cycle in the Ramp sweep for SSG using channel A
 
 command_SSGrampCycle:
-	call	SSGassignChannel
-
-	;SSG Channel Fine Tune
-	; start addr (register: 2*Channel)
-	ld		a,(SSG_currChannel)
-	rlca
-	ld		d,a
+	ld		d,0x00			;SSG Channel A Fine Tune
 	ld		a,(SSG_FreqFine)
-	ld		e,a					; fine freq
+	ld		e,a				; fine freq
 	rst 	writeDEportA
 
-	;SSG Channel Coarse Tune
-	; start addr (register: 2*Channel+1)
-	ld		a,(SSG_currChannel)
-	rlca
-	add		0x01
-	ld		d,a
+	ld		d,0x01			;SSG Channel A Coarse Tune
 	ld		a,(SSG_FreqCoarse)
-	ld		e,a					; coarse freq
+	ld		e,a				; coarse freq
 	rst 	writeDEportA
 
-	; Get bitmask for mixer
-	; store in 'b' the current bit mask for channel
-	ld		b,0x01				; set base bitmask
-	ld		a,(SSG_currChannel)	
-	cp		0					; check if channel is zero
-	jr		z,.set_mixer		; if so, skip to execution
-
-	; create bitmask for channel
-.loopSSGshifts
-	sla		b
-	dec		a
-	jr		nz,.loopSSGshifts
-
-.set_mixer:
-	ld		a,b					; copy bitmask
-	or		0xc0
-	xor		0xff
-
-	; SSG Mixing, Only current channel
-	ld		d,0x7
-	ld		e,a
+	ld		de,0x073E		;SSG Mixing, Only channel A
 	rst 	writeDEportA
 
-	; Current SSG Channel Volume
-	; start addr (register: Channel + 0x08)
-	ld		a,(SSG_currChannel)
-	add		0x08
-	ld		d,a
-	ld		e,0x0f
+	ld		de,0x080F		;SSG Channel A Volume
 	rst 	writeDEportA
 
 	; Advance to next frequency
@@ -764,23 +728,7 @@ ssg_Stop:
 
 	ret
 
-;------------------------------------------------------------------------------;
-; SSGassignChannel
-;------------------------------------------------------------------------------;
-; Calculates next channel and stores current in SSG_currChannel (and a)
 
-SSGassignChannel:
-	; check for next available channel
-	ld		a,(SSG_nextChannel)
-	ld		(SSG_currChannel),a
-	inc		a
-	cp		3
-	jr		nz,.storeSSGNextChannel
-	xor		a				; zero 'a'
-
-.storeSSGNextChannel:
-	ld		(SSG_nextChannel),a
-	ret
 
 ;==============================================================================;
 ; ADPCM-A COMMANDS
