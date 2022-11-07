@@ -821,11 +821,12 @@ void sendCDDAcommand(BYTE command, BYTE track)
 
 	// Send command via register d0 to BIOSF_CDDACMD
 	asm (
+			"move.w		%0,%%d0\n\t"
 		".loop_cdda_%=_chk:\n\t"
-			"move.b  %%d0, %0\n\t"
-			"tst.b	0x10F6D9\n\t"
-			"beq.s	.loop_cdda_%=_chk\n\t"
-			"jsr	0xC0056A\n\t"				// BIOSF_CDDACMD
+			"move.b		%%d0,0x300001\n\t"
+			"tst.b		0x10F6D9\n\t"
+			"beq.s		.loop_cdda_%=_chk\n\t"
+			"jsr		0xC0056A\n\t"				// BIOSF_CDDACMD
 		: /* No outputs. */
 		: "r" (word_out));
 }

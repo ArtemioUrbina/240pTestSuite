@@ -1126,7 +1126,7 @@ pcmb_Stop:
 ; RAM is at $F800-$FFFF
 ; but we need the stack with the current code
 ; so we test from the end of our RAM variables to the SP
-; the rest of the RAm was tested by use, we wouldn't be
+; the rest of the RAM was tested by use, we wouldn't be
 ; running this code without it working...
 ; I know...
 

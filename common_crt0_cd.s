@@ -91,7 +91,7 @@ _IRQ7	=	0x00c00426
 	jmp		_ENTRY_DEMO_END
 	jmp		_ENTRY_COIN_SOUND
 
-	.word	0xffff
+	.word	0x0000			/*; Do not use CDDA Z80 RAM */
 	.long	0xffffffff
 	.long	0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff
 	.long	0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff
@@ -137,7 +137,7 @@ _start:
 	move.w	#0x2000, sr
 	
 	|;* Stop CDDA
-	move.w	#0x0200, d0
+	move.w	#0x0600, d0
 	jsr		0xc0056a
 
 	|;* Initialize base pointers for malloc

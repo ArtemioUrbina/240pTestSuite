@@ -457,7 +457,7 @@ void tp_colorbars()
 		if (BTTN_EXIT)
 			done = 1;
 
-		if (checkHelp(HELP_601CB))
+		if (checkHelp(HELP_EBU))
 			draw = 1;
 	}
 }

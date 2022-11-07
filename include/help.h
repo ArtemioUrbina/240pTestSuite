@@ -53,6 +53,7 @@
 #define HELP_CONTRAST		28
 #define HELP_MDFOURIER		29
 #define HELP_MEMVIEW		30
+#define HELP_EBU			31
 
 void DrawHelp(int option);
 int checkHelp(int helpID);

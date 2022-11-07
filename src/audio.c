@@ -159,9 +159,15 @@ void at_sound_test()
 			case SND_SEL_ADPCMA:
 				option = 1;
 				break;
+#ifndef __cd__
 			case SND_SEL_ADPCMB:
 				option = 1;
 				break;
+#else
+			case SND_SEL_CDDA:
+				option = 1;
+				break;
+#endif
 			}
 			change = 0;
 		}

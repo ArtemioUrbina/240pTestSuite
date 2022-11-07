@@ -66,10 +66,11 @@ extern BYTE isCDFront, isCDZ;
 #define fontColorRed		2
 #define fontColorGreen		3
 #define fontColorBlue		4
-#define fontColorGrayLight	5
-#define fontColorGrayDark	6
-#define fontColorBlack		7
-#define fontColorSolid		8
+#define fontColorYellow		5
+#define fontColorGrayLight	6
+#define fontColorGrayDark	7
+#define fontColorBlack		8
+#define fontColorSolid		9
 
 #define REG_DIPSW			0x300001
 #define DP_SETTINGS			0x01
