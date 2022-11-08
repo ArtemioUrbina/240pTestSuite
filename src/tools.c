@@ -66,7 +66,7 @@ void check_systype()
 
 	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0, isPALinMVS = 0;
 	enable_shadow = 0;
-	usePAL256 = 1;
+	usePAL256 = 0;
 	allowIRE107 = 1;
 
 	if (volMEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
@@ -110,6 +110,7 @@ void check_systype()
 	regw = volMEMWORD(REG_LSPCMODE);
 	if (regw & LPSC2_NTSC_PAL)
 	{
+		usePAL256 = 1;
 		if(isMVS)
 			isPALinMVS = 1;
 		else
@@ -127,6 +128,7 @@ void check_systype()
 		if (!(regw & CD_LID_STATUS))
 			isCDZ = 1;
 	}
+	ngcd_region = ((~regw) & NGCD_REGION) >> 8;
 #endif
 }
 
@@ -502,7 +504,9 @@ void menu_footer()
 
 void draw_warning(char* msg, int index, int palindex, int clearback)
 {
+#ifndef __cd__
 	if (!isMVS || getSoftDipvalue(SOFT_DIP_5))
+#endif
 		draw_message("WARNING", msg, index, palindex, clearback);
 }
 
@@ -700,18 +704,32 @@ void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr)
 	fixPrintf(x+22, y+1, fontColorWhite, 3, "%s", buffer);
 }
 
+void displayValue(u16 x, u16 y, char *dispname, int value)
+{
+	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
+	fixPrintf(x+13, y, fontColorWhite, 3, "%d", value);
+}
+
 int getCreditCount()
 {
+#ifndef __cd__
 	if(volMEMBYTE(BIOS_DEV_MODE))
 		return(bcdToDec(volMEMBYTE(BIOS_CREDIT_DB)));
 	return(bcdToDec(volMEMBYTE(BIOS_NM_CREDIT)));
+#else
+	return 0;
+#endif
 }
 
 BYTE getHardDipValue(BYTE harddip)
 {
+#ifndef __cd__
 	if(!isMVS || AES_AS_MVS)
 		return 0;
 	return(!(volMEMBYTE(REG_DIPSW) & harddip));
+#else
+	return 0;
+#endif
 }
 
 void fixPrintC(int y, int color, int font, char *str)
@@ -725,9 +743,13 @@ void fixPrintC(int y, int color, int font, char *str)
 
 int getSoftDipvalue(u32 softdip)
 {
+#ifndef __cd__
 	if(!isMVS)
 		return 0;
 	return(volMEMBYTE(softdip));	
+#else
+	return 0;
+#endif
 }
 
 inline WORD getVideoline()
@@ -740,23 +762,44 @@ inline void waitVLine(WORD line)
 	while((volMEMWORD(REG_LSPCMODE) >> 7) != line);	
 }
 
+// regular commands AES max 180
+// regular commands MAME max 258
+// Max Timeout from z80 RAM test in NTSC AES is 66264
+// Max Timeout from z80 RAM test in PAL AES is 66508
+// Max Timeout from z80 RAM test in MAME is 108733
+// we'll use 0x25000
+
+#define Z80_TIMEOUT 0x25000
 inline int checkZ80Response(BYTE command)
 {
+	int timeout = 0;
 	BYTE response = 0;
 
 	// wait for the Z80 to enter NMI
 	do
 	{
 		response = volMEMBYTE(REG_SOUND);
-	}while(response != 0xff);
+		timeout++;
+	}while(timeout < Z80_TIMEOUT && response != 0xff);
+	// Z80 got command, and is inside the NMI (or timed out)
 
-	// Z80 got command, and is inside the NMI
+	if(timeout > max_z80_timout)
+		max_z80_timout = timeout;
+	if(timeout >= Z80_TIMEOUT)
+		return 0;
+
+	timeout = 0;
 	do
 	{
 		response = volMEMBYTE(REG_SOUND);
-	}while(response == 0xff);
+		timeout++;
+	}while(timeout < Z80_TIMEOUT && response == 0xff);
+	// Z80 has finished NMI (or timed out)
 
-	// Z80 has finished NMI
+	if(timeout > max_z80_timout)
+		max_z80_timout = timeout;
+	if(timeout >= Z80_TIMEOUT)
+		return 0;
 
 	return response;
 }
@@ -819,16 +862,18 @@ void sendCDDAcommand(BYTE command, BYTE track)
 	track = decToBCD(track);
 	word_out = (command << 8) | track;
 
+	disableIRQ();
 	// Send command via register d0 to BIOSF_CDDACMD
 	asm (
 			"move.w		%0,%%d0\n\t"
 		".loop_cdda_%=_chk:\n\t"
-			"move.b		%%d0,0x300001\n\t"
+			"move.b		#5,0x300001\n\t"
 			"tst.b		0x10F6D9\n\t"
 			"beq.s		.loop_cdda_%=_chk\n\t"
 			"jsr		0xC0056A\n\t"				// BIOSF_CDDACMD
 		: /* No outputs. */
 		: "r" (word_out));
+	 enableIRQ();
 }
 
 void playCDDA(BYTE track)

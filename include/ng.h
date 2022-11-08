@@ -48,8 +48,9 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 extern BYTE first_grid;
 extern BYTE first_overscan;
 extern BYTE first_colorramp;
+extern int max_z80_timout;
 #ifdef __cd__
-extern BYTE isCDFront, isCDZ;
+extern BYTE isCDFront, isCDZ, ngcd_region;
 #endif
 
 #define SYSTEM_AES			0x00
@@ -235,6 +236,9 @@ extern BYTE isCDFront, isCDZ;
 
 // CD
 #ifdef __cd__
+
+#define NGCD_REGION			0x0300
+
 #define REG_CDCONFIG		0xFF011C
 #define CD_CONFIG_1			0x0100
 #define CD_CONFIG_2			0x0200

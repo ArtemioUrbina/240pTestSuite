@@ -31,5 +31,6 @@ void ht_check_ng_bios_crc(u32 address);
 void ht_test_ng_ram();
 void ht_displayregs();
 void ht_z80RAMtest();
+void ht_showInternalVars();
 
 #endif /* _HARDWARE_H_ */

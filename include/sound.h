@@ -62,5 +62,6 @@
 
 #define Z80COMMAND_OK(cmd)		(cmd|0x80)
 #define Z80COMMAND_FAIL(cmd)		(cmd)
+#define Z80COMMAND_TIME(cmd)		(cmd == 0)
 
 #endif /* _SOUND_H_ */

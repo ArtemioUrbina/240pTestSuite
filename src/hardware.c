@@ -848,7 +848,7 @@ void ht_displayregs()
 
 		readController();
 
-		fixPrintf(14, 6, fontColorGreen, 3, "HW Registers");
+		fixPrintC(6, fontColorGreen, 3, "HW Registers");
 
 		displayRegWord(4, y++, "REG_LSPCMODE", REG_LSPCMODE);
 		y++;
@@ -921,6 +921,8 @@ void ht_z80RAMtest()
 				fixPrintC(15, fontColorGreen, 3, "Z80 RAM OK");
 			else if(status == Z80COMMAND_FAIL(RAMTESTCMD))
 				fixPrintC(15, fontColorRed, 3, "RAM FAILED");
+			else if(status == Z80COMMAND_TIME(RAMTESTCMD))
+				fixPrintC(15, fontColorYellow, 3, "Z80 Timed Out");
 			else
 			{
 				fixPrintC(15, fontColorRed, 3, "Unknown status");
@@ -930,13 +932,66 @@ void ht_z80RAMtest()
 
 			if (unknown || bkp_data.debug_dip1 & DP_DEBUG1)
 			{
-				char buffer[40];
+				char buffer[4];
 
-				sprintf(buffer, "Z80 replied: 0x%X", status);
-				fixPrintC(17, fontColorWhite, 3, buffer);
+				intToHex(status, buffer, 2);
+				fixPrintf(12, 17, fontColorWhite, 3, "Z80 replied: 0x%s", buffer);
 			}
 			execute = 0;
 		}
+	}
+	return;
+}
+
+void ht_showInternalVars()
+{
+	int done = 0, redraw = 1;
+
+	while (!done)
+	{
+		int x = 12, y = 8;
+
+		if (redraw)
+		{
+			gfxClear();
+			draw_background();
+			redraw = 0;
+		}
+
+		SCClose();
+		waitVBlank();
+
+		readController();
+
+		fixPrintC(6, fontColorGreen, 3, "Suite Internal Vars");
+
+		displayValue(x, y++, "isMVS", isMVS);
+#ifndef __cd__
+		displayValue(x, y++, "is4S", is4S);
+		displayValue(x, y++, "is6S", is6S);
+		displayValue(x, y++, "isMulti", isMulti);
+#endif
+		displayValue(x, y++, "hwChange", hwChange);
+		displayValue(x, y++, "IRE107", allowIRE107);
+		displayValue(x, y++, "vmode_snk", vmode_snk);
+		displayValue(x, y++, "isPAL", isPAL);
+		displayValue(x, y++, "usePAL256", usePAL256);
+		displayValue(x, y++, "isPALinMVS", isPALinMVS);
+		displayValue(x, y++, "e_shadow", enable_shadow);
+		displayValue(x, y++, "first_grid", first_grid);
+		displayValue(x, y++, "first_overs", first_overscan);
+		displayValue(x, y++, "first_cramp", first_colorramp);
+		displayValue(x, y++, "max_z80", max_z80_timout);
+#ifdef __cd__
+		displayValue(x, y++, "isCDFront", isCDFront);
+		displayValue(x, y++, "isCDZ", isCDZ);
+		displayValue(x, y++, "ngcd_region", ngcd_region);
+#endif
+
+		menu_footer();
+
+		if (BTTN_EXIT)
+			done = 1;
 	}
 	return;
 }

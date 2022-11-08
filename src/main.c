@@ -41,8 +41,9 @@ BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 BYTE isMVS, is4S, is6S, isMulti, hwChange, allowIRE107;
 BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
 #ifdef __cd__
-BYTE isCDFront, isCDZ;
+BYTE isCDFront, isCDZ, ngcd_region;
 #endif
+int max_z80_timout;
 
 #define NUM_FONT_COLORS 10
 static const ushort fixPalettes[]= {
@@ -361,15 +362,34 @@ void menu_at()
 void menu_ht()
 {
 	int done = 0, curse = 1, cursemax = 8, redraw = 1;
+	int debug = 0, olddebug = 2;
 	blinker blinkdata;
 
 	while (!done)
 	{
+		int y = 12 - debug;
+
 		if (redraw)
 		{
 			gfxClear();
 			draw_background_w_gil(&blinkdata);
 			redraw = 0;
+		}
+
+		debug = (bkp_data.debug_dip1 & DP_DEBUG1);
+		if(olddebug != debug)
+		{
+			if(debug) {
+				y = 11;
+				cursemax = 9;
+				debug = 1;
+			} else {
+				y = 12;
+				cursemax = 8;
+				debug = 0;
+			}
+			suiteClearFixLayer();
+			olddebug = debug;
 		}
 
 		SCClose();
@@ -381,15 +401,17 @@ void menu_ht()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, 13, curse == 1 ? fontColorRed : fontColorWhite, 3, "Controller Test");
-		fixPrint(5, 14, curse == 2 ? fontColorRed : fontColorWhite, 3, "SDRAM Check");
-		fixPrint(5, 15, curse == 3 ? fontColorRed : fontColorWhite, 3, "Memory Viewer");
-		fixPrint(5, 16, curse == 4 ? fontColorRed : fontColorWhite, 3, "BIOS Info");
-		fixPrint(5, 17, curse == 5 ? fontColorRed : fontColorWhite, 3, "Register View");
-		fixPrint(5, 18, curse == 6 ? fontColorRed : fontColorWhite, 3, "Z80 RAM test");
-
-		fixPrint(5, 20, curse == 7 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, 21, curse == 8 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Controller Test");
+		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "BIOS Info");
+		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "SDRAM Check");
+		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "Z80 RAM test");
+		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Memory Viewer");
+		fixPrint(5, y++, curse == 6 ? fontColorRed : fontColorWhite, 3, "Register View");
+		if (debug)
+			fixPrint(5, y++, curse == 7 ? fontColorRed : fontColorWhite, 3, "Internal Vars");
+		y++;
+		fixPrint(5, y++, curse == 7 + debug ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, y++, curse == 8 + debug ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -409,27 +431,32 @@ void menu_ht()
 				break;
 					
 				case 2:
-					
-				break;
-
-				case 3:
-					ht_memory_viewer(0);
-				break;
-
-				case 4:
 					ht_check_ng_bios_crc(BIOS_ADDRESS);
 				break;
 
+				case 3:
+					
+				break;
+
+				case 4:
+					ht_z80RAMtest();
+				break;
+				
 				case 5:
-					ht_displayregs();
+					ht_memory_viewer(0);
 				break;
 
 				case 6:
-					ht_z80RAMtest();
+					ht_displayregs();
 				break;
 
-				case 7:
-					DrawHelp(HELP_GENERAL);
+				default:
+					if(debug && curse == 7)
+						ht_showInternalVars();
+					if(curse == 7 + debug)
+						DrawHelp(HELP_GENERAL);
+					else if(curse == 8 + debug)
+						DrawHelp(HELP_GENERAL);
 				break;
 
 				case 8:
@@ -501,6 +528,7 @@ void credits()
 	return;
 }
 
+/*
 void draw_debug_data()
 {
 	if (bkp_data.debug_dip1 & DP_DEBUG1)
@@ -511,6 +539,7 @@ void draw_debug_data()
 		displayRegByte(4, 11, "BIOS_DEV_MODE", BIOS_DEV_MODE);
 	}
 }
+*/
 
 // This function is called by the BIOS when the start button is
 // pressed (AES) and when enough credits are available (MVS)
@@ -598,7 +627,7 @@ void menu_main()
 		if (showexit)
 			fixPrint(6, 22, curse == 8 ? fontColorRed : fontColorWhite, 3, "Exit");
 
-		draw_debug_data();
+		//draw_debug_data();
 		menu_footer();
 
 		if (checkHelp(HELP_GENERAL))
@@ -732,7 +761,7 @@ void draw_mvs_demo()
 		if (isMVS)
 			fixPrintf(28, 28, fontColorSolid, 4, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 
-		draw_debug_data();
+		//draw_debug_data();
 		
 		toggle ++;
 		if (toggle > 60)
@@ -817,7 +846,7 @@ void draw_mvs_title()
 			return;
 		}
 
-		draw_debug_data();
+		//draw_debug_data();
 	}
 }
 
@@ -845,6 +874,7 @@ void check_bios_init()
 	first_grid = 1;
 	first_overscan = 1;
 	first_colorramp = 1;
+	max_z80_timout = 0;
 }
 
 void mvs_state()

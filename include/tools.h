@@ -130,6 +130,7 @@ WORD getVideoline();
 void getScreenLimits(int* x, int* y);
 void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr);
 void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr);
+void displayValue(u16 x, u16 y, char *dispname, int value);
 int getCreditCount();
 BYTE getHardDipValue(BYTE harddip);
 int getSoftDipvalue(u32 softdip);

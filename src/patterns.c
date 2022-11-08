@@ -658,12 +658,21 @@ void tp_grid()
 
 			draw = 0;
 			updatepalette = 1; 
-			if(isMVS && !AES_AS_MVS && !vmode_snk && !isMulti && first_grid)
+#ifndef __cd__
+			if((isMVS && !AES_AS_MVS && !vmode_snk && !isMulti && first_grid))
 			{
-				draw_warning("Some later MVS systems can't\ndisplay the last few pixels\nwhen in full 320 mode.", index, palindex, 0);
+				draw_warning("Some later MVS systems can't display\nthe last column of pixels\nwhen in full 320 mode.", index, palindex, 0);
 				first_grid = 0;
 				draw = 1;
 			}
+#else
+			if(isCDZ && first_grid)	// Have only checked this variant, maybe all have this behaviour
+			{
+				draw_warning("CDZ systems can't display\nthe last column of pixels\nwhen in full 320 mode.", index, palindex, 0);
+				first_grid = 0;
+				draw = 1;
+			}
+#endif
 		}
 
 		SCClose();
@@ -675,7 +684,7 @@ void tp_grid()
 			if (!gray)
 				color = _BLACK;
 			else
-				color = PackColor(7, 7, 7, 0);
+				color = IRE_30;
 			VRAM_PAL(16, 3) = color;
 			VRAM_PAL(0, 2)  = color;	// SNK BIOS Border
 			backgroundColor(color);
