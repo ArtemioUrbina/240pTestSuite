@@ -251,11 +251,11 @@ extern BYTE isCDFront, isCDZ, ngcd_region;
 
 #define BIOSF_CDDACMD		0xC0056A
 
-#define BIOS_CDDA_PLAY_LOOP	0x00
+// With bit 10 clear
+#define BIOS_CDDA_PLAY_LP	0x00
 #define BIOS_CDDA_PLAY_NLP	0x01
 #define BIOS_CDDA_PAUSE		0x02
 #define BIOS_CDDA_UNPAUSE	0x03
-#define BIOS_CDDA_STOP		0x06
 
 #endif
 

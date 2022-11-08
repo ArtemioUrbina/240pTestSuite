@@ -747,6 +747,7 @@ void ht_check_ng_bios_crc(u32 address)
 	const BIOSID 	*bios = NULL;
 #ifdef __cd__
 	blinker			blinkdata;
+	int				sprindex = 0;
 #endif
 
 	gfxClear();
@@ -761,7 +762,7 @@ void ht_check_ng_bios_crc(u32 address)
 	displayBIOS(address, swap);
 	drawBIOSHeader(address, 13, 23);
 #else
-	draw_background_w_gil(&blinkdata);
+	sprindex = draw_background_w_gil(&blinkdata);
 #endif
 	menu_footer();
 
@@ -774,6 +775,7 @@ void ht_check_ng_bios_crc(u32 address)
 	crc = CalculateCRC(address, BIOS_SIZE);
 #else
 	crc = CalculateCRCBlink(address, BIOS_SIZE, &blinkdata);
+	clear_gillian(sprindex, &blinkdata);
 #endif
 	intToHex(crc, buffer, 8);
 	fixPrintf(12, 16, fontColorGreen, 3, "CRC:  ");
@@ -807,9 +809,6 @@ void ht_check_ng_bios_crc(u32 address)
 		waitVBlank();
 
 		readController();
-#ifdef __cd__
-		SD_blink_cycle(&blinkdata);
-#endif
 
 		if (BTTN_EXIT)
 			done = 1;

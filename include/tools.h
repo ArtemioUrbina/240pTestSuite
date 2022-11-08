@@ -47,6 +47,7 @@ typedef struct blinker{
 void load_blinkdata(blinker* blinkdata, int *index, int *palindex, int x, int y);
 int SD_blink_cycle(blinker *blinkdata);
 int draw_background_w_gil(blinker *blinkdata);
+int clear_gillian(int index, blinker *blinkdata);
 int draw_background();
 void draw_message(char *title, char *msg, int index, int palindex, int clearback);
 void draw_warning(char* msg, int index, int palindex, int clearback);
@@ -77,10 +78,10 @@ void sendZ80commandAtLine(WORD line, u8 command);
 void sendZ80commandnoWait(u8 command);
 
 #ifdef __cd__
-void playCDDA(BYTE track);
-void pauseCDDA();
-void unPauseCDDA();
-void stopCDDA();
+void playCDDA(BYTE track, BYTE wait);
+void pauseCDDA(BYTE wait);
+void unPauseCDDA(BYTE wait);
+void stopCDDA(BYTE wait);
 #endif
 
 // This is unbuffered, so if a palJobPut is called in the same frame, this will be overwritten

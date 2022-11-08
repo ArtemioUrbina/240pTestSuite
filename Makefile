@@ -186,12 +186,8 @@ neo: cdz80
 	cd $(OUTPUT) && $(CHARSPLIT) $(CROM) -cd $(CD_BASE_NAME)
 	$(RM) $(OUTPUT)/$(CROM)
 	$(CP) out/$(SROM) cd/$(CDFIX_OUTFILE)
-	cd $(OUTPUT) && $(MKISOFS) $(FLAGS_MKISOFS) -o $(NGCD_IMAGENAME).iso -V "$(NGCD_DISCLABEL)" $(NGCD_DISCFILES)
-	cd $(OUTPUT) && $(CHDMAN) createcd -i 240pTestSuite.cue -o 240pTestSuite.chd
-	$(CP) $(OUTPUT)/240pTestSuite.iso $(OUTPUT)/iso/240pTestSuite.iso
-	$(CP) $(OUTPUT)/240pTestSuite.chd $(OUTPUT)/chd/240pTestSuite.chd
-	$(RM) $(OUTPUT)/240pTestSuite.iso
-	$(RM) $(OUTPUT)/240pTestSuite.chd
+	cd $(OUTPUT) && $(MKISOFS) $(FLAGS_MKISOFS) -o iso/$(NGCD_IMAGENAME).iso -V "$(NGCD_DISCLABEL)" $(NGCD_DISCFILES)
+	cd $(OUTPUT)/iso && $(CHDMAN) createcd -f -i 240pTestSuite.cue -o ../chd/$(NGCD_IMAGENAME).chd
 endif
 
 ifeq ($(OUTPUT),cart)

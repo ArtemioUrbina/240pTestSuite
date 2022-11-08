@@ -363,7 +363,7 @@ void vt_striped_sprite_test()
 			gfxClear();
 
 			// load scrollers, all sprite priority based
-			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y3);
+			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y1);
 			palJobPut(palindex, sonic_back.palInfo->count, sonic_back.palInfo->data);
 			pal_wfall = palindex + 1;
 			pal_water = pal_wfall + 1;

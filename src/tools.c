@@ -389,6 +389,21 @@ int draw_background_w_gil(blinker *blinkdata)
 	return index;
 }
 
+int clear_gillian(int index, blinker *blinkdata)
+{
+	if(blinkdata)
+	{
+		clearSprites(index - gblink1.tileWidth, index);
+		index -= gblink1.tileWidth;
+		clearSprites(index - gblink2.tileWidth, index);
+		index -= gblink2.tileWidth;
+		memset(blinkdata, 0, sizeof(blinker));
+	}
+	clearSprites(index - gillian.tileWidth, index);
+	index -= gillian.tileWidth;
+	return index;
+}
+
 void load_blinkdata(blinker* blinkdata, int *index, int *palindex, int x, int y)
 {
 	blinkdata->blink_counter = 0;
@@ -854,21 +869,23 @@ void sendZ80commandnoWait(u8 command)
 
 #ifdef __cd__
 
-void sendCDDAcommand(BYTE command, BYTE track)
+void sendCDDAcommand(BYTE command, BYTE track, BYTE wait)
 {
 	WORD word_out = 0;
-
-	// we don't halt (bit 10 for sync)
+	
 	track = decToBCD(track);
 	word_out = (command << 8) | track;
+	// bit 10 for sync
+	if(wait)
+		word_out |= (1 << 10);
 
 	disableIRQ();
 	// Send command via register d0 to BIOSF_CDDACMD
 	asm (
 			"move.w		%0,%%d0\n\t"
 		".loop_cdda_%=_chk:\n\t"
-			"move.b		#5,0x300001\n\t"
-			"tst.b		0x10F6D9\n\t"
+			"move.b		#5,0x300001\n\t"			// the watchdog
+			"tst.b		0x10F6D9\n\t"				// documented wait...
 			"beq.s		.loop_cdda_%=_chk\n\t"
 			"jsr		0xC0056A\n\t"				// BIOSF_CDDACMD
 		: /* No outputs. */
@@ -876,24 +893,19 @@ void sendCDDAcommand(BYTE command, BYTE track)
 	 enableIRQ();
 }
 
-void playCDDA(BYTE track)
+void playCDDA(BYTE track, BYTE wait)
 {
-	sendCDDAcommand(BIOS_CDDA_PLAY_NLP, track);
+	sendCDDAcommand(BIOS_CDDA_PLAY_NLP, track, wait);
 }
 
-void pauseCDDA()
+void pauseCDDA(BYTE wait)
 {
-	sendCDDAcommand(BIOS_CDDA_PAUSE, 0);
+	sendCDDAcommand(BIOS_CDDA_PAUSE, 0, wait);
 }
 
-void unPauseCDDA()
+void unPauseCDDA(BYTE wait)
 {
-	sendCDDAcommand(BIOS_CDDA_UNPAUSE, 0);
-}
-
-void stopCDDA()
-{
-	sendCDDAcommand(BIOS_CDDA_STOP, 0);
+	sendCDDAcommand(BIOS_CDDA_UNPAUSE, 0, wait);
 }
 
 #endif

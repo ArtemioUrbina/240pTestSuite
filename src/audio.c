@@ -261,7 +261,7 @@ void at_sound_test()
 			}
 #else
 			if (sel == SND_SEL_CDDA)
-				playCDDA(CDDA_SNDTEST);
+				playCDDA(CDDA_SNDTEST, 0);
 #endif
 		}
 
@@ -309,7 +309,7 @@ void at_sound_test()
 	sendZ80command(SOUNDCMD_SSGPulseStop);
 
 #ifdef __cd__
-	stopCDDA();
+	pauseCDDA(0);
 #endif
 }
 
