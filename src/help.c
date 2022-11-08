@@ -611,8 +611,8 @@ void DrawHelp(int option)
 
 							fixPrint(4, 14, fontColorWhite, 3, "Speed can be varied with Up &");
 							fixPrint(4, 15, fontColorWhite, 3, "Down and scroll direction with");
-							fixPrint(4, 16, fontColorWhite, 3, "'D'. The 'A' button stops the");
-							fixPrint(4, 17, fontColorWhite, 3, "scroll and 'C' toggles between");
+							fixPrint(4, 16, fontColorWhite, 3, "'C'. The 'A' button stops the");
+							fixPrint(4, 17, fontColorWhite, 3, "scroll and 'D' toggles between");
 							fixPrint(4, 18, fontColorWhite, 3, "vertical and horizontal.");
 
 							fixPrint(4, 20, fontColorWhite, 3, "You can use Left & Right while");

@@ -71,7 +71,7 @@ void vt_drop_shadow_test()
 	int pal_water = 0, pal_wfall = 0, text = 0, evenframes = 0;
 	char flip = FLIP_NONE;
 	int drawshadow = 0, frame = 1;
-	short y1 = -96;
+	short y1 = 16;
 	short y2 = -152;
 	short y3 = 0;
 	picture donna_back;
@@ -94,7 +94,7 @@ void vt_drop_shadow_test()
 			gfxClear();
 
 			// load scrollers, all sprite priority based
-			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y1);
+			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y3);
 			palJobPut(palindex, sonic_back.palInfo->count, sonic_back.palInfo->data);
 			pal_wfall = palindex + 1;
 			pal_water = pal_wfall + 1;
@@ -104,12 +104,12 @@ void vt_drop_shadow_test()
 			scrollerInit(&waterScroll, &sonic_water, sprindex, palindex, 0, y2);
 			palJobPut(palindex, sonic_water.palInfo->count, sonic_water.palInfo->data);
 			sprindex += SCROLLER_SIZE;
-			palindex += backScroll.info->palInfo->count;
+			palindex += waterScroll.info->palInfo->count;
 
 			scrollerInit(&frontScroll, &sonic_floor, sprindex, palindex, 0, y3);
 			palJobPut(palindex, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
 			sprindex += SCROLLER_SIZE;
-			palindex += backScroll.info->palInfo->count;
+			palindex += frontScroll.info->palInfo->count;
 
 			// load palettes
 			pali_donna = palindex;
@@ -343,7 +343,7 @@ void vt_striped_sprite_test()
 {
 	int done = 0, x = 30, y = 30, draw = 1, changeBack = 1, back = 0, frame = 1;
 	int pal_water = 0, pal_wfall = 0, limitX = 0, limitY = 0;
-	short y1 = -96;
+	short y1 = 16;
 	short y2 = -152;
 	short y3 = 0;
 	picture donna_back;
@@ -363,7 +363,7 @@ void vt_striped_sprite_test()
 			gfxClear();
 
 			// load scrollers, all sprite priority based
-			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y1);
+			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y3);
 			palJobPut(palindex, sonic_back.palInfo->count, sonic_back.palInfo->data);
 			pal_wfall = palindex + 1;
 			pal_water = pal_wfall + 1;
@@ -373,12 +373,12 @@ void vt_striped_sprite_test()
 			scrollerInit(&waterScroll, &sonic_water, sprindex, palindex, 0, y2);
 			palJobPut(palindex, sonic_water.palInfo->count, sonic_water.palInfo->data);
 			sprindex += SCROLLER_SIZE;
-			palindex += backScroll.info->palInfo->count;
+			palindex += waterScroll.info->palInfo->count;
 
-			scrollerInit(&frontScroll, &sonic_floor, sprindex, palindex, 0, y3);
+			scrollerInit(&frontScroll, &sonic_floor, sprindex, palindex, 0, y1);
 			palJobPut(palindex, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
 			sprindex += SCROLLER_SIZE;
-			palindex += backScroll.info->palInfo->count;
+			palindex += frontScroll.info->palInfo->count;
 
 			// Tiles and Palettes
 			pali_donna = palindex;
@@ -1020,8 +1020,8 @@ void vt_reflex_test()
 
 void vt_scroll_test()
 {
-	int done = 0, changed = 1, reload = 1, frame = 1, vertical = 0, pause = 0, acc = 1;
-	short x1 = 0, y1 = -96;
+	int done = 0, changed = 1, reload = 1, frame = 1, vertical = 0, pause = 0, acc = 1, direction = 1;
+	short x1 = 0, y1 = 16;
 	short x2 = 0, y2 = -152;
 	short x3 = 0, y3 = 0;
 	short xvert[3] = { 96, 64, 32 }, currxvert = 1, y = 0;
@@ -1052,12 +1052,12 @@ void vt_scroll_test()
 			scrollerInit(&waterScroll, &sonic_water, sprindex, palindex, x2, y2);
 			palJobPut(palindex, sonic_water.palInfo->count, sonic_water.palInfo->data);
 			sprindex += SCROLLER_SIZE;
-			palindex += backScroll.info->palInfo->count;
+			palindex += waterScroll.info->palInfo->count;
 
 			scrollerInit(&frontScroll, &sonic_floor, sprindex, palindex, x1, y1);
 			palJobPut(palindex, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
 			sprindex += SCROLLER_SIZE;
-			palindex += backScroll.info->palInfo->count;
+			palindex += frontScroll.info->palInfo->count;
 			scrollerInit(&vertScroll, &kiki, sprindex, palindex, xvert[currxvert], y3);
 			palJobPut(palindex, kiki.palInfo->count, kiki.palInfo->data);
 
@@ -1092,7 +1092,7 @@ void vt_scroll_test()
 			if (x1 >=  0)
 				scrollerSetPos(&frontScroll, x1, y1);
 			else
-				scrollerSetPos(&frontScroll, 256+x1, y1);
+				scrollerSetPos(&frontScroll, 1024+x1, y1);
 			if (x2 >= 0)
 				scrollerSetPos(&waterScroll, x2/2, y2);
 			else
@@ -1103,14 +1103,14 @@ void vt_scroll_test()
 				scrollerSetPos(&backScroll, 256+x3/2, y3);
 			if (!pause)
 			{
-				x1+=acc;
-				x2+=acc;
-				x3+=acc;
+				x1+=direction*acc;
+				x2+=direction*acc;
+				x3+=direction*acc;
 			}
-			if (x1 >= 256) x1 -= 256;
+			if (x1 >= 1024) x1 -= 1024;
 			if (x2 >= 512) x2 -= 512;
 			if (x3 >= 512) x3 -= 512;
-			if (x1 <= -256) x1 += 256;
+			if (x1 <= -1024) x1 += 1024;
 			if (x2 <= -512) x2 += 512;
 			if (x3 <= -512) x3 += 512;
 		} else {
@@ -1144,31 +1144,20 @@ void vt_scroll_test()
 			pause = !pause;
 
 		if (BTTN_OPTION_1)
-		{
-			vertical = !vertical;
-			pause = 0;
-			changed = 1;
-		}
-
-		if (BTTN_OPTION_2)
-			acc *= -1;
+			direction *= -1;
 
 		if (PRESSED_UP)
 		{
 			acc++;
-			if (acc >= 20)
-				acc = 20;
-			if(acc == 0)
-				acc = 1;
+			if (acc > 30)
+				acc = 30;
 		}
 
 		if (PRESSED_DOWN)
 		{
 			acc--;
-			if (acc <= -20)
-				acc = -20;
-			if(acc == 0)
-				acc = -1;
+			if (acc < 1)
+				acc = 1;
 		}
 
 		if (vertical)
@@ -1183,6 +1172,13 @@ void vt_scroll_test()
 				currxvert = 2;
 			if (currxvert < 0)
 				currxvert = 0;
+		}
+
+		if (BTTN_OPTION_2)
+		{
+			vertical = !vertical;
+			pause = 0;
+			changed = 1;
 		}
 
 		if (BTTN_EXIT)
