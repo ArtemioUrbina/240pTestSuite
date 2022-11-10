@@ -1,6 +1,6 @@
 ; 240p Test Suite Sound Driver
 ; Based on freem ADPCM example at: http://ajworld.net/neogeodev/
-; Modifications made by Artemio Urbina
+; Modifications made by Artemio Urbina for the 240p Test Suite and MDFourier
 ;==============================================================================;
 ; SetBank
 ; A macro for setting one of the Z80 banks.
@@ -12,22 +12,6 @@
 	macro	SetBank
 	ld		a,#\1
 	in		a,(\2)
-	endm
-
-;==============================================================================;
-; enNMI
-; Semantic shortcut for enabling NMI via port 8.
-
-	macro	enNMI
-	out		(8),a
-	endm
-
-;==============================================================================;
-; diNMI
-; Semantic shortcut for disabling NMI via port 0x18.
-
-	macro	diNMI
-	out		(0x18),a
 	endm
 
 ;==============================================================================;

@@ -30,6 +30,7 @@ PCMcurrChannel		ds 1		; Currently used channel 0-5
 
 ;==============================================================================;
 ; [ADPCM-B variables]
+intPCMB_currSample	ds 1		; Current sample index
 intPCMB_LeftRight	ds 1		; Left and Right channel output
 intPCMB_SampRateL	ds 1		; Delta-N Sampling Rate (L)
 intPCMB_SampRateH	ds 1		; Delta-N Sampling Rate (H)

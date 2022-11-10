@@ -64,6 +64,7 @@ void at_sound_test()
 	sendZ80command(SOUNDCMD_RateB_0+adpcmb_sel);
 	sendZ80command(SOUNDCMD_NoLoopB);
 	sendZ80command(SOUNDCMD_SSGPulseStop);
+	sendZ80command(SOUNDCMD_ADPCMB_Sample0);
 
 	while (!done)
 	{

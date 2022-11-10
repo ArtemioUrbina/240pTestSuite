@@ -3,7 +3,6 @@
 ; Modifications made by Artemio Urbina for the 240p Test Suite and MDFourier
 ;==============================================================================;
 ; defines
-	include "sounddef.inc"
 	include "sysmacro.inc"
 	include "soundcmd.inc" ; shared include with 68K
 
@@ -19,8 +18,11 @@ Start:
 ;==============================================================================;
 ;                                 RST
 ;==============================================================================;
+
 	org $0008
+	;--------------------------------------------------------------------------;
 	; writeDEportA
+	;--------------------------------------------------------------------------;
 	; Writes data (from registers de) to port A (4 and 5, YM2610 A1 line=0)
 	push	af
 	ld		a,d
@@ -31,9 +33,11 @@ Start:
 	rst		waitYamaha		; wait for busy flag
 	pop		af
 	ret
-;------------------------------------------------------------------------------;
+
 	org $0018
+	;--------------------------------------------------------------------------;
 	; writeDEportB
+	;--------------------------------------------------------------------------;
 	; Writes data (from registers de) to port B (6 and 7, YM2610 A1 line=1)
 	push	af
 	ld		a,d
@@ -44,29 +48,34 @@ Start:
 	rst		waitYamaha		; wait for busy flag
 	pop		af
 	ret
-;------------------------------------------------------------------------------;
+
 	org $0028
+	;--------------------------------------------------------------------------;
 	; waitYamaha if Busy
+	;--------------------------------------------------------------------------;
 	; Keep checking the busy flag in Status 0 until it's clear.
 checkLoop:
 	in		a,(4)			; read Status 0 (busy flag in bit 7)
 	add		a
 	jr		C,checkLoop
 	ret
-;------------------------------------------------------------------------------;
+
 	org $0030
+	;--------------------------------------------------------------------------;
+	; IRQ
+	;--------------------------------------------------------------------------;
 	di						; re-enabled at end of IRQ routine
 	jp		IRQ
 
 ;==============================================================================;
 ;                             NMI
 ;==============================================================================;
-
 	org $0066
-; NMI
-; Inter-processor communications.
-
-; In this driver, the NMI gets the command from the 68K and interprets it.
+	;--------------------------------------------------------------------------;
+	; NMI
+	;--------------------------------------------------------------------------;
+	; Inter-processor communications.
+	; In this driver, the NMI gets the command from the 68K and interprets it.
 
 NMI:
 	di						; NMI di
@@ -97,8 +106,8 @@ NMI:
 	call	HandleCommand
 	
 	ld		a,(curCommand)
-	set		7,a				; set bit 7 for reply, this is a catch all for response
-	out		(0xC),a			; Reply to 68K with but 7 set bit.
+	set		7,a				; set bit 7 for reply, this is OK reply
+	out		(0xC),a			; Reply to 68K
 	xor		a				; clear a for response.
 	out		(0),a			; Write to port 0 (Clear sound code)
 
@@ -140,6 +149,7 @@ IRQ:
 	; Check if any ADPCM-A channel has finished
 	; only stop/loop the sample if we've reached the end of it.
 	ld		a,(intStatus1)
+.IRQ_checkPCMA0:
 	bit		0,a
 	jp		Z,.IRQ_checkPCMA1
 
@@ -148,7 +158,6 @@ IRQ:
 	rst 	writeDEportB
 
 .IRQ_checkPCMA1:
-	ld		a,(intStatus1)
 	bit		1,a
 	jp		Z,.IRQ_checkPCMA2
 
@@ -157,7 +166,6 @@ IRQ:
 	rst 	writeDEportB
 
 .IRQ_checkPCMA2:
-	ld		a,(intStatus1)
 	bit		2,a
 	jp		Z,.IRQ_checkPCMA3
 
@@ -166,7 +174,6 @@ IRQ:
 	rst 	writeDEportB
 
 .IRQ_checkPCMA3:
-	ld		a,(intStatus1)
 	bit		3,a
 	jp		Z,.IRQ_checkPCMA4
 
@@ -175,7 +182,6 @@ IRQ:
 	rst 	writeDEportB
 
 .IRQ_checkPCMA4:
-	ld		a,(intStatus1)
 	bit		4,a
 	jp		Z,.IRQ_checkPCMA5
 
@@ -184,7 +190,6 @@ IRQ:
 	rst 	writeDEportB
 
 .IRQ_checkPCMA5:
-	ld		a,(intStatus1)
 	bit		5,a
 	jp		Z,.IRQ_afterPCMA
 
@@ -218,7 +223,7 @@ IRQ:
 ; The entry point for the sound driver.
 
 EntryPoint:
-	ld		sp,0xFFFC		; Set stack pointer ($FFFD-$FFFE is used for other purposes)
+	ld		sp,0xFFFC		; Set stack pointer
 	im		1				; Set Interrupt Mode 1 (IRQ at $38)
 	xor		a				; make value in A = 0
 
@@ -244,6 +249,7 @@ EntryPoint:
 	ld		(PCMcurrChannel),a
 
 	; ADPCM-B
+	ld		(intPCMB_currSample),a
 	ld		(intPCMB_Loop),a
 
 	; Silence/Stop SSG, FM, and ADPCM
@@ -251,7 +257,8 @@ EntryPoint:
 	call	fm_Stop
 
 	; silence ADPCM-A, ADPCM-B
-	;call	pcma_Stop		; Commented so that the coin sound is not reset after demo->title transition
+	; Commented so that coin sound is played after demo->title transition
+	;call	pcma_Stop
 	call	pcmb_Stop
 
 	;-------------------------------------------;
@@ -375,7 +382,7 @@ HandleCommand:
 	cp		SOUNDCMD_PlayCenter
 	jp		Z,command_PlayCenterA
 
-	;------------------------------------------------------------------------------;
+	;--------------------------------------------------------------------------;
 	; don't bother trying to play back ADPCM-B on Neo-Geo CD; it won't work.
 	ifnd TARGET_CD
 
@@ -407,9 +414,17 @@ HandleCommand:
 	cp		SOUNDCMD_NoLoopB
 	jp		Z,command_NoLoopPCMB
 
+	; command Sample 0 to ADPCM-B
+	cp		SOUNDCMD_ADPCMB_Sample0
+	jp		Z,command_setADPCMB_Sample0
+
+	; command Sample 1 to ADPCM-B
+	cp		SOUNDCMD_ADPCMB_Sample1
+	jp		Z,command_setADPCMB_Sample1
+
 	endif
 	; end Neo-Geo CD.
-	;------------------------------------------------------------------------------;
+	;--------------------------------------------------------------------------;
 
 	; RAM Test this is special for return value purposes
 	cp		RAMTESTCMD
@@ -421,7 +436,8 @@ HandleCommand:
 	; if a RAM error was found...
 	pop		hl						; remove return from stack, yeah I know...
 	ld		a,(curCommand)
-	out		(0xC),a					; Reply to 68K with command as it was sent, this indicates an error
+	; Reply to 68K with command as it was sent, this indicates an error
+	out		(0xC),a
 	xor		a						; clear a for now.
 	out		(0),a					; Write to port 0 (Clear sound code)
 	jp		endNMI					; finish NMI
@@ -907,13 +923,35 @@ loadSampleADPCMA:
 ; Stops all ADPCM-A channels.
 
 pcma_Stop:
-	ld		de,0x00BF			; $00BF		Dump all ADPCM-A channels (stop sound)
+	ld		de,0x00BF			; $00BF	Dump all ADPCM-A channels (stop sound)
 	rst 	writeDEportB
 	ret
 
 ;==============================================================================;
 ; ADPCM-B COMMANDS
 ;==============================================================================;
+
+;------------------------------------------------------------------------------;
+; command_setADPCMB_Sample0 
+;------------------------------------------------------------------------------;
+; Load sample 0 to ADPCM-B RAM id
+; then ADPCM-B sample.
+
+command_setADPCMB_Sample0:
+	ld		a,0
+	ld		(intPCMB_currSample),a
+	ret
+
+;------------------------------------------------------------------------------;
+; command_setADPCMB_Sample1
+;------------------------------------------------------------------------------;
+; Load sample 1 to ADPCM-B RAM id
+; then ADPCM-B sample.
+
+command_setADPCMB_Sample1:
+	ld		a,1
+	ld		(intPCMB_currSample),a
+	ret
 
 ;------------------------------------------------------------------------------;
 ; command_PlayPCMBCenter 
@@ -969,7 +1007,6 @@ play_PCMB_Native_SR:
 ; Hard coded to sample 0 for now
 
 play_PCMB_RAM_SR:
-	ld		a,0
 	call	loadPCMB
 	call	loadCustomSamplerate
 	call	sendPlayPCMB
@@ -1029,6 +1066,7 @@ loadSampleAPCMB:
 	ifnd TARGET_CD
 
 	; multiply 'a' (sample entry) by 4
+	ld		a,(intPCMB_currSample)
 	ld		l,a	 
 	ld		h,0
 	add 	hl,hl
@@ -1055,7 +1093,7 @@ loadRateAPCMB:
 	ld		h,0
 	add 	hl,hl
 	add 	hl,hl
-	ld		de,rates_PCMB ; add the sample table base addr
+	ld		de,rates_PCMB	; add the sample table base addr
 	add 	hl, de
 	push	hl				; use the stack to make the copy
 	pop 	ix
