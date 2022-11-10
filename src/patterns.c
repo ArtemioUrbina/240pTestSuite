@@ -666,7 +666,7 @@ void tp_grid()
 				draw = 1;
 			}
 #else
-			if(isCDZ && first_grid)	// Have only checked this variant, maybe all have this behaviour
+			if(isCDZ && !vmode_snk && first_grid)	// Have only checked this variant, maybe all have this behaviour?
 			{
 				draw_warning("CDZ systems can't display\nthe last column of pixels\nwhen in full 320 mode.", index, palindex, 0);
 				first_grid = 0;

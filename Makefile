@@ -101,7 +101,7 @@ FIXSIZE   = 128
 Z80OUT_CART_SIZE = 64
 
 # PCMOUT_CART_SIZE - output size of V1 rom in kilobytes
-PCMOUT_CART_SIZE = 128
+PCMOUT_CART_SIZE = 256
 
 ##############################
 # Object Files and Libraries #
@@ -258,7 +258,7 @@ PCMOUT_CD = $(OUTPUTDIR_CD)/$(CDPCM_OUTFILE)
 PCMOUT_CD_INC = $(SND)/samples_cd.inc
 
 # FLAGS_VASMZ80 - Flags for vasm Z80
-FLAGS_VASMZ80 = -Fbin -nosym
+FLAGS_VASMZ80 = -Fbin -nosym -chklabels
 
 # Flags needed for ASM code between Cart and CD
 FLAGS_CART = TARGET_CART

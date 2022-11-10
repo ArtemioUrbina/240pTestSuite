@@ -375,6 +375,10 @@ HandleCommand:
 	cp		SOUNDCMD_PlayCenter
 	jp		Z,command_PlayCenterA
 
+	;------------------------------------------------------------------------------;
+	; don't bother trying to play back ADPCM-B on Neo-Geo CD; it won't work.
+	ifnd TARGET_CD
+
 	; command to play ADPCM-B Center
 	cp		SOUNDCMD_ADPCMB_Center
 	jp		Z,command_PlayPCMBCenter
@@ -402,6 +406,10 @@ HandleCommand:
 	; command no loop ADPCM-B
 	cp		SOUNDCMD_NoLoopB
 	jp		Z,command_NoLoopPCMB
+
+	endif
+	; end Neo-Geo CD.
+	;------------------------------------------------------------------------------;
 
 	; RAM Test this is special for return value purposes
 	cp		RAMTESTCMD
@@ -729,7 +737,6 @@ ssg_Stop:
 	ret
 
 
-
 ;==============================================================================;
 ; ADPCM-A COMMANDS
 ;==============================================================================;
@@ -740,7 +747,7 @@ ssg_Stop:
 ; Play Jingle sample on the first ADPCM-A channel.
 
 command_PlayJingleA:
-    ld      a,0
+    ld      a,0				; sample 0
     ld      b,0xc0			; center, both channels
     call    PlayPCMA
     ret
@@ -751,7 +758,7 @@ command_PlayJingleA:
 ; Play coin sample on the first ADPCM-A channel.
 
 command_PlayCoinA:
-    ld      a,1
+    ld      a,1				; sample 1
     ld      b,0xc0			; center, both channels
     call    PlayPCMA
     ret
@@ -762,7 +769,7 @@ command_PlayCoinA:
 ; Play coin sample on the first ADPCM-A channel.
 
 command_PlayLeftA:
-    ld      a,2
+    ld      a,2				; sample 2
     ld      b,0x80			; left channel
     call    PlayPCMA
     ret
@@ -773,7 +780,7 @@ command_PlayLeftA:
 ; Play coin sample on the first ADPCM-A channel.
 
 command_PlayRightA:
-    ld      a,3
+    ld      a,3				; sample 3
     ld      b,0x40			; right channel
     call    PlayPCMA
     ret
@@ -784,7 +791,7 @@ command_PlayRightA:
 ; Play coin sample on the first ADPCM-A channel.
 
 command_PlayCenterA:
-    ld      a,4
+    ld      a,4				; sample 4
     ld      b,0xc0			; center, both channels
     call    PlayPCMA
     ret
@@ -797,7 +804,7 @@ command_PlayCenterA:
 
 PlayPCMA:
     ; load sample using 'a'
-	call	loadSample			; load sample addres from a to ix from table
+	call	loadSampleADPCMA	; load sample addres from a to ix from table
 
 	; check for next available channel
 	ld		a,(PCMnextChannel)
@@ -881,7 +888,7 @@ PlayPCMA:
 ;------------------------------------------------------------------------------;
 ; sample entry is in 'a'
 
-loadSample:
+loadSampleADPCMA:
 	; multiply 'a' (sample entry) by 4
 	ld		l,a	 
 	ld		h,0
@@ -917,7 +924,7 @@ pcma_Stop:
 command_PlayPCMBCenter:
 	ld		a,0xC0
 	ld		(intPCMB_LeftRight),a
-	call	PlayPCMB
+	call	play_PCMB_RAM_SR
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -929,7 +936,7 @@ command_PlayPCMBCenter:
 command_PlayPCMBLeft:
 	ld		a,0x80
 	ld		(intPCMB_LeftRight),a
-	call	PlayPCMB
+	call	play_PCMB_RAM_SR
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -941,18 +948,40 @@ command_PlayPCMBLeft:
 command_PlayPCMBRight:
 	ld		a,0x40
 	ld		(intPCMB_LeftRight),a
-	call	PlayPCMB
+	call	play_PCMB_RAM_SR
 	ret
 
 ;------------------------------------------------------------------------------;
-; PlayPCMB
+; play_PCMB_Native_SR
 ;------------------------------------------------------------------------------;
-; Play an ADPCM-B sample, takes panning from 'b'
+; Plays ADPCM-B at native (table defined) SR
 
-PlayPCMB:
-	; don't bother trying to play back ADPCM-B on Neo-Geo CD; it won't work.
-	ifnd TARGET_CD
+play_PCMB_Native_SR:
+	call	loadPCMB
+	call	loadRateAPCMB
+	call	sendPlayPCMB
+	ret
 
+;------------------------------------------------------------------------------;
+; play_PCMB_RAM_SR
+;------------------------------------------------------------------------------;
+; Plays ADPCM-B at RAM defined SR (intPCMB_SampRateL and intPCMB_SampRateH)
+; Hard coded to sample 0 for now
+
+play_PCMB_RAM_SR:
+	ld		a,0
+	call	loadPCMB
+	call	loadCustomSamplerate
+	call	sendPlayPCMB
+	ret
+
+;------------------------------------------------------------------------------;
+; PlayPCMB 
+;------------------------------------------------------------------------------;
+; Play an ADPCM-B sample degined in 'a', takes panning from intPCMB_LeftRight
+
+loadPCMB:
+	call	loadSampleAPCMB
 	call	pcmb_Stop
 
 	; --left/right ($11)--
@@ -967,7 +996,7 @@ PlayPCMB:
 
 	; --start addr ($12,$13)--
 	; samples_PCMB word 1 (low first, then high)
-	ld		ix,samples_PCMB
+	;ld		ix,samples_PCMB
 	ld		d,0x12
 	ld		a,(ix)
 	ld		e,a
@@ -988,6 +1017,58 @@ PlayPCMB:
 	ld		e,a
 	rst 	writeDEportA
 
+	ret
+
+;------------------------------------------------------------------------------;
+; Load ADPCM-B sample entry from the table
+;------------------------------------------------------------------------------;
+; sample entry is in 'a'
+
+loadSampleAPCMB:
+	; Comment just these parts for NGCD so that execution times are identical
+	ifnd TARGET_CD
+
+	; multiply 'a' (sample entry) by 4
+	ld		l,a	 
+	ld		h,0
+	add 	hl,hl
+	add 	hl,hl
+	ld		de,samples_PCMB ; add the sample table base addr
+	add 	hl, de
+	push	hl				; use the stack to make the copy
+	pop 	ix
+
+	endif
+	ret
+
+;------------------------------------------------------------------------------;
+; helper to load ADPCM-B Sample Rate entry from the table
+;------------------------------------------------------------------------------;
+; sample entry is in 'a'
+
+loadRateAPCMB:
+	; Comment just these parts for NGCD so that execution times are identical
+	ifnd TARGET_CD
+
+	; multiply 'a' (sample entry) by 4
+	ld		l,a	 
+	ld		h,0
+	add 	hl,hl
+	add 	hl,hl
+	ld		de,rates_PCMB ; add the sample table base addr
+	add 	hl, de
+	push	hl				; use the stack to make the copy
+	pop 	ix
+
+	endif
+	ret
+
+;------------------------------------------------------------------------------;
+; loadCustomSamplerate
+;------------------------------------------------------------------------------;
+; Sends the RAM defined Sample rat eto the YM2610
+
+loadCustomSamplerate:
 	; --delta-n ($19,$1A)--
 	ld		d,0x19
 	ld		a,(intPCMB_SampRateL)
@@ -998,6 +1079,14 @@ PlayPCMB:
 	ld		e,a
 	rst 	writeDEportA
 
+	ret
+
+;------------------------------------------------------------------------------;
+; sendPlayPCMB 
+;------------------------------------------------------------------------------;
+; Sends playback and loop flags to YM2610
+
+sendPlayPCMB:
 	; --main control ($10)--
 	; %SxxLxxxR (S=start, L=loop, R=Reset)
 	; repeat/loop flag = loopB<<4
@@ -1010,8 +1099,6 @@ PlayPCMB:
 	ld		d,0x10
 	ld		e,a
 	rst 	writeDEportA
-
-	endif
 
 	ret
 

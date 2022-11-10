@@ -12,8 +12,10 @@ samples_PCMA:
 ; [ADPCM-B Samples]
 samples_PCMB:
 	word	0x0152,0x01AA	; PCMB Sample #1 (sound/pcm/b00_never.pcmb, 22050Hz)
+	word	0x01AB,0x03C8	; PCMB Sample #2 (sound/pcm/b01_sweep.pcmb, 55125Hz)
 
 ; [ADPCM-B Default Sample Rates]
 rates_PCMB:
 	word	0x65B5	; PCMB Sample #1 (sound/pcm/b00_never.pcmb, 22050Hz)
+	word	0xFE45	; PCMB Sample #2 (sound/pcm/b01_sweep.pcmb, 55125Hz)
 

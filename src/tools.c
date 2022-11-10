@@ -206,9 +206,16 @@ inline void gfxClear()
 	suiteClearFixLayer();
 }
 
+#define OPTIONS_IRE100	1
+#define OPTIONS_HORI	2
+#define OPTIONS_VERT	3
+#define OPTIONS_DARK	4
+#define OPTIONS_END		5
+
 void menu_options()
 {
 	int done = 0, curse = 1, cursemax = 5, redraw = 1, text = 0, index = 0;
+	char blank[] = "                                ";
 
 	while (!done)
 	{
@@ -234,93 +241,93 @@ void menu_options()
 #else
 		fixPrintf(14, 6, fontColorGreen, 3, "NGCD Options");
 #endif
-		fixPrintf(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
-		fixPrintf(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
-		fixPrintf(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
-		fixPrintf(5, y++, curse == 4 ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
+		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? fontColorRed : fontColorWhite, 3, "IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
+		fixPrintf(5, y++, curse == OPTIONS_HORI ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
+		fixPrintf(5, y++, curse == OPTIONS_VERT ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
+		fixPrintf(5, y++, curse == OPTIONS_DARK ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
 		y++;
-		fixPrintf(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrintf(5, y++, curse == OPTIONS_END ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
 		// Extra description
-		if (curse == 1)
+		if (curse == OPTIONS_HORI)
 		{
-			if(text != 1)
+			if(text != OPTIONS_HORI)
 			{
 				fixPrintf(4, 20, fontColorGreen, 3, "The 304 mode uses the BIOS mask");
 				fixPrintf(4, 21, fontColorGreen, 3, "to hide 8 pixels on each side, ");
 				fixPrintf(4, 22, fontColorGreen, 3, "as required by SNK in games.");
 				if (!vmode_snk)
 					fixPrintf(4, 23, fontColorRed, 3, "Some systems trim pixel col. 320");
-				text = 1;
+				text = OPTIONS_HORI;
 			}
 		} else {
-			if (text == 1)
+			if (text == OPTIONS_HORI)
 			{
 				int i = 0;
 
 				for (i = 20; i < 24; i++)
-					fixPrintf(4, i, fontColorGreen, 3, "                                ");
+					fixPrintf(4, i, fontColorGreen, 3, blank);
 				text = 0;
 			}
 		}
 
-		if (curse == 2)
+		if (curse == OPTIONS_DARK)
 		{
-			if(text != 2)
+			if(text != OPTIONS_DARK)
 			{
 				fixPrintf(4, 20, fontColorGreen, 3, "Hardware option, all patterns");
 				fixPrintf(4, 21, fontColorGreen, 3, "will be darker.");
-				text = 2;
+				text = OPTIONS_DARK;
 			}
 		}
 		else {
-			if (text == 2)
+			if (text == OPTIONS_DARK)
 			{
 				int i = 0;
 
 				for (i = 20; i < 24; i++)
-					fixPrintf(4, i, fontColorGreen, 3, "                                ");
+					fixPrintf(4, i, fontColorGreen, 3, blank);
 				text = 0;
 			}
 		}
 
-		if (curse == 3)
+		if (curse == OPTIONS_IRE100)
 		{
-			if(text != 3)
+			if(text != OPTIONS_IRE100)
 			{
 				fixPrintf(4, 20, fontColorGreen, 3, "Neo Geo white level goes up to");
 				fixPrintf(4, 21, fontColorGreen, 3, "~106.8 IRE. This option limits");
-				fixPrintf(4, 22, fontColorGreen, 3, "patterns to 100 IRE for SMPTE.");
+				fixPrintf(4, 22, fontColorGreen, 3, "patterns to 100 IRE.");
 				text = 3;
 			}
 		}
 		else {
-			if (text == 3)
+			if (text == OPTIONS_IRE100)
 			{
 				int i = 0;
 
 				for (i = 20; i < 24; i++)
-					fixPrintf(4, i, fontColorGreen, 3, "                                ");
+					fixPrintf(4, i, fontColorGreen, 3, blank);
 				text = 0;
 			}
 		}
 
-		if (curse != 5 && (PRESSED_LEFT || PRESSED_RIGHT))
+		if (curse != OPTIONS_END && (PRESSED_LEFT || PRESSED_RIGHT))
 			toggle = 1;
 
 		if (BTTN_MAIN || toggle)
 		{
 			switch (curse)
 			{
-				case 1:
+				case OPTIONS_HORI:
 					vmode_snk = !vmode_snk;
 					suiteClearFixLayer();
 					redraw = 1;
 				break;
 
-				case 2:
+				case OPTIONS_DARK:
 					enable_shadow = !enable_shadow;
 					if(enable_shadow)
 						volMEMBYTE(REG_SHADOW) = 1;
@@ -328,16 +335,16 @@ void menu_options()
 						volMEMBYTE(REG_NOSHADOW) = 1;
 				break;
 
-				case 3:
+				case OPTIONS_IRE100:
 					allowIRE107 = !allowIRE107;
 				break;
 
-				case 4:
+				case OPTIONS_VERT:
 					if(isPAL)
 						usePAL256 = !usePAL256;
 				break;
 
-				case 5:
+				case OPTIONS_END:
 					done = 1;
 				break;
 			}
@@ -351,7 +358,7 @@ void menu_options()
 	}
 
 	if(enable_shadow)
-		draw_warning("Shadows are still enabled.\nColor and brightness patterns\nwill be affected.", index, 20, 1);
+		draw_warning("Dark Mode is enabled.\nColor and brightness patterns\nwill be affected.", index, 20, 1);
 	return;
 }
 
