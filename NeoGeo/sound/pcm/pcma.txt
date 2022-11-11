@@ -1,5 +1,0 @@
-sound/pcm/a00_jingle.pcma
-sound/pcm/a01_coin.pcma
-sound/pcm/a02_left.pcma
-sound/pcm/a03_right.pcma
-sound/pcm/a04_center.pcma

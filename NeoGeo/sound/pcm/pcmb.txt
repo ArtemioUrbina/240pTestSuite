@@ -1,2 +1,0 @@
-sound/pcm/b00_never.pcmb|22050
-sound/pcm/b01_sweep.pcmb|55125
