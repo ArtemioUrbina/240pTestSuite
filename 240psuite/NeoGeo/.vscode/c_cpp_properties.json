@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "NeoGeo",
+            "includePath": [
+                "${workspaceFolder}\\**",
+                "${workspaceFolder}\\include",
+                "C:\\NeoDev\\m68k\\include"
+            ],
+            "defines": [],
+            "compilerPath": "C:\\NeoDev\\m68k\\bin\\gcc.exe",
+            "intelliSenseMode": "windows-gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceRoot}\\*"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "configurationProvider": "ms-vscode.makefile-tools"
+        }
+    ],
+    "version": 4
+}
