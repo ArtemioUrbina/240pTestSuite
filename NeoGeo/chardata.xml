@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chardata>
+  <setup>
+    <starting_tile>0</starting_tile>
+    <charfile>out\2501-cx.cx</charfile>
+    <mapfile>src\charMaps.s</mapfile>
+    <palfile>src\charPals.s</palfile>
+    <incfile>include\charInclude.h</incfile>
+  </setup>
+  <scrl id="logo">
+    <file>gfx\logo.png</file>
+  </scrl>
+  <scrl id="sonic_back">
+    <file>gfx\sonic_back.png</file>
+  </scrl>
+  <scrl id="sonic_water">
+    <file>gfx\sonic_water.png</file>
+  </scrl>
+  <scrl id="sonic_floor">
+    <file>gfx\sonic_floor.png</file>
+  </scrl>
+  <scrl id="kiki">
+    <file>gfx\kiki.png</file>
+  </scrl>
+  <scrl id="scroll_grid">
+    <file>gfx\scroll_grid.png</file>
+  </scrl>
+  <pict id="back">
+    <file>gfx\back.png</file>
+  </pict>
+  <pict id="gillian">
+    <file>gfx\SD.png</file>
+  </pict>
+  <pict id="gblink1">
+	<file>gfx\gillian_b1.png</file>
+  </pict>
+  <pict id="gblink2">
+	<file>gfx\gillian_b2.png</file>
+  </pict>
+  <pict id="title">
+	<file>gfx\title.png</file>
+  </pict>
+  <pict id="messagebox">
+	<file>gfx\message.png</file>
+  </pict>
+  <pict id="pluge">
+    <file>gfx\pluge.png</file>
+  </pict>
+  <scrl id="colorchart">
+    <file>gfx\colorchart.png</file>
+  </scrl>
+  <pict id="colorchartsingle">
+	<file>gfx\colorchartsingle.png</file>
+  </pict>
+  <pict id="colorchart_light">
+	<file>gfx\colorchart_light.png</file>
+  </pict>
+  <pict id="colorchart_dark">
+	<file>gfx\colorchart_dark.png</file>
+  </pict>
+  <scrl id="colorebu75">
+    <file>gfx\colorbarsebu75.png</file>
+  </scrl>
+  <scrl id="colorebu75_304">
+    <file>gfx\colorbarsebu75_304.png</file>
+  </scrl>
+  <pict id="colorbarssmpte75">
+    <file>gfx\colorbarssmpte75.png</file>
+  </pict>
+  <pict id="colorbarssmpte75_304">
+    <file>gfx\colorbarssmpte75_304.png</file>
+  </pict>
+  <pict id="refcolor">
+    <file>gfx\refcolor.png</file>
+  </pict>
+  <pict id="refcolor_304">
+	<file>gfx\refcolor_304.png</file>
+  </pict>
+  <pict id="colorbleedbars">
+    <file>gfx\colorbleedbars.png</file>
+  </pict>
+  <pict id="colorbleedcheck">
+    <file>gfx\colorbleedcheck.png</file>
+  </pict>
+  <scrl id="monoscopes">
+    <file>gfx\monoscopes.png</file>
+  </scrl>
+  <scrl id="grids">
+	<file>gfx\grids.png</file>
+  </scrl>
+  <pict id="grayramp">
+    <file>gfx\grayramp.png</file>
+  </pict>
+  <pict id="ire">
+    <file>gfx\ire.png</file>
+  </pict>
+  <pict id="sharp">
+    <file>gfx\sharp.png</file>
+  </pict>
+  <pict id="sharpbrick">
+    <file>gfx\sharpbrick.png</file>
+  </pict>
+  <pict id="conver_grid">
+    <file>gfx\conver_grid.png</file>
+  </pict>
+  <pict id="conver_dot">
+    <file>gfx\conver_dot.png</file>
+  </pict>
+  <pict id="conver_star">
+    <file>gfx\conver_star.png</file>
+  </pict>
+  <pict id="conver_rgb">
+    <file>gfx\conver_rgb.png</file>
+  </pict>
+  <pict id="conver_rgb_b">
+    <file>gfx\conver_rgb_b.png</file>
+  </pict>
+  <pict id="donna">
+    <file>gfx\donna.png</file>
+  </pict>
+  <pict id="slug">
+    <file>gfx\slug.png</file>
+    <flips>X</flips>
+  </pict>
+  <pict id="slug_shadow">
+    <file>gfx\slug_shadow.png</file>
+    <flips>X</flips>
+  </pict>
+  <pict id="shape_shadow">
+    <file>gfx\shape_shadow.png</file>
+  </pict>
+  <pict id="marker_striped">
+    <file>gfx\marker_striped.png</file>
+  </pict>
+  <pict id="marker">
+    <file>gfx\marker.png</file>
+  </pict>
+  <pict id="check">
+    <file>gfx\check.png</file>
+  </pict>
+  <pict id="check_alt">
+    <file>gfx\check_alt.png</file>
+  </pict>
+  <pict id="vertstripe">
+    <file>gfx\vertstripe.png</file>
+  </pict>
+  <pict id="vertstripe_alt">
+    <file>gfx\vertstripe_alt.png</file>
+  </pict>
+  <pict id="horzstripe">
+    <file>gfx\horzstripe.png</file>
+  </pict>
+  <pict id="horzstripe_alt">
+    <file>gfx\horzstripe_alt.png</file>
+  </pict>
+  <pict id="barcode">
+    <file>gfx\barcode.png</file>
+  </pict>
+  <pict id="led_1x">
+    <file>gfx\led_1x.png</file>
+  </pict>
+  <pict id="led_2x">
+    <file>gfx\led_2x.png</file>
+  </pict>
+  <pict id="led_4x">
+    <file>gfx\led_4x.png</file>
+  </pict>
+  <pict id="led_6x">
+    <file>gfx\led_6x.png</file>
+  </pict>
+  <pict id="led_8x">
+    <file>gfx\led_8x.png</file>
+  </pict>
+  <pict id="num_0">
+    <file>gfx\0.png</file>
+  </pict>
+  <pict id="num_1">
+    <file>gfx\1.png</file>
+  </pict>
+  <pict id="num_2">
+    <file>gfx\2.png</file>
+  </pict>
+  <pict id="num_3">
+    <file>gfx\3.png</file>
+  </pict>
+  <pict id="num_4">
+    <file>gfx\4.png</file>
+  </pict>
+  <pict id="num_5">
+    <file>gfx\5.png</file>
+  </pict>
+  <pict id="num_6">
+    <file>gfx\6.png</file>
+  </pict>
+  <pict id="num_7">
+    <file>gfx\7.png</file>
+  </pict>
+  <pict id="num_8">
+    <file>gfx\8.png</file>
+  </pict>
+  <pict id="num_9">
+    <file>gfx\9.png</file>
+  </pict>
+  <pict id="num_0_w">
+    <file>gfx\0w.png</file>
+  </pict>
+  <pict id="num_1_w">
+    <file>gfx\1w.png</file>
+  </pict>
+  <pict id="num_2_w">
+    <file>gfx\2w.png</file>
+  </pict>
+  <pict id="num_3_w">
+    <file>gfx\3w.png</file>
+  </pict>
+  <pict id="num_4_w">
+    <file>gfx\4w.png</file>
+  </pict>
+  <pict id="num_5_w">
+    <file>gfx\5w.png</file>
+  </pict>
+  <pict id="num_6_w">
+    <file>gfx\6w.png</file>
+  </pict>
+  <pict id="num_7_w">
+    <file>gfx\7w.png</file>
+  </pict>
+  <pict id="num_8_w">
+    <file>gfx\8w.png</file>
+  </pict>
+  <pict id="num_9_w">
+    <file>gfx\9w.png</file>
+  </pict>
+  <pict id="circle_blue">
+    <file>gfx\circle_blue.png</file>
+  </pict>
+  <pict id="circle_red">
+    <file>gfx\circle_red.png</file>
+  </pict>
+  <pict id="separator">
+    <file>gfx\separator.png</file>
+  </pict>
+  <pict id="bar_l">
+    <file>gfx\bar_l.png</file>
+    <flips>X</flips>
+  </pict>
+  <pict id="audiosync_bar">
+    <file>gfx\audiosync_bar.png</file>
+    <flips>X</flips>
+  </pict>
+  <pict id="audiosync_floor">
+    <file>gfx\audiosync_floor.png</file>
+  </pict>
+  <scrl id="overscan_horz">
+    <file>gfx\overscan_horz.png</file>
+  </scrl>
+  <scrl id="overscan_vert">
+    <file>gfx\overscan_vert.png</file>
+  </scrl>
+</chardata>
