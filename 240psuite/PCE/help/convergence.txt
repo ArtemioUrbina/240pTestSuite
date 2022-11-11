@@ -1,0 +1,13 @@
+                 CONVERGENCE TESTS
+
+These are used to adjust color convergence in CRT 
+displays.
+
+- Button 'I' changes the pattern between cross hatch
+lines, crosses, dots and a color pattern with or
+without a black grid, for transition boundary check.
+
+- Left and Right on the D-Pad allow cycling between
+patterns.
+
+- You can change the resolution with SELECT.

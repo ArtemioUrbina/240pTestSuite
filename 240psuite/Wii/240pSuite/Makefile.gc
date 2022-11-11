@@ -1,0 +1,5 @@
+all:
+	$(MAKE) PLATFORM=gamecube
+
+clean:
+	$(MAKE) PLATFORM=gamecube clean

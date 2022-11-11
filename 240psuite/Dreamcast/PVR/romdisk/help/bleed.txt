@@ -1,0 +1,13 @@
+                   COLOR BLEED 
+
+This pattern helps diagnose unneeded color
+up-sampling.
+
+It consists of one pixel width color bars
+alternating with one pixel width black bars.
+
+You can change the vertical bars to a checker
+board with the #GA#G button.
+
+There are also higher resolution versions
+when using 480i and 480p.

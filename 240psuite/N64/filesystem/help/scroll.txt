@@ -1,0 +1,16 @@
+                    SCROLL TEST
+
+This test shows a two layer background from #YSonic
+the Hedgehog#Y or a single one from #YKiki Kaikai#Y.
+The speed can be varied with the d-pad, and
+direction changed with the button #GX#G.
+
+Vertical and horizntal patterns can be swapped with
+the #GY#G button, and #GA#G stops the scroll.
+
+This can be used to notice any drops in framerate
+when using a video processor.
+
+#YSonic The Hedgehog#Y is a trademark of #YSega
+Enterprises Ltd#Y. #YKiki Kaikai#Y is a trademark
+of #YNamco/Bandai#Y. 

@@ -1,0 +1,31 @@
+                   PLUGE (1/2)
+
+
+The picture line-up generation equipment (PLUGE)
+is a test pattern used to adjust the black level
+and contrast of a video signal.
+
+The pattern in this suite is mainly designed to
+adjust the black level. The control for setting
+this on your TV is usually named Brightness.
+
+This allows all detail to be seen on dark scenes.
+
+- Button I changes the inner bars between the
+lowest B,G,R values and gray. You should use the
+blue one in order not to crush detail.
+
+
+
+
+                   PLUGE (2/2)
+
+
+Reduce the Brightness until the inner bars
+are no longer visible, and then slowly raise it
+until they are just visible, and go back one
+notch where they blend with the background.
+
+Please keep in mind that black levels are lower
+in other game consoles, these are just the lowest
+values available in this system.

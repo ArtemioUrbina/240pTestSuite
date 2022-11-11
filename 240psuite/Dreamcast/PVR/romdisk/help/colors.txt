@@ -1,0 +1,32 @@
+                 COLORBARS (1/2)
+
+This pattern allows you to calibrate each color:
+#RRed#R, #GGreen#G and #BBlue#B; as well as the white level.
+
+This is adjusted in the same way black levels
+are set with the #CPLUGE#C. If you adjusted the black
+level correctly with the #CPLUGE#C, the rectangles 
+under the #Y1#Y column should be barely visible.
+
+Adjust the white level first, this is done using
+the #CContrast#C control on your TV set. Raise it
+until you cannot distinguish between the two
+blocks under #YF#Y, and lower it slowly until you
+can clearly tell them apart.          
+                                      #C(cont...)#C
+                 COLORBARS (2/2)
+
+You can highlight the blocks for 2 seconds with #YX#Y.
+
+The same procedure should be used with each
+color, raise the control that adjusts the
+individual color level (not the #Ccolor#C/#Ctint#C one)
+until you can't tell the rightmost box under #YF#Y
+from the one to its left, and then lower it until
+you can distinguish them clearly. 
+
+The same bars with a grid pattern are available
+with the #YA#Y button.
+
+Use zoomed-in lower and higher color patterns with
+#YL#Y and #YR#Y when using the default view.

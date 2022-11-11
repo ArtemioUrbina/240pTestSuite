@@ -1,0 +1,15 @@
+                 GRID SCROLL TEST
+
+
+A grid is scrolled vertically or horizontally,
+which can be used to test linearity of the signal
+and how well the display or video processor copes
+with scrolling and framerate.
+
+- Button I can be used to toggle between horizontal
+and vertical scroll, while the d-pad up or down
+regulates speed.
+
+- D-pad left or right changes direction.
+
+- You can change the resolution with SELECT.

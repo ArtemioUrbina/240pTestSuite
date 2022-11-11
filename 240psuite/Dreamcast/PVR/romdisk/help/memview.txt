@@ -1,0 +1,16 @@
+                 Memory Viewer
+
+This shows selected regions of the main #CCPU memory
+map#C.
+
+The current address range is shown in green at the
+right from top to bottom.
+
+The left part of the screen shows a screen of bytes
+in #Chexadecimal#C.
+
+- Button #YA#Y jumps to relevant memory locations.
+
+- Button #YX#Y enabled CRC of current screen.
+
+- Button #YY#Y toggles #CASCII#C mode.

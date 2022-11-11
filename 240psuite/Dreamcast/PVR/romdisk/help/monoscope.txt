@@ -1,0 +1,60 @@
+                 MONOSCOPE (1/4)
+
+The Monoscope Pattern is the traditional tool
+for calibrating CRTs. This version aims to
+provide several key elements to ensure you make
+informed decisions about Convergence and 
+Deflection. Refer to your monitor service manual
+for procedures and safety equipment. 
+
+1. #CBrightness Adjustable Pattern#C. Electron Gun
+Alignment, or Convergence, is usually adjusted
+with a lowered brightness. Full brightness can
+mask issues with excessive bloom, especially 
+if your peak white is too high. You can double
+check your adjustments against the 30IRE pattern.
+                                         #C(cont...)#C
+                 MONOSCOPE (2/4)
+
+2. #CStatic/Center Convergence#C. The center crosshair
+is used to evaluate static or center screen
+convergence. 
+
+3. #CDynamic/Edge#C can be evaluated with the patterns
+on the side of the screen.
+
+4. #CCorner Convergence#C, corner purity and corner
+geometry are tightly linked. Static and Dynamic
+convergence must be set first before magnets can
+successfully correct corner issues.
+
+
+                                         #C(cont...)#C
+                 MONOSCOPE (3/4)
+
+5. #CAspect Ratio#C. A new feature to help set VSIZE
+and HSIZE correctly is the red squares embedded in
+the pattern. They are calculated to display as
+perfect squares on a properly setup display.
+You may want to start with a small amount of
+horizontal overscan, then use a tape measure to
+adjust VSIZE such that the outside edges of the
+red square are the same in width and height.
+This usually achieves an amount of overscan that
+preserves the Title Safe Area. Some games may not
+adhere to those boundaries, but most do.
+
+
+                                         #C(cont...)#C
+                 MONOSCOPE (4/4)
+
+6. #CLinearity#C. Is the hardest part of the deflection
+circuit. Scrolling tests are the best way to
+confirm good Linearity but some compensated square
+elements have added to each corner where a tape
+measure may help get you started.
+
+You can press #GL#G and #GR#G buttons to advance in 10 IRE
+steps in the selected range.
+
+#CPattern designed by Keith Raney#C

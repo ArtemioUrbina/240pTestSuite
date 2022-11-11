@@ -1,0 +1,13 @@
+                  COLOR BLEED
+
+
+This pattern helps diagnose color subsampling
+(4:4:4 to 4:2:2, etc). 
+
+It consists of one pixel width color bars 
+alternating with one pixel width black bars.
+
+- You can change the vertical bars to a checker
+board with button I.
+
+- You can change the resolution with SELECT.

@@ -1,0 +1,21 @@
+                  LAG TEST (1/2)
+
+This test is designed to be used with two displays
+conected at the same time. One being a CRT, or a
+display with a known lag as reference, and the
+other the display to test.
+
+Using a camera, a picture should be taken of both
+screens at the same time. The picture will show 
+the frame discrepancy between them. 
+
+The circles in the bottom help determine the frame
+even when the numbers are blurry.
+
+The #YSega Genesis#Y version of the test can be used
+with a #YNomad#Y as the reference display.   #C(cont...)#C
+                  LAG TEST (2/2)
+
+You can also chain the output ports of a #YPVM/BVM#Y
+to an upscaler and use the CRT as reference, or
+split the video signal.

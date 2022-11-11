@@ -1,0 +1,87 @@
+                  OPTIONS (1/6)
+
+#GPVR Deflicker Filter:#G Most #CDreamcast#C games used
+    this for a stable image on an #Yinterlaced CRT#Y.
+    This works by slightly blurring the screen.
+
+#GPVR Texture Dithering:#G Another filter for use
+    in composite video signals.
+
+#GUse KOS video defaults:#G Uses #CKallistiOS#C default
+    video modes instead of the custom modes.
+
+#GUse KOS register defaults:#G Uses #CKallistiOS#C default
+    register values instead of the custom ones.
+
+                                        #C(cont...)#C
+                  OPTIONS (2/6)
+
+#GEnable PAL Modes:#G These can only be enabled in
+    #CDreamcasts#C with #YEuropean Flash ROM#Y, since
+    NTSC #CDC#C output a corrupt PAL signal.
+
+#GEnable PAL Background:#G Since most of the menus
+    and screens are designed for 240p, this fills
+    the borders with the selected color, however
+    there are specific PAL patterns that do not 
+    need this, such as grids and overscan.
+
+#GChange PAL Background:#G Select the fill color for
+    the PAL background.
+
+                                        #C(cont...)#C
+                  OPTIONS (3/6)
+
+#GPAL starting line:#G PAL specifies the start of
+    active video at line 23 (Top), this setting
+    allows centering the active video lines in the
+    signal or moving it to the bottom. This allows
+    using the suite to calibrate and check overscan
+    even if the #CDC#C cannot output the full PAL
+    resolution.
+                
+#G480p Scanline Intensity:#G When in line doubled
+    480p mode, the suite allows the display of
+    rendered scanlines. This determines the alpha
+    value for them, 0% eliminates them.
+
+                                        #C(cont...)#C
+                  OPTIONS (4/6)
+
+#G480p Scanlines:#G This setting allows the display
+    or EVEN or ODD scanline display in 480p line
+    doubled mode.
+
+#GSave Options to VMU:#G Saves current options to
+    #CVMU#C. They are auto loaded at start if a save
+    is found. Save requires 2 free blocks. (Press
+    L or R trigger to use the hidden eye-catchers,
+    11 blocks needed). Icons are random.
+
+#GLoad Options from VMU:#G Loads options from the #CVMU#C.
+
+
+                                        #C(cont...)#C
+                  OPTIONS (5/6)
+
+#GApproximate 714.3mV IRE:#G Since the #CDreamcast#C
+    video output is slightly high at #C800mV#C, we
+    created an option to limit color and B&W
+    patterns to approximate #C714.3mV#C.
+
+    This option defines the default value when
+    using such patterns. It is displayed in the
+    #CVMU#C or it can be toggled with #GY#Y on those
+    patterns. Please keep in mind that in some
+    equipment, the amplitude is adjusted by the
+    #Ycolor burst#Y, and in such scenarios, or via
+    #Ydigital mods#Y, it is best to leave this at
+    #C800mV#C.
+                                        #C(cont...)#C
+                  OPTIONS (6/6)
+
+#GUse FrameBuffer copy:#G Disables Framebuffer
+    effects when opening menus, it is faster.
+
+#GReset all options to default:#G Resets all
+    options to the default values.

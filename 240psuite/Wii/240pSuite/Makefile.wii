@@ -1,0 +1,4 @@
+all:
+	$(MAKE) PLATFORM=wii
+clean:
+	$(MAKE) PLATFORM=wii clean

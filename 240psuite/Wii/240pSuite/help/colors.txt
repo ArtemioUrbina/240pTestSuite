@@ -1,0 +1,32 @@
+                 COLORBARS (1/2)
+
+This pattern allows you to calibrate each color:
+Red, Green and Blue; as  well as the white level.
+
+The default pattern shows 32 shades of each color,
+but this platform is capable of 256. You can view
+the last 32 and the first ones by pressing left 
+or right. An extra pattern is also availabe with a 
+white grid as background, for contrast balance.
+
+This is adjusted in the same way black levels
+are set with the #GPLUGE#G. If you adjusted the black
+level correctly with the PLUGE, the rectangles 
+under the #G1#G column should be barely visible.
+                                      #C(cont...)#C
+                 COLORBARS (2/2)
+
+Adjust the white level first, this is done using
+the #YContrast#Y control on your TV set. Raise it
+until you cannot distinguish between the two
+blocks under #GF#G, and lower it slowly until you
+can clearly tell them apart.  
+
+The same procedure should be used with each
+color, raise the control that adjusts the
+individual color level (not the #Ycolor#Y/#Ytint#Y one)
+until you can't tell the rightmost box under #GF#G
+from the one to its left, and then lower it until
+you can distinguish them clearly. 
+
+Repeat for each color and you are set.

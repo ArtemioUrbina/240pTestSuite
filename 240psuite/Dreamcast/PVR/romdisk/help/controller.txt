@@ -1,0 +1,15 @@
+                 Controller Test
+
+This test shows the controller inputs from all
+four controllers ports at once.
+
+The test only shows the reported controller
+functions by default, but by pressing #YRight+Start#Y
+you can display all possible inputs in order to
+test some non-compliant implementations or
+duplicated outputs, like some light guns.
+
+Keyboards are also supported by default, and you
+can type a few lines to text.
+
+You can exit by pressing #YLeft+Start#Y.

@@ -1,0 +1,9 @@
+               STRIPED SPRITE TEST
+
+There actually are deinterlacers out there which
+can display the drop shadows correctly and still
+interpret 240p as 480i. With a striped sprite it
+should be easy to tell if a processor tries to
+deinterlace (plus interpolate) or not.
+
+You can change backgrounds with $A.

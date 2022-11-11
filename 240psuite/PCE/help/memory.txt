@@ -1,0 +1,12 @@
+                Memory Viewer
+
+This shows selected regions of the main CPU memory
+map.
+
+The current address range is shown in red at the
+right from top to bottom.
+
+The left part of the screen shows 0x1C0 bytes in
+hex.
+
+- Button I toggles ASCII mode.
