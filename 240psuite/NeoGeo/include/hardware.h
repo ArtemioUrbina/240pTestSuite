@@ -1,6 +1,7 @@
 /* 
- * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * 240p Test Suite for the Neo Geo
+ * by Artemio Urbina and Dustin Dembrosky (Dasutin)
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -19,20 +20,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef TESTS_H
-#define TESTS_H
+#ifndef _HARDWARE_H_
+#define _HARDWARE_H_
 
-void DropShadowTest();
-void StripedSpriteTest();
-void ReflexNTimming();
-void ScrollTest();
-void GridScrollTest();
-void DrawStripes();
-void DrawCheckBoard();
-void LEDZoneTest();
-void PassiveLagTest();
-void DiagonalPatternTest();
-void Alternate240p480i();
+#include "types.h"
 
-#endif
+void ht_controller_test(void);
+void ht_memory_viewer(u32 address);
+void ht_check_ng_bios_crc(u32 address);
+void ht_test_ng_ram();
+void ht_displayregs();
+void ht_z80RAMtest();
+void ht_showInternalVars();
 
+#endif /* _HARDWARE_H_ */

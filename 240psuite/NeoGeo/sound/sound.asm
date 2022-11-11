@@ -257,8 +257,7 @@ EntryPoint:
 	call	fm_Stop
 
 	; silence ADPCM-A, ADPCM-B
-	; Commented so that coin sound is played after demo->title transition
-	;call	pcma_Stop
+	;call	pcma_Stop		; Commented so that the coin plays
 	call	pcmb_Stop
 
 	;-------------------------------------------;

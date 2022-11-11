@@ -1,5 +1,6 @@
 /* 
- * 240p Test Suite
+ * 240p Test Suite for the Neo Geo
+ * by Artemio Urbina and Dustin Dembrosky (Dasutin)
  * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
@@ -19,11 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef HARDWARE_H
-#define HARDWARE_H
+#ifndef _AUDIO_H_
+#define _AUDIO_H_
 
-void ControllerTest();
-void MemoryViewer();
+#include "types.h"
 
-#endif
+void at_sound_test(void);
+void at_audiosync_test(void);
+void at_sound_mdfourier(void);
 
+#endif /* _AUDIO_H_ */

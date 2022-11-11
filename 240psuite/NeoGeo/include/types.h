@@ -1,6 +1,7 @@
 /* 
- * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * 240p Test Suite for the Neo Geo
+ * by Artemio Urbina and Dustin Dembrosky (Dasutin)
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -19,39 +20,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef PATTERNS_H
-#define PATTERNS_H
+#ifndef _TYPES_H_
+#define _TYPES_H_
 
-void DrawPluge();
-void DrawWhiteScreen();
-void DrawGrayRamp();
-void DrawColorBars();
-void DrawColorBleed();
-void Draw601ColorBars();
-void DrawGrid();
-void DrawMonoscope();
-void Draw100IRE();
-void DrawEBUColorBars();
-void DrawSMPTEColorBars();
-void DrawSharpness();
-void DrawOverscan();
-void DrawConvergence();
-void DrawHCFR();
+#include <stdlib.h>
+//#include <limits.h>
 
+typedef unsigned char u8;
+typedef unsigned short int u16;
+typedef unsigned long int u32;
 
-#define HCFR_COLOR_NAME_MAX		64
+typedef signed char s8;
+typedef signed short int s16;
+typedef signed long int s32;
 
-typedef struct hcfr_color_st {
-	char	name[HCFR_COLOR_NAME_MAX];
-	int		r;
-	int		g;
-	int		b;
-} hcfr_color;
+typedef volatile unsigned char vu8;
+typedef volatile unsigned short int vu16;
+typedef volatile unsigned long int vu32;
 
-typedef struct hcfr_files_st {
-	char	*dispname;
-	char	*filename;
-} hcfr_file;
+typedef volatile signed char v8;
+typedef volatile signed short int v16;
+typedef volatile signed long int v32;
 
-#endif
+typedef s32 fix32;
 
+#endif /* _TYPES_H_ */

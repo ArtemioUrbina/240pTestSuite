@@ -1,6 +1,7 @@
 /* 
- * 240p Test Suite
- * Copyright (C)2011 Artemio Urbina
+ * 240p Test Suite for the Neo Geo
+ * by Artemio Urbina and Dustin Dembrosky (Dasutin)
+ * Copyright (C)2011-2022 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -19,25 +20,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef TESTS_H
-#define TESTS_H
+#ifndef _TESTS_H_
+#define _TESTS_H_
 
-#include "image.h"
-void DropShadowTest();
-void StripedSpriteTest();
-void TimingReflexTest();
-void ScrollTest();
-void GridScrollTest();
-void DrawStripes();
-void DrawCheckBoard();
-void SoundTest();
-void AudioSyncTest();
-void LEDZoneTest();
-void PassiveLagTest();
-void Alternate240p480i();
-void TestVideoMode();
-void DiagonalPatternTest();
-void AudioEquipmentTest(ImagePtr back);
+#include "types.h"
 
-#endif
+void vt_drop_shadow_test(void);
+void vt_striped_sprite_test(void);
+void vt_lag_test(void);
+void vt_reflex_test(void);
+void vt_scroll_test(void);
+void vt_gridscroll_test(void);
+void vt_horizontal_stripes(void);
+void vt_vertical_stripes(void);
+void vt_checkerboard(void);
+void vt_backlitzone_test(void);
 
+#endif /* _TESTS_H_ */

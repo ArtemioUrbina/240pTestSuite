@@ -238,7 +238,7 @@ if pcmaListFN then
 			end
 		end
 
-		table.insert(pcmaFiles,pcmaCount,{ID=pcmaCount,File=l,Length=tempLen,Data=tempData})
+		table.insert(pcmaFiles,pcmaCount,{ID=pcmaCount-1,File=l,Length=tempLen,Data=tempData})
 		pcmaCount = pcmaCount + 1
 	end
 
@@ -324,7 +324,7 @@ if pcmbListFN then
 			tempLen = tempLen + padBytes
 		end
 
-		table.insert(pcmbFiles,pcmbCount,{ID=pcmbCount,File=tempRealFileName,Length=tempLen,Rate=tempRate,Data=tempData})
+		table.insert(pcmbFiles,pcmbCount,{ID=pcmbCount-1,File=tempRealFileName,Length=tempLen,Rate=tempRate,Data=tempData})
 		pcmbCount = pcmbCount + 1
 	end
 
@@ -392,6 +392,7 @@ print("")
 --============================================================================--
 -- Read bank layouts and figure out required padding.
 local paddingA = {}
+local ROMSize = 0;
 
 if pcmaListFN then
 	print("Reading ADPCM-A bank layouts...")
@@ -408,6 +409,7 @@ if pcmaListFN then
 			table.insert(paddingA,k,diff)
 		end
 		print("------------------------------------------------")
+		ROMSize = curBankSize;
 		curBankSize = 0
 	end
 end
@@ -422,9 +424,12 @@ if pcmbListFN then
 		end
 		print(string.format("size of ADPCM-B bank %d: %d bytes",k,curBankSize))
 		print("------------------------------------------------")
+		ROMSize = ROMSize + curBankSize;
 		curBankSize = 0
 	end
 end
+
+print(string.format("ROM Size %d bytes", ROMSize))
 
 print("")
 
