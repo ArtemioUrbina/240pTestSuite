@@ -293,7 +293,6 @@ void at_sound_test()
 					sendZ80command(SOUNDCMD_LoopB);
 				else
 					sendZ80command(SOUNDCMD_NoLoopB);
-				sendZ80command(SOUNDCMD_StopADPCMB);
 			}
 #endif
 		}
@@ -339,6 +338,11 @@ void at_sound_mdfourier()
 {
 	int done = 0, draw = 1;
 	picture image;
+
+	//sendZ80command(SOUNDCMD_RateB_0+5);
+	sendZ80command(SOUNDCMD_NoLoopB);
+	sendZ80command(SOUNDCMD_ADPCMB_Sample1);
+	sendZ80command(SOUNDCMD_SSGPulseStop);
 
 	while (!done)
 	{

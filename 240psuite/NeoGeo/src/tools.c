@@ -66,7 +66,7 @@ void check_systype()
 
 	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0, isPALinMVS = 0;
 	enable_shadow = 0;
-	usePAL256 = 0;
+	usePAL256 = 1;
 	allowIRE107 = 1;
 
 	if (volMEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
@@ -110,7 +110,6 @@ void check_systype()
 	regw = volMEMWORD(REG_LSPCMODE);
 	if (regw & LPSC2_NTSC_PAL)
 	{
-		usePAL256 = 1;
 		if(isMVS)
 			isPALinMVS = 1;
 		else
@@ -201,20 +200,21 @@ inline void suiteClearFixLayer()
 
 inline void gfxClear()
 {
-	backgroundColor(_BLACK);
+	backgroundColor(fill_color_bg ? MAG075 : _BLACK);
 	clearSprites(1, MAX_SPRITES);
 	suiteClearFixLayer();
 }
 
 #define OPTIONS_IRE100	1
 #define OPTIONS_HORI	2
-#define OPTIONS_VERT	3
-#define OPTIONS_DARK	4
-#define OPTIONS_END		5
+#define OPTIONS_DARK	3
+#define OPTIONS_VERT	4
+#define OPTIONS_BGFILL	5
+#define OPTIONS_END		6
 
 void menu_options()
 {
-	int done = 0, curse = 1, cursemax = 5, redraw = 1, text = 0, index = 0;
+	int done = 0, curse = 1, cursemax = OPTIONS_END, redraw = 1, text = 0, index = 0;
 	char blank[] = "                                ";
 
 	while (!done)
@@ -243,8 +243,9 @@ void menu_options()
 #endif
 		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? fontColorRed : fontColorWhite, 3, "IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
 		fixPrintf(5, y++, curse == OPTIONS_HORI ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
-		fixPrintf(5, y++, curse == OPTIONS_VERT ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
 		fixPrintf(5, y++, curse == OPTIONS_DARK ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
+		fixPrintf(5, y++, curse == OPTIONS_VERT ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
+		fixPrintf(5, y++, curse == OPTIONS_BGFILL ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL background fill: %s", fill_color_bg ? "Yes" : "No");
 		y++;
 		fixPrintf(5, y++, curse == OPTIONS_END ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
@@ -342,6 +343,11 @@ void menu_options()
 				case OPTIONS_VERT:
 					if(isPAL)
 						usePAL256 = !usePAL256;
+				break;
+
+				case OPTIONS_BGFILL:
+					if(isPAL)
+						fill_color_bg = !fill_color_bg;
 				break;
 
 				case OPTIONS_END:

@@ -19,11 +19,12 @@ Start:
 ;                                 RST
 ;==============================================================================;
 
+;--------------------------------------------------------------------------;
 	org $0008
-	;--------------------------------------------------------------------------;
-	; writeDEportA
-	;--------------------------------------------------------------------------;
-	; Writes data (from registers de) to port A (4 and 5, YM2610 A1 line=0)
+;--------------------------------------------------------------------------;
+; writeDEportA
+;--------------------------------------------------------------------------;
+; Writes data (from registers de) to port A (4 and 5, YM2610 A1 line=0)
 	push	af
 	ld		a,d
 	out		(4),a			; write to port 4 (address 1)
@@ -34,11 +35,12 @@ Start:
 	pop		af
 	ret
 
+;--------------------------------------------------------------------------;
 	org $0018
-	;--------------------------------------------------------------------------;
-	; writeDEportB
-	;--------------------------------------------------------------------------;
-	; Writes data (from registers de) to port B (6 and 7, YM2610 A1 line=1)
+;--------------------------------------------------------------------------;
+; writeDEportB
+;--------------------------------------------------------------------------;
+; Writes data (from registers de) to port B (6 and 7, YM2610 A1 line=1)
 	push	af
 	ld		a,d
 	out		(6),a			; write to port 6 (address 2)
@@ -49,21 +51,23 @@ Start:
 	pop		af
 	ret
 
+;--------------------------------------------------------------------------;
 	org $0028
-	;--------------------------------------------------------------------------;
-	; waitYamaha if Busy
-	;--------------------------------------------------------------------------;
-	; Keep checking the busy flag in Status 0 until it's clear.
+;--------------------------------------------------------------------------;
+; waitYamaha if Busy
+;--------------------------------------------------------------------------;
+; Keep checking the busy flag in Status 0 until it's clear.
 checkLoop:
 	in		a,(4)			; read Status 0 (busy flag in bit 7)
 	add		a
 	jr		C,checkLoop
 	ret
 
-	org $0030
-	;--------------------------------------------------------------------------;
-	; IRQ
-	;--------------------------------------------------------------------------;
+;--------------------------------------------------------------------------;
+	org $0038
+;--------------------------------------------------------------------------;
+; IRQ
+;--------------------------------------------------------------------------;
 	di						; re-enabled at end of IRQ routine
 	jp		IRQ
 
@@ -123,7 +127,7 @@ endNMI:
 	retn
 
 ;==============================================================================;
-; IRQ (called from $0030)
+; IRQ (called from $0038)
 ;==============================================================================;
 ; Handle an interrupt request.
 ; it handles stop for ADPCM-A when the buffer is over
@@ -131,88 +135,37 @@ endNMI:
 IRQ:
 ; save registers
 	push	af
-	push	bc
-	push	de
-	push	hl
-	push	ix
-	push	iy
 
-	; update internal Status 1 register
-	in		a, (6)
-	ld		(intStatus1),a
+	; check ADPCM-B loop while playing
+	; our only current reason for the IRQ
+	ld		a,(intPCMB_Loop_change)
+	cp		0
+	jr		z,.endIRQ
 
-	; --check status of ADPCM channels--
+	; Should we do something or reset the flag
+	ld		a,(intPCMB_Loop)
+	cp		0
+	jr		z,.handleNoLoop
 
-	; for ADPCM-B, looping is handled automatically (via repeat flag).
-	; we don't need to check anything. ADPCM-A, on the other hand...
+	; there was a loop ADPCM-B change, handle it
+	in		a,(6)			; load current status 1
+	bit		7,a				; is ADPCM-B playing
+	jr		Z,.endIRQ
 
-	; Check if any ADPCM-A channel has finished
-	; only stop/loop the sample if we've reached the end of it.
-	ld		a,(intStatus1)
-.IRQ_checkPCMA0:
-	bit		0,a
-	jp		Z,.IRQ_checkPCMA1
+	; Playback halted, enable loop
+	call	sendPlayPCMB
+	jr		.reset_flag
 
-	; stop sample on ADPCM-A channel 1
-	ld		de,0x0081
-	rst 	writeDEportB
+.handleNoLoop:
+	call	pcmb_Stop
 
-.IRQ_checkPCMA1:
-	bit		1,a
-	jp		Z,.IRQ_checkPCMA2
+.reset_flag:
+	xor		a
+	ld		(intPCMB_Loop_change),a
 
-	; stop sample on ADPCM-A channel 2
-	ld		de,0x0082
-	rst 	writeDEportB
-
-.IRQ_checkPCMA2:
-	bit		2,a
-	jp		Z,.IRQ_checkPCMA3
-
-	; stop sample on ADPCM-A channel 3
-	ld		de,0x0084
-	rst 	writeDEportB
-
-.IRQ_checkPCMA3:
-	bit		3,a
-	jp		Z,.IRQ_checkPCMA4
-
-	; stop sample on ADPCM-A channel 4
-	ld		de,0x0088
-	rst 	writeDEportB
-
-.IRQ_checkPCMA4:
-	bit		4,a
-	jp		Z,.IRQ_checkPCMA5
-
-	; stop sample on ADPCM-A channel 5
-	ld		de,0x0090
-	rst 	writeDEportB
-
-.IRQ_checkPCMA5:
-	bit		5,a
-	jp		Z,.IRQ_afterPCMA
-
-	; stop sample on ADPCM-A channel 6
-	ld		de,0x00A0
-	rst 	writeDEportB
-
-.IRQ_afterPCMA:
-	; update internal Status 0 register
-	in		a, (4)
-	ld		(intStatus0),a
-
-	; check timers if needed here
-
-.IRQ_end:
+.endIRQ:
 	; restore registers
-	pop		iy
-	pop		ix
-	pop		hl
-	pop		de
-	pop		bc
 	pop		af
-
 	ei			; was set in IRQ handler
 	; return
 	reti		; could use ret
@@ -251,6 +204,7 @@ EntryPoint:
 	; ADPCM-B
 	ld		(intPCMB_currSample),a
 	ld		(intPCMB_Loop),a
+	ld		(intPCMB_Loop_change),a
 
 	; Silence/Stop SSG, FM, and ADPCM
 	call	ssg_Stop
@@ -277,14 +231,20 @@ EntryPoint:
 	call	SetDefaultBanks	; Set default program banks
 
 	;-------------------------------------------;
+	; Start Timer A
+	; Only used to loop APDCM-B if loop was disabled during playback
+	ld		de,0x2715		; Reset Timer A flags, Enable Timer A IRQs, Load A Timers
+	rst 	writeDEportA	; write to ports 4 and 5
+
+	;-------------------------------------------;
 	; Set ADPCM-A shared volume
 	ld		de,0x013F		; Set ADPCM-A volume to Maximum
 	rst 	writeDEportB	; write to ports 6 and 7
 
 	;-------------------------------------------;
 	; set ADPCM-B volume
-	ld		a,0xFF
-	ld		(intPCMB_Volume),a		; ADPCM-B volume max
+	ld		a,0xFF			
+	ld		(intPCMB_Volume),a		
 	ld		de,0x1BFF		; Set ADPCM-B volume to Maximum
 	rst 	writeDEportA	; write to ports 4 and 5
 
@@ -620,14 +580,14 @@ command_SSGrampInit:
 ; Does a cycle in the Ramp sweep for SSG using channel A
 
 command_SSGrampCycle:
-	ld		d,0x00			;SSG Channel A Fine Tune
-	ld		a,(SSG_FreqFine)
-	ld		e,a				; fine freq
-	rst 	writeDEportA
-
 	ld		d,0x01			;SSG Channel A Coarse Tune
 	ld		a,(SSG_FreqCoarse)
 	ld		e,a				; coarse freq
+	rst 	writeDEportA
+
+	ld		d,0x00			;SSG Channel A Fine Tune
+	ld		a,(SSG_FreqFine)
+	ld		e,a				; fine freq
 	rst 	writeDEportA
 
 	ld		de,0x073E		;SSG Mixing, Only channel A
@@ -662,10 +622,10 @@ command_SSGrampCycle:
 ; in MDFourier
 
 command_SSG_pulseStart:
-	ld		de,0x0010		; ~8khz (8390hz)
+	ld		de,0x0100		; Coarse to zero
 	rst 	writeDEportA
 
-	ld		de,0x0100		; Coarse to zero
+	ld		de,0x0010		; ~8khz (8390hz)
 	rst 	writeDEportA
 
 	ld		de,0x073E		; SSG Mixing, Only channel A
@@ -682,10 +642,10 @@ command_SSG_pulseStart:
 ; Starts an 999.2hz tone in Channel A, intended for confirmation beeps
 
 command_SSG_1khzStart:
-	ld		de,0x007F		; ~1khz (999.2hz)
+	ld		de,0x0100		; Coarse to zero
 	rst 	writeDEportA
 
-	ld		de,0x0100		; Coarse to zero
+	ld		de,0x007F		; ~1khz (999.2hz)
 	rst 	writeDEportA
 
 	ld		de,0x073E		; SSG Mixing, Only channel A
@@ -702,10 +662,10 @@ command_SSG_1khzStart:
 ; Starts an 260.1hz tone in Channel A, intended for missed key presses in a test
 
 command_SSG_260hzStart:
-	ld		de,0x00e5		; ~ 260hz (260.1hz)
+	ld		de,0x0101		; Coarse to 1
 	rst 	writeDEportA
 
-	ld		de,0x0101		; Coarse to 1
+	ld		de,0x00e5		; ~ 260hz (260.1hz)
 	rst 	writeDEportA
 
 	ld		de,0x073E		; SSG Mixing, Only channel A
@@ -1147,6 +1107,15 @@ sendPlayPCMB:
 command_LoopPCMB:
 	ld		a,1
 	ld		(intPCMB_Loop),a
+
+	; check if we need to alert the IRQ to check for sample end
+	in		a,(6)					; Load status
+	bit		7,a						; is ADPCM-B playing? (0 if playing)
+	jr		nz,.endloopEn			; don't alert IRQ if not playing
+	ld		a,1
+	ld		(intPCMB_Loop_change),a
+
+.endloopEn:
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -1157,6 +1126,15 @@ command_LoopPCMB:
 command_NoLoopPCMB:
 	xor		a
 	ld		(intPCMB_Loop),a
+
+	; check if we need to alert the IRQ to check for sample end
+	in		a,(6)					; Load status
+	bit		7,a						; is ADPCM-B playing? (0 if playing)
+	jr		nz,.endNoloopEn			; don't stop it if it was not playing
+	ld		a,1
+	ld		(intPCMB_Loop_change),a
+
+.endNoloopEn:
 	ret
 
 ;------------------------------------------------------------------------------;

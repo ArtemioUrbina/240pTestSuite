@@ -48,6 +48,7 @@ extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 extern BYTE first_grid;
 extern BYTE first_overscan;
 extern BYTE first_colorramp;
+extern BYTE fill_color_bg;
 extern int max_z80_timout;
 #ifdef __cd__
 extern BYTE isCDFront, isCDZ, ngcd_region;

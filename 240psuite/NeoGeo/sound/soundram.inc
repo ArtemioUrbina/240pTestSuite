@@ -12,9 +12,6 @@ curCommand			ds 1		; Current command to handle
 ;==============================================================================;
 ; <YM2610 Section>
 ;==============================================================================;
-; [System variables]
-intStatus0			ds 1		; Status 0 (Timer flags and Busy)
-intStatus1			ds 1		; Status 1 (ADPCM A and B status)
 
 ;------------------------------------------------------------------------------;
 ; [SSG Data]
@@ -36,6 +33,7 @@ intPCMB_SampRateL	ds 1		; Delta-N Sampling Rate (L)
 intPCMB_SampRateH	ds 1		; Delta-N Sampling Rate (H)
 intPCMB_Volume		ds 1		; Channel volume
 intPCMB_Loop		ds 1		; loop B
+intPCMB_Loop_change	ds 1		; loop B changed for IRQ handler
 
 usedRAM:
 

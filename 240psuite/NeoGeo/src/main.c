@@ -39,11 +39,12 @@ bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 BYTE isMVS, is4S, is6S, isMulti, hwChange, allowIRE107;
-BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
+BYTE vmode_snk, isPAL, usePAL256, isPALinMVS;
+BYTE enable_shadow, fill_color_bg;
+int max_z80_timout;
 #ifdef __cd__
 BYTE isCDFront, isCDZ, ngcd_region;
 #endif
-int max_z80_timout;
 
 #define NUM_FONT_COLORS 10
 static const ushort fixPalettes[]= {
@@ -875,6 +876,7 @@ void check_bios_init()
 	first_overscan = 1;
 	first_colorramp = 1;
 	max_z80_timout = 0;
+	fill_color_bg = 0;
 }
 
 void mvs_state()

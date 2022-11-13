@@ -3,9 +3,10 @@
 
 ; [ADPCM-A Samples]
 samples_PCMA:
-	word	0x0000,0x00FB	; PCMA Sample #1 (sound/pcm/a00_jingle.pcma)
-	word	0x00FC,0x0108	; PCMA Sample #2 (sound/pcm/a01_coin.pcma)
-	word	0x0109,0x0121	; PCMA Sample #3 (sound/pcm/a02_left.pcma)
-	word	0x0122,0x0136	; PCMA Sample #4 (sound/pcm/a03_right.pcma)
-	word	0x0137,0x0151	; PCMA Sample #5 (sound/pcm/a04_center.pcma)
+	word	0x0000,0x00FB	; PCMA Sample #0 (sound/pcm/a00_jingle.pcma)
+	word	0x00FC,0x0108	; PCMA Sample #1 (sound/pcm/a01_coin.pcma)
+	word	0x0109,0x0121	; PCMA Sample #2 (sound/pcm/a02_left.pcma)
+	word	0x0122,0x0136	; PCMA Sample #3 (sound/pcm/a03_right.pcma)
+	word	0x0137,0x0151	; PCMA Sample #4 (sound/pcm/a04_center.pcma)
+	word	0x0152,0x01E2	; PCMA Sample #5 (sound/pcm/a05_sweep.pcma)
 
