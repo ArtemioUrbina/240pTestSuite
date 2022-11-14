@@ -445,59 +445,83 @@ void at_sound_mdfourier()
 
 void at_audiosync_test()
 {
-	int done = 0, draw = 1, cycle = 0, x = 160, y = 160;
-	s16 acc = 1, status = -1;
+	int done = 0, draw = 1, x = 160, y = 180;
+	int paused = 0, speed = -1, changed = 0;
+	int x1 = 0 , x2 = 160, hstep = 1;
 	picture syncbar, syncbar2, syncfloor, block;
-
-	backgroundColor(0x8000);
 
 	while (!done)
 	{
 		if (draw)
 		{
+			int palindex = 16, sprindex = 1;
+
 			gfxClear();
-			pictureInit(&syncbar, &audiosync_bar,1, 16, 0, 48,FLIP_NONE);
-			palJobPut(16,audiosync_bar.palInfo->count,audiosync_bar.palInfo->data);
 
-			pictureInit(&syncbar2, &audiosync_bar,8, 16, 288, 48,FLIP_X);
+			pictureInit(&syncbar, &audiosync_bar,sprindex, palindex, x1, 64,FLIP_NONE);
+			palJobPut(palindex,audiosync_bar.palInfo->count,audiosync_bar.palInfo->data);
+			sprindex += getPicSprites(syncbar.info);
+			palindex += audiosync_bar.palInfo->count;
 
-			pictureInit(&syncfloor, &audiosync_floor,16, 17, 0, 160,FLIP_NONE);
-			palJobPut(17,audiosync_floor.palInfo->count,audiosync_floor.palInfo->data);
+			pictureInit(&syncbar2, &audiosync_bar,sprindex, palindex, x2, 64, FLIP_NONE);
+			sprindex += getPicSprites(syncbar.info);
 
-			pictureInit(&block, &led_2x,36, 18, x, y,FLIP_NONE);
-			palJobPut(18,led_2x.palInfo->count,led_2x.palInfo->data);
+			pictureInit(&syncfloor, &audiosync_floor,sprindex, palindex, 0, 180, FLIP_NONE);
+			palJobPut(palindex,audiosync_floor.palInfo->count,audiosync_floor.palInfo->data);
+			sprindex += getPicSprites(syncfloor.info);
+			palindex += audiosync_floor.palInfo->count;
+
+			pictureInit(&block, &led_2x,sprindex, palindex, x, y, FLIP_NONE);
+			palJobPut(palindex,led_2x.palInfo->count,led_2x.palInfo->data);
+
 			draw = 0;
+		}
+
+		if(bkp_data.debug_dip1&DP_DEBUG1)
+		{
+			fixPrintf(22, 14, fontColorSolid, 4, "X:      %04d", x);
+			fixPrintf(22, 15, fontColorSolid, 4, "Y:      %04d", y);
+			fixPrintf(22, 16, fontColorSolid, 4, "speed:  %04d", speed);
+			fixPrintf(22, 17, fontColorSolid, 4, "X1:     %04d", x1);
+			fixPrintf(22, 18, fontColorSolid, 4, "X2:     %04d", x2);
+			fixPrintf(22, 19, fontColorSolid, 4, "hstep:  %04d", hstep);
+			fixPrintf(22, 20, fontColorSolid, 4, "paused: %04d", paused);
 		}
 
 		SCClose();
 		waitVBlank();
 
-		if (BTTN_MAIN)
+		if(!paused)
 		{
-			cycle = !cycle;
-			if (!cycle)
-				status = 121;
-			else
-				y = 160;
-		}
+			y += speed;
 
-		if (cycle == 1 && status == -1)
-		{
-			status = 0;
-			acc = -1;
-		}
-
-		if (status > -1)
-		{
-			status++;
-			if (status <= 120)
+			if(y == 180)
 			{
-				y += acc;
-				pictureMove(&block, x, y);
+				sendZ80commandAtVideoStart(SOUNDCMD_SSG1KHZStart);
+				backgroundColor(WH_100);
+
+				sendZ80commandAtVideoEnd(SOUNDCMD_SSGPulseStop);
+				backgroundColor(_BLACK);
 			}
+
+			if(y == 180 || y == 120)
+			{
+				speed *= -1;
+				hstep *= -1;
+			}
+
+			x1 -= hstep;
+			x2 += hstep;
+
+			pictureSetPos(&syncbar, x1, 64);
+			pictureSetPos(&syncbar2, x2, 64);
+			pictureSetPos(&block, x, y);
 		}
 
 		readController();
+
+		if (BTTN_MAIN)
+			paused = !paused;
 
 		if (BTTN_EXIT)
 			done = 1;

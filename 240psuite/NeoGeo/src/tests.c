@@ -82,6 +82,12 @@ void vt_drop_shadow_test()
 	picture shape_sprite;
 	scroller backScroll, waterScroll, frontScroll;
 
+	if(isPAL || isPALinMVS)
+	{
+		y2 += 16;
+		y3 += 16;
+	}
+
 	getScreenLimits(&limitX, &limitY);
 	while (!done)
 	{	
@@ -106,7 +112,7 @@ void vt_drop_shadow_test()
 			sprindex += SCROLLER_SIZE;
 			palindex += waterScroll.info->palInfo->count;
 
-			scrollerInit(&frontScroll, &sonic_floor, sprindex, palindex, 0, y3);
+			scrollerInit(&frontScroll, &sonic_floor, sprindex, palindex, 0, y1);
 			palJobPut(palindex, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
 			sprindex += SCROLLER_SIZE;
 			palindex += frontScroll.info->palInfo->count;
@@ -140,10 +146,10 @@ void vt_drop_shadow_test()
 			pictureInit(&donna_back, &donna, spri_donna, pali_donna, 0, isPAL || isPALinMVS ? -16 : -32, FLIP_NONE);
 			sprindex += getPicSprites(donna_back.info);
 
-			pictureInit(&hori_back, &horzstripe, sprindex, pali_hori, 0, 0, FLIP_NONE);
+			pictureInit(&hori_back, &horzstripe, sprindex, pali_hori, 0, isPAL || isPALinMVS ? -16 : 0, FLIP_NONE);
 			sprindex += getPicSprites(hori_back.info);
 
-			pictureInit(&check_back, &check, sprindex, pali_check, 0, 0, FLIP_NONE);
+			pictureInit(&check_back, &check, sprindex, pali_check, 0, isPAL || isPALinMVS ? -16 : 0, FLIP_NONE);
 			sprindex += getPicSprites(check_back.info);
 
 			spri_slug_shadow = sprindex;
@@ -352,6 +358,12 @@ void vt_striped_sprite_test()
 	picture sprite;
 	scroller backScroll, waterScroll, frontScroll;
 
+	if(isPAL || isPALinMVS)
+	{
+		y2 += 16;
+		y3 += 16;
+	}
+
 	getScreenLimits(&limitX, &limitY);
 	while (!done)
 	{
@@ -363,7 +375,7 @@ void vt_striped_sprite_test()
 			gfxClear();
 
 			// load scrollers, all sprite priority based
-			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y1);
+			scrollerInit(&backScroll, &sonic_back, sprindex, palindex, 0, y3);
 			palJobPut(palindex, sonic_back.palInfo->count, sonic_back.palInfo->data);
 			pal_wfall = palindex + 1;
 			pal_water = pal_wfall + 1;
@@ -387,12 +399,12 @@ void vt_striped_sprite_test()
 			palJobPut(palindex,donna.palInfo->count,donna.palInfo->data);
 			palindex += donna.palInfo->count;
 
-			pictureInit(&hori_back, &horzstripe, sprindex, palindex, 0, 0, FLIP_NONE);
+			pictureInit(&hori_back, &horzstripe, sprindex, palindex, 0, isPAL || isPALinMVS ? -16 : 0, FLIP_NONE);
 			sprindex += getPicSprites(hori_back.info);
 			palJobPut(palindex,horzstripe.palInfo->count,horzstripe.palInfo->data);
 			palindex += horzstripe.palInfo->count;
 
-			pictureInit(&check_back, &check, sprindex, palindex, 0, 0, FLIP_NONE);
+			pictureInit(&check_back, &check, sprindex, palindex, 0, isPAL || isPALinMVS ? -16 : 0, FLIP_NONE);
 			sprindex += getPicSprites(check_back.info);
 			palJobPut(palindex,check.palInfo->count,check.palInfo->data);
 			palindex += check.palInfo->count;
@@ -685,6 +697,7 @@ void vt_reflex_test()
 		if (loadvram)
 		{
 			gfxClear();
+			backgroundColor(_BLACK);
 
 			pictureInit(&marker1, &marker, 1, 16, x, 96, FLIP_NONE);
 			pictureInit(&marker2, &marker, 9, 16, x2, y2, FLIP_NONE);
@@ -1034,6 +1047,12 @@ void vt_scroll_test()
 		xvert[2] += 8;
 	}
 
+	if(isPAL || isPALinMVS)
+	{
+		y2 += 16;
+		y3 += 16;
+	}
+
 	while (!done)
 	{
 		if (reload)
@@ -1058,6 +1077,7 @@ void vt_scroll_test()
 			palJobPut(palindex, sonic_floor.palInfo->count, sonic_floor.palInfo->data);
 			sprindex += SCROLLER_SIZE;
 			palindex += frontScroll.info->palInfo->count;
+
 			scrollerInit(&vertScroll, &kiki, sprindex, palindex, xvert[currxvert], y3);
 			palJobPut(palindex, kiki.palInfo->count, kiki.palInfo->data);
 
@@ -1275,22 +1295,35 @@ void vt_gridscroll_test()
 void vt_horizontal_stripes()
 {
 	int done = 0, draw = 1, alternate = 0, field = 1, frames = 0, docounter = 0;
+	ushort hori_alt[16];
 	picture image;
+
+	memcpy(&hori_alt, horzstripe.palInfo->data, sizeof(ushort)*16);
+	hori_alt[1] = horzstripe.palInfo->data[2];
+	hori_alt[2] = horzstripe.palInfo->data[1];
 
 	while (!done)
 	{
+		int	swap = 0;
+
 		if (draw)
 		{
 			gfxClear();
-			pictureInit(&image, &horzstripe, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
+			pictureInit(&image, &horzstripe, 1, 16, 0, isPAL && usePAL256 ? -16 : 0,FLIP_NONE);
+			swap = 1;
 			draw = 0;
 		}
 
 		if (alternate)
+			swap = 1;
+
+		if (!alternate && (PRESSED_UP || PRESSED_DOWN || BTTN_OPTION_2))
+			swap = 1;
+
+		if(swap)
 		{
 			if (field == 0) {
-				palJobPut(16,horzstripe_alt.palInfo->count,horzstripe_alt.palInfo->data);
+				palJobPut(16,1,hori_alt);
 				field = 1;
 			} else {
 				palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
@@ -1311,17 +1344,6 @@ void vt_horizontal_stripes()
 			}
 
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
-		}
-
-		if (!alternate && (PRESSED_UP || PRESSED_DOWN || BTTN_OPTION_2))
-		{
-			if (field == 0) {
-				palJobPut(16,horzstripe_alt.palInfo->count,horzstripe_alt.palInfo->data);
-				field = 1;
-			} else {
-				palJobPut(16,horzstripe.palInfo->count,horzstripe.palInfo->data);
-				field = 0;
-			}
 		}
 
 		SCClose();
@@ -1350,22 +1372,35 @@ void vt_horizontal_stripes()
 void vt_vertical_stripes()
 {
 	int done = 0, draw = 1, alternate = 0, field = 1, frames = 0, docounter = 0;
+	ushort vert_alt[16];
 	picture image;
+
+	memcpy(&vert_alt, vertstripe.palInfo->data, sizeof(ushort)*16);
+	vert_alt[1] = vertstripe.palInfo->data[2];
+	vert_alt[2] = vertstripe.palInfo->data[1];
 
 	while (!done)
 	{
+		int	swap = 0;
+
 		if (draw)
 		{
 			gfxClear();
-			pictureInit(&image, &vertstripe, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,vertstripe.palInfo->count,vertstripe.palInfo->data);
+			pictureInit(&image, &vertstripe, 1, 16, 0, isPAL && usePAL256 ? -16 : 0,FLIP_NONE);
+			swap = 1;
 			draw = 0;
 		}
 
 		if (alternate)
+			swap = 1;
+
+		if (!alternate && (PRESSED_UP || PRESSED_DOWN || BTTN_OPTION_2))
+			swap = 1;
+
+		if(swap)
 		{
 			if (field == 0) {
-				palJobPut(16,vertstripe_alt.palInfo->count,vertstripe_alt.palInfo->data);
+				palJobPut(16,1,vert_alt);
 				field = 1;
 			} else {
 				palJobPut(16,vertstripe.palInfo->count,vertstripe.palInfo->data);
@@ -1386,17 +1421,6 @@ void vt_vertical_stripes()
 			}
 
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
-		}
-
-		if (!alternate && (PRESSED_UP || PRESSED_DOWN || BTTN_OPTION_2))
-		{
-			if (field == 0) {
-				palJobPut(16,vertstripe_alt.palInfo->count,vertstripe_alt.palInfo->data);
-				field = 1;
-			} else {
-				palJobPut(16,vertstripe.palInfo->count,vertstripe.palInfo->data);
-				field = 0;
-			}
 		}
 
 		SCClose();
@@ -1425,24 +1449,35 @@ void vt_vertical_stripes()
 void vt_checkerboard()
 {
 	int done = 0, draw = 1, alternate = 0, field = 1, frames = 0, docounter = 0;
+	ushort check_alt[16];
 	picture image;
+
+	memcpy(&check_alt, check.palInfo->data, sizeof(ushort)*16);
+	check_alt[1] = check.palInfo->data[2];
+	check_alt[2] = check.palInfo->data[1];
 
 	while (!done)
 	{
-		SCClose();
-		waitVBlank();
+		int	swap = 0;
+
 		if (draw)
 		{
 			gfxClear();
-			pictureInit(&image, &check, 1, 16, 0, 0,FLIP_NONE);
-			palJobPut(16,check.palInfo->count,check.palInfo->data);
+			pictureInit(&image, &check, 1, 16, 0, isPAL && usePAL256 ? -16 : 0,FLIP_NONE);
+			swap = 1;
 			draw = 0;
 		}
 
 		if (alternate)
+			swap = 1;
+
+		if (!alternate && (PRESSED_UP || PRESSED_DOWN || BTTN_OPTION_2))
+			swap = 1;
+
+		if(swap)
 		{
 			if (field == 0) {
-				palJobPut(16,check_alt.palInfo->count,check_alt.palInfo->data);
+				palJobPut(16,1,check_alt);
 				field = 1;
 			} else {
 				palJobPut(16,check.palInfo->count,check.palInfo->data);
@@ -1465,16 +1500,8 @@ void vt_checkerboard()
 			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
-		if (!alternate && (PRESSED_UP || PRESSED_DOWN || BTTN_OPTION_2))
-		{
-			if (field == 0) {
-				palJobPut(16,check_alt.palInfo->count,check_alt.palInfo->data);
-				field = 1;
-			} else {
-				palJobPut(16,check.palInfo->count,check.palInfo->data);
-				field = 0;
-			}
-		}
+		SCClose();
+		waitVBlank();
 
 		readController();
 
@@ -1510,6 +1537,7 @@ void vt_backlitzone_test()
 		if (draw)
 		{
 			gfxClear();
+			backgroundColor(_BLACK);
 
 			switch (block)
 			{

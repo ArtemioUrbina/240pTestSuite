@@ -74,6 +74,7 @@ void waitVLine(WORD line);
 // Sound
 int sendZ80command(u8 command);
 void sendZ80commandAtVideoStart(u8 command);
+void sendZ80commandAtVideoEnd(u8 command);
 void sendZ80commandAtLine(WORD line, u8 command);
 void sendZ80commandnoWait(u8 command);
 

@@ -311,7 +311,7 @@ void tp_colorchart()
 
 		if(first_colorramp && !allowIRE107)
 		{
-			draw_warning("Limiting IRE to 100. As a\nresult the top bar on the\nramps will be blacked out.", index, palindex, 0);
+			draw_warning("Limiting IRE to 100.\nAs a result the top bar on the\nramps will be blacked out.", index, palindex, 0);
 			first_colorramp = 0;
 			draw = 1;
 		}
@@ -661,14 +661,14 @@ void tp_grid()
 #ifndef __cd__
 			if((isMVS && !AES_AS_MVS && !vmode_snk && !isMulti && first_grid))
 			{
-				draw_warning("Some later MVS systems can't display\nthe last column of pixels\nwhen in full 320 mode.", index, palindex, 0);
+				draw_warning("Some later MVS systems can't\ndisplay the last column of\npixels when in full 320 mode.", index, palindex, 0);
 				first_grid = 0;
 				draw = 1;
 			}
 #else
 			if(isCDZ && !vmode_snk && first_grid)	// Have only checked this variant, maybe all have this behaviour?
 			{
-				draw_warning("CDZ systems can't display\nthe last column of pixels\nwhen in full 320 mode.", index, palindex, 0);
+				draw_warning("CDZ systems can't display\nthe last column of\npixels when in full 320 mode.", index, palindex, 0);
 				first_grid = 0;
 				draw = 1;
 			}
@@ -718,14 +718,34 @@ void tp_monoscope()
 	{
 		if (draw)
 		{
+			int index = 1, palindex = 16;
+
 			gfxClear();
 
-			scrollerInit(&monoscope, &monoscopes, 1, 16, getHorScrollAspect(), PATTERN_SCROLL);
-			palJobPut(16, monoscopes.palInfo->count, monoscopes.palInfo->data);
-			
+			scrollerInit(&monoscope, &monoscopes, index, palindex, getHorScrollAspect(), PATTERN_SCROLL);
+			palJobPut(palindex, monoscopes.palInfo->count, monoscopes.palInfo->data);
+			index += SCROLLER_SIZE;
+			palindex += monoscopes.palInfo->count;
+
 			updatepalette = 1;
 			changepattern = 1;
 			draw = 0;
+
+#ifndef __cd__
+			if((isMVS && !AES_AS_MVS && !vmode_snk && !isMulti && first_grid))
+			{
+				draw_warning("Some later MVS systems can't\ndisplay the last column of\npixels when in full 320 mode.", index, palindex, 0);
+				first_grid = 0;
+				draw = 1;
+			}
+#else
+			if(isCDZ && !vmode_snk && first_grid)	// Have only checked this variant, maybe all have this behaviour?
+			{
+				draw_warning("CDZ systems can't display\nthe last column of\npixels when in full 320 mode.", index, palindex, 0);
+				first_grid = 0;
+				draw = 1;
+			}
+#endif
 		}
 		
 		SCClose();

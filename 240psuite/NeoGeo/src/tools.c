@@ -200,13 +200,15 @@ inline void suiteClearFixLayer()
 
 inline void gfxClear()
 {
-	backgroundColor(fill_color_bg ? MAG075 : _BLACK);
+	disableIRQ();
 	clearSprites(1, MAX_SPRITES);
 	suiteClearFixLayer();
+	backgroundColor(fill_color_bg ? IRE_20 : _BLACK);
+	enableIRQ();
 }
 
-#define OPTIONS_IRE100	1
-#define OPTIONS_HORI	2
+#define OPTIONS_HORI	1
+#define OPTIONS_IRE100	2
 #define OPTIONS_DARK	3
 #define OPTIONS_VERT	4
 #define OPTIONS_BGFILL	5
@@ -241,8 +243,8 @@ void menu_options()
 #else
 		fixPrintf(14, 6, fontColorGreen, 3, "NGCD Options");
 #endif
-		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? fontColorRed : fontColorWhite, 3, "IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
 		fixPrintf(5, y++, curse == OPTIONS_HORI ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
+		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? fontColorRed : fontColorWhite, 3, "IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
 		fixPrintf(5, y++, curse == OPTIONS_DARK ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
 		fixPrintf(5, y++, curse == OPTIONS_VERT ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
 		fixPrintf(5, y++, curse == OPTIONS_BGFILL ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL background fill: %s", fill_color_bg ? "Yes" : "No");
@@ -347,7 +349,10 @@ void menu_options()
 
 				case OPTIONS_BGFILL:
 					if(isPAL)
+					{
 						fill_color_bg = !fill_color_bg;
+						redraw = 1;
+					}
 				break;
 
 				case OPTIONS_END:
@@ -844,9 +849,6 @@ int sendZ80command(u8 command)
 
 /* 
  * Play sound aligned with first line of the visible frame 
- * tested on an AES, sound driver response time via NMI is 4-7 lines
- * 4 lines for SSG stop
- * 7 lines for SSG start
  */
 void sendZ80commandAtVideoStart(u8 command)
 {
@@ -856,12 +858,23 @@ void sendZ80commandAtVideoStart(u8 command)
 		$100~$10F : Top border (16px) (active in PAL, blanked in NTSC)
 		$110~$1EF : Active display (224px)
 		$1F0~$1FF : Bottom border (16px)
-
-		Processing in Z80+Ym2610 takes 4.5 lines
-		So we align to line 0x010CC for NTSC
 	*/
+
 	waitVLine(isPAL ? 0x100 : 0x010C);
 	volMEMBYTE(REG_SOUND) = command;
+
+	// we don't wait for Z80 response here
+}
+
+/*
+ * Play sound aligned with last line of the visible frame 
+ */
+void sendZ80commandAtVideoEnd(u8 command)
+{
+	waitVLine(isPAL ? 0x1FD : 0x1ED);
+	volMEMBYTE(REG_SOUND) = command;
+
+	// we don't wait for Z80 response here
 }
 
 void sendZ80commandAtLine(WORD line, u8 command)
