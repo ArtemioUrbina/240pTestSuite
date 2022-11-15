@@ -96,12 +96,6 @@ NMI:
 	ld		a,b				; set a for comparisons
 	ld		(curCommand),a	; update curCommand
 
-	; "Commands $01 and $03 are always expected to be implemented as they
-	; are used by the BIOSes for initialization purposes." - NeoGeoDev Wiki
-	cp		0x01			; Command 1 (Slot Switch)
-	jp		Z,cmdSwitchSlot
-	cp		0x03			; Command 3 (Soft Reset)
-	jp		Z,cmdSoftReset
 	or		a				; check if Command is 0
 	jp		Z,endNMI		; exit if Command 0
 
@@ -159,8 +153,8 @@ EntryPoint:
 	call	fm_Stop
 
 	; silence ADPCM-A, ADPCM-B
-	;call	pcma_Stop		; Commented so that the coin plays
-	call	pcmb_Stop
+	;call	command_PCMAStop	; Commented so that the coin plays
+	call	command_PCMBStop
 
 	;-------------------------------------------;
 	; write 1 to port $C0
@@ -239,124 +233,35 @@ SetDefaultBanks:
 
 HandleCommand:
 	ld		a,(curCommand)	; get current command
-	ld		b,a				; save backup of command
 
 	; commands that change ADPCM-B rate.
 	; The check is handled in a very simple manner for this program.
 	jp		M,command_ChangeRate
 
-	cp		SOUNDCMD_SSGRampinit
-	jp		Z,command_SSGrampInit
+	; execute the rest via jump table, will crash if command > 0x6F
+	; is called, but it has flat execution time
+	ld		h,0
+	ld		l,a
+	add		hl,hl
+	ld		de,CommandTbl
+	add		hl,de
 
-	cp		SOUNDCMD_SSGRampcycle
-	jp		Z,command_SSGrampCycle
-
-	cp		SOUNDCMD_SSGPulseStart
-	jp		Z,command_SSG_pulseStart
-
-	cp		SOUNDCMD_SSG1KHZStart
-	jp		Z,command_SSG_1khzStart
-
-	cp		SOUNDCMD_SSG260HZStart
-	jp		Z,command_SSG_260hzStart
-
-	cp		SOUNDCMD_SSGPulseStop
-	jp		Z,command_SSGpulseStop
-
-	; command $02: play Jingle ADPCM-A (channel 1)
-	cp		SOUNDCMD_PlayJingleA
-	jp		Z,command_PlayJingleA
-
-	; command play Coin ADPCM-A (channel 1)
-	cp		SOUNDCMD_PlayCoinA
-	jp		Z,command_PlayCoinA
-
-	; command play left ADPCM-A (channel 1)
-	cp		SOUNDCMD_PlayLeft
-	jp		Z,command_PlayLeftA
-
-	; command play right ADPCM-A (channel 1)
-	cp		SOUNDCMD_PlayRight
-	jp		Z,command_PlayRightA
-
-	; command play center ADPCM-A (channel 1)
-	cp		SOUNDCMD_PlayCenter
-	jp		Z,command_PlayCenterA
-
-	;--------------------------------------------------------------------------;
-	; don't bother trying to play back ADPCM-B on Neo-Geo CD; it won't work.
-	ifnd TARGET_CD
-
-	; command to play ADPCM-B Center
-	cp		SOUNDCMD_ADPCMB_Center
-	jp		Z,command_PlayPCMBCenter
-
-	; command to play ADPCM-B Left
-	cp		SOUNDCMD_ADPCMB_Left
-	jp		Z,command_PlayPCMBLeft
-
-	; command to play ADPCM-B Right
-	cp		SOUNDCMD_ADPCMB_Right
-	jp		Z,command_PlayPCMBRight
-
-	; command to stop ADPCM-A
-	cp		SOUNDCMD_StopADPCMA
-	jp		Z,pcma_Stop
-
-	; command to stop ADPCM-B
-	cp		SOUNDCMD_StopADPCMB
-	jp		Z,pcmb_Stop
-
-	; command loop ADPCM-B
-	cp		SOUNDCMD_LoopB
-	jp		Z,command_LoopPCMB
-
-	; command no loop ADPCM-B
-	cp		SOUNDCMD_NoLoopB
-	jp		Z,command_NoLoopPCMB
-
-	; command Sample 0 to ADPCM-B
-	cp		SOUNDCMD_ADPCMB_Sample0
-	jp		Z,command_setADPCMB_Sample0
-
-	; command Sample 1 to ADPCM-B
-	cp		SOUNDCMD_ADPCMB_Sample1
-	jp		Z,command_setADPCMB_Sample1
-
-	endif
-	; end Neo-Geo CD.
-	;--------------------------------------------------------------------------;
-
-	; RAM Test this is special for return value purposes
-	cp		RAMTESTCMD
-	jp		nz,.returnfromHandler
-
-	call	command_RAMTest
-	jr		nc,.returnfromHandler	; if no error, return normally
-
-	; if a RAM error was found...
-	pop		hl						; remove return from stack, yeah I know...
-	ld		a,(curCommand)
-	; Reply to 68K with command as it was sent, this indicates an error
-	out		(0xC),a
-	xor		a						; clear a for now.
-	out		(0),a					; Write to port 0 (Clear sound code)
-	jp		endNMI					; finish NMI
-
-.returnfromHandler:
-	; if it's not one of the above, then do nothing.
-	ret
+	ld		a,(hl)
+	inc		hl
+	ld		h,(hl)
+	ld		l,a
+	jp		(hl)
 
 ;==============================================================================;
 ; COMMANDS
 ;==============================================================================;
 
 ;------------------------------------------------------------------------------;
-; cmdSwitchSlot
+; command_SwitchSlot
 ;------------------------------------------------------------------------------;
 ; Performs setup work for Command $01 (Slot Change).
 
-cmdSwitchSlot:
+command_SwitchSlot:
 	xor		a
 	out		(0xC),a			; write 0 to port 0xC (Respond to 68K)
 	out		(0),a			; write to port 0 (Clear sound code)
@@ -368,11 +273,11 @@ cmdSwitchSlot:
 	retn
 
 ;------------------------------------------------------------------------------;
-; cmdSoftReset
+; command_SoftReset
 ;------------------------------------------------------------------------------;
 ; Performs setup work for Command $03 (Soft Reset).
 
-cmdSoftReset:
+command_SoftReset:
 	xor		a
 	out		(0xC),a			; write 0 to port 0xC (Respond to 68K)
 	out		(0),a			; write to port 0 (Clear sound code)
@@ -450,6 +355,32 @@ executeSoftReset:
 	out		(0),a			; Reset sound code
 	ld		sp,0xFFFF
 	jp		Start			; Go back to the top.
+
+;------------------------------------------------------------------------------;
+; command_RAMTest
+;------------------------------------------------------------------------------;
+; RAM Test handler
+
+command_RAMTest:
+	call	execute_RAMTest
+	jr		nc,command_null			; if no error, return normally
+
+	; if a RAM error was found...
+	pop		hl						; remove return from stack, yeah I know...
+	ld		a,(curCommand)
+	; Reply to 68K with command as it was sent, this indicates an error
+	out		(0xC),a
+	xor		a						; clear a for now.
+	out		(0),a					; Write to port 0 (Clear sound code)
+	jp		endNMI					; finish NMI
+
+;------------------------------------------------------------------------------;
+; command_null
+;------------------------------------------------------------------------------;
+; place holder for unexistant commands, and return for RAM test
+
+command_null:
+	ret
 
 ;==============================================================================;
 ; FM COMMANDS
@@ -803,11 +734,11 @@ loadSampleADPCMA:
 	ret
 
 ;------------------------------------------------------------------------------;
-; pcma_Stop
+; command_PCMAStop
 ;------------------------------------------------------------------------------;
 ; Stops all ADPCM-A channels.
 
-pcma_Stop:
+command_PCMAStop:
 	ld		de,0x00BF			; $00BF	Dump all ADPCM-A channels (stop sound)
 	rst 	writeDEportB
 	ret
@@ -904,7 +835,7 @@ play_PCMB_RAM_SR:
 
 loadPCMB:
 	call	loadSampleAPCMB
-	call	pcmb_Stop
+	call	command_PCMBStop
 
 	; --left/right ($11)--
 	ld		d,0x11
@@ -1033,7 +964,7 @@ sendPlayPCMB:
 command_LoopPCMB:
 	ld		a,1
 	ld		(intPCMB_Loop),a
-	call	pcmb_Stop
+	call	command_PCMBStop
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -1044,7 +975,7 @@ command_LoopPCMB:
 command_NoLoopPCMB:
 	xor		a
 	ld		(intPCMB_Loop),a
-	call	pcmb_Stop
+	call	command_PCMBStop
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -1119,11 +1050,11 @@ command_ChangeRate:
 	ret
 
 ;------------------------------------------------------------------------------;
-; pcmb_Stop
+; command_PCMBStop
 ;------------------------------------------------------------------------------;
 ; Stops the ADPCM-B channel.
 
-pcmb_Stop:
+command_PCMBStop:
 	ld		de,0x1001			; $1001		Force stop synthesis
 	rst 	writeDEportA
 
@@ -1142,7 +1073,7 @@ pcmb_Stop:
 ; running this code without it working...
 ; I know...
 
-command_RAMTest:
+execute_RAMTest:
 	; Fill with 0 and test
 	xor 	a
 	call	.fillcmp
@@ -1249,6 +1180,125 @@ command_RAMTest:
 	scf						; set carry, error
 	ret						; report with error
 
+CommandTbl:
+	dw		command_null				; 0x00
+	dw		command_SwitchSlot			; 0x01
+	dw		command_PlayJingleA			; 0x02
+	dw		command_SoftReset			; 0x03
+	dw		command_null				; 0x04
+	dw		command_null				; 0x05
+	dw		command_null				; 0x06
+	dw		command_null				; 0x07
+	dw		command_null				; 0x08
+	dw		command_null				; 0x09
+	dw		command_null				; 0x0A
+	dw		command_null				; 0x0B
+	dw		command_null				; 0x0C
+	dw		command_null				; 0x0D
+	dw		command_null				; 0x0E
+	dw		command_null				; 0x0F
+
+	dw		command_RAMTest				; 0x10
+	dw		command_null				; 0x11
+	dw		command_null				; 0x12
+	dw		command_null				; 0x13
+	dw		command_null				; 0x14
+	dw		command_null				; 0x15
+	dw		command_null				; 0x16
+	dw		command_null				; 0x17
+	dw		command_null				; 0x18
+	dw		command_null				; 0x19
+	dw		command_null				; 0x1A
+	dw		command_null				; 0x1B
+	dw		command_null				; 0x1C
+	dw		command_null				; 0x1D
+	dw		command_null				; 0x1E
+	dw		command_null				; 0x1F		last BIOS reserved
+
+    dw		command_PlayCoinA			; 0x20
+    dw		command_PlayLeftA			; 0x21
+    dw		command_PlayRightA			; 0x22
+    dw		command_PlayCenterA			; 0x23
+	dw		command_null				; 0x24
+	dw		command_null				; 0x25
+	dw		command_null				; 0x26
+	dw		command_null				; 0x27
+	dw		command_null				; 0x28
+	dw		command_null				; 0x29
+	dw		command_null				; 0x2A
+	dw		command_null				; 0x2B
+	dw		command_null				; 0x2C
+	dw		command_null				; 0x2D
+	dw		command_null				; 0x2E
+	dw		command_PCMAStop			; 0x2F
+
+    dw		command_PlayPCMBLeft		; 0x30
+	dw		command_PlayPCMBCenter		; 0x31
+    dw		command_PlayPCMBRight		; 0x32
+    dw		command_LoopPCMB			; 0x33
+    dw		command_NoLoopPCMB			; 0x34
+    dw		command_setADPCMB_Sample0	; 0x35
+	dw		command_setADPCMB_Sample1	; 0x36
+	dw		command_null				; 0x37
+	dw		command_null				; 0x38
+	dw		command_null				; 0x39
+	dw		command_null				; 0x3A
+	dw		command_null				; 0x3B
+	dw		command_null				; 0x3C
+	dw		command_null				; 0x3D
+	dw		command_null				; 0x3E
+	dw		command_PCMBStop			; 0x3F
+
+	dw		command_SSGrampInit			; 0x40
+    dw		command_SSGrampCycle		; 0x41
+    dw		command_SSG_pulseStart		; 0x42
+    dw		command_SSG_1khzStart		; 0x43
+    dw		command_SSG_260hzStart		; 0x44
+	dw		command_null				; 0x45
+	dw		command_null				; 0x46
+	dw		command_null				; 0x47
+	dw		command_null				; 0x48
+	dw		command_null				; 0x49
+	dw		command_null				; 0x4A
+	dw		command_null				; 0x4B
+	dw		command_null				; 0x4C
+	dw		command_null				; 0x4D
+	dw		command_null				; 0x4E
+	dw		command_SSGpulseStop		; 0x4f
+
+	dw		command_null				; 0x50
+	dw		command_null				; 0x51
+	dw		command_null				; 0x52
+	dw		command_null				; 0x53
+	dw		command_null				; 0x54
+	dw		command_null				; 0x55
+	dw		command_null				; 0x56
+	dw		command_null				; 0x57
+	dw		command_null				; 0x58
+	dw		command_null				; 0x59
+	dw		command_null				; 0x5A
+	dw		command_null				; 0x5B
+	dw		command_null				; 0x5C
+	dw		command_null				; 0x5D
+	dw		command_null				; 0x5E
+	dw		command_null				; 0x5F
+
+	dw		command_null				; 0x60
+	dw		command_null				; 0x61
+	dw		command_null				; 0x62
+	dw		command_null				; 0x63
+	dw		command_null				; 0x64
+	dw		command_null				; 0x65
+	dw		command_null				; 0x66
+	dw		command_null				; 0x67
+	dw		command_null				; 0x68
+	dw		command_null				; 0x69
+	dw		command_null				; 0x6A
+	dw		command_null				; 0x6B
+	dw		command_null				; 0x6C
+	dw		command_null				; 0x6D
+	dw		command_null				; 0x6E
+	dw		command_null				; 0x6F
 ;==============================================================================;
 ; samples
 	ifd TARGET_CD
