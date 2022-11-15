@@ -446,7 +446,7 @@ void at_sound_mdfourier()
 void at_audiosync_test()
 {
 	int done = 0, draw = 1, x = 160, y = 180;
-	int paused = 0, speed = -1, changed = 0;
+	int paused = 0, speed = -1;
 	int x1 = 0 , x2 = 160, hstep = 1;
 	picture syncbar, syncbar2, syncfloor, block;
 

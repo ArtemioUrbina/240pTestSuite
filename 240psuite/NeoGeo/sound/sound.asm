@@ -16,7 +16,7 @@ Start:
 	di
 	jp		EntryPoint
 ;==============================================================================;
-;                                 RST
+;								  RST
 ;==============================================================================;
 
 ;--------------------------------------------------------------------------;
@@ -63,33 +63,31 @@ checkLoop:
 	jr		C,checkLoop
 	ret
 
-;--------------------------------------------------------------------------;
+;==============================================================================;
 	org $0038
-;--------------------------------------------------------------------------;
-; IRQ
-;--------------------------------------------------------------------------;
-	di						; re-enabled at end of IRQ routine
-	jp		IRQ
+;==============================================================================;
+; IRQ 
+;==============================================================================;
+; Handle an interrupt request from the YM2610 Timer
+; unused for nowk
+IRQ:
+	reti
 
 ;==============================================================================;
-;                             NMI
+;							  NMI
 ;==============================================================================;
 	org $0066
-	;--------------------------------------------------------------------------;
-	; NMI
-	;--------------------------------------------------------------------------;
-	; Inter-processor communications.
-	; In this driver, the NMI gets the command from the 68K and interprets it.
+;--------------------------------------------------------------------------;
+; NMI
+;--------------------------------------------------------------------------;
+; Inter-processor communications.
+; In this driver, the NMI gets the command from the 68K and interprets it.
 
 NMI:
 	di						; NMI di
-	; save registers
-	push	af
-	push	bc
-	push	de
-	push	hl
-	push	ix
-	push	iy
+
+	exx
+	ex		af,af'
 
 	in		a,(0)			; Acknowledge NMI, get command from 68K via Port 0
 	ld		b,a				; make a copy
@@ -100,9 +98,9 @@ NMI:
 
 	; "Commands $01 and $03 are always expected to be implemented as they
 	; are used by the BIOSes for initialization purposes." - NeoGeoDev Wiki
-	cp		1				; Command 1 (Slot Switch)
+	cp		0x01			; Command 1 (Slot Switch)
 	jp		Z,cmdSwitchSlot
-	cp		3				; Command 3 (Soft Reset)
+	cp		0x03			; Command 3 (Soft Reset)
 	jp		Z,cmdSoftReset
 	or		a				; check if Command is 0
 	jp		Z,endNMI		; exit if Command 0
@@ -116,59 +114,12 @@ NMI:
 	out		(0),a			; Write to port 0 (Clear sound code)
 
 endNMI:
-	; restore registers
-	pop		iy
-	pop		ix
-	pop		hl
-	pop		de
-	pop		bc
-	pop		af
+	ex		af,af'
+	exx
+
 	ei						; end NMI di
 	retn
 
-;==============================================================================;
-; IRQ (called from $0038)
-;==============================================================================;
-; Handle an interrupt request.
-; it handles stop for ADPCM-A when the buffer is over
-
-IRQ:
-; save registers
-	push	af
-
-	; check ADPCM-B loop while playing
-	; our only current reason for the IRQ
-	ld		a,(intPCMB_Loop_change)
-	cp		0
-	jr		z,.endIRQ
-
-	; Should we do something or reset the flag
-	ld		a,(intPCMB_Loop)
-	cp		0
-	jr		z,.handleNoLoop
-
-	; there was a loop ADPCM-B change, handle it
-	in		a,(6)			; load current status 1
-	bit		7,a				; is ADPCM-B playing
-	jr		Z,.endIRQ
-
-	; Playback halted, enable loop
-	call	sendPlayPCMB
-	jr		.reset_flag
-
-.handleNoLoop:
-	call	pcmb_Stop
-
-.reset_flag:
-	xor		a
-	ld		(intPCMB_Loop_change),a
-
-.endIRQ:
-	; restore registers
-	pop		af
-	ei			; was set in IRQ handler
-	; return
-	reti		; could use ret
 
 ;==============================================================================;
 ; EntryPoint
@@ -194,8 +145,6 @@ EntryPoint:
 	; Initialize SSG frequencies
 	ld		(SSG_FreqCoarse),a
 	ld		(SSG_FreqFine),a
-	ld		(SSG_nextChannel),a
-	ld		(SSG_currChannel),a
 
 	; APCM-A 
 	ld		(PCMnextChannel),a
@@ -204,7 +153,6 @@ EntryPoint:
 	; ADPCM-B
 	ld		(intPCMB_currSample),a
 	ld		(intPCMB_Loop),a
-	ld		(intPCMB_Loop_change),a
 
 	; Silence/Stop SSG, FM, and ADPCM
 	call	ssg_Stop
@@ -229,12 +177,6 @@ EntryPoint:
 
 	; Initialize more variables
 	call	SetDefaultBanks	; Set default program banks
-
-	;-------------------------------------------;
-	; Start Timer A
-	; Only used to loop APDCM-B if loop was disabled during playback
-	ld		de,0x2715		; Reset Timer A flags, Enable Timer A IRQs, Load A Timers
-	rst 	writeDEportA	; write to ports 4 and 5
 
 	;-------------------------------------------;
 	; Set ADPCM-A shared volume
@@ -303,7 +245,7 @@ HandleCommand:
 	; The check is handled in a very simple manner for this program.
 	jp		M,command_ChangeRate
 
-    cp		SOUNDCMD_SSGRampinit
+	cp		SOUNDCMD_SSGRampinit
 	jp		Z,command_SSGrampInit
 
 	cp		SOUNDCMD_SSGRampcycle
@@ -321,23 +263,23 @@ HandleCommand:
 	cp		SOUNDCMD_SSGPulseStop
 	jp		Z,command_SSGpulseStop
 
-    ; command $02: play Jingle ADPCM-A (channel 1)
+	; command $02: play Jingle ADPCM-A (channel 1)
 	cp		SOUNDCMD_PlayJingleA
 	jp		Z,command_PlayJingleA
 
-    ; command play Coin ADPCM-A (channel 1)
+	; command play Coin ADPCM-A (channel 1)
 	cp		SOUNDCMD_PlayCoinA
 	jp		Z,command_PlayCoinA
 
-    ; command play left ADPCM-A (channel 1)
+	; command play left ADPCM-A (channel 1)
 	cp		SOUNDCMD_PlayLeft
 	jp		Z,command_PlayLeftA
 
-    ; command play right ADPCM-A (channel 1)
+	; command play right ADPCM-A (channel 1)
 	cp		SOUNDCMD_PlayRight
 	jp		Z,command_PlayRightA
 
-    ; command play center ADPCM-A (channel 1)
+	; command play center ADPCM-A (channel 1)
 	cp		SOUNDCMD_PlayCenter
 	jp		Z,command_PlayCenterA
 
@@ -570,8 +512,7 @@ command_SSGrampInit:
 	xor		a
 	ld		(SSG_FreqCoarse),a
 	ld		(SSG_FreqFine),a
-	ld		(SSG_nextChannel),a
-	ld		(SSG_currChannel),a
+
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -588,9 +529,6 @@ command_SSGrampCycle:
 	ld		d,0x00			;SSG Channel A Fine Tune
 	ld		a,(SSG_FreqFine)
 	ld		e,a				; fine freq
-	rst 	writeDEportA
-
-	ld		de,0x073E		;SSG Mixing, Only channel A
 	rst 	writeDEportA
 
 	ld		de,0x080F		;SSG Channel A Volume
@@ -628,9 +566,6 @@ command_SSG_pulseStart:
 	ld		de,0x0010		; ~8khz (8390hz)
 	rst 	writeDEportA
 
-	ld		de,0x073E		; SSG Mixing, Only channel A
-	rst 	writeDEportA
-
 	ld		de,0x080F		; SSG Channel A Volume
 	rst 	writeDEportA
 
@@ -646,9 +581,6 @@ command_SSG_1khzStart:
 	rst 	writeDEportA
 
 	ld		de,0x007F		; ~1khz (999.2hz)
-	rst 	writeDEportA
-
-	ld		de,0x073E		; SSG Mixing, Only channel A
 	rst 	writeDEportA
 
 	ld		de,0x080F		; SSG Channel A Volume
@@ -668,9 +600,6 @@ command_SSG_260hzStart:
 	ld		de,0x00e5		; ~ 260hz (260.1hz)
 	rst 	writeDEportA
 
-	ld		de,0x073E		; SSG Mixing, Only channel A
-	rst 	writeDEportA
-
 	ld		de,0x080F		; SSG Channel A Volume
 	rst 	writeDEportA
 
@@ -682,9 +611,6 @@ command_SSG_260hzStart:
 ; Stops any of the above in Channel A
 
 command_SSGpulseStop:
-	ld		de,0x073F		; SSG Mixing, Silence A
-	rst 	writeDEportA
-
 	ld		de,0x0800		; SSG Channel A Volume
 	rst 	writeDEportA
 
@@ -706,7 +632,7 @@ ssg_Stop:
 	rst 	writeDEportA	; write to ports 4 and 5
 	;-------------------------------------------------;
 	; Disable all SSG channels
-	ld		de,0x073F		; Disable all SSG channels (Tone and Noise)
+	ld		de,0x071C		; SSG Mixing, Tone A,B, Noise C
 	rst 	writeDEportA	; write to ports 4 and 5
 
 	ret
@@ -722,10 +648,10 @@ ssg_Stop:
 ; Play Jingle sample on the first ADPCM-A channel.
 
 command_PlayJingleA:
-    ld      a,0				; sample 0
-    ld      b,0xc0			; center, both channels
-    call    PlayPCMA
-    ret
+	ld		a,0				; sample 0
+	ld		b,0xc0			; center, both channels
+	call	PlayPCMA
+	ret
 
 ;------------------------------------------------------------------------------;
 ; SOUNDCMD_PlayCoinA
@@ -733,10 +659,10 @@ command_PlayJingleA:
 ; Play coin sample on the first ADPCM-A channel.
 
 command_PlayCoinA:
-    ld      a,1				; sample 1
-    ld      b,0xc0			; center, both channels
-    call    PlayPCMA
-    ret
+	ld		a,1				; sample 1
+	ld		b,0xc0			; center, both channels
+	call	PlayPCMA
+	ret
 
 ;------------------------------------------------------------------------------;
 ; SOUNDCMD_PlayLeftA
@@ -744,10 +670,10 @@ command_PlayCoinA:
 ; Play coin sample on the first ADPCM-A channel.
 
 command_PlayLeftA:
-    ld      a,2				; sample 2
-    ld      b,0x80			; left channel
-    call    PlayPCMA
-    ret
+	ld		a,2				; sample 2
+	ld		b,0x80			; left channel
+	call	PlayPCMA
+	ret
 
 ;------------------------------------------------------------------------------;
 ; SOUNDCMD_PlayRightA
@@ -755,10 +681,10 @@ command_PlayLeftA:
 ; Play coin sample on the first ADPCM-A channel.
 
 command_PlayRightA:
-    ld      a,3				; sample 3
-    ld      b,0x40			; right channel
-    call    PlayPCMA
-    ret
+	ld		a,3				; sample 3
+	ld		b,0x40			; right channel
+	call	PlayPCMA
+	ret
 
 ;------------------------------------------------------------------------------;
 ; SOUNDCMD_PlayCenterA
@@ -766,10 +692,10 @@ command_PlayRightA:
 ; Play coin sample on the first ADPCM-A channel.
 
 command_PlayCenterA:
-    ld      a,4				; sample 4
-    ld      b,0xc0			; center, both channels
-    call    PlayPCMA
-    ret
+	ld		a,4				; sample 4
+	ld		b,0xc0			; center, both channels
+	call	PlayPCMA
+	ret
 
 ;------------------------------------------------------------------------------;
 ; PlayPCMA
@@ -778,7 +704,7 @@ command_PlayCenterA:
 ; L/R balance in 'b'
 
 PlayPCMA:
-    ; load sample using 'a'
+	; load sample using 'a'
 	call	loadSampleADPCMA	; load sample addres from a to ix from table
 
 	; check for next available channel
@@ -793,13 +719,13 @@ PlayPCMA:
 	ld		(PCMnextChannel),a
 
 	; volume/output at 1F
-    ; set l/r panning with 'b'
+	; set l/r panning with 'b'
 	ld		a,(PCMcurrChannel)
 	add		0x08				; Base register for Volume and Pan
-    ld      d,a					; register for current channel
-    ld      a,0x1F
-    or      b					; left right panning in b
-    ld      e,a
+	ld		d,a					; register for current channel
+	ld		a,0x1F
+	or		b					; left right panning in b
+	ld		e,a
 	rst 	writeDEportB
 
 	; start addr (register $10+Channel,$18+Channel)
@@ -1107,15 +1033,7 @@ sendPlayPCMB:
 command_LoopPCMB:
 	ld		a,1
 	ld		(intPCMB_Loop),a
-
-	; check if we need to alert the IRQ to check for sample end
-	in		a,(6)					; Load status
-	bit		7,a						; is ADPCM-B playing? (0 if playing)
-	jr		nz,.endloopEn			; don't alert IRQ if not playing
-	ld		a,1
-	ld		(intPCMB_Loop_change),a
-
-.endloopEn:
+	call	pcmb_Stop
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -1126,15 +1044,7 @@ command_LoopPCMB:
 command_NoLoopPCMB:
 	xor		a
 	ld		(intPCMB_Loop),a
-
-	; check if we need to alert the IRQ to check for sample end
-	in		a,(6)					; Load status
-	bit		7,a						; is ADPCM-B playing? (0 if playing)
-	jr		nz,.endNoloopEn			; don't stop it if it was not playing
-	ld		a,1
-	ld		(intPCMB_Loop_change),a
-
-.endNoloopEn:
+	call	pcmb_Stop
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -1233,25 +1143,25 @@ pcmb_Stop:
 ; I know...
 
 command_RAMTest:
-    ; Fill with 0 and test
-    xor     a
-    call    .fillcmp
-    ret     c           ; exit if error
+	; Fill with 0 and test
+	xor 	a
+	call	.fillcmp
+	ret 	c			; exit if error
 
-    ; fill with ff and test
-    ld      a,0xff
-    call    .fillcmp
-	ret     c           ; exit if error
+	; fill with ff and test
+	ld		a,0xff
+	call	.fillcmp
+	ret 	c			; exit if error
 
-    ; fill with aa and test
-    ld      a,0xaa
-    call    .fillcmp
-    ret     c           ; exit if error
+	; fill with aa and test
+	ld		a,0xaa
+	call	.fillcmp
+	ret 	c			; exit if error
 
-    ; fill with 55 and test
-    ld      a,0x55
-    call    .fillcmp
-    ret     c           ; exit if error
+	; fill with 55 and test
+	ld		a,0x55
+	call	.fillcmp
+	ret 	c			; exit if error
 
 	; walking bit test
 .walking:
@@ -1266,33 +1176,33 @@ command_RAMTest:
 	ld		hl,usedRAM		; get started at usedRAM
 
 .wlklp1:
-    ld      a,0x80      ; 10000000
+	ld		a,0x80		; 10000000
 
 .wlklp2:
-    ld      (hl),a      ; store in RAM
-    cp      (hl)        ; read it back
-    scf                 ; set carry in case of error
-    ret     nz          ; return if error
-    rrca                ; rotate one bit to the right
-    cp      0x80        
-    jr      nz,.wlklp2  ; compare to initial pattern for a loop
-    ld      (hl),0      ; clear
-    inc     hl
-    dec     bc          ; decrement and test 16 bit counter
-    ld      a,b
-    or      c
-    jr      nz,.wlklp1  ; continue until done
-    ret                 ; no errors ("or c" clears carry)
+	ld		(hl),a		; store in RAM
+	cp		(hl)		; read it back
+	scf 				; set carry in case of error
+	ret 	nz			; return if error
+	rrca				; rotate one bit to the right
+	cp		0x80		
+	jr		nz,.wlklp2	; compare to initial pattern for a loop
+	ld		(hl),0		; clear
+	inc 	hl
+	dec 	bc			; decrement and test 16 bit counter
+	ld		a,b
+	or		c
+	jr		nz,.wlklp1	; continue until done
+	ret 				; no errors ("or c" clears carry)
 
-    ; Fill memory and test
-    ; a  = test value
-    ; hl = base address
-    ; bc = size of area in bytes
-    ; if no errors carry is 0
-    ; else
-    ;   carry is 1
-    ;   hl = Address of error
-    ;   we will return just success or fail to the Neo Geo 68k
+	; Fill memory and test
+	; a  = test value
+	; hl = base address
+	; bc = size of area in bytes
+	; if no errors carry is 0
+	; else
+	;	carry is 1
+	;	hl = Address of error
+	;	we will return just success or fail to the Neo Geo 68k
 .fillcmp:
 	ld		(usedRAM),a		; set usedRAM = value
 	
@@ -1312,7 +1222,7 @@ command_RAMTest:
 	ld		hl,usedRAM		; 00 value is at usedRAM, our source
 	ldir					; Fill out memory
 
-    ; compare a filled memory block with value
+	; compare a filled memory block with value
 .compare:
 	; Figure out the unused RAM size, SP - usedRAM
 	ld		hl,0			; prepare to duplicate SP
@@ -1326,18 +1236,18 @@ command_RAMTest:
 	ld		hl,usedRAM		; 00 value is at usedRAM, our source
 
 .cmploop:
-    cpi
-    jr      nz,.cmp_err		; jump if not equal
-    jp      pe,.cmploop		; continue
+	cpi
+	jr		nz,.cmp_err		; jump if not equal
+	jp		pe,.cmploop		; continue
 
-    ; no errors, clear carry
-    or      a				; clear carry, no errors
-    ret						; return from .fillcmp
+	; no errors, clear carry
+	or		a				; clear carry, no errors
+	ret						; return from .fillcmp
 
-    ; error, set carry
+	; error, set carry
 .cmp_err:
-    scf						; set carry, error
-    ret						; report with error
+	scf						; set carry, error
+	ret						; report with error
 
 ;==============================================================================;
 ; samples

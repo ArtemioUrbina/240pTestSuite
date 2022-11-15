@@ -23,21 +23,24 @@
 #ifndef _SOUND_H_
 #define _SOUND_H_
 
-// Sounds...
+// Sound commands for Z80
 #define SOUNDCMD_PlayJingleA	0x02
+#define	RAMTESTCMD				0x10
+
 #define SOUNDCMD_PlayCoinA		0x20
 #define SOUNDCMD_PlayLeft  		0x21
 #define SOUNDCMD_PlayRight		0x22
 #define SOUNDCMD_PlayCenter 	0x23
-#define SOUNDCMD_StopADPCMA		0x30
-#define SOUNDCMD_ADPCMB_Left	0x31
-#define SOUNDCMD_ADPCMB_Center	0x32
-#define SOUNDCMD_ADPCMB_Right	0x33
-#define SOUNDCMD_StopADPCMB		0x34
-#define SOUNDCMD_LoopB			0x35
-#define SOUNDCMD_NoLoopB		0x36
-#define SOUNDCMD_ADPCMB_Sample0 0x37
-#define SOUNDCMD_ADPCMB_Sample1 0x38
+#define SOUNDCMD_StopADPCMA		0x2f
+
+#define SOUNDCMD_ADPCMB_Left	0x30
+#define SOUNDCMD_ADPCMB_Center	0x31
+#define SOUNDCMD_ADPCMB_Right	0x32
+#define SOUNDCMD_LoopB			0x33
+#define SOUNDCMD_NoLoopB		0x34
+#define SOUNDCMD_ADPCMB_Sample0 0x35
+#define SOUNDCMD_ADPCMB_Sample1 0x36
+#define SOUNDCMD_StopADPCMB		0x3f
 
 #define SOUNDCMD_SSGRampinit	0x40
 #define SOUNDCMD_SSGRampcycle	0x41
@@ -55,14 +58,13 @@
 #define SOUNDCMD_RateB_6		0x86
 #define SOUNDCMD_RateB_7		0x87
 
-#define	RAMTESTCMD				0x10
-
 #ifdef __cd__
+// CDDA Track defines
 #define CDDA_MDFOURIER			0x02
 #define CDDA_SNDTEST			0x03
 #endif
 
-#define Z80COMMAND_OK(cmd)		(cmd|0x80)
+#define Z80COMMAND_OK(cmd)			(cmd|0x80)
 #define Z80COMMAND_FAIL(cmd)		(cmd)
 #define Z80COMMAND_TIME(cmd)		(cmd == 0)
 

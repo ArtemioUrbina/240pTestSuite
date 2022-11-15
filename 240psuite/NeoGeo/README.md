@@ -121,7 +121,6 @@ Video tests:
 Audio tests_
    - remove LUA dependency (?)
    - Finish FM Audio test
-   - Audio Sync Test
    - Create full MDfourier pattern
 
 Hardware Test:

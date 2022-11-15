@@ -17,8 +17,6 @@ curCommand			ds 1		; Current command to handle
 ; [SSG Data]
 SSG_FreqCoarse		ds 1		; Coarse SSG frequency for ramp
 SSG_FreqFine		ds 1		; Fine SSG frequency for ramp
-SSG_nextChannel		ds 1		; Next available SSG channel
-SSG_currChannel		ds 1		; Currently used SSG channel
 
 ;==============================================================================;
 ; [ADPCM-A variables]
@@ -33,7 +31,6 @@ intPCMB_SampRateL	ds 1		; Delta-N Sampling Rate (L)
 intPCMB_SampRateH	ds 1		; Delta-N Sampling Rate (H)
 intPCMB_Volume		ds 1		; Channel volume
 intPCMB_Loop		ds 1		; loop B
-intPCMB_Loop_change	ds 1		; loop B changed for IRQ handler
 
 usedRAM:
 
