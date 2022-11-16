@@ -34,6 +34,10 @@ C2ROM = $(NGH)-c2.c2
 SROM  = $(NGH)-s1.s1
 MROM  = $(NGH)-m1.m1
 VROM  = $(NGH)-v1.v1
+# Comment teh above and uncomment teh two below and all other VROMB references
+# For Split VROM (Not using PCB chip)
+#VROM  = $(NGH)-v11.v11
+#VROMB = $(NGH)-v21.v21
 
 
 MKISOFS = $(NEODEV)/tools/cdtools/mkisofs
@@ -160,6 +164,7 @@ cart: z80
 	$(CP) out/$(SROM) $(OUTPUT)/$(SROM)
 	$(CP) out/$(MROM) $(OUTPUT)/$(MROM)
 	$(CP) out/$(VROM) $(OUTPUT)/$(VROM)
+	#$(CP) out/$(VROMB) $(OUTPUT)/$(VROMB)
 	cd out && $(ROMWAK) $(FLAGS_ROMWAK_PAD) $(CROM) $(CROM).spl $(CHARSSIZE) $(PADBYTED)
 	cd out && $(CHARSPLIT) $(CROM).spl -rom $(NGH)
 	$(CP) out/$(NGH).C1 $(OUTPUT)/$(C1ROM)
@@ -176,6 +181,7 @@ ifeq ($(OUTPUT),cart)
 neo: cart out/$(PROM)
 	$(RM) $(OUTPUT)/240ptest.neo
 	cd $(OUTPUT) && $(7Z) a $(NBPATH)240ptest.zip $(PROM) $(C1ROM) $(C2ROM) $(SROM) $(MROM) $(VROM)
+	#cd $(OUTPUT) && $(7Z) a $(NBPATH)240ptest.zip $(PROM) $(C1ROM) $(C2ROM) $(SROM) $(MROM) $(VROM) $(VROMB)
 	cd $(NBPATH) && $(NB) -n 240ptest -m dasutinartemio -y 2022 -g Other -s $(NGH) 240ptest.zip
 	$(RM) $(NBPATH)240ptest.zip
 	$(CP) $(NBPATH)240ptest.neo $(OUTPUT)/neosd
@@ -198,6 +204,7 @@ copyroms: cart
 	$(CP) $(OUTPUT)/$(SROM) $(MAMEDIR)
 	$(CP) $(OUTPUT)/$(MROM) $(MAMEDIR)
 	$(CP) $(OUTPUT)/$(VROM) $(MAMEDIR)
+	#$(CP) $(OUTPUT)/$(VROMB) $(MAMEDIR)
 else
 copyroms: neo
 	$(CP) $(OUTPUT)/chd/240pTestSuite.chd $(MAMECDDIR)
@@ -252,6 +259,7 @@ OUTPUTDIR_MIXED = out
 OUTPUTDIR_CD = cd
 
 PCMOUT_CART = $(OUTPUTDIR_MIXED)/$(VROM)
+#VROMB_OUT_CART = $(OUTPUTDIR_MIXED)/$(VROMB)
 PCMOUT_CART_INC = $(SND)/samples_cart.inc
 
 PCMOUT_CD = $(OUTPUTDIR_CD)/$(CDPCM_OUTFILE)
@@ -275,7 +283,9 @@ cdz80: cdpcm
 
 pcm:
 	$(LUA) $(SND)/pcm/svrom.lua --pcma=$(PCMA_LIST) --pcmb=$(PCMB_LIST) --outname=$(PCMOUT_CART) --samplelist=$(PCMOUT_CART_INC)
+	#$(LUA) $(SND)/pcm/svrom.lua --pcma=$(PCMA_LIST) --pcmb=$(PCMB_LIST) --outname=$(PCMOUT_CART) --samplelist=$(PCMOUT_CART_INC) --vrom=split --outnameB=$(VROMB_OUT_CART)
 	$(ROMWAK) $(FLAGS_ROMWAK_PAD) $(PCMOUT_CART) $(PCMOUT_CART) $(PCMOUT_CART_SIZE)
+	#$(ROMWAK) $(FLAGS_ROMWAK_PAD) $(VROMB_OUT_CART) $(VROMB_OUT_CART) $(PCMOUT_CART_SIZE)
 
 cdpcm:
 	$(LUA) $(SND)/pcm/svrom.lua --mode=cd --pcma=$(CDPCM_LIST) --outname=$(PCMOUT_CD) --samplelist=$(PCMOUT_CD_INC)

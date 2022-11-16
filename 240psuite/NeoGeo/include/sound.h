@@ -45,9 +45,12 @@
 #define SOUNDCMD_SSGRampinit	0x40
 #define SOUNDCMD_SSGRampcycle	0x41
 #define SOUNDCMD_SSGPulseStart	0x42
-#define SOUNDCMD_SSG1KHZStart	0x43
-#define SOUNDCMD_SSG260HZStart	0x44
-#define SOUNDCMD_SSGPulseStop	0x4f
+#define SOUNDCMD_SSGPulseStop	0x43
+#define SOUNDCMD_SSG1KHZStart	0x44
+#define SOUNDCMD_SSG1KHZStop	0x45
+#define SOUNDCMD_SSG260HZStart	0x46
+#define SOUNDCMD_SSG260HZStop	0x47
+#define SOUNDCMD_SSGStop		0x4f
 
 #define SOUNDCMD_RateB_0		0x80
 #define SOUNDCMD_RateB_1		0x81

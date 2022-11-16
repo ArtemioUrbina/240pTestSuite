@@ -755,13 +755,16 @@ void vt_reflex_test()
 			backgroundColor(_BLACK);
 			resetbg = 0;
 			if (audio)
-				sendZ80command(SOUNDCMD_SSGPulseStop);
+				sendZ80command(SOUNDCMD_SSG1KHZStop);
 		}
 
 		// stop it on next frame
 		if(usersound)
 		{
-			sendZ80command(SOUNDCMD_SSGPulseStop);
+			if(usersound == 1)
+				sendZ80command(SOUNDCMD_SSG1KHZStop);
+			if(usersound == 2)
+				sendZ80command(SOUNDCMD_SSG260HZStop);
 			usersound = 0;
 		}
 		
@@ -787,11 +790,16 @@ void vt_reflex_test()
 					else
 					{
 						if (clicks[pos] > 5 || clicks[pos] < 0)
+						{
 							sendZ80command(SOUNDCMD_SSG260HZStart);
+							usersound = 2;
+						}
 						else
+						{
 							sendZ80command(SOUNDCMD_SSG1KHZStart);
+							usersound = 1;
+						}
 					}
-					usersound = 1;
 				}
 			}
 		}
@@ -816,7 +824,7 @@ void vt_reflex_test()
 		{
 			audio = !audio;
 			if(!audio)
-				sendZ80command(SOUNDCMD_SSGPulseStop);
+				sendZ80command(SOUNDCMD_SSGStop);
 			draw = 1;
 		}
 
@@ -936,7 +944,7 @@ void vt_reflex_test()
 	}
 
 	// you can never be too careful
-	sendZ80command(SOUNDCMD_SSGPulseStop);
+	sendZ80command(SOUNDCMD_SSGStop);
 
 	if (pos > 9)
 	{

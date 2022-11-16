@@ -19,6 +19,7 @@ local args = {...}
 
 print("Sailor VROM - Neo-Geo V ROM/.PCM File Builder (Lua version)");
 print(string.format("v%.02f by freem",verNum))
+print(string.format("Modified by Artemio for the 240p test Suite"))
 print("===========================================================");
 
 -- check arguments
@@ -34,6 +35,8 @@ if not args or not args[1] then
 	print("    --samplestart=addr  starting address for sample list output")
 	print("    --mode=mode         'cd' or 'cart', without the quotes")
 	print("    --slformat=format   'vasm', 'tniasm', or 'wla', all without quotes")
+	print("    --vrom=format       'split' vrom or 'single' vrom, without the quotes")
+	print("    --outnameB=path     path/filename of ADPCM-B sound data output")
 	return
 end
 
@@ -41,10 +44,11 @@ end
 -- parse command line parameters
 local pcmaListFile, pcmbListFile	-- adpcm-a and adpcm-b sample list input files
 local outSoundFile, outSampleFile	-- sound data and sample list output files
-local pcmaListFN, pcmbListFN, outSoundFN, outSampleFN -- filenames for the above
+local pcmaListFN, pcmbListFN, outSoundFN, outSampleFN, outSoundFNB-- filenames for the above
 local modeType = "cart"
 local sampListType = "vasm"
 local outSampleStart = 0
+local vromType = "single"
 
 local possibleParams = {
 	["pcma"] = function(input) pcmaListFN = input end,
@@ -87,6 +91,14 @@ local possibleParams = {
 			print(string.format("Unknown slformat type '%s', using vasm instead.",input))
 		end
 	end,
+	["vrom"] = function(input)
+		input = string.lower(input)
+		if input ~= "split" and input ~="single" then
+			error("VROM format 'split' or 'single'!")
+		end
+		vromType = input
+	end,
+	["outnameB"] = function(input) outSoundFNB = input end,
 }
 
 local startDash, endDash, startEquals
@@ -128,6 +140,7 @@ end
 -- parameters are optional, so we also handle the fallback filenames here.
 
 print(string.format("Output Mode Type: %s",modeType))
+print(string.format("VROM Format: %s",vromType))
 
 if pcmaListFN then
 	print(string.format("ADPCM-A sample list file: '%s'",pcmaListFN))
@@ -138,6 +151,13 @@ if pcmbListFN and modeType == "cd" then
 	print("Neo-Geo CD does not support ADPCM-B playback. (Yes, we've tried.)")
 	print("Ignoring ADPCM-B samples...")
 	pcmbListFN = nil
+end
+
+-- if split VROM is attempted to be used on a CD system, we need to ignore it.
+if vromType == "split" and modeType == "cd" then
+	print("Split ROM not supported/needed in Neo-Geo CD")
+	print("Ignoring split command...")
+	vromType = "single"
 end
 
 if pcmbListFN then
@@ -152,6 +172,17 @@ else
 	print(string.format("Sound data output: %s",outSoundFN))
 end
 
+-- outSoundFNB is not mandatory. (defaults to "output.Bv" or "output.Bpcm")
+if vromType == "split" then
+	if not outSoundFNB then 
+		outSoundFNB = "outputBROM."..(modeType=="cd" and "pcm" or "v")
+		print(string.format("Split Sound data output filename omitted, using '%s'.",outSoundFNB))
+	
+	else
+		print(string.format("Split Sound data output: %s",outSoundFNB))
+	end
+end
+
 -- outSampleFN is not mandatory either. (defaults to "samples.inc")
 if not outSampleFN then
 	outSampleFN = "samples.inc"
@@ -163,6 +194,8 @@ end
 print(string.format("sample list address start: %s",outSampleStart))
 
 print(string.format("sample list type: %s",sampListType))
+
+print(string.format("VROM Type: %s", vromType))
 
 print("")
 
@@ -429,7 +462,9 @@ if pcmbListFN then
 	end
 end
 
-print(string.format("ROM Size %d bytes", ROMSize))
+if vromType == "single" then
+	print(string.format("Total ROM Size %d bytes", ROMSize))
+end
 
 print("")
 
@@ -461,6 +496,17 @@ if pcmaListFN then
 			end
 		end
 		print("------------------------------------------------")
+	end
+end
+
+if vromType == "split" then
+	outSoundFile:close()
+
+	print("Resetting offset and switching file for ADPCM-B...")
+	outSoundFile,errorString = io.open(outSoundFNB,"w+b")
+	if not outSoundFile then
+		print(string.format("Error attempting to create output file %s",errorString))
+		return
 	end
 end
 
@@ -508,6 +554,9 @@ end
 if pcmbListFN then
 	print("Calculating ADPCM-B sample addresses...")
 
+	if vromType == "split" then
+		sampleStart = 0
+	end
 	for k,v in pairs(banksB) do
 		for i,d in pairs(v) do
 			local fixedLen = (d.Length/256)

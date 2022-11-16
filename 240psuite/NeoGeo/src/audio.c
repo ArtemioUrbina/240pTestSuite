@@ -63,7 +63,7 @@ void at_sound_test()
 	// Set initial State
 	sendZ80command(SOUNDCMD_RateB_0+adpcmb_sel);
 	sendZ80command(SOUNDCMD_NoLoopB);
-	sendZ80command(SOUNDCMD_SSGPulseStop);
+	sendZ80command(SOUNDCMD_SSGStop);
 	sendZ80command(SOUNDCMD_ADPCMB_Sample0);
 
 	while (!done)
@@ -119,7 +119,7 @@ void at_sound_test()
 		{
 			timer--;
 			if(!timer)
-				sendZ80command(SOUNDCMD_SSGPulseStop);
+				sendZ80command(SOUNDCMD_SSGStop);
 		}
 
 		if (PRESSED_LEFT)
@@ -221,7 +221,7 @@ void at_sound_test()
 					ssgval ++;
 					break;
 				case 2:
-					sendZ80command(SOUNDCMD_SSGPulseStop);
+					sendZ80command(SOUNDCMD_SSGStop);
 					break;
 				}
 				//sendZ80command(SOUNDCMD_SSG1KHZStart);
@@ -306,7 +306,7 @@ void at_sound_test()
 
 	sendZ80command(SOUNDCMD_StopADPCMA);
 	sendZ80command(SOUNDCMD_StopADPCMB);
-	sendZ80command(SOUNDCMD_SSGPulseStop);
+	sendZ80command(SOUNDCMD_SSGStop);
 
 #ifdef __cd__
 	pauseCDDA(0);
@@ -342,7 +342,7 @@ void at_sound_mdfourier()
 	//sendZ80command(SOUNDCMD_RateB_0+5);
 	sendZ80command(SOUNDCMD_NoLoopB);
 	sendZ80command(SOUNDCMD_ADPCMB_Sample1);
-	sendZ80command(SOUNDCMD_SSGPulseStop);
+	sendZ80command(SOUNDCMD_SSGStop);
 
 	while (!done)
 	{
@@ -374,7 +374,7 @@ void at_sound_mdfourier()
 				sendZ80commandAtVideoStart(SOUNDCMD_SSGRampcycle);
 				waitVBlank();
 			}
-			sendZ80command(SOUNDCMD_SSGRampinit);
+			sendZ80command(SOUNDCMD_SSGStop);
 
 			executeSilence();
 
@@ -425,7 +425,7 @@ void at_sound_mdfourier()
 				waitVBlank();
 
 				backgroundColor(_BLACK);
-				sendZ80command(SOUNDCMD_SSGPulseStop);
+				sendZ80command(SOUNDCMD_SSGStop);
 				readController();
 				if (BTTN_MAIN)
 					stop = 1;
@@ -500,7 +500,7 @@ void at_audiosync_test()
 				sendZ80commandAtVideoStart(SOUNDCMD_SSG1KHZStart);
 				backgroundColor(WH_100);
 
-				sendZ80commandAtVideoEnd(SOUNDCMD_SSGPulseStop);
+				sendZ80commandAtVideoEnd(SOUNDCMD_SSG1KHZStop);
 				backgroundColor(_BLACK);
 			}
 

@@ -149,7 +149,7 @@ EntryPoint:
 	ld		(intPCMB_Loop),a
 
 	; Silence/Stop SSG, FM, and ADPCM
-	call	ssg_Stop
+	call	command_ssg_Stop
 	call	fm_Stop
 
 	; silence ADPCM-A, ADPCM-B
@@ -423,11 +423,14 @@ fm_Stop:
 ;==============================================================================;
 ; SSG COMMANDS
 ;==============================================================================;
+; 0x0001 ~1258800hz
+; 0x0002 ~1258800hz
+; 0x0003  ~63300 hz
+; 0x0004  ~41960 hz
+; 0x0005  ~31470 hz
+; 0x0006  ~25780 hz
+; 0x0007  ~21090 hz
 
-; a value of 0x0003 (coarse/fine) is ~63300khz
-; 0x0006 is ~25780khz
-; 0x0007 is ~21090khz
-; 0x0001 and 0x0002 can't be measured witha 192khz smapling rate
 ; lowest frequency is around 30hz 0x0fff
 ; All these values were measured on an NTSC AES via headphone out
 
@@ -438,7 +441,7 @@ fm_Stop:
 ; and stop any SSG sound
 
 command_SSGrampInit:
-	call	ssg_Stop
+	call	command_ssg_Stop
 
 	xor		a
 	ld		(SSG_FreqCoarse),a
@@ -503,6 +506,17 @@ command_SSG_pulseStart:
 	ret
 
 ;------------------------------------------------------------------------------;
+; command_SSG_pulseStop using Channel A
+;------------------------------------------------------------------------------;
+; Stops Channel A
+
+command_SSG_pulseStop:
+	ld		de,0x0800		; SSG Channel A Volume
+	rst 	writeDEportA
+
+	ret
+
+;------------------------------------------------------------------------------;
 ; command_SSG_1khzStart using Channel A
 ;------------------------------------------------------------------------------;
 ; Starts an 999.2hz tone in Channel A, intended for confirmation beeps
@@ -520,39 +534,50 @@ command_SSG_1khzStart:
 	ret
 
 ;------------------------------------------------------------------------------;
-; command_SSG_260hzStart using Channel A
+; command_SSG1khzStop using Channel A
 ;------------------------------------------------------------------------------;
-; Starts an 260.1hz tone in Channel A, intended for missed key presses in a test
+; Stops Channel B
 
-command_SSG_260hzStart:
-	ld		de,0x0101		; Coarse to 1
-	rst 	writeDEportA
-
-	ld		de,0x00e5		; ~ 260hz (260.1hz)
-	rst 	writeDEportA
-
-	ld		de,0x080F		; SSG Channel A Volume
-	rst 	writeDEportA
-
-	ret
-
-;------------------------------------------------------------------------------;
-; command_SSGpulseStop using Channel A
-;------------------------------------------------------------------------------;
-; Stops any of the above in Channel A
-
-command_SSGpulseStop:
+command_SSG_1khzStop:
 	ld		de,0x0800		; SSG Channel A Volume
 	rst 	writeDEportA
 
 	ret
 
 ;------------------------------------------------------------------------------;
-; ssg_Stop (All channels)
+; command_SSG_260hzStart using Channel B
+;------------------------------------------------------------------------------;
+; Starts an 260.1hz tone in Channel B, intended for missed key presses in a test
+
+command_SSG_260hzStart:
+	ld		de,0x0301		; Coarse to 1
+	rst 	writeDEportA
+
+	ld		de,0x02e5		; ~ 260hz (260.1hz)
+	rst 	writeDEportA
+
+	ld		de,0x090F		; SSG Channel B Volume
+	rst 	writeDEportA
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_SSG260hzStop using Channel B
+;------------------------------------------------------------------------------;
+; Stops Channel B
+
+command_SSG_260hzStop:
+	ld		de,0x0900		; SSG Channel B Volume
+	rst 	writeDEportA
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_ssg_Stop (All channels)
 ;------------------------------------------------------------------------------;
 ; Silences and stops all SSG channels.
 
-ssg_Stop:
+command_ssg_Stop:
 	ld		de,0x0800		; SSG Channel A Volume/Mode
 	rst 	writeDEportA	; write to ports 4 and 5
 	;-------------------------------------------------;
@@ -1252,11 +1277,11 @@ CommandTbl:
 	dw		command_SSGrampInit			; 0x40
     dw		command_SSGrampCycle		; 0x41
     dw		command_SSG_pulseStart		; 0x42
-    dw		command_SSG_1khzStart		; 0x43
-    dw		command_SSG_260hzStart		; 0x44
-	dw		command_null				; 0x45
-	dw		command_null				; 0x46
-	dw		command_null				; 0x47
+    dw		command_SSG_pulseStop		; 0x43
+    dw		command_SSG_1khzStart		; 0x44
+	dw		command_SSG_1khzStop		; 0x45
+	dw		command_SSG_260hzStart		; 0x46
+	dw		command_SSG_260hzStop		; 0x47
 	dw		command_null				; 0x48
 	dw		command_null				; 0x49
 	dw		command_null				; 0x4A
@@ -1264,7 +1289,7 @@ CommandTbl:
 	dw		command_null				; 0x4C
 	dw		command_null				; 0x4D
 	dw		command_null				; 0x4E
-	dw		command_SSGpulseStop		; 0x4f
+	dw		command_ssg_Stop			; 0x4f
 
 	dw		command_null				; 0x50
 	dw		command_null				; 0x51
