@@ -136,6 +136,10 @@ EntryPoint:
 	; Initialize variables
 	; although they are 00 from above...
 
+	; Initialize FM Octave and Note
+	ld		(FM_Octave),a
+	ld		(FM_Note),a
+
 	; Initialize SSG frequencies
 	ld		(SSG_FreqCoarse),a
 	ld		(SSG_FreqFine),a
@@ -150,7 +154,7 @@ EntryPoint:
 
 	; Silence/Stop SSG, FM, and ADPCM
 	call	command_ssg_Stop
-	call	fm_Stop
+	call	SOUNDCMD_FMStopAll
 
 	; silence ADPCM-A, ADPCM-B
 	;call	command_PCMAStop	; Commented so that the coin plays
@@ -232,14 +236,10 @@ SetDefaultBanks:
 ; Handles any command that isn't already dealt with separately (e.g. $01, $03).
 
 HandleCommand:
-	ld		a,(curCommand)	; get current command
+	ld		a,b				; get current command
 
-	; commands that change ADPCM-B rate.
-	; The check is handled in a very simple manner for this program.
-	jp		M,command_ChangeRate
-
-	; execute the rest via jump table, will crash if command > 0x6F
-	; is called, but it has flat execution time
+	; execute the rest via jump table, unkown commands will ret
+	; flat execution time for a few bytes, which are plenty available
 	ld		h,0
 	ld		l,a
 	add		hl,hl
@@ -250,6 +250,7 @@ HandleCommand:
 	inc		hl
 	ld		h,(hl)
 	ld		l,a
+	ld		a,b				; set current command in a before jump
 	jp		(hl)
 
 ;==============================================================================;
@@ -377,7 +378,7 @@ command_RAMTest:
 ;------------------------------------------------------------------------------;
 ; command_null
 ;------------------------------------------------------------------------------;
-; place holder for unexistant commands, and return for RAM test
+; place holder for unexistant commands
 
 command_null:
 	ret
@@ -387,7 +388,143 @@ command_null:
 ;==============================================================================;
 
 ;------------------------------------------------------------------------------;
-; fm_Stop
+; command_FMInitChannels
+;------------------------------------------------------------------------------;
+; initialize instruments in all FM channels
+
+command_FMInitChannels:
+	xor		a
+
+.load_loop_fm1:
+	ld		de,FM_table_1		; FM base table addr
+	call	loadNextFMCommand	; load command a into de
+	rst 	writeDEportA		; write to ports 4 and 5
+	inc		a
+	cp		31
+	jp		nz,.load_loop_fm1
+
+	xor		a
+.load_loop_fm2:
+	ld		de,FM_table_2		; FM base table addr
+	call	loadNextFMCommand	; load command a into de
+	rst 	writeDEportA		; write to ports 4 and 5
+	inc		a
+	cp		31
+	jp		nz,.load_loop_fm2
+
+	xor		a
+.load_loop_fm4:
+	ld		de,FM_table_4		; FM base table addr
+	call	loadNextFMCommand	; load command a into de
+	rst 	writeDEportB		; write to ports 6 and 7
+	inc		a
+	cp		31
+	jp		nz,.load_loop_fm4
+
+	xor		a
+.load_loop_fm5:
+	ld		de,FM_table_5		; FM base table addr
+	call	loadNextFMCommand	; load command a into de
+	rst 	writeDEportB		; write to ports 6 and 7
+	inc		a
+	cp		31
+	jp		nz,.load_loop_fm5
+
+	ld		de,0x2200			; disable LFO
+	rst 	writeDEportA
+
+	ret
+
+;------------------------------------------------------------------------------;
+; SOUNDCMD_FMPlay
+;------------------------------------------------------------------------------;
+; 
+command_FMPlay:
+    ld		de,0x2801			; turn off channel
+	rst 	writeDEportA		; write to ports 4 and 5
+	ld		de,0xB5C0			; Stereo channel 1
+	rst 	writeDEportA		; write to ports 4 and 5
+
+	ld		a,(FM_Note)			; get the selected note
+	ld		l,a	 
+	ld		h,0
+	add 	hl,hl				; multiply 'a' (FM note) by 2
+	ld		de,FM_pitch			; set table address
+	add 	hl,de				; add table base from de
+	push	hl					; use the stack to make the copy
+	pop		ix
+
+	; Send Note H
+	ld		e,(ix+1)			; load pitch H
+	ld		a,(FM_Octave)		; load selected octave
+	or		e					; or the pitch and octave
+	ld		e,a					; set result in e
+	ld		d,0xA5				; set register
+	rst 	writeDEportA		; write to ports 4 and 5
+
+	; Send Note L
+	ld		e,(ix)				; load pitch L
+	ld		d,0xA1				; set register
+	rst 	writeDEportA		; write to ports 4 and 5
+
+	ld		de,0x28F1			; Play
+	rst 	writeDEportA		; write to ports 4 and 5
+
+	ret
+
+;------------------------------------------------------------------------------;
+; SOUNDCMD_FMNextNote
+;------------------------------------------------------------------------------;
+; 
+command_FMNextNote:
+    ld		de,0xB580
+	rst 	writeDEportA		; write to ports 4 and 5
+    ld		de,0x2801
+	rst 	writeDEportA		; write to ports 4 and 5
+	ld		de,0xA501
+	rst 	writeDEportA		; write to ports 4 and 5
+    ld		de,0xA137
+	rst 	writeDEportA		; write to ports 4 and 5
+	ld		de,0x28F1
+	rst 	writeDEportA		; write to ports 4 and 5
+
+	ld		de,0xB540
+	rst 	writeDEportB		; write to ports 6 and 7
+    ld		de,0x2805
+	rst 	writeDEportA		; write to ports 6 and 7
+	ld		de,0xA501
+	rst 	writeDEportB		; write to ports 6 and 7
+    ld		de,0xA137
+	rst 	writeDEportB		; write to ports 6 and 7
+	ld		de,0x28F5
+	rst 	writeDEportA		; write to ports 6 and 7
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_FMChangeOctave
+;------------------------------------------------------------------------------;
+; Change selected Ocatve in FM channels.
+
+command_FMChangeOctave:	
+	and		0x07				; mask command number w/0x07 to get Octave
+	sla		a
+	sla		a
+	sla		a
+	ld		(FM_Octave),a
+	ret
+
+; command_FMChangeNote
+;------------------------------------------------------------------------------;
+; Change selected Note in FM channels.
+
+command_FMChangeNote:	
+	and		0x0f				; mask command number w/0x0f to get note
+	ld		(FM_Note),a
+	ret
+
+;------------------------------------------------------------------------------;
+; command_FMStopAll
 ;------------------------------------------------------------------------------;
 ; Stops all FM channels.
 
@@ -395,7 +532,7 @@ command_null:
 ; address first and procceed to write the data register multiple times."
 ; - translated from YM2610 Application Manual, Section 9
 
-fm_Stop:
+command_FMStopAll:
 	push	af
 	ld		a,0x28			; Slot and Key On/Off
 	out		(4),a			; write to port 4 (address 1)
@@ -417,6 +554,23 @@ fm_Stop:
 	out		(5),a			; write to port 5 (data 1)
 	rst		waitYamaha		; Write delay 2 (83 cycles)
 	pop		af
+
+	ret
+;------------------------------------------------------------------------------;
+; loadNextFM1Command:
+;------------------------------------------------------------------------------;
+; load next FM 1 command for init
+; takes index in a and table base in de
+
+loadNextFMCommand:
+	ld		l,a	 
+	ld		h,0
+	add 	hl,hl			; multiply 'a' (FM entry) by 2
+	add 	hl,de			; add table base from de
+	push	hl				; use the stack to make the copy
+	pop		ix
+	ld		e,(ix)			; load FM data
+	ld		d,(ix+1)		; load FM register
 
 	ret
 
@@ -859,6 +1013,9 @@ play_PCMB_RAM_SR:
 ; Play an ADPCM-B sample degined in 'a', takes panning from intPCMB_LeftRight
 
 loadPCMB:
+; Comment just these parts for NGCD so that execution times are identical
+	ifnd TARGET_CD
+
 	call	loadSampleAPCMB
 	call	command_PCMBStop
 
@@ -895,6 +1052,7 @@ loadPCMB:
 	ld		e,a
 	rst 	writeDEportA
 
+	endif
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -945,7 +1103,7 @@ loadRateAPCMB:
 ;------------------------------------------------------------------------------;
 ; loadCustomSamplerate
 ;------------------------------------------------------------------------------;
-; Sends the RAM defined Sample rat eto the YM2610
+; Sends the RAM defined Sample rate to the YM2610
 
 loadCustomSamplerate:
 	; --delta-n ($19,$1A)--
@@ -1038,9 +1196,9 @@ tbl_RatesPCMB_H:
 	db 0xFE
 
 ;------------------------------------------------------------------------------;
-; command_ChangeRate (commands $80-$87)
+; command_ChangeRate (commands $40-$47)
 ;------------------------------------------------------------------------------;
-; Changes rate of ADPCM-B sample.
+; Changes rate of ADPCM-B sample. Takes current command in a
 
 command_ChangeRate:
 	; mask command number w/0x07 to get new rate index
@@ -1205,6 +1363,10 @@ execute_RAMTest:
 	scf						; set carry, error
 	ret						; report with error
 
+;==============================================================================;
+;								Vector Tables
+;==============================================================================;
+	org $800
 CommandTbl:
 	dw		command_null				; 0x00
 	dw		command_SwitchSlot			; 0x01
@@ -1274,14 +1436,14 @@ CommandTbl:
 	dw		command_null				; 0x3E
 	dw		command_PCMBStop			; 0x3F
 
-	dw		command_SSGrampInit			; 0x40
-    dw		command_SSGrampCycle		; 0x41
-    dw		command_SSG_pulseStart		; 0x42
-    dw		command_SSG_pulseStop		; 0x43
-    dw		command_SSG_1khzStart		; 0x44
-	dw		command_SSG_1khzStop		; 0x45
-	dw		command_SSG_260hzStart		; 0x46
-	dw		command_SSG_260hzStop		; 0x47
+	dw		command_ChangeRate			; 0x40
+    dw		command_ChangeRate			; 0x41
+    dw		command_ChangeRate			; 0x42
+    dw		command_ChangeRate			; 0x43
+    dw		command_ChangeRate			; 0x44
+	dw		command_ChangeRate			; 0x45
+	dw		command_ChangeRate			; 0x46
+	dw		command_ChangeRate			; 0x47
 	dw		command_null				; 0x48
 	dw		command_null				; 0x49
 	dw		command_null				; 0x4A
@@ -1289,16 +1451,16 @@ CommandTbl:
 	dw		command_null				; 0x4C
 	dw		command_null				; 0x4D
 	dw		command_null				; 0x4E
-	dw		command_ssg_Stop			; 0x4f
+	dw		command_null				; 0x4f
 
-	dw		command_null				; 0x50
-	dw		command_null				; 0x51
-	dw		command_null				; 0x52
-	dw		command_null				; 0x53
-	dw		command_null				; 0x54
-	dw		command_null				; 0x55
-	dw		command_null				; 0x56
-	dw		command_null				; 0x57
+	dw		command_SSGrampInit			; 0x50
+	dw		command_SSGrampCycle		; 0x51
+	dw		command_SSG_pulseStart		; 0x52
+	dw		command_SSG_pulseStop		; 0x53
+	dw		command_SSG_1khzStart		; 0x54
+	dw		command_SSG_1khzStop		; 0x55
+	dw		command_SSG_260hzStart		; 0x56
+	dw		command_SSG_260hzStop		; 0x57
 	dw		command_null				; 0x58
 	dw		command_null				; 0x59
 	dw		command_null				; 0x5A
@@ -1306,11 +1468,11 @@ CommandTbl:
 	dw		command_null				; 0x5C
 	dw		command_null				; 0x5D
 	dw		command_null				; 0x5E
-	dw		command_null				; 0x5F
+	dw		command_ssg_Stop			; 0x5F
 
-	dw		command_null				; 0x60
-	dw		command_null				; 0x61
-	dw		command_null				; 0x62
+	dw		command_FMInitChannels		; 0x60
+	dw		command_FMPlay				; 0x61
+	dw		command_FMNextNote			; 0x62
 	dw		command_null				; 0x63
 	dw		command_null				; 0x64
 	dw		command_null				; 0x65
@@ -1323,7 +1485,321 @@ CommandTbl:
 	dw		command_null				; 0x6C
 	dw		command_null				; 0x6D
 	dw		command_null				; 0x6E
-	dw		command_null				; 0x6F
+	dw		command_FMStopAll			; 0x6F
+
+	dw		command_FMChangeOctave		; 0x70
+	dw		command_FMChangeOctave		; 0x71
+	dw		command_FMChangeOctave		; 0x72
+	dw		command_FMChangeOctave		; 0x73
+	dw		command_FMChangeOctave		; 0x74
+	dw		command_FMChangeOctave		; 0x75
+	dw		command_FMChangeOctave		; 0x76
+	dw		command_FMChangeOctave		; 0x77
+	dw		command_null				; 0x78
+	dw		command_null				; 0x79
+	dw		command_null				; 0x7A
+	dw		command_null				; 0x7B
+	dw		command_null				; 0x7C
+	dw		command_null				; 0x7D
+	dw		command_null				; 0x7E
+	dw		command_null				; 0x7F
+
+	dw		command_FMChangeNote		; 0x80
+	dw		command_FMChangeNote		; 0x81
+	dw		command_FMChangeNote		; 0x82
+	dw		command_FMChangeNote		; 0x83
+	dw		command_FMChangeNote		; 0x84
+	dw		command_FMChangeNote		; 0x85
+	dw		command_FMChangeNote		; 0x86
+	dw		command_FMChangeNote		; 0x87
+	dw		command_FMChangeNote		; 0x88
+	dw		command_FMChangeNote		; 0x89
+	dw		command_FMChangeNote		; 0x8A
+	dw		command_FMChangeNote		; 0x8B
+	dw		command_FMChangeNote		; 0x8C
+	dw		command_null				; 0x8D
+	dw		command_null				; 0x8E
+	dw		command_null				; 0x8F
+
+; Fill the rest just out of caution, and completeness
+	dw		command_null				; 0x90
+	dw		command_null				; 0x91
+	dw		command_null				; 0x92
+	dw		command_null				; 0x93
+	dw		command_null				; 0x94
+	dw		command_null				; 0x95
+	dw		command_null				; 0x96
+	dw		command_null				; 0x97
+	dw		command_null				; 0x98
+	dw		command_null				; 0x99
+	dw		command_null				; 0x9A
+	dw		command_null				; 0x9B
+	dw		command_null				; 0x9C
+	dw		command_null				; 0x9D
+	dw		command_null				; 0x9E
+	dw		command_null				; 0x9F
+
+	dw		command_null				; 0xA0
+	dw		command_null				; 0xA1
+	dw		command_null				; 0xA2
+	dw		command_null				; 0xA3
+	dw		command_null				; 0xA4
+	dw		command_null				; 0xA5
+	dw		command_null				; 0xA6
+	dw		command_null				; 0xA7
+	dw		command_null				; 0xA8
+	dw		command_null				; 0xA9
+	dw		command_null				; 0xAA
+	dw		command_null				; 0xAB
+	dw		command_null				; 0xAC
+	dw		command_null				; 0xAD
+	dw		command_null				; 0xAE
+	dw		command_null				; 0xAF
+
+	dw		command_null				; 0xB0
+	dw		command_null				; 0xB1
+	dw		command_null				; 0xB2
+	dw		command_null				; 0xB3
+	dw		command_null				; 0xB4
+	dw		command_null				; 0xB5
+	dw		command_null				; 0xB6
+	dw		command_null				; 0xB7
+	dw		command_null				; 0xB8
+	dw		command_null				; 0xB9
+	dw		command_null				; 0xBA
+	dw		command_null				; 0xBB
+	dw		command_null				; 0xBC
+	dw		command_null				; 0xBD
+	dw		command_null				; 0xBE
+	dw		command_null				; 0xBF
+
+	dw		command_null				; 0xC0
+	dw		command_null				; 0xC1
+	dw		command_null				; 0xC2
+	dw		command_null				; 0xC3
+	dw		command_null				; 0xC4
+	dw		command_null				; 0xC5
+	dw		command_null				; 0xC6
+	dw		command_null				; 0xC7
+	dw		command_null				; 0xC8
+	dw		command_null				; 0xC9
+	dw		command_null				; 0xCA
+	dw		command_null				; 0xCB
+	dw		command_null				; 0xCC
+	dw		command_null				; 0xCD
+	dw		command_null				; 0xCE
+	dw		command_null				; 0xCF
+
+	dw		command_null				; 0xD0
+	dw		command_null				; 0xD1
+	dw		command_null				; 0xD2
+	dw		command_null				; 0xD3
+	dw		command_null				; 0xD4
+	dw		command_null				; 0xD5
+	dw		command_null				; 0xD6
+	dw		command_null				; 0xD7
+	dw		command_null				; 0xD8
+	dw		command_null				; 0xD9
+	dw		command_null				; 0xDA
+	dw		command_null				; 0xDB
+	dw		command_null				; 0xDC
+	dw		command_null				; 0xDD
+	dw		command_null				; 0xDE
+	dw		command_null				; 0xDF
+
+	dw		command_null				; 0xE0
+	dw		command_null				; 0xE1
+	dw		command_null				; 0xE2
+	dw		command_null				; 0xE3
+	dw		command_null				; 0xE4
+	dw		command_null				; 0xE5
+	dw		command_null				; 0xE6
+	dw		command_null				; 0xE7
+	dw		command_null				; 0xE8
+	dw		command_null				; 0xE9
+	dw		command_null				; 0xEA
+	dw		command_null				; 0xEB
+	dw		command_null				; 0xEC
+	dw		command_null				; 0xED
+	dw		command_null				; 0xEE
+	dw		command_null				; 0xEF
+
+	dw		command_null				; 0xF0
+	dw		command_null				; 0xF1
+	dw		command_null				; 0xF2
+	dw		command_null				; 0xF3
+	dw		command_null				; 0xF4
+	dw		command_null				; 0xF5
+	dw		command_null				; 0xF6
+	dw		command_null				; 0xF7
+	dw		command_null				; 0xF8
+	dw		command_null				; 0xF9
+	dw		command_null				; 0xFA
+	dw		command_null				; 0xFB
+	dw		command_null				; 0xFC
+	dw		command_null				; 0xFD
+	dw		command_null				; 0xFE
+	dw		command_null				; 0xFF
+
+;==============================================================================;
+;								FM Tables
+;==============================================================================;
+	org $0A00
+;==============================================================================;
+; FM pitch table, size 12
+FM_pitch:
+    dw      0x0115
+    dw      0x0125
+    dw      0x0137
+    dw      0x0149
+    dw      0x015D
+    dw      0x0171
+    dw      0x0187
+    dw      0x019F
+    dw      0x01B7
+    dw      0x01D1
+    dw      0x01ED
+    dw      0x020A
+
+; FM instruments table: Channel 1, size 30
+FM_table_1:
+    dw      0x3106
+    dw      0x3506
+    dw      0x3906
+    dw      0x3D06
+    dw      0x4132
+    dw      0x4521
+    dw      0x4973
+    dw      0x4D00
+    dw      0x510F
+    dw      0x550F
+    dw      0x590F
+    dw      0x5D0F
+    dw      0x610F
+    dw      0x650F
+    dw      0x690F
+    dw      0x6D0F
+    dw      0x710A
+    dw      0x750A
+    dw      0x790A
+    dw      0x7D0A
+    dw      0x8108
+    dw      0x8508
+    dw      0x8908
+    dw      0x8D08
+    dw      0x9100
+    dw      0x9500
+    dw      0x9900
+    dw      0x9D00
+    dw      0xB101
+    dw      0xB5C0
+    dw      0x2801
+
+;==============================================================================;
+; FM instruments table: Channel 2
+FM_table_2:
+    dw      0x3206
+    dw      0x3606
+    dw      0x3A06
+    dw      0x3E06
+    dw      0x4232
+    dw      0x4621
+    dw      0x4A73
+    dw      0x4E00
+    dw      0x520F
+    dw      0x560F
+    dw      0x5A0F
+    dw      0x5E0F
+    dw      0x620F
+    dw      0x660F
+    dw      0x6A0F
+    dw      0x6E0F
+    dw      0x720A
+    dw      0x760A
+    dw      0x7A0A
+    dw      0x7E0A
+    dw      0x8208
+    dw      0x8608
+    dw      0x8A08
+    dw      0x8E08
+    dw      0x9200
+    dw      0x9600
+    dw      0x9A00
+    dw      0x9E00
+    dw      0xB201
+    dw      0xB6C0
+    dw      0x2802
+
+;==============================================================================;
+; FM instruments table: Channel 4
+FM_table_4:
+	dw      0x3171
+	dw      0x350D
+	dw      0x3933
+	dw      0x3D01
+	dw      0x4123
+	dw      0x452D
+	dw      0x4926
+	dw      0x4D00
+	dw      0x515F
+	dw      0x5599
+	dw      0x595F
+	dw      0x5D94
+	dw      0x6105
+	dw      0x6505
+	dw      0x6905
+	dw      0x6D07
+	dw      0x7102
+	dw      0x7502
+	dw      0x7902
+	dw      0x7D02
+	dw      0x8111
+	dw      0x8511
+	dw      0x8911
+	dw      0x8DA6
+	dw      0x9100
+	dw      0x9500
+	dw      0x9900
+	dw      0x9D00
+	dw      0xB132
+	dw      0xB5C0
+	dw      0x2805
+
+;==============================================================================;
+; FM instruments table: Channel 5
+FM_table_5:
+    dw      0x3271
+    dw      0x360D
+    dw      0x3A33
+    dw      0x3E01
+    dw      0x4223
+    dw      0x462D
+    dw      0x4A26
+    dw      0x4E00
+    dw      0x525F
+    dw      0x5699
+    dw      0x5A5F
+    dw      0x5E94
+    dw      0x6205
+    dw      0x6605
+    dw      0x6A05
+    dw      0x6E07
+    dw      0x7202
+    dw      0x7602
+    dw      0x7A02
+    dw      0x7E02
+    dw      0x8211
+    dw      0x8611
+    dw      0x8A11
+    dw      0x8EA6
+    dw      0x9200
+    dw      0x9600
+    dw      0x9A00
+    dw      0x9E00
+    dw      0xB232
+    dw      0xB6C0
+    dw      0x2806
+
 ;==============================================================================;
 ; samples
 	ifd TARGET_CD

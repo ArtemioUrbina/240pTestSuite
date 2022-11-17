@@ -14,6 +14,11 @@ curCommand			ds 1		; Current command to handle
 ;==============================================================================;
 
 ;------------------------------------------------------------------------------;
+; [FM Data]
+FM_Octave			ds 1		; Octave for FM
+FM_Note				ds 1		; Note for FM
+
+;------------------------------------------------------------------------------;
 ; [SSG Data]
 SSG_FreqCoarse		ds 1		; Coarse SSG frequency for ramp
 SSG_FreqFine		ds 1		; Fine SSG frequency for ramp

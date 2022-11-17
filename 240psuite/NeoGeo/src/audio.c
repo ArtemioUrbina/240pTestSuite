@@ -34,18 +34,20 @@
 #include "sound.h"
 
 #ifndef __cd__
-#define SND_SEL_SSG		0
-#define SND_SEL_ADPCMA	1
-#define SND_SEL_ADPCMB	2
+#define SND_SEL_FM		0
+#define SND_SEL_SSG		1
+#define SND_SEL_ADPCMA	2
+#define SND_SEL_ADPCMB	3
 
-#define SND_SEL_MIN		SND_SEL_SSG
+#define SND_SEL_MIN		SND_SEL_FM
 #define SND_SEL_MAX		SND_SEL_ADPCMB
 #else
-#define SND_SEL_SSG		0
-#define SND_SEL_ADPCMA	1
-#define SND_SEL_CDDA	2
+#define SND_SEL_FM		0
+#define SND_SEL_SSG		1
+#define SND_SEL_ADPCMA	2
+#define SND_SEL_CDDA	3
 
-#define SND_SEL_MIN		SND_SEL_SSG
+#define SND_SEL_MIN		SND_SEL_FM
 #define SND_SEL_MAX		SND_SEL_CDDA
 #endif
 
@@ -53,7 +55,8 @@
 
 void at_sound_test()
 {
-	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2, ssgval = 0;
+	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2, ssgval = 0, fmval = 0;
+	int	fmNote = 0, fmOctave = 0;
 	int option = 0, change = 0, changeoption = 0, timer = 0;
 #ifndef __cd__
 	int loopB = 0, adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125  };
@@ -61,15 +64,23 @@ void at_sound_test()
 	picture image;
 
 	// Set initial State
-	sendZ80command(SOUNDCMD_RateB_0+adpcmb_sel);
-	sendZ80command(SOUNDCMD_NoLoopB);
+	sendZ80command(SOUNDCMD_FMStopAll);
 	sendZ80command(SOUNDCMD_SSGStop);
+	sendZ80command(SOUNDCMD_StopADPCMA);
+	sendZ80command(SOUNDCMD_StopADPCMB);
+
+	sendZ80command(SOUNDCMD_FMInitChannels);
+	sendZ80command(SOUNDCMD_FMOctave0);
+	sendZ80command(SOUNDCMD_FMNote0);
+
 	sendZ80command(SOUNDCMD_ADPCMB_Sample0);
+	sendZ80command(SOUNDCMD_NoLoopB);
+	sendZ80command(SOUNDCMD_RateB_0+adpcmb_sel);
 
 	while (!done)
 	{
 		int y = 11;
-		char buffer[4];
+		char buffer0[10], buffer1[10];
 
 		if (draw)
 		{
@@ -81,14 +92,23 @@ void at_sound_test()
 
 		fixPrint(15, 8, fontColorGreen, 3, "Sound Test");
 
-		intToHex(ssgval, buffer, 4);
-		fixPrintf(18, y++, fontColorGreen, 3, "SSG 0x%s", buffer);
+		sprintf(buffer0, "FM ");
+		intToHex(fmval, buffer0+3, 4);
+		fixPrintC(y++, fontColorGreen, 3, buffer0);
+		fixPrint(12, y, sel == SND_SEL_FM && option == 0 ? fontColorRed : fontColorWhite, 3, "Play");
+		fixPrint(17, y, sel == SND_SEL_FM && option == 1 ? fontColorRed : fontColorWhite, 3, "Cycle");
+		fixPrint(24, y++, sel == SND_SEL_FM && option == 2 ? fontColorRed : fontColorWhite, 3, "Stop");
+		y++;
+
+		sprintf(buffer1, "SSG ");
+		intToHex(ssgval, buffer1+4, 4);
+		fixPrintC(y++, fontColorGreen, 3, buffer1);
 		fixPrint(12, y, sel == SND_SEL_SSG && option == 0 ? fontColorRed : fontColorWhite, 3, "Init");
 		fixPrint(17, y, sel == SND_SEL_SSG && option == 1 ? fontColorRed : fontColorWhite, 3, "Cycle");
 		fixPrint(24, y++, sel == SND_SEL_SSG && option == 2 ? fontColorRed : fontColorWhite, 3, "Stop");
 		y++;
 
-		fixPrint(16, y++, fontColorGreen, 3, "ADPCM-A");
+		fixPrintC(y++, fontColorGreen, 3, "ADPCM-A");
 		fixPrint(12, y, sel == SND_SEL_ADPCMA && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
 		fixPrint(17, y, sel == SND_SEL_ADPCMA && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
 		fixPrint(24, y++, sel == SND_SEL_ADPCMA && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
@@ -96,7 +116,7 @@ void at_sound_test()
 
 		// ADPCM-B not present in Neo Geo CD
 #ifndef __cd__
-		fixPrint(16, y++, fontColorGreen, 3, "ADPCM-B");
+		fixPrintC(y++, fontColorGreen, 3, "ADPCM-B");
 		fixPrint(10, y, sel == SND_SEL_ADPCMB ? fontColorGreen : fontColorWhite, 3, "C:");
 		fixPrintf(13, y, fontColorWhite, 3, "%dhz", adpcmb_rates[adpcmb_sel]);
 		fixPrint(21, y, sel == SND_SEL_ADPCMB ? fontColorGreen : fontColorWhite, 3, "D:");
@@ -105,7 +125,7 @@ void at_sound_test()
 		fixPrint(17, y, sel == SND_SEL_ADPCMB && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
 		fixPrint(24, y, sel == SND_SEL_ADPCMB && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
 #else
-		fixPrint(18, y++, fontColorGreen, 3, "CDDA");
+		fixPrintC(y++, fontColorGreen, 3, "CDDA");
 		y++;
 		fixPrint(18, y, sel == SND_SEL_CDDA && option == 1 ? fontColorRed : fontColorWhite, 3, "Play");
 #endif
@@ -154,6 +174,9 @@ void at_sound_test()
 				sel = SND_SEL_MIN;
 			switch(sel)
 			{
+			case SND_SEL_FM:
+				option = 0;
+				break;
 			case SND_SEL_SSG:
 				option = 0;
 				break;
@@ -175,6 +198,14 @@ void at_sound_test()
 
 		if(changeoption)
 		{
+			if(sel == SND_SEL_FM)
+			{
+				if(option < 0)
+					option = 2;
+				if(option > 2)
+					option = 0;
+			}
+
 			if(sel == SND_SEL_SSG)
 			{
 				if(option < 0)
@@ -208,6 +239,36 @@ void at_sound_test()
 
 		if (BTTN_MAIN)
 		{
+			if(sel == SND_SEL_FM)
+			{
+				switch(option)
+				{
+				case 0:
+					sendZ80command(SOUNDCMD_FMPlay);
+					fmNote++;
+					if(fmNote > 11)
+					{
+						fmNote = 0;
+						fmOctave ++;
+						if(fmOctave > 7)
+						{
+							fmOctave = 0;
+							fmval = 0;
+						}
+						sendZ80command(SOUNDCMD_FMOctave0+fmOctave);
+					}
+					sendZ80command(SOUNDCMD_FMNote0+fmNote);
+					fmval ++;
+					break;
+				case 1:
+					
+					break;
+				case 2:
+					sendZ80command(SOUNDCMD_FMStopAll);
+					break;
+				}
+			}
+
 			if(sel == SND_SEL_SSG)
 			{
 				switch(option)
@@ -304,9 +365,10 @@ void at_sound_test()
 			draw = 1;
 	}
 
+	sendZ80command(SOUNDCMD_FMStopAll);
+	sendZ80command(SOUNDCMD_SSGStop);
 	sendZ80command(SOUNDCMD_StopADPCMA);
 	sendZ80command(SOUNDCMD_StopADPCMB);
-	sendZ80command(SOUNDCMD_SSGStop);
 
 #ifdef __cd__
 	pauseCDDA(0);
