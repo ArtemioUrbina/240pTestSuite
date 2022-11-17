@@ -816,12 +816,9 @@ inline int checkZ80Response(BYTE command)
 	}while(timeout < Z80_TIMEOUT && response != 0xff);
 	// Z80 got command, and is inside the NMI (or timed out)
 
-	if(timeout > max_z80_timout)
-		max_z80_timout = timeout;
 	if(timeout >= Z80_TIMEOUT)
 		return 0;
 
-	timeout = 0;
 	do
 	{
 		response = volMEMBYTE(REG_SOUND);
@@ -831,6 +828,8 @@ inline int checkZ80Response(BYTE command)
 
 	if(timeout > max_z80_timout)
 		max_z80_timout = timeout;
+	if(timeout < min_z80_timout)
+		min_z80_timout = timeout;
 	if(timeout >= Z80_TIMEOUT)
 		return 0;
 

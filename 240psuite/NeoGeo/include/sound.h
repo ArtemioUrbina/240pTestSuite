@@ -61,9 +61,10 @@
 #define SOUNDCMD_SSG260HZStop	0x57
 #define SOUNDCMD_SSGStop		0x5f
 
-#define SOUNDCMD_FMInitChannels	0x60
+#define SOUNDCMD_FMInitSndTest	0x60
 #define SOUNDCMD_FMPlay			0x61
-#define SOUNDCMD_FMNextNote		0x62
+#define SOUNDCMD_FMInitMDF		0x62
+#define SOUNDCMD_FMNextMDF		0x63
 #define SOUNDCMD_FMStopAll		0x6f
 
 #define SOUNDCMD_FMOctave0		0x70

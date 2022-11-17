@@ -50,6 +50,7 @@ extern BYTE first_overscan;
 extern BYTE first_colorramp;
 extern BYTE fill_color_bg;
 extern int max_z80_timout;
+extern int min_z80_timout;
 #ifdef __cd__
 extern BYTE isCDFront, isCDZ, ngcd_region;
 #endif

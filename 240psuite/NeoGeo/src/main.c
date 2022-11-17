@@ -42,6 +42,7 @@ BYTE isMVS, is4S, is6S, isMulti, hwChange, allowIRE107;
 BYTE vmode_snk, isPAL, usePAL256, isPALinMVS;
 BYTE enable_shadow, fill_color_bg;
 int max_z80_timout;
+int min_z80_timout;
 #ifdef __cd__
 BYTE isCDFront, isCDZ, ngcd_region;
 #endif
@@ -876,6 +877,7 @@ void check_bios_init()
 	first_overscan = 1;
 	first_colorramp = 1;
 	max_z80_timout = 0;
+	min_z80_timout = 65536;
 	fill_color_bg = 0;
 }
 

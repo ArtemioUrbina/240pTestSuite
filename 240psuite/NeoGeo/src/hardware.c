@@ -980,6 +980,7 @@ void ht_showInternalVars()
 		displayValue(x, y++, "first_grid", first_grid);
 		displayValue(x, y++, "first_overs", first_overscan);
 		displayValue(x, y++, "first_cramp", first_colorramp);
+		displayValue(x, y++, "min_z80", min_z80_timout);
 		displayValue(x, y++, "max_z80", max_z80_timout);
 		displayValue(x, y++, "color_bg", fill_color_bg);
 #ifdef __cd__

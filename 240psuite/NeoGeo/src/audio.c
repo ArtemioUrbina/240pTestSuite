@@ -69,7 +69,7 @@ void at_sound_test()
 	sendZ80command(SOUNDCMD_StopADPCMA);
 	sendZ80command(SOUNDCMD_StopADPCMB);
 
-	sendZ80command(SOUNDCMD_FMInitChannels);
+	sendZ80command(SOUNDCMD_FMInitSndTest);
 	sendZ80command(SOUNDCMD_FMOctave0);
 	sendZ80command(SOUNDCMD_FMNote0);
 
@@ -135,39 +135,33 @@ void at_sound_test()
 
 		readController();
 
-		if(timer)
-		{
+		if(timer) {
 			timer--;
 			if(!timer)
 				sendZ80command(SOUNDCMD_SSGStop);
 		}
 
-		if (PRESSED_LEFT)
-		{
+		if (PRESSED_LEFT) {
 			option --;
 			changeoption = 1;
 		}
 
-		if (PRESSED_RIGHT)
-		{
+		if (PRESSED_RIGHT) {
 			option ++;
 			changeoption = 1;
 		}
 
-		if (PRESSED_UP)
-		{
+		if (PRESSED_UP)	{
 			sel --;
 			change = 1;
 		}
 
-		if (PRESSED_DOWN)
-		{
+		if (PRESSED_DOWN) {
 			sel++;
 			change = 1;
 		}
 
-		if(change)
-		{
+		if(change) {
 			if(sel < SND_SEL_MIN)
 				sel = SND_SEL_MAX;
 			if (sel > SND_SEL_MAX)
@@ -196,8 +190,7 @@ void at_sound_test()
 			change = 0;
 		}
 
-		if(changeoption)
-		{
+		if(changeoption) {
 			if(sel == SND_SEL_FM)
 			{
 				if(option < 0)
@@ -237,8 +230,7 @@ void at_sound_test()
 			changeoption = 0;
 		}
 
-		if (BTTN_MAIN)
-		{
+		if (BTTN_MAIN) {
 			if(sel == SND_SEL_FM)
 			{
 				switch(option)
@@ -396,6 +388,33 @@ void executeSilence()
 		waitVBlank();
 }
 
+void ExecuteFM(int framelen)
+{
+	int octave, frame;
+	
+	// FM Test
+	
+	for(octave = 0; octave < 8; octave ++)
+	{
+		int note;
+			
+		sendZ80command(SOUNDCMD_FMOctave0+octave);
+		for(note = 0; note < 12; note++)
+		{
+			sendZ80command(SOUNDCMD_FMNote0+note);
+			sendZ80command(SOUNDCMD_FMNextMDF);
+				
+			for(frame = 0; frame < framelen; frame++)
+			{					
+				if(frame == framelen - framelen/5)
+					sendZ80command(SOUNDCMD_FMStopAll);
+				waitVBlank();
+			}
+		}
+	}
+	sendZ80command(SOUNDCMD_FMStopAll);
+}
+
 void at_sound_mdfourier()
 {
 	int done = 0, draw = 1;
@@ -423,20 +442,24 @@ void at_sound_mdfourier()
 
 		if (BTTN_MAIN)
 		{
-			int frame = 0;
+			//int frame = 0;
 
 			sendZ80command(SOUNDCMD_SSGRampinit);
+			sendZ80command(SOUNDCMD_FMInitMDF);
 			waitVBlank();
 
 			executePulseTrain();
 			executeSilence();
 
+			ExecuteFM(20);
+			/*
 			for(frame = 0; frame < 4096; frame++)
 			{
 				sendZ80commandAtVideoStart(SOUNDCMD_SSGRampcycle);
 				waitVBlank();
 			}
 			sendZ80command(SOUNDCMD_SSGStop);
+			*/
 
 			executeSilence();
 

@@ -139,6 +139,7 @@ EntryPoint:
 	; Initialize FM Octave and Note
 	ld		(FM_Octave),a
 	ld		(FM_Note),a
+	ld		(FM_ChannCycle),a
 
 	; Initialize SSG frequencies
 	ld		(SSG_FreqCoarse),a
@@ -175,6 +176,11 @@ EntryPoint:
 
 	; Initialize more variables
 	call	SetDefaultBanks	; Set default program banks
+
+	;-------------------------------------------;
+	; disable LFO
+	ld		de,0x2200
+	rst 	writeDEportA
 
 	;-------------------------------------------;
 	; Set ADPCM-A shared volume
@@ -388,38 +394,19 @@ command_null:
 ;==============================================================================;
 
 ;------------------------------------------------------------------------------;
-; command_FMInitChannels
+; command_FMInitSndTest
 ;------------------------------------------------------------------------------;
-; initialize instruments in all FM channels
+; initialize instruments in channels 1 and 5 to "piano" patches
 
-command_FMInitChannels:
+command_FMInitSndTest:
 	xor		a
-
 .load_loop_fm1:
-	ld		de,FM_table_1		; FM base table addr
+	ld		de,FM_table_5		; FM base table addr
 	call	loadNextFMCommand	; load command a into de
 	rst 	writeDEportA		; write to ports 4 and 5
 	inc		a
-	cp		31
+	cp		30
 	jp		nz,.load_loop_fm1
-
-	xor		a
-.load_loop_fm2:
-	ld		de,FM_table_2		; FM base table addr
-	call	loadNextFMCommand	; load command a into de
-	rst 	writeDEportA		; write to ports 4 and 5
-	inc		a
-	cp		31
-	jp		nz,.load_loop_fm2
-
-	xor		a
-.load_loop_fm4:
-	ld		de,FM_table_4		; FM base table addr
-	call	loadNextFMCommand	; load command a into de
-	rst 	writeDEportB		; write to ports 6 and 7
-	inc		a
-	cp		31
-	jp		nz,.load_loop_fm4
 
 	xor		a
 .load_loop_fm5:
@@ -427,29 +414,37 @@ command_FMInitChannels:
 	call	loadNextFMCommand	; load command a into de
 	rst 	writeDEportB		; write to ports 6 and 7
 	inc		a
-	cp		31
+	cp		30
 	jp		nz,.load_loop_fm5
-
-	ld		de,0x2200			; disable LFO
-	rst 	writeDEportA
+	
+	; always start with channel 1
+	xor		a
+	ld		(FM_ChannCycle),a
 
 	ret
 
 ;------------------------------------------------------------------------------;
 ; SOUNDCMD_FMPlay
 ;------------------------------------------------------------------------------;
-; 
+;  Plays in channel 1 or 5 the currently selected note
+
 command_FMPlay:
-    ld		de,0x2801			; turn off channel
-	rst 	writeDEportA		; write to ports 4 and 5
-	ld		de,0xB5C0			; Stereo channel 1
+	ld		a,(FM_ChannCycle)
+	ld		b,a
+
+    ld		de,0x2801			; turn off channel 1
+	cp		0
+	jp		z,.turnOffWrite
+
+	ld		de,0x2805			; turn off channel 5
+.turnOffWrite:
 	rst 	writeDEportA		; write to ports 4 and 5
 
 	ld		a,(FM_Note)			; get the selected note
 	ld		l,a	 
 	ld		h,0
 	add 	hl,hl				; multiply 'a' (FM note) by 2
-	ld		de,FM_pitch			; set table address
+	ld		de,FM_pitchTbl		; set table address
 	add 	hl,de				; add table base from de
 	push	hl					; use the stack to make the copy
 	pop		ix
@@ -459,45 +454,173 @@ command_FMPlay:
 	ld		a,(FM_Octave)		; load selected octave
 	or		e					; or the pitch and octave
 	ld		e,a					; set result in e
-	ld		d,0xA5				; set register
-	rst 	writeDEportA		; write to ports 4 and 5
 
+	ld		d,0xA5				; set register
+	ld		a,b
+	cp		0
+	jp		z,.sendcommandHto67
+	rst 	writeDEportA		; write to ports 4 and 5
+	jp		.sendnoteL
+
+.sendcommandHto67:
+	rst 	writeDEportB		; write to ports 6 and 7
+
+.sendnoteL:
 	; Send Note L
 	ld		e,(ix)				; load pitch L
 	ld		d,0xA1				; set register
+	ld		a,b
+	cp		0
+	jp		z,.sendcommandLto67
 	rst 	writeDEportA		; write to ports 4 and 5
 
 	ld		de,0x28F1			; Play
 	rst 	writeDEportA		; write to ports 4 and 5
+	jp		.endPlay
 
+.sendcommandLto67:
+	rst 	writeDEportB		; write to ports 6 and 7	
+
+	ld		de,0x28F5			; Play
+	rst 	writeDEportA		; write to ports 4 and 5
+
+.endPlay:
+	; invert channels 1 & 5
+	ld		a,b
+	xor		1
+	ld		(FM_ChannCycle),a
 	ret
 
 ;------------------------------------------------------------------------------;
-; SOUNDCMD_FMNextNote
+; command_FMInitMDF
 ;------------------------------------------------------------------------------;
-; 
-command_FMNextNote:
-    ld		de,0xB580
-	rst 	writeDEportA		; write to ports 4 and 5
-    ld		de,0x2801
-	rst 	writeDEportA		; write to ports 4 and 5
-	ld		de,0xA501
-	rst 	writeDEportA		; write to ports 4 and 5
-    ld		de,0xA137
-	rst 	writeDEportA		; write to ports 4 and 5
-	ld		de,0x28F1
-	rst 	writeDEportA		; write to ports 4 and 5
+; initialize instruments in all FM channels
+; loads two channels with "piano" patches and 2 with the flatter patches
 
-	ld		de,0xB540
+command_FMInitMDF:
+	xor		a
+.load_loop_fm1:
+	ld		de,FM_table_1		; FM base table addr
+	call	loadNextFMCommand	; load command a into de
+	rst 	writeDEportA		; write to ports 4 and 5
+	inc		a
+	cp		29
+	jp		nz,.load_loop_fm1
+
+	xor		a
+.load_loop_fm2:
+	ld		de,FM_table_2		; FM base table addr
+	call	loadNextFMCommand	; load command a into de
+	rst 	writeDEportA		; write to ports 4 and 5
+	inc		a
+	cp		29
+	jp		nz,.load_loop_fm2
+
+	xor		a
+.load_loop_fm5:
+	ld		de,FM_table_5		; FM base table addr
+	call	loadNextFMCommand	; load command a into de
 	rst 	writeDEportB		; write to ports 6 and 7
-    ld		de,0x2805
-	rst 	writeDEportA		; write to ports 6 and 7
-	ld		de,0xA501
+	inc		a
+	cp		29
+	jp		nz,.load_loop_fm5
+
+	xor		a
+.load_loop_fm6:
+	ld		de,FM_table_6		; FM base table addr
+	call	loadNextFMCommand	; load command a into de
 	rst 	writeDEportB		; write to ports 6 and 7
-    ld		de,0xA137
-	rst 	writeDEportB		; write to ports 6 and 7
-	ld		de,0x28F5
-	rst 	writeDEportA		; write to ports 6 and 7
+	inc		a
+	cp		29
+	jp		nz,.load_loop_fm6
+
+	; Set panning since we didn't load stereo from tables
+	ld		de,0xB580			; left pan
+	rst 	writeDEportA		; channel 1
+	ld		de,0xB680			; right pan
+	rst 	writeDEportA		; channel 2
+
+	ld		de,0xB540			; left pan
+	rst 	writeDEportB		; channel 5
+	ld		de,0xB640			; right pan
+	rst 	writeDEportB		; channel 6
+
+	; always start with channel 1
+	xor		a
+	ld		(FM_ChannCycle),a
+	ret
+
+;------------------------------------------------------------------------------;
+; command_FMNextMDF
+;------------------------------------------------------------------------------;
+;  Play both channels to the next frequency
+; and alternate between channels 1 & 5 and 2 and 6
+command_FMNextMDF:
+	ld		a,(FM_ChannCycle)
+	ld		b,a
+
+	ld		a,(FM_Note)			; get the selected note
+	ld		l,a	 
+	ld		h,0
+	add 	hl,hl				; multiply 'a' (FM note) by 2
+	ld		de,FM_pitchTbl		; set table address
+	add 	hl,de				; add table base from de
+	push	hl					; use the stack to make the copy
+	pop		ix
+
+	; Send Note H
+	ld		e,(ix+1)			; load pitch H
+	ld		a,(FM_Octave)		; load selected octave
+	or		e					; or the pitch and octave
+	ld		e,a					; set result in e
+
+	ld		d,0xA5				; set register for 1 & 5
+	ld		a,b
+	cp		0
+	jp		z,.sendcommandH
+	ld		d,0xA6				; set register for 2 & 6
+
+.sendcommandH:
+	rst 	writeDEportA		; send to channel 1/2
+	rst 	writeDEportB		; send to channel 5/6
+
+	; Send Note L
+	ld		e,(ix)				; load pitch L
+
+	ld		d,0xA1				; set register for 1 & 5
+	ld		a,b
+	cp		0
+	jp		z,.sendcommandL
+	ld		d,0xA2				; set register for 2 & 6
+
+.sendcommandL:
+	rst 	writeDEportA		; send to channel 1/2
+	rst 	writeDEportB		; send to channel 5/6
+
+	ld		a,b
+	cp		0
+	jp		z,.sendcommandP
+
+	ld		de,0x28F2			; Play
+	rst 	writeDEportA		; send to channel 2
+
+	ld		de,0x28F6			; Play
+	rst 	writeDEportA		; send to channel 6
+
+	jp		.mdfend
+
+.sendcommandP:
+	ld		de,0x28F1			; Play
+	rst 	writeDEportA		; send to channel 1
+
+	ld		de,0x28F5			; Play
+	rst 	writeDEportA		; send to channel 5
+
+.mdfend:
+	; invert channels 1 & 5 for 2 & 6 and viceversa
+	ld		a,b
+	xor		1
+	ld		(FM_ChannCycle),a
 
 	ret
 
@@ -556,11 +679,12 @@ command_FMStopAll:
 	pop		af
 
 	ret
+
 ;------------------------------------------------------------------------------;
-; loadNextFM1Command:
+; loadNextFMCommand:
 ;------------------------------------------------------------------------------;
-; load next FM 1 command for init
-; takes index in a and table base in de
+; load next FM command from table.
+; takes index in 'a' and table base in 'de'
 
 loadNextFMCommand:
 	ld		l,a	 
@@ -1470,10 +1594,10 @@ CommandTbl:
 	dw		command_null				; 0x5E
 	dw		command_ssg_Stop			; 0x5F
 
-	dw		command_FMInitChannels		; 0x60
+	dw		command_FMInitSndTest		; 0x60
 	dw		command_FMPlay				; 0x61
-	dw		command_FMNextNote			; 0x62
-	dw		command_null				; 0x63
+	dw		command_FMInitMDF			; 0x62
+	dw		command_FMNextMDF			; 0x63
 	dw		command_null				; 0x64
 	dw		command_null				; 0x65
 	dw		command_null				; 0x66
@@ -1647,7 +1771,7 @@ CommandTbl:
 	org $0A00
 ;==============================================================================;
 ; FM pitch table, size 12
-FM_pitch:
+FM_pitchTbl:
     dw      0x0115
     dw      0x0125
     dw      0x0137
@@ -1693,7 +1817,6 @@ FM_table_1:
     dw      0x9D00
     dw      0xB101
     dw      0xB5C0
-    dw      0x2801
 
 ;==============================================================================;
 ; FM instruments table: Channel 2
@@ -1728,11 +1851,10 @@ FM_table_2:
     dw      0x9E00
     dw      0xB201
     dw      0xB6C0
-    dw      0x2802
 
 ;==============================================================================;
-; FM instruments table: Channel 4
-FM_table_4:
+; FM instruments table: Channel 5
+FM_table_5:
 	dw      0x3171
 	dw      0x350D
 	dw      0x3933
@@ -1763,11 +1885,10 @@ FM_table_4:
 	dw      0x9D00
 	dw      0xB132
 	dw      0xB5C0
-	dw      0x2805
 
 ;==============================================================================;
-; FM instruments table: Channel 5
-FM_table_5:
+; FM instruments table: Channel 6
+FM_table_6:
     dw      0x3271
     dw      0x360D
     dw      0x3A33
@@ -1798,7 +1919,6 @@ FM_table_5:
     dw      0x9E00
     dw      0xB232
     dw      0xB6C0
-    dw      0x2806
 
 ;==============================================================================;
 ; samples
