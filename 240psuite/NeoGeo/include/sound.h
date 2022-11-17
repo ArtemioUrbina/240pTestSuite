@@ -25,6 +25,7 @@
 
 // Sound commands for Z80
 #define SOUNDCMD_PlayJingleA	0x02
+#define SOUNDCMD_StopAll		0x04
 #define	RAMTESTCMD				0x10
 
 #define SOUNDCMD_PlayCoinA		0x20
@@ -63,8 +64,11 @@
 
 #define SOUNDCMD_FMInitSndTest	0x60
 #define SOUNDCMD_FMPlay			0x61
-#define SOUNDCMD_FMInitMDF		0x62
-#define SOUNDCMD_FMNextMDF		0x63
+#define SOUNDCMD_FMUseLeft		0x62
+#define SOUNDCMD_FMUseCenter	0x63
+#define SOUNDCMD_FMUseRight		0x64
+#define SOUNDCMD_FMInitMDF		0x65
+#define SOUNDCMD_FMNextMDF		0x66
 #define SOUNDCMD_FMStopAll		0x6f
 
 #define SOUNDCMD_FMOctave0		0x70

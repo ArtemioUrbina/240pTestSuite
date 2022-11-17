@@ -1,6 +1,7 @@
 ; Shared sound command defines
 
 SOUNDCMD_PlayJingleA	= $02
+SOUNDCMD_StopAll		= $04
 RAMTESTCMD				= $10
 
 SOUNDCMD_PlayCoinA		= $20
@@ -39,8 +40,11 @@ SOUNDCMD_SSGStop		= $5f
 
 SOUNDCMD_FMInitSndTest	= $60
 SOUNDCMD_FMPlay			= $61
-SOUNDCMD_FMInitMDF		= $62
-SOUNDCMD_FMNextMDF		= $63
+SOUNDCMD_FMUseLeft		= $62
+SOUNDCMD_FMUseCenter	= $63
+SOUNDCMD_FMUseRight		= $64
+SOUNDCMD_FMInitMDF		= $65
+SOUNDCMD_FMNextMDF		= $66
 SOUNDCMD_FMStopAll		= $6f
 
 SOUNDCMD_FMOctave0		= $70

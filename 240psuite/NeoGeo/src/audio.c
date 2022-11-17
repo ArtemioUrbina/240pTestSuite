@@ -64,10 +64,7 @@ void at_sound_test()
 	picture image;
 
 	// Set initial State
-	sendZ80command(SOUNDCMD_FMStopAll);
-	sendZ80command(SOUNDCMD_SSGStop);
-	sendZ80command(SOUNDCMD_StopADPCMA);
-	sendZ80command(SOUNDCMD_StopADPCMB);
+	sendZ80command(SOUNDCMD_StopAll);
 
 	sendZ80command(SOUNDCMD_FMInitSndTest);
 	sendZ80command(SOUNDCMD_FMOctave0);
@@ -357,10 +354,7 @@ void at_sound_test()
 			draw = 1;
 	}
 
-	sendZ80command(SOUNDCMD_FMStopAll);
-	sendZ80command(SOUNDCMD_SSGStop);
-	sendZ80command(SOUNDCMD_StopADPCMA);
-	sendZ80command(SOUNDCMD_StopADPCMB);
+	sendZ80command(SOUNDCMD_StopAll);
 
 #ifdef __cd__
 	pauseCDDA(0);
@@ -423,7 +417,7 @@ void at_sound_mdfourier()
 	//sendZ80command(SOUNDCMD_RateB_0+5);
 	sendZ80command(SOUNDCMD_NoLoopB);
 	sendZ80command(SOUNDCMD_ADPCMB_Sample1);
-	sendZ80command(SOUNDCMD_SSGStop);
+	sendZ80command(SOUNDCMD_StopAll);
 
 	while (!done)
 	{
@@ -526,6 +520,7 @@ void at_sound_mdfourier()
 		if (checkHelp(HELP_SOUND))
 			draw = 1;
 	}
+	sendZ80command(SOUNDCMD_StopAll);
 }
 
 void at_audiosync_test()

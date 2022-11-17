@@ -389,6 +389,18 @@ command_RAMTest:
 command_null:
 	ret
 
+;------------------------------------------------------------------------------;
+; command_StopAll
+;------------------------------------------------------------------------------;
+; Stops everything
+
+command_StopAll:
+	call	command_FMStopAll
+	call	command_ssg_Stop
+	call	command_PCMAStop
+	call	command_PCMBStop
+	ret
+
 ;==============================================================================;
 ; FM COMMANDS
 ;==============================================================================;
@@ -420,6 +432,76 @@ command_FMInitSndTest:
 	; always start with channel 1
 	xor		a
 	ld		(FM_ChannCycle),a
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_FMChangeOctave
+;------------------------------------------------------------------------------;
+; Change selected Ocatve in FM channels.
+
+command_FMChangeOctave:	
+	and		0x07				; mask command number w/0x07 to get Octave
+	sla		a
+	sla		a
+	sla		a
+	ld		(FM_Octave),a
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_FMChangeNote
+;------------------------------------------------------------------------------;
+; Change selected Note in FM channels.
+
+command_FMChangeNote:	
+	and		0x0f				; mask command number w/0x0f to get note
+	ld		(FM_Note),a
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_FMUseLeft
+;------------------------------------------------------------------------------;
+; Change all FM channels to Left Pan only
+
+command_FMUseLeft:	
+	ld		de,0xB540			; left pan
+	rst 	writeDEportA		; channel 1
+	rst 	writeDEportB		; channel 5
+	ld		de,0xB640			; right pan
+	rst 	writeDEportA		; channel 2
+	rst 	writeDEportB		; channel 6
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_FMUseCenter
+;------------------------------------------------------------------------------;
+; Change all FM channels to Center Pan
+
+command_FMUseCenter:	
+	ld		de,0xB5C0			; center pan
+	rst 	writeDEportA		; channel 1
+	rst 	writeDEportB		; channel 5
+	ld		de,0xB6C0			; center pan
+	rst 	writeDEportA		; channel 2
+	rst 	writeDEportB		; channel 6
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_FMUseRight
+;------------------------------------------------------------------------------;
+; Change all FM channels to Right Pan only
+
+command_FMUseRight:	
+	ld		de,0xB580			; left pan
+	rst 	writeDEportA		; channel 1
+	rst 	writeDEportB		; channel 5
+	ld		de,0xB680			; right pan
+	rst 	writeDEportA		; channel 2
+	rst 	writeDEportB		; channel 6
 
 	ret
 
@@ -622,28 +704,6 @@ command_FMNextMDF:
 	xor		1
 	ld		(FM_ChannCycle),a
 
-	ret
-
-;------------------------------------------------------------------------------;
-; command_FMChangeOctave
-;------------------------------------------------------------------------------;
-; Change selected Ocatve in FM channels.
-
-command_FMChangeOctave:	
-	and		0x07				; mask command number w/0x07 to get Octave
-	sla		a
-	sla		a
-	sla		a
-	ld		(FM_Octave),a
-	ret
-
-; command_FMChangeNote
-;------------------------------------------------------------------------------;
-; Change selected Note in FM channels.
-
-command_FMChangeNote:	
-	and		0x0f				; mask command number w/0x0f to get note
-	ld		(FM_Note),a
 	ret
 
 ;------------------------------------------------------------------------------;
@@ -1496,10 +1556,10 @@ CommandTbl:
 	dw		command_SwitchSlot			; 0x01
 	dw		command_PlayJingleA			; 0x02
 	dw		command_SoftReset			; 0x03
-	dw		command_null				; 0x04
+	dw		command_StopAll				; 0x04
 	dw		command_null				; 0x05
 	dw		command_null				; 0x06
-	dw		command_null				; 0x07
+	dw		command_null				; 0x07		called by UniBIOS Jukebox
 	dw		command_null				; 0x08
 	dw		command_null				; 0x09
 	dw		command_null				; 0x0A
@@ -1596,11 +1656,11 @@ CommandTbl:
 
 	dw		command_FMInitSndTest		; 0x60
 	dw		command_FMPlay				; 0x61
-	dw		command_FMInitMDF			; 0x62
-	dw		command_FMNextMDF			; 0x63
-	dw		command_null				; 0x64
-	dw		command_null				; 0x65
-	dw		command_null				; 0x66
+	dw		command_FMUseLeft			; 0x62
+	dw		command_FMUseCenter			; 0x63
+	dw		command_FMUseRight			; 0x64
+	dw		command_FMInitMDF			; 0x65
+	dw		command_FMNextMDF			; 0x66
 	dw		command_null				; 0x67
 	dw		command_null				; 0x68
 	dw		command_null				; 0x69
