@@ -34,30 +34,35 @@
 #include "sound.h"
 
 #ifndef __cd__
-#define SND_SEL_FM		0
-#define SND_SEL_SSG		1
-#define SND_SEL_ADPCMA	2
-#define SND_SEL_ADPCMB	3
+#define SND_SEL_FM_NOTE		0
+#define SND_SEL_FM_OCTAVE	1
+#define SND_SEL_FM_PANNING	2
+#define SND_SEL_SSG			3
+#define SND_SEL_ADPCMA		4
+#define SND_SEL_ADPCMB		5
 
-#define SND_SEL_MIN		SND_SEL_FM
+#define SND_SEL_MIN		SND_SEL_FM_NOTE
 #define SND_SEL_MAX		SND_SEL_ADPCMB
 #else
-#define SND_SEL_FM		0
-#define SND_SEL_SSG		1
-#define SND_SEL_ADPCMA	2
-#define SND_SEL_CDDA	3
+#define SND_SEL_FM_NOTE		0
+#define SND_SEL_FM_OCTAVE	1
+#define SND_SEL_FM_PANNING	2
+#define SND_SEL_SSG			3
+#define SND_SEL_ADPCMA		4
+#define SND_SEL_CDDA		5
 
-#define SND_SEL_MIN		SND_SEL_FM
+#define SND_SEL_MIN		SND_SEL_FM_NOTE
 #define SND_SEL_MAX		SND_SEL_CDDA
 #endif
 
-#define SSG_TIMOUT_FRAMES 120
+#define SSG_TIMOUT_FRAMES 60
 
 void at_sound_test()
 {
-	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2, ssgval = 0, fmval = 0;
-	int	fmNote = 0, fmOctave = 0;
-	int option = 0, change = 0, changeoption = 0, timer = 0;
+	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2;
+	int fmnote = 6, fmoctave = 3, fmpan = 1;
+	int option = fmnote, change = 0, changeoption = 0;
+	int	timer0 = 0, timer1 = 0, timer2= 0;
 #ifndef __cd__
 	int loopB = 0, adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125  };
 #endif
@@ -67,8 +72,8 @@ void at_sound_test()
 	sendZ80command(SOUNDCMD_StopAll);
 
 	sendZ80command(SOUNDCMD_FMInitSndTest);
-	sendZ80command(SOUNDCMD_FMOctave0);
-	sendZ80command(SOUNDCMD_FMNote0);
+	sendZ80command(SOUNDCMD_FMOctave0+fmoctave);
+	sendZ80command(SOUNDCMD_FMNote0+fmnote);
 
 	sendZ80command(SOUNDCMD_ADPCMB_Sample0);
 	sendZ80command(SOUNDCMD_NoLoopB);
@@ -76,8 +81,7 @@ void at_sound_test()
 
 	while (!done)
 	{
-		int y = 11;
-		char buffer0[10], buffer1[10];
+		int x = 7, y = 9;
 
 		if (draw)
 		{
@@ -87,23 +91,44 @@ void at_sound_test()
 			draw = 0;
 		}
 
-		fixPrint(15, 8, fontColorGreen, 3, "Sound Test");
+		fixPrintC(6, fontColorGreen, 3, "YM 2610 Sound Test");
 
-		sprintf(buffer0, "FM ");
-		intToHex(fmval, buffer0+3, 4);
-		fixPrintC(y++, fontColorGreen, 3, buffer0);
-		fixPrint(12, y, sel == SND_SEL_FM && option == 0 ? fontColorRed : fontColorWhite, 3, "Play");
-		fixPrint(17, y, sel == SND_SEL_FM && option == 1 ? fontColorRed : fontColorWhite, 3, "Cycle");
-		fixPrint(24, y++, sel == SND_SEL_FM && option == 2 ? fontColorRed : fontColorWhite, 3, "Stop");
+		fixPrintC(y++, fontColorGreen, 3, "FM");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 0 ? fontColorRed : fontColorWhite, 3, "1");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 1 ? fontColorRed : fontColorWhite, 3, "2");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 2 ? fontColorRed : fontColorWhite, 3, "3");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 3 ? fontColorRed : fontColorWhite, 3, "4");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 4 ? fontColorRed : fontColorWhite, 3, "5");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 5 ? fontColorRed : fontColorWhite, 3, "6");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 6 ? fontColorRed : fontColorWhite, 3, "7");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 7 ? fontColorRed : fontColorWhite, 3, "8");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 8 ? fontColorRed : fontColorWhite, 3, "9");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 9 ? fontColorRed : fontColorWhite, 3, "A");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 10 ? fontColorRed : fontColorWhite, 3, "B");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 11 ? fontColorRed : fontColorWhite, 3, "C");
 		y++;
+		x = 9;
+		fixPrint(x, y, sel == SND_SEL_FM_OCTAVE ? fontColorRed : fontColorGreen, 3, "Octave:");
+		fixPrint(x+=8, y, sel == SND_SEL_FM_OCTAVE && option == 0 ? fontColorRed : fmoctave == 0 ? fontColorGrayDark : fontColorWhite, 3, "1");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 1 ? fontColorRed : fmoctave == 1 ? fontColorGrayDark : fontColorWhite, 3, "2");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 2 ? fontColorRed : fmoctave == 2 ? fontColorGrayDark : fontColorWhite, 3, "3");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 3 ? fontColorRed : fmoctave == 3 ? fontColorGrayDark : fontColorWhite, 3, "4");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 4 ? fontColorRed : fmoctave == 4 ? fontColorGrayDark : fontColorWhite, 3, "5");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 5 ? fontColorRed : fmoctave == 5 ? fontColorGrayDark : fontColorWhite, 3, "6");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 6 ? fontColorRed : fmoctave == 6 ? fontColorGrayDark : fontColorWhite, 3, "7");
+		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 7 ? fontColorRed : fmoctave == 7 ? fontColorGrayDark : fontColorWhite, 3, "8");
+		y++;
+		fixPrint(12, y, sel == SND_SEL_FM_PANNING && option == 0 ? fontColorRed : fmpan == 0 ? fontColorGrayDark : fontColorWhite, 3, "Left");
+		fixPrint(17, y, sel == SND_SEL_FM_PANNING && option == 1 ? fontColorRed : fmpan == 1 ? fontColorGrayDark : fontColorWhite, 3, "Center");
+		fixPrint(24, y, sel == SND_SEL_FM_PANNING && option == 2 ? fontColorRed : fmpan == 2 ? fontColorGrayDark : fontColorWhite, 3, "Right");
 
-		sprintf(buffer1, "SSG ");
-		intToHex(ssgval, buffer1+4, 4);
-		fixPrintC(y++, fontColorGreen, 3, buffer1);
-		fixPrint(12, y, sel == SND_SEL_SSG && option == 0 ? fontColorRed : fontColorWhite, 3, "Init");
-		fixPrint(17, y, sel == SND_SEL_SSG && option == 1 ? fontColorRed : fontColorWhite, 3, "Cycle");
-		fixPrint(24, y++, sel == SND_SEL_SSG && option == 2 ? fontColorRed : fontColorWhite, 3, "Stop");
-		y++;
+		x = 15;
+		y+=2;
+		fixPrintC(y++, fontColorGreen, 3, "SSG");
+		fixPrint(x+=2, y, sel == SND_SEL_SSG && option == 0 ? fontColorRed : fontColorWhite, 3, "1");
+		fixPrint(x+=2, y, sel == SND_SEL_SSG && option == 1 ? fontColorRed : fontColorWhite, 3, "2");
+		fixPrint(x+=2, y, sel == SND_SEL_SSG && option == 2 ? fontColorRed : fontColorWhite, 3, "3");
+		y+=2;
 
 		fixPrintC(y++, fontColorGreen, 3, "ADPCM-A");
 		fixPrint(12, y, sel == SND_SEL_ADPCMA && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
@@ -132,10 +157,22 @@ void at_sound_test()
 
 		readController();
 
-		if(timer) {
-			timer--;
-			if(!timer)
-				sendZ80command(SOUNDCMD_SSGStop);
+		if(timer0) {
+			timer0--;
+			if(!timer0)
+				sendZ80command(SOUNDCMD_SSG260HZStop);
+		}
+
+		if(timer1) {
+			timer1--;
+			if(!timer1)
+				sendZ80command(SOUNDCMD_SSG1KHZStop);
+		}
+
+		if(timer2) {
+			timer2--;
+			if(!timer2)
+				sendZ80command(SOUNDCMD_SSGNoiseStop);
 		}
 
 		if (PRESSED_LEFT) {
@@ -159,17 +196,21 @@ void at_sound_test()
 		}
 
 		if(change) {
-			if(sel < SND_SEL_MIN)
-				sel = SND_SEL_MAX;
-			if (sel > SND_SEL_MAX)
-				sel = SND_SEL_MIN;
+			if (sel < SND_SEL_MIN) sel = SND_SEL_MAX;
+			if (sel > SND_SEL_MAX) sel = SND_SEL_MIN;
 			switch(sel)
 			{
-			case SND_SEL_FM:
-				option = 0;
+			case SND_SEL_FM_NOTE:
+				option = fmnote;
+				break;
+			case SND_SEL_FM_OCTAVE:
+				option = fmoctave;
+				break;
+			case SND_SEL_FM_PANNING:
+				option = fmpan;
 				break;
 			case SND_SEL_SSG:
-				option = 0;
+				option = 1;
 				break;
 			case SND_SEL_ADPCMA:
 				option = 1;
@@ -188,24 +229,27 @@ void at_sound_test()
 		}
 
 		if(changeoption) {
-			if(sel == SND_SEL_FM)
-			{
-				if(option < 0)
-					option = 2;
-				if(option > 2)
-					option = 0;
+			if (sel == SND_SEL_FM_NOTE) {
+				if(option < 0) option = 11;
+				if(option > 11) option = 0;
 			}
 
-			if(sel == SND_SEL_SSG)
-			{
-				if(option < 0)
-					option = 2;
-				if(option > 2)
-					option = 0;
+			if (sel == SND_SEL_FM_OCTAVE) {
+				if(option < 0) option = 7;
+				if(option > 7) option = 0;
 			}
 
-			if(sel == SND_SEL_ADPCMA)
-			{
+			if (sel == SND_SEL_FM_PANNING) {
+				if(option < 0) option = 2;
+				if(option > 2) option = 0;
+			}
+
+			if (sel == SND_SEL_SSG) {
+				if(option < 0) option = 2;
+				if(option > 2) option = 0;
+			}
+
+			if (sel == SND_SEL_ADPCMA) {
 				if(option < 0)
 					option = 2;
 				if(option > 2)
@@ -213,8 +257,7 @@ void at_sound_test()
 			}
 
 #ifndef __cd__
-			if(sel == SND_SEL_ADPCMB)
-			{
+			if (sel == SND_SEL_ADPCMB) {
 				if(option < 0)
 					option = 3;
 				if(option > 3)
@@ -228,58 +271,41 @@ void at_sound_test()
 		}
 
 		if (BTTN_MAIN) {
-			if(sel == SND_SEL_FM)
-			{
+			if (sel == SND_SEL_FM_NOTE) {
+				fmnote = option;
+				sendZ80command(SOUNDCMD_FMNote0+fmnote);
+				sendZ80command(SOUNDCMD_FMPlay);
+			}
+
+			if (sel == SND_SEL_FM_OCTAVE) {
+				fmoctave = option;
+				sendZ80command(SOUNDCMD_FMOctave0+fmoctave);
+			}
+
+			if (sel == SND_SEL_FM_PANNING) {
+				fmpan = option;
+				sendZ80command(SOUNDCMD_FMUseLeft+fmpan);
+			}
+
+			if (sel == SND_SEL_SSG) {
 				switch(option)
 				{
 				case 0:
-					sendZ80command(SOUNDCMD_FMPlay);
-					fmNote++;
-					if(fmNote > 11)
-					{
-						fmNote = 0;
-						fmOctave ++;
-						if(fmOctave > 7)
-						{
-							fmOctave = 0;
-							fmval = 0;
-						}
-						sendZ80command(SOUNDCMD_FMOctave0+fmOctave);
-					}
-					sendZ80command(SOUNDCMD_FMNote0+fmNote);
-					fmval ++;
+					sendZ80command(SOUNDCMD_SSG260HZStart);
+					timer0 = SSG_TIMOUT_FRAMES;
 					break;
 				case 1:
-					
+					sendZ80command(SOUNDCMD_SSG1KHZStart);
+					timer1 = SSG_TIMOUT_FRAMES;
 					break;
 				case 2:
-					sendZ80command(SOUNDCMD_FMStopAll);
+					sendZ80command(SOUNDCMD_SSGNoiseStart);
+					timer2 = SSG_TIMOUT_FRAMES;
 					break;
 				}
 			}
 
-			if(sel == SND_SEL_SSG)
-			{
-				switch(option)
-				{
-				case 0:
-					sendZ80command(SOUNDCMD_SSGRampinit);
-					ssgval = 0;
-					break;
-				case 1:
-					sendZ80command(SOUNDCMD_SSGRampcycle);
-					ssgval ++;
-					break;
-				case 2:
-					sendZ80command(SOUNDCMD_SSGStop);
-					break;
-				}
-				//sendZ80command(SOUNDCMD_SSG1KHZStart);
-				//timer = SSG_TIMOUT_FRAMES;
-			}
-
-			if(sel == SND_SEL_ADPCMA)
-			{
+			if (sel == SND_SEL_ADPCMA) {
 				switch(option)
 				{
 				case 0:
@@ -295,8 +321,7 @@ void at_sound_test()
 			}
 
 #ifndef __cd__
-			if (sel == SND_SEL_ADPCMB)
-			{
+			if (sel == SND_SEL_ADPCMB) {
 				switch(option)
 				{
 				case 0:
@@ -316,12 +341,11 @@ void at_sound_test()
 #endif
 		}
 
-		if (BTTN_OPTION_1)
-		{
-			if(sel == SND_SEL_ADPCMA)
+		if (BTTN_OPTION_1) {
+			if (sel == SND_SEL_ADPCMA)
 				sendZ80command(SOUNDCMD_PlayLeft);
 #ifndef __cd__
-			if(sel == SND_SEL_ADPCMB)
+			if (sel == SND_SEL_ADPCMB)
 			{
 				adpcmb_sel ++;
 				if(adpcmb_sel > 7)
@@ -331,12 +355,11 @@ void at_sound_test()
 #endif
 		}
 
-		if (BTTN_OPTION_2)
-		{
-			if(sel == SND_SEL_ADPCMA)
+		if (BTTN_OPTION_2) {
+			if (sel == SND_SEL_ADPCMA)
 				sendZ80command(SOUNDCMD_PlayRight);
 #ifndef __cd__
-			if(sel == SND_SEL_ADPCMB)
+			if (sel == SND_SEL_ADPCMB)
 			{
 				loopB = !loopB;
 				if(loopB)
@@ -382,6 +405,14 @@ void executeSilence()
 		waitVBlank();
 }
 
+void waitADPCM(int frames)
+{
+	int frame = 0;
+
+	for(frame = 0; frame < frames; frame++)
+		waitVBlank();
+}
+
 void ExecuteFM(int framelen)
 {
 	int octave, frame;
@@ -416,7 +447,8 @@ void at_sound_mdfourier()
 
 	//sendZ80command(SOUNDCMD_RateB_0+5);
 	sendZ80command(SOUNDCMD_NoLoopB);
-	sendZ80command(SOUNDCMD_ADPCMB_Sample1);
+	sendZ80command(SOUNDCMD_ADPCMB_LdSweep);
+	sendZ80command(SOUNDCMD_ADPCMB_Center);
 	sendZ80command(SOUNDCMD_StopAll);
 
 	while (!done)
@@ -445,7 +477,7 @@ void at_sound_mdfourier()
 			executePulseTrain();
 			executeSilence();
 
-			ExecuteFM(20);
+			//ExecuteFM(20);
 			/*
 			for(frame = 0; frame < 4096; frame++)
 			{
@@ -454,6 +486,33 @@ void at_sound_mdfourier()
 			}
 			sendZ80command(SOUNDCMD_SSGStop);
 			*/
+			// ADPCM-A takes 236.46 frames at 16.77724
+			// 3967.312 mmilliseconds
+			// in an AES NTSC System
+			//waitVBlank();
+			sendZ80command(SOUNDCMD_PlaySweep);
+			waitADPCM(240);
+
+			// ADPCM-B
+			// 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125
+			
+			sendZ80command(SOUNDCMD_RateB_0);
+			sendZ80command(SOUNDCMD_ADPCMB_Center);
+			waitADPCM(610);
+
+			sendZ80command(SOUNDCMD_RateB_2);
+			sendZ80command(SOUNDCMD_ADPCMB_Center);
+			waitADPCM(305);
+
+			sendZ80command(SOUNDCMD_RateB_6);
+			sendZ80command(SOUNDCMD_ADPCMB_Center);
+			waitADPCM(152);
+
+			// 2.01968
+			// 121 frames
+			sendZ80command(SOUNDCMD_RateB_7);
+			sendZ80command(SOUNDCMD_ADPCMB_Center);
+			waitADPCM(122);
 
 			executeSilence();
 
@@ -462,56 +521,13 @@ void at_sound_mdfourier()
 
 		if (BTTN_OPTION_1)
 		{
-			int stop = 0;
-
-			gfxClear();
-			SCClose();
-			waitVBlank();
-			do
-			{
-				backgroundColor(WH_107);
-				sendZ80commandAtLine(0x010C, SOUNDCMD_SSGPulseStart);
-				readController();
-				if (BTTN_MAIN)
-					stop = 1;
-				sendZ80commandAtLine(0x1ED, SOUNDCMD_SSGPulseStop);
-				waitVBlank();
-				
-				backgroundColor(_BLACK);
-				readController();
-				if (BTTN_MAIN)
-					stop = 1;
-				waitVBlank();
-				
-			}while(!stop);
-			draw = 1;
+			sendZ80command(SOUNDCMD_PlaySweep);
 		}
 
 		if (BTTN_OPTION_2)
 		{
-			int stop = 0;
-
-			gfxClear();
-			SCClose();
-			waitVBlank();
-			do
-			{
-				backgroundColor(WH_107);
-				sendZ80command(SOUNDCMD_SSGPulseStart);
-				readController();
-				if (BTTN_MAIN)
-					stop = 1;
-				waitVBlank();
-
-				backgroundColor(_BLACK);
-				sendZ80command(SOUNDCMD_SSGStop);
-				readController();
-				if (BTTN_MAIN)
-					stop = 1;
-				waitVBlank();
-				
-			}while(!stop);
-			draw = 1;
+			sendZ80command(SOUNDCMD_RateB_7);
+			sendZ80command(SOUNDCMD_ADPCMB_Center);
 		}
 
 		if (BTTN_EXIT)

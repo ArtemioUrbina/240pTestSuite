@@ -32,6 +32,7 @@
 #define SOUNDCMD_PlayLeft  		0x21
 #define SOUNDCMD_PlayRight		0x22
 #define SOUNDCMD_PlayCenter 	0x23
+#define SOUNDCMD_PlaySweep	 	0x24
 #define SOUNDCMD_StopADPCMA		0x2f
 
 #define SOUNDCMD_ADPCMB_Left	0x30
@@ -40,7 +41,7 @@
 #define SOUNDCMD_LoopB			0x33
 #define SOUNDCMD_NoLoopB		0x34
 #define SOUNDCMD_ADPCMB_Sample0 0x35
-#define SOUNDCMD_ADPCMB_Sample1 0x36
+#define SOUNDCMD_ADPCMB_LdSweep	0x36
 #define SOUNDCMD_StopADPCMB		0x3f
 
 #define SOUNDCMD_RateB_0		0x40
@@ -60,6 +61,8 @@
 #define SOUNDCMD_SSG1KHZStop	0x55
 #define SOUNDCMD_SSG260HZStart	0x56
 #define SOUNDCMD_SSG260HZStop	0x57
+#define SOUNDCMD_SSGNoiseStart	0x58
+#define SOUNDCMD_SSGNoiseStop	0x59
 #define SOUNDCMD_SSGStop		0x5f
 
 #define SOUNDCMD_FMInitSndTest	0x60

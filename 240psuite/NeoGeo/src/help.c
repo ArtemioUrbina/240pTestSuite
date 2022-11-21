@@ -656,21 +656,21 @@ void DrawHelp(int option)
 					case HELP_SOUND:
 						fixPrintC(6, fontColorGreen, 3, "SOUND TEST");
 
-						fixPrint(4, 9, fontColorWhite, 3, "You can test the sound from the");
+						fixPrint(4, y++, fontColorWhite, 3, "You can test the sound from the");
 	#ifndef __cd__
-						fixPrint(4, 10, fontColorWhite, 3, "YM2610 FM, SSG, ADPCM-A and ADPCM-B.");
-						fixPrint(4, 10, fontColorWhite, 3, "ADPCM-B.");
+						fixPrint(4, y++, fontColorWhite, 3, "YM2610 FM, SSG, ADPCM-A and");
+						fixPrint(4, y++, fontColorWhite, 3, "ADPCM-B.");
 	#else
-						fixPrint(4, 10, fontColorWhite, 3, "YM2610 FM, SSG, ADPCM-A and CDDA.");
+						fixPrint(4, y++, fontColorWhite, 3, "YM2610 FM, SSG, ADPCM-A and CDDA.");
 	#endif // __cd__
-
-						fixPrint(4, 12, fontColorWhite, 3, "Panning can be changed when");
-						fixPrint(4, 13, fontColorWhite, 3, "possible. This can help you");
-						fixPrint(4, 14, fontColorWhite, 3, "identify stereo cabling issues.");
-
-						fixPrint(4, 16, fontColorWhite, 3, "SSG has 200hz, 2khz and 4khz");
-						fixPrint(4, 17, fontColorWhite, 3, "tones on its channels and white");
-						fixPrint(4, 18, fontColorWhite, 3, "noise at 500hz.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "Panning can be changed when");
+						fixPrint(4, y++, fontColorWhite, 3, "possible. This can help you");
+						fixPrint(4, y++, fontColorWhite, 3, "identify stereo cabling issues.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "SSG has 260hz and 1khz tones on");
+						fixPrint(4, y++, fontColorWhite, 3, "channels 0 and 1, and noise");
+						fixPrint(4, y++, fontColorWhite, 3, "at arounf 5khz in channel 2.");
 					break;
 
 				case HELP_LED:
@@ -761,7 +761,7 @@ void DrawHelp(int option)
 					fixPrintC(6, fontColorGreen, 3, "AUDIO SYNC TEST");
 
 					fixPrint(4, 9, fontColorWhite, 3, "This test flashes the whole");
-					fixPrint(4, 10, fontColorWhite, 3, "screen white for 2 frames,");
+					fixPrint(4, 10, fontColorWhite, 3, "screen white for 1 frames,");
 					fixPrint(4, 11, fontColorWhite, 3, "along with a 1khz test tone.");
 
 					fixPrint(4, 13, fontColorWhite, 3, "You can verify the sync between");

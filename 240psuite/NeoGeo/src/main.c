@@ -492,8 +492,8 @@ void credits()
 		{
 			int x = 4, y = 4;
 
-			fixPrint(x+24, y, fontColorGreen, 3, "Ver. 0.5");
-			fixPrint(x+24, y+1, fontColorWhite, 3, "10/28/2022");
+			fixPrint(x+24, y, fontColorGreen, 3, "Ver. 0.9");
+			fixPrint(x+24, y+1, fontColorWhite, 3, "11/17/2022");
 			fixPrint(x, y++, fontColorGreen, 3, "Code by:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Dustin Dembrosky");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Artemio Urbina");

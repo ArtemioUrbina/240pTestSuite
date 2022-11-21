@@ -466,10 +466,10 @@ command_FMChangeNote:
 ; Change all FM channels to Left Pan only
 
 command_FMUseLeft:	
-	ld		de,0xB540			; left pan
+	ld		de,0xB580			; left pan
 	rst 	writeDEportA		; channel 1
 	rst 	writeDEportB		; channel 5
-	ld		de,0xB640			; right pan
+	ld		de,0xB680			; left pan
 	rst 	writeDEportA		; channel 2
 	rst 	writeDEportB		; channel 6
 
@@ -496,10 +496,10 @@ command_FMUseCenter:
 ; Change all FM channels to Right Pan only
 
 command_FMUseRight:	
-	ld		de,0xB580			; left pan
+	ld		de,0xB540			; right pan
 	rst 	writeDEportA		; channel 1
 	rst 	writeDEportB		; channel 5
-	ld		de,0xB680			; right pan
+	ld		de,0xB640			; right pan
 	rst 	writeDEportA		; channel 2
 	rst 	writeDEportB		; channel 6
 
@@ -911,6 +911,31 @@ command_SSG_260hzStop:
 	ret
 
 ;------------------------------------------------------------------------------;
+; command_SSG_NoiseStart using Channel C
+;------------------------------------------------------------------------------;
+; Starts an 5khz-ish noise in Channel C
+
+command_SSG_NoiseStart:
+	ld		de,0x060A		; Noise Tune
+	rst 	writeDEportA
+
+	ld		de,0x0A0F		; SSG Channel C Volume
+	rst 	writeDEportA
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_SSG_NoiseStop using Channel C
+;------------------------------------------------------------------------------;
+; Stops Channel C
+
+command_SSG_NoiseStop:
+	ld		de,0x0A00		; SSG Channel B Volume
+	rst 	writeDEportA
+
+	ret
+
+;------------------------------------------------------------------------------;
 ; command_ssg_Stop (All channels)
 ;------------------------------------------------------------------------------;
 ; Silences and stops all SSG channels.
@@ -987,6 +1012,17 @@ command_PlayRightA:
 
 command_PlayCenterA:
 	ld		a,4				; sample 4
+	ld		b,0xc0			; center, both channels
+	call	PlayPCMA
+	ret
+
+;------------------------------------------------------------------------------;
+; SOUNDCMD_PlaySweep
+;------------------------------------------------------------------------------;
+; Play Sweep on the first ADPCM-A channel.
+
+command_PlaySweep:
+	ld		a,5				; sample 5
 	ld		b,0xc0			; center, both channels
 	call	PlayPCMA
 	ret
@@ -1122,12 +1158,12 @@ command_setADPCMB_Sample0:
 	ret
 
 ;------------------------------------------------------------------------------;
-; command_setADPCMB_Sample1
+; command_setADPCMB_LdSweep
 ;------------------------------------------------------------------------------;
 ; Load sample 1 to ADPCM-B RAM id
 ; then ADPCM-B sample.
 
-command_setADPCMB_Sample1:
+command_setADPCMB_LdSweep:
 	ld		a,1
 	ld		(intPCMB_currSample),a
 	ret
@@ -1348,14 +1384,14 @@ command_NoLoopPCMB:
 ;------------------------------------------------------------------------------;
 ; Sample Rates used in ADPCM-B
 ;------------------------------------------------------------------------------;
-; 11025 | delta-n: 0x32DA (13018) | rate: 1.00x | $80 | (native rate (encoded))
-; 16538 | delta-n: 0x4C49 (19529) | rate: ~1.5x | $81 |
-; 22050 | delta-n: 0x65B5 (26037) | rate: 2.00x | $82 |
-; 27563 | delta-n: 0x7F23 (32547) | rate: ~2.5x | $83 |
-; 33075 | delta-n: 0x9890 (39056) | rate: 3.00x | $84 |
-; 38588 | delta-n: 0xB1FE (45566) | rate: ~3.5x | $85 |
-; 44100 | delta-n: 0xCB6B (52075) | rate: 4.00x | $86 | (original sample's rate)
-; 55125 | delta-n: 0xFE45 (65093) | rate: 5.00x | $87 |
+; 11025 | delta-n: 0x32DA (13018) | rate: 1.00x | $40 | (min rate)
+; 16538 | delta-n: 0x4C49 (19529) | rate: ~1.5x | $41 |
+; 22050 | delta-n: 0x65B5 (26037) | rate: 2.00x | $42 |
+; 27563 | delta-n: 0x7F23 (32547) | rate: ~2.5x | $43 |
+; 33075 | delta-n: 0x9890 (39056) | rate: 3.00x | $44 |
+; 38588 | delta-n: 0xB1FE (45566) | rate: ~3.5x | $45 |
+; 44100 | delta-n: 0xCB6B (52075) | rate: 4.00x | $46 | 
+; 55125 | delta-n: 0xFE45 (65093) | rate: 5.00x | $47 | (max sample's rate)
 
 ; low byte (port 0x19)
 tbl_RatesPCMB_L:
@@ -1590,7 +1626,7 @@ CommandTbl:
     dw		command_PlayLeftA			; 0x21
     dw		command_PlayRightA			; 0x22
     dw		command_PlayCenterA			; 0x23
-	dw		command_null				; 0x24
+	dw		command_PlaySweep			; 0x24
 	dw		command_null				; 0x25
 	dw		command_null				; 0x26
 	dw		command_null				; 0x27
@@ -1609,7 +1645,7 @@ CommandTbl:
     dw		command_LoopPCMB			; 0x33
     dw		command_NoLoopPCMB			; 0x34
     dw		command_setADPCMB_Sample0	; 0x35
-	dw		command_setADPCMB_Sample1	; 0x36
+	dw		command_setADPCMB_LdSweep	; 0x36
 	dw		command_null				; 0x37
 	dw		command_null				; 0x38
 	dw		command_null				; 0x39
@@ -1645,8 +1681,8 @@ CommandTbl:
 	dw		command_SSG_1khzStop		; 0x55
 	dw		command_SSG_260hzStart		; 0x56
 	dw		command_SSG_260hzStop		; 0x57
-	dw		command_null				; 0x58
-	dw		command_null				; 0x59
+	dw		command_SSG_NoiseStart		; 0x58
+	dw		command_SSG_NoiseStop		; 0x59
 	dw		command_null				; 0x5A
 	dw		command_null				; 0x5B
 	dw		command_null				; 0x5C
