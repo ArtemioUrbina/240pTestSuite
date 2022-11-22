@@ -53,16 +53,27 @@
 #define SOUNDCMD_RateB_6		0x46
 #define SOUNDCMD_RateB_7		0x47
 
+#define SOUNDCMD_RateB_0_Play	0x48
+#define SOUNDCMD_RateB_1_Play	0x49
+#define SOUNDCMD_RateB_2_Play	0x4A
+#define SOUNDCMD_RateB_3_Play	0x4B
+#define SOUNDCMD_RateB_4_Play	0x4C
+#define SOUNDCMD_RateB_5_Play	0x4D
+#define SOUNDCMD_RateB_6_Play	0x4E
+#define SOUNDCMD_RateB_7_Play	0x4F
+
 #define SOUNDCMD_SSGRampinit	0x50
 #define SOUNDCMD_SSGRampcycle	0x51
-#define SOUNDCMD_SSGPulseStart	0x52
-#define SOUNDCMD_SSGPulseStop	0x53
-#define SOUNDCMD_SSG1KHZStart	0x54
-#define SOUNDCMD_SSG1KHZStop	0x55
-#define SOUNDCMD_SSG260HZStart	0x56
-#define SOUNDCMD_SSG260HZStop	0x57
-#define SOUNDCMD_SSGNoiseStart	0x58
-#define SOUNDCMD_SSGNoiseStop	0x59
+#define SOUNDCMD_SSGRampStep	0x52
+#define SOUNDCMD_SSGPulseStart	0x53
+#define SOUNDCMD_SSGPulseStop	0x54
+#define SOUNDCMD_SSG1KHZStart	0x55
+#define SOUNDCMD_SSG1KHZStop	0x56
+#define SOUNDCMD_SSG260HZStart	0x57
+#define SOUNDCMD_SSG260HZStop	0x58
+#define SOUNDCMD_SSGNoiseStart	0x59
+#define SOUNDCMD_SSGNoiseStop	0x5a
+#define SOUNDCMD_SSGNoiseRamp	0x5b
 #define SOUNDCMD_SSGStop		0x5f
 
 #define SOUNDCMD_FMInitSndTest	0x60

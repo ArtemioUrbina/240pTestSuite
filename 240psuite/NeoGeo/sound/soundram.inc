@@ -23,6 +23,7 @@ FM_ChannCycle		ds 1		; Toggle for FM channels
 ; [SSG Data]
 SSG_FreqCoarse		ds 1		; Coarse SSG frequency for ramp
 SSG_FreqFine		ds 1		; Fine SSG frequency for ramp
+SSG_NoiseTune		ds 1		; Noise SSG frequency for ramp
 
 ;==============================================================================;
 ; [ADPCM-A variables]

@@ -405,7 +405,7 @@ void executeSilence()
 		waitVBlank();
 }
 
-void waitADPCM(int frames)
+void waitSound(int frames)
 {
 	int frame = 0;
 
@@ -445,12 +445,6 @@ void at_sound_mdfourier()
 	int done = 0, draw = 1;
 	picture image;
 
-	//sendZ80command(SOUNDCMD_RateB_0+5);
-	sendZ80command(SOUNDCMD_NoLoopB);
-	sendZ80command(SOUNDCMD_ADPCMB_LdSweep);
-	sendZ80command(SOUNDCMD_ADPCMB_Center);
-	sendZ80command(SOUNDCMD_StopAll);
-
 	while (!done)
 	{
 		if (draw)
@@ -468,66 +462,77 @@ void at_sound_mdfourier()
 
 		if (BTTN_MAIN)
 		{
-			//int frame = 0;
+			int frame = 0;
 
-			sendZ80command(SOUNDCMD_SSGRampinit);
+			sendZ80command(SOUNDCMD_StopAll);
+
 			sendZ80command(SOUNDCMD_FMInitMDF);
+			sendZ80command(SOUNDCMD_SSGRampinit);
+
+			sendZ80command(SOUNDCMD_NoLoopB);
+			sendZ80command(SOUNDCMD_ADPCMB_LdSweep);
+
 			waitVBlank();
 
 			executePulseTrain();
 			executeSilence();
 
-			//ExecuteFM(20);
-			/*
-			for(frame = 0; frame < 4096; frame++)
+			ExecuteFM(20);
+
+			// First detailed SSG ramp
+			for(frame = 0; frame < 256; frame++)
 			{
-				sendZ80commandAtVideoStart(SOUNDCMD_SSGRampcycle);
+				sendZ80command(SOUNDCMD_SSGRampcycle);
+				waitVBlank();
+			}
+			// then low SSG tones ramp, at 0x10 steps (they would be 3840 frame otherwise)
+			for(frame = 0; frame < 240; frame++)
+			{
+				sendZ80command(SOUNDCMD_SSGRampStep);
 				waitVBlank();
 			}
 			sendZ80command(SOUNDCMD_SSGStop);
-			*/
-			// ADPCM-A takes 236.46 frames at 16.77724
-			// 3967.312 mmilliseconds
-			// in an AES NTSC System
-			//waitVBlank();
-			sendZ80command(SOUNDCMD_PlaySweep);
-			waitADPCM(240);
 
-			// ADPCM-B
-			// 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125
+			for(frame = 0; frame < 32; frame++)
+			{
+				sendZ80command(SOUNDCMD_SSGNoiseRamp);
+				waitSound(5);
+			}
 			
-			sendZ80command(SOUNDCMD_RateB_0);
-			sendZ80command(SOUNDCMD_ADPCMB_Center);
-			waitADPCM(610);
+			sendZ80command(SOUNDCMD_SSGStop);
+			waitVBlank();								// extra frame
 
-			sendZ80command(SOUNDCMD_RateB_2);
-			sendZ80command(SOUNDCMD_ADPCMB_Center);
-			waitADPCM(305);
+			// ADPCM-A takes 236.46 frames at 16.77724
+			// 3967.312 mmilliseconds in an AES NTSC System
+			sendZ80command(SOUNDCMD_PlaySweep);
+			waitSound(240);
 
-			sendZ80command(SOUNDCMD_RateB_6);
-			sendZ80command(SOUNDCMD_ADPCMB_Center);
-			waitADPCM(152);
+#ifndef __cd__
+			// ADPCM-B not present in Neo Geo CD
+			sendZ80command(SOUNDCMD_RateB_0_Play);			// 11025hz
+			waitSound(610);
 
-			// 2.01968
-			// 121 frames
-			sendZ80command(SOUNDCMD_RateB_7);
-			sendZ80command(SOUNDCMD_ADPCMB_Center);
-			waitADPCM(122);
+			sendZ80command(SOUNDCMD_RateB_2_Play);			// 22050hz
+			waitSound(305);
 
+			sendZ80command(SOUNDCMD_RateB_6_Play);			// 44100hz
+			waitSound(152);
+
+			// 2.01968 seconds or 121 frames
+			sendZ80command(SOUNDCMD_RateB_7_Play);			// 55125hz
+			waitSound(122);
+#else
+			// 10.8 seconds or 643.73 frames in AES NTSC
+			playCDDA(CDDA_MDFOURIER, 0);
+			waitSound(644);
+			pauseCDDA(0);
+			waitVBlank();								// extra frame
+#endif
 			executeSilence();
 
 			executePulseTrain();
-		}
 
-		if (BTTN_OPTION_1)
-		{
-			sendZ80command(SOUNDCMD_PlaySweep);
-		}
-
-		if (BTTN_OPTION_2)
-		{
-			sendZ80command(SOUNDCMD_RateB_7);
-			sendZ80command(SOUNDCMD_ADPCMB_Center);
+			sendZ80command(SOUNDCMD_StopAll);
 		}
 
 		if (BTTN_EXIT)
@@ -536,7 +541,11 @@ void at_sound_mdfourier()
 		if (checkHelp(HELP_SOUND))
 			draw = 1;
 	}
+
 	sendZ80command(SOUNDCMD_StopAll);
+#ifdef __cd__
+	pauseCDDA(0);
+#endif
 }
 
 void at_audiosync_test()

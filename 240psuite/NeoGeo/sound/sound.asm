@@ -144,6 +144,7 @@ EntryPoint:
 	; Initialize SSG frequencies
 	ld		(SSG_FreqCoarse),a
 	ld		(SSG_FreqFine),a
+	ld		(SSG_NoiseTune),a
 
 	; APCM-A 
 	ld		(PCMnextChannel),a
@@ -784,6 +785,7 @@ command_SSGrampInit:
 	xor		a
 	ld		(SSG_FreqCoarse),a
 	ld		(SSG_FreqFine),a
+	ld		(SSG_NoiseTune),a
 
 	ret
 
@@ -809,6 +811,45 @@ command_SSGrampCycle:
 	; Advance to next frequency
 	ld		a,(SSG_FreqFine)
 	inc 	a
+	ld		(SSG_FreqFine),a
+	cp		0x00
+	jr		nz,.finish_ssg
+
+	; Advance to next Coarse frequency
+	ld		a,(SSG_FreqCoarse)
+	inc 	a
+	cp		0x10
+	jp		nz,.update_coarse_ssg
+	ld		a,0
+.update_coarse_ssg:
+	ld		(SSG_FreqCoarse),a
+
+.finish_ssg:
+	ret
+
+;------------------------------------------------------------------------------;
+; command_SSGrampCycleStep
+;------------------------------------------------------------------------------;
+; Does a cycle in the Ramp sweep for SSG using channel A, but in 0x10 steps
+
+command_SSGrampCycleStep:
+	ld		d,0x01			;SSG Channel A Coarse Tune
+	ld		a,(SSG_FreqCoarse)
+	ld		e,a				; coarse freq
+	rst 	writeDEportA
+
+	ld		d,0x00			;SSG Channel A Fine Tune
+	ld		a,(SSG_FreqFine)
+	and		0x0f			; use the lowest freq
+	ld		e,a				; fine freq
+	rst 	writeDEportA
+
+	ld		de,0x080F		;SSG Channel A Volume
+	rst 	writeDEportA
+
+	; Advance to next frequency
+	ld		a,(SSG_FreqFine)
+	add 	0x10			; 0x10 steps
 	ld		(SSG_FreqFine),a
 	cp		0x00
 	jr		nz,.finish_ssg
@@ -932,6 +973,27 @@ command_SSG_NoiseStart:
 command_SSG_NoiseStop:
 	ld		de,0x0A00		; SSG Channel B Volume
 	rst 	writeDEportA
+
+	ret
+
+;------------------------------------------------------------------------------;
+; command_SSG_NoiseRampCycle using Channel C
+;------------------------------------------------------------------------------;
+; steps an noise ramp in Channel C
+
+command_SSG_NoiseRampCycle:
+	ld		d,0x06			; Noise Tune
+	ld		a,(SSG_NoiseTune)
+	ld		e,a
+	rst 	writeDEportA
+
+	ld		de,0x0A0F		; SSG Channel C Volume
+	rst 	writeDEportA
+
+	; Advance to next frequency
+	ld		a,(SSG_NoiseTune)
+	inc 	a
+	ld		(SSG_NoiseTune),a
 
 	ret
 
@@ -1453,6 +1515,16 @@ command_ChangeRate:
 	ret
 
 ;------------------------------------------------------------------------------;
+; command_ChangeRatePlay (commands $48-$4f)
+;------------------------------------------------------------------------------;
+; Changes rate of ADPCM-B sample and plays back. Takes current command in a
+
+command_ChangeRatePlay:
+	call	command_ChangeRate
+	call	command_PlayPCMBCenter
+	ret
+
+;------------------------------------------------------------------------------;
 ; command_PCMBStop
 ;------------------------------------------------------------------------------;
 ; Stops the ADPCM-B channel.
@@ -1664,27 +1736,27 @@ CommandTbl:
 	dw		command_ChangeRate			; 0x45
 	dw		command_ChangeRate			; 0x46
 	dw		command_ChangeRate			; 0x47
-	dw		command_null				; 0x48
-	dw		command_null				; 0x49
-	dw		command_null				; 0x4A
-	dw		command_null				; 0x4B
-	dw		command_null				; 0x4C
-	dw		command_null				; 0x4D
-	dw		command_null				; 0x4E
-	dw		command_null				; 0x4f
+	dw		command_ChangeRatePlay		; 0x48
+	dw		command_ChangeRatePlay		; 0x49
+	dw		command_ChangeRatePlay		; 0x4A
+	dw		command_ChangeRatePlay		; 0x4B
+	dw		command_ChangeRatePlay		; 0x4C
+	dw		command_ChangeRatePlay		; 0x4D
+	dw		command_ChangeRatePlay		; 0x4E
+	dw		command_ChangeRatePlay		; 0x4f
 
 	dw		command_SSGrampInit			; 0x50
 	dw		command_SSGrampCycle		; 0x51
-	dw		command_SSG_pulseStart		; 0x52
-	dw		command_SSG_pulseStop		; 0x53
-	dw		command_SSG_1khzStart		; 0x54
-	dw		command_SSG_1khzStop		; 0x55
-	dw		command_SSG_260hzStart		; 0x56
-	dw		command_SSG_260hzStop		; 0x57
-	dw		command_SSG_NoiseStart		; 0x58
-	dw		command_SSG_NoiseStop		; 0x59
-	dw		command_null				; 0x5A
-	dw		command_null				; 0x5B
+	dw		command_SSGrampCycleStep	; 0x52
+	dw		command_SSG_pulseStart		; 0x53
+	dw		command_SSG_pulseStop		; 0x54
+	dw		command_SSG_1khzStart		; 0x55
+	dw		command_SSG_1khzStop		; 0x56
+	dw		command_SSG_260hzStart		; 0x57
+	dw		command_SSG_260hzStop		; 0x58
+	dw		command_SSG_NoiseStart		; 0x59
+	dw		command_SSG_NoiseStop		; 0x5A
+	dw		command_SSG_NoiseRampCycle	; 0x5B
 	dw		command_null				; 0x5C
 	dw		command_null				; 0x5D
 	dw		command_null				; 0x5E
