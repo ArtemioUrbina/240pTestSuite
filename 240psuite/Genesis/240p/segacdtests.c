@@ -1553,11 +1553,29 @@ uint8_t segacd_init()
 	segacd_bios_addr = DetectSCDBIOS(0x400000);
 	if (!segacd_bios_addr)
 	{
-		ShowMessageAndData("SCD BIOS not found", 0, 0, PAL0, 10, 10);
+		ShowMessageAndData("SCD BIOS not found", 0, 0, PAL0, 10, ypos);
 		WaitKey(NULL);
 		return 0;
 	}
 	ShowMessageAndData("SCD BIOS Detected at", (uint32_t)segacd_bios_addr, 8, PAL1, 4, ypos++);
+	
+	// Clear Word RAM
+	ShowMessageAndData("Clearing WORD RAM at", 0x600000, 8, PAL1, 4, ypos++);
+	if(Test16bitRegion(0, (uint32_t)0x600000, (uint32_t)0x040000) != MEMORY_OK)
+	{
+		ShowMessageAndData("WORD RAM failed. A to continue", 0, 0, PAL0, 4, ypos++);
+		if(WaitKey(NULL) != BUTTON_A)
+			return 0;
+	}
+	
+	// Clear program ram first bank - needed for the LaserActive
+	ShowMessageAndData("Clearing PRGM RAM at", 0x420000, 8, PAL1, 4, ypos++);
+	if(Test16bitRegion(0, (uint32_t)0x420000, (uint32_t)0x20000) != MEMORY_OK)
+	{
+		ShowMessageAndData("PROGRAM RAM failed. A to continue", 0, 0, PAL0, 4, ypos++);
+		if(WaitKey(NULL) != BUTTON_A)
+			return 0;
+	}
 	
 	// Prepare for loading the data
 	VDP_drawTextBG(APLAN, "Sending Reset to SCD", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
@@ -1569,7 +1587,6 @@ uint8_t segacd_init()
      */
 	VDP_drawTextBG(APLAN, "Decompressing SCD BIOS", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
     write_word(0xA12002, 0x0002); // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
-    memset((void *)0x420000, 0, (uint8_t)0x20000); // clear program ram first bank - needed for the LaserActive
 	Kos_Decomp(segacd_bios_addr, (uint8_t *)0x420000);
 	VDP_waitVSync();
 

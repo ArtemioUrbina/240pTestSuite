@@ -651,8 +651,8 @@ void DrawIntro()
 void Detect_MD(char *str)
 {
 	volatile char *pointer = NULL;
-	u16 IsPAL = 0, data = 0;
-	u16 TMSS = 0, IsAsia = 0;
+	u8 IsPAL = 0, data = 0;
+	u8 TMSS = 0, IsAsia = 0;
 
 	pointer = (char *)0xA10001;
 

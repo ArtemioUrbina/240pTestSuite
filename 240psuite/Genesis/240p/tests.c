@@ -1447,11 +1447,11 @@ enum SounTestValue{
 
 void SoundTest()
 {
-	int sel = 2, loadvram = 1, psgoff = 0, fmpan = 1, fmoff = 0;
+	int sel = 5, loadvram = 1, psgoff = 0, fmpan = 1, fmoff = 0, fmchan = 3;
 	int type = stFM;
 	u16 exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-	u16 redraw = 0, selmax = 5;
+	u16 redraw = 0, selmax = 11;
 	int octave = 24;
 #ifdef SEGACD
 	int pcm = 0, sampleType = 0;
@@ -1475,7 +1475,7 @@ void SoundTest()
 		
 		if(redraw)
 		{
-			int x = 13;
+			int x = 13, xn = 7;
 #ifdef SEGACD
 			int y = 8;
 #else
@@ -1488,12 +1488,18 @@ void SoundTest()
 			VDP_drawTextBG(APLAN, "Sound Test", TILE_ATTR(PAL1, 0, 0, 0), x+1, 6);
 			
 			VDP_drawTextBG(APLAN, "YM2612 FM", TILE_ATTR(PAL1, 0, 0, 0), x+2, y++);
-			VDP_drawTextBG(APLAN, "1", TILE_ATTR((type == stFM && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x+1, y);
-			VDP_drawTextBG(APLAN, "2", TILE_ATTR((type == stFM && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+3, y);
-			VDP_drawTextBG(APLAN, "3", TILE_ATTR((type == stFM && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+5, y);
-			VDP_drawTextBG(APLAN, "4", TILE_ATTR((type == stFM && sel == 3) ? PAL3 : PAL0, 0, 0, 0), x+7, y);
-			VDP_drawTextBG(APLAN, "5", TILE_ATTR((type == stFM && sel == 4) ? PAL3 : PAL0, 0, 0, 0), x+9, y);
-			VDP_drawTextBG(APLAN, "6", TILE_ATTR((type == stFM && sel == 5) ? PAL3 : PAL0, 0, 0, 0), x+11, y);
+			VDP_drawTextBG(APLAN, "1", TILE_ATTR((type == stFM && sel == 0) ? PAL3 : PAL0, 0, 0, 0), xn+1, y);
+			VDP_drawTextBG(APLAN, "2", TILE_ATTR((type == stFM && sel == 1) ? PAL3 : PAL0, 0, 0, 0), xn+3, y);
+			VDP_drawTextBG(APLAN, "3", TILE_ATTR((type == stFM && sel == 2) ? PAL3 : PAL0, 0, 0, 0), xn+5, y);
+			VDP_drawTextBG(APLAN, "4", TILE_ATTR((type == stFM && sel == 3) ? PAL3 : PAL0, 0, 0, 0), xn+7, y);
+			VDP_drawTextBG(APLAN, "5", TILE_ATTR((type == stFM && sel == 4) ? PAL3 : PAL0, 0, 0, 0), xn+9, y);
+			VDP_drawTextBG(APLAN, "6", TILE_ATTR((type == stFM && sel == 5) ? PAL3 : PAL0, 0, 0, 0), xn+11, y);
+			VDP_drawTextBG(APLAN, "7", TILE_ATTR((type == stFM && sel == 6) ? PAL3 : PAL0, 0, 0, 0), xn+13, y);
+			VDP_drawTextBG(APLAN, "8", TILE_ATTR((type == stFM && sel == 7) ? PAL3 : PAL0, 0, 0, 0), xn+15, y);
+			VDP_drawTextBG(APLAN, "9", TILE_ATTR((type == stFM && sel == 8) ? PAL3 : PAL0, 0, 0, 0), xn+17, y);
+			VDP_drawTextBG(APLAN, "A", TILE_ATTR((type == stFM && sel == 9) ? PAL3 : PAL0, 0, 0, 0), xn+19, y);
+			VDP_drawTextBG(APLAN, "B", TILE_ATTR((type == stFM && sel == 10) ? PAL3 : PAL0, 0, 0, 0), xn+21, y);
+			VDP_drawTextBG(APLAN, "C", TILE_ATTR((type == stFM && sel == 11) ? PAL3 : PAL0, 0, 0, 0), xn+23, y);
 			y++;
 			VDP_drawTextBG(APLAN, "FM Octave:", TILE_ATTR((type == stFMOct && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x, y);
 			intToStr(octave, buffer, 2);
@@ -1565,7 +1571,7 @@ void SoundTest()
 			switch(type)
 			{
 				case stFM:
-					selmax = 5;
+					selmax = 11;
 					break;
 				case stFMOct:
 					selmax = 0;
@@ -1628,8 +1634,10 @@ void SoundTest()
 			{
 				case stFM: //YM2612
 				{
-					ymPlay(3, sel, octave, fmpan == 0 ? STEREO_LEFT: fmpan == 1 ? STEREO_BOTH : STEREO_RIGHT);
-					fmoff = 120;
+					ymPlay(fmchan, sel, octave, fmpan == 0 ? STEREO_LEFT: fmpan == 1 ? STEREO_BOTH : STEREO_RIGHT);
+					//fmoff = 120;
+					if(++fmchan > 5)
+						fmchan = 3;
 				}
 				break;
 				case stFMOct: // Octave
@@ -2593,6 +2601,7 @@ void DisappearingLogo()
 	u16 x = 132, y = 60, exit = 0, draw = 1, reload = 1;
 	u16 buttons, pressedButtons, oldButtons = 0xffff, redraw = 1;
 	u16 numbers[11];
+	u16 custom_pal[16], oldColor = 0, frames = 2;
 	timecode tc;
 
 	memset(&tc, 0, sizeof(timecode));		
@@ -2606,8 +2615,11 @@ void DisappearingLogo()
 			VDP_setScreenWidth320();
 			VDP_clearTileMapRect(BPLAN, 0, 0, 320 / 8, getVerticalRes() / 8);
 			
-			VDP_setPalette(PAL2, palette_grey);
+			VDP_setPalette(PAL2, palette_green);
 			VDP_setPalette(PAL3, gillian_pal);
+			
+			VDP_getPalette(PAL0, custom_pal);
+			oldColor = custom_pal[0];
 			
 			size = sizeof(gillian_tiles) / 32;
 			VDP_loadTileData(gillian_tiles, TILE_USERINDEX, size, USE_DMA);
@@ -2659,5 +2671,29 @@ void DisappearingLogo()
 			draw = !draw;
 			redraw = 1;
 		}		
+		
+		if(frames)
+		{
+			frames--;
+			if(!frames)
+			{
+				VDP_Start();
+				custom_pal[0] = oldColor;
+				VDP_setPalette(PAL0, custom_pal);
+				VDP_End();
+			}
+		}
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			if(!frames)
+			{
+				VDP_Start();
+				custom_pal[0] = 0x0fff;
+				VDP_setPalette(PAL0, custom_pal);
+				VDP_End();
+				frames = 2;
+			}
+		}
 	}
 }
