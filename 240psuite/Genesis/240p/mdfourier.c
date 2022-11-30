@@ -356,34 +356,31 @@ void ExecuteSilence()
 
 void ExecuteFM(u16 framelen)
 {
-	int type, octave, frame;
+	int octave, frame;
 	
 	// FM Test
-	for(type = 0; type < 1; type++)
+	for(octave = 0; octave <= 56; octave += 8)
 	{
-		for(octave = 0; octave <= 56; octave += 8)
+		int chann = 0, note;
+		
+		for(note = 0; note < 12; note++)
 		{
-			int chann = 0, note;
-			
-			for(note = 0; note < 12; note++)
-			{
-				ymPlay(chann, note, octave, STEREO_LEFT);
+			ymPlay(chann, note, octave, STEREO_LEFT);
 
-				ymPlay(chann+3, note, octave, STEREO_RIGHT);
-				
-				for(frame = 0; frame < framelen; frame++)
-				{					
-					if(frame == framelen - framelen/5)
-					{
-						ym2612_keyoff(chann);
-						ym2612_keyoff(chann+3);
-					}
-					VDP_waitVSyncMDF();
+			ymPlay(chann+3, note, octave, STEREO_RIGHT);
+			
+			for(frame = 0; frame < framelen; frame++)
+			{					
+				if(frame == framelen - framelen/5)
+				{
+					ym2612_keyoff(chann);
+					ym2612_keyoff(chann+3);
 				}
-				chann ++;
-				if(chann > 2)
-					chann = 0;
+				VDP_waitVSyncMDF();
 			}
+			chann ++;
+			if(chann > 2)
+				chann = 0;
 		}
 	}
 	ym2612_keyoffAll();
