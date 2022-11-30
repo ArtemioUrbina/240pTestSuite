@@ -2368,6 +2368,8 @@ void DrawHCFR()
 	hcfr_colors = LoadHCFR(filenames[selected_hcfr].filename, &hcfr_num);
 	if(!hcfr_colors)
 	{
+		releaseCSVList(&filenames, num_files);
+		free(resmenudata);
 		DrawMessage("Could not load HCFR CSV file");
 		return;
 	}

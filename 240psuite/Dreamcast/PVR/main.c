@@ -1115,13 +1115,13 @@ void SD_blink_cycle()
 		}
 		else
 		{
-			if(blink_counter >= 234 && blink_counter < 238)
+			if(blink_counter >= 232 && blink_counter < 234)
 				DrawImage(SD_b2);
 				
-			if(blink_counter >= 238 && blink_counter < 242)
+			if(blink_counter >= 234 && blink_counter < 238)
 				DrawImage(SD_b1);
 	
-			if(blink_counter >= 242)
+			if(blink_counter >= 238)
 			{	
 				blink_counter = 0;
 				is_blinking = 0;
