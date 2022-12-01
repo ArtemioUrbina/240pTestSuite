@@ -60,6 +60,15 @@ void clearController();
 
 void fixPrintC(int y, int color, int font, char *str);
 
+typedef struct menu_data {
+    int		option_value;
+	char	*option_text;
+} fmenudata;
+
+#define SEL_MENU_CANCEL -1
+
+int select_menu(char *title, fmenudata *menu_data, int num_options, int selected_option);
+
 // get Sprite Count from picture
 int getPicSprites(pictureInfo *picinfo);
 // Scroller Data
@@ -77,6 +86,7 @@ void sendZ80commandAtVideoStart(u8 command);
 void sendZ80commandAtVideoEnd(u8 command);
 void sendZ80commandAtLine(WORD line, u8 command);
 void sendZ80commandnoWait(u8 command);
+int verifyZ80Version();
 
 #ifdef __cd__
 void playCDDA(BYTE track, BYTE wait);
@@ -117,6 +127,7 @@ void stopCDDA(BYTE wait);
 #define BTTN_OPTION_1	PRESSED_C
 #define BTTN_OPTION_2	PRESSED_D
 #define BTTN_HELP		PRESSED_START
+#define BTTN_ANY		PRESSED_A || PRESSED_B || PRESSED_C || PRESSED_D || PRESSED_START || PRESSED_START
 
 #define NTSC_304		0
 #define NTSC_320		320

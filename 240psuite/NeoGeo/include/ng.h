@@ -42,6 +42,8 @@ extern bkp_ram_info bkp_data;
 #define DP_DEBUG7			0x40
 #define DP_DEBUG8			0x80
 
+#define DEBUG_ENABLED (bkp_data.debug_dip1 & DP_DEBUG1)
+
 extern BYTE isMVS, is4S, is6S, isMulti, hwChange, allowIRE107;
 extern BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
 extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
@@ -144,11 +146,14 @@ extern BYTE isCDFront, isCDZ, ngcd_region;
 #define RETURN_TO_BIOS	__asm__ ("jmp 0xC00444 \n")
 #define BIOS_READ_CLDR	__asm__ ("jmp 0xC0045C \n")
 
-#define SOFT_DIP_1			0x10FD8A	// ENABLE MVS DEMO
-#define SOFT_DIP_2			0x10FD8B	// DISPLAY AVAILABLE CREDITS
-#define SOFT_DIP_3			0x10FD8C	// FORCE 4P CONTROLLER TEST
-#define SOFT_DIP_4			0x10FD8D	// ENABLE 320 HORIZONTAL RESOLUTION AS DEFAULT
-#define SOFT_DIP_5			0x10FD8E	// ENABLE WARNINGS
+#define SD_MVS_DEMO			0x10FD8A	// 1 ENABLE MVS DEMO
+#define SD_DISP_CREDITS		0x10FD8B	// 2 DISPLAY AVAILABLE CREDITS
+#define SD_FORCE_4P			0x10FD8C	// 3 FORCE 4P CONTROLLER TEST
+#define SD_DFLT_320_H		0x10FD8D	// 4 ENABLE 320 HORIZONTAL RESOLUTION AS DEFAULT
+#define SD_WARNING_ENABLE	0x10FD8E	// 5 ENABLE WARNINGS
+#define SD_MV1C_STEREO		0x10FD8F	// 6 ADPCM-B MV1C Reversed
+#define SD_UNUSED_7			0x10FD90	// 7 Unused
+#define SD_UNUSED_8			0x10FD91	// 8 Unused
 
 #define BIOS_ADDRESS		0xC00000
 

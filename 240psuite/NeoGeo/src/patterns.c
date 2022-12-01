@@ -30,6 +30,7 @@
 #include "help.h"
 #include "string_ng.h"
 #include "tools.h"
+#include "hcfr.h"
 
 BYTE first_grid;
 BYTE first_overscan;
@@ -913,7 +914,7 @@ void tp_gray_ramp()
 				break;
 			}
 
-			if (bkp_data.debug_dip1 & DP_DEBUG1)
+			if (DEBUG_ENABLED)
 			{
 				display_ramp_pal(ramp_light_pal, 4);
 				display_ramp_pal(ramp_dark_pal, 12);
@@ -998,16 +999,14 @@ void tp_white_rgb()
 
 	if(allowIRE107)
 		edit_color = WH_107;
-	else
-	{
+	else {
 		edit_color = WH_100;
 		dark = 1;
 	}
 
 	while (!done)
 	{
-		if (draw)
-		{
+		if (draw) {
 			gfxClear();
 			switch (color)
 			{
@@ -1034,15 +1033,13 @@ void tp_white_rgb()
 			draw = 0;
 		}
 
-		if (text)
-		{
+		if (text) {
 			text--;
 			if (!text)
 				suiteClearFixLayer();
 		}
 
-		if (editmode)
-		{
+		if (editmode) {
 			fixPrintf(15, 5, fontColorSolid, 4, "%cR:%02d %cG:%02d %cB:%02d %cD: %d", 
 								sel == 0 ? '>' : ' ', r, 
 								sel == 1 ? '>' : ' ', g,
@@ -1055,16 +1052,13 @@ void tp_white_rgb()
 
 		readController();
 
-		if (!editmode)
-		{
-			if (PRESSED_RIGHT || BTTN_OPTION_1)
-			{
+		if (!editmode) {
+			if (PRESSED_RIGHT || BTTN_OPTION_1)	{
 				color++;
 				draw = 1;
 			}
 
-			if (PRESSED_LEFT || BTTN_OPTION_2)
-			{
+			if (PRESSED_LEFT || BTTN_OPTION_2) {
 				color--;
 				draw = 1;
 			}
@@ -1075,12 +1069,10 @@ void tp_white_rgb()
 			if (color < 1)
 				color = 5;
 
-			if (draw)
-			{
+			if (draw) {
 				char colorname[20];
 
-				switch (color)
-				{
+				switch (color) {
 					case 1:
 						sprintf(colorname, "%s", edit_color != WH_100 ? "Edit " : "White");
 					break;
@@ -1112,14 +1104,12 @@ void tp_white_rgb()
 		if (BTTN_MAIN && color == 1 && !editmode)
 			editmode = 1;
 
-		if (BTTN_EXIT)
-		{
+		if (BTTN_EXIT) {
 			if(color == 1)
 			{
 				if (!editmode)
 					done = 1;
-				else
-				{
+				else {
 					editmode = 0;
 					suiteClearFixLayer();
 				}
@@ -1128,8 +1118,7 @@ void tp_white_rgb()
 				done = 1;
 		}
 
-		if (editmode)
-		{
+		if (editmode) {
 			short *edit = NULL, hasedit = 0;
 
 			if (PRESSED_LEFT)
@@ -1143,8 +1132,7 @@ void tp_white_rgb()
 			if (sel > 3)
 				sel = 0;
 
-			switch (sel)
-			{
+			switch (sel) {
 				case 0:
 					edit = &r;
 				break;
@@ -1162,50 +1150,42 @@ void tp_white_rgb()
 				break;
 			}
 
-			if (PRESSED_UP)
-			{
+			if (PRESSED_UP)	{
 				(*edit)++;
 				hasedit = 1;
 			}
 
-			if (PRESSED_DOWN)
-			{
+			if (PRESSED_DOWN) {
 				(*edit)--;
 				hasedit = 1;
 			}
 
-			if (BTTN_OPTION_1)
-			{
+			if (BTTN_OPTION_1) {
 				*edit = 0;
 				hasedit = 1;
 			}
 
-			if (BTTN_OPTION_2)
-			{
+			if (BTTN_OPTION_2) {
 				*edit = 31;
 				hasedit = 1;
 			}
 
-			if (BTTN_MAIN)
-			{
+			if (BTTN_MAIN) {
 				dark = !dark;
 				hasedit = 1;
 			}
 
-			if (hasedit)
-			{
+			if (hasedit) {
 				int warn = 0;
 
-				if (sel != 3)
-				{
+				if (sel != 3) {
 					if(*edit < 0)
 						*edit = 0;
 					if(*edit > 31)
 						*edit = 31;
 				}
 
-				if (sel == 3)
-				{
+				if (sel == 3) {
 					if(*edit < 0)
 						*edit = 0;
 					if(*edit > 1)
@@ -1213,29 +1193,24 @@ void tp_white_rgb()
 				}
 
 				edit_color = PackColor(r, g, b, dark);
-				if(!allowIRE107 && edit_color == WH_107)
-				{
+				if(!allowIRE107 && edit_color == WH_107) {
 					edit_color = WH_100;
 					warn = 1;
 				}
-				if(!allowIRE107 && edit_color == RED107)
-				{
+				if(!allowIRE107 && edit_color == RED107) {
 					edit_color = RED100;
 					warn = 1;
 				}
-				if(!allowIRE107 && edit_color == GRN107)
-				{
+				if(!allowIRE107 && edit_color == GRN107) {
 					edit_color = GRN100;
 					warn = 1;
 				}
-				if(!allowIRE107 && edit_color == BLU107)
-				{
+				if(!allowIRE107 && edit_color == BLU107) {
 					edit_color = BLU100;
 					warn = 1;
 				}
 
-				if(warn)
-				{
+				if(warn) {
 					dark = 1;
 					fixPrint(5, 8, fontColorSolid, 4, "IRE limited to 100 in options");
 					text = 60;
@@ -1244,8 +1219,7 @@ void tp_white_rgb()
 				backgroundColor(edit_color);
 			}
 
-			if (bkp_data.debug_dip1 & DP_DEBUG1)
-			{
+			if (DEBUG_ENABLED) {
 				char buffer[7];
 
 				sprintf(buffer, "0x");
@@ -1258,11 +1232,14 @@ void tp_white_rgb()
 
 void tp_100_ire()
 {
-	int done = 0, text = 0, draw = 1, changed = 0, irenum = 9;
-	ushort irevals[] = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 107};
-	ushort irecolor[] = {IRE_10, IRE_20, IRE_30, IRE_40, IRE_50, IRE_60, IRE_70, IRE_80, IRE_90, WH_100, WH_107};
+	int done = 0, text = 0, draw = 1, changed = 0, irenum = 10, iremax = 10;
+	ushort irevals[] = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 107};
+	ushort irecolor[] = {_BLACK, IRE_10, IRE_20, IRE_30, IRE_40, IRE_50, IRE_60, IRE_70, IRE_80, IRE_90, WH_100, WH_107};
 	ushort pal_ire[] = { _BLACK, _BLACK, WH_100, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
 	picture ire_back;
+
+	if (allowIRE107)
+		iremax = 11;
 
 	while (!done)
 	{
@@ -1296,7 +1273,7 @@ void tp_100_ire()
 
 		readController();
 
-		if (BTTN_MAIN)
+		if (BTTN_MAIN || PRESSED_LEFT)
 		{
 			if (irenum != 0)
 			{
@@ -1305,9 +1282,9 @@ void tp_100_ire()
 			}
 		}
 
-		if (BTTN_OPTION_1)
+		if (BTTN_MAIN || PRESSED_RIGHT)
 		{
-			if (irenum != (allowIRE107 ? 10 : 9))
+			if (irenum != iremax)
 			{
 				irenum++;
 				changed = 1;
@@ -1488,7 +1465,7 @@ void tp_overscan()
 			fixPrintf(9, 17, fontColorWhite, 3, " Right overscan:  %3d", right_x - r_min);
 			fixPrintf(9, 13+sel, fast ? fontColorRed : fontColorGreen, 3, ">");
 
-			if (bkp_data.debug_dip1 & DP_DEBUG1)
+			if (DEBUG_ENABLED)
 			{
 				fixPrintf(8, 18, fontColorGreen, 3, "Top Y:    %4d(%04d/%04d)", top_y, t_min, t_max);
 				fixPrintf(8, 19, fontColorGreen, 3, "Bottom Y: %4d(%04d/%04d)", bottom_y, b_min, b_max);
@@ -1679,5 +1656,109 @@ void tp_convergence()
 
 		if (checkHelp(HELP_CONVERGENCE))
 			draw = 1;
+	}
+}
+
+void tp_hcfr()
+{
+	int done = 0, draw = 1, changed = 0, hcfr_num = 0, hcfr_type = 0, i = 0;
+	fmenudata	fmenu[HCFR_TYPES+1];
+	picture hcfr_back;
+
+	for(i = 0; i < HCFR_TYPES; i++)
+	{
+		fmenu[i].option_value = i;
+		fmenu[i].option_text = hcfr_data[i].name;
+	}
+
+	hcfr_type = select_menu("Select Standard", fmenu, HCFR_TYPES, 0);
+	if(hcfr_type == SEL_MENU_CANCEL)
+		return;
+
+	while (!done)
+	{
+		if (draw)
+		{
+			int p = 0;
+
+			gfxClear();
+
+			pictureInit(&hcfr_back, &hcfr, 1, 16, 0, 0,FLIP_NONE);
+			for(p = 0; p < 16; p++)
+				VRAM_PAL(16, p) = _BLACK;
+			draw = 0;
+			changed = 1;
+		}
+
+		if(changed)
+		{
+			char buffer[50];
+
+			VRAM_PAL(16, 2) = hcfr_data[hcfr_type].data[hcfr_num].color;
+			suiteClearFixLayer();
+			sprintf(buffer, "%s %02d,%02d,%02d %c", hcfr_data[hcfr_type].data[hcfr_num].name,
+					hcfr_data[hcfr_type].data[hcfr_num].r, hcfr_data[hcfr_type].data[hcfr_num].g, 
+					hcfr_data[hcfr_type].data[hcfr_num].b, hcfr_data[hcfr_type].data[hcfr_num].d ? '-' : '+');
+			fixPrintC(25, fontColorGrayLight, 3, buffer);
+			if (DEBUG_ENABLED) {
+				char bufferD[50];
+
+				sprintf(bufferD, "%03d,%03d,%03d 0x", 
+					hcfr_data[hcfr_type].data[hcfr_num].r_src, hcfr_data[hcfr_type].data[hcfr_num].r_src, 
+					hcfr_data[hcfr_type].data[hcfr_num].g_src);
+				intToHex(hcfr_data[hcfr_type].data[hcfr_num].color, bufferD+14, 4);
+				fixPrintC(26, fontColorGrayLight, 3, bufferD);
+				fixPrintC(27, fontColorGrayLight, 3, hcfr_data[hcfr_type].name);
+			}
+			changed = 0;
+		}
+		
+		SCClose();
+		waitVBlank();
+
+		readController();
+
+		if (checkHelp(HELP_HCFR))
+			draw = 1;
+
+		if (BTTN_EXIT)
+			done = 1;
+
+		if (BTTN_MAIN || PRESSED_LEFT)
+		{
+			if (hcfr_num > 0)
+			{
+				hcfr_num--;
+				changed = 1;
+			}
+		}
+
+		if (BTTN_OPTION_1 || PRESSED_RIGHT)
+		{
+			if (hcfr_num < HCFR_LEN)
+			{
+				hcfr_num++;
+				changed = 1;
+			}
+		}
+
+		if (BTTN_OPTION_1)
+		{
+			hcfr_num = 0;
+			changed = 1;
+		}
+
+		if (BTTN_OPTION_2)
+		{
+			int tmp_hcfr_type = 0;
+
+			tmp_hcfr_type = select_menu("Select Standard", fmenu, HCFR_TYPES, hcfr_type);
+			if(tmp_hcfr_type != SEL_MENU_CANCEL && tmp_hcfr_type != hcfr_type)
+			{
+				hcfr_type = tmp_hcfr_type;
+				hcfr_num = 0;
+			}
+			draw = 1;
+		}
 	}
 }

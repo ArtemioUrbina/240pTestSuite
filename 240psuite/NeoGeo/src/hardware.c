@@ -91,7 +91,7 @@ void ht_controller_test()
 		if (isMVS && (detected4p || hardDip2      || // hard dip 2 status
 			volMEMBYTE(BIOS_4P_MODE)    == 0xFF   || // Main 4P flag, is set when hard dip 2 is on and 4P board is found. 
 			volMEMBYTE(BIOS_4P_PLUGGED) == 0xFF   || // 4P compatible bios will check for 4P board regardless of dip2 switch status. 
-			volMEMBYTE(SOFT_DIP_3)))				 // Soft dip failback, so the user can force it in MVS mode
+			volMEMBYTE(SD_FORCE_4P)))				 // Soft dip failback, so the user can force it in MVS mode
 		{
 			y = 9;
 			enable4p = 1;
@@ -861,16 +861,19 @@ void ht_displayregs()
 		y++;
 #endif
 
-		if (bkp_data.debug_dip1 & DP_DEBUG1)
+		if (DEBUG_ENABLED)
 		{
 			displayRegByte(4, y++, "BIOS_COUNTRY", BIOS_COUNTRY_CODE);
 			fixPrintf(4, y, fontColorGreen, 3, "Soft Dips:");
-			fixPrintf(26, y, fontColorWhite, 3, "%01d%01d%01d%01d%01d",
-				getSoftDipvalue(SOFT_DIP_1),
-				getSoftDipvalue(SOFT_DIP_2),
-				getSoftDipvalue(SOFT_DIP_3),
-				getSoftDipvalue(SOFT_DIP_4),
-				getSoftDipvalue(SOFT_DIP_5));
+			fixPrintf(26, y, fontColorWhite, 3, "%01d%01d%01d%01d %01d%01d%01d%01d",
+				getSoftDipvalue(SD_MVS_DEMO),
+				getSoftDipvalue(SD_DISP_CREDITS),
+				getSoftDipvalue(SD_FORCE_4P),
+				getSoftDipvalue(SD_DFLT_320_H),
+				getSoftDipvalue(SD_WARNING_ENABLE),
+				getSoftDipvalue(SD_MV1C_STEREO),
+				getSoftDipvalue(SD_UNUSED_7),
+				getSoftDipvalue(SD_UNUSED_8));
 		}
 
 		menu_footer();
@@ -889,6 +892,9 @@ void ht_displayregs()
 void ht_z80RAMtest()
 {
 	int done = 0, redraw = 1, execute = 0;
+
+	if(!verifyZ80Version())
+		draw_warning("Incorrect M1 ROM.\nTest might be wrong.", 1, 16, 1);
 
 	while (!done)
 	{
@@ -929,7 +935,7 @@ void ht_z80RAMtest()
 			}
 			fixPrintC(26, fontColorWhite, 3, "Press B to exit");
 
-			if (unknown || bkp_data.debug_dip1 & DP_DEBUG1)
+			if (unknown || DEBUG_ENABLED)
 			{
 				char buffer[4];
 

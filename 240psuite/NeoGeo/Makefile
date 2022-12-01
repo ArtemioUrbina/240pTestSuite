@@ -159,7 +159,7 @@ prog.o : $(OBJS)
 	$(AS) $(ASFLAGS) $< -o $@
 
 ifeq ($(OUTPUT),cart)
-cart: z80
+cart: z80 out/$(PROM) 
 	$(CP) out/$(PROM) $(OUTPUT)/$(PROM)
 	$(CP) out/$(SROM) $(OUTPUT)/$(SROM)
 	$(CP) out/$(MROM) $(OUTPUT)/$(MROM)
@@ -178,7 +178,7 @@ cart: z80
 endif
 
 ifeq ($(OUTPUT),cart)
-neo: cart out/$(PROM)
+neo: cart
 	$(RM) $(OUTPUT)/240ptest.neo
 	cd $(OUTPUT) && $(7Z) a $(NBPATH)240ptest.zip $(PROM) $(C1ROM) $(C2ROM) $(SROM) $(MROM) $(VROM)
 	#cd $(OUTPUT) && $(7Z) a $(NBPATH)240ptest.zip $(PROM) $(C1ROM) $(C2ROM) $(SROM) $(MROM) $(VROM) $(VROMB)
@@ -187,7 +187,7 @@ neo: cart out/$(PROM)
 	$(CP) $(NBPATH)240ptest.neo $(OUTPUT)/neosd
 	$(RM) $(NBPATH)240ptest.neo
 else
-neo: cdz80
+neo: cdz80 cd/$(CDPRG_OUTFILE)
 	$(CP) out/$(CROM) $(OUTPUT)/$(CROM)
 	cd $(OUTPUT) && $(CHARSPLIT) $(CROM) -cd $(CD_BASE_NAME)
 	$(RM) $(OUTPUT)/$(CROM)

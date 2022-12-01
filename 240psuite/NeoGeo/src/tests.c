@@ -262,7 +262,7 @@ void vt_drop_shadow_test()
 		}
 
 		// Only display vestigial info if debug dip 1 is ON
-		if (bkp_data.debug_dip1 & DP_DEBUG1)
+		if (DEBUG_ENABLED)
 		{
 			fixPrintf(10, 16, fontColorWhite, 3, "X:    %04d", x);
 			fixPrintf(10, 17, fontColorWhite, 3, "Y:    %04d", y);
@@ -473,7 +473,7 @@ void vt_striped_sprite_test()
 		}
 
 		// Only display vestigial info if debug dip 1 is ON
-		if (bkp_data.debug_dip1 & DP_DEBUG1)
+		if (DEBUG_ENABLED)
 		{
 			fixPrintf(10, 16, fontColorWhite, 3, "X:    %04d", x);
 			fixPrintf(10, 17, fontColorWhite, 3, "Y:    %04d", y);
@@ -1149,7 +1149,7 @@ void vt_scroll_test()
 		}
 
 		// Only display vestigial info if debug dip 1 is ON
-		if (bkp_data.debug_dip1 & DP_DEBUG1)
+		if (DEBUG_ENABLED)
 		{
 			fixPrintf(10, 16, fontColorWhite, 3, "X1:   %04d", x1);
 			fixPrintf(10, 17, fontColorWhite, 3, "X2:   %04d", x2);
@@ -1254,7 +1254,7 @@ void vt_gridscroll_test()
 			scrollerSetPos(&grid, x, y);
 		}
 
-		if (bkp_data.debug_dip1 & DP_DEBUG1)
+		if (DEBUG_ENABLED)
 		{
 			fixPrintf(10, 12, fontColorSolid, 4, "X:      %04d", x);
 			fixPrintf(10, 13, fontColorSolid, 4, "Y:      %04d", y);

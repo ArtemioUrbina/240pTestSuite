@@ -64,13 +64,15 @@ static const ushort fixPalettes[]= {
 	//_BLACK, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  Unknown
 };
 
-void menu_tp()
+void menu_tp_colormenu()
 {
-	int done = 0, curse = 1, cursemax = 16, redraw = 1;
+	int done = 0, curse = 1, cursemax = 13, redraw = 1;
 	blinker blinkdata;
 
 	while (!done)
 	{
+		int y = 10;
+
 		if (redraw)
 		{
 			gfxClear();
@@ -87,23 +89,20 @@ void menu_tp()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, 8, curse == 1 ? fontColorRed : fontColorWhite, 3, "Pluge");
-		fixPrint(5, 9, curse == 2 ? fontColorRed : fontColorWhite, 3, "Color Bars");
-		fixPrint(5, 10, curse == 3 ? fontColorRed : fontColorWhite, 3, "EBU Color Bars");
-		fixPrint(5, 11, curse == 4 ? fontColorRed : fontColorWhite, 3, "SMPTE Color Bars");
-		fixPrint(5, 12, curse == 5 ? fontColorRed : fontColorWhite, 3, "Referenced Color Bars");
-		fixPrint(5, 13, curse == 6 ? fontColorRed : fontColorWhite, 3, "Color Bleed Check");
-		fixPrint(5, 14, curse == 7 ? fontColorRed : fontColorWhite, 3, "Monoscope");
-		fixPrint(5, 15, curse == 8 ? fontColorRed : fontColorWhite, 3, "Grid");
-		fixPrint(5, 16, curse == 9 ? fontColorRed : fontColorWhite, 3, "Gray Ramp");
-		fixPrint(5, 17, curse == 10 ? fontColorRed : fontColorWhite, 3, "White & RGB Screens");
-		fixPrint(5, 18, curse == 11 ? fontColorRed : fontColorWhite, 3, "100 IRE");
-		fixPrint(5, 19, curse == 12 ? fontColorRed : fontColorWhite, 3, "Sharpness");
-		fixPrint(5, 20, curse == 13 ? fontColorRed : fontColorWhite, 3, "Overscan");
-		fixPrint(5, 21, curse == 14 ? fontColorRed : fontColorWhite, 3, "Convergence");
-
-		fixPrint(5, 23, curse == 15 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, 24, curse == 16 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Pluge");
+		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "Color Bars");
+		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "EBU Color Bars");
+		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "SMPTE Color Bars");
+		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Referenced Color Bars");
+		fixPrint(5, y++, curse == 6 ? fontColorRed : fontColorWhite, 3, "Color Bleed Check");
+		fixPrint(5, y++, curse == 7 ? fontColorRed : fontColorWhite, 3, "Gray Ramp");
+		fixPrint(5, y++, curse == 8 ? fontColorRed : fontColorWhite, 3, "White & RGB Screens");
+		fixPrint(5, y++, curse == 9 ? fontColorRed : fontColorWhite, 3, "100 IRE");
+		fixPrint(5, y++, curse == 10 ? fontColorRed : fontColorWhite, 3, "Sharpness");
+		fixPrint(5, y++, curse == 11 ? fontColorRed : fontColorWhite, 3, "Convergence");
+		y += 2;
+		fixPrint(5, y++, curse == 12 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, y++, curse == 13 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -143,42 +142,172 @@ void menu_tp()
 				break;
 
 				case 7:
-					tp_monoscope();
-				break;
-
-				case 8:
-					tp_grid();
-				break;
-
-				case 9:
 					tp_gray_ramp();
 				break;
 
-				case 10:
+				case 8:
 					tp_white_rgb();
 				break;
 
-				case 11:
+				case 9:
 					tp_100_ire();
 				break;
 
-				case 12:
+				case 10:
 					tp_sharpness();
 				break;
 
-				case 13:
-					tp_overscan();
-				break;
-
-				case 14:
+				case 11:
 					tp_convergence();
 				break;
 
-				case 15:
+				case 12:
 					DrawHelp(HELP_GENERAL);
 				break;
 
-				case 16:
+				case 13:
+					done = 1;
+				break;
+			}
+			redraw = 1;
+		}
+	}
+	return;
+}
+
+void menu_tp_geometrymenu()
+{
+	int done = 0, curse = 1, cursemax = 5, redraw = 1;
+	blinker blinkdata;
+
+	while (!done)
+	{
+		int x = 6, y = 14;
+
+		if (redraw)
+		{
+			gfxClear();
+			draw_background_w_gil(&blinkdata);
+			redraw = 0;
+		}
+
+		SCClose();
+		waitVBlank();
+		SD_blink_cycle(&blinkdata);
+
+		readController();
+
+		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
+		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
+
+		fixPrint(x, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Monoscope");
+		fixPrint(x, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "Grid");;
+		fixPrint(x, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "Overscan");
+		y+= 2;
+		fixPrint(x, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(x, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+
+		menu_footer();
+
+		if (BTTN_EXIT)
+			done = 1;
+
+		if (checkHelp(HELP_GENERAL))
+			redraw = 1;
+
+		if (BTTN_MAIN)
+		{
+			gfxClear();
+			switch (curse)
+			{
+				case 1:
+					tp_monoscope();
+				break;
+
+				case 2:
+					tp_grid();
+				break;
+
+				case 3:
+					tp_overscan();
+				break;
+
+				case 4:
+					DrawHelp(HELP_GENERAL);
+				break;
+
+				case 5:
+					done = 1;
+				break;
+			}
+			redraw = 1;
+		}
+	}
+	return;
+}
+
+void menu_tp()
+{
+	int done = 0, curse = 1, cursemax = 5, redraw = 1;
+	blinker blinkdata;
+
+	while (!done)
+	{
+		int y = 14;
+
+		if (redraw)
+		{
+			gfxClear();
+			draw_background_w_gil(&blinkdata);
+			redraw = 0;
+		}
+
+		SCClose();
+		waitVBlank();
+		SD_blink_cycle(&blinkdata);
+
+		readController();
+
+		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
+		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
+
+		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Color & Black Levels");
+		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "Geometry");
+		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "HCFR Patterns");
+		y+=2;
+		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+
+		menu_footer();
+
+		if (BTTN_EXIT)
+			done = 1;
+
+		if (checkHelp(HELP_GENERAL))
+			redraw = 1;
+
+		if (BTTN_MAIN)
+		{
+			gfxClear();
+			switch (curse)
+			{
+				case 1:
+					menu_tp_colormenu();
+				break;
+					
+				case 2:
+					menu_tp_geometrymenu();
+				break;
+
+				case 3:
+					tp_hcfr();
+				break;
+
+				case 4:
+					DrawHelp(HELP_GENERAL);
+				break;
+
+				case 5:
 					done = 1;
 				break;
 			}
@@ -363,7 +492,7 @@ void menu_at()
 
 void menu_ht()
 {
-	int done = 0, curse = 1, cursemax = 8, redraw = 1;
+	int done = 0, curse = 1, cursemax = 7, redraw = 1;
 	int debug = 0, olddebug = 2;
 	blinker blinkdata;
 
@@ -378,18 +507,17 @@ void menu_ht()
 			redraw = 0;
 		}
 
-		debug = (bkp_data.debug_dip1 & DP_DEBUG1);
+		debug = DEBUG_ENABLED;
 		if(olddebug != debug)
 		{
 			if(debug) {
 				y = 11;
-				cursemax = 9;
 				debug = 1;
 			} else {
 				y = 12;
-				cursemax = 8;
 				debug = 0;
 			}
+			cursemax = 7 + debug;
 			suiteClearFixLayer();
 			olddebug = debug;
 		}
@@ -405,15 +533,14 @@ void menu_ht()
 
 		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Controller Test");
 		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "BIOS Info");
-		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "SDRAM Check");
-		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "Z80 RAM test");
-		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Memory Viewer");
-		fixPrint(5, y++, curse == 6 ? fontColorRed : fontColorWhite, 3, "Register View");
+		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "Z80 RAM test");
+		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "Memory Viewer");
+		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Register View");
 		if (debug)
-			fixPrint(5, y++, curse == 7 ? fontColorRed : fontColorWhite, 3, "Internal Vars");
+			fixPrint(5, y++, curse == 6 ? fontColorRed : fontColorWhite, 3, "Internal Vars");
 		y++;
-		fixPrint(5, y++, curse == 7 + debug ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, y++, curse == 8 + debug ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, y++, curse == 6 + debug ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, y++, curse == 7 + debug ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -437,32 +564,26 @@ void menu_ht()
 				break;
 
 				case 3:
-					
-				break;
-
-				case 4:
 					ht_z80RAMtest();
 				break;
 				
-				case 5:
+				case 4:
 					ht_memory_viewer(0);
 				break;
 
-				case 6:
+				case 5:
 					ht_displayregs();
 				break;
 
 				default:
-					if(debug && curse == 7)
+					if(debug && curse == 6)
 						ht_showInternalVars();
-					if(curse == 7 + debug)
+					if(curse == 6 + debug)
 						DrawHelp(HELP_GENERAL);
-					else if(curse == 8 + debug)
+					else if(curse == 6 + debug)
 						DrawHelp(HELP_GENERAL);
-				break;
-
-				case 8:
-					done = 1;
+					else if(curse == 7 + debug)
+						done = 1;
 				break;
 			}
 			redraw = 1;
@@ -477,37 +598,37 @@ void credits()
 	picture qr;
 	short half_pal[16];
 
-	gfxClear();
-	draw_background();
-
-	pictureInit(&qr, &barcode, 26, 17, 260, 70, FLIP_NONE);
-	palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
-	memcpy(half_pal, back.palInfo->data, sizeof(ushort)*16);
-	darken_palette(half_pal, 4);
-	palJobPut(16, 1, half_pal);
-
 	while (!done)
 	{
 		if(draw)
 		{
 			int x = 4, y = 4;
 
-			fixPrint(x+24, y, fontColorGreen, 3, "Ver. 0.9");
-			fixPrint(x+24, y+1, fontColorWhite, 3, "11/17/2022");
+			gfxClear();
+			draw_background();
+
+			pictureInit(&qr, &barcode, 26, 17, 260, 70, FLIP_NONE);
+			palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
+			memcpy(half_pal, back.palInfo->data, sizeof(ushort)*16);
+			darken_palette(half_pal, 4);
+			palJobPut(16, 1, half_pal);
+
+			fixPrint(x+24, y, fontColorGreen, 3, "Ver. 0.92");
+			fixPrint(x+24, y+1, fontColorWhite, 3, "11/29/2022");
 			fixPrint(x, y++, fontColorGreen, 3, "Code by:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Dustin Dembrosky");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Artemio Urbina");
-			fixPrint(x, y++, fontColorGreen, 3, "Monoscope:");
+			fixPrint(x, y++, fontColorGreen, 3, "Monoscope based on:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Keith Raney");
-			fixPrint(x, y++, fontColorGreen, 3, "Donna:");
+			fixPrint(x, y++, fontColorGreen, 3, "Donna created and drawn by:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Jose Salot");
 			fixPrint(x, y++, fontColorGreen, 3, "Menu Pixel Art:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Asher");
-			fixPrint(x, y++, fontColorGreen, 3, "Neo Geo SDK");
+			fixPrint(x, y++, fontColorGreen, 3, "Neo Geo SDK:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "NeoDev (Jeff Kurtz)");
 			fixPrint(x, y++, fontColorGreen, 3, "Graphics Library");
 			fixPrint(x+1, y++, fontColorWhite, 3, "DATlib (HPMAN)");
-			fixPrint(x, y++, fontColorGreen, 3, "Z80 Sound Driver");
+			fixPrint(x, y++, fontColorGreen, 3, "Z80 Sound Driver:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Based on freem ADPCM example");
 			fixPrint(x, y++, fontColorGreen, 3, "MVS flashcart provided by:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
@@ -523,7 +644,20 @@ void credits()
 		waitVBlank();
 
 		readController();
-		
+		if (PRESSED_D)	{
+			picture n_t;
+
+			gfxClear();
+			pictureInit(&n_t, &n_m, 26, 16, 96, 48, FLIP_NONE);
+			palJobPut(16,n_m.palInfo->count,n_m.palInfo->data);
+			SCClose();
+			do {
+				waitVBlank();
+				readController();
+			} while (HELD_D);
+
+			draw = 1;
+		}
 		if (BTTN_EXIT)
 			done = 1;
 	}
@@ -533,7 +667,7 @@ void credits()
 /*
 void draw_debug_data()
 {
-	if (bkp_data.debug_dip1 & DP_DEBUG1)
+	if (DEBUG_ENABLED)
 	{
 		displayRegByte(4, 8, "BIOS_USER_REQS", BIOS_USER_REQS);
 		displayRegByte(4, 9, "BIOS_USER_MODE", BIOS_USER_MODE);
@@ -588,8 +722,7 @@ void menu_main()
 
 	// Show Exit in neo Geo CD and MVS with credits and demo mode
 #ifndef __cd__
-	if (getSoftDipvalue(SOFT_DIP_1))
-	{
+	if (getSoftDipvalue(SD_MVS_DEMO)) {
 #endif
 		showexit = 1;
 		cursemax++;
@@ -599,6 +732,9 @@ void menu_main()
 
 	if(isPALinMVS)
 		draw_warning("MVS HW is supposed to be NTSC.\nIt is supported by the Suite,\nbut PAL options will be disabled\nto honor SNK definition.", 1, 16, 1);
+
+	if(!verifyZ80Version())
+		draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
 
 	while (!done)
 	{
@@ -887,7 +1023,7 @@ void mvs_state()
 	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_DEMO)
 	{
 		// Enter demo mode in MVS following Soft Dip Switches
-		if (getSoftDipvalue(SOFT_DIP_1))
+		if (getSoftDipvalue(SD_MVS_DEMO))
 		{
 			draw_mvs_demo();
 		}
@@ -905,7 +1041,7 @@ void mvs_state()
 	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_TITLE)
 	{
 		// Enter title mode in MVS following Soft Dip Switches
-		if (getSoftDipvalue(SOFT_DIP_1))
+		if (getSoftDipvalue(SD_MVS_DEMO))
 		{
 			draw_mvs_title();
 		}

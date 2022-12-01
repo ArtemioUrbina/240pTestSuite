@@ -383,6 +383,19 @@ command_RAMTest:
 	jp		endNMI					; finish NMI
 
 ;------------------------------------------------------------------------------;
+; command_z80_version
+;------------------------------------------------------------------------------;
+; Z80 version check
+
+command_z80_version:
+	pop		hl						; remove return from stack
+	ld		a,0x0A
+	out		(0xC),a
+	xor		a						; clear a for now.
+	out		(0),a					; Write to port 0 (Clear sound code)
+	jp		endNMI					; finish NMI
+
+;------------------------------------------------------------------------------;
 ; command_null
 ;------------------------------------------------------------------------------;
 ; place holder for unexistant commands
@@ -1882,7 +1895,7 @@ CommandTbl:
 	dw		command_null				; 0xCE
 	dw		command_null				; 0xCF
 
-	dw		command_null				; 0xD0
+	dw		command_z80_version			; 0xD0
 	dw		command_null				; 0xD1
 	dw		command_null				; 0xD2
 	dw		command_null				; 0xD3

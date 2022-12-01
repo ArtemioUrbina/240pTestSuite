@@ -147,6 +147,9 @@
   <pict id="barcode">
     <file>gfx\barcode.png</file>
   </pict>
+  <pict id="qrmdf">
+	<file>gfx\qrmdf.png</file>
+  </pict>
   <pict id="led_1x">
     <file>gfx\led_1x.png</file>
   </pict>
@@ -248,4 +251,13 @@
   <scrl id="overscan_vert">
     <file>gfx\overscan_vert.png</file>
   </scrl>
+  <pict id="n_m">
+	<file>gfx\n.png</file>
+  </pict>
+  <pict id="hcfr">
+	<file>gfx\hcfr.png</file>
+  </pict>
+  <pict id="floatmenu">
+	<file>gfx\FloatMenu.png</file>
+  </pict>
 </chardata>

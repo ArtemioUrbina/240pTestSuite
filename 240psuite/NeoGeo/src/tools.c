@@ -30,6 +30,7 @@
 #include "externs.h"
 #include "tools.h"
 #include "help.h"
+#include "sound.h"
 
 u16 randbase;
 
@@ -92,7 +93,7 @@ void check_systype()
 	// Also available under options, default is 304 mode to comply
 	if (isMVS)
 	{
-		reg = getSoftDipvalue(SOFT_DIP_4);
+		reg = getSoftDipvalue(SD_DFLT_320_H);
 		if (reg)
 			vmode_snk = 0;
 		else
@@ -523,7 +524,7 @@ void menu_footer()
 		fixPrint(31, 28, fontColorWhite, 3, "Europe");
 	}
 
-	if (getSoftDipvalue(SOFT_DIP_2))
+	if (getSoftDipvalue(SD_DISP_CREDITS))
 	{
 		int credits;
 		
@@ -538,7 +539,7 @@ void menu_footer()
 void draw_warning(char* msg, int index, int palindex, int clearback)
 {
 #ifndef __cd__
-	if (!isMVS || getSoftDipvalue(SOFT_DIP_5))
+	if (!isMVS || getSoftDipvalue(SD_WARNING_ENABLE))
 #endif
 		draw_message("WARNING", msg, index, palindex, clearback);
 }
@@ -597,6 +598,68 @@ void draw_message(char *title, char *msg, int index, int palindex, int clearback
 		if (BTTN_EXIT || PRESSED_START)
 			done = 1;
 	}
+}
+
+int select_menu(char *title, fmenudata *menu_data, int num_options, int selected_option)
+{
+	int done = 0, i = 0, sel = selected_option, draw = 1;
+	picture back;
+
+	gfxClear();
+	pictureInit(&back, &floatmenu, 1, 16, 72, 48, FLIP_NONE);
+	palJobPut(16,floatmenu.palInfo->count,floatmenu.palInfo->data);
+
+	fixPrintC(9, fontColorGreen, 3, title);
+	fixPrintC(26, fontColorGreen, 3, "Press B or START to close");
+	
+	while(!done)
+	{
+		if(draw)
+		{
+			int c = 0, y = 11;
+
+			y += (10 - num_options)/2;
+			for(i = 0; i < num_options; i++)
+			{
+				fixPrintC(y++, sel == c ? fontColorRed : fontColorWhite, 3, menu_data[i].option_text);
+				c++;
+			}
+			fixPrintC(22, sel == c ? fontColorRed : fontColorWhite, 3, "Close Menu");
+			draw = 0;
+		}
+
+		SCClose();
+		waitVBlank();
+
+		readController();
+
+		if (BTTN_MAIN)
+			done = 1;
+
+		if (BTTN_EXIT || PRESSED_START)
+		{
+			done = 1;
+			sel = SEL_MENU_CANCEL;
+		}
+
+		if (PRESSED_UP)
+		{
+			sel --;
+			if(sel < 0)
+				sel = num_options;
+			draw = 1;
+		}
+
+		if (PRESSED_DOWN)
+		{
+			sel ++;
+			if(sel > num_options)
+				sel = 0;
+			draw = 1;
+		}
+	}
+
+	return sel;
 }
 
 inline int getHorScroll()
@@ -803,7 +866,7 @@ inline void waitVLine(WORD line)
 // we'll use 0x25000
 
 #define Z80_TIMEOUT 0x25000
-inline int checkZ80Response(BYTE command)
+inline int checkZ80Response()
 {
 	int timeout = 0;
 	BYTE response = 0;
@@ -843,7 +906,7 @@ int sendZ80command(u8 command)
 {
 	volMEMBYTE(REG_SOUND) = command;
 
-	return(checkZ80Response(command));
+	return(checkZ80Response());
 }
 
 /* 
@@ -890,6 +953,13 @@ void sendZ80commandAtLine(WORD line, u8 command)
 void sendZ80commandnoWait(u8 command)
 {
 	volMEMBYTE(REG_SOUND) = command;
+}
+
+int verifyZ80Version()
+{
+	volMEMBYTE(REG_SOUND) = SOUNDCMD_CheckVersion;
+
+	return(checkZ80Response() == Z80VERSIONREPLY);
 }
 
 #ifdef __cd__

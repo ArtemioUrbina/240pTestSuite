@@ -84,4 +84,6 @@ SOUNDCMD_FMNote10		= $8A
 SOUNDCMD_FMNote11		= $8B
 SOUNDCMD_FMNote12		= $8C
 
+SOUNDCMD_CheckVersion	= $D0
+
 

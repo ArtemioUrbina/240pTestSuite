@@ -671,6 +671,13 @@ void DrawHelp(int option)
 						fixPrint(4, y++, fontColorWhite, 3, "SSG has 260hz and 1khz tones on");
 						fixPrint(4, y++, fontColorWhite, 3, "channels 0 and 1, and noise");
 						fixPrint(4, y++, fontColorWhite, 3, "at arounf 5khz in channel 2.");
+						y++;
+						if(isMVS || MVS_AS_AES)
+						{
+							fixPrint(4, y++, fontColorWhite, 3, "MV1C system have ADPCM-B stereo");
+							fixPrint(4, y++, fontColorWhite, 3, "reversed. You can fix this via");
+							fixPrint(4, y++, fontColorWhite, 3, "BIOS softdips.");
+						}
 					break;
 
 				case HELP_LED:
@@ -803,6 +810,26 @@ void DrawHelp(int option)
 					fixPrint(4, 21, fontColorWhite, 3, "- Button C jumps to relevant");
 					fixPrint(4, 22, fontColorWhite, 3, "memory locations");
 					fixPrint(4, 23, fontColorWhite, 3, "- Button D toggles ASCII");
+				break;
+				case HELP_MDFOURIER:
+				{
+					picture qr;
+
+					pictureInit(&qr, &qrmdf, index, 17, 246, 144, FLIP_NONE);
+					palJobPut(17,qrmdf.palInfo->count,qrmdf.palInfo->data);
+
+					fixPrintC(6, fontColorGreen, 3, "MDFourier");
+
+					fixPrint(4, y++, fontColorWhite, 3, "Button A plays the test tones.");
+					y++;
+					fixPrint(4, y++, fontColorWhite, 3, "Please record it with your audio");
+					fixPrint(4, y++, fontColorWhite, 3, "card and use the software at:");
+					fixPrint(4, y++, fontColorYellow, 3, "http://junkerhq.net/MDFourier");
+					y++;
+					fixPrint(4, y++, fontColorWhite, 3, "It will generate plots with the");
+					fixPrint(4, y++, fontColorWhite, 3, "audio signature from this system");
+					fixPrint(4, y++, fontColorWhite, 3, "that can be compared to others.");
+				}
 				break;
 			default:
 				exit = 1;

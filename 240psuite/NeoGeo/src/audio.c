@@ -60,11 +60,11 @@
 void at_sound_test()
 {
 	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2;
-	int fmnote = 6, fmoctave = 3, fmpan = 1;
+	int fmnote = 6, fmoctave = 3, fmpan = 1, refresh = 1;
 	int option = fmnote, change = 0, changeoption = 0;
-	int	timer0 = 0, timer1 = 0, timer2= 0;
+	int	timer0 = 0, timer1 = 0, timer2= 0, version = 0;
 #ifndef __cd__
-	int loopB = 0, adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125  };
+	int loopB = 0, adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125 }, adpcm_b_swap = 0;
 #endif
 	picture image;
 
@@ -75,9 +75,15 @@ void at_sound_test()
 	sendZ80command(SOUNDCMD_FMOctave0+fmoctave);
 	sendZ80command(SOUNDCMD_FMNote0+fmnote);
 
+#ifndef __cd__
 	sendZ80command(SOUNDCMD_ADPCMB_Sample0);
 	sendZ80command(SOUNDCMD_NoLoopB);
 	sendZ80command(SOUNDCMD_RateB_0+adpcmb_sel);
+
+	adpcm_b_swap = getSoftDipvalue(SD_MV1C_STEREO);
+#endif
+
+	version = verifyZ80Version();
 
 	while (!done)
 	{
@@ -89,68 +95,78 @@ void at_sound_test()
 			pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,back.palInfo->count,back.palInfo->data);
 			draw = 0;
+			refresh = 1;
 		}
 
-		fixPrintC(6, fontColorGreen, 3, "YM 2610 Sound Test");
+		if(refresh)
+		{
+			fixPrintC(6, fontColorGreen, 3, "YM 2610 Sound Test");
 
-		fixPrintC(y++, fontColorGreen, 3, "FM");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 0 ? fontColorRed : fontColorWhite, 3, "1");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 1 ? fontColorRed : fontColorWhite, 3, "2");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 2 ? fontColorRed : fontColorWhite, 3, "3");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 3 ? fontColorRed : fontColorWhite, 3, "4");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 4 ? fontColorRed : fontColorWhite, 3, "5");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 5 ? fontColorRed : fontColorWhite, 3, "6");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 6 ? fontColorRed : fontColorWhite, 3, "7");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 7 ? fontColorRed : fontColorWhite, 3, "8");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 8 ? fontColorRed : fontColorWhite, 3, "9");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 9 ? fontColorRed : fontColorWhite, 3, "A");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 10 ? fontColorRed : fontColorWhite, 3, "B");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 11 ? fontColorRed : fontColorWhite, 3, "C");
-		y++;
-		x = 9;
-		fixPrint(x, y, sel == SND_SEL_FM_OCTAVE ? fontColorRed : fontColorGreen, 3, "Octave:");
-		fixPrint(x+=8, y, sel == SND_SEL_FM_OCTAVE && option == 0 ? fontColorRed : fmoctave == 0 ? fontColorGrayDark : fontColorWhite, 3, "1");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 1 ? fontColorRed : fmoctave == 1 ? fontColorGrayDark : fontColorWhite, 3, "2");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 2 ? fontColorRed : fmoctave == 2 ? fontColorGrayDark : fontColorWhite, 3, "3");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 3 ? fontColorRed : fmoctave == 3 ? fontColorGrayDark : fontColorWhite, 3, "4");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 4 ? fontColorRed : fmoctave == 4 ? fontColorGrayDark : fontColorWhite, 3, "5");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 5 ? fontColorRed : fmoctave == 5 ? fontColorGrayDark : fontColorWhite, 3, "6");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 6 ? fontColorRed : fmoctave == 6 ? fontColorGrayDark : fontColorWhite, 3, "7");
-		fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 7 ? fontColorRed : fmoctave == 7 ? fontColorGrayDark : fontColorWhite, 3, "8");
-		y++;
-		fixPrint(12, y, sel == SND_SEL_FM_PANNING && option == 0 ? fontColorRed : fmpan == 0 ? fontColorGrayDark : fontColorWhite, 3, "Left");
-		fixPrint(17, y, sel == SND_SEL_FM_PANNING && option == 1 ? fontColorRed : fmpan == 1 ? fontColorGrayDark : fontColorWhite, 3, "Center");
-		fixPrint(24, y, sel == SND_SEL_FM_PANNING && option == 2 ? fontColorRed : fmpan == 2 ? fontColorGrayDark : fontColorWhite, 3, "Right");
+			fixPrintC(y++, fontColorGreen, 3, "FM");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 0 ? fontColorRed : fontColorWhite, 3, "1");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 1 ? fontColorRed : fontColorWhite, 3, "2");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 2 ? fontColorRed : fontColorWhite, 3, "3");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 3 ? fontColorRed : fontColorWhite, 3, "4");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 4 ? fontColorRed : fontColorWhite, 3, "5");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 5 ? fontColorRed : fontColorWhite, 3, "6");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 6 ? fontColorRed : fontColorWhite, 3, "7");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 7 ? fontColorRed : fontColorWhite, 3, "8");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 8 ? fontColorRed : fontColorWhite, 3, "9");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 9 ? fontColorRed : fontColorWhite, 3, "A");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 10 ? fontColorRed : fontColorWhite, 3, "B");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 11 ? fontColorRed : fontColorWhite, 3, "C");
+			y++;
+			x = 9;
+			fixPrint(x, y, sel == SND_SEL_FM_OCTAVE ? fontColorRed : fontColorGreen, 3, "Octave:");
+			fixPrint(x+=8, y, sel == SND_SEL_FM_OCTAVE && option == 0 ? fontColorRed : fmoctave == 0 ? fontColorGrayDark : fontColorWhite, 3, "1");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 1 ? fontColorRed : fmoctave == 1 ? fontColorGrayDark : fontColorWhite, 3, "2");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 2 ? fontColorRed : fmoctave == 2 ? fontColorGrayDark : fontColorWhite, 3, "3");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 3 ? fontColorRed : fmoctave == 3 ? fontColorGrayDark : fontColorWhite, 3, "4");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 4 ? fontColorRed : fmoctave == 4 ? fontColorGrayDark : fontColorWhite, 3, "5");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 5 ? fontColorRed : fmoctave == 5 ? fontColorGrayDark : fontColorWhite, 3, "6");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 6 ? fontColorRed : fmoctave == 6 ? fontColorGrayDark : fontColorWhite, 3, "7");
+			fixPrint(x+=2, y, sel == SND_SEL_FM_OCTAVE && option == 7 ? fontColorRed : fmoctave == 7 ? fontColorGrayDark : fontColorWhite, 3, "8");
+			y++;
+			fixPrint(12, y, sel == SND_SEL_FM_PANNING && option == 0 ? fontColorRed : fmpan == 0 ? fontColorGrayDark : fontColorWhite, 3, "Left");
+			fixPrint(17, y, sel == SND_SEL_FM_PANNING && option == 1 ? fontColorRed : fmpan == 1 ? fontColorGrayDark : fontColorWhite, 3, "Center");
+			fixPrint(24, y, sel == SND_SEL_FM_PANNING && option == 2 ? fontColorRed : fmpan == 2 ? fontColorGrayDark : fontColorWhite, 3, "Right");
 
-		x = 15;
-		y+=2;
-		fixPrintC(y++, fontColorGreen, 3, "SSG");
-		fixPrint(x+=2, y, sel == SND_SEL_SSG && option == 0 ? fontColorRed : fontColorWhite, 3, "1");
-		fixPrint(x+=2, y, sel == SND_SEL_SSG && option == 1 ? fontColorRed : fontColorWhite, 3, "2");
-		fixPrint(x+=2, y, sel == SND_SEL_SSG && option == 2 ? fontColorRed : fontColorWhite, 3, "3");
-		y+=2;
+			x = 15;
+			y+=2;
+			fixPrintC(y++, fontColorGreen, 3, "SSG");
+			fixPrint(x+=2, y, sel == SND_SEL_SSG && option == 0 ? fontColorRed : fontColorWhite, 3, "1");
+			fixPrint(x+=2, y, sel == SND_SEL_SSG && option == 1 ? fontColorRed : fontColorWhite, 3, "2");
+			fixPrint(x+=2, y, sel == SND_SEL_SSG && option == 2 ? fontColorRed : fontColorWhite, 3, "3");
+			y+=2;
 
-		fixPrintC(y++, fontColorGreen, 3, "ADPCM-A");
-		fixPrint(12, y, sel == SND_SEL_ADPCMA && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(17, y, sel == SND_SEL_ADPCMA && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
-		fixPrint(24, y++, sel == SND_SEL_ADPCMA && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
-		y++;
+			fixPrintC(y++, fontColorGreen, 3, "ADPCM-A");
+			fixPrint(12, y, sel == SND_SEL_ADPCMA && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
+			fixPrint(17, y, sel == SND_SEL_ADPCMA && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
+			fixPrint(24, y++, sel == SND_SEL_ADPCMA && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
+			y++;
 
-		// ADPCM-B not present in Neo Geo CD
+			// ADPCM-B not present in Neo Geo CD
 #ifndef __cd__
-		fixPrintC(y++, fontColorGreen, 3, "ADPCM-B");
-		fixPrint(10, y, sel == SND_SEL_ADPCMB ? fontColorGreen : fontColorWhite, 3, "C:");
-		fixPrintf(13, y, fontColorWhite, 3, "%dhz", adpcmb_rates[adpcmb_sel]);
-		fixPrint(21, y, sel == SND_SEL_ADPCMB ? fontColorGreen : fontColorWhite, 3, "D:");
-		fixPrintf(24, y++, fontColorWhite, 3, "loop %s", loopB ? "on ": "off");
-		fixPrint(12, y, sel == SND_SEL_ADPCMB && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
-		fixPrint(17, y, sel == SND_SEL_ADPCMB && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
-		fixPrint(24, y, sel == SND_SEL_ADPCMB && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
+			if(adpcm_b_swap)
+				fixPrintC(y++, fontColorGreen, 3, "ADPCM-B MV1C REVERSED");
+			else
+				fixPrintC(y++, fontColorGreen, 3, "ADPCM-B");
+			fixPrint(10, y, sel == SND_SEL_ADPCMB ? fontColorGreen : fontColorWhite, 3, "C:");
+			fixPrintf(13, y, fontColorWhite, 3, "%dhz", adpcmb_rates[adpcmb_sel]);
+			fixPrint(21, y, sel == SND_SEL_ADPCMB ? fontColorGreen : fontColorWhite, 3, "D:");
+			fixPrintf(24, y++, fontColorWhite, 3, "loop %s", loopB ? "on ": "off");
+			fixPrint(12, y, sel == SND_SEL_ADPCMB && option == 0 ? fontColorRed : fontColorWhite, 3, "Left");
+			fixPrint(17, y, sel == SND_SEL_ADPCMB && option == 1 ? fontColorRed : fontColorWhite, 3, "Center");
+			fixPrint(24, y, sel == SND_SEL_ADPCMB && option == 2 ? fontColorRed : fontColorWhite, 3, "Right");
 #else
-		fixPrintC(y++, fontColorGreen, 3, "CDDA");
-		y++;
-		fixPrint(18, y, sel == SND_SEL_CDDA && option == 1 ? fontColorRed : fontColorWhite, 3, "Play");
+			fixPrintC(y++, fontColorGreen, 3, "CDDA");
+			y++;
+			fixPrint(18, y, sel == SND_SEL_CDDA && option == 1 ? fontColorRed : fontColorWhite, 3, "Play");
 #endif
+			if(!version)
+				fixPrintC(++y, fontColorRed, 3, "Faulty Audio Driver");
+			refresh = 0;
+		}
 
 		SCClose();
 		waitVBlank();
@@ -226,6 +242,7 @@ void at_sound_test()
 #endif
 			}
 			change = 0;
+			refresh = 1;
 		}
 
 		if(changeoption) {
@@ -268,6 +285,7 @@ void at_sound_test()
 				option = 1;
 #endif
 			changeoption = 0;
+			refresh = 1;
 		}
 
 		if (BTTN_MAIN) {
@@ -325,13 +343,13 @@ void at_sound_test()
 				switch(option)
 				{
 				case 0:
-					sendZ80command(SOUNDCMD_ADPCMB_Left);
+					sendZ80command(adpcm_b_swap ? SOUNDCMD_ADPCMB_Right : SOUNDCMD_ADPCMB_Left);
 					break;
 				case 1:
 					sendZ80command(SOUNDCMD_ADPCMB_Center);
 					break;
 				case 2:
-					sendZ80command(SOUNDCMD_ADPCMB_Right);
+					sendZ80command(adpcm_b_swap ? SOUNDCMD_ADPCMB_Left : SOUNDCMD_ADPCMB_Right);
 					break;
 				}
 			}
@@ -401,7 +419,7 @@ void executeSilence()
 {
 	int frame = 0;
 
-	for(frame = 0; frame < 20; frame++)
+	for(frame = 0; frame < 40; frame++)
 		waitVBlank();
 }
 
@@ -442,16 +460,31 @@ void ExecuteFM(int framelen)
 
 void at_sound_mdfourier()
 {
-	int done = 0, draw = 1;
+	int done = 0, draw = 1, version = 0, msgpos = 0;
 	picture image;
+
+	version = verifyZ80Version();
+	if(!version)
+		draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
 
 	while (!done)
 	{
 		if (draw)
 		{
+			int y = 12;
+
 			gfxClear();
 			pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
 			palJobPut(16,back.palInfo->count,back.palInfo->data);
+
+			fixPrintC(6, fontColorGreen, 3, "MDFourier");
+			y+= 2;
+			fixPrintC(y++, fontColorGreen, 3, "Auto sequence");
+			msgpos = y;
+			fixPrintC(y++, fontColorWhite, 3, "Start recording and press A");
+			if(!version)
+				fixPrintC(++y, fontColorRed, 3, "Faulty Audio Driver");
+			fixPrintC(26, fontColorWhite, 3, "Press START for help");
 			draw = 0;
 		}
 
@@ -460,9 +493,19 @@ void at_sound_mdfourier()
 
 		readController();
 
+		if (BTTN_EXIT)
+			done = 1;
+
+		if (checkHelp(HELP_MDFOURIER))
+			draw = 1;
+
 		if (BTTN_MAIN)
 		{
-			int frame = 0;
+			int frame = 0, close = 0;
+
+			fixPrintC(msgpos, fontColorWhite, 3, "Please wait while recording");
+			SCClose();
+			waitVBlank();
 
 			sendZ80command(SOUNDCMD_StopAll);
 
@@ -533,13 +576,22 @@ void at_sound_mdfourier()
 			executePulseTrain();
 
 			sendZ80command(SOUNDCMD_StopAll);
-		}
 
-		if (BTTN_EXIT)
-			done = 1;
+			fixPrintC(msgpos, fontColorWhite, 3, "You can now stop recording.");
+			fixPrintC(msgpos+1, fontColorWhite, 3, "Press any button to continue");
 
-		if (checkHelp(HELP_SOUND))
+			while(!close)
+			{
+				SCClose();
+				waitVBlank();
+
+				readController();
+
+				if (BTTN_ANY)
+					close = 1;
+			}
 			draw = 1;
+		}
 	}
 
 	sendZ80command(SOUNDCMD_StopAll);

@@ -37,5 +37,6 @@ void tp_100_ire(void);
 void tp_sharpness(void);
 void tp_overscan(void);
 void tp_convergence(void);
+void tp_hcfr(void);
 
 #endif /* _PATTERNS_H_ */

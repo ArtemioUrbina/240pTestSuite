@@ -108,6 +108,8 @@
 #define SOUNDCMD_FMNote11		0x8B
 #define SOUNDCMD_FMNote12		0x8C
 
+#define SOUNDCMD_CheckVersion	0xD0
+
 #ifdef __cd__
 // CDDA Track defines
 #define CDDA_MDFOURIER			0x02
@@ -118,4 +120,5 @@
 #define Z80COMMAND_FAIL(cmd)		(cmd)
 #define Z80COMMAND_TIME(cmd)		(cmd == 0)
 
+#define Z80VERSIONREPLY				0x0A
 #endif /* _SOUND_H_ */
