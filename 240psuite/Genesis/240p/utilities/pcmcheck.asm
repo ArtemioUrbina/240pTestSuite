@@ -83,6 +83,8 @@ SP_Init:
 SP_Main:
 		bsr		InitPCM			; Initialize Ricoh RF5C164 (PCM) Chip
 		move.w	#0, $FF8020		; Send value to main CPU
+		move.w	#0, $FF8022		; Clean return value 1, needed for Laseractive. Crashes regular sp.asm
+		move.w	#0, $FF8024		; Clean return value 2
 
 @main_loop:
 		tst.w	$FF8010			; Check command

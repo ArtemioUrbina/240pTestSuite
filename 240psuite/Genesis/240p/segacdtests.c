@@ -1480,8 +1480,6 @@ void PrintPCMResults(u8 value, u16 result, u16 address, u8 y)
 	{
 		ShowMessageAndData("Memory Failed w/:", value, 2, PAL1, 11, y++);
 		ShowMessageAndData("address/8bit:", address, 4, PAL1, 13, y);
-		//if(address == 0xE715)
-			//VDP_drawTextBG(APLAN, "COMM ERR", TILE_ATTR(PAL3, 0, 0, 0), 4, y);
 	}
 	else
 		ShowMessageAndData("Memory OK w/:", value, 2, PAL1, 11, y);
@@ -1501,14 +1499,6 @@ u8 PCMRAMCheck()
 
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 	ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 5, 4);
-	
-	// laseractive fails this first one.. could it be only the first command sent?
-	// send a dummy command first then...
-	result = SendSCDCommandRetVal(Op_DummyTest, 0, &address);
-	if(result == 1  && address == 0xE715)
-		VDP_drawTextBG(APLAN, "Communication OK with Sega CD", TILE_ATTR(PAL1, 0, 0, 0), 6, 6);
-	else
-		VDP_drawTextBG(APLAN, "Communication Error with SCD", TILE_ATTR(PAL3, 0, 0, 0), 6, 6);
 	
 	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address);
 	PrintPCMResults(0x55, result, address, 10);
@@ -1531,6 +1521,7 @@ u8 PCMRAMCheck()
 	return 1;
 }
 
+#ifndef SEGACD
 void resetSegaCD()
 {
 	/*
@@ -1559,6 +1550,7 @@ uint8_t segacd_init()
 	int 		timeout = 0;
 	uint8_t  	ypos = 6;
 	volatile uint8_t *segacd_bios_addr;
+	u16			result = 0, retVal = 0;
 
 	// Clear the screen
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
@@ -1688,12 +1680,27 @@ uint8_t segacd_init()
 			ShowMessageAndData("Got SCD SP_Main in", 500 - timeout, 3, PAL1, 4, ypos);
 		VDP_waitVSync();
 	}while (value != 0);
-	VDP_drawTextBG(APLAN, "SCD initialized. Ready for test", TILE_ATTR(PAL0, 0, 0, 0), 5, ypos+3);
+	
+	ypos++;
+	
+	result = SendSCDCommandRetVal(Op_DummyTest, 0, &retVal);
+	// laseractive fails this first one.. could it be only the first command sent?
+	// send a second command if that happens...
+	if(result != 1 || retVal != 0xE715)
+		result = SendSCDCommandRetVal(Op_DummyTest, 0, &retVal);
+		
+	if(result == 1 && retVal == 0xE715)
+		VDP_drawTextBG(APLAN, "Communication OK with Sega CD", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
+	else
+		VDP_drawTextBG(APLAN, "Communication issue with SCD", TILE_ATTR(PAL3, 0, 0, 0), 4, ypos++);
+		
+	VDP_drawTextBG(APLAN, "SCD initialized. Ready for test", TILE_ATTR(PAL0, 0, 0, 0), 5, ypos+2);
 	
 	WaitKey(NULL);
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 	return 1;
 }
+#endif
 
 #ifdef SEGACD
 // These are the functions called in Sega CD Mode
