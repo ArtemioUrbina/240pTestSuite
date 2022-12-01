@@ -1331,13 +1331,17 @@ void SegaCDMenu()
 #ifndef SEGACD
 			DrawMainBGwithGillian(1, 216, 72);
 #else
-			DrawMainBGwithGillian(1, 216, 90);
+			DrawMainBGwithGillian(1, 216, 80);
 #endif
 			reload = 0;
 			redraw = 1;
 		}
 
+#ifndef SEGACD
 		pos = 7;
+#else
+		pos = 10;
+#endif
 		if(redraw)
 		{	
 			sel = 1;
@@ -1463,6 +1467,7 @@ void SegaCDMenu()
 			reload = 1;
 		}
 
+		checkblink();
 		VDP_waitVSync();
 	}
 
@@ -1475,6 +1480,8 @@ void PrintPCMResults(u8 value, u16 result, u16 address, u8 y)
 	{
 		ShowMessageAndData("Memory Failed w/:", value, 2, PAL1, 11, y++);
 		ShowMessageAndData("address/8bit:", address, 4, PAL1, 13, y);
+		//if(address == 0xE715)
+			//VDP_drawTextBG(APLAN, "COMM ERR", TILE_ATTR(PAL3, 0, 0, 0), 4, y);
 	}
 	else
 		ShowMessageAndData("Memory OK w/:", value, 2, PAL1, 11, y);
@@ -1494,6 +1501,14 @@ u8 PCMRAMCheck()
 
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 	ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 5, 4);
+	
+	// laseractive fails this first one.. could it be only the first command sent?
+	// send a dummy command first then...
+	result = SendSCDCommandRetVal(Op_DummyTest, 0, &address);
+	if(result == 1  && address == 0xE715)
+		VDP_drawTextBG(APLAN, "Communication OK with Sega CD", TILE_ATTR(PAL1, 0, 0, 0), 6, 6);
+	else
+		VDP_drawTextBG(APLAN, "Communication Error with SCD", TILE_ATTR(PAL3, 0, 0, 0), 6, 6);
 	
 	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address);
 	PrintPCMResults(0x55, result, address, 10);

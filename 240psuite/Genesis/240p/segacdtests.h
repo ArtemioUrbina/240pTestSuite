@@ -57,7 +57,8 @@ enum SCD_Command{
 		Op_SetSampSin32000,		//Use 32000hz 1khz sample
 		Op_SetSampSin32552,		//Use 32552hz 1khz sample
 		Op_SetSampSin32604,		//Use 32604hz 1khz sample
-		Op_CheckPCMRAM			//Check full PCM RAM
+		Op_CheckPCMRAM,			//Check full PCM RAM
+		Op_DummyTest			//Dummy Test Command
 	}; 
 
 

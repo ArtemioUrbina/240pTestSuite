@@ -138,6 +138,7 @@ OpTable:
 		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
 		bra.w	Op_CheckPCMRAM		; Write and Check to the full PCM RAM with value in FF8012
+		bra.w	Op_DummyTest		; Dummy Test Command
 
 Op_Null:
 		rts
@@ -303,6 +304,11 @@ Op_CheckPCMRAM:
 		
 		move.b	#$C0, CTRLdat			; Turn on PCM RAM Access
 		bsr		PCMWait
+		rts
+		
+Op_DummyTest:
+		move.w	#$1,d6			; return OK
+		move.w	#$E715,d7		; return magic number as parameter
 		rts
 
 ; =======================================================================================
@@ -511,7 +517,7 @@ PCMValueCompare:
 		
 		pop		d1/d2/d3		; Restore used registers
 		move.w	#$1,d6			; return OK
-		move.w	#$0,d7			; return address of error
+		move.w	#$E715,d7		; return address of error (out of range)
 		rts
 		
 @PCMValueCompareFail:
