@@ -260,4 +260,7 @@
   <pict id="floatmenu">
 	<file>gfx\FloatMenu.png</file>
   </pict>
+  <pict id="qrhcfr">
+	<file>gfx\qr-hcfr.png</file>
+  </pict>
 </chardata>

@@ -64,6 +64,10 @@ void DrawHelp(int option)
 		case HELP_MONOSCOPE:
 		totalpages = 3;
 		break;
+
+		case HELP_HCFR:
+		totalpages = 8;
+		break;
 	}
 
 	while (!exit)
@@ -105,6 +109,7 @@ void DrawHelp(int option)
 						{
 							picture qr;
 
+							// URL https://junkerhq.net/240p
 							pictureInit(&qr, &barcode, index, 17, 246, 144, FLIP_NONE);
 							palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 
@@ -695,10 +700,10 @@ void DrawHelp(int option)
 							fixPrint(4, 15, fontColorWhite, 3, "white pixel arrays with the");
 							fixPrint(4, 16, fontColorWhite, 3, "d-pad, and change the size of");
 							fixPrint(4, 17, fontColorWhite, 3, "the pixel array with 'A'.");
-							fixPrint(4, 18, fontColorWhite, 3, "The 'C' button allows the user");
+							fixPrint(4, 18, fontColorWhite, 3, "The 'D' button allows the user");
 							fixPrint(4, 19, fontColorWhite, 3, "to hide the pixel array in");
 							fixPrint(4, 20, fontColorWhite, 3, "order to alternate a fully black");
-							fixPrint(4, 21, fontColorWhite, 3, "screen. 'D' button toggles the");
+							fixPrint(4, 21, fontColorWhite, 3, "screen. 'C' button toggles the");
 							fixPrint(4, 22, fontColorWhite, 3, "fast mode, where the sprite is");
 							fixPrint(4, 23, fontColorWhite, 3, "moved by its width per frame.");
 						break;
@@ -749,19 +754,6 @@ void DrawHelp(int option)
 							fixPrint(4, 23, fontColorWhite, 3, "reset when stopped.");
 						break;
 						}
-				break;
-
-				case HELP_OPTIONS:
-					/* fixPrint("VIDEO OPTIONS", 10, 6, fontColorGreen);
-
-					fixPrint("Here you can enable interlaced", 4, 57, fontColorWhite);
-					fixPrint("(480i) mode for the whole suite", 4, 65, fontColorWhite);
-					fixPrint("and disable horizontal 256 in", 4, 73, fontColorWhite);
-					fixPrint("compatible screens.", 4, 81, fontColorWhite);
-
-					fixPrint("For PAL consoles, you can also", 4, 98, fontColorWhite);
-					fixPrint("enable full 240p, instead of", 4, 106, fontColorWhite);
-					fixPrint("224p.", 4, 114, fontColorWhite); */
 				break;
 
 				case HELP_AUDIOSYNC:
@@ -815,6 +807,7 @@ void DrawHelp(int option)
 				{
 					picture qr;
 
+					// URL https://junkerhq.net/MDFourier
 					pictureInit(&qr, &qrmdf, index, 17, 246, 144, FLIP_NONE);
 					palJobPut(17,qrmdf.palInfo->count,qrmdf.palInfo->data);
 
@@ -830,6 +823,169 @@ void DrawHelp(int option)
 					fixPrint(4, y++, fontColorWhite, 3, "audio signature from this system");
 					fixPrint(4, y++, fontColorWhite, 3, "that can be compared to others.");
 				}
+				break;
+				case HELP_HCFR:
+					switch(page)
+					{
+					case 1:
+					{
+						picture qr;
+
+						// URL https://sourceforge.net/p/hcfr/wiki/Home/
+						pictureInit(&qr, &qrhcfr, index, 17, 250, 142, FLIP_NONE);
+						palJobPut(17,qrhcfr.palInfo->count,qrhcfr.palInfo->data);
+
+						fixPrintC(6, fontColorGreen, 3, "HCFR PATTERNS (1/8)");
+
+						fixPrint(4, y++, fontColorWhite, 3, "The HCFR Colormeter software");
+						fixPrint(4, y++, fontColorWhite, 3, "allows for profiling and");
+						fixPrint(4, y++, fontColorWhite, 3, "calibration of displays using");
+						fixPrint(4, y++, fontColorWhite, 3, "the combination of a pattern");
+						fixPrint(4, y++, fontColorWhite, 3, "and a tristimulous colorimeter");
+						fixPrint(4, y++, fontColorWhite, 3, "to read and measure the outputs.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "Then you will have to change");
+						fixPrint(4, y++, fontColorWhite, 3, "settings on your display in");
+						fixPrint(4, y++, fontColorWhite, 3, "order to refine the results and");
+						fixPrint(4, y++, fontColorWhite, 3, "attempt to match the chosen");
+						fixPrint(4, y++, fontColorWhite, 3, "standard of color.");
+
+						fixPrint(26, 24, fontColorYellow, 3, "(cont...)");
+					}
+					break;
+					case 2:
+						fixPrintC(6, fontColorGreen, 3, "HCFR PATTERNS (2/8)");
+
+						fixPrint(4, y++, fontColorWhite, 3, "The HCFR Colormeter software is ");
+						fixPrint(4, y++, fontColorWhite, 3, "at the heart of the system. It");
+						fixPrint(4, y++, fontColorWhite, 3, "interprets the results from the");
+						fixPrint(4, y++, fontColorWhite, 3, "colorimeter and provides CCIE");
+						fixPrint(4, y++, fontColorWhite, 3, "color differences (Delta E");
+						fixPrint(4, y++, fontColorWhite, 3, "values) chromaticity diagrams,");
+						fixPrint(4, y++, fontColorWhite, 3, "to read and measure the outputs.");
+						fixPrint(4, y++, fontColorWhite, 3, "curves and other values to");
+						fixPrint(4, y++, fontColorWhite, 3, "assist you in profiling and");
+						fixPrint(4, y++, fontColorWhite, 3, "calibrating your display.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "To set up HCFR Colormeter,");
+						fixPrint(4, y++, fontColorWhite, 3, "attach your colorimeter to your");
+
+						fixPrint(26, 24, fontColorYellow, 3, "(cont...)");
+					break;
+
+					case 3:
+						fixPrintC(6, fontColorGreen, 3, "HCFR PATTERNS (3/8)");
+
+						fixPrint(4, y++, fontColorWhite, 3, "computer, open the program,");
+						fixPrint(4, y++, fontColorWhite, 3, "click File -> New, and select");
+						fixPrint(4, y++, fontColorWhite, 3, "DVD Manual as your generator.");
+						fixPrint(4, y++, fontColorWhite, 3, "Select your colorimeter from");
+						fixPrint(4, y++, fontColorWhite, 3, "the list, and click OK.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "Once in HCFR Colormeter, click");
+						fixPrint(4, y++, fontColorWhite, 3, "Advance -> Preferences.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "Under the General tab, ensure");
+						fixPrint(4, y++, fontColorWhite, 3, "that the section Colors to add");
+						fixPrint(4, y++, fontColorWhite, 3, "when measuring primaries and");
+						fixPrint(4, y++, fontColorWhite, 3, "secondaries is set to White.");
+
+						fixPrint(26, 24, fontColorYellow, 3, "(cont...)");
+					break;
+
+					case 4:
+						fixPrintC(6, fontColorGreen, 3, "HCFR PATTERNS (4/8)");
+
+						fixPrint(4, y++, fontColorWhite, 3, "Under the References tab, choos");
+						fixPrint(4, y++, fontColorWhite, 3, "your color space. PAL/SECAM is");
+						fixPrint(4, y++, fontColorWhite, 3, "recommended for PAL CRT users.");
+						fixPrint(4, y++, fontColorWhite, 3, "SDTV - REC601 (NTSC) is");
+						fixPrint(4, y++, fontColorWhite, 3, "recommended for NTSC CRT users.");
+						fixPrint(4, y++, fontColorWhite, 3, "HD TV REC 709 is recommended for");
+						fixPrint(4, y++, fontColorWhite, 3, "HD and UHD/4K in SDR flat panel");
+						fixPrint(4, y++, fontColorWhite, 3, "TV users. sRGB is recommended");
+						fixPrint(4, y++, fontColorWhite, 3, "for PC VGA and up CRT monitors.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "White point is normally D65 for");
+						fixPrint(4, y++, fontColorWhite, 3, "western regions of all color");
+						fixPrint(4, y++, fontColorWhite, 3, "space types.");
+
+						fixPrint(26, 24, fontColorYellow, 3, "(cont...)");
+					break;
+
+					case 5:
+						fixPrintC(6, fontColorGreen, 3, "HCFR PATTERNS (5/8)");
+
+						fixPrint(4, y++, fontColorWhite, 3, "Japanese SDTV often used D93 as");
+						fixPrint(4, y++, fontColorWhite, 3, "a white point (which will appear");
+						fixPrint(4, y++, fontColorWhite, 3, "cooler, or bluer, than D65).");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "Most gamma calculations normally");
+						fixPrint(4, y++, fontColorWhite, 3, "default to ITU-R BT.1886, which");
+						fixPrint(4, y++, fontColorWhite, 3, "uses Display Gamma Power Law 2.4");
+						fixPrint(4, y++, fontColorWhite, 3, "Your device may have a different");
+						fixPrint(4, y++, fontColorWhite, 3, "native gamma response, so choose");
+						fixPrint(4, y++, fontColorWhite, 3, "a different Power Law value if");
+						fixPrint(4, y++, fontColorWhite, 3, "required. sRGB has a specific");
+						fixPrint(4, y++, fontColorWhite, 3, "non-linear gamma that cannot be");
+						fixPrint(4, y++, fontColorWhite, 3, "customized.");
+
+						fixPrint(26, 24, fontColorYellow, 3, "(cont...)");
+					break;
+
+					case 6:
+						fixPrintC(6, fontColorGreen, 3, "HCFR PATTERNS (6/8)");
+
+						fixPrint(4, y++, fontColorWhite, 3, "Ensure your options chosen here");
+						fixPrint(4, y++, fontColorWhite, 3, "match the test pattern list you");
+						fixPrint(4, y++, fontColorWhite, 3, "choose in the 240p Test Suite.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "When you are ready to start");
+						fixPrint(4, y++, fontColorWhite, 3, "measuring, click the Measure");
+						fixPrint(4, y++, fontColorWhite, 3, "menu, and select your");
+						fixPrint(4, y++, fontColorWhite, 3, "measurement. If any large scale");
+						fixPrint(4, y++, fontColorWhite, 3, "changes are made to your display");
+						fixPrint(4, y++, fontColorWhite, 3, "it is recommended to re-run a");
+						fixPrint(4, y++, fontColorWhite, 3, "Gray-scale sweep often, so that");
+						fixPrint(4, y++, fontColorWhite, 3, "baseline calculations can be");
+						fixPrint(4, y++, fontColorWhite, 3, "accurately made for Delta E");
+						fixPrint(4, y++, fontColorWhite, 3, "measurements.");
+
+						fixPrint(26, 24, fontColorYellow, 3, "(cont...)");
+					break;
+
+					case 7:
+						fixPrintC(6, fontColorGreen, 3, "HCFR PATTERNS (7/8)");
+
+						fixPrint(4, y++, fontColorWhite, 3, "A menu will pop up asking you to");
+						fixPrint(4, y++, fontColorWhite, 3, "select a given DVD chapter and ");
+						fixPrint(4, y++, fontColorWhite, 3, "color name. Use the L and R");
+						fixPrint(4, y++, fontColorWhite, 3, "buttons to scroll through the");
+						fixPrint(4, y++, fontColorWhite, 3, "color list and select the color");
+						fixPrint(4, y++, fontColorWhite, 3, "desired. Once ready to measure,");
+						fixPrint(4, y++, fontColorWhite, 3, "click OK in HCFR Colormeter to");
+						fixPrint(4, y++, fontColorWhite, 3, "measure the test pattern.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "Use the Continuous measure mode");
+						fixPrint(4, y++, fontColorWhite, 3, "to be able to adjust your");
+
+						fixPrint(26, 24, fontColorYellow, 3, "(cont...)");
+					break;
+
+					case 8:
+						fixPrintC(6, fontColorGreen, 3, "HCFR PATTERNS (8/8)");
+
+						fixPrint(4, y++, fontColorWhite, 3, "display's settings to match the");
+						fixPrint(4, y++, fontColorWhite, 3, "values required for your chosen");
+						fixPrint(4, y++, fontColorWhite, 3, "color space, white point, gamma,");
+						fixPrint(4, y++, fontColorWhite, 3, "etc.");
+						y++;
+						fixPrint(4, y++, fontColorWhite, 3, "Original data and testing");
+						fixPrint(4, y++, fontColorWhite, 3, "by Dan Mons and Keith Raney.");
+
+						fixPrint(26, 24, fontColorYellow, 3, "(cont...)");
+					break;
+					}
 				break;
 			default:
 				exit = 1;

@@ -1724,7 +1724,7 @@ void tp_hcfr()
 		if (BTTN_EXIT)
 			done = 1;
 
-		if (BTTN_MAIN || PRESSED_LEFT)
+		if (PRESSED_LEFT)
 		{
 			if (hcfr_num > 0)
 			{
@@ -1733,7 +1733,7 @@ void tp_hcfr()
 			}
 		}
 
-		if (BTTN_OPTION_1 || PRESSED_RIGHT)
+		if (BTTN_MAIN || PRESSED_RIGHT)
 		{
 			if (hcfr_num < HCFR_LEN)
 			{
@@ -1744,12 +1744,6 @@ void tp_hcfr()
 
 		if (BTTN_OPTION_1)
 		{
-			hcfr_num = 0;
-			changed = 1;
-		}
-
-		if (BTTN_OPTION_2)
-		{
 			int tmp_hcfr_type = 0;
 
 			tmp_hcfr_type = select_menu("Select Standard", fmenu, HCFR_TYPES, hcfr_type);
@@ -1759,6 +1753,12 @@ void tp_hcfr()
 				hcfr_num = 0;
 			}
 			draw = 1;
+		}
+
+		if (BTTN_OPTION_2)
+		{
+			hcfr_num = 0;
+			changed = 1;
 		}
 	}
 }

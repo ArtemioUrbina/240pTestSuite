@@ -59,9 +59,6 @@ static const ushort fixPalettes[]= {
 	_BLACK, IRE_30, IRE_10, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorGrayDark
 	_BLACK, _BLACK, WH_100, 0xee51, 0x4f81, 0x4fa1, 0x4fc1, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorBlack
 	_BLACK, _BLACK, WH_100, 0x8333, 0xe7b0, 0xc580, 0xe250, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorSolid
-	//_BLACK, 0xefb8, 0x0111, 0xde96, 0x3c75, 0x2950, 0x4720, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,  Unknown
-	//_BLACK, 0x8444, 0x0111, 0xf555, 0xf666, 0x7777, 0x8888, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,  Unknown
-	//_BLACK, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  Unknown
 };
 
 void menu_tp_colormenu()
@@ -71,7 +68,7 @@ void menu_tp_colormenu()
 
 	while (!done)
 	{
-		int y = 10;
+		int y = 9;
 
 		if (redraw)
 		{
