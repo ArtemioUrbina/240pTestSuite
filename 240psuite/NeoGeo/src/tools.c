@@ -959,7 +959,17 @@ int verifyZ80Version()
 {
 	volMEMBYTE(REG_SOUND) = SOUNDCMD_CheckVersion;
 
-	return(checkZ80Response() == Z80VERSIONREPLY);
+#ifdef VROM_UNIFIED
+	return(checkZ80Response() == Z80VERSION_UNIFIED);
+#endif
+
+#ifdef VROM_SPLIT
+	return(checkZ80Response() == Z80VERSION_SPLIT);
+#endif
+
+#ifdef VROM_CD
+	return(checkZ80Response() == Z80VERSION_CD);
+#endif
 }
 
 #ifdef __cd__

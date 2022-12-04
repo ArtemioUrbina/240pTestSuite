@@ -120,5 +120,8 @@
 #define Z80COMMAND_FAIL(cmd)		(cmd)
 #define Z80COMMAND_TIME(cmd)		(cmd == 0)
 
-#define Z80VERSIONREPLY				0x0A
+#define Z80VERSION_UNIFIED			0x0A
+#define Z80VERSION_SPLIT			0x0B
+#define Z80VERSION_CD				0x0C
+
 #endif /* _SOUND_H_ */

@@ -109,7 +109,6 @@ void DrawHelp(int option)
 						{
 							picture qr;
 
-							// URL https://junkerhq.net/240p
 							pictureInit(&qr, &barcode, index, 17, 246, 144, FLIP_NONE);
 							palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 
@@ -807,8 +806,7 @@ void DrawHelp(int option)
 				{
 					picture qr;
 
-					// URL https://junkerhq.net/MDFourier
-					pictureInit(&qr, &qrmdf, index, 17, 246, 144, FLIP_NONE);
+					pictureInit(&qr, &qrmdf, index, 17, 248, 140, FLIP_NONE);
 					palJobPut(17,qrmdf.palInfo->count,qrmdf.palInfo->data);
 
 					fixPrintC(6, fontColorGreen, 3, "MDFourier");

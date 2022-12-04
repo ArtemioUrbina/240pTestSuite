@@ -59,11 +59,12 @@
 
 void at_sound_test()
 {
-	int done = 0, draw = 1, sel = 0, adpcmb_sel = 2;
+	int done = 0, draw = 1, sel = 0;
 	int fmnote = 6, fmoctave = 3, fmpan = 1, refresh = 1;
 	int option = fmnote, change = 0, changeoption = 0;
 	int	timer0 = 0, timer1 = 0, timer2= 0, version = 0;
 #ifndef __cd__
+	int adpcmb_sel = 2;
 	int loopB = 0, adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125 }, adpcm_b_swap = 0;
 #endif
 	picture image;
@@ -369,6 +370,7 @@ void at_sound_test()
 				if(adpcmb_sel > 7)
 					adpcmb_sel = 0;
 				sendZ80command(SOUNDCMD_RateB_0+adpcmb_sel);
+				refresh = 1;
 			}
 #endif
 		}
@@ -384,6 +386,7 @@ void at_sound_test()
 					sendZ80command(SOUNDCMD_LoopB);
 				else
 					sendZ80command(SOUNDCMD_NoLoopB);
+				refresh = 1;
 			}
 #endif
 		}

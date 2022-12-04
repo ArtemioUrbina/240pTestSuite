@@ -627,10 +627,15 @@ void credits()
 			fixPrint(x+1, y++, fontColorWhite, 3, "DATlib (HPMAN)");
 			fixPrint(x, y++, fontColorGreen, 3, "Z80 Sound Driver:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Based on freem ADPCM example");
+#ifndef __cd__
 			fixPrint(x, y++, fontColorGreen, 3, "MVS flashcart provided by:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
 			fixPrint(x, y++, fontColorGreen, 3, "AES flashcart borrowed from:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "El Diablo (Jorge Velazquez)");
+#else
+			fixPrint(x, y++, fontColorGreen, 3, "Neo Geo CDZ borrowed from:");
+			fixPrint(x+1, y++, fontColorWhite, 3, "Rolando Cedillo");
+#endif
 			y++;
 			fixPrint(5, y++, fontColorGreen, 3, "Info on using this test suite:");
 			fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");
