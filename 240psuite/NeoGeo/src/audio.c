@@ -101,7 +101,11 @@ void at_sound_test()
 
 		if(refresh)
 		{
+#ifndef __cd__
 			fixPrintC(6, fontColorGreen, 3, "YM 2610 Sound Test");
+#else
+			fixPrintC(6, fontColorGreen, 3, "YM 2610 & CDDA Sound Test");
+#endif
 
 			fixPrintC(y++, fontColorGreen, 3, "FM");
 			fixPrint(x+=2, y, sel == SND_SEL_FM_NOTE && option == 0 ? fontColorRed : fontColorWhite, 3, "1");
@@ -165,7 +169,12 @@ void at_sound_test()
 			fixPrint(18, y, sel == SND_SEL_CDDA && option == 1 ? fontColorRed : fontColorWhite, 3, "Play");
 #endif
 			if(!version)
-				fixPrintC(++y, fontColorRed, 3, "Faulty Audio Driver");
+				fixPrintC(++y, fontColorRed, 3, max_z80_timout == Z80_TIMEOUT ? "Z80 Driver Timed Out" : "Incorrect Audio Driver");
+			else {
+				if(disable_z80_check)
+					fixPrintC(++y, fontColorRed, 3, "Z80 Command check disabled");
+			}
+				
 			refresh = 0;
 		}
 
@@ -469,6 +478,10 @@ void at_sound_mdfourier()
 	version = verifyZ80Version();
 	if(!version)
 		draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
+	else {
+		if(disable_z80_check)
+			draw_warning("Z80 Command check disabled\nResults might be off", 1, 16, 1);
+	}
 
 	while (!done)
 	{

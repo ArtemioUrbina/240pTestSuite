@@ -124,4 +124,6 @@
 #define Z80VERSION_SPLIT			0x0B
 #define Z80VERSION_CD				0x0C
 
+#define Z80_TIMEOUT					0x25000
+
 #endif /* _SOUND_H_ */

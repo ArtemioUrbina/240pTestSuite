@@ -43,6 +43,7 @@ BYTE vmode_snk, isPAL, usePAL256, isPALinMVS;
 BYTE enable_shadow, fill_color_bg;
 int max_z80_timout;
 int min_z80_timout;
+int disable_z80_check;
 #ifdef __cd__
 BYTE isCDFront, isCDZ, ngcd_region;
 #endif
@@ -715,6 +716,20 @@ void _240p_mvs_coin_sound(void)
 	sendZ80commandnoWait(SOUNDCMD_PlayCoinA);
 }
 
+void CheckWarnings()
+{
+	if(isPALinMVS)
+		draw_warning("MVS HW is supposed to be NTSC.\nIt is supported by the Suite,\nbut PAL options will be disabled\nto honor SNK definition.", 1, 16, 1);
+
+	if(!verifyZ80Version())
+	{
+		if(max_z80_timout == Z80_TIMEOUT)
+			draw_warning("Z80 driver timed out\nEither an emulation issue\nor a bad M1 ROM.\nTry disabling Z80 check\nin options.", 1, 16, 1);
+		else
+			draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
+	}
+}
+
 void menu_main()
 {
 	int curse = 1, cursemax = 7, redraw = 1, done = 0, showexit = 0;
@@ -732,11 +747,7 @@ void menu_main()
 	}
 #endif
 
-	if(isPALinMVS)
-		draw_warning("MVS HW is supposed to be NTSC.\nIt is supported by the Suite,\nbut PAL options will be disabled\nto honor SNK definition.", 1, 16, 1);
-
-	if(!verifyZ80Version())
-		draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
+	CheckWarnings();
 
 	while (!done)
 	{
@@ -1016,6 +1027,7 @@ void check_bios_init()
 	first_colorramp = 1;
 	max_z80_timout = 0;
 	min_z80_timout = 65536;
+	disable_z80_check = 0;
 	fill_color_bg = 0;
 }
 
