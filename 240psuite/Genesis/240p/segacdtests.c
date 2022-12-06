@@ -295,15 +295,23 @@ void PrintBIOSInfo(uint32_t address)
 	}
 }
 
-int Test8bitRegionRegion(u8 value, u32 startaddress, u32 size)
+int Test8bitRegion(u8 value, u32 startaddress, u32 size)
 {
-	u8		*ram = NULL;
-	u32		byte = 0;
+	volatile u8	*ram = NULL;
+	u32			byte = 0;
 	
-	ram = (u8*)startaddress;
+	ram = (volatile u8*)startaddress;
+	// test immediate read
 	for(byte = 0; byte < size; byte++)
 	{
 		ram[byte] = value;
+		if(ram[byte] != value)
+			return byte;
+	}
+	
+	// test delayed read
+	for(byte = 0; byte < size; byte++)
+	{
 		if(ram[byte] != value)
 			return byte;
 	}
@@ -313,14 +321,21 @@ int Test8bitRegionRegion(u8 value, u32 startaddress, u32 size)
 
 int Test16bitRegion(u16 value, u32 startaddress, u32 size)
 {
-	u16		*ram = NULL;
-	u32		word = 0;
+	volatile u16 *ram = NULL;
+	u32		      word = 0;
 	
-	ram = (u16*)startaddress;
+	ram = (volatile u16*)startaddress;
 	size = size/2;
+	// test immediate read
 	for(word = 0; word < size; word++)
 	{
 		ram[word] = value;
+		if(ram[word] != value)
+			return word*2;
+	}
+	// test delayed read
+	for(word = 0; word < size; word++)
+	{
 		if(ram[word] != value)
 			return word*2;
 	}
@@ -337,7 +352,7 @@ int CheckRAMWithValue(u32 start, u32 end, u16 value, int pos, u16 numbits)
 	if(numbits == IS_16BIT)
 		memoryFail = Test16bitRegion(value, start, end - start);
 	else
-		memoryFail = Test8bitRegionRegion((u8)(value & 0x00FF), start, end - start);
+		memoryFail = Test8bitRegion((u8)(value & 0x00FF), start, end - start);
 	
 	if(memoryFail != MEMORY_OK)
 	{
@@ -1044,10 +1059,10 @@ void CheckSCDProgramRAM()
 		
 		good = 0;
 		
-		good += CheckRAMWithValue(0x420000, 0x440000, 0xAAAA, 10, IS_16BIT);
-		good += CheckRAMWithValue(0x420000, 0x440000, 0x5555, 12, IS_16BIT);
-		good += CheckRAMWithValue(0x420000, 0x440000, 0xFFFF, 14, IS_16BIT);
-		if(good == 3) CheckRAMWithValue(0x420000, 0x440000, 0x0000, 16, IS_16BIT);
+		good += CheckRAMWithValue(0x420000, 0x440000, 0xAAAA, 11, IS_16BIT);
+		good += CheckRAMWithValue(0x420000, 0x440000, 0x5555, 13, IS_16BIT);
+		good += CheckRAMWithValue(0x420000, 0x440000, 0xFFFF, 15, IS_16BIT);
+		if(good == 3) CheckRAMWithValue(0x420000, 0x440000, 0x0000, 17, IS_16BIT);
 
 		WaitKey(NULL);
 		VDP_Start();
@@ -1063,10 +1078,10 @@ void CheckSCDWordRAM()
 	ShowMessageAndData("WORD RAM", 0x600000, 8, PAL1, 10, 8);
 	
 	good = 0;
-	good += CheckRAMWithValue(0x600000, 0x640000, 0xAAAA, 10, IS_16BIT);
-	good += CheckRAMWithValue(0x600000, 0x640000, 0x5555, 12, IS_16BIT);
-	good += CheckRAMWithValue(0x600000, 0x640000, 0xFFFF, 14, IS_16BIT);
-	if(good == 3) CheckRAMWithValue(0x600000, 0x640000, 0x0000, 16, IS_16BIT);
+	good += CheckRAMWithValue(0x600000, 0x640000, 0xAAAA, 11, IS_16BIT);
+	good += CheckRAMWithValue(0x600000, 0x640000, 0x5555, 13, IS_16BIT);
+	good += CheckRAMWithValue(0x600000, 0x640000, 0xFFFF, 15, IS_16BIT);
+	if(good == 3) CheckRAMWithValue(0x600000, 0x640000, 0x0000, 17, IS_16BIT);
 
 	WaitKey(NULL);
 }
