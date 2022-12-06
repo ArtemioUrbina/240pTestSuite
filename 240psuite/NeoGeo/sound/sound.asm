@@ -389,7 +389,20 @@ command_RAMTest:
 
 command_z80_version:
 	pop		hl						; remove return from stack
+
+	; return a different value based on which version was built
+	ifd VROM_UNIFIED
 	ld		a,0x0A
+	endif
+
+	ifd VROM_SPLIT
+	ld		a,0x0B
+	endif
+
+	ifd TARGET_CD
+	ld		a,0x0C
+	endif
+
 	out		(0xC),a
 	xor		a						; clear a for now.
 	out		(0),a					; Write to port 0 (Clear sound code)

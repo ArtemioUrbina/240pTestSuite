@@ -213,12 +213,21 @@ inline void gfxClear()
 #define OPTIONS_DARK	3
 #define OPTIONS_VERT	4
 #define OPTIONS_BGFILL	5
+#define OPTIONS_Z80CHK	6
 #define OPTIONS_END		6
+#define OPTIONS_EXIT	7
 
 void menu_options()
 {
-	int done = 0, curse = 1, cursemax = OPTIONS_END, redraw = 1, text = 0, index = 0;
+	int done = 0, curse = 1, cursemax = OPTIONS_END, redraw = 1, index = 0, enable_z80 = 0, lastsel = 100;
 	char blank[] = "                                ";
+
+	// Only enable if we've timed out once
+	if (max_z80_timout == Z80_TIMEOUT)
+	{
+		enable_z80 = 1;
+		cursemax ++;
+	}
 
 	while (!done)
 	{
@@ -248,76 +257,52 @@ void menu_options()
 		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? fontColorRed : fontColorWhite, 3, "IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
 		fixPrintf(5, y++, curse == OPTIONS_DARK ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
 		fixPrintf(5, y++, curse == OPTIONS_VERT ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
-		fixPrintf(5, y++, curse == OPTIONS_BGFILL ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL background fill: %s", fill_color_bg ? "Yes" : "No");
+		fixPrintf(5, y++, curse == OPTIONS_BGFILL ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL background fill: %s", fill_color_bg ? "Yes" : "No ");
+		if(enable_z80)
+			fixPrintf(5, y++, curse == OPTIONS_Z80CHK ? fontColorRed : fontColorWhite, 3, "Disable Z80 Check:   %s", disable_z80_check ? "Yes" : "No ");
 		y++;
-		fixPrintf(5, y++, curse == OPTIONS_END ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrintf(5, y++, curse == OPTIONS_END + enable_z80 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
-		// Extra description
-		if (curse == OPTIONS_HORI)
+		if(curse != lastsel)
 		{
-			if(text != OPTIONS_HORI)
+			int i = 0;
+
+			lastsel = curse;
+
+			// Extra description
+			for (i = 20; i < 24; i++)
+				fixPrintf(4, i, fontColorGreen, 3, blank);
+
+			if (curse == OPTIONS_HORI) 
 			{
 				fixPrintf(4, 20, fontColorGreen, 3, "The 304 mode uses the BIOS mask");
 				fixPrintf(4, 21, fontColorGreen, 3, "to hide 8 pixels on each side, ");
 				fixPrintf(4, 22, fontColorGreen, 3, "as required by SNK in games.");
 				if (!vmode_snk)
 					fixPrintf(4, 23, fontColorRed, 3, "Some systems trim pixel col. 320");
-				text = OPTIONS_HORI;
 			}
-		} else {
-			if (text == OPTIONS_HORI)
-			{
-				int i = 0;
 
-				for (i = 20; i < 24; i++)
-					fixPrintf(4, i, fontColorGreen, 3, blank);
-				text = 0;
-			}
-		}
-
-		if (curse == OPTIONS_DARK)
-		{
-			if(text != OPTIONS_DARK)
+			if (curse == OPTIONS_DARK)
 			{
 				fixPrintf(4, 20, fontColorGreen, 3, "Hardware option, all patterns");
 				fixPrintf(4, 21, fontColorGreen, 3, "will be darker.");
-				text = OPTIONS_DARK;
 			}
-		}
-		else {
-			if (text == OPTIONS_DARK)
-			{
-				int i = 0;
 
-				for (i = 20; i < 24; i++)
-					fixPrintf(4, i, fontColorGreen, 3, blank);
-				text = 0;
-			}
-		}
-
-		if (curse == OPTIONS_IRE100)
-		{
-			if(text != OPTIONS_IRE100)
+			if (curse == OPTIONS_IRE100)
 			{
 				fixPrintf(4, 20, fontColorGreen, 3, "Neo Geo white level goes up to");
 				fixPrintf(4, 21, fontColorGreen, 3, "~106.8 IRE. This option limits");
 				fixPrintf(4, 22, fontColorGreen, 3, "patterns to 100 IRE.");
-				text = 3;
 			}
-		}
-		else {
-			if (text == OPTIONS_IRE100)
-			{
-				int i = 0;
+		
 
-				for (i = 20; i < 24; i++)
-					fixPrintf(4, i, fontColorGreen, 3, blank);
-				text = 0;
-			}
+			if (enable_z80 && curse == OPTIONS_Z80CHK)
+				fixPrintf(4, 20, fontColorGreen, 3, "Only needed in emulators.");
 		}
-
+		
+		
 		if (curse != OPTIONS_END && (PRESSED_LEFT || PRESSED_RIGHT))
 			toggle = 1;
 
@@ -357,6 +342,13 @@ void menu_options()
 				break;
 
 				case OPTIONS_END:
+					if(enable_z80)
+						disable_z80_check = !disable_z80_check;
+					else
+						done = 1;
+				break;
+
+				case OPTIONS_EXIT:
 					done = 1;
 				break;
 			}
@@ -371,6 +363,8 @@ void menu_options()
 
 	if(enable_shadow)
 		draw_warning("Dark Mode is enabled.\nColor and brightness patterns\nwill be affected.", index, 20, 1);
+	if(disable_z80_check)
+		draw_warning(max_z80_timout == Z80_TIMEOUT ? "If this doesn't fix the issue\nyou have a bad M1 ROM" : "Disabling Z80 Check will make\naudio commands and\nother tests fail.", index, 20, 1);
 	return;
 }
 
@@ -862,25 +856,33 @@ inline void waitVLine(WORD line)
 // regular commands MAME max 258
 // Max Timeout from z80 RAM test in NTSC AES is 66264
 // Max Timeout from z80 RAM test in PAL AES is 66508
-// Max Timeout from z80 RAM test in MAME is 108733
+// Max Timeout from z80 RAM test in MAME is 66084
 // we'll use 0x25000
 
-#define Z80_TIMEOUT 0x25000
 inline int checkZ80Response()
 {
 	int timeout = 0;
 	BYTE response = 0;
 
-	// wait for the Z80 to enter NMI
-	do
+	// Disabloing this is a workaround for NeoRaine
+	// and maybe other emulators
+	// It should not be enabled by default
+	if(!disable_z80_check)
 	{
-		response = volMEMBYTE(REG_SOUND);
-		timeout++;
-	}while(timeout < Z80_TIMEOUT && response != 0xff);
-	// Z80 got command, and is inside the NMI (or timed out)
+		// wait for the Z80 to enter NMI
+		do
+		{
+			response = volMEMBYTE(REG_SOUND);
+			timeout++;
+		}while(timeout < Z80_TIMEOUT && response != 0xff);
+		// Z80 got command, and is inside the NMI (or timed out)
 
-	if(timeout >= Z80_TIMEOUT)
-		return 0;
+		if(timeout >= Z80_TIMEOUT)
+		{
+			max_z80_timout = timeout;
+			return 0;
+		}
+	}
 
 	do
 	{
@@ -959,7 +961,17 @@ int verifyZ80Version()
 {
 	volMEMBYTE(REG_SOUND) = SOUNDCMD_CheckVersion;
 
-	return(checkZ80Response() == Z80VERSIONREPLY);
+#ifdef VROM_UNIFIED
+	return(checkZ80Response() == Z80VERSION_UNIFIED);
+#endif
+
+#ifdef VROM_SPLIT
+	return(checkZ80Response() == Z80VERSION_SPLIT);
+#endif
+
+#ifdef VROM_CD
+	return(checkZ80Response() == Z80VERSION_CD);
+#endif
 }
 
 #ifdef __cd__

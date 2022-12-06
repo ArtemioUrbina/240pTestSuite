@@ -167,3 +167,5 @@ extern const pictureInfo hcfr;
 extern const paletteInfo hcfr_Palettes;
 extern const pictureInfo floatmenu;
 extern const paletteInfo floatmenu_Palettes;
+extern const pictureInfo qrhcfr;
+extern const paletteInfo qrhcfr_Palettes;

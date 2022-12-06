@@ -43,6 +43,7 @@ BYTE vmode_snk, isPAL, usePAL256, isPALinMVS;
 BYTE enable_shadow, fill_color_bg;
 int max_z80_timout;
 int min_z80_timout;
+int disable_z80_check;
 #ifdef __cd__
 BYTE isCDFront, isCDZ, ngcd_region;
 #endif
@@ -59,9 +60,6 @@ static const ushort fixPalettes[]= {
 	_BLACK, IRE_30, IRE_10, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorGrayDark
 	_BLACK, _BLACK, WH_100, 0xee51, 0x4f81, 0x4fa1, 0x4fc1, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorBlack
 	_BLACK, _BLACK, WH_100, 0x8333, 0xe7b0, 0xc580, 0xe250, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, // fontColorSolid
-	//_BLACK, 0xefb8, 0x0111, 0xde96, 0x3c75, 0x2950, 0x4720, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,  Unknown
-	//_BLACK, 0x8444, 0x0111, 0xf555, 0xf666, 0x7777, 0x8888, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,  Unknown
-	//_BLACK, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  Unknown
 };
 
 void menu_tp_colormenu()
@@ -71,7 +69,7 @@ void menu_tp_colormenu()
 
 	while (!done)
 	{
-		int y = 10;
+		int y = 9;
 
 		if (redraw)
 		{
@@ -630,10 +628,15 @@ void credits()
 			fixPrint(x+1, y++, fontColorWhite, 3, "DATlib (HPMAN)");
 			fixPrint(x, y++, fontColorGreen, 3, "Z80 Sound Driver:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Based on freem ADPCM example");
+#ifndef __cd__
 			fixPrint(x, y++, fontColorGreen, 3, "MVS flashcart provided by:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
 			fixPrint(x, y++, fontColorGreen, 3, "AES flashcart borrowed from:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "El Diablo (Jorge Velazquez)");
+#else
+			fixPrint(x, y++, fontColorGreen, 3, "Neo Geo CDZ borrowed from:");
+			fixPrint(x+1, y++, fontColorWhite, 3, "Rolando Cedillo");
+#endif
 			y++;
 			fixPrint(5, y++, fontColorGreen, 3, "Info on using this test suite:");
 			fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");
@@ -713,6 +716,20 @@ void _240p_mvs_coin_sound(void)
 	sendZ80commandnoWait(SOUNDCMD_PlayCoinA);
 }
 
+void CheckWarnings()
+{
+	if(isPALinMVS)
+		draw_warning("MVS HW is supposed to be NTSC.\nIt is supported by the Suite,\nbut PAL options will be disabled\nto honor SNK definition.", 1, 16, 1);
+
+	if(!verifyZ80Version())
+	{
+		if(max_z80_timout == Z80_TIMEOUT)
+			draw_warning("Z80 driver timed out\nEither an emulation issue\nor a bad M1 ROM.\nTry disabling Z80 check\nin options.", 1, 16, 1);
+		else
+			draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
+	}
+}
+
 void menu_main()
 {
 	int curse = 1, cursemax = 7, redraw = 1, done = 0, showexit = 0;
@@ -730,11 +747,7 @@ void menu_main()
 	}
 #endif
 
-	if(isPALinMVS)
-		draw_warning("MVS HW is supposed to be NTSC.\nIt is supported by the Suite,\nbut PAL options will be disabled\nto honor SNK definition.", 1, 16, 1);
-
-	if(!verifyZ80Version())
-		draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
+	CheckWarnings();
 
 	while (!done)
 	{
@@ -1014,6 +1027,7 @@ void check_bios_init()
 	first_colorramp = 1;
 	max_z80_timout = 0;
 	min_z80_timout = 65536;
+	disable_z80_check = 0;
 	fill_color_bg = 0;
 }
 

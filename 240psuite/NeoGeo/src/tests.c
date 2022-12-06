@@ -1592,6 +1592,9 @@ void vt_backlitzone_test()
 		}
 
 		if (BTTN_OPTION_1)
+			fast = !fast;
+
+		if (BTTN_OPTION_2)
 		{
 			shown = !shown;
 			if(shown)
@@ -1599,9 +1602,6 @@ void vt_backlitzone_test()
 			else
 				pictureHide(&image);
 		}
-
-		if (BTTN_OPTION_2)
-			fast = !fast;
 
 		if (p1 & JOY_UP)
 		{

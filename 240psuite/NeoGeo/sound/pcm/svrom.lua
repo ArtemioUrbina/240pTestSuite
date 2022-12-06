@@ -1,4 +1,5 @@
 -- Sailor VROM (Lua version) by freem
+-- This is a modified version by Artemio Urbina for the 240p Test Suite
 -- Use of this tool (e.g. using the exported files) is free.
 -- License is still undecided, but leaning towards public domain/unlicense/CC0.
 --============================================================================--
@@ -30,13 +31,13 @@ if not args or not args[1] then
 	print("Available options:")
 	print("    --pcma=path         path/filename of ADPCM-A sample list file")
 	print("    --pcmb=path         path/filename of ADPCM-B sample list file")
-	print("    --outname=path      path/filename of sound data output")
+	print("    --outname=path      path/filename of single/ADPCM-A sound data output")
+	print("    --outnameB=path     path/filename of ADPCM-B sound data output")
 	print("    --samplelist=path   path/filename of sample list output")
 	print("    --samplestart=addr  starting address for sample list output")
 	print("    --mode=mode         'cd' or 'cart', without the quotes")
 	print("    --slformat=format   'vasm', 'tniasm', or 'wla', all without quotes")
-	print("    --vrom=format       'split' vrom or 'single' vrom, without the quotes")
-	print("    --outnameB=path     path/filename of ADPCM-B sound data output")
+	print("    --vrom=format       'split' (ADPCM-A/B) vrom or 'single' vrom, without the quotes")
 	return
 end
 
@@ -167,19 +168,26 @@ end
 -- outSoundFN is not mandatory. (defaults to "output.v" or "output.pcm")
 if not outSoundFN then
 	outSoundFN = "output."..(modeType=="cd" and "pcm" or "v")
-	print(string.format("Sound data output filename omitted, using '%s'.",outSoundFN))
+	if vromType == "split" then
+		print(string.format("ADPCM-A data output filename omitted, using '%s'.",outSoundFN))
+	else
+		print(string.format("Sound data output filename omitted, using '%s'.",outSoundFN))
+	end
 else
-	print(string.format("Sound data output: %s",outSoundFN))
+	if vromType == "split" then
+		print(string.format("ADPCM-A data output: %s",outSoundFN))
+	else
+		print(string.format("Sound data output: %s",outSoundFN))
+	end
 end
 
 -- outSoundFNB is not mandatory. (defaults to "output.Bv" or "output.Bpcm")
 if vromType == "split" then
 	if not outSoundFNB then 
 		outSoundFNB = "outputBROM."..(modeType=="cd" and "pcm" or "v")
-		print(string.format("Split Sound data output filename omitted, using '%s'.",outSoundFNB))
-	
+		print(string.format("ADPCM-B data output filename omitted, using '%s'.",outSoundFNB))
 	else
-		print(string.format("Split Sound data output: %s",outSoundFNB))
+		print(string.format("ADPCM-B Sound data output: %s",outSoundFNB))
 	end
 end
 

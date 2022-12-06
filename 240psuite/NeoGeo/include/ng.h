@@ -53,6 +53,7 @@ extern BYTE first_colorramp;
 extern BYTE fill_color_bg;
 extern int max_z80_timout;
 extern int min_z80_timout;
+extern int disable_z80_check;
 #ifdef __cd__
 extern BYTE isCDFront, isCDZ, ngcd_region;
 #endif

@@ -1,12 +1,25 @@
+###################################
+# Output: {cart, cd} *lower case* #
+###################################
+
+OUTPUT = cart
+#OUTPUT = cd
+
+##############################################
+# VROM Type, split or unified. Only for cart #
+##############################################
+
+ifeq ($(OUTPUT),cart)
+VROM_TYPE = unified
+#VROM_TYPE = split
+endif
+
 #######################################
 # Base dir of your m68k gcc toolchain #
 #######################################
 
 NEODEV=/c/NeoDev
 export PATH=$(NEODEV)/m68k/bin
-
-MAMEDIR = $(NEODEV)\mame\roms\240ptestng
-MAMECDDIR = $(NEODEV)\mame\roms\neocd\240ptestngcd
 
 BASEDIR = $(NEODEV)
 AS = as
@@ -21,34 +34,66 @@ BUILDCHAR = BuildChar
 CHARSPLIT = CharSplit
 RM = rm -f
 CP = cp
-7Z = $(NEODEV)/tools/7zip/7za
-NBPATH = $(NEODEV)/tools/neobuilder/
-NB = ./NeoBuilder.exe
 
 NGH = 2501
-
-PROM  = $(NGH)-p1.p1
-CROM  = $(NGH)-cx.cx
-C1ROM = $(NGH)-c1.c1
-C2ROM = $(NGH)-c2.c2
-SROM  = $(NGH)-s1.s1
-MROM  = $(NGH)-m1.m1
-VROM  = $(NGH)-v1.v1
-# Comment teh above and uncomment teh two below and all other VROMB references
-# For Split VROM (Not using PCB chip)
-#VROM  = $(NGH)-v11.v11
-#VROMB = $(NGH)-v21.v21
-
-
-MKISOFS = $(NEODEV)/tools/cdtools/mkisofs
-FLAGS_MKISOFS = -iso-level 1 -pad -N
-CHDMAN = $(NEODEV)/tools/cdtools/chdman
 
 # FLAGS_ROMWAK Pad output file
 FLAGS_ROMWAK_PAD = //p
 
 # FLAGS_ROMWAK flip hi/lo output file
 FLAGS_ROMWAK_FLIP = //f
+
+
+###################################
+# MAME output folders for testing #
+###################################
+
+ifeq ($(OUTPUT),cart)
+ifeq ($(VROM_TYPE),unified)
+MAMEDIR = $(NEODEV)\mame\roms\240ptestng
+endif
+ifeq ($(VROM_TYPE),split)
+MAMEDIR = $(NEODEV)\mame\roms\240ptestspl
+endif
+7Z = $(NEODEV)/tools/7zip/7za
+NBPATH = $(NEODEV)/tools/neobuilder/
+NB = ./NeoBuilder.exe
+endif
+ifeq ($(OUTPUT),cd)
+MAMECDDIR = $(NEODEV)\mame\roms\neocd\240ptestngcd
+endif
+
+#############
+# ROM Names #
+#############
+
+CROM  = $(NGH)-cx.cx
+SROM  = $(NGH)-s1.s1
+
+ifeq ($(OUTPUT),cart)
+PROM  = $(NGH)-p1.p1
+C1ROM = $(NGH)-c1.c1
+C2ROM = $(NGH)-c2.c2
+MROM  = $(NGH)-m1.m1
+ifeq ($(VROM_TYPE),unified)
+VROM  = $(NGH)-v1.v1
+endif
+ifeq ($(VROM_TYPE),split)
+# For Split VROM (Not using PCB chip)
+VROMA = $(NGH)-v11.v11
+VROMB = $(NGH)-v21.v21
+endif
+endif
+
+################
+# CD-ROM Names #
+################
+
+ifeq ($(OUTPUT),cd)
+#cd tools
+MKISOFS = $(NEODEV)/tools/cdtools/mkisofs
+FLAGS_MKISOFS = -iso-level 1 -pad -N
+CHDMAN = $(NEODEV)/tools/cdtools/chdman
 
 # NGCD_IMAGENAME - output image/ISO name
 NGCD_IMAGENAME = 240pTestSuite
@@ -77,6 +122,7 @@ NGCD_DISCFILES = \
 	$(CDFIX_OUTFILE) \
 	$(CDPCM_OUTFILE) \
 	$(CDCHR_OUTFILE)
+endif
 
 #######################################
 # Path to libraries and include files #
@@ -85,15 +131,11 @@ NGCD_DISCFILES = \
 INCDIR = -I$(BASEDIR)/m68k/include -Iinclude 
 LIBDIR = $(BASEDIR)/m68k/lib
 
-###################################
-# Output: {cart, cd} *lower case* #
-###################################
-OUTPUT = cart
-#OUTPUT = cd
-
 ############################
 # Settings for cart output #
 ############################
+
+ifeq ($(OUTPUT),cart)
 ROMSIZE   = 0x100000
 PADBYTE   = 0xFF
 ROMSIZEKB = 1024
@@ -104,8 +146,30 @@ FIXSIZE   = 128
 # Z80OUT_CART_SIZE - output size of M1 rom in kilobytes
 Z80OUT_CART_SIZE = 64
 
-# PCMOUT_CART_SIZE - output size of V1 rom in kilobytes
+# PCMOUT_CART_SIZE - output size of V roms in kilobytes
+ifeq ($(VROM_TYPE),unified)
 PCMOUT_CART_SIZE = 256
+endif
+ifeq ($(VROM_TYPE),split)
+PCMOUT_CART_SIZE = 128
+VROMB_CART_SIZE = 128
+endif
+endif
+
+###########################################
+# AUDIO_VERSION - Z80 response to version #
+###########################################
+
+ifeq ($(OUTPUT),cart)
+ifeq ($(VROM_TYPE),unified)
+AUDIO_VERSION = VROM_UNIFIED
+endif
+ifeq ($(VROM_TYPE),split)
+AUDIO_VERSION = VROM_SPLIT
+endif
+else
+AUDIO_VERSION = VROM_CD
+endif
 
 ##############################
 # Object Files and Libraries #
@@ -132,7 +196,7 @@ LIBS = -lDATlib -lprocess -lc -lgcc
 
 ASFLAGS = -m68000 --register-prefix-optional
 LDFLAGS = -Wl,-T$(BASEDIR)/src/system/neo$(OUTPUT).x -Xlinker -Map=output.map
-CCFLAGS = -m68000 -O3 -Wall -fomit-frame-pointer -ffast-math -fno-builtin -nostartfiles -nodefaultlibs -D__$(OUTPUT)__
+CCFLAGS = -m68000 -O3 -Wall -fomit-frame-pointer -ffast-math -fno-builtin -nostartfiles -nodefaultlibs -D__$(OUTPUT)__ -D$(AUDIO_VERSION)
 ARFLAGS = cr
 DEBUG = -g
 
@@ -143,7 +207,6 @@ DEBUG = -g
 ifeq ($(OUTPUT),cart)
 out/$(PROM) : prog.o
 	$(OBJC) --gap-fill=$(PADBYTE) --pad-to=$(ROMSIZE) -R .data -O binary $< $@
-#	$(OBJC) --gap-fill=$(PADBYTE) -R .data -O binary $< $@
 else
 cd/$(CDPRG_OUTFILE) : prog.o
 	$(OBJC) -O binary $< $@
@@ -158,13 +221,28 @@ prog.o : $(OBJS)
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
 
+############
+# Graphics #
+############
+
+char:
+	$(BUILDCHAR) chardata.xml
+
+fix:
+	$(BUILDCHAR) fixdata.xml
+
+
+###############
+# CART target #
+###############
+
 ifeq ($(OUTPUT),cart)
+ifeq ($(VROM_TYPE),unified)
 cart: z80 out/$(PROM) 
 	$(CP) out/$(PROM) $(OUTPUT)/$(PROM)
 	$(CP) out/$(SROM) $(OUTPUT)/$(SROM)
 	$(CP) out/$(MROM) $(OUTPUT)/$(MROM)
 	$(CP) out/$(VROM) $(OUTPUT)/$(VROM)
-	#$(CP) out/$(VROMB) $(OUTPUT)/$(VROMB)
 	cd out && $(ROMWAK) $(FLAGS_ROMWAK_PAD) $(CROM) $(CROM).spl $(CHARSSIZE) $(PADBYTED)
 	cd out && $(CHARSPLIT) $(CROM).spl -rom $(NGH)
 	$(CP) out/$(NGH).C1 $(OUTPUT)/$(C1ROM)
@@ -177,15 +255,46 @@ cart: z80 out/$(PROM)
 	cd $(OUTPUT) && $(ROMWAK) $(FLAGS_ROMWAK_PAD) $(SROM) $(SROM) $(FIXSIZE) $(PADBYTED)
 endif
 
+ifeq ($(VROM_TYPE),split)
+cart: z80 out/$(PROM) 
+	$(CP) out/$(PROM) $(OUTPUT)/$(PROM)
+	$(CP) out/$(SROM) $(OUTPUT)/$(SROM)
+	$(CP) out/$(MROM) $(OUTPUT)/$(MROM)
+	$(CP) out/$(VROMA) $(OUTPUT)/$(VROMA)
+	$(CP) out/$(VROMB) $(OUTPUT)/$(VROMB)
+	cd out && $(ROMWAK) $(FLAGS_ROMWAK_PAD) $(CROM) $(CROM).spl $(CHARSSIZE) $(PADBYTED)
+	cd out && $(CHARSPLIT) $(CROM).spl -rom $(NGH)
+	$(CP) out/$(NGH).C1 $(OUTPUT)/$(C1ROM)
+	$(CP) out/$(NGH).C2 $(OUTPUT)/$(C2ROM)
+	$(RM) out/$(NGH).C1
+	$(RM) out/$(NGH).C2
+	$(RM) out/$(CROM).spl
+	cd $(OUTPUT) && $(ROMWAK) $(FLAGS_ROMWAK_FLIP) $(PROM) $(PROM)
+	cd $(OUTPUT) && $(ROMWAK) $(FLAGS_ROMWAK_PAD) $(PROM) $(PROM) $(ROMSIZEKB) $(PADBYTED)
+	cd $(OUTPUT) && $(ROMWAK) $(FLAGS_ROMWAK_PAD) $(SROM) $(SROM) $(FIXSIZE) $(PADBYTED)
+endif
+endif
+
+###################
+# NEO & CD target #
+###################
+
 ifeq ($(OUTPUT),cart)
+ifeq ($(VROM_TYPE),unified)
 neo: cart
 	$(RM) $(OUTPUT)/240ptest.neo
 	cd $(OUTPUT) && $(7Z) a $(NBPATH)240ptest.zip $(PROM) $(C1ROM) $(C2ROM) $(SROM) $(MROM) $(VROM)
-	#cd $(OUTPUT) && $(7Z) a $(NBPATH)240ptest.zip $(PROM) $(C1ROM) $(C2ROM) $(SROM) $(MROM) $(VROM) $(VROMB)
 	cd $(NBPATH) && $(NB) -n 240ptest -m dasutinartemio -y 2022 -g Other -s $(NGH) 240ptest.zip
 	$(RM) $(NBPATH)240ptest.zip
 	$(CP) $(NBPATH)240ptest.neo $(OUTPUT)/neosd
 	$(RM) $(NBPATH)240ptest.neo
+endif
+
+# https://wiki.terraonion.com/index.php/Neobuilder_Guide
+ifeq ($(VROM_TYPE),split)
+neo: 	
+	$(info Separate ADPCM areas is not supported for custom/homebrew by the ".neo" format)
+endif
 else
 neo: cdz80 cd/$(CDPRG_OUTFILE)
 	$(CP) out/$(CROM) $(OUTPUT)/$(CROM)
@@ -196,7 +305,12 @@ neo: cdz80 cd/$(CDPRG_OUTFILE)
 	cd $(OUTPUT)/iso && $(CHDMAN) createcd -f -i 240pTestSuite.cue -o ../chd/$(NGCD_IMAGENAME).chd
 endif
 
+####################
+# For MAME testing #
+####################
+
 ifeq ($(OUTPUT),cart)
+ifeq ($(VROM_TYPE),unified)
 copyroms: cart
 	$(CP) $(OUTPUT)/$(PROM) $(MAMEDIR)
 	$(CP) $(OUTPUT)/$(C1ROM) $(MAMEDIR)
@@ -204,7 +318,18 @@ copyroms: cart
 	$(CP) $(OUTPUT)/$(SROM) $(MAMEDIR)
 	$(CP) $(OUTPUT)/$(MROM) $(MAMEDIR)
 	$(CP) $(OUTPUT)/$(VROM) $(MAMEDIR)
-	#$(CP) $(OUTPUT)/$(VROMB) $(MAMEDIR)
+endif
+
+ifeq ($(VROM_TYPE),split)
+copyroms: cart
+	$(CP) $(OUTPUT)/$(PROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(C1ROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(C2ROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(SROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(MROM) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(VROMA) $(MAMEDIR)
+	$(CP) $(OUTPUT)/$(VROMB) $(MAMEDIR)
+endif
 else
 copyroms: neo
 	$(CP) $(OUTPUT)/chd/240pTestSuite.chd $(MAMECDDIR)
@@ -217,12 +342,6 @@ clean:
 	$(RM) $(OUTPUTDIR_CD)/*.SPR $(OUTPUTDIR_CD)/*.FIX $(OUTPUTDIR_CD)/*.PRG $(OUTPUTDIR_CD)/*.iso 
 	$(RM) $(OUTPUTDIR_CD)/*.Z80 $(OUTPUTDIR_CD)/*.PCM
 	$(RM) $(SND)/samples_*.inc
-
-char:
-	$(BUILDCHAR) chardata.xml
-
-fix:
-	$(BUILDCHAR) fixdata.xml
 
 ############################# AUDIO #######################################
 
@@ -258,8 +377,15 @@ CDPCM_LIST = $(SND)/pcm/pcma_cd.txt
 OUTPUTDIR_MIXED = out
 OUTPUTDIR_CD = cd
 
+ifeq ($(VROM_TYPE),unified)
 PCMOUT_CART = $(OUTPUTDIR_MIXED)/$(VROM)
-#VROMB_OUT_CART = $(OUTPUTDIR_MIXED)/$(VROMB)
+endif
+
+ifeq ($(VROM_TYPE),split)
+PCMOUT_CART = $(OUTPUTDIR_MIXED)/$(VROMA)
+VROMB_OUT_CART = $(OUTPUTDIR_MIXED)/$(VROMB)
+endif
+
 PCMOUT_CART_INC = $(SND)/samples_cart.inc
 
 PCMOUT_CD = $(OUTPUTDIR_CD)/$(CDPCM_OUTFILE)
@@ -269,24 +395,35 @@ PCMOUT_CD_INC = $(SND)/samples_cd.inc
 FLAGS_VASMZ80 = -Fbin -nosym -chklabels
 
 # Flags needed for ASM code between Cart and CD
-FLAGS_CART = TARGET_CART
+ifeq ($(VROM_TYPE),unified)
+FLAGS_CART = -DTARGET_CART -DVROM_UNIFIED
+endif
+ifeq ($(VROM_TYPE),split)
+FLAGS_CART = -DTARGET_CART -DVROM_SPLIT
+endif
 FLAGS_CD = TARGET_CD
 
 ##############################################################################
 
 z80: pcm
-	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CART) -o $(OUTPUTDIR_MIXED)/$(MROM) $(Z80_FILE)
+	$(VASM_Z80) $(FLAGS_VASMZ80) $(FLAGS_CART) -o $(OUTPUTDIR_MIXED)/$(MROM) $(Z80_FILE)
 	$(ROMWAK) $(FLAGS_ROMWAK_PAD) $(OUTPUTDIR_MIXED)/$(MROM) $(OUTPUTDIR_MIXED)/$(MROM) $(Z80OUT_CART_SIZE)
 
 cdz80: cdpcm
 	$(VASM_Z80) $(FLAGS_VASMZ80) -D$(FLAGS_CD) -o $(OUTPUTDIR_CD)/$(CDZ80_OUTFILE) $(Z80_FILE)
 
+ifeq ($(VROM_TYPE),unified)
 pcm:
 	$(LUA) $(SND)/pcm/svrom.lua --pcma=$(PCMA_LIST) --pcmb=$(PCMB_LIST) --outname=$(PCMOUT_CART) --samplelist=$(PCMOUT_CART_INC)
-	#$(LUA) $(SND)/pcm/svrom.lua --pcma=$(PCMA_LIST) --pcmb=$(PCMB_LIST) --outname=$(PCMOUT_CART) --samplelist=$(PCMOUT_CART_INC) --vrom=split --outnameB=$(VROMB_OUT_CART)
 	$(ROMWAK) $(FLAGS_ROMWAK_PAD) $(PCMOUT_CART) $(PCMOUT_CART) $(PCMOUT_CART_SIZE)
-	#$(ROMWAK) $(FLAGS_ROMWAK_PAD) $(VROMB_OUT_CART) $(VROMB_OUT_CART) $(PCMOUT_CART_SIZE)
+endif
+
+ifeq ($(VROM_TYPE),split)
+pcm:
+	$(LUA) $(SND)/pcm/svrom.lua --pcma=$(PCMA_LIST) --pcmb=$(PCMB_LIST) --outname=$(PCMOUT_CART) --samplelist=$(PCMOUT_CART_INC) --vrom=split --outnameB=$(VROMB_OUT_CART)
+	$(ROMWAK) $(FLAGS_ROMWAK_PAD) $(PCMOUT_CART) $(PCMOUT_CART) $(PCMOUT_CART_SIZE)
+	$(ROMWAK) $(FLAGS_ROMWAK_PAD) $(VROMB_OUT_CART) $(VROMB_OUT_CART) $(VROMB_CART_SIZE)
+endif
 
 cdpcm:
 	$(LUA) $(SND)/pcm/svrom.lua --mode=cd --pcma=$(CDPCM_LIST) --outname=$(PCMOUT_CD) --samplelist=$(PCMOUT_CD_INC)
-

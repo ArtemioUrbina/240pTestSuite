@@ -109,22 +109,22 @@ General:
     - Add text in help for cases where this is not followed (SMPTE, EBU and PLUGE)
 - Save settings to backup RAM/Memory Card (?)
 - Maybe have a Memory Card Viewer (?)
+- Help for HCFR, QR code (maybe in menu?)
+- Fix Eye Catcher
+- Confirm split VROM version works on real cart HW 
+- Clean makefile (?)
 
 Patterns:
 - Confirm monoscope patterns for the Neo Geo PAR (Keith has been notified)
-- See how well HCFR patterns translate to Neo Geo
-    - In such case split menus as Genesis version does (maybe do this anyway to remove clutter)
 
 Video tests:
 - Fix water palette animations
 
 Audio tests_
-   - remove LUA dependency (?)
-   - Finish FM Audio test
-   - Create full MDfourier pattern
+ - Test current MDFourier pattern in several hw variants and PAL
 
 Hardware Test:
-   - 68K RAM check (?) maybe in ASM
+ - 68K RAM check (?) maybe in ASM (most probably won't implement, since it wouldn't boot withour working RAM)
 
 ## Resources
 [Neo Geo Development Wiki](https://wiki.neogeodev.org/index.php?title=Main_Page) - Neo Geo Bible<br>
