@@ -1373,10 +1373,13 @@ void SegaCDMenu()
 #ifndef SEGACD
 			VDP_drawTextBG(APLAN, "Program RAM Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "Word RAM Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
 #endif
 			VDP_drawTextBG(APLAN, "PCM RAM Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-			VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+#ifndef SEGACD
+			VDP_drawTextBG(APLAN, "PCM Sound Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+#endif
 			pos++;
 			VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == sel ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -1415,7 +1418,7 @@ void SegaCDMenu()
 			
 		if(pressedButtons & BUTTON_A)
 		{
-			if(cursel < sel - 2)
+			if(cursel <= sel - 2)
 			{
 				FadeAndCleanUp();
 				DrawMainBG();
@@ -1445,16 +1448,19 @@ void SegaCDMenu()
 				CheckSCDWordRAM();
 				break;
 			case 7:
-				PCMRAMCheck();
-				break;
-			case 8:
 				CleanUp();
 				MemViewer(0x400000);
 				break;
+			case 8:
+				PCMRAMCheck();
+				break;
 			case 9:
-				DrawHelp(HELP_SEGACD);
+				PCMCartPlay();
 				break;
 			case 10:
+				DrawHelp(HELP_SEGACD);
+				break;
+			case 11:
 				done = 1;
 				break;
 #else
@@ -1500,41 +1506,158 @@ void PrintPCMResults(u8 value, u16 result, u16 address, u8 y)
 		ShowMessageAndData("Memory OK w/:", value, 2, PAL1, 11, y);
 }
 
-u8 PCMRAMCheck()
+void PCMRAMCheck()
 {
-	u16 result = 0, address = 0;
+	u16 result = 0, address = 0, exit = 0;
 
 #ifndef SEGACD
 	if(!segacd_init())
 	{
 		//resetSegaCD();
-		return 0;
+		return;
 	}
 #endif
 
-	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
-	ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 5, 4);
 	
-	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address);
-	PrintPCMResults(0x55, result, address, 10);
+	while(!exit)
+	{
+		VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+		ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 5, 4);
 	
-	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xAA, &address);
-	PrintPCMResults(0xAA, result, address, 12);
-	
-	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xFF, &address);
-	PrintPCMResults(0xFF, result, address, 14);
-	
-	result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x00, &address);
-	PrintPCMResults(0x00, result, address, 16);
-	
-	WaitKey(NULL);
+		result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address);
+		PrintPCMResults(0x55, result, address, 10);
+		
+		result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xAA, &address);
+		PrintPCMResults(0xAA, result, address, 12);
+		
+		result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xFF, &address);
+		PrintPCMResults(0xFF, result, address, 14);
+		
+		result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x00, &address);
+		PrintPCMResults(0x00, result, address, 16);
+		
+		if(WaitKey("'A' for check 'B' to exit") == BUTTON_B)
+			exit = 1;
+	}
 	
 #ifndef SEGACD
 	resetSegaCD();
 #endif
-	
-	return 1;
 }
+
+#ifndef SEGACD
+
+void PCMCartPlay()
+{
+	int pcm = 0, exit = 0, redraw = 1, sel = 1;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+	
+	if(!segacd_init())
+	{
+		//resetSegaCD();
+		return;
+	}
+	
+	if(!SendSCDCommandRetVal(Op_LoadPCMDRAM, 0, NULL))
+	{
+		ShowMessageAndData("PCM data load failed", 0x2000, 4, PAL2, 5, 4);
+		if(WaitKey("Press A to continue") == BUTTON_A)
+			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+		else
+			exit = 1;
+			
+	}
+	
+	while(!exit)
+	{
+		if(redraw)
+		{
+			int x = 13, y = 9;
+			
+			VDP_Start();
+			
+			VDP_drawTextBG(APLAN, "Sega CD PCM Sound Test", TILE_ATTR(PAL1, 0, 0, 0), 9, 4);
+			
+			VDP_drawTextBG(APLAN, "Ricoh RF5C164 (315-5476A)", TILE_ATTR(PAL1, 0, 0, 0), x-5, y);
+			y += 2;
+			VDP_drawTextBG(APLAN, "Left", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), x-2, y);
+			VDP_drawTextBG(APLAN, "Center", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), x+3, y);
+			VDP_drawTextBG(APLAN, "Right", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), x+10, y);
+			
+			VDP_End();
+			redraw = 0;
+		}
+		
+		buttons = JOY_readJoypad(JOY_ALL);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		//if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
+			//loadvram = 1;
+		
+		VDP_waitVSync();
+		
+		if(pcm)
+		{
+			pcm --;
+			if(pcm == 0)
+				SendSCDCommand(Op_StopPCM);
+		}
+		
+		if(pressedButtons & BUTTON_A)
+		{
+			if(pcm)
+				SendSCDCommand(Op_StopPCM);
+
+			if(sel == 0)
+			{
+				SendSCDCommand(Op_SetPCMLeft);
+				SendSCDCommand(Op_PlayPCM);
+			}
+			if(sel == 1)
+			{
+				SendSCDCommand(Op_SetPCMCenter);
+				SendSCDCommand(Op_PlayPCM);
+			}
+			if(sel == 2)
+			{
+				SendSCDCommand(Op_SetPCMRight);
+				SendSCDCommand(Op_PlayPCM);
+			}
+			
+			pcm = 110;
+		}
+		
+		if(pressedButtons & BUTTON_LEFT)
+		{
+			sel--;
+			redraw = 1;
+		}
+		
+		if(pressedButtons & BUTTON_RIGHT)
+		{
+			sel++;
+			redraw = 1;
+		}
+		
+		if(sel > 2)
+			sel = 0;
+
+		if(sel < 0)
+			sel = 2;
+		
+		if(pressedButtons & BUTTON_START)
+		{
+			SendSCDCommand(Op_StopPCM);
+			exit = 1;
+		}
+	
+	}
+	
+	resetSegaCD();
+}
+	
+#endif
 
 #ifndef SEGACD
 void resetSegaCD()
@@ -1570,7 +1693,7 @@ uint8_t segacd_init()
 	// Clear the screen
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 	
-	VDP_drawTextBG(APLAN, "Sega CD PCM RAM Test", TILE_ATTR(PAL1, 0, 0, 0), 10, 4);
+	VDP_drawTextBG(APLAN, "Sega CD Mode 1 Boot", TILE_ATTR(PAL1, 0, 0, 0), 10, 4);
 	// Detect the address of the SCD BIOS
 	segacd_bios_addr = DetectSCDBIOS(0x400000);
 	if (!segacd_bios_addr)
@@ -1582,7 +1705,7 @@ uint8_t segacd_init()
 	ShowMessageAndData("SCD BIOS Detected at", (uint32_t)segacd_bios_addr, 8, PAL1, 4, ypos++);
 	
 	// Clear Word RAM
-	ShowMessageAndData("Clearing WORD RAM at", 0x600000, 8, PAL1, 4, ypos++);
+	ShowMessageAndData("Zero&Check WORD RAM ", 0x600000, 8, PAL1, 4, ypos++);
 	if(Test16bitRegion(0, (uint32_t)0x600000, (uint32_t)0x040000) != MEMORY_OK)
 	{
 		ShowMessageAndData("WORD RAM failed. A to continue", 0, 0, PAL0, 4, ypos++);
@@ -1591,7 +1714,7 @@ uint8_t segacd_init()
 	}
 	
 	// Clear program ram first bank - needed for the LaserActive
-	ShowMessageAndData("Clearing PRGM RAM at", 0x420000, 8, PAL1, 4, ypos++);
+	ShowMessageAndData("Zero&Check PRGM RAM ", 0x420000, 8, PAL1, 4, ypos++);
 	if(Test16bitRegion(0, (uint32_t)0x420000, (uint32_t)0x20000) != MEMORY_OK)
 	{
 		ShowMessageAndData("PROGRAM RAM failed. A to continue", 0, 0, PAL0, 4, ypos++);
@@ -1604,11 +1727,13 @@ uint8_t segacd_init()
 	resetSegaCD();
 	VDP_waitVSync();
 	
+	VDP_drawTextBG(APLAN, "Assigning WORD RAM to SCD", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
+	write_word(0xA12002, 0x0002); // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
+	
     /*
      * Decompress Sub-CPU BIOS to Program RAM at 0x00000
      */
 	VDP_drawTextBG(APLAN, "Decompressing SCD BIOS", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
-    write_word(0xA12002, 0x0002); // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
 	Kos_Decomp(segacd_bios_addr, (uint8_t *)0x420000);
 	VDP_waitVSync();
 
@@ -1626,6 +1751,7 @@ uint8_t segacd_init()
     }
 	VDP_waitVSync();
 	
+	VDP_drawTextBG(APLAN, "Starting SCD CPU", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
     write_byte(0xA12001, 0x01); // clear bus request, deassert reset - allow CD Sub-CPU to run
 	write_byte(0xA1200E, 0x00); // clear main comm port
     while (!(read_byte(0xA12001) & 1)) 

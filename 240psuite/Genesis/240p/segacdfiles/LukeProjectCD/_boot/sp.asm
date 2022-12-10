@@ -138,6 +138,7 @@ OpTable:
 		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
 		bra.w	Op_CheckPCMRAM		; Write and Check to the full PCM RAM with value in FF8010
+		bra.w	Op_LoadPCMDRAM		; Not used in Sega CD version
 		bra.w	Op_DummyTest		; Dummy reply test
 
 Op_Null:
@@ -422,7 +423,7 @@ LoadPCMFile:
 		bsr		WritePCMBank
 		add.b	#1,d2			; D2 - Bank
 		add.l	#$1000,a2		; Increment address by 1000h, a bank size
-		cmp.w	d3,d2			; have we finished copy in the number of sectors?
+		cmp.b	d3,d2			; have we finished copy in the number of sectors?
 		BNE		@LoadPCMLoop
 		
 		pop		d0/d1/d2/d3/a2	; Restore used registers
@@ -718,6 +719,15 @@ FindFile:
 		pop	a1/a2/a5/a6			; Restore used registers	
 		rts
 		
+; =======================================================================================
+;  LoadPCMDRAM subroutine, Only available form cartridge
+;  Out:   d6.b - 1 success, 0 fail (file not found or bigger than 64KB)
+; =======================================================================================
+
+Op_LoadPCMDRAM:
+		move.w	#0, d6			; return 0 for failed
+		rts
+	
 ; =======================================================================================
 ;  Data
 ; =======================================================================================

@@ -140,6 +140,7 @@ OpTable:
 		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
 		bra.w	Op_CheckPCMRAM		; Write and Check to the full PCM RAM with value in FF8012
+		bra.w	Op_LoadPCMDRAM		; Use PCM sample data to fill PCM RAM
 		bra.w	Op_DummyTest		; Dummy Test Command
 
 Op_Null:
@@ -711,6 +712,52 @@ FindFile:
 		rts
 		
 ; =======================================================================================
+;  LoadPCMDRAM subroutine, loads PCM samples to RAM
+;  Out:   d6.b - 1 success, 0 fail (file not found or bigger than 64KB)
+; =======================================================================================
+
+Op_LoadPCMDRAM:
+		push	d0/d1/d2/d3/a2/a3	; Store used registers
+
+		bsr 	InitPCM
+        move.w #2048,d2           	; number to words for cycle to fill 64kb
+		move.l #$20000,a2           ; store the destination address in a2
+
+@copy_m_loop:
+		move.l #PCMSmplData, a3     ; store the source address in a3
+        move.w #15,d1               ; size of source sample data
+        
+@copy_b_loop:
+        move.w	(a3)+,(a2)+         ; copy one byte from source to destination
+        dbf d1, @copy_b_loop        ; decrement d1 and repeat the loop if d1 is not zero
+		
+        dbf d2, @copy_m_loop    	; fill the 64kb
+
+		; prepare for WritePCMBank
+		move.l	#$20000, a2		; A2 - PCM Address
+		move.b	#0, d2			; D2 - start at first bank
+		move.b	#$10, d3		; Set banks for 64kb
+
+@LoadPCMLoop:		
+		move.l	#$1000,d0		; we copy in bank increments
+		move.l	a2,a0			; A0 - PCM source Address
+		move.b	d2,d1			; D1 - current bank
+		bsr		WritePCMBank
+		add.b	#1,d2			; D2 - Bank
+		add.l	#$1000,a2		; Increment address by 1000h, a bank size
+		cmp.b	d3,d2			; have we finished copy in the number of sectors?
+		BNE		@LoadPCMLoop
+		
+		pop		d0/d1/d2/d3/a2/a3	; Restore used registers
+		move.w	#1, d6			; return 1 for loaded
+		rts
+		
+@failLoadPCM
+		pop		d0/d1/d2/d3/a2/a3	; Restore used registers
+		move.w	#0, d6			; return 0 for failed
+		rts
+		
+; =======================================================================================
 ;  Data
 ; =======================================================================================
 
@@ -743,6 +790,14 @@ pcmtest:
 
 pcmtest2:
 		dc.b	'PCMTESZ.PCM',0
+		align 2
+
+;  PCMSampleData, 16 words		
+PCMSmplData:
+		dc.w	$8018, $3046, $5969, $747C
+		dc.w	$7E7C, $7469, $5946, $3018
+		dc.w	$8098, $B0C6, $D9E9, $F4FC
+		dc.w	$FEFC, $F4E9, $D9C6, $B098
 		align 2
 		
 ; =======================================================================================

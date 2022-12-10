@@ -1520,7 +1520,7 @@ void SoundTest()
 			y+=2;
 			VDP_drawTextBG(APLAN, "CD-DA", TILE_ATTR((type == stCD && sel == 0) ? PAL3 : PAL1, 0, 0, 0), x+4, y);
 			y+=2;
-			VDP_drawTextBG(APLAN, "PCM", TILE_ATTR(PAL1, 0, 0, 0), x+5, y++);
+			VDP_drawTextBG(APLAN, "Ricoh RF5C164 (315-5476A)", TILE_ATTR(PAL1, 0, 0, 0), x-5, y++);
 			VDP_drawTextBG(APLAN, "Left", TILE_ATTR((type == stPCM && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x-2, y);
 			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stPCM && sel == 1) ? PAL3 : PAL0, 0, 0, 0), x+3, y);
 			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stPCM && sel == 2) ? PAL3 : PAL0, 0, 0, 0), x+10, y);

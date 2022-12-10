@@ -58,6 +58,7 @@ enum SCD_Command{
 		Op_SetSampSin32552,		//Use 32552hz 1khz sample
 		Op_SetSampSin32604,		//Use 32604hz 1khz sample
 		Op_CheckPCMRAM,			//Check full PCM RAM
+		Op_LoadPCMDRAM,			//Load sample into PCM ram from cartridge
 		Op_DummyTest			//Dummy Test Command
 	}; 
 
@@ -66,7 +67,7 @@ int DetectSCDviaExpansion();
 void SegaCDMenu();
 void Z80RamTest();
 
-u8 PCMRAMCheck();
+void PCMRAMCheck();
 void CRC32_reset();
 void CRC32_update(uint8_t data);
 uint32_t CRC32_finalize();
@@ -82,6 +83,8 @@ void PlayCDTrackTimed();
 void PlayPCM(int barrier);
 void TestPCM(int barrier);
 void ChangePCM(int *type);
+#else
+void PCMCartPlay();
 #endif
 
 // These are defined in kos.s
