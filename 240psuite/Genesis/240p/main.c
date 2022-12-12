@@ -28,13 +28,14 @@ u8 joytype2 = JOY_TYPE_UNKNOWN;
 u8 IsPALVDP = 0;
 u8 VDPChanged = 0;
 u8 intCancel = 0;
+char md_ver[30];
+u16 DriveVersion = 0;
+u8 readDriveVer = 0;
 
 int main()
 {
 	u16 cursel = 1, pos, reload = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
-
-	char md_ver[30];
 
 	VDP_init();
 	JOY_init();
@@ -56,6 +57,8 @@ int main()
 	
 #ifdef SEGACD	
 	SendSCDCommand(Op_InitCD);
+	if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveVersion))
+		readDriveVer = 1;
 #endif
 	
 	DrawIntro();
@@ -84,9 +87,7 @@ int main()
 		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 6, pos);
 			
 		DrawResolution();
-		Detect_MD(md_ver);
 		
-		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
 		VDP_End();
 
 		buttons = JOY_readJoypad(JOY_ALL);
@@ -155,7 +156,6 @@ void TestPatternMenu()
 	u16 cursel = 1, pos, reload = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 done = 0;
-	char md_ver[30];
 
 	FadeAndCleanUp();
 	while(!done)
@@ -187,9 +187,7 @@ void TestPatternMenu()
 		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
-		Detect_MD(md_ver);
-		
-		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
+	
 		VDP_End();
 		
 		buttons = JOY_readJoypad(JOY_ALL);
@@ -293,7 +291,6 @@ void VideoTestsMenu()
 	u16 cursel = 1, pos, reload = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 done = 0;
-	char md_ver[30];
 
 	FadeAndCleanUp();
 	while(!done)
@@ -324,9 +321,7 @@ void VideoTestsMenu()
 		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
-		Detect_MD(md_ver);
-		
-		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
+	
 		VDP_End();
 		
 		buttons = JOY_readJoypad(JOY_ALL);
@@ -427,7 +422,6 @@ void AudioTestsMenu()
 	u16 cursel = 1, pos, reload = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 done = 0;
-	char md_ver[30];
 
 	FadeAndCleanUp();
 	while(!done)
@@ -450,9 +444,7 @@ void AudioTestsMenu()
 		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
-		Detect_MD(md_ver);
 		
-		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
 		VDP_End();
 		
 		buttons = JOY_readJoypad(JOY_ALL);
@@ -529,7 +521,6 @@ void HardwareMenu()
 	u16 cursel = 1, pos, reload = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 done = 0;
-	char md_ver[30];
 
 	FadeAndCleanUp();
 	while(!done)
@@ -553,9 +544,7 @@ void HardwareMenu()
 		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
-		Detect_MD(md_ver);
 		
-		VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
 		VDP_End();
 		
 		buttons = JOY_readJoypad(JOY_ALL);
@@ -893,6 +882,17 @@ void DrawResolution()
 		else
 			VDP_drawTextBG(APLAN, "NTSC VDP 320x224p", TILE_ATTR(PAL0, 0, 0, 0), 19, 24);
 	}
+	
+	Detect_MD(md_ver);	
+	VDP_drawTextBG(APLAN, md_ver, TILE_ATTR(PAL0, 0, 0, 0), 20, 26);
+	
+	if(readDriveVer)
+	{
+		char buffer[] = "DRV VER: 0x00";
+		
+		intToHex(DriveVersion, buffer+11, 2);
+		VDP_drawTextBG(APLAN, buffer, TILE_ATTR(PAL0, 0, 0, 0), 4, 24);
+	}
 }
 
 void OptionsMenu()
@@ -918,8 +918,6 @@ void OptionsMenu()
 			loadvram = 0;
 		}
 
-		DrawResolution();
-
 		VDP_Start();
 		VDP_drawTextBG(APLAN, "Enable Horizontal 256:", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 5, 11);
 		VDP_drawTextBG(APLAN, enable_256 ? "ON " : "OFF", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), 28, 11);
@@ -937,6 +935,8 @@ void OptionsMenu()
 
 		VDP_drawTextBG(APLAN, "Back", TILE_ATTR(sel == (hidden ? 5 : 4) ? PAL3 : PAL0, 0, 0, 0), 5, 19);
 
+		DrawResolution();
+		
 		VDP_End();
 		
 		buttons = JOY_readJoypad(JOY_ALL);

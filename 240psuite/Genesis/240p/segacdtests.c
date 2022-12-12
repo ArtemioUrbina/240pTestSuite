@@ -1383,6 +1383,9 @@ void SegaCDMenu()
 			pos++;
 			VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == sel ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+			
+			DrawResolution();
+		
 			VDP_End();
 			redraw = 0;
 		}
@@ -1550,8 +1553,8 @@ void PCMCartPlay()
 {
 	char buffer[] = "Track   ";
 	int pcm = 0, exit = 0, redraw = 1, sel = 0, opt = 1;
-	int refresh = 0, currTrack = 0, readDrive = 0;
-	u16 buttons, oldButtons = 0xffff, pressedButtons, tracks = 0, DriveVersion = 0;
+	int refresh = 0, currTrack = 0;
+	u16 buttons, oldButtons = 0xffff, pressedButtons, tracks = 0;
 	
 	if(!segacd_init())
 	{
@@ -1579,7 +1582,7 @@ void PCMCartPlay()
 			VDP_drawTextBG(APLAN, "Ricoh RF5C164 (315-5476A)", TILE_ATTR(PAL1, 0, 0, 0), 8, 9);
 			VDP_End();
 			
-			if(readDrive)
+			if(readDriveVer)
 				ShowMessageAndData("Drive Version", DriveVersion, 2, PAL1, 18, 24);
 				
 			redraw = 0;
@@ -1608,15 +1611,15 @@ void PCMCartPlay()
 			VDP_End();
 			refresh = 0;
 		}
-		
-		buttons = JOY_readJoypad(JOY_ALL);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
 
 		//if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
 			//loadvram = 1;
 		
 		VDP_waitVSync();
+		
+		buttons = JOY_readJoypad(JOY_ALL);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
 		
 		if(pcm)
 		{
@@ -1659,7 +1662,12 @@ void PCMCartPlay()
 		
 		if(pressedButtons & BUTTON_C)
 		{
-			readDrive = 0;
+			int retval = 0;
+			
+			readDriveVer = 0;
+			
+			if(pcm)
+				SendSCDCommand(Op_StopPCM);
 			
 			VDP_Start();
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
@@ -1669,13 +1677,15 @@ void PCMCartPlay()
 			VDP_waitVSync();
 			
 			SendSCDCommand(Op_InitCD);
-			if(!SendSCDCommandRetVal(Op_CDTracks, 0, &tracks))
+			retval = SendSCDCommandRetVal(Op_CDTracks, 0, &tracks);
+			if(!retval || !tracks)
 			{
 				VDP_Start();
-				VDP_drawTextBG(APLAN, "Could not get CD TOC", TILE_ATTR(PAL1, 0, 0, 0), 12, 14);
+				VDP_drawTextBG(APLAN, retval ? "TOC reported 0 tracks" : "Could not get CD TOC", TILE_ATTR(PAL1, 0, 0, 0), 10, 14);
 				VDP_End();
 				
-				WaitKey(NULL);
+				oldButtons = WaitKey(NULL);
+				
 				tracks = 0;
 				currTrack = 0;
 			}
@@ -1683,7 +1693,7 @@ void PCMCartPlay()
 			{
 				currTrack = tracks;
 				if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveVersion))
-					readDrive = 1;
+					readDriveVer = 1;
 			}
 
 			redraw = 1;
@@ -1762,9 +1772,10 @@ void PCMCartPlay()
 			exit = 1;
 	}
 	
-	SendSCDCommand(Op_StopPCM);
-	SendSCDCommand(Op_StopCD);
+	if(pcm)
+		SendSCDCommand(Op_StopPCM);
 	SendSCDCommand(Op_SetPCMCenter);
+	SendSCDCommand(Op_StopCD);
 	
 	resetSegaCD();
 }

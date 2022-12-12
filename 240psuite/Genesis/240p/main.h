@@ -34,6 +34,9 @@ extern u8		joytype2;
 
 extern u8 		doZ80Lock;
 
+extern u8		readDriveVer;
+extern u16		DriveVersion;
+
 #define FADE_TIME 10
 
 #define SCDTEST

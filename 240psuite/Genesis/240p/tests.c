@@ -1510,9 +1510,9 @@ void SoundTest()
 			intToStr(octave, buffer, 2);
 			VDP_drawTextBG(APLAN, buffer, TILE_ATTR((type == stFMOct && sel == 0) ? PAL3 : PAL0, 0, 0, 0), x+11, y);
 			y++;
-			VDP_drawTextBG(APLAN, "Left", TILE_ATTR((type == stFMPan && sel == 0) ? PAL1 : fmpan == 0 ? PAL3 : PAL0, 0, 0, 0), x-2, y);
-			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stFMPan && sel == 1) ? PAL1 : fmpan == 1 ? PAL3 : PAL0, 0, 0, 0), x+3, y);
-			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stFMPan && sel == 2) ? PAL1 : fmpan == 2 ? PAL3 : PAL0, 0, 0, 0), x+10, y);
+			VDP_drawTextBG(APLAN, "Left", TILE_ATTR((type == stFMPan && sel == 0) ? PAL3 : fmpan == 0 ? PAL1 : PAL0, 0, 0, 0), x-2, y);
+			VDP_drawTextBG(APLAN, "Center", TILE_ATTR((type == stFMPan && sel == 1) ? PAL3 : fmpan == 1 ? PAL1 : PAL0, 0, 0, 0), x+3, y);
+			VDP_drawTextBG(APLAN, "Right", TILE_ATTR((type == stFMPan && sel == 2) ? PAL3 : fmpan == 2 ? PAL1 : PAL0, 0, 0, 0), x+10, y);
 			
 			y+=2;
 			VDP_drawTextBG(APLAN, "PSG CHANNEL", TILE_ATTR(PAL1, 0, 0, 0), x+1, y++);
@@ -1577,7 +1577,7 @@ void SoundTest()
 			{
 				case stFM:
 					selmax = 11;
-					sel = 5;
+					sel = 1;
 					break;
 				case stFMOct:
 					selmax = 0;
@@ -1724,6 +1724,14 @@ void SoundTest()
 				default:
 					break;
 			}
+		}
+		
+		if(pressedButtons & BUTTON_B && type == stFM)
+		{
+			octave += 8;
+			if(octave > 56)
+				octave = 0;
+			redraw = 1;
 		}
 
 #ifdef SEGACD
