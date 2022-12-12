@@ -65,6 +65,7 @@ extern u16 g_pos;
 
 #ifdef SEGACD
 void WarningFileNotFount();
+void WarningWrongCDDA();
 #endif
 
 #ifndef MENUDATA

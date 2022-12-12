@@ -123,6 +123,7 @@ OpTable:
 		bra.w	Op_ResetPauseLimit	; Resets the pause limit after MDF 
 		bra.w	Op_PlayCDMDF	    ; Play CD-DA Track 2 for the MDFourier
 		bra.w	Op_PlayCD240	    ; Play CD-DA Track 3 for the Suite
+		bra.w	Op_PlayCDDA	    	; Play CD-DA Track from d1
 		bra.w	Op_PlayPCM			; Play Full PCM Memory
 		bra.w	Op_StopPCM			; Stop PCM Playback
 		bra.w	Op_SetPCMLeft		; Set PCM for Left Channel
@@ -138,7 +139,9 @@ OpTable:
 		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
 		bra.w	Op_CheckPCMRAM		; Write and Check to the full PCM RAM with value in FF8010
-		bra.w	Op_LoadPCMDRAM		; Not used in Sega CD version
+		bra.w	Op_LoadPCMRAM		; Not used in Sega CD version
+		bra.w	Op_CDTracks			; Query Number of Tracks
+		bra.w	Op_DriveVersion		; Query Drive Version
 		bra.w	Op_DummyTest		; Dummy reply test
 
 Op_Null:
@@ -177,11 +180,15 @@ Op_InitCD:
         rts
 	
 Op_PlayCDMDF:
-		move.w	#MDFCDTrack,d1
+		move.w	#MDFCDTrack,d3
 		jmp PlayCDDA
 		
 Op_PlayCD240:
-		move.w	#MscCDTrack,d1
+		move.w	#MscCDTrack,d3
+		jmp PlayCDDA
+		
+Op_PlayCDDA:
+		move.w	d1,d3
 		jmp PlayCDDA
 		
 Op_UnPauseCD:
@@ -202,6 +209,7 @@ Op_ResetPauseLimit:
 		rts
 	
 Op_SeekCDMDF:
+		lea		CDTrack(pc),a0
 		move.w	#MDFCDTrack,d1
 		move.w	d1,(a0)
 		BIOS_MSCSEEK1
@@ -322,10 +330,51 @@ Op_DummyTest:
 		move.w	#$1,d6			; return OK
 		move.w	#$E715,d7		; return magic number as parameter
 		rts
+
+; =======================================================================================
+;  Op_CDTracks
+;  Calls CDBSTAT for number of tracks
+; =======================================================================================
+Op_CDTracks:
+		BIOS_CDBSTAT
+		; byte 16 is 1st track 
+		; byte 17 is last track 
+		move.b  17(a0),d7		; copy last track
+		cmp.b	#$ff,d7
+		bne		@returnTracks	; continue if we got tracks
+
+		move.w	#0,d7			; return 0 tracks if no disc was found
+		move.w  #0,d6
+		rts
+		
+@returnTracks:
+		move.w  #1,d6
+		rts
+		
+; =======================================================================================
+;  Op_DriveVersion
+;  Calls CDBSTAT for Drive Version
+; =======================================================================================
+Op_DriveVersion:
+		BIOS_CDBSTAT
+		; byte 17 is last track, if 0xff we could not load TOC so drive is wrong
+		; byte 18 is Drive Version
+		move.b  17(a0),d7		; copy last track
+		cmp.b	#$ff,d7
+		bne		@returnDrive	; continue if we got tracks
+		
+		move.w	#0,d7			; return 0 tracks if no disc was found
+		move.w  #0,d6
+		rts
+		
+@returnDrive:
+		move.b  18(a0),d7		; copy drive version
+		move.w	#1, d6			; return 1
+		rts
 		
 ; =======================================================================================
 ;  PlayCDDA: Plays a CD-DA track
-;  Input: d1.b - Track number
+;  Input: d3.b - Track number
 ; =======================================================================================
 
 PlayCDDA:
@@ -334,9 +383,11 @@ PlayCDDA:
 		BIOS_MSCSTOP
 		bsr		wait_BIOS
 		
-		move.w	d1,(a0)
+		lea		CDTrack(pc),a0
+		move.w	d3,(a0)
 		BIOS_MSCPLAY1
 		bsr		wait_BIOS
+		
 		rts
 
 ; =======================================================================================
@@ -345,7 +396,7 @@ PlayCDDA:
 		
 wait_BIOS:
 		BIOS_CDBCHK						; Check BIOS status
-		bcs		wait_BIOS				; If not ready, branch
+		bcs.s	wait_BIOS				; If not ready, branch
 		rts
 
 ; =======================================================================================
@@ -578,7 +629,16 @@ ComparePCMValueBank:
 		move.w	#0, d4			; return 0, failed
 		pop		d2/d6/d7/a1		; Restore used registers
 		rts
-		
+
+; =======================================================================================
+;  Op_LoadPCMRAM subroutine, Only available form cartridge
+;  Out:   d6.b - 1 success, 0 fail 
+; =======================================================================================
+
+Op_LoadPCMRAM:
+		move.w	#0, d6			; return 0 for failed
+		rts
+	
 ; =======================================================================================
 ;  SP_IRQ
 ;  Interrupt Request, Level 2 Interrupt routine
@@ -718,15 +778,6 @@ FindFile:
 	
 		pop	a1/a2/a5/a6			; Restore used registers	
 		rts
-		
-; =======================================================================================
-;  LoadPCMDRAM subroutine, Only available form cartridge
-;  Out:   d6.b - 1 success, 0 fail (file not found or bigger than 64KB)
-; =======================================================================================
-
-Op_LoadPCMDRAM:
-		move.w	#0, d6			; return 0 for failed
-		rts
 	
 ; =======================================================================================
 ;  Data
@@ -761,6 +812,10 @@ pcmtest2:
 		
 bootloaded:
 		dc.b	0
+		align 2
+		
+CDTrack:
+		dc.w	0
 		align 2
 		
 ; =======================================================================================

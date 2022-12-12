@@ -1455,11 +1455,16 @@ void SoundTest()
 	int octave = 24;
 #ifdef SEGACD
 	int pcm = 0, sampleType = 0;
+	u16 numTracks = 0;
 #endif
 
 	yminit();
 	PSG_init();
 #ifdef SEGACD
+	if(!SendSCDCommandRetVal(Op_CDTracks, 0, &numTracks))
+		WarningWrongCDDA();
+	if(numTracks != 3)
+		WarningWrongCDDA();
 	if(!SendSCDCommandRetVal(Op_SetSamplesTest, 0, NULL))
 		WarningFileNotFount();
 #endif
@@ -1572,15 +1577,18 @@ void SoundTest()
 			{
 				case stFM:
 					selmax = 11;
+					sel = 5;
 					break;
 				case stFMOct:
 					selmax = 0;
 					break;
 				case stFMPan:
 					selmax = 2;
+					sel = 1;
 					break;
 				case stPSG:
 					selmax = 3;
+					sel = 0;
 					break;
 #ifdef SEGACD
 				case stCD:
@@ -1588,6 +1596,7 @@ void SoundTest()
 					break;
 				case stPCM:
 					selmax = 2;
+					sel = 1;
 					break;
 #endif
 				default:
@@ -2445,7 +2454,7 @@ void Alternate240p480i()
 
 void AudioSyncTest()
 {
-	u16 loadvram = 1, exit = 0, cycle = 0;
+	u16 loadvram = 1, exit = 0, cycle = 1;
 	u16 size, tiles, i, sprite = 0, x = 160, y = 160;
 	u16 buttons, pressedButtons, oldButtons = 0xffff;
 	u16 black_pal[16];

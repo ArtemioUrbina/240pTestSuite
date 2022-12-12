@@ -43,6 +43,7 @@ enum SCD_Command{
 		Op_ResetPauseLimit,		//Resets the pause limit after MDF 
 		Op_PlayCDMDF,		    //Play CD-DA Track 2 for the MDFourier Debug
 		Op_PlayCD240,		    //Play CD-DA Track 3 for the Suite
+		Op_PlayCDDA,    		//Play CD-DA Track from param
 		Op_PlayPCM,				//Play Full PCM Memory
 		Op_StopPCM,				//Stop PCM Playback
 		Op_SetPCMLeft, 			//Set PCM for Left Channel
@@ -58,7 +59,9 @@ enum SCD_Command{
 		Op_SetSampSin32552,		//Use 32552hz 1khz sample
 		Op_SetSampSin32604,		//Use 32604hz 1khz sample
 		Op_CheckPCMRAM,			//Check full PCM RAM
-		Op_LoadPCMDRAM,			//Load sample into PCM ram from cartridge
+		Op_LoadPCMRAM,			//Load sample into PCM ram from cartridge
+		Op_CDTracks,			//Query Number of Tracks
+		Op_DriveVersion,		//Query Drive Version
 		Op_DummyTest			//Dummy Test Command
 	}; 
 

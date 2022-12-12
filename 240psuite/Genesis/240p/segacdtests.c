@@ -1509,7 +1509,7 @@ void PrintPCMResults(u8 value, u16 result, u16 address, u8 y)
 void PCMRAMCheck()
 {
 	u16 result = 0, address = 0, exit = 0;
-
+	
 #ifndef SEGACD
 	if(!segacd_init())
 	{
@@ -1518,7 +1518,6 @@ void PCMRAMCheck()
 	}
 #endif
 
-	
 	while(!exit)
 	{
 		VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
@@ -1549,8 +1548,10 @@ void PCMRAMCheck()
 
 void PCMCartPlay()
 {
-	int pcm = 0, exit = 0, redraw = 1, sel = 1;
-	u16 buttons, oldButtons = 0xffff, pressedButtons;
+	char buffer[] = "Track   ";
+	int pcm = 0, exit = 0, redraw = 1, sel = 0, opt = 1;
+	int refresh = 0, currTrack = 0, readDrive = 0;
+	u16 buttons, oldButtons = 0xffff, pressedButtons, tracks = 0, DriveVersion = 0;
 	
 	if(!segacd_init())
 	{
@@ -1558,34 +1559,54 @@ void PCMCartPlay()
 		return;
 	}
 	
-	if(!SendSCDCommandRetVal(Op_LoadPCMDRAM, 0, NULL))
+	if(!SendSCDCommandRetVal(Op_LoadPCMRAM, 0, NULL))
 	{
-		ShowMessageAndData("PCM data load failed", 0x2000, 4, PAL2, 5, 4);
-		if(WaitKey("Press A to continue") == BUTTON_A)
-			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
-		else
-			exit = 1;
-			
+		ShowMessageAndData("PCM data load failed", 0x2000, 4, PAL2, 5, 10);
+		if(WaitKey("Press A to continue") != BUTTON_A)
+		{
+			resetSegaCD();
+			return;
+		}	
 	}
 	
 	while(!exit)
 	{
 		if(redraw)
 		{
-			int x = 13, y = 9;
+			VDP_Start();
+			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+			VDP_drawTextBG(APLAN, "Sega CD Sound Test", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);
+			VDP_drawTextBG(APLAN, "Ricoh RF5C164 (315-5476A)", TILE_ATTR(PAL1, 0, 0, 0), 8, 9);
+			VDP_End();
+			
+			if(readDrive)
+				ShowMessageAndData("Drive Version", DriveVersion, 2, PAL1, 18, 24);
+				
+			redraw = 0;
+			refresh = 1;
+		}
+		
+		if(refresh)
+		{
+			int x = 13, y = 11;
 			
 			VDP_Start();
-			
-			VDP_drawTextBG(APLAN, "Sega CD PCM Sound Test", TILE_ATTR(PAL1, 0, 0, 0), 9, 4);
-			
-			VDP_drawTextBG(APLAN, "Ricoh RF5C164 (315-5476A)", TILE_ATTR(PAL1, 0, 0, 0), x-5, y);
+			VDP_drawTextBG(APLAN, "Left", TILE_ATTR(sel == 0 && opt == 0 ? PAL3 : PAL0, 0, 0, 0), x-2, y);
+			VDP_drawTextBG(APLAN, "Center", TILE_ATTR(sel == 0 && opt == 1 ? PAL3 : PAL0, 0, 0, 0), x+3, y);
+			VDP_drawTextBG(APLAN, "Right", TILE_ATTR(sel == 0 && opt == 2 ? PAL3 : PAL0, 0, 0, 0), x+10, y);
 			y += 2;
-			VDP_drawTextBG(APLAN, "Left", TILE_ATTR(sel == 0 ? PAL3 : PAL0, 0, 0, 0), x-2, y);
-			VDP_drawTextBG(APLAN, "Center", TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), x+3, y);
-			VDP_drawTextBG(APLAN, "Right", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), x+10, y);
+			if(tracks)
+			{
+				intToStr(currTrack, buffer+6, 2);
+				VDP_drawTextBG(APLAN, "CDDA", TILE_ATTR(PAL1, 0, 0, 0), x+5, y);
+				y += 2;
+				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), x+3, y);
+			}
+			else
+				VDP_drawTextBG(APLAN, "Press 'C' to load CD TOC", TILE_ATTR(PAL0, 0, 0, 0), x-5, y+6);
 			
 			VDP_End();
-			redraw = 0;
+			refresh = 0;
 		}
 		
 		buttons = JOY_readJoypad(JOY_ALL);
@@ -1606,53 +1627,144 @@ void PCMCartPlay()
 		
 		if(pressedButtons & BUTTON_A)
 		{
-			if(pcm)
-				SendSCDCommand(Op_StopPCM);
-
 			if(sel == 0)
 			{
-				SendSCDCommand(Op_SetPCMLeft);
-				SendSCDCommand(Op_PlayPCM);
-			}
-			if(sel == 1)
-			{
-				SendSCDCommand(Op_SetPCMCenter);
-				SendSCDCommand(Op_PlayPCM);
-			}
-			if(sel == 2)
-			{
-				SendSCDCommand(Op_SetPCMRight);
-				SendSCDCommand(Op_PlayPCM);
+				if(pcm)
+					SendSCDCommand(Op_StopPCM);
+
+				if(opt == 0)
+				{
+					SendSCDCommand(Op_SetPCMLeft);
+					SendSCDCommand(Op_PlayPCM);
+				}
+				if(opt == 1)
+				{
+					SendSCDCommand(Op_SetPCMCenter);
+					SendSCDCommand(Op_PlayPCM);
+				}
+				if(opt == 2)
+				{
+					SendSCDCommand(Op_SetPCMRight);
+					SendSCDCommand(Op_PlayPCM);
+				}
+				
+				pcm = 110;
 			}
 			
-			pcm = 110;
+			if(sel == 1 && currTrack)
+			{
+				SendSCDCommandRetVal(Op_PlayCDDA, currTrack, NULL);
+			}
 		}
 		
-		if(pressedButtons & BUTTON_LEFT)
+		if(pressedButtons & BUTTON_C)
 		{
-			sel--;
+			readDrive = 0;
+			
+			VDP_Start();
+			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+			VDP_drawTextBG(APLAN, "Please wait while reading CD TOC", TILE_ATTR(PAL0, 0, 0, 0), 4, 12);
+			VDP_End();
+			
+			VDP_waitVSync();
+			
+			SendSCDCommand(Op_InitCD);
+			if(!SendSCDCommandRetVal(Op_CDTracks, 0, &tracks))
+			{
+				VDP_Start();
+				VDP_drawTextBG(APLAN, "Could not get CD TOC", TILE_ATTR(PAL1, 0, 0, 0), 12, 14);
+				VDP_End();
+				
+				WaitKey(NULL);
+				tracks = 0;
+				currTrack = 0;
+			}
+			else
+			{
+				currTrack = tracks;
+				if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveVersion))
+					readDrive = 1;
+			}
+
 			redraw = 1;
 		}
 		
-		if(pressedButtons & BUTTON_RIGHT)
+		if(pressedButtons & BUTTON_B && tracks)
+			SendSCDCommand(Op_StopCD);
+		
+		if(sel == 0)
 		{
-			sel++;
-			redraw = 1;
+			if(pressedButtons & BUTTON_LEFT)
+			{
+				opt--;
+				refresh = 1;
+			}
+			
+			if(pressedButtons & BUTTON_RIGHT)
+			{
+				opt++;
+				refresh = 1;
+			}
+			
+			if(opt > 2)
+				opt = 0;
+
+			if(opt < 0)
+				opt = 2;
 		}
 		
-		if(sel > 2)
+		if(sel == 1 && tracks)
+		{
+			if(pressedButtons & BUTTON_LEFT)
+			{
+				currTrack--;
+				refresh = 1;
+			}
+			
+			if(pressedButtons & BUTTON_RIGHT)
+			{
+				currTrack++;
+				refresh = 1;
+			}
+			
+			if(currTrack > tracks)
+				currTrack = 1;
+
+			if(currTrack < 1)
+				currTrack = tracks;
+		}
+		
+		if(pressedButtons & BUTTON_UP)
+		{
+			sel --;
+			refresh = 1;
+		}
+			
+		if(pressedButtons & BUTTON_DOWN)
+		{
+			sel ++;
+			refresh = 1;
+		}
+		
+		if(sel > 1)
 			sel = 0;
 
 		if(sel < 0)
-			sel = 2;
+			sel = 1;
+		
+		if(!tracks && sel)
+		{
+			sel = 0;
+			refresh = 1;
+		}
 		
 		if(pressedButtons & BUTTON_START)
-		{
-			SendSCDCommand(Op_StopPCM);
 			exit = 1;
-		}
-	
 	}
+	
+	SendSCDCommand(Op_StopPCM);
+	SendSCDCommand(Op_StopCD);
+	SendSCDCommand(Op_SetPCMCenter);
 	
 	resetSegaCD();
 }
@@ -1835,7 +1947,7 @@ uint8_t segacd_init()
 	else
 		VDP_drawTextBG(APLAN, "Communication issue with SCD", TILE_ATTR(PAL3, 0, 0, 0), 4, ypos++);
 		
-	VDP_drawTextBG(APLAN, "SCD initialized. Ready for test", TILE_ATTR(PAL0, 0, 0, 0), 5, ypos+2);
+	VDP_drawTextBG(APLAN, "SCD initialized. Ready for test", TILE_ATTR(PAL0, 0, 0, 0), 5, ypos+1);
 	
 	WaitKey(NULL);
 	VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);

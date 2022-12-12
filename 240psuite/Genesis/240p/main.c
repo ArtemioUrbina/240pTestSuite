@@ -1143,6 +1143,14 @@ void WarningFileNotFount()
 	
 	DrawFloatMenu(0, resmenudata, 0);
 }
+
+void WarningWrongCDDA()
+{
+	fmenudata resmenudata[] = { {FLOAT_CANCEL, "Incorrect CDDA"} };
+	
+	DrawFloatMenu(0, resmenudata, 0);
+}
+
 #endif
 
 u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size)
