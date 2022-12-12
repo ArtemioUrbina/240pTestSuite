@@ -1549,18 +1549,42 @@ void PCMRAMCheck()
 
 #ifndef SEGACD
 
-#define	RESP_FAILED	-1
-#define TRACK_CDDA	0x00
-#define TRACK_DATA	0xFF
+#define	RESP_FAILED		-1
+#define TOC_READ_OK		1
+
+#define CD_INVALID_TOC	0x0A
+#define CD_TRAY_OPEN	0x0B
+#define CD_NOT_FOUND	0x0C
+
+#define TRACK_CDDA		0x00
+#define TRACK_DATA		0xFF
 
 int GetTrackType(int track)
 {
 	u16 trackType = TRACK_DATA;
 				
-	if(SendSCDCommandRetVal(Op_GetCDTrackType, track, &trackType))
+	if(SendSCDCommandRetVal(Op_GetCDTrackType, track, &trackType) == TOC_READ_OK)
 		return(trackType & 0x00FF);
 
 	return RESP_FAILED;
+}
+
+void displayCDError(u16 error)
+{
+	VDP_Start();
+	switch(error)
+	{
+		case CD_TRAY_OPEN:
+			VDP_drawTextBG(APLAN, "CD tray is open", TILE_ATTR(PAL1, 0, 0, 0), 12, 14);
+		break;
+		case CD_NOT_FOUND:
+			VDP_drawTextBG(APLAN, "No CD in tray", TILE_ATTR(PAL1, 0, 0, 0), 14, 14);
+		break;
+		case CD_INVALID_TOC:
+			VDP_drawTextBG(APLAN, "TOC reported 0 tracks", TILE_ATTR(PAL1, 0, 0, 0), 10, 14);
+		break;
+	}
+	VDP_End();
 }
 
 void PCMCartPlay()
@@ -1622,15 +1646,15 @@ void PCMCartPlay()
 				else
 					buffer = buffer_data;
 				intToStr(currTrack, buffer+5, 2);
-				VDP_drawTextBG(APLAN, "CDDA", TILE_ATTR(PAL1, 0, 0, 0), x+5, y);
+				VDP_drawTextBG(APLAN, "CD Tracks", TILE_ATTR(PAL1, 0, 0, 0), 15, y);
 				y += 2;
-				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), x+4, y);
+				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 16, y);
 			}
 			else
-				VDP_drawTextBG(APLAN, "Press 'C' to load CD TOC", TILE_ATTR(PAL0, 0, 0, 0), x-5, y+6);
+				VDP_drawTextBG(APLAN, "Press 'C' to load CD TOC", TILE_ATTR(PAL0, 0, 0, 0), 8, y+6);
 				
 			if(warning)
-				VDP_drawTextBG(APLAN, "Cannot play DATA Track", TILE_ATTR(PAL0, 0, 0, 0), x-3, y+2);
+				VDP_drawTextBG(APLAN, "Cannot play DATA Track", TILE_ATTR(PAL0, 0, 0, 0), 9, y+2);
 			
 			VDP_End();
 			refresh = 0;
@@ -1699,7 +1723,7 @@ void PCMCartPlay()
 		
 		if(pressedButtons & BUTTON_C)
 		{
-			int retval = 0;
+			u16	errCode = 0;
 			
 			readDriveVer = 0;
 			
@@ -1713,13 +1737,9 @@ void PCMCartPlay()
 			
 			VDP_waitVSync();
 			
-			SendSCDCommand(Op_InitCD);
-			retval = SendSCDCommandRetVal(Op_CDTracks, 0, &tracks);
-			if(!retval || !tracks)
+			if(!SendSCDCommandRetVal(Op_CheckCDReady, 0, &errCode))
 			{
-				VDP_Start();
-				VDP_drawTextBG(APLAN, retval ? "TOC reported 0 tracks" : "Could not get CD TOC", TILE_ATTR(PAL1, 0, 0, 0), 10, 14);
-				VDP_End();
+				displayCDError(errCode);
 				
 				oldButtons = WaitKey(NULL);
 				
@@ -1730,28 +1750,46 @@ void PCMCartPlay()
 			}
 			else
 			{
-				int wait = 0;
+				u16 trackCheck = 0;
 				
-				currTrack = 0;
-				if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveVersion))
-					readDriveVer = 1;
-				
-				// Wait 4 seconds so that the TOC is updated
-				for(wait = 0; wait < 240; wait++)
-					VDP_waitVSync();
-				
-				// select the first CDDA track, if available
-				do
-				{	
-					int res = 0;
+				SendSCDCommand(Op_InitCD);
+				if(!SendSCDCommandRetVal(Op_CDTracks, 0, &trackCheck))
+				{
+					displayCDError(trackCheck);
 					
-					currTrack++;
+					oldButtons = WaitKey(NULL);
+					
+					tracks = 0;
+					currTrack = 0;
+					lastTrack = 0;
 					currTrackType = TRACK_DATA;
-					res = GetTrackType(currTrack);
-					if(res != RESP_FAILED)
-						currTrackType = res;
-				}while(currTrack < tracks && currTrackType != TRACK_CDDA);
-				lastTrack = currTrack;
+				}
+				else
+				{
+					u16 DriveCheck = 0;
+					
+					tracks = trackCheck;
+					currTrack = 0;
+					
+					if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveCheck))
+					{
+						DriveVersion = DriveCheck;
+						readDriveVer = 1;
+					}
+					
+					// select the first CDDA track, if available
+					do
+					{	
+						int res = 0;
+						
+						currTrack++;
+						currTrackType = TRACK_DATA;
+						res = GetTrackType(currTrack);
+						if(res != RESP_FAILED)
+							currTrackType = res;
+					}while(currTrack < tracks && currTrackType != TRACK_CDDA);
+					lastTrack = currTrack;
+				}
 			}
 
 			redraw = 1;

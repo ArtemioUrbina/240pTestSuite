@@ -42,6 +42,11 @@ CTRLdat		equ	$FF000F
 ONOFFdat	equ	$FF0011
 WAVEdat		equ	$FF2001
 
+; CD Check status
+ErrInvalid	equ	$0A
+ErrTrayOpen	equ	$0B
+ErrNoCD		equ	$0C
+
 ; clock cycle delay for PCM ops
 PCMREGDELAY	equ	5
 		
@@ -111,7 +116,7 @@ SP_Main:
 ; =======================================================================================		
 OpTable:
 		bra.w	Op_Null			    ; Null Operation
-		bra.w	Op_InitISOFS		; Init ISO9660 filesystem
+		bra.w	Op_LoadBootFile		; Load File (from ISO9660 filesystem)
 		bra.w	Op_GetWordRAM		; Give WordRAM to Main CPU
 		bra.w	Op_InitCD		    ; Init
 		bra.w	Op_SeekCDMDF	    ; Seek CD-DA Track 2 for MDFourier
@@ -141,6 +146,7 @@ OpTable:
 		bra.w	Op_CDTracks			; Query Number of Tracks
 		bra.w	Op_DriveVersion		; Query Drive Version
 		bra.w	Op_GetCDTrackType	; Query CD Track Type
+		bra.w	Op_CheckCDReady		; Check if Dive and CD are ready
 		bra.w	Op_DummyTest		; Dummy Test Command
 
 Op_Null:
@@ -277,25 +283,68 @@ Op_DummyTest:
 		move.w	#$1,d6			; return OK
 		move.w	#$E715,d7		; return magic number as parameter
 		rts
+
+; =======================================================================================
+;  Op_CheckCDReady
+;  Calls CDBSTAT to check if tray is closed, CD is present and TOC is read
+; =======================================================================================
+
+Op_CheckCDReady:
+		BIOS_CDBSTAT
+		move.w  0(a0),d1		; check status
+		btst.l  #14,d1			; Is Tray Open?
+		bne		@trayOpen		; Tray was open...
+		btst.l  #12,d1			; Does it have a disc?
+		bne		@noCD			; No disc present, abort
+		btst.l  #15,d1			; is it ready?
+		bne		Op_CheckCDReady
 		
+@readingTOC:
+		BIOS_CDBSTAT
+		move.w  0(a0),d1		; check status
+		btst.l  #14,d1			; Is Tray Open?
+		bne		@trayOpen		; Tray was open...
+		btst.l  #12,d1			; Does it have a disc?
+		bne		@noCD			; No disc present, abort
+		btst.l  #13,d1			; is it reading TOC?
+		bne		@readingTOC
+		
+		move.w  #1,d6			; All good, return success
+		rts
+		
+@trayOpen:
+		move.w	#ErrTrayOpen,d7	; Tray Open
+		move.w  #0,d6			; return fail
+		rts
+		
+@noCD:
+		move.w	#ErrNoCD,d7		; No CD
+		move.w  #0,d6			; return fail
+		rts
+	
 ; =======================================================================================
 ;  Op_CDTracks
 ;  Calls CDBSTAT for number of tracks
 ; =======================================================================================
 Op_CDTracks:
-		BIOS_CDBSTAT
+		bsr		Op_CheckCDReady
+		cmp.w	#0, d6
+		bne		@checkTracks	
+		rts						; return fail from Op_CheckCDReady
+		
+@checkTracks:
 		; byte 16 is 1st track 
 		; byte 17 is last track 
 		move.b  17(a0),d7		; copy last track
-		cmp.b	#$ff,d7
-		bne		@returnTracks	; continue if we got tracks
-
-		move.w	#0,d7			; return 0 tracks if no disc was found
-		move.w  #0,d6
-		rts
+		cmp.b	#$ff,d7			; Compare to check value
+		beq		@trakListErr	; Continue if we got tracks
 		
-@returnTracks:
-		move.w  #1,d6
+		move.w  #1,d6			; return success and tracks in d7
+		rts
+
+@trakListErr:		
+		move.w	#ErrInvalid,d7	; Track list not read
+		move.w  #0,d6			; emulation? return fail
 		rts
 		
 ; =======================================================================================
@@ -303,16 +352,10 @@ Op_CDTracks:
 ;  Calls CDBSTAT for Drive Version
 ; =======================================================================================
 Op_DriveVersion:
-		BIOS_CDBSTAT
-		; byte 17 is last track, if 0xff we could not load TOC so drive is wrong
-		; byte 18 is Drive Version
-		move.b  17(a0),d1		; copy last track
-		cmp.b	#$ff,d1
-		bne		@returnDrive	; continue if we got tracks
-		
-		move.w	#0,d7			; return 0 tracks if no disc was found
-		move.w  #0,d6
-		rts
+		bsr		Op_CDTracks
+		cmp.w	#0,d6
+		bne		@returnDrive	
+		rts		; return same errors as Op_CDTracks
 		
 @returnDrive:
 		move.b  18(a0),d7		; copy drive version

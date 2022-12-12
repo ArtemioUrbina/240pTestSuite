@@ -63,6 +63,7 @@ enum SCD_Command{
 		Op_CDTracks,			//Query Number of Tracks
 		Op_DriveVersion,		//Query Drive Version
 		Op_GetCDTrackType,		//Query CD Track Type
+		Op_CheckCDReady,		//Check if Dive and CD are ready
 		Op_DummyTest			//Dummy Test Command
 	}; 
 
