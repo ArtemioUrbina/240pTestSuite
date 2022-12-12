@@ -1549,11 +1549,26 @@ void PCMRAMCheck()
 
 #ifndef SEGACD
 
+#define	RESP_FAILED	-1
+#define TRACK_CDDA	0x00
+#define TRACK_DATA	0xFF
+
+int GetTrackType(int track)
+{
+	u16 trackType = TRACK_DATA;
+				
+	if(SendSCDCommandRetVal(Op_GetCDTrackType, track, &trackType))
+		return(trackType & 0x00FF);
+
+	return RESP_FAILED;
+}
+
 void PCMCartPlay()
 {
-	char buffer[] = "Track   ";
-	int pcm = 0, exit = 0, redraw = 1, sel = 0, opt = 1;
-	int refresh = 0, currTrack = 0;
+	char buffer_data[] = "DATA   ";
+	char buffer_cdda[] = "CDDA   ";
+	int pcm = 0, exit = 0, redraw = 1, sel = 0, opt = 1, lastTrack = -1;
+	int refresh = 0, currTrack = 0, currTrackType = TRACK_DATA, warning = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons, tracks = 0;
 	
 	if(!segacd_init())
@@ -1600,13 +1615,22 @@ void PCMCartPlay()
 			y += 2;
 			if(tracks)
 			{
-				intToStr(currTrack, buffer+6, 2);
+				char *buffer = NULL;
+				
+				if(currTrackType == TRACK_CDDA)
+					buffer = buffer_cdda;
+				else
+					buffer = buffer_data;
+				intToStr(currTrack, buffer+5, 2);
 				VDP_drawTextBG(APLAN, "CDDA", TILE_ATTR(PAL1, 0, 0, 0), x+5, y);
 				y += 2;
-				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), x+3, y);
+				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), x+4, y);
 			}
 			else
 				VDP_drawTextBG(APLAN, "Press 'C' to load CD TOC", TILE_ATTR(PAL0, 0, 0, 0), x-5, y+6);
+				
+			if(warning)
+				VDP_drawTextBG(APLAN, "Cannot play DATA Track", TILE_ATTR(PAL0, 0, 0, 0), x-3, y+2);
 			
 			VDP_End();
 			refresh = 0;
@@ -1620,6 +1644,13 @@ void PCMCartPlay()
 		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
+		
+		if(warning)
+		{
+			warning--;
+			if(!warning)
+				redraw = 1;
+		}
 		
 		if(pcm)
 		{
@@ -1655,8 +1686,14 @@ void PCMCartPlay()
 			}
 			
 			if(sel == 1 && currTrack)
-			{
-				SendSCDCommandRetVal(Op_PlayCDDA, currTrack, NULL);
+			{	
+				if(currTrackType == TRACK_CDDA)
+					SendSCDCommandRetVal(Op_PlayCDDA, currTrack, NULL);
+				else
+				{
+					warning = 120;
+					refresh = 1;
+				}
 			}
 		}
 		
@@ -1688,12 +1725,33 @@ void PCMCartPlay()
 				
 				tracks = 0;
 				currTrack = 0;
+				lastTrack = 0;
+				currTrackType = TRACK_DATA;
 			}
 			else
 			{
-				currTrack = tracks;
+				int wait = 0;
+				
+				currTrack = 0;
 				if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveVersion))
 					readDriveVer = 1;
+				
+				// Wait 4 seconds so that the TOC is updated
+				for(wait = 0; wait < 240; wait++)
+					VDP_waitVSync();
+				
+				// select the first CDDA track, if available
+				do
+				{	
+					int res = 0;
+					
+					currTrack++;
+					currTrackType = TRACK_DATA;
+					res = GetTrackType(currTrack);
+					if(res != RESP_FAILED)
+						currTrackType = res;
+				}while(currTrack < tracks && currTrackType != TRACK_CDDA);
+				lastTrack = currTrack;
 			}
 
 			redraw = 1;
@@ -1726,22 +1784,25 @@ void PCMCartPlay()
 		if(sel == 1 && tracks)
 		{
 			if(pressedButtons & BUTTON_LEFT)
-			{
 				currTrack--;
-				refresh = 1;
-			}
 			
 			if(pressedButtons & BUTTON_RIGHT)
-			{
 				currTrack++;
-				refresh = 1;
-			}
 			
 			if(currTrack > tracks)
 				currTrack = 1;
 
 			if(currTrack < 1)
 				currTrack = tracks;
+
+			if(currTrack != lastTrack)
+			{
+				currTrackType = GetTrackType(currTrack);
+				if(currTrackType == RESP_FAILED)
+					currTrackType = TRACK_DATA;
+				lastTrack = currTrack;
+				refresh = 1;
+			}
 		}
 		
 		if(pressedButtons & BUTTON_UP)

@@ -1,5 +1,5 @@
-In order to build the 240p Tets for Genesis download the
-SGDK 1.11 branck form 2014 located at: 
+In order to build the 240p Test for Genesis download the
+SGDK 1.11 branck from 2014 located at: 
 
 https://github.com/ArtemioUrbina/SGDK_1_11_Suite
 
@@ -7,8 +7,11 @@ Please change the sgdk.bat file to point to your installation
 and run the compile_genesis.bat file from the 240p test suite
 folder
 
-
 For Sega CD, you should update the SCD_LOADER path in the
 sgdk.bat file to point to the suitable folder (included in the
-240p test suite for genesis) and then run the compile_segaCD.bat
+240p test suite for Genesis) and then run the compile_segaCD.bat
 file from the 240p test suite folder
+
+If the PCM sub program for the Sega CD is changed, run
+buildscdpcmcheck.bat from the utilities folder and update
+resources.res so that it is linked.

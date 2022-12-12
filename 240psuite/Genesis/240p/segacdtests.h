@@ -62,6 +62,7 @@ enum SCD_Command{
 		Op_LoadPCMRAM,			//Load sample into PCM ram from cartridge
 		Op_CDTracks,			//Query Number of Tracks
 		Op_DriveVersion,		//Query Drive Version
+		Op_GetCDTrackType,		//Query CD Track Type
 		Op_DummyTest			//Dummy Test Command
 	}; 
 

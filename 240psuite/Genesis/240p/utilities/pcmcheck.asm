@@ -140,6 +140,7 @@ OpTable:
 		bra.w	Op_LoadPCMRAM		; Use PCM sample data to fill PCM RAM
 		bra.w	Op_CDTracks			; Query Number of Tracks
 		bra.w	Op_DriveVersion		; Query Drive Version
+		bra.w	Op_GetCDTrackType	; Query CD Track Type
 		bra.w	Op_DummyTest		; Dummy Test Command
 
 Op_Null:
@@ -305,8 +306,8 @@ Op_DriveVersion:
 		BIOS_CDBSTAT
 		; byte 17 is last track, if 0xff we could not load TOC so drive is wrong
 		; byte 18 is Drive Version
-		move.b  17(a0),d7		; copy last track
-		cmp.b	#$ff,d7
+		move.b  17(a0),d1		; copy last track
+		cmp.b	#$ff,d1
 		bne		@returnDrive	; continue if we got tracks
 		
 		move.w	#0,d7			; return 0 tracks if no disc was found
@@ -318,6 +319,21 @@ Op_DriveVersion:
 		move.w	#1, d6			; return 1
 		rts
 
+; =======================================================================================
+;  Op_GetCDTrackType: Gets CD track Type
+;  Input: d3.b - Track number
+;  Output: d6.w  fail or sucess
+;  Output: d7.w  raw track type
+; =======================================================================================
+Op_GetCDTrackType:
+		BIOS_CDBTOCREAD
+		bsr		wait_BIOS
+		; d0 BCD Time, ignored
+		; d1 Track Type, return raw
+		move.w	#1,d6	
+		move.w	d1,d7
+		rts
+		
 ; =======================================================================================
 ;  PlayCDDA: Plays a CD-DA track
 ;  Input: d3.b - Track number
