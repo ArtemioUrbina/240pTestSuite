@@ -147,12 +147,14 @@ OpTable:
 		bra.w	Op_DriveVersion		; Query Drive Version
 		bra.w	Op_GetCDTrackType	; Query CD Track Type
 		bra.w	Op_CheckCDReady		; Check if Dive and CD are ready
+		bra.w	Op_CheckTrayClosed	; Return 1 on tray closed 0 on open
+		bra.w	Op_TrayOpen			; Open the Tray
 		bra.w	Op_DummyTest		; Dummy Test Command
 
 Op_Null:
 		rts
 		
-Op_InitISOFS:
+Op_LoadBootFile:
 		rts
 		
 Op_GetWordRAM:	
@@ -160,8 +162,6 @@ Op_GetWordRAM:
 		rts
 
 Op_InitCD:
-		BIOS_MSCSTOP
-		bsr		wait_BIOS
 		lea		DriveInit_Params(pc),a0
 		BIOS_DRVINIT
 		bsr		wait_BIOS
@@ -283,6 +283,37 @@ Op_DummyTest:
 		move.w	#$1,d6			; return OK
 		move.w	#$E715,d7		; return magic number as parameter
 		rts
+		
+Op_TrayOpen:
+		BIOS_DRVOPEN
+		rts
+
+; =======================================================================================
+;  Op_CheckTrayClosed
+;  Calls CDBSTAT to check if tray is closed
+; =======================================================================================
+
+Op_CheckTrayClosed:
+		BIOS_CDBSTAT
+		move.w  0(a0),d1		; copy status
+		btst.l  #14,d1			; Is Tray Open?
+		bne		@trayOpen		; Tray was open...
+		btst.l  #12,d1			; Does it have a disc?
+		bne		@noCD			; No disc present, abort
+		btst.l  #15,d1			; is it ready?
+		bne		Op_CheckTrayClosed
+		
+		move.w  #1,d6			; return tray closed
+		rts
+		
+@trayOpen:
+		move.w	#ErrTrayOpen,d7	; Tray Open
+		move.w  #0,d6			; return fail
+		rts
+		
+@noCD:
+		move.w	#ErrNoCD,d7		; No CD
+		move.w  #0,d6			; return fail
 
 ; =======================================================================================
 ;  Op_CheckCDReady

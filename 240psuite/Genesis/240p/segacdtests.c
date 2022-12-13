@@ -104,6 +104,23 @@ int DetectSCDviaExpansion()
 }
 #endif
 
+u8 DetectSegaCDModel()
+{
+#ifdef SEGACD
+	uint8_t *bios = (uint8_t *)0;
+#else
+	uint8_t *bios = (uint8_t *)0x400000;
+#endif
+	if(bios[0x18A] == '1')
+		return 1;
+	if(bios[0x18A] == '2')
+		return 2;
+	// we treat laseractive as Model 2
+	if(bios[0x18A] == '0')
+		return 2;
+	return(0);
+}
+
 #ifdef BIOS_EMU_ISSUE
 int DetectEmulationIssue()
 {
@@ -1569,37 +1586,25 @@ int GetTrackType(int track)
 	return RESP_FAILED;
 }
 
-void displayCDError(u16 error)
-{
-	VDP_Start();
-	switch(error)
-	{
-		case CD_TRAY_OPEN:
-			VDP_drawTextBG(APLAN, "CD tray is open", TILE_ATTR(PAL1, 0, 0, 0), 12, 14);
-		break;
-		case CD_NOT_FOUND:
-			VDP_drawTextBG(APLAN, "No CD in tray", TILE_ATTR(PAL1, 0, 0, 0), 14, 14);
-		break;
-		case CD_INVALID_TOC:
-			VDP_drawTextBG(APLAN, "TOC reported 0 tracks", TILE_ATTR(PAL1, 0, 0, 0), 10, 14);
-		break;
-	}
-	VDP_End();
-}
-
 void PCMCartPlay()
 {
 	char buffer_data[] = "DATA   ";
 	char buffer_cdda[] = "CDDA   ";
+	char buffer_none[] = "  NONE ";
+	char *warnmsg = NULL;
 	int pcm = 0, exit = 0, redraw = 1, sel = 0, opt = 1, lastTrack = -1;
+	int CDTrayClosed = 0, timer = 0, lastTrayStatus = -1, enableCD = 0, maxSel = 3;
 	int refresh = 0, currTrack = 0, currTrackType = TRACK_DATA, warning = 0;
-	u16 buttons, oldButtons = 0xffff, pressedButtons, tracks = 0;
+	u16 buttons, oldButtons = 0xffff, pressedButtons, tracks = 0, cdStatus = 0;
+	u8  SCDModel = 0;
 	
 	if(!segacd_init())
 	{
 		//resetSegaCD();
 		return;
 	}
+	
+	SCDModel = DetectSegaCDModel();
 	
 	if(!SendSCDCommandRetVal(Op_LoadPCMRAM, 0, NULL))
 	{
@@ -1619,10 +1624,8 @@ void PCMCartPlay()
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 			VDP_drawTextBG(APLAN, "Sega CD Sound Test", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);
 			VDP_drawTextBG(APLAN, "Ricoh RF5C164 (315-5476A)", TILE_ATTR(PAL1, 0, 0, 0), 8, 9);
+			VDP_drawTextBG(APLAN, "CD Drive", TILE_ATTR(PAL1, 0, 0, 0), 16, 14);
 			VDP_End();
-			
-			if(readDriveVer)
-				ShowMessageAndData("Drive Version", DriveVersion, 2, PAL1, 18, 24);
 				
 			redraw = 0;
 			refresh = 1;
@@ -1630,32 +1633,59 @@ void PCMCartPlay()
 		
 		if(refresh)
 		{
-			int x = 13, y = 11;
+			char *buffer = NULL;
 			
 			VDP_Start();
-			VDP_drawTextBG(APLAN, "Left", TILE_ATTR(sel == 0 && opt == 0 ? PAL3 : PAL0, 0, 0, 0), x-2, y);
-			VDP_drawTextBG(APLAN, "Center", TILE_ATTR(sel == 0 && opt == 1 ? PAL3 : PAL0, 0, 0, 0), x+3, y);
-			VDP_drawTextBG(APLAN, "Right", TILE_ATTR(sel == 0 && opt == 2 ? PAL3 : PAL0, 0, 0, 0), x+10, y);
-			y += 2;
-			if(tracks)
+			
+			VDP_drawTextBG(APLAN, "Left", TILE_ATTR(sel == 0 && opt == 0 ? PAL3 : PAL0, 0, 0, 0), 11, 11);
+			VDP_drawTextBG(APLAN, "Center", TILE_ATTR(sel == 0 && opt == 1 ? PAL3 : PAL0, 0, 0, 0), 16, 11);
+			VDP_drawTextBG(APLAN, "Right", TILE_ATTR(sel == 0 && opt == 2 ? PAL3 : PAL0, 0, 0, 0), 23, 11);
+			
+			VDP_drawTextBG(APLAN, "Play", TILE_ATTR(sel == 1 && opt == 0 ? PAL3 : PAL0, 0, 0, 0), 10, 15);
+			VDP_drawTextBG(APLAN, "Stop", TILE_ATTR(sel == 1 && opt == 1 ? PAL3 : PAL0, 0, 0, 0), 15, 15);
+			VDP_drawTextBG(APLAN, "Open", TILE_ATTR(sel == 1 && opt == 2 ? PAL3 : PAL0, 0, 0, 0), 20, 15);
+			VDP_drawTextBG(APLAN, "Close", TILE_ATTR(sel == 1 && opt == 3 ? PAL3 : PAL0, 0, 0, 0), 25, 15);
+						
+			if(tracks)	
 			{
-				char *buffer = NULL;
-				
 				if(currTrackType == TRACK_CDDA)
 					buffer = buffer_cdda;
 				else
 					buffer = buffer_data;
 				intToStr(currTrack, buffer+5, 2);
-				VDP_drawTextBG(APLAN, "CD Tracks", TILE_ATTR(PAL1, 0, 0, 0), 15, y);
-				y += 2;
-				VDP_drawTextBG(APLAN, buffer, TILE_ATTR(sel == 1 ? PAL3 : PAL0, 0, 0, 0), 16, y);
 			}
 			else
-				VDP_drawTextBG(APLAN, "Press 'C' to load CD TOC", TILE_ATTR(PAL0, 0, 0, 0), 8, y+6);
-				
-			if(warning)
-				VDP_drawTextBG(APLAN, "Cannot play DATA Track", TILE_ATTR(PAL0, 0, 0, 0), 9, y+2);
+				buffer = buffer_none;
+			VDP_drawTextBG(APLAN, "Track", TILE_ATTR(PAL1, 0, 0, 0), 17, 16);
+			VDP_drawTextBG(APLAN, buffer, TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 16, 17);
 			
+			VDP_clearTileMapRect(APLAN, 0, 19, 40, 24);
+			if(!enableCD)
+				VDP_drawTextBG(APLAN, "Press C to enable CD", TILE_ATTR(PAL0, 0, 0, 0), 10, 20);
+			else
+			{
+				if(!CDTrayClosed)
+				{
+					switch(cdStatus)
+					{
+						case CD_TRAY_OPEN:
+							VDP_drawTextBG(APLAN, "CD tray is open", TILE_ATTR(PAL1, 0, 0, 0), 12, 20);
+						break;
+						case CD_NOT_FOUND:
+							VDP_drawTextBG(APLAN, "No CD in tray", TILE_ATTR(PAL1, 0, 0, 0), 14, 20);
+						break;
+						case CD_INVALID_TOC:
+							VDP_drawTextBG(APLAN, "TOC reported 0 tracks", TILE_ATTR(PAL1, 0, 0, 0), 10, 20);
+						break;
+					}
+				}
+			}
+				
+			if(warning && warnmsg)
+				VDP_drawTextBG(APLAN, warnmsg, TILE_ATTR(PAL0, 0, 0, 0), 9, 19);
+			
+			if(readDriveVer)
+				ShowMessageAndData("Drive Version", DriveVersion, 2, PAL1, 18, 24);
 			VDP_End();
 			refresh = 0;
 		}
@@ -1669,11 +1699,80 @@ void PCMCartPlay()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 		
+		if(enableCD)
+		{
+			timer++;
+			if(timer > 60)
+			{	
+				if(SendSCDCommandRetVal(Op_CheckTrayClosed, 0, &cdStatus))
+					CDTrayClosed = 1;
+				else
+				{
+					tracks = 0;
+					currTrack = 0;
+					lastTrack = 0;
+					currTrackType = TRACK_DATA;
+					CDTrayClosed = 0;
+				}
+				
+				if(lastTrayStatus != CDTrayClosed)
+				{
+					refresh = 1;
+					if(CDTrayClosed)
+					{
+						u16 trackCheck = 0;
+						
+						readDriveVer = 0;
+						
+						if(pcm)
+							SendSCDCommand(Op_StopPCM);
+						
+						VDP_Start();
+						VDP_clearTileMapRect(APLAN, 0, 19, 40, 24);
+						VDP_drawTextBG(APLAN, "Please wait while reading CD TOC", TILE_ATTR(PAL0, 0, 0, 0), 4, 20);
+						VDP_End();
+						
+						VDP_waitVSync();
+						
+						if(SendSCDCommandRetVal(Op_CDTracks, 0, &trackCheck))
+						{
+							u16 DriveCheck = 0;
+							
+							tracks = trackCheck;
+							currTrack = 0;
+							
+							if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveCheck))
+							{
+								DriveVersion = DriveCheck;
+								readDriveVer = 1;
+							}
+							
+							// select the first CDDA track, if available
+							do
+							{	
+								int res = 0;
+								
+								currTrack++;
+								currTrackType = TRACK_DATA;
+								res = GetTrackType(currTrack);
+								if(res != RESP_FAILED)
+									currTrackType = res;
+							}while(currTrack < tracks && currTrackType != TRACK_CDDA);
+							lastTrack = currTrack;
+						}
+					}
+					lastTrayStatus = CDTrayClosed;
+				}
+				
+				timer = 0;
+			}
+		}
+		
 		if(warning)
 		{
 			warning--;
 			if(!warning)
-				redraw = 1;
+				refresh = 1;
 		}
 		
 		if(pcm)
@@ -1690,115 +1789,89 @@ void PCMCartPlay()
 				if(pcm)
 					SendSCDCommand(Op_StopPCM);
 
-				if(opt == 0)
+				switch(opt)
 				{
-					SendSCDCommand(Op_SetPCMLeft);
-					SendSCDCommand(Op_PlayPCM);
-				}
-				if(opt == 1)
-				{
-					SendSCDCommand(Op_SetPCMCenter);
-					SendSCDCommand(Op_PlayPCM);
-				}
-				if(opt == 2)
-				{
-					SendSCDCommand(Op_SetPCMRight);
-					SendSCDCommand(Op_PlayPCM);
+					case 0:
+						SendSCDCommand(Op_SetPCMLeft);
+						SendSCDCommand(Op_PlayPCM);
+					break;
+					case 1:
+						SendSCDCommand(Op_SetPCMCenter);
+						SendSCDCommand(Op_PlayPCM);
+					break;
+					case 2:
+						SendSCDCommand(Op_SetPCMRight);
+						SendSCDCommand(Op_PlayPCM);
+					break;
 				}
 				
 				pcm = 110;
 			}
 			
-			if(sel == 1 && currTrack)
-			{	
-				if(currTrackType == TRACK_CDDA)
-					SendSCDCommandRetVal(Op_PlayCDDA, currTrack, NULL);
-				else
+			if(sel == 1)
+			{
+				switch(opt)
 				{
-					warning = 120;
-					refresh = 1;
+					case 0:
+						if(currTrack && currTrackType == TRACK_CDDA)
+							SendSCDCommandRetVal(Op_PlayCDDA, currTrack, NULL);
+						else {
+							if(currTrack) {
+								warnmsg = "Cannot play DATA Track";
+								warning = 120;
+								refresh = 1;
+							}
+						}
+					break;
+					case 1:
+						if(tracks)
+							SendSCDCommand(Op_StopCD);
+					break;
+					case 2:
+						if(cdStatus == CD_TRAY_OPEN)
+						{
+							warnmsg = "Tray already opened";
+							warning = 120;
+							refresh = 1;
+						}
+						else
+						{
+							if(SCDModel == 2) {
+								warnmsg = "Model 2 open manually";
+								warning = 120;
+							}
+							else
+								SendSCDCommand(Op_TrayOpen);
+						}
+						refresh = 1;
+					break;
+					case 3:
+						if(CDTrayClosed) {
+							warnmsg = "Tray already closed";
+							warning = 120;
+							refresh = 1;
+						}
+						else {
+							if(SCDModel == 2) {
+								warnmsg = "Model 2 close manually";
+								warning = 120;
+							}
+							else
+								SendSCDCommand(Op_InitCD);
+						}
+						refresh = 1;
+					break;
 				}
 			}
 		}
 		
 		if(pressedButtons & BUTTON_C)
 		{
-			u16	errCode = 0;
-			
-			readDriveVer = 0;
-			
-			if(pcm)
-				SendSCDCommand(Op_StopPCM);
-			
-			VDP_Start();
-			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
-			VDP_drawTextBG(APLAN, "Please wait while reading CD TOC", TILE_ATTR(PAL0, 0, 0, 0), 4, 12);
-			VDP_End();
-			
-			VDP_waitVSync();
-			
-			if(!SendSCDCommandRetVal(Op_CheckCDReady, 0, &errCode))
-			{
-				displayCDError(errCode);
-				
-				oldButtons = WaitKey(NULL);
-				
-				tracks = 0;
-				currTrack = 0;
-				lastTrack = 0;
-				currTrackType = TRACK_DATA;
-			}
-			else
-			{
-				u16 trackCheck = 0;
-				
-				SendSCDCommand(Op_InitCD);
-				if(!SendSCDCommandRetVal(Op_CDTracks, 0, &trackCheck))
-				{
-					displayCDError(trackCheck);
-					
-					oldButtons = WaitKey(NULL);
-					
-					tracks = 0;
-					currTrack = 0;
-					lastTrack = 0;
-					currTrackType = TRACK_DATA;
-				}
-				else
-				{
-					u16 DriveCheck = 0;
-					
-					tracks = trackCheck;
-					currTrack = 0;
-					
-					if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveCheck))
-					{
-						DriveVersion = DriveCheck;
-						readDriveVer = 1;
-					}
-					
-					// select the first CDDA track, if available
-					do
-					{	
-						int res = 0;
-						
-						currTrack++;
-						currTrackType = TRACK_DATA;
-						res = GetTrackType(currTrack);
-						if(res != RESP_FAILED)
-							currTrackType = res;
-					}while(currTrack < tracks && currTrackType != TRACK_CDDA);
-					lastTrack = currTrack;
-				}
-			}
-
-			redraw = 1;
+			enableCD = !enableCD;
+			refresh = 1;
 		}
 		
-		if(pressedButtons & BUTTON_B && tracks)
-			SendSCDCommand(Op_StopCD);
-		
-		if(sel == 0)
+		if(sel < 2)
 		{
 			if(pressedButtons & BUTTON_LEFT)
 			{
@@ -1812,14 +1885,14 @@ void PCMCartPlay()
 				refresh = 1;
 			}
 			
-			if(opt > 2)
+			if(opt > maxSel)
 				opt = 0;
 
 			if(opt < 0)
-				opt = 2;
+				opt = maxSel;
 		}
 		
-		if(sel == 1 && tracks)
+		if(sel == 2 && tracks)
 		{
 			if(pressedButtons & BUTTON_LEFT)
 				currTrack--;
@@ -1846,35 +1919,35 @@ void PCMCartPlay()
 		if(pressedButtons & BUTTON_UP)
 		{
 			sel --;
+			if(sel < 0)
+				sel = 2;
 			refresh = 1;
 		}
 			
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			sel ++;
+			if(sel > 2)
+				sel = 0;
 			refresh = 1;
 		}
 		
-		if(sel > 1)
-			sel = 0;
-
-		if(sel < 0)
-			sel = 1;
-		
-		if(!tracks && sel)
-		{
-			sel = 0;
-			refresh = 1;
-		}
+		if(sel == 0)
+			maxSel = 2;
+		if(sel == 1)
+			maxSel = 3;
+		if(sel == 2)
+			maxSel = 0;
 		
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
 	}
 	
+	SendSCDCommand(Op_SetPCMCenter);
 	if(pcm)
 		SendSCDCommand(Op_StopPCM);
-	SendSCDCommand(Op_SetPCMCenter);
-	SendSCDCommand(Op_StopCD);
+	if(tracks)
+		SendSCDCommand(Op_StopCD);
 	
 	resetSegaCD();
 }

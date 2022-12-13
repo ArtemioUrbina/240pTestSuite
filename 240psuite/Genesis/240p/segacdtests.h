@@ -29,11 +29,7 @@
 
 enum SCD_Command{
 		Op_Null = 0,			// Null Operation
-#ifdef SEGACD
 		Op_LoadBootFile, 		//Load File (from ISO9660 filesystem)
-#else
-		Op_InitISOFS, 			//Init ISO9660 filesystem
-#endif
 		Op_GetWordRAM,			//Give WordRAM to Main CPU
         Op_InitCD,		    	//Init
         Op_SeekCDMDF,		    //Seek CD-DA Track 2 for MDFourier
@@ -64,11 +60,26 @@ enum SCD_Command{
 		Op_DriveVersion,		//Query Drive Version
 		Op_GetCDTrackType,		//Query CD Track Type
 		Op_CheckCDReady,		//Check if Dive and CD are ready
+		Op_CheckTrayClosed,		//Return 1 on tray closed 0 on open
+		Op_TrayOpen,			//Open the Tray
 		Op_DummyTest			//Dummy Test Command
 	}; 
 
 
+#ifndef SEGACD
 int DetectSCDviaExpansion();
+void PCMCartPlay();
+uint8_t segacd_init();
+void resetSegaCD();
+extern void write_byte(unsigned int dst, unsigned char val);
+extern void write_word(unsigned int dst, unsigned short val);
+extern void write_long(unsigned int dst, unsigned int val);
+extern unsigned char read_byte(unsigned int src);
+extern unsigned short read_word(unsigned int src);
+extern unsigned int read_long(unsigned int src);
+#endif
+
+u8 DetectSegaCDModel();
 void SegaCDMenu();
 void Z80RamTest();
 
@@ -88,21 +99,9 @@ void PlayCDTrackTimed();
 void PlayPCM(int barrier);
 void TestPCM(int barrier);
 void ChangePCM(int *type);
-#else
-void PCMCartPlay();
 #endif
 
 // These are defined in kos.s
 short set_sr(short new_sr);
 void Kos_Decomp(volatile uint8_t *src, uint8_t *dst);
-uint8_t segacd_init();
-void resetSegaCD();
 void vblank_scd();
-extern void write_byte(unsigned int dst, unsigned char val);
-extern void write_word(unsigned int dst, unsigned short val);
-extern void write_long(unsigned int dst, unsigned int val);
-extern unsigned char read_byte(unsigned int src);
-extern unsigned short read_word(unsigned int src);
-extern unsigned int read_long(unsigned int src);
-
-
