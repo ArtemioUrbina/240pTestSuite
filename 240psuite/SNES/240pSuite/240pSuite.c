@@ -405,10 +405,11 @@ void VideoTests(void)
 			drawText(VT_START, pos, sel == 7 ? 6 : 7, "Checkerboard"); pos ++;
 			drawText(VT_START, pos, sel == 8 ? 6 : 7, "Backlit Zone Test"); pos ++;
 			drawText(VT_START, pos, sel == 9 ? 6 : 7, "Alternate 240p/480i"); pos ++;
-			pos = 18;
-			drawText(VT_START, pos, sel == 10 ? 6 : 7, "Help"); pos ++;	
-			drawText(VT_START, pos, sel == 11 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
-			drawText(VT_START, pos, sel == 12 ? 6 : 5, "Back to Main Menu"); pos++;
+			drawText(VT_START, pos, sel == 10 ? 6 : 7, "Disappearing Logo"); pos ++;
+			pos = 19;
+			drawText(VT_START, pos, sel == 11 ? 6 : 7, "Help"); pos ++;	
+			drawText(VT_START, pos, sel == 12 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(VT_START, pos, sel == 13 ? 6 : 5, "Back to Main Menu"); pos++;
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
 			
@@ -437,9 +438,9 @@ void VideoTests(void)
 		}	
 
 		if(sel < 0)
-			sel = 12;
+			sel = 13;
 			
-		if(sel > 12)
+		if(sel > 13)
 			sel = 0;
 			
 		if(pressed & KEY_START)
@@ -487,15 +488,18 @@ void VideoTests(void)
 					Alternate240p480i();
 					break;
 				case 10:
-					DrawHelp(HELP_GENERAL);
+					DisappearingLogo();
 					break;
 				case 11:
+					DrawHelp(HELP_GENERAL);
+					break;
+				case 12:
 					if(interlaced)
 						ClearInterlaced();
 					else
 						SetInterlaced();
 					break;
-				case 12:
+				case 13:
 					exit = 1;
 					Transition();
 					oamClear(0, 0);
@@ -903,8 +907,8 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(4, 4, 5, "Ver. 1.061");
-			drawText(19, 4, 7, "02/10/2021");
+			drawText(4, 4, 5, "Ver. 1.07");
+			drawText(19, 4, 7, "13/12/2022");
 			drawText(10, 24, 5, "Dedicated to Elisa");
 			
 			EndDMA();	

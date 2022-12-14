@@ -140,6 +140,10 @@ audiosync.pic: audiosync.bmp
 	@echo convert bitmap to 16 colors without rearranging colors... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m $<
 
+dissapear.pic: dissapear.bmp
+	@echo convert bitmap to 16 colors without rearranging colors... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m $<
+
 donna.pic: donna.bmp
 	@echo convert bitmap in 256 colors... $(notdir $@)
 	$(GFXCONV) -pR! -pc256 -n -gs8 -pe0 -fbmp -m $<
@@ -250,7 +254,7 @@ bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic donna.pic SMPTECB75
 	EBUCB100.pic EBUCB75.pic kiki.pic plugePAL.pic audiosync.pic fireshark.pic\
 	bricks.pic convdot.pic convcross.pic convgrid.pic convcolor.pic convcolor_blk.pic\
 	float.pic monoscope.pic monoscope_PAL.pic monoscope239.pic gillian_b1.pic gillian_b2.pic\
-	barcode.pic
+	barcode.pic dissapear.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

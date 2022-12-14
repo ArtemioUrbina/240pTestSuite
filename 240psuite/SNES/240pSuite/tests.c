@@ -680,7 +680,7 @@ void DrawCheck(void)
 	return;
 }
 
-void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y)
+void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y, u16 drawCircles)
 {
 	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };	
 	
@@ -688,19 +688,18 @@ void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y)
 					
 	consoleInitTextMine(0, 7, &font);	
 	
-	setPaletteColor(0x91, RGB5(31, 31, 31));
-	setPaletteColor(0xA3, RGB5(31, 0, 0));
-	setPaletteColor(0xA1, RGB5(31, 0, 0));
-	setPaletteColor(0xB1, RGB5(0, 0, 31));
-	
-	AddTextColor(7, RGB5(0, 0, 0), RGB5(31, 31, 31));
-				
-	bgInitTileSetMine(1, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
-	bgInitMapSetMine(1, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
-	
-	setPaletteColor(0x01, RGB5(255, 255, 255));
-	
-	drawText(1, 1, 7, "hours   minutes seconds frames");
+	if(drawCircles)
+	{
+		bgInitTileSetMine(1, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
+		bgInitMapSetMine(1, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
+		setPaletteColor(0x01, RGB5(31, 31, 31));
+	}
+	else
+	{
+		bgInitTileSetMine(1, &dissapear_tiles, &dissapear_pal, 0, (&dissapear_tiles_end - &dissapear_tiles), 16*2, BG_16COLORS, 0x6000);	
+		bgInitMapSetMine(1, &dissapear_map, (&dissapear_map_end - &dissapear_map), SC_32x32, 0x1000);
+		setPaletteColor(0x01, RGB5(0, 0, 0));
+	}
 	
 	oamInitGfxSetMine(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
 	
@@ -722,20 +721,42 @@ void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y)
 	DrawNumber(xpos[6], y, spriteIndex[6], numberIndex[0], 0);	
 	DrawNumber(xpos[7], y, spriteIndex[7], numberIndex[0], 0);			
 			
-	/*****Circles*****/			
-	
-	DrawCircle(0, 70, 192, numberIndex[10], 2);
+	if(drawCircles)
+	{
+		/*****Circles*****/			
+		
+		DrawCircle(0, 70, 192, numberIndex[10], 2);
 
-	/*****Numbers on Circles*****/
-	DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 1);	
-	DrawNumber(84, 80, numberTopIndex[1], numberIndex[2], 1);
-	DrawNumber(148, 80, numberTopIndex[2], numberIndex[3], 1);	
-	DrawNumber(212, 80, numberTopIndex[3], numberIndex[4], 1);	
+		/*****Numbers on Circles*****/
+		DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 1);	
+		DrawNumber(84, 80, numberTopIndex[1], numberIndex[2], 1);
+		DrawNumber(148, 80, numberTopIndex[2], numberIndex[3], 1);	
+		DrawNumber(212, 80, numberTopIndex[3], numberIndex[4], 1);	
+		
+		DrawNumber(20, 150, numberTopIndex[4], numberIndex[5], 1);	
+		DrawNumber(84, 150, numberTopIndex[5], numberIndex[6], 1);	
+		DrawNumber(148, 150, numberTopIndex[6], numberIndex[7], 1);	
+		DrawNumber(212, 150, numberTopIndex[7], numberIndex[8], 1);				
+	}
 	
-	DrawNumber(20, 150, numberTopIndex[4], numberIndex[5], 1);	
-	DrawNumber(84, 150, numberTopIndex[5], numberIndex[6], 1);	
-	DrawNumber(148, 150, numberTopIndex[6], numberIndex[7], 1);	
-	DrawNumber(212, 150, numberTopIndex[7], numberIndex[8], 1);				
+	if(drawCircles)
+	{
+		setPaletteColor(0x91, RGB5(31, 31, 31));
+		setPaletteColor(0xA3, RGB5(31, 0, 0));
+		setPaletteColor(0xA1, RGB5(31, 0, 0));
+		setPaletteColor(0xB1, RGB5(0, 0, 31));
+		
+		AddTextColor(7, RGB5(0, 0, 0), RGB5(31, 31, 31));
+	}
+	else
+	{
+		setPaletteColor(0x81, RGB5(0, 31, 0));
+		setPaletteColor(0x91, RGB5(0, 31, 0));
+		
+		AddTextColor(7, RGB5(31, 31, 31), RGB5(20, 20, 20));
+	}
+	
+	drawText(1, 1, 7, "hours   minutes seconds frames");
 	
 	setMode(BG_MODE1,0);
 	bgSetScroll(1, 0, -1);	
@@ -823,8 +844,7 @@ void PassiveLagTest()
 	
 		if(redraw)
 		{
-			loadStopWatch(xpos, spriteIndex, numberIndex, y);
-			
+			loadStopWatch(xpos, spriteIndex, numberIndex, y, 1);
 			redraw = 0;
 		}
 		
@@ -841,7 +861,7 @@ void PassiveLagTest()
 			else 
 			{
 				bgcol = 0xa;
-				setPaletteColor(0x01, RGB5(255, 255, 255));
+				setPaletteColor(0x01, RGB5(31, 31, 31));
 			}
 		}
 	
@@ -2231,3 +2251,95 @@ void AudioSyncTest(void)
 	return;
 }
 
+void fillGillian(u16 color)
+{
+	int i = 0;
+				
+	for(i = 3; i < 15; i++) {
+		setPaletteColor(i, color);
+	}
+	setPaletteColor(0, color);
+}
+
+void DisappearingLogo()
+{
+	timecode tc;
+	u16 pressed, end = 0;
+	u16 numberIndex[12] = { 0, 8, 64, 72, 128, 136, 192, 200, 256, 264, 320, 328};
+	u16 spriteIndex[8] = { 0, 4, 8, 12, 16, 20, 24, 28 };
+	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
+	u16 black = 0, white = 0;
+	u16 y = 20, reload = 1, redraw = 1, draw = 1, frames = 0;	
+
+	black = RGB5(0, 0, 0);
+	white = RGB5(31, 31, 31);
+	memset(&tc, 0, sizeof(timecode));		
+	while(!end)
+	{
+		if(reload)
+		{
+			loadStopWatch(xpos, spriteIndex, numberIndex, y, 0);
+			redraw = 1;
+			reload = 0;
+		}
+		
+		if(redraw)
+		{	
+			if(!draw)
+				fillGillian(black);
+			else
+			{
+				setPalette(&dissapear_pal, 0, 16*2);
+				setPaletteColor(2, RGB5(0, 31, 0));
+			}
+			redraw = 0;
+		}
+		
+		DrawStopWatch(&tc, xpos, spriteIndex, numberIndex, y, 0x9);
+		
+		// read immediately so response is accurate
+		WaitForVBlank();
+		tc.frames++;
+		
+		pressed = PadPressed(0);
+		
+		if(pressed & KEY_START)
+		{
+			DrawHelp(HELP_DISAPPEAR);
+			reload = 1;
+		}
+		
+		if(pressed & KEY_B)
+			end = 1;
+
+		if(pressed & KEY_A)
+		{
+			draw = !draw;
+			redraw = 1;
+		}		
+		
+		if(frames)
+		{
+			frames--;
+			if(!frames)
+			{
+				setPaletteColor(1, black);
+				if(!draw)
+					fillGillian(black);
+			}
+		}
+		
+		if(pressed & KEY_X)
+		{
+			if(!frames)
+			{
+				setPaletteColor(1, white);
+				if(!draw)
+					fillGillian(white);
+				frames = 2;
+			}
+		}
+	}
+	Transition();
+	oamClear(0, 0);
+}

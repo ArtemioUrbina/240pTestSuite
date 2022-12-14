@@ -104,6 +104,10 @@ extern char lagtest_tiles, lagtest_tiles_end;
 extern char lagtest_pal, lagtest_pal_end;
 extern char lagtest_map, lagtest_map_end;
 
+extern char dissapear_tiles, dissapear_tiles_end;
+extern char dissapear_pal, dissapear_pal_end;
+extern char dissapear_map, dissapear_map_end;
+
 extern char sonicback_tiles, sonicback_tiles_end;
 extern char sonicback_pal, sonicback_pal_end;
 extern char sonicback_map, sonicback_map_end;

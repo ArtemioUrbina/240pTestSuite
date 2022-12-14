@@ -131,12 +131,15 @@ void DrawHelp(u16 option)
 							drawText(20, 22, 4, "(cont...)");
 							break;
 						case 3:
+							DrawTilesWithSpritesBarcode(190, 140, 32, 32, &barcode_tiles, &barcode_tiles_end-&barcode_tiles, &barcode_pal);				
+							
 							drawText(3, 4  , 6, "        HELP (3/3)"); 
 							drawText(3, y++, 7, "The 240p suite is also"); 
 							drawText(3, y++, 7, "available in GameCube,");
 							drawText(3, y++, 7, "NES, Wii, Genesis/MD,");
 							drawText(3, y++, 7, "Sega CD, PC Engine/");
-							drawText(3, y++, 7, "TG-16 and Dreamcast.");		
+							drawText(3, y++, 7, "TG-16, Neo Geo, Dreamcast,");
+							drawText(3, y++, 7, "and more.");
 							y++;
 							drawText(3, y++, 7, "Please visit:"); 
 							drawText(3, y++, 5, "http://junkerhq.net/240p");
@@ -808,6 +811,21 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "boundary check with and"); 
 							drawText(3, y++, 7, "without a black border."); 
 					break;
+					case HELP_DISAPPEAR:
+							drawText(3, 4  , 6, "    DISAPPEARING LOGO"); 
+							drawText(3, y++, 7, "This test allows you to"); 
+							drawText(3, y++, 7, "use a slow motion camera");
+							drawText(3, y++, 7, "to measure how long it ");
+							drawText(3, y++, 7, "takes from a button");
+							drawText(3, y++, 7, "press to when the logo");
+							drawText(3, y++, 7, "disappears.");							
+							y++;
+							drawText(3, y++, 7, "You can also use a"); 
+							drawText(3, y++, 7, "photodiode and press C,");
+							drawText(3, y++, 7, "which turns the whole");
+							drawText(3, y++, 7, "screen to white for");
+							drawText(3, y++, 7, "2 frames.");
+					break;
 			}
 			drawText(5, 24, 5, "Press B to exit help");
 			
@@ -846,6 +864,8 @@ void DrawHelp(u16 option)
 				change = 1;
 			}
 		}
+		if(change)
+			oamInit();
 	}
 	Transition();
 }

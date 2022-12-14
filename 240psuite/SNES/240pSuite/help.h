@@ -51,5 +51,6 @@
 #define HELP_AUDIOSYNC		29
 #define HELP_CONTRAST		30
 #define HELP_CONVERGENCE	31
+#define HELP_DISAPPEAR		32
 
 void DrawHelp(u16 help);

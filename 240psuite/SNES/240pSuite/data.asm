@@ -568,4 +568,16 @@ barcode_pal:
 .incbin "barcode.pal"
 barcode_pal_end:
 
+dissapear_tiles:
+.incbin "dissapear.pic"
+dissapear_tiles_end:
+
+dissapear_map:
+.incbin "dissapear.map"
+dissapear_map_end:
+
+dissapear_pal:
+.incbin "dissapear.pal"
+dissapear_pal_end:
+
 .ends
