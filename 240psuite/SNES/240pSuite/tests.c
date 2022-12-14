@@ -41,16 +41,6 @@ inline void waitSNDVBlank()
 	WaitForVBlank();
 }
 
-typedef struct timecode{
-	u16 hours;
-	u16 minutes;
-	u16 seconds;
-	u16 frames;
-	u16 type;
-	u16 res;
-} timecode;
-
-
 void ShiftPalette(u16 pal, u16 pos)
 {	
 	u16 *palette = (unsigned int*)&sonicback_pal;
@@ -690,84 +680,153 @@ void DrawCheck(void)
 	return;
 }
 
+void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y)
+{
+	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };	
+	
+	StartDMA();
+					
+	consoleInitTextMine(0, 7, &font);	
+	
+	setPaletteColor(0x91, RGB5(31, 31, 31));
+	setPaletteColor(0xA3, RGB5(31, 0, 0));
+	setPaletteColor(0xA1, RGB5(31, 0, 0));
+	setPaletteColor(0xB1, RGB5(0, 0, 31));
+	
+	AddTextColor(7, RGB5(0, 0, 0), RGB5(31, 31, 31));
+				
+	bgInitTileSetMine(1, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
+	bgInitMapSetMine(1, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
+	
+	setPaletteColor(0x01, RGB5(255, 255, 255));
+	
+	drawText(1, 1, 7, "hours   minutes seconds frames");
+	
+	oamInitGfxSetMine(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
+	
+	/*****Numbers*****/
+	
+	// Hours			
+	DrawNumber(xpos[0], y, spriteIndex[0], numberIndex[0], 0);	
+	DrawNumber(xpos[1], y, spriteIndex[1], numberIndex[0], 0);	
+	
+	// Minutes
+	DrawNumber(xpos[2], y, spriteIndex[2], numberIndex[0], 0);	
+	DrawNumber(xpos[3], y, spriteIndex[3], numberIndex[0], 0);	
+	
+	//Seconds
+	DrawNumber(xpos[4], y, spriteIndex[4], numberIndex[0], 0);	
+	DrawNumber(xpos[5], y, spriteIndex[5], numberIndex[0], 0);	
+	
+	// Frames
+	DrawNumber(xpos[6], y, spriteIndex[6], numberIndex[0], 0);	
+	DrawNumber(xpos[7], y, spriteIndex[7], numberIndex[0], 0);			
+			
+	/*****Circles*****/			
+	
+	DrawCircle(0, 70, 192, numberIndex[10], 2);
+
+	/*****Numbers on Circles*****/
+	DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 1);	
+	DrawNumber(84, 80, numberTopIndex[1], numberIndex[2], 1);
+	DrawNumber(148, 80, numberTopIndex[2], numberIndex[3], 1);	
+	DrawNumber(212, 80, numberTopIndex[3], numberIndex[4], 1);	
+	
+	DrawNumber(20, 150, numberTopIndex[4], numberIndex[5], 1);	
+	DrawNumber(84, 150, numberTopIndex[5], numberIndex[6], 1);	
+	DrawNumber(148, 150, numberTopIndex[6], numberIndex[7], 1);	
+	DrawNumber(212, 150, numberTopIndex[7], numberIndex[8], 1);				
+	
+	setMode(BG_MODE1,0);
+	bgSetScroll(1, 0, -1);	
+	bgSetDisable(2);
+	
+	EndDMA();
+}
+
+void DrawStopWatch(timecode *tc, u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y, u16 bgcol)
+{
+	u16 msd, lsd;
+	
+	if(snes_50hz)	
+	{
+		if(tc->frames > 49)
+		{
+			tc->frames = 0;
+			tc->seconds ++;	
+		}
+	}
+	else
+	{
+		if(tc->frames > 59)
+		{
+			tc->frames = 0;
+			tc->seconds ++;	
+		}
+
+	}
+
+	if(tc->seconds > 59)
+	{
+	  tc->seconds = 0;
+	  tc->minutes ++;
+	}
+
+	if(tc->minutes > 59)
+	{
+	  tc->minutes = 0;
+	  tc->hours ++;
+	}
+
+	if(tc->hours > 99)
+	  tc->hours = 0;
+	  
+	// Hours			
+	lsd = tc->hours % 10;
+	msd = tc->hours / 10;			
+	ChangeNumber(xpos[0], y, spriteIndex[0], numberIndex[msd], 0);	
+	ChangeNumber(xpos[1], y, spriteIndex[1], numberIndex[lsd], 0);	
+	
+	// Minutes			
+	lsd = tc->minutes % 10;
+	msd = tc->minutes / 10;			
+	ChangeNumber(xpos[2], y, spriteIndex[2], numberIndex[msd], 0);	
+	ChangeNumber(xpos[3], y, spriteIndex[3], numberIndex[lsd], 0);	
+	
+	// Seconds		
+	lsd = tc->seconds % 10;
+	msd = tc->seconds / 10;			
+	ChangeNumber(xpos[4], y, spriteIndex[4], numberIndex[msd], 0);	
+	ChangeNumber(xpos[5], y, spriteIndex[5], numberIndex[lsd], 0);	
+	
+	// frames		
+	lsd = tc->frames % 10;
+	msd = tc->frames / 10;			
+	ChangeNumber(xpos[6], y, spriteIndex[6], numberIndex[msd], bgcol);	
+	ChangeNumber(xpos[7], y, spriteIndex[7], numberIndex[lsd], bgcol);	
+}
+
 void PassiveLagTest()
 {
+	timecode tc;
 	u16 pressed, end = 0;
-	u16 frames = 0, seconds = 0, minutes = 0, hours = 0, msd, lsd, framecnt = 0;
+	u16 framecnt = 0;
 	u16 numberIndex[12] = { 0, 8, 64, 72, 128, 136, 192, 200, 256, 264, 320, 328};
 	u16 spriteIndex[8] = { 0, 4, 8, 12, 16, 20, 24, 28 };
-	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };	
 	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
 	u16 y = 20, running = 1, redraw = 1, color = 1, bgcol = 0xa;	
 
+	memset(&tc, 0, sizeof(timecode));		
 	while(!end) 
 	{	
 		u16 count = 0, mul = 1;
 	
 		if(redraw)
 		{
-			StartDMA();
-			
-			consoleInitTextMine(0, 7, &font);	
-			
-			setPaletteColor(0x91, RGB5(31, 31, 31));
-			setPaletteColor(0xA3, RGB5(31, 0, 0));
-			setPaletteColor(0xA1, RGB5(31, 0, 0));
-			setPaletteColor(0xB1, RGB5(0, 0, 31));
-			
-			AddTextColor(7, RGB5(0, 0, 0), RGB5(31, 31, 31));
-						
-			bgInitTileSetMine(1, &lagtest_tiles, &lagtest_pal, 0, (&lagtest_tiles_end - &lagtest_tiles), 16*2, BG_16COLORS, 0x6000);	
-			bgInitMapSetMine(1, &lagtest_map, (&lagtest_map_end - &lagtest_map), SC_32x32, 0x1000);
-			
-			setPaletteColor(0x01, RGB5(255, 255, 255));
-			
-			drawText(1, 1, 7, "hours   minutes seconds frames");
-			
-			oamInitGfxSetMine(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
-			
-			/*****Numbers*****/
-			
-			// Hours			
-			DrawNumber(xpos[0], y, spriteIndex[0], numberIndex[0], 0);	
-			DrawNumber(xpos[1], y, spriteIndex[1], numberIndex[0], 0);	
-			
-			// Minutes
-			DrawNumber(xpos[2], y, spriteIndex[2], numberIndex[0], 0);	
-			DrawNumber(xpos[3], y, spriteIndex[3], numberIndex[0], 0);	
-			
-			//Seconds
-			DrawNumber(xpos[4], y, spriteIndex[4], numberIndex[0], 0);	
-			DrawNumber(xpos[5], y, spriteIndex[5], numberIndex[0], 0);	
-			
-			// Frames
-			DrawNumber(xpos[6], y, spriteIndex[6], numberIndex[0], 0);	
-			DrawNumber(xpos[7], y, spriteIndex[7], numberIndex[0], 0);			
-					
-			/*****Circles*****/			
-			
-			DrawCircle(0, 70, 192, numberIndex[10], 2);
-		
-			/*****Numbers on Circles*****/
-			DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 1);	
-			DrawNumber(84, 80, numberTopIndex[1], numberIndex[2], 1);
-			DrawNumber(148, 80, numberTopIndex[2], numberIndex[3], 1);	
-			DrawNumber(212, 80, numberTopIndex[3], numberIndex[4], 1);	
-			
-			DrawNumber(20, 150, numberTopIndex[4], numberIndex[5], 1);	
-			DrawNumber(84, 150, numberTopIndex[5], numberIndex[6], 1);	
-			DrawNumber(148, 150, numberTopIndex[6], numberIndex[7], 1);	
-			DrawNumber(212, 150, numberTopIndex[7], numberIndex[8], 1);				
-			
-			setMode(BG_MODE1,0);
-			bgSetScroll(1, 0, -1);	
-			bgSetDisable(2);
-			
-			EndDMA();
+			loadStopWatch(xpos, spriteIndex, numberIndex, y);
 			
 			redraw = 0;
 		}
-		WaitForVBlank();
 		
 		if(framecnt > 7)
 			framecnt = 0;
@@ -786,62 +845,7 @@ void PassiveLagTest()
 			}
 		}
 	
-		if(snes_50hz)	
-		{
-			if(frames > 49)
-			{
-				frames = 0;
-				seconds ++;	
-			}
-		}
-		else
-		{
-			if(frames > 59)
-			{
-				frames = 0;
-				seconds ++;	
-			}
-
-		}
-	
-		if(seconds > 59)
-		{
-		  seconds = 0;
-		  minutes ++;
-		}
-
-		if(minutes > 59)
-		{
-		  minutes = 0;
-		  hours ++;
-		}
-
-		if(hours > 99)
-		  hours = 0;
-		  
-		// Hours			
-		lsd = hours % 10;
-		msd = hours / 10;			
-		ChangeNumber(xpos[0], y, spriteIndex[0], numberIndex[msd], 0);	
-		ChangeNumber(xpos[1], y, spriteIndex[1], numberIndex[lsd], 0);	
-		
-		// Minutes			
-		lsd = minutes % 10;
-		msd = minutes / 10;			
-		ChangeNumber(xpos[2], y, spriteIndex[2], numberIndex[msd], 0);	
-		ChangeNumber(xpos[3], y, spriteIndex[3], numberIndex[lsd], 0);	
-		
-		// Seconds		
-		lsd = seconds % 10;
-		msd = seconds / 10;			
-		ChangeNumber(xpos[4], y, spriteIndex[4], numberIndex[msd], 0);	
-		ChangeNumber(xpos[5], y, spriteIndex[5], numberIndex[lsd], 0);	
-		
-		// frames		
-		lsd = frames % 10;
-		msd = frames / 10;			
-		ChangeNumber(xpos[6], y, spriteIndex[6], numberIndex[msd], bgcol);	
-		ChangeNumber(xpos[7], y, spriteIndex[7], numberIndex[lsd], bgcol);	
+		DrawStopWatch(&tc, xpos, spriteIndex, numberIndex, y, bgcol);
 		
 		count = framecnt;
 		if(count > 3)
@@ -851,13 +855,14 @@ void PassiveLagTest()
 		}
 			
 		ChangeCircle(count*64, 70*mul, 192, numberIndex[10], 2);
+	
+		WaitForVBlank();
 		
 		if(running)
 		{	
-			frames ++;
+			tc.frames ++;
 			framecnt ++;
 		}
-			
 		pressed = PadPressed(0);
 		
 		if(pressed & KEY_START)
@@ -874,7 +879,7 @@ void PassiveLagTest()
 			
 		if (pressed & KEY_X && !running)
 		{
-			frames = hours = minutes = seconds = 0;
+			memset(&tc, 0, sizeof(timecode));
 			framecnt = 0;
 		}		
 	}
@@ -2111,7 +2116,7 @@ void RedrawAudioSync()
 void AudioSyncTest(void) 
 {	
 	u16 pressed, end = 0;
-	u16 redraw = 1, refresh = 0;
+	u16 redraw = 1, refresh = 1;
 	s16 status = -1, acc = -1, x = 128, y = 160;
 	
 	while(!end) 
@@ -2226,108 +2231,3 @@ void AudioSyncTest(void)
 	return;
 }
 
-/*
-void BobTest()
-{
-	u16 redraw = 1, end = 0;
-	u16 pressed, frames = 0;
-	u16 frames = 0, seconds = 0, minutes = 0, hours = 0;
-	u8 res = 0, changed = 1, color = 7;
-
-	while(!end) 
-	{
-		WaitForVBlank();
-		
-		if(redraw)
-		{
-			u16 size = 0;
-					
-			StartDMA();	
-			
-			setPaletteColor(0x00, RGB5(0, 0, 0));
-			
-			consoleInitTextMine(0, 7, &font);
-			AddTextColor(6, RGB5(31, 31, 31), RGB5(0, 0, 0));
-			AddTextColor(7, RGB5(0, 0, 0), RGB5(31, 31, 31));	
-			
-			ClearScreen(1);
-						
-			setMode(BG_MODE1,0); 	
-			bgSetDisable(2);
-			
-			bgSetScroll(1, 0, -1);					
-			
-			EndDMA();
-			
-			changed = 1;
-			redraw = 0;
-		}			
-		
-		if(changed)
-		{
-			setPaletteColor(0x00, RGB5(0, 0, 0));
-			color = 7;
-			changed = 0;
-		}
-		
-		frames ++;
-		if(snes_50hz)	
-		{
-			if(frames > 49)
-			{
-				frames = 0;
-				seconds ++;	
-			}
-		}
-		else
-		{
-			if(frames > 59)
-			{
-				frames = 0;
-				seconds ++;	
-			}
-		}
-	
-		if(seconds > 59)
-		{
-		  seconds = 0;
-		  minutes ++;
-		}
-
-		if(minutes > 59)
-		{
-		  minutes = 0;
-		  hours ++;
-		}
-
-		if(hours > 99)
-		  hours = 0;
-		
-		pressed = PadPressed(0);
-		
-		if(pressed & KEY_START)
-		{
-			//DrawHelp(HELP_ALTERNATE);
-			//redraw = 1;
-		}
-		
-		if(pressed & KEY_A)
-		{
-			setPaletteColor(0x00, RGB5(31, 31, 31));			
-			color = 6;
-			changed = 1;
-		}
-			
-		if(pressed & KEY_B)
-			end = 1;	
-			
-		drawText(1,  0, color, "Elapsed Timer: %02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
-		drawText(1,  8, color, "Elapsed Timer: %02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
-		drawText(1, 17, color, "Elapsed Timer: %02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
-		drawText(1, 27, color, "Elapsed Timer: %02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
-	}
-	
-	Transition();
-	return;
-}
-*/

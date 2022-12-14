@@ -26,11 +26,11 @@
 #include "control.h"
 #include "hardware.h"
 
-u16 CheckController(u16 joypad, u16 oldButtons, u16 y)
+u16 CheckController(u16 joypad, u16 y)
 {
 	u16	buttons, x = 3;
 	
-	buttons = PadPressed(joypad);
+	buttons = padsCurrent(joypad);
 	
 	drawText(x, y-2, buttons & KEY_L ? 5 : 2, "L-Trigger");
 	drawText(x+17, y-2, buttons & KEY_R ? 5 : 2, "R-Trigger");
@@ -54,7 +54,7 @@ u16 CheckController(u16 joypad, u16 oldButtons, u16 y)
 void ControllerTest()
 {	
 	int	change = 1;
-	u16 pressed, end = 0, pad1 = 0xffff, pad2 = 0xffff;	 
+	u16 pressed, end = 0;	 
 	u16 redraw = 1, size = 0;	
 	
 	
@@ -92,8 +92,8 @@ void ControllerTest()
 			redraw = 0;
 		}
 		
-		pad1 = CheckController(0, pad1, 9);
-		pad2 = CheckController(1, pad2, 17);
+		CheckController(0, 9);
+		CheckController(1, 17);
 		
 		WaitForVBlank();
 		

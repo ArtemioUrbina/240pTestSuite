@@ -107,6 +107,33 @@ void DrawTilesWithSprites(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 ti
 	}
 }
 
+void DrawTilesWithSpritesBarcode(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 tileSize, u8 * pal)
+{
+	s16 baseX = X, baseY = Y;
+	s16 spriteIndex = 112, tileIndex = 128;
+	s16 row = 0, column = 0, sizeX = 0, sizeY = 0;
+	
+	sizeX = width / 16;
+	sizeY = height / 16;
+	
+	oamInitGfxSet(tiles, tileSize,	pal, 16*2, 1, 0x4800, OBJ_SIZE16);
+
+	for(row = 0; row < sizeY; row++)
+	{
+		for(column = 0; column < sizeX; column ++)
+		{
+			oamSet(spriteIndex, baseX+column*16, baseY+row*16, 3, 0, 0, tileIndex, 1); 
+			oamSetEx(spriteIndex, OBJ_SMALL, OBJ_SHOW);
+			oamSetVisible(spriteIndex, OBJ_SHOW);
+		
+			spriteIndex += 4;
+			tileIndex += 2;
+		}
+		if(row % 2 != 0)
+			tileIndex += 4*sizeX;
+	}
+}
+
 void ClearScreen(u8 layer)
 {	
 	bgInitTileSetMine(layer, &fullscreen_tiles, &grid_pal, 0, (&fullscreen_tiles_end - &fullscreen_tiles), 16*2, BG_16COLORS, 0x6000);	
@@ -316,4 +343,41 @@ void consoleInitTextMine(u8 bgNumber,u8 paletteNumber, u8 *gfxText)
 
 	// Font Color
 	REG_CGADD = 0x01+(paletteNumber<<4); *CGRAM_PALETTE = RGB5(31,31,31)  & 0xFF; *CGRAM_PALETTE = RGB5(31,31,31)>>8;
+}
+
+int g_size = 0;
+int gblink_count = 0, is_gblinking = 0;
+
+void check_blink()
+{
+	gblink_count++;
+	if(gblink_count > 230)
+	{
+		if(!is_gblinking)
+		{
+			if(rand() % 10 == 7)
+			{
+				dmaCopyVram(&gillian_b1_tiles, 0x4200, 0x100);
+				is_gblinking = 1;
+				gblink_count = 230;
+				return;
+			}
+		}
+		else
+		{
+			if(gblink_count == 232)
+				dmaCopyVram(&gillian_b2_tiles, 0x4200, 0x100);
+				
+			if(gblink_count == 234)
+				dmaCopyVram(&gillian_b1_tiles, 0x4200, 0x100);
+	
+			if(gblink_count >= 236)
+			{
+				dmaCopyVram(&gillian_tiles, 0x4000, 0x600);
+				gblink_count = 0;
+				is_gblinking = 0;
+			}
+			return;
+		}
+	}
 }

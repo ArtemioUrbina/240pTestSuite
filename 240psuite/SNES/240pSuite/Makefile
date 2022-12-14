@@ -96,7 +96,19 @@ fontback.pic: fontback.bmp
 
 gillian.pic: gillian.bmp
 	@echo convert bitmap to sprites... $(notdir $@)
+	$(GFXCONV) -pR! -gs16 -pc16 -po16 -n $<	
+
+gillian_b1.pic: gillian_b1.bmp
+	@echo convert bitmap to sprites... $(notdir $@)
 	$(GFXCONV) -pR! -gs16 -pc16 -po16 -n $<		
+
+gillian_b2.pic: gillian_b2.bmp
+	@echo convert bitmap to sprites... $(notdir $@)
+	$(GFXCONV) -pR! -gs16 -pc16 -po16 -n $<			
+
+barcode.pic: barcode.bmp
+	@echo convert bitmap to sprites... $(notdir $@)
+	$(GFXCONV) -pR! -gs16 -pc16 -po16 -n $<
 
 sprites.pic: sprites.bmp
 	@echo convert bitmap to sprites... $(notdir $@)
@@ -124,6 +136,10 @@ back.pic: back.bmp
 	@echo convert bitmap to palette 1... $(notdir $@)
 	$(GFXCONV) -pR! -pr -pc16 -po16 -n -gs8 -pe1 -fbmp -m $<
 	
+audiosync.pic: audiosync.bmp
+	@echo convert bitmap to 16 colors without rearranging colors... $(notdir $@)
+	$(GFXCONV) -pR! -pc16 -n -gs8 -pe0 -fbmp -m $<
+
 donna.pic: donna.bmp
 	@echo convert bitmap in 256 colors... $(notdir $@)
 	$(GFXCONV) -pR! -pc256 -n -gs8 -pe0 -fbmp -m $<
@@ -233,7 +249,8 @@ bitmaps : grid.pic font.pic back.pic gillian.pic grid240.pic donna.pic SMPTECB75
 	LEDsprites.pic striped.pic color_grid.pic lag-spr.pic soundbank.asm gridm7.pc7\
 	EBUCB100.pic EBUCB75.pic kiki.pic plugePAL.pic audiosync.pic fireshark.pic\
 	bricks.pic convdot.pic convcross.pic convgrid.pic convcolor.pic convcolor_blk.pic\
-	float.pic monoscope.pic monoscope_PAL.pic monoscope239.pic
+	float.pic monoscope.pic monoscope_PAL.pic monoscope239.pic gillian_b1.pic gillian_b2.pic\
+	barcode.pic
 	
 #---------------------------------------------------------------------------------
 $(OUTPUT).sfc	: $(OFILES)

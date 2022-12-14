@@ -552,5 +552,20 @@ gillian_tiles:
 .incbin "gillian.pic"
 gillian_tiles_end:
 
+gillian_b1_tiles:
+.incbin "gillian_b1.pic"
+gillian_b1_tiles_end:
+
+gillian_b2_tiles:
+.incbin "gillian_b2.pic"
+gillian_b2_tiles_end:
+
+barcode_tiles:
+.incbin "barcode.pic"
+barcode_tiles_end:
+
+barcode_pal:
+.incbin "barcode.pal"
+barcode_pal_end:
 
 .ends

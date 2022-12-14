@@ -23,6 +23,16 @@
 #include "video.h"
 
 //---------------------------------------------------------------------------------
+typedef struct timecode
+{
+	u16 hours;
+	u16 minutes;
+	u16 seconds;
+	u16 frames;
+	u16 type;
+	u16 res;
+} timecode;
+
 void DropShadowTest();
 void DrawStripes();
 void DrawCheck();
@@ -36,3 +46,4 @@ void ManualLagTest();
 void Alternate240p480i();
 void AudioSyncTest();
 void MDFourier(u8 boot);
+void DisappearingLogo();

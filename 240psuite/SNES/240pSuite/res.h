@@ -26,6 +26,12 @@ extern char back_map, back_map_end;
 extern char gillian_tiles, gillian_tiles_end;
 extern char gillian_pal, gillian_pal_end;
 
+extern char gillian_b1_tiles, gillian_b1_tiles_end;
+extern char gillian_b2_tiles, gillian_b2_tiles_end;
+
+extern char barcode_tiles, barcode_tiles_end;
+extern char barcode_pal, barcode_pal_end;
+
 extern char grid_tiles, grid_tiles_end;
 extern char grid240_map, grid240_map_end;
 extern char grid_pal, grid_pal_end;

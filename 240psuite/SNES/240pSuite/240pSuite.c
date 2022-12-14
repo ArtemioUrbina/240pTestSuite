@@ -116,6 +116,7 @@ int main(void)
 			change = 0;			
 		}
 		WaitForVBlank();
+		check_blink();
 		
 		pressed = PadPressed(0);
 					
@@ -255,6 +256,7 @@ void TestPatterns(void)
 			change = 0;			
 		}
 		WaitForVBlank();
+		check_blink();
 		
 		pressed = PadPressed(0);
 					
@@ -419,6 +421,7 @@ void VideoTests(void)
 			change = 0;			
 		}
 		WaitForVBlank();
+		check_blink();
 		
 		pressed = PadPressed(0);
 					
@@ -571,6 +574,7 @@ void AudioTests(void)
 			change = 0;			
 		}
 		WaitForVBlank();
+		check_blink();
 		
 		pressed = PadPressed(0);
 					
@@ -701,6 +705,7 @@ void HardwareTools(void)
 			change = 0;			
 		}
 		WaitForVBlank();
+		check_blink();
 		
 		pressed = PadPressed(0);
 					
@@ -867,7 +872,10 @@ void DrawCredits(void)
 			bgInitTileSetMine(1, &back_tiles, &back_pal, 1, size, 16*2, BG_16COLORS, 0x6000);			
 			
 			size = (&back_map_end - &back_map);	
-			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);						
+			bgInitMapSetMine(1, &back_map, size, SC_32x32, 0x2000);
+
+			size = (&barcode_tiles_end-&barcode_tiles);
+			DrawTilesWithSpritesBarcode(205, 72, 32, 32, &barcode_tiles, size, &barcode_pal);									
 						
 			setMode(BG_MODE1,0); 	
 			bgSetDisable(2);
@@ -927,6 +935,7 @@ void DrawCredits(void)
 			counter = 1;
 		}
 	}
+	oamInit();
 	return 0;
 }
 
