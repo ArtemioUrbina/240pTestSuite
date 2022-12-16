@@ -694,12 +694,16 @@ inline int getHorScrollAspect()
 	return x;
 }
 
-void getScreenLimits(int* x, int* y)
+void getScreenLimits(int* xs, int* xe, int* y)
 {
-	if(vmode_snk)
-		*x = 304;
-	else
-		*x = 320;
+	if(vmode_snk) {
+		*xs = 8;
+		*xe = 312;
+	}
+	else {
+		*xs = 0;
+		*xe = 320;
+	}
 	if(isPAL && usePAL256)
 		*y = 256;
 	else

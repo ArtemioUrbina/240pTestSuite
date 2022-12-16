@@ -67,7 +67,7 @@ static const ushort waterPal_4[] = {
 void vt_drop_shadow_test()
 {
 	int done = 0, x = 30, y = 30, draw = 1, spr_type = 0, changeSprite = 1, changeBack = 1, back = 0;
-	int limitX = 0, limitY = 0;
+	int limitXS = 0, limitXE = 0, limitY = 0;
 	int pal_water = 0, pal_wfall = 0, text = 0, evenframes = 0;
 	char flip = FLIP_NONE;
 	int drawshadow = 0, frame = 1;
@@ -88,7 +88,7 @@ void vt_drop_shadow_test()
 		y3 += 16;
 	}
 
-	getScreenLimits(&limitX, &limitY);
+	getScreenLimits(&limitXS, &limitXE, &limitY);
 	while (!done)
 	{	
 		if (draw)
@@ -328,10 +328,10 @@ void vt_drop_shadow_test()
 			}
 		}
 
-		if(x < 1)
-			x = 1;
-		if(x > limitX)
-			x = limitX;
+		if(x < limitXS + 1)
+			x = limitXS + 1;
+		if(x > limitXE)
+			x = limitXE;
 		if(y < 1)
 			y = 1;
 		if(y > limitY)
@@ -348,7 +348,7 @@ void vt_drop_shadow_test()
 void vt_striped_sprite_test()
 {
 	int done = 0, x = 30, y = 30, draw = 1, changeBack = 1, back = 0, frame = 1;
-	int pal_water = 0, pal_wfall = 0, limitX = 0, limitY = 0;
+	int pal_water = 0, pal_wfall = 0, limitXS = 0, limitXE = 0, limitY = 0;
 	short y1 = 16;
 	short y2 = -152;
 	short y3 = 0;
@@ -364,7 +364,7 @@ void vt_striped_sprite_test()
 		y3 += 16;
 	}
 
-	getScreenLimits(&limitX, &limitY);
+	getScreenLimits(&limitXS, &limitXE, &limitY);
 	while (!done)
 	{
 		if (draw)
@@ -508,10 +508,10 @@ void vt_striped_sprite_test()
 		if (HELD_RIGHT)
 			x++;
 
-		if(x < 1)
-			x = 1;
-		if(x > limitX)
-			x = limitX;
+		if(x < limitXS + 1)
+			x = limitXS + 1;
+		if(x > limitXE)
+			x = limitXE;
 		if(y < 1)
 			y = 1;
 		if(y > limitY)
@@ -525,146 +525,203 @@ void vt_striped_sprite_test()
 	}
 }
 
+int loadStopWatch(int drawCircles, int sprindex)
+{
+	picture sep[3];
+
+	if(drawCircles)
+	{
+		palJobPut(16, num_0.palInfo->count, num_0.palInfo->data);
+		palJobPut(17, circle_blue.palInfo->count, circle_blue.palInfo->data);
+		palJobPut(18, num_0_w.palInfo->count, num_0_w.palInfo->data);
+		palJobPut(19, circle_red.palInfo->count, circle_red.palInfo->data);
+		palJobPut(20, bar_l.palInfo->count, bar_l.palInfo->data);
+	}
+	else
+	{
+		VRAM_PAL(16, 1) = GRN100;
+	}
+
+	fixPrint(4, 3, drawCircles ? fontColorBlack : fontColorGreen, 3, "hours");
+	fixPrint(13, 3, drawCircles ? fontColorBlack : fontColorGreen, 3, "minutes");
+	fixPrint(22, 3, drawCircles ? fontColorBlack : fontColorGreen, 3, "seconds");
+	fixPrint(31, 3, drawCircles ? fontColorBlack : fontColorGreen, 3, "frames");
+
+	pictureInit(&sep[0], &separator, sprindex, 16, 76, 19, FLIP_NONE);
+	sprindex += getPicSprites(sep[0].info);
+	pictureInit(&sep[1], &separator, sprindex, 16, 148, 19, FLIP_NONE);
+	sprindex += getPicSprites(sep[1].info);
+	pictureInit(&sep[2], &separator, sprindex, 16, 220, 19, FLIP_NONE);
+	sprindex += getPicSprites(sep[2].info);
+
+	if(drawCircles)
+	{
+		int limitXS, limitXE, limitY;
+		picture c_numbers[8], bar[2];
+
+		pictureInit(&c_numbers[1], &num_1_w, sprindex, 18, 30, 84, FLIP_NONE);
+		sprindex += getPicSprites(c_numbers[1].info);
+		pictureInit(&c_numbers[2], &num_2_w, sprindex, 18, 110, 84, FLIP_NONE);
+		sprindex += getPicSprites(c_numbers[2].info);
+		pictureInit(&c_numbers[3], &num_3_w, sprindex, 18, 190, 84, FLIP_NONE);
+		sprindex += getPicSprites(c_numbers[3].info);
+		pictureInit(&c_numbers[4], &num_4_w, sprindex, 18, 266, 84, FLIP_NONE);
+		sprindex += getPicSprites(c_numbers[4].info);
+
+		pictureInit(&c_numbers[5], &num_5_w, sprindex, 18, 30, 148, FLIP_NONE);
+		sprindex += getPicSprites(c_numbers[5].info);
+		pictureInit(&c_numbers[6], &num_6_w, sprindex, 18, 110, 148, FLIP_NONE);
+		sprindex += getPicSprites(c_numbers[6].info);
+		pictureInit(&c_numbers[7], &num_7_w, sprindex, 18, 190, 148, FLIP_NONE);
+		sprindex += getPicSprites(c_numbers[7].info);
+		pictureInit(&c_numbers[8], &num_8_w, sprindex, 18, 266, 148, FLIP_NONE);
+		sprindex += getPicSprites(c_numbers[8].info);
+
+		getScreenLimits(&limitXS, &limitXE, &limitY);
+		pictureInit(&bar[0], &bar_l, sprindex, 20, limitXS, 0, FLIP_NONE);
+		sprindex += getPicSprites(bar[0].info);
+		pictureInit(&bar[1], &bar_l, sprindex, 20, limitXE-16, 0, FLIP_X);
+		sprindex += getPicSprites(bar[1].info);
+	}
+
+	return sprindex;
+}
+
+void DrawStopWatch(timecode* tc, int sprindex)
+{
+	u16 lsd, msd;
+	picture h1, h2, m1, m2, s1, s2, f1, f2;
+	const pictureInfo *numbers[10] = {&num_0, &num_1, &num_2, &num_3, &num_4, &num_5, &num_6, &num_7, &num_8, &num_9};
+
+	if (isPAL)
+	{
+		if (tc->frames > 49)
+		{
+			tc->frames = 0;
+			tc->seconds ++;
+		}
+	} else {
+		if (tc->frames > 59)
+		{
+			tc->frames = 0;
+			tc->seconds ++;
+		}
+	}
+		
+	if (tc->seconds > 59)
+	{
+		tc->seconds = 0;
+		tc->minutes ++;
+	}
+
+	if (tc->minutes > 59)
+	{
+		tc->minutes = 0;
+		tc->hours ++;
+	}
+
+	if (tc->hours > 99)
+		tc->hours = 0;
+
+	// Draw Hours
+	lsd = tc->hours % 10;
+	msd = tc->hours / 10;
+	pictureInit(&h1, numbers[msd], sprindex, 16, 28, 19, FLIP_NONE);
+	sprindex += getPicSprites(h1.info);
+	pictureInit(&h2, numbers[lsd], sprindex, 16, 52, 19, FLIP_NONE);
+	sprindex += getPicSprites(h2.info);
+
+	// Draw Minutes
+	lsd = tc->minutes % 10;
+	msd = tc->minutes / 10;
+	pictureInit(&m1, numbers[msd], sprindex, 16, 100, 19, FLIP_NONE);
+	sprindex += getPicSprites(m1.info);
+	pictureInit(&m2, numbers[lsd], sprindex, 16, 124, 19, FLIP_NONE);
+	sprindex += getPicSprites(m2.info);
+
+	// Draw Seconds
+	lsd = tc->seconds % 10;
+	msd = tc->seconds / 10;
+	pictureInit(&s1, numbers[msd], sprindex, 16, 172, 19, FLIP_NONE);
+	sprindex += getPicSprites(s1.info);
+	pictureInit(&s2, numbers[lsd], sprindex, 16, 196, 19, FLIP_NONE);
+	sprindex += getPicSprites(s2.info);
+
+	// Draw frames
+	lsd = tc->frames % 10;
+	msd = tc->frames / 10;
+	pictureInit(&f1, numbers[msd], sprindex, 16, 244, 19, FLIP_NONE);
+	sprindex += getPicSprites(f1.info);
+	pictureInit(&f2, numbers[lsd], sprindex, 16, 268, 19, FLIP_NONE);
+	sprindex += getPicSprites(f2.info);
+}
+
 void vt_lag_test()
 {
-	u16 done = 0, draw = 1, pause = 0, cposx = 32, cposy = 17, lsd, msd;
-	int frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1;
-	const pictureInfo *numbers[10] = {&num_0, &num_1, &num_2, &num_3, &num_4, &num_5, &num_6, &num_7, &num_8, &num_9};
-	picture image, circle, c_numbers, bar, h1, h2, m1, m2, s1, s2, f1, f2;
+	u16 done = 0, draw = 1, pause = 0;
+	int framecnt = 1, sprindex = 0, baseindex = 0;
+	picture circle;
+	timecode tc;
 
+	memset(&tc, 0, sizeof(timecode));
 	while (!done)
 	{
 		if (draw)
 		{
 			gfxClear();
-			backgroundColor(0xDfff);
-
-			palJobPut(16, num_0.palInfo->count, num_0.palInfo->data);
-			palJobPut(17, circle_blue.palInfo->count, circle_blue.palInfo->data);
-			palJobPut(18, num_0_w.palInfo->count, num_0_w.palInfo->data);
-			palJobPut(19, circle_red.palInfo->count, circle_red.palInfo->data);
-			palJobPut(20, bar_l.palInfo->count, bar_l.palInfo->data);
-
-			pictureInit(&c_numbers, &num_1_w, 181, 18, 32, 84, FLIP_NONE);
-			pictureInit(&c_numbers, &num_2_w, 185, 18, 112, 84, FLIP_NONE);
-			pictureInit(&c_numbers, &num_3_w, 189, 18, 192, 84, FLIP_NONE);
-			pictureInit(&c_numbers, &num_4_w, 193, 18, 268, 84, FLIP_NONE);
-
-			pictureInit(&c_numbers, &num_5_w, 197, 18, 32, 148, FLIP_NONE);
-			pictureInit(&c_numbers, &num_6_w, 201, 18, 112, 148, FLIP_NONE);
-			pictureInit(&c_numbers, &num_7_w, 205, 18, 192, 148, FLIP_NONE);
-			pictureInit(&c_numbers, &num_8_w, 209, 18, 268, 148, FLIP_NONE);
-
-			pictureInit(&image, &separator, 1, 16, 80, 19, FLIP_NONE);
-			pictureInit(&image, &separator, 5, 16, 152, 19, FLIP_NONE);
-			pictureInit(&image, &separator, 9, 16, 224, 19, FLIP_NONE);
-
-			fixPrint(4, 3, fontColorBlack, 3, "hours");
-			fixPrint(13, 3, fontColorBlack, 3, "minutes");
-			fixPrint(22, 3, fontColorBlack, 3, "seconds");
-			fixPrint(31, 3, fontColorBlack, 3, "frames");
+			backgroundColor(WH_100);
+			baseindex = loadStopWatch(1, 100);
+			
 			draw = 0;
 		}
 
-		pictureInit(&circle, &circle_blue, 65, framecnt == 1 ? 19 : 17, 12, 68, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 81, framecnt == 2 ? 19 : 17, 92, 68, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 97, framecnt == 3 ? 19 : 17, 172, 68, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 113, framecnt == 4 ? 19 : 17, 248, 68, FLIP_NONE);
+		sprindex = 20;
+		pictureInit(&circle, &circle_blue, sprindex, framecnt == 1 ? 19 : 17, 10, 68, FLIP_NONE);
+		sprindex += getPicSprites(circle.info);
+		pictureInit(&circle, &circle_blue, sprindex, framecnt == 2 ? 19 : 17, 90, 68, FLIP_NONE);
+		sprindex += getPicSprites(circle.info);
+		pictureInit(&circle, &circle_blue, sprindex, framecnt == 3 ? 19 : 17, 170, 68, FLIP_NONE);
+		sprindex += getPicSprites(circle.info);
+		pictureInit(&circle, &circle_blue, sprindex, framecnt == 4 ? 19 : 17, 246, 68, FLIP_NONE);
+		sprindex += getPicSprites(circle.info);
 
-		pictureInit(&circle, &circle_blue, 129, framecnt == 5 ? 19 : 17, 12, 132, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 145, framecnt == 6 ? 19 : 17, 92, 132, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 161, framecnt == 7 ? 19 : 17, 172, 132, FLIP_NONE);
-		pictureInit(&circle, &circle_blue, 177, framecnt == 8 ? 19 : 17, 248, 132, FLIP_NONE);
+		pictureInit(&circle, &circle_blue, sprindex, framecnt == 5 ? 19 : 17, 10, 132, FLIP_NONE);
+		sprindex += getPicSprites(circle.info);
+		pictureInit(&circle, &circle_blue, sprindex, framecnt == 6 ? 19 : 17, 90, 132, FLIP_NONE);
+		sprindex += getPicSprites(circle.info);
+		pictureInit(&circle, &circle_blue, sprindex, framecnt == 7 ? 19 : 17, 170, 132, FLIP_NONE);
+		sprindex += getPicSprites(circle.info);
+		pictureInit(&circle, &circle_blue, sprindex, framecnt == 8 ? 19 : 17, 246, 132, FLIP_NONE);
+		sprindex += getPicSprites(circle.info);
 
-		pictureInit(&bar, &bar_l, 223, framecnt % 2 == 0 ? 18 : 20, 0, 0, FLIP_NONE);
-		pictureInit(&bar, &bar_l, 237, framecnt % 2 == 0 ? 18 : 20, 304, 0, FLIP_X);
-
-		// Draw Hours
-		lsd = hours % 10;
-		msd = hours / 10;
-		pictureInit(&h1, numbers[msd], 14, 16, 32, 19, FLIP_NONE);
-		pictureInit(&h2, numbers[lsd], 19, 16, 56, 19, FLIP_NONE);
-
-		// Draw Minutes
-		lsd = minutes % 10;
-		msd = minutes / 10;
-		pictureInit(&m1, numbers[msd], 24, 16, 104, 19, FLIP_NONE);
-		pictureInit(&m2, numbers[lsd], 29, 16, 128, 19, FLIP_NONE);
-
-		// Draw Seconds
-		lsd = seconds % 10;
-		msd = seconds / 10;
-		pictureInit(&s1, numbers[msd], 34, 16, 176, 19, FLIP_NONE);
-		pictureInit(&s2, numbers[lsd], 39, 16, 200, 19, FLIP_NONE);
-
-		// Draw frames
-		lsd = frames % 10;
-		msd = frames / 10;
-		pictureInit(&f1, numbers[msd], 44, 16, 248, 19, FLIP_NONE);
-		pictureInit(&f2, numbers[lsd], 49, 16, 272, 19, FLIP_NONE);
+		DrawStopWatch(&tc, sprindex);
 
 		SCClose();
 		waitVBlank();
+		if(framecnt % 2 == 0)
+			VRAM_PAL(20, 1) = _BLACK;
+		else
+			VRAM_PAL(20, 1) = WH_100;
 
 		readController();
 
 		if (framecnt > 8)
 			framecnt = 1;
 
-		if (framecnt > 4)
-		{
-			cposx = framecnt - 4;
-			cposy = 17;
-		} else {
-			cposx = framecnt;
-			cposy = 9;
-		}
-		cposx = (cposx - 1) * 10 + 2;
-
 		if (!pause)
 		{
-			frames ++;
+			tc.frames ++;
 			framecnt ++;
 			if (framecnt > 8)
 				framecnt = 1;
 		}
-
-		if (isPAL)
-		{
-			if (frames > 49)
-			{
-				frames = 0;
-				seconds ++;
-			}
-		} else {
-			if (frames > 59)
-			{
-				frames = 0;
-				seconds ++;
-			}
-		}
-		
-		if (seconds > 59)
-		{
-			seconds = 0;
-			minutes ++;
-		}
-
-		if (minutes > 59)
-		{
-			minutes = 0;
-			hours ++;
-		}
-
-		if (hours > 99)
-			hours = 0;
 
 		if (BTTN_MAIN)
 			pause = !pause;
 
 		if (BTTN_OPTION_1 && pause)
 		{
-			frames = hours = minutes = seconds = 0;
+			memset(&tc, 0, sizeof(timecode));
 			framecnt = 1;
 		}
 
@@ -1534,11 +1591,11 @@ void vt_checkerboard()
 void vt_backlitzone_test()
 {
 	int done = 0, block = 2, x = 160, y = 112, draw = 1, shown = 1, fast = 0;
-	int limitX = 0, limitY = 0, sprSize[] = { 1, 1, 2, 3, 4 };
+	int limitXS = 0, limitXE = 0, limitY = 0, sprSize[] = { 1, 1, 2, 3, 4 };
 	int sprStep[] = { 1, 2, 4, 6, 8 };
 	picture image;
 
-	getScreenLimits(&limitX, &limitY);
+	getScreenLimits(&limitXS, &limitXE, &limitY);
 
 	while (!done)
 	{
@@ -1635,10 +1692,10 @@ void vt_backlitzone_test()
 				x -= sprStep[block];
 		}
 
-		if(x < 1)
-			x = 1;
-		if(x > limitX)
-			x = limitX;
+		if(x < limitXS + 1)
+			x = limitXS + 1;
+		if(x > limitXE)
+			x = limitXE;
 		if(y < 1)
 			y = 1;
 		if(y > limitY)
@@ -1652,3 +1709,82 @@ void vt_backlitzone_test()
 	}
 }
 
+#define DL_BG_PAL	21
+
+void vt_disappear_logo()
+{
+	u16 done = 0, reload = 1, draw = 1, flash = 0;
+	int frames = 0, baseindex = 1;
+	ushort white_pal[] = { _BLACK, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100, WH_100 };
+	ushort black_pal[] = { _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK };
+	picture solid_back, logo;
+	timecode tc;
+
+	memset(&tc, 0, sizeof(timecode));
+	while (!done)
+	{
+		if (reload)
+		{
+			baseindex = 1;
+
+			gfxClear();
+			backgroundColor(_BLACK);
+			pictureInit(&solid_back, &check, baseindex, DL_BG_PAL, 0, isPAL || isPALinMVS ? -16 : 0, FLIP_NONE);
+			baseindex += getPicSprites(solid_back.info);
+			palJobPut(DL_BG_PAL, 1, black_pal);
+
+			pictureInit(&logo, &gillian, baseindex, 17, 132, 70, FLIP_NONE);
+			palJobPut(17, gillian.palInfo->count, gillian.palInfo->data);
+			baseindex += getPicSprites(logo.info);
+
+			baseindex = loadStopWatch(0, 100);
+			
+			reload = 0;
+		}
+
+		DrawStopWatch(&tc, baseindex);
+
+		SCClose();
+		waitVBlank();
+
+		if(draw)
+			pictureShow(&logo);
+		else
+			pictureHide(&logo);
+
+		if (frames)
+		{
+			frames --;
+			if(!frames)
+				palJobPut(DL_BG_PAL, 1, black_pal);
+		}
+
+		if (flash)
+		{
+			frames = 2;
+			flash = 0;
+			palJobPut(DL_BG_PAL, 1, white_pal);
+		}
+
+		tc.frames ++;
+
+		readController();
+
+		if (BTTN_MAIN)
+		{
+			draw = !draw;
+		}
+
+		if (BTTN_OPTION_1)
+		{
+			if(!frames)
+				flash = 1;
+		}
+
+		if (BTTN_EXIT)
+			done = 1;
+
+		if (checkHelp(HELP_DISAPPEAR))
+			reload = 1;
+	}
+}

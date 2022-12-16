@@ -317,7 +317,7 @@ void menu_tp()
 
 void menu_vt()
 {
-	int done = 0, curse = 1, cursemax = 12, redraw = 1;
+	int done = 0, curse = 1, cursemax = 13, redraw = 1;
 	blinker blinkdata;
 
 	while (!done)
@@ -348,9 +348,10 @@ void menu_vt()
 		fixPrint(5, 17, curse == 8 ? fontColorRed : fontColorWhite, 3, "Vertical Stripes");
 		fixPrint(5, 18, curse == 9 ? fontColorRed : fontColorWhite, 3, "Checkerboard");
 		fixPrint(5, 19, curse == 10 ? fontColorRed : fontColorWhite, 3, "Backlit Zone Test");
+		fixPrint(5, 20, curse == 11 ? fontColorRed : fontColorWhite, 3, "Disappearing Logo");
 
-		fixPrint(5, 21, curse == 11 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, 22, curse == 12 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, 22, curse == 12 ? fontColorRed : fontColorWhite, 3, "Help");
+		fixPrint(5, 23, curse == 13 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
 
 		menu_footer();
 
@@ -406,10 +407,14 @@ void menu_vt()
 				break;
 
 				case 11:
-					DrawHelp(HELP_GENERAL);
+					vt_disappear_logo();
 				break;
 
 				case 12:
+					DrawHelp(HELP_GENERAL);
+				break;
+
+				case 13:
 					done = 1;
 				break;
 			}
@@ -611,8 +616,8 @@ void credits()
 			darken_palette(half_pal, 4);
 			palJobPut(16, 1, half_pal);
 
-			fixPrint(x+24, y, fontColorGreen, 3, "Ver. 0.92");
-			fixPrint(x+24, y+1, fontColorWhite, 3, "11/29/2022");
+			fixPrint(x+24, y, fontColorGreen, 3, "Ver. 0.93");
+			fixPrint(x+24, y+1, fontColorWhite, 3, "12/04/2022");
 			fixPrint(x, y++, fontColorGreen, 3, "Code by:");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Dustin Dembrosky");
 			fixPrint(x+1, y++, fontColorWhite, 3, "Artemio Urbina");
