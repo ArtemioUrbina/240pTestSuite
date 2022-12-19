@@ -1771,9 +1771,7 @@ void vt_disappear_logo()
 		readController();
 
 		if (BTTN_MAIN)
-		{
 			draw = !draw;
-		}
 
 		if (BTTN_OPTION_1)
 		{

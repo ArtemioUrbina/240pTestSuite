@@ -23,6 +23,8 @@
 #ifndef _NG_H_
 #define _NG_H_
 
+#include "types.h"
+
 #define BKP_SIZE	0X0100
 
 typedef struct bkp_ram_info {
@@ -51,9 +53,9 @@ extern BYTE first_grid;
 extern BYTE first_overscan;
 extern BYTE first_colorramp;
 extern BYTE fill_color_bg;
-extern int max_z80_timout;
-extern int min_z80_timout;
-extern int disable_z80_check;
+extern u16 max_z80_timout;
+extern u16 min_z80_timout;
+extern BYTE disable_z80_check;
 #ifdef __cd__
 extern BYTE isCDFront, isCDZ, ngcd_region;
 #endif

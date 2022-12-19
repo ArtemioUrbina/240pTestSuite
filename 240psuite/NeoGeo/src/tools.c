@@ -292,9 +292,18 @@ void menu_options()
 
 			if (curse == OPTIONS_IRE100)
 			{
-				fixPrintf(4, 20, fontColorGreen, 3, "Neo Geo white level goes up to");
-				fixPrintf(4, 21, fontColorGreen, 3, "~106.8 IRE. This option limits");
-				fixPrintf(4, 22, fontColorGreen, 3, "patterns to 100 IRE.");
+				if(!isMVS && !AES_AS_MVS)
+				{
+					fixPrintf(4, 20, fontColorGreen, 3, "Neo Geo white level goes up to");
+					fixPrintf(4, 21, fontColorGreen, 3, "~106.8 IRE. This option limits");
+					fixPrintf(4, 22, fontColorGreen, 3, "patterns to 100 IRE.");
+				}
+				else
+				{
+					fixPrintf(4, 20, fontColorGreen, 3, "IRE Levels are for AES systems");
+					fixPrintf(4, 21, fontColorGreen, 3, "This option limits white level");
+					fixPrintf(4, 22, fontColorGreen, 3, "in patterns to 100 IRE.");
+				}
 			}
 		
 

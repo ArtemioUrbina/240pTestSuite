@@ -41,9 +41,9 @@ BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 BYTE isMVS, is4S, is6S, isMulti, hwChange, allowIRE107;
 BYTE vmode_snk, isPAL, usePAL256, isPALinMVS;
 BYTE enable_shadow, fill_color_bg;
-int max_z80_timout;
-int min_z80_timout;
-int disable_z80_check;
+WORD max_z80_timout;
+WORD min_z80_timout;
+BYTE disable_z80_check;
 #ifdef __cd__
 BYTE isCDFront, isCDZ, ngcd_region;
 #endif
@@ -672,19 +672,6 @@ void credits()
 	return;
 }
 
-/*
-void draw_debug_data()
-{
-	if (DEBUG_ENABLED)
-	{
-		displayRegByte(4, 8, "BIOS_USER_REQS", BIOS_USER_REQS);
-		displayRegByte(4, 9, "BIOS_USER_MODE", BIOS_USER_MODE);
-		displayRegByte(4, 10, "BIOS_START_FLAG", BIOS_START_FLAG);
-		displayRegByte(4, 11, "BIOS_DEV_MODE", BIOS_DEV_MODE);
-	}
-}
-*/
-
 // This function is called by the BIOS when the start button is
 // pressed (AES) and when enough credits are available (MVS)
 void _240p_mvs_player_start(void)
@@ -703,10 +690,6 @@ void _240p_mvs_player_start(void)
 
 void game_over()
 {
-#ifdef __cd__
-	RETURN_TO_CDPLAYER;
-#endif
-
 	// Set Game Over state
 	volMEMBYTE(BIOS_PLAYER_MOD1) = BIOS_PM_GAMEOVER;
 }
@@ -783,7 +766,6 @@ void menu_main()
 		if (showexit)
 			fixPrint(6, 22, curse == 8 ? fontColorRed : fontColorWhite, 3, "Exit");
 
-		//draw_debug_data();
 		menu_footer();
 
 		if (checkHelp(HELP_GENERAL))
@@ -834,9 +816,9 @@ void menu_main()
 
 #define DEMO_BG	4
 #define DEMO_LEN 1800
-void draw_mvs_demo()
+void draw_demo()
 {
-	int toggle = 0, demo_frames = DEMO_LEN, demo_change = 0, freeplay = 0, redraw = 0;
+	int toggle = 0, demo_frames = DEMO_LEN, demo_change = 0, redraw = 0;
 	int currdemo = 0, index = 40, palindex = 25;
 	picture background, foreground, titledsp;
 	scroller grid, monoscope;
@@ -860,7 +842,7 @@ void draw_mvs_demo()
 	demo_change = 1;
 	while (demo_frames)
 	{
-		int credits = 0;
+		int credits = 0, pressStart = 0;
 
 		SCClose();
 		waitVBlank();
@@ -904,20 +886,25 @@ void draw_mvs_demo()
 
 		if (isMVS)
 		{
+			int freeplay = 0;
+
 			freeplay = getHardDipValue(DP_FREE);
 			credits = getCreditCount();
+			if(freeplay || credits)
+				pressStart = 1;
 		}
+		else
+			pressStart = 1;
+
 		readController();
 
 		if (toggle == 30)
 			fixPrint(14, 23, fontColorWhite, 3, "            ");
 		if (toggle == 0)
-			fixPrint(14, 23, fontColorRed, 3, freeplay || credits ? "PRESS  START" : "INSERT COIN");
+			fixPrint(14, 23, fontColorRed, 3, pressStart ? "PRESS  START" : "INSERT COIN");
 
 		if (isMVS)
 			fixPrintf(28, 28, fontColorSolid, 4, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
-
-		//draw_debug_data();
 		
 		toggle ++;
 		if (toggle > 60)
@@ -931,11 +918,19 @@ void draw_mvs_demo()
 			redraw = 1;
 		}
 
+#ifndef __cd__
 		if (volMEMBYTE(BIOS_USER_MODE) == BIOS_UM_INGAME)
 		{
 			menu_main();
 			return;
 		}
+#else
+		if (PRESSED_START)
+		{
+			menu_main();
+			RETURN_TO_CDPLAYER;
+		}
+#endif
 	}
 }
 
@@ -1001,8 +996,6 @@ void draw_mvs_title()
 			menu_main();
 			return;
 		}
-
-		//draw_debug_data();
 	}
 }
 
@@ -1027,24 +1020,26 @@ void check_bios_init()
 	// If some other game in a multi system enabled dark mode, disable it
 	volMEMBYTE(REG_NOSHADOW) = 1;
 
+	// Set default global values
 	first_grid = 1;
 	first_overscan = 1;
 	first_colorramp = 1;
 	max_z80_timout = 0;
-	min_z80_timout = 65536;
+	min_z80_timout = 65535;
 	disable_z80_check = 0;
 	fill_color_bg = 0;
 }
 
-void mvs_state()
+void parse_bios_status()
 {
 	// If DEMO MODE draw the insert coin screen
+	// or Title Screen in AES mode
 	if (volMEMBYTE(BIOS_USER_REQS) == BIOS_UR_DEMO)
 	{
-		// Enter demo mode in MVS following Soft Dip Switches
-		if (getSoftDipvalue(SD_MVS_DEMO))
+		// Enter demo mode in MVS following Soft Dip Switches or AES directly
+		if ((isMVS && getSoftDipvalue(SD_MVS_DEMO)) || !isMVS)
 		{
-			draw_mvs_demo();
+			draw_demo();
 		}
 		else
 		{
@@ -1088,10 +1083,7 @@ int main(void)
 	SCClose();
 	waitVBlank();
 
-	if (isMVS)
-		mvs_state();
-	else
-		menu_main();
+	parse_bios_status();
 	
 	return 0;
 }
