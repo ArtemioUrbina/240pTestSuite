@@ -38,6 +38,7 @@ void DrawSMPTEColorBars();
 void DrawSharpness();
 void DrawOverscan();
 void DrawConvergence();
+void DrawHCFR();
 
 #endif
 

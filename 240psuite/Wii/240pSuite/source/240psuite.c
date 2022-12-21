@@ -46,7 +46,12 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void VideoPatternsMenu(ImagePtr title, ImagePtr sd);
 void SoundTestMenu(ImagePtr title, ImagePtr sd);
 void HardwareTestMenu(ImagePtr title, ImagePtr sd);
+void ColorPatternsMenu(ImagePtr title, ImagePtr sd);
+void GeometryPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawMenuFooter(u8 r, u8 g, u8 b);
+
+ImagePtr 	sd_b1 = NULL, sd_b2 = NULL;
+void SD_blink_cycle();
 
 #ifdef WII_VERSION
 s8 HWButton = -1; 
@@ -101,14 +106,34 @@ int main(int argc, char **argv)
 	
 	if(OffsetH || AspectRatio)
 	{
-		sd->x = 250;
-		sd->y = 80;	
+		if(sd) {
+			sd->x = 250;
+			sd->y = 80;	
+		}
 		ShowVideoWarning(sd);
 	}
 #endif
 	
-	sd->x = 200;
-    sd->y = 80;		
+	// load blinking graphics if appropiate
+	if(sd)
+	{
+		sd->x = 200;
+		sd->y = 80;		
+		
+		sd_b1 = LoadImageMemCpy(SD_B1_IMG, 0);
+		if(sd_b1)
+		{
+			sd_b1->x = sd->x+16;
+			sd_b1->y = sd->y+32;
+		}
+		
+		sd_b2 = LoadImageMemCpy(SD_B2_IMG, 0);
+		if(sd_b2)
+		{
+			sd_b2->x = sd->x+16;
+			sd_b2->y = sd->y+32;
+		}
+	}
 		
 	while(!close && !EndProgram) 
 	{
@@ -125,6 +150,7 @@ int main(int argc, char **argv)
 		        
 		DrawImage(Back);
         DrawImage(sd);
+		SD_blink_cycle();
 		
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video tests"); y += fh; c++;
@@ -221,6 +247,8 @@ int main(int argc, char **argv)
 	
 	FreeImage(&Back);
 	FreeImage(&sd);
+	FreeImage(&sd_b1);
+	FreeImage(&sd_b2);
 	ReleaseFont();	
 	ReleaseScanlines();
 	
@@ -245,14 +273,173 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		u8      g = 0xff;
 		u8      b = 0xff;
 		u8   	c = 1;
-		u16     x = 40;
-		u16     y = 55;
+		u16     x = 60;
+		u16     y = 105;
         u32     pressed = 0;
 				
 		StartScene();
 		        
 		DrawImage(title);
         DrawImage(sd);
+		SD_blink_cycle();
+
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Geometry"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "HCFR Patterns"); y += fh; c++;
+		y += fh; 
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
+
+		DrawMenuFooter(r, g, b);
+				
+		EndScene();		
+        
+        ControllerScan();
+
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_START ) 		
+			DrawMenu = 1;	
+
+		if ( pressed & PAD_BUTTON_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & PAD_BUTTON_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }			
+			
+		if ( pressed & PAD_BUTTON_B ) 		
+			close = 1;	
+	
+		if (pressed & PAD_BUTTON_A)
+		{            
+			switch(sel)
+			{				
+				case 1:
+					ColorPatternsMenu(title, sd);
+					break;				
+				case 2:
+					GeometryPatternsMenu(title, sd);
+					break;
+				case 3:
+					DrawHCFR();
+					break;
+				case 4:
+					close = 1;
+					break;
+			} 			            										
+		}
+	}
+
+	return;
+}
+
+void GeometryPatternsMenu(ImagePtr title, ImagePtr sd)
+{
+	int			sel = 1, close = 0;		
+	
+	while(!close && !EndProgram) 
+	{		
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1;
+		u16     x = 60;
+		u16     y = 95;
+        u32     pressed = 0;
+				
+		StartScene();
+		        
+		DrawImage(title);
+        DrawImage(sd);
+		SD_blink_cycle();
+
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;	
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Convergence"); y += fh; c++;	
+		y += fh; 
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
+
+		DrawMenuFooter(r, g, b);
+				
+		EndScene();		
+        
+        ControllerScan();
+
+		pressed = Controller_ButtonsDown(0);
+		
+		if ( pressed & PAD_BUTTON_START ) 		
+			DrawMenu = 1;	
+
+		if ( pressed & PAD_BUTTON_UP )
+	    {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if ( pressed & PAD_BUTTON_DOWN )
+	    {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }			
+			
+		if ( pressed & PAD_BUTTON_B ) 		
+			close = 1;	
+	
+		if (pressed & PAD_BUTTON_A)
+		{            
+			switch(sel)
+			{				
+				case 1:
+					DrawMonoscope();
+					break;	
+				case 2:
+					GridSelect();
+					break;
+				case 3:
+					DrawOverscan();
+					break;				
+				case 4:
+					DrawConvergence();
+					break;				
+				case 5:
+					close = 1;
+					break;
+			} 			            										
+		}
+	}
+
+	return;
+}
+
+void ColorPatternsMenu(ImagePtr title, ImagePtr sd)
+{
+	int			sel = 1, close = 0;		
+	
+	while(!close && !EndProgram) 
+	{		
+		u8      r = 0xff;
+		u8      g = 0xff;
+		u8      b = 0xff;
+		u8   	c = 1;
+		u16     x = 60;
+		u16     y = 75;
+        u32     pressed = 0;
+				
+		StartScene();
+		        
+		DrawImage(title);
+        DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Pluge"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
@@ -260,14 +447,10 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SMPTE Color Bars"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;		
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White & RGB Screens"); y += fh; c++;				
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;				
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;	
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;	
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Convergence"); y += fh; c++;	
 		y += fh; 
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
@@ -322,30 +505,18 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 					DrawColorBleed();
 					break;
 				case 7:
-					DrawMonoscope();
-					break;	
-				case 8:
-					GridSelect();
-					break;	
-				case 9:
 					DrawGrayRamp();
 					break;
-				case 10:
+				case 8:
 					DrawWhiteScreen();
 					break;					
-				case 11:
+				case 9:
 					Draw100IRE();
 					break;				
-				case 12:
+				case 10:
 					DrawSharpness();
 					break;				
-				case 13:
-					DrawOverscan();
-					break;				
-				case 14:
-					DrawConvergence();
-					break;				
-				case 15:
+				case 11:
 					close = 1;
 					break;
 			} 			            										
@@ -365,7 +536,7 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 		u8      g = 0xff;
 		u8      b = 0xff;
 		u8   	c = 1;				    					   
-		u16     x = 40;
+		u16     x = 60;
 		u16     y = 70;
         u32     pressed = 0;
 				
@@ -373,6 +544,7 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 		        
 		DrawImage(title);
         DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
@@ -493,13 +665,14 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 		        
 		DrawImage(title);
         DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sount Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;
 		if(aet_exists)
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Equipment Test");
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier Test");
 		else
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Audio Equipment Test");
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "MDFourier Test");
 		y += 2*fh; c++;
 		y += fh;
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
@@ -577,6 +750,7 @@ void HardwareTestMenu(ImagePtr title, ImagePtr sd)
 		        
 		DrawImage(title);
         DrawImage(sd);
+		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++;
@@ -647,7 +821,39 @@ void DrawMenuFooter(u8 r, u8 g, u8 b)
 #endif				
 }
 
-
+void SD_blink_cycle()
+{
+	static int blink_counter = 0;
+	static int is_blinking = 0;
+	
+	blink_counter++;	
+	if(sd_b1 && sd_b2 && blink_counter > 230)
+	{
+		if(!is_blinking)
+		{
+			if(rand() % 100 < 98)	// 2% chance every frame after 240
+			{
+				is_blinking = 1;
+				blink_counter = 230;
+				DrawImage(sd_b1);
+			}
+		}
+		else
+		{
+			if(blink_counter >= 232 && blink_counter < 234)
+				DrawImage(sd_b2);
+				
+			if(blink_counter >= 234 && blink_counter < 238)
+				DrawImage(sd_b1);
+	
+			if(blink_counter >= 238)
+			{	
+				blink_counter = 0;
+				is_blinking = 0;
+			}
+		}
+	}
+}
 
 #ifdef WII_VERSION
 /**

@@ -72,13 +72,13 @@ char *diagonal_txt[] = {
 NULL
 };
 char *dshadow_txt[] = { 
-"                 DROP SHADOW TEST \n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\n(25Hz) shadow on a 60hz (50hz) signal. No \nbackground detail should be lost and the shadow \nshould be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button $X. Backgrounds can be\nswitched with the $A button and button $Y\ntoggles sprites. ",
+"                 DROP SHADOW TEST\n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\n(25Hz) shadow on a 60hz (50hz) signal. No \nbackground detail should be lost and the shadow \nshould be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button $X. Backgrounds can be\nswitched with the $A button and button $Y\ntoggles sprites.\n\nDonna art by Jose Salot",
 NULL
 };
 char *general_txt[] = { 
 "                    HELP (1/3)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp and options are available everywhere by \npressing the $S button.\n#Y[Please press right for next help page]#Y\n                                         #C(cont...)#C",
 "                    HELP (2/3)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is capable\nof drawing the whole visible signal, 264 and 528\nlines respectively. However, since most screens\nare only 240p tall, the suite centers them \nvertically. Grids and other 264p patterns are \nshown using the full resolution.\n\nPAL and 480p modes must be enabled from the \noptions menu. \n                                         #C(cont...)#C",
-"                    HELP (3/3)\n\nThe 240p suite is also available in other systems,\nincluding: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/\n#YMega CD#Y, #YPC Engine#Y/#YTG-16#Y, #YSuper Nintendo#Y/#YSFC#Y, #YNES#Y,\n#YNintendo GameCube#Y, #YNintendo Wii#Y and #YSega Dreamcast#Y.",
+"                    HELP (3/3)\n\nThe 240p suite is also available in other systems,\nincluding: #YSega Genesis#Y/#YMega Drive#Y, #YSega CD#Y/\n#YMega CD#Y, #YPC Engine#Y/#YTG-16#Y, #YSuper Nintendo#Y/#YSFC#Y, #YNES#Y,\n#YNintendo GameCube#Y, #YNintendo Wii#Y, #YNeo Geo#Y,\n#YGameBoy#Y, #YJaguar#Y, #Y32x#Y, #YSega Dreamcast#Y, etc.",
 NULL
 };
 char *gray_txt[] = { 
@@ -96,7 +96,16 @@ char *grid224_txt[] = {
 NULL
 };
 char *gridscroll_txt[] = { 
-"                 GRID SCROLL TEST\n\nA grid is scrolled vertically, horizontally and\ndiagonally which can be used to test linearity of\nthe displayor video processor; and how it copes\nwith scrolling and framerate.\n\nButton $Y can be used to switch between horizontal\nand vertical, while the d-pad regulates speed. \n\nDiagonal scroll can be enabled with the $R button.\n\nButton $A stops the scroll and button $X changes\ndirection. \n",
+"                 GRID SCROLL TEST\n\nA grid is scrolled vertically, horizontally and\ndiagonally which can be used to test linearity of\nthe display or video processor; and how it copes\nwith scrolling and framerate.\n\nButton $Y can be used to switch between horizontal\nand vertical, while the d-pad regulates speed. \n\nDiagonal scroll can be enabled with the $R button.\n\nButton $A stops the scroll and button $X changes\ndirection. \n",
+NULL
+};
+char *hcfr_txt[] = { 
+"                HCFR PATTERNS (1/6)\n\nThe #YHCFR Colormeter#Y software allows for profiling\nand calibration of displays using the combination\nof a pattern generator to create test patterns,\nand a #Ctristimulous colorimeter#C to read and\nmeasure the outputs. Then you, as the user, will\nhave to change settings on your display in order\nto refine the results and attempt to match the\nchosen standard of video color reproduction.\n\nThe #YHCFR Colormeter#Y software is at the heart\nof the system. It interprets the results from the\ncolorimeter and provides #CCIE color#C differences\n(Delta E values), chromaticity diagrams, gamma\n                                         #C(cont...)#C",
+"                HCFR PATTERNS (2/6)\n\ncurves and other values to assist you in\nprofiling and calibrating your display. \n\n#Ghttps://sourceforge.net/p/hcfr/wiki/Home/#G\n\nTo set up #YHCFR Colormeter#Y, attach your colorimeter\nto your computer, open the program, click\n#CFile -> New#C, and select DVD Manual as your\nselected generator. Select your colorimeter\nfrom the list, and click OK.\n\nOnce in #YHCFR Colormeter#Y, click\n#CAdvance -> Preferences#C. \n                                         #C(cont...)#C",
+"                HCFR PATTERNS (3/6)\n\nUnder the #CGeneral#C tab, ensure that the section\n#CColors to add when measuring primaries and\nsecondaries#C is set to #YWhite#Y. \n\nUnder the #CReferences#C tab, choose your color\nspace. #YPAL/SECAM#Y is recommended for #CPAL CRT#C\nusers. #YSDTV - REC601 (NTSC)#Y is recommended for\n#CNTSC CRT#C users. #YHD TV REC 709#Y is recommended\nfor #CHD#C and #CUHD/4K#C in #CSDR flat panel TV#C users.\n#YsRGB#Y is recommended for #CPC VGA#C and up #CCRT\nmonitors#C. \n\n\n                                         #C(cont...)#C",
+"                HCFR PATTERNS (4/6)\n\nWhite point is normally #YD65#Y (default) for\nwestern regions of all color space types.\n#YJapanese SDTV#Y often used #YD93#Y as a white point\n(which will appear cooler, or bluer, than #YD65#Y). \n\nMost gamma calculations normally default to\n#CITU-R BT.1886#C, which uses #CDisplay Gamma Power\nLaw 2.4#C. Your device may have a different native\ngamma response, so choose a different Power Law\nvalue if required. #YsRGB#Y has a specific non-linear\ngamma that cannot be customized. \n\n\n                                         #C(cont...)#C",
+"                HCFR PATTERNS (5/6)\n\nEnsure your options chosen here match the test\npattern list you choose in the #C240p Test Suite#C. \n\nWhen you are ready to start measuring, click the\n#CMeasure#C menu, and select your measurement. If\nany large scale changes are made to your display,\nit is recommended to re-run a #CGray-scale sweep#C\noften, so that baseline calculations can be\naccurately made for #CDelta E#C measurements.\n\nA menu will pop up asking you to select a given\n#CDVD chapter#C and #Ccolor name#C. Use the #YL#Y and #YR#Y\nbuttons to scroll through the color list and\n                                         #C(cont...)#C",
+"                HCFR PATTERNS (6/6)\n\nselect the color desired. Once ready to measure,\nclick #COK#C in #YHCFR Colormeter#Y to measure\nthe test pattern.\n\nUse the #CContinuous measure#C mode to be able to\nadjust your display's settings to match the\nvalues required for your chosen color space,\nwhite point, gamma, etc. \n\nPattern data and testing by #GDan Mons#G and\n#GKeith Raney#G.\n\n",
 NULL
 };
 char *ire100_txt[] = { 
@@ -197,7 +206,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	33
+#define	HELPCOUNT	34
 char **HelpArray[HELPCOUNT] = {
 	alt240p_txt,
 	backlit_txt,
@@ -214,6 +223,7 @@ char **HelpArray[HELPCOUNT] = {
 	grid_txt,
 	grid224_txt,
 	gridscroll_txt,
+	hcfr_txt,
 	ire100_txt,
 	memory_txt,
 	monoscope_txt,

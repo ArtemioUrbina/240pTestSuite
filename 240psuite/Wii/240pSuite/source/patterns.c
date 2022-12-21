@@ -27,6 +27,7 @@
 #include "video.h"
 #include "options.h"
 #include "controller.h"
+#include "hcfr.h"
 
 #include "patterns.h"
 
@@ -1475,4 +1476,115 @@ void DrawConvergence()
 	for(i = 0; i < NUM_CONV; i++)
 		FreeImage(&back[i]);
 	return;
+}
+
+void DrawHCFR()
+{
+	char 		msg[50];
+	int 		done = 0, hcfr_num = 0, hcfr_type = 0, i = 0, oldvmode = 0;
+	fmenudata	fmenu[HCFR_TYPES+1];
+	ImagePtr 	back, color;
+	u32			pressed;	
+
+	for(i = 0; i < HCFR_TYPES; i++)
+	{
+		fmenu[i].option_value = i;
+		fmenu[i].option_text = hcfr_data[i].name;
+	}
+
+	hcfr_type = SelectMenu("Select Grid", fmenu, HCFR_TYPES, hcfr_type+1);
+	if(hcfr_type == MENU_CANCEL)
+		return;
+	
+	back = LoadImage(WHITEIMG, 1);
+	if(!back)
+		return;
+		
+	color = LoadImage(WHITEIMG, 1);
+	if(!color)
+	{
+		FreeImage(&back);
+		return;
+	}
+			
+	back->w = dW;
+	back->h = dH;
+	
+	color->x = 105;
+	color->y = 70;
+	
+	color->w = 110;
+	color->h = 80;
+
+	SetTextureColor(back, 0, 0, 0);
+	while(!done && !EndProgram) 
+	{
+		int	r, g, b, len = 0, x = 0;
+		
+		if(oldvmode != vmode)
+		{
+			back->w = dW;
+			back->h = dH;
+			oldvmode = vmode;
+		}
+		
+		r = hcfr_data[hcfr_type].data[hcfr_num].r;
+		g = hcfr_data[hcfr_type].data[hcfr_num].g;
+		b = hcfr_data[hcfr_type].data[hcfr_num].b;
+		
+		SetTextureColor(color, r, g, b);
+		
+		StartScene();
+		        
+		DrawImage(back);
+		DrawImage(color);
+		sprintf(msg, "%s %03d,%03d,%03d", 
+				hcfr_data[hcfr_type].data[hcfr_num].name, r, g, b);
+		len = strlen(msg);
+		x = (320 - len*fw)/2;
+		DrawString(x, 180, 0x7f, 0x7f, 0x7f, msg);			
+		
+        EndScene();
+		ControllerScan();
+		
+		pressed = Controller_ButtonsDown(0);
+		
+		if (pressed & PAD_BUTTON_B)
+			done =	1;				
+		
+		if ( pressed & PAD_BUTTON_LEFT || pressed & PAD_TRIGGER_L)
+		{
+			if (hcfr_num > 0)
+				hcfr_num--;
+		}
+
+		if ( pressed & PAD_BUTTON_RIGHT || pressed & PAD_TRIGGER_R)
+		{
+			if (hcfr_num < HCFR_LEN)
+				hcfr_num++;
+		}
+
+		if ( pressed & PAD_BUTTON_Y )
+		{
+			int tmp_hcfr_type = 0;
+
+			tmp_hcfr_type = SelectMenu("Select Standard", fmenu, HCFR_TYPES, hcfr_type+1);
+			if(tmp_hcfr_type != MENU_CANCEL && tmp_hcfr_type != hcfr_type)
+			{
+				hcfr_type = tmp_hcfr_type;
+				hcfr_num = 0;
+			}
+		}
+
+		if ( pressed & PAD_BUTTON_X )
+			hcfr_num = 0;
+			
+		if ( pressed & PAD_BUTTON_START ) 		
+		{
+			DrawMenu = 1;					
+			HelpData = HCFRHELP;
+		}
+	}
+	FreeImage(&back);
+	FreeImage(&color);
 }

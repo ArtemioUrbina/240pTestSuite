@@ -1214,7 +1214,11 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "PAL testing:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Yamato"); y += fh; 		
 		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "MDFourier help:"); y2 += fh; 
-		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Extrems"); y2 += fh; 		
+		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Extrems"); y2 += fh;
+		
+		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "HCFR Data & Tests:"); y2 += fh;
+		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Dan Mons (@_daemons)"); y2 += fh;
+		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "& Keith Raney");	
 #ifdef GC_VERSION
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "GameCube Tools:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Rolman"); y += fh; 	
@@ -1344,13 +1348,16 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		u16     x = Back ? Back->x + 20 : 100;
 		u16     y = Back ? Back->y + 10 : 60;
         u32     pressed = 0;
-				
+		
 		StartScene();
 		
 		if(Back)        
 			DrawImage(Back);       
 
-		DrawStringS(x, y, 0x00, 0xff, 0x00, title); y += 3*fh; 		
+		DrawStringS(x, y, 0x00, 0xff, 0x00, title); y += 3*fh;
+
+		if(num_options > 6)
+			y -= fh;	
 		
 		for(i = 0; i < num_options; i++)
 		{
@@ -1358,7 +1365,11 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 			y += fh; c++;		
 		}
         
-		y += 2* fh;
+		y += fh;
+		
+		if(num_options <= 6)
+			y += fh;
+		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");		
 								
 		EndScene();		

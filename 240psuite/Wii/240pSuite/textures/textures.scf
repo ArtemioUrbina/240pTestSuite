@@ -69,4 +69,6 @@
 <filepath="monoscope480p.png" id="MONOSCOPE480IMG" colfmt=6 />
 <filepath="monoscope480p_lin.png" id="MONOSCOPE480LINIMG" colfmt=6 />
 <filepath="back.png" id="BACKIMG" colfmt=6 />
+<filepath="SD_b1.png" id="SD_B1_IMG" colfmt=6 />
+<filepath="SD_b2.png" id="SD_B2_IMG" colfmt=6 />
 <filepath="SD.png" id="SDIMG" colfmt=6 />
