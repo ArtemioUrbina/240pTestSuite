@@ -25,6 +25,16 @@
 
 #include "types.h"
 
+typedef struct timecode
+{
+	u16 hours;
+	u16 minutes;
+	u16 seconds;
+	u16 frames;
+	u16 type;
+	u16 res;
+} timecode;
+
 void vt_drop_shadow_test(void);
 void vt_striped_sprite_test(void);
 void vt_lag_test(void);
@@ -35,5 +45,6 @@ void vt_horizontal_stripes(void);
 void vt_vertical_stripes(void);
 void vt_checkerboard(void);
 void vt_backlitzone_test(void);
+void vt_disappear_logo(void);
 
 #endif /* _TESTS_H_ */

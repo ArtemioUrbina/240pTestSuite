@@ -55,6 +55,7 @@
 #define HELP_MEMVIEW		30
 #define HELP_EBU			31
 #define HELP_HCFR			32
+#define HELP_DISAPPEAR		33
 
 void DrawHelp(int option);
 int checkHelp(int helpID);

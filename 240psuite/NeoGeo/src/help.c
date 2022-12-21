@@ -985,6 +985,20 @@ void DrawHelp(int option)
 					break;
 					}
 				break;
+				case HELP_DISAPPEAR:
+					fixPrintC(6, fontColorGreen, 3, "DISAPPEARING LOGO");
+
+					fixPrint(4, y++, fontColorWhite, 3, "This test allows you to use a");
+					fixPrint(4, y++, fontColorWhite, 3, "slow motion camera to measure");
+					fixPrint(4, y++, fontColorWhite, 3, "how long it takes from a button");
+					fixPrint(4, y++, fontColorWhite, 3, "press to when the logo");
+					fixPrint(4, y++, fontColorWhite, 3, "disappears");
+					y++;
+					fixPrint(4, y++, fontColorWhite, 3, "You can also use a photodiode");
+					fixPrint(4, y++, fontColorWhite, 3, "and press C, which turns");
+					fixPrint(4, y++, fontColorWhite, 3, "the whole back to white for");
+					fixPrint(4, y++, fontColorWhite, 3, "2 frames.");
+				break;
 			default:
 				exit = 1;
 				break;

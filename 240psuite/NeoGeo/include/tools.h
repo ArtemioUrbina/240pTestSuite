@@ -140,7 +140,7 @@ int getHorScroll();
 int getHorScrollAspect();
 
 WORD getVideoline();
-void getScreenLimits(int* x, int* y);
+void getScreenLimits(int* xS, int* xe, int* y);
 void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr);
 void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr);
 void displayValue(u16 x, u16 y, char *dispname, int value);
