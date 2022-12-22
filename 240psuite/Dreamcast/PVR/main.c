@@ -382,7 +382,6 @@ void TestPatternsColorMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "White & RGB screens"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "100 IRE"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sharpness"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Convergence"); y += fh; c++;
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh; c++;
 
 		y += fh;
@@ -455,19 +454,16 @@ void TestPatternsColorMenu(ImagePtr title, ImagePtr sd)
 					DrawSharpness();
 					break;
 				case 11:
-					DrawConvergence();
-					break;
-				case 12:
 					done = 1;
 					break;
-				case 13:
+				case 12:
 					ShowMenu(GENERALHELP);
 					break;
-				case 14:
+				case 13:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 15:
+				case 14:
 					TestVideoMode(vmode);
 					break;
 #endif
@@ -502,6 +498,7 @@ void TestPatternsGeometryMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Overscan"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Convergence"); y += fh; c++;
 		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh; c++;
 
 		y += fh;
@@ -553,16 +550,19 @@ void TestPatternsGeometryMenu(ImagePtr title, ImagePtr sd)
 					DrawOverscan();
 					break;
 				case 4:
-					done = 1;
+					DrawConvergence();
 					break;
 				case 5:
-					ShowMenu(GENERALHELP);
+					done = 1;
 					break;
 				case 6:
+					ShowMenu(GENERALHELP);
+					break;
+				case 7:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 7:
+				case 8:
 					TestVideoMode(vmode);
 					break;
 #endif
