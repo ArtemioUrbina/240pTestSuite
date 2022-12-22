@@ -53,7 +53,7 @@
 #define HELP_SEGACD			30
 #define	HELP_MEMVIEW		31
 #define HELP_CONVERGENCE	32
-#define HELP_DISSAPPEAR		33
+#define HELP_DISAPPEAR		33
 
 extern u8	showhelp;
 

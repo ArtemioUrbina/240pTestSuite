@@ -739,13 +739,18 @@ void DrawHelp(int option)
 				y++;
 				ChangeResolution(&y);
 				break;
-			case HELP_DISSAPPEAR:
+			case HELP_DISAPPEAR:
 				VDP_drawTextBG(APLAN, "DISAPPEARING LOGO", TILE_ATTR(PAL1, 0, 0, 0), 11, 4);
 				VDP_drawTextBG(APLAN, "This test allows you to use a", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "slow motion camera to measure", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "how long it takes from a button", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "press to when the logo", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "disappears.", TILE_ATTR(PAL0, 0, 0, 0), 4, y);
+				VDP_drawTextBG(APLAN, "disappears.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "You can also use a photodiode", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "and press C, which turns", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "the whole back to white for", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "2 frames.", TILE_ATTR(PAL0, 0, 0, 0), 4, y);
 				break;
 			default:
 				exit = 1;

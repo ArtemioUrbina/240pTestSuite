@@ -32,6 +32,7 @@ void DrawPluge()
 	u16 exit = 0, loadvram = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
+	DrawHelp(HELP_PLUGE);
 	while(!exit)
 	{
 		if(loadvram)

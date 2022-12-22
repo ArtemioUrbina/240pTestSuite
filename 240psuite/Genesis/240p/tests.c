@@ -2032,7 +2032,7 @@ void DrawStopWatch(u16 *numbers, timecode *tc, u16 pal1, u16 bgcol, u16 plan)
 void PassiveLagTest()
 {
 	timecode tc;
-	u16 framecnt = 1, bgcol = PAL2;
+	u16 framecnt = 1, bgcol = PAL3;
 	u16 exit = 0, color = 1, loadvram = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 numbers[11], size, pause = 0, circle = 0, cposx = 32, cposy = 17, solid, bars;
@@ -2156,6 +2156,8 @@ void PassiveLagTest()
 		VDP_fillTileMapRectInc(BPLAN, TILE_ATTR(PAL2, 0, 0, 0) + circle, cposx, cposy, 7, 7);
 		VDP_End();
 
+		VDP_waitVSync();
+		
 		buttons = JOY_readJoypad(JOY_ALL);
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
@@ -2174,7 +2176,6 @@ void PassiveLagTest()
 
 		if(pressedButtons & BUTTON_C)
 		{
-			VDP_Start();
 			color = !color;
 			if(!color)
 			{
@@ -2188,7 +2189,6 @@ void PassiveLagTest()
 				VDP_setPalette(PAL2, bluew_pal);
 				VDP_setPalette(PAL3, redw_pal);
 			}
-			VDP_End();
 
 			if(color)
 				bgcol = PAL3;
@@ -2204,7 +2204,6 @@ void PassiveLagTest()
 			tc.frames++;
 			framecnt++;
 		}
-		VDP_waitVSync();
 	}
 }
 
@@ -2615,7 +2614,7 @@ void AudioSyncTest()
 
 void DisappearingLogo()
 {
-	u16 x = 132, y = 60, exit = 0, draw = 1, reload = 1;
+	u16 x = 132, y = 75, exit = 0, draw = 1, reload = 1;
 	u16 buttons, pressedButtons, oldButtons = 0xffff, redraw = 1;
 	u16 numbers[11];
 	u16 custom_pal[16], oldColor = 0, frames = 2;
@@ -2677,7 +2676,7 @@ void DisappearingLogo()
 		pressedButtons = buttons & ~oldButtons;
 		oldButtons = buttons;
 		
-		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_DISSAPPEAR))
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_DISAPPEAR))
 			reload = 1;
 		
 		if(pressedButtons & BUTTON_START)

@@ -41,6 +41,8 @@ extern u16		DriveVersion;
 
 #define SCDTEST
 
+void ColorPatternMenu();
+void GeometryPatternMenu();
 void TestPatternMenu();
 void DrawCredits();
 void DrawIntro();
