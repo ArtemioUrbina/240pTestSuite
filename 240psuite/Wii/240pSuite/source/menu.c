@@ -1327,6 +1327,11 @@ void DrawIntro()
 
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option)
 {
+	return(SelectMenuEx(title, menu_data, num_options, selected_option, NULL));
+}
+
+int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selected_option, char **helpfile)
+{
 	int 		sel = selected_option, close = 0, value = MENU_CANCEL;		
 	ImagePtr	Back = NULL;
 	
@@ -1370,7 +1375,10 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		if(num_options <= 6)
 			y += fh;
 		
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");		
+		DrawStringS(x+2*fw, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");		
+		
+		if(helpfile)
+			DrawStringS(x-2*fw, y+2*fh, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
 								
 		EndScene();		
 		
@@ -1391,11 +1399,19 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 		    if(sel > c)
 			    sel = 1;	
 	    }			
-			
-		if (pressed & PAD_BUTTON_B || pressed & PAD_BUTTON_START) 		
+
+		if (pressed & PAD_BUTTON_B || 
+			(!helpfile && pressed & PAD_BUTTON_START))				
 		{
 			close = 1;	
 			value = MENU_CANCEL;
+		}
+		
+		if(helpfile && pressed & PAD_BUTTON_START)
+		{
+			HelpData = helpfile;
+			HelpWindow(NULL);
+			HelpData = GENERALHELP;
 		}
 	
 		if (pressed & PAD_BUTTON_A)

@@ -108,6 +108,10 @@ char *hcfr_txt[] = {
 "                HCFR PATTERNS (6/6)\n\nselect the color desired. Once ready to measure,\nclick #COK#C in #YHCFR Colormeter#Y to measure\nthe test pattern.\n\nUse the #CContinuous measure#C mode to be able to\nadjust your display's settings to match the\nvalues required for your chosen color space,\nwhite point, gamma, etc. \n\nPattern data and testing by #GDan Mons#G and\n#GKeith Raney#G.\n\n",
 NULL
 };
+char *hcfr_menu_txt[] = { 
+"             HCFR STANDARD SELECTOR\n\nThis menu shows the #CHCFR software#C profiles.\n\n- #YREC 601 (NTSC)#Y is recommended for #CNTSC CRT#C\n    users.\n- #YPAL/SECAM#Y is recommended for #CPAL CRT#C users.\n- #YREC 709#Y is recommended for #CHD#C and #CUHD/4K#C\n    in #CSDR#C flat panel TV users.\n- #YsRGB#Y is recommended for #CPC VGA#C and up #CCRT\n     monitors#C. \n\nFor #Cwestern regions#C of any color space use #YD65#Y,\nand #YD93#Y is for #CJapanese SDTVs#C that support it.\n\nAccess detailed #Yhelp#Y within the test with #GSTART#G.	",
+NULL
+};
 char *ire100_txt[] = { 
 "                   100 IRE(1/2)\n\nAn IRE is a unit used in the measurement of\ncomposite video signals. Its name is derived from\nthe initials of the #YInstitute of Radio Engineers#Y.\n\nA value of 100 IRE was originally defined to be\nthe range from black to white in a video signal.\n\nA value of 0 IRE corresponds to the zero voltage\nvalue during the blanking period. The sync pulse\nis normally 40 IRE below the zero value, so, peak\nto peak, an all white signal should be equal to\n140 IRE.\n\n                                     #C(cont...)#C",
 "                   100 IRE(2/2)\n\nThe reason IRE is a relative measurement (percent)\nis because a video signal may be any amplitude.\n\nThis unit is used in the #YITU-R BT.470#Y which\ndefines PAL, NTSC and SECAM\n\nYou can press $R and $L buttons to advance in 10 IRE\nsteps in the selected range.\n\nWith button $A you can toggle the range between\n#C[0-100]#C and #C[100-140]#C IRE.",
@@ -206,7 +210,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	34
+#define	HELPCOUNT	35
 char **HelpArray[HELPCOUNT] = {
 	alt240p_txt,
 	backlit_txt,
@@ -224,6 +228,7 @@ char **HelpArray[HELPCOUNT] = {
 	grid224_txt,
 	gridscroll_txt,
 	hcfr_txt,
+	hcfr_menu_txt,
 	ire100_txt,
 	memory_txt,
 	monoscope_txt,

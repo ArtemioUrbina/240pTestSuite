@@ -57,6 +57,7 @@
 #define CONVHELP		convergence_txt
 #define MEMORYHELP		memory_txt
 #define HCFRHELP		hcfr_txt
+#define HCFR_MENUHELP	hcfr_menu_txt
 
 /* paste from here */
 extern char *alt240p_txt[];
@@ -75,6 +76,7 @@ extern char *grid_txt[];
 extern char *grid224_txt[];
 extern char *gridscroll_txt[];
 extern char *hcfr_txt[];
+extern char *hcfr_menu_txt[];
 extern char *ire100_txt[];
 extern char *memory_txt[];
 extern char *monoscope_txt[];

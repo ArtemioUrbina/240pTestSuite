@@ -1492,7 +1492,7 @@ void DrawHCFR()
 		fmenu[i].option_text = hcfr_data[i].name;
 	}
 
-	hcfr_type = SelectMenu("Select Grid", fmenu, HCFR_TYPES, hcfr_type+1);
+	hcfr_type = SelectMenuEx("Select Grid", fmenu, HCFR_TYPES, hcfr_type+1, HCFR_MENUHELP);
 	if(hcfr_type == MENU_CANCEL)
 		return;
 	
@@ -1568,7 +1568,7 @@ void DrawHCFR()
 		{
 			int tmp_hcfr_type = 0;
 
-			tmp_hcfr_type = SelectMenu("Select Standard", fmenu, HCFR_TYPES, hcfr_type+1);
+			tmp_hcfr_type = SelectMenuEx("Select Standard", fmenu, HCFR_TYPES, hcfr_type+1, HCFR_MENUHELP);
 			if(tmp_hcfr_type != MENU_CANCEL && tmp_hcfr_type != hcfr_type)
 			{
 				hcfr_type = tmp_hcfr_type;
@@ -1581,7 +1581,7 @@ void DrawHCFR()
 			
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = HCFRHELP;
 		}
 	}
