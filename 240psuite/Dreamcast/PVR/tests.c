@@ -1412,8 +1412,9 @@ void DrawCheckBoard()
 
 void LEDZoneTest()
 {	
-	int			done = 0, x = 160, y = 120;
-	int			selsprite = 1, show = 1, oldvmode = -1;
+	float		x = 160, y = 120;
+	int 		sprStep[] = { 1, 2, 4, 6, 8 };
+	int			done = 0, fast = 0, selsprite = 1, show = 1, oldvmode = -1;
 	uint16		pressed;
 	ImagePtr	back, sprite[5];
 	controller 	*st;
@@ -1446,44 +1447,60 @@ void LEDZoneTest()
 			back->h = dH;
 			oldvmode = vmode;
 		}
-		
+	
+		sprite[selsprite]->x = x - sprStep[selsprite]/2;
+		sprite[selsprite]->y = y - sprStep[selsprite]/2;
+	
 		StartScene();
 		DrawImage(back);		
-
+	
 		if(show)
-		{
-			sprite[selsprite]->x = x;
-			sprite[selsprite]->y = y;
 			DrawImage(sprite[selsprite]);
-		}
+		
 		EndScene();
 		VMURefresh("Backlit", "");
 
 		st = ReadController(0, &pressed);
 		if(st)
 		{
-			if(show)
+			if (st->buttons & CONT_DPAD_UP)
 			{
-				if (st->buttons & CONT_DPAD_UP)
+				if(!fast)
 					y --;
-			
-				if (st->buttons & CONT_DPAD_DOWN)
-					y ++;
-	
-				if (st->buttons & CONT_DPAD_LEFT)
-					x --;
-	
-				if (st->buttons & CONT_DPAD_RIGHT)
-					x ++;
-				
-	
-				// Joystick
-				if(st->joyx != 0)
-					x += st->joyx/40;
-			
-				if(st->joyy != 0)
-					y += st->joyy/40;
+				else
+					y -= sprStep[selsprite];
 			}
+		
+			if (st->buttons & CONT_DPAD_DOWN)
+			{
+				if(!fast)
+					y ++;
+				else
+					y += sprStep[selsprite];
+			}
+
+			if (st->buttons & CONT_DPAD_LEFT)
+			{
+				if(!fast)
+					x --;
+				else
+					x -= sprStep[selsprite];
+			}
+
+			if (st->buttons & CONT_DPAD_RIGHT)
+			{
+				if(!fast)
+					x ++;
+				else
+					x += sprStep[selsprite];
+			}
+					
+			// Joystick
+			if(st->joyx != 0)
+				x += st->joyx/40;
+		
+			if(st->joyy != 0)
+				y += st->joyy/40;
 		
 			if (pressed & CONT_B)
 				done =	1;
@@ -1504,8 +1521,11 @@ void LEDZoneTest()
 					selsprite = 0;
 			}
 
-			if (pressed & CONT_A)
+			if (pressed & CONT_X)
 				show = !show;
+			
+			if (pressed & CONT_A)
+				fast = !fast;
 
 			if (pressed & CONT_START)
 				ShowMenu(BACKLITHELP);

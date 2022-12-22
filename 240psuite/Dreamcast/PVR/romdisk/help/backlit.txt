@@ -5,16 +5,20 @@ backlit works when only a small array of pixels
 is shown. This can be very revealing, and can
 be used to detect the zones in LED backlit 
 displays, or to evaluate global and local
-dimming.
+dimming. Sizes are 1, 2, 4, 6 and 8 pixels.
 
 The user can move around the white pixel arrays
 with the d-pad or joystick, and change the size
 of the pixel array with #GR#G and #GL#G triggers.
-Button #GA#G allows the user to hide the pixel
+Button #GX#G allows the user to hide the pixel
 array in order to alternate a fully black screen.
 
                                      #C(cont...)#C
                 BACKLIT TEST (2/2)
+
+Button #GA#G alternates between single pixel movement
+and steps by the width of the array in order to
+check for ghosting.
 
 It might be necessary to have a fully-off panel
 (if possible) when displaying the black 
