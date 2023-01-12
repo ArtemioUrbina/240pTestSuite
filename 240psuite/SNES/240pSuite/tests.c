@@ -698,7 +698,6 @@ void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y, u16 dra
 	{
 		bgInitTileSetMine(1, &dissapear_tiles, &dissapear_pal, 0, (&dissapear_tiles_end - &dissapear_tiles), 16*2, BG_16COLORS, 0x6000);	
 		bgInitMapSetMine(1, &dissapear_map, (&dissapear_map_end - &dissapear_map), SC_32x32, 0x1000);
-		setPaletteColor(0x01, RGB5(0, 0, 0));
 	}
 	
 	oamInitGfxSetMine(&numbers_tiles, &numbers_tiles_end - &numbers_tiles,	&numbers_pal, 16*2, 0, 0x2000, OBJ_SIZE32);
@@ -752,6 +751,9 @@ void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y, u16 dra
 	{
 		setPaletteColor(0x81, RGB5(0, 31, 0));
 		setPaletteColor(0x91, RGB5(0, 31, 0));
+		
+		setPaletteColor(1, RGB5(0, 0, 0));
+		setPaletteColor(2, RGB5(0, 31, 0));
 		
 		AddTextColor(7, RGB5(31, 31, 31), RGB5(20, 20, 20));
 	}
@@ -2254,7 +2256,7 @@ void AudioSyncTest(void)
 void fillGillian(u16 color)
 {
 	int i = 0;
-				
+	
 	for(i = 3; i < 15; i++) {
 		setPaletteColor(i, color);
 	}
@@ -2269,7 +2271,7 @@ void DisappearingLogo()
 	u16 spriteIndex[8] = { 0, 4, 8, 12, 16, 20, 24, 28 };
 	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
 	u16 black = 0, white = 0;
-	u16 y = 20, reload = 1, redraw = 1, draw = 1, frames = 0;	
+	u16 y = 20, reload = 1, redraw = 0, draw = 1, frames = 0;	
 
 	black = RGB5(0, 0, 0);
 	white = RGB5(31, 31, 31);
@@ -2279,12 +2281,17 @@ void DisappearingLogo()
 		if(reload)
 		{
 			loadStopWatch(xpos, spriteIndex, numberIndex, y, 0);
-			redraw = 1;
+			
 			reload = 0;
+			if(!draw)
+				redraw = 1;
 		}
+		
+		DrawStopWatch(&tc, xpos, spriteIndex, numberIndex, y, 0x9);
 		
 		if(redraw)
 		{	
+			StartDMA();
 			if(!draw)
 				fillGillian(black);
 			else
@@ -2292,10 +2299,9 @@ void DisappearingLogo()
 				setPalette(&dissapear_pal, 0, 16*2);
 				setPaletteColor(2, RGB5(0, 31, 0));
 			}
+			EndDMA();
 			redraw = 0;
 		}
-		
-		DrawStopWatch(&tc, xpos, spriteIndex, numberIndex, y, 0x9);
 		
 		// read immediately so response is accurate
 		WaitForVBlank();
@@ -2323,9 +2329,11 @@ void DisappearingLogo()
 			frames--;
 			if(!frames)
 			{
+				StartDMA();
 				setPaletteColor(1, black);
 				if(!draw)
 					fillGillian(black);
+				EndDMA();
 			}
 		}
 		
@@ -2333,9 +2341,11 @@ void DisappearingLogo()
 		{
 			if(!frames)
 			{
+				StartDMA();
 				setPaletteColor(1, white);
 				if(!draw)
 					fillGillian(white);
+				EndDMA();
 				frames = 2;
 			}
 		}

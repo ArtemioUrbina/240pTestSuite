@@ -821,7 +821,7 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "disappears.");							
 							y++;
 							drawText(3, y++, 7, "You can also use a"); 
-							drawText(3, y++, 7, "photodiode and press C,");
+							drawText(3, y++, 7, "photodiode and press X,");
 							drawText(3, y++, 7, "which turns the whole");
 							drawText(3, y++, 7, "screen to white for");
 							drawText(3, y++, 7, "2 frames.");
