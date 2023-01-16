@@ -1390,9 +1390,10 @@ void SegaCDMenu()
 #ifndef SEGACD
 			VDP_drawTextBG(APLAN, "Program RAM Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			VDP_drawTextBG(APLAN, "Word RAM Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+#endif
 			VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 			pos++;
-#endif
+			
 			VDP_drawTextBG(APLAN, "PCM RAM Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 #ifndef SEGACD
 			VDP_drawTextBG(APLAN, "PCM Sound Check", TILE_ATTR(cursel == sel++ ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -1485,11 +1486,11 @@ void SegaCDMenu()
 				break;
 #else
 			case 4:
-				PCMRAMCheck();
-				break;
-			case 5:
 				CleanUp();
 				MemViewer(0);
+				break;
+			case 5:
+				PCMRAMCheck();
 				break;
 			case 6:
 				DrawHelp(HELP_SEGACD);
