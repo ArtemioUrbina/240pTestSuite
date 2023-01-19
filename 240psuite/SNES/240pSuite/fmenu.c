@@ -23,6 +23,7 @@
 #include "res.h"
 #include "video.h"
 #include "fmenu.h"
+#include "control.h"
 
 u16 DrawFloatMenu()
 {	

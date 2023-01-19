@@ -46,3 +46,5 @@ void oamInitGfxSetMine(u8 *tileSource, u16 tileSize, u8 *tilePalette, u16 palett
 void CopyExtraTiles(u8 * source, u16 address, u16 size);
 void consoleInitTextMine(u8 bgNumber,u8 paletteNumber, u8 *gfxText);
 void EndDMA();
+
+void check_blink();
