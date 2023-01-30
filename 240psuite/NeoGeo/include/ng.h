@@ -59,6 +59,7 @@ extern BYTE disable_z80_check;
 #ifdef __cd__
 extern BYTE isCDFront, isCDZ, ngcd_region;
 #endif
+extern WORD fbase;
 
 #define SYSTEM_AES			0x00
 #define SYSTEM_MVS			0x80

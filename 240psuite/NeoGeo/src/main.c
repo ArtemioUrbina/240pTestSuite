@@ -47,6 +47,7 @@ BYTE disable_z80_check;
 #ifdef __cd__
 BYTE isCDFront, isCDZ, ngcd_region;
 #endif
+WORD fbase;
 
 #define NUM_FONT_COLORS 10
 static const ushort fixPalettes[]= {
@@ -64,7 +65,7 @@ static const ushort fixPalettes[]= {
 
 void menu_tp_colormenu()
 {
-	int done = 0, curse = 1, cursemax = 13, redraw = 1;
+	int done = 0, curse = 1, cursemax = 12, redraw = 1;
 	blinker blinkdata;
 
 	while (!done)
@@ -87,20 +88,19 @@ void menu_tp_colormenu()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Pluge");
-		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "Color Bars");
-		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "EBU Color Bars");
-		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "SMPTE Color Bars");
-		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Referenced Color Bars");
-		fixPrint(5, y++, curse == 6 ? fontColorRed : fontColorWhite, 3, "Color Bleed Check");
-		fixPrint(5, y++, curse == 7 ? fontColorRed : fontColorWhite, 3, "Gray Ramp");
-		fixPrint(5, y++, curse == 8 ? fontColorRed : fontColorWhite, 3, "White & RGB Screens");
-		fixPrint(5, y++, curse == 9 ? fontColorRed : fontColorWhite, 3, "100 IRE");
-		fixPrint(5, y++, curse == 10 ? fontColorRed : fontColorWhite, 3, "Sharpness");
-		fixPrint(5, y++, curse == 11 ? fontColorRed : fontColorWhite, 3, "Convergence");
+		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, fbase, "Pluge");
+		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, fbase, "Color Bars");
+		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, fbase, "EBU Color Bars");
+		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, fbase, "SMPTE Color Bars");
+		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, fbase, "Referenced Color Bars");
+		fixPrint(5, y++, curse == 6 ? fontColorRed : fontColorWhite, fbase, "Color Bleed Check");
+		fixPrint(5, y++, curse == 7 ? fontColorRed : fontColorWhite, fbase, "Gray Ramp");
+		fixPrint(5, y++, curse == 8 ? fontColorRed : fontColorWhite, fbase, "White & RGB Screens");
+		fixPrint(5, y++, curse == 9 ? fontColorRed : fontColorWhite, fbase, "100 IRE");
+		fixPrint(5, y++, curse == 10 ? fontColorRed : fontColorWhite, fbase, "Sharpness");
 		y += 2;
-		fixPrint(5, y++, curse == 12 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, y++, curse == 13 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, y++, curse == 11 ? fontColorRed : fontColorWhite, fbase, "Help");
+		fixPrint(5, y++, curse == 12 ? fontColorRed : fontColorWhite, fbase, "Back to Main Menu");
 
 		menu_footer();
 
@@ -156,14 +156,10 @@ void menu_tp_colormenu()
 				break;
 
 				case 11:
-					tp_convergence();
-				break;
-
-				case 12:
 					DrawHelp(HELP_GENERAL);
 				break;
 
-				case 13:
+				case 12:
 					done = 1;
 				break;
 			}
@@ -175,7 +171,7 @@ void menu_tp_colormenu()
 
 void menu_tp_geometrymenu()
 {
-	int done = 0, curse = 1, cursemax = 5, redraw = 1;
+	int done = 0, curse = 1, cursemax = 6, redraw = 1;
 	blinker blinkdata;
 
 	while (!done)
@@ -198,12 +194,13 @@ void menu_tp_geometrymenu()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(x, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Monoscope");
-		fixPrint(x, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "Grid");;
-		fixPrint(x, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "Overscan");
+		fixPrint(x, y++, curse == 1 ? fontColorRed : fontColorWhite, fbase, "Monoscope");
+		fixPrint(x, y++, curse == 2 ? fontColorRed : fontColorWhite, fbase, "Grid");;
+		fixPrint(x, y++, curse == 3 ? fontColorRed : fontColorWhite, fbase, "Overscan");
+		fixPrint(x, y++, curse == 4 ? fontColorRed : fontColorWhite, fbase, "Convergence");
 		y+= 2;
-		fixPrint(x, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(x, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(x, y++, curse == 5 ? fontColorRed : fontColorWhite, fbase, "Help");
+		fixPrint(x, y++, curse == 6 ? fontColorRed : fontColorWhite, fbase, "Back to Main Menu");
 
 		menu_footer();
 
@@ -235,6 +232,10 @@ void menu_tp_geometrymenu()
 				break;
 
 				case 5:
+					tp_convergence();
+				break;
+
+				case 6:
 					done = 1;
 				break;
 			}
@@ -269,12 +270,12 @@ void menu_tp()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Color & Black Levels");
-		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "Geometry");
-		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "HCFR Patterns");
+		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, fbase, "Color & Black Levels");
+		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, fbase, "Geometry");
+		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, fbase, "HCFR Patterns");
 		y+=2;
-		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, fbase, "Help");
+		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, fbase, "Back to Main Menu");
 
 		menu_footer();
 
@@ -338,20 +339,20 @@ void menu_vt()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, 10, curse == 1 ? fontColorRed : fontColorWhite, 3, "Drop Shadow Test");
-		fixPrint(5, 11, curse == 2 ? fontColorRed : fontColorWhite, 3, "Striped Sprite Test");
-		fixPrint(5, 12, curse == 3 ? fontColorRed : fontColorWhite, 3, "Lag Test");
-		fixPrint(5, 13, curse == 4 ? fontColorRed : fontColorWhite, 3, "Timing & Reflex Test");
-		fixPrint(5, 14, curse == 5 ? fontColorRed : fontColorWhite, 3, "Scroll Test");
-		fixPrint(5, 15, curse == 6 ? fontColorRed : fontColorWhite, 3, "Grid Scroll Test");
-		fixPrint(5, 16, curse == 7 ? fontColorRed : fontColorWhite, 3, "Horizontal Stripes");
-		fixPrint(5, 17, curse == 8 ? fontColorRed : fontColorWhite, 3, "Vertical Stripes");
-		fixPrint(5, 18, curse == 9 ? fontColorRed : fontColorWhite, 3, "Checkerboard");
-		fixPrint(5, 19, curse == 10 ? fontColorRed : fontColorWhite, 3, "Backlit Zone Test");
-		fixPrint(5, 20, curse == 11 ? fontColorRed : fontColorWhite, 3, "Disappearing Logo");
+		fixPrint(5, 10, curse == 1 ? fontColorRed : fontColorWhite, fbase, "Drop Shadow Test");
+		fixPrint(5, 11, curse == 2 ? fontColorRed : fontColorWhite, fbase, "Striped Sprite Test");
+		fixPrint(5, 12, curse == 3 ? fontColorRed : fontColorWhite, fbase, "Lag Test");
+		fixPrint(5, 13, curse == 4 ? fontColorRed : fontColorWhite, fbase, "Timing & Reflex Test");
+		fixPrint(5, 14, curse == 5 ? fontColorRed : fontColorWhite, fbase, "Scroll Test");
+		fixPrint(5, 15, curse == 6 ? fontColorRed : fontColorWhite, fbase, "Grid Scroll Test");
+		fixPrint(5, 16, curse == 7 ? fontColorRed : fontColorWhite, fbase, "Horizontal Stripes");
+		fixPrint(5, 17, curse == 8 ? fontColorRed : fontColorWhite, fbase, "Vertical Stripes");
+		fixPrint(5, 18, curse == 9 ? fontColorRed : fontColorWhite, fbase, "Checkerboard");
+		fixPrint(5, 19, curse == 10 ? fontColorRed : fontColorWhite, fbase, "Backlit Zone Test");
+		fixPrint(5, 20, curse == 11 ? fontColorRed : fontColorWhite, fbase, "Disappearing Logo");
 
-		fixPrint(5, 22, curse == 12 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, 23, curse == 13 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, 22, curse == 12 ? fontColorRed : fontColorWhite, fbase, "Help");
+		fixPrint(5, 23, curse == 13 ? fontColorRed : fontColorWhite, fbase, "Back to Main Menu");
 
 		menu_footer();
 
@@ -447,12 +448,12 @@ void menu_at()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, 14, curse == 1 ? fontColorRed : fontColorWhite, 3, "Sound Test");
-		fixPrint(5, 15, curse == 2 ? fontColorRed : fontColorWhite, 3, "Audio Sync Test");
-		fixPrint(5, 16, curse == 3 ? fontColorRed : fontColorWhite, 3, "MDFourier");
+		fixPrint(5, 14, curse == 1 ? fontColorRed : fontColorWhite, fbase, "Sound Test");
+		fixPrint(5, 15, curse == 2 ? fontColorRed : fontColorWhite, fbase, "Audio Sync Test");
+		fixPrint(5, 16, curse == 3 ? fontColorRed : fontColorWhite, fbase, "MDFourier");
 
-		fixPrint(5, 18, curse == 4 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, 19, curse == 5 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, 18, curse == 4 ? fontColorRed : fontColorWhite, fbase, "Help");
+		fixPrint(5, 19, curse == 5 ? fontColorRed : fontColorWhite, fbase, "Back to Main Menu");
 
 		menu_footer();
 
@@ -534,16 +535,16 @@ void menu_ht()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, 3, "Controller Test");
-		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, 3, "BIOS Info");
-		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, 3, "Z80 RAM test");
-		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, 3, "Memory Viewer");
-		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, 3, "Register View");
+		fixPrint(5, y++, curse == 1 ? fontColorRed : fontColorWhite, fbase, "Controller Test");
+		fixPrint(5, y++, curse == 2 ? fontColorRed : fontColorWhite, fbase, "BIOS Info");
+		fixPrint(5, y++, curse == 3 ? fontColorRed : fontColorWhite, fbase, "Z80 RAM test");
+		fixPrint(5, y++, curse == 4 ? fontColorRed : fontColorWhite, fbase, "Memory Viewer");
+		fixPrint(5, y++, curse == 5 ? fontColorRed : fontColorWhite, fbase, "Register View");
 		if (debug)
-			fixPrint(5, y++, curse == 6 ? fontColorRed : fontColorWhite, 3, "Internal Vars");
+			fixPrint(5, y++, curse == 6 ? fontColorRed : fontColorWhite, fbase, "Internal Vars");
 		y++;
-		fixPrint(5, y++, curse == 6 + debug ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(5, y++, curse == 7 + debug ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrint(5, y++, curse == 6 + debug ? fontColorRed : fontColorWhite, fbase, "Help");
+		fixPrint(5, y++, curse == 7 + debug ? fontColorRed : fontColorWhite, fbase, "Back to Main Menu");
 
 		menu_footer();
 
@@ -616,35 +617,37 @@ void credits()
 			darken_palette(half_pal, 4);
 			palJobPut(16, 1, half_pal);
 
-			fixPrint(x+24, y, fontColorGreen, 3, "Ver. 0.93");
-			fixPrint(x+24, y+1, fontColorWhite, 3, "12/04/2022");
-			fixPrint(x, y++, fontColorGreen, 3, "Code by:");
-			fixPrint(x+1, y++, fontColorWhite, 3, "Dustin Dembrosky");
-			fixPrint(x+1, y++, fontColorWhite, 3, "Artemio Urbina");
-			fixPrint(x, y++, fontColorGreen, 3, "Monoscope based on:");
-			fixPrint(x+1, y++, fontColorWhite, 3, "Keith Raney");
-			fixPrint(x, y++, fontColorGreen, 3, "Donna created and drawn by:");
-			fixPrint(x+1, y++, fontColorWhite, 3, "Jose Salot");
-			fixPrint(x, y++, fontColorGreen, 3, "Menu Pixel Art:");
-			fixPrint(x+1, y++, fontColorWhite, 3, "Asher");
-			fixPrint(x, y++, fontColorGreen, 3, "Neo Geo SDK:");
-			fixPrint(x+1, y++, fontColorWhite, 3, "NeoDev (Jeff Kurtz)");
-			fixPrint(x, y++, fontColorGreen, 3, "Graphics Library");
-			fixPrint(x+1, y++, fontColorWhite, 3, "DATlib (HPMAN)");
-			fixPrint(x, y++, fontColorGreen, 3, "Z80 Sound Driver:");
-			fixPrint(x+1, y++, fontColorWhite, 3, "Based on freem ADPCM example");
+			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 0.94");
+			fixPrint(x+24, y+1, fontColorWhite, fbase, "29/01/2023");
+			fixPrint(x, y++, fontColorGreen, fbase, "Code by:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "Dustin Dembrosky");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "Artemio Urbina");
+			fixPrint(x, y++, fontColorGreen, fbase, "Monoscope based on:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "Keith Raney");
+			fixPrint(x, y++, fontColorGreen, fbase, "Donna created and drawn by:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "Jose Salot");
+			fixPrint(x, y++, fontColorGreen, fbase, "Menu Pixel Art:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "Asher");
+			fixPrint(x, y++, fontColorGreen, fbase, "Neo Geo SDK:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "NeoDev (Jeff Kurtz)");
+			fixPrint(x, y++, fontColorGreen, fbase, "Graphics Library");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "DATlib (HPMAN)");
+			fixPrint(x, y++, fontColorGreen, fbase, "Z80 Sound Driver:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "Based on freem ADPCM example");
+			fixPrint(x, y++, fontColorGreen, fbase, "Hardware by:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "Herzmx");
 #ifndef __cd__
-			fixPrint(x, y++, fontColorGreen, 3, "MVS flashcart provided by:");
-			fixPrint(x+1, y++, fontColorWhite, 3, "MobiusStripTech & Jose Cruz");
-			fixPrint(x, y++, fontColorGreen, 3, "AES flashcart borrowed from:");
-			fixPrint(x+1, y++, fontColorWhite, 3, "El Diablo (Jorge Velazquez)");
+			fixPrint(x, y++, fontColorGreen, fbase, "MVS flashcart provided by:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "MobiusStripTech & Jose Cruz");
+			fixPrint(x, y++, fontColorGreen, fbase, "AES flashcart borrowed from:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "El Diablo (Jorge Velazquez)");
 #else
-			fixPrint(x, y++, fontColorGreen, 3, "Neo Geo CDZ borrowed from:");
-			fixPrint(x+1, y++, fontColorWhite, 3, "Rolando Cedillo");
+			fixPrint(x, y++, fontColorGreen, fbase, "Neo Geo CDZ borrowed from:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "Rolando Cedillo");
 #endif
 			y++;
-			fixPrint(5, y++, fontColorGreen, 3, "Info on using this test suite:");
-			fixPrint(6, y, fontColorWhite, 3, "http://junkerhq.net/240p");
+			fixPrint(5, y++, fontColorGreen, fbase, "Info on using this test suite:");
+			fixPrint(6, y, fontColorWhite, fbase, "http://junkerhq.net/240p");
 			draw = 0;
 		}
 		
@@ -755,16 +758,16 @@ void menu_main()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(6, 12, curse == 1 ? fontColorRed : fontColorWhite, 3, "Test Patterns");
-		fixPrint(6, 13, curse == 2 ? fontColorRed : fontColorWhite, 3, "Video Tests");
-		fixPrint(6, 14, curse == 3 ? fontColorRed : fontColorWhite, 3, "Audio Tests");
-		fixPrint(6, 15, curse == 4 ? fontColorRed : fontColorWhite, 3, "Hardware Tools");
+		fixPrint(6, 12, curse == 1 ? fontColorRed : fontColorWhite, fbase, "Test Patterns");
+		fixPrint(6, 13, curse == 2 ? fontColorRed : fontColorWhite, fbase, "Video Tests");
+		fixPrint(6, 14, curse == 3 ? fontColorRed : fontColorWhite, fbase, "Audio Tests");
+		fixPrint(6, 15, curse == 4 ? fontColorRed : fontColorWhite, fbase, "Hardware Tools");
 
-		fixPrint(6, 19, curse == 5 ? fontColorRed : fontColorWhite, 3, "Help");
-		fixPrint(6, 20, curse == 6 ? fontColorRed : fontColorWhite, 3, "Credits");
-		fixPrint(6, 21, curse == 7 ? fontColorRed : fontColorWhite, 3, "Options");
+		fixPrint(6, 19, curse == 5 ? fontColorRed : fontColorWhite, fbase, "Help");
+		fixPrint(6, 20, curse == 6 ? fontColorRed : fontColorWhite, fbase, "Credits");
+		fixPrint(6, 21, curse == 7 ? fontColorRed : fontColorWhite, fbase, "Options");
 		if (showexit)
-			fixPrint(6, 22, curse == 8 ? fontColorRed : fontColorWhite, 3, "Exit");
+			fixPrint(6, 22, curse == 8 ? fontColorRed : fontColorWhite, fbase, "Exit");
 
 		menu_footer();
 
@@ -837,7 +840,7 @@ void draw_demo()
 
 	load_blinkdata(&blinkdata, &index, &palindex, 132, 50);
 
-	fixPrint(10, 26, fontColorSolid, 4, "2022 Dasutin/Artemio");
+	fixPrint(10, 26, fontColorSolid, fbase+1, "2022 Dasutin/Artemio");
 
 	demo_change = 1;
 	while (demo_frames)
@@ -899,12 +902,12 @@ void draw_demo()
 		readController();
 
 		if (toggle == 30)
-			fixPrint(14, 23, fontColorWhite, 3, "            ");
+			fixPrint(14, 23, fontColorWhite, fbase, "            ");
 		if (toggle == 0)
-			fixPrint(14, 23, fontColorRed, 3, pressStart ? "PRESS  START" : "INSERT COIN");
+			fixPrint(14, 23, fontColorRed, fbase, pressStart ? "PRESS  START" : "INSERT COIN");
 
 		if (isMVS)
-			fixPrintf(28, 28, fontColorSolid, 4, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
+			fixPrintf(28, 28, fontColorSolid, fbase+1, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 		
 		toggle ++;
 		if (toggle > 60)
@@ -958,7 +961,7 @@ void draw_mvs_title()
 
 	load_blinkdata(&blinkdata, &index, &palindex, 132, 50);
 
-	fixPrint(10, 26, fontColorWhite, 3, "2022 Dasutin/Artemio");
+	fixPrint(10, 26, fontColorWhite, fbase, "2022 Dasutin/Artemio");
 
 	while (1)
 	{
@@ -974,18 +977,18 @@ void draw_mvs_title()
 		freeplay = getHardDipValue(DP_FREE);
 
 		if (toggle == 30)
-			fixPrint(14, 23, fontColorRed, 3, "            ");
+			fixPrint(14, 23, fontColorRed, fbase, "            ");
 		if (toggle == 0)
-			fixPrint(14, 23, fontColorRed, 3, "PRESS  START");
+			fixPrint(14, 23, fontColorRed, fbase, "PRESS  START");
 
 		if (!freeplay)
 		{
 			bios_timer = bcdToDec(volMEMBYTE(BIOS_COMP_TIME));
-			fixPrintf(16, 28, fontColorWhite, 3, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
+			fixPrintf(16, 28, fontColorWhite, fbase, "TIME:%02d", bios_timer); // BIOS-COMPULSION-TIMER - timer for forced game start
 		}
 		
 		credits = getCreditCount();
-		fixPrintf(28, 28, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
+		fixPrintf(28, 28, fontColorWhite, fbase, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 		
 		toggle ++;
 		if (toggle > 60)
@@ -1020,6 +1023,8 @@ void check_bios_init()
 	// If some other game in a multi system enabled dark mode, disable it
 	volMEMBYTE(REG_NOSHADOW) = 1;
 
+	// default font
+	fbase = 3;
 	// Set default global values
 	first_grid = 1;
 	first_overscan = 1;

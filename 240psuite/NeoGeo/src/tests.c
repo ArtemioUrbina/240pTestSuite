@@ -264,10 +264,10 @@ void vt_drop_shadow_test()
 		// Only display vestigial info if debug dip 1 is ON
 		if (DEBUG_ENABLED)
 		{
-			fixPrintf(10, 16, fontColorWhite, 3, "X:    %04d", x);
-			fixPrintf(10, 17, fontColorWhite, 3, "Y:    %04d", y);
-			fixPrintf(10, 18, fontColorWhite, 3, "Spr:  %04d", spr_type);
-			fixPrintf(10, 19, fontColorWhite, 3, "Back: %04d", back);
+			fixPrintf(10, 16, fontColorWhite, fbase, "X:    %04d", x);
+			fixPrintf(10, 17, fontColorWhite, fbase, "Y:    %04d", y);
+			fixPrintf(10, 18, fontColorWhite, fbase, "Spr:  %04d", spr_type);
+			fixPrintf(10, 19, fontColorWhite, fbase, "Back: %04d", back);
 		}
 
 		SCClose();
@@ -290,7 +290,7 @@ void vt_drop_shadow_test()
 		{
 			drawshadow = !drawshadow;
 			evenframes = !evenframes;
-			fixPrintf(16, 3, fontColorGreen, 3, "Shadow in %s frames ", evenframes ? "even" : "odd" );
+			fixPrintf(16, 3, fontColorGreen, fbase, "Shadow in %s frames ", evenframes ? "even" : "odd" );
 			text = 120;
 		}
 
@@ -475,9 +475,9 @@ void vt_striped_sprite_test()
 		// Only display vestigial info if debug dip 1 is ON
 		if (DEBUG_ENABLED)
 		{
-			fixPrintf(10, 16, fontColorWhite, 3, "X:    %04d", x);
-			fixPrintf(10, 17, fontColorWhite, 3, "Y:    %04d", y);
-			fixPrintf(10, 18, fontColorWhite, 3, "Back: %04d", back);
+			fixPrintf(10, 16, fontColorWhite, fbase, "X:    %04d", x);
+			fixPrintf(10, 17, fontColorWhite, fbase, "Y:    %04d", y);
+			fixPrintf(10, 18, fontColorWhite, fbase, "Back: %04d", back);
 		}
 
 		pictureSetPos(&sprite, x-16, y-16);
@@ -542,10 +542,10 @@ int loadStopWatch(int drawCircles, int sprindex)
 		VRAM_PAL(16, 1) = GRN100;
 	}
 
-	fixPrint(4, 3, drawCircles ? fontColorBlack : fontColorGreen, 3, "hours");
-	fixPrint(13, 3, drawCircles ? fontColorBlack : fontColorGreen, 3, "minutes");
-	fixPrint(22, 3, drawCircles ? fontColorBlack : fontColorGreen, 3, "seconds");
-	fixPrint(31, 3, drawCircles ? fontColorBlack : fontColorGreen, 3, "frames");
+	fixPrint(4, 3, drawCircles ? fontColorBlack : fontColorGreen, fbase, "hours");
+	fixPrint(13, 3, drawCircles ? fontColorBlack : fontColorGreen, fbase, "minutes");
+	fixPrint(22, 3, drawCircles ? fontColorBlack : fontColorGreen, fbase, "seconds");
+	fixPrint(31, 3, drawCircles ? fontColorBlack : fontColorGreen, fbase, "frames");
 
 	pictureInit(&sep[0], &separator, sprindex, 16, 76, 19, FLIP_NONE);
 	sprindex += getPicSprites(sep[0].info);
@@ -764,12 +764,12 @@ void vt_reflex_test()
 			pictureHide(&marker2);
 			pictureShow(&marker3);
 
-			fixPrint(2, 23, fontColorGreen, 3, "Press the \"A\" button when the sprite");
-			fixPrint(2, 24, fontColorGreen, 3, "is aligned. A negative value means");
-			fixPrint(2, 25, fontColorGreen, 3, "you pressed \"A\" before they intersect.");
-			fixPrint(2, 26, fontColorGreen, 3, "\"C\" button toggles horz/vert");
-			fixPrint(2, 27, fontColorGreen, 3, "\"D\" button toggles audio");
-			fixPrint(2, 28, fontColorGreen, 3, "DOWN toggles random/rhythmic");
+			fixPrint(2, 23, fontColorGreen, fbase, "Press the \"A\" button when the sprite");
+			fixPrint(2, 24, fontColorGreen, fbase, "is aligned. A negative value means");
+			fixPrint(2, 25, fontColorGreen, fbase, "you pressed \"A\" before they intersect.");
+			fixPrint(2, 26, fontColorGreen, fbase, "\"C\" button toggles horz/vert");
+			fixPrint(2, 27, fontColorGreen, fbase, "\"D\" button toggles audio");
+			fixPrint(2, 28, fontColorGreen, fbase, "DOWN toggles random/rhythmic");
 
 			loadvram = 0;
 			draw = 1;
@@ -792,16 +792,16 @@ void vt_reflex_test()
 
 					ppos = i + 1;
 					intToStr(ppos, str, 1);
-					fixPrint(2, i+2, fontColorWhite, 3, "Offset");
-					fixPrint(9, i+2, fontColorWhite, 3, str);
-					fixPrint(i == 9 ? 11 : 10, i+2, fontColorWhite, 3, ":");
+					fixPrint(2, i+2, fontColorWhite, fbase, "Offset");
+					fixPrint(9, i+2, fontColorWhite, fbase, str);
+					fixPrint(i == 9 ? 11 : 10, i+2, fontColorWhite, fbase, ":");
 					intToStr(clicks[i], str, 1);
-					fixPrint(i == 9 ? 13 : 12, i+2, pal, 3, str);
+					fixPrint(i == 9 ? 13 : 12, i+2, pal, fbase, str);
 					ppos = strlen(str);
 					if (clicks[i] == 1)
-						fixPrint(pos == 9 ? 13 : 12 + ppos, i+2, pal, 3, " frame    ");
+						fixPrint(pos == 9 ? 13 : 12 + ppos, i+2, pal, fbase, " frame    ");
 					else
-						fixPrint(pos == 9 ? 13 : 12 + ppos, i+2, pal, 3, " frames   ");
+						fixPrint(pos == 9 ? 13 : 12 + ppos, i+2, pal, fbase, " frames   ");
 				}
 			}
 		}
@@ -907,17 +907,17 @@ void vt_reflex_test()
 
 			ppos = pos + 1;
 			intToStr(ppos, str, 1);
-			fixPrint(2, pos+2, fontColorWhite, 3, "Offset");
-			fixPrint(9, pos+2, fontColorWhite, 3, str);
-			fixPrint( pos == 9 ? 11 : 10, pos+2, fontColorWhite, 3, ":");
+			fixPrint(2, pos+2, fontColorWhite, fbase, "Offset");
+			fixPrint(9, pos+2, fontColorWhite, fbase, str);
+			fixPrint( pos == 9 ? 11 : 10, pos+2, fontColorWhite, fbase, ":");
 			intToStr(clicks[pos], str, 1);
-			fixPrint(pos == 9 ? 13 : 12, pos+2, pal, 3, str);
+			fixPrint(pos == 9 ? 13 : 12, pos+2, pal, fbase, str);
 			ppos = strlen(str);
 
 			if (clicks[pos] == 1)
-				fixPrint(pos == 9 ? 13 : 12 + ppos, pos+2, pal, 3, " frame    ");
+				fixPrint(pos == 9 ? 13 : 12 + ppos, pos+2, pal, fbase, " frame    ");
 			else
-				fixPrint(pos == 9 ? 13 : 12 + ppos, pos+2, pal, 3, " frames   ");
+				fixPrint(pos == 9 ? 13 : 12 + ppos, pos+2, pal, fbase, " frames   ");
 
 			if (clicks[pos] >= 0)
 				pos++;
@@ -930,17 +930,17 @@ void vt_reflex_test()
 
 		if (draw)
 		{
-			fixPrint(24, 2, fontColorWhite, 3, "Audio:");
+			fixPrint(24, 2, fontColorWhite, fbase, "Audio:");
 			if (audio)
-				fixPrint(31, 2, fontColorWhite, 3, "on ");
+				fixPrint(31, 2, fontColorWhite, fbase, "on ");
 			else
-				fixPrint(31, 2, fontColorWhite, 3, "off");
+				fixPrint(31, 2, fontColorWhite, fbase, "off");
 
-			fixPrint(24, 3, fontColorWhite, 3, "Timing:");
+			fixPrint(24, 3, fontColorWhite, fbase, "Timing:");
 			if (variation)
-				fixPrint(32, 3, fontColorWhite, 3, "random  ");
+				fixPrint(32, 3, fontColorWhite, fbase, "random  ");
 			else
-				fixPrint(32, 3, fontColorWhite, 3, "rhythmic");
+				fixPrint(32, 3, fontColorWhite, fbase, "rhythmic");
 			draw = 0;
 		}
 
@@ -1032,54 +1032,54 @@ void vt_reflex_test()
 					count++;
 				}
 			}
-			fixPrint(10, c + 9, pal, 3, str);
+			fixPrint(10, c + 9, pal, fbase, str);
 		}
 
-		fixPrint(8, 13, fontColorGreen, 3, "+");
+		fixPrint(8, 13, fontColorGreen, fbase, "+");
 
 		if (count > 0)
 		{
 			u16 h = 10, v = 20;
 			fix32 framerate = isPAL ? FIX32(19.8298) : isMVS ? FIX32(16.8960) : FIX32(16.7788);
-			fixPrint(h - 2, v++, fontColorWhite, 3, "----");
+			fixPrint(h - 2, v++, fontColorWhite, fbase, "----");
 
 			cnt = intToFix32(count);
 			tot = intToFix32(total);
 
 			intToStr(total, str, 1);
-			fixPrint(h, v, fontColorWhite, 3, str);
+			fixPrint(h, v, fontColorWhite, fbase, str);
 			h += strlen(str);
-			fixPrint(h++, v, fontColorGreen, 3, "/");
+			fixPrint(h++, v, fontColorGreen, fbase, "/");
 
 			intToStr(count, str, 1);
-			fixPrint(h, v, fontColorWhite, 3, str);
+			fixPrint(h, v, fontColorWhite, fbase, str);
 			h += strlen(str);
-			fixPrint(h++, v, fontColorGreen, 3, "=");
+			fixPrint(h++, v, fontColorGreen, fbase, "=");
 
 			totald = fix32Div(tot, cnt);
 			fix32ToStr(totald, str, 4);
-			fixPrint(h, v, fontColorWhite, 3, str);
+			fixPrint(h, v, fontColorWhite, fbase, str);
 			h += strlen(str);
 			h -= 2;
-			fixPrint(h, v, fontColorWhite, 3, "frames");
-			fixPrint(5, (++v)+1, fontColorWhite, 3, "These are your reflexes, not a");
-			fixPrint(5, (++v)+1, fontColorWhite, 3, "lag test. A frame is");
+			fixPrint(h, v, fontColorWhite, fbase, "frames");
+			fixPrint(5, (++v)+1, fontColorWhite, fbase, "These are your reflexes, not a");
+			fixPrint(5, (++v)+1, fontColorWhite, fbase, "lag test. A frame is");
 			fix32ToStr(framerate, str, 6);
-			fixPrint(26, v+1, fontColorWhite, 3, str);
-			fixPrint(32, v+1, fontColorWhite, 3, "ms.");
+			fixPrint(26, v+1, fontColorWhite, fbase, str);
+			fixPrint(32, v+1, fontColorWhite, fbase, "ms.");
 
 			h = 14, v = 14;
 			cnt = fix32Mul(totald, framerate);
 			fix32ToStr(cnt, str, 2);
-			fixPrint(h, v, fontColorRed, 3, str);
+			fixPrint(h, v, fontColorRed, fbase, str);
 			h += strlen(str);
-			fixPrint(h, v, fontColorWhite, 3, " milliseconds");
+			fixPrint(h, v, fontColorWhite, fbase, " milliseconds");
 
 			if (total < 5)
-				fixPrint(14, 17, fontColorGreen, 3, "EXCELLENT REFLEXES!");
+				fixPrint(14, 17, fontColorGreen, fbase, "EXCELLENT REFLEXES!");
 
 			if (total == 0)
-				fixPrint(14, 17, fontColorGreen, 3, "INCREDIBLE REFLEXES!!");
+				fixPrint(14, 17, fontColorGreen, fbase, "INCREDIBLE REFLEXES!!");
 		}
 
 		done = 0;
@@ -1208,12 +1208,12 @@ void vt_scroll_test()
 		// Only display vestigial info if debug dip 1 is ON
 		if (DEBUG_ENABLED)
 		{
-			fixPrintf(10, 16, fontColorWhite, 3, "X1:   %04d", x1);
-			fixPrintf(10, 17, fontColorWhite, 3, "X2:   %04d", x2);
-			fixPrintf(10, 18, fontColorWhite, 3, "X3:   %04d", x3);
-			fixPrintf(10, 19, fontColorWhite, 3, "XV:   %04d", xvert[currxvert]);
-			fixPrintf(10, 20, fontColorWhite, 3, "Y:    %04d", y);
-			fixPrintf(10, 21, fontColorWhite, 3, "acc:  %04d", acc);
+			fixPrintf(10, 16, fontColorWhite, fbase, "X1:   %04d", x1);
+			fixPrintf(10, 17, fontColorWhite, fbase, "X2:   %04d", x2);
+			fixPrintf(10, 18, fontColorWhite, fbase, "X3:   %04d", x3);
+			fixPrintf(10, 19, fontColorWhite, fbase, "XV:   %04d", xvert[currxvert]);
+			fixPrintf(10, 20, fontColorWhite, fbase, "Y:    %04d", y);
+			fixPrintf(10, 21, fontColorWhite, fbase, "acc:  %04d", acc);
 		}
 
 		SCClose();
@@ -1313,12 +1313,12 @@ void vt_gridscroll_test()
 
 		if (DEBUG_ENABLED)
 		{
-			fixPrintf(10, 12, fontColorSolid, 4, "X:      %04d", x);
-			fixPrintf(10, 13, fontColorSolid, 4, "Y:      %04d", y);
-			fixPrintf(10, 14, fontColorSolid, 4, "Hor:    %04d", horizontal);
-			fixPrintf(10, 15, fontColorSolid, 4, "Dir:    %04d", direction);
-			fixPrintf(10, 16, fontColorSolid, 4, "Acc:    %04d", acc);
-			fixPrintf(10, 17, fontColorSolid, 4, "Pause:  %04d", pause);
+			fixPrintf(10, 12, fontColorSolid, fbase+1, "X:      %04d", x);
+			fixPrintf(10, 13, fontColorSolid, fbase+1, "Y:      %04d", y);
+			fixPrintf(10, 14, fontColorSolid, fbase+1, "Hor:    %04d", horizontal);
+			fixPrintf(10, 15, fontColorSolid, fbase+1, "Dir:    %04d", direction);
+			fixPrintf(10, 16, fontColorSolid, fbase+1, "Acc:    %04d", acc);
+			fixPrintf(10, 17, fontColorSolid, fbase+1, "Pause:  %04d", pause);
 		}
 
 		SCClose();
@@ -1408,7 +1408,7 @@ void vt_horizontal_stripes()
 					frames = 0;
 			}
 
-			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrintf(2, 25, fontColorSolid, fbase+1, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		SCClose();
@@ -1485,7 +1485,7 @@ void vt_vertical_stripes()
 					frames = 0;
 			}
 
-			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrintf(2, 25, fontColorSolid, fbase+1, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		SCClose();
@@ -1562,7 +1562,7 @@ void vt_checkerboard()
 					frames = 0;
 			}
 
-			fixPrintf(2, 25, fontColorSolid, 4, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
+			fixPrintf(2, 25, fontColorSolid, fbase+1, "Frame: %02d", frames); // Use font1 in fix bank 4 for solid background font - Fix palette 4
 		}
 
 		SCClose();

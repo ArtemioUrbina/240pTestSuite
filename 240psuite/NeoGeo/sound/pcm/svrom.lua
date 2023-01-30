@@ -390,8 +390,7 @@ if pcmaListFN then
 
 		-- check if adding current file to bank would cause overflow
 		if (v.Length + curBankSize) > 1024*1024 then
-			print("------------------------------------------------")
-			print(string.format("PCMA bank %d: add %s (overflow from bank %d)",curBankNum+1,v.File,curBankNum))
+			print(string.format("PCMA bank %d: add %s (overflow from bank %d by %d bytes) <=== ",curBankNum+1,v.File,curBankNum,(v.Length+curBankSize)-(1024*1024)))
 			-- needs to go to next bank
 			curBankNum = curBankNum + 1
 			curBankSize = v.Length

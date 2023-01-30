@@ -35,25 +35,25 @@
 
 inline void DrawController(u16 x, u16 y, BYTE input, BYTE start, BYTE ps, BYTE select, BYTE mvscredit, BYTE credit)
 {
-	fixPrint(x+4, y,   input & JOY_UP ? fontColorRed : fontColorWhite, 3, "Up");
-	fixPrint(x,   y+1, input & JOY_LEFT ? fontColorRed : fontColorWhite, 3, "Left");
-	fixPrint(x+6, y+1, input & JOY_RIGHT ? fontColorRed : fontColorWhite, 3, "Right");
-	fixPrint(x+3, y+2, input & JOY_DOWN ? fontColorRed : fontColorWhite, 3, "Down");
+	fixPrint(x+4, y,   input & JOY_UP ? fontColorRed : fontColorWhite, fbase, "Up");
+	fixPrint(x,   y+1, input & JOY_LEFT ? fontColorRed : fontColorWhite, fbase, "Left");
+	fixPrint(x+6, y+1, input & JOY_RIGHT ? fontColorRed : fontColorWhite, fbase, "Right");
+	fixPrint(x+3, y+2, input & JOY_DOWN ? fontColorRed : fontColorWhite, fbase, "Down");
 
-	fixPrint(x+13, y, ps & start ? fontColorRed : fontColorWhite, 3, "Start");
+	fixPrint(x+13, y, ps & start ? fontColorRed : fontColorWhite, fbase, "Start");
 	if (isMVS)
 	{
 		// Alow drawing select with MVS1F which have AES ports and UNIBIOS in AES mode
-		fixPrint(x+13, y+1, ps & select ? fontColorRed : fontColorWhite, 3, ps & select ? "Select" : "      ");
-		fixPrint(x+13, y+2, !(mvscredit & credit) ? fontColorRed : fontColorWhite, 3, "Credit");
+		fixPrint(x+13, y+1, ps & select ? fontColorRed : fontColorWhite, fbase, ps & select ? "Select" : "      ");
+		fixPrint(x+13, y+2, !(mvscredit & credit) ? fontColorRed : fontColorWhite, fbase, "Credit");
 	}
 	else
-		fixPrint(x+13, y+2, ps & select ? fontColorRed : fontColorWhite, 3, "Select");
+		fixPrint(x+13, y+2, ps & select ? fontColorRed : fontColorWhite, fbase, "Select");
 
-	fixPrint(x+22, y+1, input & JOY_A ? fontColorRed : fontColorWhite, 3, "A");
-	fixPrint(x+23, y+1, input & JOY_B ? fontColorRed : fontColorWhite, 3, "B");
-	fixPrint(x+24, y+1, input & JOY_C ? fontColorRed : fontColorWhite, 3, "C");
-	fixPrint(x+25, y+1, input & JOY_D ? fontColorRed : fontColorWhite, 3, "D");
+	fixPrint(x+22, y+1, input & JOY_A ? fontColorRed : fontColorWhite, fbase, "A");
+	fixPrint(x+23, y+1, input & JOY_B ? fontColorRed : fontColorWhite, fbase, "B");
+	fixPrint(x+24, y+1, input & JOY_C ? fontColorRed : fontColorWhite, fbase, "C");
+	fixPrint(x+25, y+1, input & JOY_D ? fontColorRed : fontColorWhite, fbase, "D");
 }
 
 #define DC_X	7
@@ -114,11 +114,11 @@ void ht_controller_test()
 		if (isMVS)
 		{
 			if(!AES_AS_MVS)
-				fixPrint(29, 8, !(mvscredit & MVS_SERV_B) ? fontColorRed : fontColorWhite, 3, "Service");
+				fixPrint(29, 8, !(mvscredit & MVS_SERV_B) ? fontColorRed : fontColorWhite, fbase, "Service");
 			if (is4S || is6S)
 			{
-				fixPrint(4,  24, !(mvssel & MVS_SEL1) ? fontColorRed : fontColorWhite, 3, "Sel 1");
-				fixPrint(31, 24, !(mvssel & MVS_SEL2) ? fontColorRed : fontColorWhite, 3, "Sel 2");
+				fixPrint(4,  24, !(mvssel & MVS_SEL1) ? fontColorRed : fontColorWhite, fbase, "Sel 1");
+				fixPrint(31, 24, !(mvssel & MVS_SEL2) ? fontColorRed : fontColorWhite, fbase, "Sel 2");
 			}
 		}
 
@@ -139,7 +139,7 @@ void ht_controller_test()
 			DrawController(DC_X, y, p2b, P2B_START, ps, P2B_SELECT, mvscredit, P4_CREDIT);
 		}
 
-		fixPrint(9, 26, fontColorGreen, 3, "Use START+LEFT to exit");
+		fixPrint(9, 26, fontColorGreen, fbase, "Use START+LEFT to exit");
 
 		if (HELD_START && HELD_LEFT)
 			done = 1;
@@ -278,14 +278,14 @@ void ht_memory_viewer(u32 address)
 				crc = CalculateCRC(address, 0x1C0);
 
 			intToHex(address, buffer, 8);
-			fixPrint(32-start, 2, fontColorRed, 3, buffer);
+			fixPrint(32-start, 2, fontColorRed, fbase, buffer);
 			intToHex(address+448, buffer, 8);
-			fixPrint(32-start, 29, fontColorRed, 3, buffer);
+			fixPrint(32-start, 29, fontColorRed, fbase, buffer);
 
 			if (docrc)
 			{
 				intToHex(crc, buffer, 8);
-				fixPrint(32, 16, fontColorGreen, 3, buffer);
+				fixPrint(32, 16, fontColorGreen, fbase, buffer);
 			}
 
 			for (i = 0; i < 30; i++)
@@ -295,14 +295,14 @@ void ht_memory_viewer(u32 address)
 					if (!ascii)
 					{
 						intToHex(mem[i*16+j], buffer, 2);
-						fixPrint(start+j*2, i+2, fontColorWhite, 3, buffer);
+						fixPrint(start+j*2, i+2, fontColorWhite, fbase, buffer);
 					} else {
 						u8 c;
 					
 						c = mem[i*16+j];
 						// ASCII range
 						if (c >= 32 && c <= 126)	
-							fixPrintf(start+j*2, i+2, fontColorWhite, 3, "%c", (char)c);
+							fixPrintf(start+j*2, i+2, fontColorWhite, fbase, "%c", (char)c);
 					}
 				}
 			}
@@ -689,7 +689,7 @@ void displayBIOS(u32 address, u8 swap)
 			byteSwap(buffer, len);
 		buffer[len] = '\0';
 		cleanBIOSStr(buffer, len);
-		fixPrintf(x, 10+line, fontColorGreen, 3, buffer);
+		fixPrintf(x, 10+line, fontColorGreen, fbase, buffer);
 	}
 }
 
@@ -697,20 +697,20 @@ void drawBIOSHeader(u32 address, short x, short y)
 {
 	u8				bios_HW, bios_region;
 
-	fixPrint(x, y, fontColorGreen, 3, "Header:");
+	fixPrint(x, y, fontColorGreen, fbase, "Header:");
 	bios_HW = getBIOS_HW(address);
 	switch(bios_HW)
 	{
 		case SYSTEM_AES:
-			fixPrint(x+8, y, fontColorWhite, 3, "AES");
+			fixPrint(x+8, y, fontColorWhite, fbase, "AES");
 		break;
 
 		case SYSTEM_MVS:
-			fixPrint(x+8, y, fontColorWhite, 3, "MVS");
+			fixPrint(x+8, y, fontColorWhite, fbase, "MVS");
 		break;
 
 		default:
-			fixPrint(x+8, y, fontColorWhite, 3, "???");
+			fixPrint(x+8, y, fontColorWhite, fbase, "???");
 		break;
 	}
 
@@ -718,19 +718,19 @@ void drawBIOSHeader(u32 address, short x, short y)
 	switch(bios_region)
 	{
 		case SYSTEM_EUROPE:
-			fixPrint(x+8, y+1, fontColorWhite, 3, "World");
+			fixPrint(x+8, y+1, fontColorWhite, fbase, "World");
 		break;
 
 		case SYSTEM_JAPAN:
-			fixPrint(x+8, y+1, fontColorWhite, 3, "Japan");
+			fixPrint(x+8, y+1, fontColorWhite, fbase, "Japan");
 		break;
 
 		case SYSTEM_USA:
-			fixPrint(x+8, y+1, fontColorWhite, 3, "USA");
+			fixPrint(x+8, y+1, fontColorWhite, fbase, "USA");
 		break;
 
 		default:
-			fixPrint(x+8, y+1, fontColorWhite, 3, "???");
+			fixPrint(x+8, y+1, fontColorWhite, fbase, "???");
 		break;
 	}
 }
@@ -766,7 +766,7 @@ void ht_check_ng_bios_crc(u32 address)
 #endif
 	menu_footer();
 
-	fixPrintf(12, 16, fontColorGreen, 3, "Please Wait...");
+	fixPrintf(12, 16, fontColorGreen, fbase, "Please Wait...");
 
 	SCClose();
 	waitVBlank();
@@ -778,27 +778,27 @@ void ht_check_ng_bios_crc(u32 address)
 	clear_gillian(sprindex, &blinkdata);
 #endif
 	intToHex(crc, buffer, 8);
-	fixPrintf(12, 16, fontColorGreen, 3, "CRC:  ");
-	fixPrintf(17, 16, fontColorWhite, 3, "0x%s ", buffer);
+	fixPrintf(12, 16, fontColorGreen, fbase, "CRC:  ");
+	fixPrintf(17, 16, fontColorWhite, fbase, "0x%s ", buffer);
 
 	bios = GetBIOSbyCRC(crc);
 	if (bios)
 	{
-		fixPrintf(6, 18, fontColorWhite, 3, bios->name);
-		fixPrintf(6, 19, fontColorWhite, 3, bios->text);
+		fixPrintf(6, 18, fontColorWhite, fbase, bios->name);
+		fixPrintf(6, 19, fontColorWhite, fbase, bios->text);
 	} else {
-		fixPrintf(13, 18, fontColorWhite, 3, "Unknown BIOS");
-		fixPrintf(13, 19, fontColorWhite, 3, "Please report it");
+		fixPrintf(13, 18, fontColorWhite, fbase, "Unknown BIOS");
+		fixPrintf(13, 19, fontColorWhite, fbase, "Please report it");
 		if (detectUNIBIOSfast(address))
 		{
-			fixPrintf(7, 21, fontColorGreen, 3, "Non-free versions of UNIBIOS");
-			fixPrintf(7, 22, fontColorGreen, 3, "can't be recognized by CRC");
+			fixPrintf(7, 21, fontColorGreen, fbase, "Non-free versions of UNIBIOS");
+			fixPrintf(7, 22, fontColorGreen, fbase, "can't be recognized by CRC");
 		}
 #ifndef __cd__
 		else
 		{
-			fixPrintf(7, 21, fontColorGreen, 3, "SDLoader patches the BIOS");
-			fixPrintf(7, 22, fontColorGreen, 3, "and these are not identified");
+			fixPrintf(7, 21, fontColorGreen, fbase, "SDLoader patches the BIOS");
+			fixPrintf(7, 22, fontColorGreen, fbase, "and these are not identified");
 		}
 #endif
 	}
@@ -847,7 +847,7 @@ void ht_displayregs()
 
 		readController();
 
-		fixPrintC(6, fontColorGreen, 3, "HW Registers");
+		fixPrintC(6, fontColorGreen, fbase, "HW Registers");
 
 		displayRegWord(4, y++, "REG_LSPCMODE", REG_LSPCMODE);
 		y++;
@@ -864,8 +864,8 @@ void ht_displayregs()
 		if (DEBUG_ENABLED)
 		{
 			displayRegByte(4, y++, "BIOS_COUNTRY", BIOS_COUNTRY_CODE);
-			fixPrintf(4, y, fontColorGreen, 3, "Soft Dips:");
-			fixPrintf(26, y, fontColorWhite, 3, "%01d%01d%01d%01d %01d%01d%01d%01d",
+			fixPrintf(4, y, fontColorGreen, fbase, "Soft Dips:");
+			fixPrintf(26, y, fontColorWhite, fbase, "%01d%01d%01d%01d %01d%01d%01d%01d",
 				getSoftDipvalue(SD_MVS_DEMO),
 				getSoftDipvalue(SD_DISP_CREDITS),
 				getSoftDipvalue(SD_FORCE_4P),
@@ -907,7 +907,7 @@ void ht_z80RAMtest()
 			gfxClear();
 			draw_background();
 			
-			fixPrintC(6, fontColorGreen, 3, "Z80 RAM Test");
+			fixPrintC(6, fontColorGreen, fbase, "Z80 RAM Test");
 			execute = 1;
 			redraw = 0;
 		}
@@ -924,27 +924,27 @@ void ht_z80RAMtest()
 		{
 			int status = 0, unknown = 0;
 
-			fixPrintC(15, fontColorRed, 3, "               ");
+			fixPrintC(15, fontColorRed, fbase, "               ");
 			status = sendZ80command(RAMTESTCMD);
 			if(status == Z80COMMAND_OK(RAMTESTCMD))
-				fixPrintC(15, fontColorGreen, 3, "Z80 RAM OK");
+				fixPrintC(15, fontColorGreen, fbase, "Z80 RAM OK");
 			else if(status == Z80COMMAND_FAIL(RAMTESTCMD))
-				fixPrintC(15, fontColorRed, 3, "RAM FAILED");
+				fixPrintC(15, fontColorRed, fbase, "RAM FAILED");
 			else if(status == Z80COMMAND_TIME(RAMTESTCMD))
-				fixPrintC(15, fontColorYellow, 3, "Z80 Timed Out");
+				fixPrintC(15, fontColorYellow, fbase, "Z80 Timed Out");
 			else
 			{
-				fixPrintC(15, fontColorRed, 3, "Unknown status");
+				fixPrintC(15, fontColorRed, fbase, "Unknown status");
 				unknown = 1;
 			}
-			fixPrintC(26, fontColorWhite, 3, "Press B to exit");
+			fixPrintC(26, fontColorWhite, fbase, "Press B to exit");
 
 			if (unknown || DEBUG_ENABLED)
 			{
 				char buffer[4];
 
 				intToHex(status, buffer, 2);
-				fixPrintf(12, 17, fontColorWhite, 3, "Z80 replied: 0x%s", buffer);
+				fixPrintf(12, 17, fontColorWhite, fbase, "Z80 replied: 0x%s", buffer);
 			}
 			execute = 0;
 		}
@@ -972,7 +972,7 @@ void ht_showInternalVars()
 
 		readController();
 
-		fixPrintC(6, fontColorGreen, 3, "Suite Internal Vars");
+		fixPrintC(6, fontColorGreen, fbase, "Suite Internal Vars");
 
 		displayValue(x, y++, "isMVS", isMVS);
 #ifndef __cd__

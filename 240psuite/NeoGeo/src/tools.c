@@ -211,11 +211,12 @@ inline void gfxClear()
 #define OPTIONS_HORI	1
 #define OPTIONS_IRE100	2
 #define OPTIONS_DARK	3
-#define OPTIONS_VERT	4
-#define OPTIONS_BGFILL	5
-#define OPTIONS_Z80CHK	6
-#define OPTIONS_END		6
-#define OPTIONS_EXIT	7
+#define OPTIONS_FONT	4
+#define OPTIONS_VERT	5
+#define OPTIONS_BGFILL	6
+#define OPTIONS_Z80CHK	7
+#define OPTIONS_END		7
+#define OPTIONS_EXIT	8
 
 void menu_options()
 {
@@ -249,19 +250,23 @@ void menu_options()
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
 #ifndef __cd__
-		fixPrintf(15, 6, fontColorGreen, 3, "%s Options", isMVS ? "MVS" : "AES");
+		fixPrintf(15, 6, fontColorGreen, fbase, "%s Options", isMVS ? "MVS" : "AES");
 #else
-		fixPrintf(14, 6, fontColorGreen, 3, "NGCD Options");
+		fixPrintf(14, 6, fontColorGreen, fbase, "NGCD Options");
 #endif
-		fixPrintf(5, y++, curse == OPTIONS_HORI ? fontColorRed : fontColorWhite, 3, "Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
-		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? fontColorRed : fontColorWhite, 3, "IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
-		fixPrintf(5, y++, curse == OPTIONS_DARK ? fontColorRed : fontColorWhite, 3, "Video Output:        %s", enable_shadow ? "Darken" : "Normal");
-		fixPrintf(5, y++, curse == OPTIONS_VERT ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
-		fixPrintf(5, y++, curse == OPTIONS_BGFILL ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), 3, "PAL background fill: %s", fill_color_bg ? "Yes" : "No ");
+		fixPrintf(5, y++, curse == OPTIONS_HORI ? fontColorRed : fontColorWhite, fbase,		"Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
+		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? fontColorRed : fontColorWhite, fbase,	"IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
+		fixPrintf(5, y++, curse == OPTIONS_DARK ? fontColorRed : fontColorWhite, fbase,		"Video Output:        %s", enable_shadow ? "Darken" : "Normal");
+		fixPrintf(5, y++, curse == OPTIONS_FONT ? fontColorRed : fontColorWhite, fbase,		"Font:                %s", fbase == 3 ? "thick" : "thin ");
+		fixPrintf(5, y++, curse == OPTIONS_VERT ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), fbase, 
+																							"PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
+		fixPrintf(5, y++, curse == OPTIONS_BGFILL ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), fbase, 
+																							"PAL background fill: %s", fill_color_bg ? "Yes" : "No ");
 		if(enable_z80)
-			fixPrintf(5, y++, curse == OPTIONS_Z80CHK ? fontColorRed : fontColorWhite, 3, "Disable Z80 Check:   %s", disable_z80_check ? "Yes" : "No ");
+			fixPrintf(5, y++, curse == OPTIONS_Z80CHK ? fontColorRed : fontColorWhite, fbase, 
+																							"Disable Z80 Check:   %s", disable_z80_check ? "Yes" : "No ");
 		y++;
-		fixPrintf(5, y++, curse == OPTIONS_END + enable_z80 ? fontColorRed : fontColorWhite, 3, "Back to Main Menu");
+		fixPrintf(5, y++, curse == OPTIONS_END + enable_z80 ? fontColorRed : fontColorWhite, fbase, "Back to Main Menu");
 
 		menu_footer();
 
@@ -273,42 +278,42 @@ void menu_options()
 
 			// Extra description
 			for (i = 20; i < 24; i++)
-				fixPrintf(4, i, fontColorGreen, 3, blank);
+				fixPrintf(4, i, fontColorGreen, fbase, blank);
 
 			if (curse == OPTIONS_HORI) 
 			{
-				fixPrintf(4, 20, fontColorGreen, 3, "The 304 mode uses the BIOS mask");
-				fixPrintf(4, 21, fontColorGreen, 3, "to hide 8 pixels on each side, ");
-				fixPrintf(4, 22, fontColorGreen, 3, "as required by SNK in games.");
+				fixPrintf(4, 20, fontColorGreen, fbase, "The 304 mode uses the BIOS mask");
+				fixPrintf(4, 21, fontColorGreen, fbase, "to hide 8 pixels on each side, ");
+				fixPrintf(4, 22, fontColorGreen, fbase, "as required by SNK in games.");
 				if (!vmode_snk)
-					fixPrintf(4, 23, fontColorRed, 3, "Some systems trim pixel col. 320");
+					fixPrintf(4, 23, fontColorRed, fbase, "Some systems trim pixel col. 320");
 			}
 
 			if (curse == OPTIONS_DARK)
 			{
-				fixPrintf(4, 20, fontColorGreen, 3, "Hardware option, all patterns");
-				fixPrintf(4, 21, fontColorGreen, 3, "will be darker.");
+				fixPrintf(4, 20, fontColorGreen, fbase, "Hardware option, all patterns");
+				fixPrintf(4, 21, fontColorGreen, fbase, "will be darker.");
 			}
 
 			if (curse == OPTIONS_IRE100)
 			{
 				if(!isMVS && !AES_AS_MVS)
 				{
-					fixPrintf(4, 20, fontColorGreen, 3, "Neo Geo white level goes up to");
-					fixPrintf(4, 21, fontColorGreen, 3, "~106.8 IRE. This option limits");
-					fixPrintf(4, 22, fontColorGreen, 3, "patterns to 100 IRE.");
+					fixPrintf(4, 20, fontColorGreen, fbase, "Neo Geo white level goes up to");
+					fixPrintf(4, 21, fontColorGreen, fbase, "~106.8 IRE. This option limits");
+					fixPrintf(4, 22, fontColorGreen, fbase, "patterns to 100 IRE.");
 				}
 				else
 				{
-					fixPrintf(4, 20, fontColorGreen, 3, "IRE Levels are for AES systems");
-					fixPrintf(4, 21, fontColorGreen, 3, "This option limits white level");
-					fixPrintf(4, 22, fontColorGreen, 3, "in patterns to 100 IRE.");
+					fixPrintf(4, 20, fontColorGreen, fbase, "IRE Levels are for AES systems");
+					fixPrintf(4, 21, fontColorGreen, fbase, "This option limits white level");
+					fixPrintf(4, 22, fontColorGreen, fbase, "in patterns to 100 IRE.");
 				}
 			}
 		
 
 			if (enable_z80 && curse == OPTIONS_Z80CHK)
-				fixPrintf(4, 20, fontColorGreen, 3, "Only needed in emulators.");
+				fixPrintf(4, 20, fontColorGreen, fbase, "Only needed in emulators.");
 		}
 		
 		
@@ -331,6 +336,10 @@ void menu_options()
 						volMEMBYTE(REG_SHADOW) = 1;
 					else
 						volMEMBYTE(REG_NOSHADOW) = 1;
+				break;
+
+				case OPTIONS_FONT:
+					fbase = fbase == 3 ? 5 : 3;
 				break;
 
 				case OPTIONS_IRE100:
@@ -493,38 +502,38 @@ int SD_blink_cycle(blinker *blinkdata)
 
 void menu_footer()
 {
-	fixPrintf(23, 26, fontColorWhite, 3, "%s %03dx%03dp", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320, isPAL && usePAL256 ? 256 : 224);
+	fixPrintf(23, 26, fontColorWhite, fbase, "%s %03dx%03dp", isPAL ? "PAL " : "NTSC", vmode_snk ? 304 : 320, isPAL && usePAL256 ? 256 : 224);
 #ifndef __cd__
 	if (isMVS)
 	{
-		fixPrint(23, 28, fontColorWhite, 3, "MVS");
+		fixPrint(23, 28, fontColorWhite, fbase, "MVS");
 		if (is4S || is6S)
-			fixPrint(26, 28, fontColorWhite, 3, is4S ? "2/4S" : "6S");
+			fixPrint(26, 28, fontColorWhite, fbase, is4S ? "2/4S" : "6S");
 		else
-			fixPrint(26, 28, fontColorWhite, 3, "1S");
+			fixPrint(26, 28, fontColorWhite, fbase, "1S");
 		if (hwChange)
-			fixPrint(19, 28, fontColorWhite, 3, "AES>");
+			fixPrint(19, 28, fontColorWhite, fbase, "AES>");
 	} else {
 
-		fixPrint(27, 28, fontColorWhite, 3, "AES");
+		fixPrint(27, 28, fontColorWhite, fbase, "AES");
 		if (hwChange)
-			fixPrint(23, 28, fontColorWhite, 3, "MVS>");
+			fixPrint(23, 28, fontColorWhite, fbase, "MVS>");
 	}
 #else
-	fixPrintf(isCDFront ? 21 : 22, 28, fontColorWhite, 3, "NGCD %s", isCDFront ? "Front" : isCDZ ? "CDZ" : "Top", isCDFront, isCDZ);
+	fixPrintf(isCDFront ? 21 : 22, 28, fontColorWhite, fbase, "NGCD %s", isCDFront ? "Front" : isCDZ ? "CDZ" : "Top", isCDFront, isCDZ);
 #endif
 
 	if ((volMEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_JAPAN))
 	{
-		fixPrint(32, 28, fontColorWhite, 3, "Japan");
+		fixPrint(32, 28, fontColorWhite, fbase, "Japan");
 	}
 	else if ((volMEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_USA))
 	{
-		fixPrint(34, 28, fontColorWhite, 3, "USA");
+		fixPrint(34, 28, fontColorWhite, fbase, "USA");
 	}
 	else if ((volMEMBYTE(BIOS_COUNTRY_CODE) == SYSTEM_EUROPE))
 	{
-		fixPrint(31, 28, fontColorWhite, 3, "Europe");
+		fixPrint(31, 28, fontColorWhite, fbase, "Europe");
 	}
 
 	if (getSoftDipvalue(SD_DISP_CREDITS))
@@ -532,11 +541,11 @@ void menu_footer()
 		int credits;
 		
 		credits = getCreditCount();
-		fixPrintf(4, 26, fontColorWhite, 3, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
+		fixPrintf(4, 26, fontColorWhite, fbase, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 	}
 
-	fixPrintf(32, 4, fontColorRed, 3, enable_shadow ? "Dark" : "    ");
-	fixPrintf(30, 5, fontColorGreen, 3, !allowIRE107 ? "100 IRE" : "       ");
+	fixPrintf(32, 4, fontColorRed, fbase, enable_shadow ? "Dark" : "    ");
+	fixPrintf(30, 5, fontColorGreen, fbase, !allowIRE107 ? "100 IRE" : "       ");
 }
 
 void draw_warning(char* msg, int index, int palindex, int clearback)
@@ -563,8 +572,8 @@ void draw_message(char *title, char *msg, int index, int palindex, int clearback
 
 	len = strlen(title);
 	x = (40 - len)/2;
-	fixPrint(x, 11, fontColorGreen, 3, title);
-	fixPrint(8, 23, fontColorGreen, 3, "Press B or START to close");
+	fixPrint(x, 11, fontColorGreen, fbase, title);
+	fixPrint(8, 23, fontColorGreen, fbase, "Press B or START to close");
 
 	len = strlen(msg);
 	for(i = 0; i < len+1; i++)
@@ -573,7 +582,7 @@ void draw_message(char *title, char *msg, int index, int palindex, int clearback
 		{
 			buffer[sublen] = '\0';
 			x = (40 - sublen)/2;
-			fixPrint(x, 14+rows, fontColorWhite, 3, buffer);
+			fixPrint(x, 14+rows, fontColorWhite, fbase, buffer);
 
 			rows ++;
 			sublen = 0;
@@ -588,7 +597,7 @@ void draw_message(char *title, char *msg, int index, int palindex, int clearback
 	if(!rows)
 	{
 		x = (40 - len)/2;
-		fixPrint(x, 14, fontColorWhite, 3, msg);
+		fixPrint(x, 14, fontColorWhite, fbase, msg);
 	}
 
 	while(!done)
@@ -612,8 +621,8 @@ int select_menu(char *title, fmenudata *menu_data, int num_options, int selected
 	pictureInit(&back, &floatmenu, 1, 16, 72, 48, FLIP_NONE);
 	palJobPut(16,floatmenu.palInfo->count,floatmenu.palInfo->data);
 
-	fixPrintC(9, fontColorGreen, 3, title);
-	fixPrintC(26, fontColorGreen, 3, "Press B or START to close");
+	fixPrintC(9, fontColorGreen, fbase, title);
+	fixPrintC(26, fontColorGreen, fbase, "Press B or START to close");
 	
 	while(!done)
 	{
@@ -624,10 +633,10 @@ int select_menu(char *title, fmenudata *menu_data, int num_options, int selected
 			y += (10 - num_options)/2;
 			for(i = 0; i < num_options; i++)
 			{
-				fixPrintC(y++, sel == c ? fontColorRed : fontColorWhite, 3, menu_data[i].option_text);
+				fixPrintC(y++, sel == c ? fontColorRed : fontColorWhite, fbase, menu_data[i].option_text);
 				c++;
 			}
-			fixPrintC(22, sel == c ? fontColorRed : fontColorWhite, 3, "Close Menu");
+			fixPrintC(22, sel == c ? fontColorRed : fontColorWhite, fbase, "Close Menu");
 			draw = 0;
 		}
 
@@ -786,10 +795,10 @@ void displayRegByte(u16 x, u16 y, char *dispname, u32 regAddr)
 
 	regb = volMEMBYTE(regAddr);
 	intToHex(regb, buffer, 2);
-	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
-	fixPrintf(x+15, y, fontColorWhite, 3, "0x%s", buffer);
+	fixPrintf(x, y, fontColorGreen, fbase, "%s:", dispname);
+	fixPrintf(x+15, y, fontColorWhite, fbase, "0x%s", buffer);
 	byteToBin(regb, buffer);
-	fixPrintf(x+22, y, fontColorWhite, 3, "%s", buffer);
+	fixPrintf(x+22, y, fontColorWhite, fbase, "%s", buffer);
 }
 
 void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr)
@@ -799,18 +808,18 @@ void displayRegWord(u16 x, u16 y, char *dispname, u32 regAddr)
 
 	regw = volMEMWORD(regAddr);
 	intToHex(regw, buffer, 4);
-	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
-	fixPrintf(x+15, y, fontColorWhite, 3, "0x%s", buffer);
+	fixPrintf(x, y, fontColorGreen, fbase, "%s:", dispname);
+	fixPrintf(x+15, y, fontColorWhite, fbase, "0x%s", buffer);
 	byteToBin((regw & 0xFF00) >> 8, buffer);
-	fixPrintf(x+22, y, fontColorWhite, 3, "%s", buffer);
+	fixPrintf(x+22, y, fontColorWhite, fbase, "%s", buffer);
 	byteToBin(regw & 0x00FF, buffer);
-	fixPrintf(x+22, y+1, fontColorWhite, 3, "%s", buffer);
+	fixPrintf(x+22, y+1, fontColorWhite, fbase, "%s", buffer);
 }
 
 void displayValue(u16 x, u16 y, char *dispname, int value)
 {
-	fixPrintf(x, y, fontColorGreen, 3, "%s:", dispname);
-	fixPrintf(x+13, y, fontColorWhite, 3, "%d", value);
+	fixPrintf(x, y, fontColorGreen, fbase, "%s:", dispname);
+	fixPrintf(x+13, y, fontColorWhite, fbase, "%d", value);
 }
 
 int getCreditCount()

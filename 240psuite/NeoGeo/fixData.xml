@@ -16,6 +16,12 @@
 	<fix bank="4" id="fix_font1">
 		<file>gfx\fix\font1.png</file>
 	</fix>
+	<fix bank="5" id="fix_font2">
+		<file>gfx\fix\font2.png</file>
+	</fix>
+	<fix bank="6" id="fix_font3">
+		<file>gfx\fix\font3.png</file>
+	</fix>
 	<fix bank="3" id="fix_bars">
 		<file>gfx\fix\bars.png</file>
 	</fix>

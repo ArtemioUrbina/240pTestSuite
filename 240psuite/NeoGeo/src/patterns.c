@@ -84,9 +84,9 @@ void tp_pluge()
 		{
 			IsNTSC = !IsNTSC;
 			if (!IsNTSC){
-				fixPrint(24, 3, fontColorRed, 3, "RGB FULL RANGE");
+				fixPrint(24, 3, fontColorRed, fbase, "RGB FULL RANGE");
 			} else {;
-				fixPrint(24, 3, fontColorRed, 3, "NTSC 7.5 IRE  ");
+				fixPrint(24, 3, fontColorRed, fbase, "NTSC 7.5 IRE  ");
 			}
 			swappal = 1;
 			text = 60;
@@ -426,11 +426,11 @@ void tp_colorbars()
 			if (!Is75) {
 				palJobPut(palindex, 1, ebu_100_pal);
 				if(text)
-					fixPrint(32, 3, fontColorWhite, 3, allowIRE107 ? "107%" : "100%");
+					fixPrint(32, 3, fontColorWhite, fbase, allowIRE107 ? "107%" : "100%");
 			} else {
 				palJobPut(palindex, 1, ebu_075_pal);
 				if(text)
-					fixPrint(32, 3, fontColorWhite, 3, " 75%");
+					fixPrint(32, 3, fontColorWhite, fbase, " 75%");
 			}
 			swap_pal = 0;
 		}
@@ -506,11 +506,11 @@ void tp_smpte_color_bars()
 			if (!Is75) {
 				palJobPut(palindex, 1, smpte_100_pal);
 				if(text)
-					fixPrint(32, 3, fontColorWhite, 3, allowIRE107 ? "107%" : "100%");
+					fixPrint(32, 3, fontColorWhite, fbase, allowIRE107 ? "107%" : "100%");
 			} else {
 				palJobPut(palindex, 1, smpte_075_pal);
 				if(text)
-					fixPrint(32, 3, fontColorWhite, 3, " 75%");
+					fixPrint(32, 3, fontColorWhite, fbase, " 75%");
 			}
 			swap_pal = 0;
 		}
@@ -808,7 +808,7 @@ void display_ramp_pal(ushort *palette, int x)
 		for(i = 1; i < 9; i++)
 		{
 			intToHex(palette[i+pal*16], buffer, 4);
-			fixPrint(x, y++, fontColorRed, 3, buffer);
+			fixPrint(x, y++, fontColorRed, fbase, buffer);
 			if(y > 30)
 			{
 				x += 4;
@@ -947,15 +947,15 @@ void tp_gray_ramp()
 			switch(version)
 			{
 				case 0:
-					fixPrint(25, 3, fontColorRed, 3, "Full ");
+					fixPrint(25, 3, fontColorRed, fbase, "Full ");
 				break;
 
 				case 1:
-					fixPrint(25, 3, fontColorRed, 3, "Dark ");
+					fixPrint(25, 3, fontColorRed, fbase, "Dark ");
 				break;
 
 				case 2:
-					fixPrint(25, 3, fontColorRed, 3, "Light");
+					fixPrint(25, 3, fontColorRed, fbase, "Light");
 				break;
 			}
 			text = 60;
@@ -970,12 +970,12 @@ void tp_gray_ramp()
 			if(local_shadow)
 			{
 				volMEMBYTE(REG_SHADOW) = 1;
-				fixPrint(25, 4, fontColorRed, 3, "Darken");
+				fixPrint(25, 4, fontColorRed, fbase, "Darken");
 			}
 			else
 			{
 				volMEMBYTE(REG_NOSHADOW) = 1;
-				fixPrint(25, 4, fontColorRed, 3, "Normal");
+				fixPrint(25, 4, fontColorRed, fbase, "Normal");
 			}
 			text = 60;
 		}
@@ -1040,7 +1040,7 @@ void tp_white_rgb()
 		}
 
 		if (editmode) {
-			fixPrintf(15, 5, fontColorSolid, 4, "%cR:%02d %cG:%02d %cB:%02d %cD: %d", 
+			fixPrintf(15, 5, fontColorSolid, fbase+1, "%cR:%02d %cG:%02d %cB:%02d %cD: %d", 
 								sel == 0 ? '>' : ' ', r, 
 								sel == 1 ? '>' : ' ', g,
 								sel == 2 ? '>' : ' ', b,
@@ -1093,7 +1093,7 @@ void tp_white_rgb()
 						sprintf(colorname, "Blue ");
 					break;
 				}
-				fixPrintf(28, 25, color == 1 ? fontColorGreen : fontColorWhite, 3, colorname);
+				fixPrintf(28, 25, color == 1 ? fontColorGreen : fontColorWhite, fbase, colorname);
 				text = 60;
 			}
 
@@ -1212,7 +1212,7 @@ void tp_white_rgb()
 
 				if(warn) {
 					dark = 1;
-					fixPrint(5, 8, fontColorSolid, 4, "IRE limited to 100 in options");
+					fixPrint(5, 8, fontColorSolid, fbase+1, "IRE limited to 100 in options");
 					text = 60;
 				}
 
@@ -1224,7 +1224,7 @@ void tp_white_rgb()
 
 				sprintf(buffer, "0x");
 				intToHex(edit_color, buffer+2, 4);
-				fixPrint(23, 7, fontColorSolid, 4, buffer);
+				fixPrint(23, 7, fontColorSolid, fbase+1, buffer);
 			}
 		}
 	}
@@ -1263,7 +1263,7 @@ void tp_100_ire()
 		if(changed)
 		{
 			VRAM_PAL(16, 2) = irecolor[irenum];
-			fixPrintf1(30, 25, fontColorWhite, 3, "IRE %u ", irevals[irenum]);
+			fixPrintf1(30, 25, fontColorWhite, fbase, "IRE %u ", irevals[irenum]);
 			text = 60;
 			changed = 0;
 		}
@@ -1459,18 +1459,18 @@ void tp_overscan()
 				scrollerSetPos(&bottom_cover, 0, b_min);
 			}
 
-			fixPrintf(9, 14, fontColorWhite, 3, " Top overscan :   %3d", t_max - top_y);
-			fixPrintf(9, 15, fontColorWhite, 3, " Bottom overscan: %3d", bottom_y - b_min);
-			fixPrintf(9, 16, fontColorWhite, 3, " Left overscan:   %3d", l_max - left_x);
-			fixPrintf(9, 17, fontColorWhite, 3, " Right overscan:  %3d", right_x - r_min);
-			fixPrintf(9, 13+sel, fast ? fontColorRed : fontColorGreen, 3, ">");
+			fixPrintf(9, 14, fontColorWhite, fbase, " Top overscan :   %3d", t_max - top_y);
+			fixPrintf(9, 15, fontColorWhite, fbase, " Bottom overscan: %3d", bottom_y - b_min);
+			fixPrintf(9, 16, fontColorWhite, fbase, " Left overscan:   %3d", l_max - left_x);
+			fixPrintf(9, 17, fontColorWhite, fbase, " Right overscan:  %3d", right_x - r_min);
+			fixPrintf(9, 13+sel, fast ? fontColorRed : fontColorGreen, fbase, ">");
 
 			if (DEBUG_ENABLED)
 			{
-				fixPrintf(8, 18, fontColorGreen, 3, "Top Y:    %4d(%04d/%04d)", top_y, t_min, t_max);
-				fixPrintf(8, 19, fontColorGreen, 3, "Bottom Y: %4d(%04d/%04d)", bottom_y, b_min, b_max);
-				fixPrintf(8, 20, fontColorGreen, 3, "Left X:   %4d(%04d/%04d)", left_x, l_min, l_max);
-				fixPrintf(8, 21, fontColorGreen, 3, "Right X:  %4d(%04d/%04d)", right_x, r_min, r_max);
+				fixPrintf(8, 18, fontColorGreen, fbase, "Top Y:    %4d(%04d/%04d)", top_y, t_min, t_max);
+				fixPrintf(8, 19, fontColorGreen, fbase, "Bottom Y: %4d(%04d/%04d)", bottom_y, b_min, b_max);
+				fixPrintf(8, 20, fontColorGreen, fbase, "Left X:   %4d(%04d/%04d)", left_x, l_min, l_max);
+				fixPrintf(8, 21, fontColorGreen, fbase, "Right X:  %4d(%04d/%04d)", right_x, r_min, r_max);
 			}
 
 			scroll = 0;
@@ -1699,7 +1699,7 @@ void tp_hcfr()
 			sprintf(buffer, "%s %02d,%02d,%02d %c", hcfr_data[hcfr_type].data[hcfr_num].name,
 					hcfr_data[hcfr_type].data[hcfr_num].r, hcfr_data[hcfr_type].data[hcfr_num].g, 
 					hcfr_data[hcfr_type].data[hcfr_num].b, hcfr_data[hcfr_type].data[hcfr_num].d ? '-' : '+');
-			fixPrintC(25, fontColorGrayLight, 3, buffer);
+			fixPrintC(25, fontColorGrayLight, fbase, buffer);
 			if (DEBUG_ENABLED) {
 				char bufferD[50];
 
@@ -1707,8 +1707,8 @@ void tp_hcfr()
 					hcfr_data[hcfr_type].data[hcfr_num].r_src, hcfr_data[hcfr_type].data[hcfr_num].r_src, 
 					hcfr_data[hcfr_type].data[hcfr_num].g_src);
 				intToHex(hcfr_data[hcfr_type].data[hcfr_num].color, bufferD+14, 4);
-				fixPrintC(26, fontColorGrayLight, 3, bufferD);
-				fixPrintC(27, fontColorGrayLight, 3, hcfr_data[hcfr_type].name);
+				fixPrintC(26, fontColorGrayLight, fbase, bufferD);
+				fixPrintC(27, fontColorGrayLight, fbase, hcfr_data[hcfr_type].name);
 			}
 			changed = 0;
 		}
