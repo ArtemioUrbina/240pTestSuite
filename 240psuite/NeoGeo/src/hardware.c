@@ -872,7 +872,7 @@ void ht_displayregs()
 				getSoftDipvalue(SD_DFLT_320_H),
 				getSoftDipvalue(SD_WARNING_ENABLE),
 				getSoftDipvalue(SD_MV1C_STEREO),
-				getSoftDipvalue(SD_UNUSED_7),
+				getSoftDipvalue(SD_DEFAULT_FONT),
 				getSoftDipvalue(SD_UNUSED_8));
 		}
 
@@ -958,12 +958,11 @@ void ht_showInternalVars()
 
 	while (!done)
 	{
-		int x = 12, y = 8;
+		int x = 12, y = 6;
 
 		if (redraw)
 		{
 			gfxClear();
-			draw_background();
 			redraw = 0;
 		}
 
@@ -972,7 +971,7 @@ void ht_showInternalVars()
 
 		readController();
 
-		fixPrintC(6, fontColorGreen, fbase, "Suite Internal Vars");
+		fixPrintC(4, fontColorGreen, fbase, "Suite Internal Vars");
 
 		displayValue(x, y++, "isMVS", isMVS);
 #ifndef __cd__
@@ -993,13 +992,12 @@ void ht_showInternalVars()
 		displayValue(x, y++, "min_z80", min_z80_timout);
 		displayValue(x, y++, "max_z80", max_z80_timout);
 		displayValue(x, y++, "color_bg", fill_color_bg);
+		displayValue(x, y++, "font", fbase);
 #ifdef __cd__
 		displayValue(x, y++, "isCDFront", isCDFront);
 		displayValue(x, y++, "isCDZ", isCDZ);
 		displayValue(x, y++, "ngcd_region", ngcd_region);
 #endif
-
-		menu_footer();
 
 		if (BTTN_EXIT)
 			done = 1;

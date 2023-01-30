@@ -634,7 +634,7 @@ void credits()
 			fixPrint(x+1, y++, fontColorWhite, fbase, "DATlib (HPMAN)");
 			fixPrint(x, y++, fontColorGreen, fbase, "Z80 Sound Driver:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Based on freem ADPCM example");
-			fixPrint(x, y++, fontColorGreen, fbase, "Hardware by:");
+			fixPrint(x, y++, fontColorGreen, fbase, "Cartridge Hardware by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Herzmx");
 #ifndef __cd__
 			fixPrint(x, y++, fontColorGreen, fbase, "MVS flashcart provided by:");
@@ -1024,7 +1024,11 @@ void check_bios_init()
 	volMEMBYTE(REG_NOSHADOW) = 1;
 
 	// default font
-	fbase = 3;
+	if (getSoftDipvalue(SD_DEFAULT_FONT))
+		fbase = 5;
+	else
+		fbase = 3;
+	
 	// Set default global values
 	first_grid = 1;
 	first_overscan = 1;
@@ -1079,8 +1083,8 @@ void parse_bios_status()
 
 int main(void)
 {
-	check_bios_init();
 	check_systype();
+	check_bios_init();
 
 	initGfx();
 	gfxClear();
