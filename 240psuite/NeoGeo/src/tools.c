@@ -257,7 +257,7 @@ void menu_options()
 		fixPrintf(5, y++, curse == OPTIONS_HORI ? fontColorRed : fontColorWhite, fbase,		"Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
 		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? fontColorRed : fontColorWhite, fbase,	"IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
 		fixPrintf(5, y++, curse == OPTIONS_DARK ? fontColorRed : fontColorWhite, fbase,		"Video Output:        %s", enable_shadow ? "Darken" : "Normal");
-		fixPrintf(5, y++, curse == OPTIONS_FONT ? fontColorRed : fontColorWhite, fbase,		"Font:                %s", fbase == 3 ? "thick" : "thin ");
+		fixPrintf(5, y++, curse == OPTIONS_FONT ? fontColorRed : fontColorWhite, fbase,		"Font:                %s", fbase == 3 ? "Thick" : "Thin ");
 		fixPrintf(5, y++, curse == OPTIONS_VERT ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), fbase, 
 																							"PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
 		fixPrintf(5, y++, curse == OPTIONS_BGFILL ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), fbase, 

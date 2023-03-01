@@ -144,6 +144,9 @@
   <pict id="horzstripe">
     <file>gfx\horzstripe.png</file>
   </pict>
+  <pict id="beto">
+	<file>gfx\memory.png</file>
+  </pict>
   <pict id="barcode">
     <file>gfx\barcode.png</file>
   </pict>

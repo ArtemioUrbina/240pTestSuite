@@ -483,6 +483,7 @@ void at_sound_mdfourier()
 			draw_warning("Z80 Command check disabled\nResults might be off", 1, 16, 1);
 	}
 
+	draw_warning("Some adjustments will be made\nto this test in order to\ncompare between hw revisions.\nRecordings will be incompatible.", 0, 20, 1);
 	while (!done)
 	{
 		if (draw)

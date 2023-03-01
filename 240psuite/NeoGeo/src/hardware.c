@@ -958,7 +958,7 @@ void ht_showInternalVars()
 
 	while (!done)
 	{
-		int x = 12, y = 6;
+		int x = 12, y = 5;
 
 		if (redraw)
 		{

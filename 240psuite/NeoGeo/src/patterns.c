@@ -715,6 +715,7 @@ void tp_monoscope()
 	int bright[7] = { 31, 25, 20, 15, 10, 6, 2 }, color = _BLACK;
 	scroller monoscope;
 
+	draw_warning("This monoscope has yet to be\nverified for maximum precision.\nReliability is very high.", 0, 20, 1);
 	while (!done)
 	{
 		if (draw)

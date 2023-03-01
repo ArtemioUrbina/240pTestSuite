@@ -606,19 +606,19 @@ void credits()
 	{
 		if(draw)
 		{
-			int x = 4, y = 4;
+			int x = 4, y = 3;
 
 			gfxClear();
 			draw_background();
 
-			pictureInit(&qr, &barcode, 26, 17, 260, 70, FLIP_NONE);
+			pictureInit(&qr, &barcode, 26, 17, 260, 40, FLIP_NONE);
 			palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 			memcpy(half_pal, back.palInfo->data, sizeof(ushort)*16);
 			darken_palette(half_pal, 4);
 			palJobPut(16, 1, half_pal);
 
-			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 0.94");
-			fixPrint(x+24, y+1, fontColorWhite, fbase, "29/01/2023");
+			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 0.95");
+			fixPrint(x+24, y+1, fontColorWhite, fbase, "01/03/2023");
 			fixPrint(x, y++, fontColorGreen, fbase, "Code by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Dustin Dembrosky");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Artemio Urbina");
@@ -628,14 +628,15 @@ void credits()
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Jose Salot");
 			fixPrint(x, y++, fontColorGreen, fbase, "Menu Pixel Art:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Asher");
-			fixPrint(x, y++, fontColorGreen, fbase, "Neo Geo SDK:");
+			fixPrint(x, y++, fontColorGreen, fbase, "Neo Geo SDK & Graphics Library:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "NeoDev (Jeff Kurtz)");
-			fixPrint(x, y++, fontColorGreen, fbase, "Graphics Library");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "DATlib (HPMAN)");
 			fixPrint(x, y++, fontColorGreen, fbase, "Z80 Sound Driver:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Based on freem ADPCM example");
 			fixPrint(x, y++, fontColorGreen, fbase, "Cartridge Hardware by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Herzmx");
+			fixPrint(x, y++, fontColorGreen, fbase, "Cartridge funding:");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "Rolando Cedillo");
 #ifndef __cd__
 			fixPrint(x, y++, fontColorGreen, fbase, "MVS flashcart provided by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "MobiusStripTech & Jose Cruz");
@@ -645,9 +646,9 @@ void credits()
 			fixPrint(x, y++, fontColorGreen, fbase, "Neo Geo CDZ borrowed from:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Rolando Cedillo");
 #endif
+			fixPrint(x, y++, fontColorYellow, fbase, "http://junkerhq.net/240p");
 			y++;
-			fixPrint(5, y++, fontColorGreen, fbase, "Info on using this test suite:");
-			fixPrint(6, y, fontColorWhite, fbase, "http://junkerhq.net/240p");
+			fixPrint(18, y, fontColorWhite, fbase, "Dedicated to Elisa");
 			draw = 0;
 		}
 		
@@ -655,6 +656,21 @@ void credits()
 		waitVBlank();
 
 		readController();
+		if (PRESSED_C)	{
+			picture memory;
+
+			gfxClear();
+			pictureInit(&memory, &beto, 26, 16, 16, 8, FLIP_NONE);
+			palJobPut(16,beto.palInfo->count,beto.palInfo->data);
+			fixPrint(7, 3, fontColorGrayLight, fbase, "Thank you Beto Garcia");
+			SCClose();
+			do {
+				waitVBlank();
+				readController();
+			} while (HELD_C);
+
+			draw = 1;
+		}
 		if (PRESSED_D)	{
 			picture n_t;
 
