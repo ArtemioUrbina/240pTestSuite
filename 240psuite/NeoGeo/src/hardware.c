@@ -894,7 +894,7 @@ void ht_z80RAMtest()
 	int done = 0, redraw = 1, execute = 0;
 
 	if(!verifyZ80Version())
-		draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
+		checkZ80Version();
 	else {
 		if(disable_z80_check)
 			draw_warning("Z80 Check disabled\nIf this test fails\nthat's a probable cause.", 1, 16, 1);

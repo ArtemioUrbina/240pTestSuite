@@ -724,7 +724,7 @@ void tp_monoscope()
 
 			gfxClear();
 
-			scrollerInit(&monoscope, &monoscopes, index, palindex, getHorScrollAspect(), PATTERN_SCROLL);
+			scrollerInit(&monoscope, &monoscopes, index, palindex, getHorScrollMonoscope(), PATTERN_SCROLL);
 			palJobPut(palindex, monoscopes.palInfo->count, monoscopes.palInfo->data);
 			index += SCROLLER_SIZE;
 			palindex += monoscopes.palInfo->count;

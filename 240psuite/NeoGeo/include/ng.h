@@ -56,6 +56,7 @@ extern BYTE fill_color_bg;
 extern u16 max_z80_timout;
 extern u16 min_z80_timout;
 extern BYTE disable_z80_check;
+extern int z80Response, z80Expected;
 #ifdef __cd__
 extern BYTE isCDFront, isCDZ, ngcd_region;
 #endif

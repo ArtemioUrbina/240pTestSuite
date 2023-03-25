@@ -284,7 +284,7 @@ ifeq ($(VROM_TYPE),unified)
 neo: cart
 	$(RM) $(OUTPUT)/240ptest.neo
 	cd $(OUTPUT) && $(7Z) a $(NBPATH)240ptest.zip $(PROM) $(C1ROM) $(C2ROM) $(SROM) $(MROM) $(VROM)
-	cd $(NBPATH) && $(NB) -n 240ptest -m dasutinartemio -y 2022 -g Other -s $(NGH) 240ptest.zip
+	cd $(NBPATH) && $(NB) -n "240p Test Suite" -m "Dasutin&Artemio" -y 2023 -g Other -s $(NGH) 240ptest.zip
 	$(RM) $(NBPATH)240ptest.zip
 	$(CP) $(NBPATH)240ptest.neo $(OUTPUT)/neosd
 	$(RM) $(NBPATH)240ptest.neo

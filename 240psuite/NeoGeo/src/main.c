@@ -1,7 +1,7 @@
 /* 
  * 240p Test Suite for the Neo Geo
  * by Artemio Urbina and Dustin Dembrosky (Dasutin)
- * Copyright (C)2011-2022 Artemio Urbina
+ * Copyright (C)2011-2023
  *
  * This file is part of the 240p Test Suite
  *
@@ -44,6 +44,7 @@ BYTE enable_shadow, fill_color_bg;
 WORD max_z80_timout;
 WORD min_z80_timout;
 BYTE disable_z80_check;
+int z80Response, z80Expected;
 #ifdef __cd__
 BYTE isCDFront, isCDZ, ngcd_region;
 #endif
@@ -228,11 +229,11 @@ void menu_tp_geometrymenu()
 				break;
 
 				case 4:
-					DrawHelp(HELP_GENERAL);
+					tp_convergence();
 				break;
 
 				case 5:
-					tp_convergence();
+					DrawHelp(HELP_GENERAL);
 				break;
 
 				case 6:
@@ -618,7 +619,7 @@ void credits()
 			palJobPut(16, 1, half_pal);
 
 			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 0.95");
-			fixPrint(x+24, y+1, fontColorWhite, fbase, "01/03/2023");
+			fixPrint(x+24, y+1, fontColorWhite, fbase, "14/03/2023");
 			fixPrint(x, y++, fontColorGreen, fbase, "Code by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Dustin Dembrosky");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Artemio Urbina");
@@ -634,7 +635,7 @@ void credits()
 			fixPrint(x, y++, fontColorGreen, fbase, "Z80 Sound Driver:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Based on freem ADPCM example");
 			fixPrint(x, y++, fontColorGreen, fbase, "Cartridge Hardware by:");
-			fixPrint(x+1, y++, fontColorWhite, fbase, "Herzmx");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "herzmx");
 			fixPrint(x, y++, fontColorGreen, fbase, "Cartridge funding:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Rolando Cedillo");
 #ifndef __cd__
@@ -662,7 +663,7 @@ void credits()
 			gfxClear();
 			pictureInit(&memory, &beto, 26, 16, 16, 8, FLIP_NONE);
 			palJobPut(16,beto.palInfo->count,beto.palInfo->data);
-			fixPrint(7, 3, fontColorGrayLight, fbase, "Thank you Beto Garcia");
+			fixPrint(9, 3, fontColorGrayLight, fbase, "Thank you Beto Garcia");
 			SCClose();
 			do {
 				waitVBlank();
@@ -728,13 +729,7 @@ void CheckWarnings()
 	if(isPALinMVS)
 		draw_warning("MVS HW is supposed to be NTSC.\nIt is supported by the Suite,\nbut PAL options will be disabled\nto honor SNK definition.", 1, 16, 1);
 
-	if(!verifyZ80Version())
-	{
-		if(max_z80_timout == Z80_TIMEOUT)
-			draw_warning("Z80 driver timed out\nEither an emulation issue\nor a bad M1 ROM.\nTry disabling Z80 check\nin options.", 1, 16, 1);
-		else
-			draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
-	}
+	checkZ80Version();
 }
 
 void menu_main()
@@ -856,7 +851,7 @@ void draw_demo()
 
 	load_blinkdata(&blinkdata, &index, &palindex, 132, 50);
 
-	fixPrint(10, 26, fontColorSolid, fbase+1, "2022 Dasutin/Artemio");
+	fixPrint(10, 26, fontColorSolid, fbase+1, "2023 Dasutin/Artemio");
 
 	demo_change = 1;
 	while (demo_frames)
@@ -977,7 +972,7 @@ void draw_mvs_title()
 
 	load_blinkdata(&blinkdata, &index, &palindex, 132, 50);
 
-	fixPrint(10, 26, fontColorWhite, fbase, "2022 Dasutin/Artemio");
+	fixPrint(10, 26, fontColorWhite, fbase, "202 Dasutin/Artemio");
 
 	while (1)
 	{

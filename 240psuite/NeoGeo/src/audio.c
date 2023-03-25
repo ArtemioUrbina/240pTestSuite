@@ -477,7 +477,7 @@ void at_sound_mdfourier()
 
 	version = verifyZ80Version();
 	if(!version)
-		draw_warning("Incorrect M1 ROM.\nAudio will be wrong.", 1, 16, 1);
+		checkZ80Version();
 	else {
 		if(disable_z80_check)
 			draw_warning("Z80 Command check disabled\nResults might be off", 1, 16, 1);

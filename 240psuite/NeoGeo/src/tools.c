@@ -712,6 +712,36 @@ inline int getHorScrollAspect()
 	return x;
 }
 
+inline int getHorScrollMonoscope()
+{
+	int x = NTSC_304;
+
+	if(isPAL && usePAL256) {
+		if (vmode_snk)
+			x = PAL_304;
+		else
+			x = PAL_320;
+	}
+	else {
+		// MVS has a different clock
+		if(!isMVS || AES_AS_MVS)
+		{
+			if (vmode_snk)
+				x = NTSC_304;
+			else
+				x = NTSC_320;
+		}
+		else
+		{
+			if (vmode_snk)
+				x = NTSC_304_MVS;
+			else
+				x = NTSC_320_MVS;
+		}
+	}
+	return x;
+}
+
 void getScreenLimits(int* xs, int* xe, int* y)
 {
 	if(vmode_snk) {
@@ -983,17 +1013,37 @@ int verifyZ80Version()
 {
 	volMEMBYTE(REG_SOUND) = SOUNDCMD_CheckVersion;
 
+	z80Response = checkZ80Response();
 #ifdef VROM_UNIFIED
-	return(checkZ80Response() == Z80VERSION_UNIFIED);
+	z80Expected = Z80VERSION_UNIFIED;
+	return(z80Response == Z80VERSION_UNIFIED);
 #endif
 
 #ifdef VROM_SPLIT
-	return(checkZ80Response() == Z80VERSION_SPLIT);
+	z80Expected = Z80VERSION_SPLIT;
+	return(z80Response == Z80VERSION_SPLIT);
 #endif
 
 #ifdef VROM_CD
-	return(checkZ80Response() == Z80VERSION_CD);
+	z80Expected = Z80VERSION_CD;
+	return(z80Response == Z80VERSION_CD);
 #endif
+}
+
+void checkZ80Version()
+{
+	if(!verifyZ80Version())
+	{
+		if(max_z80_timout == Z80_TIMEOUT)
+			draw_warning("Z80 driver timed out\nEither an emulation issue\nor a bad M1 ROM.\nTry disabling Z80 check\nin options.", 1, 16, 1);
+		else
+		{
+			char warning[128];
+
+			sprintf(warning, "Incorrect M1 ROM.\nAudio will be wrong.\nExpected Version: %d Got: %d", z80Expected, z80Response);
+			draw_warning(warning, 1, 16, 1);
+		}
+	}
 }
 
 #ifdef __cd__

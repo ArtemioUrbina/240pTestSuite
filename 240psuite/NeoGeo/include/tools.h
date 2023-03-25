@@ -87,6 +87,7 @@ void sendZ80commandAtVideoEnd(u8 command);
 void sendZ80commandAtLine(WORD line, u8 command);
 void sendZ80commandnoWait(u8 command);
 int verifyZ80Version();
+void checkZ80Version();
 
 #ifdef __cd__
 void playCDDA(BYTE track, BYTE wait);
@@ -133,11 +134,16 @@ void stopCDDA(BYTE wait);
 #define NTSC_320		320
 #define PAL_304			640
 #define PAL_320			960
+#define NTSC_304_MVS	1280
+#define NTSC_320_MVS	1600
 
 #define	PATTERN_SCROLL	16
 
+// These scroll the bacground depending on the
+// hardware version
 int getHorScroll();
 int getHorScrollAspect();
+int getHorScrollMonoscope();
 
 WORD getVideoline();
 void getScreenLimits(int* xS, int* xe, int* y);
