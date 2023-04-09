@@ -1,4 +1,4 @@
-@REM Path to the Huc compiler, The suite uses the one at: https://github.com/uli/huc
+@REM Path to the Huc compiler, The suite uses the one at: https://github.com/pce-devel/huc
 @set CYGWIN="nodosfilewarning"
 @set HUC_HOME=C:\Devel\PCE\huc
 

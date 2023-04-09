@@ -1,4 +1,4 @@
-@REM Path to the Huc compiler, The suite uses the one at: https://github.com/jbrandwood/huc
+@REM Path to the Huc compiler, The suite uses the one at: https://github.com/pce-devel/huc
 @set HUC_HOME=C:\Devel\PCE\huc
 
 @path=%path%;%HUC_HOME%\bin
