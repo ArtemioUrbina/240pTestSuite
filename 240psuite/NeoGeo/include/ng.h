@@ -134,6 +134,10 @@ extern WORD fbase;
 #define MVS_AS_AES			((volMEMBYTE(REG_STATUS_B) & MVS_OR_AES) && !isMVS)
 #define AES_AS_MVS			(!(volMEMBYTE(REG_STATUS_B) & MVS_OR_AES) && isMVS)
 
+// Detect Base HW
+#define IS_HARDWARE_MVS		(isMVS && !hwChange)
+#define IS_HARDWARE_AES		(!isMVS && !hwChange)
+
 #define BIOS_PLAYER_MOD1	0x10FDB6
 #define BIOS_PM_INIT		0
 #define BIOS_PM_PLAYING		1

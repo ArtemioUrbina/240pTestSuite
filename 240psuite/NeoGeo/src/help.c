@@ -307,7 +307,7 @@ void DrawHelp(int option)
 							fixPrint(4, 19, fontColorWhite, fbase, "Confirm your adjustment using");
 							fixPrint(4, 20, fontColorWhite, fbase, "the scroll tests.");
 
-							fixPrint(4, 21, fontColorWhite, fbase, "Designed by Keith Raney.");
+							fixPrint(4, 22, fontColorGreen, fbase, "Designed by Keith Raney.");
 						break;
 					}
 				break;
@@ -539,6 +539,8 @@ void DrawHelp(int option)
 					fixPrint(4, 18, fontColorWhite, fbase, "button 'C'. Backgrounds can be");
 					fixPrint(4, 19, fontColorWhite, fbase, "switched with the 'A' button,");
 					fixPrint(4, 20, fontColorWhite, fbase, "and button 'D' toggles sprites.");
+
+					fixPrint(4, 22, fontColorGreen, fbase, "Donna by Pepe Salot");
 				break;
 
 				case HELP_STRIPED:
@@ -676,7 +678,7 @@ void DrawHelp(int option)
 						fixPrint(4, y++, fontColorWhite, fbase, "channels 0 and 1, and noise");
 						fixPrint(4, y++, fontColorWhite, fbase, "at arounf 5khz in channel 2.");
 						y++;
-						if(isMVS || MVS_AS_AES)
+						if(IS_HARDWARE_MVS)
 						{
 							fixPrint(4, y++, fontColorWhite, fbase, "MV1C system have ADPCM-B stereo");
 							fixPrint(4, y++, fontColorWhite, fbase, "reversed. You can fix this via");

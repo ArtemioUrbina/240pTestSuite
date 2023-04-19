@@ -209,9 +209,9 @@ inline void gfxClear()
 }
 
 #define OPTIONS_HORI	1
-#define OPTIONS_IRE100	2
-#define OPTIONS_DARK	3
-#define OPTIONS_FONT	4
+#define OPTIONS_DARK	2
+#define OPTIONS_FONT	3
+#define OPTIONS_IRE100	4
 #define OPTIONS_VERT	5
 #define OPTIONS_BGFILL	6
 #define OPTIONS_Z80CHK	7
@@ -255,9 +255,9 @@ void menu_options()
 		fixPrintf(14, 6, fontColorGreen, fbase, "NGCD Options");
 #endif
 		fixPrintf(5, y++, curse == OPTIONS_HORI ? fontColorRed : fontColorWhite, fbase,		"Horizontal Width:    %s", vmode_snk ? "BIOS 304" : "FULL 320");
-		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? fontColorRed : fontColorWhite, fbase,	"IRE limit:           %s", allowIRE107 ? "107 IRE" : "100 IRE");
 		fixPrintf(5, y++, curse == OPTIONS_DARK ? fontColorRed : fontColorWhite, fbase,		"Video Output:        %s", enable_shadow ? "Darken" : "Normal");
 		fixPrintf(5, y++, curse == OPTIONS_FONT ? fontColorRed : fontColorWhite, fbase,		"Font:                %s", fbase == 3 ? "Thick" : "Thin ");
+		fixPrintf(5, y++, curse == OPTIONS_IRE100 ? (IS_HARDWARE_AES ? fontColorRed : fontColorGrayDark) : (IS_HARDWARE_AES ? fontColorWhite : fontColorGrayLight), fbase,	"IRE limit:           %s", IS_HARDWARE_AES ? allowIRE107 ? "107 IRE" : "100 IRE" : "AES Only");
 		fixPrintf(5, y++, curse == OPTIONS_VERT ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), fbase, 
 																							"PAL vertical res:    %03dp", usePAL256 ? 256 : 224);
 		fixPrintf(5, y++, curse == OPTIONS_BGFILL ? (isPAL ? fontColorRed : fontColorGrayDark) : (isPAL ? fontColorWhite : fontColorGrayLight), fbase, 
@@ -297,7 +297,7 @@ void menu_options()
 
 			if (curse == OPTIONS_IRE100)
 			{
-				if(!isMVS && !AES_AS_MVS)
+				if(IS_HARDWARE_AES)
 				{
 					fixPrintf(4, 20, fontColorGreen, fbase, "Neo Geo white level goes up to");
 					fixPrintf(4, 21, fontColorGreen, fbase, "~106.8 IRE. This option limits");
@@ -343,7 +343,8 @@ void menu_options()
 				break;
 
 				case OPTIONS_IRE100:
-					allowIRE107 = !allowIRE107;
+					if(IS_HARDWARE_AES)
+						allowIRE107 = !allowIRE107;
 				break;
 
 				case OPTIONS_VERT:
@@ -724,7 +725,7 @@ inline int getHorScrollMonoscope()
 	}
 	else {
 		// MVS has a different clock
-		if(!isMVS || AES_AS_MVS)
+		if(IS_HARDWARE_AES)
 		{
 			if (vmode_snk)
 				x = NTSC_304;
@@ -866,7 +867,7 @@ int getCreditCount()
 BYTE getHardDipValue(BYTE harddip)
 {
 #ifndef __cd__
-	if(!isMVS || AES_AS_MVS)
+	if(IS_HARDWARE_AES)
 		return 0;
 	return(!(volMEMBYTE(REG_DIPSW) & harddip));
 #else

@@ -660,7 +660,7 @@ void tp_grid()
 			draw = 0;
 			updatepalette = 1; 
 #ifndef __cd__
-			if((isMVS && !AES_AS_MVS && !vmode_snk && !isMulti && first_grid))
+			if((IS_HARDWARE_MVS && !vmode_snk && !isMulti && first_grid))
 			{
 				draw_warning("Some later MVS systems can't\ndisplay the last column of\npixels when in full 320 mode.", index, palindex, 0);
 				first_grid = 0;
@@ -715,7 +715,6 @@ void tp_monoscope()
 	int bright[7] = { 31, 25, 20, 15, 10, 6, 2 }, color = _BLACK;
 	scroller monoscope;
 
-	draw_warning("This monoscope has yet to be\nverified for maximum precision.\nReliability is very high.", 0, 20, 1);
 	while (!done)
 	{
 		if (draw)
@@ -734,7 +733,7 @@ void tp_monoscope()
 			draw = 0;
 
 #ifndef __cd__
-			if((isMVS && !AES_AS_MVS && !vmode_snk && !isMulti && first_grid))
+			if((IS_HARDWARE_MVS && !vmode_snk && !isMulti && first_grid))
 			{
 				draw_warning("Some later MVS systems can't\ndisplay the last column of\npixels when in full 320 mode.", index, palindex, 0);
 				first_grid = 0;
@@ -761,7 +760,7 @@ void tp_monoscope()
 				color = _BLACK;
 			else
 				color = PackColor(7, 7, 7, 0);
-			VRAM_PAL(16, 3) = color;
+			VRAM_PAL(16, 2) = color;
 			VRAM_PAL(0, 3)  = color;	// SNK BIOS Border
 			backgroundColor(color);
 			updatepalette = 0;

@@ -64,7 +64,7 @@ void at_sound_test()
 	int option = fmnote, change = 0, changeoption = 0;
 	int	timer0 = 0, timer1 = 0, timer2= 0, version = 0;
 #ifndef __cd__
-	int adpcmb_sel = 2;
+	int adpcmb_sel = 6;
 	int loopB = 0, adpcmb_rates[] = { 11025, 16538, 22050, 27563, 33075, 38588, 44100, 55125 }, adpcm_b_swap = 0;
 #endif
 	picture image;
@@ -483,7 +483,6 @@ void at_sound_mdfourier()
 			draw_warning("Z80 Command check disabled\nResults might be off", 1, 16, 1);
 	}
 
-	draw_warning("Some adjustments will be made\nto this test in order to\ncompare between hw revisions.\nRecordings will be incompatible.", 0, 20, 1);
 	while (!done)
 	{
 		if (draw)
@@ -553,11 +552,13 @@ void at_sound_mdfourier()
 			}
 			sendZ80command(SOUNDCMD_SSGStop);
 
+			/* SSG Noise is too random for a peroid
 			for(frame = 0; frame < 32; frame++)
 			{
 				sendZ80command(SOUNDCMD_SSGNoiseRamp);
 				waitSound(5);
 			}
+			*/
 			
 			sendZ80command(SOUNDCMD_SSGStop);
 			waitVBlank();								// extra frame
@@ -569,18 +570,18 @@ void at_sound_mdfourier()
 
 #ifndef __cd__
 			// ADPCM-B not present in Neo Geo CD
-			sendZ80command(SOUNDCMD_RateB_0_Play);			// 11025hz
-			waitSound(610);
+			//sendZ80command(SOUNDCMD_RateB_0_Play);			// 11025hz
+			//waitSound(610);
 
-			sendZ80command(SOUNDCMD_RateB_2_Play);			// 22050hz
-			waitSound(305);
+			//sendZ80command(SOUNDCMD_RateB_2_Play);			// 22050hz
+			//waitSound(305);
 
 			sendZ80command(SOUNDCMD_RateB_6_Play);			// 44100hz
 			waitSound(152);
 
 			// 2.01968 seconds or 121 frames
-			sendZ80command(SOUNDCMD_RateB_7_Play);			// 55125hz
-			waitSound(122);
+			//sendZ80command(SOUNDCMD_RateB_7_Play);			// 55125hz
+			//waitSound(122);
 #else
 			// 10.8 seconds or 643.73 frames in AES NTSC
 			playCDDA(CDDA_MDFOURIER, 0);

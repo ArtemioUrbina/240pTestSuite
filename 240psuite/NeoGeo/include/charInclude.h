@@ -171,3 +171,5 @@ extern const pictureInfo floatmenu;
 extern const paletteInfo floatmenu_Palettes;
 extern const pictureInfo qrhcfr;
 extern const paletteInfo qrhcfr_Palettes;
+extern const pictureInfo donnaline;
+extern const paletteInfo donnaline_Palettes;

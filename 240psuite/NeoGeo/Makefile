@@ -148,11 +148,11 @@ Z80OUT_CART_SIZE = 64
 
 # PCMOUT_CART_SIZE - output size of V roms in kilobytes
 ifeq ($(VROM_TYPE),unified)
-PCMOUT_CART_SIZE = 256
+PCMOUT_CART_SIZE = 512
 endif
 ifeq ($(VROM_TYPE),split)
-PCMOUT_CART_SIZE = 128
-VROMB_CART_SIZE = 128
+PCMOUT_CART_SIZE = 256
+VROMB_CART_SIZE = 256
 endif
 endif
 

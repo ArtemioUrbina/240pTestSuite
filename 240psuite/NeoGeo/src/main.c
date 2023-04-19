@@ -608,36 +608,37 @@ void credits()
 		if(draw)
 		{
 			int x = 4, y = 3;
+			int index = 1, palindex = 16;
+			picture background;
 
 			gfxClear();
-			draw_background();
+			pictureInit(&background, &donnaline, index, palindex, 0, 0,FLIP_NONE);
+			palJobPut(palindex,donnaline.palInfo->count,donnaline.palInfo->data);
 
-			pictureInit(&qr, &barcode, 26, 17, 260, 40, FLIP_NONE);
+			pictureInit(&qr, &barcode, 26, 17, 260, 150, FLIP_NONE);
 			palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
-			memcpy(half_pal, back.palInfo->data, sizeof(ushort)*16);
-			darken_palette(half_pal, 4);
-			palJobPut(16, 1, half_pal);
 
-			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 0.95");
-			fixPrint(x+24, y+1, fontColorWhite, fbase, "14/03/2023");
+			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 1.00");
+			fixPrint(x+24, y+1, fontColorWhite, fbase, "18/04/2023");
 			fixPrint(x, y++, fontColorGreen, fbase, "Code by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Dustin Dembrosky");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Artemio Urbina");
-			fixPrint(x, y++, fontColorGreen, fbase, "Monoscope based on:");
+			fixPrint(x, y++, fontColorGreen, fbase, "Monoscope by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Keith Raney");
-			fixPrint(x, y++, fontColorGreen, fbase, "Donna created and drawn by:");
+			fixPrint(x, y++, fontColorGreen, fbase, "Donna by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Jose Salot");
-			fixPrint(x, y++, fontColorGreen, fbase, "Menu Pixel Art:");
-			fixPrint(x+1, y++, fontColorWhite, fbase, "Asher");
 			fixPrint(x, y++, fontColorGreen, fbase, "Neo Geo SDK & Graphics Library:");
-			fixPrint(x+1, y++, fontColorWhite, fbase, "NeoDev (Jeff Kurtz)");
-			fixPrint(x+1, y++, fontColorWhite, fbase, "DATlib (HPMAN)");
+			fixPrint(x+1, y++, fontColorWhite, fbase, "NeoDev/Jeff Kurtz & DATlib/HPMAN");
 			fixPrint(x, y++, fontColorGreen, fbase, "Z80 Sound Driver:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Based on freem ADPCM example");
 			fixPrint(x, y++, fontColorGreen, fbase, "Cartridge Hardware by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "herzmx");
 			fixPrint(x, y++, fontColorGreen, fbase, "Cartridge funding:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Rolando Cedillo");
+			fixPrint(x, y, fontColorGreen, fbase, "Menu Pixel Art:");
+			fixPrint(x+18, y++, fontColorGreen, fbase, "Jingle by:");
+			fixPrint(x+1, y, fontColorWhite, fbase, "Asher");
+			fixPrint(x+18, y++, fontColorWhite, fbase, "Neko Milkshake");
 #ifndef __cd__
 			fixPrint(x, y++, fontColorGreen, fbase, "MVS flashcart provided by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "MobiusStripTech & Jose Cruz");
@@ -839,7 +840,7 @@ void draw_demo()
 	blinker blinkdata;
 
 	gfxClear();
-	pictureInit(&foreground, &gillian, index, palindex, 132, 50, FLIP_NONE);
+	pictureInit(&foreground, &gillian, index, palindex, 133, 50, FLIP_NONE);
 	palJobPut(palindex,gillian.palInfo->count,gillian.palInfo->data);
 	index += getPicSprites(foreground.info);
 	palindex += gillian.palInfo->count;
@@ -849,7 +850,7 @@ void draw_demo()
 	index += getPicSprites(titledsp.info);
 	palindex += title.palInfo->count;
 
-	load_blinkdata(&blinkdata, &index, &palindex, 132, 50);
+	load_blinkdata(&blinkdata, &index, &palindex, 133, 50);
 
 	fixPrint(10, 26, fontColorSolid, fbase+1, "2023 Dasutin/Artemio");
 
@@ -869,7 +870,7 @@ void draw_demo()
 			switch(currdemo)
 			{
 				case 1:
-					scrollerInit(&monoscope, &monoscopes, 1, 16, getHorScroll(), PATTERN_SCROLL);
+					scrollerInit(&monoscope, &monoscopes, 1, 16, getHorScrollMonoscope(), PATTERN_SCROLL);
 					palJobPut(16, monoscopes.palInfo->count, monoscopes.palInfo->data);
 				break;
 				case 2:
@@ -972,7 +973,7 @@ void draw_mvs_title()
 
 	load_blinkdata(&blinkdata, &index, &palindex, 132, 50);
 
-	fixPrint(10, 26, fontColorWhite, fbase, "202 Dasutin/Artemio");
+	fixPrint(10, 26, fontColorWhite, fbase, "2023 Dasutin/Artemio");
 
 	while (1)
 	{
