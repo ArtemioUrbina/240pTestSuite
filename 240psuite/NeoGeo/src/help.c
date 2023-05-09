@@ -822,6 +822,11 @@ void DrawHelp(int option)
 					fixPrint(4, y++, fontColorWhite, fbase, "It will generate plots with the");
 					fixPrint(4, y++, fontColorWhite, fbase, "audio signature from this system");
 					fixPrint(4, y++, fontColorWhite, fbase, "that can be compared to others.");
+#ifndef __cd__					
+					y++;
+					fixPrint(4, y++, fontColorWhite, fbase, "NGCD compatible mode skips");
+					fixPrint(4, y++, fontColorWhite, fbase, "sample playback.");
+#endif
 				}
 				break;
 				case HELP_HCFR:
@@ -1000,6 +1005,17 @@ void DrawHelp(int option)
 					fixPrint(4, y++, fontColorWhite, fbase, "and press C, which turns");
 					fixPrint(4, y++, fontColorWhite, fbase, "the whole back to white for");
 					fixPrint(4, y++, fontColorWhite, fbase, "2 frames.");
+				break;
+				case HELP_Z80RAM:
+					fixPrintC(6, fontColorGreen, fbase, "Z80 RAM TEST");
+
+					fixPrint(4, y++, fontColorWhite, fbase, "This test instructs the Z80 CPU");
+					fixPrint(4, y++, fontColorWhite, fbase, "to check its RAM. Of course if");
+					fixPrint(4, y++, fontColorWhite, fbase, "the Z80 is non functional this");
+					fixPrint(4, y++, fontColorWhite, fbase, "will fail.");
+					y++;
+					fixPrint(4, y++, fontColorWhite, fbase, "The test itself also uses some");
+					fixPrint(4, y++, fontColorWhite, fbase, "RAM as heap.");
 				break;
 			default:
 				exit = 1;

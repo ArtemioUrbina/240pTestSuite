@@ -56,6 +56,7 @@
 #define HELP_EBU			31
 #define HELP_HCFR			32
 #define HELP_DISAPPEAR		33
+#define HELP_Z80RAM 		34
 
 void DrawHelp(int option);
 int checkHelp(int helpID);

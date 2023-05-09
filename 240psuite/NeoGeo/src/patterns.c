@@ -1441,7 +1441,7 @@ void tp_overscan()
 
 			if(vmode_snk && first_overscan)
 			{
-				draw_warning("You can draw 16 more pixels\nhorizontally by enabling\n320 mode in options.", sprindex, palindex, 0);
+				draw_note("You can draw 16 more pixels\nhorizontally by enabling\n320 mode in options.", sprindex, palindex, 0);
 				redraw = 1;
 				first_overscan = 0;
 			}

@@ -376,28 +376,6 @@ void ht_memory_viewer(u32 address)
 	return;
 }
 
-void ht_test_ng_ram()
-{
-	int done = 0;
-	picture image;
-
-	gfxClear();
-
-	pictureInit(&image, &back, 1, 16, 0, 0,FLIP_NONE);
-	palJobPut(16,back.palInfo->count,back.palInfo->data);
-
-	while (!done)
-	{
-		SCClose();
-		waitVBlank();
-
-		readController();
-
-		if (BTTN_EXIT)
-			done = 1;
-	}
-}
-
 typedef struct bios_data {
 	u8		type;
 	u32		crc;
@@ -937,7 +915,7 @@ void ht_z80RAMtest()
 				fixPrintC(15, fontColorRed, fbase, "Unknown status");
 				unknown = 1;
 			}
-			fixPrintC(26, fontColorWhite, fbase, "Press B to exit");
+			fixPrintC(26, fontColorWhite, fbase, "Press B to exit or A to repeat");
 
 			if (unknown || DEBUG_ENABLED)
 			{
@@ -948,6 +926,12 @@ void ht_z80RAMtest()
 			}
 			execute = 0;
 		}
+
+		if(BTTN_OPTION_2)
+			sendZ80command(SOUNDCMD_PlayJingleA);
+
+		if(checkHelp(HELP_Z80RAM))
+			redraw = 1;
 	}
 	return;
 }

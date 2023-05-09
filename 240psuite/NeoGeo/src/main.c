@@ -601,7 +601,6 @@ void credits()
 {
 	int done = 0, draw = 1;
 	picture qr;
-	short half_pal[16];
 
 	while (!done)
 	{

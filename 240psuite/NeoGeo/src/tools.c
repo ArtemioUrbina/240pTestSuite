@@ -557,6 +557,14 @@ void draw_warning(char* msg, int index, int palindex, int clearback)
 		draw_message("WARNING", msg, index, palindex, clearback);
 }
 
+void draw_note(char* msg, int index, int palindex, int clearback)
+{
+#ifndef __cd__
+	if (!isMVS || getSoftDipvalue(SD_WARNING_ENABLE))
+#endif
+		draw_message("NOTE", msg, index, palindex, clearback);
+}
+
 void draw_message(char *title, char *msg, int index, int palindex, int clearback)
 {
 	int len = 0, x = 0, done = 0, sublen = 0, rows = 0, i = 0;

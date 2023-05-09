@@ -470,10 +470,25 @@ void ExecuteFM(int framelen)
 	sendZ80command(SOUNDCMD_FMStopAll);
 }
 
+#define	MDF_DEFAULT		0
+#define	MDF_COMPATIBLE	1
+#define MDF_TYPES		2
+
 void at_sound_mdfourier()
 {
-	int done = 0, draw = 1, version = 0, msgpos = 0;
-	picture image;
+	picture 	image;
+	int 		done = 0, draw = 1, version = 0, msgpos = 0;
+#ifndef __cd__
+	int 		mdf_type = MDF_DEFAULT;
+	fmenudata	fmenu[MDF_TYPES] = { 
+			{ MDF_DEFAULT,		"Full Test" },
+			{ MDF_COMPATIBLE,	"NGCD compatible" },
+	};
+
+	mdf_type = select_menu("Select Test Type", fmenu, MDF_TYPES, mdf_type);
+	if(mdf_type == SEL_MENU_CANCEL)
+		return;
+#endif
 
 	version = verifyZ80Version();
 	if(!version)
@@ -500,6 +515,10 @@ void at_sound_mdfourier()
 			fixPrintC(y++, fontColorWhite, fbase, "Start recording and press A");
 			if(!version)
 				fixPrintC(++y, fontColorRed, fbase, "Faulty Audio Driver");
+#ifndef __cd__
+			if(mdf_type == MDF_COMPATIBLE)
+				fixPrintC(y+3, fontColorYellow, fbase, "NGCD Compatible test");
+#endif
 			fixPrintC(26, fontColorWhite, fbase, "Press START for help");
 			draw = 0;
 		}
@@ -570,30 +589,36 @@ void at_sound_mdfourier()
 
 #ifndef __cd__
 			// ADPCM-B not present in Neo Geo CD
-			//sendZ80command(SOUNDCMD_RateB_0_Play);			// 11025hz
-			//waitSound(610);
+			if(mdf_type == MDF_DEFAULT)
+			{
+				//sendZ80command(SOUNDCMD_RateB_0_Play);			// 11025hz
+				//waitSound(610);
 
-			//sendZ80command(SOUNDCMD_RateB_2_Play);			// 22050hz
-			//waitSound(305);
+				//sendZ80command(SOUNDCMD_RateB_2_Play);			// 22050hz
+				//waitSound(305);
 
-			sendZ80command(SOUNDCMD_RateB_6_Play);			// 44100hz
-			waitSound(152);
+				sendZ80command(SOUNDCMD_RateB_6_Play);			// 44100hz
+				waitSound(152);
 
-			// 2.01968 seconds or 121 frames
-			//sendZ80command(SOUNDCMD_RateB_7_Play);			// 55125hz
-			//waitSound(122);
-#else
-			// 10.8 seconds or 643.73 frames in AES NTSC
-			playCDDA(CDDA_MDFOURIER, 0);
-			waitSound(644);
-			pauseCDDA(0);
-			waitVBlank();								// extra frame
+				// 2.01968 seconds or 121 frames
+				//sendZ80command(SOUNDCMD_RateB_7_Play);			// 55125hz
+				//waitSound(122);
+			}
 #endif
 			executeSilence();
 
 			executePulseTrain();
 
 			sendZ80command(SOUNDCMD_StopAll);
+
+#ifdef __cd__
+			// We play CDDA outside from the main tones
+			// 10.8 seconds or 643.73 frames in AES NTSC
+			playCDDA(CDDA_MDFOURIER, 0);
+			waitSound(644);
+			pauseCDDA(0);
+			waitVBlank();								// extra frame
+#endif
 
 			fixPrintC(msgpos, fontColorWhite, fbase, "You can now stop recording.");
 			fixPrintC(msgpos+1, fontColorWhite, fbase, "Press any button to continue");

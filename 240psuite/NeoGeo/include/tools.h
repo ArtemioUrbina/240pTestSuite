@@ -51,6 +51,7 @@ int clear_gillian(int index, blinker *blinkdata);
 int draw_background();
 void draw_message(char *title, char *msg, int index, int palindex, int clearback);
 void draw_warning(char* msg, int index, int palindex, int clearback);
+void draw_note(char* msg, int index, int palindex, int clearback);
 
 void menu_footer();
 void menu_options();
