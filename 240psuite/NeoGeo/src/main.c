@@ -618,7 +618,7 @@ void credits()
 			palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 
 			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 1.00");
-			fixPrint(x+24, y+1, fontColorWhite, fbase, "18/04/2023");
+			fixPrint(x+24, y+1, fontColorWhite, fbase, "09/05/2023");
 			fixPrint(x, y++, fontColorGreen, fbase, "Code by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Dustin Dembrosky");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Artemio Urbina");

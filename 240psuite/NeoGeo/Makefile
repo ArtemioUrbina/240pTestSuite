@@ -279,6 +279,8 @@ endif
 # NEO & CD target #
 ###################
 
+# Build Neo and Multi roms
+# Multi info: https://www.arcade-projects.com/threads/how-to-convert-files-to-work-with-neogeo-multi.24393/
 ifeq ($(OUTPUT),cart)
 ifeq ($(VROM_TYPE),unified)
 neo: cart
@@ -288,6 +290,17 @@ neo: cart
 	$(RM) $(NBPATH)240ptest.zip
 	$(CP) $(NBPATH)240ptest.neo $(OUTPUT)/neosd
 	$(RM) $(NBPATH)240ptest.neo
+	$(RM) $(OUTPUT)/multi/240ptest.zip
+	$(CP) $(OUTPUT)/$(MROM) $(OUTPUT)/multi/m1rom
+	$(CP) $(OUTPUT)/$(SROM) $(OUTPUT)/multi/srom
+	$(CP) $(OUTPUT)/$(PROM) $(OUTPUT)/multi/prom
+	$(CP) $(OUTPUT)/$(VROM) $(OUTPUT)/multi/vroma0
+	$(CP) $(OUTPUT)/$(C1ROM) $(OUTPUT)/multi/$(C1ROM)
+	$(CP) $(OUTPUT)/$(C2ROM) $(OUTPUT)/multi/$(C2ROM)
+	cd $(OUTPUT)/multi/ && ./createcrom 2501 f
+	cd $(OUTPUT)/multi/ && $(7Z) a 240ptest.zip fpga m1rom srom prom vroma0 crom0
+	$(RM) $(OUTPUT)/multi/m1rom $(OUTPUT)/multi/srom $(OUTPUT)/multi/prom $(OUTPUT)/multi/vroma0
+	$(RM) $(OUTPUT)/multi/$(C1ROM) $(OUTPUT)/multi/$(C2ROM) $(OUTPUT)/multi/crom0 $(OUTPUT)/multi/fpga
 endif
 
 # https://wiki.terraonion.com/index.php/Neobuilder_Guide
