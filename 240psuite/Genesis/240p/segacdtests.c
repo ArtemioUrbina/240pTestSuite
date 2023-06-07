@@ -104,7 +104,7 @@ int DetectSCDviaExpansion()
 }
 #endif
 
-u8 DetectSegaCDModel()
+u8 DetectSegaCDModelFromBIOS()
 {
 #ifdef SEGACD
 	uint8_t *bios = (uint8_t *)0;
@@ -1597,7 +1597,7 @@ void PCMCartPlay()
 	int CDTrayClosed = 0, timer = 0, lastTrayStatus = -1, enableCD = 0, maxSel = 3;
 	int refresh = 0, currTrack = 0, currTrackType = TRACK_DATA, warning = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons, tracks = 0, cdStatus = 0;
-	u8  SCDModel = 0;
+	u8  SCDBIOSModel = 0;
 	
 	if(!segacd_init())
 	{
@@ -1605,7 +1605,7 @@ void PCMCartPlay()
 		return;
 	}
 	
-	SCDModel = DetectSegaCDModel();
+	SCDBIOSModel = DetectSegaCDModelFromBIOS();
 	
 	if(!SendSCDCommandRetVal(Op_LoadPCMRAM, 0, NULL))
 	{
@@ -1837,7 +1837,7 @@ void PCMCartPlay()
 						}
 						else
 						{
-							if(SCDModel == 2) {
+							if(SCDBIOSModel == 2) {
 								warnmsg = "Model 2 open manually";
 								warning = 120;
 							}
@@ -1853,7 +1853,7 @@ void PCMCartPlay()
 							refresh = 1;
 						}
 						else {
-							if(SCDModel == 2) {
+							if(SCDBIOSModel == 2) {
 								warnmsg = "Model 2 close manually";
 								warning = 120;
 							}
