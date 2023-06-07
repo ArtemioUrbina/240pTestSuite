@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011-2022 Artemio Urbina
+ * Copyright (C)2011-2023 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -924,8 +924,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-			VDP_drawTextBG(APLAN, "Ver. 1.26", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "15/12/2022", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.27", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "04/02/2023", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 			VDP_End();
@@ -951,7 +951,7 @@ void DrawCredits()
 			counter = 0;
 		VDP_End();
 
-		if(pressedButtons & BUTTON_START)
+		if(pressedButtons & BUTTON_START || pressedButtons & BUTTON_B)
 			exit = 1;
 		
 		if(pressedButtons & BUTTON_C)
@@ -1071,14 +1071,11 @@ void DrawResolution()
 
 void OptionsMenu()
 {
-	int sel = 0, loadvram = 1, hidden = 0;
+	int sel = 0, loadvram = 1;
 	u16 exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	FadeAndCleanUp();
-	
-	if(debug_controls)
-		hidden = 1;
 
 	while(!exit)
 	{
@@ -1101,13 +1098,10 @@ void OptionsMenu()
 		VDP_drawTextBG(APLAN, enable_PAL240 ? "ON " : "OFF", TILE_ATTR(sel == 2 ? PAL3 : PAL0, 0, 0, 0), 28, 13);
 		VDP_drawTextBG(APLAN, "Auto-sort controllers:", TILE_ATTR(sel == 3 ? PAL3 : PAL0, 0, 0, 0), 5, 15);
 		VDP_drawTextBG(APLAN, enable_cntrlsrt ? "ON " : "OFF", TILE_ATTR(sel == 3 ? PAL3 : PAL0, 0, 0, 0), 28, 15);
-		if(hidden)
-		{
-			VDP_drawTextBG(APLAN, "Debug controllers:", TILE_ATTR(sel == 4 ? PAL3 : PAL0, 0, 0, 0), 5, 16);
-			VDP_drawTextBG(APLAN, debug_controls ? "ON " : "OFF", TILE_ATTR(sel == 4 ? PAL3 : PAL0, 0, 0, 0), 28, 16);
-		}
+		VDP_drawTextBG(APLAN, "Debug controllers:", TILE_ATTR(sel == 4 ? PAL3 : PAL0, 0, 0, 0), 5, 16);
+		VDP_drawTextBG(APLAN, debug_controls ? "ON " : "OFF", TILE_ATTR(sel == 4 ? PAL3 : PAL0, 0, 0, 0), 28, 16);
 
-		VDP_drawTextBG(APLAN, "Back", TILE_ATTR(sel == (hidden ? 5 : 4) ? PAL3 : PAL0, 0, 0, 0), 5, 19);
+		VDP_drawTextBG(APLAN, "Back", TILE_ATTR(sel == 5 ? PAL3 : PAL0, 0, 0, 0), 5, 19);
 
 		DrawResolution();
 		
@@ -1124,13 +1118,13 @@ void OptionsMenu()
 		{
 			sel--;
 			if(sel < 0)
-				sel = hidden ? 5 : 4;
+				sel = 5;
 		}
 
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			sel++;
-			if(sel > (hidden ? 5 : 4))
+			if(sel > 5)
 				sel = 0;
 		}
 		
@@ -1164,15 +1158,12 @@ void OptionsMenu()
 			
 			if(sel == 3)
 				enable_cntrlsrt = !enable_cntrlsrt;
-				
-			if(hidden && sel == 4)
+
+			if(sel == 4)
 				debug_controls = !debug_controls;
 		}
 		
-		if(pressedButtons & BUTTON_C && sel == 3)
-			hidden = 1;
-			
-		if((pressedButtons & BUTTON_A && sel == (hidden ? 5 : 4)) ||
+		if((pressedButtons & BUTTON_A && sel == 5) ||
 			pressedButtons & BUTTON_Y || pressedButtons & BUTTON_START
 			|| pressedButtons & BUTTON_B)
 		{

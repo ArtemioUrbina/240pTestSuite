@@ -123,11 +123,11 @@ void DrawHelp(int option)
 				{
 				case 1:
 					VDP_drawTextBG(APLAN, "PLUGE (1/3)", TILE_ATTR(PAL1, 0, 0, 0), 13, 4);
-					VDP_drawTextBG(APLAN, "NTSC levels require black to be", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "at 7.5 IRE for video. This HW", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "lowest is 6 IRE (6%), so using", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "this value for general 240p use", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
-					VDP_drawTextBG(APLAN, "is not recommended.", TILE_ATTR(PAL3, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "NTSC levels require black to be", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "at 7.5 IRE for video. This HW", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "lowest is 6 IRE (6%), so using", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "this value for general 240p use", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+					VDP_drawTextBG(APLAN, "is not recommended.", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
 					y++;
 					VDP_drawTextBG(APLAN, "Of course using it as reference", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 					VDP_drawTextBG(APLAN, "will work perfectly for games", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);

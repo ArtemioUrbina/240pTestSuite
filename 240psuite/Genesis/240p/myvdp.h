@@ -30,7 +30,7 @@ u16 Detect_VDP_PAL();
 u8 VDP_Detect_Interlace();
 
 int getVerticalRes();
-inline int isVertical240();
+int isVertical240();
 
 void VDP_Start();
 void VDP_End();

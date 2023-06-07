@@ -24,7 +24,7 @@
 
 u8 doZ80Lock = 0;
 
-const static u16 PITCHES[NUMPITCHES] = {
+const u16 PITCHES[NUMPITCHES] = {
 	277, 293, 311, 329, 349, 369, 
 	391, 415, 439, 465, 493, 522
 };
