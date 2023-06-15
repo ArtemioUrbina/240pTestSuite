@@ -55,6 +55,7 @@ enum SCD_Command{
 		Op_SetSampSin32552,		//Use 32552hz 1khz sample
 		Op_SetSampSin32604,		//Use 32604hz 1khz sample
 		Op_CheckPCMRAM,			//Check full PCM RAM
+		Op_CheckPCMBankRAM,		//Check PCM BANK RAM
 		Op_LoadPCMRAM,			//Load sample into PCM ram from cartridge
 		Op_CDTracks,			//Query Number of Tracks
 		Op_DriveVersion,		//Query Drive Version
@@ -91,7 +92,8 @@ void MemViewer(uint32_t address);
 
 // These change addressed with the SEGACD define
 void SendSCDCommand(enum SCD_Command command);
-u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData);
+u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData1, u16 *extraData2);
+u16 SendSCDCommandP2RetVal(enum SCD_Command command, u16 param1, u16 param2, u16 *extraData1, u16 *extraData2);
 
 #ifdef SEGACD
 void PlayCDTrack();

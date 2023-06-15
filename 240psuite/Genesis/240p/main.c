@@ -57,7 +57,7 @@ int main()
 	
 #ifdef SEGACD	
 	SendSCDCommand(Op_InitCD);
-	if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveVersion))
+	if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveVersion, NULL))
 		readDriveVer = 1;
 #endif
 	
@@ -924,8 +924,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-			VDP_drawTextBG(APLAN, "Ver. 1.27", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "04/02/2023", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.28", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "15/06/2023", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 			VDP_End();

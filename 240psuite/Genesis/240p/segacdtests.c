@@ -1516,20 +1516,23 @@ void SegaCDMenu()
 	return;
 }
 
-void PrintPCMResults(u8 value, u16 result, u16 address, u8 y)
+void PrintPCMResults(u8 value, u16 result, u16 bank, u16 address, u16 readvalue, u8 y)
 {
 	if(result == 0)
 	{
-		ShowMessageAndData("Memory Failed w/:", value, 2, PAL1, 11, y++);
-		ShowMessageAndData("address/8bit:", address, 4, PAL1, 13, y);
+		ShowMessageAndData("Memory Failed w/value:", value, 2, PAL3, 8, y++);
+		ShowMessageAndData("bank:", bank, 2, PAL1, 12, y++);
+		ShowMessageAndData("offset (8bit):", address & 0x0FFF, 4, PAL1, 12, y++);
+		ShowMessageAndData("read value:", readvalue, 2, PAL1, 12, y);
 	}
 	else
-		ShowMessageAndData("Memory OK w/:", value, 2, PAL1, 11, y);
+		ShowMessageAndData("Memory OK w/value:", value, 2, PAL1, 8, y);
 }
 
 void PCMRAMCheck()
 {
-	u16 result = 0, address = 0, exit = 0;
+	u16 result = 0, address = 0, readvalue = 0, type = 1;
+	fmenudata resmenudata[] = { {0, "PCM RAM Check"}, {1, "Full Test"}, {2, "Per Bank"}, {3, "return"}};
 	
 #ifndef SEGACD
 	if(!segacd_init())
@@ -1539,26 +1542,63 @@ void PCMRAMCheck()
 	}
 #endif
 
-	while(!exit)
+	do
 	{
-		VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
-		ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 5, 4);
-	
-		result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address);
-		PrintPCMResults(0x55, result, address, 10);
+		u16 exit = 0;
 		
-		result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xAA, &address);
-		PrintPCMResults(0xAA, result, address, 12);
-		
-		result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xFF, &address);
-		PrintPCMResults(0xFF, result, address, 14);
-		
-		result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x00, &address);
-		PrintPCMResults(0x00, result, address, 16);
-		
-		if(WaitKey("'A' for check 'B' to exit") == BUTTON_B)
-			exit = 1;
-	}
+		type = DrawFloatMenu(type, resmenudata, 4);
+		if(type != 3)
+			DrawMainBG();
+		if(type == 1)
+		{
+			while(!exit)
+			{
+				VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+				ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 5, 4);
+				
+				result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address, &readvalue);
+				PrintPCMResults(0x55, result, ((address & 0xF000) >> 12), address, readvalue, 6);
+				
+				result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xAA, &address, &readvalue);
+				PrintPCMResults(0xAA, result, ((address & 0xF000) >> 12), address, readvalue, 10);
+				
+				result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xFF, &address, &readvalue);
+				PrintPCMResults(0xFF, result, ((address & 0xF000) >> 12), address, readvalue, 14);
+				
+				result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x00, &address, &readvalue);
+				PrintPCMResults(0x00, result, ((address & 0xF000) >> 12), address, readvalue, 18);
+				
+				if(WaitKey("'A' to test 'B' to exit") == BUTTON_B)
+					exit = 1;
+			}
+		}
+		if(type == 2)
+		{
+			u16 bank = 0;
+			
+			while(!exit && bank < 16)
+			{
+				VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
+				ShowMessageAndData("PCM RAM Test (Sega CD) Bank", bank, 2, PAL1, 4, 4);
+				
+				result = SendSCDCommandP2RetVal(Op_CheckPCMBankRAM, 0x55, bank, &address, &readvalue);
+				PrintPCMResults(0x55, result, bank, address, readvalue, 6);
+				
+				result = SendSCDCommandP2RetVal(Op_CheckPCMBankRAM, 0xAA, bank, &address, &readvalue);
+				PrintPCMResults(0xAA, result, bank, address, readvalue, 10);
+				
+				result = SendSCDCommandP2RetVal(Op_CheckPCMBankRAM, 0xFF, bank, &address, &readvalue);
+				PrintPCMResults(0xFF, result, bank, address, readvalue, 14);
+				
+				result = SendSCDCommandP2RetVal(Op_CheckPCMBankRAM, 0x00, bank, &address, &readvalue);
+				PrintPCMResults(0x00, result, bank, address, readvalue, 18);
+				
+				if(WaitKey("'A' for next 'B' to exit") == BUTTON_B)
+					exit = 1;
+				bank++;
+			}
+		}
+	}while(type != 3);
 	
 #ifndef SEGACD
 	resetSegaCD();
@@ -1581,7 +1621,7 @@ int GetTrackType(int track)
 {
 	u16 trackType = TRACK_DATA;
 				
-	if(SendSCDCommandRetVal(Op_GetCDTrackType, track, &trackType) == TOC_READ_OK)
+	if(SendSCDCommandRetVal(Op_GetCDTrackType, track, &trackType, NULL) == TOC_READ_OK)
 		return(trackType & 0x00FF);
 
 	return RESP_FAILED;
@@ -1607,7 +1647,7 @@ void PCMCartPlay()
 	
 	SCDBIOSModel = DetectSegaCDModelFromBIOS();
 	
-	if(!SendSCDCommandRetVal(Op_LoadPCMRAM, 0, NULL))
+	if(!SendSCDCommandRetVal(Op_LoadPCMRAM, 0, NULL, NULL))
 	{
 		ShowMessageAndData("PCM data load failed", 0x2000, 4, PAL2, 5, 10);
 		if(WaitKey("Press A to continue") != BUTTON_A)
@@ -1705,7 +1745,7 @@ void PCMCartPlay()
 			timer++;
 			if(timer > 60)
 			{	
-				if(SendSCDCommandRetVal(Op_CheckTrayClosed, 0, &cdStatus))
+				if(SendSCDCommandRetVal(Op_CheckTrayClosed, 0, &cdStatus, NULL))
 					CDTrayClosed = 1;
 				else
 				{
@@ -1735,14 +1775,14 @@ void PCMCartPlay()
 						
 						VDP_waitVSync();
 						
-						if(SendSCDCommandRetVal(Op_CDTracks, 0, &trackCheck))
+						if(SendSCDCommandRetVal(Op_CDTracks, 0, &trackCheck, NULL))
 						{
 							u16 DriveCheck = 0;
 							
 							tracks = trackCheck;
 							currTrack = 0;
 							
-							if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveCheck))
+							if(SendSCDCommandRetVal(Op_DriveVersion, 0, &DriveCheck, NULL))
 							{
 								DriveVersion = DriveCheck;
 								readDriveVer = 1;
@@ -1815,7 +1855,7 @@ void PCMCartPlay()
 				{
 					case 0:
 						if(currTrack && currTrackType == TRACK_CDDA)
-							SendSCDCommandRetVal(Op_PlayCDDA, currTrack, NULL);
+							SendSCDCommandRetVal(Op_PlayCDDA, currTrack, NULL, NULL);
 						else {
 							if(currTrack) {
 								warnmsg = "Cannot play DATA Track";
@@ -2120,11 +2160,11 @@ uint8_t segacd_init()
 	
 	ypos++;
 	
-	result = SendSCDCommandRetVal(Op_DummyTest, 0, &retVal);
+	result = SendSCDCommandRetVal(Op_DummyTest, 0, &retVal, NULL);
 	// laseractive fails this first one.. could it be only the first command sent?
 	// send a second command if that happens...
 	if(result != 1 || retVal != 0xE715)
-		result = SendSCDCommandRetVal(Op_DummyTest, 0, &retVal);
+		result = SendSCDCommandRetVal(Op_DummyTest, 0, &retVal, NULL);
 		
 	if(result == 1 && retVal == 0xE715)
 		VDP_drawTextBG(APLAN, "Communication OK with Sega CD", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
@@ -2160,12 +2200,13 @@ asm("SendSCDWait2:");
 	asm("bne	SendSCDWait2");
 }
 
-u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData)
+u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData1, u16 *extraData2)
 {
 	volatile unsigned char *segacd_comm = (void*)0xA1200E;
 	volatile u16 *segacd_param = (void*)0xA12010;
 	volatile u16 *return_val = (void*)0xA12020;
-	volatile u16 *extraDataInt = (void*)0xA12022;
+	volatile u16 *extraDataInt1 = (void*)0xA12022;
+	volatile u16 *extraDataInt2 = (void*)0xA12024;
 	u16	retval = 0;
 	
 asm("SendSCDCOMMwRet:");
@@ -2185,8 +2226,46 @@ asm("SendSCDWaitwRet2:");
 	asm("bne	SendSCDWaitwRet2");
 	
 	retval = *return_val;
-	if(extraData)
-		*extraData = *extraDataInt;
+	if(extraData1)
+		*extraData1 = *extraDataInt1;
+	if(extraData2)
+		*extraData2 = *extraDataInt2;
+	return retval;
+}
+
+u16 SendSCDCommandP2RetVal(enum SCD_Command command, u16 param1, u16 param2, u16 *extraData1, u16 *extraData2)
+{
+	volatile unsigned char *segacd_comm = (void*)0xA1200E;
+	volatile u16 *segacd_param1 = (void*)0xA12010;
+	volatile u16 *segacd_param2 = (void*)0xA12012;
+	volatile u16 *return_val = (void*)0xA12020;
+	volatile u16 *extraDataInt1 = (void*)0xA12022;
+	volatile u16 *extraDataInt2 = (void*)0xA12024;
+	u16	retval = 0;
+	
+asm("SendSCDCOMMwRet2Param:");
+	asm("tst.b	0xA1200F");
+	asm("bne	SendSCDCOMMwRet");
+
+	*segacd_comm = 0;
+	*segacd_param1 = 0;
+	*segacd_param2 = 0;
+asm("SendSCDWaitwRet2Param:");
+	asm("tst.b	0xA1200F");
+	asm("beq	SendSCDWaitwRet2Param");
+	
+	*segacd_comm = command;
+	*segacd_param1 = param1;
+	*segacd_param2 = param2;
+asm("SendSCDWaitwRet2_Param:");
+	asm("tst.b	0xA1200F");
+	asm("bne	SendSCDWaitwRet2_Param");
+	
+	retval = *return_val;
+	if(extraData1)
+		*extraData1 = *extraDataInt1;
+	if(extraData2)
+		*extraData2 = *extraDataInt2;
 	return retval;
 }
 
@@ -2211,12 +2290,13 @@ asm("SendSCDWait2:");
 	asm("bne	SendSCDWait2");
 }
 
-u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData)
+u16 SendSCDCommandRetVal(enum SCD_Command command, u16 param, u16 *extraData1, u16 *extraData2)
 {
 	volatile u16 *segacd_comm = (void*)0xA12010;
 	volatile u16 *segacd_param = (void*)0xA12012;
 	volatile u16 *return_val = (void*)0xA12022;
-	volatile u16 *extraDataInt = (void*)0xA12024;
+	volatile u16 *extraDataInt1 = (void*)0xA12024;
+	volatile u16 *extraDataInt2 = (void*)0xA12026;
 	u16	retval = 0;
 
 asm("SendSCDCOMMwRet:");
@@ -2235,8 +2315,45 @@ asm("SendSCDWaitwRet2:");
 	asm("bne	SendSCDWaitwRet2");
 	
 	retval = *return_val;
-	if(extraData)
-		*extraData = *extraDataInt;
+	if(extraData1)
+		*extraData1 = *extraDataInt1;
+	if(extraData2)
+		*extraData2 = *extraDataInt2;
+	return retval;
+}
+
+u16 SendSCDCommandP2RetVal(enum SCD_Command command, u16 param1, u16 param2, u16 *extraData1, u16 *extraData2)
+{
+	volatile u16 *segacd_comm = (void*)0xA12010;
+	volatile u16 *segacd_param1 = (void*)0xA12012;
+	volatile u16 *segacd_param2 = (void*)0xA12014;
+	volatile u16 *return_val = (void*)0xA12022;
+	volatile u16 *extraDataInt1 = (void*)0xA12024;
+	volatile u16 *extraDataInt2 = (void*)0xA12026;
+	u16	retval = 0;
+
+asm("SendSCDCOMMwRetParam2:");
+	asm("tst.w	0xA12020");
+	asm("bne	SendSCDCOMMwRetParam2");
+	*segacd_comm = 0;
+	*segacd_param1 = 0;
+	*segacd_param2 = 0;
+asm("SendSCDWaitwRetParam2:");
+	asm("tst.w	0xA12020");
+	asm("beq	SendSCDWaitwRetParam2");
+	
+	*segacd_comm = command;
+	*segacd_param1 = param1;
+	*segacd_param2 = param2;
+asm("SendSCDWaitwRet2Param2:");
+	asm("tst.w	0xA12020");
+	asm("bne	SendSCDWaitwRet2Param2");
+	
+	retval = *return_val;
+	if(extraData1)
+		*extraData1 = *extraDataInt1;
+	if(extraData2)
+		*extraData2 = *extraDataInt2;
 	return retval;
 }
 #endif

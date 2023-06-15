@@ -98,14 +98,17 @@ SP_Main:
 		moveq	#0, d0			; Clear d0
 		move.w	$FF8010, d0		; Store command to d0
 		move.w	$FF8012, d1		; Store param to d1
+		move.w	$FF8014, d2		; Store param to d2
 		moveq	#0, d6			; Clear d6 for return value 1
 		moveq	#0, d7			; Clear d7 for return value 2
+		moveq	#0, d5			; Clear d5 for return value 3
 		add.w	d0, d0			; Calculate Offset (Double)
 		add.w	d0, d0			; Calculate Offset (Double again)
 		jsr		OpTable(pc,d0)	; Execute function from jumptable
 		move.w	#0, $FF8020		; Mark as done
 		move.w	d6, $FF8022		; copy return value 1 if any
 		move.w	d7, $FF8024		; copy return value 2 if any
+		move.w	d5, $FF8026		; copy return value 3 if any
 		bra		@main_loop		; Loop
 
 ; =======================================================================================
@@ -142,6 +145,7 @@ OpTable:
 		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
 		bra.w	Op_CheckPCMRAM		; Write and Check to the full PCM RAM with value in FF8012
+		bra.w	Op_CheckPCMBankRAM	; Write and Check to PCM BANK RAM with value in FF8010, Bank in FF8012
 		bra.w	Op_LoadPCMRAM		; Use PCM sample data to fill PCM RAM
 		bra.w	Op_CDTracks			; Query Number of Tracks
 		bra.w	Op_DriveVersion		; Query Drive Version
@@ -277,6 +281,37 @@ Op_CheckPCMRAM:
 		
 		move.b	#$C0, CTRLdat			; Turn on PCM RAM Access
 		bsr		PCMWait
+		rts
+		
+Op_CheckPCMBankRAM:
+		move.b	#$FF, ONOFFdat			; Set all audio channels to off
+		bsr		PCMWait
+		move.b	#$40, CTRLdat			; Turn off PCM RAM Access
+		bsr		PCMWait
+		
+		move.b	d1, d0					; Set RAM check value
+		move.b	d2, d1					; Set Bank to check
+		move.l	#$1000,d3				; Set Bank size for store function
+		bsr		WritePCMValueBank		; Store value in bank
+		move.l	#$1000,d3				; set bank size for compare function
+		bsr		ComparePCMValueBank		; Compare all banks with value from d0
+		
+		move.b	#$C0, CTRLdat			; Turn on PCM RAM Access
+		bsr		PCMWait
+		
+		cmp.b	#1,d4					; Check Compare return value for failure
+		BNE		@PCMValueCompareBankFail
+		
+		move.w	#$1,d6					; return success
+		move.w	#$E715,d7				; return address of error (out of range for none)
+		rts
+		
+@PCMValueCompareBankFail:
+		move.w	#0,d6					; return fail
+		move.w	d5,d7					; return Fail address
+		move.w	#0,d5					; clear d5 for return value 3
+		lea		pcmfbyte(pc), a5		; load ram address to a5 for return value 3
+		move.b	(a5),d5					; store the failed return value to d5
 		rts
 		
 Op_DummyTest:
@@ -525,14 +560,15 @@ PCMValueStore:
 		
 		pop		d1/d2/d3		; Restore used registers
 		rts
-
+	
 ; =======================================================================================
 ;  WritePCMValueBank subroutine, writes value to PCM RAM
 ;  Input: d0.b - PCM Value to write
+;		  d1.b - Bank to use
 ;         d3.w - Bank Size
 ;  Out:   d6.b - return value, 0 fail 1 ok
 ;         d7.w - If fail, address with difference ($0-$FFFF)
-; =======================================================================================	
+; =======================================================================================		
 
 WritePCMValueBank:
 		push	a1				; Store used registers
@@ -555,6 +591,7 @@ WritePCMValueBank:
 ;  Input: d0.b - PCM Value to check
 ;  Out:   d6.b - return value, 0 fail 1 ok
 ;         d7.w - If fail, address with difference ($0-$FFFF)
+;		  d5.w - If fail, value read
 ; =======================================================================================			
 
 PCMValueCompare:
@@ -562,7 +599,7 @@ PCMValueCompare:
 		move.b	#0,d2			; D2 - start at first bank
 
 @PCMValueCompareLoop:		
-		move.l	#$1000,d3		; we copy in bank increments (4096 bytes)
+		move.l	#$1000,d3		; we copy in bank increments
 		move.b	d2,d1			; D1 - current bank
 		bsr		ComparePCMValueBank
 		
@@ -580,6 +617,9 @@ PCMValueCompare:
 @PCMValueCompareFail:
 		move.w	#0,d6			; return fail
 		move.w	d5,d7			; return Fail address
+		move.w	#0,d5			; clear d5 for return value 3
+		lea		pcmfbyte(pc), a5; load ram address to a5 for return value 3
+		move.b	(a5),d5			; store the failed return value to d5
 		pop		d1/d2/d3		; Restore used registers
 		rts
 
@@ -617,6 +657,8 @@ ComparePCMValueBank:
 		rts
 
 @ComparePCMValueError
+		lea		pcmfbyte(pc), a5; load ram address to a5 for return value 3
+		move.b	d2, (a5)		; store read value for return value 3 in d5
 		mulu.w	d6, d1			; calculate bank*size
 		move.l	d7, d5			; copy current byte offset into d5
 		add.l	d1, d5			; store complete address in d5 (bank*size+addr)
@@ -691,6 +733,10 @@ PCMSmplData:
 		dc.w	$7E7C, $7469, $5946, $3018
 		dc.w	$8098, $B0C6, $D9E9, $F4FC
 		dc.w	$FEFC, $F4E9, $D9C6, $B098
+		align 2
+		
+pcmfbyte:
+		dc.b	0
 		align 2
 
 CDTrack:

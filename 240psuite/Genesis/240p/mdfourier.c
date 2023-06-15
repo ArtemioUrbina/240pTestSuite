@@ -628,7 +628,7 @@ void ChangePCM(int *type)
 	if(*type > 5)
 		*type = 0;
 	
-	if(!SendSCDCommandRetVal(command[*type], 0, NULL))
+	if(!SendSCDCommandRetVal(command[*type], 0, NULL, NULL))
 		WarningFileNotFount();
 }
 

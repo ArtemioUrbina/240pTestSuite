@@ -1461,11 +1461,11 @@ void SoundTest()
 	yminit();
 	PSG_init();
 #ifdef SEGACD
-	if(!SendSCDCommandRetVal(Op_CDTracks, 0, &numTracks))
+	if(!SendSCDCommandRetVal(Op_CDTracks, 0, &numTracks, NULL))
 		WarningWrongCDDA();
 	if(numTracks != 3)
 		WarningWrongCDDA();
-	if(!SendSCDCommandRetVal(Op_SetSamplesTest, 0, NULL))
+	if(!SendSCDCommandRetVal(Op_SetSamplesTest, 0, NULL, NULL))
 		WarningFileNotFount();
 #endif
 	while(!exit)
