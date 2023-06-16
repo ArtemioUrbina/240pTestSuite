@@ -144,8 +144,10 @@ OpTable:
 		bra.w	Op_SetSampSin32000	; Use 32000hz 1khz sample
 		bra.w	Op_SetSampSin32552	; Use 32552hz 1khz sample
 		bra.w	Op_SetSampSin32604	; Use 32604hz 1khz sample
-		bra.w	Op_CheckPCMRAM		; Write and Check to the full PCM RAM with value in FF8012
-		bra.w	Op_CheckPCMBankRAM	; Write and Check to PCM BANK RAM with value in FF8010, Bank in FF8012
+		bra.w	Op_SetPCMRAM		; Write the full PCM RAM with value in FF8010
+		bra.w	Op_CmpPCMRAM		; Check full PCM RAM with value in FF8010
+		bra.w	Op_SetPCMBankRAM	; Set PCM BANK RAM with value in FF8010, Bank in FF8012
+		bra.w	Op_CmpPCMBankRAM	; Check PCM BANK RAM with value in FF8010, Bank in FF8012
 		bra.w	Op_LoadPCMRAM		; Use PCM sample data to fill PCM RAM
 		bra.w	Op_CDTracks			; Query Number of Tracks
 		bra.w	Op_DriveVersion		; Query Drive Version
@@ -269,35 +271,49 @@ Op_SetSamplesTest:
 Op_SetSamplesTest2:
 		rts
 
-Op_CheckPCMRAM:
-		move.b	#$FF, ONOFFdat			; Set all audio channels to off
-		bsr		PCMWait
-		move.b	#$40, CTRLdat			; Turn off PCM RAM Access
-		bsr		PCMWait
+Op_SetPCMRAM:
+		bsr		PCMAccessOFF
 		
 		move.b	d1, d0					; Set RAM check value
 		bsr		PCMValueStore			; Write all banks with value from d0
-		bsr		PCMValueCompare			; Compare all banks with value from d0
 		
-		move.b	#$C0, CTRLdat			; Turn on PCM RAM Access
-		bsr		PCMWait
+		bsr		PCMAccessOn				; Turn on PCM RAM Access
+		
+		move.w	#$1,d6					; return success
 		rts
 		
-Op_CheckPCMBankRAM:
-		move.b	#$FF, ONOFFdat			; Set all audio channels to off
-		bsr		PCMWait
-		move.b	#$40, CTRLdat			; Turn off PCM RAM Access
-		bsr		PCMWait
+Op_CmpPCMRAM:
+		bsr		PCMAccessOFF
+		
+		move.b	d1, d0					; Set RAM check value
+		bsr		PCMValueCompare			; Compare all banks with value from d0
+		
+		bsr		PCMAccessOn				; Turn on PCM RAM Access
+		rts
+
+Op_SetPCMBankRAM:
+		bsr		PCMAccessOFF
 		
 		move.b	d1, d0					; Set RAM check value
 		move.b	d2, d1					; Set Bank to check
 		move.l	#$1000,d3				; Set Bank size for store function
 		bsr		WritePCMValueBank		; Store value in bank
+		
+		bsr		PCMAccessOn				; Turn on PCM RAM Access
+		
+		move.w	#$1,d6					; return success
+		move.w	#$E715,d7				; return address of error (out of range for none)
+		rts
+		
+Op_CmpPCMBankRAM:
+		bsr		PCMAccessOFF
+		
+		move.b	d1, d0					; Set RAM check value
+		move.b	d2, d1					; Set Bank to check
 		move.l	#$1000,d3				; set bank size for compare function
 		bsr		ComparePCMValueBank		; Compare all banks with value from d0
 		
-		move.b	#$C0, CTRLdat			; Turn on PCM RAM Access
-		bsr		PCMWait
+		bsr		PCMAccessOn				; Turn on PCM RAM Access
 		
 		cmp.b	#1,d4					; Check Compare return value for failure
 		BNE		@PCMValueCompareBankFail
@@ -515,7 +531,24 @@ PCMWait:
 		move.l	(a7)+, d0
 		rts
 
+; =======================================================================================
+;  PCMAccessOFF, disable PCM RAM access
+; =======================================================================================
+PCMAccessOFF:
+		move.b	#$FF, ONOFFdat			; Set all audio channels to off
+		bsr		PCMWait
+		move.b	#$40, CTRLdat			; Turn off PCM RAM Access
+		bsr		PCMWait
+		rts
 
+; =======================================================================================
+;  PCMAccessON, enable PCM RAM access
+; =======================================================================================
+PCMAccessOn:
+		move.b	#$C0, CTRLdat			; Select channel 1
+		bsr		PCMWait
+		rts
+		
 ; =======================================================================================
 ;  WritePCMBank subroutine, copies PCM data form RAM to PCM RAM 
 ;  Input: d0.w - bytes to copy

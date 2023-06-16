@@ -54,8 +54,10 @@ enum SCD_Command{
 		Op_SetSampSin32000,		//Use 32000hz 1khz sample
 		Op_SetSampSin32552,		//Use 32552hz 1khz sample
 		Op_SetSampSin32604,		//Use 32604hz 1khz sample
-		Op_CheckPCMRAM,			//Check full PCM RAM
-		Op_CheckPCMBankRAM,		//Check PCM BANK RAM
+		Op_SetPCMRAM,			//Set full PCM RAM
+		Op_CmpPCMRAM,			//Compare full PCM RAM
+		Op_SetPCMBankRAM,		//Set PCM BANK RAM
+		Op_CmpPCMBankRAM,		//Compare PCM BANK RAM
 		Op_LoadPCMRAM,			//Load sample into PCM ram from cartridge
 		Op_CDTracks,			//Query Number of Tracks
 		Op_DriveVersion,		//Query Drive Version

@@ -1529,50 +1529,77 @@ void PrintPCMResults(u8 value, u16 result, u16 bank, u16 address, u16 readvalue,
 		ShowMessageAndData("Memory OK w/value:", value, 2, PAL1, 8, y);
 }
 
+void waitNFrames(u16 wait)
+{
+	u16 frames = 0;
+				
+	for(frames = 0; frames < wait; frames++)
+		VDP_waitVSync();
+}
+
+void executePCMCheck(u16 type, u8 value, u16 bank, u16 pos)
+{
+	u16 result = 0, address = 0, readvalue = 0;
+	
+	if(type < 3)
+	{
+		if(SendSCDCommandRetVal(Op_SetPCMRAM, value, &address, &readvalue))
+		{
+			if(type == 2)
+				waitNFrames(60);
+			result = SendSCDCommandRetVal(Op_CmpPCMRAM, value, &address, &readvalue);
+			PrintPCMResults(value, result, ((address & 0xF000) >> 12), address, readvalue, pos);
+		}
+		else
+			ShowMessageAndData("Memory write failed w/:", value, 2, PAL3, 8, pos);
+	}
+	else
+	{
+		if(SendSCDCommandP2RetVal(Op_SetPCMBankRAM, value, bank, &address, &readvalue))
+		{
+			if(type == 4)
+				waitNFrames(60);
+			result = SendSCDCommandP2RetVal(Op_CmpPCMBankRAM, value, bank, &address, &readvalue);
+			PrintPCMResults(value, result, bank, address, readvalue, pos);
+		}
+		else
+			ShowMessageAndData("Memory write failed w/:", value, 2, PAL3, 8, pos);
+	}
+}
+
 void PCMRAMCheck()
 {
-	u16 result = 0, address = 0, readvalue = 0, type = 1;
-	fmenudata resmenudata[] = { {0, "PCM RAM Check"}, {1, "Full Test"}, {2, "Per Bank"}, {3, "return"}};
-	
+	u16 type = 1;
+	fmenudata resmenudata[] = { {0, "PCM RAM Check"}, {1, "Full Test"}, {2, "Full w/1s wait"}, 
+								{3, "Per Bank"}, {4, "Bank w/1s wait"}, {5, "return"}};
 #ifndef SEGACD
 	if(!segacd_init())
-	{
-		//resetSegaCD();
 		return;
-	}
 #endif
-
 	do
 	{
 		u16 exit = 0;
 		
-		type = DrawFloatMenu(type, resmenudata, 4);
-		if(type != 3)
+		type = DrawFloatMenu(type, resmenudata, 6);
+		if(type != 5)
 			DrawMainBG();
-		if(type == 1)
+		if(type == 1 || type == 2)
 		{
 			while(!exit)
 			{
 				VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 				ShowMessageAndData("PCM RAM Test (Sega CD)", 0x2000, 4, PAL1, 5, 4);
 				
-				result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x55, &address, &readvalue);
-				PrintPCMResults(0x55, result, ((address & 0xF000) >> 12), address, readvalue, 6);
-				
-				result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xAA, &address, &readvalue);
-				PrintPCMResults(0xAA, result, ((address & 0xF000) >> 12), address, readvalue, 10);
-				
-				result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0xFF, &address, &readvalue);
-				PrintPCMResults(0xFF, result, ((address & 0xF000) >> 12), address, readvalue, 14);
-				
-				result = SendSCDCommandRetVal(Op_CheckPCMRAM, 0x00, &address, &readvalue);
-				PrintPCMResults(0x00, result, ((address & 0xF000) >> 12), address, readvalue, 18);
+				executePCMCheck(type, 0x55, 0, 6);
+				executePCMCheck(type, 0xAA, 0, 10);
+				executePCMCheck(type, 0xFF, 0, 14);
+				executePCMCheck(type, 0x00, 0, 18);
 				
 				if(WaitKey("'A' to test 'B' to exit") == BUTTON_B)
 					exit = 1;
 			}
 		}
-		if(type == 2)
+		if(type == 3 || type == 4)
 		{
 			u16 bank = 0;
 			
@@ -1581,24 +1608,17 @@ void PCMRAMCheck()
 				VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 				ShowMessageAndData("PCM RAM Test (Sega CD) Bank", bank, 2, PAL1, 4, 4);
 				
-				result = SendSCDCommandP2RetVal(Op_CheckPCMBankRAM, 0x55, bank, &address, &readvalue);
-				PrintPCMResults(0x55, result, bank, address, readvalue, 6);
-				
-				result = SendSCDCommandP2RetVal(Op_CheckPCMBankRAM, 0xAA, bank, &address, &readvalue);
-				PrintPCMResults(0xAA, result, bank, address, readvalue, 10);
-				
-				result = SendSCDCommandP2RetVal(Op_CheckPCMBankRAM, 0xFF, bank, &address, &readvalue);
-				PrintPCMResults(0xFF, result, bank, address, readvalue, 14);
-				
-				result = SendSCDCommandP2RetVal(Op_CheckPCMBankRAM, 0x00, bank, &address, &readvalue);
-				PrintPCMResults(0x00, result, bank, address, readvalue, 18);
+				executePCMCheck(type, 0x55, bank, 6);
+				executePCMCheck(type, 0xAA, bank, 10);
+				executePCMCheck(type, 0xFF, bank, 14);
+				executePCMCheck(type, 0x00, bank, 18);
 				
 				if(WaitKey("'A' for next 'B' to exit") == BUTTON_B)
 					exit = 1;
 				bank++;
 			}
 		}
-	}while(type != 3);
+	}while(type != 5);
 	
 #ifndef SEGACD
 	resetSegaCD();
