@@ -38,7 +38,7 @@
 bkp_ram_info bkp_data;
 
 BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
-BYTE isMVS, is4S, is6S, isMulti, hwChange, allowIRE107;
+BYTE isMVS, is2S, is4S, is6S, isMulti, hwChange, allowIRE107;
 BYTE vmode_snk, isPAL, usePAL256, isPALinMVS;
 BYTE enable_shadow, fill_color_bg;
 WORD max_z80_timout;

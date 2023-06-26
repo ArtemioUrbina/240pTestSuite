@@ -46,7 +46,7 @@ extern bkp_ram_info bkp_data;
 
 #define DEBUG_ENABLED (bkp_data.debug_dip1 & DP_DEBUG1)
 
-extern BYTE isMVS, is4S, is6S, isMulti, hwChange, allowIRE107;
+extern BYTE isMVS, is2S, is4S, is6S, isMulti, hwChange, allowIRE107;
 extern BYTE vmode_snk, isPAL, usePAL256, isPALinMVS, enable_shadow;
 extern BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 extern BYTE first_grid;

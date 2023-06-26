@@ -65,11 +65,21 @@ void check_systype()
 	BYTE reg = 0;
 	WORD regw = 0;
 
-	isMVS = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0, isPALinMVS = 0;
+	isMVS = is2S = is4S = is6S = isMulti = hwChange = 0, vmode_snk = isPAL = 0, isPALinMVS = 0;
 	enable_shadow = 0;
 	usePAL256 = 1;
 	allowIRE107 = 1;
 
+	/*
+	Documented by Jim Westfall
+	---------------------+----------------------+-----------
+	 bit6 of REG_SYSTYPE | bit5 of REG_STATUS_A | slot count
+	---------------------+----------------------+-----------
+			0           |         0            | 2 slot
+			0           |         1            | 1 slot
+			1           |         0            | 4 slot
+			1           |         1            | 6 slot
+	*/
 	if (volMEMBYTE(BIOS_MVS_FLAG) == SYSTEM_MVS)
 	{
 		isMVS = 1;
@@ -82,6 +92,15 @@ void check_systype()
 				is6S = 1;
 			else
 				is4S = 1;
+		}
+		else
+		{
+			reg = volMEMBYTE(REG_STATUS_A);
+			if (!(reg & MVS_4_OR_6))
+			{
+				isMulti = 1;
+				is2S = 1;
+			}
 		}
 	}
 
@@ -508,8 +527,12 @@ void menu_footer()
 	if (isMVS)
 	{
 		fixPrint(23, 28, fontColorWhite, fbase, "MVS");
-		if (is4S || is6S)
-			fixPrint(26, 28, fontColorWhite, fbase, is4S ? "2/4S" : "6S");
+		if (is2S)
+			fixPrint(26, 28, fontColorWhite, fbase, "2S");
+		else if (is4S)
+			fixPrint(26, 28, fontColorWhite, fbase, "4S");
+		else if (is6S)
+			fixPrint(26, 28, fontColorWhite, fbase, "6S");
 		else
 			fixPrint(26, 28, fontColorWhite, fbase, "1S");
 		if (hwChange)

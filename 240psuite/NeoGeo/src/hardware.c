@@ -115,7 +115,7 @@ void ht_controller_test()
 		{
 			if(!AES_AS_MVS)
 				fixPrint(29, 8, !(mvscredit & MVS_SERV_B) ? fontColorRed : fontColorWhite, fbase, "Service");
-			if (is4S || is6S)
+			if (is2S || is4S || is6S)
 			{
 				fixPrint(4,  24, !(mvssel & MVS_SEL1) ? fontColorRed : fontColorWhite, fbase, "Sel 1");
 				fixPrint(31, 24, !(mvssel & MVS_SEL2) ? fontColorRed : fontColorWhite, fbase, "Sel 2");
@@ -959,6 +959,7 @@ void ht_showInternalVars()
 
 		displayValue(x, y++, "isMVS", isMVS);
 #ifndef __cd__
+		displayValue(x, y++, "is2S", is2S);
 		displayValue(x, y++, "is4S", is4S);
 		displayValue(x, y++, "is6S", is6S);
 		displayValue(x, y++, "isMulti", isMulti);
