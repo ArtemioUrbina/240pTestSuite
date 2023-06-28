@@ -312,9 +312,10 @@ void PrintBIOSInfo(uint32_t address)
 	}
 }
 
-int Test8bitRegion(u8 value, u32 startaddress, u32 size)
+int Test8bitRegion(u8 value, u32 startaddress, u32 size, u8 *rvalue)
 {
 	volatile u8	*ram = NULL;
+	u8			read = 0;
 	u32			byte = 0;
 	
 	ram = (volatile u8*)startaddress;
@@ -322,24 +323,35 @@ int Test8bitRegion(u8 value, u32 startaddress, u32 size)
 	for(byte = 0; byte < size; byte++)
 	{
 		ram[byte] = value;
-		if(ram[byte] != value)
+		read = ram[byte];
+		if(read != value)
+		{
+			if(rvalue)
+				*rvalue = read;
 			return byte;
+		}
 	}
 	
 	// test delayed read
 	for(byte = 0; byte < size; byte++)
 	{
-		if(ram[byte] != value)
+		read = ram[byte];
+		if(read != value)
+		{
+			if(rvalue)
+				*rvalue = read;
 			return byte;
+		}
 	}
 	
 	return MEMORY_OK;
 }
 
-int Test16bitRegion(u16 value, u32 startaddress, u32 size)
+int Test16bitRegion(u16 value, u32 startaddress, u32 size, u16 *rvalue)
 {
 	volatile u16 *ram = NULL;
-	u32		      word = 0;
+	u16			read = 0;
+	u32		    word = 0;
 	
 	ram = (volatile u16*)startaddress;
 	size = size/2;
@@ -347,14 +359,24 @@ int Test16bitRegion(u16 value, u32 startaddress, u32 size)
 	for(word = 0; word < size; word++)
 	{
 		ram[word] = value;
-		if(ram[word] != value)
+		read = ram[word];
+		if(read != value)
+		{
+			if(rvalue)
+				*rvalue = read;
 			return word*2;
+		}
 	}
 	// test delayed read
 	for(word = 0; word < size; word++)
 	{
-		if(ram[word] != value)
+		read = ram[word];
+		if(read != value)
+		{
+			if(rvalue)
+				*rvalue = read;
 			return word*2;
+		}
 	}
 	
 	return MEMORY_OK;
@@ -363,17 +385,23 @@ int Test16bitRegion(u16 value, u32 startaddress, u32 size)
 int CheckRAMWithValue(u32 start, u32 end, u16 value, int pos, u16 numbits)
 {
 	int memoryFail = 0;
+	u8	rvalue8 = 0;
+	u16	rvalue16 = 0;
 	
 	ShowMessageAndData("Setting to", value, numbits == IS_8BIT ? 2 : 4, PAL1, 12, pos);
 	
 	if(numbits == IS_16BIT)
-		memoryFail = Test16bitRegion(value, start, end - start);
+		memoryFail = Test16bitRegion(value, start, end - start, &rvalue16);
 	else
-		memoryFail = Test8bitRegion((u8)(value & 0x00FF), start, end - start);
+		memoryFail = Test8bitRegion((u8)(value & 0x00FF), start, end - start, &rvalue8);
 	
 	if(memoryFail != MEMORY_OK)
 	{
-		ShowMessageAndData("FAILED", memoryFail, 6, PAL3, 12, pos+1);
+		ShowMessageAndData("Failed @", start + memoryFail, 7, PAL3, 10, pos+1);
+		if(numbits == IS_16BIT)
+			ShowMessageAndData("GOT", rvalue16, 4, PAL3, 14, pos+2);
+		else
+			ShowMessageAndData("GOT", rvalue8, 2, PAL3, 16, pos+2);
 		return 0;
 	}
 	
@@ -418,13 +446,13 @@ void Z80RamTest()
 {
 	DrawMainBG();
 	
-	ShowMessageAndData("Z80 RAM", 0xA00000, 6, PAL1, 11	, 7);
+	ShowMessageAndData("Z80 RAM", 0xA00000, 7, PAL1, 11, 4);
 	if(doZ80Lock)
 		Z80_requestBus(1);			
-	CheckRAMWithValue(0xA00000, 0xA02000, 0xFF, 10, IS_8BIT);
-	CheckRAMWithValue(0xA00000, 0xA02000, 0x55, 12, IS_8BIT);
+	CheckRAMWithValue(0xA00000, 0xA02000, 0xFF, 8, IS_8BIT);
+	CheckRAMWithValue(0xA00000, 0xA02000, 0x55, 11, IS_8BIT);
 	CheckRAMWithValue(0xA00000, 0xA02000, 0xAA, 14, IS_8BIT);
-	CheckRAMWithValue(0xA00000, 0xA02000, 0x00, 16, IS_8BIT);
+	CheckRAMWithValue(0xA00000, 0xA02000, 0x00, 17, IS_8BIT);
 	if(doZ80Lock)
 		Z80_releaseBus();
 
@@ -1027,7 +1055,7 @@ void CheckSCDProgramRAM()
 {
 	int		i = 0, banks = 4;
 	
-	ShowMessageAndData("Program RAM", 0x420000, 12, PAL1, 7, 7);
+	ShowMessageAndData("Program RAM", 0x420000, 6, PAL1, 10, 4);
 	if(!TestBankingProgramRAMRegisters())
 	{
 		ShowMessageAndData("Bank Switch FAIL", MMOD_REGISTER, 8, PAL3, 5, 8);
@@ -1048,7 +1076,7 @@ void CheckSCDProgramRAM()
 	}
 	
 	VDP_Start();
-	VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
+	VDP_clearTileMapRect(APLAN, 5, 8, 30, 28);
 	VDP_End();
 	
 	if(banks == 4 && !TestBankingProgramRAMFast())
@@ -1067,19 +1095,15 @@ void CheckSCDProgramRAM()
 	
 	for(i = 0; i < banks; i++)
 	{
-		int good = 0;
-		
-		ShowMessageAndData("Bank Test", i, 2, PAL1, 13, 9);
+		ShowMessageAndData("Bank Test", i, 2, PAL1, 13, 6);
 		
 		// Change Program RAM Bank
 		SetSCDRegisterWORD(MMOD_REGISTER, i << 6);
 		
-		good = 0;
-		
-		good += CheckRAMWithValue(0x420000, 0x440000, 0xAAAA, 11, IS_16BIT);
-		good += CheckRAMWithValue(0x420000, 0x440000, 0x5555, 13, IS_16BIT);
-		good += CheckRAMWithValue(0x420000, 0x440000, 0xFFFF, 15, IS_16BIT);
-		if(good == 3) CheckRAMWithValue(0x420000, 0x440000, 0x0000, 17, IS_16BIT);
+		CheckRAMWithValue(0x420000, 0x440000, 0xAAAA, 8, IS_16BIT);
+		CheckRAMWithValue(0x420000, 0x440000, 0x5555, 11, IS_16BIT);
+		CheckRAMWithValue(0x420000, 0x440000, 0xFFFF, 14, IS_16BIT);
+		CheckRAMWithValue(0x420000, 0x440000, 0x0000, 17, IS_16BIT);
 
 		WaitKey(NULL);
 		VDP_Start();
@@ -1090,15 +1114,12 @@ void CheckSCDProgramRAM()
 
 void CheckSCDWordRAM()
 {
-	int good = 0;
+	ShowMessageAndData("WORD RAM", 0x600000, 7, PAL1, 11, 4);
 	
-	ShowMessageAndData("WORD RAM", 0x600000, 8, PAL1, 10, 8);
-	
-	good = 0;
-	good += CheckRAMWithValue(0x600000, 0x640000, 0xAAAA, 11, IS_16BIT);
-	good += CheckRAMWithValue(0x600000, 0x640000, 0x5555, 13, IS_16BIT);
-	good += CheckRAMWithValue(0x600000, 0x640000, 0xFFFF, 15, IS_16BIT);
-	if(good == 3) CheckRAMWithValue(0x600000, 0x640000, 0x0000, 17, IS_16BIT);
+	CheckRAMWithValue(0x600000, 0x640000, 0xAAAA, 8, IS_16BIT);
+	CheckRAMWithValue(0x600000, 0x640000, 0x5555, 11, IS_16BIT);
+	CheckRAMWithValue(0x600000, 0x640000, 0xFFFF, 14, IS_16BIT);
+	CheckRAMWithValue(0x600000, 0x640000, 0x0000, 17, IS_16BIT);
 
 	WaitKey(NULL);
 }
@@ -2062,7 +2083,7 @@ uint8_t segacd_init()
 	
 	// Clear Word RAM
 	ShowMessageAndData("Zero&Check WORD RAM ", 0x600000, 8, PAL1, 4, ypos++);
-	if(Test16bitRegion(0, (uint32_t)0x600000, (uint32_t)0x040000) != MEMORY_OK)
+	if(Test16bitRegion(0, (uint32_t)0x600000, (uint32_t)0x040000, NULL) != MEMORY_OK)
 	{
 		ShowMessageAndData("WORD RAM failed. A to continue", 0, 0, PAL0, 4, ypos++);
 		if(WaitKey(NULL) != BUTTON_A)
@@ -2071,7 +2092,7 @@ uint8_t segacd_init()
 	
 	// Clear program ram first bank - needed for the LaserActive
 	ShowMessageAndData("Zero&Check PRGM RAM ", 0x420000, 8, PAL1, 4, ypos++);
-	if(Test16bitRegion(0, (uint32_t)0x420000, (uint32_t)0x20000) != MEMORY_OK)
+	if(Test16bitRegion(0, (uint32_t)0x420000, (uint32_t)0x20000, NULL) != MEMORY_OK)
 	{
 		ShowMessageAndData("PROGRAM RAM failed. A to continue", 0, 0, PAL0, 4, ypos++);
 		if(WaitKey(NULL) != BUTTON_A)
