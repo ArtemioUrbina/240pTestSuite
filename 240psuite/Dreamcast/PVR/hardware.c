@@ -680,7 +680,74 @@ int MoveDown(char *str, int pos)
 		return(pos + curlen);
 }
 
-void DiplayKeyboard(int kb_num, float x, float y, int *hit_escape)
+void DiplayMouse(int port_num, float x, float y)
+{
+	maple_device_t	*mouse = NULL;
+    mouse_state_t	*mstate;
+    char			msg[256], name[256];
+	int				isPressed = 0;
+	
+	mouse = maple_enum_type(port_num, MAPLE_FUNC_MOUSE);
+	if(!mouse)
+		return;
+		
+	mstate = (mouse_state_t *)maple_dev_status(mouse);
+	if(!mstate)
+		return;
+		
+	ReduceName(msg, mouse->info.product_name, 1);
+	sprintf(name, "#G%c%c:#G %s", 'A'+(mouse->port), '0'+(mouse->unit), msg);
+	DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, name);
+	y += fh;
+	
+	sprintf(msg, "Power[%u-%u]mW", 
+			mouse->info.standby_power, mouse->info.max_power);
+	DrawStringS(x, y, 0.0f, 0.7f, 0.6f, msg);
+	y += fh;
+	
+	// ID analog functions?
+		
+	x += 2*fw;
+	// Move Up
+	sprintf(msg, "%03d", mstate->dy < 0 ? -1*mstate->dy : 0);
+	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	y += fh;
+	
+	// Move Right & Left
+	sprintf(msg, "%03d %03d", mstate->dx < 0 ? -1*mstate->dx : 0, mstate->dx > 0 ? mstate->dx : 0);
+	DrawStringS(x, y, 1.0f, 1.0f, 1.0f, msg);
+	y += fh;
+		
+	// Move Down
+	sprintf(msg, "%03d", mstate->dy > 0 ? mstate->dy : 0);
+	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	
+	// Reposition
+	y -= 2*fh;
+	x += 6*fw;
+	// Wheel Up
+	sprintf(msg, "%03d", mstate->dz < 0 ? -1*mstate->dz : 0);
+	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	y += 2*fh;
+	
+	// Wheel Down
+	sprintf(msg, "%03d", mstate->dz > 0 ? mstate->dz : 0);
+	DrawStringS(x+2*fw, y, 1.0f, 1.0f, 1.0f, msg);
+	y += 2*fh;
+	
+	// mouse Buttons
+	x -= 3*fw;
+	isPressed = mstate->buttons & MOUSE_SIDEBUTTON ;
+	DrawStringS(x+ 1*fw, y, isPressed ? 0.0f : 1.0f, isPressed ? 1.0f : 1.0f , isPressed ? 0.0f : 1.0f, "S");
+	
+	isPressed = mstate->buttons & MOUSE_LEFTBUTTON ;
+	DrawStringS(x+ 3*fw, y, isPressed ? 0.0f : 1.0f, isPressed ? 1.0f : 1.0f , isPressed ? 0.0f : 1.0f, "L");
+	
+	isPressed = mstate->buttons & MOUSE_RIGHTBUTTON ;
+	DrawStringS(x+ 5*fw, y, isPressed ? 0.0f : 1.0f, isPressed ? 1.0f : 1.0f , isPressed ? 0.0f : 1.0f, "R");
+}
+
+void DiplayKBorMouse(int kb_num, float x, float y, int *hit_escape)
 {
 	int				rcv = 0, region = 0;
 	maple_device_t	*dev = NULL;
@@ -689,7 +756,10 @@ void DiplayKeyboard(int kb_num, float x, float y, int *hit_escape)
 
 	dev = maple_enum_type(kb_num, MAPLE_FUNC_KEYBOARD);
 	if(!dev)
+	{
+		DiplayMouse(kb_num, x, y);
 		return;
+	}
 	
 	if(dev->info.area_code	== 0x01)
 		region = KBD_REGION_US;
@@ -820,15 +890,19 @@ void DiplayKeyboard(int kb_num, float x, float y, int *hit_escape)
 				MAX_KBD_LINE, showcursor ? kbd_buffer_pos[kb_num] : -1);
 }
 
-void GetKeyboardPorts(int *ports)
+void GetKBMPorts(int *ports)
 {
-	int				kb = 0;
+	int				kbm = 0;
 	maple_device_t	*dev = NULL;
 	
 	memset(ports, 0, sizeof(int)*4);
-	for(kb = 0; kb < 4; kb++)
+	for(kbm = 0; kbm < 4; kbm++)
 	{
-		dev = maple_enum_type(kb, MAPLE_FUNC_KEYBOARD);
+		dev = maple_enum_type(kbm, MAPLE_FUNC_KEYBOARD);
+		if(dev)
+			ports[dev->port] = 1;
+			
+		dev = maple_enum_type(kbm, MAPLE_FUNC_MOUSE);
 		if(dev)
 			ports[dev->port] = 1;
 	}
@@ -839,7 +913,7 @@ void ControllerTest()
 	uint16			pressed = 0;
 	int 			done = 0, oldvmode = -1, i = 0;
 	int				ignoreFunctions = 0, timeout = 0;
-	int				ports[4], kb_ports[4];
+	int				ports[4], kbm_ports[4];
 	ImagePtr		back = NULL, black = NULL;
 	maple_device_t	*dev = NULL;
 	cont_state_t 	*st = NULL;
@@ -878,7 +952,7 @@ void ControllerTest()
 		DrawImage(back);
 		
 		GetControllerPorts(ports);
-		GetKeyboardPorts(kb_ports);
+		GetKBMPorts(kbm_ports);
 		
 		// IgnoreFunctions lists all inputs regardless
 		// of functions reported
@@ -912,20 +986,20 @@ void ControllerTest()
 		}
 		
 		// Keyboards if available
-		if(kb_ports[0])
-			DiplayKeyboard(num_keyb++, x, y, &hit_escape);
+		if(kbm_ports[0])
+			DiplayKBorMouse(num_keyb++, x, y, &hit_escape);
 		else if(!ports[0])
 			DrawStringS(x-4*fw, y, 1.0f, 1.0f, 0.0f, "#GA0:#G #C(Empty)#C");
-		if(kb_ports[1])
-			DiplayKeyboard(num_keyb++, x+w, y, NULL);
+		if(kbm_ports[1])
+			DiplayKBorMouse(num_keyb++, x+w, y, NULL);
 		else if(!ports[1])
 			DrawStringS(x+w-4*fw, y, 1.0f, 1.0f, 0.0f, "#GB0:#G #C(Empty)#C");
-		if(kb_ports[2])
-			DiplayKeyboard(num_keyb++, x,y+h, NULL);
+		if(kbm_ports[2])
+			DiplayKBorMouse(num_keyb++, x,y+h, NULL);
 		else if(!ports[2])
 			DrawStringS(x-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GC0:#G #C(Empty)#C");
-		if(kb_ports[3])
-			DiplayKeyboard(num_keyb  , x+w, y+h, NULL);
+		if(kbm_ports[3])
+			DiplayKBorMouse(num_keyb  , x+w, y+h, NULL);
 		else if(!ports[3])
 			DrawStringS(x+w-4*fw, y+h, 1.0f, 1.0f, 0.0f, "#GD0:#G #C(Empty)#C");
 						

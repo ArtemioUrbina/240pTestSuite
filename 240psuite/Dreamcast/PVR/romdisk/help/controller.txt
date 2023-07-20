@@ -10,6 +10,7 @@ test some non-compliant implementations or
 duplicated outputs, like some light guns.
 
 Keyboards are also supported by default, and you
-can type a few lines to text.
+can type a few lines to text. Mouse support has
+not been tested with official hardware.
 
 You can exit by pressing #YLeft+Start#Y.
