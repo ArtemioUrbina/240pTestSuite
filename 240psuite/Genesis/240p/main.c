@@ -39,7 +39,6 @@ int main()
 
 	VDP_init();
 	JOY_init();
-	TeamPlayerCheck();
 
 	enable_256 = 1;
 	VDP_Start();

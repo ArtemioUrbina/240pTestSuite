@@ -2145,6 +2145,7 @@ uint8_t segacd_init()
      */
 	VDP_drawTextBG(APLAN, "Enabling Interrupts", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
 	VDP_waitVSync();
+	// enable vertical blank handler to generate Sub-CPU level 2 ints.
 	segacd_int_enabled = 1;
     set_sr(0x2000); // enable interrupts
 
