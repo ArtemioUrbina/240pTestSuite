@@ -9,20 +9,34 @@
 #include "svin_debug.h"
 
 typedef enum {
+        _SVIN_SCANMODE_240I = 0,
+        _SVIN_SCANMODE_240P = 1,
+        _SVIN_SCANMODE_480I = 2,
+        //_SVIN_SCANMODE_480P = 3
+} __packed _svin_scanmode_t;
+
+typedef enum {
         _SVIN_X_RESOLUTION_320 = 0,
         _SVIN_X_RESOLUTION_352 = 1,
-        _SVIN_X_RESOLUTION_640 = 2,
-        _SVIN_X_RESOLUTION_704 = 3
+//        _SVIN_X_RESOLUTION_640 = 2,
+//        _SVIN_X_RESOLUTION_704 = 3
 } __packed _svin_x_resolution_t;
 
 typedef enum {
         _SVIN_Y_RESOLUTION_224 = 0,
         _SVIN_Y_RESOLUTION_240 = 1,
         _SVIN_Y_RESOLUTION_256 = 2,
-        _SVIN_Y_RESOLUTION_448 = 3,
-        _SVIN_Y_RESOLUTION_480 = 4,
-        _SVIN_Y_RESOLUTION_512 = 5
+//        _SVIN_Y_RESOLUTION_448 = 3,
+//        _SVIN_Y_RESOLUTION_480 = 4,
+//        _SVIN_Y_RESOLUTION_512 = 5
 } __packed _svin_y_resolution_t;
+
+typedef struct {
+        _svin_scanmode_t scanmode;
+        _svin_x_resolution_t x_res;
+        _svin_y_resolution_t y_res;
+        bool x_res_doubled;
+} __packed _svin_screen_mode_t;
 
 extern int _svin_videomode_x_res;
 extern int _svin_videomode_y_res;
@@ -126,7 +140,8 @@ extern int _svin_frame_count;
 #define _SVIN_VDP1_ORDER_TEXT_SPRITE_3_INDEX       5
 #define _SVIN_VDP1_ORDER_LIMIT                    6
 
-void _svin_init(_svin_x_resolution_t x_res, _svin_y_resolution_t y_res, bool scanlines);
+//void _svin_init(_svin_x_resolution_t x_res, _svin_y_resolution_t y_res, bool scanlines);
+void _svin_init(_svin_screen_mode_t screen_mode);
 void _svin_deinit();
 void _svin_delay(int milliseconds);
 int _svin_get_keys_state();

@@ -33,32 +33,32 @@ void LoadFont()
 {
 	int i;
 	uint8_t *pFont;
-	color_rgb1555_t * pPal;	
+	rgb1555_t * pPal;	
 
-	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_WHITE*8);
-	*(pPal++) = COLOR_RGB1555(0, 31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB1555(1, 31, 31, 31); //Font
-	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
+	pPal = (rgb1555_t*)VDP2_CRAM(FONT_WHITE*8);
+	*(pPal++) = RGB1555(0, 31, 0, 31); //Back
+	*(pPal++) = RGB1555(1, 31, 31, 31); //Font
+	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_RED*8);
-	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB1555(1, 31, 0, 0); //Font
-	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
+	pPal = (rgb1555_t*)VDP2_CRAM(FONT_RED*8);
+	*(pPal++) = RGB1555(1, 31, 0, 31); //Back
+	*(pPal++) = RGB1555(1, 31, 0, 0); //Font
+	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_GREEN*8);
-	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB1555(1, 0, 31, 0); //Font
-	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
+	pPal = (rgb1555_t*)VDP2_CRAM(FONT_GREEN*8);
+	*(pPal++) = RGB1555(1, 31, 0, 31); //Back
+	*(pPal++) = RGB1555(1, 0, 31, 0); //Font
+	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_CYAN*8);
-	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB1555(1, 0, 31, 31); //Font
-	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
+	pPal = (rgb1555_t*)VDP2_CRAM(FONT_CYAN*8);
+	*(pPal++) = RGB1555(1, 31, 0, 31); //Back
+	*(pPal++) = RGB1555(1, 0, 31, 31); //Font
+	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
 
-	pPal = (color_rgb1555_t*)VDP2_CRAM(FONT_YELLOW*8);
-	*(pPal++) = COLOR_RGB1555(1, 31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB1555(1, 31, 31, 0); //Font
-	*(pPal++) = COLOR_RGB1555(1, 0, 0, 0); //Shadow
+	pPal = (rgb1555_t*)VDP2_CRAM(FONT_YELLOW*8);
+	*(pPal++) = RGB1555(1, 31, 0, 31); //Back
+	*(pPal++) = RGB1555(1, 31, 31, 0); //Font
+	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
 
 	/*color_rgb1555_t dd;
 	dd.raw = 0xFFAA;
@@ -104,7 +104,10 @@ void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool
 	uint8_t tmp;
 	for (int _y = 0; _y < 8; _y++)
 	{
-		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _svin_videomode_x_res/2 + (_y+y)*_svin_videomode_x_res);
+		if (_svin_videomode_x_res < 512)
+			p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _svin_videomode_x_res/2 + (_y+y)*_svin_videomode_x_res);
+		else
+			p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _svin_videomode_x_res/4 + (_y+y)*_svin_videomode_x_res/2);
 		p8_char =  &(SuiteFont[(c-32)*32+_y*4]);
 		for (int _x = 0; _x < 4; _x++)
 		{

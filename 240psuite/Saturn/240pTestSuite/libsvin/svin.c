@@ -140,49 +140,37 @@ vdp1_cmdt_param_color_mode5_set(vdp1_cmdt_t *cmdt)
         cmdt->cmd_colr = 0;
 }
 
-void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive)
+void _svin_init(_svin_screen_mode_t screen_mode)
 {
     int *_pointer32;
     _svin_init_done = 0;
-    _svin_videomode_progressive = progressive;
+    if (screen_mode.scanmode == _SVIN_SCANMODE_240P)
+        _svin_videomode_progressive = true;
+    else
+        _svin_videomode_progressive = false;
     _svin_frame_count = 0;
     _svin_vdp1_cmdlist_toggle_at_vblank = true;
     _svin_cram_24bpp = false;
 
-    switch (x)
+    switch (screen_mode.x_res)
     {
         case _SVIN_X_RESOLUTION_320 :
-            _svin_videomode_x_res = 320;
+            _svin_videomode_x_res = screen_mode.x_res_doubled ? 640 : 320;
             break;
         case _SVIN_X_RESOLUTION_352 :
-            _svin_videomode_x_res = 352;
-            break;
-        case _SVIN_X_RESOLUTION_640 :
-            _svin_videomode_x_res = 640;
-            break;
-        case _SVIN_X_RESOLUTION_704 :
-            _svin_videomode_x_res = 704;
+            _svin_videomode_x_res = screen_mode.x_res_doubled ? 704 : 352;
             break;
     }
-    switch (y)
+    switch (screen_mode.y_res)
     {
         case _SVIN_Y_RESOLUTION_224 :
-            _svin_videomode_y_res = 224;
+            _svin_videomode_y_res = (screen_mode.scanmode == _SVIN_SCANMODE_480I) ? 448 : 224;
             break;
         case _SVIN_Y_RESOLUTION_240 :
-            _svin_videomode_y_res = 240;
+            _svin_videomode_y_res = (screen_mode.scanmode == _SVIN_SCANMODE_480I) ? 480 : 240;
             break;
         case _SVIN_Y_RESOLUTION_256 :
-            _svin_videomode_y_res = 256;
-            break;
-        case _SVIN_Y_RESOLUTION_448 :
-            _svin_videomode_y_res = 448;
-            break;
-        case _SVIN_Y_RESOLUTION_480 :
-            _svin_videomode_y_res = 480;
-            break;
-        case _SVIN_Y_RESOLUTION_512 :
-            _svin_videomode_y_res = 512;
+            _svin_videomode_y_res = (screen_mode.scanmode == _SVIN_SCANMODE_480I) ? 512 : 256;
             break;
     }
 
@@ -194,21 +182,24 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     //setup nbg0
     struct vdp2_scrn_cell_format format;
     memset(&format, 0x00, sizeof(format));
+    vdp2_scrn_normal_map_t normal_map;
+    memset(&normal_map, 0x00, sizeof(normal_map));
 
     format.scroll_screen = VDP2_SCRN_NBG0;
-    format.cc_count = VDP2_SCRN_CCC_PALETTE_256;
-    format.character_size = (1 * 1);
+    format.ccc = VDP2_SCRN_CCC_PALETTE_256;
+    format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
     format.pnd_size = 2;
-    format.auxiliary_mode = 1;
-    format.cp_table = 0;
-    format.color_palette = 0;
-    format.plane_size = (2 * 1);
-    format.sf_type = 0;//VDP2_SCRN_SF_TYPE_COLOR_CALCULATION;
-    format.sf_code = VDP2_SCRN_SF_CODE_A;
-    format.sf_mode = 0;
-    format.map_bases.plane_a = _SVIN_NBG0_PNDR_START;
+    format.aux_mode = VDP2_SCRN_AUX_MODE_1;
+    format.cpd_base = 0;
+    format.palette_base = 0;
+    format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
+    normal_map.plane_a = _SVIN_NBG0_PNDR_START;
+    //format.sf_type = 0;//VDP2_SCRN_SF_TYPE_COLOR_CALCULATION;
+    //format.sf_code = VDP2_SCRN_SF_CODE_A;
+    //format.sf_mode = 0;
+    //format.map_bases.plane_a = _SVIN_NBG0_PNDR_START;
 
-    vdp2_scrn_cell_format_set(&format);
+    vdp2_scrn_cell_format_set(&format,&normal_map);
     vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
     vdp2_scrn_display_set(VDP2_SCRN_NBG0);
     vdp2_cram_mode_set(1);
@@ -216,7 +207,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     //setup nbg1
     /*format.scroll_screen = VDP2_SCRN_NBG1;
     format.cc_count = VDP2_SCRN_CCC_PALETTE_256;
-    format.character_size = (1 * 1);
+    format.character_size = VDP2_SCRN_CHAR_SIZE_1X1;
     format.pnd_size = 2;
     format.auxiliary_mode = 1;
     format.cp_table = 0;
@@ -283,8 +274,8 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
 
     vdp2_tvmd_display_res_set(interlace, horz, vert);
 
-    color_rgb1555_t bs_color;
-    bs_color = COLOR_RGB1555(1, 0, 0, 0);
+    rgb1555_t bs_color;
+    bs_color = RGB1555(1, 0, 0, 0);
     vdp2_scrn_back_color_set(VDP2_VRAM_ADDR(3, 0x01FFFE), bs_color);
 
     vdp2_sprite_priority_set(0, 6);
@@ -382,9 +373,15 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     if (_svin_videomode_x_res > 512) {
         _svin_cmdt_list->cmdts[index].cmd_xa=(_svin_videomode_x_res/2);
         if (_svin_videomode_y_res > 256) 
+        {
             _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res/2);
+            _svin_cmdt_list->cmdts[index].cmd_srca = vdp1_vram_partitions.texture_base + _svin_videomode_x_res*_svin_videomode_y_res/2;
+        }
         else
+        {
             _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res);
+            _svin_cmdt_list->cmdts[index].cmd_srca = vdp1_vram_partitions.texture_base + _svin_videomode_x_res*_svin_videomode_y_res;
+        }
     }
     else {
         _svin_cmdt_list->cmdts[index].cmd_xa=0;
@@ -400,9 +397,15 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
     if (_svin_videomode_y_res > 256) {
         _svin_cmdt_list->cmdts[index].cmd_ya=(_svin_videomode_y_res/2);
         if (_svin_videomode_x_res > 512) 
+        {
             _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res/2);
+            _svin_cmdt_list->cmdts[index].cmd_srca = vdp1_vram_partitions.texture_base + _svin_videomode_x_res*_svin_videomode_y_res/2;
+        }
         else
+        {
             _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/8)<<8)|(_svin_videomode_y_res/2);
+            _svin_cmdt_list->cmdts[index].cmd_srca = vdp1_vram_partitions.texture_base + _svin_videomode_x_res*_svin_videomode_y_res;
+        }
     }
     else {
         _svin_cmdt_list->cmdts[index].cmd_ya=0;
@@ -418,6 +421,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
             _svin_cmdt_list->cmdts[index].cmd_xa=(_svin_videomode_x_res/2);
             _svin_cmdt_list->cmdts[index].cmd_ya=(_svin_videomode_y_res/2);
             _svin_cmdt_list->cmdts[index].cmd_size=((_svin_videomode_x_res/16)<<8)|(_svin_videomode_y_res/2);
+            _svin_cmdt_list->cmdts[index].cmd_srca = vdp1_vram_partitions.texture_base + 3*_svin_videomode_x_res*_svin_videomode_y_res/4;
     }
     else {
         _svin_cmdt_list->cmdts[index].cmd_xa=0;
@@ -436,7 +440,7 @@ void _svin_init(_svin_x_resolution_t x, _svin_y_resolution_t y, bool progressive
         MEMORY_WRITE(16, VDP1(FBCR), VDP1_FBCR_DIE);
 
     static vdp1_env_t vdp1_env = {
-                .erase_color = COLOR_RGB1555(0, 0, 0, 0),
+                .erase_color = RGB1555(0, 0, 0, 0),
                 .erase_points[0] = {
                         .x = 0,
                         .y = 0
