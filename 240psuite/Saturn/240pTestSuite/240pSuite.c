@@ -41,7 +41,40 @@
 #define VERSION_NUMBER "Ver. 0.0.1"
 #define VERSION_DATE __DATE__
 
+#define MENU_MAIN 0
+#define MENU_PATTERNS 1
+#define MENU_VIDEO_OPTIONS 2
+
 void DrawCredits();
+
+void wait_for_key_press()
+{
+	//wait for keypress
+	while (controller.pressed.raw == 0)
+	{
+		vdp2_tvmd_vblank_out_wait();
+		smpc_peripheral_process();
+		smpc_peripheral_digital_port(1, &controller);
+	}
+}
+
+void wait_for_key_unpress()
+{
+	//wait for unpress
+	while (controller.pressed.raw != 0)
+	{
+		vdp2_tvmd_vblank_out_wait();
+		smpc_peripheral_process();
+		smpc_peripheral_digital_port(1, &controller);
+	}
+}
+
+void wait_for_next_key()
+{
+	wait_for_key_unpress();
+	wait_for_key_press();
+	wait_for_key_unpress();
+}
 
 char * scanmode_text_value(_svin_screen_mode_t screenmode)
 {
@@ -258,7 +291,7 @@ void draw_checkerboard(_svin_screen_mode_t screenmode)
 	
 	_svin_set_cycle_patterns_cpu();
 	//add colors to palette
-	uint16_t *_pointer16 = (uint16_t *)VDP2_CRAM(0x200*2);
+	uint16_t *_pointer16 = (uint16_t *)VDP2_CRAM(0x200*2);//palette 2
 	_pointer16[1] = 0x0000;
 	_pointer16[2] = 0xFFFF;
 	//create checkerboard tile at index 0
@@ -279,34 +312,89 @@ void draw_checkerboard(_svin_screen_mode_t screenmode)
         _pointer32[i] = 0x00200000; //palette 2, transparency on
     }
 	_svin_set_cycle_patterns_nbg();
-	//wait for unpress
-	while (controller.pressed.raw != 0)
+}
+
+void draw_colorbars(_svin_screen_mode_t screenmode)
+{
+	//removing text
+	ClearTextLayer();
+	
+	_svin_set_cycle_patterns_cpu();
+	//add colors to palette
+	uint16_t *_pointer16 = (uint16_t *)VDP2_CRAM(0x200*2);//palette 2
+	for (int i=0;i<32;i++) 
 	{
-		vdp2_tvmd_vblank_out_wait();
-		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		_pointer16[1+i] = 0x0001*i; //red
+		_pointer16[33+i] = 0x0020*i; //green
+		_pointer16[65+i] = 0x0400*i; //blue
+		_pointer16[97+i] = 0x0421*i; //red
 	}
-	//wait for keypress
-	while (controller.pressed.raw == 0)
+	//create single-color tiles for each color, 128 tiles in total
+	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	for (int i=1; i<129; i++)
+		for (int j=0; j<16; j++)
+			_pointer32[i*16+j] = 0x01010101*i;
+	//fill everything with pitch-black
+    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
+    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
+    {
+        _pointer32[i] = 0x00200002; //palette 2, transparency on, black from red gradient
+    }
+	//draw bars depending on screen mode
+	_pointer32 = (int *)_SVIN_NBG0_PNDR_START;
+	int offset = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 6 : 10;
+	int y_ratio = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 2 : 1;
+    if (screenmode.x_res_doubled)
 	{
-		vdp2_tvmd_vblank_out_wait();
-		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		//high-x-res mode
+		for (int i = 0;i<64;i++)
+		{
+			for (int j=0;j<4*y_ratio;j++)
+			{
+				if (offset+i < 64)
+				{
+					_pointer32[64*(3+j) + offset + i] = 0x00200000 | (i/2+1)*2; //palette 2, red
+					_pointer32[64*(3+5*y_ratio+j) + offset + i] = 0x00200000 | (i/2+33)*2; //palette 2, green
+					_pointer32[64*(3+10*y_ratio+j) + offset + i] = 0x00200000 | (i/2+65)*2; //palette 2, blue
+					_pointer32[64*(3+15*y_ratio+j) + offset + i] = 0x00200000 | (i/2+97)*2; //palette 2, black
+				}
+				else
+				{
+					_pointer32[64*63+64*(3+j) + offset + i] = 0x00200000 | (i/2+1)*2; //palette 2, red
+					_pointer32[64*63+64*(3+5*y_ratio+j) + offset + i] = 0x00200000 | (i/2+33)*2; //palette 2, green
+					_pointer32[64*63+64*(3+10*y_ratio+j) + offset + i] = 0x00200000 | (i/2+65)*2; //palette 2, blue
+					_pointer32[64*63+64*(3+15*y_ratio+j) + offset + i] = 0x00200000 | (i/2+97)*2; //palette 2, black
+				}
+			}
+		}	
 	}
-	//wait for unpress
-	while (controller.pressed.raw != 0)
+	else
 	{
-		vdp2_tvmd_vblank_out_wait();
-		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		//normal x mode
+		for (int i = 0;i<32;i++)
+		{
+			for (int j=0;j<4*y_ratio;j++)
+			{
+				_pointer32[64*(3+j) + offset + i] = 0x00200000 | (i+1)*2; //palette 2, red
+				_pointer32[64*(3+5*y_ratio+j) + offset + i] = 0x00200000 | (i+33)*2; //palette 2, green
+				_pointer32[64*(3+10*y_ratio+j) + offset + i] = 0x00200000 | (i+65)*2; //palette 2, blue
+				_pointer32[64*(3+15*y_ratio+j) + offset + i] = 0x00200000 | (i+97)*2; //palette 2, black
+			}
+		}	
 	}
+	_svin_set_cycle_patterns_nbg();
+	//draw text
+	DrawString("RED", 10, 90-10*y_ratio, FONT_RED);
+	DrawString("GREEN", 10, 90-10*y_ratio+40, FONT_GREEN);
+	DrawString("BLUE", 10, 90-10*y_ratio+80, FONT_CYAN); 
+	DrawString("WHITE", 10, 90-10*y_ratio+120, FONT_WHITE); 
 }
 
 int main(void)
 {
 	int sel = 0;
 	bool redrawMenu = true, redrawBG = true, key_pressed = false;
-	int menu_id=0;
+	int menu_id=MENU_MAIN;
 	int menu_size=0;
 	char string_buf[128];
 
@@ -359,25 +447,29 @@ int main(void)
 			ClearTextLayer();
 			switch (menu_id)
 			{
-				case 0:
-					/*DrawString("Test Patterns", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
-					DrawString("Drop Shadow Test", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+				case MENU_MAIN:
+					DrawString("Test Patterns", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
+					DrawString("Video Options",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Credits",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 4;
+					break;
+				case MENU_PATTERNS:
+					/*DrawString("Drop Shadow Test", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Striped Sprite Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Lag Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Manual Lag Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Scroll Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Grid Scroll Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Horizontal Stripes",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
+					DrawString("Color Bars",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Checkerboard",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					/*DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
-					DrawString("Video Options",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Credits",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					menu_size = 4;//15;
+					menu_size = 11;
 					break;
-				case 1:
+				case MENU_VIDEO_OPTIONS:
 					sprintf(string_buf,"Scan mode .............. %s",scanmode_text_value(screenMode));
 					DrawString(string_buf, x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					sprintf(string_buf,"Active lines ............ %s",y_lines_text_value(screenMode));
@@ -429,32 +521,58 @@ int main(void)
 					key_pressed = true;
 				}
 
-				if(controller.pressed.button.a)
+				if ( (controller.pressed.button.a) || (controller.pressed.button.c) )
 				{
-					if (0 == menu_id)
+					if (MENU_MAIN == menu_id)
 					{
 						switch(sel)
 						{
 							case 0:
-								//go into video settings
-								draw_checkerboard(screenMode);
+								//go into patterns
+								menu_id = MENU_PATTERNS;
+								sel = 0;
 								redrawMenu = true;
 								break;							
 							case 1:
 								//go into video settings
-								menu_id = 1;
+								menu_id = MENU_VIDEO_OPTIONS;
 								sel = 0;
 								redrawMenu = true;
 								break;
 							case 3:
 								//go to credits
 								vdp2_sync_wait();
+								wait_for_key_unpress();
 								DrawCredits();
 								redrawMenu = true;
 								break;
 						}
 					}
-					else if (1 == menu_id)
+					else if (MENU_PATTERNS == menu_id)
+					{
+						switch(sel)
+						{
+							case 0:
+								//checkerboard
+								draw_colorbars(screenMode);
+								wait_for_next_key();
+								redrawMenu = true;
+								break;							
+							case 1:
+								//checkerboard
+								draw_checkerboard(screenMode);
+								wait_for_next_key();
+								redrawMenu = true;
+								break;
+							default:
+								//checkerboard
+								draw_checkerboard(screenMode);
+								wait_for_next_key();
+								redrawMenu = true;
+								break;
+						}
+					}
+					else if (MENU_VIDEO_OPTIONS == menu_id)
 					{
 						switch(sel)
 						{
@@ -501,19 +619,22 @@ int main(void)
 
 				if(controller.pressed.button.b)
 				{
-					//vdp2_tvmd_vblank_in_wait();
 					vdp2_sync_wait();
-					//vdp1_cmdt_list_commit();
 
-					//vdp2_scrn_display_clear();
-
-					if (0 == menu_id)
-						DrawCredits();
-					else
-						menu_id = 0;
-
-					//vdp2_scrn_display_clear();
-					//redrawBG = true;
+					switch(menu_id)
+					{
+						case MENU_MAIN:
+							DrawCredits();
+							break;
+						case MENU_PATTERNS:
+							menu_id = MENU_MAIN;
+							sel = 0;
+							break;
+						case MENU_VIDEO_OPTIONS:
+							menu_id = MENU_MAIN;
+							sel = 1;
+							break;
+					}
 					redrawMenu = true;
 					key_pressed = true;
 				}
