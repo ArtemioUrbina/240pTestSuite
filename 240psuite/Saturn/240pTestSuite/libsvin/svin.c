@@ -307,7 +307,7 @@ void _svin_init(_svin_screen_mode_t screen_mode)
 
     static const vdp1_cmdt_draw_mode_t sprite_draw_mode = {
         .raw = 0x0000,
-        .bits.pre_clipping_disable = true};
+        .pre_clipping_disable = true};
 
     vdp1_cmdt_color_bank_t font_color_bank;
     font_color_bank.raw = 0;
@@ -333,8 +333,7 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     cmdt_system_clip_coords->cmd_yc = _svin_videomode_y_res - 1;
 
     vdp1_cmdt_local_coord_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX]);
-    vdp1_cmdt_param_vertex_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX],
-                               CMDT_VTX_LOCAL_COORD, &local_coord_ul);
+    vdp1_cmdt_vtx_local_coord_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX], local_coord_ul);
     
     //setting up VDP1 text layer quads
     //there are from 1 to 4 quads required depending on X and Y resolution configuration
@@ -346,8 +345,8 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     //quad 0 is always used, and is always at 0,0
     int index = _SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX; 
     vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
-    vdp1_cmdt_param_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
-    vdp1_cmdt_param_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
+    vdp1_cmdt_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    vdp1_cmdt_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
     _svin_cmdt_list->cmdts[index].cmd_xa=0;
     _svin_cmdt_list->cmdts[index].cmd_ya=0;
     _svin_cmdt_list->cmdts[index].cmd_srca = vdp1_vram_partitions.texture_base;
@@ -367,8 +366,8 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     //quad 1 is used for high X resolution
     index = _SVIN_VDP1_ORDER_TEXT_SPRITE_1_INDEX; 
     vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
-    vdp1_cmdt_param_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
-    vdp1_cmdt_param_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
+    vdp1_cmdt_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    vdp1_cmdt_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
     _svin_cmdt_list->cmdts[index].cmd_ya=0;
     if (_svin_videomode_x_res > 512) {
         _svin_cmdt_list->cmdts[index].cmd_xa=(_svin_videomode_x_res/2);
@@ -391,8 +390,8 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     //quad 2 is used for high Y resolution, i.e. 480i/480p modes
     index = _SVIN_VDP1_ORDER_TEXT_SPRITE_2_INDEX; 
     vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
-    vdp1_cmdt_param_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
-    vdp1_cmdt_param_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
+    vdp1_cmdt_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    vdp1_cmdt_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
     _svin_cmdt_list->cmdts[index].cmd_xa=0;
     if (_svin_videomode_y_res > 256) {
         _svin_cmdt_list->cmdts[index].cmd_ya=(_svin_videomode_y_res/2);
@@ -415,8 +414,8 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     //quad 3 is used for high X and high Y resolution
     index = _SVIN_VDP1_ORDER_TEXT_SPRITE_3_INDEX; 
     vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
-    vdp1_cmdt_param_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
-    vdp1_cmdt_param_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
+    vdp1_cmdt_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    vdp1_cmdt_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
     if ( (_svin_videomode_x_res > 512) && (_svin_videomode_y_res > 256) ) {
             _svin_cmdt_list->cmdts[index].cmd_xa=(_svin_videomode_x_res/2);
             _svin_cmdt_list->cmdts[index].cmd_ya=(_svin_videomode_y_res/2);
