@@ -38,8 +38,6 @@ typedef struct {
         bool x_res_doubled;
 } __packed _svin_screen_mode_t;
 
-extern int _svin_videomode_x_res;
-extern int _svin_videomode_y_res;
 extern bool _svin_videomode_scanlines;
 extern int _svin_frame_count;
 
@@ -135,10 +133,7 @@ extern int _svin_frame_count;
 #define _SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX  0
 #define _SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX        1
 #define _SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX       2
-#define _SVIN_VDP1_ORDER_TEXT_SPRITE_1_INDEX       3
-#define _SVIN_VDP1_ORDER_TEXT_SPRITE_2_INDEX       4
-#define _SVIN_VDP1_ORDER_TEXT_SPRITE_3_INDEX       5
-#define _SVIN_VDP1_ORDER_LIMIT                    6
+#define _SVIN_VDP1_ORDER_LIMIT                    3
 
 //void _svin_init(_svin_x_resolution_t x_res, _svin_y_resolution_t y_res, bool scanlines);
 void _svin_init(_svin_screen_mode_t screen_mode);

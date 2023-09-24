@@ -77,10 +77,10 @@ void ClearText(int left, int top, int width, int height)
     vdp1_vram_partitions_get(&vdp1_vram_partitions);
 	
 	//drawing in low res for now
-	for (int _y = top; ( (_y < _svin_videomode_y_res) && (_y < top+height) ) ; _y++)
+	for (int _y = top; ( (_y < FONT_QUAD_HEIGHT) && (_y < top+height) ) ; _y++)
 	{
-		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _svin_videomode_x_res/2 + _y*_svin_videomode_x_res);
-		for (int _x = left; ( (_x < _svin_videomode_x_res) && (_x < left+width) ) ; _x++)
+		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _y*FONT_QUAD_WIDTH);
+		for (int _x = left; ( (_x < FONT_QUAD_WIDTH) && (_x < left+width) ) ; _x++)
 		{
 			p8_vram[_x] = 0;
 		}
@@ -89,7 +89,7 @@ void ClearText(int left, int top, int width, int height)
 
 void ClearTextLayer()
 {
-	ClearText(0,0,_svin_videomode_x_res,_svin_videomode_y_res);
+	ClearText(0,0,FONT_QUAD_WIDTH,FONT_QUAD_HEIGHT);
 }
 
 /* Draw a char as VDP1 sprite at desired location*/
@@ -104,20 +104,16 @@ void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool
 	uint8_t tmp;
 	for (int _y = 0; _y < 8; _y++)
 	{
-		if (_svin_videomode_x_res < 512)
-			p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _svin_videomode_x_res/2 + (_y+y)*_svin_videomode_x_res);
-		else
-			p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _svin_videomode_x_res/4 + (_y+y)*_svin_videomode_x_res/2);
+		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + x + (_y+y)*FONT_QUAD_WIDTH);
 		p8_char =  &(SuiteFont[(c-32)*32+_y*4]);
 		for (int _x = 0; _x < 4; _x++)
 		{
 			tmp = p8_char[_x]&0x3;
-			if (tmp) p8_vram[x+_x*2+1] = tmp | palette*4;
+			if (tmp) p8_vram[_x*2+1] = tmp | palette*4;
 			tmp = (p8_char[_x]>>4)&0x3;
-			if (tmp) p8_vram[x+_x*2] = tmp | palette*4;
+			if (tmp) p8_vram[_x*2] = tmp | palette*4;
 		}
 	}
-
 }
 
 /* Print a string at x, y using sprites by VDP1*/

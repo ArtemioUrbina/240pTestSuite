@@ -29,6 +29,9 @@
 #define FONT_CYAN	13
 #define FONT_YELLOW	12
 
+#define FONT_QUAD_WIDTH	320
+#define FONT_QUAD_HEIGHT 224
+
 extern int _fh;
 extern int _fw;
 

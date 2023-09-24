@@ -146,6 +146,7 @@ char * y_lines_text_value(_svin_screen_mode_t screenmode)
 
 void update_screen_mode(_svin_screen_mode_t screenmode)
 {
+	//ClearTextLayer();
 	_svin_deinit();
 	_svin_init(screenmode);
 	_svin_clear_palette(0);
@@ -384,10 +385,10 @@ void draw_colorbars(_svin_screen_mode_t screenmode)
 	}
 	_svin_set_cycle_patterns_nbg();
 	//draw text
-	DrawString("RED", 10, 90-10*y_ratio, FONT_RED);
-	DrawString("GREEN", 10, 90-10*y_ratio+40, FONT_GREEN);
-	DrawString("BLUE", 10, 90-10*y_ratio+80, FONT_CYAN); 
-	DrawString("WHITE", 10, 90-10*y_ratio+120, FONT_WHITE); 
+	DrawString("RED", 10, 40-10*y_ratio, FONT_RED);
+	DrawString("GREEN", 10, 40-10*y_ratio+40, FONT_GREEN);
+	DrawString("BLUE", 10, 40-10*y_ratio+80, FONT_CYAN); 
+	DrawString("WHITE", 10, 40-10*y_ratio+120, FONT_WHITE); 
 }
 
 int main(void)
@@ -443,7 +444,7 @@ int main(void)
 
 		if(redrawMenu)
 		{
-			int x = 36, y = 104, pos = 0;
+			int x = 36, y = 56, pos = 0;
 			ClearTextLayer();
 			switch (menu_id)
 			{

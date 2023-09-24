@@ -112,9 +112,6 @@ _svin_background_set_by_fad(fad_t fad, int size)
     uint8_t *palette = malloc(2048);
     assert((int)(palette) > 0);
 
-    vdp1_vram_partitions_t vdp1_vram_partitions;
-    vdp1_vram_partitions_get(&vdp1_vram_partitions);
-
     //reading 1st block to check VDP2 flag (optimize it later)
     _svin_cd_block_sector_read(fad, buffer);
     uint16_t size_x = buffer16[2]/8;
