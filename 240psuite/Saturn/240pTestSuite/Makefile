@@ -13,6 +13,7 @@ SH_SRCS:= \
     video.c \
     control.c \
     pattern_colorbars.c \
+    pattern_colorbleed.c \
     pattern_checkerboard.c \
 	libsvin/svin_cd_access.c \
 	libsvin/svin_background.c \

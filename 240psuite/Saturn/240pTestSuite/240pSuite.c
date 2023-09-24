@@ -39,6 +39,7 @@
 #include "svin.h"
 #include "background.h"
 #include "pattern_colorbars.h"
+#include "pattern_colorbleed.h"
 #include "pattern_checkerboard.h"
 
 #define VERSION_NUMBER "Ver. 0.0.1"
@@ -230,6 +231,7 @@ int main(void)
 					DrawString("Horizontal Stripes",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
 					DrawString("Color Bars",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Checkerboard",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Colorbleed",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					/*DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
@@ -328,6 +330,26 @@ int main(void)
 								//checkerboard
 								draw_checkerboard(screenMode);
 								wait_for_next_key();
+								redrawMenu = true;
+								break;
+							case 2:
+								//checkerboard
+								bool b = false;
+								bool bExit = false;
+								while (false == bExit) {
+									draw_colorbleed(screenMode,b);
+									wait_for_key_unpress();
+									wait_for_key_press();
+									if (controller.pressed.button.a)
+									{
+										b = !b;
+									}
+									else
+									{
+										bExit = true;
+									}
+								}
+								wait_for_key_unpress();
 								redrawMenu = true;
 								break;
 							default:
