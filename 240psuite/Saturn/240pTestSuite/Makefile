@@ -6,11 +6,14 @@ include $(YAUL_INSTALL_ROOT)/share/build.pre.mk
 
 SH_PROGRAM:= 240pSuite
 SH_SRCS:= \
+    background.c \
     fs.c \
     font.c \
     image.c \
     video.c \
     control.c \
+    pattern_colorbars.c \
+    pattern_checkerboard.c \
 	libsvin/svin_cd_access.c \
 	libsvin/svin_background.c \
 	libsvin/svin_debug.c \
