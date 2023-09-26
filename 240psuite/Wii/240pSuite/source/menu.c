@@ -1123,12 +1123,13 @@ void DrawMessageBox(ImagePtr scene, char *msg)
 
 void DrawCredits(ImagePtr Back)
 {
-	int 	done = 0, r, g, b;	
-    u32     pressed = 0;
-	char	data[50];
+	int 		done = 0, r, g, b;	
+    u32     	pressed = 0;
+	char		data[50];
+	ImagePtr	qr = NULL;
 #ifdef WII_VERSION
-	u8 		shopcode = 0;
-	char	shop[100];	
+	u8 			shopcode = 0;
+	char		shop[100];	
 	
 	
 	if (CONF_GetShopCode(&shopcode) >= 0) {
@@ -1149,6 +1150,12 @@ void DrawCredits(ImagePtr Back)
 		Back->b = 0x64;
 	}
 	
+	qr = LoadImage(QRIMG, 0);
+	if(qr) {
+		qr->x = 260;
+		qr->y = 165;
+	}
+	
 	while(!done && !EndProgram)  
 	{
 		int x = 20, x2 = 180, y = 10, y2 = 0;			
@@ -1156,6 +1163,7 @@ void DrawCredits(ImagePtr Back)
 		StartScene();
 		        
 		DrawImage(Back);
+		DrawImage(qr);
 		
         DrawStringS(x, y, 0x00, 0xff, 0x00, "Code and Patterns:"); y += fh; 
         DrawStringS(x, y, 0xff, 0xff, 0xff, "Artemio Urbina"); y += fh; 
@@ -1188,14 +1196,16 @@ void DrawCredits(ImagePtr Back)
 		
 		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "HCFR Data & Tests:"); y2 += fh;
 		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Dan Mons (@_daemons)"); y2 += fh;
-		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "& Keith Raney");	
+		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "& Keith Raney"); y2 += fh;
+		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "160p test Suite:"); y2 += fh;
+		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "pinobatch"); y2 += fh;
 #ifdef GC_VERSION
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "GameCube Tools:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Rolman"); y += fh; 	
 #endif
 		y += fh; 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/240p/"); y += 2*fh; 
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/240p/"); y += 3*fh; 
 
 		DrawStringS(x, y, 0x00, 0xba, 0xba, "This program is free Software.");  y += fh;
 		DrawStringS(x, y, 0x00, 0xba, 0xba, "Source code is available under GPL.");  y += fh;
@@ -1258,6 +1268,7 @@ void DrawCredits(ImagePtr Back)
 		Back->g = g;
 		Back->b = b;
 	}
+	FreeImage(&qr);
 }
 
 void DrawIntro()
