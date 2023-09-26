@@ -969,7 +969,7 @@ void ScrollTest()
 void GridScrollTest()
 {
 	int 			done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, direction = 0;
-	int				angle = 0, oldvmode = -1;
+	int				angle = 0, oldvmode = -1, subpixel = 0, subpixcnt = 0;
 	u32			    pressed;		
 	ImagePtr		back, backsquares, backdiag;
 		
@@ -1006,19 +1006,45 @@ void GridScrollTest()
 		if(speed > 5)
 			speed = 5;
 
-		if(speed < 1)
-			speed = 1;
+		if(speed < -5)
+			speed = -5;
 
 		if(!pause)
 		{
-			if(direction)
-				x += speed * acc;
+			int advance = 0;
+			
+			if(!subpixel)
+				advance = speed;
 			else
-				y += speed * acc;
+			{
+				subpixcnt ++;
+				if(subpixcnt >= subpixel)
+				{
+					advance = 1;
+					subpixcnt = 0;
+				}
+			}
+			if(direction)
+				x += advance * acc;
+			else
+				y += advance * acc;
 		}	
 				
 		CalculateUV(x, y, dW*2, dH*2, back);    
 		DrawImageRotate(back, angle, &m);
+		
+		/*
+		{
+			char str[100];
+			
+			sprintf(str, "speed: %d", speed);
+			DrawStringS(20, 20, 0x00, 0xff, 0x00, str);
+			sprintf(str, "subpixel: %d", subpixel);
+			DrawStringS(20, 40, 0x00, 0xff, 0x00, str);
+			sprintf(str, "subpixcnt: %d", subpixcnt);
+			DrawStringS(20, 60, 0x00, 0xff, 0x00, str);
+		}
+		*/
 	
 		EndScene();
 
@@ -1049,10 +1075,25 @@ void GridScrollTest()
 		}
 
 		if (pressed & PAD_BUTTON_UP)
+		{
 			speed ++;
+			if(speed == 1)
+				subpixel = subpixcnt = 0;
+			if(subpixel)
+				subpixel -= 1;
+		}
 
 		if (pressed & PAD_BUTTON_DOWN)
+		{
 			speed --;
+			if(speed == 0)
+			{
+				subpixel = 1;
+				subpixcnt = 0;
+			}
+			if(subpixel && speed > -5)
+				subpixel += 1;
+		}
 
 		if (pressed & PAD_BUTTON_B)
 			done = 1;
@@ -1211,14 +1252,6 @@ void DrawCheckBoard()
 	checkneg = LoadImage(CHECKNEGIMG, 1);
 	if(!checkneg)
 		return;	
-		
-#ifdef WII_VERSION		
-	if(vmode == VIDEO_480P)
-	{				
-		HelpData = CHECK480PWII;
-		HelpWindow(checkpos);					
-	}
-#endif
 	
 	while(!done && !EndProgram) 
 	{

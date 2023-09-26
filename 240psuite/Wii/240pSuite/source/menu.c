@@ -538,7 +538,7 @@ void ChangeOptions(ImagePtr title)
 						Set576iLine23Option(Options.PALline23+1);
 						if(IsPAL)	
 						{
-							SetVideoMode(vmode);										
+							SetVideoMode(vmode);
 							SetupGX();							
 						}
 					}
@@ -1060,84 +1060,47 @@ void ShowVideoWarning(ImagePtr screen)
 
 void ShowStretchWarning()
 {	
-	u32     	pressed = 0, done = 0;	
-	ImagePtr	Back = NULL;
-	
-	Back = LoadImage(FLOATMENUIMG, 0);
-	if(Back)
-	{
-		Back->x = (dW - Back->w) / 2;
-		Back->y = (dH - Back->h) / 2;
-		
-		Back->alpha = 0xaa;	
-	}
-	
-	while(!done)
-	{			
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;					    					  
-		u16     x = Back->x + 20;
-		u16     y = Back->y + 10;        
-				
-		StartScene();
-		
-		DrawImage(Back);       
-
-		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
-		
-		x -= 10;			
-		DrawStringS(x, y, r, 0, 0, "Horizontal stretch"); y += fh;
-		DrawStringS(x, y, r, 0, 0, "renders geometry"); y += fh;
-		DrawStringS(x, y, r, 0, 0, "patterns useless"); y += fh;
-				
-		DrawStringS(x, Back->y + fh*12, 0, g, b, "Press B to continue"); 
-		
-		EndScene();		
-			
-		ControllerScan();
-		pressed = Controller_ButtonsDown(0);
-		
-		if ( pressed & PAD_BUTTON_B ) 		
-			done = 1;	
-	}
-	FreeImage(&Back);
+	DrawMessageBox(NULL, "Horizontal stretch renders geometry\npatterns useless");
 }
 
 void ShowPALBGWarning()
 {	
+	DrawMessageBox(NULL, "PAL Background disabled for monoscope");
+}
+
+void DrawMessageBox(ImagePtr scene, char *msg)
+{	
 	u32     	pressed = 0, done = 0;	
 	ImagePtr	Back = NULL;
 	
-	Back = LoadImage(FLOATMENUIMG, 0);
-	if(Back)
+	if(scene)
 	{	
-		Back->x = (dW - Back->w) / 2;
-		Back->y = (dH - Back->h) / 2;
-		
-		Back->alpha = 0xaa;
+		scene->r = 0x77;
+		scene->g = 0x77;
+		scene->b = 0x77;
 	}
+	
+	Back = LoadImage(MSGIMG, 0);
+	if(Back)
+		Back->alpha = 0xaa;
 	
 	while(!done)
 	{			
 		u8      r = 0xff;
 		u8      g = 0xff;
 		u8      b = 0xff;					    					  
-		u16     x = Back->x + 20;
-		u16     y = Back->y + 10;        
+		u16     x = Back->x + 50;
+		u16     y = Back->y + 90;        
 				
 		StartScene();
 		
-		DrawImage(Back);       
+		if(scene)
+			DrawImage(scene);
+		DrawImage(Back);
 
-		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
-		
-		x -= 10;			
-		DrawStringS(x, y, r, 0, 0, "PAL Background"); y += fh;
-		DrawStringS(x, y, r, 0, 0, "was disabled"); y += fh;
-		DrawStringS(x, y, r, 0, 0, "for monoscope"); y += fh;
+		DrawStringS(x, y, r, g, b, msg);
 				
-		DrawStringS(x, Back->y + fh*12, 0, g, b, "Press B to continue"); 
+		DrawStringC(164, 0, g, b, "Press B to continue"); 
 		
 		EndScene();		
 			
@@ -1149,7 +1112,14 @@ void ShowPALBGWarning()
 	}
 	
 	FreeImage(&Back);
+	if(scene)
+	{	
+		scene->r = 0xff;
+		scene->g = 0xff;
+		scene->b = 0xff;
+	}
 }
+
 
 void DrawCredits(ImagePtr Back)
 {

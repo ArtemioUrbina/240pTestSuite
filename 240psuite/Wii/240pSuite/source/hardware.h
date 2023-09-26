@@ -24,6 +24,7 @@
 
 void ControllerTest();
 void MemoryViewer();
+void GBALink();
 
 #endif
 

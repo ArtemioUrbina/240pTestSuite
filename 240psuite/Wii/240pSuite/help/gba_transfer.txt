@@ -1,0 +1,16 @@
+      GBA 160p test Suite via Link Cable
+
+This tool allows the transfer of pinobatch's
+port of the Suite to Game Boy Advance.
+
+You need to have a link cable connected to a
+controller port and the GBA turned on without
+a catridge.
+
+The GBA ROM will be transferred and you'll be
+able to use the software even with the cable
+detached, until you turn off the system.
+
+#Chttps://github.com/pinobatch/240p-test-mini#C
+
+

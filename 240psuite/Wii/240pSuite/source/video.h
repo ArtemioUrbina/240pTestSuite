@@ -51,6 +51,7 @@ extern u32 	ActiveFB;
 extern u8	IsPAL;
 extern void *frameBuffer[2][2];
 extern GXRModeObj *rmode;
+extern GXRModeObj Mode_240p;
 extern u32 vmode;
 extern u8 offsetY;
 

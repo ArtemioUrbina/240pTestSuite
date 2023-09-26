@@ -58,6 +58,7 @@
 #define MEMORYHELP		memory_txt
 #define HCFRHELP		hcfr_txt
 #define HCFR_MENUHELP	hcfr_menu_txt
+#define GBA_TRANSF_HELP	gba_transfer_txt
 
 /* paste from here */
 extern char *alt240p_txt[];
@@ -70,6 +71,7 @@ extern char *colors_txt[];
 extern char *convergence_txt[];
 extern char *diagonal_txt[];
 extern char *dshadow_txt[];
+extern char *gba_transfer_txt[];
 extern char *general_txt[];
 extern char *gray_txt[];
 extern char *grid_txt[];

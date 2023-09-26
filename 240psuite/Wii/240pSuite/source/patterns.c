@@ -1,5 +1,4 @@
 /* 
- * r
  * 240p Test Suite
  * Copyright (C)2011-2022 Artemio Urbina
  *
@@ -928,7 +927,7 @@ int DrawGrid224(int GenesisVersion)
 
 void DrawMonoscope()
 {
-	int 		done = 0, irecount = 10, oldvmode = vmode, disabledPG = 0;
+	int 		done = 0, irecount = 10, oldvmode = vmode, disabledPG = 0, changed = 0;
 	u32			pressed;
 	ImagePtr	back = NULL, overlay = NULL;
 	int			irevalues[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
@@ -1013,7 +1012,31 @@ void DrawMonoscope()
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
-				
+
+		if (pressed & PAD_BUTTON_DOWN)
+		{
+			Mode_240p.viYOrigin += 1;
+			SetVideoMode(vmode);
+			SetupGX();			
+			changed = 1;
+		}
+		
+		if (pressed & PAD_BUTTON_UP)
+		{
+			Mode_240p.viYOrigin -= 1;
+			SetVideoMode(vmode);
+			SetupGX();			
+			changed = 1;
+		}
+		
+		if (pressed & PAD_BUTTON_A)
+		{
+			Mode_240p.viYOrigin = TVNtsc240Ds.viYOrigin;
+			SetVideoMode(vmode);
+			SetupGX();
+			changed = 0;
+		}
+		
 		if (pressed & PAD_BUTTON_B)
 			done =	1;	
 
@@ -1045,6 +1068,15 @@ void DrawMonoscope()
 		}	
 	}
 
+	if(changed)
+	{
+		Mode_240p.viYOrigin = TVNtsc240Ds.viYOrigin;
+		SetVideoMode(vmode);
+		SetupGX();
+		
+		DrawMessageBox(back, "Vertical position restored.");
+	}
+	
 	FreeImage(&back);
 	FreeImage(&overlay);
 	
@@ -1510,11 +1542,14 @@ void DrawHCFR()
 	back->w = dW;
 	back->h = dH;
 	
-	color->x = 105;
-	color->y = 70;
+	// Was roughly 1/3th, let's go for that instead
+	// As in danmons code https://github.com/danmons/240pTestSuite_HCFR/blob/main/scripts/generate_images_dreamcast.sh
 	
-	color->w = 110;
-	color->h = 80;
+	color->x = dW/3;
+	color->y = dH/3;
+	
+	color->w = dW/3;
+	color->h = dH/3;
 
 	SetTextureColor(back, 0, 0, 0);
 	while(!done && !EndProgram) 
@@ -1525,6 +1560,12 @@ void DrawHCFR()
 		{
 			back->w = dW;
 			back->h = dH;
+			
+			color->x = dW/3;
+			color->y = dH/3;
+
+			color->w = dW/3;
+			color->h = dH/3;
 			oldvmode = vmode;
 		}
 		
@@ -1541,8 +1582,8 @@ void DrawHCFR()
 		sprintf(msg, "%s %03d,%03d,%03d", 
 				hcfr_data[hcfr_type].data[hcfr_num].name, r, g, b);
 		len = strlen(msg);
-		x = (320 - len*fw)/2;
-		DrawString(x, 180, 0x7f, 0x7f, 0x7f, msg);			
+		x = (dW - len*fw)/2;
+		DrawString(x, 2*dH/3+fh, 0x7f, 0x7f, 0x7f, msg);			
 		
         EndScene();
 		ControllerScan();

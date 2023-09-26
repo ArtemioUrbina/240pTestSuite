@@ -457,7 +457,8 @@ ImagePtr CopyFrameBufferToImage()
 		free(cfb);
 		fprintf(stderr, "\nCould not malloc image struct FB\n");
 		return(NULL);
-	}	
+	}
+	memset(image, 0, sizeof(struct image_st));
 	
 	image->cFB = cfb;
 	GX_InitTexObj(&image->tex, image->cFB, width, height, GX_TF_RGBA8, GX_CLAMP, GX_CLAMP, GX_FALSE);
@@ -485,6 +486,7 @@ ImagePtr CopyFrameBufferToImage()
 	image->h = image->th;
 	image->FH = 0;
 	image->FV = 0;
+	image->memCpyTexture = NULL;
 	IgnoreOffset(image);	
 			
 	return image;

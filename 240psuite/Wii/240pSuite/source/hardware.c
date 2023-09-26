@@ -1,7 +1,6 @@
 /* 
- * r
  * 240p Test Suite
- * Copyright (C)2011-2022 Artemio Urbina
+ * Copyright (C)2011-2023 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -27,52 +26,154 @@
 #include "video.h"
 #include "options.h"
 #include "controller.h"
+#include "gba.h"
 
 #include "hardware.h"
 
 #include "help.h"
 #include "menu.h"
 
+/*
+typedef struct gc_control_st{
+	u8 connected;
+	u16 bttn;
+	s8 x;
+	s8 y;
+	s8 sx;
+	s8 sy;
+	u8 l;
+	u8 r;
+} GC_STATUS;
+
+void read_gc(GC_STATUS *gc_ctrl)
+{
+	int chan = 0;
+	u32	pads = 0;
+	
+	pads = PAD_ScanPads();
+	for(chan = PAD_CHAN0; chan <= PAD_CHAN3; chan++)
+	{
+		memset(&gc_ctrl[chan], 0, sizeof(GC_STATUS));
+		//if(pads & (1 << chan))
+		{
+			gc_ctrl[chan].connected = 1;
+			gc_ctrl[chan].bttn = PAD_ButtonsHeld(chan);
+			gc_ctrl[chan].x = PAD_StickX(chan);
+			gc_ctrl[chan].y = PAD_StickY(chan);
+			gc_ctrl[chan].l = PAD_TriggerL(chan);
+			gc_ctrl[chan].r = PAD_TriggerR(chan);
+			gc_ctrl[chan].sx = PAD_SubStickX(chan);
+			gc_ctrl[chan].sy = PAD_SubStickY(chan);
+		}
+	}
+}
+
+void DrawGCController(u16 x, u16 y, GC_STATUS *gc_ctrl, u16 chan)
+{
+	char 		buffer[10];
+	
+	sprintf(buffer, "%d", gc_ctrl[chan].x);
+	DrawStringS(x, y, 0x00, 0xff, 0x00, buffer);
+	sprintf(buffer, "%d", gc_ctrl[chan].y);
+	DrawStringS(x+20, y, 0x00, 0xff, 0x00, buffer);
+
+	//C-stick:
+	sprintf(buffer, "%d", gc_ctrl[chan].sx);
+	DrawStringS(x+40, y, 0x00, 0xff, 0x00, buffer);
+	sprintf(buffer, "%d", gc_ctrl[chan].sy);
+	DrawStringS(x+80, y, 0x00, 0xff, 0x00, buffer);
+}
+
+#ifdef WII_VERSION
+typedef struct wii_control_st{
+	u8 connected;
+	int bttn;
+	u32 exp;
+	WPADData *data;
+	unsigned int irx;
+	unsigned int iry;
+	float pitch;
+	float roll;
+} WII_STATUS;
+
+void read_wii(WII_STATUS *wii_ctrl)
+{
+	int chan = 0;
+	u32 wmotes = 0;
+	
+	wmotes = WPAD_ScanPads();
+	for(chan = WPAD_CHAN_0; chan <= WPAD_MAX_WIIMOTES; chan++)
+	{
+		memset(&wii_ctrl[chan], 0, sizeof(WII_STATUS));
+		
+		if(wmotes & (1 << chan))
+			wii_ctrl[chan].connected = 1;
+		if(wii_ctrl[chan].connected && WPAD_Probe(chan, &wii_ctrl[chan].exp))
+		{
+			WPAD_SetDataFormat(chan, WPAD_FMT_BTNS_ACC_IR);
+			wii_ctrl[chan].bttn = WPAD_ButtonsHeld(chan);
+			wii_ctrl[chan].data = WPAD_Data(chan);
+			if(wii_ctrl[chan].data)
+			{
+				wii_ctrl[chan].irx = wii_ctrl[chan].data->ir.x;
+				wii_ctrl[chan].iry = wii_ctrl[chan].data->ir.y;
+				wii_ctrl[chan].pitch = wii_ctrl[chan].data->orient.pitch;
+				wii_ctrl[chan].roll = wii_ctrl[chan].data->orient.roll;
+				switch (wii_ctrl[chan].exp) {
+					case WPAD_EXP_NUNCHUK:
+					break;
+					case WPAD_EXP_CLASSIC:
+					break;
+					case WPAD_EXP_GUITARHERO3:
+					break;
+					case WPAD_EXP_NONE:
+					default:
+					break;
+				}
+			}
+		}		
+	}
+}
+#endif
+
 void ControllerTest()
 {
 	int 		done = 0;
 	u32			pressed;
-	s8			value;
 	ImagePtr	back;
-	char 		buffer[10];
+	GC_STATUS	gc_ctrl[4];
+#ifdef WII_VERSION
+	WII_STATUS	wii_ctrl[4];
+#endif
 	
 	back = LoadImage(BACKIMG, 0);
 	if(!back)
 		return;
-			
+
+	memset(&gc_ctrl, 0, sizeof(GC_STATUS)*4);
+#ifdef WII_VERSION
+	memset(&wii_ctrl, 0, sizeof(WII_STATUS)*4);			
+#endif
 	while(!done && !EndProgram) 
-	{				
+	{	
 		StartScene();
 		        
 		DrawImage(back);
 		
-		//Analog:
-		value = PAD_StickX(0);
-		sprintf(buffer, "%d", value);
-		DrawStringS(100, 100, 0x00, 0xff, 0x00, buffer);
-		value  = PAD_StickY(0);
-		sprintf(buffer, "%d", value);
-		DrawStringS(140, 100, 0x00, 0xff, 0x00, buffer);
-
-		//C-stick:
-		value = PAD_SubStickX(0);
-		sprintf(buffer, "%d", value);
-		DrawStringS(200, 100, 0x00, 0xff, 0x00, buffer);
-		value = PAD_SubStickY(0);
-		sprintf(buffer, "%d", value);
-		DrawStringS(240, 100, 0x00, 0xff, 0x00, buffer);
+		DrawGCController(100, 100, gc_ctrl, 0);
+		DrawGCController(100, 120, gc_ctrl, 1);
+		DrawGCController(100, 140, gc_ctrl, 2);
+		DrawGCController(100, 160, gc_ctrl, 3);
 		
         EndScene();
 		
+		read_gc(gc_ctrl);
+#ifdef WII_VERSION
+		//read_wii(wii_ctrl);
+#endif
 		ControllerScan();
-		
 		pressed = Controller_ButtonsDown(0);
-				
+		// TODO exit
 		if (pressed & PAD_BUTTON_B)
 			done =	1;								
 		
@@ -80,6 +181,7 @@ void ControllerTest()
 	FreeImage(&back);
 	return;
 }
+*/
 
 /*
 CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
@@ -276,5 +378,110 @@ void MemoryViewer()
 			HelpData = MEMORYHELP;
 		}		
 	}
+	return;
+}
+
+int ScanPorts()
+{
+	int port = 0;
+	
+	for(port = 0; port < 4; port ++)
+		if(checkGBAConnected(port))
+			return port;
+	return -1;
+}
+
+void GBALink()
+{
+	int 		done = 0, port = -1, doscan = 1, firstscan = 1;
+	u32			pressed;
+	ImagePtr	back;
+	char		msg[256];
+	
+	back = LoadImage(GBAIMG, 0);
+	if(!back)
+		return;
+
+	InitGBARAM();
+	back->alpha = 128;
+	while(!done && !EndProgram) 
+	{	
+		if(doscan)
+		{
+			port = ScanPorts();
+			if(port != -1)
+				sprintf(msg, "GBA detected on Port %d.\nPress A to start transfer", port + 1);
+			else
+			{
+				if(!firstscan)
+					DrawMessageBox(back, "Game Boy Advance not found\nPlease connect GBA via Link Cable");
+				else
+					firstscan = 0;
+				sprintf(msg, "Press A to scan for a GBA on any GC port.");
+			}	
+			doscan = 0;
+		}
+		
+		StartScene();
+		DrawImage(back);
+		DrawStringC(40, 0x00, 0xff, 0x00, "Transfer GBA 160p Suite via Link Cable");
+		DrawStringC(40+fh, 0x00, 0xaa, 0xaa, "by pinobatch v0.23"); 
+		DrawStringS(80, 120, 0xff, 0xff, 0xff, msg); 
+		DrawStringC(200, 0xee, 0xee, 0xee, "Press B to close"); 
+		
+        EndScene();
+		
+		ControllerScan();
+		pressed = Controller_ButtonsDown(0);
+
+		if (pressed & PAD_BUTTON_A)
+		{
+			char tmsg[256];
+			if(port != -1)
+			{
+				switch(GBASendROM(back, port)) {
+					case GBA_TRANSFER_OK:
+						sprintf(tmsg, "Transfer complete");
+						break;
+					case GBA_INVALID_PORT:
+						sprintf(tmsg, "Invalid Port %d", port);
+						break;
+					case GBA_ROM_TOO_BIG:
+						sprintf(tmsg, "ROM is too big for GBA RAM");
+						break;
+					case GBA_BIOS_TIMEOUT:
+						sprintf(tmsg, "BIOS is not ready.\nBoot GBA without cartridge.");
+						break;
+					case GBA_INVALID_SESSION:
+						sprintf(tmsg, "BIOS didn't send session key.");
+						break;
+					case GBA_TRANSFER_ERROR:
+						sprintf(tmsg, "Transfer failed due to an interruption.");
+						break;
+					case GBA_FINISH_ERROR:
+						sprintf(tmsg, "Transfer not received by GBA.");
+						break;
+					default:
+						sprintf(tmsg, "Unknown error. Please retry.");
+						break;
+				}
+				DrawMessageBox(back, tmsg);
+			}
+			else
+				doscan = 1;
+		}
+		
+		if (pressed & PAD_BUTTON_START)
+		{
+			DrawMenu = 1;					
+			HelpData = GBA_TRANSF_HELP;
+		}		
+		
+		if (pressed & PAD_BUTTON_B)
+			done =	1;								
+	}
+	
+	FreeImage(&back);
+	ReleaseGBARAM();
 	return;
 }

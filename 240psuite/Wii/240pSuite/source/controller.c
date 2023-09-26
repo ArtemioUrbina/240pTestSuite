@@ -81,7 +81,7 @@ s32 ControllerInit()
 
     retval = PAD_Init();
 #ifdef WII_VERSION
-    retval = WPAD_Init();
+    retval |= WPAD_Init();
     WPAD_SetIdleTimeout(200);
 #endif    
     return retval;
@@ -103,6 +103,7 @@ u32 Controller_ButtonsDown(int chan)
     u32 retval = 0;
 	int x, y;
 
+	// Checks GC controllers
     retval = PAD_ButtonsDown(chan);
 	
     if(retval)
@@ -179,7 +180,7 @@ u32 Controller_ButtonsDown(int chan)
         retval |= PAD_TRIGGER_L;  
 		
     if(found != retval)
-	ControllerType = ControllerWiimote;
+		ControllerType = ControllerWiimote;
 
     found = retval;
     // Wii Classic Controller

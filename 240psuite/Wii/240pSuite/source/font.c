@@ -213,6 +213,19 @@ void DrawStringB(u16 x, u16 y, u8 r, u8 g, u8 b, char *str)
 	DrawString(x, y, r, g, b, str);
 }
 
+void DrawStringC(u16 y, u8 r, u8 g, u8 b, char *str) 
+{	
+	float len;
+	u16 x = 0;
+				
+	len = MeasureString(str);
+	len *= fw;
+	
+	x = (u16)((dW - len)/2);
+	
+	DrawStringS(x, y, r, g, b, str);
+}
+
 /* Big Numbers */
 
 void LoadNumbers()

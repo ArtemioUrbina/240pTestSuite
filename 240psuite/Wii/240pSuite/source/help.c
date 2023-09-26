@@ -75,6 +75,10 @@ char *dshadow_txt[] = {
 "                 DROP SHADOW TEST\n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\n(25Hz) shadow on a 60hz (50hz) signal. No \nbackground detail should be lost and the shadow \nshould be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button $X. Backgrounds can be\nswitched with the $A button and button $Y\ntoggles sprites.\n\nDonna art by Jose Salot",
 NULL
 };
+char *gba_transfer_txt[] = { 
+"      GBA 160p test Suite via Link Cable\n\nThis tool allows the transfer of pinobatch's\nport of the Suite to Game Boy Advance.\n\nYou need to have a link cable connected to a\ncontroller port and the GBA turned on without\na catridge.\n\nThe GBA ROM will be transferred and you'll be\nable to use the software even with the cable\ndetached, until you turn off the system.\n\n#Chttps://github.com/pinobatch/240p-test-mini#C\n\n\n",
+NULL
+};
 char *general_txt[] = { 
 "                    HELP (1/3)\n\nThe 240p Test Suite was designed with two goals\nin mind:\n\n1) Evaluate 240p signal processing on modern TV\nsets and video processing equipment; and \n\n2) Provide calibration patterns generated on your\ngame console to help in properly calibrating the\ndisplay's black, white and color levels.\n\nHelp and options are available everywhere by \npressing the $S button.\n#Y[Please press right for next help page]#Y\n                                         #C(cont...)#C",
 "                    HELP (2/3)\n\nThis version of the suite supports 240p, 288p, \n576i, 480i and 480p video modes. However, 480p is\nonly available via component cables. \n\nIn 288p and 576i PAL modes, the system is capable\nof drawing the whole visible signal, 264 and 528\nlines respectively. However, since most screens\nare only 240p tall, the suite centers them \nvertically. Grids and other 264p patterns are \nshown using the full resolution.\n\nPAL and 480p modes must be enabled from the \noptions menu. \n                                         #C(cont...)#C",
@@ -210,7 +214,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	35
+#define	HELPCOUNT	36
 char **HelpArray[HELPCOUNT] = {
 	alt240p_txt,
 	backlit_txt,
@@ -222,6 +226,7 @@ char **HelpArray[HELPCOUNT] = {
 	convergence_txt,
 	diagonal_txt,
 	dshadow_txt,
+	gba_transfer_txt,
 	general_txt,
 	gray_txt,
 	grid_txt,

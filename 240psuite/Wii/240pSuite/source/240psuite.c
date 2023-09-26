@@ -155,7 +155,7 @@ int main(int argc, char **argv)
         DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video tests"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound tests"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Hardware tools"); y += 4*fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Hardware tools"); y += 4*fh; c++; 
 		
 		GetVideoModeStr(res, 1);
 		if(ChangeVideoEnabled)
@@ -667,7 +667,7 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
         DrawImage(sd);
 		SD_blink_cycle();
 
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sount Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;
 		if(aet_exists)
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier Test");
@@ -680,7 +680,7 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 		DrawMenuFooter(r, g, b);		
 		
 		if(!aet_exists && sel == 3)
-			DrawStringS(x-15, y + 4*fh, r, g, b, "Copy PCM file to the 240pSuite folder to enable");		
+			DrawStringS(x-15, y + 5*fh, r, g, b, "Copy PCM file to the 240pSuite folder to enable");		
 				
 		EndScene();		
         
@@ -752,7 +752,7 @@ void HardwareTestMenu(ImagePtr title, ImagePtr sd)
         DrawImage(sd);
 		SD_blink_cycle();
 
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "GBA Suite via Link Cable"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++;
 		
 		y += fh;
@@ -791,7 +791,7 @@ void HardwareTestMenu(ImagePtr title, ImagePtr sd)
 			switch(sel)
 			{				
 				case 1:
-					ControllerTest();
+					GBALink();
 					break;
 				case 2:
 					MemoryViewer();

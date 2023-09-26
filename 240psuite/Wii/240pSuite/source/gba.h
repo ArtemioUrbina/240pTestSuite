@@ -19,30 +19,25 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef FONT_H
-#define FONT_H
+#ifndef GBA_H
+#define GBA_H
 
-#include "video.h"
+#include "image.h"
 
-extern float fw;
-extern float fh;
-extern float f_size;
+#define GBA_TRANSFER_OK		0
+#define GBA_INVALID_PORT 	-1
+#define GBA_ROM_TOO_BIG 	-2
+#define GBA_NOTCONNECTED 	-3
+#define GBA_BIOS_TIMEOUT	-4
+#define GBA_INVALID_SESSION	-5
+#define GBA_TRANSFER_ERROR	-6
+#define GBA_FINISH_ERROR	-7
 
-void DrawChar(u16 x, u16 y, char c);
-void DrawString(u16 x, u16 y, u8 r, u8 g, u8 b, char *str);
-void DrawStringS(u16 x, u16 y, u8 r, u8 g, u8 b, char *str);
-void DrawStringB(u16 x, u16 y, u8 r, u8 g, u8 b, char *str);
-void DrawStringC(u16 y, u8 r, u8 g, u8 b, char *str);
-
-void LoadFont();
-void ReleaseFont();
-
-/* Big Numbers */
-/* Big Numbers */
-
-void LoadNumbers();
-void ReleaseNumbers();
-void DrawDigit(u16 x, u16 y, u8 r, u8 g, u8 b, int digit) ;
-void DrawNumber(u16 x, u16 y,u8 r, u8 g, u8 b, int number);
+void InitGBARAM();
+void ReleaseGBARAM();
+u32 checkGBAConnected(unsigned int port);
+int detectLinkCable(ImagePtr title, unsigned int port);
+int GBASendROM(ImagePtr title, unsigned int port);
 
 #endif
+

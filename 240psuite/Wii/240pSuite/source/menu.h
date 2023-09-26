@@ -20,12 +20,12 @@
  */
  
 #ifdef WII_VERSION
-#define VERSION_NUMBER "Wii GX Ver. 1.15"
+#define VERSION_NUMBER "Wii GX Ver. 1.17"
 #else
-#define VERSION_NUMBER "GC GX Ver. 1.15"
+#define VERSION_NUMBER "GC GX Ver. 1.17"
 #endif
 
-#define VERSION_DATE "12/20/2022"
+#define VERSION_DATE "25/09/2023"
 
 extern u8 DrawMenu;
 extern char **HelpData;
@@ -38,6 +38,7 @@ void ChangeOptions(ImagePtr Back);
 void ChangePALBackgroundColor(ImagePtr Back);
 void ShowVideoData();
 void ShowVideoWarning(ImagePtr screen);
+void DrawMessageBox(ImagePtr scene, char *msg);
 void ShowStretchWarning();
 void ShowPALBGWarning();
 
