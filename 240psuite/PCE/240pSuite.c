@@ -20,7 +20,7 @@
  *
  *
  *  This version of the suite is compiled with HuC from:
- *    https://github.com/jbrandwood/huc
+ *    https://github.com/pce-devel/huc
  *
  */
 
@@ -757,7 +757,7 @@ void RefreshCredits()
 	set_font_pal(15);
 	put_string("SDK:", HPOS+2, row++);
 	set_font_pal(14);
-	put_string("HuC https://github.com/jbrandwood/huc", HPOS+2, row++);
+	put_string("HuC https://github.com/pce-devel/huc", HPOS+2, row++);
 	row++;
 	
 	set_font_pal(15);

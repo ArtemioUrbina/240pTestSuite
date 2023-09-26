@@ -1,5 +1,5 @@
 /* This patch is just documented for historic purposes
- * it is already included in https://github.com/jbrandwood/huc
+ * it is already included in https://github.com/pce-devel/huc
  */
 
 #include <stdio.h>
