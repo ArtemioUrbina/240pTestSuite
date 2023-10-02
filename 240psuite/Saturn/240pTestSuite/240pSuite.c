@@ -244,10 +244,11 @@ int main(void)
 					DrawString("Color Bars",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Checkerboard",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Colorbleed",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Grid",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					/*DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
-					menu_size = 11;
+					menu_size = 4;
 					break;
 				case MENU_VIDEO_OPTIONS:
 					sprintf(string_buf,scanmode_text_value(screenMode));
@@ -358,7 +359,7 @@ int main(void)
 						switch(sel)
 						{
 							case 0:
-								//checkerboard
+								//colorbars
 								draw_colorbars(screenMode);
 								wait_for_next_key();
 								redrawMenu = true;
@@ -370,7 +371,7 @@ int main(void)
 								redrawMenu = true;
 								break;
 							case 2:
-								//checkerboard
+								//colorbleed
 								bool b = false;
 								bool bExit = false;
 								while (false == bExit) {
@@ -387,6 +388,12 @@ int main(void)
 									}
 								}
 								wait_for_key_unpress();
+								redrawMenu = true;
+								break;
+							case 3:
+								//checkerboard
+								draw_grid(screenMode);
+								wait_for_next_key();
 								redrawMenu = true;
 								break;
 							default:
