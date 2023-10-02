@@ -85,7 +85,7 @@ char * scanmode_text_value(_svin_screen_mode_t screenmode)
 	switch (screenmode.scanmode)
 	{
 		case _SVIN_SCANMODE_240I:
-			return "240i";
+			return "480i same fields";
 			break;
 		case _SVIN_SCANMODE_240P:
 			return "240p";
@@ -191,6 +191,18 @@ int main(void)
 	_svin_clear_palette(0);
 	LoadFont();
 
+	//detect color system
+	vdp2_tvmd_tv_standard_t colorsystem = vdp2_tvmd_tv_standard_get();
+
+	//measure frame clock
+	volatile int frame_counter=0;
+	while (vdp2_tvmd_vblank_out())
+		;
+	while (vdp2_tvmd_vblank_in())
+		frame_counter++;
+	while (vdp2_tvmd_vblank_out())
+		frame_counter++;
+
 	//if(!fs_init())
 	//	DrawString("FS INIT FAILED!\n", 120, 20, 1);
 	redrawMenu = true;
@@ -238,7 +250,11 @@ int main(void)
 					menu_size = 11;
 					break;
 				case MENU_VIDEO_OPTIONS:
-					sprintf(string_buf,"Scan mode .............. %s",scanmode_text_value(screenMode));
+					sprintf(string_buf,scanmode_text_value(screenMode));
+					if (strlen(string_buf) > 4)
+						sprintf(string_buf,"Scan mode .. %s",scanmode_text_value(screenMode));
+					else
+						sprintf(string_buf,"Scan mode .............. %s",scanmode_text_value(screenMode));
 					DrawString(string_buf, x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					sprintf(string_buf,"Active lines ............ %s",y_lines_text_value(screenMode));
 					DrawString(string_buf, x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
@@ -248,9 +264,30 @@ int main(void)
 					sprintf(string_buf,"Effective resolition  %sx%s",x_res_text_value(screenMode),y_res_text_value(screenMode));
 					DrawString(string_buf,x, y+_fh*pos, FONT_CYAN); pos++;
 					pos++;
-					DrawString("Color system ........... ????",x, y+_fh*pos, FONT_CYAN); pos++;
-					DrawString("Frame clock ........ ??.?? Hz", x, y+_fh*pos, FONT_CYAN); pos++;	
-					DrawString("Pixel clock ........ ??.? MHz", x, y+_fh*pos, FONT_CYAN); pos++;	
+					if (VDP2_TVMD_TV_STANDARD_NTSC == colorsystem)
+					{
+						DrawString("Color system ........... NTSC",x, y+_fh*pos, FONT_CYAN); pos++;
+						sprintf(string_buf,"(%d)",frame_counter);
+						DrawString(string_buf, x, y+_fh*pos, FONT_CYAN); pos++;
+						DrawString("Field rate ......... 59.94 Hz", x, y+_fh*pos, FONT_CYAN); pos++;//59.52 Hz if hacked from PAL
+						if (_SVIN_X_RESOLUTION_320 == screenMode.x_res)
+							DrawString("Pixel clock ......26.8426 MHz", x, y+_fh*pos, FONT_CYAN);//1706 clock per line, 525 lines, 29.97 fps
+						else
+							DrawString("Pixel clock ......28.6364 MHz", x, y+_fh*pos, FONT_CYAN);//1820 clock per line, 525 lines, 29.97 fps
+						pos++;
+					}
+					else
+					{
+						DrawString("Color system ............ PAL",x, y+_fh*pos, FONT_CYAN); pos++;
+						sprintf(string_buf,"(%d)",frame_counter);
+						DrawString(string_buf, x, y+_fh*pos, FONT_CYAN); pos++;
+						DrawString("Field rate ............ 50 Hz", x, y+_fh*pos, FONT_CYAN); pos++;//50.35 Hz if hacked from NTSC
+						if (_SVIN_X_RESOLUTION_320 == screenMode.x_res)
+							DrawString("Pixel clock ......26.6564 MHz", x, y+_fh*pos, FONT_CYAN);//1706 clock per line, 625 lines, 25 fps
+						else
+							DrawString("Pixel clock ......28.4375 MHz", x, y+_fh*pos, FONT_CYAN);//1820 clock per line, 625 lines, 25 fps
+						pos++;
+					}
 					menu_size = 3;
 					break;
 				default:
