@@ -564,6 +564,9 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "This test allows you to check", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "phase alignment in upscalers.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
+				VDP_drawTextBG(APLAN, "Press left or right to move.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "C to change resolution.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
 				VDP_drawTextBG(APLAN, "Designed by FirebrandX", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			case HELP_LAG:

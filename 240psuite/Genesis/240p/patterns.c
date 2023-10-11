@@ -1481,8 +1481,15 @@ void DrawConvergence()
 void DrawPhaseCheck()
 {
 	s16 align = -3;
-	u16 exit = 0, loadvram = 1;
+	u16 exit = 0, loadvram = 1, type = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+		
+	if(type == RES_256)
+		align = -7;
 
 	while(!exit)
 	{
@@ -1492,13 +1499,27 @@ void DrawPhaseCheck()
 			u16 size = 0;
 			
 			ind = TILE_USERINDEX;
-			size = sizeof(phase_tiles) / 32;
 			
 			VDP_Start();
 			
+			if(type == RES_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+			
 			VDP_setPalette(PAL0, phase_pal);
-			VDP_loadTileData(phase_tiles, ind, size, USE_DMA);
-			VDP_setMyTileMapRect(BPLAN, phase_map, ind, 0, 0, 320 / 8, 224 / 8);
+			if(type == RES_256)
+			{
+				size = sizeof(phase256_tiles) / 32;
+				VDP_loadTileData(phase256_tiles, ind, size, USE_DMA);
+				VDP_setMyTileMapRect(BPLAN, phase256_map, ind, 0, 0, 256 / 8, 224 / 8);
+			}
+			else
+			{
+				size = sizeof(phase_tiles) / 32;
+				VDP_loadTileData(phase_tiles, ind, size, USE_DMA);
+				VDP_setMyTileMapRect(BPLAN, phase_map, ind, 0, 0, 320 / 8, 224 / 8);
+			}
 			
 			ind += size;
 			size = sizeof(gillian_tiles) / 32;
@@ -1510,7 +1531,8 @@ void DrawPhaseCheck()
 			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 10, 8, 56 / 8, 104 / 8);
 			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 17, 8, 56 / 8, 104 / 8);
 			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 24, 8, 56 / 8, 104 / 8);
-			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 31, 8, 56 / 8, 104 / 8);
+			if(type == RES_320)
+				VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 31, 8, 56 / 8, 104 / 8);
 			g_pos = ind;
 			
 			//Center them
@@ -1533,8 +1555,22 @@ void DrawPhaseCheck()
 			
 		if(pressedButtons & BUTTON_A)
 		{
-			align = -3;
+			align = type == RES_256 ? -7 : -3;
 			VDP_setHorizontalScroll(PLAN_A, align);
+		}
+		
+		if(pressedButtons & BUTTON_C)
+		{
+			u16 rtype; 
+			
+			rtype = DrawFloatMenuRes(type);
+			if(rtype != FLOAT_CANCEL)
+			{
+				type = rtype;
+				align = type == RES_256 ? -7 : -3;
+			}
+			resetController(&oldButtons);
+			loadvram = 1;
 		}
 		
 		if(pressedButtons & BUTTON_LEFT)

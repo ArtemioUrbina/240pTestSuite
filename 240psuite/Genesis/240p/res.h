@@ -205,5 +205,9 @@ extern u32 phase_tiles[1056/4];
 extern u16 phase_pal[16/2]; 
 extern u16 phase_map[2240/2]; 
 
+extern u32 phase256_tiles[800/4]; 
+extern u16 phase256_pal[16/2]; 
+extern u16 phase256_map[1792/2]; 
+
 
 #endif
