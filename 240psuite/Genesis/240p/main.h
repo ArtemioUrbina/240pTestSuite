@@ -26,6 +26,7 @@
 #include "tests.h"
 #include "help.h"
 #include "myvdp.h"
+#include "myvdp.h"
 
 extern u8		joytype;
 extern u8		VDPChanged;
@@ -90,3 +91,5 @@ u16 DrawFloatMenuRes(u16 def);
 u16 DrawFloatMenuResExtra(u16 def, char *option);
 u16 DrawFloatMenu(u16 def, fmenudata *data, u16 size);
 void resetController(u16 *oldButtons);
+u16 changeResMenu(u16 pressed, u16 button, u16 *oldButtons, u16 *type, u16 *loadvram);
+u16 changeResMenuExtra(u16 pressed, u16 button, u16 *oldButtons, u16 *type, u16 *loadvram, char *option);

@@ -170,11 +170,10 @@ void TestPatternMenu()
 		VDP_Start();
 		VDP_drawTextBG(APLAN, "Color & Black Levels", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Geometry", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Phase Check", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		pos+=2;
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
 	
@@ -190,7 +189,7 @@ void TestPatternMenu()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > 6)
+			if(cursel > 5)
 				cursel = 1;
 		}
 
@@ -198,7 +197,7 @@ void TestPatternMenu()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = 6;
+				cursel = 5;
 		}
 
 		if(pressedButtons & BUTTON_B || 
@@ -210,7 +209,7 @@ void TestPatternMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			if(cursel < 4)
+			if(cursel < 3)
 				FadeAndCleanUp();
 			switch (cursel)
 			{
@@ -221,15 +220,12 @@ void TestPatternMenu()
 				GeometryPatternMenu();
 				break;
 			case 3:
-				DrawPhaseCheck();
-				break;
-			case 4:
 				DrawHelp(HELP_GENERAL);
 				break;
-			case 5:
+			case 4:
 				OptionsMenu();
 				break;
-			case 6:
+			case 5:
 				DrawCredits();
 				break;
 			}
@@ -479,7 +475,7 @@ void VideoTestsMenu()
 			reload = 0;
 		}
 
-		pos = 7;
+		pos = 6;
 		VDP_Start();
 		VDP_drawTextBG(APLAN, "Drop Shadow Test", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Striped Sprite Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
@@ -489,13 +485,14 @@ void VideoTestsMenu()
 		VDP_drawTextBG(APLAN, "Grid Scroll Test", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Horiz/Vert Stripes", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Checkerboard", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Alternate 240p/480i", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Disappearing Logo", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Phase Check", TILE_ATTR(cursel == 9 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Backlit Zone Test", TILE_ATTR(cursel == 10 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Alternate 240p/480i", TILE_ATTR(cursel == 11 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Disappearing Logo", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		pos++;
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 12 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 13 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 14 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 15 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
 	
@@ -511,7 +508,7 @@ void VideoTestsMenu()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > 14)
+			if(cursel > 15)
 				cursel = 1;
 		}
 
@@ -519,7 +516,7 @@ void VideoTestsMenu()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = 14;
+				cursel = 15;
 		}
 
 		if(pressedButtons & BUTTON_B || 
@@ -531,7 +528,7 @@ void VideoTestsMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			if(cursel < 12)
+			if(cursel < 13)
 				FadeAndCleanUp();
 			switch (cursel)
 			{
@@ -560,21 +557,24 @@ void VideoTestsMenu()
 				DrawCheckBoard();
 				break;
 			case 9:
-				LEDZoneTest();
+				DrawPhaseCheck();
 				break;
 			case 10:
-				Alternate240p480i();
+				LEDZoneTest();
 				break;
 			case 11:
-				DisappearingLogo();
+				Alternate240p480i();
 				break;
 			case 12:
-				DrawHelp(HELP_GENERAL);
+				DisappearingLogo();
 				break;
 			case 13:
-				OptionsMenu();
+				DrawHelp(HELP_GENERAL);
 				break;
 			case 14:
+				OptionsMenu();
+				break;
+			case 15:
 				done = 1;
 				break;
 			}
@@ -1419,6 +1419,27 @@ void resetController(u16 *oldButtons)
 	
 	*oldButtons |= BUTTON_A;
 	*oldButtons |= BUTTON_START;
+}
+
+u16 changeResMenu(u16 pressed, u16 button, u16 *oldButtons, u16 *type, u16 *loadvram)
+{
+	return(changeResMenuExtra(pressed, button, oldButtons, type, loadvram, NULL));
+}
+
+u16 changeResMenuExtra(u16 pressed, u16 button, u16 *oldButtons, u16 *type, u16 *loadvram, char *option)
+{
+	if(pressed & button)
+	{
+		u16 ntype;
+		
+		ntype = DrawFloatMenuResExtra(*type, option);
+		if(ntype != FLOAT_CANCEL)
+			*type = ntype;
+		resetController(oldButtons);
+		*loadvram = 1;
+		return 1;
+	}
+	return 0;
 }
 
 #define NUM_CONTRL	8

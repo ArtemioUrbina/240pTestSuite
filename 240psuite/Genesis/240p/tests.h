@@ -29,6 +29,7 @@ void HScrollTest();
 void VScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
+void DrawPhaseCheck();
 void SoundTest();
 void LEDZoneTest();
 void PassiveLagTest();

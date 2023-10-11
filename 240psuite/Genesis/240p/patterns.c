@@ -429,7 +429,7 @@ void Draw601ColorBars()
 void DrawSharpness()
 {
 	u16 size;
-	u16 exit = 0, loadvram = 1, type = FLOAT_OPTION, ntype = 0;
+	u16 exit = 0, loadvram = 1, type = FLOAT_OPTION;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	
 	while(!exit)
@@ -468,16 +468,7 @@ void DrawSharpness()
 		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SHARPNESS))
 			loadvram = 1;
 
-		if(pressedButtons & BUTTON_C)
-		{
-			
-			ntype = DrawFloatMenuResExtra(type, "Sharpness");
-			if(ntype != FLOAT_CANCEL)
-				type = ntype;
-			
-			resetController(&oldButtons);
-			loadvram = 1;
-		}
+		changeResMenuExtra(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram, "Sharpness");
 		
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
@@ -489,7 +480,7 @@ void DrawSharpness()
 void DrawGrid()
 {
 	u16 size, drawBorder = 0;
-	u16 exit = 0, loadvram = 1, type = 0, ntype = 0;
+	u16 exit = 0, loadvram = 1, type = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 first_pal[16], oldColor = 0, redraw = 1;
 
@@ -576,14 +567,7 @@ void DrawGrid()
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
 		
-		if(pressedButtons & BUTTON_C)
-		{
-			ntype = DrawFloatMenuRes(type);
-			if(ntype != FLOAT_CANCEL)
-				type = ntype;
-			resetController(&oldButtons);
-			loadvram = 1;
-		}
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 
 		VDP_waitVSync();
 	}
@@ -593,7 +577,7 @@ void DrawMonoscope()
 {
 	u16 ind;
 	u16 size;
-	u16 exit, loadvram = 1, type = 0, ntype = 0, redraw = 0, drawBorder = 0, oldColor = 0;
+	u16 exit, loadvram = 1, type = 0, redraw = 0, drawBorder = 0, oldColor = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 custom_pal[16];
 	int bright = 1;
@@ -712,14 +696,7 @@ void DrawMonoscope()
 			redraw = 1;
 		}
 		
-		if(pressedButtons & BUTTON_C)
-		{
-			ntype = DrawFloatMenuRes(type);
-			if(ntype != FLOAT_CANCEL)
-				type = ntype;
-			resetController(&oldButtons);
-			loadvram = 1;
-		}
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 
 		VDP_waitVSync();
 	}
@@ -729,7 +706,7 @@ void DrawColorBleed()
 {
 	u16 ind = 0, Drawtype = 0;
 	u16 size = 0, loadvram = 1;
-	u16 exit = 0, type = 0, ntype = 0, redraw = 1;
+	u16 exit = 0, type = 0, redraw = 1;
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	type = DrawFloatMenuRes(RES_320);
@@ -801,14 +778,7 @@ void DrawColorBleed()
 			redraw = 1;
 		}
 		
-		if(pressedButtons & BUTTON_C)
-		{
-			ntype = DrawFloatMenuRes(type);
-			if(ntype != FLOAT_CANCEL)
-				type = ntype;
-			resetController(&oldButtons);
-			loadvram = 1;
-		}
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 
 		VDP_waitVSync();
 	}
@@ -1059,10 +1029,10 @@ void DrawOverscan()
 {
 	u32 _tile_l[8], _tile_r[8], _tile_t[8], _tile_b[8];
 	u32 _tile_lb[8], _tile_lt[8], _tile_rt[8], _tile_rb[8];
-	u16 vram = TILE_USERINDEX, type = 0, ntype = 0;
+	u16 vram = TILE_USERINDEX, type = 0, loadvram = 1;
 	int left = 0, right = 0, top = 0, bottom = 0, exit = 0;
 	u16 buttons, oldButtons = 0xffff, pressedButtons, redraw = 1;
-	int sel = 0, maxTileVert = 0, maxTileHor = 0, loadvram = 1;
+	int sel = 0, maxTileVert = 0, maxTileHor = 0;
 	const u32 back[8] = { 0x44444444, 0x44444444, 0x44444444, 0x44444444,
 		0x44444444, 0x44444444, 0x44444444, 0x44444444
 	};
@@ -1281,14 +1251,7 @@ void DrawOverscan()
 			redraw = 1;
 		}
 		
-		if(pressedButtons & BUTTON_C)
-		{
-			ntype = DrawFloatMenuRes(type);
-			if(ntype != FLOAT_CANCEL)
-				type = ntype;
-			resetController(&oldButtons);
-			loadvram = 1;
-		}
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 	}
 }
 
@@ -1371,9 +1334,9 @@ u8 DrawContrast()
 
 void DrawConvergence()
 {
-	int convType = 4, horRes = RES_320;
-	int exit = 0, nhorRes = horRes, redraw = 1;
-	u16 ind = 0, size = 0, loadvram = 1; 
+	int convType = 4;
+	int exit = 0, redraw = 1;
+	u16 ind = 0, size = 0, loadvram = 1, horRes = RES_320; 
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	horRes = DrawFloatMenuRes(RES_320);
@@ -1462,134 +1425,9 @@ void DrawConvergence()
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
-			
-		if(pressedButtons & BUTTON_C)
-		{
-			nhorRes = DrawFloatMenuRes(horRes);
-			resetController(&oldButtons);
-			
-			if(nhorRes != FLOAT_CANCEL)
-				horRes = nhorRes;
-			
-			loadvram = 1;
-		}
-
-		VDP_waitVSync();
-	}
-}
-
-void DrawPhaseCheck()
-{
-	s16 align = -3;
-	u16 exit = 0, loadvram = 1, type = 0;
-	u16 buttons, oldButtons = 0xffff, pressedButtons;
-
-	type = DrawFloatMenuRes(RES_320);
-	if(type == FLOAT_CANCEL)
-		return;
 		
-	if(type == RES_256)
-		align = -7;
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &horRes, &loadvram);
 
-	while(!exit)
-	{
-		if(loadvram)
-		{
-			u16 ind = 0;
-			u16 size = 0;
-			
-			ind = TILE_USERINDEX;
-			
-			VDP_Start();
-			
-			if(type == RES_256)
-				VDP_setScreenWidth256();
-			else
-				VDP_setScreenWidth320();
-			
-			VDP_setPalette(PAL0, phase_pal);
-			if(type == RES_256)
-			{
-				size = sizeof(phase256_tiles) / 32;
-				VDP_loadTileData(phase256_tiles, ind, size, USE_DMA);
-				VDP_setMyTileMapRect(BPLAN, phase256_map, ind, 0, 0, 256 / 8, 224 / 8);
-			}
-			else
-			{
-				size = sizeof(phase_tiles) / 32;
-				VDP_loadTileData(phase_tiles, ind, size, USE_DMA);
-				VDP_setMyTileMapRect(BPLAN, phase_map, ind, 0, 0, 320 / 8, 224 / 8);
-			}
-			
-			ind += size;
-			size = sizeof(gillian_tiles) / 32;
-			
-			VDP_loadTileData(gillian_tiles, ind, size, USE_DMA);
-			VDP_setPalette(PAL3, gillian_pal);
-			
-			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 3, 8, 56 / 8, 104 / 8);
-			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 10, 8, 56 / 8, 104 / 8);
-			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 17, 8, 56 / 8, 104 / 8);
-			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 24, 8, 56 / 8, 104 / 8);
-			if(type == RES_320)
-				VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 31, 8, 56 / 8, 104 / 8);
-			g_pos = ind;
-			
-			//Center them
-			VDP_setHorizontalScroll(PLAN_A, align);
-			VDP_setVerticalScroll(PLAN_A, 2);
-			
-			VDP_End();
-			loadvram = 0;
-		}
-
-		buttons = JOY_readJoypad(JOY_ALL);
-		pressedButtons = buttons & ~oldButtons;
-		oldButtons = buttons;
-
-		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_PHASE))
-			loadvram = 1;
-
-		if(pressedButtons & BUTTON_START)
-			exit = 1;
-			
-		if(pressedButtons & BUTTON_A)
-		{
-			align = type == RES_256 ? -7 : -3;
-			VDP_setHorizontalScroll(PLAN_A, align);
-		}
-		
-		if(pressedButtons & BUTTON_C)
-		{
-			u16 rtype; 
-			
-			rtype = DrawFloatMenuRes(type);
-			if(rtype != FLOAT_CANCEL)
-			{
-				type = rtype;
-				align = type == RES_256 ? -7 : -3;
-			}
-			resetController(&oldButtons);
-			loadvram = 1;
-		}
-		
-		if(pressedButtons & BUTTON_LEFT)
-		{
-			align--;
-			if(align < -24)
-				align = -24;
-			VDP_setHorizontalScroll(PLAN_A, align);
-		}
-
-		if(pressedButtons & BUTTON_RIGHT)
-		{
-			align++;
-			if(align > 17)
-				align = 17;
-			VDP_setHorizontalScroll(PLAN_A, align);
-		}
-
-		checkblink();
 		VDP_waitVSync();
 	}
 }

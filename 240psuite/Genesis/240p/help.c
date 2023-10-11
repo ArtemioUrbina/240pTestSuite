@@ -255,8 +255,8 @@ void DrawHelp(int option)
 						VDP_drawTextBG(APLAN, "corner should get you started.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "Confirm your adjustment using", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "the scroll tests.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						y++;
-						VDP_drawTextBG(APLAN, "Designed by Keith Raney.", TILE_ATTR(PAL0, 0, 0, 0), 4, y);
+						ChangeResolution(&y);
+						VDP_drawTextBG(APLAN, "Designed by Keith Raney.", TILE_ATTR(PAL1, 0, 0, 0), 4, y);
 					break;
 				}
 				break;
@@ -291,8 +291,8 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "clean black and gray transitions", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "with no white ghosting between.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "Pressing B toggles a diagonal", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "brick tileset.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "A diagonal brick tileset can be", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "selected with C.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				ChangeResolution(&y);
 				break;
 			case HELP_OVERSCAN:
@@ -564,8 +564,10 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "This test allows you to check", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "phase alignment in upscalers.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
-				VDP_drawTextBG(APLAN, "Press left or right to move.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "C to change resolution.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "Press left or right to move,", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "B for checkerboard bg & C to", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "change resolution.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				
 				y++;
 				VDP_drawTextBG(APLAN, "Designed by FirebrandX", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;

@@ -36,6 +36,9 @@ void DrawCheckBoard()
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 
 	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+
 	while(!exit)
 	{
 		if(loadvram)
@@ -134,13 +137,8 @@ void DrawCheckBoard()
 
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
-			
-		if(pressedButtons & BUTTON_C)
-		{
-			type = DrawFloatMenuRes(type);
-			oldButtons |= BUTTON_A;
-			loadvram = 1;
-		}
+		
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 	
 		VDP_waitVSync();
 	}
@@ -154,6 +152,9 @@ void DrawStripes()
 	u16 buttons = 0, oldButtons = 0xffff, pressedButtons = 0, type = 0;	
 
 	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+		
 	while(!exit)
 	{
 		if(loadvram)
@@ -272,12 +273,7 @@ void DrawStripes()
 		if(pressedButtons & BUTTON_START)
 			exit = 1;
 			
-		if(pressedButtons & BUTTON_C)
-		{
-			type = DrawFloatMenuRes(type);
-			oldButtons |= BUTTON_A;
-			loadvram = 1;
-		}
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 
 		VDP_waitVSync();
 	}
@@ -1162,6 +1158,9 @@ void HScrollTest()
 	int x = 0, y = 0, speed = 1, acc = -1, pause = 0, kikipos = 32;
 
 	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+	
 	while(!exit)
 	{
 		if(loadvram)
@@ -1338,12 +1337,7 @@ void HScrollTest()
 			VDP_End();
 		}
 		
-		if(pressedButtons & BUTTON_C)
-		{
-			type = DrawFloatMenuRes(type);
-			oldButtons |= BUTTON_A;
-			loadvram = 1;
-		}
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 		
 		VDP_waitVSync();
 	}
@@ -1357,6 +1351,9 @@ void VScrollTest()
 	int pos = 0, speed = 1, acc = -1, pause = 0, direction = 0;
 
 	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+	
 	while(!exit)
 	{
 		if(loadvram)
@@ -1407,13 +1404,8 @@ void VScrollTest()
 
 		if(pressedButtons & BUTTON_B)
 			direction = !direction;
-			
-		if(pressedButtons & BUTTON_C)
-		{
-			type = DrawFloatMenuRes(type);
-			oldButtons |= BUTTON_A;
-			loadvram = 1;
-		}
+		
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 
 		if(!pause)
 			pos += acc * speed;
@@ -1789,6 +1781,9 @@ void LEDZoneTest()
 	u16 buttons, pressedButtons, oldButtons = 0xffff, loadvram = 1, type = 0;
 		
 	type = DrawFloatMenuRes(RES_320);	
+	if(type == FLOAT_CANCEL)
+		return;
+	
 	if(type == RES_256)
 		x = 128;
 	while(!exit)
@@ -1895,12 +1890,7 @@ void LEDZoneTest()
 			}
 		}
 		
-		if(pressedButtons & BUTTON_C)
-		{
-			type = DrawFloatMenuRes(type);
-			oldButtons |= BUTTON_A;
-			loadvram = 1;
-		}
+		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 
 		if(change)
 		{
@@ -2711,5 +2701,117 @@ void DisappearingLogo()
 				frames = 2;
 			}
 		}
+	}
+}
+
+void DrawPhaseCheck()
+{
+	s16 align = -3, usecheck = 0;
+	u16 exit = 0, loadvram = 1, type = 0;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+	type = DrawFloatMenuRes(RES_320);
+	if(type == FLOAT_CANCEL)
+		return;
+		
+	if(type == RES_256)
+		align = -7;
+
+	while(!exit)
+	{
+		if(loadvram)
+		{
+			u16 ind = 0;
+			u16 size = 0;
+			
+			ind = TILE_USERINDEX;
+			
+			VDP_Start();
+			
+			if(type == RES_256)
+				VDP_setScreenWidth256();
+			else
+				VDP_setScreenWidth320();
+			
+			if(!usecheck)
+			{
+				VDP_setPalette(PAL0, phase_pal);
+				size = sizeof(phase_tiles) / 32;
+				VDP_loadTileData(phase_tiles, ind, size, USE_DMA);
+				VDP_setMyTileMapRect(BPLAN, phase_map, ind, 0, 0, 320 / 8, 224 / 8);
+			}
+			else
+			{
+				VDP_setPalette(PAL0, bw_pal);
+				size = sizeof(check_tile) / 32;
+				VDP_loadTileData(check_tile, ind, size, USE_DMA);
+				VDP_fillTileMapRect(BPLAN, TILE_ATTR(PAL0, 0, 0, 0) + TILE_USERINDEX, 0, 0, 320 / 8, getVerticalRes() / 8);
+			}
+			
+			ind += size;
+			size = sizeof(gillian_tiles) / 32;
+			
+			VDP_loadTileData(gillian_tiles, ind, size, USE_DMA);
+			VDP_setPalette(PAL3, gillian_pal);
+			
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 3, 8, 56 / 8, 104 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 10, 8, 56 / 8, 104 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 17, 8, 56 / 8, 104 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 24, 8, 56 / 8, 104 / 8);
+			if(type == RES_320)
+				VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 31, 8, 56 / 8, 104 / 8);
+			g_pos = ind;
+			
+			//Center them
+			VDP_setHorizontalScroll(PLAN_A, align);
+			VDP_setVerticalScroll(PLAN_A, 2);
+			
+			VDP_End();
+			loadvram = 0;
+		}
+
+		buttons = JOY_readJoypad(JOY_ALL);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_PHASE))
+			loadvram = 1;
+
+		if(pressedButtons & BUTTON_START)
+			exit = 1;
+			
+		if(pressedButtons & BUTTON_A)
+		{
+			align = type == RES_256 ? -7 : -3;
+			VDP_setHorizontalScroll(PLAN_A, align);
+		}
+		
+		if(pressedButtons & BUTTON_B)
+		{
+			usecheck = !usecheck;
+			loadvram = 1;
+		}
+		
+		if(changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram))
+			align = type == RES_256 ? -7 : -3;
+		
+		if(pressedButtons & BUTTON_LEFT)
+		{
+			align--;
+			if(align < -24)
+				align = -24;
+			VDP_setHorizontalScroll(PLAN_A, align);
+		}
+
+		if(pressedButtons & BUTTON_RIGHT)
+		{
+			align++;
+			if(align > 18)
+				align = 18;
+			VDP_setHorizontalScroll(PLAN_A, align);
+		}
+
+		checkblink();
+		VDP_waitVSync();
 	}
 }
