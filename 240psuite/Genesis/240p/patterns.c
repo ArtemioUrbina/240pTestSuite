@@ -1478,3 +1478,82 @@ void DrawConvergence()
 	}
 }
 
+void DrawPhaseCheck()
+{
+	s16 align = -3;
+	u16 exit = 0, loadvram = 1;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+
+	while(!exit)
+	{
+		if(loadvram)
+		{
+			u16 ind = 0;
+			u16 size = 0;
+			
+			ind = TILE_USERINDEX;
+			size = sizeof(phase_tiles) / 32;
+			
+			VDP_Start();
+			
+			VDP_setPalette(PAL0, phase_pal);
+			VDP_loadTileData(phase_tiles, ind, size, USE_DMA);
+			VDP_setMyTileMapRect(BPLAN, phase_map, ind, 0, 0, 320 / 8, 224 / 8);
+			
+			ind += size;
+			size = sizeof(gillian_tiles) / 32;
+			
+			VDP_loadTileData(gillian_tiles, ind, size, USE_DMA);
+			VDP_setPalette(PAL3, gillian_pal);
+			
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 3, 8, 56 / 8, 104 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 10, 8, 56 / 8, 104 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 17, 8, 56 / 8, 104 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 24, 8, 56 / 8, 104 / 8);
+			VDP_fillTileMapRectInc(APLAN, TILE_ATTR(PAL3, 0, 0, 0) + ind, 31, 8, 56 / 8, 104 / 8);
+			g_pos = ind;
+			
+			//Center them
+			VDP_setHorizontalScroll(PLAN_A, align);
+			VDP_setVerticalScroll(PLAN_A, 2);
+			
+			VDP_End();
+			loadvram = 0;
+		}
+
+		buttons = JOY_readJoypad(JOY_ALL);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_PHASE))
+			loadvram = 1;
+
+		if(pressedButtons & BUTTON_START)
+			exit = 1;
+			
+		if(pressedButtons & BUTTON_A)
+		{
+			align = -3;
+			VDP_setHorizontalScroll(PLAN_A, align);
+		}
+		
+		if(pressedButtons & BUTTON_LEFT)
+		{
+			align--;
+			if(align < -24)
+				align = -24;
+			VDP_setHorizontalScroll(PLAN_A, align);
+		}
+
+		if(pressedButtons & BUTTON_RIGHT)
+		{
+			align++;
+			if(align > 17)
+				align = 17;
+			VDP_setHorizontalScroll(PLAN_A, align);
+		}
+
+		checkblink();
+		VDP_waitVSync();
+	}
+}

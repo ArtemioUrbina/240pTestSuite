@@ -559,6 +559,13 @@ void DrawHelp(int option)
 				y++;
 				ChangeResolution(&y);
 				break;
+			case HELP_PHASE:
+				VDP_drawTextBG(APLAN, "PHASE CHECK", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
+				VDP_drawTextBG(APLAN, "This test allows you to check", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				VDP_drawTextBG(APLAN, "phase alignment in upscalers.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "Designed by FirebrandX", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				break;
 			case HELP_LAG:
 				switch (page)
 				{

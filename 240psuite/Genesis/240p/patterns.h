@@ -36,6 +36,7 @@ void Draw100IRE();
 void DrawSMPTEorEBU(int EBU);
 void DrawSharpness();
 void DrawOverscan();
+void DrawPhaseCheck();
 u8 DrawContrast();
 
 void DrawColorTilesAt(u16 plan, u16 pal, u16 x, u16 y, u16 tiles, u16 w, u16 h);

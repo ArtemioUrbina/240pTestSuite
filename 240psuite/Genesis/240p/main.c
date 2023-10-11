@@ -170,10 +170,11 @@ void TestPatternMenu()
 		VDP_Start();
 		VDP_drawTextBG(APLAN, "Color & Black Levels", TILE_ATTR(cursel == 1 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Geometry", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Phase Check", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		pos+=2;
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Credits", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
 	
@@ -189,7 +190,7 @@ void TestPatternMenu()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > 5)
+			if(cursel > 6)
 				cursel = 1;
 		}
 
@@ -197,7 +198,7 @@ void TestPatternMenu()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = 5;
+				cursel = 6;
 		}
 
 		if(pressedButtons & BUTTON_B || 
@@ -209,7 +210,7 @@ void TestPatternMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			if(cursel < 3)
+			if(cursel < 4)
 				FadeAndCleanUp();
 			switch (cursel)
 			{
@@ -220,12 +221,15 @@ void TestPatternMenu()
 				GeometryPatternMenu();
 				break;
 			case 3:
-				DrawHelp(HELP_GENERAL);
+				DrawPhaseCheck();
 				break;
 			case 4:
-				OptionsMenu();
+				DrawHelp(HELP_GENERAL);
 				break;
 			case 5:
+				OptionsMenu();
+				break;
+			case 6:
 				DrawCredits();
 				break;
 			}
@@ -923,8 +927,8 @@ void DrawCredits()
 			VDP_drawTextBG(APLAN, "Info on using this test suite:", TILE_ATTR(PAL1, 0, 0, 0), 4, pos++);
 			VDP_drawTextBG(APLAN, "http://junkerhq.net/240p", TILE_ATTR(PAL0, 0, 0, 0), 5, pos++);
 
-			VDP_drawTextBG(APLAN, "Ver. 1.28", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
-			VDP_drawTextBG(APLAN, "15/06/2023", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
+			VDP_drawTextBG(APLAN, "Ver. 1.29a", TILE_ATTR(PAL1, 0, 0, 0), 26, 6);
+			VDP_drawTextBG(APLAN, "10/10/2023", TILE_ATTR(PAL0, 0, 0, 0), 26, 7);
 			
 			VDP_drawTextBG(BPLAN, "Dedicated to Elisa", TILE_ATTR(PAL0, 0, 0, 0), 18, 24);
 			VDP_End();

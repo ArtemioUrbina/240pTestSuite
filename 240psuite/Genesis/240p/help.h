@@ -54,6 +54,7 @@
 #define	HELP_MEMVIEW		31
 #define HELP_CONVERGENCE	32
 #define HELP_DISAPPEAR		33
+#define HELP_PHASE			34
 
 extern u8	showhelp;
 
