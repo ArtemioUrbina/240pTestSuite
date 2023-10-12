@@ -1330,7 +1330,6 @@ void MDFourier(u8 boot)
 {
 	u16 redraw = 1, change = 0, end = 0;
 	u16 pressed;	
-	s16 effect = 0;
 
 	if(boot)
 		ExecutePulseTrain();
@@ -2352,4 +2351,92 @@ void DisappearingLogo()
 	}
 	Transition();
 	oamClear(0, 0);
+}
+
+void DrawPhase() 
+{	
+	u16 pressed, end = 0;
+	u16 redraw = 1, usecheck = 0;
+	s16 x = 0;
+		
+	while(!end) 
+	{		
+		if(redraw)
+		{
+			u16 size = 0;
+			
+			StartDMA();
+			
+			if(usecheck)
+			{
+				bgInitTileSetMine(1, &check_tiles, &grid_pal, 0, (&check_tiles_end - &check_tiles), 16*2, BG_16COLORS, 0x6000);	
+					
+				bgInitMapSetMine(1, &fullscreen_map, (&fullscreen_map_end - &fullscreen_map), SC_32x32, 0x7000);
+				
+				setPaletteColor(0x00, RGB5(0, 0, 0));
+				setPaletteColor(0x01, RGB5(0xff, 0xff, 0xff));
+			}
+			else
+			{			
+				bgInitTileSetMine(1, &phase_tiles, &phase_pal, 0, (&phase_tiles_end - &phase_tiles), 16*2, BG_16COLORS, 0x6000);	
+				bgInitMapSetMine(1, &phase_map, (&phase_map_end - &phase_map), SC_32x32, 0x2000);
+			}
+			
+			size = (&gillian_tiles_end-&gillian_tiles);
+			oamInitGfxSet(&gillian_tiles, size, &gillian_pal, 16*2, 0, 0x4000, OBJ_SIZE16);
+
+			setMode(BG_MODE1,0); 
+			bgSetDisable(0);		
+			bgSetDisable(2);
+			
+			bgSetScroll(1, 0, -1);
+			EndDMA();
+			redraw = 0;
+		}
+		
+		DrawTilesWithSpritesLoaded(18+x, 63, 64, 112, 0);
+		DrawTilesWithSpritesLoaded(74+x, 63, 64, 112, 112);
+		DrawTilesWithSpritesLoaded(130+x, 63, 64, 112, 224);
+		DrawTilesWithSpritesLoaded(186+x, 63, 64, 112, 336);
+		
+		WaitForVBlank();
+		check_blink();
+		
+		pressed = PadPressed(0);
+		
+		if(pressed & KEY_START)
+		{
+			DrawHelp(HELP_PHASE);
+			redraw = 1;
+		}
+		
+		if(pressed & KEY_A)
+			x = 0;
+
+		if(pressed & KEY_B)
+			end = 1;		
+		
+		if(pressed & KEY_X)
+		{
+			usecheck = !usecheck;
+			redraw = 1;
+		}
+			
+		if(pressed & KEY_LEFT)
+		{
+			x -= 1;
+			if(x < -18)
+				x = -18;
+		}
+		
+		if(pressed & KEY_RIGHT)
+		{
+			x += 1;
+			if(x > 18)
+				x = 18;
+		}
+	}
+	Transition();
+	oamClear(0, 0);
+	return;
 }

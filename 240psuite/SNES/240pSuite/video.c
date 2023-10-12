@@ -107,6 +107,31 @@ void DrawTilesWithSprites(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 ti
 	}
 }
 
+void DrawTilesWithSpritesLoaded(u16 X, u16 Y, u16 width, u16 height, u16 spriteIndex)
+{
+	u16 baseX = X, baseY = Y;
+	u16 tileIndex = 0;
+	u16 row = 0, column = 0, sizeX = 0, sizeY = 0;
+	
+	sizeX = width / 16;
+	sizeY = height / 16;
+
+	for(row = 0; row < sizeY; row++)
+	{
+		for(column = 0; column < sizeX; column ++)
+		{
+			oamSet(spriteIndex, baseX+column*16, baseY+row*16, 3, 0, 0, tileIndex, 0); 
+			oamSetEx(spriteIndex, OBJ_SMALL, OBJ_SHOW);
+			oamSetVisible(spriteIndex, OBJ_SHOW);
+		
+			spriteIndex += 4;
+			tileIndex += 2;
+		}
+		if(row % 2 != 0)
+			tileIndex += 4*sizeX;
+	}
+}
+
 void DrawTilesWithSpritesBarcode(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 tileSize, u8 * pal)
 {
 	s16 baseX = X, baseY = Y;

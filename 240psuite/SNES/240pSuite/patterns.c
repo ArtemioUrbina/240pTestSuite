@@ -1674,7 +1674,7 @@ void DrawConvergence()
 			redraw = 1;
 		}
 		
-		if(pressed & KEY_R)
+		if(pressed & KEY_R || pressed & KEY_A)
 		{
 			type ++;
 			if(type > 4)

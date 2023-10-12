@@ -52,5 +52,6 @@
 #define HELP_CONTRAST		30
 #define HELP_CONVERGENCE	31
 #define HELP_DISAPPEAR		32
+#define HELP_PHASE			33
 
 void DrawHelp(u16 help);

@@ -580,4 +580,16 @@ dissapear_pal:
 .incbin "dissapear.pal"
 dissapear_pal_end:
 
+phase_tiles:
+.incbin "phase.pic"
+phase_tiles_end:
+
+phase_map:
+.incbin "phase.map"
+phase_map_end:
+
+phase_pal:
+.incbin "phase.pal"
+phase_pal_end:
+
 .ends

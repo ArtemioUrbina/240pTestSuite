@@ -47,3 +47,4 @@ void Alternate240p480i();
 void AudioSyncTest();
 void MDFourier(u8 boot);
 void DisappearingLogo();
+void DrawPhase();

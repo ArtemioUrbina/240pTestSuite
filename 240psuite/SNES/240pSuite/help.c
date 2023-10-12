@@ -826,6 +826,18 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "screen to white for");
 							drawText(3, y++, 7, "2 frames.");
 					break;
+					case HELP_PHASE:
+							drawText(3, 4  , 6, "        PHASE CHECK"); 
+							drawText(3, y++, 7, "This test allows you to"); 
+							drawText(3, y++, 7, "check phase alignment in");
+							drawText(3, y++, 7, "upscalers.");
+							y++;
+							drawText(3, y++, 7, "Use left or right to");
+							drawText(3, y++, 7, "move, X for checker bg,");
+							drawText(3, y++, 7, "and A to reset position.");
+							y++;
+							drawText(3, y++, 7, "Designed by FirebrandX");
+					break;
 			}
 			drawText(5, 24, 5, "Press B to exit help");
 			
