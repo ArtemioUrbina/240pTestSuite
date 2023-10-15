@@ -929,8 +929,8 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(4, 4, 5, "Ver. 1.08a");
-			drawText(19, 4, 7, "11/10/2023");
+			drawText(4, 4, 5, "Ver. 1.08c");
+			drawText(19, 4, 7, "14/10/2023");
 			drawText(10, 24, 5, "Dedicated to Elisa");
 			
 			EndDMA();	
