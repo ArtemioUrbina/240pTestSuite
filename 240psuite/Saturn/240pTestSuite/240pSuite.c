@@ -447,7 +447,13 @@ int main(void)
 				}
 
 				if(controller.pressed.button.start)
-					abort();
+				{
+					//exit to top level
+					menu_id = MENU_MAIN;
+					sel = 0;
+					redrawMenu = true;
+					key_pressed = true;
+				}
 
 				if(controller.pressed.button.b)
 				{
@@ -456,7 +462,11 @@ int main(void)
 					switch(menu_id)
 					{
 						case MENU_MAIN:
+							//go to credits
+							vdp2_sync_wait();
+							wait_for_key_unpress();
 							DrawCredits();
+							redrawMenu = true;
 							break;
 						case MENU_PATTERNS:
 							menu_id = MENU_MAIN;
@@ -472,8 +482,6 @@ int main(void)
 				}
 			}
 		}
-		//vdp2_tvmd_vblank_in_wait();
-		//vdp1_cmdt_list_commit();
 		vdp2_sync();
 		vdp2_sync_wait();
 	}
@@ -484,21 +492,36 @@ void DrawCredits()
 	bool doexit = false;
 	char data[25];
 	int counter = 1;
+	int x = 32, y = 48, pos = 0;
 
 	ClearTextLayer();
-
-	_svin_background_set_no_filelist("BACK2.BG");
+	
+	DrawString("Code and Patterns:", x, y+_fh*pos, FONT_GREEN); pos++;
+	DrawString(VERSION_NUMBER, 208, y+_fh*pos, FONT_GREEN);
+	DrawString("Artemio Urbina", x+5, y+_fh*pos, FONT_WHITE); pos++;
+	DrawString(VERSION_DATE, 208, y+_fh*pos, FONT_WHITE); 
+	pos++;
+	DrawString("SDK & Consultant:", x, y+_fh*pos, FONT_GREEN); pos++;	
+	DrawString("libyaul by Israel Jacquez", x+5, y+_fh*pos, FONT_WHITE); pos++;
+	DrawString("USB DevCart:", x, y+_fh*pos, FONT_GREEN); pos++;	
+	DrawString("cafe-alpha", x+5, y+_fh*pos, FONT_WHITE); pos++;	
+	DrawString("Menu Pixel Art:", x, y+_fh*pos, FONT_GREEN); pos++;	
+	DrawString("Asher", x+5, y+_fh*pos, FONT_WHITE); pos++;	
+	DrawString("Advisor:", x, y+_fh*pos, FONT_GREEN); pos++;	
+	DrawString("Fudoh", x+5, y+_fh*pos, FONT_WHITE); pos++;	
+	DrawString("Info on using this suite:", x, y+_fh*pos, FONT_GREEN); pos++;	
+	DrawString("http://junkerhq.net/240p/", x+5, y+_fh*pos, FONT_WHITE); pos++;	
+	DrawString("This is free software.", x+5, y+_fh*pos, FONT_CYAN); pos++;	
+	DrawString("Source code available under GPL", x+5, y+_fh*pos, FONT_CYAN); pos++;
+	DrawString("Dedicated to Elisa", 154, y+_fh*pos, FONT_GREEN); 
 
 	while(!doexit)
 	{
-		int x = 32, y = 104, pos = 0;
+		int x = 32, y = 48, pos = 0;
 
 		smpc_peripheral_process();
 		smpc_peripheral_digital_port(1, &controller);
 
-		DrawString("Code and Patterns:", x, y+_fh*pos, FONT_GREEN); pos++;	
-		DrawString("Artemio Urbina", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-		
 		if(counter == 1)
 			snprintf(data, 25, "aurbina@junkerhq.net");
 		if(counter == 60*4)
@@ -506,31 +529,9 @@ void DrawCredits()
 		if(counter == 60*8)
 			counter = 0;
 	
+		pos = 2;
 		ClearText(x+5, y+_fh*pos, 25*_fw, _fh);
 		DrawString(data, x+5, y+_fh*pos, FONT_WHITE); pos++;	
-		DrawString("SDK & Consultant:", x, y+_fh*pos, FONT_GREEN); pos++;	
-		DrawString("libyaul by Israel Jacquez", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-
-		DrawString("USB DevCart:", x, y+_fh*pos, FONT_GREEN); pos++;	
-		DrawString("cafe-alpha", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-		DrawString("Menu Pixel Art:", x, y+_fh*pos, FONT_GREEN); pos++;	
-		DrawString("Asher", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-		DrawString("Advisor:", x, y+_fh*pos, FONT_GREEN); pos++;	
-		DrawString("Fudoh", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-	
-		DrawString("Info on using this suite:", x, y+_fh*pos, FONT_GREEN); pos++;	
-		DrawString("http://junkerhq.net/240p/", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-	
-		DrawString("This is free software.", x+5, y+_fh*pos, FONT_CYAN); pos++;	
-		DrawString("Source code available under GPL", x+5, y+_fh*pos, FONT_CYAN);
-	
-		pos = 0;
-		DrawString(VERSION_NUMBER, 208, y+_fh*pos, FONT_GREEN); pos++;	
-		DrawString(VERSION_DATE, 208, y+_fh*pos, FONT_WHITE); 
-	
-		y += _fh*18;
-		DrawString("Dedicated to Elisa", 154, y, FONT_GREEN); 
-		//vdp1_cmdt_list_end(0);
 	
 		if (controller.connected == 1)
 		{
@@ -538,8 +539,6 @@ void DrawCredits()
 				doexit = true;
 		}
 	
-		//vdp2_tvmd_vblank_in_wait();
-		//vdp1_cmdt_list_commit();
 		vdp2_sync();
 		vdp2_sync_wait();
 		counter ++;
