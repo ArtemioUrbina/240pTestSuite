@@ -12,14 +12,27 @@ void draw_colorbars(_svin_screen_mode_t screenmode)
 	
 	_svin_set_cycle_patterns_cpu();
 	//add colors to palette
-	uint16_t *_pointer16 = (uint16_t *)VDP2_CRAM(0x200*2);//palette 2
+	rgb888_t Color = {0,0,0,0};
 	for (int i=0;i<32;i++) 
 	{
-		_pointer16[1+i] = 0x0001*i; //red
-		_pointer16[33+i] = 0x0020*i; //green
-		_pointer16[65+i] = 0x0400*i; //blue
-		_pointer16[97+i] = 0x0421*i; //red
+		Color.r = i*8;
+		Color.g = 0;
+		Color.b = 0;	
+		_svin_set_palette_part(2,&Color,1+i,1+i); //palette 2 colors 1..32 = red gradient
+		Color.r = 0;
+		Color.g = i*8;
+		Color.b = 0;	
+		_svin_set_palette_part(2,&Color,33+i,33+i); //palette 2 colors 33..64 = green gradient
+		Color.r = 0;
+		Color.g = 0;
+		Color.b = i*8;	
+		_svin_set_palette_part(2,&Color,65+i,65+i); //palette 2 colors 65..96 = blue gradient
+		Color.r = i*8;
+		Color.g = i*8;
+		Color.b = i*8;	
+		_svin_set_palette_part(2,&Color,97+i,97+i); //palette 2 colors 97..128 = white gradient
 	}
+
 	//create single-color tiles for each color, 128 tiles in total
 	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
 	for (int i=1; i<129; i++)

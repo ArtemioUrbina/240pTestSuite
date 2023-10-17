@@ -12,11 +12,19 @@ void draw_colorbleed(_svin_screen_mode_t screenmode, bool checkered)
 	
 	_svin_set_cycle_patterns_cpu();
 	//add colors to palette
-	uint16_t *_pointer16 = (uint16_t *)VDP2_CRAM(0x200*2);//palette 2
-	_pointer16[1] = 0x001F; //red
-	_pointer16[2] = 0x03E0; //green
-	_pointer16[3] = 0x7C00; //blue
-	_pointer16[4] = 0x7FFF; //white
+	rgb888_t Color = {0,0,0,0};
+	Color.r = 255;
+	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = red
+	Color.r = 0;
+	Color.g = 255;
+	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = green
+	Color.g = 0;
+	Color.b = 255;
+	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = blue
+	Color.r = 255;
+	Color.g = 255;
+	Color.b = 255;	
+	_svin_set_palette_part(2,&Color,4,4); //palette 2 color 4 = white
 	//create single-color tiles for each color, 4 tiles in total
 	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
 	if (checkered)

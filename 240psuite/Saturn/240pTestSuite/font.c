@@ -29,36 +29,30 @@
 int _fh = 9;
 int _fw = 6;
 
+#define FONT_PALETTE (0)
+
 void LoadFont()
 {
 	int i;
-	uint8_t *pFont;
-	rgb1555_t * pPal;	
+	//uint8_t *pFont;
+	rgb888_t Colors[4];	
 
-	pPal = (rgb1555_t*)VDP2_CRAM(FONT_WHITE*8);
-	*(pPal++) = RGB1555(0, 31, 0, 31); //Back
-	*(pPal++) = RGB1555(1, 31, 31, 31); //Font
-	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
+	Colors[0] = RGB888(1, 255, 0, 255); //Back
+	Colors[1] = RGB888(1, 255, 255, 255); //Font
+	Colors[2] = RGB888(1, 0, 0, 0); //Shadow
+	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_WHITE*4, FONT_WHITE*4+3);
 
-	pPal = (rgb1555_t*)VDP2_CRAM(FONT_RED*8);
-	*(pPal++) = RGB1555(1, 31, 0, 31); //Back
-	*(pPal++) = RGB1555(1, 31, 0, 0); //Font
-	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
+	Colors[1] = RGB888(1, 255, 0, 0); //Font
+	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_RED*4, FONT_RED*4+3);
 
-	pPal = (rgb1555_t*)VDP2_CRAM(FONT_GREEN*8);
-	*(pPal++) = RGB1555(1, 31, 0, 31); //Back
-	*(pPal++) = RGB1555(1, 0, 31, 0); //Font
-	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
+	Colors[1] = RGB888(1, 0, 255, 0); //Font
+	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_GREEN*4, FONT_GREEN*4+3);
 
-	pPal = (rgb1555_t*)VDP2_CRAM(FONT_CYAN*8);
-	*(pPal++) = RGB1555(1, 31, 0, 31); //Back
-	*(pPal++) = RGB1555(1, 0, 31, 31); //Font
-	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
+	Colors[1] = RGB888(1, 0, 255, 255); //Font
+	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_CYAN*4, FONT_CYAN*4+3);
 
-	pPal = (rgb1555_t*)VDP2_CRAM(FONT_YELLOW*8);
-	*(pPal++) = RGB1555(1, 31, 0, 31); //Back
-	*(pPal++) = RGB1555(1, 31, 31, 0); //Font
-	*(pPal++) = RGB1555(1, 0, 0, 0); //Shadow
+	Colors[1] = RGB888(1, 255, 255, 0); //Font
+	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_YELLOW*4, FONT_YELLOW*4+3);
 
 	/*color_rgb1555_t dd;
 	dd.raw = 0xFFAA;

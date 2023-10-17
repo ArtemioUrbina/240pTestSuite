@@ -7,7 +7,6 @@
 #include <stdlib.h>
 
 extern uint8_t _svin_init_done;
-extern bool _svin_cram_24bpp;
 
 void _svin_background_fade_to_black_step()
 {
@@ -167,8 +166,15 @@ _svin_background_set_by_fad(fad_t fad, int size)
         _svin_set_cycle_patterns_nbg();
         //set palette, using palette 1 for VDP2 backgrounds
         _svin_cd_block_sector_read(fad + compressed_size_sectors + 1, palette);
-        _svin_set_palette(1, palette);
-
+        //palette in file is 24-bit, setting it color-by-color
+        rgb888_t _color  = {0,0,0,0};
+        for (int i = 0; i<256; i++)
+        {
+            _color.r = palette[i*3+0];
+            _color.g = palette[i*3+1];
+            _color.b = palette[i*3+2];
+            _svin_set_palette_part(1, &_color, i, i);
+        }
     }
     else
     {
@@ -177,10 +183,4 @@ _svin_background_set_by_fad(fad_t fad, int size)
 
     free(palette);
     free(buffer);
-}
-
-void _svin_background_clear()
-{
-    //set zero palette
-    _svin_clear_palette(1);
 }

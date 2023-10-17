@@ -17,7 +17,6 @@ vdp1_cmdt_list_t *_svin_cmdt_list;
 uint8_t _svin_init_done;
 int _svin_frame_count;
 bool _svin_vdp1_cmdlist_toggle_at_vblank;
-bool _svin_cram_24bpp;
 
 void _svin_delay(int milliseconds)
 {
@@ -143,7 +142,6 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     _svin_init_done = 0;
     _svin_frame_count = 0;
     _svin_vdp1_cmdlist_toggle_at_vblank = true;
-    _svin_cram_24bpp = false;
 
     //-------------- setup VDP2 -------------------
 
@@ -173,7 +171,7 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     vdp2_scrn_cell_format_set(&format,&normal_map);
     vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
     vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0);
-    vdp2_cram_mode_set(1);
+    vdp2_cram_mode_set(2);
 
     //setup nbg1
     /*format.scroll_screen = VDP2_SCRN_NBG1;
@@ -432,58 +430,58 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     //-------------- setup palettes -------------------
 
     //setup default palettes
-    uint8_t temp_pal[3 * 256];
+    rgb888_t temp_pal[256];
     //grayscale gradient
     for (int i = 0; i < 256; i++)
     {
-        temp_pal[i * 3] = i;     
-        temp_pal[i * 3 + 1] = i; 
-        temp_pal[i * 3 + 2] = i; 
+        temp_pal[i].r = i;     
+        temp_pal[i].g = i; 
+        temp_pal[i].b = i; 
     }
     _svin_set_palette(0, temp_pal);
     //red
     memset(temp_pal,0,sizeof(temp_pal));
     for (int i = 0; i < 256; i++)
     {
-        temp_pal[i * 3] = i;      
+        temp_pal[i].r = i;      
     }
     _svin_set_palette(1, temp_pal);
     //green
     memset(temp_pal,0,sizeof(temp_pal));
     for (int i = 0; i < 256; i++)
     {
-       temp_pal[i * 3 + 1] = i;      
+       temp_pal[i].g = i;      
     }
     _svin_set_palette(2, temp_pal);
     //blue
     memset(temp_pal,0,sizeof(temp_pal));
     for (int i = 0; i < 256; i++)
     {
-       temp_pal[i * 3 + 2] = i;      
+       temp_pal[i].b = i;      
     }
     _svin_set_palette(3, temp_pal);
     //cyan
     memset(temp_pal,0,sizeof(temp_pal));
     for (int i = 0; i < 256; i++)
     {
-        temp_pal[i * 3 + 1] = i; 
-        temp_pal[i * 3 + 2] = i;    
+        temp_pal[i].g = i; 
+        temp_pal[i].b = i;    
     }
     _svin_set_palette(4, temp_pal);
     //magenta
     memset(temp_pal,0,sizeof(temp_pal));
     for (int i = 0; i < 256; i++)
     {
-        temp_pal[i * 3] = i;     
-        temp_pal[i * 3 + 2] = i;    
+        temp_pal[i].r = i;     
+        temp_pal[i].b = i;    
     }
     _svin_set_palette(5, temp_pal);
     //yellow
     memset(temp_pal,0,sizeof(temp_pal));
     for (int i = 0; i < 256; i++)
     {
-        temp_pal[i * 3] = i;     
-        temp_pal[i * 3 + 1] = i; 
+        temp_pal[i].g = i;     
+        temp_pal[i].b = i; 
     }
     _svin_set_palette(6, temp_pal);  
 
@@ -509,33 +507,20 @@ void _svin_deinit()
 }
 
 //---------------------------------------------- Palette stuff ----------------------------------------------------
-void _svin_set_palette(int number, uint8_t *pointer)
+void _svin_set_palette(int number, rgb888_t *pointer)
 {
     _svin_set_palette_part(number,pointer,0,255);
 }
 
-void _svin_set_palette_part(int number, uint8_t *pointer, int start, int end)
+void _svin_set_palette_part(int number, rgb888_t *pointer, int start, int end)
 {
-    if (_svin_cram_24bpp)
+    uint8_t *my_vdp2_cram8 = (uint8_t *)VDP2_VRAM_ADDR(8, 0x400 * number);
+    for (int i = start; i <= end; i++)
     {
-        uint8_t *my_vdp2_cram8 = (uint8_t *)VDP2_VRAM_ADDR(8, 0x400 * number);
-        for (int i = start; i <= end; i++)
-        {
-            my_vdp2_cram8[i*4+0] = 0;
-            my_vdp2_cram8[i*4+1] = pointer[i * 3 + 2];
-            my_vdp2_cram8[i*4+2] = pointer[i * 3 + 1];
-            my_vdp2_cram8[i*4+3] = pointer[i * 3 + 0];;
-        }
-    }
-    else
-    {
-        uint16_t *my_vdp2_cram = (uint16_t *)VDP2_VRAM_ADDR(8, 0x200 * number);
-        for (int i = start; i <= end; i++)
-        {
-            my_vdp2_cram[i] = (((pointer[i * 3 + 2] & 0xF8) << 7) |
-                            ((pointer[i * 3 + 1] & 0xF8) << 2) |
-                            ((pointer[i * 3 + 0] & 0xF8) >> 3));
-        }        
+        my_vdp2_cram8[i*4+0] = pointer[i-start].cc;
+        my_vdp2_cram8[i*4+1] = pointer[i-start].b;
+        my_vdp2_cram8[i*4+2] = pointer[i-start].g;
+        my_vdp2_cram8[i*4+3] = pointer[i-start].r;
     }
 }
 
@@ -546,22 +531,12 @@ void _svin_clear_palette(int number)
 
 void _svin_clear_palette_part(int number, int start, int end)
 {
-    if (_svin_cram_24bpp)
+    uint32_t *my_vdp2_cram32 = (uint32_t *)VDP2_VRAM_ADDR(8, 0x400 * number);
+    for (int i = start; i <= end; i++)
     {
-        uint32_t *my_vdp2_cram32 = (uint32_t *)VDP2_VRAM_ADDR(8, 0x400 * number);
-        for (int i = start; i <= end; i++)
-        {
-            my_vdp2_cram32[i] = 0;
-        }
+        my_vdp2_cram32[i] = 0;
     }
-    else
-    {
-        uint16_t *my_vdp2_cram = (uint16_t *)VDP2_VRAM_ADDR(8, 0x200 * number);
-        for (int i = start; i <=  end; i++)
-        {
-            my_vdp2_cram[i] = 0;
-        }
-    }
+
 }
 
 //---------------------------------------------- Misc ----------------------------------------------------
@@ -631,10 +606,4 @@ int _svin_get_keys_state()
     smpc_peripheral_process();
     smpc_peripheral_digital_port(1, &_digital);
     return _digital.pressed.raw;
-}
-
-void _svin_set_palette_24bpp()
-{
-    _svin_cram_24bpp = true;
-    vdp2_cram_mode_set(2);
 }
