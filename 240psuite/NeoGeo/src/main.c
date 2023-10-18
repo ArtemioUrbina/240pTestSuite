@@ -50,6 +50,13 @@ BYTE isCDFront, isCDZ, ngcd_region;
 #endif
 WORD fbase;
 
+#define USE_SERIAL
+
+#ifdef USE_SERIAL
+//static const char serialnumber[] = "#SERIALSTART#37154#00047#SERIALEND#";
+static const char serialnumber[] = "#SERIALSTART#00000#00000#SERIALEND#";
+#endif
+
 #define NUM_FONT_COLORS 10
 static const ushort fixPalettes[]= {
 	_BLACK, WH_100, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK, _BLACK,	// Used for BIOS Mask
@@ -319,7 +326,7 @@ void menu_tp()
 
 void menu_vt()
 {
-	int done = 0, curse = 1, cursemax = 13, redraw = 1;
+	int done = 0, curse = 1, cursemax = 14, redraw = 1;
 	blinker blinkdata;
 
 	while (!done)
@@ -340,20 +347,21 @@ void menu_vt()
 		if (PRESSED_UP)		curse=curse>1?curse-1:cursemax;
 		if (PRESSED_DOWN)	curse=curse<cursemax?curse+1:1;
 
-		fixPrint(5, 10, curse == 1 ? fontColorRed : fontColorWhite, fbase, "Drop Shadow Test");
-		fixPrint(5, 11, curse == 2 ? fontColorRed : fontColorWhite, fbase, "Striped Sprite Test");
-		fixPrint(5, 12, curse == 3 ? fontColorRed : fontColorWhite, fbase, "Lag Test");
-		fixPrint(5, 13, curse == 4 ? fontColorRed : fontColorWhite, fbase, "Timing & Reflex Test");
-		fixPrint(5, 14, curse == 5 ? fontColorRed : fontColorWhite, fbase, "Scroll Test");
-		fixPrint(5, 15, curse == 6 ? fontColorRed : fontColorWhite, fbase, "Grid Scroll Test");
-		fixPrint(5, 16, curse == 7 ? fontColorRed : fontColorWhite, fbase, "Horizontal Stripes");
-		fixPrint(5, 17, curse == 8 ? fontColorRed : fontColorWhite, fbase, "Vertical Stripes");
-		fixPrint(5, 18, curse == 9 ? fontColorRed : fontColorWhite, fbase, "Checkerboard");
-		fixPrint(5, 19, curse == 10 ? fontColorRed : fontColorWhite, fbase, "Backlit Zone Test");
-		fixPrint(5, 20, curse == 11 ? fontColorRed : fontColorWhite, fbase, "Disappearing Logo");
+		fixPrint(5, 9,  curse == 1 ? fontColorRed : fontColorWhite, fbase, "Drop Shadow Test");
+		fixPrint(5, 10, curse == 2 ? fontColorRed : fontColorWhite, fbase, "Striped Sprite Test");
+		fixPrint(5, 11, curse == 3 ? fontColorRed : fontColorWhite, fbase, "Lag Test");
+		fixPrint(5, 12, curse == 4 ? fontColorRed : fontColorWhite, fbase, "Timing & Reflex Test");
+		fixPrint(5, 13, curse == 5 ? fontColorRed : fontColorWhite, fbase, "Scroll Test");
+		fixPrint(5, 14, curse == 6 ? fontColorRed : fontColorWhite, fbase, "Grid Scroll Test");
+		fixPrint(5, 15, curse == 7 ? fontColorRed : fontColorWhite, fbase, "Horizontal Stripes");
+		fixPrint(5, 16, curse == 8 ? fontColorRed : fontColorWhite, fbase, "Vertical Stripes");
+		fixPrint(5, 17, curse == 9 ? fontColorRed : fontColorWhite, fbase, "Checkerboard");
+		fixPrint(5, 18, curse == 10 ? fontColorRed : fontColorWhite, fbase, "Phase & Sample Rate");
+		fixPrint(5, 19, curse == 11 ? fontColorRed : fontColorWhite, fbase, "Backlit Zone Test");
+		fixPrint(5, 20, curse == 12 ? fontColorRed : fontColorWhite, fbase, "Disappearing Logo");
 
-		fixPrint(5, 22, curse == 12 ? fontColorRed : fontColorWhite, fbase, "Help");
-		fixPrint(5, 23, curse == 13 ? fontColorRed : fontColorWhite, fbase, "Back to Main Menu");
+		fixPrint(5, 22, curse == 13 ? fontColorRed : fontColorWhite, fbase, "Help");
+		fixPrint(5, 23, curse == 14 ? fontColorRed : fontColorWhite, fbase, "Back to Main Menu");
 
 		menu_footer();
 
@@ -405,18 +413,22 @@ void menu_vt()
 				break;
 
 				case 10:
-					vt_backlitzone_test();
+					vt_phase_check();
 				break;
 
 				case 11:
-					vt_disappear_logo();
+					vt_backlitzone_test();
 				break;
 
 				case 12:
-					DrawHelp(HELP_GENERAL);
+					vt_disappear_logo();
 				break;
 
 				case 13:
+					DrawHelp(HELP_GENERAL);
+				break;
+
+				case 14:
 					done = 1;
 				break;
 			}
@@ -597,6 +609,20 @@ void menu_ht()
 	return;
 }
 
+#ifdef USE_SERIAL
+int checkserialset()
+{
+	int sum = 0, i = 0;
+
+	for(i = 0; i < 5; i++)
+		sum += (int)serialnumber[13+i] - (int)'0';
+	
+	if(sum == 20)
+		return 1;
+	return sum;
+}
+#endif
+
 void credits()
 {
 	int done = 0, draw = 1;
@@ -617,8 +643,16 @@ void credits()
 			pictureInit(&qr, &barcode, 26, 17, 260, 150, FLIP_NONE);
 			palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 
-			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 1.00");
-			fixPrint(x+24, y+1, fontColorWhite, fbase, "09/05/2023");
+			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 1.02");
+			fixPrint(x+24, y+1, fontColorWhite, fbase, "17/10/2023");
+#ifdef USE_SERIAL
+			if(checkserialset())
+			{
+				char *serial = (char*)serialnumber + 20;
+				fixPrintf(x+24, y+2, fontColorYellow, fbase, "CART #%c%c%c%c",
+					serial[0], serial[1], serial[2], serial[3]);
+			}
+#endif
 			fixPrint(x, y++, fontColorGreen, fbase, "Code by:");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Dustin Dembrosky");
 			fixPrint(x+1, y++, fontColorWhite, fbase, "Artemio Urbina");

@@ -173,3 +173,5 @@ extern const pictureInfo qrhcfr;
 extern const paletteInfo qrhcfr_Palettes;
 extern const pictureInfo donnaline;
 extern const paletteInfo donnaline_Palettes;
+extern const pictureInfo phase;
+extern const paletteInfo phase_Palettes;

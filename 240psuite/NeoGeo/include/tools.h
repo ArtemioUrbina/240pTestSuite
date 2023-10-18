@@ -45,6 +45,7 @@ typedef struct blinker{
 } blinker;
 
 void load_blinkdata(blinker* blinkdata, int *index, int *palindex, int x, int y);
+void reposition_blinkdata(blinker* blinkdata, int x, int y);
 int SD_blink_cycle(blinker *blinkdata);
 int draw_background_w_gil(blinker *blinkdata);
 int clear_gillian(int index, blinker *blinkdata);

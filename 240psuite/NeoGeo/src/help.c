@@ -1017,6 +1017,17 @@ void DrawHelp(int option)
 					fixPrint(4, y++, fontColorWhite, fbase, "The test itself also uses some");
 					fixPrint(4, y++, fontColorWhite, fbase, "RAM as heap.");
 				break;
+				case HELP_PHASE:
+					fixPrintC(6, fontColorGreen, fbase, "PHASE & SAMPLE RATE CHECK");
+
+					fixPrint(4, y++, fontColorWhite, fbase, "This test allows you to check");
+					fixPrint(4, y++, fontColorWhite, fbase, "phase alignment in upscalers.");
+					y++;
+					fixPrint(4, y++, fontColorWhite, fbase, "Press left or right to move,");
+					fixPrint(4, y++, fontColorWhite, fbase, "C for checkerboard background.");
+					y++;
+					fixPrint(4, y++, fontColorWhite, fbase, "Designed by FirebrandX");
+				break;
 			default:
 				exit = 1;
 				break;

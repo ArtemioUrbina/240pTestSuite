@@ -269,4 +269,7 @@
   <pict id="donnaline">
 	<file>gfx\donnaline.png</file>
   </pict>
+  <pict id="phase">
+	<file>gfx\phase.png</file>
+  </pict>
 </chardata>

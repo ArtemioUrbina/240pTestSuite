@@ -474,6 +474,12 @@ void load_blinkdata(blinker* blinkdata, int *index, int *palindex, int x, int y)
 	pictureHide(&blinkdata->blink2);
 }
 
+void reposition_blinkdata(blinker* blinkdata, int x, int y)
+{
+	pictureSetPos(&blinkdata->blink1, x+16, y+32);
+	pictureSetPos(&blinkdata->blink2, x+16, y+32);
+}
+
 int SD_blink_cycle(blinker *blinkdata)
 {	
 	if(!blinkdata)

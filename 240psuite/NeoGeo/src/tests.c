@@ -1786,3 +1786,105 @@ void vt_disappear_logo()
 			reload = 1;
 	}
 }
+
+#define HPOS_START 13
+
+void vt_phase_check()
+{
+	int done = 0, draw = 1, moved = 0;
+	int hpos = 0, i = 0, limit = 13, type = 0;
+	picture back, sprites[5];
+	blinker blinkdata[5];
+
+	if(vmode_snk)
+		limit = 5;
+
+	while (!done)
+	{
+		if (draw)
+		{
+			int palindex = 16, index = 1;
+
+			gfxClear();
+
+			if(type == 0)
+			{
+				pictureInit(&back, &phase, index, palindex, 0, 0, FLIP_NONE);
+				palJobPut(palindex, phase.palInfo->count,phase.palInfo->data);
+				index += getPicSprites(back.info);
+				palindex += phase.palInfo->count;
+			}
+			else
+			{
+				pictureInit(&back, &check, index, palindex, 0, 0, FLIP_NONE);
+				palJobPut(palindex, check.palInfo->count, check.palInfo->data);
+				index += getPicSprites(back.info);
+				palindex += check.palInfo->count;
+			}
+
+			for(i = 0; i < 5; i++)
+			{
+				pictureInit(&sprites[i], &gillian, index, palindex, HPOS_START+i*60, 62, FLIP_NONE);
+				index += getPicSprites(sprites[i].info);
+			}
+			palJobPut(palindex, gillian.palInfo->count, gillian.palInfo->data);
+			palindex += gillian.palInfo->count;
+
+			for(i = 0; i < 5; i++)
+				load_blinkdata(&blinkdata[i], &index, &palindex, HPOS_START+i*60, 62);
+
+			draw = 0;
+		}
+
+		if(moved)
+		{
+			for(i = 0; i < 5; i++)
+			{
+				pictureSetPos(&sprites[i], HPOS_START+i*60+hpos, 62);
+				reposition_blinkdata(&blinkdata[i], HPOS_START+i*60+hpos, 62);
+			}
+			moved = 0;
+		}
+
+		SCClose();
+		waitVBlank();
+		for(i = 0; i < 5; i++)
+			SD_blink_cycle(&blinkdata[i]);
+
+		readController();
+
+		if (PRESSED_LEFT)
+		{
+			hpos--;
+			if(hpos < -1*limit)
+				hpos = -1*limit;
+			moved = 1;
+		}
+
+		if (PRESSED_RIGHT)
+		{
+			hpos++;
+			if(hpos > limit)
+				hpos = limit;
+			moved = 1;
+		}
+
+		if (BTTN_MAIN)
+		{
+			hpos = 0;
+			moved = 1;
+		}
+
+		if (BTTN_OPTION_1)
+		{
+			type = !type;
+			draw = 1;
+		}
+
+		if (BTTN_EXIT)
+			done = 1;
+
+		if (checkHelp(HELP_PHASE))
+			draw = 1;
+	}
+}
