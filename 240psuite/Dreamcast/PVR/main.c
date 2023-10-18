@@ -589,7 +589,7 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 		float 	b = 1.0f;
 		int		c = 1;
 		float 	x = 40.0f;
-		float 	y = 55.0f;
+		float 	y = 52.0f;
 
 		StartScene();
 		DrawImage(title);
@@ -604,6 +604,7 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizonta/Vertical Stripes"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Phase & Sample Rate"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Diagonal Test"); y += fh; c++;
 		if(vcable == CT_VGA)
@@ -691,26 +692,29 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 					DrawCheckBoard();
 					break;
 				case 9:
-					LEDZoneTest();
+					DrawPhase();
 					break;
 				case 10:
-					DiagonalPatternTest();
+					LEDZoneTest();
 					break;
 				case 11:
+					DiagonalPatternTest();
+					break;
+				case 12:
 					if(vcable != CT_VGA)
 						Alternate240p480i();
 					break;
-				case 12:
+				case 13:
 					done = 1;
 					break;
-				case 13:
+				case 14:
 					ShowMenu(GENERALHELP);
 					break;
-				case 14:
+				case 15:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 15:
+				case 16:
 					TestVideoMode(vmode);
 					break;
 #endif

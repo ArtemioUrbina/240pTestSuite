@@ -2192,3 +2192,149 @@ void Alternate240p480i()
 		ChangeResolution(originalvmode);
 }
 
+void SD_blink_cycle_phase(ImagePtr sd_b1, ImagePtr sd_b2, int index)
+{
+	static int blink_counter[5] = { 0, 0, 0, 0, 0 };
+	static int is_blinking[5] = { 0, 0, 0, 0, 0 };
+	
+	blink_counter[index]++;	
+	if(sd_b1 && sd_b2 && blink_counter[index] > 230)
+	{
+		if(!is_blinking[index])
+		{
+			if(rand() % 100 < 25)
+			{
+				is_blinking[index] = 1;
+				blink_counter[index] = 230;
+				DrawImage(sd_b1);
+			}
+		}
+		else
+		{
+			if(blink_counter[index] >= 232 && blink_counter[index] < 234)
+				DrawImage(sd_b2);
+				
+			if(blink_counter[index] >= 234 && blink_counter[index] < 238)
+				DrawImage(sd_b1);
+	
+			if(blink_counter[index] >= 238)
+			{	
+				blink_counter[index] = 0;
+				is_blinking[index] = 0;
+			}
+		}
+	}
+}
+
+void DrawPhase()
+{
+	int 		done = 0, oldvmode = -1, type = 0, hpos = 0, i = 0;
+	uint16		pressed;
+	ImagePtr	back = NULL, backcheck = NULL;
+	ImagePtr	sd[5] = { NULL, NULL, NULL, NULL, NULL};
+	ImagePtr	sd_b1[5] = { NULL, NULL, NULL, NULL, NULL};
+	ImagePtr	sd_b2[5] = { NULL, NULL, NULL, NULL, NULL};
+	controller	*st = NULL;
+	
+	back = LoadIMG("/rd/phase.kmg.gz", 0);
+	if(!back)
+		return;
+	
+	backcheck = LoadIMG("/rd/checkpos.kmg.gz", 1);
+	if(!backcheck)
+		return;
+
+	for(i = 0; i < 5; i++)
+	{
+		sd[i] = LoadIMG("/rd/SD.kmg.gz", 0);
+		if(!sd[i])
+			return;
+		sd[i]->x = 5+i*64;
+		sd[i]->y = 70;
+		sd_b1[i] = LoadIMG("/rd/SD_b1.kmg.gz", 0);
+		if(sd_b1[i])
+		{
+			sd_b1[i]->x = sd[i]->x+16;
+			sd_b1[i]->y = sd[i]->y+32;
+		}
+		
+		sd_b2[i] = LoadIMG("/rd/SD_b2.kmg.gz", 0);
+		if(sd_b2[i])
+		{
+			sd_b2[i]->x = sd[i]->x+16;
+			sd_b2[i]->y = sd[i]->y+32;
+		}
+	}
+
+	while(!done && !EndProgram) 
+	{
+		if(oldvmode != vmode)
+		{
+			CalculateUV(0, 0, dW, dH, backcheck);
+			oldvmode = vmode;
+		}
+		
+		StartScene();
+		if(!type)
+			DrawImage(back);
+		else
+			DrawImage(backcheck);
+		for(i = 0; i < 5; i++)
+		{
+			sd[i]->x = 5+i*64+hpos;
+			DrawImage(sd[i]);
+			if(sd_b1[i] && sd_b2[i])
+			{
+				sd_b1[i]->x = sd[i]->x+16;
+				sd_b2[i]->x = sd[i]->x+16;
+				SD_blink_cycle_phase(sd_b1[i], sd_b2[i], i);
+			}
+		}
+		EndScene();
+		
+		VMURefresh("Phase &SR", !type ? "Normal": "Check");
+		
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_START )
+				ShowMenu(PHASEHELP);
+
+			if (pressed & CONT_X)
+			{
+				type = !type;
+				refreshVMU = 1;
+			}
+			
+			if (pressed & CONT_A)
+				hpos = 0;
+			
+			if (pressed & CONT_DPAD_LEFT)
+			{
+				hpos --;
+				if(hpos < -5)
+					hpos = -5;
+			}
+			
+			if (pressed & CONT_DPAD_RIGHT)
+			{
+				hpos ++;
+				if(hpos > 5)
+					hpos = 5;
+			}
+			
+			if (pressed & CONT_B)
+				done =	1;
+		}
+
+	}
+	FreeImage(&back);
+	FreeImage(&backcheck);
+	for(i = 0; i < 5; i++)
+	{
+		FreeImage(&sd[i]);
+		FreeImage(&sd_b1[i]);
+		FreeImage(&sd_b2[i]);
+	}
+	return;
+}

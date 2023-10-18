@@ -70,6 +70,7 @@ extern char *HelpData;
 #define HCFR_MENU_HELP  "/rd/help/hcfr_menu.txt"
 #define LG_HELP  		"/rd/help/lightg.txt"
 #define CONVERHELP		"/rd/help/converg.txt"
+#define PHASEHELP		"/rd/help/phase.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);

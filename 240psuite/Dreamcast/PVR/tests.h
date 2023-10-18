@@ -29,6 +29,7 @@ void ScrollTest();
 void GridScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
+void DrawPhase();
 void LEDZoneTest();
 void PassiveLagTest();
 void DiagonalPatternTest();
