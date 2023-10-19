@@ -462,9 +462,12 @@ void DrawMonoscope(void)
 	u16 redraw = 1, size = 0;	
 	s16 color = 255;
 	
-	type = DrawFloatMenu();
-	if(type == FLOAT_CANCEL)
-		return;
+	if(!snes_50hz) 
+	{
+		type = DrawFloatMenu();
+		if(type == FLOAT_CANCEL)
+			return;
+	}
 	while(!end) 
 	{		
 		if(redraw)
@@ -534,7 +537,7 @@ void DrawMonoscope(void)
 			setPaletteColor(0x02, RGB8(color, color, color));		
 		}
 		
-		if(pressed & KEY_SELECT)
+		if(pressed & KEY_SELECT && !snes_50hz)
 		{
 			int ntype = 0;
 			

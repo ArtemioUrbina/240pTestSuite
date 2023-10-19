@@ -77,7 +77,7 @@ int main(void)
 			drawText(5, pos, sel == 3 ? 6 : 7, "Controller Test"); pos ++;
 			pos = 18;
 			drawText(5, pos, sel == 4 ? 6 : 7, "Help"); pos ++;	
-			drawText(5, pos, sel == 5 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(5, pos, sel == 5 ? 6 : 7, "Video: %s", getResString()); pos ++;	
 			drawText(5, pos, sel == 6 ? 6 : 5, "Credits"); pos++;
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 		
@@ -198,7 +198,7 @@ void TestPatterns(void)
 			drawText(4, pos, sel == 2 ? 6 : 7, "Mode 7"); pos++;
 			pos = 18;
 			drawText(4, pos, sel == 3 ? 6 : 7, "Help"); pos ++;	
-			drawText(4, pos, sel == 4 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(4, pos, sel == 4 ? 6 : 7, "Video: %s", getResString()); pos ++;	
 			drawText(4, pos, sel == 5 ? 6 : 5, "Back to Main Menu"); pos++;
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
@@ -317,7 +317,7 @@ void ColorLevelsMenu()
 			drawText(3, pos, sel == 9 ? 6 : 7, "Sharpness"); pos++;
 			pos += 1;
 			drawText(3, pos, sel == 10 ? 6 : 7, "Help"); pos ++;	
-			drawText(3, pos, sel == 11 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(3, pos, sel == 11 ? 6 : 7, "Video: %s", getResString()); pos ++;	
 			drawText(3, pos, sel == 12 ? 6 : 5, "Back to Main Menu"); 
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
@@ -452,7 +452,7 @@ void GeometryMenu()
 			drawText(4, pos, sel == 3 ? 6 : 7, "Convergence"); pos++;
 			pos += 4;
 			drawText(4, pos, sel == 4 ? 6 : 7, "Help"); pos ++;	
-			drawText(4, pos, sel == 5 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(4, pos, sel == 5 ? 6 : 7, "Video: %s", getResString()); pos ++;	
 			drawText(4, pos, sel == 6 ? 6 : 5, "Back to Main Menu"); 
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
@@ -578,7 +578,7 @@ void VideoTests(void)
 			drawText(VT_START, pos, sel == 11 ? 6 : 7, "Disappearing Logo"); pos ++;
 			pos ++;
 			drawText(VT_START, pos, sel == 12 ? 6 : 7, "Help"); pos ++;	
-			drawText(VT_START, pos, sel == 13 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(VT_START, pos, sel == 13 ? 6 : 7, "Video: %s", getResString()); pos ++;	
 			drawText(VT_START, pos, sel == 14 ? 6 : 5, "Back to Main Menu"); pos++;
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
@@ -717,7 +717,7 @@ void AudioTests(void)
 			drawText(4, pos, sel == 2 ? 6 : 7, "MDFourier"); pos ++;
 			pos = 18;
 			drawText(4, pos, sel == 3 ? 6 : 7, "Help"); pos ++;	
-			drawText(4, pos, sel == 4 ? 6 : 7, "Video: %s", interlaced ? "256x480i" : "256x224p"); pos ++;	
+			drawText(4, pos, sel == 4 ? 6 : 7, "Video: %s", getResString()); pos ++;	
 			drawText(4, pos, sel == 5 ? 6 : 5, "Back to Main Menu"); pos++;
 			
 			drawText(25, 26, 7, snes_50hz ? "PAL" : "NTSC"); 
@@ -929,8 +929,8 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(4, 4, 5, "Ver. 1.08c");
-			drawText(19, 4, 7, "14/10/2023");
+			drawText(4, 4, 5, "Ver. 1.08d");
+			drawText(19, 4, 7, "17/10/2023");
 			drawText(10, 24, 5, "Dedicated to Elisa");
 			
 			EndDMA();	

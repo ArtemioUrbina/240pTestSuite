@@ -406,3 +406,21 @@ void check_blink()
 		}
 	}
 }
+
+char *getResString()
+{
+	if(!snes_50hz)
+	{
+		if(interlaced)
+			return("256x480i");
+		else
+			return("256x224p");
+	}
+	else
+	{
+		if(interlaced)
+			return("256x576i");
+		else
+			return("256x240p");
+	}
+}

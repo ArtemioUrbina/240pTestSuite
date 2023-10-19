@@ -49,3 +49,5 @@ void consoleInitTextMine(u8 bgNumber,u8 paletteNumber, u8 *gfxText);
 void EndDMA();
 
 void check_blink();
+
+char *getResString();
