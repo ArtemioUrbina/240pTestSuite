@@ -272,7 +272,7 @@ void RefreshVideoTests()
 	//set_font_pal(12);
 	//put_string("Video Tests", 14, 6);
 	
-	row = 10;
+	row = 8;
 
 	drawmenutext(0, "Drop Shadow Test");
 	drawmenutext(1, "Striped Sprite Test");
@@ -283,9 +283,10 @@ void RefreshVideoTests()
 	drawmenutext(6, "Vertical Stripes");
 	drawmenutext(7, "Horizontal Stripes");
 	drawmenutext(8, "Checkerboard");
-	drawmenutext(9, "Backlit Zone Test");
+	drawmenutext(9, "Phase & Sample Rate");
+	drawmenutext(10, "Backlit Zone Test");
 	row = 22;
-	DrawMenuBottom(10, 0);
+	DrawMenuBottom(11, 0);
 }
 
 
@@ -339,7 +340,7 @@ void VideoTests()
 		if (controller & JOY_DOWN) 
 		{
 			sel++;
-			if(sel > 12)
+			if(sel > 13)
 				sel = 0;
 			refresh = 1;
 		}
@@ -348,7 +349,7 @@ void VideoTests()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 12;
+				sel = 13;
 			refresh = 1;
 		}
 		
@@ -414,18 +415,21 @@ void VideoTests()
 					DrawCheck();
 					break;
 				case 9:
+					DrawPhase();
+					break;
+				case 10:
 					LEDZoneTest();
 					break;			
-				case 10:
+				case 11:
 #ifdef SYSCARD1
 					x_g = OPTIONS_VID_HELP;
 #endif
 					Options();
 					break;
-				case 11:
+				case 12:
 					showHelp(GENERAL_VID_HELP);
 					break;
-				case 12:
+				case 13:
 					end = 1;
 					break;
 			}
@@ -797,9 +801,9 @@ void RefreshCredits()
 	put_string("This is free software and is open source under GPL.", HPOS+1, 23);
 
 	set_font_pal(13);
-	put_string("Ver. 1.12", 50, 6);
+	put_string("Ver. 1.13", 50, 6);
 	set_font_pal(14);
-	put_string("02/05/2022", 49, 7);
+	put_string("23/10/2023", 49, 7);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;

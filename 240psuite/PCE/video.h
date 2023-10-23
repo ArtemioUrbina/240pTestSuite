@@ -64,15 +64,16 @@
 #define	TOOL_V_STRIPES	36
 #define	TOOL_H_STRIPES	37
 #define TOOL_CHECK		38
-#define TOOL_LEDZONE	39
+#define TOOL_PHASE		39
+#define TOOL_LEDZONE	40
 
-#define SOUNDTOOL		40
-#define TOOL_SOUND		40
-#define TOOL_AUDIOSYNC	41
-#define TOOL_MDFOURIER	42
-#define TOOL_CON_INTER	43
+#define SOUNDTOOL		50
+#define TOOL_SOUND		50
+#define TOOL_AUDIOSYNC	51
+#define TOOL_MDFOURIER	52
+#define TOOL_CON_INTER	53
 
-#define HARDWARETOOL	50
+#define HARDWARETOOL	60
 #endif
  
 #define XRES_BW 0x80
@@ -95,6 +96,7 @@ extern int x1;
 extern int x2;
 extern int x3;
 extern int x4;
+extern int x5;
 extern int y;
 extern int y2;
 

@@ -754,6 +754,35 @@ overscan_00_14:	.db	"by original hardware."
 }
 
 
+void display_phase_00()
+{
+#asm
+	p_string	phase_00_00,17,4
+	__ldwi		14
+	call		_set_font_pal
+	p_string	phase_00_01,6,6
+	p_string	phase_00_02,6,7
+	p_string	phase_00_03,6,9
+	p_string	phase_00_04,6,10
+	p_string	phase_00_05,6,12
+	rts
+
+phase_00_00:	.db	"PHASE & SAMPLE RATE CHECK"
+			.db	0
+phase_00_01:	.db	"This test allows you to check phase alignment"
+			.db	0
+phase_00_02:	.db	"in upscalers."
+			.db	0
+phase_00_03:	.db	"Press left or right to move, Up for checkerboard"
+			.db	0
+phase_00_04:	.db	"background."
+			.db	0
+phase_00_05:	.db	"Designed by FirebrandX."
+			.db	0
+#endasm
+}
+
+
 void display_pluge_00()
 {
 #asm

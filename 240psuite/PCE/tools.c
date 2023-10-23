@@ -126,31 +126,45 @@ void Rewdraw512Menu()
 #ifndef HELP_OVL
 void DrawSP()
 {
-	// pos x3
-	// count x4
-
-	x3 = 0;
-	x4 = 0;
-	
 	x2 = 210;
 	y2 = 84;	
 	
+	LoadSPVRAM();
+	
+	// SP start
+	x4 = 0;
+	
+	DrawSPX2Y2();
+}
+
+void LoadSPVRAM()
+{
 	load_palette(16, SD_pal, 1);
 #ifndef SYSCARD1
 	load_vram(0x5000, SD_sp, 0x700);
 #else
 	cd_loadvram(GPHX_OVERLAY, OFS_SD_tile_bin, 0x5000, SIZE_SD_tile_bin);
 #endif
+}
 
+// 28 each SP
+void DrawSPX2Y2()
+{
+	// pos x3
+	// count x4
+	x5 = 0;	// vram pos
+	
 	for(row = 0; row < 7; row++)
 	{
 		for(x3 = 0; x3 < 4; x3++)
 		{
-			spr_make(x4, x3*16+x2, row*16+y2, 0x40*x4+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			spr_make(x4, x3*16+x2, row*16+y2, 0x40*x5+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
 			x4 ++;
+			x5 ++;
 		}
 	}
 }
+
 #endif
 
 unsigned char region;

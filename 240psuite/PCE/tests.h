@@ -30,6 +30,7 @@ void VScrollTest();
 void SoundTest();
 void AudioSyncTest();
 void ReflexTest();
+void DrawPhase();
 
 void RedrawCheck(int res);
 void RedrawDropShadow();
@@ -61,6 +62,7 @@ void PSG_SetBalance(unsigned char chan, unsigned char left, unsigned char right,
 void PSG_SetVolume(unsigned char chan, unsigned char vol);
 void MDFourier(int boot);
 void ConstrInterf();
+
 #ifdef CDPLAYER
 void CDDAPlayer();
 #endif

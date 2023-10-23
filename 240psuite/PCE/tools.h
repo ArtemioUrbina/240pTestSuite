@@ -24,6 +24,8 @@
 extern unsigned char region;
 extern unsigned char cdrom;
 
+void LoadSPVRAM();
+void DrawSPX2Y2();
 void DrawSP();
 void DetectPCEType();
 void DetectCDROM();

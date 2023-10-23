@@ -45,6 +45,9 @@ extern int striped_sp[];
 extern int numbers_sp[];
 extern int lagspr_sp[];
 
+extern char phase_map[];
+extern int phase_bg[];
+
 extern int LED_sp[];
 
 extern char MB512_map[];
@@ -72,6 +75,7 @@ extern int MB512_pal[];
 extern int donna_pal[];
 extern int lagback_pal[];
 extern int MB_pal[];
+extern int phase_pal[];
 extern int n_pal[];
 
 extern char bricks_bg[];

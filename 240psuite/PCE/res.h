@@ -80,6 +80,10 @@
 #incbin(audiosync_map, "graphics/audiosync.fmp");
 #incchr_ex(audiosync_bg, "graphics/audiosync.pcx", 0, 0, 2, 4, 0);
 
+#incbin(phase_map, "graphics/phase.fmp");
+#incchr_ex(phase_bg, "graphics/phase.pcx", 0, 0, 2, 19, 0);
+#incpal(phase_pal, "graphics/phase.pcx", 0, 1);
+
 /*
 		SPRITES
 */

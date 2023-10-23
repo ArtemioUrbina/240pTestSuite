@@ -64,6 +64,9 @@ void main()
 		case TOOL_V_STRIPES:
 			DrawStripes(1);
 			break;
+		case TOOL_PHASE:
+			DrawPhase();
+			break;
 	}
 	cd_execoverlay(MAIN_OVERLAY);
 }
@@ -727,5 +730,126 @@ void RedrawStripes()
 	load_palette(0, check_pal, 1);  
 	
 	Center224in240();
+}
+
+void updateSD()
+{
+	if(type == RES_256)
+		x2 = 32; // x position
+	else
+		x2 = 64; // x position
+	y2 = 64; // y position
+	x4 = 0; // sp start
+	
+	x2 += speed;
+	init_satb();
+	for(x = 0; x < 2; x++)
+	{
+		DrawSPX2Y2();
+		x2 += 128;
+	}			
+	satb_update();
+}
+
+void DrawPhase()
+{
+	type = FloatMenuRes320n256(1);
+	if(type == FLOAT_CANCEL)
+		return;
+
+	speed = 0;		// position
+	option = 0;		// changes in x
+	color = 0;		// draw check
+	end = 0;
+	redraw = 1;
+	
+	while(!end)
+	{	
+		vsync();
+		
+		if(redraw)
+		{
+			ResetVideo();
+			setupFont();
+			
+			if(color)
+				RedrawCheck();
+			else
+			{
+#ifndef SYSCARD1
+				set_screen_size(SCR_SIZE_64x32); 
+				set_map_data(phase_map, 40, 30);
+				set_tile_data(phase_bg);
+				load_tile(0x1000);
+				load_map(0, 0, 0, 0, 40, 30);
+				load_palette(0, phase_pal, 1);	
+#else
+				set_screen_size(SCR_SIZE_64x32); 
+				cd_loaddata(GPHX_OVERLAY, OFS_phase_PAL_bin, palCD, SIZE_phase_PAL_bin); 
+				load_palette(0, palCD, 16); 
+				cd_loadvram(GPHX_OVERLAY, OFS_phase_DATA_bin, 0x1000, SIZE_phase_DATA_bin);
+				cd_loadvram(GPHX_OVERLAY, OFS_phase_BAT_bin, 0x0000, SIZE_phase_BAT_bin);
+#endif
+			}
+			LoadSPVRAM();
+			
+			updateSD();
+			
+			ChangeResType();
+			Center224in240();
+			redraw = 0;
+			disp_sync_on();
+		}
+
+		controller = joytrg(0);
+		
+		if (controller & JOY_LEFT)
+		{
+			speed -= 1;
+			option = 1;
+		}
+		
+		if (controller & JOY_RIGHT)
+		{
+			speed += 1;
+			option = 1;
+		}
+		
+		if (controller & JOY_UP)
+		{
+			color = !color;
+			redraw = 1;
+		}
+			
+		if (controller & JOY_RUN)
+		{
+			showHelp(PHASE_HELP);
+			redraw = 1;
+		}
+
+		if (controller & JOY_SEL)
+		{
+			ntype = FloatMenuRes320n256(type);
+			if(ntype != FLOAT_CANCEL)
+				type = ntype;
+			speed = 0;
+			redraw = 1;
+		}
+		
+		if (controller & JOY_I)
+		{
+			speed = 0;
+			updateSD();
+		}
+			
+		if (controller & JOY_II)
+			end = 1;
+		
+		if(option)
+		{
+			updateSD();
+			option = 0;
+		}
+	}
 }
 

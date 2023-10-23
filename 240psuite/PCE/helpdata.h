@@ -57,10 +57,11 @@
 #define HORI_STRIPES_HELP	36
 #define VERT_STRIPES_HELP	37
 #define CHECK_HELP			38
-#define BACKLIT_HELP		39
+#define PHASE_HELP			39
+#define BACKLIT_HELP		40
 
-#define	OPTIONS_VID_HELP	40
-#define GENERAL_VID_HELP	41
+#define	OPTIONS_VID_HELP	41
+#define GENERAL_VID_HELP	42
 
 /*****************************/
 

@@ -588,6 +588,12 @@ void DrawStripes(int type)
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
+void DrawPhase()
+{
+	ToolItem = TOOL_PHASE;
+	cd_execoverlay(TEST_EXT_OVERLAY);
+}
+
 #endif
 
 

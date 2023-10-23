@@ -211,6 +211,9 @@ void main()
 				case MEMVIEW_HELP:
 					display_memory_00();
 					break;
+				case PHASE_HELP:
+					display_phase_00();
+					break;
 			}
 			
 			set_font_pal(13);
