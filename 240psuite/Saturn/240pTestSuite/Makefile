@@ -12,6 +12,7 @@ SH_SRCS:= \
     image.c \
     video.c \
     control.c \
+    ire.c \
     pattern_colorbars.c \
     pattern_colorbleed.c \
     pattern_checkerboard.c \

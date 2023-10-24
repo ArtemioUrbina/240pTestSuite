@@ -5,55 +5,57 @@
 #include "font.h"
 #include "svin.h"
 
-void draw_smpte(_svin_screen_mode_t screenmode)
+void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
 {
 	//removing text
 	ClearTextLayer();
 	
 	_svin_set_cycle_patterns_cpu();
 	//add colors to palette
+	uint8_t IRE_top = (bIRE100) ? Get_IRE_Level(100.0) : Get_IRE_Level(76.875);
+	uint8_t IRE_bot = Get_IRE_Level(7.5);
 	rgb888_t Color = {0,0,0,0};
-	Color.r = 255;
-	Color.g = 255;
-	Color.b = 255;	
+	Color.r = IRE_top;
+	Color.g = IRE_top;
+	Color.b = IRE_top;	
 	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
-	Color.b = 0;
+	Color.b = IRE_bot;
 	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE yellow
-	Color.r = 0;
-	Color.b = 255;
+	Color.r = IRE_bot;
+	Color.b = IRE_top;
 	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE cyan
-	Color.b = 0;
+	Color.b = IRE_bot;
 	_svin_set_palette_part(2,&Color,4,4); //palette 2 color 4 = IRE green
-	Color.r = 255;
-	Color.g = 0;
-	Color.b = 255;	
+	Color.r = IRE_top;
+	Color.g = IRE_bot;
+	Color.b = IRE_top;	
 	_svin_set_palette_part(2,&Color,5,5); //palette 2 color 5 = IRE pink
-	Color.b = 0;	
+	Color.b = IRE_bot;	
 	_svin_set_palette_part(2,&Color,6,6); //palette 2 color 6 = IRE red
-	Color.r = 0;
-	Color.b = 255;
+	Color.r = IRE_bot;
+	Color.b = IRE_top;
 	_svin_set_palette_part(2,&Color,7,7); //palette 2 color 7 = IRE blue
-	Color.b = 0;
+	Color.b = IRE_bot;
 	_svin_set_palette_part(2,&Color,8,8); //palette 2 color 8 = IRE black
-	Color.r = 0;
-	Color.g = 33;
-	Color.b = 74;	
+	Color.r = IRE_bot;
+	Color.g = Get_IRE_Level(29.2);//33;
+	Color.b = Get_IRE_Level(44.2);//74;	
 	_svin_set_palette_part(2,&Color,9,9); //palette 2 color 9 = -I
-	Color.r = 255;
-	Color.g = 255;
-	Color.b = 255;	
+	Color.r = Get_IRE_Level(100.0);
+	Color.g = Get_IRE_Level(100.0);
+	Color.b = Get_IRE_Level(100.0);	
 	_svin_set_palette_part(2,&Color,10,10); //palette 2 color 10 = white
-	Color.r = 49;
-	Color.g = 0;
-	Color.b = 107;	
+	Color.r = Get_IRE_Level(30.0);//49;
+	Color.g = IRE_bot;
+	Color.b = Get_IRE_Level(49.2);//107;	
 	_svin_set_palette_part(2,&Color,11,11); //palette 2 color 11 = +Q
-	Color.r = 8;
-	Color.g = 8;
-	Color.b = 8;	
+	Color.r = Get_IRE_Level(3.5);
+	Color.g = Get_IRE_Level(3.5);
+	Color.b = Get_IRE_Level(3.5);	
 	_svin_set_palette_part(2,&Color,12,12); //palette 2 color 12 = black-4
-	Color.r = 24;
-	Color.g = 24;
-	Color.b = 24;	
+	Color.r = Get_IRE_Level(11.5);
+	Color.g = Get_IRE_Level(11.5);
+	Color.b = Get_IRE_Level(11.5);	
 	_svin_set_palette_part(2,&Color,13,13); //palette 2 color 13 = black+4
 
 	//using tiled mode is a real PITA, so we switch to BMP mode now

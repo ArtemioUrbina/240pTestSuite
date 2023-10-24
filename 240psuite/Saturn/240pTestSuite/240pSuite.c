@@ -35,6 +35,7 @@
 #include "image.h"
 #include "video.h"
 #include "control.h"
+#include "ire.h"
 
 #include "svin.h"
 #include "background.h"
@@ -164,6 +165,8 @@ int main(void)
 	int menu_id=MENU_MAIN;
 	int menu_size=0;
 	char string_buf[128];
+	bool b = false;
+	bool bExit = false;
 
 	_svin_screen_mode_t screenMode =
 	{
@@ -262,6 +265,13 @@ int main(void)
 					DrawString(string_buf, x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					sprintf(string_buf,"Horisontal resoluton .... %s",x_res_text_value(screenMode));
 					DrawString(string_buf, x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					if (ire_level_0 < 10)
+						sprintf(string_buf,"IRE 0 level ............... %d",ire_level_0);
+					else
+						sprintf(string_buf,"IRE 0 level .............. %d",ire_level_0);
+					DrawString(string_buf, x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					sprintf(string_buf,"IRE 100 level ........... %d",ire_level_100);
+					DrawString(string_buf, x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
 					sprintf(string_buf,"Effective resolition  %sx%s",x_res_text_value(screenMode),y_res_text_value(screenMode));
 					DrawString(string_buf,x, y+_fh*pos, FONT_CYAN); pos++;
@@ -290,7 +300,7 @@ int main(void)
 							DrawString("Pixel clock ......28.4375 MHz", x, y+_fh*pos, FONT_CYAN);//1820 clock per line, 625 lines, 25 fps
 						pos++;
 					}
-					menu_size = 3;
+					menu_size = 5;
 					break;
 				default:
 					DrawString("Exit", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
@@ -325,6 +335,56 @@ int main(void)
 					if(sel >= menu_size)
 						sel = 0;
 					redrawMenu = true;
+					key_pressed = true;
+				}
+
+				if(controller.pressed.button.left)
+				{
+					if (MENU_VIDEO_OPTIONS == menu_id)
+					{
+						switch(sel)
+						{
+							case 3:
+								//ire 0 level
+								ire_level_0--;
+								if (ire_level_0 < 0)
+									ire_level_0 = 0;
+								redrawMenu = true;
+								break;
+							case 4:
+								//ire 100 level
+								ire_level_100--;
+								if (ire_level_100 <= ire_level_0)
+									ire_level_100 = ire_level_0+1;
+								redrawMenu = true;
+								break;
+						}
+					}
+					key_pressed = true;
+				}
+
+				if(controller.pressed.button.right)
+				{
+					if (MENU_VIDEO_OPTIONS == menu_id)
+					{
+						switch(sel)
+						{
+							case 3:
+								//ire 0 level
+								ire_level_0++;
+								if (ire_level_0 >= ire_level_100)
+									ire_level_0 = ire_level_100-1;
+								redrawMenu = true;
+								break;
+							case 4:
+								//ire 100 level
+								ire_level_100++;
+								if (ire_level_100 > 255)
+									ire_level_100 = 255;
+								redrawMenu = true;
+								break;
+						}
+					}
 					key_pressed = true;
 				}
 
@@ -373,8 +433,8 @@ int main(void)
 								break;
 							case 2:
 								//colorbleed
-								bool b = false;
-								bool bExit = false;
+								b = false;
+								bExit = false;
 								while (false == bExit) {
 									draw_colorbleed(screenMode,b);
 									wait_for_key_unpress();
@@ -399,10 +459,22 @@ int main(void)
 								break;
 							case 4:
 								//SMPTE
-								draw_smpte(screenMode);
-								wait_for_next_key();
-								//_svin_deinit();
-								//_svin_init(screenMode);
+								b = false;
+								bExit = false;
+								while (false == bExit) {
+									draw_smpte(screenMode,b);
+									wait_for_key_unpress();
+									wait_for_key_press();
+									if (controller.pressed.button.a)
+									{
+										b = !b;
+									}
+									else
+									{
+										bExit = true;
+									}
+								}
+								wait_for_key_unpress();
 								update_screen_mode(screenMode);
 								redrawBG = true;
 								redrawMenu = true;
@@ -449,6 +521,20 @@ int main(void)
 								}
 								update_screen_mode(screenMode);
 								redrawBG = true;
+								redrawMenu = true;
+								break;
+							case 3:
+								//ire 0 level
+								ire_level_0++;
+								if (ire_level_0 >= ire_level_100)
+									ire_level_0 = ire_level_100-1;
+								redrawMenu = true;
+								break;
+							case 4:
+								//ire 100 level
+								ire_level_100++;
+								if (ire_level_100 > 255)
+									ire_level_100 = 255;
 								redrawMenu = true;
 								break;
 						}
@@ -513,7 +599,7 @@ void DrawCredits()
 	DrawString(VERSION_DATE, 208, y+_fh*pos, FONT_WHITE); 
 	pos++;
 	DrawString("SDK & Consultant:", x, y+_fh*pos, FONT_GREEN); pos++;	
-	DrawString("libyaul by Israel Jacquez", x+5, y+_fh*pos, FONT_WHITE); pos++;
+	DrawString("libyaul by Israel Jacquez (yaul.org)", x+5, y+_fh*pos, FONT_WHITE); pos++;
 	DrawString("USB DevCart:", x, y+_fh*pos, FONT_GREEN); pos++;	
 	DrawString("cafe-alpha", x+5, y+_fh*pos, FONT_WHITE); pos++;	
 	DrawString("Menu Pixel Art:", x, y+_fh*pos, FONT_GREEN); pos++;	
