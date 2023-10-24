@@ -245,10 +245,11 @@ int main(void)
 					DrawString("Checkerboard",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Colorbleed",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Grid",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("SMPTE",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					/*DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
-					menu_size = 4;
+					menu_size = 5;
 					break;
 				case MENU_VIDEO_OPTIONS:
 					sprintf(string_buf,scanmode_text_value(screenMode));
@@ -394,6 +395,16 @@ int main(void)
 								//checkerboard
 								draw_grid(screenMode);
 								wait_for_next_key();
+								redrawMenu = true;
+								break;
+							case 4:
+								//SMPTE
+								draw_smpte(screenMode);
+								wait_for_next_key();
+								//_svin_deinit();
+								//_svin_init(screenMode);
+								update_screen_mode(screenMode);
+								redrawBG = true;
 								redrawMenu = true;
 								break;
 							default:

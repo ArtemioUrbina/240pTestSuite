@@ -16,6 +16,7 @@ SH_SRCS:= \
     pattern_colorbleed.c \
     pattern_checkerboard.c \
     pattern_grid.c \
+    pattern_smpte.c \
 	libsvin/svin_cd_access.c \
 	libsvin/svin_background.c \
 	libsvin/svin_debug.c \
