@@ -31,6 +31,7 @@ void SoundTest();
 void AudioSyncTest();
 void ReflexTest();
 void DrawPhase();
+void DrawDisappearLogo();
 
 void RedrawCheck(int res);
 void RedrawDropShadow();

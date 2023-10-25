@@ -288,6 +288,35 @@ convergence_00_08:	.db	"- You can change the resolution with SELECT."
 }
 
 
+void display_disappear_00()
+{
+#asm
+	p_string	disappear_00_00,21,4
+	__ldwi		14
+	call		_set_font_pal
+	p_string	disappear_00_01,6,6
+	p_string	disappear_00_02,6,7
+	p_string	disappear_00_03,6,8
+	p_string	disappear_00_04,6,10
+	p_string	disappear_00_05,6,11
+	rts
+
+disappear_00_00:	.db	"DISAPPEARING LOGO"
+			.db	0
+disappear_00_01:	.db	"This test allows you to use a slow motion camera"
+			.db	0
+disappear_00_02:	.db	"to measure how long it takes from a button press"
+			.db	0
+disappear_00_03:	.db	"to when the logo disappears."
+			.db	0
+disappear_00_04:	.db	"You can also use a photodiode and press Up, which"
+			.db	0
+disappear_00_05:	.db	"turns the whole back to white for 2 frames."
+			.db	0
+#endasm
+}
+
+
 void display_dshadow_00()
 {
 #asm

@@ -137,13 +137,15 @@ void DrawSP()
 	DrawSPX2Y2();
 }
 
+#define SP_VRAM	0x4000
+
 void LoadSPVRAM()
 {
-	load_palette(16, SD_pal, 1);
+	load_palette(17, SD_pal, 1);
 #ifndef SYSCARD1
-	load_vram(0x5000, SD_sp, 0x700);
+	load_vram(SP_VRAM, SD_sp, 0x700);
 #else
-	cd_loadvram(GPHX_OVERLAY, OFS_SD_tile_bin, 0x5000, SIZE_SD_tile_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_SD_tile_bin, SP_VRAM, SIZE_SD_tile_bin);
 #endif
 }
 
@@ -158,7 +160,7 @@ void DrawSPX2Y2()
 	{
 		for(x3 = 0; x3 < 4; x3++)
 		{
-			spr_make(x4, x3*16+x2, row*16+y2, 0x40*x5+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 0, 1);
+			spr_make(x4, x3*16+x2, row*16+y2, 0x40*x5+SP_VRAM, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_16x16, 1, 1);
 			x4 ++;
 			x5 ++;
 		}

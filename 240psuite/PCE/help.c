@@ -214,6 +214,9 @@ void main()
 				case PHASE_HELP:
 					display_phase_00();
 					break;
+				case DISAP_HELP:
+					display_disappear_00();
+					break;
 			}
 			
 			set_font_pal(13);

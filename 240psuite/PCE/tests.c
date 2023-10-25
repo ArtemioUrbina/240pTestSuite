@@ -588,6 +588,12 @@ void DrawStripes(int type)
 	cd_execoverlay(TEST_EXT_OVERLAY);
 }
 
+void DrawDisappearLogo()
+{
+	ToolItem = TOOL_DISAPP;
+	cd_execoverlay(TEST_EXT_OVERLAY);
+}
+
 void DrawPhase()
 {
 	ToolItem = TOOL_PHASE;

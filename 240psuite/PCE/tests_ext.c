@@ -64,6 +64,9 @@ void main()
 		case TOOL_V_STRIPES:
 			DrawStripes(1);
 			break;
+		case TOOL_DISAPP:
+			DrawDisappearLogo();
+			break;
 		case TOOL_PHASE:
 			DrawPhase();
 			break;
@@ -72,15 +75,17 @@ void main()
 }
 #endif
 
+#define NUMBER_VRAM	0x5000
+
 void DrawNumber(int x, int y, int sprite, int number, int palette)
 {
-	spr_make(sprite, x, y, 0x100*number+0x5000, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, palette, 1);
+	spr_make(sprite, x, y, 0x100*number+NUMBER_VRAM, FLIP_MAS|SIZE_MAS, NO_FLIP|SZ_32x32, palette, 1);
 }
 
 void ChangeNumber(int sprite, int number)
 {
 	spr_set(sprite);
-	spr_pattern(0x100*number+0x5000);
+	spr_pattern(0x100*number+NUMBER_VRAM);
 }
 
 void DrawCircle(int pos)
@@ -103,7 +108,7 @@ void DrawCircle(int pos)
 	spr_make(19, x2+32, y2, 0x5A00, FLIP_MAS|SIZE_MAS, FLIP_X|FLIP_Y|SZ_32x32, 2, 2);
 }
 
-void LoadNumbers()
+void LoadNumPalette()
 {
 	set_color_rgb(256, 0, 0, 0);
 	set_color_rgb(258, 0, 0, 0);
@@ -113,11 +118,14 @@ void LoadNumbers()
 	
 	set_color_rgb(288, 7, 7, 7);
 	set_color_rgb(289, 7, 0, 0);
-	
+}
+
+void LoadNumbers()
+{
 #ifndef SYSCARD1		
-	load_vram(0x5000, numbers_sp, 0xB00);
+	load_vram(NUMBER_VRAM, numbers_sp, 0xB00);
 #else
-	cd_loadvram(GPHX_OVERLAY, OFS_numbers_tile_bin, 0x5000, SIZE_numbers_tile_bin);
+	cd_loadvram(GPHX_OVERLAY, OFS_numbers_tile_bin, NUMBER_VRAM, SIZE_numbers_tile_bin);
 #endif
 
 	init_satb();
@@ -137,7 +145,10 @@ void LoadNumbers()
 	// Frames
 	DrawNumber(200, 32, 6, 0, 0);	
 	DrawNumber(225, 32, 7, 0, 0);	
-	
+}
+
+void LoadnumbersCircles()
+{
 	/*****Numbers on Circles*****/
 	DrawNumber(20, 92, 8, 1, 1);	
 	DrawNumber(84, 92, 9, 2, 1);
@@ -148,10 +159,6 @@ void LoadNumbers()
 	DrawNumber(84, 162, 13, 6, 1);	
 	DrawNumber(148, 162, 14, 7, 1);	
 	DrawNumber(212, 162, 15, 8, 1);	
-		
-	DrawCircle(1);
-	
-	satb_update();
 }
 
 int framecnt = 0;
@@ -164,11 +171,72 @@ int msd = 0;
 unsigned char running = 0;
 unsigned char update = 0;
 
+void initCounter()
+{
+	frames = hours = minutes = seconds = 0;
+	framecnt = 0;
+}
+
+void setCounterNumbers()
+{
+	put_string("hours", 1, 3);
+	put_string("minutes", 9, 3);
+	put_string("seconds", 17, 3);
+	put_string("frames", 25, 3);
+	LoadNumbers();
+}
+
+void AdvanceCounter()
+{
+	if(frames > 59)
+	{
+		frames = 0;
+		seconds ++;	
+	}
+	
+	if(seconds > 59)
+	{
+		seconds = 0;
+		minutes ++;
+	}
+
+	if(minutes > 59)
+	{
+		minutes = 0;
+		hours ++;
+	}
+
+	if(hours > 99)
+		hours = 0;
+	
+	lsd = hours % 10;
+	msd = hours / 10;
+	ChangeNumber(0, msd);
+	ChangeNumber(1, lsd);
+	
+	lsd = minutes % 10;
+	msd = minutes / 10;
+	ChangeNumber(2, msd);
+	ChangeNumber(3, lsd);
+	
+	lsd = seconds % 10;
+	msd = seconds / 10;
+	ChangeNumber(4, msd);
+	ChangeNumber(5, lsd);
+	
+	lsd = frames % 10;
+	msd = frames / 10;
+	ChangeNumber(6, msd);
+	ChangeNumber(7, lsd);
+}
+
 void LagTest()
 {
 	end = 0;
 	redraw = 1;
 	option = 0;
+	
+	initCounter();
     while(!end)
     {   
 		vsync();
@@ -192,12 +260,12 @@ void LagTest()
 			cd_loadvram(GPHX_OVERLAY, OFS_lagback_DATA_bin, 0x1000, SIZE_lagback_DATA_bin);
 			cd_loadvram(GPHX_OVERLAY, OFS_lagback_BAT_bin, 0x0000, SIZE_lagback_BAT_bin);
 #endif
-			put_string("hours", 1, 3);
-			put_string("minutes", 9, 3);
-			put_string("seconds", 17, 3);
-			put_string("frames", 25, 3);
-			LoadNumbers();
-
+			LoadNumPalette();
+			setCounterNumbers();
+			LoadnumbersCircles();
+			DrawCircle(1);
+	
+			satb_update();
 #ifndef SYSCARD1		
 			set_color(2, RGB(7, 7, 7));
 #else
@@ -213,46 +281,7 @@ void LagTest()
 			if(framecnt > 7)
 				framecnt = 0;
 				
-			if(frames > 59)
-			{
-				frames = 0;
-				seconds ++;	
-			}
-			
-			if(seconds > 59)
-			{
-				seconds = 0;
-				minutes ++;
-			}
-
-			if(minutes > 59)
-			{
-				minutes = 0;
-				hours ++;
-			}
-
-			if(hours > 99)
-				hours = 0;
-			
-			lsd = hours % 10;
-			msd = hours / 10;
-			ChangeNumber(0, msd);
-			ChangeNumber(1, lsd);
-			
-			lsd = minutes % 10;
-			msd = minutes / 10;
-			ChangeNumber(2, msd);
-			ChangeNumber(3, lsd);
-			
-			lsd = seconds % 10;
-			msd = seconds / 10;
-			ChangeNumber(4, msd);
-			ChangeNumber(5, lsd);
-			
-			lsd = frames % 10;
-			msd = frames / 10;
-			ChangeNumber(6, msd);
-			ChangeNumber(7, lsd);
+			AdvanceCounter();
 			
 			DrawCircle(framecnt+1);
 			
@@ -297,8 +326,7 @@ void LagTest()
 			
 		if (controller & JOY_SEL && !running)
 		{
-			frames = hours = minutes = seconds = 0;
-			framecnt = 0;
+			initCounter();
 			update = 1;
 		}
     }
@@ -742,13 +770,12 @@ void updateSD()
 	x4 = 0; // sp start
 	
 	x2 += speed;
-	init_satb();
+	
 	for(x = 0; x < 2; x++)
 	{
 		DrawSPX2Y2();
 		x2 += 128;
 	}			
-	satb_update();
 }
 
 void DrawPhase()
@@ -766,11 +793,13 @@ void DrawPhase()
 	while(!end)
 	{	
 		vsync();
+		satb_update();
 		
 		if(redraw)
 		{
 			ResetVideo();
 			setupFont();
+			init_satb();
 			
 			if(color)
 				RedrawCheck();
@@ -850,6 +879,104 @@ void DrawPhase()
 			updateSD();
 			option = 0;
 		}
+	}
+}
+
+void DrawSP_DL()
+{
+	x2 = 96;
+	y2 = 88;	
+	
+	LoadSPVRAM();
+	
+	// SP start
+	x4 = 8;
+	
+	DrawSPX2Y2();
+}
+
+void DrawDisappearLogo()
+{
+	option = 1;		// draw
+	speed = 0;		// counter
+	color = 0;		// state
+	end = 0;
+	redraw = 1;
+	
+	initCounter();
+	while(!end)
+	{	
+		vsync();
+		
+		if(redraw)
+		{
+			ResetVideo();
+			init_satb();
+			setupFont();
+			SetFontColors(14, 0, RGB(7, 7, 7), 0);
+			
+			set_map_data(fs_map, 64, 32);
+			set_tile_data(white_bg);
+			load_tile(0x1000);
+			load_map(0, 0, 0, 0, 64, 32);
+			set_color(1, 0);
+			
+			// Set Number color to white (sprite pal 0)
+			set_color(258, RGB(7, 7, 7));
+			
+			Set256H();
+			setCounterNumbers();
+			
+			LoadSPVRAM();
+			DrawSP_DL();
+			
+			redraw = 0;
+			disp_sync_on();
+		}
+
+		AdvanceCounter();
+		satb_update();
+		frames ++;
+		
+		controller = joytrg(0);
+		
+		if(speed)
+		{
+			speed --;
+			if(!speed)
+			{
+				set_color(1, 0);
+				color = 0;
+			}
+		}
+		
+		if (controller & JOY_UP && !color)
+		{
+			color = 1;
+			speed = 2;
+			set_color(1, RGB(7, 7, 7));
+		}
+			
+		if (controller & JOY_RUN)
+		{
+			showHelp(DISAP_HELP);
+			redraw = 1;
+		}
+		
+		if (controller & JOY_I)
+		{
+			option = !option;
+			if(option)
+				load_palette(17, SD_pal, 1);
+			else
+			{
+				for(x = 272; x < 288; x++)
+					set_color(x, 0);
+			}
+		}
+			
+		if (controller & JOY_II)
+			end = 1;
 	}
 }
 

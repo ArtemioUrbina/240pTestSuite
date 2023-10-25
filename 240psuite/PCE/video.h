@@ -66,6 +66,7 @@
 #define TOOL_CHECK		38
 #define TOOL_PHASE		39
 #define TOOL_LEDZONE	40
+#define TOOL_DISAPP		41
 
 #define SOUNDTOOL		50
 #define TOOL_SOUND		50

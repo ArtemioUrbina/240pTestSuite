@@ -285,8 +285,10 @@ void RefreshVideoTests()
 	drawmenutext(8, "Checkerboard");
 	drawmenutext(9, "Phase & Sample Rate");
 	drawmenutext(10, "Backlit Zone Test");
+	drawmenutext(11, "Disappearing Logo");
+	
 	row = 22;
-	DrawMenuBottom(11, 0);
+	DrawMenuBottom(12, 0);
 }
 
 
@@ -340,7 +342,7 @@ void VideoTests()
 		if (controller & JOY_DOWN) 
 		{
 			sel++;
-			if(sel > 13)
+			if(sel > 14)
 				sel = 0;
 			refresh = 1;
 		}
@@ -349,7 +351,7 @@ void VideoTests()
 		{
 			sel--;
 			if(sel < 0)
-				sel = 13;
+				sel = 14;
 			refresh = 1;
 		}
 		
@@ -419,21 +421,24 @@ void VideoTests()
 					break;
 				case 10:
 					LEDZoneTest();
-					break;			
+					break;
 				case 11:
+					DrawDisappearLogo();
+					break;			
+				case 12:
 #ifdef SYSCARD1
 					x_g = OPTIONS_VID_HELP;
 #endif
 					Options();
 					break;
-				case 12:
+				case 13:
 					showHelp(GENERAL_VID_HELP);
 					break;
-				case 13:
+				case 14:
 					end = 1;
 					break;
 			}
-			if(sel != 12)
+			if(sel != 14)
 				end = 0;
 				
 			redraw = 1;	
@@ -803,7 +808,7 @@ void RefreshCredits()
 	set_font_pal(13);
 	put_string("Ver. 1.13", 50, 6);
 	set_font_pal(14);
-	put_string("23/10/2023", 49, 7);
+	put_string("25/10/2023", 49, 7);
 	
 #ifdef CDROM
 	x = cd_getver() >> 8;

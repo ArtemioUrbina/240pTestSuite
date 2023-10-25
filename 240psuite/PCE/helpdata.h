@@ -59,9 +59,10 @@
 #define CHECK_HELP			38
 #define PHASE_HELP			39
 #define BACKLIT_HELP		40
+#define DISAP_HELP			41
 
-#define	OPTIONS_VID_HELP	41
-#define GENERAL_VID_HELP	42
+#define	OPTIONS_VID_HELP	42
+#define GENERAL_VID_HELP	43
 
 /*****************************/
 
