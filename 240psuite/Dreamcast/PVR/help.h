@@ -71,6 +71,7 @@ extern char *HelpData;
 #define LG_HELP  		"/rd/help/lightg.txt"
 #define CONVERHELP		"/rd/help/converg.txt"
 #define PHASEHELP		"/rd/help/phase.txt"
+#define DISAPHELP		"/rd/help/disappear.txt"
 
 void HelpWindow(char *filename, ImagePtr screen);
 char *LoadHelpFile(char *filename, char ***pages, int *npages);

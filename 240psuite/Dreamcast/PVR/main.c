@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011-2022 Artemio Urbina
+ * Copyright (C)2011-2023 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -58,7 +58,6 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd);
 void DrawIntro();
 int DrawFooter(float x, float y, int sel, int c, int showcredits);
 
-void SD_blink_cycle();
 ImagePtr SD_b1 = NULL, SD_b2 = NULL;
 
 int main(void)
@@ -121,18 +120,7 @@ int main(void)
 		sd->y = 85;
 		
 		SD_b1 = LoadIMG("/rd/SD_b1.kmg.gz", 0);
-		if(SD_b1)
-		{
-			SD_b1->x = sd->x+16;
-			SD_b1->y = sd->y+32;
-		}
-		
 		SD_b2 = LoadIMG("/rd/SD_b2.kmg.gz", 0);
-		if(SD_b2)
-		{
-			SD_b2->x = sd->x+16;
-			SD_b2->y = sd->y+32;
-		}
 	}
 	
 	DrawIntro();
@@ -157,7 +145,7 @@ int main(void)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
-		SD_blink_cycle();
+		SD_blink_cycle(sd);
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video Tests"); y += fh; c++;
@@ -268,7 +256,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
-		SD_blink_cycle();
+		SD_blink_cycle(sd);
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Geometry"); y += fh; c++;
@@ -370,7 +358,7 @@ void TestPatternsColorMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
-		SD_blink_cycle();
+		SD_blink_cycle(sd);
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PLUGE"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color Bars"); y += fh; c++;
@@ -493,7 +481,7 @@ void TestPatternsGeometryMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
-		SD_blink_cycle();
+		SD_blink_cycle(sd);
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid"); y += fh; c++;
@@ -588,13 +576,13 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 		float 	g = 1.0f;
 		float 	b = 1.0f;
 		int		c = 1;
-		float 	x = 40.0f;
-		float 	y = 52.0f;
+		float 	x = 50.0f;
+		float 	y = 60.0f;
 
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
-		SD_blink_cycle();
+		SD_blink_cycle(sd);
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
@@ -605,6 +593,7 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horizonta/Vertical Stripes"); y += fh; c++;    
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Phase & Sample Rate"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Disappearing Logo"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Diagonal Test"); y += fh; c++;
 		if(vcable == CT_VGA)
@@ -625,10 +614,8 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 					"Alternating 288p/576i Test"); y += fh; c++;
 			}
 		}
-		DrawStringS(x, y + fh, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;  c++;
-
 		y += fh;
-		c = DrawFooter(x, y, sel, c, 0);
+		DrawStringS(x, y, r-0.2, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;  c++;
 		
 		EndScene();
 		VMURefresh("Video", "");
@@ -695,26 +682,23 @@ void VideoTestsMenu(ImagePtr title, ImagePtr sd)
 					DrawPhase();
 					break;
 				case 10:
-					LEDZoneTest();
+					DrawDisappear();
 					break;
 				case 11:
-					DiagonalPatternTest();
+					LEDZoneTest();
 					break;
 				case 12:
+					DiagonalPatternTest();
+					break;
+				case 13:
 					if(vcable != CT_VGA)
 						Alternate240p480i();
 					break;
-				case 13:
+				case 14:
 					done = 1;
 					break;
-				case 14:
-					ShowMenu(GENERALHELP);
-					break;
-				case 15:
-					HelpWindow(GENERALHELP, title);
-					break;
 #ifdef TEST_VIDEO
-				case 16:
+				case 15:
 					TestVideoMode(vmode);
 					break;
 #endif
@@ -746,7 +730,7 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
-		SD_blink_cycle();
+		SD_blink_cycle(sd);
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;    
@@ -876,7 +860,7 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		StartScene();
 		DrawImage(title);
 		DrawImage(sd);
-		SD_blink_cycle();
+		SD_blink_cycle(sd);
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Maple Device List"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
@@ -1100,10 +1084,25 @@ int DrawFooter(float x, float y, int sel, int c, int showcredits)
 	return c;
 }
 
-void SD_blink_cycle()
+void SD_blink_cycle(ImagePtr sd)
 {
 	static int blink_counter = 0;
 	static int is_blinking = 0;
+	
+	if(sd)
+	{
+		if(SD_b1)
+		{
+			SD_b1->x = sd->x+16;
+			SD_b1->y = sd->y+32;
+		}
+		
+		if(SD_b2)
+		{
+			SD_b2->x = sd->x+16;
+			SD_b2->y = sd->y+32;
+		}
+	}
 	
 	blink_counter++;	
 	if(SD_b1 && SD_b2 && blink_counter > 230)

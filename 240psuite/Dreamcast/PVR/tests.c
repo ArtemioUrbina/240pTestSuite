@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2011-2022 Artemio Urbina
+ * Copyright (C)2011-2023 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -2337,4 +2337,148 @@ void DrawPhase()
 		FreeImage(&sd_b2[i]);
 	}
 	return;
+}
+
+void DrawDisappear()
+{
+	int 		frames = 0, seconds = 0, minutes = 0, hours = 0;
+	int			toggle = 0, done = 0;
+	uint16		pressed, lsd, msd, show = 1;		
+	ImagePtr	back = NULL, sd = NULL;
+	controller	*st;
+	float		x = -8, y = 10;
+#ifdef BENCHMARK
+	uint64 		last, now;
+	
+	last = timer_us_gettime64();
+#endif
+	
+	back = LoadIMG("/rd/white.kmg.gz", 0);
+	if(!back)
+		return;
+	back->w = 320;
+	back->h = 240;
+	
+	back->r = 0.0f;
+	back->g = 0.0f;
+	back->b = 0.0f;
+	
+	sd = LoadIMG("/rd/SD.kmg.gz", 0);
+	if(!sd)
+		return;
+	sd->x = 128;
+	sd->y = 85;
+			
+	LoadNumbers();
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		DrawImage(back);
+		DrawString(x+32,  y+8, 1.0f, 1.0f, 1.0f, "hours");
+		DrawString(x+104, y+8, 1.0f, 1.0f, 1.0f, "minutes");
+		DrawString(x+176, y+8, 1.0f, 1.0f, 1.0f, "seconds");
+		DrawString(x+248, y+8, 1.0f, 1.0f, 1.0f, "frames");
+
+		// Counter Separators
+		DrawDigit(x+80,  y+16, 1.0f, 1.0f, 1.0f, 10);
+		DrawDigit(x+152, y+16, 1.0f, 1.0f, 1.0f, 10);
+		DrawDigit(x+224, y+16, 1.0f, 1.0f, 1.0f, 10);
+
+		// Draw Hours
+		lsd = hours % 10;
+		msd = hours / 10;
+		DrawDigit(x+32, y+16, 1.0f, 1.0f, 1.0f, msd);
+		DrawDigit(x+56, y+16, 1.0f, 1.0f, 1.0f, lsd);
+
+		// Draw Minutes
+		lsd = minutes % 10;
+		msd = minutes / 10;
+		DrawDigit(x+104, y+16, 1.0f, 1.0f, 1.0f, msd);
+		DrawDigit(x+128, y+16, 1.0f, 1.0f, 1.0f, lsd);
+
+		// Draw Seconds
+		lsd = seconds % 10;
+		msd = seconds / 10;
+		DrawDigit(x+176, y+16, 1.0f, 1.0f, 1.0f, msd);
+		DrawDigit(x+200, y+16, 1.0f, 1.0f, 1.0f, lsd);
+
+		// Draw Frames
+		lsd = frames % 10;
+		msd = frames / 10;
+		DrawDigit(x+248, y+16, 1.0f, 1.0f, 1.0f, msd);
+		DrawDigit(x+272, y+16, 1.0f, 1.0f, 1.0f, lsd);
+		
+		if(show)
+		{
+			DrawImage(sd);
+			SD_blink_cycle(sd);
+		}
+
+		EndScene();
+		
+		if(toggle)
+		{
+			toggle --;
+			if(toggle == 0)
+			{
+				back->r = 0.0f;
+				back->g = 0.0f;
+				back->b = 0.0f;
+			}
+		}
+		
+#ifdef BENCHMARK
+		now = timer_us_gettime64();
+		dbglog(DBG_INFO, "Frame took %g ms\n", (double)(now - last)/1000.0);
+		last = now;
+#endif
+		VMURefresh("DISAPP. ", "LOGO   ");
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;
+			
+			if (pressed & CONT_A)
+				show = !show;
+				
+			if (pressed & CONT_X)
+			{
+				back->r = 1.0f;
+				back->g = 1.0f;
+				back->b = 1.0f;
+				toggle = 2;
+			}
+
+			if (pressed & CONT_START)
+				ShowMenu(DISAPHELP);
+		}
+
+		frames ++;
+
+		if(frames > (IsPAL ? 49 : 59))
+		{
+			frames = 0;
+			seconds ++;
+		}
+
+		if(seconds > 59)
+		{
+			seconds = 0;
+			minutes ++;
+		}
+
+		if(minutes > 59)
+		{
+			minutes = 0;
+			hours ++;
+		}
+
+		if(hours > 99)
+			hours = 0;
+	}
+	FreeImage(&back);
+	FreeImage(&sd);
+	ReleaseNumbers();
 }

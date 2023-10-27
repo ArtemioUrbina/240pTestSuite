@@ -86,6 +86,7 @@ void DrawCredits(ImagePtr back);
 void DrawIntro();
 void ShowHelpWindow(char *Data);
 void ChangePALBackgroundColor(ImagePtr title);
+void SD_blink_cycle(ImagePtr sd);
 
 #ifndef MENUDATA
 #define MENUDATA
