@@ -515,9 +515,13 @@ void at_sound_mdfourier()
 			fixPrintC(y++, fontColorWhite, fbase, "Start recording and press A");
 			if(!version)
 				fixPrintC(++y, fontColorRed, fbase, "Faulty Audio Driver");
+			if(bkp_data.debug_dip1&DP_DEBUG2)
+				fixPrintC(3+y++, fontColorYellow, fbase, "SPSG Noise enabled");
 #ifndef __cd__
+			if(mdf_type == MDF_DEFAULT && bkp_data.debug_dip1&DP_DEBUG1)
+				fixPrintC(3+y++, fontColorYellow, fbase, "Full sample rate enabled");
 			if(mdf_type == MDF_COMPATIBLE)
-				fixPrintC(y+3, fontColorYellow, fbase, "NGCD Compatible test");
+				fixPrintC(3+y, fontColorYellow, fbase, "NGCD Compatible test");
 #endif
 			fixPrintC(26, fontColorWhite, fbase, "Press START for help");
 			draw = 0;
@@ -571,13 +575,16 @@ void at_sound_mdfourier()
 			}
 			sendZ80command(SOUNDCMD_SSGStop);
 
-			/* SSG Noise is too random for a peroid
-			for(frame = 0; frame < 32; frame++)
+			// Only play th spart of the  test if debug dip 2 is enabled
+			if(bkp_data.debug_dip1&DP_DEBUG2)
 			{
-				sendZ80command(SOUNDCMD_SSGNoiseRamp);
-				waitSound(5);
+				// SSG Noise is too random for a peroid
+				for(frame = 0; frame < 32; frame++)
+				{
+					sendZ80command(SOUNDCMD_SSGNoiseRamp);
+					waitSound(5);
+				}
 			}
-			*/
 			
 			sendZ80command(SOUNDCMD_SSGStop);
 			waitVBlank();								// extra frame
@@ -591,18 +598,27 @@ void at_sound_mdfourier()
 			// ADPCM-B not present in Neo Geo CD
 			if(mdf_type == MDF_DEFAULT)
 			{
-				//sendZ80command(SOUNDCMD_RateB_0_Play);			// 11025hz
-				//waitSound(610);
+				// Only play full test if debug dip is enabled
+				if(bkp_data.debug_dip1&DP_DEBUG1)
+				{
+					sendZ80command(SOUNDCMD_RateB_0_Play);			// 11025hz
+					waitSound(610);
 
-				//sendZ80command(SOUNDCMD_RateB_2_Play);			// 22050hz
-				//waitSound(305);
+					sendZ80command(SOUNDCMD_RateB_2_Play);			// 22050hz
+					waitSound(305);
+				}
 
+				// Common playback
 				sendZ80command(SOUNDCMD_RateB_6_Play);			// 44100hz
 				waitSound(152);
 
-				// 2.01968 seconds or 121 frames
-				//sendZ80command(SOUNDCMD_RateB_7_Play);			// 55125hz
-				//waitSound(122);
+				// Only play full test if debug dip is enabled
+				if(bkp_data.debug_dip1&DP_DEBUG1)
+				{
+					// 2.01968 seconds or 121 frames
+					sendZ80command(SOUNDCMD_RateB_7_Play);			// 55125hz
+					waitSound(122);
+				}
 			}
 #endif
 			executeSilence();
@@ -635,6 +651,18 @@ void at_sound_mdfourier()
 			}
 			draw = 1;
 		}
+
+#ifndef __cd__
+		if (BTTN_OPTION_1)
+		{
+			int tmp = 0;
+
+			tmp = select_menu("Select Test Type", fmenu, MDF_TYPES, mdf_type);
+			if(mdf_type != SEL_MENU_CANCEL)
+				mdf_type = tmp;	
+			draw = 1;
+		}
+#endif
 	}
 
 	sendZ80command(SOUNDCMD_StopAll);
