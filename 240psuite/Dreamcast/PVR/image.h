@@ -97,8 +97,8 @@ void FlipV(ImagePtr image, uint16 flip);
 void FlipHV(ImagePtr image, uint16 flip);
 void DrawImage(ImagePtr image);
 void DrawImageRotate(ImagePtr image, float angle);
-inline void StartScene();
-inline void EndScene();
+void StartScene();
+void EndScene();
 
 typedef struct dpallette_st {
 	uint32_t	numcolors;

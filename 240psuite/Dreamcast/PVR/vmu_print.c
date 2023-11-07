@@ -29,7 +29,7 @@ void vmu_clear_bitmap(uint8 bitmap[192])
 		bitmap[i] = 0x00;
 }
 
-inline void vmu_flip_bit(uint8 bitmap[192], uint8 x, uint8 y)
+void vmu_flip_bit(uint8 bitmap[192], uint8 x, uint8 y)
 	/* (0, 0) is upper-left corner */
 {
 	if (x < 48 && y < 32)
@@ -45,7 +45,7 @@ void vmu_invert_bitmap(uint8 bitmap[192])
 			vmu_flip_bit(bitmap, x, y);
 }
 
-inline void vmu_set_bit(uint8 bitmap[192], uint8 x, uint8 y)
+void vmu_set_bit(uint8 bitmap[192], uint8 x, uint8 y)
 	/* (0, 0) is upper-left corner */
 {
 	if (x < 48 && y < 32)

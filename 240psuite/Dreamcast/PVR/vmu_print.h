@@ -25,10 +25,10 @@
 void vmu_clear_bitmap(uint8 bitmap[192]);
 void vmu_invert_bitmap(uint8 bitmap[192]);
 
-inline void vmu_flip_bit(uint8 bitmap[192], uint8 x, uint8 y);
+void vmu_flip_bit(uint8 bitmap[192], uint8 x, uint8 y);
 	/* (0, 0) is upper-left corner */
 
-inline void vmu_set_bit(uint8 bitmap[192], uint8 x, uint8 y);
+void vmu_set_bit(uint8 bitmap[192], uint8 x, uint8 y);
 	/* (0, 0) is upper-left corner */
 
 void vmu_draw_char(uint8 bitmap[192], unsigned char c, int x, int y);

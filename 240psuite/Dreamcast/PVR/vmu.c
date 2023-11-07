@@ -93,8 +93,10 @@ void internal_vmu_draw_lcd(maple_device_t *dev,	void *bitmap)
 	{
 		case MAPLE_EAGAIN:
 			dbglog(DBG_ERROR, "VMU LCD could not be updated, got MAPLE_EAGAIN\n");
+			break;
 		case MAPLE_ETIMEOUT:
 			dbglog(DBG_ERROR, "VMU LCD could not be updated, got MAPLE_ETIMEOUT\n");
+			break;
 		default:
 			disableVMU_LCD_val = 1;
 			break;

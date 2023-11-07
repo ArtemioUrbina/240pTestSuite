@@ -557,7 +557,8 @@ int MemcardSaveExists(char *filename, int *blocks, int *port, int *unit)
 	
 	for(file = 0; file < numfiles; file++)
 	{
-		if(strncmp(filename, vmufiles[file].filename, VMU_NAME_LEN) == 0)
+		if(vmufiles[file].filetype == 0x33 &&
+			strncmp(filename, vmufiles[file].filename, VMU_NAME_LEN) == 0)
 		{
 			if(blocks)
 				*blocks = vmufiles[file].filesize;
