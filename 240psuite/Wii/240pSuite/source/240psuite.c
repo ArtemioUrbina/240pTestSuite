@@ -680,7 +680,10 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 		DrawMenuFooter(r, g, b);		
 		
 		if(!aet_exists && sel == 3)
-			DrawStringS(x-15, y + 5*fh, r, g, b, "Copy PCM file to the 240pSuite folder to enable");		
+		{
+			DrawStringS(x-15, y + 4*fh, r, g, b, "Copy WAV file to the 240pSuite folder to enable");		
+			DrawStringS(x-15, y + 5*fh, r, g, b, EQUIPMENT_FILE);		
+		}
 				
 		EndScene();		
         

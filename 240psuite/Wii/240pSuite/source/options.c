@@ -32,6 +32,7 @@
 #include "image.h"
 #include "controller.h"
 #include "font.h"
+#include "wav.h"
 
 
 #define SD_OPTIONS_PATH "sd:/240pSuite"
@@ -305,10 +306,221 @@ u8 FileExists(char *filename)
 	return 1;
 }
 
+#define HEADER_BUFFER 4096
+
+int copyFromBuffer(void *dest, uint8_t *buffer, size_t size, int *buffpos)
+{
+	if(*buffpos + size > HEADER_BUFFER)
+		return 0;
+	
+	memcpy(dest, buffer+*buffpos, size);
+	*buffpos += size;
+	return 1;
+}
+
+/********************************************************/
+
+uint32_t EndianCorrect32bits(uint32_t num)
+{
+	uint32_t swapped = 0;
+	
+	swapped = ((num>>24)&0xff) | // move byte 3 to byte 0
+			  ((num<<8)&0xff0000) | // move byte 1 to byte 2
+			  ((num>>8)&0xff00) | // move byte 2 to byte 1
+			  ((num<<24)&0xff000000); // byte 0 to byte 3
+	return swapped;
+}
+
+uint16_t EndianCorrect16bits(uint16_t num)
+{
+	uint16_t swapped = 0;
+	
+	swapped = (num>>8) | (num<<8);
+	return swapped;
+}
+
+void swapPCMEndianess(uint16_t *samples, size_t size)
+{
+	size_t i = 0;
+	
+	for(i = 0; i < size; i++)
+		samples[i] = EndianCorrect16bits(samples[i]);
+		
+}
+
+
+u8 ParseWAVFile(FILE *file, uint32_t *size)
+{
+	fmt_hdr fmt;
+	riff_hdr riff;
+	data_hdr data;
+	fmt_hdr_ext1 fmtExtra;
+	fmt_hdr_ext2 fmtExtra2;
+	int found = 0, buffpos = 0;
+	uint8_t *hbuffer = NULL;
+	
+	hbuffer = (uint8_t*)malloc(sizeof(uint8_t)*HEADER_BUFFER);
+	if(!hbuffer)
+		return 0;
+	
+	if(fread(hbuffer, sizeof(uint8_t), HEADER_BUFFER, file) != sizeof(uint8_t)*HEADER_BUFFER)
+	{
+		free(hbuffer);
+		return 0;
+	}
+	
+	rewind(file);
+	
+	if(!copyFromBuffer(&riff, hbuffer, sizeof(riff_hdr), &buffpos))
+	{
+		free(hbuffer);
+		return 0;
+	}
+	
+	fmt.Subchunk1Size = EndianCorrect32bits(fmt.Subchunk1Size);
+	if(strncmp((char*)riff.RIFF, "RIFF", 4) != 0)
+	{
+		free(hbuffer);
+		return 0;
+	}
+	
+	if(strncmp((char*)riff.WAVE, "WAVE", 4) != 0)
+	{
+		free(hbuffer);
+		return 0;
+	}
+	
+	// look for fmt chunk
+	found = 0;
+	do
+	{
+		sub_chunk	schunk;
+
+		if(!copyFromBuffer(&schunk, hbuffer, sizeof(sub_chunk), &buffpos))
+		{
+			free(hbuffer);
+			return 0;
+		}
+		
+		schunk.Size = EndianCorrect32bits(schunk.Size);
+		if(strncmp((char*)schunk.chunkID, "fmt", 3) != 0)
+		{
+			buffpos += schunk.Size*sizeof(uint8_t);
+		}
+		else
+		{
+			buffpos -= sizeof(sub_chunk);
+			found = 1;
+		}
+	}while(!found);
+	
+	if(!copyFromBuffer(&fmt, hbuffer, sizeof(fmt_hdr), &buffpos))
+	{
+		free(hbuffer);
+		return 0;
+	}
+		
+	fmt.AudioFormat = EndianCorrect16bits(fmt.AudioFormat);
+	fmt.NumOfChan = EndianCorrect16bits(fmt.NumOfChan);
+	fmt.blockAlign = EndianCorrect16bits(fmt.blockAlign);
+	fmt.bitsPerSample = EndianCorrect16bits(fmt.bitsPerSample);
+	
+	fmt.Subchunk1Size = EndianCorrect32bits(fmt.Subchunk1Size);
+	fmt.SamplesPerSec = EndianCorrect32bits(fmt.SamplesPerSec);
+	fmt.bytesPerSec = EndianCorrect32bits(fmt.bytesPerSec);
+	
+	if(fmt.NumOfChan != 2 || fmt.AudioFormat != WAVE_FORMAT_PCM || 
+		fmt.bitsPerSample != 16 ||fmt.SamplesPerSec != 48000)
+	{
+		free(hbuffer);
+		return 0;
+	}
+	
+	switch(fmt.Subchunk1Size)
+	{
+		case FMT_TYPE_1:
+			break;
+		case FMT_TYPE_2:
+			if(!copyFromBuffer(&fmtExtra, hbuffer, sizeof(fmt_hdr_ext1), &buffpos))
+			{
+				free(hbuffer);
+				return 0;
+			}
+			break;
+		case FMT_TYPE_3:
+			if(!copyFromBuffer(&fmtExtra2, hbuffer, sizeof(fmt_hdr_ext2), &buffpos))
+			{
+				free(hbuffer);
+				return 0;
+			}
+			break;
+		default:
+			if(fmt.Subchunk1Size + 8 > sizeof(fmt_hdr))  // Add the fmt and chunksize length: 8 bytes
+				buffpos += fmt.Subchunk1Size + 8 - sizeof(fmt_hdr);
+			break;
+	}
+	
+	// look for data chunk
+	found = 0;
+	do
+	{
+		sub_chunk	schunk;
+
+		if(!copyFromBuffer(&schunk, hbuffer, sizeof(sub_chunk), &buffpos))
+		{
+			free(hbuffer);
+			return 0;
+		}
+		schunk.Size = EndianCorrect32bits(schunk.Size);
+		if(strncmp((char*)schunk.chunkID, "data", 4) != 0)
+		{
+			buffpos += schunk.Size*sizeof(uint8_t);
+		}
+		else
+		{
+			buffpos -= sizeof(sub_chunk);
+			found = 1;
+		}
+
+		// Read Total Fact if available
+		if(fmt.AudioFormat == WAVE_FORMAT_EXTENSIBLE)
+		{
+			free(hbuffer);
+			return 0;
+		}
+	}while(!found);
+	
+	if(!copyFromBuffer(&data, hbuffer, sizeof(data_hdr), &buffpos))
+	{
+		free(hbuffer);
+		return 0;
+	}
+	
+	data.DataSize = EndianCorrect32bits(data.DataSize);
+	if(data.DataSize == 0)
+	{
+		free(hbuffer);
+		return 0;
+	}
+	
+	// advance file to position
+	if(fread(hbuffer, sizeof(uint8_t), buffpos, file) != sizeof(uint8_t)*buffpos)
+	{
+		free(hbuffer);
+		return 0;
+	}
+	
+	free(hbuffer);
+	hbuffer= NULL;
+
+	*size = data.DataSize;
+	return 1;
+}
+
 u8 *LoadFileToBuffer(char *filename, ulong *size)
 {
 	FILE *file = NULL;
-	ulong file_size = 0;
+	uint32_t file_size = 0;
 	u8 *file_buffer = NULL;
 	
 	if(!InitFS())
@@ -320,13 +532,9 @@ u8 *LoadFileToBuffer(char *filename, ulong *size)
 		CloseFS();
 		return NULL;
 	}
-	fseek(file , 0, SEEK_END);
-	file_size = ftell(file);	
-	rewind(file);
 	
-	if(!file_size)
-	{		
-		fclose(file);
+	if(!ParseWAVFile(file, &file_size))
+	{
 		CloseFS();
 		return NULL;
 	}
@@ -350,6 +558,8 @@ u8 *LoadFileToBuffer(char *filename, ulong *size)
 	fclose(file);
 	CloseFS();
 	
+	swapPCMEndianess((uint16_t*)file_buffer, file_size/2);
+	
 	*size = file_size;
 	return file_buffer;
 }
@@ -357,7 +567,7 @@ u8 *LoadFileToBuffer(char *filename, ulong *size)
 u8 LoadFileToMemoryAddress(char *filename, ulong *size, void *memory, ulong memsize)
 {
 	FILE *file = NULL;
-	ulong file_size = 0;
+	uint32_t  file_size = 0;
 	
 	if(!InitFS())
 		return 0;
@@ -368,13 +578,9 @@ u8 LoadFileToMemoryAddress(char *filename, ulong *size, void *memory, ulong mems
 		CloseFS();
 		return 0;
 	}
-	fseek(file , 0, SEEK_END);
-	file_size = ftell(file);	
-	rewind(file);
 	
-	if(!file_size)
-	{		
-		fclose(file);
+	if(!ParseWAVFile(file, &file_size))
+	{
 		CloseFS();
 		return 0;
 	}
@@ -386,7 +592,7 @@ u8 LoadFileToMemoryAddress(char *filename, ulong *size, void *memory, ulong mems
 		return 0;
 	}
 	
-	if(fread(memory, sizeof(char), file_size, file) != file_size) 
+	if(fread(memory, sizeof(u8), file_size, file) != file_size) 
 	{		
 		fclose(file);
 		CloseFS();
@@ -395,6 +601,8 @@ u8 LoadFileToMemoryAddress(char *filename, ulong *size, void *memory, ulong mems
 	
 	fclose(file);
 	CloseFS();
+	
+	swapPCMEndianess((uint16_t*)memory, file_size/2);
 	
 	*size = file_size;
 	return 1;
@@ -442,7 +650,7 @@ u8 LoadOptions()
 	{		
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-	        Options.Activate480p = atoi(value);
+			Options.Activate480p = atoi(value);
 	}
 		
 	node = mxmlFindElement(xml, xml, "UseTrapFilter", NULL, NULL, MXML_DESCEND);
@@ -450,7 +658,7 @@ u8 LoadOptions()
 	{		
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-		    Options.TrapFilter = atoi(value);
+			Options.TrapFilter = atoi(value);
 	}
 	
 #ifdef WII_VERSION	
@@ -459,15 +667,15 @@ u8 LoadOptions()
 	{		
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-		    Options.FlickerFilter = atoi(value);
+			Options.FlickerFilter = atoi(value);
 	}
 	
 	node = mxmlFindElement(xml, xml, "SFCClassicController", NULL, NULL, MXML_DESCEND);
 	if (node && mxmlGetType(node) == MXML_ELEMENT)
 	{		
-        const char *value = mxmlGetText(node, NULL);
+		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            Options.SFCClassicController = atoi(value);
+			Options.SFCClassicController = atoi(value);
 	}
 #endif
 	
@@ -476,7 +684,7 @@ u8 LoadOptions()
 	{
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            SetScanlinesEvenOrOdd(atoi(value));
+			SetScanlinesEvenOrOdd(atoi(value));
 	}	
 	
 	node = mxmlFindElement(xml, xml, "ScanlineIntensity", NULL, NULL, MXML_DESCEND);
@@ -484,7 +692,7 @@ u8 LoadOptions()
 	{
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            SetRawScanlineIntensity(atoi(value));		    
+			SetRawScanlineIntensity(atoi(value));			
 	}	
 	
 	node = mxmlFindElement(xml, xml, "EnablePAL", NULL, NULL, MXML_DESCEND);
@@ -492,7 +700,7 @@ u8 LoadOptions()
 	{
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            Options.EnablePAL = atoi(value);		    
+			Options.EnablePAL = atoi(value);			
 	}	
 	
 	node = mxmlFindElement(xml, xml, "EnablePALBG", NULL, NULL, MXML_DESCEND);
@@ -500,7 +708,7 @@ u8 LoadOptions()
 	{
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            Options.EnablePALBG = atoi(value);		    
+			Options.EnablePALBG = atoi(value);			
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PalBackR", NULL, NULL, MXML_DESCEND);
@@ -508,7 +716,7 @@ u8 LoadOptions()
 	{
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            Options.PalBackR = atoi(value);		    
+			Options.PalBackR = atoi(value);			
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PalBackG", NULL, NULL, MXML_DESCEND);
@@ -516,7 +724,7 @@ u8 LoadOptions()
 	{
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            Options.PalBackG = atoi(value);		    
+			Options.PalBackG = atoi(value);			
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PalBackB", NULL, NULL, MXML_DESCEND);
@@ -524,7 +732,7 @@ u8 LoadOptions()
 	{
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            Options.PalBackB = atoi(value);		    
+			Options.PalBackB = atoi(value);			
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PALline23", NULL, NULL, MXML_DESCEND);
@@ -532,7 +740,7 @@ u8 LoadOptions()
 	{
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            Options.PALline23 = atoi(value);		    
+			Options.PALline23 = atoi(value);			
 		Set576iLine23Option(Options.PALline23);
 	}	
 	
@@ -541,7 +749,7 @@ u8 LoadOptions()
 	{
 		const char *value = mxmlGetText(node, NULL);
 		if(value)
-            Options.Force480p = atoi(value);		    
+			Options.Force480p = atoi(value);			
 	}	
 	
 	if(xml)
@@ -596,72 +804,72 @@ int addIntAttribute(mxml_node_t *parent, const char *name, int value)
 
 u8 SaveOptions()
 {
-    FILE *file = NULL;
-    mxml_node_t *xml = NULL;             // <?xml ... ?>
-    mxml_node_t *options240p = NULL;      // <options240p>
+	FILE *file = NULL;
+	mxml_node_t *xml = NULL;			 // <?xml ... ?>
+	mxml_node_t *options240p = NULL;	  // <options240p>
 
-    if (!InitFS())
-        return 0;
+	if (!InitFS())
+		return 0;
 
-    file = fopen(OPTIONS_FILE, "w");
-    if (!file)
-    {
-        CloseFS();
-        return 0;
-    }
+	file = fopen(OPTIONS_FILE, "w");
+	if (!file)
+	{
+		CloseFS();
+		return 0;
+	}
 
-    xml = mxmlNewXML("1.0");
-    if (!xml)
-    {
-        fclose(file);
-        CloseFS();
-        return 0;
-    }
+	xml = mxmlNewXML("1.0");
+	if (!xml)
+	{
+		fclose(file);
+		CloseFS();
+		return 0;
+	}
 
-    options240p = mxmlNewElement(xml, "options240p");
-    if (!options240p)
-    {
-        mxmlDelete(xml);
-        fclose(file);
-        CloseFS();
-        return 0;
-    }
+	options240p = mxmlNewElement(xml, "options240p");
+	if (!options240p)
+	{
+		mxmlDelete(xml);
+		fclose(file);
+		CloseFS();
+		return 0;
+	}
 
-    if (!addIntAttribute(options240p, "UseDeflickerFilter", Options.FlickerFilter))
-    {
-        mxmlDelete(xml);
-        fclose(file);
-        CloseFS();
-        return 0;
-    }
+	if (!addIntAttribute(options240p, "UseDeflickerFilter", Options.FlickerFilter))
+	{
+		mxmlDelete(xml);
+		fclose(file);
+		CloseFS();
+		return 0;
+	}
 
 #ifdef WII_VERSION
-    if (!addIntAttribute(options240p, "UseTrapFilter", Options.TrapFilter) ||
-        !addIntAttribute(options240p, "SFCClassicController", Options.SFCClassicController))
-    {
-        mxmlDelete(xml);
-        fclose(file);
-        CloseFS();
-        return 0;
-    }
+	if (!addIntAttribute(options240p, "UseTrapFilter", Options.TrapFilter) ||
+		!addIntAttribute(options240p, "SFCClassicController", Options.SFCClassicController))
+	{
+		mxmlDelete(xml);
+		fclose(file);
+		CloseFS();
+		return 0;
+	}
 #endif
 
-    if (!addIntAttribute(options240p, "Activate480p", Options.Activate480p) ||
-        !addIntAttribute(options240p, "ScanlineEvenOdd", (int)ScanlinesEven()) ||
-        !addIntAttribute(options240p, "ScanlineIntensity", (int)GetRawScanlineValue()) ||
-        !addIntAttribute(options240p, "EnablePAL", Options.EnablePAL) ||
-        !addIntAttribute(options240p, "EnablePALBG", Options.EnablePALBG) ||
-        !addIntAttribute(options240p, "PalBackR", Options.PalBackR) ||
-        !addIntAttribute(options240p, "PalBackG", Options.PalBackG) ||
-        !addIntAttribute(options240p, "PalBackB", Options.PalBackB) ||
-        !addIntAttribute(options240p, "PALline23", Options.PALline23) ||
-        !addIntAttribute(options240p, "Force480p", Options.Force480p))
-    {
-        mxmlDelete(xml);
-        fclose(file);
-        CloseFS();
-        return 0;
-    }
+	if (!addIntAttribute(options240p, "Activate480p", Options.Activate480p) ||
+		!addIntAttribute(options240p, "ScanlineEvenOdd", (int)ScanlinesEven()) ||
+		!addIntAttribute(options240p, "ScanlineIntensity", (int)GetRawScanlineValue()) ||
+		!addIntAttribute(options240p, "EnablePAL", Options.EnablePAL) ||
+		!addIntAttribute(options240p, "EnablePALBG", Options.EnablePALBG) ||
+		!addIntAttribute(options240p, "PalBackR", Options.PalBackR) ||
+		!addIntAttribute(options240p, "PalBackG", Options.PalBackG) ||
+		!addIntAttribute(options240p, "PalBackB", Options.PalBackB) ||
+		!addIntAttribute(options240p, "PALline23", Options.PALline23) ||
+		!addIntAttribute(options240p, "Force480p", Options.Force480p))
+	{
+		mxmlDelete(xml);
+		fclose(file);
+		CloseFS();
+		return 0;
+	}
 
 	// Removing this option from the save file, since it looks terrible
 	// addIntAttribute(options240p, "PALScale576", Options.PALScale576);
@@ -669,9 +877,9 @@ u8 SaveOptions()
 	if(mxmlSaveFile(xml, file, xml_cb))
 	{
 		fclose(file);
-        CloseFS();
+		CloseFS();
 		mxmlDelete(xml);
-        return 0;
+		return 0;
 	}
 	fclose(file);
 
