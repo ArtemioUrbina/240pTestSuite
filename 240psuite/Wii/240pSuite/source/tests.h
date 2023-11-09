@@ -18,6 +18,8 @@
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
+#define EQUIPMENT_FILE "Equip48K.pcm"
 
 #ifndef TESTS_H
 #define TESTS_H

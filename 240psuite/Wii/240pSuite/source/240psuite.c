@@ -650,7 +650,7 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 	int 	sel = 1, close = 0;
 	u8		aet_exists = 0;
 	
-	aet_exists = FileExists("Equip48KRev.pcm");
+	aet_exists = FileExists(EQUIPMENT_FILE);
 	while(!close && !EndProgram) 
 	{		
 		u8      r = 0xff;

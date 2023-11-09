@@ -31,6 +31,7 @@
 #include "controller.h"
 #include "options.h"
 #include <asndlib.h>
+#include <aesndlib.h>
 
 #include "beep_snd.h"
 
@@ -1470,22 +1471,33 @@ void DrawMessage(ImagePtr back, char *title, char *msg)
 	EndScene();
 }
 
-// AESND Gives improper results in GC, perfect on Wii
-// ASND works perfectly on GC and Wii, needs reversed L & R PCM samples
+void aesnd_callback(AESNDPB *pb, unsigned int state, void *cb_arg)
+{
+	unsigned int *playback = (unsigned int *)cb_arg;
+	
+	if (state == VOICE_STATE_RUNNING) 
+		*playback = 1;
+	if(state == VOICE_STATE_STOPPED)
+		*playback = 0;
+}
+
 void AudioEquipmentTest(ImagePtr back)
 {
 	int 			done = 0, loaded = 0, counter = 0;
 	u32			    pressed;
-	char			*msg = "Loading test...", *title = "Audio Equipment Test";
+	char			*msg = "Loading audio file...";
+	char			*title = "Audio Equipment Test";
 	u8				*aet_samples = NULL;
 	ulong			aet_size = 0;
-	s32 			voice = 0;
+	AESNDPB			*voice = NULL;
+	unsigned int	playback = 0;
+
+	AESND_Init();
 	
-	ASND_Init(); 
-    ASND_Pause(0);
-	voice = ASND_GetFirstUnusedVoice();
-	if(voice == SND_INVALID)
+	voice = AESND_AllocateVoiceWithArg(aesnd_callback, &playback);
+	if(!voice)
 		return;
+	AESND_SetVoiceVolume(voice, 0xff, 0xff);
 
 	while(!done && !EndProgram) 
 	{
@@ -1494,18 +1506,16 @@ void AudioEquipmentTest(ImagePtr back)
 		if(!loaded)
 		{
 #ifdef WII_VERSION
-			aet_samples = LoadFileToBuffer("Equip48KRev.pcm", &aet_size);
+			aet_samples = LoadFileToBuffer(EQUIPMENT_FILE, &aet_size);
 			if(!aet_samples)
 				return;
-#endif
-
-#ifdef GC_VERSION
-			// Load into our uncompressed Texture Buffer, since malloc would fail
+#else
+			// Load into our uncompressed Texture Buffer, since malloc would fail due to audio file size
 			DrawMessage(back, title, "Preparing memory");
 			CloseTextures();
 			memset(full_textures_tpl, 0, full_textures_tpl_size);
 			DrawMessage(back, title, "Loading file...");
-			if(!LoadFileToMemoryAddress("Equip48KRev.pcm", &aet_size, full_textures_tpl, full_textures_tpl_size))
+			if(!LoadFileToMemoryAddress(EQUIPMENT_FILE, &aet_size, full_textures_tpl, full_textures_tpl_size))
 			{
 				LoadTextures();
 				return;
@@ -1540,18 +1550,21 @@ void AudioEquipmentTest(ImagePtr back)
 			{	
 				int cancel = 0;
 				
-				msg = "Playing Test Tones";
-				DrawMessage(back, title, msg);
+				msg = "Playing Test Signal";
 
-				ASND_SetVoice(voice, VOICE_STEREO_16BIT, 48000, 0, aet_samples, aet_size, 0xff, 0xff, NULL);
-				while(ASND_StatusVoice(voice) == SND_WORKING && cancel != 2)
+				AESND_PlayVoice(voice, VOICE_STEREO16, aet_samples, aet_size, DSP_DEFAULT_FREQ, 0, 0);
+				
+				while(playback != 1)
+					DrawMessage(back, title, msg);
+				
+				while(playback && cancel != 2)
 				{
 					if(counter)
 					{
 						counter --;
 						if(counter == 0)
 						{
-							msg = "Playing Test Tones";
+							msg = "Playing Test Signal";
 							cancel = 0;
 						}
 					}
@@ -1568,10 +1581,11 @@ void AudioEquipmentTest(ImagePtr back)
 					{
 						msg = "Playback cancelled";
 						cancel = 2;
-						ASND_StopVoice(voice);
+						AESND_SetVoiceStop(voice, true);
 						counter = 120;
 					}
 				}
+				
 				if(cancel != 2)
 					msg = "Playback Finished";
 				DrawMessage(back, title, msg);
@@ -1579,11 +1593,17 @@ void AudioEquipmentTest(ImagePtr back)
 		}
 	}
 
-	if(ASND_StatusVoice(voice) == SND_WORKING)
-		ASND_StopVoice(voice);
-	ASND_End();
+	AESND_SetVoiceStop(voice, true);
+	AESND_FreeVoice(voice);
+	AESND_Reset();
 
-#ifdef GC_VERSION
+#ifdef WII_VERSION
+	if(aet_samples)
+	{
+		free(aet_samples);
+		aet_samples = NULL;
+	}
+#else
 	if(loaded)
 		LoadTextures();	
 #endif
