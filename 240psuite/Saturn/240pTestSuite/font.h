@@ -26,8 +26,11 @@
 #define FONT_WHITE	16
 #define FONT_RED	15
 #define FONT_GREEN	14
-#define FONT_CYAN	13
-#define FONT_YELLOW	12
+#define FONT_BLUE	13
+#define FONT_CYAN	12
+#define FONT_MAGENTA	11
+#define FONT_YELLOW	10
+#define FONT_BLACK	9
 
 #define FONT_QUAD_WIDTH	320
 #define FONT_QUAD_HEIGHT 224

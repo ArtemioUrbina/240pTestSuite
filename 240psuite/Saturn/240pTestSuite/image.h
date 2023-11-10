@@ -28,7 +28,7 @@
 #define S_NBG3	3
 
 
-bool DisplayImage(const char *path, int nbg, int width, int height, int piority, bool transparent);
+//bool DisplayImage(const char *path, int nbg, int width, int height, int piority, bool transparent);
 
 
 #endif /* !IMAGE_H */

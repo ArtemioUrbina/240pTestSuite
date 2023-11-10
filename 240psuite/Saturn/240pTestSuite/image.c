@@ -41,7 +41,7 @@ int nbg_char_data[4] = { VRAM_CTL_CYCP_CHPNDR_NBG0,
 						 VRAM_CTL_CYCP_CHPNDR_NBG2,
 						 VRAM_CTL_CYCP_CHPNDR_NBG3 };*/
 
-bool DisplayImage(const char *filename, int nbg, int width, int height, int piority, bool transparent)
+/*bool DisplayImage(const char *filename, int nbg, int width, int height, int piority, bool transparent)
 {	
 	
 	/*struct scrn_bitmap_format nbg_format;
@@ -51,14 +51,14 @@ bool DisplayImage(const char *filename, int nbg, int width, int height, int pior
 	uint8_t *ptr;
 	tga_t tga;
 	uint32_t amount;*/
-	
+	/*
 	//using only NBG0 for now
 	if(nbg < S_NBG0 || nbg > S_NBG0)
 		return false;
 
 	if(!filename)
 		return false;
-
+	*/
 	////_svin_background_set_no_filelist(filename);
 	/*
 	nbg_format.sbf_scroll_screen = nbg_data[nbg];
@@ -124,6 +124,6 @@ bool DisplayImage(const char *filename, int nbg, int width, int height, int pior
 	vdp2_tvmd_display_set();
 */
 	//TODO size and count vram
-	return true;
-}
+	/*return true;
+}*/
 

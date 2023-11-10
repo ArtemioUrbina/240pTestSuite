@@ -90,6 +90,6 @@ void draw_colorbars(_svin_screen_mode_t screenmode)
 	//draw text
 	DrawString("RED", 10, 40-10*y_ratio, FONT_RED);
 	DrawString("GREEN", 10, 40-10*y_ratio+40, FONT_GREEN);
-	DrawString("BLUE", 10, 40-10*y_ratio+80, FONT_CYAN); 
+	DrawString("BLUE", 10, 40-10*y_ratio+80, FONT_BLUE); 
 	DrawString("WHITE", 10, 40-10*y_ratio+120, FONT_WHITE); 
 }

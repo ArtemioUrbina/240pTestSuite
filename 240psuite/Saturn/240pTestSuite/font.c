@@ -48,11 +48,20 @@ void LoadFont()
 	Colors[1] = RGB888(1, 0, 255, 0); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_GREEN*4, FONT_GREEN*4+3);
 
+	Colors[1] = RGB888(1, 0, 0, 255); //Font
+	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_BLUE*4, FONT_BLUE*4+3);
+
 	Colors[1] = RGB888(1, 0, 255, 255); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_CYAN*4, FONT_CYAN*4+3);
 
+	Colors[1] = RGB888(1, 255, 0, 255); //Font
+	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_MAGENTA*4, FONT_MAGENTA*4+3);
+
 	Colors[1] = RGB888(1, 255, 255, 0); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_YELLOW*4, FONT_YELLOW*4+3);
+
+	Colors[1] = RGB888(1, 0, 0, 0); //Font
+	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_BLACK*4, FONT_BLACK*4+3);
 
 	/*color_rgb1555_t dd;
 	dd.raw = 0xFFAA;
