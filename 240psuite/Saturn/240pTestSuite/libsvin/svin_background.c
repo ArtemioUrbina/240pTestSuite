@@ -41,81 +41,14 @@ void _svin_background_fade_to_black()
     }
 }
 
-void _svin_background_set_no_filelist(char * filename)
-{
-    //searching for fad
-    cdfs_filelist_t _filelist;
-    cdfs_filelist_entry_t _filelist_entries[_SVIN_FILELIST_ENTRIES_PER_DIR_LIMIT];
-    _filelist.entries = _filelist_entries;
-    fad_t _bg_fad=0;
-    int iSize=0;
-	
-	//--------------------------------- bad yabause check
-	_filelist.entries_count = 0;
-    _filelist.entries_pooled_count = 0;
-    cdfs_pvd_t * pvd = malloc(sizeof(cdfs_pvd_t));
-    cdfs_dirent_t *dirent_root;
-
-    //reading pvd
-    _svin_cd_block_sector_read(LBA2FAD(16), (uint8_t*)pvd);
-    dirent_root = (cdfs_dirent_t *)((pvd->root_directory_record)); 
-    //getting root size
-    int root_length = isonum_733(dirent_root->data_length);
-    root_length = (((root_length-1)/2048)+1)*2048;
-    int root_start = isonum_733(dirent_root->extent);
-    if (root_start <= 0)
-	{
-		//_svin_textbox_init();
-		//_svin_textbox_print("","This sortware does not work in Yabause except romulo builds. Get one from https://github.com/razor85/yabause/releases/latest","Lato_Black15",7,7);
-		while (1);
-	}
-	//--------------------------------- bad yabause check
-	
-	
-    //can't use a filelist-based search here, using "normal" 8.3 search
-#ifdef ROM_MODE
-    cdfs_rom_filelist_root_read(&_filelist,_SVIN_FILELIST_ENTRIES_PER_DIR_LIMIT);
-#else
-    cdfs_filelist_entry_t * filelist_entries = cdfs_entries_alloc(-1);
-    assert(filelist_entries != NULL);
-    cdfs_filelist_default_init(&_filelist, filelist_entries, -1);
-    cdfs_filelist_root_read(&_filelist);
-#endif
-
-    for (uint32_t i=0;i<_filelist.entries_count;i++)
-    {
-        if (strcmp(_filelist.entries[i].name,filename) == 0)
-        {
-            _bg_fad = _filelist.entries[i].starting_fad;
-            iSize = _filelist.entries[i].size;
-        }
-    }
-
-    assert(_bg_fad > 150);
-    
-    _svin_background_set_by_fad(_bg_fad,iSize);
-
-    //we don't need yaul's filelist entries, because we have our own, freeing them
-    free(filelist_entries);
-}
-
 void 
-_svin_background_set_by_fad(fad_t fad, int size)
+_svin_background_set_from_assets(uint8_t *ptr, int size)
 {
     bool bVDP2 = false;
-    //allocate memory for 77 sectors
-    uint8_t *buffer = malloc(77 * 2048);
-    uint16_t *buffer16 = (uint16_t*)buffer;
-    assert((int)(buffer) > 0);
-    //allocate memory for cram
-    uint8_t *palette = malloc(2048);
-    assert((int)(palette) > 0);
-
-    //reading 1st block to check VDP2 flag (optimize it later)
-    _svin_cd_block_sector_read(fad, buffer);
-    uint16_t size_x = buffer16[2]/8;
-    uint16_t size_y = buffer16[3]/8;
-    if ( (buffer[2044] == 'V') && (buffer[2045] == 'D') && (buffer[2046] == 'P') && (buffer[2047] == '2') )
+    uint16_t *ptr16 = (uint16_t*)ptr;
+    uint16_t size_x = ptr16[2]/8;
+    uint16_t size_y = ptr16[3]/8;
+    if ( (ptr[2044] == 'V') && (ptr[2045] == 'D') && (ptr[2046] == 'P') && (ptr[2047] == '2') )
         bVDP2 = true; //VDP2 mode
     else 
         return; //not supporting old VDP1 backgrounds
@@ -124,22 +57,15 @@ _svin_background_set_by_fad(fad_t fad, int size)
     _svin_clear_palette(1);
 
     //reading 2nd block to check if compressed
-    _svin_cd_block_sector_read(fad + 1, buffer);
-    if ( (buffer[0] == 'L') && (buffer[1] == 'Z') && (buffer[2] == '7') && (buffer[3] == '7') )
+    if ( (ptr[2048] == 'L') && (ptr[2048+1] == 'Z') && (ptr[2048+2] == '7') && (ptr[2048+3] == '7') )
     {
         //compressed, decompressing
         //getting size
-        int * p32 = (int *)buffer;
+        int * p32 = (int *)(&ptr[2048]);
         int compressed_size = p32[1];
         assert(compressed_size > 0);
         assert(compressed_size < 0x1000000);
         int compressed_size_sectors = ((compressed_size-1)/2048)+1;
-        //reallocate buffer
-        free(buffer);
-        buffer = malloc(compressed_size_sectors*2048);
-
-        //read compressed data
-        _svin_cd_block_sectors_read(fad + 1, buffer, compressed_size+8);
     
         _svin_set_cycle_patterns_cpu();
         //writing pattern names for nbg0
@@ -162,25 +88,22 @@ _svin_background_set_by_fad(fad_t fad, int size)
         }
         
         //decompress
-        bcl_lz_decompress(&(buffer[8]),(char*)_SVIN_NBG0_CHPNDR_START,compressed_size);
+        bcl_lz_decompress(&(ptr[2048+8]),(char*)_SVIN_NBG0_CHPNDR_START,compressed_size);
         _svin_set_cycle_patterns_nbg();
+
         //set palette, using palette 1 for VDP2 backgrounds
-        _svin_cd_block_sector_read(fad + compressed_size_sectors + 1, palette);
         //palette in file is 24-bit, setting it color-by-color
         rgb888_t _color  = {0,0,0,0};
         for (int i = 0; i<256; i++)
         {
-            _color.r = palette[i*3+0];
-            _color.g = palette[i*3+1];
-            _color.b = palette[i*3+2];
+            _color.r = ptr[2048*compressed_size_sectors+2048+i*3+0];//palette[i*3+0];
+            _color.g = ptr[2048*compressed_size_sectors+2048+i*3+1];//palette[i*3+1];
+            _color.b = ptr[2048*compressed_size_sectors+2048+i*3+2];//palette[i*3+2];
             _svin_set_palette_part(1, &_color, i, i);
         }
     }
     else
     {
-        //uncompressed, not supported aanymore
+        //uncompressed, not supported anymore
     }
-
-    free(palette);
-    free(buffer);
 }

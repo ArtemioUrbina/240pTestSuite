@@ -4,6 +4,10 @@ endif
 
 include $(YAUL_INSTALL_ROOT)/share/build.pre.mk
 
+BUILTIN_ASSETS+= \
+	assets/BOOTLOGO.BG;asset_bootlogo_bg \
+	assets/BACK2.BG;asset_back2_bg
+
 SH_PROGRAM:= 240pSuite
 SH_SRCS:= \
     background.c \
@@ -18,7 +22,6 @@ SH_SRCS:= \
     pattern_checkerboard.c \
     pattern_grid.c \
     pattern_smpte.c \
-	libsvin/svin_cd_access.c \
 	libsvin/svin_background.c \
 	libsvin/svin_debug.c \
 	libsvin/svin.c \
@@ -41,3 +44,4 @@ M68K_PROGRAM:=
 M68K_OBJECTS:=
 
 include $(YAUL_INSTALL_ROOT)/share/build.post.iso-cue.mk
+#include $(YAUL_INSTALL_ROOT)/share/build.post.ss.mk

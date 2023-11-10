@@ -129,7 +129,7 @@ void _svin_set_cycle_patterns_nbg()
 }
 
 static inline void __always_inline
-vdp1_cmdt_param_color_mode5_set(vdp1_cmdt_t *cmdt)
+vdp1_cmdt_color_mode5_set(vdp1_cmdt_t *cmdt)
 {
         cmdt->cmd_pmod &= 0xFFC7;
         cmdt->cmd_pmod |= 0x0028;

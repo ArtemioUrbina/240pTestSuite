@@ -5,12 +5,16 @@
 #include "font.h"
 #include "svin.h"
 
+extern uint8_t asset_back2_bg[];
+extern uint8_t asset_back2_bg_end[];
+
 void draw_bg_with_expansion(_svin_screen_mode_t screenmode)
 {
 	int stretch_amount_x = 0; //stretch amount in quads
 	int stretch_amount_y = 0;
 	//load the image with minimal resolution 320x224
-	_svin_background_set_no_filelist("BACK2.BG");
+	//_svin_background_set_no_filelist("BACK2.BG");
+	_svin_background_set_from_assets(asset_back2_bg,(int)(asset_back2_bg_end-asset_back2_bg));
 
 	//now mess with VDP2 tiles to stretch the image among the screen accordingly
 	//the image is broken into 4 tile blocks as a 2x2 table, 256+64(32+8) horisontally, 128+96(16+12) vertically

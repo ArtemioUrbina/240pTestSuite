@@ -59,7 +59,7 @@ bool DisplayImage(const char *filename, int nbg, int width, int height, int pior
 	if(!filename)
 		return false;
 
-	_svin_background_set_no_filelist(filename);
+	////_svin_background_set_no_filelist(filename);
 	/*
 	nbg_format.sbf_scroll_screen = nbg_data[nbg];
 	nbg_format.sbf_cc_count = SCRN_CCC_RGB_32768;

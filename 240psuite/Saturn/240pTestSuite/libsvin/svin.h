@@ -5,7 +5,6 @@
 
 #include <yaul.h>
 #include "svin_background.h"
-#include "svin_cd_access.h"
 #include "svin_debug.h"
 
 typedef enum {

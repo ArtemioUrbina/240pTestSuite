@@ -50,6 +50,9 @@
 #define MENU_PATTERNS 1
 #define MENU_VIDEO_OPTIONS 2
 
+extern uint8_t asset_bootlogo_bg[];
+extern uint8_t asset_bootlogo_bg_end[];
+
 void DrawCredits();
 
 void wait_for_key_press()
@@ -178,8 +181,9 @@ int main(void)
 
 	//show yaul logo in 480i (should switch to 240p later)
 	_svin_init(screenMode);
-    //_svin_textbox_disable(); //filling textbox tiles with invisible data
-    _svin_background_set_no_filelist("BOOTLOGO.BG");
+    //_svin_background_set_no_filelist("BOOTLOGO.BG");
+	_svin_background_set_from_assets(asset_bootlogo_bg,(int)(asset_bootlogo_bg_end-asset_bootlogo_bg));
+
 	_svin_delay(1000);
 	_svin_background_fade_to_black();
 
