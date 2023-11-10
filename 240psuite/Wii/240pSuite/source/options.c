@@ -344,10 +344,8 @@ void swapPCMEndianess(uint16_t *samples, size_t size)
 	size_t i = 0;
 	
 	for(i = 0; i < size; i++)
-		samples[i] = EndianCorrect16bits(samples[i]);
-		
+		samples[i] = EndianCorrect16bits(samples[i]);	
 }
-
 
 u8 ParseWAVFile(FILE *file, uint32_t *size)
 {

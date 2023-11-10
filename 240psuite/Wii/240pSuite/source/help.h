@@ -59,6 +59,7 @@
 #define HCFRHELP		hcfr_txt
 #define HCFR_MENUHELP	hcfr_menu_txt
 #define GBA_TRANSF_HELP	gba_transfer_txt
+#define MDFOURIER_HELP	mdfourier_txt
 
 /* paste from here */
 extern char *alt240p_txt[];
@@ -80,6 +81,7 @@ extern char *gridscroll_txt[];
 extern char *hcfr_txt[];
 extern char *hcfr_menu_txt[];
 extern char *ire100_txt[];
+extern char *mdfourier_txt[];
 extern char *memory_txt[];
 extern char *monoscope_txt[];
 extern char *options_txt[];

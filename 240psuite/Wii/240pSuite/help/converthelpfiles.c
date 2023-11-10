@@ -21,6 +21,7 @@ int main(int argc, char **argv)
     
     FILE    *nfile, *hfile;
 
+	printf("Convert Help files for Wii/GC 240p test Suite by Artemio Urbina\n");
     nfile = fopen("helpdata.c", "w");
     if(!nfile)
     {
@@ -40,7 +41,7 @@ int main(int argc, char **argv)
 
     if(argc < 2)
     {
-        fprintf(stderr, "Please specify a file for %s\n", argv[0]);
+        fprintf(stderr, "\tPlease run this with *.txt in this folder\n");
         return 0;
     }
 
@@ -172,5 +173,8 @@ int main(int argc, char **argv)
 
     fclose(nfile);
     fclose(hfile);
+	
+	printf("\tNow copy the contents of helpdata.c and helpdata.h\n");
+	printf("\tinto help.c and help.h under the source folder\n");
     return 0;
 }

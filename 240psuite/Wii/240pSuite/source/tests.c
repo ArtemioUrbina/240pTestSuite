@@ -1463,11 +1463,16 @@ void AudioSyncTest()
 
 void DrawMessage(ImagePtr back, char *title, char *msg)
 {
+	char *data1 = "Using 48khz Audio Equipment Test";
+	char *data2 = "Visit #Chttp://junkerhq.net/MDFourier#C for info";
+	
 	StartScene();
 	DrawImage(back);
 
 	DrawStringS((dW-fw*strlen(title))/2, 60, 0x00, 0xff, 0x00, title); 
+	DrawStringS((dW-fw*strlen(data1))/2, 80, 0xee, 0xee, 0xee, data1);
 	DrawStringS((dW-fw*strlen(msg))/2, 120, 0xff, 0xff, 0xff, msg);
+	DrawStringS((dW-fw*strlen(data2))/2, 180, 0x00, 0xff, 0xff, data2);
 	EndScene();
 }
 
@@ -1483,10 +1488,10 @@ void aesnd_callback(AESNDPB *pb, unsigned int state, void *cb_arg)
 
 void AudioEquipmentTest(ImagePtr back)
 {
-	int 			done = 0, loaded = 0, counter = 0;
+	int 			done = 0, loaded = 0, counter = 2;
 	u32			    pressed;
 	char			*msg = "Loading audio file...";
-	char			*title = "Audio Equipment Test";
+	char			*title = "MDFourier";
 	u8				*aet_samples = NULL;
 	ulong			aet_size = 0;
 	AESNDPB			*voice = NULL;
@@ -1499,6 +1504,9 @@ void AudioEquipmentTest(ImagePtr back)
 		return;
 	AESND_SetVoiceVolume(voice, 0xff, 0xff);
 
+	while(counter --)
+		DrawMessage(back, title, msg);
+	
 	while(!done && !EndProgram) 
 	{
 		DrawMessage(back, title, msg);
@@ -1537,12 +1545,15 @@ void AudioEquipmentTest(ImagePtr back)
         pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_BUTTON_B)
 			done = 1;
-			
+
+#ifdef WII_VERSION
+		// GC version has all textures removed
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
-			//HelpData = HELP;
+			HelpData = MDFOURIER_HELP;
 		}
+#endif
 
 		if (pressed & PAD_BUTTON_A)
 		{
@@ -1552,7 +1563,11 @@ void AudioEquipmentTest(ImagePtr back)
 				
 				msg = "Playing Test Signal";
 
+#ifdef GC_VERSION
 				AESND_PlayVoice(voice, VOICE_STEREO16, aet_samples, aet_size, DSP_DEFAULT_FREQ, 0, 0);
+#else
+				AESND_PlayVoice(voice, VOICE_STEREO16, aet_samples, aet_size, 48000, 0, 0);
+#endif
 				
 				while(playback != 1)
 					DrawMessage(back, title, msg);
@@ -1587,7 +1602,8 @@ void AudioEquipmentTest(ImagePtr back)
 				}
 				
 				if(cancel != 2)
-					msg = "Playback Finished";
+					msg = "Playback Finished, press A to replay";
+				
 				DrawMessage(back, title, msg);
 			}
 		}

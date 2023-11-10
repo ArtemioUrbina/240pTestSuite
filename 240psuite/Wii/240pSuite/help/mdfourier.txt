@@ -1,0 +1,12 @@
+                    MDFOURIER
+
+This test generates a series of audio signals that
+are to be recorded and analyzed for comparison
+with the #CMDFourier#C tool on a computer.
+
+We use the Audio Equipment test at 48khz.
+
+The GC DAC pitch is off by 1.61663 cents, since it
+runs at 48042.704626334519572953736654804 hz.
+
+Visit #Yhttp://junkerhq.net/MDFourier#Y for details.
