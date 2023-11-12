@@ -43,5 +43,5 @@ IP_1ST_READ_SIZE:= 0
 M68K_PROGRAM:=
 M68K_OBJECTS:=
 
-#include $(YAUL_INSTALL_ROOT)/share/build.post.iso-cue.mk
-include $(YAUL_INSTALL_ROOT)/share/build.post.ss.mk
+include $(YAUL_INSTALL_ROOT)/share/build.post.iso-cue.mk
+#include $(YAUL_INSTALL_ROOT)/share/build.post.ss.mk

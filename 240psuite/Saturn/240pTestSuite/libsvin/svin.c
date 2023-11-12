@@ -490,9 +490,6 @@ void _svin_init(_svin_screen_mode_t screen_mode)
 
     smpc_peripheral_init();
 
-    _svin_debug_init();
-
-
     //-------------- init end -------------------  
     //vdp1_cmdt_jump_assign(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX], _SVIN_VDP1_ORDER_LOCAL_COORDS_B_INDEX * 4);
     _svin_init_done = 1;
@@ -606,4 +603,99 @@ int _svin_get_keys_state()
     smpc_peripheral_process();
     smpc_peripheral_digital_port(1, &_digital);
     return _digital.pressed.raw;
+}
+
+_svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode)
+{
+    _svin_screen_mode_t new_mode = screenmode;
+    //moving forward screen mode
+    if (screenmode.x_res == _SVIN_X_RESOLUTION_320)
+    {
+        new_mode.x_res = _SVIN_X_RESOLUTION_352;
+    }
+    else 
+    {
+        new_mode.x_res = _SVIN_X_RESOLUTION_320;
+        if (screenmode.y_res == _SVIN_Y_RESOLUTION_224)
+        {
+            new_mode.y_res = _SVIN_Y_RESOLUTION_240;
+        }
+        else
+        {
+            new_mode.y_res = _SVIN_Y_RESOLUTION_224;
+            if (screenmode.x_res_doubled == false)
+            {
+                new_mode.x_res_doubled = true;
+            }
+            else
+            {
+                new_mode.x_res_doubled = false;
+                if (screenmode.scanmode == _SVIN_SCANMODE_240I)
+                {
+                    new_mode.scanmode = _SVIN_SCANMODE_240P;
+                }
+                else if (screenmode.scanmode == _SVIN_SCANMODE_240P)
+                {
+                    new_mode.scanmode = _SVIN_SCANMODE_480I;
+                }
+                else
+                {
+                    new_mode.scanmode = _SVIN_SCANMODE_240I;
+                }
+            }
+        }
+    }
+    return new_mode;
+}
+
+_svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
+{
+    _svin_screen_mode_t new_mode = screenmode;
+    //moving forward screen mode
+    if (screenmode.x_res == _SVIN_X_RESOLUTION_352)
+    {
+        new_mode.x_res = _SVIN_X_RESOLUTION_320;
+    }
+    else 
+    {
+        if (screenmode.y_res == _SVIN_Y_RESOLUTION_240)
+        {
+            new_mode.x_res = _SVIN_X_RESOLUTION_352;
+            new_mode.y_res = _SVIN_Y_RESOLUTION_224;
+        }
+        else
+        {
+            if (screenmode.x_res_doubled == true)
+            {
+                new_mode.x_res = _SVIN_X_RESOLUTION_352;
+                new_mode.y_res = _SVIN_Y_RESOLUTION_224;
+                new_mode.x_res_doubled = false;
+            }
+            else
+            {
+                if (screenmode.scanmode == _SVIN_SCANMODE_480I)
+                {
+                    new_mode.x_res = _SVIN_X_RESOLUTION_352;
+                    new_mode.y_res = _SVIN_Y_RESOLUTION_224;
+                    new_mode.x_res_doubled = false;
+                    new_mode.scanmode = _SVIN_SCANMODE_240P;
+                }
+                else if (screenmode.scanmode == _SVIN_SCANMODE_240P)
+                {
+                    new_mode.x_res = _SVIN_X_RESOLUTION_352;
+                    new_mode.y_res = _SVIN_Y_RESOLUTION_224;
+                    new_mode.x_res_doubled = false;
+                    new_mode.scanmode = _SVIN_SCANMODE_240I;
+                }
+                else
+                {
+                    new_mode.x_res = _SVIN_X_RESOLUTION_352;
+                    new_mode.y_res = _SVIN_Y_RESOLUTION_224;
+                    new_mode.x_res_doubled = false;
+                    new_mode.scanmode = _SVIN_SCANMODE_480I;
+                }
+            }
+        }
+    }
+    return new_mode;
 }

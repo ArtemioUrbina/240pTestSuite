@@ -431,8 +431,7 @@ int main(void)
 								break;							
 							case 1:
 								//checkerboard
-								draw_checkerboard(screenMode);
-								wait_for_next_key();
+								pattern_checkerboard(screenMode);
 								redrawMenu = true;
 								break;
 							case 2:
@@ -485,8 +484,7 @@ int main(void)
 								break;
 							default:
 								//checkerboard
-								draw_checkerboard(screenMode);
-								wait_for_next_key();
+								pattern_checkerboard(screenMode);
 								redrawMenu = true;
 								break;
 						}
@@ -646,4 +644,18 @@ void DrawCredits()
 	}
 
 	return;
+}
+
+
+void print_screen_mode(_svin_screen_mode_t screenmode)
+{
+	char buf[128];
+	strcpy(buf, "");
+	strcat(buf, scanmode_text_value(screenmode));
+	strcat(buf, " ");
+	strcat(buf, x_res_text_value(screenmode));
+	strcat(buf, "x");
+	strcat(buf, y_res_text_value(screenmode));
+	strcat(buf, "");
+	DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_YELLOW);
 }

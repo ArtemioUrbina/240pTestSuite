@@ -37,29 +37,36 @@ void LoadFont()
 	//uint8_t *pFont;
 	rgb888_t Colors[4];	
 
-	Colors[0] = RGB888(1, 255, 0, 255); //Back
+	Colors[0] = RGB888(1, 0, 0, 0); //Back
 	Colors[1] = RGB888(1, 255, 255, 255); //Font
 	Colors[2] = RGB888(1, 0, 0, 0); //Shadow
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_WHITE*4, FONT_WHITE*4+3);
 
+	Colors[0] = RGB888(1, 0, 255, 255); //Back
 	Colors[1] = RGB888(1, 255, 0, 0); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_RED*4, FONT_RED*4+3);
 
+	Colors[0] = RGB888(1, 255, 0, 255); //Back
 	Colors[1] = RGB888(1, 0, 255, 0); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_GREEN*4, FONT_GREEN*4+3);
 
+	Colors[0] = RGB888(1, 255, 255, 0); //Back
 	Colors[1] = RGB888(1, 0, 0, 255); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_BLUE*4, FONT_BLUE*4+3);
 
+	Colors[0] = RGB888(1, 255, 0, 0); //Back
 	Colors[1] = RGB888(1, 0, 255, 255); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_CYAN*4, FONT_CYAN*4+3);
 
+	Colors[0] = RGB888(1, 0, 255, 0); //Back
 	Colors[1] = RGB888(1, 255, 0, 255); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_MAGENTA*4, FONT_MAGENTA*4+3);
 
+	Colors[0] = RGB888(1, 0, 0, 255); //Back
 	Colors[1] = RGB888(1, 255, 255, 0); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_YELLOW*4, FONT_YELLOW*4+3);
 
+	Colors[0] = RGB888(1, 255, 255, 255); //Back
 	Colors[1] = RGB888(1, 0, 0, 0); //Font
 	_svin_set_palette_part(FONT_PALETTE, Colors, FONT_BLACK*4, FONT_BLACK*4+3);
 
@@ -119,7 +126,7 @@ void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool
 	}
 }
 
-/* Print a string at x, y using sprites by VDP1*/
+/* Print a string at x, y using single VDP1 sprite*/
 void DrawString(char *str, unsigned int x, unsigned int y, unsigned int palette)
 {
 	int orig_x = x;
@@ -170,6 +177,32 @@ void DrawString(char *str, unsigned int x, unsigned int y, unsigned int palette)
 		DrawChar(x, y, str[i], palette, true);
 		x += _fw;
 	}
+}
+
+void DrawStringWithBackground(char *str, unsigned int x, unsigned int y, unsigned int palette, unsigned int bg_palette)
+{
+	int orig_x = x;
+	int orig_pal = palette;
+	unsigned int i;
+	int highlight = 0;
+	int _x,_y;
+	uint8_t *p8_vram;
+	uint8_t *p8_char;
+	uint8_t tmp;
+	vdp1_vram_partitions_t vdp1_vram_partitions;
+    vdp1_vram_partitions_get(&vdp1_vram_partitions);
+	
+	for (_y = 0; _y < _fh; _y++)
+	{
+		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + x + (_y+y-1)*FONT_QUAD_WIDTH);
+		for (_x = 0; _x < _fw*(strlen(str)+1)/2; _x++)
+		{
+			p8_vram[_x*2+1] = bg_palette*4;
+			p8_vram[_x*2] = bg_palette*4;
+		}
+	}
+
+	DrawString(str,x,y,palette);
 }
 
 unsigned char SuiteFont[] = {
