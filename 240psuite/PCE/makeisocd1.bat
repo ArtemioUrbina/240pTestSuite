@@ -2,7 +2,7 @@
 @set HUC_HOME=C:\Devel\PCE\huc
 
 @path=%path%;%HUC_HOME%\bin
-@set PCE_INCLUDE=%HUC_HOME%/include/pce
+@set PCE_INCLUDE=%HUC_HOME%/include/huc
 
 @REM Compile, assemble, and link
 
@@ -31,13 +31,13 @@ huc -DCDROM -DSYSCARD1 -DEXT_TOOLS -s -msmall -t -O2 -cd -overlay patterns_ext.c
 huc -DCDROM -DSYSCARD1 -DEXT_TOOLS -s -msmall -t -O2 -cd -overlay tests_ext.c video.c font.c tools.c help.c float.c  || goto :error
 huc -DCDROM -DSYSCARD1 -s -msmall -t -O2 -cd -overlay tests_sound.c video.c font.c tools.c help.c || goto :error
 huc -DCDROM -DHELP_OVL -s -msmall -t -O2 -cd -overlay help.c video.c font.c tools.c || goto :error
-pceas -s -cd -overlay loader.s  || goto :error
-pceas -s -cd -overlay 240pSuite.s  || goto :error
-pceas -s -cd -overlay patterns.s  || goto :error
-pceas -s -cd -overlay patterns_ext.s || goto :error
-pceas -s -cd -overlay tests_ext.s || goto :error
-pceas -s -cd -overlay tests_sound.s || goto :error
-pceas -s -cd -overlay help.s  || goto :error
+pceas -O -s -cd -overlay loader.s  || goto :error
+pceas -O -s -cd -overlay 240pSuite.s  || goto :error
+pceas -O -s -cd -overlay patterns.s  || goto :error
+pceas -O -s -cd -overlay patterns_ext.s || goto :error
+pceas -O -s -cd -overlay tests_ext.s || goto :error
+pceas -O -s -cd -overlay tests_sound.s || goto :error
+pceas -O -s -cd -overlay help.s  || goto :error
 isolink 240pSuite.iso loader.ovl 240pSuite.ovl patterns.ovl patterns_ext.ovl tests_ext.ovl tests_sound.ovl gdata.bin help.ovl adpcm.vox adpcmsweep.vox adpcm8khz.vox || goto :error
 
 :; exit 0

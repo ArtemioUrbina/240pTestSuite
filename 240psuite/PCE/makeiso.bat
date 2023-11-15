@@ -2,7 +2,7 @@
 @set HUC_HOME=C:\Devel\PCE\huc
 
 @path=%path%;%HUC_HOME%\bin
-@set PCE_INCLUDE=%HUC_HOME%/include/pce
+@set PCE_INCLUDE=%HUC_HOME%/include/huc
 
 CALL makeclean.bat
 
@@ -11,9 +11,9 @@ CALL makeclean.bat
 huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay loader.c font.c video.c  || goto :error
 huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay tests_reflex.c font.c video.c tools.c help.c || goto :error
 huc -DSCDROM -DCDROM -s -t -O2 -msmall -scd -overlay 240pSuite.c font.c video.c tests.c patterns.c tools.c help.c float.c || goto :error
-pceas -s -scd -overlay loader.s  || goto :error
-pceas -s -scd -overlay tests_reflex.s || goto :error
-pceas -s -scd -overlay 240pSuite.s  || goto :error
+pceas -O -s -scd -overlay loader.s  || goto :error
+pceas -O -s -scd -overlay tests_reflex.s || goto :error
+pceas -O -s -scd -overlay 240pSuite.s  || goto :error
 isolink 240pSuite.iso loader.ovl 240pSuite.ovl tests_reflex.ovl adpcm.vox adpcmsweep.vox adpcm8khz.vox || goto :error
 
 :; exit 0
