@@ -18,6 +18,64 @@
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+ 
+void display_backlit_00()
+{
+#asm
+	p_string	backlit_00_00,26,4
+	__ldwi		14
+	call		_set_font_pal
+	p_string	backlit_00_01,6,6
+	p_string	backlit_00_02,6,7
+	p_string	backlit_00_03,6,8
+	p_string	backlit_00_04,6,9
+	p_string	backlit_00_05,6,10
+	p_string	backlit_00_06,6,12
+	p_string	backlit_00_07,6,13
+	p_string	backlit_00_08,6,14
+	p_string	backlit_00_09,6,15
+	p_string	backlit_00_10,6,16
+	p_string	backlit_00_11,6,18
+	p_string	backlit_00_12,6,19
+	p_string	backlit_00_13,6,20
+	p_string	backlit_00_14,6,21
+	p_string	backlit_00_15,6,22
+	rts
+
+backlit_00_00:	.db	"BACKLIT TEST"
+			.db	0
+backlit_00_01:	.db	"This test allows you to check how the display's"
+			.db	0
+backlit_00_02:	.db	"backlit works when only a small array of pixels"
+			.db	0
+backlit_00_03:	.db	"is shown. This can be very revealing, and can"
+			.db	0
+backlit_00_04:	.db	"be used to detect the zones in LED backlit"
+			.db	0
+backlit_00_05:	.db	"displays, or to evaluate global and local dimming."
+			.db	0
+backlit_00_06:	.db	"The user can move around the white pixel arrays"
+			.db	0
+backlit_00_07:	.db	"with the d-pad or joystiq, and change the size"
+			.db	0
+backlit_00_08:	.db	"of the pixel array with button I. The SELECT"
+			.db	0
+backlit_00_09:	.db	"button allows the user to hide the pixel array"
+			.db	0
+backlit_00_10:	.db	"in order to alternate a fully black screen."
+			.db	0
+backlit_00_11:	.db	"It might be necessary to have a fully-off panel"
+			.db	0
+backlit_00_12:	.db	"(if possible) when displaying the black"
+			.db	0
+backlit_00_13:	.db	"background,  in order to evaluate full-backlit"
+			.db	0
+backlit_00_14:	.db	"displays by adjusting brightness accordingly"
+			.db	0
+backlit_00_15:	.db	"for this test."
+			.db	0
+#endasm
+}
 
 void display_audiosync_00()
 {

@@ -176,7 +176,7 @@ void main()
 					DrawGeneralHelp(right);
 					break;
 				case BACKLIT_HELP:
-					DrawBacklitHelp();
+					display_backlit_00();
 					break;
 				case BLEED_HELP:
 					display_colorbleed_00();
@@ -345,33 +345,6 @@ void DrawGeneralHelp(char right)
 			break;
 	}
 }
-
-void DrawBacklitHelp()
-{
-	row = 4;
-	
-	put_string("BACKLIT TEST", 26, row++);
-	set_font_pal(14);
-	row++;
-	put_string("This test allows you to check how the display's", 6, row++);
-	put_string("backlit works when only a small array of pixels", 6, row++);
-	put_string("is shown. This can be very revealing, and can", 6, row++);
-	put_string("be used to detect the zones in LED backlit", 6, row++);
-	put_string("displays, or to evaluate global and local dimming.", 6, row++);
-	row++;
-	put_string("The user can move around the white pixel arrays", 6, row++);
-	put_string("with the d-pad or joystiq, and change the size", 6, row++);
-	put_string("of the pixel array with button I. The SELECT", 6, row++);
-	put_string("button allows the user to hide the pixel array", 6, row++);
-	put_string("in order to alternate a fully black screen.", 6, row++);
-	row++;
-	put_string("It might be necessary to have a fully-off panel", 6, row++);
-	put_string("(if possible) when displaying the black", 6, row++);
-	put_string("background,  in order to evaluate full-backlit", 6, row++);
-	put_string("displays by adjusting brightness accordingly", 6, row++);
-	put_string("for this test.", 6, row++);
-}
-
 
 void DrawVertStripesHelp()
 {	
