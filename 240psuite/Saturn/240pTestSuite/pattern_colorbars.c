@@ -4,6 +4,7 @@
 #include <yaul.h>
 #include "font.h"
 #include "svin.h"
+#include "ire.h"
 
 void draw_colorbars(_svin_screen_mode_t screenmode)
 {
@@ -12,24 +13,26 @@ void draw_colorbars(_svin_screen_mode_t screenmode)
 	
 	_svin_set_cycle_patterns_cpu();
 	//add colors to palette
-	rgb888_t Color = {0,0,0,0};
+	uint8_t IRE_top = Get_IRE_Level(100.0);
+	uint8_t IRE_bot = Get_IRE_Level(7.5);
+	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
 	for (int i=0;i<32;i++) 
 	{
-		Color.r = i*8;
-		Color.g = 0;
-		Color.b = 0;	
+		Color.r = IRE_bot + (i*(IRE_top-IRE_bot)+16)/32;
+		Color.g = IRE_bot;
+		Color.b = IRE_bot;	
 		_svin_set_palette_part(2,&Color,1+i,1+i); //palette 2 colors 1..32 = red gradient
-		Color.r = 0;
-		Color.g = i*8;
-		Color.b = 0;	
+		Color.r = IRE_bot;
+		Color.g = IRE_bot + (i*(IRE_top-IRE_bot)+16)/32;
+		Color.b = IRE_bot;	
 		_svin_set_palette_part(2,&Color,33+i,33+i); //palette 2 colors 33..64 = green gradient
-		Color.r = 0;
-		Color.g = 0;
-		Color.b = i*8;	
+		Color.r = IRE_bot;
+		Color.g = IRE_bot;
+		Color.b = IRE_bot + (i*(IRE_top-IRE_bot)+16)/32;	
 		_svin_set_palette_part(2,&Color,65+i,65+i); //palette 2 colors 65..96 = blue gradient
-		Color.r = i*8;
-		Color.g = i*8;
-		Color.b = i*8;	
+		Color.r = IRE_bot + (i*(IRE_top-IRE_bot)+16)/32;
+		Color.g = IRE_bot + (i*(IRE_top-IRE_bot)+16)/32;
+		Color.b = IRE_bot + (i*(IRE_top-IRE_bot)+16)/32;	
 		_svin_set_palette_part(2,&Color,97+i,97+i); //palette 2 colors 97..128 = white gradient
 	}
 

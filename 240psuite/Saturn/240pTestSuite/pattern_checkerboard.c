@@ -5,6 +5,7 @@
 #include "font.h"
 #include "svin.h"
 #include "control.h"
+#include "ire.h"
 
 void draw_checkerboard(_svin_screen_mode_t screenmode)
 {
@@ -13,11 +14,13 @@ void draw_checkerboard(_svin_screen_mode_t screenmode)
 	
 	_svin_set_cycle_patterns_cpu();
 	//add colors to palette
-	rgb888_t Color = {0,0,0,0};
+	uint8_t IRE_top = Get_IRE_Level(100.0);
+	uint8_t IRE_bot = Get_IRE_Level(7.5);
+	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
 	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = black
-	Color.r = 255;
-	Color.g = 255;
-	Color.b = 255;	
+	Color.r = IRE_top;
+	Color.g = IRE_top;
+	Color.b = IRE_top;	
 	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = white
 	//create checkerboard tile at index 0
 	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
@@ -31,9 +34,7 @@ void draw_checkerboard(_svin_screen_mode_t screenmode)
 	//fill everything with this tile
     _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
     for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
-    //for (unsigned int i = 0; i < 64; i++)
     {
-        //_pointer32[i] = 0x00000000 + _SVIN_NBG0_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
         _pointer32[i] = 0x00200000; //palette 2, transparency on
     }
 	_svin_set_cycle_patterns_nbg();
@@ -45,11 +46,8 @@ void pattern_checkerboard(_svin_screen_mode_t screenmode)
 	draw_checkerboard(curr_screenmode);
 	bool key_pressed = false;
 
-	//wait_for_next_key();
 	wait_for_key_unpress();
-	//wait_for_key_press();
-	//wait_for_key_unpress();
-
+	
 	int mode_display_counter = 0;
 
 	while (1)

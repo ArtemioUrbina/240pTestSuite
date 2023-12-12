@@ -4,6 +4,7 @@
 #include <yaul.h>
 #include "font.h"
 #include "svin.h"
+#include "ire.h"
 
 void draw_colorbleed(_svin_screen_mode_t screenmode, bool checkered)
 {
@@ -12,18 +13,20 @@ void draw_colorbleed(_svin_screen_mode_t screenmode, bool checkered)
 	
 	_svin_set_cycle_patterns_cpu();
 	//add colors to palette
-	rgb888_t Color = {0,0,0,0};
-	Color.r = 255;
+	uint8_t IRE_top = Get_IRE_Level(100.0);
+	uint8_t IRE_bot = Get_IRE_Level(7.5);
+	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
+	Color.r = IRE_top;
 	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = red
-	Color.r = 0;
-	Color.g = 255;
+	Color.r = IRE_bot;
+	Color.g = IRE_top;
 	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = green
-	Color.g = 0;
-	Color.b = 255;
+	Color.g = IRE_bot;
+	Color.b = IRE_top;
 	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = blue
-	Color.r = 255;
-	Color.g = 255;
-	Color.b = 255;	
+	Color.r = IRE_top;
+	Color.g = IRE_top;
+	Color.b = IRE_top;	
 	_svin_set_palette_part(2,&Color,4,4); //palette 2 color 4 = white
 	//create single-color tiles for each color, 4 tiles in total
 	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;

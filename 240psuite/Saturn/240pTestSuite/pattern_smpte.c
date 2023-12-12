@@ -4,6 +4,7 @@
 #include <yaul.h>
 #include "font.h"
 #include "svin.h"
+#include "ire.h"
 
 void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
 {
@@ -12,7 +13,7 @@ void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
 	
 	_svin_set_cycle_patterns_cpu();
 	//add colors to palette
-	uint8_t IRE_top = (bIRE100) ? Get_IRE_Level(100.0) : Get_IRE_Level(76.875);
+	uint8_t IRE_top = (bIRE100) ? Get_IRE_Level(100.0) : Get_IRE_Level(75);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
 	rgb888_t Color = {0,0,0,0};
 	Color.r = IRE_top;
