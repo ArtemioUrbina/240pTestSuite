@@ -257,10 +257,11 @@ int main(void)
 					DrawString("Color Bars with Gray Scale",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Grayramp",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("White screen",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("IRE100",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					/*DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
-					menu_size = 8;
+					menu_size = 9;
 					break;
 				case MENU_VIDEO_OPTIONS:
 					sprintf(string_buf,scanmode_text_value(screenMode));
@@ -467,6 +468,11 @@ int main(void)
 							case 7:
 								//whitescreen
 								pattern_whitescreen(screenMode);
+								redrawMenu = true;
+								break;
+							case 8:
+								//whitescreen
+								pattern_ire100(screenMode);
 								redrawMenu = true;
 								break;
 							default:

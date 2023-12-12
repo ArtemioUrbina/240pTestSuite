@@ -22,6 +22,7 @@ SH_SRCS:= \
     video.c \
     control.c \
     ire.c \
+    pattern_100ire.c \
     pattern_colorbars.c \
     pattern_colorbars_grayscale.c \
     pattern_colorbleed.c \
