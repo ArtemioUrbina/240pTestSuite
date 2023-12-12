@@ -29,6 +29,7 @@ SH_SRCS:= \
     pattern_grayramp.c \
     pattern_grid.c \
     pattern_smpte.c \
+    pattern_whitescreen.c \
 	libsvin/svin_background.c \
 	libsvin/svin_debug.c \
 	libsvin/svin.c \
