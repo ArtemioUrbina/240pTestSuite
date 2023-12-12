@@ -437,22 +437,7 @@ int main(void)
 								break;
 							case 2:
 								//colorbleed
-								b = false;
-								bExit = false;
-								while (false == bExit) {
-									draw_colorbleed(screenMode,b);
-									wait_for_key_unpress();
-									wait_for_key_press();
-									if (controller.pressed.button.a)
-									{
-										b = !b;
-									}
-									else
-									{
-										bExit = true;
-									}
-								}
-								wait_for_key_unpress();
+								pattern_colorbleed(screenMode);
 								redrawMenu = true;
 								break;
 							case 3:
