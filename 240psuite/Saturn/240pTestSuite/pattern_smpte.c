@@ -4,6 +4,7 @@
 #include <yaul.h>
 #include "font.h"
 #include "svin.h"
+#include "control.h"
 #include "ire.h"
 
 void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
@@ -204,4 +205,64 @@ void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
 	}
 
 	_svin_set_cycle_patterns_nbg();
+}
+
+void pattern_smpte(_svin_screen_mode_t screenmode)
+{
+	_svin_screen_mode_t curr_screenmode = screenmode;
+	bool bIRE100 = false;
+	draw_smpte(curr_screenmode,bIRE100);
+	bool key_pressed = false;
+
+	wait_for_key_unpress();
+	
+	int mode_display_counter = 0;
+
+	while (1)
+	{
+		smpc_peripheral_process();
+		smpc_peripheral_digital_port(1, &controller);
+		if ( (controller.pressed.button.l) )
+		{
+			curr_screenmode = prev_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode);
+			draw_smpte(curr_screenmode,bIRE100);
+			print_screen_mode(curr_screenmode);
+			wait_for_key_unpress();
+			mode_display_counter=120;
+		}
+		else if ( (controller.pressed.button.r) )
+		{
+			curr_screenmode = next_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode);
+			draw_smpte(curr_screenmode,bIRE100);
+			print_screen_mode(curr_screenmode);
+			wait_for_key_unpress();
+			mode_display_counter=120;
+		}
+		else if ( (controller.pressed.button.a) || (controller.pressed.button.c) )
+		{
+			//change the checkered mode
+			bIRE100 = bIRE100 ? false : true;
+			draw_colorbars_grayscale(curr_screenmode,bIRE100);
+			wait_for_key_unpress();
+		}
+		else if (controller.pressed.button.b)
+		{
+			//quit the pattern
+			wait_for_key_unpress();
+			update_screen_mode(screenmode);
+			return;
+		}
+		vdp2_tvmd_vblank_in_wait();
+		vdp2_tvmd_vblank_out_wait();
+		if (mode_display_counter > 0)
+		{
+			mode_display_counter--;
+			if (0 == mode_display_counter)
+			{
+				ClearTextLayer();
+			}
+		}
+	}
 }

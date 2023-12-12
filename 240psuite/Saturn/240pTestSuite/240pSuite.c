@@ -441,52 +441,19 @@ int main(void)
 								redrawMenu = true;
 								break;
 							case 3:
-								//checkerboard
-								draw_grid(screenMode);
-								wait_for_next_key();
+								//grid
+								pattern_grid(screenMode);
 								redrawMenu = true;
 								break;
 							case 4:
 								//SMPTE
-								b = false;
-								bExit = false;
-								while (false == bExit) {
-									draw_smpte(screenMode,b);
-									wait_for_key_unpress();
-									wait_for_key_press();
-									if (controller.pressed.button.a)
-									{
-										b = !b;
-									}
-									else
-									{
-										bExit = true;
-									}
-								}
-								wait_for_key_unpress();
-								update_screen_mode(screenMode);
+								pattern_smpte(screenMode);
 								redrawBG = true;
 								redrawMenu = true;
 								break;
 							case 5:
 								//Colorbars with gray
-								b = false;
-								bExit = false;
-								while (false == bExit) {
-									draw_colorbars_grayscale(screenMode,b);
-									wait_for_key_unpress();
-									wait_for_key_press();
-									if (controller.pressed.button.a)
-									{
-										b = !b;
-									}
-									else
-									{
-										bExit = true;
-									}
-								}
-								wait_for_key_unpress();
-								update_screen_mode(screenMode);
+								pattern_colorbars_grayscale(screenMode);
 								redrawBG = true;
 								redrawMenu = true;
 								break;
