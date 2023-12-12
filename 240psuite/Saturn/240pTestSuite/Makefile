@@ -26,6 +26,7 @@ SH_SRCS:= \
     pattern_colorbars_grayscale.c \
     pattern_colorbleed.c \
     pattern_checkerboard.c \
+    pattern_grayramp.c \
     pattern_grid.c \
     pattern_smpte.c \
 	libsvin/svin_background.c \
