@@ -42,6 +42,7 @@
 #include "pattern_colorbars.h"
 #include "pattern_colorbleed.h"
 #include "pattern_checkerboard.h"
+#include "pattern_colorbars_grayscale.h"
 
 #define VERSION_NUMBER "Ver. 0.0.1"
 #define VERSION_DATE __DATE__
@@ -253,10 +254,11 @@ int main(void)
 					DrawString("Colorbleed",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Grid",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("SMPTE",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Color Bars with Gray Scale",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					/*DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
-					menu_size = 5;
+					menu_size = 6;
 					break;
 				case MENU_VIDEO_OPTIONS:
 					sprintf(string_buf,scanmode_text_value(screenMode));
@@ -425,8 +427,7 @@ int main(void)
 						{
 							case 0:
 								//colorbars
-								draw_colorbars(screenMode);
-								wait_for_next_key();
+								pattern_colorbars(screenMode);
 								redrawMenu = true;
 								break;							
 							case 1:
@@ -466,6 +467,28 @@ int main(void)
 								bExit = false;
 								while (false == bExit) {
 									draw_smpte(screenMode,b);
+									wait_for_key_unpress();
+									wait_for_key_press();
+									if (controller.pressed.button.a)
+									{
+										b = !b;
+									}
+									else
+									{
+										bExit = true;
+									}
+								}
+								wait_for_key_unpress();
+								update_screen_mode(screenMode);
+								redrawBG = true;
+								redrawMenu = true;
+								break;
+							case 5:
+								//Colorbars with gray
+								b = false;
+								bExit = false;
+								while (false == bExit) {
+									draw_colorbars_grayscale(screenMode,b);
 									wait_for_key_unpress();
 									wait_for_key_press();
 									if (controller.pressed.button.a)
