@@ -174,27 +174,18 @@ int main(void)
 
 	_svin_screen_mode_t screenMode =
 	{
-		.scanmode = _SVIN_SCANMODE_480I,
-		.x_res = _SVIN_X_RESOLUTION_352,
-		.y_res = _SVIN_Y_RESOLUTION_224,
-		.x_res_doubled = true,
+		.scanmode = _SVIN_SCANMODE_240P,
+		.x_res = _SVIN_X_RESOLUTION_320,
+		.y_res = _SVIN_Y_RESOLUTION_240,
+		.x_res_doubled = false,
 	};
 
-	//show yaul logo in 480i (should switch to 240p later)
+	//show yaul logo in 240p
 	_svin_init(screenMode);
-    //_svin_background_set_no_filelist("BOOTLOGO.BG");
 	_svin_background_set_from_assets(asset_bootlogo_bg,(int)(asset_bootlogo_bg_end-asset_bootlogo_bg));
 
 	_svin_delay(1000);
 	_svin_background_fade_to_black();
-
-	//reset to 240p
-	_svin_deinit();
-	screenMode.scanmode = _SVIN_SCANMODE_240P;
-	screenMode.x_res = _SVIN_X_RESOLUTION_320;
-    screenMode.y_res = _SVIN_Y_RESOLUTION_240;
-	screenMode.x_res_doubled = false;
-	_svin_init(screenMode);
 
 	_svin_clear_palette(0);
 	LoadFont();
