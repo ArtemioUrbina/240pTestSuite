@@ -244,7 +244,7 @@ void pattern_smpte(_svin_screen_mode_t screenmode)
 		{
 			//change the checkered mode
 			bIRE100 = bIRE100 ? false : true;
-			draw_colorbars_grayscale(curr_screenmode,bIRE100);
+			draw_smpte(curr_screenmode,bIRE100);
 			wait_for_key_unpress();
 		}
 		else if (controller.pressed.button.b)
