@@ -249,10 +249,11 @@ int main(void)
 					DrawString("Grayramp",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("White screen",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("IRE100",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Monoscope",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					/*DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
-					menu_size = 9;
+					menu_size = 10;
 					break;
 				case MENU_VIDEO_OPTIONS:
 					sprintf(string_buf,scanmode_text_value(screenMode));
@@ -422,56 +423,52 @@ int main(void)
 							case 0:
 								//colorbars
 								pattern_colorbars(screenMode);
-								redrawMenu = true;
 								break;							
 							case 1:
 								//checkerboard
 								pattern_checkerboard(screenMode);
-								redrawMenu = true;
 								break;
 							case 2:
 								//colorbleed
 								pattern_colorbleed(screenMode);
-								redrawMenu = true;
 								break;
 							case 3:
 								//grid
 								pattern_grid(screenMode);
-								redrawMenu = true;
 								break;
 							case 4:
 								//SMPTE
 								pattern_smpte(screenMode);
 								redrawBG = true;
-								redrawMenu = true;
 								break;
 							case 5:
 								//Colorbars with gray
 								pattern_colorbars_grayscale(screenMode);
 								redrawBG = true;
-								redrawMenu = true;
 								break;
 							case 6:
 								//grayramp
 								pattern_grayramp(screenMode);
-								redrawMenu = true;
 								break;
 							case 7:
 								//whitescreen
 								pattern_whitescreen(screenMode);
-								redrawMenu = true;
 								break;
 							case 8:
 								//whitescreen
 								pattern_ire100(screenMode);
-								redrawMenu = true;
+								break;
+							case 9:
+								//monoscope
+								pattern_monoscope(screenMode);
+								redrawBG = true;
 								break;
 							default:
 								//checkerboard
 								pattern_checkerboard(screenMode);
-								redrawMenu = true;
 								break;
 						}
+						redrawMenu = true;
 					}
 					else if (MENU_VIDEO_OPTIONS == menu_id)
 					{

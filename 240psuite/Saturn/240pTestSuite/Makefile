@@ -30,6 +30,7 @@ SH_SRCS:= \
     pattern_checkerboard.c \
     pattern_grayramp.c \
     pattern_grid.c \
+    pattern_monoscope.c \
     pattern_smpte.c \
     pattern_whitescreen.c \
 	libsvin/svin_background.c \
