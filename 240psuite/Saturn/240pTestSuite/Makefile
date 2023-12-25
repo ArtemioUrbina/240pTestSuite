@@ -11,7 +11,8 @@ include $(YAUL_INSTALL_ROOT)/share/build.bcl.mk
 # Each asset follows the format: <path>;<symbol>. Duplicates are removed
 BUILTIN_ASSETS+= \
 	assets/BOOTLOGO.BG;asset_bootlogo_bg \
-	assets/BACK2.BG;asset_back2_bg
+	assets/BACK2.BG;asset_back2_bg \
+	assets/MASCOT.BG;asset_mascot_bg
 
 SH_PROGRAM:= 240pSuite
 SH_SRCS:= \
