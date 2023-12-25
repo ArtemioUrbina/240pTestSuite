@@ -7,6 +7,13 @@
 #include "control.h"
 #include "ire.h"
 
+void print_ire_level(int ire_level)
+{
+	char buf[128];
+	sprintf(buf, "%i IRE", ire_level);
+	DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_YELLOW);
+}
+
 void draw_100ire(_svin_screen_mode_t screenmode, int ire_level)
 {
 	//removing text
@@ -59,11 +66,12 @@ void pattern_ire100(_svin_screen_mode_t screenmode)
 	_svin_screen_mode_t curr_screenmode = screenmode;
 	int ire_level = 100;
 	draw_100ire(curr_screenmode,ire_level);
+	print_ire_level(ire_level);
 	bool key_pressed = false;
 
 	wait_for_key_unpress();
 	
-	int mode_display_counter = 0;
+	int mode_display_counter = 120;
 
 	while (1)
 	{
@@ -93,7 +101,9 @@ void pattern_ire100(_svin_screen_mode_t screenmode)
 			ire_level-=10;
 			if (ire_level < 0) ire_level = 100;
 			draw_100ire(curr_screenmode,ire_level);
+			print_ire_level(ire_level);
 			wait_for_key_unpress();
+			mode_display_counter=120;
 		}
 		else if (controller.pressed.button.b)
 		{
