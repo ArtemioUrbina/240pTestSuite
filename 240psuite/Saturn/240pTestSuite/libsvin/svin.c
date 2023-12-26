@@ -668,7 +668,7 @@ _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
             if (screenmode.x_res_doubled == true)
             {
                 new_mode.x_res = _SVIN_X_RESOLUTION_352;
-                new_mode.y_res = _SVIN_Y_RESOLUTION_224;
+                new_mode.y_res = _SVIN_Y_RESOLUTION_240;
                 new_mode.x_res_doubled = false;
             }
             else
@@ -676,26 +676,37 @@ _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
                 if (screenmode.scanmode == _SVIN_SCANMODE_480I)
                 {
                     new_mode.x_res = _SVIN_X_RESOLUTION_352;
-                    new_mode.y_res = _SVIN_Y_RESOLUTION_224;
-                    new_mode.x_res_doubled = false;
+                    new_mode.y_res = _SVIN_Y_RESOLUTION_240;
+                    new_mode.x_res_doubled = true;
                     new_mode.scanmode = _SVIN_SCANMODE_240P;
                 }
                 else if (screenmode.scanmode == _SVIN_SCANMODE_240P)
                 {
                     new_mode.x_res = _SVIN_X_RESOLUTION_352;
-                    new_mode.y_res = _SVIN_Y_RESOLUTION_224;
-                    new_mode.x_res_doubled = false;
+                    new_mode.y_res = _SVIN_Y_RESOLUTION_240;
+                    new_mode.x_res_doubled = true;
                     new_mode.scanmode = _SVIN_SCANMODE_240I;
                 }
                 else
                 {
                     new_mode.x_res = _SVIN_X_RESOLUTION_352;
-                    new_mode.y_res = _SVIN_Y_RESOLUTION_224;
-                    new_mode.x_res_doubled = false;
+                    new_mode.y_res = _SVIN_Y_RESOLUTION_240;
+                    new_mode.x_res_doubled = true;
                     new_mode.scanmode = _SVIN_SCANMODE_480I;
                 }
             }
         }
     }
     return new_mode;
+}
+
+int get_screenmode_number(_svin_screen_mode_t screenmode)
+{
+	int number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 0 : 1;
+	number = (screenmode.y_res == _SVIN_Y_RESOLUTION_224) ? number :
+					(screenmode.y_res == _SVIN_Y_RESOLUTION_240) ? number+2 : number+4;
+	number = (screenmode.x_res_doubled) ? number+6 : number;
+	number = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? number+24 :
+                    (_SVIN_SCANMODE_240P == screenmode.scanmode) ? number+12 : number;
+	return number;
 }

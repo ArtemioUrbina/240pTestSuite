@@ -153,5 +153,6 @@ void _svin_clear_palette_part(int number, int start, int end);
 
 _svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode);
 _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode);
+int get_screenmode_number(_svin_screen_mode_t screenmode);
 
 #endif

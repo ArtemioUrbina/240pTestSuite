@@ -631,7 +631,8 @@ void DrawCredits()
 void print_screen_mode(_svin_screen_mode_t screenmode)
 {
 	char buf[128];
-	strcpy(buf, "");
+	sprintf(buf,"%i : ",get_screenmode_number(screenmode));
+	//strcpy(buf, "");
 	strcat(buf, scanmode_text_value(screenmode));
 	strcat(buf, " ");
 	strcat(buf, x_res_text_value(screenmode));
