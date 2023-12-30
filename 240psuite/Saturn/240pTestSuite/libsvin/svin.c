@@ -604,7 +604,15 @@ int _svin_get_keys_state()
 
 _svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode)
 {
-    _svin_screen_mode_t new_mode = screenmode;
+    int number = get_screenmode_number(screenmode);
+    number++;
+    if (number > 35) 
+        number=0;
+    if ((VDP2_TVMD_TV_STANDARD_NTSC == screenmode.colorsystem) && (number > 23))
+        number=0; //only 24 modes for NTSC
+    _svin_screen_mode_t new_mode = create_screenmode_by_number(screenmode.colorsystem,number);
+    return new_mode;
+    /*_svin_screen_mode_t new_mode = screenmode;
     //moving forward screen mode
     if (screenmode.x_res == _SVIN_X_RESOLUTION_320)
     {
@@ -642,12 +650,24 @@ _svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode)
             }
         }
     }
-    return new_mode;
+    return new_mode;*/
 }
 
 _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
 {
-    _svin_screen_mode_t new_mode = screenmode;
+    int number = get_screenmode_number(screenmode);
+    number--;
+    if (VDP2_TVMD_TV_STANDARD_NTSC == screenmode.colorsystem)
+    {
+        if (number < 0) number=23; //only 24 modes for NTSC
+    }
+    else
+    {
+        if (number < 0) number=35;
+    }
+    _svin_screen_mode_t new_mode = create_screenmode_by_number(screenmode.colorsystem,number);
+    return new_mode;
+    /*_svin_screen_mode_t new_mode = screenmode;
     //moving forward screen mode
     if (screenmode.x_res == _SVIN_X_RESOLUTION_352)
     {
@@ -694,16 +714,58 @@ _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
             }
         }
     }
-    return new_mode;
+    return new_mode;*/
 }
 
 int get_screenmode_number(_svin_screen_mode_t screenmode)
 {
-	int number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 0 : 1;
-	number = (screenmode.y_res == VDP2_TVMD_VERT_224) ? number :
-					(screenmode.y_res == VDP2_TVMD_VERT_240) ? number+2 : number+4;
-	number = (screenmode.x_res_doubled) ? number+6 : number;
-	number = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? number+24 :
-                    (_SVIN_SCANMODE_240P == screenmode.scanmode) ? number+12 : number;
+	int number;
+    if (VDP2_TVMD_TV_STANDARD_NTSC == screenmode.colorsystem)
+    {
+        // x256 video resolutions are not supported on NTSC machines
+        //2*2*2*3 = 24 videomodes
+        number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 0 : 1;
+        number = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? number : number+2;
+        number = (screenmode.x_res_doubled) ? number+4 : number;
+        number = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? number+16 :
+                        (_SVIN_SCANMODE_240P == screenmode.scanmode) ? number+8 : number;
+    }
+    else //PAL
+    {
+        //2*3*2*3 = 36 videomodes
+        number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 0 : 1;
+        number = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? number :
+                        (VDP2_TVMD_VERT_240 == screenmode.y_res) ? number+2 : number+4;
+        number = (screenmode.x_res_doubled) ? number+6 : number;
+        number = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? number+24 :
+                        (_SVIN_SCANMODE_240P == screenmode.scanmode) ? number+12 : number;
+    }
 	return number;
+}
+
+_svin_screen_mode_t create_screenmode_by_number(vdp2_tvmd_tv_standard_t colorsystem, int number)
+{
+    _svin_screen_mode_t new_mode;
+    new_mode.colorsystem = colorsystem;
+    if (VDP2_TVMD_TV_STANDARD_NTSC == colorsystem)
+    {
+        // x256 video resolutions are not supported on NTSC machines
+        //2*2*2*3 = 24 videomodes
+        new_mode.x_res = (number%2 == 0) ? _SVIN_X_RESOLUTION_320 : _SVIN_X_RESOLUTION_352;
+        new_mode.y_res = ((number%4)/2 == 0) ? VDP2_TVMD_VERT_224 : VDP2_TVMD_VERT_240;
+        new_mode.x_res_doubled = ((number%8)/4 == 0) ? false : true;
+        new_mode.scanmode = (number/8 == 0) ? _SVIN_SCANMODE_240I :
+                                (number/8 == 1) ? _SVIN_SCANMODE_240P : _SVIN_SCANMODE_480I;
+    }
+    else //PAL
+    {
+        //2*3*2*3 = 36 videomodes
+        new_mode.x_res = (number%2 == 0) ? _SVIN_X_RESOLUTION_320 : _SVIN_X_RESOLUTION_352;
+        new_mode.y_res = ((number%6)/2 == 0) ? VDP2_TVMD_VERT_224 : 
+                            ((number%6)/2 == 1) ? VDP2_TVMD_VERT_240 : VDP2_TVMD_VERT_256;
+        new_mode.x_res_doubled = ((number%12)/6 == 0) ? false : true;
+        new_mode.scanmode = (number/12 == 0) ? _SVIN_SCANMODE_240I :
+                                (number/12 == 1) ? _SVIN_SCANMODE_240P : _SVIN_SCANMODE_480I;
+    }
+    return new_mode;
 }

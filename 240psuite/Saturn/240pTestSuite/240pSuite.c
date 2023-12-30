@@ -178,6 +178,7 @@ int main(void)
 		.x_res = _SVIN_X_RESOLUTION_320,
 		.y_res = VDP2_TVMD_VERT_240,
 		.x_res_doubled = false,
+		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
 	};
 
 	//show yaul logo in 240p
@@ -191,7 +192,7 @@ int main(void)
 	LoadFont();
 
 	//detect color system
-	vdp2_tvmd_tv_standard_t colorsystem = vdp2_tvmd_tv_standard_get();
+	screenMode.colorsystem = vdp2_tvmd_tv_standard_get();
 
 	//measure frame clock
 	volatile int frame_counter=0;
@@ -277,7 +278,7 @@ int main(void)
 					sprintf(string_buf,"Effective resolition  %sx%s",x_res_text_value(screenMode),y_res_text_value(screenMode));
 					DrawString(string_buf,x, y+_fh*pos, FONT_CYAN); pos++;
 					pos++;
-					if (VDP2_TVMD_TV_STANDARD_NTSC == colorsystem)
+					if (VDP2_TVMD_TV_STANDARD_NTSC == screenMode.colorsystem)
 					{
 						DrawString("Color system ........... NTSC",x, y+_fh*pos, FONT_CYAN); pos++;
 						sprintf(string_buf,"(%d)",frame_counter);

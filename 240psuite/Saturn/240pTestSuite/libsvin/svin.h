@@ -23,7 +23,7 @@ typedef struct {
         _svin_x_resolution_t x_res;
         vdp2_tvmd_vert_t y_res;
         bool x_res_doubled;
-        vdp2_tvmd_tv_standard_t standard;
+        vdp2_tvmd_tv_standard_t colorsystem;
 } __packed _svin_screen_mode_t;
 
 extern bool _svin_videomode_scanlines;
@@ -142,5 +142,6 @@ void _svin_clear_palette_part(int number, int start, int end);
 _svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode);
 _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode);
 int get_screenmode_number(_svin_screen_mode_t screenmode);
+_svin_screen_mode_t create_screenmode_by_number(vdp2_tvmd_tv_standard_t colorsystem, int number);
 
 #endif
