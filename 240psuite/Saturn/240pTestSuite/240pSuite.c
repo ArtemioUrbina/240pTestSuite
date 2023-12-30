@@ -281,9 +281,9 @@ int main(void)
 						DrawString(string_buf, x, y+_fh*pos, FONT_CYAN); pos++;
 						DrawString("Field rate ......... 59.94 Hz", x, y+_fh*pos, FONT_CYAN); pos++;//59.52 Hz if hacked from PAL
 						if (_SVIN_X_RESOLUTION_320 == screenMode.x_res)
-							DrawString("Pixel clock ......26.8426 MHz", x, y+_fh*pos, FONT_CYAN);//1706 clock per line, 525 lines, 29.97 fps
+							DrawString("Pixel clock ......26.8426 MHz", x, y+_fh*pos, FONT_CYAN);//14.31818 MHz * 1706 / 910
 						else
-							DrawString("Pixel clock ......28.6364 MHz", x, y+_fh*pos, FONT_CYAN);//1820 clock per line, 525 lines, 29.97 fps
+							DrawString("Pixel clock ......28.6364 MHz", x, y+_fh*pos, FONT_CYAN);//14.31818 MHz * 1820 / 910
 						pos++;
 					}
 					else
@@ -293,9 +293,9 @@ int main(void)
 						DrawString(string_buf, x, y+_fh*pos, FONT_CYAN); pos++;
 						DrawString("Field rate ............ 50 Hz", x, y+_fh*pos, FONT_CYAN); pos++;//50.35 Hz if hacked from NTSC
 						if (_SVIN_X_RESOLUTION_320 == screenMode.x_res)
-							DrawString("Pixel clock ......26.6564 MHz", x, y+_fh*pos, FONT_CYAN);//1706 clock per line, 625 lines, 25 fps
+							DrawString("Pixel clock ......26.6564 MHz", x, y+_fh*pos, FONT_CYAN);//17.734475 MHz * 1706 / 1135
 						else
-							DrawString("Pixel clock ......28.4375 MHz", x, y+_fh*pos, FONT_CYAN);//1820 clock per line, 625 lines, 25 fps
+							DrawString("Pixel clock ......28.4377 MHz", x, y+_fh*pos, FONT_CYAN);//17.734475 MHz * 1820 / 1135
 						pos++;
 					}
 					menu_size = 5;
@@ -564,18 +564,4 @@ int main(void)
 		vdp2_sync();
 		vdp2_sync_wait();
 	}
-}
-
-void print_screen_mode(_svin_screen_mode_t screenmode)
-{
-	char buf[128];
-	sprintf(buf,"%i : ",get_screenmode_number(screenmode));
-	//strcpy(buf, "");
-	strcat(buf, scanmode_text_value(screenmode));
-	strcat(buf, " ");
-	strcat(buf, x_res_text_value(screenmode));
-	strcat(buf, "x");
-	strcat(buf, y_res_text_value(screenmode));
-	strcat(buf, "");
-	DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_YELLOW);
 }

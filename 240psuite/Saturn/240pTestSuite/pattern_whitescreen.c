@@ -4,6 +4,7 @@
 #include <yaul.h>
 #include "font.h"
 #include "svin.h"
+#include "video.h"
 #include "control.h"
 #include "ire.h"
 

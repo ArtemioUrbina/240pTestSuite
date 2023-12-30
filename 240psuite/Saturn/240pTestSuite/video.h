@@ -22,6 +22,13 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-void InitVideo();
+#include "svin.h"
+
+void print_screen_mode(_svin_screen_mode_t screenmode);
+double get_screen_square_pixel_ratio(_svin_screen_mode_t screenmode);
+_svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode);
+_svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode);
+int get_screenmode_number(_svin_screen_mode_t screenmode);
+_svin_screen_mode_t create_screenmode_by_number(vdp2_tvmd_tv_standard_t colorsystem, int number);
 
 #endif /* !VIDEO_H */
