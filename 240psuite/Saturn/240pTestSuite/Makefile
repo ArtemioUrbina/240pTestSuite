@@ -33,6 +33,7 @@ SH_SRCS:= \
     pattern_monoscope.c \
     pattern_smpte.c \
     pattern_whitescreen.c \
+    window_credits.c \
 	libsvin/svin_background.c \
 	libsvin/svin.c \
 	240pSuite.c

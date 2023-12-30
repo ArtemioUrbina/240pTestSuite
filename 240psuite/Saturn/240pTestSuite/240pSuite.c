@@ -43,9 +43,7 @@
 #include "pattern_colorbleed.h"
 #include "pattern_checkerboard.h"
 #include "pattern_colorbars_grayscale.h"
-
-#define VERSION_NUMBER "Ver. 0.0.1"
-#define VERSION_DATE __DATE__
+#include "window_credits.h"
 
 #define MENU_MAIN 0
 #define MENU_PATTERNS 1
@@ -53,8 +51,6 @@
 
 extern uint8_t asset_bootlogo_bg[];
 extern uint8_t asset_bootlogo_bg_end[];
-
-void DrawCredits();
 
 void wait_for_key_press()
 {
@@ -412,7 +408,8 @@ int main(void)
 								//go to credits
 								vdp2_sync_wait();
 								wait_for_key_unpress();
-								DrawCredits();
+								window_credits(screenMode);
+								redrawBG = true;
 								redrawMenu = true;
 								break;
 						}
@@ -546,7 +543,8 @@ int main(void)
 							//go to credits
 							vdp2_sync_wait();
 							wait_for_key_unpress();
-							DrawCredits();
+							window_credits(screenMode);
+							redrawBG = true;
 							redrawMenu = true;
 							break;
 						case MENU_PATTERNS:
@@ -567,67 +565,6 @@ int main(void)
 		vdp2_sync_wait();
 	}
 }
-
-void DrawCredits()
-{
-	bool doexit = false;
-	char data[25];
-	int counter = 1;
-	int x = 32, y = 48, pos = 0;
-
-	ClearTextLayer();
-	
-	DrawString("Code and Patterns:", x, y+_fh*pos, FONT_GREEN); pos++;
-	DrawString(VERSION_NUMBER, 208, y+_fh*pos, FONT_GREEN);
-	DrawString("Artemio Urbina", x+5, y+_fh*pos, FONT_WHITE); pos++;
-	DrawString(VERSION_DATE, 208, y+_fh*pos, FONT_WHITE); 
-	pos++;
-	DrawString("SDK & Consultant:", x, y+_fh*pos, FONT_GREEN); pos++;	
-	DrawString("libyaul by Israel Jacquez (yaul.org)", x+5, y+_fh*pos, FONT_WHITE); pos++;
-	DrawString("USB DevCart:", x, y+_fh*pos, FONT_GREEN); pos++;	
-	DrawString("cafe-alpha", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-	DrawString("Menu Pixel Art:", x, y+_fh*pos, FONT_GREEN); pos++;	
-	DrawString("Asher", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-	DrawString("Advisor:", x, y+_fh*pos, FONT_GREEN); pos++;	
-	DrawString("Fudoh", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-	DrawString("Info on using this suite:", x, y+_fh*pos, FONT_GREEN); pos++;	
-	DrawString("http://junkerhq.net/240p/", x+5, y+_fh*pos, FONT_WHITE); pos++;	
-	DrawString("This is free software.", x+5, y+_fh*pos, FONT_CYAN); pos++;	
-	DrawString("Source code available under GPL", x+5, y+_fh*pos, FONT_CYAN); pos++;
-	DrawString("Dedicated to Elisa", 154, y+_fh*pos, FONT_GREEN); 
-
-	while(!doexit)
-	{
-		int x = 32, y = 48, pos = 0;
-
-		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
-
-		if(counter == 1)
-			snprintf(data, 25, "aurbina@junkerhq.net");
-		if(counter == 60*4)
-			snprintf(data, 25, "@Artemio (twitter)");
-		if(counter == 60*8)
-			counter = 0;
-	
-		pos = 2;
-		ClearText(x+5, y+_fh*pos, 25*_fw, _fh);
-		DrawString(data, x+5, y+_fh*pos, FONT_WHITE); pos++;	
-	
-		if (controller.connected == 1)
-		{
-			if(controller.pressed.raw)
-				doexit = true;
-		}
-	
-		vdp2_sync();
-		vdp2_sync_wait();
-		counter ++;
-	}
-
-	return;
-}
-
 
 void print_screen_mode(_svin_screen_mode_t screenmode)
 {
