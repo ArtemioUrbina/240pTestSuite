@@ -5,7 +5,6 @@
 
 #include <yaul.h>
 #include "svin_background.h"
-#include "svin_debug.h"
 
 typedef enum {
         _SVIN_SCANMODE_240I = 0,
@@ -17,24 +16,14 @@ typedef enum {
 typedef enum {
         _SVIN_X_RESOLUTION_320 = 0,
         _SVIN_X_RESOLUTION_352 = 1,
-//        _SVIN_X_RESOLUTION_640 = 2,
-//        _SVIN_X_RESOLUTION_704 = 3
 } __packed _svin_x_resolution_t;
-
-typedef enum {
-        _SVIN_Y_RESOLUTION_224 = 0,
-        _SVIN_Y_RESOLUTION_240 = 1,
-        _SVIN_Y_RESOLUTION_256 = 2,
-//        _SVIN_Y_RESOLUTION_448 = 3,
-//        _SVIN_Y_RESOLUTION_480 = 4,
-//        _SVIN_Y_RESOLUTION_512 = 5
-} __packed _svin_y_resolution_t;
 
 typedef struct {
         _svin_scanmode_t scanmode;
         _svin_x_resolution_t x_res;
-        _svin_y_resolution_t y_res;
+        vdp2_tvmd_vert_t y_res;
         bool x_res_doubled;
+        vdp2_tvmd_tv_standard_t standard;
 } __packed _svin_screen_mode_t;
 
 extern bool _svin_videomode_scanlines;
@@ -134,7 +123,6 @@ extern int _svin_frame_count;
 #define _SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX       2
 #define _SVIN_VDP1_ORDER_LIMIT                    3
 
-//void _svin_init(_svin_x_resolution_t x_res, _svin_y_resolution_t y_res, bool scanlines);
 void _svin_init(_svin_screen_mode_t screen_mode);
 void _svin_deinit();
 void _svin_delay(int milliseconds);

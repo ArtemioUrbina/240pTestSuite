@@ -73,8 +73,8 @@ void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
 
 	int _size_x = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 320: 352;
 	if (screenmode.x_res_doubled) _size_x*=2;
-	int _size_y = (_SVIN_Y_RESOLUTION_224 == screenmode.y_res) ? 224 : 
-					(_SVIN_Y_RESOLUTION_240 == screenmode.y_res) ? 240 : 256;
+	int _size_y = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 224 : 
+					(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 240 : 256;
 	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
 		_size_y *= 2;
 

@@ -216,11 +216,8 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     vdp2_tvmd_horz_t horz = (_SVIN_X_RESOLUTION_320 == screen_mode.x_res) ? 
                                     screen_mode.x_res_doubled ? VDP2_TVMD_HORZ_HIRESO_A : VDP2_TVMD_HORZ_NORMAL_A :
                                     screen_mode.x_res_doubled ? VDP2_TVMD_HORZ_HIRESO_B : VDP2_TVMD_HORZ_NORMAL_B;
-                                    
-    vdp2_tvmd_vert_t vert = (_SVIN_Y_RESOLUTION_224 == screen_mode.y_res) ? VDP2_TVMD_VERT_224 :
-                                (_SVIN_Y_RESOLUTION_240 == screen_mode.y_res) ? VDP2_TVMD_VERT_240 : VDP2_TVMD_VERT_256;
 
-    vdp2_tvmd_display_res_set(interlace, horz, vert);
+    vdp2_tvmd_display_res_set(interlace, horz, screen_mode.y_res);
 
     rgb1555_t bs_color;
     bs_color = RGB1555(1, 0, 0, 0);
@@ -278,8 +275,8 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     vdp1_cmdt_t *cmdt_system_clip_coords;
     cmdt_system_clip_coords = &_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX];
     cmdt_system_clip_coords->cmd_xc = (_SVIN_X_RESOLUTION_320 == screen_mode.x_res) ? 319 : 351;
-    cmdt_system_clip_coords->cmd_yc = (_SVIN_Y_RESOLUTION_224 == screen_mode.y_res) ? 224 : 
-                                                (_SVIN_Y_RESOLUTION_240 == screen_mode.y_res) ? 240 : 256;
+    cmdt_system_clip_coords->cmd_yc = (VDP2_TVMD_VERT_224 == screen_mode.y_res) ? 224 : 
+                                                (VDP2_TVMD_VERT_240 == screen_mode.y_res) ? 240 : 256;
 
     vdp1_cmdt_local_coord_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX]);
     vdp1_cmdt_vtx_local_coord_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LOCAL_COORDS_INDEX], local_coord_ul);
@@ -297,8 +294,8 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     vdp1_cmdt_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
     vdp1_cmdt_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
     _svin_cmdt_list->cmdts[index].cmd_xa= (_SVIN_X_RESOLUTION_320 == screen_mode.x_res) ? 0 : 16;
-    _svin_cmdt_list->cmdts[index].cmd_ya= (_SVIN_Y_RESOLUTION_224 == screen_mode.y_res) ? 0 : 
-                                                (_SVIN_Y_RESOLUTION_240 == screen_mode.y_res) ? 8 : 16;
+    _svin_cmdt_list->cmdts[index].cmd_ya= (VDP2_TVMD_VERT_224 == screen_mode.y_res) ? 0 : 
+                                                (VDP2_TVMD_VERT_240 == screen_mode.y_res) ? 8 : 16;
     vdp1_cmdt_char_base_set(&_svin_cmdt_list->cmdts[index],vdp1_vram_partitions.texture_base);
     //_svin_cmdt_list->cmdts[index].cmd_srca = (uint16_t)vdp1_vram_partitions.texture_base;
     _svin_cmdt_list->cmdts[index].cmd_size=((320/8)<<8)|(224);
@@ -616,13 +613,13 @@ _svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode)
     else 
     {
         new_mode.x_res = _SVIN_X_RESOLUTION_320;
-        if (screenmode.y_res == _SVIN_Y_RESOLUTION_224)
+        if (screenmode.y_res == VDP2_TVMD_VERT_224)
         {
-            new_mode.y_res = _SVIN_Y_RESOLUTION_240;
+            new_mode.y_res = VDP2_TVMD_VERT_240;
         }
         else
         {
-            new_mode.y_res = _SVIN_Y_RESOLUTION_224;
+            new_mode.y_res = VDP2_TVMD_VERT_224;
             if (screenmode.x_res_doubled == false)
             {
                 new_mode.x_res_doubled = true;
@@ -658,17 +655,17 @@ _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
     }
     else 
     {
-        if (screenmode.y_res == _SVIN_Y_RESOLUTION_240)
+        if (screenmode.y_res == VDP2_TVMD_VERT_240)
         {
             new_mode.x_res = _SVIN_X_RESOLUTION_352;
-            new_mode.y_res = _SVIN_Y_RESOLUTION_224;
+            new_mode.y_res = VDP2_TVMD_VERT_224;
         }
         else
         {
             if (screenmode.x_res_doubled == true)
             {
                 new_mode.x_res = _SVIN_X_RESOLUTION_352;
-                new_mode.y_res = _SVIN_Y_RESOLUTION_240;
+                new_mode.y_res = VDP2_TVMD_VERT_240;
                 new_mode.x_res_doubled = false;
             }
             else
@@ -676,21 +673,21 @@ _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
                 if (screenmode.scanmode == _SVIN_SCANMODE_480I)
                 {
                     new_mode.x_res = _SVIN_X_RESOLUTION_352;
-                    new_mode.y_res = _SVIN_Y_RESOLUTION_240;
+                    new_mode.y_res = VDP2_TVMD_VERT_240;
                     new_mode.x_res_doubled = true;
                     new_mode.scanmode = _SVIN_SCANMODE_240P;
                 }
                 else if (screenmode.scanmode == _SVIN_SCANMODE_240P)
                 {
                     new_mode.x_res = _SVIN_X_RESOLUTION_352;
-                    new_mode.y_res = _SVIN_Y_RESOLUTION_240;
+                    new_mode.y_res = VDP2_TVMD_VERT_240;
                     new_mode.x_res_doubled = true;
                     new_mode.scanmode = _SVIN_SCANMODE_240I;
                 }
                 else
                 {
                     new_mode.x_res = _SVIN_X_RESOLUTION_352;
-                    new_mode.y_res = _SVIN_Y_RESOLUTION_240;
+                    new_mode.y_res = VDP2_TVMD_VERT_240;
                     new_mode.x_res_doubled = true;
                     new_mode.scanmode = _SVIN_SCANMODE_480I;
                 }
@@ -703,8 +700,8 @@ _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
 int get_screenmode_number(_svin_screen_mode_t screenmode)
 {
 	int number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 0 : 1;
-	number = (screenmode.y_res == _SVIN_Y_RESOLUTION_224) ? number :
-					(screenmode.y_res == _SVIN_Y_RESOLUTION_240) ? number+2 : number+4;
+	number = (screenmode.y_res == VDP2_TVMD_VERT_224) ? number :
+					(screenmode.y_res == VDP2_TVMD_VERT_240) ? number+2 : number+4;
 	number = (screenmode.x_res_doubled) ? number+6 : number;
 	number = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? number+24 :
                     (_SVIN_SCANMODE_240P == screenmode.scanmode) ? number+12 : number;

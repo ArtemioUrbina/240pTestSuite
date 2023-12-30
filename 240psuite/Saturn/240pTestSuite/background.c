@@ -16,7 +16,6 @@ void draw_bg_with_expansion(_svin_screen_mode_t screenmode)
 	int stretch_amount_x = 0; //stretch amount in quads
 	int stretch_amount_y = 0;
 	//load the image with minimal resolution 320x224
-	//_svin_background_set_no_filelist("BACK2.BG");
 	_svin_background_set_from_assets(asset_back2_bg,(int)(asset_back2_bg_end-asset_back2_bg));
 
 	//now mess with VDP2 tiles to stretch the image among the screen accordingly
@@ -44,19 +43,19 @@ void draw_bg_with_expansion(_svin_screen_mode_t screenmode)
 	}
 	switch (screenmode.y_res)
 	{
-		case _SVIN_Y_RESOLUTION_224:
+		case VDP2_TVMD_VERT_224:
 			if (screenmode.scanmode == _SVIN_SCANMODE_480I)
 				stretch_amount_y = 28;
 			else
 				stretch_amount_y = 0;
 			break;
-		case _SVIN_Y_RESOLUTION_240:
+		case VDP2_TVMD_VERT_240:
 			if (screenmode.scanmode == _SVIN_SCANMODE_480I)
 				stretch_amount_y = 32;
 			else
 				stretch_amount_y = 2;
 			break;
-		case _SVIN_Y_RESOLUTION_256:
+		case VDP2_TVMD_VERT_256:
 			if (screenmode.scanmode == _SVIN_SCANMODE_480I)
 				stretch_amount_y = 36;
 			else
@@ -144,8 +143,8 @@ void draw_bg_with_expansion(_svin_screen_mode_t screenmode)
 	//select mascot location
 	int mascot_x = (screenmode.x_res == _SVIN_X_RESOLUTION_320) ? 28 : 32;
 	mascot_x =  (screenmode.x_res_doubled) ? (mascot_x+6)*2 : mascot_x;
-	int mascot_y = (screenmode.y_res == _SVIN_Y_RESOLUTION_224) ? 9 :
-						(screenmode.y_res == _SVIN_Y_RESOLUTION_240) ? 11 : 13;
+	int mascot_y = (screenmode.y_res == VDP2_TVMD_VERT_224) ? 9 :
+						(screenmode.y_res == VDP2_TVMD_VERT_240) ? 11 : 13;
 	mascot_y = (screenmode.scanmode == _SVIN_SCANMODE_480I) ? (mascot_y+9)*2 : mascot_y;
 	//copy mascot patterns, adding 128 to each color
 	//decompress

@@ -123,13 +123,13 @@ char * y_res_text_value(_svin_screen_mode_t screenmode)
 {
 	switch (screenmode.y_res)
 	{
-		case _SVIN_Y_RESOLUTION_224:
+		case VDP2_TVMD_VERT_224:
 			return (_SVIN_SCANMODE_480I == screenmode.scanmode) ? "448":"224";
 			break;
-		case _SVIN_Y_RESOLUTION_240:
+		case VDP2_TVMD_VERT_240:
 			return (_SVIN_SCANMODE_480I == screenmode.scanmode) ? "480":"240";
 			break;
-		case _SVIN_Y_RESOLUTION_256:
+		case VDP2_TVMD_VERT_256:
 			return (_SVIN_SCANMODE_480I == screenmode.scanmode) ? "512":"256";
 			break;
 	}
@@ -140,13 +140,13 @@ char * y_lines_text_value(_svin_screen_mode_t screenmode)
 {
 	switch (screenmode.y_res)
 	{
-		case _SVIN_Y_RESOLUTION_224:
+		case VDP2_TVMD_VERT_224:
 			return "224";
 			break;
-		case _SVIN_Y_RESOLUTION_240:
+		case VDP2_TVMD_VERT_240:
 			return "240";
 			break;
-		case _SVIN_Y_RESOLUTION_256:
+		case VDP2_TVMD_VERT_256:
 			return "256";
 			break;
 	}
@@ -176,7 +176,7 @@ int main(void)
 	{
 		.scanmode = _SVIN_SCANMODE_240P,
 		.x_res = _SVIN_X_RESOLUTION_320,
-		.y_res = _SVIN_Y_RESOLUTION_240,
+		.y_res = VDP2_TVMD_VERT_240,
 		.x_res_doubled = false,
 	};
 
@@ -486,9 +486,9 @@ int main(void)
 							case 1:
 								//y lines
 								screenMode.y_res++;
-								if (screenMode.y_res > _SVIN_Y_RESOLUTION_240) //no 256 for now
+								if (screenMode.y_res > VDP2_TVMD_VERT_240) //no 256 for now
 								{
-									screenMode.y_res = _SVIN_Y_RESOLUTION_224;
+									screenMode.y_res = VDP2_TVMD_VERT_224;
 								}
 								update_screen_mode(screenMode);
 								redrawBG = true;

@@ -34,7 +34,6 @@ SH_SRCS:= \
     pattern_smpte.c \
     pattern_whitescreen.c \
 	libsvin/svin_background.c \
-	libsvin/svin_debug.c \
 	libsvin/svin.c \
 	240pSuite.c
 

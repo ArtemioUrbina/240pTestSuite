@@ -48,8 +48,8 @@ void draw_100ire(_svin_screen_mode_t screenmode, int ire_level)
 	//fill center with white tile
 	int x_start = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 10 : 11;
 	x_start = (screenmode.x_res_doubled) ? x_start*2 : x_start;
-	int y_start = (_SVIN_Y_RESOLUTION_224 == screenmode.y_res) ? 7 : 
-					(_SVIN_Y_RESOLUTION_240 == screenmode.y_res) ? 7 : 8;
+	int y_start = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 7 : 
+					(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 7 : 8;
 	y_start = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? y_start*2 : y_start;
 	for (int i = x_start; i<x_start*3; i++)
 	{

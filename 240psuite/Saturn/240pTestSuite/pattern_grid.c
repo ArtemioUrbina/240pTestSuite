@@ -89,8 +89,8 @@ void draw_grid(_svin_screen_mode_t screenmode)
     }
 	//fill border
 	int _size_x = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 20 : 22;
-	int _size_y = (_SVIN_Y_RESOLUTION_224 == screenmode.y_res) ? 14 : 
-					(_SVIN_Y_RESOLUTION_240 == screenmode.y_res) ? 15 : 16;
+	int _size_y = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 14 : 
+					(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 15 : 16;
 	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
 		_size_y *= 2;
 	if (screenmode.x_res_doubled)
