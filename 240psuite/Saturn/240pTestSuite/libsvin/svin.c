@@ -569,35 +569,3 @@ void _svin_vblank_out_handler(void *work __unused)
     smpc_peripheral_intback_issue();
 
 }
-
-int _svin_wait_for_key_press_and_release()
-{
-    bool bPressed = false;
-    int iCode = 0;
-    while (false == bPressed)
-    {
-        smpc_peripheral_process();
-        smpc_peripheral_digital_port(1, &_digital);
-        if (_digital.pressed.raw != 0)
-        {
-            bPressed = true;
-            iCode = _digital.pressed.raw;
-        }
-    }
-    _svin_delay(15);//debounce
-    while (true == bPressed)
-    {
-        smpc_peripheral_process();
-        smpc_peripheral_digital_port(1, &_digital);
-        if (_digital.pressed.raw == 0)
-            bPressed = false;
-    }
-    return iCode;
-}
-
-int _svin_get_keys_state()
-{
-    smpc_peripheral_process();
-    smpc_peripheral_digital_port(1, &_digital);
-    return _digital.pressed.raw;
-}

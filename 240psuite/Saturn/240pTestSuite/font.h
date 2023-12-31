@@ -47,5 +47,6 @@ void ClearText(int left, int top, int width, int height);
 void ClearTextLayer();
 
 void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool transparent);
+void DrawStringWithBackground(char *str, unsigned int x, unsigned int y, unsigned int palette, unsigned int bg_palette);
 
 #endif /* !FONT_H */

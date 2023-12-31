@@ -25,5 +25,8 @@
 extern struct smpc_peripheral_digital controller;
 
 void InitControllers();
+void wait_for_key_press();
+void wait_for_key_unpress();
+void wait_for_next_key();
 
 #endif /* !CONTROL_H */

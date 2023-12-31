@@ -65,35 +65,6 @@
 extern uint8_t asset_bootlogo_bg[];
 extern uint8_t asset_bootlogo_bg_end[];
 
-void wait_for_key_press()
-{
-	//wait for keypress
-	while (controller.pressed.raw == 0)
-	{
-		vdp2_tvmd_vblank_out_wait();
-		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
-	}
-}
-
-void wait_for_key_unpress()
-{
-	//wait for unpress
-	while (controller.pressed.raw != 0)
-	{
-		vdp2_tvmd_vblank_out_wait();
-		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
-	}
-}
-
-void wait_for_next_key()
-{
-	wait_for_key_unpress();
-	wait_for_key_press();
-	wait_for_key_unpress();
-}
-
 char * scanmode_text_value(_svin_screen_mode_t screenmode)
 {
 	switch (screenmode.scanmode)
