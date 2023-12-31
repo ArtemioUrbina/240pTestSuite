@@ -242,9 +242,9 @@ int main(void)
 					DrawString("Color & Black Levels",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Geometry",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
-					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 5;
 					break;
 				case MENU_PATTERNS_COLOR_LEVELS:
@@ -260,24 +260,22 @@ int main(void)
 					DrawString("Sharpness",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Convergence",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
-					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 14;
 					break;
 				case MENU_PATTERNS_GEOMETRY:
-					break;
 					DrawString("Monoscope",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Grid",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Overscan",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
-					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 6;
 					break;
 				case MENU_VIDEO_TESTS:
-					break;
 					DrawString("Drop Shadow Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Striped Sprite Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Lag Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
@@ -289,31 +287,29 @@ int main(void)
 					DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Diagonal Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
-					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 13;
 					break;
 				case MENU_AUDIO_TESTS:
-					break;
 					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
-					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 5;
 					break;
 				case MENU_HARDWARE_TESTS:
-					break;
 					DrawString("Controller Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Controller Ports Device List",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("System Information",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Memory Viewer",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
-					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 7;
 					break;
 				case MENU_CONFIGURATION:

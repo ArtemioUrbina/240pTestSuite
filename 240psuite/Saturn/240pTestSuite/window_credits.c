@@ -13,7 +13,7 @@
 //there is no way to fit all credits on-screen, so scrolling is implemented
 //scrolling is implemented as a change of VDP1 text quad start address
 
-void draw_credits(_svin_screen_mode_t screenmode)
+void draw_credits()
 {
 	bool doexit = false;
 	char data[25];
@@ -64,10 +64,16 @@ void draw_credits(_svin_screen_mode_t screenmode)
 
 void window_credits(_svin_screen_mode_t screenmode)
 {
-	draw_credits(screenmode);
-	bool key_pressed = false;
+	vdp1_cmdt_t *_svin_cmdt_p = (vdp1_cmdt_t *)(VDP1_VRAM(0));
+	vdp1_vram_partitions_t vdp1_vram_partitions;
+    vdp1_vram_partitions_get(&vdp1_vram_partitions);
+	
+	ClearTextLayer();
+
 	wait_for_key_unpress();
 	int scroll_counter = 0;
+
+	_svin_cmdt_p[_SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_ya=-300;//move the text out of screen before it is printed
 
 	_svin_screen_mode_t creditsScreenMode =
 	{
@@ -81,16 +87,16 @@ void window_credits(_svin_screen_mode_t screenmode)
 	draw_bg_with_expansion(creditsScreenMode);
 	int _size_y = 240;
 
-	vdp1_cmdt_t *_svin_cmdt_p = (vdp1_cmdt_t *)(VDP1_VRAM(0));
-	vdp1_vram_partitions_t vdp1_vram_partitions;
-    vdp1_vram_partitions_get(&vdp1_vram_partitions);
 	//resize the text window to implement scrolling
-	
 	_svin_cmdt_p[_SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_size=((320/8)<<8)|(_size_y-80);
     _svin_cmdt_p[_SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_ya= (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 40 : 
                                                 (VDP2_TVMD_VERT_240 == screenmode.y_res) ? 48 : 56;
 	vdp1_cmdt_char_base_set(&_svin_cmdt_p[_SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX],
 								vdp1_vram_partitions.texture_base+FONT_QUAD_WIDTH*scroll_counter);
+
+	draw_credits();
+	bool key_pressed = false;
+
 
 	while (1)
 	{
@@ -98,6 +104,7 @@ void window_credits(_svin_screen_mode_t screenmode)
 		smpc_peripheral_digital_port(1, &controller);
 		if ( (controller.pressed.button.a) || (controller.pressed.button.b) || (controller.pressed.button.c) )
 		{
+			ClearTextLayer();
 			//quit the pattern
 			wait_for_key_unpress();
 			//restoring the screenmode
