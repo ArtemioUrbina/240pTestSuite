@@ -47,7 +47,12 @@
 
 #define MENU_MAIN 0
 #define MENU_PATTERNS 1
-#define MENU_VIDEO_OPTIONS 2
+#define MENU_PATTERNS_COLOR_LEVELS 2
+#define MENU_PATTERNS_GEOMETRY 3
+#define MENU_VIDEO_TESTS 4
+#define MENU_AUDIO_TESTS 5
+#define MENU_HARDWARE_TESTS 6
+#define MENU_CONFIGURATION 7
 
 extern uint8_t asset_bootlogo_bg[];
 extern uint8_t asset_bootlogo_bg_end[];
@@ -224,35 +229,94 @@ int main(void)
 			{
 				case MENU_MAIN:
 					DrawString("Test Patterns", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
-					DrawString("Video Options",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Credits",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					menu_size = 4;
+					DrawString("Video Tests", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
+					DrawString("Audio Tests",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Hardware Tests",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Credits",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 7;
 					break;
 				case MENU_PATTERNS:
-					/*DrawString("Drop Shadow Test", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Color & Black Levels",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Geometry",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					pos++;
+					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 5;
+					break;
+				case MENU_PATTERNS_COLOR_LEVELS:
+					DrawString("PLUGE",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Color Bars",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("EBU Color Bars",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("SMPTE Color Bars",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Color Bars with Gray Scale",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Color Bleed Check",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Gray Ramp",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("White & RGB screens",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("100 IRE",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Sharpness",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Convergence",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					pos++;
+					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 14;
+					break;
+				case MENU_PATTERNS_GEOMETRY:
+					break;
+					DrawString("Monoscope",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Grid",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Overscan",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					pos++;
+					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 6;
+					break;
+				case MENU_VIDEO_TESTS:
+					break;
+					DrawString("Drop Shadow Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Striped Sprite Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Lag Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Manual Lag Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Timing & Reflex Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Scroll Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Grid Scroll Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Horizontal Stripes",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
-					DrawString("Color Bars",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Horizontal/Vertical Stripes",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Checkerboard",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Colorbleed",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Grid",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("SMPTE",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Color Bars with Gray Scale",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Grayramp",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("White screen",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("IRE100",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Monoscope",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					/*DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;*/
-					menu_size = 10;
+					DrawString("Backlit Zone Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Diagonal Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					pos++;
+					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 13;
 					break;
-				case MENU_VIDEO_OPTIONS:
+				case MENU_AUDIO_TESTS:
+					break;
+					DrawString("Sound Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Audio Sync Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					pos++;
+					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 5;
+					break;
+				case MENU_HARDWARE_TESTS:
+					break;
+					DrawString("Controller Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Controller Ports Device List",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("System Information",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Memory Viewer",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					pos++;
+					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 7;
+					break;
+				case MENU_CONFIGURATION:
 					sprintf(string_buf,scanmode_text_value(screenMode));
 					if (strlen(string_buf) > 4)
 						sprintf(string_buf,"Scan mode .. %s",scanmode_text_value(screenMode));
@@ -298,6 +362,8 @@ int main(void)
 							DrawString("Pixel clock ......28.4377 MHz", x, y+_fh*pos, FONT_CYAN);//17.734475 MHz * 1820 / 1135
 						pos++;
 					}
+					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 5;
 					break;
 				default:
@@ -338,7 +404,7 @@ int main(void)
 
 				if(controller.pressed.button.left)
 				{
-					if (MENU_VIDEO_OPTIONS == menu_id)
+					if (MENU_CONFIGURATION == menu_id)
 					{
 						switch(sel)
 						{
@@ -363,7 +429,7 @@ int main(void)
 
 				if(controller.pressed.button.right)
 				{
-					if (MENU_VIDEO_OPTIONS == menu_id)
+					if (MENU_CONFIGURATION == menu_id)
 					{
 						switch(sel)
 						{
@@ -393,24 +459,40 @@ int main(void)
 						switch(sel)
 						{
 							case 0:
-								//go into patterns
 								menu_id = MENU_PATTERNS;
 								sel = 0;
 								redrawMenu = true;
 								break;							
 							case 1:
-								//go into video settings
-								menu_id = MENU_VIDEO_OPTIONS;
+								menu_id = MENU_VIDEO_TESTS;
+								sel = 0;
+								redrawMenu = true;
+								break;
+							case 2:
+								menu_id = MENU_AUDIO_TESTS;
 								sel = 0;
 								redrawMenu = true;
 								break;
 							case 3:
+								menu_id = MENU_HARDWARE_TESTS;
+								sel = 0;
+								redrawMenu = true;
+								break;
+							case 4:
+								menu_id = MENU_CONFIGURATION;
+								sel = 0;
+								redrawMenu = true;
+								break;
+							case 5:
 								//go to credits
 								vdp2_sync_wait();
 								wait_for_key_unpress();
 								window_credits(screenMode);
 								redrawBG = true;
 								redrawMenu = true;
+								break;
+							case 6:
+								//go to help
 								break;
 						}
 					}
@@ -419,56 +501,192 @@ int main(void)
 						switch(sel)
 						{
 							case 0:
-								//colorbars
-								pattern_colorbars(screenMode);
+								menu_id = MENU_PATTERNS_COLOR_LEVELS;
+								sel = 0;
+								redrawMenu = true;
 								break;							
 							case 1:
-								//checkerboard
-								pattern_checkerboard(screenMode);
+								menu_id = MENU_PATTERNS_GEOMETRY;
+								sel = 0;
+								redrawMenu = true;
 								break;
 							case 2:
-								//colorbleed
-								pattern_colorbleed(screenMode);
+								menu_id = MENU_MAIN;
+								sel = 0;
+								redrawMenu = true;
 								break;
 							case 3:
-								//grid
-								pattern_grid(screenMode);
+								menu_id = MENU_CONFIGURATION;
+								sel = 0;
+								redrawMenu = true;
 								break;
-							case 4:
-								//SMPTE
+							case 6:
+								//go to help
+								break;
+						}
+					}
+					else if (MENU_PATTERNS_COLOR_LEVELS == menu_id)
+					{
+						switch(sel)
+						{
+							case 0:
+								//PLUGE
+								break;							
+							case 1:
+								pattern_colorbars(screenMode);
+								break;
+							case 2:
+								//EBU Color Bars
+								break;							
+							case 3:
 								pattern_smpte(screenMode);
 								redrawBG = true;
 								break;
-							case 5:
-								//Colorbars with gray
+							case 4:
 								pattern_colorbars_grayscale(screenMode);
 								redrawBG = true;
 								break;
+							case 5:
+								pattern_colorbleed(screenMode);
+								break;
 							case 6:
-								//grayramp
 								pattern_grayramp(screenMode);
 								break;
 							case 7:
-								//whitescreen
 								pattern_whitescreen(screenMode);
 								break;
 							case 8:
-								//whitescreen
 								pattern_ire100(screenMode);
 								break;
 							case 9:
-								//monoscope
-								pattern_monoscope(screenMode);
-								redrawBG = true;
+								//Sharpness
 								break;
-							default:
-								//checkerboard
-								pattern_checkerboard(screenMode);
+							case 10:
+								//Convergence
+								break;
+							case 11:
+								menu_id = MENU_PATTERNS;
+								sel = 0;
+								redrawMenu = true;
+								break;	
+							case 12:
+								menu_id = MENU_CONFIGURATION;
+								sel = 0;
+								redrawMenu = true;
+								break;
+							case 13:
+								//go to help
 								break;
 						}
 						redrawMenu = true;
 					}
-					else if (MENU_VIDEO_OPTIONS == menu_id)
+					else if (MENU_PATTERNS_GEOMETRY == menu_id)
+					{
+						switch(sel)
+						{
+							case 0:
+								pattern_monoscope(screenMode);
+								redrawBG = true;
+								break;							
+							case 1:
+								pattern_grid(screenMode);
+								break;
+							case 2:
+								//overscan
+								break;							
+							case 3:
+								menu_id = MENU_PATTERNS;
+								sel = 1;
+								redrawMenu = true;
+								break;	
+							case 4:
+								menu_id = MENU_CONFIGURATION;
+								sel = 0;
+								redrawMenu = true;
+								break;
+							case 5:
+								//go to help
+								break;
+						}
+						redrawMenu = true;
+					}
+					else if (MENU_VIDEO_TESTS == menu_id)
+					{
+						switch(sel)
+						{
+							case 0:
+								//drop shadow
+								break;							
+							case 1:
+								//striped sprite
+								break;							
+							case 2:
+								//lag
+								break;							
+							case 3:
+								//timing/reflex
+								break;							
+							case 4:
+								//scroll
+								break;							
+							case 5:
+								//grid scroll
+								break;							
+							case 6:
+								//hor/vert stripes
+								break;							
+							case 7:
+								pattern_checkerboard(screenMode);
+								break;							
+							case 8:
+								//backlit zone
+								break;
+							case 9:
+								//diagonal
+								break;
+							case 10:
+								menu_id = MENU_MAIN;
+								sel = 1;
+								redrawMenu = true;
+								break;	
+							case 11:
+								menu_id = MENU_CONFIGURATION;
+								sel = 0;
+								redrawMenu = true;
+								break;
+							case 12:
+								//go to help
+								break;
+						}
+						redrawMenu = true;
+					}
+					else if (MENU_AUDIO_TESTS == menu_id)
+					{
+						switch(sel)
+						{
+							case 0:
+								//sound
+								break;							
+							case 1:
+								//audio sync
+								break;							
+							case 2:
+								menu_id = MENU_MAIN;
+								sel = 2;
+								redrawMenu = true;
+								break;	
+							case 3:
+								menu_id = MENU_CONFIGURATION;
+								sel = 0;
+								redrawMenu = true;
+								break;
+							case 4:
+								//go to help
+								break;
+						}
+						redrawMenu = true;
+					}
+					else if (MENU_CONFIGURATION == menu_id)
 					{
 						switch(sel)
 						{
@@ -518,6 +736,19 @@ int main(void)
 									ire_level_100 = 255;
 								redrawMenu = true;
 								break;
+							case 5:
+								menu_id = MENU_MAIN;
+								sel = 3;
+								redrawMenu = true;
+								break;	
+							case 6:
+								menu_id = MENU_CONFIGURATION;
+								sel = 0;
+								redrawMenu = true;
+								break;
+							case 7:
+								//go to help
+								break;
 						}
 					}
 					redrawBG = true;
@@ -551,9 +782,29 @@ int main(void)
 							menu_id = MENU_MAIN;
 							sel = 0;
 							break;
-						case MENU_VIDEO_OPTIONS:
+						case MENU_PATTERNS_COLOR_LEVELS:
+							menu_id = MENU_PATTERNS;
+							sel = 0;
+							break;
+						case MENU_PATTERNS_GEOMETRY:
+							menu_id = MENU_PATTERNS;
+							sel = 1;
+							break;
+						case MENU_VIDEO_TESTS:
 							menu_id = MENU_MAIN;
 							sel = 1;
+							break;
+						case MENU_AUDIO_TESTS:
+							menu_id = MENU_MAIN;
+							sel = 2;
+							break;
+						case MENU_HARDWARE_TESTS:
+							menu_id = MENU_MAIN;
+							sel = 3;
+							break;
+						case MENU_CONFIGURATION:
+							menu_id = MENU_MAIN;
+							sel = 4;
 							break;
 					}
 					redrawMenu = true;
