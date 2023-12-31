@@ -41,11 +41,13 @@ void draw_checkerboard(_svin_screen_mode_t screenmode)
 	_svin_set_cycle_patterns_nbg();
 }
 
-void pattern_checkerboard(_svin_screen_mode_t screenmode)
+void videotest_checkerboard(_svin_screen_mode_t screenmode)
 {
 	_svin_screen_mode_t curr_screenmode = screenmode;
 	draw_checkerboard(curr_screenmode);
 	bool key_pressed = false;
+	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int pattern = 0;
 
 	wait_for_key_unpress();
 	
@@ -87,6 +89,30 @@ void pattern_checkerboard(_svin_screen_mode_t screenmode)
 			mode_display_counter--;
 			if (0 == mode_display_counter)
 				ClearTextLayer();
+		}
+		//change the checkerboard pattern
+		//create checkerboard tile at index 0
+		pattern++;
+		pattern = pattern % 2;
+		if (pattern)
+		{
+			for (int i=0; i<4; i++)
+			{
+				_pointer32[i*4  ] = 0x01020102;
+				_pointer32[i*4+1] = 0x01020102;
+				_pointer32[i*4+2] = 0x02010201;
+				_pointer32[i*4+3] = 0x02010201;
+			}
+		}
+		else
+		{
+			for (int i=0; i<4; i++)
+			{
+				_pointer32[i*4  ] = 0x02010201;
+				_pointer32[i*4+1] = 0x02010201;
+				_pointer32[i*4+2] = 0x01020102;
+				_pointer32[i*4+3] = 0x01020102;
+			}
 		}
 	}
 }

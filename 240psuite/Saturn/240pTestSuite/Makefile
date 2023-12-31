@@ -27,12 +27,12 @@ SH_SRCS:= \
     pattern_colorbars.c \
     pattern_colorbars_grayscale.c \
     pattern_colorbleed.c \
-    pattern_checkerboard.c \
     pattern_grayramp.c \
     pattern_grid.c \
     pattern_monoscope.c \
     pattern_smpte.c \
     pattern_whitescreen.c \
+    videotest_checkerboard.c \
     window_credits.c \
 	libsvin/svin_background.c \
 	libsvin/svin.c \

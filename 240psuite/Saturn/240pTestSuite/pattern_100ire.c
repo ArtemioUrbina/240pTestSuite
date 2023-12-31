@@ -62,7 +62,7 @@ void draw_100ire(_svin_screen_mode_t screenmode, int ire_level)
 	_svin_set_cycle_patterns_nbg();
 }
 
-void pattern_ire100(_svin_screen_mode_t screenmode)
+void pattern_100ire(_svin_screen_mode_t screenmode)
 {
 	_svin_screen_mode_t curr_screenmode = screenmode;
 	int ire_level = 100;

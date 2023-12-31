@@ -36,13 +36,21 @@
 #include "video.h"
 #include "control.h"
 #include "ire.h"
-
 #include "svin.h"
 #include "background.h"
+
+#include "pattern_100ire.h"
 #include "pattern_colorbars.h"
-#include "pattern_colorbleed.h"
-#include "pattern_checkerboard.h"
 #include "pattern_colorbars_grayscale.h"
+#include "pattern_colorbleed.h"
+#include "pattern_grayramp.h"
+#include "pattern_grid.h"
+#include "pattern_monoscope.h"
+#include "pattern_smpte.h"
+#include "pattern_whitescreen.h"
+
+#include "videotest_checkerboard.h"
+
 #include "window_credits.h"
 
 #define MENU_MAIN 0
@@ -170,8 +178,6 @@ int main(void)
 	int menu_id=MENU_MAIN;
 	int menu_size=0;
 	char string_buf[128];
-	bool b = false;
-	bool bExit = false;
 
 	_svin_screen_mode_t screenMode =
 	{
@@ -552,7 +558,7 @@ int main(void)
 								pattern_whitescreen(screenMode);
 								break;
 							case 8:
-								pattern_ire100(screenMode);
+								pattern_100ire(screenMode);
 								break;
 							case 9:
 								//Sharpness
@@ -632,7 +638,7 @@ int main(void)
 								//hor/vert stripes
 								break;							
 							case 7:
-								pattern_checkerboard(screenMode);
+								videotest_checkerboard(screenMode);
 								break;							
 							case 8:
 								//backlit zone
