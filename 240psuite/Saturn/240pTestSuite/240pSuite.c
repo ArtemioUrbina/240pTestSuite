@@ -44,6 +44,7 @@
 #include "pattern_colorbars_grayscale.h"
 #include "pattern_colorbleed.h"
 #include "pattern_ebu.h"
+#include "pattern_pluge.h"
 #include "pattern_grayramp.h"
 #include "pattern_grid.h"
 #include "pattern_monoscope.h"
@@ -504,7 +505,7 @@ int main(void)
 						switch(sel)
 						{
 							case 0:
-								//PLUGE
+								pattern_pluge(screenMode);
 								break;							
 							case 1:
 								pattern_colorbars(screenMode);
