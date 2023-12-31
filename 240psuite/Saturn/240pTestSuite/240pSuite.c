@@ -43,6 +43,7 @@
 #include "pattern_colorbars.h"
 #include "pattern_colorbars_grayscale.h"
 #include "pattern_colorbleed.h"
+#include "pattern_ebu.h"
 #include "pattern_grayramp.h"
 #include "pattern_grid.h"
 #include "pattern_monoscope.h"
@@ -509,7 +510,7 @@ int main(void)
 								pattern_colorbars(screenMode);
 								break;
 							case 2:
-								//EBU Color Bars
+								pattern_ebu(screenMode);
 								break;							
 							case 3:
 								pattern_smpte(screenMode);
