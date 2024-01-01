@@ -43,6 +43,7 @@
 #include "pattern_colorbars.h"
 #include "pattern_colorbars_grayscale.h"
 #include "pattern_colorbleed.h"
+#include "pattern_convergence.h"
 #include "pattern_ebu.h"
 #include "pattern_pluge.h"
 #include "pattern_grayramp.h"
@@ -540,7 +541,7 @@ int main(void)
 								pattern_sharpness(screenMode);
 								break;
 							case 10:
-								//Convergence
+								pattern_convergence(screenMode);
 								break;
 							case 11:
 								menu_id = MENU_PATTERNS;
