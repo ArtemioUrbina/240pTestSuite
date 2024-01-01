@@ -49,6 +49,7 @@
 #include "pattern_grid.h"
 #include "pattern_monoscope.h"
 #include "pattern_smpte.h"
+#include "pattern_sharpness.h"
 #include "pattern_whitescreen.h"
 
 #include "videotest_checkerboard.h"
@@ -506,12 +507,14 @@ int main(void)
 						{
 							case 0:
 								pattern_pluge(screenMode);
+								redrawBG = true;
 								break;							
 							case 1:
 								pattern_colorbars(screenMode);
 								break;
 							case 2:
 								pattern_ebu(screenMode);
+								redrawBG = true;
 								break;							
 							case 3:
 								pattern_smpte(screenMode);
@@ -534,7 +537,7 @@ int main(void)
 								pattern_100ire(screenMode);
 								break;
 							case 9:
-								//Sharpness
+								pattern_sharpness(screenMode);
 								break;
 							case 10:
 								//Convergence

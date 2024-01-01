@@ -159,8 +159,8 @@ void draw_pluge(_svin_screen_mode_t screenmode, bool bFullRange)
 void pattern_pluge(_svin_screen_mode_t screenmode)
 {
 	_svin_screen_mode_t curr_screenmode = screenmode;
-	bool bIRE100 = false;
-	draw_pluge(curr_screenmode,bIRE100);
+	bool bFullRange = false;
+	draw_pluge(curr_screenmode,bFullRange);
 	bool key_pressed = false;
 
 	wait_for_key_unpress();
@@ -175,7 +175,7 @@ void pattern_pluge(_svin_screen_mode_t screenmode)
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
 			update_screen_mode(curr_screenmode);
-			draw_pluge(curr_screenmode,bIRE100);
+			draw_pluge(curr_screenmode,bFullRange);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
 			mode_display_counter=120;
@@ -184,7 +184,7 @@ void pattern_pluge(_svin_screen_mode_t screenmode)
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
 			update_screen_mode(curr_screenmode);
-			draw_pluge(curr_screenmode,bIRE100);
+			draw_pluge(curr_screenmode,bFullRange);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
 			mode_display_counter=120;
@@ -192,8 +192,8 @@ void pattern_pluge(_svin_screen_mode_t screenmode)
 		else if ( (controller.pressed.button.a) || (controller.pressed.button.c) )
 		{
 			//change the checkered mode
-			bIRE100 = bIRE100 ? false : true;
-			draw_pluge(curr_screenmode,bIRE100);
+			bFullRange = bFullRange ? false : true;
+			draw_pluge(curr_screenmode,bFullRange);
 			wait_for_key_unpress();
 		}
 		else if (controller.pressed.button.b)
