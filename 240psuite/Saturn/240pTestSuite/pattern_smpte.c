@@ -61,7 +61,7 @@ void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.b = Get_IRE_Level(11.5);	
 	_svin_set_palette_part(2,&Color,13,13); //palette 2 color 13 = black+4
 
-	//using tiled mode is a real PITA, so we switch to BMP mode now
+	//switching to BMP mode
 	//setup nbg0
     struct vdp2_scrn_bitmap_format format;
     memset(&format, 0x00, sizeof(format));

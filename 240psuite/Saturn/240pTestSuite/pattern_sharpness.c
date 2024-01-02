@@ -57,7 +57,8 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.g = IRE_bot;
 	Color.b = IRE_bot;
 	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE black
-	//using tiled mode is a real PITA, so we switch to BMP mode now
+	
+	//switching to BMP mode
 	//setup nbg0
     struct vdp2_scrn_bitmap_format format;
     memset(&format, 0x00, sizeof(format));

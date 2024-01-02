@@ -49,6 +49,7 @@
 #include "pattern_grayramp.h"
 #include "pattern_grid.h"
 #include "pattern_monoscope.h"
+#include "pattern_overscan.h"
 #include "pattern_smpte.h"
 #include "pattern_sharpness.h"
 #include "pattern_whitescreen.h"
@@ -571,7 +572,7 @@ int main(void)
 								pattern_grid(screenMode);
 								break;
 							case 2:
-								//overscan
+								pattern_overscan(screenMode);
 								break;							
 							case 3:
 								menu_id = MENU_PATTERNS;

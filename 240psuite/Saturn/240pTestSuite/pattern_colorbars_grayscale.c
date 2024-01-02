@@ -39,7 +39,7 @@ void draw_colorbars_grayscale(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.b = IRE_top;
 	_svin_set_palette_part(2,&Color,7,7); //palette 2 color 7 = IRE blue
 
-	//using tiled mode is a real PITA, so we switch to BMP mode now
+	//switching to BMP mode
 	//setup nbg0
     struct vdp2_scrn_bitmap_format format;
     memset(&format, 0x00, sizeof(format));
