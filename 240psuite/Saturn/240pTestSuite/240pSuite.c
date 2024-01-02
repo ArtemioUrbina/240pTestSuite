@@ -224,7 +224,7 @@ int main(void)
 					DrawString("Color & Black Levels",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Geometry",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
-					DrawString("Back to Patterns Menu",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 5;
@@ -340,8 +340,8 @@ int main(void)
 							DrawString("Pixel clock ......28.4377 MHz", x, y+_fh*pos, FONT_CYAN);//17.734475 MHz * 1820 / 1135
 						pos++;
 					}
-					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					//DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					//DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 5;
 					break;
 				default:
