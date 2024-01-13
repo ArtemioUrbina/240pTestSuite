@@ -595,7 +595,7 @@ int main(void)
 						switch(sel)
 						{
 							case 0:
-								//drop shadow
+								videotest_dropshadow(screenMode);
 								break;							
 							case 1:
 								//striped sprite

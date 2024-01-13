@@ -12,7 +12,8 @@ include $(YAUL_INSTALL_ROOT)/share/build.bcl.mk
 BUILTIN_ASSETS+= \
 	assets/BOOTLOGO.BG;asset_bootlogo_bg \
 	assets/BACK2.BG;asset_back2_bg \
-	assets/MASCOT.BG;asset_mascot_bg
+	assets/MASCOT.BG;asset_mascot_bg \
+	assets/DONNA.BG;asset_donna_bg
 
 SH_PROGRAM:= 240pSuite
 SH_SRCS:= \
@@ -38,6 +39,7 @@ SH_SRCS:= \
     pattern_smpte.c \
     pattern_whitescreen.c \
     videotest_checkerboard.c \
+    videotest_dropshadow.c \
     window_credits.c \
 	libsvin/svin_background.c \
 	libsvin/svin.c \

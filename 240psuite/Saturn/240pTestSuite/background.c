@@ -10,6 +10,8 @@ extern uint8_t asset_back2_bg[];
 extern uint8_t asset_back2_bg_end[];
 extern uint8_t asset_mascot_bg[];
 extern uint8_t asset_mascot_bg_end[];
+extern uint8_t asset_donna_bg[];
+extern uint8_t asset_donna_bg_end[];
 
 void draw_bg_with_expansion(_svin_screen_mode_t screenmode)
 {
@@ -180,4 +182,35 @@ void draw_bg_with_expansion(_svin_screen_mode_t screenmode)
 	}
 
     _svin_set_cycle_patterns_nbg();
+}
+
+void draw_bg_donna(_svin_screen_mode_t screenmode)
+{
+	//loading the image with maximal resolution 704x512
+	_svin_background_set_from_assets(asset_donna_bg,(int)(asset_donna_bg_end-asset_donna_bg));
+
+	//now shift the VDP2 tiles according to the current screenmode
+	int x_shift =  (screenmode.x_res_doubled) ? 0 :
+					(screenmode.x_res == _SVIN_X_RESOLUTION_320) ? 30 : 32;
+	int y_shift = (screenmode.scanmode == _SVIN_SCANMODE_480I) ? 0 : 12;
+	int *_pointer32 = (int *)_SVIN_NBG0_PNDR_START;
+	//shifting plane 0
+    for (unsigned int y = 0; y<64; y++)
+    {
+	    for (unsigned int x = 0; x<64 ; x++)
+        {
+			if (x+x_shift < 64) 
+				_pointer32[y*64+x] = _pointer32[(y+y_shift)*64+(x+x_shift)]; //palette 0, transparency on
+			else
+				_pointer32[y*64+x] = _pointer32[(y+y_shift)*64+64*63+(x+x_shift)]; //palette 0, transparency on
+        }
+    }
+	//shifting plane 1
+    for (unsigned int y = 0; y<64; y++)
+    {
+	    for (unsigned int x = 0; x<64 ; x++)
+        {
+			_pointer32[y*64+64*63+x] = _pointer32[(y+y_shift)*64+64*63+(x+x_shift)]; //palette 0, transparency on
+        }
+    }
 }
