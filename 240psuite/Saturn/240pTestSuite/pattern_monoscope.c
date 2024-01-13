@@ -11,6 +11,7 @@
 #define COLOR_WHITE 1
 #define COLOR_RED 2
 #define COLOR_BLACK 3
+#define COLOR_LIGHTBLUE 4
 
 void draw_point(int x, int y, int color)
 {
@@ -22,6 +23,24 @@ void draw_point(int x, int y, int color)
 	else
 	{
 		_pointer8[y*512+x/2] |= 0x10*color;
+	}
+}
+
+void draw_dotted_line(int x1, int x2, int y, int color)
+{
+	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	int _x = x1;
+	while (_x<((x2/2)*2))
+	{
+		_pointer8[y*512+_x/2] &= 0xF0;
+		_pointer8[y*512+_x/2] |= 0x10*color;
+		_x+=2;
+	}
+	if (_x<x2)
+	{
+		_pointer8[y*512+_x/2] &= 0xF0;
+		_pointer8[y*512+_x/2] |= 0x10*color;
+		_pointer8[y*512+_x/2] |= 0x10*color;
 	}
 }
 
@@ -139,6 +158,16 @@ void draw_cell_hlines(int x, int y, int cell_x, int cell_y, int color)
 		draw_rectangle(x+3,y+_y,x+cell_x-4,y+_y,color);
 }
 
+void draw_cell_hlines_small(int x, int y, int cell_x, int cell_y, int color)
+{
+	clear_filled(x,y,x+cell_x-1,y+cell_y-1);
+	draw_cell_empty(x,y,cell_x,cell_y,color);
+	int _y;
+	for (_y=2;_y<(cell_y-2);_y+=3)
+		draw_rectangle(x+3,y+_y,x+cell_x-4,y+_y,color);
+}
+
+
 void draw_cell_vlines(int x, int y, int cell_x, int cell_y, int color)
 {
 	clear_filled(x,y,x+cell_x-1,y+cell_y-1);
@@ -214,6 +243,10 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.r = IRE_bot;
 	_svin_set_palette_part(2,&Color,0,0); //palette 2 color 0 = IRE black
 	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE black
+	Color.r = (IRE_top+IRE_bot)/2;
+	Color.g = (IRE_top+IRE_bot)/2;
+	Color.b = IRE_top;	
+	_svin_set_palette_part(2,&Color,4,4); //palette 2 color 4 = IRE lightblue
 
 	//switching to BMP mode
 	//setup nbg0
@@ -245,55 +278,67 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
 		cell_y=32;
 
+	int offset_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? cell_y/2 : 0;
+
 	//draw borders rectangles
-	for (int x=0;x<_size_x;x+=cell_x) draw_cell_empty(x,0,cell_x,cell_y,COLOR_WHITE);
-	for (int x=0;x<_size_x;x+=cell_x) draw_cell_empty(x,_size_y-cell_y,cell_x,cell_y,COLOR_WHITE);
-	for (int y=0;y<_size_y;y+=cell_y) draw_cell_empty(0,y,cell_x,cell_y,COLOR_WHITE);
-	for (int y=0;y<_size_y;y+=cell_y) draw_cell_empty(_size_x-cell_x,y,cell_x,cell_y,COLOR_WHITE);
-	draw_rectangle(cell_x,cell_y,_size_x-cell_x-1,_size_y-cell_y-1,COLOR_WHITE);
+	if (offset_y)
+	{
+		//for 240 and 480 resolution, we add half-quads at the top and bottom
+		for (int x=0;x<_size_x;x+=cell_x) draw_cell_hlines_small(x,0,cell_x,offset_y,COLOR_WHITE);
+		for (int x=0;x<_size_x;x+=cell_x) draw_cell_hlines_small(x,_size_y-offset_y,cell_x,offset_y,COLOR_WHITE);
+	}
+	for (int x=0;x<_size_x;x+=cell_x) draw_cell_empty(x,offset_y,cell_x,cell_y,COLOR_WHITE);
+	for (int x=0;x<_size_x;x+=cell_x) draw_cell_empty(x,_size_y-cell_y-offset_y,cell_x,cell_y,COLOR_WHITE);
+	for (int y=offset_y;y<_size_y;y+=cell_y) draw_cell_empty(0,y,cell_x,cell_y,COLOR_WHITE);
+	for (int y=offset_y;y<_size_y;y+=cell_y) draw_cell_empty(_size_x-cell_x,y,cell_x,cell_y,COLOR_WHITE);
+	//internal border for border quads
+	draw_rectangle(cell_x,cell_y+offset_y,_size_x-cell_x-1,_size_y-cell_y-1-offset_y,COLOR_WHITE);
 
 	//draw dots
-	for (int y=0;y<_size_y;y+=cell_y) 
+	for (int y=offset_y;y<_size_y;y+=cell_y) 
 		for (int x=0;x<_size_x;x+=cell_x) 
 			draw_rectangle(x+cell_x/2-1,y+cell_y/2-1,x+cell_x/2,y+cell_y/2,COLOR_WHITE);
 
-	//draw corner rectangles
-	draw_cell_funnypattern(0,0,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_hlines(cell_x,0,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_vlines(0,cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_funnypattern(cell_x,cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_rectangle(cell_x,cell_y,cell_x*2,cell_y*2,COLOR_WHITE);
+	//draw corner rectangles - top left
+	draw_cell_funnypattern(0,offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_hlines(cell_x,offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_vlines(0,cell_y+offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_funnypattern(cell_x,cell_y+offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_rectangle(cell_x,cell_y+offset_y,cell_x*2,cell_y*2+offset_y,COLOR_WHITE);
 
-	draw_cell_hlines(0,_size_y-cell_y*2,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_funnypattern(cell_x,_size_y-cell_y*2,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_funnypattern(0,_size_y-cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_vlines(cell_x,_size_y-cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_rectangle(cell_x,_size_y-cell_y*2-1,cell_x*2,_size_y-cell_y,COLOR_WHITE);
+	//draw corner rectangles - bottom left
+	draw_cell_hlines(0,_size_y-cell_y*2-offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_funnypattern(cell_x,_size_y-cell_y*2-offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_funnypattern(0,_size_y-cell_y-offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_vlines(cell_x,_size_y-cell_y-offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_rectangle(cell_x,_size_y-cell_y*2-1-offset_y,cell_x*2,_size_y-cell_y-offset_y,COLOR_WHITE);
 
-	draw_cell_vlines(_size_x-cell_x*2,0,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_funnypattern(_size_x-cell_x,0,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_funnypattern(_size_x-cell_x*2,cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_hlines(_size_x-cell_x,cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_rectangle(_size_x-cell_x*2-1,cell_y,_size_x-cell_x,cell_y*2,COLOR_WHITE);
+	//draw corner rectangles - top right
+	draw_cell_vlines(_size_x-cell_x*2,offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_funnypattern(_size_x-cell_x,offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_funnypattern(_size_x-cell_x*2,cell_y+offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_hlines(_size_x-cell_x,cell_y+offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_rectangle(_size_x-cell_x*2-1,cell_y+offset_y,_size_x-cell_x,cell_y*2+offset_y,COLOR_WHITE);
 
-	draw_cell_funnypattern(_size_x-cell_x*2,_size_y-cell_y*2,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_vlines(_size_x-cell_x,_size_y-cell_y*2,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_hlines(_size_x-cell_x*2,_size_y-cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_funnypattern(_size_x-cell_x,_size_y-cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_rectangle(_size_x-cell_x*2-1,_size_y-cell_y*2-1,_size_x-cell_x,_size_y-cell_y,COLOR_WHITE);
+	//draw corner rectangles - bottom right
+	draw_cell_funnypattern(_size_x-cell_x*2,_size_y-cell_y*2-offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_vlines(_size_x-cell_x,_size_y-cell_y*2-offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_hlines(_size_x-cell_x*2,_size_y-cell_y-offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_funnypattern(_size_x-cell_x,_size_y-cell_y-offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_rectangle(_size_x-cell_x*2-1,_size_y-cell_y*2-1-offset_y,_size_x-cell_x,_size_y-cell_y-offset_y,COLOR_WHITE);
 
 	//draw top and bottom rectangles
-	draw_cell_funnypattern(_size_x/2-cell_x,0,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_funnypattern(_size_x/2,0,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_hlines(_size_x/2-cell_x,cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_vlines(_size_x/2,cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_rectangle(_size_x/2-cell_x-1,cell_y,_size_x/2+cell_x,cell_y*2,COLOR_WHITE);
+	draw_cell_funnypattern(_size_x/2-cell_x,offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_funnypattern(_size_x/2,offset_y,cell_x,cell_y,COLOR_WHITE);
+	//draw_cell_hlines(_size_x/2-cell_x,cell_y+offset_y,cell_x,cell_y,COLOR_WHITE);
+	//draw_cell_vlines(_size_x/2,cell_y+offset_y,cell_x,cell_y,COLOR_WHITE);
+	//draw_rectangle(_size_x/2-cell_x-1,cell_y+offset_y,_size_x/2+cell_x,cell_y*2+offset_y,COLOR_WHITE);
 
-	draw_cell_funnypattern(_size_x/2-cell_x,_size_y-cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_funnypattern(_size_x/2,_size_y-cell_y,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_vlines(_size_x/2-cell_x,_size_y-cell_y*2,cell_x,cell_y,COLOR_WHITE);
-	draw_cell_hlines(_size_x/2,_size_y-cell_y*2,cell_x,cell_y,COLOR_WHITE);
-	draw_rectangle(_size_x/2-cell_x-1,_size_y-cell_y*2-1,_size_x/2+cell_x,_size_y,COLOR_WHITE);
+	draw_cell_funnypattern(_size_x/2-cell_x,_size_y-cell_y-offset_y,cell_x,cell_y,COLOR_WHITE);
+	draw_cell_funnypattern(_size_x/2,_size_y-cell_y-offset_y,cell_x,cell_y,COLOR_WHITE);
+	//draw_cell_vlines(_size_x/2-cell_x,_size_y-cell_y*2-offset_y,cell_x,cell_y,COLOR_WHITE);
+	//draw_cell_hlines(_size_x/2,_size_y-cell_y*2-offset_y,cell_x,cell_y,COLOR_WHITE);
+	//draw_rectangle(_size_x/2-cell_x-1,_size_y-cell_y*2-1-offset_y,_size_x/2+cell_x,_size_y-offset_y,COLOR_WHITE);
 
 	//left and right rectangles
 	draw_cell_funnypattern(0,_size_y/2-cell_y,cell_x,cell_y,COLOR_WHITE);
@@ -315,31 +360,37 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	draw_rectangle(cell_x,_size_y/2-1,_size_x-cell_x-1,_size_y/2,COLOR_WHITE);
 	draw_rectangle(_size_x/2-1,cell_y,_size_x/2,_size_y-cell_y-1,COLOR_WHITE);
 
-	//big red quad
-	double red_quad_y = _size_y - cell_y*2;
-	double ratio = get_screen_square_pixel_ratio(screenmode);
-	int red_quad_x = ((red_quad_y*ratio)+0.5);
-	if ((red_quad_x) > 1250)
-		red_quad_x = 1250;
-	if ((red_quad_x) < 40)
-		red_quad_x = 40;
-	clear_rectangle(_size_x/2-red_quad_x/2-1,cell_y,_size_x/2+red_quad_x/2,_size_y-cell_y-1);
-	draw_rectangle(_size_x/2-red_quad_x/2-1,cell_y,_size_x/2+red_quad_x/2,_size_y-cell_y-1,COLOR_RED);
-
 	//calculating square quad x size
 	double dcell_y = cell_y;
+	double ratio = get_screen_square_pixel_ratio(screenmode);
 	int cell_x_fixed = ((dcell_y*ratio)+0.5);
 	if ((cell_x_fixed) > 100)
 		cell_x_fixed = 100;
 	if ((cell_x_fixed) < 10)
 		cell_x_fixed = 10;
 
+	//close to corners quads
+	draw_rectangle_set(cell_x*2+3,cell_y+3+offset_y,cell_x_fixed,cell_y,COLOR_WHITE);
+	draw_rectangle_set(_size_x-cell_x*2-cell_x_fixed*2-4,cell_y+3+offset_y,cell_x_fixed,cell_y,COLOR_WHITE);
+	draw_rectangle_set(cell_x*2+3,_size_y-cell_y*3-5-offset_y,cell_x_fixed,cell_y,COLOR_WHITE);
+	draw_rectangle_set(_size_x-cell_x*2-cell_x_fixed*2-4,_size_y-cell_y*3-5-offset_y,cell_x_fixed,cell_y,COLOR_WHITE);
+
+	//big red quad
+	double red_quad_y = _size_y - cell_y*3 - offset_y*2 + cell_y/8;
+	int red_quad_x = ((red_quad_y*ratio)+0.5);
+	if ((red_quad_x) > 1250)
+		red_quad_x = 1250;
+	if ((red_quad_x) < 40)
+		red_quad_x = 40;
+	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
+	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_RED);
+
 	//center quads
-	draw_cell_empty(_size_x/2-cell_x_fixed,_size_y/2-cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
+	/*draw_cell_empty(_size_x/2-cell_x_fixed,_size_y/2-cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
 	draw_cell_empty(_size_x/2,_size_y/2-cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
 	draw_cell_empty(_size_x/2-cell_x_fixed,_size_y/2,cell_x_fixed,cell_y,COLOR_WHITE);
 	draw_cell_empty(_size_x/2,_size_y/2,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_rectangle(_size_x/2-cell_x_fixed-1,_size_y/2-cell_y-1,_size_x/2+cell_x_fixed,_size_y/2+cell_y,COLOR_WHITE);
+	draw_rectangle(_size_x/2-cell_x_fixed-1,_size_y/2-cell_y-1,_size_x/2+cell_x_fixed,_size_y/2+cell_y,COLOR_WHITE);*/
 
 	//center crosshair
 	clear_filled(_size_x/2-7,_size_y/2-7, _size_x/2+6, _size_y/2+6);
@@ -362,26 +413,26 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	draw_rectangle(_size_x/2+3,_size_y/2+5,_size_x/2+3,_size_y/2+10,COLOR_WHITE);
 
 	//center-around quads
-	draw_rectangle_set(_size_x/2-cell_x_fixed-1,_size_y/2-cell_y*3-1,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_rectangle_set(_size_x/2-cell_x_fixed-1,_size_y/2+cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_rectangle_set(_size_x/2-cell_x_fixed*3-1,_size_y/2-cell_y-1,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_rectangle_set(_size_x/2+cell_x_fixed,_size_y/2-cell_y-1,cell_x_fixed,cell_y,COLOR_WHITE);
+	//draw_rectangle_set(_size_x/2-cell_x_fixed-1,_size_y/2-cell_y*3-1,cell_x_fixed,cell_y,COLOR_WHITE);
+	//draw_rectangle_set(_size_x/2-cell_x_fixed-1,_size_y/2+cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
+	//draw_rectangle_set(_size_x/2-cell_x_fixed*3-1,_size_y/2-cell_y-1,cell_x_fixed,cell_y,COLOR_WHITE);
+	//draw_rectangle_set(_size_x/2+cell_x_fixed,_size_y/2-cell_y-1,cell_x_fixed,cell_y,COLOR_WHITE);
+
+	//dotted lines
+	draw_dotted_line(_size_x/2-red_quad_x/2,_size_x/2-12,_size_y/2-4,COLOR_WHITE);
+	draw_dotted_line(_size_x/2-red_quad_x/2,_size_x/2-12,_size_y/2+3,COLOR_WHITE);
+	draw_dotted_line(_size_x/2+11,_size_x/2+red_quad_x/2,_size_y/2-4,COLOR_WHITE);
+	draw_dotted_line(_size_x/2+11,_size_x/2+red_quad_x/2,_size_y/2+3,COLOR_WHITE);
 
 	//small red quad
-	red_quad_y = cell_y*6+2;
+	red_quad_y = (red_quad_y*2.0)/3.0;
 	red_quad_x = ((red_quad_y*ratio)+0.5);
-	if ((red_quad_x) > 200)
-		red_quad_x = 200;
-	if ((red_quad_x) < 20)
-		red_quad_x = 20;
-	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-cell_y*3-1,_size_x/2+red_quad_x/2,_size_y/2+cell_y*3+2);
-	draw_rectangle(_size_x/2-red_quad_x/2,_size_y/2-cell_y*3-1,_size_x/2+red_quad_x/2,_size_y/2+cell_y*3+2,COLOR_RED);
-
-	//close to corners quads
-	draw_rectangle_set(cell_x*2+3,cell_y+3,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_rectangle_set(_size_x-cell_x*2-cell_x_fixed*2-4,cell_y+3,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_rectangle_set(cell_x*2+3,_size_y-cell_y*3-5,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_rectangle_set(_size_x-cell_x*2-cell_x_fixed*2-4,_size_y-cell_y*3-5,cell_x_fixed,cell_y,COLOR_WHITE);
+	if ((red_quad_x) > 500)
+		red_quad_x = 500;
+	if ((red_quad_x) < 10)
+		red_quad_x = 10;
+	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
+	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_RED);
 
 	_svin_set_cycle_patterns_nbg();
 }
