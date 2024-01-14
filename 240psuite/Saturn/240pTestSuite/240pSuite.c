@@ -55,6 +55,8 @@
 #include "pattern_whitescreen.h"
 
 #include "videotest_checkerboard.h"
+#include "videotest_dropshadow.h"
+#include "videotest_striped_sprite.h"
 
 #include "window_credits.h"
 
@@ -601,7 +603,7 @@ int main(void)
 								videotest_dropshadow(screenMode);
 								break;							
 							case 1:
-								//striped sprite
+								videotest_striped_sprite(screenMode);
 								break;							
 							case 2:
 								//lag

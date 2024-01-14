@@ -26,6 +26,7 @@
 void print_screen_mode(_svin_screen_mode_t screenmode)
 {
 	char buf[128];
+    ClearTextLayer();
 	sprintf(buf,"%i : ",get_screenmode_number(screenmode));
 	//strcpy(buf, "");
 	strcat(buf, scanmode_text_value(screenmode));

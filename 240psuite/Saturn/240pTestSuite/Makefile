@@ -40,6 +40,7 @@ SH_SRCS:= \
     pattern_whitescreen.c \
     videotest_checkerboard.c \
     videotest_dropshadow.c \
+    videotest_striped_sprite.c \
     window_credits.c \
 	libsvin/svin_background.c \
 	libsvin/svin.c \
