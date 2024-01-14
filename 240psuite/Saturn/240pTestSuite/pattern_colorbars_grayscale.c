@@ -50,12 +50,8 @@ void draw_colorbars_grayscale(_svin_screen_mode_t screenmode, bool bIRE100)
     format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
     vdp2_scrn_bitmap_format_set(&format);
 
-	int _size_x = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 320: 352;
-	if (screenmode.x_res_doubled) _size_x*=2;
-	int _size_y = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 224 : 
-					(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 240 : 256;
-	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
-		_size_y *= 2;
+	int _size_x = get_screenmode_resolution_x(screenmode);
+	int _size_y = get_screenmode_resolution_y(screenmode);
 
 	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
 

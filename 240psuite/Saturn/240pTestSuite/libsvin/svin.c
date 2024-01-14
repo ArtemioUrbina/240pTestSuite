@@ -18,14 +18,6 @@ uint8_t _svin_init_done;
 int _svin_frame_count;
 bool _svin_vdp1_cmdlist_toggle_at_vblank;
 
-void _svin_delay(int milliseconds)
-{
-    //delay
-    volatile int dummy = 0;
-    for (dummy = 0; dummy < 3000 * milliseconds; dummy++)
-        ;
-}
-
 void _svin_set_cycle_patterns_cpu()
 {
     // switching everything to CPU access.
@@ -77,10 +69,11 @@ void _svin_set_cycle_patterns_nbg()
 {
     //swithcing everything to NBG accesses, CPU can't write data anymore
 
-    // D0 D0 -- --
-    // D0 D0 -- --
-    // D0 D0 -- --
-    // i0 D0 D0 --
+    //      T0 T1 T2 T3
+    // A0 : D0 D0 -- --
+    // A1 : D0 D0 -- --
+    // B0 : D0 D0 -- --
+    // B1 : i0 i1 D1 D1
 
     struct vdp2_vram_cycp vram_cycp;
 
@@ -112,9 +105,9 @@ void _svin_set_cycle_patterns_nbg()
     vram_cycp.pt[2].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
 
     vram_cycp.pt[3].t0 = VDP2_VRAM_CYCP_PNDR_NBG0;
-    vram_cycp.pt[3].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[3].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[3].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
+    vram_cycp.pt[3].t1 = VDP2_VRAM_CYCP_PNDR_NBG1;
+    vram_cycp.pt[3].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+    vram_cycp.pt[3].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
     vram_cycp.pt[3].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[3].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[3].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
@@ -163,34 +156,25 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     format.palette_base = 0;
     format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
     normal_map.plane_a = _SVIN_NBG0_PNDR_START;
-    //format.sf_type = 0;//VDP2_SCRN_SF_TYPE_COLOR_CALCULATION;
-    //format.sf_code = VDP2_SCRN_SF_CODE_A;
-    //format.sf_mode = 0;
-    //format.map_bases.plane_a = _SVIN_NBG0_PNDR_START;
 
     vdp2_scrn_cell_format_set(&format,&normal_map);
     vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
-    vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0);
-    vdp2_cram_mode_set(2);
+    //vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0);
 
     //setup nbg1
-    /*format.scroll_screen = VDP2_SCRN_NBG1;
-    format.cc_count = VDP2_SCRN_CCC_PALETTE_256;
-    format.character_size = VDP2_SCRN_CHAR_SIZE_1X1;
+    format.scroll_screen = VDP2_SCRN_NBG1;
+    format.ccc = VDP2_SCRN_CCC_PALETTE_256;
+    format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
     format.pnd_size = 2;
-    format.auxiliary_mode = 1;
-    format.cp_table = 0;
-    format.color_palette = 0;
-    format.plane_size = (2 * 1);
-    format.sf_type = 0;//VDP2_SCRN_SF_TYPE_COLOR_CALCULATION;
-    format.sf_code = VDP2_SCRN_SF_CODE_A;
-    format.sf_mode = 0;
-    format.map_bases.plane_a = _SVIN_NBG1_PNDR_START;
+    format.aux_mode = VDP2_SCRN_AUX_MODE_1;
+    format.cpd_base = 0;
+    format.palette_base = 0;
+    format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
+    normal_map.plane_a = _SVIN_NBG1_PNDR_START;
 
-    vdp2_scrn_cell_format_set(&format);
+    vdp2_scrn_cell_format_set(&format,&normal_map);
     vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
-    vdp2_scrn_display_set(VDP2_SCRN_NBG1);*/
-    //vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG1,0x80);
+    vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISPTP_NBG1);
 
     //setup nbg2
     /*format.scroll_screen = VDP2_SCRN_NBG2;
@@ -209,6 +193,9 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     vdp2_scrn_cell_format_set(&format);
     vdp2_scrn_priority_set(VDP2_SCRN_NBG2, 6);
     vdp2_scrn_display_set(VDP2_SCRN_NBG2);*/
+
+    //set colormap mode 2
+    vdp2_cram_mode_set(2);
 
     vdp2_tvmd_interlace_t interlace = (_SVIN_SCANMODE_240P == screen_mode.scanmode) ? VDP2_TVMD_INTERLACE_NONE :
                                             (_SVIN_SCANMODE_240I == screen_mode.scanmode)  ? VDP2_TVMD_INTERLACE_SINGLE : VDP2_TVMD_INTERLACE_DOUBLE;
@@ -271,6 +258,7 @@ void _svin_init(_svin_screen_mode_t screen_mode)
 
     _svin_cmdt_list->count = _SVIN_VDP1_ORDER_LIMIT+1;
     
+    //setting clipping coordinates
     vdp1_cmdt_system_clip_coord_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX]);
     vdp1_cmdt_t *cmdt_system_clip_coords;
     cmdt_system_clip_coords = &_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_SYSTEM_CLIP_COORDS_INDEX];
@@ -297,9 +285,19 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     _svin_cmdt_list->cmdts[index].cmd_ya= (VDP2_TVMD_VERT_224 == screen_mode.y_res) ? 0 : 
                                                 (VDP2_TVMD_VERT_240 == screen_mode.y_res) ? 8 : 16;
     vdp1_cmdt_char_base_set(&_svin_cmdt_list->cmdts[index],vdp1_vram_partitions.texture_base);
-    //_svin_cmdt_list->cmdts[index].cmd_srca = (uint16_t)vdp1_vram_partitions.texture_base;
     _svin_cmdt_list->cmdts[index].cmd_size=((320/8)<<8)|(224);
 
+    //quad for shadowdrop test, 32x32, out-of-screen, storing after text quad at 0x11800
+    index = _SVIN_VDP1_ORDER_TEXT_SPRITE_1_INDEX; 
+    vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
+    vdp1_cmdt_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    vdp1_cmdt_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
+    _svin_cmdt_list->cmdts[index].cmd_xa = -40;
+    _svin_cmdt_list->cmdts[index].cmd_ya = -40;
+    vdp1_cmdt_char_base_set(&_svin_cmdt_list->cmdts[index],vdp1_vram_partitions.texture_base+0x11800);
+    _svin_cmdt_list->cmdts[index].cmd_size=((32/8)<<8)|(32);
+
+    //end of commands list
     vdp1_cmdt_end_set(&_svin_cmdt_list->cmdts[_SVIN_VDP1_ORDER_LIMIT]);
 
     vdp1_sync_cmdt_list_put(_svin_cmdt_list, 0);
@@ -343,7 +341,7 @@ void _svin_init(_svin_screen_mode_t screen_mode)
         _pointer32[i] = 0x00000000 + _SVIN_NBG0_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
     }
 
-    /*//writing pattern names for nbg1
+    //writing pattern names for nbg1
     //nbg1  is mostly transparent, so fill with that one
     _pointer32 = (int *)_SVIN_NBG1_PNDR_START;
     for (unsigned int i = 0; i < _SVIN_NBG1_PNDR_SIZE / sizeof(int); i++)
@@ -351,7 +349,7 @@ void _svin_init(_svin_screen_mode_t screen_mode)
         _pointer32[i] = 0x00000000 + _SVIN_NBG1_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
     }
 
-    //writing pattern names for nbg2
+    /*//writing pattern names for nbg2
     //nbg2  is mostly transparent, so fill with that one
     _pointer32 = (int *)_SVIN_NBG2_PNDR_START;
     for (unsigned int i = 0; i < _SVIN_NBG2_PNDR_SIZE / sizeof(int); i++)
@@ -368,14 +366,14 @@ void _svin_init(_svin_screen_mode_t screen_mode)
         _pointer32[i] = 0;
     }
 
-    /*//clearing character pattern names data for nbg1
+    //clearing character pattern names data for nbg1
     _pointer32 = (int *)_SVIN_NBG1_CHPNDR_START;
     for (unsigned int i = 0; i < _SVIN_NBG1_CHPNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0;
     }
 
-    //clearing character pattern names data for nbg2
+    /*//clearing character pattern names data for nbg2
     _pointer32 = (int *)_SVIN_NBG2_CHPNDR_START;
     for (unsigned int i = 0; i < _SVIN_NBG2_CHPNDR_SIZE / sizeof(int); i++)
     {
@@ -396,7 +394,7 @@ void _svin_init(_svin_screen_mode_t screen_mode)
         _pointer32[i] = 0x7F7F7F7F;
     }
 
-    /*//setting up "transparent" character for nbg1
+    //setting up "transparent" character for nbg1
     _pointer32 = (int *)_SVIN_NBG1_CHPNDR_SPECIALS_ADDR;
     for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
     {
@@ -410,7 +408,7 @@ void _svin_init(_svin_screen_mode_t screen_mode)
         _pointer32[i] = 0x7F7F7F7F;
     }
 
-    //setting up "transparent" character for nbg1
+    /*//setting up "transparent" character for nbg1
     _pointer32 = (int *)_SVIN_NBG2_CHPNDR_SPECIALS_ADDR;
     for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
     {
@@ -508,7 +506,7 @@ void _svin_set_palette(int number, rgb888_t *pointer)
 
 void _svin_set_palette_part(int number, rgb888_t *pointer, int start, int end)
 {
-    uint8_t *my_vdp2_cram8 = (uint8_t *)VDP2_VRAM_ADDR(8, 0x400 * number);
+    uint8_t *my_vdp2_cram8 = (uint8_t *)VDP2_CRAM_ADDR(0x200 * number);
     for (int i = start; i <= end; i++)
     {
         my_vdp2_cram8[i*4+0] = pointer[i-start].cc;
@@ -525,7 +523,7 @@ void _svin_clear_palette(int number)
 
 void _svin_clear_palette_part(int number, int start, int end)
 {
-    uint32_t *my_vdp2_cram32 = (uint32_t *)VDP2_VRAM_ADDR(8, 0x400 * number);
+    uint32_t *my_vdp2_cram32 = (uint32_t *)VDP2_CRAM_ADDR(0x200 * number);
     for (int i = start; i <= end; i++)
     {
         my_vdp2_cram32[i] = 0;

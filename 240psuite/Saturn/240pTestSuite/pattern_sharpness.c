@@ -69,12 +69,8 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
     format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
     vdp2_scrn_bitmap_format_set(&format);
 
-	int _size_x = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 320: 352;
-	if (screenmode.x_res_doubled) _size_x*=2;
-	int _size_y = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 224 : 
-					(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 240 : 256;
-	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
-		_size_y *= 2;
+	int _size_x = get_screenmode_resolution_x(screenmode);
+	int _size_y = get_screenmode_resolution_y(screenmode);
 
 	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
 
@@ -196,21 +192,6 @@ void draw_sharpness_pattern2(_svin_screen_mode_t screenmode)
 	ClearTextLayer();
 	
 	_svin_set_cycle_patterns_cpu();
-	//switching to 16x16 tiled mode
-    struct vdp2_scrn_cell_format format;
-    memset(&format, 0x00, sizeof(format));
-	vdp2_scrn_normal_map_t normal_map;
-    memset(&normal_map, 0x00, sizeof(normal_map));
-    format.scroll_screen = VDP2_SCRN_NBG0;
-    format.ccc = VDP2_SCRN_CCC_PALETTE_256;
-    format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
-    format.pnd_size = 2;
-    format.aux_mode = VDP2_SCRN_AUX_MODE_1;
-    format.cpd_base = 0;
-    format.palette_base = 0;
-    format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
-    normal_map.plane_a = _SVIN_NBG0_PNDR_START;//(VDP2_VRAM_ADDR(1,0x18000));//_SVIN_NBG0_PNDR_START;
-    vdp2_scrn_cell_format_set(&format,&normal_map);
 
 	//add colors to palette
 	rgb888_t Color;
@@ -236,7 +217,7 @@ void draw_sharpness_pattern2(_svin_screen_mode_t screenmode)
 	}
 
 	//fill everything with a brick tile
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;//(VDP2_VRAM_ADDR(1,0x18000));//_SVIN_NBG0_PNDR_START;
+    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
     for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0x00200000; //palette 2

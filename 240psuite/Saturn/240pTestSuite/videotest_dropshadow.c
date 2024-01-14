@@ -11,31 +11,36 @@
 void draw_dropshadow(_svin_screen_mode_t screenmode)
 {	
 	_svin_set_cycle_patterns_cpu();
-	//add colors to palette
-	/*uint8_t IRE_top = Get_IRE_Level(100.0);
-	uint8_t IRE_bot = Get_IRE_Level(7.5);
-	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = black
-	Color.r = IRE_top;
-	Color.g = IRE_top;
-	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = white
-	//create checkerboard tile at index 0
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
-	for (int i=0; i<4; i++)
-	{
-		_pointer32[i*4  ] = 0x01020102;
-		_pointer32[i*4+1] = 0x01020102;
-		_pointer32[i*4+2] = 0x02010201;
-		_pointer32[i*4+3] = 0x02010201;
-	}
-	//fill everything with this tile
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x00200000; //palette 2, transparency on
-    }*/
 	draw_bg_donna(screenmode);
+	//constructing pattern
+	uint8_t pattern_color = FONT_WHITE*4;
+	uint8_t pattern [32*32];
+	memset(pattern,0,32*32);
+	for (int y=5;y<28;y++)
+		for (int x=5;x<28;x++)
+			pattern[32*y+x] = pattern_color;
+	for (int y=0;y<16;y++)
+		for (int x=14-y;x<16;x++)
+			if (x>=0)
+				{
+					pattern[32*y+x] = pattern_color;
+					pattern[32*y+31-x] = pattern_color;
+					pattern[32*(31-y)+x] = pattern_color;
+					pattern[32*(31-y)+31-x] = pattern_color;
+				}
+
+	//copying pattern to NBG1
+	uint8_t * _p8 = (uint8_t *)_SVIN_NBG1_CHPNDR_START;
+	for (int y=0;y<4;y++)
+		for (int x=0;x<4;x++)
+			for (int _y=0;_y<8;_y++)
+				memcpy(&(_p8[y*64*4+x*64+_y*8]),&(pattern[(y*8+_y)*32+x*8]),8);
+
+	//generating names for pattern in NBG1
+	int * _pointer32 = (int *)_SVIN_NBG1_PNDR_START;
+	for (int y=0;y<4;y++)
+		for (int x=0;x<4;x++)
+    		_pointer32[y*64+x] = 0x00000000 + 0x60000/32 + y*4*2 + x*2; //palette 0
 
 	_svin_set_cycle_patterns_nbg();
 }
@@ -50,15 +55,42 @@ void videotest_dropshadow(_svin_screen_mode_t screenmode)
 	bool key_pressed = false;
 	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
 	int pattern = 0;
+	int _size_x = get_screenmode_resolution_x(screenmode);
+	int _size_y = get_screenmode_resolution_y(screenmode);
+	int x=_size_x/2;
+	int y=_size_y/2;
 
 	wait_for_key_unpress();
 	
 	int mode_display_counter = 0;
+	bool bOddField = false;
+	char buf[32];
 
 	while (1)
 	{
 		smpc_peripheral_process();
 		smpc_peripheral_digital_port(1, &controller);
+		if ( (controller.pressed.button.up) )
+		{
+			y--;
+			if (y<0) y=0;
+		}
+		if ( (controller.pressed.button.down) )
+		{
+			y++;
+			if (y > _size_y-32) y=_size_y-32;
+		}
+		if ( (controller.pressed.button.left) )
+		{
+			x--;
+			if (x<0) x=0;
+		}
+		if ( (controller.pressed.button.right) )
+		{
+			x++;
+			if (x > _size_x-32) x=_size_x-32;
+		}
+
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
@@ -67,6 +99,10 @@ void videotest_dropshadow(_svin_screen_mode_t screenmode)
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
 			mode_display_counter=120;
+			_size_x = get_screenmode_resolution_x(curr_screenmode);
+			_size_y = get_screenmode_resolution_y(curr_screenmode);
+			if (x > _size_x-32) x=_size_x-32;
+			if (y > _size_y-32) y=_size_y-32;
 		}
 		else if ( (controller.pressed.button.r) )
 		{
@@ -76,8 +112,24 @@ void videotest_dropshadow(_svin_screen_mode_t screenmode)
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
 			mode_display_counter=120;
+			_size_x = get_screenmode_resolution_x(curr_screenmode);
+			_size_y = get_screenmode_resolution_y(curr_screenmode);
+			if (x > _size_x-32) x=_size_x-32;
+			if (y > _size_y-32) y=_size_y-32;
 		}
-		else if ( (controller.pressed.button.a) || (controller.pressed.button.b) || (controller.pressed.button.c) )
+		else if ( (controller.pressed.button.a) || (controller.pressed.button.c) )
+		{
+			//change the active field
+			bOddField = (bOddField) ? false : true;
+			if (bOddField)
+				sprintf(buf, " Odd fields");
+			else
+				sprintf(buf, "Even fields");
+			DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_YELLOW);
+			wait_for_key_unpress();
+			mode_display_counter=120;
+		}
+		else if ( (controller.pressed.button.b) )
 		{
 			//quit the pattern
 			wait_for_key_unpress();
@@ -92,29 +144,19 @@ void videotest_dropshadow(_svin_screen_mode_t screenmode)
 			if (0 == mode_display_counter)
 				ClearTextLayer();
 		}
-		//change the checkerboard pattern
-		//create checkerboard tile at index 0
-		/*pattern++;
-		pattern = pattern % 2;
-		if (pattern)
+		//disable pattern on every second frame
+		if ( ( (VDP2_TVMD_TV_FIELD_SCAN_ODD == vdp2_tvmd_field_scan_get()) && (bOddField) ) ||
+			 ( (VDP2_TVMD_TV_FIELD_SCAN_EVEN == vdp2_tvmd_field_scan_get()) && (!bOddField) ) )
 		{
-			for (int i=0; i<4; i++)
-			{
-				_pointer32[i*4  ] = 0x01020102;
-				_pointer32[i*4+1] = 0x01020102;
-				_pointer32[i*4+2] = 0x02010201;
-				_pointer32[i*4+3] = 0x02010201;
-			}
+			vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1,fix16_int32_from(-x));
+			vdp2_scrn_scroll_y_set(VDP2_SCRN_NBG1,fix16_int32_from(-y));
+			vdp2_sync();
 		}
 		else
 		{
-			for (int i=0; i<4; i++)
-			{
-				_pointer32[i*4  ] = 0x02010201;
-				_pointer32[i*4+1] = 0x02010201;
-				_pointer32[i*4+2] = 0x01020102;
-				_pointer32[i*4+3] = 0x01020102;
-			}
-		}*/
+			vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1,fix16_int32_from(140));
+			vdp2_scrn_scroll_y_set(VDP2_SCRN_NBG1,fix16_int32_from(140));
+			vdp2_sync();
+		}
 	}
 }

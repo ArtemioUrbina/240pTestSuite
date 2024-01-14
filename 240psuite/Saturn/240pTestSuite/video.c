@@ -164,3 +164,18 @@ _svin_screen_mode_t create_screenmode_by_number(vdp2_tvmd_tv_standard_t colorsys
     }
     return new_mode;
 }
+
+int get_screenmode_resolution_x(_svin_screen_mode_t screenmode)
+{
+	int number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 320 : 352;
+    number = (screenmode.x_res_doubled) ? number*2 : number;
+	return number;
+}
+
+int get_screenmode_resolution_y(_svin_screen_mode_t screenmode)
+{
+	int number = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 224 : 
+				(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 240 : 256;
+    number = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? number*2 : number;
+	return number;
+}

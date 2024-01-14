@@ -168,7 +168,10 @@ int main(void)
 	_svin_init(screenMode);
 	_svin_background_set_from_assets(asset_bootlogo_bg,(int)(asset_bootlogo_bg_end-asset_bootlogo_bg));
 
-	_svin_delay(1000);
+	//wait for 60 frames, either 1s or 1.2s
+	for (int i=0;i<60;i++)
+		vdp2_tvmd_vblank_in_next_wait(1);
+
 	_svin_background_fade_to_black();
 
 	_svin_clear_palette(0);

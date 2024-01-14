@@ -10,34 +10,29 @@ extern uint8_t _svin_init_done;
 
 void _svin_background_fade_to_black_step()
 {
-    uint16_t *my_vdp2_cram = (uint16_t *)VDP2_VRAM_ADDR(8, 0x00200);
+    uint8_t *my_vdp2_cram = (uint8_t *)VDP2_CRAM_ADDR(0x200);
     uint8_t r, g, b;
     for (int i = 0; i < 256; i++)
     {
-        b = (my_vdp2_cram[i] & 0x7C00) >> 10;
-        g = (my_vdp2_cram[i] & 0x03E0) >> 5;
-        r = (my_vdp2_cram[i] & 0x001F) >> 0;
-        r--;
-        b--;
-        g--;
-        if (r == 0xFF)
-            r = 0;
-        if (g == 0xFF)
-            g = 0;
-        if (b == 0xFF)
-            b = 0;
-        my_vdp2_cram[i] = ((b << 10) |
-                           (g << 5) |
-                           (r << 0));
+        b = my_vdp2_cram[i*4+1];
+        g = my_vdp2_cram[i*4+2];
+        r = my_vdp2_cram[i*4+3];
+        if (r > 4) r-=4; else r=0;
+        if (g > 4) g-=4; else g=0;
+        if (b > 4) b-=4; else b=0;
+        my_vdp2_cram[i*4+1] = b;
+        my_vdp2_cram[i*4+2] = g;
+        my_vdp2_cram[i*4+3] = r;
     }
 }
 
 void _svin_background_fade_to_black()
 {
-    for (int fade = 0; fade < 32; fade++)
+    for (int fade = 0; fade < 64; fade++)
     {
         _svin_background_fade_to_black_step();
-        _svin_delay(30);
+        //wait for 1 frame
+        vdp2_tvmd_vblank_in_next_wait(1);
     }
 }
 
