@@ -54,6 +54,7 @@
 #include "pattern_sharpness.h"
 #include "pattern_whitescreen.h"
 
+#include "videotest_backlit_zone.h"
 #include "videotest_checkerboard.h"
 #include "videotest_dropshadow.h"
 #include "videotest_striped_sprite.h"
@@ -624,7 +625,7 @@ int main(void)
 								videotest_checkerboard(screenMode);
 								break;							
 							case 8:
-								//backlit zone
+								videotest_backlit_zone(screenMode);
 								break;
 							case 9:
 								//diagonal

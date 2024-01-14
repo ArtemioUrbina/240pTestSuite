@@ -38,6 +38,7 @@ SH_SRCS:= \
     pattern_sharpness.c \
     pattern_smpte.c \
     pattern_whitescreen.c \
+    videotest_backlit_zone.c \
     videotest_checkerboard.c \
     videotest_dropshadow.c \
     videotest_striped_sprite.c \
