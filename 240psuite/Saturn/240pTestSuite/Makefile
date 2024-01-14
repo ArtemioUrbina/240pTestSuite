@@ -41,6 +41,7 @@ SH_SRCS:= \
     videotest_backlit_zone.c \
     videotest_checkerboard.c \
     videotest_dropshadow.c \
+    videotest_grid_scroll.c \
     videotest_striped_sprite.c \
     window_credits.c \
 	libsvin/svin_background.c \

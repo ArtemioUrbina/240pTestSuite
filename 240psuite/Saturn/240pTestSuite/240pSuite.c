@@ -57,6 +57,7 @@
 #include "videotest_backlit_zone.h"
 #include "videotest_checkerboard.h"
 #include "videotest_dropshadow.h"
+#include "videotest_grid_scroll.h"
 #include "videotest_striped_sprite.h"
 
 #include "window_credits.h"
@@ -616,7 +617,7 @@ int main(void)
 								//scroll
 								break;							
 							case 5:
-								//grid scroll
+								videotest_grid_scroll(screenMode);
 								break;							
 							case 6:
 								//hor/vert stripes
