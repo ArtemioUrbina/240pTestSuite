@@ -630,7 +630,7 @@ int main(void)
 								videotest_backlit_zone(screenMode);
 								break;
 							case 9:
-								//diagonal
+								videotest_diagonal(screenMode);
 								break;
 							case 10:
 								menu_id = MENU_MAIN;

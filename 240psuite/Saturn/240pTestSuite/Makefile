@@ -40,6 +40,7 @@ SH_SRCS:= \
     pattern_whitescreen.c \
     videotest_backlit_zone.c \
     videotest_checkerboard.c \
+    videotest_diagonal.c \
     videotest_dropshadow.c \
     videotest_grid_scroll.c \
     videotest_hor_vert_stripes.c \
