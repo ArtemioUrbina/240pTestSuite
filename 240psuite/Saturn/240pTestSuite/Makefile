@@ -18,12 +18,15 @@ BUILTIN_ASSETS+= \
 SH_PROGRAM:= 240pSuite
 SH_SRCS:= \
     background.c \
+    bootlogo.c \
     fs.c \
     font.c \
     image.c \
     video.c \
     control.c \
     ire.c \
+    image_buzzbomber.c \
+    image_not_really.c \
     pattern_100ire.c \
     pattern_colorbars.c \
     pattern_colorbars_grayscale.c \
