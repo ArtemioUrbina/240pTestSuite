@@ -13,6 +13,13 @@ vdp1_cmdt_color_mode5_set(vdp1_cmdt_t *cmdt)
 void _yaul_early_access()
 {
     //nothing is initialized yet. so we can't use most of the yaul functionality
+    //checking if there actually in logo on-screen (in some cases there might be not, like ODE or HLE BIOS in emulators)
+    uint16_t * p16 = (uint16_t *)(VDP2_VRAM_ADDR(0,0));
+    if ( (p16[0x8D0/2]!=0xDDDD) ||  (p16[0x8D2/2]!=0xDDD0) || (p16[0x8D4/2]!=0x0D00) || (p16[0x8D6/2]!=0x0D00) )
+    {
+        //no logo, not drawing anything
+        return;
+    }
     //wait for vblank in
     vdp2_tvmd_vblank_in_wait();
     //enabling drawing in VDP1
@@ -68,7 +75,7 @@ void _yaul_early_access()
     vdp1_cmdt_end_set(&cmdlist[4]);
     
     //changing sprite priority in VDP2 to 5
-    uint16_t * p16 = (uint16_t *)(VDP2_IOREG_BASE+PRISA);
+    p16 = (uint16_t *)(VDP2_IOREG_BASE+PRISA);
     p16[0] = 0x0505;
     p16[1] = 0x0505;
     p16[2] = 0x0505;
