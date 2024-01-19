@@ -609,7 +609,7 @@ int main(void)
 								videotest_striped_sprite(screenMode);
 								break;							
 							case 2:
-								//lag
+								videotest_lag(screenMode);
 								break;							
 							case 3:
 								//timing/reflex
