@@ -12,7 +12,7 @@ void print_ire_level(int ire_level)
 {
 	char buf[128];
 	sprintf(buf, "%i IRE", ire_level);
-	DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_YELLOW);
+	DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_BLUE);
 }
 
 void draw_100ire(_svin_screen_mode_t screenmode, int ire_level)

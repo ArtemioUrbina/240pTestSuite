@@ -35,7 +35,7 @@ void print_screen_mode(_svin_screen_mode_t screenmode)
 	strcat(buf, "x");
 	strcat(buf, y_res_text_value(screenmode));
 	strcat(buf, "");
-	DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_YELLOW);
+	DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_BLUE);
 }
 
 double get_screen_square_pixel_ratio(_svin_screen_mode_t screenmode)

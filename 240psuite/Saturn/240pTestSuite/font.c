@@ -197,8 +197,8 @@ void DrawStringWithBackground(char *str, unsigned int x, unsigned int y, unsigne
 		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + x + (_y+y-1)*FONT_QUAD_WIDTH);
 		for (_x = 0; _x < _fw*(strlen(str)+1)/2; _x++)
 		{
-			p8_vram[_x*2+1] = bg_palette*4;
-			p8_vram[_x*2] = bg_palette*4;
+			p8_vram[_x*2+1] = 0x1 | bg_palette*4;
+			p8_vram[_x*2] = 0x1 | bg_palette*4;
 		}
 	}
 

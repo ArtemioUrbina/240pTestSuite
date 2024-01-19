@@ -125,7 +125,7 @@ void videotest_dropshadow(_svin_screen_mode_t screenmode)
 				sprintf(buf, " Odd fields");
 			else
 				sprintf(buf, "Even fields");
-			DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_YELLOW);
+			DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_BLUE);
 			wait_for_key_unpress();
 			mode_display_counter=120;
 		}
