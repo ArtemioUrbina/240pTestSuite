@@ -12,6 +12,7 @@ include $(YAUL_INSTALL_ROOT)/share/build.bcl.mk
 BUILTIN_ASSETS+= \
 	assets/BOOTLOGO.BG;asset_bootlogo_bg \
 	assets/BACK2.BG;asset_back2_bg \
+	assets/KIKI.BG;asset_kiki_bg \
 	assets/MASCOT.BG;asset_mascot_bg \
 	assets/SFLOOR.BG;asset_sonicfloor_bg \
 	assets/SBACK1.BG;asset_sonicback1_bg \

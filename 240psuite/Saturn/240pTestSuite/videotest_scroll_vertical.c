@@ -8,39 +8,58 @@
 #include "control.h"
 #include "ire.h"
 
+extern uint8_t asset_kiki_bg[];
+extern uint8_t asset_kiki_bg_end[];
+
+void update_scroll_vertical(_svin_screen_mode_t screenmode, int frame, int offset)
+{
+	//shift background1
+	//vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG0,fix16_int32_from(offset1));
+	uint16_t * p16 = (uint16_t *)(VDP2_IOREG_BASE+SCYIN0);
+	p16[0] = offset;
+	//vdp2_sync();
+}
+
 void draw_scroll_vertical(_svin_screen_mode_t screenmode)
-{	
+{
+	char buf[256*256];	
 	_svin_set_cycle_patterns_cpu();
-	draw_bg_donna(screenmode);
-	//constructing pattern
-	uint8_t pattern_color = FONT_WHITE*4;
-	uint8_t pattern [32*32];
-	memset(pattern,0,32*32);
-	for (int y=5;y<28;y++)
-		for (int x=5;x<28;x++)
-			pattern[32*y+x] = pattern_color;
-	for (int y=0;y<16;y++)
-		for (int x=14-y;x<16;x++)
-			if (x>=0)
-				{
-					pattern[32*y+x] = pattern_color;
-					pattern[32*y+31-x] = pattern_color;
-					pattern[32*(31-y)+x] = pattern_color;
-					pattern[32*(31-y)+31-x] = pattern_color;
-				}
+	//switching to BMP mode
+	//setup nbg0
+    struct vdp2_scrn_bitmap_format format;
+    memset(&format, 0x00, sizeof(format));
+    format.scroll_screen = VDP2_SCRN_NBG0;
+    format.ccc = VDP2_SCRN_CCC_PALETTE_256;
+    format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_512X512;
+    format.palette_base = 0x800;
+    format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
+    vdp2_scrn_bitmap_format_set(&format);
 
-	//copying pattern to NBG1
-	uint8_t * _p8 = (uint8_t *)_SVIN_NBG1_CHPNDR_START;
-	for (int y=0;y<4;y++)
-		for (int x=0;x<4;x++)
-			for (int _y=0;_y<8;_y++)
-				memcpy(&(_p8[y*64*4+x*64+_y*8]),&(pattern[(y*8+_y)*32+x*8]),8);
-
-	//generating names for pattern in NBG1
-	int * _pointer32 = (int *)_SVIN_NBG1_PNDR_START;
-	for (int y=0;y<4;y++)
-		for (int x=0;x<4;x++)
-    		_pointer32[y*64+x] = 0x00000000 + 0x60000/32 + y*4*2 + x*2; //palette 0
+	uint8_t *p8 = (uint8_t *)(asset_kiki_bg);
+	uint16_t *p16 = (uint16_t*)p8;
+	uint16_t size_x = p16[2];
+	uint16_t size_y = p16[3];
+	//if ( (p8[2048] == 'L') && (p8[2048+1] == 'Z') && (p8[2048+2] == '7') && (p8[2048+3] == '7') )
+	{
+		//compressed, decompressing
+		//getting size
+		int * p32 = (int *)(&p8[2048]);
+		int compressed_size = p32[1];
+		assert(compressed_size > 0);
+		assert(compressed_size < 0x1000000);
+		int compressed_size_sectors = ((compressed_size-1)/2048)+1;
+		//decompress
+		bcl_lz_decompress(&(p8[2048+8]),(char*)_SVIN_NBG0_CHPNDR_START,compressed_size);
+		//palette in file is 24-bit, setting it color-by-color
+		rgb888_t _color  = {0,0,0,0};
+		for (int i = 0; i<256; i++)
+		{
+			_color.r = p8[2048*compressed_size_sectors+2048+i*3+0];
+			_color.g = p8[2048*compressed_size_sectors+2048+i*3+1];
+			_color.b = p8[2048*compressed_size_sectors+2048+i*3+2];
+			_svin_set_palette_part(2, &_color, i, i);
+		}
+	}
 
 	_svin_set_cycle_patterns_nbg();
 }
@@ -50,7 +69,17 @@ void videotest_scroll_vertical(_svin_screen_mode_t screenmode)
 	//removing text
 	ClearTextLayer();
 
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	//using 240p screenmode, no switching supported
+	_svin_screen_mode_t curr_screenmode =
+	{
+		.scanmode = _SVIN_SCANMODE_240P,
+		.x_res = _SVIN_X_RESOLUTION_320,
+		.y_res = VDP2_TVMD_VERT_240,
+		.x_res_doubled = false,
+		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
+	};
+	update_screen_mode(curr_screenmode);
+
 	draw_scroll_vertical(curr_screenmode);
 	bool key_pressed = false;
 	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
@@ -63,8 +92,10 @@ void videotest_scroll_vertical(_svin_screen_mode_t screenmode)
 	wait_for_key_unpress();
 	
 	int mode_display_counter = 0;
-	bool bOddField = false;
+	int frame_counter = 0;
+	int offset = 0;
 	char buf[32];
+	int speed = 1;
 
 	while (1)
 	{
@@ -72,62 +103,21 @@ void videotest_scroll_vertical(_svin_screen_mode_t screenmode)
 		smpc_peripheral_digital_port(1, &controller);
 		if ( (controller.pressed.button.up) )
 		{
-			y--;
-			if (y<0) y=0;
+			if (false == key_pressed)
+			{
+				key_pressed = true;
+				speed++;
+				if (speed > 10) speed=10;
+			}
 		}
-		if ( (controller.pressed.button.down) )
+		else if ( (controller.pressed.button.down) )
 		{
-			y++;
-			if (y > _size_y-32) y=_size_y-32;
-		}
-		if ( (controller.pressed.button.left) )
-		{
-			x--;
-			if (x<0) x=0;
-		}
-		if ( (controller.pressed.button.right) )
-		{
-			x++;
-			if (x > _size_x-32) x=_size_x-32;
-		}
-
-		if ( (controller.pressed.button.l) )
-		{
-			curr_screenmode = prev_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
-			draw_scroll_vertical(curr_screenmode);
-			print_screen_mode(curr_screenmode);
-			wait_for_key_unpress();
-			mode_display_counter=120;
-			_size_x = get_screenmode_resolution_x(curr_screenmode);
-			_size_y = get_screenmode_resolution_y(curr_screenmode);
-			if (x > _size_x-32) x=_size_x-32;
-			if (y > _size_y-32) y=_size_y-32;
-		}
-		else if ( (controller.pressed.button.r) )
-		{
-			curr_screenmode = next_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
-			draw_scroll_vertical(curr_screenmode);
-			print_screen_mode(curr_screenmode);
-			wait_for_key_unpress();
-			mode_display_counter=120;
-			_size_x = get_screenmode_resolution_x(curr_screenmode);
-			_size_y = get_screenmode_resolution_y(curr_screenmode);
-			if (x > _size_x-32) x=_size_x-32;
-			if (y > _size_y-32) y=_size_y-32;
-		}
-		else if ( (controller.pressed.button.a) || (controller.pressed.button.c) )
-		{
-			//change the active field
-			bOddField = (bOddField) ? false : true;
-			if (bOddField)
-				sprintf(buf, " Odd fields");
-			else
-				sprintf(buf, "Even fields");
-			DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_BLUE);
-			wait_for_key_unpress();
-			mode_display_counter=120;
+			if (false == key_pressed)
+			{
+				key_pressed = true;
+				speed--;
+				if (speed < 1) speed=1;
+			}
 		}
 		else if ( (controller.pressed.button.b) )
 		{
@@ -136,27 +126,22 @@ void videotest_scroll_vertical(_svin_screen_mode_t screenmode)
 			update_screen_mode(screenmode);
 			return;
 		}
-		vdp2_tvmd_vblank_in_wait();
+		else
+			key_pressed = false;
+
 		vdp2_tvmd_vblank_out_wait();
+		vdp2_tvmd_vblank_in_wait();
 		if (mode_display_counter > 0)
 		{
 			mode_display_counter--;
 			if (0 == mode_display_counter)
 				ClearTextLayer();
 		}
+		//changing the palette
 		//disable pattern on every second frame
-		if ( ( (VDP2_TVMD_TV_FIELD_SCAN_ODD == vdp2_tvmd_field_scan_get()) && (bOddField) ) ||
-			 ( (VDP2_TVMD_TV_FIELD_SCAN_EVEN == vdp2_tvmd_field_scan_get()) && (!bOddField) ) )
-		{
-			vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1,fix16_int32_from(-x));
-			vdp2_scrn_scroll_y_set(VDP2_SCRN_NBG1,fix16_int32_from(-y));
-			vdp2_sync();
-		}
-		else
-		{
-			vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1,fix16_int32_from(140));
-			vdp2_scrn_scroll_y_set(VDP2_SCRN_NBG1,fix16_int32_from(140));
-			vdp2_sync();
-		}
+		frame_counter++;
+		offset-=speed;
+		offset %= 512;
+		update_scroll_vertical(screenmode,frame_counter,offset);
 	}
 }
