@@ -221,13 +221,13 @@ int main(void)
 				case MENU_MAIN:
 					DrawString("Test Patterns", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
 					DrawString("Video Tests", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;	
-					DrawString("Audio Tests",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					//DrawString("Audio Tests",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Hardware Tests",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
 					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Credits",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
-					menu_size = 7;
+					menu_size = 6;
 					break;
 				case MENU_PATTERNS:
 					DrawString("Color & Black Levels",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
@@ -294,14 +294,14 @@ int main(void)
 					break;
 				case MENU_HARDWARE_TESTS:
 					DrawString("Controller Test",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Controller Ports Device List",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					//DrawString("Controller Ports Device List",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("System Information",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					DrawString("Memory Viewer",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					//DrawString("Memory Viewer",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
 					DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
 					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
-					menu_size = 7;
+					menu_size = 5;
 					break;
 				case MENU_CONFIGURATION:
 					sprintf(string_buf,scanmode_text_value(screenMode));
@@ -462,22 +462,22 @@ int main(void)
 								sel = 0;
 								redrawMenu = true;
 								break;
-							case 2:
+							/*case 2:
 								menu_id = MENU_AUDIO_TESTS;
 								sel = 0;
 								redrawMenu = true;
-								break;
-							case 3:
+								break;*/
+							case 2:
 								menu_id = MENU_HARDWARE_TESTS;
 								sel = 0;
 								redrawMenu = true;
 								break;
-							case 4:
+							case 3:
 								menu_id = MENU_CONFIGURATION;
 								sel = 0;
 								redrawMenu = true;
 								break;
-							case 5:
+							case 4:
 								//go to credits
 								vdp2_sync_wait();
 								wait_for_key_unpress();
@@ -485,7 +485,7 @@ int main(void)
 								redrawBG = true;
 								redrawMenu = true;
 								break;
-							case 6:
+							case 5:
 								//go to help
 								break;
 						}
@@ -664,6 +664,32 @@ int main(void)
 								break;							
 							case 1:
 								//audio sync
+								break;							
+							case 2:
+								menu_id = MENU_MAIN;
+								sel = 2;
+								redrawMenu = true;
+								break;	
+							case 3:
+								menu_id = MENU_CONFIGURATION;
+								sel = 0;
+								redrawMenu = true;
+								break;
+							case 4:
+								//go to help
+								break;
+						}
+						redrawMenu = true;
+					}
+					else if (MENU_HARDWARE_TESTS == menu_id)
+					{
+						switch(sel)
+						{
+							case 0:
+								hwtest_controller(screenMode);
+								break;							
+							case 1:
+								//system information
 								break;							
 							case 2:
 								menu_id = MENU_MAIN;

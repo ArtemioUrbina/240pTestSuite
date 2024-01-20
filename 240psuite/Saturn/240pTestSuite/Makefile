@@ -31,6 +31,7 @@ SH_SRCS:= \
     video.c \
     control.c \
     ire.c \
+    hwtest_controller.c \
     image_big_digits.c \
     image_buzzbomber.c \
     image_not_really.c \
