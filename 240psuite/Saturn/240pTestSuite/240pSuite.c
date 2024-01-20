@@ -71,6 +71,7 @@
 #define MENU_AUDIO_TESTS 5
 #define MENU_HARDWARE_TESTS 6
 #define MENU_CONFIGURATION 7
+#define MENU_VIDEO_TEST_SCROLL_HV_SELECT 8
 
 extern uint8_t asset_bootlogo_bg[];
 extern uint8_t asset_bootlogo_bg_end[];
@@ -348,10 +349,17 @@ int main(void)
 							DrawString("Pixel clock ......28.4377 MHz", x, y+_fh*pos, FONT_CYAN);//17.734475 MHz * 1820 / 1135
 						pos++;
 					}
-					//DrawString("Back to Main Menu",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
-					//DrawString("Help",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					menu_size = 5;
 					break;
+				case MENU_VIDEO_TEST_SCROLL_HV_SELECT:
+					DrawString("Horizontal",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Vertical",x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
+					pos++;
+					DrawString("Back to Video Tests",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Configuration",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					DrawString("Help",x, y+_fh*pos, sel == pos-1 ? FONT_RED : FONT_WHITE); pos++;
+					menu_size = 5;
+					break;				
 				default:
 					DrawString("Exit", x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					break;
@@ -612,10 +620,11 @@ int main(void)
 								videotest_lag(screenMode);
 								break;							
 							case 3:
-								//timing/reflex
+								videotest_reflex(screenMode);
 								break;							
 							case 4:
-								//scroll
+								menu_id = MENU_VIDEO_TEST_SCROLL_HV_SELECT;
+								sel = 0;
 								break;							
 							case 5:
 								videotest_grid_scroll(screenMode);
@@ -635,12 +644,10 @@ int main(void)
 							case 10:
 								menu_id = MENU_MAIN;
 								sel = 1;
-								redrawMenu = true;
 								break;	
 							case 11:
 								menu_id = MENU_CONFIGURATION;
 								sel = 0;
-								redrawMenu = true;
 								break;
 							case 12:
 								//go to help
@@ -739,6 +746,30 @@ int main(void)
 								break;
 						}
 					}
+					else if (MENU_VIDEO_TEST_SCROLL_HV_SELECT == menu_id)
+					{
+						switch(sel)
+						{
+							case 0:
+								videotest_scroll_horizontal(screenMode);
+								break;
+							case 1:
+								videotest_scroll_vertical(screenMode);
+								break;
+							case 2:
+								menu_id = MENU_VIDEO_TESTS;
+								sel = 4;
+								break;	
+							case 3:
+								menu_id = MENU_CONFIGURATION;
+								sel = 0;
+								break;
+							case 4:
+								//go to help
+								break;
+						}
+						redrawMenu = true;
+					}
 					redrawBG = true;
 					key_pressed = true;
 				}
@@ -794,6 +825,10 @@ int main(void)
 							menu_id = MENU_MAIN;
 							sel = 4;
 							break;
+						case MENU_VIDEO_TEST_SCROLL_HV_SELECT:
+							menu_id = MENU_VIDEO_TESTS;
+							sel = 4;
+							break;						
 					}
 					redrawMenu = true;
 					key_pressed = true;

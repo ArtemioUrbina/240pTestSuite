@@ -13,6 +13,11 @@ BUILTIN_ASSETS+= \
 	assets/BOOTLOGO.BG;asset_bootlogo_bg \
 	assets/BACK2.BG;asset_back2_bg \
 	assets/MASCOT.BG;asset_mascot_bg \
+	assets/SFLOOR.BG;asset_sonicfloor_bg \
+	assets/SBACK1.BG;asset_sonicback1_bg \
+	assets/SBACK2.BG;asset_sonicback2_bg \
+	assets/SBACK3.BG;asset_sonicback3_bg \
+	assets/SBACK4.BG;asset_sonicback4_bg \
 	assets/DONNA.BG;asset_donna_bg
 
 SH_PROGRAM:= 240pSuite
@@ -49,7 +54,10 @@ SH_SRCS:= \
     videotest_grid_scroll.c \
     videotest_hor_vert_stripes.c \
     videotest_lag.c \
+    videotest_reflex.c \
     videotest_striped_sprite.c \
+    videotest_scroll_horizontal.c \
+    videotest_scroll_vertical.c \
     window_credits.c \
 	libsvin/svin_background.c \
 	libsvin/svin.c \

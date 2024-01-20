@@ -8,12 +8,12 @@
 #include "control.h"
 #include "ire.h"
 
-void draw_striped_sprite(_svin_screen_mode_t screenmode)
+void draw_scroll_vertical(_svin_screen_mode_t screenmode)
 {	
 	_svin_set_cycle_patterns_cpu();
 	draw_bg_donna(screenmode);
 	//constructing pattern
-	uint8_t pattern_color = 1 | FONT_BLACK*4;
+	uint8_t pattern_color = FONT_WHITE*4;
 	uint8_t pattern [32*32];
 	memset(pattern,0,32*32);
 	for (int y=5;y<28;y++)
@@ -33,7 +33,7 @@ void draw_striped_sprite(_svin_screen_mode_t screenmode)
 	uint8_t * _p8 = (uint8_t *)_SVIN_NBG1_CHPNDR_START;
 	for (int y=0;y<4;y++)
 		for (int x=0;x<4;x++)
-			for (int _y=0;_y<8;_y+=2)
+			for (int _y=0;_y<8;_y++)
 				memcpy(&(_p8[y*64*4+x*64+_y*8]),&(pattern[(y*8+_y)*32+x*8]),8);
 
 	//generating names for pattern in NBG1
@@ -45,18 +45,18 @@ void draw_striped_sprite(_svin_screen_mode_t screenmode)
 	_svin_set_cycle_patterns_nbg();
 }
 
-void videotest_striped_sprite(_svin_screen_mode_t screenmode)
+void videotest_scroll_vertical(_svin_screen_mode_t screenmode)
 {
 	//removing text
 	ClearTextLayer();
 
 	_svin_screen_mode_t curr_screenmode = screenmode;
-	draw_striped_sprite(curr_screenmode);
+	draw_scroll_vertical(curr_screenmode);
 	bool key_pressed = false;
 	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
 	int pattern = 0;
-	int _size_x = get_screenmode_resolution_x(screenmode);
-	int _size_y = get_screenmode_resolution_y(screenmode);
+	int _size_x = get_screenmode_resolution_x(curr_screenmode);
+	int _size_y = get_screenmode_resolution_y(curr_screenmode);
 	int x=_size_x/2;
 	int y=_size_y/2;
 
@@ -90,15 +90,12 @@ void videotest_striped_sprite(_svin_screen_mode_t screenmode)
 			x++;
 			if (x > _size_x-32) x=_size_x-32;
 		}
-		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1,fix16_int32_from(-x));
-		vdp2_scrn_scroll_y_set(VDP2_SCRN_NBG1,fix16_int32_from(-y));
-		vdp2_sync();
 
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
 			update_screen_mode(curr_screenmode);
-			draw_striped_sprite(curr_screenmode);
+			draw_scroll_vertical(curr_screenmode);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
 			mode_display_counter=120;
@@ -111,7 +108,7 @@ void videotest_striped_sprite(_svin_screen_mode_t screenmode)
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
 			update_screen_mode(curr_screenmode);
-			draw_striped_sprite(curr_screenmode);
+			draw_scroll_vertical(curr_screenmode);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
 			mode_display_counter=120;
@@ -146,6 +143,20 @@ void videotest_striped_sprite(_svin_screen_mode_t screenmode)
 			mode_display_counter--;
 			if (0 == mode_display_counter)
 				ClearTextLayer();
+		}
+		//disable pattern on every second frame
+		if ( ( (VDP2_TVMD_TV_FIELD_SCAN_ODD == vdp2_tvmd_field_scan_get()) && (bOddField) ) ||
+			 ( (VDP2_TVMD_TV_FIELD_SCAN_EVEN == vdp2_tvmd_field_scan_get()) && (!bOddField) ) )
+		{
+			vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1,fix16_int32_from(-x));
+			vdp2_scrn_scroll_y_set(VDP2_SCRN_NBG1,fix16_int32_from(-y));
+			vdp2_sync();
+		}
+		else
+		{
+			vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1,fix16_int32_from(140));
+			vdp2_scrn_scroll_y_set(VDP2_SCRN_NBG1,fix16_int32_from(140));
+			vdp2_sync();
 		}
 	}
 }
