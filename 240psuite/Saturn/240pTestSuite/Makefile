@@ -31,6 +31,7 @@ SH_SRCS:= \
     video.c \
     control.c \
     ire.c \
+    help.c \
     hwtest_controller.c \
     hwtest_sysinfo.c \
     image_big_digits.c \

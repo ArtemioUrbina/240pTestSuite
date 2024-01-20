@@ -84,7 +84,7 @@ void window_credits(_svin_screen_mode_t screenmode)
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
 	};
 	update_screen_mode(creditsScreenMode);
-	draw_bg_with_expansion(creditsScreenMode);
+	draw_bg_with_expansion(creditsScreenMode,true);
 	int _size_y = 240;
 
 	//resize the text window to implement scrolling

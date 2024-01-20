@@ -208,7 +208,7 @@ int main(void)
 
 		if(redrawBG)
 		{
-			draw_bg_with_expansion(screenMode);
+			draw_bg_with_expansion(screenMode,true);
 			redrawBG = false;
 		}
 
@@ -486,7 +486,9 @@ int main(void)
 								redrawMenu = true;
 								break;
 							case 5:
-								//go to help
+								help(screenMode);
+								redrawMenu = true;
+								redrawBG = true;
 								break;
 						}
 					}
@@ -515,7 +517,9 @@ int main(void)
 								redrawMenu = true;
 								break;
 							case 6:
-								//go to help
+								help(screenMode);
+								redrawMenu = true;
+								redrawBG = true;
 								break;
 						}
 					}
@@ -571,7 +575,9 @@ int main(void)
 								redrawMenu = true;
 								break;
 							case 13:
-								//go to help
+								help(screenMode);
+								redrawMenu = true;
+								redrawBG = true;
 								break;
 						}
 						redrawMenu = true;
@@ -601,7 +607,9 @@ int main(void)
 								redrawMenu = true;
 								break;
 							case 5:
-								//go to help
+								help(screenMode);
+								redrawMenu = true;
+								redrawBG = true;
 								break;
 						}
 						redrawMenu = true;
@@ -650,7 +658,9 @@ int main(void)
 								sel = 0;
 								break;
 							case 12:
-								//go to help
+								help(screenMode);
+								redrawMenu = true;
+								redrawBG = true;
 								break;
 						}
 						redrawMenu = true;
@@ -676,7 +686,9 @@ int main(void)
 								redrawMenu = true;
 								break;
 							case 4:
-								//go to help
+								help(screenMode);
+								redrawMenu = true;
+								redrawBG = true;
 								break;
 						}
 						redrawMenu = true;
@@ -702,7 +714,9 @@ int main(void)
 								redrawMenu = true;
 								break;
 							case 4:
-								//go to help
+								help(screenMode);
+								redrawMenu = true;
+								redrawBG = true;
 								break;
 						}
 						redrawMenu = true;
@@ -768,7 +782,9 @@ int main(void)
 								redrawMenu = true;
 								break;
 							case 7:
-								//go to help
+								help(screenMode);
+								redrawMenu = true;
+								redrawBG = true;
 								break;
 						}
 					}
@@ -791,7 +807,9 @@ int main(void)
 								sel = 0;
 								break;
 							case 4:
-								//go to help
+								help(screenMode);
+								redrawMenu = true;
+								redrawBG = true;
 								break;
 						}
 						redrawMenu = true;

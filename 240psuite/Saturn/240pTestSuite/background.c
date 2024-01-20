@@ -13,7 +13,7 @@ extern uint8_t asset_mascot_bg_end[];
 extern uint8_t asset_donna_bg[];
 extern uint8_t asset_donna_bg_end[];
 
-void draw_bg_with_expansion(_svin_screen_mode_t screenmode)
+void draw_bg_with_expansion(_svin_screen_mode_t screenmode, bool bMascot)
 {
 	int stretch_amount_x = 0; //stretch amount in quads
 	int stretch_amount_y = 0;
@@ -142,43 +142,46 @@ void draw_bg_with_expansion(_svin_screen_mode_t screenmode)
 		}
 	}
 
-	//select mascot location
-	int mascot_x = (screenmode.x_res == _SVIN_X_RESOLUTION_320) ? 28 : 32;
-	mascot_x =  (screenmode.x_res_doubled) ? (mascot_x+6)*2 : mascot_x;
-	int mascot_y = (screenmode.y_res == VDP2_TVMD_VERT_224) ? 9 :
-						(screenmode.y_res == VDP2_TVMD_VERT_240) ? 11 : 13;
-	mascot_y = (screenmode.scanmode == _SVIN_SCANMODE_480I) ? (mascot_y+9)*2 : mascot_y;
-	//copy mascot patterns, adding 128 to each color
-	//decompress
-	int * p32 = (int *)(&asset_mascot_bg[2048]);
-    int compressed_size = p32[1];
-	int compressed_size_sectors = ((compressed_size-1)/2048)+1;
-    bcl_lz_decompress(&(asset_mascot_bg[2048+8]),(char*)(_SVIN_NBG0_CHPNDR_START+0x12C00),compressed_size);
-	//fill mascot pattern names 
-	int size_x = 7;
-	for (int y=mascot_y; y<mascot_y+13; y++)
+	if (bMascot)
 	{
-		for (int x=mascot_x; x<mascot_x+size_x; x++)
+		//select mascot location
+		int mascot_x = (screenmode.x_res == _SVIN_X_RESOLUTION_320) ? 28 : 32;
+		mascot_x =  (screenmode.x_res_doubled) ? (mascot_x+6)*2 : mascot_x;
+		int mascot_y = (screenmode.y_res == VDP2_TVMD_VERT_224) ? 9 :
+							(screenmode.y_res == VDP2_TVMD_VERT_240) ? 11 : 13;
+		mascot_y = (screenmode.scanmode == _SVIN_SCANMODE_480I) ? (mascot_y+9)*2 : mascot_y;
+		//copy mascot patterns, adding 128 to each color
+		//decompress
+		int * p32 = (int *)(&asset_mascot_bg[2048]);
+		int compressed_size = p32[1];
+		int compressed_size_sectors = ((compressed_size-1)/2048)+1;
+		bcl_lz_decompress(&(asset_mascot_bg[2048+8]),(char*)(_SVIN_NBG0_CHPNDR_START+0x12C00),compressed_size);
+		//fill mascot pattern names 
+		int size_x = 7;
+		for (int y=mascot_y; y<mascot_y+13; y++)
 		{
-			if (x>=64)
+			for (int x=mascot_x; x<mascot_x+size_x; x++)
 			{
-				_pointer32[64*64+y*64+x-64] = 0x00300000  + (0x12C00/32)+(y-mascot_y)*size_x*2+(x-mascot_x)*2; //palette 3, transparency on
-			}
-			else
-			{
-				_pointer32[y*64+x] = 0x00300000  + (0x12C00/32)+(y-mascot_y)*size_x*2+(x-mascot_x)*2; //palette 3, transparency on
+				if (x>=64)
+				{
+					_pointer32[64*64+y*64+x-64] = 0x00300000  + (0x12C00/32)+(y-mascot_y)*size_x*2+(x-mascot_x)*2; //palette 3, transparency on
+				}
+				else
+				{
+					_pointer32[y*64+x] = 0x00300000  + (0x12C00/32)+(y-mascot_y)*size_x*2+(x-mascot_x)*2; //palette 3, transparency on
+				}
 			}
 		}
-	}
-	//set palette, using palette 3 for mascot
-	//palette in file is 24-bit, setting it color-by-color
-	rgb888_t _color  = {0,0,0,0};
-	for (int i = 0; i<256; i++)
-	{
-		_color.r = asset_mascot_bg[2048*compressed_size_sectors+2048+i*3+0];//palette[i*3+0];
-		_color.g = asset_mascot_bg[2048*compressed_size_sectors+2048+i*3+1];//palette[i*3+1];
-		_color.b = asset_mascot_bg[2048*compressed_size_sectors+2048+i*3+2];//palette[i*3+2];
-		_svin_set_palette_part(3, &_color, i, i);
+		//set palette, using palette 3 for mascot
+		//palette in file is 24-bit, setting it color-by-color
+		rgb888_t _color  = {0,0,0,0};
+		for (int i = 0; i<256; i++)
+		{
+			_color.r = asset_mascot_bg[2048*compressed_size_sectors+2048+i*3+0];//palette[i*3+0];
+			_color.g = asset_mascot_bg[2048*compressed_size_sectors+2048+i*3+1];//palette[i*3+1];
+			_color.b = asset_mascot_bg[2048*compressed_size_sectors+2048+i*3+2];//palette[i*3+2];
+			_svin_set_palette_part(3, &_color, i, i);
+		}
 	}
 
     _svin_set_cycle_patterns_nbg();
