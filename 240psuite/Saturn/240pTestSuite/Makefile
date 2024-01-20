@@ -32,6 +32,7 @@ SH_SRCS:= \
     control.c \
     ire.c \
     hwtest_controller.c \
+    hwtest_sysinfo.c \
     image_big_digits.c \
     image_buzzbomber.c \
     image_not_really.c \

@@ -689,7 +689,7 @@ int main(void)
 								hwtest_controller(screenMode);
 								break;							
 							case 1:
-								//system information
+								hwtest_sysinfo(screenMode);
 								break;							
 							case 2:
 								menu_id = MENU_MAIN;
