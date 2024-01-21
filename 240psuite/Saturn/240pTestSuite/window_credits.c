@@ -68,7 +68,12 @@ void window_credits(_svin_screen_mode_t screenmode)
 	vdp1_vram_partitions_t vdp1_vram_partitions;
     vdp1_vram_partitions_get(&vdp1_vram_partitions);
 	
-	ClearTextLayer();
+	//ClearTextLayer();
+	uint8_t * p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base);
+	for (int _x = 0; _x < 320*256*4 ; _x++)
+	{
+		p8_vram[_x] = 0;
+	}
 
 	wait_for_key_unpress();
 	int scroll_counter = 0;
