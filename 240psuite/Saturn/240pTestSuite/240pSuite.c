@@ -328,7 +328,12 @@ int main(void)
 					if (VDP2_TVMD_TV_STANDARD_NTSC == screenMode.colorsystem)
 					{
 						DrawString("Color system ........... NTSC",x, y+_fh*pos, FONT_CYAN); pos++;
-						sprintf(string_buf,"(%d)",frame_counter);
+						switch (frame_counter)
+						{
+							default:
+								sprintf(string_buf,"Frame cal . %d (unknown)",frame_counter);
+								break;
+						}
 						DrawString(string_buf, x, y+_fh*pos, FONT_CYAN); pos++;
 						DrawString("Field rate ......... 59.94 Hz", x, y+_fh*pos, FONT_CYAN); pos++;//59.52 Hz if hacked from PAL
 						if (_SVIN_X_RESOLUTION_320 == screenMode.x_res)
@@ -340,7 +345,19 @@ int main(void)
 					else
 					{
 						DrawString("Color system ............ PAL",x, y+_fh*pos, FONT_CYAN); pos++;
-						sprintf(string_buf,"(%d)",frame_counter);
+						switch (frame_counter)
+						{
+							case 10165:
+							case 10166:
+								sprintf(string_buf,"Frame cal ..... %d (PAL)",frame_counter);
+								break;
+							case 8528:
+								sprintf(string_buf,"Frame cal  %d (PAL 60Hz)",frame_counter);
+								break;
+							default:
+								sprintf(string_buf,"Frame cal . %d (unknown)",frame_counter);
+								break;
+						}
 						DrawString(string_buf, x, y+_fh*pos, FONT_CYAN); pos++;
 						DrawString("Field rate ............ 50 Hz", x, y+_fh*pos, FONT_CYAN); pos++;//50.35 Hz if hacked from NTSC
 						if (_SVIN_X_RESOLUTION_320 == screenMode.x_res)

@@ -12,6 +12,7 @@
 #define COLOR_RED 2
 #define COLOR_BLACK 3
 #define COLOR_LIGHTBLUE 4
+#define COLOR_GREEN 5
 
 void draw_point(int x, int y, int color)
 {
@@ -236,17 +237,21 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
+	_svin_set_palette_part(2,&Color,COLOR_WHITE,COLOR_WHITE); //palette 2 color 1 = IRE white
 	Color.g = IRE_bot;
 	Color.b = IRE_bot;	
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE red
+	_svin_set_palette_part(2,&Color,COLOR_RED,COLOR_RED); //palette 2 color 2 = IRE red
 	Color.r = IRE_bot;
 	_svin_set_palette_part(2,&Color,0,0); //palette 2 color 0 = IRE black
-	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE black
+	_svin_set_palette_part(2,&Color,COLOR_BLACK,COLOR_BLACK); //palette 2 color 3 = IRE black
 	Color.r = (IRE_top+IRE_bot)/2;
 	Color.g = (IRE_top+IRE_bot)/2;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,4,4); //palette 2 color 4 = IRE lightblue
+	_svin_set_palette_part(2,&Color,COLOR_LIGHTBLUE,COLOR_LIGHTBLUE); //palette 2 color 4 = IRE lightblue
+	Color.r = IRE_bot;
+	Color.g = IRE_top;
+	Color.b = IRE_bot;	
+	_svin_set_palette_part(2,&Color,COLOR_GREEN,COLOR_GREEN); //palette 2 color 4 = IRE green
 
 	//switching to BMP mode
 	//setup nbg0
@@ -373,13 +378,41 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 
 	//big red quad
 	double red_quad_y = _size_y - cell_y*3 - offset_y*2 + cell_y/8;
-	int red_quad_x = ((red_quad_y*ratio)+0.5);
+	int red_quad_x = ((red_quad_y*(11.0/10.0))+0.5);
+	if (ratio>1.5)
+		red_quad_x= ((red_quad_y*(22.0/10.0))+0.5);
+	if (ratio<0.75)
+		red_quad_x= ((red_quad_y*(11.0/20.0))+0.5);
 	if ((red_quad_x) > 1250)
 		red_quad_x = 1250;
 	if ((red_quad_x) < 40)
 		red_quad_x = 40;
 	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
 	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_RED);
+
+	//big green quad
+	red_quad_y = red_quad_y - 30;
+	red_quad_x = ((red_quad_y*ratio)+0.5);
+	if ((red_quad_x) > 1250)
+		red_quad_x = 1250;
+	if ((red_quad_x) < 40)
+		red_quad_x = 40;
+	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
+	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_GREEN);
+
+	//big blue quad
+	red_quad_y = red_quad_y - 30;
+	red_quad_x = ((red_quad_y*(7.0/6.0))+0.5);
+	if (ratio>1.5)
+		red_quad_x= ((red_quad_y*(14.0/6.0))+0.5);
+	if (ratio<0.75)
+		red_quad_x= ((red_quad_y*(7.0/12.0))+0.5);
+	if ((red_quad_x) > 1250)
+		red_quad_x = 1250;
+	if ((red_quad_x) < 40)
+		red_quad_x = 40;
+	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
+	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_LIGHTBLUE);
 
 	//center quads
 	/*draw_cell_empty(_size_x/2-cell_x_fixed,_size_y/2-cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
@@ -421,14 +454,14 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	draw_dotted_line(_size_x/2+11,_size_x/2+red_quad_x/2,_size_y/2+3,COLOR_WHITE);
 
 	//small red quad
-	red_quad_y = (red_quad_y*2.0)/3.0;
+	/*red_quad_y = (red_quad_y*2.0)/3.0;
 	red_quad_x = ((red_quad_y*ratio)+0.5);
 	if ((red_quad_x) > 500)
 		red_quad_x = 500;
 	if ((red_quad_x) < 10)
 		red_quad_x = 10;
 	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
-	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_RED);
+	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_RED);*/
 
 	_svin_set_cycle_patterns_nbg();
 }
