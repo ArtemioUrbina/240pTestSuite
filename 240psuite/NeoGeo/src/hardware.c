@@ -783,6 +783,8 @@ void ht_check_ng_bios_crc(u32 address)
 
 	while (!done)
 	{
+		menu_footer();
+		
 		SCClose();
 		waitVBlank();
 
