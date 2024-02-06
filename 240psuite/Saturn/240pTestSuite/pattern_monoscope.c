@@ -466,12 +466,79 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	_svin_set_cycle_patterns_nbg();
 }
 
+void draw_monoscope_text(_svin_screen_mode_t screenmode)
+{
+	int _size_x = get_screenmode_resolution_x(screenmode);
+	int _size_y = get_screenmode_resolution_y(screenmode);
+	double ratio = get_screen_square_pixel_ratio(screenmode);
+	int cell_x=16;
+	int cell_y=16;
+	if (screenmode.x_res_doubled)
+		cell_x=32;
+	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
+		cell_y=32;
+	int offset_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? 0 :
+					(VDP2_TVMD_VERT_256 == screenmode.y_res) ? -cell_y : 0;
+
+	//big red quad
+	double red_quad_y = _size_y - cell_y*3 - offset_y*2 + cell_y/8;
+	int red_quad_x = ((red_quad_y*(11.0/10.0))+0.5);
+	if (ratio>1.5)
+		red_quad_x= ((red_quad_y*(22.0/10.0))+0.5);
+	if (ratio<0.75)
+		red_quad_x= ((red_quad_y*(11.0/20.0))+0.5);
+	if ((red_quad_x) > 1250)
+		red_quad_x = 1250;
+	if ((red_quad_x) < 40)
+		red_quad_x = 40;
+	char buf[32];
+	sprintf(buf," %ix%i",(int)(red_quad_x/2 + red_quad_x/2 + 2),(int)(red_quad_y/2+red_quad_y/2+2));
+	int _text_x = _size_x/2-red_quad_x/2+2;
+	if (_size_x > 512) _text_x/=2;
+	int _text_y = _size_y/2-red_quad_y/2+2;
+	if (_size_y > 256) _text_y/=2;
+	DrawString(buf, _text_x, _text_y, FONT_RED);
+
+	//big green quad
+	red_quad_y = red_quad_y - 30;
+	red_quad_x = ((red_quad_y*ratio)+0.5);
+	if ((red_quad_x) > 1250)
+		red_quad_x = 1250;
+	if ((red_quad_x) < 40)
+		red_quad_x = 40;
+	sprintf(buf," %ix%i",(int)(red_quad_x/2 + red_quad_x/2 + 2),(int)(red_quad_y/2+red_quad_y/2+2));
+	_text_x = _size_x/2-red_quad_x/2+2;
+	if (_size_x > 512) _text_x/=2;
+	_text_y = _size_y/2-red_quad_y/2+2;
+	if (_size_y > 256) _text_y/=2;
+	DrawString(buf, _text_x, _text_y, FONT_GREEN);
+
+	//big blue quad
+	red_quad_y = red_quad_y - 30;
+	red_quad_x = ((red_quad_y*(7.0/6.0))+0.5);
+	if (ratio>1.5)
+		red_quad_x= ((red_quad_y*(14.0/6.0))+0.5);
+	if (ratio<0.75)
+		red_quad_x= ((red_quad_y*(7.0/12.0))+0.5);
+	if ((red_quad_x) > 1250)
+		red_quad_x = 1250;
+	if ((red_quad_x) < 40)
+		red_quad_x = 40;
+	sprintf(buf," %ix%i",(int)(red_quad_x/2 + red_quad_x/2 + 2),(int)(red_quad_y/2+red_quad_y/2+2));
+	_text_x = _size_x/2-red_quad_x/2+2;
+	if (_size_x > 512) _text_x/=2;
+	_text_y = _size_y/2-red_quad_y/2+2;
+	if (_size_y > 256) _text_y/=2;
+	DrawString(buf, _text_x, _text_y, FONT_CYAN);
+}
+
 void pattern_monoscope(_svin_screen_mode_t screenmode)
 {
 	_svin_screen_mode_t curr_screenmode = screenmode;
 	bool bIRE100 = true;
 	draw_monoscope(curr_screenmode,bIRE100);
 	bool key_pressed = false;
+	bool size_printed = false;
 
 	wait_for_key_unpress();
 	
@@ -486,6 +553,7 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 			curr_screenmode = prev_screen_mode(curr_screenmode);
 			update_screen_mode(curr_screenmode);
 			draw_monoscope(curr_screenmode,bIRE100);
+			if (size_printed) draw_monoscope_text(curr_screenmode);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
 			mode_display_counter=120;
@@ -495,6 +563,7 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 			curr_screenmode = next_screen_mode(curr_screenmode);
 			update_screen_mode(curr_screenmode);
 			draw_monoscope(curr_screenmode,bIRE100);
+			if (size_printed) draw_monoscope_text(curr_screenmode);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
 			mode_display_counter=120;
@@ -504,6 +573,7 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 			//change the checkered mode
 			bIRE100 = bIRE100 ? false : true;
 			draw_monoscope(curr_screenmode,bIRE100);
+			if (size_printed) draw_monoscope_text(curr_screenmode);
 			wait_for_key_unpress();
 		}
 		else if (controller.pressed.button.b)
@@ -513,6 +583,15 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 			update_screen_mode(screenmode);
 			return;
 		}
+		else if (controller.pressed.button.x)
+		{
+			size_printed = size_printed ? false : true;
+			if (size_printed) 
+				draw_monoscope_text(curr_screenmode);
+			else 
+				ClearTextLayer();
+			wait_for_key_unpress();
+		}
 		vdp2_tvmd_vblank_in_wait();
 		vdp2_tvmd_vblank_out_wait();
 		if (mode_display_counter > 0)
@@ -521,6 +600,7 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 			if (0 == mode_display_counter)
 			{
 				ClearTextLayer();
+				if (size_printed) draw_monoscope_text(curr_screenmode);
 			}
 		}
 	}
