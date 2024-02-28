@@ -78,22 +78,48 @@ extern uint8_t asset_bootlogo_bg_end[];
 
 char * scanmode_text_value(_svin_screen_mode_t screenmode)
 {
-	switch (screenmode.scanmode)
+	switch (screenmode.colorsystem)
 	{
-		case _SVIN_SCANMODE_240I:
-			return "480i same fields";
+		case VDP2_TVMD_TV_STANDARD_NTSC:
+			switch (screenmode.scanmode)
+			{
+				case _SVIN_SCANMODE_240I:
+					return "480i same fields";
+					break;
+				case _SVIN_SCANMODE_240P:
+					return "240p";
+					break;
+				case _SVIN_SCANMODE_480I:
+					return "480i";
+					break;
+				/*case _SVIN_SCANMODE_480P:
+					return "480p";
+					break;*/
+			}
+			return "????";
 			break;
-		case _SVIN_SCANMODE_240P:
-			return "240p";
+		case VDP2_TVMD_TV_STANDARD_PAL:
+			switch (screenmode.scanmode)
+			{
+				case _SVIN_SCANMODE_240I:
+					return "576i same fields";
+					break;
+				case _SVIN_SCANMODE_240P:
+					return "288p";
+					break;
+				case _SVIN_SCANMODE_480I:
+					return "576i";
+					break;
+				/*case _SVIN_SCANMODE_480P:
+					return "480p";
+					break;*/
+			}
+			return "????";
 			break;
-		case _SVIN_SCANMODE_480I:
-			return "480i";
-			break;
-		/*case _SVIN_SCANMODE_480P:
-			return "480p";
-			break;*/
+		default:
+			return "????";
+			break;		
 	}
-	return "????";
 }
 
 char * x_res_text_value(_svin_screen_mode_t screenmode)
