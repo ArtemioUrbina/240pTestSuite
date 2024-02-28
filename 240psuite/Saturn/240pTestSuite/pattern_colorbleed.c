@@ -117,7 +117,7 @@ void pattern_colorbleed(_svin_screen_mode_t screenmode)
 	while (1)
 	{
 		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		get_digital_keypress_anywhere(&controller);
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);

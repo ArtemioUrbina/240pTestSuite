@@ -377,42 +377,31 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	draw_rectangle_set(_size_x-cell_x*2-cell_x_fixed*2-4,_size_y-cell_y*3-5-offset_y,cell_x_fixed,cell_y,COLOR_WHITE);
 
 	//big red quad
-	double red_quad_y = _size_y - cell_y*3 - offset_y*2 + cell_y/8;
-	int red_quad_x = ((red_quad_y*(11.0/10.0))+0.5);
+	int rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
+	int rect_x = ((rect_y*35)/32);
 	if (ratio>1.5)
-		red_quad_x= ((red_quad_y*(22.0/10.0))+0.5);
+		rect_x= ((rect_y*70)/32);
 	if (ratio<0.75)
-		red_quad_x= ((red_quad_y*(11.0/20.0))+0.5);
-	if ((red_quad_x) > 1250)
-		red_quad_x = 1250;
-	if ((red_quad_x) < 40)
-		red_quad_x = 40;
-	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
-	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_RED);
+		rect_x= ((rect_y*35)/64);
+	clear_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2);
+	draw_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2,COLOR_RED);
 
 	//big green quad
-	red_quad_y = red_quad_y - 30;
-	red_quad_x = ((red_quad_y*ratio)+0.5);
-	if ((red_quad_x) > 1250)
-		red_quad_x = 1250;
-	if ((red_quad_x) < 40)
-		red_quad_x = 40;
-	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
-	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_GREEN);
+	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 288 : 144;
+	rect_x = (int)(rect_y*ratio+0.5);
+	rect_x /= 2; rect_x *= 2;
+	clear_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2);
+	draw_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2,COLOR_GREEN);
 
 	//big blue quad
-	red_quad_y = red_quad_y - 30;
-	red_quad_x = ((red_quad_y*(7.0/6.0))+0.5);
+	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 336 : 168;
+	rect_x = ((rect_y*7)/6);
 	if (ratio>1.5)
-		red_quad_x= ((red_quad_y*(14.0/6.0))+0.5);
+		rect_x= ((rect_y*14)/6);
 	if (ratio<0.75)
-		red_quad_x= ((red_quad_y*(7.0/12.0))+0.5);
-	if ((red_quad_x) > 1250)
-		red_quad_x = 1250;
-	if ((red_quad_x) < 40)
-		red_quad_x = 40;
-	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
-	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_LIGHTBLUE);
+		rect_x= ((rect_y*7)/12);
+	clear_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2);
+	draw_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2,COLOR_LIGHTBLUE);
 
 	//center quads
 	/*draw_cell_empty(_size_x/2-cell_x_fixed,_size_y/2-cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
@@ -448,10 +437,16 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	//draw_rectangle_set(_size_x/2+cell_x_fixed,_size_y/2-cell_y-1,cell_x_fixed,cell_y,COLOR_WHITE);
 
 	//dotted lines
-	draw_dotted_line(_size_x/2-red_quad_x/2,_size_x/2-12,_size_y/2-4,COLOR_WHITE);
-	draw_dotted_line(_size_x/2-red_quad_x/2,_size_x/2-12,_size_y/2+3,COLOR_WHITE);
-	draw_dotted_line(_size_x/2+11,_size_x/2+red_quad_x/2,_size_y/2-4,COLOR_WHITE);
-	draw_dotted_line(_size_x/2+11,_size_x/2+red_quad_x/2,_size_y/2+3,COLOR_WHITE);
+	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
+	rect_x = ((rect_y*35)/32);
+	if (ratio>1.5)
+		rect_x= ((rect_y*70)/32);
+	if (ratio<0.75)
+		rect_x= ((rect_y*35)/64);
+	draw_dotted_line(_size_x/2-rect_x/2+2,_size_x/2-12,_size_y/2-4,COLOR_WHITE);
+	draw_dotted_line(_size_x/2-rect_x/2+2,_size_x/2-12,_size_y/2+3,COLOR_WHITE);
+	draw_dotted_line(_size_x/2+11,_size_x/2+rect_x/2+2,_size_y/2-4,COLOR_WHITE);
+	draw_dotted_line(_size_x/2+11,_size_x/2+rect_x/2+2,_size_y/2+3,COLOR_WHITE);
 
 	//small red quad
 	/*red_quad_y = (red_quad_y*2.0)/3.0;
@@ -477,59 +472,49 @@ void draw_monoscope_text(_svin_screen_mode_t screenmode)
 		cell_x=32;
 	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
 		cell_y=32;
-	int offset_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? 0 :
-					(VDP2_TVMD_VERT_256 == screenmode.y_res) ? -cell_y : 0;
+	int offset_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? cell_y/2 : 0;
+	int text_shift_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? -8 :
+					(VDP2_TVMD_VERT_256 == screenmode.y_res) ? -16 : 0;
 
 	//big red quad
-	double red_quad_y = _size_y - cell_y*3 - offset_y*2 + cell_y/8;
-	int red_quad_x = ((red_quad_y*(11.0/10.0))+0.5);
+	int rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
+	int rect_x = ((rect_y*35)/32);
 	if (ratio>1.5)
-		red_quad_x= ((red_quad_y*(22.0/10.0))+0.5);
+		rect_x= ((rect_y*70)/32);
 	if (ratio<0.75)
-		red_quad_x= ((red_quad_y*(11.0/20.0))+0.5);
-	if ((red_quad_x) > 1250)
-		red_quad_x = 1250;
-	if ((red_quad_x) < 40)
-		red_quad_x = 40;
+		rect_x= ((rect_y*35)/64);
 	char buf[32];
-	sprintf(buf," %ix%i",(int)(red_quad_x/2 + red_quad_x/2 + 2),(int)(red_quad_y/2+red_quad_y/2+2));
-	int _text_x = _size_x/2-red_quad_x/2+2;
+	sprintf(buf," %ix%i",rect_x,rect_y);
+	int _text_x = _size_x/2-rect_x/2+2;
 	if (_size_x > 512) _text_x/=2;
-	int _text_y = _size_y/2-red_quad_y/2+2;
+	int _text_y = _size_y/2-rect_y/2+2;
 	if (_size_y > 256) _text_y/=2;
-	DrawString(buf, _text_x, _text_y, FONT_RED);
+	DrawString(buf, _text_x, _text_y+text_shift_y, FONT_RED);
 
 	//big green quad
-	red_quad_y = red_quad_y - 30;
-	red_quad_x = ((red_quad_y*ratio)+0.5);
-	if ((red_quad_x) > 1250)
-		red_quad_x = 1250;
-	if ((red_quad_x) < 40)
-		red_quad_x = 40;
-	sprintf(buf," %ix%i",(int)(red_quad_x/2 + red_quad_x/2 + 2),(int)(red_quad_y/2+red_quad_y/2+2));
-	_text_x = _size_x/2-red_quad_x/2+2;
+	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 288 : 144;
+	rect_x = (int)(ratio*rect_y+0.5);
+	rect_x /= 2; rect_x *= 2;
+	sprintf(buf," %ix%i",rect_x,rect_y);
+	_text_x = _size_x/2-rect_x/2+2;
 	if (_size_x > 512) _text_x/=2;
-	_text_y = _size_y/2-red_quad_y/2+2;
+	_text_y = _size_y/2-rect_y/2+2;
 	if (_size_y > 256) _text_y/=2;
-	DrawString(buf, _text_x, _text_y, FONT_GREEN);
+	DrawString(buf, _text_x, _text_y+text_shift_y, FONT_GREEN);
 
 	//big blue quad
-	red_quad_y = red_quad_y - 30;
-	red_quad_x = ((red_quad_y*(7.0/6.0))+0.5);
+	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 336 : 168;
+	rect_x = ((rect_y*7)/6);
 	if (ratio>1.5)
-		red_quad_x= ((red_quad_y*(14.0/6.0))+0.5);
+		rect_x= ((rect_y*14)/6);
 	if (ratio<0.75)
-		red_quad_x= ((red_quad_y*(7.0/12.0))+0.5);
-	if ((red_quad_x) > 1250)
-		red_quad_x = 1250;
-	if ((red_quad_x) < 40)
-		red_quad_x = 40;
-	sprintf(buf," %ix%i",(int)(red_quad_x/2 + red_quad_x/2 + 2),(int)(red_quad_y/2+red_quad_y/2+2));
-	_text_x = _size_x/2-red_quad_x/2+2;
+		rect_x= ((rect_y*7)/12);
+	sprintf(buf," %ix%i",rect_x,rect_y);
+	_text_x = _size_x/2-rect_x/2+2;
 	if (_size_x > 512) _text_x/=2;
-	_text_y = _size_y/2-red_quad_y/2+2;
+	_text_y = _size_y/2-rect_y/2+2;
 	if (_size_y > 256) _text_y/=2;
-	DrawString(buf, _text_x, _text_y, FONT_CYAN);
+	DrawString(buf, _text_x, _text_y+text_shift_y, FONT_CYAN);
 }
 
 void pattern_monoscope(_svin_screen_mode_t screenmode)
@@ -547,7 +532,7 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 	while (1)
 	{
 		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		get_digital_keypress_anywhere(&controller);
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);

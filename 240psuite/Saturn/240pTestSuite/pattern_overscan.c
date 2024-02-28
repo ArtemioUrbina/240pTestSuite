@@ -139,7 +139,7 @@ void pattern_overscan(_svin_screen_mode_t screenmode)
 	while (1)
 	{
 		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		get_digital_keypress_anywhere(&controller);
 		vdp2_tvmd_vblank_in_wait();
 		vdp2_tvmd_vblank_out_wait();
 		if ( (controller.pressed.button.l) )

@@ -19,6 +19,18 @@ void update_controller(_svin_screen_mode_t screenmode)
 		char buf[16];
 		smpc_peripheral_digital_port(port, &controller);
 		sprintf(buf,"Port %d :",port);
+		/*smpc_peripheral_port_t * _port = smpc_peripheral_raw_port(port);
+		smpc_peripheral_t *peripheral;
+        smpc_peripheral_t *tmp_peripheral;
+		int per=0;
+        for (peripheral = TAILQ_FIRST(&_port->peripherals);
+			(peripheral != NULL) && (tmp_peripheral = TAILQ_NEXT(peripheral, peripherals), 1);
+            	peripheral = tmp_peripheral) {
+					sprintf(buf,"Port 1 per %i",per);
+					DrawString(buf, x, y, FONT_WHITE);
+					x+=_fw*10;
+					per++;
+				}*/
 		DrawString(buf, x, y, FONT_MAGENTA);
 		x+=_fw*10;
 		if (controller.pressed.button.a)
@@ -151,7 +163,7 @@ void hwtest_controller(_svin_screen_mode_t screenmode)
 	while (1)
 	{
 		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		get_digital_keypress_anywhere(&controller);
 		if ( (controller.pressed.button.left) && (controller.pressed.button.start) )
 		{
 			//quit the pattern

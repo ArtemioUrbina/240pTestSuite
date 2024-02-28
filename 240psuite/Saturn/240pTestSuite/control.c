@@ -38,7 +38,7 @@ void wait_for_key_press()
 	{
 		vdp2_tvmd_vblank_out_wait();
 		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		get_digital_keypress_anywhere(&controller);
 	}
 }
 
@@ -49,7 +49,7 @@ void wait_for_key_unpress()
 	{
 		vdp2_tvmd_vblank_out_wait();
 		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		get_digital_keypress_anywhere(&controller);
 	}
 }
 

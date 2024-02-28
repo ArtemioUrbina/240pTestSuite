@@ -32,7 +32,7 @@
 
 #include "fs.h"
 #include "font.h"
-#include "image.h"
+#include "input.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
@@ -204,7 +204,7 @@ int main(void)
 	{
 		vdp2_tvmd_vblank_out_wait();
 		smpc_peripheral_process();
-		smpc_peripheral_digital_port(1, &controller);
+		get_digital_keypress_anywhere(&controller);
 
 		if(redrawBG)
 		{

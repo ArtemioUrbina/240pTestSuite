@@ -27,7 +27,7 @@ SH_SRCS:= \
     bootlogo.c \
     fs.c \
     font.c \
-    image.c \
+    input.c \
     video.c \
     control.c \
     ire.c \
