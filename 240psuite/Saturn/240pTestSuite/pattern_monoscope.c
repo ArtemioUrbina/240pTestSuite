@@ -376,32 +376,33 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	draw_rectangle_set(cell_x*2+3,_size_y-cell_y*3-5-offset_y,cell_x_fixed,cell_y,COLOR_WHITE);
 	draw_rectangle_set(_size_x-cell_x*2-cell_x_fixed*2-4,_size_y-cell_y*3-5-offset_y,cell_x_fixed,cell_y,COLOR_WHITE);
 
+	int rect_y;
+	int rect_x;
 	//big red quad
-	int rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
-	int rect_x = ((rect_y*35)/32);
-	if (ratio>1.5)
-		rect_x= ((rect_y*70)/32);
-	if (ratio<0.75)
-		rect_x= ((rect_y*35)/64);
-	clear_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2);
-	draw_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2,COLOR_RED);
-
-	//big green quad
-	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 288 : 144;
-	rect_x = (int)(rect_y*ratio+0.5);
-	rect_x /= 2; rect_x *= 2;
-	clear_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2);
-	draw_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2,COLOR_GREEN);
+	if (_SVIN_X_RESOLUTION_320 == screenmode.x_res)
+	{
+		rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
+		rect_x = ((rect_y*35)/32);
+		if (ratio>1.5)
+			rect_x= ((rect_y*70)/32);
+		if (ratio<0.75)
+			rect_x= ((rect_y*35)/64);
+		clear_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2);
+		draw_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2,COLOR_RED);
+	}
 
 	//big blue quad
-	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 336 : 168;
-	rect_x = ((rect_y*7)/6);
-	if (ratio>1.5)
-		rect_x= ((rect_y*14)/6);
-	if (ratio<0.75)
-		rect_x= ((rect_y*7)/12);
-	clear_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2);
-	draw_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2,COLOR_LIGHTBLUE);
+	if (_SVIN_X_RESOLUTION_352 == screenmode.x_res)
+	{
+		rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 336 : 168;
+		rect_x = ((rect_y*7)/6);
+		if (ratio>1.5)
+			rect_x= ((rect_y*14)/6);
+		if (ratio<0.75)
+			rect_x= ((rect_y*7)/12);
+		clear_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2);
+		draw_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2,COLOR_LIGHTBLUE);
+	}
 
 	//center quads
 	/*draw_cell_empty(_size_x/2-cell_x_fixed,_size_y/2-cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
@@ -437,8 +438,16 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	//draw_rectangle_set(_size_x/2+cell_x_fixed,_size_y/2-cell_y-1,cell_x_fixed,cell_y,COLOR_WHITE);
 
 	//dotted lines
-	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
-	rect_x = ((rect_y*35)/32);
+	if (_SVIN_X_RESOLUTION_320 == screenmode.x_res)
+	{
+		rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
+		rect_x = ((rect_y*35)/32);
+	}
+	else
+	{
+		rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 336 : 168;
+		rect_x = ((rect_y*7)/6);
+	}
 	if (ratio>1.5)
 		rect_x= ((rect_y*70)/32);
 	if (ratio<0.75)
