@@ -18,6 +18,8 @@ uint8_t _svin_init_done;
 int _svin_frame_count;
 bool _svin_vdp1_cmdlist_toggle_at_vblank;
 
+int current_color_mode = 0;
+
 void _svin_set_cycle_patterns_cpu()
 {
     // switching everything to CPU access.
@@ -159,7 +161,6 @@ void _svin_init(_svin_screen_mode_t screen_mode)
 
     vdp2_scrn_cell_format_set(&format,&normal_map);
     vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
-    //vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0);
 
     //setup nbg1
     format.scroll_screen = VDP2_SCRN_NBG1;
@@ -176,33 +177,44 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
     vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISPTP_NBG1);
 
-    //setup nbg2
-    /*format.scroll_screen = VDP2_SCRN_NBG2;
-    format.cc_count = VDP2_SCRN_CCC_PALETTE_256;
-    format.character_size = (1 * 1);
-    format.pnd_size = 2;
-    format.auxiliary_mode = 1;
-    format.cp_table = 0;
-    format.color_palette = 0;
-    format.plane_size = (2 * 1);
-    format.sf_type = 0;//VDP2_SCRN_SF_TYPE_COLOR_CALCULATION;
-    format.sf_code = VDP2_SCRN_SF_CODE_A;
-    format.sf_mode = 0;
-    format.map_bases.plane_a = _SVIN_NBG2_PNDR_START;
+    vdp2_tvmd_interlace_t interlace;
+    vdp2_tvmd_horz_t horz;
 
-    vdp2_scrn_cell_format_set(&format);
-    vdp2_scrn_priority_set(VDP2_SCRN_NBG2, 6);
-    vdp2_scrn_display_set(VDP2_SCRN_NBG2);*/
+    if (_SVIN_SCANMODE_480P == screen_mode.scanmode)
+    {
+        //480p 31kHz modes
+        if (screen_mode.x_res_doubled)
+        {
+            vdp2_cram_mode_set(0);//colormap 2 is unsupported in 480p high res
+            current_color_mode = 0;
+        }
+        else
+        {
+            vdp2_cram_mode_set(2);
+            current_color_mode = 2;
+        }
 
-    //set colormap mode 2
-    vdp2_cram_mode_set(2);
+        interlace = VDP2_TVMD_INTERLACE_NONE; //interlace is not supported in 480p
 
-    vdp2_tvmd_interlace_t interlace = (_SVIN_SCANMODE_240P == screen_mode.scanmode) ? VDP2_TVMD_INTERLACE_NONE :
-                                            (_SVIN_SCANMODE_240I == screen_mode.scanmode)  ? VDP2_TVMD_INTERLACE_SINGLE : VDP2_TVMD_INTERLACE_DOUBLE;
+        horz = (_SVIN_X_RESOLUTION_320 == screen_mode.x_res) ? 
+                                        screen_mode.x_res_doubled ? VDP2_TVMD_HORZ_HIRESO_AE : VDP2_TVMD_HORZ_NORMAL_AE :
+                                        screen_mode.x_res_doubled ? VDP2_TVMD_HORZ_HIRESO_BE : VDP2_TVMD_HORZ_NORMAL_BE;
+    }
+    else
+    {
+        //normal PAL/NTSC
 
-    vdp2_tvmd_horz_t horz = (_SVIN_X_RESOLUTION_320 == screen_mode.x_res) ? 
-                                    screen_mode.x_res_doubled ? VDP2_TVMD_HORZ_HIRESO_A : VDP2_TVMD_HORZ_NORMAL_A :
-                                    screen_mode.x_res_doubled ? VDP2_TVMD_HORZ_HIRESO_B : VDP2_TVMD_HORZ_NORMAL_B;
+        vdp2_cram_mode_set(2);
+        current_color_mode = 2;
+
+        interlace = (_SVIN_SCANMODE_240P == screen_mode.scanmode) ? VDP2_TVMD_INTERLACE_NONE :
+                                                (_SVIN_SCANMODE_240I == screen_mode.scanmode)  ? VDP2_TVMD_INTERLACE_SINGLE : VDP2_TVMD_INTERLACE_DOUBLE;
+
+        horz = (_SVIN_X_RESOLUTION_320 == screen_mode.x_res) ? 
+                                        screen_mode.x_res_doubled ? VDP2_TVMD_HORZ_HIRESO_A : VDP2_TVMD_HORZ_NORMAL_A :
+                                        screen_mode.x_res_doubled ? VDP2_TVMD_HORZ_HIRESO_B : VDP2_TVMD_HORZ_NORMAL_B;
+    }
+
 
     vdp2_tvmd_display_res_set(interlace, horz, screen_mode.y_res);
 
@@ -349,14 +361,6 @@ void _svin_init(_svin_screen_mode_t screen_mode)
         _pointer32[i] = 0x00000000 + _SVIN_NBG1_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
     }
 
-    /*//writing pattern names for nbg2
-    //nbg2  is mostly transparent, so fill with that one
-    _pointer32 = (int *)_SVIN_NBG2_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG2_PNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x00000000 + _SVIN_NBG2_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
-    }*/
-
     //-------------- setup character pattern names -------------------
 
     //clearing character pattern names data for nbg0
@@ -372,13 +376,6 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     {
         _pointer32[i] = 0;
     }
-
-    /*//clearing character pattern names data for nbg2
-    _pointer32 = (int *)_SVIN_NBG2_CHPNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG2_CHPNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0;
-    }*/
 
     //setting up "transparent" character for nbg0
     _pointer32 = (int *)_SVIN_NBG0_CHPNDR_SPECIALS_ADDR;
@@ -408,78 +405,6 @@ void _svin_init(_svin_screen_mode_t screen_mode)
         _pointer32[i] = 0x7F7F7F7F;
     }
 
-    /*//setting up "transparent" character for nbg1
-    _pointer32 = (int *)_SVIN_NBG2_CHPNDR_SPECIALS_ADDR;
-    for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
-    {
-        _pointer32[i] = 0;
-    }
-
-    //setting up "semi-transparent" character for nbg1
-    _pointer32 = (int *)(_SVIN_NBG2_CHPNDR_SPECIALS_ADDR + _SVIN_CHARACTER_BYTES);
-    for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x7F7F7F7F;
-    }*/
-
-    //-------------- setup palettes -------------------
-
-    //setup default palettes
-    rgb888_t temp_pal[256];
-    //grayscale gradient
-    for (int i = 0; i < 256; i++)
-    {
-        temp_pal[i].r = i;     
-        temp_pal[i].g = i; 
-        temp_pal[i].b = i; 
-    }
-    _svin_set_palette(0, temp_pal);
-    //red
-    memset(temp_pal,0,sizeof(temp_pal));
-    for (int i = 0; i < 256; i++)
-    {
-        temp_pal[i].r = i;      
-    }
-    _svin_set_palette(1, temp_pal);
-    //green
-    memset(temp_pal,0,sizeof(temp_pal));
-    for (int i = 0; i < 256; i++)
-    {
-       temp_pal[i].g = i;      
-    }
-    _svin_set_palette(2, temp_pal);
-    //blue
-    memset(temp_pal,0,sizeof(temp_pal));
-    for (int i = 0; i < 256; i++)
-    {
-       temp_pal[i].b = i;      
-    }
-    _svin_set_palette(3, temp_pal);
-    //cyan
-    memset(temp_pal,0,sizeof(temp_pal));
-    for (int i = 0; i < 256; i++)
-    {
-        temp_pal[i].g = i; 
-        temp_pal[i].b = i;    
-    }
-    _svin_set_palette(4, temp_pal);
-    //magenta
-    memset(temp_pal,0,sizeof(temp_pal));
-    for (int i = 0; i < 256; i++)
-    {
-        temp_pal[i].r = i;     
-        temp_pal[i].b = i;    
-    }
-    _svin_set_palette(5, temp_pal);
-    //yellow
-    memset(temp_pal,0,sizeof(temp_pal));
-    for (int i = 0; i < 256; i++)
-    {
-        temp_pal[i].g = i;     
-        temp_pal[i].b = i; 
-    }
-    _svin_set_palette(6, temp_pal);  
-
     //setting cycle patterns for nbg access
     _svin_set_cycle_patterns_nbg();
 
@@ -499,20 +424,28 @@ void _svin_deinit()
 }
 
 //---------------------------------------------- Palette stuff ----------------------------------------------------
-void _svin_set_palette(int number, rgb888_t *pointer)
-{
-    _svin_set_palette_part(number,pointer,0,255);
-}
-
 void _svin_set_palette_part(int number, rgb888_t *pointer, int start, int end)
 {
-    uint8_t *my_vdp2_cram8 = (uint8_t *)VDP2_CRAM_ADDR(0x200 * number);
-    for (int i = start; i <= end; i++)
+    uint8_t *my_vdp2_cram8;
+    if (current_color_mode == 0)
     {
-        my_vdp2_cram8[i*4+0] = pointer[i-start].cc;
-        my_vdp2_cram8[i*4+1] = pointer[i-start].b;
-        my_vdp2_cram8[i*4+2] = pointer[i-start].g;
-        my_vdp2_cram8[i*4+3] = pointer[i-start].r;
+        my_vdp2_cram8 = (uint8_t *)VDP2_CRAM_ADDR(0x100 * number);
+        for (int i = start; i <= end; i++)
+        {
+            my_vdp2_cram8[i*2+0] = (pointer[i-start].cc<<7) | ((pointer[i-start].b & 0xF8)>>1) | ((pointer[i-start].g & 0xC0)>>6);
+            my_vdp2_cram8[i*2+1] = ((pointer[i-start].g & 0x38)<<2) | ((pointer[i-start].r & 0xF8)>>3);
+        }
+    }
+    else
+    {
+        my_vdp2_cram8 = (uint8_t *)VDP2_CRAM_ADDR(0x200 * number);
+        for (int i = start; i <= end; i++)
+        {
+            my_vdp2_cram8[i*4+0] = pointer[i-start].cc;
+            my_vdp2_cram8[i*4+1] = pointer[i-start].b;
+            my_vdp2_cram8[i*4+2] = pointer[i-start].g;
+            my_vdp2_cram8[i*4+3] = pointer[i-start].r;
+        }
     }
 }
 

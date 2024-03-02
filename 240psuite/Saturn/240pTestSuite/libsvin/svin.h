@@ -10,7 +10,7 @@ typedef enum {
         _SVIN_SCANMODE_240I = 0,
         _SVIN_SCANMODE_240P = 1,
         _SVIN_SCANMODE_480I = 2,
-        //_SVIN_SCANMODE_480P = 3
+        _SVIN_SCANMODE_480P = 3
 } __packed _svin_scanmode_t;
 
 typedef enum {
@@ -28,6 +28,7 @@ typedef struct {
 
 extern bool _svin_videomode_scanlines;
 extern int _svin_frame_count;
+extern int current_color_mode;
 
 #define _SVIN_CHARACTER_HEIGHT   8
 #define _SVIN_CHARACTER_WIDTH   8

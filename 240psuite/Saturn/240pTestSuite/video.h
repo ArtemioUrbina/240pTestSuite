@@ -24,6 +24,7 @@
 
 #include "svin.h"
 
+char * scanmode_text_value(_svin_screen_mode_t screenmode);
 void print_screen_mode(_svin_screen_mode_t screenmode);
 double get_screen_square_pixel_ratio(_svin_screen_mode_t screenmode);
 _svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode);

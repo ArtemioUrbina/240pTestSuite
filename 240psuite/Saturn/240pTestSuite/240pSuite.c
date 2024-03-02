@@ -76,100 +76,6 @@
 extern uint8_t asset_bootlogo_bg[];
 extern uint8_t asset_bootlogo_bg_end[];
 
-char * scanmode_text_value(_svin_screen_mode_t screenmode)
-{
-	switch (screenmode.colorsystem)
-	{
-		case VDP2_TVMD_TV_STANDARD_NTSC:
-			switch (screenmode.scanmode)
-			{
-				case _SVIN_SCANMODE_240I:
-					return "480i same fields";
-					break;
-				case _SVIN_SCANMODE_240P:
-					return "240p";
-					break;
-				case _SVIN_SCANMODE_480I:
-					return "480i";
-					break;
-				/*case _SVIN_SCANMODE_480P:
-					return "480p";
-					break;*/
-			}
-			return "????";
-			break;
-		case VDP2_TVMD_TV_STANDARD_PAL:
-			switch (screenmode.scanmode)
-			{
-				case _SVIN_SCANMODE_240I:
-					return "576i same fields";
-					break;
-				case _SVIN_SCANMODE_240P:
-					return "288p";
-					break;
-				case _SVIN_SCANMODE_480I:
-					return "576i";
-					break;
-				/*case _SVIN_SCANMODE_480P:
-					return "480p";
-					break;*/
-			}
-			return "????";
-			break;
-		default:
-			return "????";
-			break;		
-	}
-}
-
-char * x_res_text_value(_svin_screen_mode_t screenmode)
-{
-	switch (screenmode.x_res)
-	{
-		case _SVIN_X_RESOLUTION_320:
-			return (screenmode.x_res_doubled) ? "640":"320";
-			break;
-		case _SVIN_X_RESOLUTION_352:
-			return (screenmode.x_res_doubled) ? "704":"352";
-			break;
-	}
-	return "???";
-}
-
-char * y_res_text_value(_svin_screen_mode_t screenmode)
-{
-	switch (screenmode.y_res)
-	{
-		case VDP2_TVMD_VERT_224:
-			return (_SVIN_SCANMODE_480I == screenmode.scanmode) ? "448":"224";
-			break;
-		case VDP2_TVMD_VERT_240:
-			return (_SVIN_SCANMODE_480I == screenmode.scanmode) ? "480":"240";
-			break;
-		case VDP2_TVMD_VERT_256:
-			return (_SVIN_SCANMODE_480I == screenmode.scanmode) ? "512":"256";
-			break;
-	}
-	return "???";
-}
-
-char * y_lines_text_value(_svin_screen_mode_t screenmode)
-{
-	switch (screenmode.y_res)
-	{
-		case VDP2_TVMD_VERT_224:
-			return "224";
-			break;
-		case VDP2_TVMD_VERT_240:
-			return "240";
-			break;
-		case VDP2_TVMD_VERT_256:
-			return "256";
-			break;
-	}
-	return "????";
-}
-
 void update_screen_mode(_svin_screen_mode_t screenmode)
 {
 	//ClearTextLayer();
@@ -348,7 +254,7 @@ int main(void)
 					sprintf(string_buf,"IRE 100 level ........... %d",ire_level_100);
 					DrawString(string_buf, x, y+_fh*pos, sel == pos ? FONT_RED : FONT_WHITE); pos++;
 					pos++;
-					sprintf(string_buf,"Effective resolition  %sx%s",x_res_text_value(screenMode),y_res_text_value(screenMode));
+					sprintf(string_buf,"Effective resolution  %sx%s",x_res_text_value(screenMode),y_res_text_value(screenMode));
 					DrawString(string_buf,x, y+_fh*pos, FONT_CYAN); pos++;
 					pos++;
 					if (VDP2_TVMD_TV_STANDARD_NTSC == screenMode.colorsystem)
@@ -771,8 +677,10 @@ int main(void)
 							case 0:
 								//change scanmode
 								screenMode.scanmode++;
-								if (screenMode.scanmode > _SVIN_SCANMODE_480I)
+								if (screenMode.scanmode > _SVIN_SCANMODE_480P)
 									screenMode.scanmode = _SVIN_SCANMODE_240I;
+								if (_SVIN_SCANMODE_480P == screenMode.scanmode)
+									screenMode.y_res = VDP2_TVMD_VERT_240; //only x480 in 480p mode
 								update_screen_mode(screenMode);
 								redrawBG = true;
 								redrawMenu = true;
@@ -780,9 +688,17 @@ int main(void)
 							case 1:
 								//y lines
 								screenMode.y_res++;
-								if (screenMode.y_res > VDP2_TVMD_VERT_240) //no 256 for now
+								if (_SVIN_SCANMODE_480P == screenMode.scanmode)
+									screenMode.y_res = VDP2_TVMD_VERT_240; //only x480 in 480p mode
+								else if (VDP2_TVMD_TV_STANDARD_NTSC == screenMode.colorsystem)
 								{
-									screenMode.y_res = VDP2_TVMD_VERT_224;
+									if (screenMode.y_res > VDP2_TVMD_VERT_240) //no 256 for NTSC
+										screenMode.y_res = VDP2_TVMD_VERT_224;
+								}
+								else
+								{
+									if (screenMode.y_res > VDP2_TVMD_VERT_256)
+										screenMode.y_res = VDP2_TVMD_VERT_224;
 								}
 								update_screen_mode(screenMode);
 								redrawBG = true;
