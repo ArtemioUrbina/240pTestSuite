@@ -208,6 +208,22 @@ void draw_sharpness_pattern2(_svin_screen_mode_t screenmode)
 	Color.b = 74;	
 	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3
 
+	//switching to tile mode
+    struct vdp2_scrn_cell_format format;
+    memset(&format, 0x00, sizeof(format));
+    vdp2_scrn_normal_map_t normal_map;
+    memset(&normal_map, 0x00, sizeof(normal_map));
+	format.scroll_screen = VDP2_SCRN_NBG0;
+    format.ccc = VDP2_SCRN_CCC_PALETTE_256;
+    format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
+    format.pnd_size = 2;
+    format.aux_mode = VDP2_SCRN_AUX_MODE_1;
+    format.cpd_base = 0;
+    format.palette_base = 0;
+    format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
+    normal_map.plane_a = _SVIN_NBG0_PNDR_START;
+    vdp2_scrn_cell_format_set(&format,&normal_map);
+
 	//create brick tile
 	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
 	int *BrickPattern32 = (int *)BrickPattern;
