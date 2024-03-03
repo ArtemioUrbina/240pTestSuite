@@ -1,0 +1,6 @@
+#make clean
+cp Makefile_ss Makefile
+make
+cp Makefile_cue Makefile
+make
+yabause -i 240pSuite.iso

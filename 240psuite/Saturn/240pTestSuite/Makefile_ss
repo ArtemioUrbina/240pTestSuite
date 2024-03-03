@@ -80,4 +80,4 @@ IP_SLAVE_STACK_ADDR:= 0x06001000
 IP_1ST_READ_ADDR:= 0x06004000
 IP_1ST_READ_SIZE:= 0
 
-include $(YAUL_INSTALL_ROOT)/share/build.post.iso-cue.mk
+include $(YAUL_INSTALL_ROOT)/share/build.post.ss.mk
