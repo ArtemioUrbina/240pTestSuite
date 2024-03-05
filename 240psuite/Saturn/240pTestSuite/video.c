@@ -178,7 +178,7 @@ double get_screen_square_pixel_ratio(_svin_screen_mode_t screenmode)
 			break;
 	}
 	if (screenmode.x_res_doubled) ratio*=2.0;
-	if (_SVIN_SCANMODE_480I == screenmode.scanmode) ratio*=0.5;
+	if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ratio*=0.5;
 	return ratio;
 }
 
@@ -316,6 +316,6 @@ int get_screenmode_resolution_y(_svin_screen_mode_t screenmode)
 {
 	int number = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 224 : 
 				(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 240 : 256;
-    number = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? number*2 : number;
+    number = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? number*2 : number;
 	return number;
 }

@@ -254,15 +254,70 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	_svin_set_palette_part(2,&Color,COLOR_GREEN,COLOR_GREEN); //palette 2 color 4 = IRE green
 
 	//switching to BMP mode
-	//setup nbg0
-    struct vdp2_scrn_bitmap_format format;
-    memset(&format, 0x00, sizeof(format));
-    format.scroll_screen = VDP2_SCRN_NBG0;
-    format.ccc = VDP2_SCRN_CCC_PALETTE_16;
-    format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
-    format.palette_base = 0x800;
-    format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
-    vdp2_scrn_bitmap_format_set(&format);
+	struct vdp2_scrn_bitmap_format format;
+
+	if (0 == current_color_mode)
+	{
+		//480p high res, special setup
+		//setup nbg0
+		memset(&format, 0x00, sizeof(format));
+		format.scroll_screen = VDP2_SCRN_NBG0;
+		format.ccc = VDP2_SCRN_CCC_PALETTE_16;
+		format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
+		format.palette_base = 0x400;
+		format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
+		vdp2_scrn_bitmap_format_set(&format);
+		//setup nbg1
+		memset(&format, 0x00, sizeof(format));
+		format.scroll_screen = VDP2_SCRN_NBG1;
+		format.ccc = VDP2_SCRN_CCC_PALETTE_16;
+		format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
+		format.palette_base = 0x400;
+		format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
+		vdp2_scrn_bitmap_format_set(&format);
+
+		vdp2_scrn_reduction_set(VDP2_SCRN_NBG0,VDP2_SCRN_REDUCTION_HALF);
+    	vdp2_scrn_reduction_set(VDP2_SCRN_NBG1,VDP2_SCRN_REDUCTION_HALF);
+    	vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG0, FIX16(2.0f));
+	    vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG1, FIX16(2.0f));
+    	vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG0, FIX16(1.0f));
+	    vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG1, FIX16(1.0f));
+		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG0 , FIX16(0.0f));
+		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1 , FIX16(1.0f));	
+		vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 5);
+		vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
+	}
+	else
+	{
+		//normal setup
+		//setup nbg0
+		memset(&format, 0x00, sizeof(format));
+		format.scroll_screen = VDP2_SCRN_NBG0;
+		format.ccc = VDP2_SCRN_CCC_PALETTE_16;
+		format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
+		format.palette_base = 0x800;
+		format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
+		vdp2_scrn_bitmap_format_set(&format);
+		//setup nbg1
+		memset(&format, 0x00, sizeof(format));
+		format.scroll_screen = VDP2_SCRN_NBG1;
+		format.ccc = VDP2_SCRN_CCC_PALETTE_16;
+		format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
+		format.palette_base = 0x800;
+		format.bitmap_base = _SVIN_NBG1_CHPNDR_START;
+		vdp2_scrn_bitmap_format_set(&format);
+
+		vdp2_scrn_reduction_set(VDP2_SCRN_NBG0,VDP2_SCRN_REDUCTION_NONE);
+    	vdp2_scrn_reduction_set(VDP2_SCRN_NBG1,VDP2_SCRN_REDUCTION_NONE);
+    	vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG0, FIX16(1.0f));
+	    vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG1, FIX16(1.0f));
+    	vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG0, FIX16(1.0f));
+	    vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG1, FIX16(1.0f));
+		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG0 , FIX16(0.0f));
+		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1 , FIX16(0.0f));	
+		vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
+		vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 0);
+	}
 
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
@@ -276,7 +331,7 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	int cell_y=16;
 	if (screenmode.x_res_doubled)
 		cell_x=32;
-	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
+	if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )
 		cell_y=32;
 
 	int offset_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? cell_y/2 : 0;
@@ -381,7 +436,7 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	//big red quad
 	if (_SVIN_X_RESOLUTION_320 == screenmode.x_res)
 	{
-		rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
+		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) /*|| (_SVIN_SCANMODE_480P == screenmode.scanmode)*/ ) ? 384 : 192;
 		rect_x = ((rect_y*35)/32);
 		if (ratio>1.5)
 			rect_x= ((rect_y*70)/32);
@@ -394,7 +449,7 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	//big blue quad
 	if (_SVIN_X_RESOLUTION_352 == screenmode.x_res)
 	{
-		rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 336 : 168;
+		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) /*|| (_SVIN_SCANMODE_480P == screenmode.scanmode)*/ ) ? 336 : 168;
 		rect_x = ((rect_y*7)/6);
 		if (ratio>1.5)
 			rect_x= ((rect_y*14)/6);
@@ -440,12 +495,12 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	//dotted lines
 	if (_SVIN_X_RESOLUTION_320 == screenmode.x_res)
 	{
-		rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
+		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 384 : 192;
 		rect_x = ((rect_y*35)/32);
 	}
 	else
 	{
-		rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 336 : 168;
+		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 336 : 168;
 		rect_x = ((rect_y*7)/6);
 	}
 	if (ratio>1.5)
@@ -479,14 +534,14 @@ void draw_monoscope_text(_svin_screen_mode_t screenmode)
 	int cell_y=16;
 	if (screenmode.x_res_doubled)
 		cell_x=32;
-	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
+	if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )
 		cell_y=32;
 	int offset_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? cell_y/2 : 0;
 	int text_shift_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? -8 :
 					(VDP2_TVMD_VERT_256 == screenmode.y_res) ? -16 : 0;
 
 	//big red quad
-	int rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 384 : 192;
+	int rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 384 : 192;
 	int rect_x = ((rect_y*35)/32);
 	if (ratio>1.5)
 		rect_x= ((rect_y*70)/32);
@@ -501,7 +556,7 @@ void draw_monoscope_text(_svin_screen_mode_t screenmode)
 	DrawString(buf, _text_x, _text_y+text_shift_y, FONT_RED);
 
 	//big green quad
-	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 288 : 144;
+	rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 288 : 144;
 	rect_x = (int)(ratio*rect_y+0.5);
 	rect_x /= 2; rect_x *= 2;
 	sprintf(buf," %ix%i",rect_x,rect_y);
@@ -512,7 +567,7 @@ void draw_monoscope_text(_svin_screen_mode_t screenmode)
 	DrawString(buf, _text_x, _text_y+text_shift_y, FONT_GREEN);
 
 	//big blue quad
-	rect_y = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 336 : 168;
+	rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 336 : 168;
 	rect_x = ((rect_y*7)/6);
 	if (ratio>1.5)
 		rect_x= ((rect_y*14)/6);

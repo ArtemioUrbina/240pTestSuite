@@ -3,4 +3,9 @@ cp Makefile_ss Makefile
 make
 cp Makefile_cue Makefile
 make
+if test -f /f/WASCALDR.BIN; then
+  \cp -fR 240pSuite.ss /f/WASCALDR.BIN
+else
+  echo "No flash found, not updating WASCALDR.BIN"
+fi
 yabause -i 240pSuite.iso
