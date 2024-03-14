@@ -250,20 +250,17 @@ void tp_colorchart()
 			palindex += colorchartsingle.palInfo->count;
 
 			// ===================================
-			// Draw Color Text
+			// Draw Color Text on main screen
 			// ===================================
-			if(!mode)
-			{
-				pictureInit(&text_light, &colorchart_light, index, palindex, 16, 32, FLIP_NONE);
-				palJobPut(palindex,colorchart_light.palInfo->count,colorchart_light.palInfo->data);
-				index += getPicSprites(text_light.info);
-				palindex += colorchart_light.palInfo->count;
-				
-				pictureInit(&text_dark, &colorchart_dark, index, palindex, 0, 48, FLIP_NONE);
-				palJobPut(palindex,colorchart_dark.palInfo->count,colorchart_dark.palInfo->data);
-				index += getPicSprites(text_dark.info);
-				palindex += colorchart_dark.palInfo->count;
-			}
+			pictureInit(&text_light, &colorchart_light, index, palindex, 16, 32, FLIP_NONE);
+			palJobPut(palindex,colorchart_light.palInfo->count,colorchart_light.palInfo->data);
+			index += getPicSprites(text_light.info);
+			palindex += colorchart_light.palInfo->count;
+			
+			pictureInit(&text_dark, &colorchart_dark, index, palindex, 0, 48, FLIP_NONE);
+			palJobPut(palindex,colorchart_dark.palInfo->count,colorchart_dark.palInfo->data);
+			index += getPicSprites(text_dark.info);
+			palindex += colorchart_dark.palInfo->count;
 
 			draw = 0;
 			change_pallettes = 1;
@@ -381,7 +378,7 @@ void tp_colorchart()
 		}
 
 		if(checkHelp(HELP_COLORS))
-			draw = 1;
+        	draw = 1;
 	}
 }
 

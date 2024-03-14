@@ -40,7 +40,7 @@ bkp_ram_info bkp_data;
 BYTE p1,p2,ps,pse,p1e,p2e,p1b,p2b;
 BYTE isMVS, is2S, is4S, is6S, isMulti, hwChange, allowIRE107;
 BYTE vmode_snk, isPAL, usePAL256, isPALinMVS;
-BYTE enable_shadow, fill_color_bg;
+BYTE enable_shadow, fill_color_bg, soundOn;
 WORD max_z80_timout;
 WORD min_z80_timout;
 BYTE disable_z80_check;
@@ -755,7 +755,8 @@ void _240p_mvs_game_change(void)
 void _240p_mvs_coin_sound(void)
 {
 	// in case z80 is not working, don't expect a response
-	sendZ80commandnoWait(SOUNDCMD_PlayCoinA);
+    if(soundOn)
+	    sendZ80commandnoWait(SOUNDCMD_PlayCoinA);
 }
 
 void CheckWarnings()
@@ -1082,6 +1083,7 @@ void check_bios_init()
 	min_z80_timout = 65535;
 	disable_z80_check = 0;
 	fill_color_bg = 0;
+    soundOn = 1;
 }
 
 void parse_bios_status()

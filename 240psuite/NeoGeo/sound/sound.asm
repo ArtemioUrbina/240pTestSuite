@@ -69,7 +69,7 @@ checkLoop:
 ; IRQ 
 ;==============================================================================;
 ; Handle an interrupt request from the YM2610 Timer
-; unused for nowk
+; unused for now
 IRQ:
 	reti
 

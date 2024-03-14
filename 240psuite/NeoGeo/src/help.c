@@ -226,7 +226,7 @@ void DrawHelp(int option)
 						fixPrint(4, y++, fontColorWhite, fbase, "hidden, since they are at");
 						fixPrint(4, y++, fontColorWhite, fbase, "107 IRE.");
 						y++;
-						fixPrint(4, y++, fontColorWhite, fbase, "The B button toggles a grid");
+						fixPrint(4, y++, fontColorWhite, fbase, "The C button toggles a grid");
 						fixPrint(4, y++, fontColorWhite, fbase, "background");
 					break;
 					}

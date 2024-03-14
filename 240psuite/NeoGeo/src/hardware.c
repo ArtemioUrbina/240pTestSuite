@@ -978,6 +978,7 @@ void ht_showInternalVars()
 		displayValue(x, y++, "max_z80", max_z80_timout);
 		displayValue(x, y++, "color_bg", fill_color_bg);
 		displayValue(x, y++, "font", fbase);
+        displayValue(x, y++, "soundOn", soundOn);
 #ifdef __cd__
 		displayValue(x, y++, "isCDFront", isCDFront);
 		displayValue(x, y++, "isCDZ", isCDZ);

@@ -542,6 +542,9 @@ void at_sound_mdfourier()
 		{
 			int frame = 0, close = 0;
 
+            // Turn Off credits sound
+            soundOn = 0;
+
 			fixPrintC(msgpos, fontColorWhite, fbase, "Please wait while recording");
 			SCClose();
 			waitVBlank();
@@ -638,6 +641,9 @@ void at_sound_mdfourier()
 
 			fixPrintC(msgpos, fontColorWhite, fbase, "You can now stop recording.");
 			fixPrintC(msgpos+1, fontColorWhite, fbase, "Press any button to continue");
+
+            // Turn On credits sound
+            soundOn = 1;
 
 			while(!close)
 			{
