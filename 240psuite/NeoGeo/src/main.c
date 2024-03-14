@@ -643,8 +643,8 @@ void credits()
 			pictureInit(&qr, &barcode, 26, 17, 260, 150, FLIP_NONE);
 			palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 
-			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 1.02");
-			fixPrint(x+24, y+1, fontColorWhite, fbase, "17/10/2023");
+			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 1.03");
+			fixPrint(x+24, y+1, fontColorWhite, fbase, "13/03/2024");
 #ifdef USE_SERIAL
 			if(checkserialset())
 			{
