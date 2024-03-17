@@ -1,22 +1,23 @@
 ROOTDIR = $(N64_INST)
 
-HEADERDIR = $(ROOTDIR)/headers
+HEADERDIR = $(ROOTDIR)/mips64-elf/lib
 HEADER = $(HEADERDIR)/header
 
-TOOLDIR = $(ROOTDIR)/bin
-CHKSUM64 = $(TOOLDIR)/chksum64
-MKDFS = $(TOOLDIR)/mkdfs
-N64TOOL = $(TOOLDIR)/n64tool
-MKSPRITE =  $(TOOLDIR)/mksprite
+N64_BINDIR = $(ROOTDIR)/bin
+CHKSUM64 = $(N64_BINDIR)/chksum64
+MKDFS = $(N64_BINDIR)/mkdfs
+N64TOOL = $(N64_BINDIR)/n64tool
+MKSPRITE =  $(N64_BINDIR)/mksprite
+
+TOOLDIR = $(CURDIR)/tools
 UCON64 = $(TOOLDIR)/ucon64
-LOADER = $(TOOLDIR)/loader64
+LOADER = $(TOOLDIR)/unfloader
 
-LDSCRIPTSDIR = $(ROOTDIR)/ldscripts
-LINK_FLAGS = -T$(LDSCRIPTSDIR)/n64.ld -Map map.txt -nostdlib
+LDFLAGS = -Tn64.ld -Map map.txt --gc-sections
 
-LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/lib/gcc/mips64-elf/4.4.0 -L$(ROOTDIR)/mips64-elf/lib
+LIBPATH = -L$(ROOTDIR)/lib -L$(ROOTDIR)/mips64-elf/lib
 INCPATH = -I$(CURDIR)/include -I$(ROOTDIR)/include -I$(ROOTDIR)/mips64-elf/include
-CCFLAGS = -DUSE_N64MEM -std=gnu99 -march=vr4300 -mtune=vr4300 -G 0 -O2 -Wall -Werror -c $(INCPATH)
+CCFLAGS = -std=gnu99 -march=vr4300 -mtune=vr4300 -G0 -O2 -Wall -Werror -c $(INCPATH)
 ASFLAGS = -mtune=vr4300 -march=vr4300
 
 N64PREFIX = $(ROOTDIR)/bin/mips64-elf-
@@ -26,7 +27,7 @@ LD = $(N64PREFIX)ld
 OBJCOPY = $(N64PREFIX)objcopy
 
 PROG_NAME = 240pSuite
-LIBS = -ldragon -lc -lm -ldragonsys -ln64memory 
+LIBS = -ldragon -lc -lm -ldragonsys
 BITDEPTH = 16
 
 OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o menu.o help.o
@@ -34,11 +35,11 @@ OBJS = $(PROG_NAME).o utils.o image.o video.o tests.o patterns.o controller.o me
 $(PROG_NAME).z64: bitmaps $(PROG_NAME).elf drive.dfs
 	$(OBJCOPY) $(PROG_NAME).elf $(PROG_NAME).bin -O binary
 	rm -f $(PROG_NAME).z64
-	$(N64TOOL) -l 6M -t "240p Test Suite" -h $(HEADER) -o $(PROG_NAME).z64 $(PROG_NAME).bin -s 1M drive.dfs
+	$(N64TOOL) -l 8M -t "240p Test Suite" -h $(HEADER) -o $(PROG_NAME).z64 $(PROG_NAME).bin -s 1M drive.dfs
 	$(CHKSUM64) $(PROG_NAME).z64
 
 $(PROG_NAME).elf : $(OBJS)
-	$(LD) -o $(PROG_NAME).elf $(OBJS) $(LINK_FLAGS) $(LIBPATH) $(LIBS)
+	$(LD) -o $(PROG_NAME).elf $(OBJS) $(LDFLAGS) $(LIBPATH) $(LIBS)
 
 drive.dfs: bitmaps
 	$(MKDFS) drive.dfs ./filesystem/
@@ -51,6 +52,7 @@ drive.dfs: bitmaps
 
 all: $(PROG_NAME).v64
 
+.PHONY: clean
 clean:
 	rm -f *.z64 *.elf *.o *.bin *.dfs filesystem/*.bin map.txt
 
@@ -241,4 +243,4 @@ filesystem/help.bin: graphics/help.png
 	$(MKSPRITE) $(BITDEPTH) $< $@
 	
 run: $(PROG_NAME).z64
-	$(LOADER)  $(PROG_NAME).z64 
+	$(LOADER) -r ../$(PROG_NAME).z64 

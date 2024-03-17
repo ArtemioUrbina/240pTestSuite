@@ -121,25 +121,26 @@ void SoftDrawImageSolid(int x, int y, sprite_t *image)
 	graphics_draw_sprite(__dc, x, y, image);
 }
 
-void red_createflags()
-{
-	uint32_t flag1;
-	//int32_t flag2;
+// void red_createflags() //TODO: commment out as not sure whether this is actually needed!
+// {
+
+// 	uint32_t flag1; 
+// 	//int32_t flag2;
 	
-	// 0xEFA000FF 
-	// 11 101111 1 0 10 000 0000 000 00 10 11 1111
-	// 11 (filler) 10 1111 (opcode) 0 (Atomic Primitive Enable) 10 (Cycle Type)
-	// 0 (Perspective Correction Enable) 0 (Detail Texture Enable) 0 (Sharpen Texture Enable)
-	// 0 (Texture LOD Enable) 0 (TLUT Enable) 0 (TLUT Type) 0 (Sample Type) 
-	// 0 (Mid Texel Enable ) 0 (Bi­Linear Interpolation 0) 0 (Bi­Linear Interpolation 1) 
-	// 0 (Color Convert) 0 (Chroma Key enable ) 11 (RGB Dither Type ) 11 (Alpha Dither Type)
-	// 1111 (filler)
+// 	// 0xEFA000FF 
+// 	// 11 101111 1 0 10 000 0000 000 00 10 11 1111
+// 	// 11 (filler) 10 1111 (opcode) 0 (Atomicï¿½Primitiveï¿½Enable) 10 (Cycleï¿½Type)
+// 	// 0 (PerspectiveCorrection Enable) 0 (Detail Textureï¿½Enable) 0 (Sharpen Textureï¿½Enable)
+// 	// 0 (Textureï¿½LODï¿½Enable) 0 (TLUT Enable) 0 (TLUT Type) 0 (Sampleï¿½Type) 
+// 	// 0 (Midï¿½Texel Enableï¿½) 0 (Biï¿½Linearï¿½Interpolation 0) 0 (Biï¿½Linearï¿½Interpolation 1) 
+// 	// 0 (Color Convert) 0 (Chromaï¿½Key enable ) 11 (RGB Ditherï¿½Typeï¿½) 11 (Alphaï¿½Ditherï¿½Type)
+// 	// 1111 (filler)
 	
-	flag1 = 0xEFA00000; // opcode + Atomic Primitive Enable + 2 Cycle 
+// 	flag1 = 0xEFA00000; // opcode + Atomicï¿½Primitiveï¿½Enableï¿½+ 2 Cycleï¿½
 	
-	// 0x00004001
-	// 100000000000001 Force Blend -> Alpha Compare Enable
-}
+// 	// 0x00004001
+// 	// 100000000000001 Force Blendï¿½-> Alphaï¿½Compareï¿½Enable
+// }
 
 void rdp_fill_start()
 {
@@ -191,7 +192,7 @@ void rdp_DrawImage(int x, int y, sprite_t *image)
 	{
 		rdp_sync(SYNC_PIPE);
 		rdp_load_texture(0, 0, MIRROR_DISABLED, image);
-		rdp_draw_sprite(0, x, y);
+		rdp_draw_sprite(0, x, y, MIRROR_DISABLED);
 	}
 	else
 	{
@@ -223,7 +224,7 @@ void rdp_DrawImage(int x, int y, sprite_t *image)
 							rdp_set_texture_flush(FLUSH_STRATEGY_AUTOMATIC);
 						rdp_sync(SYNC_PIPE);
 						rdp_load_texture_stride(0, 0, MIRROR_DISABLED, image, offset);
-						rdp_draw_sprite(0, x+i*hsize, y+j*vsize);
+						rdp_draw_sprite(0, x+i*hsize, y+j*vsize, MIRROR_DISABLED);
 					}
 					offset++;
 				}
@@ -243,14 +244,14 @@ void rdp_FillScreenWithTexture(sprite_t *image)
 {
 	rdp_sync(SYNC_PIPE);
 	rdp_load_texture(0, 0, MIRROR_DISABLED, image);
-	rdp_draw_textured_rectangle (0, 0, 0, dW, dH);
+	rdp_draw_textured_rectangle (0, 0, 0, dW, dH, MIRROR_DISABLED);
 }
 
 void rdp_FillScreenWithTextureXY(int x, int y, sprite_t *image)
 {
 	rdp_sync(SYNC_PIPE);
 	rdp_load_texture(0, 0, MIRROR_DISABLED, image);
-	rdp_draw_textured_rectangle (0, x, y, dW, dH);
+	rdp_draw_textured_rectangle (0, x, y, dW, dH, MIRROR_DISABLED);
 }
 
 void ClearScreen()

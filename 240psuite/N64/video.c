@@ -62,10 +62,10 @@ void reset_video_vars()
 	current_buffers = 2;
 	current_gamma = GAMMA_NONE;
 	current_antialias = ANTIALIAS_RESAMPLE; // ANTIALIAS_OFF doesn't work in 16BPP
-	EnablePAL = 0;
+	EnablePAL = !isNTSC();
 	EnableDivot = 1;
 	EnableDither = 0;
-	useNTSC = 1;
+	useNTSC = isNTSC();
 }
 
 void reset_video()
@@ -99,7 +99,8 @@ void set_video()
 	
 	video_set = 0;
 	
-	display_init_ex(useNTSC, current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
+	//display_init_ex(useNTSC, current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias); Can this be deprecated?!
+	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
 	register_VI_handler(vblCallback);
 	rdp_init();
 	
@@ -120,6 +121,14 @@ void set_video()
 		case RESOLUTION_512x480:
 			dW = 512;
 			dH = 480;
+			break;
+		case RESOLUTION_512x240: /* high-res progressive */
+			dW = 512;
+			dH = 240;
+			break;
+		case RESOLUTION_640x240: /* high-res progressive */
+			dW = 640;
+			dH = 240;
 			break;
 	}
 	
@@ -149,11 +158,11 @@ void GetDisplay()
 	ClearScreen();
 }
 
-int isNTSC()
-{
+int isNTSC() //TODO: this still seems to be insufficent for MPAL consoles
+{ //TODO: libdragon should now support this!
 	int tv; 
 	
-	tv = *(int *) 0x80000300;
+	tv = *(unsigned long *) 0x80000300;
 	return tv;
 }
 
@@ -187,6 +196,12 @@ void GetVideoModeStr(char *res, int shortdesc)
 			case RESOLUTION_512x480:
 				sprintf(res, "Video: 512x480");
 				break;
+			case RESOLUTION_512x240:
+				sprintf(res, "Video: 512x240");
+				break;
+			case RESOLUTION_640x240:
+				sprintf(res, "Video: 640x240");
+				break;
 		}
 	}
 	else
@@ -204,6 +219,12 @@ void GetVideoModeStr(char *res, int shortdesc)
 				break;
 			case RESOLUTION_512x480:
 				sprintf(res, "[512]");
+				break;
+			case RESOLUTION_512x240:
+				sprintf(res, "[512p]");
+				break;
+			case RESOLUTION_640x240:
+				sprintf(res, "[640p]");
 				break;
 		}
 
@@ -339,5 +360,3 @@ void DarkenScreenBuffer(int amount)
 		}
 	}
 }
-
-
