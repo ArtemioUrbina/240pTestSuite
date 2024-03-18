@@ -50,6 +50,9 @@ void ReflexTestText();
 void ReflexTestResults();
 void ReflexTestResultsBack();
 
+void TurboPadCount();
+void ControllerTest();
+
 void PSG_LoadWave(unsigned char chan, unsigned char *wave);
 void PSG_SetWaveFreq(unsigned char chan, unsigned int freq);
 void PSG_SetNoiseFreq(unsigned int chan, unsigned int freq);

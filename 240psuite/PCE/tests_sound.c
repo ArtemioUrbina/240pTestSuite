@@ -957,10 +957,11 @@ void RefreshHardwareTests()
 	row = 14;
 
 	drawmenutext(0, "Controller Test");
-	drawmenutext(1, "Memory Viewer");
+	drawmenutext(1, "Turbo Pad Counter");
+	drawmenutext(2, "Memory Viewer");
 	
 	row = 22;
-	DrawMenuBottom(2, 0);
+	DrawMenuBottom(3, 0);
 }
 
 void HardwareTests()
@@ -1058,22 +1059,25 @@ void HardwareTests()
 					ControllerTest();
 					break;
 				case 1:
-					MemViewer(0x2000);
+					TurboPadCount();
 					break;
 				case 2:
+					MemViewer(0x2000);
+					break;
+				case 3:
 #ifdef SYSCARD1
 					x_g = OPTIONS_HW_HELP;
 #endif
 					Options();
 					break;
-				case 3:
+				case 4:
 					showHelp(GENERAL_HW_HELP);
 					break;
-				case 4:
+				case 5:
 					end = 1;
 					break;
 			}
-			if(sel != 4)
+			if(sel != 5)
 				end = 0;
 				
 			redraw = 1;	
@@ -1258,13 +1262,13 @@ void CheckController(int joypad, int y)
 
 	contollerstr(JOY_II, "II", x+24, y+2);
 	contollerstr(JOY_I, "I", x+27, y+2);
-	clicks[joypad] = 1;
 }
 
 void ControllerTest()
 {
 	redraw = 1;
-		
+	
+	disp_off();
 	while(!end)
 	{	
 		vsync();
@@ -1300,13 +1304,113 @@ void ControllerTest()
 	}
 }
 
+void showFrames(int xpos, int ypos)
+{
+	if(x4)
+		put_number(600, 3, xpos, ypos);
+	else
+		put_number(60, 3, xpos, ypos);
+}
+
+void TurboPadCount()
+{
+	redraw = 1;
+	end = 0;
+	x4 = 0;  // 10 seconds
+	
+	disp_off();
+	while(!end)
+	{	
+		vsync();
+		
+		if(redraw)
+		{
+			RedrawBG();
+			SetFontColors(12, RGB(3, 3, 3), RGB(7, 0, 0), 0);
+			SetFontColors(13, RGB(2, 2, 2), RGB(0, 6, 0), 0);
+			SetFontColors(15, RGB(2, 2, 2), RGB(7, 7, 7), 0);
+
+			refresh = 1;
+			redraw = 0;
+			disp_sync_on();
+		}
+		
+		if(refresh)
+		{
+			set_font_pal(13);
+			put_string("Turbo Pad Counter", 12, 4);
+			set_font_pal(14);
+			put_string("Hold \"I\" to measure", 8, 14);
+			showFrames(16, 16);
+		}
+		
+		controller = joytrg(0);
+		
+		if (controller & JOY_I)
+		{
+			x1 = 0;	// presses
+			if(x4)
+				x5 = 600; // frame counter
+			else
+				x5 = 60;
+			x2 = 0;
+			x3 = 0; // last frame pressed
+			
+			put_string("Measuring...        ", 8, 14);
+			put_string("Count:", 8, 15);
+			put_string("Frames:", 8, 16);
+			vsync();
+			
+			do
+			{	
+				controller = joy(0);
+				if (controller & JOY_I)
+				{
+					if(!x3)
+					{
+						x1 ++;
+						x3 = 1;
+					}
+				}
+				else
+					x3 = 0;
+	
+				x2 ++;
+				put_number(x1, 3, 16, 15);
+				put_number(x2, 3, 16, 16);
+				vsync();
+			} while(x2 < x5);
+			
+			put_string("Results:    ", 8, 14);
+			
+			do
+			{
+				vsync();
+				
+				controller = joytrg(0);
+			} while(!(controller & JOY_II));
+			
+			controller = 0;
+			redraw = 1;
+		}
+		
+		if (controller & JOY_UP)
+		{
+			x4 = !x4;
+			refresh = 1;
+		}
+			
+		if (controller & JOY_II)
+			end = 1;
+	}
+}
+
 #ifdef CDPLAYER
 void CDDAPlayer()
 {
 	int	tracks[20];
 	
 	redraw = 1;
-	refresh = 1;
 	
 	x3 = 0;			//selected track
 	end = 0;
