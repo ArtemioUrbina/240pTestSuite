@@ -20,6 +20,7 @@
  */
 
 #include "segacdtests.h"
+#include "mdfourier.h"
 #include "main.h"
 #include "res.h"
 
@@ -441,20 +442,17 @@ u16 WaitKey(char *message)
 
 /*************** Z80 *******/
 
-
 void Z80RamTest()
 {
 	DrawMainBG();
 	
 	ShowMessageAndData("Z80 RAM", 0xA00000, 7, PAL1, 11, 4);
-	if(doZ80Lock)
-		Z80_requestBus(1);			
+	Z80Lock();
 	CheckRAMWithValue(0xA00000, 0xA02000, 0xFF, 8, IS_8BIT);
 	CheckRAMWithValue(0xA00000, 0xA02000, 0x55, 11, IS_8BIT);
 	CheckRAMWithValue(0xA00000, 0xA02000, 0xAA, 14, IS_8BIT);
 	CheckRAMWithValue(0xA00000, 0xA02000, 0x00, 17, IS_8BIT);
-	if(doZ80Lock)
-		Z80_releaseBus();
+	Z80Release();
 
 	WaitKey(NULL);
 }
