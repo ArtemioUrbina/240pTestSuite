@@ -245,7 +245,7 @@ void RefreshTestPatterns()
 	drawmenutext(6, "Grids");
 	drawmenutext(7, "Monoscope");
 	drawmenutext(8, "Gray Ramp");
-	drawmenutext(9, "White & RGB Screen");
+	drawmenutext(9, "White & RGB Screens");
 	drawmenutext(10, "100 IRE");
 	drawmenutext(11, "Sharpness");
 	drawmenutext(12, "Overscan");
