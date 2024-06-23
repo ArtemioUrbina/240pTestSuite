@@ -1,6 +1,6 @@
 /* 
  * 240p Test Suite
- * Copyright (C)2014-2022 Artemio Urbina (PC Engine/TurboGrafx-16)
+ * Copyright (C)2014-2024 Artemio Urbina (PC Engine/TurboGrafx-16)
  *
  * This file is part of the 240p Test Suite
  *
@@ -18,6 +18,8 @@
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+/* Update 2024 06 23: Changed rts to jmp !exit as fixed by jbrandwood */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,15 +62,6 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-/*
-	hfile = fopen("helpdata.h", "w");
-	if(!hfile)
-	{
-		fprintf(stderr, "Could not open results  file\n");
-		return 0;
-	}
-*/
-
 	pages = &realpages;
 	npages = &realnpages;
 
@@ -77,21 +70,6 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Please specify a file for %s\n", argv[0]);
 		return 0;
 	}
-
-/*
-	for(c = 1; c < argc; c++)
-	{
-		int pos = strlen(argv[c]);
-		
-		strncpy(namebuffer, argv[c], pos);
-		makeUpper(namebuffer);
-		namebuffer[pos - 4] = '\0';
-
-		fprintf(hfile, "#define\t%s_HELP\t%d\n", namebuffer, c);
-	}
-
-	fclose(hfile);
-*/
 
 	fprintf(nfile, "/*\n"); 
 	fprintf(nfile, " * 240p Test Suite\n"); 
@@ -240,12 +218,6 @@ int main(int argc, char **argv)
 				}
 			}
 		}  
-
-		/*	  char	  **realpages = NULL;
-			  int	  realnpages = 0;
-		*/
-
-		/* here */
 	
 		for(d = 0; d < realnpages; d++)
 		{
@@ -293,7 +265,7 @@ int main(int argc, char **argv)
 			linestart = 1;
 			open = 0;
 
-			fprintf(nfile, "\trts\n\n");
+			fprintf(nfile, "\tjmp\t\t!exit+\n\n");
 			while(realpages[d][pos] != '\0')
 			{
 				if(linestart && realpages[d][pos] == ' ')
@@ -330,7 +302,7 @@ int main(int argc, char **argv)
 				fprintf(nfile, "\"\n\t\t\t.db\t0\n");
 				open = 0;
 			}
-			fprintf(nfile, "#endasm\n}\n");	
+			fprintf(nfile, "!exit:\n#endasm\n}\n");	
 			if(hasIFDEF)
 				fprintf(nfile, "#endif\n");	
 			fprintf(nfile, "\n\n");	
