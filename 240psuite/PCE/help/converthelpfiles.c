@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 	int 	hasIFDEF = 0;
 	char	ifdef[100];
 	
-	FILE	*nfile, *hfile;
+	FILE	*nfile = NULL;
 
 	nfile = fopen("helpdata.c", "w");
 	if(!nfile)
@@ -159,7 +159,7 @@ int main(int argc, char **argv)
 				ifdef[k] = '\0';
 				printf("File %s  Found ifdef[%d]: \"%s\"\n", argv[c], k, ifdef);
 
-				for(j = i-k; j < size - k; j++)
+				for(j = i-k; j < size - k - 1; j++)
 					buffer[j] = buffer[j+k+1];
 				size = size - k - 1;
 				removed += k;
@@ -232,7 +232,7 @@ int main(int argc, char **argv)
 			if(hasIFDEF)
 				fprintf(nfile, "%s\n", ifdef);
 
-			fprintf(nfile, "void display_%s_%0.2d()\n{\n", namebuffer, d);
+			fprintf(nfile, "void display_%s_%02d()\n{\n", namebuffer, d);
 
 			fprintf(nfile, "#asm\n");
 			while(realpages[d][pos] != '\0')
@@ -245,7 +245,7 @@ int main(int argc, char **argv)
 				if(realpages[d][pos] == '\n')
 				{	
 					if(pos - lastpos > 1)
-						fprintf(nfile, "\tp_string\t%s_%0.2d_%0.2d,%d,%d\n", namebuffer, d, dscount++, hpos, row+4);
+						fprintf(nfile, "\tp_string\t%s_%02d_%02d,%d,%d\n", namebuffer, d, dscount++, hpos, row+4);
 					if(first)
 					{
 						fprintf(nfile, "\t__ldwi\t\t14\n\tcall\t\t_set_font_pal\n");
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
 				{
 					if(lastpos == pos - 1)
 					{
-						fprintf(nfile, "%s_%0.2d_%0.2d:\t.db\t\"", namebuffer, d, dscount++);
+						fprintf(nfile, "%s_%02d_%02d:\t.db\t\"", namebuffer, d, dscount++);
 						open = 1;
 					}
 					if(realpages[d][pos] == '"')
