@@ -138,12 +138,14 @@ void DrawSP()
 }
 
 #define SP_VRAM	0x4000
+#define SP_SIZE 0x700
+// 0x700 are 0x40 (64) tiles
 
 void LoadSPVRAM()
 {
 	load_palette(17, SD_pal, 1);
 #ifndef SYSCARD1
-	load_vram(SP_VRAM, SD_sp, 0x700);
+	load_vram(SP_VRAM, SD_sp, SP_SIZE);
 #else
 	cd_loadvram(GPHX_OVERLAY, OFS_SD_tile_bin, SP_VRAM, SIZE_SD_tile_bin);
 #endif
@@ -165,6 +167,49 @@ void DrawSPX2Y2()
 			x5 ++;
 		}
 	}
+}
+
+#ifndef SYSCARD1
+void LoadSPBlink0()
+{
+	load_vram(SP_VRAM+0x240, SD_sp+0x240, 0x80);
+}
+
+void LoadSPBlink1()
+{
+	load_vram(SP_VRAM+0x240, SDb1_sp, 0x80);
+}
+
+void LoadSPBlink2()
+{
+	load_vram(SP_VRAM+0x240, SDb2_sp, 0x80);
+}
+
+int blinkCount;
+
+#define BLINK_T1 230
+#define BLINK_T2 232
+#define BLINK_T3 234
+#define BLINK_T4 236
+
+#endif
+
+void checkblink()
+{
+#ifndef SYSCARD1
+	blinkCount ++;
+	if(blinkCount == BLINK_T1)
+		LoadSPBlink1();
+	if(blinkCount == BLINK_T2)
+		LoadSPBlink2();
+	if(blinkCount == BLINK_T3)
+		LoadSPBlink1();
+	if(blinkCount == BLINK_T4)
+	{
+		LoadSPBlink0();
+		blinkCount = 0;
+	}
+#endif
 }
 
 #endif

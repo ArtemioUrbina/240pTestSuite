@@ -132,6 +132,10 @@ extern int colswap;
 extern unsigned char *mem;
 extern int runmdf;
 
+#ifndef SYSCARD1
+extern int blinkCount;
+#endif
+
 void Set256H();
 void Set320H();
 void Set352H();

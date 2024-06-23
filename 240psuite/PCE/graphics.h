@@ -39,6 +39,8 @@ extern char MB_map[];
 extern int MB_bg[];
 
 extern int SD_sp[];
+extern int SDb1_sp[];
+extern int SDb2_sp[];
 extern int bee_sp[];
 extern int shadow_sp[];
 extern int striped_sp[];

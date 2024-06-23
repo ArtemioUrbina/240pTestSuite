@@ -52,7 +52,9 @@ void main()
 	sel = 0;
 	redraw = 1;
 	refresh = 1;
-	
+#ifndef SYSCARD1
+	blinkCount = 0;
+#endif
 
 #ifndef CDROM
 	xres_flags = XRES_SOFT;
@@ -94,8 +96,9 @@ void main()
 #ifdef CDPLAYER
 	cd_reset();
 #endif
-    while(1)
-    {   	
+	while(1)
+	{
+		checkblink();
 		vsync();
 	
 #ifdef CDROM
@@ -304,6 +307,7 @@ void VideoTests()
 	disp_off();
 	while(!end)
 	{		
+		checkblink();
 		vsync();
 		
 #ifdef CDROM
@@ -506,6 +510,7 @@ void AudioTests()
 	disp_off();
 	while(!end)
 	{		
+		checkblink();
 		vsync();
 		
 #ifdef CDROM

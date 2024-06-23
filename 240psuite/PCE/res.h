@@ -90,6 +90,8 @@
 
 
 #incspr(SD_sp, "graphics/SD.pcx", 0, 0, 4, 7);
+#incspr(SDb1_sp, "graphics/SD_b1.pcx", 0, 0, 2, 1);
+#incspr(SDb2_sp, "graphics/SD_b2.pcx", 0, 0, 2, 1);
 
 #incspr(palm_sp, "graphics/sonicpalm.pcx", 0, 0, 5, 7);
 

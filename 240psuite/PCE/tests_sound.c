@@ -975,7 +975,8 @@ void HardwareTests()
 	
 	disp_off();
 	while(!end)
-	{		
+	{
+		checkblink();
 		vsync();
 		
 #ifdef SYSCARD1

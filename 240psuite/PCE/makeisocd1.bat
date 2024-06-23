@@ -13,7 +13,9 @@ CALL makeclean.bat
 del gdata.*
 cd cdrom_bin
 
-grep "\.incspr" 240pSuite.s | grep -v "include" | sed 's/graphics/..\/graphics/g'> data.s 
+@REM Some versions of sed in windows require " instead of ' for the parameters
+@REM changed to " but if it doens't work for you, change it back to '
+grep "\.incspr" 240pSuite.s | grep -v "include" | sed "s/graphics/..\/graphics/g"> data.s 
 pceas -raw -cd -overlay data.s  || goto :error
 copy src\*.bin .
 pcecdpak 0 gdata.bin gdata.h *.bin  || goto :error
