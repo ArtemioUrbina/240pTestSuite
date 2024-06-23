@@ -30,7 +30,7 @@ void display_audiosync_00()
 	p_string	audiosync_00_03,6,9
 	p_string	audiosync_00_04,6,10
 	p_string	audiosync_00_05,6,12
-	rts
+	jmp		!exit+
 
 audiosync_00_00:	.db	"AUDIO SYNC"
 			.db	0
@@ -44,6 +44,7 @@ audiosync_00_04:	.db	"with recording equipment or specialized hardware."
 			.db	0
 audiosync_00_05:	.db	"- Press I to start/stop the test."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -69,7 +70,7 @@ void display_backlit_00()
 	p_string	backlit_00_13,6,21
 	p_string	backlit_00_14,6,22
 	p_string	backlit_00_15,6,23
-	rts
+	jmp		!exit+
 
 backlit_00_00:	.db	"BACKLIT TEST"
 			.db	0
@@ -103,6 +104,7 @@ backlit_00_14:	.db	"displays by adjusting brightness accordingly"
 			.db	0
 backlit_00_15:	.db	"for this test."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -125,7 +127,7 @@ void display_check_00()
 	p_string	check_00_10,6,18
 	p_string	check_00_11,6,20
 	p_string	check_00_12,6,21
-	rts
+	jmp		!exit+
 
 check_00_00:	.db	"CHECKERBOARD"
 			.db	0
@@ -153,6 +155,7 @@ check_00_11:	.db	"- A frame counter can be displayed on screen by"
 			.db	0
 check_00_12:	.db	"pressing up on the d-pad."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -170,7 +173,7 @@ void display_color601_00()
 	p_string	color601_00_05,6,13
 	p_string	color601_00_06,6,14
 	p_string	color601_00_07,6,15
-	rts
+	jmp		!exit+
 
 color601_00_00:	.db	"COLOR BARS WITH GRAY SCALE"
 			.db	0
@@ -188,6 +191,7 @@ color601_00_06:	.db	"only mode, you can also use that to correct"
 			.db	0
 color601_00_07:	.db	"color balance."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -205,7 +209,7 @@ void display_colorbleed_00()
 	p_string	colorbleed_00_05,6,13
 	p_string	colorbleed_00_06,6,14
 	p_string	colorbleed_00_07,6,16
-	rts
+	jmp		!exit+
 
 colorbleed_00_00:	.db	"COLOR BLEED"
 			.db	0
@@ -223,6 +227,7 @@ colorbleed_00_06:	.db	"board with button I."
 			.db	0
 colorbleed_00_07:	.db	"- You can change the resolution with SELECT."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -244,7 +249,7 @@ void display_colors_00()
 	p_string	colors_00_09,6,18
 	p_string	colors_00_10,6,19
 	p_string	colors_00_11,6,20
-	rts
+	jmp		!exit+
 
 colors_00_00:	.db	"COLORBARS (1/2)"
 			.db	0
@@ -270,6 +275,7 @@ colors_00_10:	.db	"blocks under F, and lower it slowly until you"
 			.db	0
 colors_00_11:	.db	"can clearly tell them apart."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -287,7 +293,7 @@ void display_colors_01()
 	p_string	colors_01_05,6,12
 	p_string	colors_01_06,6,13
 	p_string	colors_01_07,6,15
-	rts
+	jmp		!exit+
 
 colors_01_00:	.db	"COLORBARS (2/2)"
 			.db	0
@@ -305,6 +311,7 @@ colors_01_06:	.db	"you can distinguish them clearly."
 			.db	0
 colors_01_07:	.db	"Repeat for each color and you are set."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -323,7 +330,7 @@ void display_convergence_00()
 	p_string	convergence_00_06,6,13
 	p_string	convergence_00_07,6,14
 	p_string	convergence_00_08,6,16
-	rts
+	jmp		!exit+
 
 convergence_00_00:	.db	"CONVERGENCE TESTS"
 			.db	0
@@ -343,6 +350,7 @@ convergence_00_07:	.db	"patterns."
 			.db	0
 convergence_00_08:	.db	"- You can change the resolution with SELECT."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -358,7 +366,7 @@ void display_disappear_00()
 	p_string	disappear_00_03,6,8
 	p_string	disappear_00_04,6,10
 	p_string	disappear_00_05,6,11
-	rts
+	jmp		!exit+
 
 disappear_00_00:	.db	"DISAPPEARING LOGO"
 			.db	0
@@ -372,6 +380,7 @@ disappear_00_04:	.db	"You can also use a photodiode and press Up, which"
 			.db	0
 disappear_00_05:	.db	"turns the whole back to white for 2 frames."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -394,7 +403,7 @@ void display_dshadow_00()
 	p_string	dshadow_00_10,6,18
 	p_string	dshadow_00_11,6,20
 	p_string	dshadow_00_12,6,22
-	rts
+	jmp		!exit+
 
 dshadow_00_00:	.db	"DROP SHADOW TEST"
 			.db	0
@@ -422,6 +431,7 @@ dshadow_00_11:	.db	"- Backgrounds can be switched with button I."
 			.db	0
 dshadow_00_12:	.db	"Donna art by Jose Salot"
 			.db	0
+!exit:
 #endasm
 }
 
@@ -435,7 +445,7 @@ void display_ebucb_00()
 	p_string	ebucb_00_01,6,7
 	p_string	ebucb_00_02,6,9
 	p_string	ebucb_00_03,6,10
-	rts
+	jmp		!exit+
 
 ebucb_00_00:	.db	"EBU COLOR BARS"
 			.db	0
@@ -445,6 +455,7 @@ ebucb_00_02:	.db	"- You can toggle between 75% and 100% saturation"
 			.db	0
 ebucb_00_03:	.db	"by pressing I."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -461,7 +472,7 @@ void display_gray_00()
 	p_string	gray_00_04,6,11
 	p_string	gray_00_05,6,12
 	p_string	gray_00_06,6,13
-	rts
+	jmp		!exit+
 
 gray_00_00:	.db	"GRAY RAMP"
 			.db	0
@@ -477,6 +488,7 @@ gray_00_05:	.db	"individual color settings, or the tint control"
 			.db	0
 gray_00_06:	.db	"in NTSC displays."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -499,7 +511,7 @@ void display_grid_00()
 	p_string	grid_00_10,6,19
 	p_string	grid_00_11,6,20
 	p_string	grid_00_12,6,22
-	rts
+	jmp		!exit+
 
 grid_00_00:	.db	"GRID"
 			.db	0
@@ -527,6 +539,7 @@ grid_00_11:	.db	"background area."
 			.db	0
 grid_00_12:	.db	"- The 352x240 resolution is used by R-Type"
 			.db	0
+!exit:
 #endasm
 }
 
@@ -546,7 +559,7 @@ void display_gridscroll_00()
 	p_string	gridscroll_00_07,6,14
 	p_string	gridscroll_00_08,6,16
 	p_string	gridscroll_00_09,6,18
-	rts
+	jmp		!exit+
 
 gridscroll_00_00:	.db	"GRID SCROLL TEST"
 			.db	0
@@ -568,6 +581,7 @@ gridscroll_00_08:	.db	"- D-pad left or right changes direction."
 			.db	0
 gridscroll_00_09:	.db	"- You can change the resolution with SELECT."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -584,7 +598,7 @@ void display_mdfourier_00()
 	p_string	mdfourier_00_04,6,10
 	p_string	mdfourier_00_05,6,11
 	p_string	mdfourier_00_06,6,13
-	rts
+	jmp		!exit+
 
 mdfourier_00_00:	.db	"MDFourier"
 			.db	0
@@ -600,6 +614,7 @@ mdfourier_00_05:	.db	"as generated by this system."
 			.db	0
 mdfourier_00_06:	.db	"Visit http://junkerhq.net/MDFourier for details."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -617,7 +632,7 @@ void display_memory_00()
 	p_string	memory_00_05,6,12
 	p_string	memory_00_06,6,13
 	p_string	memory_00_07,6,15
-	rts
+	jmp		!exit+
 
 memory_00_00:	.db	"Memory Viewer"
 			.db	0
@@ -635,6 +650,7 @@ memory_00_06:	.db	"hex."
 			.db	0
 memory_00_07:	.db	"- Button I toggles ASCII mode."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -657,7 +673,7 @@ void display_monoscope_00()
 	p_string	monoscope_00_10,6,18
 	p_string	monoscope_00_11,6,20
 	p_string	monoscope_00_12,6,21
-	rts
+	jmp		!exit+
 
 monoscope_00_00:	.db	"MONOSCOPE (1/2)"
 			.db	0
@@ -685,6 +701,7 @@ monoscope_00_11:	.db	"Corners: After setting center and edge convergence,"
 			.db	0
 monoscope_00_12:	.db	"use magnets to adjust corner purity and geometry."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -703,7 +720,7 @@ void display_monoscope_01()
 	p_string	monoscope_01_06,6,12
 	p_string	monoscope_01_07,6,13
 	p_string	monoscope_01_08,6,15
-	rts
+	jmp		!exit+
 
 monoscope_01_00:	.db	"MONOSCOPE (2/2)"
 			.db	0
@@ -723,6 +740,7 @@ monoscope_01_07:	.db	"tests."
 			.db	0
 monoscope_01_08:	.db	"Designed by Keith Raney."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -748,7 +766,7 @@ void display_options_00()
 	p_string	options_00_13,6,20
 	p_string	options_00_14,6,22
 	p_string	options_00_15,6,23
-	rts
+	jmp		!exit+
 
 options_00_00:	.db	"OPTIONS"
 			.db	0
@@ -782,6 +800,7 @@ options_00_14:	.db	"Composite B&W: This option works only in composite."
 			.db	0
 options_00_15:	.db	"It disables the NTSC color burst, eliminating color."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -806,7 +825,7 @@ void display_overscan_00()
 	p_string	overscan_00_12,6,20
 	p_string	overscan_00_13,6,22
 	p_string	overscan_00_14,6,23
-	rts
+	jmp		!exit+
 
 overscan_00_00:	.db	"OVERSCAN"
 			.db	0
@@ -838,6 +857,7 @@ overscan_00_13:	.db	"- The rows colored in yellow rows are never shown"
 			.db	0
 overscan_00_14:	.db	"by original hardware."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -853,7 +873,7 @@ void display_phase_00()
 	p_string	phase_00_03,6,9
 	p_string	phase_00_04,6,10
 	p_string	phase_00_05,6,12
-	rts
+	jmp		!exit+
 
 phase_00_00:	.db	"PHASE & SAMPLE RATE CHECK"
 			.db	0
@@ -867,6 +887,7 @@ phase_00_04:	.db	"background."
 			.db	0
 phase_00_05:	.db	"Designed by FirebrandX."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -887,7 +908,7 @@ void display_pluge_00()
 	p_string	pluge_00_08,6,17
 	p_string	pluge_00_09,6,18
 	p_string	pluge_00_10,6,19
-	rts
+	jmp		!exit+
 
 pluge_00_00:	.db	"PLUGE (1/2)"
 			.db	0
@@ -911,6 +932,7 @@ pluge_00_09:	.db	"lowest B,G,R values and gray. You should use the"
 			.db	0
 pluge_00_10:	.db	"blue one in order not to crush detail."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -928,7 +950,7 @@ void display_pluge_01()
 	p_string	pluge_01_05,6,12
 	p_string	pluge_01_06,6,13
 	p_string	pluge_01_07,6,14
-	rts
+	jmp		!exit+
 
 pluge_01_00:	.db	"PLUGE (2/2)"
 			.db	0
@@ -946,6 +968,7 @@ pluge_01_06:	.db	"in other game consoles, these are just the lowest"
 			.db	0
 pluge_01_07:	.db	"values available in this system."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -970,7 +993,7 @@ void display_reflex_00()
 	p_string	reflex_00_12,6,19
 	p_string	reflex_00_13,6,20
 	p_string	reflex_00_14,6,21
-	rts
+	jmp		!exit+
 
 reflex_00_00:	.db	"Timing & Reflex Test (1/2)"
 			.db	0
@@ -1002,6 +1025,7 @@ reflex_00_13:	.db	"background, and the offset in frames from the"
 			.db	0
 reflex_00_14:	.db	"actual intersection will be shown on screen. "
 			.db	0
+!exit:
 #endasm
 }
 
@@ -1025,7 +1049,7 @@ void display_reflex_01()
 	p_string	reflex_01_11,6,18
 	p_string	reflex_01_12,6,19
 	p_string	reflex_01_13,6,20
-	rts
+	jmp		!exit+
 
 reflex_01_00:	.db	"Timing & Reflex Test (2/2)"
 			.db	0
@@ -1055,6 +1079,7 @@ reflex_01_12:	.db	"that value must be considered the general error"
 			.db	0
 reflex_01_13:	.db	"when using the test results."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -1076,7 +1101,7 @@ void display_scroll_00()
 	p_string	scroll_00_09,6,19
 	p_string	scroll_00_10,6,21
 	p_string	scroll_00_11,6,22
-	rts
+	jmp		!exit+
 
 scroll_00_00:	.db	"SCROLL TEST"
 			.db	0
@@ -1102,6 +1127,7 @@ scroll_00_10:	.db	"Sonic is a trademark of Sega Enterprises Ltd."
 			.db	0
 scroll_00_11:	.db	"Kiki Kaikai is a trademark of Taito/Square."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -1123,7 +1149,7 @@ void display_sharpness_00()
 	p_string	sharpness_00_09,6,18
 	p_string	sharpness_00_10,6,19
 	p_string	sharpness_00_11,6,20
-	rts
+	jmp		!exit+
 
 sharpness_00_00:	.db	"SHARPNESS"
 			.db	0
@@ -1149,6 +1175,7 @@ sharpness_00_10:	.db	"the brick pattern, resolutions can be changed with "
 			.db	0
 sharpness_00_11:	.db	"SELECT."
 			.db	0
+!exit:
 #endasm
 }
 
@@ -1164,7 +1191,7 @@ void display_sound_00()
 	p_string	sound_00_02,6,9
 	p_string	sound_00_03,6,11
 	p_string	sound_00_04,6,12
-	rts
+	jmp		!exit+
 
 sound_00_00:	.db	"SOUND"
 			.db	0
@@ -1176,6 +1203,7 @@ sound_00_03:	.db	"It can be used to determine if the audio chain is"
 			.db	0
 sound_00_04:	.db	"working properly."
 			.db	0
+!exit:
 #endasm
 }
 #endif
@@ -1194,7 +1222,7 @@ void display_soundCD_00()
 	p_string	soundCD_00_04,6,12
 	p_string	soundCD_00_05,6,14
 	p_string	soundCD_00_06,6,15
-	rts
+	jmp		!exit+
 
 soundCD_00_00:	.db	"SOUND"
 			.db	0
@@ -1210,6 +1238,7 @@ soundCD_00_05:	.db	"It can be used to determine if the audio chain is"
 			.db	0
 soundCD_00_06:	.db	"working properly."
 			.db	0
+!exit:
 #endasm
 }
 #endif
@@ -1228,7 +1257,7 @@ void display_striped_00()
 	p_string	striped_00_05,6,11
 	p_string	striped_00_06,6,13
 	p_string	striped_00_07,6,15
-	rts
+	jmp		!exit+
 
 striped_00_00:	.db	"STRIPED SPRITE TEST"
 			.db	0
@@ -1246,6 +1275,7 @@ striped_00_06:	.db	"- You can change backgrounds with I."
 			.db	0
 striped_00_07:	.db	"Donna art by Jose Salot"
 			.db	0
+!exit:
 #endasm
 }
 
@@ -1266,7 +1296,7 @@ void display_white_00()
 	p_string	white_00_08,6,16
 	p_string	white_00_09,6,18
 	p_string	white_00_10,6,19
-	rts
+	jmp		!exit+
 
 white_00_00:	.db	"WHITE SCREEN"
 			.db	0
@@ -1290,7 +1320,6 @@ white_00_09:	.db	"This pattern can also be used to check color"
 			.db	0
 white_00_10:	.db	"purity, and for dead pixels in digital displays."
 			.db	0
+!exit:
 #endasm
 }
-
-
