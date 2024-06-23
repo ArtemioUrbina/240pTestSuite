@@ -473,12 +473,25 @@ void DrawConsInter()
 
 #asm
 p_string	.macro
-	__ldwi	\1
-	__stw	__si
-	__ldwi	\2
-	  stx	__bl
-	__ldwi	\3
-	call	_put_string.3
+	.ifdef	HUCC
+		lda.l	#\1
+		sta.l	<_bp
+		lda.h	#\1
+		sta.h	<_bp
+		lda	#bank(\1)
+		sta	<_bp_bank
+		lda	#\2
+		sta	<_al
+		lda	#\3
+		sta	<_ah
+	.else
+		__ldwi	\1
+		__stw	__si
+		__ldwi	\2
+		  stx	__bl
+		__ldwi	\3
+	.endif
+		call	_put_string.3
 	.endm
 #endasm
 
