@@ -44,10 +44,7 @@
 #define TEST_VIDEO
 #endif
 
-/* romdisk */
-extern uint8 romdisk[];
-KOS_INIT_ROMDISK(romdisk);
-KOS_INIT_FLAGS(INIT_DEFAULT);
+KOS_INIT_FLAGS(INIT_DEFAULT | INIT_FS_ROMDISK);
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);
 void TestPatternsColorMenu(ImagePtr title, ImagePtr sd);
@@ -69,8 +66,7 @@ int main(void)
 	controller	*st = NULL;
 	char		error[256];
 
-	if(cdrom_init() != 0)
-		dbglog(DBG_ERROR, "Could not initialize GD-ROM\n");
+	cdrom_init();
 	if(cdrom_spin_down() != ERR_OK)
 		dbglog(DBG_ERROR,"Could not stop GD-ROM from spinning\n");
 

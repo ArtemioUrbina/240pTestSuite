@@ -1181,8 +1181,9 @@ void buffer_printf(char *fmt, ... )
 /* Local copy of the returned buffer for maple stuff */
 unsigned char 	recv_buff[1024 + 32];
 
-static void vbl_allinfo_callback(maple_frame_t * frm) {
+static void vbl_allinfo_callback(maple_state_t *st, maple_frame_t *frm) {
 	maple_response_t	*resp;
+	(void)st;
 
 	/* So.. did we get a response? */
 	resp = (maple_response_t *)frm->recv_buf;
@@ -2992,7 +2993,7 @@ void MicrophoneTest()
 	Function int 1: 0xfe000000  Function int 2: 0x00000000
 	Region:         0x01        Connection:     0x01
 	Product Name & License: Dreamcast Gun
-	  Produced By or Under License FroÅ SEGA ENTERPRISES,LTD.
+	  Produced By or Under License Froï¿½ SEGA ENTERPRISES,LTD.
 	Standby power: 0x00dc (220mW) Max: 0x012c (300mW)
 
 	========================================================================
