@@ -727,8 +727,6 @@ void AudioSyncTest()
 		snd_sfx_unload(beep);
 }
 
-#ifndef NO_FFTW
-
 sip_samples rec_buffer = { NULL, 0, 0, 0, 0 };
 
 void CleanRecordBuffer()
@@ -743,6 +741,50 @@ void CleanRecordBuffer()
 	rec_buffer.overflow = 0;
 	rec_buffer.recording = 0;
 }
+
+void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
+{
+	if(!rec_buffer.recording)
+		return;
+
+	if(!rec_buffer.buffer || !rec_buffer.size)
+	{
+#ifdef DEBUG_FFT
+		dbglog(DBG_CRITICAL, "Invalid buffer or size\n");
+#endif
+		return;
+	}
+	if(!dev || !samples || !len)
+	{
+#ifdef DEBUG_FFT
+		dbglog(DBG_CRITICAL, "Invalid dev, samples or len\n");
+#endif
+		return;
+	}
+
+	if(rec_buffer.overflow)
+	{
+		rec_buffer.overflow++;
+#ifdef DEBUG_FFT
+		dbglog(DBG_CRITICAL, "Prevented buffer overflow #%d by %d bytes\n", rec_buffer.overflow, len);
+#endif
+		return;
+	}
+
+	if(len > (rec_buffer.size - rec_buffer.pos))
+	{
+		rec_buffer.overflow = 1;
+#ifdef DEBUG_FFT
+		dbglog(DBG_CRITICAL, "Prevented Buffer overflow by %d bytes\n", len - (rec_buffer.size - rec_buffer.pos));
+#endif
+		return;
+	}
+
+	memcpy(rec_buffer.buffer + rec_buffer.pos, samples, len);
+	rec_buffer.pos += len;
+}
+
+#ifndef NO_FFTW
 
 void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, double *Results, int ResCount, int showframes, double samplerate)
 {
@@ -799,48 +841,6 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 		}
 	}
 	EndScene();
-}
-
-void sip_copy(maple_device_t *dev, uint8 *samples, size_t len)
-{
-	if(!rec_buffer.recording)
-		return;
-
-	if(!rec_buffer.buffer || !rec_buffer.size)
-	{
-#ifdef DEBUG_FFT
-		dbglog(DBG_CRITICAL, "Invalid buffer or size\n");
-#endif
-		return;	
-	}
-	if(!dev || !samples || !len)
-	{
-#ifdef DEBUG_FFT
-		dbglog(DBG_CRITICAL, "Invalid dev, samples or len\n");
-#endif
-		return;
-	}
-	
-	if(rec_buffer.overflow)
-	{
-		rec_buffer.overflow++;
-#ifdef DEBUG_FFT
-		dbglog(DBG_CRITICAL, "Prevented buffer overflow #%d by %d bytes\n", rec_buffer.overflow, len);
-#endif
-		return;
-	}
-
-	if(len > (rec_buffer.size - rec_buffer.pos))
-	{
-		rec_buffer.overflow = 1;
-#ifdef DEBUG_FFT
-		dbglog(DBG_CRITICAL, "Prevented Buffer overflow by %d bytes\n", len - (rec_buffer.size - rec_buffer.pos));
-#endif
-		return;
-	}
-
-	memcpy(rec_buffer.buffer + rec_buffer.pos, samples, len);
-	rec_buffer.pos += len;
 }
 
 #define cleanSIPlag() \
