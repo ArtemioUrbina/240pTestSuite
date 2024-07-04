@@ -25,13 +25,15 @@ INLINE_ELAPSED(inline)
 make
 make install
 
+NOTE: (tests won't build)
+
 ############### headers should end in kos-ports/include after make install ############### 
 
 
 ############### Copy lib: ############### 
 
 #linux
-cp .libs/libfftw3.a /opt/toolchains/KallistiOS/addons/lib/dreamcast/
+cp .libs/libfftw3.a /opt/toolchains/dc/kos/addons/lib/dreamcast/
 
 #DreamSDK
 cp .libs/libfftw3.a /opt/toolchains/dc/kos-ports/lib
@@ -39,3 +41,6 @@ cp .libs/libfftw3.a /opt/toolchains/dc/kos-ports/lib
 
 makeip source:
 https://github.com/Dreamcast-Projects/makeip
+
+img4dc (cdi4dc) source:
+https://github.com/Kazade/img4dc

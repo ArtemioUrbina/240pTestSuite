@@ -20,7 +20,7 @@ vid_mode_t custom_vga =
 {
 	DM_640x480,
 	640, 480,
-	VID_INTERLACE,
+	0,
 	CT_VGA,
 	PM_RGB565,
 	524, 857,
@@ -28,8 +28,7 @@ vid_mode_t custom_vga =
 	21, 260,
 	135, 855,
 	36, 516,
-	0, 1,
-	{ 0, 0, 0, 0 }
+	0, 1, 0
 };
 
 /* 320x240 NTSC 60Hz */
@@ -52,8 +51,7 @@ vid_mode_t custom_240 =
 	840, // Border X stop position. 
 	24, // Border Y starting position.
 	264, // Border Y stop position.
-	0, 1,
-	{ 0, 0, 0, 0 }
+	0, 1, 0
 };
 
 
@@ -77,7 +75,7 @@ vid_mode_t custom_288 =
 	311, // Border Y stop position. 
 	0, // Current framebuffer. 
 	1, // Number of framebuffers. 
-	{ 0, 0, 0, 0 } // Offset to framebuffers. 
+	0 // Offset to framebuffers. 
 };
 
 /* 640x480 PAL 50Hz IL */
@@ -102,7 +100,7 @@ vid_mode_t custom_576 =
 	310, // 620
 	0,
 	1,
-	{ 0, 0, 0, 0 }
+	0
 };
 
 ImagePtr   scanlines = NULL;

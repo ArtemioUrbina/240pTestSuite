@@ -1,7 +1,7 @@
 /* 
  * r
  * 240p Test Suite
- * Copyright (C)2011-2022 Artemio Urbina
+ * Copyright (C)2011-2024 Artemio Urbina
  *
  * This file is part of the 240p Test Suite
  *
@@ -683,8 +683,8 @@ int MoveDown(char *str, int pos)
 void DiplayMouse(int port_num, float x, float y)
 {
 	maple_device_t	*mouse = NULL;
-    mouse_state_t	*mstate;
-    char			msg[256], name[256];
+	mouse_state_t	*mstate;
+	char			msg[256], name[256];
 	int				isPressed = 0;
 	
 	mouse = maple_enum_type(port_num, MAPLE_FUNC_MOUSE);
@@ -1006,7 +1006,7 @@ void ControllerTest()
 		DrawStringS(110, y+2*h-fh, 1.0f, 1.0f, 0.0f, "[Up&Start for Help]"); 
 		DrawStringS(70, y+2*h, 1.0f, 1.0f, 0.0f, "[Left&Start on Controller 1 to Exit}"); 
 		
-        EndScene();
+		EndScene();
 		if(timeout)
 			timeout--;
 			
@@ -1055,20 +1055,20 @@ void ControllerTest()
 
 int maple_device_scan(float x, float y, int selected)
 {
-	int     		port = 0, unit = 0, count = 0;
-	maple_device_t  *dev = NULL;
+	int 			port = 0, unit = 0, count = 0;
+	maple_device_t	*dev = NULL;
 	char			msg[512], name[256];
 
-    /* Enumerate everything */
-    for(port = 0; port < MAPLE_PORT_COUNT; port++) 
+	/* Enumerate everything */
+	for(port = 0; port < MAPLE_PORT_COUNT; port++) 
 	{	
 		float	orig_y = y, max_y = y;
 		
-        for(unit = 0; unit < MAPLE_UNIT_COUNT; unit++)
+		for(unit = 0; unit < MAPLE_UNIT_COUNT; unit++)
 		{
-            dev = &maple_state.ports[port].units[unit];
+			dev = &maple_state.ports[port].units[unit];
 
-            if(dev->valid)
+			if(dev->valid)
 			{
 				count ++;
 				if(unit == 0)
@@ -1101,10 +1101,10 @@ int maple_device_scan(float x, float y, int selected)
 				}
 				if(y > max_y)
 					max_y = y;
-            }
-        }
+			}
+		}
 		y = max_y;
-    }
+	}
 	return count;
 }
 
@@ -1831,33 +1831,33 @@ CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
 uint32_t _state = ~0L;
 
 static const uint32_t crc32_table[] = {
-    0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
-    0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
-    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
-    0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
+	0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
+	0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+	0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
+	0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
 };
 
 
 void CRC32_reset()
 {
-    _state = ~0L;
+	_state = ~0L;
 }
 
 
 void CRC32_update(uint8_t data)
 {
-    uint8_t tbl_idx = 0;
+	uint8_t tbl_idx = 0;
 
-    tbl_idx = _state ^ (data >> (0 * 4));
-    _state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
-    tbl_idx = _state ^ (data >> (1 * 4));
-    _state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+	tbl_idx = _state ^ (data >> (0 * 4));
+	_state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+	tbl_idx = _state ^ (data >> (1 * 4));
+	_state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
 }
 
 
 uint32_t CRC32_finalize()
 {
-    return ~_state;
+	return ~_state;
 }
 
 /**********************************/
@@ -1884,8 +1884,8 @@ uint32_t CalculateCRC(uint32_t startAddress, uint32_t size)
 
 typedef struct bios_data {
 	int			type;
-    uint32_t	crc;
-    char		*name;
+	uint32_t	crc;
+	char		*name;
 	char		*text;
 } BIOSID;
 
@@ -2442,7 +2442,7 @@ void MemoryViewer(uint32 address)
 				DrawStringNH(3*j*fw, i*fh, 1.0f, 1.0f, 1.0f, buffer);
 			}
 		}
-        EndScene();
+		EndScene();
 		
 		VMURefresh("MemView", "");
 		st = ReadController(0, &pressed);
@@ -3293,7 +3293,7 @@ void LightGunTest()
 				if(isLightGun)
 					DrawStringBCenteredFull(210*factor, 1.0f, 1.0f, 1.0f, "Press #Ytrigger#Y to continue");
 				else
-					DrawStringBCenteredFull(210*factor, 1.0f, 1.0f, 1.0f, "Press #Ytrigger#Y or #YA#Y in Ctrl 1 to continu");
+					DrawStringBCenteredFull(210*factor, 1.0f, 1.0f, 1.0f, "Press #Ytrigger#Y or #YA#Y in Ctrl 1 to continue");
 			}
 			else
 			{
@@ -3449,7 +3449,7 @@ void LightGunTest()
 		{
 			cont_state_t	*state;
 			
-            if((state = (cont_state_t *)maple_dev_status(dev)))
+			if((state = (cont_state_t *)maple_dev_status(dev)))
 			{
 				uint16 	lgpressed;
 				
@@ -3499,7 +3499,7 @@ void LightGunTest()
 					lgpressed & CONT_DPAD_LEFT)
 					show_cal = !show_cal;
 			}
-        }
+		}
 		
 		st = ReadController(0, &pressed);
 		if(st && !isLightGun)
@@ -3845,23 +3845,23 @@ void clone_factory_data()
 
 int flashrom_get_partition2_data()
 {
-    int start, size;
+	int start, size;
 
 	if(flashromp2_is_cached)
 		return FLASHROM_ERR_NONE;
 	
 	if(flashrom_info(FLASHROM_PT_BLOCK_1, &start, &size)) {	// 0x1C000
-        dbglog(DBG_ERROR, "flashrom_get_factory_data: can't find partition 0\n");
-        return FLASHROM_ERR_NO_PARTITION;
-    }
+		dbglog(DBG_ERROR, "flashrom_get_factory_data: can't find partition 0\n");
+		return FLASHROM_ERR_NO_PARTITION;
+	}
 
 	memset(&cid_record, 0, sizeof(cid_record_st));
 	start += 0x40;
-    /* Read the data structures from that partition */
-    if(flashrom_read(start, &cid_record, sizeof(cid_record_st)) < 0) {
-        dbglog(DBG_ERROR, "flashrom_get_partition2_data: can't read partition 0\n");
-        return FLASHROM_ERR_READ_PART;
-    }
+	/* Read the data structures from that partition */
+	if(flashrom_read(start, &cid_record, sizeof(cid_record_st)) < 0) {
+		dbglog(DBG_ERROR, "flashrom_get_partition2_data: can't read partition 0\n");
+		return FLASHROM_ERR_READ_PART;
+	}
 	
 	flashromp2_is_cached = 1;
 	return FLASHROM_ERR_NONE;
@@ -3870,23 +3870,23 @@ int flashrom_get_partition2_data()
 /* Modified from KOS */
 int flashrom_get_factory_data()
 {
-    int start, size;
+	int start, size;
 
 	if(flashrom_is_cached)
 		return FLASHROM_ERR_NONE;
 	
-    /* Find the partition */
-    if(flashrom_info(FLASHROM_PT_SYSTEM, &start, &size)) {
-        dbglog(DBG_ERROR, "flashrom_get_factory_data: can't find partition 0\n");
-        return FLASHROM_ERR_NO_PARTITION;
-    }	
+	/* Find the partition */
+	if(flashrom_info(FLASHROM_PT_SYSTEM, &start, &size)) {
+		dbglog(DBG_ERROR, "flashrom_get_factory_data: can't find partition 0\n");
+		return FLASHROM_ERR_NO_PARTITION;
+	}	
 	memset(&flash_cache, 0, sizeof(flash_data));
 
-    /* Read the data structures from that partition */
-    if(flashrom_read(start, &flash_cache, sizeof(flash_data)) < 0) {
-        dbglog(DBG_ERROR, "flashrom_get_factory_data: can't read partition 0\n");
-        return FLASHROM_ERR_READ_PART;
-    }
+	/* Read the data structures from that partition */
+	if(flashrom_read(start, &flash_cache, sizeof(flash_data)) < 0) {
+		dbglog(DBG_ERROR, "flashrom_get_factory_data: can't read partition 0\n");
+		return FLASHROM_ERR_READ_PART;
+	}
 	
 	dbglog(DBG_INFO, "Read Flashrom Factory Data %c%c%c%c%c\n", 
 		protectascii(flash_cache.factory_records[0].machine_code1), 
@@ -3931,18 +3931,18 @@ int flashrom_get_region_data(int ver)
 	if(ver != 0 && ver != 1)
 		return FLASHROM_REGION_UNKNOWN;
 	
-    /* Now compare cache against known codes */
-    if(flash_cache.factory_records[ver].country_code == '0')
-        return FLASHROM_REGION_JAPAN;
-    else if(flash_cache.factory_records[ver].country_code == '1')
-        return FLASHROM_REGION_US;
-    else if(flash_cache.factory_records[ver].country_code == '2')
-        return FLASHROM_REGION_EUROPE;
-    else {
-        dbglog(DBG_WARNING, "flashrom_get_region_data: unknown code '%c')\n",
+	/* Now compare cache against known codes */
+	if(flash_cache.factory_records[ver].country_code == '0')
+		return FLASHROM_REGION_JAPAN;
+	else if(flash_cache.factory_records[ver].country_code == '1')
+		return FLASHROM_REGION_US;
+	else if(flash_cache.factory_records[ver].country_code == '2')
+		return FLASHROM_REGION_EUROPE;
+	else {
+		dbglog(DBG_WARNING, "flashrom_get_region_data: unknown code '%c')\n",
 			flash_cache.factory_records[ver].country_code);
-        return FLASHROM_REGION_UNKNOWN;
-    }
+		return FLASHROM_REGION_UNKNOWN;
+	}
 }
 
 int is_flashrom_region_data_changed()
@@ -3956,12 +3956,12 @@ int is_flashrom_region_data_changed()
 	}
 	
 	byte = flash_cache.factory_records[1].country_code;
-    /* Now compare cache between codes */
+	/* Now compare cache between codes */
 	if(byte != 0xFF &&
 		flash_cache.factory_records[0].country_code != 
 		flash_cache.factory_records[1].country_code)
 		return 1;
-    return 0;
+	return 0;
 }
 
 char *get_flash_language_str(int ver)
@@ -3996,7 +3996,7 @@ char *get_flash_language_str(int ver)
 
 int flashrom_get_language(int ver)
 {
-    if(!flashrom_is_cached)
+	if(!flashrom_is_cached)
 	{
 		if(flashrom_get_factory_data() != FLASHROM_ERR_NONE)
 			return FLASHROM_LANGUAGE_UNKNOWN;
@@ -4005,24 +4005,24 @@ int flashrom_get_language(int ver)
 	if(ver != 0 && ver != 1)
 		return FLASHROM_LANGUAGE_UNKNOWN;
 	
-    /* Now compare against known codes */
-    if(flash_cache.factory_records[ver].language == '0')
-        return FLASHROM_LANGUAGE_JAPAN;
-    else if(flash_cache.factory_records[ver].language == '1')
-        return FLASHROM_LANGUAGE_ENGLISH;
-    else if(flash_cache.factory_records[ver].language == '2')
-        return FLASHROM_LANGUAGE_GERMAN;
+	/* Now compare against known codes */
+	if(flash_cache.factory_records[ver].language == '0')
+		return FLASHROM_LANGUAGE_JAPAN;
+	else if(flash_cache.factory_records[ver].language == '1')
+		return FLASHROM_LANGUAGE_ENGLISH;
+	else if(flash_cache.factory_records[ver].language == '2')
+		return FLASHROM_LANGUAGE_GERMAN;
 	else if(flash_cache.factory_records[ver].language == '3')
-        return FLASHROM_LANGUAGE_FRENCH;
+		return FLASHROM_LANGUAGE_FRENCH;
 	else if(flash_cache.factory_records[ver].language == '4')
-        return FLASHROM_LANGUAGE_SPANISH;
+		return FLASHROM_LANGUAGE_SPANISH;
 	else if(flash_cache.factory_records[ver].language == '5')
-        return FLASHROM_LANGUAGE_ITALIAN;
-    else {
-        dbglog(DBG_WARNING, "flashrom_get_language: unknown code '%c'\n",
+		return FLASHROM_LANGUAGE_ITALIAN;
+	else {
+		dbglog(DBG_WARNING, "flashrom_get_language: unknown code '%c'\n",
 			flash_cache.factory_records[ver].language);
-        return FLASHROM_LANGUAGE_UNKNOWN;
-    }
+		return FLASHROM_LANGUAGE_UNKNOWN;
+	}
 }
 
 char *get_flash_broadcast_str(int ver)
@@ -4050,7 +4050,7 @@ char *get_flash_broadcast_str(int ver)
 
 int flashrom_get_broadcast(int ver)
 {
-    if(!flashrom_is_cached)
+	if(!flashrom_is_cached)
 	{
 		if(flashrom_get_factory_data() != FLASHROM_ERR_NONE)
 			return FLASHROM_BROADCAST_UNKNOWN;
@@ -4059,20 +4059,20 @@ int flashrom_get_broadcast(int ver)
 	if(ver != 0 && ver != 1)
 		return FLASHROM_BROADCAST_UNKNOWN;
 	
-    /* Now compare against known codes */
-    if(flash_cache.factory_records[ver].broadcast_format == '0')
-        return FLASHROM_BROADCAST_NTSC;
-    else if(flash_cache.factory_records[ver].broadcast_format == '1')
-        return FLASHROM_BROADCAST_PAL;
-    else if(flash_cache.factory_records[ver].broadcast_format == '2')
-        return FLASHROM_BROADCAST_PALM;
+	/* Now compare against known codes */
+	if(flash_cache.factory_records[ver].broadcast_format == '0')
+		return FLASHROM_BROADCAST_NTSC;
+	else if(flash_cache.factory_records[ver].broadcast_format == '1')
+		return FLASHROM_BROADCAST_PAL;
+	else if(flash_cache.factory_records[ver].broadcast_format == '2')
+		return FLASHROM_BROADCAST_PALM;
 	else if(flash_cache.factory_records[ver].broadcast_format == '3')
-        return FLASHROM_BROADCAST_PALN;
-    else {
-        dbglog(DBG_WARNING, "flashrom_get_broadcast: unknown code '%c'\n",
+		return FLASHROM_BROADCAST_PALN;
+	else {
+		dbglog(DBG_WARNING, "flashrom_get_broadcast: unknown code '%c'\n",
 			flash_cache.factory_records[ver].broadcast_format);
-        return FLASHROM_BROADCAST_UNKNOWN;
-    }
+		return FLASHROM_BROADCAST_UNKNOWN;
+	}
 }
 
 int is_flashrom_broadcast_changed()
@@ -4086,11 +4086,11 @@ int is_flashrom_broadcast_changed()
 	}
 	
 	byte = flash_cache.factory_records[1].broadcast_format;
-    /* Now compare cache between codes */
+	/* Now compare cache between codes */
 	if(byte != 0xFF &&
 		flash_cache.factory_records[0].broadcast_format != 
 		flash_cache.factory_records[1].broadcast_format)
 		return 1;
-    return 0;
+	return 0;
 }
 

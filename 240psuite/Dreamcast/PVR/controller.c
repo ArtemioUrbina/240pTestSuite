@@ -399,7 +399,7 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 		resetSleep();
 		
 	if(pressed)
-		*pressed = st->buttons & ~OldButtonsInternal & st->buttons;
+		*pressed = st->buttons & ~OldButtonsInternal;
 	OldButtonsInternal = st->buttons;
 
 #ifdef SCREENSHOTMODE
