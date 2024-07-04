@@ -45,13 +45,17 @@ int				flashromp2_is_cached = 0;
 cid_record_st	cid_record;
 
 #define TRUNCATE_LEN	22
+#define PNAME_SIZE		29
 
 void ReduceName(char *target, char *source, int truncate)
 {
-	int len;
+	int len = 0;
 	
 	target[0] = '\0';
 	len = strlen(source);
+	if(len > PNAME_SIZE)					// limit product name to 30 chars
+		len = PNAME_SIZE;
+
 	if(!len || len == 1)
 		return;
 
@@ -63,7 +67,7 @@ void ReduceName(char *target, char *source, int truncate)
 		len = TRUNCATE_LEN+1;
 	strncpy(target, source, sizeof(char)*(len+1));
 	if(truncate)
-		target[TRUNCATE_LEN+1] = 127;
+		target[TRUNCATE_LEN+1] = 127;		// add the ... dots at the end
 	target[len+1] = '\0';
 }
 
@@ -1755,8 +1759,8 @@ void ListMapleDevices()
  *
  * We have two methods to detect a VMU that reports as having an LCD 
  * but doesn't. That wouldn't be an issue, but when graphics are sent 
- * to reported the "LCD", it resets the controller, slowing everything
- * down and in some cases, mangling controller input.
+ * to the one that reported the bogus "LCD", it resets the controller,
+ * slowing everything down and in some cases, mangling controller input.
  *
  * This method checks the INFO and ALL_INFO commands and compares them
  * for reported inconsistencies. I've found that the Visual Memory
