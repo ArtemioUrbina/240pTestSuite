@@ -45,7 +45,7 @@ int				flashromp2_is_cached = 0;
 cid_record_st	cid_record;
 
 #define TRUNCATE_LEN	22
-#define PNAME_SIZE		29
+#define PNAME_SIZE		30
 
 void ReduceName(char *target, char *source, int truncate)
 {

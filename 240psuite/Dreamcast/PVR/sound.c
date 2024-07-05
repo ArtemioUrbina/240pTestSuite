@@ -411,6 +411,8 @@ void MDFourier()
 	snd_stream_volume(hnd, 255);
 	snd_stream_queue_enable(hnd);
 	snd_stream_start(hnd, stream_samplerate, 1);
+
+	disableSleep();
 	
 	while(!done && !EndProgram) 
 	{
@@ -549,12 +551,18 @@ void MDFourier()
 	CleanStreamSamples();
 	FreeImage(&layer);
 	FreeImage(&back);
+
+	enableSleep();
 }
+
+#define REGULAR_TEST	0
+#define SCOPE_TEST		1
 
 void AudioSyncTest()
 {
 	int 		done = 0, paused = 0, oldvmode = -1, playtone = 0;
 	int			y = 0, speed = -1, W = 320, H = 240;
+	int			testMode = REGULAR_TEST, countScope = 0;
 	float		hstep = 0;
 	uint16		pressed;
 	sfxhnd_t	beep = SFXHND_INVALID;
@@ -614,6 +622,8 @@ void AudioSyncTest()
 	cover->h = H;
 	cover->x = W;
 	cover->y = 0;
+
+	disableSleep();
 	
 	while(!done && !EndProgram) 
 	{
@@ -648,59 +658,87 @@ void AudioSyncTest()
 				return;
 		}
 		
-		if(!paused)
+		if(testMode == REGULAR_TEST)
 		{
-			y += speed;
-			sprite->y = y;
-			squareL->x += hstep;
-			squareR->x -= hstep;
-			if(y == 180 || y == 120)
+			if(!paused)
 			{
-				speed *= -1;
-				hstep *= -1;
+				y += speed;
+				sprite->y = y;
+				squareL->x += hstep;
+				squareR->x -= hstep;
+				if(y == 180 || y == 120)
+				{
+					speed *= -1;
+					hstep *= -1;
+				}
+				if(y == 180)
+				{
+					back->r = 1.0f;
+					back->g = 1.0f;
+					back->b = 1.0f;
+				}
+				else
+				{
+					back->r = 0.0f;
+					back->g = 0.0f;
+					back->b = 0.0f;
+					
+					cover->r = settings.PalBackR;
+					cover->g = settings.PalBackG;
+					cover->b = settings.PalBackB;
+				}
+				
+					
+				// A frame is 16.80 ms.
+            	// It takes 0.8ms to 6.2ms for snd_sfx_play() to playback
+				// our delayed file has 13.668 ms silence to sync it with
+				// the frame which will be on the next buffer flip
+				// A 3ms fade in/&out was also added so that the main
+				// tone is only full volume during the video frame in white
+				// Also adapted for PAL timing.
+				
+				if(y == 180 && speed == -1)
+					playtone = 1;
 			}
-			if(y == 180)
+
+			StartScene();
+			DrawImage(back);
+			DrawImage(squareL);
+			DrawImage(squareR);
+			DrawImage(lineB);
+			DrawImage(sprite);
+			DrawImage(cover);
+			EndScene();
+		}
+		else
+		{
+			countScope++;
+			if(countScope == 3)
 			{
 				back->r = 1.0f;
 				back->g = 1.0f;
 				back->b = 1.0f;
+				countScope = 0;
+				playtone = 1;
 			}
 			else
 			{
 				back->r = 0.0f;
 				back->g = 0.0f;
 				back->b = 0.0f;
-				
-				cover->r = settings.PalBackR;
-				cover->g = settings.PalBackG;
-				cover->b = settings.PalBackB;
 			}
-			
-				
-			// A frame is 16.80 ms, Since we have 1.8ms out of sync
-			// we make a file with 15ms silence an play it back
-			// 1 frame before in order to have sync
-			// also adapted for PAL timing
-			
-			if(y == 180 && speed == -1)
-				playtone = 1;
+
+			StartScene();
+			DrawImage(back);
+			EndScene();
 		}
-			
-		StartScene();
-		DrawImage(back);
-		DrawImage(squareL);
-		DrawImage(squareR);
-		DrawImage(lineB);
-		DrawImage(sprite);
-		DrawImage(cover);
-		EndScene();
 		
 		if(playtone == 1)
 		{
 			snd_sfx_play(beep, 255, 128); // Centered
 			playtone = 0;
 		}
-			
+		
 		VMURefresh("A. Sync", "");
 		
 		ReadController(0, &pressed);
@@ -710,10 +748,18 @@ void AudioSyncTest()
 			
 		if (pressed & CONT_A)
 			paused = !paused;
+
+		if (pressed & CONT_X)
+		{
+			if(testMode == REGULAR_TEST &&
+				AskQuestion("This will enable the Oscilloscope version\nwhich flashes white every 3 frames.\nAre you sure?"))
+				testMode = SCOPE_TEST;
+			else
+				testMode = REGULAR_TEST;
+		}
 			
 		if (pressed & CONT_START)
 			ShowMenu(AUDIOSYNCHELP);
-
 	}
 	
 	FreeImage(&back);
@@ -725,6 +771,9 @@ void AudioSyncTest()
 	
 	if(beep != SFXHND_INVALID)
 		snd_sfx_unload(beep);
+    beep = SFXHND_INVALID;
+
+	enableSleep();
 }
 
 sip_samples rec_buffer = { NULL, 0, 0, 0, 0 };
