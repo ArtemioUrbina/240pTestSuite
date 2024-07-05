@@ -26,7 +26,7 @@
 #include "image.h"
 
 #define VERSION_NUMBER "Dreamcast Ver. 2.07"
-#define VERSION_DATE "04/07/2023"
+#define VERSION_DATE "04/07/2024"
 
 #define MENUSIZE_W 116
 #define MENUSIZE_H 123

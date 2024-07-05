@@ -636,6 +636,10 @@ uint8 ReLoadIMG(ImagePtr image, const char *filename)
 		if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
 			load = png_to_img(filename, PNG_MASK_ALPHA, &img);	
 #endif
+#ifdef DREAMEYE_DISP
+		if(filename[len - 3] == 'j' && filename[len - 2] == 'p' && filename[len - 1] == 'g')
+			load = jpeg_to_img(filename, 1, &img);
+#endif
 	}
 
 	if(load != 0)
