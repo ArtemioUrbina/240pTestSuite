@@ -19,30 +19,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
  
- #include "image.h"
+ #include "system.h"
  #include "video.h"
  
- void rdpqStart()
+ void initN64() 
  {
- 	rdpq_attach(__dc, NULL);
-	rdpq_set_mode_copy(true);
+	/* Initialize peripherals */
+	display_init(RESOLUTION_320x240, DEPTH_16_BPP, SUITE_NUM_BUFFERS, GAMMA_NONE, FILTERS_RESAMPLE);
+	
+	dfs_init(DFS_DEFAULT_LOCATION);
+	
+	controller_init();
+	
+	register_VI_handler(vblCallback);
+	rdpq_init();
  }
- 
- void rdpqEnd()
- {
-	rdpq_detach_wait();
- }
- 
- void rdpqDrawImage(sprite_t* tiles, float x, float y)
- {			
-	rdpq_sprite_blit(tiles, x, y, NULL);
- }
- 
- void rdpqClearScreen()
- {
-	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xff));
-	rdpq_fill_rectangle(0, 0, dW, dH);
-	rdpq_set_mode_copy(true);
- }
- 
  
