@@ -23,58 +23,169 @@
 #include "video.h"
 #include "font.h"
 #include "image.h"
+#include "controller.h"
+
+void drawIntro(void);
+void drawPatternsMenu(void);
  
 int main(void)
 {
-	int alternate = 1, sel = 0;
+	int sel = 1, reload = 1;
+	struct controller_data keys;
+	sprite_t *bg = NULL, *sd = NULL;
 	
 	initN64();
 	loadFont();
 
-	sprite_t *bg = NULL, *sd = NULL;
-	
-	bg = sprite_load("rom:/mainbg.sprite");
-	sd = sprite_load("rom:/sd.sprite");
-
+	//drawIntro();
 	while(1) {
+		int c = 1, x = 55, y = 90;
+		int r = 0xFF, g = 0xFF, b = 0xFF;
+		
+		if(reload)
+		{
+			bg = sprite_load("rom:/mainbg.sprite");
+			sd = sprite_load("rom:/sd.sprite");
+			reload = 0;
+		}
 		
 		getDisplay();
 		
-
-		if(!alternate)
-		{
-			graphics_fill_screen(__dc, graphics_make_color(0xff, 0, 0xff, 0xff));
-			
-			graphics_draw_sprite(__dc, 0, 0, bg);
-		}
-		else
-		{
-			rdpqStart();
-			rdpqDrawImage(bg, 0, 0);
-			rdpqDrawImage(sd, 221, 86);
-			rdpqEnd();
-		}
+		rdpqStart();
+		rdpqDrawImage(bg, 0, 0);
+		rdpqDrawImage(sd, 220, 80);
+		rdpqEnd();
 		
-		
-		int fh = 12;
-		int c = 1, x = 20, y = 40+fh;
-		int r = 0xFF, g = 0xFF, b = 0xFF;
-		
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Pluge"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color Bars"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "EBU Color Bars"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "SMPTE Color Bars"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color Bars with Gray Scale"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "White & RGB Screens"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "100 IRE"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Sharpness"); y += fh; c++;
-		
-		sel ++;
-		if(sel > 10)
-			sel = 0;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Video Tests"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Audio Tests"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Hardware Tests"); y += fh;
 				
 		waitVsync();
+		
+		controller_scan();
+        keys = Controller_ButtonsDown();
+
+		if(keys.c[0].up)
+			sel--;
+
+		if(keys.c[0].down)
+			sel++;
+			
+		if(sel > c)
+			sel = 1;
+		if(sel < 1)
+			sel = c;
+		
+		if(keys.c[0].A)
+		{	
+			freeImage(&bg);
+			freeImage(&sd);
+			
+			switch(sel)
+			{
+				case 1:
+					drawPatternsMenu();
+					break;
+			}
+			reload = 1;
+		}
 	}
+	freeImage(&bg);
+	freeImage(&sd);
+	return 0;
+}
+
+void drawPatternsMenu(void)
+{
+	int sel = 1, reload = 1, exit = 0;
+	struct controller_data keys;
+	sprite_t *bg = NULL, *sd = NULL;
+	
+	while(!exit) {
+		int c = 1, x = 55, y = 90;
+		int r = 0xFF, g = 0xFF, b = 0xFF;
+		
+		if(reload)
+		{
+			bg = sprite_load("rom:/mainbg.sprite");
+			sd = sprite_load("rom:/sd.sprite");
+			reload = 0;
+		}
+		
+		getDisplay();
+		
+		rdpqStart();
+		rdpqDrawImage(bg, 0, 0);
+		rdpqDrawImage(sd, 220, 80);
+		rdpqEnd();
+		
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Geometry"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Audio Tests"); y += fh; c++;
+		drawStringS(x, y + fh, r - 0x10, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;
+				
+		waitVsync();
+		
+		controller_scan();
+        keys = Controller_ButtonsDown();
+
+		if(keys.c[0].up)
+			sel--;
+
+		if(keys.c[0].down)
+			sel++;
+			
+		if(sel > c)
+			sel = 1;
+		if(sel < 1)
+			sel = c;
+		
+		if(keys.c[0].A)
+		{	
+			freeImage(&bg);
+			freeImage(&sd);
+			
+			switch(sel)
+			{
+				case 4:
+					exit = 1;
+					break;
+			}
+			reload = 1;
+		}
+		
+		if(keys.c[0].B)
+			exit = 1;
+	}
+	freeImage(&bg);
+	freeImage(&sd);
+}
+
+void drawIntro()
+{
+	int delay = 90;
+	struct controller_data keys;
+	sprite_t *ld = NULL;
+	
+	ld = sprite_load("rom:/libdragon.sprite");
+	
+	while(delay) {
+		getDisplay();
+		
+		rdpqStart();
+		rdpqDrawImage(ld, (dW - ld->width)/2, (dH - ld->height)/2);
+		rdpqEnd();
+		
+		waitVsync();
+		
+		controller_scan();
+        keys = Controller_ButtonsDown();
+		
+		delay --;
+		if(keys.c[0].A)
+			delay = 0;
+	}
+	
+	freeImage(&ld);
 }

@@ -3,6 +3,9 @@
 
 #include "system.h"
 
+extern int fw; // font width
+extern int fh; // font height
+ 
 int loadFont();
 void releaseFont();
 

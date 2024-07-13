@@ -25,7 +25,7 @@
  sprite_t *custom_font = NULL;
  
  int fw = 8; // font width
- int fh = 8; // font height
+ int fh = 10; // font height
  
  int loadFont()
  {
@@ -101,7 +101,7 @@ void drawStringB(int x, int y, int r, int g, int b, char *text)
 	width = measureString(text)*fw;
 	color = graphics_make_color(r, g, b, 0xff);
 	
-    graphics_draw_box(__dc, x-1, y-1, width, fh+1, 0x00000000);
+    graphics_draw_box(__dc, x-1, y-1, width, fh, 0x00000000);
 	graphics_set_color(color, 0x00000000);
 	graphics_draw_text(__dc, x, y, text);
 }

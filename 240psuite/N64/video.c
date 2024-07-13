@@ -68,7 +68,7 @@ void drawFrameLens()
 	char str[100];
 	
 	sprintf(str, "Frame: %0.2fms Idle: %0.2fms", __frameLen, __frameIdle);
-	drawStringB(100, 10, __frameLen > 16.715 ? 0xff : 0x00, __frameLen < 16.715 ? 0xff : 0x00, 0x00, str);
+	drawStringB(80, 4, __frameLen > 16.715 ? 0xff : 0x00, __frameLen < 16.715 ? 0xff : 0x00, 0x00, str);
 }
 
 void getDisplay()

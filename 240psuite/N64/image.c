@@ -45,4 +45,13 @@
 	rdpq_set_mode_copy(true);
  }
  
+ void freeImage(sprite_t **image)
+{
+	if(*image)
+	{
+		free(*image);
+		*image = NULL;
+	}
+}
+ 
  
