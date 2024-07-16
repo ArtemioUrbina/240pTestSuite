@@ -58,6 +58,7 @@ void waitVsync()
 	while (nextFrame > __frames) ;
 }
 #else
+#define N64_FRAME_LEN 16.69
 static uint64_t __frameStart = 0;
 static uint64_t __idleStart = 0;
 float __frameIdle = 0;
@@ -68,7 +69,7 @@ void drawFrameLens()
 	char str[100];
 	
 	sprintf(str, "Frame: %0.2fms Idle: %0.2fms", __frameLen, __frameIdle);
-	drawStringB(80, 4, __frameLen > 16.715 ? 0xff : 0x00, __frameLen < 16.715 ? 0xff : 0x00, 0x00, str);
+	drawStringB(80, 4, __frameLen > N64_FRAME_LEN ? 0xff : 0x00, __frameLen < N64_FRAME_LEN ? 0xff : 0x00, 0x00, str);
 }
 
 void getDisplay()

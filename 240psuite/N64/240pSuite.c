@@ -34,7 +34,7 @@ void drawVideoTestsMenu(void);
 int main(void)
 {
 	int sel = 1, reload = 1;
-	struct controller_data keys;
+	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
 	
 	initN64();
@@ -66,13 +66,13 @@ int main(void)
 				
 		waitVsync();
 		
-		controller_scan();
-        keys = Controller_ButtonsDown();
+		joypad_poll();
+		keys = Controller_ButtonsDown();
 
-		if(keys.c[0].up)
+		if(keys.d_up)
 			sel--;
 
-		if(keys.c[0].down)
+		if(keys.d_down)
 			sel++;
 			
 		if(sel > c)
@@ -80,7 +80,7 @@ int main(void)
 		if(sel < 1)
 			sel = c;
 		
-		if(keys.c[0].A)
+		if(keys.a)
 		{	
 			freeImage(&bg);
 			freeImage(&sd);
@@ -105,7 +105,7 @@ int main(void)
 void drawPatternsMenu(void)
 {
 	int sel = 1, reload = 1, exit = 0;
-	struct controller_data keys;
+	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
@@ -133,13 +133,13 @@ void drawPatternsMenu(void)
 				
 		waitVsync();
 		
-		controller_scan();
-        keys = Controller_ButtonsDown();
+		joypad_poll();
+		keys = Controller_ButtonsDown();
 
-		if(keys.c[0].up)
+		if(keys.d_up)
 			sel--;
 
-		if(keys.c[0].down)
+		if(keys.d_down)
 			sel++;
 			
 		if(sel > c)
@@ -147,7 +147,7 @@ void drawPatternsMenu(void)
 		if(sel < 1)
 			sel = c;
 		
-		if(keys.c[0].A)
+		if(keys.a)
 		{	
 			freeImage(&bg);
 			freeImage(&sd);
@@ -167,7 +167,7 @@ void drawPatternsMenu(void)
 			reload = 1;
 		}
 		
-		if(keys.c[0].B)
+		if(keys.b)
 			exit = 1;
 	}
 	freeImage(&bg);
@@ -177,7 +177,7 @@ void drawPatternsMenu(void)
 void drawPatternsColorMenu(void)
 {
 	int sel = 1, reload = 1, exit = 0;
-	struct controller_data keys;
+	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
@@ -212,13 +212,13 @@ void drawPatternsColorMenu(void)
 				
 		waitVsync();
 		
-		controller_scan();
-        keys = Controller_ButtonsDown();
+		joypad_poll();
+		keys = Controller_ButtonsDown();
 
-		if(keys.c[0].up)
+		if(keys.d_up)
 			sel--;
 
-		if(keys.c[0].down)
+		if(keys.d_down)
 			sel++;
 			
 		if(sel > c)
@@ -226,7 +226,7 @@ void drawPatternsColorMenu(void)
 		if(sel < 1)
 			sel = c;
 		
-		if(keys.c[0].A)
+		if(keys.a)
 		{	
 			freeImage(&bg);
 			freeImage(&sd);
@@ -240,7 +240,7 @@ void drawPatternsColorMenu(void)
 			reload = 1;
 		}
 		
-		if(keys.c[0].B)
+		if(keys.b)
 			exit = 1;
 	}
 	freeImage(&bg);
@@ -250,7 +250,7 @@ void drawPatternsColorMenu(void)
 void drawPatternsGeometryMenu(void)
 {
 	int sel = 1, reload = 1, exit = 0;
-	struct controller_data keys;
+	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
@@ -279,13 +279,13 @@ void drawPatternsGeometryMenu(void)
 				
 		waitVsync();
 		
-		controller_scan();
-        keys = Controller_ButtonsDown();
+		joypad_poll();
+		keys = Controller_ButtonsDown();
 
-		if(keys.c[0].up)
+		if(keys.d_up)
 			sel--;
 
-		if(keys.c[0].down)
+		if(keys.d_down)
 			sel++;
 			
 		if(sel > c)
@@ -293,7 +293,7 @@ void drawPatternsGeometryMenu(void)
 		if(sel < 1)
 			sel = c;
 		
-		if(keys.c[0].A)
+		if(keys.a)
 		{	
 			freeImage(&bg);
 			freeImage(&sd);
@@ -307,7 +307,7 @@ void drawPatternsGeometryMenu(void)
 			reload = 1;
 		}
 		
-		if(keys.c[0].B)
+		if(keys.b)
 			exit = 1;
 	}
 	freeImage(&bg);
@@ -317,7 +317,7 @@ void drawPatternsGeometryMenu(void)
 void drawVideoTestsMenu(void)
 {
 	int sel = 1, reload = 1, exit = 0;
-	struct controller_data keys;
+	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
@@ -355,13 +355,13 @@ void drawVideoTestsMenu(void)
 				
 		waitVsync();
 		
-		controller_scan();
-        keys = Controller_ButtonsDown();
+		joypad_poll();
+		keys = Controller_ButtonsDown();
 
-		if(keys.c[0].up)
+		if(keys.d_up)
 			sel--;
 
-		if(keys.c[0].down)
+		if(keys.d_down)
 			sel++;
 			
 		if(sel > c)
@@ -369,7 +369,7 @@ void drawVideoTestsMenu(void)
 		if(sel < 1)
 			sel = c;
 		
-		if(keys.c[0].A)
+		if(keys.a)
 		{	
 			freeImage(&bg);
 			freeImage(&sd);
@@ -383,7 +383,7 @@ void drawVideoTestsMenu(void)
 			reload = 1;
 		}
 		
-		if(keys.c[0].B)
+		if(keys.b)
 			exit = 1;
 	}
 	freeImage(&bg);
@@ -393,7 +393,7 @@ void drawVideoTestsMenu(void)
 void drawIntro()
 {
 	int delay = 90;
-	struct controller_data keys;
+	joypad_buttons_t keys;
 	sprite_t *ld = NULL;
 	
 	ld = sprite_load("rom:/libdragon.sprite");
@@ -409,11 +409,11 @@ void drawIntro()
 		
 		waitVsync();
 		
-		controller_scan();
-        keys = Controller_ButtonsDown();
+		joypad_poll();
+		keys = Controller_ButtonsDown();
 		
 		delay --;
-		if(keys.c[0].A || keys.c[0].B)
+		if(keys.a || keys.b)
 			delay = 0;
 	}
 	

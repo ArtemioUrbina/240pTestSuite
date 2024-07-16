@@ -29,7 +29,7 @@
 	
 	dfs_init(DFS_DEFAULT_LOCATION);
 	
-	controller_init();
+	joypad_init();
 	
 	register_VI_handler(vblCallback);
 	rdpq_init();

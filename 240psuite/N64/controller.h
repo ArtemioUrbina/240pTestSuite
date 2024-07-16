@@ -21,5 +21,5 @@
 
 #include <libdragon.h>
 
-struct controller_data Controller_ButtonsDown();
-struct controller_data Controller_ButtonsHeld();
+joypad_buttons_t Controller_ButtonsDown();
+joypad_buttons_t Controller_ButtonsHeld();

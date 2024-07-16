@@ -28,16 +28,17 @@
 int JoyCountX = 0;
 int JoyCountY = 0;
 
-struct controller_data Controller_ButtonsDown()
+joypad_buttons_t Controller_ButtonsDown()
 {
-	struct controller_data keys, held;
+	joypad_inputs_t pad_inputs;
+	joypad_buttons_t pad_pressed;
 	int x, y;
 
-	held = get_keys_held();
-	keys = get_keys_down();
+	pad_inputs = joypad_get_inputs(JOYPAD_PORT_1);
+	pad_pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1);
 		
-	x  = held.c[0].x;
-	y  = held.c[0].y;
+	x = pad_inputs.stick_x;
+	y = pad_inputs.stick_y;
 	if (x > JOYTHSHLD)
 	{
 		if(JoyCountX < 0)
@@ -45,7 +46,7 @@ struct controller_data Controller_ButtonsDown()
 		JoyCountX++;
 		if(JoyCountX > MINFRAMES)			
 		{
-			keys.c[0].right = 1;
+			pad_pressed.d_right = 1;
 			JoyCountX = 0;
 		}
 	}
@@ -56,7 +57,7 @@ struct controller_data Controller_ButtonsDown()
 		JoyCountX--;
 		if(JoyCountX < -MINFRAMES)			
 		{
-			keys.c[0].left = 1;
+			pad_pressed.d_left = 1;
 			JoyCountX = 0;
 		}
 	}
@@ -67,7 +68,7 @@ struct controller_data Controller_ButtonsDown()
 		JoyCountY++;
 		if(JoyCountY > MINFRAMES)			
 		{
-			keys.c[0].up = 1;
+			pad_pressed.d_up = 1;
 			JoyCountY = 0;
 		}
 	}
@@ -78,36 +79,38 @@ struct controller_data Controller_ButtonsDown()
 		JoyCountY--;
 		if(JoyCountY < -MINFRAMES)			
 		{
-			keys.c[0].down = 1;
+			pad_pressed.d_down = 1;
 			JoyCountY = 0;
 		}
 	}
 
 	//if(held.c[0].C_down && held.c[0].R && held.c[0].L)
 		//reset_video();
-	return keys;
+	return pad_pressed;
 }
 
 
-struct controller_data Controller_ButtonsHeld()
+joypad_buttons_t Controller_ButtonsHeld()
 {
-	struct controller_data held;
+	joypad_inputs_t pad_inputs;
+	joypad_buttons_t pad_pressed;
 	int x, y;
 
-	held = get_keys_held();
+	pad_inputs = joypad_get_inputs(JOYPAD_PORT_1);
+	pad_pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1);
 		
-	x  = held.c[0].x;
-	y  = held.c[0].y;
+	x = pad_inputs.stick_x;
+	y = pad_inputs.stick_y;
 	if (x > JOYTHSHLD)
-		held.c[0].right = 1;
+		pad_pressed.d_right = 1;
 	if (x < -JOYTHSHLD) 
-		held.c[0].left = 1;
+		pad_pressed.d_left = 1;
 	if (y > JOYTHSHLD)  
-		held.c[0].up = 1;
+		pad_pressed.d_up = 1;
 	if (y < -JOYTHSHLD) 
-		held.c[0].down = 1;
+		pad_pressed.d_down = 1;
 	
 	//if(held.c[0].C_down && held.c[0].R && held.c[0].L)
 		//reset_video();
-	return held;
+	return pad_pressed;
 }
