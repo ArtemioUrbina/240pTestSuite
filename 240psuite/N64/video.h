@@ -8,6 +8,7 @@ extern unsigned int dH;
 
 void getDisplay();
 void waitVsync();
-void vblCallback(void);
+void vblCallback();
+void resetVideo();
 
 #endif

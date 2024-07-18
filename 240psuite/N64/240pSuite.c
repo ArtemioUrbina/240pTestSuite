@@ -24,13 +24,14 @@
 #include "font.h"
 #include "image.h"
 #include "controller.h"
+#include "tests.h"
 
 void drawIntro(void);
 void drawPatternsMenu(void);
 void drawPatternsColorMenu(void);
 void drawPatternsGeometryMenu(void);
 void drawVideoTestsMenu(void);
- 
+
 int main(void)
 {
 	int sel = 1, reload = 1;
@@ -40,7 +41,8 @@ int main(void)
 	initN64();
 	loadFont();
 
-	//drawIntro();
+	drawIntro();
+	
 	while(1) {
 		int c = 1, x = 55, y = 90;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
@@ -67,7 +69,7 @@ int main(void)
 		waitVsync();
 		
 		joypad_poll();
-		keys = Controller_ButtonsDown();
+		keys = controllerButtonsDown();
 
 		if(keys.d_up)
 			sel--;
@@ -134,7 +136,7 @@ void drawPatternsMenu(void)
 		waitVsync();
 		
 		joypad_poll();
-		keys = Controller_ButtonsDown();
+		keys = controllerButtonsDown();
 
 		if(keys.d_up)
 			sel--;
@@ -213,7 +215,7 @@ void drawPatternsColorMenu(void)
 		waitVsync();
 		
 		joypad_poll();
-		keys = Controller_ButtonsDown();
+		keys = controllerButtonsDown();
 
 		if(keys.d_up)
 			sel--;
@@ -280,7 +282,7 @@ void drawPatternsGeometryMenu(void)
 		waitVsync();
 		
 		joypad_poll();
-		keys = Controller_ButtonsDown();
+		keys = controllerButtonsDown();
 
 		if(keys.d_up)
 			sel--;
@@ -356,7 +358,7 @@ void drawVideoTestsMenu(void)
 		waitVsync();
 		
 		joypad_poll();
-		keys = Controller_ButtonsDown();
+		keys = controllerButtonsDown();
 
 		if(keys.d_up)
 			sel--;
@@ -376,6 +378,9 @@ void drawVideoTestsMenu(void)
 			
 			switch(sel)
 			{
+				case 5:
+					drawScroll();
+					break;
 				case 14:
 					exit = 1;
 					break;
@@ -390,32 +395,90 @@ void drawVideoTestsMenu(void)
 	freeImage(&sd);
 }
 
-void drawIntro()
+#define LOGO_HOLD	60
+#define FADE_STEPS	20
+#define FADE_HOLD	10
+
+void fadeStep(uint16_t *colorRaw)
 {
-	int delay = 90;
+	color_t color;
+			
+	color = color_from_packed16(*colorRaw);
+    color.r = (color.r > 0) ? (color.r - color.r/FADE_STEPS) : 0;
+    color.g = (color.g > 0) ? (color.g - color.g/FADE_STEPS) : 0;
+    color.b = (color.b > 0) ? (color.b - color.b/FADE_STEPS) : 0;
+	*colorRaw = color_to_packed16(color);
+}
+
+void drawSplash(char *name, int delay)
+{
 	joypad_buttons_t keys;
-	sprite_t *ld = NULL;
+	sprite_t *logo = NULL;
+	uint16_t *pal = NULL;
 	
-	ld = sprite_load("rom:/libdragon.sprite");
-	if(!ld)
+	logo = sprite_load(name);
+	if(!logo)
 		return;
+	
+	pal = sprite_get_palette(logo);
+	if(!pal)
+	{
+		freeImage(&logo);
+		return;
+	}
 	
 	while(delay) {
 		getDisplay();
 		
 		rdpqStart();
-		rdpqDrawImage(ld, (dW - ld->width)/2, (dH - ld->height)/2);
+		rdpqClearScreen();
+		rdpqDrawImage(logo, (dW - logo->width)/2, (dH - logo->height)/2);
 		rdpqEnd();
-		
+
 		waitVsync();
 		
 		joypad_poll();
-		keys = Controller_ButtonsDown();
+		keys = controllerButtonsDown();
 		
 		delay --;
-		if(keys.a || keys.b)
+		if(keys.a || keys.b || keys.start)
 			delay = 0;
 	}
 	
-	freeImage(&ld);
+	delay = FADE_STEPS;
+	while(delay) {
+		getDisplay();
+		
+		rdpqStart();
+		rdpqClearScreen();
+		rdpqDrawImage(logo, (dW - logo->width)/2, (dH - logo->height)/2);
+		rdpqEnd();
+		
+		for(unsigned int c = 0; c < 16; c++)
+			fadeStep(&pal[c]);
+		
+		waitVsync();
+		
+		delay --;
+	}
+	
+	delay = FADE_HOLD;
+	while(delay) {
+		getDisplay();
+		
+		rdpqStart();
+		rdpqClearScreen();
+		rdpqEnd();
+				
+		waitVsync();
+		
+		delay --;
+	}
+	
+	freeImage(&logo);
+}
+
+void drawIntro()
+{
+	drawSplash("rom:/libdragon.sprite", LOGO_HOLD);
 }

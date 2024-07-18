@@ -21,5 +21,5 @@
 
 #include <libdragon.h>
 
-joypad_buttons_t Controller_ButtonsDown();
-joypad_buttons_t Controller_ButtonsHeld();
+joypad_buttons_t controllerButtonsDown();
+joypad_buttons_t controllerButtonsHeld();

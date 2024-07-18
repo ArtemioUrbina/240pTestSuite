@@ -17,9 +17,13 @@ filesystem/%.sprite: assets/%.png
 	@$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
 
 filesystem/240pSuite-font.sprite: MKSPRITE_FLAGS=
-filesystem/mainbg.sprite: MKSPRITE_FLAGS=
+filesystem/mainbg.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/sd.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/grid.sprite: MKSPRITE_FLAGS=
 filesystem/donna.sprite: MKSPRITE_FLAGS=
+filesystem/sonicback.sprite: MKSPRITE_FLAGS=--format CI8
+filesystem/sonicfloor.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/libdragon.sprite: MKSPRITE_FLAGS=--format CI4
 
 $(BUILD_DIR)/240pSuite.dfs: $(ASSETS_CONV)
 $(BUILD_DIR)/240pSuite.elf: $(src:%.c=$(BUILD_DIR)/%.o)

@@ -30,16 +30,14 @@ unsigned int dW = 320;
 unsigned int dH = 240;
 
 volatile display_context_t __dc = NULL;
-
 volatile uint64_t __frames = 0;
 
-// vblank callback so we can wait for vsync
+#ifndef DEBUG_BENCHMARK
 void vblCallback(void)
 {
     __frames++;
 }
 
-#ifndef DEBUG_BENCHMARK
 void getDisplay()
 {	
 	__dc = display_get();
@@ -57,30 +55,48 @@ void waitVsync()
 	
 	while (nextFrame > __frames) ;
 }
+
+void resetVideo()
+{
+}
 #else
-#define N64_FRAME_LEN 16.69
+#define N64_FRAME_LEN 16.715
 static uint64_t __frameStart = 0;
 static uint64_t __idleStart = 0;
-float __frameIdle = 0;
+static uint64_t __lastVbl = 0;
+float __frameIdle = N64_FRAME_LEN, __minIdle = N64_FRAME_LEN;
 float __frameLen = 0;
+float __vblLen = 0;
+
+void vblCallback(void)
+{
+	uint64_t now = get_ticks_us();
+	
+	__vblLen = (now - __lastVbl)/1000.0f;
+	__lastVbl = now;
+    __frames++;
+}
 
 void drawFrameLens()
 {
 	char str[100];
 	
-	sprintf(str, "Frame: %0.2fms Idle: %0.2fms", __frameLen, __frameIdle);
-	drawStringB(80, 4, __frameLen > N64_FRAME_LEN ? 0xff : 0x00, __frameLen < N64_FRAME_LEN ? 0xff : 0x00, 0x00, str);
+	if(__frameIdle < __minIdle)
+		__minIdle = __frameIdle;
+	
+	sprintf(str, "ALL:%0.3f IDL:%0.3f/%0.3f VBL:%0.3f", __frameLen, __frameIdle, __minIdle, __vblLen);
+	drawStringB(10, 4, __frameIdle < 4.0 ? 0xff : 0x00, __frameIdle > 4.0 ? 0xff : 0x00, 0x00, str);
 }
 
 void getDisplay()
 {	
-	__dc = display_get();
 	__frameStart = get_ticks_us();
+	__dc = display_get();
 }
 
 void waitVsync()
 {
-	uint64_t nextFrame = __frames + 1, end = 0;
+	uint64_t nextFrame = __frames + 1;
 	
 	if(__dc)
 	{
@@ -91,9 +107,13 @@ void waitVsync()
 	
 	__idleStart = get_ticks_us();
 	while (nextFrame > __frames) ;
-	end = get_ticks_us();
-	__frameLen = (end - __frameStart)/1000.0f;
-	__frameIdle = (end - __idleStart)/1000.0f;
+	__frameLen = (__lastVbl - __frameStart)/1000.0f;
+	__frameIdle = (__lastVbl - __idleStart)/1000.0f;
+}
+
+void resetVideo()
+{
+	__minIdle = N64_FRAME_LEN;
 }
 #endif
 

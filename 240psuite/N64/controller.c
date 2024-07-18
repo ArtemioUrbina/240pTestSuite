@@ -28,7 +28,7 @@
 int JoyCountX = 0;
 int JoyCountY = 0;
 
-joypad_buttons_t Controller_ButtonsDown()
+joypad_buttons_t controllerButtonsDown()
 {
 	joypad_inputs_t pad_inputs;
 	joypad_buttons_t pad_pressed;
@@ -84,13 +84,15 @@ joypad_buttons_t Controller_ButtonsDown()
 		}
 	}
 
-	//if(held.c[0].C_down && held.c[0].R && held.c[0].L)
-		//reset_video();
+#ifdef DEBUG_BENCHMARK
+	if(pad_pressed.l && pad_pressed.l)
+		resetVideo();
+#endif
 	return pad_pressed;
 }
 
 
-joypad_buttons_t Controller_ButtonsHeld()
+joypad_buttons_t controllerButtonsHeld()
 {
 	joypad_inputs_t pad_inputs;
 	joypad_buttons_t pad_pressed;
@@ -109,8 +111,10 @@ joypad_buttons_t Controller_ButtonsHeld()
 		pad_pressed.d_up = 1;
 	if (y < -JOYTHSHLD) 
 		pad_pressed.d_down = 1;
-	
-	//if(held.c[0].C_down && held.c[0].R && held.c[0].L)
-		//reset_video();
+
+#ifdef DEBUG_BENCHMARK
+	if(pad_pressed.l && pad_pressed.l)
+		resetVideo();
+#endif
 	return pad_pressed;
 }

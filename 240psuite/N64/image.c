@@ -35,7 +35,8 @@
  
  void rdpqDrawImage(sprite_t* tiles, float x, float y)
  {			
-	rdpq_sprite_blit(tiles, x, y, NULL);
+	if(tiles)
+		rdpq_sprite_blit(tiles, x, y, NULL);
  }
  
  void rdpqClearScreen()
