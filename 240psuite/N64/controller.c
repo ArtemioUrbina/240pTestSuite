@@ -85,7 +85,10 @@ joypad_buttons_t controllerButtonsDown()
 	}
 
 #ifdef DEBUG_BENCHMARK
-	if(pad_pressed.l && pad_pressed.l)
+	joypad_buttons_t pad_held;
+	
+	pad_held = joypad_get_buttons_held(JOYPAD_PORT_1);
+	if(pad_held.l && pad_held.r)
 		resetVideo();
 #endif
 	return pad_pressed;
@@ -96,9 +99,11 @@ joypad_buttons_t controllerButtonsHeld()
 {
 	joypad_inputs_t pad_inputs;
 	joypad_buttons_t pad_pressed;
+	joypad_buttons_t pad_held;
 	int x, y;
 
 	pad_inputs = joypad_get_inputs(JOYPAD_PORT_1);
+	pad_held = joypad_get_buttons_held(JOYPAD_PORT_1);
 	pad_pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1);
 		
 	x = pad_inputs.stick_x;
@@ -111,9 +116,18 @@ joypad_buttons_t controllerButtonsHeld()
 		pad_pressed.d_up = 1;
 	if (y < -JOYTHSHLD) 
 		pad_pressed.d_down = 1;
+		
+	if(pad_held.d_up)
+		pad_pressed.d_up = 1;
+	if(pad_held.d_down)
+		pad_pressed.d_down = 1;
+	if(pad_held.d_right)
+		pad_pressed.d_right = 1;
+	if(pad_held.d_left)
+		pad_pressed.d_left = 1;
 
 #ifdef DEBUG_BENCHMARK
-	if(pad_pressed.l && pad_pressed.l)
+	if(pad_held.l && pad_held.r)
 		resetVideo();
 #endif
 	return pad_pressed;

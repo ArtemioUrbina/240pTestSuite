@@ -61,9 +61,9 @@ void resetVideo()
 }
 #else
 #define N64_FRAME_LEN 16.715
-static uint64_t __frameStart = 0;
-static uint64_t __idleStart = 0;
-static uint64_t __lastVbl = 0;
+uint64_t __frameStart = 0;
+uint64_t __idleStart = 0;
+uint64_t __lastVbl = 0;
 float __frameIdle = N64_FRAME_LEN, __minIdle = N64_FRAME_LEN;
 float __frameLen = 0;
 float __vblLen = 0;
@@ -96,7 +96,7 @@ void getDisplay()
 
 void waitVsync()
 {
-	uint64_t nextFrame = __frames + 1;
+	uint64_t nextFrame = __frames + 1, now;
 	
 	if(__dc)
 	{
@@ -107,8 +107,10 @@ void waitVsync()
 	
 	__idleStart = get_ticks_us();
 	while (nextFrame > __frames) ;
-	__frameLen = (__lastVbl - __frameStart)/1000.0f;
-	__frameIdle = (__lastVbl - __idleStart)/1000.0f;
+	now = get_ticks_us();
+	
+	__frameLen = (now - __frameStart)/1000.0f;
+	__frameIdle = (now - __idleStart)/1000.0f;
 }
 
 void resetVideo()

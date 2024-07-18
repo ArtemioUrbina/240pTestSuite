@@ -41,8 +41,7 @@ int main(void)
 	initN64();
 	loadFont();
 
-	drawIntro();
-	
+	//drawIntro();
 	while(1) {
 		int c = 1, x = 55, y = 90;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
@@ -378,6 +377,9 @@ void drawVideoTestsMenu(void)
 			
 			switch(sel)
 			{
+				case 1:
+					drawDropShadow();
+					break;
 				case 5:
 					drawScroll();
 					break;

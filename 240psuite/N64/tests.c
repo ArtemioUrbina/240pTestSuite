@@ -25,6 +25,73 @@
 #include "image.h"
 #include "controller.h"
 #include "tests.h"
+
+void drawDropShadow()
+{
+	int end = 0, show = 0, x = 0, y = 0;
+	sprite_t *donna, *shadow;	
+	joypad_buttons_t keys;
+	
+	donna = sprite_load("rom:/donna.sprite");
+	if(!donna)
+		return;
+	shadow = sprite_load("rom:/shadow.sprite");
+	if(!shadow)
+	{
+		freeImage(&donna);
+		return;
+	}
+	x = dW/2 - shadow->width/2;
+	y = dH/2 - shadow->height/2;
+	while(!end)
+	{
+		char str[200];
+		getDisplay();
+
+		rdpqStart();
+		
+		rdpqDrawImage(donna, 0, 0);
+		if(show)
+			rdpqDrawImage(shadow, x, y);
+		rdpqEnd();
+		
+		sprintf(str, "x: %d y: %d", x, y);
+		drawStringS(20, 20, 0xff, 0xff, 0xff, str);
+		
+		waitVsync();
+		
+		show = !show;
+		
+		joypad_poll();
+		keys = controllerButtonsHeld();
+		
+		if(keys.d_up)
+			y--;
+		if(keys.d_down)
+			y++;
+		if(y < 0)
+			y = 0;
+		if(y > dH - shadow->height)
+			y = dH - shadow->height;
+			
+		if(keys.d_left)
+			x--;
+		if(keys.d_right)
+			x++;		
+		if(x < 0)
+			x = 0;
+		if(x > dW - shadow->width)
+			x = dW - shadow->width;
+
+		if(keys.b)
+			end = 1;
+		if(keys.a)
+			show = !show;
+	}
+	
+	freeImage(&donna);
+	freeImage(&shadow);
+}
  
 void drawScroll()
 {
