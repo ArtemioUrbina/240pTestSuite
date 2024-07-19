@@ -19,11 +19,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
  
-#include "system.h"
-#include "video.h"
-#include "font.h"
-#include "image.h"
-#include "controller.h"
 #include "tests.h"
 #include "menu.h"
 
@@ -65,7 +60,7 @@ int main(void) {
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Hardware Tests"); y += fh;
 		
 		drawSysData();
-		checkMenu(NULL);
+		checkMenu(GENERALHELP);
 		waitVsync();
 		
 		joypad_poll();
@@ -133,7 +128,7 @@ void drawPatternsMenu(void) {
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;
 
 		drawSysData();
-		checkMenu(NULL);
+		checkMenu(GENERALHELP);
 		waitVsync();
 		
 		joypad_poll();
@@ -213,7 +208,7 @@ void drawPatternsColorMenu(void) {
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
 		
 		drawSysData();
-		checkMenu(NULL);
+		checkMenu(GENERALHELP);
 		waitVsync();
 		
 		joypad_poll();
@@ -281,7 +276,7 @@ void drawPatternsGeometryMenu(void) {
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
 
 		drawSysData();
-		checkMenu(NULL);
+		checkMenu(GENERALHELP);
 		waitVsync();
 		
 		joypad_poll();
@@ -358,7 +353,7 @@ void drawVideoTestsMenu(void) {
 		drawStringS(x, y + fh/2, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
 
 		drawSysData();
-		checkMenu(NULL);
+		checkMenu(GENERALHELP);
 		waitVsync();
 		
 		joypad_poll();

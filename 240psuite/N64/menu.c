@@ -31,7 +31,7 @@ int showMenuSet = 0;
 inline void checkMenu(char *help) {
 	if(showMenuSet)
 	{
-		//helpData = help;
+		helpData = help;
 		showMenu();
 		showMenuSet = 0;
 	}
@@ -76,6 +76,8 @@ void showMenu() {
 		
 		if(keys.b)
 			end = 1;
+		if(keys.a)
+			helpWindow(helpData);
 	}
 	
 	freeFrameBuffer();

@@ -64,37 +64,112 @@ void releaseFont() {
 int measureString(char *str) {
 	return(strlen(str));
 }
+
+#define SPACE_WIDTH 7
+#define LINE_HEIGHT 8
+
+uint32_t f_color = 0xFFFFFFFF;
+
+void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const msg ) {
+	int highlight = 0;
+	uint32_t old_f_color = 0xFFFFFFFF;
+	
+    if( disp == 0 ) { return; }
+    if( msg == 0 ) { return; }
+
+    int tx = x;
+    int ty = y;
+    const char *text = (const char *)msg;
+
+    while( *text ) {
+        switch( *text ) {
+            case '\r':
+				break;
+            case '\n':
+                tx = x;
+                ty += LINE_HEIGHT;
+                break;
+            case ' ':
+                tx += SPACE_WIDTH;
+                break;
+            case '\t':
+                tx += fw * 5;
+                break;
+			case '#':
+				highlight = !highlight;
+
+				if(highlight) {
+					old_f_color = f_color;
+					text++;
+					if(f_color != 0x00000000) {
+						switch(*text)
+						{
+							case 'R':
+								f_color = graphics_make_color(0xff, 0x00, 0x00, 0xff);
+								break;
+							case 'G':
+								f_color = graphics_make_color(0x00, 0xff, 0x00, 0xff);
+								break;
+							case 'B':
+								f_color = graphics_make_color(0x00, 0x00, 0xff, 0xff);
+								break;
+							case 'Y':
+								f_color = graphics_make_color(0xff, 0xff, 0x00, 0xff);
+								break;
+							case 'C':
+								f_color = graphics_make_color(0x00, 0xff, 0xff, 0xff);
+								break;
+							case 'M':
+								f_color = graphics_make_color(0xff, 0xff, 0x00, 0xff);
+								break;
+							case 'W':
+							default:
+								f_color = graphics_make_color(0xff, 0xff, 0xff, 0xff);
+								break;					
+						}
+					}
+				}			
+				else {
+					f_color = old_f_color;
+					text++;
+				}
+				graphics_set_color(f_color, 0x00000000);
+				break;
+            default:
+                graphics_draw_character( disp, tx, ty, *text );
+                tx += fw;
+                break;
+        }
+
+        text++;
+    }
+}
  
 void drawString(int x, int y, int r, int g, int b, char *text) {
-	uint32_t color = 0;
-
-	color = graphics_make_color(r, g, b, 0xff);
-	graphics_set_color(color, 0x00000000);
-	graphics_draw_text(__disp, x, y, text);
+	f_color = graphics_make_color(r, g, b, 0xff);
+	graphics_set_color(f_color, 0x00000000);
+	graphics_draw_text_suite(__disp, x, y, text);
 }
 
 void drawStringS(int x, int y, int r, int g, int b, char *text) {
-	uint32_t color = 0;
+	f_color = 0x00000000;
+	graphics_set_color(f_color, 0x00000000);
+	graphics_draw_text_suite(__disp, x+1, y+1, text);
 
-	color = graphics_make_color(r, g, b, 0xff);
-	
-	graphics_set_color(0x00000000, 0x00000000);
-	graphics_draw_text(__disp, x+1, y+1, text);
-
-	graphics_set_color(color, 0x00000000);
-	graphics_draw_text(__disp, x, y, text);
+	f_color = graphics_make_color(r, g, b, 0xff);
+	graphics_set_color(f_color, 0x00000000);
+	graphics_draw_text_suite(__disp, x, y, text);
 }
 
 void drawStringB(int x, int y, int r, int g, int b, char *text) {
-	int width = 0;
-	uint32_t color = 0;
+	int boxWidth = 0;
 				
-	width = measureString(text)*fw;
-	color = graphics_make_color(r, g, b, 0xff);
+	boxWidth = measureString(text)*fw;
+	f_color = graphics_make_color(r, g, b, 0xff);
 	
-    graphics_draw_box(__disp, x-1, y-1, width, fh, 0x00000000);
-	graphics_set_color(color, 0x00000000);
-	graphics_draw_text(__disp, x, y, text);
+    graphics_draw_box(__disp, x-1, y-1, boxWidth, fh, 0x00000000);
+	graphics_set_color(f_color, 0x00000000);
+	graphics_draw_text_suite(__disp, x, y, text);
 }
 
  

@@ -1,6 +1,11 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include "system.h"
+#include "video.h"
+#include "font.h"
+#include "image.h"
+#include "help.h"
 #include "controller.h"
 
 void checkMenu(char *help);

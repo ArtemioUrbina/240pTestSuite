@@ -19,12 +19,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
  
-#include "system.h"
-#include "video.h"
-#include "font.h"
-#include "image.h"
-#include "controller.h"
-#include "tests.h"
 #include "menu.h"
 
 void drawDropShadow() {

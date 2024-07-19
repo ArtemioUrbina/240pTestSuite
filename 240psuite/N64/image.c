@@ -116,7 +116,7 @@ void darkenBuffer(int amount) {
 		else
 			color.b = 0;
 	
-		screen[i] = color_to_packed16(color);
+		screen[i] = graphics_convert_color(color);
 	}
 }
  
