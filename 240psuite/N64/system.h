@@ -10,5 +10,6 @@
 #define SUITE_NUM_BUFFERS 2
 
 void initN64();
+void drawSysData();
 
 #endif

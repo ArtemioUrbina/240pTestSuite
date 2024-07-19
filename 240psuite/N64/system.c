@@ -21,11 +21,14 @@
  
  #include "system.h"
  #include "video.h"
+ #include "font.h"
  
- void initN64() 
- {
+ void initN64() {
 	/* Initialize peripherals */
 	display_init(RESOLUTION_320x240, DEPTH_16_BPP, SUITE_NUM_BUFFERS, GAMMA_NONE, FILTERS_RESAMPLE);
+	
+	dW = display_get_width();
+	dH = display_get_height();
 	
 	dfs_init(DFS_DEFAULT_LOCATION);
 	
@@ -35,3 +38,26 @@
 	rdpq_init();
  }
  
+ void drawSysData() {
+	char str[20];
+	bool iQue = sys_bbplayer();
+	
+	switch(get_tv_type())
+	{
+		case TV_NTSC:
+			drawStringS(224, 216, 0xfa, 0xfa, 0xfa, iQue ? "iQue NTSC" : "N64 NTSC");
+			break;
+		case TV_PAL:
+			drawStringS(224, 216, 0xfa, 0xfa, 0xfa, iQue ? "iQue PAL" : "N64 PAL"); 
+			break;
+		case TV_MPAL:
+			drawStringS(224, 216, 0xfa, 0xfa, 0xfa, iQue ? "iQue M-PAL" : "N64 M-PAL"); 
+			break;
+		default:
+			drawStringS(224, 216, 0xfa, 0xfa, 0xfa, iQue ? "iQue ???" : "N64 ???"); 
+			break;
+	}
+	
+	sprintf(str, "RAM %d MB", get_memory_size()/0x100000);
+	drawStringS(224, 224, 0xfa, 0xfa, 0xfa, str);
+ }

@@ -27,83 +27,74 @@
  int fw = 8; // font width
  int fh = 10; // font height
  
- int loadFont()
- {
+ int loadFont() {
 	if(custom_font)
 		return 0;
-	
+
 	/* Read in the custom font */
 	int fp = dfs_open("/240pSuite-font.sprite");
 	if(fp == DFS_ESUCCESS)
 		return 0;
 
 	custom_font = malloc(dfs_size(fp));
-	if(!custom_font)
-	{
+	if(!custom_font) {
 		dfs_close( fp );
 		return 0;
 	}
-	
-	if(dfs_read(custom_font, 1, dfs_size(fp), fp) < 0)
-	{
+
+	if(dfs_read(custom_font, 1, dfs_size(fp), fp) < 0) {
 		free(custom_font);
 		custom_font = NULL;
 		return 0;
 	}
-	
+
 	dfs_close(fp);
-	
+
 	graphics_set_font_sprite(custom_font);
 	return 1;
- }
+}
  
- void releaseFont()
- {
-	if(custom_font)
-	{
+void releaseFont() {
+	if(custom_font)	{
 		free(custom_font);
 		custom_font = NULL;
 	}
- }
+}
  
- int measureString(char *str)
-{
+int measureString(char *str) {
 	return(strlen(str));
 }
  
-void drawString(int x, int y, int r, int g, int b, char *text)
-{
+void drawString(int x, int y, int r, int g, int b, char *text) {
 	uint32_t color = 0;
 
 	color = graphics_make_color(r, g, b, 0xff);
 	graphics_set_color(color, 0x00000000);
-	graphics_draw_text(__dc, x, y, text);
+	graphics_draw_text(__disp, x, y, text);
 }
 
-void drawStringS(int x, int y, int r, int g, int b, char *text)
-{
+void drawStringS(int x, int y, int r, int g, int b, char *text) {
 	uint32_t color = 0;
 
 	color = graphics_make_color(r, g, b, 0xff);
 	
 	graphics_set_color(0x00000000, 0x00000000);
-	graphics_draw_text(__dc, x+1, y+1, text);
+	graphics_draw_text(__disp, x+1, y+1, text);
 
 	graphics_set_color(color, 0x00000000);
-	graphics_draw_text(__dc, x, y, text);
+	graphics_draw_text(__disp, x, y, text);
 }
 
-void drawStringB(int x, int y, int r, int g, int b, char *text)
-{
+void drawStringB(int x, int y, int r, int g, int b, char *text) {
 	int width = 0;
 	uint32_t color = 0;
 				
 	width = measureString(text)*fw;
 	color = graphics_make_color(r, g, b, 0xff);
 	
-    graphics_draw_box(__dc, x-1, y-1, width, fh, 0x00000000);
+    graphics_draw_box(__disp, x-1, y-1, width, fh, 0x00000000);
 	graphics_set_color(color, 0x00000000);
-	graphics_draw_text(__dc, x, y, text);
+	graphics_draw_text(__disp, x, y, text);
 }
 
  

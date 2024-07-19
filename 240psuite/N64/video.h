@@ -1,7 +1,9 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-extern volatile display_context_t __dc;
+#define N64_FRAME_LEN 16.715f
+
+extern surface_t* __disp;
 
 extern unsigned int dW;
 extern unsigned int dH;

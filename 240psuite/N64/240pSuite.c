@@ -25,6 +25,7 @@
 #include "image.h"
 #include "controller.h"
 #include "tests.h"
+#include "menu.h"
 
 void drawIntro(void);
 void drawPatternsMenu(void);
@@ -32,8 +33,7 @@ void drawPatternsColorMenu(void);
 void drawPatternsGeometryMenu(void);
 void drawVideoTestsMenu(void);
 
-int main(void)
-{
+int main(void) {
 	int sel = 1, reload = 1;
 	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
@@ -46,8 +46,7 @@ int main(void)
 		int c = 1, x = 55, y = 90;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
-		if(reload)
-		{
+		if(reload) {
 			bg = sprite_load("rom:/mainbg.sprite");
 			sd = sprite_load("rom:/sd.sprite");
 			reload = 0;
@@ -64,7 +63,9 @@ int main(void)
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Video Tests"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Audio Tests"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Hardware Tests"); y += fh;
-				
+		
+		drawSysData();
+		checkMenu(NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -80,9 +81,10 @@ int main(void)
 			sel = 1;
 		if(sel < 1)
 			sel = c;
+			
+		checkStart(keys);
 		
-		if(keys.a)
-		{	
+		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
 			
@@ -103,8 +105,7 @@ int main(void)
 	return 0;
 }
 
-void drawPatternsMenu(void)
-{
+void drawPatternsMenu(void) {
 	int sel = 1, reload = 1, exit = 0;
 	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
@@ -113,8 +114,7 @@ void drawPatternsMenu(void)
 		int c = 1, x = 55, y = 90;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
-		if(reload)
-		{
+		if(reload) {
 			bg = sprite_load("rom:/mainbg.sprite");
 			sd = sprite_load("rom:/sd.sprite");
 			reload = 0;
@@ -131,7 +131,9 @@ void drawPatternsMenu(void)
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Geometry"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "HCFR Test Patterns"); y += fh; c++;
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;
-				
+
+		drawSysData();
+		checkMenu(NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -148,8 +150,9 @@ void drawPatternsMenu(void)
 		if(sel < 1)
 			sel = c;
 		
-		if(keys.a)
-		{	
+		checkStart(keys);
+
+		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
 			
@@ -175,8 +178,7 @@ void drawPatternsMenu(void)
 	freeImage(&sd);
 }
 
-void drawPatternsColorMenu(void)
-{
+void drawPatternsColorMenu(void) {
 	int sel = 1, reload = 1, exit = 0;
 	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
@@ -185,8 +187,7 @@ void drawPatternsColorMenu(void)
 		int c = 1, x = 45, y = 70;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
-		if(reload)
-		{
+		if(reload) {
 			bg = sprite_load("rom:/mainbg.sprite");
 			sd = sprite_load("rom:/sd.sprite");
 			reload = 0;
@@ -210,7 +211,9 @@ void drawPatternsColorMenu(void)
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "100 IRE"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Sharpness"); y += fh; c++;
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
-				
+		
+		drawSysData();
+		checkMenu(NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -227,8 +230,9 @@ void drawPatternsColorMenu(void)
 		if(sel < 1)
 			sel = c;
 		
-		if(keys.a)
-		{	
+		checkStart(keys);
+		
+		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
 			
@@ -248,8 +252,7 @@ void drawPatternsColorMenu(void)
 	freeImage(&sd);
 }
 
-void drawPatternsGeometryMenu(void)
-{
+void drawPatternsGeometryMenu(void) {
 	int sel = 1, reload = 1, exit = 0;
 	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
@@ -258,15 +261,14 @@ void drawPatternsGeometryMenu(void)
 		int c = 1, x = 55, y = 90;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
-		if(reload)
-		{
+		if(reload) {
 			bg = sprite_load("rom:/mainbg.sprite");
 			sd = sprite_load("rom:/sd.sprite");
 			reload = 0;
 		}
-		
+
 		getDisplay();
-		
+
 		rdpqStart();
 		rdpqDrawImage(bg, 0, 0);
 		rdpqDrawImage(sd, 225, 75);
@@ -277,7 +279,9 @@ void drawPatternsGeometryMenu(void)
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Overscan"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Convergence"); y += fh; c++;
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
-				
+
+		drawSysData();
+		checkMenu(NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -293,9 +297,10 @@ void drawPatternsGeometryMenu(void)
 			sel = 1;
 		if(sel < 1)
 			sel = c;
-		
-		if(keys.a)
-		{	
+
+		checkStart(keys);
+
+		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
 			
@@ -315,8 +320,7 @@ void drawPatternsGeometryMenu(void)
 	freeImage(&sd);
 }
 
-void drawVideoTestsMenu(void)
-{
+void drawVideoTestsMenu(void) {
 	int sel = 1, reload = 1, exit = 0;
 	joypad_buttons_t keys;
 	sprite_t *bg = NULL, *sd = NULL;
@@ -325,8 +329,7 @@ void drawVideoTestsMenu(void)
 		int c = 1, x = 45, y = 55;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
-		if(reload)
-		{
+		if(reload) {
 			bg = sprite_load("rom:/mainbg.sprite");
 			sd = sprite_load("rom:/sd.sprite");
 			reload = 0;
@@ -353,7 +356,9 @@ void drawVideoTestsMenu(void)
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Diagonal Test"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Alternating 240p/480i Test"); y += fh; c++;
 		drawStringS(x, y + fh/2, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
-				
+
+		drawSysData();
+		checkMenu(NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -370,8 +375,9 @@ void drawVideoTestsMenu(void)
 		if(sel < 1)
 			sel = c;
 		
-		if(keys.a)
-		{	
+		checkStart(keys);
+		
+		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
 			
@@ -401,8 +407,7 @@ void drawVideoTestsMenu(void)
 #define FADE_STEPS	20
 #define FADE_HOLD	10
 
-void fadeStep(uint16_t *colorRaw)
-{
+void fadeStep(uint16_t *colorRaw) {
 	color_t color;
 			
 	color = color_from_packed16(*colorRaw);
@@ -412,8 +417,7 @@ void fadeStep(uint16_t *colorRaw)
 	*colorRaw = color_to_packed16(color);
 }
 
-void drawSplash(char *name, int delay)
-{
+void drawSplash(char *name, int delay) {
 	joypad_buttons_t keys;
 	sprite_t *logo = NULL;
 	uint16_t *pal = NULL;
@@ -423,8 +427,7 @@ void drawSplash(char *name, int delay)
 		return;
 	
 	pal = sprite_get_palette(logo);
-	if(!pal)
-	{
+	if(!pal) {
 		freeImage(&logo);
 		return;
 	}
@@ -480,7 +483,6 @@ void drawSplash(char *name, int delay)
 	freeImage(&logo);
 }
 
-void drawIntro()
-{
+void drawIntro() {
 	drawSplash("rom:/libdragon.sprite", LOGO_HOLD);
 }

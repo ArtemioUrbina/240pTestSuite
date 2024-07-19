@@ -25,9 +25,9 @@
 #include "image.h"
 #include "controller.h"
 #include "tests.h"
+#include "menu.h"
 
-void drawDropShadow()
-{
+void drawDropShadow() {
 	int end = 0, show = 0, x = 0, y = 0;
 	sprite_t *donna, *shadow;	
 	joypad_buttons_t keys;
@@ -36,15 +36,13 @@ void drawDropShadow()
 	if(!donna)
 		return;
 	shadow = sprite_load("rom:/shadow.sprite");
-	if(!shadow)
-	{
+	if(!shadow)	{
 		freeImage(&donna);
 		return;
 	}
 	x = dW/2 - shadow->width/2;
 	y = dH/2 - shadow->height/2;
-	while(!end)
-	{
+	while(!end) {
 		char str[200];
 		getDisplay();
 
@@ -58,6 +56,7 @@ void drawDropShadow()
 		sprintf(str, "x: %d y: %d", x, y);
 		drawStringS(20, 20, 0xff, 0xff, 0xff, str);
 		
+		checkMenu(NULL);
 		waitVsync();
 		
 		show = !show;
@@ -83,6 +82,7 @@ void drawDropShadow()
 		if(x > dW - shadow->width)
 			x = dW - shadow->width;
 
+		checkStart(keys);
 		if(keys.b)
 			end = 1;
 		if(keys.a)
@@ -93,8 +93,7 @@ void drawDropShadow()
 	freeImage(&shadow);
 }
  
-void drawScroll()
-{
+void drawScroll() {
 	int end = 0, x = 0, y = 0, currentframe = 0;
 	int speed = 1, acc = -1, pause = 0, vertical = 0;
 	sprite_t *sonicback, *overlay;	
@@ -103,8 +102,7 @@ void drawScroll()
 	sonicback = sprite_load("rom:/sonicback.sprite");
 	overlay = sprite_load("rom:/sonicfloor.sprite");
 	
-    while(!end)
-    {	
+    while(!end) {	
 		getDisplay();
 
 		rdpqStart();
@@ -125,6 +123,7 @@ void drawScroll()
 		
 		rdpqEnd();
 		
+		checkMenu(NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -154,8 +153,8 @@ void drawScroll()
 		if(speed < 1)
 			speed = 1;
 
-		if(!pause)
-		{
+		checkStart(keys);
+		if(!pause) {
 			if(!vertical)
 				x += speed * acc;
 			else
@@ -172,11 +171,9 @@ void drawScroll()
 		if(y > 7)
 			y = 0;
 			
-		if(!vertical)
-		{
+		if(!vertical) {
 			currentframe ++;
-			if(currentframe > 10)
-			{
+			if(currentframe > 10) {
 				currentframe = 0;
 			}
 		}

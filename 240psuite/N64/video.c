@@ -29,47 +29,19 @@
 unsigned int dW = 320;
 unsigned int dH = 240;
 
-volatile display_context_t __dc = NULL;
+surface_t* __disp = NULL;
 volatile uint64_t __frames = 0;
 
-#ifndef DEBUG_BENCHMARK
-void vblCallback(void)
-{
-    __frames++;
-}
-
-void getDisplay()
-{	
-	__dc = display_get();
-}
-
-void waitVsync()
-{
-	uint64_t nextFrame = __frames + 1;
-	
-	if(__dc)
-	{
-		display_show(__dc);
-		__dc = NULL;
-	}
-	
-	while (nextFrame > __frames) ;
-}
-
-void resetVideo()
-{
-}
-#else
-#define N64_FRAME_LEN 16.715
-uint64_t __frameStart = 0;
-uint64_t __idleStart = 0;
 uint64_t __lastVbl = 0;
-float __frameIdle = N64_FRAME_LEN, __minIdle = N64_FRAME_LEN;
-float __frameLen = 0;
 float __vblLen = 0;
 
-void vblCallback(void)
-{
+extern void *__safe_buffer[];
+
+float getFrameLen() {
+	return __vblLen;
+}
+
+void vblCallback(void) {
 	uint64_t now = get_ticks_us();
 	
 	__vblLen = (now - __lastVbl)/1000.0f;
@@ -77,8 +49,34 @@ void vblCallback(void)
     __frames++;
 }
 
-void drawFrameLens()
-{
+#ifndef DEBUG_BENCHMARK
+
+void getDisplay() {	
+	__disp = display_get();
+}
+
+void waitVsync() {
+	uint64_t nextFrame = __frames + 1;
+	
+	if(__disp)
+	{
+		display_show(__disp);
+		__disp = NULL;
+	}
+	
+	while (nextFrame > __frames) ;
+}
+
+void resetVideo() {
+}
+
+#else
+uint64_t __frameStart = 0;
+uint64_t __idleStart = 0;
+float __frameIdle = N64_FRAME_LEN, __minIdle = N64_FRAME_LEN;
+float __frameLen = 0;
+
+void drawFrameLens() {
 	char str[100];
 	
 	if(__frameIdle < __minIdle)
@@ -91,18 +89,16 @@ void drawFrameLens()
 void getDisplay()
 {	
 	__frameStart = get_ticks_us();
-	__dc = display_get();
+	__disp = display_get();
 }
 
-void waitVsync()
-{
+void waitVsync() {
 	uint64_t nextFrame = __frames + 1, now;
 	
-	if(__dc)
-	{
+	if(__disp) {
 		drawFrameLens();
-		display_show(__dc);
-		__dc = NULL;
+		display_show(__disp);
+		__disp = NULL;
 	}
 	
 	__idleStart = get_ticks_us();
@@ -113,8 +109,7 @@ void waitVsync()
 	__frameIdle = (now - __idleStart)/1000.0f;
 }
 
-void resetVideo()
-{
+void resetVideo() {
 	__minIdle = N64_FRAME_LEN;
 }
 #endif

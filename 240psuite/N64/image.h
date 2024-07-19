@@ -10,4 +10,9 @@ void rdpqClearScreen();
 
 void freeImage(sprite_t **image);
 
+bool copyFrameBuffer();
+void freeFrameBuffer();
+void displayFrameBuffer();
+void darkenBuffer(int amount);
+
 #endif

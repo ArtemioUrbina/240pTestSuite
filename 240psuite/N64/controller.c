@@ -28,8 +28,7 @@
 int JoyCountX = 0;
 int JoyCountY = 0;
 
-joypad_buttons_t controllerButtonsDown()
-{
+joypad_buttons_t controllerButtonsDown() {
 	joypad_inputs_t pad_inputs;
 	joypad_buttons_t pad_pressed;
 	int x, y;
@@ -39,41 +38,34 @@ joypad_buttons_t controllerButtonsDown()
 		
 	x = pad_inputs.stick_x;
 	y = pad_inputs.stick_y;
-	if (x > JOYTHSHLD)
-	{
+	if (x > JOYTHSHLD) {
 		if(JoyCountX < 0)
 			JoyCountX = 0;
 		JoyCountX++;
-		if(JoyCountX > MINFRAMES)			
-		{
+		if(JoyCountX > MINFRAMES) {
 			pad_pressed.d_right = 1;
 			JoyCountX = 0;
 		}
 	}
-	if (x < -JOYTHSHLD) 
-	{
+	if (x < -JOYTHSHLD)	{
 		if(JoyCountX > 0)
 			JoyCountX = 0;
 		JoyCountX--;
-		if(JoyCountX < -MINFRAMES)			
-		{
+		if(JoyCountX < -MINFRAMES) {
 			pad_pressed.d_left = 1;
 			JoyCountX = 0;
 		}
 	}
-	if (y > JOYTHSHLD) 
-	{ 
+	if (y > JOYTHSHLD) { 
 		if(JoyCountY < 0)
 			JoyCountY = 0;
 		JoyCountY++;
-		if(JoyCountY > MINFRAMES)			
-		{
+		if(JoyCountY > MINFRAMES) {
 			pad_pressed.d_up = 1;
 			JoyCountY = 0;
 		}
 	}
-	if (y < -JOYTHSHLD) 
-	{
+	if (y < -JOYTHSHLD)	{
 		if(JoyCountY > 0)
 			JoyCountY = 0;
 		JoyCountY--;
@@ -95,8 +87,7 @@ joypad_buttons_t controllerButtonsDown()
 }
 
 
-joypad_buttons_t controllerButtonsHeld()
-{
+joypad_buttons_t controllerButtonsHeld() {
 	joypad_inputs_t pad_inputs;
 	joypad_buttons_t pad_pressed;
 	joypad_buttons_t pad_held;
