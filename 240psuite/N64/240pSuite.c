@@ -31,27 +31,33 @@ void drawVideoTestsMenu(void);
 int main(void) {
 	int sel = 1, reload = 1;
 	joypad_buttons_t keys;
-	sprite_t *bg = NULL, *sd = NULL;
+	image *bg = NULL, *sd = NULL;
 	
 	initN64();
 	loadFont();
 
-	//drawIntro();
+	drawIntro();
 	while(1) {
 		int c = 1, x = 55, y = 90;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
-			bg = sprite_load("rom:/mainbg.sprite");
-			sd = sprite_load("rom:/sd.sprite");
+			freeImage(&bg);
+			freeImage(&sd);
+			bg = loadImage("rom:/mainbg.sprite");
+			sd = loadImage("rom:/sd.sprite");
+			if(sd) {
+				sd->x = 225;
+				sd->y = 75;
+			}
 			reload = 0;
 		}
 		
 		getDisplay();
 		
 		rdpqStart();
-		rdpqDrawImage(bg, 0, 0);
-		rdpqDrawImage(sd, 225, 75);
+		rdpqDrawImage(bg);
+		rdpqDrawImage(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
@@ -60,7 +66,7 @@ int main(void) {
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Hardware Tests"); y += fh;
 		
 		drawSysData();
-		checkMenu(GENERALHELP);
+		checkMenu(GENERALHELP, NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -103,23 +109,29 @@ int main(void) {
 void drawPatternsMenu(void) {
 	int sel = 1, reload = 1, exit = 0;
 	joypad_buttons_t keys;
-	sprite_t *bg = NULL, *sd = NULL;
+	image *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
 		int c = 1, x = 55, y = 90;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
-			bg = sprite_load("rom:/mainbg.sprite");
-			sd = sprite_load("rom:/sd.sprite");
+			freeImage(&bg);
+			freeImage(&sd);
+			bg = loadImage("rom:/mainbg.sprite");
+			sd = loadImage("rom:/sd.sprite");
+			if(sd) {
+				sd->x = 225;
+				sd->y = 75;
+			}
 			reload = 0;
 		}
 		
 		getDisplay();
 		
 		rdpqStart();
-		rdpqDrawImage(bg, 0, 0);
-		rdpqDrawImage(sd, 225, 75);
+		rdpqDrawImage(bg);
+		rdpqDrawImage(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
@@ -128,7 +140,7 @@ void drawPatternsMenu(void) {
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;
 
 		drawSysData();
-		checkMenu(GENERALHELP);
+		checkMenu(GENERALHELP, NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -176,23 +188,29 @@ void drawPatternsMenu(void) {
 void drawPatternsColorMenu(void) {
 	int sel = 1, reload = 1, exit = 0;
 	joypad_buttons_t keys;
-	sprite_t *bg = NULL, *sd = NULL;
+	image *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
 		int c = 1, x = 45, y = 70;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
-			bg = sprite_load("rom:/mainbg.sprite");
-			sd = sprite_load("rom:/sd.sprite");
+			freeImage(&bg);
+			freeImage(&sd);
+			bg = loadImage("rom:/mainbg.sprite");
+			sd = loadImage("rom:/sd.sprite");
+			if(sd) {
+				sd->x = 225;
+				sd->y = 75;
+			}
 			reload = 0;
 		}
 		
 		getDisplay();
 		
 		rdpqStart();
-		rdpqDrawImage(bg, 0, 0);
-		rdpqDrawImage(sd, 225, 75);
+		rdpqDrawImage(bg);
+		rdpqDrawImage(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "PLUGE"); y += fh; c++;
@@ -208,7 +226,7 @@ void drawPatternsColorMenu(void) {
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
 		
 		drawSysData();
-		checkMenu(GENERALHELP);
+		checkMenu(GENERALHELP, NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -250,23 +268,29 @@ void drawPatternsColorMenu(void) {
 void drawPatternsGeometryMenu(void) {
 	int sel = 1, reload = 1, exit = 0;
 	joypad_buttons_t keys;
-	sprite_t *bg = NULL, *sd = NULL;
+	image *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
 		int c = 1, x = 55, y = 90;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
-			bg = sprite_load("rom:/mainbg.sprite");
-			sd = sprite_load("rom:/sd.sprite");
+			freeImage(&bg);
+			freeImage(&sd);
+			bg = loadImage("rom:/mainbg.sprite");
+			sd = loadImage("rom:/sd.sprite");
+			if(sd) {
+				sd->x = 225;
+				sd->y = 75;
+			}
 			reload = 0;
 		}
 
 		getDisplay();
 
 		rdpqStart();
-		rdpqDrawImage(bg, 0, 0);
-		rdpqDrawImage(sd, 225, 75);
+		rdpqDrawImage(bg);
+		rdpqDrawImage(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Monoscope"); y += fh; c++;
@@ -276,7 +300,7 @@ void drawPatternsGeometryMenu(void) {
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
 
 		drawSysData();
-		checkMenu(GENERALHELP);
+		checkMenu(GENERALHELP, NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -318,23 +342,29 @@ void drawPatternsGeometryMenu(void) {
 void drawVideoTestsMenu(void) {
 	int sel = 1, reload = 1, exit = 0;
 	joypad_buttons_t keys;
-	sprite_t *bg = NULL, *sd = NULL;
+	image *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
 		int c = 1, x = 45, y = 55;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
-			bg = sprite_load("rom:/mainbg.sprite");
-			sd = sprite_load("rom:/sd.sprite");
+			freeImage(&bg);
+			freeImage(&sd);
+			bg = loadImage("rom:/mainbg.sprite");
+			sd = loadImage("rom:/sd.sprite");
+			if(sd) {
+				sd->x = 225;
+				sd->y = 75;
+			}
 			reload = 0;
 		}
 		
 		getDisplay();
 		
 		rdpqStart();
-		rdpqDrawImage(bg, 0, 0);
-		rdpqDrawImage(sd, 225, 75);
+		rdpqDrawImage(bg);
+		rdpqDrawImage(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
@@ -353,7 +383,7 @@ void drawVideoTestsMenu(void) {
 		drawStringS(x, y + fh/2, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
 
 		drawSysData();
-		checkMenu(GENERALHELP);
+		checkMenu(GENERALHELP, NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -414,14 +444,15 @@ void fadeStep(uint16_t *colorRaw) {
 
 void drawSplash(char *name, int delay) {
 	joypad_buttons_t keys;
-	sprite_t *logo = NULL;
+	image *logo = NULL;
 	uint16_t *pal = NULL;
 	
-	logo = sprite_load(name);
+	logo = loadImage(name);
 	if(!logo)
 		return;
-	
-	pal = sprite_get_palette(logo);
+
+	logo->center = true;
+	pal = sprite_get_palette(logo->tiles);
 	if(!pal) {
 		freeImage(&logo);
 		return;
@@ -432,7 +463,7 @@ void drawSplash(char *name, int delay) {
 		
 		rdpqStart();
 		rdpqClearScreen();
-		rdpqDrawImage(logo, (dW - logo->width)/2, (dH - logo->height)/2);
+		rdpqDrawImage(logo);
 		rdpqEnd();
 
 		waitVsync();
@@ -451,7 +482,7 @@ void drawSplash(char *name, int delay) {
 		
 		rdpqStart();
 		rdpqClearScreen();
-		rdpqDrawImage(logo, (dW - logo->width)/2, (dH - logo->height)/2);
+		rdpqDrawImage(logo);
 		rdpqEnd();
 		
 		for(unsigned int c = 0; c < 16; c++)

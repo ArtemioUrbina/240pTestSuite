@@ -3,7 +3,6 @@ include include/n64.mk
 
 src = $(wildcard *.c)
 ASSETS_PNG = $(wildcard assets/*.png)
-
 ASSETS_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_PNG:%.png=%.sprite)))
 
 AUDIOCONV_FLAGS ?=
@@ -35,6 +34,9 @@ $(BUILD_DIR)/240pSuite.elf: $(src:%.c=$(BUILD_DIR)/%.o)
 
 clean:
 	rm -rf $(BUILD_DIR) 240pSuite.z64 filesystem/*.sprite
+	
+fsclean:
+	rm -rf $(BUILD_DIR)/*.dfs
 	
 debug: CFLAGS += -DDEBUG_BENCHMARK
 debug: all

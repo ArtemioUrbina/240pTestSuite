@@ -21,13 +21,26 @@
 
 #include "system.h"
 #include "video.h"
+#include "image.h"
 
 #ifdef DEBUG_BENCHMARK
 #include "font.h"
 #endif
 
+resolution_t		current_resolution;
+unsigned int		current_bitdepth = 0;
+unsigned int		current_buffers = 0;
+unsigned int		current_gamma = 0;
+filter_options_t	current_antialias = 0;
+unsigned int		EnablePAL = 0;
+unsigned int		vMode = SUITE_NONE;
+
+int useNTSC = 1;
+
 unsigned int dW = 320;
 unsigned int dH = 240;
+
+unsigned int videoSet = 0;
 
 surface_t* __disp = NULL;
 volatile uint64_t __frames = 0;
@@ -67,13 +80,10 @@ void waitVsync() {
 	while (nextFrame > __frames) ;
 }
 
-void resetVideo() {
-}
-
 #else
 uint64_t __frameStart = 0;
 uint64_t __idleStart = 0;
-float __frameIdle = N64_FRAME_LEN, __minIdle = N64_FRAME_LEN;
+float __frameIdle = 20, __minIdle = 20;
 float __frameLen = 0;
 
 void drawFrameLens() {
@@ -83,7 +93,7 @@ void drawFrameLens() {
 		__minIdle = __frameIdle;
 	
 	sprintf(str, "ALL:%0.3f IDL:%0.3f/%0.3f VBL:%0.3f", __frameLen, __frameIdle, __minIdle, __vblLen);
-	drawStringB(10, 4, __frameIdle < 4.0 ? 0xff : 0x00, __frameIdle > 4.0 ? 0xff : 0x00, 0x00, str);
+	drawStringB(10, 4, __frameIdle < IDLE_WARN_MS ? 0xff : 0x00, __frameIdle > IDLE_WARN_MS ? 0xff : 0x00, 0x00, str);
 }
 
 void getDisplay()
@@ -109,9 +119,82 @@ void waitVsync() {
 	__frameIdle = (now - __idleStart)/1000.0f;
 }
 
-void resetVideo() {
-	__minIdle = N64_FRAME_LEN;
+void resetIdle() {
+	__minIdle = 20.0f;
 }
+
 #endif
 
+/* Resolutions */
+
+void resetVideoVars() {
+	current_resolution = RESOLUTION_320x240;
+	current_bitdepth = DEPTH_16_BPP;
+	current_buffers = SUITE_NUM_BUFFERS;
+	current_gamma = GAMMA_NONE;
+	current_antialias = FILTERS_RESAMPLE;
+	EnablePAL = 0;
+	useNTSC = 1;
+	vMode = SUITE_NONE;
+}
+
+void initVideo() {
+	__disp = NULL;
+
+	resetVideoVars();
+	videoSet = 0;
+}
+
+void setVideo(resolution_t newRes) {
+	if(vMode != SUITE_NONE && isSameRes(&newRes, &current_resolution))
+		return;
+	
+	if(videoSet) {
+		unregister_VI_handler(vblCallback);
+		freeFrameBuffer();
+		display_close();
+		videoSet = 0;
+	}
+	
+	current_resolution = newRes;
+	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
+
+	dW = current_resolution.width;
+	dH = current_resolution.height;
+	
+	vMode = videoModeToInt(&current_resolution);
+	
+	rdpq_init();
+	register_VI_handler(vblCallback);
+
+	videoSet = 1;
+}
+
+bool isSameRes(resolution_t *res1, const resolution_t *res2) {
+	if(res1->width != res2->width)
+		return false;
+	if(res1->height != res2->height)
+		return false;
+	if(res1->interlaced != res2->interlaced)
+		return false;
+	if(res1->pal60 != res2->pal60)
+		return false;
+	return true;
+}
+
+int videoModeToInt(resolution_t *res) {
+	if(isSameRes(res, &RESOLUTION_320x240))
+		return SUITE_320x240;
+	if(isSameRes(res, &RESOLUTION_640x480))
+		return SUITE_640x480;
+	if(isSameRes(res, &RESOLUTION_640x240))
+		return SUITE_512x240;
+	if(isSameRes(res, &RESOLUTION_512x240))
+		return SUITE_512x480;
+	if(isSameRes(res, &RESOLUTION_512x480))
+		return 4;
+	if(isSameRes(res, &RESOLUTION_256x240))
+		return SUITE_256x240;
+	return SUITE_NONE;
+}
 

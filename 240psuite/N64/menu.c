@@ -28,23 +28,26 @@
 
 int showMenuSet = 0;
 
-inline void checkMenu(char *help) {
+void checkMenu(char *help, int *reload) {
 	if(showMenuSet)
 	{
 		helpData = help;
 		showMenu();
 		showMenuSet = 0;
+		if(reload)
+			*reload = 1;
 	}
 }
 
-inline void checkStart(joypad_buttons_t keys) {
-	if(keys.start)
+void checkStart(joypad_buttons_t keys) {
+	if(keys.start) {
 		showMenuSet = 1;
+	}
 }
 
 void showMenu() {	
-	int end = 0, px = 0, py = 0;
-	sprite_t *menu;
+	int end = 0, sel = 1;
+	image *menu = NULL;
 	joypad_buttons_t keys;
 	
 	copyFrameBuffer();
@@ -52,34 +55,181 @@ void showMenu() {
 	
 	darkenBuffer(0x30);
 	
-	menu = sprite_load("rom:/menu.sprite");
+	menu = loadImage("rom:/menu.sprite");
 	if(!menu) {
 		freeFrameBuffer();
 		return;
 	}
+	menu->center = true;
+	menu->scale = false;
 	
-	px = (dW - menu->width) / 2;
-	py = (dH - menu->height) / 2;
 	while(!end) {
+		int c = 1, x, y;
+		int r = 0xFF, g = 0xFF, b = 0xFF;
+		
 		getDisplay();
 
 		displayFrameBuffer();
 		
 		rdpqStart();
-		rdpqDrawImage(menu, px, py);
+		rdpqDrawImage(menu);
 		rdpqEnd();
+		
+		x = menu->x+16;
+		y = menu->y+20;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Video"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Options"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += 2*fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Close"); 
 		
 		waitVsync();
 		
 		joypad_poll();
 		keys = controllerButtonsDown();
 		
-		if(keys.b)
+		if(keys.d_up)
+			sel--;
+
+		if(keys.d_down)
+			sel++;
+		
+		if(sel > c)
+			sel = 1;
+		if(sel < 1)
+			sel = c;
+		
+		if(keys.b || keys.start)
 			end = 1;
-		if(keys.a)
-			helpWindow(helpData);
+		if(keys.a) {
+			switch(sel)	{
+				case 1:
+					helpWindow(helpData);
+					break;
+				case 2:
+					selectVideoMode();
+					break;
+				case 5:
+					end = 1;
+					break;
+			}
+		}
 	}
 	
 	freeFrameBuffer();
-	freeImage(&menu);
+	freeImage(&menu);	
+}
+
+void selectVideoMode() {
+	resolution_t 	oldVmode = current_resolution;
+	int 			sel = 1, close = 0;
+	image	 		*back = NULL;
+	joypad_buttons_t keys;
+	
+	back = loadImage("rom:/help.sprite");
+	if(!back)
+		return;
+	
+	sel = videoModeToInt(&current_resolution) + 1;
+	while(!close) {		
+		int     r = 0xff;
+		int     g = 0xff;
+		int     b = 0xff;
+		int   	c = 1;   
+		int     x = 40;
+		int     y = 58;
+				
+		getDisplay();
+
+		displayFrameBuffer();
+		rdpqStart();
+		rdpqDrawImage(back);
+		rdpqEnd();
+
+		drawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 3*fh; 
+			
+		drawStringS(x - 10, y + videoModeToInt(&current_resolution)*fh, 0x00, 0xff, 0x00, ">"); 
+		
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
+		//drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480/240 assets (1:1/NTSC)"); y += fh; c++;				
+		
+		y += fh/2;
+		if(EnablePAL) {
+			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
+			//drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 264/240p assets (PAL)"); y += fh; c++;
+			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i 528/480/240 assets (PAL)"); c++;
+		}
+		else {
+			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "288p"); y += fh; c++;
+			//drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i scaled 264/240p assets (stretched/PAL)"); y += fh; c++;
+			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i 528/480/240 assets (PAL)"); c++;			
+		}			
+		
+		y += fh/2;
+			
+		drawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
+				
+		drawStringS(x+40, 200, r, g, b, "Press START for help");
+	
+		waitVsync();
+
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.d_up) {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if(keys.d_down) {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }	
+
+		if(keys.start) {
+			char *oldHelp = helpData;
+			
+			helpWindow(VIDEOHELP);
+			helpData = oldHelp;
+		}		
+			
+		if(keys.b)
+			close = 1;	
+	
+		if(keys.a) {     
+			switch(sel)	{			
+				case 1:						
+					useNTSC = 1;
+					setVideo(RESOLUTION_320x240);
+					break;
+				case 2:
+					useNTSC = 1;
+					setVideo(RESOLUTION_640x480);
+					break;
+				case 3:
+					if(EnablePAL) {
+						useNTSC = 0;
+						setVideo(RESOLUTION_320x240);
+					}
+					break;
+				case 4:
+					if(EnablePAL) {
+						useNTSC = 0;
+						setVideo(RESOLUTION_640x480);
+					}
+					break;		
+				case 5:
+					close = 1;
+					break;
+				default:
+					break;
+			}
+		}		
+	}
+	freeImage(&back);
+	if(!isSameRes(&oldVmode, &current_resolution))
+		clearScreen = true;
 }

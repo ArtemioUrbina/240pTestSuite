@@ -46,8 +46,6 @@ extern char *helpData;
 #define PASSIVELAG		"/help/passivelag.txt"
 #define SMPTECOLOR		"/help/SMPTEColor.txt"
 #define WHITEHELP		"/help/white.txt"
-#define LINEARITYHELP	"/help/linearity.txt"
-#define LIN224HELP		"/help/linearity224.txt"
 #define SHARPNESSHELP	"/help/sharpness.txt"
 #define OVERSCANHELP	"/help/overscan.txt"
 #define OPTIONSHELP		"/help/options.txt"

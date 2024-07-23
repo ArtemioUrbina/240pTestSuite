@@ -25,17 +25,12 @@
  
  void initN64() {
 	/* Initialize peripherals */
-	display_init(RESOLUTION_320x240, DEPTH_16_BPP, SUITE_NUM_BUFFERS, GAMMA_NONE, FILTERS_RESAMPLE);
-	
-	dW = display_get_width();
-	dH = display_get_height();
+	initVideo();
+	setVideo(RESOLUTION_320x240);
 	
 	dfs_init(DFS_DEFAULT_LOCATION);
 	
 	joypad_init();
-	
-	register_VI_handler(vblCallback);
-	rdpq_init();
  }
  
  void drawSysData() {

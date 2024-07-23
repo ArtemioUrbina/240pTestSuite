@@ -81,7 +81,7 @@ joypad_buttons_t controllerButtonsDown() {
 	
 	pad_held = joypad_get_buttons_held(JOYPAD_PORT_1);
 	if(pad_held.l && pad_held.r)
-		resetVideo();
+		resetIdle();
 #endif
 	return pad_pressed;
 }
@@ -119,7 +119,7 @@ joypad_buttons_t controllerButtonsHeld() {
 
 #ifdef DEBUG_BENCHMARK
 	if(pad_held.l && pad_held.r)
-		resetVideo();
+		resetIdle();
 #endif
 	return pad_pressed;
 }

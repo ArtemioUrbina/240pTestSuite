@@ -24,7 +24,7 @@
 
 char *helpData = NULL;
 
-#define LINESPERPAGE	19
+#define LINESPERPAGE	24
 
 char *loadHelpFile(char *filename, char ***pages, int *npages) {
 	int		i = 0, lines = 0, linecount = 0, currpage = 0;
@@ -104,7 +104,7 @@ char *loadHelpFile(char *filename, char ***pages, int *npages) {
 
 void helpWindow(char *filename) {
 	int 				done = 0, npages = 0, page = 0;	
-	sprite_t 			*back = NULL;
+	image	 			*back = NULL;
 	char				*buffer = NULL, **pages = NULL;
 	joypad_buttons_t	keys;
 
@@ -115,24 +115,22 @@ void helpWindow(char *filename) {
 	if(!buffer)
 		return;
 
-	back = sprite_load("rom:/mainbg.sprite");
+	back = loadImage("rom:/help.sprite");
 	if(!back) {
 		free(buffer);
 		free(pages);
 		return;
 	}
 		
-	while(!done) 
-	{
+	while(!done) {
 		getDisplay();
 
 		rdpqStart();
-		rdpqDrawImage(back, 0, 0);
+		rdpqDrawImage(back);
 		rdpqEnd();
 		
-		drawStringS(34, 42, 0xff, 0xff, 0xff, pages[page]);
-
-		drawStringS(95, 200, 0xBB, 0xBB, 0xBB, "Press B to return"); 
+		drawStringS(32, 16, 0xff, 0xff, 0xff, pages[page]);
+		drawStringS(95, 216, 0xBB, 0xBB, 0xBB, "Press B to return"); 
 		waitVsync();
 
 		joypad_poll();

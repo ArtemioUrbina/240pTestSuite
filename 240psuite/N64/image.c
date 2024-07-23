@@ -22,30 +22,93 @@
  #include "image.h"
  #include "video.h"
  
+bool clearScreen = false;
+unsigned int currFB = 0;
+ 
 void rdpqStart() {
- 	rdpq_attach(__disp, NULL);
-	rdpq_set_mode_copy(true);
- }
+	if(clearScreen) {
+		rdpq_attach_clear(__disp, NULL);
+		if(currFB == current_buffers) {
+			clearScreen = false;
+			currFB = 0;
+		}
+		else
+			currFB ++;
+	}
+	else
+		rdpq_attach(__disp, NULL);
+	//rdpq_set_mode_copy(true);
+	rdpq_set_mode_standard();
+	rdpq_mode_alphacompare(1);
+	if(vMode == SUITE_640x480) {
+		rdpq_mode_filter(FILTER_POINT);
+	}
+}
  
 void rdpqEnd() {
 	rdpq_detach_wait();
- }
+}
  
-void rdpqDrawImage(sprite_t* tiles, float x, float y) {			
-	if(tiles)
-		rdpq_sprite_blit(tiles, x, y, NULL);
- }
+void rdpqDrawImage(image* data) {
+	if(data && data->tiles) {
+		if(data->center) {
+			data->x = (dW - data->tiles->width)/2;
+			data->y = (dH - data->tiles->height)/2;
+		}
+		if(vMode == SUITE_640x480 && data->scale) {
+			rdpq_sprite_blit(data->tiles, 2*data->x, 2*data->y, &(rdpq_blitparms_t) {
+				.scale_x = 2.0f, .scale_y = 2.0f
+				});
+		}
+		else
+			rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
+	}
+}
+
+void rdpqDrawImageXY(image* data, int x, int y) {
+	if(data && data->tiles) {
+		if(vMode == SUITE_640x480 && data->scale) {
+			rdpq_sprite_blit(data->tiles, 2*x, 2*y, &(rdpq_blitparms_t) {
+				.scale_x = 2.0f, .scale_y = 2.0f
+				});
+		}
+		else
+			rdpq_sprite_blit(data->tiles, x, y, NULL);
+	}
+}
  
 void rdpqClearScreen() {
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xff));
 	rdpq_fill_rectangle(0, 0, dW, dH);
-	rdpq_set_mode_copy(true);
- }
+	
+	rdpq_set_mode_standard();
+	rdpq_mode_alphacompare(1);
+}
+
+image *loadImage(char *name) {
+	image *data = NULL;
+	
+	data = (image*)malloc(sizeof(image));
+	if(!data)
+		return NULL;
+	data->tiles = sprite_load(name);
+	if(!data->tiles) {
+		free(data);
+		return(NULL);
+	}
+	data->x = 0;
+	data->y = 0;
+	data->center = false;
+	data->scale = true;
+	return(data);
+}
  
-void freeImage(sprite_t **image) {
-	if(*image) {
-		free(*image);
-		*image = NULL;
+void freeImage(image **data) {
+	if(*data) {
+		sprite_free((*data)->tiles);
+		(*data)->tiles = NULL;
+		free(*data);
+		*data = NULL;
 	}
 }
 
@@ -62,6 +125,11 @@ bool copyFrameBuffer() {
 		return false;
 		
 	*__screen_buffer = surface_alloc(surface_get_format(__disp), __disp->width, __disp->height);
+	if(!__screen_buffer->buffer) {
+		free(__screen_buffer);
+		__screen_buffer = NULL;
+		return false;
+	}
 	
 	rdpq_attach(__screen_buffer, NULL);
 	rdpq_set_mode_copy(false);

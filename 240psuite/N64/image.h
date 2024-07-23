@@ -3,12 +3,25 @@
 
 #include "system.h"
 
+struct image_st {
+	sprite_t *tiles;
+	int	x;
+	int y;
+	bool center;
+	bool scale;
+};
+typedef struct image_st image;
+
+extern bool clearScreen;
+
 void rdpqStart();
 void rdpqEnd();
-void rdpqDrawImage(sprite_t* tiles, float x, float y);
+void rdpqDrawImage(image* data);
+void rdpqDrawImageXY(image* data, int x, int y);
 void rdpqClearScreen();
 
-void freeImage(sprite_t **image);
+image *loadImage(char *name);
+void freeImage(image **data);
 
 bool copyFrameBuffer();
 void freeFrameBuffer();

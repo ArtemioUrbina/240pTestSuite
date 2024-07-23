@@ -8,8 +8,9 @@
 #include "help.h"
 #include "controller.h"
 
-void checkMenu(char *help);
+void checkMenu(char *help, int *reload);
 void checkStart(joypad_buttons_t keys);
 void showMenu();
+void selectVideoMode();
 
 #endif

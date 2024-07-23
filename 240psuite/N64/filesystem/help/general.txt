@@ -3,9 +3,9 @@
 The 240p Test Suite was designed
 with two goals in mind:
 
-1) Evaluate 240p signal
-processing on modern TV sets and
-video processing equipment; and 
+1) Evaluate 240p signal display
+modern TV sets and video
+processing equipment; and 
 
 2) Provide calibration patterns
 generated on your game console
@@ -16,12 +16,13 @@ color levels.
 Help and options are available
 everywhere by pressing #CStart#C.
 
-                   #C(cont...)#C
-           HELP (2/2)
-
 This version of the suite
 supports 240p, 288p, 576i and
 480i video modes.
+
+
+                   #C(cont...)#C
+           HELP (2/2)
 
 The #YNintendo 64#Y cuts out a
 few pixels on all sides of the

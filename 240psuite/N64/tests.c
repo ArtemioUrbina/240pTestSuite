@@ -22,35 +22,64 @@
 #include "menu.h"
 
 void drawDropShadow() {
-	int end = 0, show = 0, x = 0, y = 0;
-	sprite_t *donna, *shadow;	
+	resolution_t oldVmode = current_resolution;
+	int end = 0, show = 0, reload = 1;
+	image *donna = NULL, *shadow = NULL;	
 	joypad_buttons_t keys;
 	
-	donna = sprite_load("rom:/donna.sprite");
-	if(!donna)
-		return;
-	shadow = sprite_load("rom:/shadow.sprite");
-	if(!shadow)	{
-		freeImage(&donna);
-		return;
-	}
-	x = dW/2 - shadow->width/2;
-	y = dH/2 - shadow->height/2;
 	while(!end) {
-		char str[200];
+		if(reload) {
+			bool setPos = false;;
+			
+			if(!isSameRes(&oldVmode, &current_resolution)) {
+				freeImage(&donna);
+				setPos = true;
+				oldVmode = current_resolution;
+			}
+			
+			if(!donna) {
+				if(vMode == SUITE_640x480) {
+					donna = loadImage("rom:/donna-480.sprite");
+					if(!donna) {
+						freeImage(&shadow);
+						return;
+					}
+					donna->scale = false;
+				}
+				else
+					donna = loadImage("rom:/donna.sprite");
+				if(!donna) {
+					freeImage(&shadow);
+					return;
+				}
+			}
+			if(!shadow) {
+				shadow = loadImage("rom:/shadow.sprite");
+				if(!shadow)	{
+					freeImage(&donna);
+					return;
+				}
+				setPos = true;
+			}
+
+			if(setPos) {
+				shadow->x = dW/2 - shadow->tiles->width/2;
+				shadow->y = dH/2 - shadow->tiles->height/2;
+			}
+			
+			reload = 0;
+		}
+		
 		getDisplay();
 
 		rdpqStart();
 		
-		rdpqDrawImage(donna, 0, 0);
+		rdpqDrawImage(donna);
 		if(show)
-			rdpqDrawImage(shadow, x, y);
+			rdpqDrawImage(shadow);
 		rdpqEnd();
 		
-		sprintf(str, "x: %d y: %d", x, y);
-		drawStringS(20, 20, 0xff, 0xff, 0xff, str);
-		
-		checkMenu(NULL);
+		checkMenu(DROPSHADOW, &reload);
 		waitVsync();
 		
 		show = !show;
@@ -59,22 +88,22 @@ void drawDropShadow() {
 		keys = controllerButtonsHeld();
 		
 		if(keys.d_up)
-			y--;
+			shadow->y--;
 		if(keys.d_down)
-			y++;
-		if(y < 0)
-			y = 0;
-		if(y > dH - shadow->height)
-			y = dH - shadow->height;
+			shadow->y++;
+		if(shadow->y < 0)
+			shadow->y = 0;
+		if(shadow->y > dH - shadow->tiles->height)
+			shadow->y = dH - shadow->tiles->height;
 			
 		if(keys.d_left)
-			x--;
+			shadow->x--;
 		if(keys.d_right)
-			x++;		
-		if(x < 0)
-			x = 0;
-		if(x > dW - shadow->width)
-			x = dW - shadow->width;
+			shadow->x++;		
+		if(shadow->x < 0)
+			shadow->x = 0;
+		if(shadow->x > dW - shadow->tiles->width)
+			shadow->x = dW - shadow->tiles->width;
 
 		checkStart(keys);
 		if(keys.b)
@@ -88,36 +117,42 @@ void drawDropShadow() {
 }
  
 void drawScroll() {
-	int end = 0, x = 0, y = 0, currentframe = 0;
 	int speed = 1, acc = -1, pause = 0, vertical = 0;
-	sprite_t *sonicback, *overlay;	
+	int end = 0, x = 0, y = 0, currentframe = 0;
+	image *sonicback = NULL, *overlay = NULL;	
 	joypad_buttons_t keys;
+
+	sonicback = loadImage("rom:/sonicback.sprite");
+	if(!sonicback)
+		return;
+	overlay = loadImage("rom:/sonicfloor.sprite");
+	if(!overlay) {
+		freeImage(&sonicback);
+		return;
+	}
 	
-	sonicback = sprite_load("rom:/sonicback.sprite");
-	overlay = sprite_load("rom:/sonicfloor.sprite");
-	
-    while(!end) {	
+    while(!end) {		
 		getDisplay();
 
 		rdpqStart();
 		if(x > 0)
-			rdpqDrawImage(sonicback, x-256, 0);
-		rdpqDrawImage(sonicback, x, 0);
+			rdpqDrawImageXY(sonicback, x-256, 0);
+		rdpqDrawImageXY(sonicback, x, 0);
 		if(x < 64)
-			rdpqDrawImage(sonicback, x+256, 0);
+			rdpqDrawImageXY(sonicback, x+256, 0);
 
 		if(x > 0)
-			rdpqDrawImage(overlay, 2*x-256, 48);
-		rdpqDrawImage(overlay, 2*x, 48);
+			rdpqDrawImageXY(overlay, 2*x-256, 48);
+		rdpqDrawImageXY(overlay, 2*x, 48);
 		if(x < 64)
-			rdpqDrawImage(overlay, 2*x+256, 48);
+			rdpqDrawImageXY(overlay, 2*x+256, 48);
 		// Extra gap
 		if(x < -96)
-			rdpqDrawImage(overlay, 2*x+512, 48);
-		
+			rdpqDrawImageXY(overlay, 2*x+512, 48);
+
 		rdpqEnd();
 		
-		checkMenu(NULL);
+		checkMenu(NULL, NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -148,6 +183,7 @@ void drawScroll() {
 			speed = 1;
 
 		checkStart(keys);
+
 		if(!pause) {
 			if(!vertical)
 				x += speed * acc;
