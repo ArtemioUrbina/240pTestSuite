@@ -137,8 +137,8 @@ void ReleaseTextures()
 
 u8 InitGX()
 {	
-    memset(&gp_fifo, 0, sizeof(gp_fifo));    
-    GX_Init(&gp_fifo, sizeof(gp_fifo));    
+	memset(&gp_fifo, 0, sizeof(gp_fifo));
+	GX_Init(&gp_fifo, sizeof(gp_fifo));
 	
 	return LoadTextures();
 }
@@ -152,18 +152,18 @@ void SetupGX()
 {
 	f32 yscale;
 	u32 xfbHeight;	
-    u16 xfbWidth;
+	u16 xfbWidth;
 	u32 width = 0;
 	u32 height = 0;
 	Mtx44 perspective;
-	GXColor background = {0, 0, 0, 0xff};	
+	GXColor background = {0, 0, 0, 0xff};
 	
 	GX_SetCopyClear(background, 0x00ffffff);
  
-    GX_SetViewport(0.0F, 0.0F, rmode->fbWidth, rmode->efbHeight, 0.0F, 1.0F);	
+	GX_SetViewport(0.0F, 0.0F, rmode->fbWidth, rmode->efbHeight, 0.0F, 1.0F);
 	yscale = GX_GetYScaleFactor(rmode->efbHeight,rmode->xfbHeight);
 	xfbHeight = GX_SetDispCopyYScale(yscale);
-    xfbWidth = VIDEO_PadFramebufferWidth(rmode->fbWidth);  
+	xfbWidth = VIDEO_PadFramebufferWidth(rmode->fbWidth);
 	GX_SetScissor(0,0,rmode->fbWidth,rmode->efbHeight);
 		
 	GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
@@ -171,7 +171,7 @@ void SetupGX()
 	GX_SetDispCopySrc(0,0,rmode->fbWidth,rmode->efbHeight);
 	GX_SetDispCopyDst(xfbWidth, xfbHeight);
 	GX_SetCopyFilter(rmode->aa, rmode->sample_pattern, Options.FlickerFilter, rmode->vfilter);
-	GX_SetFieldMode(rmode->field_rendering,((rmode->viHeight==2*rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));	
+	GX_SetFieldMode(rmode->field_rendering,((rmode->viHeight==2*rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));
 
 	GX_SetCullMode(GX_CULL_NONE);
 			
@@ -188,20 +188,20 @@ void SetupGX()
 	height = rmode->efbHeight;
 	width = (vmode == VIDEO_240P || vmode == VIDEO_288P) ? 320 : xfbWidth;
 	
-	guOrtho(perspective,0,height,0,width,0,300);    
+	guOrtho(perspective,0,height,0,width,0,300);
 	GX_LoadProjectionMtx(perspective, GX_ORTHOGRAPHIC);
 	GX_SetDither(GX_FALSE);
 }
 
 void StartScene()
 {
-	Mtx GXmodelView2D;		
+	Mtx GXmodelView2D;
 	
 	GX_SetViewport(0,0,rmode->fbWidth,rmode->efbHeight,0,1);
 	GX_InvVtxCache();
 
 	GX_ClearVtxDesc();
-	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);	
+	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);
 	GX_SetVtxDesc (GX_VA_CLR0, GX_DIRECT);
 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
 		
@@ -223,7 +223,7 @@ void StartScene()
 			back->r = Options.PalBackR; 
 			back->g = Options.PalBackG;
 			back->b = Options.PalBackB;
-			
+
 			DrawImage(back);
 			FreeImage(&back);
 		}
@@ -236,7 +236,7 @@ void StartSceneMtx(Mtx *GXmodelView2D)
 	GX_InvVtxCache();
 
 	GX_ClearVtxDesc();
-	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);	
+	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);
 	GX_SetVtxDesc (GX_VA_CLR0, GX_DIRECT);
 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
 		
@@ -276,20 +276,20 @@ void EndScene()
 		
 	if(!DrawMenu)
 	{		
-		GX_CopyDisp(frameBuffer[IsPAL][ActiveFB], GX_TRUE); 		
+		GX_CopyDisp(frameBuffer[IsPAL][ActiveFB], GX_TRUE);
 	  
-		VIDEO_Flush();                      
+		VIDEO_Flush();
 		VIDEO_WaitVSync();
 
-		ActiveFB ^= 1;   
-		VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);   		
+		ActiveFB ^= 1;
+		VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);
 	}
 	else
 	{
 		DrawMenu = 0;
 		ShowMenu();
 		
-		VIDEO_Flush();                      
+		VIDEO_Flush();
 		VIDEO_WaitVSync();
 	}
 }
@@ -302,7 +302,7 @@ void IgnoreOffset(ImagePtr image)
 
 ImagePtr LoadImageMemCpy(int Texture, int maptoscreen)
 {		
-    u32 fmt = 0;
+	u32 fmt = 0;
 	u16 t_width = 0, t_height = 0;
 	void *texture = NULL;
 	ImagePtr image;
@@ -317,11 +317,11 @@ ImagePtr LoadImageMemCpy(int Texture, int maptoscreen)
 		return(NULL);
 	}
 	memset(image, 0, sizeof(struct image_st));
-		
-	TPL_GetTextureMEMCopy(&backsTPL, Texture, &image->tex, &texture);	
+	
+	TPL_GetTextureMEMCopy(&backsTPL, Texture, &image->tex, &texture);
 	
 	//GX_InitTexObjLOD(&image->tex, Options.BilinearFiler, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
-	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);	
+	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
 	TPL_GetTextureInfo(&backsTPL, Texture, &fmt, &t_width, &t_height);	
 
 	image->r = 0xff;
@@ -355,7 +355,7 @@ ImagePtr LoadImageMemCpy(int Texture, int maptoscreen)
 
 ImagePtr LoadImage(int Texture, int maptoscreen)
 {		
-    u32 fmt = 0;
+	u32 fmt = 0;
 	u16 t_width = 0, t_height = 0;
 	ImagePtr image;
 	
@@ -370,10 +370,10 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	}
 	memset(image, 0, sizeof(struct image_st));
 		
-	TPL_GetTexture(&backsTPL, Texture, &image->tex);	
+	TPL_GetTexture(&backsTPL, Texture, &image->tex);
 	
 	//GX_InitTexObjLOD(&image->tex, Options.BilinearFiler, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
-	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);	
+	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
 	TPL_GetTextureInfo(&backsTPL, Texture, &fmt, &t_width, &t_height);	
 
 	image->r = 0xff;
@@ -397,7 +397,7 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	image->FV = 0;
 	image->cFB = NULL;
 	image->memCpyTexture = NULL;
-	image->IgnoreOffsetY = 0;	
+	image->IgnoreOffsetY = 0;
 	
 	if(maptoscreen)
 		MapToScreen(image);
@@ -413,7 +413,7 @@ void MapToScreen(ImagePtr image)
 	if(image->w < dW && image->w != 8)
 		CalculateUV(0, 0, 320, IsPAL ? 264 : 240, image);
 	else
-		CalculateUV(0, 0, dW, dH, image);		
+		CalculateUV(0, 0, dW, dH, image);
 		
 	IgnoreOffset(image);
 }
@@ -429,14 +429,14 @@ ImagePtr CopyFrameBufferToImage()
 	height = rmode->efbHeight;
 	//Darned GX_GetTexBufferSize returns 0! this crashed the suite, no wonder
 	//fbsize = GX_GetTexBufferSize(width, height, GX_TF_RGBA8, GX_TRUE, 0);	
-	fbsize = width * height * 4;  // 32 bits	
+	fbsize = width * height * 4;  // 32 bits
 	cfb = (u8 *)memalign(32, fbsize);
-    if (!cfb)
+	if (!cfb)
 		return NULL;
 		
-    GX_DrawDone();
-    GX_SetCopyFilter(GX_FALSE, NULL, GX_FALSE, NULL);
-    GX_SetTexCopySrc(0, 0, width, height);
+	GX_DrawDone();
+	GX_SetCopyFilter(GX_FALSE, NULL, GX_FALSE, NULL);
+	GX_SetTexCopySrc(0, 0, width, height);
 	GX_SetTexCopyDst(width, height, GX_TF_RGBA8, GX_FALSE);
 	GX_CopyTex(cfb, GX_TRUE);
 	GX_PixModeSync();	
@@ -444,12 +444,12 @@ ImagePtr CopyFrameBufferToImage()
 	
 	SetupGX();
 	
-	ActiveFB ^= 1;    		
+	ActiveFB ^= 1;
 	  
-	VIDEO_Flush();                      
+	VIDEO_Flush();
 	VIDEO_WaitVSync();
 
-	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);   			
+	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);
 	
 	image = (ImagePtr)malloc(sizeof(struct image_st));
 	if(!image)
@@ -462,7 +462,7 @@ ImagePtr CopyFrameBufferToImage()
 	
 	image->cFB = cfb;
 	GX_InitTexObj(&image->tex, image->cFB, width, height, GX_TF_RGBA8, GX_CLAMP, GX_CLAMP, GX_FALSE);
-	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);				
+	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
 
 	image->r = 0xff;
 	image->g = 0xff;
@@ -487,7 +487,7 @@ ImagePtr CopyFrameBufferToImage()
 	image->FH = 0;
 	image->FV = 0;
 	image->memCpyTexture = NULL;
-	IgnoreOffset(image);	
+	IgnoreOffset(image);
 			
 	return image;
 }
@@ -612,11 +612,11 @@ void DrawImage(ImagePtr image)
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);		// Draw A Quad
 		GX_Position2f32(x, y);				// Top Left
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
-		GX_TexCoord2f32(image->u1, image->v1);				
+		GX_TexCoord2f32(image->u1, image->v1);
 		
 		GX_Position2f32(x+w, y);			// Top Right
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
-		GX_TexCoord2f32(image->u2, image->v1);		
+		GX_TexCoord2f32(image->u2, image->v1);
 		
 		GX_Position2f32(x+w,y+h);			// Bottom Right
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
@@ -624,7 +624,7 @@ void DrawImage(ImagePtr image)
 		
 		GX_Position2f32(x,y+h);				// Bottom Left
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
-		GX_TexCoord2f32(image->u1, image->v2);		
+		GX_TexCoord2f32(image->u1, image->v2);
 	GX_End();		
 	GX_DrawDone();							// Done Drawing The Quad 
 }
@@ -669,11 +669,11 @@ void DrawImageRotate(ImagePtr image, float angle, Mtx *m)
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);		// Draw A Quad
 		GX_Position2f32(-(w/2), -(h/2));				// Top Left
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
-		GX_TexCoord2f32(image->u1, image->v1);				
+		GX_TexCoord2f32(image->u1, image->v1);
 		
 		GX_Position2f32(w/2, -(h/2));			// Top Right
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
-		GX_TexCoord2f32(image->u2, image->v1);		
+		GX_TexCoord2f32(image->u2, image->v1);
 		
 		GX_Position2f32(w/2, h/2);			// Bottom Right
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
@@ -681,7 +681,7 @@ void DrawImageRotate(ImagePtr image, float angle, Mtx *m)
 		
 		GX_Position2f32(-(w/2), h/2);				// Bottom Left
 		GX_Color4u8(image->r, image->g, image->b, image->alpha);
-		GX_TexCoord2f32(image->u1, image->v2);		
+		GX_TexCoord2f32(image->u1, image->v2);
 	GX_End();		
 	GX_DrawDone();							// Done Drawing The Quad 
 }

@@ -47,9 +47,9 @@ typedef struct timecode{
 void DropShadowTest()
 {
 	char		msg[50];
-	int		    done = 0, x = dW/2, y = dH/2, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
+	int			done = 0, x = dW/2, y = dH/2, invert = 0, frame = 0, text = 0, selback = 0, sprite = 0;
 	int			oldvmode = vmode, i = 0, currentsonic = 0, currentframe = 0;
-	u32		    pressed, held, reload = 0;		
+	u32			pressed, held, reload = 0;		
 	ImagePtr	back[4], sonicback[4], ssprite, shadow, buzz, buzzshadow, overlay;	
 
 	sonicback[0] = LoadImage(SONICBACK1IMG, 0);
@@ -214,7 +214,7 @@ void DropShadowTest()
 			FlipH(buzzshadow, 1);
 		}
 		
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_BUTTON_B)
 			done =	1;
 
@@ -288,9 +288,9 @@ void DropShadowTest()
 
 void StripedSpriteTest()
 {	
-	int		    done = 0, x = dW/2, y = dH/2, selback = 0;
+	int			done = 0, x = dW/2, y = dH/2, selback = 0;
 	int			oldvmode = vmode, currentsonic = 0, currentframe = 0, i;
-	u32		    pressed, held, reload = 0;	
+	u32			pressed, held, reload = 0;	
 	ImagePtr	back[4], sonicback[4], striped, overlay;	
 
 	sonicback[0] = LoadImage(SONICBACK1IMG, 0);
@@ -495,7 +495,7 @@ void TimingReflexTest()
 	}
 		
 	ASND_Init(); 
-    ASND_Pause(0); 	
+	ASND_Pause(0); 	
 
 	x = 144;
 	y = 60;
@@ -719,7 +719,7 @@ void TimingReflexTest()
 				view = 0;
 		}
 					
-    					
+						
 		if(pressed & PAD_BUTTON_Y)
 		{
 			variation = !variation;
@@ -727,7 +727,7 @@ void TimingReflexTest()
 				vary = 0;
 		}
 	}
-    
+	
 	ControllerRumble(0, 0);
 
 	FreeImage(&back);
@@ -810,7 +810,7 @@ void TimingReflexTest()
 			
 			ControllerScan();
 		
-		    pressed = Controller_ButtonsDown(0);		
+			pressed = Controller_ButtonsDown(0);		
 			
 			if (pressed & PAD_BUTTON_B)
 				done =	1;	
@@ -923,7 +923,7 @@ void ScrollTest()
 
 		ControllerScan();
 
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
 		if (pressed & PAD_BUTTON_UP)
 			speed ++;
@@ -971,7 +971,7 @@ void GridScrollTest()
 {
 	int 			done = 0, speed = 1, acc = 1, x = 0, y = 0, pause = 0, direction = 0;
 	int				angle = 0, oldvmode = -1, subpixel = 0, subpixcnt = 0;
-	u32			    pressed;		
+	u32				pressed;		
 	ImagePtr		back, backsquares, backdiag;
 		
 	backdiag = LoadImage(DIAGONALIMG, 1);
@@ -1031,7 +1031,7 @@ void GridScrollTest()
 				y += advance * acc;
 		}	
 				
-		CalculateUV(x, y, dW*2, dH*2, back);    
+		CalculateUV(x, y, dW*2, dH*2, back);	
 		DrawImageRotate(back, angle, &m);
 		
 		/*
@@ -1051,7 +1051,7 @@ void GridScrollTest()
 
 		ControllerScan();
 				
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_TRIGGER_R)
 		{
 			if(angle)
@@ -1115,7 +1115,7 @@ void GridScrollTest()
 		}							
 	}
 	FreeImage(&backsquares); 
-	FreeImage(&backdiag);   
+	FreeImage(&backdiag);	
 	return;
 }
 
@@ -1123,9 +1123,9 @@ void DrawStripes()
 {
 	int 				done = 0, field = 1, alternate = 0,
 						frame = 0, dframe = 0, is_vertical = 0;
-	u16			        pressed;		
-	ImagePtr		    stripespos, stripesneg;
-	ImagePtr		    vstripespos, vstripesneg;	
+	u16					pressed;		
+	ImagePtr			stripespos, stripesneg;
+	ImagePtr			vstripespos, vstripesneg;	
 	fmenudata 			resmenudata[] = { {0, "Horizontal"}, {1, "Vertical"} };
 	
 	stripespos = LoadImage(STRIPESPOSIMG, 1);
@@ -1151,7 +1151,7 @@ void DrawStripes()
 	
 	ChangeVideoEnabled = 0;
 	while(!done && !EndProgram) 
-	{   
+	{	
 		StartScene();
 
 		if(!is_vertical)
@@ -1197,7 +1197,7 @@ void DrawStripes()
 		EndScene();
 		
 		ControllerScan();
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_BUTTON_B)
 			done =	1;				
 					
@@ -1244,8 +1244,8 @@ void DrawCheckBoard()
 {
 	int 				done = 0, field = 1, alternate = 0,
 						frame = 0, dframe = 0;
-	u16			        pressed;		
-	ImagePtr		    checkpos, checkneg;
+	u16					pressed;		
+	ImagePtr			checkpos, checkneg;
 	
 	checkpos = LoadImage(CHECKPOSIMG, 1);
 	if(!checkpos)
@@ -1291,7 +1291,7 @@ void DrawCheckBoard()
 		EndScene();
 
 		ControllerScan();
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
 		if (pressed & PAD_BUTTON_B)
 			done =	1;				
@@ -1331,7 +1331,7 @@ void AudioSyncTest()
 	ImagePtr	squareL, squareR, lineB, sprite, back;	
 	
 	ASND_Init(); 
-    ASND_Pause(0);
+	ASND_Pause(0);
 	voice = ASND_GetFirstUnusedVoice();
 	if(voice == SND_INVALID)
 		return;
@@ -1489,7 +1489,7 @@ void aesnd_callback(AESNDPB *pb, unsigned int state, void *cb_arg)
 void AudioEquipmentTest(ImagePtr back)
 {
 	int 			done = 0, loaded = 0, counter = 2;
-	u32			    pressed;
+	u32				pressed;
 	char			*msg = "Loading audio file...";
 	char			*title = "MDFourier";
 	u8				*aet_samples = NULL;
@@ -1542,7 +1542,7 @@ void AudioEquipmentTest(ImagePtr back)
 		}
 		
 		ControllerScan();
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_BUTTON_B)
 			done = 1;
 
@@ -1630,15 +1630,15 @@ void AudioEquipmentTest(ImagePtr back)
 void SoundTest()
 {
 	int 			done = 0, sel = 1, play = 0, aleft = 0, aright = 0;
-	u32			    pressed;		
+	u32				pressed;		
 	ImagePtr		back;	
 	
 	back = LoadImage(BACKIMG, 0);
 	if(!back)
 		return;
 		
-    ASND_Init(); 
-    ASND_Pause(0);
+	ASND_Init(); 
+	ASND_Pause(0);
 	while(!done && !EndProgram) 
 	{
 		StartScene();
@@ -1652,7 +1652,7 @@ void SoundTest()
 
 		ControllerScan();
 		
-        pressed = Controller_ButtonsDown(0);		
+		pressed = Controller_ButtonsDown(0);		
 		if (pressed & PAD_BUTTON_B)
 			done =	1;								
 
@@ -1707,8 +1707,8 @@ void SoundTest()
 
 void LEDZoneTest()
 {	
-	int		    done = 0, x = dW/2, y = dH/2, selsprite = 1, show = 1;
-	u32		    pressed, held;
+	int			done = 0, x = dW/2, y = dH/2, selsprite = 1, show = 1;
+	u32			pressed, held;
 	ImagePtr	back, sprite[5];
 	
 	back = LoadImage(WHITEIMG, 1);
@@ -1763,7 +1763,7 @@ void LEDZoneTest()
 		if (held & PAD_BUTTON_RIGHT)
 			x ++;			
 	
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 
 		if (pressed & PAD_BUTTON_B)
 			done =	1;
@@ -1815,7 +1815,7 @@ void LEDZoneTest()
 void PassiveLagTest()
 {
 	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
-	u16		    pressed, lsd, msd, pause = 0;		
+	u16			pressed, lsd, msd, pause = 0;		
 	ImagePtr	back, circle;	
 	
 	back = LoadImage(WHITEIMG, 0);
@@ -2036,7 +2036,7 @@ void PassiveLagTest()
 		EndScene();
 
 		ControllerScan();
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 					
 		if (pressed & PAD_BUTTON_B)
 			done =	1;				
@@ -2188,7 +2188,7 @@ void Alternate240p480i()
 			{
 				if(times[i].type == 0)
 				{
-					DrawString(32,      40+i*8, 0xff, 0xff, 0.0, "Switched to");
+					DrawString(32,		40+i*8, 0xff, 0xff, 0.0, "Switched to");
 					DrawString(32+12*5, 40+i*8, 0xff, 0xff, 0.0, 
 							times[i].res == 0 ? (IsPAL ? "288p" : "240p") : (IsPAL ? "576i" : "480i"));
 					DrawString(32+16*5, 40+i*8, 0xff, 0xff, 0.0, " at:");
@@ -2216,7 +2216,7 @@ void Alternate240p480i()
 
 
 		ControllerScan();
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 					
 		if ( pressed & PAD_BUTTON_START ) 		
 		{			
@@ -2318,9 +2318,9 @@ void FixSpriteSize(ImagePtr sprite, int full)
 
 void DiagonalPatternTest()
 {	
-	int		    done = 0, autorotate = 0, full = 0;
+	int			done = 0, autorotate = 0, full = 0;
 	float		angle = 45, speed = 1.0f;
-	u32		    pressed, oldvmode = vmode;
+	u32			pressed, oldvmode = vmode;
 	ImagePtr	back, sprite;
 	char		str[40];
 	Mtx 		m;
@@ -2366,7 +2366,7 @@ void DiagonalPatternTest()
 
 		ControllerScan();
 			
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		
 		if (pressed & PAD_BUTTON_UP)
 		{

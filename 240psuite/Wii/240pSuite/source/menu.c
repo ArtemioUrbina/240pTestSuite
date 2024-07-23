@@ -42,8 +42,8 @@ u8 ChangeVideoEnabled = 1;
 
 void ShowMenu()
 {
-	int 		sel = 1, close = 0;		
-	ImagePtr	Back = NULL, cFB = NULL;	
+	int 		sel = 1, close = 0;
+	ImagePtr	Back = NULL, cFB = NULL;
 	
 	cFB = CopyFrameBufferToImage();	
 	if(cFB)
@@ -63,24 +63,24 @@ void ShowMenu()
 	   
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;				    					   
-		u16     x = Back ? Back->x + 20 : 100;
-		u16     y = Back ? Back->y + 10 : 60;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = Back ? Back->x + 20 : 100;
+		u16 	y = Back ? Back->y + 10 : 60;
+		u32 	pressed = 0;
 		char	videomode[50];
 				
 		StartScene();
 		
-		DrawImage(cFB);         
-		DrawImage(Back);       
+		DrawImage(cFB);
+		DrawImage(Back);
 
-		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 3*fh; 		
+		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 3*fh;
 		
 		GetVideoModeStr(videomode, 1);
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;				
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Help"); y += fh; c++;
 		if(ChangeVideoEnabled)
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video");
@@ -91,12 +91,12 @@ void ShowMenu()
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA,	sel == c ? 0x77 : 0xAA, "Video");
 			DrawStringS(x+6*fw, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, videomode); y += fh; c++;		
 		}
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;		
-        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Credits"); y += fh; c++;		
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu"); y += 2* fh; c++;			
-		DrawStringS(x, y, r-0x40, sel == c ? 0 : g,	sel == c ? 0 : b, "Exit 240p Suite"); y += 2* fh; 		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Options"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Credits"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu"); y += 2* fh; c++;
+		DrawStringS(x, y, r-0x40, sel == c ? 0 : g,	sel == c ? 0 : b, "Exit 240p Suite"); y += 2* fh;
 		
-#ifdef WII_VERSION		
+#ifdef WII_VERSION
 		u8 		battery;
 		char 	level[30];
 		
@@ -106,8 +106,8 @@ void ShowMenu()
 			sprintf(level, "Wiimote batt: %d%%", battery > 100 ? 100 : battery);
 			DrawStringS(x-10, y, battery < 25 ? 0xff : 0x00, 0x88, battery >= 25 ? 0xff : 0x00 , level); 
 		}
-#endif				
-						
+#endif
+
 		EndScene();		
 		
 		ControllerScan();
@@ -115,29 +115,29 @@ void ShowMenu()
 		pressed = Controller_ButtonsDown(0);
 		
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
-			
-		if (pressed & PAD_BUTTON_B || pressed & PAD_BUTTON_START) 		
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}
+		
+		if (pressed & PAD_BUTTON_B || pressed & PAD_BUTTON_START)
 			close = 1;	
 	
 		if (pressed & PAD_BUTTON_A)
-		{     
+		{
 			switch(sel)
-			{			
-				case 1:			
+			{
+				case 1:
 					HelpWindow(cFB);
-					break;					
+					break;
 				case 2:	
 					if(ChangeVideoEnabled)
 					{
@@ -149,11 +149,11 @@ void ShowMenu()
 						}
 					}
 					break;
-				case 3:		
-					ChangeOptions(cFB);						
+				case 3:
+					ChangeOptions(cFB);
 					break;
-				case 4:		
-					DrawCredits(cFB);						
+				case 4:	
+					DrawCredits(cFB);
 					break;
 				case 5:
 					close = 1;
@@ -164,8 +164,8 @@ void ShowMenu()
 					break;
 				default:
 					break;
-			} 			            										
-		}		
+			}
+		}
 	}
 	
 	HelpData = GENERALHELP;
@@ -189,29 +189,29 @@ void ChangeOptions(ImagePtr title)
 		
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;				    					   
-		u16     x = 50;
-		u16     y = 41;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = 50;
+		u16 	y = 41;
 		u16		OptPos = 160;
-        u32     pressed = 0, held = 0;
+		u32 	pressed = 0, held = 0;
 		char	intensity[80];
 				
 		StartScene();
-		        
-		DrawImage(title);        
+				
+		DrawImage(title);
 		DrawImage(back);
 
 		DrawStringS(x + 70, 42, 0x00, 0xff, 0x00, "General Options"); 
 		
-#ifdef WII_VERSION			
-		y += fh; 	
+#ifdef WII_VERSION
+		y += fh; 
 		
 		// option 1, TrapFilter
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.TrapFilter ? "ON" : "OFF");
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VI Trap Filter (Composite):"); y += fh; c++;		
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "VI Trap Filter (Composite):"); y += fh; c++;
 #else
 		y += 2*fh; 
 #endif
@@ -223,19 +223,19 @@ void ChangeOptions(ImagePtr title)
 		/*
 		// option 3, BilinearFiler		
 		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, GetBilinearText(1));
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "GX Filter:"); y += fh; c++;	
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "GX Filter:"); y += fh; c++;
 		*/
 		
 		// option 3, Active 480p
 		if(VIDEO_HaveComponentCable())
-		{			
-			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.Activate480p ? "ON" : "OFF"); 					
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable 480p Modes:"); y += fh; c++;			
+		{
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.Activate480p ? "ON" : "OFF");
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable 480p Modes:"); y += fh; c++;
 		}
 		else
-		{			
-			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.Activate480p ? "ON" : "OFF"); 					
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Enable 480p Modes:"); y += fh; c++;			
+		{
+			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.Activate480p ? "ON" : "OFF");
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Enable 480p Modes:"); y += fh; c++;
 		}
 
 		// Option 4
@@ -244,12 +244,12 @@ void ChangeOptions(ImagePtr title)
 		
 		// Option 5
 		if(Options.EnablePAL)
-		{			
+		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.EnablePALBG ? "ON" : "OFF"); 					
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable PAL Background:"); y += fh; c++;								
 		}
 		else
-		{			
+		{
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.EnablePALBG ? "ON" : "OFF"); 					
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Enable PAL Background:"); y += fh; c++;
 		}
@@ -258,11 +258,11 @@ void ChangeOptions(ImagePtr title)
 		{
 			char BorderColor[100];
 			
-			sprintf(BorderColor, "[%X,%X,%X]", Options.PalBackR, Options.PalBackG, Options.PalBackB);			
+			sprintf(BorderColor, "[%X,%X,%X]", Options.PalBackR, Options.PalBackG, Options.PalBackB);
 			if(Options.EnablePAL)
 			{
 				DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, BorderColor);
-				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Change PAL Background:"); y += fh; c++;							
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Change PAL Background:"); y += fh; c++;
 			}
 			else
 			{
@@ -278,12 +278,12 @@ void ChangeOptions(ImagePtr title)
 			
 			sprintf(palstart, "%s", GetPalStartText());
 			if(Options.EnablePAL)
-			{			
+			{
 				DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, palstart);
 				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "PAL starting line:"); y += fh; c++;
 			}
 			else
-			{			
+			{
 				DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, palstart);
 				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "PAL starting line:"); y += fh; c++;
 			}
@@ -291,19 +291,19 @@ void ChangeOptions(ImagePtr title)
 		
 		// Option 8
 		if(Options.EnablePAL)
-		{			
+		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.PALScale576 ? "ON" : "OFF");
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "V. Stretch to 288/576 in PAL:"); y += fh; c++;		
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "V. Stretch to 288/576 in PAL:"); y += fh; c++;
 		}
 		else
-		{			
+		{
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.PALScale576 ? "ON" : "OFF");
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "V. Stretch to 288/576 in PAL:"); y += fh; c++;
 		}
 		
 		// option 9, Stretch Horizontal
-		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.Enable720Stretch ? "ON" : "OFF"); 					
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "H. Stretch to 720:"); y += fh; c++;	
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.Enable720Stretch ? "ON" : "OFF");
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "H. Stretch to 720:"); y += fh; c++;
 
 		
 		// option 10 Scanline intensity
@@ -311,12 +311,12 @@ void ChangeOptions(ImagePtr title)
 		if(vmode == VIDEO_480P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p Scanline Intensity:"); y += fh; c++;			
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p Scanline Intensity:"); y += fh; c++;
 			
 		// option 11, Scanline even/odd
-			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD"); 					
+			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD");
 			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p Scanlines:"); y += fh; c++;	
-		}				
+		}
 		else
 		{
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, intensity);
@@ -326,16 +326,16 @@ void ChangeOptions(ImagePtr title)
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, ScanlinesEven() ? "EVEN" : "ODD"); 					
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p Scanlines:"); y += fh; c++;	
 		}
-				
-#ifdef WII_VERSION					
+
+#ifdef WII_VERSION
 		// option 12, SFC CC
-		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.SFCClassicController ? "ON" : "OFF"); 					
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SFC Classic Controller:"); y += fh; c++;			
-#endif		
-				
+		DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.SFCClassicController ? "ON" : "OFF");
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "SFC Classic Controller:"); y += fh; c++;
+#endif
+
 		// Option 13
-		DrawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
-			
+		DrawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu");
+
 		r = g = b = r - 0x30;
 		y += fh / 2;
 		
@@ -344,14 +344,14 @@ void ChangeOptions(ImagePtr title)
 			DrawStringS(x-15, y + 2*fh, r, g, b, GetBilinearText(0));
 		*/
 	
-		if(Options.EnablePAL && Options.PALScale576)		
+		if(Options.EnablePAL && Options.PALScale576)
 		{
-#ifdef WII_VERSION			
+#ifdef WII_VERSION
 			if(sel == 7)
 #else
 			if(sel+1 == 7)
 #endif
-				DrawStringS(x-15, y + 2*fh, r, g, b, "This setting has no effect in stretched modes");		
+				DrawStringS(x-15, y + 2*fh, r, g, b, "This setting has no effect in stretched modes");
 		}
 		
 		if(Options.EnablePAL)
@@ -370,100 +370,100 @@ void ChangeOptions(ImagePtr title)
 			if(sel+1 == 9)
 #endif
 				DrawStringS(x-15, y + 2*fh, r, g, b, "Horz. stretching disables 1:1 pixel mapping");
-					
-#ifdef WII_VERSION					
+
+#ifdef WII_VERSION
 		if(vmode == VIDEO_480P_SL && sel == 10)
 		{
 			if(ControllerType != ControllerGC && !Options.SFCClassicController)
-				DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with + & - buttons or Left & Right"); 										
+				DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with + & - buttons or Left & Right");
 			else
-				DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 	
+				DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right");
 		}
 #else
 		if(vmode == VIDEO_480P_SL && sel+1 == 10)
-			DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right"); 										
+			DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with L & R triggers or Left & Right");
 #endif
 
 
-#ifdef WII_VERSION								
+#ifdef WII_VERSION
 		if(vmode != VIDEO_480P_SL && (sel == 10 || sel == 11))
 #else
 		if(vmode != VIDEO_480P_SL && (sel+1 == 10 || sel+1 == 11))
 #endif
-			DrawStringS(x-15, y + 2*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode"); 						
+			DrawStringS(x-15, y + 2*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode");
 			
-#ifdef WII_VERSION					
-		if(sel == 12)	
-			DrawStringS(x-15, y + 2*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]"); 										
+#ifdef WII_VERSION
+		if(sel == 12)
+			DrawStringS(x-15, y + 2*fh, r, g, b, "Change Classic Controller Button map:\n [HOME] -> [+] and [- +] -> [L R]");
 #endif
-				
+
 #ifdef WII_VERSION
 		DrawStringS(x+60, 200, r, g, b, "Press HOME for help");
 #else
 		DrawStringS(x+60, 200, r, g, b, "Press START for help");
 #endif
+
+		EndScene();
 		
-		EndScene();		
-        
-        ControllerScan();
+		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		held = Controller_ButtonsHeld(0);
 
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
-				
-#ifdef WII_VERSION			
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;	
+		}			
+
+#ifdef WII_VERSION
 		if ( pressed & PAD_TRIGGER_R && sel == 10)
 #else
 		if ( pressed & PAD_TRIGGER_R && sel+1 == 10)
 #endif
-	    {
+		{
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
-	    }
+		}
 
-#ifdef WII_VERSION			
+#ifdef WII_VERSION
 		if ( pressed & PAD_TRIGGER_L && sel == 10)
 #else
 		if ( pressed & PAD_TRIGGER_L && sel+1 == 10)
-#endif	    
-	    {
+#endif		
+		{
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
-	    }			
+		}			
 
 #ifdef WII_VERSION			
 		if ( held & PAD_BUTTON_RIGHT && sel == 10)
 #else
 		if ( held & PAD_BUTTON_RIGHT && sel+1 == 10)
-#endif	    
-	    {
+#endif		
+		{
 			if(vmode == VIDEO_480P_SL)
 				RaiseScanlineIntensity();
-	    }
+		}
 		
-#ifdef WII_VERSION			
-	    if ( held & PAD_BUTTON_LEFT && sel == 10)
+#ifdef WII_VERSION
+		if ( held & PAD_BUTTON_LEFT && sel == 10)
 #else
 		if ( held & PAD_BUTTON_LEFT && sel+1 == 10)
-#endif	    
-	    {
+#endif		
+		{
 			if(vmode == VIDEO_480P_SL)
 				LowerScanlineIntensity();
-	    }			
-			
+		}
+		
 		if(pressed & PAD_BUTTON_START)
 		{
 #ifdef WII_VERSION
@@ -482,36 +482,36 @@ void ChangeOptions(ImagePtr title)
 			Options = DefaultOptions;
 	
 		if(pressed & PAD_BUTTON_A)
-		{     
+		{
 #ifdef WII_VERSION		
 			switch(sel)
 #else
 			switch(sel + 1)
 #endif
-			{			
-#ifdef WII_VERSION		
+			{
+#ifdef WII_VERSION
 				case 1:
-					Options.TrapFilter = !Options.TrapFilter;					
-					SetVideoMode(vmode);										
-					SetupGX();						
+					Options.TrapFilter = !Options.TrapFilter;
+					SetVideoMode(vmode);
+					SetupGX();
 					break;
 #endif	
 				case 2:
-					Options.FlickerFilter = !Options.FlickerFilter;											
-					SetVideoMode(vmode);										
-					SetupGX();						
+					Options.FlickerFilter = !Options.FlickerFilter;	
+					SetVideoMode(vmode);
+					SetupGX();
 					break;
 					/*
 				case 3:
 					SetBilinearOption(Options.BilinearFiler+1);
-					SetVideoMode(vmode);										
-					SetupGX();	
+					SetVideoMode(vmode);
+					SetupGX();
 					
-					FreeImage(&back);												
+					FreeImage(&back);
 					back = LoadImage(HELPIMG, 0);
-					if(back)							
+					if(back)
 						back->alpha = 0xaa;
-						
+					
 					ReleaseFont();
 					LoadFont();
 					
@@ -522,16 +522,16 @@ void ChangeOptions(ImagePtr title)
 						Options.Activate480p = !Options.Activate480p;
 					break;
 				case 4:	
-					Options.EnablePAL = !Options.EnablePAL;					
-					break;				
+					Options.EnablePAL = !Options.EnablePAL;
+					break;
 				case 5:	
 					if(Options.EnablePAL)
-						Options.EnablePALBG = !Options.EnablePALBG;					
+						Options.EnablePALBG = !Options.EnablePALBG;
 					break;
 				case 6:	
 					if(Options.EnablePAL)
 						ChangePALBackgroundColor(title);
-					break;				
+					break;
 				case 7:	
 					if(Options.EnablePAL)
 					{
@@ -539,10 +539,10 @@ void ChangeOptions(ImagePtr title)
 						if(IsPAL)	
 						{
 							SetVideoMode(vmode);
-							SetupGX();							
+							SetupGX();
 						}
 					}
-					break;				
+					break;
 				case 8:	
 					if(Options.EnablePAL)
 					{
@@ -550,7 +550,7 @@ void ChangeOptions(ImagePtr title)
 						if(IsPAL)	
 						{
 							SetVideoMode(vmode);
-							SetupGX();							
+							SetupGX();
 						}
 					}
 					break;
@@ -559,7 +559,7 @@ void ChangeOptions(ImagePtr title)
 					if(Options.Enable720Stretch)
 						ShowStretchWarning();
 					SetVideoMode(vmode);
-					break;			
+					break;
 				case 10:
 					break;
 				case 11:
@@ -567,17 +567,17 @@ void ChangeOptions(ImagePtr title)
 						ToggleScanlineEvenOdd();
 					break;
 				case 12:
-#ifdef WII_VERSION		
+#ifdef WII_VERSION
 					Options.SFCClassicController = !Options.SFCClassicController;
-					break;										
+					break;
 				case 13:
-#endif											
+#endif
 					close = 1;
 					break;
 				default:
 					break;
-			} 			            										
-		}		
+			}
+		}
 	}
 	
 	FreeImage(&back);
@@ -587,7 +587,7 @@ void ChangeOptions(ImagePtr title)
 
 void SelectVideoMode(ImagePtr title)
 {
-	int 		sel = 1, close = 0, mode = vmode;		
+	int 		sel = 1, close = 0, mode = vmode;
 	ImagePtr	back;
 	
 	back = LoadImage(HELPIMG, 0);
@@ -599,29 +599,29 @@ void SelectVideoMode(ImagePtr title)
 	sel = mode + 1;
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;   
-		u16     x = 70;
-		u16     y = 42;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;	 
+		u16 	x = 70;
+		u16 	y = 42;
+		u32 	pressed = 0;
 				
 		StartScene();
-		        
-		DrawImage(title);		
-		DrawImage(back);        
+				
+		DrawImage(title);
+		DrawImage(back);
 
 		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 3*fh; 
 		
-		mode = vmode;		
+		mode = vmode;
 			
 		DrawStringS(x - 10, y + (mode * fh) + ((mode >= VIDEO_288P) ? fh/2 : 0) + ((mode >= VIDEO_480P_SL) ? fh/2 - 1: 0),
 					0x00, 0xff, 0x00, ">"); 
 		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;				
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480p/240p assets (1:1/NTSC)"); y += fh; c++;
 		
 		y += fh/2;
 		if(Options.EnablePAL)
@@ -630,13 +630,13 @@ void SelectVideoMode(ImagePtr title)
 			{
 				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
 				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 264/240p assets (PAL)"); y += fh; c++;
-				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i 528/480/240p assets (1:1/PAL)"); y += fh; c++;			
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i 528/480/240p assets (1:1/PAL)"); y += fh; c++;
 			}
 			else
 			{
 				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p (stretched)"); y += fh; c++;
 				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 264/240p assets (stretched/PAL)"); y += fh; c++;
-				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i 528/480/240p assets (stretched/PAL)"); y += fh; c++;			
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i 528/480/240p assets (stretched/PAL)"); y += fh; c++;
 			}
 		}
 		else
@@ -644,55 +644,55 @@ void SelectVideoMode(ImagePtr title)
 			if(!Options.PALScale576)
 			{
 				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "288p"); y += fh; c++;
-				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i scaled 264/240p assets (PAL)"); y += fh; c++;						
-				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i 528/480/240p assets (1:1/PAL)"); y += fh; c++;			
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i scaled 264/240p assets (PAL)"); y += fh; c++;
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i 528/480/240p assets (1:1/PAL)"); y += fh; c++;
 			}
 			else
 			{
 				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "288p (stretched)"); y += fh; c++;
 				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i scaled 264/240p assets (stretched/PAL)"); y += fh; c++;
-				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i 528/480/240p assets (stretched/PAL)"); y += fh; c++;			
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i 528/480/240p assets (stretched/PAL)"); y += fh; c++;
 			}
-		}			
+		}
 		
 		y += fh/2;
 		if(Options.Activate480p && VIDEO_HaveComponentCable())
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p scaled 240p assets & scanlines"); y += fh; c++;
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;
 		}
 		else
 		{
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p scaled 240p assets & scanlines"); y += fh; c++;
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;			
-		}			
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;
+		}
 			
-		DrawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
-				
+		DrawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu");
+		
 #ifdef WII_VERSION
 		DrawStringS(x+40, 200, r, g, b, "Press HOME for help");
 #else
 		DrawStringS(x+40, 200, r, g, b, "Press START for help");
-#endif				
-		EndScene();		
-        
-        ControllerScan();
+#endif
+		EndScene();
+		
+		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }	
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;	
+		}	
 
 		if(pressed & PAD_BUTTON_START)
 		{
@@ -701,11 +701,11 @@ void SelectVideoMode(ImagePtr title)
 			HelpData = GENERALHELP;
 		}		
 			
-		if ( pressed & PAD_BUTTON_B ) 		
+		if ( pressed & PAD_BUTTON_B )
 			close = 1;	
 	
 		if (pressed & PAD_BUTTON_A)
-		{     
+		{	  
 			switch(sel)
 			{			
 				case 1:
@@ -747,7 +747,7 @@ void SelectVideoMode(ImagePtr title)
 						SetVideoMode(VIDEO_480P_SL);
 						SetupGX();
 					}
-					break;					
+					break;
 				case 8:
 					if(Options.Activate480p && VIDEO_HaveComponentCable())
 					{
@@ -763,8 +763,8 @@ void SelectVideoMode(ImagePtr title)
 					break;
 				default:
 					break;
-			} 			            										
-		}		
+			}
+		}
 	}
 	FreeImage(&back);
 
@@ -805,81 +805,81 @@ void ChangePALBackgroundColor(ImagePtr title)
 		
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;				    					   
-		u16     x = 80;
-		u16     y = 70;		
-        u32     pressed = 0, held = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = 80;
+		u16 	y = 70;
+		u32 	pressed = 0, held = 0;
 		char	color[80];
 		
 		block->r = Options.PalBackR;
 		block->g = Options.PalBackG;
 		block->b = Options.PalBackB;
-				
+
 		StartScene();
-		        
-		DrawImage(title);        
+
+		DrawImage(title);
 		DrawImage(back);
 		DrawImage(blackblock);
 		DrawImage(block);
 
 		DrawStringS(x - 20, y, 0x00, 0xff, 0x00, "PAL background color"); y += 2*fh; 
 		
-		sprintf(color, "Red:    0x%X", Options.PalBackR);
+		sprintf(color, "Red:	0x%X", Options.PalBackR);
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, color); y += fh; c++;		
-		sprintf(color, "Green:  0x%X", Options.PalBackG);
+		sprintf(color, "Green:	0x%X", Options.PalBackG);
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, color); y += fh; c++;		
-		sprintf(color, "Blue:   0x%X", Options.PalBackB);
+		sprintf(color, "Blue:	0x%X", Options.PalBackB);
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, color); y += fh; c++;	
 
 		DrawStringS(x, y + fh, r, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Options Menu"); 	
 		
-		DrawStringS(x-40, y + 6*fh, r-0x30, g-0x30, b-0x30, "The background color is used to fill the screen"); 	
-		DrawStringS(x-40, y + 7*fh, r-0x30, g-0x30, b-0x30, "to the selected PAL resolution when needed"); 	
+		DrawStringS(x-40, y + 6*fh, r-0x30, g-0x30, b-0x30, "The background color is used to fill the screen");
+		DrawStringS(x-40, y + 7*fh, r-0x30, g-0x30, b-0x30, "to the selected PAL resolution when needed");
 		
-#ifdef WII_VERSION					
+#ifdef WII_VERSION
 		if(sel != c)
 		{
 			if(ControllerType != ControllerGC && !Options.SFCClassicController)
-				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons or Left & Right"); 										
+				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with + and - buttons or Left & Right");
 			else
-				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers or Left & Right"); 	
+				DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers or Left & Right");
 		}
 #else
-		if(sel != c)	
-			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers or Left & Right"); 										
+		if(sel != c)
+			DrawStringS(x-40, y + 4*fh, r, g, b, "Adjust with L and R triggers or Left & Right");
 #endif
 
-		EndScene();		
-        
-        ControllerScan();
+		EndScene();
+		
+		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		held = Controller_ButtonsHeld(0);
 		
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;	
+		}			
 			
-		if ( pressed & PAD_BUTTON_B ) 		
-			close = 1;	
+		if ( pressed & PAD_BUTTON_B )
+			close = 1;
 	
 		if (pressed & PAD_BUTTON_A)
-		{     
+		{
 			switch(sel)
-			{						
+			{
 				case 4:
 					close = 1;
 					break;
@@ -887,41 +887,41 @@ void ChangePALBackgroundColor(ImagePtr title)
 		}
 		
 		 
-	    if ((pressed & PAD_TRIGGER_L || held & PAD_BUTTON_LEFT) && sel == 1)
-	    {
+		if ((pressed & PAD_TRIGGER_L || held & PAD_BUTTON_LEFT) && sel == 1)
+		{
 			if(Options.PalBackR - 1 >= 0)
 				Options.PalBackR --;
-	    }
+		}
 		
 		if ((held & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 1)
-	    {
+		{
 			if(Options.PalBackR + 1 <= 255)
 				Options.PalBackR ++;
-	    }
+		}
 		
-		if ((held & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 2)		
-	    {
+		if ((held & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 2)
+		{
 			if(Options.PalBackG - 1 >= 0)
 				Options.PalBackG --;
-	    }
+		}
 		
 		if ((held & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 2)
-	    {
+		{
 			if(Options.PalBackG + 1 <= 255)
 				Options.PalBackG ++;
-	    }
+		}
 		
-		if ((held & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 3)		
-	    {
+		if ((held & PAD_TRIGGER_L || pressed & PAD_BUTTON_LEFT) && sel == 3)
+		{
 			if(Options.PalBackB - 1 >= 0)
 				Options.PalBackB --;
-	    }
+		}
 		
 		if ((held & PAD_TRIGGER_R || pressed & PAD_BUTTON_RIGHT) && sel == 3)
-	    {
+		{
 			if(Options.PalBackB + 1 <= 255)
 				Options.PalBackB ++;
-	    }
+		}
 	}
 	FreeImage(&back);		
 	FreeImage(&block);
@@ -933,9 +933,9 @@ extern GXRModeObj *rmode;
 
 void ShowVideoData()
 {
-	u16     x = 80;
-	u16     y = 80;
-	u32     pressed = 0, done = 0;
+	u16 	x = 80;
+	u16 	y = 80;
+	u32 	pressed = 0, done = 0;
 	char	data[100];
 	
 	/*
@@ -959,10 +959,10 @@ void ShowVideoData()
 		y = 40;
 		
 		StartScene();
-				
+		
 		sprintf(data, "viTVMode: %X", rmode->viTVMode);
 		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;
-				
+		
 		sprintf(data, "xfbMode: %X", rmode->xfbMode);
 		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;
 				
@@ -979,18 +979,18 @@ void ShowVideoData()
 		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;
 				
 		sprintf(data, "field_rendering: %u", rmode->field_rendering);
-		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;					
+		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;
 				
 		sprintf(data, "viXOrigin: %u", rmode->viXOrigin);
 		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;
 				
 		sprintf(data, "viYOrigin: %u", rmode->viYOrigin);
-		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;	
+		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;
 		
 		sprintf(data, "dW: %d", dW);
-		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;	
+		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;
 		sprintf(data, "dH: %d", dH);
-		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;	
+		DrawStringS(x, y, 0xff, 0xff,	0xff, data); y += fh;
 				
 		EndScene();		
 			
@@ -1004,7 +1004,7 @@ void ShowVideoData()
 
 void ShowVideoWarning(ImagePtr screen)
 {	
-	u32     	pressed = 0, done = 0;	
+	u32 		pressed = 0, done = 0;	
 	ImagePtr	Back = NULL;
 	
 	Back = LoadImage(FLOATMENUIMG, 0);
@@ -1018,20 +1018,20 @@ void ShowVideoWarning(ImagePtr screen)
 	
 	while(!done)
 	{			
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;					    					  
-		u16     x = Back->x + 20;
-		u16     y = Back->y + 10;        
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u16 	x = Back->x + 20;
+		u16 	y = Back->y + 10;
 				
 		StartScene();
 		
-		DrawImage(screen); 		
-		DrawImage(Back);       
+		DrawImage(screen);
+		DrawImage(Back);
 
-		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
+		DrawStringS(x, y, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh;
 		
-		x -= 10;			
+		x -= 10;
 		DrawStringS(x, y, r, 0, 0, "These settings"); y += fh;
 		DrawStringS(x, y, r, 0, 0, "will be ignored:"); y += fh;
 				
@@ -1052,7 +1052,7 @@ void ShowVideoWarning(ImagePtr screen)
 		ControllerScan();
 		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & PAD_BUTTON_B ) 		
+		if ( pressed & PAD_BUTTON_B )
 			done = 1;	
 	}
 	FreeImage(&Back);
@@ -1070,7 +1070,7 @@ void ShowPALBGWarning()
 
 void DrawMessageBox(ImagePtr scene, char *msg)
 {	
-	u32     	pressed = 0, done = 0;	
+	u32 		pressed = 0, done = 0;	
 	ImagePtr	Back = NULL;
 	
 	if(scene)
@@ -1086,11 +1086,11 @@ void DrawMessageBox(ImagePtr scene, char *msg)
 	
 	while(!done)
 	{			
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;					    					  
-		u16     x = Back->x + 50;
-		u16     y = Back->y + 90;        
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u16 	x = Back->x + 50;
+		u16 	y = Back->y + 90;
 				
 		StartScene();
 		
@@ -1107,13 +1107,13 @@ void DrawMessageBox(ImagePtr scene, char *msg)
 		ControllerScan();
 		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & PAD_BUTTON_B ) 		
-			done = 1;	
+		if ( pressed & PAD_BUTTON_B ) 
+			done = 1;
 	}
 	
 	FreeImage(&Back);
 	if(scene)
-	{	
+	{
 		scene->r = 0xff;
 		scene->g = 0xff;
 		scene->b = 0xff;
@@ -1123,8 +1123,8 @@ void DrawMessageBox(ImagePtr scene, char *msg)
 
 void DrawCredits(ImagePtr Back)
 {
-	int 		done = 0, r, g, b;	
-    u32     	pressed = 0;
+	int 		done = 0, r, g, b;
+	u32 		pressed = 0;
 	char		data[50];
 	ImagePtr	qr = NULL;
 #ifdef WII_VERSION
@@ -1134,12 +1134,12 @@ void DrawCredits(ImagePtr Back)
 	
 	if (CONF_GetShopCode(&shopcode) >= 0) {
 		sprintf(shop, "Shop: %s\n", (strlen(CONF_CountryCodes[shopcode]) ? CONF_CountryCodes[shopcode] : "Unknown Country"));
-	} else {		
-		sprintf(shop, "Error getting shop code!\n");			
+	} else {
+		sprintf(shop, "Error getting shop code!\n");
 	}
 #endif
 
-    if(Back)
+	if(Back)
 	{
 		r = Back->r;
 		g = Back->b;
@@ -1158,16 +1158,16 @@ void DrawCredits(ImagePtr Back)
 	
 	while(!done && !EndProgram)  
 	{
-		int x = 20, x2 = 180, y = 10, y2 = 0;			
+		int x = 20, x2 = 180, y = 10, y2 = 0;
 
 		StartScene();
-		        
+
 		DrawImage(Back);
 		DrawImage(qr);
 		
-        DrawStringS(x, y, 0x00, 0xff, 0x00, "Code and Patterns:"); y += fh; 
-        DrawStringS(x, y, 0xff, 0xff, 0xff, "Artemio Urbina"); y += fh; 
-		sprintf(data, "@Artemio (twitter)");					
+		DrawStringS(x, y, 0x00, 0xff, 0x00, "Code and Patterns:"); y += fh; 
+		DrawStringS(x, y, 0xff, 0xff, 0xff, "Artemio Urbina"); y += fh; 
+		sprintf(data, "@Artemio (twitter)");
 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Support and suggestions:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, data); y += fh; 
@@ -1175,12 +1175,12 @@ void DrawCredits(ImagePtr Back)
 		y += fh; 
 		y2 = y;
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "devkitPPC"); y += fh; 	
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "devkitPPC"); y += fh;
 		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope Pattern:"); y2 += fh; 
 		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney (@khmr33)"); y2 += fh;
 		
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Donna Art:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Jose Salot (@pepe_salot)"); y += fh; 	
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Jose Salot (@pepe_salot)"); y += fh;
 		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y2 += fh; 
 		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
 		
@@ -1190,7 +1190,7 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "shmups regulars"); y2 += fh;
  
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "PAL testing:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Yamato"); y += fh; 		
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Yamato"); y += fh; 
 		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "MDFourier help:"); y2 += fh; 
 		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Extrems"); y2 += fh;
 		
@@ -1201,13 +1201,13 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "pinobatch"); y2 += fh;
 #ifdef GC_VERSION
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "GameCube Tools:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Rolman"); y += fh; 	
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "Rolman"); y += fh;
 #endif
 		y += fh; 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
 		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "http://junkerhq.net/240p/"); y += 3*fh; 
 
-		DrawStringS(x, y, 0x00, 0xba, 0xba, "This program is free Software.");  y += fh;
+		DrawStringS(x, y, 0x00, 0xba, 0xba, "This program is free Software.");	y += fh;
 		DrawStringS(x, y, 0x00, 0xba, 0xba, "Source code is available under GPL.");  y += fh;
 #ifdef WII_VERSION
 		DrawStringS(x, y, 0x00, 0xba, 0xba, "Includes libcheckregion."); y += fh;
@@ -1219,21 +1219,21 @@ void DrawCredits(ImagePtr Back)
 		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_NUMBER); y += fh;
 		DrawStringS(200, y, 0x0f, 0xff, 0xff, VERSION_DATE); y += 2*fh;
 
-#ifdef WII_VERSION				
+#ifdef WII_VERSION
 		DrawStringS(200, y, 0xee, 0xee, 0xee, shop); y += fh;
 		DrawStringS(200, y, 0xee, 0xee, 0xee, wiiregion); y += fh;
 #endif
 
-		EndScene();		
+		EndScene();
 		
 		ControllerScan();
 		pressed = Controller_ButtonsDown(0);
 				
-        if (pressed & PAD_TRIGGER_R)
+		if (pressed & PAD_TRIGGER_R)
 		{
 			int 		check = 0;
-			u32			press;		
-			ImagePtr	nish;	
+			u32			press;
+			ImagePtr	nish;
 			
 #ifdef WII_VERSION
 			nish = LoadImage(NISHIMG, 0);
@@ -1241,7 +1241,7 @@ void DrawCredits(ImagePtr Back)
 			nish = LoadImage(NISHGCIMG, 0);
 #endif
 			if(nish)
-			{					
+			{
 				while(!check) 
 				{		
 					check = 1;
@@ -1252,14 +1252,14 @@ void DrawCredits(ImagePtr Back)
 					press = Controller_ButtonsHeld(0);
 							
 					if (press & PAD_TRIGGER_R)
-						check =	0;								
+						check =	0;
 				}
 				FreeImage(&nish);
 			}
 		}
 		
 		if (pressed & PAD_BUTTON_B)
-			done =	1;		
+			done =	1;
 	}
 	
 	if(Back)
@@ -1272,7 +1272,7 @@ void DrawCredits(ImagePtr Back)
 }
 
 void DrawIntro()
-{    
+{
 	u32				counter, frames = 60;
 	int				delta;
 	ImagePtr		black;
@@ -1298,7 +1298,7 @@ void DrawIntro()
 		DrawStringS(120, 115, 0xff, 0xff, 0xff, "KORDAMP PRESENTS");
 		DrawImage(black);
 		
-		EndScene();		
+		EndScene();
 
 		if(counter == frames)
 			delta *= -1;
@@ -1313,7 +1313,7 @@ int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_
 
 int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selected_option, char **helpfile)
 {
-	int 		sel = selected_option, close = 0, value = MENU_CANCEL;		
+	int 		sel = selected_option, close = 0, value = MENU_CANCEL;
 	ImagePtr	Back = NULL;
 	
 	Back = LoadImage(FLOATMENUIMG, 0);
@@ -1327,18 +1327,18 @@ int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selecte
 	   
 	while(!close) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1, i = 0;				    					   
-		u16     x = Back ? Back->x + 20 : 100;
-		u16     y = Back ? Back->y + 10 : 60;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1, i = 0;
+		u16 	x = Back ? Back->x + 20 : 100;
+		u16 	y = Back ? Back->y + 10 : 60;
+		u32 	pressed = 0;
 		
 		StartScene();
 		
-		if(Back)        
-			DrawImage(Back);       
+		if(Back)
+			DrawImage(Back);
 
 		DrawStringS(x, y, 0x00, 0xff, 0x00, title); y += 3*fh;
 
@@ -1350,39 +1350,39 @@ int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selecte
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, menu_data[i].option_text);
 			y += fh; c++;		
 		}
-        
+		
 		y += fh;
 		
 		if(num_options <= 6)
 			y += fh;
 		
-		DrawStringS(x+2*fw, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");		
+		DrawStringS(x+2*fw, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
 		
 		if(helpfile)
 			DrawStringS(x-2*fw, y+2*fh, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
-								
-		EndScene();		
+
+		EndScene();
 		
 		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}			
 
 		if (pressed & PAD_BUTTON_B || 
-			(!helpfile && pressed & PAD_BUTTON_START))				
+			(!helpfile && pressed & PAD_BUTTON_START))
 		{
 			close = 1;	
 			value = MENU_CANCEL;
@@ -1396,7 +1396,7 @@ int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selecte
 		}
 	
 		if (pressed & PAD_BUTTON_A)
-		{     
+		{	  
 			close = 1;
 
 			if(sel == c)
@@ -1419,9 +1419,9 @@ void GetWiiRegion()
 {
 	s32 ret;
 	char serialcode[SERIALCODE_SIZE] = "???\0";
-	char model[MODEL_SIZE] = {0};	
+	char model[MODEL_SIZE] = {0};
 	
-	ret = CONF_GetSerialCode(serialcode);	
+	ret = CONF_GetSerialCode(serialcode);
 	switch (ret) {
 		case CONF_CODE_JPN:
 			// LJF - Confirmed
@@ -1501,14 +1501,14 @@ void GetWiiRegion()
 		case CONF_CODE_VAUSO:
 			sprintf(wiiregion, "32GB Australian Wii U");
 			break;
-		case CONF_EBADVALUE:			
-			if (!CONF_GetModel(model)) 
+		case CONF_EBADVALUE:
+			if (!CONF_GetModel(model))
 				sprintf(wiiregion, "Unknown SC %s model %s", serialcode, model);
 			else
-				sprintf(wiiregion, "Unknown SC %s", serialcode);			
+				sprintf(wiiregion, "Unknown SC %s", serialcode);
 			break;
 		default:
-			sprintf(wiiregion, "Error getting region");			
+			sprintf(wiiregion, "Error getting region");	
 			break;
 	}
 }

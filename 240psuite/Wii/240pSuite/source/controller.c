@@ -77,44 +77,44 @@ char *ControlNamesWiiSFC_CC[] = {
 
 s32 ControllerInit()
 {
-    s32 retval;
+	s32 retval;
 
-    retval = PAD_Init();
+	retval = PAD_Init();
 #ifdef WII_VERSION
-    retval |= WPAD_Init();
-    WPAD_SetIdleTimeout(200);
-#endif    
-    return retval;
+	retval |= WPAD_Init();
+	WPAD_SetIdleTimeout(200);
+#endif
+	return retval;
 }
 
 s32 ControllerScan()
 {
-    s32 retval = 0;
+	s32 retval = 0;
 
-    retval = PAD_ScanPads();
+	retval = PAD_ScanPads();
 #ifdef WII_VERSION
-    retval |= WPAD_ScanPads();
-#endif        
-    return retval;
+	retval |= WPAD_ScanPads();
+#endif
+	return retval;
 }
 
 u32 Controller_ButtonsDown(int chan)
 {
-    u32 retval = 0;
+	u32 retval = 0;
 	int x, y;
 
 	// Checks GC controllers
-    retval = PAD_ButtonsDown(chan);
+	retval = PAD_ButtonsDown(chan);
 	
-    if(retval)
+	if(retval)
 		ControllerType = ControllerGC;
 		
-    x  = PAD_StickX(0);
-    y  = PAD_StickY(0);
-    if (x > JOYTHSHLD)
+	x  = PAD_StickX(0);
+	y  = PAD_StickY(0);
+	if (x > JOYTHSHLD)
 	{
 		JoyCountX++;
-		if(JoyCountX > MINFRAMES)			
+		if(JoyCountX > MINFRAMES)
 		{
 			retval |= PAD_BUTTON_RIGHT;
 			JoyCountX = 0;
@@ -123,7 +123,7 @@ u32 Controller_ButtonsDown(int chan)
 	if (x < -JOYTHSHLD) 
 	{
 		JoyCountX++;
-		if(JoyCountX > MINFRAMES)			
+		if(JoyCountX > MINFRAMES)
 		{
 			retval |= PAD_BUTTON_LEFT;
 			JoyCountX = 0;
@@ -132,7 +132,7 @@ u32 Controller_ButtonsDown(int chan)
 	if (y > JOYTHSHLD) 
 	{ 
 		JoyCountY++;
-		if(JoyCountY > MINFRAMES)			
+		if(JoyCountY > MINFRAMES)
 		{
 			retval |= PAD_BUTTON_UP;
 			JoyCountY = 0;
@@ -141,7 +141,7 @@ u32 Controller_ButtonsDown(int chan)
 	if (y < -JOYTHSHLD) 
 	{
 		JoyCountY++;
-		if(JoyCountY > MINFRAMES)			
+		if(JoyCountY > MINFRAMES)
 		{
 			retval |= PAD_BUTTON_DOWN;
 			JoyCountY = 0;
@@ -149,55 +149,55 @@ u32 Controller_ButtonsDown(int chan)
 	}	
 	 
 #ifdef WII_VERSION
-    u32 wiistate = 0, found = 0;
+	u32 wiistate = 0, found = 0;
 
 // WiiPad
 	wiistate = WPAD_ButtonsDown(chan);	
 	found = retval;
 
-    if( wiistate & WPAD_BUTTON_LEFT )
-        retval |= PAD_BUTTON_LEFT;
-    if( wiistate & WPAD_BUTTON_RIGHT )
-        retval |= PAD_BUTTON_RIGHT;
-    if( wiistate & WPAD_BUTTON_DOWN )
-        retval |= PAD_BUTTON_DOWN;
-    if( wiistate & WPAD_BUTTON_UP )
-        retval |= PAD_BUTTON_UP;
+	if( wiistate & WPAD_BUTTON_LEFT )
+		retval |= PAD_BUTTON_LEFT;
+	if( wiistate & WPAD_BUTTON_RIGHT )
+		retval |= PAD_BUTTON_RIGHT;
+	if( wiistate & WPAD_BUTTON_DOWN )
+		retval |= PAD_BUTTON_DOWN;
+	if( wiistate & WPAD_BUTTON_UP )
+		retval |= PAD_BUTTON_UP;
 
-    if( wiistate & WPAD_BUTTON_HOME )
-        retval |= PAD_BUTTON_START;
-    if( wiistate & WPAD_BUTTON_A )
-        retval |= PAD_BUTTON_A;
-    if( wiistate & WPAD_BUTTON_B )
-        retval |= PAD_BUTTON_B;
-    if( wiistate & WPAD_BUTTON_1 )
-        retval |= PAD_BUTTON_X;
-    if( wiistate & WPAD_BUTTON_2 )
-        retval |= PAD_BUTTON_Y;
-    if( wiistate & WPAD_BUTTON_PLUS )
-        retval |= PAD_TRIGGER_R;
-    if( wiistate & WPAD_BUTTON_MINUS )
-        retval |= PAD_TRIGGER_L;  
+	if( wiistate & WPAD_BUTTON_HOME )
+		retval |= PAD_BUTTON_START;
+	if( wiistate & WPAD_BUTTON_A )
+		retval |= PAD_BUTTON_A;
+	if( wiistate & WPAD_BUTTON_B )
+		retval |= PAD_BUTTON_B;
+	if( wiistate & WPAD_BUTTON_1 )
+		retval |= PAD_BUTTON_X;
+	if( wiistate & WPAD_BUTTON_2 )
+		retval |= PAD_BUTTON_Y;
+	if( wiistate & WPAD_BUTTON_PLUS )
+		retval |= PAD_TRIGGER_R;
+	if( wiistate & WPAD_BUTTON_MINUS )
+		retval |= PAD_TRIGGER_L;  
 		
-    if(found != retval)
+	if(found != retval)
 		ControllerType = ControllerWiimote;
 
-    found = retval;
-    // Wii Classic Controller
-    WPADData *data = WPAD_Data(0);
-    if (data && data->exp.type == WPAD_EXP_CLASSIC)
-    {
-        int x, y, overflow;        
+	found = retval;
+	// Wii Classic Controller
+	WPADData *data = WPAD_Data(0);
+	if (data && data->exp.type == WPAD_EXP_CLASSIC)
+	{
+		int x, y, overflow; 	   
 
-        if( wiistate & WPAD_CLASSIC_BUTTON_LEFT )
-            retval |= PAD_BUTTON_LEFT;
-        if( wiistate & WPAD_CLASSIC_BUTTON_RIGHT )
-            retval |= PAD_BUTTON_RIGHT;
-        if( wiistate & WPAD_CLASSIC_BUTTON_DOWN )
-            retval |= PAD_BUTTON_DOWN;
-        if( wiistate & WPAD_CLASSIC_BUTTON_UP )
-            retval |= PAD_BUTTON_UP;
-    
+		if( wiistate & WPAD_CLASSIC_BUTTON_LEFT )
+			retval |= PAD_BUTTON_LEFT;
+		if( wiistate & WPAD_CLASSIC_BUTTON_RIGHT )
+			retval |= PAD_BUTTON_RIGHT;
+		if( wiistate & WPAD_CLASSIC_BUTTON_DOWN )
+			retval |= PAD_BUTTON_DOWN;
+		if( wiistate & WPAD_CLASSIC_BUTTON_UP )
+			retval |= PAD_BUTTON_UP;
+	
 		if(Options.SFCClassicController)
 		{
 			if( wiistate & WPAD_CLASSIC_BUTTON_PLUS )
@@ -216,34 +216,34 @@ u32 Controller_ButtonsDown(int chan)
 			if( wiistate & WPAD_CLASSIC_BUTTON_MINUS )
 				retval |= PAD_TRIGGER_L;  
 		}
-			        
-        if( wiistate & WPAD_CLASSIC_BUTTON_A )
-            retval |= PAD_BUTTON_A;
-        if( wiistate & WPAD_CLASSIC_BUTTON_B )
-            retval |= PAD_BUTTON_B;
-        if( wiistate & WPAD_CLASSIC_BUTTON_X )
-            retval |= PAD_BUTTON_X;
-        if( wiistate & WPAD_CLASSIC_BUTTON_Y )
-            retval |= PAD_BUTTON_Y;        
-        
+					
+		if( wiistate & WPAD_CLASSIC_BUTTON_A )
+			retval |= PAD_BUTTON_A;
+		if( wiistate & WPAD_CLASSIC_BUTTON_B )
+			retval |= PAD_BUTTON_B;
+		if( wiistate & WPAD_CLASSIC_BUTTON_X )
+			retval |= PAD_BUTTON_X;
+		if( wiistate & WPAD_CLASSIC_BUTTON_Y )
+			retval |= PAD_BUTTON_Y;
+		
 		overflow = 0;		
 		
-        x = data->exp.classic.ljs.pos.x;    		
-        if(x > data->exp.classic.ljs.max.x)
+		x = data->exp.classic.ljs.pos.x;
+		if(x > data->exp.classic.ljs.max.x)
 		{
 			overflow = 1;
 			JoyCountX++;
-			if(JoyCountX > MINFRAMES)			
+			if(JoyCountX > MINFRAMES)
 			{
 				retval |= PAD_BUTTON_RIGHT;
 				JoyCountX = 0;
 			}
 		}
-        if(x < data->exp.classic.ljs.min.x)
+		if(x < data->exp.classic.ljs.min.x)
 		{
 			overflow = 1;
 			JoyCountX++;
-			if(JoyCountX > MINFRAMES)			
+			if(JoyCountX > MINFRAMES)
 			{
 				retval |= PAD_BUTTON_LEFT;
 				JoyCountX = 0;
@@ -256,7 +256,7 @@ u32 Controller_ButtonsDown(int chan)
 			if(x > JOYTHSHLD)
 			{
 				JoyCountX++;
-				if(JoyCountX > MINFRAMES)			
+				if(JoyCountX > MINFRAMES)
 				{
 					retval |= PAD_BUTTON_RIGHT;
 					JoyCountX = 0;
@@ -265,19 +265,19 @@ u32 Controller_ButtonsDown(int chan)
 			if(x < -1*JOYTHSHLD)
 			{
 				JoyCountX++;
-				if(JoyCountX > MINFRAMES)			
+				if(JoyCountX > MINFRAMES)
 				{
 					retval |= PAD_BUTTON_LEFT;
 					JoyCountX = 0;
 				}
 			}
 		}
-        
+		
 		overflow = 0;
 		
-        y = data->exp.classic.ljs.pos.y;         
+		y = data->exp.classic.ljs.pos.y;
 		
-        if(y > data->exp.classic.ljs.max.y)
+		if(y > data->exp.classic.ljs.max.y)
 		{
 			overflow = 1;
 			JoyCountY++;
@@ -287,7 +287,7 @@ u32 Controller_ButtonsDown(int chan)
 				JoyCountY = 0;
 			}
 		}
-        if(y < data->exp.classic.ljs.min.y)
+		if(y < data->exp.classic.ljs.min.y)
 		{
 			overflow = 1;
 			JoyCountY++;
@@ -322,37 +322,37 @@ u32 Controller_ButtonsDown(int chan)
 		}
 		
 		if(found != retval)
-			ControllerType = ControllerWiiClassic;   
-    }
+			ControllerType = ControllerWiiClassic;
+	}
 	
-    if (data && data->exp.type == WPAD_EXP_NUNCHUK)
-    {
-        int x, y, overflow;               
+	if (data && data->exp.type == WPAD_EXP_NUNCHUK)
+	{
+		int x, y, overflow;
 		
 		if( wiistate & WPAD_NUNCHUK_BUTTON_C )
-            retval |= PAD_BUTTON_A;        
-    
-        if( wiistate & WPAD_NUNCHUK_BUTTON_Z )
-            retval |= PAD_BUTTON_B;                
-        
-		overflow = 0;		
+			retval |= PAD_BUTTON_A;
+	
+		if( wiistate & WPAD_NUNCHUK_BUTTON_Z )
+			retval |= PAD_BUTTON_B;
 		
-        x = data->exp.nunchuk.js.pos.x;    		
-        if(x > data->exp.nunchuk.js.max.x)
+		overflow = 0;
+		
+		x = data->exp.nunchuk.js.pos.x;    		
+		if(x > data->exp.nunchuk.js.max.x)
 		{
 			overflow = 1;
 			JoyCountX++;
-			if(JoyCountX > MINFRAMES)			
+			if(JoyCountX > MINFRAMES)
 			{
 				retval |= PAD_BUTTON_RIGHT;
 				JoyCountX = 0;
 			}
 		}
-        if(x < data->exp.nunchuk.js.min.x)
+		if(x < data->exp.nunchuk.js.min.x)
 		{
 			overflow = 1;
 			JoyCountX++;
-			if(JoyCountX > MINFRAMES)			
+			if(JoyCountX > MINFRAMES)
 			{
 				retval |= PAD_BUTTON_LEFT;
 				JoyCountX = 0;
@@ -365,7 +365,7 @@ u32 Controller_ButtonsDown(int chan)
 			if(x > JOYTHSHLD)
 			{
 				JoyCountX++;
-				if(JoyCountX > MINFRAMES)			
+				if(JoyCountX > MINFRAMES)
 				{
 					retval |= PAD_BUTTON_RIGHT;
 					JoyCountX = 0;
@@ -374,19 +374,19 @@ u32 Controller_ButtonsDown(int chan)
 			if(x < -1*JOYTHSHLD)
 			{
 				JoyCountX++;
-				if(JoyCountX > MINFRAMES)			
+				if(JoyCountX > MINFRAMES)
 				{
 					retval |= PAD_BUTTON_LEFT;
 					JoyCountX = 0;
 				}
 			}
 		}
-        
+		
 		overflow = 0;
 		
-        y = data->exp.nunchuk.js.pos.y;         
+		y = data->exp.nunchuk.js.pos.y;
 		
-        if(y > data->exp.nunchuk.js.max.y)
+		if(y > data->exp.nunchuk.js.max.y)
 		{
 			overflow = 1;
 			JoyCountY++;
@@ -396,7 +396,7 @@ u32 Controller_ButtonsDown(int chan)
 				JoyCountY = 0;
 			}
 		}
-        if(y < data->exp.nunchuk.js.min.y)
+		if(y < data->exp.nunchuk.js.min.y)
 		{
 			overflow = 1;
 			JoyCountY++;
@@ -429,8 +429,8 @@ u32 Controller_ButtonsDown(int chan)
 				}
 			}
 		}
-    }
-#endif  
+	}
+#endif
 
 	// Emergency exit
 	{
@@ -440,28 +440,28 @@ u32 Controller_ButtonsDown(int chan)
 			(held & PAD_TRIGGER_R) && (held & PAD_TRIGGER_L))
 			EndProgram = 1;
 	}
-    return retval;
+	return retval;
 }
 
 
 u32 Controller_ButtonsHeld(int chan)
 {
-    u32 retval;
+	u32 retval;
 	int x, y;
 
-    retval = PAD_ButtonsHeld(chan);
+	retval = PAD_ButtonsHeld(chan);
 	x  = PAD_StickX(0);
-    y  = PAD_StickY(0);
-    if (x > JOYTHSHLD)
-       retval |= PAD_BUTTON_RIGHT;
+	y  = PAD_StickY(0);
+	if (x > JOYTHSHLD)
+	   retval |= PAD_BUTTON_RIGHT;
 	if (x < -JOYTHSHLD) 
 		retval |= PAD_BUTTON_LEFT;
-	if (y > JOYTHSHLD)  
+	if (y > JOYTHSHLD)	
 		retval |= PAD_BUTTON_UP;
 	if (y < -JOYTHSHLD) 
 		retval |= PAD_BUTTON_DOWN;
 		
-#ifdef WII_VERSION    
+#ifdef WII_VERSION
 	u32 wiistate;
 
 	wiistate = WPAD_ButtonsHeld(chan);
@@ -489,21 +489,21 @@ u32 Controller_ButtonsHeld(int chan)
 	if( wiistate & WPAD_BUTTON_MINUS )
 		retval |= PAD_TRIGGER_L;  
 
-    WPADData *data = WPAD_Data(0);
-    if (data && data->exp.type == WPAD_EXP_CLASSIC)
-    {
-        int x, y, overflow;        
+	WPADData *data = WPAD_Data(0);
+	if (data && data->exp.type == WPAD_EXP_CLASSIC)
+	{
+		int x, y, overflow;
 
-        if( wiistate & WPAD_CLASSIC_BUTTON_LEFT )
-            retval |= PAD_BUTTON_LEFT;
-        if( wiistate & WPAD_CLASSIC_BUTTON_RIGHT )
-            retval |= PAD_BUTTON_RIGHT;
-        if( wiistate & WPAD_CLASSIC_BUTTON_DOWN )
-            retval |= PAD_BUTTON_DOWN;
-        if( wiistate & WPAD_CLASSIC_BUTTON_UP )
-            retval |= PAD_BUTTON_UP;
-    
-        if(Options.SFCClassicController)
+		if( wiistate & WPAD_CLASSIC_BUTTON_LEFT )
+			retval |= PAD_BUTTON_LEFT;
+		if( wiistate & WPAD_CLASSIC_BUTTON_RIGHT )
+			retval |= PAD_BUTTON_RIGHT;
+		if( wiistate & WPAD_CLASSIC_BUTTON_DOWN )
+			retval |= PAD_BUTTON_DOWN;
+		if( wiistate & WPAD_CLASSIC_BUTTON_UP )
+			retval |= PAD_BUTTON_UP;
+	
+		if(Options.SFCClassicController)
 		{
 			if( wiistate & WPAD_CLASSIC_BUTTON_PLUS )
 				retval |= PAD_BUTTON_START;
@@ -522,27 +522,27 @@ u32 Controller_ButtonsHeld(int chan)
 				retval |= PAD_TRIGGER_L;  
 		}
 
-        if( wiistate & WPAD_CLASSIC_BUTTON_A )
-            retval |= PAD_BUTTON_A;
-        if( wiistate & WPAD_CLASSIC_BUTTON_B )
-            retval |= PAD_BUTTON_B;
-        if( wiistate & WPAD_CLASSIC_BUTTON_X )
-            retval |= PAD_BUTTON_X;
-        if( wiistate & WPAD_CLASSIC_BUTTON_Y )
-            retval |= PAD_BUTTON_Y;        
-       
+		if( wiistate & WPAD_CLASSIC_BUTTON_A )
+			retval |= PAD_BUTTON_A;
+		if( wiistate & WPAD_CLASSIC_BUTTON_B )
+			retval |= PAD_BUTTON_B;
+		if( wiistate & WPAD_CLASSIC_BUTTON_X )
+			retval |= PAD_BUTTON_X;
+		if( wiistate & WPAD_CLASSIC_BUTTON_Y )
+			retval |= PAD_BUTTON_Y; 	   
+	   
 		overflow = 0;
 		
-        x = data->exp.classic.ljs.pos.x;    		
-        if(x > data->exp.classic.ljs.max.x)
+		x = data->exp.classic.ljs.pos.x;
+		if(x > data->exp.classic.ljs.max.x)
 		{
 			overflow = 1;
-            retval |= PAD_BUTTON_RIGHT;
+			retval |= PAD_BUTTON_RIGHT;
 		}
-        if(x < data->exp.classic.ljs.min.x)
+		if(x < data->exp.classic.ljs.min.x)
 		{
 			overflow = 1;
-            retval |= PAD_BUTTON_LEFT;
+			retval |= PAD_BUTTON_LEFT;
 		}		
 			
 		if(!overflow)
@@ -556,17 +556,17 @@ u32 Controller_ButtonsHeld(int chan)
 		
 		overflow = 0;
 		
-        y = data->exp.classic.ljs.pos.y;         
+		y = data->exp.classic.ljs.pos.y;
 		
-        if(y > data->exp.classic.ljs.max.y)
+		if(y > data->exp.classic.ljs.max.y)
 		{
 			overflow = 1;
-            retval |= PAD_BUTTON_UP;
+			retval |= PAD_BUTTON_UP;
 		}
-        if(y < data->exp.classic.ljs.min.y)
+		if(y < data->exp.classic.ljs.min.y)
 		{
 			overflow = 1;
-            retval |= PAD_BUTTON_DOWN;
+			retval |= PAD_BUTTON_DOWN;
 		}		
 			
 		if(!overflow)
@@ -577,24 +577,24 @@ u32 Controller_ButtonsHeld(int chan)
 			if(y < -1*JOYTHSHLD)
 				retval |= PAD_BUTTON_DOWN;
 		}
-    }
+	}
 
 	if (data && data->exp.type == WPAD_EXP_NUNCHUK)
-    {
-        int x, y, overflow;        
-        		
-        overflow = 0;
+	{
+		int x, y, overflow;
+				
+		overflow = 0;
 		
-		x = data->exp.nunchuk.js.pos.x;    		
-        if(x > data->exp.nunchuk.js.max.x)
+		x = data->exp.nunchuk.js.pos.x;
+		if(x > data->exp.nunchuk.js.max.x)
 		{
 			overflow = 1;
-            retval |= PAD_BUTTON_RIGHT;
+			retval |= PAD_BUTTON_RIGHT;
 		}
-        if(x < data->exp.nunchuk.js.min.x)
+		if(x < data->exp.nunchuk.js.min.x)
 		{
 			overflow = 1;
-            retval |= PAD_BUTTON_LEFT;
+			retval |= PAD_BUTTON_LEFT;
 		}		
 			
 		if(!overflow)
@@ -605,20 +605,20 @@ u32 Controller_ButtonsHeld(int chan)
 			if(x < -1*JOYTHSHLD)
 				retval |= PAD_BUTTON_LEFT;
 		}
-        
+		
 		overflow = 0;
 		
-        y = data->exp.nunchuk.js.pos.y;         
+		y = data->exp.nunchuk.js.pos.y;
 		
-        if(y > data->exp.nunchuk.js.max.y)
+		if(y > data->exp.nunchuk.js.max.y)
 		{
 			overflow = 1;
-            retval |= PAD_BUTTON_UP;
+			retval |= PAD_BUTTON_UP;
 		}
-        if(y < data->exp.nunchuk.js.min.y)
+		if(y < data->exp.nunchuk.js.min.y)
 		{
 			overflow = 1;
-            retval |= PAD_BUTTON_DOWN;
+			retval |= PAD_BUTTON_DOWN;
 		}		
 			
 		if(!overflow)
@@ -629,18 +629,18 @@ u32 Controller_ButtonsHeld(int chan)
 			if(y < -1*JOYTHSHLD)
 				retval |= PAD_BUTTON_DOWN;
 		}
-    }
+	}
 
-#endif    
-    return retval;
+#endif	  
+	return retval;
 }
 
 u8 ControllerBattery(int chan)
 {
 	u8 level = 0;
 	
-#ifdef WII_VERSION   
-	level = WPAD_BatteryLevel(chan);	
+#ifdef WII_VERSION	 
+	level = WPAD_BatteryLevel(chan);
 #endif
 	return level;
 }
@@ -648,7 +648,7 @@ u8 ControllerBattery(int chan)
 void ControllerRumble(int chan, int rumble)
 {	
 	PAD_ControlMotor(chan, rumble);
-#ifdef WII_VERSION   
-    WPAD_Rumble(chan, rumble);
+#ifdef WII_VERSION	 
+	WPAD_Rumble(chan, rumble);
 #endif
 }

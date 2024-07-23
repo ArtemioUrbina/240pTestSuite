@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 {
 	int 		close = 0;	
 	ImagePtr 	Back = NULL, sd = NULL;
-	u8   		sel = 1;
+	u8	 		sel = 1;
 
 #ifdef WII_VERSION
 	SYS_SetResetCallback(WiiResetPressed);
@@ -83,23 +83,23 @@ int main(int argc, char **argv)
 		
 	SetupGX();
 
-    LoadFont();
+	LoadFont();
 	LoadScanlines();
 	
 	DrawIntro();
 	
 	Back = LoadImageMemCpy(BACKIMG, 0);
 	if(!Back)
-    {
-        ReleaseFont();
+	{
+		ReleaseFont();
 		EndProgram = 1;
-    }	
-    sd = LoadImageMemCpy(SDIMG, 0);
-    if(!sd)
-    {
-        ReleaseFont();
+	}	
+	sd = LoadImageMemCpy(SDIMG, 0);
+	if(!sd)
+	{
+		ReleaseFont();
 		EndProgram = 1;
-    }   
+	}
 	
 #ifdef WII_VERSION	
 	GetWiiRegion();
@@ -137,22 +137,22 @@ int main(int argc, char **argv)
 		
 	while(!close && !EndProgram) 
 	{
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;				    					   
-		u16     x = 60;
-		u16     y = 80;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = 60;
+		u16 	y = 80;
+		u32 	pressed = 0;
 		char 	res[100];
 		
 		StartScene();
-		        
+
 		DrawImage(Back);
-        DrawImage(sd);
+		DrawImage(sd);
 		SD_blink_cycle();
 		
-        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Video tests"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound tests"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Hardware tools"); y += 4*fh; c++; 
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
 		
 		EndScene();
 		
-        ControllerScan();
+		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 
@@ -185,7 +185,7 @@ int main(int argc, char **argv)
 			EndProgram = 1;
 #endif
 			
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 			DrawMenu = 1;	
 		
 		if ( pressed & PAD_BUTTON_UP )
@@ -202,7 +202,7 @@ int main(int argc, char **argv)
 				sel = 1;	
 		}
 
-        if (pressed & PAD_BUTTON_A)
+		if (pressed & PAD_BUTTON_A)
 		{		
 			switch(sel)
 			{
@@ -238,8 +238,8 @@ int main(int argc, char **argv)
 					break;
 				case 8:
 					DrawCredits(Back);
-					break;								
-			} 									
+					break;
+			}
 		}
 	}
 		
@@ -269,18 +269,18 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 	
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;
-		u16     x = 60;
-		u16     y = 105;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = 60;
+		u16 	y = 105;
+		u32 	pressed = 0;
 				
 		StartScene();
-		        
+
 		DrawImage(title);
-        DrawImage(sd);
+		DrawImage(sd);
 		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
@@ -292,38 +292,38 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawMenuFooter(r, g, b);
 				
 		EndScene();		
-        
-        ControllerScan();
+		
+		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & PAD_BUTTON_START ) 		
-			DrawMenu = 1;	
+		if ( pressed & PAD_BUTTON_START )
+			DrawMenu = 1;
 
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
-			
-		if ( pressed & PAD_BUTTON_B ) 		
-			close = 1;	
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}
+		
+		if ( pressed & PAD_BUTTON_B )
+			close = 1;
 	
 		if (pressed & PAD_BUTTON_A)
-		{            
+		{
 			switch(sel)
-			{				
+			{
 				case 1:
 					ColorPatternsMenu(title, sd);
-					break;				
+					break;
 				case 2:
 					GeometryPatternsMenu(title, sd);
 					break;
@@ -333,7 +333,7 @@ void TestPatternsMenu(ImagePtr title, ImagePtr sd)
 				case 4:
 					close = 1;
 					break;
-			} 			            										
+			}
 		}
 	}
 
@@ -346,18 +346,18 @@ void GeometryPatternsMenu(ImagePtr title, ImagePtr sd)
 	
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;
-		u16     x = 60;
-		u16     y = 95;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = 60;
+		u16 	y = 95;
+		u32 	pressed = 0;
 				
 		StartScene();
-		        
+		
 		DrawImage(title);
-        DrawImage(sd);
+		DrawImage(sd);
 		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Monoscope"); y += fh; c++;		
@@ -370,35 +370,35 @@ void GeometryPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawMenuFooter(r, g, b);
 				
 		EndScene();		
-        
-        ControllerScan();
+		
+		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 			DrawMenu = 1;	
 
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;		
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;	
+		}			
 			
-		if ( pressed & PAD_BUTTON_B ) 		
-			close = 1;	
+		if ( pressed & PAD_BUTTON_B )
+			close = 1;
 	
 		if (pressed & PAD_BUTTON_A)
-		{            
+		{
 			switch(sel)
-			{				
+			{
 				case 1:
 					DrawMonoscope();
 					break;	
@@ -407,14 +407,14 @@ void GeometryPatternsMenu(ImagePtr title, ImagePtr sd)
 					break;
 				case 3:
 					DrawOverscan();
-					break;				
+					break;
 				case 4:
 					DrawConvergence();
-					break;				
+					break;
 				case 5:
 					close = 1;
 					break;
-			} 			            										
+			}
 		}
 	}
 
@@ -423,22 +423,22 @@ void GeometryPatternsMenu(ImagePtr title, ImagePtr sd)
 
 void ColorPatternsMenu(ImagePtr title, ImagePtr sd)
 {
-	int			sel = 1, close = 0;		
+	int			sel = 1, close = 0;
 	
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;
-		u16     x = 60;
-		u16     y = 75;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = 60;
+		u16 	y = 75;
+		u32 	pressed = 0;
 				
 		StartScene();
-		        
+				
 		DrawImage(title);
-        DrawImage(sd);
+		DrawImage(sd);
 		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Pluge"); y += fh; c++;
@@ -456,39 +456,39 @@ void ColorPatternsMenu(ImagePtr title, ImagePtr sd)
 
 		DrawMenuFooter(r, g, b);
 				
-		EndScene();		
-        
-        ControllerScan();
+		EndScene();
+		
+		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & PAD_BUTTON_START ) 		
-			DrawMenu = 1;	
+		if ( pressed & PAD_BUTTON_START )
+			DrawMenu = 1;
 
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;		
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}			
 			
-		if ( pressed & PAD_BUTTON_B ) 		
+		if ( pressed & PAD_BUTTON_B )
 			close = 1;	
 	
 		if (pressed & PAD_BUTTON_A)
-		{            
+		{
 			switch(sel)
 			{				
 				case 1:
 					DrawPluge();
-					break;				
+					break;
 				case 2:
 					DrawColorBars();
 					break;
@@ -509,17 +509,17 @@ void ColorPatternsMenu(ImagePtr title, ImagePtr sd)
 					break;
 				case 8:
 					DrawWhiteScreen();
-					break;					
+					break;
 				case 9:
 					Draw100IRE();
-					break;				
+					break;
 				case 10:
 					DrawSharpness();
-					break;				
+					break;
 				case 11:
 					close = 1;
 					break;
-			} 			            										
+			}
 		}
 	}
 
@@ -528,31 +528,31 @@ void ColorPatternsMenu(ImagePtr title, ImagePtr sd)
 
 void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 {
-	int 	sel = 1, close = 0;		
+	int 	sel = 1, close = 0;
 	
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;				    					   
-		u16     x = 60;
-		u16     y = 70;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = 60;
+		u16 	y = 70;
+		u32 	pressed = 0;
 				
 		StartScene();
-		        
+		
 		DrawImage(title);
-        DrawImage(sd);
+		DrawImage(sd);
 		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;    
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Striped Sprite Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Lag Test"); y += fh; c++;
-        DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Timing & Reflex Test"); y += fh; c++;
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Timing & Reflex Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Scroll Test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Grid Scroll Test"); y += fh; c++;
-		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horiz/Vert Stripes"); y += fh; c++;    
+		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Horiz/Vert Stripes"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Checkerboard"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Diagonal test"); y += fh; c++;
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
@@ -572,8 +572,8 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 		DrawMenuFooter(r, g, b);		
 				
 		EndScene();		
-        
-        ControllerScan();
+		
+		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		
@@ -581,24 +581,24 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 			DrawMenu = 1;	
 
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}
 			
-		if ( pressed & PAD_BUTTON_B ) 		
+		if ( pressed & PAD_BUTTON_B )
 			close = 1;	
 	
 		if (pressed & PAD_BUTTON_A)
-		{            
+		{
 			switch(sel)
 			{				
 				case 1:	
@@ -609,10 +609,10 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 					break;
 				case 3:
 					PassiveLagTest();
-					break;					
+					break;
 				case 4:
 					TimingReflexTest();
-					break;					
+					break;
 				case 5:
 					ScrollTest();
 					break;
@@ -633,12 +633,12 @@ void VideoPatternsMenu(ImagePtr title, ImagePtr sd)
 					break;
 				case 11:
 					if(vmode != VIDEO_480P && vmode != VIDEO_480P_SL)
-						Alternate240p480i();					
-					break;		
+						Alternate240p480i();
+					break;
 				case 12:
 					close = 1;
 					break;			
-			} 			            										
+			}
 		}
 	}
 
@@ -653,18 +653,18 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 	aet_exists = FileExists(EQUIPMENT_FILE);
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;
-		u16     x = 60;
-		u16     y = 90;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = 60;
+		u16 	y = 90;
+		u32 	pressed = 0;
 				
 		StartScene();
-		        
+
 		DrawImage(title);
-        DrawImage(sd);
+		DrawImage(sd);
 		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
@@ -677,7 +677,7 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 		y += fh;
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
-		DrawMenuFooter(r, g, b);		
+		DrawMenuFooter(r, g, b);
 		
 		if(!aet_exists && sel == 3)
 		{
@@ -686,8 +686,8 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 		}
 				
 		EndScene();		
-        
-        ControllerScan();
+		
+		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		
@@ -695,24 +695,24 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 			DrawMenu = 1;	
 
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}			
 			
-		if ( pressed & PAD_BUTTON_B ) 		
+		if ( pressed & PAD_BUTTON_B )
 			close = 1;	
 	
 		if (pressed & PAD_BUTTON_A)
-		{            
+		{
 			switch(sel)
 			{				
 				case 1:	
@@ -727,8 +727,8 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 					break;	
 				case 5:
 					close = 1;
-					break;			
-			} 			            										
+					break;
+			}
 		}
 	}
 
@@ -741,18 +741,18 @@ void HardwareTestMenu(ImagePtr title, ImagePtr sd)
 	
 	while(!close && !EndProgram) 
 	{		
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;
-		u8   	c = 1;
-		u16     x = 60;
-		u16     y = 100;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;
+		u8	 	c = 1;
+		u16 	x = 60;
+		u16 	y = 100;
+		u32 	pressed = 0;
 				
 		StartScene();
-		        
+
 		DrawImage(title);
-        DrawImage(sd);
+		DrawImage(sd);
 		SD_blink_cycle();
 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "GBA Suite via Link Cable"); y += fh; c++;
@@ -761,38 +761,38 @@ void HardwareTestMenu(ImagePtr title, ImagePtr sd)
 		y += fh;
 		DrawStringS(x, y, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh; 
 
-		DrawMenuFooter(r, g, b);		
+		DrawMenuFooter(r, g, b);
 				
-		EndScene();		
-        
-        ControllerScan();
+		EndScene();
+		
+		ControllerScan();
 
 		pressed = Controller_ButtonsDown(0);
 		
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 			DrawMenu = 1;	
 
 		if ( pressed & PAD_BUTTON_UP )
-	    {
-		    sel --;
-		    if(sel < 1)
-			    sel = c;		
-	    }
-	    
-	    if ( pressed & PAD_BUTTON_DOWN )
-	    {
-		    sel ++;
-		    if(sel > c)
-			    sel = 1;	
-	    }			
-			
-		if ( pressed & PAD_BUTTON_B ) 		
-			close = 1;	
+		{
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if ( pressed & PAD_BUTTON_DOWN )
+		{
+			sel ++;
+			if(sel > c)
+				sel = 1;	
+		}
+		
+		if ( pressed & PAD_BUTTON_B )
+			close = 1;
 	
 		if (pressed & PAD_BUTTON_A)
-		{            
+		{
 			switch(sel)
-			{				
+			{
 				case 1:
 					GBALink();
 					break;
@@ -801,8 +801,8 @@ void HardwareTestMenu(ImagePtr title, ImagePtr sd)
 					break;
 				case 3:
 					close = 1;
-					break;			
-			} 			            										
+					break;
+			}
 		}
 	}
 

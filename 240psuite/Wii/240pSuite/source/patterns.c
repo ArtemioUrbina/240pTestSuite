@@ -133,22 +133,22 @@ void DrawPluge()
 		{			
 			DrawStringB(228, 20, 0, 0xff, 0, msg);
 			text --;
-		}		
+		}
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
-				
-		if ( pressed & PAD_BUTTON_START ) 		
+		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;			
-			HelpData = PLUGEHELP;			
+			DrawMenu = 1;
+			HelpData = PLUGEHELP;
 		}
 			
 		if (pressed & PAD_BUTTON_B)
-			done =	1;										
+			done =	1;
 			
 		if (pressed & PAD_BUTTON_A)
 		{
@@ -165,7 +165,7 @@ void DrawPluge()
 					back = backNTSC;
 				}
 					
-				text = 60;				
+				text = 60;
 			}
 		}
 		
@@ -183,7 +183,7 @@ void DrawPluge()
 void DrawGrayRamp()
 {
 	int 		done = 0;
-	u32			pressed;		
+	u32			pressed;
 	ImagePtr	back;	
 	
 	back = LoadImage(GRAYIMG, 0);
@@ -191,25 +191,25 @@ void DrawGrayRamp()
 		return;
 			
 	while(!done && !EndProgram) 
-	{				
+	{
 		StartScene();
-		        
+
 		DrawImage(back);
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
-				
+
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 	
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = GRAYHELP;
-		}		
+		}
 	}
 	FreeImage(&back);
 	return;
@@ -219,14 +219,14 @@ void DrawWhiteScreen()
 {
 	int 		done = 0, color = 0, BlackLevel = 0x00, text = 0;
 	int			cr, cb, cg, sel = 1, editmode = 0, oldvmode = 0;
-	u32			pressed;		
-	ImagePtr	back;	
+	u32			pressed;
+	ImagePtr	back;
 	char		msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
 	
 	back = LoadImage(WHITEIMG, 1);
 	if(!back)
 		return;
-			
+
 	back->w = dW;
 	back->h = dH;
 	
@@ -249,23 +249,23 @@ void DrawWhiteScreen()
 			BlackLevel = 0x00;
 			
 		StartScene();
-		        
+
 		DrawImage(back);
 		
 		if(text)
-		{						
-			DrawStringB(200, 20, 0xff, 0xff, 0xff, msg);			
+		{
+			DrawStringB(200, 20, 0xff, 0xff, 0xff, msg);
 			text --;
-		}			
+		}
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
-				
+
 		if (pressed & PAD_BUTTON_B)
-			done =	1;						
+			done =	1;
 			
 		if (pressed & PAD_BUTTON_A && color == 1 && !IsPAL)
 		{
@@ -280,7 +280,7 @@ void DrawWhiteScreen()
 				sprintf(msg, "#GBlack Level: 0 IRE#G");
 			}
 			text = 140;
-		}				
+		}
 		
 		if (pressed & PAD_BUTTON_A && color == 0)
 			editmode = !editmode;
@@ -343,14 +343,14 @@ void DrawWhiteScreen()
 			}	
 
 			if ( pressed & PAD_BUTTON_Y )
-			{				
-				if(current)			
-					*current  = 0;					
+			{
+				if(current)
+					*current  = 0;
 			}
 			
 			if ( pressed & PAD_BUTTON_X )
-			{			
-				if(current)				
+			{
+				if(current)	
 					*current = 0xff;
 			}	
 		}
@@ -359,7 +359,7 @@ void DrawWhiteScreen()
 		{
 			color ++;
 			if(color > 4)
-				color = 0;		
+				color = 0;
 			
 			editmode = 0;
 			if(color == 0 && cr + cb + cg != 3*0xff)
@@ -373,7 +373,7 @@ void DrawWhiteScreen()
 		{			
 			color --;
 			if(color < 0)
-				color = 4;			
+				color = 4;
 				
 			editmode = 0;
 			if(color == 0 && cr + cb + cg != 3*0xff)
@@ -383,11 +383,11 @@ void DrawWhiteScreen()
 			text = 30;
 		}
 			
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = WHITEHELP;
-		}			
+		}
 		
 		switch(color)
 		{
@@ -415,7 +415,7 @@ void DrawWhiteScreen()
 void DrawColorBars()
 {
 	int 		done = 0, type = 2;
-	u32         pressed;		
+	u32 		pressed;		
 	ImagePtr	back, backhigh, backlow, backgrid;
 	
 	back = LoadImage(COLORIMG, 0);
@@ -433,11 +433,11 @@ void DrawColorBars()
 		FreeImage(&back);
 		return;
 	}
-			
+
 	while(!done && !EndProgram) 
-	{				
+	{
 		StartScene();
-		        
+				
 		switch(type)
 		{
 			case 1:
@@ -454,14 +454,14 @@ void DrawColorBars()
 				break;
 		}
 		
-        EndScene();	
+		EndScene();	
 
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 		
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 		
 		if (pressed & PAD_BUTTON_LEFT)
 			type--;
@@ -474,11 +474,11 @@ void DrawColorBars()
 		if(type > 4)
 			type = 4;
 
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = COLORBARSHELP;
-		}			
+		}
 	}
 	FreeImage(&backgrid);
 	FreeImage(&backlow);
@@ -490,7 +490,7 @@ void DrawColorBars()
 void Draw601ColorBars()
 {
 	int 		done = 0;
-	u32			pressed;		
+	u32			pressed;
 	ImagePtr	back;
 	
 	back = LoadImage(CB601701IMG, 0);
@@ -500,21 +500,21 @@ void Draw601ColorBars()
 	while(!done && !EndProgram) 
 	{			
 		StartScene();
-		        
+
 		DrawImage(back);
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 		
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 	
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = COLOR601HELP;
 		}	
 	}
@@ -525,14 +525,14 @@ void Draw601ColorBars()
 void DrawEBUColorBars()
 {
 	int 		done = 0, is75 = 0, text = 0;
-	u32			pressed;		
+	u32			pressed;
 	ImagePtr	backEBU75, backEBU100;
 	char		msg[40];
 		
 	backEBU75 = LoadImage(EBUCB75IMG, 1);
 	if(!backEBU75)
 		return;
-		
+
 	backEBU100 = LoadImage(EBUCB100IMG, 1);
 	if(!backEBU100)
 	{
@@ -542,9 +542,9 @@ void DrawEBUColorBars()
 	
 	IgnoreOffset(backEBU75);
 	IgnoreOffset(backEBU100);
-			
+
 	while(!done && !EndProgram) 
-	{		
+	{
 		StartScene();
 		
 		if(is75)
@@ -558,14 +558,14 @@ void DrawEBUColorBars()
 			text --;
 		}		
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 		
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 			
 		if (pressed & PAD_BUTTON_A)
 		{
@@ -574,11 +574,11 @@ void DrawEBUColorBars()
 			sprintf(msg, "%s%%", is75 ? "75" : "100");
 		}
 	
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = SMPTECOLOR;
-		}		
+		}
 
 	}
 	FreeImage(&backEBU75);	
@@ -589,7 +589,7 @@ void DrawEBUColorBars()
 void DrawSMPTEColorBars()
 {
 	int 		done = 0, is75 = 0, text = 0;
-	u32			pressed;		
+	u32			pressed;
 	ImagePtr	backNTSC75, backNTSC100;
 	char		msg[40];
 	
@@ -619,14 +619,14 @@ void DrawSMPTEColorBars()
 			text --;
 		}		
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 		
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 			
 		if (pressed & PAD_BUTTON_A)
 		{
@@ -635,9 +635,9 @@ void DrawSMPTEColorBars()
 			sprintf(msg, "%s%%", is75 ? "75" : "100");
 		}
 	
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = SMPTECOLOR;
 		}		
 
@@ -650,7 +650,7 @@ void DrawSMPTEColorBars()
 void DrawColorBleed()
 {
 	int 		done = 0, type = 0;
-	u32			pressed;		
+	u32			pressed;
 	ImagePtr	back, backchk;
 	
 	back = LoadImage(COLORBLEEDIMG, 0);
@@ -663,28 +663,28 @@ void DrawColorBleed()
 	while(!done && !EndProgram) 
 	{		
 		StartScene();
-		        
+
 		if(!type)
 			DrawImage(back);
 		else
 			DrawImage(backchk);
 		
-        EndScene();		
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 
 		if (pressed & PAD_BUTTON_A)
 			type = !type;
 
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = COLORBLEEDHELP;
-		}				
+		}
 	}
 	FreeImage(&back);
 	FreeImage(&backchk);
@@ -762,14 +762,14 @@ int DrawGrid()
 				back = LoadImage(GRID480IMG, 0);
 				if(!back)
 					return retval;
-				back->scale = 0;		
+				back->scale = 0;
 			}
 			
 			if(vmode == VIDEO_288P || vmode == VIDEO_576I_A264)
 			{
 				back = LoadImage(GRIDPALIMG, 0);
 				if(!back)
-					return retval;    				
+					return retval;
 			}
 			
 			if(vmode == VIDEO_576I)
@@ -783,7 +783,7 @@ int DrawGrid()
 			{
 				back = LoadImage(GRIDIMG, 0);
 				if(!back)
-					return retval;		
+					return retval;
 			}
 			
 			IgnoreOffset(back);
@@ -791,7 +791,7 @@ int DrawGrid()
 		
 		StartScene();
 		
-		DrawImage(blckbg);        
+		DrawImage(blckbg);
 		DrawImage(back);
 		
 		if(text)
@@ -800,44 +800,44 @@ int DrawGrid()
 			text --;
 		}
 		
-        EndScene();		
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 		
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 	
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = GRIDHELP;
 			oldvmode = vmode;
-		}				
+		}
 		
-		if ( pressed & PAD_BUTTON_UP ) 
+		if ( pressed & PAD_BUTTON_UP )
 		{
 			text = 30;
 			back->y --;
 		}
-		if ( pressed & PAD_BUTTON_DOWN ) 		
+		if ( pressed & PAD_BUTTON_DOWN )
 		{
 			text = 30;
 			back->y ++;
 		}	
-		if ( pressed & PAD_BUTTON_LEFT ) 		
+		if ( pressed & PAD_BUTTON_LEFT )
 		{
 			text = 30;
 			back->x --;
 		}
-		if ( pressed & PAD_BUTTON_RIGHT ) 		
+		if ( pressed & PAD_BUTTON_RIGHT )
 		{
 			text = 30;
 			back->x ++;
 		}
 		
-		if ( pressed & PAD_BUTTON_A ) 		
+		if ( pressed & PAD_BUTTON_A )
 		{
 			text = 30;
 			back->x = 0;
@@ -873,7 +873,7 @@ int DrawGrid()
 int DrawGrid224(int GenesisVersion)
 {
 	int 		done = 0, retval = MENU_CANCEL;
-	u32			pressed;		
+	u32			pressed;
 	ImagePtr	back = NULL;
 	
 	if(vmode != VIDEO_240P) 
@@ -894,21 +894,21 @@ int DrawGrid224(int GenesisVersion)
 	while(!done && !EndProgram) 
 	{
 		StartScene();
-		        
+
 		DrawImage(back);
 		
-        EndScene();		
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 		
 		if ( pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 	
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;		
+			DrawMenu = 1;
 			HelpData = GRID224HELP;
 		}
 
@@ -916,7 +916,7 @@ int DrawGrid224(int GenesisVersion)
 		{
 			retval = 1;
 			done = 1;
-		}				
+		}
 	}
 
 	ChangeVideoEnabled = 1;
@@ -936,7 +936,7 @@ void DrawMonoscope()
 		ShowStretchWarning();
 
 	while(!done && !EndProgram) 
-	{   
+	{
 		if(!back || oldvmode != vmode)
 		{
 			if(back)
@@ -1001,13 +1001,13 @@ void DrawMonoscope()
 			disabledPG = 1;
 		}
 
-		StartScene();		
+		StartScene();
 		
 		DrawImage(back);
 		if(overlay)
 			DrawImage(overlay);
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
@@ -1017,7 +1017,7 @@ void DrawMonoscope()
 		{
 			Mode_240p.viYOrigin += 1;
 			SetVideoMode(vmode);
-			SetupGX();			
+			SetupGX();
 			changed = 1;
 		}
 		
@@ -1025,7 +1025,7 @@ void DrawMonoscope()
 		{
 			Mode_240p.viYOrigin -= 1;
 			SetVideoMode(vmode);
-			SetupGX();			
+			SetupGX();
 			changed = 1;
 		}
 		
@@ -1042,29 +1042,29 @@ void DrawMonoscope()
 
 		if (pressed & PAD_TRIGGER_L)
 		{
-      		irecount --;
+			irecount --;
 				
 			if(irecount < 0)
-				irecount = 10;	    						
-        	
+				irecount = 10;
+			
 			back->alpha = irevalues[irecount];
 		}
 		
 		if (pressed & PAD_TRIGGER_R)
-		{    
+		{	 
 			irecount ++;
 			
 			if(irecount > 10)
 				irecount = 0;	
 				
-			back->alpha = irevalues[irecount];				
+			back->alpha = irevalues[irecount];
 		}
 			
-		if (pressed & PAD_BUTTON_START) 		
+		if (pressed & PAD_BUTTON_START)
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = MONOSCOPEHELP;
-			oldvmode = vmode;		
+			oldvmode = vmode;
 		}	
 	}
 
@@ -1117,24 +1117,24 @@ void Draw100IRE()
 
 		if(text)
 		{
-    		if(!invert)
-      		{
+			if(!invert)
+	  		{
 				if(text > 30)
 					sprintf(msg, "RANGE 0-100 IRE");
 				else
 					sprintf(msg, "%0.1f IRE", ((back->alpha*100.0)/255.0));
 			  	DrawStringS(225, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
-      		}
-      		else
-      		{
+	  		}
+	  		else
+	  		{
 				if(text > 30)
 					sprintf(msg, "RANGE 100-140 IRE");
 				else
 					sprintf(msg, "%0.0f IRE", 100.0f + abs(40.0 - ((back->alpha * 40.0)/255.0)));
 			  	DrawStringS(225, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
-      		}
+	  		}
 		}
 		EndScene();
 		
@@ -1143,20 +1143,20 @@ void Draw100IRE()
 		pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_TRIGGER_L)
 		{
-      		if(!invert)
-        	{    		
+	  		if(!invert)
+			{
 				irecount --;
 				
 				if(irecount < 0)
-					irecount = 0;	    						
-        	}
-        	else
-        	{    
+					irecount = 0;
+			}
+			else
+			{
 				irecount ++;
-				
+
 				if(irecount > iremax)
-					irecount = iremax;					
-        	}
+					irecount = iremax;
+			}
 
 			text = 30;
 			back->alpha = irevalues[irecount];
@@ -1164,29 +1164,29 @@ void Draw100IRE()
 	
 		if (pressed & PAD_TRIGGER_R) 
 		{
-      		if(invert)
-        	{    		
+	  		if(invert)
+			{
 				irecount --;
 				
 				if(irecount < 0)
-					irecount = 0;	    						
-        	}
-        	else
-        	{    
+					irecount = 0;
+			}
+			else
+			{	 
 				irecount ++;
 				
 				if(irecount > iremax)
-					irecount = iremax;					
-        	}
+					irecount = iremax;
+			}
 
 			text = 30;
 			back->alpha = irevalues[irecount];
 		}
 		
-     	if (pressed & PAD_BUTTON_A)
-      	{
+		if (pressed & PAD_BUTTON_A)
+		{
 			invert = !invert;
-        	back->alpha = 0xff;
+			back->alpha = 0xff;
 			text = 60;
 
 			if(invert)
@@ -1201,16 +1201,16 @@ void Draw100IRE()
 				iremax = 10;
 				irecount = 10;
 			}
-      	}
+		}
 	
 		if (pressed & PAD_BUTTON_B)
-			done =	1;				
-							
-		if ( pressed & PAD_BUTTON_START ) 		
+			done =	1;
+
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = IREHELP;
-		}						
+		}
 	}
 
 	FreeImage(&back);
@@ -1221,33 +1221,33 @@ void Draw100IRE()
 void DrawSharpness()
 {
 	int 		done = 0;
-	u32			pressed;		
-	ImagePtr	back;	
+	u32			pressed;
+	ImagePtr	back;
 	
 	back = LoadImage(SHARPNESSIMG, 0);
 	if(!back)
 		return;
-			
+
 	while(!done && !EndProgram) 
-	{		
+	{
 		StartScene();
-		        
+
 		DrawImage(back);
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
-				
-		if ( pressed & PAD_BUTTON_START ) 		
+
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = SHARPNESSHELP;
 		}
-			
+
 		if (pressed & PAD_BUTTON_B)
-			done =	1;										
+			done =	1;
 
 	}
 	FreeImage(&back);
@@ -1260,8 +1260,8 @@ void DrawOverscan()
 	int 		done = 0, oLeft = 0, oTop = 0, 
 				oRight = 0, oBottom = 0, 
 				sel = 0, oldvmode = vmode, reset = 0;
-	u32			pressed, held;		
-	ImagePtr	square, border;	
+	u32			pressed, held;
+	ImagePtr	square, border;
 	char		msg[50];
 	
 	square = LoadImage(WHITEIMG, 1);
@@ -1276,7 +1276,7 @@ void DrawOverscan()
 	SetTextureColor(square, 0x60, 0x60, 0x60);
 			
 	while(!done && !EndProgram) 
-	{			
+	{
 		int x = 0, y = 0;
 		
 		if(oldvmode != vmode || reset)
@@ -1284,13 +1284,13 @@ void DrawOverscan()
 			oTop = oLeft = oBottom = oRight = 0;
 			CalculateUV(0, 0, dW, dH, square);
 			CalculateUV(0, 0, dW, dH, border);
-			square->x = square->y = 0;			
+			square->x = square->y = 0;
 			oldvmode = vmode;
 			reset = 0;
-		}		
+		}
 		
 		StartScene();
-		        
+				
 		DrawImage(border);
 		DrawImage(square);	
 
@@ -1319,41 +1319,41 @@ void DrawOverscan()
 		
 		DrawStringS(x-100, y, 0xff, 0xff, 0xff, "Right Overscan:");
 		sprintf(msg, "%d pixels (%g%%)", oRight, (oRight*100.0f)/(dW/2));
-		DrawStringS(x+20, y, 0xff, 0xff, 0xff, msg);			
+		DrawStringS(x+20, y, 0xff, 0xff, 0xff, msg);
 				
 		if(IsPAL && Options.PALScale576)
 			DrawStringS(50, 50, 0xff, 0xff, 0x00, "When using PAL stretched modes, the pixel\ncount is inaccurate due to vertical scaling.\nRead the #MHELP#M for details");
 			
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 		held = Controller_ButtonsHeld(0);
 				
-		if(pressed & PAD_BUTTON_START ) 		
+		if(pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = OVERSCANHELP;
 		}
 		
 		if ( pressed & PAD_BUTTON_UP ) 
 			sel--;
 		
-		if ( pressed & PAD_BUTTON_DOWN ) 		
+		if ( pressed & PAD_BUTTON_DOWN )
 			sel++;
-			
+
 		if(sel < 0)
 			sel = 3;
 		if(sel > 3)
 			sel = 0;
-			
+
 		// Top
 		if((pressed & PAD_TRIGGER_R && sel == 0) ||
 			(held & PAD_BUTTON_X && sel == 0))
 		{
 			if(square->y + 1 <= dH/2 && oTop + 1 <= dH/2)
-			{				
+			{
 				square->y++;
 				square->h--;
 				oTop++;
@@ -1376,7 +1376,7 @@ void DrawOverscan()
 			(held & PAD_BUTTON_X && sel == 1))
 		{
 			if(square->h - 1 >= 0 && oBottom + 1 <= dH/2)
-			{								
+			{
 				square->h--;
 				oBottom++;
 			}
@@ -1386,7 +1386,7 @@ void DrawOverscan()
 			(held & PAD_BUTTON_Y && sel == 1))
 		{
 			if(square->h + 1 <= dW && oBottom - 1 >=0 )
-			{								
+			{
 				square->h++;	
 				oBottom--;
 			}
@@ -1397,7 +1397,7 @@ void DrawOverscan()
 			(held & PAD_BUTTON_X && sel == 2))
 		{
 			if(square->x + 1 <= dW/2 && oLeft + 1 <= dW/2)
-			{				
+			{
 				square->x++;
 				square->w--;
 				oLeft++;
@@ -1408,7 +1408,7 @@ void DrawOverscan()
 			(held & PAD_BUTTON_Y && sel == 2))
 		{
 			if(square->x - 1 >= 0 && oLeft - 1 >= 0)
-			{				
+			{
 				square->x--;
 				square->w++;
 				oLeft--;
@@ -1420,7 +1420,7 @@ void DrawOverscan()
 			(held & PAD_BUTTON_X && sel == 3))
 		{
 			if(square->w - 1 >= 0 && oRight + 1 <= dW/2)
-			{								
+			{
 				square->w--;
 				oRight++;
 			}
@@ -1430,17 +1430,17 @@ void DrawOverscan()
 			(held & PAD_BUTTON_Y && sel == 3))
 		{
 			if(square->w + 1 <= dW && oRight - 1 >= 0)
-			{								
+			{
 				square->w++;	
 				oRight--;
 			}
 		}
-				
+
 		if (pressed & PAD_BUTTON_A)	
 			reset = 1;
 		
 		if (pressed & PAD_BUTTON_B)
-			done =	1;										
+			done =	1;
 
 	}
 	FreeImage(&border);
@@ -1451,9 +1451,9 @@ void DrawOverscan()
 #define	NUM_CONV	5
 void DrawConvergence()
 {
-    int 		done = 0, i = 0, current = 0, oldvmode = -1;
+	int 		done = 0, i = 0, current = 0, oldvmode = -1;
 	int			patterns[NUM_CONV] = {CONVERGE01, CONVERGE02, CONVERGE03, CONVERGE04, CONVERGE05};
-	u32			pressed;		
+	u32			pressed;
 	ImagePtr	back[NUM_CONV];	
 	
 	for(i = 0; i < NUM_CONV; i++)
@@ -1473,21 +1473,21 @@ void DrawConvergence()
 		}
 		
 		StartScene();
-		        
+
 		DrawImage(back[current]);
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
-				
+
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 	
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = CONVHELP;
 		}
 		
@@ -1531,14 +1531,14 @@ void DrawHCFR()
 	back = LoadImage(WHITEIMG, 1);
 	if(!back)
 		return;
-		
+
 	color = LoadImage(WHITEIMG, 1);
 	if(!color)
 	{
 		FreeImage(&back);
 		return;
 	}
-			
+
 	back->w = dW;
 	back->h = dH;
 	
@@ -1576,22 +1576,22 @@ void DrawHCFR()
 		SetTextureColor(color, r, g, b);
 		
 		StartScene();
-		        
+
 		DrawImage(back);
 		DrawImage(color);
 		sprintf(msg, "%s %03d,%03d,%03d", 
 				hcfr_data[hcfr_type].data[hcfr_num].name, r, g, b);
 		len = strlen(msg);
 		x = (dW - len*fw)/2;
-		DrawString(x, 2*dH/3+fh, 0x7f, 0x7f, 0x7f, msg);			
+		DrawString(x, 2*dH/3+fh, 0x7f, 0x7f, 0x7f, msg);
 		
-        EndScene();
+		EndScene();
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 		
 		if (pressed & PAD_BUTTON_B)
-			done =	1;				
+			done =	1;
 		
 		if ( pressed & PAD_BUTTON_LEFT || pressed & PAD_TRIGGER_L)
 		{
@@ -1620,7 +1620,7 @@ void DrawHCFR()
 		if ( pressed & PAD_BUTTON_X )
 			hcfr_num = 0;
 			
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
 			DrawMenu = 1;
 			HelpData = HCFRHELP;

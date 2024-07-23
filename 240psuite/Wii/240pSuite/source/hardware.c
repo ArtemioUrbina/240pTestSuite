@@ -152,12 +152,12 @@ void ControllerTest()
 
 	memset(&gc_ctrl, 0, sizeof(GC_STATUS)*4);
 #ifdef WII_VERSION
-	memset(&wii_ctrl, 0, sizeof(WII_STATUS)*4);			
+	memset(&wii_ctrl, 0, sizeof(WII_STATUS)*4);
 #endif
 	while(!done && !EndProgram) 
 	{	
 		StartScene();
-		        
+
 		DrawImage(back);
 		
 		DrawGCController(100, 100, gc_ctrl, 0);
@@ -165,7 +165,7 @@ void ControllerTest()
 		DrawGCController(100, 140, gc_ctrl, 2);
 		DrawGCController(100, 160, gc_ctrl, 3);
 		
-        EndScene();
+		EndScene();
 		
 		read_gc(gc_ctrl);
 #ifdef WII_VERSION
@@ -175,7 +175,7 @@ void ControllerTest()
 		pressed = Controller_ButtonsDown(0);
 		// TODO exit
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 		
 	}
 	FreeImage(&back);
@@ -190,33 +190,33 @@ CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
 uint32_t _state = ~0L;
 
 static const uint32_t crc32_table[] = {
-    0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
-    0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
-    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
-    0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
+	0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
+	0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+	0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
+	0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
 };
 
 
 void CRC32_reset()
 {
-    _state = ~0L;
+	_state = ~0L;
 }
 
 
 void CRC32_update(uint8_t data)
 {
-    uint8_t tbl_idx = 0;
+	uint8_t tbl_idx = 0;
 
-    tbl_idx = _state ^ (data >> (0 * 4));
-    _state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
-    tbl_idx = _state ^ (data >> (1 * 4));
-    _state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+	tbl_idx = _state ^ (data >> (0 * 4));
+	_state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+	tbl_idx = _state ^ (data >> (1 * 4));
+	_state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
 }
 
 
 uint32_t CRC32_finalize()
 {
-    return ~_state;
+	return ~_state;
 }
 
 /**********************************/
@@ -307,7 +307,7 @@ void MemoryViewer()
 				DrawStringS(3*j*fw, i*fh, 0xff, 0xff, 0xff, buffer);
 			}
 		}
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		
@@ -372,11 +372,11 @@ void MemoryViewer()
 		if (pressed & PAD_BUTTON_X)
 			docrc =	!docrc;
 	
-		if ( pressed & PAD_BUTTON_START ) 		
+		if ( pressed & PAD_BUTTON_START )
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = MEMORYHELP;
-		}		
+		}
 	}
 	return;
 }
@@ -429,7 +429,7 @@ void GBALink()
 		DrawStringS(80, 120, 0xff, 0xff, 0xff, msg); 
 		DrawStringC(200, 0xee, 0xee, 0xee, "Press B to close"); 
 		
-        EndScene();
+		EndScene();
 		
 		ControllerScan();
 		pressed = Controller_ButtonsDown(0);
@@ -473,12 +473,12 @@ void GBALink()
 		
 		if (pressed & PAD_BUTTON_START)
 		{
-			DrawMenu = 1;					
+			DrawMenu = 1;
 			HelpData = GBA_TRANSF_HELP;
-		}		
+		}
 		
 		if (pressed & PAD_BUTTON_B)
-			done =	1;								
+			done =	1;
 	}
 	
 	FreeImage(&back);

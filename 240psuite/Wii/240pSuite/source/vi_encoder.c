@@ -52,9 +52,9 @@
  ****************************************************************************/
 
 #define _SHIFTL(v, s, w)	\
-    ((u32) (((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
+	((u32) (((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define _SHIFTR(v, s, w)	\
-    ((u32)(((u32)(v) >> (s)) & ((0x01 << (w)) - 1)))
+	((u32)(((u32)(v) >> (s)) & ((0x01 << (w)) - 1)))
 
 extern void udelay(int us);
 
@@ -469,12 +469,12 @@ void __VISetTiming(u8 timing)
 
 void __VISetYUVSEL(u8 dtvstatus)
 {
-  u8 vdacFlagRegion = 0;
-  u32 currTvMode = _SHIFTR(_viReg[1],8,2);
-  if(currTvMode==VI_PAL || currTvMode==VI_EURGB60)
-    vdacFlagRegion = 2;
+	u8 vdacFlagRegion = 0;
+	u32 currTvMode = _SHIFTR(_viReg[1],8,2);
+	if(currTvMode==VI_PAL || currTvMode==VI_EURGB60)
+		vdacFlagRegion = 2;
 	else if(currTvMode==VI_MPAL)
-    vdacFlagRegion = 1;
+		vdacFlagRegion = 1;
 
 	__VIWriteI2CRegister8(0x01, _SHIFTL(dtvstatus,5,3)|(vdacFlagRegion&0x1f)); 
 }
@@ -509,21 +509,21 @@ void __VISetWSS(u16 value)
 
 void __VISetRGBOverDrive(u8 value)
 {
-  u32 currTvMode = _SHIFTR(_viReg[1],8,2);
-  if (currTvMode == VI_DEBUG)
-    __VIWriteI2CRegister8(0x0A,(value<<1)|1);
-  else
-    __VIWriteI2CRegister8(0x0A,0);
+	u32 currTvMode = _SHIFTR(_viReg[1],8,2);
+	if (currTvMode == VI_DEBUG)
+		__VIWriteI2CRegister8(0x0A,(value<<1)|1);
+	else
+		__VIWriteI2CRegister8(0x0A,0);
 }
 
 void __VISetOverSampling(void)
 {
-  __VIWriteI2CRegister8(0x65,1);
+	__VIWriteI2CRegister8(0x65,1);
 }
 
 void __VISetCCSEL(void)
 {
-  __VIWriteI2CRegister8(0x6a,1);
+	__VIWriteI2CRegister8(0x6a,1);
 }
 
 void __VISetFilterEURGB60(u8 enable)
@@ -533,7 +533,7 @@ void __VISetFilterEURGB60(u8 enable)
 
 void __VISetVolume(u16 value)
 {
-  __VIWriteI2CRegister16(0x71,value);
+	__VIWriteI2CRegister16(0x71,value);
 }
 
 void __VISetClosedCaption(u32 value)
@@ -543,20 +543,20 @@ void __VISetClosedCaption(u32 value)
 
 void __VISetGamma(VIGamma gamma)
 {
-  u8 *data = (u8 *)&gamma_coeffs[gamma][0];
-  __VIWriteI2CRegisterBuf(0x10, 0x21, data);
+	u8 *data = (u8 *)&gamma_coeffs[gamma][0];
+	__VIWriteI2CRegisterBuf(0x10, 0x21, data);
 }
 
 /* User Configurable */
 
 void VIDEO_SetGamma(VIGamma gamma)
 {
-  __VISetGamma(gamma);
+	__VISetGamma(gamma);
 }
 
 void VIDEO_SetTrapFilter(bool enable)
 {
-    __VISetTrapFilter(enable);
+	__VISetTrapFilter(enable);
 }
 
 #endif

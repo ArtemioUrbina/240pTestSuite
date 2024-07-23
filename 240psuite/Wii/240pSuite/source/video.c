@@ -30,38 +30,38 @@ GXRModeObj Mode_480i;
 GXRModeObj Mode_264p;
 GXRModeObj Mode_528i;
 
-// Modified TVPal264Ds  
+// Modified TVPal264Ds
 GXRModeObj TVPal264DsFull =
 {
-    VI_TVMODE_PAL_DS,       // viDisplayMode
-    640,             // fbWidth
-    264,             // efbHeight
-    284,             // xfbHeight, was 264
-    (VI_MAX_WIDTH_PAL - 640)/2,         // viXOrigin, was (VI_MAX_HEIGHT_PAL/2 - 528/2)
-    PAL_OFFSET,        // viYOrigin
-    640,             // viWidth
-    572,             // viHeight, was 528
-    VI_XFBMODE_SF,   // xFBmode
-    GX_FALSE,        // field_rendering
-    GX_FALSE,        // aa
+	VI_TVMODE_PAL_DS,		// viDisplayMode
+	640,			 // fbWidth
+	264,			 // efbHeight
+	284,			 // xfbHeight, was 264
+	(VI_MAX_WIDTH_PAL - 640)/2, 		// viXOrigin, was (VI_MAX_HEIGHT_PAL/2 - 528/2)
+	PAL_OFFSET, 	   // viYOrigin
+	640,			 // viWidth
+	572,			 // viHeight, was 528
+	VI_XFBMODE_SF,	 // xFBmode
+	GX_FALSE,		 // field_rendering
+	GX_FALSE,		 // aa
 
-    // sample points arranged in increasing Y order
+	// sample points arranged in increasing Y order
 	{
-		{6,6},{6,6},{6,6},  // pix 0, 3 sample points, 1/12 units, 4 bits each
-		{6,6},{6,6},{6,6},  // pix 1
-		{6,6},{6,6},{6,6},  // pix 2
-		{6,6},{6,6},{6,6}   // pix 3
+		{6,6},{6,6},{6,6},	// pix 0, 3 sample points, 1/12 units, 4 bits each
+		{6,6},{6,6},{6,6},	// pix 1
+		{6,6},{6,6},{6,6},	// pix 2
+		{6,6},{6,6},{6,6}	// pix 3
 	},
 
-    // vertical filter[7], 1/64 units, 6 bits each
+	// vertical filter[7], 1/64 units, 6 bits each
 	{
-		 0,         // line n-1
-		 0,         // line n-1
-		21,         // line n
-		22,         // line n
-		21,         // line n
-		 0,         // line n+1
-		 0          // line n+1
+		 0, 		// line n-1
+		 0, 		// line n-1
+		21, 		// line n
+		22, 		// line n
+		21, 		// line n
+		 0, 		// line n+1
+		 0			// line n+1
 	}
 };
 
@@ -70,34 +70,34 @@ GXRModeObj TVPal264DsFull =
 // GC starts at 23
 GXRModeObj TVPal576IntDfFull =
 {
-    VI_TVMODE_PAL_INT,      // viDisplayMode
-    640,             // fbWidth
-    528,             // efbHeight
-    572,             // xfbHeight when using 576 2 lines are not drawn, was 528
-    (VI_MAX_WIDTH_PAL - 640)/2,         // viXOrigin
-    PAL_OFFSET-2,    // viYOrigin, was (VI_MAX_HEIGHT_PAL - 528)/2, 
-    640,             // viWidth
-    574,             // viHeight, when using 576 2 lines are not drawn, was 528
-    VI_XFBMODE_DF,   // xFBmode
-    GX_FALSE,        // field_rendering
-    GX_FALSE,        // aa
+	VI_TVMODE_PAL_INT,		// viDisplayMode
+	640,			 // fbWidth
+	528,			 // efbHeight
+	572,			 // xfbHeight when using 576 2 lines are not drawn, was 528
+	(VI_MAX_WIDTH_PAL - 640)/2, 		// viXOrigin
+	PAL_OFFSET-2,	 // viYOrigin, was (VI_MAX_HEIGHT_PAL - 528)/2, 
+	640,			 // viWidth
+	574,			 // viHeight, when using 576 2 lines are not drawn, was 528
+	VI_XFBMODE_DF,	 // xFBmode
+	GX_FALSE,		 // field_rendering
+	GX_FALSE,		 // aa
 
-    // sample points arranged in increasing Y order
+	// sample points arranged in increasing Y order
 	{
-		{6,6},{6,6},{6,6},  // pix 0, 3 sample points, 1/12 units, 4 bits each
-		{6,6},{6,6},{6,6},  // pix 1
-		{6,6},{6,6},{6,6},  // pix 2
-		{6,6},{6,6},{6,6}   // pix 3
+		{6,6},{6,6},{6,6},	// pix 0, 3 sample points, 1/12 units, 4 bits each
+		{6,6},{6,6},{6,6},	// pix 1
+		{6,6},{6,6},{6,6},	// pix 2
+		{6,6},{6,6},{6,6}	// pix 3
 	},
-    // vertical filter[7], 1/64 units, 6 bits each
+	// vertical filter[7], 1/64 units, 6 bits each
 	{
-		 8,         // line n-1
-		 8,         // line n-1
-		10,         // line n
-		12,         // line n
-		10,         // line n
-		 8,         // line n+1
-		 8          // line n+1
+		 8, 		// line n-1
+		 8, 		// line n-1
+		10, 		// line n
+		12, 		// line n
+		10, 		// line n
+		 8, 		// line n+1
+		 8			// line n+1
 	}
 };
 
@@ -123,10 +123,10 @@ GXRModeObj *mvmode	= NULL;
 GXRModeObj *rmode = NULL;
 GXRModeObj rmode_data;
 
-int W			    = 0;
-int H			    = 0;
-int dW			    = 0;
-int dH			    = 0;
+int W				= 0;
+int H				= 0;
+int dW				= 0;
+int dH				= 0;
 
 s8	OffsetH			= 0;
 s8	AspectRatio		= 0;
@@ -191,26 +191,26 @@ void RestoreVideo()
 	DeleteFrameBuffers();	
 	
 	if(mvmode)
-		VIDEO_Configure(mvmode);	
+		VIDEO_Configure(mvmode);
 }
 
 void SetVideoMode(u32 newmode)
 {	
 	if(newmode >= TOTAL_VMODES || newmode < 0)
-		newmode = VIDEO_240P;	
+		newmode = VIDEO_240P;
 		
 	// check 480p safety
 	if(newmode == VIDEO_480P && !VIDEO_HaveComponentCable() && !Options.Activate480p)
-		newmode = VIDEO_240P;		
+		newmode = VIDEO_240P;
 		
 	if(newmode == VIDEO_480P_SL && !VIDEO_HaveComponentCable() && !Options.Activate480p)
-		newmode = VIDEO_240P;				
+		newmode = VIDEO_240P;
 		
 	// check PAL safety
 	if(newmode >= VIDEO_288P && newmode <= VIDEO_576I && !Options.EnablePAL)
-		newmode = VIDEO_240P;		
+		newmode = VIDEO_240P;
 	
-	vmode = newmode;			
+	vmode = newmode;
 	rmode_data = *(vmodes[vmode]);
 	rmode = &rmode_data;
 	
@@ -232,18 +232,18 @@ void SetVideoMode(u32 newmode)
 			offsetY = 0;
 			break;
 		case VIDEO_288P:
-		case VIDEO_576I_A264:		
+		case VIDEO_576I_A264:
 			dW = 320;
 			dH = 264;
 			offsetY = 12; // (264 - 240) / 2 -> to center all in PAL modes
 			IsPAL = MODE_PAL;
 			break;
-		case VIDEO_576I:		
+		case VIDEO_576I:
 			dW = 640;
 			dH = 528;
 			offsetY = 12;
 			IsPAL = MODE_PAL;
-			break;		
+			break;
 	}
 
 	if(Options.Enable720Stretch)
@@ -252,28 +252,27 @@ void SetVideoMode(u32 newmode)
 		rmode->viXOrigin = (VI_MAX_WIDTH_PAL - 720)/2;		// 678 is the recommended vaue
 	}
 
-	ActiveFB ^= 1;  
+	ActiveFB ^= 1;	
 #ifdef WII_VERSION
 	VIDEO_SetTrapFilter(Options.TrapFilter);
 #endif
 	VIDEO_Configure(rmode);			
-	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);			
+	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);
 	VIDEO_Flush();	
 }
 
 void InitFrameBuffers()
 {	
 	if(!frameBuffer[MODE_NTSC][0])
-		frameBuffer[MODE_NTSC][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));			
+		frameBuffer[MODE_NTSC][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));
 	
 	if(!frameBuffer[MODE_NTSC][1])	
-		frameBuffer[MODE_NTSC][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));	
-		
+		frameBuffer[MODE_NTSC][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));
 	if(!frameBuffer[MODE_PAL][0])
-		frameBuffer[MODE_PAL][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));	
+		frameBuffer[MODE_PAL][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));
 		
 	if(!frameBuffer[MODE_PAL][1])
-		frameBuffer[MODE_PAL][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));		
+		frameBuffer[MODE_PAL][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));
 		
 	CleanFB();	
 }
@@ -281,14 +280,14 @@ void InitFrameBuffers()
 void CleanFB()
 {
 	if(frameBuffer[MODE_PAL][0])
-		VIDEO_ClearFrameBuffer(&TVPal576ProgScale, frameBuffer[MODE_PAL][0], COLOR_BLACK);		
+		VIDEO_ClearFrameBuffer(&TVPal576ProgScale, frameBuffer[MODE_PAL][0], COLOR_BLACK);
 	if(frameBuffer[MODE_PAL][1])
-		VIDEO_ClearFrameBuffer(&TVPal576ProgScale, frameBuffer[MODE_PAL][1], COLOR_BLACK);		
+		VIDEO_ClearFrameBuffer(&TVPal576ProgScale, frameBuffer[MODE_PAL][1], COLOR_BLACK);
 
 	if(frameBuffer[MODE_NTSC][0])
-		VIDEO_ClearFrameBuffer(&TVNtsc480Prog, frameBuffer[MODE_NTSC][0], COLOR_BLACK);		
+		VIDEO_ClearFrameBuffer(&TVNtsc480Prog, frameBuffer[MODE_NTSC][0], COLOR_BLACK);
 	if(frameBuffer[MODE_NTSC][0])
-		VIDEO_ClearFrameBuffer(&TVNtsc480Prog, frameBuffer[MODE_NTSC][1], COLOR_BLACK);		
+		VIDEO_ClearFrameBuffer(&TVNtsc480Prog, frameBuffer[MODE_NTSC][1], COLOR_BLACK);
 }
 
 void DeleteFrameBuffers()
@@ -296,28 +295,28 @@ void DeleteFrameBuffers()
 	if(frameBuffer[MODE_NTSC][0])
 	{
 		free(MEM_K1_TO_K0(frameBuffer[MODE_NTSC][0]));
-		frameBuffer[MODE_NTSC][0] = NULL;		
+		frameBuffer[MODE_NTSC][0] = NULL;
 	}
 	if(frameBuffer[MODE_NTSC][1])
 	{
 		free(MEM_K1_TO_K0(frameBuffer[MODE_NTSC][1]));
-		frameBuffer[MODE_NTSC][1] = NULL;		
+		frameBuffer[MODE_NTSC][1] = NULL;
 	}	
 	if(frameBuffer[MODE_PAL][0])
 	{
 		free(MEM_K1_TO_K0(frameBuffer[MODE_PAL][0]));
-		frameBuffer[MODE_PAL][0] = NULL;		
+		frameBuffer[MODE_PAL][0] = NULL;
 	}
 	if(frameBuffer[MODE_PAL][1])
 	{
 		free(MEM_K1_TO_K0(frameBuffer[MODE_PAL][1]));
-		frameBuffer[MODE_PAL][1] = NULL;		
+		frameBuffer[MODE_PAL][1] = NULL;
 	}	
 }
 
 void EnableStretchedPALModes(int enable)
 {
-	Options.PALScale576 = enable;	
+	Options.PALScale576 = enable;
 	
 	if(enable)
 	{
@@ -392,7 +391,7 @@ void padString(char *str)
 	if(len > 32)
 		return;
 	memset(buffer, ' ', 100);
-    strncpy(buffer+32-len, str, 32);
+	strncpy(buffer+32-len, str, 32);
 	strncpy(str, buffer, 32);
 	str[32] = '\0';
 }
@@ -404,7 +403,7 @@ void GetVideoModeStr(char *res, int shortdesc)
 		switch(vmode)
 		{
 			case VIDEO_240P:
-				sprintf(res, "NTSC 320x240p");				
+				sprintf(res, "NTSC 320x240p");
 				break;			
 			case VIDEO_480I_A240:
 				sprintf(res, "NTSC 640x480i (scaled 240p)");
@@ -414,16 +413,16 @@ void GetVideoModeStr(char *res, int shortdesc)
 				break;
 			case VIDEO_288P:
 				if(Options.PALScale576)
-					sprintf(res, "PAL 320x288p (str.)");				
+					sprintf(res, "PAL 320x288p (str.)");
 				else
-					sprintf(res, "PAL 320x288p");				
-				break;			
+					sprintf(res, "PAL 320x288p");
+				break;
 			case VIDEO_576I_A264:
 				if(Options.PALScale576)
 					sprintf(res, "PAL 640x576i (scaled 264p str.)");
 				else
 					sprintf(res, "PAL 640x576i (scaled 264p)");
-				break;			
+				break;
 			case VIDEO_576I:
 				if(Options.PALScale576)
 					sprintf(res, "PAL 640x576i (no scaling str.)");
@@ -435,7 +434,7 @@ void GetVideoModeStr(char *res, int shortdesc)
 				break;
 			case VIDEO_480P_SL:
 				sprintf(res, "EDTV 640x480p (scaled 240p)");
-				break;				
+				break;
 		}
 		if(Options.Enable720Stretch)
 		{
@@ -451,8 +450,8 @@ void GetVideoModeStr(char *res, int shortdesc)
 		switch(vmode)
 		{
 			case VIDEO_240P:
-				sprintf(res, "[240p]");				
-				break;			
+				sprintf(res, "[240p]");
+				break;
 			case VIDEO_480I_A240:
 				sprintf(res, "[480i LD]");
 				break;
@@ -461,15 +460,15 @@ void GetVideoModeStr(char *res, int shortdesc)
 				break;
 			case VIDEO_288P:
 				if(Options.PALScale576)
-					sprintf(res, "[288p STR]");				
+					sprintf(res, "[288p STR]");
 				else
-					sprintf(res, "[288p]");				
-				break;			
+					sprintf(res, "[288p]");
+				break;
 			case VIDEO_576I_A264:
 				if(Options.PALScale576)
 					sprintf(res, "[576i LD/S]");
 				else
-					sprintf(res, "[576i LD]");				
+					sprintf(res, "[576i LD]");
 				break;
 			case VIDEO_576I:
 				if(Options.PALScale576)
@@ -482,7 +481,7 @@ void GetVideoModeStr(char *res, int shortdesc)
 				break;
 			case VIDEO_480P_SL:
 				sprintf(res, "[480p LD]");
-				break;				
+				break;
 		}
 
 	}
@@ -502,22 +501,22 @@ void SetBilinearOption(s8 set)
 char *GetBilinearText(s8 shortdesc)
 {
 	/*
-	#define GX_NEAR   0
+	#define GX_NEAR				0
 	Point sampling, no mipmap
 	
-	#define GX_LINEAR   1
+	#define GX_LINEAR			1
 	Bilinear filtering, no mipmap
 	
-	#define GX_NEAR_MIP_NEAR   2
+	#define GX_NEAR_MIP_NEAR	2
 	Point sampling, discrete mipmap
 	
-	#define GX_LIN_MIP_NEAR   3
+	#define GX_LIN_MIP_NEAR		3
 	Bilinear filtering, discrete mipmap
 
-	#define GX_NEAR_MIP_LIN   4
+	#define GX_NEAR_MIP_LIN		4
 	Point sampling, linear mipmap
 	
-	#define GX_LIN_MIP_LIN   5
+	#define GX_LIN_MIP_LIN		5
 	Trilinear filtering
 	*/
 	
