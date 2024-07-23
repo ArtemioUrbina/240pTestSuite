@@ -30,38 +30,38 @@ GXRModeObj Mode_480i;
 GXRModeObj Mode_264p;
 GXRModeObj Mode_528i;
 
-// Modified TVPal264Ds  
+// Modified TVPal264Ds	
 GXRModeObj TVPal264DsFull =
 {
-    VI_TVMODE_PAL_DS,       // viDisplayMode
-    640,             // fbWidth
-    264,             // efbHeight
-    284,             // xfbHeight, was 264
-    (VI_MAX_WIDTH_PAL - 640)/2,         // viXOrigin, was (VI_MAX_HEIGHT_PAL/2 - 528/2)
-    PAL_OFFSET,        // viYOrigin
-    640,             // viWidth
-    572,             // viHeight, was 528
-    VI_XFBMODE_SF,   // xFBmode
-    GX_FALSE,        // field_rendering
-    GX_FALSE,        // aa
+	VI_TVMODE_PAL_DS,		// viDisplayMode
+	640,			 // fbWidth
+	264,			 // efbHeight
+	284,			 // xfbHeight, was 264
+	(VI_MAX_WIDTH_PAL - 640)/2, 		// viXOrigin, was (VI_MAX_HEIGHT_PAL/2 - 528/2)
+	PAL_OFFSET, 	   // viYOrigin
+	640,			 // viWidth
+	572,			 // viHeight, was 528
+	VI_XFBMODE_SF,	 // xFBmode
+	GX_FALSE,		 // field_rendering
+	GX_FALSE,		 // aa
 
-    // sample points arranged in increasing Y order
+	// sample points arranged in increasing Y order
 	{
-		{6,6},{6,6},{6,6},  // pix 0, 3 sample points, 1/12 units, 4 bits each
-		{6,6},{6,6},{6,6},  // pix 1
-		{6,6},{6,6},{6,6},  // pix 2
-		{6,6},{6,6},{6,6}   // pix 3
+		{6,6},{6,6},{6,6},	// pix 0, 3 sample points, 1/12 units, 4 bits each
+		{6,6},{6,6},{6,6},	// pix 1
+		{6,6},{6,6},{6,6},	// pix 2
+		{6,6},{6,6},{6,6}	// pix 3
 	},
 
-    // vertical filter[7], 1/64 units, 6 bits each
+	// vertical filter[7], 1/64 units, 6 bits each
 	{
-		 0,         // line n-1
-		 0,         // line n-1
-		21,         // line n
-		22,         // line n
-		21,         // line n
-		 0,         // line n+1
-		 0          // line n+1
+		 0, 		// line n-1
+		 0, 		// line n-1
+		21, 		// line n
+		22, 		// line n
+		21, 		// line n
+		 0, 		// line n+1
+		 0			// line n+1
 	}
 };
 
@@ -70,34 +70,34 @@ GXRModeObj TVPal264DsFull =
 // GC starts at 23
 GXRModeObj TVPal576IntDfFull =
 {
-    VI_TVMODE_PAL_INT,      // viDisplayMode
-    640,             // fbWidth
-    528,             // efbHeight
-    572,             // xfbHeight when using 576 2 lines are not drawn, was 528
-    (VI_MAX_WIDTH_PAL - 640)/2,         // viXOrigin
-    PAL_OFFSET-2,    // viYOrigin, was (VI_MAX_HEIGHT_PAL - 528)/2, 
-    640,             // viWidth
-    574,             // viHeight, when using 576 2 lines are not drawn, was 528
-    VI_XFBMODE_DF,   // xFBmode
-    GX_FALSE,        // field_rendering
-    GX_FALSE,        // aa
+	VI_TVMODE_PAL_INT,		// viDisplayMode
+	640,			 // fbWidth
+	528,			 // efbHeight
+	572,			 // xfbHeight when using 576 2 lines are not drawn, was 528
+	(VI_MAX_WIDTH_PAL - 640)/2, 		// viXOrigin
+	PAL_OFFSET-2,	 // viYOrigin, was (VI_MAX_HEIGHT_PAL - 528)/2, 
+	640,			 // viWidth
+	574,			 // viHeight, when using 576 2 lines are not drawn, was 528
+	VI_XFBMODE_DF,	 // xFBmode
+	GX_FALSE,		 // field_rendering
+	GX_FALSE,		 // aa
 
-    // sample points arranged in increasing Y order
+	// sample points arranged in increasing Y order
 	{
-		{6,6},{6,6},{6,6},  // pix 0, 3 sample points, 1/12 units, 4 bits each
-		{6,6},{6,6},{6,6},  // pix 1
-		{6,6},{6,6},{6,6},  // pix 2
-		{6,6},{6,6},{6,6}   // pix 3
+		{6,6},{6,6},{6,6},	// pix 0, 3 sample points, 1/12 units, 4 bits each
+		{6,6},{6,6},{6,6},	// pix 1
+		{6,6},{6,6},{6,6},	// pix 2
+		{6,6},{6,6},{6,6}	// pix 3
 	},
-    // vertical filter[7], 1/64 units, 6 bits each
+	// vertical filter[7], 1/64 units, 6 bits each
 	{
-		 8,         // line n-1
-		 8,         // line n-1
-		10,         // line n
-		12,         // line n
-		10,         // line n
-		 8,         // line n+1
-		 8          // line n+1
+		 8, 		// line n-1
+		 8, 		// line n-1
+		10, 		// line n
+		12, 		// line n
+		10, 		// line n
+		 8, 		// line n+1
+		 8			// line n+1
 	}
 };
 
@@ -123,10 +123,10 @@ GXRModeObj *mvmode	= NULL;
 GXRModeObj *rmode = NULL;
 GXRModeObj rmode_data;
 
-int W			    = 0;
-int H			    = 0;
-int dW			    = 0;
-int dH			    = 0;
+int W				= 0;
+int H				= 0;
+int dW				= 0;
+int dH				= 0;
 
 s8	OffsetH			= 0;
 s8	AspectRatio		= 0;
@@ -252,7 +252,7 @@ void SetVideoMode(u32 newmode)
 		rmode->viXOrigin = (VI_MAX_WIDTH_PAL - 720)/2;		// 678 is the recommended vaue
 	}
 
-	ActiveFB ^= 1;  
+	ActiveFB ^= 1;	
 #ifdef WII_VERSION
 	VIDEO_SetTrapFilter(Options.TrapFilter);
 #endif
@@ -392,7 +392,7 @@ void padString(char *str)
 	if(len > 32)
 		return;
 	memset(buffer, ' ', 100);
-    strncpy(buffer+32-len, str, 32);
+	strncpy(buffer+32-len, str, 32);
 	strncpy(str, buffer, 32);
 	str[32] = '\0';
 }
@@ -505,7 +505,7 @@ char *GetBilinearText(s8 shortdesc)
 	#define GX_NEAR   0
 	Point sampling, no mipmap
 	
-	#define GX_LINEAR   1
+	#define GX_LINEAR	1
 	Bilinear filtering, no mipmap
 	
 	#define GX_NEAR_MIP_NEAR   2
@@ -517,7 +517,7 @@ char *GetBilinearText(s8 shortdesc)
 	#define GX_NEAR_MIP_LIN   4
 	Point sampling, linear mipmap
 	
-	#define GX_LIN_MIP_LIN   5
+	#define GX_LIN_MIP_LIN	 5
 	Trilinear filtering
 	*/
 	

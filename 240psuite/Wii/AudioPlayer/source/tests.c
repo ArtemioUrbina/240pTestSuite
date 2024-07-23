@@ -56,7 +56,7 @@ void aesnd_callback(AESNDPB *pb, unsigned int state, void *cb_arg)
 void PlayAudioFile(ImagePtr back, char *filename)
 {
 	int 			done = 0, loaded = 0, counter = 2;
-	u32			    pressed;
+	u32				pressed;
 	char			*msg = "Loading file...";
 	char			*title = filename;
 	u8				*aet_samples = NULL;
@@ -109,7 +109,7 @@ void PlayAudioFile(ImagePtr back, char *filename)
 		}
 		
 		ControllerScan();
-        pressed = Controller_ButtonsDown(0);
+		pressed = Controller_ButtonsDown(0);
 		if (pressed & PAD_BUTTON_B)
 			done = 1;
 			

@@ -136,8 +136,8 @@ void ReleaseTextures()
 
 u8 InitGX()
 {	
-    memset(&gp_fifo, 0, sizeof(gp_fifo));    
-    GX_Init(&gp_fifo, sizeof(gp_fifo));    
+	memset(&gp_fifo, 0, sizeof(gp_fifo));	 
+	GX_Init(&gp_fifo, sizeof(gp_fifo));    
 	
 	return LoadTextures();
 }
@@ -151,7 +151,7 @@ void SetupGX()
 {
 	f32 yscale;
 	u32 xfbHeight;	
-    u16 xfbWidth;
+	u16 xfbWidth;
 	u32 width = 0;
 	u32 height = 0;
 	Mtx44 perspective;
@@ -159,10 +159,10 @@ void SetupGX()
 	
 	GX_SetCopyClear(background, 0x00ffffff);
  
-    GX_SetViewport(0.0F, 0.0F, rmode->fbWidth, rmode->efbHeight, 0.0F, 1.0F);	
+	GX_SetViewport(0.0F, 0.0F, rmode->fbWidth, rmode->efbHeight, 0.0F, 1.0F);	
 	yscale = GX_GetYScaleFactor(rmode->efbHeight,rmode->xfbHeight);
 	xfbHeight = GX_SetDispCopyYScale(yscale);
-    xfbWidth = VIDEO_PadFramebufferWidth(rmode->fbWidth);  
+	xfbWidth = VIDEO_PadFramebufferWidth(rmode->fbWidth);  
 	GX_SetScissor(0,0,rmode->fbWidth,rmode->efbHeight);
 		
 	GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
@@ -187,7 +187,7 @@ void SetupGX()
 	height = rmode->efbHeight;
 	width = (vmode == VIDEO_240P || vmode == VIDEO_288P) ? 320 : xfbWidth;
 	
-	guOrtho(perspective,0,height,0,width,0,300);    
+	guOrtho(perspective,0,height,0,width,0,300);	
 	GX_LoadProjectionMtx(perspective, GX_ORTHOGRAPHIC);
 	GX_SetDither(GX_FALSE);
 }
@@ -274,10 +274,10 @@ void EndScene()
 		
 	GX_CopyDisp(frameBuffer[IsPAL][ActiveFB], GX_TRUE); 		
   
-	VIDEO_Flush();                      
+	VIDEO_Flush();						
 	VIDEO_WaitVSync();
 
-	ActiveFB ^= 1;   
+	ActiveFB ^= 1;	 
 	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);   		
 }
 
@@ -289,7 +289,7 @@ void IgnoreOffset(ImagePtr image)
 
 ImagePtr LoadImageMemCpy(int Texture, int maptoscreen)
 {		
-    u32 fmt = 0;
+	u32 fmt = 0;
 	u16 t_width = 0, t_height = 0;
 	void *texture = NULL;
 	ImagePtr image;
@@ -342,7 +342,7 @@ ImagePtr LoadImageMemCpy(int Texture, int maptoscreen)
 
 ImagePtr LoadImage(int Texture, int maptoscreen)
 {		
-    u32 fmt = 0;
+	u32 fmt = 0;
 	u16 t_width = 0, t_height = 0;
 	ImagePtr image;
 	
@@ -418,12 +418,12 @@ ImagePtr CopyFrameBufferToImage()
 	//fbsize = GX_GetTexBufferSize(width, height, GX_TF_RGBA8, GX_TRUE, 0);	
 	fbsize = width * height * 4;  // 32 bits	
 	cfb = (u8 *)memalign(32, fbsize);
-    if (!cfb)
+	if (!cfb)
 		return NULL;
 		
-    GX_DrawDone();
-    GX_SetCopyFilter(GX_FALSE, NULL, GX_FALSE, NULL);
-    GX_SetTexCopySrc(0, 0, width, height);
+	GX_DrawDone();
+	GX_SetCopyFilter(GX_FALSE, NULL, GX_FALSE, NULL);
+	GX_SetTexCopySrc(0, 0, width, height);
 	GX_SetTexCopyDst(width, height, GX_TF_RGBA8, GX_FALSE);
 	GX_CopyTex(cfb, GX_TRUE);
 	GX_PixModeSync();	
@@ -431,9 +431,9 @@ ImagePtr CopyFrameBufferToImage()
 	
 	SetupGX();
 	
-	ActiveFB ^= 1;    		
+	ActiveFB ^= 1;	  		
 	  
-	VIDEO_Flush();                      
+	VIDEO_Flush();						
 	VIDEO_WaitVSync();
 
 	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);   			

@@ -1,39 +1,39 @@
 /****************************************************************************
- *  vi_encoder.c
+ *	vi_encoder.c
  *
- *  Wii Audio/Video Encoder support
+ *	Wii Audio/Video Encoder support
  *
- *  Copyright (C) 2009 Eke-Eke, with some code from libogc (C) Hector Martin 
+ *	Copyright (C) 2009 Eke-Eke, with some code from libogc (C) Hector Martin 
  * 
- *  Redistribution and use of this code or any derivative works are permitted
- *  provided that the following conditions are met:
+ *	Redistribution and use of this code or any derivative works are permitted
+ *	provided that the following conditions are met:
  *
- *   - Redistributions may not be sold, nor may they be used in a commercial
- *     product or activity.
+ *	 - Redistributions may not be sold, nor may they be used in a commercial
+ *	   product or activity.
  *
- *   - Redistributions that are modified from the original source must include the
- *     complete source code, including the source code for all components used by a
- *     binary built from the modified sources. However, as a special exception, the
- *     source code distributed need not include anything that is normally distributed
- *     (in either source or binary form) with the major components (compiler, kernel,
- *     and so on) of the operating system on which the executable runs, unless that
- *     component itself accompanies the executable.
+ *	 - Redistributions that are modified from the original source must include the
+ *	   complete source code, including the source code for all components used by a
+ *	   binary built from the modified sources. However, as a special exception, the
+ *	   source code distributed need not include anything that is normally distributed
+ *	   (in either source or binary form) with the major components (compiler, kernel,
+ *	   and so on) of the operating system on which the executable runs, unless that
+ *	   component itself accompanies the executable.
  *
- *   - Redistributions must reproduce the above copyright notice, this list of
- *     conditions and the following disclaimer in the documentation and/or other
- *     materials provided with the distribution.
+ *	 - Redistributions must reproduce the above copyright notice, this list of
+ *	   conditions and the following disclaimer in the documentation and/or other
+ *	   materials provided with the distribution.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- *  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- *  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- *  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- *  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- *  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- *  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- *  POSSIBILITY OF SUCH DAMAGE.
+ *	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ *	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ *	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ *	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ *	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ *	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ *	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *	POSSIBILITY OF SUCH DAMAGE.
  *
  ****************************************************************************************/
 
@@ -47,14 +47,14 @@
 #include "vi_encoder.h"
 
 /****************************************************************************
- *  I2C driver by Hector Martin (marcan)
+ *	I2C driver by Hector Martin (marcan)
  *
  ****************************************************************************/
 
 #define _SHIFTL(v, s, w)	\
-    ((u32) (((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
+	((u32) (((u32)(v) & ((0x01 << (w)) - 1)) << (s)))
 #define _SHIFTR(v, s, w)	\
-    ((u32)(((u32)(v) >> (s)) & ((0x01 << (w)) - 1)))
+	((u32)(((u32)(v) >> (s)) & ((0x01 << (w)) - 1)))
 
 extern void udelay(int us);
 
@@ -238,7 +238,7 @@ static void __VIWriteI2CRegisterBuf(u8 reg, int size, u8 *data)
 }
 
 /****************************************************************************
- *  A/V functions support (Eke-Eke)
+ *	A/V functions support (Eke-Eke)
  *
  ****************************************************************************/
 static const u8 gamma_coeffs[][33] =
@@ -464,17 +464,17 @@ static const u8 gamma_coeffs[][33] =
 
 void __VISetTiming(u8 timing)
 {
-  __VIWriteI2CRegister8(0x00,timing);
+	__VIWriteI2CRegister8(0x00,timing);
 }
 
 void __VISetYUVSEL(u8 dtvstatus)
 {
-  u8 vdacFlagRegion = 0;
-  u32 currTvMode = _SHIFTR(_viReg[1],8,2);
-  if(currTvMode==VI_PAL || currTvMode==VI_EURGB60)
-    vdacFlagRegion = 2;
+	u8 vdacFlagRegion = 0;
+	u32 currTvMode = _SHIFTR(_viReg[1],8,2);
+	if(currTvMode==VI_PAL || currTvMode==VI_EURGB60)
+		vdacFlagRegion = 2;
 	else if(currTvMode==VI_MPAL)
-    vdacFlagRegion = 1;
+		vdacFlagRegion = 1;
 
 	__VIWriteI2CRegister8(0x01, _SHIFTL(dtvstatus,5,3)|(vdacFlagRegion&0x1f)); 
 }
@@ -509,21 +509,21 @@ void __VISetWSS(u16 value)
 
 void __VISetRGBOverDrive(u8 value)
 {
-  u32 currTvMode = _SHIFTR(_viReg[1],8,2);
-  if (currTvMode == VI_DEBUG)
-    __VIWriteI2CRegister8(0x0A,(value<<1)|1);
-  else
-    __VIWriteI2CRegister8(0x0A,0);
+	u32 currTvMode = _SHIFTR(_viReg[1],8,2);
+	if (currTvMode == VI_DEBUG)
+		__VIWriteI2CRegister8(0x0A,(value<<1)|1);
+	else
+		__VIWriteI2CRegister8(0x0A,0);
 }
 
 void __VISetOverSampling(void)
 {
-  __VIWriteI2CRegister8(0x65,1);
+	__VIWriteI2CRegister8(0x65,1);
 }
 
 void __VISetCCSEL(void)
 {
-  __VIWriteI2CRegister8(0x6a,1);
+	__VIWriteI2CRegister8(0x6a,1);
 }
 
 void __VISetFilterEURGB60(u8 enable)
@@ -543,20 +543,20 @@ void __VISetClosedCaption(u32 value)
 
 void __VISetGamma(VIGamma gamma)
 {
-  u8 *data = (u8 *)&gamma_coeffs[gamma][0];
-  __VIWriteI2CRegisterBuf(0x10, 0x21, data);
+	u8 *data = (u8 *)&gamma_coeffs[gamma][0];
+	__VIWriteI2CRegisterBuf(0x10, 0x21, data);
 }
 
 /* User Configurable */
 
 void VIDEO_SetGamma(VIGamma gamma)
 {
-  __VISetGamma(gamma);
+	__VISetGamma(gamma);
 }
 
 void VIDEO_SetTrapFilter(bool enable)
 {
-    __VISetTrapFilter(enable);
+	__VISetTrapFilter(enable);
 }
 
 #endif

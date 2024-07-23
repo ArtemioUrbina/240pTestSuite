@@ -76,7 +76,7 @@ bool InitUSB()
 	}
 	
 	if(!__io_usbstorage.startup() || !__io_usbstorage.isInserted())
-        return false;
+		return false;
 	
 	isMounted = fatMountSimple("usb", &__io_usbstorage);	
 	
@@ -364,7 +364,7 @@ typedef struct	FMT_HEADER_EXT2
 	uint16_t		extSize;		/* Size of the extension: 22 */
 	uint16_t		wValidBitsPerSample; /* at most 8*M */
 	uint32_t		dwChannelMask;	/* Speaker position mask */
-	/*  GUID (16 bytes, first two bytes are the data format code) */
+	/*	GUID (16 bytes, first two bytes are the data format code) */
 	uint16_t		formatCode; /* formatcode */
 	uint8_t			SubFormat[14];
 } fmt_hdr_ext2;
@@ -398,9 +398,9 @@ uint32_t EndianCorrect32bits(uint32_t num)
 	uint32_t swapped = 0;
 	
 	swapped = ((num>>24)&0xff) | // move byte 3 to byte 0
-              ((num<<8)&0xff0000) | // move byte 1 to byte 2
-              ((num>>8)&0xff00) | // move byte 2 to byte 1
-              ((num<<24)&0xff000000); // byte 0 to byte 3
+			  ((num<<8)&0xff0000) | // move byte 1 to byte 2
+			  ((num>>8)&0xff00) | // move byte 2 to byte 1
+			  ((num<<24)&0xff000000); // byte 0 to byte 3
 	return swapped;
 }
 
@@ -772,13 +772,13 @@ u8 LoadOptions()
 	/*
 	FILE *file = NULL;	
 	long file_size = 0;
-    mxml_node_t *xml;
+	mxml_node_t *xml;
 	mxml_node_t *node;	
 	
 	if(!InitFS())
 		return 0;	
 		
-    file = fopen(OPTIONS_FILE, "r");
+	file = fopen(OPTIONS_FILE, "r");
 	if(!file)
 	{
 		CloseFS();
@@ -796,41 +796,41 @@ u8 LoadOptions()
 		return 0;
 	}
 		
-    xml = mxmlLoadFile(NULL, file, MXML_INTEGER_CALLBACK);
-    fclose(file);
+	xml = mxmlLoadFile(NULL, file, MXML_INTEGER_CALLBACK);
+	fclose(file);
 	
 	if(!xml)
 	{
 		CloseFS();
 		return 0;	
 	}
-       	
+	   	
 	node = mxmlFindElement(xml, xml, "Activate480p", NULL, NULL, MXML_DESCEND);
 	if (node && mxmlGetType(node) == MXML_ELEMENT && !strcmp(mxmlGetText(node, 0), "Activate480p"))
 	{		
-	    if(node->child)
-	        Options.Activate480p = node->child->value.integer;		    
+		if(node->child)
+			Options.Activate480p = node->child->value.integer;			
 	}
 		
 	node = mxmlFindElement(xml, xml, "UseTrapFilter", NULL, NULL, MXML_DESCEND);
 	if (node && mxmlGetType(node) == MXML_ELEMENT && !strcmp(node->value.element.name, "UseTrapFilter"))
 	{		
 		if(node->child)
-		    Options.TrapFilter = node->child->value.integer;				    
+			Options.TrapFilter = node->child->value.integer;					
 	}
 #ifdef WII_VERSION	
 	node = mxmlFindElement(xml, xml, "UseDeflickerFilter", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "UseDeflickerFilter"))
 	{		
 		if(node->child)
-		    Options.FlickerFilter = node->child->value.integer;				    
+			Options.FlickerFilter = node->child->value.integer;					
 	}
 	
 	node = mxmlFindElement(xml, xml, "SFCClassicController", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "SFCClassicController"))
 	{		
-        if(node->child)
-            Options.SFCClassicController = node->child->value.integer;		    
+		if(node->child)
+			Options.SFCClassicController = node->child->value.integer;			
 	}
 #endif
 	
@@ -838,64 +838,64 @@ u8 LoadOptions()
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "ScanlineEvenOdd"))
 	{
 		if(node->child)
-            SetScanlinesEvenOrOdd(node->child->value.integer);		    
+			SetScanlinesEvenOrOdd(node->child->value.integer);			
 	}	
 	
 	node = mxmlFindElement(xml, xml, "ScanlineIntensity", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "ScanlineIntensity"))
 	{
-		if(node->child)       
-            SetRawScanlineIntensity(node->child->value.integer);		    
+		if(node->child) 	  
+			SetRawScanlineIntensity(node->child->value.integer);			
 	}	
 	
 	node = mxmlFindElement(xml, xml, "EnablePAL", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "EnablePAL"))
 	{
-		if(node->child)       
-            Options.EnablePAL = node->child->value.integer;		    		    
+		if(node->child) 	  
+			Options.EnablePAL = node->child->value.integer;						
 	}	
 	
 	node = mxmlFindElement(xml, xml, "EnablePALBG", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "EnablePALBG"))
 	{
-		if(node->child)       
-            Options.EnablePALBG = node->child->value.integer;		    		    
+		if(node->child) 	  
+			Options.EnablePALBG = node->child->value.integer;						
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PalBackR", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PalBackR"))
 	{
-		if(node->child)       
-            Options.PalBackR = node->child->value.integer;		    		    
+		if(node->child) 	  
+			Options.PalBackR = node->child->value.integer;						
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PalBackG", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PalBackG"))
 	{
-		if(node->child)       
-            Options.PalBackG = node->child->value.integer;		    		    
+		if(node->child) 	  
+			Options.PalBackG = node->child->value.integer;						
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PalBackB", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PalBackB"))
 	{
-		if(node->child)       
-            Options.PalBackB = node->child->value.integer;		    		    
+		if(node->child) 	  
+			Options.PalBackB = node->child->value.integer;						
 	}	
 	
 	node = mxmlFindElement(xml, xml, "PALline23", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "PALline23"))
 	{
-		if(node->child)       
-            Options.PALline23 = node->child->value.integer;		    		    
+		if(node->child) 	  
+			Options.PALline23 = node->child->value.integer;						
 		Set576iLine23Option(Options.PALline23);
 	}	
 	
 	node = mxmlFindElement(xml, xml, "Force480p", NULL, NULL, MXML_DESCEND);
 	if (node && node->type == MXML_ELEMENT && !strcmp(node->value.element.name, "Force480p"))
 	{
-		if(node->child)       
-            Options.Force480p = node->child->value.integer;		    		    
+		if(node->child) 	  
+			Options.Force480p = node->child->value.integer;						
 	}	
 	
 	if(xml)
@@ -939,8 +939,8 @@ u8 SaveOptions()
 	/*
 	FILE *file = NULL;	
 	mxml_node_t *xml = NULL;			// <?xml ... ?>
-    mxml_node_t *options240p = NULL;	// <options240p>
-    mxml_node_t *node = NULL;			// each <node>
+	mxml_node_t *options240p = NULL;	// <options240p>
+	mxml_node_t *node = NULL;			// each <node>
 
 	if(!InitFS())
 		return 0;	
@@ -952,7 +952,7 @@ u8 SaveOptions()
 		return 0;
 	}
 			
-    xml = mxmlNewXML("1.0");
+	xml = mxmlNewXML("1.0");
 	if(!xml)
 	{
 		fclose(file);
@@ -960,7 +960,7 @@ u8 SaveOptions()
 		return 0;
 	}
 	
-    options240p = mxmlNewElement(xml, "options240p");
+	options240p = mxmlNewElement(xml, "options240p");
 	if(!options240p)
 	{
 		mxmlDelete(xml);
@@ -1006,12 +1006,12 @@ u8 SaveOptions()
 	//node = mxmlNewElement(options240p, "PALScale576");
 	//mxmlNewInteger(node, Options.PALScale576);		
 	
-    mxmlSaveFile(xml, file, xml_cb);	
-    fclose(file);
+	mxmlSaveFile(xml, file, xml_cb);	
+	fclose(file);
 		
 	CloseFS();
 	mxmlDelete(xml);
 	*/
-        
+		
 	return 1;
 }

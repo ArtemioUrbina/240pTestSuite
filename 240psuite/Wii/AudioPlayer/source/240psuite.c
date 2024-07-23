@@ -85,9 +85,9 @@ int FindAudioFiles(char *folder, char **names, unsigned int max_size){
 
 int main(int argc, char **argv) 
 {
-	int 		close = 0;	
-	ImagePtr 	Back = NULL, sd = NULL;
-	int   		sel = 0, searchFiles = 1;
+	int			close = 0;	
+	ImagePtr	Back = NULL, sd = NULL;
+	int			sel = 0, searchFiles = 1;
 	int			filecount = 0, i = 0;
 	char		*filenames[MAX_FILE_COUNT];
 
@@ -118,20 +118,20 @@ int main(int argc, char **argv)
 		
 	SetupGX();
 
-    LoadFont();
+	LoadFont();
 	
 	Back = LoadImageMemCpy(BACKIMG, 0);
 	if(!Back)
-    {
-        ReleaseFont();
+	{
+		ReleaseFont();
 		EndProgram = 1;
-    }	
-    sd = LoadImageMemCpy(SDIMG, 0);
-    if(!sd)
-    {
-        ReleaseFont();
+	}	
+	sd = LoadImageMemCpy(SDIMG, 0);
+	if(!sd)
+	{
+		ReleaseFont();
 		EndProgram = 1;
-    }   
+	}	
 	
 	// load blinking graphics if appropiate
 	if(sd)
@@ -156,12 +156,12 @@ int main(int argc, char **argv)
 	
 	while(!close && !EndProgram) 
 	{
-		u8      r = 0xff;
-		u8      g = 0xff;
-		u8      b = 0xff;			    					   
-		u16     x = 40;
-		u16     y = 60;
-        u32     pressed = 0;
+		u8		r = 0xff;
+		u8		g = 0xff;
+		u8		b = 0xff;									   
+		u16 	x = 40;
+		u16 	y = 60;
+		u32 	pressed = 0;
 	
 		if(searchFiles) {
 			i = 4;
@@ -172,9 +172,9 @@ int main(int argc, char **argv)
 		}
 
 		StartScene();
-		        
+				
 		DrawImage(Back);
-        DrawImage(sd);
+		DrawImage(sd);
 		SD_blink_cycle();
 		
 		DrawStringS(34, 42, 0xff, 0xff, 0xff, "WAV file player"); 
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
 		
 		EndScene();
 		
-        ControllerScan();
+		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
 
@@ -214,7 +214,7 @@ int main(int argc, char **argv)
 				sel = 0;	
 		}
 
-        if (filecount && pressed & PAD_BUTTON_A)
+		if (filecount && pressed & PAD_BUTTON_A)
 		{		
 			PlayAudioFile(Back, filenames[sel]);						
 		}
