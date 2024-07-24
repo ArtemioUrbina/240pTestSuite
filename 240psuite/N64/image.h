@@ -9,7 +9,9 @@ struct image_st {
 	int y;
 	bool center;
 	bool scale;
+	
 	uint16_t *palette;
+	uint16_t *origPalette;
 	unsigned int fadeSteps;
 };
 typedef struct image_st image;

@@ -21,7 +21,9 @@
  
  #include "image.h"
  #include "video.h"
- 
+
+#define PAL_SIZE	16
+
 bool clearScreen = false;
 unsigned int currFB = 0;
 
@@ -56,9 +58,14 @@ void rdpqEnd() {
 }
  
 void rdpqDrawImage(image* data) {
+#ifdef DEBUG_BENCHMARK
 	assertf(data, "rdpqDrawImage() received NULL image");
 	assertf(data->tiles, "rdpqDrawImage() received NULL tiles");
-	
+#else
+	if(!data) 				return;
+	if(!data->tiles)		return;
+#endif
+
 	if(vMode == SUITE_640x480 && data->scale) {
 		if(data->center) {
 			data->x = (dW/2 - data->tiles->width)/2;
@@ -78,8 +85,13 @@ void rdpqDrawImage(image* data) {
 }
 
 void rdpqDrawImageXY(image* data, int x, int y) {
+#ifdef DEBUG_BENCHMARK
 	assertf(data, "rdpqDrawImage() received NULL image");
 	assertf(data->tiles, "rdpqDrawImage() received NULL tiles");
+#else
+	if(!data) 				return;
+	if(!data->tiles)		return;
+#endif
 	
 	if(vMode == SUITE_640x480 && data->scale) {
 		rdpq_sprite_blit(data->tiles, 2*x, 2*y, &(rdpq_blitparms_t) {
@@ -120,8 +132,15 @@ image *loadImage(char *name) {
 	
 	if(texFormat == FMT_CI4 || texFormat == FMT_CI8) {
 		data->palette = sprite_get_palette(data->tiles);
+#ifdef DEBUG_BENCHMARK
 		assertf(data->palette != NULL, 
 			"loadImage() No palette in indexed image");
+#endif
+		if(data->palette) {
+			data->origPalette = (uint16_t *)malloc(sizeof(uint16_t)*PAL_SIZE);
+			if(data->origPalette)
+				memcpy(data->origPalette, data->palette, sizeof(uint16_t)*PAL_SIZE);
+		}
 	}
 	
 	return(data);
@@ -132,6 +151,10 @@ void freeImage(image **data) {
 		if((*data)->tiles) {
 			sprite_free((*data)->tiles);
 			(*data)->tiles = NULL;
+		}
+		if((*data)->origPalette) {
+			free((*data)->origPalette);
+			(*data)->origPalette = NULL;
 		}
 		free(*data);
 		*data = NULL;
@@ -227,13 +250,17 @@ void fadePaletteStep(uint16_t *colorRaw, unsigned int fadeSteps) {
 void fadeInit(image *data, unsigned int steps) {
 #ifdef DEBUG_BENCHMARK
 	assertf(data, "fadeInit() NULL pointer received");
-	assertf(data->palette, "fadeInit() Image with no palette for dade");
+	assertf(data->palette, "fadeInit() Image with no palette in fade");
 	assertf(steps != 0, "fadeInit() steps is zero");
 #else
 	if(!data || !data->palette || steps == 0)
 		return;
 #endif
 
+	if(data->origPalette) {
+		memcpy(data->palette, data->origPalette, sizeof(uint16_t)*PAL_SIZE);
+		data_cache_hit_writeback(data->palette, sizeof(uint16_t)*PAL_SIZE);
+	}
 	data->fadeSteps = steps;
 }
 
@@ -247,9 +274,9 @@ void fadeImageStep(image *data) {
 		return;
 #endif
 
-	for(unsigned int c = 0; c < 16; c++)
+	for(unsigned int c = 0; c < PAL_SIZE; c++)
 		fadePaletteStep(&data->palette[c], data->fadeSteps);
 	
 	// Invalidate the cache
-	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*16);
+	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*PAL_SIZE);
 }

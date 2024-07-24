@@ -430,7 +430,7 @@ void drawVideoTestsMenu(void) {
 #define FADE_STEPS	20
 #define FADE_HOLD	10
 
-void drawSplash(char *name, int delay) {
+void drawSplash(char *name, int hold, int delay) {
 	joypad_buttons_t keys;
 	image *logo = NULL;
 	
@@ -446,7 +446,7 @@ void drawSplash(char *name, int delay) {
 		rdpqStart();
 		rdpqDrawImage(logo);
 		rdpqEnd();
-
+		
 		waitVsync();
 		
 		joypad_poll();
@@ -473,14 +473,14 @@ void drawSplash(char *name, int delay) {
 		delay --;
 	}
 	
+	clearScreen = true;
 	delay = FADE_HOLD;
 	while(delay) {
 		getDisplay();
 		
 		rdpqStart();
-		rdpqClearScreen();
 		rdpqEnd();
-				
+		
 		waitVsync();
 		
 		delay --;
