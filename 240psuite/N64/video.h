@@ -11,8 +11,6 @@
 #define SUITE_256x240	4
 #define SUITE_NONE		-1
 
-#define	IDLE_WARN_MS	2.0f
-
 extern surface_t* __disp;
 
 extern resolution_t		current_resolution;
@@ -39,6 +37,7 @@ bool isSameRes(resolution_t *res1, const resolution_t *res2);
 int videoModeToInt(resolution_t *res);
 
 #ifdef DEBUG_BENCHMARK
+#define	IDLE_WARN_MS	2.0f
 void resetIdle();
 #endif
 

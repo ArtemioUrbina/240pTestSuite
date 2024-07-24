@@ -22,42 +22,50 @@
  #include "font.h"
  #include "video.h"
  
- sprite_t *custom_font = NULL;
+sprite_t *font240 = NULL;
+sprite_t *font480 = NULL;
  
- int fw = 8; // font width
- int fh = 10; // font height
- 
- int loadFont() {
-	if(custom_font)
-		return 0;
+int fw = 8; // font width
+int fh = 10; // font height
 
+int loadFont() {
 	/* Read in the custom font */
-	int fp = dfs_open("/240pSuite-font.sprite");
-	if(fp == DFS_ESUCCESS)
-		return 0;
-
-	custom_font = malloc(dfs_size(fp));
-	if(!custom_font) {
-		dfs_close( fp );
-		return 0;
+	
+	if(!font240){
+		font240 = sprite_load("rom:/240pSuite-font.sprite");
+		if(!font240)
+			return 0;
 	}
-
-	if(dfs_read(custom_font, 1, dfs_size(fp), fp) < 0) {
-		free(custom_font);
-		custom_font = NULL;
-		return 0;
+	
+	if(!font480) {
+		font480 = sprite_load("rom:/240pSuite-font480.sprite");
+		if(!font480)
+			return 0;
 	}
-
-	dfs_close(fp);
-
-	graphics_set_font_sprite(custom_font);
 	return 1;
+}
+
+void setFont() {
+	if(vMode == SUITE_640x480) {
+		graphics_set_font_sprite(font480);
+		fw = 16;
+		fh = 10;
+	}
+	else {
+		graphics_set_font_sprite(font240);
+		fw = 8;
+		fh = 10;
+	}
 }
  
 void releaseFont() {
-	if(custom_font)	{
-		free(custom_font);
-		custom_font = NULL;
+	if(font240)	{
+		free(font240);
+		font240 = NULL;
+	}
+	if(font480)	{
+		free(font480);
+		font480 = NULL;
 	}
 }
  
@@ -71,7 +79,7 @@ int measureString(char *str) {
 uint32_t f_color = 0xFFFFFFFF;
 
 void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const msg ) {
-	int highlight = 0;
+	int highlight = 0, lh = LINE_HEIGHT, sw = SPACE_WIDTH;
 	uint32_t old_f_color = 0xFFFFFFFF;
 	
     if( disp == 0 ) { return; }
@@ -80,6 +88,8 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 	if(vMode == SUITE_640x480) {
 		x *= 2;
 		y *= 2;
+		lh *= 2;
+		sw *= 2;
 	}
 	
     int tx = x;
@@ -92,10 +102,10 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 				break;
             case '\n':
                 tx = x;
-                ty += LINE_HEIGHT;
+                ty += lh;
                 break;
             case ' ':
-                tx += SPACE_WIDTH;
+                tx += sw;
                 break;
             case '\t':
                 tx += fw * 5;
@@ -167,12 +177,14 @@ void drawStringS(int x, int y, int r, int g, int b, char *text) {
 }
 
 void drawStringB(int x, int y, int r, int g, int b, char *text) {
-	int boxWidth = 0;
+	int boxWidth = 0, boxHeight = fh;
 				
 	boxWidth = measureString(text)*fw;
 	f_color = graphics_make_color(r, g, b, 0xff);
 	
-    graphics_draw_box(__disp, x-1, y-1, boxWidth, fh, 0x00000000);
+	if(vMode == SUITE_640x480)
+		boxHeight *= 2;
+    graphics_draw_box(__disp, x-1, y-1, boxWidth, boxHeight, 0x00000000);
 	graphics_set_color(f_color, 0x00000000);
 	graphics_draw_text_suite(__disp, x, y, text);
 }

@@ -3,7 +3,7 @@
 
 #include "system.h"
 
-struct image_st {
+typedef struct image_st {
 	sprite_t *tiles;
 	int	x;
 	int y;
@@ -14,8 +14,7 @@ struct image_st {
 	uint16_t *origPalette;
 	unsigned int palSize;
 	unsigned int fadeSteps;
-};
-typedef struct image_st image;
+} image;
 
 extern bool clearScreen;
 

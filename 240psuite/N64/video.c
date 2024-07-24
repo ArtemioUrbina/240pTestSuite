@@ -22,10 +22,7 @@
 #include "system.h"
 #include "video.h"
 #include "image.h"
-
-#ifdef DEBUG_BENCHMARK
 #include "font.h"
-#endif
 
 resolution_t		current_resolution;
 unsigned int		current_bitdepth = 0;
@@ -165,6 +162,7 @@ void setVideo(resolution_t newRes) {
 	
 	rdpq_init();
 	register_VI_handler(vblCallback);
+	setFont();
 
 	videoSet = 1;
 }

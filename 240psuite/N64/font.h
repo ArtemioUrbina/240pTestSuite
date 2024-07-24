@@ -8,6 +8,7 @@ extern int fh; // font height
  
 int loadFont();
 void releaseFont();
+void setFont();
 
 void drawString(int x, int y, int r, int g, int b, char *str);
 void drawStringS(int x, int y, int r, int g, int b, char *str);

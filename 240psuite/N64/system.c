@@ -26,9 +26,10 @@
  void initN64() {
 	/* Initialize peripherals */
 	initVideo();
-	setVideo(RESOLUTION_320x240);
 	
 	dfs_init(DFS_DEFAULT_LOCATION);
+	loadFont();
+	setVideo(RESOLUTION_320x240);
 	
 	joypad_init();
  }

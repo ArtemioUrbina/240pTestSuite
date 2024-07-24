@@ -34,7 +34,6 @@ int main(void) {
 	image *bg = NULL, *sd = NULL;
 	
 	initN64();
-	loadFont();
 
 #ifndef DEBUG_BENCHMARK
 	drawIntro();
