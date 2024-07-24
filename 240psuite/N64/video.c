@@ -71,8 +71,7 @@ void getDisplay() {
 void waitVsync() {
 	uint64_t nextFrame = __frames + 1;
 	
-	if(__disp)
-	{
+	if(__disp) {
 		display_show(__disp);
 		__disp = NULL;
 	}

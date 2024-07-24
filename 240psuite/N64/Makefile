@@ -16,7 +16,6 @@ filesystem/%.sprite: assets/%.png
 	@$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
 
 filesystem/240pSuite-font.sprite: MKSPRITE_FLAGS=
-filesystem/font.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/mainbg.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/sd.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/grid.sprite: MKSPRITE_FLAGS=--format CI4

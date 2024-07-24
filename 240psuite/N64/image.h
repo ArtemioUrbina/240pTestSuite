@@ -9,6 +9,8 @@ struct image_st {
 	int y;
 	bool center;
 	bool scale;
+	uint16_t *palette;
+	unsigned int fadeSteps;
 };
 typedef struct image_st image;
 
@@ -27,5 +29,8 @@ bool copyFrameBuffer();
 void freeFrameBuffer();
 void displayFrameBuffer();
 void darkenBuffer(int amount);
+
+void fadeInit(image *data, unsigned int steps);
+void fadeImageStep(image *data);
 
 #endif

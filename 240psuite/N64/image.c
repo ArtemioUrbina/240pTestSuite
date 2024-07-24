@@ -107,6 +107,18 @@ image *loadImage(char *name) {
 	data->y = 0;
 	data->center = false;
 	data->scale = true;
+	data->palette = NULL;
+	data->fadeSteps = 0;
+	
+	/* prepare palette if it exists */
+	tex_format_t texFormat = sprite_get_format(data->tiles);
+	
+	if(texFormat == FMT_CI4 || texFormat == FMT_CI8) {
+		data->palette = sprite_get_palette(data->tiles);
+		assertf(data->palette != NULL, 
+			"loadImage() No palette in indexed image");
+	}
+	
 	return(data);
 }
  
@@ -196,4 +208,43 @@ void darkenBuffer(int amount) {
 		screen[i] = graphics_convert_color(color);
 	}
 }
- 
+
+void fadePaletteStep(uint16_t *colorRaw, unsigned int fadeSteps) {
+	color_t color;
+			
+	color = color_from_packed16(*colorRaw);
+    color.r = (color.r > 0) ? (color.r - color.r/fadeSteps) : 0;
+    color.g = (color.g > 0) ? (color.g - color.g/fadeSteps) : 0;
+    color.b = (color.b > 0) ? (color.b - color.b/fadeSteps) : 0;
+	*colorRaw = color_to_packed16(color);
+}
+
+void fadeInit(image *data, unsigned int steps) {
+#ifdef DEBUG_BENCHMARK
+	assertf(data, "fadeInit() NULL pointer received");
+	assertf(data->palette, "fadeInit() Image with no palette for dade");
+	assertf(steps != 0, "fadeInit() steps is zero");
+#else
+	if(!data || !data->palette || steps == 0)
+		return;
+#endif
+
+	data->fadeSteps = steps;
+}
+
+void fadeImageStep(image *data) {
+#ifdef DEBUG_BENCHMARK
+	assertf(data, "fadeImageStep() NULL pointer received");
+	assertf(data->palette, "fadeImageStep() Image with no palette for dade");
+	assertf(data->fadeSteps != 0, "fadeImageStep() fadeStep is zero");
+#else
+	if(!data || !data->palette || data->fadeSteps == 0)
+		return;
+#endif
+
+	for(unsigned int c = 0; c < 16; c++)
+		fadePaletteStep(&data->palette[c], data->fadeSteps);
+	
+	// Invalidate the cache
+	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*16);
+}

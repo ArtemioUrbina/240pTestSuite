@@ -430,37 +430,20 @@ void drawVideoTestsMenu(void) {
 #define FADE_STEPS	20
 #define FADE_HOLD	10
 
-void fadeStep(uint16_t *colorRaw) {
-	color_t color;
-			
-	color = color_from_packed16(*colorRaw);
-    color.r = (color.r > 0) ? (color.r - color.r/FADE_STEPS) : 0;
-    color.g = (color.g > 0) ? (color.g - color.g/FADE_STEPS) : 0;
-    color.b = (color.b > 0) ? (color.b - color.b/FADE_STEPS) : 0;
-	*colorRaw = color_to_packed16(color);
-}
-
 void drawSplash(char *name, int delay) {
 	joypad_buttons_t keys;
 	image *logo = NULL;
-	uint16_t *pal = NULL;
 	
 	logo = loadImage(name);
 	if(!logo)
 		return;
 
 	logo->center = true;
-	pal = sprite_get_palette(logo->tiles);
-	if(!pal) {
-		freeImage(&logo);
-		return;
-	}
 	
 	while(delay) {
 		getDisplay();
 		
 		rdpqStart();
-		rdpqClearScreen();
 		rdpqDrawImage(logo);
 		rdpqEnd();
 
@@ -475,16 +458,15 @@ void drawSplash(char *name, int delay) {
 	}
 	
 	delay = FADE_STEPS;
+	fadeInit(logo, FADE_STEPS);
 	while(delay) {
 		getDisplay();
 		
 		rdpqStart();
-		rdpqClearScreen();
 		rdpqDrawImage(logo);
 		rdpqEnd();
 		
-		for(unsigned int c = 0; c < 16; c++)
-			fadeStep(&pal[c]);
+		fadeImageStep(logo);
 		
 		waitVsync();
 		

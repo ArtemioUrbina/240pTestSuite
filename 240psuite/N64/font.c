@@ -77,6 +77,11 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
     if( disp == 0 ) { return; }
     if( msg == 0 ) { return; }
 
+	if(vMode == SUITE_640x480) {
+		x *= 2;
+		y *= 2;
+	}
+	
     int tx = x;
     int ty = y;
     const char *text = (const char *)msg;
