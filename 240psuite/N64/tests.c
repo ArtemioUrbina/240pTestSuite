@@ -29,11 +29,8 @@ void drawDropShadow() {
 	
 	while(!end) {
 		if(reload) {
-			bool setPos = false;;
-			
 			if(!isSameRes(&oldVmode, &current_resolution)) {
 				freeImage(&donna);
-				setPos = true;
 				oldVmode = current_resolution;
 			}
 			
@@ -59,14 +56,10 @@ void drawDropShadow() {
 					freeImage(&donna);
 					return;
 				}
-				setPos = true;
-			}
-
-			if(setPos) {
 				shadow->x = dW/2 - shadow->tiles->width/2;
 				shadow->y = dH/2 - shadow->tiles->height/2;
 			}
-			
+
 			reload = 0;
 		}
 		

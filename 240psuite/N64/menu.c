@@ -61,7 +61,6 @@ void showMenu() {
 		return;
 	}
 	menu->center = true;
-	menu->scale = false;
 	
 	while(!end) {
 		int c = 1, x, y;

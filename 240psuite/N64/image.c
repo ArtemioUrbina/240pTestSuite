@@ -50,31 +50,38 @@ void rdpqEnd() {
 }
  
 void rdpqDrawImage(image* data) {
-	if(data && data->tiles) {
+	assertf(data, "rdpqDrawImage() received NULL image");
+	assertf(data->tiles, "rdpqDrawImage() received NULL tiles");
+	
+	if(vMode == SUITE_640x480 && data->scale) {
+		if(data->center) {
+			data->x = (dW/2 - data->tiles->width)/2;
+			data->y = (dH/2 - data->tiles->height)/2;
+		}
+		rdpq_sprite_blit(data->tiles, 2*data->x, 2*data->y, &(rdpq_blitparms_t) {
+			.scale_x = 2.0f, .scale_y = 2.0f
+			});
+	}
+	else {
 		if(data->center) {
 			data->x = (dW - data->tiles->width)/2;
 			data->y = (dH - data->tiles->height)/2;
 		}
-		if(vMode == SUITE_640x480 && data->scale) {
-			rdpq_sprite_blit(data->tiles, 2*data->x, 2*data->y, &(rdpq_blitparms_t) {
-				.scale_x = 2.0f, .scale_y = 2.0f
-				});
-		}
-		else
-			rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
+		rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
 	}
 }
 
 void rdpqDrawImageXY(image* data, int x, int y) {
-	if(data && data->tiles) {
-		if(vMode == SUITE_640x480 && data->scale) {
-			rdpq_sprite_blit(data->tiles, 2*x, 2*y, &(rdpq_blitparms_t) {
-				.scale_x = 2.0f, .scale_y = 2.0f
-				});
-		}
-		else
-			rdpq_sprite_blit(data->tiles, x, y, NULL);
+	assertf(data, "rdpqDrawImage() received NULL image");
+	assertf(data->tiles, "rdpqDrawImage() received NULL tiles");
+	
+	if(vMode == SUITE_640x480 && data->scale) {
+		rdpq_sprite_blit(data->tiles, 2*x, 2*y, &(rdpq_blitparms_t) {
+			.scale_x = 2.0f, .scale_y = 2.0f
+			});
 	}
+	else
+		rdpq_sprite_blit(data->tiles, x, y, NULL);
 }
  
 void rdpqClearScreen() {
@@ -105,8 +112,10 @@ image *loadImage(char *name) {
  
 void freeImage(image **data) {
 	if(*data) {
-		sprite_free((*data)->tiles);
-		(*data)->tiles = NULL;
+		if((*data)->tiles) {
+			sprite_free((*data)->tiles);
+			(*data)->tiles = NULL;
+		}
 		free(*data);
 		*data = NULL;
 	}

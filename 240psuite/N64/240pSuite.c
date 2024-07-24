@@ -89,8 +89,7 @@ int main(void) {
 			freeImage(&bg);
 			freeImage(&sd);
 			
-			switch(sel)
-			{
+			switch(sel)	{
 				case 1:
 					drawPatternsMenu();
 					break;
@@ -163,8 +162,7 @@ void drawPatternsMenu(void) {
 			freeImage(&bg);
 			freeImage(&sd);
 			
-			switch(sel)
-			{
+			switch(sel)	{
 				case 1:
 					drawPatternsColorMenu();
 					break;
@@ -249,8 +247,7 @@ void drawPatternsColorMenu(void) {
 			freeImage(&bg);
 			freeImage(&sd);
 			
-			switch(sel)
-			{
+			switch(sel)	{
 				case 11:
 					exit = 1;
 					break;
@@ -323,8 +320,7 @@ void drawPatternsGeometryMenu(void) {
 			freeImage(&bg);
 			freeImage(&sd);
 			
-			switch(sel)
-			{
+			switch(sel)	{
 				case 5:
 					exit = 1;
 					break;
@@ -406,8 +402,7 @@ void drawVideoTestsMenu(void) {
 			freeImage(&bg);
 			freeImage(&sd);
 			
-			switch(sel)
-			{
+			switch(sel)	{
 				case 1:
 					drawDropShadow();
 					break;
