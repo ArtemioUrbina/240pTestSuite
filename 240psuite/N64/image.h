@@ -12,6 +12,7 @@ struct image_st {
 	
 	uint16_t *palette;
 	uint16_t *origPalette;
+	unsigned int palSize;
 	unsigned int fadeSteps;
 };
 typedef struct image_st image;
@@ -32,6 +33,7 @@ void freeFrameBuffer();
 void displayFrameBuffer();
 void darkenBuffer(int amount);
 
+void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);
 void fadeImageStep(image *data);
 

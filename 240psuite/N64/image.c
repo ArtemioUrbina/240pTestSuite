@@ -22,7 +22,8 @@
  #include "image.h"
  #include "video.h"
 
-#define PAL_SIZE	16
+#define PAL4_SIZE	16
+#define PAL8_SIZE	256
 
 bool clearScreen = false;
 unsigned int currFB = 0;
@@ -109,6 +110,8 @@ void rdpqClearScreen() {
 	rdpqSetDrawMode();
 }
 
+/* Image stuct */
+
 image *loadImage(char *name) {
 	image *data = NULL;
 	
@@ -124,23 +127,26 @@ image *loadImage(char *name) {
 	data->y = 0;
 	data->center = false;
 	data->scale = true;
+	
 	data->palette = NULL;
+	data->origPalette = NULL;
+	data->palSize = 0;
 	data->fadeSteps = 0;
 	
 	/* prepare palette if it exists */
 	tex_format_t texFormat = sprite_get_format(data->tiles);
 	
-	if(texFormat == FMT_CI4 || texFormat == FMT_CI8) {
+	if(texFormat == FMT_CI4)
+		data->palSize = PAL4_SIZE;
+	if(texFormat == FMT_CI8)
+		data->palSize = PAL8_SIZE;
+
+	if(data->palSize) {
 		data->palette = sprite_get_palette(data->tiles);
 #ifdef DEBUG_BENCHMARK
 		assertf(data->palette != NULL, 
 			"loadImage() No palette in indexed image");
 #endif
-		if(data->palette) {
-			data->origPalette = (uint16_t *)malloc(sizeof(uint16_t)*PAL_SIZE);
-			if(data->origPalette)
-				memcpy(data->origPalette, data->palette, sizeof(uint16_t)*PAL_SIZE);
-		}
 	}
 	
 	return(data);
@@ -247,6 +253,31 @@ void fadePaletteStep(uint16_t *colorRaw, unsigned int fadeSteps) {
 	*colorRaw = color_to_packed16(color);
 }
 
+/* Fade paletted images */
+
+void setPaletteFX(image *data) {
+	if(!data->palette)
+		return;
+	
+	if(data->origPalette) {
+		free(data->origPalette);
+		data->origPalette = NULL;
+	}
+	
+	if(data->palette) {
+		data->origPalette = (uint16_t *)malloc(sizeof(uint16_t)*data->palSize);
+		if(data->origPalette)
+			memcpy(data->origPalette, data->palette, sizeof(uint16_t)*data->palSize);
+	}
+}
+
+void resetPalette(image *data) {
+	if(data->palette && data->origPalette) {
+		memcpy(data->palette, data->origPalette, sizeof(uint16_t)*data->palSize);
+		data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
+	}
+}
+
 void fadeInit(image *data, unsigned int steps) {
 #ifdef DEBUG_BENCHMARK
 	assertf(data, "fadeInit() NULL pointer received");
@@ -257,10 +288,7 @@ void fadeInit(image *data, unsigned int steps) {
 		return;
 #endif
 
-	if(data->origPalette) {
-		memcpy(data->palette, data->origPalette, sizeof(uint16_t)*PAL_SIZE);
-		data_cache_hit_writeback(data->palette, sizeof(uint16_t)*PAL_SIZE);
-	}
+	resetPalette(data);
 	data->fadeSteps = steps;
 }
 
@@ -274,9 +302,9 @@ void fadeImageStep(image *data) {
 		return;
 #endif
 
-	for(unsigned int c = 0; c < PAL_SIZE; c++)
+	for(unsigned int c = 0; c < data->palSize; c++)
 		fadePaletteStep(&data->palette[c], data->fadeSteps);
 	
 	// Invalidate the cache
-	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*PAL_SIZE);
+	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
 }

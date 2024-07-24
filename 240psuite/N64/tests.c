@@ -56,8 +56,8 @@ void drawDropShadow() {
 					freeImage(&donna);
 					return;
 				}
-				shadow->x = dW/2 - shadow->tiles->width/2;
-				shadow->y = dH/2 - shadow->tiles->height/2;
+				shadow->x = 160 - shadow->tiles->width/2;
+				shadow->y = 120 - shadow->tiles->height/2;
 			}
 
 			reload = 0;

@@ -430,7 +430,7 @@ void drawVideoTestsMenu(void) {
 #define FADE_STEPS	20
 #define FADE_HOLD	10
 
-void drawSplash(char *name, int hold, int delay) {
+void drawSplash(char *name, int delay) {
 	joypad_buttons_t keys;
 	image *logo = NULL;
 	
