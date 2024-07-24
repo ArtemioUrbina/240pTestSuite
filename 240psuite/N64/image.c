@@ -24,6 +24,16 @@
  
 bool clearScreen = false;
 unsigned int currFB = 0;
+
+void rdpqSetDrawMode() {
+	if(vMode == SUITE_640x480) {
+		rdpq_set_mode_standard();
+		rdpq_mode_alphacompare(1);
+		rdpq_mode_filter(FILTER_POINT);
+	}
+	else
+		rdpq_set_mode_copy(true);
+}
  
 void rdpqStart() {
 	if(clearScreen) {
@@ -37,12 +47,8 @@ void rdpqStart() {
 	}
 	else
 		rdpq_attach(__disp, NULL);
-	//rdpq_set_mode_copy(true);
-	rdpq_set_mode_standard();
-	rdpq_mode_alphacompare(1);
-	if(vMode == SUITE_640x480) {
-		rdpq_mode_filter(FILTER_POINT);
-	}
+	
+	rdpqSetDrawMode();
 }
  
 void rdpqEnd() {
@@ -88,8 +94,7 @@ void rdpqClearScreen() {
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xff));
 	rdpq_fill_rectangle(0, 0, dW, dH);
 	
-	rdpq_set_mode_standard();
-	rdpq_mode_alphacompare(1);
+	rdpqSetDrawMode();
 }
 
 image *loadImage(char *name) {
