@@ -1814,15 +1814,28 @@ void LEDZoneTest()
 
 void PassiveLagTest()
 {
-	int 		frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
-	u16			pressed, lsd, msd, pause = 0;		
-	ImagePtr	back, circle;	
+	u16 		frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
+	u16			pressed, lsd, msd, pause = 0, toggle = 0;		
+	ImagePtr	back, circle, barl, barr;	
 	
 	back = LoadImage(WHITEIMG, 0);
 	if(!back)
 		return;
 	back->w = 320;
 	back->h = 240;
+	barl = LoadImage(WHITEIMG, 0);
+	if(!barl)
+		return;
+	barr = LoadImage(WHITEIMG, 0);
+	if(!barr)
+		return;
+	barr->x = 0;
+	barl->w = 6;
+	barl->h = 240;
+	
+	barr->x = 314;
+	barr->w = 6;
+	barr->h = 240;
 
 	circle= LoadImage(CIRCLEIMG, 0);
 	if(!circle)
@@ -1839,6 +1852,28 @@ void PassiveLagTest()
 			framecnt ++;
 			if(framecnt > 8)
 				framecnt = 1;
+			toggle = !toggle;
+		}
+		
+		if(!toggle)
+		{
+			barl->r = 0;
+			barl->g = 0;
+			barl->b = 0;
+			
+			barr->r = 0;
+			barr->g = 0;
+			barr->b = 0;
+		}
+		else
+		{
+			barl->r = 0xff;
+			barl->g = 0xff;
+			barl->b = 0xff;
+			
+			barr->r = 0xff;
+			barr->g = 0xff;
+			barr->b = 0xff;
 		}
 
 		if(IsPAL)
@@ -1877,6 +1912,8 @@ void PassiveLagTest()
 		StartScene();
 
 		DrawImage(back);
+		DrawImage(barl);
+		DrawImage(barr);
 		DrawString(32, 8, 0, 0,	0, "hours");
 		DrawString(104, 8, 0, 0, 0, "minutes");
 		DrawString(176, 8, 0, 0, 0, "seconds");
@@ -1888,7 +1925,7 @@ void PassiveLagTest()
 		DrawDigit(224, 16, 0, 0, 0, 10);
 
 		// Circles 1st row
-		circle->x = 16;
+		circle->x = 8;
 		circle->y = 56;
 		if(framecnt == 1)
 		{
@@ -1901,9 +1938,9 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(36, 68, 0xff, 0xff, 0xff, 1);
+		DrawDigit(28, 68, 0xff, 0xff, 0xff, 1);
 
-		circle->x = 96;
+		circle->x = 88;
 		circle->y = 56;
 		if(framecnt == 2)
 		{
@@ -1916,9 +1953,9 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(116, 68, 0xff, 0xff, 0xff, 2);
+		DrawDigit(108, 68, 0xff, 0xff, 0xff, 2);
 
-		circle->x = 176;
+		circle->x = 168;
 		circle->y = 56;
 		if(framecnt == 3)
 		{
@@ -1931,9 +1968,9 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(196, 68, 0xff, 0xff, 0xff, 3);
+		DrawDigit(188, 68, 0xff, 0xff, 0xff, 3);
 
-		circle->x = 256;
+		circle->x = 248;
 		circle->y = 56;
 		if(framecnt == 4)
 		{
@@ -1946,10 +1983,10 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(276, 68, 0xff, 0xff, 0xff, 4);
+		DrawDigit(268, 68, 0xff, 0xff, 0xff, 4);
 
 		// Circles 2nd row
-		circle->x = 16;
+		circle->x = 8;
 		circle->y = 136;
 		if(framecnt == 5)
 		{
@@ -1962,9 +1999,9 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(36, 148, 0xff, 0xff, 0xff, 5);
+		DrawDigit(28, 148, 0xff, 0xff, 0xff, 5);
 
-		circle->x = 96;
+		circle->x = 88;
 		circle->y = 136;
 		if(framecnt == 6)
 		{
@@ -1977,9 +2014,9 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(116, 148, 0xff, 0xff, 0xff, 6);
+		DrawDigit(108, 148, 0xff, 0xff, 0xff, 6);
 
-		circle->x = 176;
+		circle->x = 168;
 		circle->y = 136;
 		if(framecnt == 7)
 		{
@@ -1992,9 +2029,9 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(196, 148, 0xff, 0xff, 0xff, 7);
+		DrawDigit(188, 148, 0xff, 0xff, 0xff, 7);
 
-		circle->x = 256;
+		circle->x = 248;
 		circle->y = 136;
 		if(framecnt == 8)
 		{
@@ -2007,7 +2044,7 @@ void PassiveLagTest()
 			circle->r = 0;
 		}
 		DrawImage(circle);
-		DrawDigit(276, 148, 0xff, 0xff, 0xff, 8);
+		DrawDigit(268, 148, 0xff, 0xff, 0xff, 8);
 
 		// Draw Hours
 		lsd = hours % 10;
@@ -2030,8 +2067,8 @@ void PassiveLagTest()
 		// Draw Frames
 		lsd = frames % 10;
 		msd = frames / 10;
-		DrawDigit(248, 16, 0, 0, 0, msd);
-		DrawDigit(272, 16, 0, 0, 0, lsd);
+		DrawDigit(248, 16, toggle?0xff:0, 0, toggle?0:0xff, msd);
+		DrawDigit(272, 16, toggle?0xff:0, 0, toggle?0:0xff, lsd);
 
 		EndScene();
 
@@ -2057,6 +2094,8 @@ void PassiveLagTest()
 		}										
 	}
 	FreeImage(&back);
+	FreeImage(&barl);
+	FreeImage(&barr);
 	FreeImage(&circle);
 	ReleaseNumbers();
 }
