@@ -306,5 +306,5 @@ void fadeImageStep(image *data) {
 		fadePaletteStep(&data->palette[c], data->fadeSteps);
 	
 	// Invalidate the cache
-	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
+	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
 }

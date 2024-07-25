@@ -29,7 +29,7 @@ int fw = 8; // font width
 int fh = 10; // font height
 
 int loadFont() {
-	/* Read in the custom font */
+	/* Read in the custom fonts */
 	
 	if(!font240){
 		font240 = sprite_load("rom:/240pSuite-font.sprite");

@@ -108,32 +108,98 @@ void drawDropShadow() {
 	freeImage(&donna);
 	freeImage(&shadow);
 }
+
+void rotateWaterPalette(image *data) {
+	uint16_t tmpCol = data->palette[2];
+	
+	data->palette[2] = data->palette[3];
+	data->palette[3] = tmpCol;
+	
+	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
+}
+
+void rotateFallPalette(image *data) {
+	uint16_t tmpCol = data->palette[4];
+	
+	data->palette[4] = data->palette[3];
+	data->palette[3] = data->palette[2];
+	data->palette[2] = tmpCol;
+	
+	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
+}
+
+#ifdef DEBUG_BENCHMARK
+void printPalette(image *data, int x, int y) {
+	for(unsigned int c = 0; c < data->palSize; c++) {
+		char str[64];
+		color_t color = color_from_packed16(data->palette[c]);
+	
+		sprintf(str, "%X %X %X", color.r, color.g, color.b);
+		drawStringS(x, y, 0xff, 0xff, 0xff, str);
+		y += fh;
+	}
+}
+#endif
  
 void drawScroll() {
 	int speed = 1, acc = -1, pause = 0, vertical = 0;
 	int end = 0, x = 0, y = 0, currentframe = 0;
-	image *sonicback = NULL, *overlay = NULL;	
+	int frameLen[] = { 8, 8, 8 }, animFrame = 0, fallFrame = 0;
+	image 	*sonicTop = NULL, *sonicWater = NULL, *sonicFall = NULL;
+	image	*overlay = NULL;	
 	joypad_buttons_t keys;
 
-	sonicback = loadImage("rom:/sonicback.sprite");
-	if(!sonicback)
+	sonicTop = loadImage("rom:/sonicTop.sprite");
+	if(!sonicTop)
 		return;
-	overlay = loadImage("rom:/sonicfloor.sprite");
-	if(!overlay) {
-		freeImage(&sonicback);
+	sonicWater = loadImage("rom:/sonicWater.sprite");
+	if(!sonicWater) {
+		freeImage(&sonicTop);
 		return;
 	}
+	sonicFall = loadImage("rom:/sonicFall.sprite");
+	if(!sonicFall) {
+		freeImage(&sonicTop);
+		freeImage(&sonicWater);
+		return;
+	}
+	
+	overlay = loadImage("rom:/sonicFloor.sprite");
+	if(!overlay) {
+		freeImage(&sonicTop);
+		freeImage(&sonicWater);
+		freeImage(&sonicFall);
+		return;
+	}
+	
+	sonicTop->scale = false;
+	sonicWater->scale = false;
+	sonicFall->scale = false;
+	overlay->scale = false;
 	
     while(!end) {		
 		getDisplay();
 
 		rdpqStart();
-		if(x > 0)
-			rdpqDrawImageXY(sonicback, x-256, 0);
-		rdpqDrawImageXY(sonicback, x, 0);
-		if(x < 64)
-			rdpqDrawImageXY(sonicback, x+256, 0);
+		
+		rdpqClearScreen();
+		
+		/* Draw Background */
+		if(x > 0) {
+			rdpqDrawImageXY(sonicTop, x-256, 0);
+			rdpqDrawImageXY(sonicWater, x-256, 156);
+			rdpqDrawImageXY(sonicFall, x-177, 131);
+		}
+		rdpqDrawImageXY(sonicTop, x, 0);
+		rdpqDrawImageXY(sonicWater, x, 156);
+		rdpqDrawImageXY(sonicFall, x+79, 131);
+		if(x < 64) {
+			rdpqDrawImageXY(sonicTop, x+256, 0);
+			rdpqDrawImageXY(sonicWater, x+256, 156);
+			rdpqDrawImageXY(sonicFall, x+335, 131);
+		}
 
+		/* Draw Foreground */
 		if(x > 0)
 			rdpqDrawImageXY(overlay, 2*x-256, 48);
 		rdpqDrawImageXY(overlay, 2*x, 48);
@@ -144,6 +210,11 @@ void drawScroll() {
 			rdpqDrawImageXY(overlay, 2*x+512, 48);
 
 		rdpqEnd();
+		
+#ifdef DEBUG_BENCHMARK
+		//printPalette(sonicFall, 20, 20);
+		//printPalette(sonicWater, 100, 20);
+#endif
 		
 		checkMenu(NULL, NULL);
 		waitVsync();
@@ -196,12 +267,23 @@ void drawScroll() {
 			
 		if(!vertical) {
 			currentframe ++;
-			if(currentframe > 10) {
+			if(currentframe > 25) {
+				rotateWaterPalette(sonicWater);
 				currentframe = 0;
+			}
+			fallFrame ++;
+			if(fallFrame > frameLen[animFrame]) {
+				rotateFallPalette(sonicFall);
+				fallFrame = 0;
+				animFrame ++;
+				if(animFrame > 2)
+					animFrame = 0;
 			}
 		}
 	}
 	
-	freeImage(&sonicback);
+	freeImage(&sonicTop);
+	freeImage(&sonicWater);
+	freeImage(&sonicFall);
 	freeImage(&overlay);
 }
