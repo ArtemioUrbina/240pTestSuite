@@ -308,3 +308,18 @@ void fadeImageStep(image *data) {
 	// Invalidate the cache
 	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
 }
+
+#ifdef DEBUG_BENCHMARK
+#include "font.h"
+
+void printPalette(image *data, int x, int y) {
+	for(unsigned int c = 0; c < data->palSize; c++) {
+		char str[64];
+		color_t color = color_from_packed16(data->palette[c]);
+	
+		sprintf(str, "%X %X %X", color.r, color.g, color.b);
+		drawStringS(x, y, 0xff, 0xff, 0x00, str);
+		y += fh;
+	}
+}
+#endif

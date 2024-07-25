@@ -36,4 +36,8 @@ void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);
 void fadeImageStep(image *data);
 
+#ifdef DEBUG_BENCHMARK
+void printPalette(image *data, int x, int y);
+#endif
+
 #endif

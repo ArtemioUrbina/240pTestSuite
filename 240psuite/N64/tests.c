@@ -127,19 +127,6 @@ void rotateFallPalette(image *data) {
 	
 	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
 }
-
-#ifdef DEBUG_BENCHMARK
-void printPalette(image *data, int x, int y) {
-	for(unsigned int c = 0; c < data->palSize; c++) {
-		char str[64];
-		color_t color = color_from_packed16(data->palette[c]);
-	
-		sprintf(str, "%X %X %X", color.r, color.g, color.b);
-		drawStringS(x, y, 0xff, 0xff, 0xff, str);
-		y += fh;
-	}
-}
-#endif
  
 void drawScroll() {
 	int speed = 1, acc = -1, pause = 0, vertical = 0;

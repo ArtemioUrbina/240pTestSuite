@@ -20,6 +20,7 @@
  */
  
 #include "tests.h"
+#include "patterns.h"
 #include "menu.h"
 
 void drawIntro(void);
@@ -323,6 +324,12 @@ void drawPatternsGeometryMenu(void) {
 			freeImage(&sd);
 			
 			switch(sel)	{
+				case 1:
+					drawMonoscope();
+					break;
+				case 2:
+					drawGrid();
+					break;
 				case 5:
 					exit = 1;
 					break;

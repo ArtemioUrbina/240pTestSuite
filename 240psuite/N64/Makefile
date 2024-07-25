@@ -18,7 +18,10 @@ filesystem/%.sprite: assets/%.png
 filesystem/240pSuite-font.sprite: MKSPRITE_FLAGS=--tiles 8,8
 filesystem/mainbg.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/sd.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/monoscopeFBX.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/monoscope.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/grid.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/grid-480.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/donna.sprite: MKSPRITE_FLAGS=--format RGBA16
 filesystem/donna-480.sprite: MKSPRITE_FLAGS=--format RGBA16
 filesystem/sonicTop.sprite: MKSPRITE_FLAGS=--format CI4
