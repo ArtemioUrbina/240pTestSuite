@@ -104,6 +104,7 @@ char *loadHelpFile(char *filename, char ***pages, int *npages) {
 
 void helpWindow(char *filename) {
 	int 				done = 0, npages = 0, page = 0;	
+	int					opage = 0, redraw = current_buffers;
 	image	 			*back = NULL;
 	char				*buffer = NULL, **pages = NULL;
 	joypad_buttons_t	keys;
@@ -121,16 +122,23 @@ void helpWindow(char *filename) {
 		free(pages);
 		return;
 	}
-		
+
+#ifdef DEBUG_BENCHMARK
+	resetIdle();
+#endif
+
 	while(!done) {
 		getDisplay();
 
-		rdpqStart();
-		rdpqDrawImage(back);
-		rdpqEnd();
-		
-		drawStringS(32, 16, 0xff, 0xff, 0xff, pages[page]);
-		drawStringS(95, 216, 0xBB, 0xBB, 0xBB, "Press B to return"); 
+		if(redraw) {
+			rdpqStart();
+			rdpqDrawImage(back);
+			rdpqEnd();
+			
+			drawStringS(32, 16, 0xff, 0xff, 0xff, pages[page]);
+			drawStringS(95, 216, 0xBB, 0xBB, 0xBB, "Press B to return");
+			redraw--;
+		}
 		waitVsync();
 
 		joypad_poll();
@@ -151,13 +159,25 @@ void helpWindow(char *filename) {
 			page = npages - 1;
 		if(page < 0)
 			page = 0;
+	
+		if(page != opage) {
+#ifdef DEBUG_BENCHMARK
+			resetIdle();
+#endif
+			redraw = current_buffers;
+			opage = page;
+		}
 	}
 
-	if(buffer)
+	if(buffer) {
 		free(buffer);
+		buffer = NULL;
+	}
 
-	if(pages)
+	if(pages) {
 		free(pages);
+		pages = NULL;
+	}
 
 	freeImage(&back);
 }

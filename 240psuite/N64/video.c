@@ -80,16 +80,23 @@ void waitVsync() {
 uint64_t __frameStart = 0;
 uint64_t __idleStart = 0;
 float __frameIdle = 20, __minIdle = 20;
-float __frameLen = 0;
+float __frameLen = 0, __maxFrameLen = 0;
 
 void drawFrameLens() {
+	bool warn = false;
 	char str[100];
 	
 	if(__frameIdle < __minIdle)
 		__minIdle = __frameIdle;
+	if(__frameLen > __maxFrameLen)
+		__maxFrameLen = __frameLen;
 	
-	sprintf(str, "ALL:%0.3f IDL:%0.3f/%0.3f VBL:%0.3f", __frameLen, __frameIdle, __minIdle, __vblLen);
-	drawStringB(10, 4, __frameIdle < IDLE_WARN_MS ? 0xff : 0x00, __frameIdle > IDLE_WARN_MS ? 0xff : 0x00, 0x00, str);
+	if(__frameIdle > IDLE_WARN_MS || __frameLen > N64_NTSC_FRAME_LEN)
+		warn = true;
+	
+	sprintf(str, "ALL:%0.1f/%0.1f IDL:%0.1f/%0.1f VBL:%0.1f", 
+		__frameLen, __maxFrameLen, __frameIdle, __minIdle, __vblLen);
+	drawStringB(10, 4, !warn ? 0xff : 0x00, warn ? 0xff : 0x00, 0x00, str);
 }
 
 void getDisplay()
@@ -117,6 +124,7 @@ void waitVsync() {
 
 void resetIdle() {
 	__minIdle = 20.0f;
+	__maxFrameLen = 0.0f;
 }
 
 #endif
@@ -165,6 +173,10 @@ void setVideo(resolution_t newRes) {
 	setFont();
 
 	videoSet = 1;
+
+#ifdef DEBUG_BENCHMARK
+	resetIdle();
+#endif
 }
 
 bool isSameRes(resolution_t *res1, const resolution_t *res2) {
