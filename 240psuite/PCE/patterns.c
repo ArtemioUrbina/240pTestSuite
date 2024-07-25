@@ -258,6 +258,10 @@ void RefreshTestPatterns()
 
 void DrawPluge()
 {
+#ifndef SYSCARD1
+	showHelp(PLUGE_HELP);
+#endif
+
 	color = 1;
 	end = 0;
 	redraw = 1;
@@ -528,6 +532,11 @@ void DrawColorBleed()
 
 void DrawSMPTE_EBU(unsigned char ebu)
 {
+#ifndef SYSCARD1
+	if(!ebu)
+		showHelp(SMPTECOLOR_HELP);
+#endif
+
 	option = 1;  // 100% is 1, 75% is 0
 	text = 0;
 	redraw = 1;

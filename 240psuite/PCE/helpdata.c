@@ -898,39 +898,39 @@ void display_pluge_00()
 	p_string	pluge_00_00,25,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	pluge_00_01,6,7
-	p_string	pluge_00_02,6,8
-	p_string	pluge_00_03,6,9
-	p_string	pluge_00_04,6,11
-	p_string	pluge_00_05,6,12
-	p_string	pluge_00_06,6,13
-	p_string	pluge_00_07,6,15
-	p_string	pluge_00_08,6,17
-	p_string	pluge_00_09,6,18
-	p_string	pluge_00_10,6,19
+	p_string	pluge_00_01,6,6
+	p_string	pluge_00_02,6,7
+	p_string	pluge_00_03,6,8
+	p_string	pluge_00_04,6,10
+	p_string	pluge_00_05,6,11
+	p_string	pluge_00_06,6,12
+	p_string	pluge_00_07,6,14
+	p_string	pluge_00_08,6,15
+	p_string	pluge_00_09,6,16
+	p_string	pluge_00_10,6,18
 	jmp		!exit+
 
 pluge_00_00:	.db	"PLUGE (1/2)"
 			.db	0
-pluge_00_01:	.db	"The picture line-up generation equipment (PLUGE)"
+pluge_00_01:	.db	"Please keep in mind that black levels are lower"
 			.db	0
-pluge_00_02:	.db	"is a test pattern used to adjust the black level"
+pluge_00_02:	.db	"in other game consoles, these are just the lowest"
 			.db	0
-pluge_00_03:	.db	"and contrast of a video signal."
+pluge_00_03:	.db	"values available in this system."
 			.db	0
-pluge_00_04:	.db	"The pattern in this suite is mainly designed to"
+pluge_00_04:	.db	"The picture line-up generation equipment (PLUGE)"
 			.db	0
-pluge_00_05:	.db	"adjust the black level. The control for setting"
+pluge_00_05:	.db	"is a test pattern used to adjust the black level"
 			.db	0
-pluge_00_06:	.db	"this on your TV is usually named Brightness."
+pluge_00_06:	.db	"and contrast of a video signal."
 			.db	0
-pluge_00_07:	.db	"This allows all detail to be seen on dark scenes."
+pluge_00_07:	.db	"The pattern in this suite is mainly designed to"
 			.db	0
-pluge_00_08:	.db	"- Button I changes the inner bars between the"
+pluge_00_08:	.db	"adjust the black level. The control for setting"
 			.db	0
-pluge_00_09:	.db	"lowest B,G,R values and gray. You should use the"
+pluge_00_09:	.db	"this on your TV is usually named Brightness."
 			.db	0
-pluge_00_10:	.db	"blue one in order not to crush detail."
+pluge_00_10:	.db	"This allows all detail to be seen on dark scenes."
 			.db	0
 !exit:
 #endasm
@@ -943,30 +943,30 @@ void display_pluge_01()
 	p_string	pluge_01_00,25,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	pluge_01_01,6,7
-	p_string	pluge_01_02,6,8
-	p_string	pluge_01_03,6,9
+	p_string	pluge_01_01,6,6
+	p_string	pluge_01_02,6,7
+	p_string	pluge_01_03,6,8
 	p_string	pluge_01_04,6,10
-	p_string	pluge_01_05,6,12
-	p_string	pluge_01_06,6,13
-	p_string	pluge_01_07,6,14
+	p_string	pluge_01_05,6,11
+	p_string	pluge_01_06,6,12
+	p_string	pluge_01_07,6,13
 	jmp		!exit+
 
 pluge_01_00:	.db	"PLUGE (2/2)"
 			.db	0
-pluge_01_01:	.db	"Reduce the Brightness until the inner bars"
+pluge_01_01:	.db	"- Button I changes the inner bars between the"
 			.db	0
-pluge_01_02:	.db	"are no longer visible, and then slowly raise it"
+pluge_01_02:	.db	"lowest B,G,R values and gray. You should use the"
 			.db	0
-pluge_01_03:	.db	"until they are just visible, and go back one"
+pluge_01_03:	.db	"blue one in order not to crush detail."
 			.db	0
-pluge_01_04:	.db	"notch where they blend with the background."
+pluge_01_04:	.db	"Reduce the Brightness until the inner bars"
 			.db	0
-pluge_01_05:	.db	"Please keep in mind that black levels are lower"
+pluge_01_05:	.db	"are no longer visible, and then slowly raise it"
 			.db	0
-pluge_01_06:	.db	"in other game consoles, these are just the lowest"
+pluge_01_06:	.db	"until they are just visible, and go back one"
 			.db	0
-pluge_01_07:	.db	"values available in this system."
+pluge_01_07:	.db	"notch where they blend with the background."
 			.db	0
 !exit:
 #endasm
