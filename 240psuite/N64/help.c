@@ -54,7 +54,7 @@ char *loadHelpFile(char *filename, char ***pages, int *npages) {
 		return NULL;
 	}
 
-	memset(buffer, 0x20, size);
+	memset(buffer, 0x00, size);
 
 	if(dfs_read(buffer, 1, size, fp) < 0) {
 		dfs_close(fp);

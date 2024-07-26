@@ -251,6 +251,12 @@ void drawPatternsColorMenu(void) {
 			freeImage(&sd);
 			
 			switch(sel)	{
+				case 1:
+					drawPLUGE();
+					break;
+				case 7:
+					drawGrayramp();
+					break;
 				case 11:
 					exit = 1;
 					break;

@@ -16,10 +16,15 @@ filesystem/%.sprite: assets/%.png
 	@$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
 
 filesystem/240pSuite-font.sprite: MKSPRITE_FLAGS=--tiles 8,8
+filesystem/240pSuite-font480.sprite: MKSPRITE_FLAGS=--tiles 16,16
 filesystem/mainbg.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/sd.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/monoscopeFBX.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/monoscope.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/pluge.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/plugePAL.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/PLUGEBorder.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/grayramp.sprite: MKSPRITE_FLAGS=--format CI8
 filesystem/grid.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/grid-480.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/donna.sprite: MKSPRITE_FLAGS=--format RGBA16

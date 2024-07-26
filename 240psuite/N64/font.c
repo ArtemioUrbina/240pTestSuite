@@ -150,9 +150,41 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 				}
 				graphics_set_color(f_color, 0x00000000);
 				break;
-            default:
-                graphics_draw_character( disp, tx, ty, *text );
-                tx += fw;
+            default: {
+					bool shown = false;
+					
+					// show ... as three dots with less spacing
+					if(*text == '.' && *(text + 1) != '\0') {
+						if(*(text + 1) == '.' && *(text + 1) == *(text + 2)) {
+							int stride = lh;
+							
+							tx -= fw/4;
+							for(int pos = 0; pos < 3; pos++) {
+								graphics_draw_character(disp, tx, ty, '.');
+								tx += stride;
+							}
+							tx += fw/4;
+							shown = true;
+							text += 2;
+						}
+					}
+					
+					// show some characters with less spacing
+					if(!shown) {
+						if(*text == '.' || *text == ',' || *text == ';' || 
+							*text == '\'') {
+							tx = tx - fw/2 + 1;
+							graphics_draw_character(disp, tx, ty, *text);
+							tx += fw/2 + 1;
+						} else if(*text == ':' || *text == '/') {
+							graphics_draw_character(disp, tx, ty, *text);
+							tx += lh;
+						} else {  // any regular character
+							graphics_draw_character(disp, tx, ty, *text);
+							tx += fw;
+						}
+					}
+				}
                 break;
         }
 

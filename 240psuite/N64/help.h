@@ -41,7 +41,7 @@ extern char *helpData;
 #define DROPSHADOW		"/help/dshadow.txt"
 #define STRIPED			"/help/striped.txt"
 #define GRIDSCROLL		"/help/gridscroll.txt"
-#define SCROLL			"/help/scroll.txt"
+#define SCROLLHELP		"/help/scroll.txt"
 #define MANUALLAG		"/help/manuallag.txt"
 #define PASSIVELAG		"/help/passivelag.txt"
 #define SMPTECOLOR		"/help/SMPTEColor.txt"

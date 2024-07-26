@@ -21,7 +21,7 @@ supports 240p, 288p, 576i and
 480i video modes.
 
 
-                   #C(cont...)#C
+                       #C(cont...)#C
            HELP (2/2)
 
 The #YNintendo 64#Y cuts out a

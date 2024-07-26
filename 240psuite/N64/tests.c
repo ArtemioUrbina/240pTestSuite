@@ -199,11 +199,11 @@ void drawScroll() {
 		rdpqEnd();
 		
 #ifdef DEBUG_BENCHMARK
-		//printPalette(sonicFall, 20, 20);
-		//printPalette(sonicWater, 100, 20);
+		printPalette(sonicFall, 20, 20);
+		printPalette(sonicWater, 100, 20);
 #endif
 		
-		checkMenu(NULL, NULL);
+		checkMenu(SCROLLHELP, NULL);
 		waitVsync();
 		
 		joypad_poll();
