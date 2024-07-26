@@ -146,6 +146,375 @@ void drawColorbars() {
 	freeImage(&grid);
 }
 
+#define COLOR_75	0xc0
+#define COLOR_100	0xf8
+
+void swapPalette100to75(image *data) {
+	if(!data || !data->palette)
+		return;
+	
+	for(unsigned int c = 0; c < data->palSize; c++) {
+		color_t color = color_from_packed16(data->palette[c]);
+		if(color.r == COLOR_100)
+			color.r = COLOR_75;
+		if(color.g == COLOR_100)
+			color.g = COLOR_75;
+		if(color.b == COLOR_100)
+			color.b = COLOR_75;
+		data->palette[c] = color_to_packed16(color);
+	}
+	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
+}
+
+void swapPalette75to100(image *data) {
+	if(!data || !data->palette)
+		return;
+	
+	for(unsigned int c = 0; c < data->palSize; c++) {
+		color_t color = color_from_packed16(data->palette[c]);
+		if(color.r == COLOR_75)
+			color.r = COLOR_100;
+		if(color.g == COLOR_75)
+			color.g = COLOR_100;
+		if(color.b == COLOR_75)
+			color.b = COLOR_100;
+		data->palette[c] = color_to_packed16(color);
+	}
+	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
+}
+
+void drawEBUSMPTE(unsigned int ebu) {
+	int end = 0, show75 = 0, showText = 0;
+	image *back = NULL;
+	joypad_buttons_t keys;
+	char msg[50];
+	
+	if(ebu)
+		back = loadImage("rom:/EBU75.sprite");
+	else
+		back = loadImage("rom:/SMPTE75.sprite");
+	if(!back)
+		return;
+	
+	
+	swapPalette75to100(back);
+	while(!end) {
+		getDisplay();
+		
+		rdpqStart();
+		rdpqDrawImage(back);
+		rdpqEnd();
+		
+		if(showText) {
+			drawStringB(240, 20, 0, 0xff, 0, msg);
+			showText --;
+		}
+		
+		checkMenu(SMPTECOLOR, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsHeld();
+		
+		checkStart(keys);
+		if(keys.a) {
+			show75 = !show75;
+			if(show75) {
+				swapPalette100to75(back);
+				sprintf(msg, " 75%%");
+			}
+			else {
+				swapPalette75to100(back);
+				sprintf(msg, "100%%");
+			}
+			showText = 60;
+		}
+		if(keys.b)
+			end = 1;
+	}
+	
+	freeImage(&back);
+}
+
+void drawCBGray() {
+	int end = 0;
+	image *back = NULL;
+	joypad_buttons_t keys;
+	
+	back = loadImage("rom:/601701cb.sprite");
+	if(!back)
+		return;
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		
+		rdpqDrawImage(back);
+		rdpqEnd();
+		
+		checkMenu(COLOR601, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsHeld();
+		
+		checkStart(keys);
+		if(keys.b)
+			end = 1;
+	}
+	
+	freeImage(&back);
+}
+
+void drawColorbleed() {
+	int end = 0, pattern = 0;
+	image *back = NULL, *check = NULL;
+	joypad_buttons_t keys;
+	
+	back = loadImage("rom:/colorbleed.sprite");
+	if(!back)
+		return;
+	check = loadImage("rom:/colorbleedchk.sprite");
+	if(!check) {
+		freeImage(&back);
+		return;
+	}
+
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		if(!pattern)
+			rdpqDrawImage(back);
+		else
+			rdpqDrawImage(check);
+		rdpqEnd();
+
+		checkMenu(COLORBLEEDHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsHeld();
+		
+		checkStart(keys);
+		if(keys.a)
+			pattern = !pattern;
+		if(keys.b)
+			end = 1;
+	}
+	
+	freeImage(&back);
+	freeImage(&check);
+}
+
+void drawWhiteScreen() {
+	int end = 0, color = 0, blackLevel = 0x00, text = 0;
+	int	cr, cb, cg, sel = 1, editmode = 0, er, eb, eg;
+	char msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
+	joypad_buttons_t keys;
+	
+	/*
+	if(!IsPAL)
+		blackLevel = 0x13; // 7.5 IRE TODO: Needs vectorscope confirmation ported from Wii ATM
+	else
+	*/
+		blackLevel = 0x00; // 0 IRE
+	
+	// white
+	cr = cg = cb = COLOR_100;
+	er = eb = eg = COLOR_100;
+	while(!end) {
+		getDisplay();
+		
+		graphics_fill_screen(__disp, graphics_make_color(cr, cg, cb, 0xff));
+		if(text) {
+			drawStringB(140, 20, 0xff, 0xff, 0xff, msg);
+			text --;
+		}
+		
+		waitVsync();
+		
+		checkMenu(WHITEHELP, NULL);
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+
+		checkStart(keys);
+		if(keys.b)
+			end = 1;
+			
+		if(keys.a && color == 1) {
+			if(!blackLevel)	{
+				blackLevel = 0x13;
+				sprintf(msg, "#GBlack Level: 7.5 IRE#G");
+			}
+			else {
+				blackLevel = 0x0;
+				sprintf(msg, "#GBlack Level: 0 IRE#G");
+			}
+			text = 140;
+		}
+		
+		if (keys.a && color == 0)
+			editmode = !editmode;
+		
+		if(editmode) {
+			int *current = NULL;
+							
+			sprintf(msg, "#%cR:0x%x#W #%cG:0x%x#W #%cB:0x%x#W", 
+					sel == 1 ? 'G' : 'W', er,
+					sel == 2 ? 'G' : 'W', eg, 
+					sel == 3 ? 'G' : 'W', eb);
+			text = 1;
+
+			if(keys.d_left) {
+				sel --;
+				if(sel < 1)
+					sel = 3;
+			}
+			
+			if(keys.d_right)	{
+				sel ++;
+				if(sel > 3)
+					sel = 1;
+			}
+			
+			switch(sel)	{
+				case 1:
+					current = &er;
+					break;
+				case 2:
+					current = &eg;
+					break;
+				case 3:
+					current = &eb;
+					break;
+			}
+			
+			if(keys.d_up) {
+				if(current)	{
+					(*current) ++;
+					if(*current > 0xff)
+						*current = 0xff;
+				}
+			}
+			
+			if(keys.d_down) {
+				if(current)	{
+					(*current) --;
+					if(*current < 0)
+						*current = 0;
+				}
+			}	
+
+			if(keys.c_down) {
+				if(current)
+					*current  = 0;
+			}
+			
+			if(keys.c_up)	{
+				if(current)	
+					*current = 0xff;
+			}
+			
+			if(keys.c_right) {
+				if(current)	{
+					(*current) += 0x10;
+					if(*current > 0xff)
+						*current = 0xff;
+				}
+			}
+			
+			if(keys.c_left) {			
+				if(current)	{
+					(*current) -= 0x10;
+					if(*current < 0)
+						*current = 0;
+				}
+			}	
+		}
+		
+		if(keys.r) {
+			color ++;
+			if(color > 4)
+				color = 0;
+			
+			editmode = 0;
+			if(color == 0 && er + eb + eg != 3*COLOR_100)
+				sprintf(msg, "%s [EDITED]", mode[color]);
+			else
+				sprintf(msg, "%s", mode[color]);
+			text = 30;
+		}
+
+		if(keys.l) {			
+			color --;
+			if(color < 0)
+				color = 4;
+				
+			editmode = 0;
+			if(color == 0 && er + eb + eg != 3*COLOR_100)
+				sprintf(msg, "%s [edited]", mode[color]);
+			else
+				sprintf(msg, "%s", mode[color]);
+			text = 30;
+		}
+		
+		switch(color) {
+				case 0:
+					cr = er;
+					cg = eg;
+					cb = eb;
+					break;
+				case 1:
+					cr = cg = cb = blackLevel;
+					break;
+				case 2:
+					cr = COLOR_100;
+					cb = cg = 0;
+					break;
+				case 3:
+					cg = COLOR_100;
+					cr = cb = 0;
+					break;
+				case 4:
+					cb = COLOR_100;
+					cr = cg = 0;
+					break;
+		}
+	}
+}
+
+void drawSharpness() {
+	int end = 0;
+	image *back = NULL;
+	joypad_buttons_t keys;
+	
+	back = loadImage("rom:/sharpness.sprite");
+	if(!back)
+		return;
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		
+		rdpqDrawImage(back);
+		rdpqEnd();
+		
+		checkMenu(SHARPNESSHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsHeld();
+		
+		checkStart(keys);
+		if(keys.b)
+			end = 1;
+	}
+	
+	freeImage(&back);
+}
+
 void drawMonoscope() {
 	int end = 0, pattern = 0;
 	image *back = NULL, *orig = NULL;
@@ -240,7 +609,6 @@ void drawGrid() {
 	
 	freeImage(&back);
 }
-
 
 void drawGrayramp() {
 	int end = 0;

@@ -218,7 +218,7 @@ void drawPatternsColorMenu(void) {
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color Bars"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "EBU Color Bars"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "SMPTE Color Bars"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color Bars/Gray"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color Bars w/Gray"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color Bleed Check"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Gray Ramp"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "White & RGB screens"); y += fh; c++;
@@ -257,8 +257,26 @@ void drawPatternsColorMenu(void) {
 				case 2:
 					drawColorbars();
 					break;
+				case 3:
+					drawEBUSMPTE(1);
+					break;
+				case 4:
+					drawEBUSMPTE(0);
+					break;
+				case 5:
+					drawCBGray();
+					break;
+				case 6:
+					drawColorbleed();
+					break;
 				case 7:
 					drawGrayramp();
+					break;
+				case 8:
+					drawWhiteScreen();
+					break;
+				case 10:
+					drawSharpness();
 					break;
 				case 11:
 					exit = 1;

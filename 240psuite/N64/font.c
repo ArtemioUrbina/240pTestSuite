@@ -68,13 +68,44 @@ void releaseFont() {
 		font480 = NULL;
 	}
 }
- 
-int measureString(char *str) {
-	return(strlen(str));
-}
 
 #define SPACE_WIDTH 7
 #define LINE_HEIGHT 8
+ 
+int measureString(char *str) {
+	int len = 0;
+	
+	while(*str) {
+		switch( *str ) {
+            case '\r':
+            case '\n':
+                break;
+			case '#':
+				str++;
+				break;
+            case '\t':
+                len += fw*5;
+                break;
+			case '.':
+			case ',':
+			case ';':
+			case '\'':
+				len = len - fw/2 + 1;
+				len += fw/2 + 1;
+				break;
+			case ':':
+			case '/':
+				len += LINE_HEIGHT;
+				break;
+			case ' ':
+			default:
+			    len += fw;
+                break;
+		}
+		str++;
+	}
+	return(len);
+}
 
 uint32_t f_color = 0xFFFFFFFF;
 
@@ -211,7 +242,7 @@ void drawStringS(int x, int y, int r, int g, int b, char *text) {
 void drawStringB(int x, int y, int r, int g, int b, char *text) {
 	int boxWidth = 0, boxHeight = fh;
 				
-	boxWidth = measureString(text)*fw;
+	boxWidth = measureString(text);
 	f_color = graphics_make_color(r, g, b, 0xff);
 	
 	if(vMode == SUITE_640x480)

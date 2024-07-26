@@ -318,7 +318,7 @@ void printPalette(image *data, int x, int y) {
 		color_t color = color_from_packed16(data->palette[c]);
 	
 		sprintf(str, "%X %X %X", color.r, color.g, color.b);
-		drawStringS(x, y, 0xff, 0xff, 0x00, str);
+		drawStringS(x, y, 0x00, 0xff, 0x00, str);
 		y += fh;
 	}
 }
