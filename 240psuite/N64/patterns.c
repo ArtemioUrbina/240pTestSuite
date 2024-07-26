@@ -105,6 +105,47 @@ void drawPLUGE() {
 	freeImage(&back);
 }
 
+void drawColorbars() {
+	int end = 0, pattern = 0;
+	image *back = NULL, *grid = NULL;
+	joypad_buttons_t keys;
+	
+	back = loadImage("rom:/color.sprite");
+	if(!back)
+		return;
+	grid = loadImage("rom:/color_grid.sprite");
+	if(!grid) {
+		freeImage(&back);
+		return;
+	}
+
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		if(!pattern)
+			rdpqDrawImage(back);
+		else
+			rdpqDrawImage(grid);
+		rdpqEnd();
+
+		checkMenu(COLORBARSHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsHeld();
+		
+		checkStart(keys);
+		if(keys.a)
+			pattern = !pattern;
+		if(keys.b)
+			end = 1;
+	}
+	
+	freeImage(&back);
+	freeImage(&grid);
+}
+
 void drawMonoscope() {
 	int end = 0, pattern = 0;
 	image *back = NULL, *orig = NULL;

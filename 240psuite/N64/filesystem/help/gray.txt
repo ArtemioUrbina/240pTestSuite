@@ -1,4 +1,4 @@
-           GRAY RAMP 
+            GRAY RAMP 
 
 This gray ramp pattern can be
 used to check color balance and

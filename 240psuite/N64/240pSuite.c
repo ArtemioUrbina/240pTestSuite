@@ -254,6 +254,9 @@ void drawPatternsColorMenu(void) {
 				case 1:
 					drawPLUGE();
 					break;
+				case 2:
+					drawColorbars();
+					break;
 				case 7:
 					drawGrayramp();
 					break;
