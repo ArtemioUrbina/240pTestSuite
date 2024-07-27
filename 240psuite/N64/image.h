@@ -27,10 +27,10 @@ void rdpqClearScreen();
 image *loadImage(char *name);
 void freeImage(image **data);
 
-bool copyFrameBuffer();
-void freeFrameBuffer();
-void displayFrameBuffer();
-void darkenBuffer(int amount);
+bool copyMenuFB();
+void freeMenuFB();
+void drawMenuFB();
+void darkenMenuFB(int amount);
 
 void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);

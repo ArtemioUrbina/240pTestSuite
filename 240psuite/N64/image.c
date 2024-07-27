@@ -168,25 +168,25 @@ void freeImage(image **data) {
 }
 
 /* Frame Buffer for menu */
-surface_t *__screen_buffer = NULL;
+surface_t *__menu_fb = NULL;
 
-bool copyFrameBuffer() {	
+bool copyMenuFB() {	
 	if(!__disp)
 		return false;
 	
-	freeFrameBuffer();
-	__screen_buffer = (surface_t *)malloc(sizeof(surface_t));
-	if(!__screen_buffer)
+	freeMenuFB();
+	__menu_fb = (surface_t *)malloc(sizeof(surface_t));
+	if(!__menu_fb)
 		return false;
 		
-	*__screen_buffer = surface_alloc(surface_get_format(__disp), __disp->width, __disp->height);
-	if(!__screen_buffer->buffer) {
-		free(__screen_buffer);
-		__screen_buffer = NULL;
+	*__menu_fb = surface_alloc(surface_get_format(__disp), __disp->width, __disp->height);
+	if(!__menu_fb->buffer) {
+		free(__menu_fb);
+		__menu_fb = NULL;
 		return false;
 	}
 	
-	rdpq_attach(__screen_buffer, NULL);
+	rdpq_attach(__menu_fb, NULL);
 	rdpq_set_mode_copy(false);
 	rdpq_tex_blit(__disp, 0, 0, NULL);
 	rdpq_detach_wait();
@@ -194,34 +194,34 @@ bool copyFrameBuffer() {
 	return true;
 }
 
-void freeFrameBuffer() {
-	if(__screen_buffer) {
-		surface_free(__screen_buffer);
-		free(__screen_buffer);
-		__screen_buffer = NULL;
+void freeMenuFB() {
+	if(__menu_fb) {
+		surface_free(__menu_fb);
+		free(__menu_fb);
+		__menu_fb = NULL;
 	}
 }
 
-void displayFrameBuffer() {
-	if(!__screen_buffer || !__disp)
+void drawMenuFB() {
+	if(!__menu_fb || !__disp)
 		return;
 
 	rdpq_attach(__disp, NULL);
 	rdpq_set_mode_copy(false);
-	rdpq_tex_blit(__screen_buffer, 0, 0, NULL);
+	rdpq_tex_blit(__menu_fb, 0, 0, NULL);
 	rdpq_detach_wait();
 }
 
-void darkenBuffer(int amount) {
-    if(!__screen_buffer)
+void darkenMenuFB(int amount) {
+    if(!__menu_fb)
 		return;
 
-	if(surface_get_format(__screen_buffer) != FMT_RGBA16)
+	if(surface_get_format(__menu_fb) != FMT_RGBA16)
 		return;
 
-	uint16_t *screen = (uint16_t*)__screen_buffer->buffer;
-	int len = TEX_FORMAT_PIX2BYTES(surface_get_format(__screen_buffer), __screen_buffer->width * __screen_buffer->height)/2;
-    for(int i = 0; i < len; i++) {
+	uint16_t *screen = (uint16_t*)__menu_fb->buffer;
+	unsigned int len = TEX_FORMAT_PIX2BYTES(surface_get_format(__menu_fb), __menu_fb->width * __menu_fb->height)/2;
+    for(unsigned int i = 0; i < len; i++) {
 		color_t color;
 			
 		color = color_from_packed16(screen[i]);

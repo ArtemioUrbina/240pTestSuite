@@ -155,7 +155,7 @@ void setVideo(resolution_t newRes) {
 	
 	if(videoSet) {
 		unregister_VI_handler(vblCallback);
-		freeFrameBuffer();
+		freeMenuFB();
 		display_close();
 		videoSet = 0;
 	}

@@ -50,14 +50,14 @@ void showMenu() {
 	image *menu = NULL;
 	joypad_buttons_t keys;
 	
-	copyFrameBuffer();
+	copyMenuFB();
 	waitVsync();
 	
-	darkenBuffer(0x30);
+	darkenMenuFB(0x30);
 	
 	menu = loadImage("rom:/menu.sprite");
 	if(!menu) {
-		freeFrameBuffer();
+		freeMenuFB();
 		return;
 	}
 	menu->center = true;
@@ -68,7 +68,7 @@ void showMenu() {
 		
 		getDisplay();
 
-		displayFrameBuffer();
+		drawMenuFB();
 		
 		rdpqStart();
 		rdpqDrawImage(menu);
@@ -115,7 +115,7 @@ void showMenu() {
 		}
 	}
 	
-	freeFrameBuffer();
+	freeMenuFB();
 	freeImage(&menu);	
 }
 
@@ -140,7 +140,7 @@ void selectVideoMode() {
 				
 		getDisplay();
 
-		displayFrameBuffer();
+		drawMenuFB();
 		rdpqStart();
 		rdpqDrawImage(back);
 		rdpqEnd();
