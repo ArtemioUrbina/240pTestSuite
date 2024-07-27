@@ -199,8 +199,8 @@ void drawScroll() {
 		rdpqEnd();
 		
 #ifdef DEBUG_BENCHMARK
-		printPalette(sonicFall, 20, 20);
-		printPalette(sonicWater, 100, 20);
+		//printPalette(sonicFall, 20, 20);
+		//printPalette(sonicWater, 100, 20);
 #endif
 		
 		checkMenu(SCROLLHELP, NULL);

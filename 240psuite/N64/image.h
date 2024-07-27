@@ -32,6 +32,13 @@ void freeMenuFB();
 void drawMenuFB();
 void darkenMenuFB(int amount);
 
+#ifndef USE_PRESCALE
+void rdpqUpscalePrepareFB();
+bool createUpscaleFB();
+void freeUpscaleFB();
+void executeUpscaleFB();
+#endif
+
 void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);
 void fadeImageStep(image *data);

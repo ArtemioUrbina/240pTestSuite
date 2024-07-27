@@ -34,6 +34,9 @@
 	joypad_init();
  }
  
+ #define START_SYSINFO_X	190
+ #define START_SYSINFO_Y	216
+ 
  void drawSysData() {
 	char str[20];
 	bool iQue = sys_bbplayer();
@@ -41,19 +44,19 @@
 	switch(get_tv_type())
 	{
 		case TV_NTSC:
-			drawStringS(224, 216, 0xfa, 0xfa, 0xfa, iQue ? "iQue NTSC" : "N64 NTSC");
+			sprintf(str, iQue ? "iQue NTSC" : "N64 NTSC");
 			break;
 		case TV_PAL:
-			drawStringS(224, 216, 0xfa, 0xfa, 0xfa, iQue ? "iQue PAL" : "N64 PAL"); 
+			sprintf(str, iQue ? "iQue PAL" : "N64 PAL");
 			break;
 		case TV_MPAL:
-			drawStringS(224, 216, 0xfa, 0xfa, 0xfa, iQue ? "iQue M-PAL" : "N64 M-PAL"); 
+			sprintf(str, iQue ? "iQue M-PAL" : "N64 M-PAL");
 			break;
 		default:
-			drawStringS(224, 216, 0xfa, 0xfa, 0xfa, iQue ? "iQue ???" : "N64 ???"); 
+			sprintf(str, iQue ? "iQue ???" : "N64 ???");
 			break;
 	}
 	
-	sprintf(str, "RAM %d MB", get_memory_size()/0x100000);
-	drawStringS(224, 224, 0xfa, 0xfa, 0xfa, str);
+	sprintf(strlen(str)+str, " %d MB", get_memory_size()/0x100000);
+	drawStringS(START_SYSINFO_X, START_SYSINFO_Y, 0xfa, 0xfa, 0xfa, str);
  }

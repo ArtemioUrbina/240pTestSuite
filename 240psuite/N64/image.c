@@ -28,6 +28,14 @@
 bool clearScreen = false;
 unsigned int currFB = 0;
 
+#ifndef USE_PRESCALE
+// Upscale frame buffer
+surface_t *__real_disp = NULL;
+surface_t *__upscale_fb = NULL;
+bool upscaleFrame = false;
+bool menuIgnoreUpscale = false;
+#endif
+
 void rdpqSetDrawMode() {
 	if(vMode == SUITE_640x480) {
 		rdpq_set_mode_standard();
@@ -41,6 +49,12 @@ void rdpqSetDrawMode() {
 void rdpqStart() {
 	if(clearScreen) {
 		rdpq_attach_clear(__disp, NULL);
+#ifndef USE_PRESCALE
+		if(upscaleFrame) {
+			rdpq_attach_clear(__upscale_fb, NULL);
+			rdpq_detach_wait();
+		}
+#endif
 		if(currFB == current_buffers) {
 			clearScreen = false;
 			currFB = 0;
@@ -55,6 +69,13 @@ void rdpqStart() {
 }
  
 void rdpqEnd() {
+#ifndef USE_PRESCALE
+	if(upscaleFrame) {
+		__real_disp = __disp;
+		__disp = __upscale_fb;
+	}
+#endif
+
 	rdpq_detach_wait();
 }
  
@@ -67,6 +88,7 @@ void rdpqDrawImage(image* data) {
 	if(!data->tiles)		return;
 #endif
 
+#ifdef USE_PRESCALE
 	if(vMode == SUITE_640x480 && data->scale) {
 		if(data->center) {
 			data->x = (dW/2 - data->tiles->width)/2;
@@ -83,6 +105,26 @@ void rdpqDrawImage(image* data) {
 		}
 		rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
 	}
+#else
+	if(vMode == SUITE_640x480 && !data->scale)
+		upscaleFrame = false;
+	
+	if(upscaleFrame)
+		rdpq_attach(__upscale_fb, NULL);
+	
+	if(data->center) {
+		const surface_t *output = rdpq_get_attached();
+		
+		if(output) {
+			data->x = (output->width - data->tiles->width)/2;
+			data->y = (output->height - data->tiles->height)/2;
+		}
+	}
+	rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
+	
+	if(upscaleFrame)
+		rdpq_detach();
+#endif
 }
 
 void rdpqDrawImageXY(image* data, int x, int y) {
@@ -94,6 +136,7 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	if(!data->tiles)		return;
 #endif
 	
+#ifdef USE_PRESCALE
 	if(vMode == SUITE_640x480 && data->scale) {
 		rdpq_sprite_blit(data->tiles, 2*x, 2*y, &(rdpq_blitparms_t) {
 			.scale_x = 2.0f, .scale_y = 2.0f
@@ -101,6 +144,18 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	}
 	else
 		rdpq_sprite_blit(data->tiles, x, y, NULL);
+#else
+	if(vMode == SUITE_640x480 && !data->scale)
+		upscaleFrame = false;
+		
+	if(upscaleFrame)
+		rdpq_attach(__upscale_fb, NULL);
+	
+	rdpq_sprite_blit(data->tiles, x, y, NULL);
+	
+	if(upscaleFrame)
+		rdpq_detach();
+#endif
 }
  
 void rdpqClearScreen() {
@@ -168,16 +223,23 @@ void freeImage(image **data) {
 }
 
 /* Frame Buffer for menu */
+
 surface_t *__menu_fb = NULL;
 
 bool copyMenuFB() {	
 	if(!__disp)
 		return false;
 	
+#ifdef DEBUG_BENCHMARK
+	assertf(__menu_fb == NULL, "copyFrameBuffer(): __menu_fb was not NULL");
+#else
 	freeMenuFB();
+#endif
+
 	__menu_fb = (surface_t *)malloc(sizeof(surface_t));
 	if(!__menu_fb)
 		return false;
+	//memset(__menu_fb, 0, sizeof(surface_t));
 		
 	*__menu_fb = surface_alloc(surface_get_format(__disp), __disp->width, __disp->height);
 	if(!__menu_fb->buffer) {
@@ -190,7 +252,11 @@ bool copyMenuFB() {
 	rdpq_set_mode_copy(false);
 	rdpq_tex_blit(__disp, 0, 0, NULL);
 	rdpq_detach_wait();
-	
+
+#ifndef USE_PRESCALE
+	if(!upscaleFrame)
+		menuIgnoreUpscale = true;
+#endif
 	return true;
 }
 
@@ -200,31 +266,40 @@ void freeMenuFB() {
 		free(__menu_fb);
 		__menu_fb = NULL;
 	}
+#ifndef USE_PRESCALE
+	if(menuIgnoreUpscale)
+		menuIgnoreUpscale = false;
+#endif
 }
 
 void drawMenuFB() {
 	if(!__menu_fb || !__disp)
 		return;
 
+#ifndef USE_PRESCALE
+	rdpq_attach(upscaleFrame ? __upscale_fb : __disp, NULL);
+#else
 	rdpq_attach(__disp, NULL);
+#endif
 	rdpq_set_mode_copy(false);
 	rdpq_tex_blit(__menu_fb, 0, 0, NULL);
 	rdpq_detach_wait();
 }
 
 void darkenMenuFB(int amount) {
-    if(!__menu_fb)
+	if(!__menu_fb)
 		return;
 
 	if(surface_get_format(__menu_fb) != FMT_RGBA16)
 		return;
-
-	uint16_t *screen = (uint16_t*)__menu_fb->buffer;
+	
+	uint16_t *pixels = (uint16_t*)__menu_fb->buffer;
 	unsigned int len = TEX_FORMAT_PIX2BYTES(surface_get_format(__menu_fb), __menu_fb->width * __menu_fb->height)/2;
-    for(unsigned int i = 0; i < len; i++) {
+
+	for(unsigned int i = 0; i < len; i++) {
 		color_t color;
 			
-		color = color_from_packed16(screen[i]);
+		color = color_from_packed16(pixels[i]);
 		
 		if(color.r > amount)
 			color.r -= amount;
@@ -239,21 +314,88 @@ void darkenMenuFB(int amount) {
 		else
 			color.b = 0;
 	
-		screen[i] = graphics_convert_color(color);
+		pixels[i] = graphics_convert_color(color);
 	}
 }
+
+#ifndef USE_PRESCALE
+/* Frame Buffer for upscaling */
+
+void rdpqUpscalePrepareFB() {
+	if(!menuIgnoreUpscale && vMode == SUITE_640x480) {
+		createUpscaleFB();
+		upscaleFrame = true;
+	}
+}
+
+bool createUpscaleFB() {
+	if(__upscale_fb || !__disp)
+		return false;
+	
+	__upscale_fb = (surface_t *)malloc(sizeof(surface_t));
+	if(!__upscale_fb)
+		return false;
+	memset(__upscale_fb, 0, sizeof(surface_t));
+
+	*__upscale_fb = surface_alloc(surface_get_format(__disp), __disp->width/2, __disp->height/2);
+	if(!__upscale_fb->buffer) {
+		free(__upscale_fb);
+		__upscale_fb = NULL;
+		return false;
+	}
+	
+	return true;
+}
+
+void freeUpscaleFB() {
+	if(__upscale_fb) {
+		surface_free(__upscale_fb);
+		free(__upscale_fb);
+		__upscale_fb = NULL;
+	}
+	
+	if(__real_disp) {
+		__disp = __real_disp;
+		__real_disp = NULL;
+	}
+}
+
+void executeUpscaleFB() {
+	if(!upscaleFrame)
+		return;
+
+	if(!__upscale_fb || !__disp)
+		return;
+	
+	if(__real_disp) {
+		__disp = __real_disp;
+		__real_disp = NULL;
+	}
+	
+	rdpq_attach(__disp, NULL);
+	rdpq_set_mode_standard();
+	rdpq_mode_alphacompare(0);
+	rdpq_mode_filter(FILTER_POINT);
+	rdpq_tex_blit(__upscale_fb, 0, 0, &(rdpq_blitparms_t) {
+			.scale_x = 2.0f, .scale_y = 2.0f
+			});
+	rdpq_detach_wait();
+	
+	upscaleFrame = false;
+}
+#endif
+
+/* Fade paletted images */
 
 void fadePaletteStep(uint16_t *colorRaw, unsigned int fadeSteps) {
 	color_t color;
 			
 	color = color_from_packed16(*colorRaw);
-    color.r = (color.r > 0) ? (color.r - color.r/fadeSteps) : 0;
-    color.g = (color.g > 0) ? (color.g - color.g/fadeSteps) : 0;
-    color.b = (color.b > 0) ? (color.b - color.b/fadeSteps) : 0;
+	color.r = (color.r > 0) ? (color.r - color.r/fadeSteps) : 0;
+	color.g = (color.g > 0) ? (color.g - color.g/fadeSteps) : 0;
+	color.b = (color.b > 0) ? (color.b - color.b/fadeSteps) : 0;
 	*colorRaw = color_to_packed16(color);
 }
-
-/* Fade paletted images */
 
 void setPaletteFX(image *data) {
 	if(!data->palette)

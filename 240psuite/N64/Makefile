@@ -57,7 +57,10 @@ clean:
 fsclean:
 	rm -rf $(BUILD_DIR)/*.dfs
 	
-debug: CFLAGS += -DDEBUG_BENCHMARK
+bench: CFLAGS += -DDEBUG_BENCHMARK
+bench: all
+
+debug: CFLAGS += -g -ggdb
 debug: all
 
 .PHONY: all clean

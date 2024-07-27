@@ -36,15 +36,21 @@ int loadFont() {
 		if(!font240)
 			return 0;
 	}
-	
+	graphics_set_font_sprite(font240);
+	fw = 8;
+	fh = 10;
+
+#ifdef USE_PRESCALE
 	if(!font480) {
 		font480 = sprite_load("rom:/240pSuite-font480.sprite");
 		if(!font480)
 			return 0;
 	}
+#endif
 	return 1;
 }
 
+#ifdef USE_PRESCALE
 void setFont() {
 	if(vMode == SUITE_640x480) {
 		graphics_set_font_sprite(font480);
@@ -57,35 +63,39 @@ void setFont() {
 		fh = 10;
 	}
 }
+#endif
  
 void releaseFont() {
 	if(font240)	{
 		free(font240);
 		font240 = NULL;
 	}
+
+#ifdef USE_PRESCALE
 	if(font480)	{
 		free(font480);
 		font480 = NULL;
 	}
+#endif
 }
 
 #define SPACE_WIDTH 7
 #define LINE_HEIGHT 8
  
-int measureString(char *str) {
-	int len = 0;
+unsigned int measureString(char *str) {
+	unsigned int len = 0;
 	
 	while(*str) {
 		switch( *str ) {
-            case '\r':
-            case '\n':
-                break;
+			case '\r':
+			case '\n':
+				break;
 			case '#':
 				str++;
 				break;
-            case '\t':
-                len += fw*5;
-                break;
+			case '\t':
+				len += fw*5;
+				break;
 			case '.':
 			case ',':
 			case ';':
@@ -93,14 +103,12 @@ int measureString(char *str) {
 				len = len - fw/2 + 1;
 				len += fw/2 + 1;
 				break;
-			case ':':
-			case '/':
-				len += LINE_HEIGHT;
-				break;
 			case ' ':
+				len += SPACE_WIDTH;
+				break;
 			default:
-			    len += fw;
-                break;
+				len += fw;
+				break;
 		}
 		str++;
 	}
@@ -113,34 +121,36 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 	int highlight = 0, lh = LINE_HEIGHT, sw = SPACE_WIDTH;
 	uint32_t old_f_color = 0xFFFFFFFF;
 	
-    if( disp == 0 ) { return; }
-    if( msg == 0 ) { return; }
+	if( disp == 0 ) { return; }
+	if( msg == 0 ) { return; }
 
+#ifdef USE_PRESCALE
 	if(vMode == SUITE_640x480) {
 		x *= 2;
 		y *= 2;
 		lh *= 2;
 		sw *= 2;
 	}
+#endif
 	
-    int tx = x;
-    int ty = y;
-    const char *text = (const char *)msg;
+	int tx = x;
+	int ty = y;
+	const char *text = (const char *)msg;
 
-    while( *text ) {
-        switch( *text ) {
-            case '\r':
+	while( *text ) {
+		switch( *text ) {
+			case '\r':
 				break;
-            case '\n':
-                tx = x;
-                ty += lh;
-                break;
-            case ' ':
-                tx += sw;
-                break;
-            case '\t':
-                tx += fw * 5;
-                break;
+			case '\n':
+				tx = x;
+				ty += lh;
+				break;
+			case ' ':
+				tx += sw;
+				break;
+			case '\t':
+				tx += fw * 5;
+				break;
 			case '#':
 				highlight = !highlight;
 
@@ -171,7 +181,7 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 							case 'W':
 							default:
 								f_color = graphics_make_color(0xff, 0xff, 0xff, 0xff);
-								break;					
+								break;
 						}
 					}
 				}			
@@ -181,13 +191,13 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 				}
 				graphics_set_color(f_color, 0x00000000);
 				break;
-            default: {
+			default: {
 					bool shown = false;
 					
 					// show ... as three dots with less spacing
 					if(*text == '.' && *(text + 1) != '\0') {
 						if(*(text + 1) == '.' && *(text + 1) == *(text + 2)) {
-							int stride = lh;
+							int stride = fw;
 							
 							tx -= fw/4;
 							for(int pos = 0; pos < 3; pos++) {
@@ -207,20 +217,17 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 							tx = tx - fw/2 + 1;
 							graphics_draw_character(disp, tx, ty, *text);
 							tx += fw/2 + 1;
-						} else if(*text == ':' || *text == '/') {
-							graphics_draw_character(disp, tx, ty, *text);
-							tx += lh;
 						} else {  // any regular character
 							graphics_draw_character(disp, tx, ty, *text);
 							tx += fw;
 						}
 					}
 				}
-                break;
-        }
+				break;
+		}
 
-        text++;
-    }
+		text++;
+	}
 }
  
 void drawString(int x, int y, int r, int g, int b, char *text) {
@@ -240,14 +247,16 @@ void drawStringS(int x, int y, int r, int g, int b, char *text) {
 }
 
 void drawStringB(int x, int y, int r, int g, int b, char *text) {
-	int boxWidth = 0, boxHeight = fh;
-				
-	boxWidth = measureString(text);
+	unsigned int boxWidth = 0, boxHeight = fh;
+
+	boxWidth = measureString(text) + 2;
 	f_color = graphics_make_color(r, g, b, 0xff);
-	
+
+#ifdef USE_PRESCALE
 	if(vMode == SUITE_640x480)
 		boxHeight *= 2;
-    graphics_draw_box(__disp, x-1, y-1, boxWidth, boxHeight, 0x00000000);
+#endif
+	graphics_draw_box(__disp, x-1, y-1, boxWidth, boxHeight, 0x00000000);
 	graphics_set_color(f_color, 0x00000000);
 	graphics_draw_text_suite(__disp, x, y, text);
 }
