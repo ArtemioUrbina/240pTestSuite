@@ -21,7 +21,8 @@ extern filter_options_t	current_antialias;
 extern unsigned int		EnablePAL;
 extern unsigned int		vMode;
 
-extern int useNTSC;
+extern bool useNTSC;
+extern bool isPAL;
 
 extern unsigned int dW;
 extern unsigned int dH;

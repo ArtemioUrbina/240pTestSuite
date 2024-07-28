@@ -23,9 +23,10 @@
 
 void drawDropShadow() {
 	resolution_t oldVmode = current_resolution;
-	int end = 0, show = 0, reload = 1;
+	int end = 0, invert = 0, frame = 0, reload = 1, showText = 0;
 	image *donna = NULL, *shadow = NULL;	
 	joypad_buttons_t keys;
+	char msg[25];
 	
 	while(!end) {
 		if(reload) {
@@ -68,14 +69,22 @@ void drawDropShadow() {
 		rdpqStart();
 		
 		rdpqDrawImage(donna);
-		if(show)
+		if(frame == invert)
 			rdpqDrawImage(shadow);
 		rdpqEnd();
+		
+		if(showText) {
+			if(vMode == SUITE_640x480)
+				drawStringB(450, 40, 0, 0xff, 0, msg);
+			else
+				drawStringB(140, 30, 0, 0xff, 0, msg);
+			showText--;
+		}
 		
 		checkMenu(DROPSHADOW, &reload);
 		waitVsync();
 		
-		show = !show;
+		frame = !frame;
 		
 		joypad_poll();
 		keys = controllerButtonsHeld();
@@ -101,8 +110,14 @@ void drawDropShadow() {
 		checkStart(keys);
 		if(keys.b)
 			end = 1;
-		if(keys.a)
-			show = !show;
+		if(keys.a) {
+			invert = !invert;
+			if(invert)
+				sprintf(msg, "Shadow on odd frames");				
+			else
+				sprintf(msg, "Shadow on even frames");
+			showText = 60;
+		}
 	}
 	
 	freeImage(&donna);
@@ -115,7 +130,7 @@ void rotateWaterPalette(image *data) {
 	data->palette[2] = data->palette[3];
 	data->palette[3] = tmpCol;
 	
-	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
+	updatePalette(data);
 }
 
 void rotateFallPalette(image *data) {
@@ -125,7 +140,7 @@ void rotateFallPalette(image *data) {
 	data->palette[3] = data->palette[2];
 	data->palette[2] = tmpCol;
 	
-	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
+	updatePalette(data);
 }
  
 void drawScroll() {
@@ -272,24 +287,53 @@ void drawScroll() {
 	freeImage(&overlay);
 }
 
-void drawCheckerBoard() {
-	int end = 0;
-	image *back = NULL;
+void drawStripes() {
+	int end = 0, alternate = 0, isVertical = 0;
+	int frame = 0, dframe = 0;
+	image *back = NULL, *horizontal = NULL, *vertical = NULL;;
 	joypad_buttons_t keys;
+	fmenuData	verMenuData[] = { { 0, "Horizontal" }, {1, "Vertical"} };
 	
-	back = loadImage("rom:/checkneg.sprite");
-	if(!back)
+	horizontal = loadImage("rom:/stripes.sprite");
+	if(!horizontal)
 		return;
+	
+	vertical = loadImage("rom:/stripes_v.sprite");
+	if(!vertical)
+		return;
+	
+	isVertical = selectMenu("Select Type", verMenuData, 2, isVertical+1);
+	if(isVertical == MENU_CANCEL)
+		end = 1;
+	
 	while(!end) {
 		getDisplay();
 
+		back = isVertical ? vertical : horizontal;
 		rdpqStart();
-		
 		rdpqFillWithImage(back);
 		rdpqEnd();
 		
-		checkMenu(COLOR601, NULL);
+		if(dframe) {
+			char msg[20];
+
+			sprintf(msg, "Frame: %02d", frame);
+			drawStringB(20, vMode == SUITE_640x480 ? 460 : 210, 0xff, 0xff, 0xff, msg);
+			frame ++;
+			if(isPAL) {
+				if(frame > 49)
+					frame = 0;
+			}
+			else {
+				if(frame > 59)
+					frame = 0;
+			}
+		}
+		checkMenu(STRIPESHELP, NULL);
 		waitVsync();
+		
+		if(alternate)
+			swapPaletteColors(back, 0, 1);
 		
 		joypad_poll();
 		keys = controllerButtonsHeld();
@@ -297,6 +341,84 @@ void drawCheckerBoard() {
 		checkStart(keys);
 		if(keys.b)
 			end = 1;
+		if(keys.a)
+			alternate = !alternate;
+		
+		if(keys.c_left && !alternate)
+			swapPaletteColors(back, 0, 1);
+		
+		if(keys.c_right) {
+			dframe = !dframe;
+			frame = 0;
+		}
+		
+		if(keys.r) {
+			int oldOption = isVertical;
+			
+			isVertical = selectMenu("Select Type", verMenuData, 2, isVertical+1);
+			if(isVertical == MENU_CANCEL)
+				isVertical = oldOption;
+		}
+	}
+	
+	back = NULL;
+	freeImage(&horizontal);
+	freeImage(&vertical);
+}
+
+void drawCheckerBoard() {
+	int end = 0, alternate = 0;
+	int frame = 0, dframe = 0;
+	image *back = NULL;
+	joypad_buttons_t keys;
+	
+	back = loadImage("rom:/check.sprite");
+	if(!back)
+		return;
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		rdpqFillWithImage(back);
+		rdpqEnd();
+		
+		if(dframe) {
+			char msg[20];
+
+			sprintf(msg, "Frame: %02d", frame);
+			drawStringB(20, vMode == SUITE_640x480 ? 460 : 210, 0xff, 0xff, 0xff, msg);
+			frame ++;
+			if(isPAL) {
+				if(frame > 49)
+					frame = 0;
+			}
+			else {
+				if(frame > 59)
+					frame = 0;
+			}
+		}
+		checkMenu(CHECKHELP, NULL);
+		waitVsync();
+		
+		if(alternate)
+			swapPaletteColors(back, 0, 1);
+		
+		joypad_poll();
+		keys = controllerButtonsHeld();
+		
+		checkStart(keys);
+		if(keys.b)
+			end = 1;
+		if(keys.a)
+			alternate = !alternate;
+		
+		if(keys.c_left && !alternate)
+			swapPaletteColors(back, 0, 1);
+		
+		if(keys.c_right) {
+			dframe = !dframe;
+			frame = 0;
+		}
 	}
 	
 	freeImage(&back);

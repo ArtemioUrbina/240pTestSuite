@@ -23,6 +23,7 @@
  #include "video.h"
  
 sprite_t *font240 = NULL;
+bool __halfWidthSpace = false;
  
 int fw = 8; // font width
 int fh = 10; // font height
@@ -49,7 +50,12 @@ void releaseFont() {
 	}
 }
 
+void enableHalfWidthSpace(bool enable) {
+	__halfWidthSpace = enable;
+}
+
 #define SPACE_WIDTH 7
+#define HSPACE_WIDTH 2
 #define LINE_HEIGHT 8
  
 unsigned int measureString(char *str) {
@@ -74,7 +80,7 @@ unsigned int measureString(char *str) {
 				len += fw/2 + 1;
 				break;
 			case ' ':
-				len += SPACE_WIDTH;
+				len += __halfWidthSpace ? HSPACE_WIDTH : SPACE_WIDTH;
 				break;
 			default:
 				len += fw;
@@ -88,7 +94,7 @@ unsigned int measureString(char *str) {
 uint32_t f_color = 0xFFFFFFFF;
 
 void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const msg ) {
-	int highlight = 0, lh = LINE_HEIGHT, sw = SPACE_WIDTH;
+	int highlight = 0, lh = LINE_HEIGHT, sw = __halfWidthSpace ? HSPACE_WIDTH : SPACE_WIDTH;
 	uint32_t old_f_color = 0xFFFFFFFF;
 	
 	if( disp == 0 ) { return; }

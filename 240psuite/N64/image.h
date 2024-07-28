@@ -38,6 +38,8 @@ bool createUpscaleFB();
 void freeUpscaleFB();
 void executeUpscaleFB();
 
+void swapPaletteColors(image *data, unsigned int color1, unsigned int color2);
+void updatePalette(image *data);
 void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);
 void fadeImageStep(image *data);

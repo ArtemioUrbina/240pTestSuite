@@ -32,7 +32,8 @@ filter_options_t	current_antialias = 0;
 unsigned int		EnablePAL = 0;
 unsigned int		vMode = SUITE_NONE;
 
-int useNTSC = 1;
+bool useNTSC = true;
+bool isPAL = 0;
 
 unsigned int dW = 320;
 unsigned int dH = 240;
@@ -144,7 +145,7 @@ void resetVideoVars() {
 	current_gamma = GAMMA_NONE;
 	current_antialias = FILTERS_RESAMPLE;
 	EnablePAL = 0;
-	useNTSC = 1;
+	useNTSC = true;
 	vMode = SUITE_NONE;
 }
 

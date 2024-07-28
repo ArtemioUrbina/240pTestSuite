@@ -124,12 +124,13 @@ void rdpqFillWithImage(image* data) {
 	assertf(__disp, "rdpqFillWithImage() __disp was NULL");
 	assertf(data, "rdpqFillWithImage() received NULL image");
 	assertf(data->tiles, "rdpqFillWithImage() received NULL tiles");
+	assertf(data->palette, "rdpqFillWithImage() image with no palette");
 #else
 	if(!__disp)				return;
 	if(!data) 				return;
 	if(!data->tiles)		return;
+	if(!data->palette)		return;
 #endif
-
 	unsigned int width = __disp->width, height = __disp->height;
 	surface_t tiles_surf = sprite_get_pixels(data->tiles);
 
@@ -146,8 +147,7 @@ void rdpqFillWithImage(image* data) {
 	rdpq_mode_tlut(TLUT_RGBA16);
 	rdpq_tex_upload_tlut(data->palette, 0, data->palSize);
 	rdpq_tex_upload(TILE0, &tiles_surf, &(rdpq_texparms_t) 
-		{ .s.repeats = REPEAT_INFINITE, .t.repeats = REPEAT_INFINITE, 
-		.s.translate = 0.0, .t.translate = 0.0});
+		{ .s.repeats = REPEAT_INFINITE, .t.repeats = REPEAT_INFINITE });
     rdpq_texture_rectangle(TILE0, 0, 0, width, height, 0, 0);
 	
 	rdpq_mode_pop();
@@ -399,10 +399,26 @@ void setPaletteFX(image *data) {
 	}
 }
 
+inline void updatePalette(image *data) {
+	if(!data->palette) return;
+	// Invalidate the cache
+	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
+}
+
+void swapPaletteColors(image *data, unsigned int color1, unsigned int color2) {
+	if(!data->palette) return;
+	
+	uint16_t tmpColor = data->palette[color1];
+	
+	data->palette[color1] = data->palette[color2];
+	data->palette[color2] = tmpColor;
+	updatePalette(data);
+}
+
 void resetPalette(image *data) {
 	if(data->palette && data->origPalette) {
 		memcpy(data->palette, data->origPalette, sizeof(uint16_t)*data->palSize);
-		data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
+		updatePalette(data);
 	}
 }
 
@@ -433,8 +449,7 @@ void fadeImageStep(image *data) {
 	for(unsigned int c = 0; c < data->palSize; c++)
 		fadePaletteStep(&data->palette[c], data->fadeSteps);
 	
-	// Invalidate the cache
-	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
+	updatePalette(data);
 }
 
 #ifdef DEBUG_BENCHMARK

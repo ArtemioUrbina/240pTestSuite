@@ -3,6 +3,7 @@
 
 void drawScroll();
 void drawDropShadow();
+void drawStripes();
 void drawCheckerBoard();
 
 #endif

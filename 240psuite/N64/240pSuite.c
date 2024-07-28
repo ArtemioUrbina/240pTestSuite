@@ -21,6 +21,7 @@
  
 #include "tests.h"
 #include "patterns.h"
+#include "hardware.h"
 #include "menu.h"
 
 void drawIntro(void);
@@ -98,6 +99,9 @@ int main(void) {
 					break;
 				case 2:
 					drawVideoTestsMenu();
+					break;
+				case 4:
+					drawMemoryViewer();
 					break;
 			}
 			reload = 1;
@@ -444,6 +448,9 @@ void drawVideoTestsMenu(void) {
 					break;
 				case 5:
 					drawScroll();
+					break;
+				case 7:
+					drawStripes();
 					break;
 				case 8:
 					drawCheckerBoard();

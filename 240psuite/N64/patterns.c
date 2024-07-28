@@ -41,9 +41,9 @@ void drawPLUGE() {
 	if(!borderRed)
 		return;
 	borderGreen->palette[1] = graphics_make_color(0xff, 0x00, 0x00, 0xff);
-	data_cache_hit_writeback_invalidate(borderGreen->palette, sizeof(uint16_t)*borderGreen->palSize);
+	updatePalette(borderGreen);
 	borderRed->palette[1] = graphics_make_color(0x00, 0xff, 0x00, 0xff);
-	data_cache_hit_writeback_invalidate(borderRed->palette, sizeof(uint16_t)*borderRed->palSize);
+	updatePalette(borderRed);
 		
 	while(!end) {
 		getDisplay();
@@ -163,7 +163,7 @@ void swapPalette100to75(image *data) {
 			color.b = COLOR_75;
 		data->palette[c] = color_to_packed16(color);
 	}
-	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
+	updatePalette(data);
 }
 
 void swapPalette75to100(image *data) {
@@ -180,7 +180,7 @@ void swapPalette75to100(image *data) {
 			color.b = COLOR_100;
 		data->palette[c] = color_to_packed16(color);
 	}
-	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
+	updatePalette(data);
 }
 
 void drawEBUSMPTE(unsigned int ebu) {

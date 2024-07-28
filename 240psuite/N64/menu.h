@@ -13,4 +13,14 @@ void checkStart(joypad_buttons_t keys);
 void showMenu();
 void selectVideoMode();
 
+#define MENU_CANCEL -1
+
+typedef struct menuData {
+    unsigned int	optionValue;
+	char			*optionText;
+} fmenuData;
+
+int selectMenu(char *title, fmenuData *menu_data, int numOptions, int selectedOption);
+int selectMenuEx(char *title, fmenuData *menu_data, int numOptions, int selectedOption, char *helpFile);
+
 #endif

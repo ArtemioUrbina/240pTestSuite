@@ -232,3 +232,97 @@ void selectVideoMode() {
 	if(!isSameRes(&oldVmode, &current_resolution))
 		clearScreen = true;
 }
+
+/* Floating Menu functions */
+
+int selectMenu(char *title, fmenuData *menuData, int numOptions, int selectedOption) {
+	return(selectMenuEx(title, menuData, numOptions, selectedOption, NULL));
+}
+
+int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedOption, char *helpFile) {
+	int 		sel = selectedOption, close = 0, value = MENU_CANCEL;
+	image		*back = NULL;
+	
+	back = loadImage("rom:/menu.sprite");
+	if(back) {
+		back->x = (dW - back->tiles->width) / 2;
+		back->y = (dH - back->tiles->height) / 2;
+	}
+	  
+	clearScreen = true;
+	while(!close) {		
+		uint8_t		r = 0xff;
+		uint8_t		g = 0xff;
+		uint8_t		b = 0xff;
+		uint8_t		c = 1, i = 0;
+		uint16_t 	x = back->x + 8;
+		uint16_t 	y = back->y + 8;
+		joypad_buttons_t keys;
+		
+		getDisplay();
+		
+		rdpqStart();
+		rdpqDrawImage(back);
+		rdpqEnd();
+
+		drawStringS(x, y, 0x00, 0xff, 0x00, title); y += 3*fh;
+
+		if(numOptions > 6)
+			y -= fh;	
+		
+		for(i = 0; i < numOptions; i++) {
+			drawStringS(x+8, y, r, sel == c ? 0 : g, sel == c ? 0 : b, menuData[i].optionText);
+			y += fh; c++;		
+		}
+		
+		y += fh;
+		
+		if(numOptions <= 6)
+			y += fh;
+		
+		drawStringS(back->x+16, back->y+80, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
+		
+		if(helpFile)
+			drawStringS(x-2*fw, y+2*fh, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
+
+		waitVsync();
+
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.d_up) {
+			sel --;
+			if(sel < 1)
+				sel = c;
+		}
+		
+		if(keys.d_down)	{
+			sel ++;
+			if(sel > c)
+				sel = 1;
+		}			
+
+		if(keys.b || (!helpFile && keys.start)) {
+			close = 1;	
+			value = MENU_CANCEL;
+		}
+		
+		if(helpFile && keys.start) {
+			helpWindow(helpFile);
+			helpData = GENERALHELP;
+		}
+	
+		if(keys.a) {
+			close = 1;
+
+			if(sel == c)
+				value = MENU_CANCEL;
+			else
+				value = menuData[sel - 1].optionValue;
+		}		
+	}
+	
+	freeImage(&back);
+
+	return value;
+}
