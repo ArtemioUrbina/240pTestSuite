@@ -239,7 +239,6 @@ bool copyMenuFB() {
 	__menu_fb = (surface_t *)malloc(sizeof(surface_t));
 	if(!__menu_fb)
 		return false;
-	//memset(__menu_fb, 0, sizeof(surface_t));
 		
 	*__menu_fb = surface_alloc(surface_get_format(__disp), __disp->width, __disp->height);
 	if(!__menu_fb->buffer) {
@@ -251,7 +250,7 @@ bool copyMenuFB() {
 	rdpq_attach(__menu_fb, NULL);
 	rdpq_set_mode_copy(false);
 	rdpq_tex_blit(__disp, 0, 0, NULL);
-	rdpq_detach_wait();
+	rdpq_detach();
 
 #ifndef USE_PRESCALE
 	if(!upscaleFrame)
@@ -283,7 +282,7 @@ void drawMenuFB() {
 #endif
 	rdpq_set_mode_copy(false);
 	rdpq_tex_blit(__menu_fb, 0, 0, NULL);
-	rdpq_detach_wait();
+	rdpq_detach();
 }
 
 void darkenMenuFB(int amount) {
@@ -379,7 +378,7 @@ void executeUpscaleFB() {
 	rdpq_tex_blit(__upscale_fb, 0, 0, &(rdpq_blitparms_t) {
 			.scale_x = 2.0f, .scale_y = 2.0f
 			});
-	rdpq_detach_wait();
+	rdpq_detach();
 	
 	upscaleFrame = false;
 }
@@ -391,9 +390,9 @@ void fadePaletteStep(uint16_t *colorRaw, unsigned int fadeSteps) {
 	color_t color;
 			
 	color = color_from_packed16(*colorRaw);
-	color.r = (color.r > 0) ? (color.r - color.r/fadeSteps) : 0;
-	color.g = (color.g > 0) ? (color.g - color.g/fadeSteps) : 0;
-	color.b = (color.b > 0) ? (color.b - color.b/fadeSteps) : 0;
+    color.r = (color.r > 0) ? (color.r - color.r/fadeSteps) : 0;
+    color.g = (color.g > 0) ? (color.g - color.g/fadeSteps) : 0;
+    color.b = (color.b > 0) ? (color.b - color.b/fadeSteps) : 0;
 	*colorRaw = color_to_packed16(color);
 }
 
