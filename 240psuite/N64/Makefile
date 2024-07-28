@@ -16,7 +16,6 @@ filesystem/%.sprite: assets/%.png
 	@$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
 
 filesystem/240pSuite-font.sprite: MKSPRITE_FLAGS=--tiles 8,8
-filesystem/240pSuite-font480.sprite: MKSPRITE_FLAGS=--tiles 16,16
 filesystem/mainbg.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/sd.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/monoscopeFBX.sprite: MKSPRITE_FLAGS=--format CI4
@@ -44,6 +43,7 @@ filesystem/sonicFloor.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/shadow.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/libdragon.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/menu.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/checkneg.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
 
 $(BUILD_DIR)/240pSuite.dfs: $(ASSETS_CONV)
 $(BUILD_DIR)/240pSuite.elf: $(src:%.c=$(BUILD_DIR)/%.o)

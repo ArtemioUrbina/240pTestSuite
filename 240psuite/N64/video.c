@@ -205,11 +205,52 @@ int videoModeToInt(resolution_t *res) {
 	if(isSameRes(res, &RESOLUTION_640x240))
 		return SUITE_512x240;
 	if(isSameRes(res, &RESOLUTION_512x240))
-		return SUITE_512x480;
+		return SUITE_512x240;
 	if(isSameRes(res, &RESOLUTION_512x480))
-		return 4;
+		return SUITE_512x480;
 	if(isSameRes(res, &RESOLUTION_256x240))
 		return SUITE_256x240;
 	return SUITE_NONE;
 }
 
+void getVideoModeStr(char *res, bool shortdesc)
+{
+	int vmode = videoModeToInt(&current_resolution);
+	if(!shortdesc)
+	{
+		switch(vmode)
+		{
+			case SUITE_320x240:
+				sprintf(res, "320x240p");
+				break;		
+			case SUITE_640x480:
+				sprintf(res, "640x480i");
+				break;
+			case SUITE_256x240:
+				sprintf(res, "256x240");
+				break;
+			case SUITE_512x480:
+				sprintf(res, "512x480");
+				break;
+		}
+	}
+	else
+	{
+		switch(vmode)
+		{
+			case SUITE_320x240:
+				sprintf(res, "[240p]");
+				break;
+			case SUITE_640x480:
+				sprintf(res, "[480i]");
+				break;
+			case SUITE_256x240:
+				sprintf(res, "[256]");
+				break;
+			case SUITE_512x480:
+				sprintf(res, "[512]");
+				break;
+		}
+
+	}
+}

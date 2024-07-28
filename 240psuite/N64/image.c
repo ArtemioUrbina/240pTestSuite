@@ -35,13 +35,7 @@ bool upscaleFrame = false;
 bool menuIgnoreUpscale = false;
 
 void rdpqSetDrawMode() {
-	if(vMode == SUITE_640x480) {
-		rdpq_set_mode_standard();
-		rdpq_mode_alphacompare(1);
-		rdpq_mode_filter(FILTER_POINT);
-	}
-	else
-		rdpq_set_mode_copy(true);
+	rdpq_set_mode_copy(true);
 }
  
 void rdpqStart() {
@@ -124,12 +118,46 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	if(upscaleFrame)
 		rdpq_detach();
 }
- 
-void rdpqClearScreen() {
-	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xff));
-	rdpq_fill_rectangle(0, 0, dW, dH);
+
+void rdpqFillWithImage(image* data) {
+#ifdef DEBUG_BENCHMARK
+	assertf(__disp, "rdpqFillWithImage() __disp was NULL");
+	assertf(data, "rdpqFillWithImage() received NULL image");
+	assertf(data->tiles, "rdpqFillWithImage() received NULL tiles");
+#else
+	if(!__disp)				return;
+	if(!data) 				return;
+	if(!data->tiles)		return;
+#endif
+
+	unsigned int width = __disp->width, height = __disp->height;
+	surface_t tiles_surf = sprite_get_pixels(data->tiles);
+
+	if(upscaleFrame) {
+		rdpq_attach(__upscale_fb, NULL);
+		width = __upscale_fb->width;
+		height = __upscale_fb->height;
+	}
+
+	rdpq_clear(RGBA32(0xf8, 0xf8, 0xf8, 0xff));
 	
-	rdpqSetDrawMode();
+	rdpq_mode_push();
+	
+	rdpq_mode_tlut(TLUT_RGBA16);
+	rdpq_tex_upload_tlut(data->palette, 0, data->palSize);
+	rdpq_tex_upload(TILE0, &tiles_surf, &(rdpq_texparms_t) 
+		{ .s.repeats = REPEAT_INFINITE, .t.repeats = REPEAT_INFINITE, 
+		.s.translate = 0.0, .t.translate = 0.0});
+    rdpq_texture_rectangle(TILE0, 0, 0, width, height, 0, 0);
+	
+	rdpq_mode_pop();
+	
+	if(upscaleFrame)
+		rdpq_detach();
+}
+
+void rdpqClearScreen() {
+	rdpq_clear(RGBA32(0, 0, 0, 0xff));
 }
 
 /* Image stuct */

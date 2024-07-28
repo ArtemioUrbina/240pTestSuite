@@ -35,6 +35,7 @@ void setVideo(resolution_t newRes);
 
 bool isSameRes(resolution_t *res1, const resolution_t *res2);
 int videoModeToInt(resolution_t *res);
+void getVideoModeStr(char *res, bool shortdesc);
 
 #ifdef DEBUG_BENCHMARK
 #define	IDLE_WARN_MS	2.0f

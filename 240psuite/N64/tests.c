@@ -199,12 +199,7 @@ void drawScroll() {
 			rdpqDrawImageXY(overlay, 2*x+512, 48);
 
 		rdpqEnd();
-		
-#ifdef DEBUG_BENCHMARK
-		//printPalette(sonicFall, 20, 20);
-		//printPalette(sonicWater, 100, 20);
-#endif
-		
+	
 		checkMenu(SCROLLHELP, NULL);
 		waitVsync();
 		
@@ -275,4 +270,34 @@ void drawScroll() {
 	freeImage(&sonicWater);
 	freeImage(&sonicFall);
 	freeImage(&overlay);
+}
+
+void drawCheckerBoard() {
+	int end = 0;
+	image *back = NULL;
+	joypad_buttons_t keys;
+	
+	back = loadImage("rom:/checkneg.sprite");
+	if(!back)
+		return;
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		
+		rdpqFillWithImage(back);
+		rdpqEnd();
+		
+		checkMenu(COLOR601, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsHeld();
+		
+		checkStart(keys);
+		if(keys.b)
+			end = 1;
+	}
+	
+	freeImage(&back);
 }

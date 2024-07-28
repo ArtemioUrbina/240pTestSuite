@@ -445,6 +445,9 @@ void drawVideoTestsMenu(void) {
 				case 5:
 					drawScroll();
 					break;
+				case 8:
+					drawCheckerBoard();
+					break;
 				case 14:
 					exit = 1;
 					break;

@@ -41,22 +41,25 @@
 	char str[20];
 	bool iQue = sys_bbplayer();
 	
+	sprintf(str, "%s %d MB", iQue ? "iQue" : "N64", get_memory_size()/0x100000);
+	drawStringS(START_SYSINFO_X, START_SYSINFO_Y, 0xfa, 0xfa, 0xfa, str);
+	
 	switch(get_tv_type())
 	{
 		case TV_NTSC:
-			sprintf(str, iQue ? "iQue NTSC" : "N64 NTSC");
+			sprintf(str, "NTSC ");
 			break;
 		case TV_PAL:
-			sprintf(str, iQue ? "iQue PAL" : "N64 PAL");
+			sprintf(str, "PAL  ");
 			break;
 		case TV_MPAL:
-			sprintf(str, iQue ? "iQue M-PAL" : "N64 M-PAL");
+			sprintf(str, "MPAL ");
 			break;
 		default:
-			sprintf(str, iQue ? "iQue ???" : "N64 ???");
+			sprintf(str, "???  ");
 			break;
 	}
-	
-	sprintf(strlen(str)+str, " %d MB", get_memory_size()/0x100000);
-	drawStringS(START_SYSINFO_X, START_SYSINFO_Y, 0xfa, 0xfa, 0xfa, str);
+
+	getVideoModeStr(str+5, false);
+	drawStringS(START_SYSINFO_X, START_SYSINFO_Y+fh, 0xfa, 0xfa, 0xfa, str);
  }

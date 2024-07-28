@@ -22,6 +22,7 @@ void rdpqStart();
 void rdpqEnd();
 void rdpqDrawImage(image* data);
 void rdpqDrawImageXY(image* data, int x, int y);
+void rdpqFillWithImage(image* data);
 void rdpqClearScreen();
 
 image *loadImage(char *name);

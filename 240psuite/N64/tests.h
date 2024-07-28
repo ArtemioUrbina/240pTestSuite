@@ -3,5 +3,6 @@
 
 void drawScroll();
 void drawDropShadow();
+void drawCheckerBoard();
 
 #endif
