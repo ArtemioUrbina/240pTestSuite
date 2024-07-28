@@ -28,13 +28,11 @@
 bool clearScreen = false;
 unsigned int currFB = 0;
 
-#ifndef USE_PRESCALE
 // Upscale frame buffer
 surface_t *__real_disp = NULL;
 surface_t *__upscale_fb = NULL;
 bool upscaleFrame = false;
 bool menuIgnoreUpscale = false;
-#endif
 
 void rdpqSetDrawMode() {
 	if(vMode == SUITE_640x480) {
@@ -49,12 +47,12 @@ void rdpqSetDrawMode() {
 void rdpqStart() {
 	if(clearScreen) {
 		rdpq_attach_clear(__disp, NULL);
-#ifndef USE_PRESCALE
+
 		if(upscaleFrame) {
 			rdpq_attach_clear(__upscale_fb, NULL);
 			rdpq_detach_wait();
 		}
-#endif
+
 		if(currFB == current_buffers) {
 			clearScreen = false;
 			currFB = 0;
@@ -69,12 +67,10 @@ void rdpqStart() {
 }
  
 void rdpqEnd() {
-#ifndef USE_PRESCALE
 	if(upscaleFrame) {
 		__real_disp = __disp;
 		__disp = __upscale_fb;
 	}
-#endif
 
 	rdpq_detach_wait();
 }
@@ -88,24 +84,6 @@ void rdpqDrawImage(image* data) {
 	if(!data->tiles)		return;
 #endif
 
-#ifdef USE_PRESCALE
-	if(vMode == SUITE_640x480 && data->scale) {
-		if(data->center) {
-			data->x = (dW/2 - data->tiles->width)/2;
-			data->y = (dH/2 - data->tiles->height)/2;
-		}
-		rdpq_sprite_blit(data->tiles, 2*data->x, 2*data->y, &(rdpq_blitparms_t) {
-			.scale_x = 2.0f, .scale_y = 2.0f
-			});
-	}
-	else {
-		if(data->center) {
-			data->x = (dW - data->tiles->width)/2;
-			data->y = (dH - data->tiles->height)/2;
-		}
-		rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
-	}
-#else
 	if(vMode == SUITE_640x480 && !data->scale)
 		upscaleFrame = false;
 	
@@ -124,7 +102,6 @@ void rdpqDrawImage(image* data) {
 	
 	if(upscaleFrame)
 		rdpq_detach();
-#endif
 }
 
 void rdpqDrawImageXY(image* data, int x, int y) {
@@ -136,15 +113,6 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	if(!data->tiles)		return;
 #endif
 	
-#ifdef USE_PRESCALE
-	if(vMode == SUITE_640x480 && data->scale) {
-		rdpq_sprite_blit(data->tiles, 2*x, 2*y, &(rdpq_blitparms_t) {
-			.scale_x = 2.0f, .scale_y = 2.0f
-			});
-	}
-	else
-		rdpq_sprite_blit(data->tiles, x, y, NULL);
-#else
 	if(vMode == SUITE_640x480 && !data->scale)
 		upscaleFrame = false;
 		
@@ -155,7 +123,6 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	
 	if(upscaleFrame)
 		rdpq_detach();
-#endif
 }
  
 void rdpqClearScreen() {
@@ -252,10 +219,9 @@ bool copyMenuFB() {
 	rdpq_tex_blit(__disp, 0, 0, NULL);
 	rdpq_detach();
 
-#ifndef USE_PRESCALE
 	if(!upscaleFrame)
 		menuIgnoreUpscale = true;
-#endif
+
 	return true;
 }
 
@@ -265,21 +231,16 @@ void freeMenuFB() {
 		free(__menu_fb);
 		__menu_fb = NULL;
 	}
-#ifndef USE_PRESCALE
+
 	if(menuIgnoreUpscale)
 		menuIgnoreUpscale = false;
-#endif
 }
 
 void drawMenuFB() {
 	if(!__menu_fb || !__disp)
 		return;
 
-#ifndef USE_PRESCALE
 	rdpq_attach(upscaleFrame ? __upscale_fb : __disp, NULL);
-#else
-	rdpq_attach(__disp, NULL);
-#endif
 	rdpq_set_mode_copy(false);
 	rdpq_tex_blit(__menu_fb, 0, 0, NULL);
 	rdpq_detach();
@@ -317,7 +278,6 @@ void darkenMenuFB(int amount) {
 	}
 }
 
-#ifndef USE_PRESCALE
 /* Frame Buffer for upscaling */
 
 void rdpqUpscalePrepareFB() {
@@ -382,7 +342,6 @@ void executeUpscaleFB() {
 	
 	upscaleFrame = false;
 }
-#endif
 
 /* Fade paletted images */
 

@@ -64,18 +64,14 @@ void vblCallback(void) {
 void getDisplay() {	
 	__disp = display_get();
 
-#ifndef USE_PRESCALE
 	rdpqUpscalePrepareFB();
-#endif
 }
 
 void waitVsync() {
 	uint64_t nextFrame = __frames + 1;
 	
 	if(__disp) {
-#ifndef USE_PRESCALE
 		executeUpscaleFB();
-#endif
 		display_show(__disp);
 		__disp = NULL;
 	}
@@ -110,9 +106,8 @@ void getDisplay()
 {	
 	__frameStart = get_ticks_us();
 	__disp = display_get();
-#ifndef USE_PRESCALE
+	
 	rdpqUpscalePrepareFB();
-#endif
 }
 
 void waitVsync() {
@@ -120,9 +115,7 @@ void waitVsync() {
 	
 	if(__disp) {
 		drawFrameLens();
-#ifndef USE_PRESCALE
 		executeUpscaleFB();
-#endif
 		display_show(__disp);
 		__disp = NULL;
 	}
@@ -169,9 +162,7 @@ void setVideo(resolution_t newRes) {
 	if(videoSet) {
 		unregister_VI_handler(vblCallback);
 		freeMenuFB();
-#ifndef USE_PRESCALE
 		executeUpscaleFB();
-#endif
 		display_close();
 		videoSet = 0;
 	}
@@ -186,9 +177,6 @@ void setVideo(resolution_t newRes) {
 	
 	rdpq_init();
 	register_VI_handler(vblCallback);
-#ifdef USE_PRESCALE
-	setFont();
-#endif
 
 	videoSet = 1;
 

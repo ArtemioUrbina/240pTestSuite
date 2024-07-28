@@ -159,10 +159,12 @@ void drawScroll() {
 		return;
 	}
 	
+	/*
 	sonicTop->scale = false;
 	sonicWater->scale = false;
 	sonicFall->scale = false;
 	overlay->scale = false;
+	*/
 	
     while(!end) {		
 		getDisplay();

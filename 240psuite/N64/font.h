@@ -8,9 +8,7 @@ extern int fh; // font height
  
 int loadFont();
 void releaseFont();
-#ifdef USE_PRESCALE
-void setFont();
-#endif 
+
 unsigned int measureString(char *str);
 
 void drawString(int x, int y, int r, int g, int b, char *str);

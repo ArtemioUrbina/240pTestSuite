@@ -23,7 +23,6 @@
  #include "video.h"
  
 sprite_t *font240 = NULL;
-sprite_t *font480 = NULL;
  
 int fw = 8; // font width
 int fh = 10; // font height
@@ -40,43 +39,14 @@ int loadFont() {
 	fw = 8;
 	fh = 10;
 
-#ifdef USE_PRESCALE
-	if(!font480) {
-		font480 = sprite_load("rom:/240pSuite-font480.sprite");
-		if(!font480)
-			return 0;
-	}
-#endif
 	return 1;
 }
-
-#ifdef USE_PRESCALE
-void setFont() {
-	if(vMode == SUITE_640x480) {
-		graphics_set_font_sprite(font480);
-		fw = 16;
-		fh = 10;
-	}
-	else {
-		graphics_set_font_sprite(font240);
-		fw = 8;
-		fh = 10;
-	}
-}
-#endif
  
 void releaseFont() {
 	if(font240)	{
 		free(font240);
 		font240 = NULL;
 	}
-
-#ifdef USE_PRESCALE
-	if(font480)	{
-		free(font480);
-		font480 = NULL;
-	}
-#endif
 }
 
 #define SPACE_WIDTH 7
@@ -123,15 +93,6 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 	
 	if( disp == 0 ) { return; }
 	if( msg == 0 ) { return; }
-
-#ifdef USE_PRESCALE
-	if(vMode == SUITE_640x480) {
-		x *= 2;
-		y *= 2;
-		lh *= 2;
-		sw *= 2;
-	}
-#endif
 	
 	int tx = x;
 	int ty = y;
@@ -252,10 +213,6 @@ void drawStringB(int x, int y, int r, int g, int b, char *text) {
 	boxWidth = measureString(text) + 2;
 	f_color = graphics_make_color(r, g, b, 0xff);
 
-#ifdef USE_PRESCALE
-	if(vMode == SUITE_640x480)
-		boxHeight *= 2;
-#endif
 	graphics_draw_box(__disp, x-1, y-1, boxWidth, boxHeight, 0x00000000);
 	graphics_set_color(f_color, 0x00000000);
 	graphics_draw_text_suite(__disp, x, y, text);
