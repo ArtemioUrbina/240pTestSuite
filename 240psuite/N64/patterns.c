@@ -85,7 +85,7 @@ void drawPLUGE() {
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.a) {
@@ -133,7 +133,7 @@ void drawColorbars() {
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.a)
@@ -145,9 +145,6 @@ void drawColorbars() {
 	freeImage(&back);
 	freeImage(&grid);
 }
-
-#define COLOR_75	0xc0
-#define COLOR_100	0xf8
 
 void swapPalette100to75(image *data) {
 	if(!data || !data->palette)
@@ -214,7 +211,7 @@ void drawEBUSMPTE(unsigned int ebu) {
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.a) {
@@ -256,7 +253,7 @@ void drawCBGray() {
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.b)
@@ -294,7 +291,7 @@ void drawColorbleed() {
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.a)
@@ -505,7 +502,7 @@ void drawSharpness() {
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.b)
@@ -547,7 +544,7 @@ void drawMonoscope() {
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.a)
@@ -600,7 +597,7 @@ void drawGrid() {
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.b)
@@ -630,7 +627,7 @@ void drawGrayramp() {
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.b)

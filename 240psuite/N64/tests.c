@@ -57,8 +57,8 @@ void drawDropShadow() {
 					freeImage(&donna);
 					return;
 				}
-				shadow->x = 160 - shadow->tiles->width/2;
-				shadow->y = 120 - shadow->tiles->height/2;
+				shadow->x = dW/2- shadow->tiles->width/2;
+				shadow->y = dH/2 - shadow->tiles->height/2;
 			}
 
 			reload = 0;
@@ -336,7 +336,7 @@ void drawStripes() {
 			swapPaletteColors(back, 0, 1);
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.b)
@@ -404,7 +404,7 @@ void drawCheckerBoard() {
 			swapPaletteColors(back, 0, 1);
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 		
 		checkStart(keys);
 		if(keys.b)

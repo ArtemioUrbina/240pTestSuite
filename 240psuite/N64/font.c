@@ -23,10 +23,11 @@
  #include "video.h"
  
 sprite_t *font240 = NULL;
-bool __halfWidthSpace = false;
+bool __reducedWidthSpace = true;
  
 int fw = 8; // font width
 int fh = 10; // font height
+int fhR = 8; // font height real
 
 int loadFont() {
 	/* Read in the custom fonts */
@@ -39,6 +40,7 @@ int loadFont() {
 	graphics_set_font_sprite(font240);
 	fw = 8;
 	fh = 10;
+	fhR = 8;
 
 	return 1;
 }
@@ -50,13 +52,17 @@ void releaseFont() {
 	}
 }
 
-void enableHalfWidthSpace(bool enable) {
-	__halfWidthSpace = enable;
+void useReducedWidthSpace(bool use) {
+	__reducedWidthSpace = use;
 }
 
-#define SPACE_WIDTH 7
-#define HSPACE_WIDTH 2
-#define LINE_HEIGHT 8
+#define SPACE_WIDTH			7
+#define FULL_SPACE_WIDTH	8
+#define LINE_HEIGHT			8
+
+inline unsigned int getSpaceWidth() {
+	return(__reducedWidthSpace ? SPACE_WIDTH : FULL_SPACE_WIDTH);
+}
  
 unsigned int measureString(char *str) {
 	unsigned int len = 0;
@@ -80,7 +86,7 @@ unsigned int measureString(char *str) {
 				len += fw/2 + 1;
 				break;
 			case ' ':
-				len += __halfWidthSpace ? HSPACE_WIDTH : SPACE_WIDTH;
+				len += getSpaceWidth();
 				break;
 			default:
 				len += fw;
@@ -94,7 +100,7 @@ unsigned int measureString(char *str) {
 uint32_t f_color = 0xFFFFFFFF;
 
 void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const msg ) {
-	int highlight = 0, lh = LINE_HEIGHT, sw = __halfWidthSpace ? HSPACE_WIDTH : SPACE_WIDTH;
+	int highlight = 0, lh = LINE_HEIGHT, sw = getSpaceWidth();
 	uint32_t old_f_color = 0xFFFFFFFF;
 	
 	if( disp == 0 ) { return; }

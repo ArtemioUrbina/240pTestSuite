@@ -22,6 +22,7 @@
 #include "tests.h"
 #include "patterns.h"
 #include "hardware.h"
+#include "audio.h"
 #include "menu.h"
 
 void drawIntro(void);
@@ -99,6 +100,9 @@ int main(void) {
 					break;
 				case 2:
 					drawVideoTestsMenu();
+					break;
+				case 3:
+					drawMDFourier();
 					break;
 				case 4:
 					drawMemoryViewer();
@@ -516,7 +520,7 @@ void drawSplash(char *name, int delay) {
 		delay --;
 	}
 	
-	clearScreen = true;
+	setClearScreen();
 	delay = FADE_HOLD;
 	while(delay) {
 		getDisplay();

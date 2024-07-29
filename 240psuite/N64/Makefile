@@ -3,9 +3,12 @@ include include/n64.mk
 
 src = $(wildcard *.c)
 ASSETS_PNG = $(wildcard assets/*.png)
-ASSETS_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_PNG:%.png=%.sprite)))
+ASSETS_PNG_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_PNG:%.png=%.sprite)))
 
-AUDIOCONV_FLAGS ?=
+ASSETS_WAV = $(wildcard assets/*.wav)
+ASSETS_WAV_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64)))
+
+AUDIOCONV_FLAGS ?= --wav-compress 0
 MKSPRITE_FLAGS ?=
 
 all: 240pSuite.z64
@@ -14,6 +17,11 @@ filesystem/%.sprite: assets/%.png
 	@mkdir -p $(dir $@)
 	@echo "    [SPRITE] $@"
 	@$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
+	
+filesystem/%.wav64: assets/%.wav
+	@mkdir -p $(dir $@)
+	@echo "    [AUDIO] $@"
+	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) -v -o filesystem $<
 
 filesystem/240pSuite-font.sprite: MKSPRITE_FLAGS=--tiles 8,8
 filesystem/mainbg.sprite: MKSPRITE_FLAGS=--format CI4
@@ -47,14 +55,14 @@ filesystem/check.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
 filesystem/stripes.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
 filesystem/stripes_v.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
 
-$(BUILD_DIR)/240pSuite.dfs: $(ASSETS_CONV)
+$(BUILD_DIR)/240pSuite.dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV)
 $(BUILD_DIR)/240pSuite.elf: $(src:%.c=$(BUILD_DIR)/%.o)
 
 240pSuite.z64: N64_ROM_TITLE="240pSuite"
 240pSuite.z64: $(BUILD_DIR)/240pSuite.dfs 
 
 clean:
-	rm -rf $(BUILD_DIR) 240pSuite.z64 filesystem/*.sprite
+	rm -rf $(BUILD_DIR) 240pSuite.z64 $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV)
 	
 fsclean:
 	rm -rf $(BUILD_DIR)/*.dfs

@@ -34,6 +34,10 @@ surface_t *__upscale_fb = NULL;
 bool upscaleFrame = false;
 bool menuIgnoreUpscale = false;
 
+void setClearScreen() {
+	clearScreen = true;
+}
+
 void rdpqSetDrawMode() {
 	rdpq_set_mode_copy(true);
 }

@@ -16,7 +16,7 @@ typedef struct image_st {
 	unsigned int fadeSteps;
 } image;
 
-extern bool clearScreen;
+void setClearScreen();
 
 void rdpqStart();
 void rdpqEnd();

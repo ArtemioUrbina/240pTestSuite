@@ -63,6 +63,7 @@ void showMenu() {
 	menu->center = true;
 	
 	while(!end) {
+		char str[20];
 		int c = 1, x, y;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
@@ -77,7 +78,9 @@ void showMenu() {
 		x = menu->x+16;
 		y = menu->y+20;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Video"); y += fh; c++;
+		sprintf(str, "Video");
+		getVideoModeStr(str+5, true);
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, str); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Options"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += 2*fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Close"); 
@@ -151,7 +154,7 @@ void selectVideoMode() {
 		
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
 		//drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480/240 assets (1:1/NTSC)"); y += fh; c++;				
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480/240 assets"); y += fh; c++;				
 		
 		y += fh/2;
 		if(EnablePAL) {
@@ -230,7 +233,7 @@ void selectVideoMode() {
 	}
 	freeImage(&back);
 	if(!isSameRes(&oldVmode, &current_resolution))
-		clearScreen = true;
+		setClearScreen();
 }
 
 /* Floating Menu functions */
@@ -244,19 +247,17 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 	image		*back = NULL;
 	
 	back = loadImage("rom:/menu.sprite");
-	if(back) {
-		back->x = (dW - back->tiles->width) / 2;
-		back->y = (dH - back->tiles->height) / 2;
-	}
+	if(back)
+		back->center = true;
 	  
-	clearScreen = true;
+	setClearScreen();
 	while(!close) {		
 		uint8_t		r = 0xff;
 		uint8_t		g = 0xff;
 		uint8_t		b = 0xff;
 		uint8_t		c = 1, i = 0;
-		uint16_t 	x = back->x + 8;
-		uint16_t 	y = back->y + 8;
+		uint16_t 	x = 0;
+		uint16_t 	y = 0;
 		joypad_buttons_t keys;
 		
 		getDisplay();
@@ -265,7 +266,9 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 		rdpqDrawImage(back);
 		rdpqEnd();
 
-		drawStringS(x, y, 0x00, 0xff, 0x00, title); y += 3*fh;
+		x = back->x + 8;
+		y = back->y + 8;
+		drawStringS(x+6, y, 0x00, 0xff, 0x00, title); y += 3*fh;
 
 		if(numOptions > 6)
 			y -= fh;	
@@ -280,7 +283,7 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 		if(numOptions <= 6)
 			y += fh;
 		
-		drawStringS(back->x+16, back->y+80, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
+		drawStringS(x+6, back->y+80, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
 		
 		if(helpFile)
 			drawStringS(x-2*fw, y+2*fh, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");

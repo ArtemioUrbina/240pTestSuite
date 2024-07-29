@@ -29,6 +29,7 @@ extern unsigned int dH;
 
 void getDisplay();
 void waitVsync();
+void drawNoVsync();
 void vblCallback();
 
 void initVideo();

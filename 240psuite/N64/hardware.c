@@ -24,10 +24,65 @@
  #include "menu.h"
  #include "font.h"
  
-#define VISIBLE_HORZ	16
-#define VISIBLE_VERT	22
+/*
+CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
+*/
 
-#define MAX_LOCATIONS 1
+uint32_t _state = ~0L;
+
+static const uint32_t crc32_table[] = {
+	0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
+	0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+	0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
+	0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
+};
+
+
+void CRC32_reset() {
+	_state = ~0L;
+}
+
+
+void CRC32_update(uint8_t data) {
+	uint8_t tbl_idx = 0;
+
+	tbl_idx = _state ^ (data >> (0 * 4));
+	_state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+	tbl_idx = _state ^ (data >> (1 * 4));
+	_state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+}
+
+
+uint32_t CRC32_finalize() {
+	return ~_state;
+}
+
+/**********************************/
+
+uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
+	uint8_t *start = NULL;
+	uint32_t address = 0, checksum = 0;
+	CRC32_reset();
+
+	start = (void*)startAddress;
+	for (address = 0; address < size; address ++) {
+		uint8_t data;
+		
+		data = start[address];
+
+		CRC32_update(data);
+	}
+
+	checksum = CRC32_finalize();
+	return checksum;
+}
+
+ 
+#define VISIBLE_HORZ	16
+#define VISIBLE_VERT	27
+#define CHARS_PER_BYTE	2
+
+#define MAX_LOCATIONS	2
 
 #define BUFFER_SIZE 128
  
@@ -35,12 +90,11 @@
  
  void drawMemoryViewer() {
 	int 			done = 0, ascii = 0, locpos = 0, docrc = 0;
-	unsigned int	address = 0, crc = 0, offset = 6;
-	unsigned int	locations[MAX_LOCATIONS] = { 0x80000000};
+	uint32_t		address = 0, crc = 0, offset = fh;
+	uint32_t		locations[MAX_LOCATIONS] = { 0x80000000, 0xA0000000 };
 	char 			buffer[BUFFER_SIZE];
 	joypad_buttons_t keys;
 	
-	enableHalfWidthSpace(true);
 	address = locations[0];
 	while(!done) {
 		int 	i = 0, j = 0;
@@ -48,29 +102,25 @@
 		
 		getDisplay();
 
-		clearScreen = true;
+		setClearScreen();
 		rdpqStart();
 		rdpqEnd();
 		
 		mem = (uint8_t*)address;
 		
-		/*
 		if(docrc)
 			crc = calculateCRC(address, VISIBLE_HORZ*VISIBLE_VERT);
-		*/
 	
-		sprintf(buffer, "%08X", address);
-		drawString(VISIBLE_HORZ*3*fw, 0, 0x00, 0xff, 0x00, buffer);
+		sprintf(buffer, "%08lX", address);
+		drawString((VISIBLE_HORZ-2)*2*fw, 0, 0x00, 0xff, 0x00, buffer);
 		
-		sprintf(buffer, "%08X", address+VISIBLE_HORZ*VISIBLE_VERT);
-		drawString(VISIBLE_HORZ*3*fw, (VISIBLE_VERT-1)*fh, 0x00, 0xff, 0x00, buffer);
+		sprintf(buffer, "%08lX", address+VISIBLE_HORZ*VISIBLE_VERT);
+		drawString((VISIBLE_HORZ-2)*2*fw, (VISIBLE_VERT)*fhR+fh, 0x00, 0xff, 0x00, buffer);
 
-		/*
 		if(docrc) {
-			sprintf(buffer, "%08X", crc);
-			drawStringS(VISIBLE_HORZ*3*fw, (VISIBLE_VERT/2)*fh, 0xff, 0xff, 0x00, buffer);		
+			sprintf(buffer, "Screen CRC: %08lX", crc);
+			drawStringS(4*fw, (VISIBLE_VERT)*fhR+fh, 0xff, 0xff, 0x00, buffer);		
 		}
-		*/
 		
 		for(i = 0; i < VISIBLE_VERT; i++) {
 			if(ascii)
@@ -78,23 +128,26 @@
 			
 			for(j = 0; j < VISIBLE_HORZ; j++) {
 				if(!ascii)
-					sprintf(buffer+j*3, "%02X ", mem[i*VISIBLE_HORZ+j]);
+					sprintf(buffer+j*CHARS_PER_BYTE, "%02X", mem[i*VISIBLE_HORZ+j]);
 				else {
 					uint16_t c;
 					
 					c = mem[i*VISIBLE_HORZ+j];
 					if(c >= 32 && c <= 126)			// ASCII range
-						buffer[j*3+1] = c;
+						buffer[j*CHARS_PER_BYTE+1] = c;
 				}
 			}
-			drawString(offset, offset+i*fh, 0xff, 0xff, 0xff, buffer);
+			// In order to have ASCII values aligned when toggling, we use the default width here
+			useReducedWidthSpace(false);
+			drawString(offset*3, offset+i*fhR, 0xff, 0xff, 0xff, buffer);
+			useReducedWidthSpace(true);
 		}
 		checkMenu(NULL, NULL);
 		
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsHeld();
+		keys = controllerButtonsDown();
 	
 		
 		if(keys.d_left) {
@@ -140,12 +193,5 @@
 			
 		if(keys.c_right)
 			docrc =	!docrc;
-	
-		/*
-		if(keys.start) {
-			
-		}
-		*/
 	}
-	enableHalfWidthSpace(false);
 }

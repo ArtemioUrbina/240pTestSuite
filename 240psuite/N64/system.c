@@ -32,6 +32,9 @@
 	setVideo(RESOLUTION_320x240);
 	
 	joypad_init();
+	
+	audio_init(44100, 20);
+	mixer_init(2);
  }
  
  #define START_SYSINFO_X	190

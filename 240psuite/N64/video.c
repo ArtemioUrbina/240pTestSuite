@@ -68,14 +68,18 @@ void getDisplay() {
 	rdpqUpscalePrepareFB();
 }
 
-void waitVsync() {
-	uint64_t nextFrame = __frames + 1;
-	
+void drawNoVsync() {
 	if(__disp) {
 		executeUpscaleFB();
 		display_show(__disp);
 		__disp = NULL;
 	}
+}
+
+void waitVsync() {
+	uint64_t nextFrame = __frames + 1;
+	
+	drawNoVsync();
 	
 	while (nextFrame > __frames) ;
 }
@@ -109,6 +113,18 @@ void getDisplay()
 	__disp = display_get();
 	
 	rdpqUpscalePrepareFB();
+}
+
+void drawNoVsync() {
+	if(__disp) {
+		drawFrameLens();
+		executeUpscaleFB();
+		display_show(__disp);
+		__disp = NULL;
+	}
+	
+	__frameLen = (get_ticks_us() - __frameStart)/1000.0f;
+	__frameIdle = __frameLen;
 }
 
 void waitVsync() {
