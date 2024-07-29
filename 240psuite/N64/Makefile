@@ -5,8 +5,9 @@ src = $(wildcard *.c)
 ASSETS_PNG = $(wildcard assets/*.png)
 ASSETS_PNG_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_PNG:%.png=%.sprite)))
 
-ASSETS_WAV = $(wildcard assets/*.wav)
-ASSETS_WAV_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64)))
+#commented to iterate on builds and testing via USB upload
+#ASSETS_WAV = $(wildcard assets/*.wav)
+#ASSETS_WAV_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64)))
 
 AUDIOCONV_FLAGS ?= --wav-compress 0
 MKSPRITE_FLAGS ?=

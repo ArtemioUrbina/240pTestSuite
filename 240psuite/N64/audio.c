@@ -25,14 +25,28 @@
 #include "font.h"
  
 #define CHANNEL_MUSIC   0
+
+// Wrap the results for scenarios when the wav is not compiled into the ROM (testing/etc)
+bool openWAV(wav64_t *wav64, char *fileName) {
+	int fh = 0;
+	
+	fh = dfs_open(fileName);
+	if(fh != DFS_ESUCCESS)
+		return false;
+	dfs_close(fh);
+	
+	wav64_open(wav64, fileName);
+	return true;
+}
  
 void drawMDFourier() {
 	int end = 0;
 	image *back = NULL;
 	joypad_buttons_t keys;
-	wav64_t mdfSamples;;
+	wav64_t mdfSamples;
 	
-	wav64_open(&mdfSamples, "rom:/mdfourier-dac-44100.wav64");
+	if(!openWAV(&mdfSamples, "rom:/mdfourier-dac-44100.wav64"))
+		return;
 		
 	back = loadImage("rom:/mainbg.sprite");
 	if(!back)
