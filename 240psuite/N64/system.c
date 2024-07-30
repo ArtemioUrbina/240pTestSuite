@@ -42,7 +42,7 @@
  
  void drawSysData() {
 	char str[20];
-	bool iQue = sys_bbplayer();
+	int iQue = sys_bbplayer();
 	
 	sprintf(str, "%s %d MB", iQue ? "iQue" : "N64", get_memory_size()/0x100000);
 	drawStringS(START_SYSINFO_X, START_SYSINFO_Y, 0xfa, 0xfa, 0xfa, str);
@@ -63,6 +63,6 @@
 			break;
 	}
 
-	getVideoModeStr(str+5, false);
+	getVideoModeStr(str+5, 0);
 	drawStringS(START_SYSINFO_X, START_SYSINFO_Y+fh, 0xfa, 0xfa, 0xfa, str);
  }

@@ -52,6 +52,7 @@ filesystem/sonicFloor.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/shadow.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/libdragon.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/menu.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/message.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/check.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
 filesystem/stripes.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
 filesystem/stripes_v.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4

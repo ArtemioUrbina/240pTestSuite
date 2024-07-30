@@ -32,8 +32,8 @@ filter_options_t	current_antialias = 0;
 unsigned int		EnablePAL = 0;
 unsigned int		vMode = SUITE_NONE;
 
-bool useNTSC = true;
-bool isPAL = 0;
+int useNTSC = 1;
+int isPAL = 0;
 
 unsigned int dW = 320;
 unsigned int dH = 240;
@@ -91,7 +91,7 @@ float __frameIdle = 20, __minIdle = 20;
 float __frameLen = 0, __maxFrameLen = 0;
 
 void drawFrameLens() {
-	bool warn = false;
+	int warn = 0;
 	char str[100];
 	
 	if(__frameIdle < __minIdle)
@@ -100,7 +100,7 @@ void drawFrameLens() {
 		__maxFrameLen = __frameLen;
 	
 	if(__frameIdle > IDLE_WARN_MS || __frameLen > N64_NTSC_FRAME_LEN)
-		warn = true;
+		warn = 1;
 	
 	sprintf(str, "ALL:%0.1f/%0.1f IDL:%0.1f/%0.1f VBL:%0.1f", 
 		__frameLen, __maxFrameLen, __frameIdle, __minIdle, __vblLen);
@@ -161,7 +161,7 @@ void resetVideoVars() {
 	current_gamma = GAMMA_NONE;
 	current_antialias = FILTERS_RESAMPLE;
 	EnablePAL = 0;
-	useNTSC = true;
+	useNTSC = 1;
 	vMode = SUITE_NONE;
 }
 
@@ -202,16 +202,16 @@ void setVideo(resolution_t newRes) {
 #endif
 }
 
-bool isSameRes(resolution_t *res1, const resolution_t *res2) {
+int isSameRes(resolution_t *res1, const resolution_t *res2) {
 	if(res1->width != res2->width)
-		return false;
+		return 0;
 	if(res1->height != res2->height)
-		return false;
+		return 0;
 	if(res1->interlaced != res2->interlaced)
-		return false;
+		return 0;
 	if(res1->pal60 != res2->pal60)
-		return false;
-	return true;
+		return 0;
+	return 1;
 }
 
 int videoModeToInt(resolution_t *res) {
@@ -230,13 +230,10 @@ int videoModeToInt(resolution_t *res) {
 	return SUITE_NONE;
 }
 
-void getVideoModeStr(char *res, bool shortdesc)
-{
+void getVideoModeStr(char *res, int shortdesc) {
 	int vmode = videoModeToInt(&current_resolution);
-	if(!shortdesc)
-	{
-		switch(vmode)
-		{
+	if(!shortdesc) {
+		switch(vmode) {
 			case SUITE_320x240:
 				sprintf(res, "320x240p");
 				break;		
@@ -251,10 +248,8 @@ void getVideoModeStr(char *res, bool shortdesc)
 				break;
 		}
 	}
-	else
-	{
-		switch(vmode)
-		{
+	else {
+		switch(vmode) {
 			case SUITE_320x240:
 				sprintf(res, "[240p]");
 				break;
@@ -268,6 +263,5 @@ void getVideoModeStr(char *res, bool shortdesc)
 				sprintf(res, "[512]");
 				break;
 		}
-
 	}
 }

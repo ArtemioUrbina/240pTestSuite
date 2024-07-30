@@ -1,0 +1,13 @@
+            MDFOURIER
+
+This test generates a series of
+audio signals that are to be
+recorded and analyzed for
+comparison with the #CMDFourier#C
+tool on a computer.
+
+We use the Audio Equipment test
+by pinobatch at 44.1khz.
+
+More details at:
+#Yhttp://junkerhq.net/MDFourier#Y

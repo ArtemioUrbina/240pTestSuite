@@ -42,7 +42,7 @@ void drawDropShadow() {
 						freeImage(&shadow);
 						return;
 					}
-					donna->scale = false;
+					donna->scale = 0;
 				}
 				else
 					donna = loadImage("rom:/donna.sprite");
@@ -175,10 +175,10 @@ void drawScroll() {
 	}
 	
 	/*
-	sonicTop->scale = false;
-	sonicWater->scale = false;
-	sonicFall->scale = false;
-	overlay->scale = false;
+	sonicTop->scale = 0;
+	sonicWater->scale = 0;
+	sonicFall->scale = 0;
+	overlay->scale = 0;
 	*/
 	
     while(!end) {		

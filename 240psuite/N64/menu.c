@@ -60,7 +60,7 @@ void showMenu() {
 		freeMenuFB();
 		return;
 	}
-	menu->center = true;
+	menu->center = 1;
 	
 	while(!end) {
 		char str[20];
@@ -79,7 +79,7 @@ void showMenu() {
 		y = menu->y+20;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); y += fh; c++;
 		sprintf(str, "Video");
-		getVideoModeStr(str+5, true);
+		getVideoModeStr(str+5, 1);
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, str); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Options"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += 2*fh; c++;
@@ -148,7 +148,7 @@ void selectVideoMode() {
 		rdpqDrawImage(back);
 		rdpqEnd();
 
-		drawStringS(x - 20, y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 3*fh; 
+		drawStringC(y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 3*fh; 
 			
 		drawStringS(x - 10, y + videoModeToInt(&current_resolution)*fh, 0x00, 0xff, 0x00, ">"); 
 		
@@ -172,7 +172,7 @@ void selectVideoMode() {
 			
 		drawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
-		drawStringS(x+40, 200, r, g, b, "Press START for help");
+		drawStringC(200, r, g, b, "Press START for help");
 	
 		waitVsync();
 
@@ -248,7 +248,7 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 	
 	back = loadImage("rom:/menu.sprite");
 	if(back)
-		back->center = true;
+		back->center = 1;
 	  
 	setClearScreen();
 	while(!close) {		
@@ -268,7 +268,7 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 
 		x = back->x + 8;
 		y = back->y + 8;
-		drawStringS(x+6, y, 0x00, 0xff, 0x00, title); y += 3*fh;
+		drawStringC(y, 0x00, 0xff, 0x00, title); y += 3*fh;
 
 		if(numOptions > 6)
 			y -= fh;	
@@ -283,10 +283,10 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 		if(numOptions <= 6)
 			y += fh;
 		
-		drawStringS(x+6, back->y+80, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
+		drawStringC(back->y+80, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
 		
 		if(helpFile)
-			drawStringS(x-2*fw, y+2*fh, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
+			drawStringC(y+2*fh, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
 
 		waitVsync();
 
@@ -328,4 +328,41 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 	freeImage(&back);
 
 	return value;
+}
+
+void drawMessageBox(char *msg) {	
+	int 		done = 0;	
+	image		*back = NULL;
+	
+	back = loadImage("rom:/message.sprite");
+	if(back)
+		back->center = 1;
+	  
+	setClearScreen();
+	while(!done) {			
+		uint8_t		r = 0xff;
+		uint8_t		g = 0xff;
+		uint8_t		b = 0xff;
+		joypad_buttons_t keys;
+				
+		getDisplay();
+		
+		rdpqStart();
+		rdpqDrawImage(back);
+		rdpqEnd();
+
+		drawStringC(113, r, g, b, msg);
+				
+		drawStringC(182, 0, g, b, "Press B to continue"); 
+		
+		waitVsync();
+			
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.b || keys.start)
+			done = 1;
+	}
+	
+	freeImage(&back);
 }

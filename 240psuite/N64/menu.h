@@ -23,4 +23,6 @@ typedef struct menuData {
 int selectMenu(char *title, fmenuData *menu_data, int numOptions, int selectedOption);
 int selectMenuEx(char *title, fmenuData *menu_data, int numOptions, int selectedOption, char *helpFile);
 
+void drawMessageBox(char *msg);
+
 #endif

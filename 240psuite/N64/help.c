@@ -36,11 +36,16 @@ char *loadHelpFile(char *filename, char ***pages, int *npages) {
 		return(NULL);
 		
 	fp = dfs_open(filename);
-	if(fp == DFS_ESUCCESS) {
+	if(fp < DFS_ESUCCESS) {
 		return NULL;
 	}
 	
 	size = dfs_size(fp);
+	if(!size) {
+		dfs_close(fp);
+		return NULL;
+	}
+	
 	if(size < 8)
         size = 8;
     else {

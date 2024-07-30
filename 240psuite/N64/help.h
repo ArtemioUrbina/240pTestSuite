@@ -37,6 +37,8 @@ extern char *helpData;
 #define WHITEHELP		"/help/white.txt"
 #define CHECKHELP		"/help/check.txt"
 #define STRIPESHELP		"/help/stripes.txt"
+#define MDFOURIERHELP	"/help/mdfourier.txt"
+#define MEMORYHELP		"/help/memory.txt"
 
 #define ALTERNATE		"/help/alt240p.txt"
 #define BACKLITHELP		"/help/backlit.txt"

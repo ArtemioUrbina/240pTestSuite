@@ -138,18 +138,18 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
 				}
 			}
 			// In order to have ASCII values aligned when toggling, we use the default width here
-			useReducedWidthSpace(false);
+			useReducedWidthSpace(0);
 			drawString(offset*3, offset+i*fhR, 0xff, 0xff, 0xff, buffer);
-			useReducedWidthSpace(true);
+			useReducedWidthSpace(1);
 		}
-		checkMenu(NULL, NULL);
+		checkMenu(MEMORYHELP, NULL);
 		
 		waitVsync();
 		
 		joypad_poll();
 		keys = controllerButtonsDown();
 	
-		
+		checkStart(keys);
 		if(keys.d_left) {
 			if(address > locations[0])
 				address -= VISIBLE_HORZ*VISIBLE_VERT;

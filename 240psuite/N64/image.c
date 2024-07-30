@@ -25,21 +25,21 @@
 #define PAL4_SIZE	16
 #define PAL8_SIZE	256
 
-bool clearScreen = false;
+int clearScreen = 0;
 unsigned int currFB = 0;
 
 // Upscale frame buffer
 surface_t *__real_disp = NULL;
 surface_t *__upscale_fb = NULL;
-bool upscaleFrame = false;
-bool menuIgnoreUpscale = false;
+int upscaleFrame = 0;
+int menuIgnoreUpscale = 0;
 
 void setClearScreen() {
-	clearScreen = true;
+	clearScreen = 1;
 }
 
 void rdpqSetDrawMode() {
-	rdpq_set_mode_copy(true);
+	rdpq_set_mode_copy(1);
 }
  
 void rdpqStart() {
@@ -52,7 +52,7 @@ void rdpqStart() {
 		}
 
 		if(currFB == current_buffers) {
-			clearScreen = false;
+			clearScreen = 0;
 			currFB = 0;
 		}
 		else
@@ -83,7 +83,7 @@ void rdpqDrawImage(image* data) {
 #endif
 
 	if(vMode == SUITE_640x480 && !data->scale)
-		upscaleFrame = false;
+		upscaleFrame = 0;
 	
 	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
@@ -112,7 +112,7 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 #endif
 	
 	if(vMode == SUITE_640x480 && !data->scale)
-		upscaleFrame = false;
+		upscaleFrame = 0;
 		
 	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
@@ -179,8 +179,8 @@ image *loadImage(char *name) {
 	}
 	data->x = 0;
 	data->y = 0;
-	data->center = false;
-	data->scale = true;
+	data->center = 0;
+	data->scale = 1;
 	
 	data->palette = NULL;
 	data->origPalette = NULL;
@@ -225,9 +225,9 @@ void freeImage(image **data) {
 
 surface_t *__menu_fb = NULL;
 
-bool copyMenuFB() {	
+int copyMenuFB() {	
 	if(!__disp)
-		return false;
+		return 0;
 	
 #ifdef DEBUG_BENCHMARK
 	assertf(__menu_fb == NULL, "copyFrameBuffer(): __menu_fb was not NULL");
@@ -237,24 +237,24 @@ bool copyMenuFB() {
 
 	__menu_fb = (surface_t *)malloc(sizeof(surface_t));
 	if(!__menu_fb)
-		return false;
+		return 0;
 		
 	*__menu_fb = surface_alloc(surface_get_format(__disp), __disp->width, __disp->height);
 	if(!__menu_fb->buffer) {
 		free(__menu_fb);
 		__menu_fb = NULL;
-		return false;
+		return 0;
 	}
 	
 	rdpq_attach(__menu_fb, NULL);
-	rdpq_set_mode_copy(false);
+	rdpq_set_mode_copy(0);
 	rdpq_tex_blit(__disp, 0, 0, NULL);
 	rdpq_detach();
 
 	if(!upscaleFrame)
-		menuIgnoreUpscale = true;
+		menuIgnoreUpscale = 1;
 
-	return true;
+	return 1;
 }
 
 void freeMenuFB() {
@@ -265,7 +265,7 @@ void freeMenuFB() {
 	}
 
 	if(menuIgnoreUpscale)
-		menuIgnoreUpscale = false;
+		menuIgnoreUpscale = 0;
 }
 
 void drawMenuFB() {
@@ -273,7 +273,7 @@ void drawMenuFB() {
 		return;
 
 	rdpq_attach(upscaleFrame ? __upscale_fb : __disp, NULL);
-	rdpq_set_mode_copy(false);
+	rdpq_set_mode_copy(0);
 	rdpq_tex_blit(__menu_fb, 0, 0, NULL);
 	rdpq_detach();
 }
@@ -315,27 +315,27 @@ void darkenMenuFB(int amount) {
 void rdpqUpscalePrepareFB() {
 	if(!menuIgnoreUpscale && vMode == SUITE_640x480) {
 		createUpscaleFB();
-		upscaleFrame = true;
+		upscaleFrame = 1;
 	}
 }
 
-bool createUpscaleFB() {
+int createUpscaleFB() {
 	if(__upscale_fb || !__disp)
-		return false;
+		return 0;
 	
 	__upscale_fb = (surface_t *)malloc(sizeof(surface_t));
 	if(!__upscale_fb)
-		return false;
+		return 0;
 	memset(__upscale_fb, 0, sizeof(surface_t));
 
 	*__upscale_fb = surface_alloc(surface_get_format(__disp), __disp->width/2, __disp->height/2);
 	if(!__upscale_fb->buffer) {
 		free(__upscale_fb);
 		__upscale_fb = NULL;
-		return false;
+		return 0;
 	}
 	
-	return true;
+	return 1;
 }
 
 void freeUpscaleFB() {
@@ -372,7 +372,7 @@ void executeUpscaleFB() {
 			});
 	rdpq_detach();
 	
-	upscaleFrame = false;
+	upscaleFrame = 0;
 }
 
 /* Fade paletted images */

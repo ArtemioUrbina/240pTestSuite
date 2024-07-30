@@ -575,7 +575,7 @@ void drawGrid() {
 					back = loadImage("rom:/grid-480.sprite");
 					if(!back)
 						return;
-					back->scale = false;
+					back->scale = 0;
 				}
 				else
 					back = loadImage("rom:/grid.sprite");

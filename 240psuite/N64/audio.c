@@ -27,16 +27,16 @@
 #define CHANNEL_MUSIC   0
 
 // Wrap the results for scenarios when the wav is not compiled into the ROM (testing/etc)
-bool openWAV(wav64_t *wav64, char *fileName) {
+int openWAV(wav64_t *wav64, char *fileName) {
 	int fh = 0;
 	
-	fh = dfs_open(fileName);
-	if(fh != DFS_ESUCCESS)
-		return false;
+	fh = dfs_open(fileName+5);   // remove "rom:/"
+	if(fh < DFS_ESUCCESS)
+		return 0;
 	dfs_close(fh);
 	
 	wav64_open(wav64, fileName);
-	return true;
+	return 1;
 }
  
 void drawMDFourier() {
@@ -45,8 +45,10 @@ void drawMDFourier() {
 	joypad_buttons_t keys;
 	wav64_t mdfSamples;
 	
-	if(!openWAV(&mdfSamples, "rom:/mdfourier-dac-44100.wav64"))
+	if(!openWAV(&mdfSamples, "rom:/mdfourier-dac-44100.wav64")) {
+		drawMessageBox("MDFourier samples not present");
 		return;
+	}
 		
 	back = loadImage("rom:/mainbg.sprite");
 	if(!back)
@@ -60,13 +62,16 @@ void drawMDFourier() {
 		rdpqDrawImage(back);
 		rdpqEnd();
 		
+		drawStringC(42, 0x00, 0xff, 0x00, "MDFourier");
 		if(mixer_ch_playing(CHANNEL_MUSIC))
-			drawStringS(40, 60, 0xff, 0xff, 0xff, "Playing back ");
+			drawStringC(100, 0xff, 0xff, 0xff, "Playing back ");
 		else
-			drawStringS(30, 60, 0xff, 0xff, 0xff, "Press #Ga#G to play");
+			drawStringC(100, 0xff, 0xff, 0xff, "Press #Ga#G to play");
+		
+		drawStringC(201, 0xff, 0xff, 0x00, "#Yhttp://junkerhq.net/MDFourier#Y");
 		
 		if(!mixer_ch_playing(CHANNEL_MUSIC))
-			checkMenu(NULL, NULL);
+			checkMenu(MDFOURIERHELP, NULL);
 		drawNoVsync();
 		
 		mixer_try_play();
@@ -87,8 +92,9 @@ void drawMDFourier() {
 			end = 1;
 	}
 	
-	if(mixer_ch_playing(CHANNEL_MUSIC))
+	if(mixer_ch_playing(CHANNEL_MUSIC)) {
 		mixer_ch_stop(CHANNEL_MUSIC);
+	}
 	
 	wav64_close(&mdfSamples);
 	freeImage(&back);

@@ -7,8 +7,8 @@ typedef struct image_st {
 	sprite_t *tiles;
 	int	x;
 	int y;
-	bool center;
-	bool scale;
+	int center;
+	int scale;
 	
 	uint16_t *palette;
 	uint16_t *origPalette;
@@ -28,13 +28,13 @@ void rdpqClearScreen();
 image *loadImage(char *name);
 void freeImage(image **data);
 
-bool copyMenuFB();
+int copyMenuFB();
 void freeMenuFB();
 void drawMenuFB();
 void darkenMenuFB(int amount);
 
 void rdpqUpscalePrepareFB();
-bool createUpscaleFB();
+int createUpscaleFB();
 void freeUpscaleFB();
 void executeUpscaleFB();
 

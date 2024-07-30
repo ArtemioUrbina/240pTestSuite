@@ -23,7 +23,7 @@
  #include "video.h"
  
 sprite_t *font240 = NULL;
-bool __reducedWidthSpace = true;
+int __reducedWidthSpace = 1;
  
 int fw = 8; // font width
 int fh = 10; // font height
@@ -52,7 +52,7 @@ void releaseFont() {
 	}
 }
 
-void useReducedWidthSpace(bool use) {
+void useReducedWidthSpace(int use) {
 	__reducedWidthSpace = use;
 }
 
@@ -165,7 +165,7 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 				graphics_set_color(f_color, 0x00000000);
 				break;
 			default: {
-					bool shown = false;
+					int shown = 0;
 					
 					// show ... as three dots with less spacing
 					if(*text == '.' && *(text + 1) != '\0') {
@@ -178,7 +178,7 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 								tx += stride;
 							}
 							tx += fw/4;
-							shown = true;
+							shown = 1;
 							text += 2;
 						}
 					}
@@ -226,6 +226,20 @@ void drawStringB(int x, int y, int r, int g, int b, char *text) {
 	f_color = graphics_make_color(r, g, b, 0xff);
 
 	graphics_draw_box(__disp, x-1, y-1, boxWidth, boxHeight, 0x00000000);
+	graphics_set_color(f_color, 0x00000000);
+	graphics_draw_text_suite(__disp, x, y, text);
+}
+
+void drawStringC(int y, int r, int g, int b, char *text) {
+	unsigned int x = 0, strWidth = 0;
+	
+	strWidth = measureString(text);
+	x = (__disp->width - strWidth)/2;
+	f_color = 0x00000000;
+	graphics_set_color(f_color, 0x00000000);
+	graphics_draw_text_suite(__disp, x+1, y+1, text);
+
+	f_color = graphics_make_color(r, g, b, 0xff);
 	graphics_set_color(f_color, 0x00000000);
 	graphics_draw_text_suite(__disp, x, y, text);
 }

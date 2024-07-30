@@ -21,8 +21,8 @@ extern filter_options_t	current_antialias;
 extern unsigned int		EnablePAL;
 extern unsigned int		vMode;
 
-extern bool useNTSC;
-extern bool isPAL;
+extern int useNTSC;
+extern int isPAL;
 
 extern unsigned int dW;
 extern unsigned int dH;
@@ -35,9 +35,9 @@ void vblCallback();
 void initVideo();
 void setVideo(resolution_t newRes);
 
-bool isSameRes(resolution_t *res1, const resolution_t *res2);
+int isSameRes(resolution_t *res1, const resolution_t *res2);
 int videoModeToInt(resolution_t *res);
-void getVideoModeStr(char *res, bool shortdesc);
+void getVideoModeStr(char *res, int shortdesc);
 
 #ifdef DEBUG_BENCHMARK
 #define	IDLE_WARN_MS	2.0f
