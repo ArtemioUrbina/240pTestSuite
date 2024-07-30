@@ -21,107 +21,34 @@
  
 #include "menu.h"
 
-void drawDropShadow() {
-	resolution_t oldVmode = current_resolution;
-	int end = 0, invert = 0, frame = 0, reload = 1, showText = 0;
-	image *donna = NULL, *shadow = NULL;	
-	joypad_buttons_t keys;
-	char msg[25];
-	
-	while(!end) {
-		if(reload) {
-			if(!isSameRes(&oldVmode, &current_resolution)) {
-				freeImage(&donna);
-				oldVmode = current_resolution;
-			}
-			
-			if(!donna) {
-				if(vMode == SUITE_640x480) {
-					donna = loadImage("rom:/donna-480.sprite");
-					if(!donna) {
-						freeImage(&shadow);
-						return;
-					}
-					donna->scale = 0;
-				}
-				else
-					donna = loadImage("rom:/donna.sprite");
-				if(!donna) {
-					freeImage(&shadow);
-					return;
-				}
-			}
-			if(!shadow) {
-				shadow = loadImage("rom:/shadow.sprite");
-				if(!shadow)	{
-					freeImage(&donna);
-					return;
-				}
-				shadow->x = dW/2- shadow->tiles->width/2;
-				shadow->y = dH/2 - shadow->tiles->height/2;
-			}
-
-			reload = 0;
-		}
-		
-		getDisplay();
-
-		rdpqStart();
-		
-		rdpqDrawImage(donna);
-		if(frame == invert)
-			rdpqDrawImage(shadow);
-		rdpqEnd();
-		
-		if(showText) {
-			if(vMode == SUITE_640x480)
-				drawStringB(450, 40, 0, 0xff, 0, msg);
-			else
-				drawStringB(140, 30, 0, 0xff, 0, msg);
-			showText--;
-		}
-		
-		checkMenu(DROPSHADOW, &reload);
-		waitVsync();
-		
-		frame = !frame;
-		
-		joypad_poll();
-		keys = controllerButtonsHeld();
-		
-		if(keys.d_up)
-			shadow->y--;
-		if(keys.d_down)
-			shadow->y++;
-		if(shadow->y < 0)
-			shadow->y = 0;
-		if(shadow->y > dH - shadow->tiles->height)
-			shadow->y = dH - shadow->tiles->height;
-			
-		if(keys.d_left)
-			shadow->x--;
-		if(keys.d_right)
-			shadow->x++;		
-		if(shadow->x < 0)
-			shadow->x = 0;
-		if(shadow->x > dW - shadow->tiles->width)
-			shadow->x = dW - shadow->tiles->width;
-
-		checkStart(keys);
-		if(keys.b)
-			end = 1;
-		if(keys.a) {
-			invert = !invert;
-			if(invert)
-				sprintf(msg, "Shadow on odd frames");				
-			else
-				sprintf(msg, "Shadow on even frames");
-			showText = 60;
-		}
+void drawSonicBG(int x, int y, image *sonicTop, image *sonicWater, image *sonicFall) {	
+	rdpqClearScreen();
+	/* Draw Background */
+	if(x > 0) {
+		rdpqDrawImageXY(sonicTop, x-256, 0);
+		rdpqDrawImageXY(sonicWater, x-256, 156);
+		rdpqDrawImageXY(sonicFall, x-177, 131);
 	}
-	
-	freeImage(&donna);
-	freeImage(&shadow);
+	rdpqDrawImageXY(sonicTop, x, 0);
+	rdpqDrawImageXY(sonicWater, x, 156);
+	rdpqDrawImageXY(sonicFall, x+79, 131);
+	if(x < 64) {
+		rdpqDrawImageXY(sonicTop, x+256, 0);
+		rdpqDrawImageXY(sonicWater, x+256, 156);
+		rdpqDrawImageXY(sonicFall, x+335, 131);
+	}	
+}
+
+void drawSonicFG(int x, int y, image *overlay) {	
+	/* Draw Foreground */
+	if(x > 0)
+		rdpqDrawImageXY(overlay, 2*x-256, 48);
+	rdpqDrawImageXY(overlay, 2*x, 48);
+	if(x < 64)
+		rdpqDrawImageXY(overlay, 2*x+256, 48);
+	// Extra gap
+	if(x < -96)
+		rdpqDrawImageXY(overlay, 2*x+512, 48);
 }
 
 void rotateWaterPalette(image *data) {
@@ -142,6 +69,206 @@ void rotateFallPalette(image *data) {
 	
 	updatePalette(data);
 }
+
+void drawDropShadow() {
+	resolution_t oldVmode = current_resolution;
+	int end = 0, invert = 0, frame = 0, reload = 1;
+	int x = 0, y = 0, showText = 0, sprite = 0, selback = 0;
+	int frameLen[] = { 8, 8, 8 }, animFrame = 0;
+	int fallFrame = 0, currentframe = 0;
+	image *donna = NULL, *shadow = NULL, *stripes = NULL, *check = NULL;
+	image *buzz = NULL, *buzzshadow = NULL, *sshadow = NULL;
+	image 	*sonicTop = NULL, *sonicWater = NULL, *sonicFall = NULL;
+	image	*overlay = NULL;	
+	joypad_buttons_t keys;
+	char msg[25];
+		
+	sshadow = loadImage("rom:/shadow.sprite");
+	if(sshadow)	{
+		x = dW/2- sshadow->tiles->width/2;
+		y = dH/2 - sshadow->tiles->height/2;
+	}
+
+	buzz = loadImage("rom:/buzzbomber.sprite");
+	buzzshadow = loadImage("rom:/buzzbomberShadow.sprite");
+	
+	sprite = RANDN(2);
+	if(sprite == 0)
+		shadow = sshadow;
+	else
+		shadow = buzzshadow;
+		
+	sonicTop = loadImage("rom:/sonicTop.sprite");
+	sonicWater = loadImage("rom:/sonicWater.sprite");
+	sonicFall = loadImage("rom:/sonicFall.sprite");
+	overlay = loadImage("rom:/sonicFloor.sprite");
+	
+	if(sonicTop)
+		sonicTop->scale = 0;
+	if(sonicWater)
+		sonicWater->scale = 0;
+	if(sonicFall)
+		sonicFall->scale = 0;
+	if(overlay)
+		overlay->scale = 0;
+		
+	check = loadImage("rom:/check.sprite");
+	stripes = loadImage("rom:/stripes_v.sprite");
+
+	while(!end) {
+		if(reload) {
+			if(!isSameRes(&oldVmode, &current_resolution)) {
+				freeImage(&donna);
+				oldVmode = current_resolution;
+			}
+			
+			if(!donna) {
+				if(vMode == SUITE_640x480) {
+					donna = loadImage("rom:/donna-480.sprite");
+					if(!donna)
+						end = 1;
+					else
+						donna->scale = 0;
+				}
+				else
+					donna = loadImage("rom:/donna.sprite");
+				if(!donna)
+					end = 1;
+			}
+
+			reload = 0;
+		}
+		
+		getDisplay();
+
+		rdpqStart();
+		
+		switch(selback) {
+			case 0:
+				rdpqDrawImage(donna);
+				break;
+			case 1:
+				drawSonicBG(-(x-196), y, sonicTop, sonicWater, sonicFall);
+				break;
+			case 2:
+				rdpqFillWithImage(stripes);
+				break;
+			case 3:
+				rdpqFillWithImage(check);
+				break;
+			default:
+				break;
+		}
+		
+		if(frame == invert)
+			rdpqDrawImageXY(shadow, x, y);
+		if(sprite == 1 && buzz)	{
+			rdpqDrawImageXY(buzz, x-20, y-20);
+		}
+		if(selback == 1)
+			drawSonicFG(-(x-128), y, overlay);
+		rdpqEnd();
+		
+		if(showText) {
+			if(vMode == SUITE_640x480)
+				drawStringB(450, 40, 0, 0xff, 0, msg);
+			else
+				drawStringB(140, 30, 0, 0xff, 0, msg);
+			showText--;
+		}
+		
+		checkMenu(DROPSHADOW, &reload);
+		waitVsync();
+		
+		frame = !frame;
+		
+		joypad_poll();
+		keys = controllerButtonsHeld();
+		
+		if(keys.d_up)
+			y--;
+		if(keys.d_down)
+			y++;
+		if(y < 0)
+			y = 0;
+		if(y > dH - shadow->tiles->height)
+			y = dH - shadow->tiles->height;
+			
+		if(keys.d_left) {
+			x--;
+			buzz->flipH = 0;
+			buzzshadow->flipH = 0;
+		}
+		if(keys.d_right) {
+			x++;
+			buzz->flipH = 1;
+			buzzshadow->flipH = 1;
+		}
+		if(x < 0)
+			x = 0;
+		if(x > dW - shadow->tiles->width)
+			x = dW - shadow->tiles->width;
+			
+		if(selback == 1) {
+			currentframe ++;
+			if(currentframe > 25) {
+				rotateWaterPalette(sonicWater);
+				currentframe = 0;
+			}
+			fallFrame ++;
+			if(fallFrame > frameLen[animFrame]) {
+				rotateFallPalette(sonicFall);
+				fallFrame = 0;
+				animFrame ++;
+				if(animFrame > 2)
+					animFrame = 0;
+			}
+		}
+
+		keys = controllerButtonsDown();
+		checkStart(keys);
+		if(keys.b)
+			end = 1;
+		if(keys.r) {
+			invert = !invert;
+			if(invert)
+				sprintf(msg, "Shadow on odd frames");				
+			else
+				sprintf(msg, "Shadow on even frames");
+			showText = 60;
+		}
+		
+		if(keys.l) {
+			if(sprite == 0)	{
+				shadow = buzzshadow;
+				sprite = 1;
+			}
+			else {
+				shadow = sshadow;
+				sprite = 0;
+			}
+		}
+		
+		if(keys.a) {
+			selback ++;
+			if(selback > 3)
+				selback = 0;
+		}
+	}
+	
+	freeImage(&sshadow);
+	freeImage(&buzzshadow);
+	freeImage(&buzz);
+	freeImage(&donna);
+	
+	freeImage(&sonicTop);
+	freeImage(&sonicWater);
+	freeImage(&sonicFall);
+	freeImage(&overlay);
+	
+	freeImage(&stripes);
+	freeImage(&check);
+}
  
 void drawScroll() {
 	int speed = 1, acc = -1, pause = 0, vertical = 0;
@@ -152,69 +279,29 @@ void drawScroll() {
 	joypad_buttons_t keys;
 
 	sonicTop = loadImage("rom:/sonicTop.sprite");
-	if(!sonicTop)
-		return;
 	sonicWater = loadImage("rom:/sonicWater.sprite");
-	if(!sonicWater) {
-		freeImage(&sonicTop);
-		return;
-	}
 	sonicFall = loadImage("rom:/sonicFall.sprite");
-	if(!sonicFall) {
-		freeImage(&sonicTop);
-		freeImage(&sonicWater);
-		return;
-	}
-	
 	overlay = loadImage("rom:/sonicFloor.sprite");
-	if(!overlay) {
-		freeImage(&sonicTop);
-		freeImage(&sonicWater);
-		freeImage(&sonicFall);
-		return;
-	}
 	
 	/*
-	sonicTop->scale = 0;
-	sonicWater->scale = 0;
-	sonicFall->scale = 0;
-	overlay->scale = 0;
+	if(sonicTop)
+		sonicTop->scale = 0;
+	if(sonicWater)
+		sonicWater->scale = 0;
+	if(sonicFall)
+		sonicFall->scale = 0;
+	if(overlay)
+		overlay->scale = 0;
 	*/
 	
     while(!end) {		
 		getDisplay();
 
 		rdpqStart();
-		
-		rdpqClearScreen();
-		
-		/* Draw Background */
-		if(x > 0) {
-			rdpqDrawImageXY(sonicTop, x-256, 0);
-			rdpqDrawImageXY(sonicWater, x-256, 156);
-			rdpqDrawImageXY(sonicFall, x-177, 131);
-		}
-		rdpqDrawImageXY(sonicTop, x, 0);
-		rdpqDrawImageXY(sonicWater, x, 156);
-		rdpqDrawImageXY(sonicFall, x+79, 131);
-		if(x < 64) {
-			rdpqDrawImageXY(sonicTop, x+256, 0);
-			rdpqDrawImageXY(sonicWater, x+256, 156);
-			rdpqDrawImageXY(sonicFall, x+335, 131);
-		}
-
-		/* Draw Foreground */
-		if(x > 0)
-			rdpqDrawImageXY(overlay, 2*x-256, 48);
-		rdpqDrawImageXY(overlay, 2*x, 48);
-		if(x < 64)
-			rdpqDrawImageXY(overlay, 2*x+256, 48);
-		// Extra gap
-		if(x < -96)
-			rdpqDrawImageXY(overlay, 2*x+512, 48);
-
+		drawSonicBG(x, y, sonicTop, sonicWater, sonicFall);
+		drawSonicFG(x, y, overlay);
 		rdpqEnd();
-	
+		
 		checkMenu(SCROLLHELP, NULL);
 		waitVsync();
 		

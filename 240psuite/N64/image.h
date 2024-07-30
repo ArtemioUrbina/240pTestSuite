@@ -9,6 +9,8 @@ typedef struct image_st {
 	int y;
 	int center;
 	int scale;
+	int flipH;
+	int flipV;
 	
 	uint16_t *palette;
 	uint16_t *origPalette;

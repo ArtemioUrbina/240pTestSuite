@@ -96,7 +96,18 @@ void rdpqDrawImage(image* data) {
 			data->y = (output->height - data->tiles->height)/2;
 		}
 	}
-	rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
+
+	if(!data->flipH && !data->flipH) {
+		rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
+	}
+	else {
+		rdpq_set_mode_standard();
+		rdpq_mode_alphacompare(1);
+		rdpq_sprite_blit(data->tiles, data->x, data->y, &(rdpq_blitparms_t) {
+			.flip_x = data->flipH, .flip_y = data->flipV
+			});
+		rdpqSetDrawMode();
+	}
 	
 	if(upscaleFrame)
 		rdpq_detach();
@@ -117,7 +128,17 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
 	
-	rdpq_sprite_blit(data->tiles, x, y, NULL);
+	if(!data->flipH && !data->flipH) {
+		rdpq_sprite_blit(data->tiles, x, y, NULL);
+	}
+	else {
+		rdpq_set_mode_standard();
+		rdpq_mode_alphacompare(1);
+		rdpq_sprite_blit(data->tiles, x, y, &(rdpq_blitparms_t) {
+			.flip_x = data->flipH, .flip_y = data->flipV
+			});
+		rdpqSetDrawMode();
+	}
 	
 	if(upscaleFrame)
 		rdpq_detach();
@@ -168,7 +189,14 @@ void rdpqClearScreen() {
 
 image *loadImage(char *name) {
 	image *data = NULL;
-	
+
+#ifndef DEBUG_BENCHMARK	
+	int fh = dfs_open(name+5);   // remove "rom:/"
+	if(fh < DFS_ESUCCESS)
+		return 0;
+	dfs_close(fh);
+#endif
+
 	data = (image*)malloc(sizeof(image));
 	if(!data)
 		return NULL;
@@ -181,6 +209,8 @@ image *loadImage(char *name) {
 	data->y = 0;
 	data->center = 0;
 	data->scale = 1;
+	data->flipH = 0;
+	data->flipV = 0;
 	
 	data->palette = NULL;
 	data->origPalette = NULL;

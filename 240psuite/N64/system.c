@@ -65,4 +65,15 @@
 
 	getVideoModeStr(str+5, 0);
 	drawStringS(START_SYSINFO_X, START_SYSINFO_Y+fh, 0xfa, 0xfa, 0xfa, str);
- }
+}
+
+// Fair and fast random generation (using xorshift32, with explicit seed)
+static uint32_t rand_state = 1;
+
+uint32_t myrand(void) {
+	uint32_t x = rand_state;
+	x ^= x << 13;
+	x ^= x >> 7;
+	x ^= x << 5;
+	return rand_state = x;
+}
