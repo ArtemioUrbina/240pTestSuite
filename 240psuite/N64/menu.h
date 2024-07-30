@@ -8,10 +8,14 @@
 #include "help.h"
 #include "controller.h"
 
+#define VERSION_NUMBER "N64 B2 0.10"
+#define VERSION_DATE "2024/07/29"
+
 void checkMenu(char *help, int *reload);
 void checkStart(joypad_buttons_t keys);
 void showMenu();
 void selectVideoMode();
+void drawCredits(int usebuffer);
 
 #define MENU_CANCEL -1
 

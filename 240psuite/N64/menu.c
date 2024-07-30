@@ -75,6 +75,8 @@ void showMenu() {
 		rdpqDrawImage(menu);
 		rdpqEnd();
 		
+		drawStringC(menu->y+8, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
+		
 		x = menu->x+16;
 		y = menu->y+20;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); y += fh; c++;
@@ -110,6 +112,9 @@ void showMenu() {
 					break;
 				case 2:
 					selectVideoMode();
+					break;
+				case 4:
+					drawCredits(1);
 					break;
 				case 5:
 					end = 1;
@@ -234,6 +239,106 @@ void selectVideoMode() {
 	freeImage(&back);
 	if(!isSameRes(&oldVmode, &current_resolution))
 		setClearScreen();
+}
+
+void drawCredits(int usebuffer) {
+	int 		done = 0;	
+    int     	counter = 1;
+	char		data[50];
+	image		*back = NULL, *qr = NULL;
+	joypad_buttons_t keys;
+	
+	back = loadImage("rom:/help.sprite");
+	if(!back)
+		return;
+		
+	qr = loadImage("rom:/qr.sprite");
+		
+	while(!done) {
+		int x = 35, y = 40, x2 = 150, y2 = 0;
+
+		getDisplay();
+
+		if(usebuffer)
+			drawMenuFB();
+		rdpqStart();
+		rdpqDrawImage(back);
+		rdpqDrawImageXY(qr, 236, 50);
+		rdpqEnd();
+		
+        drawStringS(x, y, 0x00, 0xff, 0x00, "Code & Patterns:"); y += fh; 
+		if(counter == 1)
+			sprintf(data, "Artemio Urbina");			
+		if(counter == 60*4)
+			sprintf(data, "@Artemio (twitter)");					
+		if(counter == 60*8)
+			counter = 0;
+
+		drawStringS(x, y, 0x00, 0xff, 0x00, "Support & suggestions:"); y += fh; 
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, data); y += fh; 
+
+		drawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "libDragon"); y += fh; y2 = y;
+		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope Pattern:"); y2 += fh; 
+		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney\n(@khmr33)"); y2 += 2*fh;
+		drawStringS(x, y, 0x00, 0xff, 0x00, "Donna Art:"); y += fh; 
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Jose Salot\n(@pepe_salot)"); y += 2*fh;
+		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y2 += fh; 
+		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
+		drawStringS(x, y, 0x00, 0xff, 0x00, "Advisor:"); y += fh; 
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Fudoh"); y += fh; 
+		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Collaboration:"); y2 += fh; 
+		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "shmups regulars"); y2 += fh+5;
+		y = y2;
+	
+		drawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "#Yhttp://junkerhq.net/240p/#Y"); y += fh+5; 
+
+		drawStringS(x-8, y, 0x00, 0xba, 0xba, "This program is free Software");  y += fh;
+		drawStringS(x-8, y, 0x00, 0xba, 0xba, "Source code is available under GPL");
+		
+		drawStringS(140, 216, 0x00, 0xba, 0xba, "Dedicated to Elisa.");
+		
+		y = 28;
+		
+		drawStringS(208, y, 0x0f, 0xff, 0xff, VERSION_NUMBER); y += fh;
+		drawStringS(208, y, 0x0f, 0xff, 0xff, VERSION_DATE); y += 2*fh;
+
+		waitVsync();
+
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.b)
+			done =	1;		
+		
+		if(keys.z) {
+			int 	check = 1;
+			image 	*nish = NULL;	
+			
+			nish = loadImage("rom:/nish.sprite");
+			if(nish) {
+				while(check) {
+					getDisplay();
+					rdpqStart();
+					rdpqDrawImage(nish);
+					rdpqEnd();
+					waitVsync();
+					
+					joypad_poll();
+					keys = controllerButtonsHeld();
+					if(!keys.z)
+						check =	0;	
+				}
+				freeImage(&nish);
+			}
+		}
+		
+		counter ++;			
+	}
+	
+	freeImage(&back);
+	freeImage(&qr);
 }
 
 /* Floating Menu functions */

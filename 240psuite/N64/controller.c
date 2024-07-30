@@ -116,6 +116,25 @@ joypad_buttons_t controllerButtonsHeld() {
 		pad_pressed.d_right = 1;
 	if(pad_held.d_left)
 		pad_pressed.d_left = 1;
+	
+	if(pad_held.c_up)
+		pad_pressed.c_up = 1;
+	if(pad_held.c_down)
+		pad_pressed.c_down = 1;
+	if(pad_held.c_left)
+		pad_pressed.c_left = 1;
+	if(pad_held.c_right)
+		pad_pressed.c_right = 1;
+	if(pad_held.a)
+		pad_pressed.a = 1;
+	if(pad_held.b)
+		pad_pressed.b = 1;
+	if(pad_held.z)
+		pad_pressed.z = 1;
+	if(pad_held.l)
+		pad_pressed.l = 1;
+	if(pad_held.r)
+		pad_pressed.r = 1;
 
 #ifdef DEBUG_BENCHMARK
 	if(pad_held.l && pad_held.r)
