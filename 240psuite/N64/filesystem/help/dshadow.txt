@@ -16,6 +16,5 @@ should be visible.
 
 The user can toggle the frame
 used to draw the shadow with
-button #GCL#G. Backgrounds can
-be switched with the #GA#G button
-and button #GCR#G toggles sprites.
+button #GR#G. Backgrounds can
+be switched with the #GA#G button, and #GL#G changes sprites.

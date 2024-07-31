@@ -78,8 +78,8 @@ void drawDropShadow() {
 	int fallFrame = 0, currentframe = 0;
 	image *donna = NULL, *shadow = NULL, *stripes = NULL, *check = NULL;
 	image *buzz = NULL, *buzzshadow = NULL, *sshadow = NULL;
-	image 	*sonicTop = NULL, *sonicWater = NULL, *sonicFall = NULL;
-	image	*overlay = NULL;	
+	image *sonicTop = NULL, *sonicWater = NULL, *sonicFall = NULL;
+	image *overlay = NULL;	
 	joypad_buttons_t keys;
 	char msg[25];
 		
@@ -103,15 +103,6 @@ void drawDropShadow() {
 	sonicFall = loadImage("rom:/sonicFall.sprite");
 	overlay = loadImage("rom:/sonicFloor.sprite");
 	
-	if(sonicTop)
-		sonicTop->scale = 0;
-	if(sonicWater)
-		sonicWater->scale = 0;
-	if(sonicFall)
-		sonicFall->scale = 0;
-	if(overlay)
-		overlay->scale = 0;
-		
 	check = loadImage("rom:/check.sprite");
 	stripes = loadImage("rom:/stripes_v.sprite");
 
@@ -138,6 +129,7 @@ void drawDropShadow() {
 
 			reload = 0;
 		}
+		
 		
 		getDisplay();
 
@@ -229,6 +221,7 @@ void drawDropShadow() {
 		checkStart(keys);
 		if(keys.b)
 			end = 1;
+		
 		if(keys.r) {
 			invert = !invert;
 			if(invert)
@@ -239,14 +232,11 @@ void drawDropShadow() {
 		}
 		
 		if(keys.l) {
-			if(sprite == 0)	{
-				shadow = buzzshadow;
-				sprite = 1;
-			}
-			else {
+			sprite = !sprite;
+			if(sprite == 0)
 				shadow = sshadow;
-				sprite = 0;
-			}
+			else
+				shadow = buzzshadow;
 		}
 		
 		if(keys.a) {

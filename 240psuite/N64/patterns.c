@@ -146,40 +146,6 @@ void drawColorbars() {
 	freeImage(&grid);
 }
 
-void swapPalette100to75(image *data) {
-	if(!data || !data->palette)
-		return;
-	
-	for(unsigned int c = 0; c < data->palSize; c++) {
-		color_t color = color_from_packed16(data->palette[c]);
-		if(color.r == COLOR_100)
-			color.r = COLOR_75;
-		if(color.g == COLOR_100)
-			color.g = COLOR_75;
-		if(color.b == COLOR_100)
-			color.b = COLOR_75;
-		data->palette[c] = color_to_packed16(color);
-	}
-	updatePalette(data);
-}
-
-void swapPalette75to100(image *data) {
-	if(!data || !data->palette)
-		return;
-	
-	for(unsigned int c = 0; c < data->palSize; c++) {
-		color_t color = color_from_packed16(data->palette[c]);
-		if(color.r == COLOR_75)
-			color.r = COLOR_100;
-		if(color.g == COLOR_75)
-			color.g = COLOR_100;
-		if(color.b == COLOR_75)
-			color.b = COLOR_100;
-		data->palette[c] = color_to_packed16(color);
-	}
-	updatePalette(data);
-}
-
 void drawEBUSMPTE(unsigned int ebu) {
 	int end = 0, show75 = 0, showText = 0;
 	image *back = NULL;
@@ -192,7 +158,6 @@ void drawEBUSMPTE(unsigned int ebu) {
 		back = loadImage("rom:/SMPTE75.sprite");
 	if(!back)
 		return;
-	
 	
 	swapPalette75to100(back);
 	while(!end) {
@@ -305,21 +270,19 @@ void drawColorbleed() {
 }
 
 void drawWhiteScreen() {
-	int end = 0, color = 0, blackLevel = 0x00, text = 0;
+	int end = 0, color = 0, blackLevel = IRE_000, text = 0;
 	int	cr, cb, cg, sel = 1, editmode = 0, er, eb, eg;
 	char msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
 	joypad_buttons_t keys;
 	
-	/*
-	if(!IsPAL)
-		blackLevel = 0x13; // 7.5 IRE TODO: Needs vectorscope confirmation ported from Wii ATM
+	if(!isPAL)
+		blackLevel = IRE_007_5; // 7.5 IRE TODO: Needs vectorscope confirmation ported from Wii ATM
 	else
-	*/
-		blackLevel = 0x00; // 0 IRE
+		blackLevel = IRE_000; // 0 IRE
 	
 	// white
-	cr = cg = cb = COLOR_100;
-	er = eb = eg = COLOR_100;
+	cr = cg = cb = IRE_100;
+	er = eb = eg = IRE_100;
 	while(!end) {
 		getDisplay();
 		
@@ -342,11 +305,11 @@ void drawWhiteScreen() {
 			
 		if(keys.a && color == 1) {
 			if(!blackLevel)	{
-				blackLevel = 0x13;
+				blackLevel = IRE_007_5;
 				sprintf(msg, "#GBlack Level: 7.5 IRE#G");
 			}
 			else {
-				blackLevel = 0x0;
+				blackLevel = IRE_000;
 				sprintf(msg, "#GBlack Level: 0 IRE#G");
 			}
 			text = 140;
@@ -391,42 +354,42 @@ void drawWhiteScreen() {
 			if(keys.d_up) {
 				if(current)	{
 					(*current) ++;
-					if(*current > 0xff)
-						*current = 0xff;
+					if(*current > IRE_100)
+						*current = IRE_100;
 				}
 			}
 			
 			if(keys.d_down) {
 				if(current)	{
 					(*current) --;
-					if(*current < 0)
-						*current = 0;
+					if(*current < IRE_000)
+						*current = IRE_000;
 				}
 			}	
 
 			if(keys.c_down) {
 				if(current)
-					*current  = 0;
+					*current = IRE_000;
 			}
 			
 			if(keys.c_up)	{
 				if(current)	
-					*current = 0xff;
+					*current = IRE_100;
 			}
 			
 			if(keys.c_right) {
 				if(current)	{
 					(*current) += 0x10;
-					if(*current > 0xff)
-						*current = 0xff;
+					if(*current > IRE_100)
+						*current = IRE_100;
 				}
 			}
 			
 			if(keys.c_left) {			
 				if(current)	{
 					(*current) -= 0x10;
-					if(*current < 0)
-						*current = 0;
+					if(*current < IRE_000)
+						*current = IRE_000;
 				}
 			}	
 		}
@@ -437,7 +400,7 @@ void drawWhiteScreen() {
 				color = 0;
 			
 			editmode = 0;
-			if(color == 0 && er + eb + eg != 3*COLOR_100)
+			if(color == 0 && er + eb + eg != 3*IRE_100)
 				sprintf(msg, "%s [EDITED]", mode[color]);
 			else
 				sprintf(msg, "%s", mode[color]);
@@ -450,7 +413,7 @@ void drawWhiteScreen() {
 				color = 4;
 				
 			editmode = 0;
-			if(color == 0 && er + eb + eg != 3*COLOR_100)
+			if(color == 0 && er + eb + eg != 3*IRE_100)
 				sprintf(msg, "%s [edited]", mode[color]);
 			else
 				sprintf(msg, "%s", mode[color]);
@@ -467,16 +430,16 @@ void drawWhiteScreen() {
 					cr = cg = cb = blackLevel;
 					break;
 				case 2:
-					cr = COLOR_100;
-					cb = cg = 0;
+					cr = IRE_100;
+					cb = cg = IRE_000;
 					break;
 				case 3:
-					cg = COLOR_100;
-					cr = cb = 0;
+					cg = IRE_100;
+					cr = cb = IRE_000;
 					break;
 				case 4:
-					cb = COLOR_100;
-					cr = cg = 0;
+					cb = IRE_100;
+					cr = cg = IRE_000;
 					break;
 		}
 	}

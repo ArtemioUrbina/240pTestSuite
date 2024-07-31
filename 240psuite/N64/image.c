@@ -382,8 +382,14 @@ void freeUpscaleFB() {
 }
 
 void executeUpscaleFB() {
-	if(!upscaleFrame)
+	if(!upscaleFrame) {
+		if(__disp) {
+			// Set dW and dH to the real values for next frame
+			dW = __disp->width;
+			dH = __disp->height;
+		}
 		return;
+	}
 
 	if(!__upscale_fb || !__disp)
 		return;
@@ -401,6 +407,10 @@ void executeUpscaleFB() {
 			.scale_x = 2.0f, .scale_y = 2.0f
 			});
 	rdpq_detach();
+	
+	// Set dW and dH to the real values for next frame
+	dW = __upscale_fb->width;
+	dH = __upscale_fb->height;
 	
 	upscaleFrame = 0;
 }
@@ -454,6 +464,40 @@ void resetPalette(image *data) {
 		memcpy(data->palette, data->origPalette, sizeof(uint16_t)*data->palSize);
 		updatePalette(data);
 	}
+}
+
+void swapPalette100to75(image *data) {
+	if(!data || !data->palette)
+		return;
+	
+	for(unsigned int c = 0; c < data->palSize; c++) {
+		color_t color = color_from_packed16(data->palette[c]);
+		if(color.r == IRE_100)
+			color.r = IRE_075;
+		if(color.g == IRE_100)
+			color.g = IRE_075;
+		if(color.b == IRE_100)
+			color.b = IRE_075;
+		data->palette[c] = color_to_packed16(color);
+	}
+	updatePalette(data);
+}
+
+void swapPalette75to100(image *data) {
+	if(!data || !data->palette)
+		return;
+	
+	for(unsigned int c = 0; c < data->palSize; c++) {
+		color_t color = color_from_packed16(data->palette[c]);
+		if(color.r == IRE_075)
+			color.r = IRE_100;
+		if(color.g == IRE_075)
+			color.g = IRE_100;
+		if(color.b == IRE_075)
+			color.b = IRE_100;
+		data->palette[c] = color_to_packed16(color);
+	}
+	updatePalette(data);
 }
 
 void fadeInit(image *data, unsigned int steps) {
