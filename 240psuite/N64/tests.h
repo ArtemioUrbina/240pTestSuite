@@ -2,7 +2,7 @@
 #define TESTS_H
 
 void drawScroll();
-void drawDropShadow();
+void drawDropShadow(int striped);
 void drawLagTest();
 void drawStripes();
 void drawCheckerBoard();

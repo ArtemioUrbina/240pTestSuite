@@ -112,7 +112,7 @@ void rotateFallPalette(image *data) {
 	updatePalette(data);
 }
 
-void drawDropShadow() {
+void drawDropShadow(int striped) {
 	resolution_t oldVmode = current_resolution;
 	int end = 0, invert = 0, frame = 0, reload = 1;
 	int x = 0, y = 0, showText = 0, sprite = 0, selback = 0;
@@ -124,21 +124,31 @@ void drawDropShadow() {
 	image *overlay = NULL;	
 	joypad_buttons_t keys;
 	char msg[25];
-		
-	sshadow = loadImage("rom:/shadow.sprite");
-	if(sshadow)	{
-		x = dW/2- sshadow->tiles->width/2;
-		y = dH/2 - sshadow->tiles->height/2;
-	}
 
-	buzz = loadImage("rom:/buzzbomber.sprite");
-	buzzshadow = loadImage("rom:/buzzbomberShadow.sprite");
+	if(!striped) {
+		// Regular test
+		sshadow = loadImage("rom:/shadow.sprite");
+		if(sshadow)	{
+			x = dW/2- sshadow->tiles->width/2;
+			y = dH/2 - sshadow->tiles->height/2;
+		}
+		
+		buzz = loadImage("rom:/buzzbomber.sprite");
+		buzzshadow = loadImage("rom:/buzzbomberShadow.sprite");
 	
-	sprite = RANDN(2);
-	if(sprite == 0)
-		shadow = sshadow;
-	else
-		shadow = buzzshadow;
+		sprite = RANDN(2);
+		if(sprite == 0)
+			shadow = sshadow;
+		else
+			shadow = buzzshadow;
+	}
+	else {
+		shadow = loadImage("rom:/striped.sprite");
+		if(shadow)	{
+			x = dW/2- shadow->tiles->width/2;
+			y = dH/2 - shadow->tiles->height/2;
+		}
+	}
 		
 	sonicTop = loadImage("rom:/sonicTop.sprite");
 	sonicWater = loadImage("rom:/sonicWater.sprite");
@@ -194,16 +204,21 @@ void drawDropShadow() {
 				break;
 		}
 		
-		if(frame == invert)
-			rdpqDrawImageXY(shadow, x, y);
-		if(sprite == 1 && buzz)	{
-			rdpqDrawImageXY(buzz, x-20, y-20);
+		if(!striped) {
+			if(frame == invert)
+				rdpqDrawImageXY(shadow, x, y);
+			if(sprite == 1 && buzz)	{
+				rdpqDrawImageXY(buzz, x-20, y-20);
+			}
 		}
+		else
+			rdpqDrawImageXY(shadow, x, y);
+		
 		if(selback == 1)
 			drawSonicFG(-(x-128), y, overlay);
 		rdpqEnd();
 		
-		if(showText) {
+		if(!striped && showText) {
 			if(vMode == SUITE_640x480)
 				drawStringB(450, 40, 0, 0xff, 0, msg);
 			else
@@ -211,7 +226,7 @@ void drawDropShadow() {
 			showText--;
 		}
 		
-		checkMenu(DROPSHADOW, &reload);
+		checkMenu(striped ? STRIPED : DROPSHADOW, &reload);
 		waitVsync();
 		
 		frame = !frame;
@@ -230,13 +245,17 @@ void drawDropShadow() {
 			
 		if(keys.d_left) {
 			x--;
-			buzz->flipH = 0;
-			buzzshadow->flipH = 0;
+			if(!striped) {
+				buzz->flipH = 0;
+				buzzshadow->flipH = 0;
+			}
 		}
 		if(keys.d_right) {
 			x++;
-			buzz->flipH = 1;
-			buzzshadow->flipH = 1;
+			if(!striped) {
+				buzz->flipH = 1;
+				buzzshadow->flipH = 1;
+			}
 		}
 		if(x < 0)
 			x = 0;
@@ -264,7 +283,7 @@ void drawDropShadow() {
 		if(keys.b)
 			end = 1;
 		
-		if(keys.r) {
+		if(!striped && keys.r) {
 			invert = !invert;
 			if(invert)
 				sprintf(msg, "Shadow on odd frames");				
@@ -273,7 +292,7 @@ void drawDropShadow() {
 			showText = 60;
 		}
 		
-		if(keys.l) {
+		if(!striped && keys.l) {
 			sprite = !sprite;
 			if(sprite == 0)
 				shadow = sshadow;
@@ -288,9 +307,12 @@ void drawDropShadow() {
 		}
 	}
 	
-	freeImage(&sshadow);
-	freeImage(&buzzshadow);
-	freeImage(&buzz);
+	if(!striped) {
+		freeImage(&sshadow);
+		freeImage(&buzzshadow);
+		freeImage(&buzz);
+	}
+	
 	freeImage(&donna);
 	
 	freeImage(&sonicTop);

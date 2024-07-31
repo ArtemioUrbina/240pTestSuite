@@ -41,7 +41,7 @@ int main(void) {
 #ifndef DEBUG_BENCHMARK
 	drawIntro();
 #endif
-
+	
 	while(1) {
 		int c = 1, x = 55, y = 90;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
@@ -448,7 +448,10 @@ void drawVideoTestsMenu(void) {
 			
 			switch(sel)	{
 				case 1:
-					drawDropShadow();
+					drawDropShadow(0);
+					break;
+				case 2:
+					drawDropShadow(1);
 					break;
 				case 3:
 					drawLagTest();

@@ -40,6 +40,7 @@ extern char *helpData;
 #define MDFOURIERHELP	"/help/mdfourier.txt"
 #define MEMORYHELP		"/help/memory.txt"
 #define PASSIVELAG		"/help/passivelag.txt"
+#define STRIPED			"/help/striped.txt"
 
 #define ALTERNATE		"/help/alt240p.txt"
 #define BACKLITHELP		"/help/backlit.txt"
@@ -47,7 +48,6 @@ extern char *helpData;
 #define GRID224HELP		"/help/grid224.txt"
 #define IREHELP  		"/help/ire100.txt"
 #define SOUNDHELP		"/help/sound.txt"
-#define STRIPED			"/help/striped.txt"
 #define GRIDSCROLL		"/help/gridscroll.txt"
 #define MANUALLAG		"/help/manuallag.txt"
 #define OVERSCANHELP	"/help/overscan.txt"

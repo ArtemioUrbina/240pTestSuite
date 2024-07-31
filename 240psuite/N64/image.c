@@ -204,8 +204,10 @@ image *loadImage(char *name) {
 
 #ifndef DEBUG_BENCHMARK	
 	int fh = dfs_open(name+5);   // remove "rom:/"
-	if(fh < DFS_ESUCCESS)
-		return 0;
+	if(fh < DFS_ESUCCESS) {
+		debugf("loadImage(): Failed fh got %d\n", fh);
+		return NULL;
+	}
 	dfs_close(fh);
 #endif
 
