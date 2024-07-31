@@ -49,6 +49,7 @@ filesystem/sonicTop.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/sonicWater.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/sonicFall.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/sonicFloor.sprite: MKSPRITE_FLAGS=--format CI4
+filesystem/kiki.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/shadow.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/buzz.sprite: MKSPRITE_FLAGS=--format CI4
 filesystem/buzzshadow.sprite: MKSPRITE_FLAGS=--format CI4

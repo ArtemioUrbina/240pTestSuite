@@ -7,10 +7,10 @@ Hedgehog#Y or a single one from
 
 The speed can be varied with the
 d-pad, and direction changed with
-button #GX#G.
+button #GCL#G.
 
-Vertical and horizntal patterns
-can be swapped with the #GY#G button,
+Vertical and horizontal scrolls
+can be swapped with the #GCR#G button,
 and #GA#G stops the scroll.
 
 This can be used to notice any

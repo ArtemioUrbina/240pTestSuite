@@ -265,33 +265,35 @@ void drawScroll() {
 	int end = 0, x = 0, y = 0, currentframe = 0;
 	int frameLen[] = { 8, 8, 8 }, animFrame = 0, fallFrame = 0;
 	image 	*sonicTop = NULL, *sonicWater = NULL, *sonicFall = NULL;
-	image	*overlay = NULL;	
+	image	*overlay = NULL, *kiki = NULL;
 	joypad_buttons_t keys;
 
 	sonicTop = loadImage("rom:/sonicTop.sprite");
 	sonicWater = loadImage("rom:/sonicWater.sprite");
 	sonicFall = loadImage("rom:/sonicFall.sprite");
 	overlay = loadImage("rom:/sonicFloor.sprite");
-	
-	/*
-	if(sonicTop)
-		sonicTop->scale = 0;
-	if(sonicWater)
-		sonicWater->scale = 0;
-	if(sonicFall)
-		sonicFall->scale = 0;
-	if(overlay)
-		overlay->scale = 0;
-	*/
-	
+	kiki = loadImage("rom:/kiki.sprite");
+
     while(!end) {		
 		getDisplay();
 
 		rdpqStart();
-		drawSonicBG(x, y, sonicTop, sonicWater, sonicFall);
-		drawSonicFG(x, y, overlay);
+		if(!vertical) {
+			drawSonicBG(x, y, sonicTop, sonicWater, sonicFall);
+			drawSonicFG(x, y, overlay);
+		}
+		else {
+			if(y > 0)
+				rdpqDrawImageXY(kiki, (dW-256)/2, y-512);
+			rdpqDrawImageXY(kiki, (dW-256)/2, y);
+			if(y <= -272)
+				rdpqDrawImageXY(kiki, (dW-256)/2, 512+y);
+		}
 		rdpqEnd();
 		
+		char str[50];
+		sprintf(str, "x: %03d\ny: %03d", x, y);
+		drawStringS(20, 20, 0xff, 0xff, 0xff, str);
 		checkMenu(SCROLLHELP, NULL);
 		waitVsync();
 		
@@ -313,8 +315,10 @@ void drawScroll() {
 		if(keys.c_left)
 			acc *= -1;
 
-		if(keys.c_right)
+		if(keys.c_right) {
 			vertical = !vertical;
+			setClearScreen();
+		}
 		
 		if(speed > 16)
 			speed = 16;
@@ -336,10 +340,10 @@ void drawScroll() {
 		if(x > 128)
 			x = -128 + speed;
 			
-		if(y < -7)
-			y = 0;
-		if(y > 7)
-			y = 0;
+		if(y >= 512)
+			y = 0 + speed;
+		if(y <= -512)
+			y = 0 - speed;
 			
 		if(!vertical) {
 			currentframe ++;
@@ -362,6 +366,7 @@ void drawScroll() {
 	freeImage(&sonicWater);
 	freeImage(&sonicFall);
 	freeImage(&overlay);
+	freeImage(&kiki);
 }
 
 void drawStripes() {
