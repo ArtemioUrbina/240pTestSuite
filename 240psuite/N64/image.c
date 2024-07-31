@@ -472,11 +472,11 @@ void swapPalette100to75(image *data) {
 	
 	for(unsigned int c = 0; c < data->palSize; c++) {
 		color_t color = color_from_packed16(data->palette[c]);
-		if(color.r == IRE_100)
+		if(color.r >= IRE_100)
 			color.r = IRE_075;
-		if(color.g == IRE_100)
+		if(color.g >= IRE_100)
 			color.g = IRE_075;
-		if(color.b == IRE_100)
+		if(color.b >= IRE_100)
 			color.b = IRE_075;
 		data->palette[c] = color_to_packed16(color);
 	}

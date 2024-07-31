@@ -269,14 +269,16 @@ void drawColorbleed() {
 	freeImage(&check);
 }
 
+#define MAX_COLORS	8
+
 void drawWhiteScreen() {
 	int end = 0, color = 0, blackLevel = IRE_000, text = 0;
 	int	cr, cb, cg, sel = 1, editmode = 0, er, eb, eg;
-	char msg[100], *mode[5] = { "White", "Black", "Red", "Green", "Blue" };
+	char msg[100], *mode[MAX_COLORS] = { "White", "Black", "Red", "Green", "Blue", "Yellow", "Cyan", "Magenta"};
 	joypad_buttons_t keys;
 	
 	if(!isPAL)
-		blackLevel = IRE_007_5; // 7.5 IRE TODO: Needs vectorscope confirmation ported from Wii ATM
+		blackLevel = IRE_007_5; // 7.5 IRE 
 	else
 		blackLevel = IRE_000; // 0 IRE
 	
@@ -396,7 +398,7 @@ void drawWhiteScreen() {
 		
 		if(keys.r) {
 			color ++;
-			if(color > 4)
+			if(color > MAX_COLORS-1)
 				color = 0;
 			
 			editmode = 0;
@@ -410,7 +412,7 @@ void drawWhiteScreen() {
 		if(keys.l) {			
 			color --;
 			if(color < 0)
-				color = 4;
+				color = MAX_COLORS-1;
 				
 			editmode = 0;
 			if(color == 0 && er + eb + eg != 3*IRE_100)
@@ -421,25 +423,37 @@ void drawWhiteScreen() {
 		}
 		
 		switch(color) {
-				case 0:
+				case 0:	// Custom or White
 					cr = er;
 					cg = eg;
 					cb = eb;
 					break;
-				case 1:
+				case 1:	// Black
 					cr = cg = cb = blackLevel;
 					break;
-				case 2:
+				case 2:	// Red
 					cr = IRE_100;
 					cb = cg = IRE_000;
 					break;
-				case 3:
+				case 3:	// Green
 					cg = IRE_100;
 					cr = cb = IRE_000;
 					break;
-				case 4:
+				case 4:	// Blue
 					cb = IRE_100;
 					cr = cg = IRE_000;
+					break;
+				case 5:  // Yellow
+					cr = cg = IRE_100;
+					cb = IRE_000;
+					break;
+				case 6:  // Cyan
+					cb = cg = IRE_100;
+					cr = IRE_000;
+					break;
+				case 7:  // Magenta
+					cr = cb = IRE_100;
+					cg = IRE_000;
 					break;
 		}
 	}

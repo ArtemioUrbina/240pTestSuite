@@ -3,11 +3,22 @@
 
 #include "system.h"
 
-//TODO: Needs vectorscope confirmation
+/*
+	Verified with vectorscope and Waveform monitor via composite
+	on a US001 NTSC console. Equipment used was a VT-150 for waveform 
+	and a Tek 1720 color vectorscope.
+	Max White is around 94 IRE, and max white form the N64 is 0xf8
+	7.5 IRE matched with the ~94% is around 0x17
+*/
+
 #define IRE_000		0x00
 #define IRE_007_5	0x13
 #define IRE_075		0xc0
 #define IRE_100		0xf8
+
+// From the PNG it was 0x00, 0x20, 0x48. From vectorscope measurments it is the following
+#define COLOR_I		graphics_make_color(0x00, 0x28, 0x40, 0xff)
+#define COLOR_Q		graphics_make_color(0x28, 0x00, 0x48, 0xff)
 
 typedef struct image_st {
 	sprite_t *tiles;
