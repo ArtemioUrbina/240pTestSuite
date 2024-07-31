@@ -61,6 +61,8 @@ filesystem/nish.sprite: MKSPRITE_FLAGS=--format RGBA16
 filesystem/check.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
 filesystem/stripes.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
 filesystem/stripes_v.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
+filesystem/circle.sprite: MKSPRITE_FLAGS=--tiles 8,8 --format CI4
+filesystem/numbers.sprite: MKSPRITE_FLAGS=--tiles 24,40 --format CI4
 
 $(BUILD_DIR)/240pSuite.dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV)
 $(BUILD_DIR)/240pSuite.elf: $(src:%.c=$(BUILD_DIR)/%.o)

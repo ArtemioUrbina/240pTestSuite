@@ -21,6 +21,48 @@
  
 #include "menu.h"
 
+typedef struct timecode {
+	int hours;
+	int minutes;
+	int seconds;
+	int frames;
+	int type;
+	int res;
+} timecode;
+
+uint16_t ConvertToFrames(timecode *time) {
+	uint16_t	frames = 0;
+
+	if(!time)
+		return frames;
+
+	frames = time->frames;
+	if(isPAL)
+		frames += time->seconds*50;
+	else
+		frames += time->seconds*60;
+	frames += time->minutes*3600;
+	frames += time->hours*216000;
+	return frames;
+}
+
+void ConvertFromFrames(timecode *value, uint16_t Frames) {
+	if(!value)
+		return;
+	value->hours = Frames / 216000;
+	Frames = Frames % 216000;
+	value->minutes = Frames / 3600;
+	Frames = Frames % 3600;
+	if(isPAL) {
+		value->seconds = Frames / 50;
+		value->frames = Frames % 50;
+	}
+	else {
+		value->seconds = Frames / 60;
+		value->frames = Frames % 60;
+	}
+}
+
 void drawSonicBG(int x, int y, image *sonicTop, image *sonicWater, image *sonicFall) {	
 	rdpqClearScreen();
 	/* Draw Background */
@@ -259,6 +301,199 @@ void drawDropShadow() {
 	freeImage(&stripes);
 	freeImage(&check);
 }
+
+void drawLagTest() {
+	uint16_t	frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
+	uint16_t	lsd, msd, pause = 0, toggle = 0;		
+	image		*blueCircle = NULL, *redCircle = NULL, *circle = NULL;
+	joypad_buttons_t keys;
+
+	blueCircle = loadImage("rom:/circle.sprite");
+	if(!blueCircle)
+		return;
+	
+	redCircle = loadImage("rom:/circle.sprite");
+	if(!redCircle)
+		return;
+	
+	loadNumbers();
+	
+	blueCircle->palette[2] = graphics_make_color(0x00, 0x00, IRE_100, 0xff);
+	updatePalette(blueCircle);
+	redCircle->palette[2] = graphics_make_color(IRE_100, 0x00, 0x00, 0xff);
+	updatePalette(redCircle);
+
+	while(!done) {		
+		if(!pause) {
+			frames ++;
+			framecnt ++;
+			if(framecnt > 8)
+				framecnt = 1;
+			toggle = !toggle;
+		}
+		
+		if(isPAL) {
+			if(frames > 49)	{
+				frames = 0;
+				seconds ++;
+			}
+		}
+		else {
+			if(frames > 59) {
+				frames = 0;
+				seconds ++;
+			}
+		}
+
+		if(seconds > 59) {
+			seconds = 0;
+			minutes ++;
+		}
+
+		if(minutes > 59) {
+			minutes = 0;
+			hours ++;
+		}
+
+		if(hours > 99)
+			hours = 0;
+
+		getDisplay();
+
+		rdpqStart();
+		rdpqClearScreenWhite();
+
+		// Counter Separators
+		drawDigit(80, 16, NUMBER_BLACK, 10);
+		drawDigit(152, 16, NUMBER_BLACK, 10);
+		drawDigit(224, 16, NUMBER_BLACK, 10);
+
+		// Circles 1st row
+		if(framecnt == 1)
+			circle = redCircle;
+		else
+			circle = blueCircle;
+			
+		rdpqDrawImageXY(circle, 8, 56);
+		drawDigit(28, 68, NUMBER_WHITE, 1);
+
+		if(framecnt == 2)
+			circle = redCircle;
+		else
+			circle = blueCircle;
+			
+		rdpqDrawImageXY(circle, 88, 56);
+		drawDigit(108, 68, NUMBER_WHITE, 2);
+
+		if(framecnt == 3)
+			circle = redCircle;
+		else
+			circle = blueCircle;
+			
+		rdpqDrawImageXY(circle, 168, 56);
+		drawDigit(188, 68, NUMBER_WHITE, 3);
+
+		if(framecnt == 4)
+			circle = redCircle;
+		else
+			circle = blueCircle;
+			
+		rdpqDrawImageXY(circle, 248, 56);
+		drawDigit(268, 68, NUMBER_WHITE, 4);
+
+		// Circles 2nd row
+		if(framecnt == 5)
+			circle = redCircle;
+		else
+			circle = blueCircle;
+			
+		rdpqDrawImageXY(circle, 8, 136);
+		drawDigit(28, 148, NUMBER_WHITE, 5);
+
+		if(framecnt == 6)
+			circle = redCircle;
+		else
+			circle = blueCircle;
+			
+		rdpqDrawImageXY(circle, 88, 136);
+		drawDigit(108, 148, NUMBER_WHITE, 6);
+
+		if(framecnt == 7)
+			circle = redCircle;
+		else
+			circle = blueCircle;
+			
+		rdpqDrawImageXY(circle, 168, 136);
+		drawDigit(188, 148, NUMBER_WHITE, 7);
+
+		if(framecnt == 8)
+			circle = redCircle;
+		else
+			circle = blueCircle;
+			
+		rdpqDrawImageXY(circle, 248, 136);
+		drawDigit(268, 148, NUMBER_WHITE, 8);
+
+		// Draw Hours
+		lsd = hours % 10;
+		msd = hours / 10;
+		drawDigit(32, 16, NUMBER_BLACK, msd);
+		drawDigit(56, 16, NUMBER_BLACK, lsd);
+
+		// Draw Minutes
+		lsd = minutes % 10;
+		msd = minutes / 10;
+		drawDigit(104, 16, NUMBER_BLACK, msd);
+		drawDigit(128, 16, NUMBER_BLACK, lsd);
+
+		// Draw Seconds
+		lsd = seconds % 10;
+		msd = seconds / 10;
+		drawDigit(176, 16, NUMBER_BLACK, msd);
+		drawDigit(200, 16, NUMBER_BLACK, lsd);
+
+		// Draw Frames
+		lsd = frames % 10;
+		msd = frames / 10;
+		drawDigit(248, 16, toggle ? NUMBER_RED : NUMBER_BLUE, msd);
+		drawDigit(272, 16, toggle? NUMBER_RED : NUMBER_BLUE, lsd);
+
+		rdpqEnd();
+		
+		if(toggle) {
+			drawBlackBox(0, 0, 6, dH);
+			drawBlackBox(314, 0, 6, dH);
+		}
+
+		drawString(32, 8, 0, 0,	0, "hours");
+		drawString(104, 8, 0, 0, 0, "minutes");
+		drawString(176, 8, 0, 0, 0, "seconds");
+		drawString(248, 8, 0, 0, 0, "frames");
+		
+		checkMenu(PASSIVELAG, NULL);
+		waitVsync();
+
+		joypad_poll();
+		keys = controllerButtonsDown();
+					
+		if(keys.b)
+			done =	1;				
+					
+		if(keys.c_left && !pause) {
+			frames = hours = minutes = seconds = 0;
+			framecnt = 1;
+		}
+
+		if(keys.a)
+			pause = !pause;
+		
+		checkStart(keys);
+	}
+	
+	freeImage(&redCircle);
+	freeImage(&blueCircle);
+	releaseNumbers();
+}
  
 void drawScroll() {
 	int speed = 1, acc = -1, pause = 0, vertical = 0;
@@ -291,9 +526,6 @@ void drawScroll() {
 		}
 		rdpqEnd();
 		
-		char str[50];
-		sprintf(str, "x: %03d\ny: %03d", x, y);
-		drawStringS(20, 20, 0xff, 0xff, 0xff, str);
 		checkMenu(SCROLLHELP, NULL);
 		waitVsync();
 		

@@ -39,6 +39,7 @@ extern char *helpData;
 #define STRIPESHELP		"/help/stripes.txt"
 #define MDFOURIERHELP	"/help/mdfourier.txt"
 #define MEMORYHELP		"/help/memory.txt"
+#define PASSIVELAG		"/help/passivelag.txt"
 
 #define ALTERNATE		"/help/alt240p.txt"
 #define BACKLITHELP		"/help/backlit.txt"
@@ -49,7 +50,6 @@ extern char *helpData;
 #define STRIPED			"/help/striped.txt"
 #define GRIDSCROLL		"/help/gridscroll.txt"
 #define MANUALLAG		"/help/manuallag.txt"
-#define PASSIVELAG		"/help/passivelag.txt"
 #define OVERSCANHELP	"/help/overscan.txt"
 #define OPTIONSHELP		"/help/options.txt"
 #define VIDEOHELP		"/help/vmode.txt"

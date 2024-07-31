@@ -43,6 +43,7 @@ void rdpqDrawImage(image* data);
 void rdpqDrawImageXY(image* data, int x, int y);
 void rdpqFillWithImage(image* data);
 void rdpqClearScreen();
+void rdpqClearScreenWhite();
 
 image *loadImage(char *name);
 void freeImage(image **data);
@@ -64,6 +65,20 @@ void updatePalette(image *data);
 void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);
 void fadeImageStep(image *data);
+
+
+/* Big Numbers */
+
+#define NUMBER_WHITE	0
+#define NUMBER_BLACK	1
+#define NUMBER_RED		2
+#define NUMBER_BLUE		3
+
+void loadNumbers();
+void releaseNumbers();
+void drawDigit(uint16_t x, uint16_t y, uint16_t color, uint16_t digit);
+void drawNumber(uint16_t x, uint16_t y, uint16_t color, uint16_t number);
+void drawBlackBox(int x, int y, int width, int height);
 
 #ifdef DEBUG_BENCHMARK
 void printPalette(image *data, int x, int y);

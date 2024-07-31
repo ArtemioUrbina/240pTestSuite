@@ -450,6 +450,9 @@ void drawVideoTestsMenu(void) {
 				case 1:
 					drawDropShadow();
 					break;
+				case 3:
+					drawLagTest();
+					break;
 				case 5:
 					drawScroll();
 					break;

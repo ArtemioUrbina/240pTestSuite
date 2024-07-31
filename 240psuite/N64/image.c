@@ -182,7 +182,19 @@ void rdpqFillWithImage(image* data) {
 }
 
 void rdpqClearScreen() {
+	if(upscaleFrame)
+		rdpq_attach(__upscale_fb, NULL);
 	rdpq_clear(RGBA32(0, 0, 0, 0xff));
+	if(upscaleFrame)
+		rdpq_detach();
+}
+
+void rdpqClearScreenWhite() {
+	if(upscaleFrame)
+		rdpq_attach(__upscale_fb, NULL);
+	rdpq_clear(RGBA32(IRE_100, IRE_100, IRE_100, 0xff));
+	if(upscaleFrame)
+		rdpq_detach();
 }
 
 /* Image stuct */
@@ -528,6 +540,71 @@ void fadeImageStep(image *data) {
 		fadePaletteStep(&data->palette[c], data->fadeSteps);
 	
 	updatePalette(data);
+}
+
+/* Big Numbers */
+#define NUMBER_COLORS 	4
+
+image *bigNumbers[NUMBER_COLORS] = { NULL, NULL, NULL, NULL };
+
+void loadNumbers() {
+	if(bigNumbers[NUMBER_WHITE])
+		return;
+	
+	for(unsigned int num = 0; num < NUMBER_COLORS; num++) {
+		bigNumbers[num] = loadImage("rom:/numbers.sprite");
+	}
+	
+	bigNumbers[NUMBER_WHITE]->palette[3] = graphics_make_color(IRE_100, IRE_100, IRE_100, 0xff);
+	updatePalette(bigNumbers[NUMBER_WHITE]);
+	bigNumbers[NUMBER_BLACK]->palette[3] = graphics_make_color(0, 0, 0, 0xff);
+	updatePalette(bigNumbers[NUMBER_BLACK]);
+	bigNumbers[NUMBER_RED]->palette[3] = graphics_make_color(IRE_100, 0, 0, 0xff);
+	updatePalette(bigNumbers[NUMBER_RED]);
+	bigNumbers[NUMBER_BLUE]->palette[3] = graphics_make_color(0, 0, IRE_100, 0xff);
+	updatePalette(bigNumbers[NUMBER_BLUE]);
+}
+
+void releaseNumbers() {
+	for(unsigned int num = 0; num < NUMBER_COLORS; num++) {
+		freeImage(&bigNumbers[num]);
+	}
+}
+
+void drawDigit(uint16_t x, uint16_t y, uint16_t color, uint16_t digit) {
+	if(!bigNumbers[NUMBER_WHITE])
+		return;
+	
+	if(vMode == SUITE_640x480 && !bigNumbers[color]->scale)
+		upscaleFrame = 0;
+		
+	if(upscaleFrame)
+		rdpq_attach(__upscale_fb, NULL);
+	
+	rdpq_sprite_blit(bigNumbers[color]->tiles, x, y, &(rdpq_blitparms_t) {
+		.s0 = digit*24, .t0 = 0,
+		.width = 24, .height = 40
+		});
+	
+	if(upscaleFrame)
+		rdpq_detach();
+}
+
+void drawNumber(uint16_t x, uint16_t y, uint16_t color, uint16_t number) {
+	char  string[10], *str;
+
+	str = string;
+
+	sprintf(str, "%u", number);
+	while (*str) {
+		drawDigit(x, y, color, *str++);
+		x += 24;
+	}
+}
+
+void drawBlackBox(int x, int y, int width, int height) {
+	graphics_draw_box(upscaleFrame ? __upscale_fb : __disp, 
+		x, y, width, height, graphics_make_color(0, 0, 0, 0xff));		
 }
 
 #ifdef DEBUG_BENCHMARK
