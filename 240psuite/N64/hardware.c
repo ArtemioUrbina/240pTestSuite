@@ -88,14 +88,17 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
  
  // locks at 0x83FFE6E0
  
- void drawMemoryViewer() {
+ void drawMemoryViewer(void *startAddress) {
 	int 			done = 0, ascii = 0, locpos = 0, docrc = 0;
 	uint32_t		address = 0, crc = 0, offset = fh;
 	uint32_t		locations[MAX_LOCATIONS] = { 0x80000000, 0xA0000000 };
 	char 			buffer[BUFFER_SIZE];
 	joypad_buttons_t keys;
 	
-	address = locations[0];
+	if(startAddress)
+		address = (uint32_t)startAddress;
+	else
+		address = locations[0];
 	while(!done) {
 		int 	i = 0, j = 0;
 		uint8_t *mem = NULL;

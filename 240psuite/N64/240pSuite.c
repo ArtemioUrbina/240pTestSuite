@@ -105,7 +105,7 @@ int main(void) {
 					drawMDFourier();
 					break;
 				case 4:
-					drawMemoryViewer();
+					drawMemoryViewer(0);
 					break;
 			}
 			reload = 1;
@@ -477,69 +477,6 @@ void drawVideoTestsMenu(void) {
 	}
 	freeImage(&bg);
 	freeImage(&sd);
-}
-
-#define LOGO_HOLD	60
-#define FADE_STEPS	20
-#define FADE_HOLD	10
-
-void drawSplash(char *name, int delay) {
-	joypad_buttons_t keys;
-	image *logo = NULL;
-	
-	logo = loadImage(name);
-	if(!logo)
-		return;
-
-	logo->center = true;
-	
-	while(delay) {
-		getDisplay();
-		
-		rdpqStart();
-		rdpqDrawImage(logo);
-		rdpqEnd();
-		
-		waitVsync();
-		
-		joypad_poll();
-		keys = controllerButtonsDown();
-		
-		delay --;
-		if(keys.a || keys.b || keys.start)
-			delay = 0;
-	}
-	
-	delay = FADE_STEPS;
-	fadeInit(logo, FADE_STEPS);
-	while(delay) {
-		getDisplay();
-		
-		rdpqStart();
-		rdpqDrawImage(logo);
-		rdpqEnd();
-		
-		fadeImageStep(logo);
-		
-		waitVsync();
-		
-		delay --;
-	}
-	
-	setClearScreen();
-	delay = FADE_HOLD;
-	while(delay) {
-		getDisplay();
-		
-		rdpqStart();
-		rdpqEnd();
-		
-		waitVsync();
-		
-		delay --;
-	}
-	
-	freeImage(&logo);
 }
 
 void drawIntro() {

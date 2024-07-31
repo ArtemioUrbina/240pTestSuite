@@ -67,6 +67,11 @@
 	drawStringS(START_SYSINFO_X, START_SYSINFO_Y+fh, 0xfa, 0xfa, 0xfa, str);
 }
 
+int getUsedRAM() {
+	struct mallinfo mem_info = mallinfo();
+	return(mem_info.uordblks - ((unsigned int)HEAP_START_ADDR - 0x80000000) - 0x10000);
+}
+
 // Fair and fast random generation (using xorshift32, with explicit seed)
 static uint32_t rand_state = 1;
 

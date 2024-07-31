@@ -11,6 +11,7 @@
 
 void initN64();
 void drawSysData();
+int getUsedRAM();
 
 // These taken from libdragon examples
 uint32_t myrand(void);

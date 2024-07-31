@@ -56,11 +56,11 @@ void drawPLUGE() {
 			rdpqDrawImage(pal);
 		if(showBorder) {
 			rdpqDrawImageXY(borderRed, 14, 39);
-			rdpqDrawImageXY(borderRed, 44, 39);
-			rdpqDrawImageXY(borderGreen, 74, 39);
+			rdpqDrawImageXY(borderGreen, 44, 39);
+			rdpqDrawImageXY(borderRed, 74, 39);
 			
-			rdpqDrawImageXY(borderGreen, 228, 39);
-			rdpqDrawImageXY(borderRed, 259, 39);
+			rdpqDrawImageXY(borderRed, 228, 39);
+			rdpqDrawImageXY(borderGreen, 259, 39);
 			rdpqDrawImageXY(borderRed, 289, 39);
 		}
 		rdpqEnd();
@@ -612,4 +612,6 @@ void drawGrayramp() {
 	}
 	
 	freeImage(&back);
+	
+	drawSplash("rom:/grayramp.sprite", 0);
 }

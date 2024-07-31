@@ -21,9 +21,12 @@
  
  #include "image.h"
  #include "video.h"
+ #include "controller.h"
 
 #define PAL4_SIZE	16
-#define PAL8_SIZE	256
+// We can't know the size (mksprite.c:1163) our highest one is 32,
+// and 64 causes a buffer overflow in our fade code
+#define PAL8_SIZE	32
 
 int clearScreen = 0;
 unsigned int currFB = 0;
@@ -204,10 +207,8 @@ image *loadImage(char *name) {
 
 #ifndef DEBUG_BENCHMARK	
 	int fh = dfs_open(name+5);   // remove "rom:/"
-	if(fh < DFS_ESUCCESS) {
-		debugf("loadImage(): Failed fh got %d\n", fh);
+	if(fh < DFS_ESUCCESS)
 		return NULL;
-	}
 	dfs_close(fh);
 #endif
 
@@ -251,18 +252,19 @@ image *loadImage(char *name) {
 }
  
 void freeImage(image **data) {
-	if(*data) {
-		if((*data)->tiles) {
-			sprite_free((*data)->tiles);
-			(*data)->tiles = NULL;
-		}
-		if((*data)->origPalette) {
-			free((*data)->origPalette);
-			(*data)->origPalette = NULL;
-		}
-		free(*data);
-		*data = NULL;
+	if(!data || !*data)
+		return;
+	
+	if((*data)->tiles) {
+		sprite_free((*data)->tiles);
+		(*data)->tiles = NULL;
 	}
+	if((*data)->origPalette) {
+		free((*data)->origPalette);
+		(*data)->origPalette = NULL;
+	}
+	free(*data);
+	*data = NULL;
 }
 
 /* Frame Buffer for menu */
@@ -433,11 +435,11 @@ void executeUpscaleFB() {
 
 void fadePaletteStep(uint16_t *colorRaw, unsigned int fadeSteps) {
 	color_t color;
-			
+	
 	color = color_from_packed16(*colorRaw);
-    color.r = (color.r > 0) ? (color.r - color.r/fadeSteps) : 0;
-    color.g = (color.g > 0) ? (color.g - color.g/fadeSteps) : 0;
-    color.b = (color.b > 0) ? (color.b - color.b/fadeSteps) : 0;
+	color.r = (color.r > 0) ? (color.r - color.r/fadeSteps) : 0;
+	color.g = (color.g > 0) ? (color.g - color.g/fadeSteps) : 0;
+	color.b = (color.b > 0) ? (color.b - color.b/fadeSteps) : 0;
 	*colorRaw = color_to_packed16(color);
 }
 
@@ -460,7 +462,7 @@ void setPaletteFX(image *data) {
 inline void updatePalette(image *data) {
 	if(!data->palette) return;
 	// Invalidate the cache
-	data_cache_hit_writeback(data->palette, sizeof(uint16_t)*data->palSize);
+	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
 }
 
 void swapPaletteColors(image *data, unsigned int color1, unsigned int color2) {
@@ -543,6 +545,69 @@ void fadeImageStep(image *data) {
 	
 	updatePalette(data);
 }
+
+#define FADE_STEPS	20
+#define FADE_HOLD	10
+
+void drawSplash(char *name, int delay) {
+	joypad_buttons_t keys;
+	image *logo = NULL;
+	
+	logo = loadImage(name);
+	if(!logo)
+		return;
+
+	logo->center = true;
+	
+	while(delay) {
+		getDisplay();
+		
+		rdpqStart();
+		rdpqDrawImage(logo);
+		rdpqEnd();
+		
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		delay --;
+		if(keys.a || keys.b || keys.start)
+			delay = 0;
+	}
+	
+	delay = FADE_STEPS;
+	fadeInit(logo, FADE_STEPS);
+	while(delay) {
+		getDisplay();
+		
+		rdpqStart();
+		rdpqDrawImage(logo);
+		rdpqEnd();
+		
+		fadeImageStep(logo);
+		
+		waitVsync();
+		
+		delay --;
+	}
+	
+	setClearScreen();
+	delay = FADE_HOLD;
+	while(delay) {
+		getDisplay();
+		
+		rdpqStart();
+		rdpqEnd();
+		
+		waitVsync();
+		
+		delay --;
+	}
+	
+	freeImage(&logo);
+}
+
 
 /* Big Numbers */
 #define NUMBER_COLORS 	4

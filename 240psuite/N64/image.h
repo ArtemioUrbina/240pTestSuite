@@ -37,6 +37,7 @@ typedef struct image_st {
 
 void setClearScreen();
 
+/* Drawing functions */
 void rdpqStart();
 void rdpqEnd();
 void rdpqDrawImage(image* data);
@@ -48,15 +49,21 @@ void rdpqClearScreenWhite();
 image *loadImage(char *name);
 void freeImage(image **data);
 
+/* Menu Frame Buffer functions */
+
 int copyMenuFB();
 void freeMenuFB();
 void drawMenuFB();
 void darkenMenuFB(int amount);
 
+/* Upscaler Frame Buffer functions */
 void rdpqUpscalePrepareFB();
 int createUpscaleFB();
 void freeUpscaleFB();
 void executeUpscaleFB();
+
+/* Palette functions */
+#define LOGO_HOLD	60
 
 void swapPaletteColors(image *data, unsigned int color1, unsigned int color2);
 void swapPalette100to75(image *data);
@@ -65,6 +72,7 @@ void updatePalette(image *data);
 void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);
 void fadeImageStep(image *data);
+void drawSplash(char *name, int delay);
 
 
 /* Big Numbers */

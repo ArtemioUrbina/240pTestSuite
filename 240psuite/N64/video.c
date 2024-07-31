@@ -105,6 +105,9 @@ void drawFrameLens() {
 	sprintf(str, "ALL:%0.1f/%0.1f IDL:%0.1f/%0.1f VBL:%0.1f", 
 		__frameLen, __maxFrameLen, __frameIdle, __minIdle, __vblLen);
 	drawStringB(10, 4, !warn ? 0xff : 0x00, warn ? 0xff : 0x00, 0x00, str);
+	
+	sprintf(str, "RAM: %dKB/%dKB", (getUsedRAM() / 1024), get_memory_size() / 1024);
+	drawStringB(10, 15, 0xff, 0xff, 0xff, str);
 }
 
 void getDisplay()
@@ -179,7 +182,7 @@ void setVideo(resolution_t newRes) {
 	if(videoSet) {
 		unregister_VI_handler(vblCallback);
 		freeMenuFB();
-		executeUpscaleFB();
+		freeUpscaleFB();
 		display_close();
 		videoSet = 0;
 	}

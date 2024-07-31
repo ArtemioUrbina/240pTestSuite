@@ -312,6 +312,8 @@ void drawDropShadow(int striped) {
 		freeImage(&buzzshadow);
 		freeImage(&buzz);
 	}
+	else
+		freeImage(&shadow);
 	
 	freeImage(&donna);
 	

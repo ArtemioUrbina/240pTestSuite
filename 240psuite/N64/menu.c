@@ -29,8 +29,7 @@
 int showMenuSet = 0;
 
 void checkMenu(char *help, int *reload) {
-	if(showMenuSet)
-	{
+	if(showMenuSet)	{
 		helpData = help;
 		showMenu();
 		showMenuSet = 0;
