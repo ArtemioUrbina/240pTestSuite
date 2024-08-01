@@ -891,6 +891,117 @@ void drawPhase() {
 	return;
 }
 
+void drawDisappear() {
+	int 		frames = 0, seconds = 0, minutes = 0, hours = 0;
+	int			toggle = 0, done = 0;
+	uint16_t	lsd, msd, show = 1;		
+	image		*sd = NULL;
+	int			x = -8, y = 10;
+	joypad_buttons_t keys;
+	
+	sd = loadImage("rom:/sd.sprite");
+	if(sd) {
+		sd->x = 128;
+		sd->y = 85;
+	}
+			
+	loadNumbers();
+	while(!done) {
+		getDisplay();
+
+		rdpqStart();
+		if(toggle == 0)
+			rdpqClearScreen();
+		else
+			rdpqClearScreenWhite();
+
+		// Counter Separators
+		drawDigit(x+80,  y+16, NUMBER_WHITE, 10);
+		drawDigit(x+152, y+16, NUMBER_WHITE, 10);
+		drawDigit(x+224, y+16, NUMBER_WHITE, 10);
+
+		// Draw Hours
+		lsd = hours % 10;
+		msd = hours / 10;
+		drawDigit(x+32, y+16, NUMBER_WHITE, msd);
+		drawDigit(x+56, y+16, NUMBER_WHITE, lsd);
+
+		// Draw Minutes
+		lsd = minutes % 10;
+		msd = minutes / 10;
+		drawDigit(x+104, y+16, NUMBER_WHITE, msd);
+		drawDigit(x+128, y+16, NUMBER_WHITE, lsd);
+
+		// Draw Seconds
+		lsd = seconds % 10;
+		msd = seconds / 10;
+		drawDigit(x+176, y+16, NUMBER_WHITE, msd);
+		drawDigit(x+200, y+16, NUMBER_WHITE, lsd);
+
+		// Draw Frames
+		lsd = frames % 10;
+		msd = frames / 10;
+		drawDigit(x+248, y+16, NUMBER_WHITE, msd);
+		drawDigit(x+272, y+16, NUMBER_WHITE, lsd);
+		
+		if(show) {
+			rdpqDrawImage(sd);
+			SD_blink_cycle(sd);
+		}
+		
+		rdpqEnd();
+		
+		drawString(x+32,  y+8, 0xff, 0xff, 0xff, "hours");
+		drawString(x+104, y+8, 0xff, 0xff, 0xff, "minutes");
+		drawString(x+176, y+8, 0xff, 0xff, 0xff, "seconds");
+		drawString(x+248, y+8, 0xff, 0xff, 0xff, "frames");
+
+		checkMenu(DISAPPEAR, NULL);
+		waitVsync();
+		
+		if(toggle)
+			toggle --;
+	
+		joypad_poll();
+		keys = controllerButtonsDown();
+		if(keys.b)
+			done =	1;
+		
+		if(keys.a)
+			show = !show;
+			
+		if(keys.c_left)
+			toggle = 2;
+		
+		checkStart(keys);
+
+		frames ++;
+
+		if(frames > (isPAL ? 49 : 59)) {
+			frames = 0;
+			seconds ++;
+		}
+
+		if(seconds > 59) {
+			seconds = 0;
+			minutes ++;
+		}
+
+		if(minutes > 59) {
+			minutes = 0;
+			hours ++;
+		}
+
+		if(hours > 99)
+			hours = 0;
+	}
+	
+	freeImage(&sd);
+	releaseNumbers();
+	
+	SD_release();
+}
+
 void drawAlternate240p480i()
 {
 	int 			frames = 0, seconds = 0, minutes = 0, hours = 0;

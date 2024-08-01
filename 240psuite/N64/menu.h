@@ -18,6 +18,9 @@ void selectVideoMode();
 void drawCredits(int usebuffer);
 void setMenuVideo(int showVideoOption);
 
+void SD_blink_cycle(image *sd);
+void SD_release();
+
 #define MENU_CANCEL -1
 
 typedef struct menuData {

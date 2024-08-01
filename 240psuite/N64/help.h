@@ -43,6 +43,7 @@ extern char *helpData;
 #define STRIPED			"/help/striped.txt"
 #define ALTERNATE		"/help/alt240p.txt"
 #define PHASEHELP		"/help/phase.txt"
+#define DISAPPEAR		"/help/disappear.txt"
 
 #define BACKLITHELP		"/help/backlit.txt"
 #define GRIDHELP		"/help/grid.txt"

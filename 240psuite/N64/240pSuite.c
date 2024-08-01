@@ -63,6 +63,7 @@ int main(void) {
 		rdpqStart();
 		rdpqDrawImage(bg);
 		rdpqDrawImage(sd);
+		SD_blink_cycle(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
@@ -93,6 +94,7 @@ int main(void) {
 		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
+			SD_release();
 			
 			switch(sel)	{
 				case 1:
@@ -113,6 +115,7 @@ int main(void) {
 	}
 	freeImage(&bg);
 	freeImage(&sd);
+	SD_release();
 	return 0;
 }
 
@@ -142,6 +145,7 @@ void drawPatternsMenu(void) {
 		rdpqStart();
 		rdpqDrawImage(bg);
 		rdpqDrawImage(sd);
+		SD_blink_cycle(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
@@ -172,6 +176,7 @@ void drawPatternsMenu(void) {
 		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
+			SD_release();
 			
 			switch(sel)	{
 				case 1:
@@ -220,6 +225,7 @@ void drawPatternsColorMenu(void) {
 		rdpqStart();
 		rdpqDrawImage(bg);
 		rdpqDrawImage(sd);
+		SD_blink_cycle(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "PLUGE"); y += fh; c++;
@@ -257,6 +263,7 @@ void drawPatternsColorMenu(void) {
 		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
+			SD_release();
 			
 			switch(sel)	{
 				case 1:
@@ -326,6 +333,7 @@ void drawPatternsGeometryMenu(void) {
 		rdpqStart();
 		rdpqDrawImage(bg);
 		rdpqDrawImage(sd);
+		SD_blink_cycle(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Monoscope"); y += fh; c++;
@@ -357,6 +365,7 @@ void drawPatternsGeometryMenu(void) {
 		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
+			SD_release();
 			
 			switch(sel)	{
 				case 1:
@@ -405,6 +414,7 @@ void drawVideoTestsMenu(void) {
 		rdpqStart();
 		rdpqDrawImage(bg);
 		rdpqDrawImage(sd);
+		SD_blink_cycle(sd);
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Drop Shadow Test"); y += fh; c++;
@@ -445,6 +455,7 @@ void drawVideoTestsMenu(void) {
 		if(keys.a) {	
 			freeImage(&bg);
 			freeImage(&sd);
+			SD_release();
 			
 			switch(sel)	{
 				case 1:
@@ -467,6 +478,9 @@ void drawVideoTestsMenu(void) {
 					break;
 				case 9:
 					drawPhase();
+					break;
+				case 10:
+					drawDisappear();
 					break;
 				case 13:
 					drawAlternate240p480i();

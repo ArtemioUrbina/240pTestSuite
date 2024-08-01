@@ -7,6 +7,7 @@ void drawLagTest();
 void drawStripes();
 void drawCheckerBoard();
 void drawPhase();
+void drawDisappear();
 void drawAlternate240p480i();
 
 #endif

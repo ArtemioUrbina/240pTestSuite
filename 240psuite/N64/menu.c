@@ -494,3 +494,60 @@ void drawMessageBox(char *msg) {
 	
 	freeImage(&back);
 }
+
+image *SD_b1 = NULL;
+image *SD_b2 = NULL;
+	
+void SD_blink_cycle(image *sd) {
+	static int blink_counter = 0;
+	static int is_blinking = 0;
+	
+	if(!sd)
+		return;
+		
+	if(!SD_b1)
+		SD_b1 = loadImage("rom:/sd_b1.sprite");
+
+	if(SD_b1) {
+		SD_b1->x = sd->x+16;
+		SD_b1->y = sd->y+32;
+	}
+	
+	if(!SD_b2)
+		SD_b2 = loadImage("rom:/sd_b2.sprite");
+	
+	if(SD_b2) {
+		SD_b2->x = sd->x+16;
+		SD_b2->y = sd->y+32;
+	}
+	
+	blink_counter++;	
+	if(SD_b1 && SD_b2 && blink_counter > 230)
+	{
+		if(!is_blinking) {
+			// 2% chance every frame after 240
+			if(RANDN(100) < 98)	{
+				is_blinking = 1;
+				blink_counter = 230;
+				rdpqDrawImage(SD_b1);
+			}
+		}
+		else {
+			if(blink_counter >= 232 && blink_counter < 234)
+				rdpqDrawImage(SD_b2);
+				
+			if(blink_counter >= 234 && blink_counter < 238)
+				rdpqDrawImage(SD_b1);
+	
+			if(blink_counter >= 238) {	
+				blink_counter = 0;
+				is_blinking = 0;
+			}
+		}
+	}
+}
+
+void SD_release() {
+	freeImage(&SD_b1);
+	freeImage(&SD_b2);
+}
