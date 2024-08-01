@@ -490,34 +490,31 @@ void drawSharpness() {
 }
 
 void drawMonoscope() {
-	int end = 0, pattern = 0;
-	image *back = NULL, *orig = NULL;
+	int		end = 0, pattern = 0, changed = 1;
+	image	*fbx = NULL, *keith = NULL;
+	int		whiteGrid = 0xff, greenBorder = 0xff;
 	joypad_buttons_t keys;
 	
-	back = loadImage("rom:/monoscopeFBX.sprite");
-	if(!back)
+	fbx = loadImage("rom:/monoscopeFBX.sprite");
+	if(!fbx)
 		return;
-	orig = loadImage("rom:/monoscope.sprite");
-	if(!orig) {
-		freeImage(&back);
+	keith = loadImage("rom:/monoscope.sprite");
+	if(!keith) {
+		freeImage(&fbx);
 		return;
 	}
-
+	
 	while(!end) {
 		getDisplay();
 
 		rdpqStart();
 		if(!pattern)
-			rdpqDrawImage(back);
+			rdpqDrawImage(fbx);
 		else
-			rdpqDrawImage(orig);
+			rdpqDrawImage(keith);
 		rdpqEnd();
 
-#ifdef DEBUG_BENCHMARK
-		printPalette(back, 20, 20);
-		printPalette(orig, 100, 20);
-#endif
-		checkMenu(NULL, NULL);
+		checkMenu(MONOSCOPEHLP, NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -526,12 +523,60 @@ void drawMonoscope() {
 		checkStart(keys);
 		if(keys.a)
 			pattern = !pattern;
+			
+		if(keys.l) {
+			whiteGrid -= 0x10;
+			changed = 1;
+		}
+		
+		if(keys.r) {
+			whiteGrid += 0x10;
+			changed = 1;
+		}
+		
+		if(keys.c_left && !pattern) {
+			greenBorder = 0x00;
+			changed = 1;
+		}
+		
+		if(keys.c_right && !pattern) {
+			greenBorder = 0xff;
+			changed = 1;
+		}
+		
+		if(keys.c_up) {
+			whiteGrid = 0xff;
+			greenBorder = 0xff;
+			changed = 1;
+		}
+		
+		if(keys.c_down) {
+			whiteGrid = 0;
+			greenBorder = 0;
+			changed = 1;
+		}
+		
+		if(changed) {
+			if(whiteGrid < 0)
+				whiteGrid = 0;
+			if(whiteGrid > 0xff)
+				whiteGrid = 0xff;
+			
+			fbx->palette[1] = graphics_make_color(0, greenBorder, 0, 0xff);
+			fbx->palette[3] = graphics_make_color(whiteGrid, whiteGrid, whiteGrid, 0xff);
+			updatePalette(fbx);
+			
+			keith->palette[3] = graphics_make_color(whiteGrid, whiteGrid, whiteGrid, 0xff);
+			updatePalette(keith);
+			changed = 0;
+		}
+		
 		if(keys.b)
 			end = 1;
 	}
 	
-	freeImage(&back);
-	freeImage(&orig);
+	freeImage(&fbx);
+	freeImage(&keith);
 }
 
 void drawGrid() {

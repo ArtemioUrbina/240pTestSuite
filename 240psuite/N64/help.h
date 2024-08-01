@@ -44,6 +44,7 @@ extern char *helpData;
 #define ALTERNATE		"/help/alt240p.txt"
 #define PHASEHELP		"/help/phase.txt"
 #define DISAPPEAR		"/help/disappear.txt"
+#define MONOSCOPEHLP	"/help/monoscope.txt"
 
 #define BACKLITHELP		"/help/backlit.txt"
 #define GRIDHELP		"/help/grid.txt"

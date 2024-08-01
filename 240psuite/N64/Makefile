@@ -9,6 +9,8 @@ ASSETS_PNG_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_PNG:%.png=%.sprite))
 #ASSETS_WAV = $(wildcard assets/*.wav)
 #ASSETS_WAV_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64)))
 
+ASSETS_HELP = $(wildcard filesystem/help/*.txt)
+
 AUDIOCONV_FLAGS ?= --wav-compress 0
 #MKSPRITE_EXTRA_FLAGS ?=--verbose
 MKSPRITE_EXTRA_FLAGS ?=
@@ -68,7 +70,7 @@ filesystem/circle.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/numbers.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 24,40 --format CI4
 filesystem/phase.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 
-$(BUILD_DIR)/240pSuite.dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV)
+$(BUILD_DIR)/240pSuite.dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_HELP)
 $(BUILD_DIR)/240pSuite.elf: $(src:%.c=$(BUILD_DIR)/%.o)
 
 240pSuite.z64: N64_ROM_TITLE="240pSuite"
