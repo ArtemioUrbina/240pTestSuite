@@ -48,6 +48,12 @@ float __vblLen = 0;
 
 extern void *__safe_buffer[];
 
+/* Toggle between 256 and 320 at same vertical resolution */
+int __changeVMode = 0;
+resolution_t __newVMode;
+
+void checkVModeChange();
+
 float getFrameLen() {
 	return __vblLen;
 }
@@ -62,7 +68,9 @@ void vblCallback(void) {
 
 #ifndef DEBUG_BENCHMARK
 
-void getDisplay() {	
+void getDisplay() {
+	checkVModeChange();
+	
 	__disp = display_get();
 
 	rdpqUpscalePrepareFB();
@@ -110,8 +118,9 @@ void drawFrameLens() {
 	drawStringB(10, 15, 0xff, 0xff, 0xff, str);
 }
 
-void getDisplay()
-{	
+void getDisplay() {
+	checkVModeChange();
+	
 	__frameStart = get_ticks_us();
 	__disp = display_get();
 	
@@ -203,6 +212,54 @@ void setVideo(resolution_t newRes) {
 #ifdef DEBUG_BENCHMARK
 	resetIdle();
 #endif
+}
+
+void checkVModeChange() {
+	if(!__changeVMode)
+		return;
+	setVideo(__newVMode);
+	setClearScreen();
+	__changeVMode = 0;
+}
+
+void changeToH256onVBlank() {
+	if(current_resolution.height == 240) {
+		if(current_resolution.width == 320) {
+			__newVMode = RESOLUTION_256x240;
+			__changeVMode = 1;
+		}
+	}
+	
+	if(current_resolution.height == 480) {
+		if(current_resolution.width == 640) {
+			__newVMode = RESOLUTION_512x480;
+			__changeVMode = 1;
+		}
+	}
+}
+
+void changeToH320onVBlank() {
+	if(current_resolution.height == 240) {
+		if(current_resolution.width == 256) {
+			__newVMode = RESOLUTION_320x240;
+			__changeVMode = 1;
+		}
+	}
+	
+	if(current_resolution.height == 480) {
+		if(current_resolution.width == 512) {
+			__newVMode = RESOLUTION_640x480;
+			__changeVMode = 1;
+		}
+	}
+}
+
+int isVMode256() {
+	if(isSameRes(&current_resolution, &RESOLUTION_256x240))
+		return 1;
+	if(isSameRes(&current_resolution, &RESOLUTION_512x480))
+		return 1;
+	return 0;
 }
 
 int isSameRes(resolution_t *res1, const resolution_t *res2) {

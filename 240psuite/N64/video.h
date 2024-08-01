@@ -6,9 +6,10 @@
 
 #define SUITE_320x240	0
 #define SUITE_640x480	1
-#define SUITE_512x240	2
-#define SUITE_512x480	3
-#define SUITE_256x240	4
+#define SUITE_256x240	3
+#define SUITE_512x480	4
+#define SUITE_512x240	5
+
 #define SUITE_NONE		-1
 
 extern surface_t* __disp;
@@ -38,6 +39,9 @@ void setVideo(resolution_t newRes);
 int isSameRes(resolution_t *res1, const resolution_t *res2);
 int videoModeToInt(resolution_t *res);
 void getVideoModeStr(char *res, int shortdesc);
+void changeToH256onVBlank();
+void changeToH320onVBlank();
+int isVMode256();
 
 #ifdef DEBUG_BENCHMARK
 #define	IDLE_WARN_MS	2.0f

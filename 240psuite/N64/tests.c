@@ -533,7 +533,7 @@ void drawScroll() {
 	overlay = loadImage("rom:/sonicFloor.sprite");
 	kiki = loadImage("rom:/kiki.sprite");
 
-    while(!end) {		
+	while(!end) {
 		getDisplay();
 
 		rdpqStart();
@@ -543,10 +543,10 @@ void drawScroll() {
 		}
 		else {
 			if(y > 0)
-				rdpqDrawImageXY(kiki, (dW-256)/2, y-512);
-			rdpqDrawImageXY(kiki, (dW-256)/2, y);
+				rdpqDrawImageXY(kiki, 0, y-512);
+			rdpqDrawImageXY(kiki, 0, y);
 			if(y <= -272)
-				rdpqDrawImageXY(kiki, (dW-256)/2, 512+y);
+				rdpqDrawImageXY(kiki, 0, 512+y);
 		}
 		rdpqEnd();
 		
@@ -561,19 +561,23 @@ void drawScroll() {
 
 		if(keys.d_down)
 			speed -= 1;
-			
+		
 		if(keys.b)
 			end = 1;
 		
 		if(keys.a)
 			pause = !pause;
-			
+		
 		if(keys.c_left)
 			acc *= -1;
 
 		if(keys.c_right) {
 			vertical = !vertical;
-			setClearScreen();
+			
+			if(vertical)
+				changeToH256onVBlank();
+			else
+				changeToH320onVBlank();
 		}
 		
 		if(speed > 16)
@@ -595,12 +599,12 @@ void drawScroll() {
 			x = 128 - speed;
 		if(x > 128)
 			x = -128 + speed;
-			
+		
 		if(y >= 512)
 			y = 0 + speed;
 		if(y <= -512)
 			y = 0 - speed;
-			
+		
 		if(!vertical) {
 			currentframe ++;
 			if(currentframe > 25) {
@@ -623,6 +627,9 @@ void drawScroll() {
 	freeImage(&sonicFall);
 	freeImage(&overlay);
 	freeImage(&kiki);
+	
+	if(isVMode256())
+		changeToH320onVBlank();
 }
 
 void drawStripes() {

@@ -30,11 +30,24 @@ int showMenuSet = 0;
 
 void checkMenu(char *help, int *reload) {
 	if(showMenuSet)	{
+		int return256 = 0;
+		
+		if(isVMode256()) {
+			changeToH320onVBlank();
+			return256 = 1;
+		}
+		
 		helpData = help;
 		showMenu();
-		showMenuSet = 0;
+		
+		if(return256) {
+			changeToH256onVBlank();
+			return256 = 0;
+		}
+		
 		if(reload)
 			*reload = 1;
+		showMenuSet = 0;
 	}
 }
 
