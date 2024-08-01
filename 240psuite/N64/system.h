@@ -9,6 +9,8 @@
 
 #define SUITE_NUM_BUFFERS 2
 
+extern int isPAL;
+
 void initN64();
 void drawSysData();
 int getUsedRAM();

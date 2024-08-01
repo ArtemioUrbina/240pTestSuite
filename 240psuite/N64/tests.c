@@ -113,12 +113,13 @@ void rotateFallPalette(image *data) {
 }
 
 void drawDropShadow(int striped) {
-	resolution_t oldVmode = current_resolution;
+	int oldVmode = vMode;
 	int end = 0, invert = 0, frame = 0, reload = 1;
 	int x = 0, y = 0, showText = 0, sprite = 0, selback = 0;
 	int frameLen[] = { 8, 8, 8 }, animFrame = 0;
 	int fallFrame = 0, currentframe = 0;
-	image *donna = NULL, *shadow = NULL, *stripes = NULL, *check = NULL;
+	image *donna = NULL, *donna240 = NULL, *donna480 = NULL;
+	image *shadow = NULL, *stripes = NULL, *check = NULL;
 	image *buzz = NULL, *buzzshadow = NULL, *sshadow = NULL;
 	image *sonicTop = NULL, *sonicWater = NULL, *sonicFall = NULL;
 	image *overlay = NULL;	
@@ -149,6 +150,11 @@ void drawDropShadow(int striped) {
 			y = dH/2 - shadow->tiles->height/2;
 		}
 	}
+	
+	donna240 = loadImage("rom:/donna.sprite");
+	donna480 = loadImage("rom:/donna-480.sprite");
+	if(donna480)
+		donna480->scale = 0;
 		
 	sonicTop = loadImage("rom:/sonicTop.sprite");
 	sonicWater = loadImage("rom:/sonicWater.sprite");
@@ -160,25 +166,10 @@ void drawDropShadow(int striped) {
 
 	while(!end) {
 		if(reload) {
-			if(!isSameRes(&oldVmode, &current_resolution)) {
-				freeImage(&donna);
-				oldVmode = current_resolution;
-			}
+			if(oldVmode != vMode)
+				oldVmode = vMode;
 			
-			if(!donna) {
-				if(vMode == SUITE_640x480) {
-					donna = loadImage("rom:/donna-480.sprite");
-					if(!donna)
-						end = 1;
-					else
-						donna->scale = 0;
-				}
-				else
-					donna = loadImage("rom:/donna.sprite");
-				if(!donna)
-					end = 1;
-			}
-
+			donna = isVMode480() ? donna480 : donna240;
 			reload = 0;
 		}
 		
@@ -219,7 +210,7 @@ void drawDropShadow(int striped) {
 		rdpqEnd();
 		
 		if(!striped && showText) {
-			if(vMode == SUITE_640x480)
+			if(isVMode480())
 				drawStringB(450, 40, 0, 0xff, 0, msg);
 			else
 				drawStringB(140, 30, 0, 0xff, 0, msg);
@@ -315,7 +306,8 @@ void drawDropShadow(int striped) {
 	else
 		freeImage(&shadow);
 	
-	freeImage(&donna);
+	freeImage(&donna480);
+	freeImage(&donna240);
 	
 	freeImage(&sonicTop);
 	freeImage(&sonicWater);
@@ -663,7 +655,7 @@ void drawStripes() {
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			drawStringB(20, vMode == SUITE_640x480 ? 460 : 210, 0xff, 0xff, 0xff, msg);
+			drawStringB(20, isVMode480() ? 460 : 210, 0xff, 0xff, 0xff, msg);
 			frame ++;
 			if(isPAL) {
 				if(frame > 49)
@@ -731,7 +723,7 @@ void drawCheckerBoard() {
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			drawStringB(20, vMode == SUITE_640x480 ? 460 : 210, 0xff, 0xff, 0xff, msg);
+			drawStringB(20, isVMode480() ? 460 : 210, 0xff, 0xff, 0xff, msg);
 			frame ++;
 			if(isPAL) {
 				if(frame > 49)

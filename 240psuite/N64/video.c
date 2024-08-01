@@ -29,11 +29,8 @@ unsigned int		current_bitdepth = 0;
 unsigned int		current_buffers = 0;
 unsigned int		current_gamma = 0;
 filter_options_t	current_antialias = 0;
-unsigned int		EnablePAL = 0;
+unsigned int		enablePAL = 0;
 unsigned int		vMode = SUITE_NONE;
-
-int useNTSC = 1;
-int isPAL = 0;
 
 unsigned int dW = 320;
 unsigned int dH = 240;
@@ -47,12 +44,6 @@ uint64_t __lastVbl = 0;
 float __vblLen = 0;
 
 extern void *__safe_buffer[];
-
-/* Toggle between 256 and 320 at same vertical resolution */
-int __changeVMode = 0;
-resolution_t __newVMode;
-
-void checkVModeChange();
 
 float getFrameLen() {
 	return __vblLen;
@@ -69,14 +60,12 @@ void vblCallback(void) {
 #ifndef DEBUG_BENCHMARK
 
 void getDisplay() {
-	checkVModeChange();
-	
 	__disp = display_get();
 
 	rdpqUpscalePrepareFB();
 }
 
-void drawNoVsync() {
+inline void _internalFlipBuffer() {
 	if(__disp) {
 		executeUpscaleFB();
 		display_show(__disp);
@@ -84,10 +73,14 @@ void drawNoVsync() {
 	}
 }
 
+void drawNoVsync() {
+	_internalFlipBuffer();
+}
+
 void waitVsync() {
 	uint64_t nextFrame = __frames + 1;
 	
-	drawNoVsync();
+	_internalFlipBuffer();
 	
 	while (nextFrame > __frames) ;
 }
@@ -119,22 +112,25 @@ void drawFrameLens() {
 }
 
 void getDisplay() {
-	checkVModeChange();
-	
 	__frameStart = get_ticks_us();
 	__disp = display_get();
 	
 	rdpqUpscalePrepareFB();
 }
 
-void drawNoVsync() {
+inline void _internalFlipBuffer() {
 	if(__disp) {
 		drawFrameLens();
 		executeUpscaleFB();
 		display_show(__disp);
 		__disp = NULL;
 	}
+}
+
+void drawNoVsync() {
+	_internalFlipBuffer();
 	
+	// Fill times since we have no data
 	__frameLen = (get_ticks_us() - __frameStart)/1000.0f;
 	__frameIdle = __frameLen;
 }
@@ -142,12 +138,7 @@ void drawNoVsync() {
 void waitVsync() {
 	uint64_t nextFrame = __frames + 1, now;
 	
-	if(__disp) {
-		drawFrameLens();
-		executeUpscaleFB();
-		display_show(__disp);
-		__disp = NULL;
-	}
+	_internalFlipBuffer();
 	
 	__idleStart = get_ticks_us();
 	while (nextFrame > __frames) ;
@@ -172,8 +163,7 @@ void resetVideoVars() {
 	current_buffers = SUITE_NUM_BUFFERS;
 	current_gamma = GAMMA_NONE;
 	current_antialias = FILTERS_RESAMPLE;
-	EnablePAL = 0;
-	useNTSC = 1;
+	enablePAL = isPAL;
 	vMode = SUITE_NONE;
 }
 
@@ -188,13 +178,19 @@ void setVideo(resolution_t newRes) {
 	if(vMode != SUITE_NONE && isSameRes(&newRes, &current_resolution))
 		return;
 	
-	if(videoSet) {
-		unregister_VI_handler(vblCallback);
+	if(videoSet) {	
+		waitVsync();
+		
+		disable_interrupts();		
 		freeMenuFB();
 		freeUpscaleFB();
+		enable_interrupts();
+		
 		display_close();
 		videoSet = 0;
 	}
+	else
+		register_VI_handler(vblCallback);
 	
 	current_resolution = newRes;
 	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
@@ -205,8 +201,8 @@ void setVideo(resolution_t newRes) {
 	vMode = videoModeToInt(&current_resolution);
 	
 	rdpq_init();
-	register_VI_handler(vblCallback);
 
+	setClearScreen();
 	videoSet = 1;
 
 #ifdef DEBUG_BENCHMARK
@@ -214,26 +210,18 @@ void setVideo(resolution_t newRes) {
 #endif
 }
 
-void checkVModeChange() {
-	if(!__changeVMode)
-		return;
-	setVideo(__newVMode);
-	setClearScreen();
-	__changeVMode = 0;
-}
-
 void changeToH256onVBlank() {
 	if(current_resolution.height == 240) {
 		if(current_resolution.width == 320) {
-			__newVMode = RESOLUTION_256x240;
-			__changeVMode = 1;
+			setVideo(RESOLUTION_256x240);
+			setClearScreen();
 		}
 	}
 	
 	if(current_resolution.height == 480) {
 		if(current_resolution.width == 640) {
-			__newVMode = RESOLUTION_512x480;
-			__changeVMode = 1;
+			setVideo(RESOLUTION_512x480);
+			setClearScreen();
 		}
 	}
 }
@@ -241,23 +229,31 @@ void changeToH256onVBlank() {
 void changeToH320onVBlank() {
 	if(current_resolution.height == 240) {
 		if(current_resolution.width == 256) {
-			__newVMode = RESOLUTION_320x240;
-			__changeVMode = 1;
+			setVideo(RESOLUTION_320x240);
+			setClearScreen();
 		}
 	}
 	
 	if(current_resolution.height == 480) {
 		if(current_resolution.width == 512) {
-			__newVMode = RESOLUTION_640x480;
-			__changeVMode = 1;
+			setVideo(RESOLUTION_640x480);
+			setClearScreen();
 		}
 	}
 }
 
 int isVMode256() {
-	if(isSameRes(&current_resolution, &RESOLUTION_256x240))
+	if(vMode == SUITE_256x240)
 		return 1;
-	if(isSameRes(&current_resolution, &RESOLUTION_512x480))
+	if(vMode == SUITE_512x480)
+		return 1;
+	return 0;
+}
+
+int isVMode480() {
+	if(vMode == SUITE_640x480)
+		return 1;
+	if(vMode == SUITE_512x480)
 		return 1;
 	return 0;
 }

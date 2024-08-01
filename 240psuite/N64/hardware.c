@@ -88,6 +88,7 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
  
  // locks at 0x83FFE6E0
  
+ // TODO: maybe change all access to use mem_read8()
  void drawMemoryViewer(void *startAddress) {
 	int 			done = 0, ascii = 0, locpos = 0, docrc = 0;
 	uint32_t		address = 0, crc = 0, offset = fh;

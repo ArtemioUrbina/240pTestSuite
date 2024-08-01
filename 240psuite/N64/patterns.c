@@ -535,20 +535,20 @@ void drawMonoscope() {
 }
 
 void drawGrid() {
-	resolution_t oldVmode = current_resolution;
+	int oldVmode = vMode;
 	int end = 0, reload = 1;
 	image *back = NULL;
 	joypad_buttons_t keys;
 	
 	while(!end) {
 		if(reload) {
-			if(!isSameRes(&oldVmode, &current_resolution)) {
+			if(vMode != oldVmode) {
 				freeImage(&back);
-				oldVmode = current_resolution;
+				oldVmode = vMode;
 			}
 			
 			if(!back) {
-				if(vMode == SUITE_640x480) {
+				if(isVMode480()) {
 					back = loadImage("rom:/grid-480.sprite");
 					if(!back)
 						return;

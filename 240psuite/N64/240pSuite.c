@@ -500,5 +500,7 @@ void drawVideoTestsMenu(void) {
 }
 
 void drawIntro() {
+	setVideo(RESOLUTION_640x480);
 	drawSplash("rom:/libdragon.sprite", LOGO_HOLD);
+	setVideo(RESOLUTION_320x240);
 }

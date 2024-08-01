@@ -134,7 +134,7 @@ void showMenu() {
 					break;
 				case 2:
 					if(enableVideoOption)
-						selectVideoMode();
+						selectVideoMode(1);
 					break;
 				case 4:
 					drawCredits(1);
@@ -150,7 +150,7 @@ void showMenu() {
 	freeImage(&menu);	
 }
 
-void selectVideoMode() {
+void selectVideoMode(int useBack) {
 	resolution_t 	oldVmode = current_resolution;
 	int 			sel = 1, close = 0;
 	image	 		*back = NULL;
@@ -159,24 +159,29 @@ void selectVideoMode() {
 	back = loadImage("rom:/help.sprite");
 	if(!back)
 		return;
+	back->center = 1;
 	
 	sel = videoModeToInt(&current_resolution) + 1;
 	while(!close) {		
 		int     r = 0xff;
 		int     g = 0xff;
 		int     b = 0xff;
-		int   	c = 1;   
-		int     x = 40;
-		int     y = 58;
+		int   	c = 1, x, y;
 				
 		getDisplay();
 
-		drawMenuFB();
+		if(useBack)
+			drawMenuFB();
 		rdpqStart();
 		rdpqDrawImage(back);
 		rdpqEnd();
 
-		drawStringC(y, 0x00, 0xff, 0x00, "Select video mode"); y += 3*fh; 
+		x = back->x + 48;
+		y = back->y + 17;
+		
+		drawStringC(y, 0xff, 0xff, 0xff, "240p Test Suite Video Modes"); y += 3*fh; 
+		
+		drawStringC(y, 0x00, 0xff, 0x00, "Please select the desired mode"); y += 3*fh; 
 			
 		drawStringS(x - 10, y + videoModeToInt(&current_resolution)*fh, 0x00, 0xff, 0x00, ">"); 
 		
@@ -185,7 +190,7 @@ void selectVideoMode() {
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480/240 assets"); y += fh; c++;				
 		
 		y += fh/2;
-		if(EnablePAL) {
+		if(enablePAL) {
 			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
 			//drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 264/240p assets (PAL)"); y += fh; c++;
 			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i 528/480/240 assets (PAL)"); c++;
@@ -200,7 +205,7 @@ void selectVideoMode() {
 			
 		drawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
 				
-		drawStringC(200, r, g, b, "Press START for help");
+		drawStringC(back->y+216, r, g, b, "Press START for help");
 	
 		waitVsync();
 
@@ -232,24 +237,18 @@ void selectVideoMode() {
 		if(keys.a) {     
 			switch(sel)	{			
 				case 1:						
-					useNTSC = 1;
 					setVideo(RESOLUTION_320x240);
 					break;
 				case 2:
-					useNTSC = 1;
 					setVideo(RESOLUTION_640x480);
 					break;
 				case 3:
-					if(EnablePAL) {
-						useNTSC = 0;
+					if(enablePAL)
 						setVideo(RESOLUTION_320x240);
-					}
 					break;
 				case 4:
-					if(EnablePAL) {
-						useNTSC = 0;
+					if(enablePAL)
 						setVideo(RESOLUTION_640x480);
-					}
 					break;		
 				case 5:
 					close = 1;

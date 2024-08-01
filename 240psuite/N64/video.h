@@ -19,11 +19,8 @@ extern unsigned int		current_bitdepth;
 extern unsigned int		current_buffers;
 extern unsigned int		current_gamma;
 extern filter_options_t	current_antialias;
-extern unsigned int		EnablePAL;
+extern unsigned int		enablePAL;
 extern unsigned int		vMode;
-
-extern int useNTSC;
-extern int isPAL;
 
 extern unsigned int dW;
 extern unsigned int dH;
@@ -42,6 +39,7 @@ void getVideoModeStr(char *res, int shortdesc);
 void changeToH256onVBlank();
 void changeToH320onVBlank();
 int isVMode256();
+int isVMode480();
 
 #ifdef DEBUG_BENCHMARK
 #define	IDLE_WARN_MS	2.0f

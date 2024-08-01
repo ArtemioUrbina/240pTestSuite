@@ -69,6 +69,7 @@ void rdpqStart() {
  
 void rdpqEnd() {
 	if(upscaleFrame) {
+		/* Set a target for software drawing functions */
 		__real_disp = __disp;
 		__disp = __upscale_fb;
 	}
@@ -85,7 +86,7 @@ void rdpqDrawImage(image* data) {
 	if(!data->tiles)		return;
 #endif
 
-	if(vMode == SUITE_640x480 && !data->scale)
+	if(isVMode480() && !data->scale)
 		upscaleFrame = 0;
 	
 	if(upscaleFrame)
@@ -125,7 +126,7 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	if(!data->tiles)		return;
 #endif
 	
-	if(vMode == SUITE_640x480 && !data->scale)
+	if(isVMode480() && !data->scale)
 		upscaleFrame = 0;
 		
 	if(upscaleFrame)
@@ -272,18 +273,19 @@ void freeImage(image **data) {
 surface_t *__menu_fb = NULL;
 
 int copyMenuFB() {	
-	if(!__disp)
-		return 0;
-	
 #ifdef DEBUG_BENCHMARK
+	assertf(__disp != NULL, "copyFrameBuffer(): __disp was NULL");
 	assertf(__menu_fb == NULL, "copyFrameBuffer(): __menu_fb was not NULL");
 #else
+	if(!__disp)
+		return 0;
 	freeMenuFB();
 #endif
 
 	__menu_fb = (surface_t *)malloc(sizeof(surface_t));
 	if(!__menu_fb)
 		return 0;
+	memset(__menu_fb, 0, sizeof(surface_t));
 		
 	*__menu_fb = surface_alloc(surface_get_format(__disp), __disp->width, __disp->height);
 	if(!__menu_fb->buffer) {
@@ -359,7 +361,7 @@ void darkenMenuFB(int amount) {
 /* Frame Buffer for upscaling */
 
 void rdpqUpscalePrepareFB() {
-	if(!menuIgnoreUpscale && vMode == SUITE_640x480) {
+	if(!menuIgnoreUpscale && isVMode480()) {
 		createUpscaleFB();
 		upscaleFrame = 1;
 	}
@@ -558,6 +560,8 @@ void drawSplash(char *name, int delay) {
 		return;
 
 	logo->center = true;
+	if(dH > 240)
+		logo->scale = 0;
 	
 	while(delay) {
 		getDisplay();
@@ -642,7 +646,7 @@ void drawDigit(uint16_t x, uint16_t y, uint16_t color, uint16_t digit) {
 	if(!bigNumbers[NUMBER_WHITE])
 		return;
 	
-	if(vMode == SUITE_640x480 && !bigNumbers[color]->scale)
+	if(isVMode480() && !bigNumbers[color]->scale)
 		upscaleFrame = 0;
 		
 	if(upscaleFrame)

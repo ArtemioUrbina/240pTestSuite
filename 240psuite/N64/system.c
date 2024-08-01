@@ -23,8 +23,25 @@
  #include "video.h"
  #include "font.h"
  
+ int isPAL = 0;
+ 
+ void detectConsoleType() {
+	switch(get_tv_type()) {
+		case TV_PAL:
+		case TV_MPAL:
+			isPAL = 1;
+			break;
+		case TV_NTSC:
+		default:
+			isPAL = 0;
+			break;
+	}
+}
+ 
  void initN64() {
 	/* Initialize peripherals */
+	detectConsoleType();
+	
 	initVideo();
 	
 	dfs_init(DFS_DEFAULT_LOCATION);
@@ -47,8 +64,7 @@
 	sprintf(str, "%s %d MB", iQue ? "iQue" : "N64", get_memory_size()/0x100000);
 	drawStringS(START_SYSINFO_X, START_SYSINFO_Y, 0xfa, 0xfa, 0xfa, str);
 	
-	switch(get_tv_type())
-	{
+	switch(get_tv_type()) {
 		case TV_NTSC:
 			sprintf(str, "NTSC ");
 			break;
