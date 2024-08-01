@@ -30,7 +30,7 @@ typedef struct timecode {
 	int res;
 } timecode;
 
-uint16_t ConvertToFrames(timecode *time) {
+uint16_t convertToFrames(timecode *time) {
 	uint16_t	frames = 0;
 
 	if(!time)
@@ -46,7 +46,7 @@ uint16_t ConvertToFrames(timecode *time) {
 	return frames;
 }
 
-void ConvertFromFrames(timecode *value, uint16_t Frames) {
+void convertFromFrames(timecode *value, uint16_t Frames) {
 	if(!value)
 		return;
 	value->hours = Frames / 216000;
@@ -767,4 +767,269 @@ void drawCheckerBoard() {
 	}
 	
 	freeImage(&back);
+}
+
+void SD_blink_cycle_phase(image *sd_b1, image *sd_b2, int index) {
+	static int blink_counter[5] = { 0, 0, 0, 0, 0 };
+	static int is_blinking[5] = { 0, 0, 0, 0, 0 };
+	
+	blink_counter[index]++;	
+	if(sd_b1 && sd_b2 && blink_counter[index] > 230) {
+		if(!is_blinking[index])	{
+			if(RANDN(100) < 25) {
+				is_blinking[index] = 1;
+				blink_counter[index] = 230;
+				rdpqDrawImage(sd_b1);
+			}
+		}
+		else {
+			if(blink_counter[index] >= 232 && blink_counter[index] < 234)
+				rdpqDrawImage(sd_b2);
+				
+			if(blink_counter[index] >= 234 && blink_counter[index] < 238)
+				rdpqDrawImage(sd_b1);
+	
+			if(blink_counter[index] >= 238)	{	
+				blink_counter[index] = 0;
+				is_blinking[index] = 0;
+			}
+		}
+	}
+}
+
+void drawPhase() {
+	int 		done = 0, type = 0, hpos = 0, i = 0;
+	image		*back = NULL, *backcheck = NULL;
+	image		*sd[5] = { NULL, NULL, NULL, NULL, NULL};
+	image		*sd_b1[5] = { NULL, NULL, NULL, NULL, NULL};
+	image		*sd_b2[5] = { NULL, NULL, NULL, NULL, NULL};
+	joypad_buttons_t keys;
+	
+	back = loadImage("rom:/phase.sprite");
+	if(!back)
+		return;
+	
+	backcheck = loadImage("rom:/check.sprite");
+	if(!backcheck)
+		return;
+
+	for(i = 0; i < 5; i++) {
+		sd[i] = loadImage("rom:/sd.sprite");
+		if(!sd[i])
+			return;
+		sd[i]->x = 5+i*64;
+		sd[i]->y = 70;
+		sd_b1[i] = loadImage("rom:/sd_b1.sprite");
+		if(sd_b1[i]) {
+			sd_b1[i]->x = sd[i]->x+16;
+			sd_b1[i]->y = sd[i]->y+32;
+		}
+		
+		sd_b2[i] = loadImage("rom:/sd_b2.sprite");
+		if(sd_b2[i]) {
+			sd_b2[i]->x = sd[i]->x+16;
+			sd_b2[i]->y = sd[i]->y+32;
+		}
+	}
+
+	while(!done) {
+		getDisplay();
+		
+		rdpqStart();
+		if(!type)
+			rdpqDrawImage(back);
+		else
+			rdpqFillWithImage(backcheck);
+		for(i = 0; i < 5; i++)
+		{
+			sd[i]->x = 5+i*64+hpos;
+			rdpqDrawImage(sd[i]);
+			if(sd_b1[i] && sd_b2[i]) {
+				sd_b1[i]->x = sd[i]->x+16;
+				sd_b2[i]->x = sd[i]->x+16;
+				SD_blink_cycle_phase(sd_b1[i], sd_b2[i], i);
+			}
+		}
+		rdpqEnd();
+		
+		checkMenu(PHASEHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+
+		checkStart(keys);
+		if(keys.c_left)
+			type = !type;
+		
+		if(keys.a)
+			hpos = 0;
+		
+		if(keys.d_left)	{
+			hpos --;
+			if(hpos < -5)
+				hpos = -5;
+		}
+		
+		if(keys.d_right)	{
+			hpos ++;
+			if(hpos > 5)
+				hpos = 5;
+		}
+		
+		if(keys.b)
+			done =	1;
+	}
+	
+	freeImage(&back);
+	freeImage(&backcheck);
+	for(i = 0; i < 5; i++) {
+		freeImage(&sd[i]);
+		freeImage(&sd_b1[i]);
+		freeImage(&sd_b2[i]);
+	}
+	return;
+}
+
+void drawAlternate240p480i()
+{
+	int 			frames = 0, seconds = 0, minutes = 0, hours = 0;
+	int				done =  0, current = 0, res = 0, status = 0;
+	timecode		times[20];
+	resolution_t	oldvmode = current_resolution;
+	char 			buffer[100];
+	joypad_buttons_t keys;
+	
+	if(isPAL) {
+		if(videoModeToInt(&current_resolution) != SUITE_320x240) {
+			setVideo(RESOLUTION_320x240);	
+		}
+	}
+	else {
+		if(videoModeToInt(&current_resolution) != SUITE_320x240) {		
+			setVideo(RESOLUTION_320x240);
+		}
+	}
+	
+	setMenuVideo(0);
+	useReducedWidthSpace(0);
+	while(!done) {
+		int x = 12;
+		
+		frames ++;
+
+		if(isPAL) {
+			if(frames > 49)	{
+				frames = 0;
+				seconds ++;
+			}
+		}
+		else {
+			if(frames > 59)	{
+				frames = 0;
+				seconds ++;
+			}
+		}
+
+		if(seconds > 59) {
+			seconds = 0;
+			minutes ++;
+		}
+
+		if(minutes > 59) {
+			minutes = 0;
+			hours ++;
+		}
+
+		if(hours > 99)
+			hours = 0;
+
+		getDisplay();
+
+		setClearScreen();
+		rdpqStart();
+		rdpqEnd();
+		
+		sprintf(buffer, "Current Resolution: %s", res == 0 ? (isPAL ? "288p" : "240p") : (isPAL ? "576i" : "480i"));
+		drawString(x, 8, 0, 0xff, 0, buffer);
+
+		sprintf(buffer, "Elapsed Timer:%02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
+		drawString(x, 32, 0xff, 0xff, 0xff, buffer);
+
+		if(current)	{
+			int i = 0;
+			for(i = 0; i < current; i++) {
+				if(times[i].type == 0) {
+					sprintf(buffer, "-> to %s at: ",
+						times[i].res == 0 ? (isPAL ? "288p" : "240p") : (isPAL ? "576i" : "480i"));
+						
+					drawString(x, 40+i*fh, 0xff, 0xff, 0x00, buffer);
+				}
+				else {
+					sprintf(buffer, "Viewed at: ");
+					drawString(x, 40+i*fh, 0xff, 0x00, 0x00, buffer);
+				}
+
+				sprintf(buffer, "%02d:%02d:%02d:%02d",
+					times[i].hours, times[i].minutes, times[i].seconds, times[i].frames);
+				drawString(x+14*fw, 40+i*fh, 0xff, 0xff, 0xff, buffer);
+				
+				if(times[i].type != 0 && i >= 1 && i <= 17)	{
+					uint16_t	framesA = 0, framesB = 0, res = 0;
+					timecode 	len;
+
+					framesB = convertToFrames(&times[i]);
+					framesA = convertToFrames(&times[i - 1]);
+					res = framesB - framesA;
+					convertFromFrames(&len, res);
+					sprintf(buffer, "%02d:%02d:%02d:%02d", len.hours, len.minutes, len.seconds, len.frames);
+					drawString(x+26*fw, 40+i*fh, 0xff, 0.0, 0.0, buffer);
+				}
+			}
+		}
+		
+		checkMenu(ALTERNATE, NULL);
+		waitVsync();
+
+		joypad_poll();
+		keys = controllerButtonsDown();
+					
+		checkStart(keys);
+
+		if(keys.b)
+			done =	1;				
+					
+		if(keys.a) {
+			if(current <= 19)
+				current ++;
+			else
+				current = 1;
+
+			times[current - 1].frames = frames;
+			times[current - 1].minutes = minutes;
+			times[current - 1].seconds = seconds;
+			times[current - 1].hours = hours;
+
+			status ++;
+			if(status == 1)	{
+				times[current - 1].type = 0;
+				res = !res;
+				times[current - 1].res = res;	
+				if(!res)
+					setVideo(RESOLUTION_320x240);
+				else
+					setVideo(RESOLUTION_640x480);
+			}
+			if(status == 2)	{
+				times[current - 1].type = 1;
+				times[current - 1].res = res;
+				status = 0;
+			}
+		}
+	}	
+	
+	setMenuVideo(1);
+	
+	useReducedWidthSpace(1);
+	setVideo(oldvmode);	
 }

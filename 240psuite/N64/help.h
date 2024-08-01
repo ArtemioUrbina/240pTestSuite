@@ -41,8 +41,9 @@ extern char *helpData;
 #define MEMORYHELP		"/help/memory.txt"
 #define PASSIVELAG		"/help/passivelag.txt"
 #define STRIPED			"/help/striped.txt"
-
 #define ALTERNATE		"/help/alt240p.txt"
+#define PHASEHELP		"/help/phase.txt"
+
 #define BACKLITHELP		"/help/backlit.txt"
 #define GRIDHELP		"/help/grid.txt"
 #define GRID224HELP		"/help/grid224.txt"

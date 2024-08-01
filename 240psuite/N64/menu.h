@@ -16,6 +16,7 @@ void checkStart(joypad_buttons_t keys);
 void showMenu();
 void selectVideoMode();
 void drawCredits(int usebuffer);
+void setMenuVideo(int showVideoOption);
 
 #define MENU_CANCEL -1
 

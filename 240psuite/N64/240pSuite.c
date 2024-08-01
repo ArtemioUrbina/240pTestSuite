@@ -465,6 +465,12 @@ void drawVideoTestsMenu(void) {
 				case 8:
 					drawCheckerBoard();
 					break;
+				case 9:
+					drawPhase();
+					break;
+				case 13:
+					drawAlternate240p480i();
+					break;
 				case 14:
 					exit = 1;
 					break;

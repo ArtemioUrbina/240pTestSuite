@@ -27,6 +27,7 @@
 #include "menu.h"
 
 int showMenuSet = 0;
+int enableVideoOption = 1;
 
 void checkMenu(char *help, int *reload) {
 	if(showMenuSet)	{
@@ -55,6 +56,10 @@ void checkStart(joypad_buttons_t keys) {
 	if(keys.start) {
 		showMenuSet = 1;
 	}
+}
+
+void setMenuVideo(int showVideoOption) {
+	enableVideoOption = showVideoOption;
 }
 
 void showMenu() {	
@@ -94,7 +99,12 @@ void showMenu() {
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); y += fh; c++;
 		sprintf(str, "Video");
 		getVideoModeStr(str+5, 1);
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, str); y += fh; c++;
+		if(enableVideoOption) {
+			drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, str); y += fh; c++;
+		}
+		else {
+			drawStringS(x, y, sel == c ? 0xff:0x98, sel == c ? 0xaa:0x98, sel == c ? 0xaa:0x98, str); y += fh; c++;
+		}
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Options"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += 2*fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Close"); 
@@ -123,7 +133,8 @@ void showMenu() {
 					helpWindow(helpData);
 					break;
 				case 2:
-					selectVideoMode();
+					if(enableVideoOption)
+						selectVideoMode();
 					break;
 				case 4:
 					drawCredits(1);
@@ -165,7 +176,7 @@ void selectVideoMode() {
 		rdpqDrawImage(back);
 		rdpqEnd();
 
-		drawStringC(y, 0x00, 0xff, 0x00, "Please select the desired video mode"); y += 3*fh; 
+		drawStringC(y, 0x00, 0xff, 0x00, "Select video mode"); y += 3*fh; 
 			
 		drawStringS(x - 10, y + videoModeToInt(&current_resolution)*fh, 0x00, 0xff, 0x00, ">"); 
 		
