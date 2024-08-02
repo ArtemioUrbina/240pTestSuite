@@ -580,42 +580,24 @@ void drawMonoscope() {
 }
 
 void drawGrid() {
-	int oldVmode = vMode;
-	int end = 0, reload = 1;
-	image *back = NULL;
+	int end = 0;
+	image *back240 = NULL, *back480 = NULL;
 	joypad_buttons_t keys;
 	
+	back240 = loadImage("rom:/grid.sprite");
+	back480 = loadImage("rom:/grid-480.sprite");
+	if(back480)
+		back480->scale = 0;
+	
 	while(!end) {
-		if(reload) {
-			if(vMode != oldVmode) {
-				freeImage(&back);
-				oldVmode = vMode;
-			}
-			
-			if(!back) {
-				if(isVMode480()) {
-					back = loadImage("rom:/grid-480.sprite");
-					if(!back)
-						return;
-					back->scale = 0;
-				}
-				else
-					back = loadImage("rom:/grid.sprite");
-				if(!back)
-					return;
-			}
-			
-			reload = 0;
-		}
-		
 		getDisplay();
 
 		rdpqStart();
 		
-		rdpqDrawImage(back);
+		rdpqDrawImage(isVMode480() ? back480 : back240);
 		rdpqEnd();
 		
-		checkMenu(GRIDHELP, &reload);
+		checkMenu(GRIDHELP, NULL);
 		waitVsync();
 		
 		joypad_poll();
@@ -626,7 +608,8 @@ void drawGrid() {
 			end = 1;
 	}
 	
-	freeImage(&back);
+	freeImage(&back240);
+	freeImage(&back480);
 }
 
 void drawGrayramp() {
