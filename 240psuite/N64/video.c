@@ -87,7 +87,7 @@ void drawFrameLens() {
 }
 #endif
 
-inline void checkInternalResChange() {
+void checkInternalResChange() {
 	if(!__changeInternalRes)
 		return;
 	
@@ -107,7 +107,7 @@ void getDisplay() {
 	rdpqUpscalePrepareFB();
 }
 
-inline void _internalFlipBuffer() {
+void _internalFlipBuffer() {
 	if(__disp) {
 #ifdef DEBUG_BENCHMARK
 		drawFrameLens();
@@ -144,11 +144,10 @@ int getHardHeight() {
 	return(current_resolution.height);
 }
 
-void waitVsync() {
+void _internalWaitVsync() {
 	uint64_t nextFrame = __frames + 1;
 	
-	_internalFlipBuffer();
-
+	assertf(__disp == NULL, "_internalWaitVsync(): disp is not NULL");
 #ifdef DEBUG_BENCHMARK	
 	__idleStart = get_ticks_us();
 #endif
@@ -159,6 +158,11 @@ void waitVsync() {
 	__frameLen = (now - __frameStart)/1000.0f;
 	__frameIdle = (now - __idleStart)/1000.0f;
 #endif
+}
+
+void waitVsync() {
+	_internalFlipBuffer();
+	_internalWaitVsync();
 }
 
 /* Resolutions */
@@ -182,9 +186,9 @@ void setVideoInternal(resolution_t newRes) {
 	if(vMode != SUITE_NONE && isSameRes(&newRes, &current_resolution))
 		return;
 	
-	if(videoSet) {		
-		disable_interrupts();		
-		freeMenuFB();
+	if(videoSet) {
+		disable_interrupts();
+		freeMenuFB();				// comment this one out to get "improper" resolution backgrounds for menu
 		freeUpscaleFB();
 		enable_interrupts();
 		
@@ -234,6 +238,8 @@ void changeToH320onVBlank() {
 }
 
 void changeVMode(resolution_t newRes) {
+	if(isSameRes(&newRes, &current_resolution))
+		return;
 	__newInternalResChange = newRes;
 	__changeInternalRes = 1;
 }

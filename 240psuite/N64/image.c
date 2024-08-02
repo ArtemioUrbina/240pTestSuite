@@ -167,7 +167,7 @@ void rdpqFillWithImage(image* data) {
 	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
 
-	rdpq_clear(RGBA32(0xf8, 0xf8, 0xf8, 0xff));
+	rdpq_clear(RGBA32(IRE_100, IRE_100, IRE_100, IRE_100));
 	
 	rdpq_mode_push();
 	
@@ -281,7 +281,7 @@ void freeImage(image **data) {
 
 surface_t *__menu_fb = NULL;
 
-int copyMenuFB() {	
+int copyMenuFB() {
 	if(!__disp)
 		return 0;
 	freeMenuFB();
@@ -323,10 +323,18 @@ void freeMenuFB() {
 void drawMenuFB() {
 	if(!__menu_fb || !__disp)
 		return;
-
-	rdpq_attach(upscaleFrame ? __upscale_fb : __disp, NULL);
+	surface_t *target = NULL;
+	
+	target = upscaleFrame ? __upscale_fb : __disp;
+	
+	rdpq_attach(target, NULL);
 	rdpq_set_mode_copy(0);
-	rdpq_tex_blit(__menu_fb, 0, 0, NULL);
+	rdpq_clear(RGBA32(0, 0, 0, 0xff));
+	// check if we are using a FB from a different resolution and adjust
+	if(target->height == __menu_fb->height && target->width > __menu_fb->width)
+		rdpq_tex_blit(__menu_fb, (target->width - __menu_fb->width)/2, 0, NULL);
+	else
+		rdpq_tex_blit(__menu_fb, 0, 0, NULL);
 	rdpq_detach();
 }
 
@@ -435,16 +443,6 @@ void executeUpscaleFB() {
 
 /* Fade paletted images */
 
-void fadePaletteStep(uint16_t *colorRaw, unsigned int fadeSteps) {
-	color_t color;
-	
-	color = color_from_packed16(*colorRaw);
-	color.r = (color.r > 0) ? (color.r - color.r/fadeSteps) : 0;
-	color.g = (color.g > 0) ? (color.g - color.g/fadeSteps) : 0;
-	color.b = (color.b > 0) ? (color.b - color.b/fadeSteps) : 0;
-	*colorRaw = color_to_packed16(color);
-}
-
 void setPaletteFX(image *data) {
 	if(!data->palette)
 		return;
@@ -461,7 +459,7 @@ void setPaletteFX(image *data) {
 	}
 }
 
-inline void updatePalette(image *data) {
+void updatePalette(image *data) {
 	if(!data->palette) return;
 	// Invalidate the cache
 	data_cache_hit_writeback_invalidate(data->palette, sizeof(uint16_t)*data->palSize);
@@ -530,6 +528,16 @@ void fadeInit(image *data, unsigned int steps) {
 
 	resetPalette(data);
 	data->fadeSteps = steps;
+}
+
+void fadePaletteStep(uint16_t *colorRaw, unsigned int fadeSteps) {
+	color_t color;
+	
+	color = color_from_packed16(*colorRaw);
+	color.r = (color.r > 0) ? (color.r - color.r/fadeSteps) : 0;
+	color.g = (color.g > 0) ? (color.g - color.g/fadeSteps) : 0;
+	color.b = (color.b > 0) ? (color.b - color.b/fadeSteps) : 0;
+	*colorRaw = color_to_packed16(color);
 }
 
 void fadeImageStep(image *data) {

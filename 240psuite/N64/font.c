@@ -61,7 +61,7 @@ void useReducedWidthSpace(int use) {
 #define FULL_SPACE_WIDTH	8
 #define LINE_HEIGHT			8
 
-inline unsigned int getSpaceWidth() {
+unsigned int getSpaceWidth() {
 	return(__reducedWidthSpace ? SPACE_WIDTH : FULL_SPACE_WIDTH);
 }
  
