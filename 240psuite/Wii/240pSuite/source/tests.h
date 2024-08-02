@@ -32,6 +32,8 @@ void ScrollTest();
 void GridScrollTest();
 void DrawStripes();
 void DrawCheckBoard();
+void DrawPhase();
+void DrawDisappear();
 void SoundTest();
 void AudioSyncTest();
 void LEDZoneTest();

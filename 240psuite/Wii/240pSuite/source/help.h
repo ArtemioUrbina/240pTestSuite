@@ -60,8 +60,11 @@
 #define HCFR_MENUHELP	hcfr_menu_txt
 #define GBA_TRANSF_HELP	gba_transfer_txt
 #define MDFOURIER_HELP	mdfourier_txt
+#define PHASEHELP		phase_txt
+#define DISAPHELP		disappear_txt
 
 /* paste from here */
+extern char *SMPTEColor_txt[];
 extern char *alt240p_txt[];
 extern char *backlit_txt[];
 extern char *bleed_txt[];
@@ -71,6 +74,7 @@ extern char *color601_txt[];
 extern char *colors_txt[];
 extern char *convergence_txt[];
 extern char *diagonal_txt[];
+extern char *disappear_txt[];
 extern char *dshadow_txt[];
 extern char *gba_transfer_txt[];
 extern char *general_txt[];
@@ -88,16 +92,17 @@ extern char *options_txt[];
 extern char *optionsgc_txt[];
 extern char *overscan_txt[];
 extern char *passivelag_txt[];
+extern char *phase_txt[];
 extern char *pluge_txt[];
 extern char *scroll_txt[];
 extern char *sharpness_txt[];
-extern char *SMPTEColor_txt[];
 extern char *sound_txt[];
 extern char *striped_txt[];
 extern char *stripes_txt[];
 extern char *timereflex_txt[];
 extern char *vmode_txt[];
 extern char *white_txt[];
+
 /* paste to here */
 
 void HelpWindow(ImagePtr screen);

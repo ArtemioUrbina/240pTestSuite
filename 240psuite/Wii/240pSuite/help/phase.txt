@@ -1,0 +1,9 @@
+           PHASE & SAMPLE RATE CHECK
+
+This test allows you to check phase alignment
+in upscalers.
+
+Press left or right to move, #GX#G for checkerboard
+background.
+
+Designed by #CFirebrandX#C.

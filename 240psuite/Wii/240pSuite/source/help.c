@@ -77,6 +77,10 @@ char *diagonal_txt[] = {
 "            Diagonal line patterns\n\nThese patterns can be used to adjust the vertical\nand horizontal scaling in video procesors in\ndifferent resolutions. The test uses higher \nresolution assets for 480p when in that mode.\n\nThe angle increment for line rotation can be\nadjusted by fractions up to 1/20th of a degree\nwith $X and $Y. The angle can be adjusted with\n$L and $R.\n\nThe bars can be set to autorotate with $A and the\nbars can be toggled to full screen by pressing Up.",
 NULL
 };
+char *disappear_txt[] = { 
+"              Disappearing Logo\n\nThis test allows you to use a slow motion camera\nto measure how long it takes from a button\npress to when the logo disappears.\n\nYou can also use a photodiode and press #GX#G,\nwhich turns the whole back to white for 2 frames.",
+NULL
+};
 char *dshadow_txt[] = { 
 "                 DROP SHADOW TEST\n\nThis is a crucial test for 240p upscan converters.\nIt displays a simple sprite shadow (32x32 pixels)\nagainst a background, but the shadow is shown only\non each other frame. On a CRT this achieves a\ntransparency effect, since you are watching a 30hz\n(25Hz) shadow on a 60hz (50hz) signal. No \nbackground detail should be lost and the shadow \nshould be visible. \n\nThe user can toggle the frame used to draw the\nshadow with button $X. Backgrounds can be\nswitched with the $A button and button $Y\ntoggles sprites.\n\nDonna art by Jose Salot",
 NULL
@@ -166,6 +170,10 @@ char *passivelag_txt[] = {
 "                  LAG TEST (2/2)\n\nYou can also chain the output ports of a #YPVM/BVM#Y\nto an upscaler and use the CRT as reference, or\nsplit the video signal.",
 NULL
 };
+char *phase_txt[] = { 
+"           PHASE & SAMPLE RATE CHECK\n\nThis test allows you to check phase alignment\nin upscalers.\n\nPress left or right to move, #GX#G for checkerboard\nbackground.\n\nDesigned by #CFirebrandX#C.\n",
+NULL
+};
 char *pluge_txt[] = { 
 "                   PLUGE (1/3)\n\nThe #Ypicture line-up generation equipment#Y (PLUGE)\nis a test pattern used to adjust the black level\nand contrast of a video signal.\n\nThe pattern in this suite is mainly designed to\nadjust the black level. The control for setting \nthis on your TV is usually named #YBrightness#Y.\n\nThis adjustment ensures that anything intended\nto be black is actually black, and allows all\ndetail to be seen on dark scenes.\n\nThere are three bars at each side, you can \nhighlight them with the $X button.        #C(cont...)#C",
 "                   PLUGE (2/3)\n\nThe $A button changes between #GNTSC#G and #GRGB Full \nRange#G [0-255] when in any NTSC mode.        \n                                         \nThe values of the bars depend on your current\nvideo mode. Reduce the #YBrightness#Y until the \ndesired bars are no longer visible, and then \nslowly raise it until they are #Gjust#G visible,\nand go back one notch where they blend with the\nbackground. \n\nFor games always use #GRGB Full Range#G. The 1 IRE \nbars are the ones you should calibrate against.\nThe values of the bars are: 1, 2 and 3.5 IRE.\n                                         #C(cont...)#C",
@@ -218,7 +226,7 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	37
+#define	HELPCOUNT	39
 char **HelpArray[HELPCOUNT] = {
 	SMPTEColor_txt,
 	alt240p_txt,
@@ -230,6 +238,7 @@ char **HelpArray[HELPCOUNT] = {
 	colors_txt,
 	convergence_txt,
 	diagonal_txt,
+	disappear_txt,
 	dshadow_txt,
 	gba_transfer_txt,
 	general_txt,
@@ -247,6 +256,7 @@ char **HelpArray[HELPCOUNT] = {
 	optionsgc_txt,
 	overscan_txt,
 	passivelag_txt,
+	phase_txt,
 	pluge_txt,
 	scroll_txt,
 	sharpness_txt,

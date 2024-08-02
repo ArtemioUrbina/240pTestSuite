@@ -177,10 +177,8 @@ void DropShadowTest()
 			shadow->x = x;
 			shadow->y = y;
 			DrawImage(shadow);
-			frame = !frame;
 		}
-		else
-			frame = !frame;
+		frame = !frame;
 				
 		if(sprite == 1)
 		{
@@ -2469,3 +2467,272 @@ void DiagonalPatternTest()
 	FreeImage(&sprite);
 	return;
 }
+
+void SD_blink_cycle_phase(ImagePtr sd_b1, ImagePtr sd_b2, int index)
+{
+	static int blink_counter[5] = { 0, 0, 0, 0, 0 };
+	static int is_blinking[5] = { 0, 0, 0, 0, 0 };
+	
+	blink_counter[index]++;	
+	if(sd_b1 && sd_b2 && blink_counter[index] > 230)
+	{
+		if(!is_blinking[index])
+		{
+			if(rand() % 100 < 25)
+			{
+				is_blinking[index] = 1;
+				blink_counter[index] = 230;
+				DrawImage(sd_b1);
+			}
+		}
+		else
+		{
+			if(blink_counter[index] >= 232 && blink_counter[index] < 234)
+				DrawImage(sd_b2);
+				
+			if(blink_counter[index] >= 234 && blink_counter[index] < 238)
+				DrawImage(sd_b1);
+	
+			if(blink_counter[index] >= 238)
+			{	
+				blink_counter[index] = 0;
+				is_blinking[index] = 0;
+			}
+		}
+	}
+}
+
+void DrawPhase()
+{
+	int 		done = 0, oldvmode = -1, type = 0, hpos = 0, i = 0;
+	u32			pressed;
+	ImagePtr	back = NULL, backcheck = NULL;
+	ImagePtr	sd[5] = { NULL, NULL, NULL, NULL, NULL};
+	ImagePtr	sd_b1[5] = { NULL, NULL, NULL, NULL, NULL};
+	ImagePtr	sd_b2[5] = { NULL, NULL, NULL, NULL, NULL};
+	
+	back = LoadImage(PHASEIMG, 0);
+	if(!back)
+		return;
+	
+	backcheck = LoadImage(CHECKPOSIMG, 1);
+	if(!backcheck)
+		return;
+
+	for(i = 0; i < 5; i++)
+	{
+		sd[i] = LoadImage(SDIMG, 0);
+		if(!sd[i])
+			return;
+		sd[i]->x = 5+i*64;
+		sd[i]->y = 70;
+		sd_b1[i] = LoadImage(SD_B1_IMG, 0);
+		if(sd_b1[i])
+		{
+			sd_b1[i]->x = sd[i]->x+16;
+			sd_b1[i]->y = sd[i]->y+32;
+		}
+		
+		sd_b2[i] = LoadImage(SD_B2_IMG, 0);
+		if(sd_b2[i])
+		{
+			sd_b2[i]->x = sd[i]->x+16;
+			sd_b2[i]->y = sd[i]->y+32;
+		}
+	}
+
+	while(!done && !EndProgram) 
+	{
+		if(oldvmode != vmode)
+		{
+			CalculateUV(0, 0, dW, dH, backcheck);
+			oldvmode = vmode;
+		}
+		
+		StartScene();
+		if(!type)
+			DrawImage(back);
+		else
+			DrawImage(backcheck);
+		for(i = 0; i < 5; i++)
+		{
+			sd[i]->x = 5+i*64+hpos;
+			DrawImage(sd[i]);
+			if(sd_b1[i] && sd_b2[i])
+			{
+				sd_b1[i]->x = sd[i]->x+16;
+				sd_b2[i]->x = sd[i]->x+16;
+				SD_blink_cycle_phase(sd_b1[i], sd_b2[i], i);
+			}
+		}
+		EndScene();
+		
+		ControllerScan();
+		pressed = Controller_ButtonsDown(0);
+		if (pressed & PAD_BUTTON_START )
+		{
+			DrawMenu = 1;					
+			HelpData = PHASEHELP;
+		}
+
+		if (pressed & PAD_BUTTON_X)
+			type = !type;
+		
+		if (pressed & PAD_BUTTON_A)
+			hpos = 0;
+		
+		if (pressed & PAD_BUTTON_LEFT)
+		{
+			hpos --;
+			if(hpos < -5)
+				hpos = -5;
+		}
+		
+		if (pressed & PAD_BUTTON_RIGHT)
+		{
+			hpos ++;
+			if(hpos > 5)
+				hpos = 5;
+		}
+		
+		if (pressed & PAD_BUTTON_B)
+			done =	1;
+	}
+	FreeImage(&back);
+	FreeImage(&backcheck);
+	for(i = 0; i < 5; i++)
+	{
+		FreeImage(&sd[i]);
+		FreeImage(&sd_b1[i]);
+		FreeImage(&sd_b2[i]);
+	}
+	return;
+}
+
+void DrawDisappear()
+{
+	int 		frames = 0, seconds = 0, minutes = 0, hours = 0;
+	int			toggle = 0, done = 0;
+	u32			pressed;
+	u16			lsd, msd, show = 1;		
+	ImagePtr	back = NULL, sd = NULL;
+	float		x = -8, y = 10;
+
+	back = LoadImage(WHITEIMG, 1);
+	if(!back)
+		return;
+		
+	SetTextureColor(back, 0, 0, 0);
+	back->w = 320;
+	back->h = 240;
+	
+	sd = LoadImage(SDIMG, 0);
+	if(!sd)
+		return;
+	sd->x = 128;
+	sd->y = 85;
+			
+	LoadNumbers();
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		DrawImage(back);
+		DrawString(x+32,  y+8, 0xff, 0xff, 0xff, "hours");
+		DrawString(x+104, y+8, 0xff, 0xff, 0xff, "minutes");
+		DrawString(x+176, y+8, 0xff, 0xff, 0xff, "seconds");
+		DrawString(x+248, y+8, 0xff, 0xff, 0xff, "frames");
+
+		// Counter Separators
+		DrawDigit(x+80,  y+16, 0xff, 0xff, 0xff, 10);
+		DrawDigit(x+152, y+16, 0xff, 0xff, 0xff, 10);
+		DrawDigit(x+224, y+16, 0xff, 0xff, 0xff, 10);
+
+		// Draw Hours
+		lsd = hours % 10;
+		msd = hours / 10;
+		DrawDigit(x+32, y+16, 0xff, 0xff, 0xff, msd);
+		DrawDigit(x+56, y+16, 0xff, 0xff, 0xff, lsd);
+
+		// Draw Minutes
+		lsd = minutes % 10;
+		msd = minutes / 10;
+		DrawDigit(x+104, y+16, 0xff, 0xff, 0xff, msd);
+		DrawDigit(x+128, y+16, 0xff, 0xff, 0xff, lsd);
+
+		// Draw Seconds
+		lsd = seconds % 10;
+		msd = seconds / 10;
+		DrawDigit(x+176, y+16, 0xff, 0xff, 0xff, msd);
+		DrawDigit(x+200, y+16, 0xff, 0xff, 0xff, lsd);
+
+		// Draw Frames
+		lsd = frames % 10;
+		msd = frames / 10;
+		DrawDigit(x+248, y+16, 0xff, 0xff, 0xff, msd);
+		DrawDigit(x+272, y+16, 0xff, 0xff, 0xff, lsd);
+		
+		if(show)
+		{
+			DrawImage(sd);
+			SD_blink_cycle(sd);
+		}
+
+		EndScene();
+		
+		if(toggle)
+		{
+			toggle --;
+			if(toggle == 0)
+				SetTextureColor(back, 0, 0, 0);
+		}
+
+		ControllerScan();
+		
+		pressed = Controller_ButtonsDown(0);		
+		
+		if (pressed & PAD_BUTTON_B)
+			done =	1;
+		
+		if (pressed & PAD_BUTTON_A)
+			show = !show;
+			
+		if (pressed & PAD_BUTTON_X)
+		{
+			SetTextureColor(back, 0xff, 0xff, 0xff);
+			toggle = 2;
+		}
+
+		if (pressed & PAD_BUTTON_START)
+		{
+			DrawMenu = 1;
+			HelpData = DISAPHELP;
+		}
+
+		frames ++;
+
+		if(frames > (IsPAL ? 49 : 59))
+		{
+			frames = 0;
+			seconds ++;
+		}
+
+		if(seconds > 59)
+		{
+			seconds = 0;
+			minutes ++;
+		}
+
+		if(minutes > 59)
+		{
+			minutes = 0;
+			hours ++;
+		}
+
+		if(hours > 99)
+			hours = 0;
+	}
+	FreeImage(&back);
+	FreeImage(&sd);
+	ReleaseNumbers();
+}
+

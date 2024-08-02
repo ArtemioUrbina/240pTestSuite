@@ -56,6 +56,7 @@
 <filepath="plugePAL.png" id="PLUGEPALIMG" colfmt=6 />
 <filepath="PLUGEBorder.png" id="PLUGEBORDERIMG" colfmt=6 />
 <filepath="grid224.png" id="GRID224IMG" colfmt=6 />
+<filepath="phase.png" id="PHASEIMG" colfmt=6 />
 <filepath="longrectangle.png" id="LONGRECTANGLEIMG" colfmt=6 />
 <filepath="Convergence-01-grid.png" id="CONVERGE01" colfmt=6 />
 <filepath="Convergence-02-cross.png" id="CONVERGE02" colfmt=6 />

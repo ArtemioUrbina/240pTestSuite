@@ -40,6 +40,8 @@ char **HelpData = GENERALHELP;
 u8 EndProgram = 0;
 u8 ChangeVideoEnabled = 1;
 
+ImagePtr 	sd_b1 = NULL, sd_b2 = NULL;
+
 void ShowMenu()
 {
 	int 		sel = 1, close = 0;
@@ -1412,6 +1414,52 @@ int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selecte
 	return value;
 }
 
+void SD_blink_cycle(ImagePtr sd)
+{
+	static int blink_counter = 0;
+	static int is_blinking = 0;
+	
+	if(!sd)
+		return;
+	
+	if(sd_b1) {
+		sd_b1->x = sd->x+16;
+		sd_b1->y = sd->y+32;
+	}
+	
+	if(sd_b2) {
+		sd_b2->x = sd->x+16;
+		sd_b2->y = sd->y+32;
+	}
+	
+	blink_counter++;	
+	if(sd_b1 && sd_b2 && blink_counter > 230)
+	{
+		if(!is_blinking)
+		{
+			if(rand() % 100 < 98)	// 2% chance every frame after 240
+			{
+				is_blinking = 1;
+				blink_counter = 230;
+				DrawImage(sd_b1);
+			}
+		}
+		else
+		{
+			if(blink_counter >= 232 && blink_counter < 234)
+				DrawImage(sd_b2);
+				
+			if(blink_counter >= 234 && blink_counter < 238)
+				DrawImage(sd_b1);
+	
+			if(blink_counter >= 238)
+			{	
+				blink_counter = 0;
+				is_blinking = 0;
+			}
+		}
+	}
+}
 
 #ifdef WII_VERSION
 

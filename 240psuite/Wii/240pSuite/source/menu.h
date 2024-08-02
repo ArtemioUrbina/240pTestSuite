@@ -25,7 +25,7 @@
 #define VERSION_NUMBER "GC GX Ver. 1.19"
 #endif
 
-#define VERSION_DATE "07/25/2024"
+#define VERSION_DATE "08/01/2024"
 
 extern u8 DrawMenu;
 extern char **HelpData;
@@ -44,6 +44,9 @@ void ShowPALBGWarning();
 
 void DrawCredits(ImagePtr Back);
 void DrawIntro();
+
+extern ImagePtr 	sd_b1, sd_b2;
+void SD_blink_cycle(ImagePtr sd);
 
 #ifdef WII_VERSION	
 void GetWiiRegion();

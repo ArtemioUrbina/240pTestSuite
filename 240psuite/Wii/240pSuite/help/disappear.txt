@@ -1,0 +1,8 @@
+              Disappearing Logo
+
+This test allows you to use a slow motion camera
+to measure how long it takes from a button
+press to when the logo disappears.
+
+You can also use a photodiode and press #GX#G,
+which turns the whole back to white for 2 frames.
