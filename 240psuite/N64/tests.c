@@ -130,8 +130,8 @@ void drawDropShadow(int striped) {
 		// Regular test
 		sshadow = loadImage("rom:/shadow.sprite");
 		if(sshadow)	{
-			x = dW/2- sshadow->tiles->width/2;
-			y = dH/2 - sshadow->tiles->height/2;
+			x = getDispHeight()/2- sshadow->tiles->width/2;
+			y = getDispHeight()/2 - sshadow->tiles->height/2;
 		}
 		
 		buzz = loadImage("rom:/buzzbomber.sprite");
@@ -146,8 +146,8 @@ void drawDropShadow(int striped) {
 	else {
 		shadow = loadImage("rom:/striped.sprite");
 		if(shadow)	{
-			x = dW/2- shadow->tiles->width/2;
-			y = dH/2 - shadow->tiles->height/2;
+			x = getDispHeight()/2- shadow->tiles->width/2;
+			y = getDispHeight()/2 - shadow->tiles->height/2;
 		}
 	}
 	
@@ -231,8 +231,8 @@ void drawDropShadow(int striped) {
 			y++;
 		if(y < 0)
 			y = 0;
-		if(y > dH - shadow->tiles->height)
-			y = dH - shadow->tiles->height;
+		if(y > getDispHeight() - shadow->tiles->height)
+			y = getDispHeight() - shadow->tiles->height;
 			
 		if(keys.d_left) {
 			x--;
@@ -250,8 +250,8 @@ void drawDropShadow(int striped) {
 		}
 		if(x < 0)
 			x = 0;
-		if(x > dW - shadow->tiles->width)
-			x = dW - shadow->tiles->width;
+		if(x > getDispWidth() - shadow->tiles->width)
+			x = getDispWidth() - shadow->tiles->width;
 			
 		if(selback == 1) {
 			currentframe ++;
@@ -477,8 +477,8 @@ void drawLagTest() {
 		rdpqEnd();
 		
 		if(toggle) {
-			drawBlackBox(0, 0, 6, dH);
-			drawBlackBox(314, 0, 6, dH);
+			drawBlackBox(0, 0, 6, getDispHeight());
+			drawBlackBox(314, 0, 6, getDispHeight());
 		}
 
 		drawString(32, 8, 0, 0,	0, "hours");
@@ -1005,12 +1005,12 @@ void drawAlternate240p480i()
 	
 	if(isPAL) {
 		if(videoModeToInt(&current_resolution) != SUITE_320x240) {
-			setVideo(RESOLUTION_320x240);	
+			changeVMode(RESOLUTION_320x240);	
 		}
 	}
 	else {
 		if(videoModeToInt(&current_resolution) != SUITE_320x240) {		
-			setVideo(RESOLUTION_320x240);
+			changeVMode(RESOLUTION_320x240);
 		}
 	}
 	
@@ -1119,9 +1119,9 @@ void drawAlternate240p480i()
 				res = !res;
 				times[current - 1].res = res;	
 				if(!res)
-					setVideo(RESOLUTION_320x240);
+					changeVMode(RESOLUTION_320x240);
 				else
-					setVideo(RESOLUTION_640x480);
+					changeVMode(RESOLUTION_640x480);
 			}
 			if(status == 2)	{
 				times[current - 1].type = 1;
@@ -1134,5 +1134,5 @@ void drawAlternate240p480i()
 	setMenuVideo(1);
 	
 	useReducedWidthSpace(1);
-	setVideo(oldvmode);	
+	changeVMode(oldvmode);	
 }

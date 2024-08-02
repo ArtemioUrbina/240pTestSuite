@@ -618,7 +618,8 @@ void drawGrid() {
 		end = 0;
 	}
 	
-	setVideo(targetRes[gridResolution]);
+	setMenuVideo(0);
+	changeVMode(targetRes[gridResolution]);
 	while(!end) {
 		getDisplay();
 
@@ -641,7 +642,7 @@ void drawGrid() {
 			tmpRes = selectMenu("Select", verMenuData, NUM_RES, gridResolution+1);
 			if(tmpRes != MENU_CANCEL) {
 				gridResolution = tmpRes;
-				setVideo(targetRes[gridResolution]);
+				changeVMode(targetRes[gridResolution]);
 			}
 		}
 	}
@@ -649,7 +650,8 @@ void drawGrid() {
 	for(unsigned int res = 0; res < NUM_RES; res ++)
 		freeImage(&back[res]);
 	
-	setVideo(oldVMode);
+	changeVMode(oldVMode);
+	setMenuVideo(1);
 }
 
 void drawGrayramp() {
@@ -681,7 +683,7 @@ void drawGrayramp() {
 	
 	freeImage(&back);
 	
-	drawSplash("rom:/grayramp.sprite", 0);
+	drawSplash("rom:/grayramp.sprite", 0, 32);
 }
 
 void draw100IRE() {
@@ -821,7 +823,7 @@ void drawHCFR() {
 		sprintf(msg, "%s %03d,%03d,%03d", 
 				hcfr_data[hcfr_type].data[hcfr_num].name, r, g, b);
 
-		drawStringC(2*dH/3+fh, 0x7f, 0x7f, 0x7f, msg);
+		drawStringC(2*getDispHeight()/3+fh, 0x7f, 0x7f, 0x7f, msg);
 		
 		checkMenu(HCFR, NULL);
 		waitVsync();

@@ -32,9 +32,6 @@ filter_options_t	current_antialias = 0;
 unsigned int		enablePAL = 0;
 unsigned int		vMode = SUITE_NONE;
 
-unsigned int dW = 320;
-unsigned int dH = 240;
-
 unsigned int videoSet = 0;
 
 surface_t* __disp = NULL;
@@ -43,7 +40,8 @@ volatile uint64_t __frames = 0;
 uint64_t __lastVbl = 0;
 float __vblLen = 0;
 
-extern void *__safe_buffer[];
+resolution_t 	__newInternalResChange;
+int 			__changeInternalRes = 0;
 
 float getFrameLen() {
 	return __vblLen;
@@ -57,39 +55,16 @@ void vblCallback(void) {
     __frames++;
 }
 
-#ifndef DEBUG_BENCHMARK
-
-void getDisplay() {
-	__disp = display_get();
-
-	rdpqUpscalePrepareFB();
-}
-
-inline void _internalFlipBuffer() {
-	if(__disp) {
-		executeUpscaleFB();
-		display_show(__disp);
-		__disp = NULL;
-	}
-}
-
-void drawNoVsync() {
-	_internalFlipBuffer();
-}
-
-void waitVsync() {
-	uint64_t nextFrame = __frames + 1;
-	
-	_internalFlipBuffer();
-	
-	while (nextFrame > __frames) ;
-}
-
-#else
+#ifdef DEBUG_BENCHMARK
 uint64_t __frameStart = 0;
 uint64_t __idleStart = 0;
 float __frameIdle = 20, __minIdle = 20;
 float __frameLen = 0, __maxFrameLen = 0;
+
+void resetIdle() {
+	__minIdle = 20.0f;
+	__maxFrameLen = 0.0f;
+}
 
 void drawFrameLens() {
 	int warn = 0;
@@ -110,17 +85,33 @@ void drawFrameLens() {
 	sprintf(str, "RAM: %dKB/%dKB", (getUsedRAM() / 1024), get_memory_size() / 1024);
 	drawStringB(10, 15, 0xff, 0xff, 0xff, str);
 }
+#endif
+
+inline void checkInternalResChange() {
+	if(!__changeInternalRes)
+		return;
+	
+	setVideoInternal(__newInternalResChange);
+	setClearScreen();
+	
+	__changeInternalRes = 0;
+}
 
 void getDisplay() {
+	checkInternalResChange();
+#ifdef DEBUG_BENCHMARK
 	__frameStart = get_ticks_us();
+#endif
 	__disp = display_get();
-	
+
 	rdpqUpscalePrepareFB();
 }
 
 inline void _internalFlipBuffer() {
 	if(__disp) {
+#ifdef DEBUG_BENCHMARK
 		drawFrameLens();
+#endif
 		executeUpscaleFB();
 		display_show(__disp);
 		__disp = NULL;
@@ -130,34 +121,52 @@ inline void _internalFlipBuffer() {
 void drawNoVsync() {
 	_internalFlipBuffer();
 	
-	// Fill times since we have no data
+#ifdef DEBUG_BENCHMARK
+// Fill times since we have no data
 	__frameLen = (get_ticks_us() - __frameStart)/1000.0f;
 	__frameIdle = __frameLen;
+#endif
+}
+
+int getHardWidth() {
+	if(!videoSet || vMode == SUITE_NONE)
+		return 0;
+	if(__changeInternalRes)
+		return __newInternalResChange.width;
+	return(current_resolution.width);
+}
+
+int getHardHeight() {
+	if(!videoSet || vMode == SUITE_NONE)
+		return 0;
+	if(__changeInternalRes)
+		return __newInternalResChange.height;
+	return(current_resolution.height);
 }
 
 void waitVsync() {
-	uint64_t nextFrame = __frames + 1, now;
+	uint64_t nextFrame = __frames + 1;
 	
 	_internalFlipBuffer();
-	
+
+#ifdef DEBUG_BENCHMARK	
 	__idleStart = get_ticks_us();
+#endif
 	while (nextFrame > __frames) ;
-	now = get_ticks_us();
+#ifdef DEBUG_BENCHMARK
+	uint64_t now = get_ticks_us();
 	
 	__frameLen = (now - __frameStart)/1000.0f;
 	__frameIdle = (now - __idleStart)/1000.0f;
-}
-
-void resetIdle() {
-	__minIdle = 20.0f;
-	__maxFrameLen = 0.0f;
-}
-
 #endif
+}
 
 /* Resolutions */
 
-void resetVideoVars() {
+void initVideo() {
+	__disp = NULL;
+	__changeInternalRes = 0;
+
 	current_resolution = RESOLUTION_320x240;
 	current_bitdepth = DEPTH_16_BPP;
 	current_buffers = SUITE_NUM_BUFFERS;
@@ -165,22 +174,15 @@ void resetVideoVars() {
 	current_antialias = FILTERS_RESAMPLE;
 	enablePAL = isPAL;
 	vMode = SUITE_NONE;
-}
-
-void initVideo() {
-	__disp = NULL;
-
-	resetVideoVars();
+	
 	videoSet = 0;
 }
 
-void setVideo(resolution_t newRes) {
+void setVideoInternal(resolution_t newRes) {
 	if(vMode != SUITE_NONE && isSameRes(&newRes, &current_resolution))
 		return;
 	
-	if(videoSet) {	
-		waitVsync();
-		
+	if(videoSet) {		
 		disable_interrupts();		
 		freeMenuFB();
 		freeUpscaleFB();
@@ -194,9 +196,6 @@ void setVideo(resolution_t newRes) {
 	
 	current_resolution = newRes;
 	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
-
-	dW = current_resolution.width;
-	dH = current_resolution.height;
 	
 	vMode = videoModeToInt(&current_resolution);
 	
@@ -211,35 +210,32 @@ void setVideo(resolution_t newRes) {
 }
 
 void changeToH256onVBlank() {
-	if(current_resolution.height == 240) {
+	if(current_resolution.height == 240)
 		if(current_resolution.width == 320) {
-			setVideo(RESOLUTION_256x240);
-			setClearScreen();
-		}
+			changeVMode(RESOLUTION_256x240);
 	}
 	
 	if(current_resolution.height == 480) {
-		if(current_resolution.width == 640) {
-			setVideo(RESOLUTION_512x480);
-			setClearScreen();
-		}
+		if(current_resolution.width == 640)
+			changeVMode(RESOLUTION_512x480);
 	}
 }
 
 void changeToH320onVBlank() {
 	if(current_resolution.height == 240) {
-		if(current_resolution.width == 256) {
-			setVideo(RESOLUTION_320x240);
-			setClearScreen();
-		}
+		if(current_resolution.width == 256)
+			changeVMode(RESOLUTION_320x240);
 	}
 	
 	if(current_resolution.height == 480) {
-		if(current_resolution.width == 512) {
-			setVideo(RESOLUTION_640x480);
-			setClearScreen();
-		}
+		if(current_resolution.width == 512)
+			changeVMode(RESOLUTION_640x480);
 	}
+}
+
+void changeVMode(resolution_t newRes) {
+	__newInternalResChange = newRes;
+	__changeInternalRes = 1;
 }
 
 int isVMode256() {

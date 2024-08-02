@@ -112,6 +112,8 @@ int main(void) {
 			}
 			reload = 1;
 		}
+		if(keys.b) 
+			drawIntro();
 	}
 	freeImage(&bg);
 	freeImage(&sd);
@@ -506,7 +508,7 @@ void drawVideoTestsMenu(void) {
 }
 
 void drawIntro() {
-	setVideo(RESOLUTION_640x480);
-	drawSplash("rom:/libdragon.sprite", LOGO_HOLD);
-	setVideo(RESOLUTION_320x240);
+	changeVMode(RESOLUTION_640x480);
+	drawSplash("rom:/libdragon.sprite", LOGO_HOLD, 12);
+	changeVMode(RESOLUTION_320x240);
 }

@@ -22,16 +22,15 @@ extern filter_options_t	current_antialias;
 extern unsigned int		enablePAL;
 extern unsigned int		vMode;
 
-extern unsigned int dW;
-extern unsigned int dH;
-
 void getDisplay();
 void waitVsync();
 void drawNoVsync();
 void vblCallback();
+int getHardWidth();
+int getHardHeight();
 
 void initVideo();
-void setVideo(resolution_t newRes);
+void changeVMode(resolution_t newRes);
 
 int isSameRes(resolution_t *res1, const resolution_t *res2);
 int videoModeToInt(resolution_t *res);
@@ -40,6 +39,8 @@ void changeToH256onVBlank();
 void changeToH320onVBlank();
 int isVMode256();
 int isVMode480();
+
+void setVideoInternal(resolution_t newRes);
 
 #ifdef DEBUG_BENCHMARK
 #define	IDLE_WARN_MS	2.0f

@@ -26,7 +26,7 @@
 #define PAL4_SIZE	16
 // We can't know the size (mksprite.c:1163) our highest one is 32,
 // and 64 causes a buffer overflow in our fade code
-#define PAL8_SIZE	32
+#define PAL8_SIZE	256
 
 int clearScreen = 0;
 unsigned int currFB = 0;
@@ -162,14 +162,10 @@ void rdpqFillWithImage(image* data) {
 	if(!data->tiles)		return;
 	if(!data->palette)		return;
 #endif
-	unsigned int width = __disp->width, height = __disp->height;
 	surface_t tiles_surf = sprite_get_pixels(data->tiles);
 
-	if(upscaleFrame) {
+	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
-		width = __upscale_fb->width;
-		height = __upscale_fb->height;
-	}
 
 	rdpq_clear(RGBA32(0xf8, 0xf8, 0xf8, 0xff));
 	
@@ -179,7 +175,7 @@ void rdpqFillWithImage(image* data) {
 	rdpq_tex_upload_tlut(data->palette, 0, data->palSize);
 	rdpq_tex_upload(TILE0, &tiles_surf, &(rdpq_texparms_t) 
 		{ .s.repeats = REPEAT_INFINITE, .t.repeats = REPEAT_INFINITE });
-    rdpq_texture_rectangle(TILE0, 0, 0, width, height, 0, 0);
+    rdpq_texture_rectangle(TILE0, 0, 0, getDispWidth(), getDispHeight(), 0, 0);
 	
 	rdpq_mode_pop();
 	
@@ -286,14 +282,9 @@ void freeImage(image **data) {
 surface_t *__menu_fb = NULL;
 
 int copyMenuFB() {	
-#ifdef DEBUG_BENCHMARK
-	assertf(__disp != NULL, "copyFrameBuffer(): __disp was NULL");
-	assertf(__menu_fb == NULL, "copyFrameBuffer(): __menu_fb was not NULL");
-#else
 	if(!__disp)
 		return 0;
 	freeMenuFB();
-#endif
 
 	__menu_fb = (surface_t *)malloc(sizeof(surface_t));
 	if(!__menu_fb)
@@ -371,6 +362,12 @@ void darkenMenuFB(int amount) {
 	}
 }
 
+int hasMenuFB() {
+	if(!__menu_fb)
+		return 0;
+	return 1;
+}
+
 /* Frame Buffer for upscaling */
 
 void rdpqUpscalePrepareFB() {
@@ -413,14 +410,8 @@ void freeUpscaleFB() {
 }
 
 void executeUpscaleFB() {
-	if(!upscaleFrame) {
-		if(__disp) {
-			// Set dW and dH to the real values for next frame
-			dW = __disp->width;
-			dH = __disp->height;
-		}
+	if(!upscaleFrame)
 		return;
-	}
 
 	if(!__upscale_fb || !__disp)
 		return;
@@ -438,10 +429,6 @@ void executeUpscaleFB() {
 			.scale_x = 2.0f, .scale_y = 2.0f
 			});
 	rdpq_detach();
-	
-	// Set dW and dH to the real values for next frame
-	dW = __upscale_fb->width;
-	dH = __upscale_fb->height;
 	
 	upscaleFrame = 0;
 }
@@ -561,10 +548,34 @@ void fadeImageStep(image *data) {
 	updatePalette(data);
 }
 
+int getDispWidth() {
+	if(!upscaleFrame)
+		return getHardWidth();
+	
+	if(__upscale_fb)
+		return(__upscale_fb->width);
+
+	return 0;
+}
+
+int getDispHeight() {
+	if(!upscaleFrame)
+		return getHardHeight();
+	
+	if(__upscale_fb)
+		return(__upscale_fb->height);
+	
+	return 0;
+}
+
 #define FADE_STEPS	20
 #define FADE_HOLD	10
 
-void drawSplash(char *name, int delay) {
+// We force an external palette size because the API doens't give us one
+// if unknown, to add a new image, add verbose in the Makefile for
+// mksprite and check the colors
+
+void drawSplash(char *name, int delay, int paleteSize) {
 	joypad_buttons_t keys;
 	image *logo = NULL;
 	
@@ -573,8 +584,9 @@ void drawSplash(char *name, int delay) {
 		return;
 
 	logo->center = true;
-	if(dH > 240)
+	if(getDispHeight() > 240)
 		logo->scale = 0;
+	logo->palSize = paleteSize;
 	
 	while(delay) {
 		getDisplay();

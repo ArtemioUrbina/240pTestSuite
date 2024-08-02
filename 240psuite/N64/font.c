@@ -19,8 +19,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
  
- #include "font.h"
- #include "video.h"
+#include "font.h"
+#include "video.h"
+#include "image.h" 
  
 sprite_t *font240 = NULL;
 int __reducedWidthSpace = 1;
@@ -234,7 +235,7 @@ void drawStringC(int y, int r, int g, int b, char *text) {
 	unsigned int x = 0, strWidth = 0;
 	
 	strWidth = measureString(text);
-	x = (__disp->width - strWidth)/2;
+	x = (getDispWidth() - strWidth)/2;
 	f_color = 0x00000000;
 	graphics_set_color(f_color, 0x00000000);
 	graphics_draw_text_suite(__disp, x+1, y+1, text);

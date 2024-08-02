@@ -143,6 +143,8 @@ void showMenu() {
 					end = 1;
 					break;
 			}
+			if(!hasMenuFB())
+				setClearScreen();
 		}
 	}
 	
@@ -237,18 +239,18 @@ void selectVideoMode(int useBack) {
 		if(keys.a) {     
 			switch(sel)	{			
 				case 1:						
-					setVideo(RESOLUTION_320x240);
+					changeVMode(RESOLUTION_320x240);
 					break;
 				case 2:
-					setVideo(RESOLUTION_640x480);
+					changeVMode(RESOLUTION_640x480);
 					break;
 				case 3:
 					if(enablePAL)
-						setVideo(RESOLUTION_320x240);
+						changeVMode(RESOLUTION_320x240);
 					break;
 				case 4:
 					if(enablePAL)
-						setVideo(RESOLUTION_640x480);
+						changeVMode(RESOLUTION_640x480);
 					break;		
 				case 5:
 					close = 1;
@@ -260,6 +262,8 @@ void selectVideoMode(int useBack) {
 	}
 	freeImage(&back);
 	if(!isSameRes(&oldVmode, &current_resolution))
+		setClearScreen();
+	if(!hasMenuFB())
 		setClearScreen();
 }
 
@@ -354,6 +358,8 @@ void drawCredits(int usebuffer) {
 						check =	0;	
 				}
 				freeImage(&nish);
+				if(!hasMenuFB())
+					setClearScreen();
 			}
 		}
 		
@@ -362,6 +368,9 @@ void drawCredits(int usebuffer) {
 	
 	freeImage(&back);
 	freeImage(&qr);
+	
+	if(!hasMenuFB())
+		setClearScreen();
 }
 
 /* Floating Menu functions */

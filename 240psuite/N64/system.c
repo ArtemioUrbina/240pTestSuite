@@ -46,7 +46,7 @@
 	
 	dfs_init(DFS_DEFAULT_LOCATION);
 	loadFont();
-	setVideo(RESOLUTION_320x240);
+	setVideoInternal(RESOLUTION_320x240);
 	
 	joypad_init();
 	

@@ -37,6 +37,9 @@ typedef struct image_st {
 
 void setClearScreen();
 
+int getDispWidth();
+int getDispHeight();
+
 /* Drawing functions */
 void rdpqStart();
 void rdpqEnd();
@@ -56,6 +59,7 @@ int copyMenuFB();
 void freeMenuFB();
 void drawMenuFB();
 void darkenMenuFB(int amount);
+int hasMenuFB();
 
 /* Upscaler Frame Buffer functions */
 void rdpqUpscalePrepareFB();
@@ -73,7 +77,7 @@ void updatePalette(image *data);
 void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);
 void fadeImageStep(image *data);
-void drawSplash(char *name, int delay);
+void drawSplash(char *name, int delay, int paleteSize);
 
 
 /* Big Numbers */
