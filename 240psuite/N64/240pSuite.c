@@ -185,6 +185,9 @@ void drawPatternsMenu(void) {
 				case 2:
 					drawPatternsGeometryMenu();
 					break;
+				case 3:
+					drawHCFR();
+					break;
 				case 4:
 					exit = 1;
 					break;
@@ -289,6 +292,9 @@ void drawPatternsColorMenu(void) {
 					break;
 				case 8:
 					drawWhiteScreen();
+					break;
+				case 9:
+					draw100IRE();
 					break;
 				case 10:
 					drawSharpness();

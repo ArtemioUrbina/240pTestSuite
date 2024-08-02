@@ -46,6 +46,8 @@ void rdpqSetDrawMode() {
 }
  
 void rdpqStart() {
+	assertf(__disp != NULL, "rdpqStart(): with NULL _disp");
+	
 	if(clearScreen) {
 		rdpq_attach_clear(__disp, NULL);
 
@@ -197,6 +199,17 @@ void rdpqClearScreenWhite() {
 	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
 	rdpq_clear(RGBA32(IRE_100, IRE_100, IRE_100, 0xff));
+	if(upscaleFrame)
+		rdpq_detach();
+}
+
+void rdpqDrawRectangle(int tx, int ty, int bx, int by, int r, int g, int b) {
+	if(upscaleFrame)
+		rdpq_attach(__upscale_fb, NULL);
+	
+	rdpq_set_mode_fill(RGBA32(r, g, b, 0xff));
+	rdpq_fill_rectangle(tx, ty, bx, by);
+	
 	if(upscaleFrame)
 		rdpq_detach();
 }

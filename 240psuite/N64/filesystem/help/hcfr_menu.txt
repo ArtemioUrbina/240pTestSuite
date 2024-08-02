@@ -1,0 +1,21 @@
+      HCFR STANDARD SELECTOR
+
+This menu shows the #CHCFR software#C
+profiles.
+
+- #YREC 601 (NTSC)#Y is recommended
+    for #CNTSC CRT#C users.
+- #YPAL/SECAM#Y is recommended for 
+    #CPAL CRT#C users.
+- #YREC 709#Y is recommended for #CHD#C
+    and #CUHD/4K#C in #CSDR#C flat panel
+    TV users.
+- #YsRGB#Y is recommended for #CPC VGA#C
+    and up #CCRT monitors#C. 
+
+For #Cwestern regions#C of any color
+space use #YD65#Y, and #YD93#Y is for
+#CJapanese SDTVs#C that support it.
+
+Access detailed #Yhelp#Y within the
+test with #GSTART#G.	

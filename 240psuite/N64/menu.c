@@ -277,7 +277,7 @@ void drawCredits(int usebuffer) {
 	qr = loadImage("rom:/qr.sprite");
 		
 	while(!done) {
-		int x = 35, y = 40, x2 = 150, y2 = 0;
+		int x = 28, y = 40, x2 = 158, y2 = 0;
 
 		getDisplay();
 
@@ -301,23 +301,24 @@ void drawCredits(int usebuffer) {
 
 		drawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "libDragon"); y += fh; y2 = y;
-		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope Pattern:"); y2 += fh; 
+		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney\n(@khmr33)"); y2 += 2*fh;
+		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "@FirebrandX"); y2 += fh;
 		drawStringS(x, y, 0x00, 0xff, 0x00, "Donna Art:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Jose Salot\n(@pepe_salot)"); y += 2*fh;
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
 		drawStringS(x, y, 0x00, 0xff, 0x00, "Advisor:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Fudoh"); y += fh; 
-		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Collaboration:"); y2 += fh; 
-		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "shmups regulars"); y2 += fh+5;
-		y = y2;
+		drawStringS(x, y, 0x00, 0xff, 0x00, "Collaboration:"); y += fh; 
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "shmups regulars"); y += fh+5;
+		y = y2+fh;
 	
 		drawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "#Yhttp://junkerhq.net/240p/#Y"); y += fh+5; 
 
-		drawStringS(x-8, y, 0x00, 0xba, 0xba, "This program is free Software");  y += fh;
-		drawStringS(x-8, y, 0x00, 0xba, 0xba, "Source code is available under GPL");
+		drawStringS(x-4, y, 0x00, 0xba, 0xba, "This program is free Software");  y += fh;
+		drawStringS(x-4, y, 0x00, 0xba, 0xba, "Source code is available under GPL");
 		
 		drawStringS(140, 216, 0x00, 0xba, 0xba, "Dedicated to Elisa.");
 		
@@ -369,51 +370,55 @@ int selectMenu(char *title, fmenuData *menuData, int numOptions, int selectedOpt
 	return(selectMenuEx(title, menuData, numOptions, selectedOption, NULL));
 }
 
+#define OPTIONS_SMALL	6.0
+#define MAX_OPTIONS 	8.0
+
 int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedOption, char *helpFile) {
 	int 		sel = selectedOption, close = 0, value = MENU_CANCEL;
 	image		*back = NULL;
 	
-	back = loadImage("rom:/menu.sprite");
+	if(numOptions <= OPTIONS_SMALL)
+		back = loadImage("rom:/menu.sprite");
+	else
+		back = loadImage("rom:/menularge.sprite");
+	
 	if(back)
 		back->center = 1;
-	  
-	setClearScreen();
+	 
+	debug_init_isviewer();
 	while(!close) {		
 		uint8_t		r = 0xff;
 		uint8_t		g = 0xff;
 		uint8_t		b = 0xff;
 		uint8_t		c = 1, i = 0;
-		uint16_t 	x = 0;
 		uint16_t 	y = 0;
 		joypad_buttons_t keys;
 		
 		getDisplay();
 		
+		setClearScreen();
 		rdpqStart();
 		rdpqDrawImage(back);
 		rdpqEnd();
 
-		x = back->x + 8;
 		y = back->y + 8;
 		drawStringC(y, 0x00, 0xff, 0x00, title); y += 3*fh;
 
-		if(numOptions > 6)
-			y -= fh;	
+		if(numOptions <= OPTIONS_SMALL)
+			y = back->y + ((((OPTIONS_SMALL - (float)numOptions)/2.0f)-0.5) * fh) + 24;	
+		else
+			y = back->y + ((((MAX_OPTIONS - (float)numOptions)/2.0f)-0.5) * fh) + 24;	
 		
 		for(i = 0; i < numOptions; i++) {
-			drawStringS(x+8, y, r, sel == c ? 0 : g, sel == c ? 0 : b, menuData[i].optionText);
-			y += fh; c++;		
+			drawStringC(y, r, sel == c ? 0 : g, sel == c ? 0 : b, menuData[i].optionText);
+			y += fh;
+			c++;		
 		}
 		
-		y += fh;
-		
-		if(numOptions <= 6)
-			y += fh;
-		
-		drawStringC(back->y+80, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
+		drawStringC(back->y + (numOptions <= OPTIONS_SMALL ? 80 : 112), r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
 		
 		if(helpFile)
-			drawStringC(y+2*fh, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
+			drawStringC(back->y + (numOptions <= OPTIONS_SMALL ? 80 : 112) + 40, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
 
 		waitVsync();
 

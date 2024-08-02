@@ -21,6 +21,7 @@
  
 #include "patterns.h"
 #include "menu.h"
+#include "hcfr.h"
 
 void drawPLUGE() {
 	int end = 0, type = 0, showBorder = 0, showText = 0;
@@ -579,22 +580,51 @@ void drawMonoscope() {
 	freeImage(&keith);
 }
 
+#define NUM_RES 4
+
 void drawGrid() {
-	int end = 0;
-	image *back240 = NULL, *back480 = NULL;
+	int end = 1, gridResolution = 0, tmpRes = 0;
+	image *back[NUM_RES] = { NULL, NULL, NULL, NULL };
 	joypad_buttons_t keys;
+	fmenuData	verMenuData[NUM_RES] = { 
+										{ 0, "320x240" },
+										{ 1, "256x240" },
+										{ 2, "640x480" },
+										{ 3, "512x480" } };
+	char *grids[NUM_RES] = { 			"rom:/grid.sprite", 
+										"rom:/grid-256.sprite", 
+										"rom:/grid-480.sprite",
+										"rom:/grid-512.sprite" };
+	resolution_t targetRes[NUM_RES] = {	RESOLUTION_320x240,
+										RESOLUTION_256x240,
+										RESOLUTION_640x480,
+										RESOLUTION_512x480 };
+	resolution_t	oldVMode = current_resolution;
 	
-	back240 = loadImage("rom:/grid.sprite");
-	back480 = loadImage("rom:/grid-480.sprite");
-	if(back480)
-		back480->scale = 0;
+	for(unsigned int res = 0; res < NUM_RES; res ++) {
+		back[res] = loadImage(grids[res]);
+		if(!back[res])
+			return;
+	}
 	
+	if(back[2])
+		back[2]->scale = 0;
+	if(back[3])
+		back[3]->scale = 0;
+	
+	tmpRes = selectMenu("Select", verMenuData, NUM_RES, gridResolution+1);
+	if(tmpRes != MENU_CANCEL) {
+		gridResolution = tmpRes;
+		end = 0;
+	}
+	
+	setVideo(targetRes[gridResolution]);
 	while(!end) {
 		getDisplay();
 
 		rdpqStart();
 		
-		rdpqDrawImage(isVMode480() ? back480 : back240);
+		rdpqDrawImage(back[gridResolution]);
 		rdpqEnd();
 		
 		checkMenu(GRIDHELP, NULL);
@@ -606,10 +636,20 @@ void drawGrid() {
 		checkStart(keys);
 		if(keys.b)
 			end = 1;
+			
+		if(keys.r) {
+			tmpRes = selectMenu("Select", verMenuData, NUM_RES, gridResolution+1);
+			if(tmpRes != MENU_CANCEL) {
+				gridResolution = tmpRes;
+				setVideo(targetRes[gridResolution]);
+			}
+		}
 	}
 	
-	freeImage(&back240);
-	freeImage(&back480);
+	for(unsigned int res = 0; res < NUM_RES; res ++)
+		freeImage(&back[res]);
+	
+	setVideo(oldVMode);
 }
 
 void drawGrayramp() {
@@ -642,4 +682,179 @@ void drawGrayramp() {
 	freeImage(&back);
 	
 	drawSplash("rom:/grayramp.sprite", 0);
+}
+
+void draw100IRE() {
+	int 			done = 0;
+	int				irecount = 10, iremax = 10;  
+	int				text = 0, invert = 0, ireValue = 0;
+	char			msg[50];
+	int				*irevalues = NULL;
+	int				irevalues100[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
+	int				irevalues140[5] = { 0, 63, 127, 190, 255 };	
+	joypad_buttons_t keys;
+	
+	irevalues = irevalues100;
+	ireValue = irevalues[irecount];
+	while(!done) {		
+		getDisplay();
+		
+		rdpqStart();
+		rdpqClearScreen();
+		rdpqDrawRectangle(80, 60, 240, 180, ireValue, ireValue, ireValue);
+		rdpqEnd();
+		
+		if(text) {
+			if(!invert) {
+				if(text > 30)
+					sprintf(msg, "RANGE 0-100 IRE");
+				else
+					sprintf(msg, "XXX IRE");  // TODO IRE VALUE
+			  	drawStringS(180, 225, 0xff, 0xff, 0xff, msg);
+			  	text --;
+	  		}
+	  		else {
+				if(text > 30)
+					sprintf(msg, "RANGE 100-140 IRE");
+				else
+					sprintf(msg, "XXX IRE");  // TODO IRE VALUE
+			  	drawStringS(180, 225, 0xff, 0xff, 0xff, msg);
+			  	text --;
+	  		}
+		}
+		checkMenu(IREHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.l) {
+	  		if(!invert)	{
+				irecount --;
+				
+				if(irecount < 0)
+					irecount = 0;
+			}
+			else {
+				irecount ++;
+
+				if(irecount > iremax)
+					irecount = iremax;
+			}
+
+			text = 30;
+			ireValue = irevalues[irecount];
+		}
+	
+		if(keys.r) {
+	  		if(invert) {
+				irecount --;
+				
+				if(irecount < 0)
+					irecount = 0;
+			}
+			else {	 
+				irecount ++;
+				
+				if(irecount > iremax)
+					irecount = iremax;
+			}
+
+			text = 30;
+			ireValue  = irevalues[irecount];
+		}
+		
+		if(keys.a) {
+			invert = !invert;
+			ireValue = 0xff;
+			text = 60;
+
+			if(invert) {
+				irevalues = irevalues140;
+				iremax = 4;
+				irecount = 4;
+			}
+			else {
+				irevalues = irevalues100;
+				iremax = 10;
+				irecount = 10;
+			}
+		}
+	
+		if(keys.b)
+			done =	1;
+
+		checkStart(keys);
+	}
+}
+
+void drawHCFR() {
+	char 			msg[50];
+	int 			done = 0, hcfr_num = 0, hcfr_type = 0, i = 0;
+	fmenuData		fmenu[HCFR_TYPES+1];
+	joypad_buttons_t keys;
+
+	for(i = 0; i < HCFR_TYPES; i++)
+	{
+		fmenu[i].optionValue = i;
+		fmenu[i].optionText = hcfr_data[i].name;
+	}
+
+	hcfr_type = selectMenuEx("Select Grid", fmenu, HCFR_TYPES, hcfr_type+1, HCFRMENU);
+	if(hcfr_type == MENU_CANCEL)
+		return;
+	
+	while(!done) {
+		int	r, g, b;
+		
+		r = hcfr_data[hcfr_type].data[hcfr_num].r;
+		g = hcfr_data[hcfr_type].data[hcfr_num].g;
+		b = hcfr_data[hcfr_type].data[hcfr_num].b;
+		
+		getDisplay();
+		
+		rdpqStart();
+		rdpqClearScreen();
+		rdpqDrawRectangle(106, 80, 212, 160, r, g, b);  // 1/3th
+		rdpqEnd();
+		
+		sprintf(msg, "%s %03d,%03d,%03d", 
+				hcfr_data[hcfr_type].data[hcfr_num].name, r, g, b);
+
+		drawStringC(2*dH/3+fh, 0x7f, 0x7f, 0x7f, msg);
+		
+		checkMenu(HCFR, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.b)
+			done =	1;
+		
+		if(keys.d_left || keys.l) {
+			if (hcfr_num > 0)
+				hcfr_num--;
+		}
+
+		if(keys.d_right || keys.r) {
+			if (hcfr_num < HCFR_LEN)
+				hcfr_num++;
+		}
+
+		if(keys.c_right) {
+			int tmp_hcfr_type = 0;
+
+			tmp_hcfr_type = selectMenuEx("Select Standard", fmenu, HCFR_TYPES, hcfr_type+1, HCFRMENU);
+			if(tmp_hcfr_type != MENU_CANCEL && tmp_hcfr_type != hcfr_type)			{
+				hcfr_type = tmp_hcfr_type;
+				hcfr_num = 0;
+			}
+		}
+
+		if(keys.c_left)
+			hcfr_num = 0;
+			
+		checkStart(keys);
+	}
 }

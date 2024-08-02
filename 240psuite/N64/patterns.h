@@ -8,6 +8,9 @@ void drawCBGray();
 void drawColorbleed();
 void drawWhiteScreen();
 void drawSharpness();
+void draw100IRE();
+
+void drawHCFR();
 
 void drawMonoscope();
 void drawGrid();

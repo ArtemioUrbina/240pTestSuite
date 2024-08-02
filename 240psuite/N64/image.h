@@ -45,6 +45,7 @@ void rdpqDrawImageXY(image* data, int x, int y);
 void rdpqFillWithImage(image* data);
 void rdpqClearScreen();
 void rdpqClearScreenWhite();
+void rdpqDrawRectangle(int tx, int ty, int bx, int by, int r, int g, int b);
 
 image *loadImage(char *name);
 void freeImage(image **data);
