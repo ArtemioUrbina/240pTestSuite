@@ -48,6 +48,7 @@ extern char *helpData;
 #define IREHELP  		"/help/ire100.txt"
 #define HCFR			"/help/hcfr.txt"
 #define HCFRMENU  		"/help/hcfr_menu.txt"
+#define CONVERHELP		"/help/convergence.txt"
 
 #define BACKLITHELP		"/help/backlit.txt"
 #define GRIDHELP		"/help/grid.txt"

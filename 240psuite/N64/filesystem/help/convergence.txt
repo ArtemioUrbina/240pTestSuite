@@ -1,0 +1,8 @@
+         CONVERGENCE TESTS
+
+These are used to adjust color
+convergence in CRT displays.
+
+- Left and Right buttons allow
+cycling between patterns.
+

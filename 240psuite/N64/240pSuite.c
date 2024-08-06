@@ -382,6 +382,9 @@ void drawPatternsGeometryMenu(void) {
 				case 2:
 					drawGrid();
 					break;
+				case 4:
+					drawConvergence();
+					break;
 				case 5:
 					exit = 1;
 					break;

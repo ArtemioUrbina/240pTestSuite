@@ -860,3 +860,57 @@ void drawHCFR() {
 		checkStart(keys);
 	}
 }
+
+#define	NUM_CONV	5
+void drawConvergence()
+{
+	int 		done = 0, i = 0, current = 0;
+	char		*patterns[NUM_CONV] = { "rom:/convergence-01-grid.sprite",
+										"rom:/convergence-02-cross.sprite",
+										"rom:/convergence-03-dots.sprite",
+										"rom:/convergence-04-colors.sprite",
+										"rom:/convergence-05-colorsbl.sprite" };
+	image		*back[NUM_CONV];
+	joypad_buttons_t keys;
+	
+	for(i = 0; i < NUM_CONV; i++) {
+		back[i] = loadImage(patterns[i]);
+		if(!back[i])
+			return;
+	}
+	
+	while(!done) {	
+		getDisplay();
+
+		rdpqStart();
+		rdpqFillWithImage(back[current]);
+		rdpqEnd();
+		
+		checkMenu(CONVERHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		checkStart(keys);
+
+		if(keys.b)
+			done =	1;
+		
+		if(keys.a || keys.r) {
+			current ++;
+			if(current >= NUM_CONV)
+				current = 0;
+		}
+		
+		if (keys.l)	{
+			current --;
+			if(current < 0)
+				current = NUM_CONV - 1;
+		}
+	}
+	
+	for(i = 0; i < NUM_CONV; i++)
+		freeImage(&back[i]);
+	return;
+}

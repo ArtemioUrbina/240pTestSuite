@@ -162,25 +162,34 @@ void rdpqFillWithImage(image* data) {
 	if(!data->tiles)		return;
 	if(!data->palette)		return;
 #endif
-	surface_t tiles_surf = sprite_get_pixels(data->tiles);
 
-	if(upscaleFrame)
-		rdpq_attach(__upscale_fb, NULL);
+	if(sprite_fits_tmem(data->tiles)) {
+		surface_t tiles_surf = sprite_get_pixels(data->tiles);
 
-	rdpq_clear(RGBA32(IRE_100, IRE_100, IRE_100, IRE_100));
-	
-	rdpq_mode_push();
-	
-	rdpq_mode_tlut(TLUT_RGBA16);
-	rdpq_tex_upload_tlut(data->palette, 0, data->palSize);
-	rdpq_tex_upload(TILE0, &tiles_surf, &(rdpq_texparms_t) 
-		{ .s.repeats = REPEAT_INFINITE, .t.repeats = REPEAT_INFINITE });
-    rdpq_texture_rectangle(TILE0, 0, 0, getDispWidth(), getDispHeight(), 0, 0);
-	
-	rdpq_mode_pop();
-	
-	if(upscaleFrame)
-		rdpq_detach();
+		if(upscaleFrame)
+			rdpq_attach(__upscale_fb, NULL);
+
+		rdpq_clear(RGBA32(IRE_100, IRE_100, IRE_100, IRE_100));
+		
+		rdpq_mode_push();
+		
+		rdpq_mode_tlut(TLUT_RGBA16);
+		rdpq_tex_upload_tlut(data->palette, 0, data->palSize);
+		rdpq_tex_upload(TILE0, &tiles_surf, &(rdpq_texparms_t) 
+			{ .s.repeats = REPEAT_INFINITE, .t.repeats = REPEAT_INFINITE });
+		rdpq_texture_rectangle(TILE0, 0, 0, getDispWidth(), getDispHeight(), 0, 0);
+		
+		rdpq_mode_pop();
+		
+		if(upscaleFrame)
+			rdpq_detach();
+	}
+	else {
+		for(unsigned int y = 0; y < getDispHeight(); y += data->tiles->height) {
+			for(unsigned int x = 0; x < getDispWidth(); x += data->tiles->width)
+				rdpqDrawImageXY(data, x, y);
+		}
+	}
 }
 
 void rdpqClearScreen() {

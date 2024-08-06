@@ -9,11 +9,12 @@ void drawColorbleed();
 void drawWhiteScreen();
 void drawSharpness();
 void draw100IRE();
+void drawGrayramp();
 
 void drawHCFR();
 
 void drawMonoscope();
 void drawGrid();
-void drawGrayramp();
+void drawConvergence();
 
 #endif
