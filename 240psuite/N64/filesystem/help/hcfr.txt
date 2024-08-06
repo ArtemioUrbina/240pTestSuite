@@ -20,10 +20,11 @@ interprets the results from the
 colorimeter and provides #CCIE
 color#C differences (Delta E
 values), chromaticity diagrams,
-gamma curves and other values to
+
                        #C(cont...)#C
        HCFR PATTERNS (2/6)
 
+gamma curves and other values to
 assist you in profiling and
 calibrating your display. 
 curves and other values to assist
@@ -34,73 +35,99 @@ your display.
 
 To set up #YHCFR Colormeter#Y,
 attach your colorimeter
-to your computer, open the program, click
-#CFile -> New#C, and select DVD Manual as your
-selected generator. Select your colorimeter
-from the list, and click OK.
+to your computer, open the
+program, click #CFile -> New#C, and
+select DVD Manual as your
+selected generator. Select your
+colorimeter from the list, and
+click OK.
 
 Once in #YHCFR Colormeter#Y, click
 #CAdvance -> Preferences#C. 
-                                         #C(cont...)#C
-                HCFR PATTERNS (3/6)
 
-Under the #CGeneral#C tab, ensure that the section
-#CColors to add when measuring primaries and
+                       #C(cont...)#C
+       HCFR PATTERNS (3/6)
+
+Under the #CGeneral#C tab, ensure
+that the section #CColors to add
+when measuring primaries and
 secondaries#C is set to #YWhite#Y. 
 
-Under the #CReferences#C tab, choose your color
-space. #YPAL/SECAM#Y is recommended for #CPAL CRT#C
-users. #YSDTV - REC601 (NTSC)#Y is recommended for
-#CNTSC CRT#C users. #YHD TV REC 709#Y is recommended
-for #CHD#C and #CUHD/4K#C in #CSDR flat panel TV#C users.
-#YsRGB#Y is recommended for #CPC VGA#C and up #CCRT
-monitors#C. 
+Under the #CReferences#C tab, choose
+your color space. #YPAL/SECAM#Y is
+recommended for #CPAL CRT#C users.
+#YSDTV - REC601 (NTSC)#Y is
+recommended for #CNTSC CRT#C users.
+#YHD TV REC 709#Y is recommended
+for #CHD#C and #CUHD/4K#C in #CSDR
+flat panel TV#C users. #YsRGB#Y is
+recommended for #CPC VGA#C and up
+#CCRT monitors#C. 
+
+White point is normally #YD65#Y
+(default) for western regions of
+all color space types.
 
 
-                                         #C(cont...)#C
-                HCFR PATTERNS (4/6)
+                       #C(cont...)#C
+       HCFR PATTERNS (4/6)
 
-White point is normally #YD65#Y (default) for
-western regions of all color space types.
-#YJapanese SDTV#Y often used #YD93#Y as a white point
-(which will appear cooler, or bluer, than #YD65#Y). 
+#YJapanese SDTV#Y often used #YD93#Y as
+a white point (which will appear
+cooler, or bluer, than #YD65#Y).
 
-Most gamma calculations normally default to
-#CITU-R BT.1886#C, which uses #CDisplay Gamma Power
-Law 2.4#C. Your device may have a different native
-gamma response, so choose a different Power Law
-value if required. #YsRGB#Y has a specific non-linear
-gamma that cannot be customized. 
+Most gamma calculations normally
+default to #CITU-R BT.1886#C, which
+uses #CDisplay Gamma Power Law 2.4#C.
+Your device may have a different
+native gamma response, so choose
+a different Power Law value if
+required. #YsRGB#Y has a specific
+non-linear gamma that cannot be
+customized. 
+
+Ensure your options chosen here
+match the test pattern list you
+choose in the #C240p Test Suite#C. 
 
 
-                                         #C(cont...)#C
-                HCFR PATTERNS (5/6)
 
-Ensure your options chosen here match the test
-pattern list you choose in the #C240p Test Suite#C. 
 
-When you are ready to start measuring, click the
-#CMeasure#C menu, and select your measurement. If
-any large scale changes are made to your display,
-it is recommended to re-run a #CGray-scale sweep#C
-often, so that baseline calculations can be
-accurately made for #CDelta E#C measurements.
+                       #C(cont...)#C
+       HCFR PATTERNS (5/6)
 
-A menu will pop up asking you to select a given
-#CDVD chapter#C and #Ccolor name#C. Use the #YL#Y and #YR#Y
-buttons to scroll through the color list and
-                                         #C(cont...)#C
-                HCFR PATTERNS (6/6)
+When you are ready to start
+measuring, click the #CMeasure#C
+menu, and select your measurement.
+If any large scale changes are
+made to your display, it is
+recommended to re-run a
+#CGray-scale sweep#C often, so that
+baseline calculations can be
+accurately made for #CDelta E#C
+measurements.
 
-select the color desired. Once ready to measure,
-click #COK#C in #YHCFR Colormeter#Y to measure
-the test pattern.
+A menu will pop up asking you to
+select a given #CDVD chapter#C and
+#Ccolor name#C. Use the #YL#Y and
+#YR#Y buttons to scroll through
+the color list and select the
+color desired. Once ready to
+measure, click #COK#C in #YHCFR
+Colormeter#Y to measure the test
+pattern.
 
-Use the #CContinuous measure#C mode to be able to
-adjust your display's settings to match the
-values required for your chosen color space,
-white point, gamma, etc. 
+                       #C(cont...)#C
+       HCFR PATTERNS (6/6)
 
-Pattern data and testing by #GDan Mons#G and
-#GKeith Raney#G.
+Use the #CContinuous measure#C mode
+to be able to adjust your
+display's settings to match the
+values required for your chosen
+
+color space, white point, gamma,
+etc.
+
+Pattern data and testing by
+#GDan Mons#G and #GKeith Raney#G.
 

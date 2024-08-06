@@ -192,20 +192,20 @@ void setVideoInternal(resolution_t newRes) {
 		freeUpscaleFB();
 		enable_interrupts();
 		
+		_internalWaitVsync();
 		display_close();
+		unregister_VI_handler(vblCallback);
 		videoSet = 0;
 	}
-	else
-		register_VI_handler(vblCallback);
 	
 	current_resolution = newRes;
 	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
 	
 	vMode = videoModeToInt(&current_resolution);
-	
 	rdpq_init();
-
+	register_VI_handler(vblCallback);
 	setClearScreen();
+	
 	videoSet = 1;
 
 #ifdef DEBUG_BENCHMARK
