@@ -285,6 +285,14 @@ int copyMenuFB() {
 	if(!__disp)
 		return 0;
 	freeMenuFB();
+	
+	// only allow this in 8MB expanded systems
+	// reason is, although it works it ends up leading to memory
+	// fragmentation even if allocated from boot
+	// since constant resolution changes deallocate and reallocate
+	// libDragon's framebuffers (safe buffer)
+	if(getDispHeight() > 240 && (get_memory_size() / 0x100000) < 8)
+		return 0;
 
 	__menu_fb = (surface_t *)malloc(sizeof(surface_t));
 	if(!__menu_fb)
