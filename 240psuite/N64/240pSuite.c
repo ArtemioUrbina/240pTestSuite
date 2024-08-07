@@ -40,6 +40,8 @@ int main(void) {
 
 #ifndef DEBUG_BENCHMARK
 	drawIntro();
+#else
+	debug_init_isviewer();
 #endif
 	
 	while(1) {

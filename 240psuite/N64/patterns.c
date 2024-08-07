@@ -951,9 +951,8 @@ void drawOverscan() {
 		
 		getDisplay();
 		
-		setIgnoreUpscaler(1);
-		
 		rdpqStart();
+		frameEnableUpscaler(0);
 		rdpqDrawRectangle(0, 0, getDispWidth(), getDispHeight(), 0xff, 0xff, 0xff);
 		rdpqDrawRectangle(square.x, square.y, square.w, square.h, 0x60, 0x60, 0x60);
 		rdpqEnd();
@@ -1082,5 +1081,4 @@ void drawOverscan() {
 		if(keys.b)
 			done =	1;
 	}
-	setIgnoreUpscaler(0);
 }

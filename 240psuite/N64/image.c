@@ -35,14 +35,19 @@ unsigned int currFB = 0;
 surface_t *__real_disp = NULL;
 surface_t *__upscale_fb = NULL;
 int upscaleFrame = 0;
-int ignoreUpscale = 0;
+int menuIgnoreUpscale = 0;
+
+#define LFU_YES	1
+#define LFU_NO	0
+#define LFU_UNK	-1
+int lastFrameUpscaled = LFU_UNK;
 
 void setClearScreen() {
 	clearScreen = 1;
 }
 
-void setIgnoreUpscaler(int ignore) {
-	ignoreUpscale = ignore;
+void frameEnableUpscaler(int enable) {
+	upscaleFrame = enable;
 }
 
 void rdpqSetDrawMode() {
@@ -134,7 +139,7 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	
 	if(isVMode480() && !data->scale)
 		upscaleFrame = 0;
-		
+	
 	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
 	
@@ -328,8 +333,8 @@ int copyMenuFB() {
 	rdpq_tex_blit(__disp, 0, 0, NULL);
 	rdpq_detach();
 
-	if(!upscaleFrame)
-		ignoreUpscale = 1;
+	if(isVMode480() && !upscaleFrame)
+		menuIgnoreUpscale = 1;
 
 	return 1;
 }
@@ -341,8 +346,8 @@ void freeMenuFB() {
 		__menu_fb = NULL;
 	}
 
-	if(ignoreUpscale)
-		ignoreUpscale = 0;
+	if(menuIgnoreUpscale)
+		menuIgnoreUpscale = 0;
 }
 
 void drawMenuFB() {
@@ -404,9 +409,10 @@ int hasMenuFB() {
 /* Frame Buffer for upscaling */
 
 void rdpqUpscalePrepareFB() {
-	if(!ignoreUpscale && isVMode480()) {
+	if(!menuIgnoreUpscale && isVMode480()) {
 		createUpscaleFB();
 		upscaleFrame = 1;
+		lastFrameUpscaled = LFU_UNK;
 	}
 }
 
@@ -443,8 +449,10 @@ void freeUpscaleFB() {
 }
 
 void executeUpscaleFB() {
-	if(!upscaleFrame)
+	if(!upscaleFrame) {
+		lastFrameUpscaled = LFU_NO;
 		return;
+	}
 
 	if(!__upscale_fb || !__disp)
 		return;
@@ -464,6 +472,7 @@ void executeUpscaleFB() {
 	rdpq_detach();
 	
 	upscaleFrame = 0;
+	lastFrameUpscaled = LFU_YES;
 }
 
 /* Fade paletted images */
@@ -582,7 +591,8 @@ void fadeImageStep(image *data) {
 }
 
 int getDispWidth() {
-	if(!upscaleFrame || ignoreUpscale)
+	if(lastFrameUpscaled != LFU_YES &&
+		(!upscaleFrame || menuIgnoreUpscale))
 		return getHardWidth();
 	
 	if(__upscale_fb)
@@ -592,7 +602,8 @@ int getDispWidth() {
 }
 
 int getDispHeight() {
-	if(!upscaleFrame || ignoreUpscale)
+	if(lastFrameUpscaled != LFU_YES &&
+		(!upscaleFrame || menuIgnoreUpscale))
 		return getHardHeight();
 	
 	if(__upscale_fb)

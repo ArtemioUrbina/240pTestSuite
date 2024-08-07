@@ -1165,8 +1165,8 @@ void drawLEDZoneTest() {
 	while(!done) {
 		getDisplay();
 
-		setIgnoreUpscaler(1);
 		rdpqStart();
+		frameEnableUpscaler(0);
 		rdpqClearScreen();
 		rdpqEnd();
 
@@ -1224,5 +1224,4 @@ void drawLEDZoneTest() {
 			y = getDispHeight() - sizes[selsprite];
 
 	}
-	setIgnoreUpscaler(0);
 }
