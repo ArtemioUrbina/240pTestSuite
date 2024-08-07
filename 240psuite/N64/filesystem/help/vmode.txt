@@ -1,0 +1,63 @@
+         VIDEO MODES (1/3)
+
+The N64 version of the 240p suite
+supports the following modes:
+
+#YNTSC compatible modes (60hz):#Y
+The first 21 lines of NTSC are
+reserved and cannot contain
+video material in broadcast
+standards, since line 21 usually
+has close caption (CC) data.
+Console games typically respect
+this, since their target display
+were consumer TVs. It has 525
+lines in interlaced mode, of
+which only 480 are visible, 240
+in each field. The following
+modes start at line 22 of every
+field.
+
+
+
+
+                       #C(cont...)#C
+         VIDEO MODES (2/3)
+
+#G240p:#G The progressive variant of
+    NTSC 525i line video, it has
+    262 lines of which 240 video
+    lines are active. This format
+    is used in most SD game
+    consoles, from the #YAtari VCS#Y
+    to the #YPS2#Y. The N64 version
+    of the suite displays a full
+    320x240p screen.
+
+#G480i scaled 240p assets (NTSC):#G
+    This displays the 240p
+    patterns in 480i mode. It
+    uses the 480 visible lines,
+    240 in each field. The whole
+    content of the suite is
+    linedoubled in this mode.
+
+
+
+
+                       #C(cont...)#C
+         VIDEO MODES (3/3)
+
+#G480i mixed 240p/480p assets(1:1):#G
+    In this mode the content of
+    the suite is never line 
+    doubled.
+
+    As a result, most screens
+    end up filling 1/4th of the
+    display in 1:1 pixel mode.
+    However, there are several
+    patterns in 480 resolution
+    that fill the screen, such as
+    the grid, scroll and overscan.
+

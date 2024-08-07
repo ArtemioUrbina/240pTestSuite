@@ -35,10 +35,14 @@ unsigned int currFB = 0;
 surface_t *__real_disp = NULL;
 surface_t *__upscale_fb = NULL;
 int upscaleFrame = 0;
-int menuIgnoreUpscale = 0;
+int ignoreUpscale = 0;
 
 void setClearScreen() {
 	clearScreen = 1;
+}
+
+void setIgnoreUpscaler(int ignore) {
+	ignoreUpscale = ignore;
 }
 
 void rdpqSetDrawMode() {
@@ -212,8 +216,12 @@ void rdpqDrawRectangle(int tx, int ty, int bx, int by, int r, int g, int b) {
 	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
 	
+	rdpq_mode_push();
+	
 	rdpq_set_mode_fill(RGBA32(r, g, b, 0xff));
 	rdpq_fill_rectangle(tx, ty, bx, by);
+	
+	rdpq_mode_pop();
 	
 	if(upscaleFrame)
 		rdpq_detach();
@@ -321,7 +329,7 @@ int copyMenuFB() {
 	rdpq_detach();
 
 	if(!upscaleFrame)
-		menuIgnoreUpscale = 1;
+		ignoreUpscale = 1;
 
 	return 1;
 }
@@ -333,8 +341,8 @@ void freeMenuFB() {
 		__menu_fb = NULL;
 	}
 
-	if(menuIgnoreUpscale)
-		menuIgnoreUpscale = 0;
+	if(ignoreUpscale)
+		ignoreUpscale = 0;
 }
 
 void drawMenuFB() {
@@ -396,7 +404,7 @@ int hasMenuFB() {
 /* Frame Buffer for upscaling */
 
 void rdpqUpscalePrepareFB() {
-	if(!menuIgnoreUpscale && isVMode480()) {
+	if(!ignoreUpscale && isVMode480()) {
 		createUpscaleFB();
 		upscaleFrame = 1;
 	}
@@ -574,7 +582,7 @@ void fadeImageStep(image *data) {
 }
 
 int getDispWidth() {
-	if(!upscaleFrame)
+	if(!upscaleFrame || ignoreUpscale)
 		return getHardWidth();
 	
 	if(__upscale_fb)
@@ -584,7 +592,7 @@ int getDispWidth() {
 }
 
 int getDispHeight() {
-	if(!upscaleFrame)
+	if(!upscaleFrame || ignoreUpscale)
 		return getHardHeight();
 	
 	if(__upscale_fb)

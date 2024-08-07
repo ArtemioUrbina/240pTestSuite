@@ -8,6 +8,7 @@ void drawStripes();
 void drawCheckerBoard();
 void drawPhase();
 void drawDisappear();
+void drawLEDZoneTest();
 void drawAlternate240p480i();
 
 #endif

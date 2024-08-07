@@ -1155,3 +1155,74 @@ void drawAlternate240p480i()
 	useReducedWidthSpace(1);
 	changeVMode(oldvmode);	
 }
+
+void drawLEDZoneTest() {
+	int			done = 0, x = getDispWidth()/2, y = getDispHeight()/2;
+	int			selsprite = 1, show = 1, sizes[] = { 2, 4, 6, 8 };
+	joypad_buttons_t keys;
+	joypad_buttons_t keysHeld;
+		
+	while(!done) {
+		getDisplay();
+
+		setIgnoreUpscaler(1);
+		rdpqStart();
+		rdpqClearScreen();
+		rdpqEnd();
+
+		if(show)
+			graphics_draw_box(__disp, x, y, sizes[selsprite], sizes[selsprite], graphics_make_color(0xff, 0xff, 0xff, 0xff));
+
+		checkMenu(BACKLITHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		keysHeld = controllerButtonsHeld();
+		
+		checkStart(keys);
+
+		if(keysHeld.d_up)
+			y --;
+	
+		if(keysHeld.d_down)
+			y ++;
+
+		if(keysHeld.d_left)
+			x --;
+
+		if(keysHeld.d_right)
+			x ++;			
+
+		if(keys.b)
+			done =	1;
+					
+		if(keys.l) {
+			if(selsprite > 0)
+				selsprite --;
+			else
+				selsprite = 3;
+		}
+	
+		if(keys.r) {
+			if(selsprite < 3)
+				selsprite ++;
+			else
+				selsprite = 0;
+		}
+
+		if(keys.a)
+			show = !show;
+		
+		if(x < 0)
+			x = 0;
+		if(y < 0)
+			y = 0;
+		if(x > getDispWidth() - sizes[selsprite])
+			x = getDispWidth() - sizes[selsprite];
+		if(y > getDispHeight() - sizes[selsprite])
+			y = getDispHeight() - sizes[selsprite];
+
+	}
+	setIgnoreUpscaler(0);
+}

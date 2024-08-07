@@ -181,7 +181,7 @@ void selectVideoMode(int useBack) {
 		x = back->x + 48;
 		y = back->y + 17;
 		
-		drawStringC(y, 0xff, 0xff, 0xff, "240p Test Suite Video Modes"); y += 3*fh; 
+		drawStringC(y, 0xff, 0xff, 0xff, "240p Test Suite Video Modes"); y += 6*fh; 
 		
 		drawStringC(y, 0x00, 0xff, 0x00, "Please select the desired mode"); y += 3*fh; 
 			
@@ -191,6 +191,7 @@ void selectVideoMode(int useBack) {
 		//drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480/240 assets"); y += fh; c++;				
 		
+		/*
 		y += fh/2;
 		if(enablePAL) {
 			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
@@ -201,7 +202,8 @@ void selectVideoMode(int useBack) {
 			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "288p"); y += fh; c++;
 			//drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i scaled 264/240p assets (stretched/PAL)"); y += fh; c++;
 			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i 528/480/240 assets (PAL)"); c++;			
-		}			
+		}
+		*/
 		
 		y += fh/2;
 			

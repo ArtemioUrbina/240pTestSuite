@@ -382,6 +382,9 @@ void drawPatternsGeometryMenu(void) {
 				case 2:
 					drawGrid();
 					break;
+				case 3:
+					drawOverscan();
+					break;
 				case 4:
 					drawConvergence();
 					break;
@@ -493,6 +496,9 @@ void drawVideoTestsMenu(void) {
 					break;
 				case 10:
 					drawDisappear();
+					break;
+				case 11:
+					drawLEDZoneTest();
 					break;
 				case 13:
 					drawAlternate240p480i();

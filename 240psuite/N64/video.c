@@ -214,6 +214,8 @@ void setVideoInternal(resolution_t newRes) {
 }
 
 void changeToH256onVBlank() {
+	if(__changeInternalRes)
+		return;
 	if(current_resolution.height == 240)
 		if(current_resolution.width == 320) {
 			changeVMode(RESOLUTION_256x240);
@@ -226,6 +228,8 @@ void changeToH256onVBlank() {
 }
 
 void changeToH320onVBlank() {
+	if(__changeInternalRes)
+		return;
 	if(current_resolution.height == 240) {
 		if(current_resolution.width == 256)
 			changeVMode(RESOLUTION_320x240);

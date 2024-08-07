@@ -49,16 +49,15 @@ extern char *helpData;
 #define HCFR			"/help/hcfr.txt"
 #define HCFRMENU  		"/help/hcfr_menu.txt"
 #define CONVERHELP		"/help/convergence.txt"
-
-#define BACKLITHELP		"/help/backlit.txt"
+#define OVERSCANHELP	"/help/overscan.txt"
 #define GRIDHELP		"/help/grid.txt"
-#define GRID224HELP		"/help/grid224.txt"
+#define BACKLITHELP		"/help/backlit.txt"
+#define VIDEOHELP		"/help/vmode.txt"
+
 #define SOUNDHELP		"/help/sound.txt"
 #define GRIDSCROLL		"/help/gridscroll.txt"
 #define MANUALLAG		"/help/manuallag.txt"
-#define OVERSCANHELP	"/help/overscan.txt"
 #define OPTIONSHELP		"/help/options.txt"
-#define VIDEOHELP		"/help/vmode.txt"
 #define DIAGONALHELP	"/help/diagonal.txt"
 
 #define OVERSCANWARNING	"/help/warningoverscan.txt"

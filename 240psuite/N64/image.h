@@ -36,6 +36,7 @@ typedef struct image_st {
 } image;
 
 void setClearScreen();
+void setIgnoreUpscaler(int ignore);
 
 int getDispWidth();
 int getDispHeight();

@@ -15,6 +15,7 @@ void drawHCFR();
 
 void drawMonoscope();
 void drawGrid();
+void drawOverscan();
 void drawConvergence();
 
 #endif

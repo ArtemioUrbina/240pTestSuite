@@ -917,3 +917,170 @@ void drawConvergence()
 		freeImage(&back[i]);
 	return;
 }
+
+typedef struct rect_t {
+	int x, y, w, h;
+} rectangle;
+
+void drawOverscan() {
+	int 		done = 0, oLeft = 0, oTop = 0, 
+				oRight = 0, oBottom = 0, 
+				sel = 0, reset = 1;
+	char		msg[50];
+	rectangle	square;
+	int			oldVMode = vMode;
+	joypad_buttons_t keys;
+	joypad_buttons_t keysHeld;
+	
+	while(!done) {
+		int x = 0, y = 0;
+		
+		if(oldVMode != vMode) {
+			reset = 1;
+			oldVMode = vMode;
+		}
+		
+		if(reset) {
+			square.x = 0;
+			square.y = 0;
+			square.w = getDispWidth();
+			square.h = getDispHeight();
+			oLeft = oTop = oRight = oBottom = 0;
+			reset = 0;
+		}
+		
+		getDisplay();
+		
+		setIgnoreUpscaler(1);
+		
+		rdpqStart();
+		rdpqDrawRectangle(0, 0, getDispWidth(), getDispHeight(), 0xff, 0xff, 0xff);
+		rdpqDrawRectangle(square.x, square.y, square.w, square.h, 0x60, 0x60, 0x60);
+		rdpqEnd();
+
+		x = getDispWidth()/2;
+		y = getDispHeight()/2-2*fh;
+		
+		drawStringS(x-150, y+(fh*sel), 0xdf, 0xdf, 0xdf, ">");
+				
+		drawStringS(x-140, y, 0xdf, 0xdf, 0xdf, "Top Overscan:");
+		sprintf(msg, "%d pixels (%0.2f%%)", oTop, (oTop*100.0f)/(getDispHeight()/2));
+		drawStringS(x, y, 0xdf, 0xdf, 0xdf, msg);
+		
+		y+= fh;
+		
+		drawStringS(x-140, y, 0xdf, 0xdf, 0xdf, "Bottom Overscan:");
+		sprintf(msg, "%d pixels (%0.2f%%)", oBottom, (oBottom*100.0f)/(getDispHeight()/2));
+		drawStringS(x, y, 0xdf, 0xdf, 0xdf, msg);
+		
+		y+= fh;		
+		
+		drawStringS(x-140, y, 0xdf, 0xdf, 0xdf, "Left Overscan:");
+		sprintf(msg, "%d pixels (%0.2f%%)", oLeft, (oLeft*100.0f)/(getDispWidth()/2));
+		drawStringS(x, y, 0xdf, 0xdf, 0xdf, msg);
+		
+		y+= fh;
+		
+		drawStringS(x-140, y, 0xdf, 0xdf, 0xdf, "Right Overscan:");
+		sprintf(msg, "%d pixels (%0.2f%%)", oRight, (oRight*100.0f)/(getDispWidth()/2));
+		drawStringS(x, y, 0xdf, 0xdf, 0xdf, msg);
+				
+		//if(IsPAL && Options.PALScale576)
+			//drawStringS(50, 50, 0xff, 0xff, 0x00, "When using PAL stretched modes, the pixel\ncount is inaccurate due to vertical scaling.\nRead the #MHELP#M for details");
+			
+		checkMenu(OVERSCANHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		keysHeld = controllerButtonsHeld();
+		
+		checkStart(keys);
+		
+		if(keys.d_up)
+			sel--;
+		
+		if(keys.d_down)
+			sel++;
+
+		if(sel < 0)
+			sel = 3;
+		if(sel > 3)
+			sel = 0;
+
+		// Top
+		if((keys.r && sel == 0) ||
+			(keysHeld.c_right && sel == 0)) {
+			if(square.y + 1 <= getDispHeight()/2 && oTop + 1 <= getDispHeight()/2) {
+				square.y++;
+				oTop++;
+			}
+		}
+		
+		if((keys.l && sel == 0) ||
+			(keysHeld.c_left && sel == 0)) {
+			if(square.y - 1 >= 0 && oTop - 1 >= 0) {				
+				square.y--;	
+				oTop--;
+			}
+		}
+		
+		// Bottom
+		if((keys.r && sel == 1) ||
+			(keysHeld.c_right && sel == 1)) {
+			if(square.h - 1 >= 0 && oBottom + 1 <= getDispHeight()/2) {
+				square.h--;
+				oBottom++;
+			}
+		}
+		
+		if((keys.l && sel == 1) ||
+			(keysHeld.c_left && sel == 1)) {
+			if(square.h + 1 <= getDispWidth() && oBottom - 1 >=0 ) {
+				square.h++;	
+				oBottom--;
+			}
+		}
+		
+		// Left
+		if((keys.r && sel == 2) ||
+			(keysHeld.c_right && sel == 2)) {
+			if(square.x + 1 <= getDispWidth()/2 && oLeft + 1 <= getDispWidth()/2) {
+				square.x++;
+				oLeft++;
+			}
+		}
+		
+		if((keys.l && sel == 2) ||
+			(keysHeld.c_left && sel == 2)) {
+			if(square.x - 1 >= 0 && oLeft - 1 >= 0)	{
+				square.x--;
+				oLeft--;
+			}
+		}
+		
+		// Right
+		if((keys.r && sel == 3) ||
+			(keysHeld.c_right && sel == 3)) {
+			if(square.w - 1 >= 0 && oRight + 1 <= getDispWidth()/2)	{
+				square.w--;
+				oRight++;
+			}
+		}
+		
+		if((keys.l && sel == 3) ||
+			(keysHeld.c_left && sel == 3)) {
+			if(square.w + 1 <= getDispWidth() && oRight - 1 >= 0) {
+				square.w++;	
+				oRight--;
+			}
+		}
+
+		if(keys.a)
+			reset = 1;
+		
+		if(keys.b)
+			done =	1;
+	}
+	setIgnoreUpscaler(0);
+}
