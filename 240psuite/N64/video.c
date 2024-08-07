@@ -238,7 +238,7 @@ void changeToH320onVBlank() {
 }
 
 void changeVMode(resolution_t newRes) {
-	if(isSameRes(&newRes, &current_resolution))
+	if(!__changeInternalRes && isSameRes(&newRes, &current_resolution))
 		return;
 	__newInternalResChange = newRes;
 	__changeInternalRes = 1;

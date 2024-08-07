@@ -609,7 +609,7 @@ void drawSplash(char *name, int delay, int paleteSize) {
 		return;
 
 	logo->center = true;
-	if(getDispHeight() > 240)
+	if(getDispHeight() > 240 && logo->tiles->height > 240)
 		logo->scale = 0;
 	logo->palSize = paleteSize;
 	

@@ -112,8 +112,6 @@ int main(void) {
 			}
 			reload = 1;
 		}
-		if(keys.b) 
-			drawIntro();
 	}
 	freeImage(&bg);
 	freeImage(&sd);
@@ -202,6 +200,7 @@ void drawPatternsMenu(void) {
 	}
 	freeImage(&bg);
 	freeImage(&sd);
+	SD_release();
 }
 
 void drawPatternsColorMenu(void) {
@@ -313,6 +312,7 @@ void drawPatternsColorMenu(void) {
 	}
 	freeImage(&bg);
 	freeImage(&sd);
+	SD_release();
 }
 
 void drawPatternsGeometryMenu(void) {
@@ -397,6 +397,7 @@ void drawPatternsGeometryMenu(void) {
 	}
 	freeImage(&bg);
 	freeImage(&sd);
+	SD_release();
 }
 
 void drawVideoTestsMenu(void) {
@@ -508,6 +509,7 @@ void drawVideoTestsMenu(void) {
 	}
 	freeImage(&bg);
 	freeImage(&sd);
+	SD_release();
 }
 
 void drawIntro() {

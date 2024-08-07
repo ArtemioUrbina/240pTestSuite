@@ -289,7 +289,10 @@ void drawWhiteScreen() {
 	while(!end) {
 		getDisplay();
 		
-		graphics_fill_screen(__disp, graphics_make_color(cr, cg, cb, 0xff));
+		rdpqStart();
+		rdpqDrawRectangle(0, 0, getDispWidth(), getDispHeight(), cr, cg, cb);
+		rdpqEnd();
+		
 		if(text) {
 			drawStringB(140, 20, 0xff, 0xff, 0xff, msg);
 			text --;
@@ -583,7 +586,7 @@ void drawMonoscope() {
 #define NUM_RES 4
 
 void drawGrid() {
-	int end = 1, gridResolution = 0, tmpRes = 0;
+	int end = 0, gridResolution = 0, tmpRes = 0;
 	image *back[NUM_RES] = { NULL, NULL, NULL, NULL };
 	joypad_buttons_t keys;
 	fmenuData	verMenuData[NUM_RES] = { 
@@ -599,7 +602,13 @@ void drawGrid() {
 										RESOLUTION_256x240,
 										RESOLUTION_640x480,
 										RESOLUTION_512x480 };
-	resolution_t	oldVMode = current_resolution;
+	resolution_t oldVMode = current_resolution;
+	
+	tmpRes = selectMenu("Select", verMenuData, NUM_RES, gridResolution+1);
+	if(tmpRes == MENU_CANCEL)
+		return;
+	
+	gridResolution = tmpRes;
 	
 	for(unsigned int res = 0; res < NUM_RES; res ++) {
 		back[res] = loadImage(grids[res]);
@@ -611,12 +620,6 @@ void drawGrid() {
 		back[2]->scale = 0;
 	if(back[3])
 		back[3]->scale = 0;
-	
-	tmpRes = selectMenu("Select", verMenuData, NUM_RES, gridResolution+1);
-	if(tmpRes != MENU_CANCEL) {
-		gridResolution = tmpRes;
-		end = 0;
-	}
 	
 	setMenuVideo(0);
 	changeVMode(targetRes[gridResolution]);

@@ -118,11 +118,10 @@ void drawDropShadow(int striped) {
 	int x = 0, y = 0, showText = 0, sprite = 0, selback = 0;
 	int frameLen[] = { 8, 8, 8 }, animFrame = 0;
 	int fallFrame = 0, currentframe = 0;
-	image *donna = NULL, *donna240 = NULL, *donna480 = NULL;
-	image *shadow = NULL, *stripes = NULL, *check = NULL;
-	image *buzz = NULL, *buzzshadow = NULL, *sshadow = NULL;
+	image *donna = NULL, *shadow = NULL, *sshadow = NULL;
+	image *buzz = NULL, *buzzshadow = NULL;
 	image *sonicTop = NULL, *sonicWater = NULL, *sonicFall = NULL;
-	image *overlay = NULL;	
+	image *overlay = NULL, *stripes = NULL, *check = NULL;	
 	joypad_buttons_t keys;
 	char msg[25];
 
@@ -150,26 +149,46 @@ void drawDropShadow(int striped) {
 			y = getDispHeight()/2 - shadow->tiles->height/2;
 		}
 	}
-	
-	donna240 = loadImage("rom:/donna.sprite");
-	donna480 = loadImage("rom:/donna-480.sprite");
-	if(donna480)
-		donna480->scale = 0;
-		
-	sonicTop = loadImage("rom:/sonicTop.sprite");
-	sonicWater = loadImage("rom:/sonicWater.sprite");
-	sonicFall = loadImage("rom:/sonicFall.sprite");
-	overlay = loadImage("rom:/sonicFloor.sprite");
-	
-	check = loadImage("rom:/check.sprite");
-	stripes = loadImage("rom:/stripes_v.sprite");
 
 	while(!end) {
 		if(reload) {
 			if(oldVmode != vMode)
 				oldVmode = vMode;
 			
-			donna = isVMode480() ? donna480 : donna240;
+			freeImage(&donna);
+			
+			freeImage(&sonicTop);
+			freeImage(&sonicWater);
+			freeImage(&sonicFall);
+			freeImage(&overlay);
+			
+			freeImage(&stripes);
+			freeImage(&check);
+			
+			switch(selback) {
+				case 0:
+					if(isVMode480()) {
+						donna = loadImage("rom:/donna-480.sprite");
+						donna->scale = 0;
+					}
+					else
+						donna = loadImage("rom:/donna.sprite");
+					break;
+				case 1:
+					sonicTop = loadImage("rom:/sonicTop.sprite");
+					sonicWater = loadImage("rom:/sonicWater.sprite");
+					sonicFall = loadImage("rom:/sonicFall.sprite");
+					overlay = loadImage("rom:/sonicFloor.sprite");
+					break;
+				case 2:
+					stripes = loadImage("rom:/stripes_v.sprite");
+					break;
+				case 3:
+					check = loadImage("rom:/check.sprite");
+					break;
+				default:
+					break;
+			}
 			reload = 0;
 		}
 		
@@ -277,7 +296,7 @@ void drawDropShadow(int striped) {
 		if(!striped && keys.r) {
 			invert = !invert;
 			if(invert)
-				sprintf(msg, "Shadow on odd frames");				
+				sprintf(msg, "Shadow on odd frames");
 			else
 				sprintf(msg, "Shadow on even frames");
 			showText = 60;
@@ -295,6 +314,7 @@ void drawDropShadow(int striped) {
 			selback ++;
 			if(selback > 3)
 				selback = 0;
+			reload = 1;
 		}
 	}
 	
@@ -306,8 +326,7 @@ void drawDropShadow(int striped) {
 	else
 		freeImage(&shadow);
 	
-	freeImage(&donna480);
-	freeImage(&donna240);
+	freeImage(&donna);
 	
 	freeImage(&sonicTop);
 	freeImage(&sonicWater);

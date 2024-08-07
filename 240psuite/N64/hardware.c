@@ -82,17 +82,18 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
 #define VISIBLE_VERT	27
 #define CHARS_PER_BYTE	2
 
-#define MAX_LOCATIONS	2
+#define MAX_LOCATIONS	1
+#define BASE_ADDRESS	0xA0000000
+#define MAX_ADDRESS		0xA03FFFF0
+#define MAX_ADDRESSXP	0xA07ffff0
+#define ADDR_JUMP		0x4000
 
 #define BUFFER_SIZE 128
  
- // locks at 0x83FFE6E0
- 
- // TODO: maybe change all access to use mem_read8()
  void drawMemoryViewer(void *startAddress) {
 	int 			done = 0, ascii = 0, locpos = 0, docrc = 0;
-	uint32_t		address = 0, crc = 0, offset = fh;
-	uint32_t		locations[MAX_LOCATIONS] = { 0x80000000, 0xA0000000 };
+	uint32_t		address = 0, crc = 0, offset = fh, maxAddress = MAX_ADDRESS;
+	uint32_t		locations[MAX_LOCATIONS] = { BASE_ADDRESS };
 	char 			buffer[BUFFER_SIZE];
 	joypad_buttons_t keys;
 	
@@ -100,6 +101,10 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
 		address = (uint32_t)startAddress;
 	else
 		address = locations[0];
+		
+	if(get_memory_size()/0x100000 == 8)
+		maxAddress = MAX_ADDRESSXP;
+	
 	while(!done) {
 		int 	i = 0, j = 0;
 		uint8_t *mem = NULL;
@@ -115,10 +120,10 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
 		if(docrc)
 			crc = calculateCRC(address, VISIBLE_HORZ*VISIBLE_VERT);
 	
-		sprintf(buffer, "%08lX", address);
+		sprintf(buffer, "%08lX", address - 0xA0000000);
 		drawString((VISIBLE_HORZ-2)*2*fw, 0, 0x00, 0xff, 0x00, buffer);
 		
-		sprintf(buffer, "%08lX", address+VISIBLE_HORZ*VISIBLE_VERT);
+		sprintf(buffer, "%08lX", address+VISIBLE_HORZ*VISIBLE_VERT- 0xA0000000);
 		drawString((VISIBLE_HORZ-2)*2*fw, (VISIBLE_VERT)*fhR+fh, 0x00, 0xff, 0x00, buffer);
 
 		if(docrc) {
@@ -164,22 +169,22 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
 		if(keys.d_right) {
 			address += VISIBLE_HORZ*VISIBLE_VERT;
 
-			if(address >= 0xFFFFFFFF) 
-				address = 0xFFFFFFFF-VISIBLE_HORZ*VISIBLE_VERT;
+			if(address >= maxAddress) 
+				address = maxAddress-VISIBLE_HORZ*VISIBLE_VERT;
 		}
 		
 		if(keys.d_up) {
-			if(address > locations[0]+0x10000)
-				address -= 0x10000;
+			if(address > locations[0]+ADDR_JUMP)
+				address -= ADDR_JUMP;
 			else
 				address = locations[0];
 		}
 		
 		if(keys.d_down) {
-			address += 0x10000;
+			address += ADDR_JUMP;
 			
-			if(address >= 0xFFFFFFFF)
-				address = 0xFFFFFFFF-VISIBLE_HORZ*VISIBLE_VERT;
+			if(address >= maxAddress)
+				address = maxAddress-VISIBLE_HORZ*VISIBLE_VERT;
 		}
 		
 		if(keys.b)
