@@ -53,10 +53,10 @@ extern char *helpData;
 #define GRIDHELP		"/help/grid.txt"
 #define BACKLITHELP		"/help/backlit.txt"
 #define VIDEOHELP		"/help/vmode.txt"
+#define MANUALLAG		"/help/manuallag.txt"
 
 #define SOUNDHELP		"/help/sound.txt"
 #define GRIDSCROLL		"/help/gridscroll.txt"
-#define MANUALLAG		"/help/manuallag.txt"
 #define OPTIONSHELP		"/help/options.txt"
 #define DIAGONALHELP	"/help/diagonal.txt"
 

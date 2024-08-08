@@ -23,8 +23,6 @@
 #include "audio.h"
 #include "menu.h"
 #include "font.h"
- 
-#define CHANNEL_MUSIC   0
 
 // Wrap the results for scenarios when the wav is not compiled into the ROM (testing/etc)
 int openWAV(wav64_t *wav64, char *fileName) {
@@ -38,9 +36,13 @@ int openWAV(wav64_t *wav64, char *fileName) {
 	wav64_open(wav64, fileName);
 	return 1;
 }
+
+#define MDF_BUFFERS		20
+#define MDF_CHANNELS	2
+#define MDF_CHANNEL		0
  
 void drawMDFourier() {
-	int end = 0;
+	int end = 0, refresh = SUITE_NUM_BUFFERS, changePlaybackState = 0, isPlaying = 0;
 	image *back = NULL;
 	joypad_buttons_t keys;
 	wav64_t mdfSamples;
@@ -54,49 +56,77 @@ void drawMDFourier() {
 	if(!back)
 		return;
 
+	audio_init(44100, MDF_BUFFERS);
+	mixer_init(MDF_CHANNELS);
+	
 	while(!end) {
-		getDisplay();
+		if(changePlaybackState) {
+			if(!mixer_ch_playing(MDF_CHANNEL)) {
+				wav64_play(&mdfSamples, MDF_CHANNEL);
+				isPlaying = 1;
+			}
+			else {
+				mixer_ch_stop(MDF_CHANNEL);
+				isPlaying = 0;
+			}
+			changePlaybackState = 0;
+			refresh = 1;
+		}
+		
+		if(refresh) {
+			getDisplay();
 
-		rdpqStart();
+			rdpqStart();
+			
+			rdpqDrawImage(back);
+			rdpqEnd();
+			
+			drawStringC(42, 0x00, 0xff, 0x00, "MDFourier");
+			if(isPlaying)
+				drawStringC(100, 0xff, 0xff, 0xff, "Playing back ");
+			else
+				drawStringC(100, 0xff, 0xff, 0xff, "Press #Ga#G to play");
+			
+			drawStringC(201, 0xff, 0xff, 0x00, "#Yhttp://junkerhq.net/MDFourier#Y");
+			refresh --;
+		}
 		
-		rdpqDrawImage(back);
-		rdpqEnd();
+		if(!mixer_ch_playing(MDF_CHANNEL))
+			checkMenu(MDFOURIERHELP, &refresh);
 		
-		drawStringC(42, 0x00, 0xff, 0x00, "MDFourier");
-		if(mixer_ch_playing(CHANNEL_MUSIC))
-			drawStringC(100, 0xff, 0xff, 0xff, "Playing back ");
-		else
-			drawStringC(100, 0xff, 0xff, 0xff, "Press #Ga#G to play");
-		
-		drawStringC(201, 0xff, 0xff, 0x00, "#Yhttp://junkerhq.net/MDFourier#Y");
-		
-		if(!mixer_ch_playing(CHANNEL_MUSIC))
-			checkMenu(MDFOURIERHELP, NULL);
-		drawNoVsync();
-		
-		mixer_try_play();
+		drawNoVsyncWithAudio();
 		
 		joypad_poll();
 		keys = controllerButtonsDown();
 		
-		if(!mixer_ch_playing(CHANNEL_MUSIC))
+		if(!mixer_ch_playing(MDF_CHANNEL))
 			checkStart(keys);
-		if(keys.a) {
-			if(!mixer_ch_playing(CHANNEL_MUSIC))
-				wav64_play(&mdfSamples, CHANNEL_MUSIC);
+		
+		if(keys.b) {
+			if(!mixer_ch_playing(MDF_CHANNEL))
+				end = 1;
 			else
-				mixer_ch_stop(CHANNEL_MUSIC);
+				keys.a = 1;
 		}
 		
-		if(keys.b)
-			end = 1;
+		if(keys.a)
+			changePlaybackState = 1;
 	}
 	
-	if(mixer_ch_playing(CHANNEL_MUSIC)) {
-		mixer_ch_stop(CHANNEL_MUSIC);
+	if(mixer_ch_playing(MDF_CHANNEL)) {
+		int purge = 60;
+		
+		mixer_ch_stop(MDF_CHANNEL);
+		while(purge) {
+			waitVsyncWithAudio();
+			purge --;
+		}
 	}
 	
 	wav64_close(&mdfSamples);
 	freeImage(&back);
+	
+	mixer_close();
+	audio_close();
 }
  

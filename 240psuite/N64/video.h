@@ -24,8 +24,9 @@ extern unsigned int		vMode;
 
 void getDisplay();
 void waitVsync();
-void drawNoVsync();
-void vblCallback();
+void waitVsyncWithAudio();
+void drawNoVsyncWithAudio();
+
 int getHardWidth();
 int getHardHeight();
 

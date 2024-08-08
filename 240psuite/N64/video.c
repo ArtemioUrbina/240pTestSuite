@@ -32,6 +32,8 @@ filter_options_t	current_antialias = 0;
 unsigned int		enablePAL = 0;
 unsigned int		vMode = SUITE_NONE;
 
+
+#define TICKS_SINCE_MS(time) TICKS_SINCE(time) / (TICKS_PER_SECOND / 1000.0f)
 unsigned int videoSet = 0;
 
 surface_t* __disp = NULL;
@@ -55,12 +57,12 @@ void vblCallback(void) {
     __frames++;
 }
 
-#ifdef DEBUG_BENCHMARK
 uint64_t __frameStart = 0;
 uint64_t __idleStart = 0;
 float __frameIdle = 20, __minIdle = 20;
 float __frameLen = 0, __maxFrameLen = 0;
 
+#ifdef DEBUG_BENCHMARK
 void resetIdle() {
 	__minIdle = 20.0f;
 	__maxFrameLen = 0.0f;
@@ -87,47 +89,6 @@ void drawFrameLens() {
 }
 #endif
 
-void checkInternalResChange() {
-	if(!__changeInternalRes)
-		return;
-	
-	setVideoInternal(__newInternalResChange);
-	setClearScreen();
-	
-	__changeInternalRes = 0;
-}
-
-void getDisplay() {
-	checkInternalResChange();
-#ifdef DEBUG_BENCHMARK
-	__frameStart = get_ticks_us();
-#endif
-	__disp = display_get();
-
-	rdpqUpscalePrepareFB();
-}
-
-void _internalFlipBuffer() {
-	if(__disp) {
-#ifdef DEBUG_BENCHMARK
-		drawFrameLens();
-#endif
-		executeUpscaleFB();
-		display_show(__disp);
-		__disp = NULL;
-	}
-}
-
-void drawNoVsync() {
-	_internalFlipBuffer();
-	
-#ifdef DEBUG_BENCHMARK
-// Fill times since we have no data
-	__frameLen = (get_ticks_us() - __frameStart)/1000.0f;
-	__frameIdle = __frameLen;
-#endif
-}
-
 int getHardWidth() {
 	if(!videoSet || vMode == SUITE_NONE)
 		return 0;
@@ -144,20 +105,98 @@ int getHardHeight() {
 	return(current_resolution.height);
 }
 
+void checkInternalResChange() {
+	if(!__changeInternalRes)
+		return;
+	
+	setVideoInternal(__newInternalResChange);
+	setClearScreen();
+	
+	__changeInternalRes = 0;
+}
+
+void getDisplay() {
+	checkInternalResChange();
+	__frameStart = get_ticks_us();
+	
+	__disp = display_get();
+
+	rdpqUpscalePrepareFB();
+}
+
+void _internalFlipBuffer() {
+	if(__disp) {
+#ifdef DEBUG_BENCHMARK
+		drawFrameLens();
+#endif
+		executeUpscaleFB();
+		display_show(__disp);
+		__disp = NULL;
+	}
+}
+
 void _internalWaitVsync() {
 	uint64_t nextFrame = __frames + 1;
 	
 	assertf(__disp == NULL, "_internalWaitVsync(): disp is not NULL");
-#ifdef DEBUG_BENCHMARK	
+	
 	__idleStart = get_ticks_us();
-#endif
-	while (nextFrame > __frames) ;
-#ifdef DEBUG_BENCHMARK
+	while (nextFrame > __frames);
 	uint64_t now = get_ticks_us();
 	
 	__frameLen = (now - __frameStart)/1000.0f;
 	__frameIdle = (now - __idleStart)/1000.0f;
-#endif
+}
+
+#define MAX_AUDIO_WAIT	1.0f
+
+void _internalWaitVsyncWithAudio() {
+	float maxWait = 0, totalWait = 0, idleRest = 0;
+	uint64_t 	nextFrame = __frames + 1;
+	
+	assertf(__disp == NULL, "_internalWaitVsync(): disp is not NULL");
+	
+	__idleStart = get_ticks_us();
+	idleRest = N64_NTSC_FRAME_LEN - (__idleStart - __frameStart)/1000.0f;
+	
+	while (nextFrame > __frames) {
+		if(idleRest > MAX_AUDIO_WAIT) {
+			uint64_t mixerStart = 0;
+			
+			mixerStart = get_ticks();
+			
+			mixer_try_play();
+			
+			float wait = TICKS_SINCE_MS(mixerStart);
+			totalWait += wait;
+			if(wait > maxWait)
+				maxWait = wait;
+			idleRest -= wait;
+		}
+	}
+	
+	//assertf(idleRest > 0.2, "mixer_try_play() took longer than expected. Idle: %f", idleRest);
+	//debugf("Total Wait: %f MaxWait: %f Rest: %f\n", totalWait, maxWait, idleRest);
+
+	uint64_t now = get_ticks_us();
+	
+	__frameLen = (now - __frameStart)/1000.0f;
+	__frameIdle = idleRest;
+}
+
+void drawNoVsyncWithAudio() {
+	_internalFlipBuffer();
+	
+	// Fill times since we have no data
+	__frameLen = (get_ticks_us() - __frameStart)/1000.0f;
+	__frameIdle = __frameLen;
+
+	mixer_try_play();
+}
+
+void waitVsyncWithAudio() {
+	_internalFlipBuffer();
+	_internalWaitVsyncWithAudio();
 }
 
 void waitVsync() {
@@ -188,7 +227,7 @@ void setVideoInternal(resolution_t newRes) {
 	
 	if(videoSet) {
 		disable_interrupts();
-		freeMenuFB();				// comment this one out to get "improper" resolution backgrounds for menu
+		//freeMenuFB();				// comment this one out to get "improper" resolution backgrounds for menu
 		freeUpscaleFB();
 		enable_interrupts();
 		

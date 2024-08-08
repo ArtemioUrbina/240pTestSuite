@@ -20,6 +20,7 @@
  */
  
 #include "menu.h"
+#include "audio.h"
 
 typedef struct timecode {
 	int hours;
@@ -353,9 +354,9 @@ void drawLagTest() {
 	
 	loadNumbers();
 	
-	blueCircle->palette[2] = graphics_make_color(0x00, 0x00, IRE_100, 0xff);
+	blueCircle->palette[2] = COLOR_B;
 	updatePalette(blueCircle);
-	redCircle->palette[2] = graphics_make_color(IRE_100, 0x00, 0x00, 0xff);
+	redCircle->palette[2] = COLOR_R;
 	updatePalette(redCircle);
 
 	while(!done) {		
@@ -1157,11 +1158,13 @@ void drawAlternate240p480i()
 }
 
 void drawLEDZoneTest() {
-	int			done = 0, x = getDispWidth()/2, y = getDispHeight()/2;
-	int			selsprite = 1, show = 1, sizes[] = { 2, 4, 6, 8 };
+	int			done = 0, x = 0, y = 0;
+	int			selsprite = 2, show = 1;
 	joypad_buttons_t keys;
 	joypad_buttons_t keysHeld;
 		
+	x = getDispWidth()/2;
+	y = getDispHeight()/2;
 	while(!done) {
 		getDisplay();
 
@@ -1171,7 +1174,7 @@ void drawLEDZoneTest() {
 		rdpqEnd();
 
 		if(show)
-			graphics_draw_box(__disp, x, y, sizes[selsprite], sizes[selsprite], graphics_make_color(0xff, 0xff, 0xff, 0xff));
+			graphics_draw_box(__disp, x, y, selsprite, selsprite, COLOR_W);
 
 		checkMenu(BACKLITHELP, NULL);
 		waitVsync();
@@ -1198,17 +1201,17 @@ void drawLEDZoneTest() {
 			done =	1;
 					
 		if(keys.l) {
-			if(selsprite > 0)
-				selsprite --;
+			if(selsprite > 2)
+				selsprite -= 2;
 			else
-				selsprite = 3;
+				selsprite = 8;
 		}
 	
 		if(keys.r) {
-			if(selsprite < 3)
-				selsprite ++;
+			if(selsprite < 8)
+				selsprite += 2;
 			else
-				selsprite = 0;
+				selsprite = 2;
 		}
 
 		if(keys.a)
@@ -1218,10 +1221,322 @@ void drawLEDZoneTest() {
 			x = 0;
 		if(y < 0)
 			y = 0;
-		if(x > getDispWidth() - sizes[selsprite])
-			x = getDispWidth() - sizes[selsprite];
-		if(y > getDispHeight() - sizes[selsprite])
-			y = getDispHeight() - sizes[selsprite];
+		if(x > getDispWidth() - selsprite)
+			x = getDispWidth() - selsprite;
+		if(y > getDispHeight() - selsprite)
+			y = getDispHeight() - selsprite;
+	}
+}
 
+#define CHANNEL_LEFT	0
+#define CHANNEL_RIGHT	1
+#define TIMING_CHANNELS	2
+#define TIMING_BUFFERS	2
+
+void drawTimingReflexTest() {
+	char			msg[60];
+	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
+	int				x, y, x2, y2, pos = 0, i = 0, vary = 0, variation = 1;
+	int				audio = 0, rumble = 0;
+	image			*spriteA = NULL, *spriteB = NULL, *fixed = NULL;
+	wav64_t 		beepSamples;
+	joypad_buttons_t keys;
+	
+	fixed = loadImage("rom:/lag-per.sprite");
+	if(!fixed)
+		return;
+	spriteA = loadImage("rom:/lag-per.sprite");
+	if(!spriteA) {
+		freeImage(&fixed);
+		return;
+	}
+	spriteB = loadImage("rom:/lag-per.sprite");
+	if(!spriteB) {
+		freeImage(&spriteA);
+		freeImage(&fixed);
+		return;
+	}
+		
+	if(!openWAV(&beepSamples, "rom:/beep.wav64")) {
+		drawMessageBox("Audio samples not present");
+	}
+
+	x = 144;
+	y = 60;
+	x2 = 108;
+	y2 = 96;
+		
+	fixed->x = 144;
+	fixed->y = 96;	
+
+	for(i = 0; i < 10; i++)
+		clicks[i] = 0xFF;
+
+	audio_init(44100, TIMING_BUFFERS);
+	mixer_init(TIMING_CHANNELS);
+	
+	while(!done) {
+		getDisplay();
+
+		if(y > 132 + vary) {
+			speed = -1;
+			change = 1;
+			if(variation) {
+				if(RANDN(2))
+					vary = RANDN(7);
+				else
+					vary = -1 * RANDN(7);
+			}
+		}
+
+		if(y < 60 + vary) {
+			speed = 1;
+			change = 1;
+			if(variation) {
+				if(RANDN(2))
+					vary = RANDN(7);
+				else
+					vary = -1 * RANDN(7);
+			}
+		}
+
+		y += speed;
+		x2 += speed;
+
+		spriteA->x = x;
+		spriteA->y = y;
+		spriteB->x = x2;
+		spriteB->y = y2;
+		
+		if(y == 96)	{
+			if(audio)
+				wav64_play(&beepSamples, speed == -1 ? CHANNEL_LEFT : CHANNEL_RIGHT);
+				
+			//if(rumble)
+				//ControllerRumble(0, 1);
+			
+			spriteA->palette[4] = COLOR_R;
+			updatePalette(spriteA);
+			
+			spriteB->palette[4] = COLOR_R;
+			updatePalette(spriteB);
+		}
+		else {
+			//if(rumble)
+				//ControllerRumble(0, 0);
+				
+			if(y == 97 || y == 95) {
+				// one pixel off
+				spriteA->palette[4] = COLOR_G;
+				updatePalette(spriteA);
+				
+				spriteB->palette[4] = COLOR_G;
+				updatePalette(spriteB);
+			}
+
+			if(y == 98 || y == 94) {
+				// two pixels off
+				spriteA->palette[4] = COLOR_W;
+				updatePalette(spriteA);
+				
+				spriteB->palette[4] = COLOR_W;
+				updatePalette(spriteB);
+			}
+		}			
+
+		rdpqStart();
+		rdpqClearScreen();
+		rdpqDrawImage(fixed);
+
+		
+		if(view == 0 || view == 2)
+			rdpqDrawImage(spriteA);
+
+		if(view == 1 || view == 2)
+			rdpqDrawImage(spriteB);
+			
+		rdpqEnd();
+
+		for(i = 0; i < 10; i++)	{
+			if(clicks[i] != 0xFF) {
+				int px, py;
+
+				px = 10;
+				py = i*fh + 20;
+	
+				sprintf(msg, "%02d:", i + 1);
+				drawStringS(px, py, 0xff, 0xff, 0xff, msg);
+			
+				px += strlen(msg)*fw;
+				if(clicks[i] == 1)
+					sprintf(msg, "%2d frame", clicks[i]);
+				else
+					sprintf(msg, "%2d frames", clicks[i]);
+
+				if(clicks[i] >= 0) {
+					if(clicks[i] == 0)
+						drawStringS(px, py, 0x00, 0xff, 0x00, msg);
+					else
+						drawStringS(px, py, 0xff, 0xff, 0xff, msg);
+				}
+				else
+					drawStringS(px, py, 0xff, 0x00, 0x00, msg);
+			}
+		}
+
+		sprintf(msg, "Audio : %s", audio ? "on" : "off");
+		drawStringS(180, 20, 0xff, 0xff, 0xff, msg);
+		sprintf(msg, "Timing: %s", variation ? "random" : "rhythmic");
+		drawStringS(180, 20+fh, 0xff, 0xff, 0xff, msg);		
+		sprintf(msg, "Rumble: %s", rumble ? "on" : "off");
+		drawStringS(180, 20+2*fh, 0xff, 0xff, 0xff, msg);		
+
+		drawStringS(20, 170, 0x00, 0xff, 0x00, "Press A when sprites are aligned.");
+		drawStringS(20, 170+2*fh, 0x00, 0xff, 0x00, "R toggles horiz./vert. movement.");
+		drawStringS(20, 170+3*fh, 0x00, 0xff, 0x00, "L toggles rhythmic timing.");
+		drawStringS(20, 170+4*fh, 0x00, 0xff, 0x00, "CL toggles audio feedback.");
+		drawStringS(20, 170+5*fh, 0x00, 0xff, 0x00, "CR toggles rumble feedback.");
+
+		checkMenu(MANUALLAG, NULL);
+		//drawNoVsyncWithAudio();
+		waitVsyncWithAudio();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		checkStart(keys);
+		if(keys.b)
+			done =	1;
+		
+		if(keys.a) {
+			if(change) {
+				clicks[pos] = (y - 96) *speed;
+	
+				sprintf(msg, " Off: %d", clicks[pos]);					
+	
+				if(clicks[pos] >= 0) {
+					change = 0;
+					pos ++;
+				}
+		
+				if(pos > 9)
+					done = 1;
+			}
+		}
+
+		if(keys.c_left)
+			audio =	!audio;	
+			
+		if(keys.c_right) {
+			rumble = !rumble;	
+			//if(!rumble)
+				//ControllerRumble(0, 0);
+		}
+			
+		if(keys.r) {
+			view ++;
+			if(view > 2)
+				view = 0;
+		}
+
+		if(keys.r) {
+			variation = !variation;
+			if(!variation)
+				vary = 0;
+		}
+	}
+	
+	// Clean up the audio buffer for next test that uses it
+	view = 4;
+	mixer_ch_stop(CHANNEL_LEFT);
+	mixer_ch_stop(CHANNEL_RIGHT);
+	while(view) {
+		waitVsyncWithAudio();
+		view --;
+	}
+	
+	wav64_close(&beepSamples);
+	mixer_close();
+	audio_close();
+	
+	//ControllerRumble(0, 0);
+
+	freeImage(&fixed);
+	freeImage(&spriteA);
+	freeImage(&spriteB);	
+	
+	if(pos > 9) {
+		int	total = 0;
+		double	res = 0, ms = 0;
+		image	*wall = NULL;
+		
+		done = 0;
+		wall = loadImage("rom:/mainbg.sprite");
+		if(!wall)
+			return;
+		
+		while(!done) {			
+			getDisplay();
+			
+			rdpqStart();
+			rdpqDrawImage(wall);
+			rdpqEnd();
+
+			total = 0;
+			for(i = 0; i < 10; i++) {
+				int px, py;
+	
+				px = 70;
+				py = i*fh + 70;
+	
+				sprintf(msg, "%2d", clicks[i]);
+				if(clicks[i] >= 0) {
+					if(clicks[i] == 0)
+						drawStringS(px, py, 0, 0xff, 0, msg);
+					else
+						drawStringS(px, py, 0xff, 0xff, 0xff, msg);
+				}
+				else
+					drawStringS(px, py, 0xff, 0, 0, msg);
+	
+				if(clicks[i] >= 0)
+					total += clicks[i];
+			}
+
+			if(!isPAL) {
+				res = (double)total / 10.0;
+				ms = (double)(res*(1000.0/60.0));
+				sprintf(msg, "%d/10 = %0.2f frames ~= %0.2fms", total, res, ms);
+				drawStringS(60, 110, 0xff, 0x00, 0x00, "+");
+				drawStringS(55, 70 + fh*10, 0xff, 0x00, 0x00, "_____");
+				drawStringS(60, 70 + fh*11, 0xff, 0xff, 0xff, msg);
+				drawStringS(30, 70 + fh*12, 0x00, 0xff, 0xff, "An NTSC frame is around 16.67 ms");
+			}
+			else {
+				res = (double)total / 10.0;
+				ms = (double)(res*(1000.0/50.0));
+				sprintf(msg, "%d/10 = %0.2f frames ~= %0.2fms", total, res, ms);
+				drawStringS(60, 110, 0xff, 0x00, 0xff, "+");
+				drawStringS(55, 70 + fh*10, 0xff, 0x00, 0x00, "_____");
+				drawStringS(60, 70 + fh*11, 0xff, 0xff, 0xff, msg);
+				drawStringS(40, 70 + fh*12, 0x00, 0xff, 0xff, "A PAL frame is around 20 ms");
+			}
+
+			if(total && total < 5)
+				drawStringS(100, 120, 0x00, 0xff, 0x00, "EXCELLENT REFLEXES!");
+			if(total == 0)
+				drawStringS(100, 120, 0x00, 0xff, 0x00, "INCREDIBLE REFLEXES!!");
+
+			checkMenu(MANUALLAG, NULL);
+			waitVsync();
+			
+			joypad_poll();
+			keys = controllerButtonsDown();
+			
+			checkStart(keys);
+			if(keys.b)
+				done =	1;	
+		}
+		freeImage(&wall);
 	}
 }

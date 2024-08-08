@@ -484,6 +484,9 @@ void drawVideoTestsMenu(void) {
 				case 3:
 					drawLagTest();
 					break;
+				case 4:
+					drawTimingReflexTest();
+					break;
 				case 5:
 					drawScroll();
 					break;

@@ -41,9 +41,9 @@ void drawPLUGE() {
 	borderRed = loadImage("rom:/PLUGEBorder.sprite");
 	if(!borderRed)
 		return;
-	borderGreen->palette[1] = graphics_make_color(0xff, 0x00, 0x00, 0xff);
+	borderGreen->palette[1] = COLOR_R;
 	updatePalette(borderGreen);
-	borderRed->palette[1] = graphics_make_color(0x00, 0xff, 0x00, 0xff);
+	borderRed->palette[1] = COLOR_G;
 	updatePalette(borderRed);
 		
 	while(!end) {
