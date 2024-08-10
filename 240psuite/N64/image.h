@@ -28,6 +28,9 @@
 #define COLOR_C		graphics_make_color(0x00, 0xff, 0xff, 0xff)
 #define COLOR_Y		graphics_make_color(0xff, 0xff, 0x00, 0xff)
 
+#define GREY_25		graphics_make_color(0x2b, 0x2b, 0x2b, 0xff)
+#define GREY_50		graphics_make_color(0x80, 0x80, 0x80, 0xff)
+
 typedef struct image_st {
 	sprite_t *tiles;
 	int	x;

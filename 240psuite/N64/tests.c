@@ -338,9 +338,24 @@ void drawDropShadow(int striped) {
 	freeImage(&check);
 }
 
+void changeCirclePalette(image *blueCircle, image *redCircle, uint16_t color) {
+	if(color) {
+		blueCircle->palette[2] = COLOR_B;
+		updatePalette(blueCircle);
+		redCircle->palette[2] = COLOR_R;
+		updatePalette(redCircle);
+	}
+	else {
+		blueCircle->palette[2] = GREY_50;
+		updatePalette(blueCircle);
+		redCircle->palette[2] = GREY_25;
+		updatePalette(redCircle);
+	}
+}
+
 void drawLagTest() {
 	uint16_t	frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
-	uint16_t	lsd, msd, pause = 0, toggle = 0;		
+	uint16_t	lsd, msd, pause = 0, toggle = 0, color = 1;	
 	image		*blueCircle = NULL, *redCircle = NULL, *circle = NULL;
 	joypad_buttons_t keys;
 
@@ -354,10 +369,7 @@ void drawLagTest() {
 	
 	loadNumbers();
 	
-	blueCircle->palette[2] = COLOR_B;
-	updatePalette(blueCircle);
-	redCircle->palette[2] = COLOR_R;
-	updatePalette(redCircle);
+	changeCirclePalette(blueCircle, redCircle, color);
 
 	while(!done) {		
 		if(!pause) {
@@ -491,8 +503,14 @@ void drawLagTest() {
 		// Draw Frames
 		lsd = frames % 10;
 		msd = frames / 10;
-		drawDigit(248, 16, toggle ? NUMBER_RED : NUMBER_BLUE, msd);
-		drawDigit(272, 16, toggle? NUMBER_RED : NUMBER_BLUE, lsd);
+		if(color) {
+			drawDigit(248, 16, toggle ? NUMBER_RED : NUMBER_BLUE, msd);
+			drawDigit(272, 16, toggle? NUMBER_RED : NUMBER_BLUE, lsd);
+		}
+		else {
+			drawDigit(248, 16, NUMBER_BLACK, msd);
+			drawDigit(272, 16, NUMBER_BLACK, lsd);
+		}
 
 		rdpqEnd();
 		
@@ -518,6 +536,11 @@ void drawLagTest() {
 		if(keys.c_left && !pause) {
 			frames = hours = minutes = seconds = 0;
 			framecnt = 1;
+		}
+		
+		if(keys.c_right) {
+			color = !color;
+			changeCirclePalette(blueCircle, redCircle, color);
 		}
 
 		if(keys.a)
