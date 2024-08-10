@@ -1810,10 +1810,45 @@ void LEDZoneTest()
 	return;
 }
 
+void changeCircleColor(ImagePtr circle, u16 color, u16 toggle)
+{
+	if(toggle)
+	{
+		if(color)
+		{
+			circle->r = 0xff;
+			circle->g = 0;
+			circle->b = 0;
+		}
+		else
+		{
+			circle->r = 0x2b;
+			circle->g = 0x2b;
+			circle->b = 0x2b;
+		}
+	}
+	else
+	{
+		if(color)
+		{
+			circle->r = 0;
+			circle->g = 0;
+			circle->b = 0xff;
+		}
+		else
+		{
+			circle->r = 0x80;
+			circle->g = 0x80;
+			circle->b = 0x80;
+		}
+	}
+}
+
 void PassiveLagTest()
 {
-	u16 		frames = 0, seconds = 0, minutes = 0, hours = 0, framecnt = 1, done =  0;
-	u16			pressed, lsd, msd, pause = 0, toggle = 0;		
+	u16 		frames = 0, seconds = 0, minutes = 0;
+	u16			color = 1, hours = 0, done =  0, framecnt = 1;
+	u16			pressed, lsd, msd, pause = 0, toggle = 0;
 	ImagePtr	back, circle, barl, barr;	
 	
 	back = LoadImage(WHITEIMG, 0);
@@ -1925,122 +1960,50 @@ void PassiveLagTest()
 		// Circles 1st row
 		circle->x = 8;
 		circle->y = 56;
-		if(framecnt == 1)
-		{
-			circle->b = 0;
-			circle->r = 0xff;
-		}
-		else
-		{
-			circle->b = 0xff;
-			circle->r = 0;
-		}
+		changeCircleColor(circle, color, framecnt == 1);
 		DrawImage(circle);
 		DrawDigit(28, 68, 0xff, 0xff, 0xff, 1);
 
 		circle->x = 88;
 		circle->y = 56;
-		if(framecnt == 2)
-		{
-			circle->b = 0;
-			circle->r = 0xff;
-		}
-		else
-		{
-			circle->b = 0xff;
-			circle->r = 0;
-		}
+		changeCircleColor(circle, color, framecnt == 2);
 		DrawImage(circle);
 		DrawDigit(108, 68, 0xff, 0xff, 0xff, 2);
 
 		circle->x = 168;
 		circle->y = 56;
-		if(framecnt == 3)
-		{
-			circle->b = 0;
-			circle->r = 0xff;
-		}
-		else
-		{
-			circle->b = 0xff;
-			circle->r = 0;
-		}
+		changeCircleColor(circle, color, framecnt == 3);
 		DrawImage(circle);
 		DrawDigit(188, 68, 0xff, 0xff, 0xff, 3);
 
 		circle->x = 248;
 		circle->y = 56;
-		if(framecnt == 4)
-		{
-			circle->b = 0;
-			circle->r = 0xff;
-		}
-		else
-		{
-			circle->b = 0xff;
-			circle->r = 0;
-		}
+		changeCircleColor(circle, color, framecnt == 4);
 		DrawImage(circle);
 		DrawDigit(268, 68, 0xff, 0xff, 0xff, 4);
 
 		// Circles 2nd row
 		circle->x = 8;
 		circle->y = 136;
-		if(framecnt == 5)
-		{
-			circle->b = 0;
-			circle->r = 0xff;
-		}
-		else
-		{
-			circle->b = 0xff;
-			circle->r = 0;
-		}
+		changeCircleColor(circle, color, framecnt == 5);
 		DrawImage(circle);
 		DrawDigit(28, 148, 0xff, 0xff, 0xff, 5);
 
 		circle->x = 88;
 		circle->y = 136;
-		if(framecnt == 6)
-		{
-			circle->b = 0;
-			circle->r = 0xff;
-		}
-		else
-		{
-			circle->b = 0xff;
-			circle->r = 0;
-		}
+		changeCircleColor(circle, color, framecnt == 6);
 		DrawImage(circle);
 		DrawDigit(108, 148, 0xff, 0xff, 0xff, 6);
 
 		circle->x = 168;
 		circle->y = 136;
-		if(framecnt == 7)
-		{
-			circle->b = 0;
-			circle->r = 0xff;
-		}
-		else
-		{
-			circle->b = 0xff;
-			circle->r = 0;
-		}
+		changeCircleColor(circle, color, framecnt == 7);
 		DrawImage(circle);
 		DrawDigit(188, 148, 0xff, 0xff, 0xff, 7);
 
 		circle->x = 248;
 		circle->y = 136;
-		if(framecnt == 8)
-		{
-			circle->b = 0;
-			circle->r = 0xff;
-		}
-		else
-		{
-			circle->b = 0xff;
-			circle->r = 0;
-		}
+		changeCircleColor(circle, color, framecnt == 8);
 		DrawImage(circle);
 		DrawDigit(268, 148, 0xff, 0xff, 0xff, 8);
 
@@ -2065,8 +2028,16 @@ void PassiveLagTest()
 		// Draw Frames
 		lsd = frames % 10;
 		msd = frames / 10;
-		DrawDigit(248, 16, toggle?0xff:0, 0, toggle?0:0xff, msd);
-		DrawDigit(272, 16, toggle?0xff:0, 0, toggle?0:0xff, lsd);
+		if(color)
+		{
+			DrawDigit(248, 16, toggle?0xff:0, 0, toggle?0:0xff, msd);
+			DrawDigit(272, 16, toggle?0xff:0, 0, toggle?0:0xff, lsd);
+		}
+		else
+		{
+			DrawDigit(248, 16, 0, 0, 0, msd);
+			DrawDigit(272, 16, 0, 0, 0, lsd);
+		}
 
 		EndScene();
 
@@ -2081,6 +2052,9 @@ void PassiveLagTest()
 			frames = hours = minutes = seconds = 0;
 			framecnt = 1;
 		}
+		
+		if (pressed & PAD_BUTTON_Y)
+			color = !color;
 
 		if (pressed & PAD_BUTTON_A)
 			pause = !pause;
