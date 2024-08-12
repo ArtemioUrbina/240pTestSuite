@@ -75,7 +75,7 @@ void freeSceneData(SceneData *scene) {
 int load3DScene(SceneData *scene) {
 	memset(scene, 0, sizeof(SceneData));
 	
-	scene->depthBuffer = surface_alloc(FMT_RGBA16, 320, 240);
+	scene->depthBuffer = surface_alloc(FMT_RGBA16, getHardWidth(), getHardHeight());
 	if(!scene->depthBuffer.buffer)
 		return 0;
 
