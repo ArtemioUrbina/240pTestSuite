@@ -89,7 +89,7 @@ void updatePalette(image *data);
 void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);
 void fadeImageStep(image *data);
-void drawSplash(char *name, int delay, int paleteSize);
+int drawSplash(char *name, int delay, int paleteSize);
 
 
 /* Big Numbers */

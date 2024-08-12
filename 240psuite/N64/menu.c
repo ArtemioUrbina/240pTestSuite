@@ -25,6 +25,7 @@
 #include "image.h"
 #include "controller.h"
 #include "menu.h"
+#include "mcs.h"
 
 int showMenuSet = 0;
 int enableVideoOption = 1;
@@ -306,7 +307,7 @@ void drawCredits(int usebuffer) {
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, data); y += fh; 
 
 		drawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
-		drawStringS(x+5, y, 0xff, 0xff, 0xff, "libDragon"); y += fh; y2 = y;
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "libDragon + tiny 3D"); y += fh; y2 = y;
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney\n(@khmr33)"); y2 += 2*fh;
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "@FirebrandX"); y2 += fh;
@@ -363,6 +364,20 @@ void drawCredits(int usebuffer) {
 				if(!hasMenuFB())
 					setClearScreen();
 			}
+		}
+		
+		if(keys.c_up) {
+			drawMCSScreen(400, 1);
+		}
+		
+		if(keys.c_left) {
+			setClearScreen();
+			drawSplash("rom:/libdragon.sprite", LOGO_HOLD, 16);
+		}
+		
+		if(keys.c_right) {
+			setClearScreen();
+			drawSplash("rom:/tiny3d.sprite", LOGO_HOLD, 16);
 		}
 		
 		counter ++;			

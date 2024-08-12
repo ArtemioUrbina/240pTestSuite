@@ -24,6 +24,7 @@
 #include "hardware.h"
 #include "audio.h"
 #include "menu.h"
+#include "mcs.h"
 
 void drawIntro(void);
 void drawPatternsMenu(void);
@@ -524,7 +525,9 @@ void drawVideoTestsMenu(void) {
 }
 
 void drawIntro() {
-	changeVMode(RESOLUTION_640x480);
-	drawSplash("rom:/libdragon.sprite", LOGO_HOLD, 12);
-	changeVMode(RESOLUTION_320x240);
+	int cancel = 0;
+	
+	cancel = drawMCSScreen(100, 0);
+	cancel = drawSplash("rom:/libdragon.sprite", cancel ? 0 : LOGO_HOLD, 16);
+	cancel = drawSplash("rom:/tiny3d.sprite", cancel ? 0: LOGO_HOLD, 16);
 }

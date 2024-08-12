@@ -8,8 +8,8 @@
 #include "help.h"
 #include "controller.h"
 
-#define VERSION_NUMBER "N64 B2 0.10"
-#define VERSION_DATE "2024/07/29"
+#define VERSION_NUMBER "N64 0.80B"
+#define VERSION_DATE "2024/08/11"
 
 void checkMenu(char *help, int *reload);
 void checkStart(joypad_buttons_t keys);

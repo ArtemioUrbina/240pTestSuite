@@ -1,6 +1,9 @@
 BUILD_DIR = build
 include include/n64.mk
 
+T3D_INST=$(N64_INST)/tiny3d
+include $(T3D_INST)/t3d.mk
+
 src = $(wildcard *.c)
 ASSETS_PNG = $(wildcard assets/*.png)
 ASSETS_PNG_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_PNG:%.png=%.sprite)))
@@ -8,6 +11,9 @@ ASSETS_PNG_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_PNG:%.png=%.sprite))
 #commented to iterate on builds and testing via USB upload
 #ASSETS_WAV = $(wildcard assets/*.wav)
 #ASSETS_WAV_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64)))
+
+ASSETS_GLTF = $(wildcard assets/*.glb)
+ASSETS_GLTF_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_GLTF:%.glb=%.t3dm)))
 
 ASSETS_HELP = $(wildcard filesystem/help/*.txt)
 
@@ -26,6 +32,12 @@ filesystem/%.wav64: assets/%.wav
 	@mkdir -p $(dir $@)
 	@echo "    [AUDIO] $@"
 	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) -v -o filesystem $<
+	
+filesystem/%.t3dm: assets/%.glb
+	@mkdir -p $(dir $@)
+	@echo "    [T3D-MODEL] $@"
+	@$(T3D_GLTF_TO_3D) "$<" $@
+	@$(N64_BINDIR)/mkasset -o filesystem $@
 
 filesystem/240pSuite-font.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 8,8
 filesystem/mainbg.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
@@ -61,6 +73,7 @@ filesystem/shadow.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/buzzbomber.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/buzzbomberShadow.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/libdragon.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
+filesystem/tiny3d.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/menu.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/menularge.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/message.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI8
@@ -78,15 +91,14 @@ filesystem/convergence-03-dots.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --
 filesystem/convergence-04-colors.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/convergence-05-colorsbl.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 
-
-$(BUILD_DIR)/240pSuite.dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_HELP)
+$(BUILD_DIR)/240pSuite.dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_HELP) $(ASSETS_GLTF_CONV)
 $(BUILD_DIR)/240pSuite.elf: $(src:%.c=$(BUILD_DIR)/%.o)
 
 240pSuite.z64: N64_ROM_TITLE="240pSuite"
 240pSuite.z64: $(BUILD_DIR)/240pSuite.dfs 
 
 clean:
-	rm -rf $(BUILD_DIR) 240pSuite.z64 $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV)
+	rm -rf $(BUILD_DIR) 240pSuite.z64 $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_GLTF_CONV)
 	
 fsclean:
 	rm -rf $(BUILD_DIR)/*.dfs
@@ -96,5 +108,10 @@ bench: all
 
 debug: CFLAGS += -g -ggdb
 debug: all
+
+build_lib:
+	rm -rf $(BUILD_DIR) *.z64
+	make -C $(T3D_INST)
+	make all
 
 .PHONY: all clean

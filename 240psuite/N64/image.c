@@ -619,19 +619,22 @@ int getDispHeight() {
 // if unknown, to add a new image, add verbose in the Makefile for
 // mksprite and check the colors
 
-void drawSplash(char *name, int delay, int paleteSize) {
+int drawSplash(char *name, int delay, int paleteSize) {
+	int cancel = 0;
 	joypad_buttons_t keys;
 	image *logo = NULL;
 	
 	logo = loadImage(name);
 	if(!logo)
-		return;
+		return 0;
 
 	logo->center = true;
 	if(getDispHeight() > 240 && logo->tiles->height > 240)
 		logo->scale = 0;
 	logo->palSize = paleteSize;
 	
+	if(!delay)
+		cancel = 1;
 	while(delay) {
 		getDisplay();
 		
@@ -645,8 +648,10 @@ void drawSplash(char *name, int delay, int paleteSize) {
 		keys = controllerButtonsDown();
 		
 		delay --;
-		if(keys.a || keys.b || keys.start)
+		if(keys.a || keys.b || keys.start) {
 			delay = 0;
+			cancel = 1;
+		}
 	}
 	
 	delay = FADE_STEPS;
@@ -679,6 +684,7 @@ void drawSplash(char *name, int delay, int paleteSize) {
 	}
 	
 	freeImage(&logo);
+	return cancel;
 }
 
 
