@@ -38,7 +38,7 @@ uint16_t convertToFrames(timecode *time) {
 		return frames;
 
 	frames = time->frames;
-	if(isPAL)
+	if(is50Hz())
 		frames += time->seconds*50;
 	else
 		frames += time->seconds*60;
@@ -54,7 +54,7 @@ void convertFromFrames(timecode *value, uint16_t Frames) {
 	Frames = Frames % 216000;
 	value->minutes = Frames / 3600;
 	Frames = Frames % 3600;
-	if(isPAL) {
+	if(is50Hz()) {
 		value->seconds = Frames / 50;
 		value->frames = Frames % 50;
 	}
@@ -380,7 +380,7 @@ void drawLagTest() {
 			toggle = !toggle;
 		}
 		
-		if(isPAL) {
+		if(is50Hz()) {
 			if(frames > 49)	{
 				frames = 0;
 				seconds ++;
@@ -700,7 +700,7 @@ void drawStripes() {
 			sprintf(msg, "Frame: %02d", frame);
 			drawStringB(20, isVMode480() ? 460 : 210, 0xff, 0xff, 0xff, msg);
 			frame ++;
-			if(isPAL) {
+			if(is50Hz()) {
 				if(frame > 49)
 					frame = 0;
 			}
@@ -768,7 +768,7 @@ void drawCheckerBoard() {
 			sprintf(msg, "Frame: %02d", frame);
 			drawStringB(20, isVMode480() ? 460 : 210, 0xff, 0xff, 0xff, msg);
 			frame ++;
-			if(isPAL) {
+			if(is50Hz()) {
 				if(frame > 49)
 					frame = 0;
 			}
@@ -1012,7 +1012,7 @@ void drawDisappear() {
 
 		frames ++;
 
-		if(frames > (isPAL ? 49 : 59)) {
+		if(frames > (is50Hz() ? 49 : 59)) {
 			frames = 0;
 			seconds ++;
 		}
@@ -1046,16 +1046,9 @@ void drawAlternate240p480i()
 	char 			buffer[100];
 	joypad_buttons_t keys;
 	
-	if(isPAL) {
-		if(videoModeToInt(&current_resolution) != SUITE_320x240) {
-			changeVMode(RESOLUTION_320x240);	
-		}
-	}
-	else {
-		if(videoModeToInt(&current_resolution) != SUITE_320x240) {		
-			changeVMode(RESOLUTION_320x240);
-		}
-	}
+	
+	if(videoModeToInt(&current_resolution) != SUITE_320x240)
+		changeVMode(RESOLUTION_320x240);	
 	
 	setMenuVideo(0);
 	useReducedWidthSpace(0);
@@ -1064,7 +1057,7 @@ void drawAlternate240p480i()
 		
 		frames ++;
 
-		if(isPAL) {
+		if(is50Hz()) {
 			if(frames > 49)	{
 				frames = 0;
 				seconds ++;
@@ -1096,7 +1089,7 @@ void drawAlternate240p480i()
 		rdpqStart();
 		rdpqEnd();
 		
-		sprintf(buffer, "Current Resolution: %s", res == 0 ? (isPAL ? "288p" : "240p") : (isPAL ? "576i" : "480i"));
+		sprintf(buffer, "Current Resolution: %s", res == 0 ? "240p" : "480i");
 		drawString(x, 8, 0, 0xff, 0, buffer);
 
 		sprintf(buffer, "Elapsed Timer:%02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
@@ -1107,7 +1100,7 @@ void drawAlternate240p480i()
 			for(i = 0; i < current; i++) {
 				if(times[i].type == 0) {
 					sprintf(buffer, "-> to %s at: ",
-						times[i].res == 0 ? (isPAL ? "288p" : "240p") : (isPAL ? "576i" : "480i"));
+						times[i].res == 0 ? "240p" : "480i");
 						
 					drawString(x, 40+i*fh, 0xff, 0xff, 0x00, buffer);
 				}
@@ -1526,7 +1519,7 @@ void drawTimingReflexTest() {
 					total += clicks[i];
 			}
 
-			if(!isPAL) {
+			if(!is50Hz()) {
 				res = (double)total / 10.0;
 				ms = (double)(res*(1000.0/60.0));
 				sprintf(msg, "%d/10 = %0.2f frames ~= %0.2fms", total, res, ms);

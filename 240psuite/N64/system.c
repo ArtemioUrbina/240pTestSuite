@@ -19,14 +19,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
  
- #include "system.h"
- #include "video.h"
- #include "font.h"
- #include <unistd.h>
+#include "system.h"
+#include "video.h"
+#include "font.h"
+#include <unistd.h>
  
- int isPAL = 0;
+int isPAL = 0;
  
- void detectConsoleType() {
+void detectConsoleType() {
 	switch(get_tv_type()) {
 		case TV_PAL:
 		case TV_MPAL:
@@ -39,7 +39,7 @@
 	}
 }
  
- void initN64() {
+void initN64() {
 	uint32_t seed;
 	
 	/* Initialize peripherals */
@@ -55,12 +55,15 @@
 	
 	getentropy(&seed, 4);
 	srand(seed);
- }
+}
  
- #define START_SYSINFO_X	190
- #define START_SYSINFO_Y	216
+#define START_SYSINFO_X	226
+#define START_SYSINFO_Y	200
  
- void drawSysData() {
+#define START_VIDINFO_X	226
+#define START_VIDINFO_Y	212
+ 
+void drawSysData() {
 	char str[20];
 	int iQue = sys_bbplayer();
 	
@@ -69,21 +72,25 @@
 	
 	switch(get_tv_type()) {
 		case TV_NTSC:
-			sprintf(str, "NTSC ");
+			sprintf(str, " NTSC");
 			break;
 		case TV_PAL:
-			sprintf(str, "PAL  ");
+			if(is50Hz())
+				sprintf(str, "  PAL");
+			else
+				sprintf(str, "PAL60");
 			break;
 		case TV_MPAL:
-			sprintf(str, "MPAL ");
+			sprintf(str, " MPAL");
 			break;
 		default:
-			sprintf(str, "???  ");
+			sprintf(str, "  ???");
 			break;
 	}
-
-	getVideoModeStr(str+5, 0);
-	drawStringS(START_SYSINFO_X, START_SYSINFO_Y+fh, 0xfa, 0xfa, 0xfa, str);
+	drawStringS(START_VIDINFO_X+24, START_VIDINFO_Y, 0xfa, 0xfa, 0xfa, str);
+	
+	getVideoModeStr(str, 0);
+	drawStringS(START_VIDINFO_X, START_VIDINFO_Y+fh, 0xfa, 0xfa, 0xfa, str);
 }
 
 // Code from Fazana
@@ -92,3 +99,4 @@ int getUsedRAM() {
 	struct mallinfo mem_info = mallinfo();
 	return(mem_info.uordblks - ((unsigned int)HEAP_START_ADDR - 0x80000000 - 0x10000 - 0xF1C00));
 }
+

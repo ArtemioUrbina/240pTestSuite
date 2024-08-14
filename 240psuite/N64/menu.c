@@ -195,20 +195,7 @@ void selectVideoMode(int useBack) {
 		//drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480/240 assets"); y += fh; c++;				
 		
-		/*
-		y += fh/2;
-		if(enablePAL) {
-			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "288p"); y += fh; c++;
-			//drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i scaled 264/240p assets (PAL)"); y += fh; c++;
-			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576i 528/480/240 assets (PAL)"); c++;
-		}
-		else {
-			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "288p"); y += fh; c++;
-			//drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i scaled 264/240p assets (stretched/PAL)"); y += fh; c++;
-			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576i 528/480/240 assets (PAL)"); c++;			
-		}
-		*/
-		
+
 		y += fh/2;
 			
 		drawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
@@ -251,14 +238,6 @@ void selectVideoMode(int useBack) {
 					changeVMode(RESOLUTION_640x480);
 					break;
 				case 3:
-					if(enablePAL)
-						changeVMode(RESOLUTION_320x240);
-					break;
-				case 4:
-					if(enablePAL)
-						changeVMode(RESOLUTION_640x480);
-					break;		
-				case 5:
 					close = 1;
 					break;
 				default:

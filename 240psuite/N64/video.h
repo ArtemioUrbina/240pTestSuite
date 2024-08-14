@@ -20,8 +20,10 @@ extern unsigned int		current_buffers;
 extern unsigned int		current_gamma;
 extern filter_options_t	current_antialias;
 extern rdpq_antialias_t current_rdp_aa_filter;
-extern unsigned int		enablePAL;
+extern unsigned int		enablePAL60;
 extern unsigned int		vMode;
+
+int is50Hz();
 
 void getDisplay();
 void waitVsync();

@@ -1011,9 +1011,6 @@ void drawOverscan() {
 		sprintf(msg, "%d pixels (%0.2f%%)", oRight, (oRight*100.0f)/(getDispWidth()/2));
 		drawStringS(x, y, 0xdf, 0xdf, 0xdf, msg);
 				
-		//if(IsPAL && Options.PALScale576)
-			//drawStringS(50, 50, 0xff, 0xff, 0x00, "When using PAL stretched modes, the pixel\ncount is inaccurate due to vertical scaling.\nRead the #MHELP#M for details");
-			
 		checkMenu(OVERSCANHELP, NULL);
 		waitVsync();
 		
