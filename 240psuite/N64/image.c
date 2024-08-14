@@ -50,8 +50,13 @@ void frameEnableUpscaler(int enable) {
 	upscaleFrame = enable;
 }
 
-void rdpqSetDrawMode() {
-	rdpq_set_mode_copy(1);
+void rdpqSetDrawMode(int type) {
+	if(current_bitdepth == DEPTH_32_BPP)
+		rdpq_set_mode_standard();
+	else {
+		rdpq_set_mode_copy(type);
+		rdpq_mode_antialias(current_rdp_aa_filter);
+	}
 }
  
 void rdpqStart() {
@@ -75,7 +80,7 @@ void rdpqStart() {
 	else
 		rdpq_attach(__disp, NULL);
 	
-	rdpqSetDrawMode();
+	rdpqSetDrawMode(1);
 }
  
 void rdpqEnd() {
@@ -121,7 +126,7 @@ void rdpqDrawImage(image* data) {
 		rdpq_sprite_blit(data->tiles, data->x, data->y, &(rdpq_blitparms_t) {
 			.flip_x = data->flipH, .flip_y = data->flipV
 			});
-		rdpqSetDrawMode();
+		rdpqSetDrawMode(1);
 	}
 	
 	if(upscaleFrame)
@@ -152,7 +157,7 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 		rdpq_sprite_blit(data->tiles, x, y, &(rdpq_blitparms_t) {
 			.flip_x = data->flipH, .flip_y = data->flipV
 			});
-		rdpqSetDrawMode();
+		rdpqSetDrawMode(1);
 	}
 	
 	if(upscaleFrame)
@@ -308,11 +313,17 @@ int copyMenuFB() {
 		return 0;
 	freeMenuFB();
 	
-	// only allow this in 8MB expanded systems
-	// reason is, although it works it ends up leading to memory
-	// fragmentation even if allocated from boot
-	// since constant resolution changes deallocate and reallocate
-	// libDragon's framebuffers (safe buffer)
+	// ATM don't allow it to happen when in 32bpp since it draws
+	// incorerctly with rdpq_tex_blit
+	if(current_bitdepth == DEPTH_32_BPP)
+		return 0;
+	
+	// only allow 480i in 8MB expanded systems
+	// reason is: although it works, it ends up leading to memory
+	// fragmentation even if allocated from boot since constant
+	// resolution changes deallocate and reallocate libDragon's
+	// framebuffers (safe buffer)
+	
 	if(getDispHeight() > 240 && (get_memory_size() / 0x100000) < 8)
 		return 0;
 
@@ -329,7 +340,7 @@ int copyMenuFB() {
 	}
 	
 	rdpq_attach(__menu_fb, NULL);
-	rdpq_set_mode_copy(0);
+	rdpqSetDrawMode(0);
 	rdpq_tex_blit(__disp, 0, 0, NULL);
 	rdpq_detach();
 
@@ -351,14 +362,15 @@ void freeMenuFB() {
 }
 
 void drawMenuFB() {
+	surface_t *target = NULL;
+	
 	if(!__menu_fb || !__disp)
 		return;
-	surface_t *target = NULL;
 	
 	target = upscaleFrame ? __upscale_fb : __disp;
 	
 	rdpq_attach(target, NULL);
-	rdpq_set_mode_copy(0);
+	rdpqSetDrawMode(0);
 	rdpq_clear(RGBA32(0, 0, 0, 0xff));
 	// check if we are using a FB from a different resolution and adjust
 	if(target->height == __menu_fb->height && target->width > __menu_fb->width)
@@ -371,32 +383,58 @@ void drawMenuFB() {
 void darkenMenuFB(int amount) {
 	if(!__menu_fb)
 		return;
-
-	if(surface_get_format(__menu_fb) != FMT_RGBA16)
-		return;
 	
-	uint16_t *pixels = (uint16_t*)__menu_fb->buffer;
-	unsigned int len = TEX_FORMAT_PIX2BYTES(surface_get_format(__menu_fb), __menu_fb->width * __menu_fb->height)/2;
+	if(surface_get_format(__menu_fb) == FMT_RGBA16) {
+		uint16_t *pixels = (uint16_t*)__menu_fb->buffer;
+		unsigned int len = TEX_FORMAT_PIX2BYTES(surface_get_format(__menu_fb), __menu_fb->width * __menu_fb->height)/2;
 
-	for(unsigned int i = 0; i < len; i++) {
-		color_t color;
+		for(unsigned int i = 0; i < len; i++) {
+			color_t color;
+				
+			color = color_from_packed16(pixels[i]);
 			
-		color = color_from_packed16(pixels[i]);
+			if(color.r > amount)
+				color.r -= amount;
+			else
+				color.r = 0;
+			if(color.g > amount)
+				color.g -= amount;
+			else
+				color.g = 0;
+			if(color.b > amount)
+				color.b -= amount;
+			else
+				color.b = 0;
 		
-		if(color.r > amount)
-			color.r -= amount;
-		else
-			color.r = 0;
-		if(color.g > amount)
-			color.g -= amount;
-		else
-			color.g = 0;
-		if(color.b > amount)
-			color.b -= amount;
-		else
-			color.b = 0;
+			pixels[i] = graphics_convert_color(color);
+		}
+
+	}
 	
-		pixels[i] = graphics_convert_color(color);
+	if(surface_get_format(__menu_fb) == FMT_RGBA32) {
+		uint32_t *pixels = (uint32_t *)__menu_fb->buffer;
+		unsigned int len = TEX_FORMAT_PIX2BYTES(surface_get_format(__menu_fb), __menu_fb->width * __menu_fb->height)/4;
+
+		for(unsigned int i = 0; i < len; i++) {
+			color_t color;
+				
+			color = color_from_packed32(pixels[i]);
+
+			if(color.r > amount)
+				color.r -= amount;
+			else
+				color.r = 0;
+			if(color.g > amount)
+				color.g -= amount;
+			else
+				color.g = 0;
+			if(color.b > amount)
+				color.b -= amount;
+			else
+				color.b = 0;
+
+			pixels[i] = graphics_convert_color(color);
+		}
 	}
 }
 

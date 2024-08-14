@@ -15,14 +15,4 @@ void initN64();
 void drawSysData();
 int getUsedRAM();
 
-// These taken from libdragon examples
-uint32_t myrand(void);
-
-// RANDN(n): generate a random number from 0 to n-1
-#define RANDN(n) ({ \
-	__builtin_constant_p((n)) ? \
-		(myrand()%(n)) : \
-		(uint32_t)(((uint64_t)myrand() * (n)) >> 32); \
-})
-
 #endif

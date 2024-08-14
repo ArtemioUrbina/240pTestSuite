@@ -25,10 +25,11 @@
 #include "font.h"
 
 resolution_t		current_resolution;
-unsigned int		current_bitdepth = 0;
+bitdepth_t			current_bitdepth = DEPTH_16_BPP;
 unsigned int		current_buffers = 0;
 unsigned int		current_gamma = 0;
 filter_options_t	current_antialias = 0;
+rdpq_antialias_t	current_rdp_aa_filter = AA_NONE;
 unsigned int		enablePAL = 0;
 unsigned int		vMode = SUITE_NONE;
 
@@ -43,7 +44,9 @@ uint64_t __lastVbl = 0;
 float __vblLen = 0;
 
 resolution_t 	__newInternalResChange;
+bitdepth_t		__newInternalBPPChange = DEPTH_16_BPP;
 int 			__changeInternalRes = 0;
+int				__changeInternalBPP = 0;
 
 float getFrameLen() {
 	return __vblLen;
@@ -106,17 +109,19 @@ int getHardHeight() {
 }
 
 void checkInternalResChange() {
-	if(!__changeInternalRes)
+	if(!__changeInternalRes && !__changeInternalBPP)
 		return;
 	
-	setVideoInternal(__newInternalResChange);
+	setVideoInternal(__changeInternalRes ? __newInternalResChange : current_resolution);
 	setClearScreen();
 	
 	__changeInternalRes = 0;
+	__changeInternalBPP = 0;
 }
 
 void getDisplay() {
 	checkInternalResChange();
+
 	__frameStart = get_ticks_us();
 	
 	__disp = display_get();
@@ -209,20 +214,26 @@ void waitVsync() {
 void initVideo() {
 	__disp = NULL;
 	__changeInternalRes = 0;
+	__changeInternalBPP = 0;
 
 	current_resolution = RESOLUTION_320x240;
 	current_bitdepth = DEPTH_16_BPP;
 	current_buffers = SUITE_NUM_BUFFERS;
 	current_gamma = GAMMA_NONE;
 	current_antialias = FILTERS_RESAMPLE;
+	current_rdp_aa_filter = AA_NONE;
 	enablePAL = isPAL;
 	vMode = SUITE_NONE;
+	
+	__newInternalBPPChange = DEPTH_16_BPP;
 	
 	videoSet = 0;
 }
 
 void setVideoInternal(resolution_t newRes) {
-	if(vMode != SUITE_NONE && isSameRes(&newRes, &current_resolution))
+	if(vMode != SUITE_NONE && 
+		isSameRes(&newRes, &current_resolution) &&
+		current_bitdepth == __newInternalBPPChange)
 		return;
 	
 	if(videoSet) {
@@ -236,8 +247,10 @@ void setVideoInternal(resolution_t newRes) {
 		unregister_VI_handler(vblCallback);
 		videoSet = 0;
 	}
-	
+		
 	current_resolution = newRes;
+	current_bitdepth = __newInternalBPPChange;
+	
 	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
 	
 	vMode = videoModeToInt(&current_resolution);
@@ -366,3 +379,13 @@ void getVideoModeStr(char *res, int shortdesc) {
 		}
 	}
 }
+
+void changeBitDepthOnVBlank(int use32bits) {
+	if(use32bits && current_bitdepth == DEPTH_32_BPP)
+		return;
+	if(!use32bits && current_bitdepth == DEPTH_16_BPP)
+		return;
+	__newInternalBPPChange = use32bits ? DEPTH_32_BPP : DEPTH_16_BPP;
+	__changeInternalBPP = 1;
+}
+

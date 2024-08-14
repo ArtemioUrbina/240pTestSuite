@@ -106,28 +106,29 @@ void drawPLUGE() {
 	freeImage(&back);
 }
 
+#define NUM_CBARS 4
+
 void drawColorbars() {
-	int end = 0, pattern = 0;
-	image *back = NULL, *grid = NULL;
+	int end = 0, sel = 1, pattern = 0, reload = 1;
+	image *back = NULL;
+	char *colors[NUM_CBARS] = { "rom:/colorlow.sprite",
+								"rom:/color.sprite", 
+								"rom:/colorhigh.sprite",
+								"rom:/color_grid.sprite" };
 	joypad_buttons_t keys;
 	
-	back = loadImage("rom:/color.sprite");
-	if(!back)
-		return;
-	grid = loadImage("rom:/color_grid.sprite");
-	if(!grid) {
-		freeImage(&back);
-		return;
-	}
-
+	changeBitDepthOnVBlank(1);
 	while(!end) {
+		if(reload) {
+			freeImage(&back);
+			back = loadImage(colors[sel]);
+			reload = 0;
+		}
+		
 		getDisplay();
 
 		rdpqStart();
-		if(!pattern)
-			rdpqDrawImage(back);
-		else
-			rdpqDrawImage(grid);
+		rdpqDrawImage(back);
 		rdpqEnd();
 
 		checkMenu(COLORBARSHELP, NULL);
@@ -137,14 +138,36 @@ void drawColorbars() {
 		keys = controllerButtonsDown();
 		
 		checkStart(keys);
-		if(keys.a)
+		if((sel == 1 || sel == 3) && keys.a) {
 			pattern = !pattern;
+			if(pattern) 
+				sel = 3;
+			else
+				sel = 1;
+			reload = 1;
+		}
+		
+		if(sel != 3) {
+			if(keys.l) {
+				if(sel > 0) {
+					sel --;
+					reload = 1;
+				}
+			}
+			
+			if(keys.r) {
+				if(sel < 2) {
+					sel ++;
+					reload = 1;
+				}
+			}
+		}
 		if(keys.b)
 			end = 1;
 	}
-	
 	freeImage(&back);
-	freeImage(&grid);
+	
+	changeBitDepthOnVBlank(0);
 }
 
 void drawEBUSMPTE(unsigned int ebu) {
@@ -286,6 +309,7 @@ void drawWhiteScreen() {
 	// white
 	cr = cg = cb = IRE_100;
 	er = eb = eg = IRE_100;
+	changeBitDepthOnVBlank(1);
 	while(!end) {
 		getDisplay();
 		
@@ -461,6 +485,7 @@ void drawWhiteScreen() {
 					break;
 		}
 	}
+	changeBitDepthOnVBlank(0);
 }
 
 void drawSharpness() {
@@ -809,6 +834,7 @@ void drawHCFR() {
 	if(hcfr_type == MENU_CANCEL)
 		return;
 	
+	changeBitDepthOnVBlank(1);
 	while(!done) {
 		int	r, g, b;
 		
@@ -862,6 +888,7 @@ void drawHCFR() {
 			
 		checkStart(keys);
 	}
+	changeBitDepthOnVBlank(0);
 }
 
 #define	NUM_CONV	5

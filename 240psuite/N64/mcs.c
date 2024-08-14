@@ -238,8 +238,8 @@ int draw3DScene(SceneData *scene, int frames, uint8_t color, int type, int contr
 				frames = origFrames;
 			}
 		
-			if(scene->camPos.v[2] < 44.0)
-				scene->camPos.v[2] = 44.0f;
+			if(scene->camPos.v[2] < 45.0)
+				scene->camPos.v[2] = 45.0f;
 			if(scene->camPos.v[2] > 590.0)
 				scene->camPos.v[2] = 590.0;
 		}

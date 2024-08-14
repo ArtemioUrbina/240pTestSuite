@@ -15,10 +15,11 @@
 extern surface_t* __disp;
 
 extern resolution_t		current_resolution;
-extern unsigned int		current_bitdepth;
+extern bitdepth_t		current_bitdepth;
 extern unsigned int		current_buffers;
 extern unsigned int		current_gamma;
 extern filter_options_t	current_antialias;
+extern rdpq_antialias_t current_rdp_aa_filter;
 extern unsigned int		enablePAL;
 extern unsigned int		vMode;
 
@@ -38,6 +39,7 @@ int videoModeToInt(resolution_t *res);
 void getVideoModeStr(char *res, int shortdesc);
 void changeToH256onVBlank();
 void changeToH320onVBlank();
+void changeBitDepthOnVBlank(int use32bits);
 int isVMode256();
 int isVMode480();
 

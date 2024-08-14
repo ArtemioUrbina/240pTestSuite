@@ -182,7 +182,10 @@ void selectVideoMode(int useBack) {
 		x = back->x + 48;
 		y = back->y + 17;
 		
-		drawStringC(y, 0xff, 0xff, 0xff, "240p Test Suite Video Modes"); y += 6*fh; 
+		drawStringC(y, 0xff, 0xff, 0xff, "240p Test Suite Video Modes");
+		if(current_bitdepth == DEPTH_32_BPP)
+			drawStringS(x+160, y+fh, 0xff, 0xff, 0x00, "32 Bit Mode");
+		y += 6*fh; 
 		
 		drawStringC(y, 0x00, 0xff, 0x00, "Please select the desired mode"); y += 3*fh; 
 			
@@ -307,7 +310,7 @@ void drawCredits(int usebuffer) {
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, data); y += fh; 
 
 		drawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
-		drawStringS(x+5, y, 0xff, 0xff, 0xff, "libDragon + tiny 3D"); y += fh; y2 = y;
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "libDragon & tiny 3D"); y += fh; y2 = y;
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney\n(@khmr33)"); y2 += 2*fh;
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "@FirebrandX"); y2 += fh;
@@ -556,7 +559,7 @@ void SD_blink_cycle(image *sd) {
 	{
 		if(!is_blinking) {
 			// 2% chance every frame after 240
-			if(RANDN(100) < 98)	{
+			if(rand()%100 < 98)	{
 				is_blinking = 1;
 				blink_counter = 230;
 				rdpqDrawImage(SD_b1);

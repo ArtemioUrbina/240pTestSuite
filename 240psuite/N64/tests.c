@@ -137,7 +137,7 @@ void drawDropShadow(int striped) {
 		buzz = loadImage("rom:/buzzbomber.sprite");
 		buzzshadow = loadImage("rom:/buzzbomberShadow.sprite");
 	
-		sprite = RANDN(2);
+		sprite = rand()%2;
 		if(sprite == 0)
 			shadow = sshadow;
 		else
@@ -811,7 +811,7 @@ void SD_blink_cycle_phase(image *sd_b1, image *sd_b2, int index) {
 	blink_counter[index]++;	
 	if(sd_b1 && sd_b2 && blink_counter[index] > 230) {
 		if(!is_blinking[index])	{
-			if(RANDN(100) < 25) {
+			if(rand()%100 < 25) {
 				is_blinking[index] = 1;
 				blink_counter[index] = 230;
 				rdpqDrawImage(sd_b1);
@@ -1305,10 +1305,10 @@ void drawTimingReflexTest() {
 			speed = -1;
 			change = 1;
 			if(variation) {
-				if(RANDN(2))
-					vary = RANDN(7);
+				if(rand()%2)
+					vary = rand()%7;
 				else
-					vary = -1 * RANDN(7);
+					vary = -1 * rand()%7;
 			}
 		}
 
@@ -1316,10 +1316,10 @@ void drawTimingReflexTest() {
 			speed = 1;
 			change = 1;
 			if(variation) {
-				if(RANDN(2))
-					vary = RANDN(7);
+				if(rand()%2)
+					vary = rand()%7;
 				else
-					vary = -1 * RANDN(7);
+					vary = -1 * rand()%7;
 			}
 		}
 

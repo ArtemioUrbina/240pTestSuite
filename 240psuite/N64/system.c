@@ -22,6 +22,7 @@
  #include "system.h"
  #include "video.h"
  #include "font.h"
+ #include <unistd.h>
  
  int isPAL = 0;
  
@@ -39,16 +40,21 @@
 }
  
  void initN64() {
+	uint32_t seed;
+	
 	/* Initialize peripherals */
 	detectConsoleType();
 	
-	initVideo();
-	
 	dfs_init(DFS_DEFAULT_LOCATION);
 	loadFont();
+	
+	initVideo();
 	setVideoInternal(RESOLUTION_320x240);
 	
 	joypad_init();
+	
+	getentropy(&seed, 4);
+	srand(seed);
  }
  
  #define START_SYSINFO_X	190
@@ -80,18 +86,9 @@
 	drawStringS(START_SYSINFO_X, START_SYSINFO_Y+fh, 0xfa, 0xfa, 0xfa, str);
 }
 
+// Code from Fazana
+// 0xF1C00 taken form the max that malloc can return to on either 4Mb or 8MB
 int getUsedRAM() {
 	struct mallinfo mem_info = mallinfo();
-	return(mem_info.uordblks - ((unsigned int)HEAP_START_ADDR - 0x80000000) - 0x10000);
-}
-
-// Fair and fast random generation (using xorshift32, with explicit seed)
-static uint32_t rand_state = 1;
-
-uint32_t myrand(void) {
-	uint32_t x = rand_state;
-	x ^= x << 13;
-	x ^= x >> 7;
-	x ^= x << 5;
-	return rand_state = x;
+	return(mem_info.uordblks - ((unsigned int)HEAP_START_ADDR - 0x80000000 - 0x10000 - 0xF1C00));
 }
