@@ -4,14 +4,14 @@ This pattern allows you to
 calibrate each color: Red, Green
 and Blue; as well as white level.
 
-The default pattern shows 32
-shades of each color, but this
-platform is capable of 256.
-You can view the last 32 and the
-first ones by pressing left or
-right. An extra pattern is also
-availabe with a white grid as
-background, for contrast balance.
+The default pattern shows 32 pure
+shades of each color, but the N64 
+is has 256 available in 32bpp.
+You can view the last and first
+32 by pressing #CL#C or #CR#C. An extra
+pattern is also available with a
+white grid as background by
+pressing #CA#C.
 
 This is adjusted in the same way
 black levels are set with the

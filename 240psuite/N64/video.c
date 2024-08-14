@@ -390,12 +390,17 @@ void getVideoModeStr(char *res, int shortdesc) {
 	}
 }
 
-void changeBitDepthOnVBlank(int use32bits) {
-	if(use32bits && current_bitdepth == DEPTH_32_BPP)
+void changeTo32BitDepthOnVBlank() {
+	if(current_bitdepth == DEPTH_32_BPP)
 		return;
-	if(!use32bits && current_bitdepth == DEPTH_16_BPP)
+	__newInternalBPPChange = DEPTH_32_BPP;
+	__changeInternalBPP = 1;
+}
+
+void changeTo16BitDepthOnVBlank() {
+	if(current_bitdepth == DEPTH_16_BPP)
 		return;
-	__newInternalBPPChange = use32bits ? DEPTH_32_BPP : DEPTH_16_BPP;
+	__newInternalBPPChange = DEPTH_16_BPP;
 	__changeInternalBPP = 1;
 }
 

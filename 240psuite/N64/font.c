@@ -83,8 +83,8 @@ unsigned int measureString(char *str) {
 			case ',':
 			case ';':
 			case '\'':
-				len = len - fw/2 + 1;
-				len += fw/2 + 1;
+				len = len - fw/2;
+				len += fw/2 + 2;
 				break;
 			case ' ':
 				len += getSpaceWidth();
@@ -188,9 +188,9 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 					if(!shown) {
 						if(*text == '.' || *text == ',' || *text == ';' || 
 							*text == '\'') {
-							tx = tx - fw/2 + 1;
+							tx = tx - fw/2;
 							graphics_draw_character(disp, tx, ty, *text);
-							tx += fw/2 + 1;
+							tx += fw/2 + 2;
 						} else {  // any regular character
 							graphics_draw_character(disp, tx, ty, *text);
 							tx += fw;

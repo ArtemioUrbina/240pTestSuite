@@ -41,7 +41,8 @@ int videoModeToInt(resolution_t *res);
 void getVideoModeStr(char *res, int shortdesc);
 void changeToH256onVBlank();
 void changeToH320onVBlank();
-void changeBitDepthOnVBlank(int use32bits);
+void changeTo16BitDepthOnVBlank();
+void changeTo32BitDepthOnVBlank();
 int isVMode256();
 int isVMode480();
 

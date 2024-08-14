@@ -1,6 +1,6 @@
            HELP (1/2)
 
-The 240p Test Suite was designed
+The #Y240p Test Suite#Y was designed
 with two goals in mind:
 
 1) Evaluate 240p signal display
@@ -17,8 +17,8 @@ Help and options are available
 everywhere by pressing #CStart#C.
 
 This version of the suite
-supports 240p, 288p, 576i and
-480i video modes.
+supports #Y240p#Y and #Y480i#Y video
+modes.
 
 
                        #C(cont...)#C
@@ -30,10 +30,10 @@ screen. Affected patterns show
 a warning screen regarding this
 issue.
 
-PAL modes must be enabled from
-the options menu, but only 480
-lines are visible.
+The Suite supports #YPAL60#Y in
+euopean consoles, it must be
+enabled from options.
 
 The 240p suite is also available
 in: #YSega Genesis#Y, #YSega CD#Y, #YPCE#Y,
-#YSNES#Y, #YNES#Y, #YGC#Y, #YWii#Y, #YDC#Y, etc.
+#YSNES#Y, #YNES#Y, #YGC#Y, #YWii#Y, #YDC#Y, #YNeo Geo#Y, etc.
