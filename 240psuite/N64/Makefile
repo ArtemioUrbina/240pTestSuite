@@ -1,5 +1,8 @@
 BUILD_DIR = build
-include include/n64.mk
+include $(N64_INST)/include/n64.mk
+
+# Remove the -fdiagnostics-color=always flag
+N64_C_AND_CXX_FLAGS := $(filter-out -fdiagnostics-color=always, $(N64_C_AND_CXX_FLAGS))
 
 T3D_INST=$(N64_INST)/tiny3d
 include $(T3D_INST)/t3d.mk
@@ -21,7 +24,10 @@ AUDIOCONV_FLAGS ?= --wav-compress 0
 #MKSPRITE_EXTRA_FLAGS ?=--verbose
 MKSPRITE_EXTRA_FLAGS ?=
 
+#We need this for the older flash cart we use
+N64_CHKSUM = $(N64_BINDIR)/chksum64
 all: 240pSuite.z64
+	@$(N64_CHKSUM) 240pSuite.z64 >/dev/null
 
 filesystem/%.sprite: assets/%.png
 	@mkdir -p $(dir $@)
@@ -96,8 +102,11 @@ filesystem/convergence-05-colorsbl.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS
 $(BUILD_DIR)/240pSuite.dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_HELP) $(ASSETS_GLTF_CONV)
 $(BUILD_DIR)/240pSuite.elf: $(src:%.c=$(BUILD_DIR)/%.o)
 
-240pSuite.z64: N64_ROM_TITLE="240pSuite"
-240pSuite.z64: $(BUILD_DIR)/240pSuite.dfs 
+240pSuite.z64: N64_ROM_TITLE = "240p Test Suite"
+240pSuite.z64: N64_ROM_SAVETYPE = none 			# Supported savetypes: none eeprom4k eeprom16 sram256k sram768k sram1m flashram
+240pSuite.z64: N64_ROM_REGIONFREE = true		# Set to true to allow booting on any console region
+240pSuite.z64: N64_ROM_REGION = 'A'				# Set to a region code 'P' for PAL. 'A' all, 'E' NA
+240pSuite.z64: $(BUILD_DIR)/240pSuite.dfs
 
 clean:
 	rm -rf $(BUILD_DIR) 240pSuite.z64 $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_GLTF_CONV)
