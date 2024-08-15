@@ -31,6 +31,7 @@ void drawPatternsMenu(void);
 void drawPatternsColorMenu(void);
 void drawPatternsGeometryMenu(void);
 void drawVideoTestsMenu(void);
+void drawFooter(int x, int *y, int *sel, int *c);
 
 int main(void) {
 	int sel = 1, reload = 1;
@@ -46,7 +47,7 @@ int main(void) {
 #endif
 	
 	while(1) {
-		int c = 1, x = 55, y = 90;
+		int c = 1, x = 55, y = 80;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
@@ -72,7 +73,9 @@ int main(void) {
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Test Patterns"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Video Tests"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Audio Tests"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Hardware Tests"); y += fh;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Hardware Tests"); y += 2*fh; c++;
+		
+		drawFooter(x, &y, &sel, &c);
 		
 		drawSysData();
 		checkMenu(GENERALHELP, NULL);
@@ -112,6 +115,15 @@ int main(void) {
 				case 4:
 					drawMemoryViewer(0);
 					break;
+				case 5:					
+					
+					break;
+				case 6:
+					helpWindow(GENERALHELP);
+					break;
+				case 7:
+					drawCredits(1);
+					break;
 			}
 			reload = 1;
 		}
@@ -128,7 +140,7 @@ void drawPatternsMenu(void) {
 	image *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
-		int c = 1, x = 55, y = 90;
+		int c = 1, x = 55, y = 80;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
@@ -153,7 +165,8 @@ void drawPatternsMenu(void) {
 		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Color & Black Levels"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Geometry"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "HCFR Test Patterns"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "HCFR Test Patterns"); y += 2*fh; c++;
+		drawFooter(x, &y, &sel, &c);
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;
 
 		drawSysData();
@@ -192,6 +205,15 @@ void drawPatternsMenu(void) {
 					drawHCFR();
 					break;
 				case 4:
+					
+					break;
+				case 5:					
+					helpWindow(GENERALHELP);
+					break;
+				case 6:
+					drawCredits(1);
+					break;
+				case 7:
 					exit = 1;
 					break;
 			}
@@ -448,7 +470,7 @@ void drawVideoTestsMenu(void) {
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Backlit Zone Test"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Diagonal Test"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Alternating 240p/480i Test"); y += fh; c++;
-		drawStringS(x, y + fh/2, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Patterns Menu"); y += fh;
+		drawStringS(x, y + fh/2, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;
 
 		drawSysData();
 		checkMenu(GENERALHELP, NULL);
@@ -536,4 +558,10 @@ void drawIntro() {
 	//cancel = drawMCSScreen(100, 0);
 	cancel = drawSplash("rom:/libdragon.sprite", cancel ? 0 : LOGO_HOLD, 16);
 	cancel = drawSplash("rom:/tiny3d.sprite", cancel ? 0: LOGO_HOLD, 16);
+}
+
+void drawFooter(int x, int *y, int *sel, int *c) {
+	drawStringS(x, *y, 0xFF, *sel == *c ? 0 : 0xFF, *sel == *c ? 0 : 0xFF, "Options"); *y += fh; (*c)++;
+	drawStringS(x, *y, 0xFF, *sel == *c ? 0 : 0xFF, *sel == *c ? 0 : 0xFF, "Help"); *y += fh; (*c)++;
+	drawStringS(x, *y, 0xFF, *sel == *c ? 0 : 0xFF, *sel == *c ? 0 : 0xFF, "Credits"); *y += fh; (*c)++;
 }

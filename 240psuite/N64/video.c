@@ -153,7 +153,7 @@ void _internalWaitVsync() {
 	__frameIdle = (now - __idleStart)/1000.0f;
 }
 
-#define MAX_AUDIO_WAIT	1.0f
+#define MAX_AUDIO_WAIT	3.0f
 
 void _internalWaitVsyncWithAudio() {
 	float maxWait = 0, totalWait = 0, idleRest = 0;
@@ -164,6 +164,16 @@ void _internalWaitVsyncWithAudio() {
 	__idleStart = get_ticks_us();
 	idleRest = N64_NTSC_FRAME_LEN - (__idleStart - __frameStart)/1000.0f;
 	
+	/*
+	 * To achieve perfect sync, call #mixer_throttle every time a video frame
+	 * was generated, and pass the maximum number of samples that the mixer is
+	 * allowed to produce. Typically, you will want to pass the audio samplerate
+	 * divided by the video framerate, which corresponds to the number of
+	 * audio samples per video frame.
+	 */
+	
+	//mixer_throttle(44100.0f/(1000.0f/N64_NTSC_FRAME_LEN));
+	mixer_throttle(737.1315);
 	while (nextFrame > __frames) {
 		if(idleRest > MAX_AUDIO_WAIT) {
 			uint64_t mixerStart = 0;

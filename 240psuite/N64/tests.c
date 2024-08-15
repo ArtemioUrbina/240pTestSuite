@@ -1443,24 +1443,22 @@ void drawTimingReflexTest() {
 	int				clicks[10], done = 0, view = 0, speed = 1, change = 1;
 	int				x, y, x2, y2, pos = 0, i = 0, vary = 0, variation = 1;
 	int				audio = 0, rumble = 0;
-	image			*spriteA = NULL, *spriteB = NULL, *fixed = NULL;
+	image			*sprite = NULL;
+	image			*spriteW = NULL, *spriteG = NULL, *spriteR = NULL;
 	wav64_t 		beepSamples;
 	joypad_buttons_t keys;
 	
-	fixed = loadImage("rom:/lag-per.sprite");
-	if(!fixed)
-		return;
-	spriteA = loadImage("rom:/lag-per.sprite");
-	if(!spriteA) {
-		freeImage(&fixed);
-		return;
-	}
-	spriteB = loadImage("rom:/lag-per.sprite");
-	if(!spriteB) {
-		freeImage(&spriteA);
-		freeImage(&fixed);
-		return;
-	}
+	spriteW = loadImage("rom:/lag-per.sprite");
+	spriteR = loadImage("rom:/lag-per.sprite");
+	spriteG = loadImage("rom:/lag-per.sprite");
+	
+	// Prepare red variant so we don't invalidate caches later
+	spriteR->palette[4] = COLOR_R;
+	updatePalette(spriteR);
+	
+	// Prepare green variant so we don't invalidate caches later
+	spriteG->palette[4] = COLOR_G;
+	updatePalette(spriteG);
 		
 	if(!openWAV(&beepSamples, "rom:/beep.wav64")) {
 		drawMessageBox("Audio samples not present");
@@ -1470,9 +1468,6 @@ void drawTimingReflexTest() {
 	y = 60;
 	x2 = 108;
 	y2 = 96;
-		
-	fixed->x = 144;
-	fixed->y = 96;	
 
 	for(i = 0; i < 10; i++)
 		clicks[i] = 0xFF;
@@ -1480,7 +1475,15 @@ void drawTimingReflexTest() {
 	audio_init(44100, TIMING_BUFFERS);
 	mixer_init(TIMING_CHANNELS);
 	
+	sprite = spriteW;
 	while(!done) {
+		// Audio is 1 frames behind video, so we play it back 2 frames before it happens
+		if(audio && (
+			(y == 93 && speed == 1) || 
+			(y == 99 && speed == -1)))
+			//wav64_play(&beepSamples, speed == -1 ? CHANNEL_LEFT : CHANNEL_RIGHT);
+				wav64_play(&beepSamples, 0);
+			
 		getDisplay();
 
 		if(y > 132 + vary) {
@@ -1507,24 +1510,12 @@ void drawTimingReflexTest() {
 
 		y += speed;
 		x2 += speed;
-
-		spriteA->x = x;
-		spriteA->y = y;
-		spriteB->x = x2;
-		spriteB->y = y2;
 		
-		if(y == 96)	{
-			if(audio)
-				wav64_play(&beepSamples, speed == -1 ? CHANNEL_LEFT : CHANNEL_RIGHT);
-				
+		if(y == 96)	{				
 			//if(rumble)
 				//ControllerRumble(0, 1);
 			
-			spriteA->palette[4] = COLOR_R;
-			updatePalette(spriteA);
-			
-			spriteB->palette[4] = COLOR_R;
-			updatePalette(spriteB);
+			sprite = spriteR;
 		}
 		else {
 			//if(rumble)
@@ -1532,33 +1523,27 @@ void drawTimingReflexTest() {
 				
 			if(y == 97 || y == 95) {
 				// one pixel off
-				spriteA->palette[4] = COLOR_G;
-				updatePalette(spriteA);
-				
-				spriteB->palette[4] = COLOR_G;
-				updatePalette(spriteB);
+				sprite = spriteG;
 			}
 
 			if(y == 98 || y == 94) {
 				// two pixels off
-				spriteA->palette[4] = COLOR_W;
-				updatePalette(spriteA);
-				
-				spriteB->palette[4] = COLOR_W;
-				updatePalette(spriteB);
+				sprite = spriteW;
 			}
 		}			
 
 		rdpqStart();
-		rdpqClearScreen();
-		rdpqDrawImage(fixed);
-
+		if(y == 96)
+			rdpqClearScreenWhite();
+		else
+			rdpqClearScreen();
+		rdpqDrawImageXY(spriteW, 144, 96);
 		
 		if(view == 0 || view == 2)
-			rdpqDrawImage(spriteA);
+			rdpqDrawImageXY(sprite, x, y);
 
 		if(view == 1 || view == 2)
-			rdpqDrawImage(spriteB);
+			rdpqDrawImageXY(sprite, x2, y2);
 			
 		rdpqEnd();
 
@@ -1603,8 +1588,9 @@ void drawTimingReflexTest() {
 		drawStringS(20, 170+5*fh, 0x00, 0xff, 0x00, "CR toggles rumble feedback.");
 
 		checkMenu(MANUALLAG, NULL);
-		//drawNoVsyncWithAudio();
-		waitVsyncWithAudio();
+		drawNoVsyncWithAudio();
+		//waitVsyncWithAudio();
+		//waitVsync();
 		
 		joypad_poll();
 		keys = controllerButtonsDown();
@@ -1666,9 +1652,9 @@ void drawTimingReflexTest() {
 	
 	//ControllerRumble(0, 0);
 
-	freeImage(&fixed);
-	freeImage(&spriteA);
-	freeImage(&spriteB);	
+	freeImage(&spriteW);
+	freeImage(&spriteR);	
+	freeImage(&spriteG);
 	
 	if(pos > 9) {
 		int	total = 0;
