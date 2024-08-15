@@ -112,15 +112,30 @@ void rdpqDrawImage(image* data) {
 		const surface_t *output = rdpq_get_attached();
 		
 		if(output) {
-			data->x = (output->width - data->tiles->width)/2;
-			data->y = (output->height - data->tiles->height)/2;
+			if(!data->rotate) {
+				data->x = (output->width - data->tiles->width)/2;
+				data->y = (output->height - data->tiles->height)/2;
+			}
+			else {
+				data->x = output->width/2;
+				data->y = output->height/2;
+			}
 		}
 	}
 
-	if(!data->flipH && !data->flipH) {
+	if(!data->flipH && !data->flipH && !data->rotate) {
 		rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
 	}
-	else {
+	else if(data->rotate) {
+		rdpq_set_mode_standard();
+		rdpq_mode_alphacompare(1);
+		rdpq_sprite_blit(data->tiles, data->x, data->y, &(rdpq_blitparms_t) {
+			.cx = data->tiles->width / 2,
+			.cy = data->tiles->height / 2,
+			.theta = data->rotAngle*M_PI/180
+			});
+		rdpqSetDrawMode(1);
+	} else {
 		rdpq_set_mode_standard();
 		rdpq_mode_alphacompare(1);
 		rdpq_sprite_blit(data->tiles, data->x, data->y, &(rdpq_blitparms_t) {
@@ -269,6 +284,8 @@ image *loadImage(char *name) {
 	data->scale = 1;
 	data->flipH = 0;
 	data->flipV = 0;
+	data->rotate = 0;
+	data->rotAngle = 00.f;
 	
 	data->palette = NULL;
 	data->origPalette = NULL;

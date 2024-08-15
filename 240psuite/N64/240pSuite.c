@@ -509,6 +509,9 @@ void drawVideoTestsMenu(void) {
 				case 11:
 					drawLEDZoneTest();
 					break;
+				case 12:
+					drawDiagonalTest();
+					break;
 				case 13:
 					drawAlternate240p480i();
 					break;
@@ -530,7 +533,7 @@ void drawVideoTestsMenu(void) {
 void drawIntro() {
 	int cancel = 0;
 	
-	cancel = drawMCSScreen(100, 0);
+	//cancel = drawMCSScreen(100, 0);
 	cancel = drawSplash("rom:/libdragon.sprite", cancel ? 0 : LOGO_HOLD, 16);
 	cancel = drawSplash("rom:/tiny3d.sprite", cancel ? 0: LOGO_HOLD, 16);
 }

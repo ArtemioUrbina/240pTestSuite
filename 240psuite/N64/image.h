@@ -60,6 +60,8 @@ typedef struct image_st {
 	int scale;
 	int flipH;
 	int flipV;
+	int rotate;
+	float rotAngle;
 	
 	uint16_t *palette;
 	uint16_t *origPalette;

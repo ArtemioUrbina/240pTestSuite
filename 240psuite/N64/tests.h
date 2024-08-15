@@ -31,6 +31,7 @@ void drawGridScroll();
 void drawPhase();
 void drawDisappear();
 void drawLEDZoneTest();
+void drawDiagonalTest();
 void drawTimingReflexTest();
 void drawAlternate240p480i();
 

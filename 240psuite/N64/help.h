@@ -55,10 +55,10 @@ extern char *helpData;
 #define VIDEOHELP		"/help/vmode.txt"
 #define MANUALLAG		"/help/manuallag.txt"
 #define GRIDSCROLL		"/help/gridscroll.txt"
+#define DIAGONALHELP	"/help/diagonal.txt"
 
 #define SOUNDHELP		"/help/sound.txt"
 #define OPTIONSHELP		"/help/options.txt"
-#define DIAGONALHELP	"/help/diagonal.txt"
 
 #define OVERSCANWARNING	"/help/warningoverscan.txt"
 #define GRIDWARNING		"/help/warninggrid.txt"

@@ -1273,6 +1273,95 @@ void drawAlternate240p480i()
 	changeVMode(oldvmode);	
 }
 
+void drawDiagonalTest() {	
+	int			done = 0, autorotate = 0;
+	float		speed = 1.0f;
+	int			oldvMode = vMode, reload = 1;
+	image 		*rect = NULL;
+	char		str[40];
+	joypad_buttons_t keys;
+	
+	while(!done) {
+		if(oldvMode != vMode) {
+			reload = 1;
+			oldvMode = vMode;
+		}
+		
+		if(reload) {
+			freeImage(&rect);
+			
+			if(isVMode480()) {
+				rect = loadImage("rom:/rectangle_long.sprite");
+				rect->scale = 0;
+			}
+			else
+				rect = loadImage("rom:/rectangle_short.sprite");
+			
+			if(!rect)
+				return;
+				
+			rect->rotate = 1;
+			rect->center = 1;
+			reload = 0;
+		}
+			
+		getDisplay();
+
+		setClearScreen();
+		
+		rdpqStart();
+		rdpqDrawImage(rect);
+		rdpqEnd();
+		
+		sprintf(str, "Angle: %0.2f", rect->rotAngle);
+		drawStringS(20, 20, 0x00, 0xff, 0x00, str); 
+		sprintf(str, "Angle increment: %s%d", speed != 1 ? "1/" : "", (int)speed);
+		drawStringS(20, 30, 0x00, 0xff, 0x00, str); 
+	
+		checkMenu(DIAGONALHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		checkStart(keys);	
+		
+		if(keys.c_right)
+			speed += 1;
+			
+		if(keys.c_left)
+			speed -= 1;
+			
+		if(speed > 20)
+			speed = 20;
+			
+		if(speed < 1)
+			speed = 1;
+			
+		if(keys.b)
+			done =	1;
+			
+		if(keys.a)
+			autorotate = !autorotate;
+					
+		if(!autorotate)	{
+			if(keys.r)
+				rect->rotAngle -= 1/speed;
+			if(keys.l)
+				rect->rotAngle += 1/speed;
+		}
+		
+		if(autorotate)
+			rect->rotAngle -= 1/speed;
+		
+		if(rect->rotAngle >= 360.0f)
+			rect->rotAngle -= 360.0f;
+		if(rect->rotAngle <= -360.0f)
+			rect->rotAngle += 360.0f;
+	}
+	freeImage(&rect);
+}
+
 void drawLEDZoneTest() {
 	int			done = 0, x = 0, y = 0;
 	int			selsprite = 2, show = 1;

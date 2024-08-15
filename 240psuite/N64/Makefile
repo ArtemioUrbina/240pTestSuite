@@ -38,7 +38,7 @@ filesystem/%.sprite: assets/%.png
 filesystem/%.wav64: assets/%.wav
 	@mkdir -p $(dir $@)
 	@echo "    [AUDIO] $@"
-	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) -v -o filesystem $<
+	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) --wav-compress 0 -v -o filesystem $<
 	
 filesystem/%.t3dm: assets/%.glb
 	@mkdir -p $(dir $@)
@@ -101,6 +101,8 @@ filesystem/convergence-02-cross.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) -
 filesystem/convergence-03-dots.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/convergence-04-colors.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/convergence-05-colorsbl.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
+filesystem/rectangle_short.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
+filesystem/rectangle_long.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 
 $(BUILD_DIR)/240pSuite.dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_HELP) $(ASSETS_GLTF_CONV)
 $(BUILD_DIR)/240pSuite.elf: $(src:%.c=$(BUILD_DIR)/%.o)
