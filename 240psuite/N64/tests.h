@@ -6,6 +6,7 @@ void drawDropShadow(int striped);
 void drawLagTest();
 void drawStripes();
 void drawCheckerBoard();
+void drawGridScroll();
 void drawPhase();
 void drawDisappear();
 void drawLEDZoneTest();

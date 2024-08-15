@@ -804,6 +804,106 @@ void drawCheckerBoard() {
 	freeImage(&back);
 }
 
+void drawGridScroll() {
+	int 			done = 0, speed = 1, acc = 1, x = 0, y = 0;
+	int				subpixel = 0, subpixcnt = 0, pause = 0, direction = 0;
+	image			*back = NULL, *backsquares = NULL, *backdiag = NULL;
+	joypad_buttons_t keys;
+		
+	backdiag = loadImage("rom:/diagonal.sprite");
+	if(!backdiag)
+		return; 
+	backsquares = loadImage("rom:/small_grid.sprite");
+	if(!backsquares) {
+		freeImage(&backdiag);  
+		return;  
+	}
+
+	back = backsquares;
+	
+	while(!done) {	
+		getDisplay();
+
+		if(speed > 5)
+			speed = 5;
+
+		if(speed < -5)
+			speed = -5;
+
+		if(!pause) {
+			int advance = 0;
+			
+			if(!subpixel)
+				advance = speed;
+			else {
+				subpixcnt ++;
+				if(subpixcnt >= subpixel) {
+					advance = 1;
+					subpixcnt = 0;
+				}
+			}
+			if(direction)
+				x += advance * acc;
+			else
+				y += advance * acc;
+			if(x > 8 || x < -8)
+				x %= 8;
+			if(y > 8 || y < -8)
+				y %= 8;
+		}	
+				
+		rdpqStart();
+		rdpqFillWithImageXY(back, x > 0 ? x : 8 + x, y > 0 ? y : 8 + y);
+		rdpqEnd();
+			
+		checkMenu(GRIDSCROLL, NULL);
+		waitVsync();
+				
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		checkStart(keys);
+		if(keys.r || keys.l) {
+			if(back == backsquares)
+				back = backdiag;
+			else
+				back = backsquares;
+		}
+
+		if(keys.d_up) {
+			speed ++;
+			if(speed == 1)
+				subpixel = subpixcnt = 0;
+			if(subpixel)
+				subpixel -= 1;
+		}
+
+		if(keys.d_down) {
+			speed --;
+			if(speed == 0) {
+				subpixel = 1;
+				subpixcnt = 0;
+			}
+			if(subpixel && speed > -5)
+				subpixel += 1;
+		}
+
+		if(keys.b)
+			done = 1;
+
+		if(keys.a)
+			pause = !pause;
+
+		if(keys.c_left)
+			acc *= -1;
+
+		if(keys.c_right)
+			direction = !direction;
+	}
+	freeImage(&backsquares); 
+	freeImage(&backdiag);	
+}
+
 void SD_blink_cycle_phase(image *sd_b1, image *sd_b2, int index) {
 	static int blink_counter[5] = { 0, 0, 0, 0, 0 };
 	static int is_blinking[5] = { 0, 0, 0, 0, 0 };

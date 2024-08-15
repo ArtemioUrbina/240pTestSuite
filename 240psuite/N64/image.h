@@ -57,6 +57,7 @@ void rdpqStart();
 void rdpqEnd();
 void rdpqDrawImage(image* data);
 void rdpqDrawImageXY(image* data, int x, int y);
+void rdpqFillWithImageXY(image* data, float x, float y);
 void rdpqFillWithImage(image* data);
 void rdpqClearScreen();
 void rdpqClearScreenWhite();

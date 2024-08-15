@@ -165,6 +165,10 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 }
 
 void rdpqFillWithImage(image* data) {
+	rdpqFillWithImageXY(data, 0, 0);
+}
+
+void rdpqFillWithImageXY(image* data, float x, float y) {
 #ifdef DEBUG_BENCHMARK
 	assertf(__disp, "rdpqFillWithImage() __disp was NULL");
 	assertf(data, "rdpqFillWithImage() received NULL image");
@@ -190,7 +194,9 @@ void rdpqFillWithImage(image* data) {
 		rdpq_mode_tlut(TLUT_RGBA16);
 		rdpq_tex_upload_tlut(data->palette, 0, data->palSize);
 		rdpq_tex_upload(TILE0, &tiles_surf, &(rdpq_texparms_t) 
-			{ .s.repeats = REPEAT_INFINITE, .t.repeats = REPEAT_INFINITE });
+			{ 	.s.repeats = REPEAT_INFINITE, .t.repeats = REPEAT_INFINITE, 
+				.s.mirror = MIRROR_NONE, .t.mirror = MIRROR_NONE, 
+				.s.translate = x, .t.translate = y });
 		rdpq_texture_rectangle(TILE0, 0, 0, getDispWidth(), getDispHeight(), 0, 0);
 		
 		rdpq_mode_pop();

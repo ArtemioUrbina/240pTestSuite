@@ -491,6 +491,9 @@ void drawVideoTestsMenu(void) {
 				case 5:
 					drawScroll();
 					break;
+				case 6:
+					drawGridScroll();
+					break;
 				case 7:
 					drawStripes();
 					break;

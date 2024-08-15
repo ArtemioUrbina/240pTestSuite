@@ -12,8 +12,8 @@ ASSETS_PNG = $(wildcard assets/*.png)
 ASSETS_PNG_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_PNG:%.png=%.sprite)))
 
 #commented to iterate on builds and testing via USB upload
-#ASSETS_WAV = $(wildcard assets/*.wav)
-#ASSETS_WAV_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64)))
+ASSETS_WAV = $(wildcard assets/*.wav)
+ASSETS_WAV_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64)))
 
 ASSETS_GLTF = $(wildcard assets/*.glb)
 ASSETS_GLTF_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_GLTF:%.glb=%.t3dm)))
@@ -26,6 +26,7 @@ MKSPRITE_EXTRA_FLAGS ?=
 
 #We need this for the older flash cart we use
 N64_CHKSUM = $(N64_BINDIR)/chksum64
+
 all: 240pSuite.z64
 	@$(N64_CHKSUM) 240pSuite.z64 >/dev/null
 
@@ -90,6 +91,8 @@ filesystem/nish.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format RGBA16
 filesystem/check.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 8,8 --format CI4
 filesystem/stripes.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 8,8 --format CI4
 filesystem/stripes_v.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 8,8 --format CI4
+filesystem/small_grid.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 8,8 --format CI4
+filesystem/diagonal.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 8,8 --format CI4
 filesystem/circle.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 filesystem/numbers.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 24,40 --format CI4
 filesystem/phase.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
