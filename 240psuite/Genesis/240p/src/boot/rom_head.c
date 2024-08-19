@@ -22,10 +22,10 @@ const struct
     char region[16];                /* Country Support (16) */
 } rom_header = {
     "SEGA MEGA DRIVE ",	/* Console Name (16) */
-    "(C) AUG 2022.JAN", /* Copyright Information (16) */
+    "(C) AUG 2024.AUG", /* Copyright Information (16) */
     "240P TEST SUITE                                 ", /* Domestic Name (48) */
     "240P TEST SUITE                                 ", /* Overseas Name (48) */
-    "GM 00002501-23",	/* Serial Number (2, 12) */
+    "GM 00002501-24",	/* Serial Number (2, 12) */
     0x0000,				/* Checksum (2), fixed by tool in makefile */
     "J64             ",	/* I/O Support (16) */
     0x00000000,			/* ROM Start Address (4) */
@@ -37,6 +37,6 @@ const struct
     0x20202020,			/* SRAM start address - normally 0x200001 (4) */
     0x20202020,			/* SRAM end address - start + 2*sram_size (4) */
     "            ",		/* Modem Support (24) */
-    "ARTEMIO URBINA 2022                     ",	/* Memo (40) */
+    "ARTEMIO URBINA 2024                     ",	/* Memo (40) */
     "JUE             "	/* Country Support (16) */
 };

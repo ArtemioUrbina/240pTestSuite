@@ -105,6 +105,7 @@ void DrawHelp(int option)
 						VDP_drawTextBG(APLAN, "HELP (2/2)", TILE_ATTR(PAL1, 0, 0, 0), 14, 4);
 						VDP_drawTextBG(APLAN, "The Genesis/MegaDrive can output", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "224 active video lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+						y++;
 						VDP_drawTextBG(APLAN, "In PAL consoles, it can display", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "either 224 or 240 lines.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);					
 						y++;
@@ -634,8 +635,7 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "compatible screens.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				y++;
 				VDP_drawTextBG(APLAN, "For PAL consoles, you can also", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "enable full 240p, instead of", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "224p.", TILE_ATTR(PAL0, 0, 0, 0), 4, y);
+				VDP_drawTextBG(APLAN, "toggle full 240p and 224p.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				break;
 			case HELP_AUDIOSYNC:
 				VDP_drawTextBG(APLAN, "AUDIO SYNC", TILE_ATTR(PAL1, 0, 0, 0), 15, 4);
@@ -762,7 +762,9 @@ void DrawHelp(int option)
 				VDP_drawTextBG(APLAN, "You can also use a photodiode", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "and press C, which turns", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 				VDP_drawTextBG(APLAN, "the whole back to white for", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-				VDP_drawTextBG(APLAN, "2 frames.", TILE_ATTR(PAL0, 0, 0, 0), 4, y);
+				VDP_drawTextBG(APLAN, "2 frames.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
+				y++;
+				VDP_drawTextBG(APLAN, "Designed by Bob from RetroRGB", TILE_ATTR(PAL0, 0, 0, 0), 4, y);
 				break;
 			default:
 				exit = 1;
