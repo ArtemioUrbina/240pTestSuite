@@ -15,7 +15,6 @@ src = $(wildcard *.c)
 ASSETS_PNG = $(wildcard assets/*.png)
 ASSETS_PNG_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_PNG:%.png=%.sprite)))
 
-#commented to iterate on builds and testing via USB upload
 ASSETS_WAV = $(wildcard assets/*.wav)
 ASSETS_WAV_CONV = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64)))
 
@@ -28,11 +27,11 @@ AUDIOCONV_FLAGS ?= --wav-compress 0
 #MKSPRITE_EXTRA_FLAGS ?=--verbose
 MKSPRITE_EXTRA_FLAGS ?=
 
-#We need this for the older flash cart we use
-N64_CHKSUM = $(N64_BINDIR)/chksum64
+# We may need this for the older flash cart we use
+# N64_CHKSUM = $(N64_BINDIR)/chksum64
 
 all: 240pSuite.z64
-#	@$(N64_CHKSUM) 240pSuite.z64 >/dev/null
+#	 @$(N64_CHKSUM) 240pSuite.z64 >/dev/null
 
 filesystem/%.sprite: assets/%.png
 	@mkdir -p $(dir $@)
