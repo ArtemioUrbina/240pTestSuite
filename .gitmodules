@@ -1,0 +1,5 @@
+[submodule "240psuite/N64/libdragon"]
+	path = 240psuite/N64/libdragon
+	url = https://github.com/DragonMinded/libdragon
+	branch = preview
+	ignore = dirty
