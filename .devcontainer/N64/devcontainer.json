@@ -1,5 +1,5 @@
 {
-    "name": "N64FlashcartMenu",
+    "name": "240pTestSuite-N64",
     "build": {
         "dockerfile": "Dockerfile"
     },
