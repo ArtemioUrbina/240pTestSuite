@@ -4,7 +4,7 @@
         "dockerfile": "Dockerfile"
     },
     "mounts": [
-        "source=n64-240psuite-bashhistory,target=/commandhistory,type=volume"
+        "source=240psuite-n64-bashhistory,target=/commandhistory,type=volume"
     ],
     "workspaceMount": "source=${localWorkspaceFolder}/240psuite/N64/,target=/workspace,type=bind",
     "workspaceFolder": "/workspace",
