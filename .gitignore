@@ -6,4 +6,4 @@
 !*/N64/filesystem/help/*.txt
 */N64/filesystem/*
 */N64/build/*
-*/N64/*.z64
+**/*.z64
