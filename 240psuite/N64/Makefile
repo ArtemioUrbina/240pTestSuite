@@ -1,10 +1,14 @@
+PROJECT_NAME = 240pSuite
+
+.DEFAULT_GOAL := all
+
 BUILD_DIR = build
 include $(N64_INST)/include/n64.mk
 
 # Remove the -fdiagnostics-color=always flag
 N64_C_AND_CXX_FLAGS := $(filter-out -fdiagnostics-color=always, $(N64_C_AND_CXX_FLAGS))
 
-T3D_INST=$(N64_INST)/tiny3d
+T3D_INST=./libs/tiny3d
 include $(T3D_INST)/t3d.mk
 
 src = $(wildcard *.c)
@@ -28,7 +32,7 @@ MKSPRITE_EXTRA_FLAGS ?=
 N64_CHKSUM = $(N64_BINDIR)/chksum64
 
 all: 240pSuite.z64
-	@$(N64_CHKSUM) 240pSuite.z64 >/dev/null
+#	@$(N64_CHKSUM) 240pSuite.z64 >/dev/null
 
 filesystem/%.sprite: assets/%.png
 	@mkdir -p $(dir $@)

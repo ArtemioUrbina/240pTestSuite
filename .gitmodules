@@ -3,3 +3,7 @@
 	url = https://github.com/DragonMinded/libdragon
 	branch = preview
 	ignore = dirty
+[submodule "240psuite/N64/libs/tiny3d"]
+	path = 240psuite/N64/libs/tiny3d
+	url = https://github.com/HailToDodongo/tiny3d
+	branch = main

@@ -6,7 +6,7 @@
     "mounts": [
         "source=n64-240psuite-bashhistory,target=/commandhistory,type=volume"
     ],
-    "postCreateCommand": "git submodule update --init && cd ${localWorkspaceFolder}/240psuite/N64/libdragon/ && make clobber -j && make libdragon tools -j && make install tools-install -j",
+    "postCreateCommand": "git submodule update --init && cd ./240psuite/N64/libdragon && make clobber -j && make libdragon tools -j && make install tools-install -j",
     "workspaceMount": "source=${localWorkspaceFolder}/240psuite/N64/,target=/workspace,type=bind",
     "workspaceFolder": "/workspace",
     "customizations": {
