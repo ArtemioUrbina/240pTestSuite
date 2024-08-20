@@ -5,5 +5,5 @@
 	ignore = dirty
 [submodule "240psuite/N64/libs/tiny3d"]
 	path = 240psuite/N64/libs/tiny3d
-	url = https://github.com/HailToDodongo/tiny3d
+	url = https://github.com/ArtemioUrbina/tiny3d
 	branch = main

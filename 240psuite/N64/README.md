@@ -18,4 +18,5 @@ This repo currently uses the `preview` branch as a submodule at a specific commi
 
 ### Tiny3D
 This is a library used, located in the `libs` directory.
+***Note*** this currently uses a fork until https://github.com/HailToDodongo/tiny3d/pull/11 is available.
 This repo currently uses the `main` branch as a submodule at a specific commit.
