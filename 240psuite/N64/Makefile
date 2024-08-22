@@ -7,7 +7,7 @@ FILESYSTEM_DIR = filesystem
 BUILD_DIR = build
 OUTPUT_DIR = output
 
-VERSION_NUMBER ?= "N64 0.x.ALPHA"
+VERSION_NUMBER ?= "$(shell TZ='UTC' date "+%H:%M:%S").A"
 BUILD_TIMESTAMP = "$(shell TZ='UTC' date "+%Y-%m-%d")"
 
 include $(N64_INST)/include/n64.mk
