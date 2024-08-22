@@ -8,7 +8,7 @@ include $(N64_INST)/include/n64.mk
 # Remove the -fdiagnostics-color=always flag
 N64_C_AND_CXX_FLAGS := $(filter-out -fdiagnostics-color=always, $(N64_C_AND_CXX_FLAGS))
 
-T3D_INST=./libs/tiny3d
+T3D_INST?= tiny3d
 include $(T3D_INST)/t3d.mk
 
 src = $(wildcard *.c)
