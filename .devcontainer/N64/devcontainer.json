@@ -8,7 +8,7 @@
     ],
     "workspaceMount": "source=${localWorkspaceFolder}/240psuite/N64/,target=/workspace,type=bind",
     "workspaceFolder": "/workspace",
-    "postCreateCommand": "rm -f ./tiny3d && git clone https://github.com/ArtemioUrbina/tiny3d --depth 1 && cd ./libdragon && make clobber -j && make libdragon tools -j && make install tools-install -j && cd ../tiny3d && make -j4 && make -C tools/gltf_importer -j4",
+    "postCreateCommand": "rm -rf ./tiny3d && git clone https://github.com/ArtemioUrbina/tiny3d --depth 1 && cd ./libdragon && make clobber -j && make libdragon tools -j && make install tools-install -j && cd ../tiny3d && make -j4 && make -C tools/gltf_importer -j4",
     "customizations": {
         "vscode": {
             "extensions": [
