@@ -30,6 +30,10 @@
 #define SUITE_256x240	3
 #define SUITE_512x480	4
 #define SUITE_512x240	5
+#define SUITE_320x288	6
+#define SUITE_640x576	7
+#define SUITE_256x288	8
+#define SUITE_512x576	9
 
 #define SUITE_NONE		-1
 
@@ -42,6 +46,7 @@ extern unsigned int		current_gamma;
 extern filter_options_t	current_antialias;
 extern rdpq_antialias_t current_rdp_aa_filter;
 extern unsigned int		enablePAL60;
+extern unsigned int		enablePAL288;
 extern unsigned int		vMode;
 
 int is50Hz();

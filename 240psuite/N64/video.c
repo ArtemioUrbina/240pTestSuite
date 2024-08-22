@@ -31,8 +31,14 @@ unsigned int		current_gamma = 0;
 filter_options_t	current_antialias = 0;
 rdpq_antialias_t	current_rdp_aa_filter = AA_NONE;
 unsigned int		enablePAL60 = 0;
+unsigned int		enablePAL288 = 0;
 unsigned int		vMode = SUITE_NONE;
 
+// PAL Video modes
+const resolution_t RESOLUTION_320x288 = {320, 288, INTERLACE_OFF, true};
+const resolution_t RESOLUTION_640x576 = {640, 576, INTERLACE_HALF, true};
+const resolution_t RESOLUTION_256x288 = {256, 288, INTERLACE_OFF, true};
+const resolution_t RESOLUTION_512x576 = {512, 576, INTERLACE_HALF, true};
 
 #define TICKS_SINCE_MS(time) TICKS_SINCE(time) / (TICKS_PER_SECOND / 1000.0f)
 unsigned int videoSet = 0;
@@ -233,6 +239,7 @@ void initVideo() {
 	current_antialias = FILTERS_RESAMPLE;
 	current_rdp_aa_filter = AA_NONE;
 	enablePAL60 = 0;
+	enablePAL288 = 0;
 	vMode = SUITE_NONE;
 	
 	__newInternalBPPChange = DEPTH_16_BPP;
@@ -258,10 +265,15 @@ void setVideoInternal(resolution_t newRes) {
 		videoSet = 0;
 	}
 
-	if(enablePAL60)
-		newRes.pal60 = 1;
-	else
-		newRes.pal60 = 0;
+	if(isPAL) {
+		if(enablePAL288)
+			newRes.height = 288;
+		
+		if(enablePAL60)
+			newRes.pal60 = 1;
+		else
+			newRes.pal60 = 0;
+	}
 	current_resolution = newRes;
 	current_bitdepth = __newInternalBPPChange;
 	
@@ -288,14 +300,24 @@ int is50Hz() {
 void changeToH256onVBlank() {
 	if(__changeInternalRes)
 		return;
-	if(current_resolution.height == 240)
-		if(current_resolution.width == 320) {
+	if(current_resolution.height == 240) {
+		if(current_resolution.width == 320)
 			changeVMode(RESOLUTION_256x240);
 	}
 	
 	if(current_resolution.height == 480) {
 		if(current_resolution.width == 640)
 			changeVMode(RESOLUTION_512x480);
+	}
+	
+	if(current_resolution.height == 288) {
+		if(current_resolution.width == 320)
+			changeVMode(RESOLUTION_256x288);
+	}
+	
+	if(current_resolution.height == 576) {
+		if(current_resolution.width == 640)
+			changeVMode(RESOLUTION_512x576);
 	}
 }
 
@@ -311,6 +333,16 @@ void changeToH320onVBlank() {
 		if(current_resolution.width == 512)
 			changeVMode(RESOLUTION_640x480);
 	}
+	
+	if(current_resolution.height == 288) {
+		if(current_resolution.width == 256)
+			changeVMode(RESOLUTION_320x288);
+	}
+	
+	if(current_resolution.height == 576) {
+		if(current_resolution.width == 512)
+			changeVMode(RESOLUTION_640x576);
+	}
 }
 
 void changeVMode(resolution_t newRes) {
@@ -325,6 +357,10 @@ int isVMode256() {
 		return 1;
 	if(vMode == SUITE_512x480)
 		return 1;
+	if(vMode == SUITE_256x288)
+		return 1;
+	if(vMode == SUITE_512x576)
+		return 1;
 	return 0;
 }
 
@@ -332,6 +368,10 @@ int isVMode480() {
 	if(vMode == SUITE_640x480)
 		return 1;
 	if(vMode == SUITE_512x480)
+		return 1;
+	if(vMode == SUITE_640x576)
+		return 1;
+	if(vMode == SUITE_512x576)
 		return 1;
 	return 0;
 }
@@ -343,8 +383,11 @@ int isSameRes(resolution_t *res1, const resolution_t *res2) {
 		return 0;
 	if(res1->interlaced != res2->interlaced)
 		return 0;
+	/*
+	// We don't check PAL60 atm
 	if(res1->pal60 != res2->pal60)
 		return 0;
+	*/
 	return 1;
 }
 
@@ -361,6 +404,15 @@ int videoModeToInt(resolution_t *res) {
 		return SUITE_512x480;
 	if(isSameRes(res, &RESOLUTION_256x240))
 		return SUITE_256x240;
+		
+	if(isSameRes(res, &RESOLUTION_320x288))
+		return SUITE_320x288;
+	if(isSameRes(res, &RESOLUTION_640x576))
+		return SUITE_640x576;
+	if(isSameRes(res, &RESOLUTION_256x288))
+		return SUITE_256x288;
+	if(isSameRes(res, &RESOLUTION_512x576))
+		return SUITE_512x576;
 	return SUITE_NONE;
 }
 
@@ -375,10 +427,23 @@ void getVideoModeStr(char *res, int shortdesc) {
 				sprintf(res, "640x480i");
 				break;
 			case SUITE_256x240:
-				sprintf(res, "256x240");
+				sprintf(res, "256x240p");
 				break;
 			case SUITE_512x480:
-				sprintf(res, "512x480");
+				sprintf(res, "512x480i");
+				break;
+			
+			case SUITE_320x288:
+				sprintf(res, "320x288p");
+				break;
+			case SUITE_640x576:
+				sprintf(res, "640x576i");
+				break;
+			case SUITE_256x288:
+				sprintf(res, "256x288p");
+				break;
+			case SUITE_512x576:
+				sprintf(res, "512x576i");
 				break;
 		}
 	}
@@ -394,6 +459,19 @@ void getVideoModeStr(char *res, int shortdesc) {
 				sprintf(res, "[256]");
 				break;
 			case SUITE_512x480:
+				sprintf(res, "[512]");
+				break;
+				
+			case SUITE_320x288:
+				sprintf(res, "[288]");
+				break;
+			case SUITE_640x576:
+				sprintf(res, "[576i]");
+				break;
+			case SUITE_256x288:
+				sprintf(res, "[256]");
+				break;
+			case SUITE_512x576:
 				sprintf(res, "[512]");
 				break;
 		}

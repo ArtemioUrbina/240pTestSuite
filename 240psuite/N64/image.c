@@ -347,7 +347,7 @@ int copyMenuFB() {
 	// resolution changes deallocate and reallocate libDragon's
 	// framebuffers (safe buffer)
 	
-	if(getDispHeight() > 240 && (get_memory_size() / 0x100000) < 8)
+	if(getDispHeight() > 288 && (get_memory_size() / 0x100000) < 8)
 		return 0;
 
 	__menu_fb = (surface_t *)malloc(sizeof(surface_t));
@@ -690,7 +690,7 @@ int drawSplash(char *name, int delay, int paleteSize) {
 		return 0;
 
 	logo->center = true;
-	if(getDispHeight() > 240 && logo->tiles->height > 240)
+	if(getDispHeight() > 288 && logo->tiles->height > 240)
 		logo->scale = 0;
 	logo->palSize = paleteSize;
 	
