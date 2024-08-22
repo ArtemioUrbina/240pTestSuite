@@ -31,7 +31,7 @@ curves and other values to assist
 you in profiling and calibrating
 your display. 
 
-#sourceforge.net/p/hcfr/wiki/#G
+#Gsourceforge.net/p/hcfr/wiki/#G
 
 To set up #YHCFR Colormeter#Y,
 attach your colorimeter
