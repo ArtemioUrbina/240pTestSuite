@@ -8,7 +8,7 @@
     ],
     "workspaceMount": "source=${localWorkspaceFolder}/240psuite/N64/,target=/workspace,type=bind",
     "workspaceFolder": "/workspace",
-    "postCreateCommand": "cd ./libdragon && make clobber -j && make libdragon tools -j && make install tools-install -j",
+    "postCreateCommand": "cd ./libdragon && make clobber -j && make libdragon tools -j && make install tools-install -j && mkdir ./libs/tiny3d && cd ./libs/tiny3d && git checkout -f https://github.com/ArtemioUrbina/tiny3d",
     "customizations": {
         "vscode": {
             "extensions": [
