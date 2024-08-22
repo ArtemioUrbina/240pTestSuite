@@ -102,7 +102,7 @@ uint32_t f_color = 0xFFFFFFFF;
 
 void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const msg ) {
 	int highlight = 0, lh = LINE_HEIGHT, sw = getSpaceWidth();
-	uint32_t old_f_color = 0xFFFFFFFF;
+	uint32_t old_f_color = f_color;
 	
 	if( disp == 0 ) { return; }
 	if( msg == 0 ) { return; }
@@ -129,9 +129,9 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 				highlight = !highlight;
 
 				if(highlight) {
-					old_f_color = f_color;
 					text++;
-					if(f_color != 0x00000000) {
+					if(f_color != graphics_make_color(0, 0, 0, 0xff)) {
+						old_f_color = f_color;
 						switch(*text)
 						{
 							case 'R':
@@ -211,7 +211,7 @@ void drawString(int x, int y, int r, int g, int b, char *text) {
 }
 
 void drawStringS(int x, int y, int r, int g, int b, char *text) {
-	f_color = 0x00000000;
+	f_color = graphics_make_color(0, 0, 0, 0xff);
 	graphics_set_color(f_color, 0x00000000);
 	graphics_draw_text_suite(__disp, x+1, y+1, text);
 
@@ -231,18 +231,52 @@ void drawStringB(int x, int y, int r, int g, int b, char *text) {
 	graphics_draw_text_suite(__disp, x, y, text);
 }
 
-void drawStringC(int y, int r, int g, int b, char *text) {
-	unsigned int x = 0, strWidth = 0;
+void drawStringSCenteredInternal(int y, int r, int g, int b, char *str, int useback) {
+	int			currlen = 0;
+	char 		*startstr = NULL;
+	int			xpos = 0, len = 0;
 	
-	strWidth = measureString(text);
-	x = (getDispWidth() - strWidth)/2;
-	f_color = 0x00000000;
-	graphics_set_color(f_color, 0x00000000);
-	graphics_draw_text_suite(__disp, x+1, y+1, text);
+	startstr = str;
+	while (*str) {		
+		if(*str == '\n') {
+			*str = '\0';
+			len = measureString(startstr);
+			if(len)	{
+				xpos = (getDispWidth()-len)/2;
+				if(!useback)
+					drawStringS(xpos, y, r, g, b, startstr);
+				else
+					drawStringB(xpos, y, r, g, b, startstr);
+			}
+			*str = '\n';
+			startstr = str + 1;
+			currlen = 0;
+			y += fh;
+		}
+		str++;
+		currlen++;
+	}
+	
+	if(currlen)	{
+		len = measureString(startstr);
+		if(len)	{
+			xpos = (getDispWidth()-len)/2;
+			if(!useback)
+				drawStringS(xpos, y, r, g, b, startstr);
+			else
+				drawStringB(xpos, y, r, g, b, startstr);
+		}
+	}
+}
 
-	f_color = graphics_make_color(r, g, b, 0xff);
-	graphics_set_color(f_color, 0x00000000);
-	graphics_draw_text_suite(__disp, x, y, text);
+void drawStringC(int y, int r, int g, int b, char *text) {
+	drawStringSCenteredInternal(y+1, 0, 0, 0, text, 0);
+	drawStringSCenteredInternal(y, r, g, b, text, 0);
+}
+
+void drawStringCB(int y, int r, int g, int b, char *text) {
+	drawStringSCenteredInternal(y+1, 0, 0, 0, text, 1);
+	drawStringSCenteredInternal(y, r, g, b, text, 1);
 }
 
  

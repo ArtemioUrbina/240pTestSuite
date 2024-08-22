@@ -130,9 +130,10 @@ void drawMDFourier() {
 	audio_close();
 }
  
-#define REGULAR_TEST	0
-#define SCOPE_TEST		1
-#define SCOPE_FRAMES	8
+#define REGULAR_TEST		0
+#define SCOPE_TEST			1
+#define SCOPE_FRAMES		60
+#define AUDIO_SYNC_FRAMES	-8
 
 #define SYNC_CHANNELS	1
 #define SYNC_BUFFERS	1
@@ -143,8 +144,8 @@ typedef struct rectangle_type {
 
 void drawAudioSyncTest() {
 	int 		done = 0, paused = 0, playtone = 0;
-	int			y = 0, speed = -1, W = getDispWidth();
-	int			testMode = SCOPE_TEST, countScope = 0;
+	int			y = 0, speed = -1, W = 320;
+	int			testMode = REGULAR_TEST, countScope = 0;
 	rect_t		rectL, rectR, sprite;
 	float		hstep = 0;
 	wav64_t 	beepSamples;
@@ -192,7 +193,7 @@ void drawAudioSyncTest() {
 				}
 					
 				// need to calibrate when to playback
-				if(y == 180 && speed == -1)
+				if(y == (180 + AUDIO_SYNC_FRAMES) && speed == 1)
 					playtone = 1;
 			}
 			
@@ -220,10 +221,11 @@ void drawAudioSyncTest() {
 			if(countScope == SCOPE_FRAMES) {
 				rdpqClearScreenWhite();
 				countScope = 0;
-				playtone = 1;
 			}
 			else
 				rdpqClearScreen();
+			if(countScope == (SCOPE_FRAMES + AUDIO_SYNC_FRAMES)) 
+				playtone = 1;
 			rdpqEnd();
 			
 			checkMenu(NULL, NULL);
@@ -246,8 +248,8 @@ void drawAudioSyncTest() {
 			paused = !paused;
 
 		if(keys.c_left)	{
-			if(testMode == REGULAR_TEST)
-				//&& AskQuestion("This will enable the Oscilloscope version\nwhich flashes white every 3 frames.\nAre you sure?"))
+			if(testMode == REGULAR_TEST && 
+				drawAskQuestion("This will enable the\n#COscilloscope#C version which\nflashes white every 60 frames.\n#YAre you sure?#Y"))
 				testMode = SCOPE_TEST;
 			else
 				testMode = REGULAR_TEST;

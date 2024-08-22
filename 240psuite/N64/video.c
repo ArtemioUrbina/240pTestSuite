@@ -159,7 +159,7 @@ void _internalWaitVsync() {
 	__frameIdle = (now - __idleStart)/1000.0f;
 }
 
-#define MAX_AUDIO_WAIT	3.0f
+#define MAX_AUDIO_WAIT	1.0f
 
 void _internalWaitVsyncWithAudio() {
 	float maxWait = 0, totalWait = 0, idleRest = 0;
@@ -182,7 +182,7 @@ void _internalWaitVsyncWithAudio() {
 		mixer_throttle(44100.0f/50.0f);
 	else
 		mixer_throttle(44100.0f/(1000.0f/N64_NTSC_FRAME_LEN));
-		
+	
 	while (nextFrame > __frames) {
 		if(idleRest > MAX_AUDIO_WAIT) {
 			uint64_t mixerStart = 0;
@@ -199,9 +199,6 @@ void _internalWaitVsyncWithAudio() {
 		}
 	}
 	
-	//assertf(idleRest > 0.2, "mixer_try_play() took longer than expected. Idle: %f", idleRest);
-	//debugf("Total Wait: %f MaxWait: %f Rest: %f\n", totalWait, maxWait, idleRest);
-
 	uint64_t now = get_ticks_us();
 	
 	__frameLen = (now - __frameStart)/1000.0f;

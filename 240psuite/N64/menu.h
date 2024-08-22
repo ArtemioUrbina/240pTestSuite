@@ -53,5 +53,6 @@ int selectMenu(char *title, fmenuData *menu_data, int numOptions, int selectedOp
 int selectMenuEx(char *title, fmenuData *menu_data, int numOptions, int selectedOption, char *helpFile);
 
 void drawMessageBox(char *msg);
+int drawAskQuestion(char *msg);
 
 #endif

@@ -39,5 +39,6 @@ void drawString(int x, int y, int r, int g, int b, char *str);
 void drawStringS(int x, int y, int r, int g, int b, char *str);
 void drawStringB(int x, int y, int r, int g, int b, char *str);
 void drawStringC(int y, int r, int g, int b, char *text);
+void drawStringCB(int y, int r, int g, int b, char *text);
 
 #endif

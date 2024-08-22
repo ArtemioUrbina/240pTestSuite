@@ -470,14 +470,14 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 	return value;
 }
 
-void drawMessageBox(char *msg) {	
-	int 		done = 0;	
+int drawMessageBoxInternal(char *msg, int isquestion) {	
+	int 		done = 0, retval = 0;
 	image		*back = NULL;
 	
 	back = loadImage("rom:/message.sprite");
 	if(back)
 		back->center = 1;
-	  
+		
 	setClearScreen();
 	while(!done) {			
 		uint8_t		r = 0xff;
@@ -492,19 +492,41 @@ void drawMessageBox(char *msg) {
 		rdpqEnd();
 
 		drawStringC(113, r, g, b, msg);
-				
-		drawStringC(182, 0, g, b, "Press B to continue"); 
+		
+		if(isquestion)
+			drawStringC(182, 0, g, b, "Press #GA#G to accept or #GB#G to close"); 
+		else
+			drawStringC(182, 0, g, b, "Press B to continue"); 
 		
 		waitVsync();
 			
 		joypad_poll();
 		keys = controllerButtonsDown();
 		
-		if(keys.b || keys.start)
+		if(!isquestion && keys.start)
 			done = 1;
+		
+		if(keys.b) {
+			retval = 0;
+			done = 1;
+		}
+		
+		if(isquestion && keys.a) {
+			retval = 1;
+			done = 1;
+		}
 	}
 	
 	freeImage(&back);
+	return retval;
+}
+
+void drawMessageBox(char *msg) {
+	drawMessageBoxInternal(msg, 0);
+}
+
+int drawAskQuestion(char *msg) {
+	return(drawMessageBoxInternal(msg, 1));
 }
 
 image *SD_b1 = NULL;
