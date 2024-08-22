@@ -1588,8 +1588,8 @@ void drawTimingReflexTest() {
 		drawStringS(20, 170+5*fh, 0x00, 0xff, 0x00, "CR toggles rumble feedback.");
 
 		checkMenu(MANUALLAG, NULL);
-		drawNoVsyncWithAudio();
-		//waitVsyncWithAudio();
+		//drawNoVsyncWithAudio();
+		waitVsyncWithAudio();
 		//waitVsync();
 		
 		joypad_poll();

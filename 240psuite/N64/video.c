@@ -178,8 +178,11 @@ void _internalWaitVsyncWithAudio() {
 	 * audio samples per video frame.
 	 */
 	
-	//mixer_throttle(44100.0f/(1000.0f/N64_NTSC_FRAME_LEN));
-	mixer_throttle(737.1315);
+	if(is50Hz())
+		mixer_throttle(44100.0f/50.0f);
+	else
+		mixer_throttle(44100.0f/(1000.0f/N64_NTSC_FRAME_LEN));
+		
 	while (nextFrame > __frames) {
 		if(idleRest > MAX_AUDIO_WAIT) {
 			uint64_t mixerStart = 0;

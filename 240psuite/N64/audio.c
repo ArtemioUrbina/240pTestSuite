@@ -130,3 +130,136 @@ void drawMDFourier() {
 	audio_close();
 }
  
+#define REGULAR_TEST	0
+#define SCOPE_TEST		1
+#define SCOPE_FRAMES	8
+
+#define SYNC_CHANNELS	1
+#define SYNC_BUFFERS	1
+
+typedef struct rectangle_type {
+	int x, y, w, h;
+} rect_t;
+
+void drawAudioSyncTest() {
+	int 		done = 0, paused = 0, playtone = 0;
+	int			y = 0, speed = -1, W = getDispWidth();
+	int			testMode = SCOPE_TEST, countScope = 0;
+	rect_t		rectL, rectR, sprite;
+	float		hstep = 0;
+	wav64_t 	beepSamples;
+	joypad_buttons_t keys;
+	
+	y = 180;
+	hstep = -1 * W/120; // 60 steps times half screen
+	
+	sprite.x = W / 2 - 4;
+	sprite.y = y;
+	sprite.w = 8;
+	sprite.h = 8;
+	
+	rectL.w = W / 2;
+	rectL.h = 16;
+	rectL.x = 0;
+	rectL.y = 80;
+	
+	rectR.w = W / 2;
+	rectR.h = 16;
+	rectR.x = W / 2;
+	rectR.y = 80;
+	
+	if(!openWAV(&beepSamples, "rom:/beep.wav64")) {
+		drawMessageBox("Audio samples not present");
+		return;
+	}
+	
+	audio_init(44100, SYNC_BUFFERS);
+	mixer_init(SYNC_CHANNELS);
+	
+	while(!done) {
+		if(testMode == REGULAR_TEST) {
+			if(!paused)	{
+				y += speed;
+				
+				sprite.y = y;
+				rectL.w += hstep;
+				
+				rectR.x -= hstep;
+				rectR.w += hstep;
+				if(y == 180 || y == 120) {
+					speed *= -1;
+					hstep *= -1;
+				}
+					
+				// need to calibrate when to playback
+				if(y == 180 && speed == -1)
+					playtone = 1;
+			}
+			
+			getDisplay();
+
+			rdpqStart();
+			if(y == 180)
+				rdpqClearScreenWhite();
+			else
+				rdpqClearScreen();
+			rdpqEnd();
+
+			graphics_draw_box(__disp, rectL.x, rectL.y, rectL.w, rectL.h, COLOR_W);
+			graphics_draw_box(__disp, rectR.x, rectR.y, rectR.w, rectR.h, COLOR_W);
+			graphics_draw_box(__disp, 0, 188, W, 8, COLOR_W);
+			graphics_draw_box(__disp, sprite.x, sprite.y, sprite.w, sprite.h, COLOR_W);
+
+			checkMenu(NULL, NULL);
+			waitVsyncWithAudio();
+		}
+		else {
+			getDisplay();
+
+			rdpqStart();
+			if(countScope == SCOPE_FRAMES) {
+				rdpqClearScreenWhite();
+				countScope = 0;
+				playtone = 1;
+			}
+			else
+				rdpqClearScreen();
+			rdpqEnd();
+			
+			checkMenu(NULL, NULL);
+			waitVsyncWithAudio();
+			countScope++;
+		}
+		
+		if(playtone == 1) {
+			wav64_play(&beepSamples, 0);
+			playtone = 0;
+		}
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.b)
+			done =	1;
+			
+		if(keys.a)
+			paused = !paused;
+
+		if(keys.c_left)	{
+			if(testMode == REGULAR_TEST)
+				//&& AskQuestion("This will enable the Oscilloscope version\nwhich flashes white every 3 frames.\nAre you sure?"))
+				testMode = SCOPE_TEST;
+			else
+				testMode = REGULAR_TEST;
+		}
+		
+		if(!mixer_ch_playing(0))
+			checkStart(keys);
+	}
+	
+	wav64_close(&beepSamples);
+	
+	mixer_close();
+	audio_close();
+}
+
