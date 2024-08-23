@@ -1,0 +1,25 @@
+{
+    "name": "240pTestSuite-N64",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "mounts": [
+        "source=240psuite-n64-bashhistory,target=/commandhistory,type=volume"
+    ],
+    "workspaceMount": "source=${localWorkspaceFolder}/240psuite/N64/,target=/workspace,type=bind",
+    "workspaceFolder": "/workspace",
+    "postCreateCommand": "rm -rf ./tiny3d && git clone https://github.com/ArtemioUrbina/tiny3d --depth 1 && cd ./libdragon && make clobber -j && make libdragon tools -j && make install tools-install -j && cd ../tiny3d && make -j4 && make -C tools/gltf_importer -j4",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.makefile-tools"
+            ],
+            "settings": {
+                "git.ignoredRepositories": [
+                    "libdragon"
+                ]
+            }
+        }
+    }
+}

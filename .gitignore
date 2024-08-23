@@ -1,0 +1,9 @@
+# Ignore editor specific config folders/files
+/.vscode
+
+# Ignore N64 build files
+*/N64/tiny3d*
+!*/N64/filesystem/help/*.txt
+*/N64/filesystem/*
+*/N64/build/*
+*/N64/*.z64
