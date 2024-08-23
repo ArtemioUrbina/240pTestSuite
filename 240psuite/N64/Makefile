@@ -37,9 +37,6 @@ AUDIOCONV_FLAGS ?= --wav-compress 0
 #MKSPRITE_EXTRA_FLAGS ?=--verbose
 MKSPRITE_EXTRA_FLAGS ?=
 
-# We may need this for the older flash cart we use
-# N64_CHKSUM = $(N64_BINDIR)/chksum64
-
 $(FILESYSTEM_DIR)/%.sprite: $(ASSETS_DIR)/%.png
 	@mkdir -p $(dir $@)
 	@echo "    [SPRITE] $@"
