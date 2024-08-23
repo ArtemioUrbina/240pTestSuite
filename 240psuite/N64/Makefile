@@ -44,7 +44,7 @@ $(FILESYSTEM_DIR)/%.sprite: $(ASSETS_DIR)/%.png
 $(FILESYSTEM_DIR)/%.wav64: $(ASSETS_DIR)/%.wav
 	@mkdir -p $(dir $@)
 	@echo "    [AUDIO] $@"
-	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) --wav-compress 0 -v -o $(FILESYSTEM_DIR) $<
+	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) -v -o $(FILESYSTEM_DIR) $<
 	
 $(FILESYSTEM_DIR)/%.t3dm: $(ASSETS_DIR)/%.glb
 	@mkdir -p $(dir $@)
