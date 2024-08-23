@@ -29,8 +29,12 @@
 #include "help.h"
 #include "controller.h"
 
+#ifndef VERSION_NUMBER
 #define VERSION_NUMBER "N64 0.90B"
+#endif
+#ifndef VERSION_DATE
 #define VERSION_DATE "2024/08/15"
+#endif
 
 void checkMenu(char *help, int *reload);
 void checkStart(joypad_buttons_t keys);
