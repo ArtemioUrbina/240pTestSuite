@@ -7,13 +7,12 @@ FILESYSTEM_DIR = filesystem
 BUILD_DIR = build
 OUTPUT_DIR = output
 
-VERSION_NUMBER ?= "$(shell TZ='UTC' date "+%H:%M:%S").A"
 BUILD_TIMESTAMP = "$(shell TZ='UTC' date "+%Y-%m-%d")"
 
 include $(N64_INST)/include/n64.mk
 
 # Add version information
-N64_CFLAGS += -DVERSION_NUMBER=\"$(VERSION_NUMBER)\" -DVERSION_DATE=\"$(BUILD_TIMESTAMP)\"
+N64_CFLAGS += -DVERSION_DATE=\"$(BUILD_TIMESTAMP)\"
 
 # Remove the -fdiagnostics-color=always flag
 N64_C_AND_CXX_FLAGS := $(filter-out -fdiagnostics-color=always, $(N64_C_AND_CXX_FLAGS))

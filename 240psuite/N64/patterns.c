@@ -689,7 +689,6 @@ void drawGrayramp() {
 	back = loadImage("rom:/grayramp.sprite");
 	if(!back)
 		return;
-	changeTo32BitDepthOnVBlank();
 	while(!end) {
 		getDisplay();
 
@@ -712,7 +711,6 @@ void drawGrayramp() {
 	freeImage(&back);
 	
 	drawSplash("rom:/grayramp.sprite", 0, 32);
-	changeTo16BitDepthOnVBlank();
 }
 
 void draw100IRE() {

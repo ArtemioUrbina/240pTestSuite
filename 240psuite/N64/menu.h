@@ -29,9 +29,7 @@
 #include "help.h"
 #include "controller.h"
 
-#ifndef VERSION_NUMBER
 #define VERSION_NUMBER "N64 0.90B"
-#endif
 #ifndef VERSION_DATE
 #define VERSION_DATE "2024/08/15"
 #endif
