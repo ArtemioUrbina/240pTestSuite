@@ -1,0 +1,39 @@
+name: Build N64 ROM
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build-n64-rom.yml'
+      - '.devcontainer/N64/**'
+      - '240psuite/N64/**'
+  pull_request:
+    paths:
+      - '.github/workflows/build-n64-rom.yml'
+      - '.devcontainer/N64/**'
+      - '240psuite/N64/**'
+
+jobs:
+  build-rom:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build N64 ROM using devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: ./.devcontainer/N64/devcontainer.json
+          push: never
+          runCmd: |
+            make all
+        # env:
+        #   FLAGS: -DVERSION_NUMBER="N64 X.XX.X"
+
+# Comment in, if/when needed.
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: 240pTestSuite-N64
+      #     path: |
+      #       ./240psuite/N64/output/240pSuite.z64
+      #       ./240psuite/N64/build/240pSuite.elf
