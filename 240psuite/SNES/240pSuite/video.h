@@ -39,6 +39,8 @@ void DrawTilesWithSpritesBarcode(u16 X, u16 Y, u16 width, u16 height, u8 *tiles,
 void ClearScreen(u8 layer);
 void ClearScreen256(u8 layer);
 void Transition();
+void cleanSprites();
+void transitionAndClear();
 
 void StartDMA();
 void bgInitTileSetMine(u8 bgNumber, u8 *tileSource, u8 *tilePalette, u8 paletteEntry, u16 tileSize, u16 paletteSize, u16 colorMode, u16 address);

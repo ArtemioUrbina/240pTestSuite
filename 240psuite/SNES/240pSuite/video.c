@@ -177,6 +177,21 @@ void Transition()
 	WaitForVBlank(); 
 }
 
+void cleanSprites() 
+{
+	int i = 0;
+	
+	for(i = 0x0; i <= 0xfE; i+=2)
+		oamSetVisible(i, OBJ_HIDE);
+	oamClear(0, 0);
+}
+
+void transitionAndClear()
+{
+	Transition();
+	cleanSprites();
+}
+
 //#define DEBUG_DMA
 
 #ifdef DEBUG_DMA

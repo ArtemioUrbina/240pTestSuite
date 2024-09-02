@@ -139,8 +139,7 @@ int main(void)
 			
 		if(pressed & KEY_A && sel != 5)
 		{							
-			Transition();
-			oamClear(0, 0);
+			transitionAndClear();
 			
 			switch(sel)
 			{
@@ -227,9 +226,9 @@ void TestPatterns(void)
 		}	
 
 		if(sel < 0)
-			sel = 4;
+			sel = 5;
 			
-		if(sel > 4)
+		if(sel > 5)
 			sel = 0;
 			
 		if(pressed & KEY_START)
@@ -243,8 +242,7 @@ void TestPatterns(void)
 		{							
 			if(sel < 5)
 			{
-				Transition();
-				oamClear(0, 0);
+				transitionAndClear();
 				redraw = 1;
 			}
 			
@@ -277,8 +275,7 @@ void TestPatterns(void)
 		if(pressed & KEY_B)
 			exit = 1;
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return 0;
 }
 
@@ -363,8 +360,7 @@ void ColorLevelsMenu()
 		{							
 			if(sel < 12)
 			{
-				Transition();
-				oamClear(0, 0);
+				transitionAndClear();
 				redraw = 1;
 			}
 			
@@ -418,8 +414,7 @@ void ColorLevelsMenu()
 		if(pressed & KEY_B)
 			exit = 1;
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return 0;
 }
 
@@ -498,8 +493,7 @@ void GeometryMenu()
 		{	
 			if(sel < 6)
 			{
-				Transition();
-				oamClear(0, 0);
+				transitionAndClear();
 				redraw = 1;
 			}						
 			
@@ -535,8 +529,7 @@ void GeometryMenu()
 		if(pressed & KEY_B)
 			exit = 1;
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return 0;
 }
 
@@ -623,8 +616,7 @@ void VideoTests(void)
 		{							
 			if(sel < 14)
 			{
-				Transition();
-				oamClear(0, 0);
+				transitionAndClear();
 				redraw = 1;
 			}
 			
@@ -684,8 +676,7 @@ void VideoTests(void)
 		if(pressed & KEY_B)
 			exit = 1;
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return 0;
 }
 
@@ -762,8 +753,7 @@ void AudioTests(void)
 		{	
 			if(sel < 5)						
 			{
-				Transition();
-				oamClear(0, 0);
+				transitionAndClear();
 				redraw = 1;
 			}
 			
@@ -796,8 +786,7 @@ void AudioTests(void)
 		if(pressed & KEY_B)
 			exit = 1;
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return 0;
 }
 
@@ -929,8 +918,8 @@ void DrawCredits(void)
 			drawText(3, pos, 6, "Info on using this suite:"); pos ++;
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
-			drawText(4, 4, 5, "Ver. 1.08d");
-			drawText(19, 4, 7, "17/10/2023");
+			drawText(4, 4, 5, "Ver. 1.09");
+			drawText(19, 4, 7, "01/10/2024");
 			drawText(10, 24, 5, "Dedicated to Elisa");
 			
 			EndDMA();	
@@ -955,15 +944,13 @@ void DrawCredits(void)
 		
 		if(pressed & KEY_L)
 		{			
-			Transition();
-			oamClear(0, 0);
+			transitionAndClear();
 			DrawCat();
 			redraw = 1;
 			counter = 1;
 		}
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return 0;
 }
 

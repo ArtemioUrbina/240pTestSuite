@@ -324,8 +324,7 @@ void DropShadowTest(void)
 				back = 3;
 		}
 	}	
-	Transition();
-	oamClear(0, 0);	
+	transitionAndClear();
 	
 	return;
 }
@@ -491,8 +490,7 @@ void StripedSpriteTest(void)
 				back = 3;
 		}
 	}	
-	Transition();
-	oamClear(0, 0);	
+	transitionAndClear();
 	
 	return;
 }
@@ -682,10 +680,8 @@ void DrawCheck(void)
 
 void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y, u16 drawCircles)
 {
-	u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };	
-	
 	StartDMA();
-					
+	
 	consoleInitTextMine(0, 7, &font);	
 	
 	if(drawCircles)
@@ -704,7 +700,7 @@ void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y, u16 dra
 	
 	/*****Numbers*****/
 	
-	// Hours			
+	// Hours
 	DrawNumber(xpos[0], y, spriteIndex[0], numberIndex[0], 0);	
 	DrawNumber(xpos[1], y, spriteIndex[1], numberIndex[0], 0);	
 	
@@ -712,34 +708,33 @@ void loadStopWatch(u16 *xpos, u16 *spriteIndex, u16 *numberIndex, u16 y, u16 dra
 	DrawNumber(xpos[2], y, spriteIndex[2], numberIndex[0], 0);	
 	DrawNumber(xpos[3], y, spriteIndex[3], numberIndex[0], 0);	
 	
-	//Seconds
-	DrawNumber(xpos[4], y, spriteIndex[4], numberIndex[0], 0);	
-	DrawNumber(xpos[5], y, spriteIndex[5], numberIndex[0], 0);	
+	// Seconds
+	DrawNumber(xpos[4], y, spriteIndex[4], numberIndex[0], 0);
+	DrawNumber(xpos[5], y, spriteIndex[5], numberIndex[0], 0);
 	
 	// Frames
-	DrawNumber(xpos[6], y, spriteIndex[6], numberIndex[0], 0);	
-	DrawNumber(xpos[7], y, spriteIndex[7], numberIndex[0], 0);			
-			
+	DrawNumber(xpos[6], y, spriteIndex[6], numberIndex[0], 0);
+	DrawNumber(xpos[7], y, spriteIndex[7], numberIndex[0], 0);
+	
 	if(drawCircles)
 	{
 		/*****Circles*****/			
+		u16 numberTopIndex[8] = { 64, 68, 72, 76, 80, 84, 88, 92 };	
 		
 		DrawCircle(0, 70, 192, numberIndex[10], 2);
 
 		/*****Numbers on Circles*****/
-		DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 1);	
+		DrawNumber(20, 80, numberTopIndex[0], numberIndex[1], 1);
 		DrawNumber(84, 80, numberTopIndex[1], numberIndex[2], 1);
-		DrawNumber(148, 80, numberTopIndex[2], numberIndex[3], 1);	
-		DrawNumber(212, 80, numberTopIndex[3], numberIndex[4], 1);	
+		DrawNumber(148, 80, numberTopIndex[2], numberIndex[3], 1);
+		DrawNumber(212, 80, numberTopIndex[3], numberIndex[4], 1);
 		
-		DrawNumber(20, 150, numberTopIndex[4], numberIndex[5], 1);	
-		DrawNumber(84, 150, numberTopIndex[5], numberIndex[6], 1);	
+		DrawNumber(20, 150, numberTopIndex[4], numberIndex[5], 1);
+		DrawNumber(84, 150, numberTopIndex[5], numberIndex[6], 1);
 		DrawNumber(148, 150, numberTopIndex[6], numberIndex[7], 1);	
-		DrawNumber(212, 150, numberTopIndex[7], numberIndex[8], 1);				
-	}
-	
-	if(drawCircles)
-	{
+		DrawNumber(212, 150, numberTopIndex[7], numberIndex[8], 1);	
+
+		/**** Set palettes ****/
 		setPaletteColor(0x91, RGB5(31, 31, 31));
 		setPaletteColor(0xA3, RGB5(31, 0, 0));
 		setPaletteColor(0xA1, RGB5(31, 0, 0));
@@ -786,23 +781,22 @@ void DrawStopWatch(timecode *tc, u16 *xpos, u16 *spriteIndex, u16 *numberIndex, 
 			tc->frames = 0;
 			tc->seconds ++;	
 		}
-
 	}
 
 	if(tc->seconds > 59)
 	{
-	  tc->seconds = 0;
-	  tc->minutes ++;
+		tc->seconds = 0;
+		tc->minutes ++;
 	}
 
 	if(tc->minutes > 59)
 	{
-	  tc->minutes = 0;
-	  tc->hours ++;
+		tc->minutes = 0;
+		tc->hours ++;
 	}
 
 	if(tc->hours > 99)
-	  tc->hours = 0;
+		tc->hours = 0;
 	  
 	// Hours			
 	lsd = tc->hours % 10;
@@ -837,7 +831,7 @@ void PassiveLagTest()
 	u16 numberIndex[12] = { 0, 8, 64, 72, 128, 136, 192, 200, 256, 264, 320, 328};
 	u16 spriteIndex[8] = { 0, 4, 8, 12, 16, 20, 24, 28 };
 	u16 xpos[8] = { 5, 30, 70, 95, 135, 160, 200, 225 };
-	u16 y = 20, running = 1, redraw = 1, color = 1, bgcol = 0xa;	
+	u16 y = 20, running = 1, redraw = 1, color = 1, bgcol = 0xa, toggle = 0;	
 
 	memset(&tc, 0, sizeof(timecode));		
 	while(!end) 
@@ -853,18 +847,21 @@ void PassiveLagTest()
 		if(framecnt > 7)
 			framecnt = 0;
 			
-		if(running && color)
+		if(running)
 		{
-			if(bgcol == 0xa)
+			if(toggle)
 			{
-				bgcol = 0xb;
+				if(color)
+					bgcol = 0xb;
 				setPaletteColor(0x01, RGB5(0, 0, 0));
 			}
 			else 
 			{
-				bgcol = 0xa;
+				if(color)
+					bgcol = 0xa;
 				setPaletteColor(0x01, RGB5(31, 31, 31));
 			}
+			toggle = !toggle;
 		}
 	
 		DrawStopWatch(&tc, xpos, spriteIndex, numberIndex, y, bgcol);
@@ -876,7 +873,7 @@ void PassiveLagTest()
 			mul = 2;
 		}
 			
-		ChangeCircle(count*64, 70*mul, 192, numberIndex[10], 2);
+		ChangeCircle(count*64, 70*mul, 192, numberIndex[10], color ? 2 : 1);
 	
 		WaitForVBlank();
 		
@@ -899,14 +896,25 @@ void PassiveLagTest()
 		if(pressed & KEY_B)
 			end = 1;
 			
+		if(pressed & KEY_Y)
+		{
+			color = !color;
+			if(!color)
+			{
+				bgcol = 0;
+				setPaletteColor(3, RGB5(15, 15, 15));
+			}
+			else
+				setPaletteColor(3, RGB5(0, 0, 31));
+		}
+			
 		if (pressed & KEY_X && !running)
 		{
 			memset(&tc, 0, sizeof(timecode));
 			framecnt = 0;
 		}		
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return;
 }
 
@@ -1217,8 +1225,7 @@ void LEDZoneTest()
 		if(y < 0)
 			y = 0;
 	}	
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return;
 }
 
@@ -1870,8 +1877,7 @@ void ManualLagTest()
 			WaitForVBlank();
 		}
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return;
 }
 
@@ -2246,8 +2252,7 @@ void AudioSyncTest(void)
 		
 		oamSetXY(0, x, y);
 	}	
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	
 	return;
 }
@@ -2274,13 +2279,13 @@ void DisappearingLogo()
 
 	black = RGB5(0, 0, 0);
 	white = RGB5(31, 31, 31);
-	memset(&tc, 0, sizeof(timecode));		
+	memset(&tc, 0, sizeof(timecode));
+	
 	while(!end)
 	{
 		if(reload)
 		{
 			loadStopWatch(xpos, spriteIndex, numberIndex, y, 0);
-			
 			reload = 0;
 			if(!draw)
 				redraw = 1;
@@ -2349,8 +2354,7 @@ void DisappearingLogo()
 			}
 		}
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 }
 
 void DrawPhase() 
@@ -2436,7 +2440,6 @@ void DrawPhase()
 				x = 18;
 		}
 	}
-	Transition();
-	oamClear(0, 0);
+	transitionAndClear();
 	return;
 }

@@ -701,8 +701,9 @@ void DrawWhite()
 {	
 	u16 pressed, held, end = 0;
 	u16 redraw = 1, color, change = 1;
-	u8	custom = 0, fast = 0;
+	u8	custom = 0, fast = 0, showText = 0;
 	s16 sel = 0, mod = 0, r, g, b;
+	char *text[] = { "white", "black", "red", "green", "blue", "cyan", "yellow", "magenta" };
 			
 	r = g = b = 255;
 	while(!end) 
@@ -743,19 +744,38 @@ void DrawWhite()
 				case 4:
 					color = RGB8(0, 0, 255);
 					break;
+				case 5:
+					color = RGB8(0, 255, 255);
+					break;
+				case 6:
+					color = RGB8(255, 255, 0);
+					break;
+				case 7:
+					color = RGB8(255, 0, 255);
+					break;
 			}
 
+			CleanFontMap();
 			if(custom && sel == 0)
 			{				
 				drawText(12, 1, mod == 0 ? 6 : 7, "R:%0.2X", r);			
 				drawText(18, 1, mod == 1 ? 6 : 7, "G:%0.2X", g);				
 				drawText(24, 1, mod == 2 ? 6 : 7, "B:%0.2X", b);
+				showText = 0;
 			}
-			else			
-				CleanFontMap();
+			else
+				showText = 60;
 			
 			setPaletteColor(0x00, color);			
 			change = 0;
+		}
+		
+		if(showText)
+		{
+			drawText(24, 1, 6, text[sel]);			
+			showText --;
+			if(!showText)
+				CleanFontMap();
 		}
 		
 		WaitForVBlank();
@@ -791,10 +811,10 @@ void DrawWhite()
 			change = 1;
 		}
 			
-		if(sel > 4)
+		if(sel > 7)
 			sel = 0;
 		if(sel < 0)
-			sel = 4;
+			sel = 7;
 			
 		if(custom)
 		{
