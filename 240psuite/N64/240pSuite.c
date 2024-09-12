@@ -32,6 +32,7 @@ void drawPatternsColorMenu(void);
 void drawPatternsGeometryMenu(void);
 void drawVideoTestsMenu(void);
 void drawAudioTestsMenu(void);
+void drawHardwareTestsMenu(void);
 void drawFooter(int x, int *y, int *sel, int *c);
 
 int main(void) {
@@ -91,10 +92,10 @@ int main(void) {
 		if(keys.d_down)
 			sel++;
 			
-		if(sel > c)
+		if(sel >= c)
 			sel = 1;
 		if(sel < 1)
-			sel = c;
+			sel = c - 1;
 			
 		checkStart(keys);
 		
@@ -114,7 +115,7 @@ int main(void) {
 					drawAudioTestsMenu();
 					break;
 				case 4:
-					drawMemoryViewer(0);
+					drawHardwareTestsMenu();
 					break;
 				case 5:					
 					
@@ -584,7 +585,8 @@ void drawAudioTestsMenu() {
 		
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;    
-		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier"); y += 2*fh; c++;
+		drawFooter(x, &y, &sel, &c);
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;
 
 		drawSysData();
@@ -623,6 +625,104 @@ void drawAudioTestsMenu() {
 					drawMDFourier();
 					break;
 				case 4:
+	
+					break;
+				case 5:					
+					helpWindow(GENERALHELP);
+					break;
+				case 6:
+					drawCredits(1);
+					break;
+				case 7:
+					exit = 1;
+					break;
+			}
+			reload = 1;
+		}
+		
+		if(keys.b)
+			exit = 1;
+	}
+	freeImage(&bg);
+	freeImage(&sd);
+	SD_release();
+}
+
+void drawHardwareTestsMenu() {
+	int sel = 1, reload = 1, exit = 0;
+	joypad_buttons_t keys;
+	image *bg = NULL, *sd = NULL;
+	
+	while(!exit) {
+		int c = 1, x = 55, y = 90;
+		int r = 0xFF, g = 0xFF, b = 0xFF;
+		
+		if(reload) {
+			freeImage(&bg);
+			freeImage(&sd);
+			bg = loadImage("rom:/mainbg.sprite");
+			sd = loadImage("rom:/sd.sprite");
+			if(sd) {
+				sd->x = 225;
+				sd->y = 75;
+			}
+			reload = 0;
+		}
+
+		getDisplay();
+
+		rdpqStart();
+		rdpqDrawImage(bg);
+		rdpqDrawImage(sd);
+		SD_blink_cycle(sd);
+		rdpqEnd();
+		
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += 2*fh; c++;
+		drawFooter(x, &y, &sel, &c);
+		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;
+
+		drawSysData();
+		checkMenu(GENERALHELP, NULL);
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+
+		if(keys.d_up)
+			sel--;
+
+		if(keys.d_down)
+			sel++;
+			
+		if(sel > c)
+			sel = 1;
+		if(sel < 1)
+			sel = c;
+
+		checkStart(keys);
+
+		if(keys.a) {	
+			freeImage(&bg);
+			freeImage(&sd);
+			SD_release();
+			
+			switch(sel)	{
+				case 1:				
+					break;
+				case 2:
+					drawMemoryViewer(0);
+					break;
+				case 3:
+	
+					break;
+				case 4:					
+					helpWindow(GENERALHELP);
+					break;
+				case 5:
+					drawCredits(1);
+					break;
+				case 6:
 					exit = 1;
 					break;
 			}
