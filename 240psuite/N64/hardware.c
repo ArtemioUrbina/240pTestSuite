@@ -205,11 +205,92 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
 	}
 }
 
- 
+void drawButtonAt(int press, int x, int y, int r, int g, int b, char *text) {
+	drawStringS(x, y, press ? 0xff : r, press ? 0xff : g, press ? 0xff : b, text);
+}
+
+/*
+ L         R
+      Z     U
+ U         L R
+L R   S  A  D
+ D        B
+     255  
+   255 255
+     255
+*/
+void drawControllerAtCoord(int controller, int x, int y) {
+	char buffer[5];
+	joypad_inputs_t pad_inputs;
+	joypad_buttons_t pad_held;
+	int analog_x, analog_y;
+	
+	switch(controller) {
+		case 1:
+			pad_inputs = joypad_get_inputs(JOYPAD_PORT_1);
+			pad_held = joypad_get_buttons_held(JOYPAD_PORT_1);
+			break;
+		case 2:
+			pad_inputs = joypad_get_inputs(JOYPAD_PORT_2);
+			pad_held = joypad_get_buttons_held(JOYPAD_PORT_2);
+			break;
+		case 3:
+			pad_inputs = joypad_get_inputs(JOYPAD_PORT_3);
+			pad_held = joypad_get_buttons_held(JOYPAD_PORT_3);
+			break;
+		case 4:
+			pad_inputs = joypad_get_inputs(JOYPAD_PORT_4);
+			pad_held = joypad_get_buttons_held(JOYPAD_PORT_4);
+			break;
+		default:
+			return;
+	}
+	
+	drawButtonAt(pad_held.l, 		x + 1*fw, y, 114, 119, 128, "L");
+	drawButtonAt(pad_held.r, 		x + 11*fw, y, 114, 119, 128, "R");
+	y += fh;
+	
+	drawButtonAt(pad_held.z, 		x + 6*fw, y, 114, 119, 128, "Z");
+	drawButtonAt(pad_held.c_up, 	x + 12*fw, y, 238, 178, 0, "U");
+	y += fh;
+	
+	drawButtonAt(pad_held.d_up, 	x + 1*fw, y, 114, 119, 128, "U");
+	drawButtonAt(pad_held.c_left, 	x + 11*fw, y, 238, 178, 0, "L");
+	drawButtonAt(pad_held.c_right, 	x + 13*fw, y, 238, 178, 0, "R");
+	y += fh;
+	
+	drawButtonAt(pad_held.d_left, 	x, y, 114, 119, 128, "L");
+	drawButtonAt(pad_held.d_right, 	x + 2*fw, y, 114, 119, 128, "R");
+	drawButtonAt(pad_held.start, 	x + 6*fw, y, 255, 69, 68, "S");
+	drawButtonAt(pad_held.b, 		x + 9*fw, y, 0, 137, 92, "B");
+	drawButtonAt(pad_held.c_down, 	x + 12*fw, y, 238, 178, 0, "D");
+	y += fh;
+	
+	drawButtonAt(pad_held.d_down, 	x + 1*fw, y, 114, 119, 128, "D");
+	drawButtonAt(pad_held.a, 		x + 10*fw, y, 0, 62, 162, "A");
+	y += fh;
+	
+	analog_x = pad_inputs.stick_x;
+	analog_y = pad_inputs.stick_y;
+	
+	sprintf(buffer, "%03d", analog_y > 0 ? analog_y : 0);
+	drawButtonAt(analog_y > 0, 	x + 5*fw, y, 185, 193, 216, buffer);
+	y += fh;
+	
+	sprintf(buffer, "%03d", analog_x < 0 ? -1*analog_x : 0);
+	drawButtonAt(analog_x < 0, 	x + 3*fw, y, 185, 193, 216, buffer);
+	sprintf(buffer, "%03d", analog_x > 0 ? analog_x : 0);
+	drawButtonAt(analog_x > 0, 	x + 7*fw, y, 185, 193, 216, buffer);
+	y += fh;
+	
+	sprintf(buffer, "%03d", analog_y < 0 ? -1*analog_y : 0);
+	drawButtonAt(analog_y < 0, 	x + 5*fw, y, 185, 193, 216, buffer);
+}
+
 void drawControllerTest() {
 	int end = 0;
 	image *back = NULL;
-	joypad_buttons_t keys;
+	joypad_buttons_t pad_held;
 
 	back = loadImage("rom:/mainbg.sprite");
 	if(!back)
@@ -219,19 +300,24 @@ void drawControllerTest() {
 
 		rdpqStart();
 		
-		rdpqDrawImage(back);
+		rdpqClearScreen();
+		//rdpqDrawImage(back);
 		rdpqEnd();
 		
-		drawStringC(42, 0x00, 0xff, 0x00, "Controller Test");
+		drawStringC(20, 0x00, 0xff, 0x00, "Controller Test");
+		drawControllerAtCoord(1, 30, 40);
+		drawControllerAtCoord(2, 170, 40);
+		
+		drawControllerAtCoord(3, 30, 40+9*fh);
+		drawControllerAtCoord(4, 170, 40+9*fh);
 		waitVsync();
 		
 		joypad_poll();
-		keys = controllerButtonsDown();
+		pad_held = joypad_get_buttons_held();
 		
-		if(keys.b)
+		if(pad_held.start && pad_held.d_left)
 			end = 1;
 	}
 	
-
 	freeImage(&back);
 }

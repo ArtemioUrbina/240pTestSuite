@@ -22,6 +22,8 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+void drawControllerTest();
 void drawMemoryViewer(void *startAddress);
+
 
 #endif

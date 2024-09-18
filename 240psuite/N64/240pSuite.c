@@ -708,7 +708,8 @@ void drawHardwareTestsMenu() {
 			SD_release();
 			
 			switch(sel)	{
-				case 1:				
+				case 1:
+					drawControllerTest();
 					break;
 				case 2:
 					drawMemoryViewer(0);
