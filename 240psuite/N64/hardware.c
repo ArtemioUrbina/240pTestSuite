@@ -190,7 +190,7 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
 		if(keys.b)
 			done =	1;
 			
-		if(keys.a) {
+		if(keys.a)  {
 			locpos ++;
 			if(locpos == MAX_LOCATIONS)
 				locpos = 0;
@@ -203,4 +203,35 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
 		if(keys.c_right)
 			docrc =	!docrc;
 	}
+}
+
+ 
+void drawControllerTest() {
+	int end = 0;
+	image *back = NULL;
+	joypad_buttons_t keys;
+
+	back = loadImage("rom:/mainbg.sprite");
+	if(!back)
+		return;
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		
+		rdpqDrawImage(back);
+		rdpqEnd();
+		
+		drawStringC(42, 0x00, 0xff, 0x00, "Controller Test");
+		waitVsync();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.b)
+			end = 1;
+	}
+	
+
+	freeImage(&back);
 }
