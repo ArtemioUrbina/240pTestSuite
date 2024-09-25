@@ -117,7 +117,7 @@ void help(_svin_screen_mode_t screenmode)
 	};
 
 	draw_help(curr_screenmode,page);
-	update_screen_mode(curr_screenmode);
+	update_screen_mode(curr_screenmode,false);
 	draw_bg_with_expansion(curr_screenmode,false);
 	wait_for_key_unpress();
 
@@ -143,7 +143,7 @@ void help(_svin_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		vdp2_tvmd_vblank_out_wait();

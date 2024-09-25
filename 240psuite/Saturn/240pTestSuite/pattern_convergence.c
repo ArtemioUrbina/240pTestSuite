@@ -39,17 +39,6 @@ void draw_convergence(_svin_screen_mode_t screenmode, int iPattern)
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
 	_svin_set_palette_part(2,&Color,6,6); //palette 2 color 1 = IRE white
-	
-	//switching to BMP mode
-	//setup nbg0
-    struct vdp2_scrn_bitmap_format format;
-    memset(&format, 0x00, sizeof(format));
-    format.scroll_screen = VDP2_SCRN_NBG0;
-    format.ccc = VDP2_SCRN_CCC_PALETTE_16;
-    format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
-    format.palette_base = 0x800;
-    format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
-    vdp2_scrn_bitmap_format_set(&format);
 
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
@@ -162,6 +151,7 @@ void pattern_convergence(_svin_screen_mode_t screenmode)
 {
 	_svin_screen_mode_t curr_screenmode = screenmode;
 	int iPattern = 0;
+	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_convergence(curr_screenmode,iPattern);
 	bool key_pressed = false;
 
@@ -176,7 +166,7 @@ void pattern_convergence(_svin_screen_mode_t screenmode)
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			draw_convergence(curr_screenmode,iPattern);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -185,7 +175,7 @@ void pattern_convergence(_svin_screen_mode_t screenmode)
 		else if ( (controller.pressed.button.r) )
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			draw_convergence(curr_screenmode,iPattern);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -203,7 +193,7 @@ void pattern_convergence(_svin_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		vdp2_tvmd_vblank_in_wait();

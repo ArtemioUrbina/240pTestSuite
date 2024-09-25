@@ -76,11 +76,11 @@
 extern uint8_t asset_bootlogo_bg[];
 extern uint8_t asset_bootlogo_bg_end[];
 
-void update_screen_mode(_svin_screen_mode_t screenmode)
+void update_screen_mode(_svin_screen_mode_t screenmode, bool bmp_mode)
 {
 	//ClearTextLayer();
 	_svin_deinit();
-	_svin_init(screenmode);
+	_svin_init(screenmode, bmp_mode);
 	_svin_clear_palette(0);
 	LoadFont();
 }
@@ -103,7 +103,7 @@ int main(void)
 	};
 
 	//show yaul logo in 240p
-	_svin_init(screenMode);
+	_svin_init(screenMode,false);
 	_svin_background_set_from_assets(asset_bootlogo_bg,(int)(asset_bootlogo_bg_end-asset_bootlogo_bg));
 
 	//wait for 60 frames, either 1s or 1.2s
@@ -681,7 +681,7 @@ int main(void)
 									screenMode.scanmode = _SVIN_SCANMODE_240I;
 								if (_SVIN_SCANMODE_480P == screenMode.scanmode)
 									screenMode.y_res = VDP2_TVMD_VERT_240; //only x480 in 480p mode
-								update_screen_mode(screenMode);
+								update_screen_mode(screenMode,false);
 								redrawBG = true;
 								redrawMenu = true;
 								break;
@@ -700,7 +700,7 @@ int main(void)
 									if (screenMode.y_res > VDP2_TVMD_VERT_256)
 										screenMode.y_res = VDP2_TVMD_VERT_224;
 								}
-								update_screen_mode(screenMode);
+								update_screen_mode(screenMode,false);
 								redrawBG = true;
 								redrawMenu = true;
 								break;
@@ -712,7 +712,7 @@ int main(void)
 									screenMode.x_res = _SVIN_X_RESOLUTION_320;
 									screenMode.x_res_doubled = !screenMode.x_res_doubled;
 								}
-								update_screen_mode(screenMode);
+								update_screen_mode(screenMode,false);
 								redrawBG = true;
 								redrawMenu = true;
 								break;

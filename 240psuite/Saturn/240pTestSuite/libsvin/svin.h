@@ -28,7 +28,6 @@ typedef struct {
 
 extern bool _svin_videomode_scanlines;
 extern int _svin_frame_count;
-extern int current_color_mode;
 
 #define _SVIN_CHARACTER_HEIGHT   8
 #define _SVIN_CHARACTER_WIDTH   8
@@ -80,7 +79,7 @@ extern int current_color_mode;
 #define _SVIN_VDP1_ORDER_TEXT_SPRITE_1_INDEX       3
 #define _SVIN_VDP1_ORDER_LIMIT                    4
 
-void _svin_init(_svin_screen_mode_t screen_mode);
+void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode);
 void _svin_deinit();
 
 void _svin_set_vdp1_cmdlist_toggle_at_vblank(bool enable);

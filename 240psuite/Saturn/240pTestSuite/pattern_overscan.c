@@ -55,17 +55,6 @@ void draw_overscan(_svin_screen_mode_t screenmode, int top, int bottom, int left
 	Color.b = IRE_bot + (IRE_top-IRE_bot)/2;
 	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE gray 50%
 
-	//switching to BMP mode
-	//setup nbg0
-    struct vdp2_scrn_bitmap_format format;
-    memset(&format, 0x00, sizeof(format));
-    format.scroll_screen = VDP2_SCRN_NBG0;
-    format.ccc = VDP2_SCRN_CCC_PALETTE_16;
-    format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
-    format.palette_base = 0x800;
-    format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
-    vdp2_scrn_bitmap_format_set(&format);
-
 	draw_overscan_constant_text();
 	redraw_overscan(screenmode, top, bottom, left, right, cursor);
 
@@ -130,6 +119,7 @@ void pattern_overscan(_svin_screen_mode_t screenmode)
 	int _top = 0;
 	int _bottom = 0;
 	int _cursor = 0;
+	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_overscan(curr_screenmode,_top,_bottom,_left,_right,_cursor);
 
 	wait_for_key_unpress();
@@ -145,7 +135,7 @@ void pattern_overscan(_svin_screen_mode_t screenmode)
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			draw_overscan(curr_screenmode,_top,_bottom,_left,_right,_cursor);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -154,7 +144,7 @@ void pattern_overscan(_svin_screen_mode_t screenmode)
 		else if ( (controller.pressed.button.r) )
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			draw_overscan(curr_screenmode,_top,_bottom,_left,_right,_cursor);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -236,7 +226,7 @@ void pattern_overscan(_svin_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		if (mode_display_counter > 0)

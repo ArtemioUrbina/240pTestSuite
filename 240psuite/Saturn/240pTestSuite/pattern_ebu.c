@@ -41,17 +41,6 @@ void draw_ebu(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.b = IRE_bot;
 	_svin_set_palette_part(2,&Color,8,8); //palette 2 color 8 = IRE black
 
-	//switching to BMP mode
-	//setup nbg0
-    struct vdp2_scrn_bitmap_format format;
-    memset(&format, 0x00, sizeof(format));
-    format.scroll_screen = VDP2_SCRN_NBG0;
-    format.ccc = VDP2_SCRN_CCC_PALETTE_16;
-    format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
-    format.palette_base = 0x800;
-    format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
-    vdp2_scrn_bitmap_format_set(&format);
-
 	int _size_x = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 320: 352;
 	if (screenmode.x_res_doubled) _size_x*=2;
 	int _size_y = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 224 : 
@@ -92,6 +81,7 @@ void pattern_ebu(_svin_screen_mode_t screenmode)
 {
 	_svin_screen_mode_t curr_screenmode = screenmode;
 	bool bIRE100 = false;
+	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_ebu(curr_screenmode,bIRE100);
 	bool key_pressed = false;
 
@@ -106,7 +96,7 @@ void pattern_ebu(_svin_screen_mode_t screenmode)
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			draw_ebu(curr_screenmode,bIRE100);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -115,7 +105,7 @@ void pattern_ebu(_svin_screen_mode_t screenmode)
 		else if ( (controller.pressed.button.r) )
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			draw_ebu(curr_screenmode,bIRE100);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -132,7 +122,7 @@ void pattern_ebu(_svin_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		vdp2_tvmd_vblank_in_wait();

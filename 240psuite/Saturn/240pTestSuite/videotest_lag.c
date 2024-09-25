@@ -235,7 +235,7 @@ void videotest_lag(_svin_screen_mode_t screenmode)
 		.x_res_doubled = false,
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
 	};
-	update_screen_mode(curr_screenmode);
+	update_screen_mode(curr_screenmode,false);
 	
 	int mode_run_counter = 0;
 	draw_lag(curr_screenmode);
@@ -265,7 +265,7 @@ void videotest_lag(_svin_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		else

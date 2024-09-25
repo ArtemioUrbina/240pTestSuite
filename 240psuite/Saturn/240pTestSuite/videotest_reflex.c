@@ -129,7 +129,7 @@ void videotest_reflex(_svin_screen_mode_t screenmode)
 		.x_res_doubled = false,
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
 	};
-	update_screen_mode(curr_screenmode);
+	update_screen_mode(curr_screenmode,false);
 	
 	int offset = 0;
 	int offset_dir = 1;
@@ -179,7 +179,7 @@ void videotest_reflex(_svin_screen_mode_t screenmode)
 					DrawString(buf, 20, 10+130, FONT_CYAN);
 					wait_for_key_press();
 					wait_for_key_unpress();
-					update_screen_mode(screenmode);
+					update_screen_mode(screenmode,false);
 					return;
 				}
 				key_pressed = true;
@@ -199,7 +199,7 @@ void videotest_reflex(_svin_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		else

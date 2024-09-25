@@ -253,74 +253,6 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.b = IRE_bot;	
 	_svin_set_palette_part(2,&Color,COLOR_GREEN,COLOR_GREEN); //palette 2 color 4 = IRE green
 
-	//switching to BMP mode
-	struct vdp2_scrn_bitmap_format format;
-
-	if (0 == current_color_mode)
-	{
-		//480p high res, special setup
-		//setup nbg0
-		memset(&format, 0x00, sizeof(format));
-		format.scroll_screen = VDP2_SCRN_NBG0;
-		format.ccc = VDP2_SCRN_CCC_PALETTE_16;
-		format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
-		format.palette_base = 0x400;
-		format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
-		vdp2_scrn_bitmap_format_set(&format);
-		//setup nbg1
-		memset(&format, 0x00, sizeof(format));
-		format.scroll_screen = VDP2_SCRN_NBG1;
-		format.ccc = VDP2_SCRN_CCC_PALETTE_16;
-		format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
-		format.palette_base = 0x400;
-		format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
-		vdp2_scrn_bitmap_format_set(&format);
-
-		vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISP_NBG1);
-
-		vdp2_scrn_reduction_set(VDP2_SCRN_NBG0,VDP2_SCRN_REDUCTION_HALF);
-    	vdp2_scrn_reduction_set(VDP2_SCRN_NBG1,VDP2_SCRN_REDUCTION_HALF);
-    	vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG0, FIX16(2.0f));
-	    vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG1, FIX16(2.0f));
-    	vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG0, FIX16(1.0f));
-	    vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG1, FIX16(1.0f));
-		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG0 , FIX16(0.0f));
-		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1 , FIX16(1.0f));	
-		vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 5);
-		vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
-	}
-	else
-	{
-		//normal setup
-		//setup nbg0
-		memset(&format, 0x00, sizeof(format));
-		format.scroll_screen = VDP2_SCRN_NBG0;
-		format.ccc = VDP2_SCRN_CCC_PALETTE_16;
-		format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
-		format.palette_base = 0x800;
-		format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
-		vdp2_scrn_bitmap_format_set(&format);
-		//setup nbg1
-		memset(&format, 0x00, sizeof(format));
-		format.scroll_screen = VDP2_SCRN_NBG1;
-		format.ccc = VDP2_SCRN_CCC_PALETTE_16;
-		format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
-		format.palette_base = 0x800;
-		format.bitmap_base = _SVIN_NBG1_CHPNDR_START;
-		vdp2_scrn_bitmap_format_set(&format);
-
-		vdp2_scrn_reduction_set(VDP2_SCRN_NBG0,VDP2_SCRN_REDUCTION_NONE);
-    	vdp2_scrn_reduction_set(VDP2_SCRN_NBG1,VDP2_SCRN_REDUCTION_NONE);
-    	vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG0, FIX16(1.0f));
-	    vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG1, FIX16(1.0f));
-    	vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG0, FIX16(1.0f));
-	    vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG1, FIX16(1.0f));
-		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG0 , FIX16(0.0f));
-		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1 , FIX16(0.0f));	
-		vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
-		vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
-	}
-
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
@@ -587,6 +519,7 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 {
 	_svin_screen_mode_t curr_screenmode = screenmode;
 	bool bIRE100 = true;
+	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_monoscope(curr_screenmode,bIRE100);
 	bool key_pressed = false;
 	bool size_printed = false;
@@ -602,7 +535,7 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			draw_monoscope(curr_screenmode,bIRE100);
 			if (size_printed) draw_monoscope_text(curr_screenmode);
 			print_screen_mode(curr_screenmode);
@@ -612,7 +545,7 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 		else if ( (controller.pressed.button.r) )
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			draw_monoscope(curr_screenmode,bIRE100);
 			if (size_printed) draw_monoscope_text(curr_screenmode);
 			print_screen_mode(curr_screenmode);
@@ -631,7 +564,7 @@ void pattern_monoscope(_svin_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		else if (controller.pressed.button.x)

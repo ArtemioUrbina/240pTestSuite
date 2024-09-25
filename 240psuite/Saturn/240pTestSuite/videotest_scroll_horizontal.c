@@ -43,16 +43,6 @@ void draw_scroll_horizontal(_svin_screen_mode_t screenmode)
 {
 	char buf[256*256];	
 	_svin_set_cycle_patterns_cpu();
-	//switching to BMP mode
-	//setup nbg0
-    struct vdp2_scrn_bitmap_format format;
-    memset(&format, 0x00, sizeof(format));
-    format.scroll_screen = VDP2_SCRN_NBG0;
-    format.ccc = VDP2_SCRN_CCC_PALETTE_256;
-    format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X256;
-    format.palette_base = 0x800;
-    format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
-    vdp2_scrn_bitmap_format_set(&format);
 
 	uint8_t *p8 = (uint8_t *)(asset_sonicfloor_bg);
 	uint16_t *p16 = (uint16_t*)p8;
@@ -183,7 +173,7 @@ void videotest_scroll_horizontal(_svin_screen_mode_t screenmode)
 		.x_res_doubled = false,
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
 	};
-	update_screen_mode(curr_screenmode);
+	update_screen_mode(curr_screenmode,true);
 
 	draw_scroll_horizontal(curr_screenmode);
 	bool key_pressed = false;
@@ -229,7 +219,7 @@ void videotest_scroll_horizontal(_svin_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		else

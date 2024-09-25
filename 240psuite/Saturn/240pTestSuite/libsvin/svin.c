@@ -131,7 +131,7 @@ vdp1_cmdt_color_mode5_set(vdp1_cmdt_t *cmdt)
         cmdt->cmd_colr = 0;
 }
 
-void _svin_init(_svin_screen_mode_t screen_mode)
+void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
 {
     int *_pointer32;
     _svin_init_done = 0;
@@ -143,39 +143,229 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     //clearing vdp2
     vdp2_tvmd_display_clear();
 
-    //setup nbg0
-    struct vdp2_scrn_cell_format format;
-    memset(&format, 0x00, sizeof(format));
+    //setting cycle patterns for cpu access
+    _svin_set_cycle_patterns_cpu();
+    
+    struct vdp2_scrn_bitmap_format bmp_format;
+    struct vdp2_scrn_cell_format cell_format;
     vdp2_scrn_normal_map_t normal_map;
-    memset(&normal_map, 0x00, sizeof(normal_map));
 
-    format.scroll_screen = VDP2_SCRN_NBG0;
-    format.ccc = VDP2_SCRN_CCC_PALETTE_256;
-    format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
-    format.pnd_size = 2;
-    format.aux_mode = VDP2_SCRN_AUX_MODE_1;
-    format.cpd_base = 0;
-    format.palette_base = 0;
-    format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
-    normal_map.plane_a = _SVIN_NBG0_PNDR_START;
+    if (bmp_mode)
+    {
+        //bmp mode
+        if (_SVIN_SCANMODE_480P == screen_mode.scanmode)
+        {
+            //480p high res, special setup
+            //setup nbg0
+            memset(&bmp_format, 0x00, sizeof(bmp_format));
+            bmp_format.scroll_screen = VDP2_SCRN_NBG0;
+            bmp_format.ccc = VDP2_SCRN_CCC_PALETTE_16;
+            bmp_format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
+            bmp_format.palette_base = 0x400;
+            bmp_format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
+            vdp2_scrn_bitmap_format_set(&bmp_format);
 
-    vdp2_scrn_cell_format_set(&format,&normal_map);
-    vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
+            //setup nbg1
+            memset(&bmp_format, 0x00, sizeof(bmp_format));
+            bmp_format.scroll_screen = VDP2_SCRN_NBG1;
+            bmp_format.ccc = VDP2_SCRN_CCC_PALETTE_16;
+            bmp_format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
+            bmp_format.palette_base = 0x400;
+            bmp_format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
+            vdp2_scrn_bitmap_format_set(&bmp_format);
 
-    //setup nbg1
-    format.scroll_screen = VDP2_SCRN_NBG1;
-    format.ccc = VDP2_SCRN_CCC_PALETTE_256;
-    format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
-    format.pnd_size = 2;
-    format.aux_mode = VDP2_SCRN_AUX_MODE_1;
-    format.cpd_base = 0;
-    format.palette_base = 0;
-    format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
-    normal_map.plane_a = _SVIN_NBG1_PNDR_START;
+            vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISPTP_NBG1);
 
-    vdp2_scrn_cell_format_set(&format,&normal_map);
-    vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
-    vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISPTP_NBG1);
+            vdp2_scrn_reduction_set(VDP2_SCRN_NBG0,VDP2_SCRN_REDUCTION_HALF);
+            vdp2_scrn_reduction_set(VDP2_SCRN_NBG1,VDP2_SCRN_REDUCTION_HALF);
+            vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG0, FIX16(2.0f));
+            vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG1, FIX16(2.0f));
+            vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG0, FIX16(1.0f));
+            vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG1, FIX16(1.0f));
+            vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG0 , FIX16(0.0f));
+            vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1 , FIX16(1.0f));	
+            vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 5);
+            vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
+        }
+        else
+        {
+            //normal setup
+            //setup nbg0
+            memset(&bmp_format, 0x00, sizeof(bmp_format));
+            bmp_format.scroll_screen = VDP2_SCRN_NBG0;
+            bmp_format.ccc = VDP2_SCRN_CCC_PALETTE_16;
+            bmp_format.bitmap_size = VDP2_SCRN_BITMAP_SIZE_1024X512;
+            bmp_format.palette_base = 0x800;
+            bmp_format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
+            vdp2_scrn_bitmap_format_set(&bmp_format);
+
+            //setup nbg1 in tile mode, because it is not used in normal bmp setup
+            memset(&cell_format, 0x00, sizeof(cell_format));
+            memset(&normal_map, 0x00, sizeof(normal_map));
+            cell_format.scroll_screen = VDP2_SCRN_NBG1;
+            cell_format.ccc = VDP2_SCRN_CCC_PALETTE_256;
+            cell_format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
+            cell_format.pnd_size = 2;
+            cell_format.aux_mode = VDP2_SCRN_AUX_MODE_1;
+            cell_format.cpd_base = 0;
+            cell_format.palette_base = 0;
+            cell_format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
+            normal_map.plane_a = _SVIN_NBG1_PNDR_START;
+            vdp2_scrn_cell_format_set(&cell_format,&normal_map);
+
+            vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISPTP_NBG1);
+
+            vdp2_scrn_reduction_set(VDP2_SCRN_NBG0,VDP2_SCRN_REDUCTION_NONE);
+            vdp2_scrn_reduction_set(VDP2_SCRN_NBG1,VDP2_SCRN_REDUCTION_NONE);
+            vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG0, FIX16(1.0f));
+            vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG1, FIX16(1.0f));
+            vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG0, FIX16(1.0f));
+            vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG1, FIX16(1.0f));
+            vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG0 , FIX16(0.0f));
+            vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1 , FIX16(0.0f));	
+            vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
+            vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
+
+            //-------------- setup pattern names -------------------
+
+            //writing pattern names for nbg1
+            //nbg1  is mostly transparent, so fill with that one
+            _pointer32 = (int *)_SVIN_NBG1_PNDR_START;
+            for (unsigned int i = 0; i < _SVIN_NBG1_PNDR_SIZE / sizeof(int); i++)
+            {
+                _pointer32[i] = 0x00000000 + _SVIN_NBG1_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
+            }
+
+            //-------------- setup character pattern names -------------------
+
+            //clearing character pattern names data for nbg1
+            _pointer32 = (int *)_SVIN_NBG1_CHPNDR_START;
+            for (unsigned int i = 0; i < _SVIN_NBG1_CHPNDR_SIZE / sizeof(int); i++)
+            {
+                _pointer32[i] = 0;
+            }
+
+            //setting up "transparent" character for nbg1
+            _pointer32 = (int *)_SVIN_NBG1_CHPNDR_SPECIALS_ADDR;
+            for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
+            {
+                _pointer32[i] = 0;
+            }
+
+            //setting up "semi-transparent" character for nbg1
+            _pointer32 = (int *)(_SVIN_NBG1_CHPNDR_SPECIALS_ADDR + _SVIN_CHARACTER_BYTES);
+            for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
+            {
+                _pointer32[i] = 0x7F7F7F7F;
+            }
+        }
+    }
+    else
+    {
+        //tile mode
+        //setup nbg0
+        memset(&cell_format, 0x00, sizeof(cell_format));
+        memset(&normal_map, 0x00, sizeof(normal_map));
+        cell_format.scroll_screen = VDP2_SCRN_NBG0;
+        cell_format.ccc = VDP2_SCRN_CCC_PALETTE_256;
+        cell_format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
+        cell_format.pnd_size = 2;
+        cell_format.aux_mode = VDP2_SCRN_AUX_MODE_1;
+        cell_format.cpd_base = 0;
+        cell_format.palette_base = 0;
+        cell_format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
+        normal_map.plane_a = _SVIN_NBG0_PNDR_START;
+        vdp2_scrn_cell_format_set(&cell_format,&normal_map);
+
+        //setup nbg1
+        memset(&cell_format, 0x00, sizeof(cell_format));
+        memset(&normal_map, 0x00, sizeof(normal_map));
+        cell_format.scroll_screen = VDP2_SCRN_NBG1;
+        cell_format.ccc = VDP2_SCRN_CCC_PALETTE_256;
+        cell_format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
+        cell_format.pnd_size = 2;
+        cell_format.aux_mode = VDP2_SCRN_AUX_MODE_1;
+        cell_format.cpd_base = 0;
+        cell_format.palette_base = 0;
+        cell_format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
+        normal_map.plane_a = _SVIN_NBG1_PNDR_START;
+        vdp2_scrn_cell_format_set(&cell_format,&normal_map);
+
+        vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISPTP_NBG1);
+
+        vdp2_scrn_reduction_set(VDP2_SCRN_NBG0,VDP2_SCRN_REDUCTION_NONE);
+        vdp2_scrn_reduction_set(VDP2_SCRN_NBG1,VDP2_SCRN_REDUCTION_NONE);
+        vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG0, FIX16(1.0f));
+        vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG1, FIX16(1.0f));
+        vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG0, FIX16(1.0f));
+        vdp2_scrn_reduction_y_set(VDP2_SCRN_NBG1, FIX16(1.0f));
+        vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG0 , FIX16(0.0f));
+        vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1 , FIX16(0.0f));	
+        vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
+        vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5); 
+
+        //-------------- setup pattern names -------------------
+
+        //writing pattern names for nbg0
+        //starting with plane 0
+        _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
+        for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
+        {
+            _pointer32[i] = 0x00000000 + _SVIN_NBG0_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
+        }
+
+        //writing pattern names for nbg1
+        //nbg1  is mostly transparent, so fill with that one
+        _pointer32 = (int *)_SVIN_NBG1_PNDR_START;
+        for (unsigned int i = 0; i < _SVIN_NBG1_PNDR_SIZE / sizeof(int); i++)
+        {
+            _pointer32[i] = 0x00000000 + _SVIN_NBG1_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
+        }
+
+        //-------------- setup character pattern names -------------------
+
+        //clearing character pattern names data for nbg0
+        _pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+        for (unsigned int i = 0; i < _SVIN_NBG0_CHPNDR_SIZE / sizeof(int); i++)
+        {
+            _pointer32[i] = 0;
+        }
+
+        //clearing character pattern names data for nbg1
+        _pointer32 = (int *)_SVIN_NBG1_CHPNDR_START;
+        for (unsigned int i = 0; i < _SVIN_NBG1_CHPNDR_SIZE / sizeof(int); i++)
+        {
+            _pointer32[i] = 0;
+        }
+
+        //setting up "transparent" character for nbg0
+        _pointer32 = (int *)_SVIN_NBG0_CHPNDR_SPECIALS_ADDR;
+        for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
+        {
+            _pointer32[i] = 0;
+        }
+
+        //setting up "semi-transparent" character for nbg0
+        _pointer32 = (int *)(_SVIN_NBG0_CHPNDR_SPECIALS_ADDR + _SVIN_CHARACTER_BYTES);
+        for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
+        {
+            _pointer32[i] = 0x7F7F7F7F;
+        }
+
+        //setting up "transparent" character for nbg1
+        _pointer32 = (int *)_SVIN_NBG1_CHPNDR_SPECIALS_ADDR;
+        for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
+        {
+            _pointer32[i] = 0;
+        }
+
+        //setting up "semi-transparent" character for nbg1
+        _pointer32 = (int *)(_SVIN_NBG1_CHPNDR_SPECIALS_ADDR + _SVIN_CHARACTER_BYTES);
+        for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
+        {
+            _pointer32[i] = 0x7F7F7F7F;
+        }
+    }
 
     vdp2_tvmd_interlace_t interlace;
     vdp2_tvmd_horz_t horz;
@@ -215,7 +405,6 @@ void _svin_init(_svin_screen_mode_t screen_mode)
                                         screen_mode.x_res_doubled ? VDP2_TVMD_HORZ_HIRESO_B : VDP2_TVMD_HORZ_NORMAL_B;
     }
 
-
     vdp2_tvmd_display_res_set(interlace, horz, screen_mode.y_res);
 
     rgb1555_t bs_color;
@@ -231,14 +420,14 @@ void _svin_init(_svin_screen_mode_t screen_mode)
     vdp2_sprite_priority_set(6, 6);
     vdp2_sprite_priority_set(7, 6);
 
-    //setting cycle patterns for cpu access
-    _svin_set_cycle_patterns_cpu();
-
     vdp_sync_vblank_out_set(_svin_vblank_out_handler, NULL);
     
     vdp2_tvmd_display_set();
     //cpu_intc_mask_set(0); //?????
     vdp2_sync();
+
+    //setting cycle patterns for nbg access
+    _svin_set_cycle_patterns_nbg();
 
     //-------------- setup VDP1 -------------------
     //setting up a small VDP1 list with 3 commands: sys clip, local coords, end
@@ -353,71 +542,6 @@ void _svin_init(_svin_screen_mode_t screen_mode)
 
     vdp1_sync();
     vdp1_sync_wait();
-
-    //-------------- setup pattern names -------------------
-
-    //writing pattern names for nbg0
-    //starting with plane 0
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x00000000 + _SVIN_NBG0_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
-    }
-
-    //writing pattern names for nbg1
-    //nbg1  is mostly transparent, so fill with that one
-    _pointer32 = (int *)_SVIN_NBG1_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG1_PNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x00000000 + _SVIN_NBG1_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
-    }
-
-    //-------------- setup character pattern names -------------------
-
-    //clearing character pattern names data for nbg0
-    _pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_CHPNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0;
-    }
-
-    //clearing character pattern names data for nbg1
-    _pointer32 = (int *)_SVIN_NBG1_CHPNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG1_CHPNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0;
-    }
-
-    //setting up "transparent" character for nbg0
-    _pointer32 = (int *)_SVIN_NBG0_CHPNDR_SPECIALS_ADDR;
-    for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
-    {
-        _pointer32[i] = 0;
-    }
-
-    //setting up "semi-transparent" character for nbg0
-    _pointer32 = (int *)(_SVIN_NBG0_CHPNDR_SPECIALS_ADDR + _SVIN_CHARACTER_BYTES);
-    for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x7F7F7F7F;
-    }
-
-    //setting up "transparent" character for nbg1
-    _pointer32 = (int *)_SVIN_NBG1_CHPNDR_SPECIALS_ADDR;
-    for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
-    {
-        _pointer32[i] = 0;
-    }
-
-    //setting up "semi-transparent" character for nbg1
-    _pointer32 = (int *)(_SVIN_NBG1_CHPNDR_SPECIALS_ADDR + _SVIN_CHARACTER_BYTES);
-    for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x7F7F7F7F;
-    }
-
-    //setting cycle patterns for nbg access
-    _svin_set_cycle_patterns_nbg();
 
     smpc_peripheral_init();
 

@@ -88,7 +88,7 @@ void window_credits(_svin_screen_mode_t screenmode)
 		.x_res_doubled = false,
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
 	};
-	update_screen_mode(creditsScreenMode);
+	update_screen_mode(creditsScreenMode,false);
 	draw_bg_with_expansion(creditsScreenMode,true);
 	int _size_y = 240;
 
@@ -113,7 +113,7 @@ void window_credits(_svin_screen_mode_t screenmode)
 			//quit the pattern
 			wait_for_key_unpress();
 			//restoring the screenmode
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		vdp2_tvmd_vblank_in_wait();

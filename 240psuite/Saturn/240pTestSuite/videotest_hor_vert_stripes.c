@@ -76,7 +76,7 @@ void videotest_hor_vert_stripes(_svin_screen_mode_t screenmode)
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,false);
 			draw_hor_vert_stripes(curr_screenmode,bVertical);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -85,7 +85,7 @@ void videotest_hor_vert_stripes(_svin_screen_mode_t screenmode)
 		else if ( (controller.pressed.button.r) )
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,false);
 			draw_hor_vert_stripes(curr_screenmode,bVertical);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -120,7 +120,7 @@ void videotest_hor_vert_stripes(_svin_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		vdp2_tvmd_vblank_in_wait();
