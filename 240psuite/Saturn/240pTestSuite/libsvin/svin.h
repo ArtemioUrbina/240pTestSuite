@@ -43,9 +43,9 @@ extern int current_color_mode;
 //i(T3) -> 0,1,3
 
 //      T0 T1 T2 T3
-// A0 : D0 D0 -- --
-// A1 : D0 D0 -- --
-// B0 : D0 D0 -- --
+// A0 : D0 D0 D1 D1
+// A1 : D0 D0 D1 D1
+// B0 : D0 D0 D1 D1
 // B1 : i0 i1 D1 D1
 
 // Bank 0

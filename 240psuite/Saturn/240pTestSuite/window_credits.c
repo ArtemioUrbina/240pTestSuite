@@ -7,7 +7,7 @@
 #include "control.h"
 #include "ire.h"
 
-#define VERSION_NUMBER "Saturn Ver. 0.3 beta 3"
+#define VERSION_NUMBER "Saturn Ver. 0.3 beta 5"
 #define VERSION_DATE __DATE__
 
 //there is no way to fit all credits on-screen, so scrolling is implemented

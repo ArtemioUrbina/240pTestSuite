@@ -72,17 +72,17 @@ void _svin_set_cycle_patterns_nbg()
     //swithcing everything to NBG accesses, CPU can't write data anymore
 
     //      T0 T1 T2 T3
-    // A0 : D0 D0 -- --
-    // A1 : D0 D0 -- --
-    // B0 : D0 D0 -- --
+    // A0 : D0 D0 D1 D1
+    // A1 : D0 D0 D1 D1
+    // B0 : D0 D0 D1 D1
     // B1 : i0 i1 D1 D1
 
     struct vdp2_vram_cycp vram_cycp;
 
     vram_cycp.pt[0].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
     vram_cycp.pt[0].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[0].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[0].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
+    vram_cycp.pt[0].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+    vram_cycp.pt[0].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
     vram_cycp.pt[0].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[0].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[0].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
@@ -90,8 +90,8 @@ void _svin_set_cycle_patterns_nbg()
 
     vram_cycp.pt[1].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
     vram_cycp.pt[1].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[1].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[1].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
+    vram_cycp.pt[1].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+    vram_cycp.pt[1].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
     vram_cycp.pt[1].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[1].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[1].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
@@ -99,8 +99,8 @@ void _svin_set_cycle_patterns_nbg()
 
     vram_cycp.pt[2].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
     vram_cycp.pt[2].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[2].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[2].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
+    vram_cycp.pt[2].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+    vram_cycp.pt[2].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
     vram_cycp.pt[2].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[2].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
     vram_cycp.pt[2].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
@@ -314,11 +314,18 @@ void _svin_init(_svin_screen_mode_t screen_mode)
 
     vdp1_sync_cmdt_list_put(_svin_cmdt_list, 0);
 
-#define VDP1_FBCR_DIE (0x0008)
-    if (_SVIN_SCANMODE_240P == screen_mode.scanmode)
+/*#define VDP1_FBCR_DIE (0x0008)
+    if ( (_SVIN_SCANMODE_240P == screen_mode.scanmode) || (_SVIN_SCANMODE_480P == screen_mode.scanmode) )
         MEMORY_WRITE(16, VDP1(FBCR), 0);
     else
-        MEMORY_WRITE(16, VDP1(FBCR), VDP1_FBCR_DIE);
+        MEMORY_WRITE(16, VDP1(FBCR), VDP1_FBCR_DIE);*/
+
+/*#define VDP1_TVMR_VBE (0x0008)
+    if (_SVIN_SCANMODE_480P == screen_mode.scanmode)
+        _vdp1_env.hdtv = VDP1_ENV_HDTV_ON;
+        MEMORY_WRITE(16, VDP1(TVMR), 0x4);
+    else
+        MEMORY_WRITE(16, VDP1(TVMR), VDP1_TVMR_VBE | 0x0);*/
 
     static vdp1_env_t vdp1_env = {
                 .erase_color = RGB1555(0, 0, 0, 0),
@@ -332,9 +339,13 @@ void _svin_init(_svin_screen_mode_t screen_mode)
                 },
                 .bpp = VDP1_ENV_BPP_16,
                 .rotation = VDP1_ENV_ROTATION_0,
+                .hdtv = VDP1_ENV_HDTV_OFF,
                 .color_mode = VDP1_ENV_COLOR_MODE_RGB_PALETTE,
                 .sprite_type = 0x0
     };
+
+    if (_SVIN_SCANMODE_480P == screen_mode.scanmode)
+        vdp1_env.hdtv = VDP1_ENV_HDTV_ON;
     vdp1_env.erase_points[1].x = screen_mode.x_res_doubled ? 703 : 351;
     vdp1_env.erase_points[1].y = (_SVIN_SCANMODE_480I == screen_mode.scanmode) ? 511 : 255;
 

@@ -276,6 +276,8 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 		format.bitmap_base = _SVIN_NBG0_CHPNDR_START;
 		vdp2_scrn_bitmap_format_set(&format);
 
+		vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISP_NBG1);
+
 		vdp2_scrn_reduction_set(VDP2_SCRN_NBG0,VDP2_SCRN_REDUCTION_HALF);
     	vdp2_scrn_reduction_set(VDP2_SCRN_NBG1,VDP2_SCRN_REDUCTION_HALF);
     	vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG0, FIX16(2.0f));
@@ -316,7 +318,7 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG0 , FIX16(0.0f));
 		vdp2_scrn_scroll_x_set(VDP2_SCRN_NBG1 , FIX16(0.0f));	
 		vdp2_scrn_priority_set(VDP2_SCRN_NBG0, 3);
-		vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 0);
+		vdp2_scrn_priority_set(VDP2_SCRN_NBG1, 5);
 	}
 
 	int _size_x = get_screenmode_resolution_x(screenmode);
