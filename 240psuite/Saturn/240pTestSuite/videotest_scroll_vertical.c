@@ -51,7 +51,7 @@ void draw_scroll_vertical(_svin_screen_mode_t screenmode)
 		}
 	}
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void videotest_scroll_vertical(_svin_screen_mode_t screenmode)

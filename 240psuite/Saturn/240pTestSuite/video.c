@@ -90,13 +90,13 @@ char * y_res_text_value(_svin_screen_mode_t screenmode)
 	switch (screenmode.y_res)
 	{
 		case VDP2_TVMD_VERT_224:
-			return (_SVIN_SCANMODE_480I == screenmode.scanmode) ? "448":"224";
+			return ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? "448":"224";
 			break;
 		case VDP2_TVMD_VERT_240:
-			return (_SVIN_SCANMODE_480I == screenmode.scanmode) ? "480":"240";
+			return ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )? "480":"240";
 			break;
 		case VDP2_TVMD_VERT_256:
-			return (_SVIN_SCANMODE_480I == screenmode.scanmode) ? "512":"256";
+			return ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? "512":"256";
 			break;
 	}
 	return "???";

@@ -42,7 +42,7 @@ void draw_striped_sprite(_svin_screen_mode_t screenmode)
 		for (int x=0;x<4;x++)
     		_pointer32[y*64+x] = 0x00000000 + 0x60000/32 + y*4*2 + x*2; //palette 0
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void videotest_striped_sprite(_svin_screen_mode_t screenmode)

@@ -67,60 +67,113 @@ void _svin_set_cycle_patterns_cpu()
     vdp2_sync();
 }
 
-void _svin_set_cycle_patterns_nbg()
+void _svin_set_cycle_patterns_nbg(_svin_screen_mode_t screen_mode)
 {
     //swithcing everything to NBG accesses, CPU can't write data anymore
 
-    //      T0 T1 T2 T3
-    // A0 : D0 D0 D1 D1
-    // A1 : D0 D0 D1 D1
-    // B0 : D0 D0 D1 D1
-    // B1 : i0 i1 D1 D1
+    if ( (_SVIN_SCANMODE_480P == screen_mode.scanmode) && (screen_mode.x_res_doubled) )
+    {
+        //      T0 T1 T2 T3
+        // A0 : D0 D0 D0 D0
+        // A1 : i0 i0  x  x
+        // B0 : D1 D1 D1 D1
+        // B1 : i1 i1  x  x
 
-    struct vdp2_vram_cycp vram_cycp;
+        struct vdp2_vram_cycp vram_cycp;
 
-    vram_cycp.pt[0].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[0].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[0].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[0].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[0].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[0].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[0].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[0].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[0].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[0].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[0].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[0].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[0].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[0].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[0].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[0].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
 
-    vram_cycp.pt[1].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[1].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[1].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[1].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[1].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[1].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[1].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[1].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[1].t0 = VDP2_VRAM_CYCP_PNDR_NBG0;
+        vram_cycp.pt[1].t1 = VDP2_VRAM_CYCP_PNDR_NBG0;
+        vram_cycp.pt[1].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[1].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[1].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[1].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[1].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[1].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
 
-    vram_cycp.pt[2].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[2].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
-    vram_cycp.pt[2].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[2].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[2].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[2].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[2].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[2].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[2].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[2].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[2].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[2].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[2].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[2].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[2].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[2].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
 
-    vram_cycp.pt[3].t0 = VDP2_VRAM_CYCP_PNDR_NBG0;
-    vram_cycp.pt[3].t1 = VDP2_VRAM_CYCP_PNDR_NBG1;
-    vram_cycp.pt[3].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[3].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-    vram_cycp.pt[3].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[3].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[3].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
-    vram_cycp.pt[3].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t0 = VDP2_VRAM_CYCP_PNDR_NBG1;
+        vram_cycp.pt[3].t1 = VDP2_VRAM_CYCP_PNDR_NBG1;
+        vram_cycp.pt[3].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
 
-    vdp2_vram_cycp_set(&vram_cycp);
-    vdp2_sync();
+        vdp2_vram_cycp_set(&vram_cycp);
+        vdp2_sync();
+    }
+    else
+    {
+        //normal setup
+        //      T0 T1 T2 T3
+        // A0 : D0 D0 D1 D1
+        // A1 : D0 D0 D1 D1
+        // B0 : D0 D0 D1 D1
+        // B1 : i0 i1 D1 D1
 
-    //enable transparency for NBG1 over NBG0 (might not work with sprites between
-    //MEMORY_WRITE(16, VDP2(CCCTL), 0x0000); //disable cc both layers
-    //MEMORY_WRITE(16, VDP2(CCRNA), 0x0C00); //enable cc for NBG1
+        struct vdp2_vram_cycp vram_cycp;
+
+        vram_cycp.pt[0].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[0].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[0].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[0].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[0].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[0].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[0].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[0].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
+
+        vram_cycp.pt[1].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[1].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[1].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[1].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[1].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[1].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[1].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[1].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
+
+        vram_cycp.pt[2].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[2].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
+        vram_cycp.pt[2].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[2].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[2].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[2].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[2].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[2].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
+
+        vram_cycp.pt[3].t0 = VDP2_VRAM_CYCP_PNDR_NBG0;
+        vram_cycp.pt[3].t1 = VDP2_VRAM_CYCP_PNDR_NBG1;
+        vram_cycp.pt[3].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[3].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[3].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
+
+        vdp2_vram_cycp_set(&vram_cycp);
+        vdp2_sync();
+
+        //enable transparency for NBG1 over NBG0 (might not work with sprites between
+        //MEMORY_WRITE(16, VDP2(CCCTL), 0x0000); //disable cc both layers
+        //MEMORY_WRITE(16, VDP2(CCRNA), 0x0C00); //enable cc for NBG1
+    }
 }
 
 static inline void __always_inline
@@ -153,7 +206,7 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
     if (bmp_mode)
     {
         //bmp mode
-        if (_SVIN_SCANMODE_480P == screen_mode.scanmode)
+        if ( (_SVIN_SCANMODE_480P == screen_mode.scanmode) && (screen_mode.x_res_doubled) )
         {
             //480p high res, special bmp setup
             //setup nbg0
@@ -257,7 +310,7 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
     }
     else
     {
-        if (_SVIN_SCANMODE_480P == screen_mode.scanmode)
+        if ( (_SVIN_SCANMODE_480P == screen_mode.scanmode) && (screen_mode.x_res_doubled) )
         {
             //480p high res, special tile setup
             //setup nbg0
@@ -271,11 +324,12 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
             cell_format.cpd_base = 0;
             cell_format.palette_base = 0;
             cell_format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
-            normal_map.plane_a = _SVIN_NBG0_PNDR_START;
+            normal_map.plane_a = _SVIN_NBG0_SPECIAL_PNDR_START;
             vdp2_scrn_cell_format_set(&cell_format,&normal_map);
 
             //setup nbg1 same as nbg0
             cell_format.scroll_screen = VDP2_SCRN_NBG1;
+            normal_map.plane_a = _SVIN_NBG1_SPECIAL_PNDR_START;
             vdp2_scrn_cell_format_set(&cell_format,&normal_map);
 
             vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISP_NBG1);
@@ -492,7 +546,7 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
     vdp2_sync();
 
     //setting cycle patterns for nbg access
-    _svin_set_cycle_patterns_nbg();
+    _svin_set_cycle_patterns_nbg(screen_mode);
 
     //-------------- setup VDP1 -------------------
     //setting up a small VDP1 list with 3 commands: sys clip, local coords, end
@@ -601,7 +655,7 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
     if (_SVIN_SCANMODE_480P == screen_mode.scanmode)
         vdp1_env.hdtv = VDP1_ENV_HDTV_ON;
     vdp1_env.erase_points[1].x = screen_mode.x_res_doubled ? 703 : 351;
-    vdp1_env.erase_points[1].y = (_SVIN_SCANMODE_480I == screen_mode.scanmode) ? 511 : 255;
+    vdp1_env.erase_points[1].y = ( (_SVIN_SCANMODE_480I == screen_mode.scanmode) || (_SVIN_SCANMODE_480P == screen_mode.scanmode) ) ? 511 : 255;
 
     vdp1_env_set(&vdp1_env);
 

@@ -370,7 +370,7 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	//big red quad
 	if (_SVIN_X_RESOLUTION_320 == screenmode.x_res)
 	{
-		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) /*|| (_SVIN_SCANMODE_480P == screenmode.scanmode)*/ ) ? 384 : 192;
+		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 384 : 192;
 		rect_x = ((rect_y*35)/32);
 		if (ratio>1.5)
 			rect_x= ((rect_y*70)/32);
@@ -383,7 +383,7 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	//big blue quad
 	if (_SVIN_X_RESOLUTION_352 == screenmode.x_res)
 	{
-		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) /*|| (_SVIN_SCANMODE_480P == screenmode.scanmode)*/ ) ? 336 : 168;
+		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )? 336 : 168;
 		rect_x = ((rect_y*7)/6);
 		if (ratio>1.5)
 			rect_x= ((rect_y*14)/6);
@@ -456,7 +456,7 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
 	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_RED);*/
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void draw_monoscope_text(_svin_screen_mode_t screenmode)

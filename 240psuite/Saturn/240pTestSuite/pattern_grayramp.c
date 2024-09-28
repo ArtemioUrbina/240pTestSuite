@@ -40,7 +40,7 @@ void draw_grayramp(_svin_screen_mode_t screenmode)
 	//draw bars depending on screen mode
 	_pointer32 = (int *)_SVIN_NBG0_PNDR_START;
 	int offset = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 6 : 10;
-	int y_ratio = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 2 : 1;
+	int y_ratio = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 2 : 1;
     if (screenmode.x_res_doubled)
 	{
 		//high-x-res mode
@@ -85,7 +85,7 @@ void draw_grayramp(_svin_screen_mode_t screenmode)
 			}
 		}	
 	}
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_grayramp(_svin_screen_mode_t screenmode)

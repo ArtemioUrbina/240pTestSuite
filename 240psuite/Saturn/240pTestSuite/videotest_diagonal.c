@@ -85,7 +85,7 @@ void draw_diagonal(_svin_screen_mode_t screenmode)
         _pointer32[i] = 0x00200002; //palette 2, transparency on, black
     }
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);

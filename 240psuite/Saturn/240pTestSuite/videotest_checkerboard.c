@@ -38,7 +38,7 @@ void draw_checkerboard(_svin_screen_mode_t screenmode)
     {
         _pointer32[i] = 0x00200000; //palette 2, transparency on
     }
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void videotest_checkerboard(_svin_screen_mode_t screenmode)

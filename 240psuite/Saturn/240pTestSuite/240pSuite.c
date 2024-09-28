@@ -104,7 +104,9 @@ int main(void)
 
 	//show yaul logo in 240p
 	_svin_init(screenMode,false);
-	_svin_background_set_from_assets(asset_bootlogo_bg,(int)(asset_bootlogo_bg_end-asset_bootlogo_bg));
+	_svin_set_cycle_patterns_cpu();
+	_svin_background_set_from_assets(asset_bootlogo_bg,(int)(asset_bootlogo_bg_end-asset_bootlogo_bg),_SVIN_NBG0_PNDR_START,_SVIN_NBG0_CHPNDR_START);
+	_svin_set_cycle_patterns_nbg(screenMode);
 
 	//wait for 60 frames, either 1s or 1.2s
 	for (int i=0;i<60;i++)

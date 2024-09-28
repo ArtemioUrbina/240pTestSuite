@@ -108,7 +108,7 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 		int _x = x;		
 		if (false == screenmode.x_res_doubled) _x /= 2;
 		int _y = y;
-		if (_SVIN_SCANMODE_480I != screenmode.scanmode) _y /= 2;
+		if ( (_SVIN_SCANMODE_240I == screenmode.scanmode) || (_SVIN_SCANMODE_240P == screenmode.scanmode) ) _y /= 2;
 		draw_pixel(_size_x/2+_x,_size_y/2+_y,3);//using black color
 		draw_pixel(_size_x/2+_x,_size_y/2-_y,3);//using black color
 		draw_pixel(_size_x/2-_x,_size_y/2+_y,3);//using black color
@@ -122,7 +122,7 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 		int _x = x;		
 		if (false == screenmode.x_res_doubled) _x /= 2;
 		int _y = y;
-		if (_SVIN_SCANMODE_480I != screenmode.scanmode) _y /= 2;
+		if ( (_SVIN_SCANMODE_240I == screenmode.scanmode) || (_SVIN_SCANMODE_240P == screenmode.scanmode) ) _y /= 2;
 		draw_pixel(_size_x/2+_x,_size_y/2+_y,3);//using black color
 		draw_pixel(_size_x/2+_x,_size_y/2-_y,3);//using black color
 		draw_pixel(_size_x/2-_x,_size_y/2+_y,3);//using black color
@@ -131,7 +131,7 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 
 	//cross
 	int r_y = r;
-	if (_SVIN_SCANMODE_480I != screenmode.scanmode) r_y /= 2;
+	if ( (_SVIN_SCANMODE_240I == screenmode.scanmode) || (_SVIN_SCANMODE_240P == screenmode.scanmode) ) r_y /= 2;
 	if (false == screenmode.x_res_doubled) r_y *= 2;
 	for (x=0;x<_size_x/2-r;x++)
 	{
@@ -151,7 +151,7 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 		int _x = _size_x/2-x;		
 		if (false == screenmode.x_res_doubled) _x *= 2;
 		int _y = _size_y/2-y;
-		if (_SVIN_SCANMODE_480I != screenmode.scanmode) _y *= 2;
+		if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) _y *= 2;
 		if (_x*_x+_y*_y > r2)
 		{
 			draw_pixel(x,y,3);//using black color
@@ -171,7 +171,7 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 	for (y=_size_y/13;y<_size_y-_size_y/13;y++) draw_pixel(_size_x/13,y,1);
 	for (y=_size_y/13;y<_size_y-_size_y/13;y++) draw_pixel(_size_x-_size_x/13,y,1);
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void draw_sharpness_pattern2(_svin_screen_mode_t screenmode)
@@ -211,7 +211,7 @@ void draw_sharpness_pattern2(_svin_screen_mode_t screenmode)
     {
         _pointer32[i] = 0x00200000; //palette 2
 	}
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_sharpness(_svin_screen_mode_t screenmode)

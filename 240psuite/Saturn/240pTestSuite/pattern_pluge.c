@@ -139,7 +139,7 @@ void draw_pluge(_svin_screen_mode_t screenmode, bool bFullRange)
 		}
 	}
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_pluge(_svin_screen_mode_t screenmode)

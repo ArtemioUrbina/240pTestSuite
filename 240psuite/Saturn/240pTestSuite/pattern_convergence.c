@@ -144,7 +144,7 @@ void draw_convergence(_svin_screen_mode_t screenmode, int iPattern)
 			break;
 	}
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_convergence(_svin_screen_mode_t screenmode)

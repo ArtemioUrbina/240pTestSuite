@@ -190,7 +190,7 @@ void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
 		}
 	}
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_smpte(_svin_screen_mode_t screenmode)

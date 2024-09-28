@@ -52,7 +52,7 @@ void draw_colorbars(_svin_screen_mode_t screenmode)
 	//draw bars depending on screen mode
 	_pointer32 = (int *)_SVIN_NBG0_PNDR_START;
 	int offset = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 6 : 10;
-	int y_ratio = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 2 : 1;
+	int y_ratio = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 2 : 1;
     if (screenmode.x_res_doubled)
 	{
 		//high-x-res mode
@@ -91,13 +91,13 @@ void draw_colorbars(_svin_screen_mode_t screenmode)
 			}
 		}	
 	}
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void draw_colorbars_text(_svin_screen_mode_t screenmode)
 {
 	//draw text
-	int y_ratio = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? 2 : 1;
+	int y_ratio = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 2 : 1;
 	DrawString("RED", 10, 40-10*y_ratio, FONT_RED);
 	DrawString("GREEN", 10, 40-10*y_ratio+40, FONT_GREEN);
 	DrawString("BLUE", 10, 40-10*y_ratio+80, FONT_BLUE); 

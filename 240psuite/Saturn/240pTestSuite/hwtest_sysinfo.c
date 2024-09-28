@@ -75,7 +75,7 @@ void draw_sysinfo(_svin_screen_mode_t screenmode)
     {
         _pointer32[i] = 0x00200002; //palette 2, transparency on, black
     }
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 
 	DrawString("System information", 160 - _fw*strlen("System information")/2, 20, FONT_WHITE);
 

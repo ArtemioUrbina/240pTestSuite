@@ -100,7 +100,7 @@ void draw_lag(_svin_screen_mode_t screenmode)
     {
         _pointer32[i] = 0x00200002; //palette 2, transparency on, black
     }
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 
 	//generating VDP1 tile in VRAM: red circle
 	vdp1_vram_partitions_t vdp1_vram_partitions;

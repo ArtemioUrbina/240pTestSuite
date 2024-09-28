@@ -37,7 +37,7 @@ void _svin_background_fade_to_black()
 }
 
 void 
-_svin_background_set_from_assets(uint8_t *ptr, int size)
+_svin_background_set_from_assets(uint8_t *ptr, int size, int *names_ptr, int *data_ptr)
 {
     bool bVDP2 = false;
     uint16_t *ptr16 = (uint16_t*)ptr;
@@ -62,15 +62,15 @@ _svin_background_set_from_assets(uint8_t *ptr, int size)
         assert(compressed_size < 0x1000000);
         int compressed_size_sectors = ((compressed_size-1)/2048)+1;
     
-        _svin_set_cycle_patterns_cpu();
         //writing pattern names for nbg0
-        int *_pointer32 = (int *)_SVIN_NBG0_PNDR_START;
+        int *_pointer32 = (int *)names_ptr;
+        int vram_offset = (int)data_ptr - VDP2_VRAM_ADDR(0,0);
         //starting with plane 0
         for (unsigned int x = 0; ((x < 64)&&(x<size_x)) ; x++)
         {
             for (unsigned int y = 0; y  < size_y; y++)
             {   
-                _pointer32[y*64+x] = 0x00100000  + y*size_x*2+x*2; //palette 0, transparency on
+                _pointer32[y*64+x] = 0x00100000  + y*size_x*2+x*2 + vram_offset/32; //palette 0, transparency on
             }
         }
         //now plane 1
@@ -78,13 +78,12 @@ _svin_background_set_from_assets(uint8_t *ptr, int size)
         {
             for (unsigned int y = 0; y  < size_y; y++)
             {   
-                _pointer32[64*64+y*64+x-64] = 0x00100000  + y*size_x*2+x*2; //palette 0, transparency on
+                _pointer32[64*64+y*64+x-64] = 0x00100000  + y*size_x*2+x*2 + vram_offset/32; //palette 0, transparency on
             }
         }
         
         //decompress
-        bcl_lz_decompress(&(ptr[2048+8]),(char*)_SVIN_NBG0_CHPNDR_START,compressed_size);
-        _svin_set_cycle_patterns_nbg();
+        bcl_lz_decompress(&(ptr[2048+8]),(char*)data_ptr,compressed_size);
 
         //set palette, using palette 1 for VDP2 backgrounds
         //palette in file is 24-bit, setting it color-by-color

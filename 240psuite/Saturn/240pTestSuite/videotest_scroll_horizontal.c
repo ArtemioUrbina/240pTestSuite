@@ -70,7 +70,7 @@ void draw_scroll_horizontal(_svin_screen_mode_t screenmode)
 		}
 	}
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 
 	//enable NBG0 and NBG1 transparency
 	vdp2_scrn_display_set(VDP2_SCRN_DISPTP_NBG0 | VDP2_SCRN_DISPTP_NBG1);

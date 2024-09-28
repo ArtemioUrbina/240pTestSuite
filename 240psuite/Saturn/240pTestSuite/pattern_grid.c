@@ -92,7 +92,7 @@ void draw_grid(_svin_screen_mode_t screenmode)
 	int _size_x = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 20 : 22;
 	int _size_y = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 14 : 
 					(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 15 : 16;
-	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
+	if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )
 		_size_y *= 2;
 	if (screenmode.x_res_doubled)
 	{
@@ -171,7 +171,7 @@ void draw_grid(_svin_screen_mode_t screenmode)
 			_pointer32[y*128+_size_x*2-1+64] = 0x00200006;
 		}
 	}
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_grid(_svin_screen_mode_t screenmode)

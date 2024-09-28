@@ -57,7 +57,7 @@ void draw_whitescreen(_svin_screen_mode_t screenmode, int color)
     {
         _pointer32[i] = 0x00200002; //palette 2, transparency on, black
     }
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_whitescreen(_svin_screen_mode_t screenmode)

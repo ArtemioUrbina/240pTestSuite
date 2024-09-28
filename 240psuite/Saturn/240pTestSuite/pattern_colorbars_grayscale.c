@@ -112,7 +112,7 @@ void draw_colorbars_grayscale(_svin_screen_mode_t screenmode, bool bIRE100)
 		}
 	}
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_colorbars_grayscale(_svin_screen_mode_t screenmode)

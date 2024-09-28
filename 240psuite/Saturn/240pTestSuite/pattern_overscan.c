@@ -58,7 +58,7 @@ void draw_overscan(_svin_screen_mode_t screenmode, int top, int bottom, int left
 	draw_overscan_constant_text();
 	redraw_overscan(screenmode, top, bottom, left, right, cursor);
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void redraw_overscan(_svin_screen_mode_t screenmode, int top, int bottom, int left, int right, int cursor)
@@ -103,7 +103,7 @@ void redraw_overscan(_svin_screen_mode_t screenmode, int top, int bottom, int le
 		}
 
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 
 	ClearText(160,100,160,40);	
 	ClearText(30,100,10,50);	

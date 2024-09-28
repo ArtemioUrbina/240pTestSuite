@@ -53,7 +53,7 @@ void draw_backlit_zone(_svin_screen_mode_t screenmode)
 	_pointer32 = (int *)_SVIN_NBG1_PNDR_START;
     _pointer32[0] = 0x00200000 + 0x60000/32; //palette 2
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void videotest_backlit_zone(_svin_screen_mode_t screenmode)

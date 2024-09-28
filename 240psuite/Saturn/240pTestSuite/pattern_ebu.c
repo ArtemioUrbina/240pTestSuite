@@ -45,7 +45,7 @@ void draw_ebu(_svin_screen_mode_t screenmode, bool bIRE100)
 	if (screenmode.x_res_doubled) _size_x*=2;
 	int _size_y = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 224 : 
 					(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 240 : 256;
-	if (_SVIN_SCANMODE_480I == screenmode.scanmode)
+	if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )
 		_size_y *= 2;
 
 	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
@@ -74,7 +74,7 @@ void draw_ebu(_svin_screen_mode_t screenmode, bool bIRE100)
 		}
 	}
 
-	_svin_set_cycle_patterns_nbg();
+	_svin_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_ebu(_svin_screen_mode_t screenmode)
