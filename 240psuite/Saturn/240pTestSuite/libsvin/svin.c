@@ -76,15 +76,8 @@ void _svin_set_cycle_patterns_nbg(_svin_screen_mode_t screen_mode)
         //      T0 T1 T2 T3
         // A0 : D0 D0 D0 D0
         // A1 : i0 i0  x  x
-        // B0 : D1 D1 D1 D1
-        // B1 : i1 i1  x  x
-
-        //      T0 T1 T2 T3
-        // A0 : D0 D0 D0 D0
-        // A1 : i0 i0  x  x
         // B0 : i1 i1  x  x
         // B1 : D1 D1 D1 D1
-
 
         struct vdp2_vram_cycp vram_cycp;
 
@@ -176,10 +169,6 @@ void _svin_set_cycle_patterns_nbg(_svin_screen_mode_t screen_mode)
 
         vdp2_vram_cycp_set(&vram_cycp);
         vdp2_sync();
-
-        //enable transparency for NBG1 over NBG0 (might not work with sprites between
-        //MEMORY_WRITE(16, VDP2(CCCTL), 0x0000); //disable cc both layers
-        //MEMORY_WRITE(16, VDP2(CCRNA), 0x0C00); //enable cc for NBG1
     }
 }
 
@@ -335,16 +324,7 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
             vdp2_scrn_cell_format_set(&cell_format,&normal_map);
 
             //setup nbg1 same as nbg0
-            memset(&cell_format, 0x00, sizeof(cell_format));
-            memset(&normal_map, 0x00, sizeof(normal_map));
             cell_format.scroll_screen = VDP2_SCRN_NBG1;
-            cell_format.ccc = VDP2_SCRN_CCC_PALETTE_256;
-            cell_format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
-            cell_format.pnd_size = 2;
-            cell_format.aux_mode = VDP2_SCRN_AUX_MODE_1;
-            cell_format.cpd_base = 0;
-            cell_format.palette_base = 0;
-            cell_format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
             normal_map.plane_a = _SVIN_NBG1_SPECIAL_PNDR_START;
             vdp2_scrn_cell_format_set(&cell_format,&normal_map);
 
@@ -441,16 +421,7 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
             vdp2_scrn_cell_format_set(&cell_format,&normal_map);
 
             //setup nbg1
-            memset(&cell_format, 0x00, sizeof(cell_format));
-            memset(&normal_map, 0x00, sizeof(normal_map));
             cell_format.scroll_screen = VDP2_SCRN_NBG1;
-            cell_format.ccc = VDP2_SCRN_CCC_PALETTE_256;
-            cell_format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
-            cell_format.pnd_size = 2;
-            cell_format.aux_mode = VDP2_SCRN_AUX_MODE_1;
-            cell_format.cpd_base = 0;
-            cell_format.palette_base = 0;
-            cell_format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
             normal_map.plane_a = _SVIN_NBG1_PNDR_START;
             vdp2_scrn_cell_format_set(&cell_format,&normal_map);
 

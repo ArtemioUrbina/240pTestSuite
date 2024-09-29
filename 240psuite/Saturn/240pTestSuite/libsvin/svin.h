@@ -54,17 +54,6 @@ extern int _svin_frame_count;
 // B0 : D0 D0 D1 D1
 // B1 : i0 i1 D1 D1
 
-// 3) 2*64*64 8x8 8bpp cells for NBG0+NBG1 in 480p mode
-//      trying duplicate setup
-//              names0 78000-80000 patterns0 0-40000
-//              names1 70000-78000 patterns1 60000-70000
-//
-//      T0 T1 T2 T3
-// A0 : D0 D0 D0 D0
-// A1 : i0 i0  x  x
-// B0 : D1 D1 D1 D1
-// B1 : i1 i1  x  x
-
 // Bank 0
 //  0x00000000 - 0x0001FFFF NBG0 character pattern name data (up to 2048 8x8 tiles) = 0x20000
 // Bank 1
@@ -92,24 +81,21 @@ extern int _svin_frame_count;
 
 // Special setup for 480p cell highres
 // 3) 2*64*64 8x8 8bpp cells for NBG0+NBG1 in 480p mode
-//      trying duplicate setup
-//              names0 78000-80000 patterns0 0-40000
-//              names1 70000-78000 patterns1 60000-70000
 //
 //      T0 T1 T2 T3
 // A0 : D0 D0 D0 D0
 // A1 : i0 i0  x  x
-// B0 : D1 D1 D1 D1
-// B1 : i1 i1  x  x
+// B0 : i1 i1  x  x
+// B1 : D1 D1 D1 D1
 
 // Bank 0
 //  0x00000000 - 0x0001FFFF NBG0 character pattern name data (up to 2048 8x8 tiles) = 0x20000
 // Bank 1
 //  0x00020000 - 0x00027FFF NBG0 pattern name data 128x64*4 = 0x8000
 // Bank 2
-//  0x00040000 - 0x0005FFFF NBG1 character pattern name data (up to 2048 8x8 tiles) = 0x20000
+//  0x00040000 - 0x00047FFF NBG1 pattern name data 128x64*4 = 0x8000
 // Bank 3
-//  0x00060000 - 0x00067FFF NBG1 pattern name data 128x64*4 = 0x8000
+//  0x00060000 - 0x0007FFFF NBG1 character pattern name data (up to 2048 8x8 tiles) = 0x20000
 //  
 
 #define _SVIN_NBG0_SPECIAL_CHPNDR_START (VDP2_VRAM_ADDR(0,0))
@@ -118,13 +104,9 @@ extern int _svin_frame_count;
 #define _SVIN_NBG0_SPECIAL_CHPNDR_SPECIALS_ADDR (VDP2_VRAM_ADDR(0,0x1F000))
 #define _SVIN_NBG0_SPECIAL_CHPNDR_SPECIALS_INDEX ((0x1F000)/32)
 
-//#define _SVIN_NBG1_SPECIAL_CHPNDR_START (VDP2_VRAM_ADDR(2,0))
 #define _SVIN_NBG1_SPECIAL_CHPNDR_START (VDP2_VRAM_ADDR(3,0))
 #define _SVIN_NBG1_SPECIAL_CHPNDR_SIZE (0x20000)
-//#define _SVIN_NBG1_SPECIAL_PNDR_START (VDP2_VRAM_ADDR(3,0))
 #define _SVIN_NBG1_SPECIAL_PNDR_START (VDP2_VRAM_ADDR(2,0))
-//#define _SVIN_NBG1_SPECIAL_CHPNDR_SPECIALS_ADDR (VDP2_VRAM_ADDR(2,0x1F000))
-//#define _SVIN_NBG1_SPECIAL_CHPNDR_SPECIALS_INDEX ((0x5F000)/32)
 #define _SVIN_NBG1_SPECIAL_CHPNDR_SPECIALS_ADDR (VDP2_VRAM_ADDR(3,0x1F000))
 #define _SVIN_NBG1_SPECIAL_CHPNDR_SPECIALS_INDEX ((0x7F000)/32)
 

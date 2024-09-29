@@ -78,11 +78,15 @@ void draw_bg_with_expansion(_svin_screen_mode_t screenmode, bool bMascot)
 	int copies = 1;
 	if (bSpecialMode) copies = 2;
 	int *_pointer32[2];
+	int vram_offset[2];
 	_pointer32[0] = (int *)_SVIN_NBG0_PNDR_START;
+	vram_offset[0] = _SVIN_NBG0_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
 	if (bSpecialMode)
 	{
 		_pointer32[0] = (int *)_SVIN_NBG0_SPECIAL_PNDR_START;
 		_pointer32[1] = (int *)_SVIN_NBG1_SPECIAL_PNDR_START;
+		vram_offset[0] = _SVIN_NBG0_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+		vram_offset[1] = _SVIN_NBG1_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
 	}
 
 	//step 2 - shifting x
@@ -186,7 +190,13 @@ void draw_bg_with_expansion(_svin_screen_mode_t screenmode, bool bMascot)
 		int * p32 = (int *)(&asset_mascot_bg[2048]);
 		int compressed_size = p32[1];
 		int compressed_size_sectors = ((compressed_size-1)/2048)+1;
-		bcl_lz_decompress(&(asset_mascot_bg[2048+8]),(char*)(_SVIN_NBG0_CHPNDR_START+0x12C00),compressed_size);
+		if (bSpecialMode)
+		{
+			bcl_lz_decompress(&(asset_mascot_bg[2048+8]),(char*)(_SVIN_NBG0_SPECIAL_CHPNDR_START+0x12C00),compressed_size);
+			bcl_lz_decompress(&(asset_mascot_bg[2048+8]),(char*)(_SVIN_NBG1_SPECIAL_CHPNDR_START+0x12C00),compressed_size);
+		}
+		else
+			bcl_lz_decompress(&(asset_mascot_bg[2048+8]),(char*)(_SVIN_NBG0_CHPNDR_START+0x12C00),compressed_size);
 		//fill mascot pattern names 
 		int size_x = 7;
 		for (int copy = 0; copy < copies; copy++)
@@ -197,11 +207,11 @@ void draw_bg_with_expansion(_svin_screen_mode_t screenmode, bool bMascot)
 				{
 					if (x>=64)
 					{
-						_pointer32[copy][64*64+y*64+x-64] = 0x00300000  + (0x12C00/32)+(y-mascot_y)*size_x*2+(x-mascot_x)*2; //palette 3, transparency on
+						_pointer32[copy][64*64+y*64+x-64] = 0x00300000  + (0x12C00/32)+(y-mascot_y)*size_x*2+(x-mascot_x)*2 + vram_offset[copy]/32; //palette 3, transparency on
 					}
 					else
 					{
-						_pointer32[copy][y*64+x] = 0x00300000  + (0x12C00/32)+(y-mascot_y)*size_x*2+(x-mascot_x)*2; //palette 3, transparency on
+						_pointer32[copy][y*64+x] = 0x00300000  + (0x12C00/32)+(y-mascot_y)*size_x*2+(x-mascot_x)*2 + vram_offset[copy]/32; //palette 3, transparency on
 					}
 				}
 			}
