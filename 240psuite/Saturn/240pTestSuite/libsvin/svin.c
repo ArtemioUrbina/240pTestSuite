@@ -79,6 +79,13 @@ void _svin_set_cycle_patterns_nbg(_svin_screen_mode_t screen_mode)
         // B0 : D1 D1 D1 D1
         // B1 : i1 i1  x  x
 
+        //      T0 T1 T2 T3
+        // A0 : D0 D0 D0 D0
+        // A1 : i0 i0  x  x
+        // B0 : i1 i1  x  x
+        // B1 : D1 D1 D1 D1
+
+
         struct vdp2_vram_cycp vram_cycp;
 
         vram_cycp.pt[0].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG0;
@@ -99,19 +106,19 @@ void _svin_set_cycle_patterns_nbg(_svin_screen_mode_t screen_mode)
         vram_cycp.pt[1].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
         vram_cycp.pt[1].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
 
-        vram_cycp.pt[2].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-        vram_cycp.pt[2].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-        vram_cycp.pt[2].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
-        vram_cycp.pt[2].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[2].t0 = VDP2_VRAM_CYCP_PNDR_NBG1;
+        vram_cycp.pt[2].t1 = VDP2_VRAM_CYCP_PNDR_NBG1;
+        vram_cycp.pt[2].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[2].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
         vram_cycp.pt[2].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
         vram_cycp.pt[2].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
         vram_cycp.pt[2].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
         vram_cycp.pt[2].t7 = VDP2_VRAM_CYCP_NO_ACCESS;
 
-        vram_cycp.pt[3].t0 = VDP2_VRAM_CYCP_PNDR_NBG1;
-        vram_cycp.pt[3].t1 = VDP2_VRAM_CYCP_PNDR_NBG1;
-        vram_cycp.pt[3].t2 = VDP2_VRAM_CYCP_NO_ACCESS;
-        vram_cycp.pt[3].t3 = VDP2_VRAM_CYCP_NO_ACCESS;
+        vram_cycp.pt[3].t0 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[3].t1 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[3].t2 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
+        vram_cycp.pt[3].t3 = VDP2_VRAM_CYCP_CHPNDR_NBG1;
         vram_cycp.pt[3].t4 = VDP2_VRAM_CYCP_NO_ACCESS;
         vram_cycp.pt[3].t5 = VDP2_VRAM_CYCP_NO_ACCESS;
         vram_cycp.pt[3].t6 = VDP2_VRAM_CYCP_NO_ACCESS;
@@ -328,12 +335,21 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
             vdp2_scrn_cell_format_set(&cell_format,&normal_map);
 
             //setup nbg1 same as nbg0
+            memset(&cell_format, 0x00, sizeof(cell_format));
+            memset(&normal_map, 0x00, sizeof(normal_map));
             cell_format.scroll_screen = VDP2_SCRN_NBG1;
+            cell_format.ccc = VDP2_SCRN_CCC_PALETTE_256;
+            cell_format.char_size = VDP2_SCRN_CHAR_SIZE_1X1;
+            cell_format.pnd_size = 2;
+            cell_format.aux_mode = VDP2_SCRN_AUX_MODE_1;
+            cell_format.cpd_base = 0;
+            cell_format.palette_base = 0;
+            cell_format.plane_size = VDP2_SCRN_PLANE_SIZE_2X1;
             normal_map.plane_a = _SVIN_NBG1_SPECIAL_PNDR_START;
             vdp2_scrn_cell_format_set(&cell_format,&normal_map);
 
             vdp2_scrn_display_set(VDP2_SCRN_DISP_NBG0 | VDP2_SCRN_DISP_NBG1);
-
+            
             vdp2_scrn_reduction_set(VDP2_SCRN_NBG0,VDP2_SCRN_REDUCTION_HALF);
             vdp2_scrn_reduction_set(VDP2_SCRN_NBG1,VDP2_SCRN_REDUCTION_HALF);
             vdp2_scrn_reduction_x_set(VDP2_SCRN_NBG0, FIX16(2.0f));
@@ -349,30 +365,59 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
 
             //writing pattern names for nbg0
             //starting with plane 0
-            _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
+            _pointer32 = (int *)_SVIN_NBG0_SPECIAL_PNDR_START;
             for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
             {
-                _pointer32[i] = 0x00000000 + _SVIN_NBG0_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
+                _pointer32[i] = 0x00000000 + _SVIN_NBG0_SPECIAL_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
+            }
+
+            //writing pattern names for nbg1
+            //nbg1  is mostly transparent, so fill with that one
+            _pointer32 = (int *)_SVIN_NBG1_SPECIAL_PNDR_START;
+            for (unsigned int i = 0; i < _SVIN_NBG1_PNDR_SIZE / sizeof(int); i++)
+            {
+                _pointer32[i] = 0x00000000 + _SVIN_NBG1_SPECIAL_CHPNDR_SPECIALS_INDEX; //palette 0, transparency on
             }
 
             //-------------- setup character pattern names -------------------
 
             //clearing character pattern names data for nbg0
-            _pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
-            for (unsigned int i = 0; i < _SVIN_NBG0_CHPNDR_SIZE / sizeof(int); i++)
+            _pointer32 = (int *)_SVIN_NBG0_SPECIAL_CHPNDR_START;
+            for (unsigned int i = 0; i < _SVIN_NBG0_SPECIAL_CHPNDR_SIZE / sizeof(int); i++)
+            {
+                _pointer32[i] = 0;
+            }
+
+            //clearing character pattern names data for nbg1
+            _pointer32 = (int *)_SVIN_NBG1_SPECIAL_CHPNDR_START;
+            for (unsigned int i = 0; i < _SVIN_NBG1_SPECIAL_CHPNDR_SIZE / sizeof(int); i++)
             {
                 _pointer32[i] = 0;
             }
 
             //setting up "transparent" character for nbg0
-            _pointer32 = (int *)_SVIN_NBG0_CHPNDR_SPECIALS_ADDR;
+            _pointer32 = (int *)_SVIN_NBG0_SPECIAL_CHPNDR_SPECIALS_ADDR;
             for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
             {
                 _pointer32[i] = 0;
             }
 
             //setting up "semi-transparent" character for nbg0
-            _pointer32 = (int *)(_SVIN_NBG0_CHPNDR_SPECIALS_ADDR + _SVIN_CHARACTER_BYTES);
+            _pointer32 = (int *)(_SVIN_NBG0_SPECIAL_CHPNDR_SPECIALS_ADDR + _SVIN_CHARACTER_BYTES);
+            for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
+            {
+                _pointer32[i] = 0x7F7F7F7F;
+            }
+
+            //setting up "transparent" character for nbg1
+            _pointer32 = (int *)_SVIN_NBG1_SPECIAL_CHPNDR_SPECIALS_ADDR;
+            for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
+            {
+                _pointer32[i] = 0;
+            }
+
+            //setting up "semi-transparent" character for nbg1
+            _pointer32 = (int *)(_SVIN_NBG1_SPECIAL_CHPNDR_SPECIALS_ADDR + _SVIN_CHARACTER_BYTES);
             for (unsigned int i = 0; i < _SVIN_CHARACTER_BYTES / sizeof(int); i++)
             {
                 _pointer32[i] = 0x7F7F7F7F;
