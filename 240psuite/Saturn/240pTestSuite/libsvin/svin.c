@@ -616,6 +616,7 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
     int index = _SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX; 
     vdp1_cmdt_normal_sprite_set(&_svin_cmdt_list->cmdts[index]);
     vdp1_cmdt_draw_mode_set(&_svin_cmdt_list->cmdts[index], sprite_draw_mode);
+    _svin_cmdt_list->cmdts[index].cmd_draw_mode.trans_pixel_disable = 1;
     vdp1_cmdt_color_mode4_set(&_svin_cmdt_list->cmdts[index],font_color_bank);//8bpp
     _svin_cmdt_list->cmdts[index].cmd_xa= (_SVIN_X_RESOLUTION_320 == screen_mode.x_res) ? 0 : 16;
     _svin_cmdt_list->cmdts[index].cmd_ya= (VDP2_TVMD_VERT_224 == screen_mode.y_res) ? 0 : 
