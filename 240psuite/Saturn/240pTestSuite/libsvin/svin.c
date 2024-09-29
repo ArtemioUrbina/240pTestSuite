@@ -670,6 +670,8 @@ void _svin_init(_svin_screen_mode_t screen_mode, bool bmp_mode)
 
     if (_SVIN_SCANMODE_480P == screen_mode.scanmode)
         vdp1_env.hdtv = VDP1_ENV_HDTV_ON;
+    else
+        vdp1_env.hdtv = VDP1_ENV_HDTV_OFF;
     vdp1_env.erase_points[1].x = screen_mode.x_res_doubled ? 703 : 351;
     vdp1_env.erase_points[1].y = ( (_SVIN_SCANMODE_480I == screen_mode.scanmode) || (_SVIN_SCANMODE_480P == screen_mode.scanmode) ) ? 511 : 255;
 
