@@ -265,3 +265,203 @@ void drawAudioSyncTest() {
 	audio_close();
 }
 
+#define ST_BUFFERS		1
+#define ST_CHANNELS		3
+
+void drawAudioTest() {
+	int end = 0, sel = 0;
+	image *back = NULL;
+	joypad_buttons_t keys;
+	wav64_t left, right, center;
+
+	if(!openWAV(&left, "rom:/sound_test_left.wav64")) {
+		drawMessageBox("Sound test Left samples not present");
+		return;
+	}
+	if(!openWAV(&center, "rom:/sound_test_center.wav64")) {
+		drawMessageBox("Sound test Right samples not present");
+		return;
+	}
+	if(!openWAV(&right, "rom:/sound_test_right.wav64")) {
+		drawMessageBox("Sound test Right samples not present");
+		return;
+	}
+	back = loadImage("rom:/mainbg.sprite");
+	if(!back)
+		return;
+		
+	audio_init(44100, ST_BUFFERS);
+	mixer_init(ST_CHANNELS);
+	
+	mixer_ch_set_vol_dolby(0, 1, 0, 0, 0, 0);
+	mixer_ch_set_vol_dolby(1, 1, 1, 0, 0, 0);
+	mixer_ch_set_vol_dolby(2, 0, 1, 0, 0, 0);
+	
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		
+		rdpqClearScreen();
+		rdpqDrawImage(back);
+		rdpqEnd();
+		
+		drawStringC(40, 0x00, 0xff, 0x00, "Sound Test");
+		drawStringS(90, 120, 0xff, sel == 0 ? 0 : 0xff,	sel == 0 ? 0 : 0xff, "Left");
+		drawStringC(130, 0xff, sel == 1 ? 0 : 0xff, sel == 1 ? 0 : 0xff, "Center");
+		drawStringS(190, 120, 0xff, sel == 2 ? 0 : 0xff, sel == 2 ? 0 : 0xff, "Right");
+		
+		drawNoVsyncWithAudio();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.d_left)
+			sel --;
+		if(keys.d_right)
+			sel ++;
+		
+		if(sel < 0)
+			sel = 2;
+
+		if(sel > 2)
+			sel = 0;
+		
+		if(keys.a) {
+			switch(sel) {
+				case 0:
+					wav64_play(&left, 0);
+					break;
+				case 1:
+					wav64_play(&center, 1);
+					break;
+				case 2:
+					wav64_play(&right, 2);
+					break;
+				default:
+					break;
+			}
+		}
+		if(keys.b)
+			end = 1;
+	}
+	
+	freeImage(&back);
+	
+	wav64_close(&left);
+	wav64_close(&center);
+	wav64_close(&right);
+	
+	mixer_close();
+	audio_close();
+}
+
+#define SPLII_CHANNELS 5
+
+void drawAudioTestPLII() {
+	int end = 0, sel = 0;
+	image *back = NULL;
+	joypad_buttons_t keys;
+	wav64_t left, right, center, sleft, sright;
+
+	if(!openWAV(&left, "rom:/sound_test_left.wav64")) {
+		drawMessageBox("Sound test Left samples not present");
+		return;
+	}
+	if(!openWAV(&center, "rom:/sound_test_center.wav64")) {
+		drawMessageBox("Sound test Center samples not present");
+		return;
+	}
+	if(!openWAV(&right, "rom:/sound_test_right.wav64")) {
+		drawMessageBox("Sound test Right samples not present");
+		return;
+	}
+	if(!openWAV(&sleft, "rom:/sound_test_leftsurround.wav64")) {
+		drawMessageBox("Sound test Surr. Left samples not present");
+		return;
+	}
+	if(!openWAV(&sright, "rom:/sound_test_rightsurround.wav64")) {
+		drawMessageBox("Sound test Surr. Right samples not present");
+		return;
+	}
+	back = loadImage("rom:/mainbg.sprite");
+	if(!back)
+		return;
+		
+	audio_init(44100, ST_BUFFERS);
+	mixer_init(SPLII_CHANNELS);
+	
+	mixer_ch_set_vol_dolby(0, 1, 0, 0, 0, 0);
+	mixer_ch_set_vol_dolby(1, 0, 0, 1, 0, 0);
+	mixer_ch_set_vol_dolby(2, 0, 1, 0, 0, 0);
+	mixer_ch_set_vol_dolby(3, 0, 0, 0, 1, 0);
+	mixer_ch_set_vol_dolby(4, 0, 0, 0, 0, 1);
+	
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		
+		rdpqClearScreen();
+		rdpqDrawImage(back);
+		rdpqEnd();
+		
+		drawStringC(40, 0x00, 0xff, 0x00, "Sound Test Prologic II");
+		drawStringS(90, 120, 0xff, sel == 0 ? 0 : 0xff,	sel == 0 ? 0 : 0xff, "Left");
+		drawStringC(130, 0xff, sel == 1 ? 0 : 0xff, sel == 1 ? 0 : 0xff, "Center");
+		drawStringS(190, 120, 0xff, sel == 2 ? 0 : 0xff, sel == 2 ? 0 : 0xff, "Right");
+		drawStringS(70, 140, 0xff, sel == 3 ? 0 : 0xff,	sel == 3 ? 0 : 0xff, "Surr. Left");
+		drawStringS(170, 140, 0xff, sel == 4 ? 0 : 0xff, sel == 4 ? 0 : 0xff, "Surr. Right");
+		
+		drawNoVsyncWithAudio();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		if(keys.d_left)
+			sel --;
+		if(keys.d_right)
+			sel ++;
+		
+		if(sel < 0)
+			sel = 4;
+
+		if(sel > 4)
+			sel = 0;
+		
+		if(keys.a) {
+			switch(sel) {
+				case 0:
+					wav64_play(&left, 0);
+					break;
+				case 1:
+					wav64_play(&center, 1);
+					break;
+				case 2:
+					wav64_play(&right, 2);
+					break;
+				case 3:
+					wav64_play(&sleft, 3);
+					break;
+				case 4:
+					wav64_play(&sright, 4);
+					break;
+				default:
+					break;
+			}
+		}
+		if(keys.b)
+			end = 1;
+	}
+	
+	freeImage(&back);
+	
+	wav64_close(&left);
+	wav64_close(&center);
+	wav64_close(&right);
+	wav64_close(&sleft);
+	wav64_close(&sright);
+	
+	mixer_close();
+	audio_close();
+}

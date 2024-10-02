@@ -313,7 +313,7 @@ void drawControllerTest() {
 		waitVsync();
 		
 		joypad_poll();
-		pad_held = joypad_get_buttons_held();
+		pad_held = joypad_get_buttons_held(JOYPAD_PORT_1);
 		
 		if(pad_held.start && pad_held.d_left)
 			end = 1;

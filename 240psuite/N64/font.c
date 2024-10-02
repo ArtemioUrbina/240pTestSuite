@@ -231,7 +231,7 @@ void drawStringB(int x, int y, int r, int g, int b, char *text) {
 	graphics_draw_text_suite(__disp, x, y, text);
 }
 
-void drawStringSCenteredInternal(int y, int r, int g, int b, char *str, int useback) {
+void drawStringSCenteredInternal(int y, int r, int g, int b, char *str, int useback, bool shadow) {
 	int			currlen = 0;
 	char 		*startstr = NULL;
 	int			xpos = 0, len = 0;
@@ -244,9 +244,9 @@ void drawStringSCenteredInternal(int y, int r, int g, int b, char *str, int useb
 			if(len)	{
 				xpos = (getDispWidth()-len)/2;
 				if(!useback)
-					drawStringS(xpos, y, r, g, b, startstr);
+					drawStringS(xpos + (shadow ? 1 : 0), y + (shadow ? 1 : 0), r, g, b, startstr);
 				else
-					drawStringB(xpos, y, r, g, b, startstr);
+					drawStringB(xpos + (shadow ? 1 : 0), y + (shadow ? 1 : 0), r, g, b, startstr);
 			}
 			*str = '\n';
 			startstr = str + 1;
@@ -262,21 +262,21 @@ void drawStringSCenteredInternal(int y, int r, int g, int b, char *str, int useb
 		if(len)	{
 			xpos = (getDispWidth()-len)/2;
 			if(!useback)
-				drawStringS(xpos, y, r, g, b, startstr);
+				drawStringS(xpos + (shadow ? 1 : 0), y + (shadow ? 1 : 0), r, g, b, startstr);
 			else
-				drawStringB(xpos, y, r, g, b, startstr);
+				drawStringB(xpos + (shadow ? 1 : 0), y + (shadow ? 1 : 0), r, g, b, startstr);
 		}
 	}
 }
 
 void drawStringC(int y, int r, int g, int b, char *text) {
-	drawStringSCenteredInternal(y+1, 0, 0, 0, text, 0);
-	drawStringSCenteredInternal(y, r, g, b, text, 0);
+	//drawStringSCenteredInternal(y, 0, 0, 0, text, 0, true);
+	drawStringSCenteredInternal(y, r, g, b, text, 0, false);
 }
 
 void drawStringCB(int y, int r, int g, int b, char *text) {
-	drawStringSCenteredInternal(y+1, 0, 0, 0, text, 1);
-	drawStringSCenteredInternal(y, r, g, b, text, 1);
+	//drawStringSCenteredInternal(y, 0, 0, 0, text, 1, true);
+	drawStringSCenteredInternal(y, r, g, b, text, 1, false);
 }
 
  

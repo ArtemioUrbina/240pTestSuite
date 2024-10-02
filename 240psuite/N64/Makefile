@@ -32,7 +32,7 @@ ASSETS_GLTF_CONV = $(addprefix $(FILESYSTEM_DIR)/,$(notdir $(ASSETS_GLTF:%.glb=%
 
 ASSETS_HELP = $(wildcard $(FILESYSTEM_DIR)/help/*.txt)
 
-AUDIOCONV_FLAGS ?= --wav-compress 0
+#AUDIOCONV_FLAGS ?= --wav-compress 0
 #MKSPRITE_EXTRA_FLAGS ?=--verbose
 MKSPRITE_EXTRA_FLAGS ?=
 
@@ -51,6 +51,21 @@ $(FILESYSTEM_DIR)/%.t3dm: $(ASSETS_DIR)/%.glb
 	@echo "    [T3D-MODEL] $@"
 	@$(T3D_GLTF_TO_3D) "$<" $@
 	@$(N64_BINDIR)/mkasset -o $(FILESYSTEM_DIR) $@
+
+#AUDIO
+
+#lossless
+$(FILESYSTEM_DIR)/beep.wav64: AUDIOCONV_FLAGS=--wav-compress 0
+$(FILESYSTEM_DIR)/mdfourier-dac-44100.wav64: AUDIOCONV_FLAGS=--wav-compress 0
+
+#compression level 1
+$(FILESYSTEM_DIR)/sound_test_left.wav64: AUDIOCONV_FLAGS=--wav-compress 1
+$(FILESYSTEM_DIR)/sound_test_right.wav64: AUDIOCONV_FLAGS=--wav-compress 1
+$(FILESYSTEM_DIR)/sound_test_center.wav64: AUDIOCONV_FLAGS=--wav-compress 1
+$(FILESYSTEM_DIR)/sound_test_leftsurround.wav64: AUDIOCONV_FLAGS=--wav-compress 1
+$(FILESYSTEM_DIR)/sound_test_rightsurround.wav64: AUDIOCONV_FLAGS=--wav-compress 1
+
+#GRAPHICS
 
 $(FILESYSTEM_DIR)/240pSuite-font.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 8,8
 $(FILESYSTEM_DIR)/mainbg.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4

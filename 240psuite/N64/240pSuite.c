@@ -560,7 +560,7 @@ void drawAudioTestsMenu() {
 	image *bg = NULL, *sd = NULL;
 	
 	while(!exit) {
-		int c = 1, x = 55, y = 90;
+		int c = 1, x = 55, y = 80;
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
@@ -583,7 +583,8 @@ void drawAudioTestsMenu() {
 		SD_blink_cycle(sd);
 		rdpqEnd();
 		
-		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Sound Test"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Stereo Sound Test"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Prologic II Sound Test"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;    
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier"); y += 2*fh; c++;
 		drawFooter(x, &y, &sel, &c);
@@ -616,24 +617,27 @@ void drawAudioTestsMenu() {
 			
 			switch(sel)	{
 				case 1:
-					
+					drawAudioTest();
 					break;
 				case 2:
-					drawAudioSyncTest();
+					drawAudioTestPLII();
 					break;
 				case 3:
-					drawMDFourier();
+					drawAudioSyncTest();
 					break;
 				case 4:
+					drawMDFourier();
+					break;
+				case 5:
 	
 					break;
-				case 5:					
+				case 6:					
 					helpWindow(GENERALHELP);
 					break;
-				case 6:
+				case 7:
 					drawCredits(1);
 					break;
-				case 7:
+				case 8:
 					exit = 1;
 					break;
 			}
