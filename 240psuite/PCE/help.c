@@ -191,7 +191,7 @@ void main()
 					DrawHoriStripesHelp();
 					break;
 				case PASSIVE_HELP:
-					DrawPassiveLagHelp(right);
+					DrawPassiveLagHelp();
 					break;
 				case IRE100HELP:
 					DrawIre100Help();

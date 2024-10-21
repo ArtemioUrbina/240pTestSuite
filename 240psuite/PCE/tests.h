@@ -20,8 +20,8 @@
  */
  
 void DrawCheck();
-void DrawStripes();
-void DropShadow();
+void DrawStripes(int vert);
+void DropShadow(int strip);
 void scrollTest();
 void LEDZoneTest();
 void StripedSprite();
@@ -33,8 +33,8 @@ void ReflexTest();
 void DrawPhase();
 void DrawDisappearLogo();
 
-void RedrawCheck(int res);
-void RedrawDropShadow();
+void RedrawCheck();
+void RedrawDropShadow(int strip);
 void SwapPalette(int pal, int index);
 void DrawPalm();
 void MovePalm(int x);

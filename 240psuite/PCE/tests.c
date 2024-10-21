@@ -613,7 +613,7 @@ void SoundTest()
 	cd_execoverlay(TEST_SND_OVERLAY);
 }
 
-void MDFourier()
+void MDFourier(int armed)
 {
 	ToolItem = TOOL_MDFOURIER;
 	cd_execoverlay(TEST_SND_OVERLAY);

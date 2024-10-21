@@ -774,7 +774,7 @@ void SoundTest()
 		if(i == 1)
 			PSG_StopAudio(0);
     }
-	PSG_StopAllAudio(0);
+	PSG_StopAllAudio();
 	
 #ifdef CDROM
 	if(cd_status(0) != 0)
