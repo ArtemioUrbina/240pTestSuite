@@ -3,13 +3,13 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 #include "image_big_digits.h"
 
-void update_reflex(_svin_screen_mode_t screenmode, int offset, int mode)
+void update_reflex(video_screen_mode_t screenmode, int offset, int mode)
 {
 	vdp1_cmdt_t * cmdlist = (vdp1_cmdt_t*)VDP1_VRAM(0);
 	vdp1_vram_partitions_t vdp1_vram_partitions;
@@ -26,7 +26,7 @@ void update_reflex(_svin_screen_mode_t screenmode, int offset, int mode)
 }
 
 
-void draw_reflex(_svin_screen_mode_t screenmode)
+void draw_reflex(video_screen_mode_t screenmode)
 {
 	//removing text
 	ClearTextLayer();
@@ -38,25 +38,25 @@ void draw_reflex(_svin_screen_mode_t screenmode)
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
 	Color.r = IRE_bot;
 	Color.g = IRE_bot;
 	Color.b = IRE_bot;
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE black
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE black
 	Color.r = IRE_top;
 
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//create single-color tile for the color
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	for (int j=0; j<16; j++)
 		_pointer32[16+j] = 0x02020202;
 	//fill everything with our tile
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
+    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0x00200002; //palette 2, transparency on, black
     }
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 
 	//generating VDP1 sprite in VRAM
 	vdp1_vram_partitions_t vdp1_vram_partitions;
@@ -114,17 +114,17 @@ void draw_reflex(_svin_screen_mode_t screenmode)
 	DrawString("X button toggles horizontal and vertical movement", 10, 200, FONT_GREEN);
 }
 
-void videotest_reflex(_svin_screen_mode_t screenmode)
+void videotest_reflex(video_screen_mode_t screenmode)
 {
 	bool key_pressed = false;
 	int results[10];
 	int results_number = 0;
 
 	//using 240p screenmode, no switching supported
-	_svin_screen_mode_t curr_screenmode =
+	video_screen_mode_t curr_screenmode =
 	{
-		.scanmode = _SVIN_SCANMODE_240P,
-		.x_res = _SVIN_X_RESOLUTION_320,
+		.scanmode = VIDEO_SCANMODE_240P,
+		.x_res = VIDEO_X_RESOLUTION_320,
 		.y_res = VDP2_TVMD_VERT_240,
 		.x_res_doubled = false,
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,

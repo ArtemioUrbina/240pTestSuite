@@ -3,17 +3,17 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 
-void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
+void draw_smpte(video_screen_mode_t screenmode, bool bIRE100)
 {
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
 	uint8_t IRE_top = (bIRE100) ? Get_IRE_Level(100.0) : Get_IRE_Level(75);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
@@ -21,50 +21,50 @@ void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
 	Color.b = IRE_bot;
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE yellow
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE yellow
 	Color.r = IRE_bot;
 	Color.b = IRE_top;
-	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE cyan
+	video_vdp2_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE cyan
 	Color.b = IRE_bot;
-	_svin_set_palette_part(2,&Color,4,4); //palette 2 color 4 = IRE green
+	video_vdp2_set_palette_part(2,&Color,4,4); //palette 2 color 4 = IRE green
 	Color.r = IRE_top;
 	Color.g = IRE_bot;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,5,5); //palette 2 color 5 = IRE pink
+	video_vdp2_set_palette_part(2,&Color,5,5); //palette 2 color 5 = IRE pink
 	Color.b = IRE_bot;	
-	_svin_set_palette_part(2,&Color,6,6); //palette 2 color 6 = IRE red
+	video_vdp2_set_palette_part(2,&Color,6,6); //palette 2 color 6 = IRE red
 	Color.r = IRE_bot;
 	Color.b = IRE_top;
-	_svin_set_palette_part(2,&Color,7,7); //palette 2 color 7 = IRE blue
+	video_vdp2_set_palette_part(2,&Color,7,7); //palette 2 color 7 = IRE blue
 	Color.b = IRE_bot;
-	_svin_set_palette_part(2,&Color,8,8); //palette 2 color 8 = IRE black
+	video_vdp2_set_palette_part(2,&Color,8,8); //palette 2 color 8 = IRE black
 	Color.r = IRE_bot;
 	Color.g = Get_IRE_Level(29.2);//33;
 	Color.b = Get_IRE_Level(44.2);//74;	
-	_svin_set_palette_part(2,&Color,9,9); //palette 2 color 9 = -I
+	video_vdp2_set_palette_part(2,&Color,9,9); //palette 2 color 9 = -I
 	Color.r = Get_IRE_Level(100.0);
 	Color.g = Get_IRE_Level(100.0);
 	Color.b = Get_IRE_Level(100.0);	
-	_svin_set_palette_part(2,&Color,10,10); //palette 2 color 10 = white
+	video_vdp2_set_palette_part(2,&Color,10,10); //palette 2 color 10 = white
 	Color.r = Get_IRE_Level(30.0);//49;
 	Color.g = IRE_bot;
 	Color.b = Get_IRE_Level(49.2);//107;	
-	_svin_set_palette_part(2,&Color,11,11); //palette 2 color 11 = +Q
+	video_vdp2_set_palette_part(2,&Color,11,11); //palette 2 color 11 = +Q
 	Color.r = Get_IRE_Level(3.5);
 	Color.g = Get_IRE_Level(3.5);
 	Color.b = Get_IRE_Level(3.5);	
-	_svin_set_palette_part(2,&Color,12,12); //palette 2 color 12 = black-4
+	video_vdp2_set_palette_part(2,&Color,12,12); //palette 2 color 12 = black-4
 	Color.r = Get_IRE_Level(11.5);
 	Color.g = Get_IRE_Level(11.5);
 	Color.b = Get_IRE_Level(11.5);	
-	_svin_set_palette_part(2,&Color,13,13); //palette 2 color 13 = black+4
+	video_vdp2_set_palette_part(2,&Color,13,13); //palette 2 color 13 = black+4
 
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 
 	//draw top bars
 	for (int i=0;i<7;i++)
@@ -190,12 +190,12 @@ void draw_smpte(_svin_screen_mode_t screenmode, bool bIRE100)
 		}
 	}
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void pattern_smpte(_svin_screen_mode_t screenmode)
+void pattern_smpte(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	bool bIRE100 = false;
 	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_smpte(curr_screenmode,bIRE100);

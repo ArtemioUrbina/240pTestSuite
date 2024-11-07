@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
@@ -36,12 +36,12 @@ void redraw_overscan_text(int _size_x, int _size_y, int top, int bottom, int lef
 	DrawString(buf, 30, 100+10*cursor, FONT_WHITE);
 }
 
-void draw_overscan(_svin_screen_mode_t screenmode, int top, int bottom, int left, int right, int cursor)
+void draw_overscan(video_screen_mode_t screenmode, int top, int bottom, int left, int right, int cursor)
 {
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
 	uint8_t IRE_top = Get_IRE_Level(100.0);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
@@ -49,26 +49,26 @@ void draw_overscan(_svin_screen_mode_t screenmode, int top, int bottom, int left
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
 	Color.r = IRE_bot + (IRE_top-IRE_bot)/2;
 	Color.g = IRE_bot + (IRE_top-IRE_bot)/2;
 	Color.b = IRE_bot + (IRE_top-IRE_bot)/2;
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE gray 50%
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE gray 50%
 
 	draw_overscan_constant_text();
 	redraw_overscan(screenmode, top, bottom, left, right, cursor);
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void redraw_overscan(_svin_screen_mode_t screenmode, int top, int bottom, int left, int right, int cursor)
+void redraw_overscan(video_screen_mode_t screenmode, int top, int bottom, int left, int right, int cursor)
 {
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 
 	//fill center with gray
 	for (int y=top;y<_size_y-bottom;y++)
@@ -103,16 +103,16 @@ void redraw_overscan(_svin_screen_mode_t screenmode, int top, int bottom, int le
 		}
 
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 
 	ClearText(160,100,160,40);	
 	ClearText(30,100,10,50);	
 	redraw_overscan_text(_size_x,_size_y, top, bottom, left, right, cursor);
 }
 
-void pattern_overscan(_svin_screen_mode_t screenmode)
+void pattern_overscan(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	bool key_pressed = false;
 	int _left = 0;
 	int _right = 0;

@@ -3,18 +3,18 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 
-void draw_convergence(_svin_screen_mode_t screenmode, int iPattern)
+void draw_convergence(video_screen_mode_t screenmode, int iPattern)
 {
 	int x,y;
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
 	uint8_t IRE_top = Get_IRE_Level(100);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
@@ -22,29 +22,29 @@ void draw_convergence(_svin_screen_mode_t screenmode, int iPattern)
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
 	Color.r = IRE_bot;
 	Color.g = IRE_bot;
 	Color.b = IRE_bot;
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE black
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE black
 	Color.r = IRE_top;
-	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE red
+	video_vdp2_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE red
 	Color.r = IRE_bot;
 	Color.g = IRE_top;
-	_svin_set_palette_part(2,&Color,4,4); //palette 2 color 4 = IRE green
+	video_vdp2_set_palette_part(2,&Color,4,4); //palette 2 color 4 = IRE green
 	Color.g = IRE_bot;
 	Color.b = IRE_top;
-	_svin_set_palette_part(2,&Color,5,5); //palette 2 color 4 = IRE blue
+	video_vdp2_set_palette_part(2,&Color,5,5); //palette 2 color 4 = IRE blue
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,6,6); //palette 2 color 1 = IRE white
+	video_vdp2_set_palette_part(2,&Color,6,6); //palette 2 color 1 = IRE white
 
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
-	uint32_t *_pointer32 = (uint32_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	uint32_t *_pointer32 = (uint32_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 
 	//fill with black
 	memset(_pointer8, 0x22, _size_y*512);
@@ -144,12 +144,12 @@ void draw_convergence(_svin_screen_mode_t screenmode, int iPattern)
 			break;
 	}
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void pattern_convergence(_svin_screen_mode_t screenmode)
+void pattern_convergence(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	int iPattern = 0;
 	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_convergence(curr_screenmode,iPattern);

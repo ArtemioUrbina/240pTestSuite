@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
@@ -19,7 +19,7 @@ extern uint8_t asset_sonicback3_bg_end[];
 extern uint8_t asset_sonicback4_bg[];
 extern uint8_t asset_sonicback4_bg_end[];
 
-void update_scroll_horizontal(_svin_screen_mode_t screenmode, int frame, int offset1, int offset2)
+void update_scroll_horizontal(video_screen_mode_t screenmode, int frame, int offset1, int offset2)
 {
 	vdp1_cmdt_t * cmdlist = (vdp1_cmdt_t*)VDP1_VRAM(0);
 	vdp1_vram_partitions_t vdp1_vram_partitions;
@@ -39,10 +39,10 @@ void update_scroll_horizontal(_svin_screen_mode_t screenmode, int frame, int off
 	//vdp2_sync();
 }
 
-void draw_scroll_horizontal(_svin_screen_mode_t screenmode)
+void draw_scroll_horizontal(video_screen_mode_t screenmode)
 {
 	char buf[256*256];	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 
 	uint8_t *p8 = (uint8_t *)(asset_sonicfloor_bg);
 	uint16_t *p16 = (uint16_t*)p8;
@@ -58,7 +58,7 @@ void draw_scroll_horizontal(_svin_screen_mode_t screenmode)
 		assert(compressed_size < 0x1000000);
 		int compressed_size_sectors = ((compressed_size-1)/2048)+1;
 		//decompress
-		bcl_lz_decompress(&(p8[2048+8]),(char*)_SVIN_NBG0_CHPNDR_START,compressed_size);
+		bcl_lz_decompress(&(p8[2048+8]),(char*)VIDEO_VDP2_NBG0_CHPNDR_START,compressed_size);
 		//palette in file is 24-bit, setting it color-by-color
 		rgb888_t _color  = {0,0,0,0};
 		for (int i = 0; i<256; i++)
@@ -66,11 +66,11 @@ void draw_scroll_horizontal(_svin_screen_mode_t screenmode)
 			_color.r = p8[2048*compressed_size_sectors+2048+i*3+0];
 			_color.g = p8[2048*compressed_size_sectors+2048+i*3+1];
 			_color.b = p8[2048*compressed_size_sectors+2048+i*3+2];
-			_svin_set_palette_part(2, &_color, i, i);
+			video_vdp2_set_palette_part(2, &_color, i, i);
 		}
 	}
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 
 	//enable NBG0 and NBG1 transparency
 	vdp2_scrn_display_set(VDP2_SCRN_DISPTP_NBG0 | VDP2_SCRN_DISPTP_NBG1);
@@ -128,7 +128,7 @@ void draw_scroll_horizontal(_svin_screen_mode_t screenmode)
 				_color.r = p8[2048*compressed_size_sectors+2048+i*3+0];
 				_color.g = p8[2048*compressed_size_sectors+2048+i*3+1];
 				_color.b = p8[2048*compressed_size_sectors+2048+i*3+2];
-				_svin_set_palette_part(0, &_color, i+frame*64, i+frame*64);
+				video_vdp2_set_palette_part(0, &_color, i+frame*64, i+frame*64);
 			}
 		}
 	}
@@ -159,16 +159,16 @@ void draw_scroll_horizontal(_svin_screen_mode_t screenmode)
     p16[3] = 0x0101;
 }
 
-void videotest_scroll_horizontal(_svin_screen_mode_t screenmode)
+void videotest_scroll_horizontal(video_screen_mode_t screenmode)
 {
 	//removing text
 	ClearTextLayer();
 
 	//using 240p screenmode, no switching supported
-	_svin_screen_mode_t curr_screenmode =
+	video_screen_mode_t curr_screenmode =
 	{
-		.scanmode = _SVIN_SCANMODE_240P,
-		.x_res = _SVIN_X_RESOLUTION_320,
+		.scanmode = VIDEO_SCANMODE_240P,
+		.x_res = VIDEO_X_RESOLUTION_320,
 		.y_res = VDP2_TVMD_VERT_240,
 		.x_res_doubled = false,
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
@@ -177,7 +177,7 @@ void videotest_scroll_horizontal(_svin_screen_mode_t screenmode)
 
 	draw_scroll_horizontal(curr_screenmode);
 	bool key_pressed = false;
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	int pattern = 0;
 	int _size_x = get_screenmode_resolution_x(curr_screenmode);
 	int _size_y = get_screenmode_resolution_y(curr_screenmode);

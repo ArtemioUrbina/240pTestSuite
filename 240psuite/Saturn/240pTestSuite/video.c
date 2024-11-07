@@ -23,23 +23,50 @@
 #include "video.h"
 #include "font.h"
 
-char * scanmode_text_value(_svin_screen_mode_t screenmode)
+uint8_t video_init_done = 0;
+
+void video_init(video_screen_mode_t screen_mode, bool bmp_mode)
+{
+    video_init_done = 0;
+
+    video_vdp2_init(screen_mode, bmp_mode);
+
+    video_vdp1_init(screen_mode);
+
+    smpc_peripheral_init();
+
+    video_init_done = 1;
+}
+
+void video_deinit()
+{
+    video_vdp2_deinit();
+    video_vdp1_deinit();
+    video_init_done = 0;
+}
+
+int video_is_inited()
+{
+	return video_init_done;
+}
+
+char * scanmode_text_value(video_screen_mode_t screenmode)
 {
 	switch (screenmode.colorsystem)
 	{
 		case VDP2_TVMD_TV_STANDARD_NTSC:
 			switch (screenmode.scanmode)
 			{
-				case _SVIN_SCANMODE_240I:
+				case VIDEO_SCANMODE_240I:
 					return "480i same fields";
 					break;
-				case _SVIN_SCANMODE_240P:
+				case VIDEO_SCANMODE_240P:
 					return "240p";
 					break;
-				case _SVIN_SCANMODE_480I:
+				case VIDEO_SCANMODE_480I:
 					return "480i";
 					break;
-				case _SVIN_SCANMODE_480P:
+				case VIDEO_SCANMODE_480P:
 					return "480p";
 					break;
 			}
@@ -48,16 +75,16 @@ char * scanmode_text_value(_svin_screen_mode_t screenmode)
 		case VDP2_TVMD_TV_STANDARD_PAL:
 			switch (screenmode.scanmode)
 			{
-				case _SVIN_SCANMODE_240I:
+				case VIDEO_SCANMODE_240I:
 					return "576i same fields";
 					break;
-				case _SVIN_SCANMODE_240P:
+				case VIDEO_SCANMODE_240P:
 					return "288p";
 					break;
-				case _SVIN_SCANMODE_480I:
+				case VIDEO_SCANMODE_480I:
 					return "576i";
 					break;
-				case _SVIN_SCANMODE_480P:
+				case VIDEO_SCANMODE_480P:
 					return "576p";
 					break;
 			}
@@ -69,40 +96,40 @@ char * scanmode_text_value(_svin_screen_mode_t screenmode)
 	}
 }
 
-char * x_res_text_value(_svin_screen_mode_t screenmode)
+char * x_res_text_value(video_screen_mode_t screenmode)
 {
 	switch (screenmode.x_res)
 	{
-		case _SVIN_X_RESOLUTION_320:
+		case VIDEO_X_RESOLUTION_320:
 			return (screenmode.x_res_doubled) ? "640":"320";
 			break;
-		case _SVIN_X_RESOLUTION_352:
+		case VIDEO_X_RESOLUTION_352:
 			return (screenmode.x_res_doubled) ? "704":"352";
 			break;
 	}
 	return "???";
 }
 
-char * y_res_text_value(_svin_screen_mode_t screenmode)
+char * y_res_text_value(video_screen_mode_t screenmode)
 {
-	if (_SVIN_SCANMODE_480P == screenmode.scanmode)
+	if (VIDEO_SCANMODE_480P == screenmode.scanmode)
 		return "480";
 	switch (screenmode.y_res)
 	{
 		case VDP2_TVMD_VERT_224:
-			return ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? "448":"224";
+			return ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? "448":"224";
 			break;
 		case VDP2_TVMD_VERT_240:
-			return ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )? "480":"240";
+			return ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) )? "480":"240";
 			break;
 		case VDP2_TVMD_VERT_256:
-			return ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? "512":"256";
+			return ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? "512":"256";
 			break;
 	}
 	return "???";
 }
 
-char * y_lines_text_value(_svin_screen_mode_t screenmode)
+char * y_lines_text_value(video_screen_mode_t screenmode)
 {
 	switch (screenmode.y_res)
 	{
@@ -119,7 +146,7 @@ char * y_lines_text_value(_svin_screen_mode_t screenmode)
 	return "????";
 }
 
-void print_screen_mode(_svin_screen_mode_t screenmode)
+void print_screen_mode(video_screen_mode_t screenmode)
 {
 	char buf[128];
     //ClearTextLayer();
@@ -135,7 +162,7 @@ void print_screen_mode(_svin_screen_mode_t screenmode)
 	DrawStringWithBackground(buf, 160-strlen(buf)*_fw/2, 120, FONT_WHITE,FONT_BLUE);
 }
 
-double get_screen_square_pixel_ratio(_svin_screen_mode_t screenmode)
+double get_screen_square_pixel_ratio(video_screen_mode_t screenmode)
 {	
 	//calculating X:Y ratio for the corresponding pixel mode
 	
@@ -147,12 +174,12 @@ double get_screen_square_pixel_ratio(_svin_screen_mode_t screenmode)
 			//square pixel clock is 12 + 27/99 MHz = 1215/99 MHz  (ANSI/SMPTE 170M-1994)
 			switch (screenmode.x_res)
 			{
-				case _SVIN_X_RESOLUTION_320:
+				case VIDEO_X_RESOLUTION_320:
 					//pixel clock = 14.31818 * 1706 / 910 = 26.8426
 					//ratio is (14.31818 * 1706	 / 910)/(2*1215/99) = 1.0935896
 					ratio = 1.0935896;
 				break; 
-				case _SVIN_X_RESOLUTION_352:
+				case VIDEO_X_RESOLUTION_352:
 					//pixel clock = 14.31818 * 1820 / 910 = 28.63636
 					//ratio is (14.31818 * 1820 / 910)/(2*1215/99) = 1.1666665
 					ratio = 1.1666665;
@@ -164,12 +191,12 @@ double get_screen_square_pixel_ratio(_svin_screen_mode_t screenmode)
 			//square pixel clock is 14.75 MHz  (Rec. ITU-R BT.470-3)
 			switch (screenmode.x_res)
 			{
-				case _SVIN_X_RESOLUTION_320:
+				case VIDEO_X_RESOLUTION_320:
 					//pixel clock = 17.734475 * 1706 / 1135 = 26.6564 MHz
 					//ratio is (17.734475 * 1706 / 1135)/(2*14.75) = 0.90360679
 					ratio = 0.90360679;
 				break; 
-				case _SVIN_X_RESOLUTION_352:
+				case VIDEO_X_RESOLUTION_352:
 					//pixel clock = 17.734475 * 1820 / 1135  = 28.43766 MHz
 					//ratio is (17.734475 * 1820 / 1135)/(2*14.75) = 0.96398849
 					ratio = 0.96398849;
@@ -178,7 +205,7 @@ double get_screen_square_pixel_ratio(_svin_screen_mode_t screenmode)
 			break;
 	}
 	if (screenmode.x_res_doubled) ratio*=2.0;
-	if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ratio*=0.5;
+	if ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ratio*=0.5;
 	return ratio;
 }
 
@@ -186,7 +213,7 @@ double get_screen_square_pixel_ratio(_svin_screen_mode_t screenmode)
 //NTSC : 8 240p modes + 16 480i modes + 4 480p modes = 28 modes
 //PAL : 12 240p modes + 24 480i modes + 4 480p modes = 40 modes
 
-_svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode)
+video_screen_mode_t next_screen_mode(video_screen_mode_t screenmode)
 {
     int number = get_screenmode_number(screenmode);
     number++;
@@ -194,11 +221,11 @@ _svin_screen_mode_t next_screen_mode(_svin_screen_mode_t screenmode)
         number=0;
     if ((VDP2_TVMD_TV_STANDARD_NTSC == screenmode.colorsystem) && (number > 27))
         number=0; //only 28 modes for NTSC
-    _svin_screen_mode_t new_mode = create_screenmode_by_number(screenmode.colorsystem,number);
+    video_screen_mode_t new_mode = create_screenmode_by_number(screenmode.colorsystem,number);
     return new_mode;
 }
 
-_svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
+video_screen_mode_t prev_screen_mode(video_screen_mode_t screenmode)
 {
     int number = get_screenmode_number(screenmode);
     number--;
@@ -210,75 +237,75 @@ _svin_screen_mode_t prev_screen_mode(_svin_screen_mode_t screenmode)
     {
         if (number < 0) number=39;
     }
-    _svin_screen_mode_t new_mode = create_screenmode_by_number(screenmode.colorsystem,number);
+    video_screen_mode_t new_mode = create_screenmode_by_number(screenmode.colorsystem,number);
     return new_mode;
 }
 
-int get_screenmode_number(_svin_screen_mode_t screenmode)
+int get_screenmode_number(video_screen_mode_t screenmode)
 {
 	int number;
     if (VDP2_TVMD_TV_STANDARD_NTSC == screenmode.colorsystem)
     {
-        if (_SVIN_SCANMODE_480P == screenmode.scanmode)
+        if (VIDEO_SCANMODE_480P == screenmode.scanmode)
         {
             //480p NTSC modes have numbers 24-27
-            number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 24 : 25;
+            number = (VIDEO_X_RESOLUTION_320 == screenmode.x_res) ? 24 : 25;
             number = (screenmode.x_res_doubled) ? number+2 : number;
         }
         else
         {
             //2*2*2*3 = 24 videomodes
-            number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 0 : 1;
+            number = (VIDEO_X_RESOLUTION_320 == screenmode.x_res) ? 0 : 1;
             number = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? number : number+2;
             number = (screenmode.x_res_doubled) ? number+4 : number;
-            number = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? number+16 :
-                            (_SVIN_SCANMODE_240P == screenmode.scanmode) ? number+8 : number;
+            number = (VIDEO_SCANMODE_480I == screenmode.scanmode) ? number+16 :
+                            (VIDEO_SCANMODE_240P == screenmode.scanmode) ? number+8 : number;
         }
     }
     else //PAL
     {
-        if (_SVIN_SCANMODE_480P == screenmode.scanmode)
+        if (VIDEO_SCANMODE_480P == screenmode.scanmode)
         {
             //480p PAL modes have numbers 36-39
-            number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 36 : 37;
+            number = (VIDEO_X_RESOLUTION_320 == screenmode.x_res) ? 36 : 37;
             number = (screenmode.x_res_doubled) ? number+2 : number;
         }
         else
         {
             //2*3*2*3 = 36 videomodes
-            number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 0 : 1;
+            number = (VIDEO_X_RESOLUTION_320 == screenmode.x_res) ? 0 : 1;
             number = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? number :
                             (VDP2_TVMD_VERT_240 == screenmode.y_res) ? number+2 : number+4;
             number = (screenmode.x_res_doubled) ? number+6 : number;
-            number = (_SVIN_SCANMODE_480I == screenmode.scanmode) ? number+24 :
-                            (_SVIN_SCANMODE_240P == screenmode.scanmode) ? number+12 : number;
+            number = (VIDEO_SCANMODE_480I == screenmode.scanmode) ? number+24 :
+                            (VIDEO_SCANMODE_240P == screenmode.scanmode) ? number+12 : number;
         }
     }
 	return number;
 }
 
-_svin_screen_mode_t create_screenmode_by_number(vdp2_tvmd_tv_standard_t colorsystem, int number)
+video_screen_mode_t create_screenmode_by_number(vdp2_tvmd_tv_standard_t colorsystem, int number)
 {
-    _svin_screen_mode_t new_mode;
+    video_screen_mode_t new_mode;
     new_mode.colorsystem = colorsystem;
     if (VDP2_TVMD_TV_STANDARD_NTSC == colorsystem)
     {
         if (number >= 24)
         {
             //480p NTSC modes have numbers 24-27
-            new_mode.x_res = (number%2 == 0) ? _SVIN_X_RESOLUTION_320 : _SVIN_X_RESOLUTION_352;
+            new_mode.x_res = (number%2 == 0) ? VIDEO_X_RESOLUTION_320 : VIDEO_X_RESOLUTION_352;
             new_mode.y_res = VDP2_TVMD_VERT_240;
             new_mode.x_res_doubled = ((number%4)/2 == 0) ? false : true;
-            new_mode.scanmode = _SVIN_SCANMODE_480P;
+            new_mode.scanmode = VIDEO_SCANMODE_480P;
         }
         else
         {
             //2*2*2*3 = 24 videomodes
-            new_mode.x_res = (number%2 == 0) ? _SVIN_X_RESOLUTION_320 : _SVIN_X_RESOLUTION_352;
+            new_mode.x_res = (number%2 == 0) ? VIDEO_X_RESOLUTION_320 : VIDEO_X_RESOLUTION_352;
             new_mode.y_res = ((number%4)/2 == 0) ? VDP2_TVMD_VERT_224 : VDP2_TVMD_VERT_240;
             new_mode.x_res_doubled = ((number%8)/4 == 0) ? false : true;
-            new_mode.scanmode = (number/8 == 0) ? _SVIN_SCANMODE_240I :
-                                    (number/8 == 1) ? _SVIN_SCANMODE_240P : _SVIN_SCANMODE_480I;
+            new_mode.scanmode = (number/8 == 0) ? VIDEO_SCANMODE_240I :
+                                    (number/8 == 1) ? VIDEO_SCANMODE_240P : VIDEO_SCANMODE_480I;
         }
     }
     else //PAL
@@ -286,36 +313,36 @@ _svin_screen_mode_t create_screenmode_by_number(vdp2_tvmd_tv_standard_t colorsys
         if (number >= 36)
         {
             //480p PAL modes have numbers 36-39
-            new_mode.x_res = (number%2 == 0) ? _SVIN_X_RESOLUTION_320 : _SVIN_X_RESOLUTION_352;
+            new_mode.x_res = (number%2 == 0) ? VIDEO_X_RESOLUTION_320 : VIDEO_X_RESOLUTION_352;
             new_mode.y_res = VDP2_TVMD_VERT_240;
             new_mode.x_res_doubled = ((number%4)/2 == 0) ? false : true;
-            new_mode.scanmode = _SVIN_SCANMODE_480P;
+            new_mode.scanmode = VIDEO_SCANMODE_480P;
         }
         else
         {
             //2*3*2*3 = 36 videomodes
-            new_mode.x_res = (number%2 == 0) ? _SVIN_X_RESOLUTION_320 : _SVIN_X_RESOLUTION_352;
+            new_mode.x_res = (number%2 == 0) ? VIDEO_X_RESOLUTION_320 : VIDEO_X_RESOLUTION_352;
             new_mode.y_res = ((number%6)/2 == 0) ? VDP2_TVMD_VERT_224 : 
                                 ((number%6)/2 == 1) ? VDP2_TVMD_VERT_240 : VDP2_TVMD_VERT_256;
             new_mode.x_res_doubled = ((number%12)/6 == 0) ? false : true;
-            new_mode.scanmode = (number/12 == 0) ? _SVIN_SCANMODE_240I :
-                                    (number/12 == 1) ? _SVIN_SCANMODE_240P : _SVIN_SCANMODE_480I;
+            new_mode.scanmode = (number/12 == 0) ? VIDEO_SCANMODE_240I :
+                                    (number/12 == 1) ? VIDEO_SCANMODE_240P : VIDEO_SCANMODE_480I;
         }
     }
     return new_mode;
 }
 
-int get_screenmode_resolution_x(_svin_screen_mode_t screenmode)
+int get_screenmode_resolution_x(video_screen_mode_t screenmode)
 {
-	int number = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 320 : 352;
+	int number = (VIDEO_X_RESOLUTION_320 == screenmode.x_res) ? 320 : 352;
     number = (screenmode.x_res_doubled) ? number*2 : number;
 	return number;
 }
 
-int get_screenmode_resolution_y(_svin_screen_mode_t screenmode)
+int get_screenmode_resolution_y(video_screen_mode_t screenmode)
 {
 	int number = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 224 : 
 				(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 240 : 256;
-    number = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? number*2 : number;
+    number = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? number*2 : number;
 	return number;
 }

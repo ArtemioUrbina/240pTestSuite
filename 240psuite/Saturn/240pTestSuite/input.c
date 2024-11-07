@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 
 void get_digital_keypress_anywhere(smpc_peripheral_digital_t *digital)
 {

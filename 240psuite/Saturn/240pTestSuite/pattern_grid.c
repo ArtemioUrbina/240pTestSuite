@@ -3,31 +3,31 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 
-void draw_grid(_svin_screen_mode_t screenmode)
+void draw_grid(video_screen_mode_t screenmode)
 {
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
 	uint8_t IRE_top = Get_IRE_Level(100.0);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
 	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = black
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = black
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = white
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = white
 	Color.g = IRE_bot;
 	Color.b = IRE_bot;
-	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = red
+	video_vdp2_set_palette_part(2,&Color,3,3); //palette 2 color 3 = red
 	//clear all 8 tiles with black
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	for (int i=0; i<64*8; i++)
 	{
 		_pointer8[i] = 0x01;
@@ -73,7 +73,7 @@ void draw_grid(_svin_screen_mode_t screenmode)
 	_pointer8[64*3] = 0x03;
 	_pointer8[64*7] = 0x02;
 	//fill planes with center tile
-    uint32_t *_pointer32 = (int *)_SVIN_NBG0_PNDR_START;
+    uint32_t *_pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
     for (unsigned int y = 0; y < 32; y++)
     {
 		for (unsigned int x = 0; x < 32; x++)
@@ -89,10 +89,10 @@ void draw_grid(_svin_screen_mode_t screenmode)
 		}
     }
 	//fill border
-	int _size_x = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 20 : 22;
+	int _size_x = (VIDEO_X_RESOLUTION_320 == screenmode.x_res) ? 20 : 22;
 	int _size_y = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 14 : 
 					(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 15 : 16;
-	if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )
+	if ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) )
 		_size_y *= 2;
 	if (screenmode.x_res_doubled)
 	{
@@ -171,12 +171,12 @@ void draw_grid(_svin_screen_mode_t screenmode)
 			_pointer32[y*128+_size_x*2-1+64] = 0x00200006;
 		}
 	}
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void pattern_grid(_svin_screen_mode_t screenmode)
+void pattern_grid(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	draw_grid(curr_screenmode);
 	bool key_pressed = false;
 

@@ -29,6 +29,8 @@ SH_SRCS:= \
     font.c \
     input.c \
     video.c \
+    video_vdp1.c \
+    video_vdp2.c \
     control.c \
     ire.c \
     help.c \
@@ -63,8 +65,6 @@ SH_SRCS:= \
     videotest_scroll_horizontal.c \
     videotest_scroll_vertical.c \
     window_credits.c \
-	libsvin/svin_background.c \
-	libsvin/svin.c \
 	240pSuite.c
 
 SH_CFLAGS+= -Os -I. $(TGA_CFLAGS) $(BCL_CFLAGS) -Ilibsvin -save-temps

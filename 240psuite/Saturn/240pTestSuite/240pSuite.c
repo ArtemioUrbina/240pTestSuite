@@ -36,7 +36,7 @@
 #include "video.h"
 #include "control.h"
 #include "ire.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "background.h"
 
 #include "pattern_100ire.h"
@@ -76,12 +76,26 @@
 extern uint8_t asset_bootlogo_bg[];
 extern uint8_t asset_bootlogo_bg_end[];
 
-void update_screen_mode(_svin_screen_mode_t screenmode, bool bmp_mode)
+static smpc_peripheral_digital_t _digital;
+int global_frame_count;
+
+static void suite_vblank_out_handler(void *work __unused)
+{
+    global_frame_count++;
+    
+    if (0==video_is_inited())
+        return;
+    
+    smpc_peripheral_intback_issue();
+}
+
+
+void update_screen_mode(video_screen_mode_t screenmode, bool bmp_mode)
 {
 	//ClearTextLayer();
-	_svin_deinit();
-	_svin_init(screenmode, bmp_mode);
-	_svin_clear_palette(0);
+	video_deinit();
+	video_init(screenmode, bmp_mode);
+	video_vdp2_clear_palette(0);
 	LoadFont();
 }
 
@@ -93,28 +107,28 @@ int main(void)
 	int menu_size=0;
 	char string_buf[128];
 
-	_svin_screen_mode_t screenMode =
+	video_screen_mode_t screenMode =
 	{
-		.scanmode = _SVIN_SCANMODE_240P,
-		.x_res = _SVIN_X_RESOLUTION_320,
+		.scanmode = VIDEO_SCANMODE_240P,
+		.x_res = VIDEO_X_RESOLUTION_320,
 		.y_res = VDP2_TVMD_VERT_240,
 		.x_res_doubled = false,
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
 	};
 
 	//show yaul logo in 240p
-	_svin_init(screenMode,false);
-	_svin_set_cycle_patterns_cpu();
-	_svin_background_set_from_assets(asset_bootlogo_bg,(int)(asset_bootlogo_bg_end-asset_bootlogo_bg),_SVIN_NBG0_PNDR_START,_SVIN_NBG0_CHPNDR_START);
-	_svin_set_cycle_patterns_nbg(screenMode);
+	video_init(screenMode,false);
+	video_vdp2_set_cycle_patterns_cpu();
+	background_set_from_assets(asset_bootlogo_bg,(int)(asset_bootlogo_bg_end-asset_bootlogo_bg),VIDEO_VDP2_NBG0_PNDR_START,VIDEO_VDP2_NBG0_CHPNDR_START);
+	video_vdp2_set_cycle_patterns_nbg(screenMode);
 
 	//wait for 60 frames, either 1s or 1.2s
 	for (int i=0;i<60;i++)
 		vdp2_tvmd_vblank_in_next_wait(1);
 
-	_svin_background_fade_to_black();
+	background_fade_to_black();
 
-	_svin_clear_palette(0);
+	video_vdp2_clear_palette(0);
 	LoadFont();
 
 	//detect color system
@@ -133,6 +147,9 @@ int main(void)
 	//	DrawString("FS INIT FAILED!\n", 120, 20, 1);
 	redrawMenu = true;
 	redrawBG = true;
+
+	//register vblank handler
+	vdp_sync_vblank_out_set(suite_vblank_out_handler, NULL);
 
 	while(true)
 	{
@@ -270,7 +287,7 @@ int main(void)
 						}
 						DrawString(string_buf, x, y+_fh*pos, FONT_CYAN); pos++;
 						DrawString("Field rate ......... 59.94 Hz", x, y+_fh*pos, FONT_CYAN); pos++;//59.52 Hz if hacked from PAL
-						if (_SVIN_X_RESOLUTION_320 == screenMode.x_res)
+						if (VIDEO_X_RESOLUTION_320 == screenMode.x_res)
 							DrawString("Pixel clock ......26.8426 MHz", x, y+_fh*pos, FONT_CYAN);//14.31818 MHz * 1706 / 910
 						else
 							DrawString("Pixel clock ......28.6364 MHz", x, y+_fh*pos, FONT_CYAN);//14.31818 MHz * 1820 / 910
@@ -294,7 +311,7 @@ int main(void)
 						}
 						DrawString(string_buf, x, y+_fh*pos, FONT_CYAN); pos++;
 						DrawString("Field rate ............ 50 Hz", x, y+_fh*pos, FONT_CYAN); pos++;//50.35 Hz if hacked from NTSC
-						if (_SVIN_X_RESOLUTION_320 == screenMode.x_res)
+						if (VIDEO_X_RESOLUTION_320 == screenMode.x_res)
 							DrawString("Pixel clock ......26.6564 MHz", x, y+_fh*pos, FONT_CYAN);//17.734475 MHz * 1706 / 1135
 						else
 							DrawString("Pixel clock ......28.4377 MHz", x, y+_fh*pos, FONT_CYAN);//17.734475 MHz * 1820 / 1135
@@ -679,9 +696,9 @@ int main(void)
 							case 0:
 								//change scanmode
 								screenMode.scanmode++;
-								if (screenMode.scanmode > _SVIN_SCANMODE_480P)
-									screenMode.scanmode = _SVIN_SCANMODE_240I;
-								if (_SVIN_SCANMODE_480P == screenMode.scanmode)
+								if (screenMode.scanmode > VIDEO_SCANMODE_480P)
+									screenMode.scanmode = VIDEO_SCANMODE_240I;
+								if (VIDEO_SCANMODE_480P == screenMode.scanmode)
 									screenMode.y_res = VDP2_TVMD_VERT_240; //only x480 in 480p mode
 								update_screen_mode(screenMode,false);
 								redrawBG = true;
@@ -690,7 +707,7 @@ int main(void)
 							case 1:
 								//y lines
 								screenMode.y_res++;
-								if (_SVIN_SCANMODE_480P == screenMode.scanmode)
+								if (VIDEO_SCANMODE_480P == screenMode.scanmode)
 									screenMode.y_res = VDP2_TVMD_VERT_240; //only x480 in 480p mode
 								else if (VDP2_TVMD_TV_STANDARD_NTSC == screenMode.colorsystem)
 								{
@@ -709,9 +726,9 @@ int main(void)
 							case 2:
 								//x res
 								screenMode.x_res++;
-								if (screenMode.x_res > _SVIN_X_RESOLUTION_352)
+								if (screenMode.x_res > VIDEO_X_RESOLUTION_352)
 								{
-									screenMode.x_res = _SVIN_X_RESOLUTION_320;
+									screenMode.x_res = VIDEO_X_RESOLUTION_320;
 									screenMode.x_res_doubled = !screenMode.x_res_doubled;
 								}
 								update_screen_mode(screenMode,false);

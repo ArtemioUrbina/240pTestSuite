@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
@@ -16,7 +16,7 @@
 
 void draw_point(int x, int y, int color)
 {
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	if (x%2==1)
 	{
 		_pointer8[y*512+x/2] |= 0x01*color;
@@ -29,7 +29,7 @@ void draw_point(int x, int y, int color)
 
 void draw_dotted_line(int x1, int x2, int y, int color)
 {
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	int _x = x1;
 	while (_x<((x2/2)*2))
 	{
@@ -47,7 +47,7 @@ void draw_dotted_line(int x1, int x2, int y, int color)
 
 void draw_rectangle(int x1, int y1, int x2, int y2, int color)
 {
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	int _x = x1;
 	if (_x%2==1)
 	{
@@ -83,7 +83,7 @@ void draw_rectangle(int x1, int y1, int x2, int y2, int color)
 
 void clear_rectangle(int x1, int y1, int x2, int y2)
 {
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	int _x = x1;
 	if (_x%2==1)
 	{
@@ -120,7 +120,7 @@ void clear_rectangle(int x1, int y1, int x2, int y2)
 
 void clear_filled(int x1, int y1, int x2, int y2)
 {
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	for (int _y=y1;_y<=y2;_y++)
 	{
 		int _x = x1;
@@ -224,12 +224,12 @@ void draw_rectangle_set(int x, int y, int cell_x, int cell_y, int color)
 	draw_rectangle(x+cell_x/2+1,y+cell_y+cell_y/2-cell_y/4,x+cell_x/2+1,y+cell_y+cell_y/2+cell_y/4+2,color);
 }
 
-void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
+void draw_monoscope(video_screen_mode_t screenmode, bool bIRE100)
 {
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
 	uint8_t IRE_top = (bIRE100) ? Get_IRE_Level(100.0) : Get_IRE_Level(75);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
@@ -237,26 +237,26 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,COLOR_WHITE,COLOR_WHITE); //palette 2 color 1 = IRE white
+	video_vdp2_set_palette_part(2,&Color,COLOR_WHITE,COLOR_WHITE); //palette 2 color 1 = IRE white
 	Color.g = IRE_bot;
 	Color.b = IRE_bot;	
-	_svin_set_palette_part(2,&Color,COLOR_RED,COLOR_RED); //palette 2 color 2 = IRE red
+	video_vdp2_set_palette_part(2,&Color,COLOR_RED,COLOR_RED); //palette 2 color 2 = IRE red
 	Color.r = IRE_bot;
-	_svin_set_palette_part(2,&Color,0,0); //palette 2 color 0 = IRE black
-	_svin_set_palette_part(2,&Color,COLOR_BLACK,COLOR_BLACK); //palette 2 color 3 = IRE black
+	video_vdp2_set_palette_part(2,&Color,0,0); //palette 2 color 0 = IRE black
+	video_vdp2_set_palette_part(2,&Color,COLOR_BLACK,COLOR_BLACK); //palette 2 color 3 = IRE black
 	Color.r = (IRE_top+IRE_bot)/2;
 	Color.g = (IRE_top+IRE_bot)/2;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,COLOR_LIGHTBLUE,COLOR_LIGHTBLUE); //palette 2 color 4 = IRE lightblue
+	video_vdp2_set_palette_part(2,&Color,COLOR_LIGHTBLUE,COLOR_LIGHTBLUE); //palette 2 color 4 = IRE lightblue
 	Color.r = IRE_bot;
 	Color.g = IRE_top;
 	Color.b = IRE_bot;	
-	_svin_set_palette_part(2,&Color,COLOR_GREEN,COLOR_GREEN); //palette 2 color 4 = IRE green
+	video_vdp2_set_palette_part(2,&Color,COLOR_GREEN,COLOR_GREEN); //palette 2 color 4 = IRE green
 
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 
 	//fill everything with black
 	memset(_pointer8,0x00,512*_size_y);
@@ -265,7 +265,7 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	int cell_y=16;
 	if (screenmode.x_res_doubled)
 		cell_x=32;
-	if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )
+	if ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) )
 		cell_y=32;
 
 	int offset_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? cell_y/2 : 0;
@@ -368,9 +368,9 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	int rect_y;
 	int rect_x;
 	//big red quad
-	if (_SVIN_X_RESOLUTION_320 == screenmode.x_res)
+	if (VIDEO_X_RESOLUTION_320 == screenmode.x_res)
 	{
-		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 384 : 192;
+		rect_y = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? 384 : 192;
 		rect_x = ((rect_y*35)/32);
 		if (ratio>1.5)
 			rect_x= ((rect_y*70)/32);
@@ -381,9 +381,9 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	}
 
 	//big blue quad
-	if (_SVIN_X_RESOLUTION_352 == screenmode.x_res)
+	if (VIDEO_X_RESOLUTION_352 == screenmode.x_res)
 	{
-		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )? 336 : 168;
+		rect_y = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) )? 336 : 168;
 		rect_x = ((rect_y*7)/6);
 		if (ratio>1.5)
 			rect_x= ((rect_y*14)/6);
@@ -427,14 +427,14 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	//draw_rectangle_set(_size_x/2+cell_x_fixed,_size_y/2-cell_y-1,cell_x_fixed,cell_y,COLOR_WHITE);
 
 	//dotted lines
-	if (_SVIN_X_RESOLUTION_320 == screenmode.x_res)
+	if (VIDEO_X_RESOLUTION_320 == screenmode.x_res)
 	{
-		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 384 : 192;
+		rect_y = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? 384 : 192;
 		rect_x = ((rect_y*35)/32);
 	}
 	else
 	{
-		rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 336 : 168;
+		rect_y = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? 336 : 168;
 		rect_x = ((rect_y*7)/6);
 	}
 	if (ratio>1.5)
@@ -456,10 +456,10 @@ void draw_monoscope(_svin_screen_mode_t screenmode, bool bIRE100)
 	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
 	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_RED);*/
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void draw_monoscope_text(_svin_screen_mode_t screenmode)
+void draw_monoscope_text(video_screen_mode_t screenmode)
 {
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
@@ -468,14 +468,14 @@ void draw_monoscope_text(_svin_screen_mode_t screenmode)
 	int cell_y=16;
 	if (screenmode.x_res_doubled)
 		cell_x=32;
-	if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) )
+	if ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) )
 		cell_y=32;
 	int offset_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? cell_y/2 : 0;
 	int text_shift_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? -8 :
 					(VDP2_TVMD_VERT_256 == screenmode.y_res) ? -16 : 0;
 
 	//big red quad
-	int rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 384 : 192;
+	int rect_y = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? 384 : 192;
 	int rect_x = ((rect_y*35)/32);
 	if (ratio>1.5)
 		rect_x= ((rect_y*70)/32);
@@ -490,7 +490,7 @@ void draw_monoscope_text(_svin_screen_mode_t screenmode)
 	DrawString(buf, _text_x, _text_y+text_shift_y, FONT_RED);
 
 	//big green quad
-	rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 288 : 144;
+	rect_y = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? 288 : 144;
 	rect_x = (int)(ratio*rect_y+0.5);
 	rect_x /= 2; rect_x *= 2;
 	sprintf(buf," %ix%i",rect_x,rect_y);
@@ -501,7 +501,7 @@ void draw_monoscope_text(_svin_screen_mode_t screenmode)
 	DrawString(buf, _text_x, _text_y+text_shift_y, FONT_GREEN);
 
 	//big blue quad
-	rect_y = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 336 : 168;
+	rect_y = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? 336 : 168;
 	rect_x = ((rect_y*7)/6);
 	if (ratio>1.5)
 		rect_x= ((rect_y*14)/6);
@@ -515,9 +515,9 @@ void draw_monoscope_text(_svin_screen_mode_t screenmode)
 	DrawString(buf, _text_x, _text_y+text_shift_y, FONT_CYAN);
 }
 
-void pattern_monoscope(_svin_screen_mode_t screenmode)
+void pattern_monoscope(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	bool bIRE100 = true;
 	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_monoscope(curr_screenmode,bIRE100);

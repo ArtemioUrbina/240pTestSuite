@@ -3,7 +3,8 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp1.h"
+#include "video_vdp2.h"
 #include "control.h"
 #include "ire.h"
 
@@ -62,7 +63,7 @@ void draw_credits()
 	DrawString("Dedicated to Elisa", x, y+_fh*pos, FONT_GREEN);
 }
 
-void window_credits(_svin_screen_mode_t screenmode)
+void window_credits(video_screen_mode_t screenmode)
 {
 	vdp1_cmdt_t *_svin_cmdt_p = (vdp1_cmdt_t *)(VDP1_VRAM(0));
 	vdp1_vram_partitions_t vdp1_vram_partitions;
@@ -78,12 +79,12 @@ void window_credits(_svin_screen_mode_t screenmode)
 	wait_for_key_unpress();
 	int scroll_counter = 0;
 
-	_svin_cmdt_p[_SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_ya=-300;//move the text out of screen before it is printed
+	_svin_cmdt_p[VIDEO_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_ya=-300;//move the text out of screen before it is printed
 
-	_svin_screen_mode_t creditsScreenMode =
+	video_screen_mode_t creditsScreenMode =
 	{
-		.scanmode = _SVIN_SCANMODE_240P,
-		.x_res = _SVIN_X_RESOLUTION_320,
+		.scanmode = VIDEO_SCANMODE_240P,
+		.x_res = VIDEO_X_RESOLUTION_320,
 		.y_res = VDP2_TVMD_VERT_240,
 		.x_res_doubled = false,
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,
@@ -93,10 +94,10 @@ void window_credits(_svin_screen_mode_t screenmode)
 	int _size_y = 240;
 
 	//resize the text window to implement scrolling
-	_svin_cmdt_p[_SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_size=((320/8)<<8)|(_size_y-80);
-    _svin_cmdt_p[_SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_ya= (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 40 : 
+	_svin_cmdt_p[VIDEO_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_size=((320/8)<<8)|(_size_y-80);
+    _svin_cmdt_p[VIDEO_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_ya= (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 40 : 
                                                 (VDP2_TVMD_VERT_240 == screenmode.y_res) ? 48 : 56;
-	vdp1_cmdt_char_base_set(&_svin_cmdt_p[_SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX],
+	vdp1_cmdt_char_base_set(&_svin_cmdt_p[VIDEO_VDP1_ORDER_TEXT_SPRITE_0_INDEX],
 								vdp1_vram_partitions.texture_base+FONT_QUAD_WIDTH*scroll_counter);
 
 	draw_credits();
@@ -120,7 +121,7 @@ void window_credits(_svin_screen_mode_t screenmode)
 		vdp2_tvmd_vblank_out_wait();
 		scroll_counter++;
 		if (scroll_counter > 430*4) scroll_counter = 0;
-		vdp1_cmdt_char_base_set(&_svin_cmdt_p[_SVIN_VDP1_ORDER_TEXT_SPRITE_0_INDEX],
+		vdp1_cmdt_char_base_set(&_svin_cmdt_p[VIDEO_VDP1_ORDER_TEXT_SPRITE_0_INDEX],
 								vdp1_vram_partitions.texture_base+FONT_QUAD_WIDTH*(scroll_counter>>2));
 	}
 }

@@ -3,13 +3,13 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 #include "image_big_digits.h"
 
-void draw_help(_svin_screen_mode_t screenmode, int page)
+void draw_help(video_screen_mode_t screenmode, int page)
 {
 	//removing text
 	ClearTextLayer();
@@ -104,13 +104,13 @@ void draw_help(_svin_screen_mode_t screenmode, int page)
 	}
 }
 
-void help(_svin_screen_mode_t screenmode)
+void help(video_screen_mode_t screenmode)
 {
 	int page = 0;
-	_svin_screen_mode_t curr_screenmode =
+	video_screen_mode_t curr_screenmode =
 	{
-		.scanmode = _SVIN_SCANMODE_240P,
-		.x_res = _SVIN_X_RESOLUTION_352,
+		.scanmode = VIDEO_SCANMODE_240P,
+		.x_res = VIDEO_X_RESOLUTION_352,
 		.y_res = VDP2_TVMD_VERT_240,
 		.x_res_doubled = false,
 		.colorsystem = VDP2_TVMD_TV_STANDARD_NTSC,

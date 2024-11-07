@@ -2,18 +2,10 @@
 #include "image_buzzbomber.h"
 #include "image_not_really.h"
 
-static inline void __always_inline
-vdp1_cmdt_color_mode5_set(vdp1_cmdt_t *cmdt)
-{
-        cmdt->cmd_pmod &= 0xFFC7;
-        cmdt->cmd_pmod |= 0x0028;
-        cmdt->cmd_colr = 0;
-}
-
 void _yaul_early_access()
 {
     //nothing is initialized yet. so we can't use most of the yaul functionality
-    //checking if there actually in logo on-screen (in some cases there might be not, like ODE or HLE BIOS in emulators)
+    //checking if there actually is logo on-screen (in some cases there might be not, like ODE or HLE BIOS in emulators)
     uint16_t * p16 = (uint16_t *)(VDP2_VRAM_ADDR(0,0));
     if ( (p16[0x8D0/2]!=0xDDDD) ||  (p16[0x8D2/2]!=0xDDD0) || (p16[0x8D4/2]!=0x0D00) || (p16[0x8D6/2]!=0x0D00) )
     {
@@ -45,9 +37,7 @@ void _yaul_early_access()
     vdp1_cmdt_color_bank_t font_color_bank = {.raw = 0};
     vdp1_cmdt_normal_sprite_set(&cmdlist[2]);
     vdp1_cmdt_draw_mode_set(&cmdlist[2], sprite_draw_mode);
-    //vdp1_cmdt_color_mode0_set(&cmdlist[2],font_color_bank);//4bpp
     vdp1_cmdt_color_mode4_set(&cmdlist[2],font_color_bank);//8bpp
-    //vdp1_cmdt_color_mode5_set(&cmdlist[2]);//8bpp
     cmdlist[2].cmd_xa = -40;
     if (VDP2_TVMD_TV_STANDARD_NTSC == vdp2_tvmd_tv_standard_get())
         cmdlist[2].cmd_ya = 119;
@@ -59,9 +49,7 @@ void _yaul_early_access()
     //quad for the text
     vdp1_cmdt_normal_sprite_set(&cmdlist[3]);
     vdp1_cmdt_draw_mode_set(&cmdlist[3], sprite_draw_mode);
-    //vdp1_cmdt_color_mode0_set(&cmdlist[3],font_color_bank);//4bpp
     vdp1_cmdt_color_mode4_set(&cmdlist[3],font_color_bank);//8bpp
-    //vdp1_cmdt_color_mode5_set(&cmdlist[3]);//8bpp
     cmdlist[3].cmd_xa = -100;
     if (VDP2_TVMD_TV_STANDARD_NTSC == vdp2_tvmd_tv_standard_get())
         cmdlist[3].cmd_ya = 119+8;
@@ -83,11 +71,6 @@ void _yaul_early_access()
     //changing NBG0 priority in VDP2 to 3
     p16 = (uint16_t *)(VDP2_IOREG_BASE+PRINA);
     p16[0] = 0x0303;
-    //changing sprite type and disabling window
-    //p16 = (uint16_t *)(VDP2_IOREG_BASE+SPCTL);
-    //p16[0] = 0x3720;//3720
-    //p16 = (uint16_t *)(VDP2_IOREG_BASE+SDCTL);
-    //p16[0] = 0x0000;
 
     //copy sprite with mirror
     uint8_t * p8 = (uint8_t *)VDP1_VRAM(0x4000);
@@ -97,8 +80,6 @@ void _yaul_early_access()
         {
             p8[y*32+x] = image_buzzbomber_data[y*32+31-x]+128;
         }
-        //cleaning left pixel to prevent the trail
-        //p8[y*32]=0x80;
     }
 
     p8 = (uint8_t *)VDP1_VRAM(0x8000);

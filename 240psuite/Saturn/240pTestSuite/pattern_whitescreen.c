@@ -3,17 +3,17 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 
-void draw_whitescreen(_svin_screen_mode_t screenmode, int color)
+void draw_whitescreen(video_screen_mode_t screenmode, int color)
 {
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//adding a single color to palette
 	uint8_t IRE_top = Get_IRE_Level(100.0);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
@@ -46,23 +46,23 @@ void draw_whitescreen(_svin_screen_mode_t screenmode, int color)
 			Color.b = IRE_top;	
 			break;
 	}
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1
 	//create single-color tile for the color
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	for (int j=0; j<16; j++)
 		_pointer32[16+j] = 0x01010101;
 	//fill everything with our tile
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
+    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0x00200002; //palette 2, transparency on, black
     }
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void pattern_whitescreen(_svin_screen_mode_t screenmode)
+void pattern_whitescreen(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	int color = 0;
 	draw_whitescreen(curr_screenmode,color);
 	bool key_pressed = false;

@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
@@ -21,7 +21,7 @@ uint8_t BrickPattern[64] = {
 
 void draw_pixel(int x, int y, int color)
 {
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	if (x%2)
 	{
 		_pointer8[y*512+x/2] &= 0xF0;
@@ -34,13 +34,13 @@ void draw_pixel(int x, int y, int color)
 	}
 }
 
-void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
+void draw_sharpness(video_screen_mode_t screenmode, bool bIRE100)
 {
 	int x,y;
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
 	uint8_t IRE_top = (bIRE100) ?  Get_IRE_Level(100) : Get_IRE_Level(75);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
@@ -48,20 +48,20 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white 100%
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white 100%
 	Color.r = IRE_bot + (IRE_top-IRE_bot)/2;
 	Color.g = IRE_bot + (IRE_top-IRE_bot)/2;
 	Color.b = IRE_bot + (IRE_top-IRE_bot)/2;
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE gray 50%
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE gray 50%
 	Color.r = IRE_bot;
 	Color.g = IRE_bot;
 	Color.b = IRE_bot;
-	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE black
+	video_vdp2_set_palette_part(2,&Color,3,3); //palette 2 color 3 = IRE black
 
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 
 	//fill with gray
 	memset(_pointer8, 0x22, _size_y*512);
@@ -108,7 +108,7 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 		int _x = x;		
 		if (false == screenmode.x_res_doubled) _x /= 2;
 		int _y = y;
-		if ( (_SVIN_SCANMODE_240I == screenmode.scanmode) || (_SVIN_SCANMODE_240P == screenmode.scanmode) ) _y /= 2;
+		if ( (VIDEO_SCANMODE_240I == screenmode.scanmode) || (VIDEO_SCANMODE_240P == screenmode.scanmode) ) _y /= 2;
 		draw_pixel(_size_x/2+_x,_size_y/2+_y,3);//using black color
 		draw_pixel(_size_x/2+_x,_size_y/2-_y,3);//using black color
 		draw_pixel(_size_x/2-_x,_size_y/2+_y,3);//using black color
@@ -122,7 +122,7 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 		int _x = x;		
 		if (false == screenmode.x_res_doubled) _x /= 2;
 		int _y = y;
-		if ( (_SVIN_SCANMODE_240I == screenmode.scanmode) || (_SVIN_SCANMODE_240P == screenmode.scanmode) ) _y /= 2;
+		if ( (VIDEO_SCANMODE_240I == screenmode.scanmode) || (VIDEO_SCANMODE_240P == screenmode.scanmode) ) _y /= 2;
 		draw_pixel(_size_x/2+_x,_size_y/2+_y,3);//using black color
 		draw_pixel(_size_x/2+_x,_size_y/2-_y,3);//using black color
 		draw_pixel(_size_x/2-_x,_size_y/2+_y,3);//using black color
@@ -131,7 +131,7 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 
 	//cross
 	int r_y = r;
-	if ( (_SVIN_SCANMODE_240I == screenmode.scanmode) || (_SVIN_SCANMODE_240P == screenmode.scanmode) ) r_y /= 2;
+	if ( (VIDEO_SCANMODE_240I == screenmode.scanmode) || (VIDEO_SCANMODE_240P == screenmode.scanmode) ) r_y /= 2;
 	if (false == screenmode.x_res_doubled) r_y *= 2;
 	for (x=0;x<_size_x/2-r;x++)
 	{
@@ -151,7 +151,7 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 		int _x = _size_x/2-x;		
 		if (false == screenmode.x_res_doubled) _x *= 2;
 		int _y = _size_y/2-y;
-		if ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) _y *= 2;
+		if ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) _y *= 2;
 		if (_x*_x+_y*_y > r2)
 		{
 			draw_pixel(x,y,3);//using black color
@@ -171,34 +171,34 @@ void draw_sharpness(_svin_screen_mode_t screenmode, bool bIRE100)
 	for (y=_size_y/13;y<_size_y-_size_y/13;y++) draw_pixel(_size_x/13,y,1);
 	for (y=_size_y/13;y<_size_y-_size_y/13;y++) draw_pixel(_size_x-_size_x/13,y,1);
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void draw_sharpness_pattern2(_svin_screen_mode_t screenmode)
+void draw_sharpness_pattern2(video_screen_mode_t screenmode)
 {
 	int x,y;
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 
 	//add colors to palette
 	rgb888_t Color;
 	Color.r = 33;
 	Color.g = 0;
 	Color.b = 0;	
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1
 	Color.r = 74;
 	Color.g = 33;
 	Color.b = 33;	
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2
 	Color.r = 107;
 	Color.g = 107;
 	Color.b = 74;	
-	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3
+	video_vdp2_set_palette_part(2,&Color,3,3); //palette 2 color 3
 
 	//create brick tile
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	int *BrickPattern32 = (int *)BrickPattern;
 	for (unsigned int i = 0; i < 16; i++)
 	{
@@ -206,17 +206,17 @@ void draw_sharpness_pattern2(_svin_screen_mode_t screenmode)
 	}
 
 	//fill everything with a brick tile
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
+    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0x00200000; //palette 2
 	}
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void pattern_sharpness(_svin_screen_mode_t screenmode)
+void pattern_sharpness(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	int iPattern = 0;
 	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_sharpness(curr_screenmode,false);

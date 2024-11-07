@@ -3,12 +3,13 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp1.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 
-void update_diagonal(_svin_screen_mode_t screenmode, double angle, int angle_step_div)
+void update_diagonal(video_screen_mode_t screenmode, double angle, int angle_step_div)
 {
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
@@ -29,7 +30,7 @@ void update_diagonal(_svin_screen_mode_t screenmode, double angle, int angle_ste
     bar_y_f = fix16_div(bar_y_f,fix16_int32_from(2));
 
 	//patching the command
-	int index = _SVIN_VDP1_ORDER_TEXT_SPRITE_1_INDEX;
+	int index = VIDEO_VDP1_ORDER_TEXT_SPRITE_1_INDEX;
 	vdp1_cmdt_t * cmdlist = (vdp1_cmdt_t*)VDP1_VRAM(0);
     vdp1_cmdt_distorted_sprite_set(&cmdlist[index]);
     cmdlist[index].cmd_xa = _size_x/2 + fix16_int32_to( - fix16_mul(bar_x_f, cos_value) - fix16_mul(bar_y_f, sin_value));
@@ -56,12 +57,12 @@ void update_diagonal(_svin_screen_mode_t screenmode, double angle, int angle_ste
 }
 
 
-void draw_diagonal(_svin_screen_mode_t screenmode)
+void draw_diagonal(video_screen_mode_t screenmode)
 {
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
 	uint8_t IRE_top = Get_IRE_Level(100.0);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
@@ -69,28 +70,28 @@ void draw_diagonal(_svin_screen_mode_t screenmode)
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
 	Color.r = IRE_bot;
 	Color.g = IRE_bot;
 	Color.b = IRE_bot;
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE black
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE black
 	//create single-color tile for the color
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	for (int j=0; j<16; j++)
 		_pointer32[16+j] = 0x02020202;
 	//fill everything with our tile
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
+    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0x00200002; //palette 2, transparency on, black
     }
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
-	uint8_t *_pointer8 = (uint8_t *)_SVIN_NBG0_CHPNDR_START;
+	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 
 	//creating VDP1 tile in VRAM
 	vdp1_vram_partitions_t vdp1_vram_partitions;
@@ -102,9 +103,9 @@ void draw_diagonal(_svin_screen_mode_t screenmode)
 	for (int i=0;i<4;i++) memset(&(p8[(bar_x*bar_y*i*2)/7]),FONT_BLACK*4,bar_x*bar_y/7);//stripes
 }
 
-void videotest_diagonal(_svin_screen_mode_t screenmode)
+void videotest_diagonal(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	bool key_pressed = false;
 	bool rotating = false;
 	double angle = 45.0;

@@ -3,14 +3,14 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 
-void draw_backlit_zone(_svin_screen_mode_t screenmode)
+void draw_backlit_zone(video_screen_mode_t screenmode)
 {	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//adding a single color to palette
 	uint8_t IRE_top = Get_IRE_Level(100);
 	uint8_t IRE_bot = Get_IRE_Level(0);
@@ -18,21 +18,21 @@ void draw_backlit_zone(_svin_screen_mode_t screenmode)
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = IRE white
 	Color.r = IRE_bot;
 	Color.g = IRE_bot;
 	Color.b = IRE_bot;	
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE black
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE black
 	//create two tiles for the colors 1 and 2
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	for (int j=0; j<16; j++)
 	{
 		_pointer32[16+j] = 0x01010101;
 		_pointer32[32+j] = 0x02020202;
 	}
 	//fill NBG0 with our black tile
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
+    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0x00200004; //palette 2
     }
@@ -45,26 +45,26 @@ void draw_backlit_zone(_svin_screen_mode_t screenmode)
 			pattern[8*y+x] = pattern_color;
 
 	//copying pattern to NBG1
-	uint8_t * _p8 = (uint8_t *)_SVIN_NBG1_CHPNDR_START;
+	uint8_t * _p8 = (uint8_t *)VIDEO_VDP2_NBG1_CHPNDR_START;
 	for (int _y=0;_y<8;_y++)
 		memcpy(&(_p8[_y*8]),&(pattern[_y*8]),8);
 
 	//generating names for pattern in NBG1
-	_pointer32 = (int *)_SVIN_NBG1_PNDR_START;
+	_pointer32 = (int *)VIDEO_VDP2_NBG1_PNDR_START;
     _pointer32[0] = 0x00200000 + 0x60000/32; //palette 2
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void videotest_backlit_zone(_svin_screen_mode_t screenmode)
+void videotest_backlit_zone(video_screen_mode_t screenmode)
 {
 	//removing text
 	ClearTextLayer();
 
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	draw_backlit_zone(curr_screenmode);
 	bool key_pressed = false;
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	int pattern = 0;
 	int _size_x = get_screenmode_resolution_x(curr_screenmode);
 	int _size_y = get_screenmode_resolution_y(curr_screenmode);

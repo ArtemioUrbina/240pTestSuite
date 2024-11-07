@@ -3,35 +3,35 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 
-void draw_colorbleed(_svin_screen_mode_t screenmode, bool checkered)
+void draw_colorbleed(video_screen_mode_t screenmode, bool checkered)
 {
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
 	uint8_t IRE_top = Get_IRE_Level(100.0);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
 	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
 	Color.r = IRE_top;
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = red
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = red
 	Color.r = IRE_bot;
 	Color.g = IRE_top;
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = green
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = green
 	Color.g = IRE_bot;
 	Color.b = IRE_top;
-	_svin_set_palette_part(2,&Color,3,3); //palette 2 color 3 = blue
+	video_vdp2_set_palette_part(2,&Color,3,3); //palette 2 color 3 = blue
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,4,4); //palette 2 color 4 = white
+	video_vdp2_set_palette_part(2,&Color,4,4); //palette 2 color 4 = white
 	//create single-color tiles for each color, 4 tiles in total
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	if (checkered)
 	{
 		for (int i=1; i<5; i++)
@@ -53,15 +53,15 @@ void draw_colorbleed(_svin_screen_mode_t screenmode, bool checkered)
 	for (int j=0; j<16; j++)
 		_pointer32[j] = 0x0;
 	//fill everything with pitch-black
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
+    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0x00200000; //palette 2, transparency on, black
     }
 	//draw bars depending on screen mode
-	_pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-	int offset = (_SVIN_X_RESOLUTION_320 == screenmode.x_res) ? 6 : 10;
-	int y_ratio = ( (_SVIN_SCANMODE_480I == screenmode.scanmode) || (_SVIN_SCANMODE_480P == screenmode.scanmode) ) ? 2 : 1;
+	_pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+	int offset = (VIDEO_X_RESOLUTION_320 == screenmode.x_res) ? 6 : 10;
+	int y_ratio = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? 2 : 1;
     if (screenmode.x_res_doubled)
 	{
 		//high-x-res mode
@@ -100,12 +100,12 @@ void draw_colorbleed(_svin_screen_mode_t screenmode, bool checkered)
 			}
 		}	
 	}
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void pattern_colorbleed(_svin_screen_mode_t screenmode)
+void pattern_colorbleed(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	bool bCheckered = false;
 	draw_colorbleed(curr_screenmode,bCheckered);
 	bool key_pressed = false;

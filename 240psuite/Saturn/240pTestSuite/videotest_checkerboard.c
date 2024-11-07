@@ -3,28 +3,28 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 
-void draw_checkerboard(_svin_screen_mode_t screenmode)
+void draw_checkerboard(video_screen_mode_t screenmode)
 {
 	//removing text
 	ClearTextLayer();
 	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	//add colors to palette
 	uint8_t IRE_top = Get_IRE_Level(100.0);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
 	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
-	_svin_set_palette_part(2,&Color,1,1); //palette 2 color 1 = black
+	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1 = black
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
-	_svin_set_palette_part(2,&Color,2,2); //palette 2 color 2 = white
+	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = white
 	//create checkerboard tile at index 0
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	for (int i=0; i<4; i++)
 	{
 		_pointer32[i*4  ] = 0x01020102;
@@ -33,20 +33,20 @@ void draw_checkerboard(_svin_screen_mode_t screenmode)
 		_pointer32[i*4+3] = 0x02010201;
 	}
 	//fill everything with this tile
-    _pointer32 = (int *)_SVIN_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < _SVIN_NBG0_PNDR_SIZE / sizeof(int); i++)
+    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
     {
         _pointer32[i] = 0x00200000; //palette 2, transparency on
     }
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void videotest_checkerboard(_svin_screen_mode_t screenmode)
+void videotest_checkerboard(video_screen_mode_t screenmode)
 {
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	draw_checkerboard(curr_screenmode);
 	bool key_pressed = false;
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	int pattern = 0;
 
 	wait_for_key_unpress();

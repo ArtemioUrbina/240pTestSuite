@@ -3,14 +3,14 @@
 #include <stdbool.h>
 #include <yaul.h>
 #include "font.h"
-#include "svin.h"
+#include "video_vdp2.h"
 #include "video.h"
 #include "control.h"
 #include "ire.h"
 
-void draw_dropshadow(_svin_screen_mode_t screenmode)
+void draw_dropshadow(video_screen_mode_t screenmode)
 {	
-	_svin_set_cycle_patterns_cpu();
+	video_vdp2_set_cycle_patterns_cpu();
 	draw_bg_donna(screenmode);
 	//constructing pattern
 	uint8_t pattern_color = FONT_WHITE*4;
@@ -30,30 +30,30 @@ void draw_dropshadow(_svin_screen_mode_t screenmode)
 				}
 
 	//copying pattern to NBG1
-	uint8_t * _p8 = (uint8_t *)_SVIN_NBG1_CHPNDR_START;
+	uint8_t * _p8 = (uint8_t *)VIDEO_VDP2_NBG1_CHPNDR_START;
 	for (int y=0;y<4;y++)
 		for (int x=0;x<4;x++)
 			for (int _y=0;_y<8;_y++)
 				memcpy(&(_p8[y*64*4+x*64+_y*8]),&(pattern[(y*8+_y)*32+x*8]),8);
 
 	//generating names for pattern in NBG1
-	int * _pointer32 = (int *)_SVIN_NBG1_PNDR_START;
+	int * _pointer32 = (int *)VIDEO_VDP2_NBG1_PNDR_START;
 	for (int y=0;y<4;y++)
 		for (int x=0;x<4;x++)
     		_pointer32[y*64+x] = 0x00000000 + 0x60000/32 + y*4*2 + x*2; //palette 0
 
-	_svin_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
-void videotest_dropshadow(_svin_screen_mode_t screenmode)
+void videotest_dropshadow(video_screen_mode_t screenmode)
 {
 	//removing text
 	ClearTextLayer();
 
-	_svin_screen_mode_t curr_screenmode = screenmode;
+	video_screen_mode_t curr_screenmode = screenmode;
 	draw_dropshadow(curr_screenmode);
 	bool key_pressed = false;
-	int *_pointer32 = (int *)_SVIN_NBG0_CHPNDR_START;
+	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	int pattern = 0;
 	int _size_x = get_screenmode_resolution_x(curr_screenmode);
 	int _size_y = get_screenmode_resolution_y(curr_screenmode);
