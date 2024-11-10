@@ -54,7 +54,7 @@ void video_vdp2_set_cycle_patterns_nbg(video_screen_mode_t screen_mode)
 {
     //swithcing everything to NBG accesses, CPU can't write data anymore
 
-    if ( (VIDEO_SCANMODE_480P == screen_mode.scanmode) && (screen_mode.x_res_doubled) )
+    if (is_screenmode_special(screen_mode))
     {
         //      T0 T1 T2 T3
         // A0 : D0 D0 D0 D0
@@ -173,7 +173,7 @@ void video_vdp2_init(video_screen_mode_t screen_mode, bool bmp_mode)
     if (bmp_mode)
     {
         //bmp mode
-        if ( (VIDEO_SCANMODE_480P == screen_mode.scanmode) && (screen_mode.x_res_doubled) )
+        if (is_screenmode_special(screen_mode))
         {
             //480p high res, special bmp setup
             //setup nbg0
@@ -277,7 +277,7 @@ void video_vdp2_init(video_screen_mode_t screen_mode, bool bmp_mode)
     }
     else
     {
-        if ( (VIDEO_SCANMODE_480P == screen_mode.scanmode) && (screen_mode.x_res_doubled) )
+        if (is_screenmode_special(screen_mode))
         {
             //480p high res, special tile setup
             //setup nbg0
@@ -543,13 +543,22 @@ void video_vdp2_deinit()
 void video_vdp2_set_palette_part(int number, rgb888_t *pointer, int start, int end)
 {
     uint8_t *my_vdp2_cram8;
+    uint16_t *my_vdp2_cram16;
     if (current_color_mode == 0)
     {
         my_vdp2_cram8 = (uint8_t *)VDP2_CRAM_ADDR(0x100 * number);
+        my_vdp2_cram16 = (uint16_t *)my_vdp2_cram8;
         for (int i = start; i <= end; i++)
         {
-            my_vdp2_cram8[i*2+0] = (pointer[i-start].cc<<7) | ((pointer[i-start].b & 0xF8)>>1) | ((pointer[i-start].g & 0xC0)>>6);
-            my_vdp2_cram8[i*2+1] = ((pointer[i-start].g & 0x38)<<2) | ((pointer[i-start].r & 0xF8)>>3);
+            uint32_t color = (pointer[i-start].cc & 0x1)<<15 | ((pointer[i-start].b & 0xF8)<<7) | ((pointer[i-start].g & 0xF8)<<2) | (pointer[i-start].r & 0xF8);
+            my_vdp2_cram16[i] = color;
+        }
+        my_vdp2_cram8 = (uint8_t *)VDP2_CRAM_ADDR(0x800 + 0x100 * number);
+        my_vdp2_cram16 = (uint16_t *)my_vdp2_cram8;
+        for (int i = start; i <= end; i++)
+        {
+            uint32_t color = (pointer[i-start].cc & 0x1)<<15 | (((uint32_t)(pointer[i-start].b & 0xF8))<<7) | (((uint32_t)(pointer[i-start].g & 0xF8))<<2) | (((uint32_t)(pointer[i-start].g & 0xF8))>>3);
+            my_vdp2_cram16[i] = color;
         }
     }
     else

@@ -5,7 +5,6 @@
 #include "background.h"
 #include "font.h"
 #include "video_vdp2.h"
-#include <tga.h>
 
 extern uint8_t asset_back2_bg[];
 extern uint8_t asset_back2_bg_end[];
@@ -112,11 +111,10 @@ void draw_bg_with_expansion(video_screen_mode_t screenmode, bool bMascot)
 {
 	int stretch_amount_x = 0; //stretch amount in quads
 	int stretch_amount_y = 0;
-	int bSpecialMode = ( (VIDEO_SCANMODE_480P == screenmode.scanmode) && (screenmode.x_res_doubled) ) ? 1 : 0;
 	//load the image with minimal resolution 320x224
 	video_vdp2_set_cycle_patterns_cpu();
 	//for special mode making a copy for NBG1
-	if (bSpecialMode)
+	if (is_screenmode_special(screenmode))
 	{
 		background_set_from_assets(asset_back2_bg,(int)(asset_back2_bg_end-asset_back2_bg),VIDEO_VDP2_NBG0_SPECIAL_PNDR_START,VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START);
 		background_set_from_assets(asset_back2_bg,(int)(asset_back2_bg_end-asset_back2_bg),VIDEO_VDP2_NBG1_SPECIAL_PNDR_START,VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START);
@@ -170,14 +168,14 @@ void draw_bg_with_expansion(video_screen_mode_t screenmode, bool bMascot)
 			break;
 	}
 
-	int copies = 1;
-	if (bSpecialMode) copies = 2;
+	int copies = 1;		
 	int *_pointer32[2];
 	int vram_offset[2];
 	_pointer32[0] = (int *)VIDEO_VDP2_NBG0_PNDR_START;
 	vram_offset[0] = VIDEO_VDP2_NBG0_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
-	if (bSpecialMode)
+	if (is_screenmode_special(screenmode))
 	{
+		copies = 2;
 		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_PNDR_START;
 		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_PNDR_START;
 		vram_offset[0] = VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
@@ -285,7 +283,7 @@ void draw_bg_with_expansion(video_screen_mode_t screenmode, bool bMascot)
 		int * p32 = (int *)(&asset_mascot_bg[2048]);
 		int compressed_size = p32[1];
 		int compressed_size_sectors = ((compressed_size-1)/2048)+1;
-		if (bSpecialMode)
+		if (is_screenmode_special(screenmode))
 		{
 			bcl_lz_decompress(&(asset_mascot_bg[2048+8]),(char*)(VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START+0x12C00),compressed_size);
 			bcl_lz_decompress(&(asset_mascot_bg[2048+8]),(char*)(VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START+0x12C00),compressed_size);
@@ -328,11 +326,10 @@ void draw_bg_with_expansion(video_screen_mode_t screenmode, bool bMascot)
 
 void draw_bg_donna(video_screen_mode_t screenmode)
 {
-	int bSpecialMode = ( (VIDEO_SCANMODE_480P == screenmode.scanmode) && (screenmode.x_res_doubled) ) ? 1 : 0;
 	//loading the image with maximal resolution 704x512
 	video_vdp2_set_cycle_patterns_cpu();
 	//for special mode making a copy for NBG1
-	if (bSpecialMode)
+	if (is_screenmode_special(screenmode))
 	{
 		background_set_from_assets(asset_donna_bg,(int)(asset_donna_bg_end-asset_donna_bg),VIDEO_VDP2_NBG0_SPECIAL_PNDR_START,VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START);
 		background_set_from_assets(asset_donna_bg,(int)(asset_donna_bg_end-asset_donna_bg),VIDEO_VDP2_NBG1_SPECIAL_PNDR_START,VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START);
@@ -347,10 +344,11 @@ void draw_bg_donna(video_screen_mode_t screenmode)
 					(screenmode.x_res == VIDEO_X_RESOLUTION_320) ? 30 : 32;
 	int y_shift = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) )  ? 0 : 12;
 	int copies = 1;
-	if (bSpecialMode) copies = 2;
+	if (is_screenmode_special(screenmode)) 
+		copies = 2;
 	int *_pointer32[2];
 	_pointer32[0] = (int *)VIDEO_VDP2_NBG0_PNDR_START;
-	if (bSpecialMode)
+	if (is_screenmode_special(screenmode))
 	{
 		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_PNDR_START;
 		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_PNDR_START;

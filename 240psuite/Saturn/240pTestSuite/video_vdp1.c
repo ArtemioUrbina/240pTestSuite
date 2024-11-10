@@ -84,19 +84,6 @@ void video_vdp1_init(video_screen_mode_t screen_mode)
 
     vdp1_sync_cmdt_list_put(_cmdt_list, 0);
 
-/*#define VDP1_FBCR_DIE (0x0008)
-    if ( (VIDEO_SCANMODE_240P == screen_mode.scanmode) || (VIDEO_SCANMODE_480P == screen_mode.scanmode) )
-        MEMORY_WRITE(16, VDP1(FBCR), 0);
-    else
-        MEMORY_WRITE(16, VDP1(FBCR), VDP1_FBCR_DIE);*/
-
-/*#define VDP1_TVMR_VBE (0x0008)
-    if (VIDEO_SCANMODE_480P == screen_mode.scanmode)
-        _vdp1_env.hdtv = VDP1_ENV_HDTV_ON;
-        MEMORY_WRITE(16, VDP1(TVMR), 0x4);
-    else
-        MEMORY_WRITE(16, VDP1(TVMR), VDP1_TVMR_VBE | 0x0);*/
-
     static vdp1_env_t vdp1_env = {
                 .erase_color = RGB1555(0, 0, 0, 0),
                 .erase_points[0] = {

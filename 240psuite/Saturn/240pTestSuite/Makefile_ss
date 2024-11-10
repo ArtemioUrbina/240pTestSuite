@@ -67,7 +67,7 @@ SH_SRCS:= \
     window_credits.c \
 	240pSuite.c
 
-SH_CFLAGS+= -Os -I. $(TGA_CFLAGS) $(BCL_CFLAGS) -Ilibsvin -save-temps
+SH_CFLAGS+= -Os -I. $(TGA_CFLAGS) $(BCL_CFLAGS) -save-temps
 SH_LDFLAGS+= $(TGA_LDFLAGS) $(BCL_LDFLAGS)
 
 IP_VERSION:= V0.001

@@ -117,13 +117,13 @@ char * y_res_text_value(video_screen_mode_t screenmode)
 	switch (screenmode.y_res)
 	{
 		case VDP2_TVMD_VERT_224:
-			return ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? "448":"224";
+			return ( get_screenmode_resolution_y(screenmode) > 256 ) ? "448":"224";
 			break;
 		case VDP2_TVMD_VERT_240:
-			return ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) )? "480":"240";
+			return ( get_screenmode_resolution_y(screenmode) > 256 ) ? "480":"240";
 			break;
 		case VDP2_TVMD_VERT_256:
-			return ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? "512":"256";
+			return ( get_screenmode_resolution_y(screenmode) > 256 ) ? "512":"256";
 			break;
 	}
 	return "???";
@@ -345,4 +345,9 @@ int get_screenmode_resolution_y(video_screen_mode_t screenmode)
 				(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 240 : 256;
     number = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? number*2 : number;
 	return number;
+}
+
+bool is_screenmode_special(video_screen_mode_t screenmode)
+{
+	return ( (VIDEO_SCANMODE_480P == screenmode.scanmode) && (screenmode.x_res_doubled) ) ? true : false;
 }

@@ -34,31 +34,57 @@ void draw_100ire(video_screen_mode_t screenmode, int ire_level)
 	Color.b = IRE_bot;	
 	video_vdp2_set_palette_part(2,&Color,2,2); //palette 2 color 2 = IRE black
 	//create two tiles for the colors 1 and 2
-	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	for (int j=0; j<16; j++)
+	int copies = 1;
+	int *_pointer32[2];
+	int vram_offset[2];
+	_pointer32[0] = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(screenmode))
 	{
-		_pointer32[16+j] = 0x01010101;
-		_pointer32[32+j] = 0x02020202;
+		copies = 2;
+		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START;
+		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START;
+	}
+	for (int copy = 0; copy < copies; copy++)
+	{
+		for (int j=0; j<16; j++)
+		{
+			_pointer32[copy][16+j] = 0x01010101;
+			_pointer32[copy][32+j] = 0x02020202;
+		}
 	}
 	//fill everything with our black tile
-    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x00200004; //palette 2
-    }
+	_pointer32[0] = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+	vram_offset[0] = VIDEO_VDP2_NBG0_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+	if (is_screenmode_special(screenmode))
+	{
+		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_PNDR_START;
+		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_PNDR_START;
+		vram_offset[0] = VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+		vram_offset[1] = VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+	}
+	for (int copy = 0; copy < copies; copy++)
+	{
+    	for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
+    	{
+    	    _pointer32[copy][i] = 0x00200004 + vram_offset[copy]/32; //palette 2
+    	}
+	}
 	//fill center with white tile
 	int x_start = (VIDEO_X_RESOLUTION_320 == screenmode.x_res) ? 10 : 11;
 	x_start = (screenmode.x_res_doubled) ? x_start*2 : x_start;
 	int y_start = (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 7 : 
 					(VDP2_TVMD_VERT_240 == screenmode.y_res) ? 7 : 8;
 	y_start = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? y_start*2 : y_start;
-	for (int i = x_start; i<x_start*3; i++)
+	for (int copy = 0; copy < copies; copy++)
 	{
-		for (int j=y_start; j<y_start*3; j++)
+		for (int i = x_start; i<x_start*3; i++)
 		{
-			_pointer32[64*j + i] = 0x00200002; //palette 2
+			for (int j=y_start; j<y_start*3; j++)
+			{
+				_pointer32[copy][64*j + i] = 0x00200002 + vram_offset[copy]/32; //palette 2
+			}
 		}
-	}	
+	}
 	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 

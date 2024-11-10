@@ -134,6 +134,9 @@ int main(void)
 	//detect color system
 	screenMode.colorsystem = vdp2_tvmd_tv_standard_get();
 
+	//debug force mode
+	screenMode.scanmode = VIDEO_SCANMODE_480P;
+
 	//measure frame clock
 	volatile int frame_counter=0;
 	while (vdp2_tvmd_vblank_out())
@@ -300,6 +303,9 @@ int main(void)
 						{
 							case 10165:
 							case 10166:
+							case 10167:
+							case 10168:
+							case 10169:
 								sprintf(string_buf,"Frame cal ..... %d (PAL)",frame_counter);
 								break;
 							case 8528:
