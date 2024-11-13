@@ -7,6 +7,7 @@
 #include "video.h"
 #include "control.h"
 #include "ire.h"
+#include "input.h"
 
 void print_ire_level(int ire_level)
 {
@@ -24,7 +25,7 @@ void draw_100ire(video_screen_mode_t screenmode, int ire_level)
 	//adding a single color to palette
 	uint8_t IRE_top = Get_IRE_Level(ire_level);
 	uint8_t IRE_bot = Get_IRE_Level(0);
-	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
+	rgb888_t Color = {.cc=0,.r=IRE_bot,.g=IRE_bot,.b=IRE_bot};
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
@@ -94,7 +95,6 @@ void pattern_100ire(video_screen_mode_t screenmode)
 	int ire_level = 100;
 	draw_100ire(curr_screenmode,ire_level);
 	print_ire_level(ire_level);
-	bool key_pressed = false;
 
 	wait_for_key_unpress();
 	
