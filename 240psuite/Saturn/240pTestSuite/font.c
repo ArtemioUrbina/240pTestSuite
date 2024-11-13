@@ -31,7 +31,7 @@ int _fw = 6;
 
 #define FONT_PALETTE (0)
 
-void LoadFont()
+void SetFontPalette()
 {
 	int i;
 	//uint8_t *pFont;

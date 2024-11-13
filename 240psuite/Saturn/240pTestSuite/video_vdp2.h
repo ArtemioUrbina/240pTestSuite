@@ -73,12 +73,14 @@
 //  
 
 #define VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START (VDP2_VRAM_ADDR(0,0))
+#define VIDEO_VDP2_NBG0_SPECIAL_BMP_START (VDP2_VRAM_ADDR(0,0))
 #define VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_SIZE (0x20000)
 #define VIDEO_VDP2_NBG0_SPECIAL_PNDR_START (VDP2_VRAM_ADDR(1,0))
 #define VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_SPECIALS_ADDR (VDP2_VRAM_ADDR(0,0x1F000))
 #define VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_SPECIALS_INDEX ((0x1F000)/32)
 
 #define VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START (VDP2_VRAM_ADDR(3,0))
+#define VIDEO_VDP2_NBG1_SPECIAL_BMP_START (VDP2_VRAM_ADDR(2,0))
 #define VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_SIZE (0x20000)
 #define VIDEO_VDP2_NBG1_SPECIAL_PNDR_START (VDP2_VRAM_ADDR(2,0))
 #define VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_SPECIALS_ADDR (VDP2_VRAM_ADDR(3,0x1F000))
@@ -86,6 +88,7 @@
 
 void video_vdp2_set_cycle_patterns_cpu();
 void video_vdp2_set_cycle_patterns_nbg(video_screen_mode_t screen_mode);
+void video_vdp2_set_cycle_patterns_nbg_bmp(video_screen_mode_t screen_mode);
 void video_vdp2_init(video_screen_mode_t screen_mode, bool bmp_mode);
 
 void video_vdp2_set_palette_part(int number, rgb888_t * pointer, int start, int end);

@@ -21,6 +21,8 @@
 
 #include <yaul.h>
 #include "video.h"
+#include "video_vdp1.h"
+#include "video_vdp2.h"
 #include "font.h"
 
 uint8_t video_init_done = 0;
@@ -350,4 +352,13 @@ int get_screenmode_resolution_y(video_screen_mode_t screenmode)
 bool is_screenmode_special(video_screen_mode_t screenmode)
 {
 	return ( (VIDEO_SCANMODE_480P == screenmode.scanmode) && (screenmode.x_res_doubled) ) ? true : false;
+}
+
+void update_screen_mode(video_screen_mode_t screenmode, bool bmp_mode)
+{
+	//ClearTextLayer();
+	video_deinit();
+	video_init(screenmode, bmp_mode);
+	video_vdp2_clear_palette(0);
+	SetFontPalette();
 }

@@ -53,6 +53,9 @@ video_screen_mode_t next_screen_mode(video_screen_mode_t screenmode);
 video_screen_mode_t prev_screen_mode(video_screen_mode_t screenmode);
 int get_screenmode_number(video_screen_mode_t screenmode);
 video_screen_mode_t create_screenmode_by_number(vdp2_tvmd_tv_standard_t colorsystem, int number);
+int get_screenmode_resolution_x(video_screen_mode_t screenmode);
+int get_screenmode_resolution_y(video_screen_mode_t screenmode);
 bool is_screenmode_special(video_screen_mode_t screenmode);
+void update_screen_mode(video_screen_mode_t screenmode, bool bmp_mode);
 
 #endif /* !VIDEO_H */

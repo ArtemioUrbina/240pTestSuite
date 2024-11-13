@@ -89,16 +89,6 @@ static void suite_vblank_out_handler(void *work __unused)
     smpc_peripheral_intback_issue();
 }
 
-
-void update_screen_mode(video_screen_mode_t screenmode, bool bmp_mode)
-{
-	//ClearTextLayer();
-	video_deinit();
-	video_init(screenmode, bmp_mode);
-	video_vdp2_clear_palette(0);
-	LoadFont();
-}
-
 int main(void)
 {
 	int sel = 0;
@@ -129,7 +119,7 @@ int main(void)
 	background_fade_to_black();
 
 	video_vdp2_clear_palette(0);
-	LoadFont();
+	SetFontPalette();
 
 	//detect color system
 	screenMode.colorsystem = vdp2_tvmd_tv_standard_get();

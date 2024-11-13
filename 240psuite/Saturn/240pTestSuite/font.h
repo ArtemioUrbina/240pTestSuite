@@ -41,7 +41,7 @@ extern int _fw;
 extern unsigned char SuiteFont[];
 extern int SuiteFont_len;
 
-void LoadFont();
+void SetFontPalette();
 void DrawString(char *str, unsigned int x, unsigned int y, unsigned int palette);
 void ClearText(int left, int top, int width, int height);
 void ClearTextLayer();
