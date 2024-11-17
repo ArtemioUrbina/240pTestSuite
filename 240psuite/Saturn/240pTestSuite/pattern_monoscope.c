@@ -7,6 +7,7 @@
 #include "video.h"
 #include "control.h"
 #include "ire.h"
+#include "input.h"
 
 #define COLOR_WHITE 1
 #define COLOR_RED 2
@@ -14,132 +15,183 @@
 #define COLOR_LIGHTBLUE 4
 #define COLOR_GREEN 5
 
+video_screen_mode_t curr_screenmode;
+
 void draw_point(int x, int y, int color)
 {
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	if (x%2==1)
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(curr_screenmode))
 	{
-		_pointer8[y*512+x/2] |= 0x01*color;
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
 	}
-	else
+	for (int copy = 0; copy < copies; copy++)
 	{
-		_pointer8[y*512+x/2] |= 0x10*color;
+		if (x%2==1)
+		{
+			_pointer8[copy][y*512+x/2] |= 0x01*color;
+		}
+		else
+		{
+			_pointer8[copy][y*512+x/2] |= 0x10*color;
+		}
 	}
 }
 
 void draw_dotted_line(int x1, int x2, int y, int color)
 {
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	int _x = x1;
-	while (_x<((x2/2)*2))
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(curr_screenmode))
 	{
-		_pointer8[y*512+_x/2] &= 0xF0;
-		_pointer8[y*512+_x/2] |= 0x10*color;
-		_x+=2;
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
 	}
-	if (_x<x2)
+	for (int copy = 0; copy < copies; copy++)
 	{
-		_pointer8[y*512+_x/2] &= 0xF0;
-		_pointer8[y*512+_x/2] |= 0x10*color;
-		_pointer8[y*512+_x/2] |= 0x10*color;
+		int _x = x1;
+		while (_x<((x2/2)*2))
+		{
+			_pointer8[copy][y*512+_x/2] &= 0xF0;
+			_pointer8[copy][y*512+_x/2] |= 0x10*color;
+			_x+=2;
+		}
+		if (_x<x2)
+		{
+			_pointer8[copy][y*512+_x/2] &= 0xF0;
+			_pointer8[copy][y*512+_x/2] |= 0x10*color;
+			_pointer8[copy][y*512+_x/2] |= 0x10*color;
+		}
 	}
 }
 
 void draw_rectangle(int x1, int y1, int x2, int y2, int color)
 {
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	int _x = x1;
-	if (_x%2==1)
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(curr_screenmode))
 	{
-		_pointer8[y1*512+_x/2] |= 0x01*color;
-		_pointer8[y2*512+_x/2] |= 0x01*color;
-		_x++;
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
 	}
-	while (_x<((x2/2)*2))
+	for (int copy = 0; copy < copies; copy++)
 	{
-		_pointer8[y1*512+_x/2] |= 0x11*color;
-		_pointer8[y2*512+_x/2] |= 0x11*color;
-		_x+=2;
-	}
-	//_x-=2;
-	if (_x<x2)
-	{
-		_pointer8[y1*512+_x/2] |= 0x10*color;
-		_pointer8[y2*512+_x/2] |= 0x10*color;
-	}
-	for (int _y=y1;_y<=y2;_y++)
-	{
-		if (x1%2==0)
-			_pointer8[_y*512+x1/2] |= 0x10*color;
-		else
-			_pointer8[_y*512+x1/2] |= 0x01*color;
+		int _x = x1;
+		if (_x%2==1)
+		{
+			_pointer8[copy][y1*512+_x/2] |= 0x01*color;
+			_pointer8[copy][y2*512+_x/2] |= 0x01*color;
+			_x++;
+		}
+		while (_x<((x2/2)*2))
+		{
+			_pointer8[copy][y1*512+_x/2] |= 0x11*color;
+			_pointer8[copy][y2*512+_x/2] |= 0x11*color;
+			_x+=2;
+		}
+		if (_x<x2)
+		{
+			_pointer8[copy][y1*512+_x/2] |= 0x10*color;
+			_pointer8[copy][y2*512+_x/2] |= 0x10*color;
+		}
+		for (int _y=y1;_y<=y2;_y++)
+		{
+			if (x1%2==0)
+				_pointer8[copy][_y*512+x1/2] |= 0x10*color;
+			else
+				_pointer8[copy][_y*512+x1/2] |= 0x01*color;
 
-		if (x2%2==0)
-			_pointer8[_y*512+x2/2] |= 0x10*color;
-		else
-			_pointer8[_y*512+x2/2] |= 0x01*color;
+			if (x2%2==0)
+				_pointer8[copy][_y*512+x2/2] |= 0x10*color;
+			else
+				_pointer8[copy][_y*512+x2/2] |= 0x01*color;
+		}
 	}
 }
 
 void clear_rectangle(int x1, int y1, int x2, int y2)
 {
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	int _x = x1;
-	if (_x%2==1)
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(curr_screenmode))
 	{
-		_pointer8[y1*512+_x/2] &= ~0x0F;
-		_pointer8[y2*512+_x/2] &= ~0x0F;
-		_x++;
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
 	}
-	while (_x<((x2/2)*2))
+	for (int copy = 0; copy < copies; copy++)
 	{
-		_pointer8[y1*512+_x/2] &= ~0xFF;
-		_pointer8[y2*512+_x/2] &= ~0xFF;
-		_x+=2;
-	}
-	//_x-=2;
-	//if (_x<x2)
-	if (0==(x2%2))
-	{
-		_pointer8[y1*512+_x/2] &= ~0xF0;
-		_pointer8[y2*512+_x/2] &= ~0xF0;
-	}
-	for (int _y=y1;_y<=y2;_y++)
-	{
-		if (x1%2==0)
-			_pointer8[_y*512+x1/2] &= ~0xF0;
-		else
-			_pointer8[_y*512+x1/2] &= ~0x0F;
+		int _x = x1;
+		if (_x%2==1)
+		{
+			_pointer8[copy][y1*512+_x/2] &= ~0x0F;
+			_pointer8[copy][y2*512+_x/2] &= ~0x0F;
+			_x++;
+		}
+		while (_x<((x2/2)*2))
+		{
+			_pointer8[copy][y1*512+_x/2] &= 0;
+			_pointer8[copy][y2*512+_x/2] &= 0;
+			_x+=2;
+		}
+		if (0==(x2%2))
+		{
+			_pointer8[copy][y1*512+_x/2] &= ~0xF0;
+			_pointer8[copy][y2*512+_x/2] &= ~0xF0;
+		}
+		for (int _y=y1;_y<=y2;_y++)
+		{
+			if (x1%2==0)
+				_pointer8[copy][_y*512+x1/2] &= ~0xF0;
+			else
+				_pointer8[copy][_y*512+x1/2] &= ~0x0F;
 
-		if (x2%2==0)
-			_pointer8[_y*512+x2/2] &= ~0xF0;
-		else
-			_pointer8[_y*512+x2/2] &= ~0x0F;
+			if (x2%2==0)
+				_pointer8[copy][_y*512+x2/2] &= ~0xF0;
+			else
+				_pointer8[copy][_y*512+x2/2] &= ~0x0F;
+		}
 	}
 }
 
 void clear_filled(int x1, int y1, int x2, int y2)
 {
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	for (int _y=y1;_y<=y2;_y++)
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(curr_screenmode))
 	{
-		int _x = x1;
-		if (_x%2==1)
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
+	}
+	for (int copy = 0; copy < copies; copy++)
+	{
+		for (int _y=y1;_y<=y2;_y++)
 		{
-			_pointer8[_y*512+_x/2] &= ~0x0F;
-			//_pointer8[_y*512+_x/2] |= 0x02;
-			_x++;
-		}
-		while (_x<x2)
-		{
-			_pointer8[_y*512+_x/2] &= ~0xFF;
-			//_pointer8[_y*512+_x/2] |= 0x22;
-			_x+=2;
-		}
-		if (0==(x2%2))
-		{
-			_pointer8[_y*512+x2/2] &= ~0xF0;
-			//_pointer8[_y*512+x2/2] |= 0x20;
+			int _x = x1;
+			if (_x%2==1)
+			{
+				_pointer8[copy][_y*512+_x/2] &= ~0x0F;
+				_x++;
+			}
+			while (_x<x2)
+			{
+				_pointer8[copy][_y*512+_x/2] &= 0;
+				_x+=2;
+			}
+			if (0==(x2%2))
+			{
+				_pointer8[copy][_y*512+x2/2] &= ~0xF0;
+			}
 		}
 	}
 }
@@ -233,7 +285,7 @@ void draw_monoscope(video_screen_mode_t screenmode, bool bIRE100)
 	//add colors to palette
 	uint8_t IRE_top = (bIRE100) ? Get_IRE_Level(100.0) : Get_IRE_Level(75);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
-	rgb888_t Color = {0,0,0,0};
+	rgb888_t Color = {.cc=0,.r=0,.g=0,.b=0};
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
@@ -256,10 +308,18 @@ void draw_monoscope(video_screen_mode_t screenmode, bool bIRE100)
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
-
 	//fill everything with black
-	memset(_pointer8,0x00,512*_size_y);
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(curr_screenmode))
+	{
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
+	}
+	for (int copy = 0; copy < copies; copy++)
+		memset(_pointer8[copy],0x00,512*_size_y);
 
 	int cell_x=16;
 	int cell_y=16;
@@ -320,15 +380,9 @@ void draw_monoscope(video_screen_mode_t screenmode, bool bIRE100)
 	//draw top and bottom rectangles
 	draw_cell_funnypattern(_size_x/2-cell_x,offset_y,cell_x,cell_y,COLOR_WHITE);
 	draw_cell_funnypattern(_size_x/2,offset_y,cell_x,cell_y,COLOR_WHITE);
-	//draw_cell_hlines(_size_x/2-cell_x,cell_y+offset_y,cell_x,cell_y,COLOR_WHITE);
-	//draw_cell_vlines(_size_x/2,cell_y+offset_y,cell_x,cell_y,COLOR_WHITE);
-	//draw_rectangle(_size_x/2-cell_x-1,cell_y+offset_y,_size_x/2+cell_x,cell_y*2+offset_y,COLOR_WHITE);
 
 	draw_cell_funnypattern(_size_x/2-cell_x,_size_y-cell_y-offset_y,cell_x,cell_y,COLOR_WHITE);
 	draw_cell_funnypattern(_size_x/2,_size_y-cell_y-offset_y,cell_x,cell_y,COLOR_WHITE);
-	//draw_cell_vlines(_size_x/2-cell_x,_size_y-cell_y*2-offset_y,cell_x,cell_y,COLOR_WHITE);
-	//draw_cell_hlines(_size_x/2,_size_y-cell_y*2-offset_y,cell_x,cell_y,COLOR_WHITE);
-	//draw_rectangle(_size_x/2-cell_x-1,_size_y-cell_y*2-1-offset_y,_size_x/2+cell_x,_size_y-offset_y,COLOR_WHITE);
 
 	//left and right rectangles
 	draw_cell_funnypattern(0,_size_y/2-cell_y,cell_x,cell_y,COLOR_WHITE);
@@ -393,13 +447,6 @@ void draw_monoscope(video_screen_mode_t screenmode, bool bIRE100)
 		draw_rectangle(_size_x/2-rect_x/2+1,_size_y/2-rect_y/2+1,_size_x/2+rect_x/2,_size_y/2+rect_y/2,COLOR_LIGHTBLUE);
 	}
 
-	//center quads
-	/*draw_cell_empty(_size_x/2-cell_x_fixed,_size_y/2-cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_cell_empty(_size_x/2,_size_y/2-cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_cell_empty(_size_x/2-cell_x_fixed,_size_y/2,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_cell_empty(_size_x/2,_size_y/2,cell_x_fixed,cell_y,COLOR_WHITE);
-	draw_rectangle(_size_x/2-cell_x_fixed-1,_size_y/2-cell_y-1,_size_x/2+cell_x_fixed,_size_y/2+cell_y,COLOR_WHITE);*/
-
 	//center crosshair
 	clear_filled(_size_x/2-7,_size_y/2-7, _size_x/2+6, _size_y/2+6);
 	draw_rectangle(_size_x/2-1,_size_y/2-1,_size_x/2,_size_y/2,COLOR_WHITE);
@@ -419,12 +466,6 @@ void draw_monoscope(video_screen_mode_t screenmode, bool bIRE100)
 	draw_rectangle(_size_x/2+3,_size_y/2-11,_size_x/2+3,_size_y/2-6,COLOR_WHITE);
 	draw_rectangle(_size_x/2-4,_size_y/2+5,_size_x/2-4,_size_y/2+10,COLOR_WHITE);
 	draw_rectangle(_size_x/2+3,_size_y/2+5,_size_x/2+3,_size_y/2+10,COLOR_WHITE);
-
-	//center-around quads
-	//draw_rectangle_set(_size_x/2-cell_x_fixed-1,_size_y/2-cell_y*3-1,cell_x_fixed,cell_y,COLOR_WHITE);
-	//draw_rectangle_set(_size_x/2-cell_x_fixed-1,_size_y/2+cell_y,cell_x_fixed,cell_y,COLOR_WHITE);
-	//draw_rectangle_set(_size_x/2-cell_x_fixed*3-1,_size_y/2-cell_y-1,cell_x_fixed,cell_y,COLOR_WHITE);
-	//draw_rectangle_set(_size_x/2+cell_x_fixed,_size_y/2-cell_y-1,cell_x_fixed,cell_y,COLOR_WHITE);
 
 	//dotted lines
 	if (VIDEO_X_RESOLUTION_320 == screenmode.x_res)
@@ -446,17 +487,7 @@ void draw_monoscope(video_screen_mode_t screenmode, bool bIRE100)
 	draw_dotted_line(_size_x/2+11,_size_x/2+rect_x/2+2,_size_y/2-4,COLOR_WHITE);
 	draw_dotted_line(_size_x/2+11,_size_x/2+rect_x/2+2,_size_y/2+3,COLOR_WHITE);
 
-	//small red quad
-	/*red_quad_y = (red_quad_y*2.0)/3.0;
-	red_quad_x = ((red_quad_y*ratio)+0.5);
-	if ((red_quad_x) > 500)
-		red_quad_x = 500;
-	if ((red_quad_x) < 10)
-		red_quad_x = 10;
-	clear_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2);
-	draw_rectangle(_size_x/2-red_quad_x/2-1,_size_y/2-red_quad_y/2-1,_size_x/2+red_quad_x/2,_size_y/2+red_quad_y/2,COLOR_RED);*/
-
-	video_vdp2_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg_bmp(screenmode);
 }
 
 void draw_monoscope_text(video_screen_mode_t screenmode)
@@ -464,13 +495,7 @@ void draw_monoscope_text(video_screen_mode_t screenmode)
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 	double ratio = get_screen_square_pixel_ratio(screenmode);
-	int cell_x=16;
-	int cell_y=16;
-	if (screenmode.x_res_doubled)
-		cell_x=32;
-	if ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) )
-		cell_y=32;
-	int offset_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? cell_y/2 : 0;
+
 	int text_shift_y = (VDP2_TVMD_VERT_240 == screenmode.y_res) ? -8 :
 					(VDP2_TVMD_VERT_256 == screenmode.y_res) ? -16 : 0;
 
@@ -517,11 +542,10 @@ void draw_monoscope_text(video_screen_mode_t screenmode)
 
 void pattern_monoscope(video_screen_mode_t screenmode)
 {
-	video_screen_mode_t curr_screenmode = screenmode;
+	curr_screenmode = screenmode;
 	bool bIRE100 = true;
 	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_monoscope(curr_screenmode,bIRE100);
-	bool key_pressed = false;
 	bool size_printed = false;
 
 	wait_for_key_unpress();
@@ -536,6 +560,7 @@ void pattern_monoscope(video_screen_mode_t screenmode)
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
 			update_screen_mode(curr_screenmode,true);
+			update_screen_mode(curr_screenmode,true);
 			draw_monoscope(curr_screenmode,bIRE100);
 			if (size_printed) draw_monoscope_text(curr_screenmode);
 			print_screen_mode(curr_screenmode);
@@ -545,6 +570,7 @@ void pattern_monoscope(video_screen_mode_t screenmode)
 		else if ( (controller.pressed.button.r) )
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			update_screen_mode(curr_screenmode,true);
 			draw_monoscope(curr_screenmode,bIRE100);
 			if (size_printed) draw_monoscope_text(curr_screenmode);
