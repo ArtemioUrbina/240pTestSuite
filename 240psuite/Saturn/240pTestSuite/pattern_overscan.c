@@ -7,10 +7,10 @@
 #include "video.h"
 #include "control.h"
 #include "ire.h"
+#include "input.h"
 
 void draw_overscan_constant_text()
 {
-	char buf[64];
 	DrawString("Top Overscan :", 40, 100, FONT_WHITE);
 	DrawString("Bottom Overscan :", 40, 110, FONT_WHITE);
 	DrawString("Left Overscan :", 40, 120, FONT_WHITE);
@@ -36,6 +36,70 @@ void redraw_overscan_text(int _size_x, int _size_y, int top, int bottom, int lef
 	DrawString(buf, 30, 100+10*cursor, FONT_WHITE);
 }
 
+void redraw_overscan(video_screen_mode_t screenmode, int top, int bottom, int left, int right, int cursor)
+{
+	int _size_x = get_screenmode_resolution_x(screenmode);
+	int _size_y = get_screenmode_resolution_y(screenmode);
+
+	video_vdp2_set_cycle_patterns_cpu();
+	//add colors to palette
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(screenmode))
+	{
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
+	}
+
+	//fill center with gray
+	for (int copy = 0; copy < copies; copy++)
+		for (int y=top;y<_size_y-bottom;y++)
+			memset(&(_pointer8[copy][y*512+left/2]), 0x22, (_size_x-right-left)/2);
+
+
+	//draw top
+	for (int copy = 0; copy < copies; copy++)
+		for (int y=0;y<top;y++) 
+			memset(&(_pointer8[copy][y*512]), 0x11, 512);
+
+	//draw bot
+	for (int y=_size_y-bottom;y<_size_y;y++) memset(&(_pointer8[y*512]), 0x11, 512);
+
+	//draw left
+	for (int copy = 0; copy < copies; copy++)
+	{
+		for (int y=0;y<_size_y;y++)
+			memset(&(_pointer8[copy][y*512]), 0x11, left/2);
+		if (left%2 == 1)
+			for (int y=0;y<_size_y;y++)
+			{
+				_pointer8[copy][y*512+left/2] &= 0x0F;
+				_pointer8[copy][y*512+left/2] |= 0x10;
+			}
+	}
+
+	//draw right
+	for (int copy = 0; copy < copies; copy++)
+	{
+		for (int y=0;y<_size_y;y++)
+			memset(&(_pointer8[y*512+_size_x/2-right/2]), 0x11, right/2);
+		if (right%2 == 1)
+			for (int y=0;y<_size_y;y++)
+			{
+				_pointer8[copy][y*512+_size_x/2-right/2-1] &= 0xF0;
+				_pointer8[copy][y*512+_size_x/2-right/2-1] |= 0x01;
+			}
+	}
+
+	video_vdp2_set_cycle_patterns_nbg_bmp(screenmode);
+
+	ClearText(160,100,160,40);	
+	ClearText(30,100,10,50);	
+	redraw_overscan_text(_size_x,_size_y, top, bottom, left, right, cursor);
+}
+
 void draw_overscan(video_screen_mode_t screenmode, int top, int bottom, int left, int right, int cursor)
 {
 	//removing text
@@ -45,7 +109,7 @@ void draw_overscan(video_screen_mode_t screenmode, int top, int bottom, int left
 	//add colors to palette
 	uint8_t IRE_top = Get_IRE_Level(100.0);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
-	rgb888_t Color = {0,0,0,0};
+	rgb888_t Color = {.cc=0,.r=0,.g=0,.b=0};
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
@@ -58,62 +122,12 @@ void draw_overscan(video_screen_mode_t screenmode, int top, int bottom, int left
 	draw_overscan_constant_text();
 	redraw_overscan(screenmode, top, bottom, left, right, cursor);
 
-	video_vdp2_set_cycle_patterns_nbg(screenmode);
-}
-
-void redraw_overscan(video_screen_mode_t screenmode, int top, int bottom, int left, int right, int cursor)
-{
-	int _size_x = get_screenmode_resolution_x(screenmode);
-	int _size_y = get_screenmode_resolution_y(screenmode);
-
-	video_vdp2_set_cycle_patterns_cpu();
-	//add colors to palette
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
-
-	//fill center with gray
-	for (int y=top;y<_size_y-bottom;y++)
-	{
-		memset(&(_pointer8[y*512+left/2]), 0x22, (_size_x-right-left)/2);
-	}
-
-	//draw top
-	for (int y=0;y<top;y++) memset(&(_pointer8[y*512]), 0x11, 512);
-
-	//draw bot
-	for (int y=_size_y-bottom;y<_size_y;y++) memset(&(_pointer8[y*512]), 0x11, 512);
-
-	//draw left
-	for (int y=0;y<_size_y;y++)
-		memset(&(_pointer8[y*512]), 0x11, left/2);
-	if (left%2 == 1)
-		for (int y=0;y<_size_y;y++)
-		{
-			_pointer8[y*512+left/2] &= 0x0F;
-			_pointer8[y*512+left/2] |= 0x10;
-		}
-
-	//draw right
-	for (int y=0;y<_size_y;y++)
-		memset(&(_pointer8[y*512+_size_x/2-right/2]), 0x11, right/2);
-	if (right%2 == 1)
-		for (int y=0;y<_size_y;y++)
-		{
-			_pointer8[y*512+_size_x/2-right/2-1] &= 0xF0;
-			_pointer8[y*512+_size_x/2-right/2-1] |= 0x01;
-		}
-
-
-	video_vdp2_set_cycle_patterns_nbg(screenmode);
-
-	ClearText(160,100,160,40);	
-	ClearText(30,100,10,50);	
-	redraw_overscan_text(_size_x,_size_y, top, bottom, left, right, cursor);
+	video_vdp2_set_cycle_patterns_nbg_bmp(screenmode);
 }
 
 void pattern_overscan(video_screen_mode_t screenmode)
 {
 	video_screen_mode_t curr_screenmode = screenmode;
-	bool key_pressed = false;
 	int _left = 0;
 	int _right = 0;
 	int _top = 0;
@@ -136,6 +150,7 @@ void pattern_overscan(video_screen_mode_t screenmode)
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
 			update_screen_mode(curr_screenmode,true);
+			update_screen_mode(curr_screenmode,true);
 			draw_overscan(curr_screenmode,_top,_bottom,_left,_right,_cursor);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -144,6 +159,7 @@ void pattern_overscan(video_screen_mode_t screenmode)
 		else if ( (controller.pressed.button.r) )
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
+			update_screen_mode(curr_screenmode,true);
 			update_screen_mode(curr_screenmode,true);
 			draw_overscan(curr_screenmode,_top,_bottom,_left,_right,_cursor);
 			print_screen_mode(curr_screenmode);
