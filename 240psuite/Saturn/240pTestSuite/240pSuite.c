@@ -125,7 +125,7 @@ int main(void)
 	screenMode.colorsystem = vdp2_tvmd_tv_standard_get();
 
 	//debug force mode
-	screenMode.scanmode = VIDEO_SCANMODE_480P;
+	//screenMode.scanmode = VIDEO_SCANMODE_480P;
 
 	//measure frame clock
 	volatile int frame_counter=0;
