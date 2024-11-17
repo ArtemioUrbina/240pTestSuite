@@ -7,6 +7,7 @@
 #include "video.h"
 #include "control.h"
 #include "ire.h"
+#include "input.h"
 
 void draw_grayramp(video_screen_mode_t screenmode)
 {
@@ -17,7 +18,7 @@ void draw_grayramp(video_screen_mode_t screenmode)
 	//add colors to palette
 	uint8_t IRE_top = Get_IRE_Level(100.0);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
-	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
+	rgb888_t Color = {.cc=0,.r=IRE_bot,.g=IRE_bot,.b=IRE_bot};
 	for (int i=0;i<32;i++) 
 	{
 		Color.r = IRE_bot + (i*(IRE_top-IRE_bot)+16)/32;
@@ -27,63 +28,83 @@ void draw_grayramp(video_screen_mode_t screenmode)
 	}
 
 	//create single-color tiles for each color, 32 tiles in total
-	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	for (int i=1; i<33; i++)
-		for (int j=0; j<16; j++)
-			_pointer32[i*16+j] = 0x01010101*i;
+	int copies = 1;
+	int *_pointer32[2];
+	int vram_offset[2];
+	_pointer32[0] = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(screenmode))
+	{
+		copies = 2;
+		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START;
+		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START;
+	}
+	for (int copy = 0; copy < copies; copy++)
+		for (int i=1; i<33; i++)
+			for (int j=0; j<16; j++)
+				_pointer32[copy][i*16+j] = 0x01010101*i;
 	//fill everything with pitch-black
-    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x00200002; //palette 2, transparency on, black from white gradient
-    }
+    _pointer32[0] = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+	vram_offset[0] = VIDEO_VDP2_NBG0_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+	if (is_screenmode_special(screenmode))
+	{
+		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_PNDR_START;
+		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_PNDR_START;
+		vram_offset[0] = VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+		vram_offset[1] = VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+	}
+    for (int copy = 0; copy < copies; copy++)
+		for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
+			_pointer32[copy][i] = 0x00200002 + vram_offset[copy]/32; //palette 2, transparency on, black from white gradient
+
 	//draw bars depending on screen mode
-	_pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
 	int offset = (VIDEO_X_RESOLUTION_320 == screenmode.x_res) ? 6 : 10;
 	int y_ratio = ( (VIDEO_SCANMODE_480I == screenmode.scanmode) || (VIDEO_SCANMODE_480P == screenmode.scanmode) ) ? 2 : 1;
-    if (screenmode.x_res_doubled)
+	for (int copy = 0; copy < copies; copy++)
 	{
-		//high-x-res mode
-		for (int i = 0;i<64;i++)
+		if (screenmode.x_res_doubled)
 		{
-			for (int j=0;j<12*y_ratio;j++)
+			//high-x-res mode
+			for (int i = 0;i<64;i++)
 			{
-				if (offset+i < 64)
+				for (int j=0;j<12*y_ratio;j++)
 				{
-					_pointer32[64*(3+j) + offset + i] = 0x00200000 | (i/2+1)*2; //palette 2
+					if (offset+i < 64)
+					{
+						_pointer32[copy][64*(3+j) + offset + i] = 0x00200000 + (i/2+1)*2 + vram_offset[copy]/32; //palette 2
+					}
+					else
+					{
+						_pointer32[copy][64*63+64*(3+j) + offset + i] = 0x00200000 + (i/2+1)*2 + vram_offset[copy]/32; //palette 2
+					}
 				}
-				else
+				for (int j=12*y_ratio;j<24*y_ratio;j++)
 				{
-					_pointer32[64*63+64*(3+j) + offset + i] = 0x00200000 | (i/2+1)*2; //palette 2
+					if (offset+i < 64)
+					{
+						_pointer32[copy][64*(3+j) + offset + i] = 0x00200000 + (32-i/2)*2 + vram_offset[copy]/32; //palette 2
+					}
+					else
+					{
+						_pointer32[copy][64*63+64*(3+j) + offset + i] = 0x00200000 + (32-i/2)*2 + vram_offset[copy]/32; //palette 2
+					}
 				}
-			}
-			for (int j=12*y_ratio;j<24*y_ratio;j++)
-			{
-				if (offset+i < 64)
-				{
-					_pointer32[64*(3+j) + offset + i] = 0x00200000 | (32-i/2)*2; //palette 2
-				}
-				else
-				{
-					_pointer32[64*63+64*(3+j) + offset + i] = 0x00200000 | (32-i/2)*2; //palette 2
-				}
-			}
-		}	
-	}
-	else
-	{
-		//normal x mode
-		for (int i = 0;i<32;i++)
+			}	
+		}
+		else
 		{
-			for (int j=0;j<12*y_ratio;j++)
+			//normal x mode
+			for (int i = 0;i<32;i++)
 			{
-				_pointer32[64*(3+j) + offset + i] = 0x00200000 | (i+1)*2; //palette 2
-			}
-			for (int j=12*y_ratio;j<24*y_ratio;j++)
-			{
-				_pointer32[64*(3+j) + offset + i] = 0x00200000 | (32-i)*2; //palette 2
-			}
-		}	
+				for (int j=0;j<12*y_ratio;j++)
+				{
+					_pointer32[copy][64*(3+j) + offset + i] = 0x00200000 + (i+1)*2 + vram_offset[copy]/32; //palette 2
+				}
+				for (int j=12*y_ratio;j<24*y_ratio;j++)
+				{
+					_pointer32[copy][64*(3+j) + offset + i] = 0x00200000 + (32-i)*2 + vram_offset[copy]/32; //palette 2
+				}
+			}	
+		}
 	}
 	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
@@ -92,7 +113,6 @@ void pattern_grayramp(video_screen_mode_t screenmode)
 {
 	video_screen_mode_t curr_screenmode = screenmode;
 	draw_grayramp(curr_screenmode);
-	bool key_pressed = false;
 
 	wait_for_key_unpress();
 	
