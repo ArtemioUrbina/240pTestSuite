@@ -15,7 +15,7 @@
 #define COLOR_LIGHTBLUE 4
 #define COLOR_GREEN 5
 
-video_screen_mode_t curr_screenmode;
+static video_screen_mode_t curr_screenmode;
 
 void draw_point(int x, int y, int color)
 {

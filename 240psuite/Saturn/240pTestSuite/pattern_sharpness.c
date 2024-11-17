@@ -7,6 +7,7 @@
 #include "video.h"
 #include "control.h"
 #include "ire.h"
+#include "input.h"
 
 uint8_t BrickPattern[64] = {
 	3,3,2,2,2,2,2,2,
@@ -19,18 +20,31 @@ uint8_t BrickPattern[64] = {
 	2,2,2,2,2,2,3,3,	
 };
 
+static video_screen_mode_t curr_screenmode;
+
 void draw_pixel(int x, int y, int color)
 {
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	if (x%2)
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(curr_screenmode))
 	{
-		_pointer8[y*512+x/2] &= 0xF0;
-		_pointer8[y*512+x/2] |= color;
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
 	}
-	else
+	for (int copy = 0; copy < copies; copy++)
 	{
-		_pointer8[y*512+x/2] &= 0x0F;
-		_pointer8[y*512+x/2] |= color<<4;
+		if (x%2)
+		{
+			_pointer8[copy][y*512+x/2] &= 0xF0;
+			_pointer8[copy][y*512+x/2] |= color;
+		}
+		else
+		{
+			_pointer8[copy][y*512+x/2] &= 0x0F;
+			_pointer8[copy][y*512+x/2] |= color<<4;
+		}
 	}
 }
 
@@ -44,7 +58,7 @@ void draw_sharpness(video_screen_mode_t screenmode, bool bIRE100)
 	//add colors to palette
 	uint8_t IRE_top = (bIRE100) ?  Get_IRE_Level(100) : Get_IRE_Level(75);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
-	rgb888_t Color = {0,0,0,0};
+	rgb888_t Color = {.cc=0,.r=0,.g=0,.b=0};
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
@@ -61,17 +75,25 @@ void draw_sharpness(video_screen_mode_t screenmode, bool bIRE100)
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(screenmode))
+	{
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
+	}
 
 	//fill with gray
-	memset(_pointer8, 0x22, _size_y*512);
+	for (int copy = 0; copy < copies; copy++)
+		memset(_pointer8[copy], 0x22, _size_y*512);
 
 	//center horizontal bars
 	for (int i=0;i<5;i++)
 	{
 		for (y=(_size_y*(i+8)/20)-(i+1)/2;y<(_size_y*(i+8)/20)+(i+2)/2;y++)
 		{
-			int line_start = y*512;
 			for (x=(_size_x*7)/20;x<(_size_x*13)/20;x++)
 			{
 				draw_pixel(x,y,3);//using black color
@@ -84,7 +106,6 @@ void draw_sharpness(video_screen_mode_t screenmode, bool bIRE100)
 	{
 		for (y=(_size_y*11)/30;y<(_size_y*19)/30;y++)
 		{
-			int line_start = y*512;
 			for (x=(_size_x*(i+6)/16)-(i+1)/2;x<(_size_x*(i+6)/16)+(i+2)/2;x++)
 			{
 				draw_pixel(x,y,3);//using black color
@@ -171,12 +192,11 @@ void draw_sharpness(video_screen_mode_t screenmode, bool bIRE100)
 	for (y=_size_y/13;y<_size_y-_size_y/13;y++) draw_pixel(_size_x/13,y,1);
 	for (y=_size_y/13;y<_size_y-_size_y/13;y++) draw_pixel(_size_x-_size_x/13,y,1);
 
-	video_vdp2_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg_bmp(screenmode);
 }
 
 void draw_sharpness_pattern2(video_screen_mode_t screenmode)
 {
-	int x,y;
 	//removing text
 	ClearTextLayer();
 	
@@ -198,29 +218,43 @@ void draw_sharpness_pattern2(video_screen_mode_t screenmode)
 	video_vdp2_set_palette_part(2,&Color,3,3); //palette 2 color 3
 
 	//create brick tile
-	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	int *BrickPattern32 = (int *)BrickPattern;
-	for (unsigned int i = 0; i < 16; i++)
+	int copies = 1;
+	int *_pointer32[2];
+	int vram_offset[2];
+	_pointer32[0] = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(screenmode))
 	{
-		_pointer32[i] = BrickPattern32[i];
+		copies = 2;
+		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START;
+		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START;
 	}
+	int *BrickPattern32 = (int *)BrickPattern;
+	for (int copy = 0; copy < copies; copy++)
+		for (unsigned int i = 0; i < 16; i++)
+			_pointer32[copy][i] = BrickPattern32[i];
 
 	//fill everything with a brick tile
-    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x00200000; //palette 2
+	_pointer32[0] = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+	vram_offset[0] = VIDEO_VDP2_NBG0_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+	if (is_screenmode_special(screenmode))
+	{
+		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_PNDR_START;
+		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_PNDR_START;
+		vram_offset[0] = VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+		vram_offset[1] = VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
 	}
+	for (int copy = 0; copy < copies; copy++)
+    	for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
+        	_pointer32[copy][i] = 0x00200000 + vram_offset[copy]/32; //palette 2
 	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
 void pattern_sharpness(video_screen_mode_t screenmode)
 {
-	video_screen_mode_t curr_screenmode = screenmode;
+	curr_screenmode = screenmode;
 	int iPattern = 0;
 	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_sharpness(curr_screenmode,false);
-	bool key_pressed = false;
 
 	wait_for_key_unpress();
 	
@@ -241,6 +275,7 @@ void pattern_sharpness(video_screen_mode_t screenmode)
 			else
 			{
 				update_screen_mode(curr_screenmode,true);
+				update_screen_mode(curr_screenmode,true);
 				draw_sharpness(curr_screenmode,false);
 			}
 			print_screen_mode(curr_screenmode);
@@ -257,6 +292,7 @@ void pattern_sharpness(video_screen_mode_t screenmode)
 			}
 			else
 			{
+				update_screen_mode(curr_screenmode,true);
 				update_screen_mode(curr_screenmode,true);
 				draw_sharpness(curr_screenmode,false);
 			}
@@ -275,6 +311,7 @@ void pattern_sharpness(video_screen_mode_t screenmode)
 			}
 			else
 			{
+				update_screen_mode(curr_screenmode,true);
 				update_screen_mode(curr_screenmode,true);
 				draw_sharpness(curr_screenmode,false);
 			}

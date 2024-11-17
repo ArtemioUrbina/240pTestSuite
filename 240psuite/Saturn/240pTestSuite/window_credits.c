@@ -7,8 +7,10 @@
 #include "video_vdp2.h"
 #include "control.h"
 #include "ire.h"
+#include "input.h"
+#include "background.h"
 
-#define VERSION_NUMBER "Saturn Ver. 0.3 beta 5"
+#define VERSION_NUMBER "Saturn Ver. 0.3 beta 6"
 #define VERSION_DATE __DATE__
 
 //there is no way to fit all credits on-screen, so scrolling is implemented
@@ -16,9 +18,6 @@
 
 void draw_credits()
 {
-	bool doexit = false;
-	char data[25];
-	int counter = 1;
 	int x = 32, y = 16, pos = 0;
 
 	ClearTextLayer();
@@ -98,11 +97,9 @@ void window_credits(video_screen_mode_t screenmode)
     _svin_cmdt_p[VIDEO_VDP1_ORDER_TEXT_SPRITE_0_INDEX].cmd_ya= (VDP2_TVMD_VERT_224 == screenmode.y_res) ? 40 : 
                                                 (VDP2_TVMD_VERT_240 == screenmode.y_res) ? 48 : 56;
 	vdp1_cmdt_char_base_set(&_svin_cmdt_p[VIDEO_VDP1_ORDER_TEXT_SPRITE_0_INDEX],
-								vdp1_vram_partitions.texture_base+FONT_QUAD_WIDTH*scroll_counter);
+								(vdp1_vram_t)vdp1_vram_partitions.texture_base+FONT_QUAD_WIDTH*scroll_counter);
 
 	draw_credits();
-	bool key_pressed = false;
-
 
 	while (1)
 	{
@@ -122,6 +119,6 @@ void window_credits(video_screen_mode_t screenmode)
 		scroll_counter++;
 		if (scroll_counter > 430*4) scroll_counter = 0;
 		vdp1_cmdt_char_base_set(&_svin_cmdt_p[VIDEO_VDP1_ORDER_TEXT_SPRITE_0_INDEX],
-								vdp1_vram_partitions.texture_base+FONT_QUAD_WIDTH*(scroll_counter>>2));
+								(vdp1_vram_t)vdp1_vram_partitions.texture_base+FONT_QUAD_WIDTH*(scroll_counter>>2));
 	}
 }

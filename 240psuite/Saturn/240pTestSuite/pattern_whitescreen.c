@@ -7,6 +7,7 @@
 #include "video.h"
 #include "control.h"
 #include "ire.h"
+#include "input.h"
 
 void draw_whitescreen(video_screen_mode_t screenmode, int color)
 {
@@ -17,7 +18,7 @@ void draw_whitescreen(video_screen_mode_t screenmode, int color)
 	//adding a single color to palette
 	uint8_t IRE_top = Get_IRE_Level(100.0);
 	uint8_t IRE_bot = Get_IRE_Level(7.5);
-	rgb888_t Color = {0,IRE_bot,IRE_bot,IRE_bot};
+	rgb888_t Color = {.cc=0,.r=IRE_bot,.g=IRE_bot,.b=IRE_bot};
 	switch (color)
 	{
 		case 0: //white
@@ -48,15 +49,32 @@ void draw_whitescreen(video_screen_mode_t screenmode, int color)
 	}
 	video_vdp2_set_palette_part(2,&Color,1,1); //palette 2 color 1
 	//create single-color tile for the color
-	int *_pointer32 = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
-	for (int j=0; j<16; j++)
-		_pointer32[16+j] = 0x01010101;
+	int copies = 1;
+	int *_pointer32[2];
+	int vram_offset[2];
+	_pointer32[0] = (int *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(screenmode))
+	{
+		copies = 2;
+		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START;
+		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START;
+	}
+	for (int copy = 0; copy < copies; copy++)
+		for (int j=0; j<16; j++)
+			_pointer32[copy][16+j] = 0x01010101;
 	//fill everything with our tile
-    _pointer32 = (int *)VIDEO_VDP2_NBG0_PNDR_START;
-    for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
-    {
-        _pointer32[i] = 0x00200002; //palette 2, transparency on, black
-    }
+	_pointer32[0] = (int *)VIDEO_VDP2_NBG0_PNDR_START;
+	vram_offset[0] = VIDEO_VDP2_NBG0_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+	if (is_screenmode_special(screenmode))
+	{
+		_pointer32[0] = (int *)VIDEO_VDP2_NBG0_SPECIAL_PNDR_START;
+		_pointer32[1] = (int *)VIDEO_VDP2_NBG1_SPECIAL_PNDR_START;
+		vram_offset[0] = VIDEO_VDP2_NBG0_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+		vram_offset[1] = VIDEO_VDP2_NBG1_SPECIAL_CHPNDR_START - VDP2_VRAM_ADDR(0,0);
+	}
+	for (int copy = 0; copy < copies; copy++)
+    	for (unsigned int i = 0; i < VIDEO_VDP2_NBG0_PNDR_SIZE / sizeof(int); i++)
+			_pointer32[copy][i] = 0x00200002 + vram_offset[copy]/32; //palette 2, transparency on, black
 	video_vdp2_set_cycle_patterns_nbg(screenmode);
 }
 
@@ -65,7 +83,6 @@ void pattern_whitescreen(video_screen_mode_t screenmode)
 	video_screen_mode_t curr_screenmode = screenmode;
 	int color = 0;
 	draw_whitescreen(curr_screenmode,color);
-	bool key_pressed = false;
 
 	wait_for_key_unpress();
 	

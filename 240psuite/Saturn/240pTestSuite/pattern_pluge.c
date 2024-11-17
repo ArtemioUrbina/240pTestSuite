@@ -7,6 +7,7 @@
 #include "video.h"
 #include "control.h"
 #include "ire.h"
+#include "input.h"
 
 void draw_pluge(video_screen_mode_t screenmode, bool bFullRange)
 {
@@ -17,7 +18,7 @@ void draw_pluge(video_screen_mode_t screenmode, bool bFullRange)
 	//add colors to palette
 	uint8_t IRE_top = 255; // (bFullRange) ? 255 : Get_IRE_Level(75);
 	uint8_t IRE_bot = 0; // (bFullRange) ? 0 : Get_IRE_Level(7.5);
-	rgb888_t Color = {0,0,0,0};
+	rgb888_t Color = {.cc=0,.r=0,.g=0,.b=0};
 	Color.r = IRE_top;
 	Color.g = IRE_top;
 	Color.b = IRE_top;	
@@ -72,74 +73,84 @@ void draw_pluge(video_screen_mode_t screenmode, bool bFullRange)
 	int _size_x = get_screenmode_resolution_x(screenmode);
 	int _size_y = get_screenmode_resolution_y(screenmode);
 
-	uint8_t *_pointer8 = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	int copies = 1;
+	uint8_t *_pointer8[2];
+	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
+	if (is_screenmode_special(screenmode))
+	{
+		copies = 2;
+		_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_SPECIAL_BMP_START;
+		_pointer8[1] = (uint8_t *)VIDEO_VDP2_NBG1_SPECIAL_BMP_START;
+	}
 
 	//set black
-	memset(_pointer8, 0x88, _size_y*512);
+	for (int copy = 0; copy < copies; copy++)
+		memset(_pointer8[copy], 0x88, _size_y*512);
 
 	//center bars
-	for (int i=0;i<4;i++)
-	{
-		uint8_t color = i+1;
-		for (int y=((_size_y*(i+1))/6);y<((_size_y*(i+2))/6);y++)
+	for (int copy = 0; copy < copies; copy++)
+		for (int i=0;i<4;i++)
 		{
-			int line_start = y*512;
-			for (int x=(_size_x*3)/8;x<(_size_x*5)/8;x++)
+			uint8_t color = i+1;
+			for (int y=((_size_y*(i+1))/6);y<((_size_y*(i+2))/6);y++)
 			{
-				if (x%2)
+				int line_start = y*512;
+				for (int x=(_size_x*3)/8;x<(_size_x*5)/8;x++)
 				{
-					_pointer8[line_start+x/2] &= 0xF0;
-					_pointer8[line_start+x/2] |= color;
-				}
-				else
-				{
-					_pointer8[line_start+x/2] &= 0x0F;
-					_pointer8[line_start+x/2] |= color<<4;
+					if (x%2)
+					{
+						_pointer8[copy][line_start+x/2] &= 0xF0;
+						_pointer8[copy][line_start+x/2] |= color;
+					}
+					else
+					{
+						_pointer8[copy][line_start+x/2] &= 0x0F;
+						_pointer8[copy][line_start+x/2] |= color<<4;
 
+					}
 				}
 			}
 		}
-	}
 
 	//side bars
-	for (int i=0;i<3;i++)
-	{
-		uint8_t color = i+5;
-		for (int y=((_size_y*1)/6);y<((_size_y*5)/6);y++)
+	for (int copy = 0; copy < copies; copy++)
+		for (int i=0;i<3;i++)
 		{
-			int line_start = y*512;
-			for (int x=(_size_x*(i*2+1))/20;x<(_size_x*(i*2+2))/20;x++)
+			uint8_t color = i+5;
+			for (int y=((_size_y*1)/6);y<((_size_y*5)/6);y++)
 			{
-				if (x%2)
+				int line_start = y*512;
+				for (int x=(_size_x*(i*2+1))/20;x<(_size_x*(i*2+2))/20;x++)
 				{
-					_pointer8[line_start+x/2] &= 0xF0;
-					_pointer8[line_start+x/2] |= color;
+					if (x%2)
+					{
+						_pointer8[copy][line_start+x/2] &= 0xF0;
+						_pointer8[copy][line_start+x/2] |= color;
+					}
+					else
+					{
+						_pointer8[copy][line_start+x/2] &= 0x0F;
+						_pointer8[copy][line_start+x/2] |= color<<4;
+					}
 				}
-				else
+				for (int x=(_size_x*(18-2*i))/20;x<(_size_x*(19-2*i))/20;x++)
 				{
-					_pointer8[line_start+x/2] &= 0x0F;
-					_pointer8[line_start+x/2] |= color<<4;
+					if (x%2)
+					{
+						_pointer8[copy][line_start+x/2] &= 0xF0;
+						_pointer8[copy][line_start+x/2] |= color;
+					}
+					else
+					{
+						_pointer8[copy][line_start+x/2] &= 0x0F;
+						_pointer8[copy][line_start+x/2] |= color<<4;
 
-				}
-			}
-			for (int x=(_size_x*(18-2*i))/20;x<(_size_x*(19-2*i))/20;x++)
-			{
-				if (x%2)
-				{
-					_pointer8[line_start+x/2] &= 0xF0;
-					_pointer8[line_start+x/2] |= color;
-				}
-				else
-				{
-					_pointer8[line_start+x/2] &= 0x0F;
-					_pointer8[line_start+x/2] |= color<<4;
-
+					}
 				}
 			}
 		}
-	}
 
-	video_vdp2_set_cycle_patterns_nbg(screenmode);
+	video_vdp2_set_cycle_patterns_nbg_bmp(screenmode);
 }
 
 void pattern_pluge(video_screen_mode_t screenmode)
@@ -148,7 +159,6 @@ void pattern_pluge(video_screen_mode_t screenmode)
 	bool bFullRange = false;
 	update_screen_mode(curr_screenmode,true); //re-initing in bmp mode
 	draw_pluge(curr_screenmode,bFullRange);
-	bool key_pressed = false;
 
 	wait_for_key_unpress();
 	
@@ -161,7 +171,8 @@ void pattern_pluge(video_screen_mode_t screenmode)
 		if ( (controller.pressed.button.l) )
 		{
 			curr_screenmode = prev_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode,false);
+			update_screen_mode(curr_screenmode,true);
+			update_screen_mode(curr_screenmode,true);
 			draw_pluge(curr_screenmode,bFullRange);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -170,7 +181,8 @@ void pattern_pluge(video_screen_mode_t screenmode)
 		else if ( (controller.pressed.button.r) )
 		{
 			curr_screenmode = next_screen_mode(curr_screenmode);
-			update_screen_mode(curr_screenmode,false);
+			update_screen_mode(curr_screenmode,true);
+			update_screen_mode(curr_screenmode,true);
 			draw_pluge(curr_screenmode,bFullRange);
 			print_screen_mode(curr_screenmode);
 			wait_for_key_unpress();
@@ -187,7 +199,7 @@ void pattern_pluge(video_screen_mode_t screenmode)
 		{
 			//quit the pattern
 			wait_for_key_unpress();
-			update_screen_mode(screenmode,true);
+			update_screen_mode(screenmode,false);
 			return;
 		}
 		vdp2_tvmd_vblank_in_wait();
