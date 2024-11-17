@@ -45,6 +45,7 @@ void draw_colorbars_grayscale(video_screen_mode_t screenmode, bool bIRE100)
 
 	int copies = 1;
 	uint8_t *_pointer8[2];
+	uint32_t *_pointer32;
 	_pointer8[0] = (uint8_t *)VIDEO_VDP2_NBG0_CHPNDR_START;
 	if (is_screenmode_special(screenmode))
 	{
@@ -58,20 +59,10 @@ void draw_colorbars_grayscale(video_screen_mode_t screenmode, bool bIRE100)
 	{
 		for (int y=0;y<_size_y;y++)
 		{
-			int line_start = y*512;
-			for (int x=0;x<_size_x;x++)
+			_pointer32 = (uint32_t *)&(_pointer8[copy][y*512]);
+			for (int x=0;x<_size_x/4;x++)
 			{
-				if (x%2)
-				{
-					_pointer8[copy][line_start+x/2] &= 0xF0;
-					_pointer8[copy][line_start+x/2] |= 1;
-				}
-				else
-				{
-					_pointer8[copy][line_start+x/2] &= 0x0F;
-					_pointer8[copy][line_start+x/2] |= 1<<4;
-
-				}
+				_pointer32[x] = 0x11111111;
 			}
 		}
 	}
