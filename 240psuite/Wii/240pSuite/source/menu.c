@@ -1177,7 +1177,7 @@ void DrawCredits(ImagePtr Back)
 		y += fh; 
 		y2 = y;
 		DrawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
-		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "devkitPPC"); y += fh;
+		DrawStringS(x+5, y, 0xff, 0xff, 0xff, "libogc2/devkitPPC"); y += fh;
 		DrawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope Pattern:"); y2 += fh; 
 		DrawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney (@khmr33)"); y2 += fh;
 		

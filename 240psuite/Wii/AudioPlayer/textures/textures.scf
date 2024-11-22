@@ -1,7 +1,7 @@
-<filepath="font.png" id="FONTIMG" colfmt=6 />
-<filepath="black.png" id="BLACKIMG" colfmt=6 />
-<filepath="white.png" id="WHITEIMG" colfmt=6 />
-<filepath="back.png" id="BACKIMG" colfmt=6 />
-<filepath="SD_b1.png" id="SD_B1_IMG" colfmt=6 />
-<filepath="SD_b2.png" id="SD_B2_IMG" colfmt=6 />
-<filepath="SD.png" id="SDIMG" colfmt=6 />
+<filepath="font.png" id="FONTIMG" colfmt=6 minfilt=0 magfilt=0 />
+<filepath="black.png" id="BLACKIMG" colfmt=6 minfilt=0 magfilt=0 />
+<filepath="white.png" id="WHITEIMG" colfmt=6 minfilt=0 magfilt=0 />
+<filepath="back.png" id="BACKIMG" colfmt=6 minfilt=0 magfilt=0 />
+<filepath="SD_b1.png" id="SD_B1_IMG" colfmt=6 minfilt=0 magfilt=0 />
+<filepath="SD_b2.png" id="SD_B2_IMG" colfmt=6 minfilt=0 magfilt=0 />
+<filepath="SD.png" id="SDIMG" colfmt=6 minfilt=0 magfilt=0 />

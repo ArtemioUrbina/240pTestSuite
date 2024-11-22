@@ -115,8 +115,7 @@ s32 TPL_GetTextureMEMCopy(TPLFile *tdf,s32 id,GXTexObj *texObj, void **texture)
 
 	DCFlushRange(lclhead.data,size);
 	GX_InitTexObj(texObj,lclhead.data,lclhead.width,lclhead.height,lclhead.fmt,lclhead.wraps,lclhead.wrapt,bMipMap);
-	if(bMipMap) GX_InitTexObjLOD(texObj,lclhead.minfilter,lclhead.magfilter,lclhead.minlod,lclhead.maxlod,
-								 lclhead.lodbias,biasclamp,biasclamp,lclhead.edgelod);
+	GX_InitTexObjLOD(texObj,lclhead.minfilter,lclhead.magfilter,lclhead.minlod,lclhead.maxlod,lclhead.lodbias,biasclamp,lclhead.edgelod,GX_ANISO_1);
 
 	*texture = lclhead.data;
 	return 0;

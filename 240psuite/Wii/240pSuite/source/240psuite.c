@@ -50,11 +50,13 @@ void ColorPatternsMenu(ImagePtr title, ImagePtr sd);
 void GeometryPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawMenuFooter(u8 r, u8 g, u8 b);
 
+s8 HWButton = -1;
 #ifdef WII_VERSION
-s8 HWButton = -1; 
 void WiiResetPressed();
 void WiiPowerPressed();
 void WiimotePowerPressed(s32 chan);
+#else
+void GCResetPressed();
 #endif
 
 int main(int argc, char **argv) 
@@ -67,6 +69,8 @@ int main(int argc, char **argv)
 	SYS_SetResetCallback(WiiResetPressed);
 	SYS_SetPowerCallback(WiiPowerPressed);
 	WPAD_SetPowerButtonCallback(WiimotePowerPressed);
+#else
+	SYS_SetResetCallback(GCResetPressed);
 #endif
 
 	ControllerInit();
@@ -100,6 +104,7 @@ int main(int argc, char **argv)
 	
 #ifdef WII_VERSION	
 	GetWiiRegion();
+#endif
 	
 	if(OffsetH || AspectRatio)
 	{
@@ -109,7 +114,6 @@ int main(int argc, char **argv)
 		}
 		ShowVideoWarning(sd);
 	}
-#endif
 	
 	// load blinking graphics if appropiate
 	if(sd)
@@ -177,10 +181,8 @@ int main(int argc, char **argv)
 		
 		pressed = Controller_ButtonsDown(0);
 
-#ifdef WII_VERSION
 		if(HWButton != -1)
 			EndProgram = 1;
-#endif
 			
 		if ( pressed & PAD_BUTTON_START )
 			DrawMenu = 1;	
@@ -853,6 +855,15 @@ void WiiPowerPressed()
 void WiimotePowerPressed(s32 chan)
 {
 	HWButton = SYS_POWEROFF;
+}
+
+#else
+/**
+ * Callback for the reset button on the GameCube.
+ */
+void GCResetPressed()
+{
+	HWButton = SYS_HOTRESET;
 }
 
 #endif

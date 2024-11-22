@@ -19,6 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "tests.h"
@@ -31,6 +32,8 @@
 #include "controller.h"
 #include "options.h"
 #include <asndlib.h>
+#undef MAX_VOICES
+#undef SND_BUFFERSIZE
 #include <aesndlib.h>
 
 #include "beep_snd.h"
@@ -550,7 +553,7 @@ void TimingReflexTest()
 		if(y == 96)
 		{			
 			if(audio)
-				ASND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_MONO_16BIT, 48000, 0, (void*)beep_snd, beep_snd_size, speed == -1 ? 0 : 255, speed == -1 ? 255 : 0, NULL);				
+				ASND_SetVoice(SND_GetFirstUnusedVoice(), VOICE_MONO_16BIT, 48000, 0, (void*)beep_snd, beep_snd_size, speed == -1 ? MIN_VOLUME : MAX_VOLUME, speed == -1 ? MAX_VOLUME : MIN_VOLUME, NULL);
 				
 			if(rumble)
 				ControllerRumble(0, 1);
@@ -1412,7 +1415,7 @@ void AudioSyncTest()
 			if(ASND_StatusVoice(voice) == SND_WORKING)
 				ASND_StopVoice(voice);
 			ASND_Pause(1);
-			ASND_SetVoice(voice, VOICE_MONO_16BIT, 48000, 0, (void*)beep_snd, beep_snd_size, 0xff, 0xff, NULL);
+			ASND_SetVoice(voice, VOICE_MONO_16BIT, 48000, 0, (void*)beep_snd, beep_snd_size, MAX_VOLUME, MAX_VOLUME, NULL);
 			playtone = 0;
 		}
 		
@@ -1474,9 +1477,9 @@ void DrawMessage(ImagePtr back, char *title, char *msg)
 	EndScene();
 }
 
-void aesnd_callback(AESNDPB *pb, unsigned int state, void *cb_arg)
+void aesnd_callback(AESNDPB *pb, unsigned int state)
 {
-	unsigned int *playback = (unsigned int *)cb_arg;
+	unsigned int *playback = AESND_GetVoiceUserData(pb);
 	
 	if (state == VOICE_STATE_RUNNING) 
 		*playback = 1;
@@ -1497,10 +1500,10 @@ void AudioEquipmentTest(ImagePtr back)
 
 	AESND_Init();
 	
-	voice = AESND_AllocateVoiceWithArg(aesnd_callback, &playback);
+	voice = AESND_AllocateVoice(aesnd_callback);
 	if(!voice)
 		return;
-	AESND_SetVoiceVolume(voice, 0xff, 0xff);
+	AESND_SetVoiceUserData(voice, &playback);
 
 	while(counter --)
 		DrawMessage(back, title, msg);
@@ -1561,11 +1564,7 @@ void AudioEquipmentTest(ImagePtr back)
 				
 				msg = "Playing Test Signal";
 
-#ifdef GC_VERSION
-				AESND_PlayVoice(voice, VOICE_STEREO16, aet_samples, aet_size, DSP_DEFAULT_FREQ, 0, 0);
-#else
-				AESND_PlayVoice(voice, VOICE_STEREO16, aet_samples, aet_size, 48000, 0, 0);
-#endif
+				AESND_PlayVoice(voice, VOICE_STEREO16, aet_samples, aet_size, lrintf(DSP_DEFAULT_FREQ), 0, false);
 				
 				while(playback != 1)
 					DrawMessage(back, title, msg);
@@ -1678,16 +1677,16 @@ void SoundTest()
 		switch(sel)
 		{
 			case 0:
-				aleft = 0xff;
-				aright = 0x00;
+				aleft = MAX_VOLUME;
+				aright = MIN_VOLUME;
 				break;
 			case 1:
-				aleft = 0xff;
-				aright = 0xff;
+				aleft = MAX_VOLUME;
+				aright = MAX_VOLUME;
 				break;
 			case 2:
-				aleft = 0x00;
-				aright = 0xff;
+				aleft = MIN_VOLUME;
+				aright = MAX_VOLUME;
 				break;
 		}
 

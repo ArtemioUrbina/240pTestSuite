@@ -163,6 +163,11 @@ void InitVideo()
 	if(CONF_GetVideo() == CONF_VIDEO_PAL ||
 		CONF_GetVideo() == CONF_VIDEO_MPAL)
 		Options.EnablePAL = 1;			
+#else
+	OffsetH = SYS_GetDisplayOffsetH();
+
+	if(SYS_GetVideoMode() == SYS_VIDEO_PAL)
+		Options.EnablePAL = 1;
 #endif
 
 	for(fb = 0; fb < 2; fb++)
@@ -256,6 +261,7 @@ void SetVideoMode(u32 newmode)
 #ifdef WII_VERSION
 	VIDEO_SetTrapFilter(Options.TrapFilter);
 #endif
+	VIDEO_SetAdjustingValues(0, 0);
 	VIDEO_Configure(rmode);			
 	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);
 	VIDEO_Flush();	
