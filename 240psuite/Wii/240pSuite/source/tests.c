@@ -1474,6 +1474,11 @@ void DrawMessage(ImagePtr back, char *title, char *msg)
 	DrawStringS((dW-fw*strlen(data1))/2, 80, 0xee, 0xee, 0xee, data1);
 	DrawStringS((dW-fw*strlen(msg))/2, 120, 0xff, 0xff, 0xff, msg);
 	DrawStringS((dW-fw*strlen(data2))/2, 180, 0x00, 0xff, 0xff, data2);
+	
+#ifndef WII_VERSION
+	DrawStringS(30, 150, 0xff, 0xff, 0xff, "The GC DAC pitch is off by 1.61663 cents, since it");
+	DrawStringS(30, 150+fh, 0xff, 0xff, 0xff, "runs at 48042.704626334519572953736654804 hz.");
+#endif
 	EndScene();
 }
 
@@ -1552,7 +1557,7 @@ void AudioEquipmentTest(ImagePtr back)
 		if ( pressed & PAD_BUTTON_START ) 		
 		{
 			DrawMenu = 1;					
-			HelpData = MDFOURIER_HELP;
+			HelpData = MDF_WII_HELP;
 		}
 #endif
 

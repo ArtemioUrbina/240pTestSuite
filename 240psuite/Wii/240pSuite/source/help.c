@@ -32,12 +32,6 @@
 
 
 /****** paste the results from converthelpfiles starts here **************************/
-char *SMPTEColor_txt[] = { 
-"            EBU/SMPTE COLOR BARS (1/3)\n\nThis pattern can be used to calibrate for NTSC\nlevels regarding contrast and brightness, and \nappropiate colors as well. \n\nYou can toggle between 100% and 75% #YSMPTE#Y color \nbars by pressing $A.\n\nThe #YEBU#Y color bars start at 0mV.\n\nRemember that the black level in the SMPTE pattern\nrefers to 7.5 IRE for video, console games usually\nstart at 0 IRE. This pattern can be used to \ncalibrate colors - or auto calibrated in a \n                                         #C(cont...)#C",
-"            EBU/SMPTE COLOR BARS (2/3)\n\nprofessional display - and then black levels can\nbe adjusted with the PLUGE pattern using the #GFull \nRGB Mode#G.\n\nIn an #YSMPT#YE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on\nand off between every bar, red cycling on and \n                                         #C(cont...)#C",
-"            EBU/SMPTE COLOR BARS (3/3)\n\noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
-NULL
-};
 char *alt240p_txt[] = { 
 "              ALTERNATING 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress $A to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
 NULL
@@ -135,6 +129,10 @@ char *mdfourier_txt[] = {
 "                    MDFOURIER\n\nThis test generates a series of audio signals that\nare to be recorded and analyzed for comparison\nwith the #CMDFourier#C tool on a computer.\n\nWe use the Audio Equipment test at 48khz.\n\nThe GC DAC pitch is off by 1.61663 cents, since it\nruns at 48042.704626334519572953736654804 hz.\n\nVisit #Yhttp://junkerhq.net/MDFourier#Y for details.",
 NULL
 };
+char *mdfourier_wii_txt[] = { 
+"                    MDFOURIER\n\nThis test generates a series of audio signals that\nare to be recorded and analyzed for comparison\nwith the #CMDFourier#C tool on a computer.\n\nWe use the Audio Equipment test at 48khz.\n\nVisit #Yhttp://junkerhq.net/MDFourier#Y for details.",
+NULL
+};
 char *memory_txt[] = { 
 "                 Memory Viewer\n\nThis shows selected regions of the main CPU memory\nmap.\n\nThe current address range is shown in green at the\nright from top to bottom.\n\nThe left part of the screen shows #Y0x1A0#Y bytes in\nhex.\n\n- Button A jumps to relevant memory locations.\n\n- Button X enabled CRC of current screen.\n\n- Button Y toggles #YASCII#Y mode.",
 NULL
@@ -188,6 +186,12 @@ char *sharpness_txt[] = {
 "                    SHARPNESS\n\nYou should set the sharpness of your CRT to a\nvalue that shows clean black and gray transitions,\nwith no white ghosting in between.\n\nOn most modern displays, the #Ysharpness#Y control is \nan edge-enhancement control, and most probably\nshould be set to zero, or in the middle.\n\nIn some #YPVM#Y/#YBVM#Y displays this is also referred \nto as #Yaperture#Y.",
 NULL
 };
+char *SMPTEColor_txt[] = { 
+"            EBU/SMPTE COLOR BARS (1/3)\n\nThis pattern can be used to calibrate for NTSC\nlevels regarding contrast and brightness, and \nappropiate colors as well. \n\nYou can toggle between 100% and 75% #YSMPTE#Y color \nbars by pressing $A.\n\nThe #YEBU#Y color bars start at 0mV.\n\nRemember that the black level in the SMPTE pattern\nrefers to 7.5 IRE for video, console games usually\nstart at 0 IRE. This pattern can be used to \ncalibrate colors - or auto calibrated in a \n                                         #C(cont...)#C",
+"            EBU/SMPTE COLOR BARS (2/3)\n\nprofessional display - and then black levels can\nbe adjusted with the PLUGE pattern using the #GFull \nRGB Mode#G.\n\nIn an #YSMPT#YE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on\nand off between every bar, red cycling on and \n                                         #C(cont...)#C",
+"            EBU/SMPTE COLOR BARS (3/3)\n\noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
+NULL
+};
 char *sound_txt[] = { 
 "                      SOUND\n\nThis simple test plays a sound in either or both\nchannels.\n\nIt can be used to determine if the audio chain is\nworking properly.\n",
 NULL
@@ -226,9 +230,8 @@ char *white_txt[] = {
 NULL
 };
 
-#define	HELPCOUNT	39
+#define	HELPCOUNT	40
 char **HelpArray[HELPCOUNT] = {
-	SMPTEColor_txt,
 	alt240p_txt,
 	backlit_txt,
 	bleed_txt,
@@ -250,6 +253,7 @@ char **HelpArray[HELPCOUNT] = {
 	hcfr_menu_txt,
 	ire100_txt,
 	mdfourier_txt,
+	mdfourier_wii_txt,
 	memory_txt,
 	monoscope_txt,
 	options_txt,
@@ -260,6 +264,7 @@ char **HelpArray[HELPCOUNT] = {
 	pluge_txt,
 	scroll_txt,
 	sharpness_txt,
+	SMPTEColor_txt,
 	sound_txt,
 	striped_txt,
 	stripes_txt,

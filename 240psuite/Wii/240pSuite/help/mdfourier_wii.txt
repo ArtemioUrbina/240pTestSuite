@@ -1,0 +1,9 @@
+                    MDFOURIER
+
+This test generates a series of audio signals that
+are to be recorded and analyzed for comparison
+with the #CMDFourier#C tool on a computer.
+
+We use the Audio Equipment test at 48khz.
+
+Visit #Yhttp://junkerhq.net/MDFourier#Y for details.

@@ -59,12 +59,12 @@
 #define HCFRHELP		hcfr_txt
 #define HCFR_MENUHELP	hcfr_menu_txt
 #define GBA_TRANSF_HELP	gba_transfer_txt
-#define MDFOURIER_HELP	mdfourier_txt
+#define MDF_GC_HELP		mdfourier_txt
+#define MDF_WII_HELP	mdfourier_wii_txt
 #define PHASEHELP		phase_txt
 #define DISAPHELP		disappear_txt
 
 /* paste from here */
-extern char *SMPTEColor_txt[];
 extern char *alt240p_txt[];
 extern char *backlit_txt[];
 extern char *bleed_txt[];
@@ -86,6 +86,7 @@ extern char *hcfr_txt[];
 extern char *hcfr_menu_txt[];
 extern char *ire100_txt[];
 extern char *mdfourier_txt[];
+extern char *mdfourier_wii_txt[];
 extern char *memory_txt[];
 extern char *monoscope_txt[];
 extern char *options_txt[];
@@ -96,6 +97,7 @@ extern char *phase_txt[];
 extern char *pluge_txt[];
 extern char *scroll_txt[];
 extern char *sharpness_txt[];
+extern char *SMPTEColor_txt[];
 extern char *sound_txt[];
 extern char *striped_txt[];
 extern char *stripes_txt[];

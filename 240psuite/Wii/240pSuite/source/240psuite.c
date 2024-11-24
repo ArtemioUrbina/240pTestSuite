@@ -104,7 +104,6 @@ int main(int argc, char **argv)
 	
 #ifdef WII_VERSION	
 	GetWiiRegion();
-#endif
 	
 	if(OffsetH || AspectRatio)
 	{
@@ -114,6 +113,7 @@ int main(int argc, char **argv)
 		}
 		ShowVideoWarning(sd);
 	}
+#endif
 	
 	// load blinking graphics if appropiate
 	if(sd)
@@ -732,7 +732,7 @@ void SoundTestMenu(ImagePtr title, ImagePtr sd)
 					if(aet_exists)
 						AudioEquipmentTest(title);
 					break;	
-				case 5:
+				case 4:
 					close = 1;
 					break;
 			}
