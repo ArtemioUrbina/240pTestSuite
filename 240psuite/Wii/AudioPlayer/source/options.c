@@ -49,7 +49,7 @@ u8 FSActive = 0;
 
 bool InitSD()
 {
-	if(!__io_wiisd.startup() || !__io_wiisd.isInserted())
+	if(!__io_wiisd.startup(&__io_wiisd) || !__io_wiisd.isInserted(&__io_wiisd))
 		return false;
 
 	return(fatMountSimple("sd", &__io_wiisd));
@@ -58,7 +58,7 @@ bool InitSD()
 void DeInitSD() 
 {
 	fatUnmount("sd:/");
-	__io_wiisd.shutdown();
+	__io_wiisd.shutdown(&__io_wiisd);
 } 
 
 bool InitUSB()
@@ -70,12 +70,12 @@ bool InitUSB()
 
 	while(time(0) - start < 10) // 10 sec
 	{
-		if(__io_usbstorage.startup() && __io_usbstorage.isInserted())
+		if(__io_usbstorage.startup(&__io_usbstorage) && __io_usbstorage.isInserted(&__io_usbstorage))
 				break;
 		usleep(200000); // 1/5 sec
 	}
 	
-	if(!__io_usbstorage.startup() || !__io_usbstorage.isInserted())
+	if(!__io_usbstorage.startup(&__io_usbstorage) || !__io_usbstorage.isInserted(&__io_usbstorage))
 		return false;
 	
 	isMounted = fatMountSimple("usb", &__io_usbstorage);	
@@ -84,7 +84,7 @@ bool InitUSB()
 	{
 		fatUnmount("usb:/");
 		isMounted = fatMountSimple("usb", &__io_usbstorage);	
-		isInserted = __io_usbstorage.isInserted();
+		isInserted = __io_usbstorage.isInserted(&__io_usbstorage);
 		if(isInserted)
 		{
 			int retry = 10;
@@ -106,7 +106,7 @@ bool InitUSB()
 void DeInitUSB()
 {
 	fatUnmount("usb:/");
-	__io_usbstorage.shutdown(); 
+	__io_usbstorage.shutdown(&__io_usbstorage); 
 }
 
 
@@ -175,12 +175,13 @@ void CloseFS()
 #define FS_SDA	3
 #define FS_SDB	4
 #define FS_SD2	5
+#define FS_ODE	6
 
 #include <sdcard/gcsd.h>
 
 bool InitSDA()
 {
-	if(!__io_gcsda.startup() || !__io_gcsda.isInserted())
+	if(!__io_gcsda.startup(&__io_gcsda) || !__io_gcsda.isInserted(&__io_gcsda))
 		return false;
 
 	return(fatMountSimple("sd", &__io_gcsda));
@@ -188,7 +189,7 @@ bool InitSDA()
 
 bool InitSDB()
 {
-	if(!__io_gcsdb.startup() || !__io_gcsdb.isInserted())
+	if(!__io_gcsdb.startup(&__io_gcsdb) || !__io_gcsdb.isInserted(&__io_gcsdb))
 		return false;
 
 	return(fatMountSimple("sd", &__io_gcsdb));
@@ -196,28 +197,42 @@ bool InitSDB()
 
 bool InitSD2()
 {
-	if(!__io_gcsd2.startup() || !__io_gcsd2.isInserted())
+	if(!__io_gcsd2.startup(&__io_gcsd2) || !__io_gcsd2.isInserted(&__io_gcsd2))
 		return false;
 
 	return(fatMountSimple("sd", &__io_gcsd2));
 }
 
+bool InitODE()
+{
+	if(!__io_gcode.startup(&__io_gcode) || !__io_gcode.isInserted(&__io_gcode))
+		return false;
+
+	return(fatMountSimple("sd", &__io_gcode));
+}
+
 void DeInitSDA() 
 {
-	fatUnmount("sd");
-	__io_gcsda.shutdown();
+	fatUnmount("sd:/");
+	__io_gcsda.shutdown(&__io_gcsda);
 }
 
 void DeInitSDB() 
 {
-	fatUnmount("sd");
-	__io_gcsdb.shutdown();
+	fatUnmount("sd:/");
+	__io_gcsdb.shutdown(&__io_gcsdb);
 } 
 
 void DeInitSD2() 
 {
-	fatUnmount("sd");
-	__io_gcsd2.shutdown();
+	fatUnmount("sd:/");
+	__io_gcsd2.shutdown(&__io_gcsd2);
+} 
+
+void DeInitODE() 
+{
+	fatUnmount("sd:/");
+	__io_gcode.shutdown(&__io_gcode);
 } 
 
 u8 InitFS()
@@ -246,6 +261,12 @@ u8 InitFS()
 		fatMounted = 1;
 		path = SD_OPTIONS_PATH;
 		fsType = FS_SD2;
+	}
+	else if(InitODE())
+	{
+		fatMounted = 1;
+		path = SD_OPTIONS_PATH;
+		fsType = FS_ODE;
 	}
 	
 	if (fatMounted)
@@ -280,6 +301,8 @@ void CloseFS()
 			DeInitSDB();
 		if(FSActive == FS_SD2)
 			DeInitSD2();
+		if(FSActive == FS_ODE)
+			DeInitODE();
 		FSActive = 0;
 	}
 }

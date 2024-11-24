@@ -19,6 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "tests.h"
@@ -43,9 +44,9 @@ void DrawMessage(ImagePtr back, char *title, char *msg)
 
 extern int EndProgram;
 
-void aesnd_callback(AESNDPB *pb, unsigned int state, void *cb_arg)
+void aesnd_callback(AESNDPB *pb, unsigned int state)
 {
-	unsigned int *playback = (unsigned int *)cb_arg;
+	unsigned int *playback = AESND_GetVoiceUserData(pb);
 	
 	if (state == VOICE_STATE_RUNNING) 
 		*playback = 1;
@@ -66,10 +67,10 @@ void PlayAudioFile(ImagePtr back, char *filename)
 
 	AESND_Init();
 	
-	voice = AESND_AllocateVoiceWithArg(aesnd_callback, &playback);
+	voice = AESND_AllocateVoice(aesnd_callback);
 	if(!voice)
 		return;
-	AESND_SetVoiceVolume(voice, 0xff, 0xff);
+	AESND_SetVoiceUserData(voice, &playback);
 
 	while(counter --)
 		DrawMessage(back, title, msg);
@@ -121,7 +122,7 @@ void PlayAudioFile(ImagePtr back, char *filename)
 				
 				msg = "Playing Audio File";
 
-				AESND_PlayVoice(voice, VOICE_STEREO16, aet_samples, aet_size, DSP_DEFAULT_FREQ, 0, 0);
+				AESND_PlayVoice(voice, VOICE_STEREO16, aet_samples, aet_size, lrintf(DSP_DEFAULT_FREQ), 0, false);
 				
 				while(playback != 1)
 					DrawMessage(back, title, msg);

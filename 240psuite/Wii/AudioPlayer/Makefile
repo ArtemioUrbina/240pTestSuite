@@ -12,12 +12,12 @@ PLATFORM ?= wii
 TARGET		:=	$(notdir $(CURDIR))
 
 ifeq ($(PLATFORM),wii)
-include $(DEVKITPPC)/wii_rules
+include $(DEVKITPRO)/libogc2/wii_rules
 TARGET:="$(TARGET)_wii"
 EXTRA_LIBS=-lwiiuse -lbte
 EXTRA_FLAGS=-DWII_VERSION
 else
-include $(DEVKITPPC)/gamecube_rules
+include $(DEVKITPRO)/libogc2/gamecube_rules
 TARGET:="$(TARGET)_cube"
 EXTRA_FLAGS=-DGC_VERSION
 endif

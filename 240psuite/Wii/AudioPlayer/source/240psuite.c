@@ -38,11 +38,13 @@ int EndProgram = 0;
 ImagePtr 	sd_b1 = NULL, sd_b2 = NULL;
 void SD_blink_cycle();
 
+s8 HWButton = -1;
 #ifdef WII_VERSION
-s8 HWButton = -1; 
 void WiiResetPressed();
 void WiiPowerPressed();
 void WiimotePowerPressed(s32 chan);
+#else
+void GCResetPressed();
 #endif
 
 #include "dirent.h"
@@ -105,6 +107,8 @@ int main(int argc, char **argv)
 	SYS_SetResetCallback(WiiResetPressed);
 	SYS_SetPowerCallback(WiiPowerPressed);
 	WPAD_SetPowerButtonCallback(WiimotePowerPressed);
+#else
+	SYS_SetResetCallback(GCResetPressed);
 #endif
 
 	ControllerInit();
@@ -195,10 +199,8 @@ int main(int argc, char **argv)
 		
 		pressed = Controller_ButtonsDown(0);
 
-#ifdef WII_VERSION
 		if(HWButton != -1)
 			EndProgram = 1;
-#endif
 			
 		if ( pressed & PAD_BUTTON_UP )
 		{
@@ -303,6 +305,15 @@ void WiiPowerPressed()
 void WiimotePowerPressed(s32 chan)
 {
 	HWButton = SYS_POWEROFF;
+}
+
+#else
+/**
+ * Callback for the reset button on the GameCube.
+ */
+void GCResetPressed()
+{
+	HWButton = SYS_HOTRESET;
 }
 
 #endif

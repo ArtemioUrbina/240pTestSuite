@@ -302,7 +302,6 @@ void IgnoreOffset(ImagePtr image)
 
 ImagePtr LoadImageMemCpy(int Texture, int maptoscreen)
 {		
-	u32 fmt = 0;
 	u16 t_width = 0, t_height = 0;
 	void *texture = NULL;
 	ImagePtr image;
@@ -321,8 +320,8 @@ ImagePtr LoadImageMemCpy(int Texture, int maptoscreen)
 	TPL_GetTextureMEMCopy(&backsTPL, Texture, &image->tex, &texture);
 	
 	//GX_InitTexObjLOD(&image->tex, Options.BilinearFiler, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
-	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
-	TPL_GetTextureInfo(&backsTPL, Texture, &fmt, &t_width, &t_height);	
+	//GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
+	TPL_GetTextureInfo(&backsTPL, Texture, NULL, &t_width, &t_height);
 
 	image->r = 0xff;
 	image->g = 0xff;
@@ -355,7 +354,6 @@ ImagePtr LoadImageMemCpy(int Texture, int maptoscreen)
 
 ImagePtr LoadImage(int Texture, int maptoscreen)
 {		
-	u32 fmt = 0;
 	u16 t_width = 0, t_height = 0;
 	ImagePtr image;
 	
@@ -373,8 +371,8 @@ ImagePtr LoadImage(int Texture, int maptoscreen)
 	TPL_GetTexture(&backsTPL, Texture, &image->tex);
 	
 	//GX_InitTexObjLOD(&image->tex, Options.BilinearFiler, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
-	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
-	TPL_GetTextureInfo(&backsTPL, Texture, &fmt, &t_width, &t_height);	
+	//GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
+	TPL_GetTextureInfo(&backsTPL, Texture, NULL, &t_width, &t_height);
 
 	image->r = 0xff;
 	image->g = 0xff;
@@ -427,9 +425,7 @@ ImagePtr CopyFrameBufferToImage()
 			
 	width = rmode->fbWidth;
 	height = rmode->efbHeight;
-	//Darned GX_GetTexBufferSize returns 0! this crashed the suite, no wonder
-	//fbsize = GX_GetTexBufferSize(width, height, GX_TF_RGBA8, GX_TRUE, 0);	
-	fbsize = width * height * 4;  // 32 bits
+	fbsize = GX_GetTexBufferSize(width, height, GX_TF_RGBA8, GX_FALSE, 0);
 	cfb = (u8 *)memalign(32, fbsize);
 	if (!cfb)
 		return NULL;
@@ -462,7 +458,7 @@ ImagePtr CopyFrameBufferToImage()
 	
 	image->cFB = cfb;
 	GX_InitTexObj(&image->tex, image->cFB, width, height, GX_TF_RGBA8, GX_CLAMP, GX_CLAMP, GX_FALSE);
-	GX_InitTexObjLOD(&image->tex, GX_NEAR, GX_NEAR, 0.0, 10.0, 0.0, GX_FALSE, GX_FALSE, GX_ANISO_1);
+	GX_InitTexObjFilterMode(&image->tex, GX_NEAR, GX_NEAR);
 
 	image->r = 0xff;
 	image->g = 0xff;

@@ -214,7 +214,7 @@ int gba_displayProgress(ImagePtr title, unsigned int i, unsigned int sendsize) {
 }
 
 u32 checkGBAConnected(unsigned int port) {
-	return(SI_GetType(port) & SI_GBA);
+	return(SI_Probe(port) == SI_GBA);
 }
 
 int detectLink(ImagePtr title, unsigned int port) {
@@ -244,7 +244,7 @@ int detectLink(ImagePtr title, unsigned int port) {
 			return 0;
 	}
 	
-	return(!close && detected && (resval & SI_GBA));
+	return(!close && detected && (SI_DecodeType(resval) == SI_GBA));
 }
 
 int GBASendROM(ImagePtr title, unsigned int port) {
