@@ -1,6 +1,6 @@
 #include "types.h"
 
-// This header includes teh C used in MSU enabled games for Mega Everdrive Pro and emulators
+// This header includes the C used in MSU enabled games for Mega Everdrive Pro and emulators
 // its only purpose is for testing Sega CD under those conditions.
 
 const struct
