@@ -1,4 +1,14 @@
-240p Test Suite
+240p Test Suite Genesis Notes
+
+240pSuite-1.XX.bin: 	The regular ROM you want to always use. SEGA CD 
+			access is available when a Sega CD is connected
+			for the RAM and communication tests.
+
+240pSuite-1.XX_emu.bin: This ROM just adds the C (CDROM) support so that
+			compatible platforms enable access to teh Sega CD
+			hardware. Some examples are emulators and MiSTer
+			when using the Sega CD core.
+
 ===============================================================================
 For full documentation and source code, please visit:
 http://junkerhq.net/xrgb/index.php/240p_test_suite
@@ -103,4 +113,4 @@ For full documentation and source code, please visit:
 http://junkerhq.net/240p/
 
 ===============================================================================
-2011-2021 Artemio Urbina
+2011-2022 Artemio Urbina
