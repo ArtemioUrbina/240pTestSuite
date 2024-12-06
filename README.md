@@ -81,6 +81,11 @@ This version of the suite runs in full 256x224p, and has some tests and
 patterns for the 256x239p mode. It requires a flash cart, such as the
 Super Everdrive.
 
+Sega Saturn:
+----------------
+This version can be run from either CD (requires homebrew-capable system or ODE)
+or bootable cartridge. It supports all Saturn's video modes from 320x224i up to 
+704x512p (some modes are PAL-only). It uses Yaul system library.
 
 Sega Dreamcast:
 ---------------
