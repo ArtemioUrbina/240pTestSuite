@@ -24,70 +24,109 @@
 #include <stdlib.h>
 
 #include "font.h"
+#include "video_vdp2.h"
 
 int _fh = 9;
-int _fw = 8;
+int _fw = 6;
 
-void LoadFont()
+#define FONT_PALETTE (0)
+
+void SetFontPalette()
 {
 	int i;
-	uint8_t *pFont;
-	color_rgb555_t * pPal;	
-	
-	pPal = (color_rgb555_t *)CLUT(FONT_WHITE, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(31, 31, 31); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
+	//uint8_t *pFont;
+	rgb888_t Colors[4];	
 
-	pPal = (color_rgb555_t *)CLUT(FONT_RED, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(31, 0, 0); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
+	Colors[0] = RGB888(1, 0, 0, 0); //Back
+	Colors[1] = RGB888(1, 255, 255, 255); //Font
+	Colors[2] = RGB888(1, 0, 0, 0); //Shadow
+	video_vdp2_set_palette_part(FONT_PALETTE, Colors, FONT_WHITE*4, FONT_WHITE*4+3);
 
-	pPal = (color_rgb555_t *)CLUT(FONT_GREEN, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(0, 31, 0); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
+	Colors[0] = RGB888(1, 0, 255, 255); //Back
+	Colors[1] = RGB888(1, 255, 0, 0); //Font
+	video_vdp2_set_palette_part(FONT_PALETTE, Colors, FONT_RED*4, FONT_RED*4+3);
 
-	pPal = (color_rgb555_t *)CLUT(FONT_CYAN, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(0, 31, 31); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
+	Colors[0] = RGB888(1, 255, 0, 255); //Back
+	Colors[1] = RGB888(1, 0, 255, 0); //Font
+	video_vdp2_set_palette_part(FONT_PALETTE, Colors, FONT_GREEN*4, FONT_GREEN*4+3);
 
-	pPal = (color_rgb555_t *)CLUT(FONT_YELLOW, 0);
-	*(pPal++) = COLOR_RGB555(31, 0, 31); //Back
-	*(pPal++) = COLOR_RGB555(31, 31, 0); //Font
-	*(pPal++) = COLOR_RGB555(0, 0, 0); //Shadow
-	
-	pFont = (uint8_t *)CHAR(0);
+	Colors[0] = RGB888(1, 255, 255, 0); //Back
+	Colors[1] = RGB888(1, 0, 0, 255); //Font
+	video_vdp2_set_palette_part(FONT_PALETTE, Colors, FONT_BLUE*4, FONT_BLUE*4+3);
+
+	Colors[0] = RGB888(1, 255, 0, 0); //Back
+	Colors[1] = RGB888(1, 0, 255, 255); //Font
+	video_vdp2_set_palette_part(FONT_PALETTE, Colors, FONT_CYAN*4, FONT_CYAN*4+3);
+
+	Colors[0] = RGB888(1, 0, 255, 0); //Back
+	Colors[1] = RGB888(1, 255, 0, 255); //Font
+	video_vdp2_set_palette_part(FONT_PALETTE, Colors, FONT_MAGENTA*4, FONT_MAGENTA*4+3);
+
+	Colors[0] = RGB888(1, 0, 0, 255); //Back
+	Colors[1] = RGB888(1, 255, 255, 0); //Font
+	video_vdp2_set_palette_part(FONT_PALETTE, Colors, FONT_YELLOW*4, FONT_YELLOW*4+3);
+
+	Colors[0] = RGB888(1, 255, 255, 255); //Back
+	Colors[1] = RGB888(1, 0, 0, 0); //Font
+	video_vdp2_set_palette_part(FONT_PALETTE, Colors, FONT_BLACK*4, FONT_BLACK*4+3);
+
+	/*color_rgb1555_t dd;
+	dd.raw = 0xFFAA;
+
+	pPal[0] = dd;*/
+
+	/*pFont = (uint8_t *)CHAR(0);
 	for(i=0; i<(SuiteFont_len); i++)
-		*(pFont++) = SuiteFont[i];
+		*(pFont++) = SuiteFont[i];*/
 }
 
+void ClearText(int left, int top, int width, int height)
+{
+	uint8_t *p8_vram;
+	vdp1_vram_partitions_t vdp1_vram_partitions;
+    vdp1_vram_partitions_get(&vdp1_vram_partitions);
+	
+	//drawing in low res for now
+	for (int _y = top; ( (_y < FONT_QUAD_HEIGHT) && (_y < top+height) ) ; _y++)
+	{
+		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + _y*FONT_QUAD_WIDTH);
+		for (int _x = left; ( (_x < FONT_QUAD_WIDTH) && (_x < left+width) ) ; _x++)
+		{
+			p8_vram[_x] = 0;
+		}
+	}
+}
+
+void ClearTextLayer()
+{
+	ClearText(0,0,FONT_QUAD_WIDTH,FONT_QUAD_HEIGHT);
+}
+
+/* Draw a char as VDP1 sprite at desired location*/
 void DrawChar(unsigned int x, unsigned int y, char c, unsigned int palette, bool transparent) 
 {
-	struct vdp1_cmdt_sprite normal_sprite_pointer;
+	vdp1_vram_partitions_t vdp1_vram_partitions;
+    vdp1_vram_partitions_get(&vdp1_vram_partitions);
 
-	c -= 32;
-	memset(&normal_sprite_pointer, 0x00, sizeof(struct vdp1_cmdt_sprite));
-
-	normal_sprite_pointer.cs_type = CMDT_TYPE_NORMAL_SPRITE;
-	normal_sprite_pointer.cs_mode.color_mode = 1; 	// mode 1 COLMODE_16_LUT
-	normal_sprite_pointer.cs_mode.transparent_pixel = transparent;
-	normal_sprite_pointer.cs_mode.user_clipping = 1;
-	normal_sprite_pointer.cs_mode.end_code = 1;
-	normal_sprite_pointer.cs_clut = CLUT(palette, 0);
-	normal_sprite_pointer.cs_width = 8;
-	normal_sprite_pointer.cs_height = 8;
-	normal_sprite_pointer.cs_position.x = x;
-	normal_sprite_pointer.cs_position.y = y;
-	normal_sprite_pointer.cs_char =  CHAR(0) + (c<<5);
-	normal_sprite_pointer.cs_grad = 0;
-	
-	vdp1_cmdt_sprite_draw(&normal_sprite_pointer);
+	//drawing in low res for now
+	uint8_t *p8_vram;
+	uint8_t *p8_char;
+	uint8_t tmp;
+	for (int _y = 0; _y < 8; _y++)
+	{
+		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + x + (_y+y)*FONT_QUAD_WIDTH);
+		p8_char =  &(SuiteFont[(c-32)*32+_y*4]);
+		for (int _x = 0; _x < 4; _x++)
+		{
+			tmp = p8_char[_x]&0x3;
+			if (tmp) p8_vram[_x*2+1] = tmp | palette*4;
+			tmp = (p8_char[_x]>>4)&0x3;
+			if (tmp) p8_vram[_x*2] = tmp | palette*4;
+		}
+	}
 }
 
-/* Print a string at x, y using sprites by VDP1*/
+/* Print a string at x, y using single VDP1 sprite*/
 void DrawString(char *str, unsigned int x, unsigned int y, unsigned int palette)
 {
 	int orig_x = x;
@@ -138,6 +177,32 @@ void DrawString(char *str, unsigned int x, unsigned int y, unsigned int palette)
 		DrawChar(x, y, str[i], palette, true);
 		x += _fw;
 	}
+}
+
+void DrawStringWithBackground(char *str, unsigned int x, unsigned int y, unsigned int palette, unsigned int bg_palette)
+{
+	int orig_x = x;
+	int orig_pal = palette;
+	unsigned int i;
+	int highlight = 0;
+	int _x,_y;
+	uint8_t *p8_vram;
+	uint8_t *p8_char;
+	uint8_t tmp;
+	vdp1_vram_partitions_t vdp1_vram_partitions;
+    vdp1_vram_partitions_get(&vdp1_vram_partitions);
+	
+	for (_y = 0; _y < _fh; _y++)
+	{
+		p8_vram = (uint8_t *)(vdp1_vram_partitions.texture_base + x + (_y+y-1)*FONT_QUAD_WIDTH);
+		for (_x = 0; _x < _fw*(strlen(str)+1)/2; _x++)
+		{
+			p8_vram[_x*2+1] = 0x1 | bg_palette*4;
+			p8_vram[_x*2] = 0x1 | bg_palette*4;
+		}
+	}
+
+	DrawString(str,x,y,palette);
 }
 
 unsigned char SuiteFont[] = {

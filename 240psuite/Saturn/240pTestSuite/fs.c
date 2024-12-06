@@ -26,7 +26,7 @@
 extern uint8_t root_romdisk[];
 
 static void *romdisk = NULL;
-
+/*
 bool fs_init(void)
 {
 	if (romdisk)
@@ -69,6 +69,6 @@ size_t fs_size(void *fh)
 	
 	return romdisk_total(fh);
 }
-
+*/
 
 
