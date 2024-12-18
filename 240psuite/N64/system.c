@@ -45,7 +45,7 @@ void initN64() {
 	/* Initialize peripherals */
 	detectConsoleType();
 	
-	dfs_init(DFS_DEFAULT_LOCATION);
+	assertf(dfs_init(DFS_DEFAULT_LOCATION) == DFS_ESUCCESS, "dfs_init(): failed");
 	loadFont();
 	
 	initVideo();

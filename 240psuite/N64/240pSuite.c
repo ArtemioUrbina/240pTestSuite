@@ -745,7 +745,7 @@ void drawHardwareTestsMenu() {
 void drawIntro() {
 	int cancel = 0;
 	
-	//cancel = drawMCSScreen(100, 0);
+	cancel = drawMCSScreen(100, 0);
 	cancel = drawSplash("rom:/libdragon.sprite", cancel ? 0 : LOGO_HOLD, 16);
 	cancel = drawSplash("rom:/tiny3d.sprite", cancel ? 0: LOGO_HOLD, 16);
 }

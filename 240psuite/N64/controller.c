@@ -22,7 +22,6 @@
 #include "controller.h"
 #include "video.h"
 
-#define JOYTHSHLD 15			// min value for joystick to be a read
 #define MINFRAMES 5				// Frames to count joystick held as pad
 
 int JoyCountX = 0;

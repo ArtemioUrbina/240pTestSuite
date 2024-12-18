@@ -35,13 +35,22 @@
 #include "controller.h"
 #include "video.h"
 
-#define BGCOLOR		0xBB
+#define AMBIENT		135
+#define BGCOLOR		0xbb
 #define FADE_FRAMES	30
 #define DISTANCE	300.0f
 
 #define ZOOMIN_3D	0
 #define ROTATE_3D	1
-#define FADE_3D		2
+#define HOLD_3D		2
+#define FADE_3D		3
+
+#define MCS_FONT	1
+
+// #8969FF
+#define FONT_R	0x89
+#define FONT_G	0x69
+#define FONT_B	0xFF
 
 typedef struct scenaData_st {
 	surface_t depthBuffer;
@@ -52,8 +61,11 @@ typedef struct scenaData_st {
 	T3DVec3 camTarget;
 	uint8_t colorAmbient[4];
 	uint8_t colorDir[4];
+	uint8_t colorBG;
 	T3DVec3 lightDirVec;
 	T3DModel *modelMCS;
+	rdpq_font_t *font; 
+	uint8_t colorFont[4];
 	float rotAngle;
 } SceneData;
 
@@ -69,6 +81,12 @@ void freeSceneData(SceneData *scene) {
 	if(scene->modelMCS) {
 		t3d_model_free(scene->modelMCS);
 		scene->modelMCS = NULL;
+	}
+	
+	if(scene->font) {
+		rdpq_text_unregister_font(MCS_FONT);
+		rdpq_font_free(scene->font);
+		scene->font = NULL;
 	}
 }
 
@@ -97,9 +115,9 @@ int load3DScene(SceneData *scene) {
 	scene->camTarget.v[1] = 0.0f;
 	scene->camTarget.v[2] = 0.0f;
 
-	scene->colorAmbient[0] = 135;
-	scene->colorAmbient[1] = 135;
-	scene->colorAmbient[2] = 135;
+	scene->colorAmbient[0] = 0;
+	scene->colorAmbient[1] = 0;
+	scene->colorAmbient[2] = 0;
 	scene->colorAmbient[3] = 0xff;
 	
 	scene->colorDir[0] = 0xAA;
@@ -111,6 +129,8 @@ int load3DScene(SceneData *scene) {
 	scene->lightDirVec.v[1] = 1.0f;
 	scene->lightDirVec.v[2] = 1.0f;
 	
+	scene->colorBG = 0;
+	
 	t3d_vec3_norm(&scene->lightDirVec);
 
 	// Load a model-file, this contains the geometry and some metadata
@@ -119,6 +139,23 @@ int load3DScene(SceneData *scene) {
 		freeSceneData(scene);
 		return 0;
 	}
+	
+	scene->font = rdpq_font_load("rom:/BebasNeue-Regular.font64");
+	if(!scene->font) {
+		freeSceneData(scene);
+		return 0;
+	}
+	
+	scene->colorFont[0] = FONT_R;
+	scene->colorFont[1] = FONT_G;
+	scene->colorFont[2] = FONT_B;
+	scene->colorFont[3] = 0;
+	
+    rdpq_text_register_font(MCS_FONT, scene->font);
+	
+	rdpq_font_style(scene->font, 0, &(rdpq_fontstyle_t){
+        .color = RGBA32(scene->colorFont[0], scene->colorFont[1], scene->colorFont[2], scene->colorFont[3]),
+    });
 	
 	return 1;
 }
@@ -130,14 +167,14 @@ void fadeColor(uint8_t *color, uint8_t thrshld) {
 		*color = 0;
 }
 
-void raiseColor(uint8_t *color, uint8_t thrshld) {
-	if(*color < 0xff)
+void raiseColor(uint8_t *color, uint8_t thrshld, uint8_t limit) {
+	if(*color < limit - thrshld)
 		*color += thrshld;
 	else
-		*color = 0xff;
+		*color = limit;
 }
 
-int draw3DScene(SceneData *scene, int frames, uint8_t color, int type, int controls) {
+int draw3DScene(SceneData *scene, int frames, int type, int controls) {
 	int cancel = 0, origFrames = frames;
 	float modelScale = 0.08f, step = 0;
 	float rotX = 0.0f, rotZ = 0.0f;
@@ -156,18 +193,27 @@ int draw3DScene(SceneData *scene, int frames, uint8_t color, int type, int contr
 		switch(type) {
 			case ZOOMIN_3D:
 				scene->camPos.v[2] -= step;
+				raiseColor(&scene->colorBG, ceil(BGCOLOR/frames), BGCOLOR);
+				raiseColor(&scene->colorAmbient[0], ceil(AMBIENT/frames), AMBIENT);
+				raiseColor(&scene->colorAmbient[1], ceil(AMBIENT/frames), AMBIENT);
+				raiseColor(&scene->colorAmbient[2], ceil(AMBIENT/frames), AMBIENT);
 				break;
 			case ROTATE_3D:
-				if(!controls)
+				if(!controls) {
 					scene->rotAngle -= 0.03f;
+					raiseColor(&scene->colorFont[3], ceil(0xff/frames), 0xff);
+				}
 				break;
 			case FADE_3D:
 				scene->camPos.v[2] += step;
-				fadeColor(&color, 5);
-				fadeColor(&scene->colorAmbient[0], 15);
-				fadeColor(&scene->colorAmbient[1], 15);
-				fadeColor(&scene->colorAmbient[2], 15);
+				fadeColor(&scene->colorBG, ceil(BGCOLOR/frames));
+				fadeColor(&scene->colorAmbient[0], ceil(AMBIENT/frames));
+				fadeColor(&scene->colorAmbient[1], ceil(AMBIENT/frames));
+				fadeColor(&scene->colorAmbient[2], ceil(AMBIENT/frames));
+				fadeColor(&scene->colorFont[3], ceil(0xff/frames));
 				scene->rotAngle -= 0.05f;
+				break;
+			case HOLD_3D:
 				break;
 			default:
 				break;
@@ -189,7 +235,7 @@ int draw3DScene(SceneData *scene, int frames, uint8_t color, int type, int contr
 		t3d_frame_start();
 		t3d_viewport_attach(&scene->viewport);
 
-		t3d_screen_clear_color(RGBA32(color, color, color, 0xFF));
+		t3d_screen_clear_color(RGBA32(scene->colorBG, scene->colorBG, scene->colorBG, 0xFF));
 		t3d_screen_clear_depth();
 
 		t3d_light_set_ambient(scene->colorAmbient);
@@ -199,7 +245,23 @@ int draw3DScene(SceneData *scene, int frames, uint8_t color, int type, int contr
 		t3d_matrix_push(scene->modelMatFP);
 		t3d_model_draw(scene->modelMCS);
 		t3d_matrix_pop(1);
-
+		
+		if(!controls) {
+			rdpq_font_style(scene->font, 0, &(rdpq_fontstyle_t){
+				.color = RGBA32(scene->colorFont[0], scene->colorFont[1], scene->colorFont[2], scene->colorFont[3]),
+			});
+			rdpq_text_printf(&(rdpq_textparms_t){
+				.width = 300,
+				.height = 100,
+				.align  = ALIGN_CENTER,
+				}, MCS_FONT, 10, 10, "Mega Cat Studios");
+			rdpq_text_printf(&(rdpq_textparms_t){
+				.width = 300,
+				.height = 100,
+				.align  = ALIGN_CENTER,
+				}, MCS_FONT, 10, 210, "Proud to contribute to the community we love");
+		}
+		
 		rdpq_detach_show();
 		frames --;
 		
@@ -252,12 +314,18 @@ int draw3DScene(SceneData *scene, int frames, uint8_t color, int type, int contr
 		}
 	}
 	
+	if(cancel) {
+		scene->colorBG = BGCOLOR;
+		scene->colorAmbient[0] = AMBIENT;
+		scene->colorAmbient[1] = AMBIENT;
+		scene->colorAmbient[2] = AMBIENT;
+		scene->colorFont[3] = 0xff;
+	}
 	return cancel;
 }
 
 int drawMCSScreen(int frames, int controls) {
 	int cancel = 0;
-	
 	SceneData scene;
 		
 	if(!load3DScene(&scene))
@@ -266,12 +334,14 @@ int drawMCSScreen(int frames, int controls) {
 	t3d_init((T3DInitParams){});
 
 	// Zoom in
-	cancel = draw3DScene(&scene, FADE_FRAMES, BGCOLOR, ZOOMIN_3D, controls);
+	cancel = draw3DScene(&scene, FADE_FRAMES, ZOOMIN_3D, controls);
 	// Regular scene
 	if(!cancel)
-		cancel = draw3DScene(&scene, frames, BGCOLOR, ROTATE_3D, controls);
+		cancel = draw3DScene(&scene, frames+4, ROTATE_3D, controls);
+	if(draw3DScene(&scene, !cancel ? ceil(frames/2) : ceil(frames/8), HOLD_3D, controls))
+		cancel = true;
 	// Fade and zoom out
-	(void)draw3DScene(&scene, FADE_FRAMES, BGCOLOR, FADE_3D, controls);
+	(void)draw3DScene(&scene, FADE_FRAMES, FADE_3D, controls);
 	
 	setClearScreen();
 	waitVsync();

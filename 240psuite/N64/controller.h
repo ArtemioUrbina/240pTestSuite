@@ -21,5 +21,7 @@
 
 #include <libdragon.h>
 
+#define JOYTHSHLD 15			// min value for joystick to be a read
+
 joypad_buttons_t controllerButtonsDown();
 joypad_buttons_t controllerButtonsHeld();

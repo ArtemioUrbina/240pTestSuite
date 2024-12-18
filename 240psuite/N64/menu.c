@@ -266,7 +266,7 @@ void drawCredits(int usebuffer) {
 	qr = loadImage("rom:/qr.sprite");
 		
 	while(!done) {
-		int x = 28, y = 40, x2 = 158, y2 = 0;
+		int x = 28, y = 40, x2 = 164, y2 = 0;
 
 		getDisplay();
 
@@ -285,7 +285,6 @@ void drawCredits(int usebuffer) {
 		if(counter == 60*8)
 			counter = 0;
 
-		drawStringS(x, y, 0x00, 0xff, 0x00, "Support & suggestions:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, data); y += fh; 
 
 		drawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
@@ -297,12 +296,14 @@ void drawCredits(int usebuffer) {
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Jose Salot\n(@pepe_salot)"); y += 2*fh;
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
+		drawStringS(x, y, 0x00, 0xff, 0x00, "Puiblished by:"); y += fh; 
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Mega Cat Studios"); y += fh; 
 		drawStringS(x, y, 0x00, 0xff, 0x00, "Advisor:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Fudoh"); y += fh; 
-		drawStringS(x, y, 0x00, 0xff, 0x00, "Collaboration:"); y += fh; 
-		drawStringS(x+5, y, 0xff, 0xff, 0xff, "shmups regulars"); y += fh+5;
+		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Music for PLII:"); y2 += fh; 
+		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "NekoMilkshake"); y2 += fh;
 		y = y2+fh;
-	
+		
 		drawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "#Yhttp://junkerhq.net/240p/#Y"); y += fh+5; 
 

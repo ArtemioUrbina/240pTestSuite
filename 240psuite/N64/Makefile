@@ -30,6 +30,9 @@ ASSETS_WAV_CONV = $(addprefix $(FILESYSTEM_DIR)/,$(notdir $(ASSETS_WAV:%.wav=%.w
 ASSETS_GLTF = $(wildcard $(ASSETS_DIR)/*.glb)
 ASSETS_GLTF_CONV = $(addprefix $(FILESYSTEM_DIR)/,$(notdir $(ASSETS_GLTF:%.glb=%.t3dm)))
 
+ASSETS_TTF = $(wildcard $(ASSETS_DIR)/*.ttf)
+ASSETS_TTF_CONV = $(addprefix $(FILESYSTEM_DIR)/,$(notdir $(ASSETS_TTF:%.ttf=%.font64)))
+
 ASSETS_HELP = $(wildcard $(FILESYSTEM_DIR)/help/*.txt)
 
 #AUDIOCONV_FLAGS ?= --wav-compress 0
@@ -51,6 +54,11 @@ $(FILESYSTEM_DIR)/%.t3dm: $(ASSETS_DIR)/%.glb
 	@echo "    [T3D-MODEL] $@"
 	@$(T3D_GLTF_TO_3D) "$<" $@
 	@$(N64_BINDIR)/mkasset -o $(FILESYSTEM_DIR) $@
+	
+$(FILESYSTEM_DIR)/%.font64: $(ASSETS_DIR)/%.ttf
+	@mkdir -p $(dir $@)
+	@echo "    [FONT] $@"
+	$(N64_MKFONT) $(MKFONT_FLAGS) -o $(FILESYSTEM_DIR) "$<"
 
 #AUDIO
 
@@ -59,6 +67,7 @@ $(FILESYSTEM_DIR)/beep.wav64: AUDIOCONV_FLAGS=--wav-compress 0
 $(FILESYSTEM_DIR)/mdfourier-dac-44100.wav64: AUDIOCONV_FLAGS=--wav-compress 0
 
 #compression level 1
+$(FILESYSTEM_DIR)/neko_loop.wav64: AUDIOCONV_FLAGS=--wav-compress 1
 $(FILESYSTEM_DIR)/sound_test_left.wav64: AUDIOCONV_FLAGS=--wav-compress 1
 $(FILESYSTEM_DIR)/sound_test_right.wav64: AUDIOCONV_FLAGS=--wav-compress 1
 $(FILESYSTEM_DIR)/sound_test_center.wav64: AUDIOCONV_FLAGS=--wav-compress 1
@@ -125,7 +134,9 @@ $(FILESYSTEM_DIR)/convergence-05-colorsbl.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTR
 $(FILESYSTEM_DIR)/rectangle_short.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/rectangle_long.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 
-$(BUILD_DIR)/$(PROJECT_NAME).dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_HELP) $(ASSETS_GLTF_CONV)
+$(FILESYSTEM_DIR)/BebasNeue-Regular.font64: MKFONT_FLAGS+=--size 19
+
+$(BUILD_DIR)/$(PROJECT_NAME).dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_HELP) $(ASSETS_GLTF_CONV) $(ASSETS_TTF_CONV)
 $(BUILD_DIR)/$(PROJECT_NAME).elf: $(src:%.c=$(BUILD_DIR)/%.o)
 
 $(PROJECT_NAME).z64: N64_ROM_TITLE = "240p Test Suite"
@@ -146,7 +157,7 @@ all: $(PROJECT_NAME).z64
 
 
 clean: # NOTE: DO NOT CLEAN $(ASSETS_HELP), they are stored in the filesystem.
-	@rm -rf $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_GLTF_CONV)
+	@rm -rf $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_GLTF_CONV) $(ASSETS_TTF_CONV)
 	@rm -rf $(BUILD_DIR) $(OUTPUT_DIR) $(PROJECT_NAME).z64
 .PHONY: clean
 
