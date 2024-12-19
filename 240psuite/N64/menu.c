@@ -296,7 +296,7 @@ void drawCredits(int usebuffer) {
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Jose Salot\n(@pepe_salot)"); y += 2*fh;
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
-		drawStringS(x, y, 0x00, 0xff, 0x00, "Puiblished by:"); y += fh; 
+		drawStringS(x, y, 0x00, 0xff, 0x00, "Published by:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Mega Cat Studios"); y += fh; 
 		drawStringS(x, y, 0x00, 0xff, 0x00, "Advisor:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Fudoh"); y += fh; 

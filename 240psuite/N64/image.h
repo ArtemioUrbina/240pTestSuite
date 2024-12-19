@@ -104,7 +104,7 @@ void freeUpscaleFB();
 void executeUpscaleFB();
 
 /* Palette functions */
-#define LOGO_HOLD	60
+#define LOGO_HOLD	30
 
 void swapPaletteColors(image *data, unsigned int color1, unsigned int color2);
 void swapPalette100to75(image *data);

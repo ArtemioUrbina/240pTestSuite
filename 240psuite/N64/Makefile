@@ -134,7 +134,8 @@ $(FILESYSTEM_DIR)/convergence-05-colorsbl.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTR
 $(FILESYSTEM_DIR)/rectangle_short.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/rectangle_long.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 
-$(FILESYSTEM_DIR)/BebasNeue-Regular.font64: MKFONT_FLAGS+=--size 19
+$(FILESYSTEM_DIR)/BebasNeue-Regular.font64: MKFONT_FLAGS+=--size 41
+$(FILESYSTEM_DIR)/BebasNeue-Small.font64: MKFONT_FLAGS+=--size 15
 
 $(BUILD_DIR)/$(PROJECT_NAME).dfs: $(ASSETS_PNG_CONV) $(ASSETS_WAV_CONV) $(ASSETS_HELP) $(ASSETS_GLTF_CONV) $(ASSETS_TTF_CONV)
 $(BUILD_DIR)/$(PROJECT_NAME).elf: $(src:%.c=$(BUILD_DIR)/%.o)
