@@ -737,9 +737,9 @@ void AudioTests(void)
 		}	
 
 		if(sel < 0)
-			sel = 4;
+			sel = 5;
 			
-		if(sel > 4)
+		if(sel > 5)
 			sel = 0;
 			
 		if(pressed & KEY_START)
