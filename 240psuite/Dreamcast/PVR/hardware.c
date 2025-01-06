@@ -1070,10 +1070,9 @@ int maple_device_scan(float x, float y, int selected)
 		
 		for(unit = 0; unit < MAPLE_UNIT_COUNT; unit++)
 		{
-			dev = &maple_state.ports[port].units[unit];
-
-			if(dev->valid)
+			if(maple_dev_valid(port, unit))
 			{
+				dev = maple_state.ports[port].units[unit];
 				count ++;
 				if(unit == 0)
 				{
@@ -1261,7 +1260,7 @@ static void vbl_send_allinfo(int p, int u) {
 	/* Reserve access; if we don't get it, forget about it */
 	do
 	{	
-		dev = &maple_state.ports[p].units[u];
+		dev = maple_state.ports[p].units[u];
 		if(maple_frame_lock(&dev->frame) == 0)
 		{
 			maple_locked_device = 1;
