@@ -45,49 +45,49 @@ CRC 32 based on work by Christopher Baker <https://christopherbaker.net>
 uint32_t _state = ~0L;
 
 static const uint32_t crc32_table[] = {
-    0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
-    0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
-    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
-    0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
+	0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
+	0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+	0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c,
+	0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
 };
 
 
 void CRC32_reset()
 {
-    _state = ~0L;
+	_state = ~0L;
 }
 
 
 void CRC32_update(uint8_t data)
 {
-    uint8_t tbl_idx = 0;
+	uint8_t tbl_idx = 0;
 
-    tbl_idx = _state ^ (data >> (0 * 4));
-    _state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
-    tbl_idx = _state ^ (data >> (1 * 4));
-    _state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+	tbl_idx = _state ^ (data >> (0 * 4));
+	_state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
+	tbl_idx = _state ^ (data >> (1 * 4));
+	_state = (*(uint32_t*)(crc32_table + (tbl_idx & 0x0f)) ^ (_state >> 4));
 }
 
 
 uint32_t CRC32_finalize()
 {
-    return ~_state;
+	return ~_state;
 }
 
 /**********************************/
 
 int memcmp(const void *s1, const void *s2, int n)
 {
-    unsigned char u1, u2;
+	unsigned char u1, u2;
 
-    for ( ; n-- ; s1++, s2++) {
+	for ( ; n-- ; s1++, s2++) {
 		u1 = * (unsigned char *) s1;
 		u2 = * (unsigned char *) s2;
 		if ( u1 != u2) {
 			return (u1-u2);
 		}
-    }
-    return 0;
+	}
+	return 0;
 }
 
 #ifndef SEGACD
@@ -148,36 +148,36 @@ int DetectEmulationIssue()
  */
 static volatile uint8_t *DetectSCDBIOS(uint32_t address)
 {
-    uint8_t *bios;
+	uint8_t *bios;
 	
-    bios = (uint8_t *)0x015800+address;
-    if (memcmp(bios + 0x6D, "SEGA", 4))
-    {
-        bios = (uint8_t *)0x016000+address;
-        if (memcmp(bios + 0x6D, "SEGA", 4))
-        {
-            // check for WonderMega/X'Eye
-            if (memcmp(bios + 0x6D, "WONDER", 6))
-            {
-                bios = (uint8_t *)0x01AD00+address; // might also be 0x40D500
-                // check for LaserActive
-                if (memcmp(bios + 0x6D, "SEGA", 4))
+	bios = (uint8_t *)0x015800+address;
+	if (memcmp(bios + 0x6D, "SEGA", 4))
+	{
+		bios = (uint8_t *)0x016000+address;
+		if (memcmp(bios + 0x6D, "SEGA", 4))
+		{
+			// check for WonderMega/X'Eye
+			if (memcmp(bios + 0x6D, "WONDER", 6))
+			{
+				bios = (uint8_t *)0x01AD00+address; // might also be 0x40D500
+				// check for LaserActive
+				if (memcmp(bios + 0x6D, "SEGA", 4))
 					return 0;
-            }
-        }
-    }
-    return bios;
+			}
+		}
+	}
+	return bios;
 }
 
 #ifndef SEGACD
 int DetectBSSCDBIOS(uint32_t address)
 {
-    uint8_t *bios;
+	uint8_t *bios;
 	
-    bios = (uint8_t *)0x0100+address;
-    if(memcmp(bios, "ESAG", 4))
+	bios = (uint8_t *)0x0100+address;
+	if(memcmp(bios, "ESAG", 4))
 		return 0;
-    return 1;
+	return 1;
 }
 #endif
 
@@ -256,7 +256,7 @@ void ShowMessageAndData(char *message, uint32_t value, int len, int palmsg, int 
 void ShowSEGABIOSData(uint32_t address)
 {
 	char buffer[10];
-    int possible[] = { 0x01586D, 0x01606D, 0x01AD6D, 0x00D56D }, i;
+	int possible[] = { 0x01586D, 0x01606D, 0x01AD6D, 0x00D56D }, i;
 
 	for(i = 0; i < 4; i++)
 	{
@@ -284,7 +284,7 @@ void ShowSEGABIOSData(uint32_t address)
 		VDP_End();
 	}
 	
-    return;
+	return;
 }
 */
 
@@ -352,7 +352,7 @@ int Test16bitRegion(u16 value, u32 startaddress, u32 size, u16 *rvalue)
 {
 	volatile u16 *ram = NULL;
 	u16			read = 0;
-	u32		    word = 0;
+	u32			word = 0;
 	
 	ram = (volatile u16*)startaddress;
 	size = size/2;
@@ -461,8 +461,8 @@ void Z80RamTest()
 
 
 typedef struct bios_data {
-    uint32_t crc;
-    char *name;
+	uint32_t crc;
+	char *name;
 } BIOSID;
 
 
@@ -497,8 +497,8 @@ const static BIOSID bioslist[] = {
 { 0, NULL } } ; 
 
 typedef struct biosRF_data {
-    uint32_t crcrf;
-    uint32_t crcog;
+	uint32_t crcrf;
+	uint32_t crcog;
 } BIOSRF;
 
 // V1
@@ -536,8 +536,8 @@ const static BIOSRF biosnamesRF2[] = {
 { 0, 0 } } ; 
 
 typedef struct biosSwapped_data {
-    uint32_t crcog;
-    uint32_t crcsw;
+	uint32_t crcog;
+	uint32_t crcsw;
 } BIOS_SW;
 
 // Reversed, MAME
@@ -657,7 +657,8 @@ int FindRegionFreeBios(uint32_t checksum, const BIOSRF* blist)
 			name = GetBIOSNamebyCRC(blist[i].crcog);
 			VDP_Start();
 			VDP_drawTextBG(APLAN, "Region Free", TILE_ATTR(PAL2, 0, 0, 0), 6, 20);
-			VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 18, 20);
+			if(name)
+				VDP_drawTextBG(APLAN, name, TILE_ATTR(PAL2, 0, 0, 0), 18, 20);
 			VDP_End();
 			return 1;
 		}
@@ -2047,11 +2048,11 @@ void resetSegaCD()
 	write_byte(0xA12001, 0x02);
 	write_byte(0xA12001, 0x00);
 
-    /*
-     * Reset the Sub-CPU, request the bus
-     */
-    write_byte(0xA12001, 0x02);
-    while (!(read_byte(0xA12001) & 2)) write_byte(0xA12001, 0x02); // wait on bus acknowledge
+	/*
+	 * Reset the Sub-CPU, request the bus
+	 */
+	write_byte(0xA12001, 0x02);
+	while (!(read_byte(0xA12001) & 2)) write_byte(0xA12001, 0x02); // wait on bus acknowledge
 	
 	// Disable vertical blank handler to generate Sub-CPU level 2 ints.
 	segacd_int_enabled = 0;
@@ -2105,31 +2106,31 @@ uint8_t segacd_init()
 	VDP_drawTextBG(APLAN, "Assigning WORD RAM to SCD", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
 	write_word(0xA12002, 0x0002); // no write-protection, bank 0, 2M mode, Word RAM assigned to Sub-CPU
 	
-    /*
-     * Decompress Sub-CPU BIOS to Program RAM at 0x00000
-     */
+	/*
+	 * Decompress Sub-CPU BIOS to Program RAM at 0x00000
+	 */
 	VDP_drawTextBG(APLAN, "Decompressing SCD BIOS", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
 	Kos_Decomp(segacd_bios_addr, (uint8_t *)0x420000);
 	VDP_waitVSync();
 
-    /*
-     * Copy Sub-CPU program to Program RAM at 0x06000
-     */
+	/*
+	 * Copy Sub-CPU program to Program RAM at 0x06000
+	 */
 	ShowMessageAndData("Copying SCD Program", sizeof(pcmcheck_scd), 4, PAL1, 4, ypos++);
 	memcpy((void *)0x426000, pcmcheck_scd, sizeof(pcmcheck_scd));
 	if (memcmp((void *)0x426000, pcmcheck_scd, sizeof(pcmcheck_scd)))
-    {
+	{
 		ShowMessageAndData("Failed Program RAM", (uint32_t)0x420000, 8, PAL0, 4, ypos++);
 		WaitKey(NULL);
 		resetSegaCD();
-        return 0;
-    }
+		return 0;
+	}
 	VDP_waitVSync();
 	
 	VDP_drawTextBG(APLAN, "Starting SCD CPU", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
-    write_byte(0xA12001, 0x01); // clear bus request, deassert reset - allow CD Sub-CPU to run
+	write_byte(0xA12001, 0x01); // clear bus request, deassert reset - allow CD Sub-CPU to run
 	write_byte(0xA1200E, 0x00); // clear main comm port
-    while (!(read_byte(0xA12001) & 1)) 
+	while (!(read_byte(0xA12001) & 1)) 
 	{
 		write_byte(0xA12001, 0x01); // wait on Sub-CPU running
 		write_byte(0xA1200E, 0x00); // clear main comm port
@@ -2138,27 +2139,27 @@ uint8_t segacd_init()
 	VDP_waitVSync();
 	write_byte(0xA12010, 0x01); // clear command send (for the state machine in the SCD)
 	/*
-     * Set the vertical blank handler to generate Sub-CPU level 2 ints.
-     * The Sub-CPU BIOS needs these in order to run.
-     */
+	 * Set the vertical blank handler to generate Sub-CPU level 2 ints.
+	 * The Sub-CPU BIOS needs these in order to run.
+	 */
 	VDP_drawTextBG(APLAN, "Enabling Interrupts", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
 	VDP_waitVSync();
 	// enable vertical blank handler to generate Sub-CPU level 2 ints.
 	segacd_int_enabled = 1;
-    set_sr(0x2000); // enable interrupts
+	set_sr(0x2000); // enable interrupts
 
-    /*
-     * Wait for Sub-CPU program to set sub comm port indicating it is running -
-     * note that unless there's something wrong with the hardware, a timeout isn't
-     * needed... just loop until the Sub-CPU program responds, but 2000000 is about
-     * ten times what the LaserActive needs, and the LA is the slowest unit to
-     * initialize
-     */
+	/*
+	 * Wait for Sub-CPU program to set sub comm port indicating it is running -
+	 * note that unless there's something wrong with the hardware, a timeout isn't
+	 * needed... just loop until the Sub-CPU program responds, but 2000000 is about
+	 * ten times what the LaserActive needs, and the LA is the slowest unit to
+	 * initialize
+	 */
 	
 	VDP_waitVSync();
 	timeout = 2000000;
-    do
-    {
+	do
+	{
 		value = (u8)read_word(0xA12020);
 		if(value != 0)
 		{
@@ -2173,14 +2174,14 @@ uint8_t segacd_init()
 		else
 			ShowMessageAndData("Got SCD SP_Init in", 2000000 - timeout, 3, PAL1, 4, ypos);
 		VDP_waitVSync();
-    }while(value != 0);
+	}while(value != 0);
 	ypos ++;
 	/*
-     * Wait for Sub-CPU to indicate it is ready to receive commands
-     */
+	* Wait for Sub-CPU to indicate it is ready to receive commands
+	*/
 	VDP_waitVSync();
 	timeout = 500;
-    do
+	do
 	{
 		value = (u8)read_word(0xA12020);
 		if(value != 0)
@@ -2199,6 +2200,9 @@ uint8_t segacd_init()
 	}while (value != 0);
 	
 	ypos++;
+
+	VDP_drawTextBG(APLAN, "Wating for reply from SCD", TILE_ATTR(PAL1, 0, 0, 0), 4, ypos++);
+	VDP_waitVSync();
 	
 	result = SendSCDCommandRetVal(Op_DummyTest, 0, &retVal, NULL);
 	// laseractive fails this first one.. could it be only the first command sent?
