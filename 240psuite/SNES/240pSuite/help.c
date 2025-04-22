@@ -590,6 +590,23 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "the audio chain is working");
 							drawText(3, y++, 7, "properly.");
 					break;
+				case HELP_MDFOURIER:
+							drawText(3, 4  , 6, "        MDFOURIER"); 
+							drawText(3, y++, 7, "Button A plays the test"); 
+							drawText(3, y++, 7, "tones. Please record it"); 
+							drawText(3, y++, 7, "with your audio interface"); 
+							drawText(3, y++, 7, "and use the software at:"); 
+							y++;
+							drawText(3, y++, 7, "http://junkerhq.net/MDF"); 
+							y++;
+							drawText(3, y++, 7, "Keep in mind that this"); 
+							drawText(3, y++, 7, "platform uses a ceramic"); 
+							drawText(3, y++, 7, "resonator which varies"); 
+							drawText(3, y++, 7, "with temperature and"); 
+							drawText(3, y++, 7, "between consoles. Use the"); 
+							drawText(3, y++, 7, "special options to"); 
+							drawText(3, y++, 7, "compensate for it."); 
+					break;
 				case HELP_LED:
 					switch(page)
 					{

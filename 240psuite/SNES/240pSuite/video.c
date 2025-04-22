@@ -97,7 +97,6 @@ void DrawTilesWithSprites(u16 X, u16 Y, u16 width, u16 height, u8 *tiles, u16 ti
 		{
 			oamSet(spriteIndex, baseX+column*16, baseY+row*16, 3, 0, 0, tileIndex, 0); 
 			oamSetEx(spriteIndex, OBJ_SMALL, OBJ_SHOW);
-			oamSetVisible(spriteIndex, OBJ_SHOW);
 		
 			spriteIndex += 4;
 			tileIndex += 2;
@@ -122,7 +121,6 @@ void DrawTilesWithSpritesLoaded(u16 X, u16 Y, u16 width, u16 height, u16 spriteI
 		{
 			oamSet(spriteIndex, baseX+column*16, baseY+row*16, 3, 0, 0, tileIndex, 0); 
 			oamSetEx(spriteIndex, OBJ_SMALL, OBJ_SHOW);
-			oamSetVisible(spriteIndex, OBJ_SHOW);
 		
 			spriteIndex += 4;
 			tileIndex += 2;
@@ -149,7 +147,6 @@ void DrawTilesWithSpritesBarcode(u16 X, u16 Y, u16 width, u16 height, u8 *tiles,
 		{
 			oamSet(spriteIndex, baseX+column*16, baseY+row*16, 3, 0, 0, tileIndex, 1); 
 			oamSetEx(spriteIndex, OBJ_SMALL, OBJ_SHOW);
-			oamSetVisible(spriteIndex, OBJ_SHOW);
 		
 			spriteIndex += 4;
 			tileIndex += 2;
@@ -174,16 +171,13 @@ void ClearScreen256(u8 layer)
 void Transition()
 {
 	setFadeEffect(FADE_OUT);
-	WaitForVBlank(); 
+	WaitForVBlank();
 }
 
 void cleanSprites() 
 {
-	int i = 0;
-	
-	for(i = 0x0; i <= 0xfE; i+=2)
-		oamSetVisible(i, OBJ_HIDE);
-	oamClear(0, 0);
+	oamInit();
+	WaitForVBlank();
 }
 
 void transitionAndClear()

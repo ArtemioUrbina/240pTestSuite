@@ -52,6 +52,7 @@ int main(void)
 	
 	LoadAudio();
 	
+	oamInit();
 	// Main loop
 	DrawIntro();
 	while(1) 
@@ -737,9 +738,9 @@ void AudioTests(void)
 		}	
 
 		if(sel < 0)
-			sel = 5;
+			sel = 4;
 			
-		if(sel > 5)
+		if(sel > 4)
 			sel = 0;
 			
 		if(pressed & KEY_START)
@@ -919,7 +920,7 @@ void DrawCredits(void)
 			drawText(4, pos, 7, "http://junkerhq.net/240p"); pos ++;
 			
 			drawText(4, 4, 5, "Ver. 1.09");
-			drawText(19, 4, 7, "01/10/2024");
+			drawText(19, 4, 7, "20/04/2025");
 			drawText(10, 24, 5, "Dedicated to Elisa");
 			
 			EndDMA();	

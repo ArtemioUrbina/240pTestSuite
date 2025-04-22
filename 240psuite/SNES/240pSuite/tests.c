@@ -194,7 +194,7 @@ void DropShadowTest(void)
 				
 				oamSet(4, x+10, y+10, 2, 0, 0, 4, 7); 
 				oamSetEx(4, OBJ_SMALL, OBJ_SHOW);
-				oamSetVisible(2, OBJ_SHOW);				
+				oamSetVisible(2, OBJ_SHOW);		
 			}
 			changesprite = 0;
 		}
@@ -1340,6 +1340,8 @@ void MDFourier(u8 boot)
 
 	if(boot)
 		ExecutePulseTrain();
+	else
+		DrawHelp(HELP_MDFOURIER);
 		
 	while(!end) 
 	{
@@ -1376,7 +1378,7 @@ void MDFourier(u8 boot)
 		{
 			u16 y = 7;						
 			
-			drawText(8, 7, 6, "MDFourier Beta"); 	
+			drawText(10, 7, 6, "MDFourier"); 	
 			if(!msu1available())
 				drawText(11, 16, 7, "Press A");
 			else
@@ -1394,8 +1396,8 @@ void MDFourier(u8 boot)
 		
 		if(pressed & KEY_START)
 		{
-			//DrawHelp(HELP_SOUND);
-			//redraw = 1;
+			DrawHelp(HELP_MDFOURIER);
+			redraw = 1;
 		}
 		
 		if(pressed & KEY_X)
@@ -2426,14 +2428,14 @@ void DrawPhase()
 			redraw = 1;
 		}
 			
-		if(pressed & KEY_LEFT)
+		if(pressed & KEY_LEFT || pressed & KEY_L)
 		{
 			x -= 1;
 			if(x < -18)
 				x = -18;
 		}
 		
-		if(pressed & KEY_RIGHT)
+		if(pressed & KEY_RIGHT || pressed & KEY_R)
 		{
 			x += 1;
 			if(x > 18)
