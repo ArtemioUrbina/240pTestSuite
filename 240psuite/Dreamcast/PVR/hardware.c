@@ -2573,27 +2573,37 @@ void VMUControllerTest()
 void amplify_samples()
 {
 	double			ratio = 0;
-	unsigned int 	i = 0, size = 0, max = 0;
-	int16			*samples = NULL, current = 0;
+	unsigned int 	i = 0, size = 0;
+	int				max = 0, current = 0;
+	int16			*samples = NULL;
+
 #ifdef BENCHMARK
 	uint64	start, end;
 
 	start = timer_us_gettime64();
-#endif					
+#endif
+
 	samples = (int16*)stream_samples;
 	size = rec_buffer.pos/2;
 	for(i = 0; i < size; i++)
 	{
-		current = abs(samples[i]);
-		if((unsigned int)current > max)
+		current = samples[i] < 0 ? -(int)samples[i] : (int)samples[i];
+		if(current > max)
 			max = current;
 	}
 	
-	if(max)
+	if(max && max != INT16_MAX)
 	{
-		ratio = 32767.0/(double)max;
+		ratio = INT16_MAX/(double)max;
 		for(i = 0; i < size; i++)
-			samples[i] *= ratio;
+		{
+			int amplified = (int)(samples[i] * ratio);
+			if (amplified > INT16_MAX)
+				amplified = INT16_MAX;
+			if (amplified < INT16_MIN)
+				amplified = INT16_MIN;
+			samples[i] = (int16)amplified;
+		}
 	}
 #ifdef BENCHMARK
 	end = timer_us_gettime64();
@@ -2656,7 +2666,7 @@ void MicrophoneTest()
 				cleanSIPtest();
 				return;
 			}
-			if(AskQuestion("Use NTSC Microphone values?"))
+			if(AskQuestionText("Microphone standard to use?", "Press #GA#G for NTSC or #GB#G for PAL"))
 				samplerate = sr8 ? 8085 : 11025;
 			else
 				samplerate = sr8 ? 8000 : 10909;
@@ -2789,9 +2799,9 @@ void MicrophoneTest()
 				}
 			}
 			
-			sprintf(msg, "#CSeconds to record:#C %.2d", seconds_record);
+			sprintf(msg, "#CUp/Down#C sets seconds to record: #C%.2d#C", seconds_record);
 			DrawStringSCentered(90+5*fh, 1.0f, 1.0f, 1.0f, msg);	
-			sprintf(msg, "#CAmplify playback:#C %s", amplify ? " ON" : "OFF");
+			sprintf(msg, "#CY#C to enable playback amplification: %s", amplify ? " #CON#C" : "#COFF#C");
 			DrawStringSCentered(90+6*fh, 1.0f, 1.0f, 1.0f, msg);
 			
 			EndScene();

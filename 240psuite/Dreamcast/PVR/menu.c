@@ -1683,20 +1683,25 @@ int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selecte
 
 void DrawMessage(char *msg)
 {
-	DrawMessageInternal(msg, 1, 0);
+	DrawMessageInternal(msg, 1, 0, NULL);
 }
 
 void DrawMessageOnce(char *msg)
 {
-	DrawMessageInternal(msg, 0, 0);
+	DrawMessageInternal(msg, 0, 0, NULL);
 }
 
 int AskQuestion(char *msg)
 {
-	return(DrawMessageInternal(msg, 0, 1));
+	return(DrawMessageInternal(msg, 0, 1, NULL));
 }
 
-int DrawMessageInternal(char *msg, int waitinput, int isquestion)
+int AskQuestionText(char *msg, char *replies)
+{
+	return(DrawMessageInternal(msg, 0, 1, replies));
+}
+
+int DrawMessageInternal(char *msg, int waitinput, int isquestion, char *replies)
 {
 	int 		done = 0, retval = 0;
 	uint16		pressed;
@@ -1719,10 +1724,15 @@ int DrawMessageInternal(char *msg, int waitinput, int isquestion)
 		if(back)
 			DrawImage(back);
 		DrawStringSCenteredXY(1.0f, 1.0f, 1.0f, msg);
-		if(waitinput && !isquestion)
-			DrawStringSCentered(163, 0.4f, 0.9f, 0.4f, "Press B to close");
-		if(isquestion)
-			DrawStringSCentered(163, 1.0f, 1.0f, 1.0f, "Press #GA#G to accept or #GB#G to close");
+		if(replies == NULL)
+		{
+			if(waitinput && !isquestion)
+				DrawStringSCentered(163, 0.4f, 0.9f, 0.4f, "Press B to close");
+			if(isquestion)
+				DrawStringSCentered(163, 1.0f, 1.0f, 1.0f, "Press #GA#G to accept or #GB#G to close");
+		}
+		else
+			DrawStringSCentered(163, 1.0f, 1.0f, 1.0f, replies);
 		EndScene();
 	
 		if(waitinput)

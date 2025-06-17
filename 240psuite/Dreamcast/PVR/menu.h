@@ -101,9 +101,10 @@ typedef struct menu_data {
 int SelectMenu(char *title, fmenudata *menu_data, int num_options, int selected_option);
 int SelectMenuEx(char *title, fmenudata *menu_data, int num_options, int selected_option, char *helpfile);
 int AskQuestion(char *msg);
+int AskQuestionText(char *msg, char *replies);
 void DrawMessage(char *msg);
 void DrawMessageOnce(char *msg);
-int DrawMessageInternal(char *msg, int waitinput, int isquestion);
+int DrawMessageInternal(char *msg, int waitinput, int isquestion, char *replies);
 
 #define FB_MENU_NORMAL		1
 #define FB_MENU_HELP		2

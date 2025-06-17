@@ -1031,7 +1031,7 @@ void SIPLagTest()
 			cleanSIPlag();
 			return;
 		}
-		if(AskQuestion("Use NTSC Microphone values?"))
+		if(AskQuestionText("Microphone standard to use?", "Press #GA#G for NTSC or #GB#G for PAL"))
 			samplerate = 11025;
 		else
 			samplerate = 10909;
