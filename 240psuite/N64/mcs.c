@@ -210,6 +210,8 @@ int draw3DScene(SceneData *scene, int frames, int type, int controls) {
 	}
 	
 	while(frames) {
+		surface_t *display = NULL;
+		
 		switch(type) {
 			case ZOOMIN_3D:
 				scene->camPos.v[2] -= step;
@@ -250,8 +252,9 @@ int draw3DScene(SceneData *scene, int frames, int type, int controls) {
 		);
 		t3d_mat4_to_fixed(scene->modelMatFP, &scene->modelMat);
 
+		display = display_get();
 		// ======== Draw ======== //
-		rdpq_attach(display_get(), &scene->depthBuffer);
+		rdpq_attach(display, &scene->depthBuffer);
 		t3d_frame_start();
 		t3d_viewport_attach(&scene->viewport);
 
@@ -267,6 +270,8 @@ int draw3DScene(SceneData *scene, int frames, int type, int controls) {
 		t3d_matrix_pop(1);
 		
 		if(!controls) {
+			rdpq_detach_wait();
+			rdpq_attach(display, &scene->depthBuffer);
 			rdpq_font_style(scene->fontRegular, 0, &(rdpq_fontstyle_t){
 				.color = RGBA32(scene->colorFont[0], scene->colorFont[1], scene->colorFont[2], scene->colorFont[3]),
 			});
