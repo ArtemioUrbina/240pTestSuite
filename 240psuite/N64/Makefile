@@ -133,6 +133,7 @@ $(FILESYSTEM_DIR)/convergence-04-colors.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_
 $(FILESYSTEM_DIR)/convergence-05-colorsbl.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/rectangle_short.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/rectangle_long.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
+$(FILESYSTEM_DIR)/controller.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI8
 
 $(FILESYSTEM_DIR)/BebasNeue-Regular.font64: MKFONT_FLAGS+=--size 41
 $(FILESYSTEM_DIR)/BebasNeue-Small.font64: MKFONT_FLAGS+=--size 15

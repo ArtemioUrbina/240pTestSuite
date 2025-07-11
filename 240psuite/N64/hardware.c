@@ -292,7 +292,7 @@ void drawControllerTest() {
 	image *back = NULL;
 	joypad_buttons_t pad_held;
 
-	back = loadImage("rom:/mainbg.sprite");
+	back = loadImage("rom:/controller.sprite");
 	if(!back)
 		return;
 	while(!end) {
@@ -301,10 +301,11 @@ void drawControllerTest() {
 		rdpqStart();
 		
 		rdpqClearScreen();
-		//rdpqDrawImage(back);
+		rdpqDrawImage(back);
 		rdpqEnd();
 		
-		drawStringC(20, 0x00, 0xff, 0x00, "Controller Test");
+		drawStringC(15, 0x00, 0xff, 0x00, "Controller Test");
+		drawStringC(25, 0xFF, 0xff, 0x00, "Left+Start in controller 1 to exit");
 		drawControllerAtCoord(1, 30, 40);
 		drawControllerAtCoord(2, 170, 40);
 		

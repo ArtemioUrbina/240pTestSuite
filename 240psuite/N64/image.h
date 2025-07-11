@@ -30,12 +30,22 @@
 	and a Tek 1720 color vectorscope.
 	Max White is around 94 IRE, and max white form the N64 is 0xf8
 	7.5 IRE matched with the ~94% is around 0x17
+	
+	TODO: SDK changed, it was:
+	IRE_075		0xc0
+	IRE_100		0xf8
+	
+	changed to: 
+	IRE_075		0xc6
+	IRE_100		0xff
+	
+	Need to check IRE_007_5
 */
 
 #define IRE_000		0x00
 #define IRE_007_5	0x13
-#define IRE_075		0xc0
-#define IRE_100		0xf8
+#define IRE_075		0xc6
+#define IRE_100		0xff
 
 // From the PNG it was 0x00, 0x20, 0x48. From vectorscope measurments it is the following
 #define COLOR_I		graphics_make_color(0x00, 0x28, 0x40, 0xff)
@@ -129,8 +139,6 @@ void drawDigit(uint16_t x, uint16_t y, uint16_t color, uint16_t digit);
 void drawNumber(uint16_t x, uint16_t y, uint16_t color, uint16_t number);
 void drawBlackBox(int x, int y, int width, int height);
 
-#ifdef DEBUG_BENCHMARK
 void printPalette(image *data, int x, int y);
-#endif
 
 #endif

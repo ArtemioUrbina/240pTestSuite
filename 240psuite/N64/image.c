@@ -19,6 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
  
+ #include "font.h"
  #include "image.h"
  #include "video.h"
  #include "controller.h"
@@ -814,9 +815,6 @@ void drawBlackBox(int x, int y, int width, int height) {
 		x, y, width, height, graphics_make_color(0, 0, 0, 0xff));		
 }
 
-#ifdef DEBUG_BENCHMARK
-#include "font.h"
-
 void printPalette(image *data, int x, int y) {
 	for(unsigned int c = 0; c < data->palSize; c++) {
 		char str[64];
@@ -827,4 +825,4 @@ void printPalette(image *data, int x, int y) {
 		y += fh;
 	}
 }
-#endif
+

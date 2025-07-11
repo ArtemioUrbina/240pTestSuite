@@ -85,7 +85,7 @@ void drawMDFourier() {
 			if(isPlaying)
 				drawStringC(100, 0xff, 0xff, 0xff, "Playing back ");
 			else
-				drawStringC(100, 0xff, 0xff, 0xff, "Press #Ga#G to play");
+				drawStringC(100, 0xff, 0xff, 0xff, "Press #GA#G to play");
 			
 			drawStringC(201, 0xff, 0xff, 0x00, "#Yhttp://junkerhq.net/MDFourier#Y");
 			refresh --;
