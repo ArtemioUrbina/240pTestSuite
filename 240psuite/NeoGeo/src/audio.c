@@ -681,7 +681,7 @@ void at_audiosync_test()
 {
 	int done = 0, draw = 1, x = 160, y = 180;
 	int paused = 0, speed = -1;
-	int x1 = 0 , x2 = 160, hstep = 1;
+	int x1 = 0 , x2 = 160, hstep = 1, state = 0;
 	picture syncbar, syncbar2, syncfloor, block;
 
 	while (!done)
@@ -731,11 +731,24 @@ void at_audiosync_test()
 
 			if(y == 180)
 			{
-				sendZ80commandAtVideoStart(SOUNDCMD_SSG1KHZStart);
-				backgroundColor(WH_100);
+				switch(state) {
+					case 0:
+						sendZ80commandAtVideoStart(SOUNDCMD_SSG1KHZStart);
+						backgroundColor(WH_100);
 
-				sendZ80commandAtVideoEnd(SOUNDCMD_SSG1KHZStop);
-				backgroundColor(_BLACK);
+						sendZ80commandAtVideoEnd(SOUNDCMD_SSG1KHZStop);
+						backgroundColor(_BLACK);
+						break;
+					case 1:
+						sendZ80commandAtVideoStart(SOUNDCMD_SSG260HZStart);
+						backgroundColor(WH_100);
+
+						sendZ80commandAtVideoEnd(SOUNDCMD_SSG260HZStop);
+						backgroundColor(_BLACK);
+						break;
+				}
+
+				state = !state;
 			}
 
 			if(y == 180 || y == 120)

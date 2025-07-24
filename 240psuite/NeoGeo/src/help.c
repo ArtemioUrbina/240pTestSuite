@@ -760,16 +760,16 @@ void DrawHelp(int option)
 				case HELP_AUDIOSYNC:
 					fixPrintC(6, fontColorGreen, fbase, "AUDIO SYNC TEST");
 
-					fixPrint(4, 9, fontColorWhite, fbase, "This test flashes the whole");
-					fixPrint(4, 10, fontColorWhite, fbase, "screen white for 1 frames,");
-					fixPrint(4, 11, fontColorWhite, fbase, "along with a 1khz test tone.");
+					fixPrint(4, 9, fontColorWhite, fbase, "This test flashes the entire");
+					fixPrint(4, 10, fontColorWhite, fbase, "screen white for one frame,");
+					fixPrint(4, 11, fontColorWhite, fbase, "accompanied by alternating");
+					fixPrint(4, 12, fontColorWhite, fbase, "1khz and 260hz test tones.");
 
-					fixPrint(4, 13, fontColorWhite, fbase, "You can verify the sync between");
-					fixPrint(4, 14, fontColorWhite, fbase, "audio and video with recording");
-					fixPrint(4, 15, fontColorWhite, fbase, "equipment or specialized");
-					fixPrint(4, 16, fontColorWhite, fbase, "hardware.");
+					fixPrint(4, 14, fontColorWhite, fbase, "You can verify the sync between");
+					fixPrint(4, 15, fontColorWhite, fbase, "audio and video with recording");
+					fixPrint(4, 16, fontColorWhite, fbase, "equipment, or an oscillosciope.");
 
-					fixPrint(4, 18, fontColorWhite, fbase, "Press A to start/stop the test.");
+					fixPrint(4, 19, fontColorWhite, fbase, "Press A to start/stop the test.");
 				break;
 
 				case HELP_CONTRAST:

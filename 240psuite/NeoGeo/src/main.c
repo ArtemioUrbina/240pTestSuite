@@ -643,8 +643,8 @@ void credits()
 			pictureInit(&qr, &barcode, 26, 17, 260, 150, FLIP_NONE);
 			palJobPut(17,barcode.palInfo->count,barcode.palInfo->data);
 
-			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 1.03");
-			fixPrint(x+24, y+1, fontColorWhite, fbase, "13/03/2024");
+			fixPrint(x+24, y, fontColorGreen, fbase, "Ver. 1.04");
+			fixPrint(x+24, y+1, fontColorWhite, fbase, "23/07/2025");
 #ifdef USE_SERIAL
 			if(checkserialset())
 			{
@@ -886,7 +886,7 @@ void draw_demo()
 
 	load_blinkdata(&blinkdata, &index, &palindex, 133, 50);
 
-	fixPrint(10, 26, fontColorSolid, fbase+1, "2023 Dasutin/Artemio");
+	fixPrint(8, 26, fontColorSolid, fbase+1, "2023-2025 Dasutin/Artemio");
 
 	demo_change = 1;
 	while (demo_frames)
@@ -947,7 +947,7 @@ void draw_demo()
 
 		readController();
 
-		if (toggle == 30)
+		if (toggle == 60)
 			fixPrint(14, 23, fontColorWhite, fbase, "            ");
 		if (toggle == 0)
 			fixPrint(14, 23, fontColorRed, fbase, pressStart ? "PRESS  START" : "INSERT COIN");
@@ -956,7 +956,7 @@ void draw_demo()
 			fixPrintf(28, 28, fontColorSolid, fbase+1, "CREDIT%c %02d", credits <= 1 ? ' ' : 'S', credits);  // credit counter
 		
 		toggle ++;
-		if (toggle > 60)
+		if (toggle > 120)
 			toggle = 0;
 		demo_frames--;
 		demo_change--;
@@ -1007,7 +1007,7 @@ void draw_mvs_title()
 
 	load_blinkdata(&blinkdata, &index, &palindex, 132, 50);
 
-	fixPrint(10, 26, fontColorWhite, fbase, "2023 Dasutin/Artemio");
+	fixPrint(8, 26, fontColorWhite, fbase, "2023-2025 Dasutin/Artemio");
 
 	while (1)
 	{
