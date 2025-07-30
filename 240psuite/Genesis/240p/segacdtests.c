@@ -989,6 +989,8 @@ void CheckHintRegister()
 
 #ifndef SEGACD
 
+// Writes AA to DD from banks 0 to 3 in order
+// to confirm if bank switching was done, and ID each
 int TestBankingProgramRAMFast()
 {
 	int		i;
@@ -1049,6 +1051,12 @@ int TestBankingProgramRAMRegisters()
 	return 1;
 }
 
+void clearScreen()
+{
+	VDP_Start();
+	VDP_clearTileMapRect(APLAN, 4, 8, 32, 28);
+	VDP_End();
+}
 
 void CheckSCDProgramRAM()
 {
@@ -1074,21 +1082,23 @@ void CheckSCDProgramRAM()
 		WaitKey(NULL);
 	}
 	
-	VDP_Start();
-	VDP_clearTileMapRect(APLAN, 5, 8, 30, 28);
-	VDP_End();
+	clearScreen();
 	
 	if(banks == 4 && !TestBankingProgramRAMFast())
 	{
 		VDP_Start();
-		VDP_drawTextBG(APLAN, "Fast Check Failed. The register", TILE_ATTR(PAL2, 0, 0, 0), 5, 10);
-		VDP_drawTextBG(APLAN, "did W/R OK, but bank switch was", TILE_ATTR(PAL2, 0, 0, 0), 5, 11);
-		VDP_drawTextBG(APLAN, "either not done or RAM is bad.", TILE_ATTR(PAL2, 0, 0, 0), 5, 12);
-		VDP_drawTextBG(APLAN, "Try Memory Viewer at address", TILE_ATTR(PAL2, 0, 0, 0), 5, 14);
-		VDP_drawTextBG(APLAN, "above and use C.", TILE_ATTR(PAL2, 0, 0, 0), 5, 15);
+		VDP_drawTextBG(APLAN, "Fast Check Failed. The register", TILE_ATTR(PAL2, 0, 0, 0), 4, 10);
+		VDP_drawTextBG(APLAN, "did W/R OK, but bank switch was", TILE_ATTR(PAL2, 0, 0, 0), 4, 11);
+		VDP_drawTextBG(APLAN, "either not done or bad RAM/lines", TILE_ATTR(PAL2, 0, 0, 0), 4, 12);
+		VDP_drawTextBG(APLAN, "Try Memory Viewer at address", TILE_ATTR(PAL2, 0, 0, 0), 4, 14);
+		VDP_drawTextBG(APLAN, "above and press C, should be:", TILE_ATTR(PAL2, 0, 0, 0), 4, 15);
+		VDP_drawTextBG(APLAN, "AA, BB, CC and DD at corners.", TILE_ATTR(PAL2, 0, 0, 0), 4, 16);
 		VDP_End();
+		
 		if(WaitKey("'A' for check 'B' to exit") != BUTTON_A)
 			return;
+			
+		clearScreen();
 	}
 	
 	
@@ -1105,9 +1115,7 @@ void CheckSCDProgramRAM()
 		CheckRAMWithValue(0x420000, 0x440000, 0x0000, 17, IS_16BIT);
 
 		WaitKey(NULL);
-		VDP_Start();
-		VDP_clearTileMapRect(APLAN, 5, 10, 30, 28);
-		VDP_End();
+		clearScreen();
 	}
 }
 
