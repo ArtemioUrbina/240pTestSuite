@@ -1054,7 +1054,7 @@ int TestBankingProgramRAMRegisters()
 void clearScreen()
 {
 	VDP_Start();
-	VDP_clearTileMapRect(APLAN, 4, 8, 32, 28);
+	VDP_clearTileMapRect(APLAN, 4, 8, 33, 28);
 	VDP_End();
 }
 
@@ -1086,17 +1086,27 @@ void CheckSCDProgramRAM()
 	
 	if(banks == 4 && !TestBankingProgramRAMFast())
 	{
+		u16 option = 0;
+		
 		VDP_Start();
 		VDP_drawTextBG(APLAN, "Fast Check Failed. The register", TILE_ATTR(PAL2, 0, 0, 0), 4, 10);
 		VDP_drawTextBG(APLAN, "did W/R OK, but bank switch was", TILE_ATTR(PAL2, 0, 0, 0), 4, 11);
 		VDP_drawTextBG(APLAN, "either not done or bad RAM/lines", TILE_ATTR(PAL2, 0, 0, 0), 4, 12);
-		VDP_drawTextBG(APLAN, "Try Memory Viewer at address", TILE_ATTR(PAL2, 0, 0, 0), 4, 14);
-		VDP_drawTextBG(APLAN, "above and press C, should be:", TILE_ATTR(PAL2, 0, 0, 0), 4, 15);
-		VDP_drawTextBG(APLAN, "AA, BB, CC and DD at corners.", TILE_ATTR(PAL2, 0, 0, 0), 4, 16);
+		VDP_drawTextBG(APLAN, "Try Memory Viewer by pressing A", TILE_ATTR(PAL2, 0, 0, 0), 4, 14);
+		VDP_drawTextBG(APLAN, "and use C to switch banks. Must", TILE_ATTR(PAL2, 0, 0, 0), 4, 15);
+		VDP_drawTextBG(APLAN, "have AA, BB, CC & DD at corners", TILE_ATTR(PAL2, 0, 0, 0), 4, 16);
+		VDP_drawTextBG(APLAN, "and 00 elsewhere.", TILE_ATTR(PAL2, 0, 0, 0), 4, 17);
 		VDP_End();
 		
-		if(WaitKey("'A' for check 'B' to exit") != BUTTON_A)
-			return;
+		option = WaitKey("A:memview B:exit C:test");
+		switch(option)
+		{
+			case BUTTON_A:
+				FadeAndCleanUp();
+				MemViewer(0x420000);
+			case BUTTON_B:
+				return;
+		}
 			
 		clearScreen();
 	}
