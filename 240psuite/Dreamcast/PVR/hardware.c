@@ -1456,8 +1456,9 @@ void DisplayDreameyeImage(maple_device_t *dev)
 				'A'+(dev->port), '0'+(dev->unit));
 		DrawMessage(msg);
 #else
-		/* Disabled since libjpeg crashes with the Dreameye images:  */
-		/* "Corrupt JPEG data: premature end of data segment"        */
+		/* Disabled since libjpeg crashes with the Dreameye images since they are 640x480 */
+		/* `pvr_txr_load_kimg': Non power-of-2 image width in input kos_img_t */
+		/* I need a way to figure how to expand that to 1024x512 later so that they load */
 		if(num == 0)
 		{
 			sprintf(msg, "Dreameye at %c-%c has no images", 
@@ -1469,7 +1470,7 @@ void DisplayDreameyeImage(maple_device_t *dev)
 		sprintf(msg, "Accessing Dreameye at %c-%c", 
 			'A'+(dev->port), '0'+(dev->unit));
 		DrawMessageOnce(msg);
-		if(dreameye_get_image(dev, 2, &buf, &size)	== MAPLE_EOK)
+		if(dreameye_get_image(dev, 2, &buf, &size) == MAPLE_EOK)
 		{
 			char fn[100];
 			
@@ -1482,7 +1483,7 @@ void DisplayDreameyeImage(maple_device_t *dev)
 				uint16		pressed;
 				
 				sprintf(fn, "/ram/de-img%03d.jpg", 0);
-				img = LoadIMG(fn, 0);						
+				img = LoadIMG(fn, 0);
 				if(img)
 				{
 					do

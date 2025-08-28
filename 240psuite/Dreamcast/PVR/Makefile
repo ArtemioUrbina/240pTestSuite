@@ -8,8 +8,8 @@ all: LDFLAGS = -lfftw3
 all: $(TARGET).bin
 
 #DCLOAD debug compile (exit to dcloader)
-dcload: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DDCLOAD -DBENCHMARK -DDEBUG_FFT
-dcload: LDFLAGS = -lfftw3
+dcload: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DDCLOAD -DBENCHMARK -DDEBUG_FFT -DDREAMEYE_DISP
+dcload: LDFLAGS = -lfftw3 -ljpeg
 dcload: $(TARGET).bin
 
 #DCLOAD debug compile (release flags)
