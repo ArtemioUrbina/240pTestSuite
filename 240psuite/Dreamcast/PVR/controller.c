@@ -4,7 +4,7 @@
 #include "vmu.h"
 
 uint16	OldButtonsInternal = 0;
-char	oldControllerName[256] = { '\0' };
+char	oldControllerName[30] = { '\0' };
 uint8 	isFishingRod = 0,
 		isMaracas = 0,
 		isStockController = 0,
@@ -17,12 +17,12 @@ uint8 	isFishingRod = 0,
 void PrintDebugController(cont_state_t *st);
 #endif
 
-#define STANDRD	"Dreamcast Controller         "
-#define ARCADE	"Arcade Stick                 "
-#define FISHING	"Dreamcast Fishing Controller "
-#define MARACAS	"Maracas Controller           "
-#define KEYBRD	"Keyboard                     "
-#define LIGHTGN	"Dreamcast Gun                "
+#define STANDRD	"Dreamcast Controller          "
+#define ARCADE	"Arcade Stick                  "
+#define FISHING	"Dreamcast Fishing Controller  "
+#define MARACAS	"Maracas Controller            "
+#define KEYBRD	"Keyboard                      "
+#define LIGHTGN	"Dreamcast Gun                 "
 
 #define	MARACAS_DEATH_ZONE	20
 #define	MARACAS_RATE		120
@@ -42,7 +42,7 @@ void InitController()
 	
 	DetectControllerType(dev);
 	OldButtonsInternal = 0;
-	strcpy(oldControllerName, dev->info.product_name);
+	strncpy(oldControllerName, dev->info.product_name, PNAME_SIZE);
 }
 
 cont_state_t *ReadController(uint16 num, uint16 *pressed)
@@ -71,22 +71,22 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 		}
 	}
 	
-	if(strcmp(oldControllerName, dev->info.product_name) != 0)
+	if(strncmp(oldControllerName, dev->info.product_name, PNAME_SIZE) != 0)
 	{
 #ifdef DCLOAD
-		dbglog(DBG_INFO, "Input Device is \"%s\"",
+		dbglog(DBG_INFO, "Input Device is \"%.30s\"",
 				dev->info.product_name);
 
 		dbglog(DBG_INFO, "\n  Functions 0x%08lx: %s\n  Power[%d-%d]mW",
 			dev->info.functions, maple_pcaps(dev->info.functions),
 			dev->info.standby_power, dev->info.max_power);
-		dbglog(DBG_INFO, "\n  License: \"%s\"\n  Area Code: 0x%0x\n",
+		dbglog(DBG_INFO, "\n  License: \"%.60s\"\n  Area Code: 0x%0x\n",
 				dev->info.product_license, dev->info.area_code);
 #endif		
 		DetectControllerType(dev);
 
 		OldButtonsInternal = 0;
-		strcpy(oldControllerName, dev->info.product_name);
+		strncpy(oldControllerName, dev->info.product_name, PNAME_SIZE);
 		
 		// check if bad VMU caused a reset issue
 		vmu_report_controller_swap(0);
@@ -97,7 +97,7 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 		
 #ifdef DCLOAD
 	// Unmapped
-	//PrintDebugController(st);
+	// PrintDebugController(st);
 #endif
 
 	if(st && isStockController)
@@ -127,7 +127,7 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 		
 		/*
 		 * We map triggers to digital buttons Z and D for internal use
-		 * doens't affect controller test
+		 * doesn't affect controller test
 		 */
 		 
 		if (st->ltrig > 5)
@@ -349,7 +349,7 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	
 		/*
 		 * We map all controller inputs to some keys
-		 * doens't affect controller test
+		 * doesn't affect controller test
 		 */
 		 
 		if(dev->info.area_code	== 0x01)
@@ -392,7 +392,7 @@ cont_state_t *ReadController(uint16 num, uint16 *pressed)
 	
 #ifdef DCLOAD
 	// Mapped above
-	//PrintDebugController(st);
+	// PrintDebugController(st);
 #endif	
 	
 	if(OldButtonsInternal != st->buttons)
@@ -430,32 +430,32 @@ void DetectControllerType(maple_device_t *dev)
 	if(!dev)
 		return;
 		
-	if(strcmp(STANDRD, dev->info.product_name) == 0)
+	if(strncmp(STANDRD, dev->info.product_name, PNAME_SIZE) == 0)
 		isStockController = 1;
 	else
 		isStockController = 0;
 	
-	if(strcmp(FISHING, dev->info.product_name) == 0)
+	if(strncmp(FISHING, dev->info.product_name, PNAME_SIZE) == 0)
 		isFishingRod = 1;
 	else
 		isFishingRod = 0;
 		
-	if(strcmp(MARACAS, dev->info.product_name) == 0)
+	if(strncmp(MARACAS, dev->info.product_name, PNAME_SIZE) == 0)
 		isMaracas = 1;
 	else
 		isMaracas = 0;
 		
-	if(strcmp(ARCADE, dev->info.product_name) == 0)
+	if(strncmp(ARCADE, dev->info.product_name, PNAME_SIZE) == 0)
 		isArcade = 1;
 	else
 		isArcade = 0;
 		
-	if(strcmp(KEYBRD, dev->info.product_name) == 0)
+	if(strncmp(KEYBRD, dev->info.product_name, PNAME_SIZE) == 0)
 		isKeyboard = 1;
 	else
 		isKeyboard = 0;
 	
-	if(strcmp(LIGHTGN, dev->info.product_name) == 0)
+	if(strncmp(LIGHTGN, dev->info.product_name, PNAME_SIZE) == 0)
 		isLightGun = 1;
 	else
 		isLightGun = 0;

@@ -3,6 +3,8 @@
 
 #include <kos.h>
 
+#define PNAME_SIZE	30
+
 #define CONT_LTRIGGER	CONT_Z
 #define CONT_RTRIGGER	CONT_D
 

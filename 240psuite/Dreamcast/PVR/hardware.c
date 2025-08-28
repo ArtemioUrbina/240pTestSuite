@@ -45,7 +45,6 @@ int				flashromp2_is_cached = 0;
 cid_record_st	cid_record;
 
 #define TRUNCATE_LEN	22
-#define PNAME_SIZE		30
 
 void ReduceName(char *target, char *source, int truncate)
 {
@@ -1072,7 +1071,7 @@ int maple_device_scan(float x, float y, int selected)
 		{
 			if(maple_dev_valid(port, unit))
 			{
-				dev = maple_state.ports[port].units[unit];
+				dev = &maple_state.ports[port].units[unit];
 				count ++;
 				if(unit == 0)
 				{
@@ -1260,7 +1259,7 @@ static void vbl_send_allinfo(int p, int u) {
 	/* Reserve access; if we don't get it, forget about it */
 	do
 	{	
-		dev = maple_state.ports[p].units[u];
+		dev = &maple_state.ports[p].units[u];
 		if(maple_frame_lock(&dev->frame) == 0)
 		{
 			maple_locked_device = 1;
@@ -1571,12 +1570,13 @@ void ListMapleDevices()
 		DrawImage(black);
 		DrawImage(back);
 
-		DrawStringSCentered(20+v_scroll, 0.0f, 1.0f, 0.0f, "Maple Devices");
+		DrawStringSCentered(20+v_scroll-fh, 0.0f, 1.0f, 0.0f, "Maple Devices");
+		DrawStringSCentered(20+v_scroll, 0.0f, 0.7f, 0.6f, "Press A for info");
 		c = maple_device_scan(15, 20+v_scroll, sel);
 		if(maple_use_reply_bytes)
-			DrawStringSCentered(210+v_scroll, 0.0f, 1.0f, 0.0f, "Use Maple response bytes"); 
+			DrawStringSCentered(210+v_scroll+fh, 0.0f, 1.0f, 0.0f, "Use Maple response bytes"); 
 		if(!maple_useCache)
-			DrawStringSCentered(210+v_scroll+fh, 0.0f, 1.0f, 0.0f, "Omit short response"); 
+			DrawStringSCentered(210+v_scroll+2*fh, 0.0f, 1.0f, 0.0f, "Omit short response"); 
 		EndScene();
 
 		VMURefresh("Maple", "Devices");
