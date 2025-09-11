@@ -26,7 +26,7 @@ vid_mode_t custom_vga =
 	524, 857,
 	172, 40,
 	21, 260,
-	135, 855,
+	126, 837,
 	36, 516,
 	0, 1, 0
 };
@@ -314,6 +314,11 @@ void ChangeVideoRegisters()
 
 void ChangeResolution(int nvmode)
 {
+	ChangeResolutionEx(nvmode, 0);
+}
+
+void ChangeResolutionEx(int nvmode, int customValues)
+{
 	vuint32 *regs = (uint32*)0xA05F8000;
 
 	// Skip useless video modes when in VGA
@@ -391,41 +396,50 @@ void ChangeResolution(int nvmode)
 	ReleaseTextures();
 
 	pvr_shutdown();
-	if(settings.UseKOSDefaults)
-		dbglog(DBG_INFO, "240p TS: Using KOS default video modes\n");
+	if(customValues)
+		dbglog(DBG_INFO, "240p TS: Using Test Video Modes\n");
 	else
-		dbglog(DBG_INFO, "240p TS: Using 240p Test Suite Video Modes\n");
+	{
+		if(settings.UseKOSDefaults)
+			dbglog(DBG_INFO, "240p TS: Using KOS default video modes\n");
+		else
+			dbglog(DBG_INFO, "240p TS: Using 240p Test Suite Video Modes\n");
+	}
 	switch(vmode)
 	{
 		case VIDEO_240P:
 			//vid_set_mode(DM_320x240_NTSC, PM_RGB565); 
-			if(!settings.UseKOSDefaults)
+			if(!settings.UseKOSDefaults || customValues)
 				vid_set_mode_ex(&custom_240); 
 			else
 				vid_set_mode(DM_320x240_NTSC, PM_RGB565);
 			break;
 		case VIDEO_288P:
 			//vid_set_mode(DM_320x240_PAL, PM_RGB565); 
-			if(!settings.UseKOSDefaults)
+			if(!settings.UseKOSDefaults || customValues)
 				vid_set_mode_ex(&custom_288); 
 			else
 				vid_set_mode(DM_320x240_PAL, PM_RGB565); 
 			break;
 		case VIDEO_576I:
 		case VIDEO_576I_A264:
-			if(!settings.UseKOSDefaults)
+			//vid_set_mode(DM_768x576_PAL_IL, PM_RGB565); crashes the DC
+			if(!settings.UseKOSDefaults || customValues)
 				vid_set_mode_ex(&custom_576); 
 			else
 				vid_set_mode(DM_640x480_PAL_IL, PM_RGB565); 
-			//vid_set_mode(DM_768x576_PAL_IL, PM_RGB565); crashes the DC
 			break;
 		case VIDEO_480I_A240:
 		case VIDEO_480P_SL:
 		case VIDEO_480I:
 		case VIDEO_480P:
 			if(vcable == CT_VGA)
-				vid_set_mode(DM_640x480_VGA, PM_RGB565); 
-				//vid_set_mode_ex(&custom_vga);
+			{
+				if(customValues)
+					vid_set_mode_ex(&custom_vga);
+				else
+					vid_set_mode(DM_640x480_VGA, PM_RGB565); 
+			}
 			else
 				vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565); 
 			break;
@@ -694,7 +708,7 @@ void PVRStats(char *msg)
 #endif
 }
 
-#ifdef DCLOAD
+#ifdef TEST_VIDEO
 
 #include "vmu.h"
 #include "controller.h"
@@ -706,7 +720,7 @@ void TestVideoMode(int mode)
 	uint16			pressed, update = 0, sel = 1, showback = 1;		
 	controller		*st;
 	char			str[50];
-	ImagePtr		back;
+	ImagePtr		back = NULL, rlines = NULL, black = NULL;
 	vid_mode_t		test_mode;
 	vid_mode_t		backup_mode;
 	vid_mode_t		*source_mode = NULL;
@@ -734,6 +748,7 @@ void TestVideoMode(int mode)
 	test_mode = *source_mode;
 	backup_mode = test_mode;
 
+	/*
 	if(vmode >= HIGH_RES)
 	{
 		back = LoadIMG("/rd/480/grid-480.kmg.gz", 0);
@@ -747,11 +762,75 @@ void TestVideoMode(int mode)
 		else
 			back = LoadIMG("/rd/grid.kmg.gz", 0);
 	}
+	*/
 
-	if(!back)
-	{
-		dbglog(DBG_ERROR, "Could not load background\n");
+	black = LoadIMG("/rd/black.kmg.gz", 1);
+	if(!black)
 		return;
+
+	if(vmode == VIDEO_240P || vmode == VIDEO_480I_A240 ||
+		vmode == VIDEO_480P_SL)
+	{
+		// Use 240p Monoscope
+		if(!back)
+		{
+			back = LoadIMG("/rd/monoscope.kmg.gz", 0);
+			if(!back)
+				return;
+			rlines = LoadIMG("/rd/monoscope_lin.kmg.gz", 0);
+			if(!rlines)
+			{
+				FreeImage(&back);
+				return;
+			}
+		}
+	}
+	
+	if(vmode == VIDEO_480I || vmode == VIDEO_480P)
+	{
+		back = LoadIMG("/rd/480/monoscope-480.kmg.gz", 0);
+		if(!back)
+			return;
+		rlines = LoadIMG("/rd/480/monoscope-480_lin.kmg.gz", 0);
+		if(!rlines)
+		{
+			FreeImage(&back);
+			return;
+		}
+		back->scale = 0;
+		rlines->scale = 0;
+	}
+	
+	if(vmode == VIDEO_288P || vmode == VIDEO_576I_A264)
+	{
+		// Use PAL Monoscope
+		if(!back)
+		{
+			back = LoadIMG("/rd/monoscopePAL.kmg.gz", 0);
+			if(!back)
+				return;
+			rlines = LoadIMG("/rd/monoscopePAL_lin.kmg.gz", 0);
+			if(!rlines)
+			{
+				FreeImage(&back);
+				return;
+			}
+		}
+	}
+	
+	if(vmode == VIDEO_576I)
+	{
+		back = LoadIMG("/rd/480/monoscopePAL576.kmg.gz", 0);
+		if(!back)
+			return;
+		rlines = LoadIMG("/rd/480/monoscopePAL576_lin.kmg.gz", 0);
+		if(!rlines)
+		{
+			FreeImage(&back);
+			return;
+		}
+		back->scale = 0;
+		rlines->scale = 0;
 	}
 
 	while(!done && !EndProgram) 
@@ -765,7 +844,11 @@ void TestVideoMode(int mode)
 
 		StartScene();
 		if(showback)
+		{
+			DrawImage(black);
 			DrawImage(back);
+			DrawImage(rlines);
+		}
 
 		sprintf(str, " Width:     %d ", test_mode.width);
 		DrawStringB(x, y, r, sel == c ? 0 : g,  sel == c ? 0 : b, str); y += fh; c++;
@@ -962,17 +1045,9 @@ void TestVideoMode(int mode)
 		if(update)
 		{
 			*source_mode = test_mode;
-			ChangeResolution(mode);
-			//vuint32 *regs = (uint32*)0xA05F8000;
-			//uint32 data = 0;
+			ChangeResolutionEx(mode, 1);
 
-			//regs[0x3A] |= 8;	  /* Blank */
-			//regs[0x11] &= ~1;   /* Display disable */
-
-			//PVR_SET(PVR_SCALER_CFG, 0x400);
-			//PVR_SET(PVR_FB_CFG_2, 0x00000001);
-
-/*
+			/*
 			if(vmode == VIDEO_288P)
 			{
 				dbglog(DBG_INFO, "PVR 0x38: %lX\n", regs[0x38]);
@@ -1002,27 +1077,15 @@ void TestVideoMode(int mode)
 				regs[0x34] = data;
 				dbglog(DBG_INFO, "PVR written to 0x34: %lX\n", regs[0x34]);
 			}
-*/
-	
-			/* Enable display */
-			//regs[0x3A] &= ~8;
-			//regs[0x11] |= 1;
-
-			if(settings.drawborder)
-				vid_border_color(255, 255, 255);
-			else
-				vid_border_color(0, 0, 0);
-
-			if(settings.EnablePALBG)
-				pvr_set_bg_color(settings.PalBackR, settings.PalBackG, settings.PalBackB);
-			else
-				pvr_set_bg_color(0.0f, 0.0f, 0.0f);
+			*/
 
 			update = 0;
 		}
 	}
 
+	FreeImage(&black);
 	FreeImage(&back);
+	FreeImage(&rlines);
 
 	dbglog(DBG_INFO, "----------EXIT-------\n\n");
 	ChangeResolution(oldvmode);

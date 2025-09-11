@@ -1418,6 +1418,35 @@ void cleanDisplayBuffer()
 	memset(display_buffer, 0, sizeof(char)*DISPLAY_BUFFER_CHAR);
 }
 
+/*
+	========================================================================
+		DreamEye
+	========================================================================
+	Functions     : 0x01000000  Function int 0: 0x00080000
+	Function int 1: 0x00000000  Function int 2: 0x00000000
+	Region:         0xff        Connection:     0x00
+	Product Name & License: Dreamcast Camera Flash  Device
+	  Produced By or Under License From SEGA ENTERPRISES,LTD.
+	Standby power: 0x07d0 (2000mW) Max: 0x0960 (2400mW)
+	Extra data:
+	000 | 56 65 72 73 69 6f 6e 20 31 2e 30 30 30 2c 32 30 | Version 1.000,20
+	010 | 30 30 2f 30 32 2f 32 35 2c 33 31 35 2d 36 32 38 | 00/02/25,315-628
+	020 | 33 20 20 20 20 20 20 20 31 2e 30 30 00 00 00 00 | 3       1.00
+	030 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	040 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	050 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	060 | 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
+	End of Extra data
+	
+	Values from MAPLE_RESPONSE_DEVINFO:
+	Functions     : 0x01000000  Function int 0: 0x00080000
+	Function int 1: 0x00000000  Function int 2: 0x00000000
+	Region:         0xff        Connection:     0x00
+	Product Name & License: Dreamcast Camera Flash  Device
+	  Produced By or Under License From SEGA ENTERPRISES,LTD.
+	Standby power: 0x07d0 (2000mW) Max: 0x0960 (2400mW)
+*/
+
 void DisplayDreameyeImage(maple_device_t *dev)
 {
 	char	msg[100];
@@ -1432,12 +1461,19 @@ void DisplayDreameyeImage(maple_device_t *dev)
 	{
 		dreameye_state_t 	*state = NULL;
 		int 				num = 0;
-#ifdef DREAMEYE_DISP
+#ifndef NO_DREAMEYE_DISP
 		uint8 				*buf = NULL;
 		int 				size = 0;
 #endif
-	
 		state = (dreameye_state_t *)maple_dev_status(dev);
+		if(dreameye_get_image_count(dev, 1) != MAPLE_EOK)
+		{
+			sprintf(msg, "Dreameye at %c-%c did not report images", 
+				'A'+(dev->port), '0'+(dev->unit));
+			DrawMessage(msg);
+			return;
+		}
+	
 		if(!state->image_count_valid)
 		{
 			sprintf(msg, "Dreameye at %c-%c has an invalid image count", 
@@ -1445,9 +1481,9 @@ void DisplayDreameyeImage(maple_device_t *dev)
 			DrawMessage(msg);
 			return;
 		}
-
 		num = state->image_count;
-#ifndef DREAMEYE_DISP
+
+#ifdef NO_DREAMEYE_DISP
 		if(num)
 			sprintf(msg, "Dreameye at %c-%c has %d image%c", 
 				'A'+(dev->port), '0'+(dev->unit), num, num > 1 ? 's' : ' ');
@@ -1456,9 +1492,6 @@ void DisplayDreameyeImage(maple_device_t *dev)
 				'A'+(dev->port), '0'+(dev->unit));
 		DrawMessage(msg);
 #else
-		/* Disabled since libjpeg crashes with the Dreameye images since they are 640x480 */
-		/* `pvr_txr_load_kimg': Non power-of-2 image width in input kos_img_t */
-		/* I need a way to figure how to expand that to 1024x512 later so that they load */
 		if(num == 0)
 		{
 			sprintf(msg, "Dreameye at %c-%c has no images", 
@@ -1467,14 +1500,16 @@ void DisplayDreameyeImage(maple_device_t *dev)
 			return;
 		}
 
-		sprintf(msg, "Accessing Dreameye at %c-%c", 
-			'A'+(dev->port), '0'+(dev->unit));
+		sprintf(msg, "Loading image 1/%d from Dreameye at %c-%c", 
+			num, 'A'+(dev->port), '0'+(dev->unit));
 		DrawMessageOnce(msg);
+
 		if(dreameye_get_image(dev, 2, &buf, &size) == MAPLE_EOK)
 		{
 			char fn[100];
+			int id = rand() % 99999;
 			
-			sprintf(fn, "de-img%03d.jpg", 0);
+			sprintf(fn, "de-img%05d.jpg", id);
 			if(fs_ramdisk_attach(fn, buf, size) == 0)
 			{
 				int 		done = 0;
@@ -1482,10 +1517,11 @@ void DisplayDreameyeImage(maple_device_t *dev)
 				controller	*st = NULL;
 				uint16		pressed;
 				
-				sprintf(fn, "/ram/de-img%03d.jpg", 0);
+				sprintf(fn, "/ram/de-img%05d.jpg", id);
 				img = LoadIMG(fn, 0);
 				if(img)
 				{
+					int joycntx = 0, joycnty = 0;
 					do
 					{
 						StartScene();
@@ -1493,8 +1529,17 @@ void DisplayDreameyeImage(maple_device_t *dev)
 						EndScene();
 						
 						st = ReadController(0, &pressed);
+						JoystickDirections(st, &pressed, &joycntx, &joycnty);
 						if(st)
 						{
+							if ( pressed & CONT_DPAD_UP )
+								img->y --;
+							if ( pressed & CONT_DPAD_DOWN )
+								img->y ++;
+							if ( pressed & CONT_DPAD_LEFT )
+								img->x --;
+							if ( pressed & CONT_DPAD_RIGHT )
+								img->x ++;
 							if (pressed & CONT_B)
 								done =	1;
 						}
@@ -1502,8 +1547,9 @@ void DisplayDreameyeImage(maple_device_t *dev)
 					
 					FreeImage(&img);
 				}
+				sprintf(fn, "de-img%05d.jpg", id);
 				if(fs_ramdisk_detach(fn, (void**)&buf, (size_t*)&size) != 0)
-					dbglog(DBG_ERROR, "Could not dettach %s from /ram", fn);
+					dbglog(DBG_ERROR, "Could not dettach \"%s\" from /ram", fn);
 			}
 			else
 			{
@@ -1723,7 +1769,7 @@ void ListMapleDevices()
 						}
 					}
 					
-					if(dev->info.functions & MAPLE_FUNC_CAMERA)
+					if(dev->info.functions & MAPLE_FUNC_CAMERA && dev->unit == 1)
 						DisplayDreameyeImage(dev);
 				}
 			}

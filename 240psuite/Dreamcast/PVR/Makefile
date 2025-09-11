@@ -4,26 +4,49 @@ KOS_ROMDISK_DIR = romdisk
 
 #Full release compile
 all: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST
-all: LDFLAGS = -lfftw3
+all: LDFLAGS = -lfftw3 -ljpeg
 all: $(TARGET).bin
 
+# ===========================================================================
+
 #DCLOAD debug compile (exit to dcloader)
-dcload: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DDCLOAD -DBENCHMARK -DDEBUG_FFT -DDREAMEYE_DISP
+dcload: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DDCLOAD -DBENCHMARK -DDEBUG_FFT -DTEST_VIDEO
 dcload: LDFLAGS = -lfftw3 -ljpeg
 dcload: $(TARGET).bin
 
 #DCLOAD debug compile (release flags)
 dcloadrel: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST
-dcloadrel: LDFLAGS = -lfftw3
+dcloadrel: LDFLAGS = -lfftw3 -ljpeg
 dcloadrel: $(TARGET).bin
+
+#DCLOAD debug compile (exit to dcloader) without FFTW
+nofftserial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DDCLOAD -DBENCHMARK  -DTEST_VIDEO
+nofftserial: LDFLAGS = -ljpeg
+nofftserial: $(TARGET).bin
+
+#DCLOAD debug compile (exit to dcloader) without DE
+nodeserial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_DREAMEYE_DISP -DDCLOAD -DBENCHMARK  -DTEST_VIDEO
+nodeserial: $(TARGET).bin
+
+#DCLOAD debug compile (exit to dcloader) without DE or FFTW
+nofftordeserial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DNO_DREAMEYE_DISP -DDCLOAD -DBENCHMARK  -DTEST_VIDEO
+nofftordeserial: $(TARGET).bin
+
+# ===========================================================================
 
 #Release without FFTW
 nofft: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW
+nofft: LDFLAGS = -ljpeg
 nofft: $(TARGET).bin
 
-#DCLOAD debug compile (exit to dcloader) without FFTW
-nofftserial: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DDCLOAD -DBENCHMARK
-nofftserial: $(TARGET).bin
+#Release without DreamEye display
+node: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_DREAMEYE_DISP
+node: LDFLAGS = -lfftw3
+node: $(TARGET).bin
+
+#Release without FFTW or DreamEye display
+nofftorde: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DNO_DREAMEYE_DISP
+nofftorde: $(TARGET).bin
 
 KOS_CFLAGS+= $(CFLAGS) 
 

@@ -19,6 +19,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
  */
 
+/* TODO */
+/* Check https://github.com/KallistiOS/KallistiOS/pull/207 and update this */
+
 #include <kos.h>
 #include <string.h>
 #include <stdlib.h>

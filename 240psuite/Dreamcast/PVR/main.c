@@ -40,10 +40,6 @@
 #include "help.h"
 #include "menu.h"
 
-#ifdef DCLOAD
-#define TEST_VIDEO
-#endif
-
 KOS_INIT_FLAGS(INIT_DEFAULT | INIT_FS_ROMDISK);
 
 void TestPatternsMenu(ImagePtr title, ImagePtr sd);

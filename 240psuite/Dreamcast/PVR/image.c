@@ -31,7 +31,7 @@
 #include "help.h"
 #include "vmu.h"
 
-#ifdef DREAMEYE_DISP
+#ifndef NO_DREAMEYE_DISP
 #include <jpeg/jpeg.h>
 #endif
 
@@ -165,7 +165,7 @@ void InsertImage(ImagePtr image, char *name)
 
 void ReleaseImage(ImagePtr image)
 {
-	uint8   i = 0, deleted = 0;
+	uint8	i = 0, deleted = 0;
 
 	if(!image)
 	{
@@ -340,7 +340,7 @@ int load_palette(const char *fn, pallette *pal)
 	{
 		fclose(fp);
 		dbglog(DBG_ERROR, "load_palette: file '%s' is incompatible:\n"
-			"   magic %s num_colors %ld\n",
+			"	magic %s num_colors %ld\n",
 			fn, hdr.id, hdr.numcolors);
 		return 0;
 	}
@@ -486,6 +486,76 @@ void UseDirectColor(ImagePtr image, uint16 a, uint16 r, uint16 g, uint16 b)
 	image->b_direct = b;
 }
 
+#include <kos.h>
+#include <string.h>
+
+#ifndef NO_DREAMEYE_DISP
+unsigned int next_pow2(unsigned int x) {
+	if (x == 0)
+		return 1;
+	x--;
+	x |= x >> 1;
+	x |= x >> 2;
+	x |= x >> 4;
+	x |= x >> 8;
+	x |= x >> 16;
+	x++;
+	return x;
+}
+
+int expand_canvas(const kos_img_t *src, kos_img_t *out, uint16 bg_color) {
+	uint32 dst_w, dst_h;
+
+	if (!src || !out)
+		return 0;
+
+	// convert to next power of 2
+	dst_w = next_pow2(src->w);
+	dst_h = next_pow2(src->h);
+	out->w = dst_w;
+	out->h = dst_h;
+	out->fmt = KOS_IMG_FMT(KOS_IMG_FMT_ARGB1555, 0);
+	out->byte_count = dst_w * dst_h * sizeof(uint16);
+
+	out->data = malloc(out->byte_count);
+	if (!out->data)
+	{
+		out->w = out->h = 0;
+		out->byte_count = 0;
+		return 0;
+	}
+
+	uint16 *dst = (uint16 *)out->data;
+	uint16 *src_data = (uint16 *)src->data;
+
+	// Fill bg
+	for (uint32 i = 0; i < dst_w * dst_h; i++)
+		dst[i] = bg_color;
+
+	// Copy source
+	for (uint32 y = 0; y < src->h; y++)
+		memcpy(dst + y * dst_w, src_data + y * src->w, src->w * sizeof(uint16));
+
+	// Convert from RGB565 to ARGB1555
+	for(uint32_t i = 0; i < out->byte_count/2; i++) {
+		uint16_t rgb = dst[i];
+
+		uint16_t red   = (rgb >> 11) & 0x1F;
+		uint16_t green = (rgb >> 5) & 0x3F;
+		uint16_t blue  = rgb & 0x1F;
+
+		// Convert green from 6 bits to 5 bits
+		green = green >> 1;
+
+		// Alpha set to 1 (opaque)
+		dst[i] = (1 << 15) | (red << 10) | (green << 5) | blue;
+	}
+
+	return 1;
+}
+#endif
+
+
 ImagePtr LoadIMG(const char *filename, int maptoscreen)
 {	
 	int load = -1, len = 0, dtext888 = 0;
@@ -529,9 +599,23 @@ ImagePtr LoadIMG(const char *filename, int maptoscreen)
 		if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
 			load = png_to_img(filename, PNG_MASK_ALPHA, &img);
 #endif
-#ifdef DREAMEYE_DISP
+#ifndef NO_DREAMEYE_DISP
 		if(filename[len - 3] == 'j' && filename[len - 2] == 'p' && filename[len - 1] == 'g')
-			load = jpeg_to_img(filename, 1, &img);
+		{
+			kos_img_t original;
+
+			load = jpeg_to_img(filename, 1, &original);
+			if(load == 0)
+			{
+				/* We only use these for DreamEye, so expand that to 1024x512 that they load */
+				if(!expand_canvas(&original, &img, 0))
+				{
+					dbglog(DBG_ERROR, "Could not expand jpeg to tex dimensions: %s\n", filename);
+					load = 1;
+				}
+				kos_img_free(&original, 0);
+			}
+		}
 #endif
 	}
 
@@ -636,9 +720,23 @@ uint8 ReLoadIMG(ImagePtr image, const char *filename)
 		if(filename[len - 3] == 'p' && filename[len - 2] == 'n' && filename[len - 1] == 'g')
 			load = png_to_img(filename, PNG_MASK_ALPHA, &img);	
 #endif
-#ifdef DREAMEYE_DISP
+#ifndef NO_DREAMEYE_DISP
 		if(filename[len - 3] == 'j' && filename[len - 2] == 'p' && filename[len - 1] == 'g')
-			load = jpeg_to_img(filename, 1, &img);
+		{
+			kos_img_t original;
+
+			load = jpeg_to_img(filename, 1, &original);
+			if(load == 0)
+			{
+				/* We only use these for DreamEye, so expand that to 1024x512 that they load */
+				if(!expand_canvas(&original, &img, 0))
+				{
+					dbglog(DBG_ERROR, "Could not expand jpeg to tex dimensions: %s\n", filename);
+					load = 1;
+				}
+				kos_img_free(&original, 0);
+			}
+		}
 #endif
 	}
 

@@ -83,11 +83,12 @@ void RaiseScanlineIntensity();
 void SetScanlineEven();
 void SetScanlineOdd();
 void ChangeResolution(int nvmode);
+void ChangeResolutionEx(int nvmode, int custom);
 char *GetPalStartText();
 void Set576iLine23Option(uint8 set);
 void PVRStats(char *msg);
 double Toggle240p480i(int mode);
-#ifdef DCLOAD
+#ifdef TEST_VIDEO
 void TestVideoMode(int mode);
 #endif
 
