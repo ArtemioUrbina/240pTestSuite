@@ -481,9 +481,9 @@ p_string	.macro
 		lda	#bank(\1)
 		sta	<_bp_bank
 		lda	#\2
-		sta	<_al
+		sta.l	<_di
 		lda	#\3
-		sta	<_ah
+		sta.h	<_di
 	.else
 		__ldwi	\1
 		__stw	__si
