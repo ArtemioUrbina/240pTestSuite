@@ -22,27 +22,27 @@
 void display_audiosync_00()
 {
 #asm
-	p_string	audiosync_00_00,24,4
+	p_string	.audiosync_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	audiosync_00_01,6,6
-	p_string	audiosync_00_02,6,7
-	p_string	audiosync_00_03,6,9
-	p_string	audiosync_00_04,6,10
-	p_string	audiosync_00_05,6,12
+	p_string	.audiosync_00_01,6,6
+	p_string	.audiosync_00_02,6,7
+	p_string	.audiosync_00_03,6,9
+	p_string	.audiosync_00_04,6,10
+	p_string	.audiosync_00_05,6,12
 	jmp		!exit+
 
-audiosync_00_00:	.db	"AUDIO SYNC"
+.audiosync_00_00:	.db	"AUDIO SYNC"
 			.db	0
-audiosync_00_01:	.db	"This test flashes the whole screen white for 2"
+.audiosync_00_01:	.db	"This test flashes the whole screen white for 2"
 			.db	0
-audiosync_00_02:	.db	"frames, along with a 1khz test tone."
+.audiosync_00_02:	.db	"frames, along with a 1khz test tone."
 			.db	0
-audiosync_00_03:	.db	"You can verify the sync between audio and video"
+.audiosync_00_03:	.db	"You can verify the sync between audio and video"
 			.db	0
-audiosync_00_04:	.db	"with recording equipment or specialized hardware."
+.audiosync_00_04:	.db	"with recording equipment or specialized hardware."
 			.db	0
-audiosync_00_05:	.db	"- Press I to start/stop the test."
+.audiosync_00_05:	.db	"- Press I to start/stop the test."
 			.db	0
 !exit:
 #endasm
@@ -52,57 +52,57 @@ audiosync_00_05:	.db	"- Press I to start/stop the test."
 void display_backlit_00()
 {
 #asm
-	p_string	backlit_00_00,24,4
+	p_string	.backlit_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	backlit_00_01,6,7
-	p_string	backlit_00_02,6,8
-	p_string	backlit_00_03,6,9
-	p_string	backlit_00_04,6,10
-	p_string	backlit_00_05,6,11
-	p_string	backlit_00_06,6,13
-	p_string	backlit_00_07,6,14
-	p_string	backlit_00_08,6,15
-	p_string	backlit_00_09,6,16
-	p_string	backlit_00_10,6,17
-	p_string	backlit_00_11,6,19
-	p_string	backlit_00_12,6,20
-	p_string	backlit_00_13,6,21
-	p_string	backlit_00_14,6,22
-	p_string	backlit_00_15,6,23
+	p_string	.backlit_00_01,6,7
+	p_string	.backlit_00_02,6,8
+	p_string	.backlit_00_03,6,9
+	p_string	.backlit_00_04,6,10
+	p_string	.backlit_00_05,6,11
+	p_string	.backlit_00_06,6,13
+	p_string	.backlit_00_07,6,14
+	p_string	.backlit_00_08,6,15
+	p_string	.backlit_00_09,6,16
+	p_string	.backlit_00_10,6,17
+	p_string	.backlit_00_11,6,19
+	p_string	.backlit_00_12,6,20
+	p_string	.backlit_00_13,6,21
+	p_string	.backlit_00_14,6,22
+	p_string	.backlit_00_15,6,23
 	jmp		!exit+
 
-backlit_00_00:	.db	"BACKLIT TEST"
+.backlit_00_00:	.db	"BACKLIT TEST"
 			.db	0
-backlit_00_01:	.db	"This test allows you to check how the display's"
+.backlit_00_01:	.db	"This test allows you to check how the display's"
 			.db	0
-backlit_00_02:	.db	"backlit works when only a small array of pixels"
+.backlit_00_02:	.db	"backlit works when only a small array of pixels"
 			.db	0
-backlit_00_03:	.db	"is shown. This can be very revealing, and can"
+.backlit_00_03:	.db	"is shown. This can be very revealing, and can"
 			.db	0
-backlit_00_04:	.db	"be used to detect the zones in LED backlit"
+.backlit_00_04:	.db	"be used to detect the zones in LED backlit"
 			.db	0
-backlit_00_05:	.db	"displays, or to evaluate global and local dimming."
+.backlit_00_05:	.db	"displays, or to evaluate global and local dimming."
 			.db	0
-backlit_00_06:	.db	"The user can move around the white pixel arrays"
+.backlit_00_06:	.db	"The user can move around the white pixel arrays"
 			.db	0
-backlit_00_07:	.db	"with the d-pad or joystiq, and change the size"
+.backlit_00_07:	.db	"with the d-pad or joystiq, and change the size"
 			.db	0
-backlit_00_08:	.db	"of the pixel array with button I. The SELECT"
+.backlit_00_08:	.db	"of the pixel array with button I. The SELECT"
 			.db	0
-backlit_00_09:	.db	"button allows the user to hide the pixel array\""
+.backlit_00_09:	.db	"button allows the user to hide the pixel array\""
 			.db	0
-backlit_00_10:	.db	"in order to alternate a fully black screen.\""
+.backlit_00_10:	.db	"in order to alternate a fully black screen.\""
 			.db	0
-backlit_00_11:	.db	"It might be necessary to have a fully-off panel\""
+.backlit_00_11:	.db	"It might be necessary to have a fully-off panel\""
 			.db	0
-backlit_00_12:	.db	"(if possible) when displaying the black"
+.backlit_00_12:	.db	"(if possible) when displaying the black"
 			.db	0
-backlit_00_13:	.db	"background,  in order to evaluate full-backlit"
+.backlit_00_13:	.db	"background,  in order to evaluate full-backlit"
 			.db	0
-backlit_00_14:	.db	"displays by adjusting brightness accordingly"
+.backlit_00_14:	.db	"displays by adjusting brightness accordingly"
 			.db	0
-backlit_00_15:	.db	"for this test."
+.backlit_00_15:	.db	"for this test."
 			.db	0
 !exit:
 #endasm
@@ -112,48 +112,48 @@ backlit_00_15:	.db	"for this test."
 void display_check_00()
 {
 #asm
-	p_string	check_00_00,24,4
+	p_string	.check_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	check_00_01,6,6
-	p_string	check_00_02,6,7
-	p_string	check_00_03,6,9
-	p_string	check_00_04,6,10
-	p_string	check_00_05,6,12
-	p_string	check_00_06,6,13
-	p_string	check_00_07,6,15
-	p_string	check_00_08,6,16
-	p_string	check_00_09,6,17
-	p_string	check_00_10,6,18
-	p_string	check_00_11,6,20
-	p_string	check_00_12,6,21
+	p_string	.check_00_01,6,6
+	p_string	.check_00_02,6,7
+	p_string	.check_00_03,6,9
+	p_string	.check_00_04,6,10
+	p_string	.check_00_05,6,12
+	p_string	.check_00_06,6,13
+	p_string	.check_00_07,6,15
+	p_string	.check_00_08,6,16
+	p_string	.check_00_09,6,17
+	p_string	.check_00_10,6,18
+	p_string	.check_00_11,6,20
+	p_string	.check_00_12,6,21
 	jmp		!exit+
 
-check_00_00:	.db	"CHECKERBOARD"
+.check_00_00:	.db	"CHECKERBOARD"
 			.db	0
-check_00_01:	.db	"This pattern shows all the visible pixels in an"
+.check_00_01:	.db	"This pattern shows all the visible pixels in an"
 			.db	0
-check_00_02:	.db	"alternating b&w grid array."
+.check_00_02:	.db	"alternating b&w grid array."
 			.db	0
-check_00_03:	.db	"- You can switch between all supported resolutions"
+.check_00_03:	.db	"- You can switch between all supported resolutions"
 			.db	0
-check_00_04:	.db	"with SELECT."
+.check_00_04:	.db	"with SELECT."
 			.db	0
-check_00_05:	.db	"- You can toggle the pattern with L/R, or turn"
+.check_00_05:	.db	"- You can toggle the pattern with L/R, or turn"
 			.db	0
-check_00_06:	.db	"on auto-toggle each frame with button I."
+.check_00_06:	.db	"on auto-toggle each frame with button I."
 			.db	0
-check_00_07:	.db	"When auto-toggle is set, you should see it"
+.check_00_07:	.db	"When auto-toggle is set, you should see it"
 			.db	0
-check_00_08:	.db	"alternating rapidly. On some setups, the pattern"
+.check_00_08:	.db	"alternating rapidly. On some setups, the pattern"
 			.db	0
-check_00_09:	.db	"doesn't change at all. This means that the signal"
+.check_00_09:	.db	"doesn't change at all. This means that the signal"
 			.db	0
-check_00_10:	.db	"is being treated as interlaced."
+.check_00_10:	.db	"is being treated as interlaced."
 			.db	0
-check_00_11:	.db	"- A frame counter can be displayed on screen by"
+.check_00_11:	.db	"- A frame counter can be displayed on screen by"
 			.db	0
-check_00_12:	.db	"pressing up on the d-pad."
+.check_00_12:	.db	"pressing up on the d-pad."
 			.db	0
 !exit:
 #endasm
@@ -163,33 +163,33 @@ check_00_12:	.db	"pressing up on the d-pad."
 void display_color601_00()
 {
 #asm
-	p_string	color601_00_00,18,4
+	p_string	.color601_00_00,18,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	color601_00_01,6,8
-	p_string	color601_00_02,6,9
-	p_string	color601_00_03,6,11
-	p_string	color601_00_04,6,12
-	p_string	color601_00_05,6,13
-	p_string	color601_00_06,6,14
-	p_string	color601_00_07,6,15
+	p_string	.color601_00_01,6,8
+	p_string	.color601_00_02,6,9
+	p_string	.color601_00_03,6,11
+	p_string	.color601_00_04,6,12
+	p_string	.color601_00_05,6,13
+	p_string	.color601_00_06,6,14
+	p_string	.color601_00_07,6,15
 	jmp		!exit+
 
-color601_00_00:	.db	"COLOR BARS WITH GRAY SCALE"
+.color601_00_00:	.db	"COLOR BARS WITH GRAY SCALE"
 			.db	0
-color601_00_01:	.db	"This pattern idea and layout borrows from the"
+.color601_00_01:	.db	"This pattern idea and layout borrows from the"
 			.db	0
-color601_00_02:	.db	"Digital Video Essentials color adjust pattern."
+.color601_00_02:	.db	"Digital Video Essentials color adjust pattern."
 			.db	0
-color601_00_03:	.db	"It has a gray background as reference, and can"
+.color601_00_03:	.db	"It has a gray background as reference, and can"
 			.db	0
-color601_00_04:	.db	"be used with color filters in order to adjust"
+.color601_00_04:	.db	"be used with color filters in order to adjust"
 			.db	0
-color601_00_05:	.db	"color accuracy. If your display set has a blue"
+.color601_00_05:	.db	"color accuracy. If your display set has a blue"
 			.db	0
-color601_00_06:	.db	"only mode, you can also use that to correct"
+.color601_00_06:	.db	"only mode, you can also use that to correct"
 			.db	0
-color601_00_07:	.db	"color balance."
+.color601_00_07:	.db	"color balance."
 			.db	0
 !exit:
 #endasm
@@ -199,33 +199,33 @@ color601_00_07:	.db	"color balance."
 void display_colorbleed_00()
 {
 #asm
-	p_string	colorbleed_00_00,24,4
+	p_string	.colorbleed_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	colorbleed_00_01,6,7
-	p_string	colorbleed_00_02,6,8
-	p_string	colorbleed_00_03,6,10
-	p_string	colorbleed_00_04,6,11
-	p_string	colorbleed_00_05,6,13
-	p_string	colorbleed_00_06,6,14
-	p_string	colorbleed_00_07,6,16
+	p_string	.colorbleed_00_01,6,7
+	p_string	.colorbleed_00_02,6,8
+	p_string	.colorbleed_00_03,6,10
+	p_string	.colorbleed_00_04,6,11
+	p_string	.colorbleed_00_05,6,13
+	p_string	.colorbleed_00_06,6,14
+	p_string	.colorbleed_00_07,6,16
 	jmp		!exit+
 
-colorbleed_00_00:	.db	"COLOR BLEED"
+.colorbleed_00_00:	.db	"COLOR BLEED"
 			.db	0
-colorbleed_00_01:	.db	"This pattern helps diagnose color subsampling"
+.colorbleed_00_01:	.db	"This pattern helps diagnose color subsampling"
 			.db	0
-colorbleed_00_02:	.db	"(4:4:4 to 4:2:2, etc). "
+.colorbleed_00_02:	.db	"(4:4:4 to 4:2:2, etc). "
 			.db	0
-colorbleed_00_03:	.db	"It consists of one pixel width color bars "
+.colorbleed_00_03:	.db	"It consists of one pixel width color bars "
 			.db	0
-colorbleed_00_04:	.db	"alternating with one pixel width black bars."
+.colorbleed_00_04:	.db	"alternating with one pixel width black bars."
 			.db	0
-colorbleed_00_05:	.db	"- You can change the vertical bars to a checker"
+.colorbleed_00_05:	.db	"- You can change the vertical bars to a checker"
 			.db	0
-colorbleed_00_06:	.db	"board with button I."
+.colorbleed_00_06:	.db	"board with button I."
 			.db	0
-colorbleed_00_07:	.db	"- You can change the resolution with SELECT."
+.colorbleed_00_07:	.db	"- You can change the resolution with SELECT."
 			.db	0
 !exit:
 #endasm
@@ -235,45 +235,45 @@ colorbleed_00_07:	.db	"- You can change the resolution with SELECT."
 void display_colors_00()
 {
 #asm
-	p_string	colors_00_00,23,4
+	p_string	.colors_00_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	colors_00_01,6,8
-	p_string	colors_00_02,6,9
-	p_string	colors_00_03,6,11
-	p_string	colors_00_04,6,12
-	p_string	colors_00_05,6,13
-	p_string	colors_00_06,6,14
-	p_string	colors_00_07,6,16
-	p_string	colors_00_08,6,17
-	p_string	colors_00_09,6,18
-	p_string	colors_00_10,6,19
-	p_string	colors_00_11,6,20
+	p_string	.colors_00_01,6,8
+	p_string	.colors_00_02,6,9
+	p_string	.colors_00_03,6,11
+	p_string	.colors_00_04,6,12
+	p_string	.colors_00_05,6,13
+	p_string	.colors_00_06,6,14
+	p_string	.colors_00_07,6,16
+	p_string	.colors_00_08,6,17
+	p_string	.colors_00_09,6,18
+	p_string	.colors_00_10,6,19
+	p_string	.colors_00_11,6,20
 	jmp		!exit+
 
-colors_00_00:	.db	"COLORBARS (1/2)"
+.colors_00_00:	.db	"COLORBARS (1/2)"
 			.db	0
-colors_00_01:	.db	"This pattern allows you to calibrate each color:"
+.colors_00_01:	.db	"This pattern allows you to calibrate each color:"
 			.db	0
-colors_00_02:	.db	"Red, Green and Blue; as  well as the white level."
+.colors_00_02:	.db	"Red, Green and Blue; as  well as the white level."
 			.db	0
-colors_00_03:	.db	"This is adjusted in the same way black levels"
+.colors_00_03:	.db	"This is adjusted in the same way black levels"
 			.db	0
-colors_00_04:	.db	"are set with the PLUGE. If you adjusted the black"
+.colors_00_04:	.db	"are set with the PLUGE. If you adjusted the black"
 			.db	0
-colors_00_05:	.db	"level correctly with the PLUGE, the rectangles"
+.colors_00_05:	.db	"level correctly with the PLUGE, the rectangles"
 			.db	0
-colors_00_06:	.db	"under the 1 column should be barely visible."
+.colors_00_06:	.db	"under the 1 column should be barely visible."
 			.db	0
-colors_00_07:	.db	"Adjust the white level first, this is done using"
+.colors_00_07:	.db	"Adjust the white level first, this is done using"
 			.db	0
-colors_00_08:	.db	"the Contrast control on your TV set. Raise it"
+.colors_00_08:	.db	"the Contrast control on your TV set. Raise it"
 			.db	0
-colors_00_09:	.db	"until you cannot distinguish between the two"
+.colors_00_09:	.db	"until you cannot distinguish between the two"
 			.db	0
-colors_00_10:	.db	"blocks under F, and lower it slowly until you"
+.colors_00_10:	.db	"blocks under F, and lower it slowly until you"
 			.db	0
-colors_00_11:	.db	"can clearly tell them apart."
+.colors_00_11:	.db	"can clearly tell them apart."
 			.db	0
 !exit:
 #endasm
@@ -283,33 +283,33 @@ colors_00_11:	.db	"can clearly tell them apart."
 void display_colors_01()
 {
 #asm
-	p_string	colors_01_00,23,4
+	p_string	.colors_01_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	colors_01_01,6,8
-	p_string	colors_01_02,6,9
-	p_string	colors_01_03,6,10
-	p_string	colors_01_04,6,11
-	p_string	colors_01_05,6,12
-	p_string	colors_01_06,6,13
-	p_string	colors_01_07,6,15
+	p_string	.colors_01_01,6,8
+	p_string	.colors_01_02,6,9
+	p_string	.colors_01_03,6,10
+	p_string	.colors_01_04,6,11
+	p_string	.colors_01_05,6,12
+	p_string	.colors_01_06,6,13
+	p_string	.colors_01_07,6,15
 	jmp		!exit+
 
-colors_01_00:	.db	"COLORBARS (2/2)"
+.colors_01_00:	.db	"COLORBARS (2/2)"
 			.db	0
-colors_01_01:	.db	"The same procedure should be used with each"
+.colors_01_01:	.db	"The same procedure should be used with each"
 			.db	0
-colors_01_02:	.db	"color, raise the control that adjusts the"
+.colors_01_02:	.db	"color, raise the control that adjusts the"
 			.db	0
-colors_01_03:	.db	"individual color level (not the color/tint one)"
+.colors_01_03:	.db	"individual color level (not the color/tint one)"
 			.db	0
-colors_01_04:	.db	"until you can't tell the rightmost box under F"
+.colors_01_04:	.db	"until you can't tell the rightmost box under F"
 			.db	0
-colors_01_05:	.db	"from the one to its left, and then lower it until"
+.colors_01_05:	.db	"from the one to its left, and then lower it until"
 			.db	0
-colors_01_06:	.db	"you can distinguish them clearly."
+.colors_01_06:	.db	"you can distinguish them clearly."
 			.db	0
-colors_01_07:	.db	"Repeat for each color and you are set."
+.colors_01_07:	.db	"Repeat for each color and you are set."
 			.db	0
 !exit:
 #endasm
@@ -319,36 +319,36 @@ colors_01_07:	.db	"Repeat for each color and you are set."
 void display_convergence_00()
 {
 #asm
-	p_string	convergence_00_00,23,4
+	p_string	.convergence_00_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	convergence_00_01,6,6
-	p_string	convergence_00_02,6,7
-	p_string	convergence_00_03,6,9
-	p_string	convergence_00_04,6,10
-	p_string	convergence_00_05,6,11
-	p_string	convergence_00_06,6,13
-	p_string	convergence_00_07,6,14
-	p_string	convergence_00_08,6,16
+	p_string	.convergence_00_01,6,6
+	p_string	.convergence_00_02,6,7
+	p_string	.convergence_00_03,6,9
+	p_string	.convergence_00_04,6,10
+	p_string	.convergence_00_05,6,11
+	p_string	.convergence_00_06,6,13
+	p_string	.convergence_00_07,6,14
+	p_string	.convergence_00_08,6,16
 	jmp		!exit+
 
-convergence_00_00:	.db	"CONVERGENCE TESTS"
+.convergence_00_00:	.db	"CONVERGENCE TESTS"
 			.db	0
-convergence_00_01:	.db	"These are used to adjust color convergence in CRT "
+.convergence_00_01:	.db	"These are used to adjust color convergence in CRT "
 			.db	0
-convergence_00_02:	.db	"displays."
+.convergence_00_02:	.db	"displays."
 			.db	0
-convergence_00_03:	.db	"- Button 'I' changes the pattern between cross hatch"
+.convergence_00_03:	.db	"- Button 'I' changes the pattern between cross hatch"
 			.db	0
-convergence_00_04:	.db	"lines, crosses, dots and a color pattern with or"
+.convergence_00_04:	.db	"lines, crosses, dots and a color pattern with or"
 			.db	0
-convergence_00_05:	.db	"without a black grid, for transition boundary check."
+.convergence_00_05:	.db	"without a black grid, for transition boundary check."
 			.db	0
-convergence_00_06:	.db	"- Left and Right on the D-Pad allow cycling between"
+.convergence_00_06:	.db	"- Left and Right on the D-Pad allow cycling between"
 			.db	0
-convergence_00_07:	.db	"patterns."
+.convergence_00_07:	.db	"patterns."
 			.db	0
-convergence_00_08:	.db	"- You can change the resolution with SELECT."
+.convergence_00_08:	.db	"- You can change the resolution with SELECT."
 			.db	0
 !exit:
 #endasm
@@ -358,27 +358,27 @@ convergence_00_08:	.db	"- You can change the resolution with SELECT."
 void display_disappear_00()
 {
 #asm
-	p_string	disappear_00_00,21,4
+	p_string	.disappear_00_00,21,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	disappear_00_01,6,6
-	p_string	disappear_00_02,6,7
-	p_string	disappear_00_03,6,8
-	p_string	disappear_00_04,6,10
-	p_string	disappear_00_05,6,11
+	p_string	.disappear_00_01,6,6
+	p_string	.disappear_00_02,6,7
+	p_string	.disappear_00_03,6,8
+	p_string	.disappear_00_04,6,10
+	p_string	.disappear_00_05,6,11
 	jmp		!exit+
 
-disappear_00_00:	.db	"DISAPPEARING LOGO"
+.disappear_00_00:	.db	"DISAPPEARING LOGO"
 			.db	0
-disappear_00_01:	.db	"This test allows you to use a slow motion camera"
+.disappear_00_01:	.db	"This test allows you to use a slow motion camera"
 			.db	0
-disappear_00_02:	.db	"to measure how long it takes from a button press"
+.disappear_00_02:	.db	"to measure how long it takes from a button press"
 			.db	0
-disappear_00_03:	.db	"to when the logo disappears."
+.disappear_00_03:	.db	"to when the logo disappears."
 			.db	0
-disappear_00_04:	.db	"You can also use a photodiode and press Up, which"
+.disappear_00_04:	.db	"You can also use a photodiode and press Up, which"
 			.db	0
-disappear_00_05:	.db	"turns the whole back to white for 2 frames."
+.disappear_00_05:	.db	"turns the whole back to white for 2 frames."
 			.db	0
 !exit:
 #endasm
@@ -388,48 +388,48 @@ disappear_00_05:	.db	"turns the whole back to white for 2 frames."
 void display_dshadow_00()
 {
 #asm
-	p_string	dshadow_00_00,23,4
+	p_string	.dshadow_00_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	dshadow_00_01,6,7
-	p_string	dshadow_00_02,6,8
-	p_string	dshadow_00_03,6,9
-	p_string	dshadow_00_04,6,10
-	p_string	dshadow_00_05,6,12
-	p_string	dshadow_00_06,6,13
-	p_string	dshadow_00_07,6,14
-	p_string	dshadow_00_08,6,15
-	p_string	dshadow_00_09,6,17
-	p_string	dshadow_00_10,6,18
-	p_string	dshadow_00_11,6,20
-	p_string	dshadow_00_12,6,22
+	p_string	.dshadow_00_01,6,7
+	p_string	.dshadow_00_02,6,8
+	p_string	.dshadow_00_03,6,9
+	p_string	.dshadow_00_04,6,10
+	p_string	.dshadow_00_05,6,12
+	p_string	.dshadow_00_06,6,13
+	p_string	.dshadow_00_07,6,14
+	p_string	.dshadow_00_08,6,15
+	p_string	.dshadow_00_09,6,17
+	p_string	.dshadow_00_10,6,18
+	p_string	.dshadow_00_11,6,20
+	p_string	.dshadow_00_12,6,22
 	jmp		!exit+
 
-dshadow_00_00:	.db	"DROP SHADOW TEST"
+.dshadow_00_00:	.db	"DROP SHADOW TEST"
 			.db	0
-dshadow_00_01:	.db	"This is a crucial test for 240p upscan converters."
+.dshadow_00_01:	.db	"This is a crucial test for 240p upscan converters."
 			.db	0
-dshadow_00_02:	.db	"It displays a simple sprite shadow (32x32 pixels)"
+.dshadow_00_02:	.db	"It displays a simple sprite shadow (32x32 pixels)"
 			.db	0
-dshadow_00_03:	.db	"against a background, but the shadow is shown only"
+.dshadow_00_03:	.db	"against a background, but the shadow is shown only"
 			.db	0
-dshadow_00_04:	.db	"on each other frame. "
+.dshadow_00_04:	.db	"on each other frame. "
 			.db	0
-dshadow_00_05:	.db	"On a CRT this achieves a transparency effect,"
+.dshadow_00_05:	.db	"On a CRT this achieves a transparency effect,"
 			.db	0
-dshadow_00_06:	.db	"since you are watching a 30hz shadow on a 60hz"
+.dshadow_00_06:	.db	"since you are watching a 30hz shadow on a 60hz"
 			.db	0
-dshadow_00_07:	.db	"signal. No background detail should be lost and"
+.dshadow_00_07:	.db	"signal. No background detail should be lost and"
 			.db	0
-dshadow_00_08:	.db	"the shadow should be visible."
+.dshadow_00_08:	.db	"the shadow should be visible."
 			.db	0
-dshadow_00_09:	.db	"- The user can toggle the frame used to draw the"
+.dshadow_00_09:	.db	"- The user can toggle the frame used to draw the"
 			.db	0
-dshadow_00_10:	.db	"shadow with SELECT. "
+.dshadow_00_10:	.db	"shadow with SELECT. "
 			.db	0
-dshadow_00_11:	.db	"- Backgrounds can be switched with button I."
+.dshadow_00_11:	.db	"- Backgrounds can be switched with button I."
 			.db	0
-dshadow_00_12:	.db	"Donna art by Jose Salot"
+.dshadow_00_12:	.db	"Donna art by Jose Salot"
 			.db	0
 !exit:
 #endasm
@@ -439,21 +439,21 @@ dshadow_00_12:	.db	"Donna art by Jose Salot"
 void display_ebucb_00()
 {
 #asm
-	p_string	ebucb_00_00,22,4
+	p_string	.ebucb_00_00,22,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	ebucb_00_01,6,7
-	p_string	ebucb_00_02,6,9
-	p_string	ebucb_00_03,6,10
+	p_string	.ebucb_00_01,6,7
+	p_string	.ebucb_00_02,6,9
+	p_string	.ebucb_00_03,6,10
 	jmp		!exit+
 
-ebucb_00_00:	.db	"EBU COLOR BARS"
+.ebucb_00_00:	.db	"EBU COLOR BARS"
 			.db	0
-ebucb_00_01:	.db	"- This pattern can be used to calibrate colors"
+.ebucb_00_01:	.db	"- This pattern can be used to calibrate colors"
 			.db	0
-ebucb_00_02:	.db	"- You can toggle between 75% and 100% saturation"
+.ebucb_00_02:	.db	"- You can toggle between 75% and 100% saturation"
 			.db	0
-ebucb_00_03:	.db	"by pressing I."
+.ebucb_00_03:	.db	"by pressing I."
 			.db	0
 !exit:
 #endasm
@@ -463,30 +463,30 @@ ebucb_00_03:	.db	"by pressing I."
 void display_gray_00()
 {
 #asm
-	p_string	gray_00_00,26,4
+	p_string	.gray_00_00,26,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	gray_00_01,6,7
-	p_string	gray_00_02,6,8
-	p_string	gray_00_03,6,10
-	p_string	gray_00_04,6,11
-	p_string	gray_00_05,6,12
-	p_string	gray_00_06,6,13
+	p_string	.gray_00_01,6,7
+	p_string	.gray_00_02,6,8
+	p_string	.gray_00_03,6,10
+	p_string	.gray_00_04,6,11
+	p_string	.gray_00_05,6,12
+	p_string	.gray_00_06,6,13
 	jmp		!exit+
 
-gray_00_00:	.db	"GRAY RAMP"
+.gray_00_00:	.db	"GRAY RAMP"
 			.db	0
-gray_00_01:	.db	"This gray ramp pattern can be used to check color"
+.gray_00_01:	.db	"This gray ramp pattern can be used to check color"
 			.db	0
-gray_00_02:	.db	"balance and to adjust the white level."
+.gray_00_02:	.db	"balance and to adjust the white level."
 			.db	0
-gray_00_03:	.db	"You should make sure the bars are gray, with no"
+.gray_00_03:	.db	"You should make sure the bars are gray, with no"
 			.db	0
-gray_00_04:	.db	"red or blue bias. This can be adjusted with the"
+.gray_00_04:	.db	"red or blue bias. This can be adjusted with the"
 			.db	0
-gray_00_05:	.db	"individual color settings, or the tint control"
+.gray_00_05:	.db	"individual color settings, or the tint control"
 			.db	0
-gray_00_06:	.db	"in NTSC displays."
+.gray_00_06:	.db	"in NTSC displays."
 			.db	0
 !exit:
 #endasm
@@ -496,48 +496,48 @@ gray_00_06:	.db	"in NTSC displays."
 void display_grid_00()
 {
 #asm
-	p_string	grid_00_00,29,4
+	p_string	.grid_00_00,29,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	grid_00_01,6,6
-	p_string	grid_00_02,6,7
-	p_string	grid_00_03,6,8
-	p_string	grid_00_04,6,9
-	p_string	grid_00_05,6,11
-	p_string	grid_00_06,6,13
-	p_string	grid_00_07,6,14
-	p_string	grid_00_08,6,15
-	p_string	grid_00_09,6,17
-	p_string	grid_00_10,6,19
-	p_string	grid_00_11,6,20
-	p_string	grid_00_12,6,22
+	p_string	.grid_00_01,6,6
+	p_string	.grid_00_02,6,7
+	p_string	.grid_00_03,6,8
+	p_string	.grid_00_04,6,9
+	p_string	.grid_00_05,6,11
+	p_string	.grid_00_06,6,13
+	p_string	.grid_00_07,6,14
+	p_string	.grid_00_08,6,15
+	p_string	.grid_00_09,6,17
+	p_string	.grid_00_10,6,19
+	p_string	.grid_00_11,6,20
+	p_string	.grid_00_12,6,22
 	jmp		!exit+
 
-grid_00_00:	.db	"GRID"
+.grid_00_00:	.db	"GRID"
 			.db	0
-grid_00_01:	.db	"These grid tests change horizontal resolution between"
+.grid_00_01:	.db	"These grid tests change horizontal resolution between"
 			.db	0
-grid_00_02:	.db	"256, 320, 352, and 512. You can vary the vertical"
+.grid_00_02:	.db	"256, 320, 352, and 512. You can vary the vertical"
 			.db	0
-grid_00_03:	.db	"resolution from the options menu. The pattern should"
+.grid_00_03:	.db	"resolution from the options menu. The pattern should"
 			.db	0
-grid_00_04:	.db	"fill the 4:3 screen area."
+.grid_00_04:	.db	"fill the 4:3 screen area."
 			.db	0
-grid_00_05:	.db	"Consumer TVs may not show red squares due to overscan."
+.grid_00_05:	.db	"Consumer TVs may not show red squares due to overscan."
 			.db	0
-grid_00_06:	.db	"The Grids are not perfectly centered within the NTSC"
+.grid_00_06:	.db	"The Grids are not perfectly centered within the NTSC"
 			.db	0
-grid_00_07:	.db	"signal, and that is normal. It is the way Hudson/NEC"
+.grid_00_07:	.db	"signal, and that is normal. It is the way Hudson/NEC"
 			.db	0
-grid_00_08:	.db	"used each resolution."
+.grid_00_08:	.db	"used each resolution."
 			.db	0
-grid_00_09:	.db	"- You can change the resolution with SELECT."
+.grid_00_09:	.db	"- You can change the resolution with SELECT."
 			.db	0
-grid_00_10:	.db	"- You can press button I to fill all the video signal"
+.grid_00_10:	.db	"- You can press button I to fill all the video signal"
 			.db	0
-grid_00_11:	.db	"background area."
+.grid_00_11:	.db	"background area."
 			.db	0
-grid_00_12:	.db	"- The 352x240 resolution is used by R-Type"
+.grid_00_12:	.db	"- The 352x240 resolution is used by R-Type"
 			.db	0
 !exit:
 #endasm
@@ -547,39 +547,39 @@ grid_00_12:	.db	"- The 352x240 resolution is used by R-Type"
 void display_gridscroll_00()
 {
 #asm
-	p_string	gridscroll_00_00,23,4
+	p_string	.gridscroll_00_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	gridscroll_00_01,6,7
-	p_string	gridscroll_00_02,6,8
-	p_string	gridscroll_00_03,6,9
-	p_string	gridscroll_00_04,6,10
-	p_string	gridscroll_00_05,6,12
-	p_string	gridscroll_00_06,6,13
-	p_string	gridscroll_00_07,6,14
-	p_string	gridscroll_00_08,6,16
-	p_string	gridscroll_00_09,6,18
+	p_string	.gridscroll_00_01,6,7
+	p_string	.gridscroll_00_02,6,8
+	p_string	.gridscroll_00_03,6,9
+	p_string	.gridscroll_00_04,6,10
+	p_string	.gridscroll_00_05,6,12
+	p_string	.gridscroll_00_06,6,13
+	p_string	.gridscroll_00_07,6,14
+	p_string	.gridscroll_00_08,6,16
+	p_string	.gridscroll_00_09,6,18
 	jmp		!exit+
 
-gridscroll_00_00:	.db	"GRID SCROLL TEST"
+.gridscroll_00_00:	.db	"GRID SCROLL TEST"
 			.db	0
-gridscroll_00_01:	.db	"A grid is scrolled vertically or horizontally,"
+.gridscroll_00_01:	.db	"A grid is scrolled vertically or horizontally,"
 			.db	0
-gridscroll_00_02:	.db	"which can be used to test linearity of the signal"
+.gridscroll_00_02:	.db	"which can be used to test linearity of the signal"
 			.db	0
-gridscroll_00_03:	.db	"and how well the display or video processor copes"
+.gridscroll_00_03:	.db	"and how well the display or video processor copes"
 			.db	0
-gridscroll_00_04:	.db	"with scrolling and framerate."
+.gridscroll_00_04:	.db	"with scrolling and framerate."
 			.db	0
-gridscroll_00_05:	.db	"- Button I can be used to toggle between horizontal"
+.gridscroll_00_05:	.db	"- Button I can be used to toggle between horizontal"
 			.db	0
-gridscroll_00_06:	.db	"and vertical scroll, while the d-pad up or down"
+.gridscroll_00_06:	.db	"and vertical scroll, while the d-pad up or down"
 			.db	0
-gridscroll_00_07:	.db	"regulates speed."
+.gridscroll_00_07:	.db	"regulates speed."
 			.db	0
-gridscroll_00_08:	.db	"- D-pad left or right changes direction."
+.gridscroll_00_08:	.db	"- D-pad left or right changes direction."
 			.db	0
-gridscroll_00_09:	.db	"- You can change the resolution with SELECT."
+.gridscroll_00_09:	.db	"- You can change the resolution with SELECT."
 			.db	0
 !exit:
 #endasm
@@ -589,30 +589,30 @@ gridscroll_00_09:	.db	"- You can change the resolution with SELECT."
 void display_mdfourier_00()
 {
 #asm
-	p_string	mdfourier_00_00,24,4
+	p_string	.mdfourier_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	mdfourier_00_01,6,6
-	p_string	mdfourier_00_02,6,7
-	p_string	mdfourier_00_03,6,8
-	p_string	mdfourier_00_04,6,10
-	p_string	mdfourier_00_05,6,11
-	p_string	mdfourier_00_06,6,13
+	p_string	.mdfourier_00_01,6,6
+	p_string	.mdfourier_00_02,6,7
+	p_string	.mdfourier_00_03,6,8
+	p_string	.mdfourier_00_04,6,10
+	p_string	.mdfourier_00_05,6,11
+	p_string	.mdfourier_00_06,6,13
 	jmp		!exit+
 
-mdfourier_00_00:	.db	"MDFourier"
+.mdfourier_00_00:	.db	"MDFourier"
 			.db	0
-mdfourier_00_01:	.db	"This test generates a series of audio signals that"
+.mdfourier_00_01:	.db	"This test generates a series of audio signals that"
 			.db	0
-mdfourier_00_02:	.db	"are to be recorded and analyzed for comparison"
+.mdfourier_00_02:	.db	"are to be recorded and analyzed for comparison"
 			.db	0
-mdfourier_00_03:	.db	"with the MDFourier tool on a computer."
+.mdfourier_00_03:	.db	"with the MDFourier tool on a computer."
 			.db	0
-mdfourier_00_04:	.db	"This allows detailed comparison of the signal"
+.mdfourier_00_04:	.db	"This allows detailed comparison of the signal"
 			.db	0
-mdfourier_00_05:	.db	"as generated by this system."
+.mdfourier_00_05:	.db	"as generated by this system."
 			.db	0
-mdfourier_00_06:	.db	"Visit http://junkerhq.net/MDFourier for details."
+.mdfourier_00_06:	.db	"Visit http://junkerhq.net/MDFourier for details."
 			.db	0
 !exit:
 #endasm
@@ -622,33 +622,33 @@ mdfourier_00_06:	.db	"Visit http://junkerhq.net/MDFourier for details."
 void display_memory_00()
 {
 #asm
-	p_string	memory_00_00,22,4
+	p_string	.memory_00_00,22,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	memory_00_01,6,6
-	p_string	memory_00_02,6,7
-	p_string	memory_00_03,6,9
-	p_string	memory_00_04,6,10
-	p_string	memory_00_05,6,12
-	p_string	memory_00_06,6,13
-	p_string	memory_00_07,6,15
+	p_string	.memory_00_01,6,6
+	p_string	.memory_00_02,6,7
+	p_string	.memory_00_03,6,9
+	p_string	.memory_00_04,6,10
+	p_string	.memory_00_05,6,12
+	p_string	.memory_00_06,6,13
+	p_string	.memory_00_07,6,15
 	jmp		!exit+
 
-memory_00_00:	.db	"Memory Viewer"
+.memory_00_00:	.db	"Memory Viewer"
 			.db	0
-memory_00_01:	.db	"This shows selected regions of the main CPU memory"
+.memory_00_01:	.db	"This shows selected regions of the main CPU memory"
 			.db	0
-memory_00_02:	.db	"map."
+.memory_00_02:	.db	"map."
 			.db	0
-memory_00_03:	.db	"The current address range is shown in red at the"
+.memory_00_03:	.db	"The current address range is shown in red at the"
 			.db	0
-memory_00_04:	.db	"right from top to bottom."
+.memory_00_04:	.db	"right from top to bottom."
 			.db	0
-memory_00_05:	.db	"The left part of the screen shows 0x1C0 bytes in"
+.memory_00_05:	.db	"The left part of the screen shows 0x1C0 bytes in"
 			.db	0
-memory_00_06:	.db	"hex."
+.memory_00_06:	.db	"hex."
 			.db	0
-memory_00_07:	.db	"- Button I toggles ASCII mode."
+.memory_00_07:	.db	"- Button I toggles ASCII mode."
 			.db	0
 !exit:
 #endasm
@@ -658,48 +658,48 @@ memory_00_07:	.db	"- Button I toggles ASCII mode."
 void display_monoscope_00()
 {
 #asm
-	p_string	monoscope_00_00,23,4
+	p_string	.monoscope_00_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	monoscope_00_01,6,6
-	p_string	monoscope_00_02,6,7
-	p_string	monoscope_00_03,6,9
-	p_string	monoscope_00_04,6,10
-	p_string	monoscope_00_05,6,12
-	p_string	monoscope_00_06,6,13
-	p_string	monoscope_00_07,6,14
-	p_string	monoscope_00_08,6,16
-	p_string	monoscope_00_09,6,17
-	p_string	monoscope_00_10,6,18
-	p_string	monoscope_00_11,6,20
-	p_string	monoscope_00_12,6,21
+	p_string	.monoscope_00_01,6,6
+	p_string	.monoscope_00_02,6,7
+	p_string	.monoscope_00_03,6,9
+	p_string	.monoscope_00_04,6,10
+	p_string	.monoscope_00_05,6,12
+	p_string	.monoscope_00_06,6,13
+	p_string	.monoscope_00_07,6,14
+	p_string	.monoscope_00_08,6,16
+	p_string	.monoscope_00_09,6,17
+	p_string	.monoscope_00_10,6,18
+	p_string	.monoscope_00_11,6,20
+	p_string	.monoscope_00_12,6,21
 	jmp		!exit+
 
-monoscope_00_00:	.db	"MONOSCOPE (1/2)"
+.monoscope_00_00:	.db	"MONOSCOPE (1/2)"
 			.db	0
-monoscope_00_01:	.db	"This pattern contains elements to calibrate multiple"
+.monoscope_00_01:	.db	"This pattern contains elements to calibrate multiple"
 			.db	0
-monoscope_00_02:	.db	"aspects of a CRT."
+.monoscope_00_02:	.db	"aspects of a CRT."
 			.db	0
-monoscope_00_03:	.db	"Read your monitor's service manual to learn how, and"
+.monoscope_00_03:	.db	"Read your monitor's service manual to learn how, and"
 			.db	0
-monoscope_00_04:	.db	"use Up/Down to change IRE."
+.monoscope_00_04:	.db	"use Up/Down to change IRE."
 			.db	0
-monoscope_00_05:	.db	"Brightness adjustment: Adjust convergence at low"
+.monoscope_00_05:	.db	"Brightness adjustment: Adjust convergence at low"
 			.db	0
-monoscope_00_06:	.db	"brightness (13/25 IRE). An overly bright pattern can"
+.monoscope_00_06:	.db	"brightness (13/25 IRE). An overly bright pattern can"
 			.db	0
-monoscope_00_07:	.db	"mask convergence issues."
+.monoscope_00_07:	.db	"mask convergence issues."
 			.db	0
-monoscope_00_08:	.db	"Convergence: Use the center crosshair to check static"
+.monoscope_00_08:	.db	"Convergence: Use the center crosshair to check static"
 			.db	0
-monoscope_00_09:	.db	"(center of screen) convergence. Use the patterns at"
+.monoscope_00_09:	.db	"(center of screen) convergence. Use the patterns at"
 			.db	0
-monoscope_00_10:	.db	"the sides to check dynamic (edge) convergence."
+.monoscope_00_10:	.db	"the sides to check dynamic (edge) convergence."
 			.db	0
-monoscope_00_11:	.db	"Corners: After setting center and edge convergence,"
+.monoscope_00_11:	.db	"Corners: After setting center and edge convergence,"
 			.db	0
-monoscope_00_12:	.db	"use magnets to adjust corner purity and geometry."
+.monoscope_00_12:	.db	"use magnets to adjust corner purity and geometry."
 			.db	0
 !exit:
 #endasm
@@ -709,36 +709,36 @@ monoscope_00_12:	.db	"use magnets to adjust corner purity and geometry."
 void display_monoscope_01()
 {
 #asm
-	p_string	monoscope_01_00,23,4
+	p_string	.monoscope_01_00,23,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	monoscope_01_01,6,6
-	p_string	monoscope_01_02,6,7
-	p_string	monoscope_01_03,6,8
-	p_string	monoscope_01_04,6,9
-	p_string	monoscope_01_05,6,11
-	p_string	monoscope_01_06,6,12
-	p_string	monoscope_01_07,6,13
-	p_string	monoscope_01_08,6,15
+	p_string	.monoscope_01_01,6,6
+	p_string	.monoscope_01_02,6,7
+	p_string	.monoscope_01_03,6,8
+	p_string	.monoscope_01_04,6,9
+	p_string	.monoscope_01_05,6,11
+	p_string	.monoscope_01_06,6,12
+	p_string	.monoscope_01_07,6,13
+	p_string	.monoscope_01_08,6,15
 	jmp		!exit+
 
-monoscope_01_00:	.db	"MONOSCOPE (2/2)"
+.monoscope_01_00:	.db	"MONOSCOPE (2/2)"
 			.db	0
-monoscope_01_01:	.db	"Size and aspect ratio: If vertical and horizontal size"
+.monoscope_01_01:	.db	"Size and aspect ratio: If vertical and horizontal size"
 			.db	0
-monoscope_01_02:	.db	"are correct, the red squares in the pattern will be"
+.monoscope_01_02:	.db	"are correct, the red squares in the pattern will be"
 			.db	0
-monoscope_01_03:	.db	"perfect squares. After setting H size, use a tape"
+.monoscope_01_03:	.db	"perfect squares. After setting H size, use a tape"
 			.db	0
-monoscope_01_04:	.db	"measure to adjust V size to match it."
+.monoscope_01_04:	.db	"measure to adjust V size to match it."
 			.db	0
-monoscope_01_05:	.db	"Linearity: The squares in each corner should get you"
+.monoscope_01_05:	.db	"Linearity: The squares in each corner should get you"
 			.db	0
-monoscope_01_06:	.db	"started. Confirm your adjustment using the scroll"
+.monoscope_01_06:	.db	"started. Confirm your adjustment using the scroll"
 			.db	0
-monoscope_01_07:	.db	"tests."
+.monoscope_01_07:	.db	"tests."
 			.db	0
-monoscope_01_08:	.db	"Designed by Keith Raney."
+.monoscope_01_08:	.db	"Designed by Keith Raney."
 			.db	0
 !exit:
 #endasm
@@ -748,57 +748,57 @@ monoscope_01_08:	.db	"Designed by Keith Raney."
 void display_options_00()
 {
 #asm
-	p_string	options_00_00,27,4
+	p_string	.options_00_00,27,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	options_00_01,6,6
-	p_string	options_00_02,6,7
-	p_string	options_00_03,6,8
-	p_string	options_00_04,6,9
-	p_string	options_00_05,6,11
-	p_string	options_00_06,6,12
-	p_string	options_00_07,6,13
-	p_string	options_00_08,6,14
-	p_string	options_00_09,6,16
-	p_string	options_00_10,6,17
-	p_string	options_00_11,6,18
-	p_string	options_00_12,6,19
-	p_string	options_00_13,6,20
-	p_string	options_00_14,6,22
-	p_string	options_00_15,6,23
+	p_string	.options_00_01,6,6
+	p_string	.options_00_02,6,7
+	p_string	.options_00_03,6,8
+	p_string	.options_00_04,6,9
+	p_string	.options_00_05,6,11
+	p_string	.options_00_06,6,12
+	p_string	.options_00_07,6,13
+	p_string	.options_00_08,6,14
+	p_string	.options_00_09,6,16
+	p_string	.options_00_10,6,17
+	p_string	.options_00_11,6,18
+	p_string	.options_00_12,6,19
+	p_string	.options_00_13,6,20
+	p_string	.options_00_14,6,22
+	p_string	.options_00_15,6,23
 	jmp		!exit+
 
-options_00_00:	.db	"OPTIONS"
+.options_00_00:	.db	"OPTIONS"
 			.db	0
-options_00_01:	.db	"Vertical resolution: This system outputs either 224"
+.options_00_01:	.db	"Vertical resolution: This system outputs either 224"
 			.db	0
-options_00_02:	.db	"or 240p video. Although capable of displaying all 240"
+.options_00_02:	.db	"or 240p video. Although capable of displaying all 240"
 			.db	0
-options_00_03:	.db	"vertical lines games tend to use only 239; probably"
+.options_00_03:	.db	"vertical lines games tend to use only 239; probably"
 			.db	0
-options_00_04:	.db	"to gain the CPU time of 4 extra lines during vblank."
+.options_00_04:	.db	"to gain the CPU time of 4 extra lines during vblank."
 			.db	0
-options_00_05:	.db	"The suite uses the full 240 mode by default, but you"
+.options_00_05:	.db	"The suite uses the full 240 mode by default, but you"
 			.db	0
-options_00_06:	.db	"can enable the one games use by selecting to start at"
+.options_00_06:	.db	"can enable the one games use by selecting to start at"
 			.db	0
-options_00_07:	.db	"line 24 instead of 22. This will clip the last line"
+.options_00_07:	.db	"line 24 instead of 22. This will clip the last line"
 			.db	0
-options_00_08:	.db	"in patterns, but show the real area used by games."
+.options_00_08:	.db	"in patterns, but show the real area used by games."
 			.db	0
-options_00_09:	.db	"Composite Filter: The system outputs an extra video"
+.options_00_09:	.db	"Composite Filter: The system outputs an extra video"
 			.db	0
-options_00_10:	.db	"line (266) and creates a comb filter with every other"
+.options_00_10:	.db	"line (266) and creates a comb filter with every other"
 			.db	0
-options_00_11:	.db	"frame to reduce artifacts in the composite signal."
+.options_00_11:	.db	"frame to reduce artifacts in the composite signal."
 			.db	0
-options_00_12:	.db	"This extra line contains no data; but since the"
+.options_00_12:	.db	"This extra line contains no data; but since the"
 			.db	0
-options_00_13:	.db	"video signal is taller, CRTs shift vertically."
+.options_00_13:	.db	"video signal is taller, CRTs shift vertically."
 			.db	0
-options_00_14:	.db	"Composite B&W: This option works only in composite."
+.options_00_14:	.db	"Composite B&W: This option works only in composite."
 			.db	0
-options_00_15:	.db	"It disables the NTSC color burst, eliminating color."
+.options_00_15:	.db	"It disables the NTSC color burst, eliminating color."
 			.db	0
 !exit:
 #endasm
@@ -808,54 +808,54 @@ options_00_15:	.db	"It disables the NTSC color burst, eliminating color."
 void display_overscan_00()
 {
 #asm
-	p_string	overscan_00_00,27,4
+	p_string	.overscan_00_00,27,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	overscan_00_01,6,6
-	p_string	overscan_00_02,6,7
-	p_string	overscan_00_03,6,8
-	p_string	overscan_00_04,6,10
-	p_string	overscan_00_05,6,11
-	p_string	overscan_00_06,6,12
-	p_string	overscan_00_07,6,13
-	p_string	overscan_00_08,6,15
-	p_string	overscan_00_09,6,17
-	p_string	overscan_00_10,6,18
-	p_string	overscan_00_11,6,19
-	p_string	overscan_00_12,6,20
-	p_string	overscan_00_13,6,22
-	p_string	overscan_00_14,6,23
+	p_string	.overscan_00_01,6,6
+	p_string	.overscan_00_02,6,7
+	p_string	.overscan_00_03,6,8
+	p_string	.overscan_00_04,6,10
+	p_string	.overscan_00_05,6,11
+	p_string	.overscan_00_06,6,12
+	p_string	.overscan_00_07,6,13
+	p_string	.overscan_00_08,6,15
+	p_string	.overscan_00_09,6,17
+	p_string	.overscan_00_10,6,18
+	p_string	.overscan_00_11,6,19
+	p_string	.overscan_00_12,6,20
+	p_string	.overscan_00_13,6,22
+	p_string	.overscan_00_14,6,23
 	jmp		!exit+
 
-overscan_00_00:	.db	"OVERSCAN"
+.overscan_00_00:	.db	"OVERSCAN"
 			.db	0
-overscan_00_01:	.db	"With this pattern you can interactively find out"
+.overscan_00_01:	.db	"With this pattern you can interactively find out"
 			.db	0
-overscan_00_02:	.db	"the overscan in pixels and percentage of each"
+.overscan_00_02:	.db	"the overscan in pixels and percentage of each"
 			.db	0
-overscan_00_03:	.db	"edge in a display."
+.overscan_00_03:	.db	"edge in a display."
 			.db	0
-overscan_00_04:	.db	"- Increment the overscan with left and right until"
+.overscan_00_04:	.db	"- Increment the overscan with left and right until"
 			.db	0
-overscan_00_05:	.db	"you see the white border, then go back one pixel."
+.overscan_00_05:	.db	"you see the white border, then go back one pixel."
 			.db	0
-overscan_00_06:	.db	"The resulting number is the amount of overscan"
+.overscan_00_06:	.db	"The resulting number is the amount of overscan"
 			.db	0
-overscan_00_07:	.db	"in pixels in each direction."
+.overscan_00_07:	.db	"in pixels in each direction."
 			.db	0
-overscan_00_08:	.db	"- Button I allows faster movement of the borders."
+.overscan_00_08:	.db	"- Button I allows faster movement of the borders."
 			.db	0
-overscan_00_09:	.db	"This pattern follows the current vertical option,"
+.overscan_00_09:	.db	"This pattern follows the current vertical option,"
 			.db	0
-overscan_00_10:	.db	"so you can check how it handles in 239, 240, and"
+.overscan_00_10:	.db	"so you can check how it handles in 239, 240, and"
 			.db	0
-overscan_00_11:	.db	"224 modes. Keep in mind the horizontal resolution"
+.overscan_00_11:	.db	"224 modes. Keep in mind the horizontal resolution"
 			.db	0
-overscan_00_12:	.db	"is fixed at 256 pixels."
+.overscan_00_12:	.db	"is fixed at 256 pixels."
 			.db	0
-overscan_00_13:	.db	"- The rows colored in yellow rows are never shown"
+.overscan_00_13:	.db	"- The rows colored in yellow rows are never shown"
 			.db	0
-overscan_00_14:	.db	"by original hardware."
+.overscan_00_14:	.db	"by original hardware."
 			.db	0
 !exit:
 #endasm
@@ -865,27 +865,27 @@ overscan_00_14:	.db	"by original hardware."
 void display_phase_00()
 {
 #asm
-	p_string	phase_00_00,17,4
+	p_string	.phase_00_00,17,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	phase_00_01,6,6
-	p_string	phase_00_02,6,7
-	p_string	phase_00_03,6,9
-	p_string	phase_00_04,6,10
-	p_string	phase_00_05,6,12
+	p_string	.phase_00_01,6,6
+	p_string	.phase_00_02,6,7
+	p_string	.phase_00_03,6,9
+	p_string	.phase_00_04,6,10
+	p_string	.phase_00_05,6,12
 	jmp		!exit+
 
-phase_00_00:	.db	"PHASE & SAMPLE RATE CHECK"
+.phase_00_00:	.db	"PHASE & SAMPLE RATE CHECK"
 			.db	0
-phase_00_01:	.db	"This test allows you to check phase alignment"
+.phase_00_01:	.db	"This test allows you to check phase alignment"
 			.db	0
-phase_00_02:	.db	"in upscalers."
+.phase_00_02:	.db	"in upscalers."
 			.db	0
-phase_00_03:	.db	"Press left or right to move, Up for checkerboard"
+.phase_00_03:	.db	"Press left or right to move, Up for checkerboard"
 			.db	0
-phase_00_04:	.db	"background."
+.phase_00_04:	.db	"background."
 			.db	0
-phase_00_05:	.db	"Designed by FirebrandX."
+.phase_00_05:	.db	"Designed by FirebrandX."
 			.db	0
 !exit:
 #endasm
@@ -895,42 +895,42 @@ phase_00_05:	.db	"Designed by FirebrandX."
 void display_pluge_00()
 {
 #asm
-	p_string	pluge_00_00,25,4
+	p_string	.pluge_00_00,25,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	pluge_00_01,6,6
-	p_string	pluge_00_02,6,7
-	p_string	pluge_00_03,6,8
-	p_string	pluge_00_04,6,10
-	p_string	pluge_00_05,6,11
-	p_string	pluge_00_06,6,12
-	p_string	pluge_00_07,6,14
-	p_string	pluge_00_08,6,15
-	p_string	pluge_00_09,6,16
-	p_string	pluge_00_10,6,18
+	p_string	.pluge_00_01,6,6
+	p_string	.pluge_00_02,6,7
+	p_string	.pluge_00_03,6,8
+	p_string	.pluge_00_04,6,10
+	p_string	.pluge_00_05,6,11
+	p_string	.pluge_00_06,6,12
+	p_string	.pluge_00_07,6,14
+	p_string	.pluge_00_08,6,15
+	p_string	.pluge_00_09,6,16
+	p_string	.pluge_00_10,6,18
 	jmp		!exit+
 
-pluge_00_00:	.db	"PLUGE (1/2)"
+.pluge_00_00:	.db	"PLUGE (1/2)"
 			.db	0
-pluge_00_01:	.db	"Please keep in mind that black levels are lower"
+.pluge_00_01:	.db	"Please keep in mind that black levels are lower"
 			.db	0
-pluge_00_02:	.db	"in other game consoles, these are just the lowest"
+.pluge_00_02:	.db	"in other game consoles, these are just the lowest"
 			.db	0
-pluge_00_03:	.db	"values available in this system."
+.pluge_00_03:	.db	"values available in this system."
 			.db	0
-pluge_00_04:	.db	"The picture line-up generation equipment (PLUGE)"
+.pluge_00_04:	.db	"The picture line-up generation equipment (PLUGE)"
 			.db	0
-pluge_00_05:	.db	"is a test pattern used to adjust the black level"
+.pluge_00_05:	.db	"is a test pattern used to adjust the black level"
 			.db	0
-pluge_00_06:	.db	"and contrast of a video signal."
+.pluge_00_06:	.db	"and contrast of a video signal."
 			.db	0
-pluge_00_07:	.db	"The pattern in this suite is mainly designed to"
+.pluge_00_07:	.db	"The pattern in this suite is mainly designed to"
 			.db	0
-pluge_00_08:	.db	"adjust the black level. The control for setting"
+.pluge_00_08:	.db	"adjust the black level. The control for setting"
 			.db	0
-pluge_00_09:	.db	"this on your TV is usually named Brightness."
+.pluge_00_09:	.db	"this on your TV is usually named Brightness."
 			.db	0
-pluge_00_10:	.db	"This allows all detail to be seen on dark scenes."
+.pluge_00_10:	.db	"This allows all detail to be seen on dark scenes."
 			.db	0
 !exit:
 #endasm
@@ -940,33 +940,33 @@ pluge_00_10:	.db	"This allows all detail to be seen on dark scenes."
 void display_pluge_01()
 {
 #asm
-	p_string	pluge_01_00,25,4
+	p_string	.pluge_01_00,25,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	pluge_01_01,6,6
-	p_string	pluge_01_02,6,7
-	p_string	pluge_01_03,6,8
-	p_string	pluge_01_04,6,10
-	p_string	pluge_01_05,6,11
-	p_string	pluge_01_06,6,12
-	p_string	pluge_01_07,6,13
+	p_string	.pluge_01_01,6,6
+	p_string	.pluge_01_02,6,7
+	p_string	.pluge_01_03,6,8
+	p_string	.pluge_01_04,6,10
+	p_string	.pluge_01_05,6,11
+	p_string	.pluge_01_06,6,12
+	p_string	.pluge_01_07,6,13
 	jmp		!exit+
 
-pluge_01_00:	.db	"PLUGE (2/2)"
+.pluge_01_00:	.db	"PLUGE (2/2)"
 			.db	0
-pluge_01_01:	.db	"- Button I changes the inner bars between the"
+.pluge_01_01:	.db	"- Button I changes the inner bars between the"
 			.db	0
-pluge_01_02:	.db	"lowest B,G,R values and gray. You should use the"
+.pluge_01_02:	.db	"lowest B,G,R values and gray. You should use the"
 			.db	0
-pluge_01_03:	.db	"blue one in order not to crush detail."
+.pluge_01_03:	.db	"blue one in order not to crush detail."
 			.db	0
-pluge_01_04:	.db	"Reduce the Brightness until the inner bars"
+.pluge_01_04:	.db	"Reduce the Brightness until the inner bars"
 			.db	0
-pluge_01_05:	.db	"are no longer visible, and then slowly raise it"
+.pluge_01_05:	.db	"are no longer visible, and then slowly raise it"
 			.db	0
-pluge_01_06:	.db	"until they are just visible, and go back one"
+.pluge_01_06:	.db	"until they are just visible, and go back one"
 			.db	0
-pluge_01_07:	.db	"notch where they blend with the background."
+.pluge_01_07:	.db	"notch where they blend with the background."
 			.db	0
 !exit:
 #endasm
@@ -976,54 +976,54 @@ pluge_01_07:	.db	"notch where they blend with the background."
 void display_reflex_00()
 {
 #asm
-	p_string	reflex_00_00,16,4
+	p_string	.reflex_00_00,16,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	reflex_00_01,6,6
-	p_string	reflex_00_02,6,7
-	p_string	reflex_00_03,6,8
-	p_string	reflex_00_04,6,9
-	p_string	reflex_00_05,6,10
-	p_string	reflex_00_06,6,11
-	p_string	reflex_00_07,6,13
-	p_string	reflex_00_08,6,14
-	p_string	reflex_00_09,6,15
-	p_string	reflex_00_10,6,16
-	p_string	reflex_00_11,6,18
-	p_string	reflex_00_12,6,19
-	p_string	reflex_00_13,6,20
-	p_string	reflex_00_14,6,21
+	p_string	.reflex_00_01,6,6
+	p_string	.reflex_00_02,6,7
+	p_string	.reflex_00_03,6,8
+	p_string	.reflex_00_04,6,9
+	p_string	.reflex_00_05,6,10
+	p_string	.reflex_00_06,6,11
+	p_string	.reflex_00_07,6,13
+	p_string	.reflex_00_08,6,14
+	p_string	.reflex_00_09,6,15
+	p_string	.reflex_00_10,6,16
+	p_string	.reflex_00_11,6,18
+	p_string	.reflex_00_12,6,19
+	p_string	.reflex_00_13,6,20
+	p_string	.reflex_00_14,6,21
 	jmp		!exit+
 
-reflex_00_00:	.db	"Timing & Reflex Test (1/2)"
+.reflex_00_00:	.db	"Timing & Reflex Test (1/2)"
 			.db	0
-reflex_00_01:	.db	"WARNING: This evaluation is dependent on reflexes"
+.reflex_00_01:	.db	"WARNING: This evaluation is dependent on reflexes"
 			.db	0
-reflex_00_02:	.db	"and/or rhythm more than anything. The visual and"
+.reflex_00_02:	.db	"and/or rhythm more than anything. The visual and"
 			.db	0
-reflex_00_03:	.db	"audio cues are the more revealing aspects which"
+.reflex_00_03:	.db	"audio cues are the more revealing aspects which"
 			.db	0
-reflex_00_04:	.db	"the user should consider, of course the interactive"
+.reflex_00_04:	.db	"the user should consider, of course the interactive"
 			.db	0
-reflex_00_05:	.db	"factor can give an experienced player the hang of"
+.reflex_00_05:	.db	"factor can give an experienced player the hang of"
 			.db	0
-reflex_00_06:	.db	"the system when testing via different connections."
+.reflex_00_06:	.db	"the system when testing via different connections."
 			.db	0
-reflex_00_07:	.db	"The main intention is to show a changing pattern"
+.reflex_00_07:	.db	"The main intention is to show a changing pattern"
 			.db	0
-reflex_00_08:	.db	"on the screen, which can be complemented with"
+.reflex_00_08:	.db	"on the screen, which can be complemented with"
 			.db	0
-reflex_00_09:	.db	"audio. This should show to some degree any lag"
+.reflex_00_09:	.db	"audio. This should show to some degree any lag"
 			.db	0
-reflex_00_10:	.db	"when processing the signal."
+.reflex_00_10:	.db	"when processing the signal."
 			.db	0
-reflex_00_11:	.db	"As an added feature, the user can click button I"
+.reflex_00_11:	.db	"As an added feature, the user can click button I"
 			.db	0
-reflex_00_12:	.db	"when the sprite is aligned with the one on the"
+.reflex_00_12:	.db	"when the sprite is aligned with the one on the"
 			.db	0
-reflex_00_13:	.db	"background, and the offset in frames from the"
+.reflex_00_13:	.db	"background, and the offset in frames from the"
 			.db	0
-reflex_00_14:	.db	"actual intersection will be shown on screen. "
+.reflex_00_14:	.db	"actual intersection will be shown on screen. "
 			.db	0
 !exit:
 #endasm
@@ -1033,51 +1033,51 @@ reflex_00_14:	.db	"actual intersection will be shown on screen. "
 void display_reflex_01()
 {
 #asm
-	p_string	reflex_01_00,16,4
+	p_string	.reflex_01_00,16,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	reflex_01_01,6,6
-	p_string	reflex_01_02,6,7
-	p_string	reflex_01_03,6,8
-	p_string	reflex_01_04,6,9
-	p_string	reflex_01_05,6,10
-	p_string	reflex_01_06,6,11
-	p_string	reflex_01_07,6,12
-	p_string	reflex_01_08,6,14
-	p_string	reflex_01_09,6,15
-	p_string	reflex_01_10,6,16
-	p_string	reflex_01_11,6,18
-	p_string	reflex_01_12,6,19
-	p_string	reflex_01_13,6,20
+	p_string	.reflex_01_01,6,6
+	p_string	.reflex_01_02,6,7
+	p_string	.reflex_01_03,6,8
+	p_string	.reflex_01_04,6,9
+	p_string	.reflex_01_05,6,10
+	p_string	.reflex_01_06,6,11
+	p_string	.reflex_01_07,6,12
+	p_string	.reflex_01_08,6,14
+	p_string	.reflex_01_09,6,15
+	p_string	.reflex_01_10,6,16
+	p_string	.reflex_01_11,6,18
+	p_string	.reflex_01_12,6,19
+	p_string	.reflex_01_13,6,20
 	jmp		!exit+
 
-reflex_01_00:	.db	"Timing & Reflex Test (2/2)"
+.reflex_01_00:	.db	"Timing & Reflex Test (2/2)"
 			.db	0
-reflex_01_01:	.db	"A one frame 1khz tone is played when audio is"
+.reflex_01_01:	.db	"A one frame 1khz tone is played when audio is"
 			.db	0
-reflex_01_02:	.db	"enabled and the sprites are aligned, and a 500hz"
+.reflex_01_02:	.db	"enabled and the sprites are aligned, and a 500hz"
 			.db	0
-reflex_01_03:	.db	"tone is played when button I is pressed. This"
+.reflex_01_03:	.db	"tone is played when button I is pressed. This"
 			.db	0
-reflex_01_04:	.db	"can be repeated ten times and the software will"
+.reflex_01_04:	.db	"can be repeated ten times and the software will"
 			.db	0
-reflex_01_05:	.db	"calculate the average. Whenever the button was"
+.reflex_01_05:	.db	"calculate the average. Whenever the button was"
 			.db	0
-reflex_01_06:	.db	"pressed before the actual intersection frame, the"
+.reflex_01_06:	.db	"pressed before the actual intersection frame, the"
 			.db	0
-reflex_01_07:	.db	"result will be ignored (but still shown on screen)."
+.reflex_01_07:	.db	"result will be ignored (but still shown on screen)."
 			.db	0
-reflex_01_08:	.db	"- SELECT can be used to change the direction"
+.reflex_01_08:	.db	"- SELECT can be used to change the direction"
 			.db	0
-reflex_01_09:	.db	"of the sprite from vertical to horizontal, or"
+.reflex_01_09:	.db	"of the sprite from vertical to horizontal, or"
 			.db	0
-reflex_01_10:	.db	"display both at the same time"
+.reflex_01_10:	.db	"display both at the same time"
 			.db	0
-reflex_01_11:	.db	"Since a frame is around 16 ms (1000/60) in NTSC"
+.reflex_01_11:	.db	"Since a frame is around 16 ms (1000/60) in NTSC"
 			.db	0
-reflex_01_12:	.db	"that value must be considered the general error"
+.reflex_01_12:	.db	"that value must be considered the general error"
 			.db	0
-reflex_01_13:	.db	"when using the test results."
+.reflex_01_13:	.db	"when using the test results."
 			.db	0
 !exit:
 #endasm
@@ -1087,45 +1087,45 @@ reflex_01_13:	.db	"when using the test results."
 void display_scroll_00()
 {
 #asm
-	p_string	scroll_00_00,26,4
+	p_string	.scroll_00_00,26,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	scroll_00_01,6,7
-	p_string	scroll_00_02,6,8
-	p_string	scroll_00_03,6,10
-	p_string	scroll_00_04,6,11
-	p_string	scroll_00_05,6,13
-	p_string	scroll_00_06,6,15
-	p_string	scroll_00_07,6,16
-	p_string	scroll_00_08,6,18
-	p_string	scroll_00_09,6,19
-	p_string	scroll_00_10,6,21
-	p_string	scroll_00_11,6,22
+	p_string	.scroll_00_01,6,7
+	p_string	.scroll_00_02,6,8
+	p_string	.scroll_00_03,6,10
+	p_string	.scroll_00_04,6,11
+	p_string	.scroll_00_05,6,13
+	p_string	.scroll_00_06,6,15
+	p_string	.scroll_00_07,6,16
+	p_string	.scroll_00_08,6,18
+	p_string	.scroll_00_09,6,19
+	p_string	.scroll_00_10,6,21
+	p_string	.scroll_00_11,6,22
 	jmp		!exit+
 
-scroll_00_00:	.db	"SCROLL TEST"
+.scroll_00_00:	.db	"SCROLL TEST"
 			.db	0
-scroll_00_01:	.db	"This test shows either an horizontal background"
+.scroll_00_01:	.db	"This test shows either an horizontal background"
 			.db	0
-scroll_00_02:	.db	"from Sonic or a vertical one from Kiki Kaikai."
+.scroll_00_02:	.db	"from Sonic or a vertical one from Kiki Kaikai."
 			.db	0
-scroll_00_03:	.db	"- Speed can be varied with up & down on the"
+.scroll_00_03:	.db	"- Speed can be varied with up & down on the"
 			.db	0
-scroll_00_04:	.db	"d-pad and scroll direction with left or right."
+.scroll_00_04:	.db	"d-pad and scroll direction with left or right."
 			.db	0
-scroll_00_05:	.db	"- SELECT changes between 320 and 256 resolutions."
+.scroll_00_05:	.db	"- SELECT changes between 320 and 256 resolutions."
 			.db	0
-scroll_00_06:	.db	"- Button I toggles between vertical and horizontal"
+.scroll_00_06:	.db	"- Button I toggles between vertical and horizontal"
 			.db	0
-scroll_00_07:	.db	"scroll."
+.scroll_00_07:	.db	"scroll."
 			.db	0
-scroll_00_08:	.db	"This can be used to notice any drops in"
+.scroll_00_08:	.db	"This can be used to notice any drops in"
 			.db	0
-scroll_00_09:	.db	"framerate, or pixel width inconsistencies."
+.scroll_00_09:	.db	"framerate, or pixel width inconsistencies."
 			.db	0
-scroll_00_10:	.db	"Sonic is a trademark of Sega Enterprises Ltd."
+.scroll_00_10:	.db	"Sonic is a trademark of Sega Enterprises Ltd."
 			.db	0
-scroll_00_11:	.db	"Kiki Kaikai is a trademark of Taito/Square."
+.scroll_00_11:	.db	"Kiki Kaikai is a trademark of Taito/Square."
 			.db	0
 !exit:
 #endasm
@@ -1135,45 +1135,45 @@ scroll_00_11:	.db	"Kiki Kaikai is a trademark of Taito/Square."
 void display_sharpness_00()
 {
 #asm
-	p_string	sharpness_00_00,26,4
+	p_string	.sharpness_00_00,26,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	sharpness_00_01,6,7
-	p_string	sharpness_00_02,6,8
-	p_string	sharpness_00_03,6,9
-	p_string	sharpness_00_04,6,11
-	p_string	sharpness_00_05,6,12
-	p_string	sharpness_00_06,6,13
-	p_string	sharpness_00_07,6,15
-	p_string	sharpness_00_08,6,16
-	p_string	sharpness_00_09,6,18
-	p_string	sharpness_00_10,6,19
-	p_string	sharpness_00_11,6,20
+	p_string	.sharpness_00_01,6,7
+	p_string	.sharpness_00_02,6,8
+	p_string	.sharpness_00_03,6,9
+	p_string	.sharpness_00_04,6,11
+	p_string	.sharpness_00_05,6,12
+	p_string	.sharpness_00_06,6,13
+	p_string	.sharpness_00_07,6,15
+	p_string	.sharpness_00_08,6,16
+	p_string	.sharpness_00_09,6,18
+	p_string	.sharpness_00_10,6,19
+	p_string	.sharpness_00_11,6,20
 	jmp		!exit+
 
-sharpness_00_00:	.db	"SHARPNESS"
+.sharpness_00_00:	.db	"SHARPNESS"
 			.db	0
-sharpness_00_01:	.db	"You should set the sharpness of your CRT to a"
+.sharpness_00_01:	.db	"You should set the sharpness of your CRT to a"
 			.db	0
-sharpness_00_02:	.db	"value that shows clean black and gray transitions,"
+.sharpness_00_02:	.db	"value that shows clean black and gray transitions,"
 			.db	0
-sharpness_00_03:	.db	"with no white ghosting in between."
+.sharpness_00_03:	.db	"with no white ghosting in between."
 			.db	0
-sharpness_00_04:	.db	"On most modern displays, the sharpness control is"
+.sharpness_00_04:	.db	"On most modern displays, the sharpness control is"
 			.db	0
-sharpness_00_05:	.db	"an edge-enhancement control, and most probably"
+.sharpness_00_05:	.db	"an edge-enhancement control, and most probably"
 			.db	0
-sharpness_00_06:	.db	"should be set to zero, or in the middle."
+.sharpness_00_06:	.db	"should be set to zero, or in the middle."
 			.db	0
-sharpness_00_07:	.db	"In some PVM/BVM displays this is also referred"
+.sharpness_00_07:	.db	"In some PVM/BVM displays this is also referred"
 			.db	0
-sharpness_00_08:	.db	"to as aperture."
+.sharpness_00_08:	.db	"to as aperture."
 			.db	0
-sharpness_00_09:	.db	"- You can change the pattern with I. When using "
+.sharpness_00_09:	.db	"- You can change the pattern with I. When using "
 			.db	0
-sharpness_00_10:	.db	"the brick pattern, resolutions can be changed with "
+.sharpness_00_10:	.db	"the brick pattern, resolutions can be changed with "
 			.db	0
-sharpness_00_11:	.db	"SELECT."
+.sharpness_00_11:	.db	"SELECT."
 			.db	0
 !exit:
 #endasm
@@ -1184,24 +1184,24 @@ sharpness_00_11:	.db	"SELECT."
 void display_sound_00()
 {
 #asm
-	p_string	sound_00_00,28,4
+	p_string	.sound_00_00,28,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	sound_00_01,6,8
-	p_string	sound_00_02,6,9
-	p_string	sound_00_03,6,11
-	p_string	sound_00_04,6,12
+	p_string	.sound_00_01,6,8
+	p_string	.sound_00_02,6,9
+	p_string	.sound_00_03,6,11
+	p_string	.sound_00_04,6,12
 	jmp		!exit+
 
-sound_00_00:	.db	"SOUND"
+.sound_00_00:	.db	"SOUND"
 			.db	0
-sound_00_01:	.db	"This simple test plays a sound in either or both"
+.sound_00_01:	.db	"This simple test plays a sound in either or both"
 			.db	0
-sound_00_02:	.db	"channels."
+.sound_00_02:	.db	"channels."
 			.db	0
-sound_00_03:	.db	"It can be used to determine if the audio chain is"
+.sound_00_03:	.db	"It can be used to determine if the audio chain is"
 			.db	0
-sound_00_04:	.db	"working properly."
+.sound_00_04:	.db	"working properly."
 			.db	0
 !exit:
 #endasm
@@ -1213,30 +1213,30 @@ sound_00_04:	.db	"working properly."
 void display_soundCD_00()
 {
 #asm
-	p_string	soundCD_00_00,28,4
+	p_string	.soundCD_00_00,28,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	soundCD_00_01,6,8
-	p_string	soundCD_00_02,6,9
-	p_string	soundCD_00_03,6,11
-	p_string	soundCD_00_04,6,12
-	p_string	soundCD_00_05,6,14
-	p_string	soundCD_00_06,6,15
+	p_string	.soundCD_00_01,6,8
+	p_string	.soundCD_00_02,6,9
+	p_string	.soundCD_00_03,6,11
+	p_string	.soundCD_00_04,6,12
+	p_string	.soundCD_00_05,6,14
+	p_string	.soundCD_00_06,6,15
 	jmp		!exit+
 
-soundCD_00_00:	.db	"SOUND"
+.soundCD_00_00:	.db	"SOUND"
 			.db	0
-soundCD_00_01:	.db	"This simple test plays a PSG sound in either"
+.soundCD_00_01:	.db	"This simple test plays a PSG sound in either"
 			.db	0
-soundCD_00_02:	.db	"or both channels."
+.soundCD_00_02:	.db	"or both channels."
 			.db	0
-soundCD_00_03:	.db	"Aside from PSG, it can also play CDDA and"
+.soundCD_00_03:	.db	"Aside from PSG, it can also play CDDA and"
 			.db	0
-soundCD_00_04:	.db	"ADPCM audio."
+.soundCD_00_04:	.db	"ADPCM audio."
 			.db	0
-soundCD_00_05:	.db	"It can be used to determine if the audio chain is"
+.soundCD_00_05:	.db	"It can be used to determine if the audio chain is"
 			.db	0
-soundCD_00_06:	.db	"working properly."
+.soundCD_00_06:	.db	"working properly."
 			.db	0
 !exit:
 #endasm
@@ -1247,33 +1247,33 @@ soundCD_00_06:	.db	"working properly."
 void display_striped_00()
 {
 #asm
-	p_string	striped_00_00,21,4
+	p_string	.striped_00_00,21,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	striped_00_01,6,7
-	p_string	striped_00_02,6,8
-	p_string	striped_00_03,6,9
-	p_string	striped_00_04,6,10
-	p_string	striped_00_05,6,11
-	p_string	striped_00_06,6,13
-	p_string	striped_00_07,6,15
+	p_string	.striped_00_01,6,7
+	p_string	.striped_00_02,6,8
+	p_string	.striped_00_03,6,9
+	p_string	.striped_00_04,6,10
+	p_string	.striped_00_05,6,11
+	p_string	.striped_00_06,6,13
+	p_string	.striped_00_07,6,15
 	jmp		!exit+
 
-striped_00_00:	.db	"STRIPED SPRITE TEST"
+.striped_00_00:	.db	"STRIPED SPRITE TEST"
 			.db	0
-striped_00_01:	.db	"There actually are deinterlacers out there which"
+.striped_00_01:	.db	"There actually are deinterlacers out there which"
 			.db	0
-striped_00_02:	.db	"can display the drop shadows correctly and still"
+.striped_00_02:	.db	"can display the drop shadows correctly and still"
 			.db	0
-striped_00_03:	.db	"interpret 240p as 480i. With a striped sprite it"
+.striped_00_03:	.db	"interpret 240p as 480i. With a striped sprite it"
 			.db	0
-striped_00_04:	.db	"should be easy to tell if a processor tries to"
+.striped_00_04:	.db	"should be easy to tell if a processor tries to"
 			.db	0
-striped_00_05:	.db	"deinterlace (plus interpolate) or not."
+.striped_00_05:	.db	"deinterlace (plus interpolate) or not."
 			.db	0
-striped_00_06:	.db	"- You can change backgrounds with I."
+.striped_00_06:	.db	"- You can change backgrounds with I."
 			.db	0
-striped_00_07:	.db	"Donna art by Jose Salot"
+.striped_00_07:	.db	"Donna art by Jose Salot"
 			.db	0
 !exit:
 #endasm
@@ -1283,42 +1283,42 @@ striped_00_07:	.db	"Donna art by Jose Salot"
 void display_white_00()
 {
 #asm
-	p_string	white_00_00,24,4
+	p_string	.white_00_00,24,4
 	__ldwi		14
 	call		_set_font_pal
-	p_string	white_00_01,6,7
-	p_string	white_00_02,6,8
-	p_string	white_00_03,6,9
-	p_string	white_00_04,6,11
-	p_string	white_00_05,6,12
-	p_string	white_00_06,6,13
-	p_string	white_00_07,6,15
-	p_string	white_00_08,6,16
-	p_string	white_00_09,6,18
-	p_string	white_00_10,6,19
+	p_string	.white_00_01,6,7
+	p_string	.white_00_02,6,8
+	p_string	.white_00_03,6,9
+	p_string	.white_00_04,6,11
+	p_string	.white_00_05,6,12
+	p_string	.white_00_06,6,13
+	p_string	.white_00_07,6,15
+	p_string	.white_00_08,6,16
+	p_string	.white_00_09,6,18
+	p_string	.white_00_10,6,19
 	jmp		!exit+
 
-white_00_00:	.db	"WHITE SCREEN"
+.white_00_00:	.db	"WHITE SCREEN"
 			.db	0
-white_00_01:	.db	"- This pattern can be changed between white, black,"
+.white_00_01:	.db	"- This pattern can be changed between white, black,"
 			.db	0
-white_00_02:	.db	"red, green, blue and custom color full screens by"
+.white_00_02:	.db	"red, green, blue and custom color full screens by"
 			.db	0
-white_00_03:	.db	"using button I."
+.white_00_03:	.db	"using button I."
 			.db	0
-white_00_04:	.db	"- Pressing Select while displaying the white screen"
+.white_00_04:	.db	"- Pressing Select while displaying the white screen"
 			.db	0
-white_00_05:	.db	"will enter color edit mode, to select the RGB"
+.white_00_05:	.db	"will enter color edit mode, to select the RGB"
 			.db	0
-white_00_06:	.db	"color to fill the screen with."
+.white_00_06:	.db	"color to fill the screen with."
 			.db	0
-white_00_07:	.db	"Some displays and scalers have issues when"
+.white_00_07:	.db	"Some displays and scalers have issues when"
 			.db	0
-white_00_08:	.db	"changing between a black 0 IRE and a white screen."
+.white_00_08:	.db	"changing between a black 0 IRE and a white screen."
 			.db	0
-white_00_09:	.db	"This pattern can also be used to check color"
+.white_00_09:	.db	"This pattern can also be used to check color"
 			.db	0
-white_00_10:	.db	"purity, and for dead pixels in digital displays."
+.white_00_10:	.db	"purity, and for dead pixels in digital displays."
 			.db	0
 !exit:
 #endasm
