@@ -241,7 +241,7 @@ int main(int argc, char **argv)
 	
 #ifdef WII_VERSION
 	if(HWButton != -1)
-		SYS_ResetSystem(HWButton, 0, 0);
+		SYS_ResetSystem(HWButton, 0, FALSE);
 #endif
 
 	return EXIT_SUCCESS;

@@ -35,9 +35,8 @@
 #include "wav.h"
 
 
-#define SD_OPTIONS_PATH "sd:/240pSuite"
+#define OPTIONS_PATH "/240pSuite"
 #define OPTIONS_FILE "options.xml"
-#define FS_SD	1
 
 u8 FSActive = 0;
 
@@ -45,7 +44,9 @@ u8 FSActive = 0;
 
 #include <sdcard/wiisd_io.h>
 
+#define SD_OPTIONS_PATH "sd:/240pSuite"
 #define USB_OPTIONS_PATH "usb:/240pSuite"
+#define FS_SD	1
 #define FS_USB	2
 
 bool InitSD()
@@ -137,18 +138,8 @@ u8 InitFS()
 	}
 	
 	if (fatMounted)
-	{			
-		DIR *dir = NULL;
-				
-		dir = opendir(path);
-		if (dir) 
-		{			
-			closedir(dir);
-		}
-		else
-		{		
-			mkdir(path, S_IRWXU);
-		}
+	{
+		mkdir(path, S_IRWXU);
 		chdir(path);
 		FSActive = fsType;
 	}
@@ -173,118 +164,16 @@ void CloseFS()
 
 #ifdef GC_VERSION
 
-#define FS_SDA	3
-#define FS_SDB	4
-#define FS_SD2	5
-#define FS_ODE	6
-
-#include <sdcard/gcsd.h>
-
-bool InitSDA()
-{
-	if(!__io_gcsda.startup(&__io_gcsda) || !__io_gcsda.isInserted(&__io_gcsda))
-		return false;
-
-	return(fatMountSimple("sd", &__io_gcsda));
-}
-
-bool InitSDB()
-{
-	if(!__io_gcsdb.startup(&__io_gcsdb) || !__io_gcsdb.isInserted(&__io_gcsdb))
-		return false;
-
-	return(fatMountSimple("sd", &__io_gcsdb));
-}
-
-bool InitSD2()
-{
-	if(!__io_gcsd2.startup(&__io_gcsd2) || !__io_gcsd2.isInserted(&__io_gcsd2))
-		return false;
-
-	return(fatMountSimple("sd", &__io_gcsd2));
-}
-
-bool InitODE()
-{
-	if(!__io_gcode.startup(&__io_gcode) || !__io_gcode.isInserted(&__io_gcode))
-		return false;
-
-	return(fatMountSimple("sd", &__io_gcode));
-}
-
-void DeInitSDA() 
-{
-	fatUnmount("sd:/");
-	__io_gcsda.shutdown(&__io_gcsda);
-}
-
-void DeInitSDB() 
-{
-	fatUnmount("sd:/");
-	__io_gcsdb.shutdown(&__io_gcsdb);
-} 
-
-void DeInitSD2() 
-{
-	fatUnmount("sd:/");
-	__io_gcsd2.shutdown(&__io_gcsd2);
-} 
-
-void DeInitODE() 
-{
-	fatUnmount("sd:/");
-	__io_gcode.shutdown(&__io_gcode);
-} 
-
 u8 InitFS()
 {
-	int fatMounted = 0;
-	int	fsType = 0;
-	char *path = NULL;
-			
 	if(FSActive)
 		return 1;
 	
-	if(InitSDA())
+	if (fatInitDefault())
 	{
-		fatMounted = 1;
-		path = SD_OPTIONS_PATH;
-		fsType = FS_SDA;
-	}
-	else if(InitSDB())
-	{
-		fatMounted = 1;
-		path = SD_OPTIONS_PATH;
-		fsType = FS_SDB;
-	}
-	else if(InitSD2())
-	{
-		fatMounted = 1;
-		path = SD_OPTIONS_PATH;
-		fsType = FS_SD2;
-	}
-	else if(InitODE())
-	{
-		fatMounted = 1;
-		path = SD_OPTIONS_PATH;
-		fsType = FS_ODE;
-	}
-	
-	if (fatMounted)
-	{			
-		DIR *dir = NULL;
-				
-		dir = opendir(path);
-		if (dir) 
-		{			
-			closedir(dir);
-		}
-		else
-		{		
-			mkdir(path, S_IRWXU);
-		}
-		chdir(path);
-		FSActive = fsType;
+		mkdir(OPTIONS_PATH, S_IRWXU);
+		chdir(OPTIONS_PATH);
+		FSActive = 1;
 	}
 	else
 		FSActive = 0;
@@ -296,14 +185,7 @@ void CloseFS()
 {	
 	if(FSActive)
 	{
-		if(FSActive == FS_SDA)
-			DeInitSDA();
-		if(FSActive == FS_SDB)
-			DeInitSDB();
-		if(FSActive == FS_SD2)
-			DeInitSD2();
-		if(FSActive == FS_ODE)
-			DeInitODE();
+		fatDeinit();
 		FSActive = 0;
 	}
 }
