@@ -158,7 +158,7 @@ void SetupGX()
 	Mtx44 perspective;
 	GXColor background = {0, 0, 0, 0xff};
 	
-	GX_SetCopyClear(background, 0x00ffffff);
+	GX_SetCopyClear(background, GX_MAX_Z24);
  
 	GX_SetViewport(0.0F, 0.0F, rmode->fbWidth, rmode->efbHeight, 0.0F, 1.0F);
 	yscale = GX_GetYScaleFactor(rmode->efbHeight,rmode->xfbHeight);
@@ -279,7 +279,7 @@ void EndScene()
 		GX_CopyDisp(frameBuffer[IsPAL][ActiveFB], GX_TRUE);
 	  
 		VIDEO_Flush();
-		VIDEO_WaitVSync();
+		VIDEO_WaitForFlush();
 
 		ActiveFB ^= 1;
 		VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);
@@ -290,7 +290,7 @@ void EndScene()
 		ShowMenu();
 		
 		VIDEO_Flush();
-		VIDEO_WaitVSync();
+		VIDEO_WaitForFlush();
 	}
 }
 
@@ -443,7 +443,7 @@ ImagePtr CopyFrameBufferToImage()
 	ActiveFB ^= 1;
 	  
 	VIDEO_Flush();
-	VIDEO_WaitVSync();
+	VIDEO_WaitForFlush();
 
 	VIDEO_SetNextFramebuffer(frameBuffer[IsPAL][ActiveFB]);
 	

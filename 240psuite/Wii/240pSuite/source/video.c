@@ -188,7 +188,7 @@ void InitVideo()
 			Options.Force480p = 0;
 	}
 		
-	VIDEO_SetBlack(FALSE);
+	VIDEO_SetBlack(false);
 }
 
 void RestoreVideo()
@@ -270,15 +270,16 @@ void SetVideoMode(u32 newmode)
 void InitFrameBuffers()
 {	
 	if(!frameBuffer[MODE_NTSC][0])
-		frameBuffer[MODE_NTSC][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));
+		frameBuffer[MODE_NTSC][0] = SYS_AllocateFramebuffer(&TVNtsc480Prog);
 	
 	if(!frameBuffer[MODE_NTSC][1])	
-		frameBuffer[MODE_NTSC][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVNtsc480Prog));
+		frameBuffer[MODE_NTSC][1] = SYS_AllocateFramebuffer(&TVNtsc480Prog);
+	
 	if(!frameBuffer[MODE_PAL][0])
-		frameBuffer[MODE_PAL][0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));
+		frameBuffer[MODE_PAL][0] = SYS_AllocateFramebuffer(&TVPal576ProgScale);
 		
 	if(!frameBuffer[MODE_PAL][1])
-		frameBuffer[MODE_PAL][1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(&TVPal576ProgScale));
+		frameBuffer[MODE_PAL][1] = SYS_AllocateFramebuffer(&TVPal576ProgScale);
 		
 	CleanFB();	
 }
@@ -300,22 +301,22 @@ void DeleteFrameBuffers()
 {
 	if(frameBuffer[MODE_NTSC][0])
 	{
-		free(MEM_K1_TO_K0(frameBuffer[MODE_NTSC][0]));
+		free(frameBuffer[MODE_NTSC][0]);
 		frameBuffer[MODE_NTSC][0] = NULL;
 	}
 	if(frameBuffer[MODE_NTSC][1])
 	{
-		free(MEM_K1_TO_K0(frameBuffer[MODE_NTSC][1]));
+		free(frameBuffer[MODE_NTSC][1]);
 		frameBuffer[MODE_NTSC][1] = NULL;
 	}	
 	if(frameBuffer[MODE_PAL][0])
 	{
-		free(MEM_K1_TO_K0(frameBuffer[MODE_PAL][0]));
+		free(frameBuffer[MODE_PAL][0]);
 		frameBuffer[MODE_PAL][0] = NULL;
 	}
 	if(frameBuffer[MODE_PAL][1])
 	{
-		free(MEM_K1_TO_K0(frameBuffer[MODE_PAL][1]));
+		free(frameBuffer[MODE_PAL][1]);
 		frameBuffer[MODE_PAL][1] = NULL;
 	}	
 }
