@@ -18,7 +18,8 @@ As a secondary target, the suite aims to provide tools for
 calibrating colors, black and white levels for specific console
 outputs and setups. 
 
-This is free software, with full source code available under the GPL.
+This is free software, with full source code available under the [GNU GENERAL PUBLIC LICENSE
+Version 2](./LICENSE).
 
 Downloads
 ----------
