@@ -226,7 +226,7 @@ bricks.pic: bricks.bmp
 
 monoscope.pic: monoscope.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
-	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
+	$(GFXCONV) -pR! -mR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 
 monoscope239.pic: monoscope239.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)

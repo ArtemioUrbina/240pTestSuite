@@ -90,9 +90,8 @@ void DropShadowTest(void)
 			
 			if(back == 0)
 			{
-				size = (&donna_tiles1_end - &donna_tiles1);
-				bgInitTileSetMine(0, &donna_tiles1, &donna_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
-				CopyExtraTiles(&donna_tiles2, 0x5000, (&donna_tiles2_end-&donna_tiles2));
+				size = (&donna_tiles_end - &donna_tiles);
+				bgInitTileSetMine(0, &donna_tiles, &donna_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
 				
 				bgInitMapSetMine(0, &donna_map, (&donna_map_end - &donna_map), SC_32x32, 0x7C00);
 				mode = BG_MODE3;
@@ -348,9 +347,9 @@ void StripedSpriteTest(void)
 			
 			if(back == 0)
 			{
-				size = (&donna_tiles1_end - &donna_tiles1);
-				bgInitTileSetMine(0, &donna_tiles1, &donna_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
-				CopyExtraTiles(&donna_tiles2, 0x5000, (&donna_tiles2_end-&donna_tiles2));
+				size = (&donna_tiles_end - &donna_tiles);
+				bgInitTileSetMine(0, &donna_tiles, &donna_pal, 0, size, 256*2, BG_256COLORS, 0x2000);	
+
 				
 				bgInitMapSetMine(0, &donna_map, (&donna_map_end - &donna_map), SC_32x32, 0x7C00);
 				mode = BG_MODE3;

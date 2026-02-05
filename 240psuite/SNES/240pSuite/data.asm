@@ -23,310 +23,105 @@
 
 .section ".rodata1" superfree
 
-back_tiles:
-.incbin "back.pic"
-back_tiles_end:
-
-donna_tiles1:
-.incbin "donna.pic" read $6000
-donna_tiles1_end:
-
-.ends
-
-.section ".rodata2" superfree
-
-back_map:
-.incbin "back.map"
-back_map_end:
-
-back_pal:
-.incbin "back.pal"
-back_pal_end:
-
-grid_tiles:
-.incbin "grid.pic"
-grid_tiles_end:
-
-grid_map:
-.incbin "grid.map"
-grid_map_end:
-
-grid240_map:
-.incbin "grid240.map"
-grid240_map_end:
-
-grid_pal:
-.incbin "grid.pal"
-grid_pal_end:
-
-gillian_pal:
-.incbin "gillian.pal"
-gillian_pal_end:
-
-donna_map:
-.incbin "donna.map"
-donna_map_end:
-
-donna_pal:
-.incbin "donna.pal"
-donna_pal_end:
-
-SMPTECB75_map:
-.incbin "SMPTECB75.map"
-SMPTECB75_map_end:
-
-SMPTECB75_pal:
-.incbin "SMPTECB75.pal"
-SMPTECB75_pal_end:
-
-SMPTECB100_pal:
-.incbin "SMPTECB100.pal"
-SMPTECB100_pal_end:
-
-color_map:
-.incbin "color.map"
-color_map_end:
-
-color_pal:
-.incbin "color.pal"
-color_pal_end:
-
-
-
-pluge_map:
-.incbin "pluge.map"
-pluge_map_end:
-
-pluge_pal:
-.incbin "pluge.pal"
-pluge_pal_end:
-
-plugePAL_pal:
-.incbin "plugePAL.pal"
-plugePAL_pal_end:
-
-grayramp_map:
-.incbin "grayramp.map"
-grayramp_map_end:
-
-grayramp_pal:
-.incbin "grayramp.pal"
-grayramp_pal_end:
-
-colorbleed_map:
-.incbin "colorbleed.map"
-colorbleed_map_end:
-
-colorbleed_pal:
-.incbin "colorbleed.pal"
-colorbleed_pal_end:
-
-cb601701_map:
-.incbin "601701cb.map"
-cb601701_map_end:
-
-cb601701_pal:
-.incbin "601701cb.pal"
-cb601701_pal_end:
-
-sharpness_map:
-.incbin "sharpness.map"
-sharpness_map_end:
-
-sharpness_pal:
-.incbin "sharpness.pal"
-sharpness_pal_end:
- 
-fullscreen_map:
-.incbin "fullscreen.map"
-fullscreen_map_end:
-
-sprites_pal:
-.incbin "sprites.pal"
-sprites_pal_end:
-
-numbers_pal:
-.incbin "numbers.pal"
-numbers_pal_end:
-
-lagtest_pal:
-.incbin "lagtest.pal"
-lagtest_pal_end:
-
-sonicback_pal:
-.incbin "sonicback.pal"
-sonicback_pal_end:
-
-sonicfloor_pal:
-.incbin "sonicfloor.pal"
-sonicfloor_pal_end:
-
-.ends
-
-.section ".rodata3" superfree
-
-font:
-.incbin "font.pic"
-
-donna_tiles2:
-.incbin "donna.pic" skip $6000
-donna_tiles2_end:
-
-LEDsprites_pal:
-.incbin "LEDsprites.pal"
-LEDsprites_pal_end:
-
-striped_tiles:
-.incbin "striped.pic"
-striped_tiles_end:
-
-striped_pal:
-.incbin "striped.pal"
-striped_pal_end:
-
-lagspr_tiles:
-.incbin "lag-spr.pic"
-lagspr_tiles_end:
-
-lagspr_pal:
-.incbin "lag-spr.pal"
-lagspr_pal_end:
-
-.ends
-
-.section ".rodata4" superfree
-
-fontback:
-.incbin "fontback.pic"
-fontback_end:
-
-SMPTECB75_tiles:
-.incbin "SMPTECB75.pic"
-SMPTECB75_tiles_end:
-
-color_tiles:
-.incbin "color.pic"
-color_tiles_end:
-
-pluge_tiles:
-.incbin "pluge.pic"
-pluge_tiles_end:
-
-grayramp_tiles:
-.incbin "grayramp.pic"
-grayramp_tiles_end:
-
-colorbleed_tiles:
-.incbin "colorbleed.pic"
-colorbleed_tiles_end:
-
-colorbleedchk_tiles:
-.incbin "colorbleedchk.pic"
-colorbleedchk_tiles_end:
-
-cb601701_tiles:
-.incbin "601701cb.pic"
-cb601701_tiles_end:
-
-sharpness_tiles:
-.incbin "sharpness.pic"
-sharpness_tiles_end:
-
-fullscreen_tiles:
-.incbin "fullscreen.pic"
-fullscreen_tiles_end:
-
-fullscreen256_tiles:
-.incbin "fullscreen256.pic"
-fullscreen256_tiles_end:
-
-hstripes_tiles:
-.incbin "hstripes.pic"
-hstripes_tiles_end:
-
-vstripes_tiles:
-.incbin "vstripes.pic"
-vstripes_tiles_end:
-
-check_tiles:
-.incbin "check.pic"
-check_tiles_end:
-
-sprites_tiles:
-.incbin "sprites.pic"
-sprites_tiles_end:
+donna_tiles:
+.incbin "donna.pic"
+donna_tiles_end:
 
 IRE100_tiles:
 .incbin "100IRE.pic"
 IRE100_tiles_end:
 
-lagtest_map:
-.incbin "lagtest.map"
-lagtest_map_end:
-
-nishka_pal:
-.incbin "n_p.s"
-nishka_pal_end:
-
-smallgrid_tiles:
-.incbin "small_grid.pic"
-smallgrid_tiles_end:
+cb601701_pal:
+.incbin "601701cb.pal"
+cb601701_pal_end:
 
 .ends
 
-.section ".rodata5" superfree
+.section ".rodata2" superfree
 
-numbers_tiles:
-.incbin "numbers.pic"
-numbers_tiles_end:
+monoscope239_tiles:
+.incbin "monoscope239.pic"
+monoscope239_tiles_end:
 
-lagtest_tiles:
-.incbin "lagtest.pic"
-lagtest_tiles_end:
+mode7_tiles:
+.incbin "gridm7.pc7"
+mode7_tiles_end:
 
-sonicfloor_tiles:
-.incbin "sonicfloor.pic"
-sonicfloor_tiles_end:
+grid_tiles:
+.incbin "grid.pic"
+grid_tiles_end:
 
-color_grid_map:
-.incbin "color_grid.map"
-color_grid_map_end:
+back_pal:
+.incbin "back.pal"
+back_pal_end:
+
+.ends
+
+.section ".rodata3" superfree
 
 monoscope_tiles:
 .incbin "monoscope.pic"
 monoscope_tiles_end:
 
-monoscope_pal:
-.incbin "monoscope.pal"
-monoscope_pal_end:
+back_tiles:
+.incbin "back.pic"
+back_tiles_end:
 
-EBUCB75_map:
-.incbin "EBUCB75.map"
-EBUCB75_map_end:
+fullscreen256_tiles:
+.incbin "fullscreen256.pic"
+fullscreen256_tiles_end:
 
-EBUCB75_pal:
-.incbin "EBUCB75.pal"
-EBUCB75_pal_end:
+barcode_pal:
+.incbin "barcode.pal"
+barcode_pal_end:
 
-EBUCB100_pal:
-.incbin "EBUCB100.pal"
-EBUCB100_pal_end:
+.ends
 
-EBUCB75_tiles:
-.incbin "EBUCB75.pic"
-EBUCB75_tiles_end:
+.section ".rodata4" superfree
 
-monoscopePAL_map:
-.incbin "monoscope_PAL.map"
-monoscopePAL_map_end:
+nishka_tiles:
+.incbin "n_t.s"
+nishka_tiles_end:
 
-monoscopePAL_pal:
-.incbin "monoscope_PAL.pal"
-monoscopePAL_pal_end:
+gillian_tiles:
+.incbin "gillian.pic"
+gillian_tiles_end:
 
-float_pal:
-.incbin "float.pal"
-float_pal_end:
+kiki_tiles:
+.incbin "kiki.pic"
+kiki_tiles_end:
+
+colorbleed_tiles:
+.incbin "colorbleed.pic"
+colorbleed_tiles_end:
+
+bricks_pal:
+.incbin "bricks.pal"
+bricks_pal_end:
+
+.ends
+
+.section ".rodata5" superfree
+
+color_grid_tiles:
+.incbin "color_grid.pic"
+color_grid_tiles_end:
+
+numbers_tiles:
+.incbin "numbers.pic"
+numbers_tiles_end:
+
+IRE100_pal:
+.incbin "100IRE.pal"
+IRE100_pal_end:
+
+cb601701_tiles:
+.incbin "601701cb.pic"
+cb601701_tiles_end:
+
+bricks_tiles:
+.incbin "bricks.pic"
+bricks_tiles_end:
 
 .ends
 
@@ -336,185 +131,289 @@ sonicback_tiles:
 .incbin "sonicback.pic"
 sonicback_tiles_end:
 
-LEDsprites_tiles:
-.incbin "LEDsprites.pic"
-LEDsprites_tiles_end:
-
-mode7_tiles:
-.incbin "gridm7.pc7"
-mode7_tiles_end:
-
-monoscopePAL_tiles:
-.incbin "monoscope_PAL.pic"
-monoscopePAL_tiles_end:
-
-.ends
-
-.section ".rodata7" superfree
-
-nishka_tiles:
-.incbin "n_t.s"
-nishka_tiles_end:
-
-float_map:
-.incbin "float.map"
-float_map_end:
-
-float_tiles:
-.incbin "float.pic"
-float_tiles_end:
-
-.ends
-
-.section ".rodata8" superfree
-
-color_grid_tiles:
-.incbin "color_grid.pic"
-color_grid_tiles_end:
-
-kiki_tiles:
-.incbin "kiki.pic"
-kiki_tiles_end:
+color_tiles:
+.incbin "color.pic"
+color_tiles_end:
 
 kiki_map:
 .incbin "kiki.map"
 kiki_map_end:
 
-kiki_pal:
-.incbin "kiki.pal"
-kiki_pal_end:
-
-audiosync_tiles:
-.incbin "audiosync.pic"
-audiosync_tiles_end:
-
-audiosync_map:
-.incbin "audiosync.map"
-audiosync_map_end:
-
-fireshark_tiles:
-.incbin "fireshark.pic"
-fireshark_tiles_end:
-
-fireshark_map:
-.incbin "fireshark.map"
-fireshark_map_end:
-
-fireshark_pal:
-.incbin "fireshark.pal"
-fireshark_pal_end:
-
-bricks_tiles:
-.incbin "bricks.pic"
-bricks_tiles_end:
-
-bricks_map:
-.incbin "bricks.map"
-bricks_map_end:
-
-bricks_pal:
-.incbin "bricks.pal"
-bricks_pal_end:
+SMPTECB100_tiles:
+.incbin "SMPTECB100.pic"
+SMPTECB100_tiles_end:
 
 .ends
 
-.section ".rodata9" superfree
+.section ".rodata7" superfree
 
 mode7_map:
 .incbin "gridm7.mp7"
 mode7_map_end:
 
-sound1:
-mdf/1khz.brr
-sound1_end:
+monoscopePAL_tiles:
+.incbin "monoscope_PAL.pic"
+monoscopePAL_tiles_end:
 
-sound2:
-2khz.brr
-sound2_end:
+sharpness_tiles:
+.incbin "sharpness.pic"
+sharpness_tiles_end:
 
-sound3:
-3khz.brr
-sound3_end:
+dissapear_tiles:
+.incbin "dissapear.pic"
+dissapear_tiles_end:
 
-sound4:
-4khz.brr
-sound4_end:
+font:
+.incbin "font.pic"
+font_end:
 
-sound5:
-5khz.brr
-sound5_end:
-
-sound6:
-6khz.brr
-sound6_end:
-
-sound7:
-7khz.brr
-sound7_end:
-
-sound8:
-8khz.brr
-sound8_end:
-
-monoscope_map:
-.incbin "monoscope.map"
-monoscope_map_end:
-
-convdot_map:
-.incbin "convdot.map"
-convdot_map_end:
-
-convdot_pal:
-.incbin "convdot.pal"
-convdot_pal_end:
-
-convdot_tiles:
-.incbin "convdot.pic"
-convdot_tiles_end:
-
-convcross_map:
-.incbin "convcross.map"
-convcross_map_end:
-
-convcross_tiles:
-.incbin "convcross.pic"
-convcross_tiles_end:
-
-convgrid_tiles:
-.incbin "convgrid.pic"
-convgrid_tiles_end:
-
-convcolor_map:
-.incbin "convcolor.map"
-convcolor_map_end:
-
-convcolor_pal:
-.incbin "convcolor.pal"
-convcolor_pal_end:
+audiosync_pal:
+.incbin "audiosync.pal"
+audiosync_pal_end:
 
 convcolor_tiles:
 .incbin "convcolor.pic"
 convcolor_tiles_end:
 
-convcolor_blk_map:
-.incbin "convcolor_blk.map"
-convcolor_blk_map_end:
+.ends
+
+.section ".rodata8" superfree
+
+fontback:
+.incbin "fontback.pic"
+fontback_end:
+
+sonicfloor_tiles:
+.incbin "sonicfloor.pic"
+sonicfloor_tiles_end:
+
+lagtest_tiles:
+.incbin "lagtest.pic"
+lagtest_tiles_end:
+
+IRE100_map:
+.incbin "100IRE.map"
+IRE100_map_end:
+
+cb601701_map:
+.incbin "601701cb.map"
+cb601701_map_end:
+
+audiosync_map:
+.incbin "audiosync.map"
+audiosync_map_end:
+
+back_map:
+.incbin "back.map"
+back_map_end:
+
+bricks_map:
+.incbin "bricks.map"
+bricks_map_end:
+
+check_map:
+.incbin "check.map"
+check_map_end:
+
+color_map:
+.incbin "color.map"
+color_map_end:
+
+colorbleed_map:
+.incbin "colorbleed.map"
+colorbleed_map_end:
+
+colorbleedchk_map:
+.incbin "colorbleedchk.map"
+colorbleedchk_map_end:
+
+color_grid_map:
+.incbin "color_grid.map"
+color_grid_map_end:
+
+convcolor_map:
+.incbin "convcolor.map"
+convcolor_map_end:
+
+pluge_tiles:
+.incbin "pluge.pic"
+pluge_tiles_end:
+
+check_tiles:
+.incbin "check.pic"
+check_tiles_end:
+
+convcolor_pal:
+.incbin "convcolor.pal"
+convcolor_pal_end:
 
 convcolor_blk_pal:
 .incbin "convcolor_blk.pal"
 convcolor_blk_pal_end:
 
+.ends
+
+.section ".rodata9" superfree
+
+convcolor_blk_map:
+.incbin "convcolor_blk.map"
+convcolor_blk_map_end:
+
+convcross_map:
+.incbin "convcross.map"
+convcross_map_end:
+
+convdot_map:
+.incbin "convdot.map"
+convdot_map_end:
+
+convgrid_map:
+.incbin "convgrid.map"
+convgrid_map_end:
+
+dissapear_map:
+.incbin "dissapear.map"
+dissapear_map_end:
+
+donna_map:
+.incbin "donna.map"
+donna_map_end:
+
+EBUCB100_map:
+.incbin "EBUCB100.map"
+EBUCB100_map_end:
+
+EBUCB75_map:
+.incbin "EBUCB75.map"
+EBUCB75_map_end:
+
+fireshark_map:
+.incbin "fireshark.map"
+fireshark_map_end:
+
+float_map:
+.incbin "float.map"
+float_map_end:
+
+fullscreen_map:
+.incbin "fullscreen.map"
+fullscreen_map_end:
+
+fullscreen256_map:
+.incbin "fullscreen256.map"
+fullscreen256_map_end:
+
+grayramp_map:
+.incbin "grayramp.map"
+grayramp_map_end:
+
+grayramp_tiles:
+.incbin "grayramp.pic"
+grayramp_tiles_end:
+
+grid_map:
+.incbin "grid.map"
+grid_map_end:
+
+SMPTECB75_tiles:
+.incbin "SMPTECB75.pic"
+SMPTECB75_tiles_end:
+
 convcolor_blk_tiles:
 .incbin "convcolor_blk.pic"
 convcolor_blk_tiles_end:
+
+convdot_tiles:
+.incbin "convdot.pic"
+convdot_tiles_end:
+
+convgrid_tiles:
+.incbin "convgrid.pic"
+convgrid_tiles_end:
+
+EBUCB100_pal:
+.incbin "EBUCB100.pal"
+EBUCB100_pal_end:
 
 .ends
 
 .section ".rodata10" superfree
 
-IRE100_map:
-.incbin "100IRE.map"
-IRE100_map_end:
+grid240_map:
+.incbin "grid240.map"
+grid240_map_end:
+
+hstripes_map:
+.incbin "hstripes.map"
+hstripes_map_end:
+
+lagspr_tiles:
+.incbin "lag-spr.pic"
+lagspr_tiles_end:
+
+lagtest_map:
+.incbin "lagtest.map"
+lagtest_map_end:
+
+monoscope_map:
+.incbin "monoscope.map"
+monoscope_map_end:
+
+monoscope239_map:
+.incbin "monoscope239.map"
+monoscope239_map_end:
+
+monoscopePAL_map:
+.incbin "monoscope_PAL.map"
+monoscopePAL_map_end:
+
+nishka_map:
+.incbin "n_m.s"
+nishka_map_end:
+
+phase_map:
+.incbin "phase.map"
+phase_map_end:
+
+pluge_map:
+.incbin "pluge.map"
+pluge_map_end:
+
+plugePAL_map:
+.incbin "plugePAL.map"
+plugePAL_map_end:
+
+sharpness_map:
+.incbin "sharpness.map"
+sharpness_map_end:
+
+small_grid_map:
+.incbin "small_grid.map"
+small_grid_map_end:
+
+SMPTECB100_map:
+.incbin "SMPTECB100.map"
+SMPTECB100_map_end:
+
+SMPTECB75_map:
+.incbin "SMPTECB75.map"
+SMPTECB75_map_end:
+
+plugePAL_tiles:
+.incbin "plugePAL.pic"
+plugePAL_tiles_end:
+
+dissapear_pal:
+.incbin "dissapear.pal"
+dissapear_pal_end:
+
+check_pal:
+.incbin "check.pal"
+check_pal_end:
+
+.ends
+
+.section ".rodata11" superfree
 
 sonicback_map:
 .incbin "sonicback.map"
@@ -522,35 +421,27 @@ sonicback_map_end:
 
 sonicfloor_map:
 .incbin "sonicfloor.map"
-sonicfloor_map_end:	
+sonicfloor_map_end:
 
-nishka_map:
-.incbin "n_m.s"
-nishka_map_end:
+sprites_tiles:
+.incbin "sprites.pic"
+sprites_tiles_end:
 
-.ends
+striped_tiles:
+.incbin "striped.pic"
+striped_tiles_end:
 
-.section ".rodata11" superfree
+vstripes_map:
+.incbin "vstripes.map"
+vstripes_map_end:
 
-monoscope239_tiles:
-.incbin "monoscope239.pic"
-monoscope239_tiles_end:
+phase_tiles:
+.incbin "phase.pic"
+phase_tiles_end:
 
-.ends
-
-.section ".rodata12" superfree
-
-monoscope239_pal:
-.incbin "monoscope239.pal"
-monoscope239_pal_end:
-
-monoscope239_map:
-.incbin "monoscope239.map"
-monoscope239_map_end:
-
-gillian_tiles:
-.incbin "gillian.pic"
-gillian_tiles_end:
+barcode_tiles:
+.incbin "barcode.pic"
+barcode_tiles_end:
 
 gillian_b1_tiles:
 .incbin "gillian_b1.pic"
@@ -560,36 +451,242 @@ gillian_b2_tiles:
 .incbin "gillian_b2.pic"
 gillian_b2_tiles_end:
 
-barcode_tiles:
-.incbin "barcode.pic"
-barcode_tiles_end:
+donna_pal:
+.incbin "donna.pal"
+donna_pal_end:
 
-barcode_pal:
-.incbin "barcode.pal"
-barcode_pal_end:
+fireshark_tiles:
+.incbin "fireshark.pic"
+fireshark_tiles_end:
 
-dissapear_tiles:
-.incbin "dissapear.pic"
-dissapear_tiles_end:
+float_tiles:
+.incbin "float.pic"
+float_tiles_end:
 
-dissapear_map:
-.incbin "dissapear.map"
-dissapear_map_end:
+gridm7_pal:
+.incbin "gridm7.pal"
+gridm7_pal_end:
 
-dissapear_pal:
-.incbin "dissapear.pal"
-dissapear_pal_end:
+LEDsprites_tiles:
+.incbin "LEDsprites.pic"
+LEDsprites_tiles_end:
 
-phase_tiles:
-.incbin "phase.pic"
-phase_tiles_end:
+nishka_pal:
+.incbin "n_p.s"
+nishka_pal_end:
 
-phase_map:
-.incbin "phase.map"
-phase_map_end:
+sonicback_pal:
+.incbin "sonicback.pal"
+sonicback_pal_end:
+
+grid240_tiles:
+.incbin "grid240.pic"
+grid240_tiles_end:
+
+color_pal:
+.incbin "color.pal"
+color_pal_end:
+
+colorbleed_pal:
+.incbin "colorbleed.pal"
+colorbleed_pal_end:
+
+colorbleedchk_pal:
+.incbin "colorbleedchk.pal"
+colorbleedchk_pal_end:
+
+color_grid_pal:
+.incbin "color_grid.pal"
+color_grid_pal_end:
+
+convcross_pal:
+.incbin "convcross.pal"
+convcross_pal_end:
+
+convdot_pal:
+.incbin "convdot.pal"
+convdot_pal_end:
+
+convgrid_pal:
+.incbin "convgrid.pal"
+convgrid_pal_end:
+
+EBUCB100_tiles:
+.incbin "EBUCB100.pic"
+EBUCB100_tiles_end:
+
+EBUCB75_tiles:
+.incbin "EBUCB75.pic"
+EBUCB75_tiles_end:
+
+float_pal:
+.incbin "float.pal"
+float_pal_end:
+
+fullscreen_pal:
+.incbin "fullscreen.pal"
+fullscreen_pal_end:
+
+grayramp_pal:
+.incbin "grayramp.pal"
+grayramp_pal_end:
+
+grid_pal:
+.incbin "grid.pal"
+grid_pal_end:
+
+grid240_pal:
+.incbin "grid240.pal"
+grid240_pal_end:
+
+hstripes_pal:
+.incbin "hstripes.pal"
+hstripes_pal_end:
+
+lagtest_pal:
+.incbin "lagtest.pal"
+lagtest_pal_end:
+
+small_grid_pal:
+.incbin "small_grid.pal"
+small_grid_pal_end:
+
+vstripes_pal:
+.incbin "vstripes.pal"
+vstripes_pal_end:
+
+audiosync_tiles:
+.incbin "audiosync.pic"
+audiosync_tiles_end:
+
+colorbleedchk_tiles:
+.incbin "colorbleedchk.pic"
+colorbleedchk_tiles_end:
+
+convcross_tiles:
+.incbin "convcross.pic"
+convcross_tiles_end:
+
+EBUCB75_pal:
+.incbin "EBUCB75.pal"
+EBUCB75_pal_end:
+
+fireshark_pal:
+.incbin "fireshark.pal"
+fireshark_pal_end:
+
+fullscreen_tiles:
+.incbin "fullscreen.pic"
+fullscreen_tiles_end:
+
+fullscreen256_pal:
+.incbin "fullscreen256.pal"
+fullscreen256_pal_end:
+
+gillian_pal:
+.incbin "gillian.pal"
+gillian_pal_end:
+
+gillian_b1_pal:
+.incbin "gillian_b1.pal"
+gillian_b1_pal_end:
+
+gillian_b2_pal:
+.incbin "gillian_b2.pal"
+gillian_b2_pal_end:
+
+hstripes_tiles:
+.incbin "hstripes.pic"
+hstripes_tiles_end:
+
+kiki_pal:
+.incbin "kiki.pal"
+kiki_pal_end:
+
+lagspr_pal:
+.incbin "lag-spr.pal"
+lagspr_pal_end:
+
+LEDsprites_pal:
+.incbin "LEDsprites.pal"
+LEDsprites_pal_end:
+
+monoscope_pal:
+.incbin "monoscope.pal"
+monoscope_pal_end:
+
+monoscope239_pal:
+.incbin "monoscope239.pal"
+monoscope239_pal_end:
+
+monoscopePAL_pal:
+.incbin "monoscope_PAL.pal"
+monoscopePAL_pal_end:
+
+numbers_pal:
+.incbin "numbers.pal"
+numbers_pal_end:
 
 phase_pal:
 .incbin "phase.pal"
 phase_pal_end:
 
+pluge_pal:
+.incbin "pluge.pal"
+pluge_pal_end:
+
+plugePAL_pal:
+.incbin "plugePAL.pal"
+plugePAL_pal_end:
+
+sharpness_pal:
+.incbin "sharpness.pal"
+sharpness_pal_end:
+
+smallgrid_tiles:
+.incbin "small_grid.pic"
+smallgrid_tiles_end:
+
+SMPTECB100_pal:
+.incbin "SMPTECB100.pal"
+SMPTECB100_pal_end:
+
+SMPTECB75_pal:
+.incbin "SMPTECB75.pal"
+SMPTECB75_pal_end:
+
+sonicfloor_pal:
+.incbin "sonicfloor.pal"
+sonicfloor_pal_end:
+
+sprites_pal:
+.incbin "sprites.pal"
+sprites_pal_end:
+
+striped_pal:
+.incbin "striped.pal"
+striped_pal_end:
+
+vstripes_tiles:
+.incbin "vstripes.pic"
+vstripes_tiles_end:
+
 .ends
+
+
+/*
+ * Summary:
+ * Total bins: 11
+ * rodata1: Used 32736 bytes, Free 24 bytes
+ * rodata2: Used 32736 bytes, Free 24 bytes
+ * rodata3: Used 32736 bytes, Free 24 bytes
+ * rodata4: Used 32736 bytes, Free 24 bytes
+ * rodata5: Used 32736 bytes, Free 24 bytes
+ * rodata6: Used 32736 bytes, Free 24 bytes
+ * rodata7: Used 32736 bytes, Free 24 bytes
+ * rodata8: Used 32736 bytes, Free 24 bytes
+ * rodata9: Used 32736 bytes, Free 24 bytes
+ * rodata10: Used 32736 bytes, Free 24 bytes
+ * rodata11: Used 24352 bytes, Free 8408 bytes
+ */
+

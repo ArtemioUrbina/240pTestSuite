@@ -37,8 +37,7 @@ extern char grid240_map, grid240_map_end;
 extern char grid_pal, grid_pal_end;
 extern char grid_map, grid_map_end;
 
-extern char donna_tiles1, donna_tiles1_end;
-extern char donna_tiles2, donna_tiles2_end;
+extern char donna_tiles, donna_tiles_end;
 extern char donna_pal, donna_pal_end;
 extern char donna_map, donna_map_end;
 
