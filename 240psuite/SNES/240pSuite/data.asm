@@ -1,4 +1,4 @@
-/* 
+/*
  * 240p Test Suite
  * Copyright (C)2014 Artemio Urbina (SNES)
  *
@@ -18,7 +18,7 @@
  * along with 240p Test Suite; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 .include "hdr.asm"
 
 .section ".rodata1" superfree
@@ -139,9 +139,13 @@ kiki_map:
 .incbin "kiki.map"
 kiki_map_end:
 
-SMPTECB100_tiles:
-.incbin "SMPTECB100.pic"
-SMPTECB100_tiles_end:
+SMPTECB75_tiles:
+.incbin "SMPTECB75.pic"
+SMPTECB75_tiles_end:
+
+check_tiles:
+.incbin "check.pic"
+check_tiles_end:
 
 .ends
 
@@ -239,10 +243,6 @@ pluge_tiles:
 .incbin "pluge.pic"
 pluge_tiles_end:
 
-check_tiles:
-.incbin "check.pic"
-check_tiles_end:
-
 convcolor_pal:
 .incbin "convcolor.pal"
 convcolor_pal_end:
@@ -250,6 +250,10 @@ convcolor_pal_end:
 convcolor_blk_pal:
 .incbin "convcolor_blk.pal"
 convcolor_blk_pal_end:
+
+convdot_tiles:
+.incbin "convdot.pic"
+convdot_tiles_end:
 
 .ends
 
@@ -315,25 +319,17 @@ grid_map:
 .incbin "grid.map"
 grid_map_end:
 
-SMPTECB75_tiles:
-.incbin "SMPTECB75.pic"
-SMPTECB75_tiles_end:
+SMPTECB100_tiles:
+.incbin "SMPTECB100.pic"
+SMPTECB100_tiles_end:
 
 convcolor_blk_tiles:
 .incbin "convcolor_blk.pic"
 convcolor_blk_tiles_end:
 
-convdot_tiles:
-.incbin "convdot.pic"
-convdot_tiles_end:
-
-convgrid_tiles:
-.incbin "convgrid.pic"
-convgrid_tiles_end:
-
-EBUCB100_pal:
-.incbin "EBUCB100.pal"
-EBUCB100_pal_end:
+convcross_tiles:
+.incbin "convcross.pic"
+convcross_tiles_end:
 
 .ends
 
@@ -563,9 +559,13 @@ colorbleedchk_tiles:
 .incbin "colorbleedchk.pic"
 colorbleedchk_tiles_end:
 
-convcross_tiles:
-.incbin "convcross.pic"
-convcross_tiles_end:
+convgrid_tiles:
+.incbin "convgrid.pic"
+convgrid_tiles_end:
+
+EBUCB100_pal:
+.incbin "EBUCB100.pal"
+EBUCB100_pal_end:
 
 EBUCB75_pal:
 .incbin "EBUCB75.pal"
@@ -687,6 +687,6 @@ vstripes_tiles_end:
  * rodata8: Used 32736 bytes, Free 24 bytes
  * rodata9: Used 32736 bytes, Free 24 bytes
  * rodata10: Used 32736 bytes, Free 24 bytes
- * rodata11: Used 24352 bytes, Free 8408 bytes
+ * rodata11: Used 24288 bytes, Free 8472 bytes
  */
 
