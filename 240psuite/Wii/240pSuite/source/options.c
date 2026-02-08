@@ -185,7 +185,7 @@ void CloseFS()
 {	
 	if(FSActive)
 	{
-		fatDeinit();
+		//fatDeinit();
 		FSActive = 0;
 	}
 }
