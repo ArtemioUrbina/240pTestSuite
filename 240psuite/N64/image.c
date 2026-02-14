@@ -826,3 +826,15 @@ void printPalette(image *data, int x, int y) {
 	}
 }
 
+void holdImage(image *back, int frames) {
+	for(int i = 0; i < frames; i++) {
+		getDisplay();
+
+		rdpqStart();
+		
+		rdpqClearScreen();
+		rdpqDrawImage(back);
+		rdpqEnd();
+		waitVsync();
+	}
+}

@@ -287,14 +287,23 @@ void drawControllerAtCoord(int controller, int x, int y) {
 	drawButtonAt(analog_y < 0, 	x + 5*fw, y, 185, 193, 216, buffer);
 }
 
+char num = 0;
+
 void drawControllerTest() {
 	int end = 0;
 	image *back = NULL;
 	joypad_buttons_t pad_held;
+	char buffer[25];
 
-	back = loadImage("rom:/controller.sprite");
+	changeTo32BitDepthOnVBlank();
+	num++;
+	if(num > 2)
+		num = 1;
+	sprintf(buffer, "rom:/controller%d.sprite", num % 9);
+	back = loadImage(buffer);
 	if(!back)
 		return;
+		
 	while(!end) {
 		getDisplay();
 
@@ -320,5 +329,8 @@ void drawControllerTest() {
 			end = 1;
 	}
 	
+	holdImage(back, 30);
+	
 	freeImage(&back);
+	changeTo16BitDepthOnVBlank();
 }

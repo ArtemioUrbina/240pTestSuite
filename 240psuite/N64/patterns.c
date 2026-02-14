@@ -518,28 +518,21 @@ void drawSharpness() {
 }
 
 void drawMonoscope() {
-	int		end = 0, pattern = 0, changed = 1;
-	image	*fbx = NULL, *keith = NULL;
-	int		whiteGrid = 0xff, greenBorder = 0xff;
+	int		end = 0, /* pattern = 1, */ changed = 1, x = 0, y = 0;
+	image	*monoscope = NULL;
+	int		whiteGrid = 0xff, colorBorder = 0xff;
 	joypad_buttons_t keys;
 	
-	fbx = loadImage("rom:/monoscopeFBX.sprite");
-	if(!fbx)
+	monoscope = loadImage("rom:/monoscope.sprite");
+	if(!monoscope)
 		return;
-	keith = loadImage("rom:/monoscope.sprite");
-	if(!keith) {
-		freeImage(&fbx);
-		return;
-	}
 	
 	while(!end) {
 		getDisplay();
 
 		rdpqStart();
-		if(!pattern)
-			rdpqDrawImage(fbx);
-		else
-			rdpqDrawImage(keith);
+		rdpqDrawRectangle(0, 0, getDispWidth(), getDispHeight(), 0xff, 0, 0xff);
+		rdpqDrawImageXY(monoscope, x, y);
 		rdpqEnd();
 
 		checkMenu(MONOSCOPEHLP, NULL);
@@ -549,8 +542,17 @@ void drawMonoscope() {
 		keys = controllerButtonsDown();
 		
 		checkStart(keys);
-		if(keys.a)
-			pattern = !pattern;
+		
+/*
+		if(keys.d_up)
+			y --;
+		if(keys.d_down)
+			y++;
+		if(keys.d_left)
+			x--;
+		if(keys.d_right)
+			x++;
+*/
 			
 		if(keys.l) {
 			whiteGrid -= 0x10;
@@ -562,40 +564,46 @@ void drawMonoscope() {
 			changed = 1;
 		}
 		
-		if(keys.c_left && !pattern) {
-			greenBorder = 0x00;
+		if(keys.c_left) {
+			colorBorder = 0x00;
 			changed = 1;
 		}
 		
-		if(keys.c_right && !pattern) {
-			greenBorder = 0xff;
+		if(keys.c_right) {
+			colorBorder = 0xff;
 			changed = 1;
 		}
 		
 		if(keys.c_up) {
 			whiteGrid = 0xff;
-			greenBorder = 0xff;
 			changed = 1;
 		}
 		
 		if(keys.c_down) {
 			whiteGrid = 0;
-			greenBorder = 0;
 			changed = 1;
 		}
 		
 		if(changed) {
+			if(colorBorder < 0)
+				colorBorder = 0;
+			if(colorBorder > 0xff)
+				colorBorder = 0xff;
+				
 			if(whiteGrid < 0)
 				whiteGrid = 0;
 			if(whiteGrid > 0xff)
 				whiteGrid = 0xff;
 			
-			fbx->palette[1] = graphics_make_color(0, greenBorder, 0, 0xff);
-			fbx->palette[3] = graphics_make_color(whiteGrid, whiteGrid, whiteGrid, 0xff);
-			updatePalette(fbx);
-			
-			keith->palette[3] = graphics_make_color(whiteGrid, whiteGrid, whiteGrid, 0xff);
-			updatePalette(keith);
+			// cyan
+			monoscope->palette[1] = graphics_make_color(0, colorBorder, colorBorder, 0xff);
+			// Green
+			monoscope->palette[4] = graphics_make_color(0, colorBorder, 0, 0xff);
+			// magenta
+			monoscope->palette[3] = graphics_make_color(colorBorder, 0, colorBorder, 0xff);
+			// white
+			monoscope->palette[5] = graphics_make_color(whiteGrid, whiteGrid, whiteGrid, 0xff);
+			updatePalette(monoscope);
 			changed = 0;
 		}
 		
@@ -603,8 +611,7 @@ void drawMonoscope() {
 			end = 1;
 	}
 	
-	freeImage(&fbx);
-	freeImage(&keith);
+	freeImage(&monoscope);
 }
 
 #define NUM_RES 4

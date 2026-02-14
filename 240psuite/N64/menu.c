@@ -252,29 +252,35 @@ void selectVideoMode(int useBack) {
 		setClearScreen();
 }
 
+extern int num;
+
 void drawCredits(int usebuffer) {
 	int 		done = 0;	
     int     	counter = 1;
-	char		data[50];
+	char		data[50], buffer[25];
 	image		*back = NULL, *qr = NULL;
 	joypad_buttons_t keys;
 	
-	back = loadImage("rom:/help.sprite");
+	num++;
+	if(num > 2)
+		num = 1;
+	sprintf(buffer, "rom:/credits%d.sprite", num % 9);
+	back = loadImage(buffer);
 	if(!back)
 		return;
 		
 	qr = loadImage("rom:/qr.sprite");
-		
+	
+	changeTo32BitDepthOnVBlank();
 	while(!done) {
 		int x = 28, y = 40, x2 = 164, y2 = 0;
 
 		getDisplay();
 
-		if(usebuffer)
-			drawMenuFB();
 		rdpqStart();
 		rdpqDrawImage(back);
-		rdpqDrawImageXY(qr, 236, 50);
+		if(qr)
+			rdpqDrawImageXY(qr, 260, 50);
 		rdpqEnd();
 		
         drawStringS(x, y, 0x00, 0xff, 0x00, "Code & Patterns:"); y += fh; 
@@ -289,19 +295,19 @@ void drawCredits(int usebuffer) {
 
 		drawStringS(x, y, 0x00, 0xff, 0x00, "SDK:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "libDragon & tiny 3D"); y += fh; y2 = y;
-		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope:"); y2 += fh; 
-		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney\n(@khmr33)"); y2 += 2*fh;
-		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "@FirebrandX"); y2 += fh;
 		drawStringS(x, y, 0x00, 0xff, 0x00, "Donna Art:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Jose Salot\n(@pepe_salot)"); y += 2*fh;
-		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y2 += fh; 
-		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
 		drawStringS(x, y, 0x00, 0xff, 0x00, "Published by:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Mega Cat Studios"); y += fh; 
-		drawStringS(x, y, 0x00, 0xff, 0x00, "Advisor:"); y += fh; 
-		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Fudoh"); y += fh; 
+		drawStringS(x, y, 0x00, 0xff, 0x00, "N64 HW Photos:"); y += fh; 
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Laura Olvera"); y += fh; 
+		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope:"); y2 += fh; 
+		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney\n(@khmr33)"); y2 += 2*fh;
+		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y2 += fh; 
+		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Music for PLII:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "NekoMilkshake"); y2 += fh;
+
 		y = y2+fh;
 		
 		drawStringS(x, y, 0x00, 0xff, 0x00, "Info on using this suite:"); y += fh; 
@@ -331,6 +337,7 @@ void drawCredits(int usebuffer) {
 			
 			nish = loadImage("rom:/nish.sprite");
 			if(nish) {
+				changeTo16BitDepthOnVBlank();
 				while(check) {
 					getDisplay();
 					rdpqStart();
@@ -344,8 +351,7 @@ void drawCredits(int usebuffer) {
 						check =	0;	
 				}
 				freeImage(&nish);
-				if(!hasMenuFB())
-					setClearScreen();
+				changeTo32BitDepthOnVBlank();
 			}
 		}
 		
@@ -366,11 +372,13 @@ void drawCredits(int usebuffer) {
 		counter ++;			
 	}
 	
-	freeImage(&back);
-	freeImage(&qr);
+	holdImage(back, 30);
 	
-	if(!hasMenuFB())
-		setClearScreen();
+	freeImage(&back);
+	if(qr)
+		freeImage(&qr);
+	
+	changeTo16BitDepthOnVBlank();
 }
 
 /* Floating Menu functions */

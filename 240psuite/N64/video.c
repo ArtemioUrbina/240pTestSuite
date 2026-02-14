@@ -30,7 +30,7 @@ unsigned int		current_buffers = 0;
 unsigned int		current_gamma = 0;
 filter_options_t	current_antialias = 0;
 rdpq_antialias_t	current_rdp_aa_filter = AA_NONE;
-unsigned int		enablePAL60 = 0;
+//unsigned int		enablePAL60 = 0;
 unsigned int		enablePAL288 = 0;
 unsigned int		vMode = SUITE_NONE;
 
@@ -238,7 +238,7 @@ void initVideo() {
 	current_gamma = GAMMA_NONE;
 	current_antialias = FILTERS_RESAMPLE;
 	current_rdp_aa_filter = AA_NONE;
-	enablePAL60 = 0;
+	//enablePAL60 = 0;
 	enablePAL288 = 0;
 	vMode = SUITE_NONE;
 	
@@ -269,10 +269,12 @@ void setVideoInternal(resolution_t newRes) {
 		if(enablePAL288)
 			newRes.height = 288;
 		
+		/*
 		if(enablePAL60)
 			newRes.pal60 = 1;
 		else
 			newRes.pal60 = 0;
+		*/
 	}
 	current_resolution = newRes;
 	current_bitdepth = __newInternalBPPChange;
@@ -292,7 +294,7 @@ void setVideoInternal(resolution_t newRes) {
 }
 
 int is50Hz() {
-	if(isPAL && !current_resolution.pal60)
+	if(isPAL /* && !current_resolution.pal60 */)
 		return 1;
 	return 0;
 }

@@ -124,7 +124,7 @@ void setPaletteFX(image *data);
 void fadeInit(image *data, unsigned int steps);
 void fadeImageStep(image *data);
 int drawSplash(char *name, int delay, int paleteSize);
-
+void holdImage(image *back, int frames);
 
 /* Big Numbers */
 

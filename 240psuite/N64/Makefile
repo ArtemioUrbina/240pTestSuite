@@ -81,7 +81,6 @@ $(FILESYSTEM_DIR)/mainbg.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format
 $(FILESYSTEM_DIR)/sd.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/sd_b1.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/sd_b2.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
-$(FILESYSTEM_DIR)/monoscopeFBX.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/monoscope.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/pluge.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/plugePAL.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
@@ -133,7 +132,10 @@ $(FILESYSTEM_DIR)/convergence-04-colors.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_
 $(FILESYSTEM_DIR)/convergence-05-colorsbl.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/rectangle_short.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/rectangle_long.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
-$(FILESYSTEM_DIR)/controller.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI8
+$(FILESYSTEM_DIR)/controller1.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format RGBA32
+$(FILESYSTEM_DIR)/controller2.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format RGBA32
+$(FILESYSTEM_DIR)/credits1.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format RGBA32
+$(FILESYSTEM_DIR)/credits2.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format RGBA32
 
 $(FILESYSTEM_DIR)/BebasNeue-Regular.font64: MKFONT_FLAGS+=--size 41
 $(FILESYSTEM_DIR)/BebasNeue-Small.font64: MKFONT_FLAGS+=--size 15
@@ -144,7 +146,6 @@ $(BUILD_DIR)/$(PROJECT_NAME).elf: $(src:%.c=$(BUILD_DIR)/%.o)
 $(PROJECT_NAME).z64: N64_ROM_TITLE = "240p Test Suite"
 $(PROJECT_NAME).z64: N64_ROM_SAVETYPE = none 			# Supported savetypes: none eeprom4k eeprom16 sram256k sram768k sram1m flashram
 $(PROJECT_NAME).z64: N64_ROM_REGIONFREE = true			# Set to true to allow booting on any console region
-$(PROJECT_NAME).z64: N64_ROM_REGION = 'A'				# Set to a region code 'P' for PAL. 'A' all, 'E' NA
 $(PROJECT_NAME).z64: $(BUILD_DIR)/$(PROJECT_NAME).dfs
 
 $(@info $(shell mkdir -p ./$(OUTPUT_DIR) &> /dev/null))
