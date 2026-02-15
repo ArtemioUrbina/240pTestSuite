@@ -47,9 +47,9 @@ mode7_tiles:
 .incbin "gridm7.pc7"
 mode7_tiles_end:
 
-grid_tiles:
-.incbin "grid.pic"
-grid_tiles_end:
+grid240_tiles:
+.incbin "grid240.pic"
+grid240_tiles_end:
 
 back_pal:
 .incbin "back.pal"
@@ -59,9 +59,9 @@ back_pal_end:
 
 .section ".rodata3" superfree
 
-monoscope_tiles:
-.incbin "monoscope.pic"
-monoscope_tiles_end:
+grid_tiles:
+.incbin "grid.pic"
+grid_tiles_end:
 
 back_tiles:
 .incbin "back.pic"
@@ -79,17 +79,17 @@ barcode_pal_end:
 
 .section ".rodata4" superfree
 
-nishka_tiles:
-.incbin "n_t.s"
-nishka_tiles_end:
+monoscope_tiles:
+.incbin "monoscope.pic"
+monoscope_tiles_end:
 
-gillian_tiles:
-.incbin "gillian.pic"
-gillian_tiles_end:
+sharpness_tiles:
+.incbin "sharpness.pic"
+sharpness_tiles_end:
 
-kiki_tiles:
-.incbin "kiki.pic"
-kiki_tiles_end:
+IRE100_pal:
+.incbin "100IRE.pal"
+IRE100_pal_end:
 
 colorbleed_tiles:
 .incbin "colorbleed.pic"
@@ -103,21 +103,21 @@ bricks_pal_end:
 
 .section ".rodata5" superfree
 
-color_grid_tiles:
-.incbin "color_grid.pic"
-color_grid_tiles_end:
+nishka_tiles:
+.incbin "n_t.s"
+nishka_tiles_end:
 
-numbers_tiles:
-.incbin "numbers.pic"
-numbers_tiles_end:
+gillian_tiles:
+.incbin "gillian.pic"
+gillian_tiles_end:
 
-IRE100_pal:
-.incbin "100IRE.pal"
-IRE100_pal_end:
+kiki_tiles:
+.incbin "kiki.pic"
+kiki_tiles_end:
 
-cb601701_tiles:
-.incbin "601701cb.pic"
-cb601701_tiles_end:
+colorbleedchk_tiles:
+.incbin "colorbleedchk.pic"
+colorbleedchk_tiles_end:
 
 bricks_tiles:
 .incbin "bricks.pic"
@@ -126,6 +126,30 @@ bricks_tiles_end:
 .ends
 
 .section ".rodata6" superfree
+
+color_grid_tiles:
+.incbin "color_grid.pic"
+color_grid_tiles_end:
+
+numbers_tiles:
+.incbin "numbers.pic"
+numbers_tiles_end:
+
+audiosync_pal:
+.incbin "audiosync.pal"
+audiosync_pal_end:
+
+cb601701_tiles:
+.incbin "601701cb.pic"
+cb601701_tiles_end:
+
+check_tiles:
+.incbin "check.pic"
+check_tiles_end:
+
+.ends
+
+.section ".rodata7" superfree
 
 sonicback_tiles:
 .incbin "sonicback.pic"
@@ -143,13 +167,13 @@ SMPTECB75_tiles:
 .incbin "SMPTECB75.pic"
 SMPTECB75_tiles_end:
 
-check_tiles:
-.incbin "check.pic"
-check_tiles_end:
+convcolor_pal:
+.incbin "convcolor.pal"
+convcolor_pal_end:
 
 .ends
 
-.section ".rodata7" superfree
+.section ".rodata8" superfree
 
 mode7_map:
 .incbin "gridm7.mp7"
@@ -159,10 +183,6 @@ monoscopePAL_tiles:
 .incbin "monoscope_PAL.pic"
 monoscopePAL_tiles_end:
 
-sharpness_tiles:
-.incbin "sharpness.pic"
-sharpness_tiles_end:
-
 dissapear_tiles:
 .incbin "dissapear.pic"
 dissapear_tiles_end:
@@ -171,21 +191,29 @@ font:
 .incbin "font.pic"
 font_end:
 
-audiosync_pal:
-.incbin "audiosync.pal"
-audiosync_pal_end:
+fontback:
+.incbin "fontback.pic"
+fontback_end:
+
+convcolor_blk_tiles:
+.incbin "convcolor_blk.pic"
+convcolor_blk_tiles_end:
+
+check_pal:
+.incbin "check.pal"
+check_pal_end:
 
 convcolor_tiles:
 .incbin "convcolor.pic"
 convcolor_tiles_end:
 
+convcolor_blk_pal:
+.incbin "convcolor_blk.pal"
+convcolor_blk_pal_end:
+
 .ends
 
-.section ".rodata8" superfree
-
-fontback:
-.incbin "fontback.pic"
-fontback_end:
+.section ".rodata9" superfree
 
 sonicfloor_tiles:
 .incbin "sonicfloor.pic"
@@ -239,26 +267,6 @@ convcolor_map:
 .incbin "convcolor.map"
 convcolor_map_end:
 
-pluge_tiles:
-.incbin "pluge.pic"
-pluge_tiles_end:
-
-convcolor_pal:
-.incbin "convcolor.pal"
-convcolor_pal_end:
-
-convcolor_blk_pal:
-.incbin "convcolor_blk.pal"
-convcolor_blk_pal_end:
-
-convdot_tiles:
-.incbin "convdot.pic"
-convdot_tiles_end:
-
-.ends
-
-.section ".rodata9" superfree
-
 convcolor_blk_map:
 .incbin "convcolor_blk.map"
 convcolor_blk_map_end:
@@ -266,6 +274,22 @@ convcolor_blk_map_end:
 convcross_map:
 .incbin "convcross.map"
 convcross_map_end:
+
+color_pal:
+.incbin "color.pal"
+color_pal_end:
+
+convdot_tiles:
+.incbin "convdot.pic"
+convdot_tiles_end:
+
+convgrid_tiles:
+.incbin "convgrid.pic"
+convgrid_tiles_end:
+
+.ends
+
+.section ".rodata10" superfree
 
 convdot_map:
 .incbin "convdot.map"
@@ -319,22 +343,6 @@ grid_map:
 .incbin "grid.map"
 grid_map_end:
 
-SMPTECB100_tiles:
-.incbin "SMPTECB100.pic"
-SMPTECB100_tiles_end:
-
-convcolor_blk_tiles:
-.incbin "convcolor_blk.pic"
-convcolor_blk_tiles_end:
-
-convcross_tiles:
-.incbin "convcross.pic"
-convcross_tiles_end:
-
-.ends
-
-.section ".rodata10" superfree
-
 grid240_map:
 .incbin "grid240.map"
 grid240_map_end:
@@ -342,6 +350,22 @@ grid240_map_end:
 hstripes_map:
 .incbin "hstripes.map"
 hstripes_map_end:
+
+SMPTECB100_tiles:
+.incbin "SMPTECB100.pic"
+SMPTECB100_tiles_end:
+
+dissapear_pal:
+.incbin "dissapear.pal"
+dissapear_pal_end:
+
+convcross_tiles:
+.incbin "convcross.pic"
+convcross_tiles_end:
+
+.ends
+
+.section ".rodata11" superfree
 
 lagspr_tiles:
 .incbin "lag-spr.pic"
@@ -395,22 +419,6 @@ SMPTECB75_map:
 .incbin "SMPTECB75.map"
 SMPTECB75_map_end:
 
-plugePAL_tiles:
-.incbin "plugePAL.pic"
-plugePAL_tiles_end:
-
-dissapear_pal:
-.incbin "dissapear.pal"
-dissapear_pal_end:
-
-check_pal:
-.incbin "check.pal"
-check_pal_end:
-
-.ends
-
-.section ".rodata11" superfree
-
 sonicback_map:
 .incbin "sonicback.map"
 sonicback_map_end:
@@ -418,6 +426,22 @@ sonicback_map_end:
 sonicfloor_map:
 .incbin "sonicfloor.map"
 sonicfloor_map_end:
+
+pluge_tiles:
+.incbin "pluge.pic"
+pluge_tiles_end:
+
+donna_pal:
+.incbin "donna.pal"
+donna_pal_end:
+
+colorbleed_pal:
+.incbin "colorbleed.pal"
+colorbleed_pal_end:
+
+.ends
+
+.section ".rodata12" superfree
 
 sprites_tiles:
 .incbin "sprites.pic"
@@ -430,6 +454,10 @@ striped_tiles_end:
 vstripes_map:
 .incbin "vstripes.map"
 vstripes_map_end:
+
+plugePAL_tiles:
+.incbin "plugePAL.pic"
+plugePAL_tiles_end:
 
 phase_tiles:
 .incbin "phase.pic"
@@ -446,10 +474,6 @@ gillian_b1_tiles_end:
 gillian_b2_tiles:
 .incbin "gillian_b2.pic"
 gillian_b2_tiles_end:
-
-donna_pal:
-.incbin "donna.pal"
-donna_pal_end:
 
 fireshark_tiles:
 .incbin "fireshark.pic"
@@ -474,18 +498,6 @@ nishka_pal_end:
 sonicback_pal:
 .incbin "sonicback.pal"
 sonicback_pal_end:
-
-grid240_tiles:
-.incbin "grid240.pic"
-grid240_tiles_end:
-
-color_pal:
-.incbin "color.pal"
-color_pal_end:
-
-colorbleed_pal:
-.incbin "colorbleed.pal"
-colorbleed_pal_end:
 
 colorbleedchk_pal:
 .incbin "colorbleedchk.pal"
@@ -527,10 +539,6 @@ grayramp_pal:
 .incbin "grayramp.pal"
 grayramp_pal_end:
 
-grid_pal:
-.incbin "grid.pal"
-grid_pal_end:
-
 grid240_pal:
 .incbin "grid240.pal"
 grid240_pal_end:
@@ -554,14 +562,6 @@ vstripes_pal_end:
 audiosync_tiles:
 .incbin "audiosync.pic"
 audiosync_tiles_end:
-
-colorbleedchk_tiles:
-.incbin "colorbleedchk.pic"
-colorbleedchk_tiles_end:
-
-convgrid_tiles:
-.incbin "convgrid.pic"
-convgrid_tiles_end:
 
 EBUCB100_pal:
 .incbin "EBUCB100.pal"
@@ -594,6 +594,10 @@ gillian_b1_pal_end:
 gillian_b2_pal:
 .incbin "gillian_b2.pal"
 gillian_b2_pal_end:
+
+grid_pal:
+.incbin "grid.pal"
+grid_pal_end:
 
 hstripes_tiles:
 .incbin "hstripes.pic"
@@ -676,7 +680,7 @@ vstripes_tiles_end:
 
 /*
  * Summary:
- * Total bins: 11
+ * Total bins: 12
  * rodata1: Used 32736 bytes, Free 24 bytes
  * rodata2: Used 32736 bytes, Free 24 bytes
  * rodata3: Used 32736 bytes, Free 24 bytes
@@ -687,6 +691,7 @@ vstripes_tiles_end:
  * rodata8: Used 32736 bytes, Free 24 bytes
  * rodata9: Used 32736 bytes, Free 24 bytes
  * rodata10: Used 32736 bytes, Free 24 bytes
- * rodata11: Used 24288 bytes, Free 8472 bytes
+ * rodata11: Used 32736 bytes, Free 24 bytes
+ * rodata12: Used 19680 bytes, Free 13080 bytes
  */
 

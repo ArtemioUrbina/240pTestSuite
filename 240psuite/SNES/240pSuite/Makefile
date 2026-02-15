@@ -224,6 +224,10 @@ bricks.pic: bricks.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
 
+grid.pic: grid.bmp
+	@echo convert bitmap without rearranging palette... $(notdir $@)
+	$(GFXCONV) -pR! -mR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
+	
 monoscope.pic: monoscope.bmp
 	@echo convert bitmap without rearranging palette... $(notdir $@)
 	$(GFXCONV) -pR! -mR! -pc16 -po16 -n -gs8 -pe0 -fbmp -m $<
