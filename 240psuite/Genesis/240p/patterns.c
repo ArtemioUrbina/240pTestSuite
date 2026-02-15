@@ -696,7 +696,8 @@ void DrawMonoscope()
 			redraw = 1;
 		}
 		
-		changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
+		if(!IsPALVDP)
+			changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
 
 		VDP_waitVSync();
 	}
