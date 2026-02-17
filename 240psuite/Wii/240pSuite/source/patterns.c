@@ -974,8 +974,8 @@ void DrawMonoscope()
 						return;
 					}
 					overlay->scale = 0;
-					overlay->x = 144;
-					overlay->y = 80;
+					overlay->x = 188;
+					overlay->y = 120;
 				}
 				else
 				{
