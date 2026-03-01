@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     if(fwrite(comp, sizeof(char), cmpSize, fout) != cmpSize)
         printf("Error writing data to file %s\n", argv[2]);
     else
-        printf("Compressed data written to file %s\n", argv[2]);
+        printf("Compressed data written to file %s (%luKiB -> %luKiB)\n", argv[2], srcSize/1024, cmpSize/1024);
     fclose(fout);  
 
     fhead = fopen(argv[3], "w");

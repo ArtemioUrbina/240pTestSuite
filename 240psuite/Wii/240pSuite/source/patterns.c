@@ -945,24 +945,24 @@ void DrawMonoscope()
 				FreeImage(&overlay);
 
 			oldvmode = vmode;
-				
-			if(IsPAL)
+			
+			switch (vmode)
 			{
-				back = LoadImage(MONOSCOPEPALIMG, 0);
-				if(!back)
-					return;
-				
-				overlay = LoadImage(MONOSCOPEPALLINIMG, 0);
-				if(!overlay)
-				{
-					FreeImage(&back);
-					return;
-				}
-			}
-			else
-			{
-				if(vmode == VIDEO_480I || vmode == VIDEO_480P)
-				{
+				case VIDEO_240P:
+				case VIDEO_480I_A240:
+					back = LoadImage(MONOSCOPEIMG, 0);
+					if(!back)
+						return;
+					overlay = LoadImage(MONOSCOPELINIMG, 0);
+					if(!overlay)
+					{
+						FreeImage(&back);
+						return;
+					}
+					break;
+				case VIDEO_480I:
+				case VIDEO_480P:
+				case VIDEO_480P_SL:
 					back = LoadImage(MONOSCOPE480IMG, 0);
 					if(!back)
 						return;
@@ -976,20 +976,37 @@ void DrawMonoscope()
 					overlay->scale = 0;
 					overlay->x = 188;
 					overlay->y = 120;
-				}
-				else
-				{
-					back = LoadImage(MONOSCOPEIMG, 0);
+					break;
+				case VIDEO_288P:
+				case VIDEO_576I_A264:
+					back = LoadImage(MONOSCOPEPALIMG, 0);
 					if(!back)
 						return;
-					overlay = LoadImage(MONOSCOPELINIMG, 0);
+					
+					overlay = LoadImage(MONOSCOPEPALLINIMG, 0);
 					if(!overlay)
 					{
 						FreeImage(&back);
 						return;
 					}
-				}
+					break;
+				case VIDEO_576I:
+					back = LoadImage(MONOSCOPE576IMG, 0);
+					if(!back)
+						return;
+					back->scale = 0;	
+					overlay = LoadImage(MONOSCOPE576LINIMG, 0);
+					if(!overlay)
+					{
+						FreeImage(&back);
+						return;
+					}
+					overlay->scale = 0;
+					overlay->x = 188;
+					overlay->y = 120;
+					break;
 			}
+			
 			IgnoreOffset(back);
 			IgnoreOffset(overlay);
 		}
@@ -1045,7 +1062,7 @@ void DrawMonoscope()
 			irecount --;
 				
 			if(irecount < 0)
-				irecount = 10;
+				irecount = 0;
 			
 			back->alpha = irevalues[irecount];
 		}
@@ -1055,7 +1072,7 @@ void DrawMonoscope()
 			irecount ++;
 			
 			if(irecount > 10)
-				irecount = 0;	
+				irecount = 10;	
 				
 			back->alpha = irevalues[irecount];
 		}
