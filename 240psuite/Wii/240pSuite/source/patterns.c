@@ -927,7 +927,7 @@ int DrawGrid224(int GenesisVersion)
 
 void DrawMonoscope()
 {
-	int 		done = 0, irecount = 10, oldvmode = vmode, disabledPG = 0, changed = 0;
+	int 		done = 0, irecount = 10, oldvmode = vmode, disabledPG = 0;
 	u32			pressed;
 	ImagePtr	back = NULL, overlay = NULL;
 	int			irevalues[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
@@ -974,8 +974,6 @@ void DrawMonoscope()
 						return;
 					}
 					overlay->scale = 0;
-					overlay->x = 188;
-					overlay->y = 120;
 					break;
 				case VIDEO_288P:
 				case VIDEO_576I_A264:
@@ -1002,8 +1000,6 @@ void DrawMonoscope()
 						return;
 					}
 					overlay->scale = 0;
-					overlay->x = 188;
-					overlay->y = 120;
 					break;
 			}
 			
@@ -1029,30 +1025,6 @@ void DrawMonoscope()
 		ControllerScan();
 		
 		pressed = Controller_ButtonsDown(0);
-
-		if (pressed & PAD_BUTTON_DOWN)
-		{
-			Mode_240p.viYOrigin += 1;
-			SetVideoMode(vmode);
-			SetupGX();
-			changed = 1;
-		}
-		
-		if (pressed & PAD_BUTTON_UP)
-		{
-			Mode_240p.viYOrigin -= 1;
-			SetVideoMode(vmode);
-			SetupGX();
-			changed = 1;
-		}
-		
-		if (pressed & PAD_BUTTON_A)
-		{
-			Mode_240p.viYOrigin = TVNtsc240Ds.viYOrigin;
-			SetVideoMode(vmode);
-			SetupGX();
-			changed = 0;
-		}
 		
 		if (pressed & PAD_BUTTON_B)
 			done =	1;	
@@ -1085,15 +1057,6 @@ void DrawMonoscope()
 		}	
 	}
 
-	if(changed)
-	{
-		Mode_240p.viYOrigin = TVNtsc240Ds.viYOrigin;
-		SetVideoMode(vmode);
-		SetupGX();
-		
-		DrawMessageBox(back, "Vertical position restored.");
-	}
-	
 	FreeImage(&back);
 	FreeImage(&overlay);
 	
