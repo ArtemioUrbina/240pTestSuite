@@ -114,7 +114,7 @@ void DropShadowTest()
 				return;
 			
 			if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
-				vmode != VIDEO_576I)
+				vmode != VIDEO_576I && vmode != VIDEO_576P)
 			{		
 				back[0] = LoadImage(DONNAIMG, 0);
 				if(!back[0])
@@ -168,7 +168,7 @@ void DropShadowTest()
 
 		if(text)
 		{
-			if(vmode != VIDEO_480P)
+			if(vmode != VIDEO_480P && vmode != VIDEO_576P)
 				DrawStringB(140, 30, 0, 0xff, 0, msg);
 			else
 				DrawStringB(450, 40, 0, 0xff, 0, msg);
@@ -339,7 +339,7 @@ void StripedSpriteTest()
 				return;
 				
 			if(vmode != VIDEO_480P && vmode != VIDEO_480I && 
-				vmode != VIDEO_576I)
+				vmode != VIDEO_576I && vmode != VIDEO_576P)
 			{	
 				back[0] = LoadImage(DONNAIMG, 0);
 				if(!back[0])
@@ -1178,7 +1178,7 @@ void DrawStripes()
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			if(vmode != VIDEO_480P)
+			if(vmode != VIDEO_480P && vmode != VIDEO_576P)
 				DrawStringB(20, 210, 0xff, 0xff, 0xff, msg);
 			else
 				DrawStringB(20, 460, 0xff, 0xff, 0xff, msg);
@@ -1272,7 +1272,7 @@ void DrawCheckBoard()
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			if(vmode != VIDEO_480P)
+			if(vmode != VIDEO_480P && vmode != VIDEO_576P)
 				DrawStringB(20, 210, 0xff, 0xff, 0xff, msg);
 			else
 				DrawStringB(20, 460, 0xff, 0xff, 0xff, msg);
@@ -2291,7 +2291,7 @@ void FixSpriteSize(ImagePtr sprite, int full)
 	if(!full)
 	{
 		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
-				vmode != VIDEO_576I)
+				vmode != VIDEO_576I && vmode != VIDEO_576P)
 		{
 			sprite->x = 60;
 			sprite->y = 100;
@@ -2311,7 +2311,7 @@ void FixSpriteSize(ImagePtr sprite, int full)
 	else
 	{
 		if(vmode != VIDEO_480P && vmode != VIDEO_480I &&
-				vmode != VIDEO_576I)
+				vmode != VIDEO_576I && vmode != VIDEO_576P)
 		{
 			sprite->x = -160;
 			sprite->y = -120;

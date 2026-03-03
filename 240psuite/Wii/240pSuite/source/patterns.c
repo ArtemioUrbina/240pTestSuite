@@ -772,7 +772,7 @@ int DrawGrid()
 					return retval;
 			}
 			
-			if(vmode == VIDEO_576I)
+			if(vmode == VIDEO_576I || vmode == VIDEO_576P)
 			{
 				back = LoadImage(GRIDPAL480IMG, 0);
 				if(!back)
@@ -950,6 +950,7 @@ void DrawMonoscope()
 			{
 				case VIDEO_240P:
 				case VIDEO_480I_A240:
+				case VIDEO_480P_SL:
 					back = LoadImage(MONOSCOPEIMG, 0);
 					if(!back)
 						return;
@@ -962,7 +963,6 @@ void DrawMonoscope()
 					break;
 				case VIDEO_480I:
 				case VIDEO_480P:
-				case VIDEO_480P_SL:
 					back = LoadImage(MONOSCOPE480IMG, 0);
 					if(!back)
 						return;
@@ -977,6 +977,7 @@ void DrawMonoscope()
 					break;
 				case VIDEO_288P:
 				case VIDEO_576I_A264:
+				case VIDEO_576P_SL:
 					back = LoadImage(MONOSCOPEPALIMG, 0);
 					if(!back)
 						return;
@@ -989,6 +990,7 @@ void DrawMonoscope()
 					}
 					break;
 				case VIDEO_576I:
+				case VIDEO_576P:
 					back = LoadImage(MONOSCOPE576IMG, 0);
 					if(!back)
 						return;

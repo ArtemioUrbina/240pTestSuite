@@ -232,12 +232,12 @@ void ChangeOptions(ImagePtr title)
 		if(VIDEO_HaveComponentCable())
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, Options.Activate480p ? "ON" : "OFF");
-			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable 480p Modes:"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Enable 480p/576p Modes:"); y += fh; c++;
 		}
 		else
 		{
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, Options.Activate480p ? "ON" : "OFF");
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Enable 480p Modes:"); y += fh; c++;
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "Enable 480p/576p Modes:"); y += fh; c++;
 		}
 
 		// Option 4
@@ -310,23 +310,23 @@ void ChangeOptions(ImagePtr title)
 		
 		// option 10 Scanline intensity
 		sprintf(intensity, "%d%%", GetScanlineIntensity());
-		if(vmode == VIDEO_480P_SL)
+		if(vmode == VIDEO_480P_SL || vmode == VIDEO_576P_SL)
 		{
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g, sel == c ? 0 : b, intensity); 
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p Scanline Intensity:"); y += fh; c++;
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p/576p Scanline Intensity:"); y += fh; c++;
 			
 		// option 11, Scanline even/odd
 			DrawStringS(x + OptPos, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, ScanlinesEven() ? "EVEN" : "ODD");
-			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p Scanlines:"); y += fh; c++;	
+			DrawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "480p/576p Scanlines:"); y += fh; c++;	
 		}
 		else
 		{
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, intensity);
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p Scanline Intensity:"); y += fh; c++;			
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p/576p Scanline Intensity:"); y += fh; c++;			
 			
 		// option 11, Scanline even/odd
 			DrawStringS(x + OptPos, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, ScanlinesEven() ? "EVEN" : "ODD"); 					
-			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p Scanlines:"); y += fh; c++;	
+			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p/576p Scanlines:"); y += fh; c++;	
 		}
 
 #ifdef WII_VERSION
@@ -374,7 +374,7 @@ void ChangeOptions(ImagePtr title)
 				DrawStringS(x-15, y + 2*fh, r, g, b, "Horz. stretching disables 1:1 pixel mapping");
 
 #ifdef WII_VERSION
-		if(vmode == VIDEO_480P_SL && sel == 10)
+		if(sel == 10 && (vmode == VIDEO_480P_SL || vmode == VIDEO_576P_SL))
 		{
 			if(ControllerType != ControllerGC && !Options.SFCClassicController)
 				DrawStringS(x-15, y + 2*fh, r, g, b, "Adjust with + & - buttons or Left & Right");
@@ -388,11 +388,11 @@ void ChangeOptions(ImagePtr title)
 
 
 #ifdef WII_VERSION
-		if(vmode != VIDEO_480P_SL && (sel == 10 || sel == 11))
+		if(vmode != VIDEO_480P_SL && vmode != VIDEO_576P_SL && (sel == 10 || sel == 11))
 #else
-		if(vmode != VIDEO_480P_SL && (sel+1 == 10 || sel+1 == 11))
+		if(vmode != VIDEO_480P_SL && vmode != VIDEO_576P_SL && (sel+1 == 10 || sel+1 == 11))
 #endif
-			DrawStringS(x-15, y + 2*fh, r, g, b, "Scanlines are only available in\n480 Line Doubled mode");
+			DrawStringS(x-15, y + 2*fh, r, g, b, "Scanlines are only available in\n480/576p Line Doubled mode");
 			
 #ifdef WII_VERSION
 		if(sel == 12)
@@ -432,7 +432,7 @@ void ChangeOptions(ImagePtr title)
 		if ( pressed & PAD_TRIGGER_R && sel+1 == 10)
 #endif
 		{
-			if(vmode == VIDEO_480P_SL)
+			if(vmode == VIDEO_480P_SL || vmode == VIDEO_576P_SL)
 				RaiseScanlineIntensity();
 		}
 
@@ -442,7 +442,7 @@ void ChangeOptions(ImagePtr title)
 		if ( pressed & PAD_TRIGGER_L && sel+1 == 10)
 #endif		
 		{
-			if(vmode == VIDEO_480P_SL)
+			if(vmode == VIDEO_480P_SL || vmode == VIDEO_576P_SL)
 				LowerScanlineIntensity();
 		}			
 
@@ -452,7 +452,7 @@ void ChangeOptions(ImagePtr title)
 		if ( held & PAD_BUTTON_RIGHT && sel+1 == 10)
 #endif		
 		{
-			if(vmode == VIDEO_480P_SL)
+			if(vmode == VIDEO_480P_SL || vmode == VIDEO_576P_SL)
 				RaiseScanlineIntensity();
 		}
 		
@@ -462,7 +462,7 @@ void ChangeOptions(ImagePtr title)
 		if ( held & PAD_BUTTON_LEFT && sel+1 == 10)
 #endif		
 		{
-			if(vmode == VIDEO_480P_SL)
+			if(vmode == VIDEO_480P_SL || vmode == VIDEO_576P_SL)
 				LowerScanlineIntensity();
 		}
 		
@@ -565,7 +565,7 @@ void ChangeOptions(ImagePtr title)
 				case 10:
 					break;
 				case 11:
-					if(vmode == VIDEO_480P_SL)
+					if(vmode == VIDEO_480P_SL || vmode == VIDEO_576P_SL)
 						ToggleScanlineEvenOdd();
 					break;
 				case 12:
@@ -618,7 +618,9 @@ void SelectVideoMode(ImagePtr title)
 		
 		mode = vmode;
 			
-		DrawStringS(x - 10, y + (mode * fh) + ((mode >= VIDEO_288P) ? fh/2 : 0) + ((mode >= VIDEO_480P_SL) ? fh/2 - 1: 0),
+		DrawStringS(x - 10, y + (mode * fh) + ((mode >= VIDEO_288P) ? fh/2 : 0)
+				+ ((mode >= VIDEO_480P_SL) ? fh/2 - 1 : 0)
+				+ ((mode >= VIDEO_576P_SL) ? fh/2 - 1 : 0),
 					0x00, 0xff, 0x00, ">"); 
 		
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
@@ -662,11 +664,35 @@ void SelectVideoMode(ImagePtr title)
 		{
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p scaled 240p assets & scanlines"); y += fh; c++;
 			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;
+			
+			y += fh/2;
+			if(!Options.PALScale576)
+			{
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576p scaled 288p assets & scanlines"); y += fh; c++;
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576p mixed 576p/288p assets (1:1)"); y += fh; c++;
+			}
+			else
+			{
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576p scaled 288p assets & scanlines (stretched)"); y += fh; c++;
+				DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "576p mixed 576p/288p assets (stretched/PAL)"); y += fh; c++;
+			}
 		}
 		else
 		{
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p scaled 240p assets & scanlines"); y += fh; c++;
 			DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "480p mixed 480p/240p assets (1:1)"); y += fh; c++;
+			
+			y += fh/2;
+			if(!Options.PALScale576)
+			{
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576p scaled 288p assets & scanlines"); y += fh; c++;
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576p mixed 576p/288p assets (1:1)"); y += fh; c++;
+			}
+			else
+			{
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576p scaled 288p assets & scanlines (stretched)"); y += fh; c++;
+				DrawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, "576p mixed 576p/288p assets (stretched/PAL)"); y += fh; c++;
+			}
 		}
 			
 		DrawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu");
@@ -756,8 +782,22 @@ void SelectVideoMode(ImagePtr title)
 						SetVideoMode(VIDEO_480P);
 						SetupGX();
 					}
-					break;		
+					break;
 				case 9:
+					if(Options.Activate480p && VIDEO_HaveComponentCable())
+					{
+						SetVideoMode(VIDEO_576P_SL);
+						SetupGX();
+					}
+					break;
+				case 10:
+					if(Options.Activate480p && VIDEO_HaveComponentCable())
+					{
+						SetVideoMode(VIDEO_576P);
+						SetupGX();
+					}
+					break;		
+				case 11:
 					if(Controller_ButtonsHeld(0) & PAD_TRIGGER_L)
 						ShowVideoData();
 					else

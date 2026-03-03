@@ -72,7 +72,7 @@
 <filepath="monoscope576p.png" id="MONOSCOPE576IMG" colfmt=5 minfilt=0 magfilt=0 />
 <filepath="monoscope576p_lin.png" id="MONOSCOPE576LINIMG" colfmt=5 minfilt=0 magfilt=0 />
 <filepath="qr.png" id="QRIMG" colfmt=5 minfilt=0 magfilt=0 />
-<filepath="gba.png" id="GBAIMG" colfmt=5 minfilt=0 magfilt=0 />
+<filepath="gba.png" id="GBAIMG" colfmt=6 minfilt=0 magfilt=0 />
 <filepath="message.png" id="MSGIMG" colfmt=6 minfilt=0 magfilt=0 />
 <filepath="back.png" id="BACKIMG" colfmt=6 minfilt=0 magfilt=0 />
 <filepath="SD_b1.png" id="SD_B1_IMG" colfmt=6 minfilt=0 magfilt=0 />

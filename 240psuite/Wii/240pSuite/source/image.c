@@ -595,6 +595,7 @@ void DrawImage(ImagePtr image)
 		
 	if(image->scale && (vmode == VIDEO_480I_A240 || 
 						vmode == VIDEO_480P_SL || 
+						vmode == VIDEO_576P_SL || 
 						vmode == VIDEO_576I_A264))
 	{
 		x *= 2;
@@ -645,6 +646,7 @@ void DrawImageRotate(ImagePtr image, float angle, Mtx *m)
 		
 	if(image->scale && (vmode == VIDEO_480I_A240 || 
 						vmode == VIDEO_480P_SL || 
+						vmode == VIDEO_576P_SL || 
 						vmode == VIDEO_576I_A264))
 	{
 		x *= 2;
@@ -703,7 +705,8 @@ void LoadScanlines()
 		scanlines->layer = 5.0;
 		scanlines->alpha = SCANLINE_START_INTENSITY;
 		scanlines->scale = 0;
-		CalculateUV(0, 0, 640, 480, scanlines);
+		scanlines->IgnoreOffsetY = 1;
+		CalculateUV(0, 0, 640, 576, scanlines);
 	}
 }
 
@@ -765,7 +768,8 @@ u8 GetRawScanlineValue()
 
 void DrawScanlines()
 {
-	if(vmode == VIDEO_480P_SL && scanlines)
+	if(scanlines && (vmode == VIDEO_480P_SL || 
+		vmode == VIDEO_576P_SL))
 		DrawImage(scanlines);
 		
 #ifdef DEBUG_MEM

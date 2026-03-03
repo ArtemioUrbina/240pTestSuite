@@ -29,6 +29,7 @@ GXRModeObj Mode_240p;
 GXRModeObj Mode_480i;
 GXRModeObj Mode_264p;
 GXRModeObj Mode_528i;
+GXRModeObj Mode_576p;
 
 // Modified TVPal264Ds
 GXRModeObj TVPal264DsFull =
@@ -102,14 +103,16 @@ GXRModeObj TVPal576IntDfFull =
 };
 
 GXRModeObj *vmodes[TOTAL_VMODES] = {
-	&Mode_240p,
-	&Mode_480i, 		
-	&Mode_480i,
-	&Mode_264p,
-	&Mode_528i,	
-	&Mode_528i,	
-	&TVNtsc480Prog,
-	&TVNtsc480Prog	
+	&Mode_240p,		// VIDEO_240P      	0   240p
+	&Mode_480i, 	// VIDEO_480I_A240 	1   480i with assets in 240p
+	&Mode_480i,		// VIDEO_480I     	2	480i with 480p assets
+	&Mode_264p,		// VIDEO_288P 		3	288p
+	&Mode_528i,		// VIDEO_576I_A264	4	576i with assets in 264 (2:1)
+	&Mode_528i,		// VIDEO_576I 		5	576i with native/480p assets 1:1
+	&TVNtsc480Prog,	// VIDEO_480P_SL  	6	480p with software scanlines
+	&TVNtsc480Prog,	// VIDEO_480P 		7	480p with native/480p assets
+	&Mode_576p,		// VIDEO_576P_SL  	8	576p with software scanlines
+	&Mode_576p		// VIDEO_576P 		9	576p with native/480p assets
 };
 
 u32	ActiveFB	= 0;
@@ -143,6 +146,7 @@ void InitVideo()
 	Mode_480i = TVNtsc480IntDf;
 	Mode_264p = TVPal264Ds;
 	Mode_528i = TVPal528IntDf;
+	Mode_576p = TVPal528Prog;
 	
 	Set576iLine23Option(Options.PALline23);
 
@@ -238,16 +242,18 @@ void SetVideoMode(u32 newmode)
 			break;
 		case VIDEO_288P:
 		case VIDEO_576I_A264:
+		case VIDEO_576P_SL:
 			dW = 320;
 			dH = 264;
-			offsetY = 12; // (264 - 240) / 2 -> to center all in PAL modes
 			IsPAL = MODE_PAL;
+			offsetY = 12; // (264 - 240) / 2 -> to center all in PAL modes
 			break;
 		case VIDEO_576I:
+		case VIDEO_576P:
 			dW = 640;
 			dH = 528;
-			offsetY = 12;
 			IsPAL = MODE_PAL;
+			offsetY = 12;
 			break;
 	}
 
@@ -276,10 +282,10 @@ void InitFrameBuffers()
 		frameBuffer[MODE_NTSC][1] = SYS_AllocateFramebuffer(&TVNtsc480Prog);
 	
 	if(!frameBuffer[MODE_PAL][0])
-		frameBuffer[MODE_PAL][0] = SYS_AllocateFramebuffer(&TVPal576ProgScale);
+		frameBuffer[MODE_PAL][0] = SYS_AllocateFramebuffer(&TVPal528Prog);
 		
 	if(!frameBuffer[MODE_PAL][1])
-		frameBuffer[MODE_PAL][1] = SYS_AllocateFramebuffer(&TVPal576ProgScale);
+		frameBuffer[MODE_PAL][1] = SYS_AllocateFramebuffer(&TVPal528Prog);
 		
 	CleanFB();	
 }
@@ -287,9 +293,9 @@ void InitFrameBuffers()
 void CleanFB()
 {
 	if(frameBuffer[MODE_PAL][0])
-		VIDEO_ClearFrameBuffer(&TVPal576ProgScale, frameBuffer[MODE_PAL][0], COLOR_BLACK);
+		VIDEO_ClearFrameBuffer(&TVPal528Prog, frameBuffer[MODE_PAL][0], COLOR_BLACK);
 	if(frameBuffer[MODE_PAL][1])
-		VIDEO_ClearFrameBuffer(&TVPal576ProgScale, frameBuffer[MODE_PAL][1], COLOR_BLACK);
+		VIDEO_ClearFrameBuffer(&TVPal528Prog, frameBuffer[MODE_PAL][1], COLOR_BLACK);
 
 	if(frameBuffer[MODE_NTSC][0])
 		VIDEO_ClearFrameBuffer(&TVNtsc480Prog, frameBuffer[MODE_NTSC][0], COLOR_BLACK);
@@ -329,11 +335,13 @@ void EnableStretchedPALModes(int enable)
 	{
 		Mode_264p = TVPal264DsFull;
 		Mode_528i = TVPal576IntDfFull;
+		Mode_576p = TVPal528Prog;
 	}
 	else
 	{
 		Mode_264p = TVPal264Ds;
 		Mode_528i = TVPal528IntDf;
+		Mode_576p = TVPal528Prog;
 		Set576iLine23Option(Options.PALline23);
 	}	
 }
@@ -371,18 +379,22 @@ void Set576iLine23Option(s8 set)
 		case PAL_LINE23HALF:
 			Mode_264p.viYOrigin = PAL_OFFSET;
 			Mode_528i.viYOrigin = PAL_OFFSET - 2;
+			Mode_576p.viYOrigin = PAL_OFFSET - 2;
 			break;
 		case PAL_LINE24:
 			Mode_264p.viYOrigin = PAL_OFFSET + 1;
 			Mode_528i.viYOrigin = PAL_OFFSET - 1;	
+			Mode_576p.viYOrigin = PAL_OFFSET - 1;	
 			break;
 		case PAL_CENTERED:
 			Mode_264p.viYOrigin = (VI_MAX_HEIGHT_PAL/2 - 264)/2; // starts in 32
 			Mode_528i.viYOrigin = (VI_MAX_HEIGHT_PAL - 528)/2;	// starts in 35
+			Mode_576p.viYOrigin = (VI_MAX_HEIGHT_PAL - 528)/2;	// starts in 35
 			break;
 		case PAL_BOTTOM:
 			Mode_264p.viYOrigin = VI_MAX_HEIGHT_PAL/2 - 264 - 1; // Max output line in 264 mode is 306, starts in 43
 			Mode_528i.viYOrigin = VI_MAX_HEIGHT_PAL - 528;	// max ouput is 310, last line befor pulses, starts in 47
+			Mode_576p.viYOrigin = VI_MAX_HEIGHT_PAL - 528;	// max ouput is 310, last line befor pulses, starts in 47
 			break;
 	}
 			
@@ -442,6 +454,12 @@ void GetVideoModeStr(char *res, int shortdesc)
 			case VIDEO_480P_SL:
 				sprintf(res, "EDTV 640x480p (scaled 240p)");
 				break;
+			case VIDEO_576P:
+				sprintf(res, "EDTV 640x576p (Scaling disabled)");
+				break;
+			case VIDEO_576P_SL:
+				sprintf(res, "EDTV 640x576p (scaled 288p)");
+				break;
 		}
 		if(Options.Enable720Stretch)
 		{
@@ -488,6 +506,12 @@ void GetVideoModeStr(char *res, int shortdesc)
 				break;
 			case VIDEO_480P_SL:
 				sprintf(res, "[480p LD]");
+				break;
+			case VIDEO_576P:
+				sprintf(res, "[576p 1:1]");
+				break;
+			case VIDEO_576P_SL:
+				sprintf(res, "[576p LD]");
 				break;
 		}
 

@@ -21,16 +21,18 @@
 
 #include <gccore.h>
 
-#define TOTAL_VMODES 8
+#define TOTAL_VMODES 10
 
 #define VIDEO_240P      	0   // 240p
 #define VIDEO_480I_A240 	1   // 480i with assets in 240p
 #define VIDEO_480I     		2	// 480i with 480p assets
 #define VIDEO_288P 		 	3	// 288p
 #define VIDEO_576I_A264	 	4	// 576i with assets in 264 (2:1)
-#define VIDEO_576I 		 	5	// 576i with 480p assets 1:1
+#define VIDEO_576I 		 	5	// 576i with native/480p assets 1:1
 #define VIDEO_480P_SL  		6	// 480p with software scanlines
-#define VIDEO_480P 		 	7	// 480p with 480p assets
+#define VIDEO_480P 		 	7	// 480p with native/480p assets
+#define VIDEO_576P_SL  		8	// 576p with software scanlines
+#define VIDEO_576P 		 	9	// 576p with native/480p assets
 
 #define INVALID_VIDEO		TOTAL_VMODES
 

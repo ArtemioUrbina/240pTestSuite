@@ -221,7 +221,10 @@ void DrawStringC(u16 y, u8 r, u8 g, u8 b, char *str)
 	len = MeasureString(str);
 	len *= fw;
 	
-	x = (u16)((dW - len)/2);
+	if(vmode == VIDEO_480P || vmode == VIDEO_576P)
+		x = (u16)((dW/2 - len)/2);
+	else
+		x = (u16)((dW - len)/2);
 	
 	DrawStringS(x, y, r, g, b, str);
 }
