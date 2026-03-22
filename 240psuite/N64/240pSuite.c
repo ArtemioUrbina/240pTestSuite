@@ -25,6 +25,7 @@
 #include "audio.h"
 #include "menu.h"
 #include "mcs.h"
+#include "scene3d.h"
 
 void drawIntro(void);
 void drawPatternsMenu(void);
@@ -117,13 +118,10 @@ int main(void) {
 				case 4:
 					drawHardwareTestsMenu();
 					break;
-				case 5:					
-					
-					break;
-				case 6:
+				case 5:
 					helpWindow(GENERALHELP);
 					break;
-				case 7:
+				case 6:
 					drawCredits(1);
 					break;
 			}
@@ -207,15 +205,12 @@ void drawPatternsMenu(void) {
 					drawHCFR();
 					break;
 				case 4:
-					
-					break;
-				case 5:					
 					helpWindow(GENERALHELP);
 					break;
-				case 6:
+				case 5:
 					drawCredits(1);
 					break;
-				case 7:
+				case 6:
 					exit = 1;
 					break;
 			}
@@ -629,15 +624,12 @@ void drawAudioTestsMenu() {
 					drawMDFourier();
 					break;
 				case 5:
-	
-					break;
-				case 6:					
 					helpWindow(GENERALHELP);
 					break;
-				case 7:
+				case 6:
 					drawCredits(1);
 					break;
-				case 8:
+				case 7:
 					exit = 1;
 					break;
 			}
@@ -682,7 +674,8 @@ void drawHardwareTestsMenu() {
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Controller Test"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += 2*fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "3D Demo"); y += 2*fh; c++;
 		drawFooter(x, &y, &sel, &c);
 		drawStringS(x, y + fh, r * 0.8, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); y += fh;
 
@@ -719,9 +712,9 @@ void drawHardwareTestsMenu() {
 					drawMemoryViewer(0);
 					break;
 				case 3:
-	
+					scene3d();
 					break;
-				case 4:					
+				case 4:				
 					helpWindow(GENERALHELP);
 					break;
 				case 5:
@@ -750,10 +743,12 @@ void drawIntro() {
 	cancel = drawSplash("rom:/tiny3d.sprite", cancel ? 0: LOGO_HOLD, 16);
 	
 	drawMessageBox("This is a release candidate\nPlease send any feedback\nor comment to improve it.");
+	if(isPAL) {
+		drawMessageBox("PAL console detected\n\nThe Suite will run in PAL\nbut Monoscope and Grid are NTSC.");
+	}
 }
 
 void drawFooter(int x, int *y, int *sel, int *c) {
-	drawStringS(x, *y, 0xFF, *sel == *c ? 0 : 0xFF, *sel == *c ? 0 : 0xFF, "Options"); *y += fh; (*c)++;
 	drawStringS(x, *y, 0xFF, *sel == *c ? 0 : 0xFF, *sel == *c ? 0 : 0xFF, "Help"); *y += fh; (*c)++;
 	drawStringS(x, *y, 0xFF, *sel == *c ? 0 : 0xFF, *sel == *c ? 0 : 0xFF, "Credits"); *y += fh; (*c)++;
 }

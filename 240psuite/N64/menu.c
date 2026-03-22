@@ -273,7 +273,7 @@ void drawCredits(int usebuffer) {
 	
 	changeTo32BitDepthOnVBlank();
 	while(!done) {
-		int x = 28, y = 40, x2 = 164, y2 = 0;
+		int x = 28, y = 20, x2 = 164, y2 = 0;
 
 		getDisplay();
 
@@ -301,12 +301,16 @@ void drawCredits(int usebuffer) {
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Mega Cat Studios"); y += fh; 
 		drawStringS(x, y, 0x00, 0xff, 0x00, "N64 HW Photos:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Laura Olvera"); y += fh; 
+		
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney\n(@khmr33)"); y2 += 2*fh;
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Menu Pixel Art:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
-		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Music for PLII:"); y2 += fh; 
+		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Sound test loop:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "NekoMilkshake"); y2 += fh;
+		
+		drawStringS(x, y2, 0x00, 0xff, 0x00, "3DDemo:"); y2 += fh; 
+		drawStringS(x+5, y2, 0xff, 0xff, 0xff, "Mauricio Garrido"); y2 += fh;
 
 		y = y2+fh;
 		
@@ -316,7 +320,7 @@ void drawCredits(int usebuffer) {
 		drawStringS(x-4, y, 0x00, 0xba, 0xba, "This program is free Software");  y += fh;
 		drawStringS(x-4, y, 0x00, 0xba, 0xba, "Source code is available under GPL");
 		
-		drawStringS(140, 216, 0x00, 0xba, 0xba, "Dedicated to Elisa.");
+		//drawStringS(140, 216, 0x00, 0xba, 0xba, "Dedicated to Elisa.");
 		
 		y = 28;
 		

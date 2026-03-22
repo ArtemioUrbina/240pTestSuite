@@ -300,11 +300,6 @@ void drawWhiteScreen() {
 	char msg[100], *mode[MAX_COLORS] = { "White", "Black", "Red", "Green", "Blue", "Yellow", "Cyan", "Magenta"};
 	joypad_buttons_t keys;
 	
-	if(!isPAL)
-		blackLevel = IRE_007_5; // 7.5 IRE 
-	else
-		blackLevel = IRE_000; // 0 IRE
-	
 	// white
 	cr = cg = cb = IRE_100;
 	er = eb = eg = IRE_100;
@@ -333,7 +328,7 @@ void drawWhiteScreen() {
 			end = 1;
 			
 		if(keys.a && color == 1) {
-			if(!blackLevel)	{
+			if(blackLevel == IRE_000)	{
 				blackLevel = IRE_007_5;
 				sprintf(msg, "#GBlack Level: 7.5 IRE#G");
 			}
@@ -518,7 +513,7 @@ void drawSharpness() {
 }
 
 void drawMonoscope() {
-	int		end = 0, /* pattern = 1, */ changed = 1, x = 0, y = 0;
+	int		end = 0, changed = 1;
 	image	*monoscope = NULL;
 	int		whiteGrid = 0xff, colorBorder = 0xff;
 	joypad_buttons_t keys;
@@ -532,7 +527,7 @@ void drawMonoscope() {
 
 		rdpqStart();
 		rdpqDrawRectangle(0, 0, getDispWidth(), getDispHeight(), 0xff, 0, 0xff);
-		rdpqDrawImageXY(monoscope, x, y);
+		rdpqDrawImage(monoscope);
 		rdpqEnd();
 
 		checkMenu(MONOSCOPEHLP, NULL);
@@ -542,17 +537,6 @@ void drawMonoscope() {
 		keys = controllerButtonsDown();
 		
 		checkStart(keys);
-		
-/*
-		if(keys.d_up)
-			y --;
-		if(keys.d_down)
-			y++;
-		if(keys.d_left)
-			x--;
-		if(keys.d_right)
-			x++;
-*/
 			
 		if(keys.l) {
 			whiteGrid -= 0x10;

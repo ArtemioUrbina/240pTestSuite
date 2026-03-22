@@ -57,12 +57,6 @@ extern char *helpData;
 #define GRIDSCROLL		"/help/gridscroll.txt"
 #define DIAGONALHELP	"/help/diagonal.txt"
 
-#define SOUNDHELP		"/help/sound.txt"
-#define OPTIONSHELP		"/help/options.txt"
-
-#define OVERSCANWARNING	"/help/warningoverscan.txt"
-#define GRIDWARNING		"/help/warninggrid.txt"
-
 void helpWindow(char *filename);
 char *loadHelpFile(char *filename, char ***pages, int *npages);
 
