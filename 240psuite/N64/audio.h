@@ -28,6 +28,7 @@ int openWAV(wav64_t *wav64, char *fileName);
 void drawAudioSyncTest();
 void drawMDFourier();
 void drawAudioTest();
+void drawAudioTestAnalog();
 void drawAudioTestPLII();
 
 #endif

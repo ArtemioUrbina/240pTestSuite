@@ -69,7 +69,7 @@ void showMenu() {
 	joypad_buttons_t keys;
 	
 	copyMenuFB();
-	waitVsync();
+	drawNoVsyncWithAudio();
 	
 	darkenMenuFB(0x30);
 	
@@ -106,11 +106,11 @@ void showMenu() {
 		else {
 			drawStringS(x, y, sel == c ? 0xff:0x98, sel == c ? 0xaa:0x98, sel == c ? 0xaa:0x98, str); y += fh; c++;
 		}
-		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Options"); y += fh; c++;
+
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Credits"); y += 2*fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Close"); 
 		
-		waitVsync();
+		drawNoVsyncWithAudio();
 		
 		joypad_poll();
 		keys = controllerButtonsDown();
@@ -137,10 +137,10 @@ void showMenu() {
 					if(enableVideoOption)
 						selectVideoMode(1);
 					break;
-				case 4:
+				case 3:
 					drawCredits(1);
 					break;
-				case 5:
+				case 4:
 					end = 1;
 					break;
 			}
@@ -202,7 +202,7 @@ void selectVideoMode(int useBack) {
 				
 		drawStringC(back->y+216, r, g, b, "Press START for help");
 	
-		waitVsync();
+		drawNoVsyncWithAudio();
 
 		joypad_poll();
 		keys = controllerButtonsDown();
@@ -320,14 +320,14 @@ void drawCredits(int usebuffer) {
 		drawStringS(x-4, y, 0x00, 0xba, 0xba, "This program is free Software");  y += fh;
 		drawStringS(x-4, y, 0x00, 0xba, 0xba, "Source code is available under GPL");
 		
-		//drawStringS(140, 216, 0x00, 0xba, 0xba, "Dedicated to Elisa.");
+		drawStringS(140, 216, 0x00, 0xba, 0xba, "Dedicated to Elisa.");
 		
 		y = 28;
 		
 		drawStringS(208, y, 0x0f, 0xff, 0xff, VERSION_NUMBER); y += fh;
 		drawStringS(208, y, 0x0f, 0xff, 0xff, VERSION_DATE); y += 2*fh;
 
-		waitVsync();
+		drawNoVsyncWithAudio();
 
 		joypad_poll();
 		keys = controllerButtonsDown();
@@ -347,7 +347,7 @@ void drawCredits(int usebuffer) {
 					rdpqStart();
 					rdpqDrawImage(nish);
 					rdpqEnd();
-					waitVsync();
+					drawNoVsyncWithAudio();
 					
 					joypad_poll();
 					keys = controllerButtonsHeld();
@@ -376,7 +376,7 @@ void drawCredits(int usebuffer) {
 		counter ++;			
 	}
 	
-	holdImage(back, 30);
+	holdImage(back, 10);
 	
 	freeImage(&back);
 	if(qr)
@@ -441,7 +441,7 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 		if(helpFile)
 			drawStringC(back->y + (numOptions <= OPTIONS_SMALL ? 80 : 112) + 40, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
 
-		waitVsync();
+		drawNoVsyncWithAudio();
 
 		joypad_poll();
 		keys = controllerButtonsDown();
@@ -511,7 +511,7 @@ int drawMessageBoxInternal(char *msg, int isquestion) {
 		else
 			drawStringC(182, 0, g, b, "Press B to continue"); 
 		
-		waitVsync();
+		drawNoVsyncWithAudio();
 			
 		joypad_poll();
 		keys = controllerButtonsDown();

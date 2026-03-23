@@ -141,3 +141,19 @@ joypad_buttons_t controllerButtonsHeld() {
 #endif
 	return pad_pressed;
 }
+
+int getJoyX() {
+	joypad_inputs_t pad_inputs;
+
+	pad_inputs = joypad_get_inputs(JOYPAD_PORT_1);
+		
+	return(pad_inputs.stick_x);
+}
+
+int getJoyY() {
+	joypad_inputs_t pad_inputs;
+
+	pad_inputs = joypad_get_inputs(JOYPAD_PORT_1);
+		
+	return(pad_inputs.stick_y);
+}

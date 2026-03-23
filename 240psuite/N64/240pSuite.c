@@ -122,6 +122,9 @@ int main(void) {
 					helpWindow(GENERALHELP);
 					break;
 				case 6:
+					selectVideoMode(1);
+					break;
+				case 7:
 					drawCredits(1);
 					break;
 			}
@@ -208,9 +211,12 @@ void drawPatternsMenu(void) {
 					helpWindow(GENERALHELP);
 					break;
 				case 5:
-					drawCredits(1);
+					selectVideoMode(1);
 					break;
 				case 6:
+					drawCredits(1);
+					break;
+				case 7:
 					exit = 1;
 					break;
 			}
@@ -579,7 +585,7 @@ void drawAudioTestsMenu() {
 		rdpqEnd();
 		
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Stereo Sound Test"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Prologic II Sound Test"); y += fh; c++;
+		//drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Prologic II Sound Test"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Audio Sync Test"); y += fh; c++;    
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "MDFourier"); y += 2*fh; c++;
 		drawFooter(x, &y, &sel, &c);
@@ -614,17 +620,22 @@ void drawAudioTestsMenu() {
 				case 1:
 					drawAudioTest();
 					break;
+				/*
 				case 2:
 					drawAudioTestPLII();
 					break;
-				case 3:
+				*/
+				case 2:
 					drawAudioSyncTest();
 					break;
-				case 4:
+				case 3:
 					drawMDFourier();
 					break;
-				case 5:
+				case 4:
 					helpWindow(GENERALHELP);
+					break;
+				case 5:
+					selectVideoMode(1);
 					break;
 				case 6:
 					drawCredits(1);
@@ -718,9 +729,12 @@ void drawHardwareTestsMenu() {
 					helpWindow(GENERALHELP);
 					break;
 				case 5:
-					drawCredits(1);
+					selectVideoMode(1);
 					break;
 				case 6:
+					drawCredits(1);
+					break;
+				case 7:
 					exit = 1;
 					break;
 			}
@@ -742,7 +756,7 @@ void drawIntro() {
 	cancel = drawSplash("rom:/libdragon.sprite", cancel ? 0 : LOGO_HOLD, 16);
 	cancel = drawSplash("rom:/tiny3d.sprite", cancel ? 0: LOGO_HOLD, 16);
 	
-	drawMessageBox("This is a release candidate\nPlease send any feedback\nor comment to improve it.");
+	//drawMessageBox("This is a release candidate\nPlease send any feedback\nor comment to improve it.");
 	if(isPAL) {
 		drawMessageBox("PAL console detected\n\nThe Suite will run in PAL\nbut Monoscope and Grid are NTSC.");
 	}
@@ -750,5 +764,6 @@ void drawIntro() {
 
 void drawFooter(int x, int *y, int *sel, int *c) {
 	drawStringS(x, *y, 0xFF, *sel == *c ? 0 : 0xFF, *sel == *c ? 0 : 0xFF, "Help"); *y += fh; (*c)++;
+	drawStringS(x, *y, 0xFF, *sel == *c ? 0 : 0xFF, *sel == *c ? 0 : 0xFF, "Video"); *y += fh; (*c)++;
 	drawStringS(x, *y, 0xFF, *sel == *c ? 0 : 0xFF, *sel == *c ? 0 : 0xFF, "Credits"); *y += fh; (*c)++;
 }

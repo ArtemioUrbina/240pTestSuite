@@ -329,7 +329,7 @@ void drawControllerTest() {
 			end = 1;
 	}
 	
-	holdImage(back, 30);
+	holdImage(back, 10);
 	
 	freeImage(&back);
 	changeTo16BitDepthOnVBlank();

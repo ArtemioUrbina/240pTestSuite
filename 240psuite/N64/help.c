@@ -144,7 +144,7 @@ void helpWindow(char *filename) {
 			drawStringS(95, 216, 0xBB, 0xBB, 0xBB, "Press B to return");
 			redraw--;
 		}
-		waitVsync();
+		drawNoVsyncWithAudio();
 
 		joypad_poll();
 		keys = controllerButtonsDown();

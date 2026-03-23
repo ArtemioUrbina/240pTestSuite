@@ -269,7 +269,7 @@ void drawAudioSyncTest() {
 #define ST_CHANNELS		3
 
 void drawAudioTest() {
-	int end = 0, sel = 0;
+	int end = 0, sel = 1;
 	image *back = NULL;
 	joypad_buttons_t keys;
 	wav64_t left, right, center;
@@ -311,6 +311,7 @@ void drawAudioTest() {
 		drawStringC(130, 0xff, sel == 1 ? 0 : 0xff, sel == 1 ? 0 : 0xff, "Center");
 		drawStringS(190, 120, 0xff, sel == 2 ? 0 : 0xff, sel == 2 ? 0 : 0xff, "Right");
 		
+		checkMenu(SOUNDHELP, NULL);
 		drawNoVsyncWithAudio();
 		
 		joypad_poll();
@@ -344,6 +345,8 @@ void drawAudioTest() {
 		}
 		if(keys.b)
 			end = 1;
+					
+		checkStart(keys);
 	}
 	
 	freeImage(&back);
@@ -355,6 +358,87 @@ void drawAudioTest() {
 	mixer_close();
 	audio_close();
 }
+
+#define ST_BUFFERS		1
+#define ST_CHANNELS		3
+
+extern int num;
+
+void drawAudioTestAnalog() {
+	int end = 0, x = 0, lx = 0, text = 0;
+	float pan = 0.5;
+	image *back = NULL;
+	joypad_buttons_t keys;
+	char buffer[25];
+	wav64_t sample;
+
+	if(!openWAV(&sample, "rom:/neko_loop.wav64")) {
+		drawMessageBox("Sound test samples not present");
+		return;
+	}
+	wav64_set_loop(&sample, true);
+	
+	num++;
+	if(num > 2)
+		num = 1;
+	sprintf(buffer, "rom:/credits%d.sprite", num % 9);
+	back = loadImage(buffer);
+	if(!back)
+		return;
+		
+	audio_init(44100, ST_BUFFERS);
+	mixer_init(ST_CHANNELS);
+	
+	mixer_ch_set_vol_dolby(0, 1, 0, 0, 0, 0);
+	mixer_ch_set_vol_dolby(1, 1, 1, 0, 0, 0);
+	mixer_ch_set_vol_dolby(2, 0, 1, 0, 0, 0);
+	
+	wav64_play(&sample, 1);
+	
+	changeTo32BitDepthOnVBlank();
+	text = 120;
+	
+	while(!end) {
+		getDisplay();
+
+		rdpqStart();
+		
+		rdpqClearScreen();
+		rdpqDrawImage(back);
+		rdpqEnd();
+		
+		if(text) {
+			drawStringC(10, text, text, text, "Sound Test");
+			drawStringC(180, text, text, text, "Stereo panning follows\nanalog joystick");
+			text --;
+		}
+		
+		drawNoVsyncWithAudio();
+		
+		joypad_poll();
+		keys = controllerButtonsDown();
+		
+		x = getJoyX();
+		if(x != lx) {
+			pan = ((float)x + 85.0)/170.0;
+			mixer_ch_set_vol_pan(1, 1, pan);
+			text = 0xaa;
+			lx = x;
+		}
+		
+		if(keys.b)
+			end = 1;
+	}
+	
+	freeImage(&back);
+	
+	wav64_close(&sample);
+	
+	mixer_close();
+	audio_close();
+	changeTo16BitDepthOnVBlank();
+}
+
 
 #define SPLII_CHANNELS 5
 

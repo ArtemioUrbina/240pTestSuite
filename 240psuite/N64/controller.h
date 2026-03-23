@@ -25,3 +25,5 @@
 
 joypad_buttons_t controllerButtonsDown();
 joypad_buttons_t controllerButtonsHeld();
+int getJoyX();
+int getJoyY();
