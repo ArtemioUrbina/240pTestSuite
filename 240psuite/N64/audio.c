@@ -211,7 +211,7 @@ void drawAudioSyncTest() {
 			graphics_draw_box(__disp, 0, 188, W, 8, COLOR_W);
 			graphics_draw_box(__disp, sprite.x, sprite.y, sprite.w, sprite.h, COLOR_W);
 
-			checkMenu(NULL, NULL);
+			checkMenu(AUDIOSYNCHELP, NULL);
 			waitVsyncWithAudio();
 		}
 		else {
@@ -228,7 +228,7 @@ void drawAudioSyncTest() {
 				playtone = 1;
 			rdpqEnd();
 			
-			checkMenu(NULL, NULL);
+			checkMenu(AUDIOSYNCHELP, NULL);
 			waitVsyncWithAudio();
 			countScope++;
 		}
@@ -265,10 +265,25 @@ void drawAudioSyncTest() {
 	audio_close();
 }
 
+void drawAudioTest() {
+	fmenuData	verMenuData[2] = { 
+										{ 0, "Analog" },
+										{ 1, "Traditional" }
+										};
+										
+	int tmpRes = selectMenu("Select", verMenuData, 2, 1);
+	if(tmpRes == MENU_CANCEL)
+		return;
+	if(tmpRes == 1)
+		drawAudioTestDicrete();
+	else
+		drawAudioTestAnalog();
+}
+
 #define ST_BUFFERS		1
 #define ST_CHANNELS		3
 
-void drawAudioTest() {
+void drawAudioTestDicrete() {
 	int end = 0, sel = 1;
 	image *back = NULL;
 	joypad_buttons_t keys;

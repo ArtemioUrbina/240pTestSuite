@@ -1,0 +1,14 @@
+         AUDIO SYNC TEST
+
+This test flashes the screen
+white for a frame, along with a
+#C1 khz#C test tone.
+
+You can verify the sync between
+audio and video with recording
+equipment or specialized
+hardware.
+
+It can be paused with the #GA#G
+button and #YC-Left#Y enables Scope
+mode.
