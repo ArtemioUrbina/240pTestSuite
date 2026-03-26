@@ -146,6 +146,7 @@ $(BUILD_DIR)/$(PROJECT_NAME).elf: $(src:%.c=$(BUILD_DIR)/%.o)
 $(PROJECT_NAME).z64: N64_ROM_TITLE = "240p Test Suite"
 $(PROJECT_NAME).z64: N64_ROM_SAVETYPE = none 			# Supported savetypes: none eeprom4k eeprom16 sram256k sram768k sram1m flashram
 $(PROJECT_NAME).z64: N64_ROM_REGIONFREE = true			# Set to true to allow booting on any console region
+$(PROJECT_NAME).z64: N64_ROM_METADATA = metadata/metadata.ini
 $(PROJECT_NAME).z64: $(BUILD_DIR)/$(PROJECT_NAME).dfs
 
 $(@info $(shell mkdir -p ./$(OUTPUT_DIR) &> /dev/null))
