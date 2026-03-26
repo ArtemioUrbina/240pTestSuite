@@ -1,4 +1,4 @@
-         VIDEO MODES (1/3)
+         VIDEO MODES (1/2)
 
 The N64 version of the 240p suite
 supports the following modes:
@@ -22,7 +22,7 @@ field.
 
 
                        #C(cont...)#C
-         VIDEO MODES (2/3)
+         VIDEO MODES (2/2)
 
 #G240p:#G The progressive variant of
     NTSC 525i line video, it has
@@ -31,7 +31,7 @@ field.
     is used in most SD game
     consoles, from the #YAtari VCS#Y
     to the #YPS2#Y. The N64 version
-    of the suite displays a full
+    of the suite displays a
     320x240p screen.
 
 #G480i scaled 240p assets (NTSC):#G
@@ -41,23 +41,3 @@ field.
     240 in each field. The whole
     content of the suite is
     linedoubled in this mode.
-
-
-
-
-                       #C(cont...)#C
-         VIDEO MODES (3/3)
-
-#G480i mixed 240p/480p assets(1:1):#G
-    In this mode the content of
-    the suite is never line 
-    doubled.
-
-    As a result, most screens
-    end up filling 1/4th of the
-    display in 1:1 pixel mode.
-    However, there are several
-    patterns in 480 resolution
-    that fill the screen, such as
-    the grid, scroll and overscan.
-
