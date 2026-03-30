@@ -87,6 +87,7 @@ void drawMDFourier() {
 			else
 				drawStringC(100, 0xff, 0xff, 0xff, "Press #GA#G to play");
 			
+			drawStringC(180, 0xff, 0xff, 0xff, "Press #CSTART#C for HELP.");
 			drawStringC(201, 0xff, 0xff, 0x00, "#Yhttp://junkerhq.net/MDFourier#Y");
 			refresh --;
 		}

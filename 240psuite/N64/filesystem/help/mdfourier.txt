@@ -6,8 +6,9 @@ recorded and analyzed for
 comparison with the #CMDFourier#C
 tool on a computer.
 
-We use the Audio Equipment test
-by pinobatch at 44.1khz.
+We use the #YAudio Equipment Test#Y
+by pinobatch at #Y44.1 khz#Y, please
+use that profile to compare.
 
 More details at:
 #Yhttp://junkerhq.net/MDFourier#Y

@@ -50,8 +50,15 @@ typedef struct {
 typedef enum { 
     POINT_LIGHTS = 0,
     DIR_LIGHTS,
+    FLASHLIGHT,
     LIGHTS_OFF 
 } lights_type_t;
+
+typedef enum {
+    DITHER_NONE = 0,
+    DITHER_SQUARE,
+    DITHER_NOISE
+} dither_mode_t;
 
 void draw_text(int x, int y, const char *fmt, ...) {
     char buffer[512];
@@ -77,9 +84,10 @@ void draw_text(int x, int y, const char *fmt, ...) {
   t3d_init((T3DInitParams){});
   T3DViewport viewport = t3d_viewport_create();
 
-  #define MODEL_COUNT 1
+  #define MODEL_COUNT 2
   T3DModel *models[MODEL_COUNT] = {
     t3d_model_load("rom://scene3d.t3dm"),
+    t3d_model_load("rom://scene3d_cutout.t3dm")
   };
 
   T3DMat4FP* modelMatFP = (T3DMat4FP*)malloc_uncached(sizeof(T3DMat4FP));
@@ -95,15 +103,25 @@ void draw_text(int x, int y, const char *fmt, ...) {
   
   bool showInfoScreen = true;
   bool fpsLimit = false;
+
+  int ditherMode = DITHER_SQUARE;
   
-  lights_type_t lightsType = DIR_LIGHTS;
-  const char *lightsName[] = { "Point", "Directional", "Off" };
+  lights_type_t lightsType = POINT_LIGHTS;
+  const char *lightsName[] = { "Point", "Directional", "Flashlight", "Off" };
+  const char *ditherName[] = { "None", "Square", "Noise" };
   
   PointLight pointLights[4] = { // XYZ, strength, color
-    {{{ -8.0f, 40.0f, 22.0f}},  0.075f, {0xFF, 0xFA, 0xF4, 0xFF}}, // 1st Cabinet
-    {{{ 68.0f, 40.0f, 22.0f}},  0.075f, {0xFF, 0xFA, 0xF4, 0xFF}}, // 3rd Cabinet
+    {{{  4.0f, 35.0f, 10.0f}}, 18.0f, {0xFF, 0xFA, 0xF4, 0xFF}}, // 1st Cabinet
+    {{{ 66.0f, 35.0f, 10.0f}}, 18.0f, {0xFF, 0xFA, 0xF4, 0xFF}}, // 3rd Cabinet
+    {{{ 18.0f, 50.0f, 45.0f}}, 25.0f, {0xFF, 0xFA, 0xF4, 0xFF}}, // Desk Lamp
+    // Using four point lights considerably decreases performance
     //{{{ -2.0f, 59.0f, -5.0f}},  0.05f,  {0xFF, 0xF5, 0xB6, 0xFF}}, // Wall Lamp
-    {{{ 28.0f, 50.0f, 49.0f}},  0.10f,  {0xFF, 0xFA, 0xF4, 0xFF}}, // Desk Lamp
+  };
+
+  PointLight flashlight[3] = {
+      {{{ -8.0f, 40.0f, 22.0f}}, 32.5f,       {0xFF, 0xFA, 0xF4, 0xFF}},
+      {{{ -8.0f, 40.0f, 22.0f}}, 21.9375f,    {0xFF, 0xFA, 0xF4, 0xFF}},
+      {{{ -8.0f, 40.0f, 22.0f}}, 14.8078125f, {0xFF, 0xFA, 0xF4, 0xFF}},
   };
 
   // In order to cull, we must either not record the entire mesh, or do so with individual objects.
@@ -150,6 +168,11 @@ void draw_text(int x, int y, const char *fmt, ...) {
         lightsType++;
         if (lightsType > LIGHTS_OFF) lightsType = POINT_LIGHTS;
     }
+
+    if(pressed.r) {
+        ditherMode++;
+        if (ditherMode > DITHER_NOISE) ditherMode = DITHER_NONE;
+    }
     
     if(frame > 60 || pressed.a ) { ticks = 0; frame = 1; }
 	
@@ -181,7 +204,30 @@ void draw_text(int x, int y, const char *fmt, ...) {
     t3d_vec3_lerp(&camPos, &camPos, &camPosTarget, 0.8f);
     camRotX = t3d_lerp(camRotX, camRotXTarget, 0.8f);
     camRotY = t3d_lerp(camRotY, camRotYTarget, 0.8f);
-    const T3DModel *model = models[0];
+
+    // A very rudimentary flashlight simulation.  It works by using three
+    // point lights with different size and distance values, roughly resembling
+    // a flashlight light's cone.
+    if (lightsType == FLASHLIGHT) {
+      float lightDistance = 100.0f;
+      for(int i=0; i<3; ++i) {
+        flashlight[i].pos.v[0] = camPos.v[0] + camDir.v[0] * lightDistance;
+        flashlight[i].pos.v[1] = camPos.v[1] + camDir.v[1] * lightDistance;
+        flashlight[i].pos.v[2] = camPos.v[2] + camDir.v[2] * lightDistance;
+
+        if(flashlight[i].pos.v[0] < -20.f) flashlight[i].pos.v[0] = -20.f;
+        if(flashlight[i].pos.v[0] > 80.f)  flashlight[i].pos.v[0] = 80.f;
+        if(flashlight[i].pos.v[1] < 0.0f)  flashlight[i].pos.v[1] = 0.0f;
+        if(flashlight[i].pos.v[2] < 0.0f)  flashlight[i].pos.v[2] = 0.0f;
+        if(flashlight[i].pos.v[2] > 100.f) flashlight[i].pos.v[2] = 100.f;
+
+        lightDistance *= 0.675f;
+      }
+    }
+
+    // Flashlight mode needs to use a model with the cutout render
+    // value in all it's materials.
+    const T3DModel *model = lightsType == FLASHLIGHT ? models[1] : models[0];
 
     T3DVec3 camTarget;
     t3d_vec3_add(&camTarget, &camPos, &camDir);
@@ -225,35 +271,56 @@ void draw_text(int x, int y, const char *fmt, ...) {
 
     t3d_frame_start();
 
+    if(lightsType == FLASHLIGHT) {
+      rdpq_mode_antialias(AA_NONE);
+    } else rdpq_mode_antialias(AA_STANDARD);
+
+    if(ditherMode == 0) rdpq_mode_dithering(DITHER_NONE_NONE);
+    if(ditherMode == 1) rdpq_mode_dithering(DITHER_SQUARE_SQUARE);
+    if(ditherMode == 2) rdpq_mode_dithering(DITHER_NOISE_NOISE);
+
     t3d_viewport_attach(&viewport);
     t3d_fog_set_enabled(false);
     t3d_screen_clear_color(RGBA32(0x10, 0x10, 0x10, 0xFF));
     t3d_screen_clear_depth();
 
     switch(lightsType) {
-        case DIR_LIGHTS:
-            t3d_light_set_ambient((uint8_t[]){0x00, 0x00, 0x00, 0x00});
-            t3d_light_set_directional(0, (uint8_t[]){0xCF, 0xC1, 0xB0, 0xFF}, &(T3DVec3){{-camDir.v[0], -camDir.v[1], -camDir.v[2]}});
-            t3d_light_set_count(1);
-        break;
-        case POINT_LIGHTS:
-            t3d_light_set_ambient((uint8_t[]){0x00, 0x00, 0x00, 0x00});
-            for(int i=0; i<3; ++i) {
-                // Sets the actual point light
-                t3d_light_set_point(i, &pointLights[i].color.r,
-                    &(T3DVec3){{
-                        pointLights[i].pos.v[0],
-                        pointLights[i].pos.v[1],
-                        pointLights[i].pos.v[2]
-                    }},
-                    pointLights[i].strength, false);
-            }
-            t3d_light_set_count(3);
-        break;
-        case LIGHTS_OFF:
-            t3d_light_set_ambient((uint8_t[]){0x0B, 0x0C, 0x0B, 0xFF});
-            t3d_light_set_count(0);
-        break;
+    case DIR_LIGHTS:
+        t3d_light_set_ambient((uint8_t[]){0x00, 0x00, 0x00, 0x00});
+        t3d_light_set_directional(0, (uint8_t[]){0xCF, 0xC1, 0xB0, 0xFF}, &(T3DVec3){{-camDir.v[0], -camDir.v[1], -camDir.v[2]}});
+        t3d_light_set_count(1);
+    break;
+    case POINT_LIGHTS:
+        t3d_light_set_ambient((uint8_t[]){0x00, 0x00, 0x00, 0x00});
+        for(int i=0; i<3; ++i) {
+            // Sets the actual point light
+            t3d_light_set_point(i, &pointLights[i].color.r,
+                &(T3DVec3){{
+                    pointLights[i].pos.v[0],
+                    pointLights[i].pos.v[1],
+                    pointLights[i].pos.v[2]
+                }},
+                pointLights[i].strength, false);
+        }
+        t3d_light_set_count(3);
+    break;
+    case FLASHLIGHT:
+        t3d_light_set_ambient((uint8_t[]){0x0B, 0x0C, 0x0B, 0x00});
+        for(int i=0; i<3; ++i) {
+            t3d_light_set_point(i, (uint8_t[]){0xFF, 0xFA, 0xF4, 0xFF},
+                &(T3DVec3){{
+                    flashlight[i].pos.v[0],
+                    flashlight[i].pos.v[1],
+                    flashlight[i].pos.v[2]
+                }},
+                flashlight[i].strength, true);
+        }
+        t3d_light_set_count(3);
+    break;
+    case LIGHTS_OFF:
+        t3d_light_set_ambient((uint8_t[]){0x0B, 0x0C, 0x0B, 0xFF});
+        t3d_light_set_count(0);
+    break;
     };
 
     t3d_matrix_push(modelMatFP);
@@ -302,6 +369,10 @@ void draw_text(int x, int y, const char *fmt, ...) {
       draw_text(18, y_offset+84, INFO[1], lightsName[lightsType]);
       for(int i=2; i<8; ++i) {
         draw_text(18, y_offset+70+(i*14), INFO[i]);
+      }
+      if (lightsType == FLASHLIGHT) {
+        draw_text(18, y_offset+182, "R: Toggle dither");
+        draw_text(18, y_offset+196, "       (%s)", ditherName[ditherMode]);
       }
     }
 

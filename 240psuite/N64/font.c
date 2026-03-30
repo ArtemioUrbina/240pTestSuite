@@ -188,7 +188,7 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 					if(!shown) {
 						if(*text == '.' || *text == ',' || *text == ';' || 
 							*text == '\'') {
-							tx = tx - fw/2;
+							tx = tx - fw/2 + 1;
 							graphics_draw_character(disp, tx, ty, *text);
 							tx += fw/2 + 2;
 						} else {  // any regular character
