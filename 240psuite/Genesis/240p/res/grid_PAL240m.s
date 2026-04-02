@@ -1,6 +1,6 @@
 * ---------------------------
-.global grid_PAL_map
-grid_PAL_map:
+.global grid_PAL240_map
+grid_PAL240_map:
 * ---------------------------
 * size:2400 bytes
 

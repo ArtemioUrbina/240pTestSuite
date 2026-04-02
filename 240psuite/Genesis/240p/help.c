@@ -55,7 +55,7 @@ void DrawHelp(int option)
 		break;
 	case HELP_PLUGE:
 	case HELP_MONOSCOPE:
-		totalpages = 3;
+		totalpages = 4;
 		break;
 	}
 	
@@ -209,7 +209,7 @@ void DrawHelp(int option)
 				switch (page)
 				{
 					case 1:
-						VDP_drawTextBG(APLAN, "MONOSCOPE (1/3)", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
+						VDP_drawTextBG(APLAN, "MONOSCOPE (1/4)", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
 						VDP_drawTextBG(APLAN, "This pattern contains elements", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "to calibrate multiple aspects", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "of a CRT.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -218,32 +218,36 @@ void DrawHelp(int option)
 						VDP_drawTextBG(APLAN, "manual to learn how, and use", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "'A' button to change IRE.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						y++;
+						VDP_drawTextBG(APLAN, "You should target the green", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+						VDP_drawTextBG(APLAN, "borders on CRTs.", TILE_ATTR(PAL1, 0, 0, 0), 4, y++);
+						y++;
+						VDP_drawTextBG(APLAN, "White   90%      Green 91%", TILE_ATTR(PAL0, 0, 0, 0), 6, y++);
+						VDP_drawTextBG(APLAN, "Magenta 95%", TILE_ATTR(PAL0, 0, 0, 0), 13, y++);
+						VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+					break;
+					case 2:
+						VDP_drawTextBG(APLAN, "MONOSCOPE (2/4)", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
 						VDP_drawTextBG(APLAN, "Brightness adjustment: Adjust", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "convergence at low brightness", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "(13/25 IRE). An overly bright", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "pattern can mask convergence", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "issues.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						y++;
-						VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
-					break;
-					case 2:
-						VDP_drawTextBG(APLAN, "MONOSCOPE (2/3)", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
 						VDP_drawTextBG(APLAN, "Convergence: Use the center", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "crosshair to check static", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "(center of screen) convergence.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "Use the patterns at the sides", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "to check dynamic (edge)", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "convergence.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						y++;
+						VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+					break;
+					case 3:
+						VDP_drawTextBG(APLAN, "MONOSCOPE (3/4)", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
 						VDP_drawTextBG(APLAN, "Corners: After setting center", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "and edge convergence, use", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "magnets to adjust corner purity", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "and geometry.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
-						y+=2;
-						VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
-					break;
-					case 3:
-						VDP_drawTextBG(APLAN, "MONOSCOPE (3/3)", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
+						y++;
 						VDP_drawTextBG(APLAN, "Size and aspect ratio: If", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "vertical and horizontal size are", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "correct, the red squares in the", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
@@ -252,11 +256,16 @@ void DrawHelp(int option)
 						VDP_drawTextBG(APLAN, "measure to adjust V size to match", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "it.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						y++;
+						VDP_drawTextBG(APLAN, "(cont...)", TILE_ATTR(PAL0, 0, 0, 0), 26, 22);
+					break;
+					case 4:
+						VDP_drawTextBG(APLAN, "MONOSCOPE (4/4)", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
 						VDP_drawTextBG(APLAN, "Linearity: The squares in each", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "corner should get you started.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "Confirm your adjustment using", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						VDP_drawTextBG(APLAN, "the scroll tests.", TILE_ATTR(PAL0, 0, 0, 0), 4, y++);
 						ChangeResolution(&y);
+						y++;
 						VDP_drawTextBG(APLAN, "Designed by Keith Raney.", TILE_ATTR(PAL1, 0, 0, 0), 4, y);
 					break;
 				}

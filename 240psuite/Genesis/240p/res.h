@@ -65,13 +65,18 @@ extern u16 bw_pal[16/2];
 // Grid
 extern u32 small_grid_tiles[32/4]; 
 
-extern u32 grid_tiles[64/4]; 
+extern u32 grid_tiles[576/4]; 
+extern u32 grid_256_tiles[832/4]; 
+extern u32 grid_PAL_tiles[64/4]; 
+
 extern u16 grid_pal[16/2]; 
 
 extern u16 grid_map[2240/2];
 extern u16 grid_256_map[1792/2];
-extern u16 grid_PAL_map[2400/2];
-extern u16 grid_PAL_256_map[1920/2];
+extern u16 grid_PAL_map[2240/2];
+extern u16 grid_PAL240_map[2400/2];
+extern u16 grid_PAL_256_map[1792/2];
+extern u16 grid_PAL240_256_map[1920/2];
 
 extern u32 monoscope_tiles[2816/4]; 
 extern u16 monoscope_map[1792/2];

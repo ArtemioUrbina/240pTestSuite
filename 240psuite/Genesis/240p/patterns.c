@@ -507,23 +507,43 @@ void DrawGrid()
 				VDP_setScreenWidth320();
 
 			VDP_setPalette(PAL0, grid_pal);
-			size = sizeof(grid_tiles) / 32;
-			VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, USE_DMA);
-
-			if(type == RES_256)
+			
+			if(IsPALVDP)
 			{
-				if(isVertical240())
-					VDP_setMyTileMapRect(APLAN, grid_PAL_256_map, TILE_USERINDEX, 0, 0, 256 / 8, 240 / 8);
+				size = sizeof(grid_PAL_tiles) / 32;
+				VDP_loadTileData(grid_PAL_tiles, TILE_USERINDEX, size, USE_DMA);
+				
+				if(type == RES_256)
+				{
+					if(isVertical240())
+						VDP_setMyTileMapRect(APLAN, grid_PAL240_256_map, TILE_USERINDEX, 0, 0, 256 / 8, 240 / 8);
+					else
+						VDP_setMyTileMapRect(APLAN, grid_PAL_256_map, TILE_USERINDEX, 0, 0, 256 / 8, 224 / 8);
+				}
 				else
-					VDP_setMyTileMapRect(APLAN, grid_256_map, TILE_USERINDEX, 0, 0, 256 / 8, 224 / 8);
+				{
+					if(isVertical240())
+						VDP_setMyTileMapRect(APLAN, grid_PAL240_map, TILE_USERINDEX, 0, 0, 320 / 8, 240 / 8);
+					else
+						VDP_setMyTileMapRect(APLAN, grid_PAL_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+				}
 			}
 			else
 			{
-				if(isVertical240())
-					VDP_setMyTileMapRect(APLAN, grid_PAL_map, TILE_USERINDEX, 0, 0, 320 / 8, 240 / 8);
+				if(type == RES_256)
+				{
+					size = sizeof(grid_256_tiles) / 32;
+					VDP_loadTileData(grid_256_tiles, TILE_USERINDEX, size, USE_DMA);
+					VDP_setMyTileMapRect(APLAN, grid_256_map, TILE_USERINDEX, 0, 0, 256 / 8, 224 / 8);
+				}
 				else
+				{
+					size = sizeof(grid_tiles) / 32;
+					VDP_loadTileData(grid_tiles, TILE_USERINDEX, size, USE_DMA);
 					VDP_setMyTileMapRect(APLAN, grid_map, TILE_USERINDEX, 0, 0, 320 / 8, 224 / 8);
+				}
 			}
+			
 			VDP_End();
 
 			oldColor = first_pal[0];
