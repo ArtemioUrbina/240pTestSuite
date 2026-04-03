@@ -32,6 +32,12 @@
 
 
 /****** paste the results from converthelpfiles starts here **************************/
+char *SMPTEColor_txt[] = { 
+"            EBU/SMPTE COLOR BARS (1/3)\n\nThis pattern can be used to calibrate for NTSC\nlevels regarding contrast and brightness, and \nappropiate colors as well. \n\nYou can toggle between 100% and 75% #YSMPTE#Y color \nbars by pressing $A.\n\nThe #YEBU#Y color bars start at 0mV.\n\nRemember that the black level in the SMPTE pattern\nrefers to 7.5 IRE for video, console games usually\nstart at 0 IRE. This pattern can be used to \ncalibrate colors - or auto calibrated in a \n                                         #C(cont...)#C",
+"            EBU/SMPTE COLOR BARS (2/3)\n\nprofessional display - and then black levels can\nbe adjusted with the PLUGE pattern using the #GFull \nRGB Mode#G.\n\nIn an #YSMPT#YE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on\nand off between every bar, red cycling on and \n                                         #C(cont...)#C",
+"            EBU/SMPTE COLOR BARS (3/3)\n\noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
+NULL
+};
 char *alt240p_txt[] = { 
 "              ALTERNATING 240p/480i \n\nSome devices have a delay when the source changes\nbetween resolutions, which happens in some games.\nThis test allows to time that delay manually. \n\nPress $A to switch the resolution; press it again\nwhen you are able to see the screen back in your\ndisplay.\n",
 NULL
@@ -94,9 +100,9 @@ char *gray_txt[] = {
 NULL
 };
 char *grid_txt[] = { 
-"                    GRID (1/3)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. Consumer TVs may not show the red squares.\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. \n\nIn PAL resolutions, there are also two different \ngrids. \n\n                                    #C(cont...)#C",
-"                    GRID (2/3)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. You can also use the 576i stretched option \nto fill the whole screen at the cost of 1:1 pixel \nmapping.\n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 23\nfor PAL. You can adjust this value for PAL in 1:1\nmapping modes.\n                                    #C(cont...)#C",
-"                    GRID (3/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. $A button resets it to its position.\n\nThe $X button toggles a green background.\n\nThe $Y button changes the grid type.\n",
+"                    GRID (1/3)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. \n\nYou should target the #Ggreen#G borders on CRTs.\n           White   90%      #GGreen#G 91%\n           #MMagenta#M 95%      #CCyan#C 100%\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. Also available in PAL modes.\n",
+"                                    #C(cont...)#C\n                    GRID (2/3)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. You can also use the 576i stretched option \nto fill the whole screen at the cost of 1:1 pixel \nmapping.\n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 23\nfor PAL. You can adjust this value for PAL in 1:1\nmapping modes.",
+"                                    #C(cont...)#C\n                    GRID (3/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. $A button resets it to its position.\n\nThe $X button toggles a green background.\n\nThe $Y button changes the grid type.\n",
 NULL
 };
 char *grid224_txt[] = { 
@@ -141,7 +147,7 @@ char *monoscope_txt[] = {
 "                 MONOSCOPE (1/4)\n\nThe Monoscope Pattern is the traditional tool\nfor calibrating CRTs. This version aims to\nprovide several key elements to ensure you make\ninformed decisions about Convergence and \nDeflection. Refer to your monitor service manual\nfor procedures and safety equipment. \n\n1. #CBrightness Adjustable Pattern#C. Electron Gun\nAlignment, or Convergence, is usually adjusted\nwith a lowered brightness. Full brightness can\nmask issues with excessive bloom, especially \nif your peak white is too high. You can double\ncheck your adjustments against the 30IRE pattern.\n                                         #C(cont...)#C",
 "                 MONOSCOPE (2/4)\n\n2. #CStatic/Center Convergence#C. The center crosshair\nis used to evaluate static or center screen\nconvergence. \n\n3. #CDynamic/Edge#C can be evaluated with the patterns\non the side of the screen.\n\n4. #CCorner Convergence#C, corner purity and corner\ngeometry are tightly linked. Static and Dynamic\nconvergence must be set first before magnets can\nsuccessfully correct corner issues.\n\n\n                                         #C(cont...)#C",
 "                 MONOSCOPE (3/4)\n\n5. #CAspect Ratio#C. A new feature to help set VSIZE\nand HSIZE correctly is the red squares embedded in\nthe pattern. They are calculated to display as\nperfect squares on a properly setup display.\nYou may want to start with a small amount of\nhorizontal overscan, then use a tape measure to\nadjust VSIZE such that the outside edges of the\nred square are the same in width and height.\nThis usually achieves an amount of overscan that\npreserves the Title Safe Area. Some games may not\nadhere to those boundaries, but most do.\n\n\n                                         #C(cont...)#C",
-"                 MONOSCOPE (4/4)\n\n6. #CLinearity#C. Is the hardest part of the deflection\ncircuit. Scrolling tests are the best way to\nconfirm good Linearity but some compensated square\nelements have added to each corner where a tape\nmeasure may help get you started.\n\nYou can press $R and $L buttons to advance in 10 IRE\nsteps in the selected range.\n\n#CPattern designed by Keith Raney#C\n",
+"                 MONOSCOPE (4/4)\n\n6. #CLinearity#C. Is the hardest part of the deflection\ncircuit. Scrolling tests are the best way to\nconfirm good Linearity but some compensated square\nelements have added to each corner where a tape\nmeasure may help get you started.\n\nYou can press $R and $L buttons to advance in 10 IRE\nsteps in the selected range.\n\nYou should target the #Ggreen#G borders on CRTs.\n           White   90%      #GGreen#G 91%\n           #MMagenta#M 95%      #CCyan#C 100%\n\n#CPattern designed by Keith Raney#C",
 NULL
 };
 char *options_txt[] = { 
@@ -186,12 +192,6 @@ char *sharpness_txt[] = {
 "                    SHARPNESS\n\nYou should set the sharpness of your CRT to a\nvalue that shows clean black and gray transitions,\nwith no white ghosting in between.\n\nOn most modern displays, the #Ysharpness#Y control is \nan edge-enhancement control, and most probably\nshould be set to zero, or in the middle.\n\nIn some #YPVM#Y/#YBVM#Y displays this is also referred \nto as #Yaperture#Y.",
 NULL
 };
-char *SMPTEColor_txt[] = { 
-"            EBU/SMPTE COLOR BARS (1/3)\n\nThis pattern can be used to calibrate for NTSC\nlevels regarding contrast and brightness, and \nappropiate colors as well. \n\nYou can toggle between 100% and 75% #YSMPTE#Y color \nbars by pressing $A.\n\nThe #YEBU#Y color bars start at 0mV.\n\nRemember that the black level in the SMPTE pattern\nrefers to 7.5 IRE for video, console games usually\nstart at 0 IRE. This pattern can be used to \ncalibrate colors - or auto calibrated in a \n                                         #C(cont...)#C",
-"            EBU/SMPTE COLOR BARS (2/3)\n\nprofessional display - and then black levels can\nbe adjusted with the PLUGE pattern using the #GFull \nRGB Mode#G.\n\nIn an #YSMPT#YE color bar image, the top two-thirds\nof the television picture contain seven vertical\nbars of 75% intensity. In order from left to\nright, the colors are gray, yellow, cyan, green,\nmagenta, red, and blue. This sequence runs \nthrough all seven possible combinations that use\nat least one of the three basic color components\nof green, red, and blue, with blue cycling on\nand off between every bar, red cycling on and \n                                         #C(cont...)#C",
-"            EBU/SMPTE COLOR BARS (3/3)\n\noff every two bars, and green on for the leftmost\nfour bars and off for the rightmost three.\n\nBelow the main set of seven bars is a strip of \nblue, magenta, cyan, and white castellations. \nWhen a television receiver is set to filter out \nall colors except for blue, these castellations, \ncombined with the main set of color bars, are \nused to properly adjust the color controls; they\nappear as four solid blue bars, with no visible \ndistinction between the bars and the \ncastellations, if the color controls are properly\nadjusted.",
-NULL
-};
 char *sound_txt[] = { 
 "                      SOUND\n\nThis simple test plays a sound in either or both\nchannels.\n\nIt can be used to determine if the audio chain is\nworking properly.\n",
 NULL
@@ -232,6 +232,7 @@ NULL
 
 #define	HELPCOUNT	40
 char **HelpArray[HELPCOUNT] = {
+	SMPTEColor_txt,
 	alt240p_txt,
 	backlit_txt,
 	bleed_txt,
@@ -264,7 +265,6 @@ char **HelpArray[HELPCOUNT] = {
 	pluge_txt,
 	scroll_txt,
 	sharpness_txt,
-	SMPTEColor_txt,
 	sound_txt,
 	striped_txt,
 	stripes_txt,

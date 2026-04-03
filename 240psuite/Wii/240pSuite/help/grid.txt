@@ -5,13 +5,14 @@ all of the 4:3 visible area.
 
 You can use it to verify that all the visible area
 is being displayed, and that there is no distortion
-present. Consumer TVs may not show the red squares.
+present. 
+
+You should target the #Ggreen#G borders on CRTs.
+           White   90%      #GGreen#G 91%
+           #MMagenta#M 95%      #CCyan#C 100%
 
 A 640x480 Grid can be shown in compatible NTSC
-video modes. 
-
-In PAL resolutions, there are also two different 
-grids. 
+video modes. Also available in PAL modes.
 
                                     #C(cont...)#C
                     GRID (2/3)

@@ -57,4 +57,8 @@ measure may help get you started.
 You can press $R and $L buttons to advance in 10 IRE
 steps in the selected range.
 
+You should target the #Ggreen#G borders on CRTs.
+           White   90%      #GGreen#G 91%
+           #MMagenta#M 95%      #CCyan#C 100%
+
 #CPattern designed by Keith Raney#C

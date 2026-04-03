@@ -65,6 +65,7 @@
 #define DISAPHELP		disappear_txt
 
 /* paste from here */
+extern char *SMPTEColor_txt[];
 extern char *alt240p_txt[];
 extern char *backlit_txt[];
 extern char *bleed_txt[];
@@ -97,7 +98,6 @@ extern char *phase_txt[];
 extern char *pluge_txt[];
 extern char *scroll_txt[];
 extern char *sharpness_txt[];
-extern char *SMPTEColor_txt[];
 extern char *sound_txt[];
 extern char *striped_txt[];
 extern char *stripes_txt[];
