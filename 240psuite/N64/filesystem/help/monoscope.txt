@@ -85,5 +85,11 @@ You can press #YR#Y and #YL#Y buttons to
 advance in 10 IRE steps in the
 selected range.
 
+You should target the #Ggreen#G
+borders on CRTs.
+
+   White    90%      #GGreen#G 91%
+   #MMagenta#M  95%      #CCyan#C  100%
+
 Pattern designed by #GKeith Raney#G
-Modified for N64 by #GFirebrandX#G
+

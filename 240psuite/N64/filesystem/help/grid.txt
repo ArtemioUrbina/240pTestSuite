@@ -12,3 +12,9 @@ may not show the red squares.
 
 Different grids are shown for
 every video mode supported.
+
+You should target the #Ggreen#G
+borders on CRTs.
+
+   White    90%      #GGreen#G 91%
+   #MMagenta#M  95%      #CCyan#C  100%
