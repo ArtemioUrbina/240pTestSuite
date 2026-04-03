@@ -42,7 +42,7 @@ void DrawHelp(u16 option)
 		case HELP_GENERAL:
 		case HELP_STRIPES:	
 		case HELP_MONOSCOPE:
-			totalpages = 3;
+			totalpages = 4;
 			break;
 		case HELP_PLUGE:
 		case HELP_MANUALLAG:
@@ -259,14 +259,25 @@ void DrawHelp(u16 option)
 							y++;
 							drawText(3, y++, 7, "You can use it to verify"); 
 							drawText(3, y++, 7, "that all the visible area");
-							drawText(3, y++, 7, "is being displayed, and");
-							drawText(3, y++, 7, "that there is no");
-							drawText(3, y++, 7, "distortion present.");
+							drawText(3, y++, 7, "is being displayed.");
+
 							if(option == HELP_GRID_239)
 							{
 								y++;
 								drawText(3, y++, 7, "The 239 resolution is");
 								drawText(3, y++, 7, "rarely used."); 								
+							}
+							else
+							{
+								y++;
+								drawText(3, y++, 7, "You should target the");
+								drawText(3, y++, 7, "green borders on CRTs.");
+				
+								y++;
+								drawText(5, y, 7, "White 90%");
+								drawText(17, y++, 7, "Green 91%");
+								y++;
+								drawText(10, y++, 7, "Magenta 95%");
 							}
 					break;					
 				case HELP_BLEED:
@@ -344,7 +355,7 @@ void DrawHelp(u16 option)
 					switch(page)
 					{
 						case 1:
-							drawText(3, 4  , 6, "      MONOSCOPE (1/3)"); 
+							drawText(3, 4  , 6, "      MONOSCOPE (1/4)"); 
 							drawText(3, y++, 7, "This pattern contains"); 
 							drawText(3, y++, 7, "elements to calibrate"); 
 							drawText(3, y++, 7, "multiple aspects of a CRT."); 
@@ -352,15 +363,23 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "service manual to learn"); 
 							drawText(3, y++, 7, "how. Use L&R to change."); 
 							y++;
+							drawText(3, y++, 7, "You should target the");
+							drawText(3, y++, 7, "green borders on CRTs.");
+							y++;
+							drawText(5, y, 7, "White 90%");
+							drawText(17, y++, 7, "Green 91%");
+							y++;
+							drawText(10, y++, 7, "Magenta 95%");
+							drawText(20, 22, 4, "(cont...)");	
+							break;
+						case 2:
+							drawText(3, 4  , 6, "      MONOSCOPE (2/4)"); 
 							drawText(3, y++, 5, "Brightness adjustment:"); 
 							drawText(3, y++, 7, "Adjust convergence at low"); 
 							drawText(3, y++, 7, "brightness (e.g. 30 IRE)."); 
 							drawText(3, y++, 7, "An overly bright pattern"); 
 							drawText(3, y++, 7, "can mask bloom issues."); 
-							drawText(20, 22, 4, "(cont...)");	
-							break;
-						case 2:
-							drawText(3, 4  , 6, "      MONOSCOPE (2/3)"); 
+							y++;
 							drawText(3, y++, 5, "Convergence:"); 
 							drawText(3, y++, 7, "Use the center crosshair"); 
 							drawText(3, y++, 7, "to check static (center"); 
@@ -368,16 +387,16 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "Use the patterns at the"); 
 							drawText(3, y++, 7, "sides to check dynamic"); 
 							drawText(3, y++, 7, "(edge) convergence."); 
-							y++;
+							drawText(20, 22, 4, "(cont...)");	
+							break;
+						case 3:
+							drawText(3, 4  , 6, "      MONOSCOPE (3/4)"); 
 							drawText(3, y++, 5, "Corners:"); 
 							drawText(3, y++, 7, "After setting center and"); 
 							drawText(3, y++, 7, "edge convergence, use"); 
 							drawText(3, y++, 7, "magnets to adjust corner"); 
 							drawText(3, y++, 7, "purity and geometry."); 
-							drawText(20, 22, 4, "(cont...)");	
-							break;
-						case 3:
-							drawText(3, 4  , 6, "      MONOSCOPE (3/3)"); 
+							y++;
 							drawText(3, y++, 5, "Size and aspect ratio:"); 
 							drawText(3, y++, 7, "If vertical and horizontal"); 
 							drawText(3, y++, 7, "size are correct, the red"); 
@@ -386,7 +405,10 @@ void DrawHelp(u16 option)
 							drawText(3, y++, 7, "After setting H size, use"); 
 							drawText(3, y++, 7, "a tape measure to adjust"); 
 							drawText(3, y++, 7, "V size to match it."); 
-							y++;
+							drawText(20, 22, 4, "(cont...)");
+							break;
+						case 4:
+							drawText(3, 4  , 6, "      MONOSCOPE (4/4)"); 
 							drawText(3, y++, 5, "Linearity:"); 
 							drawText(3, y++, 7, "The squares in each corner"); 
 							drawText(3, y++, 7, "should get you started."); 

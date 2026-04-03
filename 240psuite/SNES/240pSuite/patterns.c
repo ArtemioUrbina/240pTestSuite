@@ -41,16 +41,16 @@ void DrawGrid()
 		{
 			StartDMA();
 			
-			bgInitTileSetMine(1, &grid_tiles, &grid_pal, 0, (&grid_tiles_end - &grid_tiles), 16*2, BG_16COLORS, 0x4000);	
-			
 			if(type == RES_239)
-			{					
+			{	
+				bgInitTileSetMine(1, &grid240_tiles, &grid_pal, 0, (&grid240_tiles_end - &grid240_tiles), 16*2, BG_16COLORS, 0x4000);					
 				bgInitMapSetMine(1, &grid240_map, (&grid240_map_end - &grid240_map), SC_32x32, 0x1000);
 			
 				Set240pMode();
 			}
 			else
 			{				
+				bgInitTileSetMine(1, &grid_tiles, &grid_pal, 0, (&grid_tiles_end - &grid_tiles), 16*2, BG_16COLORS, 0x4000);	
 				bgInitMapSetMine(1, &grid_map, (&grid_map_end - &grid_map), SC_32x32, 0x1000);
 			
 				Set224pMode();
@@ -69,7 +69,7 @@ void DrawGrid()
 		
 		if(pressed & KEY_START)
 		{
-			if(type)
+			if(type == RES_239)
 			{
 				Set224pMode();
 				DrawHelp(HELP_GRID_239);				
