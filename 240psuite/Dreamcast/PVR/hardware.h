@@ -112,9 +112,13 @@ void ListMapleDevices();
 void MemoryViewer(uint32 address);
 void VMUControllerTest();
 int isLightGunPresent();
+maple_device_t	*isDreameyePresent();
 void LightGunTest();
+void DreameyeTest();
 void MicrophoneTest();
 void ShowBIOSandFlash();
+void DisplayDreameyeImage(maple_device_t *dev, uint16 imageNum);
+void EraseDreameyeImage(maple_device_t *dev, uint16 imageNum);
 
 char *get_flash_region_str(int ver);
 char *get_flash_language_str(int ver);

@@ -264,7 +264,7 @@ void HelpWindow(char *filename, ImagePtr screen)
 			page = 0;
 		if(page != oldpage)
 		{
-			sprintf(vmuMsg, "Page: %d/%d", page + 1, npages);
+			sprintf(vmuMsg, "Page: %d/%d", (uint8_t)page + 1, (uint8_t)npages);
 			oldpage = page;
 			refreshVMU = 1;
 		}

@@ -833,6 +833,8 @@ void AudioTestsMenu(ImagePtr title, ImagePtr sd)
 	return;
 }
 
+#define HW_POPUP_OFFSET 3.4
+
 void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 {
 	int 			done = 0, sel = 1, joycnt = 0;
@@ -880,6 +882,14 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		{
 			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Microphone Test"); y += fh; c++;    
 		}
+		if(isDreameyePresent())
+		{
+			DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Dreameye Test"); y += fh; c++;    
+		}
+		else
+		{
+			DrawStringS(x, y, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, sel == c ? 0.5f : 0.7f, "Dreameye Test"); y += fh; c++;    
+		}
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "BIOS and Flashrom data"); y += fh; c++; 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Show ISP Data"); y += fh; c++; 
 		DrawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Memory Viewer"); y += fh; c++; 
@@ -892,23 +902,29 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 		if(sel == 3 && !isVMUPresent())
 		{
 			if(isMemCardPresent())
-				DrawStringS(x-15, y + 3*fh, 0.8f, 0.8f, 0.8f,
+				DrawStringS(x-15, y + HW_POPUP_OFFSET*fh, 0.8f, 0.8f, 0.8f,
 					"You need a VMU with LCD to use this test");
 			else
-				DrawStringS(x-15, y + 3*fh, 0.8f, 0.8f, 0.8f,
+				DrawStringS(x-15, y + HW_POPUP_OFFSET*fh, 0.8f, 0.8f, 0.8f,
 					"You need a VMU to use this test");
 		}
 		
 		if(sel == 4 && !isLightGunPresent())
 		{
-			DrawStringS(x-15, y + 3*fh, 0.8f, 0.8f, 0.8f,
+			DrawStringS(x-15, y + HW_POPUP_OFFSET*fh, 0.8f, 0.8f, 0.8f,
 				"You need a Light Gun to use this test");
 		}
 		
 		if(sel == 5 && !isSIPPresent())
 		{
-			DrawStringS(x-15, y + 3*fh, 0.8f, 0.8f, 0.8f,
+			DrawStringS(x-15, y + HW_POPUP_OFFSET*fh, 0.8f, 0.8f, 0.8f,
 				"You need a Microphone to use this test");
+		}
+
+		if(sel == 6 && !isDreameyePresent())
+		{
+			DrawStringS(x-15, y + HW_POPUP_OFFSET*fh, 0.8f, 0.8f, 0.8f,
+				"You need a Dreameye to use this test");
 		}
 		
 		EndScene();
@@ -958,25 +974,29 @@ void HardwareTestsMenu(ImagePtr title, ImagePtr sd)
 						MicrophoneTest();
 					break;
 				case 6:
-					ShowBIOSandFlash();
+					if(isDreameyePresent())
+						DreameyeTest();
 					break;
 				case 7:
-					Show_ISP_Data();
+					ShowBIOSandFlash();
 					break;
 				case 8:
-					MemoryViewer(0);
+					Show_ISP_Data();
 					break;
 				case 9:
-					done = 1;
+					MemoryViewer(0);
 					break;
 				case 10:
-					ShowMenu(GENERALHELP);
+					done = 1;
 					break;
 				case 11:
+					ShowMenu(GENERALHELP);
+					break;
+				case 12:
 					HelpWindow(GENERALHELP, title);
 					break;
 #ifdef TEST_VIDEO
-				case 12:
+				case 13:
 					TestVideoMode(vmode);
 					break;
 #endif

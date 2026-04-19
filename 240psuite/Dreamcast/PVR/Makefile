@@ -7,6 +7,20 @@ all: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST
 all: LDFLAGS = -lfftw3 -ljpeg
 all: $(TARGET).bin
 
+#Release without FFTW
+nofft: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW
+nofft: LDFLAGS = -ljpeg 
+nofft: $(TARGET).bin
+
+#Release without DreamEye display
+node: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_DREAMEYE_DISP
+node: LDFLAGS = -lfftw3
+node: $(TARGET).bin
+
+#Release without FFTW or DreamEye display
+nofftorde: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DNO_DREAMEYE_DISP
+nofftorde: $(TARGET).bin
+
 # ===========================================================================
 
 #DCLOAD debug compile (exit to dcloader)
@@ -34,20 +48,6 @@ nofftordeserial: $(TARGET).bin
 
 # ===========================================================================
 
-#Release without FFTW
-nofft: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW
-nofft: LDFLAGS = -ljpeg
-nofft: $(TARGET).bin
-
-#Release without DreamEye display
-node: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_DREAMEYE_DISP
-node: LDFLAGS = -lfftw3
-node: $(TARGET).bin
-
-#Release without FFTW or DreamEye display
-nofftorde: CFLAGS = $(OPT) -fomit-frame-pointer -DDREAMCAST -DNO_FFTW -DNO_DREAMEYE_DISP
-nofftorde: $(TARGET).bin
-
 KOS_CFLAGS+= $(CFLAGS) 
 
 include $(KOS_BASE)/Makefile.rules
@@ -63,7 +63,7 @@ include $(KOS_BASE)/Makefile.rules
             vmu_print.c \
             controller.c \
             hardware.c \
-			sound.c \
+            sound.c \
             vmufs.c \
             vmu.c \
             menu.c \
@@ -78,7 +78,7 @@ HEADERS	=\
             vmu_print.h \
             controller.h \
             hardware.h \
-			sound.h \
+            sound.h \
             vmufs.h \
             vmu.h \
             menu.h \

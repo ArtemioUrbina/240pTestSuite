@@ -577,20 +577,24 @@ int rumble_puru(maple_device_t *dev, int type)
 {
 	if(!(dev->info.functions & MAPLE_FUNC_PURUPURU))
 		return 0;
-	
-	// Functions from the "performance" and official rumble
-	if(dev->info.function_data[0] & 0x00000001)	
-	{
-		purupuru_effect_t	effect;
-		
-		effect.duration = 20;
-		effect.effect2 = PURUPURU_EFFECT2_UINTENSITY(1)|PURUPURU_EFFECT2_LINTENSITY(1);
-		effect.effect1 = PURUPURU_EFFECT1_INTENSITY(7);
-		if(type)
-			effect.special = PURUPURU_SPECIAL_MOTOR1;
-		else
-			effect.special = PURUPURU_SPECIAL_MOTOR2;
-		return(purupuru_rumble(dev, &effect) == MAPLE_EOK);
+
+	if (dev->info.function_data[0] & 0x00000001) {
+		purupuru_effect_t effect = {0};
+
+		effect.cont = true;
+		effect.motor = 1;
+		effect.fpow = 5;			 // Forward direction intensity (0-7)
+		effect.bpow = 5;			 // Backward direction intensity (0-7)
+		effect.freq = 40;			 // Set vibration frequency (4-59)
+		effect.inc = 5; 			 // Set vibration inclination period (arbitrary)
+
+		if (type) {
+			effect.div = 1; 		 // Divergent vibration
+		} else {
+			effect.conv = 1;		 // Convergent vibration
+		}
+
+		return (purupuru_rumble(dev, &effect) == MAPLE_EOK);
 	}
 	
 	// Functions from the Fishing Rod

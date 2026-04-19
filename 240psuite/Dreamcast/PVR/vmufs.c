@@ -774,7 +774,7 @@ int LoadMemCardSave(char *error, int forceLoad)
 
 	vmufs_shutdown ();
 
-	if(vmu_pkg_parse(pkg_in, &pkg) != 0)
+	if(vmu_pkg_parse(pkg_in, pkg_size, &pkg) != 0)
 	{
 		free(pkg_in);
 		vmufs_delete (vmu, VMU_NAME);

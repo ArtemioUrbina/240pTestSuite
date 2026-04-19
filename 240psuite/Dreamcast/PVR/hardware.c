@@ -51,10 +51,8 @@ void ReduceName(char *target, char *source, int truncate)
 	int len = 0;
 	
 	target[0] = '\0';
-	len = strlen(source);
-	if(len > PNAME_SIZE)					// limit product name to 30 chars
-		len = PNAME_SIZE;
-
+	len = strnlen(source, PNAME_SIZE);
+	
 	if(!len || len == 1)
 		return;
 
@@ -1071,7 +1069,7 @@ int maple_device_scan(float x, float y, int selected)
 		{
 			if(maple_dev_valid(port, unit))
 			{
-				dev = &maple_state.ports[port].units[unit];
+				dev = maple_state.ports[port].units[unit];
 				count ++;
 				if(unit == 0)
 				{
@@ -1259,7 +1257,7 @@ static void vbl_send_allinfo(int p, int u) {
 	/* Reserve access; if we don't get it, forget about it */
 	do
 	{	
-		dev = &maple_state.ports[p].units[u];
+		dev = maple_state.ports[p].units[u];
 		if(maple_frame_lock(&dev->frame) == 0)
 		{
 			maple_locked_device = 1;
@@ -1356,7 +1354,7 @@ void print_device_allinfo(maple_device_t *dev, int extra)
 	{
 		// the value is updated inside an interrupt
 		// can't use semaphores or mutex, but it is safe exactly because of that
-		timer_spin_sleep(10);
+		thd_sleep(10);
 		timeout ++;
 	}while(maple_command_finish_wait == 0 && timeout < 80);
 	
@@ -1447,7 +1445,157 @@ void cleanDisplayBuffer()
 	Standby power: 0x07d0 (2000mW) Max: 0x0960 (2400mW)
 */
 
-void DisplayDreameyeImage(maple_device_t *dev)
+maple_device_t	*isDreameyePresent()
+{
+	return maple_enum_type(0, MAPLE_FUNC_CAMERA);
+}
+
+uint16 getDreameyeImageCount()
+{
+	maple_device_t		*dev = NULL;  
+	dreameye_state_t 	*state = NULL;
+	
+	dev = maple_enum_type(0, MAPLE_FUNC_CAMERA);
+	if(!dev)
+		return 0;
+	
+	if(dreameye_get_image_count(dev, 1) != MAPLE_EOK)
+		return 0;
+	
+	state = (dreameye_state_t *)maple_dev_status(dev);
+	if(!state->image_count_valid)
+		return 0;
+	return(state->image_count);
+}
+
+void DreameyeTest()
+{
+	int 				done = 0, sel = 0;
+	uint16				pressed, numImages = 0;		
+	ImagePtr			back;
+	controller			*st;
+	maple_device_t		*dev = NULL;
+	char				*vmuMsg = "", buffer[100];
+
+	back = LoadIMG("/rd/back.kmg.gz", 0);
+	if(!back)
+		return;
+	
+	numImages = getDreameyeImageCount();
+	while(!done && !EndProgram) 
+	{
+		StartScene();
+		DrawImage(back);
+
+		DrawStringSCentered(60, 0.0f, 1.0f, 0.0f, "Dreameye Test"); 
+		if(numImages)
+		{
+			int y = 80;
+
+			for(int i = 0; i < numImages; i++)
+			{
+				sprintf(buffer, "View Photo %2d", i+1);
+				DrawStringSCentered(y+i*fh, 1.0f, sel == i ? 0 : 1.0f, sel == i ? 0 : 1.0f, buffer);
+			}
+		}
+		DrawStringSCentered(200, 0.0f, 1.0f, 1.0f, "Press Y to erase image"); 
+		EndScene();
+		
+		VMURefresh("Dreameye", vmuMsg);
+
+		dev = isDreameyePresent();
+		if(!dev)
+			done = 1;
+
+		st = ReadController(0, &pressed);
+		if(st)
+		{
+			if (pressed & CONT_B)
+				done =	1;
+
+			if (pressed & CONT_A)
+				DisplayDreameyeImage(dev, sel+1);
+
+			if (pressed & CONT_Y)
+			{
+				EraseDreameyeImage(dev, sel+1);
+				numImages = getDreameyeImageCount();
+			}
+			if (pressed & CONT_DPAD_UP)
+				sel --;
+
+			if (pressed & CONT_DPAD_DOWN)
+				sel ++;
+
+			if(sel > numImages - 1)
+				sel = 0;
+		
+			if(sel < 0)
+				sel = numImages - 1;
+
+			if (pressed & CONT_START)
+			{
+				ShowMenu(SOUNDHELP);
+				//prevSel = -1;
+			}
+		}
+		
+		//refreshVMU = 1;
+	}
+	
+	FreeImage(&back);
+
+}
+
+void EraseDreameyeImage(maple_device_t *dev, uint16 imageNum)
+{
+	char	msg[100];
+	
+	if(!dev)
+		return;
+		
+	if(!(dev->info.functions & MAPLE_FUNC_CAMERA))
+		return;
+	
+	if(dreameye_get_image_count(dev, 1) == MAPLE_EOK)
+	{
+		dreameye_state_t 	*state = NULL;
+		int 				num = 0;
+
+		state = (dreameye_state_t *)maple_dev_status(dev);
+		if(!state->image_count_valid)
+		{
+			sprintf(msg, "Dreameye at %c-%c has an invalid image count", 
+					'A'+(dev->port), '0'+(dev->unit));
+			DrawMessage(msg);
+			return;
+		}
+		num = state->image_count;
+		if(num == 0)
+		{
+			sprintf(msg, "Dreameye at %c-%c has no images", 
+				'A'+(dev->port), '0'+(dev->unit));
+			DrawMessage(msg);
+			return;
+		}
+
+		sprintf(msg, "Really erase photo %u from Dreameye at %c-%c?", 
+			imageNum, 'A'+(dev->port), '0'+(dev->unit));
+
+		if(AskQuestion(msg))
+		{
+			if(dreameye_erase_image(dev, imageNum+1, 1) == MAPLE_EOK)
+				sprintf(msg, "Erased image %u at %c-%c", 
+					imageNum, 'A'+(dev->port), '0'+(dev->unit));
+			else
+				sprintf(msg, "Could not erase image %u at %c-%c", 
+					imageNum, 'A'+(dev->port), '0'+(dev->unit));
+			DrawMessage(msg);	
+		}
+	}
+}
+
+void DisplayDreameyeImage(maple_device_t *dev, uint16 imageNum)
 {
 	char	msg[100];
 	
@@ -1466,14 +1614,6 @@ void DisplayDreameyeImage(maple_device_t *dev)
 		int 				size = 0;
 #endif
 		state = (dreameye_state_t *)maple_dev_status(dev);
-		if(dreameye_get_image_count(dev, 1) != MAPLE_EOK)
-		{
-			sprintf(msg, "Dreameye at %c-%c did not report images", 
-				'A'+(dev->port), '0'+(dev->unit));
-			DrawMessage(msg);
-			return;
-		}
-	
 		if(!state->image_count_valid)
 		{
 			sprintf(msg, "Dreameye at %c-%c has an invalid image count", 
@@ -1500,11 +1640,11 @@ void DisplayDreameyeImage(maple_device_t *dev)
 			return;
 		}
 
-		sprintf(msg, "Loading image 1/%d from Dreameye at %c-%c", 
-			num, 'A'+(dev->port), '0'+(dev->unit));
+		sprintf(msg, "Loading image %u/%d from Dreameye at %c-%c", 
+			imageNum, num, 'A'+(dev->port), '0'+(dev->unit));
 		DrawMessageOnce(msg);
 
-		if(dreameye_get_image(dev, 2, &buf, &size) == MAPLE_EOK)
+		if(dreameye_get_image(dev, imageNum+1, &buf, &size) == MAPLE_EOK)
 		{
 			char fn[100];
 			int id = rand() % 99999;
@@ -1533,13 +1673,13 @@ void DisplayDreameyeImage(maple_device_t *dev)
 						if(st)
 						{
 							if ( pressed & CONT_DPAD_UP )
-								img->y --;
+								img->y -= 4;
 							if ( pressed & CONT_DPAD_DOWN )
-								img->y ++;
+								img->y += 4;
 							if ( pressed & CONT_DPAD_LEFT )
-								img->x --;
+								img->x -= 4;
 							if ( pressed & CONT_DPAD_RIGHT )
-								img->x ++;
+								img->x += 4;
 							if (pressed & CONT_B)
 								done =	1;
 						}
@@ -1740,7 +1880,7 @@ void ListMapleDevices()
 								useMotor1 ? 1 : 2);
 						DrawMessageOnce(dev_msg);
 						if(rumble_puru(dev, useMotor1))
-							timer_spin_sleep(500);
+							thd_sleep(500);
 						else
 							DrawMessage("Rumble effect failed");
 						stop_puru(dev);
@@ -1754,7 +1894,7 @@ void ListMapleDevices()
 								'A'+(dev->port), '0'+(dev->unit));
 							DrawMessageOnce(dev_msg);
 							vmu_beep_raw(dev, 0x65f0);
-							timer_spin_sleep(800);
+							thd_sleep(800);
 							vmu_beep_raw(dev, 0);
 						}
 						else
@@ -1763,14 +1903,14 @@ void ListMapleDevices()
 								'A'+(dev->port), '0'+(dev->unit));
 							DrawMessageOnce(dev_msg);
 							updateVMU_SD_Dev(dev);
-							timer_spin_sleep(1000);
+							thd_sleep(1000);
 							clearVMUGraphicDev(dev);  // it may not be the only one
 							refreshVMU = 1;
 						}
 					}
 					
 					if(dev->info.functions & MAPLE_FUNC_CAMERA && dev->unit == 1)
-						DisplayDreameyeImage(dev);
+						DisplayDreameyeImage(dev, 1);
 				}
 			}
 
@@ -1842,7 +1982,7 @@ int check_for_bad_lcd()
 	{
 		// the value is updated inside an interrupt
 		// can't use semaphores or mutex, but it is safe exactly because of that
-		timer_spin_sleep(10);
+		thd_sleep(10);
 		timeout ++;
 	}while(maple_command_finish_wait == 0 && timeout < 80);
 	
@@ -2092,8 +2232,13 @@ BIOSID *GetBIOSNamebyCRC(uint32_t checksum)
 
 void CopyBIOSVersion(char *bios_version)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#pragma GCC diagnostic ignored "-Wstringop-overread"
 	memcpy(bios_version, (void*)0x07CC, sizeof(char)*5);
-	bios_version[6] = '\0';
+	bios_version[5] = '\0';
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 }
 
 void printflashromdata(int ver)
@@ -2996,7 +3141,7 @@ void MicrophoneTest()
 				if(sipretval == MAPLE_EAGAIN)
 				{
 					retries	++;
-					timer_spin_sleep(10);
+					thd_sleep(10);
 				}
 				else if(sipretval != MAPLE_EOK)
 					dbglog(DBG_ERROR, "Got %d from sip_stop_sampling\n", sipretval);
@@ -3226,7 +3371,7 @@ void LightGunTest()
 		{
 			if(dev)
 			{
-				timer_spin_sleep(10);
+				thd_sleep(10);
 				maple_gun_enable(dev->port);
 			}
 		}
@@ -3386,7 +3531,7 @@ void LightGunTest()
 			
 			if(dev)
 			{
-				timer_spin_sleep(10);
+				thd_sleep(10);
 				maple_gun_read_pos(&x, &y);
 				if(oldx != x || oldy != y)
 				{
@@ -3499,7 +3644,7 @@ void LightGunTest()
 			polling_active = 1;
 			frame = 0;
 			lg_state = 0;
-			timer_spin_sleep(10);
+			thd_sleep(10);
 		}
 		
 		VMURefresh("Light Gun", "");

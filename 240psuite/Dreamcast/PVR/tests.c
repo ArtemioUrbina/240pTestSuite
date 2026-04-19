@@ -2042,7 +2042,8 @@ void Alternate240p480i()
 			(IsPAL ? "288" : "240p") : (IsPAL ? "576i" : "480i"));
 		DrawString(180, 8, 1.0, 1.0f, 1.0, "Press 'Start' for help");
 
-		sprintf(buffer, "%02d:%02d:%02d:%02d", hours, minutes, seconds, frames);
+		sprintf(buffer, "%02d:%02d:%02d:%02d",
+			(uint8_t)hours, (uint8_t)minutes, (uint8_t)seconds, (uint8_t)frames);
 		DrawString(32, 32, 1.0, 1.0, 1.0, "Elapsed Timer:");
 		DrawString(140, 32, 1.0, 1.0, 1.0, buffer);
 

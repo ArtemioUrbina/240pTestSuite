@@ -1375,7 +1375,7 @@ void DrawMonoscope()
 	uint16		pressed;		
 	ImagePtr	back = NULL, rlines = NULL, black = NULL;
 	controller	*st = NULL;
-	char		vmumsg[5];
+	char		vmumsg[10];
 
 	black = LoadIMG("/rd/black.kmg.gz", 1);
 	if(!black)
@@ -1463,7 +1463,7 @@ void DrawMonoscope()
 			if(back)
 			{
 				IgnoreOffset(back);
-				sprintf(vmumsg, "  %3d%%", FLOAT_TO_INT(back->alpha*100.0f));
+				sprintf(vmumsg, "  %3d%%", (uint8_t)FLOAT_TO_INT(back->alpha*100.0f));
 				refreshVMU = 1;
 			}
 			if(rlines)
@@ -2056,7 +2056,7 @@ hcfr_file *listCSVFiles(char *path, int *num_files)
 {
 	int			filecount = 0, maxlen = 0, i = 0;
 	file_t		d;
-	dirent_t 	*dir;
+	const dirent_t 	*dir;
 	hcfr_file	*filenames = NULL;
 	
 	if(!num_files)

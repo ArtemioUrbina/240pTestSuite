@@ -840,7 +840,7 @@ void DrawSIPScreen(ImagePtr back, ImagePtr wave, char *Status, int accuracy, dou
 	int		i = 0;
 	char	DPres[40];
 	char	Header[40];
-	char	Res[40];
+	char	Res[100];
 	char	sr[40];
 
 	StartScene();
@@ -1242,7 +1242,7 @@ void SIPLagTest()
 				}
 				if(value >= 0)
 				{
-					char vmtext[10];
+					char vmtext[20];
 
 					sprintf(DStatus, "Lag is #C%g#C frames\n       #C%0.2f#C ms",
 						value, value*(IsPAL ? PAL_FRAME_LEN : NTSC_FRAME_LEN));
@@ -1290,7 +1290,7 @@ void SIPLagTest()
 			if(sipretval == MAPLE_EAGAIN)
 			{
 				retries	++;
-				timer_spin_sleep(10);
+				thd_sleep(10);
 			}
 			else if(sipretval != MAPLE_EOK)
 				dbglog(DBG_ERROR, "Got %d from sip_stop_sampling\n", sipretval);
