@@ -29,9 +29,9 @@
 #include "help.h"
 #include "controller.h"
 
-#define VERSION_NUMBER "N64 0.92B"
+#define VERSION_NUMBER "N64 0.94 RC"
 #ifndef VERSION_DATE
-#define VERSION_DATE "2026/02/13"
+#define VERSION_DATE "2026/04/27"
 #endif
 
 void checkMenu(char *help, int *reload);

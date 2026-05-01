@@ -756,7 +756,7 @@ void drawIntro() {
 	cancel = drawSplash("rom:/libdragon.sprite", cancel ? 0 : LOGO_HOLD, 16);
 	cancel = drawSplash("rom:/tiny3d.sprite", cancel ? 0: LOGO_HOLD, 16);
 	
-	drawMessageBox("This is a release candidate\nPlease send any feedback\nor comment to improve it.");
+	drawMessageBox("This is a release candidate\nPlease send any feedback\nor comment to improve it.\n\nhttps://junkerhq.net/240p");
 	if(isPAL) {
 		drawMessageBox("PAL console detected\n\nThe Suite will run in PAL\nbut Monoscope and Grid are NTSC.");
 	}
