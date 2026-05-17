@@ -310,7 +310,7 @@ void drawAudioTestDicrete() {
 	mixer_init(ST_CHANNELS);
 	
 	mixer_ch_set_vol_dolby(0, 1, 0, 0, 0, 0);
-	mixer_ch_set_vol_dolby(1, 1, 1, 0, 0, 0);
+	mixer_ch_set_vol_dolby(1, 0, 0, 1, 0, 0);
 	mixer_ch_set_vol_dolby(2, 0, 1, 0, 0, 0);
 	
 	while(!end) {
