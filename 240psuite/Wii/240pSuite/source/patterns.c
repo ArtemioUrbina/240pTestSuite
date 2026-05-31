@@ -694,27 +694,30 @@ void DrawColorBleed()
 void GridSelect()
 {
 	int sel = 1, res = MENU_CANCEL;
-	fmenudata resmenudata[] = { {1, "Full Grid"}, {2, "Genesis 224"}, {3, "SNES 224"} };
+	fmenudata resmenudata[] = { {1, "Full Grid"}, {2, "Genesis 224"}, {3, "SNES 224"}, {4, "Old Grid"} };
 
 	if(vmode != VIDEO_240P)
 	{
-		DrawGrid();
+		DrawGrid(0);
 		return;
 	}
 	
 	do
 	{
-		sel = SelectMenu("Select Grid", resmenudata, 3, sel);
+		sel = SelectMenu("Select Grid", resmenudata, 4, sel);
 		switch(sel)
 		{
 			case 1:
-				res = DrawGrid();
+				res = DrawGrid(0);
 				break;
 			case 2:
 				res = DrawGrid224(1);
 				break;
 			case 3:
 				res = DrawGrid224(0);
+				break;
+			case 4:
+				res = DrawGrid(1);
 				break;
 			case MENU_CANCEL:
 			default:
@@ -725,7 +728,7 @@ void GridSelect()
 	}while(res != MENU_CANCEL);
 }
 
-int DrawGrid()
+int DrawGrid(int oldGrid)
 {
 	int 		done = 0, oldvmode = vmode, text = 0, bggreen = 0;
 	u32			pressed;		
@@ -781,7 +784,7 @@ int DrawGrid()
 			
 			if(!back)
 			{
-				back = LoadImage(GRIDIMG, 0);
+				back = LoadImage(oldGrid ? GRIDOLDIMG : GRIDIMG, 0);
 				if(!back)
 					return retval;
 			}
@@ -806,7 +809,7 @@ int DrawGrid()
 		
 		pressed = Controller_ButtonsDown(0);
 		
-		if (pressed & PAD_BUTTON_B)
+		if ( pressed & PAD_BUTTON_B)
 			done =	1;
 	
 		if ( pressed & PAD_BUTTON_START )

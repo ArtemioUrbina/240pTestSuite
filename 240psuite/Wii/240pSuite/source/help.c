@@ -102,7 +102,7 @@ NULL
 char *grid_txt[] = { 
 "                    GRID (1/3)\n\nThis grid uses a 320x240 pattern, and should fill\nall of the 4:3 visible area. \n\nYou can use it to verify that all the visible area\nis being displayed, and that there is no distortion\npresent. \n\nYou should target the #Ggreen#G borders on CRTs.\n           White   90%      #GGreen#G 91%\n           #MMagenta#M 95%      #CCyan#C 100%\n\nA 640x480 Grid can be shown in compatible NTSC\nvideo modes. Also available in PAL modes.\n",
 "                                    #C(cont...)#C\n                    GRID (2/3)\n\nIn the 288p PAL video, only 264 are visible lines.\nSince 264 is not an exact multiple of 16, there is\na centered line of smaller blue rectangles. \n\nIn 576i unscaled 1:1 mode, a full 640x528 grid is\nshown. You can also use the 576i stretched option \nto fill the whole screen at the cost of 1:1 pixel \nmapping.\n\nThe 240 test suite draws from line 22 onwards from \nthe blanking interval of NTSC signals, and line 23\nfor PAL. You can adjust this value for PAL in 1:1\nmapping modes.",
-"                                    #C(cont...)#C\n                    GRID (3/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. $A button resets it to its position.\n\nThe $X button toggles a green background.\n\nThe $Y button changes the grid type.\n",
+"                                    #C(cont...)#C\n                    GRID (3/3)\n\nThe d-pad can be used to move the grid around the\nvideo signal. $A button resets it to its position.\n\nThe $X button toggles a green background.\n\nThe $Y button changes the grid type.\n\nThe old grid is presented for those that don't\nmind NTSC geometry.\n",
 NULL
 };
 char *grid224_txt[] = { 

@@ -28,7 +28,7 @@ void DrawGrayRamp();
 void DrawColorBars();
 void DrawColorBleed();
 void Draw601ColorBars();
-int DrawGrid();
+int DrawGrid(int oldGrid);
 int DrawGrid224(int GenesisVersion);
 void GridSelect();
 void DrawMonoscope();
