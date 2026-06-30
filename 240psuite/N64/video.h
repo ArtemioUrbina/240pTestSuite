@@ -24,6 +24,8 @@
 
 // Measured with scope and get_ticks_us() 
 #define N64_NTSC_FRAME_LEN 16.715f
+// To be checked
+#define N64_PAL_FRAME_LEN 20.0f
 
 #define SUITE_320x240	0
 #define SUITE_640x480	1

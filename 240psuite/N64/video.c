@@ -87,8 +87,14 @@ void drawFrameLens() {
 	if(__frameLen > __maxFrameLen)
 		__maxFrameLen = __frameLen;
 	
-	if(__frameIdle > IDLE_WARN_MS || __frameLen > N64_NTSC_FRAME_LEN)
-		warn = 1;
+	if(is50Hz()) {
+		if(__frameIdle > IDLE_WARN_MS || __frameLen > N64_PAL_FRAME_LEN)
+			warn = 1;
+	}
+	else {
+		if(__frameIdle > IDLE_WARN_MS || __frameLen > N64_NTSC_FRAME_LEN)
+			warn = 1;
+	}
 	
 	sprintf(str, "ALL:%0.1f/%0.1f IDL:%0.1f/%0.1f VBL:%0.1f", 
 		__frameLen, __maxFrameLen, __frameIdle, __minIdle, __vblLen);
@@ -169,7 +175,6 @@ void _internalWaitVsyncWithAudio() {
 	assertf(__disp == NULL, "_internalWaitVsync(): disp is not NULL");
 	
 	__idleStart = get_ticks_us();
-	idleRest = N64_NTSC_FRAME_LEN - (__idleStart - __frameStart)/1000.0f;
 	
 	/*
 	 * To achieve perfect sync, call #mixer_throttle every time a video frame
@@ -179,10 +184,14 @@ void _internalWaitVsyncWithAudio() {
 	 * audio samples per video frame.
 	 */
 	
-	if(is50Hz())
+	if(is50Hz()) {
+		idleRest = N64_PAL_FRAME_LEN - (__idleStart - __frameStart)/1000.0f;
 		mixer_throttle(44100.0f/50.0f);
-	else
+	}
+	else {
+		idleRest = N64_NTSC_FRAME_LEN - (__idleStart - __frameStart)/1000.0f;
 		mixer_throttle(44100.0f/(1000.0f/N64_NTSC_FRAME_LEN));
+	}
 	
 	while (nextFrame > __frames) {
 		if(idleRest > MAX_AUDIO_WAIT) {
