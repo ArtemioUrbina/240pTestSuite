@@ -75,6 +75,7 @@ void changeTo16BitDepthOnVBlankNC();
 void changeTo32BitDepthOnVBlankNC();
 int isVMode256();
 int isVMode480();
+int isResolution480Class(resolution_t *res);
 
 void setVideoInternal(resolution_t newRes);
 

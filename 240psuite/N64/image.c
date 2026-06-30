@@ -479,15 +479,30 @@ void rdpqUpscalePrepareFB() {
 }
 
 int createUpscaleFB() {
-	if(__upscale_fb || !__disp)
+	if(!__disp)
 		return 0;
-	
+
+	unsigned int neededW = __disp->width/2;
+	unsigned int neededH = __disp->height/2;
+	tex_format_t neededFmt = surface_get_format(__disp);
+
+	if(__upscale_fb) {
+		if(__upscale_fb->width == neededW && __upscale_fb->height == neededH &&
+			surface_get_format(__upscale_fb) == neededFmt)
+			return 1;
+
+		// mismatch
+		surface_free(__upscale_fb);
+		free(__upscale_fb);
+		__upscale_fb = NULL;
+	}
+
 	__upscale_fb = (surface_t *)malloc(sizeof(surface_t));
 	if(!__upscale_fb)
 		return 0;
 	memset(__upscale_fb, 0, sizeof(surface_t));
 
-	*__upscale_fb = surface_alloc(surface_get_format(__disp), __disp->width/2, __disp->height/2);
+	*__upscale_fb = surface_alloc(neededFmt, neededW, neededH);
 	if(!__upscale_fb->buffer) {
 		free(__upscale_fb);
 		__upscale_fb = NULL;

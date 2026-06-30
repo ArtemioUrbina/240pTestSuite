@@ -266,7 +266,8 @@ void setVideoInternal(resolution_t newRes) {
 	if(videoSet) {
 		disable_interrupts();
 		freeMenuFB();				// comment this one out to get "improper" resolution backgrounds for menu
-		freeUpscaleFB();
+		if(!isResolution480Class(&newRes) || current_bitdepth != __newInternalBPPChange)
+			freeUpscaleFB();
 		enable_interrupts();
 		
 		_internalWaitVsync();
@@ -372,6 +373,20 @@ int isVMode256() {
 	if(vMode == SUITE_256x288)
 		return 1;
 	if(vMode == SUITE_512x576)
+		return 1;
+	return 0;
+}
+
+
+int isResolution480Class(resolution_t *res) {
+	int mode = videoModeToInt(res);
+	if(mode == SUITE_640x480)
+		return 1;
+	if(mode == SUITE_512x480)
+		return 1;
+	if(mode == SUITE_640x576)
+		return 1;
+	if(mode == SUITE_512x576)
 		return 1;
 	return 0;
 }

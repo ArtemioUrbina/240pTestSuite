@@ -627,8 +627,11 @@ void drawGrid() {
 	
 	for(unsigned int res = 0; res < NUM_RES; res ++) {
 		back[res] = loadImage(grids[res]);
-		if(!back[res])
+		if(!back[res]) {
+			for(unsigned int i = 0; i < res; i++)
+				freeImage(&back[i]);
 			return;
+		}
 	}
 	
 	if(back[2])
