@@ -130,9 +130,7 @@ void draw_text(int x, int y, const char *fmt, ...) {
     T3DModelIter it = t3d_model_iter_create(models[m], T3D_CHUNK_TYPE_OBJECT);
     while(t3d_model_iter_next(&it)) {
       rspq_block_begin();
-      t3d_model_draw_object(it.object, NULL);
-      // the object struct offers a 'userBlock' for recording, this is automatically freed when the t3dm object is freed
-      // if you need to manually free it, make sure to set it back to NULL afterward
+      t3d_model_draw_object(it.object, NULL);      
       it.object->userBlock = rspq_block_end();
     }
   }
@@ -381,6 +379,8 @@ void draw_text(int x, int y, const char *fmt, ...) {
   setClearScreen();
   waitVsync();
 
+  for(int m=0; m<MODEL_COUNT; ++m)
+    t3d_model_free(models[m]);
   free_uncached(modelMatFP);
   t3d_destroy();
   
