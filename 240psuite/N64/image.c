@@ -124,7 +124,7 @@ void rdpqDrawImage(image* data) {
 		}
 	}
 
-	if(!data->flipH && !data->flipH && !data->rotate) {
+	if(!data->flipH && !data->flipV && !data->rotate) {
 		rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
 	}
 	else if(data->rotate) {
@@ -164,7 +164,7 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
 	
-	if(!data->flipH && !data->flipH) {
+	if(!data->flipH && !data->flipV) {
 		rdpq_sprite_blit(data->tiles, x, y, NULL);
 	}
 	else {
@@ -221,9 +221,9 @@ void rdpqFillWithImageXY(image* data, float x, float y) {
 			rdpq_detach();
 	}
 	else {
-		for(unsigned int y = 0; y < getDispHeight(); y += data->tiles->height) {
-			for(unsigned int x = 0; x < getDispWidth(); x += data->tiles->width)
-				rdpqDrawImageXY(data, x, y);
+		for(unsigned int ty = 0; ty < getDispHeight(); ty += data->tiles->height) {
+			for(unsigned int tx = 0; tx < getDispWidth(); tx += data->tiles->width)
+				rdpqDrawImageXY(data, tx + x, ty + y);
 		}
 	}
 }
@@ -508,6 +508,7 @@ void freeUpscaleFB() {
 		__disp = __real_disp;
 		__real_disp = NULL;
 	}
+	menuIgnoreUpscale = 0; 
 }
 
 void executeUpscaleFB() {
@@ -693,7 +694,8 @@ int drawSplash(char *name, int delay, int paleteSize) {
 	logo->center = true;
 	if(getDispHeight() > 288 && logo->tiles->height > 240)
 		logo->scale = 0;
-	logo->palSize = paleteSize;
+	if(paleteSize > 0 && paleteSize < logo->palSize)
+		logo->palSize = paleteSize;
 	
 	if(!delay)
 		cancel = 1;
