@@ -521,17 +521,3 @@ void changeTo16BitDepthOnVBlank() {
 	resetResIfNeeded();
 }
 
-void changeTo32BitDepthOnVBlankNC() {
-	if(current_bitdepth == DEPTH_32_BPP)
-		return;
-	__newInternalBPPChange = DEPTH_32_BPP;
-	__changeInternalBPP = 1;
-}
-
-void changeTo16BitDepthOnVBlankNC() {
-	if(current_bitdepth == DEPTH_16_BPP)
-		return;
-	__newInternalBPPChange = DEPTH_16_BPP;
-	__changeInternalBPP = 1;
-}
-

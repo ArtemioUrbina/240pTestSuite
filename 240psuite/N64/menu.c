@@ -341,7 +341,6 @@ void drawCredits(int usebuffer) {
 			
 			nish = loadImage("rom:/nish.sprite");
 			if(nish) {
-				changeTo16BitDepthOnVBlankNC();
 				while(check) {
 					getDisplay();
 					rdpqStart();
@@ -355,7 +354,6 @@ void drawCredits(int usebuffer) {
 						check =	0;	
 				}
 				freeImage(&nish);
-				changeTo32BitDepthOnVBlankNC();
 			}
 		}
 		
