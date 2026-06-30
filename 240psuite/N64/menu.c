@@ -341,7 +341,7 @@ void drawCredits(int usebuffer) {
 			
 			nish = loadImage("rom:/nish.sprite");
 			if(nish) {
-				changeTo16BitDepthOnVBlank();
+				changeTo16BitDepthOnVBlankNC();
 				while(check) {
 					getDisplay();
 					rdpqStart();
@@ -355,7 +355,7 @@ void drawCredits(int usebuffer) {
 						check =	0;	
 				}
 				freeImage(&nish);
-				changeTo32BitDepthOnVBlank();
+				changeTo32BitDepthOnVBlankNC();
 			}
 		}
 		
@@ -540,6 +540,23 @@ void drawMessageBox(char *msg) {
 
 int drawAskQuestion(char *msg) {
 	return(drawMessageBoxInternal(msg, 1));
+}
+
+int __isUnsupportedHighRes = 0;
+
+void setToLowResIfNeeded() {
+	if(isUnsupportedHighRes()) {
+		drawMessageBox("Expansion Pak Required\n(480i 32-bit mode)\n\nTemporarily switching to 240p.");
+		changeVMode(RESOLUTION_320x240);
+		__isUnsupportedHighRes = 1;
+	}
+}
+
+void resetResIfNeeded() {
+	if(__isUnsupportedHighRes) {
+		changeVMode(RESOLUTION_640x480);
+		__isUnsupportedHighRes = 0;
+	}
 }
 
 image *SD_b1 = NULL;

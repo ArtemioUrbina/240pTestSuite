@@ -93,10 +93,19 @@ void drawSysData() {
 	drawStringS(START_VIDINFO_X, START_VIDINFO_Y+fh, 0xfa, 0xfa, 0xfa, str);
 }
 
+int hasMemExpansion() {
+	return(get_memory_size()/0x100000 == 8);
+}
+
+int isUnsupportedHighRes() {
+    if (vMode == SUITE_640x480 && !hasMemExpansion())
+        return 1;    
+    return 0;
+}
+
 // Code from Fazana
-// 0xF1C00 taken form the max that malloc can return to on either 4Mb or 8MB
+// 0xF1C00 taken from the max that malloc can return to on either 4Mb or 8MB
 int getUsedRAM() {
 	struct mallinfo mem_info = mallinfo();
 	return(mem_info.uordblks - ((unsigned int)HEAP_START_ADDR - 0x80000000 - 0x10000 - 0xF1C00));
 }
-

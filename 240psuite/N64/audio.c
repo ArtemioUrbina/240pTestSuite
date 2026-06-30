@@ -402,6 +402,8 @@ void drawAudioTestAnalog() {
 	if(!back)
 		return;
 		
+	changeTo32BitDepthOnVBlank();
+	
 	audio_init(44100, ST_BUFFERS);
 	mixer_init(ST_CHANNELS);
 	
@@ -411,7 +413,7 @@ void drawAudioTestAnalog() {
 	
 	wav64_play(&sample, 1);
 	
-	changeTo32BitDepthOnVBlank();
+	
 	text = 120;
 	
 	while(!end) {

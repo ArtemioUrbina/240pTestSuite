@@ -69,6 +69,8 @@ void changeToH256onVBlank();
 void changeToH320onVBlank();
 void changeTo16BitDepthOnVBlank();
 void changeTo32BitDepthOnVBlank();
+void changeTo16BitDepthOnVBlankNC();
+void changeTo32BitDepthOnVBlankNC();
 int isVMode256();
 int isVMode480();
 

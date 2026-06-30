@@ -23,6 +23,7 @@
 #include "video.h"
 #include "image.h"
 #include "font.h"
+#include "menu.h"
 
 resolution_t		current_resolution;
 bitdepth_t			current_bitdepth = DEPTH_16_BPP;
@@ -255,7 +256,7 @@ void setVideoInternal(resolution_t newRes) {
 	
 	if(videoSet) {
 		disable_interrupts();
-		//freeMenuFB();				// comment this one out to get "improper" resolution backgrounds for menu
+		freeMenuFB();				// comment this one out to get "improper" resolution backgrounds for menu
 		freeUpscaleFB();
 		enable_interrupts();
 		
@@ -481,6 +482,7 @@ void getVideoModeStr(char *res, int shortdesc) {
 }
 
 void changeTo32BitDepthOnVBlank() {
+	setToLowResIfNeeded();
 	if(current_bitdepth == DEPTH_32_BPP)
 		return;
 	__newInternalBPPChange = DEPTH_32_BPP;
@@ -488,6 +490,21 @@ void changeTo32BitDepthOnVBlank() {
 }
 
 void changeTo16BitDepthOnVBlank() {
+	if(current_bitdepth == DEPTH_16_BPP)
+		return;
+	__newInternalBPPChange = DEPTH_16_BPP;
+	__changeInternalBPP = 1;
+	resetResIfNeeded();
+}
+
+void changeTo32BitDepthOnVBlankNC() {
+	if(current_bitdepth == DEPTH_32_BPP)
+		return;
+	__newInternalBPPChange = DEPTH_32_BPP;
+	__changeInternalBPP = 1;
+}
+
+void changeTo16BitDepthOnVBlankNC() {
 	if(current_bitdepth == DEPTH_16_BPP)
 		return;
 	__newInternalBPPChange = DEPTH_16_BPP;

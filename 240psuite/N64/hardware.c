@@ -102,7 +102,7 @@ uint32_t calculateCRC(uint32_t startAddress, uint32_t size) {
 	else
 		address = locations[0];
 		
-	if(get_memory_size()/0x100000 == 8)
+	if(hasMemExpansion())
 		maxAddress = MAX_ADDRESSXP;
 	
 	while(!done) {

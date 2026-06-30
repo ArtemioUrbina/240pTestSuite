@@ -35,5 +35,7 @@ extern int isPAL;
 void initN64();
 void drawSysData();
 int getUsedRAM();
+int hasMemExpansion();
+int isUnsupportedHighRes();
 
 #endif

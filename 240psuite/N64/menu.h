@@ -29,7 +29,7 @@
 #include "help.h"
 #include "controller.h"
 
-#define VERSION_NUMBER "N64 0.94 RC"
+#define VERSION_NUMBER "N64 0.96 RC"
 #ifndef VERSION_DATE
 #define VERSION_DATE "2026/04/27"
 #endif
@@ -40,6 +40,9 @@ void showMenu();
 void selectVideoMode(int useBack);
 void drawCredits(int usebuffer);
 void setMenuVideo(int showVideoOption);
+
+void setToLowResIfNeeded();
+void resetResIfNeeded();
 
 void SD_blink_cycle(image *sd);
 void SD_release();
