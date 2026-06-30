@@ -382,15 +382,6 @@ void draw_text(int x, int y, const char *fmt, ...) {
   setClearScreen();
   waitVsync();
 
-  for (int m = 0; m < MODEL_COUNT; ++m) {
-      T3DModelIter it = t3d_model_iter_create(models[m], T3D_CHUNK_TYPE_OBJECT);
-      while (t3d_model_iter_next(&it)) {
-          if (it.object->userBlock) {
-              rspq_block_free(it.object->userBlock);
-              it.object->userBlock = NULL;
-          }
-      }
-  }
 
   for(int m=0; m<MODEL_COUNT; ++m)
     t3d_model_free(models[m]);
