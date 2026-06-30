@@ -149,7 +149,8 @@ void draw_text(int x, int y, const char *fmt, ...) {
 
     joypad_poll();
     joypad_inputs_t joypad = joypad_get_inputs(JOYPAD_PORT_1);
-    joypad_buttons_t pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1);
+    joypad_buttons_t pressed = controllerButtonsDown();
+    joypad_buttons_t held = controllerButtonsHeld();
 
     if(joypad.stick_x < 10 && joypad.stick_x > -10)joypad.stick_x = 0;
     if(joypad.stick_y < 10 && joypad.stick_y > -10)joypad.stick_y = 0;
@@ -185,7 +186,7 @@ void draw_text(int x, int y, const char *fmt, ...) {
     camDir.v[2] = fm_sinf(camRotX) * fm_cosf(camRotY);
     t3d_vec3_norm(&camDir);
 
-    if(joypad.btn.z) {
+    if(held.z) {
       camRotXTarget += (float)joypad.stick_x * camRotSpeed;
       camRotYTarget -= (float)joypad.stick_y * camRotSpeed;
     } else {
@@ -196,8 +197,8 @@ void draw_text(int x, int y, const char *fmt, ...) {
       camPosTarget.v[2] -= camDir.v[0] * (float)joypad.stick_x * -camSpeed;
     }   
 
-    if(joypad.btn.c_up)   camPosTarget.v[1] += camSpeed * 35.0f;
-    if(joypad.btn.c_down) camPosTarget.v[1] -= camSpeed * 35.0f;
+    if(held.c_up)   camPosTarget.v[1] += camSpeed * 35.0f;
+    if(held.c_down) camPosTarget.v[1] -= camSpeed * 35.0f;
 
     t3d_vec3_lerp(&camPos, &camPos, &camPosTarget, 0.8f);
     camRotX = t3d_lerp(camRotX, camRotXTarget, 0.8f);
@@ -380,6 +381,16 @@ void draw_text(int x, int y, const char *fmt, ...) {
   }
   setClearScreen();
   waitVsync();
+
+  for (int m = 0; m < MODEL_COUNT; ++m) {
+      T3DModelIter it = t3d_model_iter_create(models[m], T3D_CHUNK_TYPE_OBJECT);
+      while (t3d_model_iter_next(&it)) {
+          if (it.object->userBlock) {
+              rspq_block_free(it.object->userBlock);
+              it.object->userBlock = NULL;
+          }
+      }
+  }
 
   for(int m=0; m<MODEL_COUNT; ++m)
     t3d_model_free(models[m]);

@@ -357,10 +357,11 @@ int drawMCSScreen(int frames, int controls) {
 	
 	SceneData scene;
 		
-	if(!load3DScene(&scene, controls))
-		return 0;
-		
 	t3d_init((T3DInitParams){});
+	if(!load3DScene(&scene, controls)) {
+		freeSceneData(&scene);
+		return 0;
+	}
 
 	// Zoom in
 	cancel = draw3DScene(&scene, FADE_FRAMES, ZOOMIN_3D, controls);
