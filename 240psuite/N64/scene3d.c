@@ -86,8 +86,8 @@ void draw_text(int x, int y, const char *fmt, ...) {
 
   #define MODEL_COUNT 2
   T3DModel *models[MODEL_COUNT] = {
-    t3d_model_load("rom://scene3d.t3dm"),
-    t3d_model_load("rom://scene3d_cutout.t3dm")
+    t3d_model_load("rom:/scene3d.t3dm"),
+    t3d_model_load("rom:/scene3d_cutout.t3dm")
   };
 
   T3DMat4FP* modelMatFP = (T3DMat4FP*)malloc_uncached(sizeof(T3DMat4FP));
@@ -351,6 +351,8 @@ void draw_text(int x, int y, const char *fmt, ...) {
     // ----------- DRAW (2D) ------------ //
 	
     if(showInfoScreen) {
+	  rdpq_detach_wait();
+      rdpq_attach(surface, display_get_zbuf());
       draw_text(18, 18, "Tris: %d", triCount);
       draw_text(18, 32, "Visible Objects: %d", visibleObjects);
       draw_text(18, 46, "%.2f FPS %s", display_get_fps(), fpsLimit ? "Limited to 30" : " ");
