@@ -602,7 +602,7 @@ void drawMonoscope() {
 
 void drawGrid() {
 	int end = 0, gridResolution = 0, tmpRes = 0;
-	image *back[NUM_RES] = { NULL, NULL, NULL, NULL };
+	image *back = NULL;
 	joypad_buttons_t keys;
 	fmenuData	verMenuData[NUM_RES] = { 
 										{ 0, "320x240" },
@@ -625,28 +625,20 @@ void drawGrid() {
 	
 	gridResolution = tmpRes;
 	
-	for(unsigned int res = 0; res < NUM_RES; res ++) {
-		back[res] = loadImage(grids[res]);
-		if(!back[res]) {
-			for(unsigned int i = 0; i < res; i++)
-				freeImage(&back[i]);
-			return;
-		}
-	}
+	back = loadImage(grids[gridResolution]);
+	if(!back)
+		return;
 	
-	if(back[2])
-		back[2]->scale = 0;
-	if(back[3])
-		back[3]->scale = 0;
+	if(gridResolution == 2 || gridResolution == 3)
+		back->scale = 0;
 	
 	setMenuVideo(0);
 	changeVMode(targetRes[gridResolution]);
 	while(!end) {
 		getDisplay();
-
 		rdpqStart();
 		
-		rdpqDrawImage(back[gridResolution]);
+		rdpqDrawImage(back);
 		rdpqEnd();
 		
 		checkMenu(GRIDHELP, NULL);
@@ -661,15 +653,25 @@ void drawGrid() {
 			
 		if(keys.r) {
 			tmpRes = selectMenu("Select", verMenuData, NUM_RES, gridResolution+1);
-			if(tmpRes != MENU_CANCEL) {
-				gridResolution = tmpRes;
-				changeVMode(targetRes[gridResolution]);
+			if(tmpRes != MENU_CANCEL && tmpRes != gridResolution) {
+				image *newBack = loadImage(grids[tmpRes]);
+				if(newBack) {
+					freeImage(&back);
+					back = newBack;
+					if(tmpRes == 2 || tmpRes == 3)
+						back->scale = 0;
+					gridResolution = tmpRes;
+					changeVMode(targetRes[gridResolution]);
+				}
+				else {
+					back = newBack;
+					end = 1;
+				}
 			}
 		}
 	}
 	
-	for(unsigned int res = 0; res < NUM_RES; res ++)
-		freeImage(&back[res]);
+	freeImage(&back);
 	
 	changeVMode(oldVMode);
 	setMenuVideo(1);

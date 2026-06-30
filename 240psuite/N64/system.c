@@ -103,9 +103,8 @@ int isUnsupportedHighRes() {
     return 0;
 }
 
-// Code from Fazana
-// 0xF1C00 taken from the max that malloc can return to on either 4Mb or 8MB
 int getUsedRAM() {
-	struct mallinfo mem_info = mallinfo();
-	return(mem_info.uordblks - ((unsigned int)HEAP_START_ADDR - 0x80000000 - 0x10000 - 0xF1C00));
+	heap_stats_t stats;
+	sys_get_heap_stats(&stats);
+	return(stats.used); // stats.total
 }
