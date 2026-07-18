@@ -60,6 +60,11 @@ void drawMDFourier() {
 	mixer_init(MDF_CHANNELS);
 	
 	while(!end) {
+		if(isPlaying && !mixer_ch_playing(MDF_CHANNEL)) {
+			isPlaying = 0;
+			refresh = 1;
+		}
+		
 		if(changePlaybackState) {
 			if(!mixer_ch_playing(MDF_CHANNEL)) {
 				wav64_play(&mdfSamples, MDF_CHANNEL);
@@ -84,10 +89,11 @@ void drawMDFourier() {
 			drawStringC(42, 0x00, 0xff, 0x00, "MDFourier");
 			if(isPlaying)
 				drawStringC(100, 0xff, 0xff, 0xff, "Playing back ");
-			else
+			else {
 				drawStringC(100, 0xff, 0xff, 0xff, "Press #GA#G to play");
+				drawStringC(180, 0xff, 0xff, 0xff, "Press #CSTART#C for HELP.");
+			}
 			
-			drawStringC(180, 0xff, 0xff, 0xff, "Press #CSTART#C for HELP.");
 			drawStringC(201, 0xff, 0xff, 0x00, "#Yhttp://junkerhq.net/MDFourier#Y");
 			refresh --;
 		}
