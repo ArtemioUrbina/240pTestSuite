@@ -371,7 +371,7 @@ void drawLagTest() {
 	
 	changeCirclePalette(blueCircle, redCircle, color);
 
-	while(!done) {		
+	while(!done) {
 		if(!pause) {
 			frames ++;
 			framecnt ++;
@@ -552,6 +552,7 @@ void drawLagTest() {
 	freeImage(&redCircle);
 	freeImage(&blueCircle);
 	releaseNumbers();
+	setClearScreen();
 }
  
 void drawScroll() {
@@ -744,6 +745,8 @@ void drawStripes() {
 	back = NULL;
 	freeImage(&horizontal);
 	freeImage(&vertical);
+	
+	setClearScreen();
 }
 
 void drawCheckerBoard() {
@@ -802,6 +805,7 @@ void drawCheckerBoard() {
 	}
 	
 	freeImage(&back);
+	setClearScreen();
 }
 
 void drawGridScroll() {
@@ -901,7 +905,9 @@ void drawGridScroll() {
 			direction = !direction;
 	}
 	freeImage(&backsquares); 
-	freeImage(&backdiag);	
+	freeImage(&backdiag);
+	
+	setClearScreen();
 }
 
 void SD_blink_cycle_phase(image *sd_b1, image *sd_b2, int index) {
@@ -1431,6 +1437,8 @@ void drawLEDZoneTest() {
 		if(y > getDispHeight() - selsprite)
 			y = getDispHeight() - selsprite;
 	}
+	
+	setClearScreen();
 }
 
 #define CHANNEL_LEFT	0

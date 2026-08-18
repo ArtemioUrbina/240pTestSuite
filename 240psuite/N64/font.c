@@ -111,6 +111,9 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 	int ty = y;
 	const char *text = (const char *)msg;
 
+	if(enablePAL288)
+		ty += OFFSET_288P;
+		
 	while( *text ) {
 		switch( *text ) {
 			case '\r':
@@ -226,7 +229,10 @@ void drawStringB(int x, int y, int r, int g, int b, char *text) {
 	boxWidth = measureString(text) + 2;
 	f_color = graphics_make_color(r, g, b, 0xff);
 
-	graphics_draw_box(__disp, x-1, y-1, boxWidth, boxHeight, 0x00000000);
+	if(enablePAL288)
+		graphics_draw_box(__disp, x-1, y-1+OFFSET_288P, boxWidth, boxHeight, 0x00000000);
+	else
+		graphics_draw_box(__disp, x-1, y-1, boxWidth, boxHeight, 0x00000000);
 	graphics_set_color(f_color, 0x00000000);
 	graphics_draw_text_suite(__disp, x, y, text);
 }

@@ -31,7 +31,7 @@ unsigned int		current_buffers = 0;
 unsigned int		current_gamma = 0;
 filter_options_t	current_antialias = 0;
 rdpq_antialias_t	current_rdp_aa_filter = AA_NONE;
-//unsigned int		enablePAL60 = 0;
+unsigned int		enablePAL60 = 0;
 unsigned int		enablePAL288 = 0;
 unsigned int		vMode = SUITE_NONE;
 
@@ -96,7 +96,8 @@ void drawFrameLens() {
 			warn = 1;
 	}
 	
-	sprintf(str, "ALL:%0.1f/%0.1f IDL:%0.1f/%0.1f VBL:%0.1f", 
+	sprintf(str, "%0.1f, ALL:%0.1f/%0.1f IDL:%0.1f/%0.1f VBL:%0.1f ", 
+		display_get_refresh_rate(),
 		__frameLen, __maxFrameLen, __frameIdle, __minIdle, __vblLen);
 	drawStringB(10, 4, !warn ? 0xff : 0x00, warn ? 0xff : 0x00, 0x00, str);
 	
@@ -248,7 +249,7 @@ void initVideo() {
 	current_gamma = GAMMA_NONE;
 	current_antialias = FILTERS_RESAMPLE;
 	current_rdp_aa_filter = AA_NONE;
-	//enablePAL60 = 0;
+	enablePAL60 = 0;
 	enablePAL288 = 0;
 	vMode = SUITE_NONE;
 	
@@ -259,7 +260,7 @@ void initVideo() {
 
 void setVideoInternal(resolution_t newRes) {
 	if(vMode != SUITE_NONE && 
-		isSameRes(&newRes, &current_resolution) &&
+		isSameRes(&newRes, &current_resolution, 1) &&
 		current_bitdepth == __newInternalBPPChange)
 		return;
 	
@@ -280,12 +281,10 @@ void setVideoInternal(resolution_t newRes) {
 		if(enablePAL288)
 			newRes.height = 288;
 		
-		/*
 		if(enablePAL60)
 			newRes.pal60 = 1;
 		else
 			newRes.pal60 = 0;
-		*/
 	}
 	current_resolution = newRes;
 	current_bitdepth = __newInternalBPPChange;
@@ -305,9 +304,18 @@ void setVideoInternal(resolution_t newRes) {
 }
 
 int is50Hz() {
-	if(isPAL /* && !current_resolution.pal60 */)
+	if(isPAL && !current_resolution.pal60)
 		return 1;
 	return 0;
+}
+
+void togglePAL60() {
+	if(isPAL) {
+		enablePAL60 = !enablePAL60;
+		__newInternalResChange = current_resolution;
+		__newInternalResChange.pal60 = enablePAL60;
+		__changeInternalRes = 1;
+	}
 }
 
 void changeToH256onVBlank() {
@@ -359,7 +367,7 @@ void changeToH320onVBlank() {
 }
 
 void changeVMode(resolution_t newRes) {
-	if(!__changeInternalRes && isSameRes(&newRes, &current_resolution))
+	if(!__changeInternalRes && isSameRes(&newRes, &current_resolution, 1))
 		return;
 	__newInternalResChange = newRes;
 	__changeInternalRes = 1;
@@ -403,42 +411,40 @@ int isVMode480() {
 	return 0;
 }
 
-int isSameRes(resolution_t *res1, const resolution_t *res2) {
+int isSameRes(resolution_t *res1, const resolution_t *res2, int palCheck) {
 	if(res1->width != res2->width)
 		return 0;
 	if(res1->height != res2->height)
 		return 0;
 	if(res1->interlaced != res2->interlaced)
 		return 0;
-	/*
-	// We don't check PAL60 atm
-	if(res1->pal60 != res2->pal60)
+	if(palCheck && res1->pal60 != res2->pal60)
 		return 0;
-	*/
+
 	return 1;
 }
 
 int videoModeToInt(resolution_t *res) {
-	if(isSameRes(res, &RESOLUTION_320x240))
+	if(isSameRes(res, &RESOLUTION_320x240, 0))
 		return SUITE_320x240;
-	if(isSameRes(res, &RESOLUTION_640x480))
+	if(isSameRes(res, &RESOLUTION_640x480, 0))
 		return SUITE_640x480;
-	if(isSameRes(res, &RESOLUTION_640x240))
+	if(isSameRes(res, &RESOLUTION_640x240, 0))
 		return SUITE_512x240;
-	if(isSameRes(res, &RESOLUTION_512x240))
+	if(isSameRes(res, &RESOLUTION_512x240, 0))
 		return SUITE_512x240;
-	if(isSameRes(res, &RESOLUTION_512x480))
+	if(isSameRes(res, &RESOLUTION_512x480, 0))
 		return SUITE_512x480;
-	if(isSameRes(res, &RESOLUTION_256x240))
+	if(isSameRes(res, &RESOLUTION_256x240, 0))
 		return SUITE_256x240;
 		
-	if(isSameRes(res, &RESOLUTION_320x288))
+	if(isSameRes(res, &RESOLUTION_320x288, 0))
 		return SUITE_320x288;
-	if(isSameRes(res, &RESOLUTION_640x576))
+	if(isSameRes(res, &RESOLUTION_640x576, 0))
 		return SUITE_640x576;
-	if(isSameRes(res, &RESOLUTION_256x288))
+	if(isSameRes(res, &RESOLUTION_256x288, 0))
 		return SUITE_256x288;
-	if(isSameRes(res, &RESOLUTION_512x576))
+	if(isSameRes(res, &RESOLUTION_512x576, 0))
 		return SUITE_512x576;
 	return SUITE_NONE;
 }

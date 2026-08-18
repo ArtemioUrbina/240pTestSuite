@@ -62,7 +62,7 @@ void rdpqSetDrawMode(int type) {
  
 void rdpqStart() {
 	assertf(__disp != NULL, "rdpqStart(): with NULL _disp");
-	
+
 	if(clearScreen) {
 		rdpq_attach_clear(__disp, NULL);
 
@@ -102,7 +102,11 @@ void rdpqDrawImage(image* data) {
 	if(!data) 				return;
 	if(!data->tiles)		return;
 #endif
-
+	int offset = 0, drawX = data->x, drawY = data->y;
+	
+	if(enablePAL288)
+		offset = OFFSET_288P;
+		
 	if(isVMode480() && !data->scale)
 		upscaleFrame = 0;
 	
@@ -122,15 +126,20 @@ void rdpqDrawImage(image* data) {
 				data->y = output->height/2;
 			}
 		}
+		
+		drawX = data->x;
+		drawY = data->y;
 	}
+	else
+		drawY += offset;
 
 	if(!data->flipH && !data->flipV && !data->rotate) {
-		rdpq_sprite_blit(data->tiles, data->x, data->y, NULL);
+		rdpq_sprite_blit(data->tiles, drawX, drawY, NULL);
 	}
 	else if(data->rotate) {
 		rdpq_set_mode_standard();
 		rdpq_mode_alphacompare(1);
-		rdpq_sprite_blit(data->tiles, data->x, data->y, &(rdpq_blitparms_t) {
+		rdpq_sprite_blit(data->tiles, drawX, drawY, &(rdpq_blitparms_t) {
 			.cx = data->tiles->width / 2,
 			.cy = data->tiles->height / 2,
 			.theta = data->rotAngle*M_PI/180
@@ -139,7 +148,7 @@ void rdpqDrawImage(image* data) {
 	} else {
 		rdpq_set_mode_standard();
 		rdpq_mode_alphacompare(1);
-		rdpq_sprite_blit(data->tiles, data->x, data->y, &(rdpq_blitparms_t) {
+		rdpq_sprite_blit(data->tiles, drawX, drawY, &(rdpq_blitparms_t) {
 			.flip_x = data->flipH, .flip_y = data->flipV
 			});
 		rdpqSetDrawMode(1);
@@ -151,13 +160,17 @@ void rdpqDrawImage(image* data) {
 
 void rdpqDrawImageXY(image* data, int x, int y) {
 #ifdef DEBUG_BENCHMARK
-	assertf(data, "rdpqDrawImage() received NULL image");
-	assertf(data->tiles, "rdpqDrawImage() received NULL tiles");
+	assertf(data, "rdpqDrawImageXY() received NULL image");
+	assertf(data->tiles, "rdpqDrawImageXY() received NULL tiles");
 #else
 	if(!data) 				return;
 	if(!data->tiles)		return;
 #endif
+	int offset = 0;
 	
+	if(enablePAL288)
+		offset = OFFSET_288P;
+		
 	if(isVMode480() && !data->scale)
 		upscaleFrame = 0;
 	
@@ -165,12 +178,12 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 		rdpq_attach(__upscale_fb, NULL);
 	
 	if(!data->flipH && !data->flipV) {
-		rdpq_sprite_blit(data->tiles, x, y, NULL);
+		rdpq_sprite_blit(data->tiles, x, y+offset, NULL);
 	}
 	else {
 		rdpq_set_mode_standard();
 		rdpq_mode_alphacompare(1);
-		rdpq_sprite_blit(data->tiles, x, y, &(rdpq_blitparms_t) {
+		rdpq_sprite_blit(data->tiles, x, y+offset, &(rdpq_blitparms_t) {
 			.flip_x = data->flipH, .flip_y = data->flipV
 			});
 		rdpqSetDrawMode(1);
@@ -186,10 +199,10 @@ void rdpqFillWithImage(image* data) {
 
 void rdpqFillWithImageXY(image* data, float x, float y) {
 #ifdef DEBUG_BENCHMARK
-	assertf(__disp, "rdpqFillWithImage() __disp was NULL");
-	assertf(data, "rdpqFillWithImage() received NULL image");
-	assertf(data->tiles, "rdpqFillWithImage() received NULL tiles");
-	assertf(data->palette, "rdpqFillWithImage() image with no palette");
+	assertf(__disp, "rdpqFillWithImageXY() __disp was NULL");
+	assertf(data, "rdpqFillWithImageXY() received NULL image");
+	assertf(data->tiles, "rdpqFillWithImageXY() received NULL tiles");
+	assertf(data->palette, "rdpqFillWithImageXY() image with no palette");
 #else
 	if(!__disp)				return;
 	if(!data) 				return;
@@ -693,7 +706,7 @@ int getDispHeight() {
 #define FADE_STEPS	20
 #define FADE_HOLD	10
 
-// We force an external palette size because the API doens't give us one
+// We force an external palette size because the API doens't give us one.
 // if unknown, to add a new image, add verbose in the Makefile for
 // mksprite and check the colors
 
@@ -798,7 +811,9 @@ void releaseNumbers() {
 void drawDigit(uint16_t x, uint16_t y, uint16_t color, uint16_t digit) {
 	if(!bigNumbers[NUMBER_WHITE])
 		return;
-	
+		
+	if(enablePAL288)
+		y+= OFFSET_288P;
 	if(isVMode480() && !bigNumbers[color]->scale)
 		upscaleFrame = 0;
 		

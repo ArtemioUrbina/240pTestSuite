@@ -93,10 +93,16 @@ void showMenu() {
 		rdpqDrawImage(menu);
 		rdpqEnd();
 		
-		drawStringC(menu->y+8, 0x00, 0xff, 0x00, VERSION_NUMBER); y += 2*fh; 		
+		y = menu->y+8;
+		if(enablePAL288)
+			y -= OFFSET_288P;
+		drawStringC(y, 0x00, 0xff, 0x00, VERSION_NUMBER);
 		
 		x = menu->x+16;
 		y = menu->y+20;
+		if(enablePAL288)
+			y -= OFFSET_288P;
+		
 		drawStringS(x, y, r, sel == c ? 0 : g, sel == c ? 0 : b, "Help"); y += fh; c++;
 		sprintf(str, "Video");
 		getVideoModeStr(str+5, 1);
@@ -157,6 +163,7 @@ void selectVideoMode(int useBack) {
 	resolution_t 	oldVmode = current_resolution;
 	int 			sel = 1, close = 0;
 	image	 		*back = NULL;
+	//char 			buffer[20];
 	joypad_buttons_t keys;
 	
 	back = loadImage("rom:/help.sprite");
@@ -182,6 +189,9 @@ void selectVideoMode(int useBack) {
 		x = back->x + 48;
 		y = back->y + 17;
 		
+		if(enablePAL288)
+			y -= OFFSET_288P;
+		
 		drawStringC(y, 0xff, 0xff, 0xff, "240p Test Suite Video Modes");
 		if(current_bitdepth == DEPTH_32_BPP)
 			drawStringS(x+160, y+fh, 0xff, 0xff, 0x00, "32 Bit Mode");
@@ -192,9 +202,20 @@ void selectVideoMode(int useBack) {
 		drawStringS(x - 10, y + videoModeToInt(&current_resolution)*fh, 0x00, 0xff, 0x00, ">"); 
 		
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
-		//drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i scaled 240p assets (NTSC)"); y += fh; c++;
 		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480/240 assets"); y += fh; c++;				
 		
+		/* PAL60 is disabled in libdragon preview 
+		y += fh;
+		sprintf(buffer, "Enable PAL 60: %s", current_resolution.pal60 ? "yes" : "no");
+		if(isPAL) {
+			drawStringS(x, y, 0x00, 0xff, 0x00, "PAL Options"); y += fh; 
+			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, buffer); y += fh; c++;
+		}
+		else {
+			drawStringS(x, y, 0x22, 0x44, 0x22, "PAL Options"); y += fh; 
+			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, buffer); y += fh; c++;
+		}
+		*/
 
 		y += fh/2;
 			
@@ -246,7 +267,7 @@ void selectVideoMode(int useBack) {
 		}		
 	}
 	freeImage(&back);
-	if(!isSameRes(&oldVmode, &current_resolution))
+	if(!isSameRes(&oldVmode, &current_resolution, 1))
 		setClearScreen();
 	if(!hasMenuFB())
 		setClearScreen();
@@ -301,6 +322,9 @@ void drawCredits(int usebuffer) {
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Mega Cat Studios"); y += fh; 
 		drawStringS(x, y, 0x00, 0xff, 0x00, "N64 HW Photos:"); y += fh; 
 		drawStringS(x+5, y, 0xff, 0xff, 0xff, "Laura Olvera"); y += fh; 
+		drawStringS(x, y, 0x00, 0xff, 0x00, "PAL Hardware:"); y += fh; 
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "consoles4you"); y += fh;
+		drawStringS(x+5, y, 0xff, 0xff, 0xff, "DrMike"); y += fh;
 		
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Monoscope:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Keith Raney\n(@khmr33)"); y2 += 2*fh;
@@ -308,9 +332,8 @@ void drawCredits(int usebuffer) {
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Asher"); y2 += fh;
 		drawStringS(x2, y2, 0x00, 0xff, 0x00, "Sound test loop:"); y2 += fh; 
 		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "NekoMilkshake"); y2 += fh;
-		
-		drawStringS(x, y2, 0x00, 0xff, 0x00, "3DDemo:"); y2 += fh; 
-		drawStringS(x+5, y2, 0xff, 0xff, 0xff, "Mauricio Garrido"); y2 += fh;
+		drawStringS(x2, y2, 0x00, 0xff, 0x00, "3DDemo:"); y2 += fh; 
+		drawStringS(x2+5, y2, 0xff, 0xff, 0xff, "Mauricio Garrido"); y2 += fh;
 
 		y = y2+fh;
 		
@@ -421,13 +444,17 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 		rdpqEnd();
 
 		y = back->y + 8;
+		if(enablePAL288)
+			y -= OFFSET_288P;
 		drawStringC(y, 0x00, 0xff, 0x00, title); y += 3*fh;
 
 		if(numOptions <= OPTIONS_SMALL)
 			y = back->y + ((((OPTIONS_SMALL - (float)numOptions)/2.0f)-0.5) * fh) + 24;	
 		else
 			y = back->y + ((((MAX_OPTIONS - (float)numOptions)/2.0f)-0.5) * fh) + 24;	
-		
+		if(enablePAL288)
+			y -= OFFSET_288P;
+			
 		for(i = 0; i < numOptions; i++) {
 			drawStringC(y, r, sel == c ? 0 : g, sel == c ? 0 : b, menuData[i].optionText);
 			y += fh;

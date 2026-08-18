@@ -6,8 +6,16 @@ ASSETS_DIR = assets
 FILESYSTEM_DIR = filesystem
 BUILD_DIR = build
 OUTPUT_DIR = output
+ROM_REGION =
+ROM_REGIONFREE = true
 
 BUILD_TIMESTAMP = "$(shell TZ='UTC' date "+%Y-%m-%d")"
+
+# Not needed for production, it is just for debugging in Ares
+pal: ROM_REGION = P
+pal: ROM_REGIONFREE =
+pal: CFLAGS += -DDEBUG_BENCHMARK
+pal: all
 
 include $(N64_INST)/include/n64.mk
 
@@ -145,7 +153,8 @@ $(BUILD_DIR)/$(PROJECT_NAME).elf: $(src:%.c=$(BUILD_DIR)/%.o)
 
 $(PROJECT_NAME).z64: N64_ROM_TITLE = "240p Test Suite"
 $(PROJECT_NAME).z64: N64_ROM_SAVETYPE = none 			# Supported savetypes: none eeprom4k eeprom16 sram256k sram768k sram1m flashram
-$(PROJECT_NAME).z64: N64_ROM_REGIONFREE = true			# Set to true to allow booting on any console region
+$(PROJECT_NAME).z64: N64_ROM_REGION = $(ROM_REGION)
+$(PROJECT_NAME).z64: N64_ROM_REGIONFREE = $(ROM_REGIONFREE)
 $(PROJECT_NAME).z64: N64_ROM_METADATA = metadata/metadata.ini
 $(PROJECT_NAME).z64: $(BUILD_DIR)/$(PROJECT_NAME).dfs
 

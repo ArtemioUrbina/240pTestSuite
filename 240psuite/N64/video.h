@@ -63,8 +63,9 @@ int getHardHeight();
 
 void initVideo();
 void changeVMode(resolution_t newRes);
+void togglePAL60();
 
-int isSameRes(resolution_t *res1, const resolution_t *res2);
+int isSameRes(resolution_t *res1, const resolution_t *res2, int palCheck);
 int videoModeToInt(resolution_t *res);
 void getVideoModeStr(char *res, int shortdesc);
 void changeToH256onVBlank();

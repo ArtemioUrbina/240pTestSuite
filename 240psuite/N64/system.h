@@ -30,6 +30,9 @@
 
 #define SUITE_NUM_BUFFERS 2
 
+// define it to center all at 22
+#define OFFSET_288P 24
+
 extern int isPAL;
 
 void initN64();

@@ -596,6 +596,7 @@ void drawMonoscope() {
 	}
 	
 	freeImage(&monoscope);
+	setClearScreen();
 }
 
 #define NUM_RES 4
@@ -675,6 +676,7 @@ void drawGrid() {
 	
 	changeVMode(oldVMode);
 	setMenuVideo(1);
+	setClearScreen();
 }
 
 void drawGrayramp() {
@@ -706,7 +708,8 @@ void drawGrayramp() {
 	
 	freeImage(&back);
 	
-	drawSplash("rom:/grayramp.sprite", 0, 32);
+	if(!enablePAL288)
+		drawSplash("rom:/grayramp.sprite", 0, 32);
 }
 
 void draw100IRE() {
@@ -937,7 +940,7 @@ void drawConvergence()
 	
 	for(i = 0; i < NUM_CONV; i++)
 		freeImage(&back[i]);
-	return;
+	setClearScreen();
 }
 
 typedef struct rect_t {
@@ -1033,7 +1036,8 @@ void drawOverscan() {
 
 		// Top
 		if((keys.r && sel == 0) ||
-			(keysHeld.c_right && sel == 0)) {
+			(keysHeld.c_right && sel == 0) ||
+			(keys.d_right && sel == 0)) {
 			if(square.y + 1 <= height/2 && oTop + 1 <= height/2) {
 				square.y++;
 				oTop++;
@@ -1041,7 +1045,8 @@ void drawOverscan() {
 		}
 		
 		if((keys.l && sel == 0) ||
-			(keysHeld.c_left && sel == 0)) {
+			(keysHeld.c_left && sel == 0) ||
+			(keys.d_left && sel == 0)) {
 			if(square.y - 1 >= 0 && oTop - 1 >= 0) {				
 				square.y--;	
 				oTop--;
@@ -1050,7 +1055,8 @@ void drawOverscan() {
 		
 		// Bottom
 		if((keys.r && sel == 1) ||
-			(keysHeld.c_right && sel == 1)) {
+			(keysHeld.c_right && sel == 1) ||
+			(keys.d_right && sel == 1)) {
 			if(square.h - 1 >= 0 && oBottom + 1 <= height/2) {
 				square.h--;
 				oBottom++;
@@ -1058,7 +1064,8 @@ void drawOverscan() {
 		}
 		
 		if((keys.l && sel == 1) ||
-			(keysHeld.c_left && sel == 1)) {
+			(keysHeld.c_left && sel == 1) ||
+			(keys.d_left && sel == 1)) {
 			if(square.h + 1 <= width && oBottom - 1 >=0 ) {
 				square.h++;	
 				oBottom--;
@@ -1067,7 +1074,8 @@ void drawOverscan() {
 		
 		// Left
 		if((keys.r && sel == 2) ||
-			(keysHeld.c_right && sel == 2)) {
+			(keysHeld.c_right && sel == 2) ||
+			(keys.d_right && sel == 2)) {
 			if(square.x + 1 <= width/2 && oLeft + 1 <= width/2) {
 				square.x++;
 				oLeft++;
@@ -1075,7 +1083,8 @@ void drawOverscan() {
 		}
 		
 		if((keys.l && sel == 2) ||
-			(keysHeld.c_left && sel == 2)) {
+			(keysHeld.c_left && sel == 2) ||
+			(keys.d_left && sel == 2)) {
 			if(square.x - 1 >= 0 && oLeft - 1 >= 0)	{
 				square.x--;
 				oLeft--;
@@ -1084,7 +1093,8 @@ void drawOverscan() {
 		
 		// Right
 		if((keys.r && sel == 3) ||
-			(keysHeld.c_right && sel == 3)) {
+			(keysHeld.c_right && sel == 3) ||
+			(keys.d_right && sel == 3)) {
 			if(square.w - 1 >= 0 && oRight + 1 <= width/2)	{
 				square.w--;
 				oRight++;
@@ -1092,7 +1102,8 @@ void drawOverscan() {
 		}
 		
 		if((keys.l && sel == 3) ||
-			(keysHeld.c_left && sel == 3)) {
+			(keysHeld.c_left && sel == 3) ||
+			(keys.d_left && sel == 3)) {
 			if(square.w + 1 <= width && oRight - 1 >= 0) {
 				square.w++;	
 				oRight--;
@@ -1105,4 +1116,5 @@ void drawOverscan() {
 		if(keys.b)
 			done =	1;
 	}
+	setClearScreen();
 }
