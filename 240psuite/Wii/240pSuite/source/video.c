@@ -53,7 +53,6 @@ GXRModeObj TVPal264DsFull =
 		{6,6},{6,6},{6,6},	// pix 2
 		{6,6},{6,6},{6,6}	// pix 3
 	},
-
 	// vertical filter[7], 1/64 units, 6 bits each
 	{
 		 0, 		// line n-1
@@ -63,7 +62,8 @@ GXRModeObj TVPal264DsFull =
 		21, 		// line n
 		 0, 		// line n+1
 		 0			// line n+1
-	}
+	},
+	GX_COPY_PROGRESSIVE		// copy_interlaced
 };
 
 // Modified TVPal528Int  
@@ -99,7 +99,8 @@ GXRModeObj TVPal576IntDfFull =
 		10, 		// line n
 		 8, 		// line n+1
 		 8			// line n+1
-	}
+	},
+	GX_COPY_PROGRESSIVE		// copy_interlaced
 };
 
 GXRModeObj *vmodes[TOTAL_VMODES] = {

@@ -50,28 +50,11 @@ void ColorPatternsMenu(ImagePtr title, ImagePtr sd);
 void GeometryPatternsMenu(ImagePtr title, ImagePtr sd);
 void DrawMenuFooter(u8 r, u8 g, u8 b);
 
-s8 HWButton = -1;
-#ifdef WII_VERSION
-void WiiResetPressed();
-void WiiPowerPressed();
-void WiimotePowerPressed(s32 chan);
-#else
-void GCResetPressed();
-#endif
-
 int main(int argc, char **argv) 
 {
 	int 		close = 0;	
 	ImagePtr 	Back = NULL, sd = NULL;
 	u8	 		sel = 1;
-
-#ifdef WII_VERSION
-	SYS_SetResetCallback(WiiResetPressed);
-	SYS_SetPowerCallback(WiiPowerPressed);
-	WPAD_SetPowerButtonCallback(WiimotePowerPressed);
-#else
-	SYS_SetResetCallback(GCResetPressed);
-#endif
 
 	ControllerInit();
 
@@ -181,7 +164,7 @@ int main(int argc, char **argv)
 		
 		pressed = Controller_ButtonsDown(0);
 
-		if(HWButton != -1)
+		if(!SYS_MainLoop())
 			EndProgram = 1;
 			
 		if ( pressed & PAD_BUTTON_START )
@@ -253,11 +236,6 @@ int main(int argc, char **argv)
 	
 	EndGX();
 	RestoreVideo();
-	
-#ifdef WII_VERSION
-	if(HWButton != -1)
-		SYS_ResetSystem(HWButton, 0, FALSE);
-#endif
 
 	return EXIT_SUCCESS;
 }
@@ -832,40 +810,3 @@ void DrawMenuFooter(u8 r, u8 g, u8 b)
 	DrawStringS(35, 200, r, g, b, wiiregion);
 #endif				
 }
-
-#ifdef WII_VERSION
-/**
- * Callback for the reset button on the Wii.
- */
-void WiiResetPressed()
-{
-	HWButton = SYS_RETURNTOMENU;
-}
- 
-/**
- * Callback for the power button on the Wii.
- */
-void WiiPowerPressed()
-{
-	HWButton = SYS_POWEROFF;
-}
- 
-/**
- * Callback for the power button on the Wiimote.
- * @param[in] chan The Wiimote that pressed the button
- */
-void WiimotePowerPressed(s32 chan)
-{
-	HWButton = SYS_POWEROFF;
-}
-
-#else
-/**
- * Callback for the reset button on the GameCube.
- */
-void GCResetPressed()
-{
-	HWButton = SYS_HOTRESET;
-}
-
-#endif
