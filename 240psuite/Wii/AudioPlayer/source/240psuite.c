@@ -38,15 +38,6 @@ int EndProgram = 0;
 ImagePtr 	sd_b1 = NULL, sd_b2 = NULL;
 void SD_blink_cycle();
 
-s8 HWButton = -1;
-#ifdef WII_VERSION
-void WiiResetPressed();
-void WiiPowerPressed();
-void WiimotePowerPressed(s32 chan);
-#else
-void GCResetPressed();
-#endif
-
 #include "dirent.h"
 #include "ctype.h"
 
@@ -102,14 +93,6 @@ int main(int argc, char **argv)
 		if(!filenames[i])
 			EndProgram = 1;
 	}
-	
-#ifdef WII_VERSION
-	SYS_SetResetCallback(WiiResetPressed);
-	SYS_SetPowerCallback(WiiPowerPressed);
-	WPAD_SetPowerButtonCallback(WiimotePowerPressed);
-#else
-	SYS_SetResetCallback(GCResetPressed);
-#endif
 
 	ControllerInit();
 
@@ -199,7 +182,7 @@ int main(int argc, char **argv)
 		
 		pressed = Controller_ButtonsDown(0);
 
-		if(HWButton != -1)
+		if(!SYS_MainLoop())
 			EndProgram = 1;
 			
 		if ( pressed & PAD_BUTTON_UP )
@@ -238,11 +221,6 @@ int main(int argc, char **argv)
 	
 	EndGX();
 	RestoreVideo();
-	
-#ifdef WII_VERSION
-	if(HWButton != -1)
-		SYS_ResetSystem(HWButton, 0, FALSE);
-#endif
 
 	return EXIT_SUCCESS;
 }
@@ -280,40 +258,3 @@ void SD_blink_cycle()
 		}
 	}
 }
-
-#ifdef WII_VERSION
-/**
- * Callback for the reset button on the Wii.
- */
-void WiiResetPressed()
-{
-	HWButton = SYS_RETURNTOMENU;
-}
- 
-/**
- * Callback for the power button on the Wii.
- */
-void WiiPowerPressed()
-{
-	HWButton = SYS_POWEROFF;
-}
- 
-/**
- * Callback for the power button on the Wiimote.
- * @param[in] chan The Wiimote that pressed the button
- */
-void WiimotePowerPressed(s32 chan)
-{
-	HWButton = SYS_POWEROFF;
-}
-
-#else
-/**
- * Callback for the reset button on the GameCube.
- */
-void GCResetPressed()
-{
-	HWButton = SYS_HOTRESET;
-}
-
-#endif

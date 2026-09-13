@@ -152,7 +152,6 @@ void SetupGX()
 {
 	f32 yscale;
 	u32 xfbHeight;	
-	u16 xfbWidth;
 	u32 width = 0;
 	u32 height = 0;
 	Mtx44 perspective;
@@ -161,17 +160,17 @@ void SetupGX()
 	GX_SetCopyClear(background, GX_MAX_Z24);
  
 	GX_SetViewport(0.0F, 0.0F, rmode->fbWidth, rmode->efbHeight, 0.0F, 1.0F);
-	yscale = GX_GetYScaleFactor(rmode->efbHeight,rmode->xfbHeight);
-	xfbHeight = GX_SetDispCopyYScale(yscale);
-	xfbWidth = VIDEO_PadFramebufferWidth(rmode->fbWidth);
 	GX_SetScissor(0,0,rmode->fbWidth,rmode->efbHeight);
 		
 	GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
 		
+	GX_SetDispCopyFrame2Field(rmode->copy_interlaced);
 	GX_SetDispCopySrc(0,0,rmode->fbWidth,rmode->efbHeight);
-	GX_SetDispCopyDst(xfbWidth, xfbHeight);
+	yscale = GX_GetYScaleFactor(rmode->efbHeight,rmode->xfbHeight);
+	xfbHeight = GX_SetDispCopyYScale(yscale);
+	GX_SetDispCopyDst(rmode->fbWidth, xfbHeight);
 	GX_SetCopyFilter(rmode->aa, rmode->sample_pattern, Options.FlickerFilter, rmode->vfilter);
-	GX_SetFieldMode(rmode->field_rendering,((rmode->viHeight==2*rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));
+	GX_SetFieldMode(rmode->field_rendering,((rmode->viHeight/rmode->efbHeight==2)?GX_ENABLE:GX_DISABLE));
 
 	GX_SetCullMode(GX_CULL_NONE);
 			
@@ -186,7 +185,7 @@ void SetupGX()
 	GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);	
 		
 	height = rmode->efbHeight;
-	width = (vmode == VIDEO_240P || vmode == VIDEO_288P) ? 320 : xfbWidth;
+	width = (vmode == VIDEO_240P || vmode == VIDEO_288P) ? 320 : rmode->fbWidth;
 	
 	guOrtho(perspective,0,height,0,width,0,300);
 	GX_LoadProjectionMtx(perspective, GX_ORTHOGRAPHIC);
@@ -433,7 +432,7 @@ ImagePtr CopyFrameBufferToImage()
 	GX_DrawDone();
 	GX_SetCopyFilter(GX_FALSE, NULL, GX_FALSE, NULL);
 	GX_SetTexCopySrc(0, 0, width, height);
-	GX_SetTexCopyDst(width, height, GX_TF_RGBA8, GX_FALSE);
+	GX_SetTexCopyDst(width, height, GX_TF_RGBA8, GX_COPY_PROGRESSIVE);
 	GX_CopyTex(cfb, GX_TRUE);
 	GX_PixModeSync();	
 	DCFlushRange(cfb, fbsize);
