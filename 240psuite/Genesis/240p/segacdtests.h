@@ -90,6 +90,8 @@ void PCMRAMCheck();
 void CRC32_reset();
 void CRC32_update(uint8_t data);
 uint32_t CRC32_finalize();
+uint32_t CalculateCRC(uint32_t startAddress, uint32_t size, u8 patch);
+void ShowMessageAndData(char *message, uint32_t value, int len, int palmsg, int xpos, int ypos);
 void MemViewer(uint32_t address);
 
 // These change addressed with the SEGACD define

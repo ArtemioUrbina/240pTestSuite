@@ -2815,3 +2815,66 @@ void DrawPhaseCheck()
 		VDP_waitVSync();
 	}
 }
+
+#define CART_SIZE	0x40000
+#define CD_SIZE		0x3C800
+
+void TestSuiteROM()
+{
+	u16 exit = 0;
+	u16 buttons, oldButtons = 0xffff, pressedButtons;
+	u16 redraw = 0, loadvram = 1;
+	
+	while(!exit)
+	{
+		if(loadvram)
+		{	
+			DrawMainBG();
+			
+			loadvram = 0;
+			redraw = 1;
+		}
+		
+		if(redraw)
+		{
+			VDP_Start();
+			VDP_drawTextBG(APLAN, "Verify Suite CRC", TILE_ATTR(PAL1, 0, 0, 0), 12, 4);
+			
+			VDP_drawTextBG(APLAN, "'A' to start", TILE_ATTR(PAL0, 0, 0, 0), 8, 14);
+			
+			VDP_End();
+			
+			redraw = 0;
+		}
+
+		buttons = JOY_readJoypad(JOY_ALL);
+		pressedButtons = buttons & ~oldButtons;
+		oldButtons = buttons;
+
+		/*
+		if(CheckHelpAndVO(&buttons, &pressedButtons, HELP_SOUND))
+			loadvram = 1;
+		*/
+
+		if(pressedButtons & BUTTON_START)
+			exit = 1;
+
+		if(pressedButtons & BUTTON_A)
+		{
+			uint32_t	bschecksum = 0;
+			
+			VDP_Start();
+			VDP_drawTextBG(APLAN, "working...  ", TILE_ATTR(PAL0, 0, 0, 0), 8, 14);
+			VDP_End();
+			
+#ifdef SEGACD
+			bschecksum = CalculateCRC(0x200000, CD_SIZE, 0);
+#else			
+			bschecksum = CalculateCRC(0, CART_SIZE, 0);
+#endif
+			ShowMessageAndData("Cart CRC32:", bschecksum, 8, PAL1, 8, 14);	
+		}
+		
+		VDP_waitVSync();
+	}
+}

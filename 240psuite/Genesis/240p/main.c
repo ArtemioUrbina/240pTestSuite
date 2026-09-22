@@ -715,10 +715,11 @@ void HardwareMenu()
 		VDP_drawTextBG(APLAN, "Z80 RAM Test", TILE_ATTR(cursel == 2 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Memory Viewer", TILE_ATTR(cursel == 3 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		VDP_drawTextBG(APLAN, "Sega CD Tests", TILE_ATTR(cursel == 4 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Verify Suite ROM", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
 		pos++;
-		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 5 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
-		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
+		VDP_drawTextBG(APLAN, "Help", TILE_ATTR(cursel == 6 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Options", TILE_ATTR(cursel == 7 ? PAL1 : PAL0, 0, 0, 0), 5, pos++);
+		VDP_drawTextBG(APLAN, "Back to Main Menu", TILE_ATTR(cursel == 8 ? PAL1 : PAL0, 0, 0, 0), 5, pos);
 		
 		DrawResolution();
 		
@@ -734,7 +735,7 @@ void HardwareMenu()
 		if(pressedButtons & BUTTON_DOWN)
 		{
 			cursel++;
-			if(cursel > 7)
+			if(cursel > 8)
 				cursel = 1;
 		}
 
@@ -742,7 +743,7 @@ void HardwareMenu()
 		{
 			cursel--;
 			if(cursel < 1)
-				cursel = 7;
+				cursel = 8;
 		}
 
 		if(pressedButtons & BUTTON_B || 
@@ -754,7 +755,7 @@ void HardwareMenu()
 
 		if(pressedButtons & BUTTON_A)
 		{
-			if(cursel < 5)
+			if(cursel < 6)
 				FadeAndCleanUp();
 				
 			switch (cursel)
@@ -772,12 +773,15 @@ void HardwareMenu()
 				SegaCDMenu();
 				break;
 			case 5:
-				DrawHelp(HELP_GENERAL);
+				TestSuiteROM();
 				break;
 			case 6:
-				OptionsMenu();
+				DrawHelp(HELP_GENERAL);
 				break;
 			case 7:
+				OptionsMenu();
+				break;
+			case 8:
 				done = 1;
 				break;
 			}

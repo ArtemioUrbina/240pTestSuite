@@ -494,6 +494,7 @@ const static BIOSID bioslist[] = {
 { 0x2B19972F, "WM 2.00" },		// wondermega_m2_bios_2_00_j.bin
 { 0xD48C44B5, "CDX US 2.21X" },	// segacdx_bios_2_21_u.bin
 { 0xAACB851E, "MMEGA 2.21" },	// opr-16140.bin
+{ 0x1C3D3955, "Hoshino" },	    // hoshino_byteswap.BIN
 { 0, NULL } } ; 
 
 typedef struct biosRF_data {
@@ -568,6 +569,7 @@ const static BIOS_SW biosSwapped[] = {
 { 0xD48C44B5, 0xD1EE6282 }, // segacdx_bios_2_21_u.bin
 { 0x8AF65F58, 0x0C653035 }, // us_scd2_930314.bin
 { 0x2B19972F, 0x9E13FDA6 }, // wondermega_m2_bios_2_00_j.bin
+{ 0x1C3D3955, 0x3FE03053 }, // hoshino_byteswap.BIN
 { 0, 0 } } ; 
 
 // Reversed Region Free V1

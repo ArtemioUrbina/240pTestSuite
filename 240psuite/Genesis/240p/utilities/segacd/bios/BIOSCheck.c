@@ -29,6 +29,15 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#if defined(WIN32)
+#include <direct.h>
+#define PATH_SEP "\\"
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#define PATH_SEP "/"
+#endif
+
 uint32_t _state = ~0L;
 
 static const uint32_t crc32_table[] = {
@@ -150,7 +159,7 @@ int SaveBIOS(char *folder, uint8_t *bios, char *name)
 		printf("Could not create folder \"%s\"\n", folder);
 		return 0;
 	}
-	sprintf(target, "%s\\%s", folder, name);
+	sprintf(target, "%s" PATH_SEP "%s", folder, name);
 	fout = fopen(target, "wb");
 	if(!fout)
 	{
@@ -276,6 +285,7 @@ const static BIOSID biosnames[] = {
 { 0x2B19972F, "WM 2.00", "wondermega_m2_bios_2_00_j.bin" },      // 
 { 0xD48C44B5, "CDX US 2.21X", "segacdx_bios_2_21_u.bin" },	// 
 { 0xAACB851E, "MMEGA 2.21", "opr-16140.bin" },   // 
+{ 0x1C3D3955, "Hoshino BIOS (M1 JP 1.11)", "hoshino.bin" },   // 
 { 0, NULL } } ; 
 
 const static BIOSID biosnamesRF[] = {

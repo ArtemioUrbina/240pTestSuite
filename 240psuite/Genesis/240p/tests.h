@@ -37,6 +37,7 @@ void Alternate240p480i();
 void AudioSyncTest();
 void DrawConvergence();
 void DisappearingLogo();
+void TestSuiteROM();
 
 typedef struct timecode
 {
