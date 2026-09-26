@@ -68,9 +68,8 @@ SMCONVFLAGS	:= -l -s -o soundbank -v -b 5
 #---------------------------------------------------------------------------------
 all	:	bitmaps $(OUTPUT).sfc
 	$(SNTOOLS) -hi! $(GTITLE) $(TARGET).sfc
-	$(CHNGREG) $(TARGET).sfc $(TARGET)-PAL.sfc
-	$(UCON64) --chk $(TARGET)-PAL.sfc
-	rm $(TARGET)-PAL.bak
+	$(CHNGREG) $(TARGET).sfc $(TARGET).sfc 01
+	$(CHNGREG) $(TARGET).sfc $(TARGET)-PAL.sfc 02
 	
 clean:
 	@echo clean ...
