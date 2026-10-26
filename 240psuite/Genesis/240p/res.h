@@ -78,10 +78,10 @@ extern u16 grid_PAL240_map[2400/2];
 extern u16 grid_PAL_256_map[1792/2];
 extern u16 grid_PAL240_256_map[1920/2];
 
-extern u32 monoscope_tiles[2816/4]; 
+extern u32 monoscope_tiles[3552/4]; 
 extern u16 monoscope_map[1792/2];
 
-extern u32 monoscope320_tiles[2560/4]; 
+extern u32 monoscope320_tiles[3808/4]; 
 extern u16 monoscope320_map[2240/2];
 
 extern u32 monoscopePAL_tiles[2304/4]; 

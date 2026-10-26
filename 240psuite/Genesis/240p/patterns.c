@@ -601,12 +601,18 @@ void DrawMonoscope()
 	u16 buttons, oldButtons = 0xffff, pressedButtons;
 	u16 custom_pal[16];
 	int bright = 1;
+	u16 alternate = 0; 
+	u16 curRes = RES_320;
+	u16 frameCount = 0;
 
 	exit = 0;
 	
 	if(!IsPALVDP)
 	{
-		type = DrawFloatMenuRes(RES_320);
+		if(IsPALVDP)
+			type = DrawFloatMenuRes(RES_320);
+		else
+			type = DrawFloatMenuResExtra(RES_320, "Alternate");
 		if(type == FLOAT_CANCEL)
 			return;
 	}
@@ -614,6 +620,35 @@ void DrawMonoscope()
 	memcpy(custom_pal, grid_pal, sizeof(grid_pal));
 	while(!exit)
 	{
+		if(IsPALVDP)
+		{
+			alternate = 0;
+			curRes = RES_320;
+		}
+		else if(type == FLOAT_OPTION)
+		{
+			if(!alternate)
+			{
+				alternate = 1;
+				frameCount = 0;
+				curRes = RES_320;
+				loadvram = 1;
+			}
+
+			frameCount++;
+			if(frameCount >= 60)
+			{
+				frameCount = 0;
+				curRes = (curRes == RES_320) ? RES_256 : RES_320;
+				loadvram = 1;
+			}
+		}
+		else
+		{
+			alternate = 0;
+			curRes = type;
+		}
+
 		if(VDPChanged)
 		{
 			loadvram = 1;
@@ -627,10 +662,7 @@ void DrawMonoscope()
 			VDP_clearTileMapRect(APLAN, 0, 0, 320 / 8, 240 / 8);
 			VDP_setVerticalScroll(PLAN_A, 0);
 			
-			if(IsPALVDP)
-				type = RES_320;
-				
-			if(type == RES_256)
+			if(curRes == RES_256)
 				VDP_setScreenWidth256();
 			else
 				VDP_setScreenWidth320();
@@ -641,7 +673,7 @@ void DrawMonoscope()
 			
 			if(!IsPALVDP)
 			{
-				if(type == RES_256)
+				if(curRes == RES_256)
 				{
 					size = sizeof(monoscope_tiles) / 32;
 					VDP_loadTileData(monoscope_tiles, ind, size, USE_DMA);
@@ -717,7 +749,7 @@ void DrawMonoscope()
 		}
 		
 		if(!IsPALVDP)
-			changeResMenu(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram);
+			changeResMenuExtra(pressedButtons, BUTTON_C, &oldButtons, &type, &loadvram, "Alternate");
 
 		VDP_waitVSync();
 	}
