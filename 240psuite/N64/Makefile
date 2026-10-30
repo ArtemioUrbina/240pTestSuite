@@ -8,6 +8,7 @@ BUILD_DIR = build
 OUTPUT_DIR = output
 ROM_REGION =
 ROM_REGIONFREE = true
+ROM_EXPANSIONPAK = unused
 
 BUILD_TIMESTAMP = "$(shell TZ='UTC' date "+%Y-%m-%d")"
 
