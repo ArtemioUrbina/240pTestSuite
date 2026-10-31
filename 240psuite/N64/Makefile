@@ -8,6 +8,7 @@ BUILD_DIR = build
 OUTPUT_DIR = output
 ROM_REGION =
 ROM_REGIONFREE = true
+ROM_EXPANSIONPAK = unused
 
 BUILD_TIMESTAMP = "$(shell TZ='UTC' date "+%Y-%m-%d")"
 
@@ -155,6 +156,7 @@ $(PROJECT_NAME).z64: N64_ROM_TITLE = "240p Test Suite"
 $(PROJECT_NAME).z64: N64_ROM_SAVETYPE = none 			# Supported savetypes: none eeprom4k eeprom16 sram256k sram768k sram1m flashram
 $(PROJECT_NAME).z64: N64_ROM_REGION = $(ROM_REGION)
 $(PROJECT_NAME).z64: N64_ROM_REGIONFREE = $(ROM_REGIONFREE)
+$(PROJECT_NAME).z64: N64_ROM_EXPANSIONPAK = $(ROM_EXPANSIONPAK)
 $(PROJECT_NAME).z64: N64_ROM_METADATA = metadata/metadata.ini
 $(PROJECT_NAME).z64: $(BUILD_DIR)/$(PROJECT_NAME).dfs
 
