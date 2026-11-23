@@ -78,6 +78,18 @@ void draw_text(int x, int y, const char *fmt, ...) {
  void scene3d() {
   int exit = 0;
   
+  // 640x480/576 framebuffers plus the Z buffer don't fit without the Expansion Pak
+  setToLowResIfNeeded();
+  checkInternalResChange();
+  
+  // Our own Z buffer, display_get_zbuf() doesn't check if it was allocated
+  surface_t zbuffer = surface_alloc(FMT_RGBA16, getHardWidth(), getHardHeight());
+  if(!zbuffer.buffer) {
+    drawMessageBox("Not enough memory for the 3D scene");
+    resetResIfNeeded();
+    return;
+  }
+  
   rdpq_font_t* font = rdpq_font_load_builtin(FONT_BUILTIN_DEBUG_MONO);
   rdpq_text_register_font(FONT_BUILTIN_DEBUG_MONO, font);
   
@@ -266,7 +278,7 @@ void draw_text(int x, int y, const char *fmt, ...) {
 
     // ----------- DRAW ------------ //
     surface_t *surface = display_get();
-    rdpq_attach(surface, display_get_zbuf());
+    rdpq_attach(surface, &zbuffer);
 
     t3d_frame_start();
 
@@ -353,7 +365,7 @@ void draw_text(int x, int y, const char *fmt, ...) {
 	
     if(showInfoScreen) {
 	  rdpq_detach_wait();
-      rdpq_attach(surface, display_get_zbuf());
+      rdpq_attach(surface, &zbuffer);
       draw_text(18, 18, "Tris: %d", triCount);
       draw_text(18, 32, "Visible Objects: %d", visibleObjects);
       draw_text(18, 46, "%.2f FPS %s", display_get_fps(), fpsLimit ? "Limited to 30" : " ");
@@ -382,14 +394,19 @@ void draw_text(int x, int y, const char *fmt, ...) {
   setClearScreen();
   waitVsync();
 
+  // The RSP and RDP can still be using the models, matrices and fonts
+  rspq_wait();
 
   for(int m=0; m<MODEL_COUNT; ++m)
     t3d_model_free(models[m]);
   free_uncached(modelMatFP);
+  t3d_viewport_destroy(&viewport);
   t3d_destroy();
   
   rdpq_text_unregister_font(FONT_BUILTIN_DEBUG_MONO);
   rdpq_font_free(font);
+  surface_free(&zbuffer);
+  resetResIfNeeded();
   
   if (fpsLimit) display_set_fps_limit(0);
 }

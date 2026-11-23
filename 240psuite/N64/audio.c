@@ -406,8 +406,12 @@ void drawAudioTestAnalog() {
 	char buffer[25];
 	wav64_t sample;
 
+	changeTo32BitDepthOnVBlank();
+	checkInternalResChange();
+	
 	if(!openWAV(&sample, "rom:/neko_loop.wav64")) {
 		drawMessageBox("Sound test samples not present");
+		changeTo16BitDepthOnVBlank();
 		return;
 	}
 	wav64_set_loop(&sample, true);
@@ -419,10 +423,9 @@ void drawAudioTestAnalog() {
 	back = loadImage(buffer);
 	if(!back) {
 		wav64_close(&sample);
+		changeTo16BitDepthOnVBlank();
 		return;
 	}
-		
-	changeTo32BitDepthOnVBlank();
 	
 	audio_init(44100, ST_BUFFERS);
 	mixer_init(ST_CHANNELS);

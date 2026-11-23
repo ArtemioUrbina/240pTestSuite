@@ -76,10 +76,22 @@ typedef struct image_st {
 	int resident;		// loaded once at boot, freeImage() doesn't release it
 	
 	uint16_t *palette;
-	uint16_t *origPalette;
+	uint16_t *origPalette;	// points to palBuffer once copied
+	uint16_t *palBuffer;	// space for a CI8 palette copy, no malloc after load
 	unsigned int palSize;
 	unsigned int fadeSteps;
 } image;
+
+/* Image arena */
+
+// Test images are loaded here instead of the heap, see image.c
+#define ARENA_SIZE	(640*1024)
+
+void arenaInit(unsigned int size);
+#ifdef DEBUG_BENCHMARK
+void arenaGetStats(int *used, int *peak, int *live, int *largest);
+void arenaCheckLeaks();
+#endif
 
 void setClearScreen();
 void frameEnableUpscaler(int enable);

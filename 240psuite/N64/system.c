@@ -51,11 +51,13 @@ void initN64() {
 	
 	// Everything that stays allocated goes before the first framebuffers, 
 	loadResidentImages();
+	arenaInit(ARENA_SIZE);
 	rdpq_init();
 	joypad_init();
 #ifdef DEBUG_BENCHMARK
 	debug_init_isviewer();
-	debugf("240p Test Suite debug log\n");	// allocates the stderr buffer now
+	debug_init_usblog();
+	debugf("240p Test Suite debug log, RAM %dMB\n", get_memory_size()/0x100000);	// allocates the stderr buffer now
 #endif
 	
 	initVideo();

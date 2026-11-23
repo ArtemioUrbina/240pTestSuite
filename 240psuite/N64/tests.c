@@ -176,7 +176,8 @@ void drawDropShadow(int striped) {
 				case 0:
 					if(isVMode480()) {
 						donna = loadImage("rom:/donna-480.sprite");
-						donna->scale = 0;
+						if(donna)
+							donna->scale = 0;
 					}
 					else
 						donna = loadImage("rom:/donna.sprite");
@@ -1312,7 +1313,8 @@ void drawDiagonalTest() {
 			
 			if(isVMode480()) {
 				rect = loadImage("rom:/rectangle_long.sprite");
-				rect->scale = 0;
+				if(rect)
+					rect->scale = 0;
 			}
 			else
 				rect = loadImage("rom:/rectangle_short.sprite");

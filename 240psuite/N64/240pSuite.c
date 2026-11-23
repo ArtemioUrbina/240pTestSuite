@@ -45,8 +45,6 @@ int main(void) {
 
 #ifndef DEBUG_BENCHMARK
 	drawIntro();
-#else
-	debug_init_isviewer();
 #endif
 	
 	while(1) {
@@ -54,6 +52,9 @@ int main(void) {
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
+#ifdef DEBUG_BENCHMARK
+			arenaCheckLeaks();
+#endif
 			freeImage(&bg);
 			freeImage(&sd);
 			bg = loadImage("rom:/mainbg.sprite");
@@ -147,6 +148,9 @@ void drawPatternsMenu(void) {
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
+#ifdef DEBUG_BENCHMARK
+			arenaCheckLeaks();
+#endif
 			freeImage(&bg);
 			freeImage(&sd);
 			bg = loadImage("rom:/mainbg.sprite");
@@ -241,6 +245,9 @@ void drawPatternsColorMenu(void) {
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
+#ifdef DEBUG_BENCHMARK
+			arenaCheckLeaks();
+#endif
 			freeImage(&bg);
 			freeImage(&sd);
 			bg = loadImage("rom:/mainbg.sprite");
@@ -353,6 +360,9 @@ void drawPatternsGeometryMenu(void) {
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
+#ifdef DEBUG_BENCHMARK
+			arenaCheckLeaks();
+#endif
 			freeImage(&bg);
 			freeImage(&sd);
 			bg = loadImage("rom:/mainbg.sprite");
@@ -441,6 +451,9 @@ void drawVideoTestsMenu(void) {
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
+#ifdef DEBUG_BENCHMARK
+			arenaCheckLeaks();
+#endif
 			freeImage(&bg);
 			freeImage(&sd);
 			bg = loadImage("rom:/mainbg.sprite");
@@ -565,6 +578,9 @@ void drawAudioTestsMenu() {
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
+#ifdef DEBUG_BENCHMARK
+			arenaCheckLeaks();
+#endif
 			freeImage(&bg);
 			freeImage(&sd);
 			bg = loadImage("rom:/mainbg.sprite");
@@ -665,6 +681,9 @@ void drawHardwareTestsMenu() {
 		int r = 0xFF, g = 0xFF, b = 0xFF;
 		
 		if(reload) {
+#ifdef DEBUG_BENCHMARK
+			arenaCheckLeaks();
+#endif
 			freeImage(&bg);
 			freeImage(&sd);
 			bg = loadImage("rom:/mainbg.sprite");

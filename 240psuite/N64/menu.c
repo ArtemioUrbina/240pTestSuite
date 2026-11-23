@@ -730,7 +730,11 @@ int __isUnsupportedHighRes = 0;
 
 void setToLowResIfNeeded() {
 	if(isUnsupportedHighRes()) {
-		drawMessageBox("Expansion Pak Required\n(480i 32-bit mode)\n\nTemporarily switching to 240p.");
+		char msg[100];
+		
+		sprintf(msg, "Expansion Pak Required\nfor this screen in %s\n\nTemporarily switching to %s.",
+			enablePAL288 ? "576i" : "480i", enablePAL288 ? "288p" : "240p");
+		drawMessageBox(msg);
 		changeVMode(RESOLUTION_320x240);
 		__isUnsupportedHighRes = 1;
 	}

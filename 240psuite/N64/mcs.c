@@ -72,12 +72,21 @@ typedef struct scenaData_st {
 } SceneData;
 
 void freeSceneData(SceneData *scene) {
+	// The RSP and RDP can still be using the depth buffer, model and fonts
+	rspq_wait();
+	
 	if(scene->depthBuffer.buffer)
 		surface_free(&scene->depthBuffer);
 	
 	if(scene->modelMatFP) {
 		free_uncached(scene->modelMatFP);
 		scene->modelMatFP = NULL;
+	}
+	
+	// t3d_viewport_create() allocates its matrices
+	if(scene->viewport._matFP) {
+		t3d_viewport_destroy(&scene->viewport);
+		scene->viewport._matFP = NULL;
 	}
 	
 	if(scene->modelMCS) {

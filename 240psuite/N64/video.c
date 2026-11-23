@@ -70,6 +70,7 @@ resolution_t 	__newInternalResChange;
 bitdepth_t		__newInternalBPPChange = DEPTH_16_BPP;
 int 			__changeInternalRes = 0;
 int				__changeInternalBPP = 0;
+int				__videoModeFailed = 0;
 
 float getFrameLen() {
 	return __vblTicks / (TICKS_PER_SECOND / 1000.0f);
@@ -157,14 +158,16 @@ void drawFrameLens() {
 		// log for long runs in emulators, every ~10 seconds
 		if(++__heapLogCount >= 20) {
 			heap_stats_t stats;
-			int free;
+			int free, aUsed, aPeak, aLive, aLargest;
 			
 			sys_get_heap_stats(&stats);
+			arenaGetStats(&aUsed, &aPeak, &aLive, &aLargest);
 			free = stats.total - stats.used;
 			// split: free memory that is not part of the largest block
-			debugf("HEAP frame %llu used %dKB free %dKB largest %dKB split %dKB min %dKB mode %d\n",
+			debugf("HEAP frame %llu used %dKB free %dKB largest %dKB split %dKB min %dKB mode %d ARENA used %dKB peak %dKB live %d largest %dKB\n",
 				__frames, stats.used/1024, free/1024, __largestFree/1024, 
-				(free - __largestFree)/1024, __minLargestFree/1024, vMode);
+				(free - __largestFree)/1024, __minLargestFree/1024, vMode,
+				aUsed/1024, aPeak/1024, aLive, aLargest/1024);
 			__heapLogCount = 0;
 		}
 	}
@@ -222,6 +225,11 @@ void checkInternalResChange() {
 	
 	__changeInternalRes = 0;
 	__changeInternalBPP = 0;
+	
+	if(__videoModeFailed) {
+		__videoModeFailed = 0;
+		drawMessageBox("Not enough memory\nfor this video mode");
+	}
 }
 
 void getDisplay() {
@@ -378,7 +386,27 @@ resolution_t adjustResForPAL(resolution_t res, int pal288) {
 	return res;
 }
 
+// display_init() asserts if a framebuffer can't be allocated, so we try them first
+static int framebuffersFit(resolution_t res, bitdepth_t bpp, int buffers) {
+	surface_t	test[3];
+	int			count = 0, fit = 1;
+	tex_format_t format = bpp == DEPTH_16_BPP ? FMT_RGBA16 : FMT_RGBA32;
+	
+	for(count = 0; count < buffers && count < 3; count++) {
+		test[count] = surface_alloc(format, res.width, res.height);
+		if(!test[count].buffer) {
+			fit = 0;
+			break;
+		}
+	}
+	for(int i = 0; i < count; i++)
+		surface_free(&test[i]);
+	return fit;
+}
+
 void setVideoInternal(resolution_t newRes) {
+	unsigned int oldPAL288 = enablePAL288;
+	
 	if(__pendingPAL288 != -1) {
 		enablePAL288 = isPAL ? __pendingPAL288 : 0;
 		__pendingPAL288 = -1;
@@ -395,8 +423,7 @@ void setVideoInternal(resolution_t newRes) {
 		// RDP must be done with all framebuffers before we free them
 		rspq_wait();
 		freeMenuFB();				// comment this one out to get "improper" resolution backgrounds for menu
-		if(!isResolution480Class(&newRes) || current_bitdepth != __newInternalBPPChange)
-			freeUpscaleFB();
+		freeUpscaleFB();			// always, it would stay between the new framebuffers
 		
 		_internalWaitVsync();
 		// display_close polls VI_V_CURRENT for line 2, the same line that
@@ -414,6 +441,19 @@ void setVideoInternal(resolution_t newRes) {
 		else
 			newRes.pal60 = 0;
 	}
+	// Without enough memory we go back to the mode we just closed, it fits
+	if(vMode != SUITE_NONE && !framebuffersFit(newRes, __newInternalBPPChange, current_buffers)) {
+#ifdef DEBUG_BENCHMARK
+		debugf("Not enough memory for %dx%d %dbpp, keeping %dx%d\n",
+			(int)newRes.width, (int)newRes.height, __newInternalBPPChange == DEPTH_32_BPP ? 32 : 16,
+			(int)current_resolution.width, (int)current_resolution.height);
+#endif
+		newRes = current_resolution;
+		__newInternalBPPChange = current_bitdepth;
+		enablePAL288 = oldPAL288;
+		__videoModeFailed = 1;
+	}
+	
 	current_resolution = newRes;
 	current_bitdepth = __newInternalBPPChange;
 	

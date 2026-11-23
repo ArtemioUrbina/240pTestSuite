@@ -347,37 +347,216 @@ void loadResidentImages() {
 	loadNumbers();
 }
 
+/* 
+	Image arena
+	
+	Test images are loaded into a block reserved at boot, right after the
+	resident images and before the first framebuffers.
+	
+	First fit, free blocks are merged while searching. If it is full the 
+	image goes to the heap as before, debug builds log it.
+*/
+
+#define ARENA_ALIGN		16
+
+typedef struct arena_block_st {
+	uint32_t	size;		// whole block, header included
+	uint32_t	used;
+#ifdef DEBUG_BENCHMARK
+	char		name[24];	// for the leak check
+#else
+	uint32_t	pad[2];	
+#endif
+} arena_block_t;
+
+uint8_t	*__arena = NULL, *__arenaEnd = NULL;
+int		__arenaUsed = 0, __arenaPeak = 0, __arenaLive = 0;
+
+void arenaInit(unsigned int size) {
+	arena_block_t *first = NULL;
+	
+	size &= ~(ARENA_ALIGN-1);
+	__arena = memalign(ARENA_ALIGN, size);
+	if(!__arena)
+		return;	
+	__arenaEnd = __arena + size;
+	
+	first = (arena_block_t*)__arena;
+	first->size = size;
+	first->used = 0;
+}
+
+static inline arena_block_t *arenaNext(arena_block_t *block) {
+	return (arena_block_t*)((uint8_t*)block + block->size);
+}
+
+// merges the free blocks that follow this one
+static void arenaMerge(arena_block_t *block) {
+	arena_block_t *next = arenaNext(block);
+	
+	while((uint8_t*)next < __arenaEnd && !next->used) {
+		block->size += next->size;
+		next = arenaNext(block);
+	}
+}
+
+void *arenaAlloc(int size, char *name) {
+	arena_block_t *block = (arena_block_t*)__arena;
+	
+	if(!__arena)
+		return NULL;
+	
+	size = (size + sizeof(arena_block_t) + ARENA_ALIGN - 1) & ~(ARENA_ALIGN-1);
+	while((uint8_t*)block < __arenaEnd) {
+		if(!block->used) {
+			arenaMerge(block);
+			if(block->size >= (uint32_t)size) {
+				// split if what is left is worth it
+				if(block->size - size >= 1024) {
+					arena_block_t *rest = (arena_block_t*)((uint8_t*)block + size);
+					
+					rest->size = block->size - size;
+					rest->used = 0;
+					block->size = size;
+				}
+				block->used = 1;
+#ifdef DEBUG_BENCHMARK
+				strncpy(block->name, name + 5, sizeof(block->name) - 1);	// remove "rom:/"
+				block->name[sizeof(block->name) - 1] = '\0';
+#endif
+				__arenaUsed += block->size;
+				if(__arenaUsed > __arenaPeak)
+					__arenaPeak = __arenaUsed;
+				__arenaLive++;
+				return (uint8_t*)block + sizeof(arena_block_t);
+			}
+		}
+		block = arenaNext(block);
+	}
+	return NULL;
+}
+
+static inline int isArenaPtr(void *ptr) {
+	return((uint8_t*)ptr >= __arena && (uint8_t*)ptr < __arenaEnd);
+}
+
+void arenaFree(void *ptr) {
+	arena_block_t *block = (arena_block_t*)((uint8_t*)ptr - sizeof(arena_block_t));
+	
+	if(!block->used)
+		return;	
+		
+	block->used = 0;
+	__arenaUsed -= block->size;
+	__arenaLive--;
+}
+
+#ifdef DEBUG_BENCHMARK
+void arenaGetStats(int *used, int *peak, int *live, int *largest) {
+	arena_block_t *block = (arena_block_t*)__arena;
+	
+	*used = __arenaUsed;
+	*peak = __arenaPeak;
+	*live = __arenaLive;
+	*largest = 0;
+	
+	if(!__arena)
+		return;
+		
+	while((uint8_t*)block < __arenaEnd) {
+		if(!block->used) {
+			arenaMerge(block);
+			if((int)block->size > *largest)
+				*largest = block->size;
+		}
+		block = arenaNext(block);
+	}
+}
+
+// Nothing should be in the arena at the main menu
+void arenaCheckLeaks() {
+	arena_block_t *block = (arena_block_t*)__arena;
+	
+	if(!__arena || !__arenaLive)
+		return;
+	while((uint8_t*)block < __arenaEnd) {
+		if(block->used)
+			debugf("ARENA leak: %s %dKB\n", block->name, (int)block->size/1024);
+		block = arenaNext(block);
+	}
+}
+#endif
+
 /* Image stuct */
 
+/*
+	One allocation per image, in the arena or the heap:
+	[image struct][palette copy space][sprite file, loaded in place]
+*/
+#define IMAGE_STRUCT_SIZE	((sizeof(image) + ARENA_ALIGN - 1) & ~(ARENA_ALIGN-1))
+#define IMAGE_HEADER_SIZE	(IMAGE_STRUCT_SIZE + PAL8_SIZE*sizeof(uint16_t))
+
 image *loadImage(char *name) {
-	image *data = NULL;
-	int resident = getResidentIndex(name);
+	image		*data = NULL;
+	FILE		*fp = NULL;
+	uint8_t		*block = NULL;
+	int			resident = getResidentIndex(name);
+	int			fileSize = 0, size = 0, needed = 0;
 	
 	if(resident != -1 && residentImages[resident]) {
 		setImageDefaults(residentImages[resident]);
 		return residentImages[resident];
 	}
 
-#ifndef DEBUG_BENCHMARK	
-	int fh = dfs_open(name+5);   // remove "rom:/"
-	if(fh < DFS_ESUCCESS)
-		return NULL;
-	dfs_close(fh);
+	fp = fopen(name, "rb");
+#ifdef DEBUG_BENCHMARK
+	assertf(fp, "loadImage() %s not found", name);
 #endif
-
-	data = (image*)malloc(sizeof(image));
-	if(!data)
+	if(!fp)
 		return NULL;
-	data->tiles = sprite_load(name);
-	if(!data->tiles) {
-		free(data);
-		return(NULL);
+		
+	fseek(fp, 0, SEEK_END);
+	fileSize = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	
+	// with no buffer it returns the size needed, more than the file if compressed
+	size = fileSize;
+	asset_loadf_into(fp, &size, NULL, &needed);
+	
+	// residents are loaded before the arena exists, they stay in the heap
+	block = arenaAlloc(IMAGE_HEADER_SIZE + needed, name);
+	if(!block) {
+#ifdef DEBUG_BENCHMARK
+		if(__arena)
+			debugf("ARENA full: %s %dKB\n", name, (int)(IMAGE_HEADER_SIZE + needed)/1024);
+#endif
+		block = memalign(ARENA_ALIGN, IMAGE_HEADER_SIZE + needed);
+	}	
+	if(!block) {
+		fclose(fp);
+		return NULL;
 	}
+	
+	fseek(fp, 0, SEEK_SET);
+	size = fileSize;
+	if(!asset_loadf_into(fp, &size, block + IMAGE_HEADER_SIZE, &needed)) {
+		fclose(fp);
+		if(isArenaPtr(block))
+			arenaFree(block);
+		else
+			free(block);
+		return NULL;
+	}
+	fclose(fp);
+	
+	data = (image*)block;
+	data->tiles = sprite_load_buf(block + IMAGE_HEADER_SIZE, size);
 	setImageDefaults(data);
 	data->resident = 0;
 	
 	data->palette = NULL;
 	data->origPalette = NULL;
+	data->palBuffer = (uint16_t*)(block + IMAGE_STRUCT_SIZE);
 	data->palSize = 0;
 	data->fadeSteps = 0;
 	
@@ -446,15 +625,15 @@ void freeImage(image **data) {
 		return;
 	}
 	
+	// sprite_load_buf() sprites don't own their buffer, it is part of the image block
 	if((*data)->tiles) {
 		sprite_free((*data)->tiles);
 		(*data)->tiles = NULL;
 	}
-	if((*data)->origPalette) {
-		free((*data)->origPalette);
-		(*data)->origPalette = NULL;
-	}
-	free(*data);
+	if(isArenaPtr(*data))
+		arenaFree(*data);
+	else
+		free(*data);
 	*data = NULL;
 }
 
@@ -692,16 +871,8 @@ void setPaletteFX(image *data) {
 	if(!data->palette)
 		return;
 	
-	if(data->origPalette) {
-		free(data->origPalette);
-		data->origPalette = NULL;
-	}
-	
-	if(data->palette) {
-		data->origPalette = (uint16_t *)malloc(sizeof(uint16_t)*data->palSize);
-		if(data->origPalette)
-			memcpy(data->origPalette, data->palette, sizeof(uint16_t)*data->palSize);
-	}
+	data->origPalette = data->palBuffer;
+	memcpy(data->origPalette, data->palette, sizeof(uint16_t)*data->palSize);
 }
 
 void updatePalette(image *data) {
