@@ -97,6 +97,7 @@ void setVideoInternal(resolution_t newRes);
 #ifdef DEBUG_BENCHMARK
 #define	IDLE_WARN_MS	2.0f
 void resetIdle();
+void resetHeapMin();
 void drawVIRegisters(int x, int y);
 #endif
 

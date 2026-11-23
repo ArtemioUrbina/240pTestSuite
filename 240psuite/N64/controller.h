@@ -26,4 +26,8 @@
 joypad_buttons_t controllerButtonsDown();
 joypad_buttons_t controllerButtonsHeld();
 int getJoyX();
+
+#ifdef SOAK_TEST
+extern int randomInput;
+#endif
 int getJoyY();

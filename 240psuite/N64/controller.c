@@ -21,11 +21,34 @@
  
 #include "controller.h"
 #include "video.h"
+#include "system.h"
 
 #define MINFRAMES 5				// Frames to count joystick held as pad
 
 int JoyCountX = 0;
 int JoyCountY = 0;
+
+#ifdef SOAK_TEST
+// Random input for long run tests (make soak), hold L+R to stop it
+int randomInput = 1;
+
+// Fair and fast random generation (using xorshift32, with explicit seed)
+// fixed seed, so a crash can be reproduced with the same input sequence
+static uint32_t rand_state = 1;
+static uint32_t myrand(void) {
+	uint32_t x = rand_state;
+	x ^= x << 13;
+	x ^= x >> 7;
+	x ^= x << 5;
+	return rand_state = x;
+}
+
+#define RANDN(n) ({ \
+	__builtin_constant_p((n)) ? \
+		(myrand()%(n)) : \
+		(uint32_t)(((uint64_t)myrand() * (n)) >> 32); \
+})
+#endif
 
 joypad_buttons_t controllerButtonsDown() {
 	joypad_inputs_t pad_inputs;
@@ -75,12 +98,51 @@ joypad_buttons_t controllerButtonsDown() {
 		}
 	}
 
+#ifdef SOAK_TEST
+	if(randomInput) {
+		if(RANDN(2))
+			pad_pressed.d_up = 1;
+		if(RANDN(2))
+			pad_pressed.d_down = 1;
+		if(RANDN(2))
+			pad_pressed.d_right = 1;
+		if(RANDN(2))
+			pad_pressed.d_left = 1;
+		
+		if(RANDN(2))
+			pad_pressed.c_up = 1;
+		if(RANDN(2))
+			pad_pressed.c_down = 1;
+		if(RANDN(2))
+			pad_pressed.c_left = 1;
+		if(RANDN(2))
+			pad_pressed.c_right = 1;
+		if(RANDN(100) == 7)
+			pad_pressed.start = 1;
+		if(RANDN(10) == 4)
+			pad_pressed.a = 1;
+		if(RANDN(10) == 8)
+			pad_pressed.b = 1;
+		if(RANDN(2))
+			pad_pressed.z = 1;
+		if(RANDN(2))
+			pad_pressed.l = 1;
+		if(RANDN(2))
+			pad_pressed.r = 1;
+	}
+#endif
+
 #ifdef DEBUG_BENCHMARK
 	joypad_buttons_t pad_held;
 	
 	pad_held = joypad_get_buttons_held(JOYPAD_PORT_1);
-	if(pad_held.l && pad_held.r)
+	if(pad_held.l && pad_held.r) {
 		resetIdle();
+		resetHeapMin();
+#ifdef SOAK_TEST
+		randomInput = 0;
+#endif
+	}
 #endif
 	return pad_pressed;
 }

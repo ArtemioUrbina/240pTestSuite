@@ -294,8 +294,10 @@ void drawControllerTest() {
 	image *back = NULL;
 	joypad_buttons_t pad_held;
 	char buffer[25];
+#ifdef SOAK_TEST
+	int soakFrames = 0;
+#endif
 
-	changeTo32BitDepthOnVBlank();
 	num++;
 	if(num > 2)
 		num = 1;
@@ -303,6 +305,8 @@ void drawControllerTest() {
 	back = loadImage(buffer);
 	if(!back)
 		return;
+	
+	changeTo32BitDepthOnVBlank();
 		
 	while(!end) {
 		getDisplay();
@@ -327,6 +331,11 @@ void drawControllerTest() {
 		
 		if(pad_held.start && pad_held.d_left)
 			end = 1;
+#ifdef SOAK_TEST
+		// random input can't hold Left+Start, leave after ~5 seconds
+		if(randomInput && ++soakFrames > 300)
+			end = 1;
+#endif
 	}
 	
 	holdImage(back, 10);

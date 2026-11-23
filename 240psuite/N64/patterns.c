@@ -33,14 +33,15 @@ void drawPLUGE() {
 	if(!back)
 		return;
 	pal = loadImage("rom:/plugePAL.sprite");
-	if(!pal)
-		return;
 	borderGreen = loadImage("rom:/PLUGEBorder.sprite");
-	if(!borderGreen)
-		return;
 	borderRed = loadImage("rom:/PLUGEBorder.sprite");
-	if(!borderRed)
+	if(!pal || !borderGreen || !borderRed) {
+		freeImage(&borderGreen);
+		freeImage(&borderRed);
+		freeImage(&pal);
+		freeImage(&back);
 		return;
+	}
 	borderGreen->palette[1] = COLOR_R;
 	updatePalette(borderGreen);
 	borderRed->palette[1] = COLOR_G;
@@ -943,8 +944,11 @@ void drawConvergence()
 	
 	for(i = 0; i < NUM_CONV; i++) {
 		back[i] = loadImage(patterns[i]);
-		if(!back[i])
+		if(!back[i]) {
+			while(i--)
+				freeImage(&back[i]);
 			return;
+		}
 	}
 	
 	while(!done) {	

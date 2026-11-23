@@ -25,6 +25,7 @@
 #include <libdragon.h>
 
 int openWAV(wav64_t *wav64, char *fileName);
+void closeMixerAudio(int channels);
 void drawAudioSyncTest();
 void drawMDFourier();
 void drawAudioTest();

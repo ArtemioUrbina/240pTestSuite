@@ -136,6 +136,12 @@ void drawDropShadow(int striped) {
 		
 		buzz = loadImage("rom:/buzzbomber.sprite");
 		buzzshadow = loadImage("rom:/buzzbomberShadow.sprite");
+		if(!sshadow || !buzz || !buzzshadow) {
+			freeImage(&sshadow);
+			freeImage(&buzz);
+			freeImage(&buzzshadow);
+			return;
+		}
 	
 		sprite = rand()%2;
 		if(sprite == 0)
@@ -145,10 +151,10 @@ void drawDropShadow(int striped) {
 	}
 	else {
 		shadow = loadImage("rom:/striped.sprite");
-		if(shadow)	{
-			x = getDispHeight()/2- shadow->tiles->width/2;
-			y = getDispHeight()/2 - shadow->tiles->height/2;
-		}
+		if(!shadow)
+			return;
+		x = getDispHeight()/2- shadow->tiles->width/2;
+		y = getDispHeight()/2 - shadow->tiles->height/2;
 	}
 
 	while(!end) {
@@ -364,8 +370,10 @@ void drawLagTest() {
 		return;
 	
 	redCircle = loadImage("rom:/circle.sprite");
-	if(!redCircle)
+	if(!redCircle) {
+		freeImage(&blueCircle);
 		return;
+	}
 	
 	loadNumbers();
 	
@@ -680,8 +688,10 @@ void drawStripes() {
 		return;
 	
 	vertical = loadImage("rom:/stripes_v.sprite");
-	if(!vertical)
+	if(!vertical) {
+		freeImage(&horizontal);
 		return;
+	}
 	
 	isVertical = selectMenu("Select Type", verMenuData, 2, isVertical+1);
 	if(isVertical == MENU_CANCEL)
@@ -951,13 +961,17 @@ void drawPhase() {
 		return;
 	
 	backcheck = loadImage("rom:/check.sprite");
-	if(!backcheck)
+	if(!backcheck) {
+		freeImage(&back);
 		return;
+	}
 
 	for(i = 0; i < 5; i++) {
 		sd[i] = loadImage("rom:/sd.sprite");
-		if(!sd[i])
-			return;
+		if(!sd[i]) {
+			done = 1;
+			break;
+		}
 		sd[i]->x = 5+i*64;
 		sd[i]->y = 70;
 		sd_b1[i] = loadImage("rom:/sd_b1.sprite");
@@ -1454,11 +1468,18 @@ void drawTimingReflexTest() {
 	image			*sprite = NULL;
 	image			*spriteW = NULL, *spriteG = NULL, *spriteR = NULL;
 	wav64_t 		beepSamples;
+	int				hasBeep = 0;
 	joypad_buttons_t keys;
 	
 	spriteW = loadImage("rom:/lag-per.sprite");
 	spriteR = loadImage("rom:/lag-per.sprite");
 	spriteG = loadImage("rom:/lag-per.sprite");
+	if(!spriteW || !spriteR || !spriteG) {
+		freeImage(&spriteW);
+		freeImage(&spriteR);
+		freeImage(&spriteG);
+		return;
+	}
 	
 	// Prepare red variant so we don't invalidate caches later
 	spriteR->palette[4] = COLOR_R;
@@ -1468,9 +1489,9 @@ void drawTimingReflexTest() {
 	spriteG->palette[4] = COLOR_G;
 	updatePalette(spriteG);
 		
-	if(!openWAV(&beepSamples, "rom:/beep.wav64")) {
+	hasBeep = openWAV(&beepSamples, "rom:/beep.wav64");
+	if(!hasBeep)
 		drawMessageBox("Audio samples not present");
-	}
 
 	x = 144;
 	y = 60;
@@ -1623,7 +1644,7 @@ void drawTimingReflexTest() {
 			}
 		}
 
-		if(keys.c_left)
+		if(keys.c_left && hasBeep)
 			audio =	!audio;	
 			
 		if(keys.c_right) {
@@ -1654,9 +1675,9 @@ void drawTimingReflexTest() {
 		view --;
 	}
 	
-	wav64_close(&beepSamples);
-	mixer_close();
-	audio_close();
+	closeMixerAudio(TIMING_CHANNELS);
+	if(hasBeep)
+		wav64_close(&beepSamples);
 	
 	//ControllerRumble(0, 0);
 

@@ -315,10 +315,48 @@ void rdpqDrawRectangle(int tx, int ty, int bx, int by, int r, int g, int b) {
 		rdpq_detach();
 }
 
+char *residentNames[] = { "rom:/mainbg.sprite", "rom:/sd.sprite", 
+						"rom:/sd_b1.sprite", "rom:/sd_b2.sprite", 
+						"rom:/menu.sprite", "rom:/menularge.sprite", 
+						"rom:/help.sprite", "rom:/message.sprite", NULL };
+image *residentImages[sizeof(residentNames)/sizeof(char*)];
+
+int getResidentIndex(char *name) {
+	for(int i = 0; residentNames[i]; i++) {
+		if(strcmp(name, residentNames[i]) == 0)
+			return i;
+	}
+	return -1;
+}
+
+void setImageDefaults(image *data) {
+	data->x = 0;
+	data->y = 0;
+	data->center = 0;
+	data->scale = 1;
+	data->flipH = 0;
+	data->flipV = 0;
+	data->rotate = 0;
+	data->rotAngle = 00.f;
+	data->ignoreOffsetY = 0;
+}
+
+void loadResidentImages() {
+	for(int i = 0; residentNames[i]; i++)
+		loadImage(residentNames[i]);
+	loadNumbers();
+}
+
 /* Image stuct */
 
 image *loadImage(char *name) {
 	image *data = NULL;
+	int resident = getResidentIndex(name);
+	
+	if(resident != -1 && residentImages[resident]) {
+		setImageDefaults(residentImages[resident]);
+		return residentImages[resident];
+	}
 
 #ifndef DEBUG_BENCHMARK	
 	int fh = dfs_open(name+5);   // remove "rom:/"
@@ -335,15 +373,8 @@ image *loadImage(char *name) {
 		free(data);
 		return(NULL);
 	}
-	data->x = 0;
-	data->y = 0;
-	data->center = 0;
-	data->scale = 1;
-	data->flipH = 0;
-	data->flipV = 0;
-	data->rotate = 0;
-	data->rotAngle = 00.f;
-	data->ignoreOffsetY = 0;
+	setImageDefaults(data);
+	data->resident = 0;
 	
 	data->palette = NULL;
 	data->origPalette = NULL;
@@ -366,6 +397,10 @@ image *loadImage(char *name) {
 #endif
 	}
 	
+	if(resident != -1) {
+		data->resident = 1;
+		residentImages[resident] = data;
+	}
 	return(data);
 }
  
@@ -405,6 +440,11 @@ image *loadImagePAL(char *name) {
 void freeImage(image **data) {
 	if(!data || !*data)
 		return;
+	
+	if((*data)->resident) {
+		*data = NULL;
+		return;
+	}
 	
 	if((*data)->tiles) {
 		sprite_free((*data)->tiles);
@@ -466,6 +506,7 @@ int copyMenuFB() {
 
 void freeMenuFB() {
 	if(__menu_fb) {
+		rspq_wait();	// the RDP might still be using it
 		surface_free(__menu_fb);
 		free(__menu_fb);
 		__menu_fb = NULL;
@@ -582,6 +623,7 @@ int createUpscaleFB() {
 			return 1;
 
 		// mismatch
+		rspq_wait();
 		surface_free(__upscale_fb);
 		free(__upscale_fb);
 		__upscale_fb = NULL;
@@ -604,6 +646,7 @@ int createUpscaleFB() {
 
 void freeUpscaleFB() {
 	if(__upscale_fb) {
+		rspq_wait();	// the RDP might still be using it
 		surface_free(__upscale_fb);
 		free(__upscale_fb);
 		__upscale_fb = NULL;
@@ -879,10 +922,8 @@ void loadNumbers() {
 	updatePalette(bigNumbers[NUMBER_BLUE]);
 }
 
+// Numbers are resident, loaded at boot by loadResidentImages()
 void releaseNumbers() {
-	for(unsigned int num = 0; num < NUMBER_COLORS; num++) {
-		freeImage(&bigNumbers[num]);
-	}
 }
 
 void drawDigit(uint16_t x, uint16_t y, uint16_t color, uint16_t digit) {

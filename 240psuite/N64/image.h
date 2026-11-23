@@ -73,6 +73,7 @@ typedef struct image_st {
 	int rotate;
 	float rotAngle;
 	int ignoreOffsetY;	// native 288/576 assets are not centered in PAL 288
+	int resident;		// loaded once at boot, freeImage() doesn't release it
 	
 	uint16_t *palette;
 	uint16_t *origPalette;
@@ -100,6 +101,7 @@ void rdpqClearScreenWhite();
 void rdpqDrawRectangle(int tx, int ty, int bx, int by, int r, int g, int b);
 
 image *loadImage(char *name);
+void loadResidentImages();
 image *loadImagePAL(char *name);
 void freeImage(image **data);
 

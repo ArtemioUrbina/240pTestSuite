@@ -22,6 +22,7 @@
 #include "system.h"
 #include "video.h"
 #include "font.h"
+#include "image.h"
 #include <unistd.h>
  
 int isPAL = 0;
@@ -48,10 +49,17 @@ void initN64() {
 	assertf(dfs_init(DFS_DEFAULT_LOCATION) == DFS_ESUCCESS, "dfs_init(): failed");
 	loadFont();
 	
+	// Everything that stays allocated goes before the first framebuffers, 
+	loadResidentImages();
+	rdpq_init();
+	joypad_init();
+#ifdef DEBUG_BENCHMARK
+	debug_init_isviewer();
+	debugf("240p Test Suite debug log\n");	// allocates the stderr buffer now
+#endif
+	
 	initVideo();
 	setVideoInternal(RESOLUTION_320x240);
-	
-	joypad_init();
 	
 	getentropy(&seed, 4);
 	srand(seed);

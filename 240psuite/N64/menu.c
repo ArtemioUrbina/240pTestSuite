@@ -584,7 +584,6 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 	if(back)
 		back->center = 1;
 	 
-	debug_init_isviewer();
 	while(!close) {		
 		uint8_t		r = 0xff;
 		uint8_t		g = 0xff;

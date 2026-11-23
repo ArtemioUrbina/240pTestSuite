@@ -37,6 +37,14 @@ int openWAV(wav64_t *wav64, char *fileName) {
 	return 1;
 }
 
+void closeMixerAudio(int channels) {
+	for(int ch = 0; ch < channels; ch++)
+		mixer_ch_stop(ch);
+	rspq_wait();
+	mixer_close();
+	audio_close();
+}
+
 #define MDF_BUFFERS		20
 #define MDF_CHANNELS	2
 #define MDF_CHANNEL		0
@@ -53,8 +61,10 @@ void drawMDFourier() {
 	}
 		
 	back = loadImage("rom:/mainbg.sprite");
-	if(!back)
+	if(!back) {
+		wav64_close(&mdfSamples);
 		return;
+	}
 
 	audio_init(44100, MDF_BUFFERS);
 	mixer_init(MDF_CHANNELS);
@@ -130,11 +140,10 @@ void drawMDFourier() {
 		}
 	}
 	
-	wav64_close(&mdfSamples);
 	freeImage(&back);
 	
-	mixer_close();
-	audio_close();
+	closeMixerAudio(MDF_CHANNELS);
+	wav64_close(&mdfSamples);
 }
  
 #define REGULAR_TEST		0
@@ -266,10 +275,8 @@ void drawAudioSyncTest() {
 			checkStart(keys);
 	}
 	
+	closeMixerAudio(SYNC_CHANNELS);
 	wav64_close(&beepSamples);
-	
-	mixer_close();
-	audio_close();
 }
 
 void drawAudioTest() {
@@ -301,16 +308,23 @@ void drawAudioTestDicrete() {
 		return;
 	}
 	if(!openWAV(&center, "rom:/sound_test_center.wav64")) {
-		drawMessageBox("Sound test Right samples not present");
+		drawMessageBox("Sound test Center samples not present");
+		wav64_close(&left);
 		return;
 	}
 	if(!openWAV(&right, "rom:/sound_test_right.wav64")) {
 		drawMessageBox("Sound test Right samples not present");
+		wav64_close(&left);
+		wav64_close(&center);
 		return;
 	}
 	back = loadImage("rom:/mainbg.sprite");
-	if(!back)
+	if(!back) {
+		wav64_close(&left);
+		wav64_close(&center);
+		wav64_close(&right);
 		return;
+	}
 		
 	audio_init(44100, ST_BUFFERS);
 	mixer_init(ST_CHANNELS);
@@ -373,12 +387,10 @@ void drawAudioTestDicrete() {
 	
 	freeImage(&back);
 	
+	closeMixerAudio(ST_CHANNELS);
 	wav64_close(&left);
 	wav64_close(&center);
 	wav64_close(&right);
-	
-	mixer_close();
-	audio_close();
 }
 
 #define ST_BUFFERS		1
@@ -405,8 +417,10 @@ void drawAudioTestAnalog() {
 		num = 1;
 	sprintf(buffer, "rom:/credits%d.sprite", num % 9);
 	back = loadImage(buffer);
-	if(!back)
+	if(!back) {
+		wav64_close(&sample);
 		return;
+	}
 		
 	changeTo32BitDepthOnVBlank();
 	
@@ -456,10 +470,9 @@ void drawAudioTestAnalog() {
 	
 	freeImage(&back);
 	
+	closeMixerAudio(ST_CHANNELS);
 	wav64_close(&sample);
 	
-	mixer_close();
-	audio_close();
 	changeTo16BitDepthOnVBlank();
 }
 
@@ -478,23 +491,39 @@ void drawAudioTestPLII() {
 	}
 	if(!openWAV(&center, "rom:/sound_test_center.wav64")) {
 		drawMessageBox("Sound test Center samples not present");
+		wav64_close(&left);
 		return;
 	}
 	if(!openWAV(&right, "rom:/sound_test_right.wav64")) {
 		drawMessageBox("Sound test Right samples not present");
+		wav64_close(&left);
+		wav64_close(&center);
 		return;
 	}
 	if(!openWAV(&sleft, "rom:/sound_test_leftsurround.wav64")) {
 		drawMessageBox("Sound test Surr. Left samples not present");
+		wav64_close(&left);
+		wav64_close(&center);
+		wav64_close(&right);
 		return;
 	}
 	if(!openWAV(&sright, "rom:/sound_test_rightsurround.wav64")) {
 		drawMessageBox("Sound test Surr. Right samples not present");
+		wav64_close(&left);
+		wav64_close(&center);
+		wav64_close(&right);
+		wav64_close(&sleft);
 		return;
 	}
 	back = loadImage("rom:/mainbg.sprite");
-	if(!back)
+	if(!back) {
+		wav64_close(&left);
+		wav64_close(&center);
+		wav64_close(&right);
+		wav64_close(&sleft);
+		wav64_close(&sright);
 		return;
+	}
 		
 	audio_init(44100, ST_BUFFERS);
 	mixer_init(SPLII_CHANNELS);
@@ -564,12 +593,10 @@ void drawAudioTestPLII() {
 	
 	freeImage(&back);
 	
+	closeMixerAudio(SPLII_CHANNELS);
 	wav64_close(&left);
 	wav64_close(&center);
 	wav64_close(&right);
 	wav64_close(&sleft);
 	wav64_close(&sright);
-	
-	mixer_close();
-	audio_close();
 }

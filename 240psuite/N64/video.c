@@ -63,8 +63,8 @@ unsigned int videoSet = 0;
 surface_t* __disp = NULL;
 volatile uint64_t __frames = 0;
 
-uint64_t __lastVbl = 0;
-float __vblLen = 0;
+uint32_t __lastVbl = 0;
+uint32_t __vblTicks = 0;
 
 resolution_t 	__newInternalResChange;
 bitdepth_t		__newInternalBPPChange = DEPTH_16_BPP;
@@ -72,13 +72,18 @@ int 			__changeInternalRes = 0;
 int				__changeInternalBPP = 0;
 
 float getFrameLen() {
-	return __vblLen;
+	return __vblTicks / (TICKS_PER_SECOND / 1000.0f);
 }
 
+/*
+	Runs in the VI interrupt, so it can't use get_ticks(), libDragon's 
+	64 bit counter is not interrupt safe and can jump 91 seconds ahead
+	when this interrupts it. 32 bit ticks are fine for a frame.
+*/
 void vblCallback(void) {
-	uint64_t now = get_ticks_us();
+	uint32_t now = TICKS_READ();
 	
-	__vblLen = (now - __lastVbl)/1000.0f;
+	__vblTicks = TICKS_DISTANCE(__lastVbl, now);
 	__lastVbl = now;
     __frames++;
 }
@@ -90,9 +95,35 @@ float __frameLenMS = N64_NTSC_FRAME_LEN;
 float __frameLen = 0, __maxFrameLen = 0;
 
 #ifdef DEBUG_BENCHMARK
+int			__largestFree = 0, __minLargestFree = 0x7fffffff, __heapLogCount = 0;
+uint64_t	__lastHeapCheck = 0;
+
+// Largest block malloc can return, binary search down to 1KB
+int getLargestFreeBlock() {
+	int low = 0, high = get_memory_size();
+	
+	while(high - low > 1024) {
+		int mid = low + (high - low)/2;
+		void *test = malloc(mid);
+		
+		if(test) {
+			free(test);
+			low = mid;
+		}
+		else
+			high = mid;
+	}
+	return low;
+}
+
 void resetIdle() {
 	__minIdle = 20.0f;
 	__maxFrameLen = 0.0f;
+}
+
+// Only with L+R, resetIdle() is also called on every video mode change
+void resetHeapMin() {
+	__minLargestFree = 0x7fffffff;
 }
 
 void drawFrameLens() {
@@ -109,10 +140,37 @@ void drawFrameLens() {
 	
 	sprintf(str, "%0.1f, ALL:%0.1f/%0.1f IDL:%0.1f/%0.1f VBL:%0.1f ", 
 		display_get_refresh_rate(),
-		__frameLen, __maxFrameLen, __frameIdle, __minIdle, __vblLen);
+		__frameLen, __maxFrameLen, __frameIdle, __minIdle, getFrameLen());
 	drawStringB(10, 4, !warn ? 0xff : 0x00, warn ? 0xff : 0x00, 0x00, str);
+#ifdef SOAK_TEST
+	// shows the ROM was built with make soak/soakpal
+	drawStringB(280, 15, 0xff, randomInput ? 0x00 : 0xff, 0x00, randomInput ? "SOAK" : "STOP");
+#endif
 	
-	sprintf(str, "RAM: %dKB/%dKB", (getUsedRAM() / 1024), get_memory_size() / 1024);
+	// largest free block shows fragmentation, measured twice per second
+	if(__frames - __lastHeapCheck >= 30) {
+		__largestFree = getLargestFreeBlock();
+		if(__largestFree < __minLargestFree)
+			__minLargestFree = __largestFree;
+		__lastHeapCheck = __frames;
+		
+		// log for long runs in emulators, every ~10 seconds
+		if(++__heapLogCount >= 20) {
+			heap_stats_t stats;
+			int free;
+			
+			sys_get_heap_stats(&stats);
+			free = stats.total - stats.used;
+			// split: free memory that is not part of the largest block
+			debugf("HEAP frame %llu used %dKB free %dKB largest %dKB split %dKB min %dKB mode %d\n",
+				__frames, stats.used/1024, free/1024, __largestFree/1024, 
+				(free - __largestFree)/1024, __minLargestFree/1024, vMode);
+			__heapLogCount = 0;
+		}
+	}
+	
+	sprintf(str, "RAM:%dK/%dK BIG:%dK MIN:%dK", (getUsedRAM() / 1024), get_memory_size() / 1024,
+		__largestFree / 1024, __minLargestFree / 1024);
 	drawStringB(10, 15, 0xff, 0xff, 0xff, str);
 }
 
@@ -297,6 +355,11 @@ void initVideo() {
 	__newInternalBPPChange = DEPTH_16_BPP;
 	
 	videoSet = 0;
+	
+	// Registered once, libDragon's callback list is not interrupt safe
+	disable_interrupts();
+	register_VI_handler(vblCallback);
+	enable_interrupts();
 }
 
 // Converts between the 240/480 and 288/576 classes of a mode
@@ -329,15 +392,19 @@ void setVideoInternal(resolution_t newRes) {
 		return;
 	
 	if(videoSet) {
-		disable_interrupts();
+		// RDP must be done with all framebuffers before we free them
+		rspq_wait();
 		freeMenuFB();				// comment this one out to get "improper" resolution backgrounds for menu
 		if(!isResolution480Class(&newRes) || current_bitdepth != __newInternalBPPChange)
 			freeUpscaleFB();
-		enable_interrupts();
 		
 		_internalWaitVsync();
+		// display_close polls VI_V_CURRENT for line 2, the same line that
+		// fires the VI interrupt. If the interrupt takes longer than a 
+		// line it never sees it and hangs, so poll with interrupts off
+		disable_interrupts();
 		display_close();
-		unregister_VI_handler(vblCallback);
+		enable_interrupts();
 		videoSet = 0;
 	}
 
@@ -360,7 +427,6 @@ void setVideoInternal(resolution_t newRes) {
 	
 	vMode = videoModeToInt(&current_resolution);
 	rdpq_init();
-	register_VI_handler(vblCallback);
 	setClearScreen();
 	
 	videoSet = 1;

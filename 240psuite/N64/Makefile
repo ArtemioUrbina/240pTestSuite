@@ -184,6 +184,15 @@ fsclean:
 bench: CFLAGS += -DDEBUG_BENCHMARK
 bench: all
 
+# Long run test with random input and heap log, hold L+R to stop the input
+soak: CFLAGS += -DDEBUG_BENCHMARK -DSOAK_TEST
+soak: all
+
+soakpal: ROM_REGION = P
+soakpal: ROM_REGIONFREE =
+soakpal: CFLAGS += -DDEBUG_BENCHMARK -DSOAK_TEST
+soakpal: all
+
 debug: CFLAGS += -g -ggdb
 debug: all
 
