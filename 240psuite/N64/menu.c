@@ -163,7 +163,7 @@ void selectVideoMode(int useBack) {
 	resolution_t 	oldVmode = current_resolution;
 	int 			sel = 1, close = 0;
 	image	 		*back = NULL;
-	//char 			buffer[20];
+	char 			buffer[40];
 	joypad_buttons_t keys;
 	
 	back = loadImage("rom:/help.sprite");
@@ -171,7 +171,7 @@ void selectVideoMode(int useBack) {
 		return;
 	back->center = 1;
 	
-	sel = videoModeToInt(&current_resolution) + 1;
+	sel = isVMode480() ? 2 : 1;
 	while(!close) {		
 		int     r = 0xff;
 		int     g = 0xff;
@@ -197,12 +197,40 @@ void selectVideoMode(int useBack) {
 			drawStringS(x+160, y+fh, 0xff, 0xff, 0x00, "32 Bit Mode");
 		y += 6*fh; 
 		
-		drawStringC(y, 0x00, 0xff, 0x00, "Please select the desired mode"); y += 3*fh; 
+		drawStringC(y, 0x00, 0xff, 0x00, "Please select the desired mode"); y += 2*fh; 
 			
-		drawStringS(x - 10, y + videoModeToInt(&current_resolution)*fh, 0x00, 0xff, 0x00, ">"); 
+		drawStringS(x - 10, y + (isVMode480() ? fh : 0), 0x00, 0xff, 0x00, ">"); 
 		
-		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "240p"); y += fh; c++;
-		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "480i mixed 480/240 assets"); y += fh; c++;				
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, enablePAL288 ? "288p" : "240p"); y += fh; c++;
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, enablePAL288 ? "576i mixed 480/240 assets" : "480i mixed 480/240 assets"); y += fh; c++;				
+		
+		y += fh;
+		sprintf(buffer, "Enable PAL 288p/576i: %s", enablePAL288 ? "yes" : "no");
+		if(isPAL) {
+			drawStringS(x, y, 0x00, 0xff, 0x00, "PAL Options"); y += fh; 
+			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, buffer); y += fh; c++;
+		}
+		else {
+			drawStringS(x, y, 0x22, 0x44, 0x22, "PAL Options"); y += fh; 
+			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, buffer); y += fh; c++;
+		}
+		
+		// PAL Background, only used in 288p/576i
+		sprintf(buffer, "Enable PAL Background: %s", enablePALBG ? "yes" : "no");
+		if(isPAL) {
+			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, buffer); y += fh; c++;
+		}
+		else {
+			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, buffer); y += fh; c++;
+		}
+		
+		sprintf(buffer, "Change PAL Background: [%X,%X,%X]", palBackR, palBackG, palBackB);
+		if(isPAL) {
+			drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, buffer); y += fh; c++;
+		}
+		else {
+			drawStringS(x, y, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, sel == c ? 0x77 : 0xAA, buffer); y += fh; c++;
+		}
 		
 		/* PAL60 is disabled in libdragon preview 
 		y += fh;
@@ -220,8 +248,18 @@ void selectVideoMode(int useBack) {
 		y += fh/2;
 			
 		drawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Main Menu"); 		
-				
-		drawStringC(back->y+216, r, g, b, "Press START for help");
+		
+		if(isPAL && sel == 3) {
+			y += fh/2;
+			drawStringC(y + 2*fh, r-0x30, g-0x30, b-0x30, "240p patterns are centered");
+		}
+		
+		if(isPAL && !enablePAL288 && (sel == 4 || sel == 5)) {
+			y += fh/2;
+			drawStringC(y + 2*fh, r-0x30, g-0x30, b-0x30, "Only used in 288p and 576i");
+		}
+		
+		drawStringC(back->y+216-(enablePAL288 ? OFFSET_288P : 0), r, g, b, "Press START for help");
 	
 		drawNoVsyncWithAudio();
 
@@ -259,6 +297,18 @@ void selectVideoMode(int useBack) {
 					changeVMode(RESOLUTION_640x480);
 					break;
 				case 3:
+					if(isPAL)
+						togglePAL288();
+					break;
+				case 4:
+					if(isPAL)
+						enablePALBG = !enablePALBG;
+					break;
+				case 5:
+					if(isPAL)
+						changePALBackgroundColor(useBack);
+					break;
+				case 6:
 					close = 1;
 					break;
 				default:
@@ -271,6 +321,113 @@ void selectVideoMode(int useBack) {
 		setClearScreen();
 	if(!hasMenuFB())
 		setClearScreen();
+}
+
+void changePALBackgroundColor(int useBack) {
+	int 			sel = 1, close = 0;
+	image	 		*back = NULL;
+	char 			color[40];
+	joypad_buttons_t keys, keysHeld;
+	
+	back = loadImage("rom:/help.sprite");
+	if(!back)
+		return;
+	back->center = 1;
+	
+	while(!close) {		
+		int     r = 0xff;
+		int     g = 0xff;
+		int     b = 0xff;
+		int   	c = 1, x, y, *current = NULL;
+				
+		getDisplay();
+
+		if(useBack)
+			drawMenuFB();
+		rdpqStart();
+		rdpqDrawImage(back);
+		// Color sample with a black border, rectangles have no 288 offset
+		rdpqDrawRectangle(back->x+199, back->y+89, back->x+221, back->y+111, 0, 0, 0);
+		rdpqDrawRectangle(back->x+200, back->y+90, back->x+220, back->y+110, palBackR, palBackG, palBackB);
+		rdpqEnd();
+
+		x = back->x + 80;
+		y = back->y + 70;
+		
+		if(enablePAL288)
+			y -= OFFSET_288P;
+		
+		drawStringC(y, 0x00, 0xff, 0x00, "PAL Background Color"); y += 2*fh; 
+		
+		sprintf(color, "Red:   0x%02X", palBackR);
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, color); y += fh; c++;
+		sprintf(color, "Green: 0x%02X", palBackG);
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, color); y += fh; c++;
+		sprintf(color, "Blue:  0x%02X", palBackB);
+		drawStringS(x, y, r, sel == c ? 0 : g,	sel == c ? 0 : b, color); y += fh; c++;
+		
+		drawStringS(x, y + fh, r-0x40, sel == c ? 0 : g, sel == c ? 0 : b, "Back to Video Modes"); 
+		
+		if(sel != c)
+			drawStringC(y + 4*fh, r, g, b, "Adjust with L/R, Left/Right or C");
+		
+		drawStringC(y + 6*fh, r-0x30, g-0x30, b-0x30, "The background fills the screen");
+		drawStringC(y + 7*fh, r-0x30, g-0x30, b-0x30, "around 240p patterns in 288p/576i");
+	
+		drawNoVsyncWithAudio();
+
+		joypad_poll();
+		keys = controllerButtonsDown();
+		keysHeld = controllerButtonsHeld();
+		
+		if(keys.d_up) {
+		    sel --;
+		    if(sel < 1)
+			    sel = c;		
+	    }
+	    
+	    if(keys.d_down) {
+		    sel ++;
+		    if(sel > c)
+			    sel = 1;	
+	    }
+		
+		if(keys.b)
+			close = 1;
+		
+		if(keys.a && sel == c)
+			close = 1;
+		
+		switch(sel)	{
+			case 1:
+				current = &palBackR;
+				break;
+			case 2:
+				current = &palBackG;
+				break;
+			case 3:
+				current = &palBackB;
+				break;
+		}
+		
+		if(current) {
+			// held for fast changes, like the Wii/GC version
+			if(keysHeld.l || keys.d_left)
+				(*current) --;
+			if(keysHeld.r || keys.d_right)
+				(*current) ++;
+			if(keys.c_left)
+				(*current) -= 0x10;
+			if(keys.c_right)
+				(*current) += 0x10;
+			
+			if(*current < 0)
+				*current = 0;
+			if(*current > 0xff)
+				*current = 0xff;
+		}
+	}
+	freeImage(&back);
 }
 
 extern int num;
@@ -461,10 +618,13 @@ int selectMenuEx(char *title, fmenuData *menuData, int numOptions, int selectedO
 			c++;		
 		}
 		
-		drawStringC(back->y + (numOptions <= OPTIONS_SMALL ? 80 : 112), r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
+		y = back->y + (numOptions <= OPTIONS_SMALL ? 80 : 112);
+		if(enablePAL288)
+			y -= OFFSET_288P;
+		drawStringC(y, r, sel == c ? 0 : g,	sel == c ? 0 : b, "Close Menu");
 		
 		if(helpFile)
-			drawStringC(back->y + (numOptions <= OPTIONS_SMALL ? 80 : 112) + 40, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
+			drawStringC(y + 40, 0xff, 0xff, 0xff, "Press #YSTART#Y for help");
 
 		drawNoVsyncWithAudio();
 

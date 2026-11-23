@@ -33,13 +33,29 @@ filter_options_t	current_antialias = 0;
 rdpq_antialias_t	current_rdp_aa_filter = AA_NONE;
 unsigned int		enablePAL60 = 0;
 unsigned int		enablePAL288 = 0;
+unsigned int		enablePALBG = 0;
+int					palBackR = PAL_BG_DEFAULT;
+#ifdef DEBUG_BENCHMARK
+int					palBackG = 0;
+#else
+int					palBackG = PAL_BG_DEFAULT;
+#endif
+int					palBackB = PAL_BG_DEFAULT;
 unsigned int		vMode = SUITE_NONE;
 
 // PAL Video modes
-const resolution_t RESOLUTION_320x288 = {320, 288, INTERLACE_OFF, true};
-const resolution_t RESOLUTION_640x576 = {640, 576, INTERLACE_HALF, true};
-const resolution_t RESOLUTION_256x288 = {256, 288, INTERLACE_OFF, true};
-const resolution_t RESOLUTION_512x576 = {512, 576, INTERLACE_HALF, true};
+const resolution_t RESOLUTION_320x288 = {.width = 320, .height = 288, .interlaced = INTERLACE_OFF};
+const resolution_t RESOLUTION_640x576 = {.width = 640, .height = 576, .interlaced = INTERLACE_HALF};
+const resolution_t RESOLUTION_256x288 = {.width = 256, .height = 288, .interlaced = INTERLACE_OFF};
+const resolution_t RESOLUTION_512x576 = {.width = 512, .height = 576, .interlaced = INTERLACE_HALF};
+
+// libdragon PAL output is always 576 half-lines (45-621). 240/480 line modes
+// are displayed 1:1 by trimming 48 half-lines top and bottom (93-573),
+// instead of letting libdragon stretch them to 288 lines (Y_SCALE 0x355)
+#define PAL_240_BORDER	48
+
+// -1 none pending, 0/1 new value of enablePAL288 at next video change
+int				__pendingPAL288 = -1;
 
 #define TICKS_SINCE_MS(time) TICKS_SINCE(time) / (TICKS_PER_SECOND / 1000.0f)
 unsigned int videoSet = 0;
@@ -70,6 +86,7 @@ void vblCallback(void) {
 uint64_t __frameStart = 0;
 uint64_t __idleStart = 0;
 float __frameIdle = 20, __minIdle = 20;
+float __frameLenMS = N64_NTSC_FRAME_LEN;
 float __frameLen = 0, __maxFrameLen = 0;
 
 #ifdef DEBUG_BENCHMARK
@@ -87,14 +104,8 @@ void drawFrameLens() {
 	if(__frameLen > __maxFrameLen)
 		__maxFrameLen = __frameLen;
 	
-	if(is50Hz()) {
-		if(__frameIdle > IDLE_WARN_MS || __frameLen > N64_PAL_FRAME_LEN)
-			warn = 1;
-	}
-	else {
-		if(__frameIdle > IDLE_WARN_MS || __frameLen > N64_NTSC_FRAME_LEN)
-			warn = 1;
-	}
+	if(__frameIdle > IDLE_WARN_MS || __frameLen > __frameLenMS)
+		warn = 1;
 	
 	sprintf(str, "%0.1f, ALL:%0.1f/%0.1f IDL:%0.1f/%0.1f VBL:%0.1f ", 
 		display_get_refresh_rate(),
@@ -104,6 +115,28 @@ void drawFrameLens() {
 	sprintf(str, "RAM: %dKB/%dKB", (getUsedRAM() / 1024), get_memory_size() / 1024);
 	drawStringB(10, 15, 0xff, 0xff, 0xff, str);
 }
+
+static const char *viNames[14] = {
+	"CTRL",    "ORIGIN",  "WIDTH",   "V_INTR",
+	"V_CURR",  "BURST",   "V_TOTAL", "H_TOTAL",
+	"H_LEAP",  "H_VIDEO", "V_VIDEO", "V_BURST",
+	"X_SCALE", "Y_SCALE"
+};
+
+// Shows libdragon's VI register shadow (most VI registers don't read back on
+// hardware), V_CURRENT is read live
+void drawVIRegisters(int x, int y) {
+	char str[40];
+
+	for(int i = 0; i < 14; i++) {
+		uint32_t value = (i == 4) ? *VI_V_CURRENT : vi_read(&VI_REGISTERS[i]);
+		sprintf(str, "%-8s %08lX", viNames[i], (unsigned long)value);
+		drawStringB(x, y + i * 8, 0xff, 0xff, 0xff, str);
+	}
+	sprintf(str, "%0.3f Hz", display_get_refresh_rate());
+	drawStringB(x, y + 14 * 8, 0xff, 0xff, 0x00, str);
+}
+
 #endif
 
 int getHardWidth() {
@@ -169,6 +202,18 @@ void _internalWaitVsync() {
 
 #define MAX_AUDIO_WAIT	1.0f
 
+float getFrameLenMS() {
+	return __frameLenMS;
+}
+
+float getAudioFrequency() {
+	int freq = audio_get_frequency();
+	
+	if(!freq)
+		return 44100.0f;
+	return (float)freq;
+}
+
 void _internalWaitVsyncWithAudio() {
 	float maxWait = 0, totalWait = 0, idleRest = 0;
 	uint64_t 	nextFrame = __frames + 1;
@@ -185,14 +230,9 @@ void _internalWaitVsyncWithAudio() {
 	 * audio samples per video frame.
 	 */
 	
-	if(is50Hz()) {
-		idleRest = N64_PAL_FRAME_LEN - (__idleStart - __frameStart)/1000.0f;
-		mixer_throttle(44100.0f/50.0f);
-	}
-	else {
-		idleRest = N64_NTSC_FRAME_LEN - (__idleStart - __frameStart)/1000.0f;
-		mixer_throttle(44100.0f/(1000.0f/N64_NTSC_FRAME_LEN));
-	}
+	// 44095 Hz on NTSC and 44099 Hz on PAL when asking for 44100
+	idleRest = __frameLenMS - (__idleStart - __frameStart)/1000.0f;
+	mixer_throttle(getAudioFrequency()/(1000.0f/__frameLenMS));
 	
 	while (nextFrame > __frames) {
 		if(idleRest > MAX_AUDIO_WAIT) {
@@ -251,6 +291,7 @@ void initVideo() {
 	current_rdp_aa_filter = AA_NONE;
 	enablePAL60 = 0;
 	enablePAL288 = 0;
+	__pendingPAL288 = -1;
 	vMode = SUITE_NONE;
 	
 	__newInternalBPPChange = DEPTH_16_BPP;
@@ -258,7 +299,30 @@ void initVideo() {
 	videoSet = 0;
 }
 
+// Converts between the 240/480 and 288/576 classes of a mode
+resolution_t adjustResForPAL(resolution_t res, int pal288) {
+	int is480Class = 0;
+	
+	if(res.height != 240 && res.height != 288 && 
+		res.height != 480 && res.height != 576)
+		return res;
+	
+	is480Class = res.height >= 480;
+	if(isPAL && pal288)
+		res.height = is480Class ? 576 : 288;
+	else
+		res.height = is480Class ? 480 : 240;
+	return res;
+}
+
 void setVideoInternal(resolution_t newRes) {
+	if(__pendingPAL288 != -1) {
+		enablePAL288 = isPAL ? __pendingPAL288 : 0;
+		__pendingPAL288 = -1;
+	}
+	
+	newRes = adjustResForPAL(newRes, enablePAL288);
+	
 	if(vMode != SUITE_NONE && 
 		isSameRes(&newRes, &current_resolution, 1) &&
 		current_bitdepth == __newInternalBPPChange)
@@ -278,9 +342,6 @@ void setVideoInternal(resolution_t newRes) {
 	}
 
 	if(isPAL) {
-		if(enablePAL288)
-			newRes.height = 288;
-		
 		if(enablePAL60)
 			newRes.pal60 = 1;
 		else
@@ -290,6 +351,12 @@ void setVideoInternal(resolution_t newRes) {
 	current_bitdepth = __newInternalBPPChange;
 	
 	display_init(current_resolution, current_bitdepth, current_buffers, current_gamma, current_antialias);
+	
+	if(isPAL && (current_resolution.height == 240 || current_resolution.height == 480))
+		vi_set_borders((vi_borders_t){ .left = 0, .right = 0, .up = PAL_240_BORDER, .down = PAL_240_BORDER });
+	
+	// Frame length changes between progressive and interlaced modes
+	__frameLenMS = 1000.0f / display_get_refresh_rate();
 	
 	vMode = videoModeToInt(&current_resolution);
 	rdpq_init();
@@ -316,6 +383,16 @@ void togglePAL60() {
 		__newInternalResChange.pal60 = enablePAL60;
 		__changeInternalRes = 1;
 	}
+}
+
+void togglePAL288() {
+	if(!isPAL)
+		return;
+	if(__pendingPAL288 != -1)
+		return;
+	__pendingPAL288 = !enablePAL288;
+	__newInternalResChange = adjustResForPAL(__changeInternalRes ? __newInternalResChange : current_resolution, __pendingPAL288);
+	__changeInternalRes = 1;
 }
 
 void changeToH256onVBlank() {
@@ -367,6 +444,7 @@ void changeToH320onVBlank() {
 }
 
 void changeVMode(resolution_t newRes) {
+	newRes = adjustResForPAL(newRes, __pendingPAL288 != -1 ? __pendingPAL288 : enablePAL288);
 	if(!__changeInternalRes && isSameRes(&newRes, &current_resolution, 1))
 		return;
 	__newInternalResChange = newRes;

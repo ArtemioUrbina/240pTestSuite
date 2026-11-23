@@ -84,6 +84,10 @@ $(FILESYSTEM_DIR)/sound_test_rightsurround.wav64: AUDIOCONV_FLAGS=--wav-compress
 
 #GRAPHICS
 
+# PAL versions of CI4 patterns (loadImagePAL), name.png -> namePAL.png / namePAL240.png
+$(FILESYSTEM_DIR)/%PAL.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
+$(FILESYSTEM_DIR)/%PAL240.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
+
 $(FILESYSTEM_DIR)/240pSuite-font.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --tiles 8,8
 $(FILESYSTEM_DIR)/mainbg.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4
 $(FILESYSTEM_DIR)/sd.sprite: MKSPRITE_FLAGS=$(MKSPRITE_EXTRA_FLAGS) --format CI4

@@ -72,6 +72,7 @@ typedef struct image_st {
 	int flipV;
 	int rotate;
 	float rotAngle;
+	int ignoreOffsetY;	// native 288/576 assets are not centered in PAL 288
 	
 	uint16_t *palette;
 	uint16_t *origPalette;
@@ -93,10 +94,13 @@ void rdpqDrawImageXY(image* data, int x, int y);
 void rdpqFillWithImageXY(image* data, float x, float y);
 void rdpqFillWithImage(image* data);
 void rdpqClearScreen();
+void rdpqClearScreenFull();
+void rdpqDrawPALBackground();
 void rdpqClearScreenWhite();
 void rdpqDrawRectangle(int tx, int ty, int bx, int by, int r, int g, int b);
 
 image *loadImage(char *name);
+image *loadImagePAL(char *name);
 void freeImage(image **data);
 
 /* Menu Frame Buffer functions */

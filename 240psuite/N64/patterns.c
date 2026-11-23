@@ -513,22 +513,43 @@ void drawSharpness() {
 }
 
 void drawMonoscope() {
-	int		end = 0, changed = 1;
+	int		end = 0, changed = 1, oldVMode = vMode;
 	image	*monoscope = NULL;
 	int		whiteGrid = 0xff, colorBorder = 0xff;
 	joypad_buttons_t keys;
+#ifdef DEBUG_BENCHMARK
+	int showDebug = 1;
+#endif
 	
-	monoscope = loadImage("rom:/monoscope.sprite");
+	monoscope = loadImagePAL("rom:/monoscope.sprite");
 	if(!monoscope)
 		return;
 	
 	while(!end) {
+		if(oldVMode != vMode) {
+			image *newMono = NULL;
+			
+			newMono = loadImagePAL("rom:/monoscope.sprite");
+			if(newMono) {
+				freeImage(&monoscope);
+				monoscope = newMono;
+				changed = 1;
+			}
+			oldVMode = vMode;
+		}
+		
 		getDisplay();
 
 		rdpqStart();
 		rdpqDrawRectangle(0, 0, getDispWidth(), getDispHeight(), 0xff, 0, 0xff);
 		rdpqDrawImage(monoscope);
 		rdpqEnd();
+		
+#ifdef DEBUG_BENCHMARK
+		if(showDebug)
+			drawVIRegisters(40, 40);
+#endif
+
 
 		checkMenu(MONOSCOPEHLP, NULL);
 		waitVsync();
@@ -567,6 +588,11 @@ void drawMonoscope() {
 			whiteGrid = 0;
 			changed = 1;
 		}
+		
+#ifdef DEBUG_BENCHMARK
+		if(keys.z)
+			showDebug = !showDebug;
+#endif
 		
 		if(changed) {
 			if(colorBorder < 0)
@@ -610,23 +636,29 @@ void drawGrid() {
 										{ 1, "256x240" },
 										{ 2, "640x480" },
 										{ 3, "512x480" } };
+	fmenuData	verMenuData288[NUM_RES] = { 
+										{ 0, "320x288" },
+										{ 1, "256x288" },
+										{ 2, "640x576" },
+										{ 3, "512x576" } };
 	char *grids[NUM_RES] = { 			"rom:/grid.sprite", 
 										"rom:/grid-256.sprite", 
 										"rom:/grid-480.sprite",
 										"rom:/grid-512.sprite" };
+	fmenuData	*resMenu = enablePAL288 ? verMenuData288 : verMenuData;
 	resolution_t targetRes[NUM_RES] = {	RESOLUTION_320x240,
 										RESOLUTION_256x240,
 										RESOLUTION_640x480,
 										RESOLUTION_512x480 };
 	resolution_t oldVMode = current_resolution;
 	
-	tmpRes = selectMenu("Select", verMenuData, NUM_RES, gridResolution+1);
+	tmpRes = selectMenu("Select", resMenu, NUM_RES, gridResolution+1);
 	if(tmpRes == MENU_CANCEL)
 		return;
 	
 	gridResolution = tmpRes;
 	
-	back = loadImage(grids[gridResolution]);
+	back = loadImagePAL(grids[gridResolution]);
 	if(!back)
 		return;
 	
@@ -653,9 +685,9 @@ void drawGrid() {
 			end = 1;
 			
 		if(keys.r) {
-			tmpRes = selectMenu("Select", verMenuData, NUM_RES, gridResolution+1);
+			tmpRes = selectMenu("Select", resMenu, NUM_RES, gridResolution+1);
 			if(tmpRes != MENU_CANCEL && tmpRes != gridResolution) {
-				image *newBack = loadImage(grids[tmpRes]);
+				image *newBack = loadImagePAL(grids[tmpRes]);
 				if(newBack) {
 					freeImage(&back);
 					back = newBack;
@@ -716,6 +748,7 @@ void draw100IRE() {
 	int 			done = 0;
 	int				irecount = 10, iremax = 10;  
 	int				text = 0, invert = 0, ireValue = 0;
+	int				offset = 0;
 	char			msg[50];
 	int				*irevalues = NULL;
 	int				irevalues100[11] = { 0, 26, 51, 77, 102, 128, 153, 179, 204, 230, 255};
@@ -727,9 +760,12 @@ void draw100IRE() {
 	while(!done) {		
 		getDisplay();
 		
+		// Rectangles have no 288 offset
+		offset = enablePAL288 ? OFFSET_288P : 0;
+		
 		rdpqStart();
-		rdpqClearScreen();
-		rdpqDrawRectangle(80, 60, 240, 180, ireValue, ireValue, ireValue);
+		rdpqClearScreenFull();
+		rdpqDrawRectangle(80, 60+offset, 240, 180+offset, ireValue, ireValue, ireValue);
 		rdpqEnd();
 		
 		if(text) {
@@ -737,7 +773,7 @@ void draw100IRE() {
 				if(text > 30)
 					sprintf(msg, "RANGE 0-100 IRE");
 				else
-					sprintf(msg, "XXX IRE");  // TODO IRE VALUE
+					sprintf(msg, "%0.1f IRE", (ireValue*100.0f)/255.0f);
 			  	drawStringS(180, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
 	  		}
@@ -745,7 +781,7 @@ void draw100IRE() {
 				if(text > 30)
 					sprintf(msg, "RANGE 100-140 IRE");
 				else
-					sprintf(msg, "XXX IRE");  // TODO IRE VALUE
+					sprintf(msg, "%0.0f IRE", 100.0f + (40.0f - (ireValue*40.0f)/255.0f));
 			  	drawStringS(180, 225, 0xff, 0xff, 0xff, msg);
 			  	text --;
 	  		}
@@ -818,7 +854,7 @@ void draw100IRE() {
 
 void drawHCFR() {
 	char 			msg[50];
-	int 			done = 0, hcfr_num = 0, hcfr_type = 0, i = 0;
+	int 			done = 0, hcfr_num = 0, hcfr_type = 0, i = 0, offset = 0;
 	fmenuData		fmenu[HCFR_TYPES+1];
 	joypad_buttons_t keys;
 
@@ -842,15 +878,19 @@ void drawHCFR() {
 		
 		getDisplay();
 		
+		// Rectangles have no 288 offset
+		offset = enablePAL288 ? OFFSET_288P : 0;
+		
 		rdpqStart();
-		rdpqClearScreen();
-		rdpqDrawRectangle(106, 80, 212, 160, r, g, b);  // 1/3th
+		rdpqClearScreenFull();
+		rdpqDrawRectangle(106, 80+offset, 212, 160+offset, r, g, b);  // 1/3th
 		rdpqEnd();
 		
 		sprintf(msg, "%s %03d,%03d,%03d", 
 				hcfr_data[hcfr_type].data[hcfr_num].name, r, g, b);
 
-		drawStringC(2*getDispHeight()/3+fh, 0x7f, 0x7f, 0x7f, msg);
+		// text is offset in 288, place it in 240 coordinates
+		drawStringC(2*(getDispHeight()-2*offset)/3+fh, 0x7f, 0x7f, 0x7f, msg);
 		
 		checkMenu(HCFR, NULL);
 		waitVsync();
@@ -987,8 +1027,9 @@ void drawOverscan() {
 		rdpqDrawRectangle(square.x, square.y, square.w, square.h, 0x60, 0x60, 0x60);
 		rdpqEnd();
 
+		// text is offset in 288, center it in 240 coordinates
 		x = width/2;
-		y = height/2-2*fh;
+		y = (height-(enablePAL288 ? 2*OFFSET_288P : 0))/2-2*fh;
 		
 		drawStringS(x-150, y+(fh*sel), 0xdf, 0xdf, 0xdf, ">");
 				
@@ -1005,7 +1046,7 @@ void drawOverscan() {
 		y+= fh;		
 		
 		drawStringS(x-140, y, 0xdf, 0xdf, 0xdf, "Left Overscan:");
-		sprintf(msg, "%d pixels (%0.2f%%)", oLeft, (oLeft*100.0f)/(height/2));
+		sprintf(msg, "%d pixels (%0.2f%%)", oLeft, (oLeft*100.0f)/(width/2));
 		drawStringS(x, y, 0xdf, 0xdf, 0xdf, msg);
 		
 		y+= fh;
@@ -1066,7 +1107,7 @@ void drawOverscan() {
 		if((keys.l && sel == 1) ||
 			(keysHeld.c_left && sel == 1) ||
 			(keys.d_left && sel == 1)) {
-			if(square.h + 1 <= width && oBottom - 1 >=0 ) {
+			if(square.h + 1 <= height && oBottom - 1 >=0 ) {
 				square.h++;	
 				oBottom--;
 			}

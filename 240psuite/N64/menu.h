@@ -38,6 +38,7 @@ void checkMenu(char *help, int *reload);
 void checkStart(joypad_buttons_t keys);
 void showMenu();
 void selectVideoMode(int useBack);
+void changePALBackgroundColor(int useBack);
 void drawCredits(int usebuffer);
 void setMenuVideo(int showVideoOption);
 

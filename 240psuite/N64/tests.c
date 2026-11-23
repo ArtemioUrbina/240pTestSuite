@@ -1153,7 +1153,7 @@ void drawAlternate240p480i()
 	joypad_buttons_t keys;
 	
 	
-	if(videoModeToInt(&current_resolution) != SUITE_320x240)
+	if(vMode != SUITE_320x240 && vMode != SUITE_320x288)
 		changeVMode(RESOLUTION_320x240);	
 	
 	setMenuVideo(0);
@@ -1381,7 +1381,7 @@ void drawLEDZoneTest() {
 
 		rdpqStart();
 		frameEnableUpscaler(0);
-		rdpqClearScreen();
+		rdpqClearScreenFull();
 		rdpqEnd();
 
 		if(show)

@@ -1,4 +1,4 @@
-         VIDEO MODES (1/2)
+         VIDEO MODES (1/3)
 
 The N64 version of the 240p suite
 supports the following modes:
@@ -22,7 +22,7 @@ field.
 
 
                        #C(cont...)#C
-         VIDEO MODES (2/2)
+         VIDEO MODES (2/3)
 
 #G240p:#G The progressive variant of
     NTSC 525i line video, it has
@@ -41,3 +41,33 @@ field.
     240 in each field. The whole
     content of the suite is
     linedoubled in this mode.
+
+
+
+
+                       #C(cont...)#C
+         VIDEO MODES (3/3)
+
+#YPAL modes (50hz):#Y
+PAL consoles output 625 lines
+with 576 visible, 288 in each
+field. In #G240p#G and #G480i#G the
+suite shows its patterns 1:1
+and centered, with black
+borders on top and bottom.
+
+#G288p/576i:#G Enable them from
+    #CPAL Options#C in this menu.
+    They use the whole PAL
+    visible area, 320x288p and
+    640x576i. Most patterns are
+    240p and are centered, the
+    ones with PAL versions, like
+    the #YMonoscope#Y, use all lines.
+
+#CPAL Background#C fills the area
+around 240p patterns with a
+selectable color in 288p/576i.
+PAL pixels are wider than NTSC
+ones, geometry patterns have
+PAL specific versions.

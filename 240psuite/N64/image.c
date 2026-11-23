@@ -59,7 +59,34 @@ void rdpqSetDrawMode(int type) {
 		rdpq_mode_antialias(current_rdp_aa_filter);
 	}
 }
- 
+
+void drawPALBGBands(int width, int height, int band) {
+	rdpq_mode_push();
+	rdpq_set_mode_fill(RGBA32(palBackR, palBackG, palBackB, 0xff));
+	rdpq_fill_rectangle(0, 0, width, band);
+	rdpq_fill_rectangle(0, height - band, width, height);
+	rdpq_mode_pop();
+}
+
+void rdpqDrawPALBackground() {
+	int band = OFFSET_288P;
+	
+	if(!isPAL || !enablePAL288 || !enablePALBG || !__disp)
+		return;
+	
+	// non scaled 480 assets are drawn directly to the 576 framebuffer
+	if(isVMode480())
+		band *= 2;
+	drawPALBGBands(__disp->width, __disp->height, band);
+	
+	// and the rest in the 288 upscale framebuffer
+	if(upscaleFrame && __upscale_fb) {
+		rdpq_attach(__upscale_fb, NULL);
+		drawPALBGBands(__upscale_fb->width, __upscale_fb->height, OFFSET_288P);
+		rdpq_detach();
+	}
+}
+
 void rdpqStart() {
 	assertf(__disp != NULL, "rdpqStart(): with NULL _disp");
 
@@ -81,6 +108,7 @@ void rdpqStart() {
 	else
 		rdpq_attach(__disp, NULL);
 	
+	rdpqDrawPALBackground();
 	rdpqSetDrawMode(1);
 }
  
@@ -94,6 +122,16 @@ void rdpqEnd() {
 	rdpq_detach_wait();
 }
  
+// Vertical offset to center 240/480 assets in PAL 288/576 modes
+int getOffset288(image *data) {
+	if(!enablePAL288 || data->ignoreOffsetY)
+		return 0;
+	// non scaled 480 assets are drawn directly in the 576 framebuffer
+	if(isVMode480() && !data->scale)
+		return OFFSET_288P*2;
+	return OFFSET_288P;
+}
+
 void rdpqDrawImage(image* data) {
 #ifdef DEBUG_BENCHMARK
 	assertf(data, "rdpqDrawImage() received NULL image");
@@ -102,10 +140,9 @@ void rdpqDrawImage(image* data) {
 	if(!data) 				return;
 	if(!data->tiles)		return;
 #endif
-	int offset = 0, drawX = data->x, drawY = data->y;
+	int drawX = data->x, drawY = data->y;
+	int offset = getOffset288(data);
 	
-	if(enablePAL288)
-		offset = OFFSET_288P;
 		
 	if(isVMode480() && !data->scale)
 		upscaleFrame = 0;
@@ -166,10 +203,7 @@ void rdpqDrawImageXY(image* data, int x, int y) {
 	if(!data) 				return;
 	if(!data->tiles)		return;
 #endif
-	int offset = 0;
-	
-	if(enablePAL288)
-		offset = OFFSET_288P;
+	int offset = getOffset288(data);
 		
 	if(isVMode480() && !data->scale)
 		upscaleFrame = 0;
@@ -234,14 +268,23 @@ void rdpqFillWithImageXY(image* data, float x, float y) {
 			rdpq_detach();
 	}
 	else {
+		// Tiles start at the top of the screen, cancel the 288 offset
+		int offset = getOffset288(data);
+		
 		for(unsigned int ty = 0; ty < getDispHeight(); ty += data->tiles->height) {
 			for(unsigned int tx = 0; tx < getDispWidth(); tx += data->tiles->width)
-				rdpqDrawImageXY(data, tx + x, ty + y);
+				rdpqDrawImageXY(data, tx + x, ty + y - offset);
 		}
 	}
 }
 
 void rdpqClearScreen() {
+	rdpqClearScreenFull();
+	rdpqDrawPALBackground();
+}
+
+// Full screen black, ignores the PAL background
+void rdpqClearScreenFull() {
 	if(upscaleFrame)
 		rdpq_attach(__upscale_fb, NULL);
 	rdpq_clear(RGBA32(0, 0, 0, 0xff));
@@ -300,6 +343,7 @@ image *loadImage(char *name) {
 	data->flipV = 0;
 	data->rotate = 0;
 	data->rotAngle = 00.f;
+	data->ignoreOffsetY = 0;
 	
 	data->palette = NULL;
 	data->origPalette = NULL;
@@ -325,6 +369,39 @@ image *loadImage(char *name) {
 	return(data);
 }
  
+int fileExists(char *name) {
+	int fh = dfs_open(name+5);   // remove "rom:/"
+	
+	if(fh < DFS_ESUCCESS)
+		return 0;
+	dfs_close(fh);
+	return 1;
+}
+
+/* 
+	Loads the PAL version of a pattern if it exists, otherwise the NTSC one
+	"rom:/grid.sprite" uses:
+	- "rom:/gridPAL.sprite" in 288p/576i, native and drawn without offset
+	- "rom:/gridPAL240.sprite" in PAL 240p/480i, PAL pixel aspect ratio
+*/
+image *loadImagePAL(char *name) {
+	char	palName[100];
+	image	*data = NULL;
+	int		len = strlen(name) - strlen(".sprite");
+	
+	if(isPAL && len > 0 && len + 16 < (int)sizeof(palName)) {
+		sprintf(palName, "%.*s%s.sprite", len, name, enablePAL288 ? "PAL" : "PAL240");
+		if(fileExists(palName)) {
+			data = loadImage(palName);
+			if(data && enablePAL288)
+				data->ignoreOffsetY = 1;
+		}
+	}
+	if(!data)
+		data = loadImage(name);
+	return data;
+}
+
 void freeImage(image **data) {
 	if(!data || !*data)
 		return;
