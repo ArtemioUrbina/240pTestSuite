@@ -710,7 +710,7 @@ void drawStripes() {
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			drawStringB(20, isVMode480() ? 460 : 210, 0xff, 0xff, 0xff, msg);
+			drawStringB(20, __disp->height > 288 ? 460 : 210, 0xff, 0xff, 0xff, msg);
 			frame ++;
 			if(is50Hz()) {
 				if(frame > 49)
@@ -780,7 +780,7 @@ void drawCheckerBoard() {
 			char msg[20];
 
 			sprintf(msg, "Frame: %02d", frame);
-			drawStringB(20, isVMode480() ? 460 : 210, 0xff, 0xff, 0xff, msg);
+			drawStringB(20, __disp->height > 288 ? 460 : 210, 0xff, 0xff, 0xff, msg);
 			frame ++;
 			if(is50Hz()) {
 				if(frame > 49)
@@ -1401,7 +1401,7 @@ void drawLEDZoneTest() {
 		rdpqEnd();
 
 		if(show)
-			graphics_draw_box(__disp, x, y, selsprite, selsprite, COLOR_W);
+			drawBoxClipped(__disp, x, y, selsprite, selsprite, COLOR_W);
 
 		checkMenu(BACKLITHELP, NULL);
 		waitVsync();

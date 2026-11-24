@@ -38,6 +38,7 @@ void useReducedWidthSpace(int enable);
 void drawString(int x, int y, int r, int g, int b, char *str);
 void drawStringS(int x, int y, int r, int g, int b, char *str);
 void drawStringB(int x, int y, int r, int g, int b, char *str);
+void drawBoxClipped(surface_t *disp, int x, int y, int width, int height, uint32_t color);
 void drawStringC(int y, int r, int g, int b, char *text);
 void drawStringCB(int y, int r, int g, int b, char *text);
 

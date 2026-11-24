@@ -108,7 +108,8 @@ int hasMemExpansion() {
 }
 
 int isUnsupportedHighRes() {
-    if ((vMode == SUITE_640x480 || vMode == SUITE_640x576) && !hasMemExpansion())
+    if ((vMode == SUITE_640x480 || vMode == SUITE_640x576 ||
+		vMode == SUITE_512x480 || vMode == SUITE_512x576) && !hasMemExpansion())
         return 1;    
     return 0;
 }

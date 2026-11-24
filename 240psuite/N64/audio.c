@@ -222,10 +222,10 @@ void drawAudioSyncTest() {
 				rdpqClearScreen();
 			rdpqEnd();
 
-			graphics_draw_box(__disp, rectL.x, rectL.y, rectL.w, rectL.h, COLOR_W);
-			graphics_draw_box(__disp, rectR.x, rectR.y, rectR.w, rectR.h, COLOR_W);
-			graphics_draw_box(__disp, 0, 188, W, 8, COLOR_W);
-			graphics_draw_box(__disp, sprite.x, sprite.y, sprite.w, sprite.h, COLOR_W);
+			drawBoxClipped(__disp, rectL.x, rectL.y, rectL.w, rectL.h, COLOR_W);
+			drawBoxClipped(__disp, rectR.x, rectR.y, rectR.w, rectR.h, COLOR_W);
+			drawBoxClipped(__disp, 0, 188, W, 8, COLOR_W);
+			drawBoxClipped(__disp, sprite.x, sprite.y, sprite.w, sprite.h, COLOR_W);
 
 			checkMenu(AUDIOSYNCHELP, NULL);
 			waitVsyncWithAudio();

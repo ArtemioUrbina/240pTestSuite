@@ -100,6 +100,37 @@ unsigned int measureString(char *str) {
 
 uint32_t f_color = 0xFFFFFFFF;
 
+#define FONT_CHAR_HEIGHT	8
+
+// anything outside the surface is written over whatever follows it in memory. fix it
+void drawBoxClipped(surface_t *disp, int x, int y, int width, int height, uint32_t color) {
+	if(!disp || !disp->buffer)
+		return;
+		
+	if(x < 0) {
+		width += x;
+		x = 0;
+	}
+	if(y < 0) {
+		height += y;
+		y = 0;
+	}
+	if(x + width > disp->width)
+		width = disp->width - x;
+	if(y + height > disp->height)
+		height = disp->height - y;
+	if(width <= 0 || height <= 0)
+		return;
+		
+	graphics_draw_box(disp, x, y, width, height, color);
+}
+
+void drawCharacterClipped(surface_t *disp, int x, int y, char ch) {
+	if(x < 0 || y < 0 || x + fw > disp->width || y + FONT_CHAR_HEIGHT > disp->height)
+		return;
+	graphics_draw_character(disp, x, y, ch);
+}
+
 void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const msg ) {
 	int highlight = 0, lh = LINE_HEIGHT, sw = getSpaceWidth();
 	uint32_t old_f_color = f_color;
@@ -178,7 +209,7 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 							
 							tx -= fw/4;
 							for(int pos = 0; pos < 3; pos++) {
-								graphics_draw_character(disp, tx, ty, '.');
+								drawCharacterClipped(disp, tx, ty, '.');
 								tx += stride;
 							}
 							tx += fw/4;
@@ -192,10 +223,10 @@ void graphics_draw_text_suite( surface_t* disp, int x, int y, const char * const
 						if(*text == '.' || *text == ',' || *text == ';' || 
 							*text == '\'') {
 							tx = tx - fw/2 + 1;
-							graphics_draw_character(disp, tx, ty, *text);
+							drawCharacterClipped(disp, tx, ty, *text);
 							tx += fw/2 + 2;
 						} else {  // any regular character
-							graphics_draw_character(disp, tx, ty, *text);
+							drawCharacterClipped(disp, tx, ty, *text);
 							tx += fw;
 						}
 					}
@@ -230,9 +261,9 @@ void drawStringB(int x, int y, int r, int g, int b, char *text) {
 	f_color = graphics_make_color(r, g, b, 0xff);
 
 	if(enablePAL288)
-		graphics_draw_box(__disp, x-1, y-1+OFFSET_288P, boxWidth, boxHeight, 0x00000000);
+		drawBoxClipped(__disp, x-1, y-1+OFFSET_288P, boxWidth, boxHeight, 0x00000000);
 	else
-		graphics_draw_box(__disp, x-1, y-1, boxWidth, boxHeight, 0x00000000);
+		drawBoxClipped(__disp, x-1, y-1, boxWidth, boxHeight, 0x00000000);
 	graphics_set_color(f_color, 0x00000000);
 	graphics_draw_text_suite(__disp, x, y, text);
 }

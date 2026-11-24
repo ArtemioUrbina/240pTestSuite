@@ -782,7 +782,11 @@ int hasMenuFB() {
 
 void rdpqUpscalePrepareFB() {
 	if(!menuIgnoreUpscale && isVMode480()) {
-		createUpscaleFB();
+		// without memory for it we draw at full resolution, unscaled
+		if(!createUpscaleFB()) {
+			upscaleFrame = 0;
+			return;
+		}
 		upscaleFrame = 1;
 		lastFrameUpscaled = LFU_UNK;
 	}
@@ -1131,7 +1135,7 @@ void drawNumber(uint16_t x, uint16_t y, uint16_t color, uint16_t number) {
 }
 
 void drawBlackBox(int x, int y, int width, int height) {
-	graphics_draw_box(upscaleFrame ? __upscale_fb : __disp, 
+	drawBoxClipped(upscaleFrame ? __upscale_fb : __disp, 
 		x, y, width, height, graphics_make_color(0, 0, 0, 0xff));		
 }
 
