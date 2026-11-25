@@ -22,6 +22,9 @@
 #ifndef MCS_H
 #define MCS_H
 
-int drawMCSScreen(int frames, int controls);
+#define LOGO_MODEL_MCS	0
+#define LOGO_MODEL_SD	1
+
+int drawMCSScreen(int frames, int controls, int model);
 
 #endif

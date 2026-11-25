@@ -22,7 +22,7 @@
  /*
   * Code in this file is based on the 01_model example from tiny 3D
   * https://github.com/HailToDodongo/tiny3d
-  * © 2023-2024 - Max Bebök (HailToDodongo)
+  * Â© 2023-2024 - Max BebÃ¶k (HailToDodongo)
   * Tiny3D is licensed under the MIT License
   */
  
@@ -31,6 +31,7 @@
 #include <t3d/t3dmath.h>
 #include <t3d/t3dmodel.h>
 
+#include "mcs.h"
 #include "menu.h"
 #include "controller.h"
 #include "video.h"
@@ -48,10 +49,22 @@
 #define MCS_FONT_REGULAR	1
 #define MCS_FONT_SMALL		2
 
-// #8969FF
-#define FONT_R	0x89
-#define FONT_G	0x69
-#define FONT_B	0xFF
+typedef struct modelInfo_st {
+	const char *modelPath;
+	const char *title;
+	const char *subtitle;	
+	uint8_t		fontColor[3];
+	int			titleY;
+} ModelInfo;
+
+static const ModelInfo modelInfo[] = {
+	// LOGO_MODEL_MCS, font #8969FF
+	{ "rom:/mcs.t3dm", "Mega Cat Studios", "Proud to contribute to the community we love", { 0x89, 0x69, 0xFF }, 170 },
+	// LOGO_MODEL_SD, font #6B4A21 (coat brown)
+	{ "rom:/sd3d.t3dm", "Junker HQ", NULL, { 0x6B, 0x4A, 0x21 }, 185 },
+};
+
+#define MODEL_COUNT	(int)(sizeof(modelInfo)/sizeof(modelInfo[0]))
 
 typedef struct scenaData_st {
 	surface_t depthBuffer;
@@ -64,7 +77,8 @@ typedef struct scenaData_st {
 	uint8_t colorDir[4];
 	uint8_t colorBG;
 	T3DVec3 lightDirVec;
-	T3DModel *modelMCS;
+	T3DModel *model;
+	const ModelInfo *info;
 	rdpq_font_t *fontRegular; 
 	rdpq_font_t *fontSmall; 
 	uint8_t colorFont[4];
@@ -89,9 +103,9 @@ void freeSceneData(SceneData *scene) {
 		scene->viewport._matFP = NULL;
 	}
 	
-	if(scene->modelMCS) {
-		t3d_model_free(scene->modelMCS);
-		scene->modelMCS = NULL;
+	if(scene->model) {
+		t3d_model_free(scene->model);
+		scene->model = NULL;
 	}
 	
 	if(scene->fontRegular) {
@@ -107,9 +121,13 @@ void freeSceneData(SceneData *scene) {
 	}
 }
 
-int load3DScene(SceneData *scene, int controls) {
+int load3DScene(SceneData *scene, int controls, int model) {
 	memset(scene, 0, sizeof(SceneData));
-	
+
+	if(model < 0 || model >= MODEL_COUNT)
+		model = LOGO_MODEL_MCS;
+	scene->info = &modelInfo[model];
+
 	scene->depthBuffer = surface_alloc(FMT_RGBA16, getHardWidth(), getHardHeight());
 	if(!scene->depthBuffer.buffer)
 		return 0;
@@ -151,8 +169,8 @@ int load3DScene(SceneData *scene, int controls) {
 	t3d_vec3_norm(&scene->lightDirVec);
 
 	// Load a model-file, this contains the geometry and some metadata
-	scene->modelMCS = t3d_model_load("rom:/mcs.t3dm");
-	if(!scene->modelMCS) {
+	scene->model = t3d_model_load(scene->info->modelPath);
+	if(!scene->model) {
 		freeSceneData(scene);
 		return 0;
 	}
@@ -164,28 +182,30 @@ int load3DScene(SceneData *scene, int controls) {
 	}
 
 	rdpq_text_register_font(MCS_FONT_REGULAR, scene->fontRegular);
-	
-	scene->fontSmall = rdpq_font_load("rom:/BebasNeue-Small.font64");
-	if(!scene->fontSmall) {
-		freeSceneData(scene);
-		return 0;
-	}
-	
-	scene->colorFont[0] = FONT_R;
-	scene->colorFont[1] = FONT_G;
-	scene->colorFont[2] = FONT_B;
+
+	scene->colorFont[0] = scene->info->fontColor[0];
+	scene->colorFont[1] = scene->info->fontColor[1];
+	scene->colorFont[2] = scene->info->fontColor[2];
 	scene->colorFont[3] = 0;
-	
-    rdpq_text_register_font(MCS_FONT_SMALL, scene->fontSmall);
-	
+
 	rdpq_font_style(scene->fontRegular, 0, &(rdpq_fontstyle_t){
         .color = RGBA32(scene->colorFont[0], scene->colorFont[1], scene->colorFont[2], scene->colorFont[3]),
     });
-	
-	rdpq_font_style(scene->fontSmall, 0, &(rdpq_fontstyle_t){
-        .color = RGBA32(scene->colorFont[0], scene->colorFont[1], scene->colorFont[2], scene->colorFont[3]),
-    });
-	
+
+	if(scene->info->subtitle) {
+		scene->fontSmall = rdpq_font_load("rom:/BebasNeue-Small.font64");
+		if(!scene->fontSmall) {
+			freeSceneData(scene);
+			return 0;
+		}
+
+		rdpq_text_register_font(MCS_FONT_SMALL, scene->fontSmall);
+
+		rdpq_font_style(scene->fontSmall, 0, &(rdpq_fontstyle_t){
+			.color = RGBA32(scene->colorFont[0], scene->colorFont[1], scene->colorFont[2], scene->colorFont[3]),
+		});
+	}
+
 	return 1;
 }
 
@@ -275,7 +295,7 @@ int draw3DScene(SceneData *scene, int frames, int type, int controls) {
 		t3d_light_set_count(1);
 
 		t3d_matrix_push(scene->modelMatFP);
-		t3d_model_draw(scene->modelMCS);
+		t3d_model_draw(scene->model);
 		t3d_matrix_pop(1);
 		
 		if(!controls) {
@@ -284,19 +304,21 @@ int draw3DScene(SceneData *scene, int frames, int type, int controls) {
 			rdpq_font_style(scene->fontRegular, 0, &(rdpq_fontstyle_t){
 				.color = RGBA32(scene->colorFont[0], scene->colorFont[1], scene->colorFont[2], scene->colorFont[3]),
 			});
-			rdpq_font_style(scene->fontSmall, 0, &(rdpq_fontstyle_t){
-				.color = RGBA32(scene->colorFont[0], scene->colorFont[1], scene->colorFont[2], scene->colorFont[3]),
-			});
 			rdpq_text_printf(&(rdpq_textparms_t){
 				.width = 300,
 				.height = 100,
 				.align  = ALIGN_CENTER,
-				}, MCS_FONT_REGULAR, 10, 170, "Mega Cat Studios");
-			rdpq_text_printf(&(rdpq_textparms_t){
-				.width = 300,
-				.height = 100,
-				.align  = ALIGN_CENTER,
-				}, MCS_FONT_SMALL, 10, 210, "Proud to contribute to the community we love");
+				}, MCS_FONT_REGULAR, 10, scene->info->titleY, "%s", scene->info->title);
+			if(scene->fontSmall) {
+				rdpq_font_style(scene->fontSmall, 0, &(rdpq_fontstyle_t){
+					.color = RGBA32(scene->colorFont[0], scene->colorFont[1], scene->colorFont[2], scene->colorFont[3]),
+				});
+				rdpq_text_printf(&(rdpq_textparms_t){
+					.width = 300,
+					.height = 100,
+					.align  = ALIGN_CENTER,
+					}, MCS_FONT_SMALL, 10, scene->info->titleY + 40, "%s", scene->info->subtitle);
+			}
 		}
 		
 		rdpq_detach_show();
@@ -361,14 +383,15 @@ int draw3DScene(SceneData *scene, int frames, int type, int controls) {
 	return cancel;
 }
 
-int drawMCSScreen(int frames, int controls) {
+int drawMCSScreen(int frames, int controls, int model) {
 	int cancel = 0;
-	
+
 	SceneData scene;
-		
+
 	t3d_init((T3DInitParams){});
-	if(!load3DScene(&scene, controls)) {
+	if(!load3DScene(&scene, controls, model)) {
 		freeSceneData(&scene);
+		t3d_destroy();
 		return 0;
 	}
 

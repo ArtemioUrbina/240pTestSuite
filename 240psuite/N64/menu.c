@@ -538,7 +538,7 @@ void drawCredits(int usebuffer) {
 		}
 		
 		if(keys.c_up) {
-			drawMCSScreen(400, 1);
+			drawMCSScreen(400, 1, rand()%2);
 		}
 		
 		if(keys.c_left) {
